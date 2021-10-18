@@ -491,7 +491,7 @@ static void report_device(char *device, int quiet)
 	    ioctl(fd, BLKSSZGET, &ssz) == 0 &&
 	    ioctl(fd, BLKBSZGET, &bsz) == 0 &&
 	    blkdev_get_size(fd, &bytes) == 0) {
-		printf("%s %5ld %5d %5d %s %15lld   %s\n",
+		printf("%s %5ld %5d %5d %s %15lld   %s\n",
 			ro ? "ro" : "rw", ra, ssz, bsz, start_str, bytes, device);
 	} else {
 		if (!quiet)
