@@ -109,6 +109,7 @@ static int ncolumns;
 
 struct wd_device {
 	const char	*devpath;
+	struct path_cxt	*sysfs;
 
 	int		timeout;
 	int		timeleft;
@@ -123,7 +124,8 @@ struct wd_device {
 	unsigned int	has_timeout : 1,
 			has_timeleft : 1,
 			has_pretimeout : 1,
-			has_nowayout : 1;
+			has_nowayout : 1,
+			no_sysfs : 1;
 };
 
 struct wd_control {
@@ -472,27 +474,44 @@ static int read_watchdog_from_device(struct wd_device *wd)
 	return 0;
 }
 
-/* Returns: <0 error, 0 success, 1 unssuported */
-static int read_watchdog_from_sysfs(struct wd_device *wd)
+static struct path_cxt *get_sysfs(struct wd_device *wd)
 {
 	struct path_cxt *sys;
 	struct stat st;
-	int rc;
 
-	rc = stat(wd->devpath, &st);
-	if (rc != 0)
-		return rc;
+	if (wd->no_sysfs)
+		return NULL;
+	if (wd->sysfs)
+		return wd->sysfs;
+	if (stat(wd->devpath, &st) != 0)
+		goto nosysfs;
 
 	sys = ul_new_path(_PATH_SYS_DEVCHAR "/%u:%u",
 			major(st.st_rdev), minor(st.st_rdev));
 	if (!sys)
-		return -ENOMEM;
+		return NULL;
 
 	if (ul_path_get_dirfd(sys) < 0)
 		goto nosysfs;		/* device not in /sys */
 
 	if (ul_path_access(sys, F_OK, "identity") != 0)
 		goto nosysfs;		/* no info in /sys (old miscdev?) */
+
+	wd->sysfs = sys;
+	return sys;
+nosysfs:
+	wd->no_sysfs = 1;
+	return NULL;
+}
+
+/* Returns: <0 error, 0 success, 1 unssuported */
+static int read_watchdog_from_sysfs(struct wd_device *wd)
+{
+	struct path_cxt *sys;
+
+	sys = get_sysfs(wd);
+	if (!sys)
+		return 1;
 
 	ul_path_read_buffer(sys, (char *) wd->ident.identity, sizeof(wd->ident.identity), "identity");
 
@@ -508,11 +527,7 @@ static int read_watchdog_from_sysfs(struct wd_device *wd)
 	if (ul_path_read_s32(sys, &wd->timeleft, "timeleft") == 0)
 		wd->has_timeleft = 1;
 
-	ul_unref_path(sys);
 	return 0;
-nosysfs:
-	ul_unref_path(sys);
-	return 1;
 }
 
 static int read_watchdog(struct wd_device *wd)
@@ -527,6 +542,8 @@ static int read_watchdog(struct wd_device *wd)
 		return -1;
 	}
 
+	ul_unref_path(wd->sysfs);
+	wd->sysfs = NULL;
 	return 0;
 }
 
