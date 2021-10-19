@@ -216,6 +216,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -n, --noheadings       don't print headings for flags table\n"
 		" -O, --oneline          print all information on one line\n"
 		" -o, --output <list>    output columns of the flags\n"
+		" -p, --setpretimeout <sec> set watchdog pre-timeout\n"
 		" -r, --raw              use raw output format for flags table\n"
 		" -T, --notimeouts       don't print watchdog timeouts\n"
 		" -s, --settimeout <sec> set watchdog timeout\n"
@@ -334,19 +335,27 @@ done:
 	scols_unref_table(table);
 	return rc;
 }
+
+enum {
+	WDCTL_SET_TIMEOUT = (1 << 1),
+	WDCTL_SET_PRETIMEOUT = (1 << 2)
+};
+
 /*
  * Warning: successfully opened watchdog has to be properly closed with magic
  * close character otherwise the machine will be rebooted!
  *
  * Don't use err() or exit() here!
  */
-static int set_watchdog(struct wd_device *wd, int timeout)
+static int set_watchdog(struct wd_device *wd, int timeout, int pretimeout,
+			unsigned int flags)
 {
 	int fd;
 	sigset_t sigs, oldsigs;
 	int rc = 0;
 
 	assert(wd->devpath);
+	assert(flags);
 
 	sigemptyset(&oldsigs);
 	sigfillset(&sigs);
@@ -377,9 +386,16 @@ static int set_watchdog(struct wd_device *wd, int timeout)
 		 * the machine might end up rebooting. */
 	}
 
-	if (ioctl(fd, WDIOC_SETTIMEOUT, &timeout) != 0) {
-		rc = errno;
+	if ((flags & WDCTL_SET_TIMEOUT) &&
+	    ioctl(fd, WDIOC_SETTIMEOUT, &timeout) != 0) {
+		rc += errno;
 		warn(_("cannot set timeout for %s"), wd->devpath);
+	}
+
+	if ((flags & WDCTL_SET_PRETIMEOUT) &&
+	    ioctl(fd, WDIOC_SETPRETIMEOUT, &pretimeout) != 0) {
+		rc += errno;
+		warn(_("cannot set pretimeout for %s"), wd->devpath);
 	}
 
 	if (close(fd))
@@ -599,8 +615,9 @@ int main(int argc, char *argv[])
 	struct wd_device wd;
 	struct wd_control ctl = { .hide_headings = 0 };
 	int c, res = EXIT_SUCCESS, count = 0;
+	unsigned int wantset = 0;
 	uint32_t wanted = 0;
-	int timeout = 0;
+	int timeout = 0, pretimeout = 0;
 	const char *dflt_device = NULL;
 
 	static const struct option long_opts[] = {
@@ -612,6 +629,7 @@ int main(int argc, char *argv[])
 		{ "noident",	no_argument,       NULL, 'I' },
 		{ "notimeouts", no_argument,       NULL, 'T' },
 		{ "settimeout", required_argument, NULL, 's' },
+		{ "setpretimeout", required_argument, NULL, 'p' },
 		{ "output",     required_argument, NULL, 'o' },
 		{ "oneline",    no_argument,       NULL, 'O' },
 		{ "raw",        no_argument,       NULL, 'r' },
@@ -631,7 +649,7 @@ int main(int argc, char *argv[])
 	close_stdout_atexit();
 
 	while ((c = getopt_long(argc, argv,
-				"d:f:hFnITo:s:OrVx", long_opts, NULL)) != -1) {
+				"d:f:hFnITp:o:s:OrVx", long_opts, NULL)) != -1) {
 
 		err_exclusive_options(c, long_opts, excl, excl_st);
 
@@ -645,6 +663,11 @@ int main(int argc, char *argv[])
 			break;
 		case 's':
 			timeout = strtos32_or_err(optarg, _("invalid timeout argument"));
+			wantset |= WDCTL_SET_TIMEOUT;
+			break;
+		case 'p':
+			pretimeout = strtos32_or_err(optarg, _("invalid pretimeout argument"));
+			wantset |= WDCTL_SET_PRETIMEOUT;
 			break;
 		case 'f':
 			if (string_to_bitmask(optarg, (unsigned long *) &wanted, name2bit) != 0)
@@ -707,8 +730,8 @@ int main(int argc, char *argv[])
 			fputc('\n', stdout);
 		count++;
 
-		if (timeout) {
-			rc = set_watchdog(&wd, timeout);
+		if (wantset) {
+			rc = set_watchdog(&wd, timeout, pretimeout, wantset);
 			if (rc) {
 				res = EXIT_FAILURE;
 			}
