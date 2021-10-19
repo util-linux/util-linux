@@ -28,6 +28,7 @@ extern int procfs_process_init_path(struct path_cxt *pc, pid_t pid);
 extern int procfs_process_get_uid(struct path_cxt *pc, uid_t *uid);
 extern ssize_t procfs_process_get_cmdline(struct path_cxt *pc, char *buf, size_t bufsz);
 extern ssize_t procfs_process_get_cmdname(struct path_cxt *pc, char *buf, size_t bufsz);
+extern ssize_t procfs_process_get_stat(struct path_cxt *pc, char *buf, size_t bufsz);
 
 
 static inline ssize_t procfs_process_get_exe(struct path_cxt *pc, char *buf, size_t bufsz)

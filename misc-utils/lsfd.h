@@ -44,6 +44,7 @@ enum {
 	COL_FD,
 	COL_FLAGS,
 	COL_INODE,
+	COL_KTHREAD,
 	COL_MAJMIN,
 	COL_MAPLEN,
 	COL_MISCDEV,
@@ -97,6 +98,7 @@ struct proc {
 	ino_t ns_mnt;
 	struct list_head procs;
 	struct list_head files;
+	unsigned int kthread: 1;
 };
 
 /*

@@ -30,6 +30,7 @@
 #include <unistd.h>
 #include <getopt.h>
 
+#include <linux/sched.h>
 #include <sys/syscall.h>
 #include <linux/kcmp.h>
 static int kcmp(pid_t pid1, pid_t pid2, int type,
@@ -37,6 +38,10 @@ static int kcmp(pid_t pid1, pid_t pid2, int type,
 {
 	return syscall(SYS_kcmp, pid1, pid2, type, idx1, idx2);
 }
+
+/* See proc(5).
+ * Defined in linux/include/linux/sched.h private header file. */
+#define PF_KTHREAD		0x00200000	/* I am a kernel thread */
 
 #include "c.h"
 #include "nls.h"
@@ -108,6 +113,8 @@ static struct colinfo infos[] = {
 		N_("user ID number of the file's owner") },
 	[COL_INODE]   = { "INODE",    0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 		N_("inode number") },
+	[COL_KTHREAD] = { "KTHREAD",    0, SCOLS_FL_RIGHT, SCOLS_JSON_BOOLEAN,
+		N_("opened by a kernel thread") },
 	[COL_MAJMIN]  = { "MAJ:MIN",  0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("device ID for special, or ID of device containing file") },
 	[COL_MAPLEN]  = { "MAPLEN",   0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
@@ -194,6 +201,9 @@ struct lsfd_control {
 
 	struct lsfd_filter *filter;
 };
+
+static void xstrappend(char **a, const char *b);
+static void xstrputc(char **a, char c);
 
 static int column_name_to_id(const char *name, size_t namesz)
 {
@@ -381,6 +391,7 @@ static struct proc *new_process(pid_t pid, struct proc *leader)
 	INIT_LIST_HEAD(&proc->files);
 	INIT_LIST_HEAD(&proc->procs);
 
+	proc->kthread = 0;
 	return proc;
 }
 
@@ -867,6 +878,25 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 			xstrdup(buf) : xstrdup(_("(unknown)"));
 	procfs_process_get_uid(pc, &proc->uid);
 
+	if (procfs_process_get_stat(pc, buf, sizeof(buf)) > 0) {
+		char *p;
+		unsigned int flags;
+		char *pat = NULL;
+
+		/* See proc(5) about the column in the line. */
+		xstrappend(&pat, "%*d (");
+		for (p = proc->command; *p != '\0'; p++) {
+			if (*p == '%')
+				xstrappend(&pat, "%%");
+			else
+				xstrputc(&pat, *p);
+		}
+		xstrappend(&pat, ") %*c %*d %*d %*d %*d %*d %u %*[^\n]");
+		if (sscanf(buf, pat, &flags) == 1)
+			proc->kthread = !!(flags & PF_KTHREAD);
+		free(pat);
+	}
+
 	collect_execve_file(pc, proc);
 
 	if (proc->pid == proc->leader->pid
@@ -985,6 +1015,12 @@ static void xstrappend(char **a, const char *b)
 {
 	if (strappend(a, b) < 0)
 		err(EXIT_FAILURE, _("failed to allocate memory for string"));
+}
+
+static void xstrputc(char **a, char c)
+{
+	char b[] = {c, '\0'};
+	xstrappend(a, b);
 }
 
 static char * quote_filter_expr(char *expr)

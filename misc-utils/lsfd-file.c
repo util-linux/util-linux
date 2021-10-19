@@ -297,6 +297,9 @@ static bool file_fill_column(struct proc *proc,
 	case COL_DELETED:
 		xasprintf(&str, "%d", file->stat.st_nlink == 0);
 		break;
+	case COL_KTHREAD:
+		xasprintf(&str, "%u", proc->kthread);
+		break;
 	case COL_MNT_ID:
 		xasprintf(&str, "%d", file->association < 0? 0: file->mnt_id);
 		break;

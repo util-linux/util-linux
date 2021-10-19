@@ -104,6 +104,9 @@ User ID number of the file's owner.
 INODE <__number__>::
 Inode number.
 
+KTHREAD <__boolean__>::
+Whether the process is a kernel thread or not.
+
 MAJ:MIN <__string__>::
 Device ID for special, or ID of device containing file.
 

@@ -138,9 +138,10 @@ static ssize_t read_procfs_file(int fd, char *buf, size_t bufsz)
 	return sz;
 }
 
-ssize_t procfs_process_get_cmdline(struct path_cxt *pc, char *buf, size_t bufsz)
+static ssize_t procfs_process_get_line_for(struct path_cxt *pc, char *buf, size_t bufsz,
+					    const char *fname)
 {
-	int fd = ul_path_open(pc, O_RDONLY|O_CLOEXEC, "cmdline");
+	int fd = ul_path_open(pc, O_RDONLY|O_CLOEXEC, fname);
 
 	if (fd >= 0) {
 		ssize_t sz = read_procfs_file(fd, buf, bufsz);
@@ -150,16 +151,19 @@ ssize_t procfs_process_get_cmdline(struct path_cxt *pc, char *buf, size_t bufsz)
 	return -errno;
 }
 
+ssize_t procfs_process_get_cmdline(struct path_cxt *pc, char *buf, size_t bufsz)
+{
+	return procfs_process_get_line_for(pc, buf, bufsz, "cmdline");
+}
+
 ssize_t procfs_process_get_cmdname(struct path_cxt *pc, char *buf, size_t bufsz)
 {
-	int fd = ul_path_open(pc, O_RDONLY|O_CLOEXEC, "comm");
+	return procfs_process_get_line_for(pc, buf, bufsz, "comm");
+}
 
-	if (fd >= 0) {
-		ssize_t sz = read_procfs_file(fd, buf, bufsz);
-		close(fd);
-		return sz;
-	}
-	return -errno;
+ssize_t procfs_process_get_stat(struct path_cxt *pc, char *buf, size_t bufsz)
+{
+	return procfs_process_get_line_for(pc, buf, bufsz, "stat");
 }
 
 int procfs_process_get_uid(struct path_cxt *pc, uid_t *uid)
