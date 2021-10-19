@@ -134,7 +134,10 @@ if test -f tools/libtool.m4.patch; then
 		rm m4/libtool.m4
 		mv m4/libtool.m4.org m4/libtool.m4
 	fi
-	patch -p1 --batch < tools/libtool.m4.patch
+	patch --batch --dry -p1 < tools/libtool.m4.patch &> /dev/null;
+	if [ "$?" -eq 0 ]; then
+		patch -p1 --batch < tools/libtool.m4.patch
+	fi
 fi
 
 aclocal -I m4 $AL_OPTS
