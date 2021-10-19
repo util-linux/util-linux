@@ -27,13 +27,16 @@ ts_check_test_command "$TS_CMD_UL"
 # This test provides different result on some terminals and virtual machines
 TS_KNOWN_FAIL="yes"
 
-ts_log "printable characters"
+ts_init_subtest "printable-characters"
 $TS_CMD_UL < $TS_SELF/basic.input >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
 
-ts_log "filter input"
+ts_init_subtest "filter-input"
 $TS_CMD_UL $TS_SELF/filter.input >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
 
-ts_log "indicated"
+ts_init_subtest "indicated"
 printf "u\b_l\b_\n" | ul --indicated >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
 
 ts_finalize
