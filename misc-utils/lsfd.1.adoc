@@ -265,6 +265,10 @@ OP2REG :: _=~_ | _!~_
 
 == EXAMPLES
 
+*lsfd* has few options for filtering. In most of cases, what you should
+know is *-Q* (or *--filter*) option.  Combined with *-o* (or
+*--output*) option, you can customize the output as you want.
+
 List files associated with PID 1 and PID 2 processes::
 
   # lsfd -Q '(PID == 1) or (PID == 2)'
@@ -272,6 +276,14 @@ List files associated with PID 1 and PID 2 processes::
 Do the same in an alternative way::
 
   # lsfd -Q '(PID == 1) || (PID == 2)'
+
+List the 1st file descriptor opened by PID 1 process::
+
+  # lsfd -Q '(PID == 1) and (FD == 1)'
+
+Do the same in an alternative way::
+
+  # lsfd -Q '(PID == 1) && (FD == 1)'
 
 List all running executables::
 
@@ -285,13 +297,33 @@ Do the same but print only file names::
 
   # lsfd -o NAME -Q '(ASSOC eq "exe")' | sort -u
 
-List deleted non-regular files::
+List deleted files associated to processes::
 
-  # lsfd -Q 'DELETED and (TYPE != "REG")'
+  # lsfd -Q 'DELETED'
+
+List non-regular files::
+
+  # lsfd -Q '(TYPE != "REG")'
+
+List block devices::
+
+  # lsfd -Q '(DEVTYPE == "blk")'
+
+Do the same with TYPE column::
+
+  # lsfd -Q '(TYPE == "BLK")'
 
 List files including "dconf" directory in their names::
 
-  # lsfd -Q '(NAME =~ ".*/dconf/.*")
+  # lsfd -Q '(NAME =~ ".\*/dconf/.*")
+
+List files opened to QEMU virtual machine::
+
+  # lsfd -Q '(COMMAND =~ ".\*qemu.*") and (FD >= 0)'
+
+Hide files associated to kernel threads::
+
+  # lsfd -Q '!KTHREAD'
 
 == HISTORY
 
