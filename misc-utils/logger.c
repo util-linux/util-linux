@@ -976,9 +976,7 @@ static void logger_stdin(struct logger_ctl *ctl)
 	 */
 	int default_priority = ctl->pri;
 	int last_pri = default_priority;
-	size_t max_usrmsg_size = ctl->max_message_size - strlen(ctl->hdr);
-	size_t allocated_usrmsg_size = max_usrmsg_size;
-	char *buf = xmalloc(allocated_usrmsg_size + 2 + 2);
+	char *buf = xmalloc(ctl->max_message_size + 2 + 2);
 	int pri;
 	int c;
 	size_t i;
@@ -1006,20 +1004,13 @@ static void logger_stdin(struct logger_ctl *ctl)
 
 			if (ctl->pri != last_pri) {
 				generate_syslog_header(ctl);
-				max_usrmsg_size = ctl->max_message_size - strlen(ctl->hdr);
-
-				if (max_usrmsg_size > allocated_usrmsg_size) {
-					allocated_usrmsg_size = max_usrmsg_size;
-					buf = xrealloc(buf, allocated_usrmsg_size + 2 + 2);
-				}
-
 				last_pri = ctl->pri;
 			}
 			if (c != EOF && c != '\n')
 				c = getchar();
 		}
 
-		while (c != EOF && c != '\n' && i < max_usrmsg_size) {
+		while (c != EOF && c != '\n' && i < ctl->max_message_size) {
 			buf[i++] = c;
 			c = getchar();
 		}
