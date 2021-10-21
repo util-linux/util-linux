@@ -359,7 +359,7 @@ If this variable is set its value takes precedence over the system configured ti
 == FILES
 
 _{ADJTIME_PATH}_::
-The configuration and state file for hwclock.
+The configuration and state file for hwclock. See also *adjtime_config*(5).
 
 _/etc/localtime_::
 The system timezone file.
@@ -372,6 +372,7 @@ Device files *hwclock* may try for Hardware Clock access: _/dev/rtc0_ _/dev/rtc_
 == SEE ALSO
 
 *date*(1),
+*adjtime_config*(5),
 *adjtimex*(8),
 *gettimeofday*(2),
 *settimeofday*(2),

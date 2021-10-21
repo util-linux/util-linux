@@ -133,6 +133,7 @@ This is free software. You may redistribute copies of it under the terms of the 
 
 == SEE ALSO
 
+*adjtime_config*(5),
 *hwclock*(8),
 *date*(1)
 
