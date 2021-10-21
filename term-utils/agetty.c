@@ -56,6 +56,10 @@
 # include <sys/param.h>
 #endif
 
+#ifdef HAVE_GETTTYNAM
+# include <ttyent.h>
+#endif
+
 #if defined(__FreeBSD_kernel__)
 # include <pty.h>
 # ifdef HAVE_UTMP_H
@@ -1159,6 +1163,18 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 	memset(tp, 0, sizeof(struct termios));
 	if (tcgetattr(STDIN_FILENO, tp) < 0)
 		log_err(_("%s: failed to get terminal attributes: %m"), tty);
+
+#ifdef HAVE_GETTTYNAM
+	if (!op->term) {
+		struct ttyent *ent = getttynam(tty);
+		/* a bit nasty as it's never freed */
+		if (ent && ent->ty_type) {
+			op->term = strdup(ent->ty_type);
+			if (!op->term)
+				log_err(_("failed to allocate memory: %m"));
+		}
+	}
+#endif
 
 #if defined (__s390__) || defined (__s390x__)
 	if (!op->term) {

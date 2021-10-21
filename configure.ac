@@ -535,6 +535,7 @@ AC_CHECK_FUNCS([ \
 	getrandom \
 	getrlimit \
 	getsgnam \
+	getttynam \
 	inotify_init \
 	jrand48 \
 	lchown \
