@@ -586,7 +586,9 @@ AC_CHECK_FUNCS([openat fstatat unlinkat], [have_openat=yes], [have_openat=no])
 AC_CHECK_FUNCS([open_memstream], [have_open_memstream=yes],[have_open_memstream=no])
 AC_CHECK_FUNCS([reboot], [have_reboot=yes],[have_reboot=no])
 AC_CHECK_FUNCS([updwtmpx updwtmpx], [have_gnu_utmpx=yes], [have_gnu_utmpx=no])
+AC_CHECK_FUNCS([getttynam], [have_getttynam=yes], [have_getttynam=no])
 
+AM_CONDITIONAL([HAVE_GETTTYNAM], [test "x$have_getttynam" = xyes])
 AM_CONDITIONAL([HAVE_OPENAT], [test "x$have_openat" = xyes])
 
 have_setns_syscall="yes"
