@@ -39,6 +39,7 @@
 #include "strutils.h"
 #include "carefulputc.h"
 #include "path.h"
+#include "strv.h"
 
 /*
  * since 2.6.18
@@ -110,6 +111,9 @@ static int ncolumns;
 struct wd_device {
 	const char	*devpath;
 	struct path_cxt	*sysfs;
+
+	char		*governor;
+	char		**available_governors;
 
 	int		timeout;
 	int		timeleft;
@@ -530,6 +534,36 @@ static int read_watchdog_from_sysfs(struct wd_device *wd)
 	return 0;
 }
 
+static int read_governors(struct wd_device *wd)
+{
+	struct path_cxt *sys;
+	FILE *f;
+
+	sys = get_sysfs(wd);
+	if (!sys)
+		return 1;
+
+	f = ul_path_fopen(sys, "r", "pretimeout_available_governors");
+	if (f) {
+		char *line = NULL;
+		size_t dummy = 0;
+		ssize_t sz;
+
+		while ((sz = getline(&line, &dummy, f)) >= 0) {
+			if (rtrim_whitespace((unsigned char *) line) == 0)
+				continue;
+			strv_consume(&wd->available_governors, line);
+			dummy = 0;
+			line = NULL;
+		}
+		free(line);
+		fclose(f);
+	}
+
+	ul_path_read_string(sys, &wd->governor,  "pretimeout_governor");
+	return 0;
+}
+
 static int read_watchdog(struct wd_device *wd)
 {
 	int rc = read_watchdog_from_device(wd);
@@ -542,6 +576,8 @@ static int read_watchdog(struct wd_device *wd)
 		return -1;
 	}
 
+	read_governors(wd);
+
 	ul_unref_path(wd->sysfs);
 	wd->sysfs = NULL;
 	return 0;
@@ -552,12 +588,26 @@ static void show_timeouts(struct wd_device *wd)
 	if (wd->has_timeout)
 		printf(P_("%-14s %2i second\n", "%-14s %2i seconds\n", wd->timeout),
 			  _("Timeout:"), wd->timeout);
-	if (wd->has_pretimeout)
-		printf(P_("%-14s %2i second\n", "%-14s %2i seconds\n", wd->pretimeout),
-			  _("Pre-timeout:"), wd->pretimeout);
 	if (wd->has_timeleft)
 		printf(P_("%-14s %2i second\n", "%-14s %2i seconds\n", wd->timeleft),
 			  _("Timeleft:"), wd->timeleft);
+	if (wd->has_pretimeout)
+		printf(P_("%-14s %2i second\n", "%-14s %2i seconds\n", wd->pretimeout),
+			  _("Pre-timeout:"), wd->pretimeout);
+}
+
+static void show_governors(struct wd_device *wd)
+{
+	if (wd->governor)
+		printf(_("%-14s %s\n"), _("Pre-timeout governor:"), wd->governor);
+	if (wd->available_governors) {
+		char *tmp = strv_join(wd->available_governors, " ");
+
+		if (tmp)
+			printf(_("%-14s %s\n"),
+				_("Available pre-timeout governors:"), tmp);
+		free(tmp);
+	}
 }
 
 static void print_oneline(struct wd_control *ctl, struct wd_device *wd, uint32_t wanted)
@@ -622,6 +672,8 @@ static void print_device(struct wd_control *ctl, struct wd_device *wd, uint32_t 
 	}
 	if (!ctl->hide_timeouts)
 		show_timeouts(wd);
+
+	show_governors(wd);
 
 	if (!ctl->hide_flags)
 		show_flags(ctl, wd, wanted);
