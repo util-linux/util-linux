@@ -548,8 +548,11 @@ static void syslog_rfc3164_header(struct logger_ctl *const ctl)
 	} else
 		hostname = xstrdup(NILVALUE);
 
-	xasprintf(&ctl->hdr, "<%d>%.15s %s %.200s%s: ",
-		 ctl->pri, rfc3164_current_time(), hostname, ctl->tag, pid);
+	if ((size_t) xasprintf(&ctl->hdr, "<%d>%.15s %s %.200s%s: ",
+			 ctl->pri, rfc3164_current_time(),
+			 hostname, ctl->tag, pid) > ctl->max_message_size)
+		errx(EXIT_FAILURE, _("maximal message size is smaller than message header"));
+
 
 	free(hostname);
 }
@@ -828,14 +831,15 @@ static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 	if (!structured)
 		structured = xstrdup(NILVALUE);
 
-	xasprintf(&ctl->hdr, "<%d>1 %s %s %s %s %s %s ",
-		ctl->pri,
-		time,
-		hostname,
-		app_name,
-		procid,
-		msgid,
-		structured);
+	if ((size_t) xasprintf(&ctl->hdr, "<%d>1 %s %s %s %s %s %s ",
+			ctl->pri,
+			time,
+			hostname,
+			app_name,
+			procid,
+			msgid,
+			structured) > ctl->max_message_size)
+		errx(EXIT_FAILURE, _("maximal message size is smaller than message header"));
 
 	free(time);
 	free(hostname);
@@ -885,8 +889,9 @@ static void syslog_local_header(struct logger_ctl *const ctl)
 	else
 		pid[0] = '\0';
 
-	xasprintf(&ctl->hdr, "<%d>%s %s%s: ", ctl->pri, rfc3164_current_time(),
-		ctl->tag, pid);
+	if ((size_t) xasprintf(&ctl->hdr, "<%d>%s %s%s: ", ctl->pri, rfc3164_current_time(),
+			ctl->tag, pid) > ctl->max_message_size)
+		errx(EXIT_FAILURE, _("maximal message size is smaller than message header"));
 }
 
 static void generate_syslog_header(struct logger_ctl *const ctl)
