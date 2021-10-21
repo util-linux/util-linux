@@ -1381,6 +1381,7 @@ void lsfd_filter_free(struct lsfd_filter *filter)
 		scols_unref_table(filter->table);
 		node_free(filter->node);
 	}
+	free(filter->parameters);
 	free(filter);
 }
 
