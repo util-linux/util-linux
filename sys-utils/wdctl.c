@@ -136,6 +136,7 @@ struct wd_control {
 	/* set */
 	int		timeout;			/* --settimeout */
 	int		pretimeout;			/* --setpretimeout */
+	const char      *governor;			/* --setpregovernor */
 	unsigned int	set_timeout : 1,
 			set_pretimeout : 1;
 
@@ -148,7 +149,9 @@ struct wd_control {
 			hide_timeouts : 1;
 };
 
-#define want_set(_ctl)		((_ctl)->set_timeout || (_ctl)->set_pretimeout)
+#define want_set(_ctl)		((_ctl)->set_timeout \
+				  || (_ctl)->set_pretimeout \
+				  || (_ctl)->governor)
 
 /* converts flag name to flag bit */
 static long name2bit(const char *name, size_t namesz)
@@ -232,6 +235,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -O, --oneline          print all information on one line\n"
 		" -o, --output <list>    output columns of the flags\n"
 		" -p, --setpretimeout <sec> set watchdog pre-timeout\n"
+		" -g, --setpregovernor <name> set pre-timeout governor\n"
 		" -r, --raw              use raw output format for flags table\n"
 		" -T, --notimeouts       don't print watchdog timeouts\n"
 		" -s, --settimeout <sec> set watchdog timeout\n"
@@ -397,6 +401,9 @@ static int set_watchdog(struct wd_control *ctl, struct wd_device *wd)
 	assert(wd->devpath);
 	assert(ctl);
 
+	if (!ctl->set_timeout && !ctl->set_timeout)
+		goto sysfs_only;
+
 	sigemptyset(&oldsigs);
 	sigfillset(&sigs);
 	sigprocmask(SIG_BLOCK, &sigs, &oldsigs);
@@ -450,6 +457,20 @@ static int set_watchdog(struct wd_control *ctl, struct wd_device *wd)
 		warn(_("write failed"));
 
 	sigprocmask(SIG_SETMASK, &oldsigs, NULL);
+
+sysfs_only:
+	if (ctl->governor) {
+		struct path_cxt *sys = get_sysfs(wd);
+		int xrc;
+
+		xrc = !sys ? errno :
+			     ul_path_write_string(sys, ctl->governor,
+						"pretimeout_governor");
+		if (xrc)
+			warn(_("cannot set pre-timeout governor"));
+		rc += xrc;
+	}
+
 	return rc;
 }
 
@@ -705,6 +726,7 @@ int main(int argc, char *argv[])
 		{ "notimeouts", no_argument,       NULL, 'T' },
 		{ "settimeout", required_argument, NULL, 's' },
 		{ "setpretimeout", required_argument, NULL, 'p' },
+		{ "setpregovernor", required_argument, NULL, 'g' },
 		{ "output",     required_argument, NULL, 'o' },
 		{ "oneline",    no_argument,       NULL, 'O' },
 		{ "raw",        no_argument,       NULL, 'r' },
@@ -724,7 +746,7 @@ int main(int argc, char *argv[])
 	close_stdout_atexit();
 
 	while ((c = getopt_long(argc, argv,
-				"d:f:hFnITp:o:s:OrVx", long_opts, NULL)) != -1) {
+				"d:f:g:hFnITp:o:s:OrVx", long_opts, NULL)) != -1) {
 
 		err_exclusive_options(c, long_opts, excl, excl_st);
 
@@ -750,6 +772,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'F':
 			ctl.hide_flags = 1;
+			break;
+		case 'g':
+			ctl.governor = optarg;
 			break;
 		case 'I':
 			ctl.hide_ident = 1;
