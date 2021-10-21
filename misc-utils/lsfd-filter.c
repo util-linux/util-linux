@@ -663,7 +663,9 @@ static const char *get_column_name(struct libscols_column *cl)
 static struct libscols_column *search_column(struct libscols_table *tb, const char *name)
 {
 	size_t len = scols_table_get_ncols(tb);
-	for (size_t i = 0; i < len; i++) {
+	size_t i;
+
+	for (i = 0; i < len; i++) {
 		struct libscols_column *cl = scols_table_get_column(tb, i);
 		const char *n = get_column_name(cl);
 		if (strcmp(n, name) == 0)
@@ -974,10 +976,12 @@ static bool node_apply(struct node *node, struct parameter *params, struct libsc
 
 static void node_dump(struct node *node, struct parameter *param, int depth, FILE *stream)
 {
+	int i;
+
 	if (!node)
 		return;
 
-	for (int i = 0; i < depth; i++)
+	for (i = 0; i < depth; i++)
 		fputc(' ', stream);
 	fputs(NODE_CLASS(node)->name, stream);
 	if (NODE_CLASS(node)->dump)
@@ -1025,8 +1029,10 @@ static void node_op1_dump(struct node *node, struct parameter* params, int depth
 
 static void node_op2_dump(struct node *node, struct parameter* params, int depth, FILE *stream)
 {
+	int i;
+
 	fprintf(stream, ": %s\n", ((struct node_op2 *)node)->opclass->name);
-	for (int i = 0; i < 2; i++)
+	for (i = 0; i < 2; i++)
 		node_dump(((struct node_op2 *)node)->args[i], params, depth + 4, stream);
 }
 
@@ -1048,7 +1054,9 @@ static void node_op1_free(struct node *node)
 
 static void node_op2_free(struct node *node)
 {
-	for (int i = 0; i < 2; i++)
+	int i;
+
+	for (i = 0; i < 2; i++)
 		node_free(((struct node_op2 *)node)->args[i]);
 }
 
@@ -1288,14 +1296,18 @@ struct lsfd_filter *lsfd_filter_new(const char *const expr, struct libscols_tabl
 				      void *data)
 {
 	struct parser parser;
+	int i;
+	struct node *node;
+	struct lsfd_filter *filter;
+
 	parser_init(&parser, expr, tb, ncols,
 		    column_name_to_id,
 		    add_column_by_id,
 		    data);
 
-	struct node *node = dparser_compile(&parser);
+	node = dparser_compile(&parser);
 
-	struct lsfd_filter *filter = xmalloc(sizeof(struct lsfd_filter));
+	filter = xmalloc(sizeof(struct lsfd_filter));
 	filter->errmsg[0] = '\0';
 	if (GOT_ERROR(&parser)) {
 		strcpy(filter->errmsg, parser.errmsg);
@@ -1324,7 +1336,7 @@ struct lsfd_filter *lsfd_filter_new(const char *const expr, struct libscols_tabl
 	filter->node = node;
 	filter->parameters = parser.parameters;
 	filter->nparams = ncols;
-	for (int i = 0; i < filter->nparams; i++) {
+	for (i = 0; i < filter->nparams; i++) {
 		if (filter->parameters[i].cl)
 			scols_ref_column(filter->parameters[i].cl);
 	}
@@ -1356,11 +1368,13 @@ void lsfd_filter_dump(struct lsfd_filter *filter, FILE *stream)
 
 void lsfd_filter_free(struct lsfd_filter *filter)
 {
+	int i;
+
 	if (!filter)
 		return;
 
 	if (!GOT_ERROR(filter)) {
-		for (int i = 0; i < filter->nparams; i++) {
+		for (i = 0; i < filter->nparams; i++) {
 			if (filter->parameters[i].cl)
 				scols_unref_column(filter->parameters[i].cl);
 		}
@@ -1372,13 +1386,15 @@ void lsfd_filter_free(struct lsfd_filter *filter)
 
 bool lsfd_filter_apply(struct lsfd_filter *filter, struct libscols_line * ln)
 {
+	int i;
+
 	if (!filter)
 		return true;
 
 	if (GOT_ERROR(filter))
 		return false;
 
-	for (int i = 0; i < filter->nparams; i++)
+	for (i = 0; i < filter->nparams; i++)
 		filter->parameters[i].has_value = false;
 
 	return node_apply(filter->node, filter->parameters, ln);

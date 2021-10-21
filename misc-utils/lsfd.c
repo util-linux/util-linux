@@ -645,13 +645,17 @@ static void free_nodev(struct nodev *nodev)
 
 static void initialize_nodevs(void)
 {
-	for (int i = 0; i < NODEV_TABLE_SIZE; i++)
+	int i;
+
+	for (i = 0; i < NODEV_TABLE_SIZE; i++)
 		INIT_LIST_HEAD(&nodev_table.tables[i]);
 }
 
 static void finalize_nodevs(void)
 {
-	for (int i = 0; i < NODEV_TABLE_SIZE; i++)
+	int i;
+
+	for (i = 0; i < NODEV_TABLE_SIZE; i++)
 		list_free(&nodev_table.tables[i], struct nodev, nodevs, free_nodev);
 
 	free(mnt_namespaces);
@@ -725,7 +729,9 @@ static void convert_file(struct proc *proc,
 		     struct libscols_line *ln)
 
 {
-	for (size_t i = 0; i < ncolumns; i++)
+	size_t i;
+
+	for (i = 0; i < ncolumns; i++)
 		fill_column(proc, file, ln, get_column_id(i), i);
 }
 
