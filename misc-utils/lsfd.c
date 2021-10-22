@@ -935,7 +935,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	 * the last path based operation in read_process()
 	 */
 	if (ctl->threads && leader == NULL) {
-		DIR *sub = NULL;;
+		DIR *sub = NULL;
 		pid_t tid;
 
 		while (procfs_process_next_tid(pc, &sub, &tid) == 0) {
