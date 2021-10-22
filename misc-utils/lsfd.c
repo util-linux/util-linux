@@ -949,13 +949,11 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
         ul_path_close_dirfd(pc);
 }
 
-static void parse_pids(const char *str, pid_t pids[], int *count, const int pids_size)
+static void parse_pids(const char *str, pid_t **pids, int *count)
 {
 	long v;
 	char *next = NULL;
 
-	if (!(*count < pids_size))
-		err(EXIT_FAILURE, _("too many pids (more than %d) are specified"), pids_size);
 	if (*str == '\0')
 		return;
 
@@ -967,13 +965,16 @@ static void parse_pids(const char *str, pid_t pids[], int *count, const int pids
 		errx(EXIT_FAILURE, _("garbage at the end of pid specification: %s"), str);
 	if (v < 0)
 		errx(EXIT_FAILURE, _("out of range value for pid specification: %ld"), v);
-	pids[(*count)++] = (pid_t)v;
+
+	(*count)++;
+	*pids = xrealloc(*pids, (*count) * sizeof(**pids));
+	(*pids)[*count - 1] = (pid_t)v;
 
 	while (next && *next != '\0'
 	       && (isspace((unsigned char)*next) || *next == ','))
 		next++;
 	if (*next != '\0')
-		parse_pids(next, pids, count, pids_size);
+		parse_pids(next, pids, count);
 }
 
 static int pidcmp(const void *a, const void *b)
@@ -1104,8 +1105,7 @@ int main(int argc, char *argv[])
 	struct lsfd_control ctl = {};
 	char  *filter_expr = NULL;
 	bool debug_filter = false;
-#define MAX_PIDS 128
-	pid_t pids[MAX_PIDS] = {};
+	pid_t *pids = NULL;
 	int n_pids = 0;
 
 	enum {
@@ -1157,7 +1157,7 @@ int main(int argc, char *argv[])
 			ctl.sysroot = optarg;
 			break;
 		case 'p':
-			parse_pids(optarg, pids, &n_pids, MAX_PIDS);
+			parse_pids(optarg, &pids, &n_pids);
 			break;
 		case 'Q':
 			append_filter_expr(&filter_expr, optarg, true);
@@ -1242,6 +1242,7 @@ int main(int argc, char *argv[])
 	initialize_classes();
 
 	collect_processes(&ctl, pids, n_pids);
+	free(pids);
 
 	convert(&ctl.procs, &ctl);
 	emit(&ctl);
