@@ -29,6 +29,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <getopt.h>
+#include <ctype.h>
 
 #include <linux/sched.h>
 #include <sys/syscall.h>
@@ -948,7 +949,57 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
         ul_path_close_dirfd(pc);
 }
 
-static void collect_processes(struct lsfd_control *ctl)
+static void parse_pids(const char *str, pid_t pids[], int *count, const int pids_size)
+{
+	long v;
+	char *next = NULL;
+
+	if (!(*count < pids_size))
+		err(EXIT_FAILURE, _("too many pids (more than %d) are specified"), pids_size);
+	if (*str == '\0')
+		return;
+
+	errno = 0;
+	v = strtol(str, &next, 10);
+	if (errno)
+		err(EXIT_FAILURE, _("unexpected value for pid specification: %s"), str);
+	if (next == str)
+		errx(EXIT_FAILURE, _("garbage at the end of pid specification: %s"), str);
+	if (v < 0)
+		errx(EXIT_FAILURE, _("out of range value for pid specification: %ld"), v);
+	pids[(*count)++] = (pid_t)v;
+
+	while (next && *next != '\0'
+	       && (isspace((unsigned char)*next) || *next == ','))
+		next++;
+	if (*next != '\0')
+		parse_pids(next, pids, count, pids_size);
+}
+
+static int pidcmp(const void *a, const void *b)
+{
+	pid_t pa = *(pid_t *)a;
+	pid_t pb = *(pid_t *)b;
+
+	if (pa < pb)
+		return -1;
+	else if (pa == pb)
+		return 0;
+	else
+		return 1;
+}
+
+static void sort_pids(pid_t pids[], const int count)
+{
+	qsort(pids, count, sizeof(pid_t), pidcmp);
+}
+
+static bool member_pids(const pid_t pid, const pid_t pids[], const int count)
+{
+	return bsearch(&pid, pids, count, sizeof(pid_t), pidcmp)? true: false;
+}
+
+static void collect_processes(struct lsfd_control *ctl, const pid_t pids[], int n_pids)
 {
 	DIR *dir;
 	struct dirent *d;
@@ -967,7 +1018,8 @@ static void collect_processes(struct lsfd_control *ctl)
 
 		if (procfs_dirent_get_pid(d, &pid) != 0)
 			continue;
-		read_process(ctl, pc, pid, 0);
+		if (n_pids == 0 || member_pids(pid, pids, n_pids))
+			read_process(ctl, pc, pid, 0);
 	}
 
 	closedir(dir);
@@ -990,6 +1042,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -r, --raw             use raw output format\n"), out);
 	fputs(_("     --sysroot <dir>   use specified directory as system root\n"), out);
 	fputs(_(" -u, --notruncate      don't truncate text in columns\n"), out);
+	fputs(_(" -p, --pid  <pid(s)>   collect information only specified processes\n"), out);
 	fputs(_(" -Q, --filter <expr>   apply display filter\n"), out);
 	fputs(_("     --debug-filter    dump the innternal data structure of filter and exit\n"), out);
 
@@ -1051,6 +1104,9 @@ int main(int argc, char *argv[])
 	struct lsfd_control ctl = {};
 	char  *filter_expr = NULL;
 	bool debug_filter = false;
+#define MAX_PIDS 128
+	pid_t pids[MAX_PIDS] = {};
+	int n_pids = 0;
 
 	enum {
 		OPT_SYSROOT = CHAR_MAX + 1,
@@ -1066,6 +1122,7 @@ int main(int argc, char *argv[])
 		{ "threads",    no_argument, NULL, 'l' },
 		{ "notruncate", no_argument, NULL, 'u' },
 		{ "sysroot",    required_argument, NULL, OPT_SYSROOT },
+		{ "pid",        required_argument, NULL, 'p' },
 		{ "filter",     required_argument, NULL, 'Q' },
 		{ "debug-filter",no_argument, NULL, OPT_DEBUG_FILTER },
 		{ NULL, 0, NULL, 0 },
@@ -1076,7 +1133,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "no:JrVhluQ:", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "no:JrVhluQ:p:", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'n':
 			ctl.noheadings = 1;
@@ -1098,6 +1155,9 @@ int main(int argc, char *argv[])
 			break;
 		case OPT_SYSROOT:
 			ctl.sysroot = optarg;
+			break;
+		case 'p':
+			parse_pids(optarg, pids, &n_pids, MAX_PIDS);
 			break;
 		case 'Q':
 			append_filter_expr(&filter_expr, optarg, true);
@@ -1174,11 +1234,14 @@ int main(int argc, char *argv[])
 		free(filter_expr);
 	}
 
+	if (n_pids > 0)
+		sort_pids(pids, n_pids);
+
 	/* collect data */
 	initialize_nodevs();
 	initialize_classes();
 
-	collect_processes(&ctl);
+	collect_processes(&ctl, pids, n_pids);
 
 	convert(&ctl.procs, &ctl);
 	emit(&ctl);

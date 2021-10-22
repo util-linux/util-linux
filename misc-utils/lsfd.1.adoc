@@ -57,6 +57,16 @@ Use specified directory as system root.
 *--notruncate*::
 Don't truncate text in columns.
 
+*-p*, *--pid* _pids_::
+Collect information only specified processes.
+_pids_ is a list of pids. A comma or whitespaces can be used as separators.
+You can use this option with *pidof*(1). See "EXAMPLES".
++
+Both *-Q* option with an expression including PID, e.g. -Q (PID == 1),
+and *-p* option, e.g. -p 1, may print the same output but using *-p*
+option is a much more efficient because *-p* option works much earlier
+stage of processing than *-Q* option.
+
 *-Q*, *--filter* _expr_::
 Print the files only satisfying with the condition represented by the _expr_.
 
@@ -277,6 +287,18 @@ Do the same in an alternative way::
 
   # lsfd -Q '(PID == 1) || (PID == 2)'
 
+Do the same in a more efficient way::
+
+  # lsfd --pid 1,2
+
+Whitescapes can be used instead of a comma::
+
+  # lsfd --pid '1 2'
+
+Utilize *pidof*(1) for list the files associated with "firefox"::
+
+  # lsfd --pid "$(pidof firefox)"
+
 List the 1st file descriptor opened by PID 1 process::
 
   # lsfd -Q '(PID == 1) and (FD == 1)'
@@ -337,6 +359,7 @@ mailto:kzak@redhat.com[Karel Zak]
 == SEE ALSO
 
 *lsof*(8)
+*pidof*(1)
 *proc*(5)
 
 include::man-common/bugreports.adoc[]
