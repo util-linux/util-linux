@@ -522,6 +522,7 @@ static void parent_setup_signals(struct su_context *su)
 
 static void create_watching_parent(struct su_context *su)
 {
+	struct sigaction action;
 	int status;
 
 	DBG(MISC, ul_debug("forking..."));
@@ -544,6 +545,19 @@ static void create_watching_parent(struct su_context *su)
 	}
 #endif
 	fflush(stdout);			/* ??? */
+
+	/* set default handler for SIGCHLD */
+	sigemptyset(&action.sa_mask);
+	action.sa_flags = 0;
+	action.sa_handler = SIG_DFL;
+	if (sigaction(SIGCHLD, &action, NULL)) {
+		supam_cleanup(su, PAM_ABORT);
+#ifdef USE_PTY
+		if (su->force_pty)
+			ul_pty_cleanup(su->pty);
+#endif
+		err(EXIT_FAILURE, _("cannot set child signal handler"));
+	}
 
 	switch ((int) (su->child = fork())) {
 	case -1: /* error */
