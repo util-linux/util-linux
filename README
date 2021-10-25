@@ -36,6 +36,8 @@ BUG REPORTING:
       E-MAIL: util-linux@vger.kernel.org
       Web:    https://github.com/karelzak/util-linux/issues
 
+      Bug reports with sensitive or private information: Karel Zak <kzak@redhat.com>
+
       This project has no resources to provide support for distribution specific
       issues. For end users it is recommended to utilize the distribution's
       support system.
