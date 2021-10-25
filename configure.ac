@@ -539,6 +539,8 @@ AC_CHECK_FUNCS([ \
 	inotify_init \
 	jrand48 \
 	lchown \
+	lgetxattr \
+	llistxattr \
 	llseek \
 	newlocale \
 	mempcpy \

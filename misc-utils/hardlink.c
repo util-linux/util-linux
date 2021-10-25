@@ -46,8 +46,9 @@
 
 #include <regex.h>		/* regcomp(), regsearch() */
 
-#ifdef HAVE_SYS_XATTR_H
-# include <sys/xattr.h>		/* listxattr, getxattr */
+#if defined(HAVE_SYS_XATTR_H) && defined(HAVE_LLISTXATTR) && defined(HAVE_LGETXATTR)
+# include <sys/xattr.h>
+# define USE_XATTR 1
 #endif
 
 static int quiet;		/* don't print anything */
@@ -322,7 +323,7 @@ static void print_stats(void)
 	jlog(JLOG_SUMMARY, "%-15s %zu", _("Files:"), stats.files);
 	jlog(JLOG_SUMMARY, _("%-15s %zu files"), _("Linked:"), stats.linked);
 
-#ifdef HAVE_SYS_XATTR_H
+#ifdef USE_XATTR
 	jlog(JLOG_SUMMARY, _("%-15s %zu xattrs"), _("Compared:"),
 	     stats.xattr_comparisons);
 #endif
@@ -361,7 +362,7 @@ static int handle_interrupt(void)
 	return FALSE;
 }
 
-#ifdef HAVE_SYS_XATTR_H
+#ifdef USE_XATTR
 
 /**
  * llistxattr_or_die - Wrapper for llistxattr()
@@ -546,12 +547,12 @@ static int file_xattrs_equal(const struct file *a, const struct file *b)
 	free(value_b);
 	return ret;
 }
-#else /* !HAVE_SYS_XATTR_H */
+#else /* !USE_XATTR */
 static int file_xattrs_equal(const struct file *a, const struct file *b)
 {
 	return TRUE;
 }
-#endif /* HAVE_SYS_XATTR_H */
+#endif /* USE_XATTR */
 
 /**
  * file_contents_equal - Compare contents of two files for equality
@@ -918,7 +919,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -p, --ignore-mode          ignore changes of file mode\n"), out);
 	fputs(_(" -o, --ignore-owner         ignore owner changes\n"), out);
 	fputs(_(" -t, --ignore-time          ignore timestamps (when testing for equality)\n"), out);
-#ifdef HAVE_SYS_XATTR_H
+#ifdef USE_XATTR
 	fputs(_(" -X, --respect-xattrs       respect extended attributes\n"), out);
 #endif
 	fputs(_(" -m, --maximize             maximize the hardlink count, remove the file with\n"
