@@ -227,7 +227,7 @@ static char *ask_new_field(struct chfn_control *ctl, const char *question,
 			   char *def_val)
 {
 	int len;
-	char *buf;
+	char *buf = NULL; /* leave initialized to NULL or getline segfaults */
 #ifndef HAVE_LIBREADLINE
 	size_t dummy = 0;
 #endif
@@ -242,6 +242,7 @@ static char *ask_new_field(struct chfn_control *ctl, const char *question,
 		if ((buf = readline(" ")) == NULL)
 #else
 		putchar(' ');
+		fflush(stdout);
 		if (getline(&buf, &dummy, stdin) < 0)
 #endif
 			errx(EXIT_FAILURE, _("Aborted."));
