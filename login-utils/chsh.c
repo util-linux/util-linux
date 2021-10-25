@@ -210,6 +210,7 @@ static char *ask_new_shell(char *question, char *oldshell)
 	if ((ans = readline(" ")) == NULL)
 #else
 	putchar(' ');
+	fflush(stdout);
 	if (getline(&ans, &dummy, stdin) < 0)
 #endif
 		return NULL;
