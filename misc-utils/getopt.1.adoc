@@ -23,7 +23,7 @@ getopt - parse command options (enhanced)
 
 The parameters *getopt* is called with can be divided into two parts: options which modify the way *getopt* will do the parsing (the _options_ and the _optstring_ in the *SYNOPSIS*), and the parameters which are to be parsed (_parameters_ in the *SYNOPSIS*). The second part will start at the first non-option parameter that is not an option argument, or after the first occurrence of '*--*'. If no '*-o*' or '*--options*' option is found in the first part, the first parameter of the second part is used as the short options string.
 
-If the environment variable *GETOPT_COMPATIBLE* is set, or if the first _parameter_ is not an option (does not start with a '*-*', the first format in the *SYNOPSIS*), *getopt* will generate output that is compatible with that of other versions of *getopt*(1). It will still do parameter shuffling and recognize optional arguments (see section *COMPATIBILITY* for more information).
+If the environment variable *GETOPT_COMPATIBLE* is set, or if the first _parameter_ is not an option (does not start with a '*-*', the first format in the *SYNOPSIS*), *getopt* will generate output that is compatible with that of other versions of *getopt*(1). It will still do parameter shuffling and recognize optional arguments (see the *COMPATIBILITY* section for more information).
 
 Traditional implementations of *getopt*(1) are unable to cope with whitespace and other (shell-specific) special characters in arguments and non-option parameters. To solve this problem, this implementation can generate quoted output which must once again be interpreted by the shell (usually by using the *eval* command). This has the effect of preserving those characters, but you must call *getopt* in a way that is no longer compatible with other versions (the second or third format in the *SYNOPSIS*). To determine whether this enhanced version of *getopt*(1) is installed, a special test option (*-T*) can be used.
 
@@ -42,7 +42,7 @@ The long (multi-character) options to be recognized. More than one option name m
 The name that will be used by the *getopt*(3) routines when it reports errors. Note that errors of *getopt*(1) are still reported as coming from getopt.
 
 *-o*, *--options* _shortopts_::
-The short (one-character) options to be recognized. If this option is not found, the first parameter of *getopt* that does not start with a '*-*' (and is not an option argument) is used as the short options string. Each short option character in _shortopts_ may be followed by one colon to indicate it has a required argument, and by two colons to indicate it has an optional argument. The first character of shortopts may be '*{plus}*' or '*-*' to influence the way options are parsed and output is generated (see section *SCANNING MODES* for details).
+The short (one-character) options to be recognized. If this option is not found, the first parameter of *getopt* that does not start with a '*-*' (and is not an option argument) is used as the short options string. Each short option character in _shortopts_ may be followed by one colon to indicate it has a required argument, and by two colons to indicate it has an optional argument. The first character of shortopts may be '*{plus}*' or '*-*' to influence the way options are parsed and output is generated (see the *SCANNING MODES* section for details).
 //TRANSLATORS: Keep {plus} untranslated.
 
 *-q*, *--quiet*::

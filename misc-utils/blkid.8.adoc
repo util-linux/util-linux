@@ -44,7 +44,7 @@ For security reasons *blkid* silently ignores all devices where the probing resu
 The _size_ and _offset_ arguments may be followed by the multiplicative suffixes like KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB"), or the suffixes KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
 
 *-c*, *--cache-file* _cachefile_::
-Read from _cachefile_ instead of reading from the default cache file (see the CONFIGURATION FILE section for more details). If you want to start with a clean cache (i.e., don't report devices previously scanned but not necessarily available at this time), specify _/dev/null_.
+Read from _cachefile_ instead of reading from the default cache file (see the *CONFIGURATION FILE* section for more details). If you want to start with a clean cache (i.e., don't report devices previously scanned but not necessarily available at this time), specify _/dev/null_.
 
 *-d*, *--no-encoding*::
 Don't encode non-printing characters. The non-printing characters are encoded by ^ and M- notation by default. Note that the *--output udev* output format uses a different encoding which cannot be disabled.

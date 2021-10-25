@@ -53,7 +53,7 @@ ____
 *name color-sequence*
 ____
 
-The *name* is a logical name of color sequence (for example "error"). The names are specific to the utilities. For more details always see the COLORS section in the man page for the utility.
+The *name* is a logical name of color sequence (for example "error"). The names are specific to the utilities. For more details always see the *COLORS* section in the man page for the utility.
 
 The *color-sequence* is a color name, ASCII color sequences or escape sequences.
 
@@ -163,7 +163,7 @@ ____
 
 == COMPATIBILITY
 
-The *terminal-colors.d* functionality is currently supported by all util-linux utilities which provides colorized output. For more details always see the COLORS section in the man page for the utility.
+The *terminal-colors.d* functionality is currently supported by all util-linux utilities which provides colorized output. For more details always see the *COLORS* section in the man page for the utility.
 
 include::man-common/bugreports.adoc[]
 

@@ -54,7 +54,7 @@ Display help text and exit.
 Listen for rfkill events and display them on stdout.
 
 *list* [__id__|_type_ ...]::
-List the current state of all available devices. The command output format is deprecated, see the section DESCRIPTION. It is a good idea to check with *list* command _id_ or _type_ scope is appropriate before setting *block* or *unblock*. Special _all_ type string will match everything. Use of multiple _ID_ or _type_ arguments is supported.
+List the current state of all available devices. The command output format is deprecated, see the *DESCRIPTION* section. It is a good idea to check with *list* command _id_ or _type_ scope is appropriate before setting *block* or *unblock*. Special _all_ type string will match everything. Use of multiple _ID_ or _type_ arguments is supported.
 
 **block id**|*type* [...]::
 Disable the corresponding device.
