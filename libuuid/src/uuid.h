@@ -32,8 +32,8 @@
  * %End-Header%
  */
 
-#ifndef _UUID_UUID_H
-#define _UUID_UUID_H
+#ifndef _UL_LIBUUID_UUID_H
+#define _UL_LIBUUID_UUID_H
 
 #include <sys/types.h>
 #ifndef _WIN32
@@ -120,4 +120,4 @@ extern const uuid_t *uuid_get_template(const char *alias);
 }
 #endif
 
-#endif /* _UUID_UUID_H */
+#endif /* _UL_LIBUUID_UUID_H */
