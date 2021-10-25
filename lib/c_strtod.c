@@ -14,6 +14,10 @@
 
 #include "c_strtod.h"
 
+#ifdef __APPLE__
+# include <xlocale.h>
+#endif
+
 #if defined(HAVE_NEWLOCALE) && (defined(HAVE_STRTOD_L) || defined(HAVE_USELOCALE))
 # define USE_CLOCALE
 #endif
