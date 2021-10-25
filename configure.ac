@@ -465,6 +465,7 @@ have_security_pam_misc_h=$ac_cv_header_security_pam_misc_h
 have_shadow_h=$ac_cv_header_shadow_h
 have_sys_signalfd_h=$ac_cv_header_sys_signalfd_h
 have_utmpx_h=$ac_cv_header_utmpx_h
+have_mntent_h=$ac_cv_header_mntent_h
 
 AS_CASE([$linux_os:$have_linux_version_h],
   [yes:no],
@@ -1138,6 +1139,7 @@ AC_ARG_ENABLE([libmount],
 UL_BUILD_INIT([libmount])
 UL_REQUIRES_BUILD([libmount], [libblkid])
 UL_REQUIRES_HAVE([libmount], [dirfd,ddfd], [dirfd or ddfd function])
+UL_REQUIRES_HAVE([libmount], [mntent_h], [mntent.h header file])
 AM_CONDITIONAL([BUILD_LIBMOUNT], [test "x$build_libmount" = xyes])
 AM_CONDITIONAL([BUILD_LIBMOUNT_TESTS], [test "x$build_libmount" = xyes && test "x$enable_static" = xyes])
 AS_IF([test "x$build_libmount" = xyes], [
