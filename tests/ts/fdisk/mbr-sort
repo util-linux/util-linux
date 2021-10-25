@@ -42,38 +42,42 @@ function print_layout {
 	echo -ne "\n---layout----------\n" >> $TS_OUTPUT
 	$TS_CMD_FDISK -x ${TEST_IMAGE_NAME} >> $TS_OUTPUT
 	echo -ne   "-------------------\n\n" >> $TS_OUTPUT
+    
+    ts_fdisk_clean ${TEST_IMAGE_NAME}
 }
 
 #set -x
 
-ts_log "Initialize empty image"
+ts_init_subtest "empty-pt"
 TEST_IMAGE_NAME=$(ts_image_init 20)	# 20 MiB
 
-ts_log "Create new DOS partition table"
 echo -e "${FDISK_CMD_CREATE_DOSLABEL}${FDISK_CMD_WRITE_CLOSE}" \
 	 | $TS_CMD_FDISK --noauto-pt ${TEST_IMAGE_NAME} &> /dev/null
 
 print_layout
+ts_finalize_subtest
 
-ts_log "Create primary partitions"
+ts_init_subtest "create-primary-partitions"
 echo -e "${FDISK_CMD_CREATE_1PRIMARY}${FDISK_CMD_CREATE_2PRIMARY}${FDISK_CMD_CREATE_3PRIMARY}${FDISK_CMD_CREATE_EXTENDED}${FDISK_CMD_WRITE_CLOSE}" \
 	| $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 
 print_layout
+ts_finalize_subtest
 
 
-ts_log "Create logical partitions"
+ts_init_subtest "create-logical-partitions"
 echo -e "${FDISK_CMD_CREATE_1LOGICAL}${FDISK_CMD_CREATE_2LOGICAL}${FDISK_CMD_CREATE_3LOGICAL}${FDISK_CMD_CREATE_4LOGICAL}${FDISK_CMD_WRITE_CLOSE}" \
 	| $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 
 print_layout
+ts_finalize_subtest
 
 
-ts_log "Fix order."
+ts_init_subtest "fix-order"
 echo -e "${FDISK_CMD_EXPERT_SORT}${FDISK_CMD_WRITE_CLOSE}" \
 	| $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 
 print_layout
+ts_finalize_subtest
 
-ts_fdisk_clean ${TEST_IMAGE_NAME}
 ts_finalize

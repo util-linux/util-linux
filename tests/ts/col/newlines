@@ -23,19 +23,24 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_COL"
 
-ts_log "zero length file"
+ts_init_subtest "zero-length-file"
 printf "" | ts_run $TS_CMD_COL >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
 
-ts_log "one line no nl"
+ts_init_subtest "one-line-no-nl"
 printf "1" | ts_run $TS_CMD_COL >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
 
-ts_log "one line with nl"
+ts_init_subtest "one-line-with-nl"
 printf "1\n" | ts_run $TS_CMD_COL >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
 
-ts_log "second line no nl"
+ts_init_subtest "second-line-no-nl"
 printf "1\n2" | ts_run $TS_CMD_COL >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
 
-ts_log "second line with nl"
+ts_init_subtest "second-line-with-nl"
 printf "1\n2\n" | ts_run $TS_CMD_COL >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
 
 ts_finalize

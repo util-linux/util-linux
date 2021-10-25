@@ -23,17 +23,21 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_COL"
 
-ts_log "no-backspaces"
+ts_init_subtest "no-backspaces"
 printf "FIXME" | ts_run $TS_CMD_COL --no-backspaces >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
 
-ts_log "pass"
+ts_init_subtest "pass"
 printf "a\x11b" | ts_run $TS_CMD_COL >> $TS_OUTPUT 2>> $TS_ERRLOG
 printf "a\x11b" | ts_run $TS_CMD_COL --pass >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
 
-ts_log "tabs"
+ts_init_subtest "tabs"
 printf "        1\n" | ts_run $TS_CMD_COL --tabs >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
 
-ts_log "spaces"
+ts_init_subtest "spaces"
 printf "\t1\n" | ts_run $TS_CMD_COL --spaces >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
 
 ts_finalize
