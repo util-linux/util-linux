@@ -111,5 +111,4 @@ static inline ssize_t sendfile_all(int out, int in, off_t *off, size_t count)
 	return -1;
 #endif
 }
-
 #endif /* UTIL_LINUX_ALL_IO_H */

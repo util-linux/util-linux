@@ -84,6 +84,7 @@ check_PROGRAMS += \
 	test_buffer \
 	test_canonicalize \
 	test_colors \
+	test_fileeq \
 	test_fileutils \
 	test_ismounted \
 	test_pwdutils \
@@ -187,6 +188,9 @@ test_pager_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_PAGER
 test_linux_version_SOURCES = lib/linux_version.c
 test_linux_version_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_LINUXVERSION
 endif
+
+test_fileeq_SOURCES = lib/fileeq.c
+test_fileeq_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_FILEEQ
 
 test_fileutils_SOURCES = lib/fileutils.c
 test_fileutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_FILEUTILS
