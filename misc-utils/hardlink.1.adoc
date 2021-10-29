@@ -38,6 +38,13 @@ Quiet mode, don't print anything.
 *-n*, *--dry-run*::
 Do not act, just print what would happen.
 
+*-y*, *--method* _name_::
+Set the file content comparison method. The currently supported methods are
+sha256, sha1, crc32c and memcpy. The default is sha256 and memcmp if Linux
+Crypto API is not available. The methods based on checksums are implemented in
+zero-copy way, in this case file content is not copied to the userspace and all
+calculation is done in kernel.
+
 *-f*, *--respect-name*::
 Only try to link files with the same (base)name. It's strongly recommended to use long options rather than *-f* which is interpreted in a different way by other *hardlink* implementations.
 
@@ -76,6 +83,7 @@ The size of read buffer used when comparing file contents (default: 8KiB). This
 costs some additional memory but potentially reduces the amount of seek
 operations and therefore improve performance, especially with mechanic disk
 drives. Optional factor suffixes are supported, like with the *-s* option. This is mostly efficient with other filters (i.e. with *-f* or *-X*) and can be less efficient with *-top* options.
+
 
 == ARGUMENTS
 

@@ -315,6 +315,7 @@ AC_CHECK_HEADERS([ \
 	linux/tiocl.h \
 	linux/version.h \
 	linux/watchdog.h \
+	linux/if_alg.h \
 	locale.h \
 	mntent.h \
 	net/if_dl.h \
