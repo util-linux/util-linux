@@ -1097,6 +1097,26 @@ static void append_filter_expr(char **a, const char *b, bool and)
 	xstrappend(a, ")");
 }
 
+static struct lsfd_filter *new_filter(const char *expr, bool debug, const char *err_prefix, struct lsfd_control *ctl)
+{
+	struct lsfd_filter *filter;
+	const char *errmsg;
+
+	filter = lsfd_filter_new(expr, ctl->tb,
+				 LSFD_N_COLS,
+				 column_name_to_id_cb,
+				 add_column_by_id_cb, ctl);
+	errmsg = lsfd_filter_get_errmsg(filter);
+	if (errmsg)
+		errx(EXIT_FAILURE, "%s%s", err_prefix, errmsg);
+	if (debug) {
+		lsfd_filter_dump(filter, stdout);
+		exit(EXIT_SUCCESS);
+	}
+
+	return filter;
+}
+
 int main(int argc, char *argv[])
 {
 	int c;
@@ -1215,17 +1235,7 @@ int main(int argc, char *argv[])
 
 	/* make fitler */
 	if (filter_expr) {
-		ctl.filter = lsfd_filter_new(filter_expr, ctl.tb,
-					     LSFD_N_COLS,
-					     column_name_to_id_cb,
-					     add_column_by_id_cb, &ctl);
-		const char *errmsg = lsfd_filter_get_errmsg(ctl.filter);
-		if (errmsg)
-			errx(EXIT_FAILURE, "%s", errmsg);
-		if (debug_filter) {
-			lsfd_filter_dump(ctl.filter, stdout);
-			return 0;
-		}
+		ctl.filter = new_filter(filter_expr, debug_filter, "", &ctl);
 		free(filter_expr);
 	}
 
