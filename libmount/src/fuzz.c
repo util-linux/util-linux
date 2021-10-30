@@ -13,6 +13,10 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
         if (size == 0)
                 return 0;
 
+        // 128Kb should be enough to trigger all the issues we're interested in
+        if (size > 131072)
+                return 0;
+
         tb = mnt_new_table();
         if (!tb)
 		err_oom();
