@@ -15,6 +15,15 @@
 # GNU General Public License for more details.
 #
 
+function lsfd_wait_for_pausing {
+	ts_check_prog "sleep"
+
+	local PID=$1
+	until [[ $(ps --no-headers -ostat "${PID}") =~ S.* ]]; do
+		sleep 1
+	done
+}
+
 function lsfd_compare_dev {
     local LSFD=$1
     local FINDMNT=$2

@@ -59,6 +59,7 @@ static int kcmp(pid_t pid1, pid_t pid2, int type,
 
 #include "lsfd.h"
 #include "lsfd-filter.h"
+#include "lsfd-counter.h"
 
 /*
  * /proc/$pid/mountinfo entries
@@ -189,6 +190,84 @@ static size_t ncolumns;
 static ino_t *mnt_namespaces;
 static size_t nspaces;
 
+struct counter_spec {
+	struct list_head specs;
+	const char *name;
+	const char *expr;
+};
+
+static struct counter_spec default_counter_specs[] = {
+	{
+		.name = N_("processes"),
+		.expr = "ASSOC == 'cwd'",
+	},
+	{
+		.name = N_("root owned processes"),
+		.expr = "(ASSOC == 'cwd') && (UID == 0)",
+	},
+	{
+		.name = N_("kernel threads"),
+		.expr = "(ASSOC == 'cwd') && KTHREAD",
+	},
+	{
+		.name = N_("open files"),
+		.expr = "FD >= 0",
+	},
+	{
+		.name = N_("RO open files"),
+		.expr = "(FD >= 0) and (MODE == 'r--')",
+	},
+	{
+		.name = N_("WO open files"),
+		.expr = "(FD >= 0) and (MODE == '-w-')",
+	},
+	{
+		.name = N_("shared mappings"),
+		.expr = "ASSOC == 'shm'",
+	},
+	{
+		.name = N_("RO shared mappings"),
+		.expr = "(ASSOC == 'shm') and (MODE == 'r--')",
+	},
+	{
+		.name = N_("WO shared mappings"),
+		.expr = "(ASSOC == 'shm') and (MODE == '-w-')",
+	},
+	{
+		.name = N_("regular files"),
+		.expr = "(FD >= 0) && (TYPE == 'REG')",
+	},
+	{
+		.name = N_("directories"),
+		.expr = "(FD >= 0) && (TYPE == 'DIR')",
+	},
+	{
+		.name = N_("sockets"),
+		.expr = "(FD >= 0) && (TYPE == 'SOCK')",
+	},
+	{
+		.name = N_("fifos/pipes"),
+		.expr = "(FD >= 0) && (TYPE == 'FIFO')",
+	},
+	{
+		.name = N_("character devices"),
+		.expr = "(FD >= 0) && (TYPE == 'CHR')",
+	},
+	{
+		.name = N_("block devices"),
+		.expr = "(FD >= 0) && (TYPE == 'BLK')",
+	},
+	{
+		.name = N_("unknown types"),
+		.expr = "(FD >= 0) && (TYPE == 'UNKN')",
+	}
+};
+
+enum {
+	SUMMARY_EMIT = 1 << 0,
+	SUMMARY_ONLY = 1 << 1,
+};
+
 struct lsfd_control {
 	struct libscols_table *tb;		/* output */
 	struct list_head procs;			/* list of all processes */
@@ -197,9 +276,11 @@ struct lsfd_control {
 			raw : 1,
 			json : 1,
 			notrunc : 1,
-			threads : 1;
+			threads : 1,
+			summary: 2;
 
 	struct lsfd_filter *filter;
+	struct lsfd_counter **counters;		/* NULL terminated array. */
 };
 
 static void xstrappend(char **a, const char *b);
@@ -759,13 +840,23 @@ static void convert(struct list_head *procs, struct lsfd_control *ctl)
 		list_for_each (f, &proc->files) {
 			struct file *file = list_entry(f, struct file, files);
 			struct libscols_line *ln = scols_table_new_line(ctl->tb, NULL);
+			struct lsfd_counter **counter = NULL;
+
 			if (!ln)
 				err(EXIT_FAILURE, _("failed to allocate output line"));
 
 			convert_file(proc, file, ln);
 
-			if (!lsfd_filter_apply(ctl->filter, ln))
+			if (!lsfd_filter_apply(ctl->filter, ln)) {
 				scols_table_remove_line(ctl->tb, ln);
+				continue;
+			}
+
+			if (!ctl->counters)
+				continue;
+
+			for (counter = ctl->counters; *counter; counter++)
+				lsfd_counter_accumulate(*counter, ln);
 		}
 	}
 }
@@ -776,6 +867,12 @@ static void delete(struct list_head *procs, struct lsfd_control *ctl)
 
 	scols_unref_table(ctl->tb);
 	lsfd_filter_free(ctl->filter);
+	if (ctl->counters) {
+		struct lsfd_counter **counter;
+		for (counter = ctl->counters; *counter; counter++)
+			lsfd_counter_free(*counter);
+		free(ctl->counters);
+	}
 }
 
 static void emit(struct lsfd_control *ctl)
@@ -1046,6 +1143,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -p, --pid  <pid(s)>   collect information only specified processes\n"), out);
 	fputs(_(" -Q, --filter <expr>   apply display filter\n"), out);
 	fputs(_("     --debug-filter    dump the innternal data structure of filter and exit\n"), out);
+	fputs(_(" -C, --counter <name>:<expr>\n"
+		"                       make a counter used in --summary output\n"), out);
+	fputs(_("     --summary[=when]  print summary information (never,always or only)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(23));
@@ -1117,6 +1217,153 @@ static struct lsfd_filter *new_filter(const char *expr, bool debug, const char *
 	return filter;
 }
 
+static struct counter_spec *new_counter_spec(const char *spec_str)
+{
+	char *sep;
+	struct counter_spec *spec;
+
+	if (spec_str[0] == '\0')
+		errx(EXIT_FAILURE,
+		     _("too short counter specification: -C/--counter %s"),
+		     spec_str);
+	if (spec_str[0] == ':')
+		errx(EXIT_FAILURE,
+		     _("no name for counter: -C/--counter %s"),
+		     spec_str);
+
+	sep = strchr(spec_str, ':');
+	if (sep == NULL)
+		errx(EXIT_FAILURE,
+		     _("no name for counter: -C/--counter %s"),
+		     spec_str);
+	if (sep[1] == '\0')
+		errx(EXIT_FAILURE,
+		     _("empty ecounter expression given: -C/--counter %s"),
+		     spec_str);
+
+	/* Split the spec_str in to name and expr. */
+	*sep = '\0';
+
+	if (strchr(spec_str, '{'))
+		errx(EXIT_FAILURE,
+		     _("don't use `{' in the name of a counter: %s"),
+		     spec_str);
+
+	spec = xmalloc(sizeof(struct counter_spec));
+	INIT_LIST_HEAD(&spec->specs);
+	spec->name = spec_str;
+	spec->expr = sep + 1;
+
+	return spec;
+}
+
+static void free_counter_spec(struct counter_spec *counter_spec)
+{
+	free(counter_spec);
+}
+
+static struct lsfd_counter *new_counter(struct counter_spec *spec, struct lsfd_control *ctl)
+{
+	struct lsfd_filter *filter;
+
+	filter = new_filter(spec->expr, false,
+			    _("failed in making filter for a counter: "),
+			    ctl);
+	return lsfd_counter_new(spec->name, filter);
+}
+
+static struct lsfd_counter **new_counters(struct list_head *specs, struct lsfd_control *ctl)
+{
+	struct lsfd_counter **counters;
+	size_t len = list_count_entries(specs);
+	size_t i = 0;
+	struct list_head *s;
+
+	counters = xcalloc(len + 1, sizeof(struct lsfd_counter *));
+	list_for_each(s, specs) {
+		struct counter_spec *spec = list_entry(s, struct counter_spec, specs);
+		counters[i++] = new_counter(spec, ctl);
+	}
+	assert(counters[len] == NULL);
+
+	return counters;
+}
+
+static struct lsfd_counter **new_default_counters(struct lsfd_control *ctl)
+{
+	struct lsfd_counter **counters;
+	size_t len = ARRAY_SIZE(default_counter_specs);
+	size_t i;
+
+	counters = xcalloc(len + 1, sizeof(struct lsfd_counter *));
+	for (i = 0; i < len; i++) {
+		struct counter_spec *spec = default_counter_specs + i;
+		counters[i] = new_counter(spec, ctl);
+	}
+	assert(counters[len] == NULL);
+
+	return counters;
+}
+
+static struct libscols_table *new_summary_table(struct lsfd_control *ctl)
+{
+	struct libscols_table *tb = scols_new_table();
+
+	struct libscols_column *name_cl, *value_cl;
+
+	if (!tb)
+		err(EXIT_FAILURE, _("failed to allocate summary table"));
+
+	scols_table_enable_noheadings(tb, ctl->noheadings);
+	scols_table_enable_raw(tb, ctl->raw);
+	scols_table_enable_json(tb, ctl->json);
+
+	if(ctl->json)
+		scols_table_set_name(tb, "lsfd-summary");
+
+
+	value_cl = scols_table_new_column(tb, _("VALUE"), 0, SCOLS_FL_RIGHT);
+	if (!value_cl)
+		err(EXIT_FAILURE, _("failed to allocate summary column"));
+	if (ctl->json)
+		scols_column_set_json_type(value_cl, SCOLS_JSON_NUMBER);
+
+	name_cl = scols_table_new_column(tb, _("COUNTER"), 0, 0);
+	if (!name_cl)
+		err(EXIT_FAILURE, _("failed to allocate summary column"));
+	if (ctl->json)
+		scols_column_set_json_type(name_cl, SCOLS_JSON_STRING);
+
+	return tb;
+}
+
+static void fill_summary_line(struct libscols_line *ln, struct lsfd_counter *counter)
+{
+	char *str = NULL;
+
+	xasprintf(&str, "%llu", (unsigned long long)lsfd_counter_value(counter));
+	if (!str)
+		err(EXIT_FAILURE, _("failed to add summary data"));
+	if (scols_line_refer_data(ln, 0, str))
+		err(EXIT_FAILURE, _("failed to add summary data"));
+
+	if (scols_line_set_data(ln, 1, lsfd_counter_name(counter)))
+		err(EXIT_FAILURE, _("failed to add summary data"));
+}
+
+static void emit_summary(struct lsfd_control *ctl, struct lsfd_counter **counter)
+{
+	struct libscols_table *tb = new_summary_table(ctl);
+
+	for (; *counter; counter++) {
+		struct libscols_line *ln = scols_table_new_line(tb, NULL);
+		fill_summary_line(ln, *counter);
+	}
+	scols_print_table(tb);
+
+	scols_unref_table(tb);
+}
+
 int main(int argc, char *argv[])
 {
 	int c;
@@ -1127,9 +1374,13 @@ int main(int argc, char *argv[])
 	bool debug_filter = false;
 	pid_t *pids = NULL;
 	int n_pids = 0;
+	struct list_head counter_specs;
+
+	INIT_LIST_HEAD(&counter_specs);
 
 	enum {
-		OPT_DEBUG_FILTER = CHAR_MAX + 1
+		OPT_DEBUG_FILTER = CHAR_MAX + 1,
+		OPT_SUMMARY,
 	};
 	static const struct option longopts[] = {
 		{ "noheadings", no_argument, NULL, 'n' },
@@ -1143,6 +1394,8 @@ int main(int argc, char *argv[])
 		{ "pid",        required_argument, NULL, 'p' },
 		{ "filter",     required_argument, NULL, 'Q' },
 		{ "debug-filter",no_argument, NULL, OPT_DEBUG_FILTER },
+		{ "summary",    optional_argument, NULL,  OPT_SUMMARY },
+		{ "counter",    required_argument, NULL, 'C' },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -1151,7 +1404,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "no:JrVhluQ:p:", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "no:JrVhluQ:p:C:s", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'n':
 			ctl.noheadings = 1;
@@ -1177,8 +1430,26 @@ int main(int argc, char *argv[])
 		case 'Q':
 			append_filter_expr(&filter_expr, optarg, true);
 			break;
+		case 'C': {
+			struct counter_spec *c = new_counter_spec(optarg);
+			list_add_tail(&c->specs, &counter_specs);
+			break;
+		}
 		case OPT_DEBUG_FILTER:
 			debug_filter = true;
+			break;
+		case OPT_SUMMARY:
+			if (optarg) {
+				if (strcmp(optarg, "never") == 0)
+					ctl.summary = 0;
+				else if (strcmp(optarg, "only") == 0)
+					ctl.summary |= (SUMMARY_ONLY|SUMMARY_EMIT);
+				else if (strcmp(optarg, "always") == 0)
+					ctl.summary |= SUMMARY_EMIT;
+				else
+					errx(EXIT_FAILURE, _("unsupported --summary argument"));
+			} else
+				ctl.summary |= SUMMARY_EMIT;
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
@@ -1239,6 +1510,17 @@ int main(int argc, char *argv[])
 		free(filter_expr);
 	}
 
+	/* make counters */
+	if (ctl.summary & SUMMARY_EMIT) {
+		if (list_empty(&counter_specs))
+			ctl.counters = new_default_counters(&ctl);
+		else {
+			ctl.counters = new_counters(&counter_specs, &ctl);
+			list_free(&counter_specs, struct counter_spec, specs,
+				  free_counter_spec);
+		}
+	}
+
 	if (n_pids > 0)
 		sort_pids(pids, n_pids);
 
@@ -1250,7 +1532,10 @@ int main(int argc, char *argv[])
 	free(pids);
 
 	convert(&ctl.procs, &ctl);
-	emit(&ctl);
+	if (!(ctl.summary & SUMMARY_ONLY))
+		emit(&ctl);
+	if (ctl.counters && (ctl.summary & SUMMARY_EMIT))
+		emit_summary(&ctl, ctl.counters);
 
 	/* cleanup */
 	delete(&ctl.procs, &ctl);

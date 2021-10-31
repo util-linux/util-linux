@@ -255,6 +255,8 @@ lsfd_SOURCES = \
 	misc-utils/lsfd.h \
 	misc-utils/lsfd-filter.h \
 	misc-utils/lsfd-filter.c \
+	misc-utils/lsfd-counter.h \
+	misc-utils/lsfd-counter.c \
 	misc-utils/lsfd-file.c \
 	misc-utils/lsfd-cdev.c \
 	misc-utils/lsfd-bdev.c \
