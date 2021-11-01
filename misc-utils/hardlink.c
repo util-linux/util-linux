@@ -43,6 +43,7 @@
 #include "strutils.h"
 #include "monotonic.h"
 #include "optutils.h"
+#include "fileeq.h"
 
 #include <regex.h>		/* regcomp(), regsearch() */
 
@@ -52,6 +53,8 @@
 #endif
 
 static int quiet;		/* don't print anything */
+
+static struct ul_fileeq fileeq;
 
 /**
  * struct file - Information about a file
@@ -64,6 +67,8 @@ static int quiet;		/* don't print anything */
  */
 struct file {
 	struct stat st;
+	struct ul_fileeq_data data;
+
 	struct file *next;
 	struct link {
 		struct link *next;
@@ -91,10 +96,6 @@ enum log_level {
 	JLOG_VERBOSE1,
 	JLOG_VERBOSE2
 };
-
-#ifndef DEF_SCAN_BUFSIZ
-# define DEF_SCAN_BUFSIZ 8192
-#endif
 
 /**
  * struct statistic - Statistics about the file
@@ -138,11 +139,13 @@ struct hdl_regex {
  * @keep_oldest: Choose the file with oldest timestamp as master (default = FALSE)
  * @dry_run: Specifies whether hardlink should not link files (default = FALSE)
  * @min_size: Minimum size of files to consider. (default = 1 byte)
+ * @max_size: Maximum size of files to consider, 0 means umlimited. (default = 0 byte)
  */
 static struct options {
 	struct hdl_regex *include;
 	struct hdl_regex *exclude;
 
+	const char *method;
 	signed int verbosity;
 	unsigned int respect_mode:1;
 	unsigned int respect_owner:1;
@@ -154,16 +157,19 @@ static struct options {
 	unsigned int keep_oldest:1;
 	unsigned int dry_run:1;
 	uintmax_t min_size;
-	size_t bufsiz;
+	uintmax_t max_size;
+	size_t io_size;
+	size_t cache_size;
 } opts = {
 	/* default setting */
+	.method = "sha256",
 	.respect_mode = TRUE,
 	.respect_owner = TRUE,
 	.respect_time = TRUE,
 	.respect_xattrs = FALSE,
 	.keep_oldest = FALSE,
 	.min_size = 1,
-	.bufsiz = DEF_SCAN_BUFSIZ
+	.cache_size = 10*1024*1024
 };
 
 /*
@@ -174,12 +180,6 @@ static struct options {
  */
 static void *files;
 static void *files_by_ino;
-
-/*
- * Temporary buffers for reading file contents
- */
-static char *buf_a = NULL;
-static char *buf_b = NULL;
 
 /*
  * last_signal
@@ -320,6 +320,7 @@ static void print_stats(void)
 
 	jlog(JLOG_SUMMARY, "%-15s %s", _("Mode:"),
 	     opts.dry_run ? _("dry-run") : _("real"));
+	jlog(JLOG_SUMMARY, "%-15s %s", _("Method:"), opts.method);
 	jlog(JLOG_SUMMARY, "%-15s %zu", _("Files:"), stats.files);
 	jlog(JLOG_SUMMARY, _("%-15s %zu files"), _("Linked:"), stats.linked);
 
@@ -555,81 +556,12 @@ static int file_xattrs_equal(const struct file *a, const struct file *b)
 #endif /* USE_XATTR */
 
 /**
- * file_contents_equal - Compare contents of two files for equality
- * @a: The first file
- * @b: The second file
- *
- * Compare the contents of the files for equality
- */
-static int file_contents_equal(const struct file *a, const struct file *b)
-{
-	FILE *fa = NULL;
-	FILE *fb = NULL;
-	int cmp = 0;		/* zero => equal */
-	off_t off = 0;		/* current offset */
-
-	assert(a->links != NULL);
-	assert(b->links != NULL);
-
-	jlog(JLOG_VERBOSE1, _("Comparing %s to %s"), a->links->path,
-	     b->links->path);
-
-	stats.comparisons++;
-
-	if ((fa = fopen(a->links->path, "rb")) == NULL)
-		goto err;
-	if ((fb = fopen(b->links->path, "rb")) == NULL)
-		goto err;
-
-#if defined(POSIX_FADV_SEQUENTIAL) && defined(HAVE_POSIX_FADVISE)
-	ignore_result( posix_fadvise(fileno(fa), 0, 0, POSIX_FADV_SEQUENTIAL) );
-	ignore_result( posix_fadvise(fileno(fb), 0, 0, POSIX_FADV_SEQUENTIAL) );
-#endif
-
-	while (!handle_interrupt() && cmp == 0) {
-		size_t ca;
-		size_t cb;
-
-		ca = fread(buf_a, 1, opts.bufsiz, fa);
-		if (ca < sizeof(buf_a) && ferror(fa))
-			goto err;
-
-		cb = fread(buf_b, 1, opts.bufsiz, fb);
-		if (cb < sizeof(buf_b) && ferror(fb))
-			goto err;
-
-		off += ca;
-
-		if ((ca != cb || ca == 0)) {
-			cmp = CMP(ca, cb);
-			break;
-		}
-		cmp = memcmp(buf_a, buf_b, ca);
-	}
- out:
-	if (fa != NULL)
-		fclose(fa);
-	if (fb != NULL)
-		fclose(fb);
-	return !handle_interrupt() && cmp == 0;
- err:
-	if (fa == NULL || fb == NULL)
-		warn(_("cannot open %s"), fa ? b->links->path : a->links->path);
-	else
-		warn(_("cannot read %s"),
-		     ferror(fa) ? a->links->path : b->links->path);
-	cmp = 1;
-	goto out;
-}
-
-/**
  * file_may_link_to - Check whether a file may replace another one
  * @a: The first file
  * @b: The second file
  *
- * Check whether the two fies are considered equal and can be linked
- * together. If the two files are identical, the result will be FALSE,
- * as replacing a link with an identical one is stupid.
+ * Check whether the two files are considered equal attributes and can be
+ * linked. This function does not compare content od the files!
  */
 static int file_may_link_to(const struct file *a, const struct file *b)
 {
@@ -645,8 +577,7 @@ static int file_may_link_to(const struct file *a, const struct file *b)
 		(!opts.respect_name
 		 || strcmp(a->links->path + a->links->basename,
 			   b->links->path + b->links->basename) == 0) &&
-		(!opts.respect_xattrs || file_xattrs_equal(a, b)) &&
-		file_contents_equal(a, b));
+		(!opts.respect_xattrs || file_xattrs_equal(a, b)));
 }
 
 /**
@@ -792,7 +723,14 @@ static int inserter(const char *fpath, const struct stat *sb,
 		return 0;
 	}
 
-	jlog(JLOG_VERBOSE2, _("Visiting %s (file %zu)"), fpath, stats.files);
+	jlog(JLOG_VERBOSE2, " %5zu: [%ld/%ld/%ld] %s",
+			stats.files, sb->st_dev, sb->st_ino, sb->st_nlink, fpath);
+
+	if ((opts.max_size > 0) && ((uintmax_t) sb->st_size > opts.max_size)) {
+		jlog(JLOG_VERBOSE1,
+		     _("Skipped %s (greater than configured size)"), fpath);
+		return 0;
+	}
 
 	pathlen = strlen(fpath) + 1;
 
@@ -854,6 +792,16 @@ static int inserter(const char *fpath, const struct stat *sb,
 	return 0;
 }
 
+static inline size_t count_nodes(struct file *x)
+{
+	size_t ct = 0;
+
+	for ( ; x !=  NULL; x = x->next)
+		ct++;
+
+	return ct;
+}
+
 /**
  * visitor - Callback for twalk()
  * @nodep: Pointer to a pointer to a #struct file
@@ -867,6 +815,7 @@ static int inserter(const char *fpath, const struct stat *sb,
 static void visitor(const void *nodep, const VISIT which, const int depth)
 {
 	struct file *master = *(struct file **)nodep;
+	struct file *begin = master;
 	struct file *other;
 
 	(void)depth;
@@ -875,25 +824,68 @@ static void visitor(const void *nodep, const VISIT which, const int depth)
 		return;
 
 	for (; master != NULL; master = master->next) {
+		size_t nnodes, memsiz;
+
 		if (handle_interrupt())
 			exit(EXIT_FAILURE);
 		if (master->links == NULL)
 			continue;
 
+		/* calculate per file max memory use */
+		nnodes = count_nodes(master);
+		if (!nnodes)
+			continue;
+
+		/* per-file cache size */
+		memsiz = opts.cache_size / nnodes;
+		/*                                filesiz,      readsiz,      memsiz */
+		ul_fileeq_set_size(&fileeq, master->st.st_size, opts.io_size, memsiz);
+
 		for (other = master->next; other != NULL; other = other->next) {
+			int eq;
+
 			if (handle_interrupt())
 				exit(EXIT_FAILURE);
 
 			assert(other != other->next);
 			assert(other->st.st_size == master->st.st_size);
 
-			if (other->links == NULL
-			    || !file_may_link_to(master, other))
+			/* check file attributes, etc. */
+			if (!other->links || !file_may_link_to(master, other))
 				continue;
 
-			if (!file_link(master, other) && errno == EMLINK)
+			/* initialize content comparison */
+			if (!ul_fileeq_data_associated(&master->data))
+				ul_fileeq_data_set_file(&master->data, master->links->path);
+			if (!ul_fileeq_data_associated(&other->data))
+				ul_fileeq_data_set_file(&other->data, other->links->path);
+
+			/* compare files */
+			eq = ul_fileeq(&fileeq, &master->data, &other->data);
+
+			/* reduce number of open files, keep only master open */
+			ul_fileeq_data_close_file(&other->data);
+
+			stats.comparisons++;
+
+			if (!eq)
+				continue;
+
+			/* link files */
+			if (!file_link(master, other) && errno == EMLINK) {
+				ul_fileeq_data_deinit(&master->data);
 				master = other;
+			}
 		}
+
+		/* don't keep master data in memory */
+		ul_fileeq_data_deinit(&master->data);
+	}
+
+	/* final cleanup */
+	for (other = begin; other != NULL; other = other->next) {
+		if (ul_fileeq_data_associated(&other->data))
+			ul_fileeq_data_deinit(&other->data);
 	}
 }
 
@@ -915,6 +907,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -v, --verbose              verbose output (repeat for more verbosity)\n"), out);
 	fputs(_(" -q, --quiet                quiet mode - don't print anything\n"), out);
 	fputs(_(" -n, --dry-run              don't actually link anything\n"), out);
+	fputs(_(" -y, --method <name>        file content comparison method\n"), out);
+
 	fputs(_(" -f, --respect-name         filenames have to be identical\n"), out);
 	fputs(_(" -p, --ignore-mode          ignore changes of file mode\n"), out);
 	fputs(_(" -o, --ignore-owner         ignore owner changes\n"), out);
@@ -930,7 +924,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -x, --exclude <regex>      regular expression to exclude files\n"), out);
 	fputs(_(" -i, --include <regex>      regular expression to include files/dirs\n"), out);
 	fputs(_(" -s, --minimum-size <size>  minimum size for files.\n"), out);
-	fputs(_(" -S, --buffer-size <size>   buffer size for file reading (speedup, using more RAM)\n"), out);
+	fputs(_(" -S, --maximum-size <size>  maximum size for files.\n"), out);
+	fputs(_(" -b, --io-size <size>       I/O buffer size for file reading (speedup, using more RAM)\n"), out);
+	fputs(_(" -r, --cache-size <size>    memory limit for cached file content data\n"), out);
 	fputs(_(" -c, --content              compare only file contents, same as -pot\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -940,19 +936,6 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-
-static void init_buffers(size_t bufsiz)
-{
-	buf_a = xmalloc(bufsiz);
-	buf_b = xmalloc(bufsiz);
-}
-
-static void deinit_buffers(void)
-{
-	free(buf_a);
-	free(buf_b);
-}
-
 /**
  * parse_options - Parse the command line options
  * @argc: Number of options
@@ -960,7 +943,7 @@ static void deinit_buffers(void)
  */
 static int parse_options(int argc, char *argv[])
 {
-	static const char optstr[] = "VhvnfpotXcmMOx:i:s:S:q";
+	static const char optstr[] = "VhvnfpotXcmMOx:y:i:r:S:s:b:q";
 	static const struct option long_options[] = {
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
@@ -976,10 +959,13 @@ static int parse_options(int argc, char *argv[])
 		{"keep-oldest", no_argument, NULL, 'O'},
 		{"exclude", required_argument, NULL, 'x'},
 		{"include", required_argument, NULL, 'i'},
+		{"method", required_argument, NULL, 'y' },
 		{"minimum-size", required_argument, NULL, 's'},
-		{"buffer-size", required_argument, NULL, 'S'},
+		{"maximum-size", required_argument, NULL, 'S'},
+		{"io-size", required_argument, NULL, 'b'},
 		{"content", no_argument, NULL, 'c'},
 		{"quiet", no_argument, NULL, 'q'},
+		{"cache-size", required_argument, NULL, 'r'},
 		{NULL, 0, NULL, 0}
 	};
 	static const ul_excl_t excl[] = {
@@ -1037,14 +1023,23 @@ static int parse_options(int argc, char *argv[])
 		case 'x':
 			register_regex(&opts.exclude, optarg);
 			break;
+		case 'y':
+			opts.method = optarg;
+			break;
 		case 'i':
 			register_regex(&opts.include, optarg);
 			break;
 		case 's':
-			opts.min_size = strtosize_or_err(optarg, _("failed to parse size"));
+			opts.min_size = strtosize_or_err(optarg, _("failed to parse minimum size"));
 			break;
 		case 'S':
-			opts.bufsiz = strtosize_or_err(optarg, _("failed to parse size"));
+			opts.max_size = strtosize_or_err(optarg, _("failed to parse maximum size"));
+			break;
+		case 'r':
+			opts.cache_size = strtosize_or_err(optarg, _("failed to cache size"));
+			break;
+		case 'b':
+			opts.io_size = strtosize_or_err(optarg, _("failed to parse I/O size"));
 			break;
 		case 'h':
 			usage();
@@ -1081,6 +1076,7 @@ static void sighandler(int i)
 int main(int argc, char *argv[])
 {
 	struct sigaction sa;
+	int rc;
 
 	sa.sa_handler = sighandler;
 	sa.sa_flags = SA_RESTART;
@@ -1103,10 +1099,26 @@ int main(int argc, char *argv[])
 
 	gettime_monotonic(&stats.start_time);
 
-	init_buffers(opts.bufsiz);
+	rc = ul_fileeq_init(&fileeq, opts.method);
+	if (rc != 0 && strcmp(opts.method, "memcmp") != 0) {
+		warnx(_("cannot initialize %s method, use 'memcmp' fallback"), opts.method);
+		opts.method = "memcmp";
+		rc = ul_fileeq_init(&fileeq, opts.method);
+	}
+	if (rc < 0)
+		err(EXIT_FAILURE, _("failed to initialize files comparior"));
+
+	/* defautl I/O size */
+	if (!opts.io_size) {
+		if (strcmp(opts.method, "memcmp") == 0)
+			opts.io_size = 8*1024;
+		else
+			opts.io_size = 1024*1024;
+	}
 
 	stats.started = TRUE;
 
+	jlog(JLOG_VERBOSE2, _("Scanning [device/inode/links]:"));
 	for (; optind < argc; optind++) {
 		if (nftw(argv[optind], inserter, 20, FTW_PHYS) == -1)
 			warn(_("cannot process %s"), argv[optind]);
@@ -1114,7 +1126,6 @@ int main(int argc, char *argv[])
 
 	twalk(files, visitor);
 
-	deinit_buffers();
-
+	ul_fileeq_deinit(&fileeq);
 	return 0;
 }

@@ -76,5 +76,20 @@ $TS_CMD_HARDLINK --quiet --content "$SRCDIR" >> $TS_OUTPUT 2>> $TS_ERRLOG
 show_srcdir | sed 's/\(1540236\).*/\1xxx\tperm/' >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
+ts_init_subtest "maximum-size-8191"
+create_srcdir
+$TS_CMD_HARDLINK --maximum-size 8191 "$SRCDIR" | \
+	sed 's/^Duration:.*/Duration: [Redacted]/' >> $TS_OUTPUT 2>> $TS_ERRLOG
+show_srcdir >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
+ts_init_subtest "maximum-size-8192"
+create_srcdir
+$TS_CMD_HARDLINK --maximum-size 8192 "$SRCDIR" | \
+       sed 's/^Duration:.*/Duration: [Redacted]/' >> $TS_OUTPUT 2>> $TS_ERRLOG
+show_srcdir >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
+
 rm -rf "$SRCDIR"
 ts_finalize

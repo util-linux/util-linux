@@ -24,6 +24,15 @@ hardlink - link multiple copies of a file
 
 *hardlink* is a tool which replaces copies of a file with hardlinks, therefore saving space.
 
+*hardlink* creates binary tree from file sizes and after that, it compares files with the
+same sizes. There are two basic content comparison methods. *memcmp* method directly reads
+data blocks from files and compares them. The other methods are based on checksums (like SHA256),
+in this case for each data block is calculated checksum by Linux kernel crypto API, and this
+checksum is stored in userspace and used for files comparison. For each file is also cached
+"intro" buffer (32 bytes), this buffer is used independently on the comparison method and requested
+cache-size and io-size. The "intro" buffer dramatically reduces operations with data content as
+files are very often different from the beginning.
+
 == OPTIONS
 
 *-h*, *--help*::
@@ -37,6 +46,13 @@ Quiet mode, don't print anything.
 
 *-n*, *--dry-run*::
 Do not act, just print what would happen.
+
+*-y*, *--method* _name_::
+Set the file content comparison method. The currently supported methods are
+sha256, sha1, crc32c and memcpy. The default is sha256 and memcmp if Linux
+Crypto API is not available. The methods based on checksums are implemented in
+zero-copy way, in this case file content is not copied to the userspace and all
+calculation is done in kernel.
 
 *-f*, *--respect-name*::
 Only try to link files with the same (base)name. It's strongly recommended to use long options rather than *-f* which is interpreted in a different way by other *hardlink* implementations.
@@ -71,11 +87,23 @@ A regular expression to include files. If the option *--exclude* has been given,
 *-s*, *--minimum-size* _size_::
 The minimum size to consider. By default this is 1, so empty files will not be linked. The _size_ argument may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB").
 
-*-S*, *--buffer-size* _size_::
-The size of read buffer used when comparing file contents (default: 8KiB). This
-costs some additional memory but potentially reduces the amount of seek
-operations and therefore improve performance, especially with mechanic disk
-drives. Optional factor suffixes are supported, like with the *-s* option. This is mostly efficient with other filters (i.e. with *-f* or *-X*) and can be less efficient with *-top* options.
+*-S*, *--maximum-size* _size_::
+The maximum size to consider. By default this is 0 and 0 has the special meaning of unlimited. The _size_ argument may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB").
+
+*-b*, *--io-size* _size_::
+The size of the read() or sendfile() buffer used when comparing file contents.
+The _size_ argument may be followed by the multiplicative suffixes KiB, MiB,
+etc.  The "iB" is optional, e.g., "K" has the same meaning as "KiB". The
+default is 8KiB for memcmp method and 1MiB for the other methods. The only
+memcmp method uses process memory for the buffer, other methods use zero-copy
+way and I/O operation is done in the kernel. The size may be altered on the fly
+to fit a number of cached content checksums.
+
+*-r*, *--cache-size* _size_::
+The size of the cache for content checksums. All non-memcmp methods calculate checksum for each
+file content block (see --io-size), these checksums are cached for the next comparison. The
+size is important for large files or a large sets of files of the same size. The default is
+10MiB.
 
 == ARGUMENTS
 
