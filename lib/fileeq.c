@@ -267,6 +267,8 @@ size_t ul_fileeq_set_size(struct ul_fileeq *eq, uint64_t filesiz,
 		filesiz = (filesiz + readsiz) / readsiz * readsiz;
 		/* calculate limits */
 		maxdigs = memsiz / digsiz;
+		if (maxdigs == 0)
+			maxdigs = 1;
 		nreads = filesiz / readsiz;
 		/* enlarge readsize for large files */
 		if (nreads > maxdigs)
