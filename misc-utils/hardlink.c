@@ -156,6 +156,7 @@ static struct options {
 	unsigned int dry_run:1;
 	uintmax_t min_size;
 	size_t io_size;
+	size_t cache_size;
 } opts = {
 	/* default setting */
 	.method = "sha256",
@@ -164,7 +165,8 @@ static struct options {
 	.respect_time = TRUE,
 	.respect_xattrs = FALSE,
 	.keep_oldest = FALSE,
-	.min_size = 1
+	.min_size = 1,
+	.cache_size = 10*1024*1024
 };
 
 /*
@@ -824,7 +826,9 @@ static void visitor(const void *nodep, const VISIT which, const int depth)
 		nnodes = count_nodes(master);
 		if (!nnodes)
 			continue;
-		memsiz = (10*1024*1024)/nnodes;
+
+		/* per-file cache size */
+		memsiz = opts.cache_size / nnodes;
 		/*                                filesiz,      readsiz,      memsiz */
 		ul_fileeq_set_size(&fileeq, master->st.st_size, opts.io_size, memsiz);
 
@@ -912,6 +916,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -i, --include <regex>      regular expression to include files/dirs\n"), out);
 	fputs(_(" -s, --minimum-size <size>  minimum size for files.\n"), out);
 	fputs(_(" -b, --io-size <size>       I/O buffer size for file reading (speedup, using more RAM)\n"), out);
+	fputs(_(" -r, --cache-size <size>    memory limit for cached file content data\n"), out);
 	fputs(_(" -c, --content              compare only file contents, same as -pot\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -928,7 +933,7 @@ static void __attribute__((__noreturn__)) usage(void)
  */
 static int parse_options(int argc, char *argv[])
 {
-	static const char optstr[] = "VhvnfpotXcmMOx:y:i:s:b:q";
+	static const char optstr[] = "VhvnfpotXcmMOx:y:i:r:s:b:q";
 	static const struct option long_options[] = {
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
@@ -949,6 +954,7 @@ static int parse_options(int argc, char *argv[])
 		{"io-size", required_argument, NULL, 'b'},
 		{"content", no_argument, NULL, 'c'},
 		{"quiet", no_argument, NULL, 'q'},
+		{"cache-size", required_argument, NULL, 'r'},
 		{NULL, 0, NULL, 0}
 	};
 	static const ul_excl_t excl[] = {
@@ -1014,6 +1020,9 @@ static int parse_options(int argc, char *argv[])
 			break;
 		case 's':
 			opts.min_size = strtosize_or_err(optarg, _("failed to parse size"));
+			break;
+		case 'r':
+			opts.cache_size = strtosize_or_err(optarg, _("failed to cache size"));
 			break;
 		case 'b':
 			opts.io_size = strtosize_or_err(optarg, _("failed to parse I/O size"));
