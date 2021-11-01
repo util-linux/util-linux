@@ -96,10 +96,6 @@ enum log_level {
 	JLOG_VERBOSE2
 };
 
-#ifndef DEF_SCAN_BUFSIZ
-# define DEF_SCAN_BUFSIZ 8192
-#endif
-
 /**
  * struct statistic - Statistics about the file
  * @started: Whether we are post command-line processing
@@ -159,7 +155,7 @@ static struct options {
 	unsigned int keep_oldest:1;
 	unsigned int dry_run:1;
 	uintmax_t min_size;
-	size_t bufsiz;
+	size_t io_size;
 } opts = {
 	/* default setting */
 	.method = "sha256",
@@ -168,8 +164,7 @@ static struct options {
 	.respect_time = TRUE,
 	.respect_xattrs = FALSE,
 	.keep_oldest = FALSE,
-	.min_size = 1,
-	.bufsiz = DEF_SCAN_BUFSIZ
+	.min_size = 1
 };
 
 /*
@@ -830,8 +825,8 @@ static void visitor(const void *nodep, const VISIT which, const int depth)
 		if (!nnodes)
 			continue;
 		memsiz = (10*1024*1024)/nnodes;
-		/*                                filesiz,      readsiz,   memsiz */
-		ul_fileeq_set_size(&fileeq, master->st.st_size, 1024*1024, memsiz);
+		/*                                filesiz,      readsiz,      memsiz */
+		ul_fileeq_set_size(&fileeq, master->st.st_size, opts.io_size, memsiz);
 
 		for (other = master->next; other != NULL; other = other->next) {
 			int eq;
@@ -916,7 +911,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -x, --exclude <regex>      regular expression to exclude files\n"), out);
 	fputs(_(" -i, --include <regex>      regular expression to include files/dirs\n"), out);
 	fputs(_(" -s, --minimum-size <size>  minimum size for files.\n"), out);
-	fputs(_(" -S, --buffer-size <size>   buffer size for file reading (speedup, using more RAM)\n"), out);
+	fputs(_(" -b, --io-size <size>       I/O buffer size for file reading (speedup, using more RAM)\n"), out);
 	fputs(_(" -c, --content              compare only file contents, same as -pot\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -933,7 +928,7 @@ static void __attribute__((__noreturn__)) usage(void)
  */
 static int parse_options(int argc, char *argv[])
 {
-	static const char optstr[] = "VhvnfpotXcmMOx:y:i:s:S:q";
+	static const char optstr[] = "VhvnfpotXcmMOx:y:i:s:b:q";
 	static const struct option long_options[] = {
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
@@ -951,7 +946,7 @@ static int parse_options(int argc, char *argv[])
 		{"include", required_argument, NULL, 'i'},
 		{"method", required_argument, NULL, 'y' },
 		{"minimum-size", required_argument, NULL, 's'},
-		{"buffer-size", required_argument, NULL, 'S'},
+		{"io-size", required_argument, NULL, 'b'},
 		{"content", no_argument, NULL, 'c'},
 		{"quiet", no_argument, NULL, 'q'},
 		{NULL, 0, NULL, 0}
@@ -1020,8 +1015,8 @@ static int parse_options(int argc, char *argv[])
 		case 's':
 			opts.min_size = strtosize_or_err(optarg, _("failed to parse size"));
 			break;
-		case 'S':
-			opts.bufsiz = strtosize_or_err(optarg, _("failed to parse size"));
+		case 'b':
+			opts.io_size = strtosize_or_err(optarg, _("failed to parse I/O size"));
 			break;
 		case 'h':
 			usage();
@@ -1089,6 +1084,14 @@ int main(int argc, char *argv[])
 	}
 	if (rc < 0)
 		err(EXIT_FAILURE, _("failed to initialize files comparior"));
+
+	/* defautl I/O size */
+	if (!opts.io_size) {
+		if (strcmp(opts.method, "memcmp") == 0)
+			opts.io_size = 8*1024;
+		else
+			opts.io_size = 1024*1024;
+	}
 
 	stats.started = TRUE;
 
