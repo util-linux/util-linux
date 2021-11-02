@@ -5,6 +5,7 @@ COMPILER="${COMPILER:?}"
 COMPILER_VERSION="${COMPILER_VERSION}"
 CFLAGS=(-O1 -g)
 CXXFLAGS=(-O1 -g)
+LDFLAGS=()
 
 if [[ "$COMPILER" == clang ]]; then
     CC="clang${COMPILER_VERSION:+-$COMPILER_VERSION}"
@@ -27,6 +28,12 @@ for phase in "${PHASES[@]}"; do
             --enable-werror
         )
 
+        if [[ "$COVERAGE" == "yes" ]]; then
+            CFLAGS+=(--coverage)
+            CXXFLAGS+=(--coverage)
+            LDFLAGS+=(--coverage)
+        fi
+
         if [[ "$SANITIZE" == "yes" ]]; then
             opts+=(--enable-asan --enable-ubsan)
             CFLAGS+=(-fno-omit-frame-pointer)
@@ -42,7 +49,7 @@ for phase in "${PHASES[@]}"; do
         sudo -E git clean -xdf
 
         ./autogen.sh
-        CC="$CC" CXX="$CXX" CFLAGS="${CFLAGS[@]}" CXXFLAGS="${CXXFLAGS[@]}" ./configure "${opts[@]}"
+        CC="$CC" CXX="$CXX" CFLAGS="${CFLAGS[@]}" CXXFLAGS="${CXXFLAGS[@]}" LDFLAGS="${LDFLAGS[@]}" ./configure "${opts[@]}"
         ;;
     MAKE)
         make -j
@@ -89,6 +96,13 @@ for phase in "${PHASES[@]}"; do
         fi
 
         ./tests/run.sh --show-diff
+
+        if [[ "$COVERAGE" == "yes" ]]; then
+            lcov --directory . --capture --initial --output-file coverage.info.initial
+            lcov --directory . --capture --output-file coverage.info.run --no-checksum --rc lcov_branch_coverage=1
+            lcov -a coverage.info.initial -a coverage.info.run --rc lcov_branch_coverage=1 -o coverage.info.raw
+            lcov --extract coverage.info.raw "$(pwd)/*" --rc lcov_branch_coverage=1 --output-file coverage.info
+        fi
         ;;
     DISTCHECK)
         make distcheck

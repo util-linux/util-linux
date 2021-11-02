@@ -18,6 +18,7 @@ PACKAGES=(
 	socat
 	asciidoctor
 	meson
+	lcov
 )
 
 PACKAGES_OPTIONAL=(

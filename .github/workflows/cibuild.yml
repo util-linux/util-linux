@@ -37,6 +37,28 @@ jobs:
         run: sudo -E .github/workflows/cibuild.sh CHECK
       - name: Make install
         run: .github/workflows/cibuild.sh INSTALL
+  coveralls:
+    runs-on: ubuntu-latest
+    if: github.repository == 'util-linux/util-linux'
+    env:
+      COMPILER: gcc
+      COMPILER_VERSION: 10
+      SANITIZE: no
+      COVERAGE: yes
+    steps:
+      - name: Repository checkout
+        uses: actions/checkout@v1
+      - name: Ubuntu setup
+        run: sudo -E .github/workflows/cibuild-setup-ubuntu.sh
+      - name: Configure & Make
+        run: .github/workflows/cibuild.sh CONFIGURE MAKE
+      - name: Check
+        run: sudo -E .github/workflows/cibuild.sh CHECK
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: ./coverage.info
   meson:
     needs: build
     runs-on: ubuntu-latest
