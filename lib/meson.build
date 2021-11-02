@@ -48,6 +48,7 @@ swapprober_c = files('swapprober.c')
 pty_session_c = files('pty-session.c')
 ismounted_c = files('ismounted.c')
 exec_shell_c = files('exec_shell.c')
+fileeq_c = files('fileeq.c')
 
 if LINUX
   lib_common_sources += '''

@@ -119,7 +119,8 @@ fincore_sources = files(
 hardlink_sources = files(
   'hardlink.c',
 ) + \
-  monotonic_c
+  monotonic_c + \
+  fileeq_c
 
 cal_sources = files(
   'cal.c',
