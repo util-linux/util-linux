@@ -192,7 +192,6 @@ static size_t nspaces;
 struct lsfd_control {
 	struct libscols_table *tb;		/* output */
 	struct list_head procs;			/* list of all processes */
-	const char *sysroot;			/* default is NULL */
 
 	unsigned int	noheadings : 1,
 			raw : 1,
@@ -1041,7 +1040,6 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -n, --noheadings      don't print headings\n"), out);
 	fputs(_(" -o, --output <list>   output columns\n"), out);
 	fputs(_(" -r, --raw             use raw output format\n"), out);
-	fputs(_("     --sysroot <dir>   use specified directory as system root\n"), out);
 	fputs(_(" -u, --notruncate      don't truncate text in columns\n"), out);
 	fputs(_(" -p, --pid  <pid(s)>   collect information only specified processes\n"), out);
 	fputs(_(" -Q, --filter <expr>   apply display filter\n"), out);
@@ -1109,8 +1107,7 @@ int main(int argc, char *argv[])
 	int n_pids = 0;
 
 	enum {
-		OPT_SYSROOT = CHAR_MAX + 1,
-		OPT_DEBUG_FILTER,
+		OPT_DEBUG_FILTER = CHAR_MAX + 1
 	};
 	static const struct option longopts[] = {
 		{ "noheadings", no_argument, NULL, 'n' },
@@ -1121,7 +1118,6 @@ int main(int argc, char *argv[])
 		{ "raw",        no_argument, NULL, 'r' },
 		{ "threads",    no_argument, NULL, 'l' },
 		{ "notruncate", no_argument, NULL, 'u' },
-		{ "sysroot",    required_argument, NULL, OPT_SYSROOT },
 		{ "pid",        required_argument, NULL, 'p' },
 		{ "filter",     required_argument, NULL, 'Q' },
 		{ "debug-filter",no_argument, NULL, OPT_DEBUG_FILTER },
@@ -1152,9 +1148,6 @@ int main(int argc, char *argv[])
 			break;
 		case 'u':
 			ctl.notrunc = 1;
-			break;
-		case OPT_SYSROOT:
-			ctl.sysroot = optarg;
 			break;
 		case 'p':
 			parse_pids(optarg, &pids, &n_pids);

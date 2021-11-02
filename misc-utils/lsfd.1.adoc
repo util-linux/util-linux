@@ -51,9 +51,6 @@ the format _+list_ (e.g., *lsfd -o +DELETED*).
 *-r*, *--raw*::
 Use raw output format.
 
-*--sysroot* _dir_::
-Use specified directory as system root.
-
 *--notruncate*::
 Don't truncate text in columns.
 
