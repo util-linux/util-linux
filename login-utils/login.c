@@ -583,9 +583,9 @@ static void init_tty(struct login_context *cxt)
 	tcsetattr(0, TCSAFLUSH, &tt);
 
 	/* Restore tty size */
-	if (ws.ws_row > 0 || ws.ws_col > 0)
-		if (ioctl(STDIN_FILENO, TIOCSWINSZ, &ws) < 0)
-			syslog(LOG_WARNING, _("TIOCSWINSZ ioctl failed: %m"));
+	if ((ws.ws_row > 0 || ws.ws_col > 0)
+	    && ioctl(STDIN_FILENO, TIOCSWINSZ, &ws) < 0)
+		syslog(LOG_WARNING, _("TIOCSWINSZ ioctl failed: %m"));
 }
 
 /*
