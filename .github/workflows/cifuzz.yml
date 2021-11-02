@@ -15,7 +15,7 @@ on:
 jobs:
   Fuzzing:
     runs-on: ubuntu-latest
-    if: github.repository == 'karelzak/util-linux'
+    if: github.repository == 'util-linux/util-linux'
     strategy:
       fail-fast: false
       matrix:
