@@ -135,7 +135,7 @@ Name of the file.
 NLINK <__number__>::
 Link count.
 
-OWNER <_string_>::
+OWNER <__string__>::
 Owner of the file.
 
 PARTITION <__string__>::
