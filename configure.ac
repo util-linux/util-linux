@@ -1804,22 +1804,29 @@ UL_BUILD_INIT([chmem])
 UL_REQUIRES_LINUX([chmem])
 AM_CONDITIONAL([BUILD_CHMEM], [test "x$build_chmem" = xyes])
 
-UL_BUILD_INIT([ipcmk], [yes])
-AM_CONDITIONAL([BUILD_IPCMK], [test "x$build_ipcmk" = xyes])
 
+AC_ARG_ENABLE([ipcmk],
+  AS_HELP_STRING([--disable-ipcmk], [do not build ipcmk]),
+  [], [UL_DEFAULT_ENABLE([ipcmk], [check])]
+)
+UL_BUILD_INIT([ipcmk])
+UL_EXCLUDE_ARCH([ipcmk], [*darwin*])
+AM_CONDITIONAL([BUILD_IPCMK], [test "x$build_ipcmk" = xyes])
 
 AC_ARG_ENABLE([ipcrm],
   AS_HELP_STRING([--disable-ipcrm], [do not build ipcrm]),
-  [], [UL_DEFAULT_ENABLE([ipcrm], [yes])]
+  [], [UL_DEFAULT_ENABLE([ipcrm], [check])]
 )
 UL_BUILD_INIT([ipcrm])
+UL_EXCLUDE_ARCH([ipcrm], [*darwin*])
 AM_CONDITIONAL([BUILD_IPCRM], [test "x$build_ipcrm" = xyes])
 
 AC_ARG_ENABLE([ipcs],
   AS_HELP_STRING([--disable-ipcs], [do not build ipcs]),
-  [], [UL_DEFAULT_ENABLE([ipcs], [yes])]
+  [], [UL_DEFAULT_ENABLE([ipcs], [check])]
 )
 UL_BUILD_INIT([ipcs])
+UL_EXCLUDE_ARCH([ipcs], [*darwin*])
 AM_CONDITIONAL([BUILD_IPCS], [test "x$build_ipcs" = xyes])
 
 
