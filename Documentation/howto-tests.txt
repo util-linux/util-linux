@@ -139,7 +139,7 @@ lgtm CI - automatically executed security code analysis
 
 Coverity Scan
 
-    URL: https://scan.coverity.com/projects/util-linux-util-linux
+    URL: https://scan.coverity.com/projects/karelzak-util-linux
 
 Fossies codespell report
 

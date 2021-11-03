@@ -1,0 +1,24 @@
+---
+name: Coverity
+
+on:
+  schedule:
+    # send data to Coverity daily at midnight
+    - cron:  '0 0 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.repository == 'util-linux/util-linux'
+    env:
+      COMPILER: gcc
+      COVERITY_SCAN_TOKEN: "${{ secrets.COVERITY_SCAN_TOKEN }}"
+    steps:
+      - name: Repository checkout
+        uses: actions/checkout@v1
+      - name: Ubuntu setup
+        run: sudo -E .github/workflows/cibuild-setup-ubuntu.sh
+      - name: Configure
+        run: .github/workflows/cibuild.sh CONFIGURE
+      - name: Coverity
+        run: .github/workflows/cibuild.sh COVERITY
