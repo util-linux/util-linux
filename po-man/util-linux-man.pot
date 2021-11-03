@@ -26,7 +26,7 @@ msgstr ""
 #: ../man-common/bugreports.adoc:3
 msgid ""
 "For bug reports, use the issue tracker at "
-"https://github.com/karelzak/util-linux/issues."
+"https://github.com/util-linux/util-linux/issues."
 msgstr ""
 
 #. type: Title ==

@@ -6,7 +6,7 @@ all
 
  - use gettext() for column names on output in libsmartcols based tools and
    accept trantated as well as original names on command line (lsblk -o NAME,SIZE).
-   https://github.com/karelzak/util-linux/issues/1291
+   https://github.com/util-linux/util-linux/issues/1291
 
 tests
 -----
@@ -21,7 +21,7 @@ fstrim
   - "fstrim --fstab" uses root= from /proc/cmdline to get root FS when it's missing
     in fstab file. This is fragile (due to missing root= or the root FS is not
     accessible). The best seems to parse mountinfo and use mnt_table_get_root_fs()
-    as a fallback solution.  https://github.com/karelzak/util-linux/issues/1266.
+    as a fallback solution.  https://github.com/util-linux/util-linux/issues/1266.
 
 script (lib/pty-session.c)
 --------------------------
@@ -37,14 +37,14 @@ rev
 ---
   - support huge input lines (for example read input by small fixed buffer
     rather than try allocate all buffer for a whole line)
-    see: https://github.com/karelzak/util-linux/issues/972
+    see: https://github.com/util-linux/util-linux/issues/972
 
 col
 ---
   - use unsigned sizes for columns and lines
   - check for limits to avoid segfaults
   - make it more robust
-  https://github.com/karelzak/util-linux/issues/749
+  https://github.com/util-linux/util-linux/issues/749
 
 cal
 ---
@@ -56,7 +56,7 @@ lscpu
   - add "Boost/Turbo: true|false" based on /sys/devices/system/cpu/intel_pstate/no_turbo and
     /sys/devices/system/cpu/cpufreq/boost
 
-  - add --freq output to visualise CPU use, see https://github.com/karelzak/util-linux/issues/1314
+  - add --freq output to visualise CPU use, see https://github.com/util-linux/util-linux/issues/1314
 
   - read cpuid and uname information from file if --sysroot is specified, then
     we can prepare regression tests completely independent on hw and architecture.
@@ -89,13 +89,13 @@ libmount (mount/umount)
    The solution is to use pipe(), keep output from helper in memory and return it later
    by mnt_context_get_excode() (or mnt_context_get_helper_output(), etc.). This feature
    should be optional and disabled by default.
-   see: https://github.com/karelzak/util-linux/issues/1208
+   see: https://github.com/util-linux/util-linux/issues/1208
 
  - add --onlyonce to force mount(8) to check if mountpoint is already used. Now
    "already mounted" detection is used for --all only. The problem is if you
    call "mount <mountpoint>" more than once for in fstab defined tmpfs (or network
    filesystem etc.). In this case kernel does not return EBUSY, but a new instance
-   of the FS is created. https://github.com/karelzak/util-linux/issues/448
+   of the FS is created. https://github.com/util-linux/util-linux/issues/448
    (... just idea, maybe wrong idea)
 
 partx
@@ -110,7 +110,7 @@ getopt
   Currently, it outputs -- for every option it doesn't recognize but leaving the
   option as it is could beneficial wrapper scripts which could then pass the
   options they don't recognize as they are to the command they are wrapping.
-  https://github.com/karelzak/util-linux/issues/701
+  https://github.com/util-linux/util-linux/issues/701
 
 docs
 ----
@@ -148,10 +148,10 @@ libblkid
 
  - extend ZFS proper to scan for more uberblocks if BLKID_SUBLKS_MAGIC flag is set.
    This solution will make wipefs(8) more usable as ZFS is extremely variable with
-   additional root blocks locations. See  https://github.com/karelzak/util-linux/issues/1228
+   additional root blocks locations. See  https://github.com/util-linux/util-linux/issues/1228
 
  - (!) add support for BitLocker Drive Encryption
-   https://github.com/karelzak/util-linux/issues/617
+   https://github.com/util-linux/util-linux/issues/617
    https://github.com/libyal/libbde/blob/master/documentation/BitLocker%20Drive%20Encryption%20(BDE)%20format.asciidoc
 
  - (!) add support for dasd PT (used for example on s390)
@@ -166,13 +166,13 @@ libfdisk
    * add "nested-label:" block to sfdisk --dump
    * add "nested-partitiontable" to sfdisk --JSON
    * support nested labels parsing from dump
-   see https://github.com/karelzak/util-linux/issues/850
+   see https://github.com/util-linux/util-linux/issues/850
 
 sfdisk
 ------
 
  - don't backup PT in interactive mode before write to the devices is requested,
-   see https://github.com/karelzak/util-linux/issues/852
+   see https://github.com/util-linux/util-linux/issues/852
 
 misc
 ----

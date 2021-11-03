@@ -14,7 +14,7 @@
       util-linux is a random collection of Linux utilities.
       Note that in years 2006-2010 this project used the name "util-linux-ng".
     </description>
-    <bug-database rdf:resource="https://github.com/karelzak/util-linux/issues" />
+    <bug-database rdf:resource="https://github.com/util-linux/util-linux/issues" />
     <mailing-list rdf:resource="http://vger.kernel.org/vger-lists.html#util-linux" />
     <download-page rdf:resource="https://www.kernel.org/pub/linux/utils/util-linux/" />
     <programming-language>C</programming-language>

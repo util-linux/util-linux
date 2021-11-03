@@ -27,7 +27,7 @@ ts_check_test_command "$TS_CMD_HWCLOCK"
 
 ts_skip_nonroot
 if [ "$TRAVIS_DIST" == "precise" ]; then
-	ts_skip "https://github.com/karelzak/util-linux/issues/1082"
+	ts_skip "https://github.com/util-linux/util-linux/issues/1082"
 fi
 if [ "$GITHUB_ACTIONS" == "true" ]; then
 	ts_skip "virtual machine"

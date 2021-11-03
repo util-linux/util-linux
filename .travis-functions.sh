@@ -32,7 +32,7 @@ DUMP_CONFIG_LOG="short"
 
 # Coverity-related settings
 COVERITY_SCAN_TOOL_BASE="/tmp/coverity-scan-analysis"
-COVERITY_SCAN_PROJECT_NAME="karelzak/util-linux"
+COVERITY_SCAN_PROJECT_NAME="util-linux/util-linux"
 
 # workaround ugly warning on travis OSX,
 # see https://github.com/direnv/direnv/issues/210
@@ -74,7 +74,7 @@ function xconfigure
 function make_checkusage
 {
 	local tmp
-	# memory leaks are ignored here. See https://github.com/karelzak/util-linux/issues/1077
+	# memory leaks are ignored here. See https://github.com/util-linux/util-linux/issues/1077
 	if ! tmp=$(ASAN_OPTIONS="$ASAN_OPTIONS:detect_leaks=0" $MAKE checkusage 2>&1) || test -n "$tmp"; then
 		echo "$tmp"
 		echo "make checkusage failed" >&2

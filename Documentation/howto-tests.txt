@@ -126,7 +126,7 @@ External services
 
 Travis CI - automatically executed for all github commits.
 
-    URL: https://travis-ci.org/karelzak/util-linux/
+    URL: https://travis-ci.org/util-linux/util-linux/
 
     See .travis.yml for more details.
 
@@ -135,11 +135,11 @@ Travis CI - automatically executed for all github commits.
 
 lgtm CI - automatically executed security code analysis
 
-    URL: https://lgtm.com/projects/g/karelzak/util-linux/
+    URL: https://lgtm.com/projects/g/util-linux/util-linux/
 
 Coverity Scan
 
-    URL: https://scan.coverity.com/projects/karelzak-util-linux
+    URL: https://scan.coverity.com/projects/util-linux-util-linux
 
 Fossies codespell report
 
@@ -154,4 +154,4 @@ OSS-Fuzz
 CIFuzz
 
     URL: https://google.github.io/oss-fuzz/getting-started/continuous-integration/
-    URL: https://github.com/karelzak/util-linux/actions?query=workflow%3ACIFuzz
+    URL: https://github.com/util-linux/util-linux/actions?query=workflow%3ACIFuzz

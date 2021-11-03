@@ -34,7 +34,7 @@ IRC CHANNEL:
 BUG REPORTING:
 
       E-MAIL: util-linux@vger.kernel.org
-      Web:    https://github.com/karelzak/util-linux/issues
+      Web:    https://github.com/util-linux/util-linux/issues
 
       Bug reports with sensitive or private information: Karel Zak <kzak@redhat.com>
 
@@ -74,11 +74,11 @@ SOURCE CODE:
 	  git clone git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git
 
     Backup repository:
-	  git clone git://github.com/karelzak/util-linux.git
+	  git clone git://github.com/util-linux/util-linux.git
 
     Web interfaces:
 	  http://git.kernel.org/cgit/utils/util-linux/util-linux.git
-	  https://github.com/karelzak/util-linux
+	  https://github.com/util-linux/util-linux
 
       Note: the GitHub repository may contain temporary development branches too.
 

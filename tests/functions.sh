@@ -537,7 +537,7 @@ function ts_gen_diff {
 		ts_gen_diff_from $TS_EXPECTED_ERR $TS_ERRLOG $TS_DIFF.err
 		status_err=$?
 	else
-		# TS_EXIT_CODE is empty when tests aren't run with ts_run: https://github.com/karelzak/util-linux/issues/1072
+		# TS_EXIT_CODE is empty when tests aren't run with ts_run: https://github.com/util-linux/util-linux/issues/1072
 		# or when ts_finalize is called right after ts_finalize_subtest.
 		exit_code="$(cat $TS_EXIT_CODE)"
 		if [ -z "$exit_code" ]; then

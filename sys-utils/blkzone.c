@@ -273,7 +273,7 @@ static int blkzone_report(struct blkzone_control *ctl)
 		for (i = 0; i < zi->nr_zones; i++) {
 /*
  * blk_zone_report hasn't been packed since https://github.com/torvalds/linux/commit/b3e7e7d2d668de0102264302a4d10dd9d4438a42
- * was merged. See https://github.com/karelzak/util-linux/issues/1083
+ * was merged. See https://github.com/util-linux/util-linux/issues/1083
  */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Waddress-of-packed-member"
