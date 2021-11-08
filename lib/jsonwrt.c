@@ -109,6 +109,11 @@ void ul_jsonwrt_init(struct ul_jsonwrt *fmt, FILE *out, int indent)
 	fmt->after_close = 0;
 }
 
+int ul_jsonwrt_is_ready(struct ul_jsonwrt *fmt)
+{
+	return fmt->out == NULL ? 0 : 1;
+}
+
 void ul_jsonwrt_indent(struct ul_jsonwrt *fmt)
 {
 	int i;
