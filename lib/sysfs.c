@@ -210,9 +210,10 @@ int sysfs_blkdev_is_partition_dirent(DIR *dir, struct dirent *d, const char *par
 	    d->d_type != DT_UNKNOWN)
 		return 0;
 #endif
+	size_t len = 0;
+
 	if (parent_name) {
 		const char *p = parent_name;
-		size_t len;
 
 		/* /dev/sda --> "sda" */
 		if (*parent_name == '/') {
@@ -223,14 +224,15 @@ int sysfs_blkdev_is_partition_dirent(DIR *dir, struct dirent *d, const char *par
 		}
 
 		len = strlen(p);
-		if (strlen(d->d_name) <= len)
-			return 0;
+		if ((strlen(d->d_name) <= len) || (strncmp(p, d->d_name, len) != 0))
+			len = 0;
+	}
 
+	if (len > 0) {
 		/* partitions subdir name is
 		 *	"<parent>[:digit:]" or "<parent>p[:digit:]"
 		 */
-		return strncmp(p, d->d_name, len) == 0 &&
-		       ((*(d->d_name + len) == 'p' && isdigit(*(d->d_name + len + 1)))
+		return ((*(d->d_name + len) == 'p' && isdigit(*(d->d_name + len + 1)))
 			|| isdigit(*(d->d_name + len)));
 	}
 
