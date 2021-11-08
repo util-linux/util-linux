@@ -418,7 +418,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 		warnx(_("failed to get start of the old partition; ignoring --move-data"));
 	else if (fdisk_partition_get_start(pa) == fdisk_partition_get_start(orig_pa))
 		warnx(_("start of the partition has not been moved; ignoring --move-data"));
-	else if (fdisk_partition_get_size(orig_pa) < fdisk_partition_get_size(pa))
+	else if (fdisk_partition_get_size(orig_pa) > fdisk_partition_get_size(pa))
 		warnx(_("new partition is smaller than original; ignoring --move-data"));
 	else
 		ok = 1;
