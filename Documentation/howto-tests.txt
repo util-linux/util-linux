@@ -124,14 +124,9 @@ TS_OPT_testdir_[testscript_]memcheck="<yes|no>"
 External services
 -----------------
 
-Travis CI - automatically executed for all github commits.
+Coveralls coverage reports
 
-    URL: https://travis-ci.org/util-linux/util-linux/
-
-    See .travis.yml for more details.
-
-    We require "sudo" to install additional stuff and to run the tests with
-    UID=0, it means that tests are executed on travis "legacy infrastructure".
+    URL: https://coveralls.io/github/util-linux/util-linux
 
 lgtm CI - automatically executed security code analysis
 
