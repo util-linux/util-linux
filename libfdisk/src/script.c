@@ -814,6 +814,36 @@ static int parse_line_header(struct fdisk_script *dp, char *s)
 	return fdisk_script_set_header(dp, name, value);
 }
 
+static int partno_from_devname(char *s)
+{
+	intmax_t num;
+	size_t sz;
+	char *end, *p;
+
+	if (!s || !*s)
+		return -1;
+
+	sz = rtrim_whitespace((unsigned char *)s);
+	end = p = s + sz;
+
+	while (p > s && isdigit(*(p - 1)))
+		p--;
+	if (p == end)
+		return -1;
+	end = NULL;
+	errno = 0;
+	num = strtol(p, &end, 10);
+	if (errno || !end || p == end)
+		return -1;
+
+	if (num < INT32_MIN || num > INT32_MAX) {
+		errno = ERANGE;
+		return -1;
+	}
+	return num - 1;
+}
+
+
 /* returns zero terminated string with next token and @str is updated */
 static char *next_token(char **str)
 {
@@ -878,18 +908,32 @@ static char *next_token(char **str)
 	return tk_begin;
 }
 
-static int next_number(char **s, uint64_t *num, int *power)
+/*
+ * "[-]<,;>"
+ * "[ ]<,;>"
+ * "- <value>"
+ */
+static int is_default_value(char **str)
 {
-	char *tk;
-	int rc = -EINVAL;
+	char *p = (char *) skip_blank(*str);
+	int blank = 0;
 
-	assert(num);
-	assert(s);
+	if (*p == '-') {
+		char *x = ++p;
+		p = (char *) skip_blank(x);
+		blank = x < p;			/* "- " */
+	}
 
-	tk = next_token(s);
-	if (tk)
-		rc = parse_size(tk, (uintmax_t *) num, power);
-	return rc;
+	if (*p == ';' || *p == ',') {
+		*str = ++p;
+		return 1;
+	}
+	if (*p == '\0' || blank) {
+		*str = p;
+		return 1;
+	}
+
+	return 0;
 }
 
 static int next_string(char **s, char **str)
@@ -910,34 +954,117 @@ static int next_string(char **s, char **str)
 	return rc;
 }
 
-static int partno_from_devname(char *s)
+static int skip_optional_sign(char **str)
 {
-	intmax_t num;
-	size_t sz;
-	char *end, *p;
+	char *p = (char *) skip_blank(*str);
 
-	if (!s || !*s)
-		return -1;
-
-	sz = rtrim_whitespace((unsigned char *)s);
-	end = p = s + sz;
-
-	while (p > s && isdigit(*(p - 1)))
-		p--;
-	if (p == end)
-		return -1;
-	end = NULL;
-	errno = 0;
-	num = strtol(p, &end, 10);
-	if (errno || !end || p == end)
-		return -1;
-
-	if (num < INT32_MIN || num > INT32_MAX) {
-		errno = ERANGE;
-		return -1;
+	if (*p == '-' || *p == '+') {
+		*str = p+1;
+		return *p;
 	}
-	return num - 1;
+	return 0;
 }
+
+static int parse_start_value(struct fdisk_script *dp, struct fdisk_partition *pa, char **str)
+{
+	char *tk;
+	int rc = 0;
+
+	assert(str);
+
+	if (is_default_value(str)) {
+		fdisk_partition_start_follow_default(pa, 1);
+		return 0;
+	}
+
+	tk = next_token(str);
+	if (!tk)
+		return -EINVAL;
+
+	if (strcmp(tk, "+") == 0) {
+		fdisk_partition_start_follow_default(pa, 1);
+		pa->movestart = FDISK_MOVE_DOWN;
+	} else {
+		int pow = 0, sign = skip_optional_sign(&tk);
+		uint64_t num;
+
+		rc = parse_size(tk, (uintmax_t *) &num, &pow);
+		if (!rc) {
+			if (pow) {	/* specified as <num><suffix> */
+				if (!dp->cxt->sector_size) {
+					rc = -EINVAL;
+					goto done;
+				}
+				num /= dp->cxt->sector_size;
+			}
+			fdisk_partition_set_start(pa, num);
+
+			pa->movestart = sign == '-' ? FDISK_MOVE_DOWN :
+					sign == '+' ? FDISK_MOVE_UP :
+						      FDISK_MOVE_NONE;
+		}
+		fdisk_partition_start_follow_default(pa, 0);
+	}
+
+done:
+	DBG(SCRIPT, ul_debugobj(dp, "  start parse result: rc=%d, move=%s, start=%ju, default=%s",
+				rc, pa->movestart == FDISK_MOVE_DOWN ? "down" :
+				    pa->movestart == FDISK_MOVE_UP ? "up" : "none",
+				    pa->start,
+				    pa->start_follow_default ? "on" : "off"));
+	return rc;
+}
+
+static int parse_size_value(struct fdisk_script *dp, struct fdisk_partition *pa, char **str)
+{
+	char *tk;
+	int rc = 0;
+
+	if (is_default_value(str)) {
+		fdisk_partition_end_follow_default(pa, 1);
+		return 0;
+	}
+
+	tk = next_token(str);
+	if (!tk)
+		return -EINVAL;
+
+	if (strcmp(tk, "+") == 0) {
+		fdisk_partition_end_follow_default(pa, 1);
+		pa->resize = FDISK_RESIZE_ENLARGE;
+	} else {
+		/* '[+-]<number>[<suffix] */
+		int pow = 0, sign = skip_optional_sign(&tk);
+		uint64_t num;
+
+		rc = parse_size(tk, (uintmax_t *) &num, &pow);
+		if (!rc) {
+			if (pow) { /* specified as <size><suffix> */
+				if (!dp->cxt->sector_size) {
+					rc = -EINVAL;
+					goto done;
+				}
+				num /= dp->cxt->sector_size;
+			} else	 /* specified as number of sectors */
+				fdisk_partition_size_explicit(pa, 1);
+
+			fdisk_partition_set_size(pa, num);
+			pa->resize = sign == '-' ? FDISK_RESIZE_REDUCE :
+				     sign == '+' ? FDISK_RESIZE_ENLARGE :
+						   FDISK_RESIZE_NONE;
+		}
+		fdisk_partition_end_follow_default(pa, 0);
+	}
+
+done:
+	DBG(SCRIPT, ul_debugobj(dp, "  size parse result: rc=%d, move=%s, size=%ju, default=%s",
+				rc, pa->resize == FDISK_RESIZE_REDUCE ? "reduce" :
+				    pa->resize == FDISK_RESIZE_ENLARGE ? "enlage" : "none",
+				    pa->size,
+				    pa->end_follow_default ? "on" : "off"));
+	return rc;
+}
+
 
 #define FDISK_SCRIPT_PARTTYPE_PARSE_FLAGS \
 	(FDISK_PARTTYPE_PARSE_DATA | FDISK_PARTTYPE_PARSE_DATALAST | \
@@ -953,7 +1080,6 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 	char *p, *x;
 	struct fdisk_partition *pa;
 	int rc = 0;
-	uint64_t num;
 	int pno;
 
 	assert(dp);
@@ -991,44 +1117,12 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 		p = (char *) skip_blank(p);
 
 		if (!strncasecmp(p, "start=", 6)) {
-			int pow = 0;
-
 			p += 6;
-			if (!*p)
-				continue;
+			rc = parse_start_value(dp, pa, &p);
 
-			rc = next_number(&p, &num, &pow);
-			if (!rc) {
-				if (pow) {	/* specified as <num><suffix> */
-					if (!dp->cxt->sector_size) {
-						rc = -EINVAL;
-						break;
-					}
-					num /= dp->cxt->sector_size;
-				}
-				fdisk_partition_set_start(pa, num);
-				fdisk_partition_start_follow_default(pa, 0);
-			}
 		} else if (!strncasecmp(p, "size=", 5)) {
-			int pow = 0;
-
 			p += 5;
-			if (!*p)
-				continue;
-
-			rc = next_number(&p, &num, &pow);
-			if (!rc) {
-				if (pow) {	/* specified as <num><suffix> */
-					if (!dp->cxt->sector_size) {
-						rc = -EINVAL;
-						break;
-					}
-					num /= dp->cxt->sector_size;
-				} else		/* specified as number of sectors */
-					fdisk_partition_size_explicit(pa, 1);
-				fdisk_partition_set_size(pa, num);
-				fdisk_partition_end_follow_default(pa, 0);
-			}
+			rc = parse_size_value(dp, pa, &p);
 
 		} else if (!strncasecmp(p, "bootable", 8)) {
 			/* we use next_token() to skip possible extra space */
@@ -1088,11 +1182,6 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 	return rc;
 }
 
-#define TK_PLUS		1
-#define TK_MINUS	-1
-
-#define alone_sign(_sign, _p)	(_sign && (*_p == '\0' || isblank(*_p)))
-
 /* simple format:
  * <start>, <size>, <type>, <bootable>, ...
  */
@@ -1117,84 +1206,35 @@ static int parse_line_valcommas(struct fdisk_script *dp, char *s)
 	fdisk_partition_partno_follow_default(pa, 1);
 
 	while (rc == 0 && p && *p) {
-		uint64_t num;
 		char *begin;
-		int sign = 0;
 
 		p = (char *) skip_blank(p);
 		item++;
-
-		if (item != ITEM_BOOTABLE) {
-			sign = *p == '-' ? TK_MINUS : *p == '+' ? TK_PLUS : 0;
-			if (sign)
-				p++;
-		}
 
 		DBG(SCRIPT, ul_debugobj(dp, " parsing item %d ('%s')", item, p));
 		begin = p;
 
 		switch (item) {
 		case ITEM_START:
-			if (*p == ',' || *p == ';' || alone_sign(sign, p))
-				fdisk_partition_start_follow_default(pa, 1);
-			else {
-				int pow = 0;
-
-				rc = next_number(&p, &num, &pow);
-				if (!rc) {
-					if (pow) {	/* specified as <num><suffix> */
-						if (!dp->cxt->sector_size) {
-							rc = -EINVAL;
-							break;
-						}
-						num /= dp->cxt->sector_size;
-					}
-					fdisk_partition_set_start(pa, num);
-					pa->movestart = sign == TK_MINUS ? FDISK_MOVE_DOWN :
-							sign == TK_PLUS  ? FDISK_MOVE_UP :
-							FDISK_MOVE_NONE;
-				}
-				fdisk_partition_start_follow_default(pa, 0);
-			}
+			rc = parse_start_value(dp, pa, &p);
 			break;
 		case ITEM_SIZE:
-			if (*p == ',' || *p == ';' || alone_sign(sign, p)) {
-				fdisk_partition_end_follow_default(pa, 1);
-				if (sign == TK_PLUS)
-					/* '+' alone means use all possible space, '-' alone means nothing */
-					pa->resize = FDISK_RESIZE_ENLARGE;
-			} else {
-				int pow = 0;
-				rc = next_number(&p, &num, &pow);
-				if (!rc) {
-					if (pow) { /* specified as <size><suffix> */
-						if (!dp->cxt->sector_size) {
-							rc = -EINVAL;
-							break;
-						}
-						num /= dp->cxt->sector_size;
-					} else	 /* specified as number of sectors */
-						fdisk_partition_size_explicit(pa, 1);
-					fdisk_partition_set_size(pa, num);
-					pa->resize = sign == TK_MINUS ? FDISK_RESIZE_REDUCE :
-						     sign == TK_PLUS  ? FDISK_RESIZE_ENLARGE :
-							FDISK_RESIZE_NONE;
-				}
-				fdisk_partition_end_follow_default(pa, 0);
-			}
+			rc = parse_size_value(dp, pa, &p);
 			break;
 		case ITEM_TYPE:
 		{
 			char *str = NULL;
 
-			if (*p == ',' || *p == ';' || alone_sign(sign, p))
+			fdisk_unref_parttype(pa->type);
+			pa->type = NULL;
+
+			if (*p == ',' || *p == ';' || is_default_value(&p))
 				break;	/* use default type */
 
 			rc = next_string(&p, &str);
 			if (rc)
 				break;
 
-			fdisk_unref_parttype(pa->type);
 			pa->type = fdisk_label_advparse_parttype(script_get_label(dp),
 						str, FDISK_SCRIPT_PARTTYPE_PARSE_FLAGS);
 			free(str);
