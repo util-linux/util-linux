@@ -69,6 +69,9 @@ will print messages from system daemons only. For all supported facilities see t
 *-H*, *--human*::
 Enable human-readable output. See also *--color*, *--reltime* and *--nopager*.
 
+*-J*, *--json*::
+Use JSON output format. The time output format is in "sec.usec" format only, log priority level is not decoded by default (use *--decode* to split into facility and priority), the other options to control the output format or time format are silently ignored.
+
 *-k*, *--kernel*::
 Print kernel messages.
 
