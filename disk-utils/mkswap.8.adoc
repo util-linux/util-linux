@@ -46,6 +46,9 @@ Go ahead even if the command is stupid. This allows the creation of a swap area 
 +
 Also, without this option, *mkswap* will refuse to erase the first block on a device with a partition table.
 
+*-q*, *--quiet*::
+Suppress output and warning messages.
+
 *-L*, *--label* _label_::
 Specify a _label_ for the device, to allow *swapon*(8) by label.
 

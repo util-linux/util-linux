@@ -41,6 +41,7 @@
 #include "c.h"
 #include "closestream.h"
 #include "ismounted.h"
+#include "optutils.h"
 
 #ifdef HAVE_LIBUUID
 # include <uuid.h>
@@ -76,6 +77,7 @@ struct mkswap_control {
 
 	unsigned int		check:1,	/* --check */
 				verbose:1,      /* --verbose */
+				quiet:1,        /* --quiet */
 				force:1;	/* --force */
 };
 
@@ -89,7 +91,7 @@ static void init_signature_page(struct mkswap_control *ctl)
 			errx(EXIT_FAILURE,
 			     _("Bad user-specified page size %u"),
 			       ctl->user_pagesize);
-		if (ctl->user_pagesize != kernel_pagesize)
+		if (!ctl->quiet && ctl->user_pagesize != kernel_pagesize)
 			warnx(_("Using user-specified page size %d, "
 				"instead of the system value %d"),
 				ctl->user_pagesize, kernel_pagesize);
@@ -130,12 +132,13 @@ static void set_uuid_and_label(const struct mkswap_control *ctl)
 	if (ctl->opt_label) {
 		xstrncpy(ctl->hdr->volume_name,
 			 ctl->opt_label, sizeof(ctl->hdr->volume_name));
-		if (strlen(ctl->opt_label) > strlen(ctl->hdr->volume_name))
+		if (!ctl->quiet
+		    && strlen(ctl->opt_label) > strlen(ctl->hdr->volume_name))
 			warnx(_("Label was truncated."));
 	}
 
 	/* report results */
-	if (ctl->uuid || ctl->opt_label) {
+	if (!ctl->quiet && (ctl->uuid || ctl->opt_label)) {
 		if (ctl->opt_label)
 			printf("LABEL=%s, ", ctl->hdr->volume_name);
 		else
@@ -164,6 +167,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -c, --check               check bad blocks before creating the swap area\n"), out);
 	fputs(_(" -f, --force               allow swap size area be larger than device\n"), out);
+	fputs(_(" -q, --quiet               suppress output and warning messages\n"), out);
 	fputs(_(" -p, --pagesize SIZE       specify page size in bytes\n"), out);
 	fputs(_(" -L, --label LABEL         specify label\n"), out);
 	fputs(_(" -v, --swapversion NUM     specify swap-space version number\n"), out);
@@ -214,7 +218,9 @@ static void check_blocks(struct mkswap_control *ctl)
 			page_bad(ctl, current_page);
 		current_page++;
 	}
-	printf(P_("%lu bad page\n", "%lu bad pages\n", ctl->nbadpages), ctl->nbadpages);
+
+	if (!ctl->quiet)
+		printf(P_("%lu bad page\n", "%lu bad pages\n", ctl->nbadpages), ctl->nbadpages);
 	free(buffer);
 }
 
@@ -286,7 +292,7 @@ static void check_extents(struct mkswap_control *ctl)
 				warn_extent(ctl, _("data inline extent at offset %ju"),
 						(uintmax_t) e->fe_logical);
 			if (e->fe_flags & FIEMAP_EXTENT_SHARED)
-				 warn_extent(ctl, _("shared extent at offset %ju"),
+				warn_extent(ctl, _("shared extent at offset %ju"),
 						(uintmax_t) e->fe_logical);
 			if (e->fe_flags & FIEMAP_EXTENT_DELALLOC)
 				warn_extent(ctl, _("unallocated extent at offset %ju"),
@@ -352,8 +358,9 @@ static void open_device(struct mkswap_control *ctl)
 
 	if (ctl->check && S_ISREG(ctl->devstat.st_mode)) {
 		ctl->check = 0;
-		warnx(_("warning: checking bad blocks from swap file is not supported: %s"),
-		       ctl->devname);
+		if (!ctl->quiet)
+			warnx(_("warning: checking bad blocks from swap file is not supported: %s"),
+			       ctl->devname);
 	}
 }
 
@@ -410,12 +417,13 @@ static void wipe_device(struct mkswap_control *ctl)
 		while (blkid_do_probe(pr) == 0) {
 			const char *data = NULL;
 
-			if (blkid_probe_lookup_value(pr, "TYPE", &data, NULL) == 0 && data)
+			if (!ctl->quiet
+			    && blkid_probe_lookup_value(pr, "TYPE", &data, NULL) == 0 && data)
 				warnx(_("%s: warning: wiping old %s signature."), ctl->devname, data);
 			blkid_do_wipe(pr, 0);
 		}
 #endif
-	} else {
+	} else if (!ctl->quiet) {
 		warnx(_("%s: warning: don't erase bootbits sectors"),
 			ctl->devname);
 		if (type)
@@ -466,6 +474,7 @@ int main(int argc, char **argv)
 	static const struct option longopts[] = {
 		{ "check",       no_argument,       NULL, 'c' },
 		{ "force",       no_argument,       NULL, 'f' },
+		{ "quiet",       no_argument,       NULL, 'q' },
 		{ "pagesize",    required_argument, NULL, 'p' },
 		{ "label",       required_argument, NULL, 'L' },
 		{ "swapversion", required_argument, NULL, 'v' },
@@ -477,12 +486,21 @@ int main(int argc, char **argv)
 		{ NULL,          0, NULL, 0 }
 	};
 
+	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */
+		{ 'c', 'q' },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while((c = getopt_long(argc, argv, "cfp:L:v:U:Vh", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "cfp:qL:v:U:Vh", longopts, NULL)) != -1) {
+
+		err_exclusive_options(c, longopts, excl, excl_st);
+
 		switch (c) {
 		case 'c':
 			ctl.check = 1;
@@ -492,6 +510,9 @@ int main(int argc, char **argv)
 			break;
 		case 'p':
 			ctl.user_pagesize = strtou32_or_err(optarg, _("parsing page size failed"));
+			break;
+		case 'q':
+			ctl.quiet = 1;
 			break;
 		case 'L':
 			ctl.opt_label = optarg;
@@ -584,8 +605,9 @@ int main(int argc, char **argv)
 	if (ctl.npages > UINT32_MAX) {
 		/* true when swap is bigger than 17.59 terabytes */
 		ctl.npages = UINT32_MAX;
-		warnx(_("warning: truncating swap area to %llu KiB"),
-			ctl.npages * ctl.pagesize / 1024);
+		if (!ctl.quiet)
+			warnx(_("warning: truncating swap area to %llu KiB"),
+				ctl.npages * ctl.pagesize / 1024);
 	}
 
 	if (is_mounted(ctl.devname))
@@ -595,11 +617,12 @@ int main(int argc, char **argv)
 
 	open_device(&ctl);
 	permMask = S_ISBLK(ctl.devstat.st_mode) ? 07007 : 07077;
-	if ((ctl.devstat.st_mode & permMask) != 0)
+	if (!ctl.quiet && (ctl.devstat.st_mode & permMask) != 0)
 		warnx(_("%s: insecure permissions %04o, fix with: chmod %04o %s"),
 			ctl.devname, ctl.devstat.st_mode & 07777,
 			~permMask & 0666, ctl.devname);
-	if (getuid() == 0 && S_ISREG(ctl.devstat.st_mode) && ctl.devstat.st_uid != 0)
+	if (!ctl.quiet
+	    && getuid() == 0 && S_ISREG(ctl.devstat.st_mode) && ctl.devstat.st_uid != 0)
 		warnx(_("%s: insecure file owner %d, fix with: chown 0:0 %s"),
 			ctl.devname, ctl.devstat.st_uid, ctl.devname);
 
@@ -607,7 +630,7 @@ int main(int argc, char **argv)
 	if (ctl.check)
 		check_blocks(&ctl);
 #ifdef HAVE_LINUX_FIEMAP_H
-	if (S_ISREG(ctl.devstat.st_mode))
+	if (!ctl.quiet && S_ISREG(ctl.devstat.st_mode))
 		check_extents(&ctl);
 #endif
 
@@ -624,8 +647,9 @@ int main(int argc, char **argv)
 	sz = (ctl.npages - ctl.nbadpages - 1) * ctl.pagesize;
 	strsz = size_to_human_string(SIZE_SUFFIX_SPACE | SIZE_SUFFIX_3LETTER, sz);
 
-	printf(_("Setting up swapspace version %d, size = %s (%"PRIu64" bytes)\n"),
-		version, strsz, sz);
+	if (!ctl.quiet)
+		printf(_("Setting up swapspace version %d, size = %s (%"PRIu64" bytes)\n"),
+			version, strsz, sz);
 	free(strsz);
 
 	set_signature(&ctl);
