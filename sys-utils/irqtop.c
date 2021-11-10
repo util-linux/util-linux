@@ -68,6 +68,12 @@
 
 #define MAX_EVENTS	3
 
+enum irqtop_cpus_table {
+	irqtop_cpus_table_auto,
+	irqtop_cpus_table_enable,
+	irqtop_cpus_table_disable,
+};
+
 /* top control struct */
 struct irqtop_ctl {
 	WINDOW		*win;
@@ -78,6 +84,7 @@ struct irqtop_ctl {
 	struct itimerspec timer;
 	struct irq_stat	*prev_stat;
 
+	enum irqtop_cpus_table cpus;
 	unsigned int request_exit:1;
 	unsigned int softirq:1;
 };
@@ -98,7 +105,7 @@ static void parse_input(struct irqtop_ctl *ctl, struct irq_output *out, char c)
 
 static int update_screen(struct irqtop_ctl *ctl, struct irq_output *out)
 {
-	struct libscols_table *table, *cpus;
+	struct libscols_table *table, *cpus = NULL;
 	struct irq_stat *stat;
 	time_t now = time(NULL);
 	char timestr[64], *data, *data0, *p;
@@ -114,8 +121,12 @@ static int update_screen(struct irqtop_ctl *ctl, struct irq_output *out)
 	scols_table_reduce_termwidth(table, 1);
 
 	/* make cpus table */
-	cpus = get_scols_cpus_table(out, ctl->prev_stat, stat);
-	scols_table_reduce_termwidth(cpus, 1);
+	if (ctl->cpus != irqtop_cpus_table_disable) {
+		cpus = get_scols_cpus_table(out, ctl->prev_stat, stat);
+		scols_table_reduce_termwidth(cpus, 1);
+		if (ctl->cpus == irqtop_cpus_table_auto)
+			scols_table_enable_nowrap(cpus, 1);
+	}
 
 	/* print header */
 	move(0, 0);
@@ -123,10 +134,12 @@ static int update_screen(struct irqtop_ctl *ctl, struct irq_output *out)
 	wprintw(ctl->win, _("irqtop | total: %ld delta: %ld | %s | %s\n\n"),
 			   stat->total_irq, stat->delta_irq, ctl->hostname, timestr);
 
-	/* print cpus table */
-	scols_print_table_to_string(cpus, &data);
-	wprintw(ctl->win, "%s\n\n", data);
-	free(data);
+	/* print cpus table or not by -c option */
+	if (cpus) {
+		scols_print_table_to_string(cpus, &data);
+		wprintw(ctl->win, "%s\n\n", data);
+		free(data);
+	}
 
 	/* print irqs table */
 	scols_print_table_to_string(table, &data0);
@@ -247,6 +260,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	puts(_("Interactive utility to display kernel interrupt information."));
 
 	fputs(USAGE_OPTIONS, stdout);
+	fputs(_(" -c, --cpu-stat <mode> show per-cpu stat (auto, enable, disable)\n"), stdout);
 	fputs(_(" -d, --delay <secs>   delay updates\n"), stdout);
 	fputs(_(" -o, --output <list>  define which output columns to use\n"), stdout);
 	fputs(_(" -s, --sort <column>  specify sort column\n"), stdout);
@@ -275,6 +289,7 @@ static void parse_args(	struct irqtop_ctl *ctl,
 {
 	const char *outarg = NULL;
 	static const struct option longopts[] = {
+		{"cpus", required_argument, NULL, 'c'},
 		{"delay", required_argument, NULL, 'd'},
 		{"sort", required_argument, NULL, 's'},
 		{"output", required_argument, NULL, 'o'},
@@ -285,8 +300,18 @@ static void parse_args(	struct irqtop_ctl *ctl,
 	};
 	int o;
 
-	while ((o = getopt_long(argc, argv, "d:o:s:ShV", longopts, NULL)) != -1) {
+	while ((o = getopt_long(argc, argv, "c:d:o:s:ShV", longopts, NULL)) != -1) {
 		switch (o) {
+		case 'c':
+			if (!strcmp(optarg, "auto"))
+				ctl->cpus = irqtop_cpus_table_auto;
+			else if (!strcmp(optarg, "enable"))
+				ctl->cpus = irqtop_cpus_table_enable;
+			else if (!strcmp(optarg, "disable"))
+				ctl->cpus = irqtop_cpus_table_disable;
+			else
+				errx(EXIT_FAILURE, _("unsupported mode '%s'"), optarg);
+			break;
 		case 'd':
 			{
 				struct timeval delay;

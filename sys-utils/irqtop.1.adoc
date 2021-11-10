@@ -25,6 +25,9 @@ The default output is subject to change. So whenever possible, you should avoid 
 *-o*, *--output* _list_::
 Specify which output columns to print. Use *--help* to get a list of all supported columns. The default list of columns may be extended if list is specified in the format _+list_.
 
+*-c*, *--cpu-stat* _mode_::
+Show per-cpu statistics by specified option, available options: auto, enable, disable. The default option *auto* detects the width of window, then shows the per-cpu statistics if the width of window is large enouth to show a full line of statistics.
+
 *-d*, *--delay* _seconds_::
 Update interrupt output every _seconds_ intervals.
 
