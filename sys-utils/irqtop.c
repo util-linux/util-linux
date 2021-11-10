@@ -68,10 +68,10 @@
 
 #define MAX_EVENTS	3
 
-enum irqtop_cpus_table {
-	irqtop_cpus_table_auto,
-	irqtop_cpus_table_enable,
-	irqtop_cpus_table_disable,
+enum irqtop_cpustat_mode {
+	IRQTOP_CPUSTAT_AUTO,
+	IRQTOP_CPUSTAT_ENABLE,
+	IRQTOP_CPUSTAT_DISABLE,
 };
 
 /* top control struct */
@@ -84,7 +84,7 @@ struct irqtop_ctl {
 	struct itimerspec timer;
 	struct irq_stat	*prev_stat;
 
-	enum irqtop_cpus_table cpus;
+	enum irqtop_cpustat_mode cpustat_mode;
 	unsigned int request_exit:1;
 	unsigned int softirq:1;
 };
@@ -121,10 +121,10 @@ static int update_screen(struct irqtop_ctl *ctl, struct irq_output *out)
 	scols_table_reduce_termwidth(table, 1);
 
 	/* make cpus table */
-	if (ctl->cpus != irqtop_cpus_table_disable) {
+	if (ctl->cpustat_mode != IRQTOP_CPUSTAT_DISABLE) {
 		cpus = get_scols_cpus_table(out, ctl->prev_stat, stat);
 		scols_table_reduce_termwidth(cpus, 1);
-		if (ctl->cpus == irqtop_cpus_table_auto)
+		if (ctl->cpustat_mode == IRQTOP_CPUSTAT_AUTO)
 			scols_table_enable_nowrap(cpus, 1);
 	}
 
@@ -304,11 +304,11 @@ static void parse_args(	struct irqtop_ctl *ctl,
 		switch (o) {
 		case 'c':
 			if (!strcmp(optarg, "auto"))
-				ctl->cpus = irqtop_cpus_table_auto;
+				ctl->cpustat_mode = IRQTOP_CPUSTAT_AUTO;
 			else if (!strcmp(optarg, "enable"))
-				ctl->cpus = irqtop_cpus_table_enable;
+				ctl->cpustat_mode = IRQTOP_CPUSTAT_ENABLE;
 			else if (!strcmp(optarg, "disable"))
-				ctl->cpus = irqtop_cpus_table_disable;
+				ctl->cpustat_mode = IRQTOP_CPUSTAT_DISABLE;
 			else
 				errx(EXIT_FAILURE, _("unsupported mode '%s'"), optarg);
 			break;
