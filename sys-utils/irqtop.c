@@ -289,7 +289,7 @@ static void parse_args(	struct irqtop_ctl *ctl,
 {
 	const char *outarg = NULL;
 	static const struct option longopts[] = {
-		{"cpus", required_argument, NULL, 'c'},
+		{"cpu-stat", required_argument, NULL, 'c'},
 		{"delay", required_argument, NULL, 'd'},
 		{"sort", required_argument, NULL, 's'},
 		{"output", required_argument, NULL, 'o'},
