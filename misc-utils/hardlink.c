@@ -850,9 +850,15 @@ static void visitor(const void *nodep, const VISIT which, const int depth)
 			assert(other != other->next);
 			assert(other->st.st_size == master->st.st_size);
 
-			/* check file attributes, etc. */
-			if (!other->links || !file_may_link_to(master, other))
+			if (!other->links)
 				continue;
+
+			/* check file attributes, etc. */
+			if (!file_may_link_to(master, other)) {
+				jlog(JLOG_VERBOSE2,
+				     _("Skipped (attributes mismatch) %s"), other->links->path);
+				continue;
+			}
 
 			/* initialize content comparison */
 			if (!ul_fileeq_data_associated(&master->data))
@@ -868,8 +874,11 @@ static void visitor(const void *nodep, const VISIT which, const int depth)
 
 			stats.comparisons++;
 
-			if (!eq)
+			if (!eq) {
+				jlog(JLOG_VERBOSE2,
+				     _("Skipped (content mismatch) %s"), other->links->path);
 				continue;
+			}
 
 			/* link files */
 			if (!file_link(master, other) && errno == EMLINK) {
