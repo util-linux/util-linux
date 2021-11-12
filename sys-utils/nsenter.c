@@ -156,20 +156,33 @@ static int get_ns_ino(const char *path, ino_t *ino)
 	return 0;
 }
 
-static int is_same_namespace(pid_t a, pid_t b, const char *type)
+static int is_usable_namespace(pid_t target, const struct namespace_file *nsfile)
 {
 	char path[PATH_MAX];
-	ino_t a_ino = 0, b_ino = 0;
+	ino_t my_ino = 0;
+	int rc;
 
-	snprintf(path, sizeof(path), "/proc/%u/%s", a, type);
-	if (get_ns_ino(path, &a_ino) != 0)
-		err(EXIT_FAILURE, _("stat of %s failed"), path);
+	/* Check NS accessibility */
+	snprintf(path, sizeof(path), "/proc/%u/%s", getpid(), nsfile->name);
+	rc = get_ns_ino(path, &my_ino);
+	if (rc == -ENOENT)
+		return false; /* Unsupported NS */
 
-	snprintf(path, sizeof(path), "/proc/%u/%s", b, type);
-	if (get_ns_ino(path, &b_ino) != 0)
-		err(EXIT_FAILURE, _("stat of %s failed"), path);
+	/* It is not permitted to use setns(2) to reenter the caller's
+	 * current user namespace; see setns(2) man page for more details.
+	 */
+	if (nsfile->nstype & CLONE_NEWUSER) {
+		ino_t target_ino = 0;
 
-	return a_ino == b_ino;
+		snprintf(path, sizeof(path), "/proc/%u/%s", target, nsfile->name);
+		if (get_ns_ino(path, &target_ino) != 0)
+			err(EXIT_FAILURE, _("stat of %s failed"), path);
+
+		if (my_ino == target_ino)
+			return false;
+	}
+
+	return true; /* All pass */
 }
 
 static void continue_as_child(void)
@@ -371,11 +384,7 @@ int main(int argc, char *argv[])
 			if (nsfile->fd >= 0)
 				continue;	/* namespace already specified */
 
-			/* It is not permitted to use setns(2) to reenter the caller's
-			 * current user namespace; see setns(2) man page for more details.
-			 */
-			if (nsfile->nstype & CLONE_NEWUSER
-			    && is_same_namespace(getpid(), namespace_target_pid, nsfile->name))
+			if (!is_usable_namespace(namespace_target_pid, nsfile))
 				continue;
 
 			namespaces |= nsfile->nstype;
