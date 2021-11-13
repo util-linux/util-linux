@@ -225,7 +225,7 @@ static struct node *dparser_compile(struct parser *);
  * Data
  */
 #define TOKEN_CLASS(TOKEN) (&token_classes[(TOKEN)->type])
-struct token_class token_classes [] = {
+static struct token_class token_classes [] = {
 	[TOKEN_NAME] = {
 		.name = "NAME",
 		.free = token_free_str,
@@ -266,7 +266,7 @@ struct token_class token_classes [] = {
 };
 
 #define TOKEN_OP1_CLASS(TOKEN) (&(op1_classes[(TOKEN)->val.op1]))
-struct op1_class op1_classes [] = {
+static struct op1_class op1_classes [] = {
 	[OP1_NOT] = {
 		.name = "!",
 		.is_acceptable = op1_not,
@@ -275,7 +275,7 @@ struct op1_class op1_classes [] = {
 };
 
 #define TOKEN_OP2_CLASS(TOKEN) (&(op2_classes[(TOKEN)->val.op2]))
-struct op2_class op2_classes [] = {
+static struct op2_class op2_classes [] = {
 	[OP2_EQ] = {
 		.name = "==",
 		.is_acceptable = op2_eq,
@@ -329,7 +329,7 @@ struct op2_class op2_classes [] = {
 };
 
 #define NODE_CLASS(NODE) (&node_classes[(NODE)->type])
-struct node_class node_classes[] = {
+static struct node_class node_classes[] = {
 	[NODE_STR] = {
 		.name = "STR",
 		.free = node_str_free,
