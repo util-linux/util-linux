@@ -253,12 +253,14 @@ static struct libscols_column *add_column(struct libscols_table *tb, const struc
 
 static struct libscols_column *add_column_by_id_cb(struct libscols_table *tb, int colid, void *data)
 {
+	struct libscols_column *cl;
+
 	if (ncolumns >= ARRAY_SIZE(columns))
 		errx(EXIT_FAILURE, _("too many columns are added via filter expression"));
 
 	assert(colid < LSFD_N_COLS);
 
-	struct libscols_column *cl = add_column(tb, infos + colid);
+	cl = add_column(tb, infos + colid);
 	if (!cl)
 		err(EXIT_FAILURE, _("failed to allocate output column"));
 	columns[ncolumns++] = colid;
