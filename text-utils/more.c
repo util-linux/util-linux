@@ -2058,6 +2058,9 @@ int main(int argc, char **argv)
 		env_argscan(&ctl, s);
 	argscan(&ctl, argc, argv);
 
+	/* clear any inherited settings */
+	signal(SIGCHLD, SIG_DFL);
+
 	initterm(&ctl);
 
 	if (ctl.no_tty_err)
