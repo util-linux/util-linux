@@ -542,6 +542,9 @@ int main(int argc, char *argv[])
 		errx(EXIT_FAILURE, _("options --monotonic and --boottime require "
 			"unsharing of a time namespace (-t)"));
 
+	/* clear any inherited settings */
+	signal(SIGCHLD, SIG_DFL);
+
 	if (npersists && (unshare_flags & CLONE_NEWNS))
 		bind_ns_files_from_child(&pid_bind, fds);
 
