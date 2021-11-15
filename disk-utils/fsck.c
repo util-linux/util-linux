@@ -1633,6 +1633,8 @@ int main(int argc, char *argv[])
 	if (!notitle)
 		printf(UTIL_LINUX_VERSION);
 
+	signal(SIGCHLD, SIG_DFL);	/* clear any inherited settings */
+
 	load_fs_info();
 
 	fsck_path = xstrdup(path && *path ? path : FSCK_DEFAULT_PATH);
