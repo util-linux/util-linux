@@ -187,10 +187,14 @@ static int is_usable_namespace(pid_t target, const struct namespace_file *nsfile
 
 static void continue_as_child(void)
 {
-	pid_t child = fork();
+	pid_t child;
 	int status;
 	pid_t ret;
 
+	/* Clear any inherited settings */
+	signal(SIGCHLD, SIG_DFL);
+
+	child = fork();
 	if (child < 0)
 		err(EXIT_FAILURE, _("fork failed"));
 
