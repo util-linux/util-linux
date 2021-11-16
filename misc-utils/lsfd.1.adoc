@@ -309,15 +309,15 @@ Do the same in an alternative way::
 
 List all running executables::
 
-  # lsfd -Q '(ASSOC == "exe")'
+  # lsfd -Q 'ASSOC == "exe"'
 
 Do the same in an alternative way::
 
-  # lsfd -Q '(ASSOC eq "exe")'
+  # lsfd -Q 'ASSOC eq "exe"'
 
 Do the same but print only file names::
 
-  # lsfd -o NAME -Q '(ASSOC eq "exe")' | sort -u
+  # lsfd -o NAME -Q 'ASSOC eq "exe"' | sort -u
 
 List deleted files associated to processes::
 
@@ -325,19 +325,19 @@ List deleted files associated to processes::
 
 List non-regular files::
 
-  # lsfd -Q '(TYPE != "REG")'
+  # lsfd -Q 'TYPE != "REG"'
 
 List block devices::
 
-  # lsfd -Q '(DEVTYPE == "blk")'
+  # lsfd -Q 'DEVTYPE == "blk"'
 
 Do the same with TYPE column::
 
-  # lsfd -Q '(TYPE == "BLK")'
+  # lsfd -Q 'TYPE == "BLK"'
 
 List files including "dconf" directory in their names::
 
-  # lsfd -Q '(NAME =~ ".\*/dconf/.*")'
+  # lsfd -Q 'NAME =~ ".\*/dconf/.*"'
 
 List files opened to QEMU virtual machine::
 
