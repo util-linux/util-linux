@@ -81,6 +81,9 @@ Display version information and exit.
 
 Each column has a type. Types are surround by < and >.
 
+CAUTION: The names and types of columns are not stable yet.
+They may be changed in the future releases.
+
 ASSOC <__string__>::
 Association between file and process.
 
