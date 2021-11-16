@@ -334,7 +334,7 @@ Do the same with TYPE column::
 
 List files including "dconf" directory in their names::
 
-  # lsfd -Q '(NAME =~ ".\*/dconf/.*")
+  # lsfd -Q '(NAME =~ ".\*/dconf/.*")'
 
 List files opened to QEMU virtual machine::
 
