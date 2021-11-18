@@ -798,7 +798,7 @@ static int create_treenode(struct libscols_table *table, struct libmnt_table *tb
 		fs = NULL;
 
 		while (mnt_table_next_fs(tb, itr, &fs) == 0) {
-			if (!has_line(table, fs))
+			if (!has_line(table, fs) && match_func(fs, NULL))
 				create_treenode(table, tb, fs, NULL);
 		}
 	}
