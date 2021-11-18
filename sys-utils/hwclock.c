@@ -71,7 +71,9 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/time.h>
+#ifdef HAVE_SYS_SYSCALL_H
 #include <sys/syscall.h>
+#endif
 #include <time.h>
 #include <unistd.h>
 #include <inttypes.h>

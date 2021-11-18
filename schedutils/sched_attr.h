@@ -68,7 +68,7 @@
 # define SCHED_FLAG_UTIL_CLAMP_MAX 0x40
 #endif
 
-#if defined (__linux__)
+#ifdef HAVE_SYS_SYSCALL_H
 # include <sys/syscall.h>
 #endif
 
