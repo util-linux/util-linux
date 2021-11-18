@@ -759,13 +759,14 @@ static int create_treenode(struct libscols_table *table, struct libmnt_table *tb
 	struct libmnt_fs *chld = NULL;
 	struct libmnt_iter *itr = NULL;
 	struct libscols_line *line;
-	int rc = -1;
+	int rc = -1, first = 0;
 
 	if (!fs) {
 		/* first call, get root FS */
 		if (mnt_table_get_root_fs(tb, &fs))
 			goto leave;
 		parent_line = NULL;
+		first = 1;
 
 	} else if ((flags & FL_SUBMOUNTS) && has_line(table, fs))
 		return 0;
@@ -784,11 +785,23 @@ static int create_treenode(struct libscols_table *table, struct libmnt_table *tb
 	/*
 	 * add all children to the output table
 	 */
-	while(mnt_table_next_child_fs(tb, itr, fs, &chld) == 0) {
+	while (mnt_table_next_child_fs(tb, itr, fs, &chld) == 0) {
 		if (create_treenode(table, tb, chld, line))
 			goto leave;
 	}
 	rc = 0;
+
+	/* make sure all entries are in the tree */
+	if (first && (size_t) mnt_table_get_nents(tb) >
+		     (size_t) scols_table_get_nlines(table)) {
+		mnt_reset_iter(itr, MNT_ITER_FORWARD);
+		fs = NULL;
+
+		while (mnt_table_next_fs(tb, itr, &fs) == 0) {
+			if (!has_line(table, fs))
+				create_treenode(table, tb, fs, NULL);
+		}
+	}
 leave:
 	mnt_free_iter(itr);
 	return rc;
