@@ -1,7 +1,7 @@
 #ifndef UTIL_LINUX_PIDFD_UTILS
 #define UTIL_LINUX_PIDFD_UTILS
 
-#if defined(__linux__)
+#ifdef HAVE_SYS_SYSCALL_H
 # include <sys/syscall.h>
 # if defined(SYS_pidfd_send_signal) && defined(SYS_pidfd_open)
 #  include <sys/types.h>
@@ -24,5 +24,5 @@ static inline int pidfd_open(pid_t pid, unsigned int flags)
 #  define UL_HAVE_PIDFD 1
 
 # endif	/* SYS_pidfd_send_signal */
-#endif /* __linux__ */
+#endif /* HAVE_SYS_SYSCALL_H */
 #endif /* UTIL_LINUX_PIDFD_UTILS */

@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
-#ifdef __linux__
+#ifdef HAVE_SYS_SYSCALL_H
 #include <sys/syscall.h>
 #endif
 #include "c.h"

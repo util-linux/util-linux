@@ -11,7 +11,9 @@
 #include <errno.h>
 #include <getopt.h>
 #include <unistd.h>
+#ifdef HAVE_SYS_SYSCALL_H
 #include <sys/syscall.h>
+#endif
 #include <ctype.h>
 
 #include "nls.h"

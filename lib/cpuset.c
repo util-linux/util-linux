@@ -20,7 +20,9 @@
 #include <errno.h>
 #include <string.h>
 #include <ctype.h>
+#ifdef HAVE_SYS_SYSCALL_H
 #include <sys/syscall.h>
+#endif
 
 #include "cpuset.h"
 #include "c.h"
