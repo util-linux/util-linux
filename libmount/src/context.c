@@ -1302,6 +1302,16 @@ int mnt_context_get_mtab(struct libmnt_context *cxt, struct libmnt_table **tb)
 					cxt->table_fltrcb_data);
 
 		mnt_table_set_cache(cxt->mtab, mnt_context_get_cache(cxt));
+	}
+
+	/* Read the table; it's empty, because this first mnt_context_get_mtab()
+	 * call, or because /proc was not accessible in previous calls */
+	if (mnt_table_is_empty(cxt->mtab)) {
+		if (!ns_old) {
+			ns_old = mnt_context_switch_target_ns(cxt);
+			if (!ns_old)
+				return -MNT_ERR_NAMESPACE;
+		}
 
 		/*
 		 * Note that mtab_path is NULL if mtab is useless or unsupported
@@ -2924,7 +2934,7 @@ int mnt_context_is_fs_mounted(struct libmnt_context *cxt,
 			      struct libmnt_fs *fs, int *mounted)
 {
 	struct libmnt_table *mtab, *orig;
-	int rc;
+	int rc = 0;
 	struct libmnt_ns *ns_old;
 
 	if (!cxt || !fs || !mounted)
@@ -2943,18 +2953,17 @@ int mnt_context_is_fs_mounted(struct libmnt_context *cxt,
 			cxt->mtab = NULL;
 		}
 		*mounted = 0;
-		return 0;	/* /proc not mounted */
-	}
+		rc = 0;			/* /proc not mounted */
 
-	if (rc)
-		return rc;
-
-	*mounted = __mnt_table_is_fs_mounted(mtab, fs,
+	} else if (rc == 0) {
+		*mounted = __mnt_table_is_fs_mounted(mtab, fs,
 				mnt_context_get_target_prefix(cxt));
+
+	}
 
 	if (!mnt_context_switch_ns(cxt, ns_old))
 		return -MNT_ERR_NAMESPACE;
-	return 0;
+	return rc;
 }
 
 static int mnt_context_add_child(struct libmnt_context *cxt, pid_t pid)

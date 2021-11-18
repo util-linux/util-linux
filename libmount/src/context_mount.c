@@ -1453,8 +1453,15 @@ int mnt_context_next_mount(struct libmnt_context *cxt,
 
 	/* ignore already mounted filesystems */
 	rc = mnt_context_is_fs_mounted(cxt, *fs, &mounted);
-	if (rc)
+	if (rc) {
+		if (mnt_table_is_empty(cxt->mtab)) {
+			DBG(CXT, ul_debugobj(cxt, "next-mount: no mount table [rc=%d], ignore", rc));
+			rc = 0;
+			if (ignored)
+				*ignored = 1;
+		}
 		return rc;
+	}
 	if (mounted) {
 		if (ignored)
 			*ignored = 2;

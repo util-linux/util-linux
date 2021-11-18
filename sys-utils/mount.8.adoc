@@ -301,7 +301,7 @@ Command-line options available for the *mount* command are:
 *-a*, *--all*::
 Mount all filesystems (of the given types) mentioned in _fstab_ (except for those whose line contains the *noauto* keyword). The filesystems are mounted following their order in _fstab_. The *mount* command compares filesystem source, target (and fs root for bind mount or btrfs) to detect already mounted filesystems. The kernel table with already mounted filesystems is cached during *mount --all*. This means that all duplicated _fstab_ entries will be mounted.
 +
-The correct functionality depends on /proc (to detect already mounted filesystems) and on /sys (to evaluate filesystem tags like UUID= or LABEL=). It's strongly recommended to mount /proc and /sys filesystems before *mount -a* is executed on system boot.
+The correct functionality depends on /proc (to detect already mounted filesystems) and on /sys (to evaluate filesystem tags like UUID= or LABEL=). It's strongly recommended to mount /proc and /sys filesystems before *mount -a* is executed, or keep /proc and /sys at the beginning of fstab.
 +
 The option *--all* is possible to use for remount operation too. In this case all filters (*-t* and *-O*) are applied to the table of already mounted filesystems.
 +
