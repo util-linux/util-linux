@@ -1145,6 +1145,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --debug-filter    dump the innternal data structure of filter and exit\n"), out);
 	fputs(_(" -C, --counter <name>:<expr>\n"
 		"                       make a counter used in --summary output\n"), out);
+	fputs(_("     --dump-counters   dump counter definitions\n"), out);
 	fputs(_("     --summary[=when]  print summary information (never,always or only)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -1305,6 +1306,29 @@ static struct lsfd_counter **new_default_counters(struct lsfd_control *ctl)
 	return counters;
 }
 
+static void dump_default_counter_specs(void)
+{
+	size_t len = ARRAY_SIZE(default_counter_specs);
+	size_t i;
+
+	puts("default counter specs:");
+	for (i = 0; i < len; i++) {
+		struct counter_spec *spec = default_counter_specs + i;
+		printf("\t%s:%s\n", spec->name, spec->expr);
+	}
+}
+
+static void dump_counter_specs(struct list_head *specs)
+{
+	struct list_head *s;
+
+	puts("custom counter specs:");
+	list_for_each(s, specs) {
+		struct counter_spec *spec = list_entry(s, struct counter_spec, specs);
+		printf("\t%s:%s\n", spec->name, spec->expr);
+	}
+}
+
 static struct libscols_table *new_summary_table(struct lsfd_control *ctl)
 {
 	struct libscols_table *tb = scols_new_table();
@@ -1372,6 +1396,7 @@ int main(int argc, char *argv[])
 	struct lsfd_control ctl = {};
 	char  *filter_expr = NULL;
 	bool debug_filter = false;
+	bool dump_counters = false;
 	pid_t *pids = NULL;
 	int n_pids = 0;
 	struct list_head counter_specs;
@@ -1381,6 +1406,7 @@ int main(int argc, char *argv[])
 	enum {
 		OPT_DEBUG_FILTER = CHAR_MAX + 1,
 		OPT_SUMMARY,
+		OPT_DUMP_COUNTERS,
 	};
 	static const struct option longopts[] = {
 		{ "noheadings", no_argument, NULL, 'n' },
@@ -1396,6 +1422,7 @@ int main(int argc, char *argv[])
 		{ "debug-filter",no_argument, NULL, OPT_DEBUG_FILTER },
 		{ "summary",    optional_argument, NULL,  OPT_SUMMARY },
 		{ "counter",    required_argument, NULL, 'C' },
+		{ "dump-counters",no_argument, NULL, OPT_DUMP_COUNTERS },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -1450,6 +1477,9 @@ int main(int argc, char *argv[])
 					errx(EXIT_FAILURE, _("unsupported --summary argument"));
 			} else
 				ctl.summary |= SUMMARY_EMIT;
+			break;
+		case OPT_DUMP_COUNTERS:
+			dump_counters = true;
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
@@ -1508,6 +1538,14 @@ int main(int argc, char *argv[])
 	if (filter_expr) {
 		ctl.filter = new_filter(filter_expr, debug_filter, "", &ctl);
 		free(filter_expr);
+	}
+
+	if (dump_counters) {
+		if (list_empty(&counter_specs))
+			dump_default_counter_specs();
+		else
+			dump_counter_specs(&counter_specs);
+		return 0;
 	}
 
 	/* make counters */
