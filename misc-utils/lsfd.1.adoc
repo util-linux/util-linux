@@ -57,7 +57,7 @@ Don't truncate text in columns.
 *-p*, *--pid* _pids_::
 Collect information only specified processes.
 _pids_ is a list of pids. A comma or whitespaces can be used as separators.
-You can use this option with *pidof*(1). See "EXAMPLES".
+You can use this option with *pidof*(1). See "FILTER EXAMPLES".
 +
 Both *-Q* option with an expression including PID, e.g. -Q (PID == 1),
 and *-p* option, e.g. -p 1, may print the same output but using *-p*
@@ -66,6 +66,32 @@ stage of processing than *-Q* option.
 
 *-Q*, *--filter* _expr_::
 Print the files only satisfying with the condition represented by the _expr_.
+See also "FILTER EXAMPLES".
+
+*-C*, *--counter* _label_:_filter_expr_::
+Define a counter used in *--summary* output. *lsfd* makes a
+counter named _label_. During collect information, *lsfd* counts files
+satisfying _filter_expr_, and stores the counted number to the
+counter named _label_. *lsfd* applies filters defined with *--filter*
+options before couring; files excluded by the filters are not counted.
++
+See "FILTER EXPRESSION" about _filter_expr_.
+_label_ should not include _{_ nor _:_. You can define multiple
+counters with specifying this option multiple times.
++
+See also "COUNTER EXAMPLES".
+
+*--summary*[=_when_]::
+This option controls summary lines output. The optional argument _when_
+can be *never*, *always* or *only*. If the _when_ argument is omitted,
+it defaults to *"only"*.
++
+The summary reports counters. A counter comes from a label and an
+integer value.  *--counter* is the option for defining a counter.  If
+a user defines no counter, *lsfd* uses the definitions of pre-defined
+built-in counters (default counters) to make the summary output.
++
+CAUTION: Using *--summary* and *--json* may make the output broken. Only combining *--summary*=*only* and *--json* is valid.
 
 *--debug-filter*::
 Dump the internal data structure for the filter and exit. This is useful
@@ -273,7 +299,7 @@ BOOLOP2REG :: STREXP OP2REG STRLIT
 
 OP2REG :: _=~_ | _!~_
 
-== EXAMPLES
+== FILTER EXAMPLES
 
 *lsfd* has few options for filtering. In most of cases, what you should
 know is *-Q* (or *--filter*) option.  Combined with *-o* (or
@@ -363,6 +389,37 @@ Hide files associated to kernel threads::
 ....
 # lsfd -Q '!KTHREAD'
 ....
+
+== COUNTER EXAMPLES
+
+Report the numbers of netlink socket descriptors and unix socket descriptors::
+....
+# lsfd --summary=only \
+	-C 'netlink sockets':'(NAME =~ "NETLINK:.*")' \
+	-C 'unix sockets':'(NAME =~ "UNIX:.*")'
+VALUE COUNTER
+   57 netlink sockets
+ 1552 unix sockets
+....
+
+Do the same but print in JSON format::
+....
+# lsfd --summary=only --json \
+	-C 'netlink sockets':'(NAME =~ "NETLINK:.*")' \
+	-C 'unix sockets':'(NAME =~ "UNIX:.*")'
+{
+   "lsfd-summary": [
+      {
+	 "value": 15,
+	 "counter": "netlink sockets"
+      },{
+	 "value": 798,
+	 "counter": "unix sockets"
+      }
+   ]
+}
+....
+
 
 == HISTORY
 
