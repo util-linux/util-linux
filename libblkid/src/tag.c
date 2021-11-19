@@ -326,14 +326,14 @@ blkid_dev blkid_find_dev_with_tag(blkid_cache cache,
 	blkid_dev	dev;
 	int		pri;
 	struct list_head *p;
-	int		probe_new = 0;
+	int		probe_new = 0, probe_all = 0;
 
 	if (!cache || !type || !value)
 		return NULL;
 
 	blkid_read_cache(cache);
 
-	DBG(TAG, ul_debug("looking for %s=%s in cache", type, value));
+	DBG(TAG, ul_debug("looking for tag %s=%s in cache", type, value));
 
 try_again:
 	pri = -1;
@@ -366,9 +366,11 @@ try_again:
 		goto try_again;
 	}
 
-	if (!dev && !(cache->bic_flags & BLKID_BIC_FL_PROBED)) {
+	if (!dev && !probe_all
+	    && !(cache->bic_flags & BLKID_BIC_FL_PROBED)) {
 		if (blkid_probe_all(cache) < 0)
 			return NULL;
+		probe_all++;
 		goto try_again;
 	}
 	return dev;

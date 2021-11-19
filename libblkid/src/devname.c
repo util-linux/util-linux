@@ -429,6 +429,8 @@ sysfs_probe_all(blkid_cache cache, int only_if_new, int only_removable)
 	if (!sysfs)
 		return -BLKID_ERR_SYSFS;
 
+	DBG(DEVNAME, ul_debug(" probe /sys/block"));
+
 	/* scan /sys/block */
 	while ((dev = xreaddir(sysfs))) {
 		DIR *dir = NULL;
@@ -533,14 +535,18 @@ sysfs_probe_all(blkid_cache cache, int only_if_new, int only_removable)
 /*
  * Read the device data for all available block devices in the system.
  */
-static int probe_all(blkid_cache cache, int only_if_new)
+static int probe_all(blkid_cache cache, int only_if_new, int update_interval)
 {
+	int rc;
+
 	if (!cache)
 		return -BLKID_ERR_PARAM;
 
 	if (cache->bic_flags & BLKID_BIC_FL_PROBED &&
-	    time(NULL) - cache->bic_time < BLKID_PROBE_INTERVAL)
+	    time(NULL) - cache->bic_time < BLKID_PROBE_INTERVAL) {
+		DBG(PROBE, ul_debug("don't re-probe [delay < %d]", BLKID_PROBE_INTERVAL));
 		return 0;
+	}
 
 	blkid_read_cache(cache);
 #ifdef VG_DIR
@@ -548,7 +554,13 @@ static int probe_all(blkid_cache cache, int only_if_new)
 #endif
 	ubi_probe_all(cache, only_if_new);
 
-	sysfs_probe_all(cache, only_if_new, 0);
+	rc = sysfs_probe_all(cache, only_if_new, 0);
+
+	/* Don't mark the change as "probed" if /sys not avalable */
+	if (update_interval && rc == 0) {
+		cache->bic_time = time(NULL);
+		cache->bic_flags |= BLKID_BIC_FL_PROBED;
+	}
 
 	blkid_flush_cache(cache);
 	return 0;
@@ -567,11 +579,7 @@ int blkid_probe_all(blkid_cache cache)
 	int ret;
 
 	DBG(PROBE, ul_debug("Begin blkid_probe_all()"));
-	ret = probe_all(cache, 0);
-	if (ret == 0) {
-		cache->bic_time = time(NULL);
-		cache->bic_flags |= BLKID_BIC_FL_PROBED;
-	}
+	ret = probe_all(cache, 0, 1);
 	DBG(PROBE, ul_debug("End blkid_probe_all() [rc=%d]", ret));
 	return ret;
 }
@@ -589,7 +597,7 @@ int blkid_probe_all_new(blkid_cache cache)
 	int ret;
 
 	DBG(PROBE, ul_debug("Begin blkid_probe_all_new()"));
-	ret = probe_all(cache, 1);
+	ret = probe_all(cache, 1, 0);
 	DBG(PROBE, ul_debug("End blkid_probe_all_new() [rc=%d]", ret));
 	return ret;
 }
