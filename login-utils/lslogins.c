@@ -562,9 +562,6 @@ static int get_sgroups(gid_t **list, size_t *len, struct passwd *pwd)
 
 	*list = xcalloc(1, ngroups * sizeof(gid_t));
 
-fprintf(stderr, "KZAK>>> alloc '%p' for %s\n", *list, pwd->pw_name);
-
-
 	/* now for the actual list of GIDs */
 	if (-1 == getgrouplist(pwd->pw_name, pwd->pw_gid, *list, &ngroups))
 		return -1;
