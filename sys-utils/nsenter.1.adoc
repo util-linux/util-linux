@@ -113,10 +113,13 @@ Set the user ID which will be used in the entered namespace. *nsenter* always se
 Don't modify UID and GID when enter user namespace. The default is to drops supplementary groups and sets GID and UID to 0.
 
 *-r*, *--root*[=_directory_]::
-Set the root directory. If no directory is specified, set the root directory to the root directory of the target process. If directory is specified, set the root directory to the specified directory.
+Set the root directory. If no directory is specified, set the root directory to the root directory of the target process. If directory is specified, set the root directory to the specified directory. The specified _directory_ is open before it switches to the requested namespaces.
 
 *-w*, *--wd*[=_directory_]::
-Set the working directory. If no directory is specified, set the working directory to the working directory of the target process. If directory is specified, set the working directory to the specified directory.
+Set the working directory. If no directory is specified, set the working directory to the working directory of the target process. If directory is specified, set the working directory to the specified directory. The specified _directory_ is open before it switches to the requested namespaces, it means the specified directory works as "tunnel" to the current namespace. See also *--wdns*.
+
+*-W*, *--wdns*[=_directory_]::
+Set the working directory. The _directory_ is open after switch to the requested namespaces and after chroot call. The options *--wd* and *--wdns* are mutually exclusive.
 
 *-F*, *--no-fork*::
 Do not fork before exec'ing the specified program. By default, when entering a PID namespace, *nsenter* calls *fork* before calling *exec* so that any children will also be in the newly entered PID namespace.

@@ -48,6 +48,7 @@ _nsenter_module()
 				--preserve-credentials
 				--root=
 				--wd=
+				--wdns=
 				--no-fork
 				--help
 				--version
