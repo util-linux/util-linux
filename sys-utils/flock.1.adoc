@@ -111,7 +111,7 @@ Grab the exclusive lock "local-lock-file" before running echo with 'a b c'.
 (; flock -n 9 || exit 1; # ... commands executed under lock ...; ) 9>/var/lock/mylockfile::
 The form is convenient inside shell scripts. The mode used to open the file doesn't matter to *flock*; using _>_ or _>>_ allows the lockfile to be created if it does not already exist, however, write permission is required. Using _<_ requires that the file already exists but only read permission is required.
 
-[ $\{FLOCKER} != $0 ] && exec env FLOCKER="$0 flock -en $0 $0 $@ || :::
+[ "$\{FLOCKER}" != "$0" ] && exec env FLOCKER="$0" flock -en "$0" "$0" "$@" || : ::
 This is useful boilerplate code for shell scripts. Put it at the top of the shell script you want to lock and it'll automatically lock itself on the first run. If the env var *$FLOCKER* is not set to the shell script that is being run, then execute *flock* and grab an exclusive non-blocking lock (using the script itself as the lock file) before re-execing itself with the right arguments. It also sets the FLOCKER env var to the right value so it doesn't run again.
 
 shell> exec 4<>/var/lock/mylockfile; shell> flock -n 4::
