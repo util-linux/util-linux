@@ -102,11 +102,11 @@ Log timing information to the _file_. Two timing file formats are supported now.
 
 *-m*, *--logging-format* _format_::
 Force use of _advanced_ or _classic_ format. The default is the classic format to log only output and the advanced format when input as well as output logging is requested.
-
-*Classic format*:::
++
+*Classic format*;;
 The log contains two fields, separated by a space. The first field indicates how much time elapsed since the previous output. The second field indicates how many characters were output this time.
-
-*Advanced (multi-stream) format*:::
++
+*Advanced (multi-stream) format*;;
 The first field is an entry type identifier ('I'nput, 'O'utput, 'H'eader, 'S'ignal). The socond field is how much time elapsed since the previous entry, and the rest of the entry is type-specific data.
 
 *-o*, *--output-limit* _size_::
