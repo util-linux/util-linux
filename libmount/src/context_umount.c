@@ -452,10 +452,7 @@ static int is_fuse_usermount(struct libmnt_context *cxt, int *errsv)
 	struct libmnt_ns *ns_old;
 	const char *type = mnt_fs_get_fstype(cxt->fs);
 	const char *optstr;
-	char *user_id = NULL;
-	size_t sz;
-	uid_t uid;
-	char uidstr[sizeof(stringify_value(ULONG_MAX))];
+	uid_t uid, entry_uid;
 
 	*errsv = 0;
 
@@ -472,11 +469,7 @@ static int is_fuse_usermount(struct libmnt_context *cxt, int *errsv)
 	optstr = mnt_fs_get_fs_options(cxt->fs);
 	if (!optstr)
 		return 0;
-
-	if (mnt_optstr_get_option(optstr, "user_id", &user_id, &sz) != 0)
-		return 0;
-
-	if (sz == 0 || user_id == NULL)
+	if (mnt_optstr_get_uid(optstr, "user_id", &entry_uid) != 0)
 		return 0;
 
 	/* get current user */
@@ -493,8 +486,7 @@ static int is_fuse_usermount(struct libmnt_context *cxt, int *errsv)
 		return 0;
 	}
 
-	snprintf(uidstr, sizeof(uidstr), "%lu", (unsigned long) uid);
-	return strncmp(user_id, uidstr, sz) == 0;
+	return uid == entry_uid;
 }
 
 /*
