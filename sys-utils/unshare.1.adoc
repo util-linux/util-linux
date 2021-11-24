@@ -93,8 +93,17 @@ Just before running the program, mount the proc filesystem at _mountpoint_ (defa
 **--map-user=**__uid|name__::
 Run the program only after the current effective user ID has been mapped to _uid_. If this option is specified multiple times, the last occurrence takes precedence. This option implies *--user*.
 
+**--map-users=**__outeruid,inneruid,count__|**auto**::
+Run the program only after the block of user IDs of size _count_ beginning at _outeruid_ has been mapped to the block of user IDs beginning at _inneruid_. This mapping is created with **newuidmap**(1). If the range of user IDs overlaps with the mapping specified by *--map-user*, then a "hole" will be removed from the mapping. This may result in the highest user ID of the mapping not being mapped. The special value *auto* will map the first block of user IDs owned by the effective user from _/etc/subuid_ to a block starting at user ID 0. If this option is specified multiple times, the last occurrence takes precedence. This option implies *--user*.
+
 **--map-group=**__gid|name__::
 Run the program only after the current effective group ID has been mapped to _gid_. If this option is specified multiple times, the last occurrence takes precedence. This option implies *--setgroups=deny* and *--user*.
+
+**--map-groups=**__outergid,innergid,count__|**auto**::
+Run the program only after the block of group IDs of size _count_ beginning at _outergid_ has been mapped to the block of group IDs beginning at _innergid_. This mapping is created with **newgidmap**(1). If the range of group IDs overlaps with the mapping specified by *--map-group*, then a "hole" will be removed from the mapping. This may result in the highest group ID of the mapping not being mapped. The special value *auto* will map the first block of user IDs owned by the effective user from _/etc/subgid_ to a block starting at group ID 0. If this option is specified multiple times, the last occurrence takes precedence. This option implies *--user*.
+
+**--map-auto**::
+Map the first block of user IDs owned by the effective user from _/etc/subuid_ to a block starting at user ID 0. In the same manner, also map the first block of group IDs owned by the effective group from _/etc/subgid_ to a block starting at group ID 0. This option is intended to handle the common case where the first block of subordinate user and group IDs can map the whole user and group ID space. This option is equivalent to specifying *--map-users=auto* and *--map-groups=auto*.
 
 *-r*, *--map-root-user*::
 Run the program only after the current effective user and group IDs have been mapped to the superuser UID and GID in the newly created user namespace. This makes it possible to conveniently gain capabilities needed to manage various aspects of the newly created namespaces (such as configuring interfaces in the network namespace or mounting filesystems in the mount namespace) even when run unprivileged. As a mere convenience feature, it does not support more sophisticated use cases, such as mapping multiple ranges of UIDs and GIDs. This option implies *--setgroups=deny* and *--user*. This option is equivalent to *--map-user=0 --map-group=0*.
@@ -158,6 +167,27 @@ $ unshare --user --map-root-user \
 root
          0       1000          1
          0       1000          1
+....
+
+As an unprivileged user, create a user namespace where the first 65536 IDs are all mapped, and the user's credentials are mapped to the root IDs inside the namespace. The map is determined by the subordinate IDs assigned in *subuid*(5) and *subgid*(5). Demonstrate this mapping by creating a file with user ID 1 and group ID 1. For brevity, only the user ID mappings are shown:
+
+....
+$ id -u
+1000
+$ cat /etc/subuid
+1000:100000:65536
+$ unshare --user --map-auto --map-root-user
+# id -u
+0
+# cat /proc/self/uid_map
+         0       1000          1
+         1     100000      65535
+# touch file; chown 1:1 file
+# ls -ln --time-style=+ file
+-rw-r--r-- 1 1 1 0  file
+# exit
+$ ls -ln --time-style=+ file
+-rw-r--r-- 1 100000 100000 0  file
 ....
 
 The first of the following commands creates a new persistent UTS namespace and modifies the hostname as seen in that namespace. The namespace is then entered with *nsenter*(1) in order to display the modified hostname; this step demonstrates that the UTS namespace continues to exist even though the namespace had no member processes after the *unshare* command terminated. The namespace is then destroyed by removing the bind mount.
@@ -235,6 +265,8 @@ mailto:kzak@redhat.com[Karel Zak]
 
 == SEE ALSO
 
+*newuidmap*(1)
+*newgidmap*(1)
 *clone*(2),
 *unshare*(2),
 *namespaces*(7),
