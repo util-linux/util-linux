@@ -22,18 +22,19 @@ enum {
 	FL_REAL		= (1 << 18),
 	FL_VFS_ALL	= (1 << 19),
 	FL_SHADOWED	= (1 << 20),
+	FL_DELETED      = (1 << 21),
 
 	/* basic table settings */
-	FL_ASCII	= (1 << 21),
-	FL_RAW		= (1 << 22),
-	FL_NOHEADINGS	= (1 << 23),
-	FL_EXPORT	= (1 << 24),
-	FL_TREE		= (1 << 25),
-	FL_JSON		= (1 << 26),
+	FL_ASCII	= (1 << 25),
+	FL_RAW		= (1 << 26),
+	FL_NOHEADINGS	= (1 << 27),
+	FL_EXPORT	= (1 << 28),
+	FL_TREE		= (1 << 29),
+	FL_JSON		= (1 << 30),
 };
 
 extern struct libmnt_cache *cache;
-extern int flags;
+extern unsigned int flags;
 extern int parse_nerrors;
 
 extern int is_listall_mode(void);

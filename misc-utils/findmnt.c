@@ -53,6 +53,7 @@
 enum {
 	COL_ACTION,
 	COL_AVAIL,
+	COL_DELETED,
 	COL_FREQ,
 	COL_FSROOT,
 	COL_FSTYPE,
@@ -99,6 +100,7 @@ struct colinfo {
 static struct colinfo infos[] = {
 	[COL_ACTION]       = { "ACTION",         10, SCOLS_FL_STRICTWIDTH, N_("action detected by --poll") },
 	[COL_AVAIL]        = { "AVAIL",           5, SCOLS_FL_RIGHT, N_("filesystem size available") },
+	[COL_DELETED]      = { "DELETED",         1, SCOLS_FL_RIGHT, N_("filesystem target marked as deleted") },
 	[COL_FREQ]         = { "FREQ",            1, SCOLS_FL_RIGHT, N_("dump(8) period in days [fstab only]") },
 	[COL_FSROOT]       = { "FSROOT",       0.25, SCOLS_FL_NOEXTREMES, N_("filesystem root") },
 	[COL_FSTYPE]       = { "FSTYPE",       0.10, SCOLS_FL_TRUNC, N_("filesystem type") },
@@ -150,7 +152,7 @@ static int actions[FINDMNT_NACTIONS];
 static int nactions;
 
 /* global (accessed from findmnt-verify.c too) */
-int flags;
+unsigned int flags;
 int parse_nerrors;
 struct libmnt_cache *cache;
 
@@ -638,6 +640,9 @@ static char *get_data(struct libmnt_fs *fs, int num)
 		if (!mnt_fs_is_kernel(fs))
 			xasprintf(&str, "%d", mnt_fs_get_passno(fs));
 		break;
+	case COL_DELETED:
+		str = xstrdup(mnt_fs_is_deleted(fs) ? "1" : "0");
+		break;
 	default:
 		break;
 	}
@@ -991,6 +996,9 @@ static int match_func(struct libmnt_fs *fs,
 			return rc;
 	}
 
+	if ((flags & FL_DELETED) && !mnt_fs_is_deleted(fs))
+		return rc;
+
 	return !rc;
 }
 
@@ -1259,6 +1267,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -b, --bytes            print sizes in bytes rather than in human readable format\n"), out);
 	fputs(_(" -C, --nocanonicalize   don't canonicalize when comparing paths\n"), out);
 	fputs(_(" -c, --canonicalize     canonicalize printed paths\n"), out);
+	fputs(_("     --deleted          print filesystems with mountpoint marked as deleted\n"), out);
 	fputs(_(" -D, --df               imitate the output of df(1)\n"), out);
 	fputs(_(" -d, --direction <word> direction of search, 'forward' or 'backward'\n"), out);
 	fputs(_(" -e, --evaluate         convert tags (LABEL,UUID,PARTUUID,PARTLABEL) \n"
@@ -1327,7 +1336,8 @@ int main(int argc, char *argv[])
 		FINDMNT_OPT_PSEUDO,
 		FINDMNT_OPT_REAL,
 		FINDMNT_OPT_VFS_ALL,
-		FINDMNT_OPT_SHADOWED
+		FINDMNT_OPT_SHADOWED,
+		FINDMNT_OPT_DELETED,
 	};
 
 	static const struct option longopts[] = {
@@ -1335,6 +1345,7 @@ int main(int argc, char *argv[])
 		{ "ascii",	    no_argument,       NULL, 'a'		 },
 		{ "bytes",	    no_argument,       NULL, 'b'		 },
 		{ "canonicalize",   no_argument,       NULL, 'c'		 },
+		{ "deleted",        no_argument,       NULL, FINDMNT_OPT_DELETED },
 		{ "direction",	    required_argument, NULL, 'd'		 },
 		{ "df",		    no_argument,       NULL, 'D'		 },
 		{ "evaluate",	    no_argument,       NULL, 'e'		 },
@@ -1553,7 +1564,9 @@ int main(int argc, char *argv[])
 		case FINDMNT_OPT_SHADOWED:
 			flags |= FL_SHADOWED;
 			break;
-
+		case FINDMNT_OPT_DELETED:
+			flags |= FL_DELETED;
+			break;
 		case 'h':
 			usage();
 		case 'V':
@@ -1718,6 +1731,9 @@ int main(int argc, char *argv[])
 			case COL_PASSNO:
 			case COL_TID:
 				scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
+				break;
+			case COL_DELETED:
+				scols_column_set_json_type(cl, SCOLS_JSON_BOOLEAN);
 				break;
 			default:
 				scols_column_set_json_type(cl, SCOLS_JSON_STRING);
