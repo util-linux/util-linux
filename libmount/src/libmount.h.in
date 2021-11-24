@@ -512,6 +512,7 @@ extern int mnt_fs_match_options(struct libmnt_fs *fs, const char *options);
 extern int mnt_fs_print_debug(struct libmnt_fs *fs, FILE *file);
 
 extern int mnt_fs_is_kernel(struct libmnt_fs *fs);
+extern int mnt_fs_is_deleted(struct libmnt_fs *fs);
 extern int mnt_fs_is_swaparea(struct libmnt_fs *fs);
 extern int mnt_fs_is_netfs(struct libmnt_fs *fs);
 extern int mnt_fs_is_pseudofs(struct libmnt_fs *fs);

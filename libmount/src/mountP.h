@@ -228,6 +228,7 @@ struct libmnt_fs {
 #define MNT_FS_SWAP	(1 << 3) /* swap device */
 #define MNT_FS_KERNEL	(1 << 4) /* data from /proc/{mounts,self/mountinfo} */
 #define MNT_FS_MERGED	(1 << 5) /* already merged data from /run/mount/utab */
+#define MNT_FS_DELETED	(1 << 6) /* target path in mountinfo contains "(deleted)" */
 
 /*
  * mtab/fstab/mountinfo file

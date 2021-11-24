@@ -652,6 +652,17 @@ int mnt_fs_is_regularfs(struct libmnt_fs *fs)
 }
 
 /**
+ * mnt_fs_is_deleted:
+ * @fs: filesystem
+ *
+ * Returns: 1 if the filesystem target is a marked as deleted by kernel
+ */
+int mnt_fs_is_deleted(struct libmnt_fs *fs)
+{
+	return mnt_fs_get_flags(fs) & MNT_FS_DELETED;
+}
+
+/**
  * mnt_fs_get_fstype:
  * @fs: fstab/mtab/mountinfo entry pointer
  *

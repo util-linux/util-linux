@@ -229,8 +229,10 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, const char *s)
 
 	/* remove "\040(deleted)" suffix */
 	p = (char *) endswith(fs->target, PATH_DELETED_SUFFIX);
-	if (p && *p)
+	if (p && *p) {
 		*p = '\0';
+		fs->flags |= MNT_FS_DELETED;
+	}
 
 	s = skip_separator(s);
 

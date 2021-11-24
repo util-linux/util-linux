@@ -365,4 +365,5 @@ MOUNT_2_37 {
 
 MOUNT_2_38 {
 	mnt_fs_is_regularfs;
+	mnt_fs_is_deleted;
 } MOUNT_2_37;

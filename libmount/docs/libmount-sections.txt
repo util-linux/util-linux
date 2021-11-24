@@ -246,6 +246,7 @@ mnt_fs_get_userdata
 mnt_fs_get_user_options
 mnt_fs_get_vfs_options
 mnt_fs_get_vfs_options_all
+mnt_fs_is_deleted
 mnt_fs_is_kernel
 mnt_fs_is_netfs
 mnt_fs_is_pseudofs
