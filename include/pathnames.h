@@ -98,6 +98,9 @@
 #define _PATH_PROC_LOCKS        "/proc/locks"
 #define _PATH_PROC_CDROMINFO	"/proc/sys/dev/cdrom/info"
 
+/* unshare paths */
+#define _PATH_SUBUID		"/etc/subuid"
+#define _PATH_SUBGID		"/etc/subgid"
 #define _PATH_PROC_UIDMAP	"/proc/self/uid_map"
 #define _PATH_PROC_GIDMAP	"/proc/self/gid_map"
 #define _PATH_PROC_SETGROUPS	"/proc/self/setgroups"

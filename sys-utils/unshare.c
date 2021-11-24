@@ -419,6 +419,72 @@ static struct map_range *get_map_range(const char *s)
 }
 
 /**
+ * read_subid_range() - Look up a user's sub[gu]id range
+ * @filename: The file to look up the range from. This should be either
+ *            ``/etc/subuid`` or ``/etc/subgid``.
+ * @uid: The uid of the user whose range we should look up.
+ *
+ * This finds the first subid range matching @uid in @filename.
+ */
+static struct map_range *read_subid_range(char *filename, uid_t uid)
+{
+	char *line = NULL, *pwbuf;
+	FILE *idmap;
+	size_t n;
+	struct passwd *pw;
+	struct map_range *map;
+
+	map = xmalloc(sizeof(*map));
+	map->inner = 0;
+
+	pw = xgetpwuid(uid, &pwbuf);
+	if (!pw)
+		errx(EXIT_FAILURE, _("you (user %d) don't exist."), uid);
+
+	idmap = fopen(filename, "r");
+	if (!idmap)
+		err(EXIT_FAILURE, _("could not open '%s'"), filename);
+
+	/*
+	* Each line in sub[ug]idmap looks like
+	* username:subuid:count
+	* OR
+	* uid:subuid:count
+	*/
+	while (getline(&line, &n, idmap) != -1) {
+		char *rest, *s;
+
+		rest = strchr(line, ':');
+		if (!rest)
+			continue;
+		*rest = '\0';
+
+		if (strcmp(line, pw->pw_name) &&
+		    strtoul(line, NULL, 10) != pw->pw_uid)
+			continue;
+
+		s = rest + 1;
+		rest = strchr(s, ':');
+		if (!rest)
+			continue;
+		*rest = '\0';
+		map->outer = strtoul_or_err(s, _("failed to parse subid map"));
+
+		s = rest + 1;
+		rest = strchr(s, '\n');
+		if (rest)
+			*rest = '\0';
+		map->count = strtoul_or_err(s, _("failed to parse subid map"));
+
+		fclose(idmap);
+		return map;
+	}
+
+	err(EXIT_FAILURE, _("no line matching user \"%s\" in %s"),
+	pw->pw_name, filename);
+}
+
+/**
  * map_ids() - Create a new uid/gid map
  * @idmapper: Either newuidmap or newgidmap
  * @ppid: Pid to set the map for
@@ -603,6 +669,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --map-group=<gid>|<name>  map current group to gid (implies --user)\n"), out);
 	fputs(_(" -r, --map-root-user       map current user to root (implies --user)\n"), out);
 	fputs(_(" -c, --map-current-user    map current user to itself (implies --user)\n"), out);
+	fputs(_(" --map-auto                map users and groups automatically (implies --user)\n"), out);
 	fputs(_(" --map-users=<outeruid>,<inneruid>,<count>\n"
 		"                           map count users from outeruid to inneruid (implies --user)\n"), out);
 	fputs(_(" --map-groups=<outergid>,<innergid>,<count>\n"
@@ -644,6 +711,7 @@ int main(int argc, char *argv[])
 		OPT_MAPUSERS,
 		OPT_MAPGROUP,
 		OPT_MAPGROUPS,
+		OPT_MAPAUTO,
 	};
 	static const struct option longopts[] = {
 		{ "help",          no_argument,       NULL, 'h'             },
@@ -667,6 +735,7 @@ int main(int argc, char *argv[])
 		{ "map-groups",    required_argument, NULL, OPT_MAPGROUPS   },
 		{ "map-root-user", no_argument,       NULL, 'r'             },
 		{ "map-current-user", no_argument,    NULL, 'c'             },
+		{ "map-auto",      no_argument,       NULL, OPT_MAPAUTO     },
 		{ "propagation",   required_argument, NULL, OPT_PROPAGATION },
 		{ "setgroups",     required_argument, NULL, OPT_SETGROUPS   },
 		{ "keep-caps",     no_argument,       NULL, OPT_KEEPCAPS    },
@@ -778,11 +847,22 @@ int main(int argc, char *argv[])
 			break;
 		case OPT_MAPUSERS:
 			unshare_flags |= CLONE_NEWUSER;
-			usermap = get_map_range(optarg);
+			if (!strcmp(optarg, "auto"))
+				usermap = read_subid_range(_PATH_SUBUID, real_euid);
+			else
+				usermap = get_map_range(optarg);
 			break;
 		case OPT_MAPGROUPS:
 			unshare_flags |= CLONE_NEWUSER;
-			groupmap = get_map_range(optarg);
+			if (!strcmp(optarg, "auto"))
+				groupmap = read_subid_range(_PATH_SUBGID, real_egid);
+			else
+				groupmap = get_map_range(optarg);
+			break;
+		case OPT_MAPAUTO:
+			unshare_flags |= CLONE_NEWUSER;
+			usermap = read_subid_range(_PATH_SUBUID, real_euid);
+			groupmap = read_subid_range(_PATH_SUBGID, real_egid);
 			break;
 		case OPT_SETGROUPS:
 			setgrpcmd = setgroups_str2id(optarg);
