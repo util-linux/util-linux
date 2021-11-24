@@ -69,7 +69,7 @@ Print the files only satisfying with the condition represented by the _expr_.
 See also "FILTER EXAMPLES".
 
 *-C*, *--counter* _label_:_filter_expr_::
-Define a counter used in *--summary* output. *lsfd* makes a
+Define a custom counter used in *--summary* output. *lsfd* makes a
 counter named _label_. During collect information, *lsfd* counts files
 satisfying _filter_expr_, and stores the counted number to the
 counter named _label_. *lsfd* applies filters defined with *--filter*
@@ -83,7 +83,7 @@ See also "COUNTER EXAMPLES".
 
 *--summary*[=_when_]::
 This option controls summary lines output. The optional argument _when_
-can be *never*, *always* or *only*. If the _when_ argument is omitted,
+can be *only*, *append* or *never*. If the _when_ argument is omitted,
 it defaults to *"only"*.
 +
 The summary reports counters. A counter comes from a label and an

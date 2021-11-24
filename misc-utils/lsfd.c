@@ -263,11 +263,6 @@ static struct counter_spec default_counter_specs[] = {
 	}
 };
 
-enum {
-	SUMMARY_EMIT = 1 << 0,
-	SUMMARY_ONLY = 1 << 1,
-};
-
 struct lsfd_control {
 	struct libscols_table *tb;		/* output */
 	struct list_head procs;			/* list of all processes */
@@ -277,7 +272,8 @@ struct lsfd_control {
 			json : 1,
 			notrunc : 1,
 			threads : 1,
-			summary: 2;
+			show_main : 1,		/* print main table */
+			show_summary : 1;	/* print summary/counters */
 
 	struct lsfd_filter *filter;
 	struct lsfd_counter **counters;		/* NULL terminated array. */
@@ -1144,9 +1140,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -Q, --filter <expr>   apply display filter\n"), out);
 	fputs(_("     --debug-filter    dump the innternal data structure of filter and exit\n"), out);
 	fputs(_(" -C, --counter <name>:<expr>\n"
-		"                       make a counter used in --summary output\n"), out);
+		"                       define custom counter for --summary output\n"), out);
 	fputs(_("     --dump-counters   dump counter definitions\n"), out);
-	fputs(_("     --summary[=when]  print summary information (never,always or only)\n"), out);
+	fputs(_("     --summary[=when]  print summary information (only, append, or never)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(23));
@@ -1393,13 +1389,16 @@ int main(int argc, char *argv[])
 	int c;
 	size_t i;
 	char *outarg = NULL;
-	struct lsfd_control ctl = {};
 	char  *filter_expr = NULL;
 	bool debug_filter = false;
 	bool dump_counters = false;
 	pid_t *pids = NULL;
 	int n_pids = 0;
 	struct list_head counter_specs;
+
+	struct lsfd_control ctl = {
+		.show_main = 1
+	};
 
 	INIT_LIST_HEAD(&counter_specs);
 
@@ -1468,15 +1467,15 @@ int main(int argc, char *argv[])
 		case OPT_SUMMARY:
 			if (optarg) {
 				if (strcmp(optarg, "never") == 0)
-					ctl.summary = 0;
+					ctl.show_summary = 0, ctl.show_main = 1;
 				else if (strcmp(optarg, "only") == 0)
-					ctl.summary |= (SUMMARY_ONLY|SUMMARY_EMIT);
-				else if (strcmp(optarg, "always") == 0)
-					ctl.summary |= SUMMARY_EMIT;
+					ctl.show_summary = 1, ctl.show_main = 0;
+				else if (strcmp(optarg, "append") == 0)
+					ctl.show_summary = 1, ctl.show_main = 1;
 				else
 					errx(EXIT_FAILURE, _("unsupported --summary argument"));
 			} else
-				ctl.summary |= SUMMARY_EMIT;
+				ctl.show_summary = 1, ctl.show_main = 0;
 			break;
 		case OPT_DUMP_COUNTERS:
 			dump_counters = true;
@@ -1549,7 +1548,7 @@ int main(int argc, char *argv[])
 	}
 
 	/* make counters */
-	if (ctl.summary & SUMMARY_EMIT) {
+	if (ctl.show_summary) {
 		if (list_empty(&counter_specs))
 			ctl.counters = new_default_counters(&ctl);
 		else {
@@ -1570,9 +1569,12 @@ int main(int argc, char *argv[])
 	free(pids);
 
 	convert(&ctl.procs, &ctl);
-	if (!(ctl.summary & SUMMARY_ONLY))
+
+	/* print */
+	if (ctl.show_main)
 		emit(&ctl);
-	if (ctl.counters && (ctl.summary & SUMMARY_EMIT))
+
+	if (ctl.show_summary && ctl.counters)
 		emit_summary(&ctl, ctl.counters);
 
 	/* cleanup */
