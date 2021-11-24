@@ -250,39 +250,74 @@ static void waitchild(int pid)
 	} while (rc < 0);
 }
 
-static void bind_ns_files_from_child(pid_t *child, int fds[2])
+/**
+ * sync_with_child() - Tell our child we're ready and wait for it to exit
+ * @pid: The pid of our child
+ * @fd: A file descriptor created with eventfd()
+ *
+ * This tells a child created with fork_and_wait() that we are ready for it to
+ * continue. Once we have done that, wait for our child to exit.
+ */
+static void sync_with_child(pid_t pid, int fd)
 {
-	char ch;
-	pid_t ppid = getpid();
-	ino_t ino = get_mnt_ino(ppid);
+	uint64_t ch = PIPE_SYNC_BYTE;
 
-	if (pipe(fds) < 0)
-		err(EXIT_FAILURE, _("pipe failed"));
+	write_all(fd, &ch, sizeof(ch));
+	close(fd);
 
-	*child = fork();
+	waitchild(pid);
+}
 
-	switch (*child) {
-	case -1:
+/**
+ * fork_and_wait() - Fork and wait to be sync'd with
+ * @fd - A file descriptor created with eventfd() which should be passed to
+ *       sync_with_child()
+ *
+ * This creates an eventfd and forks. The parent process returns immediately,
+ * but the child waits for a %PIPE_SYNC_BYTE on the eventfd before returning.
+ * This allows the parent to perform some tasks before the child starts its
+ * work. The parent should call sync_with_child() once it is ready for the
+ * child to continue.
+ *
+ * Return: The pid from fork()
+ */
+static pid_t fork_and_wait(int *fd)
+{
+	pid_t pid;
+	uint64_t ch;
+
+	*fd = eventfd(0, 0);
+	if (*fd < 0)
+		err(EXIT_FAILURE, _("eventfd failed"));
+
+	pid = fork();
+	if (pid < 0)
 		err(EXIT_FAILURE, _("fork failed"));
 
-	case 0:	/* child */
-		close(fds[1]);
-		fds[1] = -1;
-
-		/* wait for parent */
-		if (read_all(fds[0], &ch, 1) != 1 && ch != PIPE_SYNC_BYTE)
-			err(EXIT_FAILURE, _("failed to read pipe"));
-		if (get_mnt_ino(ppid) == ino)
-			exit(EXIT_FAILURE);
-		bind_ns_files(ppid);
-		exit(EXIT_SUCCESS);
-		break;
-
-	default: /* parent */
-		close(fds[0]);
-		fds[0] = -1;
-		break;
+	if (!pid) {
+		/* wait for the our parent to tell us to continue */
+		if (read_all(*fd, (char *)&ch, sizeof(ch)) != sizeof(ch) ||
+		    ch != PIPE_SYNC_BYTE)
+			err(EXIT_FAILURE, _("failed to read eventfd"));
+		close(*fd);
 	}
+
+	return pid;
+}
+
+static pid_t bind_ns_files_from_child(int *fd)
+{
+	pid_t child, ppid = getpid();
+	ino_t ino = get_mnt_ino(ppid);
+
+	child = fork_and_wait(fd);
+	if (child)
+		return child;
+
+	if (get_mnt_ino(ppid) == ino)
+		exit(EXIT_FAILURE);
+	bind_ns_files(ppid);
+	exit(EXIT_SUCCESS);
 }
 
 static uid_t get_user(const char *s, const char *err)
@@ -426,7 +461,7 @@ int main(int argc, char *argv[])
 	const char *newdir = NULL;
 	pid_t pid_bind = 0;
 	pid_t pid = 0;
-	int fds[2];
+	int fd_bind = -1;
 	int status;
 	unsigned long propagation = UNSHARE_PROPAGATION_DEFAULT;
 	int force_uid = 0, force_gid = 0;
@@ -570,7 +605,7 @@ int main(int argc, char *argv[])
 	signal(SIGCHLD, SIG_DFL);
 
 	if (npersists && (unshare_flags & CLONE_NEWNS))
-		bind_ns_files_from_child(&pid_bind, fds);
+		pid_bind = bind_ns_files_from_child(&fd_bind);
 
 	if (-1 == unshare(unshare_flags))
 		err(EXIT_FAILURE, _("unshare failed"));
@@ -593,8 +628,8 @@ int main(int argc, char *argv[])
 		case -1:
 			err(EXIT_FAILURE, _("fork failed"));
 		case 0:	/* child */
-			if (pid_bind && (unshare_flags & CLONE_NEWNS))
-				close(fds[1]);
+			if (npersists && (unshare_flags & CLONE_NEWNS))
+				close(fd_bind);
 			break;
 		default: /* parent */
 			break;
@@ -603,17 +638,9 @@ int main(int argc, char *argv[])
 
 	if (npersists && (pid || !forkit)) {
 		/* run in parent */
-		if (pid_bind && (unshare_flags & CLONE_NEWNS)) {
-			char ch = PIPE_SYNC_BYTE;
-
-			/* signal child we are ready */
-			write_all(fds[1], &ch, 1);
-			close(fds[1]);
-			fds[1] = -1;
-
-			/* wait for bind_ns_files_from_child() */
-			waitchild(pid_bind);
-		} else
+		if (pid_bind && (unshare_flags & CLONE_NEWNS))
+			sync_with_child(pid_bind, fd_bind);
+		else
 			/* simple way, just bind */
 			bind_ns_files(getpid());
 	}
