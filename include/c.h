@@ -159,6 +159,14 @@
 	_max1 > _max2 ? _max1 : _max2; })
 #endif
 
+#ifndef abs_diff
+# define abs_diff(x, y) __extension__ ({        \
+	__typeof__(x) _a = (x);			\
+	__typeof__(y) _b = (y);			\
+	(void) (&_a == &_b);			\
+	_a > _b ? _a - _b : _b - _a; })
+#endif
+
 #ifndef cmp_numbers
 # define cmp_numbers(x, y) __extension__ ({	\
 	__typeof__(x) _a = (x);			\
