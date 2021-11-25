@@ -109,5 +109,7 @@ int sysfs_blkdev_scsi_host_is(struct path_cxt *pc, const char *type);
 int sysfs_blkdev_scsi_has_attribute(struct path_cxt *pc, const char *attr);
 int sysfs_blkdev_scsi_path_contains(struct path_cxt *pc, const char *pattern);
 
+char *sysfs_chrdev_devno_to_devname(dev_t devno, char *buf, size_t bufsiz);
+
 
 #endif /* UTIL_LINUX_SYSFS_H */

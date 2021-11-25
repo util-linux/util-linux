@@ -1039,6 +1039,40 @@ int sysfs_devno_count_partitions(dev_t devno)
 	return n;
 }
 
+char *sysfs_chrdev_devno_to_devname(dev_t devno, char *buf, size_t bufsiz)
+{
+	char link[PATH_MAX];
+	struct path_cxt *pc;
+	char *name;
+	ssize_t	sz;
+
+	pc = ul_new_path(_PATH_SYS_DEVCHAR "/%u:%u", major(devno), minor(devno));
+	if (!pc)
+		return NULL;
+
+        /* read /sys/dev/char/<maj:min> link */
+	sz = ul_path_readlink(pc, link, sizeof(link), NULL);
+	ul_unref_path(pc);
+
+	if (sz < 0)
+		return NULL;
+
+	name = strrchr(link, '/');
+	if (!name)
+		return NULL;
+
+	name++;
+	sz = strlen(name);
+	if ((size_t) sz + 1 > bufsiz)
+		return NULL;
+
+	memcpy(buf, name, sz + 1);
+	sysfs_devname_sys_to_dev(buf);
+	return buf;
+
+}
+
+
 
 #ifdef TEST_PROGRAM_SYSFS
 #include <errno.h>
