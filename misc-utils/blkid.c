@@ -46,6 +46,8 @@
 #define XALLOC_EXIT_CODE    BLKID_EXIT_OTHER    /* x.*alloc(), xstrndup() */
 #include "xalloc.h"
 
+#include "sysfs.h"
+
 struct blkid_control {
 	int output;
 	uintmax_t offset;
@@ -836,8 +838,29 @@ int main(int argc, char **argv)
 	/* The rest of the args are device names */
 	if (optind < argc) {
 		devices = xcalloc(argc - optind, sizeof(char *));
-		while (optind < argc)
-			devices[numdev++] = argv[optind++];
+		while (optind < argc) {
+			char *dev = argv[optind++];
+			struct stat sb;
+
+			if (stat(dev, &sb) != 0)
+				continue;
+			else if (S_ISBLK(sb.st_mode))
+				;
+			else if (S_ISREG(sb.st_mode))
+				;
+			else if (S_ISCHR(sb.st_mode)) {
+				char buf[PATH_MAX];
+
+				if (!sysfs_chrdev_devno_to_devname(
+						sb.st_rdev, buf, sizeof(buf)))
+					continue;
+				if (strncmp(buf, "ubi", 3) != 0)
+					continue;
+			} else
+				continue;
+
+			devices[numdev++] = dev;
+		}
 	}
 
 	/* convert LABEL/UUID lookup to evaluate request */
