@@ -723,8 +723,9 @@ static int inserter(const char *fpath, const struct stat *sb,
 		return 0;
 	}
 
-	jlog(JLOG_VERBOSE2, " %5zu: [%ld/%ld/%ld] %s",
-			stats.files, sb->st_dev, sb->st_ino, sb->st_nlink, fpath);
+	jlog(JLOG_VERBOSE2, " %5zu: [%ld/%ld/%zu] %s",
+			stats.files, sb->st_dev, sb->st_ino,
+			(size_t) sb->st_nlink, fpath);
 
 	if ((opts.max_size > 0) && ((uintmax_t) sb->st_size > opts.max_size)) {
 		jlog(JLOG_VERBOSE1,
