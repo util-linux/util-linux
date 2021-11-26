@@ -308,6 +308,7 @@ AC_CHECK_HEADERS([ \
 	linux/falloc.h \
 	linux/fd.h \
 	linux/fiemap.h \
+	linux/kcmp.h \
 	linux/net_namespace.h \
 	linux/nsfs.h \
 	linux/raw.h \
@@ -455,6 +456,7 @@ dnl
 have_linux_blkzoned_h=$ac_cv_header_linux_blkzoned_h
 have_linux_btrfs_h=$ac_cv_header_linux_btrfs_h
 have_linux_capability_h=$ac_cv_header_linux_capability_h
+have_linux_kcmp_h=$ac_cv_header_linux_kcmp_h
 have_linux_raw_h=$ac_cv_header_linux_raw_h
 have_linux_securebits_h=$ac_cv_header_linux_securebits_h
 have_linux_version_h=$ac_cv_header_linux_version_h
@@ -1660,6 +1662,7 @@ AM_CONDITIONAL([BUILD_LSCPU], [test "x$build_lscpu" = xyes])
 UL_BUILD_INIT([lsfd], [check])
 UL_REQUIRES_LINUX([lsfd])
 UL_REQUIRES_BUILD([lsfd], [libsmartcols])
+UL_REQUIRES_HAVE([lsfd], [linux_kcmp_h], [linux/kcmp.h header file])
 AM_CONDITIONAL([BUILD_LSFD], [test "x$build_lsfd" = xyes])
 
 AC_ARG_ENABLE([lslogins],
