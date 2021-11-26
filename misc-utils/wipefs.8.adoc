@@ -97,7 +97,7 @@ Prints information about sda and all partitions on sda.
 *wipefs --all --backup /dev/sdb*::
 Erases all signatures from the device _/dev/sdb_ and creates a signature backup file _~/wipefs-sdb-<offset>.bak_ for each signature.
 
-*dd if=~/wipefs-sdb-0x00000438.bak of=/dev/sdb seek=$((0x00000438)) bs=1 conv=notrunc*::
+*dd if=~/wipefs-sdb-0x00000438.bak of=/dev/sdb seek=$\((0x00000438)) bs=1 conv=notrunc*::
 Restores an ext2 signature from the backup file _~/wipefs-sdb-0x00000438.bak_.
 
 == AUTHORS
