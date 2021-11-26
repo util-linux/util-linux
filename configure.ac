@@ -1659,7 +1659,11 @@ UL_REQUIRES_BUILD([lscpu], [libsmartcols])
 UL_REQUIRES_HAVE([lscpu], [cpu_set_t], [cpu_set_t type])
 AM_CONDITIONAL([BUILD_LSCPU], [test "x$build_lscpu" = xyes])
 
-UL_BUILD_INIT([lsfd], [check])
+AC_ARG_ENABLE([lsfd],
+  AS_HELP_STRING([--disable-lsfd], [do not build lsfd]),
+  [], [UL_DEFAULT_ENABLE([lsfd], [check])]
+)
+UL_BUILD_INIT([lsfd])
 UL_REQUIRES_LINUX([lsfd])
 UL_REQUIRES_BUILD([lsfd], [libsmartcols])
 UL_REQUIRES_HAVE([lsfd], [linux_kcmp_h], [linux/kcmp.h header file])
