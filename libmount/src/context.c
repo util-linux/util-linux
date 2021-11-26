@@ -73,6 +73,8 @@ struct libmnt_context *mnt_new_context(void)
 	cxt->ns_orig.fd = -1;
 	cxt->ns_tgt.fd = -1;
 	cxt->ns_cur = &cxt->ns_orig;
+	cxt->userns_fd = -1;
+	INIT_LIST_HEAD(&cxt->id_map);
 
 	/* if we're really root and aren't running setuid */
 	cxt->restricted = (uid_t) 0 == ruid && ruid == euid ? 0 : 1;
@@ -160,6 +162,12 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	cxt->tgt_owner = (uid_t) -1;
 	cxt->tgt_group = (gid_t) -1;
 	cxt->tgt_mode = (mode_t) -1;
+
+	if (cxt->userns_fd >= 0) {
+		close(cxt->userns_fd);
+		cxt->userns_fd = -1;
+	}
+	free_idmap(cxt);
 
 	cxt->fs = NULL;
 	cxt->mtab = NULL;
@@ -2682,7 +2690,8 @@ int mnt_context_propagation_only(struct libmnt_context *cxt)
 	       && (cxt->mountflags == 0 || cxt->mountflags == MS_SILENT)
 	       && cxt->fs
 	       && (!cxt->fs->fstype || strcmp(cxt->fs->fstype, "none") == 0)
-	       && (!cxt->fs->source || strcmp(cxt->fs->source, "none") == 0);
+	       && (!cxt->fs->source || strcmp(cxt->fs->source, "none") == 0)
+	       && (cxt->userns_fd < 0);
 }
 
 /**

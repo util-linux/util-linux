@@ -21,10 +21,12 @@
 #include <selinux/context.h>
 #endif
 
+#include <stdbool.h>
 #include <sys/wait.h>
 #include <sys/mount.h>
 
 #include "linux_version.h"
+#include "mount-api-utils.h"
 #include "mountP.h"
 #include "strutils.h"
 
@@ -776,6 +778,63 @@ static int do_mount_subdir(struct libmnt_context *cxt,
 	return rc;
 }
 
+#ifdef UL_HAVE_MOUNT_API
+/**
+ * mnt_idmapped:
+ * @target: mount to idmap
+ * @userns_fd: user namespace file descriptor to attach
+ * @recursive: whether this is a MS_REC recursive request
+ *
+ * Create an idmapped mount based on @target, unmounting the non-idmapped
+ * @target mount and attaching the detached idmapped mount @target.
+ *
+ * Returns: 0 on success,
+ *         <0 in case of error
+ */
+static int mnt_idmapped(const char *target, int userns_fd, bool recursive)
+{
+	int fd_tree = -1;
+	struct mount_attr attr = {
+		.attr_set	= MOUNT_ATTR_IDMAP,
+		.userns_fd	= userns_fd,
+
+	};
+	int rc;
+
+	/*
+	 * Once a mount has been attached to the filesystem it can't be
+	 * idmapped anymore. So create a new detached mount.
+	 */
+	fd_tree = open_tree(-1, target,
+			    OPEN_TREE_CLONE | OPEN_TREE_CLOEXEC |
+			    (recursive ? AT_RECURSIVE : 0));
+	if (fd_tree < 0)
+		return -MNT_ERR_IDMAP;
+
+	/* Attach the idmapping to the mount. */
+	rc = mount_setattr(fd_tree, "",
+			   AT_EMPTY_PATH | (recursive ? AT_RECURSIVE : 0),
+			   &attr, sizeof(attr));
+	if (rc < 0)
+		goto err;
+
+	/* Unmount the old, non-idmapped mount we just cloned and idmapped. */
+	rc = umount(target);
+	if (rc < 0)
+		goto err;
+
+	/* Attach the idmapped mount. */
+	rc = move_mount(fd_tree, "", -1, target, MOVE_MOUNT_F_EMPTY_PATH);
+
+err:
+	close(fd_tree);
+	if (rc < 0)
+		return -MNT_ERR_IDMAP;
+
+	return 0;
+}
+#endif
+
 /*
  * The default is to use fstype from cxt->fs, this could be overwritten by
  * @try_type argument. If @try_type is specified then mount with MS_SILENT.
@@ -876,6 +935,15 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 		}
 		DBG(CXT, ul_debugobj(cxt, "  mount(2) success"));
 		cxt->syscall_status = 0;
+
+#ifdef UL_HAVE_MOUNT_API
+		if (cxt->userns_fd >= 0) {
+			rc = mnt_idmapped(target, cxt->userns_fd,
+					  cxt->mountflags & MS_REC);
+			if (rc < 0)
+				goto done;
+		}
+#endif
 
 		/*
 		 * additional mounts for extra propagation flags
@@ -1068,6 +1136,107 @@ static int parse_ownership_mode(struct libmnt_context *cxt)
 	return 0;
 }
 
+#ifdef UL_HAVE_MOUNT_API
+/*
+ * Process X-mount.idmap=.
+ */
+static int mnt_context_prepare_idmaps(struct libmnt_context *cxt)
+{
+	int rc;
+	char *value;
+	size_t valsz;
+	char *saveptr = NULL, *tok;
+
+	const char *o = mnt_fs_get_user_options(cxt->fs);
+	if (!o)
+		return 0;
+
+	rc = mnt_optstr_get_option(o, "X-mount.idmap", &value, &valsz);
+	if (rc < 0)
+		return -MNT_ERR_MOUNTOPT;
+	if (rc > 0)
+		return 0;
+
+	if (!valsz)
+		return errno = EINVAL, -MNT_ERR_MOUNTOPT;
+
+	/* Has the user given us a path to a user namespace? */
+	if (*value == '/') {
+		cxt->userns_fd = open_userns(value);
+		if (cxt->userns_fd < 0)
+			return errno = EINVAL, -MNT_ERR_MOUNTOPT;
+
+		return 0;
+	}
+
+	/*
+	 * This is an explicit ID-mapping list of the form:
+	 * [id-type]:id-mount:id-host:id-range [...]
+	 *
+	 * We split the list into separate ID-mapping entries. The individual
+	 * ID-mapping entries are separated by ' '.
+	 *
+	 * A long while ago I made the kernel support up to 340 individual
+	 * ID-mappings. So users have quite a bit of freedom here.
+	 */
+	for (tok = strtok_r(value, " ", &saveptr); tok;
+	     tok = strtok_r(NULL, " ", &saveptr)) {
+		struct id_map *idmap;
+		idmap_type_t map_type;
+		uint32_t nsid = UINT_MAX, hostid = UINT_MAX, range = UINT_MAX;
+
+		if (startswith(tok, "b:")) {
+			/* b:id-mount:id-host:id-range */
+			map_type = ID_TYPE_UIDGID;
+			tok += 2;
+		} else if (startswith(tok, "g:")) {
+			/* g:id-mount:id-host:id-range */
+			map_type = ID_TYPE_GID;
+			tok += 2;
+		} else if (startswith(tok, "u:")) {
+			/* u:id-mount:id-host:id-range */
+			map_type = ID_TYPE_UID;
+			tok += 2;
+		} else {
+			/*
+			 * id-mount:id-host:id-range
+			 *
+			 * If the user didn't specify it explicitly then they
+			 * want this to be both a gid- and uidmap.
+			 */
+			map_type = ID_TYPE_UIDGID;
+		}
+
+		/* id-mount:id-host:id-range */
+		rc = sscanf(tok, "%" PRIu32 ":%" PRIu32 ":%" PRIu32, &nsid,
+			    &hostid, &range);
+		if (rc != 3)
+			goto err;
+
+		idmap = calloc(1, sizeof(*idmap));
+		if (!idmap)
+			goto err;
+
+		idmap->map_type = map_type;
+		idmap->nsid = nsid;
+		idmap->hostid = hostid;
+		idmap->range = range;
+		INIT_LIST_HEAD(&idmap->map_head);
+		list_add_tail(&idmap->map_head, &cxt->id_map);
+	}
+
+	cxt->userns_fd = get_userns_fd_from_idmap(&cxt->id_map);
+	if (cxt->userns_fd < 0)
+		goto err;
+
+	return 0;
+
+err:
+	free_idmap(cxt);
+	return -MNT_ERR_IDMAP;
+}
+#endif
+
 /**
  * mnt_context_prepare_mount:
  * @cxt: context
@@ -1114,6 +1283,10 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
 		rc = mnt_context_prepare_target(cxt);
 	if (!rc)
 		rc = parse_ownership_mode(cxt);
+#ifdef UL_HAVE_MOUNT_API
+	if (!rc)
+		rc = mnt_context_prepare_idmaps(cxt);
+#endif
 	if (!rc)
 		rc = mnt_context_prepare_helper(cxt, "mount", NULL);
 
@@ -1924,6 +2097,12 @@ int mnt_context_get_mount_excode(
 		if (rc == -MNT_ERR_CHMOD) {
 			if (buf)
 				snprintf(buf, bufsz, _("filesystem was mounted, but failed to change mode to %04o: %m"), cxt->tgt_mode);
+			return MNT_EX_SYSERR;
+		}
+
+		if (rc == -MNT_ERR_IDMAP) {
+			if (buf)
+				snprintf(buf, bufsz, _("filesystem was mounted, but failed to attach idmapping"));
 			return MNT_EX_SYSERR;
 		}
 

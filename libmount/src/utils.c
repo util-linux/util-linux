@@ -20,7 +20,11 @@
 #include <pwd.h>
 #include <grp.h>
 #include <blkid.h>
+#include <stdbool.h>
+#include <sys/socket.h>
+#include <sys/wait.h>
 
+#include "all-io.h"
 #include "strutils.h"
 #include "pathnames.h"
 #include "mountP.h"
@@ -32,6 +36,9 @@
 #include "statfs_magic.h"
 #include "sysfs.h"
 
+#ifdef HAVE_LINUX_NSFS_H
+# include <linux/nsfs.h>
+#endif
 /*
  * Return 1 if the file is not accessible or empty
  */
@@ -1341,6 +1348,196 @@ int mnt_tmptgt_cleanup(int old_ns_fd)
 	return -ENOSYS;
 #endif
 }
+
+#ifdef UL_HAVE_MOUNT_API
+static int write_id_mapping(idmap_type_t map_type, pid_t pid, const char *buf,
+			    size_t buf_size)
+{
+	int fd = -1, rc = -1, setgroups_fd = -1;
+	char path[PATH_MAX];
+
+	if (geteuid() != 0 && map_type == ID_TYPE_GID) {
+		snprintf(path, sizeof(path), "/proc/%d/setgroups", pid);
+
+		setgroups_fd = open(path, O_WRONLY | O_CLOEXEC | O_NOCTTY);
+		if (setgroups_fd < 0 && errno != ENOENT)
+			goto err;
+
+		if (setgroups_fd >= 0) {
+			rc = write_all(setgroups_fd, "deny\n", strlen("deny\n"));
+			if (rc)
+				goto err;
+		}
+	}
+
+	snprintf(path, sizeof(path), "/proc/%d/%cid_map", pid,
+		 map_type == ID_TYPE_UID ? 'u' : 'g');
+
+	fd = open(path, O_WRONLY | O_CLOEXEC | O_NOCTTY);
+	if (fd < 0)
+		goto err;
+
+	rc = write_all(fd, buf, buf_size);
+
+err:
+	if (fd >= 0)
+		close(fd);
+	if (setgroups_fd >= 0)
+		close(setgroups_fd);
+
+	return rc;
+}
+
+static int map_ids(struct list_head *idmap, pid_t pid)
+{
+	int fill, left;
+	char *pos;
+	int rc = 0;
+	char mapbuf[4096] = {};
+	struct list_head *p;
+
+	for (idmap_type_t type = ID_TYPE_UID; type <= ID_TYPE_GID; type++) {
+		bool had_entry = false;
+
+		pos = mapbuf;
+		list_for_each(p, idmap) {
+			struct id_map *map = list_entry(p, struct id_map, map_head);
+
+			/*
+			 * If the map type is ID_TYPE_UIDGID we need to include
+			 * it in both gid- and uidmap.
+			 */
+			if (map->map_type != ID_TYPE_UIDGID && map->map_type != type)
+				continue;
+
+			had_entry = true;
+
+			left = sizeof(mapbuf) - (pos - mapbuf);
+			fill = snprintf(pos, left,
+					"%" PRIu32 " %" PRIu32 " %" PRIu32 "\n",
+					map->nsid, map->hostid, map->range);
+			/*
+			 * The kernel only takes <= 4k for writes to
+			 * /proc/<pid>/{g,u}id_map
+			 */
+			if (fill <= 0)
+				return errno = EINVAL, -1;
+
+			pos += fill;
+		}
+		if (!had_entry)
+			continue;
+
+		rc = write_id_mapping(type, pid, mapbuf, pos - mapbuf);
+		if (rc < 0)
+			return -1;
+
+		memset(mapbuf, 0, sizeof(mapbuf));
+	}
+
+	return 0;
+}
+
+static int wait_for_pid(pid_t pid)
+{
+	int status, rc;
+
+	do {
+		rc = waitpid(pid, &status, 0);
+	} while (rc < 0 && errno == EINTR);
+
+	if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
+		return -1;
+
+	return 0;
+}
+
+int get_userns_fd_from_idmap(struct list_head *idmap)
+{
+	int fd_userns = -1;
+	ssize_t rc = -1;
+	char c = '1';
+	pid_t pid;
+	int sock_fds[2];
+	char path[PATH_MAX];
+
+	rc = socketpair(PF_LOCAL, SOCK_STREAM | SOCK_CLOEXEC, 0, sock_fds);
+	if (rc < 0)
+		return -errno;
+
+	pid = fork();
+	if (pid < 0)
+		goto err_close_sock;
+
+	if (pid == 0) {
+		close(sock_fds[1]);
+
+		rc = unshare(CLONE_NEWUSER);
+		if (rc < 0)
+			_exit(EXIT_FAILURE);
+
+		rc = write_all(sock_fds[0], &c, 1);
+		if (rc)
+			_exit(EXIT_FAILURE);
+
+		close(sock_fds[0]);
+
+		_exit(EXIT_SUCCESS);
+	}
+	close(sock_fds[0]);
+	sock_fds[0] = -1;
+
+	rc = read_all(sock_fds[1], &c, 1);
+	if (rc != 1)
+		goto err_wait;
+
+	rc = map_ids(idmap, pid);
+	if (rc < 0)
+		goto err_wait;
+
+	snprintf(path, sizeof(path), "/proc/%d/ns/user", pid);
+	fd_userns = open(path, O_RDONLY | O_CLOEXEC | O_NOCTTY);
+
+err_wait:
+	rc = wait_for_pid(pid);
+
+err_close_sock:
+	if (sock_fds[0] > 0)
+		close(sock_fds[0]);
+	close(sock_fds[1]);
+
+	if (rc < 0 && fd_userns >= 0) {
+		close(fd_userns);
+		fd_userns = -1;
+	}
+
+	return fd_userns;
+}
+
+int open_userns(const char *path)
+{
+
+	int userns_fd;
+
+	userns_fd = open(path, O_RDONLY | O_CLOEXEC | O_NOCTTY);
+	if (userns_fd < 0)
+		return -1;
+
+#if defined(NS_GET_OWNER_UID)
+	/*
+	 * We use NS_GET_OWNER_UID to verify that this is a user namespace.
+	 * This is on a best-effort basis. If this isn't a userns then
+	 * mount_setattr() will tell us to go away later.
+	 */
+	if (ioctl(userns_fd, NS_GET_OWNER_UID, &(uid_t){-1}) < 0) {
+		close(userns_fd);
+		return -1;
+	}
+#endif
+
+	return userns_fd;
+}
+#endif
 
 #ifdef TEST_PROGRAM
 static int test_match_fstype(struct libmnt_test *ts, int argc, char *argv[])

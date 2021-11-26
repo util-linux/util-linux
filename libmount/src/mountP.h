@@ -27,6 +27,7 @@
 #include "c.h"
 #include "list.h"
 #include "debug.h"
+#include "mount-api-utils.h"
 #include "libmount.h"
 
 /*
@@ -93,7 +94,25 @@ struct libmnt_test {
 extern int mnt_run_test(struct libmnt_test *tests, int argc, char *argv[]);
 #endif
 
+#ifdef UL_HAVE_MOUNT_API
 /* utils.c */
+typedef enum idmap_type_t {
+	ID_TYPE_UID,	/* uidmap entry */
+	ID_TYPE_GID,	/* gidmap entry */
+	ID_TYPE_UIDGID,	/* uidmap and gidmap entry */
+} idmap_type_t;
+
+struct id_map {
+	idmap_type_t map_type;
+	uint32_t nsid;
+	uint32_t hostid;
+	uint32_t range;
+	struct list_head map_head;
+};
+
+extern int get_userns_fd_from_idmap(struct list_head *idmap);
+extern int open_userns(const char *path);
+#endif
 extern int mnt_valid_tagname(const char *tagname);
 
 extern const char *mnt_statfs_get_fstype(struct statfs *vfs);
@@ -359,6 +378,9 @@ struct libmnt_context
 	struct libmnt_ns	*ns_cur;	/* pointer to current namespace */
 
 	unsigned int	enabled_textdomain : 1;		/* bindtextdomain() called */
+
+	int	userns_fd;
+	struct list_head	id_map;
 };
 
 /* flags */
@@ -478,6 +500,20 @@ extern int mnt_context_is_veritydev(struct libmnt_context *cxt)
 			__attribute__((nonnull));
 extern int mnt_context_setup_veritydev(struct libmnt_context *cxt);
 extern int mnt_context_deferred_delete_veritydev(struct libmnt_context *cxt);
+static inline void free_idmap(struct libmnt_context *cxt)
+{
+#ifdef UL_HAVE_MOUNT_API
+	struct list_head *p, *pnext;
+	struct id_map *idmap;
+
+	list_for_each_safe(p, pnext, &cxt->id_map) {
+		idmap = list_entry(p, struct id_map, map_head);
+		list_del(&idmap->map_head);
+		free(idmap);
+	}
+#endif
+	INIT_LIST_HEAD(&cxt->id_map);
+}
 
 /* tab_update.c */
 extern int mnt_update_set_filename(struct libmnt_update *upd,
