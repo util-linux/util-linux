@@ -49,7 +49,7 @@ dist_noinst_HEADERS += \
 	include/pathnames.h \
 	include/pidfd-utils.h \
 	include/plymouth-ctrl.h \
-	include/procutils.h \
+	include/procfs.h \
 	include/pt-bsd.h \
 	include/pt-mbr.h \
 	include/pt-mbr-partnames.h \

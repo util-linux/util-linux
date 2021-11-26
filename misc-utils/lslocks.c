@@ -44,7 +44,7 @@
 #include "list.h"
 #include "closestream.h"
 #include "optutils.h"
-#include "procutils.h"
+#include "procfs.h"
 
 /* column IDs */
 enum {
@@ -282,7 +282,7 @@ static int get_local_locks(struct list_head *locks)
 				 */
 				l->pid = strtos32_or_err(tok, _("failed to parse pid"));
 				if (l->pid > 0) {
-					l->cmdname = proc_get_command_name(l->pid);
+					l->cmdname = pid_get_cmdname(l->pid);
 					if (!l->cmdname)
 						l->cmdname = xstrdup(_("(unknown)"));
 				} else

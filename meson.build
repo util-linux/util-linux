@@ -2336,6 +2336,19 @@ if not is_disabler(exe)
 endif
 
 exe = executable(
+  'lsfd',
+  lsfd_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_smartcols],
+  install_dir : usrbin_exec_dir,
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  manadocs += ['misc-utils/lsfd.1.adoc']
+endif
+
+exe = executable(
   'uuidgen',
   uuidgen_sources,
   include_directories : includes,
@@ -2672,10 +2685,11 @@ exes += exe
 
 # XXX: HAVE_OPENAT && HAVE_DIRFD
 exe = executable(
-  'test_procutils',
-  'lib/procutils.c',
-  c_args : ['-DTEST_PROGRAM_PROCUTILS'],
-  include_directories : dir_include)
+  'test_procfs',
+  'lib/procfs.c',
+  c_args : ['-DTEST_PROGRAM_PROCFS'],
+  include_directories : dir_include,
+  link_with : lib_common)
 exes += exe
 
 # XXX: HAVE_OPENAT && HAVE_DIRFD

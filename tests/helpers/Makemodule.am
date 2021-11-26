@@ -31,3 +31,5 @@ check_PROGRAMS += test_uuid_namespace
 test_uuid_namespace_SOURCES = tests/helpers/test_uuid_namespace.c \
 	libuuid/src/predefined.c libuuid/src/unpack.c libuuid/src/unparse.c
 
+check_PROGRAMS += test_mkfds
+test_mkfds_SOURCES = tests/helpers/test_mkfds.c

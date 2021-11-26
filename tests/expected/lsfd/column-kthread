@@ -1,0 +1,6 @@
+COMMAND  PID USER MODE TYPE INODE NAME KTHREAD
+systemd    1 root  ---  DIR     2 /          0
+systemd    1 root  ---  DIR     2 /          0
+kthreadd   2 root  ---  DIR     2 /          1
+kthreadd   2 root  ---  DIR     2 /          1
+0

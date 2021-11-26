@@ -43,6 +43,7 @@ AUTHORS (merged projects & commands):
       lscpu:           Cai Qian <qcai@redhat.com>
       lsblk:           Milan Broz <mbroz@redhat.com>
                        Karel Zak <kzak@redhat.com>
+      lsfd:            Masatake YAMATO <yamato@redhat.com>
       lsipc:           Ondrej Oprala <ooprala@redhat.com>
                        Karel Zak <kzak@redhat.com>
       lslocks:         Davidlohr Bueso <dave@gnu.org>

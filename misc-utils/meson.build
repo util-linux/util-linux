@@ -39,6 +39,21 @@ lsblk_sources = files(
   'lsblk.h',
 )
 
+lsfd_sources = files (
+  'lsfd.c',
+  'lsfd.h',
+  'lsfd-filter.h',
+  'lsfd-filter.c',
+  'lsfd-counter.h',
+  'lsfd-counter.c',
+  'lsfd-file.c',
+  'lsfd-cdev.c',
+  'lsfd-bdev.c',
+  'lsfd-sock.c',
+  'lsfd-unkn.c',
+  'lsfd-fifo.c',
+)
+
 uuidgen_sources = files(
   'uuidgen.c',
 )

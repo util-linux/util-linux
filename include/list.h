@@ -208,6 +208,25 @@ _INLINE_ void list_splice(struct list_head *list, struct list_head *head)
 	for (pos = (head)->next, pnext = pos->next; pos != (head); \
 	     pos = pnext, pnext = pos->next)
 
+/**
+ * list_free - remove all entries from list and call freefunc()
+ *             for each entry
+ * @head:       the head for your list
+ * @type:       the type of the struct this is embedded in.
+ * @member:     the name of the list_struct within the struct.
+ * @freefunc:   the list entry deallocator
+ */
+#define list_free(head, type, member, freefunc)				\
+	do {								\
+		struct list_head *__p, *__pnext;			\
+									\
+		list_for_each_safe (__p, __pnext, (head)) {		\
+			type *__elt = list_entry(__p, type, member);	\
+			list_del(__p);					\
+			freefunc(__elt);			\
+		}							\
+	} while (0)
+
 _INLINE_ size_t list_count_entries(struct list_head *head)
 {
 	struct list_head *pos;

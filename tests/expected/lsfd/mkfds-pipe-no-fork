@@ -1,0 +1,9 @@
+    3  r-- FIFO pipefs 
+    4  -w- FIFO pipefs wronly,nonblock
+ASSOC,MODE,TYPE,SOURCE,FLAGS: 0
+PID[RUN]: 0
+PID[STR]: 0
+NAMES[RUN]: 0
+NAMES[STR]: 0
+INODES[RUN]: 0
+INODES[STR]: 0

@@ -48,7 +48,7 @@ int ul_path_is_accessible(struct path_cxt *pc);
 char *ul_path_get_abspath(struct path_cxt *pc, char *buf, size_t bufsz, const char *path, ...)
 				__attribute__ ((__format__ (__printf__, 4, 5)));
 
-int ul_path_stat(struct path_cxt *pc, struct stat *sb, const char *path);
+int ul_path_stat(struct path_cxt *pc, struct stat *sb, int flags, const char *path);
 int ul_path_access(struct path_cxt *pc, int mode, const char *path);
 int ul_path_accessf(struct path_cxt *pc, int mode, const char *path, ...)
 				__attribute__ ((__format__ (__printf__, 3, 4)));
@@ -127,6 +127,8 @@ int ul_path_writef_u64(struct path_cxt *pc, uint64_t num, const char *path, ...)
 int ul_path_count_dirents(struct path_cxt *pc, const char *path);
 int ul_path_countf_dirents(struct path_cxt *pc, const char *path, ...)
 				__attribute__ ((__format__ (__printf__, 2, 3)));
+
+int ul_path_next_dirent(struct path_cxt *pc, DIR **sub, const char *dirname, struct dirent **d);
 
 FILE *ul_prefix_fopen(const char *prefix, const char *path, const char *mode);
 

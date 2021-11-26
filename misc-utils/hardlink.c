@@ -45,7 +45,7 @@
 #include "optutils.h"
 #include "fileeq.h"
 
-#include <regex.h>		/* regcomp(), regsearch() */
+#include <regex.h>		/* regcomp(), regexec() */
 
 #if defined(HAVE_SYS_XATTR_H) && defined(HAVE_LLISTXATTR) && defined(HAVE_LGETXATTR)
 # include <sys/xattr.h>

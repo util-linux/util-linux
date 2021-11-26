@@ -119,6 +119,7 @@ ylwrap
 /look
 /losetup
 /lsblk
+/lsfd
 /lsipc
 /lsirq
 /lscpu

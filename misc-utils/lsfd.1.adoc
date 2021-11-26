@@ -1,0 +1,448 @@
+//po4a: entry man manual
+////
+Copyright 2021 Red Hat, Inc.
+
+This file may be copied under the terms of the GNU Public License.
+////
+= lsfd(1)
+:doctype: manpage
+:man manual: User Commands
+:man source: util-linux {release-version}
+:page-layout: base
+:command: lsfd
+
+== NAME
+
+lsfd - list file descriptors
+
+== SYNOPSIS
+
+*lsfd* [option]
+
+== DESCRIPTION
+
+*lsfd* is intended to be a modern replacement for *lsof*(8) on Linux systems.
+Unlike *lsof*, *lsfd* is specialized to Linux kernel; it supports Linux
+specific features like namespaces with simpler code. *lsfd* is not a
+drop-in replacement for *lsof*; they are different in the command line
+interface and output formats.
+
+*lsfd* uses Libsmartcols for output formatting and filtering. See the description of *--output*
+option for customizing the output format, and *--filter* option for filtering.
+
+== OPTIONS
+
+*-l*, *--threads*::
+List in threads level.
+
+*-J*, *--json*::
+Use JSON output format.
+
+*-n*, *--noheadings*::
+Don't print headings.
+
+*-o*, *--output* _list_::
+Specify which output columns to print. See the "OUTPUT COLUMNS"
+section for details of available column.
++
+The default list of columns may be extended if _list_ is specified in
+the format _+list_ (e.g., *lsfd -o +DELETED*).
+
+*-r*, *--raw*::
+Use raw output format.
+
+*--notruncate*::
+Don't truncate text in columns.
+
+*-p*, *--pid* _pids_::
+Collect information only specified processes.
+_pids_ is a list of pids. A comma or whitespaces can be used as separators.
+You can use this option with *pidof*(1). See "FILTER EXAMPLES".
++
+Both *-Q* option with an expression including PID, e.g. -Q (PID == 1),
+and *-p* option, e.g. -p 1, may print the same output but using *-p*
+option is a much more efficient because *-p* option works much earlier
+stage of processing than *-Q* option.
+
+*-Q*, *--filter* _expr_::
+Print the files only satisfying with the condition represented by the _expr_.
+See also "FILTER EXAMPLES".
+
+*-C*, *--counter* _label_:_filter_expr_::
+Define a custom counter used in *--summary* output. *lsfd* makes a
+counter named _label_. During collect information, *lsfd* counts files
+satisfying _filter_expr_, and stores the counted number to the
+counter named _label_. *lsfd* applies filters defined with *--filter*
+options before couring; files excluded by the filters are not counted.
++
+See "FILTER EXPRESSION" about _filter_expr_.
+_label_ should not include _{_ nor _:_. You can define multiple
+counters with specifying this option multiple times.
++
+See also "COUNTER EXAMPLES".
+
+*--summary*[=_when_]::
+This option controls summary lines output. The optional argument _when_
+can be *only*, *append* or *never*. If the _when_ argument is omitted,
+it defaults to *"only"*.
++
+The summary reports counters. A counter comes from a label and an
+integer value.  *--counter* is the option for defining a counter.  If
+a user defines no counter, *lsfd* uses the definitions of pre-defined
+built-in counters (default counters) to make the summary output.
++
+CAUTION: Using *--summary* and *--json* may make the output broken. Only combining *--summary*=*only* and *--json* is valid.
+
+*--debug-filter*::
+Dump the internal data structure for the filter and exit. This is useful
+only for lsfd developers.
+
+*--dump-counters*::
+Dump the definition of counters used in *--summary* output.
+
+*-h*, *--help*::
+Display help text and exit.
+
+*-V*, *--version*::
+Display version information and exit.
+
+== OUTPUT COLUMNS
+
+Each column has a type. Types are surround by < and >.
+
+CAUTION: The names and types of columns are not stable yet.
+They may be changed in the future releases.
+
+ASSOC <__string__>::
+Association between file and process.
+
+CHRDRV <__string__>::
+Character device driver name resolved by _/proc/devices_.
+
+COMMAND <__string__>::
+Command of the process opening the file.
+
+DELETED <__boolean__>::
+Reachability from the file system.
+
+DEV <__string__>::
+ID of the device containing the file.
+
+DEVTYPE <__string__>::
+Device type (_blk_, _char_, or _nodev_).
+
+FD <__number__>::
+File descriptor for the file.
+
+FLAGS <__string__>::
+Flags specified when opening the file.
+
+FUID <__number__>::
+User ID number of the file's owner.
+
+INODE <__number__>::
+Inode number.
+
+KTHREAD <__boolean__>::
+Whether the process is a kernel thread or not.
+
+MAJ:MIN <__string__>::
+Device ID for special, or ID of device containing file.
+
+MAPLEN <__number__>::
+Length of file mapping (in page).
+
+MISCDEV <__string__>::
+Misc character device name resolved by _/proc/misc_.
+
+MNTID <__number__>::
+Mount ID.
+
+MODE <__string__>::
+Access mode (rwx).
+
+NAME <__string__>::
+Name of the file.
+
+NLINK <__number__>::
+Link count.
+
+OWNER <__string__>::
+Owner of the file.
+
+PARTITION <__string__>::
+Block device name resolved by _/proc/partition_.
+
+PID <__number__>::
+PID of the process opening the file.
+
+POS <__number__>::
+File position.
+
+PROTONAME <__string__>::
+Protocol name.
+
+RDEV <__string__>::
+Device ID (if special file).
+
+SIZE <__number__>::
+File size.
+
+SOURCE <__string__>::
+File system, partition, or device containing the file.
+
+TID <__number__>::
+Thread ID of the process opening the file.
+
+TYPE <__string__>::
+File type.
+
+UID <__number__>::
+User ID number.
+
+USER <__string__>::
+User of the process.
+
+== FILTER EXPRESSION
+
+*lsfd* evaluates the expression passed to *--filter* option every time
+before printing a file line. *lsfd* prints the line only if the result
+of evaluation is _true_.
+
+An expression consists of column names, literals and, operators like:
+`DELETED`, `(PID == 1)`, `(NAME == "/etc/passwd")`, `(PID == 1) && DELETED`.
+`DELETED`, `PID`, and `NAME` are column names in the example.
+`1` and "/etc/passwd" are literals.
+`==` and `&&` are operators.
+
+Before evaluation, *lsfd* substitutes column names in the given
+expression with actual column values in the line. There are three
+different data types: _boolean_, _string_, and _number_.  For columns
+with a _boolean_ type, the vale can be stand-alone.  For _string_ and
+_number_ values, the value must be an operand of an operator, for
+example, `(PID == 1)`. See the "OUTPUT COLUMNS" about the types of
+columns.
+
+Literal is for representing a value directly. See BOOLLIT, STRLIT, and
+NUMLIT. Different data types have different literal syntax.
+
+An operator works with one or two operand(s). An operator has an
+expectation about the data type(s) of its operands. Giving an
+unexpected data type to an operator causes a syntax error.
+
+Operators taking two operands are _and_, _or_, _eq_, _ne_, _le_, _lt_, _ge_, _gt_, _=~_, _!~_.
+Alphabetically named operators have C-language
+flavored aliases: _&&_, _||_, _==_, _!=_, _<_, _<=_, _>=_, and _>_.
+
+_!_ is the only operator that takes one operand.
+
+_eq_, _ne_, and their aliases expect operands have the same data type.
+Applying these operators return a _boolean_.
+
+_and_, _or_, _not_ and their aliases expect operands have _bool_ data
+type. Applying these operators return a _boolean_.
+
+_lt_, _le_, _gt_, _ge_, and their aliases expect operands have
+_number_ data types. Applying these operators return a _boolean_.
+
+_=~_ is for regular expression matching; if a string at the right side
+matches a regular expression at the left side, the result is true.
+The right side operand must be a string literal. See STRLIT about the
+syntax.
+
+_!~_ is a short-hand version of `not (STR =~ PAT)`; it inverts the
+result of _=~_.
+
+=== Limitations
+
+The current implementation does not define precedences within
+operators.  Use _(_ and _)_ explicitly for grouping the
+sub-expressions if your expression uses more than two operators.
+
+About _number_ typed values, the filter engine supports only
+zero or positive numbers.
+
+=== Semi-formal syntax
+
+EXPR :: BOOLEXP
+
+BOOLEXP0 :: COLUMN <__boolean__> | BOOLLIT | _(_ BOOLEXP _)_
+
+BOOLEXP :: BOOLEXP0 | BOOLOP1 | BOOLOP2 | BOOLOP2BL | BOOLOP2CMP | BOOLOP2REG
+
+COLUMN :: [\_A-Za-z][-_:A-Za-z0-9]*
+
+BOOLOP1 :: _!_ BOOLEXP0 | _not_ BOOLEXP0
+
+STREXP :: COLUMN <__string__> | STRLIT
+
+NUMEXP :: COLUMN <__number__> | NUMLIT
+
+BOOLLIT :: _true_ | _false_
+
+CHARS  :: ( [^\] | _\\_ | _\'_ | _\"_ )*
+
+STRLIT :: _'_ CHARS _'_ | _"_ CHARS _"_
+
+NUMLIT :: [1-9][0-9]* | _0_
+
+BOOLOP2 :: STREXP OP2 STREXP | NUMEXP OP2 NUMEXP | BOOLEXP0 OP2 BOOLEXP0
+
+OP2   :: _==_ | _eq_ | _!=_ | _ne_
+
+BOOLOP2BL :: BOOLEXP0 OP2BL BOOLEXP0
+
+OP2BL ::  _&&_ | _and_ |  _||_ | _or_
+
+BOOLOP2CMP :: NUMEXP OP2CMP NUMEXP
+
+OP2CMP :: _<_ | _lt_ | _\<=_ | _le_ | _>_ | _gt_ | _>=_ | _ge_
+
+BOOLOP2REG :: STREXP OP2REG STRLIT
+
+OP2REG :: _=~_ | _!~_
+
+== FILTER EXAMPLES
+
+*lsfd* has few options for filtering. In most of cases, what you should
+know is *-Q* (or *--filter*) option.  Combined with *-o* (or
+*--output*) option, you can customize the output as you want.
+
+List files associated with PID 1 and PID 2 processes::
+....
+# lsfd -Q '(PID == 1) or (PID == 2)'
+....
+
+Do the same in an alternative way::
+....
+# lsfd -Q '(PID == 1) || (PID == 2)'
+....
+
+Do the same in a more efficient way::
+....
+# lsfd --pid 1,2
+....
+
+Whitescapes can be used instead of a comma::
+....
+# lsfd --pid '1 2'
+....
+
+Utilize *pidof*(1) for list the files associated with "firefox"::
+....
+# lsfd --pid "$(pidof firefox)"
+....
+
+List the 1st file descriptor opened by PID 1 process::
+....
+# lsfd -Q '(PID == 1) and (FD == 1)'
+....
+
+Do the same in an alternative way::
+....
+# lsfd -Q '(PID == 1) && (FD == 1)'
+....
+
+List all running executables::
+....
+# lsfd -Q 'ASSOC == "exe"'
+....
+
+Do the same in an alternative way::
+....
+# lsfd -Q 'ASSOC eq "exe"'
+....
+
+Do the same but print only file names::
+....
+# lsfd -o NAME -Q 'ASSOC eq "exe"' | sort -u
+....
+
+List deleted files associated to processes::
+....
+# lsfd -Q 'DELETED'
+....
+
+List non-regular files::
+....
+# lsfd -Q 'TYPE != "REG"'
+....
+
+List block devices::
+....
+# lsfd -Q 'DEVTYPE == "blk"'
+....
+
+Do the same with TYPE column::
+....
+# lsfd -Q 'TYPE == "BLK"'
+....
+
+List files including "dconf" directory in their names::
+....
+# lsfd -Q 'NAME =~ ".\*/dconf/.*"'
+....
+
+List files opened to QEMU virtual machine::
+....
+# lsfd -Q '(COMMAND =~ ".\*qemu.*") and (FD >= 0)'
+....
+
+Hide files associated to kernel threads::
+....
+# lsfd -Q '!KTHREAD'
+....
+
+== COUNTER EXAMPLES
+
+Report the numbers of netlink socket descriptors and unix socket descriptors::
+....
+# lsfd --summary=only \
+	-C 'netlink sockets':'(NAME =~ "NETLINK:.*")' \
+	-C 'unix sockets':'(NAME =~ "UNIX:.*")'
+VALUE COUNTER
+   57 netlink sockets
+ 1552 unix sockets
+....
+
+Do the same but print in JSON format::
+....
+# lsfd --summary=only --json \
+	-C 'netlink sockets':'(NAME =~ "NETLINK:.*")' \
+	-C 'unix sockets':'(NAME =~ "UNIX:.*")'
+{
+   "lsfd-summary": [
+      {
+	 "value": 15,
+	 "counter": "netlink sockets"
+      },{
+	 "value": 798,
+	 "counter": "unix sockets"
+      }
+   ]
+}
+....
+
+
+== HISTORY
+
+The *lsfd* command is part of the util-linux package since v2.38.
+
+== AUTHORS
+
+mailto:yamato@redhat.com[Masatake YAMATO],
+mailto:kzak@redhat.com[Karel Zak]
+
+== SEE ALSO
+
+*lsof*(8)
+*pidof*(1)
+*proc*(5)
+
+include::man-common/bugreports.adoc[]
+
+include::man-common/footer.adoc[]
+
+ifdef::translation[]
+include::man-common/translation.adoc[]
+endif::[]

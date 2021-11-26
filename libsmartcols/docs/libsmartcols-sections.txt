@@ -69,6 +69,7 @@ scols_line_free_cells
 scols_line_get_cell
 scols_line_get_color
 scols_line_get_column_cell
+scols_line_get_column_data
 scols_line_get_ncells
 scols_line_get_parent
 scols_line_get_userdata

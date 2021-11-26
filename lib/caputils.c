@@ -22,8 +22,8 @@
 
 #include "c.h"
 #include "caputils.h"
-#include "procutils.h"
 #include "pathnames.h"
+#include "procfs.h"
 
 static int test_cap(unsigned int cap)
 {
@@ -58,7 +58,7 @@ static int cap_last_by_procfs(int *ret)
 
 	*ret = 0;
 
-	if (f && proc_is_procfs(fileno(f))) {
+	if (f && fd_is_procfs(fileno(f))) {
 		int cap;
 
 		/* we check if the cap after this one really isn't valid */

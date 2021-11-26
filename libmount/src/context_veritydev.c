@@ -223,7 +223,7 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 		root_hash_sig_file = strndup(val, len);
 		rc = root_hash_sig_file ? 0 : -ENOMEM;
 		if (rc == 0)
-			rc = ul_path_stat(NULL, &hash_sig_st, root_hash_sig_file);
+			rc = ul_path_stat(NULL, &hash_sig_st, 0, root_hash_sig_file);
 		if (rc == 0)
 			rc = !S_ISREG(hash_sig_st.st_mode) || !hash_sig_st.st_size ? -EINVAL : 0;
 		if (rc == 0) {
