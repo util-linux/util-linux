@@ -366,7 +366,7 @@ The GPT header can later be restored by:
 
 ____
 dd  if=~/sfdisk-sda-0x00000200.bak  of=/dev/sda  \
-  seek=$((0x00000200))  bs=1  conv=notrunc
+  seek=$\((0x00000200))  bs=1  conv=notrunc
 ____
 
 Note that *sfdisk* since version 2.26 no longer provides the *-I* option to restore sectors. *dd*(1) provides all necessary functionality.
