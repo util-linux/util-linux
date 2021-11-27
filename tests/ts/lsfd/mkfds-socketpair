@@ -32,7 +32,7 @@ FD1=4
 EXPR=
 
 {
-    coproc MKFDS { "$TS_HELPER_MKFDS" socketpair $FD0 $FD1 socktype=STREAM; }
+    coproc MKFDS { "$TS_HELPER_MKFDS" socketpair $FD0 $FD1 socktype=DGRAM; }
     if read -u ${MKFDS[0]} PID; then
 	EXPR='(PID == '"${PID}"') and ((FD == '"$FD0"') or (FD == '"$FD1"'))'
 	${TS_CMD_LSFD} -n -o ASSOC,MODE,TYPE,SOURCE,PROTONAME -Q "${EXPR}"
