@@ -1533,6 +1533,9 @@ int main(int argc, char **argv)
 
 	child_argv[child_argc++] = NULL;
 
+	/* http://www.linux-pam.org/Linux-PAM-html/adg-interface-by-app-expected.html#adg-pam_end */
+	(void) pam_end(cxt.pamh, PAM_SUCCESS|PAM_DATA_SILENT);
+
 	execvp(child_argv[0], child_argv + 1);
 
 	if (!strcmp(child_argv[0], "/bin/sh"))

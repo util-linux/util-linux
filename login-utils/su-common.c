@@ -1263,6 +1263,9 @@ int su_main(int argc, char **argv, int mode)
 	if (su->simulate_login && chdir(su->pwd->pw_dir) != 0)
 		warn(_("warning: cannot change directory to %s"), su->pwd->pw_dir);
 
+	/* http://www.linux-pam.org/Linux-PAM-html/adg-interface-by-app-expected.html#adg-pam_end */
+	(void) pam_end(su->pamh, PAM_SUCCESS|PAM_DATA_SILENT);
+
 	if (shell)
 		run_shell(su, shell, command, argv + optind, max(0, argc - optind));
 
