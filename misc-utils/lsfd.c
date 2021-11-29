@@ -538,7 +538,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 	file_init_content(f);
 
 	if (is_association(f, NS_MNT))
-		proc->ns_mnt = sb.st_ino;
+		proc->ns_mnt = f->stat.st_ino;
 
 	else if (assoc >= 0) {
 		/* file-descriptor based association */
