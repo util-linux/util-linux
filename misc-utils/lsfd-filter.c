@@ -1238,7 +1238,7 @@ static bool op2_check_type_num(struct parser* parser, struct op2_class *op2_clas
 	if (right->type != NODE_NUM) {
 		snprintf(parser->errmsg, ERRMSG_LEN,
 			 _("error: unexpected right operand type %s for: %s"),
-			 NODE_CLASS(left)->name,
+			 NODE_CLASS(right)->name,
 			 op2_class->name);
 		return false;
 	}
