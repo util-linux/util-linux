@@ -32,7 +32,7 @@ ts_skip_nonroot
 ts_cd "$TS_OUTDIR"
 
 {
-    "$TS_CMD_LSFD" -o COMMAND,PID,USER,MODE,TYPE,INODE,NAME,KTHREAD \
+    "$TS_CMD_LSFD" -o COMMAND,PID,USER,MODE,TYPE,NAME,KTHREAD \
 		   -Q '(PID < 3) and ((ASSOC == "cwd") or (ASSOC == "rtd"))'
     echo $?
 } > $TS_OUTPUT 2>&1
