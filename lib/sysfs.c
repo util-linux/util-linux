@@ -165,7 +165,7 @@ static int sysfs_blkdev_enoent_redirect(struct path_cxt *pc, const char *path, i
 {
 	struct sysfs_blkdev *blk = ul_path_get_dialect(pc);
 
-	if (blk && blk->parent && strncmp(path, "queue/", 6) == 0) {
+	if (blk && blk->parent && path && strncmp(path, "queue/", 6) == 0) {
 		*dirfd = ul_path_get_dirfd(blk->parent);
 		if (*dirfd >= 0) {
 			DBG(CXT, ul_debugobj(pc, "%s redirected to parent", path));

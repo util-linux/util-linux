@@ -344,7 +344,7 @@ int ul_path_stat(struct path_cxt *pc, struct stat *sb, int flags, const char *pa
 	int rc;
 
 	if (!pc) {
-		rc = stat(path, sb);
+		rc = path ? stat(path, sb) : -EINVAL;
 		DBG(CXT, ul_debug("stat '%s' [no context, rc=%d]", path, rc));
 	} else {
 		int dir = ul_path_get_dirfd(pc);
@@ -359,6 +359,7 @@ int ul_path_stat(struct path_cxt *pc, struct stat *sb, int flags, const char *pa
 			rc = fstat(dir, sb);	/* dir itself */
 
 		if (rc && errno == ENOENT
+		    && path
 		    && pc->redirect_on_enoent
 		    && pc->redirect_on_enoent(pc, path, &dir) == 0)
 			rc = fstatat(dir, path, sb, 0);
@@ -372,6 +373,8 @@ int ul_path_open(struct path_cxt *pc, int flags, const char *path)
 {
 	int fd;
 
+	if (!path)
+		return -EINVAL;
 	if (!pc) {
 		fd = open(path, flags);
 		DBG(CXT, ul_debug("opening '%s' [no context]", path));
