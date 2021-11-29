@@ -245,11 +245,14 @@ static void open_ro_regular_file(const struct factory *factory, struct fdesc fde
 	}
 	free_arg(&offset);
 
-	if (dup2(fd, fdescs[0].fd) < 0) {
-		int e = errno;
+	if (fd != fdescs[0].fd) {
+		if (dup2(fd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(fd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", fd, fdescs[0].fd);
+		}
 		close(fd);
-		errno = e;
-		err(EXIT_FAILURE, "failed to dup %d -> %d", fd, fdescs[0].fd);
 	}
 
 	fdescs[0] = (struct fdesc){
@@ -302,13 +305,16 @@ static void make_pipe(const struct factory *factory, struct fdesc fdescs[], pid_
 	}
 
 	for (int i = 0; i < 2; i++) {
-		if (dup2(pd[i], fdescs[i].fd) < 0) {
-			int e = errno;
-			close(pd[0]);
-			close(pd[1]);
-			errno = e;
-			err(EXIT_FAILURE, "failed to dup %d -> %d",
-			    pd[i], fdescs[i].fd);
+		if (pd[i] != fdescs[i].fd) {
+			if (dup2(pd[i], fdescs[i].fd) < 0) {
+				int e = errno;
+				close(pd[0]);
+				close(pd[1]);
+				errno = e;
+				err(EXIT_FAILURE, "failed to dup %d -> %d",
+				    pd[i], fdescs[i].fd);
+			}
+			close(pd[i]);
 		}
 		fdescs[i] = (struct fdesc){
 			.fd    = fdescs[i].fd,
@@ -339,11 +345,14 @@ static void open_directory(const struct factory *factory, struct fdesc fdescs[],
 		err(EXIT_FAILURE, "failed to open: %s", ARG_STRING(dir));
 	free_arg(&dir);
 
-	if (dup2(fd, fdescs[0].fd) < 0) {
-		int e = errno;
+	if (fd != fdescs[0].fd) {
+		if (dup2(fd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(fd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", fd, fdescs[0].fd);
+		}
 		close(fd);
-		errno = e;
-		err(EXIT_FAILURE, "failed to dup %d -> %d", fd, fdescs[0].fd);
 	}
 
 	if (ARG_INTEGER(dentries) > 0) {
@@ -412,13 +421,16 @@ static void make_socketpair(const struct factory *factory, struct fdesc fdescs[]
 		err(EXIT_FAILURE, "failed to make socket pair");
 
 	for (int i = 0; i < 2; i++) {
-		if (dup2(sd[i], fdescs[i].fd) < 0) {
-			int e = errno;
-			close(sd[0]);
-			close(sd[1]);
-			errno = e;
-			err(EXIT_FAILURE, "failed to dup %d -> %d",
-			    sd[i], fdescs[i].fd);
+		if (sd[i] != fdescs[i].fd) {
+			if (dup2(sd[i], fdescs[i].fd) < 0) {
+				int e = errno;
+				close(sd[0]);
+				close(sd[1]);
+				errno = e;
+				err(EXIT_FAILURE, "failed to dup %d -> %d",
+				    sd[i], fdescs[i].fd);
+			}
+			close(sd[i]);
 		}
 		fdescs[i] = (struct fdesc){
 			.fd    = fdescs[i].fd,
