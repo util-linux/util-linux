@@ -282,7 +282,12 @@ static void undump(FILE *in, FILE *out)
 	while (fgets(linestart, 1023, in)) {
 		line = linestart;
 		memset(&ut, '\0', sizeof(ut));
-		sscanf(line, "[%hd] [%d] [%4c] ", &ut.ut_type, &ut.ut_pid, ut.ut_id);
+
+		if (sscanf(line, "[%hd] [%d] [%4c] ",
+				&ut.ut_type, &ut.ut_pid, ut.ut_id) != 3) {
+			warnx(_("parse error: %s"), line);
+			continue;
+		}
 
 		line += 19;
 		line += gettok(line, ut.ut_user, sizeof(ut.ut_user), 1);
