@@ -16,7 +16,7 @@
 #
 
 TS_TOPDIR="${0%/*}/../.."
-TS_DESC="directory"
+TS_DESC="kthread column"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
