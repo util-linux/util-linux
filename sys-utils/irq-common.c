@@ -290,7 +290,8 @@ static struct irq_stat *get_irqinfo(int softirq)
 		for (index = 0; (index < stat->nr_active_cpu) && (tmp - line < length); index++) {
 			struct irq_cpu *cpu = &stat->cpus[index];
 
-			sscanf(tmp, " %10lu", &count);
+			if (sscanf(tmp, " %10lu", &count) != 1)
+				continue;
 			curr->total += count;
 			cpu->total += count;
 			stat->total_irq += count;
