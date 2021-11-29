@@ -457,6 +457,7 @@ have_linux_blkzoned_h=$ac_cv_header_linux_blkzoned_h
 have_linux_btrfs_h=$ac_cv_header_linux_btrfs_h
 have_linux_capability_h=$ac_cv_header_linux_capability_h
 have_linux_kcmp_h=$ac_cv_header_linux_kcmp_h
+have_linux_nsfs_h=$ac_cv_header_linux_nsfs_h
 have_linux_raw_h=$ac_cv_header_linux_raw_h
 have_linux_securebits_h=$ac_cv_header_linux_securebits_h
 have_linux_version_h=$ac_cv_header_linux_version_h
@@ -1871,10 +1872,15 @@ UL_REQUIRES_LINUX([lsipc])
 UL_REQUIRES_BUILD([lsipc], [libsmartcols])
 AM_CONDITIONAL([BUILD_LSIPC], [test "x$build_lsipc" = xyes])
 
-UL_BUILD_INIT([lsns], [check])
+AC_ARG_ENABLE([lsns],
+  AS_HELP_STRING([--disable-lsns], [do not build lsns]),
+  [], [UL_DEFAULT_ENABLE([lsns], [check])]
+)
+UL_BUILD_INIT([lsns])
 UL_REQUIRES_LINUX([lsns])
 UL_REQUIRES_BUILD([lsns], [libsmartcols])
 UL_REQUIRES_BUILD([lsns], [libmount])
+UL_REQUIRES_HAVE([lsns], [linux_nsfs_h], [linux/nsfs.h header file])
 AM_CONDITIONAL([BUILD_LSNS], [test "x$build_lsns" = xyes])
 
 UL_BUILD_INIT([renice], [yes])
