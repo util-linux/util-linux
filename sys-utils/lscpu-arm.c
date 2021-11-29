@@ -147,6 +147,12 @@ static const struct id_part marvell_part[] = {
     { -1, "unknown" },
 };
 
+static const struct id_part apple_part[] = {
+    { 0x022, "Icestorm" },
+    { 0x023, "Firestorm" },
+    { -1, "unknown" },
+};
+
 static const struct id_part faraday_part[] = {
     { 0x526, "FA526" },
     { 0x626, "FA626" },
@@ -189,8 +195,8 @@ static const struct id_part hisi_part[] = {
 };
 
 static const struct id_part ft_part[] = {
-    { 0x662, "FT2000PLUS" },
-    { 0x663, "S2500" },
+    { 0x662, "FTC662" },
+    { 0x663, "FTC663" },
     { -1, "unknown" },
 };
 
@@ -218,7 +224,7 @@ static const struct hw_impl hw_implementer[] = {
     { 0x51, qcom_part,    "Qualcomm" },
     { 0x53, samsung_part, "Samsung" },
     { 0x56, marvell_part, "Marvell" },
-    { 0x61, unknown_part, "Apple" },
+    { 0x61, apple_part,   "Apple" },
     { 0x66, faraday_part, "Faraday" },
     { 0x69, intel_part,   "Intel" },
     { 0x70, ft_part,      "Phytium" },
