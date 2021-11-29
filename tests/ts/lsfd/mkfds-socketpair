@@ -24,6 +24,8 @@ ts_check_test_command "$TS_CMD_LSFD"
 
 ts_check_test_command "$TS_HELPER_MKFDS"
 
+ts_check_prog "sed"
+
 ts_cd "$TS_OUTDIR"
 
 PID=
@@ -35,7 +37,7 @@ EXPR=
     coproc MKFDS { "$TS_HELPER_MKFDS" socketpair $FD0 $FD1 socktype=DGRAM; }
     if read -u ${MKFDS[0]} PID; then
 	EXPR='(PID == '"${PID}"') and ((FD == '"$FD0"') or (FD == '"$FD1"'))'
-	${TS_CMD_LSFD} -n -o ASSOC,MODE,TYPE,SOURCE,PROTONAME -Q "${EXPR}"
+	${TS_CMD_LSFD} -n -o ASSOC,MODE,TYPE,SOURCE,PROTONAME -Q "${EXPR}" | sed -e 's/UNIX-DGRAM/UNIX/'
 	echo 'ASSOC,MODE,TYPE,SOURCE,PROTONAME': $?
 
 	kill -CONT ${PID}
