@@ -746,7 +746,6 @@ static struct node *dparser_compile1(struct parser *parser, struct node *last)
 			scols_column_set_flags(cl, SCOLS_FL_HIDDEN);
 		}
 		parameter_init(parser->parameters + col_id, cl);
-		token_free(t);
 
 		int jtype = scols_column_get_json_type(cl);
 		int ntype;
@@ -767,6 +766,7 @@ static struct node *dparser_compile1(struct parser *parser, struct node *last)
 			return NULL;
 		}
 		node = node_val_new(ntype, col_id);
+		token_free(t);
 		return node;
 	}
 
@@ -796,6 +796,7 @@ static struct node *dparser_compile1(struct parser *parser, struct node *last)
 	case TOKEN_OP1: {
 		struct node *op1_right = dparser_compile1(parser, NULL);
 		struct op1_class *op1_class = TOKEN_OP1_CLASS(t);
+
 		token_free(t);
 
 		if (GOT_ERROR(parser)) {
@@ -826,6 +827,7 @@ static struct node *dparser_compile1(struct parser *parser, struct node *last)
 	case TOKEN_OP2: {
 		struct node *op2_right = dparser_compile1(parser, NULL);
 		struct op2_class *op2_class = TOKEN_OP2_CLASS(t);
+
 		token_free(t);
 
 		if (GOT_ERROR(parser)) {
@@ -855,6 +857,7 @@ static struct node *dparser_compile1(struct parser *parser, struct node *last)
 
 	default:
 		warnx("unexpected token type: %d", t->type);
+		token_free(t);
 		return NULL;
 	}
 }
