@@ -107,10 +107,10 @@ static int probe_lvm_tp(blkid_probe pr,
 
 	while (fgets(buf, sizeof(buf), stream) != NULL) {
 		if (!strncmp(buf, "Stripes", 7))
-			sscanf(buf, "Stripes %d", &stripes);
+			ignore_result( sscanf(buf, "Stripes %d", &stripes) );
 
 		if (!strncmp(buf, "Stripe size", 11))
-			sscanf(buf, "Stripe size (KByte) %d", &stripesize);
+			ignore_result( sscanf(buf, "Stripe size (KByte) %d", &stripesize) );
 	}
 
 	if (!stripes)
