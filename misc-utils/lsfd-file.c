@@ -352,18 +352,24 @@ static bool file_fill_column(struct proc *proc,
 
 static int file_handle_fdinfo(struct file *file, const char *key, const char* value)
 {
-	if (strcmp(key, "pos") == 0) {
-		ul_strtou64(value, &file->pos, 10);
-		return 1;
-	} else if (strcmp(key, "flags") == 0) {
-		ul_strtou32(value, &file->sys_flags, 8);
+	int rc;
 
-		return 1;
+	if (strcmp(key, "pos") == 0) {
+		rc = ul_strtou64(value, &file->pos, 10);
+
+	} else if (strcmp(key, "flags") == 0) {
+		rc = ul_strtou32(value, &file->sys_flags, 8);
+
 	} else if (strcmp(key, "mnt_id") == 0) {
-		ul_strtou32(value, &file->mnt_id, 10);
-		return 1;
-	}
-	return 0;
+		rc = ul_strtou32(value, &file->mnt_id, 10);
+
+	} else
+		return 0;	/* ignore -- unknown item */
+
+	if (rc < 0)
+		return 0;	/* ignore -- parse failed */
+
+	return 1;		/* success */
 }
 
 static void file_free_content(struct file *file)
