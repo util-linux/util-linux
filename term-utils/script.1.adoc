@@ -107,7 +107,7 @@ Force use of _advanced_ or _classic_ format. The default is the classic format t
 The log contains two fields, separated by a space. The first field indicates how much time elapsed since the previous output. The second field indicates how many characters were output this time.
 +
 *Advanced (multi-stream) format*;;
-The first field is an entry type identifier ('I'nput, 'O'utput, 'H'eader, 'S'ignal). The socond field is how much time elapsed since the previous entry, and the rest of the entry is type-specific data.
+The first field is an entry type identifier ('I'nput, 'O'utput, 'H'eader, 'S'ignal). The second field is how much time elapsed since the previous entry, and the rest of the entry is type-specific data.
 
 *-o*, *--output-limit* _size_::
 Limit the size of the typescript and timing files to _size_ and stop the child process after this size is exceeded. The calculated file size does not include the start and done messages that the *script* command prepends and appends to the child process output. Due to buffering, the resulting output file might be larger than the specified value.
