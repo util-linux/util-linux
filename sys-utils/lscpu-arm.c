@@ -195,6 +195,8 @@ static const struct id_part hisi_part[] = {
 };
 
 static const struct id_part ft_part[] = {
+    { 0x660, "FTC660" },
+    { 0x661, "FTC661" }, 
     { 0x662, "FTC662" },
     { 0x663, "FTC663" },
     { -1, "unknown" },
