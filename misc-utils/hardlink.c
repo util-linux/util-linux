@@ -189,6 +189,9 @@ static void *files_by_ino;
  */
 static int last_signal;
 
+
+#define is_log_enabled(_level)  (quiet == 0 && (_level) <= (unsigned int)opts.verbosity)
+
 /**
  * jlog - Logging for hardlink
  * @level: The log level
@@ -199,7 +202,7 @@ static void jlog(enum log_level level, const char *format, ...)
 {
 	va_list args;
 
-	if (quiet || level > (unsigned int)opts.verbosity)
+	if (!is_log_enabled(level))
 		return;
 
 	va_start(args, format);
@@ -619,19 +622,20 @@ static int file_compare(const struct file *a, const struct file *b)
  */
 static int file_link(struct file *a, struct file *b)
 {
-	char *ssz;
 
  file_link:
 	assert(a->links != NULL);
 	assert(b->links != NULL);
 
-	ssz = size_to_human_string(SIZE_SUFFIX_3LETTER |
+	if (is_log_enabled(JLOG_INFO)) {
+		char *ssz = size_to_human_string(SIZE_SUFFIX_3LETTER |
 				   SIZE_SUFFIX_SPACE |
 				   SIZE_DECIMAL_2DIGITS, a->st.st_size);
-	jlog(JLOG_INFO, _("%sLinking %s to %s (-%s)"),
-	     opts.dry_run ? _("[DryRun] ") : "", a->links->path, b->links->path,
-	     ssz);
-	free(ssz);
+		jlog(JLOG_INFO, _("%sLinking %s to %s (-%s)"),
+		     opts.dry_run ? _("[DryRun] ") : "", a->links->path, b->links->path,
+		     ssz);
+		free(ssz);
+	}
 
 	if (!opts.dry_run) {
 		char *new_path;
