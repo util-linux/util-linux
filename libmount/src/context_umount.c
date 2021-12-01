@@ -283,10 +283,6 @@ static int lookup_umount_fs_by_statfs(struct libmnt_context *cxt, const char *tg
 		return 1; /* not found */
 
 	type = mnt_fs_get_fstype(cxt->fs);
-
-	DBG(CXT, ul_debugobj(cxt, "  umount: disabling mtab"));
-	mnt_context_disable_mtab(cxt, TRUE);
-
 	if (!type) {
 		struct statfs vfs;
 		int fd;
@@ -307,6 +303,9 @@ static int lookup_umount_fs_by_statfs(struct libmnt_context *cxt, const char *tg
 		}
 	}
 	if (type) {
+		DBG(CXT, ul_debugobj(cxt, "  umount: disabling mtab"));
+		mnt_context_disable_mtab(cxt, TRUE);
+
 		DBG(CXT, ul_debugobj(cxt,
 			"  mountinfo unnecessary [type=%s]", type));
 		return 0;
