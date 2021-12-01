@@ -634,26 +634,23 @@ static int file_link(struct file *a, struct file *b)
 	free(ssz);
 
 	if (!opts.dry_run) {
-		size_t len =
-		    strlen(b->links->path) + strlen(".hardlink-temporary") + 1;
-		char *new_path = xmalloc(len);
+		char *new_path;
+		int failed = 1;
 
-		snprintf(new_path, len, "%s.hardlink-temporary",
-			 b->links->path);
+		xasprintf(&new_path, "%s.hardlink-temporary", b->links->path);
 
-		if (link(a->links->path, new_path) != 0) {
-			warn(_("cannot link %s to %s"), a->links->path,
-			     new_path);
-			free(new_path);
-			return FALSE;
-		} else if (rename(new_path, b->links->path) != 0) {
-			warn(_("cannot rename %s to %s"), a->links->path,
-			     new_path);
-			unlink(new_path);	/* cleanup failed rename */
-			free(new_path);
-			return FALSE;
-		}
+		if (link(a->links->path, new_path) != 0)
+			warn(_("cannot link %s to %s"), a->links->path, new_path);
+
+		else if (rename(new_path, b->links->path) != 0) {
+			warn(_("cannot rename %s to %s"), a->links->path, new_path);
+			unlink(new_path);
+		} else
+			failed = 0;
+
 		free(new_path);
+		if (failed)
+			return FALSE;
 	}
 
 	/* Update statistics */
