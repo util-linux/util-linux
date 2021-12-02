@@ -36,6 +36,15 @@
 #include <signal.h>		/* SIG*, sigaction */
 #include <getopt.h>		/* getopt_long() */
 #include <ctype.h>		/* tolower() */
+#include <sys/ioctl.h>
+
+#if defined(HAVE_LINUX_FIEMAP_H)
+# include <linux/fs.h>
+# include <linux/fiemap.h>
+# ifdef FICLONE
+#  define USE_REFLINK 1
+# endif
+#endif
 
 #include "nls.h"
 #include "c.h"
@@ -44,6 +53,7 @@
 #include "monotonic.h"
 #include "optutils.h"
 #include "fileeq.h"
+#include "statfs_magic.h"
 
 #include <regex.h>		/* regcomp(), regexec() */
 
@@ -53,6 +63,16 @@
 #endif
 
 static int quiet;		/* don't print anything */
+
+#ifdef USE_REFLINK
+enum {
+	REFLINK_NEVER  = 0,
+	REFLINK_AUTO,
+	REFLINK_ALWAYS
+};
+static int reflink_mode = REFLINK_NEVER;
+static int reflinks_skip;
+#endif
 
 static struct ul_fileeq fileeq;
 
@@ -113,6 +133,7 @@ static struct statistics {
 	size_t linked;
 	size_t xattr_comparisons;
 	size_t comparisons;
+	size_t ignored_reflinks;
 	double saved;
 	struct timeval start_time;
 } stats;
@@ -321,27 +342,31 @@ static void print_stats(void)
 	gettime_monotonic(&end);
 	timersub(&end, &stats.start_time, &delta);
 
-	jlog(JLOG_SUMMARY, "%-15s %s", _("Mode:"),
+	jlog(JLOG_SUMMARY, "%-25s %s", _("Mode:"),
 	     opts.dry_run ? _("dry-run") : _("real"));
-	jlog(JLOG_SUMMARY, "%-15s %s", _("Method:"), opts.method);
-	jlog(JLOG_SUMMARY, "%-15s %zu", _("Files:"), stats.files);
-	jlog(JLOG_SUMMARY, _("%-15s %zu files"), _("Linked:"), stats.linked);
+	jlog(JLOG_SUMMARY, "%-25s %s", _("Method:"), opts.method);
+	jlog(JLOG_SUMMARY, "%-25s %zu", _("Files:"), stats.files);
+	jlog(JLOG_SUMMARY, _("%-25s %zu files"), _("Linked:"), stats.linked);
 
 #ifdef USE_XATTR
-	jlog(JLOG_SUMMARY, _("%-15s %zu xattrs"), _("Compared:"),
+	jlog(JLOG_SUMMARY, _("%-25s %zu xattrs"), _("Compared:"),
 	     stats.xattr_comparisons);
 #endif
-	jlog(JLOG_SUMMARY, _("%-15s %zu files"), _("Compared:"),
+	jlog(JLOG_SUMMARY, _("%-25s %zu files"), _("Compared:"),
 	     stats.comparisons);
-
+#ifdef USE_REFLINK
+	if (reflinks_skip)
+		jlog(JLOG_SUMMARY, _("%-25s %zu files"), _("Skipped reflinks:"),
+		     stats.ignored_reflinks);
+#endif
 	ssz = size_to_human_string(SIZE_SUFFIX_3LETTER |
 				   SIZE_SUFFIX_SPACE |
 				   SIZE_DECIMAL_2DIGITS, stats.saved);
 
-	jlog(JLOG_SUMMARY, "%-15s %s", _("Saved:"), ssz);
+	jlog(JLOG_SUMMARY, "%-25s %s", _("Saved:"), ssz);
 	free(ssz);
 
-	jlog(JLOG_SUMMARY, _("%-15s %"PRId64".%06"PRId64" seconds"), _("Duration:"),
+	jlog(JLOG_SUMMARY, _("%-25s %"PRId64".%06"PRId64" seconds"), _("Duration:"),
 	     (int64_t)delta.tv_sec, (int64_t)delta.tv_usec);
 }
 
@@ -611,6 +636,53 @@ static int file_compare(const struct file *a, const struct file *b)
 	return res;
 }
 
+#ifdef USE_REFLINK
+static inline int do_link(struct file *a, struct file *b,
+			  const char *new_name, int reflink)
+{
+	if (reflink) {
+		int dest = -1, src = -1;
+
+		dest = open(new_name, O_CREAT|O_WRONLY|O_TRUNC);
+		if (dest < 0)
+			goto fallback;
+		if (fchmod(dest, b->st.st_mode) != 0)
+			goto fallback;
+		if (fchown(dest, b->st.st_uid, b->st.st_gid) != 0)
+			goto fallback;
+		src = open(a->links->path, O_RDONLY);
+		if (src < 0)
+			goto fallback;
+		if (ioctl(dest, FICLONE, src) != 0)
+			goto fallback;
+		close(dest);
+		close(src);
+		return 0;
+fallback:
+		if (dest >= 0) {
+			close(dest);
+			unlink(new_name);
+		}
+		if (src >= 0)
+			close(src);
+
+		if (reflink_mode == REFLINK_ALWAYS)
+			return -errno;
+		jlog(JLOG_VERBOSE2,_("Reflinking failed, fallback to hardlinking"));
+	}
+
+	return link(a->links->path, new_name);
+}
+#else
+static inline int do_link(struct file *a,
+			  struct file *b __attribute__((__unused__)),
+			  const char *new_name,
+			  int reflink __attribute__((__unused__)))
+{
+	return link(a->links->path, new_name);
+}
+#endif /* USE_REFLINK */
+
 /**
  * file_link - Replace b with a link to a
  * @a: The first file
@@ -620,7 +692,7 @@ static int file_compare(const struct file *a, const struct file *b)
  * linked to a temporary name, and then renamed to the name of @b, making
  * the replace atomic (@b will always exist).
  */
-static int file_link(struct file *a, struct file *b)
+static int file_link(struct file *a, struct file *b, int reflink)
 {
 
  file_link:
@@ -631,8 +703,10 @@ static int file_link(struct file *a, struct file *b)
 		char *ssz = size_to_human_string(SIZE_SUFFIX_3LETTER |
 				   SIZE_SUFFIX_SPACE |
 				   SIZE_DECIMAL_2DIGITS, a->st.st_size);
-		jlog(JLOG_INFO, _("%sLinking %s to %s (-%s)"),
-		     opts.dry_run ? _("[DryRun] ") : "", a->links->path, b->links->path,
+		jlog(JLOG_INFO, _("%s%sLinking %s to %s (-%s)"),
+		     opts.dry_run ? _("[DryRun] ") : "",
+		     reflink ? "Ref" : "",
+		     a->links->path, b->links->path,
 		     ssz);
 		free(ssz);
 	}
@@ -643,7 +717,7 @@ static int file_link(struct file *a, struct file *b)
 
 		xasprintf(&new_path, "%s.hardlink-temporary", b->links->path);
 
-		if (link(a->links->path, new_path) != 0)
+		if (do_link(a, b, new_path, reflink) != 0)
 			warn(_("cannot link %s to %s"), a->links->path, new_path);
 
 		else if (rename(new_path, b->links->path) != 0) {
@@ -794,6 +868,93 @@ static int inserter(const char *fpath, const struct stat *sb,
 	return 0;
 }
 
+#ifdef USE_REFLINK
+static int is_reflink_compatible(dev_t devno, const char *filename)
+{
+	static dev_t last_dev = 0;
+	static int last_status = 0;
+
+	if (last_dev != devno) {
+		struct statfs vfs;
+
+		if (statfs(filename, &vfs) != 0)
+			return 0;
+
+		last_dev = devno;
+		switch (vfs.f_type) {
+			case STATFS_BTRFS_MAGIC:
+			case STATFS_XFS_MAGIC:
+				last_status = 1;
+				break;
+			default:
+				last_status = 0;
+				break;
+		}
+	}
+
+	return last_status;
+}
+
+static int is_reflink(struct file *xa, struct file *xb)
+{
+	int last = 0, rc = 0;
+	char abuf[BUFSIZ] = { 0 },
+	     bbuf[BUFSIZ] = { 0 };
+
+	struct fiemap *amap = (struct fiemap *) abuf,
+		      *bmap = (struct fiemap *) bbuf;
+
+	int af = open(xa->links->path, O_RDONLY),
+	    bf = open(xb->links->path, O_RDONLY);
+
+	do {
+		size_t i;
+
+		amap->fm_length = ~0ULL;
+		amap->fm_flags = FIEMAP_FLAG_SYNC;
+		amap->fm_extent_count =	(sizeof(abuf) - sizeof(*amap)) / sizeof(struct fiemap_extent);
+
+		bmap->fm_length = ~0ULL;
+		bmap->fm_flags = FIEMAP_FLAG_SYNC;
+		bmap->fm_extent_count =	(sizeof(bbuf) - sizeof(*bmap)) / sizeof(struct fiemap_extent);
+
+		if (ioctl(af, FS_IOC_FIEMAP, (unsigned long) amap) < 0)
+			goto done;
+		if (ioctl(bf, FS_IOC_FIEMAP, (unsigned long) bmap) < 0)
+			goto done;
+
+		if (amap->fm_mapped_extents != bmap->fm_mapped_extents)
+			goto done;
+
+		for (i = 0; i < amap->fm_mapped_extents; i++) {
+			struct fiemap_extent *a = &amap->fm_extents[i];
+			struct fiemap_extent *b = &bmap->fm_extents[i];
+
+			if (a->fe_logical != b->fe_logical ||
+			    a->fe_length !=  b->fe_length ||
+			    a->fe_physical != b->fe_physical)
+				goto done;
+			if (!(a->fe_flags & FIEMAP_EXTENT_SHARED) ||
+			    !(b->fe_flags & FIEMAP_EXTENT_SHARED))
+				goto done;
+			if (a->fe_flags & FIEMAP_EXTENT_LAST)
+				last = 1;
+		}
+
+		bmap->fm_start = amap->fm_start =
+			amap->fm_extents[amap->fm_mapped_extents - 1].fe_logical +
+			amap->fm_extents[amap->fm_mapped_extents - 1].fe_length;
+	} while (last == 0);
+
+	rc = 1;
+done:
+	close(af);
+	close(bf);
+
+	return rc;
+}
+#endif /* USE_REFLINK */
+
 static inline size_t count_nodes(struct file *x)
 {
 	size_t ct = 0;
@@ -827,6 +988,7 @@ static void visitor(const void *nodep, const VISIT which, const int depth)
 
 	for (; master != NULL; master = master->next) {
 		size_t nnodes, memsiz;
+		int may_reflink = 0;
 
 		if (handle_interrupt())
 			exit(EXIT_FAILURE);
@@ -843,6 +1005,14 @@ static void visitor(const void *nodep, const VISIT which, const int depth)
 		/*                                filesiz,      readsiz,      memsiz */
 		ul_fileeq_set_size(&fileeq, master->st.st_size, opts.io_size, memsiz);
 
+#ifdef USE_REFLINK
+		if (reflink_mode || reflinks_skip) {
+			may_reflink =
+				reflink_mode == REFLINK_ALWAYS ? 1 :
+				is_reflink_compatible(master->st.st_dev,
+							    master->links->path);
+		}
+#endif
 		for (other = master->next; other != NULL; other = other->next) {
 			int eq;
 
@@ -861,7 +1031,14 @@ static void visitor(const void *nodep, const VISIT which, const int depth)
 				     _("Skipped (attributes mismatch) %s"), other->links->path);
 				continue;
 			}
-
+#ifdef USE_REFLINK
+			if (may_reflink && reflinks_skip && is_reflink(master, other)) {
+				jlog(JLOG_VERBOSE2,
+				     _("Skipped (already reflink) %s"), other->links->path);
+				stats.ignored_reflinks++;
+				continue;
+			}
+#endif
 			/* initialize content comparison */
 			if (!ul_fileeq_data_associated(&master->data))
 				ul_fileeq_data_set_file(&master->data, master->links->path);
@@ -883,7 +1060,7 @@ static void visitor(const void *nodep, const VISIT which, const int depth)
 			}
 
 			/* link files */
-			if (!file_link(master, other) && errno == EMLINK) {
+			if (!file_link(master, other, may_reflink) && errno == EMLINK) {
 				ul_fileeq_data_deinit(&master->data);
 				master = other;
 			}
@@ -927,6 +1104,10 @@ static void __attribute__((__noreturn__)) usage(void)
 #ifdef USE_XATTR
 	fputs(_(" -X, --respect-xattrs       respect extended attributes\n"), out);
 #endif
+#ifdef USE_REFLINK
+	fputs(_("     --reflink[=<when>]     create clone/CoW copies (auto, always, never)\n"), out);
+	fputs(_("     --skip-reflinks        skip already cloned files (enabled on --reflink)\n"), out);
+#endif
 	fputs(_(" -m, --maximize             maximize the hardlink count, remove the file with\n"
 	        "                              lowest hardlink count\n"), out);
 	fputs(_(" -M, --minimize             reverse the meaning of -m\n"), out);
@@ -954,6 +1135,10 @@ static void __attribute__((__noreturn__)) usage(void)
  */
 static int parse_options(int argc, char *argv[])
 {
+	enum {
+		OPT_REFLINK = CHAR_MAX + 1,
+		OPT_SKIP_RELINKS
+	};
 	static const char optstr[] = "VhvnfpotXcmMOx:y:i:r:S:s:b:q";
 	static const struct option long_options[] = {
 		{"version", no_argument, NULL, 'V'},
@@ -973,6 +1158,10 @@ static int parse_options(int argc, char *argv[])
 		{"method", required_argument, NULL, 'y' },
 		{"minimum-size", required_argument, NULL, 's'},
 		{"maximum-size", required_argument, NULL, 'S'},
+#ifdef USE_REFLINK
+		{"reflink", optional_argument, NULL, OPT_REFLINK },
+		{"skip-reflinks", no_argument, NULL, OPT_SKIP_RELINKS },
+#endif
 		{"io-size", required_argument, NULL, 'b'},
 		{"content", no_argument, NULL, 'c'},
 		{"quiet", no_argument, NULL, 'q'},
@@ -1052,6 +1241,26 @@ static int parse_options(int argc, char *argv[])
 		case 'b':
 			opts.io_size = strtosize_or_err(optarg, _("failed to parse I/O size"));
 			break;
+#ifdef USE_REFLINK
+		case OPT_REFLINK:
+			reflink_mode = REFLINK_AUTO;
+			if (optarg) {
+				if (strcmp(optarg, "auto") == 0)
+					reflink_mode = REFLINK_AUTO;
+				else if (strcmp(optarg, "always") == 0)
+					reflink_mode = REFLINK_ALWAYS;
+				else if (strcmp(optarg, "never") == 0)
+					reflink_mode = REFLINK_NEVER;
+				else
+					errx(EXIT_FAILURE, _("unsupported reflink mode; %s"), optarg);
+			}
+			if (reflink_mode != REFLINK_NEVER)
+				reflinks_skip = 1;
+			break;
+		case OPT_SKIP_RELINKS:
+			reflinks_skip = 1;
+			break;
+#endif
 		case 'h':
 			usage();
 		case 'V':
