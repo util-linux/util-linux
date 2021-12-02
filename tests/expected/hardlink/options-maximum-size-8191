@@ -1,11 +1,11 @@
 Number of test files: 26
-Mode:           real
-Method:         sha256
-Files:          26
-Linked:         0 files
-Compared:       0 xattrs
-Compared:       0 files
-Saved:          0 B
+Mode:                     real
+Method:                   sha256
+Files:                    26
+Linked:                   0 files
+Compared:                 0 xattrs
+Compared:                 0 files
+Saved:                    0 B
 Duration: [Redacted]
 dir-1/sdir-1/file-a-1	1	8192	1540236330	644
 dir-1/sdir-1/file-a-2	1	8192	1540236330	644
