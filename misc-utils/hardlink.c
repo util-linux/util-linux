@@ -643,7 +643,7 @@ static inline int do_link(struct file *a, struct file *b,
 	if (reflink) {
 		int dest = -1, src = -1;
 
-		dest = open(new_name, O_CREAT|O_WRONLY|O_TRUNC);
+		dest = open(new_name, O_CREAT|O_WRONLY|O_TRUNC, 0600);
 		if (dest < 0)
 			goto fallback;
 		if (fchmod(dest, b->st.st_mode) != 0)
