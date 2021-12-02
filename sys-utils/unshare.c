@@ -477,6 +477,9 @@ static struct map_range *read_subid_range(char *filename, uid_t uid)
 		map->count = strtoul_or_err(s, _("failed to parse subid map"));
 
 		fclose(idmap);
+		free(pw);
+		free(pwbuf);
+
 		return map;
 	}
 
