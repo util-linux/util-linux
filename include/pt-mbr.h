@@ -199,6 +199,7 @@ enum {
 	MBR_SPEEDSTOR1_PARTITION	= 0xf1,
 	MBR_SPEEDSTOR2_PARTITION	= 0xf4, /* SpeedStor large partition */
 	MBR_DOS_SECONDARY_PARTITION	= 0xf2, /* DOS 3.3+ secondary */
+	MBR_EBBR_PROTECTIVE_PARTITION	= 0xf8, /* Arm EBBR firmware protective partition */
 	MBR_VMWARE_VMFS_PARTITION	= 0xfb,
 	MBR_VMWARE_VMKCORE_PARTITION	= 0xfc, /* VMware kernel dump partition */
 	MBR_LINUX_RAID_PARTITION	= 0xfd, /* Linux raid partition with autodetect using persistent superblock */
