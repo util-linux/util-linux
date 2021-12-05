@@ -543,7 +543,7 @@ static int swapon_checks(const struct swapon_ctl *ctl, struct swap_device *dev)
 
 	/* test for holes by LBT */
 	if (S_ISREG(st.st_mode)) {
-		if (st.st_blocks * 512 < st.st_size) {
+		if (st.st_blocks * 512L < st.st_size) {
 			warnx(_("%s: skipping - it appears to have holes."),
 				dev->path);
 			goto err;
