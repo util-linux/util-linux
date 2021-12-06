@@ -10,6 +10,7 @@ This file may be copied under the terms of the GNU Public License.
 :man source: util-linux {release-version}
 :page-layout: base
 :command: lsfd
+:colon: :
 
 == NAME
 
@@ -91,7 +92,8 @@ integer value.  *--counter* is the option for defining a counter.  If
 a user defines no counter, *lsfd* uses the definitions of pre-defined
 built-in counters (default counters) to make the summary output.
 +
-CAUTION: Using *--summary* and *--json* may make the output broken. Only combining *--summary*=*only* and *--json* is valid.
+CAUTION{colon} Using *--summary* and *--json* may make the output broken. Only combining *--summary*=*only* and *--json* is valid.
+//TRANSLATORS: Keep {colon} untranslated.
 
 *--debug-filter*::
 Dump the internal data structure for the filter and exit. This is useful
@@ -110,7 +112,8 @@ Display version information and exit.
 
 Each column has a type. Types are surround by < and >.
 
-CAUTION: The names and types of columns are not stable yet.
+//TRANSLATORS: Keep {colon} untranslated.
+CAUTION{colon} The names and types of columns are not stable yet.
 They may be changed in the future releases.
 
 ASSOC <__string__>::
@@ -264,6 +267,7 @@ non-negative integers.
 
 === Semi-formal syntax
 
+//TRANSLATORS: In the following messages, translate only the <__variables__>.
 EXPR :: BOOLEXP
 
 BOOLEXP0 :: COLUMN <__boolean__> | BOOLLIT | _(_ BOOLEXP _)_
@@ -308,94 +312,95 @@ OP2REG :: _=~_ | _!~_
 know is *-Q* (or *--filter*) option.  Combined with *-o* (or
 *--output*) option, you can customize the output as you want.
 
-List files associated with PID 1 and PID 2 processes::
+//TRANSLATORS: In the following messages, don't forget to add whitespace at the end!
+List files associated with PID 1 and PID 2 processes: ::
 ....
 # lsfd -Q '(PID == 1) or (PID == 2)'
 ....
 
-Do the same in an alternative way::
+Do the same in an alternative way: ::
 ....
 # lsfd -Q '(PID == 1) || (PID == 2)'
 ....
 
-Do the same in a more efficient way::
+Do the same in a more efficient way: ::
 ....
 # lsfd --pid 1,2
 ....
 
-Whitescapes can be used instead of a comma::
+Whitescapes can be used instead of a comma: ::
 ....
 # lsfd --pid '1 2'
 ....
 
-Utilize *pidof*(1) for list the files associated with "firefox"::
+Utilize *pidof*(1) for list the files associated with "firefox": ::
 ....
 # lsfd --pid "$(pidof firefox)"
 ....
 
-List the 1st file descriptor opened by PID 1 process::
+List the 1st file descriptor opened by PID 1 process: ::
 ....
 # lsfd -Q '(PID == 1) and (FD == 1)'
 ....
 
-Do the same in an alternative way::
+Do the same in an alternative way: ::
 ....
 # lsfd -Q '(PID == 1) && (FD == 1)'
 ....
 
-List all running executables::
+List all running executables: ::
 ....
 # lsfd -Q 'ASSOC == "exe"'
 ....
 
-Do the same in an alternative way::
+Do the same in an alternative way: ::
 ....
 # lsfd -Q 'ASSOC eq "exe"'
 ....
 
-Do the same but print only file names::
+Do the same but print only file names: ::
 ....
 # lsfd -o NAME -Q 'ASSOC eq "exe"' | sort -u
 ....
 
-List deleted files associated to processes::
+List deleted files associated to processes: ::
 ....
 # lsfd -Q 'DELETED'
 ....
 
-List non-regular files::
+List non-regular files: ::
 ....
 # lsfd -Q 'TYPE != "REG"'
 ....
 
-List block devices::
+List block devices: ::
 ....
 # lsfd -Q 'DEVTYPE == "blk"'
 ....
 
-Do the same with TYPE column::
+Do the same with TYPE column: ::
 ....
 # lsfd -Q 'TYPE == "BLK"'
 ....
 
-List files including "dconf" directory in their names::
+List files including "dconf" directory in their names: ::
 ....
 # lsfd -Q 'NAME =~ ".\*/dconf/.*"'
 ....
 
-List files opened in a QEMU virtual machine::
+List files opened in a QEMU virtual machine: ::
 ....
 # lsfd -Q '(COMMAND =~ ".\*qemu.*") and (FD >= 0)'
 ....
 
-Hide files associated to kernel threads::
+Hide files associated to kernel threads: ::
 ....
 # lsfd -Q '!KTHREAD'
 ....
 
 == COUNTER EXAMPLES
 
-Report the numbers of netlink socket descriptors and unix socket descriptors::
+Report the numbers of netlink socket descriptors and unix socket descriptors: ::
 ....
 # lsfd --summary=only \
 	-C 'netlink sockets':'(NAME =~ "NETLINK:.*")' \
@@ -405,7 +410,7 @@ VALUE COUNTER
  1552 unix sockets
 ....
 
-Do the same but print in JSON format::
+Do the same but print in JSON format: ::
 ....
 # lsfd --summary=only --json \
 	-C 'netlink sockets':'(NAME =~ "NETLINK:.*")' \
