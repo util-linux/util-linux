@@ -907,6 +907,9 @@ static int is_reflink(struct file *xa, struct file *xb)
 	int af = open(xa->links->path, O_RDONLY),
 	    bf = open(xb->links->path, O_RDONLY);
 
+	if (af < 0 || bf < 0)
+		goto done;
+
 	do {
 		size_t i;
 
@@ -948,9 +951,10 @@ static int is_reflink(struct file *xa, struct file *xb)
 
 	rc = 1;
 done:
-	close(af);
-	close(bf);
-
+	if (af >= 0)
+		close(af);
+	if (bf >= 0)
+		close(bf);
 	return rc;
 }
 #endif /* USE_REFLINK */
