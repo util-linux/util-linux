@@ -90,6 +90,7 @@ struct devdrv {
 };
 
 static struct list_head chrdrvs;
+static struct list_head blkdrvs;
 
 /*
  * Column related stuffs
@@ -936,24 +937,53 @@ static void free_devdrv(struct devdrv *devdrv)
 	free(devdrv);
 }
 
-static void read_devices(struct list_head *devdrvs_list, FILE *devices_fp)
+#define READ_DEVICES_LINE_LEN 256
+static struct devdrv *read_devdrv(const char *line)
 {
 	unsigned long major;
-	char line[256];
-	char name[sizeof(line)];
+	char name[READ_DEVICES_LINE_LEN];
+
+	if (sscanf(line, "%lu %s", &major, name) != 2)
+		return NULL;
+
+	return new_devdrv(major, name);
+}
+
+static void read_devices(struct list_head *chrdrvs_list,
+			 struct list_head *blkdrvs_list, FILE *devices_fp)
+{
+	char line[READ_DEVICES_LINE_LEN];
+
+	/* Skip to the line "Character devices:". */
+	while (fgets(line, sizeof(line), devices_fp)) {
+		if (line[0] == 'C')
+			break;
+		continue;
+	}
 
 	while (fgets(line, sizeof(line), devices_fp)) {
-		struct devdrv *devdrv;
-
-		if (line[0] == 'C')
-			continue; /* "Character devices:" */
-		else if (line[0] == '\n')
+		/* Find the blank line before "Block devices:" line. */
+		if (line[0] == '\n')
 			break;
 
-		if (sscanf(line, "%lu %s", &major, name) != 2)
-			continue;
-		devdrv = new_devdrv(major, name);
-		list_add_tail(&devdrv->devdrvs, devdrvs_list);
+		/* Read the character device drivers */
+		struct devdrv *devdrv = read_devdrv(line);
+		if (devdrv)
+			list_add_tail(&devdrv->devdrvs, chrdrvs_list);
+	}
+
+	/* Skip to the line "Block devices:". */
+	while (fgets(line, sizeof(line), devices_fp)) {
+		if (line[0] == 'B')
+			break;
+		continue;
+	}
+
+	/* Read the block device drivers */
+	while (fgets(line, sizeof(line), devices_fp)) {
+		struct devdrv *devdrv = read_devdrv(line);
+		if (devdrv)
+			list_add_tail(&devdrv->devdrvs, blkdrvs_list);
 	}
 }
 
@@ -962,28 +992,40 @@ static void initialize_devdrvs(void)
 	FILE *devices_fp;
 
 	INIT_LIST_HEAD(&chrdrvs);
+	INIT_LIST_HEAD(&blkdrvs);
 
 	devices_fp = fopen("/proc/devices", "r");
 	if (devices_fp) {
-		read_devices(&chrdrvs, devices_fp);
+		read_devices(&chrdrvs, &blkdrvs, devices_fp);
 		fclose(devices_fp);
 	}
 }
 
 static void finalize_devdrvs(void)
 {
+	list_free(&blkdrvs, struct devdrv,  devdrvs, free_devdrv);
 	list_free(&chrdrvs, struct devdrv,  devdrvs, free_devdrv);
 }
 
-const char *get_chrdrv(unsigned long major)
+static const char *get_devdrv(struct list_head *devdrvs_list, unsigned long major)
 {
 	struct list_head *c;
-	list_for_each(c, &chrdrvs) {
+	list_for_each(c, devdrvs_list) {
 		struct devdrv *devdrv = list_entry(c, struct devdrv, devdrvs);
 		if (devdrv->major == major)
 			return devdrv->name;
 	}
 	return NULL;
+}
+
+const char *get_chrdrv(unsigned long major)
+{
+	return get_devdrv(&chrdrvs, major);
+}
+
+const char *get_blkdrv(unsigned long major)
+{
+	return get_devdrv(&blkdrvs, major);
 }
 
 struct name_manager *new_name_manager(void)
