@@ -126,9 +126,11 @@ static void read_partitions(struct list_head *partitions_list, FILE *part_fp)
 
 static void bdev_class_initialize(void)
 {
+	FILE *part_fp;
+
 	INIT_LIST_HEAD(&partitions);
 
-	FILE *part_fp = fopen("/proc/partitions", "r");
+	part_fp = fopen("/proc/partitions", "r");
 	if (part_fp) {
 		read_partitions(&partitions, part_fp);
 		fclose(part_fp);
