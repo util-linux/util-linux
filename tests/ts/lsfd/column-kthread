@@ -20,11 +20,10 @@ TS_DESC="kthread column"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
+ts_skip_nonroot
 
 ts_check_test_command "$TS_CMD_LSFD"
 ts_check_prog "ps"
-
-ts_skip_nonroot
 
 [ "$(ps --no-headers -o comm 1)" = 'systemd'  ] || ts_skip "pid 1 is not systemd"
 [ "$(ps --no-headers -o comm 2)" = 'kthreadd' ] || ts_skip "pid 2 is not kthreadd"

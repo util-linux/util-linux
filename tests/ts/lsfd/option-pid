@@ -19,14 +19,13 @@ TS_DESC="--pid option"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
+ts_skip_nonroot
 
 ts_check_test_command "$TS_CMD_LSFD"
 ts_check_test_command "$TS_HELPER_MKFDS"
 ts_check_prog "ps"
 
 ts_cd "$TS_OUTDIR"
-
-ts_skip_nonroot
 
 [ "$(ps --no-headers -o comm 1)" = 'systemd'  ] || ts_skip "pid 1 is not systemd"
 
