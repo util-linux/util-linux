@@ -81,6 +81,17 @@ struct name_manager {
 };
 
 /*
+ * /proc/devices entries
+ */
+struct devdrv {
+	struct list_head devdrvs;
+	unsigned long major;
+	char *name;
+};
+
+static struct list_head chrdrvs;
+
+/*
  * Column related stuffs
  */
 
@@ -907,7 +918,73 @@ static void finalize_classes(void)
 	finalize_class(&unkn_class);
 }
 
+static struct devdrv *new_devdrv(unsigned long major, const char *name)
+{
+	struct devdrv *devdrv = xcalloc(1, sizeof(*devdrv));
 
+	INIT_LIST_HEAD(&devdrv->devdrvs);
+
+	devdrv->major = major;
+	devdrv->name = xstrdup(name);
+
+	return devdrv;
+}
+
+static void free_devdrv(struct devdrv *devdrv)
+{
+	free(devdrv->name);
+	free(devdrv);
+}
+
+static void read_devices(struct list_head *devdrvs_list, FILE *devices_fp)
+{
+	unsigned long major;
+	char line[256];
+	char name[sizeof(line)];
+
+	while (fgets(line, sizeof(line), devices_fp)) {
+		struct devdrv *devdrv;
+
+		if (line[0] == 'C')
+			continue; /* "Character devices:" */
+		else if (line[0] == '\n')
+			break;
+
+		if (sscanf(line, "%lu %s", &major, name) != 2)
+			continue;
+		devdrv = new_devdrv(major, name);
+		list_add_tail(&devdrv->devdrvs, devdrvs_list);
+	}
+}
+
+static void initialize_devdrvs(void)
+{
+	FILE *devices_fp;
+
+	INIT_LIST_HEAD(&chrdrvs);
+
+	devices_fp = fopen("/proc/devices", "r");
+	if (devices_fp) {
+		read_devices(&chrdrvs, devices_fp);
+		fclose(devices_fp);
+	}
+}
+
+static void finalize_devdrvs(void)
+{
+	list_free(&chrdrvs, struct devdrv,  devdrvs, free_devdrv);
+}
+
+const char *get_chrdrv(unsigned long major)
+{
+	struct list_head *c;
+	list_for_each(c, &chrdrvs) {
+		struct devdrv *devdrv = list_entry(c, struct devdrv, devdrvs);
+		if (devdrv->major == major)
+			return devdrv->name;
+	}
+	return NULL;
+}
 
 struct name_manager *new_name_manager(void)
 {
@@ -1564,6 +1641,7 @@ int main(int argc, char *argv[])
 	/* collect data */
 	initialize_nodevs();
 	initialize_classes();
+	initialize_devdrvs();
 
 	collect_processes(&ctl, pids, n_pids);
 	free(pids);
@@ -1580,6 +1658,7 @@ int main(int argc, char *argv[])
 	/* cleanup */
 	delete(&ctl.procs, &ctl);
 
+	finalize_devdrvs();
 	finalize_classes();
 	finalize_nodevs();
 
