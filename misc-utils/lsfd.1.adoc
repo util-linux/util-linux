@@ -10,6 +10,7 @@ This file may be copied under the terms of the GNU Public License.
 :man source: util-linux {release-version}
 :page-layout: base
 :command: lsfd
+:colon: :
 
 == NAME
 
@@ -42,8 +43,8 @@ Use JSON output format.
 Don't print headings.
 
 *-o*, *--output* _list_::
-Specify which output columns to print. See the "OUTPUT COLUMNS"
-section for details of available column.
+Specify which output columns to print. See the *OUTPUT COLUMNS*
+section for details of available columns.
 +
 The default list of columns may be extended if _list_ is specified in
 the format _+list_ (e.g., *lsfd -o +DELETED*).
@@ -55,47 +56,48 @@ Use raw output format.
 Don't truncate text in columns.
 
 *-p*, *--pid* _pids_::
-Collect information only specified processes.
+Collect information only for specified processes.
 _pids_ is a list of pids. A comma or whitespaces can be used as separators.
-You can use this option with *pidof*(1). See "FILTER EXAMPLES".
+You can use this option with *pidof*(1). See *FILTER EXAMPLES*.
 +
 Both *-Q* option with an expression including PID, e.g. -Q (PID == 1),
 and *-p* option, e.g. -p 1, may print the same output but using *-p*
-option is a much more efficient because *-p* option works much earlier
-stage of processing than *-Q* option.
+option is much more efficient because *-p* option works at a much earlier
+stage of processing than the *-Q* option.
 
 *-Q*, *--filter* _expr_::
-Print the files only satisfying with the condition represented by the _expr_.
-See also "FILTER EXAMPLES".
+Print only the files matching the condition represented by the _expr_.
+See also *FILTER EXAMPLES*.
 
 *-C*, *--counter* _label_:_filter_expr_::
 Define a custom counter used in *--summary* output. *lsfd* makes a
 counter named _label_. During collect information, *lsfd* counts files
-satisfying _filter_expr_, and stores the counted number to the
+matching _filter_expr_, and stores the counted number to the
 counter named _label_. *lsfd* applies filters defined with *--filter*
-options before couring; files excluded by the filters are not counted.
+options before counting; files excluded by the filters are not counted.
 +
-See "FILTER EXPRESSION" about _filter_expr_.
+See *FILTER EXPRESSION* about _filter_expr_.
 _label_ should not include _{_ nor _:_. You can define multiple
-counters with specifying this option multiple times.
+counters by specifying this option multiple times.
 +
-See also "COUNTER EXAMPLES".
+See also *COUNTER EXAMPLES*.
 
 *--summary*[=_when_]::
 This option controls summary lines output. The optional argument _when_
 can be *only*, *append* or *never*. If the _when_ argument is omitted,
-it defaults to *"only"*.
+it defaults to *only*.
 +
-The summary reports counters. A counter comes from a label and an
+The summary reports counters. A counter consists of a label and an
 integer value.  *--counter* is the option for defining a counter.  If
 a user defines no counter, *lsfd* uses the definitions of pre-defined
 built-in counters (default counters) to make the summary output.
 +
-CAUTION: Using *--summary* and *--json* may make the output broken. Only combining *--summary*=*only* and *--json* is valid.
+CAUTION{colon} Using *--summary* and *--json* may make the output broken. Only combining *--summary*=*only* and *--json* is valid.
+//TRANSLATORS: Keep {colon} untranslated.
 
 *--debug-filter*::
 Dump the internal data structure for the filter and exit. This is useful
-only for lsfd developers.
+only for *lsfd* developers.
 
 *--dump-counters*::
 Dump the definition of counters used in *--summary* output.
@@ -110,7 +112,8 @@ Display version information and exit.
 
 Each column has a type. Types are surround by < and >.
 
-CAUTION: The names and types of columns are not stable yet.
+//TRANSLATORS: Keep {colon} untranslated.
+CAUTION{colon} The names and types of columns are not stable yet.
 They may be changed in the future releases.
 
 ASSOC <__string__>::
@@ -218,7 +221,7 @@ An expression consists of column names, literals and, operators like:
 Before evaluation, *lsfd* substitutes column names in the given
 expression with actual column values in the line. There are three
 different data types: _boolean_, _string_, and _number_.  For columns
-with a _boolean_ type, the vale can be stand-alone.  For _string_ and
+with a _boolean_ type, the value can be stand-alone.  For _string_ and
 _number_ values, the value must be an operand of an operator, for
 example, `(PID == 1)`. See the "OUTPUT COLUMNS" about the types of
 columns.
@@ -260,10 +263,11 @@ operators.  Use _(_ and _)_ explicitly for grouping the
 sub-expressions if your expression uses more than two operators.
 
 About _number_ typed values, the filter engine supports only
-zero or positive numbers.
+non-negative integers.
 
 === Semi-formal syntax
 
+//TRANSLATORS: In the following messages, translate only the <__variables__>.
 EXPR :: BOOLEXP
 
 BOOLEXP0 :: COLUMN <__boolean__> | BOOLLIT | _(_ BOOLEXP _)_
@@ -308,94 +312,95 @@ OP2REG :: _=~_ | _!~_
 know is *-Q* (or *--filter*) option.  Combined with *-o* (or
 *--output*) option, you can customize the output as you want.
 
-List files associated with PID 1 and PID 2 processes::
+//TRANSLATORS: In the following messages, don't forget to add whitespace at the end!
+List files associated with PID 1 and PID 2 processes: ::
 ....
 # lsfd -Q '(PID == 1) or (PID == 2)'
 ....
 
-Do the same in an alternative way::
+Do the same in an alternative way: ::
 ....
 # lsfd -Q '(PID == 1) || (PID == 2)'
 ....
 
-Do the same in a more efficient way::
+Do the same in a more efficient way: ::
 ....
 # lsfd --pid 1,2
 ....
 
-Whitescapes can be used instead of a comma::
+Whitescapes can be used instead of a comma: ::
 ....
 # lsfd --pid '1 2'
 ....
 
-Utilize *pidof*(1) for list the files associated with "firefox"::
+Utilize *pidof*(1) for list the files associated with "firefox": ::
 ....
 # lsfd --pid "$(pidof firefox)"
 ....
 
-List the 1st file descriptor opened by PID 1 process::
+List the 1st file descriptor opened by PID 1 process: ::
 ....
 # lsfd -Q '(PID == 1) and (FD == 1)'
 ....
 
-Do the same in an alternative way::
+Do the same in an alternative way: ::
 ....
 # lsfd -Q '(PID == 1) && (FD == 1)'
 ....
 
-List all running executables::
+List all running executables: ::
 ....
 # lsfd -Q 'ASSOC == "exe"'
 ....
 
-Do the same in an alternative way::
+Do the same in an alternative way: ::
 ....
 # lsfd -Q 'ASSOC eq "exe"'
 ....
 
-Do the same but print only file names::
+Do the same but print only file names: ::
 ....
 # lsfd -o NAME -Q 'ASSOC eq "exe"' | sort -u
 ....
 
-List deleted files associated to processes::
+List deleted files associated to processes: ::
 ....
 # lsfd -Q 'DELETED'
 ....
 
-List non-regular files::
+List non-regular files: ::
 ....
 # lsfd -Q 'TYPE != "REG"'
 ....
 
-List block devices::
+List block devices: ::
 ....
 # lsfd -Q 'DEVTYPE == "blk"'
 ....
 
-Do the same with TYPE column::
+Do the same with TYPE column: ::
 ....
 # lsfd -Q 'TYPE == "BLK"'
 ....
 
-List files including "dconf" directory in their names::
+List files including "dconf" directory in their names: ::
 ....
 # lsfd -Q 'NAME =~ ".\*/dconf/.*"'
 ....
 
-List files opened to QEMU virtual machine::
+List files opened in a QEMU virtual machine: ::
 ....
 # lsfd -Q '(COMMAND =~ ".\*qemu.*") and (FD >= 0)'
 ....
 
-Hide files associated to kernel threads::
+Hide files associated to kernel threads: ::
 ....
 # lsfd -Q '!KTHREAD'
 ....
 
 == COUNTER EXAMPLES
 
-Report the numbers of netlink socket descriptors and unix socket descriptors::
+Report the numbers of netlink socket descriptors and unix socket descriptors: ::
 ....
 # lsfd --summary=only \
 	-C 'netlink sockets':'(NAME =~ "NETLINK:.*")' \
@@ -405,7 +410,7 @@ VALUE COUNTER
  1552 unix sockets
 ....
 
-Do the same but print in JSON format::
+Do the same but print in JSON format: ::
 ....
 # lsfd --summary=only --json \
 	-C 'netlink sockets':'(NAME =~ "NETLINK:.*")' \
