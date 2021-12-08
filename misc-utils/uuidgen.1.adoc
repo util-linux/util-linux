@@ -69,6 +69,7 @@ uuidgen --sha1 --namespace @dns --name "www.example.com"
 
 == SEE ALSO
 
+*uuidparse*(1),
 *libuuid*(3),
 link:https://tools.ietf.org/html/rfc4122[RFC 4122]
 
