@@ -994,8 +994,12 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 		}
 
 # ifdef CDROM_LAST_WRITTEN
-		if (ioctl(fd, CDROM_LAST_WRITTEN, &last_written) == 0)
+		if (ioctl(fd, CDROM_LAST_WRITTEN, &last_written) == 0) {
 			pr->flags |= BLKID_FL_CDROM_DEV;
+		} else {
+			if (errno == ENOMEDIUM)
+				goto err;
+		}
 # endif
 
 		if (pr->flags & BLKID_FL_CDROM_DEV) {
