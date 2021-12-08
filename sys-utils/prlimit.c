@@ -25,6 +25,8 @@
 #include <ctype.h>
 #include <assert.h>
 #include <unistd.h>
+#include <sys/time.h>
+#include <sys/types.h>
 #include <sys/resource.h>
 
 #include <libsmartcols.h>
@@ -141,15 +143,19 @@ static int ncolumns;
 static pid_t pid; /* calling process (default) */
 static int verbose;
 
-#ifndef HAVE_PRLIMIT
+#ifdef HAVE_SYS_SYSCALL_H
 # include <sys/syscall.h>
+# if defined(SYS_prlimit64)
+#  ifndef HAVE_PRLIMIT
 static int prlimit(pid_t p, int resource,
 		   const struct rlimit *new_limit,
 		   struct rlimit *old_limit)
 {
 	return syscall(SYS_prlimit64, p, resource, new_limit, old_limit);
 }
-#endif
+#  endif /* !HAVE_PRLIMIT */
+# endif /* SYS_prlimit64 */
+#endif /* HAVE_SYS_SYSCALL_H */
 
 static void __attribute__((__noreturn__)) usage(void)
 {
