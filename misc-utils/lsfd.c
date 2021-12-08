@@ -109,6 +109,8 @@ struct colinfo {
 static struct colinfo infos[] = {
 	[COL_ASSOC]   = { "ASSOC",    0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("association between file and process") },
+	[COL_BLKDRV]  = { "BLKDRV",   0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
+		N_("block device driver name resolved by /proc/devices") },
 	[COL_CHRDRV]  = { "CHRDRV",   0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("character device driver name resolved by /proc/devices") },
 	[COL_COMMAND] = { "COMMAND",0.3, SCOLS_FL_TRUNC, SCOLS_JSON_STRING,
