@@ -35,6 +35,7 @@
 #ifdef HAVE_LIBUDEV
 # include <libudev.h>
 #endif
+#include <blkid.h>
 #include <libmount.h>
 #include <libsmartcols.h>
 
@@ -46,6 +47,7 @@
 #include "xalloc.h"
 #include "optutils.h"
 #include "mangle.h"
+#include "buffer.h"
 
 #include "findmnt.h"
 
@@ -72,6 +74,7 @@ enum {
 	COL_PROPAGATION,
 	COL_SIZE,
 	COL_SOURCE,
+	COL_SOURCES,
 	COL_TARGET,
 	COL_TID,
 	COL_USED,
@@ -118,6 +121,7 @@ static struct colinfo infos[] = {
 	[COL_PASSNO]       = { "PASSNO",          1, SCOLS_FL_RIGHT, N_("pass number on parallel fsck(8) [fstab only]") },
 	[COL_PROPAGATION]  = { "PROPAGATION",  0.10, 0, N_("VFS propagation flags") },
 	[COL_SIZE]         = { "SIZE",            5, SCOLS_FL_RIGHT, N_("filesystem size") },
+	[COL_SOURCES]      = { "SOURCES",      0.25, SCOLS_FL_WRAP, N_("all possible source devices [fstab only]") },
 	[COL_SOURCE]       = { "SOURCE",       0.25, SCOLS_FL_NOEXTREMES, N_("source device") },
 	[COL_TARGET]       = { "TARGET",       0.30, SCOLS_FL_TREE| SCOLS_FL_NOEXTREMES, N_("mountpoint") },
 	[COL_TID]          = { "TID",             4, SCOLS_FL_RIGHT, N_("task ID") },
@@ -511,9 +515,41 @@ static char *get_vfs_attr(struct libmnt_fs *fs, int sizetype)
 static char *get_data(struct libmnt_fs *fs, int num)
 {
 	char *str = NULL;
+	const char *t = NULL, *v = NULL;
 	int col_id = get_column_id(num);
 
 	switch (col_id) {
+	case COL_SOURCES:
+		/* print all devices with the same tag (LABEL, UUID) */
+		if ((flags & FL_EVALUATE) &&
+		    mnt_fs_get_tag(fs, &t, &v) == 0) {
+			blkid_dev_iterate iter;
+			blkid_dev dev;
+			blkid_cache cache = NULL;
+			struct ul_buffer buf = UL_INIT_BUFFER;
+			int i = 0;
+
+			if (blkid_get_cache(&cache, NULL) < 0)
+				break;
+
+			blkid_probe_all(cache);
+
+			iter = blkid_dev_iterate_begin(cache);
+			blkid_dev_set_search(iter, t, v);
+			while (blkid_dev_next(iter, &dev) == 0) {
+				dev = blkid_verify(cache, dev);
+				if (!dev)
+					continue;
+				if (i != 0)
+					ul_buffer_append_data(&buf, "\n", 1);
+				ul_buffer_append_string(&buf, blkid_dev_devname(dev));
+				i++;
+			}
+			blkid_dev_iterate_end(iter);
+			str = ul_buffer_get_data(&buf, NULL, NULL);
+			break;
+		}
+		/* fallthrough */
 	case COL_SOURCE:
 	{
 		const char *root = mnt_fs_get_root(fs);
@@ -536,6 +572,7 @@ static char *get_data(struct libmnt_fs *fs, int num)
 			free(cn);
 		break;
 	}
+
 	case COL_TARGET:
 		if (mnt_fs_get_target(fs))
 			str = xstrdup(mnt_fs_get_target(fs));
@@ -1716,7 +1753,14 @@ int main(int argc, char *argv[])
 			warn(_("failed to allocate output column"));
 			goto leave;
 		}
-
+		/* multi-line cells (now used for SOURCES) */
+		if (fl & SCOLS_FL_WRAP) {
+			scols_column_set_wrapfunc(cl,
+						scols_wrapnl_chunksize,
+						scols_wrapnl_nextchunk,
+						NULL);
+			scols_column_set_safechars(cl, "\n");
+		}
 		if (flags & FL_JSON) {
 			switch (id) {
 			case COL_SIZE:
@@ -1736,7 +1780,10 @@ int main(int argc, char *argv[])
 				scols_column_set_json_type(cl, SCOLS_JSON_BOOLEAN);
 				break;
 			default:
-				scols_column_set_json_type(cl, SCOLS_JSON_STRING);
+				if (fl & SCOLS_FL_WRAP)
+					scols_column_set_json_type(cl, SCOLS_JSON_ARRAY_STRING);
+				else
+					scols_column_set_json_type(cl, SCOLS_JSON_STRING);
 				break;
 			}
 		}
