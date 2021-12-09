@@ -141,7 +141,7 @@ Don't create a new partition table, but only append the specified partitions.
 Note that unused partition maybe be re-used in this case although it is not the last partition in the partition table. See also *-N* to specify entry in the partition table.
 
 *-b*, *--backup*::
-Back up the current partition table sectors before starting the partitioning. The default backup file name is _~/sfdisk-<device>-<offset>.bak_; to use another name see option *-O*, *--backup-file*.
+Back up the current partition table sectors before starting the partitioning. The default backup file name is _~/sfdisk-<device>-<offset>.bak_; to use another name see option *-O*, *--backup-file*. See section *BACKING UP THE PARTITION TABLE* for more details.
 
 *--color*[**=**__when__]::
 Colorize the output. The optional argument _when_ can be *auto*, *never* or *always*. If the _when_ argument is omitted, it defaults to *auto*. The colors can be disabled; for the current built-in default see the *--help* output. See also the *COLORS* section.
@@ -356,7 +356,8 @@ ____
 *sfdisk /dev/sda < sda.dump*
 ____
 
-If you want to do a full (binary) backup of all sectors where the partition table is stored, then use the *--backup* option. It writes the sectors to _~/sfdisk-<device>-<offset>.bak_ files. The default name of the backup file can be changed with the *--backup-file* option. The backup files contain only raw data from the _device_. Note that the same concept of backup files is used by *wipefs*(8). For example:
+If you want to do a full (binary) backup of all sectors where the partition table is stored, then use the *--backup* option. It writes the sectors to _~/sfdisk-<device>-<offset>.bak_ files. The default name of the backup file can be changed with the *--backup-file* option. The backup files contain only raw data from the _device_. *sfdisk* writes backup files immediately after startup, this operation is independent, and the backup is done although the device is not modified later.
+For example:
 
 ____
 *sfdisk --backup /dev/sda*
@@ -365,9 +366,10 @@ ____
 The GPT header can later be restored by:
 
 ____
-dd  if=~/sfdisk-sda-0x00000200.bak  of=/dev/sda  \
-  seek=$\((0x00000200))  bs=1  conv=notrunc
+dd if=~/sfdisk-sda-0x00000200.bak of=/dev/sda seek=$\((0x00000200)) bs=1 conv=notrunc
 ____
+
+The same concept of backup files is used by *wipefs*(8).
 
 Note that *sfdisk* since version 2.26 no longer provides the *-I* option to restore sectors. *dd*(1) provides all necessary functionality.
 

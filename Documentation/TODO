@@ -168,12 +168,6 @@ libfdisk
    * support nested labels parsing from dump
    see https://github.com/util-linux/util-linux/issues/850
 
-sfdisk
-------
-
- - don't backup PT in interactive mode before write to the devices is requested,
-   see https://github.com/util-linux/util-linux/issues/852
-
 misc
 ----
 
