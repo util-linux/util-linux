@@ -71,6 +71,7 @@ _sfdisk_module()
 				--part-attrs
 				--append
 				--backup
+				--backup-pt-sectors
 				--bytes
 				--move-data
 				--force

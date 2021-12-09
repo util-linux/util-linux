@@ -88,7 +88,8 @@ enum {
 	ACT_PARTLABEL,
 	ACT_PARTATTRS,
 	ACT_DISKID,
-	ACT_DELETE
+	ACT_DELETE,
+	ACT_BACKUP_SECTORS,
 };
 
 struct sfdisk {
@@ -1075,6 +1076,29 @@ static int command_dump(struct sfdisk *sf, int argc, char **argv)
 	return 0;
 }
 
+/*
+ * sfdisk --backup-pt-sectors <device>
+ */
+static int command_backup_sectors(struct sfdisk *sf, int argc, char **argv)
+{
+	const char *devname = NULL;
+
+	if (argc)
+		devname = argv[0];
+	if (!devname)
+		errx(EXIT_FAILURE, _("no disk device specified"));
+
+	assign_device(sf, devname, 1);	/* read-only */
+
+	if (!fdisk_has_label(sf->cxt))
+		errx(EXIT_FAILURE, _("%s: does not contain a recognized partition table"), devname);
+
+	backup_partition_table(sf, devname);
+
+	fdisk_deassign_device(sf->cxt, 1);		/* no-sync() */
+	return 0;
+}
+
 static void assign_device_partition(struct sfdisk *sf,
 				const char *devname,
 				size_t partno,
@@ -2022,6 +2046,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -A, --activate <dev> [<part> ...] list or set bootable (P)MBR partitions\n"), out);
 	fputs(_(" -d, --dump <dev>                  dump partition table (usable for later input)\n"), out);
 	fputs(_(" -J, --json <dev>                  dump partition table in JSON format\n"), out);
+	fputs(_(" -B, --backup-pt-sectors <dev>     binary partition table backup (see -b and -O)\n"), out);
 	fputs(_(" -g, --show-geometry [<dev> ...]   list geometry of all or specified devices\n"), out);
 	fputs(_(" -l, --list [<dev> ...]            list partitions of each device\n"), out);
 	fputs(_(" -F, --list-free [<dev> ...]       list unpartitioned free areas of each device\n"), out);
@@ -2124,6 +2149,7 @@ int main(int argc, char *argv[])
 	static const struct option longopts[] = {
 		{ "activate",no_argument,	NULL, 'A' },
 		{ "append",  no_argument,       NULL, 'a' },
+		{ "backup-pt-sectors", no_argument,   NULL, 'B' },
 		{ "backup",  no_argument,       NULL, 'b' },
 		{ "backup-file", required_argument, NULL, 'O' },
 		{ "bytes",   no_argument,	NULL, OPT_BYTES },
@@ -2188,7 +2214,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "aAbcdfFgGhJlLo:O:nN:qrsTu:vVX:Y:w:W:",
+	while ((c = getopt_long(argc, argv, "aAbBcdfFgGhJlLo:O:nN:qrsTu:vVX:Y:w:W:",
 					longopts, &longidx)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -2202,6 +2228,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'b':
 			sf->backup = 1;
+			break;
+		case 'B':
+			sf->act = ACT_BACKUP_SECTORS;
 			break;
 		case OPT_CHANGE_ID:
 		case OPT_PRINT_ID:
@@ -2368,6 +2397,10 @@ int main(int argc, char *argv[])
 	switch (sf->act) {
 	case ACT_ACTIVATE:
 		rc = command_activate(sf, argc - optind, argv + optind);
+		break;
+
+	case ACT_BACKUP_SECTORS:
+		rc = command_backup_sectors(sf, argc - optind, argv + optind);
 		break;
 
 	case ACT_DELETE:

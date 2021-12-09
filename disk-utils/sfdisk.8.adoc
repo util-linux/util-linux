@@ -67,6 +67,9 @@ The activation command is supported for MBR and PMBR only. If a GPT label is det
 +
 If no _partition-number_ is specified, then list the partitions with an enabled flag.
 
+*--backup-pt-sectors* _device_::
+Back up the current partition table sectors in binary format and exit. See the *BACKING UP THE PARTITION TABLE* section.
+
 *--delete* _device_ [__partition-number__...]::
 Delete all or the specified partitions.
 
@@ -344,30 +347,39 @@ creates empty GPT partition table. Note that the *--append* disables this featur
 
 It is recommended to save the layout of your devices. *sfdisk* supports two ways.
 
-Use the *--dump* option to save a description of the device layout to a text file. The dump format is suitable for later *sfdisk* input. For example:
+=== Dump in sfdisk compatible format
 
+Use the *--dump* command to save a description of the device layout to a text file.
+The dump format is suitable for later *sfdisk* input. For example:
 ____
 *sfdisk --dump /dev/sda > sda.dump*
 ____
 
 This can later be restored by:
-
 ____
 *sfdisk /dev/sda < sda.dump*
 ____
 
-If you want to do a full (binary) backup of all sectors where the partition table is stored, then use the *--backup* option. It writes the sectors to _~/sfdisk-<device>-<offset>.bak_ files. The default name of the backup file can be changed with the *--backup-file* option. The backup files contain only raw data from the _device_. *sfdisk* writes backup files immediately after startup, this operation is independent, and the backup is done although the device is not modified later.
-For example:
+=== Full binary backup
+
+If you want to do a full binary backup of all sectors where the partition table is stored, then use the *--backup-pt-sectors* command. It writes the sectors to _~/sfdisk-<device>-<offset>.bak_ files. The default name of the backup file can be changed with the *--backup-file* option. The backup files contain only raw data from the _device_. For example:
 
 ____
-*sfdisk --backup /dev/sda*
+*sfdisk --backup-pt-sectors /dev/sda*
 ____
 
 The GPT header can later be restored by:
 
 ____
-dd if=~/sfdisk-sda-0x00000200.bak of=/dev/sda seek=$\((0x00000200)) bs=1 conv=notrunc
+*dd if=~/sfdisk-sda-0x00000200.bak of=/dev/sda seek=$\((0x00000200)) bs=1 conv=notrunc*
 ____
+
+
+It's also possible to use the *--backup* option to create the same backup immediately after startup for other sfdisk commands. For example, backup partition table before deleting all partitions from partition table:
+____
+*sfdisk --backup --delete /dev/sda*
+____
+
 
 The same concept of backup files is used by *wipefs*(8).
 
