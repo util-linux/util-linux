@@ -36,6 +36,7 @@
  */
 enum {
 	COL_ASSOC,
+	COL_BLKDRV,
 	COL_CHRDRV,
 	COL_COMMAND,
 	COL_DELETED,
@@ -61,7 +62,7 @@ enum {
 	COL_SOURCE,
 	COL_TID,
 	COL_TYPE,
-	COL_UID,		/* proess */
+	COL_UID,		/* process */
 	COL_USER,		/* process */
 	COL_FUID,		/* file */
 	COL_OWNER,		/* file */
@@ -151,6 +152,7 @@ const char *get_name(struct name_manager *nm, unsigned long id);
 unsigned long add_name(struct name_manager *nm, const char *name);
 
 const char *get_partition(dev_t dev);
+const char *get_blkdrv(unsigned long major);
 const char *get_chrdrv(unsigned long major);
 const char *get_miscdev(unsigned long minor);
 const char *get_nodev_filesystem(unsigned long minor);

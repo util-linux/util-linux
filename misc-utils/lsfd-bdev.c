@@ -40,13 +40,21 @@ static bool bdev_fill_column(struct proc *proc __attribute__((__unused__)),
 			     size_t column_index)
 {
 	char *str = NULL;
-	const char *partition;
+	const char *partition, *devdrv;
 
 	switch(column_id) {
 	case COL_TYPE:
 		if (scols_line_set_data(ln, column_index, "BLK"))
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
+	case COL_BLKDRV:
+		devdrv = get_blkdrv(major(file->stat.st_rdev));
+		if (devdrv)
+			str = strdup(devdrv);
+		else
+			xasprintf(&str, "%u",
+				  major(file->stat.st_rdev));
+		break;
 	case COL_DEVTYPE:
 		if (scols_line_set_data(ln, column_index,
 					"blk"))
@@ -57,6 +65,12 @@ static bool bdev_fill_column(struct proc *proc __attribute__((__unused__)),
 		partition = get_partition(file->stat.st_rdev);
 		if (partition) {
 			str = strdup(partition);
+			break;
+		}
+		devdrv = get_blkdrv(major(file->stat.st_rdev));
+		if (devdrv) {
+			xasprintf(&str, "%s:%u", devdrv,
+				  minor(file->stat.st_rdev));
 			break;
 		}
 		/* FALL THROUGH */
@@ -112,9 +126,11 @@ static void read_partitions(struct list_head *partitions_list, FILE *part_fp)
 
 static void bdev_class_initialize(void)
 {
+	FILE *part_fp;
+
 	INIT_LIST_HEAD(&partitions);
 
-	FILE *part_fp = fopen("/proc/partitions", "r");
+	part_fp = fopen("/proc/partitions", "r");
 	if (part_fp) {
 		read_partitions(&partitions, part_fp);
 		fclose(part_fp);

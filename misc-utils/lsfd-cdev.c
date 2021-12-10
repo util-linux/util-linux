@@ -25,14 +25,7 @@
 
 #include "lsfd.h"
 
-static struct list_head chrdrvs;
 static struct list_head miscdevs;
-
-struct chrdrv {
-	struct list_head chrdrvs;
-	unsigned long major;
-	char *name;
-};
 
 struct miscdev {
 	struct list_head miscdevs;
@@ -47,7 +40,7 @@ static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
 			     size_t column_index)
 {
 	char *str = NULL;
-	const char *chrdrv;
+	const char *devdrv;
 	const char *miscdev;
 
 	switch(column_id) {
@@ -56,8 +49,8 @@ static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
 	case COL_MISCDEV:
-		chrdrv = get_chrdrv(major(file->stat.st_rdev));
-		if (chrdrv && strcmp(chrdrv, "misc") == 0) {
+		devdrv = get_chrdrv(major(file->stat.st_rdev));
+		if (devdrv && strcmp(devdrv, "misc") == 0) {
 			miscdev = get_miscdev(minor(file->stat.st_rdev));
 			if (miscdev)
 				str = strdup(miscdev);
@@ -73,23 +66,23 @@ static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
 	case COL_CHRDRV:
-		chrdrv = get_chrdrv(major(file->stat.st_rdev));
-		if (chrdrv)
-			str = strdup(chrdrv);
+		devdrv = get_chrdrv(major(file->stat.st_rdev));
+		if (devdrv)
+			str = strdup(devdrv);
 		else
 			xasprintf(&str, "%u",
 				  major(file->stat.st_rdev));
 		break;
 	case COL_SOURCE:
-		chrdrv = get_chrdrv(major(file->stat.st_rdev));
+		devdrv = get_chrdrv(major(file->stat.st_rdev));
 		miscdev = NULL;
-		if (chrdrv && strcmp(chrdrv, "misc") == 0)
+		if (devdrv && strcmp(devdrv, "misc") == 0)
 			miscdev = get_miscdev(minor(file->stat.st_rdev));
-		if (chrdrv) {
+		if (devdrv) {
 			if (miscdev) {
 				xasprintf(&str, "misc:%s", miscdev);
 			} else {
-				xasprintf(&str, "%s:%u", chrdrv,
+				xasprintf(&str, "%s:%u", devdrv,
 					  minor(file->stat.st_rdev));
 			}
 			break;
@@ -109,45 +102,6 @@ static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
 	if (scols_line_refer_data(ln, column_index, str))
 		err(EXIT_FAILURE, _("failed to add output data"));
 	return true;
-}
-
-static struct chrdrv *new_chrdrv(unsigned long major, const char *name)
-{
-	struct chrdrv *chrdrv = xcalloc(1, sizeof(*chrdrv));
-
-	INIT_LIST_HEAD(&chrdrv->chrdrvs);
-
-	chrdrv->major = major;
-	chrdrv->name = xstrdup(name);
-
-	return chrdrv;
-}
-
-static void free_chrdrv(struct chrdrv *chrdrv)
-{
-	free(chrdrv->name);
-	free(chrdrv);
-}
-
-static void read_devices(struct list_head *chrdrvs_list, FILE *devices_fp)
-{
-	unsigned long major;
-	char line[256];
-	char name[sizeof(line)];
-
-	while (fgets(line, sizeof(line), devices_fp)) {
-		struct chrdrv *chrdrv;
-
-		if (line[0] == 'C')
-			continue; /* "Character devices:" */
-		else if (line[0] == '\n')
-			break;
-
-		if (sscanf(line, "%lu %s", &major, name) != 2)
-			continue;
-		chrdrv = new_chrdrv(major, name);
-		list_add_tail(&chrdrv->chrdrvs, chrdrvs_list);
-	}
 }
 
 static struct miscdev *new_miscdev(unsigned long minor, const char *name)
@@ -187,17 +141,9 @@ static void read_misc(struct list_head *miscdevs_list, FILE *misc_fp)
 
 static void cdev_class_initialize(void)
 {
-	FILE *devices_fp;
 	FILE *misc_fp;
 
-	INIT_LIST_HEAD(&chrdrvs);
 	INIT_LIST_HEAD(&miscdevs);
-
-	devices_fp = fopen("/proc/devices", "r");
-	if (devices_fp) {
-		read_devices(&chrdrvs, devices_fp);
-		fclose(devices_fp);
-	}
 
 	misc_fp = fopen("/proc/misc", "r");
 	if (misc_fp) {
@@ -208,19 +154,7 @@ static void cdev_class_initialize(void)
 
 static void cdev_class_finalize(void)
 {
-	list_free(&chrdrvs, struct chrdrv, chrdrvs, free_chrdrv);
 	list_free(&miscdevs, struct miscdev, miscdevs, free_miscdev);
-}
-
-const char *get_chrdrv(unsigned long major)
-{
-	struct list_head *c;
-	list_for_each(c, &chrdrvs) {
-		struct chrdrv *chrdrv = list_entry(c, struct chrdrv, chrdrvs);
-		if (chrdrv->major == major)
-			return chrdrv->name;
-	}
-	return NULL;
 }
 
 const char *get_miscdev(unsigned long minor)

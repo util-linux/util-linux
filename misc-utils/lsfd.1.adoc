@@ -119,6 +119,9 @@ They may be changed in the future releases.
 ASSOC <__string__>::
 Association between file and process.
 
+BLKDRV <__string__>::
+Block device driver name resolved by _/proc/devices_.
+
 CHRDRV <__string__>::
 Character device driver name resolved by _/proc/devices_.
 

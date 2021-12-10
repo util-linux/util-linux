@@ -17,6 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include <ctype.h>
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -456,6 +457,22 @@ static void open_with_opath(const struct factory *factory, struct fdesc fdescs[]
 	};
 }
 
+static void open_ro_blkdev(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
+			    int argc, char ** argv)
+{
+	struct arg blkdev = decode_arg("blkdev", factory->params, argc, argv);
+	int fd = open(ARG_STRING(blkdev), O_RDONLY);
+	if (fd < 0)
+		err(EXIT_FAILURE, "failed to open: %s", ARG_STRING(blkdev));
+	free_arg(&blkdev);
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -568,6 +585,23 @@ static const struct factory factories[] = {
 				.type = PTYPE_STRING,
 				.desc = "path to a symbolic link",
 				.defv.string = "/dev/stdin",
+			},
+			PARAM_END
+		},
+	},
+	{
+		.name = "ro-block-device",
+		.desc = "block device with O_RDONLY flag",
+		.priv = true,
+		.N = 1,
+		.fork = false,
+		.make = open_ro_blkdev,
+		.params = (struct parameter []) {
+			{
+				.name = "blkdev",
+				.type = PTYPE_STRING,
+				.desc = "block device node to be opened",
+				.defv.string = "/dev/nullb0",
 			},
 			PARAM_END
 		},
