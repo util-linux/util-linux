@@ -139,7 +139,7 @@ static char *evaluate_by_udev(const char *token, const char *value, int uevent)
 {
 	char dev[PATH_MAX];
 	char *path = NULL;
-	size_t len;
+	size_t len,count;
 	struct stat st;
 
 	DBG(EVALUATE, ul_debug("evaluating by udev %s=%s", token, value));
@@ -169,6 +169,30 @@ static char *evaluate_by_udev(const char *token, const char *value, int uevent)
 		goto failed;	/* link or device does not exist */
 
 	if (!S_ISBLK(st.st_mode))
+		return NULL;
+
+	count = 0;
+	if(!memcmp(token,"UUID",strlen("UUID")))
+	{
+		blkid_cache cache;
+		blkid_dev_iterate	iter;
+		blkid_dev		dev_cache;
+
+		blkid_get_cache(&cache,NULL);
+		blkid_gc_cache(cache);
+		blkid_probe_all(cache);
+		iter = blkid_dev_iterate_begin(cache);
+		while (blkid_dev_next(iter, &dev_cache) == 0) {
+			dev_cache = blkid_verify(cache, dev_cache);
+			if (!dev_cache)
+				continue;
+			if(dev_cache->bid_uuid &&  !memcmp(dev_cache->bid_uuid,value,strlen(dev_cache->bid_uuid) > strlen(value)? strlen(value):strlen(dev_cache->bid_uuid)))
+				count++;
+		}
+		blkid_dev_iterate_end(iter);
+		blkid_put_cache(cache);
+	}
+	if(count >= 2)
 		return NULL;
 
 	path = canonicalize_path(dev);
