@@ -200,8 +200,10 @@ static char *evaluate_by_scan(const char *token, const char *value,
 
 	if (!c) {
 		char *cachefile = blkid_get_cache_filename(conf);
-		blkid_get_cache(&c, cachefile);
+		int rc = blkid_get_cache(&c, cachefile);
 		free(cachefile);
+		if (rc < 0)
+			return NULL;
 	}
 	if (!c)
 		return NULL;
