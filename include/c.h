@@ -175,6 +175,24 @@
 	_a == _b ? 0 : _a > _b ? 1 : -1; })
 #endif
 
+
+#ifndef cmp_timespec
+# define cmp_timespec(a, b, CMP)		\
+	(((a)->tv_sec == (b)->tv_sec)		\
+	? ((a)->tv_nsec CMP (b)->tv_nsec)	\
+	: ((a)->tv_sec CMP (b)->tv_sec))
+#endif
+
+
+#ifndef cmp_stat_mtime
+# ifdef HAVE_STRUCT_STAT_ST_MTIM_TV_NSEC
+#  define cmp_stat_mtime(_a, _b, CMP)	cmp_timespec(&(_a)->st_mtim, &(_b)->st_mtim, CMP)
+# else
+#  define cmp_stat_mtime(_a, _b, CMP)	((_a)->st_mtime CMP (_b)->st_mtime)
+# endif
+#endif
+
+
 #ifndef offsetof
 #define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
 #endif
