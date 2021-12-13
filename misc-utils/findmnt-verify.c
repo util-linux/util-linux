@@ -14,6 +14,7 @@
 #include "c.h"
 #include "strutils.h"
 #include "xalloc.h"
+#include "pathnames.h"
 
 #include "findmnt.h"
 
@@ -35,7 +36,7 @@ struct verify_context {
 static void __attribute__ ((__format__ (__printf__, 3, 0)))
 	verify_mesg(struct verify_context *vfy, char type, const char *fmt, va_list ap)
 {
-	if (!vfy->target_printed) {
+	if (!vfy->target_printed && vfy->fs) {
 		fprintf(stdout, "%s\n", mnt_fs_get_target(vfy->fs));
 		vfy->target_printed = 1;
 	}
@@ -544,6 +545,19 @@ int verify_table(struct libmnt_table *tb)
 			break;
 		flags |= FL_NOSWAPMATCH;
 	}
+
+#ifdef USE_SYSTEMD
+	{
+		struct stat a, b;
+
+		if (stat(_PATH_SD_UNITSLOAD, &a) == 0 &&
+		    stat(_PATH_MNTTAB, &b) == 0 &&
+		    cmp_stat_mtime(&a, &b, <))
+			verify_warn(&vfy, _(
+	"your fstab has been modified, but systemd still uses the old version;\n"
+	"       use 'systemctl daemon-reload' to reload"));
+	}
+#endif
 
 done:
 	mnt_free_iter(itr);
