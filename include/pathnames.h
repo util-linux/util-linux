@@ -82,6 +82,8 @@
 #define _PATH_NUMLOCK_ON	_PATH_RUNSTATEDIR "/numlock-on"
 #define _PATH_LOGINDEFS		"/etc/login.defs"
 
+#define _PATH_SD_UNITSLOAD	_PATH_RUNSTATEDIR "/systemd/systemd-units-load"
+
 /* misc paths */
 #define _PATH_WORDS             "/usr/share/dict/words"
 #define _PATH_WORDS_ALT         "/usr/share/dict/web2"

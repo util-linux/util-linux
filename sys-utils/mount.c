@@ -38,6 +38,7 @@
 #include "strutils.h"
 #include "closestream.h"
 #include "canonicalize.h"
+#include "pathnames.h"
 
 #define XALLOC_EXIT_CODE MNT_EX_SYSERR
 #include "xalloc.h"
@@ -336,6 +337,31 @@ static void selinux_warning(struct libmnt_context *cxt, const char *tgt)
 # define selinux_warning(_x, _y)
 #endif
 
+
+#ifdef USE_SYSTEMD
+static void systemd_hint(void)
+{
+	static int fstab_check_done = 0;
+
+	if (fstab_check_done == 0) {
+		struct stat a, b;
+
+		if (isatty(STDERR_FILENO) &&
+		    stat(_PATH_SD_UNITSLOAD, &a) == 0 &&
+		    stat(_PATH_MNTTAB, &b) == 0 &&
+		    cmp_stat_mtime(&a, &b, <))
+			printf(_(
+	"mount: (hint) your fstab has been modified, but systemd still uses\n"
+	"       the old version; use 'systemctl daemon-reload' to reload.\n"));
+
+		fstab_check_done = 1;
+	}
+}
+#else
+# define systemd_hint()
+#endif
+
+
 /*
  * Returns exit status (MNT_EX_*) and/or prints error message.
  */
@@ -363,6 +389,9 @@ static int mk_exit_code(struct libmnt_context *cxt, int rc)
 	if (rc == MNT_EX_SUCCESS && mnt_context_get_status(cxt) == 1) {
 		selinux_warning(cxt, tgt);
 	}
+
+	systemd_hint();
+
 	return rc;
 }
 
