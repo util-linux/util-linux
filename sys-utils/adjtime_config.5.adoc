@@ -22,7 +22,7 @@ The file is usually located in _/etc_, but tools like *hwclock*(8) or *rtcwake*(
 
 The Hardware Clock is usually not very accurate. However, much of its inaccuracy is completely predictable - it gains or loses the same amount of time every day. This is called systematic drift. The util *hwclock*(8) keeps the file _/etc/adjtime_, that keeps some historical information. For more details see "*The Adjust Function*" and "*The Adjtime File*" sections from *hwclock*(8) man page.
 
-The format of the adjtime file is, in ASCII.
+The _adjtime_ file is formatted in ASCII.
 
 === First line
 

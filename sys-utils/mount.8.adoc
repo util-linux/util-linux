@@ -301,11 +301,11 @@ Command-line options available for the *mount* command are:
 *-a*, *--all*::
 Mount all filesystems (of the given types) mentioned in _fstab_ (except for those whose line contains the *noauto* keyword). The filesystems are mounted following their order in _fstab_. The *mount* command compares filesystem source, target (and fs root for bind mount or btrfs) to detect already mounted filesystems. The kernel table with already mounted filesystems is cached during *mount --all*. This means that all duplicated _fstab_ entries will be mounted.
 +
-The correct functionality depends on /proc (to detect already mounted filesystems) and on /sys (to evaluate filesystem tags like UUID= or LABEL=). It's strongly recommended to mount /proc and /sys filesystems before *mount -a* is executed, or keep /proc and /sys at the beginning of fstab.
+The correct functionality depends on _/proc_ (to detect already mounted filesystems) and on _/sys_ (to evaluate filesystem tags like UUID= or LABEL=). It's strongly recommended to mount _/proc_ and _/sys_ filesystems before *mount -a* is executed, or keep /proc and /sys at the beginning of _fstab_.
 +
 The option *--all* is possible to use for remount operation too. In this case all filters (*-t* and *-O*) are applied to the table of already mounted filesystems.
 +
-Since version 2.35 is possible to use the command line option *-o* to alter mount options from _fstab_ (see also *--options-mode*).
+Since version 2.35 it is possible to use the command line option *-o* to alter mount options from _fstab_ (see also *--options-mode*).
 +
 Note that it is a bad practice to use *mount -a* for _fstab_ checking. The recommended solution is *findmnt --verify*.
 
@@ -571,7 +571,7 @@ Do not use the lazytime feature.
 Honor set-user-ID and set-group-ID bits or file capabilities when executing programs from this filesystem.
 
 *nosuid*::
-Do not honor set-user-ID and set-group-ID bits or file capabilities when executing programs from this filesystem. In addition, SELinux domain transitions require permission nosuid_transition, which in turn needs also policy capability nnp_nosuid_transition.
+Do not honor set-user-ID and set-group-ID bits or file capabilities when executing programs from this filesystem. In addition, SELinux domain transitions require permission _nosuid_transition_, which in turn needs also policy capability _nnp_nosuid_transition_.
 
 *silent*::
 Turn on the silent flag.
@@ -1103,7 +1103,7 @@ Note: the mount options __index=off,nfs_export=on__ are conflicting for a
 read-write mount and will result in an error.
 --
 
-*xinfo=*{**on**|**off**|**auto**}::
+*xino=*{**on**|**off**|**auto**}::
 The "xino" feature composes a unique object identifier from the real object st_ino and an underlying fsid index. The "xino" feature uses the high inode number bits for fsid, because the underlying filesystems rarely use the high inode number bits. In case the underlying inode number does overflow into the high xino bits, overlay filesystem will fall back to the non xino behavior for that inode.
 +
 For a detailed description of the effect of this option please refer to https://www.kernel.org/doc/html/latest/filesystems/overlayfs.html?highlight=overlayfs

@@ -24,14 +24,7 @@ hardlink - link multiple copies of a file
 
 *hardlink* is a tool which replaces copies of a file with hardlinks or copy-on-write clones, therefore saving space.
 
-*hardlink* creates binary tree from file sizes and after that, it compares files with the
-same sizes. There are two basic content comparison methods. *memcmp* method directly reads
-data blocks from files and compares them. The other methods are based on checksums (like SHA256),
-in this case for each data block is calculated checksum by Linux kernel crypto API, and this
-checksum is stored in userspace and used for files comparison. For each file is also cached
-"intro" buffer (32 bytes), this buffer is used independently on the comparison method and requested
-cache-size and io-size. The "intro" buffer dramatically reduces operations with data content as
-files are very often different from the beginning.
+*hardlink* creates a binary tree from file sizes and after that, it compares files with the same sizes. There are two basic content comparison methods. *memcmp* method directly reads data blocks from files and compares them. The other method is based on checksums (like SHA256), in this case for each data block is calculated checksum by Linux kernel crypto API, and this checksum is stored in userspace and used for files comparison. For each file is also cached "intro" buffer (32 bytes), this buffer is used independently on the comparison method and requested cache-size and io-size. The "intro" buffer dramatically reduces operations with data content as files are very often different from the beginning.
 
 == OPTIONS
 
@@ -49,9 +42,9 @@ Do not act, just print what would happen.
 
 *-y*, *--method* _name_::
 Set the file content comparison method. The currently supported methods are
-sha256, sha1, crc32c and memcpy. The default is sha256 and memcmp if Linux
+sha256, sha1, crc32c and memcmp. The default is sha256, or memcmp if Linux
 Crypto API is not available. The methods based on checksums are implemented in
-zero-copy way, in this case file, content is not copied to the userspace and all
+zero-copy way, in this case file contents are not copied to the userspace and all
 calculation is done in kernel.
 
 *--reflink*[=_when_]::
@@ -61,9 +54,9 @@ to use it with *--ignore-owner* and *--ignore-mode* options. This option implies
 *--skip-reflinks* to ignore already cloned files.
 +
 The optional argument _when_ can be *never*, *always*, or *auto*. If the _when_ argument
-is omitted, it defaults to *"auto"*, in this case, hardlink checks filesystem type and
+is omitted, it defaults to *auto*, in this case, *hardlink* checks filesystem type and
 uses reflinks on BTRFS and XFS only, and fallback to hardlinks when creating reflink is impossible.
-The argumen *always* disables filesystem type detection and fallback to hardlinks, in this case,
+The argument *always* disables filesystem type detection and fallback to hardlinks, in this case,
 only reflinks are allowed.
 
 *--skip-reflinks*::
@@ -106,7 +99,7 @@ The minimum size to consider. By default this is 1, so empty files will not be l
 The maximum size to consider. By default this is 0 and 0 has the special meaning of unlimited. The _size_ argument may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB").
 
 *-b*, *--io-size* _size_::
-The size of the read() or sendfile() buffer used when comparing file contents.
+The size of the *read*(2) or *sendfile*(2) buffer used when comparing file contents.
 The _size_ argument may be followed by the multiplicative suffixes KiB, MiB,
 etc.  The "iB" is optional, e.g., "K" has the same meaning as "KiB". The
 default is 8KiB for memcmp method and 1MiB for the other methods. The only
@@ -116,7 +109,7 @@ to fit a number of cached content checksums.
 
 *-r*, *--cache-size* _size_::
 The size of the cache for content checksums. All non-memcmp methods calculate checksum for each
-file content block (see --io-size), these checksums are cached for the next comparison. The
+file content block (see *--io-size*), these checksums are cached for the next comparison. The
 size is important for large files or a large sets of files of the same size. The default is
 10MiB.
 
