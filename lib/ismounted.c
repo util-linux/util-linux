@@ -347,7 +347,7 @@ int check_mount_point(const char *device, int *mount_flags,
 		if ((stat(device, &st_buf) != 0) ||
 		    !S_ISBLK(st_buf.st_mode))
 			return 0;
-		fd = open(device, O_RDONLY|O_EXCL|O_CLOEXEC);
+		fd = open(device, O_RDONLY|O_EXCL|O_CLOEXEC|O_NONBLOCK);
 		if (fd < 0) {
 			if (errno == EBUSY)
 				*mount_flags |= MF_BUSY;
