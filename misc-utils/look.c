@@ -102,8 +102,6 @@ main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	setlocale(LC_ALL, "");
-
 	if ((file = getenv("WORDLIST")) && !access(file, R_OK))
 		/* use the WORDLIST */;
 	else
