@@ -50,7 +50,7 @@ look - display lines beginning with a given string
 
 == DESCRIPTION
 
-The *look* utility displays any lines in _file_ which contain _string_. As *look* performs a binary search, the lines in _file_ must be sorted (where *sort*(1) was given the same options *-d* and/or *-f* that *look* is invoked with).
+The *look* utility displays any lines in _file_ which contain _string_ as a prefix. As *look* performs a binary search, the lines in _file_ must be sorted (where *sort*(1) was given the same options *-d* and/or *-f* that *look* is invoked with).
 
 If _file_ is not specified, the file _/usr/share/dict/words_ is used, only alphanumeric characters are compared and the case of alphabetic characters is ignored.
 
