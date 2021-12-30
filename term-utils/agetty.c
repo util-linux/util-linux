@@ -2794,8 +2794,18 @@ static void output_special_char(struct issue *ie,
 		break;
 	}
 	case 'l':
-		fprintf (ie->output, "%s", op->tty);
+	{
+		const char *name = op->tty;
+		if (strcmp(op->tty, "-") == 0) {
+			/* try to resolve the name of the tty associated to standard input. */
+			const char *ttypath = ttyname(STDIN_FILENO);
+			if (ttypath != NULL) {
+				name = (strncmp(ttypath, "/dev/", 5) == 0) ? ttypath + 5 : ttypath;
+			}
+		}
+		fprintf (ie->output, "%s", name);
 		break;
+	}
 	case 'b':
 	{
 		const speed_t speed = cfgetispeed(tp);
