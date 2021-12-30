@@ -42,3 +42,4 @@ pkgconfig.generate(lib_uuid,
                    description : 'Universally unique id library',
                    subdirs : 'uuid',
                    version : pc_version)
+install_headers('src/uuid.h', subdir : 'uuid')

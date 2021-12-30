@@ -7,7 +7,10 @@ defs.set('LIBBLKID_VERSION', pc_version)
 blkid_h = configure_file(
   input : 'src/blkid.h.in',
   output : 'blkid.h',
-  configuration : defs)
+  configuration : defs,
+  install : build_libblkid,
+  install_dir : join_paths(get_option('includedir'), 'blkid'),
+)
 
 lib_blkid_sources = '''
   src/blkidP.h

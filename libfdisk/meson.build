@@ -9,7 +9,10 @@ defs.set('LIBFDISK_PATCH_VERSION', pc_version.split('.')[2])
 libfdisk_h = configure_file(
   input : 'src/libfdisk.h.in',
   output : 'libfdisk.h',
-  configuration : defs)
+  configuration : defs,
+  install : build_libfdisk,
+  install_dir : join_paths(get_option('includedir'), 'libfisk'),
+)
 
 lib_fdisk_sources = '''
   src/fdiskP.h

@@ -6,7 +6,10 @@ defs.set('LIBSMARTCOLS_VERSION', pc_version)
 libsmartcols_h = configure_file(
   input : 'src/libsmartcols.h.in',
   output : 'libsmartcols.h',
-  configuration : defs)
+  configuration : defs,
+  install : build_libsmartcols,
+  install_dir : join_paths(get_option('includedir'), 'libsmartcols'),
+)
 
 lib_smartcols_sources = '''
   src/smartcolsP.h

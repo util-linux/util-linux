@@ -9,7 +9,10 @@ defs.set('LIBMOUNT_PATCH_VERSION', pc_version.split('.')[2])
 libmount_h = configure_file(
   input : 'src/libmount.h.in',
   output : 'libmount.h',
-  configuration : defs)
+  configuration : defs,
+  install : build_libmount,
+  install_dir : join_paths(get_option('includedir'), 'libmount'),
+)
 
 lib_mount_sources = '''
   src/mountP.h
