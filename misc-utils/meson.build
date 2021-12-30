@@ -124,7 +124,7 @@ getopt_sources = files(
 install_data(
   'getopt-example.bash',
   'getopt-example.tcsh',
-  install_dir : 'doc',
+  install_dir : docdir,
   install_mode: 'rwxr-xr-x')
 
 fincore_sources = files(

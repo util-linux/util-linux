@@ -18,7 +18,7 @@ endif
 bindir = join_paths(prefixdir, get_option('bindir'))
 sbindir = join_paths(prefixdir, get_option('sbindir'))
 sysconfstaticdir = join_paths(prefixdir, 'lib')
-docdir = '/usr/share/doc/util-linux'
+docdir = join_paths(prefixdir, get_option('datadir'), 'doc', 'util-linux')
 mandir = join_paths(prefixdir, get_option('mandir'))
 runstatedir = '/run'
 execprefixdir = '/usr'
