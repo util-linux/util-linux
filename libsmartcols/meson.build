@@ -45,7 +45,9 @@ lib_smartcols = both_libraries(
 
 lib_smartcols_static = lib_smartcols.get_static_lib()
 
-pkgconfig.generate(lib_smartcols,
-                   description : 'table or tree library',
-                   subdirs : 'libsmartcols',
-                   version : pc_version)
+if build_libsmartcols
+  pkgconfig.generate(lib_smartcols,
+                     description : 'table or tree library',
+                     subdirs : 'libsmartcols',
+                     version : pc_version)
+endif

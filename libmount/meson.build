@@ -88,9 +88,11 @@ lib_mount = library(
                   realtime_libs],
   install : build_libmount)
 
-pkgconfig.generate(lib_mount,
-                   description : 'mount library',
-                   subdirs : 'libmount',
-                   version : pc_version)
+if build_libmount
+  pkgconfig.generate(lib_mount,
+                     description : 'mount library',
+                     subdirs : 'libmount',
+                     version : pc_version)
+endif
 
 subdir('python')

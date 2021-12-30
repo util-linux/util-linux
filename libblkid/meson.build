@@ -144,7 +144,9 @@ lib_blkid = both_libraries(
 
 lib_blkid_static = lib_blkid.get_static_lib()
 
-pkgconfig.generate(lib_blkid,
-                   description : 'Block device id library',
-                   subdirs : 'blkid',
-                   version : pc_version)
+if build_libblkid
+  pkgconfig.generate(lib_blkid,
+                     description : 'Block device id library',
+                     subdirs : 'blkid',
+                     version : pc_version)
+endif

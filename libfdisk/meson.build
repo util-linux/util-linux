@@ -75,7 +75,9 @@ lib_fdisk = library(
                lib_uuid],
   install : build_libfdisk)
 
-pkgconfig.generate(lib_fdisk,
-                   description : 'fdisk library',
-                   subdirs : 'libfdisk',
-                   version : pc_version)
+if build_libfdisk
+  pkgconfig.generate(lib_fdisk,
+                     description : 'fdisk library',
+                     subdirs : 'libfdisk',
+                     version : pc_version)
+endif
