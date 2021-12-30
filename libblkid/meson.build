@@ -1,9 +1,13 @@
 dir_libblkid = include_directories('.', 'src')
 
+defs = configuration_data()
+defs.set('LIBBLKID_DATE', libblkid_date)
+defs.set('LIBBLKID_VERSION', pc_version)
+
 blkid_h = configure_file(
   input : 'src/blkid.h.in',
   output : 'blkid.h',
-  configuration : conf)
+  configuration : defs)
 
 lib_blkid_sources = '''
   src/blkidP.h

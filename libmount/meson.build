@@ -1,10 +1,10 @@
 dir_libmount = include_directories('.', 'src')
 
 defs = configuration_data()
-defs.set('LIBMOUNT_VERSION', libmount_version)
-defs.set('LIBMOUNT_MAJOR_VERSION', libmount_version.split('.')[0])
-defs.set('LIBMOUNT_MINOR_VERSION', libmount_version.split('.')[1])
-defs.set('LIBMOUNT_PATCH_VERSION', libmount_version.split('.')[2])
+defs.set('LIBMOUNT_VERSION', pc_version)
+defs.set('LIBMOUNT_MAJOR_VERSION', pc_version.split('.')[0])
+defs.set('LIBMOUNT_MINOR_VERSION', pc_version.split('.')[1])
+defs.set('LIBMOUNT_PATCH_VERSION', pc_version.split('.')[2])
 
 libmount_h = configure_file(
   input : 'src/libmount.h.in',
