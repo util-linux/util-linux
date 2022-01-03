@@ -227,7 +227,9 @@ This feature is not supported by the Linux kernel; it is implemented in userspac
 The alternative (classic) way to create a read-only bind mount is to use the remount operation, for example:
 
 ____
-*mount --bind* _olddir newdir_ *mount -o remount,bind,ro* _olddir newdir_
+*mount --bind* _olddir newdir_
+
+*mount -o remount,bind,ro* _olddir newdir_
 ____
 
 Note that a read-only bind will create a read-only mountpoint (VFS entry), but the original filesystem superblock will still be writable, meaning that the _olddir_ will be writable, but the _newdir_ will be read-only.
