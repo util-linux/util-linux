@@ -1,9 +1,16 @@
 dir_libblkid = include_directories('.', 'src')
 
+defs = configuration_data()
+defs.set('LIBBLKID_DATE', libblkid_date)
+defs.set('LIBBLKID_VERSION', pc_version)
+
 blkid_h = configure_file(
   input : 'src/blkid.h.in',
   output : 'blkid.h',
-  configuration : conf)
+  configuration : defs,
+  install : build_libblkid,
+  install_dir : join_paths(get_option('includedir'), 'blkid'),
+)
 
 lib_blkid_sources = '''
   src/blkidP.h
@@ -137,7 +144,9 @@ lib_blkid = both_libraries(
 
 lib_blkid_static = lib_blkid.get_static_lib()
 
-pkgconfig.generate(lib_blkid,
-                   description : 'Block device id library',
-                   subdirs : 'blkid',
-                   version : pc_version)
+if build_libblkid
+  pkgconfig.generate(lib_blkid,
+                     description : 'Block device id library',
+                     subdirs : 'blkid',
+                     version : pc_version)
+endif

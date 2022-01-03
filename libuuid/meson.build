@@ -38,7 +38,10 @@ lib_uuid = both_libraries(
                   build_libuuid ? [] : disabler()],
   install : build_libuuid)
 
-pkgconfig.generate(lib_uuid,
-                   description : 'Universally unique id library',
-                   subdirs : 'uuid',
-                   version : pc_version)
+if build_libuuid
+  pkgconfig.generate(lib_uuid,
+                     description : 'Universally unique id library',
+                     subdirs : 'uuid',
+                     version : pc_version)
+  install_headers('src/uuid.h', subdir : 'uuid')
+endif

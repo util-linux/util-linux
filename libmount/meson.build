@@ -1,15 +1,18 @@
 dir_libmount = include_directories('.', 'src')
 
 defs = configuration_data()
-defs.set('LIBMOUNT_VERSION', libmount_version)
-defs.set('LIBMOUNT_MAJOR_VERSION', libmount_version.split('.')[0])
-defs.set('LIBMOUNT_MINOR_VERSION', libmount_version.split('.')[1])
-defs.set('LIBMOUNT_PATCH_VERSION', libmount_version.split('.')[2])
+defs.set('LIBMOUNT_VERSION', pc_version)
+defs.set('LIBMOUNT_MAJOR_VERSION', pc_version.split('.')[0])
+defs.set('LIBMOUNT_MINOR_VERSION', pc_version.split('.')[1])
+defs.set('LIBMOUNT_PATCH_VERSION', pc_version.split('.')[2])
 
 libmount_h = configure_file(
   input : 'src/libmount.h.in',
   output : 'libmount.h',
-  configuration : defs)
+  configuration : defs,
+  install : build_libmount,
+  install_dir : join_paths(get_option('includedir'), 'libmount'),
+)
 
 lib_mount_sources = '''
   src/mountP.h
@@ -85,9 +88,11 @@ lib_mount = library(
                   realtime_libs],
   install : build_libmount)
 
-pkgconfig.generate(lib_mount,
-                   description : 'mount library',
-                   subdirs : 'libmount',
-                   version : pc_version)
+if build_libmount
+  pkgconfig.generate(lib_mount,
+                     description : 'mount library',
+                     subdirs : 'libmount',
+                     version : pc_version)
+endif
 
 subdir('python')

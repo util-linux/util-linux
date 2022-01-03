@@ -1,15 +1,18 @@
 dir_libfdisk = include_directories('.', 'src')
 
 defs = configuration_data()
-defs.set('LIBFDISK_VERSION', libfdisk_version)
-defs.set('LIBFDISK_MAJOR_VERSION', libfdisk_version.split('.')[0])
-defs.set('LIBFDISK_MINOR_VERSION', libfdisk_version.split('.')[1])
-defs.set('LIBFDISK_PATCH_VERSION', libfdisk_version.split('.')[2])
+defs.set('LIBFDISK_VERSION', pc_version)
+defs.set('LIBFDISK_MAJOR_VERSION', pc_version.split('.')[0])
+defs.set('LIBFDISK_MINOR_VERSION', pc_version.split('.')[1])
+defs.set('LIBFDISK_PATCH_VERSION', pc_version.split('.')[2])
 
 libfdisk_h = configure_file(
   input : 'src/libfdisk.h.in',
   output : 'libfdisk.h',
-  configuration : defs)
+  configuration : defs,
+  install : build_libfdisk,
+  install_dir : join_paths(get_option('includedir'), 'libfisk'),
+)
 
 lib_fdisk_sources = '''
   src/fdiskP.h
@@ -72,7 +75,9 @@ lib_fdisk = library(
                lib_uuid],
   install : build_libfdisk)
 
-pkgconfig.generate(lib_fdisk,
-                   description : 'fdisk library',
-                   subdirs : 'libfdisk',
-                   version : pc_version)
+if build_libfdisk
+  pkgconfig.generate(lib_fdisk,
+                     description : 'fdisk library',
+                     subdirs : 'libfdisk',
+                     version : pc_version)
+endif
