@@ -59,8 +59,8 @@ Perform a garbage collection pass on the blkid cache to remove devices which no 
 Display a usage message and exit.
 
 *-H*, *--hint* _setting_::
-Set probing hint. The hints are optional way how to force probing functions to
-check for example another location. The currently supported is
+Set probing hint. The hints are an optional way to force probing functions to
+check, for example, another location. The currently supported is
 "session_offset=_number_" to set session offset on multi-session UDF.
 
 *-i*, *--info*::
