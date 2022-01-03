@@ -806,7 +806,7 @@ static fdisk_sector_t get_dev_blocks(char *dev)
 	int fd, ret;
 	fdisk_sector_t size;
 
-	if ((fd = open(dev, O_RDONLY)) < 0)
+	if ((fd = open(dev, O_RDONLY|O_NONBLOCK)) < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), dev);
 	ret = blkdev_get_sectors(fd, (unsigned long long *) &size);
 	close(fd);
