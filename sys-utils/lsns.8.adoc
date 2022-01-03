@@ -65,10 +65,7 @@ Do not use multi-line text in columns.
 
 *-T*, *--tree* _rel_::
 Use tree-like output format.
-If *process* is given as _rel_, print proecss tree(s) in each name space. This is default when *--tree* is not specified.
-If *parent* is given, print tree(s) constructed by the parent/child relationship.
-If *owner* is given, print tree(s) constructed by the owner/owned relationship.
-*owner* is used as default when _rel_ is omitted.
+If *process* is given as _rel_, print process tree(s) in each name space. This is default when *--tree* is not specified. If *parent* is given, print tree(s) constructed by the parent/child relationship. If *owner* is given, print tree(s) constructed by the owner/owned relationship. *owner* is used as default when _rel_ is omitted.
 
 
 *-V*, *--version*::

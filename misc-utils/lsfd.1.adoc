@@ -69,7 +69,7 @@ stage of processing than the *-Q* option.
 Print only the files matching the condition represented by the _expr_.
 See also *FILTER EXAMPLES*.
 
-*-C*, *--counter* _label_:_filter_expr_::
+*-C*, *--counter* __label__:__filter_expr__::
 Define a custom counter used in *--summary* output. *lsfd* makes a
 counter named _label_. During collect information, *lsfd* counts files
 matching _filter_expr_, and stores the counted number to the

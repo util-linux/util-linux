@@ -257,7 +257,7 @@ where each line fills one partition descriptor.
 
 Fields are separated by whitespace, comma (recommended) or semicolon possibly followed by whitespace; initial and trailing whitespace is ignored. Numbers can be octal, decimal or hexadecimal; decimal is the default. When a field is absent, empty or specified as '-' a default value is used. But when the *-N* option (change a single partition) is given, the default for each field is its previous value.
 
-The default value of _start_ is the first non-assigned sector aligned according to device I/O limits. The default start offset for the first partition is 1 MiB. The offset may be followed by the multiplicative suffixes (KiB, MiB, GiB, TiB, PiB, EiB, ZiB and YiB) then the number is interpreted as offset in bytes. Since v2.38 when the -N option (change a single partition) is given, a '{plus}' can be used to enlarge partition by move start of the partition if there is a free space before the partition.
+The default value of _start_ is the first non-assigned sector aligned according to device I/O limits. The default start offset for the first partition is 1 MiB. The offset may be followed by the multiplicative suffixes (KiB, MiB, GiB, TiB, PiB, EiB, ZiB and YiB) then the number is interpreted as offset in bytes. Since v2.38 when the *-N* option (change a single partition) is given, a '{plus}' can be used to enlarge partition by move start of the partition if there is a free space before the partition.
 
 //TRANSLATORS: Keep {plus} untranslated.
 The default value of _size_ indicates "as much as possible"; i.e., until the next partition or end-of-device. A numerical argument is by default interpreted as a number of sectors, however if the size is followed by one of the multiplicative suffixes (KiB, MiB, GiB, TiB, PiB, EiB, ZiB and YiB) then the number is interpreted as the size of the partition in bytes and it is then aligned according to the device I/O limits. A '{plus}' can be used instead of a number to enlarge the partition as much as possible. Note '{plus}' is equivalent to the default behaviour for a new partition; existing partitions will be resized as required.
@@ -375,7 +375,7 @@ ____
 ____
 
 
-It's also possible to use the *--backup* option to create the same backup immediately after startup for other sfdisk commands. For example, backup partition table before deleting all partitions from partition table:
+It's also possible to use the *--backup* option to create the same backup immediately after startup for other *sfdisk* commands. For example, backup partition table before deleting all partitions from partition table:
 ____
 *sfdisk --backup --delete /dev/sda*
 ____
@@ -429,7 +429,7 @@ Create three Linux partitions, with the default start, the size of the first two
 The same as the previous example, but in named-fields format.
 
 *echo -e 'type=swap' | sfdisk -N 3 /dev/sdc*::
-Set typf of the 3rd partition to 'swap'.
+Set type of the 3rd partition to 'swap'.
 
 *sfdisk --part-type /dev/sdc 3 swap*::
 The same as the previous example, but without script use.

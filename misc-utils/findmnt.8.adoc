@@ -56,7 +56,7 @@ Imitate the output of *df*(1). This option is equivalent to *-o SOURCE,FSTYPE,SI
 The search direction, either *forward* or *backward*.
 
 *-e*, *--evaluate*::
-Convert all tags (LABEL, UUID, PARTUUID, or PARTLABEL) to the corresponding device names for the SOURCE column.  It's an unusual situation, but the same tag may be duplicated (used for more devices). For this purpose, there is SOURCES (pl.) column. This column displays by multi-line cell all devices where the tag is detected by libblkid. This option makes sense for fstab only.
+Convert all tags (LABEL, UUID, PARTUUID, or PARTLABEL) to the corresponding device names for the SOURCE column.  It's an unusual situation, but the same tag may be duplicated (used for more devices). For this purpose, there is SOURCES (pl.) column. This column displays by multi-line cell all devices where the tag is detected by libblkid. This option makes sense for _fstab_ only.
 
 *-F*, *--tab-file* _path_::
 Search in an alternative file. If used with *--fstab*, *--mtab* or *--kernel*, then it overrides the default paths. If specified more than once, then tree-like output is disabled (see the *--list* option).
@@ -149,7 +149,7 @@ Define the mount target. If _path_ is not a mountpoint file or directory, then *
 Limit the set of printed filesystems. More than one type may be specified in a comma-separated list. The list of filesystem types can be prefixed with *no* to specify the filesystem types on which no action should be taken. For more details see *mount*(8).
 
 *--tree*::
-Enable tree-like output if possible. The options is silently ignored for tables where is missing child-parent relation (e.g., fstab).
+Enable tree-like output if possible. The options is silently ignored for tables where is missing child-parent relation (e.g., _fstab_).
 
 *--shadowed*::
 Print only filesystems over-mounted by another filesystem.
@@ -184,10 +184,10 @@ specification, or the device path or mountpoint does not exist).
 == ENVIRONMENT
 
 *LIBMOUNT_FSTAB*=<path>::
-overrides the default location of the fstab file
+overrides the default location of the _fstab_ file
 
 *LIBMOUNT_MTAB*=<path>::
-overrides the default location of the mtab file
+overrides the default location of the _mtab_ file
 
 *LIBMOUNT_DEBUG*=all::
 enables libmount debug output
