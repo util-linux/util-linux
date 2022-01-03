@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-/* Number of bytes from the beginnning of the file we always
+/* Number of bytes from the beginning of the file we always
  * compare by memcmp() */
 #define UL_FILEEQ_INTROSIZ	32
 

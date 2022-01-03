@@ -1,5 +1,5 @@
 /*
- * mkfs		A simple generic frontend for the for the mkfs program
+ * mkfs		A simple generic frontend for the mkfs program
  *		under Linux.  See the manual page for details.
  *
  * Authors:	David Engel, <david@ods.com>
