@@ -3230,12 +3230,12 @@ if bash_completion.found()
   foreach completion : bashcompletions
     install_data(
       join_paths('bash-completion', completion),
-      install_dir : bash_completion.get_variable('completionsdir')
+      install_dir : bash_completion.get_variable(pkgconfig : 'completionsdir')
     )
   endforeach
   foreach link_name, target : bashcompletionslinks
     meson.add_install_script(meson_make_symlink,
       target,
-      join_paths(bash_completion.get_variable('completionsdir'), link_name))
+      join_paths(bash_completion.get_variable(pkgconfig : 'completionsdir'), link_name))
   endforeach
 endif
