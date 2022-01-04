@@ -351,17 +351,6 @@ id:     47
 parent: 20
 devno:  0:38
 ------ fs:
-source: /fooooo
-target: /mnt/foo
-fstype: bar
-optstr: rw,relatime
-VFS-optstr: rw,relatime
-FS-opstr: rw
-root:   /
-id:     48
-parent: 20
-devno:  0:39
------- fs:
 source: tmpfs
 target: /mnt/test/foobar
 fstype: tmpfs
