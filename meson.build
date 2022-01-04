@@ -753,7 +753,9 @@ add_project_arguments('-include', 'config.h', language : 'c')
 
 manadocs = []
 manlinks = {}
+
 bashcompletions = []
+bashcompletionslinks = {}
 
 subdir('include')
 subdir('lib')
@@ -847,6 +849,7 @@ if opt and not is_disabler(exe)
   manadocs += ['login-utils/last.1.adoc']
   manlinks += {'lastb.1': 'last.1'}
   bashcompletions += ['last']
+  bashcompletionslinks += {'lastb': 'last'}
 endif
 
 opt = not get_option('build-nologin').disabled()
@@ -977,11 +980,7 @@ exe = executable(
 if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['login-utils/runuser.1.adoc']
-  if bash_completion.found()
-    meson.add_install_script(meson_make_symlink,
-                             'su',
-                             join_paths(bash_completion.get_variable('completionsdir'), 'runuser'))
-endif
+  bashcompletionslinks += {'runuser': 'su'}
 endif
 
 ############################################################
@@ -3233,5 +3232,10 @@ if bash_completion.found()
       join_paths('bash-completion', completion),
       install_dir : bash_completion.get_variable('completionsdir')
     )
+  endforeach
+  foreach link_name, target : bashcompletionslinks
+    meson.add_install_script(meson_make_symlink,
+      target,
+      join_paths(bash_completion.get_variable('completionsdir'), link_name))
   endforeach
 endif
