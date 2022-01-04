@@ -28,5 +28,4 @@ TARGET                       SOURCE           FSTYPE                OPTIONS
 /home/kzak/.gvfs             gvfs-fuse-daemon fuse.gvfs-fuse-daemon rw,nosuid,nodev,relatime,user_id=500,group_id=500
 /var/lib/nfs/rpc_pipefs      sunrpc           rpc_pipefs            rw,relatime
 /mnt/sounds                  //foo.home/bar/  cifs                  rw,relatime,unc=\\foo.home\bar,username=kzak,domain=SRGROUP,uid=0,noforceuid,gid=0,noforcegid,addr=192.168.111.1,posixpaths,serverino,acl,rsize=16384,wsize=57344
-/mnt/foo                     /fooooo          bar                   rw,relatime
 rc=0
