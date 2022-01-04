@@ -164,6 +164,9 @@ dist_bashcompletion_DATA += \
 endif
 if BUILD_LAST
 dist_bashcompletion_DATA += bash-completion/last
+install-data-hook-bashcomp-lastb::
+	ln -sf last $(DESTDIR)$(bashcompletiondir)/lastb
+INSTALL_DATA_HOOKS += install-data-hook-bashcomp-lastb
 endif
 if BUILD_LSLOGINS
 dist_bashcompletion_DATA += bash-completion/lslogins
