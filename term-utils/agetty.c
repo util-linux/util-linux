@@ -928,7 +928,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 		op->tty_is_stdin = 1;
 		int fd = get_terminal_name(NULL, &op->tty, NULL);
 		if (fd < 0) {
-			log_warn(_("could not get terminal name: %d", fd));
+			log_warn(_("could not get terminal name: %d"), fd);
 		}
 	}
 
