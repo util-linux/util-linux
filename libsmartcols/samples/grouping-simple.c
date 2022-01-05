@@ -26,10 +26,19 @@ enum { COL_NAME, COL_DATA };
 /* add columns to the @tb */
 static void setup_columns(struct libscols_table *tb)
 {
+	struct libscols_column *cl;
+
 	if (!scols_table_new_column(tb, "NAME", 0, SCOLS_FL_TREE))
 		goto fail;
-	if (!scols_table_new_column(tb, "DATA", 0, 0))
+	cl = scols_table_new_column(tb, "DATA", 0, SCOLS_FL_WRAP);
+	if (!cl)
 		goto fail;
+
+	scols_column_set_wrapfunc(cl, scols_wrapnl_chunksize,
+				      scols_wrapnl_nextchunk,
+				      NULL);
+	scols_column_set_safechars(cl, "\n");
+
 	return;
 fail:
 	scols_unref_table(tb);
@@ -101,15 +110,17 @@ int main(int argc, char *argv[])
 	     add_line(tb, p1,   "A:C", "bla bla bla");
 
 	g1 = add_line(tb, NULL, "B", "bla bla bla");
-	     add_line(tb, NULL, "C", "bla bla bla");
-	p1 = add_line(tb, NULL, "D", "bla bla bla");
+	     add_line(tb, NULL, "C", "bla\nfoo");
+	p1 = add_line(tb, NULL, "D", "bla bla\nbar");
 
 	p2 = add_line(tb, p1, "D:A", "bla bla bla");
 
-	ln = add_line(tb, p2, "D:A:A", "bla bla bla");
+	ln = add_line(tb, p2, "D:A:A", "bla\nbla\nbla");
 	scols_table_group_lines(tb, g1, ln, 0);
 
 	add_line(tb, p1, "D:B", "bla bla bla");
+	add_line(tb, p1, "D:C", "bla\nother bla");
+	add_line(tb, p1, "D:D", "bla bla bla");
 
 	ln = add_line(tb, NULL, "E", "bla bla bla");
 	scols_table_group_lines(tb, g1, ln, 0);
@@ -125,13 +136,13 @@ int main(int argc, char *argv[])
 	scols_line_link_group(ln, g1, 0);
 
 	p1 = ln;
-	add_line(tb, p1, "G1:A:A", "bla bla bla");
+	add_line(tb, p1, "G1:A:A", "bla\nbla bla");
 	add_line(tb, p1, "G1:A:B", "bla bla bla");
 	add_line(tb, p1, "G1:A:C", "bla bla bla");
 
 	add_line(tb, NULL, "G", "bla bla bla");
 
-	ln = add_line(tb, NULL, "G1:B", "alb alb alb");
+	ln = add_line(tb, NULL, "G1:B", "alb alb\nalb");
 	scols_line_link_group(ln, g1, 0);
 
 	add_line(tb, NULL, "foo", "bla bla bla");
