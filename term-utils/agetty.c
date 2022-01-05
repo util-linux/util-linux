@@ -203,6 +203,7 @@ struct options {
 	int numspeed;			/* number of baud rates to try */
 	int clocal;			/* CLOCAL_MODE_* */
 	int kbmode;			/* Keyboard mode if virtual console */
+	int tty_is_stdin;		/* is the tty the standard input stream */
 	speed_t speeds[MAX_SPEED];	/* baud rates to be tried */
 };
 
@@ -922,6 +923,15 @@ static void parse_args(int argc, char **argv, struct options *op)
 		}
 	}
 
+	/* resolve the tty path in case it was provided as stdin */
+	if (strcmp(op->tty, "-") == 0) {
+		op->tty_is_stdin = 1;
+		int fd = get_terminal_name(NULL, &op->tty, NULL);
+		if (fd < 0) {
+			log_warn(_("could not get terminal name: %d", fd));
+		}
+	}
+
 	/* On virtual console remember the line which is used for */
 	if (strncmp(op->tty, "tty", 3) == 0 &&
 	    strspn(op->tty + 3, "0123456789") == strlen(op->tty+3))
@@ -1040,7 +1050,7 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 
 	/* Set up new standard input, unless we are given an already opened port. */
 
-	if (strcmp(tty, "-") != 0) {
+	if (!op->tty_is_stdin) {
 		char buf[PATH_MAX+1];
 		struct group *gr = NULL;
 		struct stat st;
