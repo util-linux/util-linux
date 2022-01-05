@@ -131,7 +131,8 @@ static int grpset_is_empty(	struct libscols_table *tb,
 
 static int groups_ascii_art_to_buffer(	struct libscols_table *tb,
 				struct libscols_line *ln,
-				struct ul_buffer *buf)
+				struct ul_buffer *buf,
+				int empty)
 {
 	int filled = 0;
 	size_t i, rest = 0;
@@ -153,6 +154,36 @@ static int groups_ascii_art_to_buffer(	struct libscols_table *tb,
 			continue;
 		}
 
+		/*
+		 * Empty cells (multi-line entries, etc.), print vertical symbols only
+		 * to show that the group continues.
+		 */
+		if (empty) {
+			switch (gr->state) {
+			case SCOLS_GSTATE_FIRST_MEMBER:
+			case SCOLS_GSTATE_MIDDLE_MEMBER:
+			case SCOLS_GSTATE_CONT_MEMBERS:
+				ul_buffer_append_string(buf, grp_vertical_symbol(tb));
+				ul_buffer_append_ntimes(buf, 2, filler);
+				break;
+
+			case SCOLS_GSTATE_LAST_MEMBER:
+			case SCOLS_GSTATE_MIDDLE_CHILD:
+			case SCOLS_GSTATE_CONT_CHILDREN:
+				ul_buffer_append_string(buf, filler);
+				ul_buffer_append_string(buf, grp_vertical_symbol(tb));
+				ul_buffer_append_string(buf, filler);
+				break;
+			case SCOLS_GSTATE_LAST_CHILD:
+				ul_buffer_append_ntimes(buf, 3, filler);
+				break;
+			}
+			continue;
+		}
+
+		/*
+		 * Regular cell
+		 */
 		switch (gr->state) {
 		case SCOLS_GSTATE_FIRST_MEMBER:
 			ul_buffer_append_string(buf, grp_m_first_symbol(tb));
@@ -304,40 +335,34 @@ static void print_empty_cell(struct libscols_table *tb,
 
 	fputs_color_cell_open(tb, cl, ln, ce);
 
-	/* generate tree ASCII-art rather than padding */
+	/* generate tree/group ASCII-art rather than padding
+	 */
 	if (ln && scols_column_is_tree(cl)) {
-		if (!ln->parent) {
-			/* only print symbols->vert if followed by child */
-			if (!list_empty(&ln->ln_branch)) {
-				fputs(vertical_symbol(tb), tb->out);
-				len_pad = scols_table_is_noencoding(tb) ?
-						mbs_width(vertical_symbol(tb)) :
-						mbs_safe_width(vertical_symbol(tb));
-			}
-		} else {
-			/* use the same draw function as though we were intending to draw an L-shape */
-			struct ul_buffer art = UL_INIT_BUFFER;
-			char *data;
+		struct ul_buffer art = UL_INIT_BUFFER;
+		char *data;
 
-			if (ul_buffer_alloc_data(&art, bufsz) == 0) {
-				/* whatever the rc, len_pad will be sensible */
-				tree_ascii_art_to_buffer(tb, ln, &art);
+		if (ul_buffer_alloc_data(&art, bufsz) != 0)
+			goto done;
 
-				if (!list_empty(&ln->ln_branch) && has_pending_data(tb))
-					ul_buffer_append_string(&art, vertical_symbol(tb));
+		if (cl->is_groups)
+			groups_ascii_art_to_buffer(tb, ln, &art, 1);
 
-				if (scols_table_is_noencoding(tb))
-					data = ul_buffer_get_data(&art, NULL, &len_pad);
-				else
-					data = ul_buffer_get_safe_data(&art, NULL, &len_pad, NULL);
+		tree_ascii_art_to_buffer(tb, ln, &art);
 
-				if (data && len_pad)
-					fputs(data, tb->out);
-				ul_buffer_free_data(&art);
-			}
-		}
+		if (!list_empty(&ln->ln_branch) && has_pending_data(tb))
+			ul_buffer_append_string(&art, vertical_symbol(tb));
+
+		if (scols_table_is_noencoding(tb))
+			data = ul_buffer_get_data(&art, NULL, &len_pad);
+		else
+			data = ul_buffer_get_safe_data(&art, NULL, &len_pad, NULL);
+
+		if (data && len_pad)
+			fputs(data, tb->out);
+		ul_buffer_free_data(&art);
 	}
 
+done:
 	/* minout -- don't fill */
 	if (scols_table_is_minout(tb) && is_next_columns_empty(tb, cl, ln)) {
 		fputs_color_cell_close(tb, cl, ln, ce);
@@ -733,7 +758,7 @@ int __cell_to_buffer(struct libscols_table *tb,
 	 * Group stuff
 	 */
 	if (!scols_table_is_json(tb) && cl->is_groups)
-		rc = groups_ascii_art_to_buffer(tb, ln, buf);
+		rc = groups_ascii_art_to_buffer(tb, ln, buf, 0);
 
 	/*
 	 * Tree stuff
