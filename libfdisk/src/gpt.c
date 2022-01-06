@@ -1299,12 +1299,12 @@ static int gpt_get_disklabel_item(struct fdisk_context *cxt, struct fdisk_labeli
 			rc = -ENOMEM;
 		break;
 	case GPT_LABELITEM_FIRSTLBA:
-		item->name = _("First LBA");
+		item->name = _("First usable LBA");
 		item->type = 'j';
 		item->data.num64 = le64_to_cpu(h->first_usable_lba);
 		break;
 	case GPT_LABELITEM_LASTLBA:
-		item->name = _("Last LBA");
+		item->name = _("Last usable LBA");
 		item->type = 'j';
 		item->data.num64 = le64_to_cpu(h->last_usable_lba);
 		break;
