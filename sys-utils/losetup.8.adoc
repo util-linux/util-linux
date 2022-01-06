@@ -30,7 +30,7 @@ Detach all associated loop devices:
 
 Set up a loop device:
 
-*losetup* [*-o* _offset_] [*--sizelimit* _size_] [*--sector-size* _size_] [*-Pr*] [*--show*] *-f* _loopdev file_
+*losetup* [*-o* _offset_] [*--sizelimit* _size_] [*--sector-size* _size_] [*-Pr*] [*--show*] *-f*|_loopdev file_
 
 Resize a loop device:
 
