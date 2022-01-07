@@ -698,7 +698,10 @@ static char *getpasswd(struct console *con)
 	cp->eol = *ptr = '\0';
 
 	eightbit = ((con->flags & CON_SERIAL) == 0 || (tty.c_cflag & (PARODD|PARENB)) == 0);
+
 	while (cp->eol == '\0') {
+		errno = 0;
+
 		if (read(fd, &c, 1) < 1) {
 			if (errno == EINTR || errno == EAGAIN) {
 				if (alarm_rised) {
@@ -709,9 +712,11 @@ static char *getpasswd(struct console *con)
 				continue;
 			}
 			ret = NULL;
+
 			switch (errno) {
 			case EIO:
 				con->flags |= CON_EIO;
+				/* fallthrough */
 			default:
 				warn(_("cannot read %s"), con->tty);
 				break;
