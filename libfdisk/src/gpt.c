@@ -1283,6 +1283,7 @@ static int gpt_get_disklabel_item(struct fdisk_context *cxt, struct fdisk_labeli
 {
 	struct gpt_header *h;
 	int rc = 0;
+	uint64_t x = 0;
 
 	assert(cxt);
 	assert(cxt->label);
@@ -1316,9 +1317,17 @@ static int gpt_get_disklabel_item(struct fdisk_context *cxt, struct fdisk_labeli
 		break;
 	case GPT_LABELITEM_ENTRIESLBA:
 		/* TRANSLATORS: The start of the array of partition entries. */
-		item->name = _("Partition entries LBA");
+		item->name = _("Partition entries starting LBA");
 		item->type = 'j';
 		item->data.num64 = le64_to_cpu(h->partition_entry_lba);
+		break;
+	case GPT_LABELITEM_ENTRIESLASTLBA:
+		/* TRANSLATORS: The end of the array of partition entries. */
+		item->name = _("Partition entries ending LBA");
+		item->type = 'j';
+		gpt_calculate_sectorsof_entries(h,
+				le32_to_cpu(h->npartition_entries), &x, cxt);
+		item->data.num64 = le64_to_cpu(h->partition_entry_lba) + x - 1;
 		break;
 	case GPT_LABELITEM_ENTRIESALLOC:
 		item->name = _("Allocated partition entries");

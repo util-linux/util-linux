@@ -776,10 +776,11 @@ extern void fdisk_gpt_enable_minimize(struct fdisk_label *lb, int enable);
  * fdisk_labelitem_gpt:
  * @GPT_LABELITEM_ID: GPT disklabel UUID (!= partition UUID)
  * @GPT_LABELITEM_FIRSTLBA: First Usable LBA
- * @GPT_LABELITEM_LASTLBA: Usable LBA
+ * @GPT_LABELITEM_LASTLBA: Last Usable LBA
  * @GPT_LABELITEM_ALTLBA: Alternative LBA (backup header LBA)
  * @GPT_LABELITEM_ENTRIESLBA: Partitions entries array LBA
  * @GPT_LABELITEM_ENTRIESALLOC: Number of allocated entries in entries array
+ * @GPT_LABELITEM_ENTRIESLASTLBA: Last LBA where is entries array
  *
  * GPT specific label items.
  */
@@ -791,7 +792,8 @@ enum fdisk_labelitem_gpt {
 	GPT_LABELITEM_LASTLBA,
 	GPT_LABELITEM_ALTLBA,
 	GPT_LABELITEM_ENTRIESLBA,
-	GPT_LABELITEM_ENTRIESALLOC
+	GPT_LABELITEM_ENTRIESALLOC,
+	GPT_LABELITEM_ENTRIESLASTLBA
 };
 
 /* script.c */
