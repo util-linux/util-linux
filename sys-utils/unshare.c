@@ -765,6 +765,7 @@ int main(int argc, char *argv[])
 	pid_t pid_bind = 0, pid_idmap = 0;
 	pid_t pid = 0;
 	int fd_idmap, fd_bind = -1;
+	sigset_t sigset, oldsigset;
 	int status;
 	unsigned long propagation = UNSHARE_PROPAGATION_DEFAULT;
 	int force_uid = 0, force_gid = 0;
@@ -947,8 +948,11 @@ int main(int argc, char *argv[])
 		settime(monotonic, CLOCK_MONOTONIC);
 
 	if (forkit) {
-		signal(SIGINT, SIG_IGN);
-		signal(SIGTERM, SIG_IGN);
+		if (sigemptyset(&sigset) != 0 ||
+			sigaddset(&sigset, SIGINT) != 0 ||
+			sigaddset(&sigset, SIGTERM) != 0 ||
+			sigprocmask(SIG_BLOCK, &sigset, &oldsigset) != 0)
+			err(EXIT_FAILURE, _("sigprocmask block failed"));
 
 		/* force child forking before mountspace binding
 		 * so pid_for_children is populated */
@@ -958,6 +962,9 @@ int main(int argc, char *argv[])
 		case -1:
 			err(EXIT_FAILURE, _("fork failed"));
 		case 0:	/* child */
+			if (sigprocmask(SIG_SETMASK, &oldsigset, NULL))
+				err(EXIT_FAILURE,
+					_("sigprocmask restore failed"));
 			if (npersists && (unshare_flags & CLONE_NEWNS))
 				close(fd_bind);
 			break;
@@ -979,13 +986,24 @@ int main(int argc, char *argv[])
 		if (waitpid(pid, &status, 0) == -1)
 			err(EXIT_FAILURE, _("waitpid failed"));
 
-		signal(SIGINT, SIG_DFL);
-		signal(SIGTERM, SIG_DFL);
-
 		if (WIFEXITED(status))
 			return WEXITSTATUS(status);
-		if (WIFSIGNALED(status))
-			kill(getpid(), WTERMSIG(status));
+		if (WIFSIGNALED(status)) {
+
+			/* Ensure the signal that terminated the child will
+			 * also terminate the parent. */
+
+			int termsig = WTERMSIG(status);
+
+			if (signal(termsig, SIG_DFL) == SIG_ERR ||
+				sigemptyset(&sigset) != 0 ||
+				sigaddset(&sigset, termsig) != 0 ||
+				sigprocmask(SIG_UNBLOCK, &sigset, NULL) != 0)
+				err(EXIT_FAILURE,
+					_("sigprocmask unblock failed"));
+
+			kill(getpid(), termsig);
+		}
 		err(EXIT_FAILURE, _("child exit failed"));
 	}
 
