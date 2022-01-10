@@ -861,6 +861,12 @@ int main(int argc, char **argv)
 
 			devices[numdev++] = dev;
 		}
+
+		if (!numdev) {
+			/* only unsupported devices specified */
+			err = BLKID_EXIT_NOTFOUND;
+			goto exit;
+		}
 	}
 
 	/* convert LABEL/UUID lookup to evaluate request */
