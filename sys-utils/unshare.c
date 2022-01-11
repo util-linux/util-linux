@@ -763,7 +763,7 @@ int main(int argc, char *argv[])
 	const char *newroot = NULL;
 	const char *newdir = NULL;
 	pid_t pid_bind = 0, pid_idmap = 0;
-	pid_t pid = 0;
+	pid_t pid = 0, pid_parent = 0;
 	int fd_idmap, fd_bind = -1;
 	sigset_t sigset, oldsigset;
 	int status;
@@ -956,6 +956,7 @@ int main(int argc, char *argv[])
 
 		/* force child forking before mountspace binding
 		 * so pid_for_children is populated */
+		pid_parent = getpid();
 		pid = fork();
 
 		switch(pid) {
@@ -1007,8 +1008,17 @@ int main(int argc, char *argv[])
 		err(EXIT_FAILURE, _("child exit failed"));
 	}
 
-	if (kill_child_signo != 0 && prctl(PR_SET_PDEATHSIG, kill_child_signo) < 0)
-		err(EXIT_FAILURE, "prctl failed");
+	if (kill_child_signo != 0) {
+		if (prctl(PR_SET_PDEATHSIG, kill_child_signo) < 0)
+			err(EXIT_FAILURE, "prctl failed");
+
+		if (getppid() != pid_parent) {
+			if (kill(getpid(), kill_child_signo) != 0)
+				err(EXIT_FAILURE, _("child kill failed"));
+			/* The selected kill_child_signo be blocked, or
+			 * might not cause termination. */
+		}
+	}
 
         if (mapuser != (uid_t) -1 && !usermap)
 		map_id(_PATH_PROC_UIDMAP, mapuser, real_euid);
