@@ -894,6 +894,7 @@ static struct number_command read_command(struct more_control *ctl)
 		case 'q':
 		case 'Q':
 			cmd.key = more_kc_quit;
+			return cmd;
 			break;
 		case 'f':
 		case CTRL('F'):
