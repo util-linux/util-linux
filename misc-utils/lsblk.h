@@ -55,6 +55,7 @@ struct lsblk {
 	unsigned int sort_hidden:1;	/* sort column not between output columns */
 	unsigned int dedup_hidden :1;	/* deduplication column not between output columns */
 	unsigned int force_tree_order:1;/* sort lines by parent->tree relation */
+	unsigned int noempty:1;		/* hide empty devices */
 };
 
 extern struct lsblk *lsblk;     /* global handler */

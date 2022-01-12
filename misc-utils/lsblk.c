@@ -1244,6 +1244,9 @@ static int ignore_empty(struct lsblk_device *dev)
 	if (dev->size)
 		return 0;
 
+	if (lsblk->noempty && dev->size == 0)
+		return 1;
+
 	/* ignore empty loop devices without backing file */
 	if (dev->maj == LOOPDEV_MAJOR &&
 	    !loopdev_has_backing_file(dev->filename))
@@ -1903,6 +1906,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
 	fputs(_(" -S, --scsi           output info about SCSI devices\n"), out);
 	fputs(_(" -T, --tree[=<column>] use tree format output\n"), out);
+	fputs(_(" -A, --noempty        don't print empty devices\n"), out);
 	fputs(_(" -a, --all            print all devices\n"), out);
 	fputs(_(" -b, --bytes          print SIZE in bytes rather than in human readable format\n"), out);
 	fputs(_(" -d, --nodeps         don't print slaves or holders\n"), out);
@@ -1965,6 +1969,7 @@ int main(int argc, char *argv[])
 		{ "all",	no_argument,       NULL, 'a' },
 		{ "bytes",      no_argument,       NULL, 'b' },
 		{ "nodeps",     no_argument,       NULL, 'd' },
+		{ "noempty",    no_argument,       NULL, 'A' },
 		{ "discard",    no_argument,       NULL, 'D' },
 		{ "dedup",      required_argument, NULL, 'E' },
 		{ "zoned",      no_argument,       NULL, 'z' },
@@ -2018,11 +2023,15 @@ int main(int argc, char *argv[])
 	lsblk_init_debug();
 
 	while((c = getopt_long(argc, argv,
-			       "abdDzE:e:fhJlnMmo:OpPiI:rstVST::w:x:", longopts, NULL)) != -1) {
+				"AabdDzE:e:fhJlnMmo:OpPiI:rstVST::w:x:",
+				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
 		switch(c) {
+		case 'A':
+			lsblk->noempty = 1;
+			break;
 		case 'a':
 			lsblk->all_devices = 1;
 			break;

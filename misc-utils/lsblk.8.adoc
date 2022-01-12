@@ -28,6 +28,9 @@ The relationship between block devices and filesystems is not always one-to-one.
 
 == OPTIONS
 
+*-A*, *--noempty*::
+Don't print empty devices.
+
 *-a*, *--all*::
 Disable all built-in filters and list all empty devices and RAM disk devices too.
 
