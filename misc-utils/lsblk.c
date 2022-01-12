@@ -1898,15 +1898,16 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("List information about block devices.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -A, --noempty        don't print empty devices\n"), out);
 	fputs(_(" -D, --discard        print discard capabilities\n"), out);
 	fputs(_(" -E, --dedup <column> de-duplicate output by <column>\n"), out);
 	fputs(_(" -I, --include <list> show only devices with specified major numbers\n"), out);
 	fputs(_(" -J, --json           use JSON output format\n"), out);
+	fputs(_(" -M, --merge          group parents of sub-trees (usable for RAIDs, Multi-path)\n"), out);
 	fputs(_(" -O, --output-all     output all columns\n"), out);
 	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
 	fputs(_(" -S, --scsi           output info about SCSI devices\n"), out);
 	fputs(_(" -T, --tree[=<column>] use tree format output\n"), out);
-	fputs(_(" -A, --noempty        don't print empty devices\n"), out);
 	fputs(_(" -a, --all            print all devices\n"), out);
 	fputs(_(" -b, --bytes          print SIZE in bytes rather than in human readable format\n"), out);
 	fputs(_(" -d, --nodeps         don't print slaves or holders\n"), out);
@@ -1914,7 +1915,6 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -f, --fs             output info about filesystems\n"), out);
 	fputs(_(" -i, --ascii          use ascii characters only\n"), out);
 	fputs(_(" -l, --list           use list format output\n"), out);
-	fputs(_(" -M, --merge          group parents of sub-trees (usable for RAIDs, Multi-path)\n"), out);
 	fputs(_(" -m, --perms          output info about permissions\n"), out);
 	fputs(_(" -n, --noheadings     don't print headings\n"), out);
 	fputs(_(" -o, --output <list>  output columns\n"), out);
