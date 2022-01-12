@@ -1433,7 +1433,23 @@ UL_REQUIRES_LINUX([unshare])
 UL_REQUIRES_SYSCALL_CHECK([unshare], [UL_CHECK_SYSCALL([unshare])])
 UL_REQUIRES_HAVE([unshare], [linux_capability_h], [linux/capability.h header file])
 AM_CONDITIONAL([BUILD_UNSHARE], [test "x$build_unshare" = xyes])
-AC_CHECK_FUNCS([unshare])
+
+AC_MSG_CHECKING([for valid unshare() function])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+#include <sched.h>
+]],[[
+   int ret;
+   ret = unshare(0);
+   if (ret != 0) {
+      return 1;
+   }
+   ]])],[
+  AC_MSG_RESULT([yes])
+  AC_DEFINE([HAVE_UNSHARE], [1], [Have valid unshare() function])],
+[
+  AC_MSG_RESULT([no])
+])
+
 
 AC_ARG_ENABLE([nsenter],
   AS_HELP_STRING([--disable-nsenter], [do not build nsenter]),
@@ -1443,7 +1459,23 @@ UL_BUILD_INIT([nsenter])
 UL_REQUIRES_LINUX([nsenter])
 UL_REQUIRES_HAVE([nsenter], [setns_syscall], [setns syscall])
 AM_CONDITIONAL([BUILD_NSENTER], [test "x$build_nsenter" = xyes])
-AC_CHECK_FUNCS([setns])
+
+AC_MSG_CHECKING([for valid setns() function])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+#include <sched.h>
+#include <errno.h>
+]],[[
+   int ret;
+   ret = setns(0, 0);
+   if (ret != EINVAL && ret != EBADF && ret != EPERM) {
+      return 1;
+   }
+   ]])],[
+  AC_MSG_RESULT([yes])
+  AC_DEFINE([HAVE_SETNS], [1], [Have valid setns() function])],
+[
+  AC_MSG_RESULT([no])
+])
 
 
 AC_ARG_WITH([cap_ng],
@@ -1760,8 +1792,25 @@ UL_REQUIRES_BUILD([prlimit], [libsmartcols])
 UL_REQUIRES_SYSCALL_CHECK([prlimit], [UL_CHECK_SYSCALL([prlimit64])], [prlimit64])
 AM_CONDITIONAL([BUILD_PRLIMIT], [test "x$build_prlimit" = xyes])
 AS_IF([test "x$build_prlimit" = xyes], [
-  AC_CHECK_FUNCS([prlimit])
+  dnl check for valid prlimit() function
+  AC_MSG_CHECKING([for valid prlimit() function])
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <stddef.h>
+]],[[
+   int ret;
+   ret = prlimit(0, RLIMIT_AS, NULL, NULL);
+   if (ret != 0) {
+      return 1;
+   }
+   ]])],[
+  AC_MSG_RESULT([yes])
+  AC_DEFINE([HAVE_PRLIMIT], [1], [Have valid prlimit() function])],[
+  AC_MSG_RESULT([no])])
 ])
+
 
 
 UL_BUILD_INIT([lslocks], [check])
