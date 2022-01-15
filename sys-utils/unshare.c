@@ -359,8 +359,8 @@ static gid_t get_group(const char *s, const char *err)
 
 /**
  * struct map_range - A range of IDs to map
- * @outer: First ID inside the namespace
- * @inner: First ID outside the namespace
+ * @outer: First ID mapped on the outside of the namespace
+ * @inner: First ID mapped on the inside of the namespace
  * @count: Length of the inside and outside ranges
  *
  * A range of uids/gids to map using new[gu]idmap.
@@ -393,9 +393,9 @@ static int uint_to_id(const char *name, size_t sz)
 
 /**
  * get_map_range() - Parse a mapping range from a string
- * @s: A string of the format upper,lower,count
+ * @s: A string of the format outer,inner,count
  *
- * Parse a string of the form upper,lower,count into a new mapping range.
+ * Parse a string of the form outer,inner,count into a new mapping range.
  *
  * Return: A new &struct map_range
  */
