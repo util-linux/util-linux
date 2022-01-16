@@ -131,6 +131,7 @@ struct script_control {
 
 	const char *ttyname;
 	const char *ttytype;
+	const char *command;
 	int ttycols;
 	int ttylines;
 
@@ -408,6 +409,9 @@ static int log_start(struct script_control *ctl,
 			fprintf(log->fp, _("<not executed on terminal>"));
 
 		fputs("]\n", log->fp);
+
+		fprintf(log->fp, _("%s"), ctl->command);
+		fputs("\n", log->fp);
 		break;
 	}
 	case SCRIPT_FMT_TIMING_SIMPLE:
@@ -752,6 +756,7 @@ int main(int argc, char **argv)
 	struct script_control ctl = {
 		.out = { .ident = 'O' },
 		.in  = { .ident = 'I' },
+		.command = NULL
 	};
 	struct ul_pty_callbacks *cb;
 	int ch, format = 0, caught_signal = 0, rc = 0, echo = 1;
@@ -812,6 +817,7 @@ int main(int argc, char **argv)
 			break;
 		case 'c':
 			command = optarg;
+			ctl.command = command;
 			break;
 		case 'E':
 			if (strcmp(optarg, "auto") == 0)
