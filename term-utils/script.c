@@ -410,8 +410,8 @@ static int log_start(struct script_control *ctl,
 
 		fputs("]\n", log->fp);
 
-		fprintf(log->fp, _("%s"), ctl->command);
-		fputs("\n", log->fp);
+		if (ctl->command)
+			fprintf(log->fp, "%s\n", ctl->command);
 		break;
 	}
 	case SCRIPT_FMT_TIMING_SIMPLE:
