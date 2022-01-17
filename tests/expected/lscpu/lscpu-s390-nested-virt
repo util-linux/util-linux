@@ -2,6 +2,7 @@ CPU op-mode(s):                  32-bit, 64-bit
 CPU(s):                          2
 On-line CPU(s) list:             0,1
 Vendor ID:                       IBM/S390
+Model name:                      -
 Machine type:                    2964
 Thread(s) per core:              1
 Core(s) per socket:              1

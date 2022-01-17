@@ -3,6 +3,7 @@ CPU(s):               20
 On-line CPU(s) list:  1-5,8-19
 Off-line CPU(s) list: 0,6,7
 Vendor ID:            IBM/S390
+Model name:           -
 Machine type:         2817
 Thread(s) per core:   1
 Core(s) per socket:   4
