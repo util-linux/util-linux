@@ -876,9 +876,6 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	struct stat sb;
 	uint64_t devsiz = 0;
 	char *dm_uuid = NULL;
-#ifdef CDROM_GET_CAPABILITY
-	long last_written = 0;
-#endif
 
 	blkid_reset_probe(pr);
 	blkid_probe_reset_buffers(pr);
@@ -970,6 +967,8 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	    !blkid_probe_is_tiny(pr) &&
 	    !dm_uuid &&
 	    blkid_probe_is_wholedisk(pr)) {
+
+		long last_written = 0;
 
 		/*
 		 * pktcdvd.ko accepts only these ioctls:
