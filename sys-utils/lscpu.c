@@ -859,8 +859,7 @@ print_summary_cputype(struct lscpu_cxt *cxt,
 		     struct libscols_table *tb,
 		     struct libscols_line *sec)
 {
-	if (ct->modelname)
-		sec = add_summary_s(tb, sec, _("Model name:"), ct->modelname ? ct->modelname : "-");
+	sec = add_summary_s(tb, sec, _("Model name:"), ct->modelname ? ct->modelname : "-");
 	if (ct->bios_modelname)
 		add_summary_s(tb, sec, _("BIOS Model name:"), ct->bios_modelname);
 	if (ct->bios_family)
