@@ -450,6 +450,7 @@ static void checkf(struct more_control *ctl, char *fs)
 
 	ctl->current_line = 0;
 	ctl->file_position = 0;
+	ctl->file_size = 0;
 	fflush(NULL);
 
 	ctl->current_file = fopen(fs, "r");
@@ -468,10 +469,8 @@ static void checkf(struct more_control *ctl, char *fs)
 		ctl->current_file = NULL;
 		return;
 	}
-	if (st.st_size == 0) {
-		return;
-	}
-	if (check_magic(ctl, fs)) {
+	ctl->file_size = st.st_size;
+	if (0 < ctl->file_size && check_magic(ctl, fs)) {
 		fclose(ctl->current_file);
 		ctl->current_file = NULL;
 		return;
@@ -480,8 +479,6 @@ static void checkf(struct more_control *ctl, char *fs)
 	c = more_getc(ctl);
 	ctl->clear_first = (c == '\f');
 	more_ungetc(ctl, c);
-	if ((ctl->file_size = st.st_size) == 0)
-		ctl->file_size = ~((off_t)0);
 }
 
 static void prepare_line_buffer(struct more_control *ctl)
@@ -1912,7 +1909,7 @@ static void display_file(struct more_control *ctl, int left)
 		    more_key_command(ctl, ctl->file_names[ctl->argv_position]);
 	if (left != 0) {
 		if ((ctl->no_scroll || ctl->clear_first)
-		    && ctl->file_size != ~((off_t)0)) {
+		    && 0 < ctl->file_size) {
 			if (ctl->clear_line_ends)
 				putp(ctl->go_home);
 			else
