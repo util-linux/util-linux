@@ -103,6 +103,9 @@
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
 #endif
+#ifdef HAVE_LINUX_FD_H
+#include <linux/fd.h>
+#endif
 #include <inttypes.h>
 #include <stdint.h>
 #include <stdarg.h>
@@ -113,6 +116,7 @@
 #include "sysfs.h"
 #include "strutils.h"
 #include "list.h"
+#include "fileutils.h"
 
 /*
  * All supported chains
@@ -906,6 +910,35 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 
 	if (fd < 0)
 		return 1;
+
+#ifdef FDGETFDCSTAT
+	{
+		/*
+		 * Re-open without O_NONBLOCK for floppy device.
+		 *
+		 * Since kernel commit c7e9d0020361f4308a70cdfd6d5335e273eb8717
+		 * floppy drive works bad when opened with O_NONBLOCK.
+		 */
+		struct floppy_fdc_state flst;
+
+		if (ioctl(fd, FDGETFDCSTAT, &flst) >= 0) {
+			int flags = fcntl(fd, F_GETFL, 0);
+
+			if (flags < 0)
+				goto err;
+			if (flags & O_NONBLOCK) {
+				flags &= ~O_NONBLOCK;
+
+				fd = ul_reopen(fd, flags | O_CLOEXEC);
+				if (fd < 0)
+					goto err;
+
+				pr->flags |= BLKID_FL_PRIVATE_FD;
+				pr->fd = fd;
+			}
+		}
+	}
+#endif
 
 #if defined(POSIX_FADV_RANDOM) && defined(HAVE_POSIX_FADVISE)
 	/* Disable read-ahead */
