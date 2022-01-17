@@ -220,12 +220,14 @@ if LINUX
   ]
 endif
 
-fstrim_service = configure_file(
-  input : 'fstrim.service.in',
-  output : 'fstrim.service',
-  configuration : conf)
+if systemd.found()
+  fstrim_service = configure_file(
+    input : 'fstrim.service.in',
+    output : 'fstrim.service',
+    configuration : conf)
 
-install_data(fstrim_service,
-             install_dir : systemdsystemunitdir)
-install_data('fstrim.timer',
-             install_dir : systemdsystemunitdir)
+  install_data(fstrim_service,
+               install_dir : systemdsystemunitdir)
+  install_data('fstrim.timer',
+               install_dir : systemdsystemunitdir)
+endif
