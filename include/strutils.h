@@ -106,8 +106,8 @@ static inline char *mem2strcpy(char *dest, const void *src, size_t n, size_t nma
 	if (n + 1 > nmax)
 		n = nmax - 1;
 
+	memset(dest, '\0', nmax);
 	memcpy(dest, src, n);
-	dest[nmax-1] = '\0';
 	return dest;
 }
 
