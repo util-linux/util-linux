@@ -388,7 +388,7 @@ static int uint_to_id(const char *name, size_t sz)
 	char buf[UID_BUFSIZ];
 
 	mem2strcpy(buf, name, sz, sizeof(buf));
-	return strtoul_or_err(name, _("could not parse ID"));
+	return strtoul_or_err(buf, _("could not parse ID"));
 }
 
 /**
