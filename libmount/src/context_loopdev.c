@@ -255,6 +255,25 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 			DBG(LOOP, ul_debugobj(cxt, "re-using existing loop device %s",
 				loopcxt_get_device(&lc)));
 
+			/* Open loop device to block device autoclear... */
+			if (loopcxt_get_fd(&lc) < 0) {
+				DBG(LOOP, ul_debugobj(cxt, "failed to get loopdev FD"));
+				rc = -errno;
+				goto done;
+			}
+
+			/*
+			 * Now that we certainly have the loop device open,
+			 * verify the loop device was not autocleared in the
+			 * mean time.
+			 */
+			if (!loopcxt_get_info(&lc)) {
+				DBG(LOOP, ul_debugobj(cxt, "lost race with %s teardown",
+						loopcxt_get_device(&lc)));
+				loopcxt_deinit(&lc);
+				break;
+			}
+
 			/* Once a loop is initialized RO, there is no
 			 * way to change its parameters. */
 			if (loopcxt_is_readonly(&lc)
