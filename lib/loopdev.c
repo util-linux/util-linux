@@ -739,7 +739,8 @@ int loopcxt_get_offset(struct loopdev_cxt *lc, uint64_t *offset)
 	int rc = -EINVAL;
 
 	if (sysfs)
-		rc = ul_path_read_u64(sysfs, offset, "loop/offset");
+		if (ul_path_read_u64(sysfs, offset, "loop/offset") == 0)
+			rc = 0;
 
 	if (rc && loopcxt_ioctl_enabled(lc)) {
 		struct loop_info64 *lo = loopcxt_get_info(lc);
@@ -767,7 +768,8 @@ int loopcxt_get_blocksize(struct loopdev_cxt *lc, uint64_t *blocksize)
 	int rc = -EINVAL;
 
 	if (sysfs)
-		rc = ul_path_read_u64(sysfs, blocksize, "queue/logical_block_size");
+		if (ul_path_read_u64(sysfs, blocksize, "queue/logical_block_size") == 0)
+			rc = 0;
 
 	/* Fallback based on BLKSSZGET ioctl */
 	if (rc) {
@@ -799,7 +801,8 @@ int loopcxt_get_sizelimit(struct loopdev_cxt *lc, uint64_t *size)
 	int rc = -EINVAL;
 
 	if (sysfs)
-		rc = ul_path_read_u64(sysfs, size, "loop/sizelimit");
+		if (ul_path_read_u64(sysfs, size, "loop/sizelimit") == 0)
+			rc = 0;
 
 	if (rc && loopcxt_ioctl_enabled(lc)) {
 		struct loop_info64 *lo = loopcxt_get_info(lc);
