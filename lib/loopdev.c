@@ -1777,10 +1777,13 @@ int loopcxt_find_overlap(struct loopdev_cxt *lc, const char *filename,
 
 		rc = loopcxt_is_used(lc, hasst ? &st : NULL,
 				     filename, offset, sizelimit, 0);
-		if (!rc)
-			continue;	/* unused */
-		if (rc < 0)
-			break;		/* error */
+		/*
+		 * Either the loopdev is unused or we've got an error which can
+		 * happen when we are racing with device autoclear. Just ignore
+		 * this loopdev...
+		 */
+		if (rc <= 0)
+			continue;
 
 		DBG(CXT, ul_debugobj(lc, "found %s backed by %s",
 			loopcxt_get_device(lc), filename));
@@ -1789,13 +1792,13 @@ int loopcxt_find_overlap(struct loopdev_cxt *lc, const char *filename,
 		if (rc) {
 			DBG(CXT, ul_debugobj(lc, "failed to get offset for device %s",
 				loopcxt_get_device(lc)));
-			break;
+			continue;
 		}
 		rc = loopcxt_get_sizelimit(lc, &lc_sizelimit);
 		if (rc) {
 			DBG(CXT, ul_debugobj(lc, "failed to get sizelimit for device %s",
 				loopcxt_get_device(lc)));
-			break;
+			continue;
 		}
 
 		/* full match */
