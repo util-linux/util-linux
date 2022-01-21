@@ -443,13 +443,17 @@ static int verify_fstype(struct verify_context *vfy)
 		if (!isswap && !isauto && !none && !is_supported_filesystem(vfy, type))
 			verify_warn(vfy, _("%s seems unsupported by the current kernel"), type);
 	}
+
+	errno = 0;
 	realtype = mnt_get_fstype(src, &ambi, cache);
 
 	if (!realtype) {
+		const char *reson = errno ? strerror(errno) : _("reason uknown");
+
 		if (isauto)
-			verify_err(vfy, _("cannot detect on-disk filesystem type"));
+			verify_err(vfy, _("cannot detect on-disk filesystem type (%s)"), reson);
 		else
-			verify_warn(vfy, _("cannot detect on-disk filesystem type"));
+			verify_warn(vfy, _("cannot detect on-disk filesystem type (%s)"), reson);
 		goto done;
 	}
 
