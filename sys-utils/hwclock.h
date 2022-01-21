@@ -31,6 +31,7 @@ struct hwclock_control {
 	char *rtc_dev_name;
 #endif
 	char *param_get_option;
+	char *param_set_option;
 	unsigned int
 		hwaudit_on:1,
 		adjust:1,
@@ -88,6 +89,7 @@ struct rtc_param {
 };
 
 #define RTC_PARAM_GET	_IOW('p', 0x13, struct rtc_param)
+#define RTC_PARAM_SET	_IOW('p', 0x14, struct rtc_param)
 
 #define RTC_PARAM_FEATURES		0
 #define RTC_PARAM_CORRECTION		1
@@ -107,6 +109,7 @@ static struct hwclock_param hwclock_params[] = {
 };
 
 extern int get_param_rtc(const struct hwclock_control *ctl, struct rtc_param *param);
+extern int set_param_rtc(const struct hwclock_control *ctl);
 
 extern void __attribute__((__noreturn__))
 hwclock_exit(const struct hwclock_control *ctl, int status);

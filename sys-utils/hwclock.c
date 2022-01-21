@@ -1167,6 +1167,12 @@ manipulate_rtc_param(const struct hwclock_control *ctl)
 
 		printf(_("The RTC parameter 0x%llx is set to 0x%llx.\n"),
 		       param.param, param.uvalue);
+
+	} else if (ctl->param_set_option) {
+		if (ctl->testing)
+			return 0;
+
+		return set_param_rtc(ctl);
 	}
 
 	return 1;
@@ -1201,6 +1207,7 @@ usage(void)
 	puts(_("     --setepoch                  set the RTC epoch according to --epoch"));
 #endif
 	puts(_("     --param-get <param>         display the RTC parameter"));
+	puts(_("     --param-set <param>=<value> set the RTC parameter"));
 	puts(_("     --predict                   predict the drifted RTC time according to --date"));
 	fputs(USAGE_OPTIONS, stdout);
 	puts(_(" -u, --utc                       the RTC timescale is UTC"));
@@ -1235,9 +1242,9 @@ usage(void)
 		param++;
 	}
 
-	puts(_("   See Kernel's include/uapi/linux/rtc.h for parameters."));
+	puts(_("   See Kernel's include/uapi/linux/rtc.h for parameters and values."));
 	fputs(USAGE_ARG_SEPARATOR, stdout);
-	puts(_(" <param> accepts hexadecimal values if prefixed with 0x, otherwise decimal."));
+	puts(_(" <param> and <value> accept hexadecimal values if prefixed with 0x, otherwise decimal."));
 
 	printf(USAGE_MAN_TAIL("hwclock(8)"));
 	exit(EXIT_SUCCESS);
@@ -1269,6 +1276,7 @@ int main(int argc, char **argv)
 		OPT_GETEPOCH,
 		OPT_NOADJFILE,
 		OPT_PARAM_GET,
+		OPT_PARAM_SET,
 		OPT_PREDICT,
 		OPT_SET,
 		OPT_SETEPOCH,
@@ -1296,6 +1304,7 @@ int main(int argc, char **argv)
 		{ "epoch",        required_argument, NULL, OPT_EPOCH      },
 #endif
 		{ "param-get",    required_argument, NULL, OPT_PARAM_GET  },
+		{ "param-set",    required_argument, NULL, OPT_PARAM_SET  },
 		{ "noadjfile",    no_argument,       NULL, OPT_NOADJFILE  },
 		{ "directisa",    no_argument,       NULL, OPT_DIRECTISA  },
 		{ "test",         no_argument,       NULL, OPT_TEST       },
@@ -1413,6 +1422,11 @@ int main(int argc, char **argv)
 			ctl.param_get_option = optarg;
 			ctl.show = 0;
 			break;
+		case OPT_PARAM_SET:
+			ctl.param_set_option = optarg;
+			ctl.show = 0;
+			ctl.hwaudit_on = 1;
+			break;
 		case OPT_NOADJFILE:
 			ctl.noadjfile = 1;
 			break;
@@ -1506,7 +1520,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (ctl.param_get_option) {
+	if (ctl.param_get_option || ctl.param_set_option) {
 		if (manipulate_rtc_param(&ctl))
 			hwclock_exit(&ctl, EXIT_FAILURE);
 

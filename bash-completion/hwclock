@@ -23,6 +23,10 @@ _hwclock_module()
 			COMPREPLY=( $(compgen -W "param" -- $cur) )
 			return 0
 			;;
+		'--param-set')
+			COMPREPLY=( $(compgen -W "param=value" -- $cur) )
+			return 0
+			;;
 		'-h'|'-?'|'--help'|'-v'|'-V'|'--version')
 			return 0
 			;;
@@ -49,6 +53,7 @@ _hwclock_module()
 				--delay
 				--epoch
 				--param-get
+				--param-set
 				--update-drift
 				--noadjfile
 				--adjfile
