@@ -453,3 +453,59 @@ int set_epoch_rtc(const struct hwclock_control *ctl)
 	return 0;
 }
 #endif	/* __alpha__ */
+
+static int resolve_rtc_param_alias(const char *alias, uint64_t *value)
+{
+	const struct hwclock_param *param = &hwclock_params[0];
+
+	while (param->name) {
+		if (!strcmp(alias, param->name)) {
+			*value = param->id;
+			return 0;
+		}
+		param++;
+	}
+
+	return 1;
+}
+
+/*
+ * Get the Hardware Clock parameter setting from the kernel.
+ */
+int get_param_rtc(const struct hwclock_control *ctl, struct rtc_param *param)
+{
+	int rtc_fd;
+
+	/* handle name */
+	if (resolve_rtc_param_alias(ctl->param_get_option, &param->param)) {
+		char *end = NULL;
+		int base;
+
+		base = strncmp(ctl->param_get_option, "0x", 2) ? 10 : 16;
+		errno = 0;
+		param->param = strtoull(ctl->param_get_option, &end, base);
+		if (errno || !end || *end) {
+			warnx(_("could not convert parameter name to number"));
+			return 1;
+		}
+	}
+
+	/* get parameter */
+	rtc_fd = open_rtc(ctl);
+	if (rtc_fd < 0) {
+		warn(_("cannot open %s"), rtc_dev_name);
+		return 1;
+	}
+
+	if (ioctl(rtc_fd, RTC_PARAM_GET, param) == -1) {
+		warn(_("ioctl(%d, RTC_PARAM_GET, param) to %s failed"),
+		     rtc_fd, rtc_dev_name);
+		return 1;
+	}
+
+	if (ctl->verbose)
+		printf(_("ioctl(%d, RTC_PARAM_GET, param) to %s succeeded.\n"),
+		       rtc_fd, rtc_dev_name);
+
+	return 0;
+}

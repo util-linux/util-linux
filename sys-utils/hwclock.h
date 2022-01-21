@@ -9,6 +9,7 @@
 
 #include "c.h"
 #include "debug.h"
+#include "nls.h"
 
 #define HWCLOCK_DEBUG_INIT		(1 << 0)
 #define HWCLOCK_DEBUG_RANDOM_SLEEP	(1 << 1)
@@ -29,6 +30,7 @@ struct hwclock_control {
 #ifdef __linux__
 	char *rtc_dev_name;
 #endif
+	char *param_get_option;
 	unsigned int
 		hwaudit_on:1,
 		adjust:1,
@@ -73,6 +75,38 @@ extern double time_diff(struct timeval subtrahend, struct timeval subtractor);
 extern int get_epoch_rtc(const struct hwclock_control *ctl, unsigned long *epoch);
 extern int set_epoch_rtc(const struct hwclock_control *ctl);
 #endif
+
+struct rtc_param {
+	uint64_t param;
+	union {
+		uint64_t uvalue;
+		int64_t svalue;
+		uint64_t ptr;
+	};
+	uint32_t index;
+	uint32_t __pad;
+};
+
+#define RTC_PARAM_GET	_IOW('p', 0x13, struct rtc_param)
+
+#define RTC_PARAM_FEATURES		0
+#define RTC_PARAM_CORRECTION		1
+#define RTC_PARAM_BACKUP_SWITCH_MODE	2
+
+struct hwclock_param {
+	int id;
+	const char *name;
+	const char *help;
+};
+
+static struct hwclock_param hwclock_params[] = {
+	{ RTC_PARAM_FEATURES,  "features", N_("supported features") },
+	{ RTC_PARAM_CORRECTION, "correction", N_("time correction") },
+	{ RTC_PARAM_BACKUP_SWITCH_MODE, "bsm", N_("backup switch mode") },
+	{ }
+};
+
+extern int get_param_rtc(const struct hwclock_control *ctl, struct rtc_param *param);
 
 extern void __attribute__((__noreturn__))
 hwclock_exit(const struct hwclock_control *ctl, int status);
