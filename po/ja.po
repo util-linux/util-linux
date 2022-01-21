@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.36-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-08-16 15:06+0200\n"
+"POT-Creation-Date: 2022-01-21 16:40+0100\n"
 "PO-Revision-Date: 2020-07-19 21:15+0900\n"
 "Last-Translator: Takeshi Hamasaki <hmatrjp@users.sourceforge.jp>\n"
 "Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
@@ -7224,12 +7224,12 @@ msgstr "%s 用のループバックデバイスの設定に失敗しました"
 msgid "overlapping loop device exists for %s"
 msgstr "%s 用の重複するループバックデバイスが存在します"
 
-#: libmount/src/context_mount.c:1729 libmount/src/context_umount.c:1267
+#: libmount/src/context_mount.c:1729 libmount/src/context_umount.c:1259
 #, c-format
 msgid "locking failed"
 msgstr "ロックに失敗しました"
 
-#: libmount/src/context_mount.c:1733 libmount/src/context_umount.c:1273
+#: libmount/src/context_mount.c:1733 libmount/src/context_umount.c:1265
 #: sys-utils/umount.c:252 sys-utils/umount.c:268
 #, c-format
 msgid "failed to switch namespace"
@@ -7419,62 +7419,62 @@ msgstr "%s にメディアが挿入されていません"
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "マウントできません; おそらく %s のファイルシステムが壊れています"
 
-#: libmount/src/context_umount.c:1261 libmount/src/context_umount.c:1315
+#: libmount/src/context_umount.c:1253 libmount/src/context_umount.c:1307
 #, c-format
 msgid "not mounted"
 msgstr "マウントされていません"
 
-#: libmount/src/context_umount.c:1277
+#: libmount/src/context_umount.c:1269
 #, c-format
 msgid "umount failed: %m"
 msgstr "アンマウントに失敗しました: %m"
 
-#: libmount/src/context_umount.c:1286
+#: libmount/src/context_umount.c:1278
 #, c-format
 msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr "ファイルシステムをアンマウントしましたが、 ユーザー空間のマウントテーブルの更新が失敗しました"
 
-#: libmount/src/context_umount.c:1292
+#: libmount/src/context_umount.c:1284
 #, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
 msgstr "ファイルシステムをアンマウントしましたが、名前空間を元に戻せませんでした"
 
-#: libmount/src/context_umount.c:1299
+#: libmount/src/context_umount.c:1291
 #, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "ファイルシステムをアンマウントしましたが、続く操作が失敗しました: %m"
 
-#: libmount/src/context_umount.c:1312
+#: libmount/src/context_umount.c:1304
 #, c-format
 msgid "invalid block device"
 msgstr "不正なブロックデバイスです"
 
-#: libmount/src/context_umount.c:1318
+#: libmount/src/context_umount.c:1310
 #, c-format
 msgid "can't write superblock"
 msgstr "スーパーブロックに書き込むことができません"
 
-#: libmount/src/context_umount.c:1321
+#: libmount/src/context_umount.c:1313
 #, c-format
 msgid "target is busy"
 msgstr "対象は使用中です"
 
-#: libmount/src/context_umount.c:1324
+#: libmount/src/context_umount.c:1316
 #, c-format
 msgid "no mount point specified"
 msgstr "マウントポイントが指定されていません"
 
-#: libmount/src/context_umount.c:1327
+#: libmount/src/context_umount.c:1319
 #, c-format
 msgid "must be superuser to unmount"
 msgstr "アンマウントするにはスーパーユーザでなければなりません"
 
-#: libmount/src/context_umount.c:1330
+#: libmount/src/context_umount.c:1322
 #, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr "ブロックデバイスはファイルシステム上で許可されていません"
 
-#: libmount/src/context_umount.c:1333
+#: libmount/src/context_umount.c:1325
 #, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "umount(2) システムコールが失敗しました: %m"

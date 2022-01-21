@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.37-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-08-16 15:06+0200\n"
+"POT-Creation-Date: 2022-01-21 16:40+0100\n"
 "PO-Revision-Date: 2021-05-12 13:33-0700\n"
 "Last-Translator: Božidar Putanec <bozidarp@yahoo.com>\n"
 "Language-Team: Croatian <lokalizacija@linux.hr>\n"
@@ -7335,12 +7335,12 @@ msgstr "nije uspjelo postaviti loop uređaj za %s"
 msgid "overlapping loop device exists for %s"
 msgstr "za %s postoji preklapajući loop-uređaj"
 
-#: libmount/src/context_mount.c:1729 libmount/src/context_umount.c:1267
+#: libmount/src/context_mount.c:1729 libmount/src/context_umount.c:1259
 #, c-format
 msgid "locking failed"
 msgstr "zaključavanje nije uspjelo"
 
-#: libmount/src/context_mount.c:1733 libmount/src/context_umount.c:1273
+#: libmount/src/context_mount.c:1733 libmount/src/context_umount.c:1265
 #: sys-utils/umount.c:252 sys-utils/umount.c:268
 #, c-format
 msgid "failed to switch namespace"
@@ -7528,64 +7528,64 @@ msgstr "ni jedan medij nije nađen na %s"
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "nije moguće montirati; datotečni sustav na %s je vjerojatno oštećen"
 
-#: libmount/src/context_umount.c:1261 libmount/src/context_umount.c:1315
+#: libmount/src/context_umount.c:1253 libmount/src/context_umount.c:1307
 #, c-format
 msgid "not mounted"
 msgstr "nije montiran"
 
-#: libmount/src/context_umount.c:1277
+#: libmount/src/context_umount.c:1269
 #, c-format
 msgid "umount failed: %m"
 msgstr "demontiranje nije uspjelo: %m"
 
-#: libmount/src/context_umount.c:1286
+#: libmount/src/context_umount.c:1278
 #, c-format
 msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr ""
 "datotečni sustav je demontiran, ali ažurirati tablicu montiranja u korisničkom\n"
 "prostoru nije uspjelo"
 
-#: libmount/src/context_umount.c:1292
+#: libmount/src/context_umount.c:1284
 #, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
 msgstr "datotečni sustav je demontiran, ali povratak u imenski prostor nije uspio"
 
-#: libmount/src/context_umount.c:1299
+#: libmount/src/context_umount.c:1291
 #, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "datotečni sustav je demontiran, ali sljedeća operacija nije uspjela: %m"
 
-#: libmount/src/context_umount.c:1312
+#: libmount/src/context_umount.c:1304
 #, c-format
 msgid "invalid block device"
 msgstr "nevaljani blok-uređaj"
 
-#: libmount/src/context_umount.c:1318
+#: libmount/src/context_umount.c:1310
 #, c-format
 msgid "can't write superblock"
 msgstr "nije moguće zapisati superblok"
 
-#: libmount/src/context_umount.c:1321
+#: libmount/src/context_umount.c:1313
 #, c-format
 msgid "target is busy"
 msgstr "cilj je zauzet"
 
-#: libmount/src/context_umount.c:1324
+#: libmount/src/context_umount.c:1316
 #, c-format
 msgid "no mount point specified"
 msgstr "ni jedna točka montiranja nije specificirana"
 
-#: libmount/src/context_umount.c:1327
+#: libmount/src/context_umount.c:1319
 #, c-format
 msgid "must be superuser to unmount"
 msgstr "za koristiti umount morate biti superuser (root)"
 
-#: libmount/src/context_umount.c:1330
+#: libmount/src/context_umount.c:1322
 #, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr "blok-uređaji nisu dopušteni na datotečnom sustavu"
 
-#: libmount/src/context_umount.c:1333
+#: libmount/src/context_umount.c:1325
 #, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "sustavski poziv umount(2) nije uspio: %m"

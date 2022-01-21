@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.26-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-08-16 15:06+0200\n"
+"POT-Creation-Date: 2022-01-21 16:40+0100\n"
 "PO-Revision-Date: 2015-02-15 08:31+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -7393,12 +7393,12 @@ msgstr "%s: gặp lỗi khi cài đặt thiết bị loop"
 msgid "overlapping loop device exists for %s"
 msgstr "%s không phải là một thiết bị lp"
 
-#: libmount/src/context_mount.c:1729 libmount/src/context_umount.c:1267
+#: libmount/src/context_mount.c:1729 libmount/src/context_umount.c:1259
 #, fuzzy, c-format
 msgid "locking failed"
 msgstr "đóng %s gặp lỗi"
 
-#: libmount/src/context_mount.c:1733 libmount/src/context_umount.c:1273
+#: libmount/src/context_mount.c:1733 libmount/src/context_umount.c:1265
 #: sys-utils/umount.c:252 sys-utils/umount.c:268
 #, fuzzy, c-format
 msgid "failed to switch namespace"
@@ -7588,62 +7588,62 @@ msgstr "không tìm thấy vật chứa trên %s"
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "sẽ không thử tạo hệ thống tập tin trên “%s”"
 
-#: libmount/src/context_umount.c:1261 libmount/src/context_umount.c:1315
+#: libmount/src/context_umount.c:1253 libmount/src/context_umount.c:1307
 #, fuzzy, c-format
 msgid "not mounted"
 msgstr "%s: chưa gắn"
 
-#: libmount/src/context_umount.c:1277
+#: libmount/src/context_umount.c:1269
 #, fuzzy, c-format
 msgid "umount failed: %m"
 msgstr "mount (gắn) không thành công"
 
-#: libmount/src/context_umount.c:1286
+#: libmount/src/context_umount.c:1278
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr "%s: hệ thống tập tin đã bỏ gắn, nhưng lệnh mount(8) gặp lỗi"
 
-#: libmount/src/context_umount.c:1292
+#: libmount/src/context_umount.c:1284
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
 msgstr "%s: hệ thống tập tin đã bỏ gắn, nhưng lệnh mount(8) gặp lỗi"
 
-#: libmount/src/context_umount.c:1299
+#: libmount/src/context_umount.c:1291
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "%s: hệ thống tập tin đã bỏ gắn, nhưng lệnh mount(8) gặp lỗi"
 
-#: libmount/src/context_umount.c:1312
+#: libmount/src/context_umount.c:1304
 #, fuzzy, c-format
 msgid "invalid block device"
 msgstr "%s: thiết bị khối không hợp lệ"
 
-#: libmount/src/context_umount.c:1318
+#: libmount/src/context_umount.c:1310
 #, fuzzy, c-format
 msgid "can't write superblock"
 msgstr "%s: không thể ghi siêu khối"
 
-#: libmount/src/context_umount.c:1321
+#: libmount/src/context_umount.c:1313
 #, fuzzy, c-format
 msgid "target is busy"
 msgstr "%s đang bận"
 
-#: libmount/src/context_umount.c:1324
+#: libmount/src/context_umount.c:1316
 #, fuzzy, c-format
 msgid "no mount point specified"
 msgstr "chưa chỉ ra điểm gắn"
 
-#: libmount/src/context_umount.c:1327
+#: libmount/src/context_umount.c:1319
 #, fuzzy, c-format
 msgid "must be superuser to unmount"
 msgstr "%s: phải là siêu người dùng (root) để bỏ gắn"
 
-#: libmount/src/context_umount.c:1330
+#: libmount/src/context_umount.c:1322
 #, fuzzy, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr "%s: thiết bị khối không được thừa nhận trên hệ thống tập tin"
 
-#: libmount/src/context_umount.c:1333
+#: libmount/src/context_umount.c:1325
 #, fuzzy, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "gặp lỗi khi mount(2)"

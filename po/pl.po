@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.37-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-08-16 15:06+0200\n"
+"POT-Creation-Date: 2022-01-21 16:40+0100\n"
 "PO-Revision-Date: 2021-07-28 17:53+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -7211,12 +7211,12 @@ msgstr "nie udało się skonfigurować urządzenia loop dla %s"
 msgid "overlapping loop device exists for %s"
 msgstr "dla %s istnieje zachodzące urządzenie loop"
 
-#: libmount/src/context_mount.c:1729 libmount/src/context_umount.c:1267
+#: libmount/src/context_mount.c:1729 libmount/src/context_umount.c:1259
 #, c-format
 msgid "locking failed"
 msgstr "zablokowanie nie powiodło się"
 
-#: libmount/src/context_mount.c:1733 libmount/src/context_umount.c:1273
+#: libmount/src/context_mount.c:1733 libmount/src/context_umount.c:1265
 #: sys-utils/umount.c:252 sys-utils/umount.c:268
 #, c-format
 msgid "failed to switch namespace"
@@ -7398,62 +7398,62 @@ msgstr "brak nośnika w %s"
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "nie można zamontować; prawdopodobnie uszkodzony system plików na %s"
 
-#: libmount/src/context_umount.c:1261 libmount/src/context_umount.c:1315
+#: libmount/src/context_umount.c:1253 libmount/src/context_umount.c:1307
 #, c-format
 msgid "not mounted"
 msgstr "nie zamontowany"
 
-#: libmount/src/context_umount.c:1277
+#: libmount/src/context_umount.c:1269
 #, c-format
 msgid "umount failed: %m"
 msgstr "odmontowanie nie powiodło się: %m"
 
-#: libmount/src/context_umount.c:1286
+#: libmount/src/context_umount.c:1278
 #, c-format
 msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr "system plików odmontowany, ale nie udało się uaktualnić tablicy montowań w przestrzeni użytkownika"
 
-#: libmount/src/context_umount.c:1292
+#: libmount/src/context_umount.c:1284
 #, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
 msgstr "system plików odmontowany, ale nie udało się przełączyć z powrotem przestrzeni nazw"
 
-#: libmount/src/context_umount.c:1299
+#: libmount/src/context_umount.c:1291
 #, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "system plików odmontowany, ale żadna kolejna operacja nie powiodła się: %m"
 
-#: libmount/src/context_umount.c:1312
+#: libmount/src/context_umount.c:1304
 #, c-format
 msgid "invalid block device"
 msgstr "nieprawidłowe urządzenie blokowe"
 
-#: libmount/src/context_umount.c:1318
+#: libmount/src/context_umount.c:1310
 #, c-format
 msgid "can't write superblock"
 msgstr "nie można zapisać superbloku"
 
-#: libmount/src/context_umount.c:1321
+#: libmount/src/context_umount.c:1313
 #, c-format
 msgid "target is busy"
 msgstr "cel jest zajęty"
 
-#: libmount/src/context_umount.c:1324
+#: libmount/src/context_umount.c:1316
 #, c-format
 msgid "no mount point specified"
 msgstr "nie podano punktu montowania"
 
-#: libmount/src/context_umount.c:1327
+#: libmount/src/context_umount.c:1319
 #, c-format
 msgid "must be superuser to unmount"
 msgstr "trzeba być superużytkownikiem, żeby odmontować"
 
-#: libmount/src/context_umount.c:1330
+#: libmount/src/context_umount.c:1322
 #, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr "urządzenia blokowe nie są dozwolone w systemie plików"
 
-#: libmount/src/context_umount.c:1333
+#: libmount/src/context_umount.c:1325
 #, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "wywołanie systemowe umount(2) nie powiodło się: %m"

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.17.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-08-16 15:06+0200\n"
+"POT-Creation-Date: 2022-01-21 16:40+0100\n"
 "PO-Revision-Date: 2010-02-18 04:00+0700\n"
 "Last-Translator: Arif E. Nugroho <arif_endro@yahoo.com>\n"
 "Language-Team: Indonesian <translation-team-id@lists.sourceforge.net>\n"
@@ -7711,12 +7711,12 @@ msgstr "tidak dapat merewind perangkat swap"
 msgid "overlapping loop device exists for %s"
 msgstr "%s: %s bukan sebuah perangkat lp.\n"
 
-#: libmount/src/context_mount.c:1729 libmount/src/context_umount.c:1267
+#: libmount/src/context_mount.c:1729 libmount/src/context_umount.c:1259
 #, fuzzy, c-format
 msgid "locking failed"
 msgstr "gagal menjalankan %s"
 
-#: libmount/src/context_mount.c:1733 libmount/src/context_umount.c:1273
+#: libmount/src/context_mount.c:1733 libmount/src/context_umount.c:1265
 #: sys-utils/umount.c:252 sys-utils/umount.c:268
 #, fuzzy, c-format
 msgid "failed to switch namespace"
@@ -7906,62 +7906,62 @@ msgstr "mount: tidak ada media ditemukan di %s"
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "tidak akan mencoba untuk membuat filesystem pada '%s'"
 
-#: libmount/src/context_umount.c:1261 libmount/src/context_umount.c:1315
+#: libmount/src/context_umount.c:1253 libmount/src/context_umount.c:1307
 #, fuzzy, c-format
 msgid "not mounted"
 msgstr "fsck: %s: tidak ditemukan\n"
 
-#: libmount/src/context_umount.c:1277
+#: libmount/src/context_umount.c:1269
 #, fuzzy, c-format
 msgid "umount failed: %m"
 msgstr "mount gagal"
 
-#: libmount/src/context_umount.c:1286
+#: libmount/src/context_umount.c:1278
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr "mount: mount gagal"
 
-#: libmount/src/context_umount.c:1292
+#: libmount/src/context_umount.c:1284
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
 msgstr "mount: mount gagal"
 
-#: libmount/src/context_umount.c:1299
+#: libmount/src/context_umount.c:1291
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "mount: mount gagal"
 
-#: libmount/src/context_umount.c:1312
+#: libmount/src/context_umount.c:1304
 #, fuzzy, c-format
 msgid "invalid block device"
 msgstr "umount: %s: perangkat block tidak valid"
 
-#: libmount/src/context_umount.c:1318
+#: libmount/src/context_umount.c:1310
 #, fuzzy, c-format
 msgid "can't write superblock"
 msgstr "mount: %s: tidak dapat membaca superblock"
 
-#: libmount/src/context_umount.c:1321
+#: libmount/src/context_umount.c:1313
 #, fuzzy, c-format
 msgid "target is busy"
 msgstr "mount: %s sedang sibuk"
 
-#: libmount/src/context_umount.c:1324
+#: libmount/src/context_umount.c:1316
 #, fuzzy, c-format
 msgid "no mount point specified"
 msgstr "nama berkas tidak dispesifikasikan."
 
-#: libmount/src/context_umount.c:1327
+#: libmount/src/context_umount.c:1319
 #, fuzzy, c-format
 msgid "must be superuser to unmount"
 msgstr "umount: %s: harus superuser untuk melakukan umount"
 
-#: libmount/src/context_umount.c:1330
+#: libmount/src/context_umount.c:1322
 #, fuzzy, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr "umount: %s: perangkat block tidak diijinkan di fs"
 
-#: libmount/src/context_umount.c:1333
+#: libmount/src/context_umount.c:1325
 #, fuzzy, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "mount gagal"

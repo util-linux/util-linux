@@ -52,7 +52,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.37-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-08-16 15:06+0200\n"
+"POT-Creation-Date: 2022-01-21 16:40+0100\n"
 "PO-Revision-Date: 2021-05-13 17:40+0200\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -7360,12 +7360,12 @@ msgstr "das Loop-Gerät für %s konnte nicht eingerichtet werden"
 msgid "overlapping loop device exists for %s"
 msgstr "für %s existieren sich überschneidende Loop-Geräte"
 
-#: libmount/src/context_mount.c:1729 libmount/src/context_umount.c:1267
+#: libmount/src/context_mount.c:1729 libmount/src/context_umount.c:1259
 #, c-format
 msgid "locking failed"
 msgstr "Sperren fehlgeschlagen"
 
-#: libmount/src/context_mount.c:1733 libmount/src/context_umount.c:1273
+#: libmount/src/context_mount.c:1733 libmount/src/context_umount.c:1265
 #: sys-utils/umount.c:252 sys-utils/umount.c:268
 #, c-format
 msgid "failed to switch namespace"
@@ -7554,62 +7554,62 @@ msgstr "kein Medium in %s gefunden"
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "Einhängen nicht möglich; wahrscheinlich beschädigtes Dateisystem auf %s"
 
-#: libmount/src/context_umount.c:1261 libmount/src/context_umount.c:1315
+#: libmount/src/context_umount.c:1253 libmount/src/context_umount.c:1307
 #, c-format
 msgid "not mounted"
 msgstr "nicht eingehängt"
 
-#: libmount/src/context_umount.c:1277
+#: libmount/src/context_umount.c:1269
 #, c-format
 msgid "umount failed: %m"
 msgstr "umount ist fehlgeschlagen: %m"
 
-#: libmount/src/context_umount.c:1286
+#: libmount/src/context_umount.c:1278
 #, c-format
 msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr "das Dateisystem war ausgehängt, aber die Einhängetabelle auf Anwendungsebene konnte nicht aktualisiert werden"
 
-#: libmount/src/context_umount.c:1292
+#: libmount/src/context_umount.c:1284
 #, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
 msgstr "das Dateisystem war ausgehängt, aber Zurückwechseln zum Namensraum ist fehlgeschlagen"
 
-#: libmount/src/context_umount.c:1299
+#: libmount/src/context_umount.c:1291
 #, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "das Dateisystem wurde ausgehängt, aber alle folgenden Operationen sind fehlgeschlagen: %m"
 
-#: libmount/src/context_umount.c:1312
+#: libmount/src/context_umount.c:1304
 #, c-format
 msgid "invalid block device"
 msgstr "ungültiges blockorientiertes Gerät"
 
-#: libmount/src/context_umount.c:1318
+#: libmount/src/context_umount.c:1310
 #, c-format
 msgid "can't write superblock"
 msgstr "der Superblock kann nicht geschrieben werden"
 
-#: libmount/src/context_umount.c:1321
+#: libmount/src/context_umount.c:1313
 #, c-format
 msgid "target is busy"
 msgstr "das Ziel wird gerade benutzt"
 
-#: libmount/src/context_umount.c:1324
+#: libmount/src/context_umount.c:1316
 #, c-format
 msgid "no mount point specified"
 msgstr "kein Einhängepunkt angegeben"
 
-#: libmount/src/context_umount.c:1327
+#: libmount/src/context_umount.c:1319
 #, c-format
 msgid "must be superuser to unmount"
 msgstr "nur der Administrator kann umount ausführen"
 
-#: libmount/src/context_umount.c:1330
+#: libmount/src/context_umount.c:1322
 #, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr "blockorientierte Geräte sind auf dem Dateisystem nicht erlaubt"
 
-#: libmount/src/context_umount.c:1333
+#: libmount/src/context_umount.c:1325
 #, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "mount(2) Systemaufruf ist fehlgeschlagen: %m"

@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.32-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-08-16 15:06+0200\n"
+"POT-Creation-Date: 2022-01-21 16:40+0100\n"
 "PO-Revision-Date: 2018-03-17 13:36+0200\n"
 "Last-Translator: Lauri Nurmi <lanurmi@iki.fi>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
@@ -7552,12 +7552,12 @@ msgstr "mount: loop-laitteen asettaminen epäonnistui\n"
 msgid "overlapping loop device exists for %s"
 msgstr ""
 
-#: libmount/src/context_mount.c:1729 libmount/src/context_umount.c:1267
+#: libmount/src/context_mount.c:1729 libmount/src/context_umount.c:1259
 #, fuzzy, c-format
 msgid "locking failed"
 msgstr "suljetaan syötetiedosto %s"
 
-#: libmount/src/context_mount.c:1733 libmount/src/context_umount.c:1273
+#: libmount/src/context_mount.c:1733 libmount/src/context_umount.c:1265
 #: sys-utils/umount.c:252 sys-utils/umount.c:268
 #, fuzzy, c-format
 msgid "failed to switch namespace"
@@ -7745,62 +7745,62 @@ msgstr "Mediaa ei löydy"
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "ei yritetä luoda tiedostojärjestelmää kohteeseen ”%s”"
 
-#: libmount/src/context_umount.c:1261 libmount/src/context_umount.c:1315
+#: libmount/src/context_umount.c:1253 libmount/src/context_umount.c:1307
 #, fuzzy, c-format
 msgid "not mounted"
 msgstr "umount: %s: ei ole liitettynä"
 
-#: libmount/src/context_umount.c:1277
+#: libmount/src/context_umount.c:1269
 #, fuzzy, c-format
 msgid "umount failed: %m"
 msgstr "liittäminen epäonnistui"
 
-#: libmount/src/context_umount.c:1286
+#: libmount/src/context_umount.c:1278
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr "mount: liitos epäonnistui"
 
-#: libmount/src/context_umount.c:1292
+#: libmount/src/context_umount.c:1284
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
 msgstr "mount: liitos epäonnistui"
 
-#: libmount/src/context_umount.c:1299
+#: libmount/src/context_umount.c:1291
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "mount: liitos epäonnistui"
 
-#: libmount/src/context_umount.c:1312
+#: libmount/src/context_umount.c:1304
 #, fuzzy, c-format
 msgid "invalid block device"
 msgstr "umount: %s: virheellinen lohkolaite"
 
-#: libmount/src/context_umount.c:1318
+#: libmount/src/context_umount.c:1310
 #, fuzzy, c-format
 msgid "can't write superblock"
 msgstr "umount: %s: superlohkoa ei voi kirjoittaa"
 
-#: libmount/src/context_umount.c:1321
+#: libmount/src/context_umount.c:1313
 #, fuzzy, c-format
 msgid "target is busy"
 msgstr "%s on varattu"
 
-#: libmount/src/context_umount.c:1324
+#: libmount/src/context_umount.c:1316
 #, fuzzy, c-format
 msgid "no mount point specified"
 msgstr "%s ei ole liitospiste tai virheellinen valitsin"
 
-#: libmount/src/context_umount.c:1327
+#: libmount/src/context_umount.c:1319
 #, fuzzy, c-format
 msgid "must be superuser to unmount"
 msgstr "%s: irrottamiseen vaaditaan pääkäyttäjän oikeudet"
 
-#: libmount/src/context_umount.c:1330
+#: libmount/src/context_umount.c:1322
 #, fuzzy, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr "umount: %s: lohkolaitteita ei sallita tiedostojärjestelmässä"
 
-#: libmount/src/context_umount.c:1333
+#: libmount/src/context_umount.c:1325
 #, fuzzy, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "mount: liitos epäonnistui"

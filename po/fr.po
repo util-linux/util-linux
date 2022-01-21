@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.37-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-08-16 15:06+0200\n"
+"POT-Creation-Date: 2022-01-21 16:40+0100\n"
 "PO-Revision-Date: 2021-05-15 09:21+0200\n"
 "Last-Translator: Frédéric Marchal <fmarchal@perso.be>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -7218,12 +7218,12 @@ msgstr "échec de configuration du périphérique de bouclage %s"
 msgid "overlapping loop device exists for %s"
 msgstr "périphérique de bouclage existant pour %s"
 
-#: libmount/src/context_mount.c:1729 libmount/src/context_umount.c:1267
+#: libmount/src/context_mount.c:1729 libmount/src/context_umount.c:1259
 #, c-format
 msgid "locking failed"
 msgstr "échec du verrouillage"
 
-#: libmount/src/context_mount.c:1733 libmount/src/context_umount.c:1273
+#: libmount/src/context_mount.c:1733 libmount/src/context_umount.c:1265
 #: sys-utils/umount.c:252 sys-utils/umount.c:268
 #, c-format
 msgid "failed to switch namespace"
@@ -7405,62 +7405,62 @@ msgstr "aucun support trouvé dans %s"
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "impossible de monter ; le système de fichiers est peut-être corrompu sur %s"
 
-#: libmount/src/context_umount.c:1261 libmount/src/context_umount.c:1315
+#: libmount/src/context_umount.c:1253 libmount/src/context_umount.c:1307
 #, c-format
 msgid "not mounted"
 msgstr "non monté"
 
-#: libmount/src/context_umount.c:1277
+#: libmount/src/context_umount.c:1269
 #, c-format
 msgid "umount failed: %m"
 msgstr "le démontage a échoué : %m"
 
-#: libmount/src/context_umount.c:1286
+#: libmount/src/context_umount.c:1278
 #, c-format
 msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr "le système de fichiers a été démonté mais la mise à jour de la table de montage dans l'espace utilisateur a échoué"
 
-#: libmount/src/context_umount.c:1292
+#: libmount/src/context_umount.c:1284
 #, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
 msgstr "le système de fichiers a été démonté mais le retour à l'espace de noms a échoué"
 
-#: libmount/src/context_umount.c:1299
+#: libmount/src/context_umount.c:1291
 #, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "le système de fichiers a été démonté mais les opérations suivantes ont échoué : %m"
 
-#: libmount/src/context_umount.c:1312
+#: libmount/src/context_umount.c:1304
 #, c-format
 msgid "invalid block device"
 msgstr "périphérique bloc non invalide"
 
-#: libmount/src/context_umount.c:1318
+#: libmount/src/context_umount.c:1310
 #, c-format
 msgid "can't write superblock"
 msgstr "impossible d'écrire le superbloc"
 
-#: libmount/src/context_umount.c:1321
+#: libmount/src/context_umount.c:1313
 #, c-format
 msgid "target is busy"
 msgstr "la cible est active"
 
-#: libmount/src/context_umount.c:1324
+#: libmount/src/context_umount.c:1316
 #, c-format
 msgid "no mount point specified"
 msgstr "Aucun point de montage indiqué"
 
-#: libmount/src/context_umount.c:1327
+#: libmount/src/context_umount.c:1319
 #, c-format
 msgid "must be superuser to unmount"
 msgstr "seul le superutilisateur peut démonter"
 
-#: libmount/src/context_umount.c:1330
+#: libmount/src/context_umount.c:1322
 #, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr "les périphériques bloc ne sont pas autorisés sur ce système de fichiers"
 
-#: libmount/src/context_umount.c:1333
+#: libmount/src/context_umount.c:1325
 #, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "l’appel système unnount(2) a échoué : %m"

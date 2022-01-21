@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.18-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-08-16 15:06+0200\n"
+"POT-Creation-Date: 2022-01-21 16:40+0100\n"
 "PO-Revision-Date: 2010-08-23 18:09+0200\n"
 "Last-Translator: Fran Diéguez <frandieguez@ubuntu.com>\n"
 "Language-Team: Galician <proxecto@trasno.net>\n"
@@ -7432,12 +7432,12 @@ msgstr "%s fallou."
 msgid "overlapping loop device exists for %s"
 msgstr "%s: non é un dispositivo de bloques\n"
 
-#: libmount/src/context_mount.c:1729 libmount/src/context_umount.c:1267
+#: libmount/src/context_mount.c:1729 libmount/src/context_umount.c:1259
 #, fuzzy, c-format
 msgid "locking failed"
 msgstr "a execución de %s fallou."
 
-#: libmount/src/context_mount.c:1733 libmount/src/context_umount.c:1273
+#: libmount/src/context_mount.c:1733 libmount/src/context_umount.c:1265
 #: sys-utils/umount.c:252 sys-utils/umount.c:268
 #, fuzzy, c-format
 msgid "failed to switch namespace"
@@ -7619,62 +7619,62 @@ msgstr ""
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "   t   Cambia o id do sistema de ficheiros da partición"
 
-#: libmount/src/context_umount.c:1261 libmount/src/context_umount.c:1315
+#: libmount/src/context_umount.c:1253 libmount/src/context_umount.c:1307
 #, fuzzy, c-format
 msgid "not mounted"
 msgstr "Non se encontrou o patrón"
 
-#: libmount/src/context_umount.c:1277
+#: libmount/src/context_umount.c:1269
 #, fuzzy, c-format
 msgid "umount failed: %m"
 msgstr "%s: fstat fallou."
 
-#: libmount/src/context_umount.c:1286
+#: libmount/src/context_umount.c:1278
 #, c-format
 msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr ""
 
-#: libmount/src/context_umount.c:1292
+#: libmount/src/context_umount.c:1284
 #, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
 msgstr ""
 
-#: libmount/src/context_umount.c:1299
+#: libmount/src/context_umount.c:1291
 #, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr ""
 
-#: libmount/src/context_umount.c:1312
+#: libmount/src/context_umount.c:1304
 #, fuzzy, c-format
 msgid "invalid block device"
 msgstr "%s: non é un dispositivo de bloques\n"
 
-#: libmount/src/context_umount.c:1318
+#: libmount/src/context_umount.c:1310
 #, fuzzy, c-format
 msgid "can't write superblock"
 msgstr "Non é posíbel escribir o superbloque"
 
-#: libmount/src/context_umount.c:1321
+#: libmount/src/context_umount.c:1313
 #, c-format
 msgid "target is busy"
 msgstr ""
 
-#: libmount/src/context_umount.c:1324
+#: libmount/src/context_umount.c:1316
 #, fuzzy, c-format
 msgid "no mount point specified"
 msgstr "volve a ler a táboa de particións"
 
-#: libmount/src/context_umount.c:1327
+#: libmount/src/context_umount.c:1319
 #, c-format
 msgid "must be superuser to unmount"
 msgstr ""
 
-#: libmount/src/context_umount.c:1330
+#: libmount/src/context_umount.c:1322
 #, fuzzy, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr "aviso: o ficheiro pasa do final do sistema de ficheiros\n"
 
-#: libmount/src/context_umount.c:1333
+#: libmount/src/context_umount.c:1325
 #, fuzzy, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "malloc fallou"

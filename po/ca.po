@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre3\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2021-08-16 15:06+0200\n"
+"POT-Creation-Date: 2022-01-21 16:40+0100\n"
 "PO-Revision-Date: 2005-09-17 13:40+0200\n"
 "Last-Translator: Josep Puigdemont <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -7749,12 +7749,12 @@ msgstr "no s'ha pogut rebobinar el dispositiu d'intercanvi"
 msgid "overlapping loop device exists for %s"
 msgstr "%s: %s no és un dispositiu lp.\n"
 
-#: libmount/src/context_mount.c:1729 libmount/src/context_umount.c:1267
+#: libmount/src/context_mount.c:1729 libmount/src/context_umount.c:1259
 #, fuzzy, c-format
 msgid "locking failed"
 msgstr "no s'ha pogut executar exec\n"
 
-#: libmount/src/context_mount.c:1733 libmount/src/context_umount.c:1273
+#: libmount/src/context_mount.c:1733 libmount/src/context_umount.c:1265
 #: sys-utils/umount.c:252 sys-utils/umount.c:268
 #, fuzzy, c-format
 msgid "failed to switch namespace"
@@ -7942,62 +7942,62 @@ msgstr "mount: %s ja està muntat a %s\n"
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "no s'intentarà crear cap sistema de fitxers a '%s'"
 
-#: libmount/src/context_umount.c:1261 libmount/src/context_umount.c:1315
+#: libmount/src/context_umount.c:1253 libmount/src/context_umount.c:1307
 #, fuzzy, c-format
 msgid "not mounted"
 msgstr "umount: %s: no s'ha trobat"
 
-#: libmount/src/context_umount.c:1277
+#: libmount/src/context_umount.c:1269
 #, fuzzy, c-format
 msgid "umount failed: %m"
 msgstr "no s'ha estat possible muntar"
 
-#: libmount/src/context_umount.c:1286
+#: libmount/src/context_umount.c:1278
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr "mount: no ha estat possible muntar"
 
-#: libmount/src/context_umount.c:1292
+#: libmount/src/context_umount.c:1284
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
 msgstr "mount: no ha estat possible muntar"
 
-#: libmount/src/context_umount.c:1299
+#: libmount/src/context_umount.c:1291
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "mount: no ha estat possible muntar"
 
-#: libmount/src/context_umount.c:1312
+#: libmount/src/context_umount.c:1304
 #, fuzzy, c-format
 msgid "invalid block device"
 msgstr "umount: %s: dispositiu de blocs no vàlid"
 
-#: libmount/src/context_umount.c:1318
+#: libmount/src/context_umount.c:1310
 #, fuzzy, c-format
 msgid "can't write superblock"
 msgstr "mount: %s: no s'ha pogut llegir el superbloc"
 
-#: libmount/src/context_umount.c:1321
+#: libmount/src/context_umount.c:1313
 #, fuzzy, c-format
 msgid "target is busy"
 msgstr "mount: %s està ocupat"
 
-#: libmount/src/context_umount.c:1324
+#: libmount/src/context_umount.c:1316
 #, fuzzy, c-format
 msgid "no mount point specified"
 msgstr "No s'ha especificat l'opció --date.\n"
 
-#: libmount/src/context_umount.c:1327
+#: libmount/src/context_umount.c:1319
 #, fuzzy, c-format
 msgid "must be superuser to unmount"
 msgstr "umount: %s: haureu de ser superusuari per poder usar umount"
 
-#: libmount/src/context_umount.c:1330
+#: libmount/src/context_umount.c:1322
 #, fuzzy, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr "umount: %s: dispositius de blocs no permesos en el sistema de fitxers"
 
-#: libmount/src/context_umount.c:1333
+#: libmount/src/context_umount.c:1325
 #, fuzzy, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "no s'ha estat possible muntar"
