@@ -437,7 +437,7 @@ static int verify_fstype(struct verify_context *vfy)
 			isauto = 1;
 		else if (strcmp(type, "swap") == 0)
 			isswap = 1;
-		else if (strcmp(type, "xfs") == 0)
+		else if (strcmp(type, "xfs") == 0 || strcmp(type, "btrfs") == 0)
 			vfy->no_fsck = 1;
 
 		if (!isswap && !isauto && !none && !is_supported_filesystem(vfy, type))
@@ -455,7 +455,8 @@ static int verify_fstype(struct verify_context *vfy)
 
 	if (realtype) {
 		isswap = strcmp(realtype, "swap") == 0;
-		vfy->no_fsck = strcmp(realtype, "xfs") == 0;
+		vfy->no_fsck = strcmp(realtype, "xfs") == 0
+				|| strcmp(realtype, "btrfs") == 0;
 
 		if (type && !isauto && strcmp(type, realtype) != 0) {
 			verify_err(vfy, _("%s does not match with on-disk %s"), type, realtype);
