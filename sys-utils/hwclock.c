@@ -1169,41 +1169,55 @@ usage(void)
 	puts(_("Time clocks utility."));
 
 	fputs(USAGE_FUNCTIONS, stdout);
-	puts(_(" -r, --show           display the RTC time"));
-	puts(_("     --get            display drift corrected RTC time"));
-	puts(_("     --set            set the RTC according to --date"));
-	puts(_(" -s, --hctosys        set the system time from the RTC"));
-	puts(_(" -w, --systohc        set the RTC from the system time"));
-	puts(_("     --systz          send timescale configurations to the kernel"));
-	puts(_(" -a, --adjust         adjust the RTC to account for systematic drift"));
+	puts(_(" -r, --show                      display the RTC time"));
+	puts(_("     --get                       display drift corrected RTC time"));
+	puts(_("     --set                       set the RTC according to --date"));
+	puts(_(" -s, --hctosys                   set the system time from the RTC"));
+	puts(_(" -w, --systohc                   set the RTC from the system time"));
+	puts(_("     --systz                     send timescale configurations to the kernel"));
+	puts(_(" -a, --adjust                    adjust the RTC to account for systematic drift"));
 #if defined(__linux__) && defined(__alpha__)
-	puts(_("     --getepoch       display the RTC epoch"));
-	puts(_("     --setepoch       set the RTC epoch according to --epoch"));
+	puts(_("     --getepoch                  display the RTC epoch"));
+	puts(_("     --setepoch                  set the RTC epoch according to --epoch"));
 #endif
-	puts(_("     --predict        predict the drifted RTC time according to --date"));
+	puts(_("     --predict                   predict the drifted RTC time according to --date"));
 	fputs(USAGE_OPTIONS, stdout);
-	puts(_(" -u, --utc            the RTC timescale is UTC"));
-	puts(_(" -l, --localtime      the RTC timescale is Local"));
+	puts(_(" -u, --utc                       the RTC timescale is UTC"));
+	puts(_(" -l, --localtime                 the RTC timescale is Local"));
 #ifdef __linux__
 	printf(_(
-	       " -f, --rtc <file>     use an alternate file to %1$s\n"), _PATH_RTC_DEV);
+	       " -f, --rtc <file>                use an alternate file to %1$s\n"), _PATH_RTC_DEV);
 #endif
 	printf(_(
-	       "     --directisa      use the ISA bus instead of %1$s access\n"), _PATH_RTC_DEV);
-	puts(_("     --date <time>    date/time input for --set and --predict"));
-	puts(_("     --delay <sec>    delay used when set new RTC time"));
+	       "     --directisa                 use the ISA bus instead of %1$s access\n"), _PATH_RTC_DEV);
+	puts(_("     --date <time>               date/time input for --set and --predict"));
+	puts(_("     --delay <sec>               delay used when set new RTC time"));
 #if defined(__linux__) && defined(__alpha__)
-	puts(_("     --epoch <year>   epoch input for --setepoch"));
+	puts(_("     --epoch <year>              epoch input for --setepoch"));
 #endif
-	puts(_("     --update-drift   update the RTC drift factor"));
+	puts(_("     --update-drift              update the RTC drift factor"));
 	printf(_(
-	       "     --noadjfile      do not use %1$s\n"), _PATH_ADJTIME);
+	       "     --noadjfile                 do not use %1$s\n"), _PATH_ADJTIME);
 	printf(_(
-	       "     --adjfile <file> use an alternate file to %1$s\n"), _PATH_ADJTIME);
-	puts(_("     --test           dry run; implies --verbose"));
-	puts(_(" -v, --verbose        display more details"));
+	       "     --adjfile <file>            use an alternate file to %1$s\n"), _PATH_ADJTIME);
+	puts(_("     --test                      dry run; implies --verbose"));
+	puts(_(" -v, --verbose                   display more details"));
+
 	fputs(USAGE_SEPARATOR, stdout);
-	printf(USAGE_HELP_OPTIONS(22));
+	printf(USAGE_HELP_OPTIONS(33));
+
+	fputs(USAGE_ARGUMENTS, stdout);
+	puts(_(" <param> is either a numeric RTC parameter value or one of these aliases:"));
+
+	while (param->name) {
+		printf(_("   %1$s: %2$s (0x%3$x)\n"), param->name, param->help, param->id);
+		param++;
+	}
+
+	puts(_("   See Kernel's include/uapi/linux/rtc.h for paramters and values."));
+	fputs(USAGE_ARG_SEPARATOR, stdout);
+	puts(_(" <param> and <value> accept hexadecimal values if prefixed with 0x, otherwise decimal."));
+
 	printf(USAGE_MAN_TAIL("hwclock(8)"));
 	exit(EXIT_SUCCESS);
 }
