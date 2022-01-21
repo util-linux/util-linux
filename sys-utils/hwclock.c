@@ -1154,6 +1154,24 @@ manipulate_epoch(const struct hwclock_control *ctl)
 }
 #endif		/* __linux__ __alpha__ */
 
+static int
+manipulate_rtc_param(const struct hwclock_control *ctl)
+{
+	if (ctl->param_get_option) {
+		struct rtc_param param = {};
+
+		if (get_param_rtc(ctl, &param)) {
+			warnx(_("unable to read the RTC parameter 0x%llx."), param.param);
+			return 1;
+		}
+
+		printf(_("The RTC parameter 0x%llx is set to 0x%llx.\n"),
+		       param.param, param.uvalue);
+	}
+
+	return 1;
+}
+
 static void out_version(void)
 {
 	printf(UTIL_LINUX_VERSION);
@@ -1162,6 +1180,8 @@ static void out_version(void)
 static void __attribute__((__noreturn__))
 usage(void)
 {
+	const struct hwclock_param *param = &hwclock_params[0];
+
 	fputs(USAGE_HEADER, stdout);
 	printf(_(" %s [function] [option...]\n"), program_invocation_short_name);
 
@@ -1180,6 +1200,7 @@ usage(void)
 	puts(_("     --getepoch                  display the RTC epoch"));
 	puts(_("     --setepoch                  set the RTC epoch according to --epoch"));
 #endif
+	puts(_("     --param-get <param>         display the RTC parameter"));
 	puts(_("     --predict                   predict the drifted RTC time according to --date"));
 	fputs(USAGE_OPTIONS, stdout);
 	puts(_(" -u, --utc                       the RTC timescale is UTC"));
@@ -1210,13 +1231,13 @@ usage(void)
 	puts(_(" <param> is either a numeric RTC parameter value or one of these aliases:"));
 
 	while (param->name) {
-		printf(_("   %1$s: %2$s (0x%3$x)\n"), param->name, param->help, param->id);
+		printf(_("   - %1$s: %2$s (0x%3$x)\n"), param->name, param->help, param->id);
 		param++;
 	}
 
-	puts(_("   See Kernel's include/uapi/linux/rtc.h for paramters and values."));
+	puts(_("   See Kernel's include/uapi/linux/rtc.h for parameters."));
 	fputs(USAGE_ARG_SEPARATOR, stdout);
-	puts(_(" <param> and <value> accept hexadecimal values if prefixed with 0x, otherwise decimal."));
+	puts(_(" <param> accepts hexadecimal values if prefixed with 0x, otherwise decimal."));
 
 	printf(USAGE_MAN_TAIL("hwclock(8)"));
 	exit(EXIT_SUCCESS);
@@ -1247,6 +1268,7 @@ int main(int argc, char **argv)
 		OPT_GET,
 		OPT_GETEPOCH,
 		OPT_NOADJFILE,
+		OPT_PARAM_GET,
 		OPT_PREDICT,
 		OPT_SET,
 		OPT_SETEPOCH,
@@ -1273,6 +1295,7 @@ int main(int argc, char **argv)
 		{ "setepoch",     no_argument,       NULL, OPT_SETEPOCH   },
 		{ "epoch",        required_argument, NULL, OPT_EPOCH      },
 #endif
+		{ "param-get",    required_argument, NULL, OPT_PARAM_GET  },
 		{ "noadjfile",    no_argument,       NULL, OPT_NOADJFILE  },
 		{ "directisa",    no_argument,       NULL, OPT_DIRECTISA  },
 		{ "test",         no_argument,       NULL, OPT_TEST       },
@@ -1386,6 +1409,10 @@ int main(int argc, char **argv)
 			ctl.epoch_option = optarg;	/* --epoch */
 			break;
 #endif
+		case OPT_PARAM_GET:
+			ctl.param_get_option = optarg;
+			ctl.show = 0;
+			break;
 		case OPT_NOADJFILE:
 			ctl.noadjfile = 1;
 			break;
@@ -1477,6 +1504,13 @@ int main(int argc, char **argv)
 			warnx(_("invalid date '%s'"), ctl.date_opt);
 			exit(EXIT_FAILURE);
 		}
+	}
+
+	if (ctl.param_get_option) {
+		if (manipulate_rtc_param(&ctl))
+			hwclock_exit(&ctl, EXIT_FAILURE);
+
+		hwclock_exit(&ctl, EXIT_SUCCESS);
 	}
 
 #if defined(__linux__) && defined(__alpha__)
