@@ -937,6 +937,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 				pr->fd = fd;
 			}
 		}
+		errno = 0;
 	}
 #endif
 
