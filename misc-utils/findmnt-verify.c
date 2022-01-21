@@ -15,6 +15,7 @@
 #include "strutils.h"
 #include "xalloc.h"
 #include "pathnames.h"
+#include "match.h"
 
 #include "findmnt.h"
 
@@ -284,7 +285,7 @@ static int is_supported_filesystem(struct verify_context *vfy, const char *name)
 		return 0;
 
 	for (n = 0; n < vfy->fs_num; n++ ) {
-		if (strcmp(vfy->fs_ary[n], name) == 0)
+		if (match_fstype(vfy->fs_ary[n], name))
 			return 1;
 	}
 
