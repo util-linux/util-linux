@@ -509,3 +509,63 @@ int get_param_rtc(const struct hwclock_control *ctl, struct rtc_param *param)
 
 	return 0;
 }
+
+/*
+ * Set the Hardware Clock parameter in the kernel.
+ */
+int set_param_rtc(const struct hwclock_control *ctl)
+{
+	char *tok = NULL, *end = NULL;
+	int rtc_fd, base;
+	struct rtc_param param;
+
+	memset(&param, 0, sizeof(param));
+
+	/* handle name */
+	tok = strtok(ctl->param_set_option, "=");
+	if (resolve_rtc_param_alias(tok, &param.param)) {
+		base = strncmp(tok, "0x", 2) ? 10 : 16;
+
+		errno = 0;
+		param.param = strtoull(tok, &end, base);
+		if (errno || !end || *end) {
+			warnx(_("could not convert parameter name to number"));
+			return 1;
+		}
+	}
+
+	/* handle value */
+	tok = strtok(NULL, "=");
+	if (!tok) {
+		warnx(_("expected <param>=<value>"));
+		return 1;
+	}
+
+	base = strncmp(tok, "0x", 2) ? 10 : 16;
+	end = NULL;
+	errno = 0;
+	param.uvalue = strtoull(tok, &end, base);
+	if (errno || !end || *end) {
+		warnx(_("could not convert parameter value to number"));
+		return 1;
+	}
+
+	/* set parameter */
+	rtc_fd = open_rtc(ctl);
+	if (rtc_fd < 0) {
+		warnx(_("cannot open %s"), rtc_dev_name);
+		return 1;
+	}
+
+	if (ioctl(rtc_fd, RTC_PARAM_SET, &param) == -1) {
+		warn(_("ioctl(%d, RTC_PARAM_SET, param) to %s failed"),
+		     rtc_fd, rtc_dev_name);
+		return 1;
+	}
+
+	if (ctl->verbose)
+		printf(_("ioctl(%d, RTC_PARAM_SET, param) to %s succeeded.\n"),
+		       rtc_fd, rtc_dev_name);
+
+	return 0;
+}
