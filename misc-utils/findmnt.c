@@ -119,7 +119,7 @@ static struct colinfo infos[] = {
 	[COL_PASSNO]       = { "PASSNO",          1, SCOLS_FL_RIGHT, N_("pass number on parallel fsck(8) [fstab only]") },
 	[COL_PROPAGATION]  = { "PROPAGATION",  0.10, 0, N_("VFS propagation flags") },
 	[COL_SIZE]         = { "SIZE",            5, SCOLS_FL_RIGHT, N_("filesystem size") },
-	[COL_SOURCES]      = { "SOURCES",      0.25, SCOLS_FL_WRAP, N_("all possible source devices [fstab only]") },
+	[COL_SOURCES]      = { "SOURCES",      0.25, SCOLS_FL_WRAP, N_("all possible source devices") },
 	[COL_SOURCE]       = { "SOURCE",       0.25, SCOLS_FL_NOEXTREMES, N_("source device") },
 	[COL_TARGET]       = { "TARGET",       0.30, SCOLS_FL_TREE| SCOLS_FL_NOEXTREMES, N_("mountpoint") },
 	[COL_TID]          = { "TID",             4, SCOLS_FL_RIGHT, N_("task ID") },
@@ -158,6 +158,7 @@ unsigned int flags;
 int parse_nerrors;
 struct libmnt_cache *cache;
 
+static blkid_cache blk_cache;
 
 #ifdef HAVE_LIBUDEV
 static struct udev *udev;
@@ -508,45 +509,90 @@ static char *get_vfs_attr(struct libmnt_fs *fs, int sizetype)
 	return sizestr;
 }
 
+/* reads sources from libmount/libblkid
+ */
+static char *get_data_col_sources(struct libmnt_fs *fs, int evaluate)
+{
+	const char *tag = NULL, *p = NULL;
+	int i = 0;
+	const char *device = NULL;
+	char *val = NULL;
+	blkid_dev_iterate iter;
+	blkid_dev dev;
+	struct ul_buffer buf = UL_INIT_BUFFER;
+
+	/* get TAG from libmount if avalable (e.g. fstab) */
+	if (mnt_fs_get_tag(fs, &tag, &p) == 0) {
+
+		/* if device is in the form 'UUID=..' or 'LABEL=..' and evaluate==0
+		 * then it is ok to do not search for multiple devices
+		 */
+		if (!evaluate)
+			goto nothing;
+		val = xstrdup(p);
+	}
+
+	/* or get device name */
+	else if (!(device = mnt_fs_get_srcpath(fs))
+		 || strncmp(device, "/dev/", 5) != 0)
+		goto nothing;
+
+	if (!blk_cache) {
+		if (blkid_get_cache(&blk_cache, NULL) != 0)
+			goto nothing;
+		blkid_probe_all(blk_cache);
+	}
+
+	/* ask libblkid for the UUID */
+	if (!val) {
+		assert(device);
+
+		tag = "UUID";
+		val = blkid_get_tag_value(blk_cache, "UUID", device);	/* returns allocated string */
+		if (!val)
+			goto nothing;
+	}
+
+	assert(val);
+	assert(tag);
+
+	/* scan all devices for the TAG */
+	iter = blkid_dev_iterate_begin(blk_cache);
+	blkid_dev_set_search(iter, tag, val);
+
+	while (blkid_dev_next(iter, &dev) == 0) {
+		dev = blkid_verify(blk_cache, dev);
+		if (!dev)
+			continue;
+		if (i != 0)
+			ul_buffer_append_data(&buf, "\n", 1);
+		ul_buffer_append_string(&buf, blkid_dev_devname(dev));
+		i++;
+	}
+	blkid_dev_iterate_end(iter);
+	free(val);
+
+	return ul_buffer_get_data(&buf, NULL, NULL);
+
+nothing:
+	free(val);
+	return NULL;
+}
+
 /* reads FS data from libmount
  */
 static char *get_data(struct libmnt_fs *fs, int num)
 {
 	char *str = NULL;
-	const char *t = NULL, *v = NULL;
 	int col_id = get_column_id(num);
 
 	switch (col_id) {
 	case COL_SOURCES:
 		/* print all devices with the same tag (LABEL, UUID) */
-		if ((flags & FL_EVALUATE) &&
-		    mnt_fs_get_tag(fs, &t, &v) == 0) {
-			blkid_dev_iterate iter;
-			blkid_dev dev;
-			blkid_cache cache = NULL;
-			struct ul_buffer buf = UL_INIT_BUFFER;
-			int i = 0;
-
-			if (blkid_get_cache(&cache, NULL) < 0)
-				break;
-
-			blkid_probe_all(cache);
-
-			iter = blkid_dev_iterate_begin(cache);
-			blkid_dev_set_search(iter, t, v);
-			while (blkid_dev_next(iter, &dev) == 0) {
-				dev = blkid_verify(cache, dev);
-				if (!dev)
-					continue;
-				if (i != 0)
-					ul_buffer_append_data(&buf, "\n", 1);
-				ul_buffer_append_string(&buf, blkid_dev_devname(dev));
-				i++;
-			}
-			blkid_dev_iterate_end(iter);
-			str = ul_buffer_get_data(&buf, NULL, NULL);
+		str = get_data_col_sources(fs, flags & FL_EVALUATE);
+		if (str)
 			break;
-		}
+
 		/* fallthrough */
 	case COL_SOURCE:
 	{
