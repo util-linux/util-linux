@@ -71,7 +71,8 @@ Show status summary.
 These affect only the *-l* (*--limits*) option.
 
 *-b*, *--bytes*::
-Print sizes in bytes.
+include::man-common/in-bytes.adoc[]
+
 
 *--human*::
 Print sizes in human-readable format.

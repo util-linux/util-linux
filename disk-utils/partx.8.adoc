@@ -43,7 +43,7 @@ This will see sda3 as a whole-disk rather than as a partition.
 Add the specified partitions, or read the disk and add all partitions.
 
 *-b*, *--bytes*::
-Print the SIZE column in bytes rather than in human-readable format.
+include::man-common/in-bytes.adoc[]
 
 *-d*, *--delete*::
 Delete the specified partitions or all partitions. It is not error to remove non-existing partitions, so this option is possible to use together with large *--nr* ranges without care about the current partitions set on the device.
