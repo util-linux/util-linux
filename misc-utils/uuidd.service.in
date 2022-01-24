@@ -8,7 +8,6 @@ ExecStart=@usrsbin_execdir@/uuidd --socket-activation
 Restart=no
 User=uuidd
 Group=uuidd
-ProtectSystem=strict
 ProtectHome=yes
 PrivateDevices=yes
 PrivateNetwork=yes
