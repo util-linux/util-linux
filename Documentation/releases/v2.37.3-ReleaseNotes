@@ -1,0 +1,13 @@
+util-linux 2.37.3 Release Notes
+===============================
+
+This release fixes two security mount(8) and umount(8) issues:
+
+CVE-2021-3996
+    Improper UID check in libmount allows an unprivileged user to unmount FUSE
+    filesystems of users with similar UID.
+
+CVE-2021-3995
+    This issue is related to parsing the /proc/self/mountinfo file allows an
+    unprivileged user to unmount other user's filesystems that are either
+    world-writable themselves or mounted in a world-writable directory.
