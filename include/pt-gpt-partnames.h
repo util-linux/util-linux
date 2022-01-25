@@ -133,11 +133,16 @@ DEF_GUID("6A96237F-1DD2-11B2-99A6-080020736631", N_("Solaris reserved 4")),
 DEF_GUID("6A8D2AC7-1DD2-11B2-99A6-080020736631", N_("Solaris reserved 5")),
 
 /* NetBSD */
+/* References:
+ *    Current: https://ftp.netbsd.org/pub/NetBSD/NetBSD-current/src/sys/sys/disklabel_gpt.h
+ *  Release 9: https://ftp.netbsd.org/pub/NetBSD/NetBSD-release-9/src/sys/sys/disklabel_gpt.h
+ * Latest CVS: http://cvsweb.netbsd.org/bsdweb.cgi/src/sys/sys/disklabel_gpt.h?rev=.&content-type=text/x-cvsweb-markup
+ */
 DEF_GUID("49F48D32-B10E-11DC-B99B-0019D1879648", N_("NetBSD swap")),
 DEF_GUID("49F48D5A-B10E-11DC-B99B-0019D1879648", N_("NetBSD FFS")),
 DEF_GUID("49F48D82-B10E-11DC-B99B-0019D1879648", N_("NetBSD LFS")),
-DEF_GUID("2DB519C4-B10E-11DC-B99B-0019D1879648", N_("NetBSD concatenated")),
-DEF_GUID("2DB519EC-B10E-11DC-B99B-0019D1879648", N_("NetBSD encrypted")),
+DEF_GUID("2DB519C4-B10F-11DC-B99B-0019D1879648", N_("NetBSD concatenated")),
+DEF_GUID("2DB519EC-B10F-11DC-B99B-0019D1879648", N_("NetBSD encrypted")),
 DEF_GUID("49F48DAA-B10E-11DC-B99B-0019D1879648", N_("NetBSD RAID")),
 
 /* ChromeOS */
