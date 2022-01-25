@@ -8,6 +8,7 @@ ExecStart=@usrsbin_execdir@/uuidd --socket-activation
 Restart=no
 User=uuidd
 Group=uuidd
+ProtectSystem=strict
 ProtectHome=yes
 PrivateDevices=yes
 PrivateNetwork=yes
@@ -17,6 +18,7 @@ ProtectKernelModules=yes
 ProtectControlGroups=yes
 RestrictAddressFamilies=AF_UNIX
 MemoryDenyWriteExecute=yes
+ReadWritePaths=/var/lib/libuuid/
 SystemCallFilter=@default @file-system @basic-io @system-service @signal @io-event @network-io
 
 [Install]
