@@ -409,10 +409,10 @@ static int log_start(struct script_control *ctl,
 			if (ctl->ttyname)
 				x += fprintf(log->fp, "%*sTTY=\"%s\"", !!x, "", ctl->ttyname);
 
-			fprintf(log->fp, "%*sCOLUMNS=\"%d\" LINES=\"%d\"", !!x, "",
+			x += fprintf(log->fp, "%*sCOLUMNS=\"%d\" LINES=\"%d\"", !!x, "",
 					ctl->ttycols, ctl->ttylines);
 		} else
-			fprintf(log->fp, _("<not executed on terminal>"));
+			fprintf(log->fp, _("%*s<not executed on terminal>"), !!x, "");
 
 		fputs("]\n", log->fp);
 		break;
