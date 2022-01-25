@@ -132,6 +132,7 @@ struct script_control {
 	const char *ttyname;
 	const char *ttytype;
 	const char *command;
+	char *command_norm;	/* normalized (without \n) */
 	int ttycols;
 	int ttylines;
 
@@ -398,7 +399,7 @@ static int log_start(struct script_control *ctl,
 		fprintf(log->fp, _("Script started on %s ["), buf);
 
 		if (ctl->command)
-			x += fprintf(log->fp, "COMMAND=\"%s\"", ctl->command);
+			x += fprintf(log->fp, "COMMAND=\"%s\"", ctl->command_norm);
 
 		if (ctl->isterm) {
 			init_terminal_info(ctl);
@@ -818,6 +819,8 @@ int main(int argc, char **argv)
 			break;
 		case 'c':
 			ctl.command = optarg;
+			ctl.command_norm = xstrdup(ctl.command);
+			strrep(ctl.command_norm, '\n', ' ');
 			break;
 		case 'E':
 			if (strcmp(optarg, "auto") == 0)
@@ -1017,7 +1020,7 @@ int main(int argc, char **argv)
 		}
 		log_info(&ctl, "SHELL", "%s", shell);
 		if (ctl.command)
-			log_info(&ctl, "COMMAND", "%s", ctl.command);
+			log_info(&ctl, "COMMAND", "%s", ctl.command_norm);
 		log_info(&ctl, "TIMING_LOG", "%s", timingfile);
 		if (outfile)
 			log_info(&ctl, "OUTPUT_LOG", "%s", outfile);
