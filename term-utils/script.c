@@ -408,10 +408,9 @@ static int log_start(struct script_control *ctl,
 		} else
 			fprintf(log->fp, _("<not executed on terminal>"));
 
-		fputs("]\n", log->fp);
-
 		if (ctl->command)
-			fprintf(log->fp, "%s\n", ctl->command);
+			fprintf(log->fp, "COMMAND=\"%s\" ", ctl->command);
+		fputs("]\n", log->fp);
 		break;
 	}
 	case SCRIPT_FMT_TIMING_SIMPLE:
