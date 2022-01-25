@@ -399,6 +399,7 @@ extern const struct libmnt_optmap *mnt_optmap_get_entry(
 			     const struct libmnt_optmap **mapent);
 
 /* optstr.c */
+extern int mnt_optstr_get_uid(const char *optstr, const char *name, uid_t *uid);
 extern int mnt_optstr_remove_option_at(char **optstr, char *begin, char *end);
 extern int mnt_optstr_fix_gid(char **optstr, char *value, size_t valsz, char **next);
 extern int mnt_optstr_fix_uid(char **optstr, char *value, size_t valsz, char **next);

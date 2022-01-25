@@ -103,6 +103,9 @@
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
 #endif
+#ifdef HAVE_LINUX_FD_H
+#include <linux/fd.h>
+#endif
 #include <inttypes.h>
 #include <stdint.h>
 #include <stdarg.h>
@@ -113,6 +116,7 @@
 #include "sysfs.h"
 #include "strutils.h"
 #include "list.h"
+#include "fileutils.h"
 
 /*
  * All supported chains
@@ -876,9 +880,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	struct stat sb;
 	uint64_t devsiz = 0;
 	char *dm_uuid = NULL;
-#ifdef CDROM_GET_CAPABILITY
-	long last_written = 0;
-#endif
+	int is_floppy = 0;
 
 	blkid_reset_probe(pr);
 	blkid_probe_reset_buffers(pr);
@@ -909,6 +911,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 
 	if (fd < 0)
 		return 1;
+
 
 #if defined(POSIX_FADV_RANDOM) && defined(HAVE_POSIX_FADVISE)
 	/* Disable read-ahead */
@@ -959,7 +962,38 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	if (pr->size <= 1440 * 1024 && !S_ISCHR(sb.st_mode))
 		pr->flags |= BLKID_FL_TINY_DEV;
 
+#ifdef FDGETFDCSTAT
+	if (S_ISBLK(sb.st_mode)) {
+		/*
+		 * Re-open without O_NONBLOCK for floppy device.
+		 *
+		 * Since kernel commit c7e9d0020361f4308a70cdfd6d5335e273eb8717
+		 * floppy drive works bad when opened with O_NONBLOCK.
+		 */
+		struct floppy_fdc_state flst;
+
+		if (ioctl(fd, FDGETFDCSTAT, &flst) >= 0) {
+			int flags = fcntl(fd, F_GETFL, 0);
+
+			if (flags < 0)
+				goto err;
+			if (flags & O_NONBLOCK) {
+				flags &= ~O_NONBLOCK;
+
+				fd = ul_reopen(fd, flags | O_CLOEXEC);
+				if (fd < 0)
+					goto err;
+
+				pr->flags |= BLKID_FL_PRIVATE_FD;
+				pr->fd = fd;
+			}
+			is_floppy = 1;
+		}
+		errno = 0;
+	}
+#endif
 	if (S_ISBLK(sb.st_mode) &&
+	    !is_floppy &&
 	    sysfs_devno_is_dm_private(sb.st_rdev, &dm_uuid)) {
 		DBG(LOWPROBE, ul_debug("ignore private device mapper device"));
 		pr->flags |= BLKID_FL_NOSCAN_DEV;
@@ -969,7 +1003,10 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	else if (S_ISBLK(sb.st_mode) &&
 	    !blkid_probe_is_tiny(pr) &&
 	    !dm_uuid &&
+	    !is_floppy &&
 	    blkid_probe_is_wholedisk(pr)) {
+
+		long last_written = 0;
 
 		/*
 		 * pktcdvd.ko accepts only these ioctls:
@@ -1018,7 +1055,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	free(dm_uuid);
 
 # ifdef BLKGETZONESZ
-	if (S_ISBLK(sb.st_mode)) {
+	if (S_ISBLK(sb.st_mode) && !is_floppy) {
 		uint32_t zone_size_sector;
 
 		if (!ioctl(pr->fd, BLKGETZONESZ, &zone_size_sector))

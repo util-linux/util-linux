@@ -34,7 +34,7 @@ Note that lslocks also lists OFD (Open File Description) locks, these locks are 
 == OPTIONS
 
 *-b*, *--bytes*::
-Print the SIZE column in bytes rather than in a human-readable format.
+include::man-common/in-bytes.adoc[]
 
 *-i*, *--noinaccessible*::
 Ignore lock files which are inaccessible for the current user.

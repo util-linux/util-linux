@@ -34,7 +34,7 @@ The cache sizes are reported as summary from all CPUs. The versions before v2.34
 Include lines for online and offline CPUs in the output (default for *-e*). This option may only be specified together with option *-e* or *-p*.
 
 *-B*, *--bytes*::
-Print the sizes in bytes rather than in a human-readable format.
+include::man-common/in-bytes.adoc[]
 
 *-b*, *--online*::
 Limit the output to online CPUs (default for *-p*). This option may only be specified together with option *-e* or *-p*.

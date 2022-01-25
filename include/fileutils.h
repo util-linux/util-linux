@@ -97,4 +97,7 @@ extern void ul_close_all_fds(unsigned int first, unsigned int last);
 #define UL_COPY_WRITE_ERROR (-2)
 int ul_copy_file(int from, int to);
 
+
+extern int ul_reopen(int fd, int flags);
+
 #endif /* UTIL_LINUX_FILEUTILS */

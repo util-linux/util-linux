@@ -38,7 +38,7 @@ Disable all built-in filters and print all filesystems.
 Use ascii characters for tree formatting.
 
 *-b*, *--bytes*::
-Print the SIZE, USED and AVAIL columns in bytes rather than in a human-readable format.
+include::man-common/in-bytes.adoc[]
 
 *-C*, *--nocanonicalize*::
 Do not canonicalize paths at all. This option affects the comparing of paths and the evaluation of tags (LABEL, UUID, etc.).

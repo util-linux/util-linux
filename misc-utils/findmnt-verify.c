@@ -15,6 +15,7 @@
 #include "strutils.h"
 #include "xalloc.h"
 #include "pathnames.h"
+#include "match.h"
 
 #include "findmnt.h"
 
@@ -284,7 +285,7 @@ static int is_supported_filesystem(struct verify_context *vfy, const char *name)
 		return 0;
 
 	for (n = 0; n < vfy->fs_num; n++ ) {
-		if (strcmp(vfy->fs_ary[n], name) == 0)
+		if (match_fstype(vfy->fs_ary[n], name))
 			return 1;
 	}
 
@@ -437,25 +438,30 @@ static int verify_fstype(struct verify_context *vfy)
 			isauto = 1;
 		else if (strcmp(type, "swap") == 0)
 			isswap = 1;
-		else if (strcmp(type, "xfs") == 0)
+		else if (strcmp(type, "xfs") == 0 || strcmp(type, "btrfs") == 0)
 			vfy->no_fsck = 1;
 
 		if (!isswap && !isauto && !none && !is_supported_filesystem(vfy, type))
 			verify_warn(vfy, _("%s seems unsupported by the current kernel"), type);
 	}
+
+	errno = 0;
 	realtype = mnt_get_fstype(src, &ambi, cache);
 
 	if (!realtype) {
+		const char *reson = errno ? strerror(errno) : _("reason uknown");
+
 		if (isauto)
-			verify_err(vfy, _("cannot detect on-disk filesystem type"));
+			verify_err(vfy, _("cannot detect on-disk filesystem type (%s)"), reson);
 		else
-			verify_warn(vfy, _("cannot detect on-disk filesystem type"));
+			verify_warn(vfy, _("cannot detect on-disk filesystem type (%s)"), reson);
 		goto done;
 	}
 
 	if (realtype) {
 		isswap = strcmp(realtype, "swap") == 0;
-		vfy->no_fsck = strcmp(realtype, "xfs") == 0;
+		vfy->no_fsck = strcmp(realtype, "xfs") == 0
+				|| strcmp(realtype, "btrfs") == 0;
 
 		if (type && !isauto && strcmp(type, realtype) != 0) {
 			verify_err(vfy, _("%s does not match with on-disk %s"), type, realtype);

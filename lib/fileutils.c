@@ -288,3 +288,22 @@ int ul_copy_file(int from, int to)
 	return copy_file_simple(from, to);
 #endif
 }
+
+int ul_reopen(int fd, int flags)
+{
+	ssize_t ssz;
+	char buf[PATH_MAX];
+	char fdpath[ sizeof(_PATH_PROC_FDDIR) + sizeof(stringify_value(INT_MAX)) ];
+
+	snprintf(fdpath, sizeof(fdpath), _PATH_PROC_FDDIR "/%d", fd);
+
+	ssz = readlink(fdpath, buf, sizeof(buf) - 1);
+	if (ssz < 0)
+		return -errno;
+
+	assert(ssz > 0);
+
+	buf[ssz] = '\0';
+
+	return open(buf, flags);
+}

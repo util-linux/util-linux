@@ -34,7 +34,7 @@ Use the *--help* option to see the columns description.
 List each individual memory block, instead of combining memory blocks with similar attributes.
 
 *-b*, *--bytes*::
-Print the SIZE column in bytes rather than in a human-readable format.
+include::man-common/in-bytes.adoc[]
 
 *-h*, *--help*::
 Display help text and exit.

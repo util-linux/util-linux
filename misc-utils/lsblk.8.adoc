@@ -35,7 +35,7 @@ Don't print empty devices.
 Disable all built-in filters and list all empty devices and RAM disk devices too.
 
 *-b*, *--bytes*::
-Print the SIZE column in bytes rather than in a human-readable format.
+include::man-common/in-bytes.adoc[]
 
 *-D*, *--discard*::
 Print information about the discarding capabilities (TRIM, UNMAP) for each device.
