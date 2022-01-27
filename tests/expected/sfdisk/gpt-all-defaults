@@ -25,7 +25,7 @@ Device             Start    End Sectors Size Type
 <removed>2  12288  22527   10240   5M Linux filesystem
 <removed>3  22528  32767   10240   5M Linux swap
 <removed>4  32768  43007   10240   5M Linux root (x86-64)
-<removed>5  43008 102366   59359  29M Linux filesystem
+<removed>5  43008 100351   57344  28M Linux filesystem
 
 The partition table has been altered.
 Calling ioctl() to re-read partition table.

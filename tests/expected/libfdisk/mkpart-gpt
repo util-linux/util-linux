@@ -20,4 +20,4 @@ Device             Start   End Sectors Size Type
 <removed>4  8192 10239    2048   1M Linux filesystem
 <removed>5 10240 12287    2048   1M Linux filesystem
 <removed>6 12288 14335    2048   1M Linux filesystem
-<removed>7 14336 30686   16351   8M Linux filesystem
+<removed>7 14336 28671   14336   7M Linux filesystem

@@ -18,7 +18,7 @@ Disk identifier: <removed>
 
 Device             Start   End Sectors Size Type
 <removed>1  2048 12287   10240   5M Linux filesystem
-<removed>2 12288 20446    8159   4M Linux filesystem
+<removed>2 12288 18431    6144   3M Linux filesystem
 
 The partition table has been altered.
 Syncing disks.

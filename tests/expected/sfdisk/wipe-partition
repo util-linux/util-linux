@@ -15,7 +15,7 @@ Disklabel type: gpt
 Disk identifier: <removed>
 
 Device             Start    End Sectors Size Type
-<removed>1   2048 102366  100319  49M Linux filesystem
+<removed>1   2048 100351   98304  48M Linux filesystem
 
 The partition table has been altered.
 Calling ioctl() to re-read partition table.
@@ -42,7 +42,7 @@ Disklabel type: gpt
 Disk identifier: <removed>
 
 Device             Start    End Sectors Size Type
-<removed>1   2048 102366  100319  49M Linux filesystem
+<removed>1   2048 100351   98304  48M Linux filesystem
 
 Filesystem/RAID signature on partition 1 will be wiped.
 

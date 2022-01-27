@@ -12,7 +12,7 @@ Disklabel type: gpt
 Disk identifier: <removed>
 
 Device             Start   End Sectors Size Type
-<removed>p1  2048 20446   18399   9M Linux filesystem
+<removed>p1  2048 18431   16384   8M Linux filesystem
 
 The partition table has been altered.
 ----- fixing after resize: -----
@@ -22,7 +22,7 @@ Changes will remain in memory only, until you decide to write them.
 Be careful before using the write command.
 
 
-Command (m for help): Partition number (2-128, default 2): First sector (20447-40926, default 20480): Last sector, +/-sectors or +/-size{K,M,G,T,P} (20480-40926, default 40926): 
+Command (m for help): Partition number (2-128, default 2): First sector (18432-40926, default 18432): Last sector, +/-sectors or +/-size{K,M,G,T,P} (18432-40926, default 38911): 
 Created a new partition <removed>.
 
 Command (m for help): The partition table has been altered.
@@ -39,5 +39,5 @@ Disklabel type: gpt
 Disk identifier: <removed>
 
 Device             Start   End Sectors Size Type
-<removed>p1  2048 20446   18399   9M Linux filesystem
-<removed>p2 20480 40926   20447  10M Linux filesystem
+<removed>p1  2048 18431   16384   8M Linux filesystem
+<removed>p2 18432 38911   20480  10M Linux filesystem

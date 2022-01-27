@@ -2346,7 +2346,7 @@ static int gpt_add_partition(
 {
 	uint64_t user_f, user_l;	/* user input ranges for first and last sectors */
 	uint64_t disk_f, disk_l;	/* first and last available sector ranges on device*/
-	uint64_t dflt_f, dflt_l;	/* largest segment (default) */
+	uint64_t dflt_f, dflt_l, max_l;	/* largest segment (default) */
 	struct gpt_guid typeid;
 	struct fdisk_gpt_label *gpt;
 	struct gpt_header *pheader;
@@ -2474,15 +2474,23 @@ static int gpt_add_partition(
 
 
 	/* Last sector */
-	dflt_l = find_last_free(gpt, user_f);
+	dflt_l = max_l = find_last_free(gpt, user_f);
+
+	/* Make sure the last partition has aligned size by default because
+	 * range specified by LastUsableLBA may be unaligned on disks where
+	 * logical sector != physical (512/4K) because backup header size is
+	 * calculated from logical sectors. */
+	if (max_l == le64_to_cpu(gpt->pheader->last_usable_lba))
+		dflt_l = fdisk_align_lba_in_range(cxt, max_l, user_f, max_l) - 1;
 
 	if (pa && pa->end_follow_default) {
 		user_l = dflt_l;
 
 	} else if (pa && fdisk_partition_has_size(pa)) {
 		user_l = user_f + pa->size - 1;
-		DBG(GPT, ul_debug("size defined: %ju, end: %"PRIu64" (last possible: %"PRIu64")",
-					 (uintmax_t)pa->size, user_l, dflt_l));
+		DBG(GPT, ul_debug("size defined: %ju, end: %"PRIu64
+				  "(last possible: %"PRIu64", optimal: %"PRIu64")",
+				(uintmax_t)pa->size, user_l, max_l, dflt_l));
 
 		if (user_l != dflt_l
 		    && !pa->size_explicit
@@ -2506,7 +2514,7 @@ static int gpt_add_partition(
 			fdisk_ask_set_type(ask, FDISK_ASKTYPE_OFFSET);
 			fdisk_ask_number_set_low(ask,     user_f);	/* minimal */
 			fdisk_ask_number_set_default(ask, dflt_l);	/* default */
-			fdisk_ask_number_set_high(ask,    dflt_l);	/* maximal */
+			fdisk_ask_number_set_high(ask,    max_l);	/* maximal */
 			fdisk_ask_number_set_base(ask,    user_f);	/* base for relative input */
 			fdisk_ask_number_set_unit(ask,    cxt->sector_size);
 			fdisk_ask_number_set_wrap_negative(ask, 1);	/* wrap negative around high */

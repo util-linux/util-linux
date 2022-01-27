@@ -22,7 +22,7 @@ Disklabel type: gpt
 Disk identifier: <removed>
 
 Device             Start    End Sectors Size Type
-<removed>1   2048 102366  100319  49M Linux filesystem
+<removed>1   2048 100351   98304  48M Linux filesystem
 
 The partition table has been altered.
 
@@ -38,7 +38,7 @@ Disk identifier: <removed>
 Old situation:
 
 Device             Start    End Sectors Size Type
-<removed>1   2048 102366  100319  49M Linux filesystem
+<removed>1   2048 100351   98304  48M Linux filesystem
 
 >>> Created a new disklabel.
 <removed>1: Created a new partition <removed>.
