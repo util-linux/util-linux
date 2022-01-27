@@ -2297,7 +2297,7 @@ static int gpt_verify_disklabel(struct fdisk_context *cxt)
 			   P_("A total of %ju free sectors is available in %u segment.",
 			      "A total of %ju free sectors is available in %u segments "
 			      "(the largest is %s).", nsegments),
-			   free_sectors, nsegments, strsz);
+			   free_sectors, nsegments, strsz ? : "0 B");
 		free(strsz);
 
 	} else
@@ -2427,6 +2427,14 @@ static int gpt_add_partition(
 	/* the default is the largest free space */
 	dflt_f = find_first_in_largest(gpt);
 	dflt_l = find_last_free(gpt, dflt_f);
+
+	/* don't offer too small free space by default, this is possible to
+	 * bypass by sfdisk script */
+	if ((!pa || !fdisk_partition_has_start(pa))
+	    && dflt_l - dflt_f + 1 < cxt->grain / cxt->sector_size) {
+		fdisk_warnx(cxt, _("No enough free sectors available."));
+		return -ENOSPC;
+	}
 
 	/* align the default in range <dflt_f,dflt_l>*/
 	dflt_f = fdisk_align_lba_in_range(cxt, dflt_f, dflt_f, dflt_l);
