@@ -1493,7 +1493,7 @@ int main(int argc, char *argv[])
 			break;
 		case FINDMNT_OPT_OUTPUT_ALL:
 			ncolumns = 0;
-			for (int i = 0; i < ARRAY_SIZE(infos); i++) {
+			for (i = 0; i < ARRAY_SIZE(infos); i++) {
 				if (is_tabdiff_column(i))
 					continue;
 				columns[ncolumns++] = i;
