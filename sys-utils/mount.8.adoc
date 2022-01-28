@@ -234,7 +234,7 @@ ____
 
 Note that a read-only bind will create a read-only mountpoint (VFS entry), but the original filesystem superblock will still be writable, meaning that the _olddir_ will be writable, but the _newdir_ will be read-only.
 
-It's also possible to change nosuid, nodev, noexec, noatime, nodiratime and relatime VFS entry flags via a "remount,bind" operation. The other flags (for example filesystem-specific flags) are silently ignored. It's impossible to change mount options recursively (for example with *-o rbind,ro*).
+It's also possible to change nosuid, nodev, noexec, noatime, nodiratime, relatime and nosymfollow VFS entry flags via a "remount,bind" operation. The other flags (for example filesystem-specific flags) are silently ignored. It's impossible to change mount options recursively (for example with *-o rbind,ro*).
 
 Since util-linux 2.31, *mount* ignores the *bind* flag from _/etc/fstab_ on a *remount* operation (if "-o remount" is specified on command line). This is necessary to fully control mount options on remount by command line. In previous versions the bind flag has been always applied and it was impossible to re-define mount options without interaction with the bind semantic. This *mount* behavior does not affect situations when "remount,bind" is specified in the _/etc/fstab_ file.
 
