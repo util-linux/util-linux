@@ -1492,10 +1492,11 @@ int main(int argc, char *argv[])
 			outarg = optarg;
 			break;
 		case FINDMNT_OPT_OUTPUT_ALL:
-			for (ncolumns = 0; ncolumns < ARRAY_SIZE(infos); ncolumns++) {
-				if (is_tabdiff_column(ncolumns))
+			ncolumns = 0;
+			for (int i = 0; i < ARRAY_SIZE(infos); i++) {
+				if (is_tabdiff_column(i))
 					continue;
-				columns[ncolumns] = ncolumns;
+				columns[ncolumns++] = i;
 			}
 			break;
 		case 'O':
