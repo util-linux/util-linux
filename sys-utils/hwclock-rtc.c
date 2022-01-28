@@ -86,6 +86,19 @@ struct linux_rtc_time {
 # define RTC_EPOCH_SET	_IOW('p', 0x0e, unsigned long)	/* Set epoch */
 #endif
 
+static const struct hwclock_param hwclock_params[] =
+{
+	{ RTC_PARAM_FEATURES,  "features", N_("supported features") },
+	{ RTC_PARAM_CORRECTION, "correction", N_("time correction") },
+	{ RTC_PARAM_BACKUP_SWITCH_MODE, "bsm", N_("backup switch mode") },
+	{ }
+};
+
+const struct hwclock_param *get_hwclock_params(void)
+{
+	return hwclock_params;
+}
+
 /*
  * /dev/rtc is conventionally chardev 10/135
  * ia64 uses /dev/efirtc, chardev 10/136
@@ -453,6 +466,8 @@ int set_epoch_rtc(const struct hwclock_control *ctl)
 	return 0;
 }
 #endif	/* __alpha__ */
+
+
 
 static int resolve_rtc_param_alias(const char *alias, uint64_t *value)
 {

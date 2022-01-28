@@ -101,13 +101,7 @@ struct hwclock_param {
 	const char *help;
 };
 
-static struct hwclock_param hwclock_params[] = {
-	{ RTC_PARAM_FEATURES,  "features", N_("supported features") },
-	{ RTC_PARAM_CORRECTION, "correction", N_("time correction") },
-	{ RTC_PARAM_BACKUP_SWITCH_MODE, "bsm", N_("backup switch mode") },
-	{ }
-};
-
+extern const struct hwclock_param *get_hwclock_params(void);
 extern int get_param_rtc(const struct hwclock_control *ctl, struct rtc_param *param);
 extern int set_param_rtc(const struct hwclock_control *ctl);
 

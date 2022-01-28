@@ -1161,12 +1161,13 @@ manipulate_rtc_param(const struct hwclock_control *ctl)
 		struct rtc_param param = {};
 
 		if (get_param_rtc(ctl, &param)) {
-			warnx(_("unable to read the RTC parameter 0x%llx."), param.param);
+			warnx(_("unable to read the RTC parameter 0x%jx."),
+					(uintmax_t) param.param);
 			return 1;
 		}
 
-		printf(_("The RTC parameter 0x%llx is set to 0x%llx.\n"),
-		       param.param, param.uvalue);
+		printf(_("The RTC parameter 0x%jx is set to 0x%jx.\n"),
+		       (uintmax_t) param.param, (uintmax_t) param.uvalue);
 
 	} else if (ctl->param_set_option) {
 		if (ctl->testing)
@@ -1186,7 +1187,7 @@ static void out_version(void)
 static void __attribute__((__noreturn__))
 usage(void)
 {
-	const struct hwclock_param *param = &hwclock_params[0];
+	const struct hwclock_param *param = get_hwclock_params();
 
 	fputs(USAGE_HEADER, stdout);
 	printf(_(" %s [function] [option...]\n"), program_invocation_short_name);
