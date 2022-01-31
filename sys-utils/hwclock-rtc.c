@@ -15,6 +15,8 @@
 #include <unistd.h>
 
 #include "monotonic.h"
+#include "strutils.h"
+#include "xalloc.h"
 #include "nls.h"
 
 #include "hwclock.h"
@@ -85,6 +87,39 @@ struct linux_rtc_time {
 # define RTC_EPOCH_READ	_IOR('p', 0x0d, unsigned long)	/* Read epoch */
 # define RTC_EPOCH_SET	_IOW('p', 0x0e, unsigned long)	/* Set epoch */
 #endif
+
+#ifndef RTC_PARAM_GET
+struct rtc_param {
+	uint64_t param;
+	union {
+		uint64_t uvalue;
+		int64_t svalue;
+		uint64_t ptr;
+	};
+	uint32_t index;
+	uint32_t __pad;
+};
+
+# define RTC_PARAM_GET	_IOW('p', 0x13, struct rtc_param)
+# define RTC_PARAM_SET	_IOW('p', 0x14, struct rtc_param)
+
+# define RTC_PARAM_FEATURES		0
+# define RTC_PARAM_CORRECTION		1
+# define RTC_PARAM_BACKUP_SWITCH_MODE	2
+#endif /* RTC_PARAM_GET */
+
+static const struct hwclock_param hwclock_params[] =
+{
+	{ RTC_PARAM_FEATURES,  "features", N_("supported features") },
+	{ RTC_PARAM_CORRECTION, "correction", N_("time correction") },
+	{ RTC_PARAM_BACKUP_SWITCH_MODE, "bsm", N_("backup switch mode") },
+	{ }
+};
+
+const struct hwclock_param *get_hwclock_params(void)
+{
+	return hwclock_params;
+}
 
 /*
  * /dev/rtc is conventionally chardev 10/135
@@ -453,3 +488,112 @@ int set_epoch_rtc(const struct hwclock_control *ctl)
 	return 0;
 }
 #endif	/* __alpha__ */
+
+
+
+static int resolve_rtc_param_alias(const char *alias, uint64_t *value)
+{
+	const struct hwclock_param *param = &hwclock_params[0];
+
+	while (param->name) {
+		if (!strcmp(alias, param->name)) {
+			*value = param->id;
+			return 0;
+		}
+		param++;
+	}
+
+	return 1;
+}
+
+/*
+ * Get the Hardware Clock parameter setting from the kernel.
+ */
+int get_param_rtc(const struct hwclock_control *ctl,
+		  const char *name, uint64_t *id, uint64_t *value)
+{
+	int rtc_fd;
+	struct rtc_param param = { .param = 0 };
+
+	/* handle name */
+	if (resolve_rtc_param_alias(name, &param.param) != 0
+	    && ul_strtou64(name, &param.param, 0) != 0) {
+		warnx(_("could not convert parameter name to number"));
+		return 1;
+	}
+
+	/* get parameter */
+	rtc_fd = open_rtc(ctl);
+	if (rtc_fd < 0) {
+		warn(_("cannot open %s"), rtc_dev_name);
+		return 1;
+	}
+
+	if (ioctl(rtc_fd, RTC_PARAM_GET, &param) == -1) {
+		warn(_("ioctl(%d, RTC_PARAM_GET, param) to %s failed"),
+		     rtc_fd, rtc_dev_name);
+		return 1;
+	}
+
+	if (id)
+		*id = param.param;
+	if (*value)
+		*value = param.uvalue;
+
+	if (ctl->verbose)
+		printf(_("ioctl(%d, RTC_PARAM_GET, param) to %s succeeded.\n"),
+		       rtc_fd, rtc_dev_name);
+
+	return 0;
+}
+
+/*
+ * Set the Hardware Clock parameter in the kernel.
+ */
+int set_param_rtc(const struct hwclock_control *ctl, const char *opt0)
+{
+	int rtc_fd, rc = 1;
+	struct rtc_param param = { .param = 0 };
+	char *tok, *opt = xstrdup(opt0);
+
+	/* handle name */
+	tok = strtok(opt, "=");
+	if (resolve_rtc_param_alias(tok, &param.param) != 0
+	    && ul_strtou64(tok, &param.param, 0) != 0) {
+		warnx(_("could not convert parameter name to number"));
+		goto done;
+	}
+
+	/* handle value */
+	tok = strtok(NULL, "=");
+	if (!tok) {
+		warnx(_("expected <param>=<value>"));
+		goto done;
+	}
+	if (ul_strtou64(tok, &param.uvalue, 0) != 0) {
+		warnx(_("could not convert parameter value to number"));
+		goto done;
+	}
+
+	/* set parameter */
+	rtc_fd = open_rtc(ctl);
+	if (rtc_fd < 0) {
+		warnx(_("cannot open %s"), rtc_dev_name);
+		return 1;
+	}
+
+	if (ioctl(rtc_fd, RTC_PARAM_SET, &param) == -1) {
+		warn(_("ioctl(%d, RTC_PARAM_SET, param) to %s failed"),
+		     rtc_fd, rtc_dev_name);
+		goto done;
+	}
+
+	if (ctl->verbose)
+		printf(_("ioctl(%d, RTC_PARAM_SET, param) to %s succeeded.\n"),
+		       rtc_fd, rtc_dev_name);
+
+	rc = 0;
+done:
+	free(opt);
+	return rc;
+}

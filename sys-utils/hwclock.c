@@ -1154,6 +1154,31 @@ manipulate_epoch(const struct hwclock_control *ctl)
 }
 #endif		/* __linux__ __alpha__ */
 
+static int
+manipulate_rtc_param(const struct hwclock_control *ctl)
+{
+	if (ctl->param_get_option) {
+		uint64_t id = 0, value = 0;
+
+		if (get_param_rtc(ctl, ctl->param_get_option, &id, &value)) {
+			warnx(_("unable to read the RTC parameter %s"),
+					ctl->param_get_option);
+			return 1;
+		}
+
+		printf(_("The RTC parameter 0x%jx is set to 0x%jx.\n"),
+		       (uintmax_t) id, (uintmax_t) value);
+
+	} else if (ctl->param_set_option) {
+		if (ctl->testing)
+			return 0;
+
+		return set_param_rtc(ctl, ctl->param_set_option);
+	}
+
+	return 1;
+}
+
 static void out_version(void)
 {
 	printf(UTIL_LINUX_VERSION);
@@ -1162,6 +1187,8 @@ static void out_version(void)
 static void __attribute__((__noreturn__))
 usage(void)
 {
+	const struct hwclock_param *param = get_hwclock_params();
+
 	fputs(USAGE_HEADER, stdout);
 	printf(_(" %s [function] [option...]\n"), program_invocation_short_name);
 
@@ -1169,41 +1196,57 @@ usage(void)
 	puts(_("Time clocks utility."));
 
 	fputs(USAGE_FUNCTIONS, stdout);
-	puts(_(" -r, --show           display the RTC time"));
-	puts(_("     --get            display drift corrected RTC time"));
-	puts(_("     --set            set the RTC according to --date"));
-	puts(_(" -s, --hctosys        set the system time from the RTC"));
-	puts(_(" -w, --systohc        set the RTC from the system time"));
-	puts(_("     --systz          send timescale configurations to the kernel"));
-	puts(_(" -a, --adjust         adjust the RTC to account for systematic drift"));
+	puts(_(" -r, --show                      display the RTC time"));
+	puts(_("     --get                       display drift corrected RTC time"));
+	puts(_("     --set                       set the RTC according to --date"));
+	puts(_(" -s, --hctosys                   set the system time from the RTC"));
+	puts(_(" -w, --systohc                   set the RTC from the system time"));
+	puts(_("     --systz                     send timescale configurations to the kernel"));
+	puts(_(" -a, --adjust                    adjust the RTC to account for systematic drift"));
 #if defined(__linux__) && defined(__alpha__)
-	puts(_("     --getepoch       display the RTC epoch"));
-	puts(_("     --setepoch       set the RTC epoch according to --epoch"));
+	puts(_("     --getepoch                  display the RTC epoch"));
+	puts(_("     --setepoch                  set the RTC epoch according to --epoch"));
 #endif
-	puts(_("     --predict        predict the drifted RTC time according to --date"));
+	puts(_("     --param-get <param>         display the RTC parameter"));
+	puts(_("     --param-set <param>=<value> set the RTC parameter"));
+	puts(_("     --predict                   predict the drifted RTC time according to --date"));
 	fputs(USAGE_OPTIONS, stdout);
-	puts(_(" -u, --utc            the RTC timescale is UTC"));
-	puts(_(" -l, --localtime      the RTC timescale is Local"));
+	puts(_(" -u, --utc                       the RTC timescale is UTC"));
+	puts(_(" -l, --localtime                 the RTC timescale is Local"));
 #ifdef __linux__
 	printf(_(
-	       " -f, --rtc <file>     use an alternate file to %1$s\n"), _PATH_RTC_DEV);
+	       " -f, --rtc <file>                use an alternate file to %1$s\n"), _PATH_RTC_DEV);
 #endif
 	printf(_(
-	       "     --directisa      use the ISA bus instead of %1$s access\n"), _PATH_RTC_DEV);
-	puts(_("     --date <time>    date/time input for --set and --predict"));
-	puts(_("     --delay <sec>    delay used when set new RTC time"));
+	       "     --directisa                 use the ISA bus instead of %1$s access\n"), _PATH_RTC_DEV);
+	puts(_("     --date <time>               date/time input for --set and --predict"));
+	puts(_("     --delay <sec>               delay used when set new RTC time"));
 #if defined(__linux__) && defined(__alpha__)
-	puts(_("     --epoch <year>   epoch input for --setepoch"));
+	puts(_("     --epoch <year>              epoch input for --setepoch"));
 #endif
-	puts(_("     --update-drift   update the RTC drift factor"));
+	puts(_("     --update-drift              update the RTC drift factor"));
 	printf(_(
-	       "     --noadjfile      do not use %1$s\n"), _PATH_ADJTIME);
+	       "     --noadjfile                 do not use %1$s\n"), _PATH_ADJTIME);
 	printf(_(
-	       "     --adjfile <file> use an alternate file to %1$s\n"), _PATH_ADJTIME);
-	puts(_("     --test           dry run; implies --verbose"));
-	puts(_(" -v, --verbose        display more details"));
+	       "     --adjfile <file>            use an alternate file to %1$s\n"), _PATH_ADJTIME);
+	puts(_("     --test                      dry run; implies --verbose"));
+	puts(_(" -v, --verbose                   display more details"));
+
 	fputs(USAGE_SEPARATOR, stdout);
-	printf(USAGE_HELP_OPTIONS(22));
+	printf(USAGE_HELP_OPTIONS(33));
+
+	fputs(USAGE_ARGUMENTS, stdout);
+	puts(_(" <param> is either a numeric RTC parameter value or one of these aliases:"));
+
+	while (param->name) {
+		printf(_("   - %1$s: %2$s (0x%3$x)\n"), param->name, param->help, param->id);
+		param++;
+	}
+
+	puts(_("   See Kernel's include/uapi/linux/rtc.h for parameters and values."));
+	fputs(USAGE_ARG_SEPARATOR, stdout);
+	puts(_(" <param> and <value> accept hexadecimal values if prefixed with 0x, otherwise decimal."));
+
 	printf(USAGE_MAN_TAIL("hwclock(8)"));
 	exit(EXIT_SUCCESS);
 }
@@ -1233,6 +1276,8 @@ int main(int argc, char **argv)
 		OPT_GET,
 		OPT_GETEPOCH,
 		OPT_NOADJFILE,
+		OPT_PARAM_GET,
+		OPT_PARAM_SET,
 		OPT_PREDICT,
 		OPT_SET,
 		OPT_SETEPOCH,
@@ -1259,6 +1304,8 @@ int main(int argc, char **argv)
 		{ "setepoch",     no_argument,       NULL, OPT_SETEPOCH   },
 		{ "epoch",        required_argument, NULL, OPT_EPOCH      },
 #endif
+		{ "param-get",    required_argument, NULL, OPT_PARAM_GET  },
+		{ "param-set",    required_argument, NULL, OPT_PARAM_SET  },
 		{ "noadjfile",    no_argument,       NULL, OPT_NOADJFILE  },
 		{ "directisa",    no_argument,       NULL, OPT_DIRECTISA  },
 		{ "test",         no_argument,       NULL, OPT_TEST       },
@@ -1372,6 +1419,15 @@ int main(int argc, char **argv)
 			ctl.epoch_option = optarg;	/* --epoch */
 			break;
 #endif
+		case OPT_PARAM_GET:
+			ctl.param_get_option = optarg;
+			ctl.show = 0;
+			break;
+		case OPT_PARAM_SET:
+			ctl.param_set_option = optarg;
+			ctl.show = 0;
+			ctl.hwaudit_on = 1;
+			break;
 		case OPT_NOADJFILE:
 			ctl.noadjfile = 1;
 			break;
@@ -1463,6 +1519,13 @@ int main(int argc, char **argv)
 			warnx(_("invalid date '%s'"), ctl.date_opt);
 			exit(EXIT_FAILURE);
 		}
+	}
+
+	if (ctl.param_get_option || ctl.param_set_option) {
+		if (manipulate_rtc_param(&ctl))
+			hwclock_exit(&ctl, EXIT_FAILURE);
+
+		hwclock_exit(&ctl, EXIT_SUCCESS);
 	}
 
 #if defined(__linux__) && defined(__alpha__)

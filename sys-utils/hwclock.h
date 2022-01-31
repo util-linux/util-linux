@@ -9,6 +9,7 @@
 
 #include "c.h"
 #include "debug.h"
+#include "nls.h"
 
 #define HWCLOCK_DEBUG_INIT		(1 << 0)
 #define HWCLOCK_DEBUG_RANDOM_SLEEP	(1 << 1)
@@ -29,6 +30,8 @@ struct hwclock_control {
 #ifdef __linux__
 	char *rtc_dev_name;
 #endif
+	char *param_get_option;
+	char *param_set_option;
 	unsigned int
 		hwaudit_on:1,
 		adjust:1,
@@ -73,6 +76,17 @@ extern double time_diff(struct timeval subtrahend, struct timeval subtractor);
 extern int get_epoch_rtc(const struct hwclock_control *ctl, unsigned long *epoch);
 extern int set_epoch_rtc(const struct hwclock_control *ctl);
 #endif
+
+struct hwclock_param {
+	int id;
+	const char *name;
+	const char *help;
+};
+
+extern const struct hwclock_param *get_hwclock_params(void);
+extern int get_param_rtc(const struct hwclock_control *ctl,
+			const char *name, uint64_t *id, uint64_t *value);
+extern int set_param_rtc(const struct hwclock_control *ctl, const char *name);
 
 extern void __attribute__((__noreturn__))
 hwclock_exit(const struct hwclock_control *ctl, int status);
