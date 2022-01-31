@@ -224,6 +224,8 @@ static int is_unwanted_fs(struct libmnt_fs *fs, const char *tgt)
 		return 1;
 	if (mnt_fs_match_options(fs, "ro"))
 		return 1;
+	if (mnt_fs_match_options(fs, "+X-fstrim.notrim"))
+		return 1;
 
 	fd = open(tgt, O_PATH);
 	if (fd < 0)
