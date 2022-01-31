@@ -537,7 +537,7 @@ int get_param_rtc(const struct hwclock_control *ctl,
 
 	if (id)
 		*id = param.param;
-	if (*value)
+	if (value)
 		*value = param.uvalue;
 
 	if (ctl->verbose)
