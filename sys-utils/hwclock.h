@@ -77,24 +77,6 @@ extern int get_epoch_rtc(const struct hwclock_control *ctl, unsigned long *epoch
 extern int set_epoch_rtc(const struct hwclock_control *ctl);
 #endif
 
-struct rtc_param {
-	uint64_t param;
-	union {
-		uint64_t uvalue;
-		int64_t svalue;
-		uint64_t ptr;
-	};
-	uint32_t index;
-	uint32_t __pad;
-};
-
-#define RTC_PARAM_GET	_IOW('p', 0x13, struct rtc_param)
-#define RTC_PARAM_SET	_IOW('p', 0x14, struct rtc_param)
-
-#define RTC_PARAM_FEATURES		0
-#define RTC_PARAM_CORRECTION		1
-#define RTC_PARAM_BACKUP_SWITCH_MODE	2
-
 struct hwclock_param {
 	int id;
 	const char *name;
@@ -102,8 +84,9 @@ struct hwclock_param {
 };
 
 extern const struct hwclock_param *get_hwclock_params(void);
-extern int get_param_rtc(const struct hwclock_control *ctl, struct rtc_param *param);
-extern int set_param_rtc(const struct hwclock_control *ctl);
+extern int get_param_rtc(const struct hwclock_control *ctl,
+			const char *name, uint64_t *id, uint64_t *value);
+extern int set_param_rtc(const struct hwclock_control *ctl, const char *name);
 
 extern void __attribute__((__noreturn__))
 hwclock_exit(const struct hwclock_control *ctl, int status);

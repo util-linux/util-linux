@@ -1158,22 +1158,22 @@ static int
 manipulate_rtc_param(const struct hwclock_control *ctl)
 {
 	if (ctl->param_get_option) {
-		struct rtc_param param = {};
+		uint64_t id = 0, value = 0;
 
-		if (get_param_rtc(ctl, &param)) {
-			warnx(_("unable to read the RTC parameter 0x%jx."),
-					(uintmax_t) param.param);
+		if (get_param_rtc(ctl, ctl->param_get_option, &id, &value)) {
+			warnx(_("unable to read the RTC parameter %s"),
+					ctl->param_get_option);
 			return 1;
 		}
 
 		printf(_("The RTC parameter 0x%jx is set to 0x%jx.\n"),
-		       (uintmax_t) param.param, (uintmax_t) param.uvalue);
+		       (uintmax_t) id, (uintmax_t) value);
 
 	} else if (ctl->param_set_option) {
 		if (ctl->testing)
 			return 0;
 
-		return set_param_rtc(ctl);
+		return set_param_rtc(ctl, ctl->param_set_option);
 	}
 
 	return 1;
