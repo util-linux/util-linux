@@ -1,35 +1,35 @@
 agetty:  
-blkdiscard:  librt 
+blkdiscard:  
 blkzone:  
 blockdev:  
 cal:  libtinfo 
 chcpu:  
-chfn:  libpam libpam_misc libpthread libreadline libuser 
+chfn:  libpam libpam_misc libreadline libuser 
 chmem:  
 choom:  
 chrt:  
-chsh:  libpam libpam_misc libpthread libreadline libuser 
+chsh:  libpam libpam_misc libreadline libuser 
 col:  
 colcrt:  
 colrm:  
 ctrlaltdel:  
-dmesg:  librt libtinfo 
+dmesg:  libtinfo 
 fallocate:  
-flock:  librt 
+flock:  
 fsck.cramfs:  libz 
 fsck.minix:  
 fsfreeze:  
 getopt:  
-hardlink:  libpcre2-posix librt 
+hardlink:  
 hexdump:  libtinfo 
-hwclock:  libm librt 
+hwclock:  libm 
 ionice:  
 ipcmk:  
 ipcrm:  
 ipcs:  
 isosize:  
 kill:  
-last:  librt 
+last:  
 ldattach:  
 logger:  libsystemd 
 login:  libpam libpam_misc 
@@ -46,21 +46,20 @@ namei:
 nologin:  
 nsenter:  
 pivot_root:  
-raw:  
 readprofile:  
 rename:  
 renice:  
 rev:  
 rtcwake:  
-runuser:  libpam libpam_misc librt libutil 
-script:  librt libutil 
-scriptlive:  librt libutil 
+runuser:  libpam libpam_misc 
+script:  
+scriptlive:  
 scriptreplay:  
 setarch:  
 setpriv:  libcap-ng 
 setsid:  
 setterm:  libtinfo 
-su:  libpam libpam_misc librt libutil 
+su:  libpam libpam_misc 
 sulogin:  libcrypt 
 switch_root:  
 taskset:  
