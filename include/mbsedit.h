@@ -22,7 +22,7 @@ enum {
 };
 
 struct mbs_editor *mbs_new_edit(char *buf, size_t bufsz, size_t ncells);
-char *mbs_free_edit(struct mbs_editor *edit);
+void *mbs_free_edit(struct mbs_editor *edit);
 
 int mbs_edit_goto(struct mbs_editor *edit, int where);
 int mbs_edit_delete(struct mbs_editor *edit);

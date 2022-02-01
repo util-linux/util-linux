@@ -29,12 +29,9 @@ struct mbs_editor *mbs_new_edit(char *buf, size_t bufsz, size_t ncells)
 	return edit;
 }
 
-char *mbs_free_edit(struct mbs_editor *edit)
+void *mbs_free_edit(struct mbs_editor *edit)
 {
-	char *ret = edit ? edit->buf : NULL;
-
 	free(edit);
-	return ret;
 }
 
 static size_t mbs_next(const char *str, size_t *ncells)
