@@ -980,8 +980,12 @@ static void sanitize_prlimits(void)
 	struct rlimit lm = { .rlim_cur = 0, .rlim_max = 0 };
 
 	/* reset to zero */
+#ifdef RLIMIT_NICE
 	setrlimit(RLIMIT_NICE, &lm);
+#endif
+#ifdef RLIMIT_RTPRIO
 	setrlimit(RLIMIT_RTPRIO, &lm);
+#endif
 
 	/* reset to unlimited */
 	lm.rlim_cur = RLIM_INFINITY;
