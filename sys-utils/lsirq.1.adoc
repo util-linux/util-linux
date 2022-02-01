@@ -40,11 +40,7 @@ Produce output in the form of key="value" pairs. All potentially unsafe characte
 *-S*, *--softirq*::
 Show softirqs information.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == AUTHORS
 

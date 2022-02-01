@@ -26,6 +26,10 @@ delpart - tell the kernel to forget about a partition
 
 This command doesn't manipulate partitions on a block device.
 
+== OPTIONS
+
+include::man-common/help-version.adoc[]
+
 == SEE ALSO
 
 *addpart*(8),

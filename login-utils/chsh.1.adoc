@@ -36,11 +36,7 @@ Specify your login shell.
 *-l*, *--list-shells*::
 Print the list of shells listed in _/etc/shells_ and exit.
 
-*-h*, *--help*::
-Display help text and exit.
-
-*-v*, *--version*::
-Display version information and exit.
+include::man-common/help-version.adoc[]
 
 == VALID SHELLS
 

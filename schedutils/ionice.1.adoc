@@ -60,14 +60,10 @@ Specify the process group IDs of running processes for which to get or set the s
 *-t*, *--ignore*::
 Ignore failure to set the requested priority. If _command_ was specified, run it even in case it was not possible to set the desired scheduling priority, which can happen due to insufficient privileges or an old kernel version.
 
-*-h*, *--help*::
-Display help text and exit.
-
 *-u*, *--uid* _UID_...::
 Specify the user IDs of running processes for which to get or set the scheduling parameters.
 
-*-V*, *--version*::
-Display version information and exit.
+include::man-common/help-version.adoc[]
 
 == NOTES
 

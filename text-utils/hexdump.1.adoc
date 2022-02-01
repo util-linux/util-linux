@@ -95,11 +95,7 @@ The *-v* option causes *hexdump* to display all input data. Without the *-v* opt
 *-x*, *--two-bytes-hex*::
 _Two-byte hexadecimal display_. Display the input offset in hexadecimal, followed by eight space-separated, four-column, zero-filled, two-byte quantities of input data, in hexadecimal, per line.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 For each input file, *hexdump* sequentially copies the input to standard output, transforming the data according to the format strings specified by the *-e* and *-f* options, in the order that they were specified.
 
@@ -113,7 +109,7 @@ The byte count is an optional positive integer. If specified it defines the numb
 
 If an iteration count and/or a byte count is specified, a single slash must be placed after the iteration count and/or before the byte count to disambiguate them. Any whitespace before or after the slash is ignored.
 
-The format is required and must be surrounded by double quote (" ") marks. It is interpreted as a fprintf-style format string (see *fprintf*(3), with the following exceptions:
+The format is required and must be surrounded by double quote (" ") marks. It is interpreted as a fprintf-style format string (see *fprintf*(3)), with the following exceptions:
 
 1.::
 An asterisk (*) may not be used as a field width or precision.

@@ -24,11 +24,7 @@ switch_root - switch to another filesystem as the root of the mount tree
 
 == OPTIONS
 
-*-h, --help*::
-Display help text and exit.
-
-*-V, --version*::
-Display version information and exit.
+include::man-common/help-version.adoc[]
 
 == EXIT STATUS
 

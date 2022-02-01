@@ -46,9 +46,6 @@ Create a signature backup to the file _$HOME/wipefs-<devname>-<offset>.bak_. For
 *-f*, *--force*::
 Force erasure, even if the filesystem is mounted. This is required in order to erase a partition-table signature on a block device.
 
-*-h*, *--help*::
-Display help text and exit.
-
 *-J*, *--json*::
 Use JSON output format.
 
@@ -78,8 +75,7 @@ Suppress any messages after a successful signature wipe.
 *-t*, *--types* _list_::
 Limit the set of printed or erased signatures. More than one type may be specified in a comma-separated list. The list or individual types can be prefixed with 'no' to specify the types on which no action should be taken. For more details see *mount*(8).
 
-*-V*, *--version*::
-Display version information and exit.
+include::man-common/help-version.adoc[]
 
 == ENVIRONMENT
 

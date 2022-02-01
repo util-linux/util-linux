@@ -44,6 +44,8 @@ ____
 *blkid*
 ____
 
+include::man-common/help-version.adoc[]
+
 == EXIT STATUS
 
 *0*::

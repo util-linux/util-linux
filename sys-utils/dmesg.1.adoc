@@ -141,11 +141,7 @@ Wait and print only new messages.
 *-x*, *--decode*::
 Decode facility and level (priority) numbers to human-readable prefixes.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == COLORS
 

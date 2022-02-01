@@ -52,15 +52,11 @@ Note that the *-h* option has an impact on the *PAM service* *name*. The standar
 *-H*::
 Used by other servers (for example, *telnetd*(8)) to tell *login* that printing the hostname should be suppressed in the login: prompt. See also *LOGIN_PLAIN_PROMPT* below.
 
-*--help*::
-Display help text and exit.
-
-*-V*, *--version*::
-Display version information and exit.
+include::man-common/help-version.adoc[]
 
 == CONFIG FILE ITEMS
 
-*login* reads the _/etc/login.defs_ configuration file (see login.defs(5)). Note that the configuration file could be distributed with another package (usually shadow-utils). The following configuration items are relevant for *login*:
+*login* reads the _/etc/login.defs_ configuration file (see *login.defs*(5)). Note that the configuration file could be distributed with another package (usually shadow-utils). The following configuration items are relevant for *login*:
 
 *MOTD_FILE* (string)::
 Specifies a ":" delimited list of "message of the day" files and directories to be displayed upon login. If the specified path is a directory then displays all files with .motd file extension in version-sort order from the directory.

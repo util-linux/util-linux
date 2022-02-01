@@ -40,11 +40,7 @@ This option has a value.
 For empty lines within a description (to keep the indentation) you can use the "plus" character at the beginning of an otherwise empty line.
 
 //Last but not least, don't forget the common options:
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == NOTES
 

@@ -48,8 +48,7 @@ Don't erase the beginning of the first disk sector when creating a new disk labe
 *-c*, *--compatibility*[=_mode_]::
 Specify the compatibility mode, 'dos' or 'nondos'. The default is non-DOS mode. For backward compatibility, it is possible to use the option without the _mode_ argument -- then the default is used. Note that the optional _mode_ argument cannot be separated from the *-c* option by a space, the correct form is for example *-c*=_dos_.
 
-*-h*, *--help*::
-Display a help text and exit.
+include::man-common/help-version.adoc[]
 
 *-L*, *--color*[=_when_]::
 Colorize the output. The optional argument _when_ can be *auto*, *never* or *always*. If the _when_ argument is omitted, it defaults to *auto*. The colors can be disabled; for the current built-in default see the *--help* output. See also the *COLORS* section.

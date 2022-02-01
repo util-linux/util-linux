@@ -71,11 +71,7 @@ If no arguments are given, *mesg* shows the current message status on standard e
 *-v*, *--verbose*::
 Explain what is being done.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == EXIT STATUS
 

@@ -34,11 +34,7 @@ The function of *ctrlaltdel* is usually set in the _/etc/rc.local_ file.
 
 == OPTIONS
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == FILES
 

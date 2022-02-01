@@ -98,11 +98,7 @@ Enforce commands to change zone status on block devices used by the system.
 *-v*, *--verbose*::
 Display the number of zones returned in the report or the range of sectors reset.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == AUTHORS
 

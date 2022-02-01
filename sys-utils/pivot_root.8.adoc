@@ -32,11 +32,7 @@ Note that *exec chroot* changes the running executable, which is necessary if th
 
 == OPTIONS
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == EXAMPLE
 

@@ -95,11 +95,7 @@ Start displaying each file at line _number_.
 **+**/__string__::
 The _string_ to be searched in each file before starting to display it.
 
-*--help*::
-Display help text and exit.
-
-*-V*, *--version*::
-Display version information and exit.
+include::man-common/help-version.adoc[]
 
 == COMMANDS
 

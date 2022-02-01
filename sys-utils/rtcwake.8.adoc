@@ -105,11 +105,7 @@ Assume that the hardware clock is set to UTC (Universal Time Coordinated), regar
 *-v*, *--verbose*::
 Be verbose.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == NOTES
 

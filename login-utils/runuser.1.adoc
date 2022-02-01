@@ -76,11 +76,7 @@ Same as *-c*, but do not create a new session. (Discouraged.)
 *-w*, *--whitelist-environment*=_list_::
 Don't reset the environment variables specified in the comma-separated _list_ when clearing the environment for *--login*. The whitelist is ignored for the environment variables *HOME*, *SHELL*, *USER*, *LOGNAME*, and *PATH*.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == CONFIG FILES
 

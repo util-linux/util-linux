@@ -60,9 +60,6 @@ When specifying the _list_ argument, the string of option, equal sign (=), and _
 +
 The default list of columns may be extended if list is specified in the format +list (e.g., lscpu -e=+MHZ).
 
-*-h*, *--help*::
-Display help text and exit.
-
 *-J*, *--json*::
 Use JSON output format for the default summary or extended output (see *--extended*).
 
@@ -85,9 +82,6 @@ Use hexadecimal masks for CPU sets (for example "ff"). The default is to print t
 Display physical IDs for all columns with topology elements (core, socket, etc.). Other than logical IDs, which are assigned by *lscpu*, physical IDs are platform-specific values that are provided by the kernel. Physical IDs are not necessarily unique and they might not be arranged sequentially. If the kernel could not retrieve a physical ID for an element *lscpu* prints the dash (-) character.
 +
 The CPU logical numbers are not affected by this option.
-
-*-V*, *--version*::
-Display version information and exit.
 
 *--output-all*::
 Output all available columns. This option must be combined with either *--extended*, *--parse* or *--caches*.

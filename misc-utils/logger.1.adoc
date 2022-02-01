@@ -180,11 +180,7 @@ Write to the specified _socket_ instead of to the system log socket.
 *--*::
 End the argument list. This allows the _message_ to start with a hyphen (-).
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == EXIT STATUS
 

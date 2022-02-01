@@ -48,11 +48,7 @@ The exit status returned by *nologin* is always 1.
 
 These shell command-line options are ignored to avoid *nologin* error.
 
-*-h*, *--help*::
-Display help text and exit.
-
-*-V*, *--version*::
-Display version information and exit.
+include::man-common/help-version.adoc[]
 
 == NOTES
 

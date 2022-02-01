@@ -28,11 +28,8 @@ hardlink - link multiple copies of a file
 
 == OPTIONS
 
-*-h*, *--help*::
-print quick usage details to the screen.
-
-*-v*, *--verbose*::
-More verbose output. If specified once, every hardlinked file is displayed, if specified twice, it also shows every comparison.
+include::man-common/help-version.adoc[]
+If specified once, every hardlinked file is displayed, if specified twice, it also shows every comparison.
 
 *-q*, *--quiet*::
 Quiet mode, don't print anything.

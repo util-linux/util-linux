@@ -68,11 +68,7 @@ Abandon the write attempt to the terminals after _timeout_ seconds. This _timeou
 *-g*, *--group* _group_::
 Limit printing message to members of group defined as a _group_ argument. The argument can be group name or GID.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == NOTES
 

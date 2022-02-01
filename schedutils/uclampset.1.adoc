@@ -83,11 +83,7 @@ Set *SCHED_FLAG_RESET_ON_FORK* flag.
 *-v*, *--verbose*::
 Show status information.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == USAGE
 

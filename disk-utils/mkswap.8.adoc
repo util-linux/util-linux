@@ -76,11 +76,7 @@ Specify the swap-space version. (This option is currently pointless, as the old 
 *--verbose*::
 Verbose execution. With this option *mkswap* will output more details about detected problems during swap area set up.
 
-*-h*, *--help*::
-Display help text and exit.
-
-*-V*, *--version*::
-Display version information and exit.
+include::man-common/help-version.adoc[]
 
 == ENVIRONMENT
 

@@ -63,11 +63,7 @@ Use the raw output format.
 *-u*, *--notruncate*::
 Do not truncate text in columns.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == OUTPUT
 

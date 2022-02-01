@@ -101,11 +101,7 @@ The first two are only available on the first call of *settimeofday*(2) after bo
 *-w*, *--systohc*::
 Set the Hardware Clock from the System Clock, and update the timestamps in _{ADJTIME_PATH}_. With the *--update-drift* option also (re)calculate the drift factor. Try it without the option if *--systohc* fails. See *--update-drift* below.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == OPTIONS
 

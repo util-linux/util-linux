@@ -84,6 +84,8 @@ Display full user names and domain names in the output.
 *-x*, *--system*::
 Display the system shutdown entries and run level changes.
 
+include::man-common/help-version.adoc[]
+
 == TIME FORMATS
 
 The options that take the _time_ argument understand the following formats:

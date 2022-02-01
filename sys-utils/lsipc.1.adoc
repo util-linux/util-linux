@@ -26,11 +26,7 @@ Show full details on just the one resource element identified by _id_. This opti
 *-g*, *--global*::
 Show system-wide usage and limits of IPC resources. This option may be combined with one of the three resource options: *-m*, *-q* or *-s*. The default is to show information about all resources.
 
-*-h*, *--help*::
-Display help text and exit.
-
-*-V*, *--version*::
-Display version information and exit.
+include::man-common/help-version.adoc[]
 
 === Resource options
 

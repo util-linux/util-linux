@@ -44,8 +44,7 @@ If you want to remove an old partition table from a device, use *wipefs*(8).
 
 == OPTIONS
 
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 *-L*, *--color*[**=**__when__]::
 Colorize the output. The optional argument _when_ can be *auto*, *never* or *always*. If the _when_ argument is omitted, it defaults to *auto*. The colors can be disabled, for the current built-in default see *--help* output. See also the *COLORS* section.
@@ -55,9 +54,6 @@ Use exclusive BSD lock for device or file it operates. The optional argument _mo
 
 *-r*, *--read-only*::
 Forced open in read-only mode.
-
-*-V*, *--version*::
-Display version information and exit.
 
 *-z*, *--zero*::
 Start with an in-memory zeroed partition table. This option does not zero the partition table on the disk; rather, it simply starts the program without reading the existing partition table. This option allows you to create a new partition table from scratch or from an *sfdisk*(8)-compatible script.

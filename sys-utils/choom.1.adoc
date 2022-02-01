@@ -28,11 +28,7 @@ Specifies process ID.
 *-n*, *--adjust* _value_::
 Specify the adjust score value.
 
-*-h*, *--help*::
-Display help text and exit.
-
-*-V*, *--version*::
-Display version information and exit.
+include::man-common/help-version.adoc[]
 
 == NOTES
 

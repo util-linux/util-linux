@@ -70,11 +70,7 @@ If this is set then *mmap*(3p) *PROT_READ* will also add the *PROT_EXEC* bit - a
 *-Z*, *--mmap-page-zero*::
 SVr4 bug emulation that will set *mmap*(3p) page zero as read-only. Use when _program_ depends on this behavior, and the source code is not available to be fixed. Turns on *MMAP_PAGE_ZERO*.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == EXAMPLE
 

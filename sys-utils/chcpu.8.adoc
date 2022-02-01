@@ -50,11 +50,7 @@ The workload is concentrated on few CPUs.
 *-r*, *--rescan*::
 Trigger a rescan of CPUs. After a rescan, the Linux kernel recognizes the new CPUs. Use this option on systems that do not automatically detect newly attached CPUs.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == EXIT STATUS
 

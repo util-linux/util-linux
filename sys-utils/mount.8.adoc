@@ -443,11 +443,7 @@ A synonym is *-o rw*.
 +
 Note that specifying *-w* on the command line forces *mount* to never try read-only mount on write-protected devices or already mounted read-only filesystems.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == FILESYSTEM-INDEPENDENT MOUNT OPTIONS
 

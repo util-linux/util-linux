@@ -39,11 +39,7 @@ Output all available columns.
 *-r*, *--raw*::
 Use the raw output format.
 
-*--help*::
-Display help text and exit.
-
-*--version*::
-Display version information and exit.
+include::man-common/help-version.adoc[]
 
 == COMMANDS
 

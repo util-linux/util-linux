@@ -39,11 +39,7 @@ Be verbose.
 *--report*::
 Print a report for the specified device. It is possible to give multiple devices. If none is given, all devices which appear in _/proc/partitions_ are shown. Note that the partition StartSec is in 512-byte sectors.
 
-*-h*, *--help*::
-Display help text and exit.
-
-*-V*, *--version*::
-Print version and exit.
+include::man-common/help-version.adoc[]
 
 == COMMANDS
 

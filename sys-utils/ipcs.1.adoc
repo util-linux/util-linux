@@ -27,11 +27,7 @@ ipcs - show information on IPC facilities
 *-i*, *--id* _id_::
 Show full details on just the one resource element identified by _id_. This option needs to be combined with one of the three resource options: *-m*, *-q* or *-s*.
 
-*-h*, *--help*::
-Display help text and exit.
-
-*-V*, *--version*::
-Display version information and exit.
+include::man-common/help-version.adoc[]
 
 === Resource options
 

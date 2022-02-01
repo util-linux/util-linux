@@ -113,12 +113,6 @@ Use the raw *--list* output format.
 *-J*, *--json*::
 Use JSON format for *--list* output.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
-
 == ENCRYPTION
 
 *Cryptoloop is no longer supported in favor of dm-crypt.* For more details see *cryptsetup*(8).

@@ -49,9 +49,6 @@ Silently skip devices that do not exist. The _/etc/fstab_ mount option *nofail* 
 *-f*, *--fixpgsz*::
 Reinitialize (exec mkswap) the swap space if its page size does not match that of the current running kernel. *mkswap*(8) initializes the whole device and does not check for bad blocks.
 
-*-h*, *--help*::
-Display help text and exit.
-
 *-L* _label_::
 Use the partition that has the specified _label_. (For this, access to _/proc/partitions_ is needed.)
 
@@ -89,8 +86,7 @@ Use the partition that has the specified _uuid_.
 *-v*, *--verbose*::
 Be verbose.
 
-*-V*, *--version*::
-Display version information and exit.
+include::man-common/help-version.adoc[]
 
 == EXIT STATUS
 

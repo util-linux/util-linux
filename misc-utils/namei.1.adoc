@@ -56,11 +56,7 @@ Vertically align the modes and owners.
 *-x*, *--mountpoints*::
 Show mountpoint directories with a 'D' rather than a 'd'.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == BUGS
 

@@ -46,11 +46,7 @@ Write command output to _file_ instead of standard output.
 *-r*, *--reverse*::
 Undump, write back edited login information into the utmp or wtmp files.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == NOTES
 

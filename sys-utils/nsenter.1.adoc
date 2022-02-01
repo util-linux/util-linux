@@ -127,11 +127,7 @@ Do not fork before exec'ing the specified program. By default, when entering a P
 *-Z*, *--follow-context*::
 Set the SELinux security context used for executing a new process according to already running process specified by *--target* PID. (The util-linux has to be compiled with SELinux support otherwise the option is unavailable.)
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == AUTHORS
 

@@ -46,14 +46,10 @@ Set the specified _RANGE_, _SIZE_, or _BLOCKRANGE_ of memory online.
 *-z*, *--zone*::
 Select the memory _ZONE_ where to set the specified _RANGE_, _SIZE_, or _BLOCKRANGE_ of memory online or offline. By default, memory will be set online to the zone Movable, if possible.
 
-*-h*, *--help*::
-Print a short help text, then exit.
-
 *-v*, *--verbose*::
 Verbose mode. Causes *chmem* to print debugging messages about it's progress.
 
-*-V*, *--version*::
-Print the version number, then exit.
+include::man-common/help-version.adoc[]
 
 == EXIT STATUS
 

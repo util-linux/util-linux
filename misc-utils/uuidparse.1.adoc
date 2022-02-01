@@ -59,11 +59,7 @@ Specify which output columns to print. Use *--help* to get a list of all support
 *-r*, *--raw*::
 Use the raw output format.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == AUTHORS
 
