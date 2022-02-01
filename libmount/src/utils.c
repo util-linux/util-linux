@@ -1141,6 +1141,7 @@ done:
  */
 int mnt_tmptgt_unshare(int *old_ns_fd)
 {
+#ifdef USE_LIBMOUNT_SUPPORT_NAMESPACES
 	int rc = 0, fd = -1;
 
 	assert(old_ns_fd);
@@ -1182,6 +1183,9 @@ fail:
 	mnt_tmptgt_cleanup(fd);
 	DBG(UTILS, ul_debug(MNT_PATH_TMPTGT " unshare failed"));
 	return rc;
+#else
+	return -ENOSYS;
+#endif
 }
 
 /*
@@ -1189,6 +1193,7 @@ fail:
  */
 int mnt_tmptgt_cleanup(int old_ns_fd)
 {
+#ifdef USE_LIBMOUNT_SUPPORT_NAMESPACES
 	umount(MNT_PATH_TMPTGT);
 
 	if (old_ns_fd >= 0) {
@@ -1198,6 +1203,9 @@ int mnt_tmptgt_cleanup(int old_ns_fd)
 
 	DBG(UTILS, ul_debug(MNT_PATH_TMPTGT " cleanup done"));
 	return 0;
+#else
+	return -ENOSYS;
+#endif
 }
 
 #ifdef TEST_PROGRAM
