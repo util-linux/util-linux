@@ -332,6 +332,7 @@ int mnt_fstype_is_netfs(const char *type)
 	    strncmp(type,"nfs", 3) == 0 ||
 	    strcmp(type, "afs")    == 0 ||
 	    strcmp(type, "ncpfs")  == 0 ||
+	    strcmp(type, "glusterfs")  == 0 ||
 	    strcmp(type, "fuse.curlftpfs") == 0 ||
 	    strcmp(type, "fuse.sshfs") == 0 ||
 	    strncmp(type,"9p", 2)  == 0)
