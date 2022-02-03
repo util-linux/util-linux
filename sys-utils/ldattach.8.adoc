@@ -109,6 +109,8 @@ Define an intro command that is sent through the serial line before the invocati
 *-p*, *--pause* _value_::
 Sleep for _value_ seconds before the invocation of *ldattach*. Default is one second.
 
+include::man-common/help-version.adoc[]
+
 == AUTHORS
 
 mailto:tilman@imap.cc[Tilman Schmidt]
