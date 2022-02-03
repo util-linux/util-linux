@@ -100,12 +100,37 @@ ts_init_subtest "flags"
 ts_run $TESTPROG --flags "aaa,bbb=BBB,x-foo,ccc,user=kzak,nodev,noexec,nosuid,loop=/dev/loop0" &> $TS_OUTPUT
 ts_finalize_subtest
 
-ts_init_subtest "apply-linux"	# add noatime and remove noexec and nosuid
+ts_init_subtest "apply-linux"
+# Use kernel mount options man (--linux), add noatime, remove noexec and nosuid,
+# and keep unknown(e.g. user=kzak)
 ts_run $TESTPROG --apply --linux "user=kzak,noexec,nosuid" 0x400 &> $TS_OUTPUT
 ts_finalize_subtest
 
-ts_init_subtest "apply-user"	# add user,nofail and remove loop
+ts_init_subtest "apply-user"
+# Use userspace options map (--user), add user and nofail, remove loop,
+# and keep unknown (e.g. noexec, nosuid)
 ts_run $TESTPROG --apply --user "noexec,nosuid,loop=/dev/looop0" 0x408 &> $TS_OUTPUT
+ts_finalize_subtest
+
+ts_init_subtest "apply-user-x"
+# Use userspace options map (--user), remove X-* and loop=, keep unknown 'something' and
+# keep by flags specified x-*
+ts_run $TESTPROG --apply --user \
+	"something,loop=/dev/looop0,x-gvfs-hide,x-gdu.hide,x-canary,X-foo" 0x00002000 &> $TS_OUTPUT
+ts_finalize_subtest
+
+ts_init_subtest "apply-user-X"
+# Use userspace options map (--user), remove x-* and loop=, keep unknown 'something' and
+# keep by flags specified X-*
+ts_run $TESTPROG --apply --user \
+	"something,loop=/dev/looop0,x-gvfs-hide,x-gdu.hide,x-canary,X-foo,X-bar" 0x00020000 &> $TS_OUTPUT
+ts_finalize_subtest
+
+ts_init_subtest "apply-user-Xx"
+# Use userspace options map (--user), remove loop=, keep unknown 'something' and
+# keep by flags specified X-* and x-*, add by flag specified nofail
+ts_run $TESTPROG --apply --user \
+	"something,loop=/dev/looop0,x-gvfs-hide,x-gdu.hide,x-canary,X-foo,X-bar" 0x00022400 &> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "fix"
