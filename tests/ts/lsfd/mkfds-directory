@@ -37,7 +37,7 @@ EXPR=
     if read -u ${MKFDS[0]} PID; then
 	EXPR='(PID == '"${PID}"') and (FD == '"$FD"')'
 	${TS_CMD_LSFD} -n -o ASSOC,MODE,TYPE,FLAGS,NAME -Q "${EXPR}"
-	echo 'ASSOC,MODE,TYPE,NAME': $?
+	echo 'ASSOC,MODE,TYPE,FLAGS,NAME': $?
 
 	LSFD_PID=$(${TS_CMD_LSFD} --raw -n -o PID -Q "${EXPR}")
 	echo 'PID[RUN]:' $?
