@@ -25,6 +25,7 @@ ts_check_test_command "$TS_HELPER_MKFDS"
 
 ts_check_prog "stat"
 ts_check_prog "id"
+ts_check_prog "sed"
 
 ts_cd "$TS_OUTDIR"
 
@@ -36,7 +37,16 @@ EXPR=
     coproc MKFDS { "$TS_HELPER_MKFDS" directory $FD; }
     if read -u ${MKFDS[0]} PID; then
 	EXPR='(PID == '"${PID}"') and (FD == '"$FD"')'
-	${TS_CMD_LSFD} -n -o ASSOC,MODE,TYPE,FLAGS,NAME -Q "${EXPR}"
+	${TS_CMD_LSFD} -n -o ASSOC,MODE,TYPE,FLAGS,NAME -Q "${EXPR}" | {
+	    #
+	    # Normalize the output:
+	    #
+	    # See https://github.com/util-linux/util-linux/issues/1511#issuecomment-1029968595
+	    # It seems that syscalls opening a directory on mips64 GNU/Linux take the
+	    # O_LARGEFILE flag.
+	    #
+	    sed -e 's/largefile,\|,largefile//'
+	}
 	echo 'ASSOC,MODE,TYPE,FLAGS,NAME': $?
 
 	LSFD_PID=$(${TS_CMD_LSFD} --raw -n -o PID -Q "${EXPR}")
