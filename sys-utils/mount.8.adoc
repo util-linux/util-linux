@@ -55,7 +55,7 @@ mount - mount a filesystem
 
 *mount* *--bind*|*--rbind*|*--move* _olddir newdir_
 
-*mount* *--make*-[*shared*|*slave*|*private*|*unbindable*|*rshared*|*rslave*|*rprivate*|*runbindable*] _mountpoint_
+*mount* *--make-*[*shared*|*slave*|*private*|*unbindable*|*rshared*|*rslave*|*rprivate*|*runbindable*] _mountpoint_
 
 == DESCRIPTION
 
