@@ -17,7 +17,7 @@ kill - terminate a process
 
 == SYNOPSIS
 
-*kill*  [-signal|*-s* _signal_|*-p*]  [*-q* _value_] [*-a*] [*--timeout* _milliseconds_ _signal_] [*--*] _pid_|_name_...
+*kill*  [**-**_signal_|*-s* _signal_|*-p*]  [*-q* _value_] [*-a*] [*--timeout* _milliseconds_ _signal_] [*--*] _pid_|_name_...
 
 *kill* *-l* [_number_] | *-L*
 
