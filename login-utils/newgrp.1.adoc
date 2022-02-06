@@ -14,7 +14,7 @@ newgrp - log in to a new group
 
 == SYNOPSIS
 
-newgrp [_group_]
+*newgrp* [_group_]
 
 == DESCRIPTION
 
