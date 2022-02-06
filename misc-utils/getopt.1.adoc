@@ -14,7 +14,9 @@ getopt - parse command options (enhanced)
 == SYNOPSIS
 
 *getopt* _optstring_ _parameters_
+
 *getopt* [options] [*--*] _optstring_ _parameters_
+
 *getopt* [options] *-o*|*--options* _optstring_ [options] [*--*] _parameters_
 
 == DESCRIPTION
