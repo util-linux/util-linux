@@ -1,5 +1,5 @@
     3  r--  DIR directory,_tmpfile /
-ASSOC,MODE,TYPE,NAME: 0
+ASSOC,MODE,TYPE,FLAGS,NAME: 0
 PID[RUN]: 0
 PID[STR]: 0
 INODE[RUN]: 0

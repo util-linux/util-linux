@@ -41,8 +41,16 @@ function lsfd_compare_dev {
     # for a given device separately.
     # We can save the code for extracting the major part and minor part
     # if we use findmnt.
-    local FINDMNT_MNTID_DEV=$("${FINDMNT}" --raw -n -o ID,MAJ:MIN | grep "^${MNTID}")
+    local FINDMNT_MNTID_DEV=$("${FINDMNT}" --raw -n -o ID,MAJ:MIN | grep "^${MNTID}\b")
     echo 'FINDMNT[RUN]:' $?
-    [ "${MNTID} ${DEV}" == "${FINDMNT_MNTID_DEV}" ]
-    echo 'DEV[STR]:' $?
+    if [ "${MNTID} ${DEV}" == "${FINDMNT_MNTID_DEV}" ]; then
+	echo 'DEV[STR]:' 0
+    else
+	echo 'DEV[STR]:' 1
+	# Print more information for debugging
+	echo 'MNTID:' "${MNTID}"
+	echo 'DEV:' "${DEV}"
+	echo 'MNTID DEV:' "${MNTID} ${DEV}"
+	echo 'FINDMNT_MNTID_DEV:' "${FINDMNT_MNTID_DEV}"
+    fi
 }
