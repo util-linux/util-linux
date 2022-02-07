@@ -890,7 +890,8 @@ int mnt_open_uniq_filename(const char *filename, char **name)
 	 */
 	oldmode = umask(S_IRGRP|S_IWGRP|S_IXGRP|
 			S_IROTH|S_IWOTH|S_IXOTH);
-	fd = mkostemp(n, O_RDWR|O_CREAT|O_EXCL|O_CLOEXEC);
+
+	fd = mkstemp_cloexec(n);
 	if (fd < 0)
 		fd = -errno;
 	umask(oldmode);

@@ -4,6 +4,7 @@
 #include "carefulputc.h"
 #include "mangle.h"
 #include "jsonwrt.h"
+#include "fileutils.h"
 
 #ifdef FUZZ_TARGET
 #include "fuzz.h"
@@ -1574,9 +1575,9 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	struct fdisk_context *cxt;
 	FILE *f;
 
-	fd = mkostemp(name, O_RDWR|O_CREAT|O_EXCL|O_CLOEXEC);
+	fd = mkstemp_cloexec(name);
 	if (fd < 0)
-		err(EXIT_FAILURE, "mkostemp() failed");
+		err(EXIT_FAILURE, "mkstemp() failed");
 	if (write_all(fd, data, size) != 0)
 		err(EXIT_FAILURE, "write() failed");
 	f = fopen(name, "r");

@@ -52,6 +52,7 @@
 #include "strutils.h"
 #include "timeutils.h"
 #include "monotonic.h"
+#include "fileutils.h"
 
 #ifdef FUZZ_TARGET
 #include "fuzz.h"
@@ -939,9 +940,9 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
 	char name[] = "/tmp/test-last-fuzz.XXXXXX";
 	int fd;
 
-	fd = mkostemp(name, O_RDWR|O_CREAT|O_EXCL|O_CLOEXEC);
+	fd = mkstemp_cloexec(name);
 	if (fd < 0)
-		err(EXIT_FAILURE, "mkostemp() failed");
+		err(EXIT_FAILURE, "mkstemp() failed");
 	if (write_all(fd, data, size) != 0)
 		err(EXIT_FAILURE, "write() failed");
 
