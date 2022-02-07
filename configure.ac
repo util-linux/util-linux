@@ -2761,7 +2761,7 @@ AC_MSG_RESULT([
         Manual pages:              ${build_asciidoc}
         Manual pages translated:   ${build_poman}
 
-        compiler:                  ${CC}
+        compiler:                  ${CC} / ${CXX}
         suid cflags:               ${SUID_CFLAGS}
         ldflags:                   ${LDFLAGS}
         suid ldflags:              ${SUID_LDFLAGS}
