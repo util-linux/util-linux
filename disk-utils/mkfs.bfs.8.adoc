@@ -44,11 +44,8 @@ This option is silently ignored.
 *-l*::
 This option is silently ignored.
 
-*-h*, *--help*::
-Display help text and exit.
-
-*-V*, *--version*::
-Display version information and exit. Option *-V* only works as *--version* when it is the only option.
+include::man-common/help-version.adoc[]
+Option *-V* only works as *--version* when it is the only option.
 
 == EXIT STATUS
 

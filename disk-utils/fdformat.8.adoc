@@ -61,11 +61,7 @@ Try to repair tracks failed during the verification (max _N_ retries).
 *-n*, *--no-verify*::
 Skip the verification that is normally performed after the formatting.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == NOTES
 

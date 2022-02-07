@@ -55,9 +55,6 @@ Don't print information (PART_ENTRY_* tags) from partition table in low-level pr
 *-g*, *--garbage-collect*::
 Perform a garbage collection pass on the blkid cache to remove devices which no longer exist.
 
-*-h*, *--help*::
-Display a usage message and exit.
-
 *-H*, *--hint* _setting_::
 Set probing hint. The hints are an optional way to force probing functions to
 check, for example, another location. The currently supported is
@@ -146,8 +143,7 @@ probes for all supported formats except RAIDs. This option is only useful togeth
 *-U*, *--uuid* _uuid_::
 Look up the device that uses this filesystem _uuid_. For more details see the *--label* option.
 
-*-V*, *--version*::
-Display version number and exit.
+include::man-common/help-version.adoc[]
 
 == EXIT STATUS
 

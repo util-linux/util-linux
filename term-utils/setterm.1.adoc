@@ -154,11 +154,7 @@ Sets the color for underlined characters. Virtual consoles only.
 *--underline* on|off::
 Turns underline mode on or off.
 
-*--version*::
-Displays version information and exits.
-
-*--help*::
-Displays a help text and exits.
+include::man-common/help-version.adoc[]
 
 == COMPATIBILITY
 

@@ -45,11 +45,7 @@ Speed up the replay displaying this _number_ of times. The argument is a floatin
 *-m*, *--maxdelay* _number_::
 Set the maximum delay between updates to _number_ of seconds. The argument is a floating-point number. This can be used to avoid long pauses in the typescript replay.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == EXAMPLES
 

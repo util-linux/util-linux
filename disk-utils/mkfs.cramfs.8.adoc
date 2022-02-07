@@ -62,11 +62,7 @@ This option is ignored. Originally the *-s* turned on directory entry sorting.
 *-z*::
 Make explicit holes.
 
-*-h*, *--help*::
-Display help text and exit.
-
-*-V*, *--version*::
-Display version information and exit.
+include::man-common/help-version.adoc[]
 
 == EXIT STATUS
 

@@ -35,11 +35,8 @@ Filesystem-specific options to be passed to the real filesystem builder.
 *-V*, *--verbose*::
 Produce verbose output, including all filesystem-specific commands that are executed. Specifying this option more than once inhibits execution of any filesystem-specific commands. This is really only useful for testing.
 
-*-V*, *--version*::
-Display version information and exit. (Option *-V* will display version information only when it is the only parameter, otherwise it will work as *--verbose*.)
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
+(Option *-V* will display version information only when it is the only parameter, otherwise it will work as *--verbose*.)
 
 == BUGS
 

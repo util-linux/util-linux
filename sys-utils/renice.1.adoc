@@ -66,11 +66,7 @@ Interpret the succeeding arguments as process IDs (the default).
 *-u*, *--user*::
 Interpret the succeeding arguments as usernames or UIDs.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == FILES
 

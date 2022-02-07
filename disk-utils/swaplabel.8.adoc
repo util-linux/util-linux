@@ -28,8 +28,7 @@ If an optional argument is present, then *swaplabel* will change the appropriate
 
 == OPTIONS
 
-*-h*, *--help*::
-  Display help text and exit.
+include::man-common/help-version.adoc[]
 
 *-L*, *--label* _label_::
   Specify a new _label_ for the device. Swap partition labels can be at most 16 characters long. If _label_ is longer than 16 characters, *swaplabel* will truncate it and print a warning message.

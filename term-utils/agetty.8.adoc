@@ -180,11 +180,7 @@ Run login with this priority.
 *--reload*::
 Ask all running agetty instances to reload and update their displayed prompts, if the user has not yet commenced logging in. After doing so the command will exit. This feature might be unsupported on systems without Linux *inotify*(7).
 
-*--version*::
-Display version information and exit.
-
-*--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == EXAMPLE
 

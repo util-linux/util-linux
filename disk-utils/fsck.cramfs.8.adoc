@@ -35,11 +35,7 @@ This option is silently ignored.
 *-y*::
 This option is silently ignored.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == EXIT STATUS
 

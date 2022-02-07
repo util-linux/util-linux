@@ -62,11 +62,7 @@ Display details about the session recorded in the specified timing file and exit
 *-x*, *--stream* _type_::
 Forces *scriptreplay* to print only the specified stream. The supported stream types are _in_, _out_, _signal_, or _info_. This option is recommended for multi-stream logs (e.g., *--log-io*) in order to print only specified data.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == EXAMPLES
 

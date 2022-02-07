@@ -42,11 +42,7 @@ Set query mode. *raw* will query an existing binding instead of setting a new on
 *-a*, *--all*::
 With *-q*, specify that all bound raw devices should be queried.
 
-*-h*, *--help*::
-Display help text and exit.
-
-*-V*, *--version*::
-Display version information and exit.
+include::man-common/help-version.adoc[]
 
 == NOTES
 

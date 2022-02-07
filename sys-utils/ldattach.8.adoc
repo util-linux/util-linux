@@ -104,16 +104,12 @@ Set the parity of the serial line to odd.
 Set the speed (the baud rate) of the serial line to the specified _value_.
 
 *-c*, *--intro-command* _string_::
-Define an intro command that is sent through the serial line before the invocation of ldattach. E.g. in conjunction with line discipline GSM0710, the command 'AT+CMUX=0\r' is commonly suitable to switch the modem into the CMUX mode.
+Define an intro command that is sent through the serial line before the invocation of *ldattach*. E.g. in conjunction with line discipline GSM0710, the command 'AT+CMUX=0\r' is commonly suitable to switch the modem into the CMUX mode.
 
 *-p*, *--pause* _value_::
-Sleep for _value_ seconds before the invocation of ldattach. Default is one second.
+Sleep for _value_ seconds before the invocation of *ldattach*. Default is one second.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == AUTHORS
 

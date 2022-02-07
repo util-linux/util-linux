@@ -96,11 +96,7 @@ Overwrite default sector size.
 *-v*, *--verbose*::
 Verbose mode.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == ENVIRONMENT
 

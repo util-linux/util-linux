@@ -36,11 +36,7 @@ Note that even after freezing, the on-disk filesystem can contain information on
 *-u*, *--unfreeze*::
 This option is used to un-freeze the filesystem and allow operations to continue. Any filesystem modifications that were blocked by the freeze are unblocked and allowed to complete.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == FILESYSTEM SUPPORT
 

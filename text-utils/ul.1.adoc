@@ -60,11 +60,7 @@ Underlining is indicated by a separate line containing appropriate dashes `-'; t
 *-t*, *-T*, *--terminal* _terminal_::
 Override the environment variable *TERM* with the specified _terminal_ type.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == ENVIRONMENT
 

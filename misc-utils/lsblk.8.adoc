@@ -54,9 +54,6 @@ Exclude the devices specified by the comma-separated _list_ of major device numb
 *-f*, *--fs*::
 Output info about filesystems. This option is equivalent to *-o NAME,FSTYPE,FSVER,LABEL,UUID,FSAVAIL,FSUSE%,MOUNTPOINTS*. The authoritative information about filesystems and raids is provided by the *blkid*(8) command.
 
-*-h*, *--help*::
-Display help text and exit.
-
 *-I*, *--include* _list_::
 Include devices specified by the comma-separated _list_ of major device numbers. The filter is applied to the top-level devices only. This may be confusing for *--list* output format where hierarchy of the devices is not obvious.
 
@@ -109,8 +106,7 @@ Output info about block-device topology. This option is equivalent to
 +
 *-o NAME,ALIGNMENT,MIN-IO,OPT-IO,PHY-SEC,LOG-SEC,ROTA,SCHED,RQ-SIZE,RA,WSAME*.
 
-*-V*, *--version*::
-Display version information and exit.
+include::man-common/help-version.adoc[]
 
 *-w*, *--width* _number_::
 Specifies output width as a number of characters. The default is the number of the terminal columns, and if not executed on a terminal, then output width is not restricted at all by default. This option also forces *lsblk* to assume that terminal control characters and unsafe characters are not allowed. The expected use-case is for example when *lsblk* is used by the *watch*(1) command.

@@ -65,11 +65,7 @@ Activate MINIX-like "mode not cleared" warnings.
 *-f*, *--force*::
 Force a filesystem check even if the filesystem was marked as valid. Marking is done by the kernel when the filesystem is unmounted.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == DIAGNOSTICS
 

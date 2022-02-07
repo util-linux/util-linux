@@ -61,11 +61,7 @@ Specifying this option causes *sulogin* to start the shell process as a login sh
 *-t*, *--timeout* _seconds_::
 Specify the maximum amount of time to wait for user input. By default, *sulogin* will wait forever.
 
-*-h*, *--help*::
-Display help text and exit.
-
-*-V*, *--version*::
-Display version information and exit.
+include::man-common/help-version.adoc[]
 
 == ENVIRONMENT
 

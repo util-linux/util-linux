@@ -22,6 +22,10 @@ newgrp [_group_]
 
 If no group is specified, the GID is changed to the login GID.
 
+== OPTIONS
+
+include::man-common/help-version.adoc[]
+
 == FILES
 
 _/etc/group_,

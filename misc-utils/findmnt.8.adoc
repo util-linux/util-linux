@@ -66,9 +66,6 @@ Search in an alternative file. If used with *--fstab*, *--mtab* or *--kernel*, t
 *-f*, *--first-only*::
 Print the first matching filesystem only.
 
-*-h*, *--help*::
-Display help text and exit.
-
 *-i*, *--invert*::
 Invert the sense of matching.
 
@@ -176,6 +173,8 @@ Force *findmnt* to print more information (*--verify* only for now).
 
 *--vfs-all*::
 When used with *VFS-OPTIONS* column, print all VFS (fs-independent) flags. This option is designed for auditing purposes to list also default VFS kernel mount options which are normally not listed.
+
+include::man-common/help-version.adoc[]
 
 == EXIT STATUS
 

@@ -97,11 +97,7 @@ Terminates the directory list and signals the start of filenames. It _must_ be u
 *-l*::
 Output the list of effective lookup paths that *whereis* is using. When none of *-B*, *-M*, or *-S* is specified, the option will output the hard-coded paths that the command was able to find on the system.
 
-*-h*, *--help*::
-Display help text and exit.
-
-*-V*, *--version*::
-Display version information and exit.
+include::man-common/help-version.adoc[]
 
 == FILE SEARCH PATHS
 

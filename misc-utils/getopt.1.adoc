@@ -32,9 +32,6 @@ Traditional implementations of *getopt*(1) are unable to cope with whitespace an
 *-a*, *--alternative*::
 Allow long options to start with a single '*-*'.
 
-*-h*, *--help*::
-Display help text and exit. No other output is generated.
-
 *-l*, *--longoptions* _longopts_::
 The long (multi-character) options to be recognized. More than one option name may be specified at once, by separating the names with commas. This option may be given more than once, the _longopts_ are cumulative. Each long option name in _longopts_ may be followed by one colon to indicate it has a required argument, and by two colons to indicate it has an optional argument.
 
@@ -60,8 +57,7 @@ Test if your *getopt*(1) is this enhanced version or an old version. This genera
 *-u*, *--unquoted*::
 Do not quote the output. Note that whitespace and special (shell-dependent) characters can cause havoc in this mode (like they do with other *getopt*(1) implementations).
 
-*-V*, *--version*::
-Display version information and exit. No other output is generated.
+include::man-common/help-version.adoc[]
 
 == PARSING
 

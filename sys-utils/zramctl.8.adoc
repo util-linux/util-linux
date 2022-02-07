@@ -67,11 +67,7 @@ The _size_ argument may be followed by the multiplicative suffixes KiB (=1024), 
 *-t*, *--streams* _number_::
 Set the maximum number of compression streams that can be used for the device. The default is use all CPUs and one stream for kernels older than 4.6.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == EXIT STATUS
 

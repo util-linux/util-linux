@@ -37,6 +37,8 @@ The partition number.
 _length_::
 The new length of the partition (in 512-byte sectors).
 
+include::man-common/help-version.adoc[]
+
 == SEE ALSO
 
 *addpart*(8),

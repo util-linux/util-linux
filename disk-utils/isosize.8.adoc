@@ -28,6 +28,8 @@ Only has an effect when *-x* is not given. The value shown (if no errors) is the
 +
 The size of the file (or block device) holding an iso9660 filesystem can be marginally larger than the actual size of the iso9660 filesystem. One reason for this is that cd writers are allowed to add "run out" sectors at the end of an iso9660 image.
 
+include::man-common/help-version.adoc[]
+
 == EXIT STATUS
 
 *0*::

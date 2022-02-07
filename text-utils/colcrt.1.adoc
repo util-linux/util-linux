@@ -61,11 +61,7 @@ Suppress all underlining. This option is especially useful for previewing _allbo
 *-2*, *--half-lines*::
 Causes all half-lines to be printed, effectively double spacing the output. Normally, a minimal space output format is used which will suppress empty lines. The program never suppresses two consecutive empty lines, however. The *-2* option is useful for sending output to the line printer when the output contains superscripts and subscripts which would otherwise be invisible.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == HISTORY
 

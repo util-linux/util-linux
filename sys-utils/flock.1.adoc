@@ -83,11 +83,7 @@ Fail if the lock cannot be acquired within _seconds_. Decimal fractional values 
 *--verbose*::
 Report how long it took to acquire the lock, or why the lock could not be obtained.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == EXIT STATUS
 

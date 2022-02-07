@@ -39,11 +39,7 @@ The _number_ argument may be followed by the multiplicative suffixes KiB=1024, M
 *-v*, *--verbose*::
 Inform where randomness originated, with amount of entropy read from each source.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == FILES
 

@@ -70,11 +70,7 @@ Ignore the case of alphabetic characters. This is on by default if no file is sp
 *-t*, *--terminate* _character_::
 Specify a string termination character, i.e., only the characters in _string_ up to and including the first occurrence of _character_ are compared.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 The *look* utility exits 0 if one or more lines were found and displayed, 1 if no lines were found, and >1 if an error occurred.
 

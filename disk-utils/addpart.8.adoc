@@ -40,6 +40,8 @@ The beginning of the partition (in 512-byte sectors).
 _length_::
 The length of the partition (in 512-byte sectors).
 
+include::man-common/help-version.adoc[]
+
 == SEE ALSO
 
 *delpart*(8),

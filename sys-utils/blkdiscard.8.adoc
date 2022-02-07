@@ -49,11 +49,7 @@ Zero-fill rather than discard.
 *-v*, *--verbose*::
 Display the aligned values of _offset_ and _length_. If the *--step* option is specified, it prints the discard progress every second.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == AUTHORS
 

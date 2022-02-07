@@ -54,6 +54,10 @@ vipw, vigr - edit the password or group file
 
 *vipw* edits the password file after setting the appropriate locks, and does any necessary processing after the password file is unlocked. If the password file is already locked for editing by another user, *vipw* will ask you to try again later. The default editor for *vipw* and *vigr* is *vi*(1). *vigr* edits the group file in the same manner as *vipw* does the passwd file.
 
+== OPTIONS
+
+include::man-common/help-version.adoc[]
+
 == ENVIRONMENT
 
 If the following environment variable exists, it will be utilized by *vipw* and *vigr*:

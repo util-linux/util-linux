@@ -61,11 +61,7 @@ Verbose execution. With this option *fstrim* will output the number of bytes pas
 *--quiet-unsupported*::
 Suppress error messages if trim operation (ioctl) is unsupported. This option is meant to be used in *systemd* service file or in *cron*(8) scripts to hide warnings that are result of known problems, such as NTFS driver reporting _Bad file descriptor_ when device is mounted read-only, or lack of file system support for ioctl _FITRIM_ call. This option also cleans exit status when unsupported filesystem specified on *fstrim* command line.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == EXIT STATUS
 

@@ -40,9 +40,6 @@ Because of the nature of limits, the soft limit must be lower or equal to the hi
 
 == GENERAL OPTIONS
 
-*-h, --help*::
-Display help text and exit.
-
 *--noheadings*::
 Do not print a header line.
 
@@ -58,8 +55,7 @@ Use the raw output format.
 *--verbose*::
 Verbose mode.
 
-*-V, --version*::
-Display version information and exit.
+include::man-common/help-version.adoc[]
 
 == RESOURCE OPTIONS
 

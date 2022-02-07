@@ -132,11 +132,7 @@ Specify column with parent ID to create child-parent relation.
 *-x, --fillrows*::
 Fill rows before filling columns.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h, --help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == ENVIRONMENT
 

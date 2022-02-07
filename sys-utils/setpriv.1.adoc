@@ -89,11 +89,7 @@ Clears all the environment variables except *TERM*; initializes the environment 
 +
 The environment variable *PATH* may be different on systems where _/bin_ and _/sbin_ are merged into _/usr_. The environment variable *SHELL* defaults to */bin/sh* if none is given in the user's passwd entry.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == NOTES
 

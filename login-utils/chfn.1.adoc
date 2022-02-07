@@ -46,11 +46,7 @@ Specify your office phone number.
 *-h*, *--home-phone* _home-phone_::
 Specify your home phone number.
 
-*-u*, *--help*::
-Display help text and exit.
-
-*-v*, *--version*::
-Display version information and exit.
+include::man-common/help-version.adoc[]
 
 == CONFIG FILE ITEMS
 

@@ -34,11 +34,7 @@ Do not follow symbolic link if it the last element of the _directory_ path.
 *-x*, *--devno*::
 Show the major/minor numbers of the given blockdevice on standard output.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == EXIT STATUS
 

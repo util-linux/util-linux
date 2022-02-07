@@ -49,9 +49,6 @@ Force eject, don't check device type, don't open device with exclusive lock. The
 *-f*, *--floppy*::
 This option specifies that the drive should be ejected using a removable floppy disk eject command.
 
-*-h*, *--help*::
-Display help text and exit.
-
 *-i*, **--manualeject on**|*off*::
 This option controls locking of the hardware eject button. When enabled, the drive will not be ejected when the button is pressed. This is useful when you are carrying a laptop in a bag or case and don't want it to eject if the button is inadvertently pressed.
 
@@ -82,8 +79,7 @@ With this option the drive is given a CD-ROM tray close command if it's opened, 
 *-t*, *--trayclose*::
 With this option the drive is given a CD-ROM tray close command. Not all devices support this command.
 
-*-V*, *--version*::
-Display version information and exit.
+include::man-common/help-version.adoc[]
 
 *-v*, *--verbose*::
 Run in verbose mode; more information is displayed about what the command is doing.
