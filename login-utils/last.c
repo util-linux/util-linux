@@ -757,7 +757,7 @@ static void process_wtmp_file(const struct last_control *ctl,
 		else {
 			if (ut.ut_type != DEAD_PROCESS &&
 			    ut.ut_user[0] && ut.ut_line[0] &&
-			    strcmp(ut.ut_user, "LOGIN") != 0)
+			    strncmp(ut.ut_user, "LOGIN", 5) != 0)
 				ut.ut_type = USER_PROCESS;
 			/*
 			 * Even worse, applications that write ghost
@@ -770,7 +770,7 @@ static void process_wtmp_file(const struct last_control *ctl,
 			/*
 			 * Clock changes.
 			 */
-			if (strcmp(ut.ut_user, "date") == 0) {
+			if (strncmp(ut.ut_user, "date", 4) == 0) {
 				if (ut.ut_line[0] == '|')
 					ut.ut_type = OLD_TIME;
 				if (ut.ut_line[0] == '{')
