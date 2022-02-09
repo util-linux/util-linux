@@ -385,11 +385,9 @@ The same concept of backup files is used by *wipefs*(8).
 
 Note that *sfdisk* since version 2.26 no longer provides the *-I* option to restore sectors. *dd*(1) provides all necessary functionality.
 
-== COLORS
+include::man-common/colors.adoc[]
 
-Implicit coloring can be disabled by an empty file _/etc/terminal-colors.d/sfdisk.disable_.
-
-See *terminal-colors.d*(5) for more details about colorization configuration. The logical color names supported by *sfdisk* are:
+The logical color names supported by *sfdisk* are:
 
 *header*::
 The header of the output tables.

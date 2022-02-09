@@ -113,12 +113,7 @@ Select the preceding or the next menu item. Hitting _Enter_ will execute the cur
 
 All commands can be entered with either uppercase or lowercase letters (except for **W**rite). When in a submenu or at a prompt, you can hit the _Esc_ key to return to the main menu.
 
-== COLORS
-
-Implicit coloring can be disabled by creating the empty file _/etc/terminal-colors.d/cfdisk.disable_.
-
-See *terminal-colors.d*(5) for more details about colorization configuration.
-
+include::man-common/colors.adoc[]
 *cfdisk* does not support color customization with a color-scheme file.
 
 == ENVIRONMENT

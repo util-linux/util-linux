@@ -144,15 +144,7 @@ A year starts on January 1. The first day of the week is determined by the local
 
 The week numbering depends on the choice of the first day of the week. If it is Sunday then the customary North American numbering is used, where 1 January is in week number 1. If it is Monday (*-m*) then the ISO 8601 standard week numbering is used, where the first Thursday is in week number 1.
 
-== COLORS
-
-Implicit coloring can be disabled as follows:
-
-____
-*touch /etc/terminal-colors.d/cal.disable*
-____
-
-See *terminal-colors.d*(5) for more details about colorization configuration.
+include::man-common/colors.adoc[]
 
 == HISTORY
 

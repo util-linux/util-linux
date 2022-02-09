@@ -143,10 +143,7 @@ Decode facility and level (priority) numbers to human-readable prefixes.
 
 include::man-common/help-version.adoc[]
 
-== COLORS
-
-Implicit coloring can be disabled by an empty file _/etc/terminal-colors.d/dmesg.disable_. See *terminal-colors.d*(5) for more details about colorization configuration.
-
+include::man-common/colors.adoc[]
 The logical color names supported by *dmesg* are:
 
 *subsys*::

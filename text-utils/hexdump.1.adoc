@@ -248,11 +248,7 @@ MBR Boot Signature example: Highlight the addresses cyan and the bytes at offset
    "%07.7_ax_L[cyan]  " 8/2 "   %04x_L[green:0xAA55@510-511,!red:0xAA55@510-511] " "\n"
 ....
 
-== COLORS
-
-Implicit coloring can be disabled by an empty file _/etc/terminal-colors.d/hexdump.disable_.
-
-See *terminal-colors.d*(5) for more details about colorization configuration.
+include::man-common/colors.adoc[]
 
 include::man-common/bugreports.adoc[]
 

@@ -175,11 +175,8 @@ Some versions of MS-DOS create a first partition which does not begin on a cylin
 
 For best results, you should always use an OS-specific partition table program. For example, you should make DOS partitions with the DOS FDISK program and Linux partitions with the Linux *fdisk* or Linux *cfdisk*(8) programs.
 
-== COLORS
-
-Implicit coloring can be disabled by an empty file _/etc/terminal-colors.d/fdisk.disable_.
-
-See *terminal-colors.d*(5) for more details about colorization configuration. The logical color names supported by *fdisk* are:
+include::man-common/colors.adoc[]
+The logical color names supported by *fdisk* are:
 
 *header*::
 The header of the output tables.
