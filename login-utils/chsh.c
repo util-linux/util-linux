@@ -58,11 +58,6 @@
 # include "auth.h"
 #endif
 
-#ifdef HAVE_LIBREADLINE
-# define _FUNCTION_DEF
-# include <readline/readline.h>
-#endif
-
 struct sinfo {
 	char *username;
 	char *shell;
@@ -121,33 +116,6 @@ static void print_shells(void)
 	endusershell();
 }
 
-#ifdef HAVE_LIBREADLINE
-static char *shell_name_generator(const char *text, int state)
-{
-	static size_t len;
-	char *s;
-
-	if (!state) {
-		setusershell();
-		len = strlen(text);
-	}
-
-	while ((s = getusershell())) {
-		if (strncmp(s, text, len) == 0)
-			return xstrdup(s);
-	}
-	return NULL;
-}
-
-static char **shell_name_completion(const char *text,
-				    int start __attribute__((__unused__)),
-				    int end __attribute__((__unused__)))
-{
-	rl_attempted_completion_over = 1;
-	return rl_completion_matches(text, shell_name_generator);
-}
-#endif
-
 /*
  *  parse_argv () --
  *	parse the command line arguments, and fill in "pinfo" with any
@@ -198,21 +166,16 @@ static char *ask_new_shell(char *question, char *oldshell)
 {
 	int len;
 	char *ans = NULL;
-#ifdef HAVE_LIBREADLINE
-	rl_attempted_completion_function = shell_name_completion;
-#else
 	size_t dummy = 0;
-#endif
+
 	if (!oldshell)
 		oldshell = "";
 	printf("%s [%s]:", question, oldshell);
-#ifdef HAVE_LIBREADLINE
-	if ((ans = readline(" ")) == NULL)
-#else
 	putchar(' ');
+
 	if (getline(&ans, &dummy, stdin) < 0)
-#endif
 		return NULL;
+
 	/* remove the newline at the end of ans. */
 	ltrim_whitespace((unsigned char *) ans);
 	len = rtrim_whitespace((unsigned char *) ans);
