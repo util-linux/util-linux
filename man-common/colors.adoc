@@ -1,11 +1,11 @@
 == COLORS
 
-The output colorization is implemented by *terminal-colors.d(5)* functionality.
+The output colorization is implemented by *terminal-colors.d*(5) functionality.
 Implicit coloring can be disabled by an empty file
 ____
 _/etc/terminal-colors.d/{command}.disable_
 ____
-for the {command} or for all tools by
+for the {command} command or for all tools by
 ____
 _/etc/terminal-colors.d/disable_
 ____
