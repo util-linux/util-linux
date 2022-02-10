@@ -337,7 +337,7 @@ static bool file_fill_column(struct proc *proc,
 		if (file->association != -ASSOC_SHM
 		    && file->association != -ASSOC_MEM)
 			return true;
-		xasprintf(&str, "%lu", get_map_length(file));
+		xasprintf(&str, "%ju", (uintmax_t)get_map_length(file));
 		break;
 	default:
 		return false;
