@@ -289,7 +289,7 @@ static bool file_fill_column(struct proc *proc,
 		xasprintf(&str, "%d", (int)file->stat.st_uid);
 		break;
 	case COL_SIZE:
-		xasprintf(&str, "%ju", file->stat.st_size);
+		xasprintf(&str, "%jd", (intmax_t)file->stat.st_size);
 		break;
 	case COL_NLINK:
 		xasprintf(&str, "%ju", (unsigned long int)file->stat.st_nlink);
