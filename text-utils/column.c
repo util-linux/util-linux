@@ -319,9 +319,7 @@ static void apply_columnflag_from_list(struct column_control *ctl, const char *l
 			err_oom();
 
 		while (scols_table_next_column(ctl->tab, itr, &cl) == 0) {
-			struct libscols_cell *ce = scols_column_get_header(cl);
-
-			if (ce == NULL ||  scols_cell_get_data(ce) == NULL)
+			if (!scols_column_get_name(cl))
 				column_set_flag(cl, flag);
 		}
 		scols_free_iter(itr);
