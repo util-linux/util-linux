@@ -74,6 +74,7 @@ void scols_unref_column(struct libscols_column *cl)
 		free(cl->color);
 		free(cl->safechars);
 		free(cl->pending_data_buf);
+		free(cl->shellvar);
 		free(cl);
 	}
 }
@@ -244,6 +245,84 @@ struct libscols_cell *scols_column_get_header(struct libscols_column *cl)
 {
 	return &cl->header;
 }
+
+/**
+ * scols_column_set_name:
+ * @cl: a pointer to a struct libscols_column instance
+ * @name: column name
+ *
+ * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.38
+ */
+int scols_column_set_name(struct libscols_column *cl, const char *name)
+{
+	struct libscols_cell *hr = scols_column_get_header(cl);
+
+	if (!hr)
+		return -EINVAL;
+
+	free(cl->shellvar);
+	cl->shellvar = NULL;
+
+	return scols_cell_set_data(hr, name);
+}
+
+/**
+ * scols_column_get_name:
+ * @cl: a pointer to a struct libscols_column instance
+ *
+ * Returns: A pointer to a column name, which is stored in column header
+ *
+ * Since: 2.38
+ */
+const char *scols_column_get_name(struct libscols_column *cl)
+{
+	return scols_cell_get_data(&cl->header);
+}
+
+/**
+ * scols_column_get_name_as_shellvar
+ * @cl: a pointer to a struct libscols_column instance
+ *
+ * Like scols_column_get_name(), but column name is modified to be compatible with shells
+ * requirements for variable names.
+ *
+ * Since: 2.38
+ */
+const char *scols_column_get_name_as_shellvar(struct libscols_column *cl)
+{
+	if (!cl->shellvar) {
+		const char *s, *name = scols_column_get_name(cl);
+		char *p;
+		size_t sz;
+
+		if (!name || !*name)
+			return NULL;
+
+		/* "1FOO%" --> "_1FOO_PCT */
+		sz = strlen(name) + 1 + 3;
+		p = cl->shellvar = calloc(1, sz + 1);
+		if (!cl->shellvar)
+			return NULL;
+
+		 /* convert "1FOO" to "_1FOO" */
+		if (!isalpha(*name))
+			*p++ = '_';
+
+		/* replace all "bad" chars with "_" */
+		for (s = name; *s; s++)
+			*p++ = !isalnum(*s) ? '_' : *s;
+
+		if (!*s && *(s - 1) == '%') {
+			*p++ = 'P';
+			*p++ = 'C';
+			*p++ = 'T';
+		}
+	}
+	return cl->shellvar;
+}
+
 
 /**
  * scols_column_set_color:

@@ -139,6 +139,7 @@ enum {
 	LSBLK_EXPORT =		(1 << 3),
 	LSBLK_TREE =		(1 << 4),
 	LSBLK_JSON =		(1 << 5),
+	LSBLK_SHELLVAR =	(1 << 6)
 };
 
 /* Types used for qsort() and JSON */
@@ -1924,6 +1925,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -t, --topology       output info about topology\n"), out);
 	fputs(_(" -w, --width <num>    specifies output width as number of characters\n"), out);
 	fputs(_(" -x, --sort <column>  sort output by <column>\n"), out);
+	fputs(_(" -y, --shell          modify column names to be usable as shell variable identifiers\n"), out);
 	fputs(_(" -z, --zoned          print zone related information\n"), out);
 	fputs(_("     --sysroot <dir>  use specified directory as system root\n"), out);
 	fputs(USAGE_SEPARATOR, out);
@@ -1993,6 +1995,7 @@ int main(int argc, char *argv[])
 		{ "scsi",       no_argument,       NULL, 'S' },
 		{ "sort",	required_argument, NULL, 'x' },
 		{ "sysroot",    required_argument, NULL, OPT_SYSROOT },
+		{ "shell",      no_argument,       NULL, 'y' },
 		{ "tree",       optional_argument, NULL, 'T' },
 		{ "version",    no_argument,       NULL, 'V' },
 		{ "width",	required_argument, NULL, 'w' },
@@ -2023,7 +2026,7 @@ int main(int argc, char *argv[])
 	lsblk_init_debug();
 
 	while((c = getopt_long(argc, argv,
-				"AabdDzE:e:fhJlnMmo:OpPiI:rstVST::w:x:",
+				"AabdDzE:e:fhJlnMmo:OpPiI:rstVST::w:x:y",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -2086,6 +2089,9 @@ int main(int argc, char *argv[])
 		case 'P':
 			lsblk->flags |= LSBLK_EXPORT;
 			lsblk->flags &= ~LSBLK_TREE;	/* disable the default */
+			break;
+		case 'y':
+			lsblk->flags |= LSBLK_SHELLVAR;
 			break;
 		case 'i':
 			lsblk->flags |= LSBLK_ASCII;
@@ -2234,6 +2240,7 @@ int main(int argc, char *argv[])
 		errx(EXIT_FAILURE, _("failed to allocate output table"));
 	scols_table_enable_raw(lsblk->table, !!(lsblk->flags & LSBLK_RAW));
 	scols_table_enable_export(lsblk->table, !!(lsblk->flags & LSBLK_EXPORT));
+	scols_table_enable_shellvar(lsblk->table, !!(lsblk->flags & LSBLK_SHELLVAR));
 	scols_table_enable_ascii(lsblk->table, !!(lsblk->flags & LSBLK_ASCII));
 	scols_table_enable_json(lsblk->table, !!(lsblk->flags & LSBLK_JSON));
 	scols_table_enable_noheadings(lsblk->table, !!(lsblk->flags & LSBLK_NOHEADINGS));

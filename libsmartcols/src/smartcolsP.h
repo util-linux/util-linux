@@ -126,7 +126,9 @@ struct libscols_column {
 	void *wrapfunc_data;
 
 
-	struct libscols_cell	header;
+	struct libscols_cell	header;		/* column name with color etc. */
+	char	*shellvar;			/* raw colum name in shell compatible format */
+
 	struct list_head	cl_columns;	/* member of table->tb_columns */
 
 	struct libscols_table	*table;
@@ -245,6 +247,7 @@ struct libscols_table {
 			is_term		:1,	/* isatty() */
 			padding_debug	:1,	/* output visible padding chars */
 			is_dummy_print	:1,	/* printing used for width calculation only */
+			is_shellvar	:1,	/* shell compatible column names */
 			maxout		:1,	/* maximize output */
 			minout		:1,	/* minimize output (mutually exclusive to maxout) */
 			header_repeat   :1,     /* print header after libscols_table->termheight */

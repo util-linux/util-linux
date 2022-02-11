@@ -71,21 +71,4 @@ static inline void fputs_nonblank(const char *data, FILE *out)
 	}
 }
 
-static inline void fputs_shell_ident(const char *data, FILE *out)
-{
-	const char *p = data;
-
-	/* convert "1FOO" to "_1FOO" */
-	if (p && !isalpha(*p))
-		fputc('_', out);
-
-	/* replace all "bad" chars with "_" */
-	for (p = data; p && *p; p++) {
-		if (!isalnum(*p))
-			fputc('_', out);
-		else
-			fputc(*p, out);
-	}
-}
-
 #endif  /*  _CAREFULPUTC_H  */
