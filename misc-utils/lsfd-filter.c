@@ -654,12 +654,6 @@ static void parameter_init(struct parameter *param, struct libscols_column *cl)
 	param->has_value = false;
 }
 
-static const char *get_column_name(struct libscols_column *cl)
-{
-	struct libscols_cell *header = scols_column_get_header(cl);
-	return scols_cell_get_data(header);;
-}
-
 static struct libscols_column *search_column(struct libscols_table *tb, const char *name)
 {
 	size_t len = scols_table_get_ncols(tb);
@@ -667,8 +661,9 @@ static struct libscols_column *search_column(struct libscols_table *tb, const ch
 
 	for (i = 0; i < len; i++) {
 		struct libscols_column *cl = scols_table_get_column(tb, i);
-		const char *n = get_column_name(cl);
-		if (strcmp(n, name) == 0)
+		const char *n = scols_column_get_name(cl);
+
+		if (n && strcmp(n, name) == 0)
 			return cl;
 	}
 	return NULL;
@@ -994,7 +989,7 @@ static void node_dump(struct node *node, struct parameter *param, int depth, FIL
 static void node_str_dump(struct node *node, struct parameter* params, int depth __attribute__((__unused__)), FILE *stream)
 {
 	if (PINDEX(node) >= 0)
-		fprintf(stream, ": |%s|\n", get_column_name(params[PINDEX(node)].cl));
+		fprintf(stream, ": |%s|\n", scols_column_get_name(params[PINDEX(node)].cl));
 	else
 		fprintf(stream, ": '%s'\n", VAL(node,str));
 }
@@ -1002,7 +997,7 @@ static void node_str_dump(struct node *node, struct parameter* params, int depth
 static void node_num_dump(struct node *node, struct parameter* params, int depth __attribute__((__unused__)), FILE *stream)
 {
 	if (PINDEX(node) >= 0)
-		fprintf(stream, ": |%s|\n", get_column_name(params[PINDEX(node)].cl));
+		fprintf(stream, ": |%s|\n", scols_column_get_name(params[PINDEX(node)].cl));
 	else
 		fprintf(stream, ": %llu\n", VAL(node,num));
 }
@@ -1010,7 +1005,7 @@ static void node_num_dump(struct node *node, struct parameter* params, int depth
 static void node_bool_dump(struct node *node, struct parameter* params, int depth __attribute__((__unused__)), FILE *stream)
 {
 	if (PINDEX(node) >= 0)
-		fprintf(stream, ": |%s|\n", get_column_name(params[PINDEX(node)].cl));
+		fprintf(stream, ": |%s|\n", scols_column_get_name(params[PINDEX(node)].cl));
 	else
 		fprintf(stream, ": %s\n",
 			VAL(node,boolean)
