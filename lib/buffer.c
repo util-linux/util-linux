@@ -122,6 +122,8 @@ int ul_buffer_alloc_data(struct ul_buffer *buf, size_t sz)
 	buf->end = buf->begin + len;
 	buf->sz = sz;
 
+	memset(buf->end, '\0', sz - len);
+
 	return 0;
 }
 
