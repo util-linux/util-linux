@@ -606,8 +606,11 @@ static int print_data(struct libscols_table *tb,
 	if (!data)
 		data = "";
 
-	if (tb->format != SCOLS_FMT_HUMAN)
-		name = scols_cell_get_data(&cl->header);
+	if (tb->format != SCOLS_FMT_HUMAN) {
+		name = scols_table_is_shellvar(tb) ?
+				scols_column_get_name_as_shellvar(cl) :
+				scols_column_get_name(cl);
+	}
 
 	is_last = is_last_column(cl);
 
@@ -624,9 +627,7 @@ static int print_data(struct libscols_table *tb,
 		return 0;
 
 	case SCOLS_FMT_EXPORT:
-		fputs_shell_ident(name, tb->out);
-		if (endswith(name, "%"))
-			fputs("PCT", tb->out);
+		fputs(name, tb->out);
 		fputc('=', tb->out);
 		fputs_quoted(data, tb->out);
 		if (!is_last)
@@ -973,7 +974,10 @@ int __scols_print_header(struct libscols_table *tb, struct ul_buffer *buf)
 			}
 		}
 		if (!rc)
-			rc = ul_buffer_append_string(buf, scols_cell_get_data(&cl->header));
+			rc = ul_buffer_append_string(buf,
+					scols_table_is_shellvar(tb) ?
+						scols_column_get_name_as_shellvar(cl) :
+						scols_column_get_name(cl));
 		if (!rc)
 			rc = print_data(tb, cl, NULL, &cl->header, buf);
 	}
@@ -1190,7 +1194,9 @@ int __scols_initialize_printing(struct libscols_table *tb, struct ul_buffer *buf
 		while (scols_table_next_column(tb, &itr, &cl) == 0) {
 			if (scols_column_is_hidden(cl))
 				continue;
-			extra_bufsz += strlen(scols_cell_get_data(&cl->header));	/* data */
+
+			if (scols_column_get_name(cl))
+				extra_bufsz += strlen(scols_column_get_name(cl));	/* data */
 			extra_bufsz += 2;						/* separators */
 		}
 		break;

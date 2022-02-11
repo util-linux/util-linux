@@ -78,17 +78,13 @@ static struct libscols_column *parse_column(FILE *f)
 
 		switch (nlines) {
 		case 0: /* NAME */
-		{
-			struct libscols_cell *hr;
-
 			cl = scols_new_column();
 			if (!cl)
 				goto fail;
-			hr = scols_column_get_header(cl);
-			if (!hr || scols_cell_set_data(hr, line))
+			if (scols_column_set_name(cl, line) != 0)
 				goto fail;
 			break;
-		}
+
 		case 1: /* WIDTH-HINT */
 		{
 			double whint = strtod_or_err(line, "failed to parse column whint");

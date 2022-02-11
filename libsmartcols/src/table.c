@@ -415,7 +415,6 @@ struct libscols_column *scols_table_new_column(struct libscols_table *tb,
 					       int flags)
 {
 	struct libscols_column *cl;
-	struct libscols_cell *hr;
 
 	if (!tb)
 		return NULL;
@@ -426,13 +425,8 @@ struct libscols_column *scols_table_new_column(struct libscols_table *tb,
 	if (!cl)
 		return NULL;
 
-	/* set column name */
-	hr = scols_column_get_header(cl);
-	if (!hr)
+	if (scols_column_set_name(cl, name))
 		goto err;
-	if (scols_cell_set_data(hr, name))
-		goto err;
-
 	scols_column_set_whint(cl, whint);
 	scols_column_set_flags(cl, flags);
 
@@ -1078,9 +1072,11 @@ int scols_table_enable_json(struct libscols_table *tb, int enable)
  * Enable/disable export output format (COLUMNAME="value" ...).
  * The parsable output formats (export and raw) are mutually exclusive.
  *
- * Note that COLUMNAME maybe be modified on output to contains only chars
- * allowed as shell variable identifiers, for example MIN-IO and FSUSE% will be
- * MIN_IO and FSUSE_PCT.
+ * See also scols_table_enable_shellvar(). Note that in version 2.37 (and only
+ * in this version) scols_table_enable_shellvar() functionality has been
+ * automatically enabled  for "export" format. This behavior has been reverted
+ * in version 2.38 due to backward compatibility issues. Now it's necessary to
+ * explicitly call scols_table_enable_shellvar().
  *
  * Returns: 0 on success, negative number in case of an error.
  */
@@ -1096,6 +1092,29 @@ int scols_table_enable_export(struct libscols_table *tb, int enable)
 		tb->format = 0;
 	return 0;
 }
+
+/**
+ * scols_table_enable_shellvar:
+ * @tb: table
+ * @enable: 1 or 0
+ *
+ * Force library to print column names to be compatible with shell requirements
+ * to variable names.  For example "1FOO%" will be printed as "_1FOO_PCT".
+ *
+ * Returns: 0 on success, negative number in case of an error.
+ *
+ * Since: 2.38
+ */
+int scols_table_enable_shellvar(struct libscols_table *tb, int enable)
+{
+	if (!tb)
+		return -EINVAL;
+
+	DBG(TAB, ul_debugobj(tb, "shellvar: %s", enable ? "ENABLE" : "DISABLE"));
+	tb->is_shellvar = enable ? 1 : 0;
+	return 0;
+}
+
 
 /**
  * scols_table_enable_ascii:
@@ -1341,6 +1360,20 @@ int scols_table_is_header_repeat(const struct libscols_table *tb)
 int scols_table_is_export(const struct libscols_table *tb)
 {
 	return tb->format == SCOLS_FMT_EXPORT;
+}
+
+/**
+ * scols_table_is_shellvar:
+ * @tb: table
+ *
+ * Returns: 1 if column names has to be compatible with shell requirements
+ *          to variable names
+ *
+ * Since: 2.38
+ */
+int scols_table_is_shellvar(const struct libscols_table *tb)
+{
+	return tb->is_shellvar;
 }
 
 /**
