@@ -5,7 +5,7 @@ Implicit coloring can be disabled by an empty file
 ____
 _/etc/terminal-colors.d/{command}.disable_
 ____
-for the {command} command or for all tools by
+for the *{command}* command or for all tools by
 ____
 _/etc/terminal-colors.d/disable_
 ____
