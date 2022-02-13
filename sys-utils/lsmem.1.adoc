@@ -18,7 +18,7 @@ lsmem - list the ranges of available memory with their online status
 
 The *lsmem* command lists the ranges of available memory with their online status. The listed memory blocks correspond to the memory block representation in sysfs. The command also shows the memory block size and the amount of memory in online and offline state.
 
-The default output compatible with original implementation from s390-tools, but it's strongly recommended to avoid using default outputs in your scripts. Always explicitly define expected columns by using the *--output* option together with a columns list in environments where a stable output is required.
+The default output is compatible with original implementation from s390-tools, but it's strongly recommended to avoid using default outputs in your scripts. Always explicitly define expected columns by using the *--output* option together with a columns list in environments where a stable output is required.
 
 The *lsmem* command lists a new memory range always when the current memory block distinguish from the previous block by some output column. This default behavior is possible to override by the *--split* option (e.g., *lsmem --split=ZONES*). The special word "none" may be used to ignore all differences between memory blocks and to create as large as possible continuous ranges. The opposite semantic is *--all* to list individual memory blocks.
 

@@ -65,7 +65,7 @@ _One-byte octal display_. Display the input offset in hexadecimal, followed by s
 _One-byte character display_. Display the input offset in hexadecimal, followed by sixteen space-separated, three-column, space-filled characters of input data per line.
 
 *-C*, *--canonical*::
-_Canonical hex{plus}ASCII display_. Display the input offset in hexadecimal, followed by sixteen space-separated, two-column, hexadecimal bytes, followed by the same sixteen bytes in *%{underscore}p* format enclosed in '*|*' characters. Invoking the program as *hd* implies this option.
+_Canonical hex{plus}ASCII display_. Display the input offset in hexadecimal, followed by sixteen space-separated, two-column, hexadecimal bytes, followed by the same sixteen bytes in *%{underscore}p* format enclosed in *|* characters. Invoking the program as *hd* implies this option.
 //TRANSLATORS: Keep {plus} and {underscore} untranslated.
 
 *-d*, *--two-bytes-decimal*::
@@ -144,7 +144,7 @@ The *hexdump* utility also supports the following additional conversion strings.
 Display the input offset, cumulative across input files, of the next byte to be displayed. The appended characters *d*, *o*, and *x* specify the display base as decimal, octal or hexadecimal respectively.
 
 *_A[dox]*::
-Identical to the *_a* conversion string except that it is only performed once, when all of the input data has been processed.
+Almost identical to the *_a* conversion string except that it is only performed once, when all of the input data has been processed.
 
 *_c*::
 Output characters in the default character set. Non-printing characters are displayed in three-character, zero-padded octal, except for those representable by standard escape notation (see above), which are displayed as two-character strings.
@@ -168,7 +168,7 @@ ____
 
 === Colors
 
-When put at the end of a format specifier, hexdump highlights the respective string with the color specified. Conditions, if present, are evaluated prior to highlighting.
+When put at the end of a format specifier, *hexdump* highlights the respective string with the color specified. Conditions, if present, are evaluated prior to highlighting.
 
 *_L[color_unit_1,color_unit_2,...,color_unit_n]*
 
@@ -183,7 +183,7 @@ Negate the condition. Please note that it only makes sense to negate a unit if b
 One of the 8 basic shell colors.
 
 *VALUE*::
-A value to be matched specified in hexadecimal, or octal base, or as a string. Please note that the usual C escape sequences are not interpreted by hexdump inside the color_units.
+A value to be matched specified in hexadecimal, or octal base, or as a string. Please note that the usual C escape sequences are not interpreted by *hexdump* inside the color_units.
 
 *OFFSET*::
 An offset or an offset range at which to check for a match. Please note that lone OFFSET_START uses the same value as END offset.

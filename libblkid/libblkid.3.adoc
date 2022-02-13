@@ -33,7 +33,7 @@ The high-level part of the library keeps information about block devices in a ca
 
 In situations where one is getting information about a single known device, it does not impact performance whether the cache is used or not (unless you are not able to read the block device directly).
 
-The high-level part of the library supports two methods to evaluate *LABEL/UUID*. It reads information directly from a block device or read information from /dev/disk/by-* udev symlinks. The udev is preferred method by default.
+The high-level part of the library supports two methods to determine *LABEL/UUID*. It reads information directly from a block device or read information from /dev/disk/by-* udev symlinks. The udev is preferred method by default.
 
 If you are dealing with multiple devices, use of the cache is highly recommended (even if empty) as devices will be scanned at most one time and the on-disk cache will be updated if possible.
 

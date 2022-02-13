@@ -57,9 +57,9 @@ Start the shell as a login shell with an environment similar to a real login:
 Preserve the entire environment, i.e., do not set *HOME*, *SHELL*, *USER* or *LOGNAME*. This option is ignored if the option *--login* is specified.
 
 *-P*, *--pty*::
-Create a pseudo-terminal for the session. The independent terminal provides better security as the user does not share a terminal with the original session. This can be used to avoid TIOCSTI ioctl terminal injection and other security attacks against terminal file descriptors. The entire session can also be moved to the background (e.g., "su --pty - username -c application &"). If the pseudo-terminal is enabled, then *su* works as a proxy between the sessions (copy stdin and stdout).
+Create a pseudo-terminal for the session. The independent terminal provides better security as the user does not share a terminal with the original session. This can be used to avoid *TIOCSTI* ioctl terminal injection and other security attacks against terminal file descriptors. The entire session can also be moved to the background (e.g., *su --pty **-** __username__ *-c* _application_ *&*). If the pseudo-terminal is enabled, then *su* works as a proxy between the sessions (sync stdin and stdout).
 +
-This feature is mostly designed for interactive sessions. If the standard input is not a terminal, but for example a pipe (e.g., echo "date" | su --pty), then the *ECHO* flag for the pseudo-terminal is disabled to avoid messy output.
+This feature is mostly designed for interactive sessions. If the standard input is not a terminal, but for example a pipe (e.g., *echo "date" | su --pty*), then the *ECHO* flag for the pseudo-terminal is disabled to avoid messy output.
 
 *-s*, **--shell**=__shell__::
 Run the specified _shell_ instead of the default. The shell to run is selected according to the following rules, in order:
@@ -132,7 +132,7 @@ global logindef config file
 
 == NOTES
 
-For security reasons, *su* always logs failed log-in attempts to the btmp file, but it does not write to the _lastlog_ file at all. This solution can be used to control *su* behavior by PAM configuration. If you want to use the *pam_lastlog*(8) module to print warning message about failed log-in attempts then *pam_lastlog*(8) has to be configured to update the _lastlog_ file as well. For example by:
+For security reasons, *su* always logs failed log-in attempts to the _btmp_ file, but it does not write to the _lastlog_ file at all. This solution can be used to control *su* behavior by PAM configuration. If you want to use the *pam_lastlog*(8) module to print warning message about failed log-in attempts then *pam_lastlog*(8) has to be configured to update the _lastlog_ file as well. For example by:
 
 ____
 session required pam_lastlog.so nowtmp

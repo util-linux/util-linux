@@ -102,7 +102,7 @@ system has insufficient memory to stop swapping (OOM)
 *swapoff*(2) syscall failed for another reason
 
 *8*::
-non-swapoff syscall system error (out of memory, ...)
+non-*swapoff*(2) syscall system error (out of memory, ...)
 
 *16*::
 usage or syntax error
@@ -147,7 +147,7 @@ The most portable solution to create a swap file is to use *dd*(1) and _/dev/zer
 
 === Btrfs
 
-Swap files on Btrfs are supported since Linux 5.0 on files with nocow attribute. See the *btrfs*(5) manual page for more details.
+Swap files on Btrfs are supported since Linux 5.0 on files with *nocow* attribute. See the *btrfs*(5) manual page for more details.
 
 === NFS
 

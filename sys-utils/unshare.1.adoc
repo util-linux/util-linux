@@ -141,11 +141,11 @@ include::man-common/help-version.adoc[]
 
 == NOTES
 
-The proc and sysfs filesystems mounting as root in a user namespace have to be restricted so that a less privileged user can not get more access to sensitive files that a more privileged user made unavailable. In short the rule for proc and sysfs is as close to a bind mount as possible.
+The proc and sysfs filesystems mounting as root in a user namespace have to be restricted so that a less privileged user cannot get more access to sensitive files that a more privileged user made unavailable. In short the rule for proc and sysfs is as close to a bind mount as possible.
 
 == EXAMPLES
 
-The following command creates a PID namespace, using *--fork* to ensure that the executed command is performed in a child process that (being the first process in the namespace) has PID 1. The *--mount-proc* option ensures that a new mount namespace is also simultaneously created and that a new *proc*(5) filesystem is mounted that contains information corresponding to the new PID namespace. When the *readlink* command terminates, the new namespaces are automatically torn down.
+The following command creates a PID namespace, using *--fork* to ensure that the executed command is performed in a child process that (being the first process in the namespace) has PID 1. The *--mount-proc* option ensures that a new mount namespace is also simultaneously created and that a new *proc*(5) filesystem is mounted that contains information corresponding to the new PID namespace. When the *readlink*(1) command terminates, the new namespaces are automatically torn down.
 
 ....
 # unshare --fork --pid --mount-proc readlink /proc/self

@@ -51,7 +51,7 @@ Disable error reporting by *getopt*(3).
 Do not generate normal output. Errors are still reported by *getopt*(3), unless you also use *-q*.
 
 *-s*, *--shell* _shell_::
-Set quoting conventions to those of _shell_. If the *-s* option is not given, the BASH conventions are used. Valid arguments are currently '*sh*' '*bash*', '*csh*', and '*tcsh*'.
+Set quoting conventions to those of _shell_. If the *-s* option is not given, the *BASH* conventions are used. Valid arguments are currently '*sh*', '*bash*', '*csh*', and '*tcsh*'.
 
 *-T*, *--test*::
 Test if your *getopt*(1) is this enhanced version or an old version. This generates no output, and sets the error status to 4. Other implementations of *getopt*(1), and this version if the environment variable *GETOPT_COMPATIBLE* is set, will return '*--*' and error status 0.
