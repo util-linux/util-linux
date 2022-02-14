@@ -129,6 +129,7 @@ struct lsipc_control {
 	int outmode;
 	unsigned int noheadings : 1,		/* don't print header line */
 		     notrunc : 1,		/* don't truncate columns */
+		     shellvar : 1,              /* use shell compatible colum names */
 		     bytes : 1,			/* SIZE in bytes */
 		     numperms : 1,		/* numeric permissions */
 		     time_mode : 2;
@@ -315,6 +316,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -P, --numeric-perms      print numeric permissions (PERMS column)\n"), out);
 	fputs(_(" -r, --raw                display in raw mode\n"), out);
 	fputs(_(" -t, --time               show attach, detach and change times\n"), out);
+	fputs(_(" -y, --shell              use column names to be usable as shell variable identifiers\n"), out);
+
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(26));
@@ -352,6 +355,8 @@ static struct libscols_table *new_table(struct lsipc_control *ctl)
 
 	if (ctl->noheadings)
 		scols_table_enable_noheadings(table, 1);
+	if (ctl->shellvar)
+		scols_table_enable_shellvar(table, 1);
 
 	switch(ctl->outmode) {
 	case OUT_NEWLINE:
@@ -1132,6 +1137,7 @@ int main(int argc, char *argv[])
 		{ "time",           no_argument,	NULL, 't' },
 		{ "time-format",    required_argument,	NULL, OPT_TIME_FMT },
 		{ "version",        no_argument,	NULL, 'V' },
+		{ "shell",          no_argument,	NULL, 'y' },
 		{NULL, 0, NULL, 0}
 	};
 
@@ -1153,7 +1159,7 @@ int main(int argc, char *argv[])
 
 	scols_init_debug(0);
 
-	while ((opt = getopt_long(argc, argv, "bceghi:Jlmno:PqrstV", longopts, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "bceghi:Jlmno:PqrstVy", longopts, NULL)) != -1) {
 
 		err_exclusive_options(opt, longopts, excl, excl_st);
 
@@ -1241,6 +1247,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'c':
 			show_creat = 1;
+			break;
+		case 'y':
+			ctl->shellvar = 1;
 			break;
 
 		case 'h':

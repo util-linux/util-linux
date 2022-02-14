@@ -45,7 +45,7 @@ Write information about active semaphore sets.
 Show creator and owner.
 
 *-e*, *--export*::
-Produce output in the form of key="value" pairs. All potentially unsafe value characters are hex-escaped (\x<code>). The key (variable name) will be modified to contain only characters allowed for a shell variable identifiers, for example, USE_PCT instead of USE%.
+Produce output in the form of key="value" pairs. All potentially unsafe value characters are hex-escaped (\x<code>). See also option *--shell*.
 
 *-J*, *--json*::
 Use the JSON output format.
@@ -79,6 +79,9 @@ Display dates in short, full or iso format. The default is short, this time form
 
 *-P*, *--numeric-perms*::
 Print numeric permissions in PERMS column.
+
+*-y*, *--shell*::
+The column name will be modified to contain only characters allowed for shell variable identifiers. This is usable, for example, with *--export*. Note that this feature has been automatically enabled for *--export* in version 2.37, but due to compatibility issues, now it's necessary to request this behavior by *--shell*.
 
 == EXIT STATUS
 
