@@ -1,0 +1,15 @@
+util-linux 2.37.4 Release Notes
+===============================
+
+This release fixes security issue in chsh(1) and chfn(8):
+
+CVE-2022-0563
+
+  The readline library uses INPUTRC= environment variable to get a path
+  to the library config file. When the library cannot parse the
+  specified file, it prints an error message containing data from the
+  file.
+    
+  Unfortunately, the library does not use secure_getenv() (or a similar
+  concept), or sanitize the config file path to avoid vulnerabilities that
+  could occur if set-user-ID or set-group-ID programs.
