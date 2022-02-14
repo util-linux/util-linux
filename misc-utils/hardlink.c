@@ -757,6 +757,19 @@ static int file_link(struct file *a, struct file *b, int reflink)
 	return TRUE;
 }
 
+static int has_fpath(struct file *node, const char *path)
+{
+	struct link *l;
+
+	for (l = node->links; l; l = l->next) {
+		if (strcmp(l->path, path) == 0)
+			return 1;
+	}
+
+	return 0;
+}
+
+
 /**
  * inserter - Callback function for nftw()
  * @fpath: The path of the file being visited
@@ -829,8 +842,14 @@ static int inserter(const char *fpath, const struct stat *sb,
 		assert((*node)->st.st_dev == sb->st_dev);
 		assert((*node)->st.st_ino == sb->st_ino);
 
-		fil->links->next = (*node)->links;
-		(*node)->links = fil->links;
+		if (has_fpath(*node, fpath)) {
+			jlog(JLOG_VERBOSE1,
+				_("Skipped %s (specified more than once)"), fpath);
+			free(fil->links);
+		} else {
+			fil->links->next = (*node)->links;
+			(*node)->links = fil->links;
+		}
 
 		free(fil);
 	} else {
