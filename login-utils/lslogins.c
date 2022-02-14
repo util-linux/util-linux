@@ -281,6 +281,7 @@ struct lslogins_control {
 	unsigned int selinux_enabled : 1,
 		     fail_on_unknown : 1,		/* fail if user does not exist */
 		     ulist_on : 1,
+		     shellvar : 1,
 		     noheadings : 1,
 		     notrunc : 1;
 };
@@ -1072,6 +1073,8 @@ static struct libscols_table *setup_table(struct lslogins_control *ctl)
 		err(EXIT_FAILURE, _("failed to allocate output table"));
 	if (ctl->noheadings)
 		scols_table_enable_noheadings(table, 1);
+	if (ctl->shellvar)
+		scols_table_enable_shellvar(table, 1);
 
 	switch(outmode) {
 	case OUT_COLON:
@@ -1420,6 +1423,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -s, --system-accs        display system accounts\n"), out);
 	fputs(_("     --time-format=<type> display dates in short, full or iso format\n"), out);
 	fputs(_(" -u, --user-accs          display user accounts\n"), out);
+	fputs(_(" -y, --shell              use column names to be usable as shell variable identifiers\n"), out);
 	fputs(_(" -Z, --context            display SELinux contexts\n"), out);
 	fputs(_(" -z, --print0             delimit user entries with a nul character\n"), out);
 	fputs(_("     --wtmp-file <path>   set an alternate path for wtmp\n"), out);
@@ -1460,6 +1464,7 @@ int main(int argc, char *argv[])
 		{ "acc-expiration", no_argument,	0, 'a' },
 		{ "colon-separate", no_argument,	0, 'c' },
 		{ "export",         no_argument,	0, 'e' },
+		{ "shell",          no_argument,        0, 'y' },
 		{ "failed",         no_argument,	0, 'f' },
 		{ "groups",         required_argument,	0, 'g' },
 		{ "help",           no_argument,	0, 'h' },
@@ -1509,7 +1514,7 @@ int main(int argc, char *argv[])
 	add_column(columns, ncolumns++, COL_UID);
 	add_column(columns, ncolumns++, COL_USER);
 
-	while ((c = getopt_long(argc, argv, "acefGg:hLl:no:prsuVzZ",
+	while ((c = getopt_long(argc, argv, "acefGg:hLl:no:prsuVyzZ",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1584,6 +1589,9 @@ int main(int argc, char *argv[])
 			add_column(columns, ncolumns++, COL_NOLOGIN);
 			add_column(columns, ncolumns++, COL_HUSH_STATUS);
 			add_column(columns, ncolumns++, COL_PWDMETHOD);
+			break;
+		case 'y':
+			ctl->shellvar = 1;
 			break;
 		case 'z':
 			outmode = OUT_NUL;
