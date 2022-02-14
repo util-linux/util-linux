@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.36-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-01-21 16:40+0100\n"
+"POT-Creation-Date: 2022-02-14 10:24+0100\n"
 "PO-Revision-Date: 2020-07-19 21:15+0900\n"
 "Last-Translator: Takeshi Hamasaki <hmatrjp@users.sourceforge.jp>\n"
 "Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
@@ -6686,8 +6686,8 @@ msgstr "パーティションの種類 (UUID)"
 msgid "UUID"
 msgstr "UUID"
 
-#: libfdisk/src/gpt.c:3197 login-utils/chfn.c:156 login-utils/chfn.c:158
-#: login-utils/chfn.c:322
+#: libfdisk/src/gpt.c:3197 login-utils/chfn.c:151 login-utils/chfn.c:153
+#: login-utils/chfn.c:312
 msgid "Name"
 msgstr "名前"
 
@@ -7539,161 +7539,161 @@ msgstr "format_iso_time: バッファーオーバーフロー。"
 msgid "time %<PRId64> is out of range."
 msgstr "time %ld は範囲外の値です。"
 
-#: login-utils/chfn.c:96 login-utils/chsh.c:75 login-utils/lslogins.c:1397
+#: login-utils/chfn.c:91 login-utils/chsh.c:70 login-utils/lslogins.c:1397
 #, c-format
 msgid " %s [options] [<username>]\n"
 msgstr " %s [オプション] [<ユーザ名>]\n"
 
-#: login-utils/chfn.c:99
+#: login-utils/chfn.c:94
 msgid "Change your finger information.\n"
 msgstr "あなたの finger 情報を変更します。\n"
 
-#: login-utils/chfn.c:102
+#: login-utils/chfn.c:97
 msgid " -f, --full-name <full-name>  real name\n"
 msgstr " -f, --full-name <姓名>       ユーザの実名を設定します\n"
 
-#: login-utils/chfn.c:103
+#: login-utils/chfn.c:98
 msgid " -o, --office <office>        office number\n"
 msgstr " -o, --office <オフィス>      オフィス番号を設定します\n"
 
-#: login-utils/chfn.c:104
+#: login-utils/chfn.c:99
 msgid " -p, --office-phone <phone>   office phone number\n"
 msgstr " -p, --office-phone <電話番号> オフィスの電話番号を設定します\n"
 
-#: login-utils/chfn.c:105
+#: login-utils/chfn.c:100
 msgid " -h, --home-phone <phone>     home phone number\n"
 msgstr " -h, --home-phone <電話番号>  自宅の電話番号を設定します\n"
 
-#: login-utils/chfn.c:123
+#: login-utils/chfn.c:118
 #, c-format
 msgid "field %s is too long"
 msgstr "フィールド \"%s\" が長すぎます"
 
-#: login-utils/chfn.c:127 login-utils/chsh.c:237
+#: login-utils/chfn.c:122 login-utils/chsh.c:200
 #, c-format
 msgid "%s: has illegal characters"
 msgstr "%s: 正しくない文字が含まれています"
 
-#: login-utils/chfn.c:156 login-utils/chfn.c:162 login-utils/chfn.c:168
-#: login-utils/chfn.c:174
+#: login-utils/chfn.c:151 login-utils/chfn.c:157 login-utils/chfn.c:163
+#: login-utils/chfn.c:169
 #, c-format
 msgid "login.defs forbids setting %s"
 msgstr "login.defs は %s の設定を禁じています"
 
-#: login-utils/chfn.c:162 login-utils/chfn.c:164 login-utils/chfn.c:324
+#: login-utils/chfn.c:157 login-utils/chfn.c:159 login-utils/chfn.c:314
 msgid "Office"
 msgstr "オフィス"
 
-#: login-utils/chfn.c:168 login-utils/chfn.c:170 login-utils/chfn.c:326
+#: login-utils/chfn.c:163 login-utils/chfn.c:165 login-utils/chfn.c:316
 msgid "Office Phone"
 msgstr "オフィスの電話"
 
-#: login-utils/chfn.c:174 login-utils/chfn.c:176 login-utils/chfn.c:328
+#: login-utils/chfn.c:169 login-utils/chfn.c:171 login-utils/chfn.c:318
 msgid "Home Phone"
 msgstr "自宅の電話"
 
-#: login-utils/chfn.c:193 login-utils/chsh.c:187
+#: login-utils/chfn.c:188 login-utils/chsh.c:155
 msgid "cannot handle multiple usernames"
 msgstr "複数のユーザー名を扱うことはできません"
 
-#: login-utils/chfn.c:247
+#: login-utils/chfn.c:236
 msgid "Aborted."
 msgstr "中止しました。"
 
-#: login-utils/chfn.c:310
+#: login-utils/chfn.c:300
 #, c-format
 msgid "%s: CHFN_RESTRICT has unexpected value: %s"
 msgstr "%s: CHFN_RESTRICT に予期しない値があります: %s"
 
-#: login-utils/chfn.c:312
+#: login-utils/chfn.c:302
 #, c-format
 msgid "%s: CHFN_RESTRICT does not allow any changes"
 msgstr "%s: CHFN_RESTRICT はあらゆる変更を禁じています"
 
-#: login-utils/chfn.c:394
+#: login-utils/chfn.c:384
 #, c-format
 msgid "Finger information *NOT* changed.  Try again later.\n"
 msgstr "finger 情報は *変更されませんでした* 。またあとで試してください。\n"
 
-#: login-utils/chfn.c:398
+#: login-utils/chfn.c:388
 #, c-format
 msgid "Finger information changed.\n"
 msgstr "finger 情報を変更しました。\n"
 
-#: login-utils/chfn.c:424 login-utils/chsh.c:274
+#: login-utils/chfn.c:414 login-utils/chsh.c:237
 #, c-format
 msgid "you (user %d) don't exist."
 msgstr "あなた (ユーザ %d) が存在しません。"
 
-#: login-utils/chfn.c:430 login-utils/chsh.c:279 login-utils/libuser.c:59
+#: login-utils/chfn.c:420 login-utils/chsh.c:242 login-utils/libuser.c:59
 #, c-format
 msgid "user \"%s\" does not exist."
 msgstr "ユーザ \"%s\" が存在しません。"
 
-#: login-utils/chfn.c:436 login-utils/chsh.c:285
+#: login-utils/chfn.c:426 login-utils/chsh.c:248
 msgid "can only change local entries"
 msgstr "ローカル項目のみを変更することができます"
 
-#: login-utils/chfn.c:445
+#: login-utils/chfn.c:435
 #, c-format
 msgid "%s is not authorized to change the finger info of %s"
 msgstr "%s には、 %s の finger 情報を変更する権限がありません"
 
-#: login-utils/chfn.c:447 login-utils/chsh.c:295
+#: login-utils/chfn.c:437 login-utils/chsh.c:258
 msgid "Unknown user context"
 msgstr "不明なユーザコンテキスト"
 
-#: login-utils/chfn.c:452 login-utils/chsh.c:300
+#: login-utils/chfn.c:442 login-utils/chsh.c:263
 #, c-format
 msgid "can't set default context for %s"
 msgstr "%s に対して既定のコンテキストを設定することができません"
 
-#: login-utils/chfn.c:463
+#: login-utils/chfn.c:453
 msgid "running UID doesn't match UID of user we're altering, change denied"
 msgstr "処理に使用している UID と、変更しようとしている UID が合致しません。変更は拒否されました"
 
-#: login-utils/chfn.c:467
+#: login-utils/chfn.c:457
 #, c-format
 msgid "Changing finger information for %s.\n"
 msgstr "%s の finger 情報を変更します。\n"
 
-#: login-utils/chfn.c:481
+#: login-utils/chfn.c:471
 #, c-format
 msgid "Finger information not changed.\n"
 msgstr "finger 情報は変更されませんでした。\n"
 
-#: login-utils/chsh.c:78
+#: login-utils/chsh.c:73
 msgid "Change your login shell.\n"
 msgstr "ログインシェルを変更します。\n"
 
-#: login-utils/chsh.c:81
+#: login-utils/chsh.c:76
 msgid " -s, --shell <shell>  specify login shell\n"
 msgstr " -s, --shell <shell>  ログインシェルを設定します\n"
 
-#: login-utils/chsh.c:82
+#: login-utils/chsh.c:77
 msgid " -l, --list-shells    print list of shells and exit\n"
 msgstr " -l, --list-shells    シェルの一覧を表示して終了します\n"
 
-#: login-utils/chsh.c:231
+#: login-utils/chsh.c:194
 msgid "shell must be a full path name"
 msgstr "シェルはフルパスで無ければなりません"
 
-#: login-utils/chsh.c:233
+#: login-utils/chsh.c:196
 #, c-format
 msgid "\"%s\" does not exist"
 msgstr "\"%s\" は存在しません"
 
-#: login-utils/chsh.c:235
+#: login-utils/chsh.c:198
 #, c-format
 msgid "\"%s\" is not executable"
 msgstr "\"%s\" は実行できません"
 
-#: login-utils/chsh.c:241
+#: login-utils/chsh.c:204
 #, c-format
 msgid "Warning: \"%s\" is not listed in %s."
 msgstr "警告: \"%s\" は %s の一覧内にありません。"
 
-#: login-utils/chsh.c:245 login-utils/chsh.c:249
+#: login-utils/chsh.c:208 login-utils/chsh.c:212
 #, c-format
 msgid ""
 "\"%s\" is not listed in %s.\n"
@@ -7702,38 +7702,38 @@ msgstr ""
 "\"%s\" は %s の一覧内にありません。\n"
 "%s -l を実行すると、一覧を表示することができます。"
 
-#: login-utils/chsh.c:294
+#: login-utils/chsh.c:257
 #, c-format
 msgid "%s is not authorized to change the shell of %s"
 msgstr "%s には、 %s のシェルを変更する権限がありません"
 
-#: login-utils/chsh.c:319
+#: login-utils/chsh.c:282
 msgid "running UID doesn't match UID of user we're altering, shell change denied"
 msgstr "処理に使用している UID と、変更しようとしている UID が合致しません。シェルの変更は拒否されました"
 
-#: login-utils/chsh.c:324
+#: login-utils/chsh.c:287
 #, c-format
 msgid "your shell is not in %s, shell change denied"
 msgstr "お使いのシェルは %s 内に書かれていません。シェルの変更は拒否されました"
 
-#: login-utils/chsh.c:328
+#: login-utils/chsh.c:291
 #, c-format
 msgid "Changing shell for %s.\n"
 msgstr "%s のシェルを変更します。\n"
 
-#: login-utils/chsh.c:336
+#: login-utils/chsh.c:299
 msgid "New shell"
 msgstr "新しいシェル"
 
-#: login-utils/chsh.c:344
+#: login-utils/chsh.c:307
 msgid "Shell not changed."
 msgstr "シェルを変更しませんでした。"
 
-#: login-utils/chsh.c:349
+#: login-utils/chsh.c:312
 msgid "Shell *NOT* changed.  Try again later."
 msgstr "シェルは *変更されませんでした* 。あとでまた試してください。"
 
-#: login-utils/chsh.c:353
+#: login-utils/chsh.c:316
 msgid ""
 "setpwnam failed\n"
 "Shell *NOT* changed.  Try again later."
@@ -7741,7 +7741,7 @@ msgstr ""
 "setpwnam に失敗しました\n"
 "シェルは *変更されませんでした* 。あとでまた試してください。"
 
-#: login-utils/chsh.c:357
+#: login-utils/chsh.c:320
 #, c-format
 msgid "Shell changed.\n"
 msgstr "シェルを変更しました。\n"

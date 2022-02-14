@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.23.1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-01-21 16:40+0100\n"
+"POT-Creation-Date: 2022-02-14 10:24+0100\n"
 "PO-Revision-Date: 2013-06-07 23:29+0800\n"
 "Last-Translator: Wei-Lun Chao <bluebat@member.fsf.org>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -7103,8 +7103,8 @@ msgstr "類型"
 msgid "UUID"
 msgstr ""
 
-#: libfdisk/src/gpt.c:3197 login-utils/chfn.c:156 login-utils/chfn.c:158
-#: login-utils/chfn.c:322
+#: libfdisk/src/gpt.c:3197 login-utils/chfn.c:151 login-utils/chfn.c:153
+#: login-utils/chfn.c:312
 msgid "Name"
 msgstr "名稱"
 
@@ -8040,173 +8040,173 @@ msgstr ""
 msgid "time %<PRId64> is out of range."
 msgstr "數值超出範圍。\n"
 
-#: login-utils/chfn.c:96 login-utils/chsh.c:75 login-utils/lslogins.c:1397
+#: login-utils/chfn.c:91 login-utils/chsh.c:70 login-utils/lslogins.c:1397
 #, fuzzy, c-format
 msgid " %s [options] [<username>]\n"
 msgstr " %s [選項] [使用者名稱]\n"
 
-#: login-utils/chfn.c:99
+#: login-utils/chfn.c:94
 #, fuzzy
 msgid "Change your finger information.\n"
 msgstr "修改 %s 的 finger 資訊。\n"
 
-#: login-utils/chfn.c:102
+#: login-utils/chfn.c:97
 #, fuzzy
 msgid " -f, --full-name <full-name>  real name\n"
 msgstr " -f, --full-name <full-name>  真實名稱\n"
 
-#: login-utils/chfn.c:103
+#: login-utils/chfn.c:98
 #, fuzzy
 msgid " -o, --office <office>        office number\n"
 msgstr " -o, --office <office>        辦公室數字\n"
 
-#: login-utils/chfn.c:104
+#: login-utils/chfn.c:99
 #, fuzzy
 msgid " -p, --office-phone <phone>   office phone number\n"
 msgstr " -p, --office-phone <phone>   辦公室電話號碼\n"
 
-#: login-utils/chfn.c:105
+#: login-utils/chfn.c:100
 #, fuzzy
 msgid " -h, --home-phone <phone>     home phone number\n"
 msgstr " -h, --home-phone <phone>     個人資料夾電話號碼\n"
 
-#: login-utils/chfn.c:123
+#: login-utils/chfn.c:118
 #, fuzzy, c-format
 msgid "field %s is too long"
 msgstr "欄位 %s 太長"
 
-#: login-utils/chfn.c:127 login-utils/chsh.c:237
+#: login-utils/chfn.c:122 login-utils/chsh.c:200
 #, c-format
 msgid "%s: has illegal characters"
 msgstr ""
 
-#: login-utils/chfn.c:156 login-utils/chfn.c:162 login-utils/chfn.c:168
-#: login-utils/chfn.c:174
+#: login-utils/chfn.c:151 login-utils/chfn.c:157 login-utils/chfn.c:163
+#: login-utils/chfn.c:169
 #, c-format
 msgid "login.defs forbids setting %s"
 msgstr ""
 
-#: login-utils/chfn.c:162 login-utils/chfn.c:164 login-utils/chfn.c:324
+#: login-utils/chfn.c:157 login-utils/chfn.c:159 login-utils/chfn.c:314
 msgid "Office"
 msgstr "辦公室"
 
-#: login-utils/chfn.c:168 login-utils/chfn.c:170 login-utils/chfn.c:326
+#: login-utils/chfn.c:163 login-utils/chfn.c:165 login-utils/chfn.c:316
 msgid "Office Phone"
 msgstr "辦公室電話"
 
-#: login-utils/chfn.c:174 login-utils/chfn.c:176 login-utils/chfn.c:328
+#: login-utils/chfn.c:169 login-utils/chfn.c:171 login-utils/chfn.c:318
 msgid "Home Phone"
 msgstr "住家電話"
 
-#: login-utils/chfn.c:193 login-utils/chsh.c:187
+#: login-utils/chfn.c:188 login-utils/chsh.c:155
 msgid "cannot handle multiple usernames"
 msgstr ""
 
-#: login-utils/chfn.c:247
+#: login-utils/chfn.c:236
 #, fuzzy
 msgid "Aborted."
 msgstr "放棄。"
 
-#: login-utils/chfn.c:310
+#: login-utils/chfn.c:300
 #, c-format
 msgid "%s: CHFN_RESTRICT has unexpected value: %s"
 msgstr ""
 
-#: login-utils/chfn.c:312
+#: login-utils/chfn.c:302
 #, c-format
 msgid "%s: CHFN_RESTRICT does not allow any changes"
 msgstr ""
 
-#: login-utils/chfn.c:394
+#: login-utils/chfn.c:384
 #, c-format
 msgid "Finger information *NOT* changed.  Try again later.\n"
 msgstr "Finger 資訊 *未被* 變更。請稍後再嘗試。\n"
 
-#: login-utils/chfn.c:398
+#: login-utils/chfn.c:388
 #, c-format
 msgid "Finger information changed.\n"
 msgstr "Finger 資訊已變更。\n"
 
-#: login-utils/chfn.c:424 login-utils/chsh.c:274
+#: login-utils/chfn.c:414 login-utils/chsh.c:237
 #, fuzzy, c-format
 msgid "you (user %d) don't exist."
 msgstr "您 (使用者 %d) 不存在。"
 
-#: login-utils/chfn.c:430 login-utils/chsh.c:279 login-utils/libuser.c:59
+#: login-utils/chfn.c:420 login-utils/chsh.c:242 login-utils/libuser.c:59
 #, fuzzy, c-format
 msgid "user \"%s\" does not exist."
 msgstr "使用者「%s」不存在。"
 
-#: login-utils/chfn.c:436 login-utils/chsh.c:285
+#: login-utils/chfn.c:426 login-utils/chsh.c:248
 #, fuzzy
 msgid "can only change local entries"
 msgstr "只能變更本地條目"
 
-#: login-utils/chfn.c:445
+#: login-utils/chfn.c:435
 #, fuzzy, c-format
 msgid "%s is not authorized to change the finger info of %s"
 msgstr "%s 未被授權到變更手指資訊的 %s"
 
-#: login-utils/chfn.c:447 login-utils/chsh.c:295
+#: login-utils/chfn.c:437 login-utils/chsh.c:258
 msgid "Unknown user context"
 msgstr "不明的使用者相關環境"
 
-#: login-utils/chfn.c:452 login-utils/chsh.c:300
+#: login-utils/chfn.c:442 login-utils/chsh.c:263
 #, fuzzy, c-format
 msgid "can't set default context for %s"
 msgstr "無法設定預設語境用於 %s"
 
-#: login-utils/chfn.c:463
+#: login-utils/chfn.c:453
 #, fuzzy
 msgid "running UID doesn't match UID of user we're altering, change denied"
 msgstr "執行中 UID 不匹配 UID 的使用者我們正在改變，命令殼變更拒絕"
 
-#: login-utils/chfn.c:467
+#: login-utils/chfn.c:457
 #, c-format
 msgid "Changing finger information for %s.\n"
 msgstr "修改 %s 的 finger 資訊。\n"
 
-#: login-utils/chfn.c:481
+#: login-utils/chfn.c:471
 #, c-format
 msgid "Finger information not changed.\n"
 msgstr "Finger 資訊沒有變更。\n"
 
-#: login-utils/chsh.c:78
+#: login-utils/chsh.c:73
 #, fuzzy
 msgid "Change your login shell.\n"
 msgstr "變更 %s 的 shell。\n"
 
-#: login-utils/chsh.c:81
+#: login-utils/chsh.c:76
 #, fuzzy
 msgid " -s, --shell <shell>  specify login shell\n"
 msgstr " -s, --shell <shell>  指定登入命令殼\n"
 
-#: login-utils/chsh.c:82
+#: login-utils/chsh.c:77
 #, fuzzy
 msgid " -l, --list-shells    print list of shells and exit\n"
 msgstr " -l, --list-shells    列印命令殼清單的然後離開\n"
 
-#: login-utils/chsh.c:231
+#: login-utils/chsh.c:194
 #, fuzzy
 msgid "shell must be a full path name"
 msgstr "命令殼必須是完整路徑名稱"
 
-#: login-utils/chsh.c:233
+#: login-utils/chsh.c:196
 #, fuzzy, c-format
 msgid "\"%s\" does not exist"
 msgstr "「%s」不存在"
 
-#: login-utils/chsh.c:235
+#: login-utils/chsh.c:198
 #, fuzzy, c-format
 msgid "\"%s\" is not executable"
 msgstr "「%s」不是可執行檔案"
 
-#: login-utils/chsh.c:241
+#: login-utils/chsh.c:204
 #, fuzzy, c-format
 msgid "Warning: \"%s\" is not listed in %s."
 msgstr "警告：「%s」未被清單在中 %s。"
 
-#: login-utils/chsh.c:245 login-utils/chsh.c:249
+#: login-utils/chsh.c:208 login-utils/chsh.c:212
 #, fuzzy, c-format
 msgid ""
 "\"%s\" is not listed in %s.\n"
@@ -8215,43 +8215,43 @@ msgstr ""
 "「%s」未被清單在中 %s。\n"
 "使用 %s -l 到參看清單。"
 
-#: login-utils/chsh.c:294
+#: login-utils/chsh.c:257
 #, fuzzy, c-format
 msgid "%s is not authorized to change the shell of %s"
 msgstr "%s 未被授權到變更命令殼的 %s"
 
-#: login-utils/chsh.c:319
+#: login-utils/chsh.c:282
 #, fuzzy
 msgid "running UID doesn't match UID of user we're altering, shell change denied"
 msgstr "執行中 UID 不匹配 UID 的使用者我們正在改變，命令殼變更拒絕"
 
-#: login-utils/chsh.c:324
+#: login-utils/chsh.c:287
 #, fuzzy, c-format
 msgid "your shell is not in %s, shell change denied"
 msgstr "您的命令殼不是在中 %s，命令殼變更拒絕"
 
-#: login-utils/chsh.c:328
+#: login-utils/chsh.c:291
 #, c-format
 msgid "Changing shell for %s.\n"
 msgstr "變更 %s 的 shell。\n"
 
-#: login-utils/chsh.c:336
+#: login-utils/chsh.c:299
 msgid "New shell"
 msgstr "新命令殼"
 
-#: login-utils/chsh.c:344
+#: login-utils/chsh.c:307
 #, fuzzy
 msgid "Shell not changed."
 msgstr "命令殼無法變更。"
 
-#: login-utils/chsh.c:349
+#: login-utils/chsh.c:312
 #, fuzzy
 msgid "Shell *NOT* changed.  Try again later."
 msgstr ""
 "setpwnam 失敗\n"
 "命令殼 * 無法 * 變更。 稍後再試一次。"
 
-#: login-utils/chsh.c:353
+#: login-utils/chsh.c:316
 #, fuzzy
 msgid ""
 "setpwnam failed\n"
@@ -8260,7 +8260,7 @@ msgstr ""
 "setpwnam 失敗\n"
 "命令殼 * 無法 * 變更。 稍後再試一次。"
 
-#: login-utils/chsh.c:357
+#: login-utils/chsh.c:320
 #, c-format
 msgid "Shell changed.\n"
 msgstr "shell 已變更。\n"
