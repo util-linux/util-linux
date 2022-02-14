@@ -1371,6 +1371,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -U, --uniq             ignore filesystems with duplicate target\n"), out);
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
 	fputs(_(" -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"), out);
+	fputs(_(" -y, --shell            use column names to be usable as shell variable identifiers\n"), out);
 
 	fputc('\n', out);
 	fputs(_(" -x, --verify           verify mount table content (default is fstab)\n"), out);
@@ -1450,6 +1451,7 @@ int main(int argc, char *argv[])
 		{ "uniq",	    no_argument,       NULL, 'U'		 },
 		{ "verify",	    no_argument,       NULL, 'x'		 },
 		{ "version",	    no_argument,       NULL, 'V'		 },
+		{ "shell",          no_argument,       NULL, 'y'                 },
 		{ "verbose",	    no_argument,       NULL, FINDMNT_OPT_VERBOSE },
 		{ "tree",	    no_argument,       NULL, FINDMNT_OPT_TREE	 },
 		{ "real",	    no_argument,       NULL, FINDMNT_OPT_REAL	 },
@@ -1482,7 +1484,7 @@ int main(int argc, char *argv[])
 	flags |= FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
-				"AabCcDd:ehiJfF:o:O:p::PklmM:nN:rst:uvRS:T:Uw:Vx",
+				"AabCcDd:ehiJfF:o:O:p::PklmM:nN:rst:uvRS:T:Uw:Vxy",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1618,6 +1620,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'x':
 			verify = 1;
+			break;
+		case 'y':
+			flags |= FL_SHELLVAR;
 			break;
 		case FINDMNT_OPT_VERBOSE:
 			flags |= FL_VERBOSE;
@@ -1760,6 +1765,7 @@ int main(int argc, char *argv[])
 	}
 	scols_table_enable_raw(table,        !!(flags & FL_RAW));
 	scols_table_enable_export(table,     !!(flags & FL_EXPORT));
+	scols_table_enable_shellvar(table,   !!(flags & FL_SHELLVAR));
 	scols_table_enable_json(table,       !!(flags & FL_JSON));
 	scols_table_enable_ascii(table,      !!(flags & FL_ASCII));
 	scols_table_enable_noheadings(table, !!(flags & FL_NOHEADINGS));

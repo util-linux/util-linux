@@ -104,7 +104,7 @@ The default list of columns may be extended if _list_ is specified in the format
 Output almost all available columns. The columns that require *--poll* are not included.
 
 *-P*, *--pairs*::
-Produce output in the form of key="value" pairs. All potentially unsafe value characters are hex-escaped (\x<code>). The key (variable name) will be modified to contain only characters allowed for a shell variable identifiers, for example, FS_OPTIONS and USE_PCT instead of FS-OPTIONS and USE%.
+Produce output in the form of key="value" pairs. All potentially unsafe value characters are hex-escaped (\x<code>). See also option *--shell*.
 
 *-p*, *--poll*[_=list_]::
 Monitor changes in the _/proc/self/mountinfo_ file. Supported actions are: mount, umount, remount and move. More than one action may be specified in a comma-separated list. All actions are monitored by default.
@@ -173,6 +173,9 @@ Force *findmnt* to print more information (*--verify* only for now).
 
 *--vfs-all*::
 When used with *VFS-OPTIONS* column, print all VFS (fs-independent) flags. This option is designed for auditing purposes to list also default VFS kernel mount options which are normally not listed.
+
+*-y*, *--shell*::
+The column name will be modified to contain only characters allowed for shell variable identifiers. This is usable, for example, with *--pairs*. Note that this feature has been automatically enabled for *--pairs* in version 2.37, but due to compatibility issues, now it's necessary to request this behavior by *--shell*.
 
 include::man-common/help-version.adoc[]
 
