@@ -430,7 +430,7 @@ static struct map_range *read_subid_range(char *filename, uid_t uid)
 {
 	char *line = NULL, *pwbuf;
 	FILE *idmap;
-	size_t n;
+	size_t n = 0;
 	struct passwd *pw;
 	struct map_range *map;
 
