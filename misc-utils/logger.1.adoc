@@ -76,7 +76,7 @@ Log the PID of the *logger* process with each line. When the optional argument _
 Note that the system logging infrastructure (for example *systemd* when listening on _/dev/log_) may follow local socket credentials to overwrite the PID specified in the message. *logger*(1) is able to set those socket credentials to the given _id_, but only if you have root permissions and a process with the specified PID exists, otherwise the socket credentials are not modified and the problem is silently ignored.
 
 *--journald*[**=**__file__]::
-Write a systemd journal entry. The entry is read from the given _file_, when specified, otherwise from standard input. Each line must begin with a field that is accepted by journald; see *systemd.journal-fields*(7) for details. The use of a MESSAGE_ID field is generally a good idea, as it makes finding entries easy. Examples:
+Write a *systemd* journal entry. The entry is read from the given _file_, when specified, otherwise from standard input. Each line must begin with a field that is accepted by *journald*; see *systemd.journal-fields*(7) for details. The use of a MESSAGE_ID field is generally a good idea, as it makes finding entries easy. Examples:
 
 ____
     logger --journald <<end
@@ -99,13 +99,13 @@ Sets the link:https://tools.ietf.org/html/rfc5424[RFC 5424] MSGID field. Note th
 Write to the specified remote syslog _server_ instead of to the system log socket. Unless *--udp* or *--tcp* is specified, *logger* will first try to use UDP, but if this fails a TCP connection is attempted.
 
 *--no-act*::
-Causes everything to be done except for writing the log message to the system log, and removing the connection or the journal. This option can be used together with *--stderr* for testing purposes.
+Causes everything to be done except for writing the log message to the system log, and removing the connection to the journal. This option can be used together with *--stderr* for testing purposes.
 
 *--octet-count*::
 Use the link:https://tools.ietf.org/html/rfc6587[RFC 6587] octet counting framing method for sending messages. When this option is not used, the default is no framing on UDP, and RFC6587 non-transparent framing (also known as octet stuffing) on TCP.
 
 *-P*, *--port* _port_::
-Use the specified _port_. When this option is not specified, the port defaults to syslog for udp and to syslog-conn for tcp connections.
+Use the specified _port_. When this option is not specified, the port defaults to *syslog* for udp and to *syslog-conn* for tcp connections.
 
 *-p*, *--priority* _priority_::
 Enter the message into the log with the specified _priority_. The priority may be specified numerically or as a _facility_._level_ pair. For example, *-p local3.info* logs the message as informational in the local3 facility. The default is *user.notice*.
@@ -137,7 +137,7 @@ Output the message to standard error as well as to the system log.
 *--sd-id* _name_[**@**__digits__]::
 Specifies a structured data element ID for an RFC 5424 message header. The option has to be used before *--sd-param* to introduce a new element. The number of structured data elements is unlimited. The ID (_name_ plus possibly **@**__digits__) is case-sensitive and uniquely identifies the type and purpose of the element. The same ID must not exist more than once in a message. The **@**__digits__ part is required for user-defined non-standardized IDs.
 +
-*logger* currently generates the *timeQuality* standardized element only. RFC 5424 also describes the elements *origin* (with parameters ip, enterpriseId, software and swVersion) and *meta* (with parameters sequenceId, sysUpTime and language). These element IDs may be specified without the **@**__digits__ suffix.
+*logger* currently generates the *timeQuality* standardized element only. RFC 5424 also describes the elements *origin* (with parameters *ip*, *enterpriseId*, *software* and *swVersion*) and *meta* (with parameters *sequenceId*, *sysUpTime* and *language*). These element IDs may be specified without the **@**__digits__ suffix.
 
 *--sd-param* _name_=_value_::
 Specifies a structured data element parameter, a name and value pair. The option has to be used after *--sd-id* and may be specified more than once for the same element. Note that the quotation marks around _value_ are required and must be escaped on the command line.
@@ -162,7 +162,7 @@ Most receivers accept messages larger than 1KiB over any type of syslog protocol
 Note: the message-size limit limits the overall message size, including the syslog header. Header sizes vary depending on the selected options and the hostname length. As a rule of thumb, headers are usually not longer than 50 to 80 characters. When selecting a maximum message size, it is important to ensure that the receiver supports the max size as well, otherwise messages may become truncated. Again, as a rule of thumb two to four KiB message size should generally be OK, whereas anything larger should be verified to work.
 
 *--socket-errors*[**=**__mode__]::
-Print errors about Unix socket connections. The _mode_ can be a value of *off*, *on*, or *auto*. When the mode is *auto*, then *logger* will detect if the init process is *systemd*(1), and if so assumption is made _/dev/log_ can be used early at boot. Other init systems lack of _/dev/log_ will not cause errors that is identical with messaging using *openlog*(3) system call. The *logger*(1) before version 2.26 used openlog, and hence was unable to detected loss of messages sent to Unix sockets.
+Print errors about Unix socket connections. The _mode_ can be a value of *off*, *on*, or *auto*. When the mode is *auto*, then *logger* will detect if the init process is *systemd*(1), and if so assumption is made _/dev/log_ can be used early at boot. Other init systems lack of _/dev/log_ will not cause errors that is identical with messaging using *openlog*(3) system call. The *logger*(1) before version 2.26 used *openlog*(3), and hence was unable to detected loss of messages sent to Unix sockets.
 +
 The default mode is *auto*. When errors are not enabled lost messages are not communicated and will result to successful exit status of *logger*(1) invocation.
 

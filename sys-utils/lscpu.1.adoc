@@ -44,9 +44,9 @@ Display details about CPU caches. For details about available information see *-
 +
 If the _list_ argument is omitted, all columns for which data is available are included in the command output.
 +
-When specifying the _list_ argument, the string of option, equal sign (=), and _list_ must not contain any blanks or other whitespace. Examples: '*-C=NAME,ONE-SIZE*' or '*--caches=NAME,ONE-SIZE*'.
+When specifying the _list_ argument, the string of option, equal sign (=), and _list_ must not contain any blanks or other whitespace. Examples: *-C=NAME,ONE-SIZE* or *--caches=NAME,ONE-SIZE*.
 +
-The default list of columns may be extended if list is specified in the format +list (e.g., lscpu -C=+ALLOC-POLICY).
+The default list of columns may be extended if list is specified in the format +list (e.g., **lscpu -C=+ALLOC-POLICY**).
 
 *-c*, *--offline*::
 Limit the output to offline CPUs. This option may only be specified together with option *-e* or *-p*.

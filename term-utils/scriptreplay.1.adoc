@@ -25,7 +25,7 @@ The timing information is what *script*(1) outputs to file specified by *--log-t
 
 By default, the typescript to display is assumed to be named _typescript_, but other filenames may be specified, as the second parameter or with option *--log-out*.
 
-If the third parameter or *--divisor* is specified, it is used as a speed-up multiplier. For example, a speed-up of 2 makes *scriptreplay* go twice as fast, and a speed-up of 0.1 makes it go ten times slower than the original session.
+If the third parameter or *--divisor* is specified, it is used as a speed-up multiplier. For example, a speed-up of 2 makes *scriptreplay* go twice as fast, and a speed-down of 0.1 makes it go ten times slower than the original session.
 
 == OPTIONS
 
@@ -57,7 +57,7 @@ Speed up the replay displaying this _number_ of times. The argument is a floatin
 Set the maximum delay between updates to _number_ of seconds. The argument is a floating-point number. This can be used to avoid long pauses in the typescript replay.
 
 *--summary*::
-Display details about the session recorded in the specified timing file and exit. The session has to be recorded using _advanced_ format (see *script*(1)) option *--logging-format* for more details).
+Display details about the session recorded in the specified timing file and exit. The session has to be recorded using _advanced_ format (see *script*(1) option *--logging-format* for more details).
 
 *-x*, *--stream* _type_::
 Forces *scriptreplay* to print only the specified stream. The supported stream types are _in_, _out_, _signal_, or _info_. This option is recommended for multi-stream logs (e.g., *--log-io*) in order to print only specified data.

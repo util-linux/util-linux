@@ -115,7 +115,7 @@ Specifies output width as a number of characters. The default is the number of t
 Sort output lines by _column_. This option enables *--list* output format by default. It is possible to use the option *--tree* to force tree-like output and than the tree branches are sorted by the _column_.
 
 *-y*, *--shell*::
-The column name will be modified to contain only characters allowed for shell variable identifiers, for example, MIN_IO and FSUSE_PCT instead of MIN-IO and FSUSE%. This is usable, for example, with *--pairs*. Note that this feature has been automatically enabled for *--pairs* in version 2.37, but due to compatibility issues, now it’s necessary to request this behavior by *--shell*.
+The column name will be modified to contain only characters allowed for shell variable identifiers, for example, MIN_IO and FSUSE_PCT instead of MIN-IO and FSUSE%. This is usable, for example, with *--pairs*. Note that this feature has been automatically enabled for *--pairs* in version 2.37, but due to compatibility issues, now it's necessary to request this behavior by *--shell*.
 
 *-z*, *--zoned*::
 Print the zone related information for each device.

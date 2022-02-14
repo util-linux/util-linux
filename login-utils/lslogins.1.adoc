@@ -49,13 +49,13 @@ Show information about supplementary groups.
 *-g*, **--groups**=_groups_::
 Only show data of users belonging to _groups_. More than one group may be specified; the list has to be comma-separated. Unknown group names are ignored.
 +
-Note that relation between user and group may be invisible for primary group if the user is not explicitly specify as group member (e.g., in _/etc/group_). If the command *lslogins* scans for groups than it uses groups database only, and user database with primary GID is not used at all.
+Note that the relation between user and group may be invisible for the primary group if the user is not explicitly specified as group member (e.g., in _/etc/group_). If the command *lslogins* scans for groups then it uses the groups database only, and the user database with primary GID is not used at all.
 
 *-L*, *--last*::
 Display data containing information about the users' last login sessions.
 
 *-l*, **--logins**=_logins_::
-Only show data of users with a login specified in _logins_ (user names or user IDS). More than one login may be specified; the list has to be comma-separated. Unknown login names are ignored.
+Only show data of users with a login specified in _logins_ (user names or user IDs). More than one login may be specified; the list has to be comma-separated. Unknown login names are ignored.
 
 *-n*, *--newline*::
 Display each piece of information on a separate line.
@@ -73,13 +73,13 @@ Specify which output columns to print. The default list of columns may be extend
 Output all available columns. *--help* to get a list of all supported columns.
 
 *-p*, *--pwd*::
-Display information related to login by password (see also *-afL).*
+Display information related to login by password (see also *-afL*).
 
 *-r*, *--raw*::
 Raw output (no columnation).
 
 *-s*, *--system-accs*::
-Show system accounts. These are by default all accounts with a UID between 101 and 999 (inclusive), with the exception of either nobody or nfsnobody (UID 65534). This hardcoded default may be overwritten by parameters SYS_UID_MIN and SYS_UID_MAX in the file _/etc/login.defs_.
+Show system accounts. These are by default all accounts with a UID between 101 and 999 (inclusive), with the exception of either nobody or nfsnobody (UID 65534). This hardcoded default may be overwritten by parameters *SYS_UID_MIN* and *SYS_UID_MAX* in the file _/etc/login.defs_.
 
 *--time-format* _type_::
 Display dates in short, full or iso format. The default is short, this time format is designed to be space efficient and human readable.

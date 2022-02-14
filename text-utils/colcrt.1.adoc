@@ -59,7 +59,7 @@ colcrt - filter nroff output for CRT previewing
 Suppress all underlining. This option is especially useful for previewing _allboxed_ tables from *tbl*(1).
 
 *-2*, *--half-lines*::
-Causes all half-lines to be printed, effectively double spacing the output. Normally, a minimal space output format is used which will suppress empty lines. The program never suppresses two consecutive empty lines, however. The *-2* option is useful for sending output to the line printer when the output contains superscripts and subscripts which would otherwise be invisible.
+Causes all half-lines to be printed, effectively double spacing the output. Normally, a minimal space output format is used which will suppress empty lines. The program never suppresses two consecutive empty lines, however. The *-2* option is useful for sending output to the line printer when the output contains superscripts and subscripts which would otherwise be partially invisible.
 
 include::man-common/help-version.adoc[]
 
@@ -69,7 +69,7 @@ The *colcrt* command appeared in 3.0BSD.
 
 == BUGS
 
-Should fold underlines onto blanks even with the *'-'* option so that a true underline character would show.
+Should fold underlines onto blanks even with the *-* option so that a true underline character would show.
 
 Can't back up more than 102 lines.
 

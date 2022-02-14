@@ -76,10 +76,10 @@ If the *--nohostname* option is given, then an *-H* option is added to the */bin
 See *--login-options*.
 
 *-f*, *--issue-file* _path_::
-Specifies a ":" delimited list of files and directories to be displayed instead of _/etc/issue_ (or other). All specified files and directories are displayed, missing or empty files are silently ignored. If the specified path is a directory then display all files with .issue file extension in version-sort order from the directory. This allows custom messages to be displayed on different terminals. The *--noissue* option will override this option.
+Specifies a ":" delimited list of files and directories to be displayed instead of _/etc/issue_ (or other). All specified files and directories are displayed, missing or empty files are silently ignored. If the specified path is a directory then display all files with __.issue__ file extension in version-sort order from the directory. This allows custom messages to be displayed on different terminals. The *--noissue* option will override this option.
 
 *--show-issue*::
-Display the current issue file (or other) on the current terminal and exit. Use this option to review the current setting, it is not designed for any other purpose. Note that output may use some default or incomplete information as proper output depends on terminal and agetty command line.
+Display the current issue file (or other) on the current terminal and exit. Use this option to review the current setting, it is not designed for any other purpose. Note that output may use some default or incomplete information as proper output depends on terminal and *agetty* command line.
 
 *-h, --flow-control*::
 Enable hardware (RTS/CTS) flow control. It is left up to the application to disable software (XON/XOFF) flow protocol where appropriate.
@@ -100,7 +100,7 @@ Do not clear the screen before prompting for the login name. By default the scre
 Invoke the specified _login_program_ instead of /bin/login. This allows the use of a non-standard login program. Such a program could, for example, ask for a dial-up password or use a different password file. See *--login-options*.
 
 *-L*, *--local-line*[=__mode__]::
-Control the CLOCAL line flag. The optional _mode_ argument is 'auto', 'always' or 'never'. If the _mode_ argument is omitted, then the default is 'always'. If the *--local-line* option is not given at all, then the default is 'auto'.
+Control the CLOCAL line flag. The optional _mode_ argument is *auto*, *always* or *never*. If the _mode_ argument is omitted, then the default is *always*. If the *--local-line* option is not given at all, then the default is *auto*.
 
 _always_;;
 Forces the line to be a local line with no need for carrier detect. This can be useful when you have a locally attached terminal where the serial line does not set the carrier-detect signal.
@@ -178,7 +178,7 @@ Sleep seconds before open tty.
 Run login with this priority.
 
 *--reload*::
-Ask all running agetty instances to reload and update their displayed prompts, if the user has not yet commenced logging in. After doing so the command will exit. This feature might be unsupported on systems without Linux *inotify*(7).
+Ask all running *agetty* instances to reload and update their displayed prompts, if the user has not yet commenced logging in. After doing so the command will exit. This feature might be unsupported on systems without Linux *inotify*(7).
 
 include::man-common/help-version.adoc[]
 
@@ -212,7 +212,7 @@ ____
 
 == SECURITY NOTICE
 
-If you use the *--login-program* and *--login-options* options, be aware that a malicious user may try to enter lognames with embedded options, which then get passed to the used login program. Agetty does check for a leading "-" and makes sure the logname gets passed as one parameter (so embedded spaces will not create yet another parameter), but depending on how the login binary parses the command line that might not be sufficient. Check that the used login program cannot be abused this way.
+If you use the *--login-program* and *--login-options* options, be aware that a malicious user may try to enter lognames with embedded options, which then get passed to the used login program. *agetty* does check for a leading "-" and makes sure the logname gets passed as one parameter (so embedded spaces will not create yet another parameter), but depending on how the login binary parses the command line that might not be sufficient. Check that the used login program cannot be abused this way.
 
 Some programs use "--" to indicate that the rest of the command line should not be interpreted as options. Use this feature if available by passing "--" before the username gets passed by \u.
 
@@ -231,7 +231,7 @@ It is possible to review the current issue file by *agetty --show-issue* on the 
 The issue files may contain certain escape codes to display the system name, date, time et cetera. All escape codes consist of a backslash (\) immediately followed by one of the characters listed below.
 
 4 or 4{_interface_}::
-Insert the IPv4 address of the specified network interface (for example: \4\{eth0}). If the _interface_ argument is not specified, then select the first fully configured (UP, non-LOCALBACK, RUNNING) interface. If not any configured interface is found, fall back to the IP address of the machine's hostname.
+Insert the IPv4 address of the specified network interface (for example: \4\{eth0}). If the _interface_ argument is not specified, then select the first fully configured (UP, non-LOCALBACK, RUNNING) interface. If no configured interface is found, fall back to the IP address of the machine's hostname.
 
 6 or 6{_interface_}::
 The same as \4 but for IPv6.

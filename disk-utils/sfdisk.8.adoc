@@ -45,7 +45,7 @@ The recommended way is not to specify start offsets at all and specify partition
 
 *sfdisk* does not create the standard system partitions for SGI and SUN disk labels like *fdisk*(8) does. It is necessary to explicitly create all partitions including whole-disk system partitions.
 
-*sfdisk* uses *BLKRRPART* (reread partition table) ioctl to make sure that the device is not used by system or other tools (see also *--no-reread*). It's possible that this feature or another *sfdisk* activity races with *udevd*. The recommended way how to avoid possible collisions is to use *--lock* option. The exclusive lock will cause udevd to skip the event handling on the device.
+*sfdisk* uses *BLKRRPART* (reread partition table) ioctl to make sure that the device is not used by system or other tools (see also *--no-reread*). It's possible that this feature or another *sfdisk* activity races with *systemd-udevd*(8). The recommended way how to avoid possible collisions is to use *--lock* option. The exclusive lock will cause *systemd-udevd* to skip the event handling on the device.
 
 The *sfdisk* prompt is only a hint for users and a displayed partition number does not mean that the same partition table entry will be created (if *-N* not specified), especially for tables with gaps.
 
@@ -156,7 +156,7 @@ Disable all consistency checking.
 Deprecated and ignored option. Partitioning that is compatible with Linux (and other modern operating systems) is the default.
 
 *--lock*[=_mode_]::
-Use exclusive BSD lock for device or file it operates. The optional argument _mode_ can be *yes*, *no* (or 1 and 0) or *nonblock*. If the _mode_ argument is omitted, it defaults to *"yes"*. This option overwrites environment variable *$LOCK_BLOCK_DEVICE*. The default is not to use any lock at all, but it's recommended to avoid collisions with udevd or other tools.
+Use exclusive BSD lock for device or file it operates. The optional argument _mode_ can be *yes*, *no* (or 1 and 0) or *nonblock*. If the _mode_ argument is omitted, it defaults to *yes*. This option overwrites environment variable *$LOCK_BLOCK_DEVICE*. The default is not to use any lock at all, but it's recommended to avoid collisions with *systemd-udevd*(8) or other tools.
 
 *-n*, *--no-act*::
 Do everything except writing to the device.
@@ -208,7 +208,7 @@ Force editing of a nested disk label. The primary disk label has to exist alread
 Wipe filesystem, RAID and partition-table signatures from the device, in order to avoid possible collisions. The argument _when_ can be *auto*, *never* or *always*. When this option is not given, the default is *auto*, in which case signatures are wiped only when in interactive mode; except the old partition-table signatures which are always wiped before create a new partition-table if the argument _when_ is not *never*. The *auto* mode also does not wipe the first sector (boot sector), it is necessary to use the *always* mode to wipe this area. In all cases detected signatures are reported by warning messages before a new partition table is created. See also the *wipefs*(8) command.
 
 *-W*, *--wipe-partitions* _when_::
-Wipe filesystem, RAID and partition-table signatures from a newly created partitions, in order to avoid possible collisions. The argument _when_ can be *auto*, *never* or *always*. When this option is not given, the default is *auto*, in which case signatures are wiped only when in interactive mode and after confirmation by user. In all cases detected signatures are reported by warning messages after a new partition is created. See also *wipefs*(8) command.
+Wipe filesystem, RAID and partition-table signatures from a newly created partition, in order to avoid possible collisions. The argument _when_ can be *auto*, *never* or *always*. When this option is not given, the default is *auto*, in which case signatures are wiped only when in interactive mode and after confirmation by user. In all cases detected signatures are reported by warning messages after a new partition is created. See also *wipefs*(8) command.
 
 *-v*, *--version*::
 Display version information and exit.
@@ -257,7 +257,7 @@ where each line fills one partition descriptor.
 
 Fields are separated by whitespace, comma (recommended) or semicolon possibly followed by whitespace; initial and trailing whitespace is ignored. Numbers can be octal, decimal or hexadecimal; decimal is the default. When a field is absent, empty or specified as '-' a default value is used. But when the *-N* option (change a single partition) is given, the default for each field is its previous value.
 
-The default value of _start_ is the first non-assigned sector aligned according to device I/O limits. The default start offset for the first partition is 1 MiB. The offset may be followed by the multiplicative suffixes (KiB, MiB, GiB, TiB, PiB, EiB, ZiB and YiB) then the number is interpreted as offset in bytes. Since v2.38 when the *-N* option (change a single partition) is given, a '{plus}' can be used to enlarge partition by move start of the partition if there is a free space before the partition.
+The default value of _start_ is the first non-assigned sector aligned according to device I/O limits. The default start offset for the first partition is 1 MiB. If the offset is followed by the multiplicative suffixes (KiB, MiB, GiB, TiB, PiB, EiB, ZiB and YiB), then the number is interpreted as offset in bytes. Since v2.38 when the *-N* option (change a single partition) is given, a '{plus}' can be used to enlarge partition by move start of the partition if there is a free space before the partition.
 
 //TRANSLATORS: Keep {plus} untranslated.
 The default value of _size_ indicates "as much as possible"; i.e., until the next partition or end-of-device. A numerical argument is by default interpreted as a number of sectors, however if the size is followed by one of the multiplicative suffixes (KiB, MiB, GiB, TiB, PiB, EiB, ZiB and YiB) then the number is interpreted as the size of the partition in bytes and it is then aligned according to the device I/O limits. A '{plus}' can be used instead of a number to enlarge the partition as much as possible. Note '{plus}' is equivalent to the default behaviour for a new partition; existing partitions will be resized as required.
@@ -313,7 +313,7 @@ The _value_ can be between quotation marks (e.g., name="This is partition name")
 The currently supported fields are:
 
 **start=**__number__::
-The first non-assigned sector aligned according to device I/O limits. The default start offset for the first partition is 1 MiB. The offset may be followed by the multiplicative suffixes (KiB, MiB, GiB, TiB, PiB, EiB, ZiB and YiB) then the number is interpreted as offset in bytes.
+The first non-assigned sector aligned according to device I/O limits. The default start offset for the first partition is 1 MiB. If the offset is followed by the multiplicative suffixes (KiB, MiB, GiB, TiB, PiB, EiB, ZiB and YiB), then the number is interpreted as offset in bytes.
 
 **size=**__number__::
 Specify the partition size in sectors. The number may be followed by the multiplicative suffixes (KiB, MiB, GiB, TiB, PiB, EiB, ZiB and YiB), then it's interpreted as size in bytes and the size is aligned according to device I/O limits.

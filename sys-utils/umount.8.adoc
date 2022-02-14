@@ -119,13 +119,13 @@ Normally, only the superuser can umount filesystems. However, when _fstab_ conta
 
 Since version 2.34 the *umount* command can be used to perform umount operation also for fuse filesystems if kernel mount table contains user's ID. In this case _fstab_ *user=* mount option is not required.
 
-Since version 2.35 *umount* command does not exit when user permissions are inadequate by internal libmount security rules. It drops suid permissions and continue as regular non-root user. This can be used to support use-cases where root permissions are not necessary (e.g., fuse filesystems, user namespaces, etc).
+Since version 2.35 *umount* command does not exit when user permissions are inadequate by internal *libmount* security rules. It drops suid permissions and continue as regular non-root user. This can be used to support use-cases where root permissions are not necessary (e.g., fuse filesystems, user namespaces, etc).
 
 == LOOP DEVICE
 
 The *umount* command will automatically detach loop device previously initialized by *mount*(8) command independently of _/etc/mtab_.
 
-In this case the device is initialized with "autoclear" flag (see *losetup*(8) output for more details), otherwise it's necessary to use the option *--detach-loop* or call *losetup -d <device>*. The autoclear feature is supported since Linux 2.6.25.
+In this case the device is initialized with "autoclear" flag (see *losetup*(8) output for more details), otherwise it's necessary to use the option *--detach-loop* or call *losetup -d* _device_. The autoclear feature is supported since Linux 2.6.25.
 
 == EXTERNAL HELPERS
 
@@ -143,9 +143,9 @@ ____
 
 A **uhelper=**__something__ marker (unprivileged helper) can appear in the _/etc/mtab_ file when ordinary users need to be able to unmount a mountpoint that is not defined in _/etc/fstab_ (for example for a device that was mounted by *udisks*(1)).
 
-A **helper=**__type__ marker in the mtab file will redirect all unmount requests to the **/sbin/umount.**__type__ helper independently of UID.
+A **helper=**__type__ marker in the _mtab_ file will redirect all unmount requests to the **/sbin/umount.**__type__ helper independently of UID.
 
-Note that _/etc/mtab_ is currently deprecated and *helper=* and other userspace mount options are maintained by libmount.
+Note that _/etc/mtab_ is currently deprecated and *helper=* and other userspace mount options are maintained by *libmount*.
 
 == ENVIRONMENT
 
