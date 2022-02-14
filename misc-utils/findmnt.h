@@ -23,6 +23,7 @@ enum {
 	FL_VFS_ALL	= (1 << 19),
 	FL_SHADOWED	= (1 << 20),
 	FL_DELETED      = (1 << 21),
+	FL_SHELLVAR     = (1 << 22),
 
 	/* basic table settings */
 	FL_ASCII	= (1 << 25),
