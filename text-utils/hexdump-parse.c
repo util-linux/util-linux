@@ -78,7 +78,7 @@ void addfile(char *name, struct hexdump *hex)
 {
 	char *fmt, *buf = NULL;
 	FILE *fp;
-	size_t n;
+	size_t n = 0;
 
 	if ((fp = fopen(name, "r")) == NULL)
 	        err(EXIT_FAILURE, _("can't read %s"), name);
