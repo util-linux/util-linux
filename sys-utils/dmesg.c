@@ -910,8 +910,8 @@ static const char *get_subsys_delimiter(const char *mesg, size_t mesg_size)
 			return NULL;
 		sz -= d - p + 1;
 		if (sz) {
-			if (isblank(*(d + 1)))
-				return d;
+			if (sz >= 2 && isblank(*(d + 1)))
+				return d + 2;
 			p = d + 1;
 		}
 	}
