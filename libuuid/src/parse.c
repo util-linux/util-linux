@@ -58,16 +58,14 @@ int uuid_parse_range(const char *in_start, const char *in_end, uuid_t uu)
 
 	if ((in_end - in_start) != 36)
 		return -1;
-	for (i=0, cp = in_start; i <= 36; i++,cp++) {
+	for (i=0, cp = in_start; i < 36; i++,cp++) {
 		if ((i == 8) || (i == 13) || (i == 18) ||
 		    (i == 23)) {
 			if (*cp == '-')
 				continue;
 			return -1;
 		}
-		if (i== 36)
-			if (*cp == 0)
-				continue;
+
 		if (!isxdigit(*cp))
 			return -1;
 	}
