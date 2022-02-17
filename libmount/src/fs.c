@@ -600,7 +600,7 @@ int mnt_fs_get_propagation(struct libmnt_fs *fs, unsigned long *flags)
  */
 int mnt_fs_is_kernel(struct libmnt_fs *fs)
 {
-	return mnt_fs_get_flags(fs) & MNT_FS_KERNEL;
+	return mnt_fs_get_flags(fs) & MNT_FS_KERNEL ? 1 : 0;
 }
 
 /**
@@ -611,7 +611,7 @@ int mnt_fs_is_kernel(struct libmnt_fs *fs)
  */
 int mnt_fs_is_swaparea(struct libmnt_fs *fs)
 {
-	return mnt_fs_get_flags(fs) & MNT_FS_SWAP;
+	return mnt_fs_get_flags(fs) & MNT_FS_SWAP ? 1 : 0;
 }
 
 /**
@@ -622,7 +622,7 @@ int mnt_fs_is_swaparea(struct libmnt_fs *fs)
  */
 int mnt_fs_is_pseudofs(struct libmnt_fs *fs)
 {
-	return mnt_fs_get_flags(fs) & MNT_FS_PSEUDO;
+	return mnt_fs_get_flags(fs) & MNT_FS_PSEUDO ? 1 : 0;
 }
 
 /**
@@ -633,7 +633,7 @@ int mnt_fs_is_pseudofs(struct libmnt_fs *fs)
  */
 int mnt_fs_is_netfs(struct libmnt_fs *fs)
 {
-	return mnt_fs_get_flags(fs) & MNT_FS_NET;
+	return mnt_fs_get_flags(fs) & MNT_FS_NET ? 1 : 0;
 }
 
 /**
