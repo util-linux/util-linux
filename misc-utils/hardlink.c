@@ -1363,8 +1363,15 @@ int main(int argc, char *argv[])
 
 	jlog(JLOG_VERBOSE2, _("Scanning [device/inode/links]:"));
 	for (; optind < argc; optind++) {
-		if (nftw(argv[optind], inserter, 20, FTW_PHYS) == -1)
-			warn(_("cannot process %s"), argv[optind]);
+		char *path = realpath(argv[optind], NULL);
+
+		if (!path) {
+			warn(_("cannot get realpath: %s"), argv[optind]);
+			continue;
+		}
+		if (nftw(path, inserter, 20, FTW_PHYS) == -1)
+			warn(_("cannot process %s"), path);
+		free(path);
 	}
 
 	twalk(files, visitor);
