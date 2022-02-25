@@ -522,7 +522,7 @@ static int create_loop(struct loopdev_cxt *lc,
 		}
 	}
 
-	if (hasdev && !is_loopdev(loopcxt_get_device(lc)))
+	if (hasdev)
 		loopcxt_add_device(lc);
 
 	/* losetup --noverlap /dev/loopN file.img */
