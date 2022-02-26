@@ -26,8 +26,6 @@ ts_check_test_command "$TS_CMD_LSFD"
 
 ts_check_test_command "$TS_HELPER_MKFDS"
 
-ts_check_prog "stat"
-
 ts_cd "$TS_OUTDIR"
 
 PID=
