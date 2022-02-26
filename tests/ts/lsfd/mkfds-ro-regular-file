@@ -23,7 +23,6 @@ ts_init "$*"
 . $TS_SELF/lsfd-functions.bash
 
 ts_check_test_command "$TS_CMD_LSFD"
-ts_check_test_command "$TS_CMD_FINDMNT"
 
 ts_check_test_command "$TS_HELPER_MKFDS"
 
@@ -37,7 +36,8 @@ FD=3
 EXPR=
 
 {
-    coproc MKFDS { "$TS_HELPER_MKFDS" --comm ABC ro-regular-file $FD offset=1; }
+    target=/etc/passwd
+    coproc MKFDS { "$TS_HELPER_MKFDS" --comm ABC ro-regular-file $FD offset=1 file=$target; }
     if read -u ${MKFDS[0]} PID; then
 	EXPR='(PID == '"${PID}"') and (FD == '"$FD"')'
 	${TS_CMD_LSFD} -n -o COMMAND,ASSOC,MODE,TYPE,NAME,POS -Q "${EXPR}"
@@ -50,7 +50,7 @@ EXPR=
 
 	LSFD_INODE=$(${TS_CMD_LSFD} --raw -n -o INODE -Q "${EXPR}")
 	echo 'INODE[RUN]:' $?
-	[ "${LSFD_INODE}"  == "$(stat -c %i /etc/passwd)" ]
+	[ "${LSFD_INODE}"  == "$(stat -c %i $target)" ]
 	echo 'INODE[STR]:' $?
 
 	LSFD_UID=$(${TS_CMD_LSFD} --raw -n -o UID -Q "${EXPR}")
@@ -65,10 +65,10 @@ EXPR=
 
 	LSFD_SIZE=$(${TS_CMD_LSFD} --raw -n -o SIZE -Q "${EXPR}")
 	echo 'SIZE[RUN]:' $?
-	[ "${LSFD_SIZE}" == $(stat -c %s /etc/passwd) ]
+	[ "${LSFD_SIZE}" == $(stat -c %s $target) ]
 	echo 'SIZE[STR]:' $?
 
-	lsfd_compare_dev "${TS_CMD_LSFD}" "${TS_CMD_FINDMNT}" "${EXPR}"
+	lsfd_compare_dev "${TS_CMD_LSFD}" $target "${EXPR}"
 
 	kill -CONT ${PID}
 	wait ${MKFDS_PID}

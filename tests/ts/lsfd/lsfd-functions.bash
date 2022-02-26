@@ -26,31 +26,28 @@ function lsfd_wait_for_pausing {
 
 function lsfd_compare_dev {
     local LSFD=$1
-    local FINDMNT=$2
+    local FILE=$2
     local EXPR=$3
 
     ts_check_prog "grep"
+    ts_check_prog "expr"
+    ts_check_prog "stat"
 
-    local MNTID=$("${LSFD}" --raw -n -o MNTID -Q "${EXPR}")
-    echo 'MNTID[RUN]:' $?
     local DEV=$("${LSFD}" --raw -n -o DEV -Q "${EXPR}")
     echo 'DEV[RUN]:' $?
-    # "stat -c" %d or "stat -c %D" can be used here instead of "findmnt".
-    # "stat" just prints a device id.
-    # Unlike "stat", "findmnt" can print the major part and minor part
-    # for a given device separately.
-    # We can save the code for extracting the major part and minor part
-    # if we use findmnt.
-    local FINDMNT_MNTID_DEV=$("${FINDMNT}" --raw -n -o ID,MAJ:MIN | grep "^${MNTID}\b")
-    echo 'FINDMNT[RUN]:' $?
-    if [ "${MNTID} ${DEV}" == "${FINDMNT_MNTID_DEV}" ]; then
-	echo 'DEV[STR]:' 0
+    local MAJ=${DEV%:*}
+    local MIN=${DEV#*:}
+    local DEVNUM=$(( ( MAJ << 8 ) + MIN ))
+    local STAT_DEVNUM=$(stat -c "%d" "$FILE")
+    echo 'STAT[RUN]:' $?
+    if [ "${DEVNUM}" == "${STAT_DEVNUM}" ]; then
+	echo 'DEVNUM[STR]:' 0
     else
-	echo 'DEV[STR]:' 1
+	echo 'DEVNUM[STR]:' 1
 	# Print more information for debugging
-	echo 'MNTID:' "${MNTID}"
 	echo 'DEV:' "${DEV}"
-	echo 'MNTID DEV:' "${MNTID} ${DEV}"
-	echo 'FINDMNT_MNTID_DEV:' "${FINDMNT_MNTID_DEV}"
+	echo 'MAJ:MIN' "${MAJ}:${MIN}"
+	echo 'DEVNUM:' "${DEVNUM}"
+	echo 'STAT_DEVNUM:' "${STAT_DEVNUM}"
     fi
 }
