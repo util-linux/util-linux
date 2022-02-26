@@ -44,11 +44,11 @@ static void __attribute__((__noreturn__)) usage(FILE *out, int status)
 	fprintf(out, _(" %s [options] FACTORY FD... [PARAM=VAL...]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -l, --list           list available file descriptor factories and exit\n"), out);
-	fputs(_(" -I, --parameters     list parameters the factory takes\n"), out);
-	fputs(_(" -r, --comm <name>    rename self\n"), out);
-	fputs(_(" -q, --quiet          don't print pid(s)\n"), out);
-	fputs(_(" -c, --dont-pause     don't pause after making fd(s)\n"), out);
+	fputs(_(" -l, --list                    list available file descriptor factories and exit\n"), out);
+	fputs(_(" -I, --parameters <factory>    list parameters the factory takes\n"), out);
+	fputs(_(" -r, --comm <name>             rename self\n"), out);
+	fputs(_(" -q, --quiet                   don't print pid(s)\n"), out);
+	fputs(_(" -c, --dont-pause              don't pause after making fd(s)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Examples:\n"), out);
