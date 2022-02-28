@@ -23,11 +23,8 @@ ts_init "$*"
 . $TS_SELF/lsfd-functions.bash
 
 ts_check_test_command "$TS_CMD_LSFD"
-ts_check_test_command "$TS_CMD_FINDMNT"
 
 ts_check_test_command "$TS_HELPER_MKFDS"
-
-ts_check_prog "stat"
 
 ts_cd "$TS_OUTDIR"
 
@@ -36,13 +33,14 @@ FD=3
 EXPR=
 
 {
-    coproc MKFDS { "$TS_HELPER_MKFDS" rw-character-device $FD chrdev=/dev/zero; }
+    target=/dev/zero
+    coproc MKFDS { "$TS_HELPER_MKFDS" rw-character-device $FD chrdev=$target; }
     if read -u ${MKFDS[0]} PID; then
 	EXPR='(PID == '"${PID}"') and (FD == '"$FD"')'
 	${TS_CMD_LSFD} -n -o ASSOC,MODE,TYPE,NAME,SOURCE,POS,MAJ:MIN,CHRDRV,DEVTYPE,RDEV -Q "${EXPR}"
 	echo 'ASSOC,MODE,TYPE,NAME,SOURCE,POS,MAJ:MIN,CHRDRV,DEVTYPE,RDEV': $?
 
-	lsfd_compare_dev "${TS_CMD_LSFD}" "${TS_CMD_FINDMNT}" "${EXPR}"
+	lsfd_compare_dev "${TS_CMD_LSFD}" $target "${EXPR}"
 
 	kill -CONT ${PID}
 	wait ${MKFDS_PID}

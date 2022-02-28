@@ -65,7 +65,7 @@ EXPR=
 	[ "${LSFD_RDEV}" == 7:"${LSFD_LOOP_BDEV_NUM}" ]
 	echo 'RDEV[STR]:' $?
 
-	lsfd_compare_dev "${TS_CMD_LSFD}" "${TS_CMD_FINDMNT}" "${EXPR}"
+	lsfd_compare_dev "${TS_CMD_LSFD}" "${LSFD_LOOP_BDEV}" "${EXPR}"
 
 	kill -CONT ${PID}
 	wait ${MKFDS_PID}
