@@ -43,6 +43,9 @@
 #include "debug.h"
 #include "fileutils.h"
 
+
+#define LOOPDEV_MAX_TRIES	10
+
 /*
  * Debug stuff (based on include/debug.h)
  */
@@ -1454,7 +1457,7 @@ err:
  */
 int loopcxt_ioctl_status(struct loopdev_cxt *lc)
 {
-	int dev_fd, rc = -1, err, again;
+	int dev_fd, rc = -1, err, again, tries = 0;
 
 	errno = 0;
 	dev_fd = loopcxt_get_fd(lc);
@@ -1468,9 +1471,12 @@ int loopcxt_ioctl_status(struct loopdev_cxt *lc)
 	do {
 		err = ioctl(dev_fd, LOOP_SET_STATUS64, &lc->config.info);
 		again = err && errno == EAGAIN;
-		if (again)
+		if (again) {
 			xusleep(250000);
-	} while (again);
+			tries++;
+		}
+	} while (again && tries <= LOOPDEV_MAX_TRIES);
+
 	if (err) {
 		rc = -errno;
 		DBG(SETUP, ul_debugobj(lc, "LOOP_SET_STATUS64 failed: %m"));
@@ -1524,16 +1530,24 @@ int loopcxt_ioctl_dio(struct loopdev_cxt *lc, unsigned long use_dio)
 int loopcxt_ioctl_blocksize(struct loopdev_cxt *lc, uint64_t blocksize)
 {
 	int fd = loopcxt_get_fd(lc);
+	int err, again, tries = 0;
 
 	if (fd < 0)
 		return -EINVAL;
 
-	/* Kernels prior to v4.14 don't support this ioctl */
-	if (ioctl(fd, LOOP_SET_BLOCK_SIZE, (unsigned long) blocksize) < 0) {
-		int rc = -errno;
-		DBG(CXT, ul_debugobj(lc, "LOOP_SET_BLOCK_SIZE failed: %m"));
-		return rc;
-	}
+	do {
+		/* Kernels prior to v4.14 don't support this ioctl */
+		err = ioctl(fd, LOOP_SET_BLOCK_SIZE, (unsigned long) blocksize);
+		again = err && errno == EAGAIN;
+		if (again) {
+			xusleep(250000);
+			tries++;
+		} else if (err) {
+			int rc = -errno;
+			DBG(CXT, ul_debugobj(lc, "LOOP_SET_BLOCK_SIZE failed: %m"));
+			return rc;
+		}
+	} while (again && tries <= LOOPDEV_MAX_TRIES);
 
 	DBG(CXT, ul_debugobj(lc, "logical block size set"));
 	return 0;
