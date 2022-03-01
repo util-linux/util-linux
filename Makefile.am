@@ -114,6 +114,29 @@ include man-common/Makemodule.am
 
 include tests/Makemodule.am
 
+# Meson files
+EXTRA_DIST += \
+	meson.build \
+	meson_options.txt \
+	tools/meson-make-manpage-stub.sh \
+	tools/meson-make-symlink.sh \
+	\
+	include/meson.build \
+	libblkid/meson.build \
+	libmount/meson.build \
+	libmount/python/meson.build \
+	misc-utils/meson.build \
+	libsmartcols/meson.build \
+	text-utils/meson.build \
+	po/meson.build \
+	lib/meson.build \
+	libuuid/meson.build \
+	sys-utils/meson.build \
+	libfdisk/meson.build \
+	term-utils/meson.build \
+	disk-utils/meson.build \
+	login-utils/meson.build
+
 # pylibmountexec module must be installed after usrlib_exec libraries,
 # otherwise the libtool relink step will fail to find libmount.la and
 # will try -lmount which is possibly not available.
