@@ -984,9 +984,9 @@ int main(int argc, char **argv)
 				execl(shell, shname, "-i", (char *)NULL);
 		} else {
 			if (ctl.command)
-				execlp(shname, "-c", ctl.command, (char *)NULL);
+				execlp(shname, shname, "-c", ctl.command, (char *)NULL);
 			else
-				execlp(shname, "-i", (char *)NULL);
+				execlp(shname, shname, "-i", (char *)NULL);
 		}
 
 		err(EXIT_FAILURE, "failed to execute %s", shell);
