@@ -36,9 +36,16 @@ IMAGE_SRC="$TS_OUTDIR/${TS_TESTNAME}-data"
 ts_log "create mountpoint dir"
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 
-mkdir -p $IMAGE_SRC
+rm -rf "$IMAGE_SRC"
+mkdir -m 755 -p $IMAGE_SRC
+
+umask 133
+
 echo hello > $IMAGE_SRC/a
 echo hello > $IMAGE_SRC/b
+
+# sudo may use whatever group
+chgrp -R 0 "$IMAGE_SRC"
 
 ts_log "create cramfs image"
 $TS_CMD_MKCRAMFS $IMAGE_SRC $IMAGE_PATH >> $TS_OUTPUT 2>> $TS_ERRLOG
