@@ -115,6 +115,8 @@ _/var/log/btmp_
 
 The files _wtmp_ and _btmp_ might not be found. The system only logs information in these files if they are present. This is a local configuration issue. If you want the files to be used, they can be created with a simple *touch*(1) command (for example, *touch /var/log/wtmp*).
 
+An empty entry is a valid type of wtmp entry. It means that an empty file or file with zeros is not interpreted as an error.
+
 == AUTHORS
 
 mailto:miquels@cistron.nl[Miquel van Smoorenburg]
