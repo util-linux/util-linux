@@ -305,9 +305,6 @@ struct lsfd_control {
 	struct lsfd_counter **counters;		/* NULL terminated array. */
 };
 
-static void xstrappend(char **a, const char *b);
-static void xstrputc(char **a, char c);
-
 static int column_name_to_id(const char *name, size_t namesz)
 {
 	size_t i;
@@ -1340,18 +1337,6 @@ static void __attribute__((__noreturn__)) usage(void)
 	printf(USAGE_MAN_TAIL("lsfd(1)"));
 
 	exit(EXIT_SUCCESS);
-}
-
-static void xstrappend(char **a, const char *b)
-{
-	if (strappend(a, b) < 0)
-		err(EXIT_FAILURE, _("failed to allocate memory for string"));
-}
-
-static void xstrputc(char **a, char c)
-{
-	char b[] = {c, '\0'};
-	xstrappend(a, b);
 }
 
 static void append_filter_expr(char **a, const char *b, bool and)

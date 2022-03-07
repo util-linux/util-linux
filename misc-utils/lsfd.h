@@ -30,6 +30,7 @@
 #include <inttypes.h>
 
 #include "list.h"
+#include "strutils.h"
 
 /*
  * column IDs
@@ -180,5 +181,17 @@ const char *get_blkdrv(unsigned long major);
 const char *get_chrdrv(unsigned long major);
 const char *get_miscdev(unsigned long minor);
 const char *get_nodev_filesystem(unsigned long minor);
+
+static inline void xstrappend(char **a, const char *b)
+{
+	if (strappend(a, b) < 0)
+		err(XALLOC_EXIT_CODE, _("failed to allocate memory for string"));
+}
+
+static inline void xstrputc(char **a, char c)
+{
+	char b[] = {c, '\0'};
+	xstrappend(a, b);
+}
 
 #endif /* UTIL_LINUX_LSFD_H */
