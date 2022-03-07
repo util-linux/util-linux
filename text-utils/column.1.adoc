@@ -59,7 +59,7 @@ This is the default mode (required by backward compatibility).
 This mode is enabled by option *-x, --fillrows*
 
 *table*::
-Determine the number of columns the input contains and create a table. This mode is enabled by option *-t, --table* and columns formatting is possible to modify by *--table-** options. Use this mode if not sure.
+Determine the number of columns the input contains and create a table. This mode is enabled by option *-t, --table* and columns formatting is possible to modify by *--table-** options. Use this mode if not sure. The output is aligned to the terminal width in interactive mode and the 80 columns in non-interactive mode (see *--output-width* for more details).
 
 Input is taken from _file_, or otherwise from standard input. Empty lines are ignored and all invalid multibyte sequences are encoded by x<hex> convention.
 
@@ -71,7 +71,7 @@ The argument _columns_ for *--table-** options is a comma separated list of the 
 Use JSON output format to print the table, the option *--table-columns* is required and the option *--table-name* is recommended.
 
 *-c, --output-width* _width_::
-Output is formatted to a width specified as number of characters. The original name of this option is *--columns*; this name is deprecated since v2.30. Note that input longer than _width_ is not truncated by default.
+Output is formatted to a width specified as number of characters. The original name of this option is *--columns*; this name is deprecated since v2.30. Note that input longer than _width_ is not truncated by default. The default is a terminal width and the 80 columns in non-interactive mode. The column headers are never truncated.
 
 *-d, --table-noheadings*::
 Do not print header. This option allows the use of logical column names on the command line, but keeps the header hidden when printing the table.
