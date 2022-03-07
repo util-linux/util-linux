@@ -73,7 +73,8 @@ struct nodev {
 struct nodev_table {
 #define NODEV_TABLE_SIZE 97
 	struct list_head tables[NODEV_TABLE_SIZE];
-} nodev_table;
+};
+static struct nodev_table nodev_table;
 
 struct name_manager {
 	struct idcache *cache;
