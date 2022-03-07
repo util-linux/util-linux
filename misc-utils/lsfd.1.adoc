@@ -135,6 +135,17 @@ Device type (_blk_, _char_, or _nodev_).
 
 ENDPOINT <__string__>::
 IPC endpoints information communicated with the fd.
+The format of the column depends on the object associated
+with the fd:
+
+ FIFO type::: _PID_,_COMMAND_,_ASSOC_[-r][-w]
+
+ The last characters ([-r][-w]) represents the read and/or
+ write mode of the endpoint.
+
+*lsfd* collects endpoints within the processes that
+*lsfd* scans; *lsfd* may miss some endpoints
+if you limits the processes with *-p* option.
 
 FD <__number__>::
 File descriptor for the file.

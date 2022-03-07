@@ -133,7 +133,7 @@ static struct colinfo infos[] = {
 		N_("ID of device containing file") },
 	[COL_DEVTYPE] = { "DEVTYPE",  0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("device type (blk, char, or nodev)") },
-	[COL_ENDPOINTS] ={"ENDPOINTS",0,              0, SCOLS_JSON_STRING,
+	[COL_ENDPOINTS] ={"ENDPOINTS",0,  SCOLS_FL_WRAP, SCOLS_JSON_STRING,
 		N_("IPC endpoints information communicated with the fd") },
 	[COL_FLAGS]   = { "FLAGS",    0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("flags specified when opening the file") },
@@ -347,8 +347,16 @@ static struct libscols_column *add_column(struct libscols_table *tb, const struc
 	int flags = col->flags;
 
 	cl = scols_table_new_column(tb, col->name, col->whint, flags);
-	if (cl)
+	if (cl) {
 		scols_column_set_json_type(cl, col->json_type);
+		if (col->flags & SCOLS_FL_WRAP) {
+			scols_column_set_wrapfunc(cl,
+						  scols_wrapnl_chunksize,
+						  scols_wrapnl_nextchunk,
+						  NULL);
+			scols_column_set_safechars(cl, "\n");
+		}
+	}
 
 	return cl;
 }

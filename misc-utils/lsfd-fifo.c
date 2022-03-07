@@ -25,6 +25,26 @@
 
 #include "lsfd.h"
 
+struct fifo {
+	struct file file;
+	struct ipc_endpoint endpoint;
+};
+
+struct fifo_ipc {
+	struct ipc ipc;
+	ino_t ino;
+};
+
+static inline char *fifo_xstrendpoint(struct file *file)
+{
+	char *str = NULL;
+	xasprintf(&str, "%d,%s,%d%c%c",
+		  file->proc->pid, file->proc->command, file->association,
+		  (file->mode & S_IRUSR)? 'r': '-',
+		  (file->mode & S_IWUSR)? 'w': '-');
+	return str;
+}
+
 static bool fifo_fill_column(struct proc *proc __attribute__((__unused__)),
 			     struct file *file,
 			     struct libscols_line *ln,
@@ -45,6 +65,24 @@ static bool fifo_fill_column(struct proc *proc __attribute__((__unused__)),
 			break;
 		}
 		return false;
+	case COL_ENDPOINTS: {
+		struct fifo *this = (struct fifo *)file;
+		struct list_head *e;
+		char *estr;
+		list_for_each_backwardly(e, &this->endpoint.ipc->endpoints) {
+			struct fifo *other = list_entry(e, struct fifo, endpoint.endpoints);
+			if (this == other)
+				continue;
+			if (str)
+				xstrputc(&str, '\n');
+			estr = fifo_xstrendpoint(&other->file);
+			xstrappend(&str, estr);
+			free(estr);
+		}
+		if (!str)
+			return false;
+		break;
+	}
 	default:
 		return false;
 	}
@@ -56,9 +94,55 @@ static bool fifo_fill_column(struct proc *proc __attribute__((__unused__)),
 	return true;
 }
 
+static unsigned int fifo_get_hash(struct file *file)
+{
+	return (unsigned int)(file->stat.st_ino % UINT_MAX);
+}
+
+static bool fifo_is_suitable_ipc(struct ipc *ipc, struct file *file)
+{
+	return ((struct fifo_ipc *)ipc)->ino == file->stat.st_ino;
+}
+
+static struct ipc_class *fifo_get_ipc_class(struct file *file __attribute__((__unused__)))
+{
+	static struct ipc_class fifo_ipc_class = {
+		.get_hash = fifo_get_hash,
+		.is_suitable_ipc = fifo_is_suitable_ipc,
+		.free = NULL,
+	};
+	return &fifo_ipc_class;
+}
+
+static void fifo_initialize_content(struct file *file)
+{
+	struct fifo *fifo = (struct fifo *)file;
+	struct ipc *ipc;
+	unsigned int hash;
+
+	INIT_LIST_HEAD(&fifo->endpoint.endpoints);
+	ipc = get_ipc(file);
+	if (ipc)
+		goto link;
+
+	ipc = xmalloc(sizeof(struct fifo_ipc));
+	ipc->class = fifo_get_ipc_class(file);
+	INIT_LIST_HEAD(&ipc->endpoints);
+	INIT_LIST_HEAD(&ipc->ipcs);
+	((struct fifo_ipc *)ipc)->ino = file->stat.st_ino;
+
+	hash = fifo_get_hash(file);
+	add_ipc(ipc, hash);
+ link:
+	fifo->endpoint.ipc = ipc;
+	list_add(&fifo->endpoint.endpoints, &ipc->endpoints);
+}
+
 const struct file_class fifo_class = {
 	.super = &file_class,
-	.size = sizeof(struct file),
+	.size = sizeof(struct fifo),
 	.fill_column = fifo_fill_column,
+	.initialize_content = fifo_initialize_content,
 	.free_content = NULL,
+	.get_ipc_class = fifo_get_ipc_class,
 };
