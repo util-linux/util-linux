@@ -133,6 +133,9 @@ ID of the device containing the file.
 DEVTYPE <__string__>::
 Device type (_blk_, _char_, or _nodev_).
 
+ENDPOINT <__string__>::
+IPC endpoints information communicated with the fd.
+
 FD <__number__>::
 File descriptor for the file.
 

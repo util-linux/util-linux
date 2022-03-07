@@ -133,6 +133,8 @@ static struct colinfo infos[] = {
 		N_("ID of device containing file") },
 	[COL_DEVTYPE] = { "DEVTYPE",  0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("device type (blk, char, or nodev)") },
+	[COL_ENDPOINTS] ={"ENDPOINTS",0,              0, SCOLS_JSON_STRING,
+		N_("IPC endpoints information communicated with the fd") },
 	[COL_FLAGS]   = { "FLAGS",    0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("flags specified when opening the file") },
 	[COL_FD]      = { "FD",       0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
