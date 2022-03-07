@@ -94,6 +94,17 @@ static struct list_head chrdrvs;
 static struct list_head blkdrvs;
 
 /*
+ * IPC table
+ */
+
+#define IPC_TABLE_SIZE 997
+struct ipc_table {
+	struct list_head tables[IPC_TABLE_SIZE];
+};
+
+static struct ipc_table ipc_table;
+
+/*
  * Column related stuffs
  */
 
@@ -810,6 +821,54 @@ static void add_nodevs(FILE *mnt)
 
 		list_add_tail(&nodev->nodevs, &nodev_table.tables[slot]);
 	}
+}
+
+static void initialize_ipc_table(void)
+{
+	for (int i = 0; i < IPC_TABLE_SIZE; i++)
+		INIT_LIST_HEAD(ipc_table.tables + i);
+}
+
+static void free_ipc(struct ipc *ipc)
+{
+	if (ipc->class->free)
+		ipc->class->free(ipc);
+}
+
+static void finalize_ipc_table(void)
+{
+	for (int i = 0; i < IPC_TABLE_SIZE; i++)
+		list_free(ipc_table.tables, struct ipc, ipcs, free_ipc);
+}
+
+struct ipc *get_ipc(struct file *file)
+{
+	int slot;
+	struct list_head *e;
+	struct ipc_class *ipc_class;
+
+	if (!file->class->get_ipc_class)
+		return NULL;
+
+	ipc_class = file->class->get_ipc_class(file);
+	if (!ipc_class)
+		return NULL;
+
+	slot = ipc_class->get_hash(file) % IPC_TABLE_SIZE;
+	list_for_each (e, &ipc_table.tables[slot]) {
+		struct ipc *ipc = list_entry(e, struct ipc, ipcs);
+		if (ipc->class != ipc_class)
+			continue;
+		if (ipc_class->is_suitable_ipc(ipc, file))
+			return ipc;
+	}
+	return NULL;
+}
+
+void add_ipc(struct ipc *ipc, unsigned int hash)
+{
+	int slot = hash % IPC_TABLE_SIZE;
+	list_add(&ipc->ipcs, &ipc_table.tables[slot]);
 }
 
 static void fill_column(struct proc *proc,
@@ -1687,6 +1746,7 @@ int main(int argc, char *argv[])
 	initialize_nodevs();
 	initialize_classes();
 	initialize_devdrvs();
+	initialize_ipc_table();
 
 	collect_processes(&ctl, pids, n_pids);
 	free(pids);
@@ -1703,6 +1763,7 @@ int main(int argc, char *argv[])
 	/* cleanup */
 	delete(&ctl.procs, &ctl);
 
+	finalize_ipc_table();
 	finalize_devdrvs();
 	finalize_classes();
 	finalize_nodevs();

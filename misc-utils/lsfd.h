@@ -137,9 +137,33 @@ struct file_class {
 	int  (*handle_fdinfo)(struct file *file, const char *key, const char* value);
 	void (*initialize_content)(struct file *file);
 	void (*free_content)(struct file *file);
+	struct ipc_class *(*get_ipc_class)(struct file *file);
 };
 
 extern const struct file_class file_class, cdev_class, bdev_class, sock_class, unkn_class, fifo_class;
+
+/*
+ * IPC
+ */
+struct ipc {
+	const struct ipc_class *class;
+	struct list_head endpoints;
+	struct list_head ipcs;
+};
+
+struct ipc_endpoint {
+	struct ipc *ipc;
+	struct list_head endpoints;
+};
+
+struct ipc_class {
+	unsigned int (*get_hash)(struct file *file);
+	bool (*is_suitable_ipc)(struct ipc *ipc, struct file *file);
+	void (*free)(struct ipc *ipc);
+};
+
+struct ipc *get_ipc(struct file *file);
+void add_ipc(struct ipc *ipc, unsigned int hash);
 
 /*
  * Name managing
