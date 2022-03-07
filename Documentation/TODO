@@ -144,6 +144,12 @@ libsmartcols / column -t
     * extend 'struct libscols_symbols', use box-drawing chars UTF8/ASCII
     * add scols_table_enable_border()
 
+
+column(1):
+  - add "--output-width unlimited" and no call cols_table_set_termwidth() and
+    cols_table_set_termforce() in this case. See https://github.com/util-linux/util-linux/issues/1618
+
+
 libblkid
 --------
 
