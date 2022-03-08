@@ -96,12 +96,6 @@ static int setgroups_str2id(const char *str)
 	errx(EXIT_FAILURE, _("unsupported --setgroups argument '%s'"), str);
 }
 
-static void closedown_fd(int *fd)
-{
-	close(*fd);
-	*fd = -1;
-}
-
 static void setgroups_control(int action)
 {
 	const char *file = _PATH_PROC_SETGROUPS;
@@ -770,8 +764,6 @@ int main(int argc, char *argv[])
 	const char *newdir = NULL;
 	pid_t pid_bind = 0, pid_idmap = 0;
 	pid_t pid = 0;
-	int parent_wr[2] = { -1, -1 };
-	int child_wr[2] = { -1, -1 };
 	int fd_idmap, fd_bind = -1;
 	sigset_t sigset, oldsigset;
 	int status;
@@ -964,16 +956,12 @@ int main(int argc, char *argv[])
 
 		/* force child forking before mountspace binding
 		 * so pid_for_children is populated */
-		if (pipe(parent_wr) || pipe(child_wr))
-			err(EXIT_FAILURE, _("dead parent pipe creation failed"));
 		pid = fork();
 
 		switch(pid) {
 		case -1:
 			err(EXIT_FAILURE, _("fork failed"));
 		case 0:	/* child */
-			closedown_fd(&parent_wr[1]);
-			closedown_fd(&child_wr[0]);
 			if (sigprocmask(SIG_SETMASK, &oldsigset, NULL))
 				err(EXIT_FAILURE,
 					_("sigprocmask restore failed"));
@@ -981,27 +969,7 @@ int main(int argc, char *argv[])
 				close(fd_bind);
 			break;
 		default: /* parent */
-			{
-				closedown_fd(&parent_wr[0]);
-				closedown_fd(&child_wr[1]);
-
-				char ready;
-				while (-1 == read(child_wr[0], &ready, 1)) {
-					if (EINTR != errno)
-						break;
-				}
-				closedown_fd(&child_wr[0]);
-
-				char died = 0;
-				while (-1 == write(parent_wr[1], &died, 1)) {
-					if (EINTR == errno)
-						continue;
-					err(EXIT_FAILURE,
-						_("dead parent sync write failed "));
-				}
-				closedown_fd(&parent_wr[1]);
-				break;
-			}
+			break;
 		}
 	}
 
@@ -1039,34 +1007,8 @@ int main(int argc, char *argv[])
 		err(EXIT_FAILURE, _("child exit failed"));
 	}
 
-	if (kill_child_signo != 0) {
-		if (prctl(PR_SET_PDEATHSIG, kill_child_signo) < 0)
-			err(EXIT_FAILURE, "prctl failed");
-
-		/* Use pipes to detect a dead parent because
-		 * getppid(2) returns 0 if the child runs
-		 * in a different pid namespace.
-		 */
-		closedown_fd(&child_wr[1]);
-
-		char died = 1;
-		while (-1 == read(parent_wr[0], &died, 1)) {
-			if (EINTR == errno)
-				continue;
-			err(EXIT_FAILURE,
-				_("dead parent sync read failed"));
-		}
-
-		closedown_fd(&parent_wr[0]);
-
-		/* The child be re-parented if the parent terminated
-		 * before sending a sync message. The new parent will
-		 * likely not be interested in the precise exit status
-		 * of the orphan.
-		 */
-		if (died)
-			exit(EXIT_FAILURE);
-	}
+	if (kill_child_signo != 0 && prctl(PR_SET_PDEATHSIG, kill_child_signo) < 0)
+		err(EXIT_FAILURE, "prctl failed");
 
         if (mapuser != (uid_t) -1 && !usermap)
 		map_id(_PATH_PROC_UIDMAP, mapuser, real_euid);
