@@ -1297,7 +1297,7 @@ static int loopcxt_check_size(struct loopdev_cxt *lc, int file_fd)
 int loopcxt_setup_device(struct loopdev_cxt *lc)
 {
 	int file_fd, dev_fd, mode = O_RDWR, flags = O_CLOEXEC;
-	int rc = -1, cnt = 0, err, again;
+	int rc = -1, cnt = 0;
 	int errsv = 0;
 	int fallback = 0;
 
@@ -1404,21 +1404,10 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 			goto err;
 		}
 
-		do {
-			err = ioctl(dev_fd, LOOP_SET_STATUS64, &lc->config.info);
-			again = err && errno == EAGAIN;
-			if (again)
-				xusleep(250000);
-		} while (again);
-
-		if (err) {
-			rc = -errno;
-			errsv = errno;
-			DBG(SETUP, ul_debugobj(lc, "LOOP_SET_STATUS64 failed: %m"));
+		if ((rc = loopcxt_ioctl_status(lc)) < 0) {
+			errsv = -rc;
 			goto err;
 		}
-
-		DBG(SETUP, ul_debugobj(lc, "LOOP_SET_STATUS64: OK"));
 	}
 
 	if ((rc = loopcxt_check_size(lc, file_fd)))
