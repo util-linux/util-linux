@@ -502,7 +502,7 @@ static void rereadpt(int fd, const char *devname)
 		 * without delay is uncuccesful. The reason is probably kernel
 		 * and/or udevd.  Let's wait a moment and try more attempts.
 		 */
-		xusleep(25000);
+		xusleep(250000);
 
 		errno = 0;
 		ioctl(fd, BLKRRPART);
