@@ -239,7 +239,7 @@ static int set_scols_data(struct loopdev_cxt *lc, struct libscols_line *ln)
 			p = loopcxt_get_device(lc);
 			break;
 		case COL_BACK_FILE:
-			p = loopcxt_get_backing_file(lc);
+			np = loopcxt_get_backing_file(lc);
 			break;
 		case COL_OFFSET:
 			if (loopcxt_get_offset(lc, &x) == 0)
