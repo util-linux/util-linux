@@ -20,6 +20,7 @@
 
 #include <errno.h>
 #include <getopt.h>
+#include <poll.h>
 #include <sched.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,6 +41,7 @@
 #include "caputils.h"
 #include "closestream.h"
 #include "namespace.h"
+#include "pidfd-utils.h"
 #include "exec_shell.h"
 #include "xalloc.h"
 #include "pathnames.h"
@@ -764,6 +766,7 @@ int main(int argc, char *argv[])
 	const char *newdir = NULL;
 	pid_t pid_bind = 0, pid_idmap = 0;
 	pid_t pid = 0;
+	int fd_parent_pid = -1;
 	int fd_idmap, fd_bind = -1;
 	sigset_t sigset, oldsigset;
 	int status;
@@ -956,6 +959,10 @@ int main(int argc, char *argv[])
 
 		/* force child forking before mountspace binding
 		 * so pid_for_children is populated */
+		fd_parent_pid = pidfd_open(getpid(), 0);
+		if (0 > fd_parent_pid)
+			err(EXIT_FAILURE, _("pidfd_open failed"));
+
 		pid = fork();
 
 		switch(pid) {
@@ -1007,8 +1014,31 @@ int main(int argc, char *argv[])
 		err(EXIT_FAILURE, _("child exit failed"));
 	}
 
-	if (kill_child_signo != 0 && prctl(PR_SET_PDEATHSIG, kill_child_signo) < 0)
-		err(EXIT_FAILURE, "prctl failed");
+	if (kill_child_signo != 0) {
+		if (prctl(PR_SET_PDEATHSIG, kill_child_signo) < 0)
+			err(EXIT_FAILURE, "prctl failed");
+
+		struct pollfd pollfds[1] = {
+			{
+				.fd = fd_parent_pid,
+				.events = POLLIN,
+			}
+                };
+
+		int nfds = poll(pollfds, 1, 0);
+		if (0 > nfds)
+			err(EXIT_FAILURE, "poll parent pidfd failed");
+
+		/* If the child was re-parented before prctl(2) was called,
+		 * the new parent will likely not be interested in the
+                 * precise exit status of the orphan.
+		 */
+		if (nfds)
+			exit(EXIT_FAILURE);
+	}
+
+	close(fd_parent_pid);
+	fd_parent_pid = -1;
 
         if (mapuser != (uid_t) -1 && !usermap)
 		map_id(_PATH_PROC_UIDMAP, mapuser, real_euid);
