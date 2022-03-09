@@ -43,7 +43,6 @@
 #include "debug.h"
 #include "fileutils.h"
 
-
 #define LOOPDEV_MAX_TRIES	10
 
 /*
@@ -76,6 +75,24 @@ static void loopdev_init_debug(void)
 #define loopcxt_ioctl_enabled(_lc)	(!((_lc)->flags & LOOPDEV_FL_NOIOCTL))
 #define loopcxt_sysfs_available(_lc)	(!((_lc)->flags & LOOPDEV_FL_NOSYSFS)) \
 					 && !loopcxt_ioctl_enabled(_lc)
+
+/*
+ * Calls @x and repeat on EAGAIN
+ */
+#define repeat_on_eagain(x) __extension__ ({			\
+		int _c = 0, _e;					\
+		do {						\
+			errno = 0;				\
+			_e = x;					\
+			if (_e == 0 || errno != EAGAIN)		\
+				break;				\
+			if (_c >= LOOPDEV_MAX_TRIES)		\
+				break;				\
+			xusleep(250000);			\
+			_c++;					\
+		} while (1);					\
+		_e == 0 ? 0 : errno ? -errno : -1;		\
+	})
 
 /*
  * @lc: context
@@ -1276,6 +1293,7 @@ static int loopcxt_check_size(struct loopdev_cxt *lc, int file_fd)
 	return 0;
 }
 
+
 /*
  * @lc: context
  *
@@ -1367,8 +1385,9 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 	 * -- since Linux v5.8-rc1, commit 3448914e8cc550ba792d4ccc74471d1ca4293aae
 	 */
 	lc->config.fd = file_fd;
-	if (ioctl(dev_fd, LOOP_CONFIGURE, &lc->config) < 0) {
-		rc = -errno;
+
+	rc = repeat_on_eagain( ioctl(dev_fd, LOOP_CONFIGURE, &lc->config) );
+	if (rc != 0) {
 		errsv = errno;
 		if (errno != EINVAL && errno != ENOTTY && errno != ENOSYS) {
 			DBG(SETUP, ul_debugobj(lc, "LOOP_CONFIGURE failed: %m"));
@@ -1433,6 +1452,7 @@ err:
 	return rc;
 }
 
+
 /*
  * @lc: context
  *
@@ -1446,28 +1466,18 @@ err:
  */
 int loopcxt_ioctl_status(struct loopdev_cxt *lc)
 {
-	int dev_fd, rc = -1, err, again, tries = 0;
+	int dev_fd, rc;
 
 	errno = 0;
 	dev_fd = loopcxt_get_fd(lc);
 
-	if (dev_fd < 0) {
-		rc = -errno;
-		return rc;
-	}
-	DBG(SETUP, ul_debugobj(lc, "device open: OK"));
+	if (dev_fd < 0)
+		return -errno;
 
-	do {
-		err = ioctl(dev_fd, LOOP_SET_STATUS64, &lc->config.info);
-		again = err && errno == EAGAIN;
-		if (again) {
-			xusleep(250000);
-			tries++;
-		}
-	} while (again && tries <= LOOPDEV_MAX_TRIES);
+	DBG(SETUP, ul_debugobj(lc, "calling LOOP_SET_STATUS64"));
 
-	if (err) {
-		rc = -errno;
+	rc = repeat_on_eagain( ioctl(dev_fd, LOOP_SET_STATUS64, &lc->config.info) );
+	if (rc != 0) {
 		DBG(SETUP, ul_debugobj(lc, "LOOP_SET_STATUS64 failed: %m"));
 		return rc;
 	}
@@ -1478,14 +1488,16 @@ int loopcxt_ioctl_status(struct loopdev_cxt *lc)
 
 int loopcxt_ioctl_capacity(struct loopdev_cxt *lc)
 {
-	int fd = loopcxt_get_fd(lc);
+	int rc, fd = loopcxt_get_fd(lc);
 
 	if (fd < 0)
 		return -EINVAL;
 
+	DBG(SETUP, ul_debugobj(lc, "calling LOOP_SET_CAPACITY"));
+
 	/* Kernels prior to v2.6.30 don't support this ioctl */
-	if (ioctl(fd, LOOP_SET_CAPACITY, 0) < 0) {
-		int rc = -errno;
+	rc = repeat_on_eagain( ioctl(fd, LOOP_SET_CAPACITY, 0) );
+	if (rc != 0) {
 		DBG(CXT, ul_debugobj(lc, "LOOP_SET_CAPACITY failed: %m"));
 		return rc;
 	}
@@ -1496,14 +1508,16 @@ int loopcxt_ioctl_capacity(struct loopdev_cxt *lc)
 
 int loopcxt_ioctl_dio(struct loopdev_cxt *lc, unsigned long use_dio)
 {
-	int fd = loopcxt_get_fd(lc);
+	int rc, fd = loopcxt_get_fd(lc);
 
 	if (fd < 0)
 		return -EINVAL;
 
+	DBG(SETUP, ul_debugobj(lc, "calling LOOP_SET_DIRECT_IO"));
+
 	/* Kernels prior to v4.4 don't support this ioctl */
-	if (ioctl(fd, LOOP_SET_DIRECT_IO, use_dio) < 0) {
-		int rc = -errno;
+	rc = repeat_on_eagain( ioctl(fd, LOOP_SET_DIRECT_IO, use_dio) );
+	if (rc != 0) {
 		DBG(CXT, ul_debugobj(lc, "LOOP_SET_DIRECT_IO failed: %m"));
 		return rc;
 	}
@@ -1518,25 +1532,19 @@ int loopcxt_ioctl_dio(struct loopdev_cxt *lc, unsigned long use_dio)
  */
 int loopcxt_ioctl_blocksize(struct loopdev_cxt *lc, uint64_t blocksize)
 {
-	int fd = loopcxt_get_fd(lc);
-	int err, again, tries = 0;
+	int rc, fd = loopcxt_get_fd(lc);
 
 	if (fd < 0)
 		return -EINVAL;
 
-	do {
-		/* Kernels prior to v4.14 don't support this ioctl */
-		err = ioctl(fd, LOOP_SET_BLOCK_SIZE, (unsigned long) blocksize);
-		again = err && errno == EAGAIN;
-		if (again) {
-			xusleep(250000);
-			tries++;
-		} else if (err) {
-			int rc = -errno;
-			DBG(CXT, ul_debugobj(lc, "LOOP_SET_BLOCK_SIZE failed: %m"));
-			return rc;
-		}
-	} while (again && tries <= LOOPDEV_MAX_TRIES);
+	DBG(SETUP, ul_debugobj(lc, "calling LOOP_SET_BLOCK_SIZE"));
+
+	rc = repeat_on_eagain(
+		ioctl(fd, LOOP_SET_BLOCK_SIZE, (unsigned long) blocksize) );
+	if (rc != 0) {
+		DBG(CXT, ul_debugobj(lc, "LOOP_SET_BLOCK_SIZE failed: %m"));
+		return rc;
+	}
 
 	DBG(CXT, ul_debugobj(lc, "logical block size set"));
 	return 0;
@@ -1544,14 +1552,17 @@ int loopcxt_ioctl_blocksize(struct loopdev_cxt *lc, uint64_t blocksize)
 
 int loopcxt_delete_device(struct loopdev_cxt *lc)
 {
-	int fd = loopcxt_get_fd(lc);
+	int rc, fd = loopcxt_get_fd(lc);
 
 	if (fd < 0)
 		return -EINVAL;
 
-	if (ioctl(fd, LOOP_CLR_FD, 0) < 0) {
+	DBG(SETUP, ul_debugobj(lc, "calling LOOP_SET_CLR_FD"));
+
+	rc = repeat_on_eagain( ioctl(fd, LOOP_CLR_FD, 0) );
+	if (rc != 0) {
 		DBG(CXT, ul_debugobj(lc, "LOOP_CLR_FD failed: %m"));
-		return -errno;
+		return rc;
 	}
 
 	DBG(CXT, ul_debugobj(lc, "device removed"));
