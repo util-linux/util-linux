@@ -796,12 +796,14 @@ int main(int argc, char **argv)
 		 * OR
 		 * losetup {--direct-io[=off]|--logical-blocksize=size}... <device>
 		 */
-		if (!(set_dio || set_blocksize))
-			act = A_SHOW_ONE;
-		if (set_dio)
+		if (set_dio) {
 			act = A_SET_DIRECT_IO;
-		if (set_blocksize)
+			lo_flags &= ~LO_FLAGS_DIRECT_IO;
+		} else if (set_blocksize)
 			act = A_SET_BLOCKSIZE;
+		else
+			act = A_SHOW_ONE;
+
 		if (!is_loopdev(argv[optind]) ||
 		    loopcxt_set_device(&lc, argv[optind]))
 			err(EXIT_FAILURE, _("%s: failed to use device"),
