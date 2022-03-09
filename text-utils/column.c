@@ -67,7 +67,7 @@ enum {
 
 struct column_control {
 	int	mode;		/* COLUMN_MODE_* */
-	size_t	termwidth;
+	size_t	termwidth;	/* -1 uninilialized, 0 unlimited, >0 width (default is 80) */
 
 	struct libscols_table *tab;
 
@@ -402,8 +402,10 @@ static void create_tree(struct column_control *ctl)
 
 static void modify_table(struct column_control *ctl)
 {
-	scols_table_set_termwidth(ctl->tab, ctl->termwidth);
-	scols_table_set_termforce(ctl->tab, SCOLS_TERMFORCE_ALWAYS);
+	if (ctl->termwidth > 0) {
+		scols_table_set_termwidth(ctl->tab, ctl->termwidth);
+		scols_table_set_termforce(ctl->tab, SCOLS_TERMFORCE_ALWAYS);
+	}
 
 	if (ctl->tab_colright)
 		apply_columnflag_from_list(ctl, ctl->tab_colright,
@@ -759,7 +761,10 @@ int main(int argc, char **argv)
 
 		switch(c) {
 		case 'c':
-			ctl.termwidth = strtou32_or_err(optarg, _("invalid columns argument"));
+			if (strcmp(optarg, "unlimited") == 0)
+				ctl.termwidth = 0;
+			else
+				ctl.termwidth = strtou32_or_err(optarg, _("invalid columns argument"));
 			break;
 		case 'd':
 			ctl.tab_noheadings = 1;

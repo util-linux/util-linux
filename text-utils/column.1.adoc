@@ -72,6 +72,8 @@ Use JSON output format to print the table, the option *--table-columns* is requi
 
 *-c, --output-width* _width_::
 Output is formatted to a width specified as number of characters. The original name of this option is *--columns*; this name is deprecated since v2.30. Note that input longer than _width_ is not truncated by default. The default is a terminal width and the 80 columns in non-interactive mode. The column headers are never truncated.
++
+The placeholder "unlimited" (or 0) is possible to use to not restrict output width. This is recommended for example when output to the files rather than on terminal.
 
 *-d, --table-noheadings*::
 Do not print header. This option allows the use of logical column names on the command line, but keeps the header hidden when printing the table.
