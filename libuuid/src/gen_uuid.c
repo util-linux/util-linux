@@ -453,7 +453,7 @@ static int uuid_generate_time_generic(uuid_t out) {
 			num = 0;
 	}
 	if (num <= 0) {
-		num = 1000;
+		num = 1000000;
 		if (get_uuid_via_daemon(UUIDD_OP_BULK_TIME_UUID,
 					out, &num) == 0) {
 			last_time = time(NULL);
