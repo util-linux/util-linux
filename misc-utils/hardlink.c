@@ -1259,7 +1259,7 @@ static int parse_options(int argc, char *argv[])
 			opts.max_size = strtosize_or_err(optarg, _("failed to parse maximum size"));
 			break;
 		case 'r':
-			opts.cache_size = strtosize_or_err(optarg, _("failed to cache size"));
+			opts.cache_size = strtosize_or_err(optarg, _("failed to parse cache size"));
 			break;
 		case 'b':
 			opts.io_size = strtosize_or_err(optarg, _("failed to parse I/O size"));
