@@ -1329,8 +1329,10 @@ int main(int argc, char *argv[])
 	sigaction(SIGINT, &sa, NULL);
 	sigaction(SIGUSR1, &sa, NULL);
 
-	/* Pretty print numeric output */
-	setlocale(LC_NUMERIC, "");
+	/* Localize messages, number formatting, and anything else. */
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
 	if (atexit(to_be_called_atexit) != 0)
 		err(EXIT_FAILURE, _("cannot register exit handler"));
