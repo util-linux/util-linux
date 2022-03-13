@@ -22,9 +22,21 @@ hardlink - link multiple copies of a file
 
 == DESCRIPTION
 
-*hardlink* is a tool which replaces copies of a file with hardlinks or copy-on-write clones, therefore saving space.
+*hardlink* is a tool that replaces copies of a file with either hardlinks
+or copy-on-write clones, thus saving space.
 
-*hardlink* creates a binary tree from file sizes and after that, it compares files with the same sizes. There are two basic content comparison methods. *memcmp* method directly reads data blocks from files and compares them. The other method is based on checksums (like SHA256), in this case for each data block is calculated checksum by Linux kernel crypto API, and this checksum is stored in userspace and used for files comparison. For each file is also cached "intro" buffer (32 bytes), this buffer is used independently on the comparison method and requested cache-size and io-size. The "intro" buffer dramatically reduces operations with data content as files are very often different from the beginning.
+*hardlink* first creates a binary tree of file sizes and then compares
+the content of files that have the same size. There are two basic content
+comparison methods. The *memcmp* method directly reads data blocks from
+files and compares them. The other method is based on checksums (like SHA256);
+in this case for each data block a checksum is calculated by the Linux kernel
+crypto API, and this checksum is stored in userspace and used for file
+comparisons.
+
+For each file also an "intro" buffer (32 bytes) is cached. This buffer is used
+independently from the comparison method and requested cache-size and io-size.
+The "intro" buffer dramatically reduces operations with data content as files
+are very often different from the beginning.
 
 == OPTIONS
 
