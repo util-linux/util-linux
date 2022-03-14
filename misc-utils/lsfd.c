@@ -1259,7 +1259,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -u, --notruncate      don't truncate text in columns\n"), out);
 	fputs(_(" -p, --pid  <pid(s)>   collect information only specified processes\n"), out);
 	fputs(_(" -Q, --filter <expr>   apply display filter\n"), out);
-	fputs(_("     --debug-filter    dump the innternal data structure of filter and exit\n"), out);
+	fputs(_("     --debug-filter    dump the internal data structure of filter and exit\n"), out);
 	fputs(_(" -C, --counter <name>:<expr>\n"
 		"                       define custom counter for --summary output\n"), out);
 	fputs(_("     --dump-counters   dump counter definitions\n"), out);
@@ -1356,7 +1356,7 @@ static struct counter_spec *new_counter_spec(const char *spec_str)
 		     spec_str);
 	if (sep[1] == '\0')
 		errx(EXIT_FAILURE,
-		     _("empty ecounter expression given: -C/--counter %s"),
+		     _("empty counter expression given: -C/--counter %s"),
 		     spec_str);
 
 	/* Split the spec_str in to name and expr. */
