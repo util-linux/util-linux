@@ -4,6 +4,12 @@ Util-linux 2.38 Release Notes
 Release highlights
 ------------------
 
+This is the first release with translated util-linux man-pages. For now, the
+translations are not installed by default. It's necessary to use a configure
+option --enable-poman to enable, and po4a (PO for all) program is required to
+generate the translation from the tarball.
+
+
 mount(8) now supports a new option --mkdir as shortcut for X-mount.mkdir
 
 mount(8) (and libmount) now supports new mount options X-mount.subdir= to
@@ -116,6 +122,7 @@ build-sys:
    - make re-use of generated man-pages more robust  [Karel Zak]
    - patch libtool.m4 for darwin  [Karel Zak]
    - release++ (v2.38-rc1)  [Karel Zak]
+   - release++ (v2.38-rc2)  [Karel Zak]
    - remove bashism  [Karel Zak]
    - remove lib/procutils.c  [Karel Zak]
    - report C++ compiler too  [Karel Zak]
@@ -141,6 +148,7 @@ cifuzz:
 colors.adoc:
    - format command name bold  [Mario Blättermann]
 column:
+   - (man) add note about default width in non-interactive mode  [Karel Zak]
    - segmentation fault on invalid unicode input passed to -s option  [Karel Zak]
    - use new libsmartcols functions  [Karel Zak]
 dmesg:
@@ -165,6 +173,8 @@ docs:
    - update AUTHORS file  [Karel Zak]
    - update IRC address  [Karel Zak]
    - update TODO  [Karel Zak]
+   - update TODO, add "column --output-width unlimited"  [Karel Zak]
+   - update copyright years  [Karel Zak]
    - update github URL  [Karel Zak]
    - update v2.38-ReleaseNotes  [Karel Zak]
 eject:
@@ -225,11 +235,13 @@ github:
 hardlink:
    - Calling posix_fadvise without checking return value [coverity scan]  [Karel Zak]
    - add --cache-size  [Karel Zak]
+   - add a missing word to an error message  [Benno Schulenberg]
    - add new option  -S/--maximum-size  [Daniele Pizzolli]
    - add reflinks support (add --reflinks and --skip-reflinks)  [Karel Zak]
    - add verbose messages when skip file  [Karel Zak]
    - call size_to_human_string() only when necessary  [Karel Zak]
    - fix compiler warning [-Wformat=]  [Karel Zak]
+   - grammaticalize the main description in the man page  [Benno Schulenberg]
    - ignore files specified more than once  [Karel Zak]
    - improve verbose messages  [Karel Zak]
    - make it possible to compare paths  [Karel Zak]
@@ -237,6 +249,7 @@ hardlink:
    - remove pcre2posix.h support  [Karel Zak]
    - rename --buffer-size to --io-size  [Karel Zak]
    - rewrite files content comparison  [Karel Zak]
+   - set all locale elements, so that messages will get translated  [Benno Schulenberg]
    - simplify file_link()  [Karel Zak]
    - small regex stuff refactoring  [Karel Zak]
    - use more passive wording in hardlink.1  [Eduard Bloch]
@@ -432,6 +445,7 @@ libsmartcols:
    - use snprintf() rather than sprintf()  [Karel Zak]
 libuuid:
    - check errno after strto..()  [Karel Zak]
+   - extend cache in uuid_generate_time_generic()  [Michael Trapp]
    - fix buffer overrun in uuid_parse_range()  [Zane van Iperen]
    - include c.h to cover restrict keyword  [Karel Zak]
 logger:
@@ -459,6 +473,8 @@ losetup:
    - Add missing pipe to man example for setting up loop device  [Vojtech Trefny]
    - directly set dio instead of afterwards  [Alex Xu (Hello71)]
    - don't skip adding a new device if it already has a device node  [Christoph Hellwig]
+   - fix --direct-io  [Karel Zak]
+   - fix memory leak [asan]  [Karel Zak]
    - use LOOP_CONFIGURE in a more robust way  [Karel Zak]
 lsblk:
    - (adoc) improve --all description  [Karel Zak]
@@ -803,10 +819,24 @@ po:
    - update cs.po (from translationproject.org)  [Petr Písař]
    - update de.po (from translationproject.org)  [Mario Blättermann]
    - update es.po (from translationproject.org)  [Antonio Ceballos Roa]
+   - update fr.po (from translationproject.org)  [Frédéric Marchal]
+   - update hr.po (from translationproject.org)  [Božidar Putanec]
+   - update ko.po (from translationproject.org)  [Seong-ho Cho]
    - update pl.po (from translationproject.org)  [Jakub Bogusz]
    - update pt_BR.po (from translationproject.org)  [Rafael Fontenelle]
    - update sr.po (from translationproject.org)  [Мирослав Николић]
+   - update uk.po (from translationproject.org)  [Yuri Chornoivan]
    - update zh_CN.po (from translationproject.org)  [Boyuan Yang]
+po-man:
+   - add es.po (from translationproject.org)  [Antonio Ceballos Roa]
+   - add fr.po (from translationproject.org)  [Frédéric Marchal]
+   - add new langs to po4a.cfg  [Karel Zak]
+   - add pt_BR.po (from translationproject.org)  [Rafael Fontenelle]
+   - add sr.po (from translationproject.org)  [Мирослав Николић]
+   - add uk.po (from translationproject.org)  [Yuri Chornoivan]
+   - merge changes  [Karel Zak]
+   - update de.po (from translationproject.org)  [Mario Blättermann]
+   - update variables in Makefile.am  [Karel Zak]
 prlimit:
    - fix compiler warning [-Wmaybe-uninitialized]  [Karel Zak]
    - improve --help output  [Karel Zak]
@@ -903,6 +933,7 @@ tests:
    - make mount/fstab-all more robust  [Karel Zak]
    - make use of subtests  [Vojtěch Eichler]
    - mark ul/ul as a known failure  [Ross Burton]
+   - remove readline from build-sys output  [Karel Zak]
    - skip if scsi_debug model file is not accessible  [Karel Zak]
    - split additional tests into subtests  [Vojtěch Eichler]
    - split cal/color test into subtests  [Vojtěch Eichler]
@@ -921,6 +952,7 @@ tests:
 tests/eject:
    - check for root perms at beginning  [Karel Zak]
 tools:
+   - add git-tp-sync-man  [Karel Zak]
    - allow to update specific files on kernel.org  [Karel Zak]
    - report and use LDFLAGS in tools/config-gen  [Karel Zak]
 tools/git-version-gen:
@@ -976,6 +1008,7 @@ whereis:
    - use commands for Bash completions  [Smitty]
 wipefs:
    - check errno after strto..()  [Karel Zak]
+   - increase delay after re-read ioctl  [Karel Zak]
    - remove dead code  [Karel Zak]
 write:
    - use snprintf() rather than sprintf()  [Karel Zak]
