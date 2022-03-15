@@ -49,11 +49,11 @@ blkzone:
 blockdev:  
 cal:  libtinfo 
 chcpu:  
-chfn:  libpam libpam_misc libreadline libselinux 
+chfn:  libpam libpam_misc libselinux 
 chmem:  
 choom:  
 chrt:  
-chsh:  libpam libpam_misc libreadline libselinux 
+chsh:  libpam libpam_misc libselinux 
 col:  
 colcrt:  
 colrm:  

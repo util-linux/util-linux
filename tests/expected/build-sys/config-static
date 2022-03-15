@@ -50,11 +50,11 @@ blkzone:
 blockdev:  
 cal:  libtinfo 
 chcpu:  
-chfn:  libpam libpam_misc libreadline libuser 
+chfn:  libpam libpam_misc libuser 
 chmem:  
 choom:  
 chrt:  
-chsh:  libpam libpam_misc libreadline libuser 
+chsh:  libpam libpam_misc libuser 
 col:  
 colcrt:  
 colrm:  
