@@ -11,7 +11,7 @@
 # Vladimír Michl <vladimir.michl@seznam.cz>, 2007
 # Petr Písař <petr.pisar@atlas.cz>, 2007, 2008, 2009, 2010, 2011, 2012, 2013.
 # Petr Písař <petr.pisar@atlas.cz>, 2014, 2015, 2016, 2017, 2018, 2019, 2020.
-# Petr Písař <petr.pisar@atlas.cz>, 2021.
+# Petr Písař <petr.pisar@atlas.cz>, 2021, 2022.
 #
 # eject tool messages merged from eject-2.1.5:
 # Jeff Tranter <tranter@pobox.com>, 2005.
@@ -36,6 +36,7 @@
 # (GPT) partition label → název oddílu
 # personality → charakteristika architektury
 # primary group → hlavní skupina
+# reflink → lehká (klonovaná) kopie (stejně jako u cp(1))
 # resource → prostředek
 # (file system) signature → vzorec
 # swap → odkládací (prostor)
@@ -47,10 +48,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.37-rc2\n"
+"Project-Id-Version: util-linux 2.38-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-04 12:14+0100\n"
-"PO-Revision-Date: 2021-05-21 20:18+02:00\n"
+"POT-Creation-Date: 2022-03-04 16:17+0100\n"
+"PO-Revision-Date: 2022-03-13 21:17+01:00\n"
 "Last-Translator: Petr Písař <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
 "Language: cs\n"
@@ -275,10 +276,8 @@ msgid "%s requires an argument"
 msgstr "přepínač %s vyžaduje argument"
 
 #: disk-utils/blockdev.c:355
-#, fuzzy
-#| msgid "failed to parse argument"
 msgid "failed to parse command argument"
-msgstr "argument se nepodařilo rozebrat"
+msgstr "argument příkazu se nepodařilo rozebrat"
 
 #: disk-utils/blockdev.c:386 disk-utils/blockdev.c:498
 #, c-format
@@ -301,10 +300,9 @@ msgid "N/A"
 msgstr "---"
 
 #: disk-utils/blockdev.c:506
-#, fuzzy, c-format
-#| msgid "RO    RA   SSZ   BSZ   StartSec            Size   Device\n"
+#, c-format
 msgid "RO    RA   SSZ   BSZ        StartSec            Size   Device\n"
-msgstr "RO    RA   SSZ   BSZ PrvníSekt.        Velikost Zařízení\n"
+msgstr "RO    RA   SSZ   BSZ     PrvníSekt.        Velikost Zařízení\n"
 
 #: disk-utils/cfdisk.c:196
 msgid "Bootable"
@@ -525,7 +523,8 @@ msgstr "Zápis skriptu %s selhal."
 msgid "Select label type"
 msgstr "Vybrat druh popisu"
 
-#: disk-utils/cfdisk.c:2195 disk-utils/fdisk.c:1162 disk-utils/fdisk-menu.c:490
+#: disk-utils/cfdisk.c:2195 disk-utils/fdisk.c:1162
+#: disk-utils/fdisk-menu.c:490
 msgid "Device does not contain a recognized partition table."
 msgstr "Zařízení neobsahuje známou tabulku rozdělení disku."
 
@@ -670,7 +669,8 @@ msgstr "Nová velikost: "
 msgid "Partition %zu resized."
 msgstr "Oddíl č. %zu změnil velikost."
 
-#: disk-utils/cfdisk.c:2504 disk-utils/fdisk.c:1138 disk-utils/fdisk-menu.c:593
+#: disk-utils/cfdisk.c:2504 disk-utils/fdisk.c:1138
+#: disk-utils/fdisk-menu.c:593
 msgid "Device is open in read-only mode."
 msgstr "Zařízení otevřeno jen pro čtení."
 
@@ -807,8 +807,8 @@ msgstr ""
 "Pokračuje se…"
 
 #: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:629 sys-utils/blkdiscard.c:89
-#: sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:629
+#: sys-utils/blkdiscard.c:89 sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [přepínače] <zařízení>\n"
@@ -1185,21 +1185,21 @@ msgstr "nepodporovaný režim výmazu"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Vlastnosti zařízení (velikost sektoru a geometrie) by měly být použity jen s jedním zadaným zařízením."
 
-#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122 disk-utils/fsck.cramfs.c:703
-#: disk-utils/mkfs.bfs.c:192 disk-utils/mkfs.cramfs.c:788
-#: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
-#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:524
-#: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:580
-#: misc-utils/whereis.c:591 misc-utils/whereis.c:602 misc-utils/whereis.c:644
-#: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:188
-#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1580
-#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:916
-#: sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656 sys-utils/mount.c:877
-#: sys-utils/mount.c:885 sys-utils/mount.c:932 sys-utils/mount.c:945
-#: sys-utils/mount.c:1017 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
-#: sys-utils/swapoff.c:258 sys-utils/swapon.c:1006 sys-utils/switch_root.c:270
-#: sys-utils/umount.c:620 term-utils/setterm.c:1197 text-utils/col.c:584
-#: text-utils/more.c:2094
+#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122
+#: disk-utils/fsck.cramfs.c:703 disk-utils/mkfs.bfs.c:192
+#: disk-utils/mkfs.cramfs.c:788 disk-utils/partx.c:975 disk-utils/raw.c:136
+#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
+#: misc-utils/cal.c:524 misc-utils/findfs.c:58 misc-utils/look.c:147
+#: misc-utils/whereis.c:580 misc-utils/whereis.c:591 misc-utils/whereis.c:602
+#: misc-utils/whereis.c:644 schedutils/chrt.c:442 schedutils/ionice.c:264
+#: schedutils/taskset.c:188 sys-utils/chcpu.c:355 sys-utils/chmem.c:429
+#: sys-utils/dmesg.c:1580 sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321
+#: sys-utils/losetup.c:916 sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656
+#: sys-utils/mount.c:877 sys-utils/mount.c:885 sys-utils/mount.c:932
+#: sys-utils/mount.c:945 sys-utils/mount.c:1017 sys-utils/mountpoint.c:191
+#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:258 sys-utils/swapon.c:1006
+#: sys-utils/switch_root.c:270 sys-utils/umount.c:620
+#: term-utils/setterm.c:1197 text-utils/col.c:584 text-utils/more.c:2094
 msgid "bad usage"
 msgstr "chybný způsob použití"
 
@@ -1251,10 +1251,9 @@ msgid "Disk model: %s"
 msgstr "Model disku: %s"
 
 #: disk-utils/fdisk-list.c:71
-#, fuzzy, c-format
-#| msgid "Geometry: %d heads, %llu sectors/track, %llu cylinders"
+#, c-format
 msgid "Geometry: %d heads, %ju sectors/track, %ju cylinders"
-msgstr "Geometrie: hlav: %'d, sektorů na stopu: %'llu, cylindrů: %'llu"
+msgstr "Geometrie: hlav: %'d, sektorů na stopu: %'ju, cylindrů: %'ju"
 
 #: disk-utils/fdisk-list.c:76 disk-utils/fdisk-list.c:299
 #, c-format
@@ -1320,12 +1319,13 @@ msgstr "výstupní řádek se nepodařilo alokovat"
 #: misc-utils/lsfd-file.c:349 misc-utils/lsfd-sock.c:47
 #: misc-utils/lsfd-sock.c:52 misc-utils/lsfd-sock.c:73
 #: misc-utils/lsfd-sock.c:75 misc-utils/lsfd-unkn.c:39
-#: misc-utils/lsfd-unkn.c:53 misc-utils/lsfd-unkn.c:55 misc-utils/lslocks.c:459
-#: misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242 sys-utils/losetup.c:305
-#: sys-utils/lscpu.c:568 sys-utils/lscpu.c:783 sys-utils/lscpu.c:812
-#: sys-utils/lscpu.c:822 sys-utils/lsipc.c:526 sys-utils/lsipc.c:651
-#: sys-utils/prlimit.c:275 sys-utils/rfkill.c:417 sys-utils/swapon.c:227
-#: sys-utils/wdctl.c:327 sys-utils/zramctl.c:481 text-utils/column.c:481
+#: misc-utils/lsfd-unkn.c:53 misc-utils/lsfd-unkn.c:55
+#: misc-utils/lslocks.c:459 misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242
+#: sys-utils/losetup.c:305 sys-utils/lscpu.c:568 sys-utils/lscpu.c:783
+#: sys-utils/lscpu.c:812 sys-utils/lscpu.c:822 sys-utils/lsipc.c:526
+#: sys-utils/lsipc.c:651 sys-utils/prlimit.c:275 sys-utils/rfkill.c:417
+#: sys-utils/swapon.c:227 sys-utils/wdctl.c:327 sys-utils/zramctl.c:481
+#: text-utils/column.c:481
 msgid "failed to add output data"
 msgstr "přidání výstupních data selhalo"
 
@@ -1630,10 +1630,8 @@ msgid "move beginning of data in a partition"
 msgstr "posune počátek dat v oddílu"
 
 #: disk-utils/fdisk-menu.c:224
-#, fuzzy
-#| msgid "fix partitions order"
 msgid "fix partitions C/H/S values"
-msgstr "opraví řazení oddílů"
+msgstr "opraví C/H/S hodnoty oddílů"
 
 #: disk-utils/fdisk-menu.c:225
 msgid "change the disk identifier"
@@ -1779,13 +1777,11 @@ msgstr "Vstupuje se do vnořeného BSD popisu disku."
 
 #: disk-utils/fdisk-menu.c:876
 msgid "C/H/S values fixed."
-msgstr ""
+msgstr "Hodnoty C/H/S opraveny."
 
 #: disk-utils/fdisk-menu.c:878
-#, fuzzy
-#| msgid "Nothing to do. Ordering is correct already."
 msgid "Nothing to do. C/H/S values are correct already."
-msgstr "Diskové oddíly jsou již seřazeny."
+msgstr "Není co dělat. Hodnoty C/H/S již jsou správné."
 
 #: disk-utils/fdisk-menu.c:1045
 msgid "Number of cylinders"
@@ -3486,10 +3482,8 @@ msgid " -f, --force               allow swap size area be larger than device\n"
 msgstr " -f, --force               dovolí, aby odkládací oblast byla větší než zařízení\n"
 
 #: disk-utils/mkswap.c:170
-#, fuzzy
-#| msgid " -q, --quiet               suppress extra info messages\n"
 msgid " -q, --quiet               suppress output and warning messages\n"
-msgstr " -q, --quiet               potlačí informační hlášky\n"
+msgstr " -q, --quiet               potlačí výstup a varovná hlášení\n"
 
 #: disk-utils/mkswap.c:171
 msgid " -p, --pagesize SIZE       specify page size in bytes\n"
@@ -4654,10 +4648,9 @@ msgid "Failed to apply script headers, disk label not created"
 msgstr "Hlavičky skriptu ne nepodařilo použít. Popis disku nebyl vytvořen"
 
 #: disk-utils/sfdisk.c:1954
-#, fuzzy, c-format
-#| msgid "Failed to add #%d partition"
+#, c-format
 msgid "Failed to add #%zu partition"
-msgstr "Oddíl č. %d se nepodařilo přidat"
+msgstr "Oddíl č. %zu se nepodařilo přidat"
 
 #: disk-utils/sfdisk.c:1977
 msgid "Script header accepted."
@@ -4709,10 +4702,11 @@ msgid " -J, --json <dev>                  dump partition table in JSON format\n"
 msgstr " -J, --json <zařízení>             exportuje tabulku rozdělení disku v JSONu\n"
 
 #: disk-utils/sfdisk.c:2049
-#, fuzzy
-#| msgid " -b, --backup              backup partition table sectors (see -O)\n"
 msgid " -B, --backup-pt-sectors <dev>     binary partition table backup (see -b and -O)\n"
-msgstr " -b, --backup              sektory záložní tabulky rozdělení disku (vize -O)\n"
+msgstr ""
+" -B, --backup-pt-sectors <zařízení>\n"
+"                                   binární záloha tabulky rozdělení disku\n"
+"                                   (vize -b a -O)\n"
 
 #: disk-utils/sfdisk.c:2050
 msgid " -g, --show-geometry [<dev> ...]   list geometry of all or specified devices\n"
@@ -5160,16 +5154,12 @@ msgid "Linux root (x86-64)"
 msgstr "Kořen Linuxu (x86-64)"
 
 #: include/pt-gpt-partnames.h:54
-#, fuzzy
-#| msgid "Linux root (ARM)"
 msgid "Linux root (Alpha)"
-msgstr "Kořen Linuxu (ARM)"
+msgstr "Kořen Linuxu (Alpha)"
 
 #: include/pt-gpt-partnames.h:55
-#, fuzzy
-#| msgid "Linux root (ARM)"
 msgid "Linux root (ARC)"
-msgstr "Kořen Linuxu (ARM)"
+msgstr "Kořen Linuxu (ARC)"
 
 #: include/pt-gpt-partnames.h:56
 msgid "Linux root (ARM)"
@@ -5184,70 +5174,48 @@ msgid "Linux root (IA-64)"
 msgstr "Kořen Linuxu (IA-64)"
 
 #: include/pt-gpt-partnames.h:59
-#, fuzzy
-#| msgid "Linux root (IA-64)"
 msgid "Linux root (LoongArch-64)"
-msgstr "Kořen Linuxu (IA-64)"
+msgstr "Kořen Linuxu (LoongArch-64)"
 
 #: include/pt-gpt-partnames.h:60
-#, fuzzy
-#| msgid "Linux root (IA-64)"
 msgid "Linux root (MIPS-32 LE)"
-msgstr "Kořen Linuxu (IA-64)"
+msgstr "Kořen Linuxu (MIPS-32 LE)"
 
 #: include/pt-gpt-partnames.h:61
-#, fuzzy
-#| msgid "Linux root (IA-64)"
 msgid "Linux root (MIPS-64 LE)"
-msgstr "Kořen Linuxu (IA-64)"
+msgstr "Kořen Linuxu (MIPS-64 LE)"
 
 #: include/pt-gpt-partnames.h:62
-#, fuzzy
-#| msgid "Linux root (x86)"
 msgid "Linux root (PPC)"
-msgstr "Kořen Linuxu (x86)"
+msgstr "Kořen Linuxu (PowerPC)"
 
 #: include/pt-gpt-partnames.h:63
-#, fuzzy
-#| msgid "Linux root (IA-64)"
 msgid "Linux root (PPC64)"
-msgstr "Kořen Linuxu (IA-64)"
+msgstr "Kořen Linuxu (PowerPC-64)"
 
 #: include/pt-gpt-partnames.h:64
-#, fuzzy
-#| msgid "Linux root (IA-64)"
 msgid "Linux root (PPC64LE)"
-msgstr "Kořen Linuxu (IA-64)"
+msgstr "Kořen Linuxu (PowerPC-64 LE)"
 
 #: include/pt-gpt-partnames.h:65
-#, fuzzy
-#| msgid "Linux root (IA-64)"
 msgid "Linux root (RISC-V-32)"
-msgstr "Kořen Linuxu (IA-64)"
+msgstr "Kořen Linuxu (RISC-V-32)"
 
 #: include/pt-gpt-partnames.h:66
-#, fuzzy
-#| msgid "Linux root (IA-64)"
 msgid "Linux root (RISC-V-64)"
-msgstr "Kořen Linuxu (IA-64)"
+msgstr "Kořen Linuxu (RISC-V-64)"
 
 #: include/pt-gpt-partnames.h:67
-#, fuzzy
-#| msgid "Linux root (x86)"
 msgid "Linux root (S390)"
-msgstr "Kořen Linuxu (x86)"
+msgstr "Kořen Linuxu (System/390)"
 
 #: include/pt-gpt-partnames.h:68
-#, fuzzy
-#| msgid "Linux root (x86)"
 msgid "Linux root (S390X)"
-msgstr "Kořen Linuxu (x86)"
+msgstr "Kořen Linuxu (System/390-64)"
 
 #: include/pt-gpt-partnames.h:69
-#, fuzzy
-#| msgid "Linux root (IA-64)"
 msgid "Linux root (TILE-Gx)"
-msgstr "Kořen Linuxu (IA-64)"
+msgstr "Kořen Linuxu (TILE-Gx)"
 
 #: include/pt-gpt-partnames.h:70
 msgid "Linux reserved"
@@ -5283,16 +5251,12 @@ msgid "Linux /usr (x86-64)"
 msgstr "/usr Linuxu (x86-64)"
 
 #: include/pt-gpt-partnames.h:78
-#, fuzzy
-#| msgid "Linux /usr (ARM)"
 msgid "Linux /usr (Alpha)"
-msgstr "/usr Linuxu (ARM)"
+msgstr "/usr Linuxu (Alpha)"
 
 #: include/pt-gpt-partnames.h:79
-#, fuzzy
-#| msgid "Linux /usr (ARM)"
 msgid "Linux /usr (ARC)"
-msgstr "/usr Linuxu (ARM)"
+msgstr "/usr Linuxu (ARC)"
 
 #: include/pt-gpt-partnames.h:80
 msgid "Linux /usr (ARM)"
@@ -5307,70 +5271,48 @@ msgid "Linux /usr (IA-64)"
 msgstr "/usr Linuxu (IA-64)"
 
 #: include/pt-gpt-partnames.h:83
-#, fuzzy
-#| msgid "Linux /usr (IA-64)"
 msgid "Linux /usr (LoongArch-64)"
-msgstr "/usr Linuxu (IA-64)"
+msgstr "/usr Linuxu (LoongArch-64)"
 
 #: include/pt-gpt-partnames.h:84
-#, fuzzy
-#| msgid "Linux /usr (IA-64)"
 msgid "Linux /usr (MIPS-32 LE)"
-msgstr "/usr Linuxu (IA-64)"
+msgstr "/usr Linuxu (MIPS-32 LE)"
 
 #: include/pt-gpt-partnames.h:85
-#, fuzzy
-#| msgid "Linux /usr (IA-64)"
 msgid "Linux /usr (MIPS-64 LE)"
-msgstr "/usr Linuxu (IA-64)"
+msgstr "/usr Linuxu (MIPS-64 LE)"
 
 #: include/pt-gpt-partnames.h:86
-#, fuzzy
-#| msgid "Linux /usr (x86)"
 msgid "Linux /usr (PPC)"
-msgstr "/usr Linuxu (x86)"
+msgstr "/usr Linuxu (PowerPC)"
 
 #: include/pt-gpt-partnames.h:87
-#, fuzzy
-#| msgid "Linux /usr (IA-64)"
 msgid "Linux /usr (PPC64)"
-msgstr "/usr Linuxu (IA-64)"
+msgstr "/usr Linuxu (PowerPC-64)"
 
 #: include/pt-gpt-partnames.h:88
-#, fuzzy
-#| msgid "Linux /usr (IA-64)"
 msgid "Linux /usr (PPC64LE)"
-msgstr "/usr Linuxu (IA-64)"
+msgstr "/usr Linuxu (PowerPC-64 LE)"
 
 #: include/pt-gpt-partnames.h:89
-#, fuzzy
-#| msgid "Linux /usr (IA-64)"
 msgid "Linux /usr (RISC-V-32)"
-msgstr "/usr Linuxu (IA-64)"
+msgstr "/usr Linuxu (RISC-V-32)"
 
 #: include/pt-gpt-partnames.h:90
-#, fuzzy
-#| msgid "Linux /usr (IA-64)"
 msgid "Linux /usr (RISC-V-64)"
-msgstr "/usr Linuxu (IA-64)"
+msgstr "/usr Linuxu (RISC-V-64)"
 
 #: include/pt-gpt-partnames.h:91
-#, fuzzy
-#| msgid "Linux /usr (x86)"
 msgid "Linux /usr (S390)"
-msgstr "/usr Linuxu (x86)"
+msgstr "/usr Linuxu (System/390)"
 
 #: include/pt-gpt-partnames.h:92
-#, fuzzy
-#| msgid "Linux /usr (x86)"
 msgid "Linux /usr (S390X)"
-msgstr "/usr Linuxu (x86)"
+msgstr "/usr Linuxu (System/390-64)"
 
 #: include/pt-gpt-partnames.h:93
-#, fuzzy
-#| msgid "Linux /usr (IA-64)"
 msgid "Linux /usr (TILE-Gx)"
-msgstr "/usr Linuxu (IA-64)"
+msgstr "/usr Linuxu (TILE-Gx)"
 
 #: include/pt-gpt-partnames.h:94
 msgid "Linux root verity (x86)"
@@ -5381,16 +5323,12 @@ msgid "Linux root verity (x86-64)"
 msgstr "Verity kořenu Linuxu (x86-64)"
 
 #: include/pt-gpt-partnames.h:96
-#, fuzzy
-#| msgid "Linux root verity (ARM)"
 msgid "Linux root verity (Alpha)"
-msgstr "Verity kořenu Linuxu (ARM)"
+msgstr "Verity kořenu Linuxu (Alpha)"
 
 #: include/pt-gpt-partnames.h:97
-#, fuzzy
-#| msgid "Linux root verity (ARM)"
 msgid "Linux root verity (ARC)"
-msgstr "Verity kořenu Linuxu (ARM)"
+msgstr "Verity kořenu Linuxu (ARC)"
 
 #: include/pt-gpt-partnames.h:98
 msgid "Linux root verity (ARM)"
@@ -5405,70 +5343,48 @@ msgid "Linux root verity (IA-64)"
 msgstr "Verity kořenu Linuxu (IA-64)"
 
 #: include/pt-gpt-partnames.h:101
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity (LoongArch-64)"
-msgstr "Verity kořenu Linuxu (IA-64)"
+msgstr "Verity kořenu Linuxu (LoongArch-64)"
 
 #: include/pt-gpt-partnames.h:102
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity (MIPS-32 LE)"
-msgstr "Verity kořenu Linuxu (IA-64)"
+msgstr "Verity kořenu Linuxu (MIPS-32 LE)"
 
 #: include/pt-gpt-partnames.h:103
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity (MIPS-64 LE)"
-msgstr "Verity kořenu Linuxu (IA-64)"
+msgstr "Verity kořenu Linuxu (MIPS-64 LE)"
 
 #: include/pt-gpt-partnames.h:104
-#, fuzzy
-#| msgid "Linux root verity (x86)"
 msgid "Linux root verity (PPC)"
-msgstr "Verity kořenu Linuxu (x86)"
+msgstr "Verity kořenu Linuxu (PowerPC)"
 
 #: include/pt-gpt-partnames.h:105
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity (PPC64)"
-msgstr "Verity kořenu Linuxu (IA-64)"
+msgstr "Verity kořenu Linuxu (PowerPC-64)"
 
 #: include/pt-gpt-partnames.h:106
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity (PPC64LE)"
-msgstr "Verity kořenu Linuxu (IA-64)"
+msgstr "Verity kořenu Linuxu (PowerPC-64 LE)"
 
 #: include/pt-gpt-partnames.h:107
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity (RISC-V-32)"
-msgstr "Verity kořenu Linuxu (IA-64)"
+msgstr "Verity kořenu Linuxu (RISC-V-32)"
 
 #: include/pt-gpt-partnames.h:108
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity (RISC-V-64)"
-msgstr "Verity kořenu Linuxu (IA-64)"
+msgstr "Verity kořenu Linuxu (RISC-V-64)"
 
 #: include/pt-gpt-partnames.h:109
-#, fuzzy
-#| msgid "Linux root verity (x86)"
 msgid "Linux root verity (S390)"
-msgstr "Verity kořenu Linuxu (x86)"
+msgstr "Verity kořenu Linuxu (System/390)"
 
 #: include/pt-gpt-partnames.h:110
-#, fuzzy
-#| msgid "Linux root verity (x86)"
 msgid "Linux root verity (S390X)"
-msgstr "Verity kořenu Linuxu (x86)"
+msgstr "Verity kořenu Linuxu (System/390-64)"
 
 #: include/pt-gpt-partnames.h:111
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity (TILE-Gx)"
-msgstr "Verity kořenu Linuxu (IA-64)"
+msgstr "Verity kořenu Linuxu (TILE-Gx)"
 
 #: include/pt-gpt-partnames.h:112
 msgid "Linux /usr verity (x86)"
@@ -5479,16 +5395,12 @@ msgid "Linux /usr verity (x86-64)"
 msgstr "Verity /usr Linuxu (x86-64)"
 
 #: include/pt-gpt-partnames.h:114
-#, fuzzy
-#| msgid "Linux /usr verity (ARM)"
 msgid "Linux /usr verity (Alpha)"
-msgstr "Verity /usr Linuxu (ARM)"
+msgstr "Verity /usr Linuxu (Alpha)"
 
 #: include/pt-gpt-partnames.h:115
-#, fuzzy
-#| msgid "Linux /usr verity (ARM)"
 msgid "Linux /usr verity (ARC)"
-msgstr "Verity /usr Linuxu (ARM)"
+msgstr "Verity /usr Linuxu (ARC)"
 
 #: include/pt-gpt-partnames.h:116
 msgid "Linux /usr verity (ARM)"
@@ -5503,286 +5415,192 @@ msgid "Linux /usr verity (IA-64)"
 msgstr "Verity /usr Linuxu (IA-64)"
 
 #: include/pt-gpt-partnames.h:119
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity (LoongArch-64)"
-msgstr "Verity /usr Linuxu (IA-64)"
+msgstr "Verity /usr Linuxu (LoongArch-64)"
 
 #: include/pt-gpt-partnames.h:120
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity (MIPS-32 LE)"
-msgstr "Verity /usr Linuxu (IA-64)"
+msgstr "Verity /usr Linuxu (MIPS-32 LE)"
 
 #: include/pt-gpt-partnames.h:121
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity (MIPS-64 LE)"
-msgstr "Verity /usr Linuxu (IA-64)"
+msgstr "Verity /usr Linuxu (MIPS-64 LE)"
 
 #: include/pt-gpt-partnames.h:122
-#, fuzzy
-#| msgid "Linux /usr verity (x86)"
 msgid "Linux /usr verity (PPC)"
-msgstr "Verity /usr Linuxu (x86)"
+msgstr "Verity /usr Linuxu (PowerPC)"
 
 #: include/pt-gpt-partnames.h:123
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity (PPC64)"
-msgstr "Verity /usr Linuxu (IA-64)"
+msgstr "Verity /usr Linuxu (PowerPC-64)"
 
 #: include/pt-gpt-partnames.h:124
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity (PPC64LE)"
-msgstr "Verity /usr Linuxu (IA-64)"
+msgstr "Verity /usr Linuxu (PowerPC-64 LE)"
 
 #: include/pt-gpt-partnames.h:125
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity (RISC-V-32)"
-msgstr "Verity /usr Linuxu (IA-64)"
+msgstr "Verity /usr Linuxu (RISC-V-32)"
 
 #: include/pt-gpt-partnames.h:126
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity (RISC-V-64)"
-msgstr "Verity /usr Linuxu (IA-64)"
+msgstr "Verity /usr Linuxu (RISC-V-64)"
 
 #: include/pt-gpt-partnames.h:127
-#, fuzzy
-#| msgid "Linux /usr verity (x86)"
 msgid "Linux /usr verity (S390)"
-msgstr "Verity /usr Linuxu (x86)"
+msgstr "Verity /usr Linuxu (System/390)"
 
 #: include/pt-gpt-partnames.h:128
-#, fuzzy
-#| msgid "Linux /usr verity (x86)"
 msgid "Linux /usr verity (S390X)"
-msgstr "Verity /usr Linuxu (x86)"
+msgstr "Verity /usr Linuxu (System/390-64)"
 
 #: include/pt-gpt-partnames.h:129
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity (TILE-Gx)"
-msgstr "Verity /usr Linuxu (IA-64)"
+msgstr "Verity /usr Linuxu (TILE-Gx)"
 
 #: include/pt-gpt-partnames.h:130
-#, fuzzy
-#| msgid "Linux root verity (x86)"
 msgid "Linux root verity sign. (x86)"
-msgstr "Verity kořenu Linuxu (x86)"
+msgstr "Verity podpis kořenu Linuxu (x86)"
 
 #: include/pt-gpt-partnames.h:131
-#, fuzzy
-#| msgid "Linux root verity (x86-64)"
 msgid "Linux root verity sign. (x86-64)"
-msgstr "Verity kořenu Linuxu (x86-64)"
+msgstr "Verity podpis kořenu Linuxu (x86-64)"
 
 #: include/pt-gpt-partnames.h:132
-#, fuzzy
-#| msgid "Linux root verity (ARM)"
 msgid "Linux root verity sign. (Alpha)"
-msgstr "Verity kořenu Linuxu (ARM)"
+msgstr "Verity podpis kořenu Linuxu (Alpha)"
 
 #: include/pt-gpt-partnames.h:133
-#, fuzzy
-#| msgid "Linux root verity (ARM)"
 msgid "Linux root verity sign. (ARC)"
-msgstr "Verity kořenu Linuxu (ARM)"
+msgstr "Verity podpis kořenu Linuxu (ARC)"
 
 #: include/pt-gpt-partnames.h:134
-#, fuzzy
-#| msgid "Linux root verity (ARM)"
 msgid "Linux root verity sign. (ARM)"
-msgstr "Verity kořenu Linuxu (ARM)"
+msgstr "Verity podpis kořenu Linuxu (ARM)"
 
 #: include/pt-gpt-partnames.h:135
-#, fuzzy
-#| msgid "Linux root verity (ARM-64)"
 msgid "Linux root verity sign. (ARM-64)"
-msgstr "Verity kořenu Linuxu (ARM-64)"
+msgstr "Verity podpis kořenu Linuxu (ARM-64)"
 
 #: include/pt-gpt-partnames.h:136
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (IA-64)"
-msgstr "Verity kořenu Linuxu (IA-64)"
+msgstr "Verity podpis kořenu Linuxu (IA-64)"
 
 #: include/pt-gpt-partnames.h:137
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (LoongArch-64)"
-msgstr "Verity kořenu Linuxu (IA-64)"
+msgstr "Verity podpis kořenu Linuxu (LoongArch-64)"
 
 #: include/pt-gpt-partnames.h:138
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (MIPS-32 LE)"
-msgstr "Verity kořenu Linuxu (IA-64)"
+msgstr "Verity podpis kořenu Linuxu (MIPS-32 LE)"
 
 #: include/pt-gpt-partnames.h:139
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (MIPS-64 LE)"
-msgstr "Verity kořenu Linuxu (IA-64)"
+msgstr "Verity podpis kořenu Linuxu (MIPS-64 LE)"
 
 #: include/pt-gpt-partnames.h:140
-#, fuzzy
-#| msgid "Linux root verity (x86)"
 msgid "Linux root verity sign. (PPC)"
-msgstr "Verity kořenu Linuxu (x86)"
+msgstr "Verity podpis kořenu Linuxu (PowerPC)"
 
 #: include/pt-gpt-partnames.h:141
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (PPC64)"
-msgstr "Verity kořenu Linuxu (IA-64)"
+msgstr "Verity podpis kořenu Linuxu (PowerPC-64)"
 
 #: include/pt-gpt-partnames.h:142
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (PPC64LE)"
-msgstr "Verity kořenu Linuxu (IA-64)"
+msgstr "Verity podpis kořenu Linuxu (PowerPC-64 LE)"
 
 #: include/pt-gpt-partnames.h:143
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (RISC-V-32)"
-msgstr "Verity kořenu Linuxu (IA-64)"
+msgstr "Verity podpis kořenu Linuxu (RISC-V-32)"
 
 #: include/pt-gpt-partnames.h:144
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (RISC-V-64)"
-msgstr "Verity kořenu Linuxu (IA-64)"
+msgstr "Verity podpis kořenu Linuxu (RISC-V-64)"
 
 #: include/pt-gpt-partnames.h:145
-#, fuzzy
-#| msgid "Linux root verity (x86)"
 msgid "Linux root verity sign. (S390)"
-msgstr "Verity kořenu Linuxu (x86)"
+msgstr "Verity podpis kořenu Linuxu (System/390)"
 
 #: include/pt-gpt-partnames.h:146
-#, fuzzy
-#| msgid "Linux root verity (x86)"
 msgid "Linux root verity sign. (S390X)"
-msgstr "Verity kořenu Linuxu (x86)"
+msgstr "Verity podpis kořenu Linuxu (System/390-64)"
 
 #: include/pt-gpt-partnames.h:147
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (TILE-Gx)"
-msgstr "Verity kořenu Linuxu (IA-64)"
+msgstr "Verity podpis kořenu Linuxu (TILE-Gx)"
 
 #: include/pt-gpt-partnames.h:148
-#, fuzzy
-#| msgid "Linux /usr verity (x86)"
 msgid "Linux /usr verity sign. (x86)"
-msgstr "Verity /usr Linuxu (x86)"
+msgstr "Verity podpis /usr Linuxu (x86)"
 
 #: include/pt-gpt-partnames.h:149
-#, fuzzy
-#| msgid "Linux /usr verity (x86-64)"
 msgid "Linux /usr verity sign. (x86-64)"
-msgstr "Verity /usr Linuxu (x86-64)"
+msgstr "Verity podpis /usr Linuxu (x86-64)"
 
 #: include/pt-gpt-partnames.h:150
-#, fuzzy
-#| msgid "Linux /usr verity (ARM)"
 msgid "Linux /usr verity sign. (Alpha)"
-msgstr "Verity /usr Linuxu (ARM)"
+msgstr "Verity podpis /usr Linuxu (Alpha)"
 
 #: include/pt-gpt-partnames.h:151
-#, fuzzy
-#| msgid "Linux /usr verity (ARM)"
 msgid "Linux /usr verity sign. (ARC)"
-msgstr "Verity /usr Linuxu (ARM)"
+msgstr "Verity podpis /usr Linuxu (ARC)"
 
 #: include/pt-gpt-partnames.h:152
-#, fuzzy
-#| msgid "Linux /usr verity (ARM)"
 msgid "Linux /usr verity sign. (ARM)"
-msgstr "Verity /usr Linuxu (ARM)"
+msgstr "Verity podpis /usr Linuxu (ARM)"
 
 #: include/pt-gpt-partnames.h:153
-#, fuzzy
-#| msgid "Linux /usr verity (ARM-64)"
 msgid "Linux /usr verity sign. (ARM-64)"
-msgstr "Verity /usr Linuxu (ARM-64)"
+msgstr "Verity podpis /usr Linuxu (ARM-64)"
 
 #: include/pt-gpt-partnames.h:154
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (IA-64)"
-msgstr "Verity /usr Linuxu (IA-64)"
+msgstr "Verity podpis /usr Linuxu (IA-64)"
 
 #: include/pt-gpt-partnames.h:155
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (LoongArch-64)"
-msgstr "Verity /usr Linuxu (IA-64)"
+msgstr "Verity podpis /usr Linuxu (LoongArch-64)"
 
 #: include/pt-gpt-partnames.h:156
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (MIPS-32 LE)"
-msgstr "Verity /usr Linuxu (IA-64)"
+msgstr "Verity podpis /usr Linuxu (MIPS-32 LE)"
 
 #: include/pt-gpt-partnames.h:157
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (MIPS-64 LE)"
-msgstr "Verity /usr Linuxu (IA-64)"
+msgstr "Verity podpis /usr Linuxu (MIPS-64 LE)"
 
 #: include/pt-gpt-partnames.h:158
-#, fuzzy
-#| msgid "Linux /usr verity (x86)"
 msgid "Linux /usr verity sign. (PPC)"
-msgstr "Verity /usr Linuxu (x86)"
+msgstr "Verity podpis /usr Linuxu (PowerPC)"
 
 #: include/pt-gpt-partnames.h:159
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (PPC64)"
-msgstr "Verity /usr Linuxu (IA-64)"
+msgstr "Verity podpis /usr Linuxu (PowerPC-64)"
 
 #: include/pt-gpt-partnames.h:160
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (PPC64LE)"
-msgstr "Verity /usr Linuxu (IA-64)"
+msgstr "Verity podpis /usr Linuxu (PowerPC-64 LE)"
 
 #: include/pt-gpt-partnames.h:161
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (RISC-V-32)"
-msgstr "Verity /usr Linuxu (IA-64)"
+msgstr "Verity podpis /usr Linuxu (RISC-V-32)"
 
 #: include/pt-gpt-partnames.h:162
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (RISC-V-64)"
-msgstr "Verity /usr Linuxu (IA-64)"
+msgstr "Verity podpis /usr Linuxu (RISC-V-64)"
 
 #: include/pt-gpt-partnames.h:163
-#, fuzzy
-#| msgid "Linux /usr verity (x86)"
 msgid "Linux /usr verity sign. (S390)"
-msgstr "Verity /usr Linuxu (x86)"
+msgstr "Verity podpis /usr Linuxu (System/390)"
 
 #: include/pt-gpt-partnames.h:164
-#, fuzzy
-#| msgid "Linux /usr verity (x86)"
 msgid "Linux /usr verity sign. (S390X)"
-msgstr "Verity /usr Linuxu (x86)"
+msgstr "Verity podpis /usr Linuxu (System/390-64)"
 
 #: include/pt-gpt-partnames.h:165
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (TILE-Gx)"
-msgstr "Verity /usr Linuxu (IA-64)"
+msgstr "Verity podpis /usr Linuxu (TILE-Gx)"
 
 #: include/pt-gpt-partnames.h:171 include/pt-mbr-partnames.h:95
 msgid "Linux extended boot"
@@ -6021,20 +5839,16 @@ msgid "Plan 9 partition"
 msgstr "Oddíl Plan 9"
 
 #: include/pt-gpt-partnames.h:262
-#, fuzzy
-#| msgid "HiFive Unleashed FSBL"
 msgid "HiFive FSBL"
-msgstr "FSBL HiFive Unleashed"
+msgstr "FSBL HiFive"
 
 #: include/pt-gpt-partnames.h:263
-#, fuzzy
-#| msgid "HiFive Unleashed BBL"
 msgid "HiFive BBL"
-msgstr "BBL HiFive Unleashed"
+msgstr "BBL HiFive"
 
 #: include/pt-gpt-partnames.h:266
 msgid "Haiku BFS"
-msgstr ""
+msgstr "BFS Haiku"
 
 #: include/pt-mbr-partnames.h:1
 msgid "Empty"
@@ -6387,7 +6201,7 @@ msgstr "DOS sekundární"
 
 #: include/pt-mbr-partnames.h:104
 msgid "EBBR protective"
-msgstr ""
+msgstr "Chráněný EBBR"
 
 #: include/pt-mbr-partnames.h:106
 msgid "VMware VMKCORE"
@@ -6822,10 +6636,9 @@ msgid "No free sectors available."
 msgstr "Nejsou žádné volné sektory."
 
 #: libfdisk/src/dos.c:1342
-#, fuzzy, c-format
-#| msgid "Sector %llu is already allocated."
+#, c-format
 msgid "Sector %ju is already allocated."
-msgstr "Sektor %llu je již alokován."
+msgstr "Sektor %ju je již alokován."
 
 #: libfdisk/src/dos.c:1562
 #, c-format
@@ -6843,22 +6656,19 @@ msgid "Partition %zu: head %d greater than maximum %d"
 msgstr "Oddíl %zu: hlava %d má větší číslo než je maximum %d"
 
 #: libfdisk/src/dos.c:1603
-#, fuzzy, c-format
-#| msgid "Partition %zu: sector %d greater than maximum %llu"
+#, c-format
 msgid "Partition %zu: sector %d greater than maximum %ju"
-msgstr "Oddíl %zu: sektor %d má větší číslo než je maximum %llu"
+msgstr "Oddíl %zu: sektor %d má větší číslo než je maximum %ju"
 
 #: libfdisk/src/dos.c:1609
-#, fuzzy, c-format
-#| msgid "Partition %zu: cylinder %d greater than maximum %llu"
+#, c-format
 msgid "Partition %zu: cylinder %d greater than maximum %ju"
-msgstr "Oddíl %zu: cylindr %d má větší číslo než je maximum %llu"
+msgstr "Oddíl %zu: cylindr %d má větší číslo než je maximum %ju"
 
 #: libfdisk/src/dos.c:1616
-#, fuzzy, c-format
-#| msgid "Partition %zu: previous sectors %u disagrees with total %u"
+#, c-format
 msgid "Partition %zu: LBA sector %u disagrees with C/H/S calculated sector %u"
-msgstr "Oddíl %zu: předchozí sektory %u nesouhlasí s úhrnem %u"
+msgstr "Oddíl %zu: LBA sektor %u nesouhlasí s vypočteným C/H/S sektorem %u"
 
 #: libfdisk/src/dos.c:1675
 #, c-format
@@ -6900,16 +6710,14 @@ msgid "No errors detected."
 msgstr "Žádné chyby neobjeveny."
 
 #: libfdisk/src/dos.c:1811
-#, fuzzy, c-format
-#| msgid "Total allocated sectors %llu greater than the maximum %llu."
+#, c-format
 msgid "Total allocated sectors %ju greater than the maximum %ju."
-msgstr "Celkový počet alokovaných sektorů %'llu je větší než maximum %'llu."
+msgstr "Celkový počet alokovaných sektorů %'ju je větší než maximum %'ju."
 
 #: libfdisk/src/dos.c:1814
-#, fuzzy, c-format
-#| msgid "Remaining %lld unallocated %ld-byte sectors."
+#, c-format
 msgid "Remaining %ju unallocated %ld-byte sectors."
-msgstr "Zbývá %'lld nealokovaných %ldbajtových sektorů."
+msgstr "Zbývá %'ju nealokovaných %ldbajtových sektorů."
 
 #: libfdisk/src/dos.c:1818 libfdisk/src/gpt.c:2305
 #, c-format
@@ -7007,7 +6815,7 @@ msgstr "Nový začátek dat"
 
 #: libfdisk/src/dos.c:2735
 msgid "The new beginning of the partition overlaps the disk label area. Be very careful when using the partition. You can lose all your partitions on the disk."
-msgstr ""
+msgstr "Nový začátek oddílu se překrývá s tabulkou rozdělení disku. Při používání tohoto oddílu buďte velmi opatrní. Můžete přijít o všechny oddíly na disku."
 
 #: libfdisk/src/dos.c:2781
 #, c-format
@@ -7092,16 +6900,12 @@ msgid "GPT Backup Header"
 msgstr "Záložní hlavička GPT"
 
 #: libfdisk/src/gpt.c:1303
-#, fuzzy
-#| msgid "First LBA"
 msgid "First usable LBA"
-msgstr "První LBA"
+msgstr "První použitelné LBA"
 
 #: libfdisk/src/gpt.c:1308
-#, fuzzy
-#| msgid "Last LBA"
 msgid "Last usable LBA"
-msgstr "Poslední LBA"
+msgstr "Poslední použitelné LBA"
 
 #. TRANSLATORS: The LBA (Logical Block Address) of the backup GPT header.
 #: libfdisk/src/gpt.c:1314
@@ -7110,17 +6914,13 @@ msgstr "LBA náhrady"
 
 #. TRANSLATORS: The start of the array of partition entries.
 #: libfdisk/src/gpt.c:1320
-#, fuzzy
-#| msgid "Partition entries LBA"
 msgid "Partition entries starting LBA"
-msgstr "LBA záznamů oddílů"
+msgstr "Počáteční LBA záznamů oddílů"
 
 #. TRANSLATORS: The end of the array of partition entries.
 #: libfdisk/src/gpt.c:1326
-#, fuzzy
-#| msgid "Partition entries LBA"
 msgid "Partition entries ending LBA"
-msgstr "LBA záznamů oddílů"
+msgstr "Poslední LBA záznamů oddílů"
 
 #: libfdisk/src/gpt.c:1333
 msgid "Allocated partition entries"
@@ -7260,10 +7060,8 @@ msgid "All partitions are already in use."
 msgstr "Všechny oddíly se již používají."
 
 #: libfdisk/src/gpt.c:2435
-#, fuzzy
-#| msgid "No free sectors available."
 msgid "No enough free sectors available."
-msgstr "Nejsou žádné volné sektory."
+msgstr "Není dost volných sektorů."
 
 #: libfdisk/src/gpt.c:2449 libfdisk/src/gpt.c:2476
 #, c-format
@@ -7291,10 +7089,9 @@ msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr "Vytvořena nový popis disku GPT (GUID: %s)."
 
 #: libfdisk/src/gpt.c:2706
-#, fuzzy, c-format
-#| msgid "The maximal number of partitions is %d (default is %d)."
+#, c-format
 msgid "The maximal number of partitions is %zu (default is %zu)."
-msgstr "Maximální množství oddílů je %d (výchozí je %d)."
+msgstr "Maximální množství oddílů je %zu (výchozí je %zu)."
 
 #: libfdisk/src/gpt.c:2728
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
@@ -7337,10 +7134,9 @@ msgid "Cannot allocate memory!"
 msgstr "Paměť nelze alokovat!"
 
 #: libfdisk/src/gpt.c:2887
-#, fuzzy, c-format
-#| msgid "Partition table length changed from %<PRIu32> to %<PRIu64>."
+#, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu32>."
-msgstr "Délka tabulky rozdělení disku změněna z %<PRIu32> na %<PRIu64>."
+msgstr "Délka tabulky rozdělení disku změněna z %<PRIu32> na %<PRIu32>."
 
 #: libfdisk/src/gpt.c:2997
 #, c-format
@@ -7618,10 +7414,9 @@ msgid "Last %s or +%s or +size{K,M,G,T,P}"
 msgstr "Poslední %s, +%s nebo +velikost{K,M,G,T,P}"
 
 #: libfdisk/src/sgi.c:989 libfdisk/src/sun.c:248
-#, fuzzy, c-format
-#| msgid "BLKGETSIZE ioctl failed on %s. Using geometry cylinder value of %llu. This value may be truncated for devices > 33.8 GB."
+#, c-format
 msgid "BLKGETSIZE ioctl failed on %s. Using geometry cylinder value of %ju. This value may be truncated for devices > 33.8 GB."
-msgstr "ioctl BLKGETSIZE selhalo na %s. Pro geometrii se použije %llu cylindrů. Tato hodnota může být zkrácena pro zařízení > 33,8 GB."
+msgstr "ioctl BLKGETSIZE selhalo na %s. Pro geometrii se použije %ju cylindrů. Tato hodnota může být zkrácena pro zařízení > 33,8 GB."
 
 #: libfdisk/src/sgi.c:1056
 msgid "Created a new SGI disklabel."
@@ -7684,16 +7479,14 @@ msgid "SunOS reserved"
 msgstr "Vyhrazeno pro SunOS"
 
 #: libfdisk/src/sun.c:86
-#, fuzzy, c-format
-#| msgid "%#zu: start cylinder overflows Sun label limits"
+#, c-format
 msgid "#%zu: start cylinder overflows Sun label limits"
-msgstr "%#zu: počáteční cylindr přesahuje možnosti popisu disku Sun"
+msgstr "#%zu: počáteční cylindr přesahuje možnosti popisu disku Sun"
 
 #: libfdisk/src/sun.c:89
-#, fuzzy, c-format
-#| msgid "%#zu: number of sectors overflow Sun label limits"
+#, c-format
 msgid "#%zu: number of sectors overflow Sun label limits"
-msgstr "%#zu: počet sektorů přesahuje možnosti popisu disku Sun"
+msgstr "#%zu: počet sektorů přesahuje možnosti popisu disku Sun"
 
 #: libfdisk/src/sun.c:136
 msgid "Detected sun disklabel with wrong checksum. Probably you'll have to set all the values, e.g. heads, sectors, cylinders and partitions or force a fresh label (s command in main menu)"
@@ -7908,16 +7701,14 @@ msgid "no mount source specified"
 msgstr "nezadán žádný zdroj připojení"
 
 #: libmount/src/context_mount.c:1784
-#, fuzzy, c-format
-#| msgid "failed to parse mount options: %m"
+#, c-format
 msgid "failed to parse mount options '%s': %m"
-msgstr "nezdařilo se rozebrat volby připojení: %m"
+msgstr "nezdařilo se rozebrat volby připojení „%s“: %m"
 
 #: libmount/src/context_mount.c:1785
-#, fuzzy, c-format
-#| msgid "failed to parse mount options: %m"
+#, c-format
 msgid "failed to parse mount options '%s'"
-msgstr "nezdařilo se rozebrat volby připojení: %m"
+msgstr "nezdařilo se rozebrat volby připojení „%s“"
 
 #: libmount/src/context_mount.c:1788
 #, c-format
@@ -8617,10 +8408,9 @@ msgid "FATAL: bad tty"
 msgstr "FATÁLNÍ: špatné TTY"
 
 #: login-utils/login.c:551
-#, fuzzy, c-format
-#| msgid "TIOCSCTTY: ioctl failed"
+#, c-format
 msgid "TIOCGWINSZ ioctl failed: %m"
-msgstr "TIOCSCTTY: volání ioctl selhalo"
+msgstr "TIOCGWINSZ: volání ioctl selhalo: %m"
 
 #: login-utils/login.c:559
 #, c-format
@@ -8628,10 +8418,9 @@ msgid "FATAL: %s: change permissions failed: %m"
 msgstr "FATÁLNÍ: %s: změna přístupových práv selhala: %m"
 
 #: login-utils/login.c:588
-#, fuzzy, c-format
-#| msgid "TIOCSCTTY: ioctl failed"
+#, c-format
 msgid "TIOCSWINSZ ioctl failed: %m"
-msgstr "TIOCSCTTY: volání ioctl selhalo"
+msgstr "TIOCSWINSZ: volání ioctl selhalo: %m"
 
 #: login-utils/login.c:694
 #, c-format
@@ -9174,6 +8963,8 @@ msgstr " -u, --user-accs          zobrazí uživatelské účty\n"
 #: login-utils/lslogins.c:1426 sys-utils/lsipc.c:319
 msgid " -y, --shell              use column names to be usable as shell variable identifiers\n"
 msgstr ""
+" -y, --shell              zvolí názvy sloupců tak, aby je bylo možné použít\n"
+"                          jako identifikátoru proměnných shellu\n"
 
 #: login-utils/lslogins.c:1427
 msgid " -Z, --context            display SELinux contexts\n"
@@ -9325,10 +9116,8 @@ msgid "failed to create pseudo-terminal"
 msgstr "vytvoření pseudoterminálu selhalo"
 
 #: login-utils/su-common.c:559
-#, fuzzy
-#| msgid "cannot set signal handler"
 msgid "cannot set child signal handler"
-msgstr "obsluhu signálu nelze nastavit"
+msgstr "obsluhu signálu o ukončení potomka nelze nastavit"
 
 #: login-utils/su-common.c:569 term-utils/script.c:965
 #: term-utils/scriptlive.c:303
@@ -10245,10 +10034,8 @@ msgid "filesystem size"
 msgstr "velikost systému souborů"
 
 #: misc-utils/findmnt.c:122
-#, fuzzy
-#| msgid "source device"
 msgid "all possible source devices"
-msgstr "zdrojové zařízení"
+msgstr "všechna možná zdrojová zařízení"
 
 #: misc-utils/findmnt.c:123
 msgid "source device"
@@ -10530,6 +10317,8 @@ msgstr " -v, --nofsroot         u vázaných a btrfs připojení nevypisuje [/a
 #: misc-utils/findmnt.c:1374
 msgid " -y, --shell            use column names to be usable as shell variable identifiers\n"
 msgstr ""
+" -y, --shell            zvolí názvy sloupců tak, aby je bylo možné použít jako\n"
+"                        identifikátoru proměnných shellu\n"
 
 #: misc-utils/findmnt.c:1377
 msgid " -x, --verify           verify mount table content (default is fstab)\n"
@@ -10693,16 +10482,13 @@ msgid "%s seems unsupported by the current kernel"
 msgstr "zdá se, že současné jádro nepodporuje %s"
 
 #: misc-utils/findmnt-verify.c:452
-#, fuzzy
-#| msgid "Unknown"
 msgid "reason uknown"
-msgstr "Neznámý"
+msgstr "důvod neznámý"
 
 #: misc-utils/findmnt-verify.c:455 misc-utils/findmnt-verify.c:457
-#, fuzzy, c-format
-#| msgid "cannot detect on-disk filesystem type"
+#, c-format
 msgid "cannot detect on-disk filesystem type (%s)"
-msgstr "nelze určit typ systému souborů na disku"
+msgstr "nelze určit typ systému souborů na disku (%s)"
 
 #: misc-utils/findmnt-verify.c:467
 #, c-format
@@ -10729,6 +10515,8 @@ msgid ""
 "your fstab has been modified, but systemd still uses the old version;\n"
 "       use 'systemctl daemon-reload' to reload"
 msgstr ""
+"váš fstab byl změněn, ale systemd stále používá starou verzi.\n"
+"k novému načtení použijte „systemctl daemon-reload“"
 
 #: misc-utils/findmnt-verify.c:574
 #, c-format
@@ -10849,7 +10637,7 @@ msgstr "skutečný"
 
 #: misc-utils/hardlink.c:347
 msgid "Method:"
-msgstr ""
+msgstr "Způsob:"
 
 #: misc-utils/hardlink.c:348
 msgid "Files:"
@@ -10858,10 +10646,9 @@ msgstr "Soubory:"
 # TODO: Pluralize
 #: misc-utils/hardlink.c:349 misc-utils/hardlink.c:355
 #: misc-utils/hardlink.c:359
-#, fuzzy, c-format
-#| msgid "%-15s %zu files"
+#, c-format
 msgid "%-25s %zu files"
-msgstr "%-15s %zu souborů"
+msgstr "%-25s %zu souborů"
 
 #: misc-utils/hardlink.c:349
 msgid "Linked:"
@@ -10869,10 +10656,9 @@ msgstr "Vytvořeno odkazů:"
 
 # TODO: Pluralize
 #: misc-utils/hardlink.c:352
-#, fuzzy, c-format
-#| msgid "%-15s %zu xattrs"
+#, c-format
 msgid "%-25s %zu xattrs"
-msgstr "%-15s %zu rozšířených atributů"
+msgstr "%-25s %zu rozšířených atributů"
 
 #: misc-utils/hardlink.c:352 misc-utils/hardlink.c:355
 msgid "Compared:"
@@ -10880,17 +10666,16 @@ msgstr "Porovnáno:"
 
 #: misc-utils/hardlink.c:359
 msgid "Skipped reflinks:"
-msgstr ""
+msgstr "Přeskočeno lehkých kopií:"
 
 #: misc-utils/hardlink.c:366
 msgid "Saved:"
 msgstr "Ušetřeno:"
 
 #: misc-utils/hardlink.c:369
-#, fuzzy, c-format
-#| msgid "%-15s %<PRId64>.%06<PRId64> seconds"
+#, c-format
 msgid "%-25s %<PRId64>.%06<PRId64> seconds"
-msgstr "%-15s %<PRId64>,%06<PRId64> sekund"
+msgstr "%-25s %<PRId64>,%06<PRId64> sekund"
 
 #: misc-utils/hardlink.c:369
 msgid "Duration:"
@@ -10913,16 +10698,15 @@ msgstr "Porovnávají se rozšířené atributy %s s %s"
 
 #: misc-utils/hardlink.c:671
 msgid "Reflinking failed, fallback to hardlinking"
-msgstr ""
+msgstr "Lehká kopie selhala, návrat k pevným odkazům"
 
 # First argument is "[DryRun] " or "".
 # Second and third ones are file names.
 # Fourth one is a file size.
 #: misc-utils/hardlink.c:706
-#, fuzzy, c-format
-#| msgid "%sLinking %s to %s (-%s)"
+#, c-format
 msgid "%s%sLinking %s to %s (-%s)"
-msgstr "%sVytváří se odkaz %s na %s (-%s)"
+msgstr "%s%sVytváří se odkaz %s na %s (-%s)"
 
 #: misc-utils/hardlink.c:707
 msgid "[DryRun] "
@@ -10944,36 +10728,33 @@ msgid "Skipped %s (smaller than configured size)"
 msgstr "Přeskočeno %s (menší než nastavená velikost)"
 
 #: misc-utils/hardlink.c:820
-#, fuzzy, c-format
-#| msgid "Skipped %s (smaller than configured size)"
+#, c-format
 msgid "Skipped %s (greater than configured size)"
-msgstr "Přeskočeno %s (menší než nastavená velikost)"
+msgstr "Přeskočeno %s (větší než nastavená velikost)"
 
 #: misc-utils/hardlink.c:847
-#, fuzzy, c-format
-#| msgid "target specified more than once"
+#, c-format
 msgid "Skipped %s (specified more than once)"
-msgstr "cíl zadán více než jednou"
+msgstr "Přeskočeno %s (cíl zadán více než jednou)"
 
 #: misc-utils/hardlink.c:886
 msgid "cannot continue"
 msgstr "nelze pokračovat"
 
 #: misc-utils/hardlink.c:1054
-#, fuzzy, c-format
-#| msgid "unsupported GPT attribute bit '%s'"
+#, c-format
 msgid "Skipped (attributes mismatch) %s"
-msgstr "nepodporovaný bit „%s“ atributu GPT"
+msgstr "Přeskočeno (atributy nesouhlasí) %s"
 
 #: misc-utils/hardlink.c:1060
 #, c-format
 msgid "Skipped (already reflink) %s"
-msgstr ""
+msgstr "Přeskočeno (již je lehkou kopií) %s"
 
 #: misc-utils/hardlink.c:1081
 #, c-format
 msgid "Skipped (content mismatch) %s"
-msgstr ""
+msgstr "Přeskočeno (obsah nesouhlasí) %s"
 
 #: misc-utils/hardlink.c:1111
 #, c-format
@@ -10997,10 +10778,8 @@ msgid " -n, --dry-run              don't actually link anything\n"
 msgstr " -n, --dry-run              ve skutečnosti žádné odkazy nevytvoří\n"
 
 #: misc-utils/hardlink.c:1121
-#, fuzzy
-#| msgid " -f, --file <file>        log the contents of this file\n"
 msgid " -y, --method <name>        file content comparison method\n"
-msgstr " -f, --file <soubor>      zaznamená obsah tohoto souboru\n"
+msgstr " -y, --method <název>       způsob porovnávání obsahu souborů\n"
 
 #: misc-utils/hardlink.c:1123
 msgid " -f, --respect-name         filenames have to be identical\n"
@@ -11023,16 +10802,16 @@ msgid " -X, --respect-xattrs       respect extended attributes\n"
 msgstr " -X, --respect-xattrs       respektuje rozšířené atributy\n"
 
 #: misc-utils/hardlink.c:1131
-#, fuzzy
-#| msgid " -E, --echo <when>             echo input in session (auto, always or never)\n"
 msgid "     --reflink[=<when>]     create clone/CoW copies (auto, always, never)\n"
 msgstr ""
-" -E, --echo <kdy>              opisuje výstup relace (auto, always [vždy],\n"
-"                               never [nikdy])\n"
+"     --reflink[=<kdy>]      vytváří klonované/CoW kopie (auto, always [vždy],\n"
+"                            never [nikdy])\n"
 
 #: misc-utils/hardlink.c:1132
 msgid "     --skip-reflinks        skip already cloned files (enabled on --reflink)\n"
 msgstr ""
+"     --skip-reflinks        přeskočit již naklonované soubory (zapnuto\n"
+"                            při --reflink)\n"
 
 #: misc-utils/hardlink.c:1134
 msgid ""
@@ -11067,56 +10846,44 @@ msgid " -s, --minimum-size <size>  minimum size for files.\n"
 msgstr " -s, --minimum-size <velikost>  minimální velikost pro soubory\n"
 
 #: misc-utils/hardlink.c:1142
-#, fuzzy
-#| msgid " -s, --minimum-size <size>  minimum size for files.\n"
 msgid " -S, --maximum-size <size>  maximum size for files.\n"
-msgstr " -s, --minimum-size <velikost>  minimální velikost pro soubory\n"
+msgstr " -S, --maximum-size <velikost>  minimální velikost pro soubory\n"
 
 #: misc-utils/hardlink.c:1143
-#, fuzzy
-#| msgid " -S, --size <size>        maximum size for a single message\n"
 msgid " -b, --io-size <size>       I/O buffer size for file reading (speedup, using more RAM)\n"
-msgstr " -S, --size <velikost>    maximální velikost jedné zprávy\n"
+msgstr ""
+" -b, --io-size <velikost>   velikost vyrovnávací paměti I/O pro čtení souboru\n"
+"                            (zrychlení, použije více RAM)\n"
 
 #: misc-utils/hardlink.c:1144
-#, fuzzy
-#| msgid " -S, --size <size>        maximum size for a single message\n"
 msgid " -r, --cache-size <size>    memory limit for cached file content data\n"
-msgstr " -S, --size <velikost>    maximální velikost jedné zprávy\n"
+msgstr " -r, --cache-size <velikost>  omezení paměti na uchování obsahu souboru\n"
 
 #: misc-utils/hardlink.c:1145
 msgid " -c, --content              compare only file contents, same as -pot\n"
 msgstr " -c, --content              porovnává pouze obsah souborů, stejné jako -pot\n"
 
 #: misc-utils/hardlink.c:1256
-#, fuzzy
-#| msgid "failed to parse size"
 msgid "failed to parse minimum size"
-msgstr "velikost se nezdařilo rozebrat"
+msgstr "minimální velikost se nezdařilo rozebrat"
 
 #: misc-utils/hardlink.c:1259
-#, fuzzy
-#| msgid "failed to parse size"
 msgid "failed to parse maximum size"
-msgstr "velikost se nezdařilo rozebrat"
+msgstr "maximální velikost se nezdařilo rozebrat"
 
+# FIX: missing "parse"
 #: misc-utils/hardlink.c:1262
-#, fuzzy
-#| msgid "failed to parse size"
 msgid "failed to cache size"
-msgstr "velikost se nezdařilo rozebrat"
+msgstr "velikost keše se nezdařilo rozebrat"
 
 #: misc-utils/hardlink.c:1265
-#, fuzzy
-#| msgid "failed to parse size"
 msgid "failed to parse I/O size"
-msgstr "velikost se nezdařilo rozebrat"
+msgstr "velikost I/O se nezdařilo rozebrat"
 
 #: misc-utils/hardlink.c:1278
-#, fuzzy, c-format
-#| msgid "unsupported lock mode: %s"
+#, c-format
 msgid "unsupported reflink mode; %s"
-msgstr "nepodporovaný režim zamykání: %s"
+msgstr "nepodporovaný režim lehkých kopií: %s"
 
 #: misc-utils/hardlink.c:1336
 msgid "cannot register exit handler"
@@ -11129,17 +10896,15 @@ msgstr "nezadán ani adresář, ani soubor"
 #: misc-utils/hardlink.c:1347
 #, c-format
 msgid "cannot initialize %s method, use 'memcmp' fallback"
-msgstr ""
+msgstr "způsob %s nelze inicializovat, použije se „memcmp“"
 
 #: misc-utils/hardlink.c:1352
-#, fuzzy
-#| msgid "failed to initialize loopcxt"
 msgid "failed to initialize files comparior"
-msgstr "loopctx se nepodařilo inicializovat"
+msgstr "porovnávač souborů se nepodařilo inicializovat"
 
 #: misc-utils/hardlink.c:1364
 msgid "Scanning [device/inode/links]:"
-msgstr ""
+msgstr "Prohledává se [zařízení/i-uzel/odkazy]:"
 
 #: misc-utils/hardlink.c:1369 sys-utils/fstrim.c:96
 #, c-format
@@ -11683,10 +11448,8 @@ msgid "size of the device"
 msgstr "velikost zařízení"
 
 #: misc-utils/lsblk.c:211
-#, fuzzy
-#| msgid "# partition table of %s\n"
 msgid "partition start offset"
-msgstr "# tabulka rozdělení disku pro %s\n"
+msgstr "poloha začátku oddílu"
 
 #: misc-utils/lsblk.c:212
 msgid "state of the device"
@@ -11729,40 +11492,28 @@ msgid "zone model"
 msgstr "model zóny"
 
 #: misc-utils/lsblk.c:223
-#, fuzzy
-#| msgid "min seg size"
 msgid "zone size"
-msgstr "minimální velikost segmentu"
+msgstr "velikost zóny"
 
 #: misc-utils/lsblk.c:224
-#, fuzzy
-#| msgid "discard granularity"
 msgid "zone write granularity"
-msgstr "stupeň zahazování"
+msgstr "granularita zápisu zón"
 
 #: misc-utils/lsblk.c:225
-#, fuzzy
-#| msgid "write same max bytes"
 msgid "zone append max bytes"
-msgstr "maximální počet bajtů pro zápis kopií"
+msgstr "maximální počet bajtů pro přípis do zóny"
 
 #: misc-utils/lsblk.c:226
-#, fuzzy
-#| msgid "number of sectors"
 msgid "number of zones"
-msgstr "počet sektorů"
+msgstr "počet zón"
 
 #: misc-utils/lsblk.c:227
-#, fuzzy
-#| msgid "max number of open files"
 msgid "maximum number of open zones"
-msgstr "maximální počet otevřených souborů"
+msgstr "maximální počet otevřených zón"
 
 #: misc-utils/lsblk.c:228
-#, fuzzy
-#| msgid "max number of processes"
 msgid "maximum number of active zones"
-msgstr "maximální počet procesů"
+msgstr "maximální počet aktivních zón"
 
 #: misc-utils/lsblk.c:1348
 msgid "failed to allocate device"
@@ -11814,10 +11565,8 @@ msgid "List information about block devices.\n"
 msgstr "Vypíše údaje o blokovém zařízení.\n"
 
 #: misc-utils/lsblk.c:1902
-#, fuzzy
-#| msgid " -d, --nodeps         don't print slaves or holders\n"
 msgid " -A, --noempty        don't print empty devices\n"
-msgstr " -d, --nodeps         nevypíše podřízená (slave) a nadřízená (holder) zařízení\n"
+msgstr " -A, --noempty        nevypíše prázdná zařízení\n"
 
 #: misc-utils/lsblk.c:1903
 msgid " -D, --discard        print discard capabilities\n"
@@ -11916,12 +11665,12 @@ msgstr " -x, --sort <sloupec> výstup seřadí podle <sloupce>\n"
 #: misc-utils/lsblk.c:1928
 msgid " -y, --shell          use column names to be usable as shell variable identifiers\n"
 msgstr ""
+" -y, --shell          zvolí názvy sloupců tak, aby se daly použít jako\n"
+"                      identifikátory proměnných v shellu\n"
 
 #: misc-utils/lsblk.c:1929
-#, fuzzy
-#| msgid " -z, --zoned          print zone model\n"
 msgid " -z, --zoned          print zone related information\n"
-msgstr " -z, --zoned          vypíše model zóny\n"
+msgstr " -z, --zoned          vypíše údaje o zónách\n"
 
 #: misc-utils/lsblk.c:1930
 msgid "     --sysroot <dir>  use specified directory as system root\n"
@@ -11941,267 +11690,200 @@ msgid "failed to allocate device tree"
 msgstr "alokace stromu zařízení selhala"
 
 #: misc-utils/lsfd.c:111
-#, fuzzy
-#| msgid "cannot create child process"
 msgid "association between file and process"
-msgstr "nelze vytvořit proces pro potomka"
+msgstr "vztah mezi souborem a procesem"
 
 #: misc-utils/lsfd.c:113
 msgid "block device driver name resolved by /proc/devices"
-msgstr ""
+msgstr "název ovladače blokového zařízení podle /proc/devices"
 
 #: misc-utils/lsfd.c:115
 msgid "character device driver name resolved by /proc/devices"
-msgstr ""
+msgstr "název ovladače znakového zařízení podle /proc/devices"
 
 #: misc-utils/lsfd.c:117
-#, fuzzy
-#| msgid "command of the process holding the lock"
 msgid "command of the process opening the file"
-msgstr "příkaz procesu, který drží zámek"
+msgstr "příkaz procesu, který otevřel soubor"
 
 #: misc-utils/lsfd.c:119
 msgid "reachability from the file system"
-msgstr ""
+msgstr "dosažitelnost ze souborového systému"
 
 #: misc-utils/lsfd.c:121
-#, fuzzy
-#| msgid "device backing file"
 msgid "ID of device containing file"
-msgstr "soubor pod zařízením"
+msgstr "identifikátor zařízení, které obsahuje soubor"
 
 #: misc-utils/lsfd.c:123
 msgid "device type (blk, char, or nodev)"
-msgstr ""
+msgstr "druh zařízení (blk [blokové], char [znakové], nebo nodev [není zařízením]"
 
 #: misc-utils/lsfd.c:125
 msgid "flags specified when opening the file"
-msgstr ""
+msgstr "příznaku zadané při otevření souboru"
 
 #: misc-utils/lsfd.c:127
-#, fuzzy
-#| msgid "bad file descriptor"
 msgid "file descriptor for the file"
-msgstr "špatný deskriptor souboru"
+msgstr "deskriptor souboru"
 
 #: misc-utils/lsfd.c:129
-#, fuzzy
-#| msgid "max number of open files"
 msgid "user ID number of the file's owner"
-msgstr "maximální počet otevřených souborů"
+msgstr "ID uživatele, který vlastní soubor"
 
 #: misc-utils/lsfd.c:131 misc-utils/lslocks.c:79
-#, fuzzy
-#| msgid "logical NUMA node number"
 msgid "inode number"
-msgstr "číslo logické uzlu NUMA"
+msgstr "číslo i-uzlu"
 
 #: misc-utils/lsfd.c:133
 msgid "opened by a kernel thread"
-msgstr ""
+msgstr "otevřené vláknem jádra"
 
 #: misc-utils/lsfd.c:135
 msgid "device ID for special, or ID of device containing file"
-msgstr ""
+msgstr "ID zařízení pro zvláštní souboru nebo ID zařízení, které obsahuje soubor"
 
 #: misc-utils/lsfd.c:137
 msgid "length of file mapping (in page)"
-msgstr ""
+msgstr "délka namapované části souboru (ve stránkách)"
 
 #: misc-utils/lsfd.c:139
 msgid "misc character device name resolved by /proc/misc"
-msgstr ""
+msgstr "název ostatního znakového zařízení podle /proc/misc "
 
-# Název akce
 #: misc-utils/lsfd.c:141
-#, fuzzy
-#| msgid "mount"
 msgid "mount id"
-msgstr "připojení"
+msgstr "identifikátor připojení do systému souborů"
 
 #: misc-utils/lsfd.c:143
-#, fuzzy
-#| msgid "lock access mode"
 msgid "access mode (rwx)"
-msgstr "přístupový režim k zámku"
+msgstr "přístupová práva (rwx)"
 
 #: misc-utils/lsfd.c:145
-#, fuzzy
-#| msgid "size of the file"
 msgid "name of the file"
-msgstr "velikost souboru"
+msgstr "název souboru"
 
 #: misc-utils/lsfd.c:147
-#, fuzzy
-#| msgid "ncount"
 msgid "link count"
-msgstr "ncount"
+msgstr "počet odkazů"
 
 #: misc-utils/lsfd.c:149
-#, fuzzy
-#| msgid "size of the file"
 msgid "owner of the file"
-msgstr "velikost souboru"
+msgstr "vlastník souboru"
 
 #: misc-utils/lsfd.c:151
-#, fuzzy
-#| msgid "PID of the process holding the lock"
 msgid "PID of the process opening the file"
-msgstr "ID procesu, který drží zámek"
+msgstr "ID procesu, který otevřel soubor"
 
 #: misc-utils/lsfd.c:153
 msgid "block device name resolved by /proc/partition"
-msgstr ""
+msgstr "název blokového zařízení podle /proc/partition"
 
 #: misc-utils/lsfd.c:155
-#, fuzzy
-#| msgid "%s: cannot get file position"
 msgid "file position"
-msgstr "%s: pozici v souboru nelze zjistit"
+msgstr "pozice v souboru"
 
 #: misc-utils/lsfd.c:157
-#, fuzzy
-#| msgid "partition name"
 msgid "protocol name"
-msgstr "název oddílu"
+msgstr "název protokolu"
 
 #: misc-utils/lsfd.c:159
-#, fuzzy
-#| msgid "no device specified"
 msgid "device ID (if special file)"
-msgstr "žádné zařízení nebylo zadáno"
+msgstr "ID zařízení (jde-li o zvláštní soubor)"
 
 #: misc-utils/lsfd.c:161
-#, fuzzy
-#| msgid "max file size"
 msgid "file size"
-msgstr "maximální velikost souboru"
+msgstr "velikost souboru"
 
 #: misc-utils/lsfd.c:163
-#, fuzzy
-#| msgid "failed to read new partition from device; ignoring --move-data"
 msgid "file system, partition, or device containing file"
-msgstr "načtení tabulky rozdělení disku ze zařízení selhalo, --move-data se ignoruje"
+msgstr "souborový systém, oddíl nebo zařízení obsahující soubor"
 
 #: misc-utils/lsfd.c:165
-#, fuzzy
-#| msgid "PID of the process holding the lock"
 msgid "thread ID of the process opening the file"
-msgstr "ID procesu, který drží zámek"
+msgstr "ID vlákna, které otevřelo soubor"
 
 #: misc-utils/lsfd.c:167
-#, fuzzy
-#| msgid "filesystem type"
 msgid "file type"
-msgstr "druh systému souborů"
+msgstr "druh souboru"
 
 #: misc-utils/lsfd.c:169
-#, fuzzy
-#| msgid "Number of attached processes"
 msgid "user ID number of the process"
-msgstr "Počet připojených procesů"
+msgstr "ID uživatele procesu"
 
 #: misc-utils/lsfd.c:171
-#, fuzzy
-#| msgid "Number of attached processes"
 msgid "user of the process"
-msgstr "Počet připojených procesů"
+msgstr "uživatel procesu"
 
 #: misc-utils/lsfd.c:215 sys-utils/prlimit.c:87
 msgid "processes"
 msgstr "procesy"
 
 #: misc-utils/lsfd.c:219
-#, fuzzy
-#| msgid "Attached processes"
 msgid "root owned processes"
-msgstr "Připojené procesy"
+msgstr "procesy vlastněné superuživatelem"
 
 #: misc-utils/lsfd.c:223
-#, fuzzy
-#| msgid "kernel messages"
 msgid "kernel threads"
-msgstr "jaderné zprávy"
+msgstr "vlákna jádra"
 
 #: misc-utils/lsfd.c:227
-#, fuzzy
-#| msgid "open failed"
 msgid "open files"
-msgstr "otevření selhalo"
+msgstr "otevřené soubory"
 
 #: misc-utils/lsfd.c:231
-#, fuzzy
-#| msgid "open failed"
 msgid "RO open files"
-msgstr "otevření selhalo"
+msgstr "soubory otevřené jen pro čtení"
 
 #: misc-utils/lsfd.c:235
-#, fuzzy
-#| msgid "open failed"
 msgid "WO open files"
-msgstr "otevření selhalo"
+msgstr "soubory otevřené jen pro zápis"
 
 #: misc-utils/lsfd.c:239
 msgid "shared mappings"
-msgstr ""
+msgstr "sdílená mapování"
 
 #: misc-utils/lsfd.c:243
 msgid "RO shared mappings"
-msgstr ""
+msgstr "sdílená mapování jen pro čtení"
 
 #: misc-utils/lsfd.c:247
 msgid "WO shared mappings"
-msgstr ""
+msgstr "sdílená mapování jen pro zápis"
 
 #: misc-utils/lsfd.c:251
-#, fuzzy
-#| msgid "Regular files: %9lld\n"
 msgid "regular files"
-msgstr "Běžné soubory: %9lld\n"
+msgstr "běžné soubory"
 
 #: misc-utils/lsfd.c:255
-#, fuzzy
-#| msgid "Sectors"
 msgid "directories"
-msgstr "Sektory"
+msgstr "adresáře"
 
 #: misc-utils/lsfd.c:259
-#, fuzzy
-#| msgid "socket"
 msgid "sockets"
-msgstr "socket"
+msgstr "sockety"
 
 #: misc-utils/lsfd.c:263
 msgid "fifos/pipes"
-msgstr ""
+msgstr "roury"
 
 #: misc-utils/lsfd.c:267
-#, fuzzy
-#| msgid "/dev/%s: not a character device"
 msgid "character devices"
-msgstr "/dev/%s není znakovým zařízením"
+msgstr "znaková zařízení"
 
 #: misc-utils/lsfd.c:271
-#, fuzzy
-#| msgid "block device name"
 msgid "block devices"
-msgstr "název blokového zařízení"
+msgstr "bloková zařízení"
 
 #: misc-utils/lsfd.c:275
-#, fuzzy
-#| msgid "unknown user %s"
 msgid "unknown types"
-msgstr "neznámý uživatel: %s"
+msgstr "neznámé druhy"
 
 #: misc-utils/lsfd.c:350
 msgid "too many columns are added via filter expression"
-msgstr ""
+msgstr "do filtrovacího výrazu bylo přidáno příliš mnoho sloupců"
 
 #: misc-utils/lsfd.c:1039
-#, fuzzy
-#| msgid "failed to allocate UID cache"
 msgid "failed to allocate an idcache"
-msgstr "alokace keš UID selhala"
+msgstr "alokace keše identifikátorů selhala"
 
 # Unknown command
 #: misc-utils/lsfd.c:1094 misc-utils/lslocks.c:292
@@ -12209,138 +11891,113 @@ msgid "(unknown)"
 msgstr "(neznámý)"
 
 #: misc-utils/lsfd.c:1178
-#, fuzzy, c-format
-#| msgid "unexpected value in %s: %ju"
+#, c-format
 msgid "unexpected value for pid specification: %s"
-msgstr "neočekávaná hodnota v %s: %ju"
+msgstr "neočekávaná hodnota pro PID: %s"
 
 #: misc-utils/lsfd.c:1180
 #, c-format
 msgid "garbage at the end of pid specification: %s"
-msgstr ""
+msgstr "smetí na konci PID: %s"
 
 #: misc-utils/lsfd.c:1182
 #, c-format
 msgid "out of range value for pid specification: %ld"
-msgstr ""
+msgstr "PID je mimo platný rozsah: %ld"
 
 #: misc-utils/lsfd.c:1226
-#, fuzzy
-#| msgid "failed to allocate pty handler"
 msgid "failed to alloc procfs handler"
-msgstr "alokace deskriptoru PTY selhala"
+msgstr "alokace deskriptoru procfs selhala"
 
 #: misc-utils/lsfd.c:1230
-#, fuzzy
-#| msgid "failed to open: %s"
 msgid "failed to open /proc"
-msgstr "nepodařilo se otevřít: %s"
+msgstr "nepodařilo se otevřít /proc"
 
 #: misc-utils/lsfd.c:1254
-#, fuzzy
-#| msgid " -n, --noheadings          don't print headings\n"
 msgid " -l, --threads         list in threads level\n"
-msgstr " -n, --noheadings          nevypíše záhlaví\n"
+msgstr " -l, --threads         vypisuje na úrovni vláken\n"
 
 #: misc-utils/lsfd.c:1259
-#, fuzzy
-#| msgid " -u, --notruncate       don't truncate text in columns\n"
 msgid " -u, --notruncate      don't truncate text in columns\n"
-msgstr " -u, --notruncate       ve sloupcích nezkracuje text\n"
+msgstr " -u, --notruncate      ve sloupcích nezkracuje text\n"
 
 #: misc-utils/lsfd.c:1260
-#, fuzzy
-#| msgid " -p, --pid <pid>...     act on these already running processes\n"
 msgid " -p, --pid  <pid(s)>   collect information only specified processes\n"
-msgstr " -p, --pid <PID>…       pracuje nad těmito již běžícími procesy\n"
+msgstr " -p, --pid <PID…>      shromáždí údaje jen o zadaných procesech\n"
 
 #: misc-utils/lsfd.c:1261
 msgid " -Q, --filter <expr>   apply display filter\n"
-msgstr ""
+msgstr " -Q, --filter <výraz>  použije výstupní filtr\n"
 
 #: misc-utils/lsfd.c:1262
 msgid "     --debug-filter    dump the innternal data structure of filter and exit\n"
-msgstr ""
+msgstr "     --debug-filter    vypíše vnitřní údaje o filtru a skončí\n"
 
 #: misc-utils/lsfd.c:1263
-#, fuzzy
-#| msgid ""
-#| "     --target-prefix <path>\n"
-#| "                         specifies path used for all mountpoints\n"
 msgid ""
 " -C, --counter <name>:<expr>\n"
 "                       define custom counter for --summary output\n"
 msgstr ""
-"     --target-prefix <cesta>\n"
-"                         určuje cestu použitou pro všechny body připojení\n"
+" -C, --counter <název>:<výraz>\n"
+"                       definuje vlastní počítadlo ve výstupu --summary\n"
 
 #: misc-utils/lsfd.c:1265
 msgid "     --dump-counters   dump counter definitions\n"
-msgstr ""
+msgstr "     --dump-counters   vypíše definice počítadel\n"
 
 #: misc-utils/lsfd.c:1266
-#, fuzzy
-#| msgid "     --summary[=when] print summary information (never,always or only)\n"
 msgid "     --summary[=when]  print summary information (only, append, or never)\n"
 msgstr ""
-"     --summary[=kdy]  vypíše souhrnné údaje (never [nikdy], always [vždy]\n"
-"                      nebo only [pouze]\n"
+"     --summary[=kdy]   vypíše souhrnné údaje (only [pouze], append [připojit]\n"
+"                       nebo never [nikdy]\n"
 
 #: misc-utils/lsfd.c:1288
-#, fuzzy
-#| msgid "failed to allocate memory: %m"
 msgid "failed to allocate memory for string"
-msgstr "paměť nelze alokovat: %m"
+msgstr "nelze alokovat paměť pro řetězec"
 
 #: misc-utils/lsfd.c:1345
 #, c-format
 msgid "too short counter specification: -C/--counter %s"
-msgstr ""
+msgstr "příliš krátká definice počítadla: -C/--counter %s"
 
 #: misc-utils/lsfd.c:1349 misc-utils/lsfd.c:1355
 #, c-format
 msgid "no name for counter: -C/--counter %s"
-msgstr ""
+msgstr "počítadlo bez názvu: -C/--counter %s"
 
 #: misc-utils/lsfd.c:1359
 #, c-format
 msgid "empty ecounter expression given: -C/--counter %s"
-msgstr ""
+msgstr "zadán prázdný výraz pro počítadlo: -C/--counter %s"
 
 #: misc-utils/lsfd.c:1367
 #, c-format
 msgid "don't use `{' in the name of a counter: %s"
-msgstr ""
+msgstr "v názvu počítadla nepoužívejte „{“: %s"
 
 #: misc-utils/lsfd.c:1388
 msgid "failed in making filter for a counter: "
-msgstr ""
+msgstr "výroba filtru pro počítadlo selhala: "
 
 #: misc-utils/lsfd.c:1456
-#, fuzzy
-#| msgid "failed to allocate output table"
 msgid "failed to allocate summary table"
-msgstr "výstupní tabulku se nepodařilo alokovat"
+msgstr "tabulku souhrnu se nepodařilo alokovat"
 
 #: misc-utils/lsfd.c:1466
 msgid "VALUE"
-msgstr ""
+msgstr "HODNOTA"
 
 #: misc-utils/lsfd.c:1468 misc-utils/lsfd.c:1474
-#, fuzzy
-#| msgid "failed to allocate output column"
 msgid "failed to allocate summary column"
-msgstr "výstupní sloupec se nepodařilo alokovat"
+msgstr "sloupec souhrnu se nepodařilo alokovat"
 
 #: misc-utils/lsfd.c:1472
 msgid "COUNTER"
-msgstr ""
+msgstr "POČÍTADLO"
 
 #: misc-utils/lsfd.c:1487 misc-utils/lsfd.c:1489 misc-utils/lsfd.c:1492
-#, fuzzy
-#| msgid "failed to add output data"
 msgid "failed to add summary data"
-msgstr "přidání výstupních data selhalo"
+msgstr "přidání souhrnných údajů selhalo"
 
 #: misc-utils/lsfd.c:1597 sys-utils/lsmem.c:641
 msgid "unsupported --summary argument"
@@ -12351,124 +12008,110 @@ msgid "failed to allocate UID cache"
 msgstr "alokace keš UID selhala"
 
 #: misc-utils/lsfd-filter.c:375
-#, fuzzy
-#| msgid "failed to allocate memory: %m"
 msgid "failed to allocate memory"
-msgstr "paměť nelze alokovat: %m"
+msgstr "paměť nebylo možné alokovat"
 
 #: misc-utils/lsfd-filter.c:418
 #, c-format
 msgid "error: string literal is not terminated: %s"
-msgstr ""
+msgstr "chyba: řetězec není ukončen: %s"
 
 #: misc-utils/lsfd-filter.c:511
 #, c-format
 msgid "error: unbalanced parenthesis: %s"
-msgstr ""
+msgstr "chyba: nepárové závorky: %s"
 
 #: misc-utils/lsfd-filter.c:560 misc-utils/lsfd-filter.c:570
 #: misc-utils/lsfd-filter.c:580
-#, fuzzy, c-format
-#| msgid "input error: unexpected character %c after %s field"
+#, c-format
 msgid "error: unexpected character %c after ="
-msgstr "chyba vstupu: neočekávaný znak %c po položce %s"
+msgstr "chyba: neočekávaný znak %c po ="
 
 #: misc-utils/lsfd-filter.c:641
-#, fuzzy, c-format
-#| msgid "%s: failed to get partition number"
+#, c-format
 msgid "error: failed to convert input to number"
-msgstr "%s: získání čísla oddílu selhalo"
+msgstr "chyba: převod vstupu na číslo selhalo"
 
 #: misc-utils/lsfd-filter.c:645
-#, fuzzy, c-format
-#| msgid "input error: unexpected character %c after %s field"
+#, c-format
 msgid "error: unexpected character %c"
-msgstr "chyba vstupu: neočekávaný znak %c po položce %s"
+msgstr "chyba: neočekávaný znak %c"
 
 #: misc-utils/lsfd-filter.c:700
-#, fuzzy, c-format
-#| msgid "input error: unexpected character %c after %s field"
+#, c-format
 msgid "error: unexpected token: %s after %s"
-msgstr "chyba vstupu: neočekávaný znak %c po položce %s"
+msgstr "chyba: neočekávaný symbol %s po %s"
 
 #: misc-utils/lsfd-filter.c:711
 #, c-format
 msgid "error: empty left side expression: %s"
-msgstr ""
+msgstr "chyba: výraz na levé straně je prázdný: %s"
 
 #: misc-utils/lsfd-filter.c:726
-#, fuzzy, c-format
-#| msgid "error: cannot open %s"
+#, c-format
 msgid "error: no such column: %s"
-msgstr "chyba: nelze otevřít %s"
+msgstr "chyba: sloupec neexistuje: %s"
 
 #: misc-utils/lsfd-filter.c:737
-#, fuzzy, c-format
-#| msgid "error: cannot open %s"
+#, c-format
 msgid "error: cannot add a column to table: %s"
-msgstr "chyba: nelze otevřít %s"
+msgstr "chyba: sloupec nelze přidat do tabulky: %s"
 
 #: misc-utils/lsfd-filter.c:759
-#, fuzzy, c-format
-#| msgid "internal error: unsupported dialog type %d"
+#, c-format
 msgid "error: unsupported column data type: %d, column: %s"
-msgstr "vnitřní chyba: nepodporovaný druh dialogu %d"
+msgstr "chyba: nepodporovaný druh datového sloupce: %d, sloupec %s"
 
 #: misc-utils/lsfd-filter.c:804 misc-utils/lsfd-filter.c:834
 #, c-format
 msgid "error: empty right side expression: %s"
-msgstr ""
+msgstr "chyba: prázdný výraz na pravé straně: %s"
 
 #: misc-utils/lsfd-filter.c:970
-#, fuzzy, c-format
-#| msgid "unexpected end of file on %s"
+#, c-format
 msgid "unexpected type in filter application: %s"
-msgstr "neočekávaný konec souboru %s"
+msgstr "neočekávaný typ v aplikaci filtru: %s"
 
 #: misc-utils/lsfd-filter.c:1071
-#, fuzzy, c-format
-#| msgid "input error: unexpected character %c after %s field"
+#, c-format
 msgid "error: unexpected operand type %s for: %s"
-msgstr "chyba vstupu: neočekávaný znak %c po položce %s"
+msgstr "chyba: neočekávaný typ operátoru %s pro: %s"
 
 #: misc-utils/lsfd-filter.c:1194 misc-utils/lsfd-filter.c:1227
 #: misc-utils/lsfd-filter.c:1249
-#, fuzzy, c-format
-#| msgid "input error: unexpected character %c after %s field"
+#, c-format
 msgid "error: unexpected left operand type %s for: %s"
-msgstr "chyba vstupu: neočekávaný znak %c po položce %s"
+msgstr "chyba: neočekávaný typ levého operandu %s pro: %s"
 
 #: misc-utils/lsfd-filter.c:1202 misc-utils/lsfd-filter.c:1235
 #: misc-utils/lsfd-filter.c:1257
-#, fuzzy, c-format
-#| msgid "input error: unexpected character %c after %s field"
+#, c-format
 msgid "error: unexpected right operand type %s for: %s"
-msgstr "chyba vstupu: neočekávaný znak %c po položce %s"
+msgstr "chyba: neočekávaný typ pravého operandu %s pro: %s"
 
 #: misc-utils/lsfd-filter.c:1264
 #, c-format
 msgid "error: string literal is expected as right operand for: %s"
-msgstr ""
+msgstr "chyba: jako pravý operand se očekává obyčejný řetězec: %s"
 
 #: misc-utils/lsfd-filter.c:1280
-#, fuzzy, c-format
-#| msgid "could not compile regular expression %s: %s"
+#, c-format
 msgid "error: could not compile regular expression %s: %s"
-msgstr "regulární výraz %s nebylo možné přeložit: %s"
+msgstr "chyba: regulární výraz %s nebylo možné přeložit: %s"
 
 #: misc-utils/lsfd-filter.c:1316
 msgid "error: unbalanced parenthesis: ("
-msgstr ""
+msgstr "chyba: nepárová závorka: ("
 
 #: misc-utils/lsfd-filter.c:1322
 #, c-format
 msgid "error: garbage at the end of expression: %s"
-msgstr ""
+msgstr "chyba: smetí na konci výrazu: %s"
 
 #: misc-utils/lsfd-filter.c:1328
 #, c-format
 msgid "error: bool expression is expected: %s"
-msgstr ""
+msgstr "chyba: je očekáván pravdivostní výraz: %s"
 
 #: misc-utils/lslocks.c:75
 msgid "command of the process holding the lock"
@@ -12511,10 +12154,9 @@ msgid "PID of the process blocking the lock"
 msgstr "ID procesu, který blokuje zámek"
 
 #: misc-utils/lslocks.c:234
-#, fuzzy, c-format
-#| msgid "failed to parse %s"
+#, c-format
 msgid "failed to parse '%s'"
-msgstr "%s se nezdařilo rozebrat"
+msgstr "„%s“ se nezdařilo rozebrat"
 
 #: misc-utils/lslocks.c:266
 msgid "failed to parse ID"
@@ -12741,16 +12383,12 @@ msgid " -n, --no-act        do not make any changes\n"
 msgstr " -n, --no-act        neprovede žádné změny\n"
 
 #: misc-utils/rename.c:246
-#, fuzzy
-#| msgid " -a, --all            print all devices\n"
 msgid " -a, --all           replace all occurrences\n"
-msgstr " -a, --all            vypíše všechna zařízení\n"
+msgstr " -a, --all           nahradí všechny výskyty\n"
 
 #: misc-utils/rename.c:247
-#, fuzzy
-#| msgid " -a, --hostlast       display hostnames in the last column\n"
 msgid " -l, --last          replace only the last occurrence\n"
-msgstr " -a, --hostlast       v posledním sloupci zobrazí název stroje\n"
+msgstr " -l, --last          nahradí pouze poslední výskyt\n"
 
 #: misc-utils/rename.c:248
 msgid " -o, --no-overwrite  don't overwrite existing files\n"
@@ -12924,10 +12562,8 @@ msgid "operation %d\n"
 msgstr "operace %d\n"
 
 #: misc-utils/uuidd.c:498 misc-utils/uuidd.c:509 misc-utils/uuidd.c:519
-#, fuzzy
-#| msgid "failed to parse logical block size"
 msgid "failed to open/lock clock counter"
-msgstr "velikost logického bloku se nepodařilo rozebrat"
+msgstr "otevření/uzamknutí počítadla hodin selhalo"
 
 #: misc-utils/uuidd.c:501
 #, c-format
@@ -13877,8 +13513,9 @@ msgstr "nezdařilo se rozebrat začátek oblasti"
 msgid "failed to parse step"
 msgstr "krok se nezdařilo rozebrat"
 
-#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:491 sys-utils/fallocate.c:382
-#: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561 sys-utils/umount.c:610
+#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:491
+#: sys-utils/fallocate.c:382 sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561
+#: sys-utils/umount.c:610
 msgid "unexpected number of arguments"
 msgstr "neočekávaný počet argumentů"
 
@@ -14627,10 +14264,8 @@ msgid " -H, --human                 human readable output\n"
 msgstr " -H, --human                 výstup čitelný pro lidi\n"
 
 #: sys-utils/dmesg.c:289
-#, fuzzy
-#| msgid " -J, --json             use JSON output format\n"
 msgid " -J, --json                  use JSON output format\n"
-msgstr " -J, --json             výstup formátuje do JSONu\n"
+msgstr " -J, --json                  výstup formátuje do JSONu\n"
 
 #: sys-utils/dmesg.c:290
 msgid " -k, --kernel                display kernel messages\n"
@@ -14777,14 +14412,14 @@ msgstr "nelze namapovat do paměti: %s"
 #. proper month/day order here
 #: sys-utils/dmesg.c:861
 msgid "%a %b %e %H:%M:%S %Y"
-msgstr ""
+msgstr "%a %e. %b %Y %H:%M:%S"
 
 #. TRANSLATORS: dmesg uses strftime() fo generate date-time string
 #. where: %b is abbreviated month and %e is day of the month as a
 #. decimal number. Please, set proper month/day order here.
 #: sys-utils/dmesg.c:871
 msgid "%b%e %H:%M"
-msgstr ""
+msgstr "%e.%b %H:%M"
 
 #: sys-utils/dmesg.c:1523
 msgid "invalid buffer size argument"
@@ -14973,10 +14608,8 @@ msgstr "%s: odpojuje se"
 
 #: sys-utils/eject.c:662 sys-utils/mount.c:59 sys-utils/umount.c:122
 #: text-utils/more.c:1272
-#, fuzzy
-#| msgid "drop permissions failed."
 msgid "drop permissions failed"
-msgstr "zbavení se oprávnění selhalo."
+msgstr "zbavení se oprávnění selhalo"
 
 #: sys-utils/eject.c:671
 msgid "unable to fork"
@@ -15234,34 +14867,29 @@ msgid "invalid offset value specified"
 msgstr "zadána neplatná hodnota pozice"
 
 #: sys-utils/fallocate.c:421
-#, fuzzy, c-format
-#| msgid "%s: %s (%ju bytes) converted to sparse holes.\n"
+#, c-format
 msgid "%s: %s (%ju bytes) hole created.\n"
-msgstr "%s: %s (%ju bajtů) převedeno na řídké díry.\n"
+msgstr "%s: %s (%ju bajtů) díra vytvořena.\n"
 
 #: sys-utils/fallocate.c:424
-#, fuzzy, c-format
-#| msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
+#, c-format
 msgid "%s: %s (%ju bytes) removed.\n"
-msgstr "%s: %s (%'<PRIu64> bajtů) zahozeno\n"
+msgstr "%s: %s (%ju bajtů) odstraněno.\n"
 
 #: sys-utils/fallocate.c:427
-#, fuzzy, c-format
-#| msgid "%s: %s (%ju bytes) converted to sparse holes.\n"
+#, c-format
 msgid "%s: %s (%ju bytes) inserted.\n"
-msgstr "%s: %s (%ju bajtů) převedeno na řídké díry.\n"
+msgstr "%s: %s (%ju bajtů) vloženo.\n"
 
 #: sys-utils/fallocate.c:430
-#, fuzzy, c-format
-#| msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
+#, c-format
 msgid "%s: %s (%ju bytes) zeroed.\n"
-msgstr "%s: %s (%'<PRIu64> bajtů) zahozeno\n"
+msgstr "%s: %s (%ju bajtů) vynulováno.\n"
 
 #: sys-utils/fallocate.c:433
-#, fuzzy, c-format
-#| msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
+#, c-format
 msgid "%s: %s (%ju bytes) allocated.\n"
-msgstr "%s: %s (%'<PRIu64> bajtů) zahozeno\n"
+msgstr "%s: %s (%ju bajtů) alokováno.\n"
 
 #: sys-utils/flock.c:53
 #, c-format
@@ -15526,21 +15154,16 @@ msgid "local"
 msgstr "místní"
 
 #: sys-utils/hwclock.c:258 sys-utils/hwclock.c:261
-#, fuzzy, c-format
-#| msgid ""
-#| "Warning: unrecognized third line in adjtime file\n"
-#| "(Expected: `UTC' or `LOCAL' or nothing.)"
+#, c-format
 msgid "Warning: unrecognized line in adjtime file: %s"
-msgstr ""
-"Varování: neznámý formát třetího řádku v souboru adjtime\n"
-"(Očekáváno: „UTC“ nebo „LOCAL“ nebo nic.)"
+msgstr "Pozor: neznámý formát řádku v souboru adjtime: %s"
 
 #: sys-utils/hwclock.c:273
 msgid ""
 "Warning: unrecognized third line in adjtime file\n"
 "(Expected: `UTC' or `LOCAL' or nothing.)"
 msgstr ""
-"Varování: neznámý formát třetího řádku v souboru adjtime\n"
+"Pozor: neznámý formát třetího řádku v souboru adjtime\n"
 "(Očekáváno: „UTC“ nebo „LOCAL“ nebo nic.)"
 
 #: sys-utils/hwclock.c:279
@@ -15773,16 +15396,14 @@ msgid "unable to set the RTC epoch."
 msgstr "epochu hodin RTC nelze nastavit."
 
 #: sys-utils/hwclock.c:1165
-#, fuzzy, c-format
-#| msgid "unable to read the RTC epoch."
+#, c-format
 msgid "unable to read the RTC parameter %s"
-msgstr "nelze přečíst epochu hodin RTC."
+msgstr "nelze přečíst parametr %s hodin RTC"
 
 #: sys-utils/hwclock.c:1170
-#, fuzzy, c-format
-#| msgid "The RTC epoch is set to %lu.\n"
+#, c-format
 msgid "The RTC parameter 0x%jx is set to 0x%jx.\n"
-msgstr "Epocha hodin RTC je nastavena na %lu.\n"
+msgstr "Parametr 0x%jx hodin RTC je nastavena na 0x%jx.\n"
 
 #: sys-utils/hwclock.c:1197
 #, c-format
@@ -15794,165 +15415,121 @@ msgid "Time clocks utility."
 msgstr "Nástroj pro hodiny a čas."
 
 #: sys-utils/hwclock.c:1203
-#, fuzzy
-#| msgid " -r, --show           display the RTC time"
 msgid " -r, --show                      display the RTC time"
-msgstr " -r, --show           zobrazí čas v RTC"
+msgstr " -r, --show                      zobrazí čas v RTC"
 
 #: sys-utils/hwclock.c:1204
-#, fuzzy
-#| msgid "     --get            display drift corrected RTC time"
 msgid "     --get                       display drift corrected RTC time"
-msgstr "     --get            zobrazí čas v RTC opravený o systematický posun"
+msgstr "     --get                       zobrazí čas v RTC opravený o systematický posun"
 
 #: sys-utils/hwclock.c:1205
-#, fuzzy
-#| msgid "     --set            set the RTC according to --date"
 msgid "     --set                       set the RTC according to --date"
-msgstr "     --set            nastaví RTC podle --date"
+msgstr "     --set                       nastaví RTC podle --date"
 
 #: sys-utils/hwclock.c:1206
-#, fuzzy
-#| msgid " -s, --hctosys        set the system time from the RTC"
 msgid " -s, --hctosys                   set the system time from the RTC"
-msgstr " -s, --hctosys        nastaví systémový čas podle hodin RTC"
+msgstr " -s, --hctosys                   nastaví systémový čas podle hodin RTC"
 
 #: sys-utils/hwclock.c:1207
-#, fuzzy
-#| msgid " -w, --systohc        set the RTC from the system time"
 msgid " -w, --systohc                   set the RTC from the system time"
-msgstr " -w, --systohc        nastaví hodiny RTC podle systémového času"
+msgstr " -w, --systohc                   nastaví hodiny RTC podle systémového času"
 
 #: sys-utils/hwclock.c:1208
-#, fuzzy
-#| msgid "     --systz          send timescale configurations to the kernel"
 msgid "     --systz                     send timescale configurations to the kernel"
-msgstr "     --systz          odešle do jádra konfiguraci časové zóny"
+msgstr "     --systz                     odešle do jádra konfiguraci časové zóny"
 
 #: sys-utils/hwclock.c:1209
-#, fuzzy
-#| msgid " -a, --adjust         adjust the RTC to account for systematic drift"
 msgid " -a, --adjust                    adjust the RTC to account for systematic drift"
-msgstr " -a, --adjust         opraví RTC o systematický posun"
+msgstr " -a, --adjust                    opraví RTC o systematický posun"
 
 #: sys-utils/hwclock.c:1211
-#, fuzzy
-#| msgid "     --getepoch       display the RTC epoch"
 msgid "     --getepoch                  display the RTC epoch"
-msgstr "     --getepoch       zobrazí epochu hodin RTC"
+msgstr "     --getepoch                  zobrazí epochu hodin RTC"
 
 #: sys-utils/hwclock.c:1212
-#, fuzzy
-#| msgid "     --setepoch       set the RTC epoch according to --epoch"
 msgid "     --setepoch                  set the RTC epoch according to --epoch"
-msgstr "     --setepoch       nastaví epochu hodin RTC podle --epoch"
+msgstr "     --setepoch                  nastaví epochu hodin RTC podle --epoch"
 
 #: sys-utils/hwclock.c:1215
-#, fuzzy
-#| msgid "     --getepoch       display the RTC epoch"
 msgid "     --param-get <param>         display the RTC parameter"
-msgstr "     --getepoch       zobrazí epochu hodin RTC"
+msgstr "     --param-get <parametr>      zobrazí parametr hodin RTC"
 
 #: sys-utils/hwclock.c:1216
 msgid "     --param-set <param>=<value> set the RTC parameter"
-msgstr ""
+msgstr "     --param-set <parametr>=<hodnota>  nastaví parametr hodin RTC"
 
 #: sys-utils/hwclock.c:1218
-#, fuzzy
-#| msgid "     --predict        predict the drifted RTC time according to --date"
 msgid "     --predict                   predict the drifted RTC time according to --date"
-msgstr "     --predict        předpoví posunutý čas v RTC podle --date"
+msgstr "     --predict                   předpoví posunutý čas v RTC podle --date"
 
 #: sys-utils/hwclock.c:1220
-#, fuzzy
-#| msgid " -u, --utc            the RTC timescale is UTC"
 msgid " -u, --utc                       the RTC timescale is UTC"
-msgstr " -u, --utc            hodiny RTC běží v UTC"
+msgstr " -u, --utc                       hodiny RTC běží v UTC"
 
 #: sys-utils/hwclock.c:1221
-#, fuzzy
-#| msgid " -l, --localtime      the RTC timescale is Local"
 msgid " -l, --localtime                 the RTC timescale is Local"
-msgstr " -l, --localtime      hodiny RTC běží v místní časové zóně"
+msgstr " -l, --localtime                 hodiny RTC běží v místní časové zóně"
 
 #: sys-utils/hwclock.c:1224
-#, fuzzy, c-format
-#| msgid " -f, --rtc <file>     use an alternate file to %1$s\n"
+#, c-format
 msgid " -f, --rtc <file>                use an alternate file to %1$s\n"
-msgstr " -f, --rtc <soubor>   použije zadaný soubor místo %1$s\n"
+msgstr " -f, --rtc <soubor>              použije zadaný soubor místo %1$s\n"
 
 #: sys-utils/hwclock.c:1227
-#, fuzzy, c-format
-#| msgid "     --directisa      use the ISA bus instead of %1$s access\n"
+#, c-format
 msgid "     --directisa                 use the ISA bus instead of %1$s access\n"
-msgstr "     --directisa      použije sběrnici ISA namísto přístupu %1$s\n"
+msgstr "     --directisa                 použije sběrnici ISA namísto přístupu %1$s\n"
 
 #: sys-utils/hwclock.c:1228
-#, fuzzy
-#| msgid "     --date <time>    date/time input for --set and --predict"
 msgid "     --date <time>               date/time input for --set and --predict"
-msgstr "     --date <čas>     vstup času/data pro --set a --predict"
+msgstr "     --date <čas>                vstup času/data pro --set a --predict"
 
 #: sys-utils/hwclock.c:1229
-#, fuzzy
-#| msgid "     --delay <sec>    delay used when set new RTC time"
 msgid "     --delay <sec>               delay used when set new RTC time"
-msgstr "     --delay <sekundy>  zpoždění při nastavování nového času RTC"
+msgstr "     --delay <sekundy>           zpoždění při nastavování nového času RTC"
 
 #: sys-utils/hwclock.c:1231
-#, fuzzy
-#| msgid "     --epoch <year>   epoch input for --setepoch"
 msgid "     --epoch <year>              epoch input for --setepoch"
-msgstr "     --epoch <rok>    určuje epochu pro --setepoch"
+msgstr "     --epoch <rok>               určuje epochu pro --setepoch"
 
 #: sys-utils/hwclock.c:1233
-#, fuzzy
-#| msgid "     --update-drift   update the RTC drift factor"
 msgid "     --update-drift              update the RTC drift factor"
-msgstr "     --update-drift   aktualizuje činitel systematického posunu hodin RTC"
+msgstr "     --update-drift              aktualizuje činitel systematického posunu hodin RTC"
 
 #: sys-utils/hwclock.c:1235
-#, fuzzy, c-format
-#| msgid "     --noadjfile      do not use %1$s\n"
+#, c-format
 msgid "     --noadjfile                 do not use %1$s\n"
-msgstr "     --noadjfile      nepoužije %1$s\n"
+msgstr "     --noadjfile                 nepoužije %1$s\n"
 
 #: sys-utils/hwclock.c:1237
-#, fuzzy, c-format
-#| msgid "     --adjfile <file> use an alternate file to %1$s\n"
+#, c-format
 msgid "     --adjfile <file>            use an alternate file to %1$s\n"
-msgstr ""
-"     --adjfile <soubor>\n"
-"                      použije zadaný soubor místo %1$s\n"
+msgstr "     --adjfile <soubor>          použije zadaný soubor místo %1$s\n"
 
 #: sys-utils/hwclock.c:1238
-#, fuzzy
-#| msgid "     --test           dry run; implies --verbose"
 msgid "     --test                      dry run; implies --verbose"
-msgstr "     --test           nic nenastaví, zapne --verbose"
+msgstr "     --test                      nic nenastaví, zapne --verbose"
 
 #: sys-utils/hwclock.c:1239
-#, fuzzy
-#| msgid " -v, --verbose          display more details\n"
 msgid " -v, --verbose                   display more details"
-msgstr " -v, --verbose          vypisuje více podrobností\n"
+msgstr " -v, --verbose                   vypisuje více podrobností"
 
 #: sys-utils/hwclock.c:1246
 msgid " <param> is either a numeric RTC parameter value or one of these aliases:"
-msgstr ""
+msgstr " <parametr> je buďto číselná hodnota parametru TRC, nebo jeden z těchto názvů:"
 
 #: sys-utils/hwclock.c:1249
 #, c-format
 msgid "   - %1$s: %2$s (0x%3$x)\n"
-msgstr ""
+msgstr "   - %1$s: %2$s (0x%3$x)\n"
 
 #: sys-utils/hwclock.c:1253
 msgid "   See Kernel's include/uapi/linux/rtc.h for parameters and values."
-msgstr ""
+msgstr "   Parametry a hodnoty naleznete v include/uapi/linux/rtc.h jádra."
 
 #: sys-utils/hwclock.c:1255
 msgid " <param> and <value> accept hexadecimal values if prefixed with 0x, otherwise decimal."
-msgstr ""
+msgstr " <parametr> a <hodnota> jsou šestnáctkovou hodnotou, je-li uvedena předpona 0x, jinak desítkovou."
 
 #: sys-utils/hwclock.c:1356
 msgid "Unable to connect to audit system"
@@ -16006,18 +15583,16 @@ msgid "Using direct ISA access to the clock"
 msgstr "K hodinám se přistoupí přímo přes sběrnici ISA"
 
 #: sys-utils/hwclock-rtc.c:113
-#, fuzzy
-#| msgid "unsupported filesystem features"
 msgid "supported features"
-msgstr "nepodporované vlastnosti systému souborů"
+msgstr "nepodporované vlastnosti"
 
 #: sys-utils/hwclock-rtc.c:114
 msgid "time correction"
-msgstr ""
+msgstr "oprava času"
 
 #: sys-utils/hwclock-rtc.c:115
 msgid "backup switch mode"
-msgstr ""
+msgstr "režim přepnutí zálohy"
 
 #: sys-utils/hwclock-rtc.c:166
 #, c-format
@@ -16103,39 +15678,35 @@ msgstr "Volání ioctl(%d, RTC_EPOCH_SET, %lu) nad %s uspělo.\n"
 
 #: sys-utils/hwclock-rtc.c:521 sys-utils/hwclock-rtc.c:563
 msgid "could not convert parameter name to number"
-msgstr ""
+msgstr "název parametru nebylo možné převést na číslo"
 
 #: sys-utils/hwclock-rtc.c:533
-#, fuzzy, c-format
-#| msgid "ioctl(%d, RTC_EPOCH_SET, %lu) to %s failed"
+#, c-format
 msgid "ioctl(%d, RTC_PARAM_GET, param) to %s failed"
-msgstr "volání ioctl(%d, RTC_EPOCH_SET, %lu) nad %s selhalo"
+msgstr "volání ioctl(%d, RTC_PARAM_GET, parametr) nad %s selhalo"
 
 #: sys-utils/hwclock-rtc.c:544
-#, fuzzy, c-format
-#| msgid "ioctl(%d, RTC_EPOCH_SET, %lu) to %s succeeded.\n"
+#, c-format
 msgid "ioctl(%d, RTC_PARAM_GET, param) to %s succeeded.\n"
-msgstr "Volání ioctl(%d, RTC_EPOCH_SET, %lu) nad %s uspělo.\n"
+msgstr "Volání ioctl(%d, RTC_PARAM_GET, parametr) nad %s uspělo.\n"
 
 #: sys-utils/hwclock-rtc.c:570
 msgid "expected <param>=<value>"
-msgstr ""
+msgstr "očekáváno <parametr>=<hodnota>"
 
 #: sys-utils/hwclock-rtc.c:574
 msgid "could not convert parameter value to number"
-msgstr ""
+msgstr "hodnotu parametru nebylo možné převést na číslo"
 
 #: sys-utils/hwclock-rtc.c:586
-#, fuzzy, c-format
-#| msgid "ioctl(%d, RTC_EPOCH_SET, %lu) to %s failed"
+#, c-format
 msgid "ioctl(%d, RTC_PARAM_SET, param) to %s failed"
-msgstr "volání ioctl(%d, RTC_EPOCH_SET, %lu) nad %s selhalo"
+msgstr "volání ioctl(%d, RTC_PARAM_SET, parametr) nad %s selhalo"
 
 #: sys-utils/hwclock-rtc.c:592
-#, fuzzy, c-format
-#| msgid "ioctl(%d, RTC_EPOCH_SET, %lu) to %s succeeded.\n"
+#, c-format
 msgid "ioctl(%d, RTC_PARAM_SET, param) to %s succeeded.\n"
-msgstr "Volání ioctl(%d, RTC_EPOCH_SET, %lu) nad %s uspělo.\n"
+msgstr "Volání ioctl(%d, RTC_PARAM_SET, parametr) nad %s uspělo.\n"
 
 #: sys-utils/ipcmk.c:70
 msgid "Create various IPC resources.\n"
@@ -16170,10 +15741,8 @@ msgid "failed to parse elements"
 msgstr "elementy se nepodařilo rozebrat"
 
 #: sys-utils/ipcmk.c:130
-#, fuzzy
-#| msgid "failed to parse id"
 msgid "failed to parse mode"
-msgstr "ID se nezdařilo rozebrat"
+msgstr "režim se nezdařilo rozebrat"
 
 #: sys-utils/ipcmk.c:149
 msgid "create share memory failed"
@@ -16391,10 +15960,8 @@ msgid " -b, --bytes       show sizes in bytes\n"
 msgstr " -b, --bytes       velikosti zobrazí v bajtech\n"
 
 #: sys-utils/ipcs.c:124
-#, fuzzy
-#| msgid "failed to parse argument"
 msgid "failed to parse id argument"
-msgstr "argument se nepodařilo rozebrat"
+msgstr "argument ID se nepodařilo rozebrat"
 
 #: sys-utils/ipcs.c:172
 msgid "when using an ID, a single resource must be specified"
@@ -16963,8 +16530,7 @@ msgid "cpu-interrupts"
 msgstr "přerušení_CPU"
 
 #: sys-utils/irq-common.c:484
-#, fuzzy, no-c-format
-#| msgid "%delta:"
+#, no-c-format
 msgid "%delta:"
 msgstr "%rozdíl:"
 
@@ -17009,6 +16575,9 @@ msgstr "Interaktivní nástroj pro zobrazí údajů o přerušeních jádra."
 #: sys-utils/irqtop.c:263
 msgid " -c, --cpu-stat <mode> show per-cpu stat (auto, enable, disable)\n"
 msgstr ""
+" -c, --cpu-stat <režim>\n"
+"                       zobrazí statistiku pro každý procesor (auto,\n"
+"                       enable [zapnuto], disable [vypnuto])\n"
 
 #: sys-utils/irqtop.c:264
 msgid " -d, --delay <secs>   delay updates\n"
@@ -17051,10 +16620,9 @@ msgid "  q Q    quit program\n"
 msgstr "  q Q    ukončit program\n"
 
 #: sys-utils/irqtop.c:313
-#, fuzzy, c-format
-#| msgid "unsupported mode name: '%s'"
+#, c-format
 msgid "unsupported mode '%s'"
-msgstr "nepodporovaný název režimu: „%s“"
+msgstr "nepodporovaný režim: „%s“"
 
 #: sys-utils/irqtop.c:320
 msgid "failed to parse delay argument"
@@ -17527,7 +17095,7 @@ msgstr "ukáže současnou frekvenci CPU"
 
 #: sys-utils/lscpu.c:155
 msgid "shows scaling percentage of the CPU frequency"
-msgstr ""
+msgstr "ukáže procentuální frekvenci CPU"
 
 #: sys-utils/lscpu.c:156
 msgid "shows the maximum MHz of the CPU"
@@ -17617,10 +17185,8 @@ msgid "BIOS Model name:"
 msgstr "Biosový název modelu:"
 
 #: sys-utils/lscpu.c:866
-#, fuzzy
-#| msgid "CPU family:"
 msgid "BIOS CPU family:"
-msgstr "Rodina CPU:"
+msgstr "Biosová rodina CPU:"
 
 #: sys-utils/lscpu.c:868
 msgid "Machine type:"
@@ -17696,10 +17262,8 @@ msgid "CPU static MHz:"
 msgstr "CPU statické MHz:"
 
 #: sys-utils/lscpu.c:916
-#, fuzzy
-#| msgid "CPU min MHz:"
 msgid "CPU(s) scaling MHz:"
-msgstr "CPU min. MHz:"
+msgstr "CPU relativní MHz:"
 
 #: sys-utils/lscpu.c:917
 msgid "CPU max MHz:"
@@ -18518,10 +18082,10 @@ msgstr ""
 "                        cgroup, time)\n"
 
 #: sys-utils/lsns.c:1224
-#, fuzzy
-#| msgid "     --tree             enable tree format output if possible\n"
 msgid " -T, --tree <rel>       use tree format (parent, owner, or process)\n"
-msgstr "     --tree             výstup formátuje jako strom, je-li možno\n"
+msgstr ""
+" -T, --tree <vztah>     formátuje do stromu (parent [rodič], owner [vlastník]\n"
+"                        nebo process [proces])\n"
 
 #: sys-utils/lsns.c:1320
 #, c-format
@@ -18529,10 +18093,9 @@ msgid "unknown namespace type: %s"
 msgstr "druh jmenného prostoru není znám: %s"
 
 #: sys-utils/lsns.c:1340
-#, fuzzy, c-format
-#| msgid "unknown namespace type: %s"
+#, c-format
 msgid "unknown tree type: %s"
-msgstr "druh jmenného prostoru není znám: %s"
+msgstr "neznámý druh stromu: %s"
 
 #: sys-utils/lsns.c:1362
 msgid "--task is mutually exclusive with <namespace>"
@@ -18543,10 +18106,8 @@ msgid "invalid namespace argument"
 msgstr "neplatný argument se jmenným prostorem"
 
 #: sys-utils/lsns.c:1393
-#, fuzzy
-#| msgid "--pty is not supported for your system"
 msgid "--tree={parent|owner} is unsupported for your system"
-msgstr "přepínač --pty není na vašem systému podporován"
+msgstr "přepínač --tree={parent|owner} není na vašem systému podporován"
 
 #: sys-utils/lsns.c:1423
 #, c-format
@@ -18618,11 +18179,13 @@ msgid ""
 "mount: (hint) your fstab has been modified, but systemd still uses\n"
 "       the old version; use 'systemctl daemon-reload' to reload.\n"
 msgstr ""
+"mount: (rada) váš fstab byl změněn, ale systemd stále používá starou verzi.\n"
+"       Pro znovunačtení použijte „systemctl daemon-reload“.\n"
 
 #: sys-utils/mount.c:386
 #, c-format
 msgid "       dmesg(1) may have more information after failed mount system call.\n"
-msgstr ""
+msgstr "       dmesg(1) může obsahovat více údajů o selhaném připojení.\n"
 
 #: sys-utils/mount.c:415
 #, c-format
@@ -18687,7 +18250,7 @@ msgstr " -l, --show-labels       ukáže rovněž jmenovky souborových systém�
 #: sys-utils/mount.c:505
 #, c-format
 msgid " -m, --mkdir[=<mode>]    alias to '-o X-mount.mkdir[=<mode>]'\n"
-msgstr ""
+msgstr " -m, --mkdir[=<mód>]     stejné jako „-o X-mount.mkdir[=<mód>]“\n"
 
 #: sys-utils/mount.c:507 sys-utils/umount.c:99
 #, c-format
@@ -18961,10 +18524,8 @@ msgid " -w, --wd[=<dir>]       set the working directory\n"
 msgstr " -w, --wd[=<adresář>]   nastaví pracovní adresář\n"
 
 #: sys-utils/nsenter.c:97
-#, fuzzy
-#| msgid " -w, --wd[=<dir>]       set the working directory\n"
 msgid " -W. --wdns <dir>       set the working directory in namespace\n"
-msgstr " -w, --wd[=<adresář>]   nastaví pracovní adresář\n"
+msgstr " -W, --wdns[=<adresář>]  nastaví pracovní adresář ve jmenném prostoru\n"
 
 #: sys-utils/nsenter.c:98
 msgid " -F, --no-fork          do not fork before exec'ing <program>\n"
@@ -19150,16 +18711,14 @@ msgid "units"
 msgstr "jednotky"
 
 #: sys-utils/prlimit.c:168
-#, fuzzy, c-format
-#| msgid " %s [options] [-p PID]\n"
+#, c-format
 msgid " %s [options] [--<resource>=<limit>] [-p PID]\n"
-msgstr " %s [přepínače] [-p PID]\n"
+msgstr " %s [přepínače] [--<zdroj>=<omezení>] [-p PID]\n"
 
 #: sys-utils/prlimit.c:170
-#, fuzzy, c-format
-#| msgid " %s [options] -u <USER> COMMAND\n"
+#, c-format
 msgid " %s [options] [--<resource>=<limit>] COMMAND\n"
-msgstr " %s [přepínače] -u <UŽIVATEL> PŘÍKAZ\n"
+msgstr " %s [přepínače] [--<zdroj>=<omezení>] PŘÍKAZ\n"
 
 #: sys-utils/prlimit.c:173
 msgid "Show or change the resource limits of a process.\n"
@@ -19180,12 +18739,12 @@ msgstr ""
 "     --verbose          podrobný výstup\n"
 
 #: sys-utils/prlimit.c:184
-#, fuzzy
-#| msgid "Resource"
 msgid ""
 "\n"
 "Resources:\n"
-msgstr "Zdroj"
+msgstr ""
+"\n"
+"Zdroje:\n"
 
 #: sys-utils/prlimit.c:185
 msgid ""
@@ -19230,6 +18789,8 @@ msgid ""
 " <limit> is defined as a range soft:hard, soft:, :hard or a value to\n"
 "         define both limits (e.g. -e=0:10 -r=:10).\n"
 msgstr ""
+" <omezení> je definováno jako rozsah měkké:tvrdé, měkké:, :tvrdé\n"
+"nebo hodnota, která definuje obě hranice (např. -e=0:10 -r=:10).\n"
 
 #: sys-utils/prlimit.c:256 sys-utils/prlimit.c:262 sys-utils/prlimit.c:379
 #: sys-utils/prlimit.c:384
@@ -19328,10 +18889,8 @@ msgid " -n, --no-auto             disable byte order auto-detection\n"
 msgstr " -n, --no-auto             vypne automatické rozpoznávání pořadí bajtů\n"
 
 #: sys-utils/readprofile.c:204
-#, fuzzy
-#| msgid "failed to parse pid"
 msgid "failed to parse multiplier"
-msgstr "PID se nezdařilo rozebrat"
+msgstr "nezdařilo se rozebrat činitel"
 
 #: sys-utils/readprofile.c:242
 #, c-format
@@ -20933,49 +20492,41 @@ msgid "failed to write to /proc/self/timens_offsets"
 msgstr "nezdařilo se zapsat do /proc/self/timens_offsets"
 
 #: sys-utils/unshare.c:292
-#, fuzzy
-#| msgid "reset failed"
 msgid "eventfd failed"
-msgstr "reset selhal"
+msgstr "volání eventfd selhalo"
 
 #: sys-utils/unshare.c:302
-#, fuzzy
-#| msgid "failed to read speed"
 msgid "failed to read eventfd"
-msgstr "nepodařilo se přečíst rychlost"
+msgstr "nepodařilo se přečíst z eventfd"
 
 #: sys-utils/unshare.c:391
-#, fuzzy
-#| msgid "cannot parse PID"
 msgid "could not parse ID"
-msgstr "PID nelze rozebrat"
+msgstr "ID nebylo možné rozebrat"
 
 #: sys-utils/unshare.c:409
 #, c-format
 msgid "too many elements for mapping '%s'"
-msgstr ""
+msgstr "příliš mnoho prvků pro mapování „%s“"
 
+# TODO: pluralize
 #: sys-utils/unshare.c:411
 #, c-format
 msgid "mapping '%s' contains only %d elements"
-msgstr ""
+msgstr "mapování „%s“ obsahuje pouze %d prvků"
 
 #: sys-utils/unshare.c:446
-#, fuzzy, c-format
-#| msgid "couldn't open %s"
+#, c-format
 msgid "could not open '%s'"
-msgstr "%s nelze otevřít"
+msgstr "„%s“ nebylo možné otevřít"
 
 #: sys-utils/unshare.c:471 sys-utils/unshare.c:477
-#, fuzzy
-#| msgid "failed to parse uid"
 msgid "failed to parse subid map"
-msgstr "UID se nezdařilo rozebrat"
+msgstr "mapování subid se nezdařilo rozebrat"
 
 #: sys-utils/unshare.c:486
 #, c-format
 msgid "no line matching user \"%s\" in %s"
-msgstr ""
+msgstr "uživateli „%s“ v %s neodpovídá žádný řádek"
 
 #: sys-utils/unshare.c:658
 msgid "Run a program with some namespaces unshared from the parent.\n"
@@ -21042,32 +20593,28 @@ msgstr ""
 "                           (znamená --user)\n"
 
 #: sys-utils/unshare.c:675
-#, fuzzy
-#| msgid " -r, --map-root-user       map current user to root (implies --user)\n"
 msgid " --map-auto                map users and groups automatically (implies --user)\n"
 msgstr ""
-" -r, --map-root-user       namapuje současného uživatele na uživatele root\n"
+" --map-auto                namapuje uživatele a skupiny automaticky\n"
 "                           (znamená --user)\n"
 
 #: sys-utils/unshare.c:676
-#, fuzzy
-#| msgid " --map-user=<uid>|<name>   map current user to uid (implies --user)\n"
 msgid ""
 " --map-users=<outeruid>,<inneruid>,<count>\n"
 "                           map count users from outeruid to inneruid (implies --user)\n"
 msgstr ""
-" --map-user=<UID>|<jméno>  namapuje současného uživatele na UID\n"
-"                           (znamená --user)\n"
+" --map-users=<vnější_UID>,<vnitřní_UID>,<počet>\n"
+"                           namapuje počet uživatelů z vnějšího_UID na\n"
+"                           vnitřní_UID (znamená --user)\n"
 
 #: sys-utils/unshare.c:678
-#, fuzzy
-#| msgid " --map-group=<gid>|<name>  map current group to gid (implies --user)\n"
 msgid ""
 " --map-groups=<outergid>,<innergid>,<count>\n"
 "                           map count groups from outergid to innergid (implies --user)\n"
 msgstr ""
-" --map-group=<GID>|<název>  namapuje současnou skupinu na GID\n"
-"                            (znamená --user)\n"
+" --map-groups=<vnější_GID>,<vnitřní_GID>,<počet>\n"
+"                           namapuje počet skupin z vnějšího_GID na vnitřní_GID\n"
+"                           (znamená --user)\n"
 
 #: sys-utils/unshare.c:681
 msgid ""
@@ -21154,22 +20701,16 @@ msgid "unshare failed"
 msgstr "volání unshare selhalo"
 
 #: sys-utils/unshare.c:955
-#, fuzzy
-#| msgid "sigprocmask failed"
 msgid "sigprocmask block failed"
-msgstr "volání sigprocmask() selhalo"
+msgstr "blokování pomocí sigprocmask() selhalo"
 
 #: sys-utils/unshare.c:967
-#, fuzzy
-#| msgid "sigprocmask failed"
 msgid "sigprocmask restore failed"
-msgstr "volání sigprocmask() selhalo"
+msgstr "obnovení pomocí sigprocmask() selhalo"
 
 #: sys-utils/unshare.c:1003
-#, fuzzy
-#| msgid "sigprocmask failed"
 msgid "sigprocmask unblock failed"
-msgstr "volání sigprocmask() selhalo"
+msgstr "odblokování pomocí sigprocmask() selhalo"
 
 #: sys-utils/unshare.c:1007
 msgid "child exit failed"
@@ -21290,18 +20831,6 @@ msgid "Show the status of the hardware watchdog.\n"
 msgstr "Ukáže stav hardwarového hlídacího zařízení.\n"
 
 #: sys-utils/wdctl.c:231
-#, fuzzy
-#| msgid ""
-#| " -f, --flags <list>     print selected flags only\n"
-#| " -F, --noflags          don't print information about flags\n"
-#| " -I, --noident          don't print watchdog identity information\n"
-#| " -n, --noheadings       don't print headings for flags table\n"
-#| " -O, --oneline          print all information on one line\n"
-#| " -o, --output <list>    output columns of the flags\n"
-#| " -r, --raw              use raw output format for flags table\n"
-#| " -T, --notimeouts       don't print watchdog timeouts\n"
-#| " -s, --settimeout <sec> set watchdog timeout\n"
-#| " -x, --flags-only       print only flags table (same as -I -T)\n"
 msgid ""
 " -f, --flags <list>     print selected flags only\n"
 " -F, --noflags          don't print information about flags\n"
@@ -21322,6 +20851,10 @@ msgstr ""
 " -n, --noheadings       nevypisuje záhlaví tabulky příznaků\n"
 " -O, --oneline          vypíše všechny údaje na jeden řádek\n"
 " -o, --output <seznam>  vypíše sloupce příznaků\n"
+" -p, --setpretimeout <sekundy>\n"
+"                        nastaví upozornění na časový limit sledovacího zařízení\n"
+" -g, --setpregovernor <název>\n"
+"                        nastaví správce upozornění na časový limit\n"
 " -r, --raw              tabulku příznaků neformátuje\n"
 " -T, --notimeouts       nevypisuje časové limity hlídacího zařízení\n"
 " -s, --settimeout <sekundy>\n"
@@ -21367,26 +20900,21 @@ msgstr[1] "Časový limit je nastaven na %d sekundy.\n"
 msgstr[2] "Časový limit je nastaven na %d sekund.\n"
 
 #: sys-utils/wdctl.c:449
-#, fuzzy, c-format
-#| msgid "cannot set timeout for %s"
+#, c-format
 msgid "cannot set pretimeout for %s"
-msgstr "časový limit pro %s nelze nastavit"
+msgstr "upozornění na časový limit pro %s nelze nastavit"
 
 #: sys-utils/wdctl.c:451
-#, fuzzy, c-format
-#| msgid "Timeout has been set to %d second.\n"
-#| msgid_plural "Timeout has been set to %d seconds.\n"
+#, c-format
 msgid "Pre-timeout has been set to %d second.\n"
 msgid_plural "Pre-timeout has been set to %d seconds.\n"
-msgstr[0] "Časový limit je nastaven na %d sekundu.\n"
-msgstr[1] "Časový limit je nastaven na %d sekundy.\n"
-msgstr[2] "Časový limit je nastaven na %d sekund.\n"
+msgstr[0] "Upozornění na časový limit je nastaveno na %d sekundu.\n"
+msgstr[1] "Upozornění na časový limit je nastaveno na %d sekundy.\n"
+msgstr[2] "Upozornění na časový limit je nastaveno na %d sekund.\n"
 
 #: sys-utils/wdctl.c:470
-#, fuzzy
-#| msgid "cannot set timeout for %s"
 msgid "cannot set pre-timeout governor"
-msgstr "časový limit pro %s nelze nastavit"
+msgstr "správce upozornění na časový limit nelze nastavit"
 
 #: sys-utils/wdctl.c:500
 #, c-format
@@ -21419,27 +20947,17 @@ msgid "Pre-timeout:"
 msgstr "Prvotní časový limit"
 
 #: sys-utils/wdctl.c:631 sys-utils/wdctl.c:636
-#, fuzzy, c-format
-#| msgid "%-14s %2i second\n"
-#| msgid_plural "%-14s %2i seconds\n"
+#, c-format
 msgid "%-14s %s\n"
-msgstr "%-14s %2i sekunda\n"
+msgstr "%-14s %s\n"
 
 #: sys-utils/wdctl.c:631
-#, fuzzy
-#| msgid "Pre-timeout:"
 msgid "Pre-timeout governor:"
-msgstr "Prvotní časový limit"
+msgstr "Správce upozornění na časový limit:"
 
 #: sys-utils/wdctl.c:637
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "Available output columns:\n"
 msgid "Available pre-timeout governors:"
-msgstr ""
-"\n"
-"Dostupné sloupce pro výstup:\n"
+msgstr "Dostupní správci na upozornění na časový limit:"
 
 #: sys-utils/wdctl.c:695
 msgid "Device:"
@@ -21454,10 +20972,8 @@ msgid "version"
 msgstr "verze"
 
 #: sys-utils/wdctl.c:766
-#, fuzzy
-#| msgid "invalid timeout argument"
 msgid "invalid pretimeout argument"
-msgstr "neplatný argument přepínače --timeout"
+msgstr "neplatný argument upozornění na časový limit"
 
 #: sys-utils/wdctl.c:820
 msgid "No default device is available."
@@ -21528,12 +21044,10 @@ msgid "Set up and control zram devices.\n"
 msgstr "Nastaví a ovládá zram zařízení.\n"
 
 #: sys-utils/zramctl.c:550
-#, fuzzy
-#| msgid " -a, --algorithm lzo|lz4|lz4hc|deflate|842   compression algorithm to use\n"
 msgid " -a, --algorithm <alg>     compression algorithm to use\n"
 msgstr ""
-" -a, --algorithm lzo|lz4|lz4hc|deflate|842   použije vybraný kompresní\n"
-"                                             algoritmus\n"
+" -a, --algorithm <algoritmus>\n"
+"                           použije vybraný kompresní algoritmus\n"
 
 #: sys-utils/zramctl.c:551
 msgid " -b, --bytes               print sizes in bytes rather than in human readable format\n"
@@ -21575,11 +21089,11 @@ msgstr " -t, --streams <počet>     počet kompresních proudů\n"
 
 #: sys-utils/zramctl.c:567
 msgid " <alg> specify algorithm, supported are:\n"
-msgstr ""
+msgstr " Podporované <algoritmy> jsou:\n"
 
 #: sys-utils/zramctl.c:568
 msgid "   lzo, lz4, lz4hc, deflate, 842 and zstd\n"
-msgstr ""
+msgstr "   lzo, lz4, lz4hc, deflate, 842 a zstd\n"
 
 #: sys-utils/zramctl.c:657
 msgid "failed to parse streams"
@@ -21668,10 +21182,9 @@ msgid "invalid nice argument"
 msgstr "neplatný argument přepínače --nice"
 
 #: term-utils/agetty.c:931
-#, fuzzy, c-format
-#| msgid "could not set terminal attributes"
+#, c-format
 msgid "could not get terminal name: %d"
-msgstr "nebylo možné nastavit vlastnosti terminálu"
+msgstr "nebylo možné získat název terminálu: %d"
 
 #: term-utils/agetty.c:958
 #, c-format
@@ -22127,10 +21640,9 @@ msgid "Script started on %s ["
 msgstr "Script spuštěn v %s ["
 
 #: term-utils/script.c:415
-#, fuzzy, c-format
-#| msgid "<not executed on terminal>"
+#, c-format
 msgid "%*s<not executed on terminal>"
-msgstr "<nespuštěn na terminálu>"
+msgstr "%*s<nespuštěn na terminálu>"
 
 #: term-utils/script.c:689
 #, c-format
@@ -22967,10 +22479,8 @@ msgid "failed to parse column names"
 msgstr "nezdařilo rozebrat názvy sloupců"
 
 #: text-utils/column.c:816
-#, fuzzy
-#| msgid "failed to allocate iterator"
 msgid "failed to use input separator"
-msgstr "alokace iterátoru selhala"
+msgstr "použití oddělovače vstupu selhalo"
 
 #: text-utils/column.c:849
 msgid "options --tree-id and --tree-parent are required for tree formatting"
@@ -23105,7 +22615,7 @@ msgstr " -p, --clean-print     neroluje, smaže obrazovku a zobrazí text"
 
 #: text-utils/more.c:249
 msgid " -e, --exit-on-eof     exit on end-of-file"
-msgstr ""
+msgstr " -e, --exit-on-eof     skončit na konci souboru"
 
 #: text-utils/more.c:250
 msgid " -s, --squeeze         squeeze multiple blank lines into one"
@@ -23174,7 +22684,7 @@ msgstr "(Další soubor: %s)"
 #: text-utils/more.c:737 text-utils/more.c:743
 #, c-format
 msgid "(END)"
-msgstr ""
+msgstr "(KONEC)"
 
 #: text-utils/more.c:748
 #, c-format
@@ -23557,23 +23067,15 @@ msgstr "chyba při čtení terminfo databáze"
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr "terminál „%s“ není znám, použije se „dump“"
 
-#, fuzzy
-#~| msgid "child exit failed"
-#~ msgid "child kill failed"
-#~ msgstr "ukončení potomka selhalo"
-
-#, c-format
 #~ msgid "Comparing %s to %s"
 #~ msgstr "Porovnává se %s s %s"
 
-#, c-format
 #~ msgid "Visiting %s (file %zu)"
 #~ msgstr "Prohlíží se %s (soubor %zu)"
 
 #~ msgid " -v, --verbose        display more details"
 #~ msgstr " -v, --verbose        vypisuje více podrobností"
 
-#, c-format
 #~ msgid " %s [options] COMMAND\n"
 #~ msgstr " %s [přepínače] PŘÍKAZ\n"
 
@@ -23591,7 +23093,6 @@ msgstr "terminál „%s“ není znám, použije se „dump“"
 #~ "\n"
 #~ "Přepínače zdrojů:\n"
 
-#, c-format
 #~ msgid "cannot stat %s"
 #~ msgstr "o %s nelze získat podrobnosti"
 
