@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre3\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-04 12:14+0100\n"
+"POT-Creation-Date: 2022-03-15 15:24+0100\n"
 "PO-Revision-Date: 2005-09-17 13:40+0200\n"
 "Last-Translator: Josep Puigdemont <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -1246,7 +1246,7 @@ msgstr "Avís: l'opció -b (estableix la mida del sector) s'ha d'usar amb un dis
 #: misc-utils/whereis.c:591 misc-utils/whereis.c:602 misc-utils/whereis.c:644
 #: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:188
 #: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1580
-#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:916
+#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
 #: sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656 sys-utils/mount.c:877
 #: sys-utils/mount.c:885 sys-utils/mount.c:932 sys-utils/mount.c:945
 #: sys-utils/mount.c:1017 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
@@ -10606,7 +10606,7 @@ msgstr "  -o, --options=cadena_opcions Opcions curtes a reconèixer\n"
 msgid " -r, --raw             use raw output format\n"
 msgstr "  -V, --version                Mostra la informació de la versió\n"
 
-#: misc-utils/fincore.c:338 sys-utils/losetup.c:826
+#: misc-utils/fincore.c:338 sys-utils/losetup.c:828
 #, fuzzy
 msgid "no file specified"
 msgstr "No s'ha especificat l'opció --date.\n"
@@ -11178,7 +11178,7 @@ msgstr "mount: el tipus del sistema de fitxers %s no està suportat pel nucli"
 #: misc-utils/findmnt-verify.c:452
 #, fuzzy
 #| msgid "Unknown"
-msgid "reason uknown"
+msgid "reason unknown"
 msgstr "Desconegut"
 
 #: misc-utils/findmnt-verify.c:455 misc-utils/findmnt-verify.c:457
@@ -11578,7 +11578,7 @@ msgstr "%s: s'ha produït un error en obrir: %s\n"
 
 #: misc-utils/hardlink.c:1262
 #, fuzzy
-msgid "failed to cache size"
+msgid "failed to parse cache size"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
 #: misc-utils/hardlink.c:1265
@@ -11591,36 +11591,36 @@ msgstr "%s: s'ha produït un error en obrir: %s\n"
 msgid "unsupported reflink mode; %s"
 msgstr "cap ordre?\n"
 
-#: misc-utils/hardlink.c:1336
+#: misc-utils/hardlink.c:1338
 #, fuzzy
 msgid "cannot register exit handler"
 msgstr "No s'ha pogut determinar el gestor de senyals"
 
-#: misc-utils/hardlink.c:1341
+#: misc-utils/hardlink.c:1343
 #, fuzzy
 msgid "no directory or file specified"
 msgstr "mount: el dispositiu loop està especificat dues vegades"
 
-#: misc-utils/hardlink.c:1347
+#: misc-utils/hardlink.c:1349
 #, c-format
 msgid "cannot initialize %s method, use 'memcmp' fallback"
 msgstr ""
 
-#: misc-utils/hardlink.c:1352
+#: misc-utils/hardlink.c:1354
 #, fuzzy
 msgid "failed to initialize files comparior"
 msgstr "No s'ha pogut assignar la memòria temporal.\n"
 
-#: misc-utils/hardlink.c:1364
+#: misc-utils/hardlink.c:1366
 msgid "Scanning [device/inode/links]:"
 msgstr ""
 
-#: misc-utils/hardlink.c:1369 sys-utils/fstrim.c:96
+#: misc-utils/hardlink.c:1371 sys-utils/fstrim.c:96
 #, fuzzy, c-format
 msgid "cannot get realpath: %s"
 msgstr "%s: no s'ha pogut llegir %s.\n"
 
-#: misc-utils/hardlink.c:1373
+#: misc-utils/hardlink.c:1375
 #, fuzzy, c-format
 msgid "cannot process %s"
 msgstr "No s'ha pogut obrir el fitxer '%s'"
@@ -12719,7 +12719,7 @@ msgid " -Q, --filter <expr>   apply display filter\n"
 msgstr ""
 
 #: misc-utils/lsfd.c:1262
-msgid "     --debug-filter    dump the innternal data structure of filter and exit\n"
+msgid "     --debug-filter    dump the internal data structure of filter and exit\n"
 msgstr ""
 
 #: misc-utils/lsfd.c:1263
@@ -12754,7 +12754,7 @@ msgstr ""
 
 #: misc-utils/lsfd.c:1359
 #, c-format
-msgid "empty ecounter expression given: -C/--counter %s"
+msgid "empty counter expression given: -C/--counter %s"
 msgstr ""
 
 #: misc-utils/lsfd.c:1367
@@ -18001,7 +18001,7 @@ msgstr "mount: no ha estat possible configurar el dispositiu loop\n"
 msgid "%s: failed to check for conflicting loop devices"
 msgstr "no s'ha pogut rebobinar el dispositiu d'intercanvi"
 
-#: sys-utils/losetup.c:555 sys-utils/losetup.c:879
+#: sys-utils/losetup.c:555 sys-utils/losetup.c:881
 #, fuzzy
 msgid "cannot find an unused loop device"
 msgstr "%s: no s'ha pogut trobar el dispositiu per a %s\n"
@@ -18016,37 +18016,37 @@ msgstr "torna a llegir la taula de particions"
 msgid "failed to parse logical block size"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: sys-utils/losetup.c:671 sys-utils/losetup.c:681 sys-utils/losetup.c:807
-#: sys-utils/losetup.c:821 sys-utils/losetup.c:859
+#: sys-utils/losetup.c:671 sys-utils/losetup.c:681 sys-utils/losetup.c:809
+#: sys-utils/losetup.c:823 sys-utils/losetup.c:861
 #, fuzzy, c-format
 msgid "%s: failed to use device"
 msgstr "no s'ha pogut rebobinar el dispositiu d'intercanvi"
 
-#: sys-utils/losetup.c:818
+#: sys-utils/losetup.c:820
 #, fuzzy
 msgid "no loop device specified"
 msgstr "mount: el dispositiu loop està especificat dues vegades"
 
-#: sys-utils/losetup.c:833
+#: sys-utils/losetup.c:835
 #, c-format
 msgid "the options %s are allowed during loop device setup only"
 msgstr ""
 
-#: sys-utils/losetup.c:838
+#: sys-utils/losetup.c:840
 msgid "the option --offset is not allowed in this context"
 msgstr ""
 
-#: sys-utils/losetup.c:900
+#: sys-utils/losetup.c:902
 #, fuzzy, c-format
 msgid "%s: set capacity failed"
 msgstr "la cerca ha fallat"
 
-#: sys-utils/losetup.c:906
+#: sys-utils/losetup.c:908
 #, fuzzy, c-format
 msgid "%s: set direct io failed"
 msgstr "la cerca ha fallat"
 
-#: sys-utils/losetup.c:912
+#: sys-utils/losetup.c:914
 #, fuzzy, c-format
 msgid "%s: set logical block size failed"
 msgstr "la cerca ha fallat"
@@ -24231,6 +24231,10 @@ msgstr "hi ha hagut un problema en llegir terminfo"
 #, c-format
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr ""
+
+#, fuzzy
+#~ msgid "failed to cache size"
+#~ msgstr "%s: s'ha produït un error en obrir: %s\n"
 
 #, fuzzy
 #~ msgid "child kill failed"

@@ -18,7 +18,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.37-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-04 12:14+0100\n"
+"POT-Creation-Date: 2022-03-15 15:24+0100\n"
 "PO-Revision-Date: 2021-06-05 22:04-0300\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <ldpbr-translation@lists.sourceforge.net>\n"
@@ -1184,7 +1184,7 @@ msgstr "As propriedades de dispositivo (tamanho e geometria do setor) devem ser 
 #: misc-utils/whereis.c:591 misc-utils/whereis.c:602 misc-utils/whereis.c:644
 #: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:188
 #: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1580
-#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:916
+#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
 #: sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656 sys-utils/mount.c:877
 #: sys-utils/mount.c:885 sys-utils/mount.c:932 sys-utils/mount.c:945
 #: sys-utils/mount.c:1017 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
@@ -10102,7 +10102,7 @@ msgstr " -o, --output <lista>  mostra colunas\n"
 msgid " -r, --raw             use raw output format\n"
 msgstr " -r, --raw             usa formato de saída não tratado\n"
 
-#: misc-utils/fincore.c:338 sys-utils/losetup.c:826
+#: misc-utils/fincore.c:338 sys-utils/losetup.c:828
 msgid "no file specified"
 msgstr "nenhum arquivo especificado"
 
@@ -10641,7 +10641,7 @@ msgstr "%s parece não possuir suporte no kernel atual"
 #: misc-utils/findmnt-verify.c:452
 #, fuzzy
 #| msgid "Unknown"
-msgid "reason uknown"
+msgid "reason unknown"
 msgstr "Desconhecido"
 
 #: misc-utils/findmnt-verify.c:455 misc-utils/findmnt-verify.c:457
@@ -11042,7 +11042,7 @@ msgstr "falha ao analisar o tamanho"
 #: misc-utils/hardlink.c:1262
 #, fuzzy
 #| msgid "failed to parse size"
-msgid "failed to cache size"
+msgid "failed to parse cache size"
 msgstr "falha ao analisar o tamanho"
 
 #: misc-utils/hardlink.c:1265
@@ -11057,36 +11057,36 @@ msgstr "falha ao analisar o tamanho"
 msgid "unsupported reflink mode; %s"
 msgstr "sem suporte a modo de trava: %s"
 
-#: misc-utils/hardlink.c:1336
+#: misc-utils/hardlink.c:1338
 msgid "cannot register exit handler"
 msgstr "não foi possível registrar o manipulador de saída"
 
-#: misc-utils/hardlink.c:1341
+#: misc-utils/hardlink.c:1343
 msgid "no directory or file specified"
 msgstr "nenhum diretório ou arquivo especificado"
 
-#: misc-utils/hardlink.c:1347
+#: misc-utils/hardlink.c:1349
 #, c-format
 msgid "cannot initialize %s method, use 'memcmp' fallback"
 msgstr ""
 
-#: misc-utils/hardlink.c:1352
+#: misc-utils/hardlink.c:1354
 #, fuzzy
 #| msgid "failed to initialize loopcxt"
 msgid "failed to initialize files comparior"
 msgstr "falha ao inicializar loopcxt"
 
-#: misc-utils/hardlink.c:1364
+#: misc-utils/hardlink.c:1366
 msgid "Scanning [device/inode/links]:"
 msgstr ""
 
 # realpath é uma variável no código do arquivo fonte -- Rafael
-#: misc-utils/hardlink.c:1369 sys-utils/fstrim.c:96
+#: misc-utils/hardlink.c:1371 sys-utils/fstrim.c:96
 #, c-format
 msgid "cannot get realpath: %s"
 msgstr "não foi possível obter realpath: %s"
 
-#: misc-utils/hardlink.c:1373
+#: misc-utils/hardlink.c:1375
 #, c-format
 msgid "cannot process %s"
 msgstr "não foi possível processar %s"
@@ -12190,7 +12190,7 @@ msgid " -Q, --filter <expr>   apply display filter\n"
 msgstr ""
 
 #: misc-utils/lsfd.c:1262
-msgid "     --debug-filter    dump the innternal data structure of filter and exit\n"
+msgid "     --debug-filter    dump the internal data structure of filter and exit\n"
 msgstr ""
 
 #: misc-utils/lsfd.c:1263
@@ -12235,7 +12235,7 @@ msgstr ""
 
 #: misc-utils/lsfd.c:1359
 #, c-format
-msgid "empty ecounter expression given: -C/--counter %s"
+msgid "empty counter expression given: -C/--counter %s"
 msgstr ""
 
 #: misc-utils/lsfd.c:1367
@@ -17309,7 +17309,7 @@ msgstr "falha ao inspecionar dispositivos de loop"
 msgid "%s: failed to check for conflicting loop devices"
 msgstr "%s: falha ao verificar por dispositivos de loop conflitantes"
 
-#: sys-utils/losetup.c:555 sys-utils/losetup.c:879
+#: sys-utils/losetup.c:555 sys-utils/losetup.c:881
 msgid "cannot find an unused loop device"
 msgstr "não foi possível localizar dispositivo de loop não usado"
 
@@ -17322,36 +17322,36 @@ msgstr "%s: falha ao usar arquivo de backend"
 msgid "failed to parse logical block size"
 msgstr "falha ao analisar o tamanho de bloco lógico"
 
-#: sys-utils/losetup.c:671 sys-utils/losetup.c:681 sys-utils/losetup.c:807
-#: sys-utils/losetup.c:821 sys-utils/losetup.c:859
+#: sys-utils/losetup.c:671 sys-utils/losetup.c:681 sys-utils/losetup.c:809
+#: sys-utils/losetup.c:823 sys-utils/losetup.c:861
 #, c-format
 msgid "%s: failed to use device"
 msgstr "%s: falha ao usar dispositivo"
 
-#: sys-utils/losetup.c:818
+#: sys-utils/losetup.c:820
 msgid "no loop device specified"
 msgstr "nenhum dispositivo foi especificado"
 
-#: sys-utils/losetup.c:833
+#: sys-utils/losetup.c:835
 #, c-format
 msgid "the options %s are allowed during loop device setup only"
 msgstr "as opções %s são permitidas apenas durante configuração de dispositivo de loop"
 
-#: sys-utils/losetup.c:838
+#: sys-utils/losetup.c:840
 msgid "the option --offset is not allowed in this context"
 msgstr "a opção --offset não é permitida neste contexto"
 
-#: sys-utils/losetup.c:900
+#: sys-utils/losetup.c:902
 #, c-format
 msgid "%s: set capacity failed"
 msgstr "%s: definição de capacidade falhou"
 
-#: sys-utils/losetup.c:906
+#: sys-utils/losetup.c:908
 #, c-format
 msgid "%s: set direct io failed"
 msgstr "%s: definição de e/s direta falhou"
 
-#: sys-utils/losetup.c:912
+#: sys-utils/losetup.c:914
 #, c-format
 msgid "%s: set logical block size failed"
 msgstr "%s: definição de tamanho de bloco lógico falhou"
@@ -23412,6 +23412,11 @@ msgstr "problemas na leitura de terminfo"
 #, c-format
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr "o terminal \"%s\" não é conhecido, usando o padrão \"dumb\""
+
+#, fuzzy
+#~| msgid "failed to parse size"
+#~ msgid "failed to cache size"
+#~ msgstr "falha ao analisar o tamanho"
 
 #, fuzzy
 #~| msgid "child exit failed"

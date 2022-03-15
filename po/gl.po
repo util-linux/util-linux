@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.18-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-04 12:14+0100\n"
+"POT-Creation-Date: 2022-03-15 15:24+0100\n"
 "PO-Revision-Date: 2010-08-23 18:09+0200\n"
 "Last-Translator: Fran Diéguez <frandieguez@ubuntu.com>\n"
 "Language-Team: Galician <proxecto@trasno.net>\n"
@@ -1214,7 +1214,7 @@ msgstr ""
 #: misc-utils/whereis.c:591 misc-utils/whereis.c:602 misc-utils/whereis.c:644
 #: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:188
 #: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1580
-#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:916
+#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
 #: sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656 sys-utils/mount.c:877
 #: sys-utils/mount.c:885 sys-utils/mount.c:932 sys-utils/mount.c:945
 #: sys-utils/mount.c:1017 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
@@ -10188,7 +10188,7 @@ msgstr "  p          Imprimi a táboa de particións á pantalla ou a un ficheir
 msgid " -r, --raw             use raw output format\n"
 msgstr "                s - Táboa ordenada por sectores"
 
-#: misc-utils/fincore.c:338 sys-utils/losetup.c:826
+#: misc-utils/fincore.c:338 sys-utils/losetup.c:828
 msgid "no file specified"
 msgstr ""
 
@@ -10749,8 +10749,9 @@ msgid "%s seems unsupported by the current kernel"
 msgstr ""
 
 #: misc-utils/findmnt-verify.c:452
-msgid "reason uknown"
-msgstr ""
+#, fuzzy
+msgid "reason unknown"
+msgstr "%s: Orde descoñecida: %s\n"
 
 #: misc-utils/findmnt-verify.c:455 misc-utils/findmnt-verify.c:457
 #, fuzzy, c-format
@@ -11141,7 +11142,7 @@ msgstr "%s: produciuse un erro ao abrir: %s\n"
 
 #: misc-utils/hardlink.c:1262
 #, fuzzy
-msgid "failed to cache size"
+msgid "failed to parse cache size"
 msgstr "%s: produciuse un erro ao abrir: %s\n"
 
 #: misc-utils/hardlink.c:1265
@@ -11154,36 +11155,36 @@ msgstr "%s: produciuse un erro ao abrir: %s\n"
 msgid "unsupported reflink mode; %s"
 msgstr "%s necesita un argumento\n"
 
-#: misc-utils/hardlink.c:1336
+#: misc-utils/hardlink.c:1338
 #, fuzzy
 msgid "cannot register exit handler"
 msgstr "erro: non se pode abrir %s"
 
-#: misc-utils/hardlink.c:1341
+#: misc-utils/hardlink.c:1343
 #, fuzzy
 msgid "no directory or file specified"
 msgstr "volve a ler a táboa de particións"
 
-#: misc-utils/hardlink.c:1347
+#: misc-utils/hardlink.c:1349
 #, c-format
 msgid "cannot initialize %s method, use 'memcmp' fallback"
 msgstr ""
 
-#: misc-utils/hardlink.c:1352
+#: misc-utils/hardlink.c:1354
 #, fuzzy
 msgid "failed to initialize files comparior"
 msgstr "volve a ler a táboa de particións"
 
-#: misc-utils/hardlink.c:1364
+#: misc-utils/hardlink.c:1366
 msgid "Scanning [device/inode/links]:"
 msgstr ""
 
-#: misc-utils/hardlink.c:1369 sys-utils/fstrim.c:96
+#: misc-utils/hardlink.c:1371 sys-utils/fstrim.c:96
 #, fuzzy, c-format
 msgid "cannot get realpath: %s"
 msgstr "hexdump: non é posíbel ler %s.\n"
 
-#: misc-utils/hardlink.c:1373
+#: misc-utils/hardlink.c:1375
 #, fuzzy, c-format
 msgid "cannot process %s"
 msgstr "Non se pode efectuar «stat» sobre o dispositivo %s"
@@ -12265,7 +12266,7 @@ msgid " -Q, --filter <expr>   apply display filter\n"
 msgstr ""
 
 #: misc-utils/lsfd.c:1262
-msgid "     --debug-filter    dump the innternal data structure of filter and exit\n"
+msgid "     --debug-filter    dump the internal data structure of filter and exit\n"
 msgstr ""
 
 #: misc-utils/lsfd.c:1263
@@ -12300,7 +12301,7 @@ msgstr ""
 
 #: misc-utils/lsfd.c:1359
 #, c-format
-msgid "empty ecounter expression given: -C/--counter %s"
+msgid "empty counter expression given: -C/--counter %s"
 msgstr ""
 
 #: misc-utils/lsfd.c:1367
@@ -17397,7 +17398,7 @@ msgstr "%s fallou."
 msgid "%s: failed to check for conflicting loop devices"
 msgstr "%s fallou."
 
-#: sys-utils/losetup.c:555 sys-utils/losetup.c:879
+#: sys-utils/losetup.c:555 sys-utils/losetup.c:881
 #, fuzzy
 msgid "cannot find an unused loop device"
 msgstr "%s fallou."
@@ -17412,36 +17413,36 @@ msgstr "volve a ler a táboa de particións"
 msgid "failed to parse logical block size"
 msgstr "%s: produciuse un erro ao abrir: %s\n"
 
-#: sys-utils/losetup.c:671 sys-utils/losetup.c:681 sys-utils/losetup.c:807
-#: sys-utils/losetup.c:821 sys-utils/losetup.c:859
+#: sys-utils/losetup.c:671 sys-utils/losetup.c:681 sys-utils/losetup.c:809
+#: sys-utils/losetup.c:823 sys-utils/losetup.c:861
 #, fuzzy, c-format
 msgid "%s: failed to use device"
 msgstr "%s fallou."
 
-#: sys-utils/losetup.c:818
+#: sys-utils/losetup.c:820
 msgid "no loop device specified"
 msgstr ""
 
-#: sys-utils/losetup.c:833
+#: sys-utils/losetup.c:835
 #, c-format
 msgid "the options %s are allowed during loop device setup only"
 msgstr ""
 
-#: sys-utils/losetup.c:838
+#: sys-utils/losetup.c:840
 msgid "the option --offset is not allowed in this context"
 msgstr ""
 
-#: sys-utils/losetup.c:900
+#: sys-utils/losetup.c:902
 #, fuzzy, c-format
 msgid "%s: set capacity failed"
 msgstr "%s: fstat fallou."
 
-#: sys-utils/losetup.c:906
+#: sys-utils/losetup.c:908
 #, fuzzy, c-format
 msgid "%s: set direct io failed"
 msgstr "%s: fstat fallou."
 
-#: sys-utils/losetup.c:912
+#: sys-utils/losetup.c:914
 #, fuzzy, c-format
 msgid "%s: set logical block size failed"
 msgstr "obter o tamaño do bloque lóxico (sector)"
@@ -23484,6 +23485,10 @@ msgstr ""
 #, c-format
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr ""
+
+#, fuzzy
+#~ msgid "failed to cache size"
+#~ msgstr "%s: produciuse un erro ao abrir: %s\n"
 
 #, fuzzy
 #~ msgid "child kill failed"

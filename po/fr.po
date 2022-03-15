@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.38-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-04 16:17+0100\n"
+"POT-Creation-Date: 2022-03-15 15:24+0100\n"
 "PO-Revision-Date: 2022-03-05 17:15+0100\n"
 "Last-Translator: Frédéric Marchal <fmarchal@perso.be>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -490,8 +490,7 @@ msgstr "Échec d’écriture du script %s"
 msgid "Select label type"
 msgstr "Sélectionner un type d’étiquette"
 
-#: disk-utils/cfdisk.c:2195 disk-utils/fdisk.c:1162
-#: disk-utils/fdisk-menu.c:490
+#: disk-utils/cfdisk.c:2195 disk-utils/fdisk.c:1162 disk-utils/fdisk-menu.c:490
 msgid "Device does not contain a recognized partition table."
 msgstr "Le périphérique ne contient pas de table de partitions reconnue."
 
@@ -636,8 +635,7 @@ msgstr "Nouvel taille :"
 msgid "Partition %zu resized."
 msgstr "Partition %zu redimensionnée."
 
-#: disk-utils/cfdisk.c:2504 disk-utils/fdisk.c:1138
-#: disk-utils/fdisk-menu.c:593
+#: disk-utils/cfdisk.c:2504 disk-utils/fdisk.c:1138 disk-utils/fdisk-menu.c:593
 msgid "Device is open in read-only mode."
 msgstr "Le périphérique est ouvert en mode lecture seule."
 
@@ -774,8 +772,8 @@ msgstr ""
 "Poursuite du traitement… "
 
 #: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:629
-#: sys-utils/blkdiscard.c:89 sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:629 sys-utils/blkdiscard.c:89
+#: sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [options] <périphérique>\n"
@@ -1144,21 +1142,21 @@ msgstr "mode nettoyage non pris en charge"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Les propriétés du périphérique (taille de secteur et géométrie) ne doivent être utilisées qu’avec un seul périphérique indiqué."
 
-#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122
-#: disk-utils/fsck.cramfs.c:703 disk-utils/mkfs.bfs.c:192
-#: disk-utils/mkfs.cramfs.c:788 disk-utils/partx.c:975 disk-utils/raw.c:136
-#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
-#: misc-utils/cal.c:524 misc-utils/findfs.c:58 misc-utils/look.c:147
-#: misc-utils/whereis.c:580 misc-utils/whereis.c:591 misc-utils/whereis.c:602
-#: misc-utils/whereis.c:644 schedutils/chrt.c:442 schedutils/ionice.c:264
-#: schedutils/taskset.c:188 sys-utils/chcpu.c:355 sys-utils/chmem.c:429
-#: sys-utils/dmesg.c:1580 sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321
-#: sys-utils/losetup.c:916 sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656
-#: sys-utils/mount.c:877 sys-utils/mount.c:885 sys-utils/mount.c:932
-#: sys-utils/mount.c:945 sys-utils/mount.c:1017 sys-utils/mountpoint.c:191
-#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:258 sys-utils/swapon.c:1006
-#: sys-utils/switch_root.c:270 sys-utils/umount.c:620
-#: term-utils/setterm.c:1197 text-utils/col.c:584 text-utils/more.c:2094
+#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122 disk-utils/fsck.cramfs.c:703
+#: disk-utils/mkfs.bfs.c:192 disk-utils/mkfs.cramfs.c:788
+#: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
+#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:524
+#: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:580
+#: misc-utils/whereis.c:591 misc-utils/whereis.c:602 misc-utils/whereis.c:644
+#: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:188
+#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1580
+#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
+#: sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656 sys-utils/mount.c:877
+#: sys-utils/mount.c:885 sys-utils/mount.c:932 sys-utils/mount.c:945
+#: sys-utils/mount.c:1017 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
+#: sys-utils/swapoff.c:258 sys-utils/swapon.c:1006 sys-utils/switch_root.c:270
+#: sys-utils/umount.c:620 term-utils/setterm.c:1197 text-utils/col.c:584
+#: text-utils/more.c:2094
 msgid "bad usage"
 msgstr "mauvaise utilisation"
 
@@ -1279,13 +1277,12 @@ msgstr "échec d’allocation de la ligne de sortie"
 #: misc-utils/lsfd-file.c:349 misc-utils/lsfd-sock.c:47
 #: misc-utils/lsfd-sock.c:52 misc-utils/lsfd-sock.c:73
 #: misc-utils/lsfd-sock.c:75 misc-utils/lsfd-unkn.c:39
-#: misc-utils/lsfd-unkn.c:53 misc-utils/lsfd-unkn.c:55
-#: misc-utils/lslocks.c:459 misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242
-#: sys-utils/losetup.c:305 sys-utils/lscpu.c:568 sys-utils/lscpu.c:783
-#: sys-utils/lscpu.c:812 sys-utils/lscpu.c:822 sys-utils/lsipc.c:526
-#: sys-utils/lsipc.c:651 sys-utils/prlimit.c:275 sys-utils/rfkill.c:417
-#: sys-utils/swapon.c:227 sys-utils/wdctl.c:327 sys-utils/zramctl.c:481
-#: text-utils/column.c:481
+#: misc-utils/lsfd-unkn.c:53 misc-utils/lsfd-unkn.c:55 misc-utils/lslocks.c:459
+#: misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242 sys-utils/losetup.c:305
+#: sys-utils/lscpu.c:568 sys-utils/lscpu.c:783 sys-utils/lscpu.c:812
+#: sys-utils/lscpu.c:822 sys-utils/lsipc.c:526 sys-utils/lsipc.c:651
+#: sys-utils/prlimit.c:275 sys-utils/rfkill.c:417 sys-utils/swapon.c:227
+#: sys-utils/wdctl.c:327 sys-utils/zramctl.c:481 text-utils/column.c:481
 msgid "failed to add output data"
 msgstr "échec d'ajout de données de sortie"
 
@@ -9842,7 +9839,7 @@ msgstr " -o, --output <liste>  colonnes affichées\n"
 msgid " -r, --raw             use raw output format\n"
 msgstr " -r, --raw             utiliser le format de sortie brut\n"
 
-#: misc-utils/fincore.c:338 sys-utils/losetup.c:826
+#: misc-utils/fincore.c:338 sys-utils/losetup.c:828
 msgid "no file specified"
 msgstr "aucun fichier indiqué"
 
@@ -10371,7 +10368,9 @@ msgid "%s seems unsupported by the current kernel"
 msgstr "%s semble ne pas être supporté par le noyau actuel"
 
 #: misc-utils/findmnt-verify.c:452
-msgid "reason uknown"
+#, fuzzy
+#| msgid "reason uknown"
+msgid "reason unknown"
 msgstr "raison inconnue"
 
 #: misc-utils/findmnt-verify.c:455 misc-utils/findmnt-verify.c:457
@@ -10744,8 +10743,10 @@ msgid "failed to parse maximum size"
 msgstr "échec d'analyse de la taille maximale"
 
 #: misc-utils/hardlink.c:1262
-msgid "failed to cache size"
-msgstr "échec d'analyse de la taille de la cache"
+#, fuzzy
+#| msgid "failed to parse size"
+msgid "failed to parse cache size"
+msgstr "échec d'analyse de taille"
 
 #: misc-utils/hardlink.c:1265
 msgid "failed to parse I/O size"
@@ -10756,33 +10757,33 @@ msgstr "échec d'analyse de la taille des E/S"
 msgid "unsupported reflink mode; %s"
 msgstr "mode de lien de référence non pris en charge : %s"
 
-#: misc-utils/hardlink.c:1336
+#: misc-utils/hardlink.c:1338
 msgid "cannot register exit handler"
 msgstr "impossible d'enregistrer le gestionnaire de sortie"
 
-#: misc-utils/hardlink.c:1341
+#: misc-utils/hardlink.c:1343
 msgid "no directory or file specified"
 msgstr "aucun répertoire ou fichier indiqué"
 
-#: misc-utils/hardlink.c:1347
+#: misc-utils/hardlink.c:1349
 #, c-format
 msgid "cannot initialize %s method, use 'memcmp' fallback"
 msgstr "impossible d'initialiser la méthode %s, utilisation de « memcmp » en second choix"
 
-#: misc-utils/hardlink.c:1352
+#: misc-utils/hardlink.c:1354
 msgid "failed to initialize files comparior"
 msgstr "échec d'initialisation de la comparaison de fichiers"
 
-#: misc-utils/hardlink.c:1364
+#: misc-utils/hardlink.c:1366
 msgid "Scanning [device/inode/links]:"
 msgstr "Analyse [périphérique/inœud/liens] :"
 
-#: misc-utils/hardlink.c:1369 sys-utils/fstrim.c:96
+#: misc-utils/hardlink.c:1371 sys-utils/fstrim.c:96
 #, c-format
 msgid "cannot get realpath: %s"
 msgstr "impossible d'obtenir le chemin réel : %s"
 
-#: misc-utils/hardlink.c:1373
+#: misc-utils/hardlink.c:1375
 #, c-format
 msgid "cannot process %s"
 msgstr "impossible de traiter %s"
@@ -11787,7 +11788,9 @@ msgid " -Q, --filter <expr>   apply display filter\n"
 msgstr " -Q, --filter <expr>   appliquer le filtre d'affichage\n"
 
 #: misc-utils/lsfd.c:1262
-msgid "     --debug-filter    dump the innternal data structure of filter and exit\n"
+#, fuzzy
+#| msgid "     --debug-filter    dump the innternal data structure of filter and exit\n"
+msgid "     --debug-filter    dump the internal data structure of filter and exit\n"
 msgstr "     --debug-filter    vidanger la structure de données interne du filtre et terminer\n"
 
 #: misc-utils/lsfd.c:1263
@@ -11821,8 +11824,9 @@ msgid "no name for counter: -C/--counter %s"
 msgstr "pas de nom pour le compteur : -C/--counter %s"
 
 #: misc-utils/lsfd.c:1359
-#, c-format
-msgid "empty ecounter expression given: -C/--counter %s"
+#, fuzzy, c-format
+#| msgid "empty ecounter expression given: -C/--counter %s"
+msgid "empty counter expression given: -C/--counter %s"
 msgstr "expression de compteur vide donnée : -C//--counter %s"
 
 #: misc-utils/lsfd.c:1367
@@ -13346,9 +13350,8 @@ msgstr "échec d'analyse de position"
 msgid "failed to parse step"
 msgstr "échec d'analyse du pas"
 
-#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:491
-#: sys-utils/fallocate.c:382 sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561
-#: sys-utils/umount.c:610
+#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:491 sys-utils/fallocate.c:382
+#: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561 sys-utils/umount.c:610
 msgid "unexpected number of arguments"
 msgstr "nombre d'arguments inattendu"
 
@@ -16787,7 +16790,7 @@ msgstr "échec d’inspection du périphérique de bouclage"
 msgid "%s: failed to check for conflicting loop devices"
 msgstr "%s : échec de vérification de conflit du périphérique de bouclage"
 
-#: sys-utils/losetup.c:555 sys-utils/losetup.c:879
+#: sys-utils/losetup.c:555 sys-utils/losetup.c:881
 msgid "cannot find an unused loop device"
 msgstr "impossible de trouver un périphérique de bouclage inutilisé"
 
@@ -16801,36 +16804,36 @@ msgid "failed to parse logical block size"
 msgstr "échec d'analyse de la taille de bloc logique"
 
 # disk-utils/mkswap.c:612
-#: sys-utils/losetup.c:671 sys-utils/losetup.c:681 sys-utils/losetup.c:807
-#: sys-utils/losetup.c:821 sys-utils/losetup.c:859
+#: sys-utils/losetup.c:671 sys-utils/losetup.c:681 sys-utils/losetup.c:809
+#: sys-utils/losetup.c:823 sys-utils/losetup.c:861
 #, c-format
 msgid "%s: failed to use device"
 msgstr "%s : échec d'utilisation du périphérique"
 
-#: sys-utils/losetup.c:818
+#: sys-utils/losetup.c:820
 msgid "no loop device specified"
 msgstr "aucun périphérique boucle indiqué"
 
-#: sys-utils/losetup.c:833
+#: sys-utils/losetup.c:835
 #, c-format
 msgid "the options %s are allowed during loop device setup only"
 msgstr "les options %s ne sont permises que pendant la configuration de périphérique boucle"
 
-#: sys-utils/losetup.c:838
+#: sys-utils/losetup.c:840
 msgid "the option --offset is not allowed in this context"
 msgstr "l'option --offset n'est pas permise dans ce contexte"
 
-#: sys-utils/losetup.c:900
+#: sys-utils/losetup.c:902
 #, c-format
 msgid "%s: set capacity failed"
 msgstr "%s : échec de définition de capacité"
 
-#: sys-utils/losetup.c:906
+#: sys-utils/losetup.c:908
 #, c-format
 msgid "%s: set direct io failed"
 msgstr "%s : échec de la sélection d’io directe"
 
-#: sys-utils/losetup.c:912
+#: sys-utils/losetup.c:914
 #, c-format
 msgid "%s: set logical block size failed"
 msgstr "%s : échec de la définition de la taille de bloc logique"
@@ -22769,6 +22772,9 @@ msgstr "problème à la lecture de terminfo"
 #, c-format
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr "terminal « %s » inconnu, utilisation de « dumb » par défaut"
+
+#~ msgid "failed to cache size"
+#~ msgstr "échec d'analyse de la taille de la cache"
 
 #~ msgid "Comparing %s to %s"
 #~ msgstr "Comparaison de %s avec %s"

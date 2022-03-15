@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.23.1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-04 12:14+0100\n"
+"POT-Creation-Date: 2022-03-15 15:24+0100\n"
 "PO-Revision-Date: 2013-06-07 23:29+0800\n"
 "Last-Translator: Wei-Lun Chao <bluebat@member.fsf.org>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -1231,7 +1231,7 @@ msgstr "警告：-b (設定磁區大小) 選項應該與一個指定裝置共同
 #: misc-utils/whereis.c:591 misc-utils/whereis.c:602 misc-utils/whereis.c:644
 #: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:188
 #: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1580
-#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:916
+#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
 #: sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656 sys-utils/mount.c:877
 #: sys-utils/mount.c:885 sys-utils/mount.c:932 sys-utils/mount.c:945
 #: sys-utils/mount.c:1017 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
@@ -10592,7 +10592,7 @@ msgstr " -o, --options <optstring>    短選項為辨識的\n"
 msgid " -r, --raw             use raw output format\n"
 msgstr " -V, --version                輸出版本資訊\n"
 
-#: misc-utils/fincore.c:338 sys-utils/losetup.c:826
+#: misc-utils/fincore.c:338 sys-utils/losetup.c:828
 #, fuzzy
 msgid "no file specified"
 msgstr "沒有檔案指定的"
@@ -11195,7 +11195,7 @@ msgstr "唯讀光碟機選取速度命令不支援由這個內核"
 #: misc-utils/findmnt-verify.c:452
 #, fuzzy
 #| msgid "Unknown"
-msgid "reason uknown"
+msgid "reason unknown"
 msgstr "未知"
 
 #: misc-utils/findmnt-verify.c:455 misc-utils/findmnt-verify.c:457
@@ -11598,7 +11598,7 @@ msgstr "剖析大小時失敗"
 
 #: misc-utils/hardlink.c:1262
 #, fuzzy
-msgid "failed to cache size"
+msgid "failed to parse cache size"
 msgstr "剖析大小時失敗"
 
 #: misc-utils/hardlink.c:1265
@@ -11611,36 +11611,36 @@ msgstr "剖析大小時失敗"
 msgid "unsupported reflink mode; %s"
 msgstr "不受支援的命令"
 
-#: misc-utils/hardlink.c:1336
+#: misc-utils/hardlink.c:1338
 #, fuzzy
 msgid "cannot register exit handler"
 msgstr "無法設定信號處理程式"
 
-#: misc-utils/hardlink.c:1341
+#: misc-utils/hardlink.c:1343
 #, fuzzy
 msgid "no directory or file specified"
 msgstr "沒有迴圈裝置指定的"
 
-#: misc-utils/hardlink.c:1347
+#: misc-utils/hardlink.c:1349
 #, c-format
 msgid "cannot initialize %s method, use 'memcmp' fallback"
 msgstr ""
 
-#: misc-utils/hardlink.c:1352
+#: misc-utils/hardlink.c:1354
 #, fuzzy
 msgid "failed to initialize files comparior"
 msgstr "初始化 loopcxt 時失敗"
 
-#: misc-utils/hardlink.c:1364
+#: misc-utils/hardlink.c:1366
 msgid "Scanning [device/inode/links]:"
 msgstr ""
 
-#: misc-utils/hardlink.c:1369 sys-utils/fstrim.c:96
+#: misc-utils/hardlink.c:1371 sys-utils/fstrim.c:96
 #, fuzzy, c-format
 msgid "cannot get realpath: %s"
 msgstr "無法讀取 %s"
 
-#: misc-utils/hardlink.c:1373
+#: misc-utils/hardlink.c:1375
 #, fuzzy, c-format
 msgid "cannot process %s"
 msgstr "無法存取 %s"
@@ -12770,7 +12770,7 @@ msgid " -Q, --filter <expr>   apply display filter\n"
 msgstr ""
 
 #: misc-utils/lsfd.c:1262
-msgid "     --debug-filter    dump the innternal data structure of filter and exit\n"
+msgid "     --debug-filter    dump the internal data structure of filter and exit\n"
 msgstr ""
 
 #: misc-utils/lsfd.c:1263
@@ -12805,7 +12805,7 @@ msgstr ""
 
 #: misc-utils/lsfd.c:1359
 #, c-format
-msgid "empty ecounter expression given: -C/--counter %s"
+msgid "empty counter expression given: -C/--counter %s"
 msgstr ""
 
 #: misc-utils/lsfd.c:1367
@@ -18182,7 +18182,7 @@ msgstr "%s：無法設定迴圈裝置"
 msgid "%s: failed to check for conflicting loop devices"
 msgstr "%s：無法設定迴圈裝置"
 
-#: sys-utils/losetup.c:555 sys-utils/losetup.c:879
+#: sys-utils/losetup.c:555 sys-utils/losetup.c:881
 #, fuzzy
 msgid "cannot find an unused loop device"
 msgstr "找不到未使用的裝置"
@@ -18197,38 +18197,38 @@ msgstr "%s：無法使用上一步檔案"
 msgid "failed to parse logical block size"
 msgstr "剖析大小時失敗"
 
-#: sys-utils/losetup.c:671 sys-utils/losetup.c:681 sys-utils/losetup.c:807
-#: sys-utils/losetup.c:821 sys-utils/losetup.c:859
+#: sys-utils/losetup.c:671 sys-utils/losetup.c:681 sys-utils/losetup.c:809
+#: sys-utils/losetup.c:823 sys-utils/losetup.c:861
 #, fuzzy, c-format
 msgid "%s: failed to use device"
 msgstr "%s：無法使用裝置"
 
-#: sys-utils/losetup.c:818
+#: sys-utils/losetup.c:820
 #, fuzzy
 msgid "no loop device specified"
 msgstr "沒有迴圈裝置指定的"
 
-#: sys-utils/losetup.c:833
+#: sys-utils/losetup.c:835
 #, fuzzy, c-format
 msgid "the options %s are allowed during loop device setup only"
 msgstr "選項 %s 被允許到迴圈裝置設定只有"
 
-#: sys-utils/losetup.c:838
+#: sys-utils/losetup.c:840
 #, fuzzy
 msgid "the option --offset is not allowed in this context"
 msgstr "選項 --offset 未被允許在中這個語境。"
 
-#: sys-utils/losetup.c:900
+#: sys-utils/losetup.c:902
 #, fuzzy, c-format
 msgid "%s: set capacity failed"
 msgstr "%s：設定容量失敗"
 
-#: sys-utils/losetup.c:906
+#: sys-utils/losetup.c:908
 #, fuzzy, c-format
 msgid "%s: set direct io failed"
 msgstr "%s：變更目錄失敗"
 
-#: sys-utils/losetup.c:912
+#: sys-utils/losetup.c:914
 #, fuzzy, c-format
 msgid "%s: set logical block size failed"
 msgstr "%s：取得大小時失敗"
@@ -24672,6 +24672,10 @@ msgstr "讀取 terminfo 時出現問題"
 #, fuzzy, c-format
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr "終端機『%s』不是已知，預設到『dumb』"
+
+#, fuzzy
+#~ msgid "failed to cache size"
+#~ msgstr "剖析大小時失敗"
 
 #, fuzzy
 #~ msgid "child kill failed"

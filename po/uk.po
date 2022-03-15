@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.38-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-04 16:17+0100\n"
+"POT-Creation-Date: 2022-03-15 15:24+0100\n"
 "PO-Revision-Date: 2022-03-04 22:13+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
@@ -482,8 +482,7 @@ msgstr "Не вдалося записати скрипт %s"
 msgid "Select label type"
 msgstr "Вибрати тип мітки"
 
-#: disk-utils/cfdisk.c:2195 disk-utils/fdisk.c:1162
-#: disk-utils/fdisk-menu.c:490
+#: disk-utils/cfdisk.c:2195 disk-utils/fdisk.c:1162 disk-utils/fdisk-menu.c:490
 msgid "Device does not contain a recognized partition table."
 msgstr "Пристрій не містить розпізнаної таблиці розділів."
 
@@ -628,8 +627,7 @@ msgstr "Новий розмір: "
 msgid "Partition %zu resized."
 msgstr "Змінено розмір розділу %zu."
 
-#: disk-utils/cfdisk.c:2504 disk-utils/fdisk.c:1138
-#: disk-utils/fdisk-menu.c:593
+#: disk-utils/cfdisk.c:2504 disk-utils/fdisk.c:1138 disk-utils/fdisk-menu.c:593
 msgid "Device is open in read-only mode."
 msgstr "Пристрій відкрито у режимі лише читання."
 
@@ -766,8 +764,8 @@ msgstr ""
 "Продовжуємо... "
 
 #: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:629
-#: sys-utils/blkdiscard.c:89 sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:629 sys-utils/blkdiscard.c:89
+#: sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [параметри] <пристрій>\n"
@@ -1134,21 +1132,21 @@ msgstr "непідтримуваний режим витирання"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Властивості пристрою (розмір сектора та геометрію) слід використовувати лише для одного вказаного пристрою."
 
-#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122
-#: disk-utils/fsck.cramfs.c:703 disk-utils/mkfs.bfs.c:192
-#: disk-utils/mkfs.cramfs.c:788 disk-utils/partx.c:975 disk-utils/raw.c:136
-#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
-#: misc-utils/cal.c:524 misc-utils/findfs.c:58 misc-utils/look.c:147
-#: misc-utils/whereis.c:580 misc-utils/whereis.c:591 misc-utils/whereis.c:602
-#: misc-utils/whereis.c:644 schedutils/chrt.c:442 schedutils/ionice.c:264
-#: schedutils/taskset.c:188 sys-utils/chcpu.c:355 sys-utils/chmem.c:429
-#: sys-utils/dmesg.c:1580 sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321
-#: sys-utils/losetup.c:916 sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656
-#: sys-utils/mount.c:877 sys-utils/mount.c:885 sys-utils/mount.c:932
-#: sys-utils/mount.c:945 sys-utils/mount.c:1017 sys-utils/mountpoint.c:191
-#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:258 sys-utils/swapon.c:1006
-#: sys-utils/switch_root.c:270 sys-utils/umount.c:620
-#: term-utils/setterm.c:1197 text-utils/col.c:584 text-utils/more.c:2094
+#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122 disk-utils/fsck.cramfs.c:703
+#: disk-utils/mkfs.bfs.c:192 disk-utils/mkfs.cramfs.c:788
+#: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
+#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:524
+#: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:580
+#: misc-utils/whereis.c:591 misc-utils/whereis.c:602 misc-utils/whereis.c:644
+#: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:188
+#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1580
+#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
+#: sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656 sys-utils/mount.c:877
+#: sys-utils/mount.c:885 sys-utils/mount.c:932 sys-utils/mount.c:945
+#: sys-utils/mount.c:1017 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
+#: sys-utils/swapoff.c:258 sys-utils/swapon.c:1006 sys-utils/switch_root.c:270
+#: sys-utils/umount.c:620 term-utils/setterm.c:1197 text-utils/col.c:584
+#: text-utils/more.c:2094
 msgid "bad usage"
 msgstr "помилкове використання"
 
@@ -1268,13 +1266,12 @@ msgstr "не вдалося розташувати у пам'яті рядок �
 #: misc-utils/lsfd-file.c:349 misc-utils/lsfd-sock.c:47
 #: misc-utils/lsfd-sock.c:52 misc-utils/lsfd-sock.c:73
 #: misc-utils/lsfd-sock.c:75 misc-utils/lsfd-unkn.c:39
-#: misc-utils/lsfd-unkn.c:53 misc-utils/lsfd-unkn.c:55
-#: misc-utils/lslocks.c:459 misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242
-#: sys-utils/losetup.c:305 sys-utils/lscpu.c:568 sys-utils/lscpu.c:783
-#: sys-utils/lscpu.c:812 sys-utils/lscpu.c:822 sys-utils/lsipc.c:526
-#: sys-utils/lsipc.c:651 sys-utils/prlimit.c:275 sys-utils/rfkill.c:417
-#: sys-utils/swapon.c:227 sys-utils/wdctl.c:327 sys-utils/zramctl.c:481
-#: text-utils/column.c:481
+#: misc-utils/lsfd-unkn.c:53 misc-utils/lsfd-unkn.c:55 misc-utils/lslocks.c:459
+#: misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242 sys-utils/losetup.c:305
+#: sys-utils/lscpu.c:568 sys-utils/lscpu.c:783 sys-utils/lscpu.c:812
+#: sys-utils/lscpu.c:822 sys-utils/lsipc.c:526 sys-utils/lsipc.c:651
+#: sys-utils/prlimit.c:275 sys-utils/rfkill.c:417 sys-utils/swapon.c:227
+#: sys-utils/wdctl.c:327 sys-utils/zramctl.c:481 text-utils/column.c:481
 msgid "failed to add output data"
 msgstr "не вдалося додати виведені дані"
 
@@ -9809,7 +9806,7 @@ msgstr " -o, --output <список> стовпчики виведених да�
 msgid " -r, --raw             use raw output format\n"
 msgstr " -r, --raw             використовувати формат виведення без обробки\n"
 
-#: misc-utils/fincore.c:338 sys-utils/losetup.c:826
+#: misc-utils/fincore.c:338 sys-utils/losetup.c:828
 msgid "no file specified"
 msgstr "не вказано жодного файла"
 
@@ -10330,7 +10327,9 @@ msgid "%s seems unsupported by the current kernel"
 msgstr "Здається, у поточному ядрі не передбачено підтримки %s"
 
 #: misc-utils/findmnt-verify.c:452
-msgid "reason uknown"
+#, fuzzy
+#| msgid "reason uknown"
+msgid "reason unknown"
 msgstr "невідома причина"
 
 #: misc-utils/findmnt-verify.c:455 misc-utils/findmnt-verify.c:457
@@ -10708,8 +10707,10 @@ msgid "failed to parse maximum size"
 msgstr "не вдалося обробити максимальне значення розміру"
 
 #: misc-utils/hardlink.c:1262
-msgid "failed to cache size"
-msgstr "не вдалося кешувати розмір"
+#, fuzzy
+#| msgid "failed to parse size"
+msgid "failed to parse cache size"
+msgstr "не вдалося обробити значення розміру"
 
 #: misc-utils/hardlink.c:1265
 msgid "failed to parse I/O size"
@@ -10720,33 +10721,33 @@ msgstr "не вдалося обробити значення розміру в�
 msgid "unsupported reflink mode; %s"
 msgstr "непідтримуваний режим відносних посилань: %s"
 
-#: misc-utils/hardlink.c:1336
+#: misc-utils/hardlink.c:1338
 msgid "cannot register exit handler"
 msgstr "не вдалося зареєструвати обробник виходу"
 
-#: misc-utils/hardlink.c:1341
+#: misc-utils/hardlink.c:1343
 msgid "no directory or file specified"
 msgstr "не вказано файла або каталогу"
 
-#: misc-utils/hardlink.c:1347
+#: misc-utils/hardlink.c:1349
 #, c-format
 msgid "cannot initialize %s method, use 'memcmp' fallback"
 msgstr "не вдалося ініціалізувати метод %s, використовуємо резервний «memcmp»"
 
-#: misc-utils/hardlink.c:1352
+#: misc-utils/hardlink.c:1354
 msgid "failed to initialize files comparior"
 msgstr "не вдалося ініціалізувати засіб порівняння файлів"
 
-#: misc-utils/hardlink.c:1364
+#: misc-utils/hardlink.c:1366
 msgid "Scanning [device/inode/links]:"
 msgstr "Сканування [пристрій/inode/посилання]:"
 
-#: misc-utils/hardlink.c:1369 sys-utils/fstrim.c:96
+#: misc-utils/hardlink.c:1371 sys-utils/fstrim.c:96
 #, c-format
 msgid "cannot get realpath: %s"
 msgstr "не вдалося отримати realpath: %s"
 
-#: misc-utils/hardlink.c:1373
+#: misc-utils/hardlink.c:1375
 #, c-format
 msgid "cannot process %s"
 msgstr "не вдалося обробити %s"
@@ -11742,7 +11743,9 @@ msgid " -Q, --filter <expr>   apply display filter\n"
 msgstr " -Q, --filter <вираз>  застосувати фільтрування виведення\n"
 
 #: misc-utils/lsfd.c:1262
-msgid "     --debug-filter    dump the innternal data structure of filter and exit\n"
+#, fuzzy
+#| msgid "     --debug-filter    dump the innternal data structure of filter and exit\n"
+msgid "     --debug-filter    dump the internal data structure of filter and exit\n"
 msgstr "     --debug-filter    створити дамп структури внутрішніх даних фільтра і вийти\n"
 
 #: misc-utils/lsfd.c:1263
@@ -11776,8 +11779,9 @@ msgid "no name for counter: -C/--counter %s"
 msgstr "немає назви для лічильника: -C/--counter %s"
 
 #: misc-utils/lsfd.c:1359
-#, c-format
-msgid "empty ecounter expression given: -C/--counter %s"
+#, fuzzy, c-format
+#| msgid "empty ecounter expression given: -C/--counter %s"
+msgid "empty counter expression given: -C/--counter %s"
 msgstr "вказано порожній вираз лічильника: -C/--counter %s"
 
 #: misc-utils/lsfd.c:1367
@@ -13308,9 +13312,8 @@ msgstr "не вдалося обробити зсув"
 msgid "failed to parse step"
 msgstr "не вдалося обробити крок"
 
-#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:491
-#: sys-utils/fallocate.c:382 sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561
-#: sys-utils/umount.c:610
+#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:491 sys-utils/fallocate.c:382
+#: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561 sys-utils/umount.c:610
 msgid "unexpected number of arguments"
 msgstr "неочікувана кількість аргументів"
 
@@ -16727,7 +16730,7 @@ msgstr "не вдалося виконати інспектування петл
 msgid "%s: failed to check for conflicting loop devices"
 msgstr "%s: не вдалося виконати перевірку щодо конфліктів між петльовими пристроями"
 
-#: sys-utils/losetup.c:555 sys-utils/losetup.c:879
+#: sys-utils/losetup.c:555 sys-utils/losetup.c:881
 msgid "cannot find an unused loop device"
 msgstr "не вдалося знайти невикористаний петльовий пристрій"
 
@@ -16740,36 +16743,36 @@ msgstr "%s: не вдалося скористатися резервним фа
 msgid "failed to parse logical block size"
 msgstr "не вдалося обробити значення розміру логічного блоку"
 
-#: sys-utils/losetup.c:671 sys-utils/losetup.c:681 sys-utils/losetup.c:807
-#: sys-utils/losetup.c:821 sys-utils/losetup.c:859
+#: sys-utils/losetup.c:671 sys-utils/losetup.c:681 sys-utils/losetup.c:809
+#: sys-utils/losetup.c:823 sys-utils/losetup.c:861
 #, c-format
 msgid "%s: failed to use device"
 msgstr "%s: не вдалося використати пристрій"
 
-#: sys-utils/losetup.c:818
+#: sys-utils/losetup.c:820
 msgid "no loop device specified"
 msgstr "не вказано жодного петльового пристрою (loop)"
 
-#: sys-utils/losetup.c:833
+#: sys-utils/losetup.c:835
 #, c-format
 msgid "the options %s are allowed during loop device setup only"
 msgstr "параметри %s можна використовувати лише для початкового налаштовування петльового пристрою"
 
-#: sys-utils/losetup.c:838
+#: sys-utils/losetup.c:840
 msgid "the option --offset is not allowed in this context"
 msgstr "параметр --offset не можна використовувати у цьому контексті"
 
-#: sys-utils/losetup.c:900
+#: sys-utils/losetup.c:902
 #, c-format
 msgid "%s: set capacity failed"
 msgstr "%s: спроба встановлення місткості зазнала невдачі"
 
-#: sys-utils/losetup.c:906
+#: sys-utils/losetup.c:908
 #, c-format
 msgid "%s: set direct io failed"
 msgstr "%s: спроба встановлення безпосереднього введення-виведення зазнала невдачі"
 
-#: sys-utils/losetup.c:912
+#: sys-utils/losetup.c:914
 #, c-format
 msgid "%s: set logical block size failed"
 msgstr "%s: не вдалося встановити розмір логічного блоку"
@@ -22686,6 +22689,9 @@ msgstr "проблема при читанні terminfo"
 #, c-format
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr "термінал «%s» не належить до списку відомих, повертаємося до типового, «dumb»"
+
+#~ msgid "failed to cache size"
+#~ msgstr "не вдалося кешувати розмір"
 
 #~ msgid "Comparing %s to %s"
 #~ msgstr "Порівнюємо %s з %s"

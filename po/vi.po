@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.26-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-04 12:14+0100\n"
+"POT-Creation-Date: 2022-03-15 15:24+0100\n"
 "PO-Revision-Date: 2015-02-15 08:31+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -1187,7 +1187,7 @@ msgstr "Thuộc tính thiết bị (kích cỡ cung từ và cấu trúc hình h
 #: misc-utils/whereis.c:591 misc-utils/whereis.c:602 misc-utils/whereis.c:644
 #: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:188
 #: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1580
-#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:916
+#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
 #: sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656 sys-utils/mount.c:877
 #: sys-utils/mount.c:885 sys-utils/mount.c:932 sys-utils/mount.c:945
 #: sys-utils/mount.c:1017 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
@@ -10173,7 +10173,7 @@ msgstr " -o, --output <d.sách> hiển thị các cột\n"
 msgid " -r, --raw             use raw output format\n"
 msgstr " -r, --raw              dùng định dạng thô\n"
 
-#: misc-utils/fincore.c:338 sys-utils/losetup.c:826
+#: misc-utils/fincore.c:338 sys-utils/losetup.c:828
 msgid "no file specified"
 msgstr "chưa ghi rõ tập tin"
 
@@ -10711,7 +10711,7 @@ msgstr "Lệnh chọn tốc độ đĩa CD-ROM không được hỗ trợ bởi 
 #: misc-utils/findmnt-verify.c:452
 #, fuzzy
 #| msgid "Unknown"
-msgid "reason uknown"
+msgid "reason unknown"
 msgstr "Không hiểu"
 
 #: misc-utils/findmnt-verify.c:455 misc-utils/findmnt-verify.c:457
@@ -11111,7 +11111,7 @@ msgstr "gặp lỗi khi đặt kích cỡ trang"
 #: misc-utils/hardlink.c:1262
 #, fuzzy
 #| msgid "failed to parse size"
-msgid "failed to cache size"
+msgid "failed to parse cache size"
 msgstr "gặp lỗi khi đặt kích cỡ trang"
 
 #: misc-utils/hardlink.c:1265
@@ -11125,36 +11125,36 @@ msgstr "gặp lỗi khi đặt kích cỡ trang"
 msgid "unsupported reflink mode; %s"
 msgstr "không được hỗ trợ tô màu"
 
-#: misc-utils/hardlink.c:1336
+#: misc-utils/hardlink.c:1338
 #, fuzzy
 msgid "cannot register exit handler"
 msgstr "không đặt bộ tiếp hợp tín hiệu"
 
-#: misc-utils/hardlink.c:1341
+#: misc-utils/hardlink.c:1343
 #, fuzzy
 msgid "no directory or file specified"
 msgstr "chưa chỉ định thiết bị"
 
-#: misc-utils/hardlink.c:1347
+#: misc-utils/hardlink.c:1349
 #, c-format
 msgid "cannot initialize %s method, use 'memcmp' fallback"
 msgstr ""
 
-#: misc-utils/hardlink.c:1352
+#: misc-utils/hardlink.c:1354
 #, fuzzy
 msgid "failed to initialize files comparior"
 msgstr "gặp lỗi khi khởi tạo loopcxt"
 
-#: misc-utils/hardlink.c:1364
+#: misc-utils/hardlink.c:1366
 msgid "Scanning [device/inode/links]:"
 msgstr ""
 
-#: misc-utils/hardlink.c:1369 sys-utils/fstrim.c:96
+#: misc-utils/hardlink.c:1371 sys-utils/fstrim.c:96
 #, fuzzy, c-format
 msgid "cannot get realpath: %s"
 msgstr "không thể đọc %s"
 
-#: misc-utils/hardlink.c:1373
+#: misc-utils/hardlink.c:1375
 #, fuzzy, c-format
 msgid "cannot process %s"
 msgstr "không thể truy cập %s"
@@ -12259,7 +12259,7 @@ msgid " -Q, --filter <expr>   apply display filter\n"
 msgstr ""
 
 #: misc-utils/lsfd.c:1262
-msgid "     --debug-filter    dump the innternal data structure of filter and exit\n"
+msgid "     --debug-filter    dump the internal data structure of filter and exit\n"
 msgstr ""
 
 #: misc-utils/lsfd.c:1263
@@ -12295,7 +12295,7 @@ msgstr ""
 
 #: misc-utils/lsfd.c:1359
 #, c-format
-msgid "empty ecounter expression given: -C/--counter %s"
+msgid "empty counter expression given: -C/--counter %s"
 msgstr ""
 
 #: misc-utils/lsfd.c:1367
@@ -17495,7 +17495,7 @@ msgstr "gặp lỗi khi cài đặt thiết bị loop"
 msgid "%s: failed to check for conflicting loop devices"
 msgstr "%s: gặp lỗi khi cài đặt thiết bị loop"
 
-#: sys-utils/losetup.c:555 sys-utils/losetup.c:879
+#: sys-utils/losetup.c:555 sys-utils/losetup.c:881
 msgid "cannot find an unused loop device"
 msgstr "không thể tìm thấy thiết bị loop chưa dùng"
 
@@ -17509,36 +17509,36 @@ msgstr "%s: gặp lỗi sử dụng tập tin trợ giúp"
 msgid "failed to parse logical block size"
 msgstr "gặp lỗi khi đặt kích cỡ trang"
 
-#: sys-utils/losetup.c:671 sys-utils/losetup.c:681 sys-utils/losetup.c:807
-#: sys-utils/losetup.c:821 sys-utils/losetup.c:859
+#: sys-utils/losetup.c:671 sys-utils/losetup.c:681 sys-utils/losetup.c:809
+#: sys-utils/losetup.c:823 sys-utils/losetup.c:861
 #, c-format
 msgid "%s: failed to use device"
 msgstr "%s: gặp lỗi khi sử dụng thiết bị"
 
-#: sys-utils/losetup.c:818
+#: sys-utils/losetup.c:820
 msgid "no loop device specified"
 msgstr "không chỉ ra thiết bị loop (vòng ngược)"
 
-#: sys-utils/losetup.c:833
+#: sys-utils/losetup.c:835
 #, c-format
 msgid "the options %s are allowed during loop device setup only"
 msgstr "tùy chọn %s chỉ cho phép cài đặt thiết bị vòng lặp (loop) thôi"
 
-#: sys-utils/losetup.c:838
+#: sys-utils/losetup.c:840
 msgid "the option --offset is not allowed in this context"
 msgstr "tùy chọn --offset là không được phép trong ngữ cảnh này"
 
-#: sys-utils/losetup.c:900
+#: sys-utils/losetup.c:902
 #, c-format
 msgid "%s: set capacity failed"
 msgstr "%s: đặt dung lượng gặp lỗi"
 
-#: sys-utils/losetup.c:906
+#: sys-utils/losetup.c:908
 #, fuzzy, c-format
 msgid "%s: set direct io failed"
 msgstr "%s: đổi thư mục gặp lỗi"
 
-#: sys-utils/losetup.c:912
+#: sys-utils/losetup.c:914
 #, fuzzy, c-format
 msgid "%s: set logical block size failed"
 msgstr "%s: lỗi lấy kích cỡ"
@@ -23807,6 +23807,11 @@ msgstr "có vấn đề khi đọc terminfo"
 #, c-format
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr "thiết bị cuối “%s” không hiểu, mặc định là “dumb”"
+
+#, fuzzy
+#~| msgid "failed to parse size"
+#~ msgid "failed to cache size"
+#~ msgstr "gặp lỗi khi đặt kích cỡ trang"
 
 #, fuzzy
 #~| msgid "child exit failed"

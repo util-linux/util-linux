@@ -50,7 +50,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.38-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-04 16:17+0100\n"
+"POT-Creation-Date: 2022-03-15 15:24+0100\n"
 "PO-Revision-Date: 2022-03-13 21:17+01:00\n"
 "Last-Translator: Petr Písař <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -523,8 +523,7 @@ msgstr "Zápis skriptu %s selhal."
 msgid "Select label type"
 msgstr "Vybrat druh popisu"
 
-#: disk-utils/cfdisk.c:2195 disk-utils/fdisk.c:1162
-#: disk-utils/fdisk-menu.c:490
+#: disk-utils/cfdisk.c:2195 disk-utils/fdisk.c:1162 disk-utils/fdisk-menu.c:490
 msgid "Device does not contain a recognized partition table."
 msgstr "Zařízení neobsahuje známou tabulku rozdělení disku."
 
@@ -669,8 +668,7 @@ msgstr "Nová velikost: "
 msgid "Partition %zu resized."
 msgstr "Oddíl č. %zu změnil velikost."
 
-#: disk-utils/cfdisk.c:2504 disk-utils/fdisk.c:1138
-#: disk-utils/fdisk-menu.c:593
+#: disk-utils/cfdisk.c:2504 disk-utils/fdisk.c:1138 disk-utils/fdisk-menu.c:593
 msgid "Device is open in read-only mode."
 msgstr "Zařízení otevřeno jen pro čtení."
 
@@ -807,8 +805,8 @@ msgstr ""
 "Pokračuje se…"
 
 #: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:629
-#: sys-utils/blkdiscard.c:89 sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:629 sys-utils/blkdiscard.c:89
+#: sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [přepínače] <zařízení>\n"
@@ -1185,21 +1183,21 @@ msgstr "nepodporovaný režim výmazu"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Vlastnosti zařízení (velikost sektoru a geometrie) by měly být použity jen s jedním zadaným zařízením."
 
-#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122
-#: disk-utils/fsck.cramfs.c:703 disk-utils/mkfs.bfs.c:192
-#: disk-utils/mkfs.cramfs.c:788 disk-utils/partx.c:975 disk-utils/raw.c:136
-#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
-#: misc-utils/cal.c:524 misc-utils/findfs.c:58 misc-utils/look.c:147
-#: misc-utils/whereis.c:580 misc-utils/whereis.c:591 misc-utils/whereis.c:602
-#: misc-utils/whereis.c:644 schedutils/chrt.c:442 schedutils/ionice.c:264
-#: schedutils/taskset.c:188 sys-utils/chcpu.c:355 sys-utils/chmem.c:429
-#: sys-utils/dmesg.c:1580 sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321
-#: sys-utils/losetup.c:916 sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656
-#: sys-utils/mount.c:877 sys-utils/mount.c:885 sys-utils/mount.c:932
-#: sys-utils/mount.c:945 sys-utils/mount.c:1017 sys-utils/mountpoint.c:191
-#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:258 sys-utils/swapon.c:1006
-#: sys-utils/switch_root.c:270 sys-utils/umount.c:620
-#: term-utils/setterm.c:1197 text-utils/col.c:584 text-utils/more.c:2094
+#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122 disk-utils/fsck.cramfs.c:703
+#: disk-utils/mkfs.bfs.c:192 disk-utils/mkfs.cramfs.c:788
+#: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
+#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:524
+#: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:580
+#: misc-utils/whereis.c:591 misc-utils/whereis.c:602 misc-utils/whereis.c:644
+#: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:188
+#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1580
+#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
+#: sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656 sys-utils/mount.c:877
+#: sys-utils/mount.c:885 sys-utils/mount.c:932 sys-utils/mount.c:945
+#: sys-utils/mount.c:1017 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
+#: sys-utils/swapoff.c:258 sys-utils/swapon.c:1006 sys-utils/switch_root.c:270
+#: sys-utils/umount.c:620 term-utils/setterm.c:1197 text-utils/col.c:584
+#: text-utils/more.c:2094
 msgid "bad usage"
 msgstr "chybný způsob použití"
 
@@ -1319,13 +1317,12 @@ msgstr "výstupní řádek se nepodařilo alokovat"
 #: misc-utils/lsfd-file.c:349 misc-utils/lsfd-sock.c:47
 #: misc-utils/lsfd-sock.c:52 misc-utils/lsfd-sock.c:73
 #: misc-utils/lsfd-sock.c:75 misc-utils/lsfd-unkn.c:39
-#: misc-utils/lsfd-unkn.c:53 misc-utils/lsfd-unkn.c:55
-#: misc-utils/lslocks.c:459 misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242
-#: sys-utils/losetup.c:305 sys-utils/lscpu.c:568 sys-utils/lscpu.c:783
-#: sys-utils/lscpu.c:812 sys-utils/lscpu.c:822 sys-utils/lsipc.c:526
-#: sys-utils/lsipc.c:651 sys-utils/prlimit.c:275 sys-utils/rfkill.c:417
-#: sys-utils/swapon.c:227 sys-utils/wdctl.c:327 sys-utils/zramctl.c:481
-#: text-utils/column.c:481
+#: misc-utils/lsfd-unkn.c:53 misc-utils/lsfd-unkn.c:55 misc-utils/lslocks.c:459
+#: misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242 sys-utils/losetup.c:305
+#: sys-utils/lscpu.c:568 sys-utils/lscpu.c:783 sys-utils/lscpu.c:812
+#: sys-utils/lscpu.c:822 sys-utils/lsipc.c:526 sys-utils/lsipc.c:651
+#: sys-utils/prlimit.c:275 sys-utils/rfkill.c:417 sys-utils/swapon.c:227
+#: sys-utils/wdctl.c:327 sys-utils/zramctl.c:481 text-utils/column.c:481
 msgid "failed to add output data"
 msgstr "přidání výstupních data selhalo"
 
@@ -9942,7 +9939,7 @@ msgstr ""
 msgid " -r, --raw             use raw output format\n"
 msgstr " -r, --raw             neformátovaný výstup\n"
 
-#: misc-utils/fincore.c:338 sys-utils/losetup.c:826
+#: misc-utils/fincore.c:338 sys-utils/losetup.c:828
 msgid "no file specified"
 msgstr "nezadán žádný soubor"
 
@@ -10482,7 +10479,9 @@ msgid "%s seems unsupported by the current kernel"
 msgstr "zdá se, že současné jádro nepodporuje %s"
 
 #: misc-utils/findmnt-verify.c:452
-msgid "reason uknown"
+#, fuzzy
+#| msgid "reason uknown"
+msgid "reason unknown"
 msgstr "důvod neznámý"
 
 #: misc-utils/findmnt-verify.c:455 misc-utils/findmnt-verify.c:457
@@ -10871,10 +10870,11 @@ msgstr "minimální velikost se nezdařilo rozebrat"
 msgid "failed to parse maximum size"
 msgstr "maximální velikost se nezdařilo rozebrat"
 
-# FIX: missing "parse"
 #: misc-utils/hardlink.c:1262
-msgid "failed to cache size"
-msgstr "velikost keše se nezdařilo rozebrat"
+#, fuzzy
+#| msgid "failed to parse size"
+msgid "failed to parse cache size"
+msgstr "velikost se nezdařilo rozebrat"
 
 #: misc-utils/hardlink.c:1265
 msgid "failed to parse I/O size"
@@ -10885,33 +10885,33 @@ msgstr "velikost I/O se nezdařilo rozebrat"
 msgid "unsupported reflink mode; %s"
 msgstr "nepodporovaný režim lehkých kopií: %s"
 
-#: misc-utils/hardlink.c:1336
+#: misc-utils/hardlink.c:1338
 msgid "cannot register exit handler"
 msgstr "obsluhu ukončení nelze zaregistrovat"
 
-#: misc-utils/hardlink.c:1341
+#: misc-utils/hardlink.c:1343
 msgid "no directory or file specified"
 msgstr "nezadán ani adresář, ani soubor"
 
-#: misc-utils/hardlink.c:1347
+#: misc-utils/hardlink.c:1349
 #, c-format
 msgid "cannot initialize %s method, use 'memcmp' fallback"
 msgstr "způsob %s nelze inicializovat, použije se „memcmp“"
 
-#: misc-utils/hardlink.c:1352
+#: misc-utils/hardlink.c:1354
 msgid "failed to initialize files comparior"
 msgstr "porovnávač souborů se nepodařilo inicializovat"
 
-#: misc-utils/hardlink.c:1364
+#: misc-utils/hardlink.c:1366
 msgid "Scanning [device/inode/links]:"
 msgstr "Prohledává se [zařízení/i-uzel/odkazy]:"
 
-#: misc-utils/hardlink.c:1369 sys-utils/fstrim.c:96
+#: misc-utils/hardlink.c:1371 sys-utils/fstrim.c:96
 #, c-format
 msgid "cannot get realpath: %s"
 msgstr "reálnou cestu nelze zjistit: %s"
 
-#: misc-utils/hardlink.c:1373
+#: misc-utils/hardlink.c:1375
 #, c-format
 msgid "cannot process %s"
 msgstr "%s nelze zpracovat"
@@ -11930,7 +11930,9 @@ msgid " -Q, --filter <expr>   apply display filter\n"
 msgstr " -Q, --filter <výraz>  použije výstupní filtr\n"
 
 #: misc-utils/lsfd.c:1262
-msgid "     --debug-filter    dump the innternal data structure of filter and exit\n"
+#, fuzzy
+#| msgid "     --debug-filter    dump the innternal data structure of filter and exit\n"
+msgid "     --debug-filter    dump the internal data structure of filter and exit\n"
 msgstr "     --debug-filter    vypíše vnitřní údaje o filtru a skončí\n"
 
 #: misc-utils/lsfd.c:1263
@@ -11966,8 +11968,9 @@ msgid "no name for counter: -C/--counter %s"
 msgstr "počítadlo bez názvu: -C/--counter %s"
 
 #: misc-utils/lsfd.c:1359
-#, c-format
-msgid "empty ecounter expression given: -C/--counter %s"
+#, fuzzy, c-format
+#| msgid "empty ecounter expression given: -C/--counter %s"
+msgid "empty counter expression given: -C/--counter %s"
 msgstr "zadán prázdný výraz pro počítadlo: -C/--counter %s"
 
 #: misc-utils/lsfd.c:1367
@@ -13513,9 +13516,8 @@ msgstr "nezdařilo se rozebrat začátek oblasti"
 msgid "failed to parse step"
 msgstr "krok se nezdařilo rozebrat"
 
-#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:491
-#: sys-utils/fallocate.c:382 sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561
-#: sys-utils/umount.c:610
+#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:491 sys-utils/fallocate.c:382
+#: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561 sys-utils/umount.c:610
 msgid "unexpected number of arguments"
 msgstr "neočekávaný počet argumentů"
 
@@ -16960,7 +16962,7 @@ msgstr "loop zařízení se nepodařilo prozkoumat"
 msgid "%s: failed to check for conflicting loop devices"
 msgstr "%s: nepodařilo zkontrolovat, jestli loop zařízení nejsou ve sporu"
 
-#: sys-utils/losetup.c:555 sys-utils/losetup.c:879
+#: sys-utils/losetup.c:555 sys-utils/losetup.c:881
 msgid "cannot find an unused loop device"
 msgstr "nelze nalézt nepoužité loop zařízení"
 
@@ -16973,36 +16975,36 @@ msgstr "%s: podkladový soubor se nepodařilo použít"
 msgid "failed to parse logical block size"
 msgstr "velikost logického bloku se nepodařilo rozebrat"
 
-#: sys-utils/losetup.c:671 sys-utils/losetup.c:681 sys-utils/losetup.c:807
-#: sys-utils/losetup.c:821 sys-utils/losetup.c:859
+#: sys-utils/losetup.c:671 sys-utils/losetup.c:681 sys-utils/losetup.c:809
+#: sys-utils/losetup.c:823 sys-utils/losetup.c:861
 #, c-format
 msgid "%s: failed to use device"
 msgstr "%s: zařízení nebylo možné použít"
 
-#: sys-utils/losetup.c:818
+#: sys-utils/losetup.c:820
 msgid "no loop device specified"
 msgstr "žádné loop zařízení nebylo zadáno"
 
-#: sys-utils/losetup.c:833
+#: sys-utils/losetup.c:835
 #, c-format
 msgid "the options %s are allowed during loop device setup only"
 msgstr "přepínače %s jsou dovoleny jen při nastavování loop zařízení"
 
-#: sys-utils/losetup.c:838
+#: sys-utils/losetup.c:840
 msgid "the option --offset is not allowed in this context"
 msgstr "v tomto kontextu není přepínač --offset dovolen"
 
-#: sys-utils/losetup.c:900
+#: sys-utils/losetup.c:902
 #, c-format
 msgid "%s: set capacity failed"
 msgstr "%s: nepodařilo se nastavit kapacitu"
 
-#: sys-utils/losetup.c:906
+#: sys-utils/losetup.c:908
 #, c-format
 msgid "%s: set direct io failed"
 msgstr "%s: nepodařilo se nastavit přímé IO"
 
-#: sys-utils/losetup.c:912
+#: sys-utils/losetup.c:914
 #, c-format
 msgid "%s: set logical block size failed"
 msgstr "%s: nepodařilo se nastavit velikost logické bloku"
@@ -23066,6 +23068,10 @@ msgstr "chyba při čtení terminfo databáze"
 #, c-format
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr "terminál „%s“ není znám, použije se „dump“"
+
+# FIX: missing "parse"
+#~ msgid "failed to cache size"
+#~ msgstr "velikost keše se nezdařilo rozebrat"
 
 #~ msgid "Comparing %s to %s"
 #~ msgstr "Porovnává se %s s %s"

@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.36-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-04 12:14+0100\n"
+"POT-Creation-Date: 2022-03-15 15:24+0100\n"
 "PO-Revision-Date: 2020-07-19 21:15+0900\n"
 "Last-Translator: Takeshi Hamasaki <hmatrjp@users.sourceforge.jp>\n"
 "Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
@@ -1159,7 +1159,7 @@ msgstr "デバイスのプロパティ (セクタサイズ及びジオメトリ)
 #: misc-utils/whereis.c:591 misc-utils/whereis.c:602 misc-utils/whereis.c:644
 #: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:188
 #: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1580
-#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:916
+#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
 #: sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656 sys-utils/mount.c:877
 #: sys-utils/mount.c:885 sys-utils/mount.c:932 sys-utils/mount.c:945
 #: sys-utils/mount.c:1017 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
@@ -10028,7 +10028,7 @@ msgstr " -o, --output <list>   出力する列を指定します\n"
 msgid " -r, --raw             use raw output format\n"
 msgstr " -r, --raw             特に加工を行わずに出力します\n"
 
-#: misc-utils/fincore.c:338 sys-utils/losetup.c:826
+#: misc-utils/fincore.c:338 sys-utils/losetup.c:828
 msgid "no file specified"
 msgstr "ファイルが指定されていません"
 
@@ -10581,7 +10581,7 @@ msgstr "CD-ROM 速度選択コマンドは、このカーネルで対応して�
 #: misc-utils/findmnt-verify.c:452
 #, fuzzy
 #| msgid "Unknown"
-msgid "reason uknown"
+msgid "reason unknown"
 msgstr "不明"
 
 #: misc-utils/findmnt-verify.c:455 misc-utils/findmnt-verify.c:457
@@ -10993,7 +10993,7 @@ msgstr "サイズ情報の解釈に失敗しました"
 #: misc-utils/hardlink.c:1262
 #, fuzzy
 #| msgid "failed to parse size"
-msgid "failed to cache size"
+msgid "failed to parse cache size"
 msgstr "サイズ情報の解釈に失敗しました"
 
 #: misc-utils/hardlink.c:1265
@@ -11008,37 +11008,37 @@ msgstr "サイズ情報の解釈に失敗しました"
 msgid "unsupported reflink mode; %s"
 msgstr "未対応のロックモードです: %s"
 
-#: misc-utils/hardlink.c:1336
+#: misc-utils/hardlink.c:1338
 #, fuzzy
 msgid "cannot register exit handler"
 msgstr "シグナルハンドラを設定できません"
 
-#: misc-utils/hardlink.c:1341
+#: misc-utils/hardlink.c:1343
 #, fuzzy
 msgid "no directory or file specified"
 msgstr "デバイスが指定されていません"
 
-#: misc-utils/hardlink.c:1347
+#: misc-utils/hardlink.c:1349
 #, c-format
 msgid "cannot initialize %s method, use 'memcmp' fallback"
 msgstr ""
 
-#: misc-utils/hardlink.c:1352
+#: misc-utils/hardlink.c:1354
 #, fuzzy
 #| msgid "failed to initialize loopcxt"
 msgid "failed to initialize files comparior"
 msgstr "loopcxt の準備に失敗しました"
 
-#: misc-utils/hardlink.c:1364
+#: misc-utils/hardlink.c:1366
 msgid "Scanning [device/inode/links]:"
 msgstr ""
 
-#: misc-utils/hardlink.c:1369 sys-utils/fstrim.c:96
+#: misc-utils/hardlink.c:1371 sys-utils/fstrim.c:96
 #, fuzzy, c-format
 msgid "cannot get realpath: %s"
 msgstr "%s を読み込むことができません"
 
-#: misc-utils/hardlink.c:1373
+#: misc-utils/hardlink.c:1375
 #, fuzzy, c-format
 msgid "cannot process %s"
 msgstr "%s にアクセスできません"
@@ -12154,7 +12154,7 @@ msgid " -Q, --filter <expr>   apply display filter\n"
 msgstr ""
 
 #: misc-utils/lsfd.c:1262
-msgid "     --debug-filter    dump the innternal data structure of filter and exit\n"
+msgid "     --debug-filter    dump the internal data structure of filter and exit\n"
 msgstr ""
 
 #: misc-utils/lsfd.c:1263
@@ -12190,7 +12190,7 @@ msgstr ""
 
 #: misc-utils/lsfd.c:1359
 #, c-format
-msgid "empty ecounter expression given: -C/--counter %s"
+msgid "empty counter expression given: -C/--counter %s"
 msgstr ""
 
 #: misc-utils/lsfd.c:1367
@@ -17334,7 +17334,7 @@ msgstr "%s: ループバックデバイスの設定に失敗しました"
 msgid "%s: failed to check for conflicting loop devices"
 msgstr "%s: ループバックデバイスの設定に失敗しました"
 
-#: sys-utils/losetup.c:555 sys-utils/losetup.c:879
+#: sys-utils/losetup.c:555 sys-utils/losetup.c:881
 msgid "cannot find an unused loop device"
 msgstr "未使用のループバックデバイスが見つかりません"
 
@@ -17348,36 +17348,36 @@ msgstr "%s: 裏側に設定するファイルを使用できませんでした"
 msgid "failed to parse logical block size"
 msgstr "サイズ情報の解釈に失敗しました"
 
-#: sys-utils/losetup.c:671 sys-utils/losetup.c:681 sys-utils/losetup.c:807
-#: sys-utils/losetup.c:821 sys-utils/losetup.c:859
+#: sys-utils/losetup.c:671 sys-utils/losetup.c:681 sys-utils/losetup.c:809
+#: sys-utils/losetup.c:823 sys-utils/losetup.c:861
 #, c-format
 msgid "%s: failed to use device"
 msgstr "%s: デバイスの使用に失敗しました"
 
-#: sys-utils/losetup.c:818
+#: sys-utils/losetup.c:820
 msgid "no loop device specified"
 msgstr "ループバックデバイスが指定されていません"
 
-#: sys-utils/losetup.c:833
+#: sys-utils/losetup.c:835
 #, c-format
 msgid "the options %s are allowed during loop device setup only"
 msgstr "オプション %s はループバックデバイスの設定時にのみ有効です"
 
-#: sys-utils/losetup.c:838
+#: sys-utils/losetup.c:840
 msgid "the option --offset is not allowed in this context"
 msgstr "オプション --offset は、この処理では利用できません"
 
-#: sys-utils/losetup.c:900
+#: sys-utils/losetup.c:902
 #, c-format
 msgid "%s: set capacity failed"
 msgstr "%s: stat が失敗しました"
 
-#: sys-utils/losetup.c:906
+#: sys-utils/losetup.c:908
 #, fuzzy, c-format
 msgid "%s: set direct io failed"
 msgstr "%s: ディレクトリの変更に失敗しました"
 
-#: sys-utils/losetup.c:912
+#: sys-utils/losetup.c:914
 #, fuzzy, c-format
 msgid "%s: set logical block size failed"
 msgstr "%s: サイズの取得に失敗しました"
@@ -23591,6 +23591,11 @@ msgstr "terminfo の読み込み中にトラブルが発生しました"
 #, c-format
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr "端末 `%s' は不明な端末です。 `dumb' として処理します"
+
+#, fuzzy
+#~| msgid "failed to parse size"
+#~ msgid "failed to cache size"
+#~ msgstr "サイズ情報の解釈に失敗しました"
 
 #, fuzzy
 #~| msgid "child exit failed"
