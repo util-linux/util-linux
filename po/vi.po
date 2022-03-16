@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.26-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-15 15:24+0100\n"
+"POT-Creation-Date: 2022-03-16 17:42+0100\n"
 "PO-Revision-Date: 2015-02-15 08:31+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -217,7 +217,7 @@ msgstr " %-25s lấy kích cỡ theo cung từ là 512 byte\n"
 #: disk-utils/fsck.minix.c:1336 disk-utils/isosize.c:155
 #: disk-utils/mkfs.bfs.c:175 disk-utils/mkfs.c:110 disk-utils/mkfs.minix.c:827
 #: disk-utils/swaplabel.c:180 misc-utils/wipefs.c:760
-#: sys-utils/blkdiscard.c:219 sys-utils/blkzone.c:487 sys-utils/tunelp.c:241
+#: sys-utils/blkdiscard.c:219 sys-utils/blkzone.c:495 sys-utils/tunelp.c:241
 #: sys-utils/zramctl.c:716 sys-utils/zramctl.c:742
 msgid "no device specified"
 msgstr "chưa chỉ định thiết bị"
@@ -13946,7 +13946,7 @@ msgstr "không phân tích được offset"
 msgid "failed to parse step"
 msgstr "gặp lỗi khi phân tích bước"
 
-#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:491 sys-utils/fallocate.c:382
+#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:499 sys-utils/fallocate.c:382
 #: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561 sys-utils/umount.c:610
 msgid "unexpected number of arguments"
 msgstr "gặp số các đối số bất thường"
@@ -13966,7 +13966,7 @@ msgstr "%s: BLKSSZGET ioctl gặp lỗi"
 msgid "%s: offset %<PRIu64> is not aligned to sector size %i"
 msgstr "%s: khoảng bù %<PRIu64> không được căn chỉnh với cỡ cung từ %i"
 
-#: sys-utils/blkdiscard.c:249 sys-utils/blkzone.c:348
+#: sys-utils/blkdiscard.c:249 sys-utils/blkzone.c:356
 #, c-format
 msgid "%s: offset is greater than device size"
 msgstr "%s: khoảng bù còn lớn hơn cả cỡ của thiết bị"
@@ -14040,7 +14040,7 @@ msgstr "%s: đổi thư mục gặp lỗi"
 msgid "%s: offset is greater than or equal to device size"
 msgstr "%s: khoảng bù còn lớn hơn cả cỡ của thiết bị"
 
-#: sys-utils/blkzone.c:246 sys-utils/blkzone.c:338
+#: sys-utils/blkzone.c:246 sys-utils/blkzone.c:346
 #, fuzzy, c-format
 msgid "%s: unable to determine zone size"
 msgstr "%s: không thể ghi ánh xạ vùng"
@@ -14060,90 +14060,95 @@ msgstr ""
 msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, cap 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:318
+#: sys-utils/blkzone.c:310
+#, c-format
+msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
+msgstr ""
+
+#: sys-utils/blkzone.c:326
 #, c-format
 msgid "0x%09<PRIx64>\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:343
+#: sys-utils/blkzone.c:351
 #, fuzzy, c-format
 msgid "%s: offset %<PRIu64> is not aligned to zone size %lu"
 msgstr "%s: khoảng bù %<PRIu64> không được căn chỉnh với cỡ cung từ %i"
 
-#: sys-utils/blkzone.c:362
+#: sys-utils/blkzone.c:370
 #, fuzzy, c-format
 msgid "%s: number of sectors %<PRIu64> is not aligned to zone size %lu"
 msgstr "%s: khoảng bù %<PRIu64> không được căn chỉnh với cỡ cung từ %i"
 
-#: sys-utils/blkzone.c:370
+#: sys-utils/blkzone.c:378
 #, fuzzy, c-format
 msgid "%s: %s ioctl failed"
 msgstr "%s: FITRIM ioctl không thành công"
 
-#: sys-utils/blkzone.c:373
+#: sys-utils/blkzone.c:381
 #, fuzzy, c-format
 msgid "%s: successful %s of zones in range from %<PRIu64>, to %<PRIu64>"
 msgstr "Tên phân vùng được thay đổi từ “%s” thành “%.*s”."
 
-#: sys-utils/blkzone.c:388
+#: sys-utils/blkzone.c:396
 #, fuzzy, c-format
 msgid " %s <command> [options] <device>\n"
 msgstr "%s [các-tùy-chọn] <thiết-bị>\n"
 
-#: sys-utils/blkzone.c:391
+#: sys-utils/blkzone.c:399
 msgid "Run zone command on the given block device.\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:398
+#: sys-utils/blkzone.c:406
 #, fuzzy
 msgid " -o, --offset <sector>  start sector of zone to act (in 512-byte sectors)\n"
 msgstr " -o, --offset <số>    khoảng bù cho thao tác vùng, tính bằng byte\n"
 
-#: sys-utils/blkzone.c:399
+#: sys-utils/blkzone.c:407
 msgid " -l, --length <sectors> maximum sectors to act (in 512-byte sectors)\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:400
+#: sys-utils/blkzone.c:408
 #, fuzzy
 msgid " -c, --count <number>   maximum number of zones\n"
 msgstr " -t, --streams <sô>        số luồng nén\n"
 
-#: sys-utils/blkzone.c:401
+#: sys-utils/blkzone.c:409
 #, fuzzy
 msgid " -f, --force            enforce on block devices used by the system\n"
 msgstr " -f, --fs             hiển thị thông tin về hệ thống tập tin\n"
 
-#: sys-utils/blkzone.c:402
+#: sys-utils/blkzone.c:410
 #, fuzzy
 msgid " -v, --verbose          display more details\n"
 msgstr " -v, --verbose             hiển thị dữ liệu dạng đầy đủ\n"
 
-#: sys-utils/blkzone.c:407
+#: sys-utils/blkzone.c:415
 #, fuzzy
 msgid "<sector> and <sectors>"
 msgstr "số cung từ: %d, kích cỡ cung từ: %d\n"
 
-#: sys-utils/blkzone.c:445
+#: sys-utils/blkzone.c:453
 #, fuzzy, c-format
 msgid "%s is not valid command name"
 msgstr "%s: không phải là thiết bị khối thích hợp"
 
-#: sys-utils/blkzone.c:457
+#: sys-utils/blkzone.c:465
 #, fuzzy
 msgid "failed to parse number of zones"
 msgstr "gặp lỗi khi phân tích số dòng"
 
-#: sys-utils/blkzone.c:461
+#: sys-utils/blkzone.c:469
 #, fuzzy
 msgid "failed to parse number of sectors"
 msgstr "gặp lỗi khi phân tích số dòng"
 
-#: sys-utils/blkzone.c:465
+#: sys-utils/blkzone.c:473
 #, fuzzy
 msgid "failed to parse zone offset"
 msgstr "không phân tích được offset"
 
-#: sys-utils/blkzone.c:484 sys-utils/setsid.c:92
+#: sys-utils/blkzone.c:492 sys-utils/setsid.c:92
 #, fuzzy
 msgid "no command specified"
 msgstr "chưa chỉ ra lệnh"

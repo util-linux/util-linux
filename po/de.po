@@ -52,7 +52,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.38-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-15 15:24+0100\n"
+"POT-Creation-Date: 2022-03-16 17:42+0100\n"
 "PO-Revision-Date: 2022-03-04 20:26+0100\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -259,7 +259,7 @@ msgstr " %-25s Größe in Anzahl von 512-Byte Sektoren ermitteln\n"
 #: disk-utils/fsck.minix.c:1336 disk-utils/isosize.c:155
 #: disk-utils/mkfs.bfs.c:175 disk-utils/mkfs.c:110 disk-utils/mkfs.minix.c:827
 #: disk-utils/swaplabel.c:180 misc-utils/wipefs.c:760
-#: sys-utils/blkdiscard.c:219 sys-utils/blkzone.c:487 sys-utils/tunelp.c:241
+#: sys-utils/blkdiscard.c:219 sys-utils/blkzone.c:495 sys-utils/tunelp.c:241
 #: sys-utils/zramctl.c:716 sys-utils/zramctl.c:742
 msgid "no device specified"
 msgstr "kein Gerät angegeben"
@@ -13562,7 +13562,7 @@ msgstr "Position konnte nicht eingelesen werden"
 msgid "failed to parse step"
 msgstr "Durchläufe konnten nicht eingelesen werden"
 
-#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:491 sys-utils/fallocate.c:382
+#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:499 sys-utils/fallocate.c:382
 #: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561 sys-utils/umount.c:610
 msgid "unexpected number of arguments"
 msgstr "unerwartete Anzahl an Argumenten"
@@ -13582,7 +13582,7 @@ msgstr "%s: BLKSSZGET ioctl fehlgeschlagen"
 msgid "%s: offset %<PRIu64> is not aligned to sector size %i"
 msgstr "%s: Position %<PRIu64> ist nicht an Sektorgröße %i ausgerichtet"
 
-#: sys-utils/blkdiscard.c:249 sys-utils/blkzone.c:348
+#: sys-utils/blkdiscard.c:249 sys-utils/blkzone.c:356
 #, c-format
 msgid "%s: offset is greater than device size"
 msgstr "%s: Position übersteigt die Gerätegröße"
@@ -13653,7 +13653,7 @@ msgstr "%s: blkdev_get_sectors E/A ist fehlgeschlagen"
 msgid "%s: offset is greater than or equal to device size"
 msgstr "%s: Position ist größer als oder gleich der Gerätegröße"
 
-#: sys-utils/blkzone.c:246 sys-utils/blkzone.c:338
+#: sys-utils/blkzone.c:246 sys-utils/blkzone.c:346
 #, c-format
 msgid "%s: unable to determine zone size"
 msgstr "%s: die Zonengröße konnte nicht ermittelt werden"
@@ -13673,87 +13673,93 @@ msgstr "%d Zonen von 0x%<PRIx64> gefunden\n"
 msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, cap 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
 msgstr "  Start: 0x%09<PRIx64>, Länge 0x%06<PRIx64>, Kap. 0x%06<PRIx64>, Wptr 0x%06<PRIx64> Reset:%u non-seq:%u, Z-Bed.:%2u(%s) [Typ: %u(%s)]\n"
 
-#: sys-utils/blkzone.c:318
+#: sys-utils/blkzone.c:310
+#, fuzzy, c-format
+#| msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, cap 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
+msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
+msgstr "  Start: 0x%09<PRIx64>, Länge 0x%06<PRIx64>, Kap. 0x%06<PRIx64>, Wptr 0x%06<PRIx64> Reset:%u non-seq:%u, Z-Bed.:%2u(%s) [Typ: %u(%s)]\n"
+
+#: sys-utils/blkzone.c:326
 #, c-format
 msgid "0x%09<PRIx64>\n"
 msgstr "0x%09<PRIx64>\n"
 
-#: sys-utils/blkzone.c:343
+#: sys-utils/blkzone.c:351
 #, c-format
 msgid "%s: offset %<PRIu64> is not aligned to zone size %lu"
 msgstr "%s: Position %<PRIu64> ist nicht an Zonengröße %lu ausgerichtet"
 
-#: sys-utils/blkzone.c:362
+#: sys-utils/blkzone.c:370
 #, c-format
 msgid "%s: number of sectors %<PRIu64> is not aligned to zone size %lu"
 msgstr "%s: Sektoranzahl %<PRIu64> ist nicht an Zonengröße %lu ausgerichtet"
 
-#: sys-utils/blkzone.c:370
+#: sys-utils/blkzone.c:378
 #, c-format
 msgid "%s: %s ioctl failed"
 msgstr "%s: %s ioctl fehlgeschlagen"
 
-#: sys-utils/blkzone.c:373
+#: sys-utils/blkzone.c:381
 #, c-format
 msgid "%s: successful %s of zones in range from %<PRIu64>, to %<PRIu64>"
 msgstr "%s: erfolgreich für %s der Zonen im Bereich von %<PRIu64> bis %<PRIu64>"
 
-#: sys-utils/blkzone.c:388
+#: sys-utils/blkzone.c:396
 #, c-format
 msgid " %s <command> [options] <device>\n"
 msgstr " %s <Befehl> [Optionen] <Gerät>\n"
 
-#: sys-utils/blkzone.c:391
+#: sys-utils/blkzone.c:399
 msgid "Run zone command on the given block device.\n"
 msgstr "Zonenbefehle auf dem angegebenen blockorientierten Gerät ausführen.\n"
 
-#: sys-utils/blkzone.c:398
+#: sys-utils/blkzone.c:406
 msgid " -o, --offset <sector>  start sector of zone to act (in 512-byte sectors)\n"
 msgstr " -o, --offset <Sektor>  Startsektor der Zone (in 512-Byte-Sektoren)\n"
 
-#: sys-utils/blkzone.c:399
+#: sys-utils/blkzone.c:407
 msgid " -l, --length <sectors> maximum sectors to act (in 512-byte sectors)\n"
 msgstr ""
 " -l, --length <Sektoren>\n"
 "                        maximal zu bearbeitende Sektoren\n"
 "                          (in 512-Byte-Sektoren)\n"
 
-#: sys-utils/blkzone.c:400
+#: sys-utils/blkzone.c:408
 msgid " -c, --count <number>   maximum number of zones\n"
 msgstr " -c, --count <Zahl>     maximale Anzahl der Zonen\n"
 
-#: sys-utils/blkzone.c:401
+#: sys-utils/blkzone.c:409
 msgid " -f, --force            enforce on block devices used by the system\n"
 msgstr ""
 " -f, --force            auf vom System verwendeten blockorientierten\n"
 "                          Geräten erzwingen\n"
 
-#: sys-utils/blkzone.c:402
+#: sys-utils/blkzone.c:410
 msgid " -v, --verbose          display more details\n"
 msgstr " -v, --verbose          mehr Details anzeigen\n"
 
-#: sys-utils/blkzone.c:407
+#: sys-utils/blkzone.c:415
 msgid "<sector> and <sectors>"
 msgstr "<Sektor> und <Sektoren>"
 
-#: sys-utils/blkzone.c:445
+#: sys-utils/blkzone.c:453
 #, c-format
 msgid "%s is not valid command name"
 msgstr "%s ist kein gültiger Befehlsname"
 
-#: sys-utils/blkzone.c:457
+#: sys-utils/blkzone.c:465
 msgid "failed to parse number of zones"
 msgstr "Einlesen der Zonenanzahl ist fehlgeschlagen"
 
-#: sys-utils/blkzone.c:461
+#: sys-utils/blkzone.c:469
 msgid "failed to parse number of sectors"
 msgstr "Einlesen der Sektorenanzahl ist fehlgeschlagen"
 
-#: sys-utils/blkzone.c:465
+#: sys-utils/blkzone.c:473
 msgid "failed to parse zone offset"
 msgstr "Zonenposition konnte nicht eingelesen werden"
 
-#: sys-utils/blkzone.c:484 sys-utils/setsid.c:92
+#: sys-utils/blkzone.c:492 sys-utils/setsid.c:92
 msgid "no command specified"
 msgstr "kein Befehl angegeben"
 

@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.38-rc2-31-8b998\n"
+"Project-Id-Version: util-linux 2.38-rc3-4-70eb\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-15 15:24+0100\n"
+"POT-Creation-Date: 2022-03-16 17:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -210,7 +210,7 @@ msgstr ""
 #: disk-utils/fsck.minix.c:1336 disk-utils/isosize.c:155
 #: disk-utils/mkfs.bfs.c:175 disk-utils/mkfs.c:110 disk-utils/mkfs.minix.c:827
 #: disk-utils/swaplabel.c:180 misc-utils/wipefs.c:760
-#: sys-utils/blkdiscard.c:219 sys-utils/blkzone.c:487 sys-utils/tunelp.c:241
+#: sys-utils/blkdiscard.c:219 sys-utils/blkzone.c:495 sys-utils/tunelp.c:241
 #: sys-utils/zramctl.c:716 sys-utils/zramctl.c:742
 msgid "no device specified"
 msgstr ""
@@ -13229,7 +13229,7 @@ msgstr ""
 msgid "failed to parse step"
 msgstr ""
 
-#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:491 sys-utils/fallocate.c:382
+#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:499 sys-utils/fallocate.c:382
 #: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561 sys-utils/umount.c:610
 msgid "unexpected number of arguments"
 msgstr ""
@@ -13249,7 +13249,7 @@ msgstr ""
 msgid "%s: offset %<PRIu64> is not aligned to sector size %i"
 msgstr ""
 
-#: sys-utils/blkdiscard.c:249 sys-utils/blkzone.c:348
+#: sys-utils/blkdiscard.c:249 sys-utils/blkzone.c:356
 #, c-format
 msgid "%s: offset is greater than device size"
 msgstr ""
@@ -13322,7 +13322,7 @@ msgstr ""
 msgid "%s: offset is greater than or equal to device size"
 msgstr ""
 
-#: sys-utils/blkzone.c:246 sys-utils/blkzone.c:338
+#: sys-utils/blkzone.c:246 sys-utils/blkzone.c:346
 #, c-format
 msgid "%s: unable to determine zone size"
 msgstr ""
@@ -13344,83 +13344,90 @@ msgid ""
 "%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:318
+#: sys-utils/blkzone.c:310
+#, c-format
+msgid ""
+"  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-"
+"seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
+msgstr ""
+
+#: sys-utils/blkzone.c:326
 #, c-format
 msgid "0x%09<PRIx64>\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:343
+#: sys-utils/blkzone.c:351
 #, c-format
 msgid "%s: offset %<PRIu64> is not aligned to zone size %lu"
 msgstr ""
 
-#: sys-utils/blkzone.c:362
+#: sys-utils/blkzone.c:370
 #, c-format
 msgid "%s: number of sectors %<PRIu64> is not aligned to zone size %lu"
 msgstr ""
 
-#: sys-utils/blkzone.c:370
+#: sys-utils/blkzone.c:378
 #, c-format
 msgid "%s: %s ioctl failed"
 msgstr ""
 
-#: sys-utils/blkzone.c:373
+#: sys-utils/blkzone.c:381
 #, c-format
 msgid "%s: successful %s of zones in range from %<PRIu64>, to %<PRIu64>"
 msgstr ""
 
-#: sys-utils/blkzone.c:388
+#: sys-utils/blkzone.c:396
 #, c-format
 msgid " %s <command> [options] <device>\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:391
+#: sys-utils/blkzone.c:399
 msgid "Run zone command on the given block device.\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:398
+#: sys-utils/blkzone.c:406
 msgid ""
 " -o, --offset <sector>  start sector of zone to act (in 512-byte sectors)\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:399
+#: sys-utils/blkzone.c:407
 msgid " -l, --length <sectors> maximum sectors to act (in 512-byte sectors)\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:400
+#: sys-utils/blkzone.c:408
 msgid " -c, --count <number>   maximum number of zones\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:401
+#: sys-utils/blkzone.c:409
 msgid " -f, --force            enforce on block devices used by the system\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:402
+#: sys-utils/blkzone.c:410
 msgid " -v, --verbose          display more details\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:407
+#: sys-utils/blkzone.c:415
 msgid "<sector> and <sectors>"
 msgstr ""
 
-#: sys-utils/blkzone.c:445
+#: sys-utils/blkzone.c:453
 #, c-format
 msgid "%s is not valid command name"
 msgstr ""
 
-#: sys-utils/blkzone.c:457
+#: sys-utils/blkzone.c:465
 msgid "failed to parse number of zones"
 msgstr ""
 
-#: sys-utils/blkzone.c:461
+#: sys-utils/blkzone.c:469
 msgid "failed to parse number of sectors"
 msgstr ""
 
-#: sys-utils/blkzone.c:465
+#: sys-utils/blkzone.c:473
 msgid "failed to parse zone offset"
 msgstr ""
 
-#: sys-utils/blkzone.c:484 sys-utils/setsid.c:92
+#: sys-utils/blkzone.c:492 sys-utils/setsid.c:92
 msgid "no command specified"
 msgstr ""
 

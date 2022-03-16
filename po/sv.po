@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.36-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-15 15:24+0100\n"
+"POT-Creation-Date: 2022-03-16 17:42+0100\n"
 "PO-Revision-Date: 2021-04-17 18:24+0200\n"
 "Last-Translator: Sebastian Rasmussen <sebras@gmail.com>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -221,7 +221,7 @@ msgstr " %-25s hämta storlek i 512-byte sektorer\n"
 #: disk-utils/fsck.minix.c:1336 disk-utils/isosize.c:155
 #: disk-utils/mkfs.bfs.c:175 disk-utils/mkfs.c:110 disk-utils/mkfs.minix.c:827
 #: disk-utils/swaplabel.c:180 misc-utils/wipefs.c:760
-#: sys-utils/blkdiscard.c:219 sys-utils/blkzone.c:487 sys-utils/tunelp.c:241
+#: sys-utils/blkdiscard.c:219 sys-utils/blkzone.c:495 sys-utils/tunelp.c:241
 #: sys-utils/zramctl.c:716 sys-utils/zramctl.c:742
 msgid "no device specified"
 msgstr "ingen enhet angiven"
@@ -13850,7 +13850,7 @@ msgstr "misslyckades med att tolka position"
 msgid "failed to parse step"
 msgstr "misslyckades med att tolka steg"
 
-#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:491 sys-utils/fallocate.c:382
+#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:499 sys-utils/fallocate.c:382
 #: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561 sys-utils/umount.c:610
 msgid "unexpected number of arguments"
 msgstr "oväntat antal argument"
@@ -13870,7 +13870,7 @@ msgstr "%s: BLKSSZGET ioctl misslyckades"
 msgid "%s: offset %<PRIu64> is not aligned to sector size %i"
 msgstr "%s: position %<PRIu64> är inte justerad till sektorstorlek %i"
 
-#: sys-utils/blkdiscard.c:249 sys-utils/blkzone.c:348
+#: sys-utils/blkdiscard.c:249 sys-utils/blkzone.c:356
 #, c-format
 msgid "%s: offset is greater than device size"
 msgstr "%s: positionen är större än enhetsstorlek"
@@ -13943,7 +13943,7 @@ msgstr "%s: blkdev_get_sectors ioctl misslyckades"
 msgid "%s: offset is greater than or equal to device size"
 msgstr "%s: positionen är större än eller lika med enhetsstorleken"
 
-#: sys-utils/blkzone.c:246 sys-utils/blkzone.c:338
+#: sys-utils/blkzone.c:246 sys-utils/blkzone.c:346
 #, c-format
 msgid "%s: unable to determine zone size"
 msgstr "%s: kan inte avgöra zonstorlek"
@@ -13964,84 +13964,90 @@ msgstr "Hittade %d zoner från 0x%<PRIx64>\n"
 msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, cap 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
 msgstr "  start: 0x%09<PRIx64>, lgd 0x%06<PRIx64>, spek 0x%06<PRIx64> åter:%u icke-sekv:%u, zkond:%2u(%s) [typ: %u(%s)]\n"
 
-#: sys-utils/blkzone.c:318
+#: sys-utils/blkzone.c:310
+#, fuzzy, c-format
+#| msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
+msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
+msgstr "  start: 0x%09<PRIx64>, lgd 0x%06<PRIx64>, spek 0x%06<PRIx64> åter:%u icke-sekv:%u, zkond:%2u(%s) [typ: %u(%s)]\n"
+
+#: sys-utils/blkzone.c:326
 #, c-format
 msgid "0x%09<PRIx64>\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:343
+#: sys-utils/blkzone.c:351
 #, c-format
 msgid "%s: offset %<PRIu64> is not aligned to zone size %lu"
 msgstr "%s: position %<PRIu64> är inte justerad till zonstorlek %lu"
 
-#: sys-utils/blkzone.c:362
+#: sys-utils/blkzone.c:370
 #, c-format
 msgid "%s: number of sectors %<PRIu64> is not aligned to zone size %lu"
 msgstr "%s: antal sektorer %<PRIu64> är inte justerat till zonstorlek %lu"
 
-#: sys-utils/blkzone.c:370
+#: sys-utils/blkzone.c:378
 #, c-format
 msgid "%s: %s ioctl failed"
 msgstr "%s: %s ioctl misslyckades"
 
-#: sys-utils/blkzone.c:373
+#: sys-utils/blkzone.c:381
 #, fuzzy, c-format
 #| msgid "%s: successfull %s of zones in range from %<PRIu64>, to %<PRIu64>"
 msgid "%s: successful %s of zones in range from %<PRIu64>, to %<PRIu64>"
 msgstr "%s: framgångsrikt %s zoner i intervall från %<PRIu64>, till%<PRIu64>"
 
-#: sys-utils/blkzone.c:388
+#: sys-utils/blkzone.c:396
 #, c-format
 msgid " %s <command> [options] <device>\n"
 msgstr " %s <kommando> [flaggor] <enhet>\n"
 
-#: sys-utils/blkzone.c:391
+#: sys-utils/blkzone.c:399
 msgid "Run zone command on the given block device.\n"
 msgstr "Kör zonkommando på den givna blockenheten.\n"
 
-#: sys-utils/blkzone.c:398
+#: sys-utils/blkzone.c:406
 msgid " -o, --offset <sector>  start sector of zone to act (in 512-byte sectors)\n"
 msgstr " -o, --offset <sektor>  startsektor för zone att agera på (i 512-byte sektorer)\n"
 
 # sebras: what does act mean here?
-#: sys-utils/blkzone.c:399
+#: sys-utils/blkzone.c:407
 msgid " -l, --length <sectors> maximum sectors to act (in 512-byte sectors)\n"
 msgstr " -l, --length <sektorer> största sektorstorlek att aktivera (i 512-byte sektorer)\n"
 
-#: sys-utils/blkzone.c:400
+#: sys-utils/blkzone.c:408
 msgid " -c, --count <number>   maximum number of zones\n"
 msgstr " -c, --count <antal>    maximalt antal zoner\n"
 
-#: sys-utils/blkzone.c:401
+#: sys-utils/blkzone.c:409
 msgid " -f, --force            enforce on block devices used by the system\n"
 msgstr " -f, --force            tvinga för blockenheter som används av systemet\n"
 
-#: sys-utils/blkzone.c:402
+#: sys-utils/blkzone.c:410
 msgid " -v, --verbose          display more details\n"
 msgstr " -v, --verbose          visa ytterligare detaljer\n"
 
-#: sys-utils/blkzone.c:407
+#: sys-utils/blkzone.c:415
 msgid "<sector> and <sectors>"
 msgstr "<sektor> och <sektorer>"
 
-#: sys-utils/blkzone.c:445
+#: sys-utils/blkzone.c:453
 #, c-format
 msgid "%s is not valid command name"
 msgstr "%s är inte ett giltigt kommandonamn"
 
-#: sys-utils/blkzone.c:457
+#: sys-utils/blkzone.c:465
 msgid "failed to parse number of zones"
 msgstr "misslyckades med att tolk antal zoner"
 
-#: sys-utils/blkzone.c:461
+#: sys-utils/blkzone.c:469
 msgid "failed to parse number of sectors"
 msgstr "misslyckades med att tolka antal sektorer"
 
-#: sys-utils/blkzone.c:465
+#: sys-utils/blkzone.c:473
 msgid "failed to parse zone offset"
 msgstr "misslyckades med att tolka zonposition"
 
-#: sys-utils/blkzone.c:484 sys-utils/setsid.c:92
+#: sys-utils/blkzone.c:492 sys-utils/setsid.c:92
 msgid "no command specified"
 msgstr "inget kommando angivet"
 

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.17.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-15 15:24+0100\n"
+"POT-Creation-Date: 2022-03-16 17:42+0100\n"
 "PO-Revision-Date: 2010-02-16 19:58+0100\n"
 "Last-Translator: Mikel Olasagasti Uranga <hey_neken@mundurat.net>\n"
 "Language-Team: Basque <translation-team-eu@lists.sourceforge.net>\n"
@@ -222,7 +222,7 @@ msgstr "lortu tamainua 512 byte-eko sektoreetan"
 #: disk-utils/fsck.minix.c:1336 disk-utils/isosize.c:155
 #: disk-utils/mkfs.bfs.c:175 disk-utils/mkfs.c:110 disk-utils/mkfs.minix.c:827
 #: disk-utils/swaplabel.c:180 misc-utils/wipefs.c:760
-#: sys-utils/blkdiscard.c:219 sys-utils/blkzone.c:487 sys-utils/tunelp.c:241
+#: sys-utils/blkdiscard.c:219 sys-utils/blkzone.c:495 sys-utils/tunelp.c:241
 #: sys-utils/zramctl.c:716 sys-utils/zramctl.c:742
 #, fuzzy
 msgid "no device specified"
@@ -14098,7 +14098,7 @@ msgstr "huts egin da lerro buffer-a hasieratzen\n"
 msgid "failed to parse step"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:491 sys-utils/fallocate.c:382
+#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:499 sys-utils/fallocate.c:382
 #: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561 sys-utils/umount.c:610
 #, fuzzy
 msgid "unexpected number of arguments"
@@ -14119,7 +14119,7 @@ msgstr " %s: write-k huts egin du"
 msgid "%s: offset %<PRIu64> is not aligned to sector size %i"
 msgstr ""
 
-#: sys-utils/blkdiscard.c:249 sys-utils/blkzone.c:348
+#: sys-utils/blkdiscard.c:249 sys-utils/blkzone.c:356
 #, fuzzy, c-format
 msgid "%s: offset is greater than device size"
 msgstr "Ezin da diskoaren tamainua lortu"
@@ -14193,7 +14193,7 @@ msgstr "%s: get size egiterakoan huts egin da"
 msgid "%s: offset is greater than or equal to device size"
 msgstr "Ezin da diskoaren tamainua lortu"
 
-#: sys-utils/blkzone.c:246 sys-utils/blkzone.c:338
+#: sys-utils/blkzone.c:246 sys-utils/blkzone.c:346
 #, fuzzy, c-format
 msgid "%s: unable to determine zone size"
 msgstr "   w   idatzi diskoaren etiketa diskoan"
@@ -14213,89 +14213,94 @@ msgstr ""
 msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, cap 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:318
+#: sys-utils/blkzone.c:310
+#, c-format
+msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
+msgstr ""
+
+#: sys-utils/blkzone.c:326
 #, c-format
 msgid "0x%09<PRIx64>\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:343
+#: sys-utils/blkzone.c:351
 #, c-format
 msgid "%s: offset %<PRIu64> is not aligned to zone size %lu"
 msgstr ""
 
-#: sys-utils/blkzone.c:362
+#: sys-utils/blkzone.c:370
 #, c-format
 msgid "%s: number of sectors %<PRIu64> is not aligned to zone size %lu"
 msgstr ""
 
-#: sys-utils/blkzone.c:370
+#: sys-utils/blkzone.c:378
 #, fuzzy, c-format
 msgid "%s: %s ioctl failed"
 msgstr " %s: write-k huts egin du"
 
-#: sys-utils/blkzone.c:373
+#: sys-utils/blkzone.c:381
 #, fuzzy, c-format
 msgid "%s: successful %s of zones in range from %<PRIu64>, to %<PRIu64>"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/blkzone.c:388
+#: sys-utils/blkzone.c:396
 #, fuzzy, c-format
 msgid " %s <command> [options] <device>\n"
 msgstr "Erabilera: %s [aukerak] gailua ...\n"
 
-#: sys-utils/blkzone.c:391
+#: sys-utils/blkzone.c:399
 msgid "Run zone command on the given block device.\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:398
+#: sys-utils/blkzone.c:406
 msgid " -o, --offset <sector>  start sector of zone to act (in 512-byte sectors)\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:399
+#: sys-utils/blkzone.c:407
 msgid " -l, --length <sectors> maximum sectors to act (in 512-byte sectors)\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:400
+#: sys-utils/blkzone.c:408
 #, fuzzy
 msgid " -c, --count <number>   maximum number of zones\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/blkzone.c:401
+#: sys-utils/blkzone.c:409
 #, fuzzy
 msgid " -f, --force            enforce on block devices used by the system\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: sys-utils/blkzone.c:402
+#: sys-utils/blkzone.c:410
 #, fuzzy
 msgid " -v, --verbose          display more details\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/blkzone.c:407
+#: sys-utils/blkzone.c:415
 #, fuzzy
 msgid "<sector> and <sectors>"
 msgstr "lortu bloke logikoaren (sektorea) tamainua"
 
-#: sys-utils/blkzone.c:445
+#: sys-utils/blkzone.c:453
 #, fuzzy, c-format
 msgid "%s is not valid command name"
 msgstr "Erabilera: %s [aukerak] gailua ...\n"
 
-#: sys-utils/blkzone.c:457
+#: sys-utils/blkzone.c:465
 #, fuzzy
 msgid "failed to parse number of zones"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/blkzone.c:461
+#: sys-utils/blkzone.c:469
 #, fuzzy
 msgid "failed to parse number of sectors"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/blkzone.c:465
+#: sys-utils/blkzone.c:473
 #, fuzzy
 msgid "failed to parse zone offset"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/blkzone.c:484 sys-utils/setsid.c:92
+#: sys-utils/blkzone.c:492 sys-utils/setsid.c:92
 #, fuzzy
 msgid "no command specified"
 msgstr "Ez da --date aukerarik zehaztu.\n"
