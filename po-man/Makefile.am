@@ -17,6 +17,15 @@ po4a-gen.stamp: $(PO_FILES)
 	$(AM_V_GEN) $(PO4A) po4a.cfg
 	@touch po4a-gen.stamp
 
+# We need to call po4a --force only on 'make dist', otherwise .po and .pot
+# files has to be unmodified. This update has to be done before 'make' copies
+# sources to the $distdir. $EXTRA_DIST (where is util-linux-man.pot) is used as
+# a dependence for 'distdir' automake target, so it's trigered by "make dist*"
+# only.
+util-linux-man.pot:
+	@echo 'po4a: force pot-update'
+	$(AM_V_GEN) $(PO4A) --force po4a.cfg
+
 gen-trans: $(PO_STAMPS)
 
 asciidoc_man_cmd = $(ASCIIDOCTOR) \
