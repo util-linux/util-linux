@@ -298,11 +298,19 @@ static int blkzone_report(struct blkzone_control *ctl)
 
 			if (only_capacity_sum) {
 				capacity_sum += cap;
-			} else {
+			} else if (has_zone_capacity(zi)) {
 				printf(_("  start: 0x%09"PRIx64", len 0x%06"PRIx64
 					", cap 0x%06"PRIx64", wptr 0x%06"PRIx64
 					" reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"),
 					start, len, cap, (type == 0x1) ? 0 : wp - start,
+					entry->reset, entry->non_seq,
+					cond, condition_str[cond & (ARRAY_SIZE(condition_str) - 1)],
+					type, type_text[type]);
+			} else {
+				printf(_("  start: 0x%09"PRIx64", len 0x%06"PRIx64
+					", wptr 0x%06"PRIx64
+					" reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"),
+					start, len, (type == 0x1) ? 0 : wp - start,
 					entry->reset, entry->non_seq,
 					cond, condition_str[cond & (ARRAY_SIZE(condition_str) - 1)],
 					type, type_text[type]);
