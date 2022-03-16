@@ -1,4 +1,8 @@
-util-linux 2.38-rc3: Mar 04 2022
+util-linux 2.38-rc4: Mar 16 2022
+* see Documentation/releases/v2.38-ReleaseNotes or the complete changelog at
+  https://www.kernel.org/pub/linux/utils/util-linux/v2.38/v2.38-rc4-ChangeLog
+
+util-linux 2.38-rc3: Mar 15 2022
 * see Documentation/releases/v2.38-ReleaseNotes or the complete changelog at
   https://www.kernel.org/pub/linux/utils/util-linux/v2.38/v2.38-rc3-ChangeLog
 
