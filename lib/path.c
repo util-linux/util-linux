@@ -815,7 +815,7 @@ int ul_path_readf_s32(struct path_cxt *pc, int *res, const char *path, ...)
 int ul_path_read_u32(struct path_cxt *pc, unsigned int *res, const char *path)
 {
 	int rc;
-	unsigned int x;
+	unsigned int x = 0;
 
 	rc = ul_path_scanf(pc, path, "%u", &x);
 	if (rc != 1)
@@ -839,7 +839,7 @@ int ul_path_readf_u32(struct path_cxt *pc, unsigned int *res, const char *path, 
 
 int ul_path_read_majmin(struct path_cxt *pc, dev_t *res, const char *path)
 {
-	int rc, maj, min;
+	int rc, maj = 0, min = 0;
 
 	rc = ul_path_scanf(pc, path, "%d:%d", &maj, &min);
 	if (rc != 2)
