@@ -251,6 +251,7 @@ void blkid_free_probe(blkid_probe pr)
 		if (ch->driver->free_data)
 			ch->driver->free_data(pr, ch->data);
 		free(ch->fltr);
+		ch->fltr = NULL;
 	}
 
 	if ((pr->flags & BLKID_FL_PRIVATE_FD) && pr->fd >= 0)
