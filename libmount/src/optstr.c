@@ -915,12 +915,16 @@ int mnt_optstr_fix_secontext(char **optstr,
 
 	/* create a quoted string from the raw context */
 	sz = strlen((char *) raw);
-	if (!sz)
+	if (!sz) {
+		freecon(raw);
 		return -EINVAL;
+	}
 
 	p = val = malloc(valsz + 3);
-	if (!val)
+	if (!val) {
+		freecon(raw);
 		return -ENOMEM;
+	}
 
 	*p++ = '"';
 	memcpy(p, raw, sz);
