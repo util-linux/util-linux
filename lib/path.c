@@ -672,14 +672,17 @@ int ul_path_readf_string(struct path_cxt *pc, char **str, const char *path, ...)
 int ul_path_read_buffer(struct path_cxt *pc, char *buf, size_t bufsz, const char *path)
 {
 	int rc = ul_path_read(pc, buf, bufsz - 1, path);
-	if (rc < 0)
-		return rc;
 
-	/* Remove tailing newline (usual in sysfs) */
-	if (rc > 0 && *(buf + rc - 1) == '\n')
-		buf[--rc] = '\0';
-	else
-		buf[rc - 1] = '\0';
+	if (rc == 0)
+		buf[0] = '\0';
+
+	else if (rc > 0) {
+		/* Remove tailing newline (usual in sysfs) */
+		if (*(buf + rc - 1) == '\n')
+			buf[--rc] = '\0';
+		else
+			buf[rc - 1] = '\0';
+	}
 
 	return rc;
 }
