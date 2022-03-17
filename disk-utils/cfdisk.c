@@ -2080,7 +2080,7 @@ done:
 	}
 	free(cm);
 	DBG(UI, ul_debug("get parrtype done [type=%s] ", t ?
-				fdisk_parttype_get_name(t) : NULL));
+				fdisk_parttype_get_name(t) : ""));
 	return t;
 }
 
