@@ -1013,6 +1013,7 @@ int main(int argc, char **argv)
 				errx(EXIT_FAILURE, _("%s: partitioned loop devices unsupported"),
 				     wholedisk);
 			assoc_loopdev(wholedisk);
+			free(wholedisk);
 			wholedisk = xstrdup(lc.device);
 		} else if (!S_ISBLK(x.st_mode))
 			errx(EXIT_FAILURE, _("%s: not a block device"), wholedisk);
@@ -1060,6 +1061,8 @@ int main(int argc, char **argv)
 
 		blkid_free_probe(pr);
 	}
+
+	free(wholedisk);
 
 	if (loopdev)
 		loopcxt_deinit(&lc);
