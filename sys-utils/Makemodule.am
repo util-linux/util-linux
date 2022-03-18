@@ -158,7 +158,7 @@ bin_PROGRAMS += dmesg
 MANPAGES += sys-utils/dmesg.1
 dist_noinst_DATA += sys-utils/dmesg.1.adoc
 dmesg_SOURCES = sys-utils/dmesg.c lib/monotonic.c
-dmesg_LDADD = $(LDADD) libcommon.la libtcolors.la $(REALTIME_LIBS)
+dmesg_LDADD = $(LDADD) libcommon.la libtcolors.la
 dmesg_CFLAGS = $(AM_CFLAGS)
 check_PROGRAMS += test_dmesg
 test_dmesg_SOURCES = $(dmesg_SOURCES)
@@ -186,7 +186,7 @@ sbin_PROGRAMS += blkdiscard
 MANPAGES += sys-utils/blkdiscard.8
 dist_noinst_DATA += sys-utils/blkdiscard.8.adoc
 blkdiscard_SOURCES = sys-utils/blkdiscard.c lib/monotonic.c
-blkdiscard_LDADD = $(LDADD) libcommon.la $(REALTIME_LIBS)
+blkdiscard_LDADD = $(LDADD) libcommon.la
 blkdiscard_CFLAGS = $(AM_CFLAGS)
 if BUILD_LIBBLKID
 blkdiscard_LDADD += libblkid.la
@@ -283,7 +283,7 @@ usrbin_exec_PROGRAMS += eject
 MANPAGES += sys-utils/eject.1
 dist_noinst_DATA += sys-utils/eject.1.adoc
 eject_SOURCES =  sys-utils/eject.c lib/monotonic.c
-eject_LDADD = $(LDADD) libmount.la libcommon.la $(REALTIME_LIBS)
+eject_LDADD = $(LDADD) libmount.la libcommon.la
 eject_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
 endif
 

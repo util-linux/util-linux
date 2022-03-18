@@ -103,7 +103,7 @@ sbin_PROGRAMS += fsck
 MANPAGES += disk-utils/fsck.8
 dist_noinst_DATA += disk-utils/fsck.8.adoc
 fsck_SOURCES = disk-utils/fsck.c lib/monotonic.c
-fsck_LDADD = $(LDADD) libmount.la libblkid.la libcommon.la $(REALTIME_LIBS)
+fsck_LDADD = $(LDADD) libmount.la libblkid.la libcommon.la
 fsck_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir) -I$(ul_libblkid_incdir)
 endif
 
