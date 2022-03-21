@@ -103,6 +103,10 @@ libmount (mount/umount)
    of the FS is created. https://github.com/util-linux/util-linux/issues/448
    (... just idea, maybe wrong idea)
 
+ - Extend mount(8) command line for mount flags modification without remount:
+   "mount modify --clear noexec --set nodev,private,ro /mnt"
+   This functionality should be implemented by mount_setattr() syscall.
+
 partx
 -----
 
