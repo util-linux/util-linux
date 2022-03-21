@@ -144,8 +144,10 @@
 #endif
 
 /* Login prompt. */
-#define LOGIN		"login: "
-#define LOGIN_ARGV_MAX	16		/* Numbers of args for login */
+#define LOGIN_PROMPT		"login: "
+
+/* Numbers of args for login(1) */
+#define LOGIN_ARGV_MAX	16
 
 /*
  * agetty --reload
@@ -498,7 +500,8 @@ int main(int argc, char **argv)
 			/* Autologin prompt */
 			eval_issue_file(&issue, &options, &termios);
 			do_prompt(&issue, &options, &termios);
-			printf(_("%s%s (automatic login)\n"), LOGIN, options.autolog);
+			printf(_("%s%s (automatic login)\n"), LOGIN_PROMPT,
+					options.autolog);
 		} else {
 			/* Read the login name. */
 			debug("reading login name\n");
@@ -2136,7 +2139,8 @@ again:
 	}
 	if (!op->autolog) {
 		/* Always show login prompt. */
-		write_all(STDOUT_FILENO, LOGIN, sizeof(LOGIN) - 1);
+		write_all(STDOUT_FILENO, LOGIN_PROMPT,
+				sizeof(LOGIN_PROCESS) - 1);
 	}
 }
 
