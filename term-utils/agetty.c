@@ -31,6 +31,7 @@
 #include <sys/socket.h>
 #include <langinfo.h>
 #include <grp.h>
+#include <pwd.h>
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <ifaddrs.h>
@@ -47,6 +48,8 @@
 #include "ttyutils.h"
 #include "color-names.h"
 #include "env.h"
+
+#include "logindefs.h"
 
 #ifdef USE_PLYMOUTH_SUPPORT
 # include "plymouth-ctrl.h"
@@ -495,7 +498,13 @@ int main(int argc, char **argv)
 	if (options.flags & F_NOPROMPT) {	/* --skip-login */
 		eval_issue_file(&issue, &options, &termios);
 		print_issue_file(&issue, &options, &termios);
+
 	} else {				/* regular (auto)login */
+		if ((options.flags & F_NOHOSTNAME) == 0 &&
+		    getlogindefs_bool("LOGIN_PLAIN_PROMPT", 0) == 1)
+			/* /etc/login.defs enbles --nohostname too */
+			options.flags |= F_NOHOSTNAME;
+
 		if (options.autolog) {
 			/* Autologin prompt */
 			eval_issue_file(&issue, &options, &termios);

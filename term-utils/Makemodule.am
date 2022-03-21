@@ -46,13 +46,17 @@ if BUILD_AGETTY
 sbin_PROGRAMS += agetty
 MANPAGES += term-utils/agetty.8
 dist_noinst_DATA += term-utils/agetty.8.adoc
-agetty_SOURCES = term-utils/agetty.c
+agetty_SOURCES = term-utils/agetty.c \
+		 lib/logindefs.c
 if USE_PLYMOUTH_SUPPORT
 agetty_SOURCES += lib/plymouth-ctrl.c
 endif
 agetty_LDADD = $(LDADD) libcommon.la
 if BSD
 agetty_LDADD += -lutil
+endif
+if HAVE_ECONF
+agetty_LDADD += -leconf
 endif
 endif # BUILD_AGETTY
 
