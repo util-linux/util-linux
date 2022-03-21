@@ -818,13 +818,6 @@ exe = executable(
 exes += exe
 
 exe = executable(
-  'test_logindefs',
-  test_logindefs_sources,
-  include_directories : includes,
-  c_args : '-DTEST_PROGRAM')
-exes += exe
-
-exe = executable(
   'test-consoles',
   test_consoles_sources,
   c_args : ['-DTEST_PROGRAM'],
@@ -887,8 +880,7 @@ exe = executable(
   'login-utils/su.c',
   'login-utils/su-common.c',
   'login-utils/su-common.h',
-  'login-utils/logindefs.c',
-  'login-utils/logindefs.h',
+  'lib/logindefs.c',
   pty_session_c,
   monotonic_c,
   include_directories : includes,
@@ -923,8 +915,7 @@ opt = not get_option('build-lslogins').disabled()
 exe = executable(
   'lslogins',
   'login-utils/lslogins.c',
-  'login-utils/logindefs.c',
-  'login-utils/logindefs.h',
+  'lib/logindefs.c',
   include_directories : includes,
   link_with : [lib_common,
                lib_smartcols],
@@ -964,8 +955,7 @@ exe = executable(
   'login-utils/runuser.c',
   'login-utils/su-common.c',
   'login-utils/su-common.h',
-  'login-utils/logindefs.c',
-  'login-utils/logindefs.h',
+  'lib/logindefs.c',
   pty_session_c,
   monotonic_c,
   include_directories : includes,
@@ -2900,6 +2890,15 @@ exe = executable(
   include_directories : dir_include,
   link_with : lib_common)
 exes += exe
+
+exe = executable(
+  'test_logindefs',
+  'lib/logindefs.c',
+  c_args : ['-DTEST_PROGRAM'],
+  include_directories : dir_include,
+  link_with : lib_common)
+exes += exe
+
 
 ############################################################
 

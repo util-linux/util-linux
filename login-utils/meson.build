@@ -40,17 +40,11 @@ endif
 
 chfn_sources = files(
   'chfn.c',
-  'logindefs.c',
-  'logindefs.h',
-)
+) + \
+  logindefs_c
 
 test_islocal_sources = files(
   'islocal.c',
-)
-
-test_logindefs_sources = files(
-  'logindefs.c',
-  'logindefs.h',
 )
 
 test_consoles_sources = files(
@@ -64,9 +58,8 @@ last_sources = files(
 
 login_sources = files(
   'login.c',
-  'logindefs.c',
-  'logindefs.h',
-)
+) + \
+  logindefs_c
 
 sulogin_sources = files(
   'sulogin.c',
