@@ -94,7 +94,8 @@ check_PROGRAMS += \
 	test_strutils \
 	test_ttyutils \
 	test_timeutils \
-	test_c_strtod
+	test_c_strtod \
+	test_logindefs
 
 
 if LINUX
@@ -221,4 +222,12 @@ test_loopdev_SOURCES = lib/loopdev.c \
 		       $(test_sysfs_SOURCES) \
 		       $(test_canonicalize_SOURCES)
 test_loopdev_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_LOOPDEV
+endif
+
+
+test_logindefs_SOURCES = lib/logindefs.c
+test_logindefs_CPPFLAGS = -DTEST_PROGRAM $(AM_CPPFLAGS)
+test_logindefs_LDADD = $(LDADD) libcommon.la
+if HAVE_ECONF
+test_logindefs_LDADD += -leconf
 endif

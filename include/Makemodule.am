@@ -32,6 +32,7 @@ dist_noinst_HEADERS += \
 	include/pwdutils.h \
 	include/linux_version.h \
 	include/list.h \
+	include/logindefs.h \
 	include/loopdev.h \
 	include/mangle.h \
 	include/match.h \

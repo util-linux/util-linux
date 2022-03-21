@@ -59,8 +59,7 @@ MANPAGES += login-utils/login.1
 dist_noinst_DATA += login-utils/login.1.adoc
 login_SOURCES = \
 	login-utils/login.c \
-	login-utils/logindefs.c \
-	login-utils/logindefs.h
+	lib/logindefs.c
 login_LDADD = $(LDADD) libcommon.la -lpam
 if HAVE_LINUXPAM
 login_LDADD += -lpam_misc
@@ -144,8 +143,7 @@ endif
 
 chfn_SOURCES = \
 	login-utils/chfn.c \
-	login-utils/logindefs.c \
-	login-utils/logindefs.h \
+	lib/logindefs.c \
 	$(chfn_chsh_sources)
 chfn_CFLAGS = $(chfn_chsh_cflags)
 chfn_LDFLAGS = $(chfn_chsh_ldflags)
@@ -169,8 +167,7 @@ su_SOURCES = \
 	login-utils/su.c \
 	login-utils/su-common.c \
 	login-utils/su-common.h \
-	login-utils/logindefs.c \
-	login-utils/logindefs.h
+	lib/logindefs.c
 su_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 su_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 su_LDADD = $(LDADD) libcommon.la -lpam
@@ -197,8 +194,7 @@ runuser_SOURCES = \
 	login-utils/runuser.c \
 	login-utils/su-common.c \
 	login-utils/su-common.h \
-	login-utils/logindefs.c \
-	login-utils/logindefs.h
+	lib/logindefs.c
 runuser_LDADD = $(LDADD) libcommon.la -lpam
 if HAVE_LINUXPAM
 runuser_LDADD += -lpam_misc
@@ -235,8 +231,7 @@ MANPAGES += login-utils/lslogins.1
 dist_noinst_DATA += login-utils/lslogins.1.adoc
 lslogins_SOURCES = \
 	login-utils/lslogins.c \
-	login-utils/logindefs.c \
-	login-utils/logindefs.h
+	lib/logindefs.c
 lslogins_LDADD = $(LDADD) libcommon.la libsmartcols.la
 lslogins_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
 if HAVE_SELINUX
@@ -271,21 +266,9 @@ INSTALL_EXEC_HOOKS += install-exec-hook-vipw
 endif # BUILD_VIPW
 
 
-check_PROGRAMS += \
-	test_islocal \
-	test_logindefs
-
+check_PROGRAMS += test_islocal
 test_islocal_SOURCES = login-utils/islocal.c
 test_islocal_CPPFLAGS = -DTEST_PROGRAM $(AM_CPPFLAGS)
-
-test_logindefs_SOURCES = \
-	login-utils/logindefs.c \
-	login-utils/logindefs.h
-test_logindefs_CPPFLAGS = -DTEST_PROGRAM $(AM_CPPFLAGS)
-test_logindefs_LDADD = $(LDADD) libcommon.la
-if HAVE_ECONF
-test_logindefs_LDADD += -leconf
-endif
 
 
 install-exec-hook:
