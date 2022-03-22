@@ -155,6 +155,9 @@ int ul_buffer_append_data(struct ul_buffer *buf, const char *data, size_t sz)
 
 int ul_buffer_append_string(struct ul_buffer *buf, const char *str)
 {
+	if (!str)
+		return 0;
+
 	return ul_buffer_append_data(buf, str, strlen(str));
 }
 
