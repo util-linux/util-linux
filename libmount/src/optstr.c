@@ -46,78 +46,6 @@ struct libmnt_optloc {
 		(e && (e)->name && !strchr((e)->name, '=') && !((e)->mask & MNT_PREFIX))
 
 /*
- * Parses the first option from @optstr. The @optstr pointer is set to the beginning
- * of the next option.
- *
- * Returns -EINVAL on parse error, 1 at the end of optstr and 0 on success.
- */
-static int mnt_optstr_parse_next(char **optstr,	 char **name, size_t *namesz,
-					char **value, size_t *valsz)
-{
-	int open_quote = 0;
-	char *start = NULL, *stop = NULL, *p, *sep = NULL;
-	char *optstr0;
-
-	assert(optstr);
-	assert(*optstr);
-
-	optstr0 = *optstr;
-
-	if (name)
-		*name = NULL;
-	if (namesz)
-		*namesz = 0;
-	if (value)
-		*value = NULL;
-	if (valsz)
-		*valsz = 0;
-
-	/* trim leading commas as to not invalidate option
-	 * strings with multiple consecutive commas */
-	while (optstr0 && *optstr0 == ',')
-		optstr0++;
-
-	for (p = optstr0; p && *p; p++) {
-		if (!start)
-			start = p;		/* beginning of the option item */
-		if (*p == '"')
-			open_quote ^= 1;	/* reverse the status */
-		if (open_quote)
-			continue;		/* still in quoted block */
-		if (!sep && p > start && *p == '=')
-			sep = p;		/* name and value separator */
-		if (*p == ',')
-			stop = p;		/* terminate the option item */
-		else if (*(p + 1) == '\0')
-			stop = p + 1;		/* end of optstr */
-		if (!start || !stop)
-			continue;
-		if (stop <= start)
-			goto error;
-
-		if (name)
-			*name = start;
-		if (namesz)
-			*namesz = sep ? sep - start : stop - start;
-		*optstr = *stop ? stop + 1 : stop;
-
-		if (sep) {
-			if (value)
-				*value = sep + 1;
-			if (valsz)
-				*valsz = stop - sep - 1;
-		}
-		return 0;
-	}
-
-	return 1;				/* end of optstr */
-
-error:
-	DBG(OPTIONS, ul_debug("parse error: \"%s\"", optstr0));
-	return -EINVAL;
-}
-
-/*
  * Locates the first option that matches @name. The @end is set to the
  * char behind the option (it means ',' or \0).
  *
@@ -138,7 +66,7 @@ static int mnt_optstr_locate_option(char *optstr, const char *name,
 	namesz = strlen(name);
 
 	do {
-		rc = mnt_optstr_parse_next(&optstr, &n, &nsz,
+		rc = ul_optstr_next(&optstr, &n, &nsz,
 					&ol->value, &ol->valsz);
 		if (rc)
 			break;
@@ -172,7 +100,8 @@ int mnt_optstr_next_option(char **optstr, char **name, size_t *namesz,
 {
 	if (!optstr || !*optstr)
 		return -EINVAL;
-	return mnt_optstr_parse_next(optstr, name, namesz, value, valuesz);
+
+	return ul_optstr_next(optstr, name, namesz, value, valuesz);
 }
 
 static int __buffer_append_option(struct ul_buffer *buf,
