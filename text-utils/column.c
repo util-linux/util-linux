@@ -98,6 +98,7 @@ struct column_control {
 	unsigned int greedy :1,
 		     json :1,
 		     header_repeat :1,
+		     hide_unnamed :1,
 		     keep_empty_lines :1,	/* --keep-empty-lines */
 		     tab_noheadings :1;
 };
@@ -198,7 +199,10 @@ static char **split_or_error(const char *str, const char *errmsg)
 	if (!res) {
 		if (errno == ENOMEM)
 			err_oom();
-		errx(EXIT_FAILURE, "%s: '%s'", errmsg, str);
+		if (errmsg)
+			errx(EXIT_FAILURE, "%s: '%s'", errmsg, str);
+		else
+			return NULL;
 	}
 	return res;
 }
@@ -287,6 +291,29 @@ static int column_set_flag(struct libscols_column *cl, int fl)
 	return scols_column_set_flags(cl, cur | fl);
 }
 
+static int has_unnamed(const char *list)
+{
+	char **all, **one;
+
+	if (!list)
+		return 0;
+	if (strcmp(list, "-") == 0)
+		return 1;
+	if (!strchr(list, ','))
+		return 0;
+
+	all = split_or_error(list, NULL);
+	if (all) {
+		STRV_FOREACH(one, all) {
+			if (strcmp(*one, "-") == 0)
+				return 1;
+		}
+		strv_free(all);
+	}
+
+	return 0;
+}
+
 static void apply_columnflag_from_list(struct column_control *ctl, const char *list,
 					 int flag, const char *errmsg)
 {
@@ -312,7 +339,7 @@ static void apply_columnflag_from_list(struct column_control *ctl, const char *l
 
 	/* apply to columns specified by name */
 	STRV_FOREACH(one, all) {
-		if (flag == SCOLS_FL_HIDDEN && strcmp(*one, "-") == 0) {
+		if (strcmp(*one, "-") == 0) {
 			unnamed = 1;
 			continue;
 		}
@@ -473,12 +500,13 @@ static int add_line_to_table(struct column_control *ctl, wchar_t *wcs0)
 		if (!wcdata)
 			break;
 		if (scols_table_get_ncols(ctl->tab) < n + 1) {
-			if (scols_table_is_json(ctl->tab))
+			if (scols_table_is_json(ctl->tab) && !ctl->hide_unnamed)
 				errx(EXIT_FAILURE, _("line %zu: for JSON the name of the "
 					"column %zu is required"),
 					scols_table_get_nlines(ctl->tab) + 1,
 					n + 1);
-			scols_table_new_column(ctl->tab, NULL, 0, 0);
+			scols_table_new_column(ctl->tab, NULL, 0,
+					ctl->hide_unnamed ? SCOLS_FL_HIDDEN : 0);
 		}
 		if (!ln) {
 			ln = scols_table_new_line(ctl->tab, NULL);
@@ -794,6 +822,7 @@ int main(int argc, char **argv)
 			break;
 		case 'H':
 			ctl.tab_colhide = optarg;
+			ctl.hide_unnamed = has_unnamed(ctl.tab_colhide);
 			break;
 		case 'i':
 			ctl.tree_id = optarg;
