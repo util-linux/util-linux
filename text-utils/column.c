@@ -709,6 +709,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -t, --table                      create a table\n"), out);
 	fputs(_(" -n, --table-name <name>          table name for JSON output\n"), out);
 	fputs(_(" -O, --table-order <columns>      specify order of output columns\n"), out);
+	fputs(_(" -C, --table-column <properties>  define column\n"), out);
 	fputs(_(" -N, --table-columns <names>      comma separated columns names\n"), out);
 	fputs(_(" -l, --table-columns-limit <num>  maximal number of input columns\n"), out);
 	fputs(_(" -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"), out);
