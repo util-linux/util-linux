@@ -425,7 +425,7 @@ struct libscols_column *scols_table_new_column(struct libscols_table *tb,
 	if (!cl)
 		return NULL;
 
-	if (scols_column_set_name(cl, name))
+	if (name && scols_column_set_name(cl, name))
 		goto err;
 	scols_column_set_whint(cl, whint);
 	scols_column_set_flags(cl, flags);
@@ -606,6 +606,35 @@ struct libscols_column *scols_table_get_column(struct libscols_table *tb,
 	}
 	return NULL;
 }
+
+/**
+ * scols_table_get_column_ny_name
+ * @tb: table
+ * @name: column name
+ *
+ * Returns: pointer to column or NULL
+ *
+ * Since: 2.39
+ */
+struct libscols_column *scols_table_get_column_by_name(
+				struct libscols_table *tb, const char *name)
+{
+	struct libscols_iter itr;
+	struct libscols_column *cl;
+
+	if (!tb || !name)
+		return NULL;
+
+	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+	while (scols_table_next_column(tb, &itr, &cl) == 0) {
+		const char *cn = scols_column_get_name(cl);
+
+		if (cn && strcmp(cn, name) == 0)
+			return cl;
+	}
+	return NULL;
+}
+
 
 /**
  * scols_table_add_line:

@@ -194,6 +194,8 @@ extern int scols_column_set_name(struct libscols_column *cl, const char *name);
 extern const char *scols_column_get_name(struct libscols_column *cl);
 extern const char *scols_column_get_name_as_shellvar(struct libscols_column *cl);
 
+extern int scols_column_set_properties(struct libscols_column *cl, const char *opts);
+
 extern int scols_column_set_cmpfunc(struct libscols_column *cl,
 			int (*cmp)(struct libscols_cell *a,
 				   struct libscols_cell *b, void *),
@@ -290,6 +292,7 @@ extern const char *scols_table_get_line_separator(const struct libscols_table *t
 extern size_t scols_table_get_ncols(const struct libscols_table *tb);
 extern size_t scols_table_get_nlines(const struct libscols_table *tb);
 extern struct libscols_column *scols_table_get_column(struct libscols_table *tb, size_t n);
+struct libscols_column *scols_table_get_column_by_name(struct libscols_table *tb, const char *name);
 extern int scols_table_add_line(struct libscols_table *tb, struct libscols_line *ln);
 extern int scols_table_remove_line(struct libscols_table *tb, struct libscols_line *ln);
 extern void scols_table_remove_lines(struct libscols_table *tb);

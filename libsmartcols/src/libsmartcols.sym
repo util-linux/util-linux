@@ -209,3 +209,9 @@ SMARTCOLS_2.38 {
 	scols_table_is_shellvar;
 	scols_table_enable_shellvar;
 } SMARTCOLS_2.35;
+
+
+SMARTCOLS_2.39 {
+	scols_column_set_properties;
+	scols_table_get_column_by_name;
+} SMARTCOLS_2.38;
