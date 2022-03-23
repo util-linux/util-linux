@@ -65,7 +65,11 @@ Input is taken from _file_, or otherwise from standard input. Empty lines are ig
 
 == OPTIONS
 
-The argument _columns_ for *--table-** options is a comma separated list of the column names as defined by *--table-columns* or it's column number in order as specified by input. It's possible to mix names and numbers. The special placeholder '0' (e.g. -R0) may be used to specify all columns.
+The argument _columns_ for *--table-** options is a comma separated list of the
+column names as defined by *--table-columns*, or names defined by
+*--table-column* or it's column number in order as specified by input. It's
+possible to mix names and numbers. The special placeholder '0' (e.g. -R0) may
+be used to specify all columns.
 
 *-J, --json*::
 Use JSON output format to print the table, the option *--table-columns* is required and the option *--table-name* is recommended.
@@ -87,8 +91,38 @@ Specify the possible input item delimiters (default is whitespace).
 *-t, --table*::
 Determine the number of columns the input contains and create a table. Columns are delimited with whitespace, by default, or with the characters supplied using the *--output-separator* option. Table output is useful for pretty-printing.
 
+*-C, --table-column* _properties_::
+Define one column by comma separated list of column attributes.
+This option can be used more than once, every use defines just one column.
+The properties replace some of --table- options. For example *--table-column
+name=FOO,right* define one column where text is aligned to right. The option is
+mutually exclusive to *--table-columns*.
++
+The currently supported attributes are:
++
+*name=string*;;
+Specifies column name.
+*trunc*;;
+The column text can be truncated when necessary. The same as *--table-truncate*.
+*right*;;
+Right align text in the specified columns. The same as *--table-right*.
+*width=number*;;
+Specifies column width. The width is used as a hint only. The width is strictly followed
+only when *strictwidth* attribute is used too.
+*strictwidth*;;
+Strictly follow column *width=* setting.
+*noextreme*;;
+Specify columns where is possible to ignore unusually long cells. See *--table-noextreme* for more details.
+*wrap*;;
+Specify columns where is possible to use multi-line cell for long text when necessary. See *--table-wrap*.
+*hide*;;
+Don't print specified columns. See *--table-hide*.
+*json=type*;;
+Define column type for JSON output, Supported are string, number and boolean.
+
 *-N, --table-columns* _names_::
-Specify the columns names by comma separated list of names. The names are used for the table header or to address column in option arguments.
+Specify the columns names by comma separated list of names. The names are used
+for the table header or to address column in option argument. See also *--table-column*.
 
 *-l, --table-columns-limit* _number_::
 Specify maximal number of the input columns. The last column will contain all remaining line data if the limit is smaller than the number of the columns in the input data.

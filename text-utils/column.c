@@ -75,6 +75,8 @@ struct column_control {
 	const char *tab_name;	/* table name */
 	const char *tab_order;	/* --table-order */
 
+	char **tab_columns;	/* array from --table-column */
+
 	const char *tab_colright;	/* --table-right */
 	const char *tab_coltrunc;	/* --table-trunc */
 	const char *tab_colnoextrem;	/* --table-noextreme */
@@ -216,37 +218,47 @@ static void init_table(struct column_control *ctl)
 	} else
 		scols_table_enable_noencoding(ctl->tab, 1);
 
-	if (ctl->tab_colnames) {
+	if (ctl->tab_columns) {
+		char **opts;
+
+		STRV_FOREACH(opts, ctl->tab_columns) {
+			struct libscols_column *cl;
+
+			cl = scols_table_new_column(ctl->tab, NULL, 0, 0);
+			scols_column_set_properties(cl, *opts);
+		}
+
+	} else if (ctl->tab_colnames) {
 		char **name;
 
 		STRV_FOREACH(name, ctl->tab_colnames)
 			scols_table_new_column(ctl->tab, *name, 0, 0);
+	} else
+		scols_table_enable_noheadings(ctl->tab, 1);
+
+	if (ctl->tab_colnames || ctl->tab_columns) {
 		if (ctl->header_repeat)
 			scols_table_enable_header_repeat(ctl->tab, 1);
 		scols_table_enable_noheadings(ctl->tab, !!ctl->tab_noheadings);
-	} else
-		scols_table_enable_noheadings(ctl->tab, 1);
+	}
+
 }
 
 static struct libscols_column *string_to_column(struct column_control *ctl, const char *str)
 {
-	uint32_t colnum = 0;
+	struct libscols_column *cl;
 
-	if (isdigit_string(str))
-		colnum = strtou32_or_err(str, _("failed to parse column")) - 1;
-	else {
-		char **name;
+	if (isdigit_string(str)) {
+		uint32_t n = strtou32_or_err(str, _("failed to parse column")) - 1;
 
-		STRV_FOREACH(name, ctl->tab_colnames) {
-			if (strcasecmp(*name, str) == 0)
-				break;
-			colnum++;
-		}
-		if (!name || !*name)
-			errx(EXIT_FAILURE, _("undefined column name '%s'"), str);
-	}
+		cl = scols_table_get_column(ctl->tab, n);
+	} else
+		cl = scols_table_get_column_by_name(ctl->tab, str);
 
-	return scols_table_get_column(ctl->tab, colnum);
+	if (!cl)
+		errx(EXIT_FAILURE, _("undefined column name '%s'"), str);
+
+	return cl;
 }
 
 static struct libscols_column *get_last_visible_column(struct column_control *ctl)
@@ -723,6 +735,7 @@ int main(int argc, char **argv)
 		{ "separator",           required_argument, NULL, 's' },
 		{ "table",               no_argument,       NULL, 't' },
 		{ "table-columns",       required_argument, NULL, 'N' },
+		{ "table-column",        required_argument, NULL, 'C' },
 		{ "table-columns-limit", required_argument, NULL, 'l' },
 		{ "table-hide",          required_argument, NULL, 'H' },
 		{ "table-name",          required_argument, NULL, 'n' },
@@ -741,6 +754,7 @@ int main(int argc, char **argv)
 		{ NULL,	0, NULL, 0 },
 	};
 	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */
+		{ 'C','N' },
 		{ 'J','x' },
 		{ 't','x' },
 		{ 0 }
@@ -755,11 +769,14 @@ int main(int argc, char **argv)
 	ctl.output_separator = "  ";
 	ctl.input_separator = mbs_to_wcs("\t ");
 
-	while ((c = getopt_long(argc, argv, "c:dE:eH:hi:Jl:LN:n:O:o:p:R:r:s:T:tVW:x", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "C:c:dE:eH:hi:Jl:LN:n:O:o:p:R:r:s:T:tVW:x", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
 		switch(c) {
+		case 'C':
+			strv_extend(&ctl.tab_columns, optarg);
+			break;
 		case 'c':
 			if (strcmp(optarg, "unlimited") == 0)
 				ctl.termwidth = 0;
@@ -858,11 +875,11 @@ int main(int argc, char **argv)
 	if (ctl.mode != COLUMN_MODE_TABLE
 	    && (ctl.tab_order || ctl.tab_name || ctl.tab_colwrap ||
 		ctl.tab_colhide || ctl.tab_coltrunc || ctl.tab_colnoextrem ||
-		ctl.tab_colright || ctl.tab_colnames))
+		ctl.tab_colright || ctl.tab_colnames || ctl.tab_columns))
 		errx(EXIT_FAILURE, _("option --table required for all --table-*"));
 
-	if (ctl.tab_colnames == NULL && ctl.json)
-		errx(EXIT_FAILURE, _("option --table-columns required for --json"));
+	if (!ctl.tab_colnames && !ctl.tab_columns && ctl.json)
+		errx(EXIT_FAILURE, _("option --table-columns or --table-column required for --json"));
 
 	if (!*argv)
 		eval += read_input(&ctl, stdin);
@@ -891,6 +908,12 @@ int main(int argc, char **argv)
 		if (ctl.tab && scols_table_get_nlines(ctl.tab)) {
 			modify_table(&ctl);
 			eval = scols_print_table(ctl.tab);
+
+			scols_unref_table(ctl.tab);
+			if (ctl.tab_colnames)
+				strv_free(ctl.tab_colnames);
+			if (ctl.tab_columns)
+				strv_free(ctl.tab_columns);
 		}
 		break;
 	case COLUMN_MODE_FILLCOLS:
@@ -903,6 +926,8 @@ int main(int argc, char **argv)
 		simple_print(&ctl);
 		break;
 	}
+
+	free(ctl.input_separator);
 
 	return eval == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }
