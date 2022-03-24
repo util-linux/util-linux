@@ -62,6 +62,7 @@ usrbin_exec_PROGRAMS += namei
 MANPAGES += misc-utils/namei.1
 dist_noinst_DATA += misc-utils/namei.1.adoc
 namei_SOURCES = misc-utils/namei.c lib/strutils.c lib/idcache.c
+namei_LDADD = $(LDADD) -lselinux
 endif
 
 if BUILD_WHEREIS
