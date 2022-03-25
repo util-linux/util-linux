@@ -91,6 +91,12 @@ The command uses <sysexits.h> exit status values for everything, except when usi
 
 When using the _command_ variant, and executing the child worked, then the exit status is that of the child command.
 
+== NOTES
+
+*flock* does not detect deadlock. See *flock*(2) for details.
+
+Some file systems (e. g. NFS and CIFS) have a limited implementation of *flock*(2) and flock may always fail. For details see *flock*(2), *nfs*(5) and *mount.cifs*(8). Depending on mount options, flock can always fail there.
+
 == EXAMPLES
 
 Note that "shell> " in examples is a command line prompt.
