@@ -6,19 +6,19 @@
 # Boyuan Yang <073plan@gmail.com>, 2019, 2020, 2021, 2022.
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux-2.38-rc3\n"
+"Project-Id-Version: util-linux-2.38-rc4\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-16 17:42+0100\n"
-"PO-Revision-Date: 2022-03-16 09:40-0400\n"
+"POT-Creation-Date: 2022-03-16 18:08+0100\n"
+"PO-Revision-Date: 2022-03-17 10:51-0400\n"
 "Last-Translator: Boyuan Yang <073plan@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Bugs: Report translation errors to the Language-Team address.\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.4.3\n"
+"X-Bugs: Report translation errors to the Language-Team address.\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #: disk-utils/addpart.c:15
 #, c-format
@@ -482,7 +482,8 @@ msgstr "写脚本文件 %s 失败"
 msgid "Select label type"
 msgstr "选择标签类型"
 
-#: disk-utils/cfdisk.c:2195 disk-utils/fdisk.c:1162 disk-utils/fdisk-menu.c:490
+#: disk-utils/cfdisk.c:2195 disk-utils/fdisk.c:1162
+#: disk-utils/fdisk-menu.c:490
 msgid "Device does not contain a recognized partition table."
 msgstr "设备不包含可识别的分区表。"
 
@@ -629,7 +630,8 @@ msgstr "新大小："
 msgid "Partition %zu resized."
 msgstr "已调整分区 %zu 的大小。"
 
-#: disk-utils/cfdisk.c:2504 disk-utils/fdisk.c:1138 disk-utils/fdisk-menu.c:593
+#: disk-utils/cfdisk.c:2504 disk-utils/fdisk.c:1138
+#: disk-utils/fdisk-menu.c:593
 msgid "Device is open in read-only mode."
 msgstr "设备以只读方式打开。"
 
@@ -766,8 +768,8 @@ msgstr ""
 "将继续 ... "
 
 #: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:629 sys-utils/blkdiscard.c:89
-#: sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:629
+#: sys-utils/blkdiscard.c:89 sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [选项] <设备>\n"
@@ -1135,21 +1137,21 @@ msgstr "不支持的擦除模式"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "设备属性(扇区大小和几何属性)只能用于某个指定的设备。"
 
-#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122 disk-utils/fsck.cramfs.c:703
-#: disk-utils/mkfs.bfs.c:192 disk-utils/mkfs.cramfs.c:788
-#: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
-#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:524
-#: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:580
-#: misc-utils/whereis.c:591 misc-utils/whereis.c:602 misc-utils/whereis.c:644
-#: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:188
-#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1580
-#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
-#: sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656 sys-utils/mount.c:877
-#: sys-utils/mount.c:885 sys-utils/mount.c:932 sys-utils/mount.c:945
-#: sys-utils/mount.c:1017 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
-#: sys-utils/swapoff.c:258 sys-utils/swapon.c:1006 sys-utils/switch_root.c:270
-#: sys-utils/umount.c:620 term-utils/setterm.c:1197 text-utils/col.c:584
-#: text-utils/more.c:2094
+#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122
+#: disk-utils/fsck.cramfs.c:703 disk-utils/mkfs.bfs.c:192
+#: disk-utils/mkfs.cramfs.c:788 disk-utils/partx.c:975 disk-utils/raw.c:136
+#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
+#: misc-utils/cal.c:524 misc-utils/findfs.c:58 misc-utils/look.c:147
+#: misc-utils/whereis.c:580 misc-utils/whereis.c:591 misc-utils/whereis.c:602
+#: misc-utils/whereis.c:644 schedutils/chrt.c:442 schedutils/ionice.c:264
+#: schedutils/taskset.c:188 sys-utils/chcpu.c:355 sys-utils/chmem.c:429
+#: sys-utils/dmesg.c:1580 sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321
+#: sys-utils/losetup.c:918 sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656
+#: sys-utils/mount.c:877 sys-utils/mount.c:885 sys-utils/mount.c:932
+#: sys-utils/mount.c:945 sys-utils/mount.c:1017 sys-utils/mountpoint.c:191
+#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:258 sys-utils/swapon.c:1006
+#: sys-utils/switch_root.c:270 sys-utils/umount.c:620
+#: term-utils/setterm.c:1197 text-utils/col.c:584 text-utils/more.c:2094
 msgid "bad usage"
 msgstr "错误用法"
 
@@ -1268,12 +1270,13 @@ msgstr "分配输出行失败"
 #: misc-utils/lsfd-file.c:349 misc-utils/lsfd-sock.c:47
 #: misc-utils/lsfd-sock.c:52 misc-utils/lsfd-sock.c:73
 #: misc-utils/lsfd-sock.c:75 misc-utils/lsfd-unkn.c:39
-#: misc-utils/lsfd-unkn.c:53 misc-utils/lsfd-unkn.c:55 misc-utils/lslocks.c:459
-#: misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242 sys-utils/losetup.c:305
-#: sys-utils/lscpu.c:568 sys-utils/lscpu.c:783 sys-utils/lscpu.c:812
-#: sys-utils/lscpu.c:822 sys-utils/lsipc.c:526 sys-utils/lsipc.c:651
-#: sys-utils/prlimit.c:275 sys-utils/rfkill.c:417 sys-utils/swapon.c:227
-#: sys-utils/wdctl.c:327 sys-utils/zramctl.c:481 text-utils/column.c:481
+#: misc-utils/lsfd-unkn.c:53 misc-utils/lsfd-unkn.c:55
+#: misc-utils/lslocks.c:459 misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242
+#: sys-utils/losetup.c:305 sys-utils/lscpu.c:568 sys-utils/lscpu.c:783
+#: sys-utils/lscpu.c:812 sys-utils/lscpu.c:822 sys-utils/lsipc.c:526
+#: sys-utils/lsipc.c:651 sys-utils/prlimit.c:275 sys-utils/rfkill.c:417
+#: sys-utils/swapon.c:227 sys-utils/wdctl.c:327 sys-utils/zramctl.c:481
+#: text-utils/column.c:481
 msgid "failed to add output data"
 msgstr "添加输出信息失败"
 
@@ -1725,7 +1728,7 @@ msgstr "进入嵌套的 BSD 磁盘标签。"
 
 #: disk-utils/fdisk-menu.c:876
 msgid "C/H/S values fixed."
-msgstr ""
+msgstr "C/H/S 值已修复。"
 
 #: disk-utils/fdisk-menu.c:878
 msgid "Nothing to do. C/H/S values are correct already."
@@ -1857,10 +1860,9 @@ msgid "Finished with %s (exit status %d)\n"
 msgstr "以 %s 结束(退出状态为 %d)\n"
 
 #: disk-utils/fsck.c:939
-#, fuzzy, c-format
-#| msgid "error %d (%m) while executing fsck.%s for %s"
+#, c-format
 msgid "error %d (%s) while executing fsck.%s for %s"
-msgstr "对 %3$s 执行 fsck.%2$s 时出现错误 %1$d (%m)"
+msgstr "错误 %d（%s）出现在执行 fsck.%s 时，用于 %s"
 
 #: disk-utils/fsck.c:1005
 msgid ""
@@ -3399,10 +3401,8 @@ msgid " -q, --quiet               suppress output and warning messages\n"
 msgstr " -q, --quiet               禁止输出和警告信息\n"
 
 #: disk-utils/mkswap.c:171
-#, fuzzy
-#| msgid " -b, --bytes       show sizes in bytes\n"
 msgid " -p, --pagesize SIZE       specify page size in bytes\n"
-msgstr " -b, --bytes       以字节数显示大小\n"
+msgstr " -p, --pagesize 大小       指定页面大小，以字节为单位\n"
 
 #: disk-utils/mkswap.c:172
 msgid " -L, --label LABEL         specify label\n"
@@ -3446,6 +3446,8 @@ msgid ""
 "mkswap: %s contains holes or other unsupported extents.\n"
 "        This swap file can be rejected by kernel on swap activation!\n"
 msgstr ""
+"mkswap: %s 包含空洞或者其它不支持的扩展。\n"
+"        此交换文件可能会在启用时被内核拒绝！\n"
 
 #: disk-utils/mkswap.c:243
 #, c-format
@@ -3455,7 +3457,7 @@ msgstr "        使用 --verbose 显示更多细节。\n"
 #: disk-utils/mkswap.c:284 disk-utils/mkswap.c:309
 #, c-format
 msgid "hole detected at offset %ju"
-msgstr ""
+msgstr "在偏移量 %ju 处探测到空洞"
 
 #: disk-utils/mkswap.c:292
 #, c-format
@@ -4555,10 +4557,9 @@ msgid "Failed to apply script headers, disk label not created"
 msgstr "无法应用脚本标头(header)，未创建磁盘标签。"
 
 #: disk-utils/sfdisk.c:1954
-#, fuzzy, c-format
-#| msgid "Failed to add #%d partition"
+#, c-format
 msgid "Failed to add #%zu partition"
-msgstr "添加 #%d 分区失败"
+msgstr "添加 #%zu 分区失败"
 
 #: disk-utils/sfdisk.c:1977
 msgid "Script header accepted."
@@ -4606,10 +4607,8 @@ msgid " -J, --json <dev>                  dump partition table in JSON format\n"
 msgstr " -J, --json <设备>                 以 JSON 格式转储分区表\n"
 
 #: disk-utils/sfdisk.c:2049
-#, fuzzy
-#| msgid " -b, --backup              backup partition table sectors (see -O)\n"
 msgid " -B, --backup-pt-sectors <dev>     binary partition table backup (see -b and -O)\n"
-msgstr " -b, --backup              备份分区表扇区(见 -O)\n"
+msgstr " -B, --backup-pt-sectors <dev>     二进制分区表备份（参见 -b 和 -O）\n"
 
 #: disk-utils/sfdisk.c:2050
 msgid " -g, --show-geometry [<dev> ...]   list geometry of all or specified devices\n"
@@ -5863,20 +5862,16 @@ msgid "Plan 9 partition"
 msgstr "Plan 9 分区"
 
 #: include/pt-gpt-partnames.h:262
-#, fuzzy
-#| msgid "HiFive Unleashed FSBL"
 msgid "HiFive FSBL"
-msgstr "HiFive Unleashed FSBL"
+msgstr "HiFive FSBL"
 
 #: include/pt-gpt-partnames.h:263
-#, fuzzy
-#| msgid "HiFive Unleashed BBL"
 msgid "HiFive BBL"
-msgstr "HiFive Unleashed BBL"
+msgstr "HiFive BBL"
 
 #: include/pt-gpt-partnames.h:266
 msgid "Haiku BFS"
-msgstr ""
+msgstr "Haiku BFS"
 
 #: include/pt-mbr-partnames.h:1
 msgid "Empty"
@@ -6273,7 +6268,7 @@ msgid "%s: failed to get lock"
 msgstr "%s：获取锁失败"
 
 #: lib/blkdev.c:417
-#, fuzzy, c-format
+#, c-format
 msgid "OK\n"
 msgstr "正常\n"
 
@@ -6655,10 +6650,9 @@ msgid "No free sectors available."
 msgstr "无空闲扇区可用。"
 
 #: libfdisk/src/dos.c:1342
-#, fuzzy, c-format
-#| msgid "Sector %llu is already allocated."
+#, c-format
 msgid "Sector %ju is already allocated."
-msgstr "扇区 %llu 已经分配."
+msgstr "扇区 %ju 已经分配。"
 
 #: libfdisk/src/dos.c:1562
 #, c-format
@@ -7968,10 +7962,9 @@ msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr "文件系统已卸载，但更新用户空间挂载表失败"
 
 #: libmount/src/context_umount.c:1283
-#, fuzzy, c-format
-#| msgid "%s: filesystem was unmounted, but mount(8) failed"
+#, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
-msgstr "%s：文件系统已卸载，但 mount(8) 失败"
+msgstr ""
 
 #: libmount/src/context_umount.c:1290
 #, fuzzy, c-format
@@ -8448,10 +8441,9 @@ msgid "FATAL: bad tty"
 msgstr "致命：坏的 tty"
 
 #: login-utils/login.c:551
-#, fuzzy, c-format
-#| msgid "TIOCSCTTY failed: %m"
+#, c-format
 msgid "TIOCGWINSZ ioctl failed: %m"
-msgstr "TIOCSCTTY 失败：%m"
+msgstr "TIOCGWINSZ ioctl 失败: %m"
 
 #: login-utils/login.c:559
 #, c-format
@@ -8459,10 +8451,9 @@ msgid "FATAL: %s: change permissions failed: %m"
 msgstr "致命：%s：更改权限失败：%m"
 
 #: login-utils/login.c:588
-#, fuzzy, c-format
-#| msgid "TIOCSCTTY failed: %m"
+#, c-format
 msgid "TIOCSWINSZ ioctl failed: %m"
-msgstr "TIOCSCTTY 失败：%m"
+msgstr "TIOCSWINSZ ioctl 失败: %m"
 
 #: login-utils/login.c:694
 #, c-format
@@ -8470,16 +8461,14 @@ msgid "Last login: %.*s "
 msgstr "上次登录：%.*s "
 
 #: login-utils/login.c:698
-#, fuzzy, c-format
-#| msgid "from %.*s\n"
+#, c-format
 msgid "from %s\n"
-msgstr "来自 %.*s\n"
+msgstr "来自 %s\n"
 
 #: login-utils/login.c:701
-#, fuzzy, c-format
-#| msgid "on %.*s\n"
+#, c-format
 msgid "on %s\n"
-msgstr "于 %.*s\n"
+msgstr "于 %s\n"
 
 #: login-utils/login.c:717
 msgid "write lastlog failed"
@@ -13780,8 +13769,9 @@ msgstr "解析偏移失败"
 msgid "failed to parse step"
 msgstr "解析步长失败"
 
-#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:499 sys-utils/fallocate.c:382
-#: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561 sys-utils/umount.c:610
+#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:499
+#: sys-utils/fallocate.c:382 sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561
+#: sys-utils/umount.c:610
 msgid "unexpected number of arguments"
 msgstr "参数数量异常"
 
@@ -19017,10 +19007,8 @@ msgid "Run a program with namespaces of other processes.\n"
 msgstr "以其他程序的名字空间运行某个程序。\n"
 
 #: sys-utils/nsenter.c:82
-#, fuzzy
-#| msgid " -a, --all            print all devices\n"
 msgid " -a, --all              enter all namespaces\n"
-msgstr " -a, --all            打印所有设备\n"
+msgstr " -a, --all              进入所有名字空间\n"
 
 #: sys-utils/nsenter.c:83
 msgid " -t, --target <pid>     target process to get namespaces from\n"
