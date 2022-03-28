@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-man 2.37-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-16 17:43+0100\n"
+"POT-Creation-Date: 2022-03-28 13:25+0200\n"
 "PO-Revision-Date: 2022-02-20 08:34+0200\n"
 "Last-Translator: Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
 "Language-Team: Serbian <(nothing)>\n"
@@ -549,7 +549,7 @@ msgstr "Величина партиције (у 512-бајтним сектор�
 #: ../sys-utils/chmem.8.adoc:81 ../sys-utils/choom.1.adoc:51
 #: ../sys-utils/ctrlaltdel.8.adoc:47 ../sys-utils/dmesg.1.adoc:183
 #: ../sys-utils/eject.1.adoc:117 ../sys-utils/fallocate.1.adoc:86
-#: ../sys-utils/flock.1.adoc:125 ../sys-utils/fsfreeze.8.adoc:53
+#: ../sys-utils/flock.1.adoc:131 ../sys-utils/fsfreeze.8.adoc:53
 #: ../sys-utils/fstab.5.adoc:135 ../sys-utils/fstrim.8.adoc:83
 #: ../sys-utils/hwclock.8.adoc:373 ../sys-utils/ipcmk.1.adoc:49
 #: ../sys-utils/ipcrm.1.adoc:68 ../sys-utils/ipcs.1.adoc:88
@@ -1034,7 +1034,7 @@ msgstr "Поставља за читање-писање."
 #: ../sys-utils/blkzone.8.adoc:103 ../sys-utils/chcpu.8.adoc:68
 #: ../sys-utils/choom.1.adoc:47 ../sys-utils/ctrlaltdel.8.adoc:43
 #: ../sys-utils/dmesg.1.adoc:177 ../sys-utils/eject.1.adoc:113
-#: ../sys-utils/fallocate.1.adoc:81 ../sys-utils/flock.1.adoc:116
+#: ../sys-utils/fallocate.1.adoc:81 ../sys-utils/flock.1.adoc:122
 #: ../sys-utils/fsfreeze.8.adoc:49 ../sys-utils/fstrim.8.adoc:79
 #: ../sys-utils/hwclock.8.adoc:383 ../sys-utils/ipcmk.1.adoc:45
 #: ../sys-utils/ipcs.1.adoc:84 ../sys-utils/irqtop.1.adoc:59
@@ -1855,16 +1855,16 @@ msgstr "Прескаче проверавање које се обично об�
 #: ../misc-utils/lslocks.8.adoc:100 ../schedutils/chrt.1.adoc:127
 #: ../schedutils/ionice.1.adoc:68 ../schedutils/uclampset.1.adoc:110
 #: ../sys-utils/choom.1.adoc:33 ../sys-utils/eject.1.adoc:97
-#: ../sys-utils/fsfreeze.8.adoc:45 ../sys-utils/fstab.5.adoc:125
-#: ../sys-utils/hwclock.8.adoc:171 ../sys-utils/ipcrm.1.adoc:63
-#: ../sys-utils/ipcs.1.adoc:80 ../sys-utils/losetup.8.adoc:124
-#: ../sys-utils/mountpoint.1.adoc:57 ../sys-utils/prlimit.1.adoc:110
-#: ../sys-utils/renice.1.adoc:76 ../sys-utils/rtcwake.8.adoc:110
-#: ../sys-utils/setpriv.1.adoc:94 ../sys-utils/swapon.8.adoc:136
-#: ../sys-utils/switch_root.8.adoc:33 ../sys-utils/tunelp.8.adoc:64
-#: ../sys-utils/unshare.1.adoc:142 ../term-utils/script.1.adoc:134
-#: ../term-utils/wall.1.adoc:73 ../text-utils/col.1.adoc:86
-#: ../text-utils/pg.1.adoc:136
+#: ../sys-utils/flock.1.adoc:94 ../sys-utils/fsfreeze.8.adoc:45
+#: ../sys-utils/fstab.5.adoc:125 ../sys-utils/hwclock.8.adoc:171
+#: ../sys-utils/ipcrm.1.adoc:63 ../sys-utils/ipcs.1.adoc:80
+#: ../sys-utils/losetup.8.adoc:124 ../sys-utils/mountpoint.1.adoc:57
+#: ../sys-utils/prlimit.1.adoc:110 ../sys-utils/renice.1.adoc:76
+#: ../sys-utils/rtcwake.8.adoc:110 ../sys-utils/setpriv.1.adoc:94
+#: ../sys-utils/swapon.8.adoc:136 ../sys-utils/switch_root.8.adoc:33
+#: ../sys-utils/tunelp.8.adoc:64 ../sys-utils/unshare.1.adoc:142
+#: ../term-utils/script.1.adoc:134 ../term-utils/wall.1.adoc:73
+#: ../text-utils/col.1.adoc:86 ../text-utils/pg.1.adoc:136
 #, no-wrap
 msgid "NOTES"
 msgstr "БЕЛЕШКЕ"
@@ -7539,7 +7539,7 @@ msgstr ""
 #: ../misc-utils/look.1.adoc:94 ../misc-utils/rename.1.adoc:77
 #: ../misc-utils/uuidgen.1.adoc:58 ../misc-utils/whereis.1.adoc:111
 #: ../misc-utils/wipefs.8.adoc:88 ../schedutils/ionice.1.adoc:72
-#: ../sys-utils/flock.1.adoc:94 ../sys-utils/prlimit.1.adoc:114
+#: ../sys-utils/flock.1.adoc:100 ../sys-utils/prlimit.1.adoc:114
 #: ../sys-utils/renice.1.adoc:86 ../sys-utils/setpriv.1.adoc:100
 #: ../sys-utils/unshare.1.adoc:146 ../term-utils/scriptlive.1.adoc:50
 #: ../term-utils/scriptreplay.1.adoc:67 ../text-utils/colcrt.1.adoc:83
@@ -22248,7 +22248,7 @@ msgstr "Написао је Robert M. Love."
 
 #. type: Title ==
 #: ../schedutils/taskset.1.adoc:104 ../sys-utils/chcpu.8.adoc:72
-#: ../sys-utils/flock.1.adoc:120 ../sys-utils/rtcwake.8.adoc:126
+#: ../sys-utils/flock.1.adoc:126 ../sys-utils/rtcwake.8.adoc:126
 #: ../term-utils/scriptlive.1.adoc:66 ../term-utils/scriptreplay.1.adoc:83
 #, no-wrap
 msgid "COPYRIGHT"
@@ -25584,17 +25584,31 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/flock.1.adoc:97
+#, no-wrap
+msgid "*flock* does not detect deadlock. See *flock*(2) for details.\n"
+msgstr ""
+
+#. type: Plain text
+#: ../sys-utils/flock.1.adoc:99
+msgid ""
+"Some file systems (e. g. NFS and CIFS) have a limited implementation of "
+"*flock*(2) and flock may always fail. For details see *flock*(2), *nfs*(5) "
+"and *mount.cifs*(8). Depending on mount options, flock can always fail there."
+msgstr ""
+
+#. type: Plain text
+#: ../sys-utils/flock.1.adoc:103
 msgid "Note that \"shell> \" in examples is a command line prompt."
 msgstr "Знајте да је „shell> “ у примерима упит линије наредби."
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:98
+#: ../sys-utils/flock.1.adoc:104
 #, no-wrap
 msgid "shell1> flock /tmp -c cat; shell2> flock -w .007 /tmp -c echo; /bin/echo $?"
 msgstr "shell1> flock /tmp -c cat; shell2> flock -w .007 /tmp -c echo; /bin/echo $?"
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:100
+#: ../sys-utils/flock.1.adoc:106
 #, fuzzy
 #| msgid ""
 #| "Set exclusive lock to directory /tmp and the second command will fail."
@@ -25605,13 +25619,13 @@ msgstr ""
 "успети."
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:101
+#: ../sys-utils/flock.1.adoc:107
 #, no-wrap
 msgid "shell1> flock -s /tmp -c cat; shell2> flock -s -w .007 /tmp -c echo; /bin/echo $?"
 msgstr "shell1> flock -s /tmp -c cat; shell2> flock -s -w .007 /tmp -c echo; /bin/echo $?"
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:103
+#: ../sys-utils/flock.1.adoc:109
 #, fuzzy
 #| msgid ""
 #| "Set shared lock to directory /tmp and the second command will not fail. "
@@ -25626,13 +25640,13 @@ msgstr ""
 "наредбом неће успети."
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:104
+#: ../sys-utils/flock.1.adoc:110
 #, no-wrap
 msgid "shell> flock -x local-lock-file echo 'a b c'"
 msgstr "shell> flock -x local-lock-file echo 'a b c'"
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:106
+#: ../sys-utils/flock.1.adoc:112
 msgid ""
 "Grab the exclusive lock \"local-lock-file\" before running echo with 'a b c'."
 msgstr ""
@@ -25640,13 +25654,13 @@ msgstr ""
 "„echo“ са „a b c“."
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:107
+#: ../sys-utils/flock.1.adoc:113
 #, no-wrap
 msgid "(; flock -n 9 || exit 1; # ... commands executed under lock ...; ) 9>/var/lock/mylockfile"
 msgstr "(; flock -n 9 || exit 1; # ... наредбе извршене под закључавањем ...; ) 9>/var/lock/moja-datoteka-zaključavanja"
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:109
+#: ../sys-utils/flock.1.adoc:115
 msgid ""
 "The form is convenient inside shell scripts. The mode used to open the file "
 "doesn't matter to *flock*; using _>_ or _>>_ allows the lockfile to be "
@@ -25661,14 +25675,14 @@ msgstr ""
 "само овлашћење писања."
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:110
+#: ../sys-utils/flock.1.adoc:116
 #, fuzzy, no-wrap
 #| msgid "[ $\\{FLOCKER} != $0 ] && exec env FLOCKER=\"$0 flock -en $0 $0 $@ || :"
 msgid "[ \"$\\{FLOCKER}\" != \"$0\" ] && exec env FLOCKER=\"$0\" flock -en \"$0\" \"$0\" \"$@\" || : "
 msgstr "[ $\\{FLOCKER} != $0 ] && exec env FLOCKER=\"$0 flock -en $0 $0 $@ || :"
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:112
+#: ../sys-utils/flock.1.adoc:118
 #, fuzzy
 #| msgid ""
 #| "This is useful boilerplate code for shell scripts. Put it at the top of "
@@ -25696,13 +25710,13 @@ msgstr ""
 "окружења „FLOCKER“ на праву вредност тако да се не покреће поново."
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:113
+#: ../sys-utils/flock.1.adoc:119
 #, no-wrap
 msgid "shell> exec 4<>/var/lock/mylockfile; shell> flock -n 4"
 msgstr "shell> exec 4<>/var/lock/mylockfile; shell> flock -n 4"
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:115
+#: ../sys-utils/flock.1.adoc:121
 #, fuzzy
 #| msgid ""
 #| "This form is convenient for locking a file without spawning a subprocess. "
@@ -25718,13 +25732,13 @@ msgstr ""
 "4, а затим се „flock“ користи за закључавање описника."
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:119
+#: ../sys-utils/flock.1.adoc:125
 msgid "mailto:hpa@zytor.com[H. Peter Anvin]"
 msgstr "mailto:hpa@zytor.com[H. Peter Anvin]"
 
 #. TRANSLATORS: Keep {copyright} untranslated.
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:124
+#: ../sys-utils/flock.1.adoc:130
 msgid ""
 "Copyright {copyright} 2003-2006 H. Peter Anvin. This is free software; see "
 "the source for copying conditions. There is NO warranty; not even for "
@@ -25735,7 +25749,7 @@ msgstr ""
 "ни о ТРЖИШНОЈ ВРЕДНОСТИ или ПРИЛАГОЂЕНОСТИ ПОСЕБНОЈ НАМЕНИ."
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:128
+#: ../sys-utils/flock.1.adoc:134
 #, no-wrap
 msgid "*flock*(2)\n"
 msgstr "*flock*(2)\n"
