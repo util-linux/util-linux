@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.38-rc4\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-16 18:08+0100\n"
+"POT-Creation-Date: 2022-03-28 13:24+0200\n"
 "PO-Revision-Date: 2022-03-25 15:35+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -47,7 +47,7 @@ msgstr "za mało argumentów"
 #: disk-utils/isosize.c:53 disk-utils/mkfs.bfs.c:186
 #: disk-utils/mkfs.cramfs.c:173 disk-utils/mkfs.cramfs.c:662
 #: disk-utils/mkfs.cramfs.c:801 disk-utils/mkfs.minix.c:838
-#: disk-utils/mkswap.c:325 disk-utils/mkswap.c:354 disk-utils/partx.c:1021
+#: disk-utils/mkswap.c:325 disk-utils/mkswap.c:354 disk-utils/partx.c:1022
 #: disk-utils/resizepart.c:104 disk-utils/sfdisk.c:381 disk-utils/sfdisk.c:502
 #: disk-utils/sfdisk.c:813 disk-utils/sfdisk.c:1117 disk-utils/swaplabel.c:65
 #: libfdisk/src/bsd.c:642 login-utils/islocal.c:86 login-utils/last.c:695
@@ -481,8 +481,7 @@ msgstr "Nie udało się zapisać skryptu %s"
 msgid "Select label type"
 msgstr "Proszę wybrać typ etykiety"
 
-#: disk-utils/cfdisk.c:2195 disk-utils/fdisk.c:1162
-#: disk-utils/fdisk-menu.c:490
+#: disk-utils/cfdisk.c:2195 disk-utils/fdisk.c:1162 disk-utils/fdisk-menu.c:490
 msgid "Device does not contain a recognized partition table."
 msgstr "Urządzenie nie zawiera żadnej znanej tablicy partycji."
 
@@ -627,8 +626,7 @@ msgstr "Nowy rozmiar: "
 msgid "Partition %zu resized."
 msgstr "Zmieniono rozmiar partycji %zu."
 
-#: disk-utils/cfdisk.c:2504 disk-utils/fdisk.c:1138
-#: disk-utils/fdisk-menu.c:593
+#: disk-utils/cfdisk.c:2504 disk-utils/fdisk.c:1138 disk-utils/fdisk-menu.c:593
 msgid "Device is open in read-only mode."
 msgstr "Urządzenie jest otwarte w trybie tylko do odczytu."
 
@@ -765,8 +763,8 @@ msgstr ""
 "Kontynuacja... "
 
 #: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:629
-#: sys-utils/blkdiscard.c:89 sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:629 sys-utils/blkdiscard.c:89
+#: sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [opcje] <urządzenie>\n"
@@ -823,7 +821,7 @@ msgstr "błędny argument - opcja naprawy"
 msgid "stat of %s failed"
 msgstr "stat %s nie powiodło się"
 
-#: disk-utils/fdformat.c:226 disk-utils/partx.c:1018 misc-utils/lsblk.c:1578
+#: disk-utils/fdformat.c:226 disk-utils/partx.c:1019 misc-utils/lsblk.c:1578
 #: sys-utils/blkdiscard.c:235 sys-utils/blkzone.c:149
 #: sys-utils/mountpoint.c:109
 #, c-format
@@ -1135,21 +1133,21 @@ msgstr "nie obsługiwany tryb wymazywania"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Właściwości urządzenia (rozmiar sektora i geometria) powinny być używane tylko z jednym określonym urządzeniem."
 
-#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122
-#: disk-utils/fsck.cramfs.c:703 disk-utils/mkfs.bfs.c:192
-#: disk-utils/mkfs.cramfs.c:788 disk-utils/partx.c:975 disk-utils/raw.c:136
-#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
-#: misc-utils/cal.c:524 misc-utils/findfs.c:58 misc-utils/look.c:147
-#: misc-utils/whereis.c:580 misc-utils/whereis.c:591 misc-utils/whereis.c:602
-#: misc-utils/whereis.c:644 schedutils/chrt.c:442 schedutils/ionice.c:264
-#: schedutils/taskset.c:188 sys-utils/chcpu.c:355 sys-utils/chmem.c:429
-#: sys-utils/dmesg.c:1580 sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321
-#: sys-utils/losetup.c:918 sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656
-#: sys-utils/mount.c:877 sys-utils/mount.c:885 sys-utils/mount.c:932
-#: sys-utils/mount.c:945 sys-utils/mount.c:1017 sys-utils/mountpoint.c:191
-#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:258 sys-utils/swapon.c:1006
-#: sys-utils/switch_root.c:270 sys-utils/umount.c:620
-#: term-utils/setterm.c:1197 text-utils/col.c:584 text-utils/more.c:2094
+#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122 disk-utils/fsck.cramfs.c:703
+#: disk-utils/mkfs.bfs.c:192 disk-utils/mkfs.cramfs.c:788
+#: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
+#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:524
+#: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:580
+#: misc-utils/whereis.c:591 misc-utils/whereis.c:602 misc-utils/whereis.c:644
+#: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:188
+#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1580
+#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
+#: sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656 sys-utils/mount.c:877
+#: sys-utils/mount.c:885 sys-utils/mount.c:932 sys-utils/mount.c:945
+#: sys-utils/mount.c:1017 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
+#: sys-utils/swapoff.c:258 sys-utils/swapon.c:1006 sys-utils/switch_root.c:270
+#: sys-utils/umount.c:620 term-utils/setterm.c:1197 text-utils/col.c:584
+#: text-utils/more.c:2094
 msgid "bad usage"
 msgstr "błędna składnia"
 
@@ -1269,13 +1267,12 @@ msgstr "nie udało się zainicjować linii wyjściowej"
 #: misc-utils/lsfd-file.c:349 misc-utils/lsfd-sock.c:47
 #: misc-utils/lsfd-sock.c:52 misc-utils/lsfd-sock.c:73
 #: misc-utils/lsfd-sock.c:75 misc-utils/lsfd-unkn.c:39
-#: misc-utils/lsfd-unkn.c:53 misc-utils/lsfd-unkn.c:55
-#: misc-utils/lslocks.c:459 misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242
-#: sys-utils/losetup.c:305 sys-utils/lscpu.c:568 sys-utils/lscpu.c:783
-#: sys-utils/lscpu.c:812 sys-utils/lscpu.c:822 sys-utils/lsipc.c:526
-#: sys-utils/lsipc.c:651 sys-utils/prlimit.c:275 sys-utils/rfkill.c:417
-#: sys-utils/swapon.c:227 sys-utils/wdctl.c:327 sys-utils/zramctl.c:481
-#: text-utils/column.c:481
+#: misc-utils/lsfd-unkn.c:53 misc-utils/lsfd-unkn.c:55 misc-utils/lslocks.c:459
+#: misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242 sys-utils/losetup.c:305
+#: sys-utils/lscpu.c:568 sys-utils/lscpu.c:783 sys-utils/lscpu.c:812
+#: sys-utils/lscpu.c:822 sys-utils/lsipc.c:526 sys-utils/lsipc.c:651
+#: sys-utils/prlimit.c:275 sys-utils/rfkill.c:417 sys-utils/swapon.c:227
+#: sys-utils/wdctl.c:327 sys-utils/zramctl.c:481 text-utils/column.c:481
 msgid "failed to add output data"
 msgstr "nie udało się dodać danych wyjściowych"
 
@@ -2737,7 +2734,7 @@ msgstr ""
 "---------------------------\n"
 
 #: disk-utils/fsck.minix.c:1429 disk-utils/mkfs.minix.c:854
-#: disk-utils/mkswap.c:700 disk-utils/partx.c:1068 disk-utils/resizepart.c:115
+#: disk-utils/mkswap.c:700 disk-utils/partx.c:1071 disk-utils/resizepart.c:115
 #: login-utils/utmpdump.c:408 sys-utils/dmesg.c:684 sys-utils/wdctl.c:457
 #: sys-utils/wdctl.c:536 term-utils/setterm.c:908 text-utils/col.c:195
 #: text-utils/pg.c:1255
@@ -3932,7 +3929,7 @@ msgstr "%s: nie można usunąć partycji"
 msgid "%s: partitioned loop devices unsupported"
 msgstr "%s: partycjonowanie urządzeń loop nie jest obsługiwane"
 
-#: disk-utils/partx.c:1030
+#: disk-utils/partx.c:1031
 #, c-format
 msgid "%s: failed to initialize blkid prober"
 msgstr "%s: nie udało się zainicjować próbnika blkid"
@@ -5560,183 +5557,195 @@ msgstr "Apple TV recovery"
 msgid "Apple Core storage"
 msgstr "Apple Core storage"
 
-#: include/pt-gpt-partnames.h:196 include/pt-mbr-partnames.h:77
+#: include/pt-gpt-partnames.h:194
+#, fuzzy
+#| msgid "Apple boot"
+msgid "Apple Silicon boot"
+msgstr "Apple boot"
+
+#: include/pt-gpt-partnames.h:195
+#, fuzzy
+#| msgid "Apple TV recovery"
+msgid "Apple Silicon recovery"
+msgstr "Apple TV recovery"
+
+#: include/pt-gpt-partnames.h:198 include/pt-mbr-partnames.h:77
 msgid "Solaris boot"
 msgstr "Solaris boot"
 
-#: include/pt-gpt-partnames.h:197
+#: include/pt-gpt-partnames.h:199
 msgid "Solaris root"
 msgstr "Solaris root"
 
-#: include/pt-gpt-partnames.h:199
+#: include/pt-gpt-partnames.h:201
 msgid "Solaris /usr & Apple ZFS"
 msgstr "Solaris /usr / Apple ZFS"
 
-#: include/pt-gpt-partnames.h:200
+#: include/pt-gpt-partnames.h:202
 msgid "Solaris swap"
 msgstr "Solaris swap"
 
-#: include/pt-gpt-partnames.h:201
+#: include/pt-gpt-partnames.h:203
 msgid "Solaris backup"
 msgstr "Solaris backup"
 
-#: include/pt-gpt-partnames.h:202
+#: include/pt-gpt-partnames.h:204
 msgid "Solaris /var"
 msgstr "Solaris /var"
 
-#: include/pt-gpt-partnames.h:203
+#: include/pt-gpt-partnames.h:205
 msgid "Solaris /home"
 msgstr "Solaris /home"
 
-#: include/pt-gpt-partnames.h:204
+#: include/pt-gpt-partnames.h:206
 msgid "Solaris alternate sector"
 msgstr "Solaris alternate sector"
 
-#: include/pt-gpt-partnames.h:205
+#: include/pt-gpt-partnames.h:207
 msgid "Solaris reserved 1"
 msgstr "Solaris - zarezerwowana 1"
 
-#: include/pt-gpt-partnames.h:206
+#: include/pt-gpt-partnames.h:208
 msgid "Solaris reserved 2"
 msgstr "Solaris - zarezerwowana 2"
 
-#: include/pt-gpt-partnames.h:207
+#: include/pt-gpt-partnames.h:209
 msgid "Solaris reserved 3"
 msgstr "Solaris - zarezerwowana 3"
 
-#: include/pt-gpt-partnames.h:208
+#: include/pt-gpt-partnames.h:210
 msgid "Solaris reserved 4"
 msgstr "Solaris - zarezerwowana 4"
 
-#: include/pt-gpt-partnames.h:209
+#: include/pt-gpt-partnames.h:211
 msgid "Solaris reserved 5"
 msgstr "Solaris - zarezerwowana 5"
 
-#: include/pt-gpt-partnames.h:217
+#: include/pt-gpt-partnames.h:219
 msgid "NetBSD swap"
 msgstr "NetBSD swap"
 
-#: include/pt-gpt-partnames.h:218
+#: include/pt-gpt-partnames.h:220
 msgid "NetBSD FFS"
 msgstr "NetBSD FFS"
 
-#: include/pt-gpt-partnames.h:219
+#: include/pt-gpt-partnames.h:221
 msgid "NetBSD LFS"
 msgstr "NetBSD LFS"
 
-#: include/pt-gpt-partnames.h:220
+#: include/pt-gpt-partnames.h:222
 msgid "NetBSD concatenated"
 msgstr "NetBSD - łączona"
 
-#: include/pt-gpt-partnames.h:221
+#: include/pt-gpt-partnames.h:223
 msgid "NetBSD encrypted"
 msgstr "NetBSD - szyfrowana"
 
-#: include/pt-gpt-partnames.h:222
+#: include/pt-gpt-partnames.h:224
 msgid "NetBSD RAID"
 msgstr "NetBSD RAID"
 
-#: include/pt-gpt-partnames.h:225
+#: include/pt-gpt-partnames.h:227
 msgid "ChromeOS kernel"
 msgstr "ChromeOS kernel"
 
-#: include/pt-gpt-partnames.h:226
+#: include/pt-gpt-partnames.h:228
 msgid "ChromeOS root fs"
 msgstr "ChromeOS root"
 
-#: include/pt-gpt-partnames.h:227
+#: include/pt-gpt-partnames.h:229
 msgid "ChromeOS reserved"
 msgstr "ChromeOS - zarezerwowana"
 
-#: include/pt-gpt-partnames.h:230
+#: include/pt-gpt-partnames.h:232
 msgid "MidnightBSD data"
 msgstr "MidnightBSD - dane"
 
-#: include/pt-gpt-partnames.h:231
+#: include/pt-gpt-partnames.h:233
 msgid "MidnightBSD boot"
 msgstr "MidnightBSD boot"
 
-#: include/pt-gpt-partnames.h:232
+#: include/pt-gpt-partnames.h:234
 msgid "MidnightBSD swap"
 msgstr "MidnightBSD swap"
 
-#: include/pt-gpt-partnames.h:233
+#: include/pt-gpt-partnames.h:235
 msgid "MidnightBSD UFS"
 msgstr "MidnightBSD UFS"
 
-#: include/pt-gpt-partnames.h:234
+#: include/pt-gpt-partnames.h:236
 msgid "MidnightBSD ZFS"
 msgstr "MidnightBSD ZFS"
 
-#: include/pt-gpt-partnames.h:235
+#: include/pt-gpt-partnames.h:237
 msgid "MidnightBSD Vinum"
 msgstr "MidnightBSD Vinum"
 
-#: include/pt-gpt-partnames.h:238
+#: include/pt-gpt-partnames.h:240
 msgid "Ceph Journal"
 msgstr "Ceph - kronika"
 
-#: include/pt-gpt-partnames.h:239
+#: include/pt-gpt-partnames.h:241
 msgid "Ceph Encrypted Journal"
 msgstr "Ceph - zaszyfrowana kronika"
 
-#: include/pt-gpt-partnames.h:240
+#: include/pt-gpt-partnames.h:242
 msgid "Ceph OSD"
 msgstr "Ceph - OSD"
 
-#: include/pt-gpt-partnames.h:241
+#: include/pt-gpt-partnames.h:243
 msgid "Ceph crypt OSD"
 msgstr "Ceph - zaszyfrowana OSD"
 
-#: include/pt-gpt-partnames.h:242
+#: include/pt-gpt-partnames.h:244
 msgid "Ceph disk in creation"
 msgstr "Ceph - dysk podczas tworzenia"
 
-#: include/pt-gpt-partnames.h:243
+#: include/pt-gpt-partnames.h:245
 msgid "Ceph crypt disk in creation"
 msgstr "Ceph - zaszyfrowany dysk podczas tworzenia"
 
-#: include/pt-gpt-partnames.h:246 include/pt-mbr-partnames.h:105
+#: include/pt-gpt-partnames.h:248 include/pt-mbr-partnames.h:105
 msgid "VMware VMFS"
 msgstr "VMware VMFS"
 
-#: include/pt-gpt-partnames.h:247
+#: include/pt-gpt-partnames.h:249
 msgid "VMware Diagnostic"
 msgstr "VMware Diagnostic"
 
-#: include/pt-gpt-partnames.h:248
+#: include/pt-gpt-partnames.h:250
 msgid "VMware Virtual SAN"
 msgstr "VMware Virtual SAN"
 
-#: include/pt-gpt-partnames.h:249
+#: include/pt-gpt-partnames.h:251
 msgid "VMware Virsto"
 msgstr "VMware Virsto"
 
-#: include/pt-gpt-partnames.h:250
+#: include/pt-gpt-partnames.h:252
 msgid "VMware Reserved"
 msgstr "VMware - zarezerwowana"
 
-#: include/pt-gpt-partnames.h:253
+#: include/pt-gpt-partnames.h:255
 msgid "OpenBSD data"
 msgstr "OpenBSD - dane"
 
-#: include/pt-gpt-partnames.h:256
+#: include/pt-gpt-partnames.h:258
 msgid "QNX6 file system"
 msgstr "System plików QNX6"
 
-#: include/pt-gpt-partnames.h:259
+#: include/pt-gpt-partnames.h:261
 msgid "Plan 9 partition"
 msgstr "Partycja Plan 9"
 
-#: include/pt-gpt-partnames.h:262
+#: include/pt-gpt-partnames.h:264
 msgid "HiFive FSBL"
 msgstr "HiFive FSBL"
 
-#: include/pt-gpt-partnames.h:263
+#: include/pt-gpt-partnames.h:265
 msgid "HiFive BBL"
 msgstr "HiFive BBL"
 
-#: include/pt-gpt-partnames.h:266
+#: include/pt-gpt-partnames.h:268
 msgid "Haiku BFS"
 msgstr "Haiku BFS"
 
@@ -13306,9 +13315,8 @@ msgstr "niezrozumiały offset"
 msgid "failed to parse step"
 msgstr "niezrozumiały krok"
 
-#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:499
-#: sys-utils/fallocate.c:382 sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561
-#: sys-utils/umount.c:610
+#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:499 sys-utils/fallocate.c:382
+#: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561 sys-utils/umount.c:610
 msgid "unexpected number of arguments"
 msgstr "nieoczekiwana liczba argumentów"
 

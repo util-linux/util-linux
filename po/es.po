@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.37-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-16 17:42+0100\n"
+"POT-Creation-Date: 2022-03-28 13:24+0200\n"
 "PO-Revision-Date: 2021-06-13 09:32+0200\n"
 "Last-Translator: Antonio Ceballos Roa <aceballos@gmail.com>\n"
 "Language-Team: Spanish <es@tp.org.es>\n"
@@ -56,7 +56,7 @@ msgstr "no hay suficientes argumentos"
 #: disk-utils/isosize.c:53 disk-utils/mkfs.bfs.c:186
 #: disk-utils/mkfs.cramfs.c:173 disk-utils/mkfs.cramfs.c:662
 #: disk-utils/mkfs.cramfs.c:801 disk-utils/mkfs.minix.c:838
-#: disk-utils/mkswap.c:325 disk-utils/mkswap.c:354 disk-utils/partx.c:1021
+#: disk-utils/mkswap.c:325 disk-utils/mkswap.c:354 disk-utils/partx.c:1022
 #: disk-utils/resizepart.c:104 disk-utils/sfdisk.c:381 disk-utils/sfdisk.c:502
 #: disk-utils/sfdisk.c:813 disk-utils/sfdisk.c:1117 disk-utils/swaplabel.c:65
 #: libfdisk/src/bsd.c:642 login-utils/islocal.c:86 login-utils/last.c:695
@@ -840,7 +840,7 @@ msgstr "argumento no válido - repair"
 msgid "stat of %s failed"
 msgstr "stat de %s ha fallado"
 
-#: disk-utils/fdformat.c:226 disk-utils/partx.c:1018 misc-utils/lsblk.c:1578
+#: disk-utils/fdformat.c:226 disk-utils/partx.c:1019 misc-utils/lsblk.c:1578
 #: sys-utils/blkdiscard.c:235 sys-utils/blkzone.c:149
 #: sys-utils/mountpoint.c:109
 #, c-format
@@ -2767,7 +2767,7 @@ msgstr ""
 "----------------------------------\n"
 
 #: disk-utils/fsck.minix.c:1429 disk-utils/mkfs.minix.c:854
-#: disk-utils/mkswap.c:700 disk-utils/partx.c:1068 disk-utils/resizepart.c:115
+#: disk-utils/mkswap.c:700 disk-utils/partx.c:1071 disk-utils/resizepart.c:115
 #: login-utils/utmpdump.c:408 sys-utils/dmesg.c:684 sys-utils/wdctl.c:457
 #: sys-utils/wdctl.c:536 term-utils/setterm.c:908 text-utils/col.c:195
 #: text-utils/pg.c:1255
@@ -3962,7 +3962,7 @@ msgstr "%s: no se pueden borrar las particiones"
 msgid "%s: partitioned loop devices unsupported"
 msgstr "%s: los dispositivos de bucle particionados no se admiten"
 
-#: disk-utils/partx.c:1030
+#: disk-utils/partx.c:1031
 #, c-format
 msgid "%s: failed to initialize blkid prober"
 msgstr "%s: no se ha podido inicializar el sondeo blkid"
@@ -5767,187 +5767,199 @@ msgstr "Recuperación de Apple TV"
 msgid "Apple Core storage"
 msgstr "Almacenamiento Core de Apple"
 
-#: include/pt-gpt-partnames.h:196 include/pt-mbr-partnames.h:77
+#: include/pt-gpt-partnames.h:194
+#, fuzzy
+#| msgid "Apple boot"
+msgid "Apple Silicon boot"
+msgstr "Arranque de Apple"
+
+#: include/pt-gpt-partnames.h:195
+#, fuzzy
+#| msgid "Apple TV recovery"
+msgid "Apple Silicon recovery"
+msgstr "Recuperación de Apple TV"
+
+#: include/pt-gpt-partnames.h:198 include/pt-mbr-partnames.h:77
 msgid "Solaris boot"
 msgstr "arranque de Solaris"
 
-#: include/pt-gpt-partnames.h:197
+#: include/pt-gpt-partnames.h:199
 msgid "Solaris root"
 msgstr "Raíz de Solaris"
 
-#: include/pt-gpt-partnames.h:199
+#: include/pt-gpt-partnames.h:201
 msgid "Solaris /usr & Apple ZFS"
 msgstr "/usr de Solaris y ZFS de Apple"
 
-#: include/pt-gpt-partnames.h:200
+#: include/pt-gpt-partnames.h:202
 msgid "Solaris swap"
 msgstr "Swap de Solaris"
 
-#: include/pt-gpt-partnames.h:201
+#: include/pt-gpt-partnames.h:203
 msgid "Solaris backup"
 msgstr "Respaldo de Solaris"
 
-#: include/pt-gpt-partnames.h:202
+#: include/pt-gpt-partnames.h:204
 msgid "Solaris /var"
 msgstr "/var de Solaris"
 
-#: include/pt-gpt-partnames.h:203
+#: include/pt-gpt-partnames.h:205
 msgid "Solaris /home"
 msgstr "/home de Solaris"
 
-#: include/pt-gpt-partnames.h:204
+#: include/pt-gpt-partnames.h:206
 msgid "Solaris alternate sector"
 msgstr "Sector alternativo de Solaris"
 
-#: include/pt-gpt-partnames.h:205
+#: include/pt-gpt-partnames.h:207
 msgid "Solaris reserved 1"
 msgstr "Reservado para Solaris 1"
 
-#: include/pt-gpt-partnames.h:206
+#: include/pt-gpt-partnames.h:208
 msgid "Solaris reserved 2"
 msgstr "Reservado para Solaris 2"
 
-#: include/pt-gpt-partnames.h:207
+#: include/pt-gpt-partnames.h:209
 msgid "Solaris reserved 3"
 msgstr "Reservador para Solaris 3"
 
-#: include/pt-gpt-partnames.h:208
+#: include/pt-gpt-partnames.h:210
 msgid "Solaris reserved 4"
 msgstr "Reservado para Solaris 4"
 
-#: include/pt-gpt-partnames.h:209
+#: include/pt-gpt-partnames.h:211
 msgid "Solaris reserved 5"
 msgstr "Reservado para Solaris 5"
 
-#: include/pt-gpt-partnames.h:217
+#: include/pt-gpt-partnames.h:219
 msgid "NetBSD swap"
 msgstr "Swap de NetBSD"
 
-#: include/pt-gpt-partnames.h:218
+#: include/pt-gpt-partnames.h:220
 msgid "NetBSD FFS"
 msgstr "FFS de NetBSD"
 
-#: include/pt-gpt-partnames.h:219
+#: include/pt-gpt-partnames.h:221
 msgid "NetBSD LFS"
 msgstr "LFS de NetBSD"
 
-#: include/pt-gpt-partnames.h:220
+#: include/pt-gpt-partnames.h:222
 msgid "NetBSD concatenated"
 msgstr "NetBSD concatenado"
 
-#: include/pt-gpt-partnames.h:221
+#: include/pt-gpt-partnames.h:223
 msgid "NetBSD encrypted"
 msgstr "NetBSD cifrado"
 
-#: include/pt-gpt-partnames.h:222
+#: include/pt-gpt-partnames.h:224
 msgid "NetBSD RAID"
 msgstr "RAID de NetBSD"
 
-#: include/pt-gpt-partnames.h:225
+#: include/pt-gpt-partnames.h:227
 msgid "ChromeOS kernel"
 msgstr "Núcleo de ChromeOS"
 
-#: include/pt-gpt-partnames.h:226
+#: include/pt-gpt-partnames.h:228
 msgid "ChromeOS root fs"
 msgstr "Sistema raíz de ChromeOS"
 
-#: include/pt-gpt-partnames.h:227
+#: include/pt-gpt-partnames.h:229
 msgid "ChromeOS reserved"
 msgstr "Reservado para ChromeOS"
 
-#: include/pt-gpt-partnames.h:230
+#: include/pt-gpt-partnames.h:232
 msgid "MidnightBSD data"
 msgstr "Datos de MidnightBSD"
 
-#: include/pt-gpt-partnames.h:231
+#: include/pt-gpt-partnames.h:233
 msgid "MidnightBSD boot"
 msgstr "Arranque de MidnightBSD"
 
-#: include/pt-gpt-partnames.h:232
+#: include/pt-gpt-partnames.h:234
 msgid "MidnightBSD swap"
 msgstr "Swap de MidnightBSD"
 
-#: include/pt-gpt-partnames.h:233
+#: include/pt-gpt-partnames.h:235
 msgid "MidnightBSD UFS"
 msgstr "UFS de MidnightBSD"
 
-#: include/pt-gpt-partnames.h:234
+#: include/pt-gpt-partnames.h:236
 msgid "MidnightBSD ZFS"
 msgstr "ZFS de MidnightBSD"
 
-#: include/pt-gpt-partnames.h:235
+#: include/pt-gpt-partnames.h:237
 msgid "MidnightBSD Vinum"
 msgstr "Vinum de MidnightBSD"
 
-#: include/pt-gpt-partnames.h:238
+#: include/pt-gpt-partnames.h:240
 msgid "Ceph Journal"
 msgstr "Journal de Ceph"
 
-#: include/pt-gpt-partnames.h:239
+#: include/pt-gpt-partnames.h:241
 msgid "Ceph Encrypted Journal"
 msgstr "Journal cifrado de Ceph"
 
-#: include/pt-gpt-partnames.h:240
+#: include/pt-gpt-partnames.h:242
 msgid "Ceph OSD"
 msgstr "OSD de Ceph"
 
-#: include/pt-gpt-partnames.h:241
+#: include/pt-gpt-partnames.h:243
 msgid "Ceph crypt OSD"
 msgstr "OSD cifrado de Ceph"
 
-#: include/pt-gpt-partnames.h:242
+#: include/pt-gpt-partnames.h:244
 msgid "Ceph disk in creation"
 msgstr "Disco de Ceph creándose"
 
-#: include/pt-gpt-partnames.h:243
+#: include/pt-gpt-partnames.h:245
 msgid "Ceph crypt disk in creation"
 msgstr "Disco cifrado de Ceph creándose"
 
-#: include/pt-gpt-partnames.h:246 include/pt-mbr-partnames.h:105
+#: include/pt-gpt-partnames.h:248 include/pt-mbr-partnames.h:105
 msgid "VMware VMFS"
 msgstr "VMFS de VMware"
 
-#: include/pt-gpt-partnames.h:247
+#: include/pt-gpt-partnames.h:249
 msgid "VMware Diagnostic"
 msgstr "Diagnósticos de VMware"
 
-#: include/pt-gpt-partnames.h:248
+#: include/pt-gpt-partnames.h:250
 msgid "VMware Virtual SAN"
 msgstr "SAN virtual de VMware"
 
-#: include/pt-gpt-partnames.h:249
+#: include/pt-gpt-partnames.h:251
 msgid "VMware Virsto"
 msgstr "Almacenamiento virtual de VMware"
 
-#: include/pt-gpt-partnames.h:250
+#: include/pt-gpt-partnames.h:252
 msgid "VMware Reserved"
 msgstr "Reservado para VMware"
 
-#: include/pt-gpt-partnames.h:253
+#: include/pt-gpt-partnames.h:255
 msgid "OpenBSD data"
 msgstr "Datos OpenBSD"
 
-#: include/pt-gpt-partnames.h:256
+#: include/pt-gpt-partnames.h:258
 msgid "QNX6 file system"
 msgstr "Sistema de ficheros de QNX6"
 
-#: include/pt-gpt-partnames.h:259
+#: include/pt-gpt-partnames.h:261
 msgid "Plan 9 partition"
 msgstr "Partición del plan 9"
 
-#: include/pt-gpt-partnames.h:262
+#: include/pt-gpt-partnames.h:264
 #, fuzzy
 #| msgid "HiFive Unleashed FSBL"
 msgid "HiFive FSBL"
 msgstr "HiFive Unleashed FSBL"
 
-#: include/pt-gpt-partnames.h:263
+#: include/pt-gpt-partnames.h:265
 #, fuzzy
 #| msgid "HiFive Unleashed BBL"
 msgid "HiFive BBL"
 msgstr "HiFive Unleashed BBL"
 
-#: include/pt-gpt-partnames.h:266
+#: include/pt-gpt-partnames.h:268
 msgid "Haiku BFS"
 msgstr ""
 
