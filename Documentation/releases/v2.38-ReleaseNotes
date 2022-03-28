@@ -86,6 +86,8 @@ bash-completion:
 blkid:
    - check device type and name before probe  [Karel Zak]
    - don't print all devices if only garbage specified  [Karel Zak]
+blkzone:
+   - Do not print zone capacity if not supported  [Andreas Hindborg]
 blockdev:
    - allow for larger values for start sector  [Thomas Abraham]
    - improve arguments parsing (remove atoi)  [Karel Zak]
@@ -94,6 +96,7 @@ blockdev:
 build-sys:
    - (hardlink) check for llistxattr and lgetxattr  [Karel Zak]
    - (meson) fix hardlink  [Karel Zak]
+   - (po-man) force .pot file update on 'make dist'  [Karel Zak]
    - Update configure.ac  [Alex Xu]
    - add USE_SYSTEMD  [Karel Zak]
    - add configure option to disable lsfd  [Anatoly Pugachev]
@@ -123,6 +126,8 @@ build-sys:
    - patch libtool.m4 for darwin  [Karel Zak]
    - release++ (v2.38-rc1)  [Karel Zak]
    - release++ (v2.38-rc2)  [Karel Zak]
+   - release++ (v2.38-rc3)  [Karel Zak]
+   - release++ (v2.38-rc4)  [Karel Zak]
    - remove bashism  [Karel Zak]
    - remove lib/procutils.c  [Karel Zak]
    - report C++ compiler too  [Karel Zak]
@@ -130,6 +135,7 @@ build-sys:
    - use set +e before patch --try in ./autogen.sh  [Karel Zak]
 cfdisk:
    - do not use atoi()  [Karel Zak]
+   - don't use NULL in printf [coverity scan]  [Karel Zak]
    - optimize mountpoint detection for PARTUUID  [Karel Zak]
 chfn:
    - flush stdout before reading stdin and fix uninitialized variable  [Lorenzo Beretta]
@@ -214,6 +220,7 @@ fixup! lsns:
    - interpolate missing namespaces for converting forests to a tree  [Masatake YAMATO]
 flock:
    - (adoc) fix example  [Karel Zak]
+   - Decribe limitations of flock  deadlock, NFS, CIFS  [Stanislav Brabec]
 fsck:
    - check errno after strto..()  [Karel Zak]
    - clear SIGCHLD inherited setting  [Karel Zak]
@@ -321,6 +328,7 @@ lib/buffer:
    - add possibility to save position in the buffer  [Karel Zak]
    - add support for "safe" encoding  [Karel Zak]
    - fix buffer reset  [Karel Zak]
+   - fix possible SEGV  [Karel Zak]
    - make sure buffer without data is zero terminated [asan]  [Karel Zak]
    - retun size of the buffer and data  [Karel Zak]
 lib/caputils:
@@ -339,7 +347,9 @@ lib/path:
    - fix possible leak when use ul_path_read_string() [coverity scan]  [Karel Zak]
    - fstat dir itself  [Karel Zak]
    - improve ul_path_readlink() to be more robust  [Karel Zak]
+   - initialize variables for scanf [coverity scan]  [Karel Zak]
    - make path use more robust [coverity scan]  [Karel Zak]
+   - make ul_path_read_buffer() more robust [coverity scan]  [Karel Zak]
    - use flags for fstatat()  [Karel Zak]
 lib/procfs:
    - add functions to read /proc/#/ stuff  [Karel Zak]
@@ -367,6 +377,7 @@ libblkid:
    - fix and cleanup blkid_safe_string()  [Karel Zak]
    - ignore scanf() result when read number of stripes [coverity scan]  [Karel Zak]
    - implement zone-aware probing  [Naohiro Aota]
+   - make blkid_free_probe() more robust  [Karel Zak]
    - optimize ioctl calls in blkid_probe_set_device()  [Karel Zak]
    - remove EVMS support  [Karel Zak]
    - remove unnecessary ifdef  [Karel Zak]
@@ -427,6 +438,7 @@ libmount:
    - don't use setgroups at all()  [Karel Zak]
    - fix UID check for FUSE umount [CVE-2021-3995]  [Karel Zak]
    - fix mnt_fs_is_* return codes  [Karel Zak]
+   - fix possible memory leak in mnt_optstr_fix_secontext() [coverity scan]  [Karel Zak]
    - fix setgroups() use  [Karel Zak]
    - make mnt_table_get_fs_root() more robust [gcc-analyzer]  [Karel Zak]
    - remove support for deleted mount table entries  [Karel Zak]
@@ -701,6 +713,7 @@ lslocks:
    - add INODE and MAJ MIN columns  [Karel Zak]
    - check errno after strto..()  [Karel Zak]
    - check scanf() return code [coverity scan]  [Karel Zak]
+   - fix maj min scanf  [Karel Zak]
    - use lib/procfs.c  [Karel Zak]
    - use snprintf() rather than sprintf()  [Karel Zak]
 lslogins:
@@ -811,6 +824,8 @@ nsenter:
    - Do not try to enter nonexisting namespaces when --all is used  [Yonatan Goldschmidt]
    - add --wdns to change working directory  [Karel Zak]
    - clear SIGCHLD inherited setting  [Karel Zak]
+partx:
+   - remove memory leak to make scanners happy  [coverity scan]  [Karel Zak]
 pg:
    - do not use atoi()  [Karel Zak]
 po:
@@ -825,9 +840,11 @@ po:
    - update pl.po (from translationproject.org)  [Jakub Bogusz]
    - update pt_BR.po (from translationproject.org)  [Rafael Fontenelle]
    - update sr.po (from translationproject.org)  [Мирослав Николић]
+   - update tr.po (from translationproject.org)  [Mesutcan Kurt]
    - update uk.po (from translationproject.org)  [Yuri Chornoivan]
    - update zh_CN.po (from translationproject.org)  [Boyuan Yang]
 po-man:
+   - add cs.po (from translationproject.org)  [Petr Písař]
    - add es.po (from translationproject.org)  [Antonio Ceballos Roa]
    - add fr.po (from translationproject.org)  [Frédéric Marchal]
    - add new langs to po4a.cfg  [Karel Zak]
@@ -836,6 +853,8 @@ po-man:
    - add uk.po (from translationproject.org)  [Yuri Chornoivan]
    - merge changes  [Karel Zak]
    - update de.po (from translationproject.org)  [Mario Blättermann]
+   - update fr.po (from translationproject.org)  [Frédéric Marchal]
+   - update uk.po (from translationproject.org)  [Yuri Chornoivan]
    - update variables in Makefile.am  [Karel Zak]
 prlimit:
    - fix compiler warning [-Wmaybe-uninitialized]  [Karel Zak]
