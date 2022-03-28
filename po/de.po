@@ -46,14 +46,14 @@
 # bad     – beschädigt (z. B. »beschädigte Blöcke«)
 #           bzw. ungültig (z. B. »ungültige ‚magic number‘ im Superblock«)
 #
-# Mario Blättermann <mario.blaettermann@gmail.com>, 2014, 2015, 2019-2021, 2022.
+# Mario Blättermann <mario.blaettermann@gmail.com>, 2014, 2015, 2019-2022.
 # Philipp Thomas <pth@suse.de>, 2014, 2015, 2017.
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.38-rc2\n"
+"Project-Id-Version: util-linux 2.38-rc4\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-16 17:42+0100\n"
-"PO-Revision-Date: 2022-03-04 20:26+0100\n"
+"POT-Creation-Date: 2022-03-16 18:08+0100\n"
+"PO-Revision-Date: 2022-03-17 18:27+0100\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -62,7 +62,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
-"X-Generator: Lokalize 21.12.2\n"
+"X-Generator: Lokalize 21.12.3\n"
 
 #: disk-utils/addpart.c:15
 #, c-format
@@ -530,7 +530,8 @@ msgstr "Schreiben des Skripts %s ist fehlgeschlagen"
 msgid "Select label type"
 msgstr "Bezeichnungstyp ändern"
 
-#: disk-utils/cfdisk.c:2195 disk-utils/fdisk.c:1162 disk-utils/fdisk-menu.c:490
+#: disk-utils/cfdisk.c:2195 disk-utils/fdisk.c:1162
+#: disk-utils/fdisk-menu.c:490
 msgid "Device does not contain a recognized partition table."
 msgstr "Gerät enthält keine erkennbare Partitionstabelle."
 
@@ -683,7 +684,8 @@ msgstr "Neue Größe: "
 msgid "Partition %zu resized."
 msgstr "Größe der Partition %zu wurde geändert."
 
-#: disk-utils/cfdisk.c:2504 disk-utils/fdisk.c:1138 disk-utils/fdisk-menu.c:593
+#: disk-utils/cfdisk.c:2504 disk-utils/fdisk.c:1138
+#: disk-utils/fdisk-menu.c:593
 msgid "Device is open in read-only mode."
 msgstr "Gerät ist im schreibgeschützten Modus geöffnet."
 
@@ -825,8 +827,8 @@ msgstr ""
 "Operation wird fortgesetzt … "
 
 #: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:629 sys-utils/blkdiscard.c:89
-#: sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:629
+#: sys-utils/blkdiscard.c:89 sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [Optionen] <Gerät>\n"
@@ -1205,21 +1207,21 @@ msgstr "nicht unterstützter Löschmodus"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Die Geräteeigenschaften (Sektorgröße und Geometrie) sollten nur mit einem bestimmten Gerät verwendet werden."
 
-#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122 disk-utils/fsck.cramfs.c:703
-#: disk-utils/mkfs.bfs.c:192 disk-utils/mkfs.cramfs.c:788
-#: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
-#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:524
-#: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:580
-#: misc-utils/whereis.c:591 misc-utils/whereis.c:602 misc-utils/whereis.c:644
-#: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:188
-#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1580
-#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
-#: sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656 sys-utils/mount.c:877
-#: sys-utils/mount.c:885 sys-utils/mount.c:932 sys-utils/mount.c:945
-#: sys-utils/mount.c:1017 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
-#: sys-utils/swapoff.c:258 sys-utils/swapon.c:1006 sys-utils/switch_root.c:270
-#: sys-utils/umount.c:620 term-utils/setterm.c:1197 text-utils/col.c:584
-#: text-utils/more.c:2094
+#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122
+#: disk-utils/fsck.cramfs.c:703 disk-utils/mkfs.bfs.c:192
+#: disk-utils/mkfs.cramfs.c:788 disk-utils/partx.c:975 disk-utils/raw.c:136
+#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
+#: misc-utils/cal.c:524 misc-utils/findfs.c:58 misc-utils/look.c:147
+#: misc-utils/whereis.c:580 misc-utils/whereis.c:591 misc-utils/whereis.c:602
+#: misc-utils/whereis.c:644 schedutils/chrt.c:442 schedutils/ionice.c:264
+#: schedutils/taskset.c:188 sys-utils/chcpu.c:355 sys-utils/chmem.c:429
+#: sys-utils/dmesg.c:1580 sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321
+#: sys-utils/losetup.c:918 sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656
+#: sys-utils/mount.c:877 sys-utils/mount.c:885 sys-utils/mount.c:932
+#: sys-utils/mount.c:945 sys-utils/mount.c:1017 sys-utils/mountpoint.c:191
+#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:258 sys-utils/swapon.c:1006
+#: sys-utils/switch_root.c:270 sys-utils/umount.c:620
+#: term-utils/setterm.c:1197 text-utils/col.c:584 text-utils/more.c:2094
 msgid "bad usage"
 msgstr "fehlerhafter Aufruf"
 
@@ -1341,12 +1343,13 @@ msgstr "Platz für die Ausgabezeile konnte nicht zugewiesen werden"
 #: misc-utils/lsfd-file.c:349 misc-utils/lsfd-sock.c:47
 #: misc-utils/lsfd-sock.c:52 misc-utils/lsfd-sock.c:73
 #: misc-utils/lsfd-sock.c:75 misc-utils/lsfd-unkn.c:39
-#: misc-utils/lsfd-unkn.c:53 misc-utils/lsfd-unkn.c:55 misc-utils/lslocks.c:459
-#: misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242 sys-utils/losetup.c:305
-#: sys-utils/lscpu.c:568 sys-utils/lscpu.c:783 sys-utils/lscpu.c:812
-#: sys-utils/lscpu.c:822 sys-utils/lsipc.c:526 sys-utils/lsipc.c:651
-#: sys-utils/prlimit.c:275 sys-utils/rfkill.c:417 sys-utils/swapon.c:227
-#: sys-utils/wdctl.c:327 sys-utils/zramctl.c:481 text-utils/column.c:481
+#: misc-utils/lsfd-unkn.c:53 misc-utils/lsfd-unkn.c:55
+#: misc-utils/lslocks.c:459 misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242
+#: sys-utils/losetup.c:305 sys-utils/lscpu.c:568 sys-utils/lscpu.c:783
+#: sys-utils/lscpu.c:812 sys-utils/lscpu.c:822 sys-utils/lsipc.c:526
+#: sys-utils/lsipc.c:651 sys-utils/prlimit.c:275 sys-utils/rfkill.c:417
+#: sys-utils/swapon.c:227 sys-utils/wdctl.c:327 sys-utils/zramctl.c:481
+#: text-utils/column.c:481
 msgid "failed to add output data"
 msgstr "Hinzufügen von Daten zur Ausgabetabelle ist fehlgeschlagen"
 
@@ -10532,8 +10535,6 @@ msgid "%s seems unsupported by the current kernel"
 msgstr "%s scheint der aktuelle Kernel nicht zu unterstützen"
 
 #: misc-utils/findmnt-verify.c:452
-#, fuzzy
-#| msgid "reason uknown"
 msgid "reason unknown"
 msgstr "Unbekannter Grund"
 
@@ -10923,10 +10924,8 @@ msgid "failed to parse maximum size"
 msgstr "maximale Größe kann nicht eingelesen werden"
 
 #: misc-utils/hardlink.c:1262
-#, fuzzy
-#| msgid "failed to parse size"
 msgid "failed to parse cache size"
-msgstr "Größe kann nicht eingelesen werden"
+msgstr "Zwischenspeichergröße kann nicht eingelesen werden"
 
 #: misc-utils/hardlink.c:1265
 msgid "failed to parse I/O size"
@@ -11986,8 +11985,6 @@ msgstr ""
 "                       Anzeigefilter anwenden\n"
 
 #: misc-utils/lsfd.c:1262
-#, fuzzy
-#| msgid "     --debug-filter    dump the innternal data structure of filter and exit\n"
 msgid "     --debug-filter    dump the internal data structure of filter and exit\n"
 msgstr ""
 "     --debug-filter    interne Datenstruktur des Filters ausgeben\n"
@@ -12026,10 +12023,9 @@ msgid "no name for counter: -C/--counter %s"
 msgstr "Kein Name für den Zähler: -C/--counter %s"
 
 #: misc-utils/lsfd.c:1359
-#, fuzzy, c-format
-#| msgid "empty ecounter expression given: -C/--counter %s"
+#, c-format
 msgid "empty counter expression given: -C/--counter %s"
-msgstr "Leerer Ecounter-Ausdruck angegeben: -C/--counter %s"
+msgstr "Leerer Zählerausdruck angegeben: -C/--counter %s"
 
 #: misc-utils/lsfd.c:1367
 #, c-format
@@ -13562,8 +13558,9 @@ msgstr "Position konnte nicht eingelesen werden"
 msgid "failed to parse step"
 msgstr "Durchläufe konnten nicht eingelesen werden"
 
-#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:499 sys-utils/fallocate.c:382
-#: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561 sys-utils/umount.c:610
+#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:499
+#: sys-utils/fallocate.c:382 sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561
+#: sys-utils/umount.c:610
 msgid "unexpected number of arguments"
 msgstr "unerwartete Anzahl an Argumenten"
 
@@ -13674,10 +13671,9 @@ msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, cap 0x%06<PRIx64>, wptr 0x%06<
 msgstr "  Start: 0x%09<PRIx64>, Länge 0x%06<PRIx64>, Kap. 0x%06<PRIx64>, Wptr 0x%06<PRIx64> Reset:%u non-seq:%u, Z-Bed.:%2u(%s) [Typ: %u(%s)]\n"
 
 #: sys-utils/blkzone.c:310
-#, fuzzy, c-format
-#| msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, cap 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
+#, c-format
 msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
-msgstr "  Start: 0x%09<PRIx64>, Länge 0x%06<PRIx64>, Kap. 0x%06<PRIx64>, Wptr 0x%06<PRIx64> Reset:%u non-seq:%u, Z-Bed.:%2u(%s) [Typ: %u(%s)]\n"
+msgstr "  Start: 0x%09<PRIx64>, Länge 0x%06<PRIx64>, Wptr 0x%06<PRIx64> Reset:%u non-seq:%u, Z-Bed.:%2u(%s) [Typ: %u(%s)]\n"
 
 #: sys-utils/blkzone.c:326
 #, c-format
@@ -18947,6 +18943,9 @@ msgid ""
 " <limit> is defined as a range soft:hard, soft:, :hard or a value to\n"
 "         define both limits (e.g. -e=0:10 -r=:10).\n"
 msgstr ""
+" <Begrenzung> ist als Bereich weich:hart, weich:, :hart oder als Wert\n"
+"         zum Festlegen beider Begrenzungen definiert\n"
+"         (z.B. -e=0:10 -r=:10).\n"
 
 #: sys-utils/prlimit.c:256 sys-utils/prlimit.c:262 sys-utils/prlimit.c:379
 #: sys-utils/prlimit.c:384
@@ -19253,9 +19252,8 @@ msgid " unblock identifier\n"
 msgstr " unblock Bezeichner\n"
 
 #: sys-utils/rfkill.c:665
-#, fuzzy
 msgid " toggle  identifier\n"
-msgstr " block   Bezeichner\n"
+msgstr " toggle  Bezeichner\n"
 
 #: sys-utils/rtcwake.c:102
 msgid "Enter a system sleep state until a specified wakeup time.\n"
