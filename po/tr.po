@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.38-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-16 17:42+0100\n"
+"POT-Creation-Date: 2022-03-04 16:17+0100\n"
 "PO-Revision-Date: 2022-03-11 13:24+0100\n"
 "Last-Translator: Mesutcan Kurt <mesutcank@gmail.com>\n"
 "Language-Team: Turkish <gnome-turk@gnome.org>\n"
@@ -224,7 +224,7 @@ msgstr " %-25s 512-bayt sektörlerindeki boyutu getir\n"
 #: disk-utils/fsck.minix.c:1336 disk-utils/isosize.c:155
 #: disk-utils/mkfs.bfs.c:175 disk-utils/mkfs.c:110 disk-utils/mkfs.minix.c:827
 #: disk-utils/swaplabel.c:180 misc-utils/wipefs.c:760
-#: sys-utils/blkdiscard.c:219 sys-utils/blkzone.c:495 sys-utils/tunelp.c:241
+#: sys-utils/blkdiscard.c:219 sys-utils/blkzone.c:487 sys-utils/tunelp.c:241
 #: sys-utils/zramctl.c:716 sys-utils/zramctl.c:742
 msgid "no device specified"
 msgstr "hiçbir aygıt belirtilmedi"
@@ -501,7 +501,8 @@ msgstr "%s betiğine yazılamadı"
 msgid "Select label type"
 msgstr "Etiket türünü seç"
 
-#: disk-utils/cfdisk.c:2195 disk-utils/fdisk.c:1162 disk-utils/fdisk-menu.c:490
+#: disk-utils/cfdisk.c:2195 disk-utils/fdisk.c:1162
+#: disk-utils/fdisk-menu.c:490
 msgid "Device does not contain a recognized partition table."
 msgstr "Aygıt bilinen bir bölümleme tablosu içermiyor."
 
@@ -653,7 +654,8 @@ msgstr "Yeni kabuk"
 msgid "Partition %zu resized."
 msgstr "%s: partition #%d yeniden boyutlandırıldı\n"
 
-#: disk-utils/cfdisk.c:2504 disk-utils/fdisk.c:1138 disk-utils/fdisk-menu.c:593
+#: disk-utils/cfdisk.c:2504 disk-utils/fdisk.c:1138
+#: disk-utils/fdisk-menu.c:593
 msgid "Device is open in read-only mode."
 msgstr "Aygıt salt-okunur modda açık."
 
@@ -795,8 +797,8 @@ msgstr ""
 "Devam ediliyor... "
 
 #: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:629 sys-utils/blkdiscard.c:89
-#: sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:629
+#: sys-utils/blkdiscard.c:89 sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [seçenekler] <device>\n"
@@ -1180,21 +1182,21 @@ msgstr "desteklenmeyen silme modu"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Aygıt özellikleri (sektör boyutu ve geometri) sadece belirtilen aygıt ile birlikte kullanılmalı."
 
-#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122 disk-utils/fsck.cramfs.c:703
-#: disk-utils/mkfs.bfs.c:192 disk-utils/mkfs.cramfs.c:788
-#: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
-#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:524
-#: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:580
-#: misc-utils/whereis.c:591 misc-utils/whereis.c:602 misc-utils/whereis.c:644
-#: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:188
-#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1580
-#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
-#: sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656 sys-utils/mount.c:877
-#: sys-utils/mount.c:885 sys-utils/mount.c:932 sys-utils/mount.c:945
-#: sys-utils/mount.c:1017 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
-#: sys-utils/swapoff.c:258 sys-utils/swapon.c:1006 sys-utils/switch_root.c:270
-#: sys-utils/umount.c:620 term-utils/setterm.c:1197 text-utils/col.c:584
-#: text-utils/more.c:2094
+#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122
+#: disk-utils/fsck.cramfs.c:703 disk-utils/mkfs.bfs.c:192
+#: disk-utils/mkfs.cramfs.c:788 disk-utils/partx.c:975 disk-utils/raw.c:136
+#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
+#: misc-utils/cal.c:524 misc-utils/findfs.c:58 misc-utils/look.c:147
+#: misc-utils/whereis.c:580 misc-utils/whereis.c:591 misc-utils/whereis.c:602
+#: misc-utils/whereis.c:644 schedutils/chrt.c:442 schedutils/ionice.c:264
+#: schedutils/taskset.c:188 sys-utils/chcpu.c:355 sys-utils/chmem.c:429
+#: sys-utils/dmesg.c:1580 sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321
+#: sys-utils/losetup.c:916 sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656
+#: sys-utils/mount.c:877 sys-utils/mount.c:885 sys-utils/mount.c:932
+#: sys-utils/mount.c:945 sys-utils/mount.c:1017 sys-utils/mountpoint.c:191
+#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:258 sys-utils/swapon.c:1006
+#: sys-utils/switch_root.c:270 sys-utils/umount.c:620
+#: term-utils/setterm.c:1197 text-utils/col.c:584 text-utils/more.c:2094
 #, fuzzy
 #| msgid "%lu bad page\n"
 #| msgid_plural "%lu bad pages\n"
@@ -1324,12 +1326,13 @@ msgstr "çıktı hattı tahsil edlemedi"
 #: misc-utils/lsfd-file.c:349 misc-utils/lsfd-sock.c:47
 #: misc-utils/lsfd-sock.c:52 misc-utils/lsfd-sock.c:73
 #: misc-utils/lsfd-sock.c:75 misc-utils/lsfd-unkn.c:39
-#: misc-utils/lsfd-unkn.c:53 misc-utils/lsfd-unkn.c:55 misc-utils/lslocks.c:459
-#: misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242 sys-utils/losetup.c:305
-#: sys-utils/lscpu.c:568 sys-utils/lscpu.c:783 sys-utils/lscpu.c:812
-#: sys-utils/lscpu.c:822 sys-utils/lsipc.c:526 sys-utils/lsipc.c:651
-#: sys-utils/prlimit.c:275 sys-utils/rfkill.c:417 sys-utils/swapon.c:227
-#: sys-utils/wdctl.c:327 sys-utils/zramctl.c:481 text-utils/column.c:481
+#: misc-utils/lsfd-unkn.c:53 misc-utils/lsfd-unkn.c:55
+#: misc-utils/lslocks.c:459 misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242
+#: sys-utils/losetup.c:305 sys-utils/lscpu.c:568 sys-utils/lscpu.c:783
+#: sys-utils/lscpu.c:812 sys-utils/lscpu.c:822 sys-utils/lsipc.c:526
+#: sys-utils/lsipc.c:651 sys-utils/prlimit.c:275 sys-utils/rfkill.c:417
+#: sys-utils/swapon.c:227 sys-utils/wdctl.c:327 sys-utils/zramctl.c:481
+#: text-utils/column.c:481
 #, fuzzy
 #| msgid "failed to add data to output table"
 msgid "failed to add output data"
@@ -10411,7 +10414,7 @@ msgstr " -o, --output <liste>  çıktı sütunları\n"
 msgid " -r, --raw             use raw output format\n"
 msgstr " -r, --raw              ham çıktı biçimini kullan\n"
 
-#: misc-utils/fincore.c:338 sys-utils/losetup.c:828
+#: misc-utils/fincore.c:338 sys-utils/losetup.c:826
 msgid "no file specified"
 msgstr "hiçbir dosya belirtilmedi"
 
@@ -10950,7 +10953,7 @@ msgstr "%s mevcut çekirdek tarafından desteklenmiyor"
 #: misc-utils/findmnt-verify.c:452
 #, fuzzy
 #| msgid "Unknown"
-msgid "reason unknown"
+msgid "reason uknown"
 msgstr "Bilinmeyen"
 
 #: misc-utils/findmnt-verify.c:455 misc-utils/findmnt-verify.c:457
@@ -11381,7 +11384,7 @@ msgstr "boyut ayrıştırılamadı"
 #: misc-utils/hardlink.c:1262
 #, fuzzy
 #| msgid "failed to parse size"
-msgid "failed to parse cache size"
+msgid "failed to cache size"
 msgstr "boyut ayrıştırılamadı"
 
 #: misc-utils/hardlink.c:1265
@@ -11396,40 +11399,40 @@ msgstr "boyut ayrıştırılamadı"
 msgid "unsupported reflink mode; %s"
 msgstr "desteklenmeyen yayılma kipi: %s"
 
-#: misc-utils/hardlink.c:1338
+#: misc-utils/hardlink.c:1336
 #, fuzzy
 #| msgid "cannot set signal handler"
 msgid "cannot register exit handler"
 msgstr "sinyal işleyicisi ayarlanamıyor"
 
-#: misc-utils/hardlink.c:1343
+#: misc-utils/hardlink.c:1341
 #, fuzzy
 #| msgid "no input file specified"
 msgid "no directory or file specified"
 msgstr "girdi dosyası belirtilmedi"
 
-#: misc-utils/hardlink.c:1349
+#: misc-utils/hardlink.c:1347
 #, c-format
 msgid "cannot initialize %s method, use 'memcmp' fallback"
 msgstr ""
 
-#: misc-utils/hardlink.c:1354
+#: misc-utils/hardlink.c:1352
 #, fuzzy
 #| msgid "failed to initialize loopcxt"
 msgid "failed to initialize files comparior"
 msgstr "loopcxt başlatılamadı"
 
-#: misc-utils/hardlink.c:1366
+#: misc-utils/hardlink.c:1364
 msgid "Scanning [device/inode/links]:"
 msgstr ""
 
-#: misc-utils/hardlink.c:1371 sys-utils/fstrim.c:96
+#: misc-utils/hardlink.c:1369 sys-utils/fstrim.c:96
 #, fuzzy, c-format
 #| msgid "cannot read %s"
 msgid "cannot get realpath: %s"
 msgstr "%s okunamıyor"
 
-#: misc-utils/hardlink.c:1375
+#: misc-utils/hardlink.c:1373
 #, fuzzy, c-format
 #| msgid "cannot access %s"
 msgid "cannot process %s"
@@ -12558,7 +12561,7 @@ msgid " -Q, --filter <expr>   apply display filter\n"
 msgstr " -f, --issue-file <dosya>    issue dosyasını göster\n"
 
 #: misc-utils/lsfd.c:1262
-msgid "     --debug-filter    dump the internal data structure of filter and exit\n"
+msgid "     --debug-filter    dump the innternal data structure of filter and exit\n"
 msgstr ""
 
 #: misc-utils/lsfd.c:1263
@@ -12593,7 +12596,7 @@ msgstr ""
 
 #: misc-utils/lsfd.c:1359
 #, c-format
-msgid "empty counter expression given: -C/--counter %s"
+msgid "empty ecounter expression given: -C/--counter %s"
 msgstr ""
 
 #: misc-utils/lsfd.c:1367
@@ -14271,8 +14274,9 @@ msgstr "ofset ayrıştırılamadı"
 msgid "failed to parse step"
 msgstr "adım ayrıştırılamadı"
 
-#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:499 sys-utils/fallocate.c:382
-#: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561 sys-utils/umount.c:610
+#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:491
+#: sys-utils/fallocate.c:382 sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561
+#: sys-utils/umount.c:610
 msgid "unexpected number of arguments"
 msgstr "beklenmeyen argüman sayısı"
 
@@ -14291,7 +14295,7 @@ msgstr "%s: BLKSSZGET ioctl başarısız"
 msgid "%s: offset %<PRIu64> is not aligned to sector size %i"
 msgstr "%s: ofset %<PRIu64> sektör boyutu %i'ye hızalı değil"
 
-#: sys-utils/blkdiscard.c:249 sys-utils/blkzone.c:356
+#: sys-utils/blkdiscard.c:249 sys-utils/blkzone.c:348
 #, c-format
 msgid "%s: offset is greater than device size"
 msgstr "%s: ofset aygıt boyutundan daha büyük"
@@ -14370,7 +14374,7 @@ msgstr "%s: doğrudan gç ayarlanamadı"
 msgid "%s: offset is greater than or equal to device size"
 msgstr "%s: ofset aygıt boyutundan daha büyük"
 
-#: sys-utils/blkzone.c:246 sys-utils/blkzone.c:346
+#: sys-utils/blkzone.c:246 sys-utils/blkzone.c:338
 #, fuzzy, c-format
 #| msgid "%s: unable to write zone map"
 msgid "%s: unable to determine zone size"
@@ -14392,109 +14396,104 @@ msgstr ""
 msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, cap 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:310
-#, c-format
-msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
-msgstr ""
-
-#: sys-utils/blkzone.c:326
+#: sys-utils/blkzone.c:318
 #, c-format
 msgid "0x%09<PRIx64>\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:351
+#: sys-utils/blkzone.c:343
 #, fuzzy, c-format
 #| msgid "%s: offset %<PRIu64> is not aligned to sector size %i"
 msgid "%s: offset %<PRIu64> is not aligned to zone size %lu"
 msgstr "%s: ofset %<PRIu64> sektör boyutu %i'ye hızalı değil"
 
-#: sys-utils/blkzone.c:370
+#: sys-utils/blkzone.c:362
 #, fuzzy, c-format
 #| msgid "%s: offset %<PRIu64> is not aligned to sector size %i"
 msgid "%s: number of sectors %<PRIu64> is not aligned to zone size %lu"
 msgstr "%s: ofset %<PRIu64> sektör boyutu %i'ye hızalı değil"
 
-#: sys-utils/blkzone.c:378
+#: sys-utils/blkzone.c:370
 #, fuzzy, c-format
 #| msgid "%s: FITRIM ioctl failed"
 msgid "%s: %s ioctl failed"
 msgstr "%s: FITRIM ioctl başarısız"
 
-#: sys-utils/blkzone.c:381
+#: sys-utils/blkzone.c:373
 #, fuzzy, c-format
 #| msgid "Partition table length changed from %<PRIu32> to %<PRIu64>."
 msgid "%s: successful %s of zones in range from %<PRIu64>, to %<PRIu64>"
 msgstr "Disk bölümü boyutu %<PRIu32> den %<PRIu64> e değiştirildi."
 
-#: sys-utils/blkzone.c:396
+#: sys-utils/blkzone.c:388
 #, fuzzy, c-format
 #| msgid " %s [options] <device>\n"
 msgid " %s <command> [options] <device>\n"
 msgstr " %s [seçenekler] <device>\n"
 
-#: sys-utils/blkzone.c:399
+#: sys-utils/blkzone.c:391
 msgid "Run zone command on the given block device.\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:406
+#: sys-utils/blkzone.c:398
 #, fuzzy
 #| msgid " -o, --offset <num>   offset for range operations, in bytes\n"
 msgid " -o, --offset <sector>  start sector of zone to act (in 512-byte sectors)\n"
 msgstr " -o, --offset <sayı>   aralık işlemleri için ofset, bayt olarak\n"
 
-#: sys-utils/blkzone.c:407
+#: sys-utils/blkzone.c:399
 msgid " -l, --length <sectors> maximum sectors to act (in 512-byte sectors)\n"
 msgstr ""
 
-#: sys-utils/blkzone.c:408
+#: sys-utils/blkzone.c:400
 #, fuzzy
 #| msgid " -t, --streams <number>    number of compression streams\n"
 msgid " -c, --count <number>   maximum number of zones\n"
 msgstr " -t, --streams <sayı>    sıkıştırma akışlarının sayısı\n"
 
-#: sys-utils/blkzone.c:409
+#: sys-utils/blkzone.c:401
 #, fuzzy
 #| msgid " -f, --force             force unmount (in case of an unreachable NFS system)\n"
 msgid " -f, --force            enforce on block devices used by the system\n"
 msgstr " -f, --force             ayırmayı zorla (erişileme NFS sistemi durumunda)\n"
 
-#: sys-utils/blkzone.c:410
+#: sys-utils/blkzone.c:402
 #, fuzzy
 #| msgid "     --verbose          print more details\n"
 msgid " -v, --verbose          display more details\n"
 msgstr "     --verbose          daha fazla bilgi yazdır\n"
 
-#: sys-utils/blkzone.c:415
+#: sys-utils/blkzone.c:407
 #, fuzzy
 #| msgid "sector count: %d, sector size: %d\n"
 msgid "<sector> and <sectors>"
 msgstr "sektör sayısı: %d, sektör uzunluğu: %d\n"
 
-#: sys-utils/blkzone.c:453
+#: sys-utils/blkzone.c:445
 #, fuzzy, c-format
 #| msgid "%s is not a valid block device"
 msgid "%s is not valid command name"
 msgstr "%s geçerli bir blok aygıtı değil"
 
-#: sys-utils/blkzone.c:465
+#: sys-utils/blkzone.c:457
 #, fuzzy
 #| msgid "failed to parse number of lines"
 msgid "failed to parse number of zones"
 msgstr "satır sayısı ayrıştırılamadı"
 
-#: sys-utils/blkzone.c:469
+#: sys-utils/blkzone.c:461
 #, fuzzy
 #| msgid "failed to parse number of lines"
 msgid "failed to parse number of sectors"
 msgstr "satır sayısı ayrıştırılamadı"
 
-#: sys-utils/blkzone.c:473
+#: sys-utils/blkzone.c:465
 #, fuzzy
 #| msgid "failed to parse offset"
 msgid "failed to parse zone offset"
 msgstr "ofset ayrıştırılamadı"
 
-#: sys-utils/blkzone.c:492 sys-utils/setsid.c:92
+#: sys-utils/blkzone.c:484 sys-utils/setsid.c:92
 #, fuzzy
 #| msgid "no command was specified"
 msgid "no command specified"
@@ -17983,7 +17982,7 @@ msgstr "döngü aygıtı incelenemedi"
 msgid "%s: failed to check for conflicting loop devices"
 msgstr "%s: çakışan döngü aygıtları kontrol edilemedi"
 
-#: sys-utils/losetup.c:555 sys-utils/losetup.c:881
+#: sys-utils/losetup.c:555 sys-utils/losetup.c:879
 msgid "cannot find an unused loop device"
 msgstr "kullanılmayan bir döngü aygıtı bulunamadı"
 
@@ -17998,36 +17997,36 @@ msgstr "%s: yedek dosyası kullanılamadı"
 msgid "failed to parse logical block size"
 msgstr "boyut ayrıştırılamadı"
 
-#: sys-utils/losetup.c:671 sys-utils/losetup.c:681 sys-utils/losetup.c:809
-#: sys-utils/losetup.c:823 sys-utils/losetup.c:861
+#: sys-utils/losetup.c:671 sys-utils/losetup.c:681 sys-utils/losetup.c:807
+#: sys-utils/losetup.c:821 sys-utils/losetup.c:859
 #, c-format
 msgid "%s: failed to use device"
 msgstr "%s: aygıt kullanılamadı"
 
-#: sys-utils/losetup.c:820
+#: sys-utils/losetup.c:818
 msgid "no loop device specified"
 msgstr "hiçbir döngü aygıtı belirtilmedi"
 
-#: sys-utils/losetup.c:835
+#: sys-utils/losetup.c:833
 #, c-format
 msgid "the options %s are allowed during loop device setup only"
 msgstr "döngü aygıtı kurulumu sırasında sadece %s seçenekleri kullanılabilir"
 
-#: sys-utils/losetup.c:840
+#: sys-utils/losetup.c:838
 msgid "the option --offset is not allowed in this context"
 msgstr "--offset seçeneği bu içerikte kullanılamaz"
 
-#: sys-utils/losetup.c:902
+#: sys-utils/losetup.c:900
 #, c-format
 msgid "%s: set capacity failed"
 msgstr "%s: kapasite ayarlanamadı"
 
-#: sys-utils/losetup.c:908
+#: sys-utils/losetup.c:906
 #, c-format
 msgid "%s: set direct io failed"
 msgstr "%s: doğrudan gç ayarlanamadı"
 
-#: sys-utils/losetup.c:914
+#: sys-utils/losetup.c:912
 #, fuzzy, c-format
 #| msgid "%s: get size failed"
 msgid "%s: set logical block size failed"
@@ -24574,11 +24573,6 @@ msgstr "terminfo okunmaya çalışılıyor"
 #, c-format
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr "uç birim `%s' bilinmiyor, `dump' öntanımlanıyor"
-
-#, fuzzy
-#~| msgid "failed to parse size"
-#~ msgid "failed to cache size"
-#~ msgstr "boyut ayrıştırılamadı"
 
 #~ msgid ""
 #~ "\n"
