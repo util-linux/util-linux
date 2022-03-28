@@ -10,10 +10,10 @@
 # Božidar Putanec <bozidarp@yahoo.com>, 2019, 2020, 2021, 2022.
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux-2.38-rc2\n"
+"Project-Id-Version: util-linux-2.38-rc4\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-16 17:42+0100\n"
-"PO-Revision-Date: 2022-03-13 12:10-0800\n"
+"POT-Creation-Date: 2022-03-16 18:08+0100\n"
+"PO-Revision-Date: 2022-03-24 17:17-0700\n"
 "Last-Translator: Božidar Putanec <bozidarp@yahoo.com>\n"
 "Language-Team: Croatian <lokalizacija@linux.hr>\n"
 "Language: hr\n"
@@ -336,7 +336,7 @@ msgstr "Raspored"
 
 #: disk-utils/cfdisk.c:203
 msgid "Fix partitions order"
-msgstr "korigira poredak/raspored particija"
+msgstr "Korigira poredak particija"
 
 #: disk-utils/cfdisk.c:204
 msgid "Write"
@@ -491,7 +491,8 @@ msgstr "Nije uspjelo zapisati skriptu %s"
 msgid "Select label type"
 msgstr "Odaberite vrstu oznake"
 
-#: disk-utils/cfdisk.c:2195 disk-utils/fdisk.c:1162 disk-utils/fdisk-menu.c:490
+#: disk-utils/cfdisk.c:2195 disk-utils/fdisk.c:1162
+#: disk-utils/fdisk-menu.c:490
 msgid "Device does not contain a recognized partition table."
 msgstr "Uređaj ne sadrži prepoznatljivu particijsku tablicu."
 
@@ -636,7 +637,8 @@ msgstr "Nova veličina: "
 msgid "Partition %zu resized."
 msgstr "Veličina particije %zu je promijenjena."
 
-#: disk-utils/cfdisk.c:2504 disk-utils/fdisk.c:1138 disk-utils/fdisk-menu.c:593
+#: disk-utils/cfdisk.c:2504 disk-utils/fdisk.c:1138
+#: disk-utils/fdisk-menu.c:593
 msgid "Device is open in read-only mode."
 msgstr "Uređaj je otvoren samo za čitanje."
 
@@ -769,12 +771,12 @@ msgid ""
 "bad data in track/head %u/%u\n"
 "Continuing ... "
 msgstr ""
-"oštećeni podatci u zapisu %u, glave %u\n"
+"oštećeni podaci u zapisu %u, glave %u\n"
 "Nastavlja se... "
 
 #: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:629 sys-utils/blkdiscard.c:89
-#: sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:629
+#: sys-utils/blkdiscard.c:89 sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [opcije] <uređaj>\n"
@@ -1067,7 +1069,7 @@ msgstr " -t, --type <tip>              prepoznaje samo vrstu „tip“ particijs
 
 #: disk-utils/fdisk.c:871
 msgid " -u, --units[=<unit>]          display units: 'cylinders' or 'sectors' (default)\n"
-msgstr " -u, --units[=<jedinice>]      prikaz u „cylinders“ ili „sectors“ (zadano)\n"
+msgstr " -u, --units[=<jedinice>]      jedinice su „cylinders“ ili „sectors“ (zadano)\n"
 
 #: disk-utils/fdisk.c:872
 msgid " -s, --getsz                   display device size in 512-byte sectors [DEPRECATED]\n"
@@ -1152,21 +1154,21 @@ msgstr ""
 "Svojstva uređaja (veličina sektora i geometrija) treba koristiti\n"
 "samo s jednim specificiranim uređajem."
 
-#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122 disk-utils/fsck.cramfs.c:703
-#: disk-utils/mkfs.bfs.c:192 disk-utils/mkfs.cramfs.c:788
-#: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
-#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:524
-#: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:580
-#: misc-utils/whereis.c:591 misc-utils/whereis.c:602 misc-utils/whereis.c:644
-#: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:188
-#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1580
-#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
-#: sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656 sys-utils/mount.c:877
-#: sys-utils/mount.c:885 sys-utils/mount.c:932 sys-utils/mount.c:945
-#: sys-utils/mount.c:1017 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
-#: sys-utils/swapoff.c:258 sys-utils/swapon.c:1006 sys-utils/switch_root.c:270
-#: sys-utils/umount.c:620 term-utils/setterm.c:1197 text-utils/col.c:584
-#: text-utils/more.c:2094
+#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122
+#: disk-utils/fsck.cramfs.c:703 disk-utils/mkfs.bfs.c:192
+#: disk-utils/mkfs.cramfs.c:788 disk-utils/partx.c:975 disk-utils/raw.c:136
+#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
+#: misc-utils/cal.c:524 misc-utils/findfs.c:58 misc-utils/look.c:147
+#: misc-utils/whereis.c:580 misc-utils/whereis.c:591 misc-utils/whereis.c:602
+#: misc-utils/whereis.c:644 schedutils/chrt.c:442 schedutils/ionice.c:264
+#: schedutils/taskset.c:188 sys-utils/chcpu.c:355 sys-utils/chmem.c:429
+#: sys-utils/dmesg.c:1580 sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321
+#: sys-utils/losetup.c:918 sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656
+#: sys-utils/mount.c:877 sys-utils/mount.c:885 sys-utils/mount.c:932
+#: sys-utils/mount.c:945 sys-utils/mount.c:1017 sys-utils/mountpoint.c:191
+#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:258 sys-utils/swapon.c:1006
+#: sys-utils/switch_root.c:270 sys-utils/umount.c:620
+#: term-utils/setterm.c:1197 text-utils/col.c:584 text-utils/more.c:2094
 msgid "bad usage"
 msgstr "pogrešna uporaba"
 
@@ -1222,7 +1224,7 @@ msgstr "Model diska: %s"
 #: disk-utils/fdisk-list.c:71
 #, c-format
 msgid "Geometry: %d heads, %ju sectors/track, %ju cylinders"
-msgstr "Geometrija: %d glava, %ju sektora/zapis, %ju cilindra"
+msgstr "Geometrija: %d glava, %ju sektora/brazdi, %ju cilindra"
 
 #: disk-utils/fdisk-list.c:76 disk-utils/fdisk-list.c:299
 #, c-format
@@ -1288,12 +1290,13 @@ msgstr "nije uspjelo rezervirati memoriju za izlazni redak"
 #: misc-utils/lsfd-file.c:349 misc-utils/lsfd-sock.c:47
 #: misc-utils/lsfd-sock.c:52 misc-utils/lsfd-sock.c:73
 #: misc-utils/lsfd-sock.c:75 misc-utils/lsfd-unkn.c:39
-#: misc-utils/lsfd-unkn.c:53 misc-utils/lsfd-unkn.c:55 misc-utils/lslocks.c:459
-#: misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242 sys-utils/losetup.c:305
-#: sys-utils/lscpu.c:568 sys-utils/lscpu.c:783 sys-utils/lscpu.c:812
-#: sys-utils/lscpu.c:822 sys-utils/lsipc.c:526 sys-utils/lsipc.c:651
-#: sys-utils/prlimit.c:275 sys-utils/rfkill.c:417 sys-utils/swapon.c:227
-#: sys-utils/wdctl.c:327 sys-utils/zramctl.c:481 text-utils/column.c:481
+#: misc-utils/lsfd-unkn.c:53 misc-utils/lsfd-unkn.c:55
+#: misc-utils/lslocks.c:459 misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242
+#: sys-utils/losetup.c:305 sys-utils/lscpu.c:568 sys-utils/lscpu.c:783
+#: sys-utils/lscpu.c:812 sys-utils/lscpu.c:822 sys-utils/lsipc.c:526
+#: sys-utils/lsipc.c:651 sys-utils/prlimit.c:275 sys-utils/rfkill.c:417
+#: sys-utils/swapon.c:227 sys-utils/wdctl.c:327 sys-utils/zramctl.c:481
+#: text-utils/column.c:481
 msgid "failed to add output data"
 msgstr "nije uspjelo dodati izlazne podatke"
 
@@ -1485,7 +1488,7 @@ msgstr "mijenja broj glava"
 
 #: disk-utils/fdisk-menu.c:158
 msgid "change number of sectors/track"
-msgstr "mijenja broj sektora/zapisu"
+msgstr "mijenja broj sektora/brazdi"
 
 #: disk-utils/fdisk-menu.c:167 include/pt-mbr-partnames.h:98
 msgid "GPT"
@@ -1839,7 +1842,7 @@ msgstr "nije uspjelo postaviti opis za %s"
 #: sys-utils/mount.c:100 sys-utils/swapon-common.c:19 sys-utils/umount.c:52
 #, c-format
 msgid "%s: parse error at line %d -- ignored"
-msgstr "%s: greška pri raščlambi retka %d -- ignorira se"
+msgstr "%s: greška pri raščlambi retka %d -- zanemarena je"
 
 #: disk-utils/fsck.c:503 disk-utils/fsck.c:505
 #, c-format
@@ -1892,8 +1895,8 @@ msgid ""
 "Either all or none of the filesystem types passed to -t must be prefixed\n"
 "with 'no' or '!'."
 msgstr ""
-"Ili svi ili nijedan datotečni sustav proslijeđeni opciji -t moraju imati\n"
-"prefiks „no” ili „!”."
+"Kad koristite opciju -t, onda svaki ili nijedan navedeni datotečni sustav\n"
+"morate prefiksirati s „no” ili „!”."
 
 # bp: A bind mount is an alternate view of a directory tree. Classically, mounting creates a view of a storage device as a directory tree. A bind mount instead takes an existing directory tree and replicates it under a different point.
 #: disk-utils/fsck.c:1121
@@ -2047,7 +2050,7 @@ msgstr "nevaljani argument za -r: %d"
 
 #: disk-utils/fsck.c:1646
 msgid "the -l option can be used with one device only -- ignore"
-msgstr "opcija -l se može koristiti samo s jednim uređajem -- zanemareno"
+msgstr "opcija -l se može koristiti samo s jednim uređajem -- zanemarena je"
 
 #: disk-utils/fsck.cramfs.c:117
 #, c-format
@@ -2060,7 +2063,7 @@ msgstr "Provjeri i popravlja komprimirani ROM datotečne sustave.\n"
 
 #: disk-utils/fsck.cramfs.c:123
 msgid " -a                       for compatibility only, ignored\n"
-msgstr " -a                       samo zbog kompatibilnosti -- ignorira se\n"
+msgstr " -a                       samo zbog kompatibilnosti -- zanemarena je\n"
 
 #: disk-utils/fsck.cramfs.c:124
 msgid " -v, --verbose            be more verbose\n"
@@ -2068,7 +2071,7 @@ msgstr " -v, --verbose            objašnjava što radi\n"
 
 #: disk-utils/fsck.cramfs.c:125
 msgid " -y                       for compatibility only, ignored\n"
-msgstr " -y                       samo zbog kompatibilnosti -- ignorira se\n"
+msgstr " -y                       samo zbog kompatibilnosti -- zanemarena je\n"
 
 #: disk-utils/fsck.cramfs.c:126
 msgid " -b, --blocksize <size>   use this blocksize, defaults to page size\n"
@@ -2419,7 +2422,7 @@ msgid ""
 "Write request ignored\n"
 msgstr ""
 "**Interna programska greška**: pokušava se zapisati oštećeni blok.\n"
-"Zahtjev za pisanje se ignorira\n"
+"Zahtjev za pisanje je zanemaren\n"
 
 #: disk-utils/fsck.minix.c:386
 msgid "seek failed in write_block"
@@ -2841,8 +2844,8 @@ msgstr ""
 " -V, --vname=IME     specifikacija IMENA volumena\n"
 " -F, --fname=IME     specifikacija IMENA sustava\n"
 " -v, --verbose       objašnjava što radi\n"
-" -c                  ova opcija se prešutno ignorira\n"
-" -l                  ova opcija se prešutno ignorira\n"
+" -c                  ova opcija je prešutno zanemarena\n"
+" -l                  ova opcija je prešutno zanemarena\n"
 
 #: disk-utils/mkfs.bfs.c:139
 msgid "invalid number of inodes"
@@ -2925,7 +2928,7 @@ msgstr "greška pri pisanju superbloka"
 
 #: disk-utils/mkfs.bfs.c:277
 msgid "error writing root inode"
-msgstr "greška pri pisanju korijenskoga (root inode) inoda"
+msgstr "greška pri pisanju korijenskog (root inode) inoda"
 
 #: disk-utils/mkfs.bfs.c:282
 msgid "error writing inode"
@@ -3048,7 +3051,7 @@ msgstr " -p                 dopuni s %d bajtova kȏd za pokretanje\n"
 
 #: disk-utils/mkfs.cramfs.c:141
 msgid " -s             sort directory entries (old option, ignored)"
-msgstr " -s                 poreda direktorije (zastarjelo, ignorira se)"
+msgstr " -s                 poreda direktorije (zastarjelo, zanemarena je)"
 
 #: disk-utils/mkfs.cramfs.c:142
 msgid " -z             make explicit holes"
@@ -3119,7 +3122,7 @@ msgstr "Uključeno: %s\n"
 #: disk-utils/mkfs.cramfs.c:861
 #, c-format
 msgid "Directory data: %zd bytes\n"
-msgstr "Podaci direktorija: %zd bajtova\n"
+msgstr "podaci direktorija: %zd bajtova\n"
 
 #: disk-utils/mkfs.cramfs.c:869
 #, c-format
@@ -3609,7 +3612,7 @@ msgstr "inačica %d za odlagalište (swap space) nije podržana"
 #: disk-utils/mkswap.c:530
 #, c-format
 msgid "warning: ignoring -U (UUIDs are unsupported by %s)"
-msgstr "upozorenje: ignorira se opcija -U (%s ne podržava UUID-ove)"
+msgstr "upozorenje: zanemarena je opcija -U (%s ne podržava UUID-ove)"
 
 #: disk-utils/mkswap.c:560
 msgid "only one device argument is currently supported"
@@ -4124,31 +4127,31 @@ msgstr "Osiguranje, sigurnosne kopije (backup):"
 
 #: disk-utils/sfdisk.c:411
 msgid "failed to read new partition from device; ignoring --move-data"
-msgstr "nije uspjelo pročitati novu particiju; --move-data se ignorira"
+msgstr "nije uspjelo pročitati novu particiju; --move-data je zanemaren"
 
 #: disk-utils/sfdisk.c:413
 msgid "failed to get size of the new partition; ignoring --move-data"
-msgstr "nije uspjelo doznati veličinu nove particije; --move-data se ignorira"
+msgstr "nije uspjelo doznati veličinu nove particije; --move-data je zanemaren"
 
 #: disk-utils/sfdisk.c:415
 msgid "failed to get start of the new partition; ignoring --move-data"
-msgstr "nije uspjelo doznati početak nove particije; --move-data se ignorira"
+msgstr "nije uspjelo doznati početak nove particije; --move-data je zanemaren"
 
 #: disk-utils/sfdisk.c:417
 msgid "failed to get size of the old partition; ignoring --move-data"
-msgstr "nije uspjelo doznati veličinu stare particije; --move-data se ignorira"
+msgstr "nije uspjelo doznati veličinu stare particije; --move-data je zanemaren"
 
 #: disk-utils/sfdisk.c:419
 msgid "failed to get start of the old partition; ignoring --move-data"
-msgstr "nije uspjelo doznati početak stare particije; --move-data se ignorira"
+msgstr "nije uspjelo doznati početak stare particije; --move-data je zanemaren"
 
 #: disk-utils/sfdisk.c:421
 msgid "start of the partition has not been moved; ignoring --move-data"
-msgstr "početak particije nije premješten; --move-data se ignorira"
+msgstr "početak particije nije premješten; --move-data je zanemaren"
 
 #: disk-utils/sfdisk.c:423
 msgid "new partition is smaller than original; ignoring --move-data"
-msgstr "nova particija je manja od originalne; --move-data se ignorira"
+msgstr "nova particija je manja od originalne; --move-data je zanemaren"
 
 #: disk-utils/sfdisk.c:474
 msgid "Data move: (--no-act)"
@@ -4422,7 +4425,7 @@ msgstr "   print    prikaže particijsku tablicu\n"
 
 #: disk-utils/sfdisk.c:1481
 msgid "   help     show this help text\n"
-msgstr "   help     ova prikazana pomoć\n"
+msgstr "   help     ova pokazana pomoć\n"
 
 #: disk-utils/sfdisk.c:1483
 msgid "   Ctrl-D   the same as 'quit'\n"
@@ -4610,7 +4613,7 @@ msgstr "Koriste se sve particije."
 #: disk-utils/sfdisk.c:1894
 #, c-format
 msgid "Unknown script header '%s' -- ignore."
-msgstr "Nepoznato zaglavlje skripte „%s” -- zanemari."
+msgstr "Nepoznato zaglavlje skripte „%s” -- zanemareno je."
 
 #: disk-utils/sfdisk.c:1910
 msgid "Done.\n"
@@ -4618,7 +4621,7 @@ msgstr "Gotovo.\n"
 
 #: disk-utils/sfdisk.c:1922
 msgid "Ignoring partition."
-msgstr "Particije se ignoriraju."
+msgstr "Ignoriramo particiju."
 
 #: disk-utils/sfdisk.c:1933
 msgid "Failed to apply script headers, disk label not created"
@@ -4920,7 +4923,7 @@ msgstr ""
 
 #: disk-utils/swaplabel.c:171
 msgid "ignore -U (UUIDs are unsupported)"
-msgstr "opcija -U se ignorira (UUID-ovi  nisu podržani)"
+msgstr "opcija -U je zanemarena (UUID-ovi  nisu podržani)"
 
 #: include/c.h:288
 #, c-format
@@ -4977,11 +4980,11 @@ msgstr ""
 
 #: include/c.h:418
 msgid "display this help"
-msgstr "ova prikazana pomoć"
+msgstr "ova pokazana pomoć"
 
 #: include/c.h:419
 msgid "display version"
-msgstr "podatci o inačici programa"
+msgstr "podaci o inačici programa"
 
 #: include/c.h:429
 #, c-format
@@ -5205,11 +5208,11 @@ msgstr "Linux LVM"
 
 #: include/pt-gpt-partnames.h:74
 msgid "Linux variable data"
-msgstr "Linux, promjenljivi podatci"
+msgstr "Linux, promjenljivi podaci"
 
 #: include/pt-gpt-partnames.h:75
 msgid "Linux temporary data"
-msgstr "Linux, privremeni podatci"
+msgstr "Linux, privremeni podaci"
 
 #: include/pt-gpt-partnames.h:76
 msgid "Linux /usr (x86)"
@@ -5581,7 +5584,7 @@ msgstr "Linux korisnički home direktorij"
 
 #: include/pt-gpt-partnames.h:177
 msgid "FreeBSD data"
-msgstr "FreeBSD, podatci"
+msgstr "FreeBSD, podaci"
 
 #: include/pt-gpt-partnames.h:178
 msgid "FreeBSD boot"
@@ -5841,7 +5844,7 @@ msgstr "FAT16 <32M"
 
 #: include/pt-mbr-partnames.h:6
 msgid "Extended"
-msgstr "Extended (proš.)"
+msgstr "Proširena (Extended)"
 
 #: include/pt-mbr-partnames.h:7
 msgid "FAT16"
@@ -6342,7 +6345,7 @@ msgstr "bajta/sektor"
 
 #: libfdisk/src/bsd.c:614
 msgid "sectors/track"
-msgstr "sektora/brazda"
+msgstr "sektora/brazdi"
 
 #: libfdisk/src/bsd.c:615
 msgid "tracks/cylinder"
@@ -6588,7 +6591,7 @@ msgstr "Identifikator diska je promijenjen iz 0x%08x u 0x%08x."
 #: libfdisk/src/dos.c:952
 #, c-format
 msgid "Ignoring extra extended partition %zu"
-msgstr "Suvišna proširena (extended) particija %zu se ignorira"
+msgstr "Suvišna proširena (extended) particija %zu je zanemarena"
 
 #: libfdisk/src/dos.c:966
 #, c-format
@@ -8173,7 +8176,7 @@ msgstr "nije moguće postaviti kontekst za %s"
 msgid "running UID doesn't match UID of user we're altering, change denied"
 msgstr ""
 "trenutni UID ne odgovara UID-u korisnika čiji se\n"
-"podatci mijenjaju -- izmjena je odbijena"
+"podaci mijenjaju -- izmjena je odbijena"
 
 #: login-utils/chfn.c:460
 #, c-format
@@ -8595,7 +8598,7 @@ msgstr " -H             prompt za prijavu potisne ime host-a"
 #: login-utils/login.c:1307
 #, c-format
 msgid "%s: timed out after %u seconds"
-msgstr "%s: nakon %u sekunda isteklo je vrijeme za prijavu"
+msgstr "%s: %u sekunda za prijavu je isteklo"
 
 #: login-utils/login.c:1334
 #, c-format
@@ -8916,7 +8919,7 @@ msgstr " -a, --acc-expiration     informacije o isteku lozinki\n"
 
 #: login-utils/lslogins.c:1409
 msgid " -c, --colon-separate     display data in a format similar to /etc/passwd\n"
-msgstr " -c, --colon-separate     podatci u formatu sličnom kao u /etc/passwd\n"
+msgstr " -c, --colon-separate     podaci u formatu sličnom kao u /etc/passwd\n"
 
 #: login-utils/lslogins.c:1410 sys-utils/lsipc.c:311
 msgid " -e, --export             display in an export-able output format\n"
@@ -8924,7 +8927,7 @@ msgstr " -e, --export             prikaže izlaz u formatu prikladnom za eksport
 
 #: login-utils/lslogins.c:1411
 msgid " -f, --failed             display data about the users' last failed logins\n"
-msgstr " -f, --failed             podatci o posljednjim neuspješnim prijavama korisnika\n"
+msgstr " -f, --failed             podaci o posljednjim neuspješnim prijavama korisnika\n"
 
 #: login-utils/lslogins.c:1412
 msgid " -G, --supp-groups        display information about groups\n"
@@ -9289,7 +9292,7 @@ msgstr "opcija --pty nije podržana na vašem sustavu"
 
 #: login-utils/su-common.c:1160
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
-msgstr "opcija --preserve-environment se ignorira; ne može se koristi zajedno s --login"
+msgstr "opcija --preserve-environment je zanemarena; ne može se koristi zajedno s --login"
 
 #: login-utils/su-common.c:1174
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
@@ -9565,7 +9568,7 @@ msgstr "Na ovom sustavu koristite zasjenjene (shadow) lozinke.\n"
 #: login-utils/vipw.c:361
 #, c-format
 msgid "Would you like to edit %s now [y/n]? "
-msgstr "Želite li %s sad urediti [y/n]? "
+msgstr "Želite li sad urediti %s [d/n]? "
 
 #: misc-utils/blkid.c:72
 #, c-format
@@ -9861,7 +9864,7 @@ msgstr " -n, --months <broj>   pokaže mjesec za broj kasniji od trenutnog\n"
 
 #: misc-utils/cal.c:1259
 msgid " -S, --span            span the date when displaying multiple months\n"
-msgstr " -S, --span            ako prikazuje nekoliko mjeseci, obuhvati datum\n"
+msgstr " -S, --span            ako pokazuje nekoliko mjeseci, obuhvati datum\n"
 
 #: misc-utils/cal.c:1260
 msgid " -s, --sunday          Sunday as first day of week\n"
@@ -10009,7 +10012,7 @@ msgstr "opcija montiranja specifična za FS (datotečni sustav)"
 
 #: misc-utils/findmnt.c:109
 msgid "mount ID"
-msgstr "ID montiranja"
+msgstr "identifikator montiranja"
 
 #: misc-utils/findmnt.c:110
 msgid "filesystem label"
@@ -10255,7 +10258,7 @@ msgstr " -O, --options <popis>  datotečne sustave ograniči s opcijama montiran
 
 #: misc-utils/findmnt.c:1357
 msgid " -o, --output <list>    the output columns to be shown\n"
-msgstr " -o, --output <popis>   popis stupaca koje treba prikazati\n"
+msgstr " -o, --output <popis>   popis stupaca koje treba pokazati\n"
 
 #: misc-utils/findmnt.c:1358
 msgid "     --output-all       output all available columns\n"
@@ -10315,7 +10318,7 @@ msgstr " -t, --types <popis>    datotečne sustave ograniči na popisane vrste\n
 
 #: misc-utils/findmnt.c:1371
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
-msgstr " -U, --uniq             ignorira datotečne sustave s već postojećim ciljem\n"
+msgstr " -U, --uniq             zanemari datotečne sustave s već postojećim ciljem\n"
 
 #: misc-utils/findmnt.c:1372 misc-utils/lslocks.c:559 sys-utils/lsns.c:1221
 msgid " -u, --notruncate       don't truncate text in columns\n"
@@ -10497,10 +10500,8 @@ msgid "%s seems unsupported by the current kernel"
 msgstr "izgleda da trenutna jezgra (kernel) ne podržava %s"
 
 #: misc-utils/findmnt-verify.c:452
-#, fuzzy
-#| msgid "reason uknown"
 msgid "reason unknown"
-msgstr "nepoznati razlog"
+msgstr "nepoznat razlog"
 
 #: misc-utils/findmnt-verify.c:455 misc-utils/findmnt-verify.c:457
 #, c-format
@@ -10803,7 +10804,7 @@ msgstr " -o, --ignore-owner       zanemari promjenu vlasnika\n"
 
 #: misc-utils/hardlink.c:1126
 msgid " -t, --ignore-time          ignore timestamps (when testing for equality)\n"
-msgstr " -t, --ignore-time        ignorira vremenske žigove (kad testira jednakost)\n"
+msgstr " -t, --ignore-time        zanemari vremenske žigove (kad testira jednakost)\n"
 
 #: misc-utils/hardlink.c:1128
 msgid " -X, --respect-xattrs       respect extended attributes\n"
@@ -10811,41 +10812,41 @@ msgstr " -X, --respect-xattrs     uzima u obzir proširene atribute\n"
 
 #: misc-utils/hardlink.c:1131
 msgid "     --reflink[=<when>]     create clone/CoW copies (auto, always, never)\n"
-msgstr "     --reflink[=<kad>]        kreira klona/CoW kopije (auto, always, never)\n"
+msgstr "     --reflink[=<kad>]    kreira klona/CoW kopije (auto, always, never)\n"
 
 #: misc-utils/hardlink.c:1132
 msgid "     --skip-reflinks        skip already cloned files (enabled on --reflink)\n"
 msgstr ""
-"     --skip-reflinks          preskače klonirane datoteke\n"
-"                                (omogućeno s --reflink)\n"
+"     --skip-reflinks      preskače klonirane datoteke\n"
+"                            (omogućeno s --reflink)\n"
 
 #: misc-utils/hardlink.c:1134
 msgid ""
 " -m, --maximize             maximize the hardlink count, remove the file with\n"
 "                              lowest hardlink count\n"
 msgstr ""
-" -m, --maximize             maksimalizira broj tvrdih poveznica, ukloni datoteku\n"
-"                              s najmanjim brojem poveznica\n"
+" -m, --maximize           maksimimira broj tvrdih poveznica, ukloni datoteku\n"
+"                            s najmanjim brojem poveznica\n"
 
 #: misc-utils/hardlink.c:1136
 msgid " -M, --minimize             reverse the meaning of -m\n"
-msgstr " -M, --minimize             obrne značenje od -m\n"
+msgstr " -M, --minimize           obrne značenje od -m\n"
 
 #: misc-utils/hardlink.c:1137
 msgid ""
 " -O, --keep-oldest          keep the oldest file of multiple equal files\n"
 "                              (lower precedence than minimize/maximize)\n"
 msgstr ""
-" -O, --keep-oldest          zadrži najstariju od više istih datoteka\n"
-"                              (niži prioritet neko minimizira/maksimizira)\n"
+" -O, --keep-oldest        zadrži najstariju od više istih datoteka\n"
+"                            (niži prioritet neko minimizira/maksimizira)\n"
 
 #: misc-utils/hardlink.c:1139
 msgid " -x, --exclude <regex>      regular expression to exclude files\n"
-msgstr " -x, --exclude <regex>      regularni izraz za izuzimanje datoteka\n"
+msgstr " -x, --exclude <regex>    regularni izraz za izuzimanje datoteka\n"
 
 #: misc-utils/hardlink.c:1140
 msgid " -i, --include <regex>      regular expression to include files/dirs\n"
-msgstr " -i, --include <regex>      regularni izraz za uključivanje datoteka/direktorija\n"
+msgstr " -i, --include <regex>    regularni izraz za uključivanje datoteka/direktorija\n"
 
 #: misc-utils/hardlink.c:1141
 msgid " -s, --minimum-size <size>  minimum size for files.\n"
@@ -10858,16 +10859,16 @@ msgstr " -S, --maximum-size <broj>  maksimalna veličina datoteka.\n"
 #: misc-utils/hardlink.c:1143
 msgid " -b, --io-size <size>       I/O buffer size for file reading (speedup, using more RAM)\n"
 msgstr ""
-" -b, --io-size <broj>       veličina I/O spremnika za čitanje datoteka\n"
-"                              (za veću brzinu, koristite više RAM-a)\n"
+" -b, --io-size <broj>     veličina I/O spremnika za čitanje datoteka\n"
+"                            (za veću brzinu, koristite više RAM-a)\n"
 
 #: misc-utils/hardlink.c:1144
 msgid " -r, --cache-size <size>    memory limit for cached file content data\n"
-msgstr " -r, --cache-size <broj>    ograničenje memorije za podatke predmemorirane datoteke\n"
+msgstr " -r, --cache-size <broj>  ograničenje memorije za podatke predmemorirane datoteke\n"
 
 #: misc-utils/hardlink.c:1145
 msgid " -c, --content              compare only file contents, same as -pot\n"
-msgstr " -c, --content          usporedi samo sadržaje, isto kao -pot\n"
+msgstr " -c, --content            usporedi samo sadržaje, isto kao -pot\n"
 
 #: misc-utils/hardlink.c:1256
 msgid "failed to parse minimum size"
@@ -10878,10 +10879,8 @@ msgid "failed to parse maximum size"
 msgstr "nije uspjelo razabrati maksimalnu veličinu"
 
 #: misc-utils/hardlink.c:1262
-#, fuzzy
-#| msgid "failed to parse size"
 msgid "failed to parse cache size"
-msgstr "nije uspjelo raščlaniti veličinu"
+msgstr "vrijednost veličine za predmemoriju nije moguće raščlaniti"
 
 #: misc-utils/hardlink.c:1265
 msgid "failed to parse I/O size"
@@ -11120,7 +11119,7 @@ msgstr "predugi tag „%s“"
 #: misc-utils/logger.c:863
 #, c-format
 msgid "ignoring unknown option argument: %s"
-msgstr "nepoznati argument %s opcije se ignorira"
+msgstr "nepoznati argument opcije %s je zanemaren"
 
 #: misc-utils/logger.c:875
 #, c-format
@@ -11210,11 +11209,11 @@ msgstr ""
 
 #: misc-utils/logger.c:1065
 msgid "     --sd-id <id>         rfc5424 structured data ID\n"
-msgstr "     --sd-id <ID>          strukturirani ID podatci prema RFC5424\n"
+msgstr "     --sd-id <ID>         strukturirani ID podaci prema RFC5424\n"
 
 #: misc-utils/logger.c:1066
 msgid "     --sd-param <data>    rfc5424 structured data name=value\n"
-msgstr "     --sd-param <data>    strukturirani podatci (ime=vrijednost) prema RFC-542\n"
+msgstr "     --sd-param <data>    strukturirani podaci (ime=vrijednost) prema RFC-542\n"
 
 #: misc-utils/logger.c:1067
 msgid "     --msgid <msgid>      set rfc5424 message id field\n"
@@ -11263,7 +11262,7 @@ msgstr "nevaljani argument strukturiranih podataka: „%s“"
 
 #: misc-utils/logger.c:1263
 msgid "--file <file> and <message> are mutually exclusive, message is ignored"
-msgstr "datoteka i poruka se međusobno isključuju; poruka se ignorira"
+msgstr "datoteka i poruka se međusobno isključuju; poruka  je zanemarena"
 
 #: misc-utils/logger.c:1270
 msgid "journald entry could not be written"
@@ -11288,7 +11287,7 @@ msgstr " -d, --alphanum           uspoređuje samo bjeline i alfanumeričke znak
 
 #: misc-utils/look.c:365
 msgid " -f, --ignore-case        ignore case differences when comparing\n"
-msgstr " -f, --ignore-case        ne pazi na veličinu slova\n"
+msgstr " -f, --ignore-case        zanemari mala/velika slova pri uspoređivanju\n"
 
 #: misc-utils/look.c:366
 msgid " -t, --terminate <char>   define the string-termination character\n"
@@ -11542,7 +11541,7 @@ msgstr "nije uspjelo raščlaniti popis '%s'"
 #: misc-utils/lsblk.c:1796
 #, c-format
 msgid "the list of excluded devices is too large (limit is %d devices)"
-msgstr "popis isključenih uređaja je predug (ograničenje je %d uređaja)"
+msgstr "popisano je previše isključenih uređaja (ograničenje je %d uređaja)"
 
 #. TRANSLATORS: The standard value for %d is 256.
 #: misc-utils/lsblk.c:1827
@@ -11680,7 +11679,7 @@ msgstr "nevaljani brojevni argument za širinu izlaza"
 
 #: misc-utils/lsblk.c:2328
 msgid "failed to allocate device tree"
-msgstr "nije uspjelo rezervirati memoriju za stablo uređaja"
+msgstr "nije uspjelo dodijeliti memoriju za stablo uređaja"
 
 #: misc-utils/lsfd.c:111
 msgid "association between file and process"
@@ -11688,15 +11687,15 @@ msgstr "povezanost između datoteke i procesa"
 
 #: misc-utils/lsfd.c:113
 msgid "block device driver name resolved by /proc/devices"
-msgstr "naziv drajvera blok uređaja razriješen pomoću /proc/devices"
+msgstr "ime drajvera blok uređaja riješeno via /proc/devices"
 
 #: misc-utils/lsfd.c:115
 msgid "character device driver name resolved by /proc/devices"
-msgstr "ime drajvera uređaja znakova razriješeno pomoću /proc/devices"
+msgstr "ime drajvera znak uređaja riješeno via /proc/devices"
 
 #: misc-utils/lsfd.c:117
 msgid "command of the process opening the file"
-msgstr "naredba procesa otvaranja datoteke"
+msgstr "naredba procesa koji otvara datoteku"
 
 #: misc-utils/lsfd.c:119
 msgid "reachability from the file system"
@@ -11704,7 +11703,7 @@ msgstr "dostupnost iz datotečnog sustava"
 
 #: misc-utils/lsfd.c:121
 msgid "ID of device containing file"
-msgstr "ID (identifikator) uređaja koji sadrži datoteku"
+msgstr "ID uređaja s datoekom (koji sadrži datoteku)"
 
 #: misc-utils/lsfd.c:123
 msgid "device type (blk, char, or nodev)"
@@ -11712,11 +11711,11 @@ msgstr "vrsta uređaja (blk, char, or nodev)"
 
 #: misc-utils/lsfd.c:125
 msgid "flags specified when opening the file"
-msgstr "flagi, navedene kad se otvara datoteka"
+msgstr "flagi, navedeni kad se otvara datoteka"
 
 #: misc-utils/lsfd.c:127
 msgid "file descriptor for the file"
-msgstr "deskriptor datatoteke"
+msgstr "deskriptor datoteke"
 
 #: misc-utils/lsfd.c:129
 msgid "user ID number of the file's owner"
@@ -11724,7 +11723,7 @@ msgstr "ID broj korisnika-vlasnika datoteke"
 
 #: misc-utils/lsfd.c:131 misc-utils/lslocks.c:79
 msgid "inode number"
-msgstr "broj inode-a"
+msgstr "broj inodea"
 
 #: misc-utils/lsfd.c:133
 msgid "opened by a kernel thread"
@@ -11732,7 +11731,7 @@ msgstr "otvoreno pomoću jezgrine (kernel) dretve"
 
 #: misc-utils/lsfd.c:135
 msgid "device ID for special, or ID of device containing file"
-msgstr "ID uređaja za posebni uređaj, ili ID uređaja koji sadržava datoteku"
+msgstr "ID uređaja za posebni ili ID uređaja s datotekom"
 
 #: misc-utils/lsfd.c:137
 msgid "length of file mapping (in page)"
@@ -11740,7 +11739,7 @@ msgstr "duljina mape datoteke (u stranicama)"
 
 #: misc-utils/lsfd.c:139
 msgid "misc character device name resolved by /proc/misc"
-msgstr "znak-uređaja ime razriješeno s /proc/misc"
+msgstr "ime znak uređaja riješeno via /proc/misc"
 
 #: misc-utils/lsfd.c:141
 msgid "mount id"
@@ -11768,7 +11767,7 @@ msgstr "PID procesa koji otvara datoteku"
 
 #: misc-utils/lsfd.c:153
 msgid "block device name resolved by /proc/partition"
-msgstr "blok-uređaj ime razriješemo s /proc/partition"
+msgstr "ime blok uređaja riješeno s /proc/partition"
 
 #: misc-utils/lsfd.c:155
 msgid "file position"
@@ -11776,11 +11775,11 @@ msgstr "pozicija datoteke"
 
 #: misc-utils/lsfd.c:157
 msgid "protocol name"
-msgstr "ime protokala"
+msgstr "ime protokola"
 
 #: misc-utils/lsfd.c:159
 msgid "device ID (if special file)"
-msgstr "identifikator uređaja (ako je to specijalna datoteka)"
+msgstr "ID uređaja (ako je to specijalna datoteka)"
 
 #: misc-utils/lsfd.c:161
 msgid "file size"
@@ -11788,11 +11787,11 @@ msgstr "veličina datoteke"
 
 #: misc-utils/lsfd.c:163
 msgid "file system, partition, or device containing file"
-msgstr "datotečni sustav, particija, ili uređaj koji sadrži datoteku"
+msgstr "datotečni sustav, particija, ili uređaj s datotekom"
 
 #: misc-utils/lsfd.c:165
 msgid "thread ID of the process opening the file"
-msgstr "identifikator dretve procesa koji otvara datoteku"
+msgstr "ID dretve procesa koja otvara datoteku"
 
 #: misc-utils/lsfd.c:167
 msgid "file type"
@@ -11800,7 +11799,7 @@ msgstr "vrsta datoteke"
 
 #: misc-utils/lsfd.c:169
 msgid "user ID number of the process"
-msgstr "identifikatorski broj korisnika procesa"
+msgstr "ID broj korisnika procesa"
 
 #: misc-utils/lsfd.c:171
 msgid "user of the process"
@@ -11911,32 +11910,25 @@ msgstr " -l, --threads         ispiše popis razina dretvi\n"
 
 #: misc-utils/lsfd.c:1259
 msgid " -u, --notruncate      don't truncate text in columns\n"
-msgstr " -u, --notruncate       ne skrati tekst u stupcima\n"
+msgstr " -u, --notruncate      ne krati tekst u stupcima\n"
 
 #: misc-utils/lsfd.c:1260
 msgid " -p, --pid  <pid(s)>   collect information only specified processes\n"
-msgstr " -p, --pid  <pid(s)>    skuplja podatke samo za specificirane procese\n"
+msgstr " -p, --pid  <pid(s)>   skuplja podatke samo za specificirane procese\n"
 
 #: misc-utils/lsfd.c:1261
 msgid " -Q, --filter <expr>   apply display filter\n"
 msgstr " -Q, --filter <izraz>  izraz za filtriranje izlaza\n"
 
 #: misc-utils/lsfd.c:1262
-#, fuzzy
-#| msgid "     --debug-filter    dump the innternal data structure of filter and exit\n"
 msgid "     --debug-filter    dump the internal data structure of filter and exit\n"
-msgstr ""
-"     --debug-filter    istovari filtriranu internu strukturu podataka\n"
-"                         i završi\n"
+msgstr "     --debug-filter    istovari internu strukturu podataka filtra i iziđe\n"
 
 #: misc-utils/lsfd.c:1263
 msgid ""
 " -C, --counter <name>:<expr>\n"
 "                       define custom counter for --summary output\n"
-msgstr ""
-" -C, --counter <ime>:<izraz>\n"
-"                       naredba procesa koji otvara netipičan brojač\n"
-"                       za --summary izlaz\n"
+msgstr " -C, --counter <ime>:<izraz>  definira atipični brojač za --summary izlaz\n"
 
 #: misc-utils/lsfd.c:1265
 msgid "     --dump-counters   dump counter definitions\n"
@@ -11944,7 +11936,7 @@ msgstr "     --dump-counters   istovari definicije brojila\n"
 
 #: misc-utils/lsfd.c:1266
 msgid "     --summary[=when]  print summary information (only, append, or never)\n"
-msgstr "     --summary[=kȁd]   ispiše sažete informacije (only, append, ili never)\n"
+msgstr "     --summary[=kàko]  ispiše sažete informacije (only, append, ili never)\n"
 
 #: misc-utils/lsfd.c:1288
 msgid "failed to allocate memory for string"
@@ -11961,10 +11953,9 @@ msgid "no name for counter: -C/--counter %s"
 msgstr "nedostaje ime za brojilo: -C/--counter %s"
 
 #: misc-utils/lsfd.c:1359
-#, fuzzy, c-format
-#| msgid "empty ecounter expression given: -C/--counter %s"
+#, c-format
 msgid "empty counter expression given: -C/--counter %s"
-msgstr "dan je prazni izraz za ecounter: -C/--counter %s"
+msgstr "naveden je prazni izraz za counter: -C/--counter %s"
 
 #: misc-utils/lsfd.c:1367
 #, c-format
@@ -12253,7 +12244,7 @@ msgstr "nije uspjelo razabrati duljinu"
 
 #: misc-utils/mcookie.c:181
 msgid "--max-size ignored when used without --file"
-msgstr "opcija --max-size se ignorira kad se koristi bez opcije --file"
+msgstr "opcija --max-size je zanemarena kad se koristi bez opcije --file"
 
 #: misc-utils/mcookie.c:190
 #, c-format
@@ -12488,7 +12479,7 @@ msgstr "nije uspjelo primiti signal"
 
 #: misc-utils/uuidd.c:337
 msgid "timed out"
-msgstr "predugo traje"
+msgstr "vrijeme je isteklo"
 
 #: misc-utils/uuidd.c:373 sys-utils/flock.c:276
 msgid "cannot set up timer"
@@ -12610,7 +12601,7 @@ msgstr "ime utičnice je predugo: %s"
 
 #: misc-utils/uuidd.c:694
 msgid "Both --socket-activation and --socket specified. Ignoring --socket."
-msgstr "Dȃne su obje opcije --socket-activation i --socket; opcija --socket se ignorira."
+msgstr "Dȃne su obje opcije --socket-activation i --socket; opcija --socket je zanemarena."
 
 #: misc-utils/uuidd.c:705 misc-utils/uuidd.c:740
 #, c-format
@@ -12642,7 +12633,7 @@ msgstr "nije (bilo) moguće ubiti aktivni uuid s PID-om %d"
 #: misc-utils/uuidd.c:767
 #, c-format
 msgid "Killed uuidd running at pid %d.\n"
-msgstr "Ubijen je aktivni uuidd s PID-om %d.\n"
+msgstr "Ubijen je aktivni uuidd na PID-u %d.\n"
 
 #: misc-utils/uuidgen.c:29
 msgid "Create a new UUID value.\n"
@@ -12897,7 +12888,7 @@ msgstr "nije uspjelo osigurati (backup) potpis jer $HOME nije definiran"
 #: misc-utils/wipefs.c:560
 #, c-format
 msgid "%s: ignoring nested \"%s\" partition table on non-whole disk device"
-msgstr "%s: ignoriramo ugniježđenu particijsku tablicu „%s“ jer uređaj nije cijeli-disk"
+msgstr "%s: ignoriramo ugniježđenu particijsku tablicu „%s“ na non-whole disk uređaju"
 
 #: misc-utils/wipefs.c:589
 #, c-format
@@ -12942,7 +12933,7 @@ msgstr " -o, --offset <broj>   odmak za obrisati (u bajtima)"
 
 #: misc-utils/wipefs.c:642
 msgid " -O, --output <list> COLUMNS to display (see below)"
-msgstr " -O, --output <popis>  popis STUPACA koje treba prikazati (v. niže)"
+msgstr " -O, --output <popis>  popis STUPACA koje treba pokazati (v. niže)"
 
 #: misc-utils/wipefs.c:643
 msgid " -p, --parsable      print out in parsable instead of printable format"
@@ -13043,7 +13034,7 @@ msgstr "Ostale opcije:\n"
 
 #: schedutils/chrt.c:87 schedutils/uclampset.c:66
 msgid " -a, --all-tasks      operate on all the tasks (threads) for a given pid\n"
-msgstr " -a, --all-tasks      obradi sve zadatke/dretve dȃnoga PID-a\n"
+msgstr " -a, --all-tasks      obradi sve zadatke/dretve dȃnog PID-a\n"
 
 #: schedutils/chrt.c:88
 msgid " -m, --max            show min and max valid priorities\n"
@@ -13240,11 +13231,11 @@ msgstr "nevaljani argument UID-a"
 
 #: schedutils/ionice.c:214
 msgid "ignoring given class data for none class"
-msgstr "ignoriramo dȃnu klasu za klasu „none“"
+msgstr "ignoriramo podatke dȃne klase za „none“ klasu"
 
 #: schedutils/ionice.c:222
 msgid "ignoring given class data for idle class"
-msgstr "ignoriramo dȃnu klasu za klasu „idle“"
+msgstr "ignoriramo podatke dȃne klase za „idle“ klasu"
 
 #: schedutils/ionice.c:227
 #, c-format
@@ -13494,8 +13485,9 @@ msgstr "nije uspjelo razabrati odmak"
 msgid "failed to parse step"
 msgstr "nije uspjelo razabrati iteraciju (korak)"
 
-#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:499 sys-utils/fallocate.c:382
-#: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561 sys-utils/umount.c:610
+#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:499
+#: sys-utils/fallocate.c:382 sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561
+#: sys-utils/umount.c:610
 msgid "unexpected number of arguments"
 msgstr "neočekivan broj argumenata"
 
@@ -13603,13 +13595,19 @@ msgstr "Pronađeno je %d zona od 0x%<PRIx64>\n"
 #: sys-utils/blkzone.c:302
 #, c-format
 msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, cap 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
-msgstr "  poč: 0x%09<PRIx64>, duž 0x%06<PRIx64>, kap 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [vrsta: %u(%s)]\n"
+msgstr "  poč: 0x%09<PRIx64>, duž 0x%06<PRIx64>, kap 0x%06<PRIx64>, w-pok 0x%06<PRIx64> reset:%u nesek:%u, z-uvjet:%2u(%s) [vrsta: %u(%s)]\n"
 
+# start:Zone start sector
+# len:Zone length in number of sectors
+# wptr:Zone write pointer position
+# reset:Reset write pointer recommended
+# non-seq:Non-sequential write resources active
+# cond:Zone condition
+# type:Zone type
 #: sys-utils/blkzone.c:310
-#, fuzzy, c-format
-#| msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, cap 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
+#, c-format
 msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
-msgstr "  poč: 0x%09<PRIx64>, duž 0x%06<PRIx64>, kap 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [vrsta: %u(%s)]\n"
+msgstr "  poč: 0x%09<PRIx64>, duž 0x%06<PRIx64>, w-pok 0x%06<PRIx64> reset:%u nesek:%u, z-uvjet:%2u(%s) [vrsta: %u(%s)]\n"
 
 #: sys-utils/blkzone.c:326
 #, c-format
@@ -14033,7 +14031,7 @@ msgstr "nije uspjelo inicijalizirati rukovatelja %s"
 # sysfs is a pseudo file system provided by the Linux kernel
 #: sys-utils/chmem.c:440
 msgid "zone ignored, no valid_zones sysfs attribute present"
-msgstr "ignorirana zona -- ne postoji atribut „valid_zones“ sysfs"
+msgstr "zanemarena zona -- ne postoji atribut „valid_zones“ sysfs"
 
 #: sys-utils/chmem.c:445
 #, c-format
@@ -14342,7 +14340,7 @@ msgid ""
 "                               [delta|reltime|ctime|notime|iso]\n"
 "Suspending/resume will make ctime and iso timestamps inaccurate.\n"
 msgstr ""
-"     --time-format <format>  vremenski žigovi prikazani su u dȃnom formatu:\n"
+"     --time-format <format>  vremenski žigovi pokazani su u dȃnom formatu:\n"
 "                               [delta|reltime|ctime|notime|iso]\n"
 "Spavanje/buđenje učinit će ctime i iso vremenske žigove netočnim.\n"
 
@@ -14401,14 +14399,14 @@ msgstr "nije moguće datoteku %s u cijelosti pohraniti u memoriju (mmap nije mog
 #. proper month/day order here
 #: sys-utils/dmesg.c:861
 msgid "%a %b %e %H:%M:%S %Y"
-msgstr "%a %b %e %H:%M:%S %Y"
+msgstr "%a %e %b %H:%M:%S %Y"
 
 #. TRANSLATORS: dmesg uses strftime() fo generate date-time string
 #. where: %b is abbreviated month and %e is day of the month as a
 #. decimal number. Please, set proper month/day order here.
 #: sys-utils/dmesg.c:871
 msgid "%b%e %H:%M"
-msgstr "%b%e %H:%M"
+msgstr "%e%b %H:%M"
 
 #: sys-utils/dmesg.c:1523
 msgid "invalid buffer size argument"
@@ -14416,7 +14414,7 @@ msgstr "nevaljani argument za veličinu međuspremnika"
 
 #: sys-utils/dmesg.c:1611
 msgid "--show-delta is ignored when used together with iso8601 time format"
-msgstr "--show-delta se ignorira kad se koristi zajedno s formatom vremena po ISO8601"
+msgstr "--show-delta je zanemarena kad se koristi zajedno s formatom vremena po ISO8601"
 
 #: sys-utils/dmesg.c:1635
 msgid "--raw can be used together with --level or --facility only when reading messages from /dev/kmsg"
@@ -15048,13 +15046,13 @@ msgstr "%s: FITRIM ioctl nije uspjela"
 #: sys-utils/fstrim.c:141
 #, c-format
 msgid "%s: %s (%<PRIu64> bytes) trimmed on %s\n"
-msgstr "%s: %s (%<PRIu64> bajta) je podrezano na %s\n"
+msgstr "%s: %s (%<PRIu64> bajta) podrezano na %s\n"
 
 #. TRANSLATORS: The standard value here is a very large number.
 #: sys-utils/fstrim.c:145
 #, c-format
 msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
-msgstr "%s: %s (%<PRIu64> bajta) je podrezano\n"
+msgstr "%s: %s (%<PRIu64> bajta) je odrezano\n"
 
 #: sys-utils/fstrim.c:277 sys-utils/lsns.c:1412 sys-utils/swapon.c:746
 #: sys-utils/umount.c:262
@@ -15319,7 +15317,7 @@ msgid ""
 "New %s data:\n"
 "%s"
 msgstr ""
-"Novi podatci %s:\n"
+"Novi podaci %s:\n"
 "%s"
 
 #: sys-utils/hwclock.c:920
@@ -15615,7 +15613,7 @@ msgstr "Čekamo (u petlji) na promjenu vremena iz %s\n"
 
 #: sys-utils/hwclock-rtc.c:274
 msgid "Timed out waiting for time change."
-msgstr "Isteklo je vrijeme čekanja na promjenu vremena."
+msgstr "Isteklo je vrijeme čekanja za promjenu vremena."
 
 #: sys-utils/hwclock-rtc.c:322
 #, c-format
@@ -16031,7 +16029,7 @@ msgstr ""
 "dodijeljene stranice %ld\n"
 "rezidentne stranice  %ld\n"
 "odložene (swapped) stranice %ld\n"
-"Učinkovitost odlaganja: %ld pokušaja  %ld uspješnih\n"
+"Učinkovitost odlaganja: %ld pokušaja\t  %ld uspješnih\n"
 
 #: sys-utils/ipcs.c:281
 #, c-format
@@ -16107,7 +16105,7 @@ msgstr "------ Zajednička memorija: segmenti --------\n"
 
 #: sys-utils/ipcs.c:302 sys-utils/ipcs.c:422 sys-utils/ipcs.c:527
 msgid "key"
-msgstr "key"
+msgstr "ključ"
 
 #: sys-utils/ipcs.c:303 sys-utils/ipcs.c:528
 msgid "size"
@@ -16519,7 +16517,7 @@ msgstr "nije uspjelo inicijalizirati izlaznu tablicu"
 
 #: sys-utils/irq-common.c:172 sys-utils/lsns.c:984
 msgid "failed to add line to output"
-msgstr "nije uspjelo dodati redak izlaznim podatcima"
+msgstr "nije uspjelo dodati redak izlaznim podacima"
 
 #: sys-utils/irq-common.c:402
 msgid "unsupported column name to sort output"
@@ -16569,7 +16567,7 @@ msgstr "nije moguće kreirati signalfd"
 
 #: sys-utils/irqtop.c:260
 msgid "Interactive utility to display kernel interrupt information."
-msgstr "Interaktivna rutina za prikazivanje informacija o jezgrinim prekidima (kernel interrupt information)"
+msgstr "Interaktivna rutina za pokazivanje informacija o jezgrinim prekidima (kernel interrupt information)"
 
 #: sys-utils/irqtop.c:263
 msgid " -c, --cpu-stat <mode> show per-cpu stat (auto, enable, disable)\n"
@@ -16593,7 +16591,7 @@ msgid ""
 "The following interactive key commands are valid:\n"
 msgstr ""
 "\n"
-"Sljedeće interaktivne tipkovničke naredbe su valjanje:\n"
+"Sljedeće interaktivne naredbe s tipkama su valjanje:\n"
 
 #: sys-utils/irqtop.c:272
 msgid "  i      sort by IRQ\n"
@@ -16901,7 +16899,7 @@ msgstr " -n, --noheadings              ne ispisuje zaglavlja s --list\n"
 
 #: sys-utils/losetup.c:434
 msgid " -O, --output <cols>           specify columns to output for --list\n"
-msgstr " -O, --output <stupci>         stupci koje treba prikazati s --list\n"
+msgstr " -O, --output <stupci>         stupci koje treba pokazati s --list\n"
 
 #: sys-utils/losetup.c:435
 msgid "     --output-all              output all columns\n"
@@ -16919,7 +16917,7 @@ msgstr "%s: Upozorenje: datoteka je manja od 512 bajta -- taj loop-uređaj će m
 #: sys-utils/losetup.c:468
 #, c-format
 msgid "%s: Warning: file does not fit into a 512-byte sector; the end of the file will be ignored."
-msgstr "%s: Upozorenje: datoteka ne stane u sektor od 512 bajta -- kraj datoteke će se ignorirati."
+msgstr "%s: Upozorenje: datoteka ne stane u sektor od 512 bajta -- kraj datoteke bit će zanemaren."
 
 #: sys-utils/losetup.c:490 sys-utils/losetup.c:542
 #, c-format
@@ -18052,7 +18050,7 @@ msgstr " -p, --task <PID>       ispiše imenske prostore procesa\n"
 
 #: sys-utils/lsns.c:1222
 msgid " -W, --nowrap           don't use multi-line representation\n"
-msgstr " -W, --nowrap           ne koristi više-redni prikaz\n"
+msgstr " -W, --nowrap           ne koristi višeredni prikaz\n"
 
 #: sys-utils/lsns.c:1223
 msgid " -t, --type <name>      namespace type (mnt, net, ipc, user, pid, uts, cgroup, time)\n"
@@ -18107,7 +18105,7 @@ msgstr "nije uspjelo pročitati mtab"
 #: sys-utils/mount.c:190 sys-utils/mount.c:257 sys-utils/umount.c:200
 #, c-format
 msgid "%-25s: ignored\n"
-msgstr "%-25s: ignorira se\n"
+msgstr "%-25s: zanemareno je\n"
 
 #: sys-utils/mount.c:191
 #, c-format
@@ -19045,27 +19043,27 @@ msgstr "Alat za omogućavanje i onemogućavanje bežičnih uređaja.\n"
 #.
 #: sys-utils/rfkill.c:660
 msgid " help\n"
-msgstr " help\n"
+msgstr " help (pomoć)\n"
 
 #: sys-utils/rfkill.c:661
 msgid " event\n"
-msgstr " event\n"
+msgstr " event (događaj)\n"
 
 #: sys-utils/rfkill.c:662
 msgid " list   [identifier]\n"
-msgstr " list    [identifikator]\n"
+msgstr " list   [identifier] (popis [identifikator])\n"
 
 #: sys-utils/rfkill.c:663
 msgid " block   identifier\n"
-msgstr " block   identifikator\n"
+msgstr " block   identifier (blokiranje identifikator)\n"
 
 #: sys-utils/rfkill.c:664
 msgid " unblock identifier\n"
-msgstr " unblock identifikator\n"
+msgstr " unblock identifikator (deblokiranje identifikator)\n"
 
 #: sys-utils/rfkill.c:665
 msgid " toggle  identifier\n"
-msgstr " toggle  identifikator\n"
+msgstr " toggle  identifier   (šalter identifikator)\n"
 
 #: sys-utils/rtcwake.c:102
 msgid "Enter a system sleep state until a specified wakeup time.\n"
@@ -19334,7 +19332,7 @@ msgstr " -3, --3gb                ograniči na 3 GB korišteni adresni prostor\n
 
 #: sys-utils/setarch.c:115
 msgid "     --4gb                ignored (for backward compatibility only)\n"
-msgstr "     --4gb                (ignorira se; tu je samo zbog kompatibilnost)\n"
+msgstr "     --4gb                (zanemarena je; tu je samo zbog kompatibilnost)\n"
 
 #: sys-utils/setarch.c:116
 msgid "     --uname-2.6          turns on UNAME26\n"
@@ -20003,7 +20001,7 @@ msgstr ""
 #: sys-utils/swapon.c:607
 #, c-format
 msgid "%s: software suspend data detected. Rewriting the swap signature."
-msgstr "%s: otkriveni su podatci spavanja -- potpis je ponovno zapisan."
+msgstr "%s: otkriveni su podaci spavanja -- potpis je ponovno zapisan."
 
 #: sys-utils/swapon.c:677
 #, c-format
@@ -20018,17 +20016,17 @@ msgstr "%s: swapon nije uspio"
 #: sys-utils/swapon.c:760
 #, c-format
 msgid "%s: noauto option -- ignored"
-msgstr "%s: opcija noauto -- ignorira se"
+msgstr "%s: opcija noauto -- zanemarena je"
 
 #: sys-utils/swapon.c:782
 #, c-format
 msgid "%s: already active -- ignored"
-msgstr "%s: je već aktiv -- ignorira se"
+msgstr "%s: je već aktivna -- zanemarena je"
 
 #: sys-utils/swapon.c:788
 #, c-format
 msgid "%s: inaccessible -- ignored"
-msgstr "%s: nije dostupno -- ignorira se"
+msgstr "%s: nije dostupna -- zanemareno je"
 
 #: sys-utils/swapon.c:810
 msgid "Enable devices and files for paging and swapping.\n"
@@ -20064,7 +20062,7 @@ msgstr " -s, --summary               sažetak korištenja svih swap-uređaja (ZA
 
 #: sys-utils/swapon.c:820
 msgid "     --show[=<columns>]   display summary in definable table\n"
-msgstr "     --show[=<stupac>]       prikaz sažetka u tablici (koja se može definirati)\n"
+msgstr "     --show[=<stupac>]       sažetak u tablici (koja se može definirati)\n"
 
 #: sys-utils/swapon.c:821
 msgid "     --noheadings         don't print table heading (with --show)\n"
@@ -21301,7 +21299,7 @@ msgstr " -H, --host <hostname>         specificira hostname za prijavu\n"
 
 #: term-utils/agetty.c:2490
 msgid " -i, --noissue              do not display issue file\n"
-msgstr " -i, --noissue                 ne prikazati issue-datoteku\n"
+msgstr " -i, --noissue                 ne pokazati issue-datoteku\n"
 
 #: term-utils/agetty.c:2491
 msgid " -I, --init-string <string> set init string\n"
@@ -21687,7 +21685,7 @@ msgstr ">>> scriptlive: %s započinje izvršavati vaš typescript.\n"
 
 #: term-utils/scriptlive.c:284
 msgid "failed to allocate PTY handler"
-msgstr "nije uspjelo rezervirati memoriju za rukovatelja PTY"
+msgstr "nije uspjelo rezervirati memoriju za PTY rukovatelja"
 
 #: term-utils/scriptlive.c:363
 #, c-format
@@ -22316,7 +22314,7 @@ msgstr " -W, --table-wrap <stupci>        omota tekst u stupcima kad je to potre
 
 #: text-utils/column.c:679
 msgid " -L, --keep-empty-lines           don't ignore empty lines\n"
-msgstr " -L, --keep-empty-lines           ne zanemaruje prazne retke\n"
+msgstr " -L, --keep-empty-lines           ne zanemari prazne retke\n"
 
 #: text-utils/column.c:680
 msgid " -J, --json                       use JSON output format for table\n"
@@ -22796,7 +22794,7 @@ msgstr " -BROJ          količin (broj) redaka po stranici\n"
 
 #: text-utils/pg.c:239
 msgid " -c           clear screen before displaying\n"
-msgstr " -c             počisti konzolu prije prikazivanja\n"
+msgstr " -c             počisti konzolu prije pokazivanja\n"
 
 #: text-utils/pg.c:240
 msgid " -e           do not pause at end of a file\n"
@@ -22940,7 +22938,7 @@ msgstr " -t, -T, --terminal TERMINAL  koristi ovu vrstu terminala (umjesto $TERM
 
 #: text-utils/ul.c:130
 msgid " -i, --indicated              underlining is indicated via a separate line\n"
-msgstr " -i, --indicated              podcrtavanje je prikazano u zasebnom retku\n"
+msgstr " -i, --indicated              podcrtavanje je pokazano u zasebnom retku\n"
 
 #: text-utils/ul.c:503
 #, c-format
@@ -23252,7 +23250,7 @@ msgstr "terminal „%s“ nije poznat; koristit će se „dumb“ terminal"
 #~ " -d, --divisor <num>     speed up or slow down execution with time divisor\n"
 #~ " -m, --maxdelay <num>    wait at most this many seconds between updates\n"
 #~ msgstr ""
-#~ " -t, --timing <datoteka>      izlazna timing-datoteka s vremenskim podatcima\n"
+#~ " -t, --timing <datoteka>      izlazna timing-datoteka s vremenskim podacima\n"
 #~ " -s, --typescript <datoteka>  izlazna skript-datoteka sesije na terminalu\n"
 #~ " -d, --divisor <broj>         divizorom <broj> ubrza ili uspori reprodukciju\n"
 #~ " -m, --maxdelay <broj>        ne čeka više od <broj> sekundi između ažuriranja\n"
