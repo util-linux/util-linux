@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.38-rc2\n"
+"Project-Id-Version: util-linux 2.38-rc4\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-04 16:17+0100\n"
-"PO-Revision-Date: 2022-03-05 16:46+0900\n"
+"POT-Creation-Date: 2022-03-16 18:08+0100\n"
+"PO-Revision-Date: 2022-03-18 00:53+0900\n"
 "Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
 "Language-Team: Korean <translation-team-ko@googlegroups.com>\n"
 "Language: ko\n"
@@ -214,7 +214,7 @@ msgstr " 512 바이트 섹터 단위로 %-25s 크기 가져옴\n"
 #: disk-utils/fsck.minix.c:1336 disk-utils/isosize.c:155
 #: disk-utils/mkfs.bfs.c:175 disk-utils/mkfs.c:110 disk-utils/mkfs.minix.c:827
 #: disk-utils/swaplabel.c:180 misc-utils/wipefs.c:760
-#: sys-utils/blkdiscard.c:219 sys-utils/blkzone.c:487 sys-utils/tunelp.c:241
+#: sys-utils/blkdiscard.c:219 sys-utils/blkzone.c:495 sys-utils/tunelp.c:241
 #: sys-utils/zramctl.c:716 sys-utils/zramctl.c:742
 msgid "no device specified"
 msgstr "지정한 장치가 없습니다"
@@ -1142,7 +1142,7 @@ msgstr "장치 속성(섹터 크기와 수치 사양)은 지정한 장치 하나
 #: misc-utils/whereis.c:644 schedutils/chrt.c:442 schedutils/ionice.c:264
 #: schedutils/taskset.c:188 sys-utils/chcpu.c:355 sys-utils/chmem.c:429
 #: sys-utils/dmesg.c:1580 sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321
-#: sys-utils/losetup.c:916 sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656
+#: sys-utils/losetup.c:918 sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656
 #: sys-utils/mount.c:877 sys-utils/mount.c:885 sys-utils/mount.c:932
 #: sys-utils/mount.c:945 sys-utils/mount.c:1017 sys-utils/mountpoint.c:191
 #: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:258 sys-utils/swapon.c:1006
@@ -9763,7 +9763,7 @@ msgstr " -o, --output <목록>   지정 열 항목 출력\n"
 msgid " -r, --raw             use raw output format\n"
 msgstr " -r, --raw             원시 형식으로 출력\n"
 
-#: misc-utils/fincore.c:338 sys-utils/losetup.c:826
+#: misc-utils/fincore.c:338 sys-utils/losetup.c:828
 msgid "no file specified"
 msgstr "지정한 파일이 없습니다"
 
@@ -10281,7 +10281,7 @@ msgid "%s seems unsupported by the current kernel"
 msgstr "%s은(는) 아마도 현재 커널에서 지원하지 않는 것 같습니다"
 
 #: misc-utils/findmnt-verify.c:452
-msgid "reason uknown"
+msgid "reason unknown"
 msgstr "이유 알 수 없음"
 
 #: misc-utils/findmnt-verify.c:455 misc-utils/findmnt-verify.c:457
@@ -10650,8 +10650,8 @@ msgid "failed to parse maximum size"
 msgstr "최대 크기 해석 실패"
 
 #: misc-utils/hardlink.c:1262
-msgid "failed to cache size"
-msgstr "캐시 크기 해석 실패"
+msgid "failed to parse cache size"
+msgstr "캐시 용량 해석 실패"
 
 #: misc-utils/hardlink.c:1265
 msgid "failed to parse I/O size"
@@ -10662,33 +10662,33 @@ msgstr "입출력 크기 해석 실패"
 msgid "unsupported reflink mode; %s"
 msgstr "지원하지 않는 참조 링크 모드: %s"
 
-#: misc-utils/hardlink.c:1336
+#: misc-utils/hardlink.c:1338
 msgid "cannot register exit handler"
 msgstr "종료 핸들러를 등록할 수 없습니다"
 
-#: misc-utils/hardlink.c:1341
+#: misc-utils/hardlink.c:1343
 msgid "no directory or file specified"
 msgstr "지정한 디렉터리 또는 파일이 없습니다"
 
-#: misc-utils/hardlink.c:1347
+#: misc-utils/hardlink.c:1349
 #, c-format
 msgid "cannot initialize %s method, use 'memcmp' fallback"
 msgstr "%s 방식을 초기화할 수 없습니다. 'memcmp' 방식을 대신 사용합니다"
 
-#: misc-utils/hardlink.c:1352
+#: misc-utils/hardlink.c:1354
 msgid "failed to initialize files comparior"
 msgstr "파일 비교자 초기화 실패"
 
-#: misc-utils/hardlink.c:1364
+#: misc-utils/hardlink.c:1366
 msgid "Scanning [device/inode/links]:"
 msgstr "탐색 중 [장치/아이노드/링크]:"
 
-#: misc-utils/hardlink.c:1369 sys-utils/fstrim.c:96
+#: misc-utils/hardlink.c:1371 sys-utils/fstrim.c:96
 #, c-format
 msgid "cannot get realpath: %s"
 msgstr "실제 경로를 가져올 수 없습니다: %s"
 
-#: misc-utils/hardlink.c:1373
+#: misc-utils/hardlink.c:1375
 #, c-format
 msgid "cannot process %s"
 msgstr "%s을(를) 처리할 수 없습니다"
@@ -11684,7 +11684,7 @@ msgid " -Q, --filter <expr>   apply display filter\n"
 msgstr " -Q, --filter <표현식>   디스플레이 필터 적용\n"
 
 #: misc-utils/lsfd.c:1262
-msgid "     --debug-filter    dump the innternal data structure of filter and exit\n"
+msgid "     --debug-filter    dump the internal data structure of filter and exit\n"
 msgstr "     --debug-filter    필터의 내부 데이터 구조를 덤핑하고 나갑니다\n"
 
 #: misc-utils/lsfd.c:1263
@@ -11719,7 +11719,7 @@ msgstr "카운터 이름이 없습니다: -C/--counter %s"
 
 #: misc-utils/lsfd.c:1359
 #, c-format
-msgid "empty ecounter expression given: -C/--counter %s"
+msgid "empty counter expression given: -C/--counter %s"
 msgstr "빈 카운터 표현식을 설정함: -C/--counter %s"
 
 #: misc-utils/lsfd.c:1367
@@ -13234,7 +13234,7 @@ msgstr "오프셋 해석 실패"
 msgid "failed to parse step"
 msgstr "단계 횟수 해석 실패"
 
-#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:491
+#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:499
 #: sys-utils/fallocate.c:382 sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561
 #: sys-utils/umount.c:610
 msgid "unexpected number of arguments"
@@ -13255,7 +13255,7 @@ msgstr "%s: BLKSSZGET ioctl 실패"
 msgid "%s: offset %<PRIu64> is not aligned to sector size %i"
 msgstr "%s: %<PRIu64> 오프셋 값을 %i 섹터 크기에 맞추지 않았습니다"
 
-#: sys-utils/blkdiscard.c:249 sys-utils/blkzone.c:348
+#: sys-utils/blkdiscard.c:249 sys-utils/blkzone.c:356
 #, c-format
 msgid "%s: offset is greater than device size"
 msgstr "%s: 오프셋이 장치 크기보다 큽니다"
@@ -13326,7 +13326,7 @@ msgstr "%s: blkdev_get_sectors ioctl 실패"
 msgid "%s: offset is greater than or equal to device size"
 msgstr "%s: 오프셋이 장치 크기 보다 크거나 같습니다"
 
-#: sys-utils/blkzone.c:246 sys-utils/blkzone.c:338
+#: sys-utils/blkzone.c:246 sys-utils/blkzone.c:346
 #, c-format
 msgid "%s: unable to determine zone size"
 msgstr "%s: 영역 크기를 확인할 수 없습니다"
@@ -13346,82 +13346,87 @@ msgstr "0x%2$<PRIx64> 부터 영역 %1$d 개 찾음\n"
 msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, cap 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
 msgstr "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, cap 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
 
-#: sys-utils/blkzone.c:318
+#: sys-utils/blkzone.c:310
+#, c-format
+msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
+msgstr "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
+
+#: sys-utils/blkzone.c:326
 #, c-format
 msgid "0x%09<PRIx64>\n"
 msgstr "0x%09<PRIx64>\n"
 
-#: sys-utils/blkzone.c:343
+#: sys-utils/blkzone.c:351
 #, c-format
 msgid "%s: offset %<PRIu64> is not aligned to zone size %lu"
 msgstr "%s: %<PRIu64> 오프셋을 %lu 영역 크기에 정렬하지 않았습니다"
 
-#: sys-utils/blkzone.c:362
+#: sys-utils/blkzone.c:370
 #, c-format
 msgid "%s: number of sectors %<PRIu64> is not aligned to zone size %lu"
 msgstr "%s: %<PRIu64> 섹더 수를 %lu 영역 크기에 정렬하지 않았습니다"
 
-#: sys-utils/blkzone.c:370
+#: sys-utils/blkzone.c:378
 #, c-format
 msgid "%s: %s ioctl failed"
 msgstr "%s: %s ioctl 실패"
 
-#: sys-utils/blkzone.c:373
+#: sys-utils/blkzone.c:381
 #, c-format
 msgid "%s: successful %s of zones in range from %<PRIu64>, to %<PRIu64>"
 msgstr "%1$s: %3$<PRIu64> ~ %4$<PRIu64> 범위 영역의 %2$s 명령 처리 성공"
 
-#: sys-utils/blkzone.c:388
+#: sys-utils/blkzone.c:396
 #, c-format
 msgid " %s <command> [options] <device>\n"
 msgstr " %s <명령> [<옵션>] <장치>\n"
 
-#: sys-utils/blkzone.c:391
+#: sys-utils/blkzone.c:399
 msgid "Run zone command on the given block device.\n"
 msgstr "주어진 블록 장치에서 영역 명령을 실행합니다.\n"
 
-#: sys-utils/blkzone.c:398
+#: sys-utils/blkzone.c:406
 msgid " -o, --offset <sector>  start sector of zone to act (in 512-byte sectors)\n"
 msgstr " -o, --offset <섹터>  동작을 실행할 영역 시작 섹터(512 바이트 섹터 단위)\n"
 
-#: sys-utils/blkzone.c:399
+#: sys-utils/blkzone.c:407
 msgid " -l, --length <sectors> maximum sectors to act (in 512-byte sectors)\n"
 msgstr " -l, --length <섹터> 동작을 실행할 최데 섹터 수(512 바이트 섹터 단위)\n"
 
-#: sys-utils/blkzone.c:400
+#: sys-utils/blkzone.c:408
 msgid " -c, --count <number>   maximum number of zones\n"
 msgstr " -c, --count <숫자>   최대 영역 수\n"
 
-#: sys-utils/blkzone.c:401
+#: sys-utils/blkzone.c:409
 msgid " -f, --force            enforce on block devices used by the system\n"
 msgstr " -f, --force            시스템에서 블록 장치를 사용하도록 강제\n"
 
-#: sys-utils/blkzone.c:402
+#: sys-utils/blkzone.c:410
 msgid " -v, --verbose          display more details\n"
 msgstr " -v, --verbose          더 자세히 출력\n"
 
-#: sys-utils/blkzone.c:407
+#: sys-utils/blkzone.c:415
 msgid "<sector> and <sectors>"
 msgstr "<섹터> 와 <여러섹터>"
 
-#: sys-utils/blkzone.c:445
+#: sys-utils/blkzone.c:453
 #, c-format
 msgid "%s is not valid command name"
 msgstr "%s은(는) 적절한 명령 이름이 아닙니다"
 
-#: sys-utils/blkzone.c:457
+#: sys-utils/blkzone.c:465
 msgid "failed to parse number of zones"
 msgstr "영역 갯수 해석 실패"
 
-#: sys-utils/blkzone.c:461
+#: sys-utils/blkzone.c:469
 msgid "failed to parse number of sectors"
 msgstr "섹터 수 해석 실패"
 
-#: sys-utils/blkzone.c:465
+#: sys-utils/blkzone.c:473
 msgid "failed to parse zone offset"
 msgstr "영역 오프셋 해석 실패"
 
-#: sys-utils/blkzone.c:484 sys-utils/setsid.c:92
+#: sys-utils/blkzone.c:492 sys-utils/setsid.c:92
 msgid "no command specified"
 msgstr "지정 명령이 없습니다"
 
@@ -16650,7 +16655,7 @@ msgstr "루프 장치 검사 실패"
 msgid "%s: failed to check for conflicting loop devices"
 msgstr "%s: 루프 장치 중복 존재 여부 검사 실패"
 
-#: sys-utils/losetup.c:555 sys-utils/losetup.c:879
+#: sys-utils/losetup.c:555 sys-utils/losetup.c:881
 msgid "cannot find an unused loop device"
 msgstr "미사용 루프 장치를 찾을 수 없습니다"
 
@@ -16663,36 +16668,36 @@ msgstr "%s: 보조 파일 활용 실패"
 msgid "failed to parse logical block size"
 msgstr "논리 블록 크기 해석 실패"
 
-#: sys-utils/losetup.c:671 sys-utils/losetup.c:681 sys-utils/losetup.c:807
-#: sys-utils/losetup.c:821 sys-utils/losetup.c:859
+#: sys-utils/losetup.c:671 sys-utils/losetup.c:681 sys-utils/losetup.c:809
+#: sys-utils/losetup.c:823 sys-utils/losetup.c:861
 #, c-format
 msgid "%s: failed to use device"
 msgstr "%s: 장치 사용 실패"
 
-#: sys-utils/losetup.c:818
+#: sys-utils/losetup.c:820
 msgid "no loop device specified"
 msgstr "지정한 루프 장치가 없습니다"
 
-#: sys-utils/losetup.c:833
+#: sys-utils/losetup.c:835
 #, c-format
 msgid "the options %s are allowed during loop device setup only"
 msgstr "%s 옵션은 루프 장치 설정시에만 활용할 수 있습니다"
 
-#: sys-utils/losetup.c:838
+#: sys-utils/losetup.c:840
 msgid "the option --offset is not allowed in this context"
 msgstr "--offset 옵션은 이 컨텍스트에서 활용할 수 없습니다"
 
-#: sys-utils/losetup.c:900
+#: sys-utils/losetup.c:902
 #, c-format
 msgid "%s: set capacity failed"
 msgstr "%s: 용량 설정 실패"
 
-#: sys-utils/losetup.c:906
+#: sys-utils/losetup.c:908
 #, c-format
 msgid "%s: set direct io failed"
 msgstr "%s: 직접 입출력 설정 실패"
 
-#: sys-utils/losetup.c:912
+#: sys-utils/losetup.c:914
 #, c-format
 msgid "%s: set logical block size failed"
 msgstr "%s: 논리 블록 크기 설정 실패"
@@ -22589,6 +22594,9 @@ msgstr "terminfo 읽는 중 문제가 있습니다"
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr "`%s' 터미널을 알 수 없어 `dumb'를 기본으로 함"
 
+#~ msgid "failed to cache size"
+#~ msgstr "캐시 크기 해석 실패"
+
 #~ msgid "Comparing %s to %s"
 #~ msgstr "%s와(과) %s 비교"
 
@@ -22765,9 +22773,6 @@ msgstr "`%s' 터미널을 알 수 없어 `dumb'를 기본으로 함"
 
 #~ msgid "--reset-on-fork option is supported for SCHED_FIFO and SCHED_RR policies only"
 #~ msgstr "--reset-on-fork 옵션은 SCHED_FIFO 과 SCHED_RR 정책만 지원합니다"
-
-#~ msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
-#~ msgstr "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
 
 #~ msgid "%s: successfull %s of zones in range from %<PRIu64>, to %<PRIu64>"
 #~ msgstr "%1$s: 영역의 %3$<PRIu64> ~ %4$<PRIu64> 범위내 %2$s 명령 수행 성공"
