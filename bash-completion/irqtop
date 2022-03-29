@@ -9,6 +9,9 @@ _irqtop_module()
 			COMPREPLY=( $(compgen -W "auto enable disable" -- $cur) )
 			return 0
 			;;
+		'-C'|'--cpu-list')
+			return 0
+			;;
 		'-d'|'--delay')
 			COMPREPLY=( $(compgen -W "secs" -- $cur) )
 			return 0
@@ -35,6 +38,7 @@ _irqtop_module()
 			;;
 	esac
 	OPTS="	--cpu-stat
+		--cpu-list
 		--delay
 		--sort
 		--output

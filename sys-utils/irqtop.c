@@ -57,6 +57,7 @@
 #include <libsmartcols.h>
 
 #include "closestream.h"
+#include "cpuset.h"
 #include "monotonic.h"
 #include "pathnames.h"
 #include "strutils.h"
@@ -83,6 +84,8 @@ struct irqtop_ctl {
 
 	struct itimerspec timer;
 	struct irq_stat	*prev_stat;
+	size_t setsize;
+	cpu_set_t *cpuset;
 
 	enum irqtop_cpustat_mode cpustat_mode;
 	unsigned int request_exit:1;
@@ -111,7 +114,8 @@ static int update_screen(struct irqtop_ctl *ctl, struct irq_output *out)
 	char timestr[64], *data, *data0, *p;
 
 	/* make irqs table */
-	table = get_scols_table(out, ctl->prev_stat, &stat, ctl->softirq);
+	table = get_scols_table(out, ctl->prev_stat, &stat, ctl->softirq, ctl->setsize,
+				ctl->cpuset);
 	if (!table) {
 		ctl->request_exit = 1;
 		return 1;
@@ -122,7 +126,8 @@ static int update_screen(struct irqtop_ctl *ctl, struct irq_output *out)
 
 	/* make cpus table */
 	if (ctl->cpustat_mode != IRQTOP_CPUSTAT_DISABLE) {
-		cpus = get_scols_cpus_table(out, ctl->prev_stat, stat);
+		cpus = get_scols_cpus_table(out, ctl->prev_stat, stat, ctl->setsize,
+					    ctl->cpuset);
 		scols_table_reduce_termwidth(cpus, 1);
 		if (ctl->cpustat_mode == IRQTOP_CPUSTAT_AUTO)
 			scols_table_enable_nowrap(cpus, 1);
@@ -261,6 +266,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, stdout);
 	fputs(_(" -c, --cpu-stat <mode> show per-cpu stat (auto, enable, disable)\n"), stdout);
+	fputs(_(" -C, --cpu-list <list> specify cpus in list format\n"), stdout);
 	fputs(_(" -d, --delay <secs>   delay updates\n"), stdout);
 	fputs(_(" -o, --output <list>  define which output columns to use\n"), stdout);
 	fputs(_(" -s, --sort <column>  specify sort column\n"), stdout);
@@ -290,6 +296,7 @@ static void parse_args(	struct irqtop_ctl *ctl,
 	const char *outarg = NULL;
 	static const struct option longopts[] = {
 		{"cpu-stat", required_argument, NULL, 'c'},
+		{"cpu-list", required_argument, NULL, 'C'},
 		{"delay", required_argument, NULL, 'd'},
 		{"sort", required_argument, NULL, 's'},
 		{"output", required_argument, NULL, 'o'},
@@ -300,7 +307,7 @@ static void parse_args(	struct irqtop_ctl *ctl,
 	};
 	int o;
 
-	while ((o = getopt_long(argc, argv, "c:d:o:s:ShV", longopts, NULL)) != -1) {
+	while ((o = getopt_long(argc, argv, "c:C:d:o:s:ShV", longopts, NULL)) != -1) {
 		switch (o) {
 		case 'c':
 			if (!strcmp(optarg, "auto"))
@@ -311,6 +318,21 @@ static void parse_args(	struct irqtop_ctl *ctl,
 				ctl->cpustat_mode = IRQTOP_CPUSTAT_DISABLE;
 			else
 				errx(EXIT_FAILURE, _("unsupported mode '%s'"), optarg);
+			break;
+		case 'C':
+			{
+				int ncpus = get_max_number_of_cpus();
+				if (ncpus <= 0)
+					errx(EXIT_FAILURE, _("cannot determine NR_CPUS; aborting"));
+
+				ctl->cpuset = cpuset_alloc(ncpus, &ctl->setsize, NULL);
+				if (!ctl->cpuset)
+					err(EXIT_FAILURE, _("cpuset_alloc failed"));
+
+				if (cpulist_parse(optarg, ctl->cpuset, ctl->setsize, 0))
+					errx(EXIT_FAILURE, _("failed to parse CPU list: %s"),
+						optarg);
+			}
 			break;
 		case 'd':
 			{
@@ -388,6 +410,7 @@ int main(int argc, char **argv)
 
 	free_irqstat(ctl.prev_stat);
 	free(ctl.hostname);
+	cpuset_free(ctl.cpuset);
 
 	if (is_tty)
 		tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_tty);

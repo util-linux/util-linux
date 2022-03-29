@@ -23,6 +23,7 @@
 #include <errno.h>
 #include <limits.h>
 #include <locale.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -228,10 +229,19 @@ static char *remove_repeated_spaces(char *str)
 	return str;
 }
 
+static bool cpu_in_list(int cpu, size_t setsize, cpu_set_t *cpuset)
+{
+	/* no -C/--cpu-list specified, use all the CPUs */
+	if (!cpuset)
+		return true;
+
+	return CPU_ISSET_S(cpu, setsize, cpuset);
+}
+
 /*
  * irqinfo - parse the system's interrupts
  */
-static struct irq_stat *get_irqinfo(int softirq)
+static struct irq_stat *get_irqinfo(int softirq, size_t setsize, cpu_set_t *cpuset)
 {
 	FILE *irqfile;
 	char *line = NULL, *tmp;
@@ -292,9 +302,11 @@ static struct irq_stat *get_irqinfo(int softirq)
 
 			if (sscanf(tmp, " %10lu", &count) != 1)
 				continue;
-			curr->total += count;
-			cpu->total += count;
-			stat->total_irq += count;
+			if (cpu_in_list(index, setsize, cpuset)) {
+				curr->total += count;
+				cpu->total += count;
+				stat->total_irq += count;
+			}
 
 			tmp += 11;
 		}
@@ -422,13 +434,15 @@ void set_sort_func_by_key(struct irq_output *out, char c)
 
 struct libscols_table *get_scols_cpus_table(struct irq_output *out,
 					struct irq_stat *prev,
-					struct irq_stat *curr)
+					struct irq_stat *curr,
+					size_t setsize,
+					cpu_set_t *cpuset)
 {
 	struct libscols_table *table;
 	struct libscols_column *cl;
 	struct libscols_line *ln;
 	char colname[sizeof(stringify_value(LONG_MAX))];
-	size_t i;
+	size_t i, j;
 
 	if (prev) {
 		for (i = 0; i < curr->nr_active_cpu; i++) {
@@ -454,6 +468,8 @@ struct libscols_table *get_scols_cpus_table(struct irq_output *out,
 		scols_table_new_column(table, "", 0, SCOLS_FL_RIGHT);
 
 	for (i = 0; i < curr->nr_active_cpu; i++) {
+		if (!cpu_in_list(i, setsize, cpuset))
+			continue;
 		snprintf(colname, sizeof(colname), "cpu%zu", i);
 		cl = scols_table_new_column(table, colname, 0, SCOLS_FL_RIGHT);
 		if (cl == NULL) {
@@ -469,12 +485,14 @@ struct libscols_table *get_scols_cpus_table(struct irq_output *out,
 	if (!ln || (!out->json && scols_line_set_data(ln, 0, "%irq:") != 0))
 		goto err;
 
-	for (i = 0; i < curr->nr_active_cpu; i++) {
+	for (i = 0, j = 0; i < curr->nr_active_cpu; i++) {
 		struct irq_cpu *cpu = &curr->cpus[i];
 		char *str;
 
+		if (!cpu_in_list(i, setsize, cpuset))
+			continue;
 		xasprintf(&str, "%0.1f", (double)((long double) cpu->total / (long double) curr->total_irq * 100.0));
-		if (str && scols_line_refer_data(ln, i + 1, str) != 0)
+		if (str && scols_line_refer_data(ln, ++j, str) != 0)
 			goto err;
 	}
 
@@ -484,14 +502,16 @@ struct libscols_table *get_scols_cpus_table(struct irq_output *out,
 	if (!ln || (!out->json && scols_line_set_data(ln, 0, _("%delta:")) != 0))
 		goto err;
 
-	for (i = 0; i < curr->nr_active_cpu; i++) {
+	for (i = 0, j = 0; i < curr->nr_active_cpu; i++) {
 		struct irq_cpu *cpu = &curr->cpus[i];
 		char *str;
 
+		if (!cpu_in_list(i, setsize, cpuset))
+			continue;
 		if (!curr->delta_irq)
 			continue;
 		xasprintf(&str, "%0.1f", (double)((long double) cpu->delta / (long double) curr->delta_irq * 100.0));
-		if (str && scols_line_refer_data(ln, i + 1, str) != 0)
+		if (str && scols_line_refer_data(ln, ++j, str) != 0)
 			goto err;
 	}
 
@@ -504,7 +524,9 @@ struct libscols_table *get_scols_cpus_table(struct irq_output *out,
 struct libscols_table *get_scols_table(struct irq_output *out,
 					      struct irq_stat *prev,
 					      struct irq_stat **xstat,
-					      int softirq)
+					      int softirq,
+					      size_t setsize,
+					      cpu_set_t *cpuset)
 {
 	struct libscols_table *table;
 	struct irq_info *result;
@@ -513,7 +535,7 @@ struct libscols_table *get_scols_table(struct irq_output *out,
 	size_t i;
 
 	/* the stats */
-	stat = get_irqinfo(softirq);
+	stat = get_irqinfo(softirq, setsize, cpuset);
 	if (!stat)
 		return NULL;
 

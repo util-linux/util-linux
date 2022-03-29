@@ -42,7 +42,7 @@ static int print_irq_data(struct irq_output *out, int softirq)
 {
 	struct libscols_table *table;
 
-	table = get_scols_table(out, NULL, NULL, softirq);
+	table = get_scols_table(out, NULL, NULL, softirq, 0, NULL);
 	if (!table)
 		return -1;
 

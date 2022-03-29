@@ -28,6 +28,9 @@ Specify which output columns to print. Use *--help* to get a list of all support
 *-c*, *--cpu-stat* _mode_::
 Show per-cpu statistics by specified mode. Available modes are: *auto*, *enable*, *disable*. The default option *auto* detects the width of window, then shows the per-cpu statistics if the width of window is large enouth to show a full line of statistics.
 
+*-C*, *--cpu-list* _list_::
+Specify cpus in list format to show.
+
 *-d*, *--delay* _seconds_::
 Update interrupt output every _seconds_ intervals.
 

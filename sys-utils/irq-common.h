@@ -3,6 +3,7 @@
 
 #include "c.h"
 #include "nls.h"
+#include "cpuset.h"
 
 /* supported columns */
 enum {
@@ -63,10 +64,14 @@ void set_sort_func_by_key(struct irq_output *out, const char c);
 struct libscols_table *get_scols_table(struct irq_output *out,
                                               struct irq_stat *prev,
                                               struct irq_stat **xstat,
-                                              int softirq);
+                                              int softirq,
+                                              size_t setsize,
+                                              cpu_set_t *cpuset);
 
 struct libscols_table *get_scols_cpus_table(struct irq_output *out,
                                         struct irq_stat *prev,
-                                        struct irq_stat *curr);
+                                        struct irq_stat *curr,
+                                        size_t setsize,
+                                        cpu_set_t *cpuset);
 
 #endif /* UTIL_LINUX_H_IRQ_COMMON */
