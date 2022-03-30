@@ -53,7 +53,10 @@
 #include "monotonic.h"
 #include "optutils.h"
 #include "fileeq.h"
-#include "statfs_magic.h"
+
+#ifdef USE_REFLINK
+# include "statfs_magic.h"
+#endif
 
 #include <regex.h>		/* regcomp(), regexec() */
 
