@@ -294,6 +294,7 @@ static int column_set_flag(struct libscols_column *cl, int fl)
 static int has_unnamed(const char *list)
 {
 	char **all, **one;
+	int rc = 0;
 
 	if (!list)
 		return 0;
@@ -305,13 +306,15 @@ static int has_unnamed(const char *list)
 	all = split_or_error(list, NULL);
 	if (all) {
 		STRV_FOREACH(one, all) {
-			if (strcmp(*one, "-") == 0)
-				return 1;
+			if (strcmp(*one, "-") == 0) {
+				rc = 1;
+				break;
+			}
 		}
 		strv_free(all);
 	}
 
-	return 0;
+	return rc;
 }
 
 static void apply_columnflag_from_list(struct column_control *ctl, const char *list,
@@ -804,7 +807,8 @@ int main(int argc, char **argv)
 
 		switch(c) {
 		case 'C':
-			strv_extend(&ctl.tab_columns, optarg);
+			if (strv_extend(&ctl.tab_columns, optarg))
+				err_oom();
 			break;
 		case 'c':
 			if (strcmp(optarg, "unlimited") == 0)
