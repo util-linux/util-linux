@@ -887,7 +887,7 @@ static int set_uint_value(char **optstr, unsigned int num,
  * @value: pointer to the beginning of the uid value
  * @valsz: size of the value
  * @next: returns pointer to the next option (optional argument)
-
+ *
  * Translates "username" or "useruid" to the real UID.
  *
  * For example:

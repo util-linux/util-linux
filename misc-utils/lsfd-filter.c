@@ -573,7 +573,7 @@ static struct token *parser_read(struct parser *parser)
 		c0 = parser_getc(parser);
 		if (c0 == '|') {
 			t->type = TOKEN_OP2;
-			t->val.op2= OP2_OR;
+			t->val.op2 = OP2_OR;
 			break;
 		}
 		snprintf(parser->errmsg, ERRMSG_LEN,
@@ -597,19 +597,19 @@ static struct token *parser_read(struct parser *parser)
 			} else if (strcmp(t->val.str, "or") == 0) {
 				free(t->val.str);
 				t->type = TOKEN_OP2;
-				t->val.op2= OP2_OR;
+				t->val.op2 = OP2_OR;
 			} else if (strcmp(t->val.str, "and") == 0) {
 				free(t->val.str);
 				t->type = TOKEN_OP2;
-				t->val.op2= OP2_AND;
+				t->val.op2 = OP2_AND;
 			} else if (strcmp(t->val.str, "eq") == 0) {
 				free(t->val.str);
 				t->type = TOKEN_OP2;
-				t->val.op2= OP2_EQ;
+				t->val.op2 = OP2_EQ;
 			} else if (strcmp(t->val.str, "ne") == 0) {
 				free(t->val.str);
 				t->type = TOKEN_OP2;
-				t->val.op2= OP2_NE;
+				t->val.op2 = OP2_NE;
 			} else if (strcmp(t->val.str, "lt") == 0) {
 				free(t->val.str);
 				t->type = TOKEN_OP2;

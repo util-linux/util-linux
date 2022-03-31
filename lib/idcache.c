@@ -97,7 +97,7 @@ static void add_id(struct idcache *ic, char *name, unsigned long int id)
 
 void add_uid(struct idcache *cache, unsigned long int id)
 {
-	struct identry *ent= get_id(cache, id);
+	struct identry *ent = get_id(cache, id);
 
 	if (!ent) {
 		struct passwd *pw = getpwuid((uid_t) id);

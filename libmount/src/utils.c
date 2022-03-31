@@ -596,7 +596,7 @@ int mnt_get_uid(const char *username, uid_t *uid)
 		return -ENOMEM;
 
 	if (!getpwnam_r(username, &pwd, buf, UL_GETPW_BUFSIZ, &pw) && pw) {
-		*uid= pw->pw_uid;
+		*uid = pw->pw_uid;
 		rc = 0;
 	} else {
 		DBG(UTILS, ul_debug(
@@ -623,7 +623,7 @@ int mnt_get_gid(const char *groupname, gid_t *gid)
 		return -ENOMEM;
 
 	if (!getgrnam_r(groupname, &grp, buf, UL_GETPW_BUFSIZ, &gr) && gr) {
-		*gid= gr->gr_gid;
+		*gid = gr->gr_gid;
 		rc = 0;
 	} else {
 		DBG(UTILS, ul_debug(

@@ -230,8 +230,8 @@ static int filename_to_tokens(const char *str,
 
 	/* parse utilname */
 	p = term_start ? term_start : type_start;
-	*name =  str;
-	*namesz	= p - str - 1;
+	*name = str;
+	*namesz = p - str - 1;
 
 	return 0;
 }

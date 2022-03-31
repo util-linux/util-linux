@@ -475,7 +475,7 @@ static int detect_consoles_from_cmdline(struct list_head *consoles)
 		goto done;
 	}
 
-	words= cmdline;
+	words = cmdline;
 	dir = opendir("/dev");
 	if (!dir)
 		goto done;
