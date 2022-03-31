@@ -766,7 +766,9 @@ int main(int argc, char *argv[])
 	const char *newdir = NULL;
 	pid_t pid_bind = 0, pid_idmap = 0;
 	pid_t pid = 0;
+#ifdef UL_HAVE_PIDFD
 	int fd_parent_pid = -1;
+#endif
 	int fd_idmap, fd_bind = -1;
 	sigset_t sigset, oldsigset;
 	int status;
@@ -956,13 +958,16 @@ int main(int argc, char *argv[])
 			sigaddset(&sigset, SIGTERM) != 0 ||
 			sigprocmask(SIG_BLOCK, &sigset, &oldsigset) != 0)
 			err(EXIT_FAILURE, _("sigprocmask block failed"));
-
-		/* force child forking before mountspace binding
-		 * so pid_for_children is populated */
-		fd_parent_pid = pidfd_open(getpid(), 0);
-		if (0 > fd_parent_pid)
-			err(EXIT_FAILURE, _("pidfd_open failed"));
-
+#ifdef UL_HAVE_PIDFD
+		if (kill_child_signo != 0) {
+			/* make a connection to the original process (parent) */
+			fd_parent_pid = pidfd_open(getpid(), 0);
+			if (0 > fd_parent_pid)
+				err(EXIT_FAILURE, _("pidfd_open failed"));
+		}
+#endif
+		/* force child forking before mountspace binding so
+		 * pid_for_children is populated */
 		pid = fork();
 
 		switch(pid) {
@@ -1017,28 +1022,29 @@ int main(int argc, char *argv[])
 	if (kill_child_signo != 0) {
 		if (prctl(PR_SET_PDEATHSIG, kill_child_signo) < 0)
 			err(EXIT_FAILURE, "prctl failed");
+#ifdef UL_HAVE_PIDFD
+		/* Use poll() to check that there is still the original parent. */
+		if (fd_parent_pid != -1) {
+			struct pollfd pollfds[1] = {
+				{ .fd = fd_parent_pid, .events = POLLIN	}
+			};
+			int nfds = poll(pollfds, 1, 0);
 
-		struct pollfd pollfds[1] = {
-			{
-				.fd = fd_parent_pid,
-				.events = POLLIN,
-			}
-                };
+			if (0 > nfds)
+				err(EXIT_FAILURE, "poll parent pidfd failed");
 
-		int nfds = poll(pollfds, 1, 0);
-		if (0 > nfds)
-			err(EXIT_FAILURE, "poll parent pidfd failed");
+			/* If the child was re-parented before prctl(2) was called, the
+			 * new parent will likely not be interested in the precise exit
+			 * status of the orphan.
+			 */
+			if (nfds)
+				exit(EXIT_FAILURE);
 
-		/* If the child was re-parented before prctl(2) was called,
-		 * the new parent will likely not be interested in the
-                 * precise exit status of the orphan.
-		 */
-		if (nfds)
-			exit(EXIT_FAILURE);
+			close(fd_parent_pid);
+			fd_parent_pid = -1;
+		}
+#endif
 	}
-
-	close(fd_parent_pid);
-	fd_parent_pid = -1;
 
         if (mapuser != (uid_t) -1 && !usermap)
 		map_id(_PATH_PROC_UIDMAP, mapuser, real_euid);
