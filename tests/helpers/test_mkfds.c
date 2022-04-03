@@ -393,8 +393,18 @@ static void open_rw_chrdev(const struct factory *factory, struct fdesc fdescs[],
 		err(EXIT_FAILURE, "failed to open: %s", ARG_STRING(chrdev));
 	free_arg(&chrdev);
 
+	if (fd != fdescs[0].fd) {
+		if (dup2(fd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(fd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", fd, fdescs[0].fd);
+		}
+		close(fd);
+	}
+
 	fdescs[0] = (struct fdesc){
-		.fd    = fd,
+		.fd    = fdescs[0].fd,
 		.close = close_fdesc,
 		.data  = NULL
 	};
@@ -450,8 +460,18 @@ static void open_with_opath(const struct factory *factory, struct fdesc fdescs[]
 		err(EXIT_FAILURE, "failed to open with O_PATH: %s", ARG_STRING(path));
 	free_arg(&path);
 
+	if (fd != fdescs[0].fd) {
+		if (dup2(fd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(fd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", fd, fdescs[0].fd);
+		}
+		close(fd);
+	}
+
 	fdescs[0] = (struct fdesc){
-		.fd    = fd,
+		.fd    = fdescs[0].fd,
 		.close = close_fdesc,
 		.data  = NULL
 	};
@@ -466,8 +486,18 @@ static void open_ro_blkdev(const struct factory *factory, struct fdesc fdescs[],
 		err(EXIT_FAILURE, "failed to open: %s", ARG_STRING(blkdev));
 	free_arg(&blkdev);
 
+	if (fd != fdescs[0].fd) {
+		if (dup2(fd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(fd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", fd, fdescs[0].fd);
+		}
+		close(fd);
+	}
+
 	fdescs[0] = (struct fdesc){
-		.fd    = fd,
+		.fd    = fdescs[0].fd,
 		.close = close_fdesc,
 		.data  = NULL,
 	};
