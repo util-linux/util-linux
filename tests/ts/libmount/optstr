@@ -112,14 +112,14 @@ ts_init_subtest "apply-user"
 ts_run $TESTPROG --apply --user "noexec,nosuid,loop=/dev/looop0" 0x408 &> $TS_OUTPUT
 ts_finalize_subtest
 
-ts_init_subtest "apply-user-x"
+ts_init_subtest "apply-user-small-x"
 # Use userspace options map (--user), remove X-* and loop=, keep unknown 'something' and
 # keep by flags specified x-*
 ts_run $TESTPROG --apply --user \
 	"something,loop=/dev/looop0,x-gvfs-hide,x-gdu.hide,x-canary,X-foo" 0x00002000 &> $TS_OUTPUT
 ts_finalize_subtest
 
-ts_init_subtest "apply-user-X"
+ts_init_subtest "apply-user-large-X"
 # Use userspace options map (--user), remove x-* and loop=, keep unknown 'something' and
 # keep by flags specified X-*
 ts_run $TESTPROG --apply --user \
