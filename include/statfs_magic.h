@@ -1,7 +1,9 @@
 #ifndef UTIL_LINUX_STATFS_MAGIC_H
 #define UTIL_LINUX_STATFS_MAGIC_H
 
-#include <sys/statfs.h>
+#ifdef HAVE_SYS_STATFS_H
+# include <sys/statfs.h>
+#endif
 
 /*
  * If possible then don't depend on internal libc __SWORD_TYPE type.

@@ -38,7 +38,7 @@
 #include <ctype.h>		/* tolower() */
 #include <sys/ioctl.h>
 
-#if defined(HAVE_LINUX_FIEMAP_H)
+#if defined(HAVE_LINUX_FIEMAP_H) && defined(HAVE_SYS_VFS_H)
 # include <linux/fs.h>
 # include <linux/fiemap.h>
 # ifdef FICLONE

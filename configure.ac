@@ -346,6 +346,7 @@ AC_CHECK_HEADERS([ \
 	sys/socket.h \
 	sys/sockio.h \
 	sys/stat.h \
+	sys/statfs.h \
 	sys/swap.h \
 	sys/syscall.h \
 	sys/sysmacros.h \
@@ -355,6 +356,7 @@ AC_CHECK_HEADERS([ \
 	sys/types.h \
 	sys/ucred.h \
 	sys/un.h \
+	sys/vfs.h \
 	sys/xattr.h \
 	unistd.h \
 	utmp.h \
