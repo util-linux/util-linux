@@ -56,10 +56,8 @@ endif
 if HAVE_OPENAT
 if HAVE_DIRFD
 libcommon_la_SOURCES += lib/path.c
-if LINUX
 libcommon_la_SOURCES += lib/sysfs.c
 libcommon_la_SOURCES += lib/procfs.c
-endif
 endif
 endif
 
