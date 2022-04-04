@@ -438,8 +438,7 @@ static void parser_read_str(struct parser *parser, struct token *token, char del
 				return;
 			}
 			escape = false;
-		}
-		else if (c == delimiter)
+		} else if (c == delimiter)
 			return;
 		else if (c == '\\')
 			escape = true;
