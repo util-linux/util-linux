@@ -275,6 +275,16 @@ static void make_pipe(const struct factory *factory, struct fdesc fdescs[], pid_
 		     "nonblock", ARG_STRING(nonblock));
 	}
 
+	/* Make extra pipe descriptors for making pipe objects connected
+	 * with fds more than 2.
+	 * See https://github.com/util-linux/util-linux/pull/1622
+	 * about the background of the requirement. */
+	struct arg rdup = decode_arg("rdup", factory->params, argc, argv);
+	struct arg wdup = decode_arg("wdup", factory->params, argc, argv);
+	int xpd[2];
+	xpd [0] = ARG_INTEGER(rdup);
+	xpd [1] = ARG_INTEGER(wdup);
+
 	for (int i = 0; i < 2; i++) {
 		if (ARG_STRING(nonblock)[i] == '-')
 			continue;
@@ -323,6 +333,27 @@ static void make_pipe(const struct factory *factory, struct fdesc fdescs[], pid_
 			.close = close_fdesc,
 			.data  = NULL
 		};
+	}
+
+	/* Make extra pipe descriptors. */
+	for (int i = 0; i < 2; i++) {
+		if (xpd[i] >= 0) {
+			if (dup2(fdescs[i].fd, xpd[i]) < 0) {
+				int e = errno;
+				close(fdescs[0].fd);
+				close(fdescs[1].fd);
+				if (i > 0 && xpd[0] >= 0)
+					close(xpd[0]);
+				errno = e;
+				err(EXIT_FAILURE, "failed to dup %d -> %d",
+				    fdescs[i].fd, xpd[i]);
+			}
+			fdescs[i + 2] = (struct fdesc){
+				.fd = xpd[i],
+				.close = close_fdesc,
+				.data = NULL
+			};
+		}
 	}
 }
 
@@ -535,7 +566,7 @@ static const struct factory factories[] = {
 		.desc = "making pair of fds with pipe(2)",
 		.priv = false,
 		.N    = 2,
-		.EX_N = 0,
+		.EX_N = 2,
 		.fork = false,
 		.make = make_pipe,
 		.params = (struct parameter []) {
@@ -544,6 +575,18 @@ static const struct factory factories[] = {
 				.type = PTYPE_STRING,
 				.desc = "set nonblock flag (\"--\", \"r-\", \"-w\", or \"rw\")",
 				.defv.string = "--",
+			},
+			{
+				.name = "rdup",
+				.type = PTYPE_INTEGER,
+				.desc = "file descriptor for duplicating the pipe input",
+				.defv.integer = -1,
+			},
+			{
+				.name = "wdup",
+				.type = PTYPE_INTEGER,
+				.desc = "file descriptor for duplicating the pipe output",
+				.defv.integer = -1,
 			},
 			PARAM_END
 		},
