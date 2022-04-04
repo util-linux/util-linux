@@ -590,7 +590,7 @@ static void collect_fd_files(struct path_cxt *pc, struct proc *proc)
 	}
 }
 
-static void parse_maps_line(char *buf, struct proc *proc)
+static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 {
 	uint64_t start, end, offset, ino;
 	unsigned long major, minor;
@@ -599,12 +599,6 @@ static void parse_maps_line(char *buf, struct proc *proc)
 	struct file *f, *prev;
 	char *path, modestr[5];
 	dev_t devno;
-
-	/* ignore non-path entries */
-	path = strchr(buf, '/');
-	if (!path)
-		return;
-	rtrim_whitespace((unsigned char *) path);
 
 	/* read rest of the map */
 	if (sscanf(buf, "%"SCNx64		/* start */
@@ -616,6 +610,10 @@ static void parse_maps_line(char *buf, struct proc *proc)
 
 			&start, &end, modestr, &offset,
 			&major, &minor, &ino) != 7)
+		return;
+
+	/* Skip private anonymous mappings. */
+	if (major == 0 && minor == 0 && ino == 0)
 		return;
 
 	devno = makedev(major, minor);
@@ -631,14 +629,34 @@ static void parse_maps_line(char *buf, struct proc *proc)
 	if (prev && prev->stat.st_dev == devno && prev->stat.st_ino == ino) {
 		f = copy_file(prev);
 		f->association = -assoc;
-	} else {
+	} else if ((path = strchr(buf, '/'))) {
+		rtrim_whitespace((unsigned char *) path);
 		if (stat(path, &sb) < 0)
-			return;
+			/* If a file is mapped but deleted from the file system,
+			 * "stat by the file name" may not work. In that case,
+			 */
+			goto try_map_files;
 		f = new_file(proc, stat2class(&sb));
 		if (!f)
 			return;
 
 		file_set_path(f, &sb, path, -assoc);
+	} else {
+		/* As used in tcpdump, AF_PACKET socket can be mmap'ed. */
+		char map_file[sizeof("map_files/000000000000-ffffffffffff")];
+		char sym[PATH_MAX] = { '\0' };
+
+	try_map_files:
+		snprintf(map_file, sizeof(map_file), "map_files/%"SCNx64"-%"SCNx64, start, end);
+		if (ul_path_stat(pc, &sb, 0, map_file) < 0)
+			return;
+		if (ul_path_readlink(pc, sym, sizeof(sym), map_file) < 0)
+			return;
+		f = new_file(proc, stat2class(&sb));
+		if (!f)
+			return;
+
+		file_set_path(f, &sb, sym, -assoc);
 	}
 
 	if (modestr[0] == 'r')
@@ -665,7 +683,7 @@ static void collect_mem_files(struct path_cxt *pc, struct proc *proc)
 		return;
 
 	while (fgets(buf, sizeof(buf), fp))
-		parse_maps_line(buf, proc);
+		parse_maps_line(pc, buf, proc);
 
 	fclose(fp);
 }
