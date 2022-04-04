@@ -213,8 +213,9 @@ struct factory {
 	const char *name;	/* [-a-zA-Z0-9_]+ */
 	const char *desc;
 	bool priv;		/* the root privilege is needed to make fd(s) */
-#define MAX_N 3
+#define MAX_N 5
 	int  N;			/* the number of fds this factory makes */
+	int  EX_N;		/* fds made optionally */
 	bool fork;		/* whether this factory make a child process or not */
 	void (*make)(const struct factory *, struct fdesc[], pid_t *, int, char **);
 	const struct parameter * params;
@@ -510,6 +511,7 @@ static const struct factory factories[] = {
 		.desc = "read-only regular file",
 		.priv = false,
 		.N    = 1,
+		.EX_N = 0,
 		.fork = false,
 		.make = open_ro_regular_file,
 		.params = (struct parameter []) {
@@ -533,6 +535,7 @@ static const struct factory factories[] = {
 		.desc = "making pair of fds with pipe(2)",
 		.priv = false,
 		.N    = 2,
+		.EX_N = 0,
 		.fork = false,
 		.make = make_pipe,
 		.params = (struct parameter []) {
@@ -550,6 +553,7 @@ static const struct factory factories[] = {
 		.desc = "directory",
 		.priv = false,
 		.N    = 1,
+		.EX_N = 0,
 		.fork = false,
 		.make = open_directory,
 		.params = (struct parameter []) {
@@ -573,6 +577,7 @@ static const struct factory factories[] = {
 		.desc = "character device with O_RDWR flag",
 		.priv = false,
 		.N    = 1,
+		.EX_N = 0,
 		.fork = false,
 		.make = open_rw_chrdev,
 		.params = (struct parameter []) {
@@ -590,6 +595,7 @@ static const struct factory factories[] = {
 		.desc = "AF_UNIX socket pair created with socketpair(2)",
 		.priv = false,
 		.N    = 2,
+		.EX_N = 0,
 		.fork = false,
 		.make = make_socketpair,
 		.params = (struct parameter []) {
@@ -607,6 +613,7 @@ static const struct factory factories[] = {
 		.desc = "symbolic link itself opened with O_PATH",
 		.priv = false,
 		.N    = 1,
+		.EX_N = 0,
 		.fork = false,
 		.make = open_with_opath,
 		.params = (struct parameter []) {
@@ -624,6 +631,7 @@ static const struct factory factories[] = {
 		.desc = "block device with O_RDONLY flag",
 		.priv = true,
 		.N = 1,
+		.EX_N = 0,
 		.fork = false,
 		.make = open_ro_blkdev,
 		.params = (struct parameter []) {
@@ -756,12 +764,16 @@ int main(int argc, char **argv)
 	factory = find_factory(argv[optind]);
 	if (!factory)
 		errx(EXIT_FAILURE, _("no such factory: %s"), argv[optind]);
-	assert(factory->N < MAX_N);
+	assert(factory->N + factory->EX_N < MAX_N);
 	optind++;
 
 	if ((optind + factory->N) > argc)
 		errx(EXIT_FAILURE, _("not enough file descriptors given for %s"),
 		     factory->name);
+
+	for (int i = 0; i < MAX_N; i++)
+		fdescs[i].fd = -1;
+
 	for (int i = 0; i < factory->N; i++) {
 		char *str = argv[optind + i];
 		long fd;
@@ -798,8 +810,9 @@ int main(int argc, char **argv)
 	if (!cont)
 		pause();
 
-	for (int i = 0; i < factory->N; i++)
-		fdescs[i].close(fdescs[i].fd, fdescs[i].data);
+	for (int i = 0; i < factory->N + factory->EX_N; i++)
+		if (fdescs[i].fd >= 0)
+			fdescs[i].close(fdescs[i].fd, fdescs[i].data);
 
 	exit(EXIT_SUCCESS);
 }
