@@ -438,9 +438,11 @@ static void parser_read_str(struct parser *parser, struct token *token, char del
 				return;
 			}
 			escape = false;
-		} else if (c == delimiter)
+		} else if (c == delimiter) {
+			if (token->val.str == NULL)
+				token->val.str = xstrdup("");
 			return;
-		else if (c == '\\')
+		} else if (c == '\\')
 			escape = true;
 		else
 			xstrputc(&token->val.str, c);
