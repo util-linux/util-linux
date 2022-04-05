@@ -1066,10 +1066,20 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
 		rc = mnt_context_prepare_target(cxt);
 	if (!rc)
 		rc = mnt_context_prepare_helper(cxt, "mount", NULL);
+
+	if (!rc && mnt_context_is_onlyonce(cxt)) {
+		int mounted = 0;
+		rc = mnt_context_is_fs_mounted(cxt, cxt->fs, &mounted);
+		if (rc == 0 && mounted == 1) {
+			rc = -MNT_ERR_ONLYONCE;
+			goto end;
+		}
+	}
 	if (rc) {
 		DBG(CXT, ul_debugobj(cxt, "mount: preparing failed"));
 		goto end;
 	}
+
 	cxt->flags |= MNT_FL_PREPARED;
 
 end:
@@ -1410,6 +1420,9 @@ int mnt_context_next_mount(struct libmnt_context *cxt,
 
 	if (!cxt || !fs || !itr)
 		return -EINVAL;
+
+	/* ingore --onlyonce, it's default behavior for --all */
+	mnt_context_enable_onlyonce(cxt, 0);
 
 	rc = mnt_context_get_fstab(cxt, &fstab);
 	if (rc)
@@ -1805,6 +1818,10 @@ int mnt_context_get_mount_excode(
 			if (buf)
 				snprintf(buf, bufsz, _("failed to switch namespace"));
 			return MNT_EX_SYSERR;
+		case -MNT_ERR_ONLYONCE:
+			if (buf)
+				snprintf(buf, bufsz, _("filesystem already mounted"));
+			return MNT_EX_FAIL;
 		default:
 			return mnt_context_get_generic_excode(rc, buf, bufsz, _("mount failed: %m"));
 		}

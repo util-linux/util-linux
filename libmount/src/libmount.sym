@@ -366,3 +366,8 @@ MOUNT_2_37 {
 MOUNT_2_38 {
 	mnt_fs_is_regularfs;
 } MOUNT_2_37;
+
+MOUNT_2_39 {
+	mnt_context_enable_onlyonce;
+	mnt_context_is_lazy;
+} MOUNT_2_38;

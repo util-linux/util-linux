@@ -372,6 +372,9 @@ Use the specified mount options. The _opts_ argument is a comma-separated list. 
 +
 For more details, see the *FILESYSTEM-INDEPENDENT MOUNT OPTIONS* and *FILESYSTEM-SPECIFIC MOUNT OPTIONS* sections.
 
+*--onlyonce*::
+Forces mount command to check if the filesystem is already mounted. This behavior is the default for *--all*; otherwise, it depends on the kernel filesystem driver. Some filesystems may be mounted more than once on the same mount point (e.g. tmpfs).
+
 *--options-mode* _mode_::
 Controls how to combine options from _fstab_/_mtab_ with options from the command line. _mode_ can be one of *ignore*, *append*, *prepend* or *replace*. For example, *append* means that options from _fstab_ are appended to options from the command line. The default value is *prepend* -- it means command line options are evaluated after _fstab_ options. Note that the last option wins if there are conflicting ones.
 

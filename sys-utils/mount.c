@@ -513,6 +513,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	"     --options-source-force\n"
 	"                         force use of options from fstab/mtab\n"));
 	fprintf(out, _(
+	"     --onlyonce          check if filesystem is already mounted\n"));
+	fprintf(out, _(
 	" -o, --options <list>    comma-separated list of mount options\n"
 	" -O, --test-opts <list>  limit the set of filesystems (use with -a)\n"
 	" -r, --read-only         mount the filesystem read-only (same as -o ro)\n"
@@ -647,7 +649,8 @@ int main(int argc, char **argv)
 		MOUNT_OPT_SOURCE,
 		MOUNT_OPT_OPTMODE,
 		MOUNT_OPT_OPTSRC,
-		MOUNT_OPT_OPTSRC_FORCE
+		MOUNT_OPT_OPTSRC_FORCE,
+		MOUNT_OPT_ONLYONCE
 	};
 
 	static const struct option longopts[] = {
@@ -686,6 +689,7 @@ int main(int argc, char **argv)
 		{ "target",           required_argument, NULL, MOUNT_OPT_TARGET      },
 		{ "target-prefix",    required_argument, NULL, MOUNT_OPT_TARGET_PREFIX },
 		{ "source",           required_argument, NULL, MOUNT_OPT_SOURCE      },
+		{ "onlyonce",         no_argument,       NULL, MOUNT_OPT_ONLYONCE    },
 		{ "options-mode",     required_argument, NULL, MOUNT_OPT_OPTMODE     },
 		{ "options-source",   required_argument, NULL, MOUNT_OPT_OPTSRC      },
 		{ "options-source-force",   no_argument, NULL, MOUNT_OPT_OPTSRC_FORCE},
@@ -891,7 +895,9 @@ int main(int argc, char **argv)
 		case MOUNT_OPT_OPTSRC_FORCE:
 			optmode |= MNT_OMODE_FORCE;
 			break;
-
+		case MOUNT_OPT_ONLYONCE:
+			mnt_context_enable_onlyonce(cxt, 1);
+			break;
 		case 'h':
 			mnt_free_context(cxt);
 			usage();

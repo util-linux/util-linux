@@ -35,6 +35,7 @@ mnt_context_enable_force
 mnt_context_enable_fork
 mnt_context_enable_lazy
 mnt_context_enable_loopdel
+mnt_context_enable_onlyonce
 mnt_context_enable_rdonly_umount
 mnt_context_enable_rwonly_mount
 mnt_context_enable_sloppy
@@ -77,6 +78,7 @@ mnt_context_is_loopdel
 mnt_context_is_nocanonicalize
 mnt_context_is_nohelpers
 mnt_context_is_nomtab
+mnt_context_is_onlyonce
 mnt_context_is_parent
 mnt_context_is_rdonly_umount
 mnt_context_is_restricted

@@ -570,6 +570,31 @@ int mnt_context_is_lazy(struct libmnt_context *cxt)
 }
 
 /**
+ * mnt_context_enable_onlyonce:
+ * @cxt: mount context
+ * @enable: TRUE or FALSE
+ *
+ * Enable/disable only-once mount (check if FS is not already mounted).
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_context_enable_onlyonce(struct libmnt_context *cxt, int enable)
+{
+	return set_flag(cxt, MNT_FL_ONLYONCE, enable);
+}
+
+/**
+ * mnt_context_is_lazy:
+ * @cxt: mount context
+ *
+ * Returns: 1 if lazy umount is enabled or 0
+ */
+int mnt_context_is_onlyonce(struct libmnt_context *cxt)
+{
+	return cxt->flags & MNT_FL_ONLYONCE ? 1 : 0;
+}
+
+/**
  * mnt_context_enable_fork:
  * @cxt: mount context
  * @enable: TRUE or FALSE

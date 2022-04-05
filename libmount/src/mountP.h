@@ -368,6 +368,7 @@ struct libmnt_context
 #define MNT_FL_FORK		(1 << 12)
 #define MNT_FL_NOSWAPMATCH	(1 << 13)
 #define MNT_FL_RWONLY_MOUNT	(1 << 14)	/* explicit mount -w; never try read-only  */
+#define MNT_FL_ONLYONCE		(1 << 15)
 
 #define MNT_FL_MOUNTDATA	(1 << 20)
 #define MNT_FL_TAB_APPLIED	(1 << 21)	/* mtab/fstab merged to cxt->fs */
