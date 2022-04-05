@@ -1920,7 +1920,11 @@ UL_REQUIRES_LINUX([lsipc])
 UL_REQUIRES_BUILD([lsipc], [libsmartcols])
 AM_CONDITIONAL([BUILD_LSIPC], [test "x$build_lsipc" = xyes])
 
-UL_BUILD_INIT([lsns], [check])
+AC_ARG_ENABLE([lsns],
+  AS_HELP_STRING([--disable-lsns], [do not build lsns]),
+  [], [UL_DEFAULT_ENABLE([lsns], [check])]
+)
+UL_BUILD_INIT([lsns])
 UL_REQUIRES_LINUX([lsns])
 UL_REQUIRES_BUILD([lsns], [libsmartcols])
 UL_REQUIRES_BUILD([lsns], [libmount])
