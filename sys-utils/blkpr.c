@@ -19,8 +19,6 @@
  * This program uses IOC_PR_XXX ioctl to do persistent reservations
  * operation on a block device if the device supports it.
  */
-
-
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -64,30 +62,17 @@ static struct type_string pr_flag[] = {
 	{PR_FL_IGNORE_KEY, "ignore-key"}
 };
 
-static char *all_type_string(struct type_string *ts, int nmem)
+static void print_type(FILE *out, struct type_string *ts, size_t nmem)
 {
-	char *prtypes, *tmp;
-	size_t total = 0, length;
-	int i;
+	size_t i;
 
 	for (i = 0; i < nmem; i++) {
-		total += (strlen(ts[i].str) + 1);
+		fprintf(out, "%s", ts[i].str);
+		fputs(i + 2 < nmem ? ", " :
+		      i + 1 < nmem ? _(", and ") : "\n", out);
 	}
-
-	tmp = prtypes = xmalloc(total);
-	for (i = 0; i < nmem; i++) {
-		strcpy(tmp, ts[i].str);
-		length = strlen(ts[i].str);
-
-		tmp[length++] = '|';
-		tmp += length;
-	}
-
-	/* strip the last '|' */
-	prtypes[total - 1] = '\0';
-
-	return prtypes;
 }
+
 
 static int parse_type_by_str(struct type_string *ts, int nmem, char *pattern)
 {
@@ -102,17 +87,18 @@ static int parse_type_by_str(struct type_string *ts, int nmem, char *pattern)
 	return -1;
 }
 
-#define SUPPORTED(XX) \
-	static char *supported_##XX(void) \
-	{ return all_type_string(XX, ARRAY_SIZE(XX)); }
+
+#define PRINT_SUPPORTED(XX) \
+	static void print_##XX(FILE *out) \
+	{ print_type(out, XX, ARRAY_SIZE(XX)); }
 
 #define PARSE(XX) \
 	static int parse_##XX(char *pattern) \
 	{ return parse_type_by_str(XX, ARRAY_SIZE(XX), pattern); }
 
-SUPPORTED(pr_type);
-SUPPORTED(pr_operation);
-SUPPORTED(pr_flag);
+PRINT_SUPPORTED(pr_type);
+PRINT_SUPPORTED(pr_operation);
+PRINT_SUPPORTED(pr_flag);
 
 PARSE(pr_type);
 PARSE(pr_operation);
@@ -176,6 +162,7 @@ static int do_pr(char *path, uint64_t key, uint64_t oldkey, int op, int type, in
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
+
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] <device>\n"), program_invocation_short_name);
@@ -184,16 +171,28 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Persistent reservations on a device.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fprintf(out, _(" -o, --operation <string>  supported operation [%s]\n"), supported_pr_operation());
-	fputs(_(" -k, --key <num>           key to operate\n"), out);
-	fputs(_(" -K, --oldkey <num>        old key to operate\n"), out);
-	fprintf(out, _(" -f, --flag <string>       supported flag [%s]\n"), supported_pr_flag());
-	fprintf(out, _(" -t, --type <string>       supported type [%s]\n"), supported_pr_type());
+	fputs(_(" -o, --operation <oper>   operation of persistent reservations\n"), out);
+	fputs(_(" -k, --key <num>          key to operate\n"), out);
+	fputs(_(" -K, --oldkey <num>       old key to operate\n"), out);
+	fputs(_(" -f, --flag <flag>        operation flag\n"), out);
+	fputs(_(" -t, --type <type>        operation type\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(21));
+	printf(USAGE_HELP_OPTIONS(26));
 
 	fputs(USAGE_ARGUMENTS, out);
+
+	fputs(_(" <oper> is an operation, available operations:\n"), out);
+	fputs("        ", out);
+	print_pr_operation(out);
+
+	fputs(_(" <flag> is an operation flag, available flags:\n"), out);
+	fputs("        ", out);
+	print_pr_flag(out);
+
+	fputs(_(" <type> is an operation type, available types:\n"), out);
+	fputs("        ", out);
+	print_pr_type(out);
 
 	printf(USAGE_MAN_TAIL("blkpr(8)"));
 	exit(EXIT_SUCCESS);
