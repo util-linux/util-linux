@@ -40,7 +40,9 @@
 
 #ifdef HAVE_LINUX_NSFS_H
 # include <linux/nsfs.h>
-# define USE_NS_GET_API	1
+# if defined(NS_GET_NSTYPE) && defined(NS_GET_OWNER_UID)
+#  define USE_NS_GET_API	1
+# endif
 #endif
 
 #include "pathnames.h"
