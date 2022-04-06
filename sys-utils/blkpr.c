@@ -95,13 +95,13 @@ static int parse_type_by_str(struct type_string *ts, int nmem, char *pattern)
 	static int parse_##XX(char *pattern) \
 	{ return parse_type_by_str(XX, ARRAY_SIZE(XX), pattern); }
 
-PRINT_SUPPORTED(pr_type);
-PRINT_SUPPORTED(pr_operation);
-PRINT_SUPPORTED(pr_flag);
+PRINT_SUPPORTED(pr_type)
+PRINT_SUPPORTED(pr_operation)
+PRINT_SUPPORTED(pr_flag)
 
-PARSE(pr_type);
-PARSE(pr_operation);
-PARSE(pr_flag);
+PARSE(pr_type)
+PARSE(pr_operation)
+PARSE(pr_flag)
 
 static int do_pr(char *path, uint64_t key, uint64_t oldkey, int op, int type, int flag)
 {
