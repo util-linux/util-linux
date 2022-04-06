@@ -79,9 +79,8 @@ static int parse_type_by_str(struct type_string *ts, int nmem, char *pattern)
 	int i;
 
 	for (i = 0; i < nmem; i++) {
-		if (!strcmp(ts[i].str, pattern)) {
+		if (!strcmp(ts[i].str, pattern))
 			return ts[i].type;
-		}
 	}
 
 	return -1;
@@ -113,9 +112,8 @@ static int do_pr(char *path, uint64_t key, uint64_t oldkey, int op, int type, in
 	int fd, ret;
 
 	fd = open(path, O_RDWR);
-	if (fd < 0) {
+	if (fd < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), path);
-	}
 
 	switch (op) {
 	case IOC_PR_REGISTER:
@@ -150,11 +148,10 @@ static int do_pr(char *path, uint64_t key, uint64_t oldkey, int op, int type, in
 	}
 
 	close(fd);
-	if (ret < 0) {
+	if (ret < 0)
 		err(EXIT_FAILURE, _("pr ioctl failed"));
-	} else if (ret > 0) {
+	if (ret > 0)
 		errx(EXIT_FAILURE, _("error code 0x%x, for more detailed information see specification of device model."), ret);
-	}
 
 	return ret;
 }
@@ -234,21 +231,18 @@ int main(int argc, char **argv)
 			break;
 		case 'o':
 			operation = parse_pr_operation(optarg);
-			if (operation < 0) {
+			if (operation < 0)
 				err(EXIT_FAILURE, _("unknown operation"));
-			}
 			break;
 		case 't':
 			type = parse_pr_type(optarg);
-			if (type < 0) {
+			if (type < 0)
 				err(EXIT_FAILURE, _("unknown type"));
-			}
 			break;
 		case 'f':
 			flag = parse_pr_flag(optarg);
-			if (flag < 0) {
+			if (flag < 0)
 				err(EXIT_FAILURE, _("unknown flag"));
-			}
 			break;
 
 		case 'h':
@@ -260,9 +254,8 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (optind == argc) {
+	if (optind == argc)
 		errx(EXIT_FAILURE, _("no device specified"));
-	}
 
 	path = argv[optind++];
 	if (optind != argc) {
