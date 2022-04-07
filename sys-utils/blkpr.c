@@ -37,29 +37,77 @@
 struct type_string {
 	int type;
 	char *str;
+	char *desc;
 };
 
 /* This array should keep align with enum pr_type of linux/types.h */
 static struct type_string pr_type[] = {
-	{PR_WRITE_EXCLUSIVE,           "write-exclusive"},
-	{PR_EXCLUSIVE_ACCESS,          "exclusive-access"},
-	{PR_WRITE_EXCLUSIVE_REG_ONLY,  "write-exclusive-reg-only"},
-	{PR_EXCLUSIVE_ACCESS_REG_ONLY, "exclusive-access-reg-only"},
-	{PR_WRITE_EXCLUSIVE_ALL_REGS,  "write-exclusive-all-regs"},
-	{PR_EXCLUSIVE_ACCESS_ALL_REGS, "exclusive-access-all-regs"}
+	{PR_WRITE_EXCLUSIVE,           "write-exclusive",
+	"Only the initiator that owns the reservation can write to the\n"
+	"\t\tdevice. Any initiator can read from the device.\n"},
+
+	{PR_EXCLUSIVE_ACCESS,          "exclusive-access",
+	"Only the initiator that owns the reservation can access the device.\n"},
+
+	{PR_WRITE_EXCLUSIVE_REG_ONLY,  "write-exclusive-reg-only",
+	"Only initiators with a registered key can write to the device,\n"
+	"\t\tAny initiator can read from the device.\n"},
+
+	{PR_EXCLUSIVE_ACCESS_REG_ONLY, "exclusive-access-reg-only",
+	"Only initiators with a registered key can access the device.\n"},
+
+	{PR_WRITE_EXCLUSIVE_ALL_REGS,  "write-exclusive-all-regs",
+	"Only initiators with a registered key can write to the device.\n"
+	"\t\tAny initiator can read from the device.\n"
+	"\t\tAll initiators with a registered key are considered reservation holders.\n"
+	"\t\tPlease reference the SPC spec on the meaning of a reservation\n"
+	"\t\tholder if you want to use this type.\n"},
+
+	{PR_EXCLUSIVE_ACCESS_ALL_REGS, "exclusive-access-all-regs",
+	"Only initiators with a registered key can access the device.\n"
+	"\t\tAll initiators with a registered key are considered reservation holders.\n"
+	"\t\tPlease reference the SPC spec on the meaning of a reservation\n"
+	"\t\tholder if you want to use this type.\n"}
 };
 
 static struct type_string pr_command[] = {
-	{IOC_PR_REGISTER,      "register"},
-	{IOC_PR_RESERVE,       "reserve"},
-	{IOC_PR_RELEASE,       "release"},
-	{IOC_PR_PREEMPT,       "preempt"},
-	{IOC_PR_PREEMPT_ABORT, "preempt-abort"},
-	{IOC_PR_CLEAR,         "clear"},
+	{IOC_PR_REGISTER,      "register",
+	"This command registers a new reservation if the key argument\n"
+	"\t\tis non-null. If no existing reservation exists oldkey must be zero,\n"
+	"\t\tif an existing reservation should be replaced oldkey must contain\n"
+	"\t\tthe old reservation key.\n"
+	"\t\tIf the key argument is 0 it unregisters the existing reservation passed\n"
+	"\t\tin oldkey.\n"},
+
+	{IOC_PR_RESERVE,       "reserve",
+	"This command reserves the device and thus restricts access for other\n"
+	"\t\tdevices based on the type argument.  The key argument must be the existing\n"
+	"\t\treservation key for the device as acquired by the register, preempt,\n"
+	"\t\tpreempt-abort commands.\n"},
+
+	{IOC_PR_RELEASE,       "release",
+	"This command releases the reservation specified by key and flags\n"
+	"\t\tand thus removes any access restriction implied by it.\n"},
+
+	{IOC_PR_PREEMPT,       "preempt",
+	"This command releases the existing reservation referred to by\n"
+	"\t\told_key and replaces it with a new reservation of type for the\n"
+	"\t\treservation key key.\n"},
+
+	{IOC_PR_PREEMPT_ABORT, "preempt-abort",
+	"This command works like preempt except that it also aborts\n"
+	"\t\tany outstanding command sent over a connection identified by oldkey.\n"},
+
+	{IOC_PR_CLEAR,         "clear",
+	"This command unregisters both key and any other reservation key\n"
+	"\t\tregistered with the device and drops any existing reservation.\n"},
 };
 
 static struct type_string pr_flag[] = {
-	{PR_FL_IGNORE_KEY, "ignore-key"}
+	{PR_FL_IGNORE_KEY, "ignore-key",
+	"Ignore the existing reservation key.  This is commonly supported for\n"
+	"\t\tregister command, and some implementation may support the flag for\n"
+	"\t\treserve command.\n"}
 };
 
 static void print_type(FILE *out, struct type_string *ts, size_t nmem)
@@ -67,9 +115,7 @@ static void print_type(FILE *out, struct type_string *ts, size_t nmem)
 	size_t i;
 
 	for (i = 0; i < nmem; i++) {
-		fprintf(out, "%s", ts[i].str);
-		fputs(i + 2 < nmem ? ", " :
-		      i + 1 < nmem ? _(", and ") : "\n", out);
+		fprintf(out, "\t%s: %s\n", ts[i].str, ts[i].desc);
 	}
 }
 
@@ -180,15 +226,12 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_ARGUMENTS, out);
 
 	fputs(_(" <cmd> is an command, available command:\n"), out);
-	fputs("        ", out);
 	print_pr_command(out);
 
 	fputs(_(" <flag> is a command flag, available flags:\n"), out);
-	fputs("        ", out);
 	print_pr_flag(out);
 
 	fputs(_(" <type> is a command type, available types:\n"), out);
-	fputs("        ", out);
 	print_pr_type(out);
 
 	printf(USAGE_MAN_TAIL("blkpr(8)"));
