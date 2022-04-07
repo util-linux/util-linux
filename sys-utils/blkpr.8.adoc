@@ -22,15 +22,15 @@ The _device_ argument is the pathname of the block device.
 
 == OPTIONS
 
-*-o*, *--operation* _operation_::
-The operation of persistent reservations, supported operations are *register*, *reserve*, *release*, *preempt*,
+*-c*, *--command* _command_::
+The command of persistent reservations, supported commands are *register*, *reserve*, *release*, *preempt*,
 *preempt-abort*, and *clear*.
 
 *-k*, *--key* _key_::
-The key the operation should operate on.
+The key the command should operate on.
 
 *-K*, *--oldkey* _oldkey_::
-The old key the operation should operate on.
+The old key the command should operate on.
 
 *-f*, *--flag* _flag_::
 Supported flag is *ignore-key*.

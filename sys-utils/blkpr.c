@@ -1,7 +1,7 @@
 /*
  * blkpr.c -- persistent reservations on a block device.
  *
- * Copyright (C) 2021 zhenwei pi <pizhenwei@bytedance.com>
+ * Copyright (C) 2021-2022 zhenwei pi <pizhenwei@bytedance.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * This program uses IOC_PR_XXX ioctl to do persistent reservations
- * operation on a block device if the device supports it.
+ * This program uses IOC_PR_XXX ioctl to run persistent reservations
+ * command on a block device if the device supports it.
  */
 #include <string.h>
 #include <unistd.h>
@@ -49,7 +49,7 @@ static struct type_string pr_type[] = {
 	{PR_EXCLUSIVE_ACCESS_ALL_REGS, "exclusive-access-all-regs"}
 };
 
-static struct type_string pr_operation[] = {
+static struct type_string pr_command[] = {
 	{IOC_PR_REGISTER,      "register"},
 	{IOC_PR_RESERVE,       "reserve"},
 	{IOC_PR_RELEASE,       "release"},
@@ -96,11 +96,11 @@ static int parse_type_by_str(struct type_string *ts, int nmem, char *pattern)
 	{ return parse_type_by_str(XX, ARRAY_SIZE(XX), pattern); }
 
 PRINT_SUPPORTED(pr_type)
-PRINT_SUPPORTED(pr_operation)
+PRINT_SUPPORTED(pr_command)
 PRINT_SUPPORTED(pr_flag)
 
 PARSE(pr_type)
-PARSE(pr_operation)
+PARSE(pr_command)
 PARSE(pr_flag)
 
 static int do_pr(char *path, uint64_t key, uint64_t oldkey, int op, int type, int flag)
@@ -144,7 +144,7 @@ static int do_pr(char *path, uint64_t key, uint64_t oldkey, int op, int type, in
 		break;
 	default:
 		errno = EINVAL;
-		err(EXIT_FAILURE, _("unknown operation"));
+		err(EXIT_FAILURE, _("unknown command"));
 	}
 
 	close(fd);
@@ -168,26 +168,26 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Persistent reservations on a device.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -o, --operation <oper>   operation of persistent reservations\n"), out);
+	fputs(_(" -c, --command <cmd>      command of persistent reservations\n"), out);
 	fputs(_(" -k, --key <num>          key to operate\n"), out);
 	fputs(_(" -K, --oldkey <num>       old key to operate\n"), out);
-	fputs(_(" -f, --flag <flag>        operation flag\n"), out);
-	fputs(_(" -t, --type <type>        operation type\n"), out);
+	fputs(_(" -f, --flag <flag>        command flag\n"), out);
+	fputs(_(" -t, --type <type>        command type\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(26));
 
 	fputs(USAGE_ARGUMENTS, out);
 
-	fputs(_(" <oper> is an operation, available operations:\n"), out);
+	fputs(_(" <cmd> is an command, available command:\n"), out);
 	fputs("        ", out);
-	print_pr_operation(out);
+	print_pr_command(out);
 
-	fputs(_(" <flag> is an operation flag, available flags:\n"), out);
+	fputs(_(" <flag> is a command flag, available flags:\n"), out);
 	fputs("        ", out);
 	print_pr_flag(out);
 
-	fputs(_(" <type> is an operation type, available types:\n"), out);
+	fputs(_(" <type> is a command type, available types:\n"), out);
 	fputs("        ", out);
 	print_pr_type(out);
 
@@ -200,12 +200,12 @@ int main(int argc, char **argv)
 	char c;
 	char *path;
 	uint64_t key = 0, oldkey = 0;
-	int operation = -1, type = -1, flag = 0;
+	int command = -1, type = -1, flag = 0;
 
 	static const struct option longopts[] = {
 	    { "help",            no_argument,       NULL, 'h' },
 	    { "version",         no_argument,       NULL, 'V' },
-	    { "operation",       required_argument, NULL, 'o' },
+	    { "command",         required_argument, NULL, 'c' },
 	    { "key",             required_argument, NULL, 'k' },
 	    { "oldkey",          required_argument, NULL, 'K' },
 	    { "flag",            required_argument, NULL, 'f' },
@@ -219,7 +219,7 @@ int main(int argc, char **argv)
 	close_stdout_atexit();
 
 	errno = EINVAL;
-	while ((c = getopt_long(argc, argv, "hVo:k:K:f:t:", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "hVc:k:K:f:t:", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'k':
 			key = strtosize_or_err(optarg,
@@ -229,10 +229,10 @@ int main(int argc, char **argv)
 			oldkey = strtosize_or_err(optarg,
 					_("failed to parse old key"));
 			break;
-		case 'o':
-			operation = parse_pr_operation(optarg);
-			if (operation < 0)
-				err(EXIT_FAILURE, _("unknown operation"));
+		case 'c':
+			command = parse_pr_command(optarg);
+			if (command < 0)
+				err(EXIT_FAILURE, _("unknown command"));
 			break;
 		case 't':
 			type = parse_pr_type(optarg);
@@ -263,7 +263,7 @@ int main(int argc, char **argv)
 		errtryhelp(EXIT_FAILURE);
 	}
 
-	do_pr(path, key, oldkey, operation, type, flag);
+	do_pr(path, key, oldkey, command, type, flag);
 
 	return EXIT_SUCCESS;
 }
