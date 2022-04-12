@@ -167,7 +167,7 @@ static struct lscpu_coldesc coldescs_cache[] =
 	[COL_CACHE_WAYS]       = { "WAYS", N_("ways of associativity"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
 	[COL_CACHE_ALLOCPOL]   = { "ALLOC-POLICY", N_("allocation policy") },
 	[COL_CACHE_WRITEPOL]   = { "WRITE-POLICY", N_("write policy") },
-	[COL_CACHE_PHYLINE]    = { "PHY-LINE", N_("number of physical cache line per cache t"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
+	[COL_CACHE_PHYLINE]    = { "PHY-LINE", N_("number of physical cache line per cache tag"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
 	[COL_CACHE_SETS]       = { "SETS", N_("number of sets in the cache; set lines has the same cache index"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
 	[COL_CACHE_COHERENCYSIZE] = { "COHERENCY-SIZE", N_("minimum amount of data in bytes transferred from memory to cache"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER }
 };
