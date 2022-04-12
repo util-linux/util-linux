@@ -72,7 +72,7 @@ test_uuidd_sources = files(
   'test_uuidd.c',
 )
 
-if build_uuidd
+if build_uuidd and systemd.found()
   uuidd_service = configure_file(
     input : 'uuidd.service.in',
     output : 'uuidd.service',
