@@ -270,6 +270,8 @@ endif
 
 if BUILD_PIPESZ
 bin_PROGRAMS += pipesz
+MANPAGES += misc-utils/pipesz.1
+dist_noinst_DATA += misc-utils/pipesz.1.adoc
 pipesz_SOURCES = misc-utils/pipesz.c
 pipesz_LDADD = $(LDADD) libcommon.la
 pipesz_CFLAGS = $(AM_CFLAGS)
