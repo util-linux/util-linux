@@ -2122,13 +2122,14 @@ static int gpt_write_pmbr(struct fdisk_context *cxt)
 		pmbr->partition_record[0].size_in_lba =
 			cpu_to_le32((uint32_t) (cxt->total_sectors - 1ULL));
 
+	/* Read the current PMBR and compare it with the new, don't write if
+	 * the same. */
 	current = malloc(sizeof(*current));
 	if (!current)
 		goto do_write;
 
 	rc = gpt_read(cxt, GPT_PMBR_LBA * cxt->sector_size,
 		      current, cxt->sector_size);
-
 	if (!rc)
 		rc = memcmp(pmbr, current, sizeof(*current));
 
