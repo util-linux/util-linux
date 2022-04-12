@@ -2694,6 +2694,7 @@ exe = executable(
 if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['misc-utils/pipesz.1.adoc']
+  bashcompletions += ['pipesz']
 endif
 
 exe = executable(

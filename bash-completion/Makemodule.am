@@ -335,5 +335,8 @@ endif
 if BUILD_HARDLINK
 dist_bashcompletion_DATA += bash-completion/hardlink
 endif
+if BUILD_PIPESZ
+dist_bashcompletion_DATA += bash-completion/pipesz
+endif
 
 endif # BUILD_BASH_COMPLETION
