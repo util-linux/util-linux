@@ -81,6 +81,13 @@ struct ul_pty {
 
 	struct timeval	next_callback_time;
 
+	struct ul_pty_child_buffer {
+		struct ul_pty_child_buffer *next;
+		char buf[BUFSIZ];
+		size_t size, cursor;
+		unsigned int final_input:1;	/* drain child before writing */
+	} *child_buffer_head, *child_buffer_tail, *free_buffers;
+
 	unsigned int isterm:1,		/* is stdin terminal? */
 		     slave_echo:1;	/* keep ECHO on pty slave */
 };

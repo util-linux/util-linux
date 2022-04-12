@@ -69,6 +69,15 @@ struct ul_pty *ul_new_pty(int is_stdin_tty)
 
 void ul_free_pty(struct ul_pty *pty)
 {
+	struct ul_pty_child_buffer *hd;
+	while((hd = pty->child_buffer_head)) {
+		pty->child_buffer_head = hd->next;
+		free(hd);
+	}
+	while((hd = pty->free_buffers)) {
+		pty->free_buffers = hd->next;
+		free(hd);
+	}
 	free(pty);
 }
 
@@ -182,7 +191,7 @@ int ul_pty_setup(struct ul_pty *pty)
 		cfmakeraw(&attrs);
 		tcsetattr(STDIN_FILENO, TCSANOW, &attrs);
 	} else {
-	        DBG(SETUP, ul_debugobj(pty, "create for non-terminal"));
+		DBG(SETUP, ul_debugobj(pty, "create for non-terminal"));
 
 		rc = openpty(&pty->master, &pty->slave, NULL, NULL, NULL);
 		if (rc)
@@ -197,6 +206,8 @@ int ul_pty_setup(struct ul_pty *pty)
 
 		tcsetattr(pty->slave, TCSANOW, &attrs);
 	}
+
+	fcntl(pty->master, F_SETFL, O_NONBLOCK);
 
 	sigfillset(&ourset);
 	if (sigprocmask(SIG_BLOCK, &ourset, NULL)) {
@@ -290,9 +301,27 @@ static int write_output(char *obuf, ssize_t bytes)
 	return 0;
 }
 
-static int write_to_child(struct ul_pty *pty, char *buf, size_t bufsz)
+static int schedule_child_write(struct ul_pty *pty, char *buf, size_t bufsz, int final)
 {
-	return write_all(pty->master, buf, bufsz);
+	struct ul_pty_child_buffer *stash;
+	if (pty->free_buffers) {
+		stash = pty->free_buffers;
+		pty->free_buffers = stash->next;
+		memset(stash, 0, sizeof(*stash));
+	} else
+		stash = calloc(1, sizeof(*stash));
+	if (!stash)
+		return -1;
+
+	memcpy(stash->buf, buf, bufsz);
+	stash->size = bufsz;
+	stash->final_input = final ? 1 : 0;
+
+	if (pty->child_buffer_head)
+		pty->child_buffer_tail = pty->child_buffer_tail->next = stash;
+	else
+		pty->child_buffer_head = pty->child_buffer_tail = stash;
+	return 0;
 }
 
 /*
@@ -311,16 +340,13 @@ static int write_to_child(struct ul_pty *pty, char *buf, size_t bufsz)
  * maintains master+slave tty stuff within the session. Use pipe to write to
  * pty and assume non-interactive (tee-like) behavior is NOT well supported.
  */
-void ul_pty_write_eof_to_child(struct ul_pty *pty)
+static void drain_child_buffers(struct ul_pty *pty)
 {
 	unsigned int tries = 0;
-	struct pollfd fds[] = {
-	           { .fd = pty->slave, .events = POLLIN }
-	};
-	char c = DEF_EOF;
+	struct pollfd fd = { .fd = pty->slave, .events = POLLIN };
 
 	DBG(IO, ul_debugobj(pty, " waiting for empty slave"));
-	while (poll(fds, 1, 10) == 1 && tries < 8) {
+	while (poll(&fd, 1, 10) == 1 && tries < 8) {
 		DBG(IO, ul_debugobj(pty, "   slave is not empty"));
 		xusleep(250000);
 		tries++;
@@ -329,7 +355,53 @@ void ul_pty_write_eof_to_child(struct ul_pty *pty)
 		DBG(IO, ul_debugobj(pty, "   slave is empty now"));
 
 	DBG(IO, ul_debugobj(pty, " sending EOF to master"));
-	write_to_child(pty, &c, sizeof(char));
+}
+
+static int flush_child_buffers(struct ul_pty *pty, int *anything)
+{
+	int ret = 0, any = 0;
+	while (pty->child_buffer_head) {
+		struct ul_pty_child_buffer *hd = pty->child_buffer_head;
+
+		if(hd->final_input)
+			drain_child_buffers(pty);
+
+		DBG(IO, ul_debugobj(hd, " stdin --> master trying %zu bytes", hd->size - hd->cursor));
+		ssize_t ret = write(pty->master, hd->buf + hd->cursor, hd->size - hd->cursor);
+		if (ret == -1) {
+			DBG(IO, ul_debugobj(hd, "   EAGAIN"));
+			if (!(errno == EINTR || errno == EAGAIN))
+				ret = -errno;
+			goto out;
+		}
+		DBG(IO, ul_debugobj(hd, "   wrote %zd", ret));
+		any = 1;
+		hd->cursor += ret;
+		if (hd->cursor == hd->size) {
+			pty->child_buffer_head = hd->next;
+			if(!hd->next)
+				pty->child_buffer_tail = NULL;
+
+			hd->next = pty->free_buffers;
+			pty->free_buffers = hd;
+		}
+	}
+
+out:
+	/* without sync write_output() will write both input &
+	 * shell output that looks like double echoing */
+	if (any)
+		fdatasync(pty->master);
+
+	if (anything)
+		*anything = any;
+	return ret;
+}
+
+void ul_pty_write_eof_to_child(struct ul_pty *pty)
+{
+	char c = DEF_EOF;
+	schedule_child_write(pty, &c, sizeof(char), 1);
 }
 
 static int mainloop_callback(struct ul_pty *pty)
@@ -362,7 +434,7 @@ static int handle_io(struct ul_pty *pty, int fd, int *eof)
 	/* read from active FD */
 	bytes = read(fd, buf, sizeof(buf));
 	sigprocmask(SIG_BLOCK, &set, NULL);
-	if (bytes < 0) {
+	if (bytes == -1) {
 		if (errno == EAGAIN || errno == EINTR)
 			return 0;
 		return -errno;
@@ -375,14 +447,10 @@ static int handle_io(struct ul_pty *pty, int fd, int *eof)
 
 	/* from stdin (user) to command */
 	if (fd == STDIN_FILENO) {
-		DBG(IO, ul_debugobj(pty, " stdin --> master %zd bytes", bytes));
+		DBG(IO, ul_debugobj(pty, " stdin --> master %zd bytes queued", bytes));
 
-		if (write_to_child(pty, buf, bytes))
+		if (schedule_child_write(pty, buf, bytes, 0))
 			return -errno;
-
-		/* without sync write_output() will write both input &
-		 * shell output that looks like double echoing */
-		fdatasync(pty->master);
 
 	/* from command (master) to stdout */
 	} else if (fd == pty->master) {
@@ -567,6 +635,11 @@ int ul_pty_proxy_master(struct ul_pty *pty)
 		} else
 			timeout = pty->poll_timeout;
 
+		if (pty->child_buffer_head)
+			pfd[POLLFD_MASTER].events |= POLLOUT;
+		else
+			pfd[POLLFD_MASTER].events &= ~POLLOUT;
+
 		/* wait for input, signal or timeout */
 		DBG(IO, ul_debugobj(pty, "calling poll() [timeout=%dms]", timeout));
 		ret = poll(pfd, ARRAY_SIZE(pfd), timeout);
@@ -600,23 +673,30 @@ int ul_pty_proxy_master(struct ul_pty *pty)
 			if (pfd[i].revents == 0)
 				continue;
 
-			DBG(IO, ul_debugobj(pty, " active pfd[%s].fd=%d %s %s %s %s",
+			DBG(IO, ul_debugobj(pty, " active pfd[%s].fd=%d %s %s %s %s %s",
 						i == POLLFD_STDIN  ? "stdin" :
 						i == POLLFD_MASTER ? "master" :
 						i == POLLFD_SIGNAL ? "signal" : "???",
 						pfd[i].fd,
 						pfd[i].revents & POLLIN  ? "POLLIN" : "",
+						pfd[i].revents & POLLOUT ? "POLLOUT" : "",
 						pfd[i].revents & POLLHUP ? "POLLHUP" : "",
 						pfd[i].revents & POLLERR ? "POLLERR" : "",
 						pfd[i].revents & POLLNVAL ? "POLLNVAL" : ""));
 
 			if (i == POLLFD_SIGNAL)
 				rc = handle_signal(pty, pfd[i].fd);
-			else if (pfd[i].revents & POLLIN)
-				rc = handle_io(pty, pfd[i].fd, &eof); /* data */
+			else {
+				if (pfd[i].revents & POLLIN)
+					rc = handle_io(pty, pfd[i].fd, &eof); /* data */
+				if (pfd[i].revents & POLLOUT) /* i == POLLFD_MASTER */
+					rc = flush_child_buffers(pty, NULL);
+			}
 
 			if (rc) {
 				ul_pty_write_eof_to_child(pty);
+				for (int anything = 1; anything;)
+					flush_child_buffers(pty, &anything);
 				break;
 			}
 
@@ -631,11 +711,11 @@ int ul_pty_proxy_master(struct ul_pty *pty)
 			 */
 			if ((pfd[i].revents & POLLHUP) || (pfd[i].revents & POLLNVAL) || eof) {
 				DBG(IO, ul_debugobj(pty, " ignore FD"));
-				pfd[i].fd = -1;
 				if (i == POLLFD_STDIN) {
+					pfd[i].fd = -1;
 					ul_pty_write_eof_to_child(pty);
-					DBG(IO, ul_debugobj(pty, "  ignore STDIN"));
-				}
+				} else /* i == POLLFD_MASTER */
+					pfd[i].revents &= ~POLLIN;
 			}
 		}
 		if (rc)
