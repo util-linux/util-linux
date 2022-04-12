@@ -150,6 +150,8 @@ option('build-more', type : 'feature',
        description : 'build more')
 option('build-pg', type : 'feature',
        description : 'build pg')
+option('build-pipesz', type : 'feature',
+       description : 'build pipesz')
 option('build-setterm', type : 'feature',
        description : 'build setterm')
 option('build-schedutils', type : 'feature',

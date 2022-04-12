@@ -2683,6 +2683,18 @@ if not is_disabler(exe)
   bashcompletions += ['hardlink']
 endif
 
+opt = not get_option('build-pipesz').disabled()
+exe = executable(
+  'pipesz',
+  pipesz_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : true)
+if opt and not is_disabler(exe)
+  exes += exe
+endif
+
 exe = executable(
   'test_cal',
   cal_sources,

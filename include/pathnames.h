@@ -198,6 +198,10 @@
 #define _PATH_PROC_UCLAMP_MIN	_PATH_PROC_KERNEL "/sched_util_clamp_min"
 #define _PATH_PROC_UCLAMP_MAX	_PATH_PROC_KERNEL "/sched_util_clamp_max"
 
+/* sysctl fs paths */
+#define _PATH_PROC_SYS_FS	"/proc/sys/fs"
+#define _PATH_PROC_PIPE_MAX_SIZE	_PATH_PROC_SYS_FS "/pipe-max-size"
+
 /* irqtop paths */
 #define _PATH_PROC_INTERRUPTS	"/proc/interrupts"
 #define _PATH_PROC_SOFTIRQS	"/proc/softirqs"

@@ -1785,6 +1785,14 @@ AC_ARG_ENABLE([whereis],
 UL_BUILD_INIT([whereis])
 AM_CONDITIONAL([BUILD_WHEREIS], [test "x$build_whereis" = xyes])
 
+AC_ARG_ENABLE([pipesz],
+  AS_HELP_STRING([--disable-pipesz], [do not build pipesz]),
+  [], [UL_DEFAULT_ENABLE([pipesz])]
+)
+UL_BUILD_INIT([pipesz])
+UL_REQUIRES_LINUX([pipesz])
+AM_CONDITIONAL([BUILD_PIPESZ], [test "x$build_pipesz" = xyes])
+
 UL_BUILD_INIT([getopt], [yes])
 AM_CONDITIONAL([BUILD_GETOPT], [test "x$build_getopt" = xyes])
 

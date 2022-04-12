@@ -148,6 +148,7 @@ GSYMS
 /nsenter
 /partx
 /pg
+/pipesz
 /pivot_root
 /prlimit
 /raw

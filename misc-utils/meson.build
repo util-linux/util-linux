@@ -140,3 +140,7 @@ hardlink_sources = files(
 cal_sources = files(
   'cal.c',
 )
+
+pipesz_sources = files(
+  'pipesz.c',
+)
