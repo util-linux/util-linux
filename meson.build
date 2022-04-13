@@ -47,7 +47,7 @@ pc_version = []
 foreach code : codes
   res = run_command('bash', '-c',
                     '''echo '@0@' | awk -F. '@1@' '''.format(
-                      meson.project_version(), code))
+                      meson.project_version(), code), check: true)
   pc_version += res.stdout().strip()
 endforeach
 pc_version = '.'.join(pc_version)
