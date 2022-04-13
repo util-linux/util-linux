@@ -62,6 +62,10 @@ tests/run.sh.log
 tests/run.sh.trs
 update.log
 ylwrap
+GPATH
+GRTAGS
+GTAGS
+GSYMS
 
 #
 # binaries
