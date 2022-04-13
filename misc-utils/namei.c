@@ -19,7 +19,6 @@
  *	Arkadiusz Miśkiewicz (1999-02-22)
  *	Li Zefan (2007-09-10).
  */
-
 #include <stdio.h>
 #include <unistd.h>
 #include <getopt.h>
@@ -31,6 +30,10 @@
 #include <sys/param.h>
 #include <pwd.h>
 #include <grp.h>
+
+#ifdef HAVE_LIBSELINUX
+# include <selinux/selinux.h>
+#endif
 
 #include "c.h"
 #include "xalloc.h"
@@ -49,6 +52,7 @@
 #define NAMEI_MNTS	(1 << 3)
 #define NAMEI_OWNERS	(1 << 4)
 #define NAMEI_VERTICAL	(1 << 5)
+#define NAMEI_CONTEXT	(1 << 6)
 
 
 struct namei {
@@ -60,6 +64,10 @@ struct namei {
 	int		level;
 	int		mountpoint;	/* is mount point */
 	int		noent;		/* this item not existing (stores errno from stat()) */
+#ifdef HAVE_LIBSELINUX
+	int		context_len;	/* length of selinux contexts, as returned by lgetfilecon(3) */
+	char		*context;	/* selinux contexts, as set by lgetfilecon(3) */
+#endif
 };
 
 static int flags;
@@ -71,6 +79,9 @@ free_namei(struct namei *nm)
 {
 	while (nm) {
 		struct namei *next = nm->next;
+#ifdef HAVE_LIBSELINUX
+		free(nm->context);
+#endif
 		free(nm->name);
 		free(nm->abslink);
 		free(nm);
@@ -151,6 +162,11 @@ new_namei(struct namei *parent, const char *path, const char *fname, int lev)
 	nm->level = lev;
 	nm->name = xstrdup(fname);
 
+#ifdef HAVE_LIBSELINUX
+	/* Don't use is_selinux_enabled() here. We need info about a context
+	 * also on systems where SELinux is (temporary) disabled */
+	nm->context_len = lgetfilecon(path, &nm->context);
+#endif
 	if (lstat(path, &nm->st) != 0) {
 		nm->noent = errno;
 		return nm;
@@ -279,6 +295,8 @@ print_namei(struct namei *nm, char *path)
 				blanks += ucache->width + gcache->width + 2;
 			if (!(flags & NAMEI_VERTICAL))
 				blanks += 1;
+			if (!(flags & NAMEI_CONTEXT))
+				blanks += 1;
 			blanks += nm->level * 2;
 			printf("%*s ", blanks, "");
 			printf("%s - %s\n", nm->name, strerror(nm->noent));
@@ -307,7 +325,14 @@ print_namei(struct namei *nm, char *path)
 			printf(" %-*s", gcache->width,
 				get_id(gcache, nm->st.st_gid)->name);
 		}
-
+#ifdef HAVE_LIBSELINUX
+		if (flags & NAMEI_CONTEXT) {
+			if (nm->context)
+				printf(" %-*s", nm->context_len, nm->context);
+			else
+				printf(" ?");
+		}
+#endif
 		if (flags & NAMEI_VERTICAL)
 			for (i = 0; i < nm->level; i++)
 				fputs("  ", stdout);
@@ -344,6 +369,10 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -l, --long          use a long listing format (-m -o -v) \n"
 		" -n, --nosymlinks    don't follow symlinks\n"
 		" -v, --vertical      vertical align of modes and owners\n"), out);
+#ifdef HAVE_LIBSELINUX
+	fputs(_( " -Z, --context       print any security context of each file \n"), out);
+#endif
+
 	printf(USAGE_HELP_OPTIONS(21));
 
 	printf(USAGE_MAN_TAIL("namei(1)"));
@@ -360,6 +389,9 @@ static const struct option longopts[] =
 	{ "long",        no_argument, NULL, 'l' },
 	{ "nolinks",	 no_argument, NULL, 'n' },
 	{ "vertical",    no_argument, NULL, 'v' },
+#ifdef HAVE_LIBSELINUX
+	{ "context",	 no_argument, NULL, 'Z' },
+#endif
 	{ NULL, 0, NULL, 0 },
 };
 
@@ -368,13 +400,18 @@ main(int argc, char **argv)
 {
 	int c;
 	int rc = EXIT_SUCCESS;
+	static const char *shortopts =
+#ifdef HAVE_LIBSELINUX
+		"Z"
+#endif
+		"hVlmnovx";
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "hVlmnovx", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, shortopts, longopts, NULL)) != -1) {
 		switch(c) {
 		case 'l':
 			flags |= (NAMEI_OWNERS | NAMEI_MODES | NAMEI_VERTICAL);
@@ -394,7 +431,11 @@ main(int argc, char **argv)
 		case 'v':
 			flags |= NAMEI_VERTICAL;
 			break;
-
+#ifdef HAVE_LIBSELINUX
+		case 'Z':
+			flags |= NAMEI_CONTEXT;
+			break;
+#endif
 		case 'h':
 			usage();
 		case 'V':
