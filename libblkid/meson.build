@@ -141,6 +141,7 @@ lib_blkid = both_libraries(
   link_with : lib_common,
   dependencies : build_libblkid ? [] : disabler(),
   install : build_libblkid)
+blkid_dep = declare_dependency(link_with: lib_blkid, include_directories: '.')
 
 lib_blkid_static = lib_blkid.get_static_lib()
 
@@ -149,4 +150,7 @@ if build_libblkid
                      description : 'Block device id library',
                      subdirs : 'blkid',
                      version : pc_version)
+  if meson.version().version_compare('>=0.54.0')
+    meson.override_dependency('blkid', blkid_dep)
+  endif
 endif

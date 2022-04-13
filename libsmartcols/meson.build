@@ -42,6 +42,7 @@ lib_smartcols = both_libraries(
   link_with : lib_common,
   dependencies : build_libsmartcols ? [] : disabler(),
   install : build_libsmartcols)
+smartcols_dep = declare_dependency(link_with: lib_blkid, include_directories: '.')
 
 lib_smartcols_static = lib_smartcols.get_static_lib()
 
@@ -50,4 +51,7 @@ if build_libsmartcols
                      description : 'table or tree library',
                      subdirs : 'libsmartcols',
                      version : pc_version)
+  if meson.version().version_compare('>=0.54.0')
+    meson.override_dependency('smartcols', blkid_dep)
+  endif
 endif

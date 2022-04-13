@@ -74,10 +74,14 @@ lib_fdisk = library(
                lib_blkid,
                lib_uuid],
   install : build_libfdisk)
+fdisk_dep = declare_dependency(link_with: lib_fdisk, include_directories: '.')
 
 if build_libfdisk
   pkgconfig.generate(lib_fdisk,
                      description : 'fdisk library',
                      subdirs : 'libfdisk',
                      version : pc_version)
+  if meson.version().version_compare('>=0.54.0')
+    meson.override_dependency('fdisk', fdisk_dep)
+  endif
 endif

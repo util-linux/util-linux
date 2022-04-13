@@ -87,12 +87,16 @@ lib_mount = library(
                   get_option('cryptsetup-dlopen').enabled() ? lib_dl : lib_cryptsetup,
                   realtime_libs],
   install : build_libmount)
+mount_dep = declare_dependency(link_with: lib_blkid, include_directories: '.')
 
 if build_libmount
   pkgconfig.generate(lib_mount,
                      description : 'mount library',
                      subdirs : 'libmount',
                      version : pc_version)
+  if meson.version().version_compare('>=0.54.0')
+    meson.override_dependency('mount', blkid_dep)
+  endif
 endif
 
 subdir('python')
