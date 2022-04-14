@@ -285,5 +285,7 @@ int main(void)
 	printf("data [%zu] '%s'\n", sz, str);
 
 	ul_buffer_free_data(&buf);
+
+        return EXIT_SUCCESS;
 }
 #endif /* TEST_PROGRAM_BUFFER */
