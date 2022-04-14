@@ -37,7 +37,7 @@ lib_uuid = both_libraries(
   dependencies : [socket_libs,
                   build_libuuid ? [] : disabler()],
   install : build_libuuid)
-uuid_dep = declare_dependency(link_with: lib_blkid, include_directories: dir_libuuid)
+uuid_dep = declare_dependency(link_with: lib_uuid, include_directories: dir_libuuid)
 
 if build_libuuid
   pkgconfig.generate(lib_uuid,
@@ -46,6 +46,6 @@ if build_libuuid
                      version : pc_version)
   install_headers('src/uuid.h', subdir : 'uuid')
   if meson.version().version_compare('>=0.54.0')
-    meson.override_dependency('uuid', blkid_dep)
+    meson.override_dependency('uuid', uuid_dep)
   endif
 endif
