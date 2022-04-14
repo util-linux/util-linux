@@ -65,7 +65,7 @@ lib__mount = static_library(
                          dir_libblkid])
 
 lib_mount_static = static_library(
-  'mount',
+  'mount_static',
   link_whole : lib__mount,
   link_with : [lib_common,
                lib_blkid.get_static_lib()],
