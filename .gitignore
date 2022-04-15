@@ -73,8 +73,9 @@ GSYMS
 /addpart
 /agetty
 /blkdiscard
-/blkzone
 /blkid
+/blkpr
+/blkzone
 /blockdev
 /cal
 /cfdisk
