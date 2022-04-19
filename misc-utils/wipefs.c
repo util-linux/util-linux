@@ -593,7 +593,9 @@ static int do_wipe(struct wipe_control *ctl)
 	if (need_force)
 		warnx(_("Use the --force option to force erase."));
 
-	fsync(blkid_probe_get_fd(pr));
+	if (fsync(blkid_probe_get_fd(pr)) != 0)
+		err(EXIT_FAILURE, _("%s: cannot flush modified buffers"),
+				ctl->devname);
 
 #ifdef BLKRRPART
 	if (reread && (mode & O_EXCL)) {
@@ -613,7 +615,9 @@ static int do_wipe(struct wipe_control *ctl)
 	}
 #endif
 
-	close(blkid_probe_get_fd(pr));
+	if (close(blkid_probe_get_fd(pr)) != 0)
+		err(EXIT_FAILURE, _("%s: close device failed"), ctl->devname);
+
 	blkid_free_probe(pr);
 	free(backup);
 	return 0;

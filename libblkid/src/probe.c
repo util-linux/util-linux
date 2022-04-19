@@ -1414,7 +1414,8 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 			/* wipen on device */
 			if (write_all(fd, buf, len))
 				return -1;
-			fsync(fd);
+			if (fsync(fd) != 0)
+				return -1;
 		} else {
 #ifdef HAVE_LINUX_BLKZONED_H
 			uint64_t zone_mask = ~(pr->zone_size - 1);
