@@ -70,11 +70,13 @@ struct ul_pty *ul_new_pty(int is_stdin_tty)
 void ul_free_pty(struct ul_pty *pty)
 {
 	struct ul_pty_child_buffer *hd;
-	while((hd = pty->child_buffer_head)) {
+
+	while ((hd = pty->child_buffer_head)) {
 		pty->child_buffer_head = hd->next;
 		free(hd);
 	}
-	while((hd = pty->free_buffers)) {
+
+	while ((hd = pty->free_buffers)) {
 		pty->free_buffers = hd->next;
 		free(hd);
 	}
@@ -304,6 +306,7 @@ static int write_output(char *obuf, ssize_t bytes)
 static int schedule_child_write(struct ul_pty *pty, char *buf, size_t bufsz, int final)
 {
 	struct ul_pty_child_buffer *stash;
+
 	if (pty->free_buffers) {
 		stash = pty->free_buffers;
 		pty->free_buffers = stash->next;
@@ -312,6 +315,8 @@ static int schedule_child_write(struct ul_pty *pty, char *buf, size_t bufsz, int
 		stash = calloc(1, sizeof(*stash));
 	if (!stash)
 		return -1;
+
+	assert(bufsz <= sizeof(stash->buf));
 
 	memcpy(stash->buf, buf, bufsz);
 	stash->size = bufsz;
@@ -359,34 +364,37 @@ static void drain_child_buffers(struct ul_pty *pty)
 
 static int flush_child_buffers(struct ul_pty *pty, int *anything)
 {
-	int ret = 0, any = 0;
+	int rc = 0, any = 0;
+
 	while (pty->child_buffer_head) {
 		struct ul_pty_child_buffer *hd = pty->child_buffer_head;
+		ssize_t ret;
 
-		if(hd->final_input)
+		if (hd->final_input)
 			drain_child_buffers(pty);
 
 		DBG(IO, ul_debugobj(hd, " stdin --> master trying %zu bytes", hd->size - hd->cursor));
-		ssize_t ret = write(pty->master, hd->buf + hd->cursor, hd->size - hd->cursor);
+
+		ret = write(pty->master, hd->buf + hd->cursor, hd->size - hd->cursor);
 		if (ret == -1) {
 			DBG(IO, ul_debugobj(hd, "   EAGAIN"));
 			if (!(errno == EINTR || errno == EAGAIN))
-				ret = -errno;
+				rc = -errno;
 			goto out;
 		}
 		DBG(IO, ul_debugobj(hd, "   wrote %zd", ret));
 		any = 1;
 		hd->cursor += ret;
+
 		if (hd->cursor == hd->size) {
 			pty->child_buffer_head = hd->next;
-			if(!hd->next)
+			if (!hd->next)
 				pty->child_buffer_tail = NULL;
 
 			hd->next = pty->free_buffers;
 			pty->free_buffers = hd;
 		}
 	}
-
 out:
 	/* without sync write_output() will write both input &
 	 * shell output that looks like double echoing */
@@ -395,7 +403,7 @@ out:
 
 	if (anything)
 		*anything = any;
-	return ret;
+	return rc;
 }
 
 void ul_pty_write_eof_to_child(struct ul_pty *pty)
@@ -635,6 +643,7 @@ int ul_pty_proxy_master(struct ul_pty *pty)
 		} else
 			timeout = pty->poll_timeout;
 
+		/* use POLLOUT (aka "writing is now possible") if data queued */
 		if (pty->child_buffer_head)
 			pfd[POLLFD_MASTER].events |= POLLOUT;
 		else
@@ -694,8 +703,10 @@ int ul_pty_proxy_master(struct ul_pty *pty)
 			}
 
 			if (rc) {
+				int anything = 1;
+
 				ul_pty_write_eof_to_child(pty);
-				for (int anything = 1; anything;)
+				for (anything = 1; anything;)
 					flush_child_buffers(pty, &anything);
 				break;
 			}
