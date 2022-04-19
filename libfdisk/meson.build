@@ -57,7 +57,7 @@ lib__fdisk = static_library(
   dependencies : build_libfdisk ? [] : disabler())
 
 lib_fdisk_static = static_library(
-  'fdisk',
+  'fdisk_static',
   link_whole : lib__fdisk,
   link_with : [lib_common,
                lib_blkid.get_static_lib(),
