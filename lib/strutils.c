@@ -471,48 +471,6 @@ err:
 	errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
 }
 
-long strtol_or_err(const char *str, const char *errmesg)
-{
-	long num;
-	char *end = NULL;
-
-	errno = 0;
-	if (str == NULL || *str == '\0')
-		goto err;
-	num = strtol(str, &end, 10);
-
-	if (errno || str == end || (end && *end))
-		goto err;
-
-	return num;
-err:
-	if (errno == ERANGE)
-		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
-
-	errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
-}
-
-unsigned long strtoul_or_err(const char *str, const char *errmesg)
-{
-	unsigned long num;
-	char *end = NULL;
-
-	errno = 0;
-	if (str == NULL || *str == '\0')
-		goto err;
-	num = strtoul(str, &end, 10);
-
-	if (errno || str == end || (end && *end))
-		goto err;
-
-	return num;
-err:
-	if (errno == ERANGE)
-		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
-
-	errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
-}
-
 uintmax_t strtosize_or_err(const char *str, const char *errmesg)
 {
 	uintmax_t num;
