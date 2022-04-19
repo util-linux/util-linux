@@ -73,7 +73,8 @@ struct nodev {
 struct nodev_table {
 #define NODEV_TABLE_SIZE 97
 	struct list_head tables[NODEV_TABLE_SIZE];
-} nodev_table;
+};
+static struct nodev_table nodev_table;
 
 struct name_manager {
 	struct idcache *cache;
@@ -91,6 +92,17 @@ struct devdrv {
 
 static struct list_head chrdrvs;
 static struct list_head blkdrvs;
+
+/*
+ * IPC table
+ */
+
+#define IPC_TABLE_SIZE 997
+struct ipc_table {
+	struct list_head tables[IPC_TABLE_SIZE];
+};
+
+static struct ipc_table ipc_table;
 
 /*
  * Column related stuffs
@@ -121,6 +133,8 @@ static struct colinfo infos[] = {
 		N_("ID of device containing file") },
 	[COL_DEVTYPE] = { "DEVTYPE",  0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("device type (blk, char, or nodev)") },
+	[COL_ENDPOINTS] ={"ENDPOINTS",0,  SCOLS_FL_WRAP, SCOLS_JSON_STRING,
+		N_("IPC endpoints information communicated with the fd") },
 	[COL_FLAGS]   = { "FLAGS",    0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("flags specified when opening the file") },
 	[COL_FD]      = { "FD",       0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
@@ -293,9 +307,6 @@ struct lsfd_control {
 	struct lsfd_counter **counters;		/* NULL terminated array. */
 };
 
-static void xstrappend(char **a, const char *b);
-static void xstrputc(char **a, char c);
-
 static int column_name_to_id(const char *name, size_t namesz)
 {
 	size_t i;
@@ -336,8 +347,16 @@ static struct libscols_column *add_column(struct libscols_table *tb, const struc
 	int flags = col->flags;
 
 	cl = scols_table_new_column(tb, col->name, col->whint, flags);
-	if (cl)
+	if (cl) {
 		scols_column_set_json_type(cl, col->json_type);
+		if (col->flags & SCOLS_FL_WRAP) {
+			scols_column_set_wrapfunc(cl,
+						  scols_wrapnl_chunksize,
+						  scols_wrapnl_nextchunk,
+						  NULL);
+			scols_column_set_safechars(cl, "\n");
+		}
+	}
 
 	return cl;
 }
@@ -829,6 +848,54 @@ static void add_nodevs(FILE *mnt)
 	}
 }
 
+static void initialize_ipc_table(void)
+{
+	for (int i = 0; i < IPC_TABLE_SIZE; i++)
+		INIT_LIST_HEAD(ipc_table.tables + i);
+}
+
+static void free_ipc(struct ipc *ipc)
+{
+	if (ipc->class->free)
+		ipc->class->free(ipc);
+}
+
+static void finalize_ipc_table(void)
+{
+	for (int i = 0; i < IPC_TABLE_SIZE; i++)
+		list_free(ipc_table.tables, struct ipc, ipcs, free_ipc);
+}
+
+struct ipc *get_ipc(struct file *file)
+{
+	int slot;
+	struct list_head *e;
+	struct ipc_class *ipc_class;
+
+	if (!file->class->get_ipc_class)
+		return NULL;
+
+	ipc_class = file->class->get_ipc_class(file);
+	if (!ipc_class)
+		return NULL;
+
+	slot = ipc_class->get_hash(file) % IPC_TABLE_SIZE;
+	list_for_each (e, &ipc_table.tables[slot]) {
+		struct ipc *ipc = list_entry(e, struct ipc, ipcs);
+		if (ipc->class != ipc_class)
+			continue;
+		if (ipc_class->is_suitable_ipc(ipc, file))
+			return ipc;
+	}
+	return NULL;
+}
+
+void add_ipc(struct ipc *ipc, unsigned int hash)
+{
+	int slot = hash % IPC_TABLE_SIZE;
+	list_add(&ipc->ipcs, &ipc_table.tables[slot]);
+}
+
 static void fill_column(struct proc *proc,
 			struct file *file,
 			struct libscols_line *ln,
@@ -1300,18 +1367,6 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static void xstrappend(char **a, const char *b)
-{
-	if (strappend(a, b) < 0)
-		err(EXIT_FAILURE, _("failed to allocate memory for string"));
-}
-
-static void xstrputc(char **a, char c)
-{
-	char b[] = {c, '\0'};
-	xstrappend(a, b);
-}
-
 static void append_filter_expr(char **a, const char *b, bool and)
 {
 	if (*a == NULL) {
@@ -1704,6 +1759,7 @@ int main(int argc, char *argv[])
 	initialize_nodevs();
 	initialize_classes();
 	initialize_devdrvs();
+	initialize_ipc_table();
 
 	collect_processes(&ctl, pids, n_pids);
 	free(pids);
@@ -1720,6 +1776,7 @@ int main(int argc, char *argv[])
 	/* cleanup */
 	delete(&ctl.procs, &ctl);
 
+	finalize_ipc_table();
 	finalize_devdrvs();
 	finalize_classes();
 	finalize_nodevs();
