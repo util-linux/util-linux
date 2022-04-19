@@ -109,6 +109,9 @@ extern int mnt_chdir_to_parent(const char *target, char **filename);
 extern char *mnt_get_username(const uid_t uid);
 extern int mnt_get_uid(const char *username, uid_t *uid);
 extern int mnt_get_gid(const char *groupname, gid_t *gid);
+extern int mnt_parse_uid(const char *user, size_t user_len, uid_t *gid);
+extern int mnt_parse_gid(const char *group, size_t group_len, gid_t *gid);
+extern int mnt_parse_mode(const char *mode, size_t mode_len, mode_t *gid);
 extern int mnt_in_group(gid_t gid);
 
 extern int mnt_open_uniq_filename(const char *filename, char **name);
@@ -293,6 +296,10 @@ struct libmnt_context
 	char	*optstr_pattern;	/* for mnt_match_options() */
 
 	char	*subdir;		/* X-mount.subdir= */
+
+	uid_t	tgt_owner;		/* X-mount.owner= */
+	gid_t	tgt_group;		/* X-mount.group= */
+	mode_t	tgt_mode;		/* X-mount.mode= */
 
 	struct libmnt_fs *fs;		/* filesystem description (type, mountpoint, device, ...) */
 	struct libmnt_fs *fs_template;	/* used for @fs on mnt_reset_context() */

@@ -220,6 +220,18 @@ enum {
  * filesystem mounted, but --onlyonce specified
  */
 #define MNT_ERR_ONLYONCE    5010
+/**
+ * MNT_ERR_CHOWN:
+ *
+ * filesystem mounted, but subsequent X-mount.owner=/X-mount.group= lchown(2) failed
+ */
+#define MNT_ERR_CHOWN    5011
+/**
+ * MNT_ERR_CHMOD:
+ *
+ * filesystem mounted, but subsequent X-mount.mode= chmod(2) failed
+ */
+#define MNT_ERR_CHMOD    5012
 
 
 /*
@@ -246,7 +258,6 @@ enum {
  *
  * [u]mount(8) exit code: out of memory, cannot fork, ...
  */
-
 #define MNT_EX_SYSERR	2
 
 /**

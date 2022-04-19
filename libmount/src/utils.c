@@ -635,6 +635,132 @@ int mnt_get_gid(const char *groupname, gid_t *gid)
 	return rc;
 }
 
+static int parse_uid_numeric(const char *value, size_t valsz, uid_t *uid)
+{
+	uint64_t num;
+
+	assert(value);
+	assert(uid);
+
+	if (valsz > sizeof(stringify_value(UINT64_MAX)) - 1) {
+		errno = ERANGE;
+		goto fail;
+	}
+
+	if (ul_strtou64(value, &num, 10) != 0) {
+		errno = ENOENT;
+		goto fail;
+	}
+	if (num > ULONG_MAX || (uid_t) num != num) {
+		errno = ERANGE;
+		goto fail;
+	}
+	*uid = (uid_t) num;
+
+	return 0;
+fail:
+	DBG(UTILS, ul_debug("failed to convert '%s' to number [errno=%d]", value, errno));
+	return -1;
+}
+
+/* POSIX-parse user_len-sized user; -1 and errno set, or 0 on success */
+int mnt_parse_uid(const char *user, size_t user_len, uid_t *uid)
+{
+	char *user_tofree = NULL;
+	int rc;
+
+	if (user[user_len]) {
+		user = user_tofree = strndup(user, user_len);
+		if (!user)
+			return -1;
+	}
+
+	rc = mnt_get_uid(user, uid);
+	if (rc != 0 && isdigit(*user))
+		rc = parse_uid_numeric(user, user_len, uid);
+
+	free(user_tofree);
+	return rc;
+}
+
+static int parse_gid_numeric(const char *value, size_t valsz, gid_t *gid)
+{
+	uint64_t num;
+
+	assert(value);
+	assert(gid);
+
+	if (valsz > sizeof(stringify_value(UINT64_MAX)) - 1) {
+		errno = ERANGE;
+		goto fail;
+	}
+
+	if (ul_strtou64(value, &num, 10) != 0) {
+		errno = ENOENT;
+		goto fail;
+	}
+	if (num > ULONG_MAX || (gid_t) num != num) {
+		errno = ERANGE;
+		goto fail;
+	}
+	*gid = (gid_t) num;
+
+	return 0;
+fail:
+	DBG(UTILS, ul_debug("failed to convert '%s' to number [errno=%d]", value, errno));
+	return -1;
+}
+
+/* POSIX-parse group_len-sized group; -1 and errno set, or 0 on success */
+int mnt_parse_gid(const char *group, size_t group_len, gid_t *gid)
+{
+	char *group_tofree = NULL;
+	int rc;
+
+	if (group[group_len]) {
+		group = group_tofree = strndup(group, group_len);
+		if (!group)
+			return -1;
+	}
+
+	rc = mnt_get_gid(group, gid);
+	if (rc != 0 && isdigit(*group))
+		rc = parse_gid_numeric(group, group_len, gid);
+
+	free(group_tofree);
+	return rc;
+}
+
+int mnt_parse_mode(const char *mode, size_t mode_len, mode_t *uid)
+{
+	char buf[sizeof(stringify_value(UINT32_MAX))];
+	uint32_t num;
+
+	assert(mode);
+	assert(uid);
+
+	if (mode_len > sizeof(buf) - 1) {
+		errno = ERANGE;
+		goto fail;
+	}
+	mem2strcpy(buf, mode, mode_len, sizeof(buf));
+
+	if (ul_strtou32(buf, &num, 8) != 0) {
+		errno = EINVAL;
+		goto fail;
+	}
+	if (num > 07777) {
+		errno = ERANGE;
+		goto fail;
+	}
+	*uid = (mode_t) num;
+
+	return 0;
+fail:
+	DBG(UTILS, ul_debug("failed to convert '%.*s' to mode [errno=%d]", (int) mode_len, mode, errno));
+	return -1;
+}
+
 int mnt_in_group(gid_t gid)
 {
 	int rc = 0, n, i;

@@ -57,6 +57,10 @@ struct libmnt_context *mnt_new_context(void)
 	if (!cxt)
 		return NULL;
 
+	cxt->tgt_owner = (uid_t) -1;
+	cxt->tgt_group = (gid_t) -1;
+	cxt->tgt_mode = (mode_t) -1;
+
 	INIT_LIST_HEAD(&cxt->addmounts);
 
 	ruid = getuid();
@@ -75,7 +79,6 @@ struct libmnt_context *mnt_new_context(void)
 
 	DBG(CXT, ul_debugobj(cxt, "----> allocate %s",
 				cxt->restricted ? "[RESTRICTED]" : ""));
-
 
 	return cxt;
 }
@@ -130,7 +133,6 @@ void mnt_free_context(struct libmnt_context *cxt)
  *	mnt_context_set_options_pattern(cxt, NULL);
  *	mnt_context_set_target_ns(cxt, NULL);
  *
- *
  * to reset this stuff.
  *
  * Returns: 0 on success, negative number in case of error.
@@ -154,6 +156,10 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	free(cxt->helper);
 	free(cxt->orig_user);
 	free(cxt->subdir);
+
+	cxt->tgt_owner = (uid_t) -1;
+	cxt->tgt_group = (gid_t) -1;
+	cxt->tgt_mode = (mode_t) -1;
 
 	cxt->fs = NULL;
 	cxt->mtab = NULL;
@@ -3108,7 +3114,7 @@ static void close_ns(struct libmnt_ns *ns)
  *
  * This function sets errno to ENOSYS and returns error if libmount is
  * compiled without namespaces support.
-*
+ *
  * Returns: 0 on success, negative number in case of error.
  *
  * Since: 2.33

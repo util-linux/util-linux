@@ -1019,15 +1019,13 @@ int mnt_optstr_fix_user(char **optstr)
 /*
  * Converts value from @optstr addressed by @name to uid.
  *
- * Returns: 0 on success, 1 if not found, <0 on error
+ * Returns: 0 on success, <0 on error
  */
 int mnt_optstr_get_uid(const char *optstr, const char *name, uid_t *uid)
 {
 	char *value = NULL;
 	size_t valsz = 0;
-	char buf[sizeof(stringify_value(UINT64_MAX))];
 	int rc;
-	uint64_t num;
 
 	assert(optstr);
 	assert(name);
@@ -1037,20 +1035,11 @@ int mnt_optstr_get_uid(const char *optstr, const char *name, uid_t *uid)
 	if (rc != 0)
 		goto fail;
 
-	if (valsz > sizeof(buf) - 1) {
-		rc = -ERANGE;
+	rc = mnt_parse_uid(value, valsz, uid);
+	if (rc != 0) {
+		rc = -errno;
 		goto fail;
 	}
-	mem2strcpy(buf, value, valsz, sizeof(buf));
-
-	rc = ul_strtou64(buf, &num, 10);
-	if (rc != 0)
-		goto fail;
-	if (num > ULONG_MAX || (uid_t) num != num) {
-		rc = -ERANGE;
-		goto fail;
-	}
-	*uid = (uid_t) num;
 
 	return 0;
 fail:
