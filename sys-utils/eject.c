@@ -55,7 +55,7 @@
 #include "monotonic.h"
 
 /*
- * sg_io_hdr_t driver_status -- see kernel include/scsi/scsi.h
+ * sg_io_hdr_t driver_status -- see kernel include/scsi/sg.h
  */
 #ifndef DRIVER_SENSE
 # define DRIVER_SENSE	0x08
