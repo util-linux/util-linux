@@ -1592,7 +1592,9 @@ int main(int argc, char *argv[])
 
 	if ((is_timefmt(&ctl, RELTIME) ||
 	     is_timefmt(&ctl, CTIME)   ||
-	     is_timefmt(&ctl, ISO8601))) {
+	     is_timefmt(&ctl, ISO8601)) ||
+	     ctl.since ||
+	     ctl.until) {
 		if (dmesg_get_boot_time(&ctl.boot_time) != 0)
 			ctl.time_fmt = DMESG_TIMEFTM_NONE;
 		else
