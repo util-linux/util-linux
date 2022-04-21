@@ -250,14 +250,14 @@ mkdir -p $top_builddir/tests/
 printf "%s\n" ${comps[*]} |
 	sort |
 	xargs -I '{}' -P $paraller_jobs -n 1 bash -c "'{}' \"$OPTS\" ||
-		echo 1 >> $top_builddir/tests/failures"
+		echo '{}' >> $top_builddir/tests/failures"
 if [ $? != 0 ]; then
 	echo "xargs error" >&2
 	exit 1
 fi
+
 declare -a fail_file
 fail_file=( $( < $top_builddir/tests/failures ) ) || exit 1
-rm -f $top_builddir/tests/failures
 echo
 echo "---------------------------------------------------------------------"
 if [ ${#fail_file[@]} -eq 0 ]; then
@@ -265,7 +265,16 @@ if [ ${#fail_file[@]} -eq 0 ]; then
 	res=0
 else
 	echo "  ${#fail_file[@]} tests of ${#comps[@]} FAILED"
+
+	echo
+	for ts in ${fail_file[@]}; do
+		NAME=$(basename $ts)
+		COMPONENT=$(basename $(dirname $ts))
+		echo "      $COMPONENT/$NAME"
+	done
 	res=1
 fi
 echo "---------------------------------------------------------------------"
+
+rm -f $top_builddir/tests/failures
 exit $res
