@@ -326,13 +326,16 @@ int ul_strtos64(const char *str, int64_t *num, int base)
 {
 	char *end = NULL;
 
-	errno = 0;
 	if (str == NULL || *str == '\0')
-		return -EINVAL;
+		return -(errno = EINVAL);
+
+	errno = 0;
 	*num = (int64_t) strtoimax(str, &end, base);
 
-	if (errno || str == end || (end && *end))
-		return -EINVAL;
+	if (errno != 0)
+		return -errno;
+	if (str == end || (end && *end))
+		return -(errno = EINVAL);
 	return 0;
 }
 
@@ -341,13 +344,13 @@ int ul_strtou64(const char *str, uint64_t *num, int base)
 	char *end = NULL;
 	int64_t tmp;
 
-	errno = 0;
 	if (str == NULL || *str == '\0')
-		return -EINVAL;
+		return -(errno = EINVAL);
 
 	/* we need to ignore negative numbers, note that for invalid negative
 	 * number strtoimax() returns negative number too, so we do not
 	 * need to check errno here */
+	errno = 0;
 	tmp = (int64_t) strtoimax(str, &end, base);
 	if (tmp < 0)
 		errno = ERANGE;
@@ -356,8 +359,10 @@ int ul_strtou64(const char *str, uint64_t *num, int base)
 		*num = strtoumax(str, &end, base);
 	}
 
-	if (errno || str == end || (end && *end))
-		return -EINVAL;
+	if (errno != 0)
+		return -errno;
+	if (str == end || (end && *end))
+		return -(errno = EINVAL);
 	return 0;
 }
 
