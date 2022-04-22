@@ -347,7 +347,7 @@ static int blkzone_action(struct blkzone_control *ctl)
 
 	fd = init_device(ctl, O_WRONLY | (ctl->force ? 0 : O_EXCL));
 
-	if (ctl->offset & (zonesize - 1))
+	if (ctl->offset % zonesize )
 		errx(EXIT_FAILURE, _("%s: offset %" PRIu64 " is not aligned "
 			"to zone size %lu"),
 			ctl->devname, ctl->offset, zonesize);
@@ -365,7 +365,7 @@ static int blkzone_action(struct blkzone_control *ctl)
 		zlen = ctl->total_sectors - ctl->offset;
 
 	if (ctl->length &&
-	    (zlen & (zonesize - 1)) &&
+	   (zlen % zonesize) &&
 	    ctl->offset + zlen != ctl->total_sectors)
 		errx(EXIT_FAILURE, _("%s: number of sectors %" PRIu64 " is not aligned "
 			"to zone size %lu"),
