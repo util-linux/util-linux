@@ -54,6 +54,8 @@ static struct lsblk_devprop *get_properties_by_udev(struct lsblk_device *dev
 static struct lsblk_devprop *get_properties_by_udev(struct lsblk_device *ld)
 {
 	struct udev_device *dev;
+	const char *data;
+	struct lsblk_devprop *prop;
 
 	if (ld->udev_requested)
 		return ld->properties;
@@ -64,72 +66,70 @@ static struct lsblk_devprop *get_properties_by_udev(struct lsblk_device *ld)
 		goto done;
 
 	dev = udev_device_new_from_subsystem_sysname(udev, "block", ld->name);
-	if (dev) {
-		const char *data;
-		struct lsblk_devprop *prop;
+	if (!dev)
+		goto done;
 
-		if (ld->properties)
-			lsblk_device_free_properties(ld->properties);
-		prop = ld->properties = xcalloc(1, sizeof(*ld->properties));
+	DBG(DEV, ul_debugobj(ld, "%s: found udev properties", ld->name));
 
-		if ((data = udev_device_get_property_value(dev, "ID_FS_LABEL_ENC"))) {
-			prop->label = xstrdup(data);
-			unhexmangle_string(prop->label);
-		}
-		if ((data = udev_device_get_property_value(dev, "ID_FS_UUID_ENC"))) {
-			prop->uuid = xstrdup(data);
-			unhexmangle_string(prop->uuid);
-		}
-		if ((data = udev_device_get_property_value(dev, "ID_PART_TABLE_UUID")))
-			prop->ptuuid = xstrdup(data);
-		if ((data = udev_device_get_property_value(dev, "ID_PART_TABLE_TYPE")))
-			prop->pttype = xstrdup(data);
-		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_NAME"))) {
-			prop->partlabel = xstrdup(data);
-			unhexmangle_string(prop->partlabel);
-		}
-		if ((data = udev_device_get_property_value(dev, "ID_FS_TYPE")))
-			prop->fstype = xstrdup(data);
-		if ((data = udev_device_get_property_value(dev, "ID_FS_VERSION")))
-			prop->fsversion = xstrdup(data);
-		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_TYPE")))
-			prop->parttype = xstrdup(data);
-		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_UUID")))
-			prop->partuuid = xstrdup(data);
-		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_FLAGS")))
-			prop->partflags = xstrdup(data);
+	if (ld->properties)
+		lsblk_device_free_properties(ld->properties);
+	prop = ld->properties = xcalloc(1, sizeof(*ld->properties));
 
-		data = udev_device_get_property_value(dev, "ID_WWN_WITH_EXTENSION");
-		if (!data)
-			data = udev_device_get_property_value(dev, "ID_WWN");
-		if (data)
-			prop->wwn = xstrdup(data);
+	if ((data = udev_device_get_property_value(dev, "ID_FS_LABEL_ENC"))) {
+		prop->label = xstrdup(data);
+		unhexmangle_string(prop->label);
+	}
+	if ((data = udev_device_get_property_value(dev, "ID_FS_UUID_ENC"))) {
+		prop->uuid = xstrdup(data);
+		unhexmangle_string(prop->uuid);
+	}
+	if ((data = udev_device_get_property_value(dev, "ID_PART_TABLE_UUID")))
+		prop->ptuuid = xstrdup(data);
+	if ((data = udev_device_get_property_value(dev, "ID_PART_TABLE_TYPE")))
+		prop->pttype = xstrdup(data);
+	if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_NAME"))) {
+		prop->partlabel = xstrdup(data);
+		unhexmangle_string(prop->partlabel);
+	}
+	if ((data = udev_device_get_property_value(dev, "ID_FS_TYPE")))
+		prop->fstype = xstrdup(data);
+	if ((data = udev_device_get_property_value(dev, "ID_FS_VERSION")))
+		prop->fsversion = xstrdup(data);
+	if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_TYPE")))
+		prop->parttype = xstrdup(data);
+	if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_UUID")))
+		prop->partuuid = xstrdup(data);
+	if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_FLAGS")))
+		prop->partflags = xstrdup(data);
 
-		data = udev_device_get_property_value(dev, "SCSI_IDENT_SERIAL");	/* sg3_utils do not use I_D prefix */
-		if (!data)
-			data = udev_device_get_property_value(dev, "ID_SCSI_SERIAL");
-		if(!data)
-			data = udev_device_get_property_value(dev, "ID_SERIAL_SHORT");
-		if(!data)
-			data = udev_device_get_property_value(dev, "ID_SERIAL");
-		if (data) {
-			prop->serial = xstrdup(data);
-			normalize_whitespace((unsigned char *) prop->serial);
-		}
+	data = udev_device_get_property_value(dev, "ID_WWN_WITH_EXTENSION");
+	if (!data)
+		data = udev_device_get_property_value(dev, "ID_WWN");
+	if (data)
+		prop->wwn = xstrdup(data);
 
-		if ((data = udev_device_get_property_value(dev, "ID_MODEL_ENC"))) {
-			prop->model = xstrdup(data);
-			unhexmangle_string(prop->model);
-			normalize_whitespace((unsigned char *) prop->model);
-		} else if ((data = udev_device_get_property_value(dev, "ID_MODEL"))) {
-			prop->model = xstrdup(data);
-			normalize_whitespace((unsigned char *) prop->model);
-		}
-
-		udev_device_unref(dev);
-		DBG(DEV, ul_debugobj(ld, "%s: found udev properties", ld->name));
+	data = udev_device_get_property_value(dev, "SCSI_IDENT_SERIAL");	/* sg3_utils do not use I_D prefix */
+	if (!data)
+		data = udev_device_get_property_value(dev, "ID_SCSI_SERIAL");
+	if(!data)
+		data = udev_device_get_property_value(dev, "ID_SERIAL_SHORT");
+	if(!data)
+		data = udev_device_get_property_value(dev, "ID_SERIAL");
+	if (data) {
+		prop->serial = xstrdup(data);
+		normalize_whitespace((unsigned char *) prop->serial);
 	}
 
+	if ((data = udev_device_get_property_value(dev, "ID_MODEL_ENC"))) {
+		prop->model = xstrdup(data);
+		unhexmangle_string(prop->model);
+		normalize_whitespace((unsigned char *) prop->model);
+	} else if ((data = udev_device_get_property_value(dev, "ID_MODEL"))) {
+		prop->model = xstrdup(data);
+		normalize_whitespace((unsigned char *) prop->model);
+	}
+
+	udev_device_unref(dev);
 done:
 	ld->udev_requested = 1;
 
