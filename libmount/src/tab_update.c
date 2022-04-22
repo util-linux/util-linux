@@ -30,6 +30,7 @@
 #include "mountP.h"
 #include "mangle.h"
 #include "pathnames.h"
+#include "strutils.h"
 
 struct libmnt_update {
 	char		*target;
@@ -762,13 +763,44 @@ static int update_modify_target(struct libmnt_update *upd, struct libmnt_lock *l
 	tb = __mnt_new_table_from_file(upd->filename,
 			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB, 1);
 	if (tb) {
-		struct libmnt_fs *cur = mnt_table_find_target(tb,
-				mnt_fs_get_srcpath(upd->fs), MNT_ITER_BACKWARD);
-		if (cur) {
-			rc = mnt_fs_set_target(cur, mnt_fs_get_target(upd->fs));
-			if (!rc)
-				rc = update_table(upd, tb);
+		const char *upd_source = mnt_fs_get_srcpath(upd->fs);
+		const char *upd_target = mnt_fs_get_target(upd->fs);
+		struct libmnt_iter itr;
+		struct libmnt_fs *fs;
+
+		mnt_reset_iter(&itr, MNT_ITER_BACKWARD);
+		while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
+			char *p, *e;
+			size_t len;
+
+			e = startswith(mnt_fs_get_target(fs), upd_source);
+			if (!e)
+				continue;
+
+			len = strlen(upd_target) + strlen(e) + 2;
+			p = malloc(len);
+			if (!p)
+				rc = -ENOMEM;
+			else {
+				char *cn;
+
+				strcpy(p, upd_target);
+				strcat(p, "/");
+				strcat(p, e);
+
+				cn = mnt_resolve_path(p, NULL);
+				rc = mnt_fs_set_target(fs, cn);
+
+				free(cn);
+				free(p);
+			}
+
+			if (rc < 0)
+				break;
 		}
+
+		if (!rc)
+			rc = update_table(upd, tb);
 	}
 
 	if (lc)
