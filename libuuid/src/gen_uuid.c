@@ -443,6 +443,7 @@ int __uuid_generate_time(uuid_t out, int *num)
 static int uuid_generate_time_generic(uuid_t out) {
 #ifdef HAVE_TLS
 	THREAD_LOCAL int		num = 0;
+	THREAD_LOCAL int		cache_size = 1;
 	THREAD_LOCAL struct uuid	uu;
 	THREAD_LOCAL time_t		last_time = 0;
 	time_t				now;
@@ -453,7 +454,15 @@ static int uuid_generate_time_generic(uuid_t out) {
 			num = 0;
 	}
 	if (num <= 0) {
-		num = 1000000;
+		/*
+		 * num + OP_BULK provides a local cache in each application.
+		 * Start with a small cache size to cover short running applications
+		 * and increment the cache size over the runntime.
+		 */
+		if (cache_size < 1000000)
+			cache_size *= 10;
+		num = cache_size;
+
 		if (get_uuid_via_daemon(UUIDD_OP_BULK_TIME_UUID,
 					out, &num) == 0) {
 			last_time = time(NULL);
