@@ -36,6 +36,7 @@ void lsblk_device_free_properties(struct lsblk_devprop *p)
 	free(p->serial);
 	free(p->model);
 	free(p->partflags);
+	free(p->byid);
 
 	free(p->mode);
 	free(p->owner);
@@ -51,11 +52,17 @@ static struct lsblk_devprop *get_properties_by_udev(struct lsblk_device *dev
 	return NULL;
 }
 #else
+
+#define LSBLK_UDEV_BYID_PREFIX "/dev/disk/by-id/"
+#define LSBLK_UDEV_BYID_PREFIXSZ (sizeof(LSBLK_UDEV_BYID_PREFIX) - 1)
+
 static struct lsblk_devprop *get_properties_by_udev(struct lsblk_device *ld)
 {
 	struct udev_device *dev;
+	struct udev_list_entry *le;
 	const char *data;
 	struct lsblk_devprop *prop;
+	size_t len;
 
 	if (ld->udev_requested)
 		return ld->properties;
@@ -127,6 +134,25 @@ static struct lsblk_devprop *get_properties_by_udev(struct lsblk_device *ld)
 	} else if ((data = udev_device_get_property_value(dev, "ID_MODEL"))) {
 		prop->model = xstrdup(data);
 		normalize_whitespace((unsigned char *) prop->model);
+	}
+
+	/* select the shortest udev by-id symlink */
+	len = 0;
+	udev_list_entry_foreach(le, udev_device_get_devlinks_list_entry(dev)) {
+		const char *name = udev_list_entry_get_name(le);
+		size_t sz;
+
+		if (!name || !startswith(name,  LSBLK_UDEV_BYID_PREFIX))
+			continue;
+		name += LSBLK_UDEV_BYID_PREFIXSZ;
+		if (!*name)
+			continue;
+		sz = strlen(name);
+		if (!len || sz < len) {
+			len = sz;
+			free(prop->byid);
+			prop->byid = xstrdup(name);
+		}
 	}
 
 	udev_device_unref(dev);

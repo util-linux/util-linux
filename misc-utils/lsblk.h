@@ -75,6 +75,7 @@ struct lsblk_devprop {
 	char *wwn;		/* storage WWN */
 	char *serial;		/* disk serial number */
 	char *model;		/* disk model */
+	char *byid;		/* /dev/disk/by-id/<name> */
 
 	/* lsblk specific (for --sysroot only)  */
 	char *owner;		/* user name */
