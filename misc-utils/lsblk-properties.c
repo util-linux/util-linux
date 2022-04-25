@@ -36,7 +36,7 @@ void lsblk_device_free_properties(struct lsblk_devprop *p)
 	free(p->serial);
 	free(p->model);
 	free(p->partflags);
-	free(p->byid);
+	free(p->idlink);
 
 	free(p->mode);
 	free(p->owner);
@@ -150,8 +150,8 @@ static struct lsblk_devprop *get_properties_by_udev(struct lsblk_device *ld)
 		sz = strlen(name);
 		if (!len || sz < len) {
 			len = sz;
-			free(prop->byid);
-			prop->byid = xstrdup(name);
+			free(prop->idlink);
+			prop->idlink = xstrdup(name);
 		}
 	}
 

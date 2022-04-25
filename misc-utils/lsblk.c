@@ -66,7 +66,7 @@ static int column_id_to_number(int id);
 /* column IDs */
 enum {
 	COL_ALIOFF = 0,
-	COL_BYID,
+	COL_IDLINK,
 	COL_DALIGN,
 	COL_DAX,
 	COL_DGRAN,
@@ -164,7 +164,7 @@ struct colinfo {
 /* columns descriptions */
 static struct colinfo infos[] = {
 	[COL_ALIOFF] = { "ALIGNMENT", 6, SCOLS_FL_RIGHT, N_("alignment offset"), COLTYPE_NUM },
-	[COL_BYID] = { "ID-LINK", 0.1, SCOLS_FL_NOEXTREMES, N_("udev by-id link") },
+	[COL_IDLINK] = { "ID-LINK", 0.1, SCOLS_FL_NOEXTREMES, N_("the shortest udev /dev/disk/by-id link name") },
 	[COL_DALIGN] = { "DISC-ALN", 6, SCOLS_FL_RIGHT, N_("discard alignment offset"), COLTYPE_NUM },
 	[COL_DAX] = { "DAX", 1, SCOLS_FL_RIGHT, N_("dax-capable device"), COLTYPE_BOOL },
 	[COL_DGRAN] = { "DISC-GRAN", 6, SCOLS_FL_RIGHT, N_("discard granularity"), COLTYPE_SIZE },
@@ -929,10 +929,10 @@ static char *device_get_data(
 		if (prop && prop->wwn)
 			str = xstrdup(prop->wwn);
 		break;
-	case COL_BYID:
+	case COL_IDLINK:
 		prop = lsblk_device_get_properties(dev);
-		if (prop && prop->byid)
-			str = xstrdup(prop->byid);
+		if (prop && prop->idlink)
+			str = xstrdup(prop->idlink);
 		break;
 	case COL_RA:
 		ul_path_read_string(dev->sysfs, &str, "queue/read_ahead_kb");
