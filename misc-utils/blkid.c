@@ -921,7 +921,8 @@ int main(int argc, char **argv)
 			blkid_probe_set_superblocks_flags(pr,
 				BLKID_SUBLKS_LABEL | BLKID_SUBLKS_UUID |
 				BLKID_SUBLKS_TYPE | BLKID_SUBLKS_SECTYPE |
-				BLKID_SUBLKS_USAGE | BLKID_SUBLKS_VERSION);
+				BLKID_SUBLKS_USAGE | BLKID_SUBLKS_VERSION |
+				BLKID_SUBLKS_FSSIZE);
 
 
 			if (fltr_usage &&
