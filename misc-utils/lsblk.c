@@ -67,6 +67,7 @@ static int column_id_to_number(int id);
 enum {
 	COL_ALIOFF = 0,
 	COL_IDLINK,
+	COL_ID,
 	COL_DALIGN,
 	COL_DAX,
 	COL_DGRAN,
@@ -164,6 +165,7 @@ struct colinfo {
 /* columns descriptions */
 static struct colinfo infos[] = {
 	[COL_ALIOFF] = { "ALIGNMENT", 6, SCOLS_FL_RIGHT, N_("alignment offset"), COLTYPE_NUM },
+	[COL_ID] = { "ID", 0.1, SCOLS_FL_NOEXTREMES, N_("udev ID (based on ID-LINK)") },
 	[COL_IDLINK] = { "ID-LINK", 0.1, SCOLS_FL_NOEXTREMES, N_("the shortest udev /dev/disk/by-id link name") },
 	[COL_DALIGN] = { "DISC-ALN", 6, SCOLS_FL_RIGHT, N_("discard alignment offset"), COLTYPE_NUM },
 	[COL_DAX] = { "DAX", 1, SCOLS_FL_RIGHT, N_("dax-capable device"), COLTYPE_BOOL },
@@ -933,6 +935,14 @@ static char *device_get_data(
 		prop = lsblk_device_get_properties(dev);
 		if (prop && prop->idlink)
 			str = xstrdup(prop->idlink);
+		break;
+	case COL_ID:
+		prop = lsblk_device_get_properties(dev);
+		if (prop && prop->idlink) {
+			/* skip bus/subsystem prefix */
+			const char *p = strchr(prop->idlink, '-');
+			str = p && *(p + 1) ? xstrdup(p+1) : xstrdup(prop->idlink);
+		}
 		break;
 	case COL_RA:
 		ul_path_read_string(dev->sysfs, &str, "queue/read_ahead_kb");
