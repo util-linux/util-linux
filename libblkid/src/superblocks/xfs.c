@@ -158,6 +158,15 @@ static int xfs_verify_sb(struct xfs_super_block *ondisk)
 	return 1;
 }
 
+static uint64_t xfs_fssize(struct xfs_super_block *xs)
+{
+	uint32_t lsize = xs->sb_logstart ? xs->sb_logblocks : 0;
+	uint64_t avail_blocks = be64_to_cpu(xs->sb_dblocks) - be32_to_cpu(lsize);
+	uint64_t fssize = avail_blocks*be32_to_cpu(xs->sb_blocksize);
+
+	return fssize;
+}
+
 static int probe_xfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct xfs_super_block *xs;
@@ -173,6 +182,7 @@ static int probe_xfs(blkid_probe pr, const struct blkid_idmag *mag)
 		blkid_probe_set_label(pr, (unsigned char *) xs->sb_fname,
 				sizeof(xs->sb_fname));
 	blkid_probe_set_uuid(pr, xs->sb_uuid);
+	blkid_probe_set_fssize(pr, xfs_fssize(xs));
 	blkid_probe_set_block_size(pr, be16_to_cpu(xs->sb_sectsize));
 	return 0;
 }
