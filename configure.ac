@@ -229,6 +229,12 @@ m4_ifndef([PKG_PROG_PKG_CONFIG],
     ./autogen.sh or autoreconf again. Make sure pkg-config is installed.])])
 PKG_PROG_PKG_CONFIG
 PKG_INSTALLDIR(['${usrlib_execdir}/pkgconfig'])
+PKG_CHECK_EXISTS([pkg-config],
+                 [pkgconfig_supports_host=true],
+                 [pkgconfig_supports_host=false])
+if $pkgconfig_supports_host; then
+    PKG_CONFIG="$PKG_CONFIG --host $host"
+fi
 
 GTK_DOC_CHECK([1.10])
 AC_PATH_PROG([XSLTPROC], [xsltproc])
