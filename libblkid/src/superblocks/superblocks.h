@@ -111,6 +111,7 @@ extern int blkid_probe_set_utf8_id_label(blkid_probe pr, const char *name,
 			     const unsigned char *data, size_t len, int enc);
 
 int blkid_probe_set_block_size(blkid_probe pr, unsigned block_size);
+int blkid_probe_set_fssize(blkid_probe pr, uint64_t size);
 
 extern int blkid_probe_is_bitlocker(blkid_probe pr);
 extern int blkid_probe_is_ntfs(blkid_probe pr);

@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 			BLKID_SUBLKS_UUID | BLKID_SUBLKS_UUIDRAW |
 			BLKID_SUBLKS_TYPE | BLKID_SUBLKS_SECTYPE |
 			BLKID_SUBLKS_USAGE | BLKID_SUBLKS_VERSION |
-			BLKID_SUBLKS_MAGIC);
+			BLKID_SUBLKS_MAGIC | BLKID_SUBLKS_FSSIZE);
 
 	rc = blkid_do_safeprobe(pr);
 	if (rc == -1)

@@ -7,6 +7,7 @@
  * GNU Lesser General Public License.
  */
 
+#include <inttypes.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -582,6 +583,16 @@ static int blkid_probe_set_usage(blkid_probe pr, int usage)
 		u = "unknown";
 
 	return blkid_probe_set_value(pr, "USAGE", (unsigned char *) u, strlen(u) + 1);
+}
+
+int blkid_probe_set_fssize(blkid_probe pr, uint64_t size)
+{
+	struct blkid_chain *chn = blkid_probe_get_chain(pr);
+
+	if (!(chn->flags & BLKID_SUBLKS_FSSIZE))
+		return 0;
+
+	return blkid_probe_sprintf_value(pr, "FSSIZE", "%" PRIu64, size);
 }
 
 int blkid_probe_set_id_label(blkid_probe pr, const char *name,
