@@ -161,9 +161,7 @@ void sanitize_env(void)
 
 char *safe_getenv(const char *arg)
 {
-	uid_t ruid = getuid();
-
-	if (ruid != 0 || (ruid != geteuid()) || (getgid() != getegid()))
+	if ((getuid() != geteuid()) || (getgid() != getegid()))
 		return NULL;
 #ifdef HAVE_PRCTL
 	if (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
