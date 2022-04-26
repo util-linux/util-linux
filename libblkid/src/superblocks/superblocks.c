@@ -66,7 +66,7 @@
  *
  * @SBMAGIC_OFFSET: offset of SBMAGIC
  *
- * @FSSIZE: size of filesystem [not-implemented yet]
+ * @FSSIZE: size of filesystem (implemented for XFS only)
  *
  * @SYSTEM_ID: ISO9660 system identifier
  *
