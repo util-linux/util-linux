@@ -68,6 +68,8 @@
  *
  * @FSSIZE: size of filesystem (implemented for XFS only)
  *
+ * @FSLASTBLOCK: last fsblock/total number of fsblocks
+ *
  * @SYSTEM_ID: ISO9660 system identifier
  *
  * @PUBLISHER_ID: ISO9660 publisher identifier
@@ -593,6 +595,17 @@ int blkid_probe_set_fssize(blkid_probe pr, uint64_t size)
 		return 0;
 
 	return blkid_probe_sprintf_value(pr, "FSSIZE", "%" PRIu64, size);
+}
+
+int blkid_probe_set_fslastblock(blkid_probe pr, uint64_t lastblock)
+{
+	struct blkid_chain *chn = blkid_probe_get_chain(pr);
+
+	if (!(chn->flags & BLKID_SUBLKS_FSLASTBLOCK))
+		return 0;
+
+	return blkid_probe_sprintf_value(pr, "FSLASTBLOCK", "%" PRIu64,
+			lastblock);
 }
 
 int blkid_probe_set_id_label(blkid_probe pr, const char *name,
