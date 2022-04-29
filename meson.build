@@ -380,7 +380,7 @@ endforeach
 have = cc.has_header('sched.h')
 conf.set10('HAVE_DECL_CPU_ALLOC', have)
 # We get -1 if the size cannot be determined
-have_cpu_set_t = cc.sizeof('cpu_set_t', prefix : '#include <sched.h>') > 0
+have_cpu_set_t = cc.sizeof('cpu_set_t', prefix : '#define _GNU_SOURCE\n#include <sched.h>') > 0
 conf.set('HAVE_CPU_SET_T', have_cpu_set_t ? 1 : false)
 
 have = cc.has_header_symbol('stdlib.h', 'environ')
