@@ -598,7 +598,7 @@ if not have
   have = cc.has_function('clock_gettime',
                          dependencies : realtime_libs)
 endif
-conf.set('HAVE_CLOCK_GETTIME', have_dirfd ? 1 : false)
+conf.set('HAVE_CLOCK_GETTIME', have ? 1 : false)
 
 thread_libs = dependency('threads')
 
