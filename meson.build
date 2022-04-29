@@ -721,6 +721,7 @@ if fs_search_path_extra != ''
 endif
 conf.set_quoted('FS_SEARCH_PATH', fs_search_path)
 
+systemdsystemunitdir = ''
 if systemd.found()
   systemdsystemunitdir = systemd.get_pkgconfig_variable('systemdsystemunitdir')
 endif
