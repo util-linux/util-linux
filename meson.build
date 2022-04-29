@@ -578,8 +578,7 @@ int main(void) {
   return tzname ? 0 : 1;
 }
 '''.format(have ? 1 : 0)
-result = cc.run(code, name : 'using tzname[]')
-have = result.compiled() and result.returncode() == 0
+have = cc.compiles(code, name : 'using tzname[]')
 conf.set('HAVE_TZNAME', have ? 1 : false)
 
 socket_libs = []
@@ -642,8 +641,7 @@ int main(void) {
     return (*__progname != 0);
 }
 '''
-result = cc.run(code, name : 'using __progname')
-have = result.compiled() and result.returncode() == 0
+have = cc.compiles(code, name : 'using __progname')
 conf.set('HAVE___PROGNAME', have ? 1 : false)
 
 build_plymouth_support = get_option('build-plymouth-support')
