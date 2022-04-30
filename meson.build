@@ -566,7 +566,7 @@ have = cc.has_member('struct tm', 'tm_zone',
                      prefix : '#include <time.h>')
 conf.set('HAVE_STRUCT_TM_TM_ZONE', have ? 1 : false)
 
-have = cc.sizeof('tzname', prefix : '#include <time.h>') > 0
+have = cc.has_header_symbol('time.h', 'tzname')
 conf.set('HAVE_DECL_TZNAME', have ? 1 : false)
 
 code = '''
