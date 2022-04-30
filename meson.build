@@ -623,7 +623,7 @@ rtas_libs = cc.find_library('rtas', required : false)
 conf.set('HAVE_LIBRTAS', rtas_libs.found() ? 1 : false)
 
 math_libs = []
-if not cc.has_function('isnan')
+if not cc.has_header_symbol('math.h', 'isnan')
   lib = cc.find_library('m', required : true)
   if (cc.has_function('isnan', dependencies : lib) and
       cc.has_function('__isnan', dependencies : lib))
