@@ -386,7 +386,7 @@ conf.set('HAVE_CPU_SET_T', have_cpu_set_t ? 1 : false)
 have = cc.has_header_symbol('unistd.h', 'environ', prefix : '#define _GNU_SOURCE')
 conf.set10('HAVE_ENVIRON_DECL', have)
 
-have = cc.has_header_symbol('signal.h', 'sighandler_t')
+have = cc.has_header_symbol('signal.h', 'sighandler_t', prefix : '#define _GNU_SOURCE')
 conf.set('HAVE_SIGHANDLER_T', have ? 1 : false)
 
 have = cc.has_header_symbol('string.h', 'strsignal')
