@@ -684,12 +684,36 @@ static char *get_structured_data_string(struct logger_ctl *ctl)
 
 static int valid_structured_data_param(const char *str)
 {
+	char *s;
 	char *eq  = strchr(str, '='),
 	     *qm1 = strchr(str, '"'),
-	     *qm2 = qm1 ? strchr(qm1 + 1, '"') : NULL;
+	     *qm2 = qm1 ? ul_strchr_escaped(qm1 + 1, '"') : NULL;
 
-	if (!eq || !qm1 || !qm2)		/* something is missing */
+	/* something is missing */
+	if (!eq || !qm1 || !qm2)
 		return 0;
+
+	/* ']' need to be escaped */
+	for (s = qm1 + 1; s && *s; ) {
+		char *p = strchr(s, ']');
+		if (!p)
+			break;
+		if (p > qm2 || p == ul_strchr_escaped(s, ']'))
+			return 0;
+		s = p + 1;
+	}
+
+	/* '\' is allowed only before '[]"\' chars */
+	for (s = qm1 + 1; s && *s; ) {
+		char *p = strchr(s, '\\');
+		if (!p)
+			break;
+		if (!strchr("[]\"\\", *(p + 1)))
+			return 0;
+		s = p + 1;
+		if (*s == '\\')
+			s++;
+	}
 
 	/* foo="bar" */
 	return eq > str && eq < qm1 && eq + 1 == qm1 && qm1 < qm2 && *(qm2 + 1) == '\0';
