@@ -2149,7 +2149,7 @@ again:
 	if (!op->autolog) {
 		/* Always show login prompt. */
 		write_all(STDOUT_FILENO, LOGIN_PROMPT,
-				sizeof(LOGIN_PROCESS) - 1);
+				sizeof(LOGIN_PROMPT) - 1);
 	}
 }
 
