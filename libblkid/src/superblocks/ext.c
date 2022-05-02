@@ -164,10 +164,11 @@ static struct ext2_super_block *ext_get_super(
 static void ext_get_info(blkid_probe pr, int ver, struct ext2_super_block *es)
 {
 	struct blkid_chain *chn = blkid_probe_get_chain(pr);
+	uint32_t s_feature_incompat = le32_to_cpu(es->s_feature_incompat);
 
 	DBG(PROBE, ul_debug("ext2_sb.compat = %08X:%08X:%08X",
 		   le32_to_cpu(es->s_feature_compat),
-		   le32_to_cpu(es->s_feature_incompat),
+		   s_feature_incompat,
 		   le32_to_cpu(es->s_feature_ro_compat)));
 
 	if (*es->s_volume_name != '\0')
@@ -179,7 +180,7 @@ static void ext_get_info(blkid_probe pr, int ver, struct ext2_super_block *es)
 		blkid_probe_set_uuid_as(pr, es->s_journal_uuid, "EXT_JOURNAL");
 
 	if (ver != 2 && (chn->flags & BLKID_SUBLKS_SECTYPE) &&
-	    ((le32_to_cpu(es->s_feature_incompat) & EXT2_FEATURE_INCOMPAT_UNSUPPORTED) == 0))
+	    ((s_feature_incompat & EXT2_FEATURE_INCOMPAT_UNSUPPORTED) == 0))
 		blkid_probe_set_value(pr, "SEC_TYPE",
 				(unsigned char *) "ext2",
 				sizeof("ext2"));
@@ -190,6 +191,11 @@ static void ext_get_info(blkid_probe pr, int ver, struct ext2_super_block *es)
 
 	if (le32_to_cpu(es->s_log_block_size) < 32)
 		blkid_probe_set_block_size(pr, 1024U << le32_to_cpu(es->s_log_block_size));
+
+	uint64_t fslastblock = le32_to_cpu(es->s_blocks_count) |
+		((s_feature_incompat & EXT4_FEATURE_INCOMPAT_64BIT) ?
+		(uint64_t) le32_to_cpu(es->s_blocks_count_hi) << 32 : 0);
+	blkid_probe_set_fslastblock(pr, fslastblock);
 }
 
 
