@@ -725,7 +725,7 @@ conf.set_quoted('FS_SEARCH_PATH', fs_search_path)
 
 systemdsystemunitdir = ''
 if systemd.found()
-  systemdsystemunitdir = systemd.get_pkgconfig_variable('systemdsystemunitdir')
+  systemdsystemunitdir = systemd.get_variable(pkgconfig : 'systemdsystemunitdir')
 endif
 
 chfn_chsh_password = get_option('chfn-chsh-password') or lib_user.found()
