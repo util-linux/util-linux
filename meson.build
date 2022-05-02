@@ -335,7 +335,8 @@ have = cc.has_function(
 conf.set('HAVE_CRYPT_ACTIVATE_BY_SIGNED_KEY', have ? 1 : false)
 
 lib_cap_ng = dependency(
-  'libcap-ng')
+  'libcap-ng',
+  required : get_option('build-setpriv'))
 
 lib_selinux = dependency(
   'libselinux',
@@ -1745,7 +1746,7 @@ if opt and not is_disabler(exe)
   exes += exe
 endif
 
-opt = not get_option('build-setpriv').disabled()
+opt = not get_option('build-setpriv').disabled() and lib_cap_ng.found()
 exe = executable(
   'setpriv',
   setpriv_sources,
