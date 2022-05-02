@@ -300,10 +300,14 @@ conf.set('HAVE_LIBUDEV', lib_udev.found() ? 1 : false)
 
 lib_crypt = cc.find_library('crypt')
 
-lib_pam = cc.find_library('pam')
+req_libpam = not (get_option('build-login').disabled() or get_option('build-chfn-chsh').disabled()
+  or get_option('build-su').disabled() or get_option('build-runuser').disabled())
+lib_pam = cc.find_library('pam', required : req_libpam)
 if lib_pam.found()
   lib_pam_misc = cc.find_library('pam_misc')
   lib_pam = [lib_pam, lib_pam_misc]
+else
+  lib_pam_misc = declare_dependency()
 endif
 
 lib_cryptsetup = dependency(
@@ -380,13 +384,13 @@ endforeach
 have = cc.has_header('sched.h')
 conf.set10('HAVE_DECL_CPU_ALLOC', have)
 # We get -1 if the size cannot be determined
-have_cpu_set_t = cc.sizeof('cpu_set_t', prefix : '#include <sched.h>') > 0
+have_cpu_set_t = cc.sizeof('cpu_set_t', prefix : '#define _GNU_SOURCE\n#include <sched.h>') > 0
 conf.set('HAVE_CPU_SET_T', have_cpu_set_t ? 1 : false)
 
-have = cc.has_header_symbol('stdlib.h', 'environ')
+have = cc.has_header_symbol('unistd.h', 'environ', prefix : '#define _GNU_SOURCE')
 conf.set10('HAVE_ENVIRON_DECL', have)
 
-have = cc.has_header_symbol('signal.h', 'sighandler_t')
+have = cc.has_header_symbol('signal.h', 'sighandler_t', prefix : '#define _GNU_SOURCE')
 conf.set('HAVE_SIGHANDLER_T', have ? 1 : false)
 
 have = cc.has_header_symbol('string.h', 'strsignal')
@@ -566,7 +570,7 @@ have = cc.has_member('struct tm', 'tm_zone',
                      prefix : '#include <time.h>')
 conf.set('HAVE_STRUCT_TM_TM_ZONE', have ? 1 : false)
 
-have = cc.sizeof('tzname', prefix : '#include <time.h>') > 0
+have = cc.has_header_symbol('time.h', 'tzname')
 conf.set('HAVE_DECL_TZNAME', have ? 1 : false)
 
 code = '''
@@ -578,8 +582,7 @@ int main(void) {
   return tzname ? 0 : 1;
 }
 '''.format(have ? 1 : 0)
-result = cc.run(code, name : 'using tzname[]')
-have = result.compiled() and result.returncode() == 0
+have = cc.compiles(code, name : 'using tzname[]')
 conf.set('HAVE_TZNAME', have ? 1 : false)
 
 socket_libs = []
@@ -624,7 +627,7 @@ rtas_libs = cc.find_library('rtas', required : false)
 conf.set('HAVE_LIBRTAS', rtas_libs.found() ? 1 : false)
 
 math_libs = []
-if not cc.has_function('isnan')
+if not cc.has_header_symbol('math.h', 'isnan')
   lib = cc.find_library('m', required : true)
   if (cc.has_function('isnan', dependencies : lib) and
       cc.has_function('__isnan', dependencies : lib))
@@ -642,8 +645,7 @@ int main(void) {
     return (*__progname != 0);
 }
 '''
-result = cc.run(code, name : 'using __progname')
-have = result.compiled() and result.returncode() == 0
+have = cc.compiles(code, name : 'using __progname')
 conf.set('HAVE___PROGNAME', have ? 1 : false)
 
 build_plymouth_support = get_option('build-plymouth-support')
@@ -721,6 +723,7 @@ if fs_search_path_extra != ''
 endif
 conf.set_quoted('FS_SEARCH_PATH', fs_search_path)
 
+systemdsystemunitdir = ''
 if systemd.found()
   systemdsystemunitdir = systemd.get_pkgconfig_variable('systemdsystemunitdir')
 endif
