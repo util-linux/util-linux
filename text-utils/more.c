@@ -1828,7 +1828,7 @@ static void screen(struct more_control *ctl, int num_lines)
 					putp(ctl->clear_rest);
 				return;
 			}
-			if (ctl->squeeze_spaces && length == 0 && prev_len == 0)
+			if (ctl->squeeze_spaces && length == 0 && prev_len == 0 && !ctl->is_eof)
 				continue;
 			prev_len = length;
 			if (ctl->bad_stdout
