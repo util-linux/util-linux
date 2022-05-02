@@ -1035,6 +1035,37 @@ static size_t strcspn_escaped(const char *s, const char *reject)
         return n - escaped;
 }
 
+/*
+ * Like strchr() but ignores @c if escaped by '\', '\\' is interpreted like '\'.
+ *
+ * For example for @c='X':
+ *
+ *      "abcdXefgXh"    --> "XefgXh"
+ *	"abcd\XefgXh"   --> "Xh"
+ *	"abcd\\XefgXh"  --> "XefgXh"
+ *	"abcd\\\XefgXh" --> "Xh"
+ *	"abcd\Xefg\Xh"  --> (null)
+ *
+ *	"abcd\\XefgXh"  --> "\XefgXh"   for @c='\\'
+ */
+char *ul_strchr_escaped(const char *s, int c)
+{
+	char *p;
+	int esc = 0;
+
+	for (p = (char *) s; p && *p; p++) {
+		if (!esc && *p == '\\') {
+			esc = 1;
+			continue;
+		}
+		if (*p == c && (!esc || c == '\\'))
+			return p;
+		esc = 0;
+	}
+
+	return NULL;
+}
+
 /* Split a string into words. */
 const char *split(const char **state, size_t *l, const char *separator, int quoted)
 {
@@ -1260,6 +1291,10 @@ int main(int argc, char *argv[])
 		return EXIT_SUCCESS;
 	} else if (argc == 3 && strcmp(argv[1], "--strtou16") == 0) {
 		printf("'%s'-->%hu\n", argv[2], strtou16_or_err(argv[2], "strtou16 failed"));
+		return EXIT_SUCCESS;
+
+	} else if (argc == 4 && strcmp(argv[1], "--strchr-escaped") == 0) {
+		printf("\"%s\" --> \"%s\"\n", argv[2], ul_strchr_escaped(argv[2], *argv[3]));
 		return EXIT_SUCCESS;
 
 	} else {
