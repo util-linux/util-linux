@@ -922,8 +922,7 @@ int main(int argc, char **argv)
 				BLKID_SUBLKS_LABEL | BLKID_SUBLKS_UUID |
 				BLKID_SUBLKS_TYPE | BLKID_SUBLKS_SECTYPE |
 				BLKID_SUBLKS_USAGE | BLKID_SUBLKS_VERSION |
-				BLKID_SUBLKS_FSSIZE | BLKID_SUBLKS_FSLASTBLOCK);
-
+				BLKID_SUBLKS_FSINFO);
 
 			if (fltr_usage &&
 			    blkid_probe_filter_superblocks_usage(pr, fltr_flag, fltr_usage))

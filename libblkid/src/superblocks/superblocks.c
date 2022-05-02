@@ -562,6 +562,11 @@ int blkid_probe_sprintf_version(blkid_probe pr, const char *fmt, ...)
 
 int blkid_probe_set_block_size(blkid_probe pr, unsigned block_size)
 {
+	struct blkid_chain *chn = blkid_probe_get_chain(pr);
+
+	if (!(chn->flags & BLKID_SUBLKS_FSINFO))
+		return 0;
+
 	return blkid_probe_sprintf_value(pr, "BLOCK_SIZE", "%u", block_size);
 }
 
@@ -591,7 +596,7 @@ int blkid_probe_set_fssize(blkid_probe pr, uint64_t size)
 {
 	struct blkid_chain *chn = blkid_probe_get_chain(pr);
 
-	if (!(chn->flags & BLKID_SUBLKS_FSSIZE))
+	if (!(chn->flags & BLKID_SUBLKS_FSINFO))
 		return 0;
 
 	return blkid_probe_sprintf_value(pr, "FSSIZE", "%" PRIu64, size);
@@ -601,7 +606,7 @@ int blkid_probe_set_fslastblock(blkid_probe pr, uint64_t lastblock)
 {
 	struct blkid_chain *chn = blkid_probe_get_chain(pr);
 
-	if (!(chn->flags & BLKID_SUBLKS_FSLASTBLOCK))
+	if (!(chn->flags & BLKID_SUBLKS_FSINFO))
 		return 0;
 
 	return blkid_probe_sprintf_value(pr, "FSLASTBLOCK", "%" PRIu64,

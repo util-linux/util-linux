@@ -271,18 +271,17 @@ extern int blkid_superblocks_get_name(size_t idx, const char **name, int *usage)
 extern int blkid_probe_enable_superblocks(blkid_probe pr, int enable)
 			__ul_attribute__((nonnull));
 
-#define BLKID_SUBLKS_LABEL		(1 << 1) /* read LABEL from superblock */
-#define BLKID_SUBLKS_LABELRAW		(1 << 2) /* read and define LABEL_RAW result value*/
-#define BLKID_SUBLKS_UUID		(1 << 3) /* read UUID from superblock */
-#define BLKID_SUBLKS_UUIDRAW		(1 << 4) /* read and define UUID_RAW result value */
-#define BLKID_SUBLKS_TYPE		(1 << 5) /* define TYPE result value */
-#define BLKID_SUBLKS_SECTYPE		(1 << 6) /* define compatible fs type (second type) */
-#define BLKID_SUBLKS_USAGE		(1 << 7) /* define USAGE result value */
-#define BLKID_SUBLKS_VERSION		(1 << 8) /* read FS type from superblock */
-#define BLKID_SUBLKS_MAGIC		(1 << 9) /* define SBMAGIC and SBMAGIC_OFFSET */
-#define BLKID_SUBLKS_BADCSUM		(1 << 10) /* allow a bad checksum */
-#define BLKID_SUBLKS_FSSIZE		(1 << 11) /* read and define FSSIZE from superblock */
-#define BLKID_SUBLKS_FSLASTBLOCK	(1 << 12) /* read and define FSLASTBLOCK from superblock */
+#define BLKID_SUBLKS_LABEL	(1 << 1) /* read LABEL from superblock */
+#define BLKID_SUBLKS_LABELRAW	(1 << 2) /* read and define LABEL_RAW result value*/
+#define BLKID_SUBLKS_UUID	(1 << 3) /* read UUID from superblock */
+#define BLKID_SUBLKS_UUIDRAW	(1 << 4) /* read and define UUID_RAW result value */
+#define BLKID_SUBLKS_TYPE	(1 << 5) /* define TYPE result value */
+#define BLKID_SUBLKS_SECTYPE	(1 << 6) /* define compatible fs type (second type) */
+#define BLKID_SUBLKS_USAGE	(1 << 7) /* define USAGE result value */
+#define BLKID_SUBLKS_VERSION	(1 << 8) /* read FS type from superblock */
+#define BLKID_SUBLKS_MAGIC	(1 << 9) /* define SBMAGIC and SBMAGIC_OFFSET */
+#define BLKID_SUBLKS_BADCSUM	(1 << 10) /* allow a bad checksum */
+#define BLKID_SUBLKS_FSINFO	(1 << 11) /* read and define fs properties from superblock */
 
 #define BLKID_SUBLKS_DEFAULT	(BLKID_SUBLKS_LABEL | BLKID_SUBLKS_UUID | \
 				 BLKID_SUBLKS_TYPE | BLKID_SUBLKS_SECTYPE)
