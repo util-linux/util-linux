@@ -389,6 +389,8 @@ extern int strappend(char **a, const char *b);
 
 extern const char *split(const char **state, size_t *l, const char *separator, int quoted);
 
+extern char *ul_strchr_escaped(const char *s, int c);
+
 extern int skip_fline(FILE *fp);
 extern int ul_stralnumcmp(const char *p1, const char *p2);
 
