@@ -1,5 +1,5 @@
 project('util-linux', 'c',
-        version : '2.37',
+        version : '2.38',
         meson_version: '>=0.53.0',
         license : 'GPLv2+')
 
