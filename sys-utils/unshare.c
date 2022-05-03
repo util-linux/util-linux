@@ -217,7 +217,7 @@ static void settime(time_t offset, clockid_t clk_id)
 	char buf[sizeof(stringify_value(ULONG_MAX)) * 3];
 	int fd, len;
 
-	len = snprintf(buf, sizeof(buf), "%d %ld 0", clk_id, offset);
+	len = snprintf(buf, sizeof(buf), "%d %" PRId64 " 0", clk_id, (int64_t) offset);
 
 	fd = open("/proc/self/timens_offsets", O_WRONLY);
 	if (fd < 0)
