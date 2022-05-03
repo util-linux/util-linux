@@ -1158,7 +1158,7 @@ int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
 		if (buf && !memcmp(mag->magic,
 				buf + (mag->sboff & 0x3ff), mag->len)) {
 
-			DBG(LOWPROBE, ul_debug("\tmagic sboff=%u, kboff=%ld",
+			DBG(LOWPROBE, ul_debug("\tmagic sboff=%u, kboff=%" PRIu64,
 				mag->sboff, kboff));
 			if (offset)
 				*offset = off + (mag->sboff & 0x3ff);

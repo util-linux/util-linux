@@ -515,7 +515,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 			(uintmax_t)to, (uintmax_t)to * ss);
 		fprintf(f, "# Area size (sectors/bytes): %ju/%ju\n",
 			(uintmax_t)nsectors, (uintmax_t)nsectors * ss);
-				fprintf(f, "# Step size (sectors/bytes): %zu/%zu\n", step, step_bytes);
+				fprintf(f, "# Step size (sectors/bytes): %" PRIu64 "/%zu\n", step, step_bytes);
 		fprintf(f, "# Steps: %ju\n", ((uintmax_t) nsectors / step) + 1);
 		fprintf(f, "#\n");
 		fprintf(f, "# <step>: <from> <to> (step offsets in bytes)\n");
@@ -533,7 +533,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	for (cc = 1, i = 0; i < nsectors && nbytes > 0; i += step, cc++) {
 
 		if (nbytes < step_bytes) {
-			DBG(MISC, ul_debug("aligning step #%05zu from %ju to %ju",
+			DBG(MISC, ul_debug("aligning step #%05zu from %zu to %ju",
 						cc, step_bytes, nbytes));
 			step_bytes = nbytes;
 		}
@@ -551,7 +551,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 				if (f)
 					fprintf(f, "%05zu: read error %12ju %12ju\n", cc, src, dst);
 				fdisk_warn(sf->cxt,
-					_("cannot read at offset: %zu; continue"), src);
+					_("cannot read at offset: %ju; continue"), src);
 				ioerr++;
 				goto next;
 			}
@@ -562,7 +562,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 				if (f)
 					fprintf(f, "%05zu: write error %12ju %12ju\n", cc, src, dst);
 				fdisk_warn(sf->cxt,
-					_("cannot write at offset: %zu; continue"), dst);
+					_("cannot write at offset: %ju; continue"), dst);
 				ioerr++;
 				goto next;
 			}

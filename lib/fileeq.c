@@ -31,6 +31,7 @@
  * Written by Karel Zak <kzak@redhat.com> [October 2021]
  */
 
+#include <inttypes.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -279,7 +280,7 @@ size_t ul_fileeq_set_size(struct ul_fileeq *eq, uint64_t filesiz,
 	eq->readsiz = readsiz;
 	eq->blocksmax = filesiz / readsiz;
 
-	DBG(EQ, ul_debugobj(eq, "set sizes: filesiz=%ju, maxblocks=%zu, readsiz=%zu",
+	DBG(EQ, ul_debugobj(eq, "set sizes: filesiz=%ju, maxblocks=%" PRIu64 ", readsiz=%zu",
 				eq->filesiz, eq->blocksmax, eq->readsiz));
 	return eq->blocksmax;
 }
