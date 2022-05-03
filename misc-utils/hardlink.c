@@ -814,7 +814,7 @@ static int inserter(const char *fpath, const struct stat *sb,
 		return 0;
 	}
 
-	jlog(JLOG_VERBOSE2, " %5zu: [%ld/%ld/%zu] %s",
+	jlog(JLOG_VERBOSE2, " %5zu: [%" PRIu64 "/%" PRIu64 "/%zu] %s",
 			stats.files, sb->st_dev, sb->st_ino,
 			(size_t) sb->st_nlink, fpath);
 

@@ -678,7 +678,7 @@ static int callback_log_stream_activity(void *data, int fd, char *buf, size_t bu
 	if (ssz < 0)
 		return (int) ssz;
 
-	DBG(IO, ul_debug(" append %ld bytes [summary=%zu, max=%zu]", ssz,
+	DBG(IO, ul_debug(" append %zd bytes [summary=%" PRIu64 ", max=%" PRIu64 "]", ssz,
 				ctl->outsz, ctl->maxsz));
 
 	ctl->outsz += ssz;
