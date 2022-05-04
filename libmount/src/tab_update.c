@@ -767,33 +767,34 @@ static int update_modify_target(struct libmnt_update *upd, struct libmnt_lock *l
 		const char *upd_target = mnt_fs_get_target(upd->fs);
 		struct libmnt_iter itr;
 		struct libmnt_fs *fs;
+		char *cn_target = mnt_resolve_path(upd_target, NULL);
+
+		if (!cn_target) {
+			rc = -ENOMEM;
+			goto done;
+		}
 
 		mnt_reset_iter(&itr, MNT_ITER_BACKWARD);
-		while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
-			char *p, *e;
-			size_t len;
+		while (mnt_table_next_fs(tb, &itr, &fs) == 0) {
+			char *p;
+			const char *e;
 
 			e = startswith(mnt_fs_get_target(fs), upd_source);
-			if (!e)
+			if (!e || (*e && *e != '/'))
 				continue;
+			if (*e == '/')
+				e++;		/* remove extra '/' */
 
-			len = strlen(upd_target) + strlen(e) + 2;
-			p = malloc(len);
-			if (!p)
-				rc = -ENOMEM;
-			else {
-				char *cn;
+			/* no subdirectory, replace entire path */
+			if (!*e)
+				rc = mnt_fs_set_target(fs, cn_target);
 
-				strcpy(p, upd_target);
-				strcat(p, "/");
-				strcat(p, e);
-
-				cn = mnt_resolve_path(p, NULL);
-				rc = mnt_fs_set_target(fs, cn);
-
-				free(cn);
+			/* update start of the path, keep subdirectory */
+			else if (asprintf(&p, "%s/%s", cn_target, e) > 0) {
+				rc = mnt_fs_set_target(fs, p);
 				free(p);
-			}
+			} else
+				rc = -ENOMEM;
 
 			if (rc < 0)
 				break;
@@ -801,8 +802,10 @@ static int update_modify_target(struct libmnt_update *upd, struct libmnt_lock *l
 
 		if (!rc)
 			rc = update_table(upd, tb);
+		free(cn_target);
 	}
 
+done:
 	if (lc)
 		mnt_unlock_file(lc);
 
