@@ -1,5 +1,5 @@
 project('util-linux', 'c',
-        version : '2.37',
+        version : run_command('tools/git-version-gen', check: true).stdout(),
         meson_version: '>=0.53.0',
         license : 'GPLv2+')
 
