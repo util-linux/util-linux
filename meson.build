@@ -1,5 +1,5 @@
 project('util-linux', 'c',
-        version : '2.37',
+        version : run_command('tools/git-version-gen', check: true).stdout(),
         meson_version: '>=0.53.0',
         license : 'GPLv2+')
 
@@ -42,7 +42,7 @@ conf.set_quoted('PACKAGE_VERSION', meson.project_version())
 
 codes = [''' {print $1}  ''',
          ''' {sub("-.*","",$2); print $2} ''',
-         ''' {sub("-.*","",$3); print $3 ~ /^@<:@0-9@:>@+$/ ? $3 : 0} ''']
+         ''' {sub("-.*","",$3); print $3 ~ /^[0-9]+$/ ? $3 : 0} ''']
 pc_version = []
 foreach code : codes
   res = run_command('bash', '-c',
