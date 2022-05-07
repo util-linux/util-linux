@@ -122,6 +122,7 @@ static int fstrim_filesystem(struct fstrim_control *ctl, const char *path, const
 		case EBADF:
 		case ENOTTY:
 		case EOPNOTSUPP:
+		case ENOSYS:
 			rc = 1;
 			break;
 		default:
