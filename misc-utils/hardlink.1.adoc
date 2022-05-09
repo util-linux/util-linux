@@ -56,21 +56,6 @@ Crypto API is not available. The methods based on checksums are implemented in
 zero-copy way, in this case file contents are not copied to the userspace and all
 calculation is done in kernel.
 
-*--reflink*[=_when_]::
-Create copy-on-write clones (aka reflinks) rather than hardlinks. The reflinked files
-share only on-disk data, but the file mode and owner can be different. It's recommended
-to use it with *--ignore-owner* and *--ignore-mode* options. This option implies
-*--skip-reflinks* to ignore already cloned files.
-+
-The optional argument _when_ can be *never*, *always*, or *auto*. If the _when_ argument
-is omitted, it defaults to *auto*, in this case, *hardlink* checks filesystem type and
-uses reflinks on BTRFS and XFS only, and fallback to hardlinks when creating reflink is impossible.
-The argument *always* disables filesystem type detection and fallback to hardlinks, in this case,
-only reflinks are allowed.
-
-*--skip-reflinks*::
-Ignore already cloned files. This option may be used without *--reflink* when creating classic hardlinks.
-
 *-f*, *--respect-name*::
 Only try to link files with the same (base)name. It's strongly recommended to use long options rather than *-f* which is interpreted in a different way by other *hardlink* implementations.
 
@@ -88,6 +73,21 @@ Consider only file content, not attributes, when determining whether two files a
 
 *-X*, *--respect-xattrs*::
 Only try to link files with the same extended attributes.
+
+*--reflink*[=_when_]::
+Create copy-on-write clones (aka reflinks) rather than hardlinks. The reflinked files
+share only on-disk data, but the file mode and owner can be different. It's recommended
+to use it with *--ignore-owner* and *--ignore-mode* options. This option implies
+*--skip-reflinks* to ignore already cloned files.
++
+The optional argument _when_ can be *never*, *always*, or *auto*. If the _when_ argument
+is omitted, it defaults to *auto*, in this case, *hardlink* checks filesystem type and
+uses reflinks on BTRFS and XFS only, and fallback to hardlinks when creating reflink is impossible.
+The argument *always* disables filesystem type detection and fallback to hardlinks, in this case,
+only reflinks are allowed.
+
+*--skip-reflinks*::
+Ignore already cloned files. This option may be used without *--reflink* when creating classic hardlinks.
 
 *-m*, *--maximize*::
 Among equal files, keep the file with the highest link count.
