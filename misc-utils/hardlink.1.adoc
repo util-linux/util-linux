@@ -41,7 +41,9 @@ are very often different from the beginning.
 == OPTIONS
 
 include::man-common/help-version.adoc[]
-If specified once, every hardlinked file is displayed, if specified twice, it also shows every comparison.
+
+*-v*, *--verbose*::
+Verbose output, explain to the user what is being done. If specified once, every hardlinked file is displayed. If specified twice, it also shows every comparison.
 
 *-q*, *--quiet*::
 Quiet mode, don't print anything.
