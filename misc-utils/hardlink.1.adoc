@@ -83,6 +83,9 @@ Link and compare files even if their owner information (user and group) differs.
 *-t*, *--ignore-time*::
 Link and compare files even if their time of modification is different. This is usually a good choice.
 
+*-c* *--content*::
+Consider only file content, not attributes, when determining whether two files are equal. Same as *-pot*.
+
 *-X*, *--respect-xattrs*::
 Only try to link files with the same extended attributes.
 
