@@ -1144,7 +1144,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -i, --include <regex>      regular expression to include files/dirs\n"), out);
 	fputs(_(" -s, --minimum-size <size>  minimum size for files.\n"), out);
 	fputs(_(" -S, --maximum-size <size>  maximum size for files.\n"), out);
-	fputs(_(" -b, --io-size <size>       I/O buffer size for file reading (speedup, using more RAM)\n"), out);
+	fputs(_(" -b, --io-size <size>       I/O buffer size for file reading\n"
+	        "                              (speedup, using more RAM)\n"), out);
 	fputs(_(" -r, --cache-size <size>    memory limit for cached file content data\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
