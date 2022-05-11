@@ -41,7 +41,9 @@ are very often different from the beginning.
 == OPTIONS
 
 include::man-common/help-version.adoc[]
-If specified once, every hardlinked file is displayed, if specified twice, it also shows every comparison.
+
+*-v*, *--verbose*::
+Verbose output, explain to the user what is being done. If specified once, every hardlinked file is displayed. If specified twice, it also shows every comparison.
 
 *-q*, *--quiet*::
 Quiet mode, don't print anything.
@@ -55,6 +57,24 @@ sha256, sha1, crc32c and memcmp. The default is sha256, or memcmp if Linux
 Crypto API is not available. The methods based on checksums are implemented in
 zero-copy way, in this case file contents are not copied to the userspace and all
 calculation is done in kernel.
+
+*-f*, *--respect-name*::
+Only try to link files with the same (base)name. It's strongly recommended to use long options rather than *-f* which is interpreted in a different way by other *hardlink* implementations.
+
+*-p*, *--ignore-mode*::
+Link and compare files even if their mode is different. Results may be slightly unpredictable.
+
+*-o*, *--ignore-owner*::
+Link and compare files even if their owner information (user and group) differs. Results may be unpredictable.
+
+*-t*, *--ignore-time*::
+Link and compare files even if their time of modification is different. This is usually a good choice.
+
+*-c* *--content*::
+Consider only file content, not attributes, when determining whether two files are equal. Same as *-pot*.
+
+*-X*, *--respect-xattrs*::
+Only try to link files with the same extended attributes.
 
 *--reflink*[=_when_]::
 Create copy-on-write clones (aka reflinks) rather than hardlinks. The reflinked files
@@ -70,21 +90,6 @@ only reflinks are allowed.
 
 *--skip-reflinks*::
 Ignore already cloned files. This option may be used without *--reflink* when creating classic hardlinks.
-
-*-f*, *--respect-name*::
-Only try to link files with the same (base)name. It's strongly recommended to use long options rather than *-f* which is interpreted in a different way by other *hardlink* implementations.
-
-*-p*, *--ignore-mode*::
-Link and compare files even if their mode is different. Results may be slightly unpredictable.
-
-*-o*, *--ignore-owner*::
-Link and compare files even if their owner information (user and group) differs. Results may be unpredictable.
-
-*-t*, *--ignore-time*::
-Link and compare files even if their time of modification is different. This is usually a good choice.
-
-*-X*, *--respect-xattrs*::
-Only try to link files with the same extended attributes.
 
 *-m*, *--maximize*::
 Among equal files, keep the file with the highest link count.

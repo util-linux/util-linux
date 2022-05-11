@@ -1127,6 +1127,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -p, --ignore-mode          ignore changes of file mode\n"), out);
 	fputs(_(" -o, --ignore-owner         ignore owner changes\n"), out);
 	fputs(_(" -t, --ignore-time          ignore timestamps (when testing for equality)\n"), out);
+	fputs(_(" -c, --content              compare only file contents, same as -pot\n"), out);
 #ifdef USE_XATTR
 	fputs(_(" -X, --respect-xattrs       respect extended attributes\n"), out);
 #endif
@@ -1143,9 +1144,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -i, --include <regex>      regular expression to include files/dirs\n"), out);
 	fputs(_(" -s, --minimum-size <size>  minimum size for files.\n"), out);
 	fputs(_(" -S, --maximum-size <size>  maximum size for files.\n"), out);
-	fputs(_(" -b, --io-size <size>       I/O buffer size for file reading (speedup, using more RAM)\n"), out);
+	fputs(_(" -b, --io-size <size>       I/O buffer size for file reading\n"
+	        "                              (speedup, using more RAM)\n"), out);
 	fputs(_(" -r, --cache-size <size>    memory limit for cached file content data\n"), out);
-	fputs(_(" -c, --content              compare only file contents, same as -pot\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(28));
