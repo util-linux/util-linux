@@ -78,7 +78,7 @@ The data start is moved _offset_ bytes into the specified file or device. The _o
 The data end is set to no more than _size_ bytes after the data start. The _size_ may be followed by the multiplicative suffixes; see above.
 
 *-b*, *--sector-size* _size_::
-Set the logical sector size of the loop device in bytes (since Linux 4.14). The option may be used when create a new loop device as well as stand-alone command to modify sector size of the already existing loop device.
+Set the logical sector size of the loop device in bytes (since Linux 4.14). The option may be used when creating a new loop device as well as a stand-alone command to modify sector size of the already existing loop device.
 
 *-c*, *--set-capacity* _loopdev_::
 Force the loop driver to reread the size of the file associated with the specified loop device.
