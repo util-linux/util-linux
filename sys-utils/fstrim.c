@@ -233,8 +233,17 @@ static int is_unwanted_fs(struct libmnt_fs *fs, const char *tgt)
 		return 1;
 	rc = fstatfs(fd, &vfs) != 0 || vfs.f_type == STATFS_AUTOFS_MAGIC;
 	close(fd);
+	if (rc)
+		return 1;
 
-	return rc;
+	/* FITRIM on read-only filesystem can fail, and it can fail */
+	if (access(tgt, W_OK) != 0) {
+		if (errno == EROFS)
+			return 1;
+		if (errno == EACCES)
+			return 1;
+	}
+	return 0;
 }
 
 static int uniq_fs_target_cmp(
@@ -320,6 +329,8 @@ static int fstrim_all_from_file(struct fstrim_control *ctl, const char *filename
 	while (mnt_table_next_fs(tab, itr, &fs) == 0) {
 		const char *src = mnt_fs_get_srcpath(fs),
 			   *tgt = mnt_fs_get_target(fs);
+		char *path;
+		int rc = 1;
 
 		if (!tgt || is_unwanted_fs(fs, tgt)) {
 			mnt_table_remove_fs(tab, fs);
@@ -342,6 +353,23 @@ static int fstrim_all_from_file(struct fstrim_control *ctl, const char *filename
 			mnt_table_remove_fs(tab, fs);
 			continue;
 		}
+
+		/* Is it really accessible mountpoint? Not all mountpoints are
+		 * accessible (maybe over mounted by another filesystem) */
+		path = mnt_get_mountpoint(tgt);
+		if (path && streq_paths(path, tgt))
+			rc = 0;
+		free(path);
+		if (rc) {
+			mnt_table_remove_fs(tab, fs);
+			continue;	/* overlaying mount */
+		}
+
+		if (!is_directory(tgt, 1) ||
+		    !has_discard(src, &wholedisk)) {
+			mnt_table_remove_fs(tab, fs);
+			continue;
+		}
 	}
 
 	/* de-duplicate by source */
@@ -353,29 +381,8 @@ static int fstrim_all_from_file(struct fstrim_control *ctl, const char *filename
 	while (mnt_table_next_fs(tab, itr, &fs) == 0) {
 		const char *src = mnt_fs_get_srcpath(fs),
 			   *tgt = mnt_fs_get_target(fs);
-		char *path;
-		int rc = 1;
+		int rc;
 
-		/* Is it really accessible mountpoint? Not all mountpoints are
-		 * accessible (maybe over mounted by another filesystem) */
-		path = mnt_get_mountpoint(tgt);
-		if (path && streq_paths(path, tgt))
-			rc = 0;
-		free(path);
-		if (rc)
-			continue;	/* overlaying mount */
-
-		/* FITRIM on read-only filesystem can fail, and it can fail */
-		if (access(tgt, W_OK) != 0) {
-			if (errno == EROFS)
-				continue;
-			if (errno == EACCES)
-				continue;
-		}
-
-		if (!is_directory(tgt, 1) ||
-		    !has_discard(src, &wholedisk))
-			continue;
 		cnt++;
 
 		/*
