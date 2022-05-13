@@ -11739,7 +11739,7 @@ msgstr ""
 #: ../login-utils/runuser.1.adoc:100
 #, no-wrap
 msgid "*runuser* normally returns the exit status of the command it executed. If the command was killed by a signal, *runuser* returns the number of the signal plus 128.\n"
-msgstr "*runuser* gibt normalerweise den Exit-Status des Befehls zurück, den es ausgeführt hat. Wenn der Befehl durch ein Signal abgewürgt wurde, gibt *runuser* die Nummer des Signals plus 128 zurück.\n"
+msgstr "*runuser* gibt normalerweise den Exit-Status des Befehls zurück, den es ausgeführt hat. Wenn der Befehl durch ein Signal beendet wurde, gibt *runuser* die Nummer des Signals plus 128 zurück.\n"
 
 #. type: Plain text
 #: ../login-utils/runuser.1.adoc:102

@@ -9208,12 +9208,12 @@ msgid ""
 "Session terminated, killing shell..."
 msgstr ""
 "\n"
-"Sitzung beendet, Shell wird abgewürgt …"
+"Sitzung beendet, Shell wird beendet …"
 
 #: login-utils/su-common.c:625
 #, c-format
 msgid " ...killed.\n"
-msgstr " … abgewürgt.\n"
+msgstr " … beendet.\n"
 
 #: login-utils/su-common.c:722
 msgid "failed to set the PATH environment variable"
@@ -12705,12 +12705,12 @@ msgstr "Liste der UUIDs:\n"
 #: misc-utils/uuidd.c:762
 #, c-format
 msgid "couldn't kill uuidd running at pid %d"
-msgstr "uuidd laufend mit pid %d konnte nicht abgewürgt werden"
+msgstr "uuidd laufend mit pid %d konnte nicht beendet werden"
 
 #: misc-utils/uuidd.c:767
 #, c-format
 msgid "Killed uuidd running at pid %d.\n"
-msgstr "uuidd laufend mit pid %d abgewürgt.\n"
+msgstr "uuidd laufend mit pid %d beendet.\n"
 
 #: misc-utils/uuidgen.c:29
 msgid "Create a new UUID value.\n"
