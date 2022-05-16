@@ -394,7 +394,7 @@ conf.set10('HAVE_ENVIRON_DECL', have)
 have = cc.has_header_symbol('signal.h', 'sighandler_t', prefix : '#define _GNU_SOURCE')
 conf.set('HAVE_SIGHANDLER_T', have ? 1 : false)
 
-have = cc.has_header_symbol('string.h', 'strsignal')
+have = cc.has_function('strsignal')
 conf.set10('HAVE_STRSIGNAL_DECL', have)
 
 have = cc.sizeof('union semun', prefix : '#include <sys/sem.h>') > 0
@@ -571,7 +571,7 @@ have = cc.has_member('struct tm', 'tm_zone',
                      prefix : '#include <time.h>')
 conf.set('HAVE_STRUCT_TM_TM_ZONE', have ? 1 : false)
 
-have = cc.has_header_symbol('time.h', 'tzname')
+have = cc.has_header_symbol('time.h', 'tzname', prefix: '#define _GNU_SOURCE')
 conf.set('HAVE_DECL_TZNAME', have ? 1 : false)
 
 code = '''
