@@ -388,10 +388,10 @@ conf.set10('HAVE_DECL_CPU_ALLOC', have)
 have_cpu_set_t = cc.sizeof('cpu_set_t', prefix : '#define _GNU_SOURCE\n#include <sched.h>') > 0
 conf.set('HAVE_CPU_SET_T', have_cpu_set_t ? 1 : false)
 
-have = cc.has_header_symbol('unistd.h', 'environ', prefix : '#define _GNU_SOURCE')
+have = cc.has_header_symbol('unistd.h', 'environ', args : '-D_GNU_SOURCE')
 conf.set10('HAVE_ENVIRON_DECL', have)
 
-have = cc.has_header_symbol('signal.h', 'sighandler_t', prefix : '#define _GNU_SOURCE')
+have = cc.has_header_symbol('signal.h', 'sighandler_t', args : '-D_GNU_SOURCE')
 conf.set('HAVE_SIGHANDLER_T', have ? 1 : false)
 
 have = cc.has_function('strsignal')
@@ -571,7 +571,7 @@ have = cc.has_member('struct tm', 'tm_zone',
                      prefix : '#include <time.h>')
 conf.set('HAVE_STRUCT_TM_TM_ZONE', have ? 1 : false)
 
-have = cc.has_header_symbol('time.h', 'tzname', prefix: '#define _GNU_SOURCE')
+have = cc.has_header_symbol('time.h', 'tzname', args: '-D_GNU_SOURCE')
 conf.set('HAVE_DECL_TZNAME', have ? 1 : false)
 
 code = '''
