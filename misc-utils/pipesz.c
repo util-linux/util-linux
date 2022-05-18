@@ -32,7 +32,7 @@
 #include "strutils.h"		/* strtos32_or_err strtosize_or_err */
 
 static char opt_check = 0;	/* --check */
-static char opt_get = 0; 	/* --get */
+static char opt_get = 0;	/* --get */
 static char opt_quiet = 0;	/* --quiet */
 static int opt_size = -1;	/* --set <size> */
 static char opt_verbose = 0;	/* --verbose */
@@ -72,9 +72,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_OPTIONS, stdout);
 	puts(_(" -g, --get          examine pipe buffers"));
 	/* TRANSLATORS: '%s' refers to a system file */
-	printf(_(" -s, --set <size>  set pipe buffer sizes\n"
-		"                      size defaults to %s\n"
-	), PIPESZ_DEFAULT_SIZE_FILE);
+	printf(
+	     _(" -s, --set <size>   set pipe buffer sizes\n"
+	       "                      size defaults to %s\n"),
+		PIPESZ_DEFAULT_SIZE_FILE);
 
 	fputs(USAGE_SEPARATOR, stdout);
 	puts(_(" -f, --file <path>  act on a file"));
@@ -103,7 +104,7 @@ static void __attribute__((__noreturn__)) usage(void)
 static void do_get(int fd, const char *name)
 {
 	int sz, used;
-	
+
 	sz = fcntl(fd, F_GETPIPE_SZ);
 	if (sz < 0) {
 		/* TRANSLATORS: '%s' refers to a file */
@@ -123,7 +124,7 @@ static void do_get(int fd, const char *name)
 static void do_set(int fd, const char *name)
 {
 	int sz;
-	
+
 	sz = fcntl(fd, F_SETPIPE_SZ, opt_size);
 	if (sz < 0)
 		/* TRANSLATORS: '%s' refers to a file */
@@ -228,13 +229,14 @@ int main(int argc, char **argv)
 	close_stdout_atexit();
 
 	/* check for --help or --version */
-	while ((c = getopt_long(argc, argv, shortopts, longopts, NULL)) != -1)
+	while ((c = getopt_long(argc, argv, shortopts, longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
 			usage();
 		case 'V':
 			print_version(EXIT_SUCCESS);
 		}
+	}
 
 	/* gather normal options */
 	optind = 1;
