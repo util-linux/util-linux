@@ -29,6 +29,7 @@ UL_DEBUG_DEFINE_MASKNAMES(libmount) =
 	{ "diff", MNT_DEBUG_DIFF,	"mountinfo changes tracking" },
 	{ "fs", MNT_DEBUG_FS,		"FS abstraction" },
 	{ "help", MNT_DEBUG_HELP,	"this help" },
+	{ "hook", MNT_DEBUG_HOOK,	"hooks functionality" },
 	{ "locks", MNT_DEBUG_LOCKS,	"mtab and utab locking" },
 	{ "loop", MNT_DEBUG_LOOP,	"loop devices routines" },
 	{ "options", MNT_DEBUG_OPTIONS,	"mount options parsing" },

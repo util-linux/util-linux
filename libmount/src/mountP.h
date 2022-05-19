@@ -47,6 +47,7 @@
 #define MNT_DEBUG_BTRFS		(1 << 12)
 #define MNT_DEBUG_LOOP		(1 << 13)
 #define MNT_DEBUG_VERITY	(1 << 14)
+#define MNT_DEBUG_HOOK		(1 << 15)
 
 #define MNT_DEBUG_ALL		0xFFFF
 
@@ -275,14 +276,66 @@ enum {
 };
 
 /*
- * Additional mounts
+ * Context hooks
+ *
+ * TODO: this will be public one day when libmount will support modules for
+ * stuff like veritydev.c.
  */
-struct libmnt_addmount {
-	unsigned long mountflags;
+enum {
+	MNT_STAGE_PREP_SOURCE = 1,
+	MNT_STAGE_PREP_TARGET,
+	MNT_STAGE_PREP_OPTIONS,
 
-	struct list_head	mounts;
+	MNT_STAGE_MOUNT_PRE = 100,
+	MNT_STAGE_MOUNT,
+	MNT_STAGE_MOUNT_POST,
+
+	MNT_STAGE_POST = 200
 };
 
+struct libmnt_hookset {
+	const char *name;				/* hook set name */
+	int (*init)(struct libmnt_context *, const struct libmnt_hookset *);	/* initialization function */
+	int (*deinit)(struct libmnt_context *, const struct libmnt_hookset *);	/* cleanup function */
+};
+
+/* built-in hooks */
+extern const struct libmnt_hookset hookset_mount_legacy;
+
+
+extern int mnt_context_init_hooksets(struct libmnt_context *cxt);
+extern int mnt_context_deinit_hooksets(struct libmnt_context *cxt);
+extern const struct libmnt_hookset *mnt_context_get_hookset(struct libmnt_context *cxt, const char *name);
+
+extern int mnt_context_set_hookset_data(struct libmnt_context *cxt,
+			const struct libmnt_hookset *hs,
+			void *data);
+
+extern void *mnt_context_get_hookset_data(struct libmnt_context *cxt,
+			const struct libmnt_hookset *hs);
+
+extern int mnt_context_has_hook(struct libmnt_context *cxt,
+                         const struct libmnt_hookset *hs,
+                         int stage,
+                         void *data);
+
+extern int mnt_context_append_hook(struct libmnt_context *cxt,
+			const struct libmnt_hookset *hs,
+			int stage,
+			void *data,
+			int (*func)(struct libmnt_context *,
+				const struct libmnt_hookset *,
+				void *));
+
+extern int mnt_context_remove_hook(struct libmnt_context *cxt,
+			const struct libmnt_hookset *hs,
+			int stage,
+			void **data);
+extern int mnt_context_call_hooks(struct libmnt_context *cxt, int stage);
+
+/*
+ * Namespace
+ */
 struct libmnt_ns {
 	int fd;				/* file descriptor of namespace, -1 when inactive */
 	struct libmnt_cache *cache;	/* paths cache associated with NS */
@@ -328,8 +381,7 @@ struct libmnt_context
 	const void	*mountdata;	/* final mount(2) data, string or binary data */
 
 	unsigned long	user_mountflags;	/* MNT_MS_* (loop=, user=, ...) */
-
-	struct list_head	addmounts;	/* additional mounts */
+	unsigned long	orig_mountflags;	/* original flags (see mnt_context_merge_mflags()) */
 
 	struct libmnt_cache	*cache;	/* paths cache */
 	struct libmnt_lock	*lock;	/* utab lock */
@@ -354,7 +406,6 @@ struct libmnt_context
 	int	nchildren;	/* number of children */
 	pid_t	pid;		/* 0=parent; PID=child */
 
-
 	int	syscall_status;	/* 1: not called yet, 0: success, <0: -errno */
 
 	struct libmnt_ns	ns_orig;	/* original namespace */
@@ -362,7 +413,11 @@ struct libmnt_context
 	struct libmnt_ns	*ns_cur;	/* pointer to current namespace */
 
 	unsigned int	enabled_textdomain : 1;	/* bindtextdomain() called */
-	unsigned int 	noautofs : 1;		/* ignore autofs mounts */
+	unsigned int	noautofs : 1;		/* ignore autofs mounts */
+	unsigned int	is_propagation_only : 1;
+
+	struct list_head	hooksets_datas;	/* global hooksets data */
+	struct list_head	hooksets_hooks;	/* global hooksets data */
 };
 
 /* flags */
@@ -421,6 +476,8 @@ extern int __mnt_fs_set_source_ptr(struct libmnt_fs *fs, char *source)
 			__attribute__((nonnull(1)));
 extern int __mnt_fs_set_fstype_ptr(struct libmnt_fs *fs, char *fstype)
 			__attribute__((nonnull(1)));
+extern int __mnt_fs_set_target_ptr(struct libmnt_fs *fs, char *tgt)
+			__attribute__((nonnull(1)));
 
 /* context.c */
 extern struct libmnt_context *mnt_copy_context(struct libmnt_context *o);
@@ -449,9 +506,6 @@ extern int mnt_context_is_loopdev(struct libmnt_context *cxt)
 
 extern int mnt_context_propagation_only(struct libmnt_context *cxt)
 			__attribute__((nonnull));
-
-extern struct libmnt_addmount *mnt_new_addmount(void);
-extern void mnt_free_addmount(struct libmnt_addmount *ad);
 
 extern int mnt_context_setup_loopdev(struct libmnt_context *cxt);
 extern int mnt_context_delete_loopdev(struct libmnt_context *cxt);

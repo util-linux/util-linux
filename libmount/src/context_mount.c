@@ -28,140 +28,6 @@
 #include "mountP.h"
 #include "strutils.h"
 
-/*
- * Kernel supports only one MS_PROPAGATION flag change by one mount(2) syscall,
- * to bypass this restriction we call mount(2) per flag. It's really not a perfect
- * solution, but it's the same like to execute multiple mount(8) commands.
- *
- * We use cxt->addmounts (additional mounts) list to keep order of the requested
- * flags changes.
- */
-struct libmnt_addmount *mnt_new_addmount(void)
-{
-	struct libmnt_addmount *ad = calloc(1, sizeof(*ad));
-	if (!ad)
-		return NULL;
-
-	INIT_LIST_HEAD(&ad->mounts);
-	return ad;
-}
-
-void mnt_free_addmount(struct libmnt_addmount *ad)
-{
-	if (!ad)
-		return;
-	list_del(&ad->mounts);
-	free(ad);
-}
-
-static int mnt_context_append_additional_mount(struct libmnt_context *cxt,
-					       struct libmnt_addmount *ad)
-{
-	assert(cxt);
-	assert(ad);
-
-	if (!list_empty(&ad->mounts))
-		return -EINVAL;
-
-	DBG(CXT, ul_debugobj(cxt,
-			"mount: add additional flag: 0x%08lx",
-			ad->mountflags));
-
-	list_add_tail(&ad->mounts, &cxt->addmounts);
-	return 0;
-}
-
-/*
- * add additional mount(2) syscall requests when necessary to set propagation flags
- * after regular mount(2).
- */
-static int init_propagation(struct libmnt_context *cxt)
-{
-	char *name;
-	char *opts = (char *) mnt_fs_get_vfs_options(cxt->fs);
-	size_t namesz;
-	struct libmnt_optmap const *maps[1];
-	int rec_count = 0;
-
-	if (!opts)
-		return 0;
-
-	DBG(CXT, ul_debugobj(cxt, "mount: initialize additional propagation mounts"));
-
-	maps[0] = mnt_get_builtin_optmap(MNT_LINUX_MAP);
-
-	while (!mnt_optstr_next_option(&opts, &name, &namesz, NULL, NULL)) {
-		const struct libmnt_optmap *ent;
-		struct libmnt_addmount *ad;
-		int rc;
-
-		if (!mnt_optmap_get_entry(maps, 1, name, namesz, &ent) || !ent)
-			continue;
-
-		DBG(CXT, ul_debugobj(cxt, " checking %s", ent->name));
-
-		/* Note that MS_REC may be used for more flags, so we have to keep
-		 * track about number of recursive options to keep the MS_REC in the
-		 * mountflags if necessary.
-		 */
-		if (ent->id & MS_REC)
-			rec_count++;
-
-		if (!(ent->id & MS_PROPAGATION))
-			continue;
-
-		ad = mnt_new_addmount();
-		if (!ad)
-			return -ENOMEM;
-
-		ad->mountflags = ent->id;
-		DBG(CXT, ul_debugobj(cxt, " adding extra mount(2) call for %s", ent->name));
-		rc = mnt_context_append_additional_mount(cxt, ad);
-		if (rc)
-			return rc;
-
-		DBG(CXT, ul_debugobj(cxt, " removing %s from primary mount(2) call", ent->name));
-		cxt->mountflags &= ~ent->id;
-
-		if (ent->id & MS_REC)
-			rec_count--;
-	}
-
-	if (rec_count)
-		cxt->mountflags |= MS_REC;
-
-	return 0;
-}
-
-/*
- * add additional mount(2) syscall request to implement "bind,<flags>", the first regular
- * mount(2) is the "bind" operation, the second is "remount,bind,<flags>" call.
- */
-static int init_bind_remount(struct libmnt_context *cxt)
-{
-	struct libmnt_addmount *ad;
-	int rc;
-
-	assert(cxt);
-	assert(cxt->mountflags & MS_BIND);
-	assert(!(cxt->mountflags & MS_REMOUNT));
-
-	DBG(CXT, ul_debugobj(cxt, "mount: initialize additional ro,bind mount"));
-
-	ad = mnt_new_addmount();
-	if (!ad)
-		return -ENOMEM;
-
-	ad->mountflags = cxt->mountflags;
-	ad->mountflags |= (MS_REMOUNT | MS_BIND);
-
-	rc = mnt_context_append_additional_mount(cxt, ad);
-	if (rc)
-		return rc;
-
-	return 0;
-}
-
 #if defined(HAVE_LIBSELINUX) || defined(HAVE_SMACK)
 struct libmnt_optname {
 	const char *name;
@@ -272,18 +138,7 @@ static int fix_optstr(struct libmnt_context *cxt)
 		free(fs->user_optstr);
 		fs->user_optstr = NULL;
 	}
-	if (cxt->mountflags & MS_PROPAGATION) {
-		rc = init_propagation(cxt);
-		if (rc)
-			return rc;
-	}
-	if ((cxt->mountflags & MS_BIND)
-	    && (cxt->mountflags & MNT_BIND_SETTABLE)
-	    && !(cxt->mountflags & MS_REMOUNT)) {
-		rc = init_bind_remount(cxt);
-		if (rc)
-			return rc;
-	}
+
 
 	next = fs->fs_optstr;
 
@@ -353,7 +208,6 @@ static int fix_optstr(struct libmnt_context *cxt)
 			goto done;
 	}
 
-
 	if (!rc && mnt_context_is_restricted(cxt) && (cxt->user_mountflags & MNT_MS_USER)) {
 		ns_old = mnt_context_switch_origin_ns(cxt);
 		if (!ns_old)
@@ -364,6 +218,8 @@ static int fix_optstr(struct libmnt_context *cxt)
 		if (!mnt_context_switch_ns(cxt, ns_old))
 			return -MNT_ERR_NAMESPACE;
 	}
+
+	mnt_context_call_hooks(cxt, MNT_STAGE_PREP_OPTIONS);
 
 	/* refresh merged optstr */
 	free(fs->optstr);
@@ -716,43 +572,6 @@ static int exec_helper(struct libmnt_context *cxt)
 	return rc;
 }
 
-static int do_mount_additional(struct libmnt_context *cxt,
-			       const char *target,
-			       unsigned long flags,
-			       int *syserr)
-{
-	struct list_head *p;
-
-	assert(cxt);
-	assert(target);
-
-	if (syserr)
-		*syserr = 0;
-
-	list_for_each(p, &cxt->addmounts) {
-		int rc;
-		struct libmnt_addmount *ad =
-				list_entry(p, struct libmnt_addmount, mounts);
-
-		DBG(CXT, ul_debugobj(cxt, "mount(2) changing flag: 0x%08lx %s",
-				ad->mountflags,
-				ad->mountflags & MS_REC ? " (recursive)" : ""));
-
-		rc = mount("none", target, NULL,
-				ad->mountflags | (flags & MS_SILENT), NULL);
-		if (rc) {
-			if (syserr)
-				*syserr = -errno;
-			DBG(CXT, ul_debugobj(cxt,
-					"mount(2) failed [errno=%d %m]",
-					errno));
-			return rc;
-		}
-	}
-
-	return 0;
-}
-
 static int do_mount_subdir(struct libmnt_context *cxt,
 			   const char *root,
 			   const char *subdir,
@@ -787,8 +606,7 @@ static int do_mount_subdir(struct libmnt_context *cxt,
 static int do_mount(struct libmnt_context *cxt, const char *try_type)
 {
 	int rc = 0, old_ns_fd = -1;
-	const char *src, *target, *type;
-	unsigned long flags;
+	char *org_target = NULL, *org_type = NULL;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -800,108 +618,72 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 			return rc;
 	}
 
-	flags = cxt->mountflags;
-	src = mnt_fs_get_srcpath(cxt->fs);
-	target = mnt_fs_get_target(cxt->fs);
-
 	if (cxt->helper) {
 		rc = exec_helper(cxt);
 
 		if (mnt_context_helper_executed(cxt)
 		    && mnt_context_get_helper_status(cxt) == 0
-		    && !list_empty(&cxt->addmounts)
-		    && do_mount_additional(cxt, target, flags, NULL))
-
+		    && mnt_context_call_hooks(cxt, MNT_STAGE_MOUNT_POST))
 			return -MNT_ERR_APPLYFLAGS;
+
 		return rc;
 	}
 
-	if (!target)
-		return -EINVAL;
-	if (!src) {
-		/* unnecessary, should be already resolved in
-		 * mnt_context_prepare_srcpath(), but to be sure... */
-		DBG(CXT, ul_debugobj(cxt, "WARNING: source is NULL -- using \"none\"!"));
-		src = "none";
-	}
-	type = try_type ? : mnt_fs_get_fstype(cxt->fs);
-
-	if (try_type)
-		flags |= MS_SILENT;
-
-
-	if (mnt_context_is_fake(cxt)) {
-		/*
-		 * fake
-		 */
-		cxt->syscall_status = 0;
-
-		DBG(CXT, ul_debugobj(cxt, "FAKE mount(2) "
-				"[source=%s, target=%s, type=%s,"
-				" mountflags=0x%08lx, mountdata=%s]",
-				src, target, type,
-				flags, cxt->mountdata ? "yes" : "<none>"));
-
-	} else if (mnt_context_propagation_only(cxt)) {
-		/*
-		 * propagation flags *only*
-		 */
-		if (do_mount_additional(cxt, target, flags, &cxt->syscall_status))
-			return -MNT_ERR_APPLYFLAGS;
-	} else {
-		/*
-		 * regular mount
-		 */
-
-		/* create unhared temporary target */
-		if (cxt->subdir) {
-			rc = mnt_tmptgt_unshare(&old_ns_fd);
-			if (rc)
-				return rc;
-			target = MNT_PATH_TMPTGT;
-		}
-
-		DBG(CXT, ul_debugobj(cxt, "mount(2) "
-			"[source=%s, target=%s, type=%s,"
-			" mountflags=0x%08lx, mountdata=%s]",
-			src, target, type,
-			flags, cxt->mountdata ? "yes" : "<none>"));
-
-		if (mount(src, target, type, flags, cxt->mountdata)) {
-			cxt->syscall_status = -errno;
-			DBG(CXT, ul_debugobj(cxt, "mount(2) failed [errno=%d %m]",
-							-cxt->syscall_status));
-			rc = -cxt->syscall_status;
-			goto done;
-		}
-		DBG(CXT, ul_debugobj(cxt, "  mount(2) success"));
-		cxt->syscall_status = 0;
-
-		/*
-		 * additional mounts for extra propagation flags
-		 */
-		if (!list_empty(&cxt->addmounts)
-		    && do_mount_additional(cxt, target, flags, NULL)) {
-
-			/* TODO: call umount? */
-			rc = -MNT_ERR_APPLYFLAGS;
-			goto done;
-		}
-
-		/*
-		 * bind subdir to the real target, umount temporary target
-		 */
-		if (cxt->subdir) {
-			target = mnt_fs_get_target(cxt->fs);
-			rc = do_mount_subdir(cxt, MNT_PATH_TMPTGT, cxt->subdir, target);
-			if (rc)
+	if (try_type) {
+		cxt->mountflags |= MS_SILENT;
+		if (mnt_fs_get_fstype(cxt->fs)) {
+			org_type = strdup(mnt_fs_get_fstype(cxt->fs));
+			if (!org_type) {
+				rc = -ENOMEM;
 				goto done;
-			mnt_tmptgt_cleanup(old_ns_fd);
-			old_ns_fd = -1;
+			}
 		}
+		mnt_fs_set_fstype(cxt->fs, try_type);
 	}
 
-	if (try_type && cxt->update) {
+
+	/* create unhared temporary target (TODO: use MOUNT_PRE hook) */
+	if (cxt->subdir) {
+		org_target = strdup(mnt_fs_get_target(cxt->fs));
+		if (!org_target) {
+			rc = -ENOMEM;
+			goto done;
+		}
+		rc = mnt_tmptgt_unshare(&old_ns_fd);
+		if (rc)
+			goto done;
+		mnt_fs_set_target(cxt->fs, MNT_PATH_TMPTGT);
+	}
+
+	/*
+	 * mount(2) or others syscalls
+	 */
+	rc = mnt_context_call_hooks(cxt, MNT_STAGE_MOUNT_PRE);
+	if (!rc)
+		rc = mnt_context_call_hooks(cxt, MNT_STAGE_MOUNT);
+	if (!rc)
+		rc = mnt_context_call_hooks(cxt, MNT_STAGE_MOUNT_POST);
+
+	if (org_target)
+		__mnt_fs_set_target_ptr(cxt->fs, org_target);
+	if (org_type && rc != 0)
+		__mnt_fs_set_fstype_ptr(cxt->fs, org_type);
+	org_target = org_type  = NULL;
+
+	/*
+	 * bind subdir to the real target, umount temporary target
+	 * (TODO: use MOUNT_POST hook)
+	 */
+	if (rc == 0 && cxt->subdir) {
+		rc = do_mount_subdir(cxt, MNT_PATH_TMPTGT, cxt->subdir,
+				mnt_fs_get_target(cxt->fs));
+		if (rc)
+			goto done;
+		mnt_tmptgt_cleanup(old_ns_fd);
+		old_ns_fd = -1;
+	}
+
+	if (rc == 0 && try_type && cxt->update) {
 		struct libmnt_fs *fs = mnt_update_get_fs(cxt->update);
 		if (fs)
 			rc = mnt_fs_set_fstype(fs, try_type);
@@ -910,7 +692,10 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 done:
 	if (old_ns_fd >= 0)
 		mnt_tmptgt_cleanup(old_ns_fd);
-
+	if (try_type)
+		cxt->mountflags &= ~MS_SILENT;
+	free(org_target);
+	free(org_type);
 	return rc;
 }
 
@@ -1104,6 +889,8 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
 		rc = mnt_context_merge_mflags(cxt);
 	if (!rc)
 		rc = evaluate_permissions(cxt);
+	if (!rc)
+		rc = mnt_context_init_hooksets(cxt);
 	if (!rc)
 		rc = fix_optstr(cxt);
 	if (!rc)
@@ -1397,8 +1184,12 @@ again:
 			goto again;
 		}
 	}
+
+	mnt_context_deinit_hooksets(cxt);
+
 	if (!mnt_context_switch_ns(cxt, ns_old))
 		return -MNT_ERR_NAMESPACE;
+
 	return rc;
 }
 

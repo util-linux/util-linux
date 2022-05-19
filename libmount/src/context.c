@@ -61,8 +61,6 @@ struct libmnt_context *mnt_new_context(void)
 	cxt->tgt_group = (gid_t) -1;
 	cxt->tgt_mode = (mode_t) -1;
 
-	INIT_LIST_HEAD(&cxt->addmounts);
-
 	ruid = getuid();
 	euid = geteuid();
 
@@ -73,6 +71,9 @@ struct libmnt_context *mnt_new_context(void)
 	cxt->ns_orig.fd = -1;
 	cxt->ns_tgt.fd = -1;
 	cxt->ns_cur = &cxt->ns_orig;
+
+	INIT_LIST_HEAD(&cxt->hooksets_hooks);
+	INIT_LIST_HEAD(&cxt->hooksets_datas);
 
 	/* if we're really root and aren't running setuid */
 	cxt->restricted = (uid_t) 0 == ruid && ruid == euid ? 0 : 1;
@@ -112,6 +113,7 @@ void mnt_free_context(struct libmnt_context *cxt)
 	mnt_free_update(cxt->update);
 
 	mnt_context_set_target_ns(cxt, NULL);
+	mnt_context_deinit_hooksets(cxt);
 
 	free(cxt->children);
 
@@ -170,20 +172,15 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	cxt->orig_user = NULL;
 	cxt->mountflags = 0;
 	cxt->user_mountflags = 0;
+	cxt->orig_mountflags = 0;
 	cxt->mountdata = NULL;
 	cxt->subdir = NULL;
 	cxt->flags = MNT_FL_DEFAULT;
 	cxt->noautofs = 1;
-
-	/* free additional mounts list */
-	while (!list_empty(&cxt->addmounts)) {
-		struct libmnt_addmount *ad = list_entry(cxt->addmounts.next,
-				                  struct libmnt_addmount,
-						  mounts);
-		mnt_free_addmount(ad);
-	}
+	cxt->is_propagation_only = 0;
 
 	mnt_context_reset_status(cxt);
+	mnt_context_deinit_hooksets(cxt);
 
 	if (cxt->table_fltrcb)
 		mnt_context_set_tabfilter(cxt, NULL, NULL);
@@ -308,6 +305,7 @@ struct libmnt_context *mnt_copy_context(struct libmnt_context *o)
 
 	n->mountflags = o->mountflags;
 	n->mountdata = o->mountdata;
+	n->is_propagation_only = o->is_propagation_only;
 
 	mnt_context_reset_status(n);
 
@@ -1700,28 +1698,32 @@ int mnt_context_set_mflags(struct libmnt_context *cxt, unsigned long flags)
 int mnt_context_get_mflags(struct libmnt_context *cxt, unsigned long *flags)
 {
 	int rc = 0;
-	struct list_head *p;
 
 	if (!cxt || !flags)
 		return -EINVAL;
 
 	*flags = 0;
-	if (!(cxt->flags & MNT_FL_MOUNTFLAGS_MERGED) && cxt->fs) {
-		const char *o = mnt_fs_get_options(cxt->fs);
-		if (o)
-			rc = mnt_optstr_get_flags(o, flags,
-				    mnt_get_builtin_optmap(MNT_LINUX_MAP));
-	}
 
-	list_for_each(p, &cxt->addmounts) {
-		struct libmnt_addmount *ad =
-				list_entry(p, struct libmnt_addmount, mounts);
+	if (cxt->flags & MNT_FL_MOUNTFLAGS_MERGED)
+		/*
+		 * Mount options already merged to the flags
+		 */
+		*flags |= cxt->orig_mountflags;
+	else {
+		/*
+		 * Mount options not yet processed by library, generate the
+		 * flags on-the fly
+		 */
+		if (cxt->fs) {
+			const char *o = mnt_fs_get_options(cxt->fs);
 
-		*flags |= ad->mountflags;
-	}
-
-	if (!rc)
+			if (o)
+				rc = mnt_optstr_get_flags(o, flags,
+					    mnt_get_builtin_optmap(MNT_LINUX_MAP));
+		}
+		/* Add flags defined by mnt_context_set_mflags */
 		*flags |= cxt->mountflags;
+	}
 	return rc;
 }
 
@@ -2254,6 +2256,10 @@ int mnt_context_prepare_helper(struct libmnt_context *cxt, const char *name,
 	return rc;
 }
 
+/*
+ * Create cxt->mountflags from options and already defined flags. Note that the
+ * flags may be later modified, the original is stored in cxt->orig_mountflags.
+ */
 int mnt_context_merge_mflags(struct libmnt_context *cxt)
 {
 	unsigned long fl = 0;
@@ -2266,7 +2272,7 @@ int mnt_context_merge_mflags(struct libmnt_context *cxt)
 	rc = mnt_context_get_mflags(cxt, &fl);
 	if (rc)
 		return rc;
-	cxt->mountflags = fl;
+	cxt->orig_mountflags = cxt->mountflags = fl;
 
 	fl = 0;
 	rc = mnt_context_get_user_mflags(cxt, &fl);
@@ -2278,6 +2284,14 @@ int mnt_context_merge_mflags(struct libmnt_context *cxt)
 			cxt->mountflags, cxt->user_mountflags));
 
 	cxt->flags |= MNT_FL_MOUNTFLAGS_MERGED;
+
+	if (cxt->mountflags & MS_PROPAGATION) {
+		unsigned long rest = cxt->mountflags & ~MS_PROPAGATION;
+
+		if (rest == 0 || rest == MS_SILENT)
+			cxt->is_propagation_only = 1;
+	}
+
 	return 0;
 }
 
@@ -2667,13 +2681,12 @@ int mnt_context_propagation_only(struct libmnt_context *cxt)
 	if (cxt->action != MNT_ACT_MOUNT)
 		return 0;
 
-	/* has to be called after context_mount.c: fix_opts() */
-	assert((cxt->flags & MNT_FL_MOUNTOPTS_FIXED));
+	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
-	/* all propagation mounts are in cxt->addmount */
-	return !list_empty(&cxt->addmounts)
-	       && (cxt->mountflags == 0 || cxt->mountflags == MS_SILENT)
+	return cxt->is_propagation_only
+	       && cxt->mountdata == NULL
 	       && cxt->fs
+	       && cxt->fs->fs_optstr == NULL
 	       && (!cxt->fs->fstype || strcmp(cxt->fs->fstype, "none") == 0)
 	       && (!cxt->fs->source || strcmp(cxt->fs->source, "none") == 0);
 }

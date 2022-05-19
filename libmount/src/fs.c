@@ -552,6 +552,13 @@ int mnt_fs_set_target(struct libmnt_fs *fs, const char *tgt)
 	return strdup_to_struct_member(fs, target, tgt);
 }
 
+int __mnt_fs_set_target_ptr(struct libmnt_fs *fs, char *tgt)
+{
+	free(fs->target);
+	fs->target = tgt;
+	return 0;
+}
+
 static int mnt_fs_get_flags(struct libmnt_fs *fs)
 {
 	return fs ? fs->flags : 0;

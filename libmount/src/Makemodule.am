@@ -11,6 +11,7 @@ libmount_la_SOURCES = \
 	libmount/src/mountP.h \
 	libmount/src/cache.c \
 	libmount/src/fs.c \
+	libmount/src/hooks.c \
 	libmount/src/init.c \
 	libmount/src/iter.c \
 	libmount/src/lock.c \
@@ -31,6 +32,7 @@ libmount_la_SOURCES += \
 	libmount/src/context_veritydev.c \
 	libmount/src/context_mount.c \
 	libmount/src/context_umount.c \
+	libmount/src/hook_mount_legacy.c \
 	libmount/src/monitor.c
 
 if HAVE_BTRFS

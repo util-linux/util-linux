@@ -17,6 +17,7 @@ configure_file(
 lib_mount_sources = '''
   src/mountP.h
   src/cache.c
+  src/hooks.c
   src/fs.c
   src/init.c
   src/iter.c
@@ -42,6 +43,7 @@ if LINUX
     src/context_veritydev.c
     src/context_mount.c
     src/context_umount.c
+    src/hook_mount_legacy.c
     src/monitor.c
 '''.split()
 endif
