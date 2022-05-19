@@ -272,6 +272,7 @@ int main(int argc, char **argv)
 		case 's':
 			sz = strtosize_or_err(optarg, _("invalid size argument"));
 			opt_size = sz >= INT_MAX ? INT_MAX : (int)sz;
+			++n_opt_size;
 			break;
 		case 'v':
 			opt_verbose = TRUE;
