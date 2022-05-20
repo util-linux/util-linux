@@ -90,7 +90,7 @@ _Two-byte octal display_. Display the input offset in hexadecimal, followed by e
 Skip _offset_ bytes from the beginning of the input.
 
 *-v*, *--no-squeezing*::
-The *-v* option causes *hexdump* to display all input data. Without the *-v* option, any number of groups of output lines which would be identical to the immediately preceding group of output lines (except for the input offsets), are replaced with a line comprised of a single asterisk.
+The *-v* option causes *hexdump* to display all output data. Without the *-v* option, any number of groups of output lines which would be identical to the immediately preceding group of output lines (except for the input offsets), are replaced with a line comprised of a single asterisk.
 
 *-x*, *--two-bytes-hex*::
 _Two-byte hexadecimal display_. Display the input offset in hexadecimal, followed by eight space-separated, four-column, zero-filled, two-byte quantities of input data, in hexadecimal, per line.
