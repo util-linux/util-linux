@@ -1,5 +1,5 @@
 [Unit]
-Description=Discard unused blocks once a week
+Description=Discard unused filesystem blocks once a week
 Documentation=man:fstrim
 ConditionVirtualization=!container
 ConditionPathExists=!/etc/initrd-release
@@ -8,7 +8,7 @@ ConditionPathExists=!/etc/initrd-release
 OnCalendar=weekly
 AccuracySec=1h
 Persistent=true
-RandomizedDelaySec=6000
+RandomizedDelaySec=100min
 
 [Install]
 WantedBy=timers.target
