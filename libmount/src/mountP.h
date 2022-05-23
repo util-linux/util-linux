@@ -489,7 +489,6 @@ extern int mnt_context_get_mountinfo_for_target(struct libmnt_context *cxt,
 				    struct libmnt_table **mountinfo, const char *tgt);
 
 extern int mnt_context_prepare_srcpath(struct libmnt_context *cxt);
-extern int mnt_context_prepare_target(struct libmnt_context *cxt);
 extern int mnt_context_guess_srcpath_fstype(struct libmnt_context *cxt, char **type);
 extern int mnt_context_guess_fstype(struct libmnt_context *cxt);
 extern int mnt_context_prepare_helper(struct libmnt_context *cxt,
