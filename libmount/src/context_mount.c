@@ -27,7 +27,6 @@
 #include "linux_version.h"
 #include "mountP.h"
 #include "strutils.h"
-#include "fileutils.h"
 
 #if defined(HAVE_LIBSELINUX) || defined(HAVE_SMACK)
 struct libmnt_optname {
@@ -887,60 +886,11 @@ static int is_subdir_required(struct libmnt_context *cxt, int *rc)
 	return *rc == 0;
 }
 
-static int is_mkdir_required(const char *tgt, struct libmnt_fs *fs, mode_t *mode, int *rc)
-{
-	char *mstr = NULL;
-	size_t mstr_sz = 0;
-	struct stat st;
-
-	assert(tgt);
-	assert(fs);
-	assert(mode);
-	assert(rc);
-
-	*mode = 0;
-	*rc = 0;
-
-	if (mnt_optstr_get_option(fs->user_optstr, "X-mount.mkdir", &mstr, &mstr_sz) != 0 &&
-	    mnt_optstr_get_option(fs->user_optstr, "x-mount.mkdir", &mstr, &mstr_sz) != 0)   	/* obsolete */
-		return 0;
-
-	if (mnt_stat_mountpoint(tgt, &st) == 0)
-		return 0;
-
-	DBG(CXT, ul_debug("mkdir %s (%s) wanted", tgt, mstr));
-
-	if (mstr && mstr_sz) {
-		char *end = NULL;
-
-		if (*mstr == '"')
-			mstr++, mstr_sz-=2;
-
-		errno = 0;
-		*mode = strtol(mstr, &end, 8);
-
-		if (errno || !end || mstr + mstr_sz != end) {
-			DBG(CXT, ul_debug("failed to parse mkdir mode '%s'", mstr));
-			*rc = -MNT_ERR_MOUNTOPT;
-			return 0;
-		}
-	}
-
-	if (!*mode)
-		*mode = S_IRWXU |			/* 0755 */
-		       S_IRGRP | S_IXGRP |
-		       S_IROTH | S_IXOTH;
-
-	return 1;
-}
-
-
 static int prepare_target(struct libmnt_context *cxt)
 {
 	const char *tgt, *prefix;
 	int rc = 0;
 	struct libmnt_ns *ns_old;
-	mode_t mode = 0;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -980,19 +930,7 @@ static int prepare_target(struct libmnt_context *cxt)
 		return -MNT_ERR_NAMESPACE;
 
 	/* X-mount.mkdir target */
-	if (cxt->action == MNT_ACT_MOUNT
-	    && (cxt->user_mountflags & MNT_MS_XCOMMENT ||
-		cxt->user_mountflags & MNT_MS_XFSTABCOMM)
-	    && is_mkdir_required(tgt, cxt->fs, &mode, &rc)) {
-
-		/* supported only for root or non-suid mount(8) */
-		if (!mnt_context_is_restricted(cxt)) {
-			rc = ul_mkdir_p(tgt, mode);
-			if (rc)
-				DBG(CXT, ul_debug("mkdir %s failed: %m", tgt));
-		} else
-			rc = -EPERM;
-	}
+	rc = mnt_context_call_hooks(cxt, MNT_STAGE_PREP_TARGET);
 
 	/* canonicalize the path */
 	if (rc == 0) {

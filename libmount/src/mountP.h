@@ -301,6 +301,7 @@ struct libmnt_hookset {
 
 /* built-in hooks */
 extern const struct libmnt_hookset hookset_mount_legacy;
+extern const struct libmnt_hookset hookset_mkdir;
 
 
 extern int mnt_context_init_hooksets(struct libmnt_context *cxt);
