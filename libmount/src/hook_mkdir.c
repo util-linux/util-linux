@@ -107,6 +107,8 @@ static int hook_prepare_target(
 		cxt->user_mountflags & MNT_MS_XFSTABCOMM)
 	    && is_mkdir_required(tgt, cxt->fs, &mode, &rc)) {
 
+		struct libmnt_cache *cache;
+
 		/* supported only for root or non-suid mount(8) */
 		if (!mnt_context_is_restricted(cxt)) {
 			rc = ul_mkdir_p(tgt, mode);
@@ -114,6 +116,15 @@ static int hook_prepare_target(
 				DBG(HOOK, ul_debugobj(hs, "mkdir %s failed: %m", tgt));
 		} else
 			rc = -EPERM;
+
+		if (rc == 0) {
+			cache = mnt_context_get_cache(cxt);
+			if (cache) {
+				char *path = mnt_resolve_path(tgt, cache);
+				if (path && strcmp(path, tgt) != 0)
+					rc = mnt_fs_set_target(cxt->fs, path);
+			}
+		}
 	}
 
 	return rc;
