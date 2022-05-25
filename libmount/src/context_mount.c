@@ -572,29 +572,6 @@ static int exec_helper(struct libmnt_context *cxt)
 	return rc;
 }
 
-static int do_mount_subdir(struct libmnt_context *cxt,
-			   const char *root,
-			   const char *subdir,
-			   const char *target)
-{
-	char *src = NULL;
-	int rc = 0;
-
-	if (asprintf(&src, "%s/%s", root, subdir) < 0)
-		return -ENOMEM;
-
-	DBG(CXT, ul_debugobj(cxt, "mount subdir %s to %s", src, target));
-	if (mount(src, target, NULL, MS_BIND | MS_REC, NULL) != 0)
-		rc = -MNT_ERR_APPLYFLAGS;
-
-	DBG(CXT, ul_debugobj(cxt, "umount old root %s", root));
-	if (umount(root) != 0)
-		rc = -MNT_ERR_APPLYFLAGS;
-
-	free(src);
-	return rc;
-}
-
 /*
  * The default is to use fstype from cxt->fs, this could be overwritten by
  * @try_type argument. If @try_type is specified then mount with MS_SILENT.
@@ -605,8 +582,8 @@ static int do_mount_subdir(struct libmnt_context *cxt,
  */
 static int do_mount(struct libmnt_context *cxt, const char *try_type)
 {
-	int rc = 0, old_ns_fd = -1;
-	char *org_target = NULL, *org_type = NULL;
+	int rc = 0;
+	char *org_type = NULL;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -642,19 +619,6 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 	}
 
 
-	/* create unhared temporary target (TODO: use MOUNT_PRE hook) */
-	if (cxt->subdir) {
-		org_target = strdup(mnt_fs_get_target(cxt->fs));
-		if (!org_target) {
-			rc = -ENOMEM;
-			goto done;
-		}
-		rc = mnt_tmptgt_unshare(&old_ns_fd);
-		if (rc)
-			goto done;
-		mnt_fs_set_target(cxt->fs, MNT_PATH_TMPTGT);
-	}
-
 	/*
 	 * mount(2) or others syscalls
 	 */
@@ -664,24 +628,9 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 	if (!rc)
 		rc = mnt_context_call_hooks(cxt, MNT_STAGE_MOUNT_POST);
 
-	if (org_target)
-		__mnt_fs_set_target_ptr(cxt->fs, org_target);
 	if (org_type && rc != 0)
 		__mnt_fs_set_fstype_ptr(cxt->fs, org_type);
-	org_target = org_type  = NULL;
-
-	/*
-	 * bind subdir to the real target, umount temporary target
-	 * (TODO: use MOUNT_POST hook)
-	 */
-	if (rc == 0 && cxt->subdir) {
-		rc = do_mount_subdir(cxt, MNT_PATH_TMPTGT, cxt->subdir,
-				mnt_fs_get_target(cxt->fs));
-		if (rc)
-			goto done;
-		mnt_tmptgt_cleanup(old_ns_fd);
-		old_ns_fd = -1;
-	}
+	org_type  = NULL;
 
 	if (rc == 0 && try_type && cxt->update) {
 		struct libmnt_fs *fs = mnt_update_get_fs(cxt->update);
@@ -690,11 +639,8 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 	}
 
 done:
-	if (old_ns_fd >= 0)
-		mnt_tmptgt_cleanup(old_ns_fd);
 	if (try_type)
 		cxt->mountflags &= ~MS_SILENT;
-	free(org_target);
 	free(org_type);
 	return rc;
 }
@@ -853,39 +799,6 @@ static int parse_ownership_mode(struct libmnt_context *cxt)
 	return 0;
 }
 
-static int is_subdir_required(struct libmnt_context *cxt, int *rc)
-{
-	char *dir;
-	size_t sz;
-
-	assert(cxt);
-	assert(rc);
-
-	*rc = 0;
-
-	if (!cxt->fs
-	    || !cxt->fs->user_optstr
-	    || mnt_optstr_get_option(cxt->fs->user_optstr,
-				  "X-mount.subdir", &dir, &sz) != 0)
-		return 0;
-
-	if (dir && *dir == '"')
-		dir++, sz-=2;
-
-	if (!dir || sz < 1) {
-		DBG(CXT, ul_debug("failed to parse X-mount.subdir '%s'", dir));
-		*rc = -MNT_ERR_MOUNTOPT;
-	} else {
-		cxt->subdir = strndup(dir, sz);
-		if (!cxt->subdir)
-			*rc = -ENOMEM;
-
-		DBG(CXT, ul_debug("subdir %s wanted", dir));
-	}
-
-	return *rc == 0;
-}
-
 static int prepare_target(struct libmnt_context *cxt)
 {
 	const char *tgt, *prefix;
@@ -929,9 +842,6 @@ static int prepare_target(struct libmnt_context *cxt)
 	if (!ns_old)
 		return -MNT_ERR_NAMESPACE;
 
-	/* X-mount.mkdir target */
-	rc = mnt_context_call_hooks(cxt, MNT_STAGE_PREP_TARGET);
-
 	/* canonicalize the path */
 	if (rc == 0) {
 		struct libmnt_cache *cache = mnt_context_get_cache(cxt);
@@ -943,15 +853,7 @@ static int prepare_target(struct libmnt_context *cxt)
 		}
 	}
 
-	/* X-mount.subdir= target */
-	if (rc == 0
-	    && cxt->action == MNT_ACT_MOUNT
-	    && (cxt->user_mountflags & MNT_MS_XFSTABCOMM)
-	    && is_subdir_required(cxt, &rc)) {
-
-		DBG(CXT, ul_debugobj(cxt, "subdir %s required", cxt->subdir));
-	}
-
+	rc = mnt_context_call_hooks(cxt, MNT_STAGE_PREP_TARGET);
 
 	if (!mnt_context_switch_ns(cxt, ns_old))
 		return -MNT_ERR_NAMESPACE;

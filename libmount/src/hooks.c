@@ -8,12 +8,14 @@
  * under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation; either version 2.1 of the License, or
  * (at your option) any later version.
- */
-
-/**
- * SECTION: hookset
- * @title: Mount context hooks
- * @short_description: extensions to mount process
+ *
+ *
+ * The "hookset" is set of callbacks (hooks) that implement some functionality.
+ * It supports two kinds of data:
+ *
+ *  - global data    : accessible for all callbacks, independent on defined hooks
+ *
+ *  - per-hook data  : usually used by the callback function
  */
 
 #include "mountP.h"
@@ -23,6 +25,7 @@ static const struct libmnt_hookset *hooksets[] =
 {
 #ifdef __linux__
 	&hookset_mkdir,
+	&hookset_subdir,
 	&hookset_mount_legacy
 #endif
 };
@@ -151,6 +154,7 @@ int mnt_context_set_hookset_data(struct libmnt_context *cxt,
 	/* deallocate old data */
 	if (data == NULL) {
 		if (hd) {
+			DBG(CXT, ul_debugobj(cxt, " free '%s' data", hs->name));
 			list_del(&hd->datas);
 			free(hd);
 		}
@@ -163,7 +167,7 @@ int mnt_context_set_hookset_data(struct libmnt_context *cxt,
 		if (!hd)
 			return -ENOMEM;
 
-		DBG(CXT, ul_debugobj(cxt, "alloc '%s' data", hs->name));
+		DBG(CXT, ul_debugobj(cxt, " alloc '%s' data", hs->name));
 		INIT_LIST_HEAD(&hd->datas);
 		hd->hookset = hs;
 		list_add_tail(&hd->datas, &cxt->hooksets_datas);

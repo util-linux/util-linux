@@ -158,7 +158,6 @@ int mnt_reset_context(struct libmnt_context *cxt)
 
 	free(cxt->helper);
 	free(cxt->orig_user);
-	free(cxt->subdir);
 
 	cxt->tgt_owner = (uid_t) -1;
 	cxt->tgt_group = (gid_t) -1;
@@ -173,7 +172,6 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	cxt->user_mountflags = 0;
 	cxt->orig_mountflags = 0;
 	cxt->mountdata = NULL;
-	cxt->subdir = NULL;
 	cxt->flags = MNT_FL_DEFAULT;
 	cxt->noautofs = 1;
 	cxt->is_propagation_only = 0;
@@ -298,8 +296,6 @@ struct libmnt_context *mnt_copy_context(struct libmnt_context *o)
 	if (strdup_between_structs(n, o, helper))
 		goto failed;
 	if (strdup_between_structs(n, o, orig_user))
-		goto failed;
-	if (strdup_between_structs(n, o, subdir))
 		goto failed;
 
 	n->mountflags = o->mountflags;
