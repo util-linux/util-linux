@@ -1367,6 +1367,9 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 	 * -- since Linux v5.8-rc1, commit 3448914e8cc550ba792d4ccc74471d1ca4293aae
 	 */
 	lc->config.fd = file_fd;
+	if (lc->blocksize > 0)
+		lc->config.block_size = lc->blocksize;
+
 	if (ioctl(dev_fd, LOOP_CONFIGURE, &lc->config) < 0) {
 		rc = -errno;
 		errsv = errno;
@@ -1376,11 +1379,6 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 		}
 		fallback = 1;
 	} else {
-		if (lc->blocksize > 0
-			&& (rc = loopcxt_ioctl_blocksize(lc, lc->blocksize)) < 0) {
-			errsv = -rc;
-			goto err;
-		}
 		DBG(SETUP, ul_debugobj(lc, "LOOP_CONFIGURE: OK"));
 	}
 
