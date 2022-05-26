@@ -117,7 +117,7 @@ static void do_taskset(struct taskset *ts, size_t setsize, cpu_set_t *set)
 	/* read the current mask */
 	if (ts->pid) {
 		if (sched_getaffinity(ts->pid, ts->setsize, ts->set) < 0)
-			err_affinity(ts->pid, 1);
+			err_affinity(ts->pid, 0);
 		print_affinity(ts, FALSE);
 	}
 
