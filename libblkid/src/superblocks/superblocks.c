@@ -75,7 +75,7 @@
  *
  * @BOOT_SYSTEM_ID: ISO9660 boot system identifier
  *
- * @BLOCK_SIZE: block size
+ * @BLOCK_SIZE: minimal block size accessible by file system
  */
 
 static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn);
