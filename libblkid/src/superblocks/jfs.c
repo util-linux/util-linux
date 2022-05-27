@@ -52,6 +52,7 @@ static int probe_jfs(blkid_probe pr, const struct blkid_idmag *mag)
 	if (*((char *) js->js_label) != '\0')
 		blkid_probe_set_label(pr, js->js_label, sizeof(js->js_label));
 	blkid_probe_set_uuid(pr, js->js_uuid);
+	blkid_probe_set_fsblocksize(pr, le32_to_cpu(js->js_bsize));
 	blkid_probe_set_block_size(pr, le32_to_cpu(js->js_bsize));
 	return 0;
 }

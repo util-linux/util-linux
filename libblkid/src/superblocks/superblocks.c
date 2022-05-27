@@ -70,6 +70,8 @@
  *
  * @FSLASTBLOCK: last fsblock/total number of fsblocks
  *
+ * @FSBLOCKSIZE: file system block size
+ *
  * @SYSTEM_ID: ISO9660 system identifier
  *
  * @PUBLISHER_ID: ISO9660 publisher identifier
@@ -611,6 +613,17 @@ int blkid_probe_set_fslastblock(blkid_probe pr, uint64_t lastblock)
 
 	return blkid_probe_sprintf_value(pr, "FSLASTBLOCK", "%" PRIu64,
 			lastblock);
+}
+
+int blkid_probe_set_fsblocksize(blkid_probe pr, uint32_t block_size)
+{
+	struct blkid_chain *chn = blkid_probe_get_chain(pr);
+
+	if (!(chn->flags & BLKID_SUBLKS_FSINFO))
+		return 0;
+
+	return blkid_probe_sprintf_value(pr, "FSBLOCKSIZE", "%" PRIu32,
+			block_size);
 }
 
 int blkid_probe_set_id_label(blkid_probe pr, const char *name,

@@ -33,9 +33,11 @@ static int probe_vxfs(blkid_probe pr, const struct blkid_idmag *mag)
 
 	if (le32_to_cpu(vxs->vs_magic) == 0xa501fcf5) {
 		blkid_probe_sprintf_version(pr, "%u", (unsigned int)le32_to_cpu(vxs->vs_version));
+		blkid_probe_set_fsblocksize(pr, le32_to_cpu(vxs->vs_bsize));
 		blkid_probe_set_block_size(pr, le32_to_cpu(vxs->vs_bsize));
 	} else if (be32_to_cpu(vxs->vs_magic) == 0xa501fcf5) {
 		blkid_probe_sprintf_version(pr, "%u", (unsigned int)be32_to_cpu(vxs->vs_version));
+		blkid_probe_set_fsblocksize(pr, be32_to_cpu(vxs->vs_bsize));
 		blkid_probe_set_block_size(pr, be32_to_cpu(vxs->vs_bsize));
 	}
 	return 0;

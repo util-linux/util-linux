@@ -90,6 +90,7 @@ static int probe_iso9660_hsfs(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!iso)
 		return errno ? -errno : 1;
 
+	blkid_probe_set_fsblocksize(pr, ISO_SECTOR_SIZE);
 	blkid_probe_set_block_size(pr, ISO_SECTOR_SIZE);
 	blkid_probe_set_version(pr, "High Sierra");
 	blkid_probe_set_label(pr, iso->volume_id, sizeof(iso->volume_id));
@@ -249,6 +250,7 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!pvd)
 		return errno ? -errno : 1;
 
+	blkid_probe_set_fsblocksize(pr, ISO_SECTOR_SIZE);
 	blkid_probe_set_block_size(pr, ISO_SECTOR_SIZE);
 
 	if (joliet && (len = merge_utf16be_ascii(buf, joliet->system_id, pvd->system_id, sizeof(pvd->system_id))) != 0)

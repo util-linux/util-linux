@@ -148,6 +148,7 @@ static int probe_minix(blkid_probe pr,
 		return 1;
 
 	blkid_probe_sprintf_version(pr, "%d", version);
+	blkid_probe_set_fsblocksize(pr, block_size);
 	blkid_probe_set_block_size(pr, block_size);
 	return 0;
 }

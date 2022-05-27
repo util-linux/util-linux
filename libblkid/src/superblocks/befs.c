@@ -521,6 +521,7 @@ static int probe_befs(blkid_probe pr, const struct blkid_idmag *mag)
 					sizeof(volume_id), "%016" PRIx64,
 					FS64_TO_CPU(volume_id, fs_le));
 
+	blkid_probe_set_fsblocksize(pr, block_size);
 	blkid_probe_set_block_size(pr, block_size);
 
 	return BLKID_PROBE_OK;

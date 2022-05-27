@@ -138,8 +138,10 @@ static void zfs_process_value(blkid_probe pr, char *name, size_t namelen,
 		if (nvu_type != DATA_TYPE_UINT64)
 			return;
 
-		if (nvu_value < 32)
+		if (nvu_value < 32){
+			blkid_probe_set_fsblocksize(pr, 1U << nvu_value);
 			blkid_probe_set_block_size(pr, 1U << nvu_value);
+		}
 	}
 }
 

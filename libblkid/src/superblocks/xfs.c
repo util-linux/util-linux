@@ -184,6 +184,7 @@ static int probe_xfs(blkid_probe pr, const struct blkid_idmag *mag)
 	blkid_probe_set_uuid(pr, xs->sb_uuid);
 	blkid_probe_set_fssize(pr, xfs_fssize(xs));
 	blkid_probe_set_fslastblock(pr, be64_to_cpu(xs->sb_dblocks));
+	blkid_probe_set_fsblocksize(pr, be32_to_cpu(xs->sb_blocksize));
 	blkid_probe_set_block_size(pr, be16_to_cpu(xs->sb_sectsize));
 	return 0;
 }

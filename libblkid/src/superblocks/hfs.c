@@ -241,6 +241,7 @@ static int probe_hfsplus(blkid_probe pr, const struct blkid_idmag *mag)
 	if (blocksize < HFSPLUS_SECTOR_SIZE)
 		return 1;
 
+	blkid_probe_set_fsblocksize(pr, blocksize);
 	blkid_probe_set_block_size(pr, blocksize);
 
 	memcpy(extents, hfsplus->cat_file.extents, sizeof(extents));
