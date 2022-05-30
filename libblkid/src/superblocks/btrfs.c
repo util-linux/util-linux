@@ -234,6 +234,7 @@ static int probe_btrfs(blkid_probe pr, const struct blkid_idmag *mag)
 
 	blkid_probe_set_uuid(pr, bfs->fsid);
 	blkid_probe_set_uuid_as(pr, bfs->dev_item.uuid, "UUID_SUB");
+	blkid_probe_set_fsblocksize(pr, le32_to_cpu(bfs->sectorsize));
 	blkid_probe_set_block_size(pr, le32_to_cpu(bfs->sectorsize));
 
 	uint32_t sectorsize_log = 31 -

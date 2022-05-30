@@ -569,6 +569,7 @@ real_blksz:
 		 * E.g. number 0x0150 is revision 1.50, number 0x0201 is revision 2.01. */
 		blkid_probe_sprintf_version(pr, "%x.%02x", (unsigned int)(udf_rev >> 8), (unsigned int)(udf_rev & 0xFF));
 
+	blkid_probe_set_fsblocksize(pr, bs);
 	blkid_probe_set_block_size(pr, bs);
 
 	return 0;

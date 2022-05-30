@@ -433,6 +433,7 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 	if (version)
 		blkid_probe_set_version(pr, version);
 
+	blkid_probe_set_fsblocksize(pr, vs->vs_cluster_size * sector_size);
 	blkid_probe_set_block_size(pr, sector_size);
 
 	return 0;

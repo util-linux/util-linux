@@ -106,6 +106,7 @@ static int probe_gfs2(blkid_probe pr, const struct blkid_idmag *mag)
 				sizeof(sbd->sb_locktable));
 		blkid_probe_set_uuid(pr, sbd->sb_uuid);
 		blkid_probe_set_version(pr, "1");
+		blkid_probe_set_fsblocksize(pr, be32_to_cpu(sbd->sb_bsize));
 		blkid_probe_set_block_size(pr, be32_to_cpu(sbd->sb_bsize));
 		return 0;
 	}

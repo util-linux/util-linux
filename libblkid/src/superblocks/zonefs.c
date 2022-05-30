@@ -64,6 +64,7 @@ static int probe_zonefs(blkid_probe pr,
 				      sizeof(sb->s_label));
 
 	blkid_probe_set_uuid(pr, sb->s_uuid);
+	blkid_probe_set_fsblocksize(pr, ZONEFS_BLOCK_SIZE);
 	blkid_probe_set_block_size(pr, ZONEFS_BLOCK_SIZE);
 
 	return 0;

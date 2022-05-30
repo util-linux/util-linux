@@ -74,6 +74,7 @@ static int probe_reiser(blkid_probe pr, const struct blkid_idmag *mag)
 	else
 		blkid_probe_set_version(pr, "3.5");
 
+	blkid_probe_set_fsblocksize(pr, blocksize);
 	blkid_probe_set_block_size(pr, blocksize);
 
 	return 0;
@@ -95,6 +96,7 @@ static int probe_reiser4(blkid_probe pr, const struct blkid_idmag *mag)
 	blkid_probe_set_uuid(pr, rs4->rs4_uuid);
 	blkid_probe_set_version(pr, "4");
 
+	blkid_probe_set_fsblocksize(pr, blocksize);
 	blkid_probe_set_block_size(pr, blocksize);
 
 	return 0;

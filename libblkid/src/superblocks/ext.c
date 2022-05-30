@@ -189,8 +189,10 @@ static void ext_get_info(blkid_probe pr, int ver, struct ext2_super_block *es)
 		le32_to_cpu(es->s_rev_level),
 		le16_to_cpu(es->s_minor_rev_level));
 
-	if (le32_to_cpu(es->s_log_block_size) < 32)
+	if (le32_to_cpu(es->s_log_block_size) < 32){
+		blkid_probe_set_fsblocksize(pr, 1024U << le32_to_cpu(es->s_log_block_size));
 		blkid_probe_set_block_size(pr, 1024U << le32_to_cpu(es->s_log_block_size));
+	}
 
 	uint64_t fslastblock = le32_to_cpu(es->s_blocks_count) |
 		((s_feature_incompat & EXT4_FEATURE_INCOMPAT_64BIT) ?
