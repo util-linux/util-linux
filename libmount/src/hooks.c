@@ -62,26 +62,6 @@ static const char *stagenames[] = {
 	[MNT_STAGE_POST] = "post",
 };
 
-int mnt_context_init_hooksets(struct libmnt_context *cxt)
-{
-	size_t i;
-	int rc = 0;
-
-	assert(cxt);
-
-	for (i = 0; i <  ARRAY_SIZE(hooksets); i++) {
-		const struct libmnt_hookset *hs = hooksets[i];
-
-		rc = hs->init(cxt, hs);
-		if (rc < 0)
-			break;
-	}
-
-	if (rc < 0)
-		mnt_context_deinit_hooksets(cxt);
-	return rc;
-}
-
 int mnt_context_deinit_hooksets(struct libmnt_context *cxt)
 {
 	size_t i;
@@ -277,7 +257,25 @@ int mnt_context_has_hook(struct libmnt_context *cxt,
 int mnt_context_call_hooks(struct libmnt_context *cxt, int stage)
 {
 	struct list_head *p, *next;
+	size_t i;
 
+	/* call initial hooks */
+	for (i = 0; i <  ARRAY_SIZE(hooksets); i++) {
+		int rc;
+		const struct libmnt_hookset *hs = hooksets[i];
+
+		if (hs->firststage != stage)
+			continue;
+
+		DBG(CXT, ul_debugobj(cxt, "calling %s hook from %s",
+                        stagenames[hs->firststage], hs->name));
+
+		rc = hs->firstcall(cxt, hs, NULL);
+		if (rc < 0)
+			return rc;
+	}
+
+	/* call already active hooks */
 	list_for_each_safe(p, next, &cxt->hooksets_hooks) {
 		int rc;
 		struct hookset_hook *x = list_entry(p, struct hookset_hook, hooks);

@@ -60,15 +60,6 @@ static struct hookset_data *new_hookset_data(
 	return hsd;
 }
 
-/* initiallize this module */
-static int hookset_init(struct libmnt_context *cxt, const struct libmnt_hookset *hs)
-{
-	DBG(HOOK, ul_debugobj(hs, "init '%s'", hs->name));
-
-	return mnt_context_append_hook(cxt, hs,
-				MNT_STAGE_PREP_TARGET, NULL, hook_prepare_target);
-}
-
 /* de-initiallize this module */
 static int hookset_deinit(struct libmnt_context *cxt, const struct libmnt_hookset *hs)
 {
@@ -307,10 +298,12 @@ static int hook_prepare_target(
 	return rc;
 }
 
-
 const struct libmnt_hookset hookset_subdir =
 {
 	.name = "__subdir",
-	.init = hookset_init,
+
+	.firststage = MNT_STAGE_PREP_TARGET,
+	.firstcall = hook_prepare_target,
+
 	.deinit = hookset_deinit
 };

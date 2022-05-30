@@ -295,7 +295,10 @@ enum {
 
 struct libmnt_hookset {
 	const char *name;				/* hook set name */
-	int (*init)(struct libmnt_context *, const struct libmnt_hookset *);	/* initialization function */
+
+	int firststage;
+	int (*firstcall)(struct libmnt_context *, const struct libmnt_hookset *, void *);
+
 	int (*deinit)(struct libmnt_context *, const struct libmnt_hookset *);	/* cleanup function */
 };
 
@@ -304,8 +307,6 @@ extern const struct libmnt_hookset hookset_mount_legacy;
 extern const struct libmnt_hookset hookset_mkdir;
 extern const struct libmnt_hookset hookset_subdir;
 
-
-extern int mnt_context_init_hooksets(struct libmnt_context *cxt);
 extern int mnt_context_deinit_hooksets(struct libmnt_context *cxt);
 extern const struct libmnt_hookset *mnt_context_get_hookset(struct libmnt_context *cxt, const char *name);
 

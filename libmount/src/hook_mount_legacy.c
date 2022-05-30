@@ -18,21 +18,6 @@ struct hook_data {
 	unsigned long mountflags;
 };
 
-static int hookset_init(struct libmnt_context *cxt, const struct libmnt_hookset *hs)
-{
-#ifdef UL_HAVE_MOUNT_API
-	/* do nothing when __builtin-mount succesfully registred */
-	if (mnt_context_has_hook(cxt, &hookset_mount, 0, NULL))
-		return 0;
-#endif
-
-	DBG(HOOK, ul_debugobj(hs, "init '%s'", hs->name));
-
-	/* add very basic callback */
-	return mnt_context_append_hook(cxt, hs,
-				MNT_STAGE_PREP_OPTIONS, NULL, hook_prepare);
-}
-
 static int hookset_deinit(struct libmnt_context *cxt, const struct libmnt_hookset *hs)
 {
 	void *data = NULL;
@@ -275,6 +260,11 @@ static int hook_prepare(struct libmnt_context *cxt,
 	assert(cxt);
 	assert(hs == &hookset_mount_legacy);
 
+#ifdef UL_HAVE_MOUNT_API
+	/* do nothing when __builtin-mount succesfully registred */
+	if (mnt_context_has_hook(cxt, &hookset_mount, 0, NULL))
+		return 0;
+#endif
 	/* add extra mount(2) calls for each propagation flag  */
 	if (cxt->mountflags & MS_PROPAGATION) {
 		rc = prepare_propagation(cxt, hs);
@@ -299,10 +289,12 @@ static int hook_prepare(struct libmnt_context *cxt,
 	return rc;
 }
 
-
 const struct libmnt_hookset hookset_mount_legacy =
 {
 	.name = "__legacy-mount",
-	.init = hookset_init,
+
+	.firststage = MNT_STAGE_PREP_OPTIONS,
+	.firstcall = hook_prepare,
+
 	.deinit = hookset_deinit
 };

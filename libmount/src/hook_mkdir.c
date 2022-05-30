@@ -15,14 +15,6 @@
 
 static int hook_prepare_target(struct libmnt_context *cxt, const struct libmnt_hookset *hs, void *data);
 
-static int hookset_init(struct libmnt_context *cxt, const struct libmnt_hookset *hs)
-{
-	DBG(HOOK, ul_debugobj(hs, "init '%s'", hs->name));
-
-	return mnt_context_append_hook(cxt, hs,
-				MNT_STAGE_PREP_TARGET, NULL, hook_prepare_target);
-}
-
 static int hookset_deinit(struct libmnt_context *cxt, const struct libmnt_hookset *hs)
 {
 	void *data = NULL;
@@ -86,7 +78,6 @@ static int is_mkdir_required(const char *tgt, struct libmnt_fs *fs, mode_t *mode
 	return 1;
 }
 
-
 static int hook_prepare_target(
 			struct libmnt_context *cxt,
 			const struct libmnt_hookset *hs,
@@ -130,10 +121,12 @@ static int hook_prepare_target(
 	return rc;
 }
 
-
 const struct libmnt_hookset hookset_mkdir =
 {
 	.name = "__mkdir",
-	.init = hookset_init,
+
+	.firststage = MNT_STAGE_PREP_TARGET,
+	.firstcall = hook_prepare_target,
+
 	.deinit = hookset_deinit
 };

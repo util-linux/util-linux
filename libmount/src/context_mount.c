@@ -900,8 +900,6 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
 	if (!rc)
 		rc = evaluate_permissions(cxt);
 	if (!rc)
-		rc = mnt_context_init_hooksets(cxt);
-	if (!rc)
 		rc = fix_optstr(cxt);
 	if (!rc)
 		rc = mnt_context_prepare_srcpath(cxt);
