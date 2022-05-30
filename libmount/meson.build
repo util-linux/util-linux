@@ -46,6 +46,7 @@ if LINUX
     src/hook_mount_legacy.c
     src/hook_mkdir.c
     src/hook_subdir.c
+    src/hook_owner.c
     src/monitor.c
 '''.split()
 endif

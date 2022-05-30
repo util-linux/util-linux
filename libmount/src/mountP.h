@@ -306,6 +306,7 @@ struct libmnt_hookset {
 extern const struct libmnt_hookset hookset_mount_legacy;
 extern const struct libmnt_hookset hookset_mkdir;
 extern const struct libmnt_hookset hookset_subdir;
+extern const struct libmnt_hookset hookset_owner;
 
 extern int mnt_context_deinit_hooksets(struct libmnt_context *cxt);
 extern const struct libmnt_hookset *mnt_context_get_hookset(struct libmnt_context *cxt, const char *name);
@@ -354,10 +355,6 @@ struct libmnt_context
 
 	char	*fstype_pattern;	/* for mnt_match_fstype() */
 	char	*optstr_pattern;	/* for mnt_match_options() */
-
-	uid_t	tgt_owner;		/* X-mount.owner= */
-	gid_t	tgt_group;		/* X-mount.group= */
-	mode_t	tgt_mode;		/* X-mount.mode= */
 
 	struct libmnt_fs *fs;		/* filesystem description (type, mountpoint, device, ...) */
 	struct libmnt_fs *fs_template;	/* used for @fs on mnt_reset_context() */

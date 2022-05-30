@@ -751,54 +751,6 @@ static int do_mount_by_pattern(struct libmnt_context *cxt, const char *pattern)
 	return rc;
 }
 
-/*
- * Process X-mount.owner=, X-mount.group=, X-mount.mode=.
- */
-static int parse_ownership_mode(struct libmnt_context *cxt)
-{
-	int rc;
-	char *value;
-	size_t valsz;
-
-	const char *o = mnt_fs_get_user_options(cxt->fs);
-	if (!o)
-		return 0;
-
-	if ((rc = mnt_optstr_get_option(o, "X-mount.owner", &value, &valsz)) < 0)
-		return -MNT_ERR_MOUNTOPT;
-	if (!rc) {
-		if (!valsz)
-			return errno = EINVAL, -MNT_ERR_MOUNTOPT;
-
-		if (mnt_parse_uid(value, valsz, &cxt->tgt_owner))
-			return -MNT_ERR_MOUNTOPT;
-	}
-
-	if ((rc = mnt_optstr_get_option(o, "X-mount.group", &value, &valsz)) < 0)
-		return -MNT_ERR_MOUNTOPT;
-	if (!rc) {
-		if (!valsz)
-			return errno = EINVAL, -MNT_ERR_MOUNTOPT;
-
-		if (mnt_parse_gid(value, valsz, &cxt->tgt_group))
-			return -MNT_ERR_MOUNTOPT;
-	}
-
-	if ((rc = mnt_optstr_get_option(o, "X-mount.mode", &value, &valsz)) < 0)
-		return -MNT_ERR_MOUNTOPT;
-	if (!rc) {
-		if (!valsz)
-			return errno = EINVAL, -MNT_ERR_MOUNTOPT;
-
-		if ((rc = mnt_parse_mode(value, valsz, &cxt->tgt_mode)))
-			return -MNT_ERR_MOUNTOPT;
-	}
-
-	DBG(CXT, ul_debugobj(cxt, "ownership %d:%d, mode %04o", cxt->tgt_owner, cxt->tgt_group, cxt->tgt_mode));
-
-	return 0;
-}
-
 static int prepare_target(struct libmnt_context *cxt)
 {
 	const char *tgt, *prefix;
@@ -908,8 +860,6 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
 	if (!rc)
 		rc = prepare_target(cxt);
 	if (!rc)
-		rc = parse_ownership_mode(cxt);
-	if (!rc)
 		rc = mnt_context_prepare_helper(cxt, "mount", NULL);
 
 	if (!rc && mnt_context_is_onlyonce(cxt)) {
@@ -932,25 +882,6 @@ end:
 		return -MNT_ERR_NAMESPACE;
 
 	return rc;
-}
-
-static int set_ownership_mode(struct libmnt_context *cxt)
-{
-	const char *target = mnt_fs_get_target(cxt->fs);
-
-	if (cxt->tgt_owner != (uid_t) -1 || cxt->tgt_group != (uid_t) -1) {
-		DBG(CXT, ul_debugobj(cxt, "mount: lchown(%s, %u, %u)", target, cxt->tgt_owner, cxt->tgt_group));
-		if (lchown(target, cxt->tgt_owner, cxt->tgt_group) == -1)
-			return -MNT_ERR_CHOWN;
-	}
-
-	if (cxt->tgt_mode != (mode_t) -1) {
-		DBG(CXT, ul_debugobj(cxt, "mount: chmod(%s, %04o)", target, cxt->tgt_mode));
-		if (chmod(target, cxt->tgt_mode) == -1)
-			return -MNT_ERR_CHMOD;
-	}
-
-	return 0;
 }
 
 /**
@@ -1012,9 +943,6 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 	/* Cleanup will be immediate on failure, and deferred to umount on success */
 	if (mnt_context_is_veritydev(cxt))
 		mnt_context_deferred_delete_veritydev(cxt);
-
-	if (!res)
-		res = set_ownership_mode(cxt);
 
 	if (!mnt_context_switch_ns(cxt, ns_old))
 		return -MNT_ERR_NAMESPACE;
@@ -1674,13 +1602,13 @@ int mnt_context_get_mount_excode(
 
 		if (rc == -MNT_ERR_CHOWN) {
 			if (buf)
-				snprintf(buf, bufsz, _("filesystem was mounted, but failed to change ownership to %u:%u: %m"), cxt->tgt_owner, cxt->tgt_group);
+				snprintf(buf, bufsz, _("filesystem was mounted, but failed to change ownership: %m"));
 			return MNT_EX_SYSERR;
 		}
 
 		if (rc == -MNT_ERR_CHMOD) {
 			if (buf)
-				snprintf(buf, bufsz, _("filesystem was mounted, but failed to change mode to %04o: %m"), cxt->tgt_mode);
+				snprintf(buf, bufsz, _("filesystem was mounted, but failed to change mode: %m"));
 			return MNT_EX_SYSERR;
 		}
 

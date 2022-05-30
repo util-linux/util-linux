@@ -56,10 +56,6 @@ struct libmnt_context *mnt_new_context(void)
 	if (!cxt)
 		return NULL;
 
-	cxt->tgt_owner = (uid_t) -1;
-	cxt->tgt_group = (gid_t) -1;
-	cxt->tgt_mode = (mode_t) -1;
-
 	ruid = getuid();
 	euid = geteuid();
 
@@ -158,10 +154,6 @@ int mnt_reset_context(struct libmnt_context *cxt)
 
 	free(cxt->helper);
 	free(cxt->orig_user);
-
-	cxt->tgt_owner = (uid_t) -1;
-	cxt->tgt_group = (gid_t) -1;
-	cxt->tgt_mode = (mode_t) -1;
 
 	cxt->fs = NULL;
 	cxt->mountinfo = NULL;
