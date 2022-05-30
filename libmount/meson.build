@@ -44,6 +44,8 @@ if LINUX
     src/context_mount.c
     src/context_umount.c
     src/hook_mount_legacy.c
+    src/hook_mkdir.c
+    src/hook_subdir.c
     src/monitor.c
 '''.split()
 endif
