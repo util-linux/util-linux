@@ -12,8 +12,6 @@
 
 #include "mountP.h"
 
-static int hook_prepare(struct libmnt_context *cxt, const struct libmnt_hookset *hs, void *data);
-
 struct hook_data {
 	unsigned long mountflags;
 };

@@ -18,8 +18,6 @@
 #include "mountP.h"
 #include "fileutils.h"
 
-static int hook_prepare_options(struct libmnt_context *cxt, const struct libmnt_hookset *hs, void *data);
-
 struct hook_data {
 	uid_t owner;
 	gid_t group;

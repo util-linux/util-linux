@@ -13,8 +13,6 @@
 #include "mountP.h"
 #include "fileutils.h"
 
-static int hook_prepare_target(struct libmnt_context *cxt, const struct libmnt_hookset *hs, void *data);
-
 static int hookset_deinit(struct libmnt_context *cxt, const struct libmnt_hookset *hs)
 {
 	void *data = NULL;
