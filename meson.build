@@ -499,8 +499,11 @@ funcs = '''
         newlocale
         mempcpy
         mkostemp
+        move_mount
+        mount_setattr
         nanosleep
         ntp_gettime
+        open_tree
         personality
         pidfd_open
         pidfd_send_signal
@@ -580,6 +583,10 @@ have = cc.has_member('struct tm', 'tm_gmtoff',
                      #include <unistd.h>
                      ''')
 conf.set('HAVE_TM_GMTOFF', have ? 1 : false)
+
+
+have = cc.sizeof('struct mount_attr', prefix : '#include <linux/mount.h>') > 0
+conf.set('HAVE_STRUCT_MOUNT_ATTR', have ? 1 : false)
 
 have = cc.has_member('struct termios', 'c_line',
                      prefix : '#include <termios.h>')

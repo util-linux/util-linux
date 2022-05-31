@@ -3,6 +3,7 @@
 
 #if defined(__linux__)
 #include <sys/syscall.h>
+#include <linux/mount.h>
 
 /*
  * Scope all of this beneath mount_setattr(). If this syscall is available all
