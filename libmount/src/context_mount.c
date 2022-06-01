@@ -91,9 +91,11 @@ static int fix_optstr(struct libmnt_context *cxt)
 	if (!cxt->fs || (cxt->flags & MNT_FL_MOUNTOPTS_FIXED))
 		return 0;
 
+	DBG(CXT, ul_debugobj(cxt, "-->: preparing mount options"));
+
 	fs = cxt->fs;
 
-	DBG(CXT, ul_debugobj(cxt, "mount: fixing options, current "
+	DBG(CXT, ul_debugobj(cxt, " current options"
 		"vfs: '%s' fs: '%s' user: '%s', optstr: '%s'",
 		fs->vfs_optstr, fs->fs_optstr, fs->user_optstr, fs->optstr));
 
@@ -118,13 +120,13 @@ static int fix_optstr(struct libmnt_context *cxt)
 	/*
 	 * Sync mount options with mount flags
 	 */
-	DBG(CXT, ul_debugobj(cxt, "mount: fixing vfs optstr"));
+	DBG(CXT, ul_debugobj(cxt, " fixing vfs optstr"));
 	rc = mnt_optstr_apply_flags(&fs->vfs_optstr, cxt->mountflags,
 				mnt_get_builtin_optmap(MNT_LINUX_MAP));
 	if (rc)
 		goto done;
 
-	DBG(CXT, ul_debugobj(cxt, "mount: fixing user optstr"));
+	DBG(CXT, ul_debugobj(cxt, " fixing user optstr"));
 	rc = mnt_optstr_apply_flags(&fs->user_optstr, cxt->user_mountflags,
 				mnt_get_builtin_optmap(MNT_USERSPACE_MAP));
 	if (rc)
@@ -228,7 +230,7 @@ static int fix_optstr(struct libmnt_context *cxt)
 done:
 	cxt->flags |= MNT_FL_MOUNTOPTS_FIXED;
 
-	DBG(CXT, ul_debugobj(cxt, "fixed options [rc=%d]: "
+	DBG(CXT, ul_debugobj(cxt, " fixed options [rc=%d]: "
 		"vfs: '%s' fs: '%s' user: '%s', optstr: '%s'", rc,
 		fs->vfs_optstr, fs->fs_optstr, fs->user_optstr, fs->optstr));
 
