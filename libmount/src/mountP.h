@@ -307,6 +307,7 @@ extern const struct libmnt_hookset hookset_mount_legacy;
 extern const struct libmnt_hookset hookset_mkdir;
 extern const struct libmnt_hookset hookset_subdir;
 extern const struct libmnt_hookset hookset_owner;
+extern const struct libmnt_hookset hookset_idmap;
 
 extern int mnt_context_deinit_hooksets(struct libmnt_context *cxt);
 extern const struct libmnt_hookset *mnt_context_get_hookset(struct libmnt_context *cxt, const char *name);

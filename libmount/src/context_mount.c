@@ -1614,6 +1614,12 @@ int mnt_context_get_mount_excode(
 			return MNT_EX_SYSERR;
 		}
 
+		if (rc == -MNT_ERR_IDMAP) {
+			if (buf)
+				snprintf(buf, bufsz, _("filesystem was mounted, but failed to attach idmapping"));
+			return MNT_EX_SYSERR;
+		}
+
 		if (rc < 0)
 			return mnt_context_get_generic_excode(rc, buf, bufsz,
 				_("filesystem was mounted, but any subsequent operation failed: %m"));

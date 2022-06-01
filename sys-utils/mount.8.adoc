@@ -642,6 +642,33 @@ Set _mountpoint_'s ownership after mounting. Names resolved in the target mount 
 *X-mount.mode*=_mode_::
 Set _mountpoint_'s mode after mounting.
 
+*X-mount.idmap*=__id-type__:__id-mount__:__id-host__:__id-range__ [__id-type__:__id-mount__:__id-host__:__id-range__], *X-mount.idmap*=__file__::
+Use this option to create an idmapped mount.
+An idmapped mount allows to change ownership of all files located under a mount according to the ID-mapping associated with a user namespace.
+The ownership change is tied to the lifetime and localized to the relevant mount.
+The relevant ID-mapping can be specified in two ways:
++
+* A user can specify the ID-mapping directly.
++
+The ID-mapping must be specified using the syntax __id-type__:__id-mount__:__id-host__:__id-range__.
+Specifying *u* as the __id-type__ prefix creates a UID-mapping, *g* creates a GID-mapping and omitting __id-type__ or specifying *b* creates both a UID- and GID-mapping.
+The __id-mount__ parameter indicates the starting ID in the new mount.
+The __id-host__ parameter indicates the starting ID in the filesystem.
+The __id-range__ parameter indicates how many IDs are to be mapped.
+It is possible to specify multiple ID-mappings.
+The individual ID-mappings must be separated by spaces.
++
+For example, the ID-mapping *X-mount.idmap=u:1000:0:1 g:1001:1:2 5000:1000:2* creates an idmapped mount where
+UID 0 is mapped to UID 1000, GID 1 is mapped to GUID 1001, GID 2 is mapped to GID 1002, UID and GID 1000 are mapped to 5000, and UID and GID 1001 are mapped to 5001 in the mount.
++
+When an ID-mapping is specified directly a new user namespace will be allocated with the requested ID-mapping.
+The newly created user namespace will be attached to the mount.
+* A user can specify a user namespace file.
++
+The user namespace will then be attached to the mount and the ID-mapping of the user namespace will become the ID-mapping of the mount.
++
+For example, *X-mount.idmap=/proc/PID/ns/user* will attach the user namespace of the process PID to the mount.
+
 *nosymfollow*::
 Do not follow symlinks when resolving paths. Symlinks can still be created, and *readlink*(1), *readlink*(2), *realpath*(1), and *realpath*(3) all still work properly.
 

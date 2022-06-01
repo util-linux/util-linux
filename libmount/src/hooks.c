@@ -19,6 +19,7 @@
  */
 
 #include "mountP.h"
+#include "mount-api-utils.h"
 
 /* built-in hooksets */
 static const struct libmnt_hookset *hooksets[] =
@@ -27,6 +28,9 @@ static const struct libmnt_hookset *hooksets[] =
 	&hookset_mkdir,
 	&hookset_subdir,
 	&hookset_mount_legacy,
+#ifdef UL_HAVE_MOUNT_API
+	&hookset_idmap,
+#endif
 	&hookset_owner
 #endif
 };

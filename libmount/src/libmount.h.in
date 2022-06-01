@@ -232,6 +232,12 @@ enum {
  * filesystem mounted, but subsequent X-mount.mode= chmod(2) failed
  */
 #define MNT_ERR_CHMOD    5012
+/**
+ * MNT_ERR_IDMAP:
+ *
+ * filesystem mounted, but subsequent X-mount.idmap= failed
+ */
+#define MNT_ERR_IDMAP    5013
 
 
 /*
