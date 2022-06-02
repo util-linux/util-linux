@@ -173,7 +173,10 @@ static int probe_hfs(blkid_probe pr, const struct blkid_idmag *mag)
 
 	hfs_set_uuid(pr, hfs->finder_info.id, sizeof(hfs->finder_info.id));
 
-	blkid_probe_set_label(pr, hfs->label, hfs->label_len);
+	size = hfs->label_len;
+	if ((size_t) size > sizeof(hfs->label))
+		size = sizeof(hfs->label);
+	blkid_probe_set_label(pr, hfs->label, size);
 	return 0;
 }
 
