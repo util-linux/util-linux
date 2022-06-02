@@ -621,6 +621,11 @@ static int hide_buffer(blkid_probe pr, uint64_t off, uint64_t len)
 	struct list_head *p;
 	int ct = 0;
 
+	if (UINT64_MAX - len < off) {
+		DBG(BUFFER, ul_debug("\t  hide-buffer overflow (ignore)"));
+		return -EINVAL;
+	}
+
 	list_for_each(p, &pr->buffers) {
 		struct blkid_bufinfo *x =
 			list_entry(p, struct blkid_bufinfo, bufs);
@@ -656,14 +661,20 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr, uint64_t off, uint64_t len
 	DBG(BUFFER, ul_debug("\t>>>> off=%ju, real-off=%ju (probe <%ju..%ju>, len=%ju",
 				off, real_off, pr->off, pr->off + pr->size, len));
 	*/
-
 	if (pr->size == 0) {
 		errno = EINVAL;
 		return NULL;
 	}
 
-	if (len == 0 || (!S_ISCHR(pr->mode) && pr->off + pr->size < real_off + len)) {
-		DBG(BUFFER, ul_debug("\t  ignore: request out of probing area"));
+	if (UINT64_MAX - len < off || UINT64_MAX - len < real_off) {
+		DBG(BUFFER, ul_debug("\t  read-buffer overflow (ignore)"));
+		return NULL;
+	}
+
+	if (len == 0
+	    || (!S_ISCHR(pr->mode) && (pr->size < off || pr->size < len))
+	    || (!S_ISCHR(pr->mode) && (pr->off + pr->size < real_off + len))) {
+		DBG(BUFFER, ul_debug("\t  read-buffer out of probing area (ignore)"));
 		errno = 0;
 		return NULL;
 	}
