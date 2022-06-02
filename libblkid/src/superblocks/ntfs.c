@@ -158,6 +158,9 @@ static int __probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag, int save_
 			sectors_per_cluster, nr_clusters,
 			off));
 
+	if (mft_record_size < 4)
+		return 1;
+
 	buf_mft = blkid_probe_get_buffer(pr, off, mft_record_size);
 	if (!buf_mft)
 		return errno ? -errno : 1;
