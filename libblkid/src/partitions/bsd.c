@@ -50,7 +50,7 @@ static int probe_bsd_pt(blkid_probe pr, const struct blkid_idmag *mag)
 		goto nothing;
 	}
 
-	l = (struct bsd_disklabel *) data + BLKID_MAG_LASTOFFSET(mag);
+	l = (struct bsd_disklabel *) (data + BLKID_MAG_LASTOFFSET(mag));
 
 	ls = blkid_probe_get_partlist(pr);
 	if (!ls)
