@@ -16,7 +16,6 @@ PrivateUsers=yes
 ProtectKernelTunables=yes
 ProtectKernelModules=yes
 ProtectControlGroups=yes
-RestrictAddressFamilies=AF_UNIX
 MemoryDenyWriteExecute=yes
 ReadWritePaths=/var/lib/libuuid/
 SystemCallFilter=@default @file-system @basic-io @system-service @signal @io-event @network-io
