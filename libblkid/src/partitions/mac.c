@@ -93,6 +93,8 @@ static int probe_mac_pt(blkid_probe pr,
 	}
 
 	block_size = be16_to_cpu(md->block_size);
+	if (block_size < sizeof(struct mac_partition))
+		goto nothing;
 
 	/* The partition map always begins at physical block 1,
 	 * the second block on the disk.
