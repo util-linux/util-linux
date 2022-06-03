@@ -90,6 +90,7 @@ enum {
 	COL_MINIO,
 	COL_MODE,
 	COL_MODEL,
+	COL_MQ,
 	COL_NAME,
 	COL_OPTIO,
 	COL_OWNER,
@@ -189,6 +190,7 @@ static struct colinfo infos[] = {
 	[COL_MINIO] = { "MIN-IO", 6, SCOLS_FL_RIGHT, N_("minimum I/O size"), COLTYPE_NUM },
 	[COL_MODEL] = { "MODEL", 0.1, SCOLS_FL_TRUNC, N_("device identifier") },
 	[COL_MODE] = { "MODE", 10, 0, N_("device node permissions") },
+	[COL_MQ] = { "MQ", 3, SCOLS_FL_RIGHT, N_("device queues") },
 	[COL_NAME] = { "NAME", 0.25, SCOLS_FL_NOEXTREMES, N_("device name") },
 	[COL_OPTIO] = { "OPT-IO", 6, SCOLS_FL_RIGHT, N_("optimal I/O size"), COLTYPE_NUM },
 	[COL_OWNER] = { "OWNER", 0.1, SCOLS_FL_TRUNC, N_("user name"), },
@@ -746,6 +748,34 @@ static void device_read_bytes(struct lsblk_device *dev, char *path, char **str,
 	}
 }
 
+static void process_mq(struct lsblk_device *dev, char **str)
+{
+	DIR *dir;
+	struct dirent *d;
+	unsigned int queues = 0;
+
+	DBG(DEV, ul_debugobj(dev, "%s: process mq", dev->name));
+
+	dir = ul_path_opendir(dev->sysfs, "mq");
+	if (!dir) {
+		*str = xstrdup("1");
+		DBG(DEV, ul_debugobj(dev, "%s: no mq supported, use a single queue", dev->name));
+		return;
+	}
+
+	while ((d = xreaddir(dir))) {
+		if (!strcmp(d->d_name, ".") || !strcmp(d->d_name, ".."))
+			continue;
+
+		queues++;
+	}
+
+	closedir(dir);
+
+	DBG(DEV, ul_debugobj(dev, "%s: has %d queues", dev->name, queues));
+	xasprintf(str, "%3u", queues);
+}
+
 /*
  * Generates data (string) for column specified by column ID for specified device. If sortdata
  * is not NULL then returns number usable to sort the column if the data are available for the
@@ -1142,6 +1172,9 @@ static char *device_get_data(
 		break;
 	case COL_DAX:
 		ul_path_read_string(dev->sysfs, &str, "queue/dax");
+		break;
+	case COL_MQ:
+		process_mq(dev, &str);
 		break;
 	};
 
