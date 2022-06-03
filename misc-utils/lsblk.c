@@ -514,8 +514,10 @@ static char *get_transport(struct lsblk_device *dev)
 			trans = "ata";
 		free(attr);
 
-	} else if (strncmp(dev->name, "nvme", 4) == 0)
+	} else if (strncmp(dev->name, "nvme", 4) == 0) {
 		trans = "nvme";
+	} else if (strncmp(dev->name, "vd", 2) == 0)
+		trans = "virtio";
 
 	return trans ? xstrdup(trans) : NULL;
 }
