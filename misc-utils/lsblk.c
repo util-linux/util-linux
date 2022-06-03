@@ -2233,6 +2233,7 @@ int main(int argc, char *argv[])
 			add_uniq_column(COL_SERIAL);
 			add_uniq_column(COL_TRANSPORT);
 			add_uniq_column(COL_RQ_SIZE);
+			add_uniq_column(COL_MQ);
 			break;
 		case 'v':
 			lsblk->nodeps = 1;
@@ -2242,6 +2243,7 @@ int main(int argc, char *argv[])
 			add_uniq_column(COL_TRANSPORT);
 			add_uniq_column(COL_SIZE);
 			add_uniq_column(COL_RQ_SIZE);
+			add_uniq_column(COL_MQ);
 			break;
 		case 'T':
 			force_tree = 1;
