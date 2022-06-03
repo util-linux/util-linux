@@ -80,6 +80,7 @@ _lsblk_module()
 				--topology
 				--scsi
 				--nvme
+				--virtio
 				--sort
 				--width
 				--help

@@ -75,6 +75,9 @@ Output info about device owner, group and mode. This option is equivalent to *-o
 *-N*, *--nvme*::
 Output info about NVMe devices only.
 
+*-v*, *--virtio*::
+Output info about virtio devices only.
+
 *-n*, *--noheadings*::
 Do not print a header line.
 

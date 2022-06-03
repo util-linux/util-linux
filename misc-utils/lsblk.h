@@ -52,6 +52,7 @@ struct lsblk {
 	unsigned int nodeps:1;		/* don't print slaves/holders */
 	unsigned int scsi:1;		/* print only device with HCTL (SCSI) */
 	unsigned int nvme:1;		/* print NVMe device only */
+	unsigned int virtio:1;		/* print virtio device only */
 	unsigned int paths:1;		/* print devnames with "/dev" prefix */
 	unsigned int sort_hidden:1;	/* sort column not between output columns */
 	unsigned int dedup_hidden :1;	/* deduplication column not between output columns */
