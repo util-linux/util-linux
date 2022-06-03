@@ -72,6 +72,9 @@ Group parents of sub-trees to provide more readable output for RAIDs and Multi-p
 *-m*, *--perms*::
 Output info about device owner, group and mode. This option is equivalent to *-o NAME,SIZE,OWNER,GROUP,MODE*.
 
+*-N*, *--nvme*::
+Output info about NVMe devices only.
+
 *-n*, *--noheadings*::
 Do not print a header line.
 

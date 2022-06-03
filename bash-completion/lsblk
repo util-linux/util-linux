@@ -79,6 +79,7 @@ _lsblk_module()
 				--inverse
 				--topology
 				--scsi
+				--nvme
 				--sort
 				--width
 				--help

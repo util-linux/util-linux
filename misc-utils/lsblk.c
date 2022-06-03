@@ -1349,6 +1349,16 @@ static int initialize_device(struct lsblk_device *dev,
 		return -1;
 	}
 
+	/* ignore non-NVMe devices */
+	if (lsblk->nvme) {
+		char *transport = get_transport(dev);
+
+		if (!transport || strcmp(transport, "nvme")) {
+			DBG(DEV, ul_debugobj(dev, "non-nvme device -- ignore"));
+			return -1;
+		}
+	}
+
 	DBG(DEV, ul_debugobj(dev, "%s: context successfully initialized", dev->name));
 	return 0;
 }
@@ -1925,6 +1935,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -O, --output-all     output all columns\n"), out);
 	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
 	fputs(_(" -S, --scsi           output info about SCSI devices\n"), out);
+	fputs(_(" -N, --nvme           output info about NVMe devices\n"), out);
 	fputs(_(" -T, --tree[=<column>] use tree format output\n"), out);
 	fputs(_(" -a, --all            print all devices\n"), out);
 	fputs(_(" -b, --bytes          print SIZE in bytes rather than in human readable format\n"), out);
@@ -2010,6 +2021,7 @@ int main(int argc, char *argv[])
 		{ "paths",      no_argument,       NULL, 'p' },
 		{ "pairs",      no_argument,       NULL, 'P' },
 		{ "scsi",       no_argument,       NULL, 'S' },
+		{ "nvme",       no_argument,       NULL, 'N' },
 		{ "sort",	required_argument, NULL, 'x' },
 		{ "sysroot",    required_argument, NULL, OPT_SYSROOT },
 		{ "shell",      no_argument,       NULL, 'y' },
@@ -2043,7 +2055,7 @@ int main(int argc, char *argv[])
 	lsblk_init_debug();
 
 	while((c = getopt_long(argc, argv,
-				"AabdDzE:e:fhJlnMmo:OpPiI:rstVST::w:x:y",
+				"AabdDzE:e:fhJlNnMmo:OpPiI:rstVST::w:x:y",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -2164,6 +2176,16 @@ int main(int argc, char *argv[])
 			add_uniq_column(COL_REV);
 			add_uniq_column(COL_SERIAL);
 			add_uniq_column(COL_TRANSPORT);
+			break;
+		case 'N':
+			lsblk->nodeps = 1;
+			lsblk->nvme = 1;
+			add_uniq_column(COL_NAME);
+			add_uniq_column(COL_TYPE);
+			add_uniq_column(COL_MODEL);
+			add_uniq_column(COL_SERIAL);
+			add_uniq_column(COL_TRANSPORT);
+			add_uniq_column(COL_RQ_SIZE);
 			break;
 		case 'T':
 			force_tree = 1;
