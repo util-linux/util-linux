@@ -750,27 +750,16 @@ static void device_read_bytes(struct lsblk_device *dev, char *path, char **str,
 
 static void process_mq(struct lsblk_device *dev, char **str)
 {
-	DIR *dir;
-	struct dirent *d;
 	unsigned int queues = 0;
 
 	DBG(DEV, ul_debugobj(dev, "%s: process mq", dev->name));
 
-	dir = ul_path_opendir(dev->sysfs, "mq");
-	if (!dir) {
+	queues = ul_path_count_dirents(dev->sysfs, "mq");
+	if (!queues) {
 		*str = xstrdup("1");
 		DBG(DEV, ul_debugobj(dev, "%s: no mq supported, use a single queue", dev->name));
 		return;
 	}
-
-	while ((d = xreaddir(dir))) {
-		if (!strcmp(d->d_name, ".") || !strcmp(d->d_name, ".."))
-			continue;
-
-		queues++;
-	}
-
-	closedir(dir);
 
 	DBG(DEV, ul_debugobj(dev, "%s: has %d queues", dev->name, queues));
 	xasprintf(str, "%3u", queues);
