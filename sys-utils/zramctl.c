@@ -291,7 +291,7 @@ static struct path_cxt *zram_get_control(void)
 
 static int zram_control_add(struct zram *z)
 {
-	int n;
+	int n = 0;
 	struct path_cxt *ctl;
 
 	if (!zram_has_control(z) || !(ctl = zram_get_control()))
