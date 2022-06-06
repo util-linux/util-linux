@@ -18,11 +18,12 @@ TS_DESC="pipesz"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+ts_check_test_command "$TS_CMD_PIPESZ"
+ts_check_test_command "$TS_HELPER_SYSINFO"
+
 set -o pipefail
 
-DEFAULT_PIPE_SIZE=$(($(getconf PAGE_SIZE) * 16))
-
-ts_check_test_command "$TS_CMD_PIPESZ"
+DEFAULT_PIPE_SIZE=$(($($TS_HELPER_SYSINFO pagesize) * 16))
 
 ts_init_subtest "set-fd-bad"
 $TS_CMD_PIPESZ --check --set 4096 --fd 42 >> $TS_OUTPUT 2>> $TS_ERRLOG
