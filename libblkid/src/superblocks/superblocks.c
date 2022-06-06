@@ -66,7 +66,7 @@
  *
  * @SBMAGIC_OFFSET: offset of SBMAGIC
  *
- * @FSSIZE: size of filesystem (implemented for XFS only)
+ * @FSSIZE: size of filesystem (implemented for XFS/BTRFS/Ext only)
  *
  * @FSLASTBLOCK: last fsblock/total number of fsblocks
  *

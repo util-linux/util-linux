@@ -189,15 +189,23 @@ static void ext_get_info(blkid_probe pr, int ver, struct ext2_super_block *es)
 		le32_to_cpu(es->s_rev_level),
 		le16_to_cpu(es->s_minor_rev_level));
 
+	uint32_t block_size = 1024U << le32_to_cpu(es->s_log_block_size);
 	if (le32_to_cpu(es->s_log_block_size) < 32){
-		blkid_probe_set_fsblocksize(pr, 1024U << le32_to_cpu(es->s_log_block_size));
-		blkid_probe_set_block_size(pr, 1024U << le32_to_cpu(es->s_log_block_size));
+		blkid_probe_set_fsblocksize(pr, block_size);
+		blkid_probe_set_block_size(pr, block_size);
 	}
 
 	uint64_t fslastblock = le32_to_cpu(es->s_blocks_count) |
 		((s_feature_incompat & EXT4_FEATURE_INCOMPAT_64BIT) ?
 		(uint64_t) le32_to_cpu(es->s_blocks_count_hi) << 32 : 0);
 	blkid_probe_set_fslastblock(pr, fslastblock);
+	// The total number of blocks is taken without substraction of overhead
+	// (journal, metadata). The ext4 has non-trivial overhead calculation
+	// viz. ext4_calculate_overhead(). Thefore, the FSSIZE would show number
+	// slightly higher than the real value (for example, calculated via
+	// statfs()).
+	uint64_t fssize = (uint64_t)block_size*le32_to_cpu(es->s_blocks_count);
+	blkid_probe_set_fssize(pr, fssize);
 }
 
 

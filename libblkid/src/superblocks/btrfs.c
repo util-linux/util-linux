@@ -241,6 +241,12 @@ static int probe_btrfs(blkid_probe pr, const struct blkid_idmag *mag)
 		__builtin_clz(le32_to_cpu(bfs->sectorsize));
 	blkid_probe_set_fslastblock(pr,
 			le64_to_cpu(bfs->total_bytes) >> sectorsize_log);
+	// The size is calculated without the RAID factor. It could not be
+	// obtained from the superblock as it is property of device tree.
+	// Without the factor we would show fs size with the redundant data. The
+	// acquisition of the factor will require additional parsing of btrfs
+	// tree.
+	blkid_probe_set_fssize(pr, le64_to_cpu(bfs->total_bytes));
 
 	return 0;
 }
