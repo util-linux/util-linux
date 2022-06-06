@@ -35,6 +35,7 @@ _column_module()
 				--table-columns-limit
 				--table-noextreme
 				--table-noheadings
+				--table-maxout
 				--table-header-repeat
 				--table-hide
 				--table-right

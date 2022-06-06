@@ -99,6 +99,7 @@ struct column_control {
 		     json :1,
 		     header_repeat :1,
 		     hide_unnamed :1,
+		     maxout : 1,
 		     keep_empty_lines :1,	/* --keep-empty-lines */
 		     tab_noheadings :1;
 };
@@ -221,6 +222,8 @@ static void init_table(struct column_control *ctl)
 		scols_table_set_name(ctl->tab, ctl->tab_name ? : "table");
 	} else
 		scols_table_enable_noencoding(ctl->tab, 1);
+
+	scols_table_enable_maxout(ctl->tab, ctl->maxout ? 1 : 0);
 
 	if (ctl->tab_columns) {
 		char **opts;
@@ -717,6 +720,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -l, --table-columns-limit <num>  maximal number of input columns\n"), out);
 	fputs(_(" -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"), out);
 	fputs(_(" -d, --table-noheadings           don't print header\n"), out);
+	fputs(_(" -m, --table-maxout               fill all available space\n"), out);
 	fputs(_(" -e, --table-header-repeat        repeat header for each page\n"), out);
 	fputs(_(" -H, --table-hide <columns>       don't print the columns\n"), out);
 	fputs(_(" -R, --table-right <columns>      right align text in these columns\n"), out);
@@ -771,6 +775,7 @@ int main(int argc, char **argv)
 		{ "table-columns-limit", required_argument, NULL, 'l' },
 		{ "table-hide",          required_argument, NULL, 'H' },
 		{ "table-name",          required_argument, NULL, 'n' },
+		{ "table-maxout",        no_argument,       NULL, 'm' },
 		{ "table-noextreme",     required_argument, NULL, 'E' },
 		{ "table-noheadings",    no_argument,       NULL, 'd' },
 		{ "table-order",         required_argument, NULL, 'O' },
@@ -801,7 +806,7 @@ int main(int argc, char **argv)
 	ctl.output_separator = "  ";
 	ctl.input_separator = mbs_to_wcs("\t ");
 
-	while ((c = getopt_long(argc, argv, "C:c:dE:eH:hi:Jl:LN:n:O:o:p:R:r:s:T:tVW:x", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "C:c:dE:eH:hi:Jl:LN:n:mO:o:p:R:r:s:T:tVW:x", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -849,6 +854,9 @@ int main(int argc, char **argv)
 			break;
 		case 'n':
 			ctl.tab_name = optarg;
+			break;
+		case 'm':
+			ctl.maxout = 1;
 			break;
 		case 'O':
 			ctl.tab_order = optarg;

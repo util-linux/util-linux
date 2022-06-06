@@ -153,6 +153,9 @@ Specify columns order on output.
 *-n, --table-name* _name_::
 Specify the table name used for JSON output. The default is "table".
 
+*-m, --table-maxout*::
+Fill all available space on output.
+
 *-L, --keep-empty-lines*::
 Preserve whitespace-only lines in the input. The default is ignore empty lines at all. This option's original name was *--table-empty-lines* but is now deprecated because it gives the false impression that the option only applies to table mode.
 
