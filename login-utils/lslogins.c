@@ -226,7 +226,7 @@ static const struct lslogins_coldesc coldescs[] =
 {
 	[COL_USER]          = { "USER",		N_("user name"), N_("Username"), 0.1, SCOLS_FL_NOEXTREMES },
 	[COL_UID]           = { "UID",		N_("user ID"), "UID", 1, SCOLS_FL_RIGHT},
-	[COL_PWDEMPTY]      = { "PWD-EMPTY",	N_("password not required"), N_("Password not required"), 1, SCOLS_FL_RIGHT },
+	[COL_PWDEMPTY]      = { "PWD-EMPTY",	N_("password not defined"), N_("Password not required (empty)"), 1, SCOLS_FL_RIGHT },
 	[COL_PWDDENY]       = { "PWD-DENY",	N_("login by password disabled"), N_("Login by password disabled"), 1, SCOLS_FL_RIGHT },
 	[COL_PWDLOCK]       = { "PWD-LOCK",	N_("password defined, but locked"), N_("Password is locked"), 1, SCOLS_FL_RIGHT },
 	[COL_PWDMETHOD]     = { "PWD-METHOD",   N_("password encryption method"), N_("Password encryption method"), 0.1 },
@@ -823,23 +823,42 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			break;
 		case COL_PWDEMPTY:
 			if (shadow) {
-				if (!*shadow->sp_pwdp) /* '\0' */
+				const char *p = shadow->sp_pwdp;
+
+				while (p && (*p == '!' || *p == '*'))
+					p++;
+
+				if (!p || !*p)
 					user->pwd_empty = STATUS_TRUE;
 			} else
 				user->pwd_empty = STATUS_UNKNOWN;
 			break;
 		case COL_PWDDENY:
 			if (shadow) {
-				if ((*shadow->sp_pwdp == '!' ||
-				     *shadow->sp_pwdp == '*') &&
-				    !valid_pwd(shadow->sp_pwdp + 1))
+				const char *p = shadow->sp_pwdp;
+
+				while (p && (*p == '!' || *p == '*'))
+					p++;
+
+				if (p && *p && p != shadow->sp_pwdp && !valid_pwd(p))
 					user->pwd_deny = STATUS_TRUE;
 			} else
 				user->pwd_deny = STATUS_UNKNOWN;
 			break;
 		case COL_PWDLOCK:
 			if (shadow) {
-				if (*shadow->sp_pwdp == '!' && valid_pwd(shadow->sp_pwdp + 1))
+				const char *p = shadow->sp_pwdp;
+				int i = 0;
+
+				/* 'passwd --lock' uses two exclamation marks,
+				 * shadow(5) describes the lock as "field which
+				 * starts with an exclamation mark". Let's
+				 * support more '!' ...
+				 */
+				while (p && *p == '!')
+					p++, i++;
+
+				if (i != 0 && (!*p || valid_pwd(p)))
 					user->pwd_lock = STATUS_TRUE;
 			} else
 				user->pwd_lock = STATUS_UNKNOWN;
@@ -848,7 +867,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			if (shadow) {
 				const char *p = shadow->sp_pwdp;
 
-				if (*p == '!' || *p == '*')
+				while (p && (*p == '!' || *p == '*'))
 					p++;
 				user->pwd_method = get_pwd_method(p, NULL, NULL);
 			} else
