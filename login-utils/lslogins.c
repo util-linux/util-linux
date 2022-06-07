@@ -490,7 +490,7 @@ static int parse_utmpx(const char *path, size_t *nrecords, struct utmpx **record
 
 	/* optimize allocation according to file size, the realloc() below is
 	 * just fallback only */
-	if (stat(path, &st) == 0 && (size_t) st.st_size > sizeof(struct utmpx)) {
+	if (stat(path, &st) == 0 && (size_t) st.st_size >= sizeof(struct utmpx)) {
 		imax = st.st_size / sizeof(struct utmpx);
 		ary = xmalloc(imax * sizeof(struct utmpx));
 	}
@@ -1012,6 +1012,9 @@ static int get_ulist(struct lslogins_control *ctl, char *logins, char *groups)
 static void free_ctl(struct lslogins_control *ctl)
 {
 	size_t n = 0;
+
+	if (!ctl)
+		return;
 
 	free(ctl->wtmp);
 	free(ctl->btmp);
