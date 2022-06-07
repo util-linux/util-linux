@@ -467,7 +467,7 @@ static char *get_type(struct lsblk_device *dev)
 }
 
 /* Thanks to lsscsi code for idea of detection logic used here */
-static char *get_transport(struct lsblk_device *dev)
+static const char *get_transport(struct lsblk_device *dev)
 {
 	struct path_cxt *sysfs = dev->sysfs;
 	char *attr = NULL;
@@ -521,7 +521,7 @@ static char *get_transport(struct lsblk_device *dev)
 	} else if (strncmp(dev->name, "vd", 2) == 0)
 		trans = "virtio";
 
-	return trans ? xstrdup(trans) : NULL;
+	return trans;
 }
 
 static char *get_subsystems(struct lsblk_device *dev)
@@ -1077,8 +1077,12 @@ static char *device_get_data(
 		break;
 	}
 	case COL_TRANSPORT:
-		str = get_transport(dev);
+	{
+		const char *trans = get_transport(dev);
+		if (trans)
+			str = xstrdup(trans);
 		break;
+	}
 	case COL_SUBSYS:
 		str = get_subsystems(dev);
 		break;
@@ -1375,7 +1379,7 @@ static int initialize_device(struct lsblk_device *dev,
 
 	/* ignore non-NVMe devices */
 	if (lsblk->nvme) {
-		char *transport = get_transport(dev);
+		const char *transport = get_transport(dev);
 
 		if (!transport || strcmp(transport, "nvme")) {
 			DBG(DEV, ul_debugobj(dev, "non-nvme device -- ignore"));
@@ -1385,7 +1389,7 @@ static int initialize_device(struct lsblk_device *dev,
 
 	/* ignore non-virtio devices */
 	if (lsblk->virtio) {
-		char *transport = get_transport(dev);
+		const char *transport = get_transport(dev);
 
 		if (!transport || strcmp(transport, "virtio")) {
 			DBG(DEV, ul_debugobj(dev, "non-virtio device -- ignore"));
