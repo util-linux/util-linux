@@ -40,6 +40,14 @@ show_srcdir()
 	find "$SRCDIR" -type f -printf "%P\t%n\t%s\t%Ts\t%m\n" | sort
 }
 
+summary_clean()
+{
+	sed -i \
+		-e 's/^Duration:.*/Duration: [Redacted]/' \
+		-e 's/^Method:.*/Method: [Redacted]/' \
+		$TS_OUTPUT
+}
+
 create_srcdir
 
 ts_init_subtest "orig" # just list original dir
@@ -80,16 +88,16 @@ ts_finalize_subtest
 ts_init_subtest "maximum-size-8191"
 create_srcdir
 echo "Number of test files: $(find "$SRCDIR" -type f | wc -l)" >> $TS_OUTPUT
-$TS_CMD_HARDLINK --maximum-size 8191 "$SRCDIR" | \
-	sed 's/^Duration:.*/Duration: [Redacted]/' >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_HARDLINK --maximum-size 8191 "$SRCDIR" >> $TS_OUTPUT 2>> $TS_ERRLOG
+summary_clean
 show_srcdir >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "maximum-size-8192"
 create_srcdir
 echo "Number of test files: $(find "$SRCDIR" -type f | wc -l)" >> $TS_OUTPUT
-$TS_CMD_HARDLINK --maximum-size 8192 "$SRCDIR" | \
-       sed 's/^Duration:.*/Duration: [Redacted]/' >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_HARDLINK --maximum-size 8192 "$SRCDIR" >> $TS_OUTPUT 2>> $TS_ERRLOG
+summary_clean
 show_srcdir >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
