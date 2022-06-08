@@ -455,6 +455,10 @@ static void modify_table(struct column_control *ctl)
 		scols_table_set_termforce(ctl->tab, SCOLS_TERMFORCE_ALWAYS);
 	}
 
+	if (ctl->tab_colhide)
+		apply_columnflag_from_list(ctl, ctl->tab_colhide,
+				SCOLS_FL_HIDDEN , _("failed to parse --table-hide list"));
+
 	if (ctl->tab_colright)
 		apply_columnflag_from_list(ctl, ctl->tab_colright,
 				SCOLS_FL_RIGHT, _("failed to parse --table-right list"));
@@ -470,10 +474,6 @@ static void modify_table(struct column_control *ctl)
 	if (ctl->tab_colwrap)
 		apply_columnflag_from_list(ctl, ctl->tab_colwrap,
 				SCOLS_FL_WRAP , _("failed to parse --table-wrap list"));
-
-	if (ctl->tab_colhide)
-		apply_columnflag_from_list(ctl, ctl->tab_colhide,
-				SCOLS_FL_HIDDEN , _("failed to parse --table-hide list"));
 
 	if (!ctl->tab_colnoextrem) {
 		struct libscols_column *cl = get_last_visible_column(ctl);
