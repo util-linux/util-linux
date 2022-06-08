@@ -251,23 +251,6 @@ static void init_table(struct column_control *ctl)
 
 }
 
-static struct libscols_column *string_to_column(struct column_control *ctl, const char *str)
-{
-	struct libscols_column *cl;
-
-	if (isdigit_string(str)) {
-		uint32_t n = strtou32_or_err(str, _("failed to parse column")) - 1;
-
-		cl = scols_table_get_column(ctl->tab, n);
-	} else
-		cl = scols_table_get_column_by_name(ctl->tab, str);
-
-	if (!cl)
-		errx(EXIT_FAILURE, _("undefined column name '%s'"), str);
-
-	return cl;
-}
-
 static struct libscols_column *get_last_visible_column(struct column_control *ctl)
 {
 	struct libscols_iter *itr;
@@ -285,6 +268,25 @@ static struct libscols_column *get_last_visible_column(struct column_control *ct
 
 	scols_free_iter(itr);
 	return last;
+}
+
+static struct libscols_column *string_to_column(struct column_control *ctl, const char *str)
+{
+	struct libscols_column *cl;
+
+	if (isdigit_string(str)) {
+		uint32_t n = strtou32_or_err(str, _("failed to parse column")) - 1;
+
+		cl = scols_table_get_column(ctl->tab, n);
+	} else if (strcmp(str, "-1") == 0)
+		cl = get_last_visible_column(ctl);
+	else
+		cl = scols_table_get_column_by_name(ctl->tab, str);
+
+	if (!cl)
+		errx(EXIT_FAILURE, _("undefined column name '%s'"), str);
+
+	return cl;
 }
 
 static int column_set_flag(struct libscols_column *cl, int fl)

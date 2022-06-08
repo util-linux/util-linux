@@ -69,7 +69,7 @@ The argument _columns_ for *--table-** options is a comma separated list of the
 column names as defined by *--table-columns*, or names defined by
 *--table-column* or it's column number in order as specified by input. It's
 possible to mix names and numbers. The special placeholder '0' (e.g. -R0) may
-be used to specify all columns.
+be used to specify all columns and '-1' (e.g. -R -1) to specify the last visible column.
 
 *-J, --json*::
 Use JSON output format to print the table, the option *--table-columns* is required and the option *--table-name* is recommended.
