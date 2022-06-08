@@ -46,6 +46,7 @@ lsfd_sources = files (
   'lsfd-filter.c',
   'lsfd-counter.h',
   'lsfd-counter.c',
+  'lsfd-decode-file-flags.c',
   'lsfd-file.c',
   'lsfd-cdev.c',
   'lsfd-bdev.c',

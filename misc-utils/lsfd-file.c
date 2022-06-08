@@ -78,92 +78,10 @@ static const char *strftype(mode_t ftype)
 	}
 }
 
-/* See /usr/include/asm-generic/fcntl.h */
+extern void lsfd_decode_file_flags(struct ul_buffer *buf, int flags);
 static void file_fill_flags_buf(struct ul_buffer *buf, int flags)
 {
-#define SET_FLAG_FULL(L,s)						\
-	do {								\
-		if (flags & (L)) {					\
-			if (!ul_buffer_is_empty(buf))			\
-				ul_buffer_append_data(buf, ",", 1);	\
-			ul_buffer_append_string(buf, #s);		\
-		}							\
-	} while (0)
-
-#define SET_FLAG(L,s) SET_FLAG_FULL(O_##L,s)
-
-#ifdef O_WRONLY
-	SET_FLAG(WRONLY,wronly);
-#endif
-
-#ifdef O_RDWR
-	SET_FLAG(RDWR,rdwr);
-#endif
-
-#ifdef O_CREAT
-	SET_FLAG(CREAT,creat);
-#endif
-
-#ifdef O_EXCL
-	SET_FLAG(EXCL,excl);
-#endif
-
-#ifdef O_NOCTTY
-	SET_FLAG(NOCTTY,noctty);
-#endif
-
-#ifdef O_APPEND
-	SET_FLAG(APPEND,append);
-#endif
-
-#ifdef O_NONBLOCK
-	SET_FLAG(NONBLOCK,nonblock);
-#endif
-
-#ifdef O_DSYNC
-	SET_FLAG(DSYNC,dsync);
-#endif
-
-#ifdef O_FASYNC
-	SET_FLAG(FASYNC,fasync);
-#endif
-
-#ifdef O_DIRECT
-	SET_FLAG(DIRECT,direct);
-#endif
-
-#ifdef O_LARGEFILE
-	SET_FLAG(LARGEFILE,largefile);
-#endif
-
-#ifdef O_DIRECTORY
-	SET_FLAG(DIRECTORY,directory);
-#endif
-
-#ifdef O_FOLLOW
-	SET_FLAG(FOLLOW,follow);
-#endif
-
-#ifdef O_NOATIME
-	SET_FLAG(NOATIME,noatime);
-#endif
-
-#ifdef O_CLOEXEC
-	SET_FLAG(CLOEXEC,cloexec);
-#endif
-
-#ifdef __O_SYNC
-	SET_FLAG_FULL(__O_SYNC,_sync);
-#endif
-
-#ifdef O_PATH
-	SET_FLAG(PATH,path);
-#endif
-
-#ifdef __O_TMPFILE
-	SET_FLAG_FULL(__O_TMPFILE,_tmpfile);
-#endif
-
+	lsfd_decode_file_flags(buf, flags);
 }
 
 #define does_file_has_fdinfo_alike(file)	\

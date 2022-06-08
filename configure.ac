@@ -291,6 +291,8 @@ AC_CHECK_HEADERS([linux/compiler.h linux/blkpg.h linux/major.h], [], [], [
 #endif
 ])
 AC_CHECK_HEADERS([ \
+	asm-generic/fcntl.h \
+	asm/fcntl.h \
 	asm/io.h \
 	byteswap.h \
 	endian.h \
