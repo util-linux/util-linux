@@ -31,6 +31,7 @@
 #include "fileutils.h"
 #include "statfs_magic.h"
 #include "sysfs.h"
+#include "namespace.h"
 
 /*
  * Return 1 if the file is not accessible or empty
