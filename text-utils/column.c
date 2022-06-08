@@ -339,6 +339,7 @@ static void apply_columnflag_from_list(struct column_control *ctl, const char *l
 		while (scols_table_next_column(ctl->tab, itr, &cl) == 0)
 			column_set_flag(cl, flag);
 		scols_free_iter(itr);
+		return;
 	}
 
 	all = split_or_error(list, errmsg);
