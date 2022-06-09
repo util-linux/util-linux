@@ -186,7 +186,11 @@ static struct options {
 	size_t cache_size;
 } opts = {
 	/* default setting */
+#ifdef __APPLE__
+	.method = "memcmp",
+#else
 	.method = "sha256",
+#endif
 	.respect_mode = TRUE,
 	.respect_owner = TRUE,
 	.respect_time = TRUE,
