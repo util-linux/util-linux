@@ -19,6 +19,7 @@
 #include <ctype.h>
 
 #include "mountP.h"
+#include "mount-api-utils.h"
 
 static const char *lib_version = LIBMOUNT_VERSION;
 static const char *lib_features[] = {
@@ -36,6 +37,9 @@ static const char *lib_features[] = {
 #endif
 #ifdef USE_LIBMOUNT_SUPPORT_NAMESPACES
 	"namespaces",
+#endif
+#ifdef UL_HAVE_MOUNT_API
+	"idmapping",
 #endif
 #if !defined(NDEBUG)
 	"assert",	/* libc assert.h stuff */

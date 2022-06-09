@@ -5,14 +5,6 @@
 #include <sys/syscall.h>
 #include <linux/mount.h>
 
-/*
- * Scope all of this beneath mount_setattr(). If this syscall is available all
- * other syscalls must as well. Otherwise we're dealing with a partial backport
- * of syscalls.
- */
-
-# if defined(SYS_mount_setattr)
-
 /* Accepted by both open_tree() and mount_setattr(). */
 #ifndef AT_RECURSIVE
 # define AT_RECURSIVE 0x8000
@@ -26,10 +18,10 @@
 # define OPEN_TREE_CLOEXEC O_CLOEXEC
 #endif
 
-#ifndef HAVE_OPEN_TREE
+#if !defined(HAVE_OPEN_TREE) && defined(SYS_open_tree)
 static inline int open_tree(int dfd, const char *filename, unsigned int flags)
 {
-	return syscall(__NR_open_tree, dfd, filename, flags);
+	return syscall(SYS_open_tree, dfd, filename, flags);
 }
 #endif
 
@@ -61,11 +53,11 @@ static inline int open_tree(int dfd, const char *filename, unsigned int flags)
 # define MOVE_MOUNT__MASK 0x00000077
 #endif
 
-#ifndef HAVE_MOVE_MOUNT
+#if !defined(HAVE_MOVE_MOUNT) && defined(SYS_move_mount)
 static inline int move_mount(int from_dfd, const char *from_pathname, int to_dfd,
 			     const char *to_pathname, unsigned int flags)
 {
-	return syscall(__NR_move_mount, from_dfd, from_pathname, to_dfd,
+	return syscall(SYS_move_mount, from_dfd, from_pathname, to_dfd,
 		       to_pathname, flags);
 }
 #endif
@@ -116,17 +108,25 @@ struct mount_attr {
 };
 #endif
 
-#ifndef HAVE_MOUNT_SETATTR
+#if !defined(HAVE_MOUNT_SETATTR) && defined(SYS_mount_setattr)
 static inline int mount_setattr(int dfd, const char *path, unsigned int flags,
 				struct mount_attr *attr, size_t size)
 {
-	return syscall(__NR_mount_setattr, dfd, path, flags, attr, size);
+	return syscall(SYS_mount_setattr, dfd, path, flags, attr, size);
 }
 #endif
 
-#define UL_HAVE_MOUNT_API 1
 
-#endif /* SYS_mount_setattr */
+/*
+ * UL_HAVE_MOUNT_API is used by applications to check that all new mount API is
+ * avalable.
+ */
+#if defined(SYS_open_tree) && \
+    defined(SYS_mount_setattr) && \
+    defined(SYS_move_mount)
+
+# define UL_HAVE_MOUNT_API 1
+#endif
 
 #endif /* __linux__ */
 #endif /* UTIL_LINUX_MOUNT_API_UTILS */

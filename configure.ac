@@ -622,6 +622,10 @@ UL_CHECK_SYSCALL([pidfd_open])
 UL_CHECK_SYSCALL([pidfd_send_signal])
 UL_CHECK_SYSCALL([close_range])
 
+UL_CHECK_SYSCALL([open_tree])
+UL_CHECK_SYSCALL([move_mount])
+UL_CHECK_SYSCALL([mount_setattr])
+
 AC_CHECK_FUNCS([isnan], [],
 	[AC_CHECK_LIB([m], [isnan], [MATH_LIBS="-lm"])]
 	[AC_CHECK_LIB([m], [__isnan], [MATH_LIBS="-lm"])]
