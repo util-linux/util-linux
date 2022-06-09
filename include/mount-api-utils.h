@@ -116,6 +116,72 @@ static inline int mount_setattr(int dfd, const char *path, unsigned int flags,
 }
 #endif
 
+#ifndef HAVE_ENUM_FSCONFIG_COMMAND
+enum fsconfig_command {
+	FSCONFIG_SET_FLAG	= 0,	/* Set parameter, supplying no value */
+	FSCONFIG_SET_STRING	= 1,	/* Set parameter, supplying a string value */
+	FSCONFIG_SET_BINARY	= 2,	/* Set parameter, supplying a binary blob value */
+	FSCONFIG_SET_PATH	= 3,	/* Set parameter, supplying an object by path */
+	FSCONFIG_SET_PATH_EMPTY	= 4,	/* Set parameter, supplying an object by (empty) path */
+	FSCONFIG_SET_FD		= 5,	/* Set parameter, supplying an object by fd */
+	FSCONFIG_CMD_CREATE	= 6,	/* Invoke superblock creation */
+	FSCONFIG_CMD_RECONFIGURE = 7,	/* Invoke superblock reconfiguration */
+};
+#endif
+
+#if !defined(HAVE_FSCONFIG) && defined(SYS_fsconfig)
+static inline int fsconfig(int fd, unsigned int cmd, const char *key,
+                    const void *value, int aux)
+{
+        return syscall(SYS_fsconfig, fd, cmd, key, value, aux);
+}
+#endif
+
+#ifndef FSOPEN_CLOEXEC
+# define FSOPEN_CLOEXEC          0x00000001
+#endif
+
+#if !defined(HAVE_FSOPEN) && defined(SYS_fsopen)
+static inline int fsopen(const char *fsname, unsigned int flags)
+{
+        return syscall(SYS_fsopen, fsname, flags);
+}
+#endif
+
+#ifndef FSMOUNT_CLOEXEC
+# define FSMOUNT_CLOEXEC         0x00000001
+#endif
+
+#if !defined(HAVE_FSMOUNT) && defined(SYS_fsmount)
+static inline int fsmount(int fd, unsigned int flags, unsigned int mount_attrs)
+{
+        return syscall(SYS_fsmount, fd, flags, mount_attrs);
+}
+#endif
+
+#ifndef FSPICK_CLOEXEC
+# define FSPICK_CLOEXEC          0x00000001
+#endif
+
+#ifndef FSPICK_SYMLINK_NOFOLLOW
+# define FSPICK_SYMLINK_NOFOLLOW 0x00000002
+#endif
+
+#ifndef FSPICK_NO_AUTOMOUNT
+# define FSPICK_NO_AUTOMOUNT     0x00000004
+#endif
+
+#ifdef FSPICK_EMPTY_PATH
+# define FSPICK_EMPTY_PATH       0x00000008
+#endif
+
+#if !defined(HAVE_FSPICK) && defined(SYS_fspick)
+static inline int fspick(int dfd, const char *pathname, unsigned int flags)
+{
+        return syscall(SYS_fspick, dfd, pathname, flags);
+}
+#endif
+
 
 /*
  * UL_HAVE_MOUNT_API is used by applications to check that all new mount API is
@@ -123,7 +189,11 @@ static inline int mount_setattr(int dfd, const char *path, unsigned int flags,
  */
 #if defined(SYS_open_tree) && \
     defined(SYS_mount_setattr) && \
-    defined(SYS_move_mount)
+    defined(SYS_move_mount) && \
+    defined(SYS_fsconfig) && \
+    defined(SYS_fsopen) && \
+    defined(SYS_fsmount) && \
+    defined(SYS_fspick)
 
 # define UL_HAVE_MOUNT_API 1
 #endif

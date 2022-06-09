@@ -499,6 +499,7 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 ])
 
 AC_CHECK_TYPES([struct mount_attr], [], [], [[#include <linux/mount.h>]])
+AC_CHECK_TYPES([enum fsconfig_command], [], [], [[#include <linux/mount.h>]])
 
 AC_CHECK_MEMBERS([struct termios.c_line],,,
     [[#include <termios.h>]])
@@ -544,6 +545,10 @@ AC_CHECK_FUNCS([ \
 	__fpending \
 	__fpurge \
 	fpurge \
+	fsconfig \
+	fsmount \
+	fsopen \
+	fspick \
 	fsync \
 	getdomainname \
 	getdtablesize \
@@ -622,9 +627,14 @@ UL_CHECK_SYSCALL([pidfd_open])
 UL_CHECK_SYSCALL([pidfd_send_signal])
 UL_CHECK_SYSCALL([close_range])
 
-UL_CHECK_SYSCALL([open_tree])
-UL_CHECK_SYSCALL([move_mount])
+UL_CHECK_SYSCALL([fsconfig])
+UL_CHECK_SYSCALL([fsmount])
+UL_CHECK_SYSCALL([fsopen])
+UL_CHECK_SYSCALL([fspick])
 UL_CHECK_SYSCALL([mount_setattr])
+UL_CHECK_SYSCALL([move_mount])
+UL_CHECK_SYSCALL([open_tree])
+
 
 AC_CHECK_FUNCS([isnan], [],
 	[AC_CHECK_LIB([m], [isnan], [MATH_LIBS="-lm"])]
