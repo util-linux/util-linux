@@ -601,8 +601,7 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 		rc = exec_helper(cxt);
 
 		if (mnt_context_helper_executed(cxt)
-		    && mnt_context_get_helper_status(cxt) == 0
-		    && mnt_context_call_hooks(cxt, MNT_STAGE_MOUNT_POST))
+		    && mnt_context_get_helper_status(cxt) == 0)
 			return -MNT_ERR_APPLYFLAGS;
 
 		return rc;
@@ -624,11 +623,8 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 	/*
 	 * mount(2) or others syscalls
 	 */
-	rc = mnt_context_call_hooks(cxt, MNT_STAGE_MOUNT_PRE);
 	if (!rc)
 		rc = mnt_context_call_hooks(cxt, MNT_STAGE_MOUNT);
-	if (!rc)
-		rc = mnt_context_call_hooks(cxt, MNT_STAGE_MOUNT_POST);
 
 	if (org_type && rc != 0)
 		__mnt_fs_set_fstype_ptr(cxt->fs, org_type);
@@ -916,7 +912,7 @@ end:
 int mnt_context_do_mount(struct libmnt_context *cxt)
 {
 	const char *type;
-	int res;
+	int res, rc;
 	struct libmnt_ns *ns_old;
 
 	assert(cxt);
@@ -936,6 +932,12 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 	if (!ns_old)
 		return -MNT_ERR_NAMESPACE;
 
+	/* before mount stage */
+	rc = mnt_context_call_hooks(cxt, MNT_STAGE_MOUNT_PRE);
+	if (rc)
+		return rc;
+
+	/* mount stage */
 	type = mnt_fs_get_fstype(cxt->fs);
 	if (type) {
 		if (strchr(type, ','))
@@ -945,6 +947,11 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 			res = do_mount(cxt, NULL);
 	} else
 		res = do_mount_by_pattern(cxt, cxt->fstype_pattern);
+
+	/* after mount stage */
+	rc = mnt_context_call_hooks(cxt, MNT_STAGE_MOUNT_POST);
+	if (rc)
+		return rc;
 
 	/* Cleanup will be immediate on failure, and deferred to umount on success */
 	if (mnt_context_is_veritydev(cxt))
