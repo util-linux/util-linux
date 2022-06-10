@@ -872,6 +872,10 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
 			goto end;
 		}
 	}
+
+	if (!rc)
+		rc = mnt_context_call_hooks(cxt, MNT_STAGE_PREP);
+
 	if (rc) {
 		DBG(CXT, ul_debugobj(cxt, "mount: preparing failed"));
 		goto end;

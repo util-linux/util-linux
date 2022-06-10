@@ -259,7 +259,7 @@ static int hook_prepare(struct libmnt_context *cxt,
 	assert(hs == &hookset_mount_legacy);
 
 #ifdef UL_HAVE_MOUNT_API
-	/* do nothing when __builtin-mount succesfully registred */
+	/* do nothing when __mount succesfully registred */
 	if (mnt_context_has_hook(cxt, &hookset_mount, 0, NULL))
 		return 0;
 #endif
@@ -291,7 +291,7 @@ const struct libmnt_hookset hookset_mount_legacy =
 {
 	.name = "__legacy-mount",
 
-	.firststage = MNT_STAGE_PREP_OPTIONS,
+	.firststage = MNT_STAGE_PREP,
 	.firstcall = hook_prepare,
 
 	.deinit = hookset_deinit

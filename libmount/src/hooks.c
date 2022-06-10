@@ -59,10 +59,13 @@ static const char *stagenames[] = {
 	[MNT_STAGE_PREP_SOURCE] = "prep-source",
 	[MNT_STAGE_PREP_TARGET] = "prep-target",
 	[MNT_STAGE_PREP_OPTIONS] = "prep-options",
+	[MNT_STAGE_PREP] = "prep",
+
 	/* mount */
 	[MNT_STAGE_MOUNT_PRE] = "pre-mount",
 	[MNT_STAGE_MOUNT] = "mount",
 	[MNT_STAGE_MOUNT_POST] = "post-mount",
+
 	/* post */
 	[MNT_STAGE_POST] = "post",
 };

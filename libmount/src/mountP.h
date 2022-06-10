@@ -282,15 +282,16 @@ enum {
  * stuff like veritydev.c.
  */
 enum {
-	MNT_STAGE_PREP_SOURCE = 1,
-	MNT_STAGE_PREP_TARGET,
-	MNT_STAGE_PREP_OPTIONS,
+	MNT_STAGE_PREP_SOURCE = 1,	/* mount source preparation */
+	MNT_STAGE_PREP_TARGET,		/* mount target preparation */
+	MNT_STAGE_PREP_OPTIONS,		/* mount options preparation */
+	MNT_STAGE_PREP,			/* all prepared */
 
-	MNT_STAGE_MOUNT_PRE = 100,
-	MNT_STAGE_MOUNT,
-	MNT_STAGE_MOUNT_POST,
+	MNT_STAGE_MOUNT_PRE = 100,	/* before mount */
+	MNT_STAGE_MOUNT,		/* mount(2) or fsmount(2) or tree-clone */
+	MNT_STAGE_MOUNT_POST,		/* after mount */
 
-	MNT_STAGE_POST = 200
+	MNT_STAGE_POST = 200		/* all is done */
 };
 
 struct libmnt_hookset {
