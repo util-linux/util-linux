@@ -43,7 +43,6 @@
 # include <linux/if_alg.h>
 # include <sys/param.h>
 # include <sys/sendfile.h>
-# define USE_HARDLINK_CRYPTOAPI	1
 #endif
 
 #include "c.h"
@@ -90,7 +89,7 @@ static const struct ul_fileeq_method ul_eq_methods[] = {
 	[UL_FILEEQ_MEMCMP] = {
 		.id = UL_FILEEQ_MEMCMP, .name = "memcmp"
 	},
-#ifdef USE_HARDLINK_CRYPTOAPI
+#ifdef USE_FILEEQ_CRYPTOAPI
 	[UL_FILEEQ_SHA1] = {
 		.id = UL_FILEEQ_SHA1, .name = "sha1",
 		.digsiz = 20, .kname = "sha1"
@@ -107,7 +106,7 @@ static const struct ul_fileeq_method ul_eq_methods[] = {
 #endif
 };
 
-#ifdef USE_HARDLINK_CRYPTOAPI
+#ifdef USE_FILEEQ_CRYPTOAPI
 static void deinit_crypto_api(struct ul_fileeq *eq)
 {
 	if (!eq)
@@ -176,7 +175,7 @@ int ul_fileeq_init(struct ul_fileeq *eq, const char *method)
 
 	if (!eq->method)
 		return -1;
-#ifdef USE_HARDLINK_CRYPTOAPI
+#ifdef USE_FILEEQ_CRYPTOAPI
 	if (eq->method->id != UL_FILEEQ_MEMCMP
 	    && init_crypto_api(eq) != 0)
 		return -1;
@@ -190,7 +189,7 @@ void ul_fileeq_deinit(struct ul_fileeq *eq)
 		return;
 
 	DBG(EQ, ul_debugobj(eq, "deinit"));
-#ifdef USE_HARDLINK_CRYPTOAPI
+#ifdef USE_FILEEQ_CRYPTOAPI
 	deinit_crypto_api(eq);
 #endif
 	free(eq->buf_a);
@@ -389,7 +388,7 @@ static ssize_t read_block(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 	return rsz;
 }
 
-#ifdef USE_HARDLINK_CRYPTOAPI
+#ifdef USE_FILEEQ_CRYPTOAPI
 static ssize_t get_digest(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 				size_t n, unsigned char **block)
 {
@@ -490,7 +489,7 @@ static ssize_t get_cmp_data(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 	default:
 		break;
 	}
-#ifdef USE_HARDLINK_CRYPTOAPI
+#ifdef USE_FILEEQ_CRYPTOAPI
 	return get_digest(eq, data, blockno, block);
 #else
 	return -1;

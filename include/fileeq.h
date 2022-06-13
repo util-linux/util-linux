@@ -5,6 +5,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#if defined(__linux__) && defined(HAVE_LINUX_IF_ALG_H)
+# define USE_FILEEQ_CRYPTOAPI 1
+#endif
+
 /* Number of bytes from the beginning of the file we always
  * compare by memcmp() */
 #define UL_FILEEQ_INTROSIZ	32
