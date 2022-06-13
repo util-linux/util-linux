@@ -438,12 +438,15 @@ static inline int xusleep(useconds_t usec)
 		exit(eval); \
 })
 
-static inline void print_features(const char **features)
+static inline void print_features(const char **features, const char *prefix)
 {
 	if (features && *features) {
 		const char **p = features;
 		while (p && *p) {
-			fputs(p == features ? " (" : ", ", stdout);
+			if (prefix && p == features)
+				printf(" (%s ", prefix);
+			else
+				fputs(p == features ? " (" : ", ", stdout);
 			fputs(*p++, stdout);
 		}
 		fputc(')', stdout);
@@ -454,7 +457,7 @@ static inline void print_features(const char **features)
 
 #define print_version_with_features(eval, features) __extension__ ({ \
 		printf(UTIL_LINUX_VERSION_NOBREAK); \
-		print_features(features); \
+		print_features(features, _("features:")); \
 		fputc('\n', stdout); \
 		exit(eval); \
 })
