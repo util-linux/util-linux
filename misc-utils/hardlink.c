@@ -186,10 +186,10 @@ static struct options {
 	size_t cache_size;
 } opts = {
 	/* default setting */
-#ifdef __APPLE__
-	.method = "memcmp",
-#else
+#ifdef USE_FILEEQ_CRYPTOAPI
 	.method = "sha256",
+#else
+	.method = "memcmp",
 #endif
 	.respect_mode = TRUE,
 	.respect_owner = TRUE,
@@ -1295,9 +1295,21 @@ static int parse_options(int argc, char *argv[])
 		case 'h':
 			usage();
 		case 'V':
-			print_version(EXIT_SUCCESS);
+		{
+			static const char *features[] = {
+#ifdef USE_REFLINK
+				"reflink",
+#endif
+#ifdef USE_FILEEQ_CRYPTOAPI
+				"cryptoapi",
+#endif
+				NULL
+			};
+			print_version_with_features(EXIT_SUCCESS, features);
+		}
 		default:
-			errtryhelp(EXIT_FAILURE);}
+			errtryhelp(EXIT_FAILURE);
+		}
 	}
 
 	return 0;
