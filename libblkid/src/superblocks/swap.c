@@ -109,7 +109,7 @@ static int probe_swsuspend(blkid_probe pr, const struct blkid_idmag *mag)
 		return swap_set_info(pr, "s2suspend");
 	if (!memcmp(mag->magic, "ULSUSPEND", mag->len))
 		return swap_set_info(pr, "ulsuspend");
-	if (!memcmp(mag->magic, TOI_MAGIC_STRING, mag->len))
+	if (!memcmp(mag->magic, TOI_MAGIC_STRING, TOI_MAGIC_STRLEN))
 		return swap_set_info(pr, "tuxonice");
 	if (!memcmp(mag->magic, "LINHIB0001", mag->len))
 		return swap_set_info(pr, "linhib0001");
