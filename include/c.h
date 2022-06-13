@@ -438,6 +438,27 @@ static inline int xusleep(useconds_t usec)
 		exit(eval); \
 })
 
+static inline void print_features(const char **features)
+{
+	if (features && *features) {
+		const char **p = features;
+		while (p && *p) {
+			fputs(p == features ? " (" : ", ", stdout);
+			fputs(*p++, stdout);
+		}
+		fputc(')', stdout);
+	}
+}
+
+#define UTIL_LINUX_VERSION_NOBREAK _("%s from %s"), program_invocation_short_name, PACKAGE_STRING
+
+#define print_version_with_features(eval, features) __extension__ ({ \
+		printf(UTIL_LINUX_VERSION_NOBREAK); \
+		print_features(features); \
+		fputc('\n', stdout); \
+		exit(eval); \
+})
+
 /*
  * seek stuff
  */
