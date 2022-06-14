@@ -2506,8 +2506,9 @@ AC_ARG_WITH([bashcompletiondir],
       [with_bashcompletiondir=${datadir}/bash-completion/completions])
   ])
 ])
-AC_SUBST([bashcompletiondir], [$with_bashcompletiondir])
-
+AS_IF([test "x$enable_bash_completion" = xyes], [
+  AC_SUBST([bashcompletiondir], [$with_bashcompletiondir])
+])
 
 
 AC_ARG_WITH([python],
