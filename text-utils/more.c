@@ -2052,8 +2052,11 @@ int main(int argc, char **argv)
 	if (!(strcmp(program_invocation_short_name, "page")))
 		ctl.no_scroll++;
 
+	ctl.exit_on_eof = getenv("POSIXLY_CORRECT") ? 0 : 1;
+
 	if ((s = getenv("MORE")) != NULL)
 		env_argscan(&ctl, s);
+
 	argscan(&ctl, argc, argv);
 
 	/* clear any inherited settings */
