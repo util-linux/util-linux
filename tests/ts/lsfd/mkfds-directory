@@ -21,6 +21,7 @@ TS_DESC="directory"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_LSFD"
+ts_check_test_command "$TS_CMD_FINDMNT"
 ts_check_test_command "$TS_HELPER_MKFDS"
 
 ts_check_prog "stat"
@@ -32,9 +33,17 @@ ts_cd "$TS_OUTDIR"
 PID=
 FD=3
 EXPR=
+DIR=/
+
+mntflag=$(findmnt -n -o OPTIONS -T $DIR)
+noatime=
+case "${mntflag}" in
+    *noatime*)
+	noatime=1
+esac
 
 {
-    coproc MKFDS { "$TS_HELPER_MKFDS" directory $FD; }
+    coproc MKFDS { "$TS_HELPER_MKFDS" directory $FD dir=$DIR; }
     if read -u ${MKFDS[0]} PID; then
 	EXPR='(PID == '"${PID}"') and (FD == '"$FD"')'
 	${TS_CMD_LSFD} -n -o ASSOC,MODE,TYPE,FLAGS,NAME -Q "${EXPR}" | {
@@ -46,6 +55,19 @@ EXPR=
 	    # O_LARGEFILE flag.
 	    #
 	    sed -e 's/largefile,\|,largefile//'
+	} | {
+	    #
+	    # Normalize the output:
+	    #
+	    # See https://github.com/util-linux/util-linux/issues/1709#issuecomment-1156333293
+	    # If the file system where the target directory ($DIR) is mounted with
+	    # "noatime" flag, Linux kernel may set O_NOATIME to the fd associated with $DIR.
+	    #
+	    if [ "$noatime" = 1 ]; then
+		sed -e 's/noatime,\|,noatime//'
+	    else
+		cat
+	    fi
 	}
 	echo 'ASSOC,MODE,TYPE,FLAGS,NAME': $?
 
