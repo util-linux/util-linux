@@ -854,8 +854,6 @@ int mnt_update_table(struct libmnt_update *upd, struct libmnt_lock *lc)
 		if (lc)
 			mnt_lock_block_signals(lc, TRUE);
 	}
-	if (lc)
-		mnt_lock_use_simplelock(lc, TRUE);	/* use flock */
 
 	if (!upd->fs && upd->target)
 		rc = update_remove_entry(upd, lc);	/* umount */
@@ -890,8 +888,6 @@ int mnt_update_already_done(struct libmnt_update *upd, struct libmnt_lock *lc)
 		if (lc)
 			mnt_lock_block_signals(lc, TRUE);
 	}
-	if (lc)
-		mnt_lock_use_simplelock(lc, TRUE);	/* use flock */
 	if (lc) {
 		rc = mnt_lock_file(lc);
 		if (rc) {
