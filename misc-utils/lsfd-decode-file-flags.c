@@ -105,8 +105,8 @@ void lsfd_decode_file_flags(struct ul_buffer *buf, int flags)
 	SET_FLAG(DSYNC,dsync);
 #endif
 
-#ifdef O_FASYNC
-	SET_FLAG(FASYNC,fasync);
+#ifdef FASYNC
+	SET_FLAG_FULL(FASYNC,fasync);
 #endif
 
 #ifdef O_DIRECT
@@ -121,8 +121,8 @@ void lsfd_decode_file_flags(struct ul_buffer *buf, int flags)
 	SET_FLAG(DIRECTORY,directory);
 #endif
 
-#ifdef O_FOLLOW
-	SET_FLAG(FOLLOW,follow);
+#ifdef O_NOFOLLOW
+	SET_FLAG(NOFOLLOW,nofollow);
 #endif
 
 #ifdef O_NOATIME
