@@ -1241,7 +1241,7 @@ static struct libmnt_fs *get_already_mounted_source(struct libmnt_context *cxt)
 
 	src = mnt_fs_get_srcpath(cxt->fs);
 
-	if (src && mnt_context_get_mtab(cxt, &tb) == 0) {
+	if (src && mnt_context_get_mountinfo(cxt, &tb) == 0) {
 		struct libmnt_iter itr;
 		struct libmnt_fs *fs;
 
@@ -1439,7 +1439,7 @@ int mnt_context_next_mount(struct libmnt_context *cxt,
 			   int *mntrc,
 			   int *ignored)
 {
-	struct libmnt_table *fstab, *mtab;
+	struct libmnt_table *fstab, *mountinfo;
 	const char *o, *tgt;
 	int rc, mounted = 0;
 
@@ -1497,7 +1497,7 @@ int mnt_context_next_mount(struct libmnt_context *cxt,
 	/* ignore already mounted filesystems */
 	rc = mnt_context_is_fs_mounted(cxt, *fs, &mounted);
 	if (rc) {
-		if (mnt_table_is_empty(cxt->mtab)) {
+		if (mnt_table_is_empty(cxt->mountinfo)) {
 			DBG(CXT, ul_debugobj(cxt, "next-mount: no mount table [rc=%d], ignore", rc));
 			rc = 0;
 			if (ignored)
@@ -1522,11 +1522,11 @@ int mnt_context_next_mount(struct libmnt_context *cxt,
 		mnt_context_save_template(cxt);
 	}
 
-	/* reset context, but protect mtab */
-	mtab = cxt->mtab;
-	cxt->mtab = NULL;
+	/* reset context, but protect mountinfo */
+	mountinfo = cxt->mountinfo;
+	cxt->mountinfo = NULL;
 	mnt_reset_context(cxt);
-	cxt->mtab = mtab;
+	cxt->mountinfo = mountinfo;
 
 	if (mnt_context_is_fork(cxt)) {
 		rc = mnt_fork_context(cxt);
@@ -1613,7 +1613,7 @@ int mnt_context_next_remount(struct libmnt_context *cxt,
 			   int *mntrc,
 			   int *ignored)
 {
-	struct libmnt_table *mtab;
+	struct libmnt_table *mountinfo;
 	const char *tgt;
 	int rc;
 
@@ -1625,11 +1625,11 @@ int mnt_context_next_remount(struct libmnt_context *cxt,
 	if (!cxt || !fs || !itr)
 		return -EINVAL;
 
-	rc = mnt_context_get_mtab(cxt, &mtab);
+	rc = mnt_context_get_mountinfo(cxt, &mountinfo);
 	if (rc)
 		return rc;
 
-	rc = mnt_table_next_fs(mtab, itr, fs);
+	rc = mnt_table_next_fs(mountinfo, itr, fs);
 	if (rc != 0)
 		return rc;	/* more filesystems (or error) */
 
@@ -1666,10 +1666,10 @@ int mnt_context_next_remount(struct libmnt_context *cxt,
 		mnt_context_save_template(cxt);
 	}
 
-	/* restore original, but protect mtab */
-	cxt->mtab = NULL;
+	/* restore original, but protect mountinfo */
+	cxt->mountinfo = NULL;
 	mnt_reset_context(cxt);
-	cxt->mtab = mtab;
+	cxt->mountinfo = mountinfo;
 
 	rc = mnt_context_set_target(cxt, tgt);
 	if (!rc) {
@@ -1711,7 +1711,7 @@ static int is_shared_tree(struct libmnt_context *cxt, const char *dir)
 
 	if (!dir)
 		return 0;
-	if (mnt_context_get_mtab(cxt, &tb) || !tb)
+	if (mnt_context_get_mountinfo(cxt, &tb) || !tb)
 		goto done;
 
 	mnt = strdup(dir);
@@ -1859,7 +1859,7 @@ int mnt_context_get_mount_excode(
 	} else if (mnt_context_get_syscall_errno(cxt) == 0) {
 		/*
 		 * mount(2) syscall success, but something else failed
-		 * (probably error in mtab processing).
+		 * (probably error in utab processing).
 		 */
 		if (rc == -MNT_ERR_LOCK) {
 			if (buf)

@@ -152,9 +152,6 @@ Note that _/etc/mtab_ is currently deprecated and *helper=* and other userspace 
 *LIBMOUNT_FSTAB*=<path>::
 overrides the default location of the _fstab_ file (ignored for *suid*)
 
-*LIBMOUNT_MTAB*=<path>::
-overrides the default location of the _mtab_ file (ignored for *suid*)
-
 *LIBMOUNT_DEBUG*=all::
 enables *libmount* debug output
 

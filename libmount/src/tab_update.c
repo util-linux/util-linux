@@ -16,10 +16,8 @@
  * @short_description: userspace mount information management
  *
  * The struct libmnt_update provides an abstraction to manage mount options in
- * userspace independently of system configuration. This low-level API works on
- * systems both with and without /etc/mtab. On systems without the regular /etc/mtab
- * file, the userspace mount options (e.g. user=) are stored in the /run/mount/utab
- * file.
+ * userspace independently of system configuration. The userspace mount options
+ * (e.g. user=) are stored in the /run/mount/utab file.
  *
  * It's recommended to use high-level struct libmnt_context API.
  */
@@ -37,7 +35,6 @@ struct libmnt_update {
 	struct libmnt_fs *fs;
 	char		*filename;
 	unsigned long	mountflags;
-	int		userspace_only;
 	int		ready;
 
 	struct libmnt_table *mountinfo;
@@ -86,8 +83,7 @@ void mnt_free_update(struct libmnt_update *upd)
 /*
  * Returns 0 on success, <0 in case of error.
  */
-int mnt_update_set_filename(struct libmnt_update *upd, const char *filename,
-			    int userspace_only)
+int mnt_update_set_filename(struct libmnt_update *upd, const char *filename)
 {
 	const char *path = NULL;
 	int rw = 0;
@@ -101,7 +97,6 @@ int mnt_update_set_filename(struct libmnt_update *upd, const char *filename,
 		if (!p)
 			return -ENOMEM;
 
-		upd->userspace_only = userspace_only;
 		free(upd->filename);
 		upd->filename = p;
 	}
@@ -109,13 +104,12 @@ int mnt_update_set_filename(struct libmnt_update *upd, const char *filename,
 	if (upd->filename)
 		return 0;
 
-	/* detect tab filename -- /etc/mtab or /run/mount/utab
+	/* detect tab filename -- /run/mount/utab
 	 */
 	path = NULL;
 	mnt_has_regular_utab(&path, &rw);
 	if (!rw)
 		return -EACCES;
-	upd->userspace_only = TRUE;
 	upd->filename = strdup(path);
 	if (!upd->filename)
 		return -ENOMEM;
@@ -127,7 +121,7 @@ int mnt_update_set_filename(struct libmnt_update *upd, const char *filename,
  * mnt_update_get_filename:
  * @upd: update
  *
- * This function returns the file name (e.g. /etc/mtab) of the up-dated file.
+ * This function returns the file name of the up-dated file.
  *
  * Returns: pointer to filename that will be updated or NULL in case of error.
  */
@@ -141,7 +135,7 @@ const char *mnt_update_get_filename(struct libmnt_update *upd)
  * @upd: update handler
  *
  * Returns: 1 if entry described by @upd is successfully prepared and will be
- * written to the mtab/utab file.
+ * written to the utab file.
  */
 int mnt_update_is_ready(struct libmnt_update *upd)
 {
@@ -189,7 +183,7 @@ int mnt_update_set_fs(struct libmnt_update *upd, unsigned long mountflags,
 
 	upd->mountflags = mountflags;
 
-	rc = mnt_update_set_filename(upd, NULL, 0);
+	rc = mnt_update_set_filename(upd, NULL);
 	if (rc) {
 		DBG(UPDATE, ul_debugobj(upd, "no writable file available [rc=%d]", rc));
 		return rc;	/* error or no file available (rc = 1) */
@@ -200,18 +194,16 @@ int mnt_update_set_fs(struct libmnt_update *upd, unsigned long mountflags,
 			return -ENOMEM;
 
 	} else if (fs) {
-		if (upd->userspace_only && !(mountflags & MS_MOVE)) {
+		if (!(mountflags & MS_MOVE)) {
 			rc = utab_new_entry(upd, fs, mountflags);
 			if (rc)
-				return rc;
+			       return rc;
 		} else {
 			upd->fs = mnt_copy_mtab_fs(fs);
 			if (!upd->fs)
 				return -ENOMEM;
-
 		}
 	}
-
 
 	DBG(UPDATE, ul_debugobj(upd, "ready"));
 	upd->ready = TRUE;
@@ -258,19 +250,6 @@ int mnt_update_force_rdonly(struct libmnt_update *upd, int rdonly)
 		return 0;
 	if (!rdonly && !(upd->mountflags & MS_RDONLY))
 		return 0;
-
-	if (!upd->userspace_only) {
-		/* /etc/mtab -- we care about VFS options there */
-		const char *o = mnt_fs_get_options(upd->fs);
-		char *n = o ? strdup(o) : NULL;
-
-		if (n)
-			mnt_optstr_remove_option(&n, rdonly ? "rw" : "ro");
-		if (!mnt_optstr_prepend_option(&n, rdonly ? "ro" : "rw", NULL))
-			rc = mnt_fs_set_options(upd->fs, n);
-
-		free(n);
-	}
 
 	if (rdonly)
 		upd->mountflags &= ~MS_RDONLY;
@@ -531,10 +510,7 @@ static int update_table(struct libmnt_update *upd, struct libmnt_table *tb)
 			fputs(mnt_table_get_intro_comment(tb), f);
 
 		while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
-			if (upd->userspace_only)
-				rc = fprintf_utab_fs(f, fs);
-			else
-				rc = fprintf_mtab_fs(f, fs);
+			rc = fprintf_utab_fs(f, fs);
 			if (rc) {
 				DBG(UPDATE, ul_debugobj(upd,
 					"%s: write entry failed: %m", uq));
@@ -700,8 +676,7 @@ static int update_add_entry(struct libmnt_update *upd, struct libmnt_lock *lc)
 	if (rc)
 		return -MNT_ERR_LOCK;
 
-	tb = __mnt_new_table_from_file(upd->filename,
-			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB, 1);
+	tb = __mnt_new_table_from_file(upd->filename, MNT_FMT_UTAB, 1);
 	if (tb)
 		rc = add_file_entry(tb, upd);
 	if (lc)
@@ -726,8 +701,7 @@ static int update_remove_entry(struct libmnt_update *upd, struct libmnt_lock *lc
 	if (rc)
 		return -MNT_ERR_LOCK;
 
-	tb = __mnt_new_table_from_file(upd->filename,
-			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB, 1);
+	tb = __mnt_new_table_from_file(upd->filename, MNT_FMT_UTAB, 1);
 	if (tb) {
 		struct libmnt_fs *rem = mnt_table_find_target(tb, upd->target, MNT_ITER_BACKWARD);
 		if (rem) {
@@ -755,8 +729,7 @@ static int update_modify_target(struct libmnt_update *upd, struct libmnt_lock *l
 	if (rc)
 		return -MNT_ERR_LOCK;
 
-	tb = __mnt_new_table_from_file(upd->filename,
-			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB, 1);
+	tb = __mnt_new_table_from_file(upd->filename, MNT_FMT_UTAB, 1);
 	if (tb) {
 		const char *upd_source = mnt_fs_get_srcpath(upd->fs);
 		const char *upd_target = mnt_fs_get_target(upd->fs);
@@ -826,15 +799,13 @@ static int update_modify_options(struct libmnt_update *upd, struct libmnt_lock *
 	if (rc)
 		return -MNT_ERR_LOCK;
 
-	tb = __mnt_new_table_from_file(upd->filename,
-			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB, 1);
+	tb = __mnt_new_table_from_file(upd->filename, MNT_FMT_UTAB, 1);
 	if (tb) {
 		struct libmnt_fs *cur = mnt_table_find_target(tb,
 					mnt_fs_get_target(fs),
 					MNT_ITER_BACKWARD);
 		if (cur) {
-			if (upd->userspace_only)
-				rc = mnt_fs_set_attributes(cur,	mnt_fs_get_attributes(fs));
+			rc = mnt_fs_set_attributes(cur,	mnt_fs_get_attributes(fs));
 			if (!rc)
 				rc = mnt_fs_set_options(cur, mnt_fs_get_options(fs));
 			if (!rc)
@@ -883,7 +854,7 @@ int mnt_update_table(struct libmnt_update *upd, struct libmnt_lock *lc)
 		if (lc)
 			mnt_lock_block_signals(lc, TRUE);
 	}
-	if (lc && upd->userspace_only)
+	if (lc)
 		mnt_lock_use_simplelock(lc, TRUE);	/* use flock */
 
 	if (!upd->fs && upd->target)
@@ -919,7 +890,7 @@ int mnt_update_already_done(struct libmnt_update *upd, struct libmnt_lock *lc)
 		if (lc)
 			mnt_lock_block_signals(lc, TRUE);
 	}
-	if (lc && upd->userspace_only)
+	if (lc)
 		mnt_lock_use_simplelock(lc, TRUE);	/* use flock */
 	if (lc) {
 		rc = mnt_lock_file(lc);
@@ -929,8 +900,7 @@ int mnt_update_already_done(struct libmnt_update *upd, struct libmnt_lock *lc)
 		}
 	}
 
-	tb = __mnt_new_table_from_file(upd->filename,
-			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB, 1);
+	tb = __mnt_new_table_from_file(upd->filename, MNT_FMT_UTAB, 1);
 	if (lc)
 		mnt_unlock_file(lc);
 	if (!tb)

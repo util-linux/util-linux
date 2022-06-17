@@ -150,7 +150,7 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	fl = cxt->flags;
 
 	mnt_unref_fs(cxt->fs);
-	mnt_unref_table(cxt->mtab);
+	mnt_unref_table(cxt->mountinfo);
 	mnt_unref_table(cxt->utab);
 
 	free(cxt->helper);
@@ -162,7 +162,7 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	cxt->tgt_mode = (mode_t) -1;
 
 	cxt->fs = NULL;
-	cxt->mtab = NULL;
+	cxt->mountinfo = NULL;
 	cxt->utab = NULL;
 	cxt->helper = NULL;
 	cxt->orig_user = NULL;
@@ -288,10 +288,10 @@ struct libmnt_context *mnt_copy_context(struct libmnt_context *o)
 			goto failed;
 	}
 
-	n->mtab = o->mtab;
-	mnt_ref_table(n->mtab);
+	n->mountinfo = o->mountinfo;
+	mnt_ref_table(n->mountinfo);
 
-	n->mtab = o->utab;
+	n->utab = o->utab;
 	mnt_ref_table(n->utab);
 
 	if (strdup_between_structs(n, o, tgt_prefix))
@@ -360,8 +360,6 @@ static int context_init_paths(struct libmnt_context *cxt, int writable)
 
 	DBG(CXT, ul_debugobj(cxt, "checking for writable tab files"));
 
-	cxt->mtab_writable = 0;
-
 	ns_old = mnt_context_switch_target_ns(cxt);
 	if (!ns_old)
 		return -MNT_ERR_NAMESPACE;
@@ -373,14 +371,6 @@ static int context_init_paths(struct libmnt_context *cxt, int writable)
 
 	cxt->flags |= MNT_FL_TABPATHS_CHECKED;
 	return 0;
-}
-
-int mnt_context_mtab_writable(struct libmnt_context *cxt)
-{
-	assert(cxt);
-
-	context_init_paths(cxt, 1);
-	return cxt->mtab_writable == 1;
 }
 
 int mnt_context_utab_writable(struct libmnt_context *cxt)
@@ -396,7 +386,7 @@ const char *mnt_context_get_writable_tabpath(struct libmnt_context *cxt)
 	assert(cxt);
 
 	context_init_paths(cxt, 1);
-	return cxt->mtab_writable ? cxt->mtab_path : cxt->utab_path;
+	return cxt->utab_path;
 }
 
 
@@ -455,23 +445,23 @@ int mnt_context_force_unrestricted(struct libmnt_context *cxt)
  * @cxt: mount context
  * @mode: MNT_OMODE_* flags
  *
- * Controls how to use mount optionssource and target paths from fstab/mtab.
+ * Controls how to use mount optionssource and target paths from fstab/mountinfo.
  *
- * @MNT_OMODE_IGNORE: ignore mtab/fstab options
+ * @MNT_OMODE_IGNORE: ignore fstab options
  *
- * @MNT_OMODE_APPEND: append mtab/fstab options to existing options
+ * @MNT_OMODE_APPEND: append fstab options to existing options
  *
- * @MNT_OMODE_PREPEND: prepend mtab/fstab options to existing options
+ * @MNT_OMODE_PREPEND: prepend fstab options to existing options
  *
- * @MNT_OMODE_REPLACE: replace existing options with options from mtab/fstab
+ * @MNT_OMODE_REPLACE: replace existing options with options from fstab
  *
- * @MNT_OMODE_FORCE: always read mtab/fstab (although source and target are defined)
+ * @MNT_OMODE_FORCE: always read fstab (although source and target are defined)
  *
  * @MNT_OMODE_FSTAB: read from fstab
  *
- * @MNT_OMODE_MTAB: read from mtab if fstab not enabled or failed
+ * @MNT_OMODE_MTAB: read from mountinfo if fstab not enabled or failed
  *
- * @MNT_OMODE_NOTAB: do not read fstab/mtab at all
+ * @MNT_OMODE_NOTAB: do not read fstab/mountinfoat all
  *
  * @MNT_OMODE_AUTO: default mode (MNT_OMODE_PREPEND | MNT_OMODE_FSTAB | MNT_OMODE_MTAB)
  *
@@ -482,7 +472,7 @@ int mnt_context_force_unrestricted(struct libmnt_context *cxt)
  * - MNT_OMODE_USER is always used if mount context is in restricted mode
  * - MNT_OMODE_AUTO is used if nothing else is defined
  * - the flags are evaluated in this order: MNT_OMODE_NOTAB, MNT_OMODE_FORCE,
- *   MNT_OMODE_FSTAB, MNT_OMODE_MTAB and then the mount options from fstab/mtab
+ *   MNT_OMODE_FSTAB, MNT_OMODE_MTAB and then the mount options from fstab/mountinfo
  *   are set according to MNT_OMODE_{IGNORE,APPEND,PREPEND,REPLACE}
  *
  * Returns: 0 on success, negative number in case of error.
@@ -798,7 +788,8 @@ int mnt_context_is_fake(struct libmnt_context *cxt)
  * @cxt: mount context
  * @disable: TRUE or FALSE
  *
- * Disable/enable mtab update (see mount(8) man page, option -n).
+ * Disable/enable userspace mount table update (see mount(8) man page,
+ * option -n). Originally /etc/mtab, now /run/mount/utab.
  *
  * Returns: 0 on success, negative number in case of error.
  */
@@ -992,11 +983,15 @@ void *mnt_context_get_fstab_userdata(struct libmnt_context *cxt)
  * mnt_context_get_mtab_userdata:
  * @cxt: mount context
  *
+ * The file /etc/mtab is no more used, @context points always to mountinfo
+ * (/proc/self/mountinfo). The function uses "mtab" in the name for backward
+ * compatibility only.
+ *
  * Returns: pointer to userdata or NULL.
  */
 void *mnt_context_get_mtab_userdata(struct libmnt_context *cxt)
 {
-	return cxt->mtab ? mnt_table_get_userdata(cxt->mtab) : NULL;
+	return cxt->mountinfo ? mnt_table_get_userdata(cxt->mountinfo) : NULL;
 }
 
 /**
@@ -1284,73 +1279,55 @@ int mnt_context_get_fstab(struct libmnt_context *cxt, struct libmnt_table **tb)
 	return 0;
 }
 
-/**
- * mnt_context_get_mtab:
- * @cxt: mount context
- * @tb: returns mtab
- *
- * See also mnt_table_parse_mtab() for more details about mtab/mountinfo. The
- * result will be deallocated by mnt_free_context(@cxt).
- *
- * Returns: 0 on success, negative number in case of error.
- */
-int mnt_context_get_mtab(struct libmnt_context *cxt, struct libmnt_table **tb)
+int mnt_context_get_mountinfo(struct libmnt_context *cxt, struct libmnt_table **tb)
 {
 	int rc = 0;
 	struct libmnt_ns *ns_old = NULL;
 
 	if (!cxt)
 		return -EINVAL;
-	if (!cxt->mtab) {
+	if (!cxt->mountinfo) {
 		ns_old = mnt_context_switch_target_ns(cxt);
 		if (!ns_old)
 			return -MNT_ERR_NAMESPACE;
 
 		context_init_paths(cxt, 0);
 
-		cxt->mtab = mnt_new_table();
-		if (!cxt->mtab) {
+		cxt->mountinfo = mnt_new_table();
+		if (!cxt->mountinfo) {
 			rc = -ENOMEM;
 			goto end;
 		}
 
 		if (cxt->table_errcb)
-			mnt_table_set_parser_errcb(cxt->mtab, cxt->table_errcb);
+			mnt_table_set_parser_errcb(cxt->mountinfo, cxt->table_errcb);
 		if (cxt->table_fltrcb)
-			mnt_table_set_parser_fltrcb(cxt->mtab,
+			mnt_table_set_parser_fltrcb(cxt->mountinfo,
 					cxt->table_fltrcb,
 					cxt->table_fltrcb_data);
 
-		mnt_table_set_cache(cxt->mtab, mnt_context_get_cache(cxt));
+		mnt_table_set_cache(cxt->mountinfo, mnt_context_get_cache(cxt));
 	}
 
-	/* Read the table; it's empty, because this first mnt_context_get_mtab()
+	/* Read the table; it's empty, because this first mnt_context_get_mountinfo()
 	 * call, or because /proc was not accessible in previous calls */
-	if (mnt_table_is_empty(cxt->mtab)) {
+	if (mnt_table_is_empty(cxt->mountinfo)) {
 		if (!ns_old) {
 			ns_old = mnt_context_switch_target_ns(cxt);
 			if (!ns_old)
 				return -MNT_ERR_NAMESPACE;
 		}
 
-		/*
-		 * Note that mtab_path is NULL if mtab is useless or unsupported
-		 */
-		if (cxt->utab)
-			/* utab already parsed, don't parse it again */
-			rc = __mnt_table_parse_mtab(cxt->mtab,
-						    cxt->mtab_path, cxt->utab);
-		else
-			rc = mnt_table_parse_mtab(cxt->mtab, cxt->mtab_path);
+		rc = __mnt_table_parse_mountinfo(cxt->mountinfo, NULL, cxt->utab);
 		if (rc)
 			goto end;
 	}
 
 	if (tb)
-		*tb = cxt->mtab;
+		*tb = cxt->mountinfo;
 
-	DBG(CXT, ul_debugobj(cxt, "mtab requested [nents=%d]",
-				mnt_table_get_nents(cxt->mtab)));
+	DBG(CXT, ul_debugobj(cxt, "mountinfo requested [nents=%d]",
+				mnt_table_get_nents(cxt->mountinfo)));
 
 end:
 	if (ns_old && !mnt_context_switch_ns(cxt, ns_old))
@@ -1359,11 +1336,32 @@ end:
 	return rc;
 }
 
+/**
+ * mnt_context_get_mtab:
+ * @cxt: mount context
+ * @tb: returns mtab
+ *
+ * Parse /proc/self/mountinfo mount table.
+ *
+ * The file /etc/mtab is no more used, @context points always to mountinfo
+ * (/proc/self/mountinfo). The function uses "mtab" in the name for backward
+ * compatibility only.
+ *
+ * See also mnt_table_parse_mtab() for more details about mountinfo. The
+ * result will be deallocated by mnt_free_context(@cxt).
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_context_get_mtab(struct libmnt_context *cxt, struct libmnt_table **tb)
+{
+	return mnt_context_get_mountinfo(cxt, tb);
+}
+
 /*
- * Called by mtab parser to filter out entries, non-zero means that
+ * Called by mountinfo parser to filter out entries, non-zero means that
  * an entry has to be filtered out.
  */
-static int mtab_filter(struct libmnt_fs *fs, void *data)
+static int mountinfo_filter(struct libmnt_fs *fs, void *data)
 {
 	if (!fs || !data)
 		return 0;
@@ -1375,11 +1373,11 @@ static int mtab_filter(struct libmnt_fs *fs, void *data)
 }
 
 /*
- * The same like mnt_context_get_mtab(), but does not read all mountinfo/mtab
+ * The same like mnt_context_get_mountinfo(), but does not read all mountinfo
  * file, but only entries relevant for @tgt.
  */
-int mnt_context_get_mtab_for_target(struct libmnt_context *cxt,
-				    struct libmnt_table **mtab,
+int mnt_context_get_mountinfo_for_target(struct libmnt_context *cxt,
+				    struct libmnt_table **mountinfo,
 				    const char *tgt)
 {
 	struct stat st;
@@ -1393,16 +1391,16 @@ int mnt_context_get_mtab_for_target(struct libmnt_context *cxt,
 		return -MNT_ERR_NAMESPACE;
 
 	if (mnt_context_is_nocanonicalize(cxt))
-		mnt_context_set_tabfilter(cxt, mtab_filter, (void *) tgt);
+		mnt_context_set_tabfilter(cxt, mountinfo_filter, (void *) tgt);
 
 	else if (mnt_stat_mountpoint(tgt, &st) == 0 && S_ISDIR(st.st_mode)) {
 		cache = mnt_context_get_cache(cxt);
 		cn_tgt = mnt_resolve_path(tgt, cache);
 		if (cn_tgt)
-			mnt_context_set_tabfilter(cxt, mtab_filter, cn_tgt);
+			mnt_context_set_tabfilter(cxt, mountinfo_filter, cn_tgt);
 	}
 
-	rc = mnt_context_get_mtab(cxt, mtab);
+	rc = mnt_context_get_mountinfo(cxt, mountinfo);
 	mnt_context_set_tabfilter(cxt, NULL, NULL);
 
 	if (!mnt_context_switch_ns(cxt, ns_old))
@@ -1416,7 +1414,7 @@ int mnt_context_get_mtab_for_target(struct libmnt_context *cxt,
 
 /*
  * Allows to specify a filter for tab file entries. The filter is called by
- * the table parser. Currently used for mtab and utab only.
+ * the table parser. Currently used for utab only.
  */
 int mnt_context_set_tabfilter(struct libmnt_context *cxt,
 			      int (*fltr)(struct libmnt_fs *, void *),
@@ -1428,8 +1426,8 @@ int mnt_context_set_tabfilter(struct libmnt_context *cxt,
 	cxt->table_fltrcb = fltr;
 	cxt->table_fltrcb_data = data;
 
-	if (cxt->mtab)
-		mnt_table_set_parser_fltrcb(cxt->mtab,
+	if (cxt->mountinfo)
+		mnt_table_set_parser_fltrcb(cxt->mountinfo,
 				cxt->table_fltrcb,
 				cxt->table_fltrcb_data);
 
@@ -1448,7 +1446,7 @@ int mnt_context_set_tabfilter(struct libmnt_context *cxt,
  * See also mnt_table_parse_file().
  *
  * It's strongly recommended to use the mnt_context_get_mtab() and
- * mnt_context_get_fstab() functions for mtab and fstab files. This function
+ * mnt_context_get_fstab() functions for mountinfo and fstab files. This function
  * does not care about LIBMOUNT_* env.variables and does not merge userspace
  * options.
  *
@@ -1497,7 +1495,7 @@ end:
  * @cxt: mount context
  * @cb: pointer to callback function
  *
- * The error callback is used for all tab files (e.g. mtab, fstab)
+ * The error callback is used for all tab files (e.g. mountinfo, fstab)
  * parsed within the context.
  *
  * See also mnt_context_get_mtab(),
@@ -1512,8 +1510,8 @@ int mnt_context_set_tables_errcb(struct libmnt_context *cxt,
 	if (!cxt)
 		return -EINVAL;
 
-	if (cxt->mtab)
-		mnt_table_set_parser_errcb(cxt->mtab, cb);
+	if (cxt->mountinfo)
+		mnt_table_set_parser_errcb(cxt->mountinfo, cb);
 	if (cxt->fstab)
 		mnt_table_set_parser_errcb(cxt->fstab, cb);
 
@@ -1531,7 +1529,7 @@ int mnt_context_set_tables_errcb(struct libmnt_context *cxt,
  * This function increments cache reference counter.
  *
  * If the @cache argument is NULL, then the current cache instance is reset.
- * This function apply the cache to fstab and mtab instances (if already
+ * This function apply the cache to fstab and mountinfo instances (if already
  * exists).
  *
  * The old cache instance reference counter is de-incremented.
@@ -1548,8 +1546,8 @@ int mnt_context_set_cache(struct libmnt_context *cxt, struct libmnt_cache *cache
 
 	cxt->cache = cache;
 
-	if (cxt->mtab)
-		mnt_table_set_cache(cxt->mtab, cache);
+	if (cxt->mountinfo)
+		mnt_table_set_cache(cxt->mountinfo, cache);
 	if (cxt->fstab)
 		mnt_table_set_cache(cxt->fstab, cache);
 
@@ -1603,12 +1601,12 @@ int mnt_context_set_passwd_cb(struct libmnt_context *cxt,
  * mnt_context_get_lock:
  * @cxt: mount context
  *
- * The libmount applications don't have to care about mtab locking, but with a
+ * The libmount applications don't have to care about utab locking, but with a
  * small exception: the application has to be able to remove the lock file when
  * interrupted by signal or signals have to be ignored when the lock is locked.
  *
  * The default behavior is to ignore all signals (except SIGALRM and
- * SIGTRAP for mtab update) when the lock is locked. If this behavior
+ * SIGTRAP for utab update) when the lock is locked. If this behavior
  * is unacceptable, then use:
  *
  *	lc = mnt_context_get_lock(cxt);
@@ -1624,7 +1622,7 @@ struct libmnt_lock *mnt_context_get_lock(struct libmnt_context *cxt)
 	/*
 	 * DON'T call this function within libmount, it will always allocate
 	 * the lock. The mnt_update_* functions are able to allocate the lock
-	 * only when mtab/utab update is really necessary.
+	 * only when utab update is really necessary.
 	 */
 	if (!cxt || mnt_context_is_nomtab(cxt))
 		return NULL;
@@ -2277,7 +2275,7 @@ int mnt_context_merge_mflags(struct libmnt_context *cxt)
 }
 
 /*
- * Prepare /etc/mtab or /run/mount/utab
+ * Prepare /run/mount/utab
  */
 int mnt_context_prepare_update(struct libmnt_context *cxt)
 {
@@ -2331,8 +2329,7 @@ int mnt_context_prepare_update(struct libmnt_context *cxt)
 		if (!cxt->update)
 			return -ENOMEM;
 
-		mnt_update_set_filename(cxt->update, name,
-				!mnt_context_mtab_writable(cxt));
+		mnt_update_set_filename(cxt->update, name);
 	}
 
 	if (cxt->action == MNT_ACT_UMOUNT)
@@ -2603,14 +2600,14 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 			rc = apply_table(cxt, tab, MNT_ITER_FORWARD, mflags);
 	}
 
-	/* try mtab */
+	/* try mountinfo */
 	if (rc < 0 && (cxt->optsmode & MNT_OMODE_MTAB)
 	    && (isremount || cxt->action == MNT_ACT_UMOUNT)) {
-		DBG(CXT, ul_debugobj(cxt, "trying to apply mtab (src=%s, target=%s)", src, tgt));
+		DBG(CXT, ul_debugobj(cxt, "trying to apply mountinfo (src=%s, target=%s)", src, tgt));
 		if (tgt)
-			rc = mnt_context_get_mtab_for_target(cxt, &tab, tgt);
+			rc = mnt_context_get_mountinfo_for_target(cxt, &tab, tgt);
 		else
-			rc = mnt_context_get_mtab(cxt, &tab);
+			rc = mnt_context_get_mountinfo(cxt, &tab);
 		if (!rc)
 			rc = apply_table(cxt, tab, MNT_ITER_BACKWARD, mflags);
 	}
@@ -2622,13 +2619,13 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 		if (!mnt_context_is_restricted(cxt)
 		    && tgt && !src
 		    && isremount) {
-			DBG(CXT, ul_debugobj(cxt, "only target; ignore missing mtab entry on remount"));
+			DBG(CXT, ul_debugobj(cxt, "only target; ignore missing mountinfo entry on remount"));
 			return 0;
 		}
 
-		DBG(CXT, ul_debugobj(cxt, "failed to find entry in fstab/mtab [rc=%d]: %m", rc));
+		DBG(CXT, ul_debugobj(cxt, "failed to find entry in fstab/mountinfo [rc=%d]: %m", rc));
 
-		/* force to "not found in fstab/mtab" error, the details why
+		/* force to "not found in fstab/mountinfo" error, the details why
 		 * not found are not so important and may be misinterpreted by
 		 * applications... */
 		rc = -MNT_ERR_NOFSTAB;
@@ -2646,7 +2643,7 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
  * mnt_context_tab_applied:
  * @cxt: mount context
  *
- * Returns: 1 if fstab (or mtab) has been applied to the context, or 0.
+ * Returns: 1 if fstab (or mountinfo) has been applied to the context, or 0.
  */
 int mnt_context_tab_applied(struct libmnt_context *cxt)
 {
@@ -2953,7 +2950,7 @@ int mnt_context_helper_setopt(struct libmnt_context *cxt, int c, char *arg)
 int mnt_context_is_fs_mounted(struct libmnt_context *cxt,
 			      struct libmnt_fs *fs, int *mounted)
 {
-	struct libmnt_table *mtab, *orig;
+	struct libmnt_table *mountinfo, *orig;
 	int rc = 0;
 	struct libmnt_ns *ns_old;
 
@@ -2964,19 +2961,18 @@ int mnt_context_is_fs_mounted(struct libmnt_context *cxt,
 	if (!ns_old)
 		return -MNT_ERR_NAMESPACE;
 
-	orig = cxt->mtab;
-	rc = mnt_context_get_mtab(cxt, &mtab);
-	if (rc == -ENOENT && mnt_fs_streq_target(fs, "/proc") &&
-	    (!cxt->mtab_path || startswith(cxt->mtab_path, "/proc/"))) {
+	orig = cxt->mountinfo;
+	rc = mnt_context_get_mountinfo(cxt, &mountinfo);
+	if (rc == -ENOENT && mnt_fs_streq_target(fs, "/proc")) {
 		if (!orig) {
-			mnt_unref_table(cxt->mtab);
-			cxt->mtab = NULL;
+			mnt_unref_table(cxt->mountinfo);
+			cxt->mountinfo = NULL;
 		}
 		*mounted = 0;
 		rc = 0;			/* /proc not mounted */
 
 	} else if (rc == 0) {
-		*mounted = __mnt_table_is_fs_mounted(mtab, fs,
+		*mounted = __mnt_table_is_fs_mounted(mountinfo, fs,
 				mnt_context_get_target_prefix(cxt));
 
 	}

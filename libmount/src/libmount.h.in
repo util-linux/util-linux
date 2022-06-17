@@ -55,7 +55,7 @@ struct libmnt_cache;
 /**
  * libmnt_lock:
  *
- * Stores information about the locked file (e.g. /etc/mtab)
+ * Stores information about the locked file
  */
 struct libmnt_lock;
 
@@ -92,21 +92,21 @@ struct libmnt_optmap
 /**
  * libmnt_fs:
  *
- * Parsed fstab/mtab/mountinfo entry
+ * Parsed fstab or mountinfo entry
  */
 struct libmnt_fs;
 
 /**
  * libmnt_table:
  *
- * List of struct libmnt_fs entries (parsed fstab/mtab/mountinfo)
+ * List of struct libmnt_fs entries (parsed fstab or mountinfo)
  */
 struct libmnt_table;
 
 /**
  * libmnt_update
  *
- * /etc/mtab or utab update description
+ * utab update description
  */
 struct libmnt_update;
 
@@ -205,7 +205,7 @@ enum {
 /**
  * MNT_ERR_LOCK:
  *
- * failed to lock mtab/utab or so.
+ * failed to lock utab or so.
  */
 #define MNT_ERR_LOCK         5008
 /**
@@ -277,7 +277,7 @@ enum {
 /**
  * MNT_EX_FILEIO:
  *
- * [u]mount(8) exit code: problems writing, locking, ... mtab/utab
+ * [u]mount(8) exit code: problems writing, locking, ... utab
  */
 #define MNT_EX_FILEIO	16
 
@@ -355,7 +355,7 @@ extern void mnt_ref_cache(struct libmnt_cache *cache);
 extern void mnt_unref_cache(struct libmnt_cache *cache);
 
 extern int mnt_cache_set_targets(struct libmnt_cache *cache,
-				struct libmnt_table *mtab);
+				struct libmnt_table *mountinfo);
 extern int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname);
 
 extern int mnt_cache_device_has_tag(struct libmnt_cache *cache,
@@ -699,19 +699,19 @@ extern int mnt_monitor_event_cleanup(struct libmnt_monitor *mn);
 /* context.c */
 
 /*
- * Mode for mount options from fstab (or mtab), see mnt_context_set_optsmode().
+ * Mode for mount options from fstab), see mnt_context_set_optsmode().
  */
 enum {
-	MNT_OMODE_IGNORE  = (1 << 1),	/* ignore mtab/fstab options */
-	MNT_OMODE_APPEND  = (1 << 2),	/* append mtab/fstab options to existing options */
-	MNT_OMODE_PREPEND = (1 << 3),	/* prepend mtab/fstab options to existing options */
+	MNT_OMODE_IGNORE  = (1 << 1),	/* ignore fstab options */
+	MNT_OMODE_APPEND  = (1 << 2),	/* append fstab options to existing options */
+	MNT_OMODE_PREPEND = (1 << 3),	/* prepend fstab options to existing options */
 	MNT_OMODE_REPLACE = (1 << 4),	/* replace existing options with options from mtab/fstab */
 
-	MNT_OMODE_FORCE   = (1 << 5),   /* always read mtab/fstab options */
+	MNT_OMODE_FORCE   = (1 << 5),   /* always read fstab options */
 
 	MNT_OMODE_FSTAB   = (1 << 10),	/* read from fstab */
-	MNT_OMODE_MTAB    = (1 << 11),	/* read from mtab if fstab not enabled or failed */
-	MNT_OMODE_NOTAB   = (1 << 12),	/* do not read fstab/mtab at all */
+	MNT_OMODE_MTAB    = (1 << 11),	/* read from mountinfo if fstab not enabled or failed */
+	MNT_OMODE_NOTAB   = (1 << 12),	/* do not read fstab at all */
 
 	/* default */
 	MNT_OMODE_AUTO   = (MNT_OMODE_PREPEND | MNT_OMODE_FSTAB | MNT_OMODE_MTAB),

@@ -43,14 +43,14 @@
 # define UMOUNT_UNUSED    0x80000000	/* Flag guaranteed to be unused */
 #endif
 
-/* search in mountinfo/mtab */
-static int __mtab_find_umount_fs(struct libmnt_context *cxt,
+/* search in mountinfo */
+static int __mountinfo_find_umount_fs(struct libmnt_context *cxt,
 			    const char *tgt,
 			    struct libmnt_fs **pfs)
 {
 	int rc;
 	struct libmnt_ns *ns_old;
-	struct libmnt_table *mtab = NULL;
+	struct libmnt_table *mountinfo = NULL;
 	struct libmnt_fs *fs;
 	char *loopdev = NULL;
 
@@ -69,29 +69,27 @@ static int __mtab_find_umount_fs(struct libmnt_context *cxt,
 	 *
 	 * The filter uses mnt_fs_streq_{target,srcpath} function where all
 	 * paths should be absolute and canonicalized. This is done within
-	 * mnt_context_get_mtab_for_target() where LABEL, UUID or symlinks are
+	 * mnt_context_get_mountinfo_for_target() where LABEL, UUID or symlinks are
 	 * canonicalized. If --no-canonicalize is enabled than the target path
 	 * is expected already canonical.
 	 *
 	 * Anyway it's better to read huge mount table than canonicalize target
 	 * paths. It means we use the filter only if --no-canonicalize enabled.
 	 *
-	 * It also means that we have to read mount table from kernel
-	 * (non-writable mtab).
+	 * It also means that we have to read mount table from kernel.
 	 */
-	if (mnt_context_is_nocanonicalize(cxt) &&
-	    !mnt_context_mtab_writable(cxt) && *tgt == '/')
-		rc = mnt_context_get_mtab_for_target(cxt, &mtab, tgt);
+	if (mnt_context_is_nocanonicalize(cxt) && *tgt == '/')
+		rc = mnt_context_get_mountinfo_for_target(cxt, &mountinfo, tgt);
 	else
-		rc = mnt_context_get_mtab(cxt, &mtab);
+		rc = mnt_context_get_mountinfo(cxt, &mountinfo);
 
 	if (rc) {
-		DBG(CXT, ul_debugobj(cxt, "umount: failed to read mtab"));
+		DBG(CXT, ul_debugobj(cxt, "umount: failed to read mountinfo"));
 		return rc;
 	}
 
-	if (mnt_table_get_nents(mtab) == 0) {
-		DBG(CXT, ul_debugobj(cxt, "umount: mtab empty"));
+	if (mnt_table_get_nents(mountinfo) == 0) {
+		DBG(CXT, ul_debugobj(cxt, "umount: mountinfo empty"));
 		return 1;
 	}
 
@@ -100,20 +98,20 @@ static int __mtab_find_umount_fs(struct libmnt_context *cxt,
 		return -MNT_ERR_NAMESPACE;
 
 try_loopdev:
-	fs = mnt_table_find_target(mtab, tgt, MNT_ITER_BACKWARD);
+	fs = mnt_table_find_target(mountinfo, tgt, MNT_ITER_BACKWARD);
 	if (!fs && mnt_context_is_swapmatch(cxt)) {
 		/*
 		 * Maybe the option is source rather than target (sometimes
 		 * people use e.g. "umount /dev/sda1")
 		 */
-		fs = mnt_table_find_source(mtab, tgt, MNT_ITER_BACKWARD);
+		fs = mnt_table_find_source(mountinfo, tgt, MNT_ITER_BACKWARD);
 
 		if (fs) {
-			struct libmnt_fs *fs1 = mnt_table_find_target(mtab,
+			struct libmnt_fs *fs1 = mnt_table_find_target(mountinfo,
 							mnt_fs_get_target(fs),
 							MNT_ITER_BACKWARD);
 			if (!fs1) {
-				DBG(CXT, ul_debugobj(cxt, "mtab is broken?!?!"));
+				DBG(CXT, ul_debugobj(cxt, "mountinfo is broken?!?!"));
 				rc = -EINVAL;
 				goto err;
 			}
@@ -195,16 +193,16 @@ int mnt_context_find_umount_fs(struct libmnt_context *cxt,
 
 	/* In future this function should be extended to support for example
 	 * fsinfo() (or another cheap way kernel will support), for now the
-	 * default is expensive mountinfo/mtab.
+	 * default is expensive mountinfo.
 	 */
-	return __mtab_find_umount_fs(cxt, tgt, pfs);
+	return __mountinfo_find_umount_fs(cxt, tgt, pfs);
 }
 
 /* Check if there is something important in the utab file. The parsed utab is
  * stored in context->utab and deallocated by mnt_free_context().
  *
  * This function exists to avoid (if possible) /proc/self/mountinfo usage, so
- * don't use things like mnt_resolve_target(), mnt_context_get_mtab() etc here.
+ * don't use things like mnt_resolve_target(), mnt_context_get_mountinfo() etc here.
  * See lookup_umount_fs() for more details.
  */
 static int has_utab_entry(struct libmnt_context *cxt, const char *target)
@@ -273,7 +271,6 @@ static int lookup_umount_fs_by_statfs(struct libmnt_context *cxt, const char *tg
 	if (mnt_context_is_restricted(cxt)
 	    || *tgt != '/'
 	    || (cxt->flags & MNT_FL_HELPER)
-	    || mnt_context_mtab_writable(cxt)
 	    || mnt_context_is_force(cxt)
 	    || mnt_context_is_lazy(cxt)
 	    || mnt_context_is_nocanonicalize(cxt)
@@ -303,7 +300,7 @@ static int lookup_umount_fs_by_statfs(struct libmnt_context *cxt, const char *tg
 		}
 	}
 	if (type) {
-		DBG(CXT, ul_debugobj(cxt, "  umount: disabling mtab"));
+		DBG(CXT, ul_debugobj(cxt, "  umount: disabling mountinfo"));
 		mnt_context_disable_mtab(cxt, TRUE);
 
 		DBG(CXT, ul_debugobj(cxt,
@@ -326,7 +323,7 @@ static int lookup_umount_fs_by_mountinfo(struct libmnt_context *cxt, const char 
 	DBG(CXT, ul_debugobj(cxt, " lookup by mountinfo"));
 
 	/* search */
-	rc = __mtab_find_umount_fs(cxt, tgt, &fs);
+	rc = __mountinfo_find_umount_fs(cxt, tgt, &fs);
 	if (rc != 0)
 		return rc;
 
@@ -339,7 +336,7 @@ static int lookup_umount_fs_by_mountinfo(struct libmnt_context *cxt, const char 
 			DBG(CXT, ul_debugobj(cxt, "  failed to copy FS"));
 			return -errno;
 		}
-		DBG(CXT, ul_debugobj(cxt, "  mtab applied"));
+		DBG(CXT, ul_debugobj(cxt, "  mountinfo applied"));
 	}
 
 	cxt->flags |= MNT_FL_TAB_APPLIED;
@@ -490,7 +487,7 @@ static int is_fuse_usermount(struct libmnt_context *cxt, int *errsv)
 }
 
 /*
- * Note that cxt->fs contains relevant mtab entry!
+ * Note that cxt->fs contains relevant mountinfo entry!
  */
 static int evaluate_permissions(struct libmnt_context *cxt)
 {
@@ -511,7 +508,7 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 
 	if (!mnt_context_tab_applied(cxt)) {
 		DBG(CXT, ul_debugobj(cxt,
-				"cannot find %s in mtab and you are not root",
+				"cannot find %s in mountinfo and you are not root",
 				mnt_fs_get_target(cxt->fs)));
 		goto eperm;
 	}
@@ -562,13 +559,13 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 	if (!fs) {
 		/*
 		 * It's possible that there is /path/file.img in fstab and
-		 * /dev/loop0 in mtab -- then we have to check the relation
+		 * /dev/loop0 in mountinfo -- then we have to check the relation
 		 * between loopdev and the file.
 		 */
 		fs = mnt_table_find_target(fstab, tgt, MNT_ITER_FORWARD);
 		if (fs) {
 			struct libmnt_cache *cache = mnt_context_get_cache(cxt);
-			const char *sp = mnt_fs_get_srcpath(cxt->fs);		/* devname from mtab */
+			const char *sp = mnt_fs_get_srcpath(cxt->fs);		/* devname from mountinfo */
 			const char *dev = sp && cache ? mnt_resolve_path(sp, cache) : sp;
 
 			if (!dev || !is_associated_fs(dev, fs))
@@ -576,7 +573,7 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		}
 		if (!fs) {
 			DBG(CXT, ul_debugobj(cxt,
-					"umount %s: mtab disagrees with fstab",
+					"umount %s: mountinfo disagrees with fstab",
 					tgt));
 			goto eperm;
 		}
@@ -590,7 +587,7 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 	 * this may be a security risk.
 	 *
 	 * The options `user', `owner' and `group' only allow unmounting by the
-	 * user that mounted (visible in mtab).
+	 * user that mounted (visible in mountinfo).
 	 */
 	optstr = mnt_fs_get_user_options(fs);	/* FSTAB mount options! */
 	if (!optstr)
@@ -606,18 +603,18 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		return 0;
 	}
 	/*
-	 * Check user=<username> setting from mtab if there is a user, owner or
+	 * Check user=<username> setting from utab if there is a user, owner or
 	 * group option in /etc/fstab
 	 */
 	if (u_flags & (MNT_MS_USER | MNT_MS_OWNER | MNT_MS_GROUP)) {
 
 		char *curr_user;
-		char *mtab_user = NULL;
+		char *utab_user = NULL;
 		size_t sz;
 		struct libmnt_ns *ns_old;
 
 		DBG(CXT, ul_debugobj(cxt,
-				"umount: checking user=<username> from mtab"));
+				"umount: checking user=<username> from mountinfo"));
 
 		ns_old = mnt_context_switch_origin_ns(cxt);
 		if (!ns_old)
@@ -635,11 +632,11 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 			goto eperm;
 		}
 
-		/* get options from mtab */
+		/* get options from utab */
 		optstr = mnt_fs_get_user_options(cxt->fs);
 		if (optstr && !mnt_optstr_get_option(optstr,
-					"user", &mtab_user, &sz) && sz)
-			ok = !strncmp(curr_user, mtab_user, sz);
+					"user", &utab_user, &sz) && sz)
+			ok = !strncmp(curr_user, utab_user, sz);
 
 		free(curr_user);
 	}
@@ -963,7 +960,7 @@ int mnt_context_prepare_umount(struct libmnt_context *cxt)
 	}
 
 	if (!rc && (cxt->user_mountflags & MNT_MS_LOOP))
-		/* loop option explicitly specified in mtab, detach this loop */
+		/* loop option explicitly specified in utab, detach this loop */
 		mnt_context_enable_loopdel(cxt, TRUE);
 
 	if (!rc && mnt_context_is_loopdel(cxt) && cxt->fs) {
@@ -1028,24 +1025,12 @@ int mnt_context_do_umount(struct libmnt_context *cxt)
 		/*
 		 * Umounted, do some post-umount operations
 		 *	- remove loopdev
-		 *	- refresh in-memory mtab stuff if remount rather than
+		 *	- refresh in-memory utab stuff if remount rather than
 		 *	  umount has been performed
 		 */
 		if (mnt_context_is_loopdel(cxt)
 		    && !(cxt->mountflags & MS_REMOUNT))
 			rc = mnt_context_delete_loopdev(cxt);
-
-		if (!mnt_context_is_nomtab(cxt)
-		    && mnt_context_get_status(cxt)
-		    && !cxt->helper
-		    && mnt_context_is_rdonly_umount(cxt)
-		    && (cxt->mountflags & MS_REMOUNT)) {
-
-			/* use "remount" instead of "umount" in /etc/mtab */
-			if (!rc && cxt->update && mnt_context_mtab_writable(cxt))
-				rc = mnt_update_set_fs(cxt->update,
-						       cxt->mountflags, NULL, cxt->fs);
-		}
 	}
 end:
 	if (!mnt_context_switch_ns(cxt, ns_old))
@@ -1141,8 +1126,7 @@ int mnt_context_umount(struct libmnt_context *cxt)
  * @mntrc: returns the return code from mnt_context_umount()
  * @ignored: returns 1 for not matching
  *
- * This function tries to umount the next filesystem from mtab (as returned by
- * mnt_context_get_mtab()).
+ * This function tries to umount the next filesystem from mountinfo file.
  *
  * You can filter out filesystems by:
  *	mnt_context_set_options_pattern() to simulate umount -a -O pattern
@@ -1167,7 +1151,7 @@ int mnt_context_next_umount(struct libmnt_context *cxt,
 			   int *mntrc,
 			   int *ignored)
 {
-	struct libmnt_table *mtab;
+	struct libmnt_table *mountinfo;
 	const char *tgt;
 	int rc;
 
@@ -1179,17 +1163,17 @@ int mnt_context_next_umount(struct libmnt_context *cxt,
 	if (!cxt || !fs || !itr)
 		return -EINVAL;
 
-	rc = mnt_context_get_mtab(cxt, &mtab);
-	cxt->mtab = NULL;		/* do not reset mtab */
+	rc = mnt_context_get_mountinfo(cxt, &mountinfo);
+	cxt->mountinfo = NULL;		/* do not reset mountinfo */
 	mnt_reset_context(cxt);
 
 	if (rc)
 		return rc;
 
-	cxt->mtab = mtab;
+	cxt->mountinfo = mountinfo;
 
 	do {
-		rc = mnt_table_next_fs(mtab, itr, fs);
+		rc = mnt_table_next_fs(mountinfo, itr, fs);
 		if (rc != 0)
 			return rc;	/* no more filesystems (or error) */
 
@@ -1247,7 +1231,7 @@ int mnt_context_get_umount_excode(
 		 */
 		if (rc == -EPERM && !mnt_context_tab_applied(cxt)) {
 			/* failed to evaluate permissions because not found
-			 * relevant entry in mtab */
+			 * relevant entry in mountinfo */
 			if (buf)
 				snprintf(buf, bufsz, _("not mounted"));
 			return MNT_EX_USAGE;
@@ -1270,7 +1254,7 @@ int mnt_context_get_umount_excode(
 	} if (mnt_context_get_syscall_errno(cxt) == 0) {
 		/*
 		 * umount(2) syscall success, but something else failed
-		 * (probably error in mtab processing).
+		 * (probably error in utab processing).
 		 */
 		if (rc == -MNT_ERR_LOCK) {
 			if (buf)

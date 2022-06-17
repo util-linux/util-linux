@@ -844,52 +844,19 @@ static int try_write(const char *filename, const char *directory)
 
 /**
  * mnt_has_regular_mtab:
- * @mtab: returns path to mtab
- * @writable: returns 1 if the file is writable
+ * @mtab: returns NULL
+ * @writable: returns 0
  *
- * If the file does not exist and @writable argument is not NULL, then it will
- * try to create the file.
+ * Returns: 0
  *
- * Returns: 1 if /etc/mtab is a regular file, and 0 in case of error (check
- *          errno for more details).
+ * Deprecated: libmount does not use /etc/mtab at all since v2.39.
  */
 int mnt_has_regular_mtab(const char **mtab, int *writable)
 {
-	struct stat st;
-	int rc;
-	const char *filename = mtab && *mtab ? *mtab : mnt_get_mtab_path();
-
 	if (writable)
 		*writable = 0;
-	if (mtab && !*mtab)
-		*mtab = filename;
-
-	DBG(UTILS, ul_debug("mtab: %s", filename));
-
-	rc = lstat(filename, &st);
-
-	if (rc == 0) {
-		/* file exists */
-		if (S_ISREG(st.st_mode)) {
-			if (writable)
-				*writable = !try_write(filename, NULL);
-			DBG(UTILS, ul_debug("%s: writable", filename));
-			return 1;
-		}
-		goto done;
-	}
-
-	/* try to create the file */
-	if (writable) {
-		*writable = !try_write(filename, NULL);
-		if (*writable) {
-			DBG(UTILS, ul_debug("%s: writable", filename));
-			return 1;
-		}
-	}
-
-done:
-	DBG(UTILS, ul_debug("%s: irregular/non-writable", filename));
+	if (mtab)
+		*mtab = NULL;
 	return 0;
 }
 
@@ -978,10 +945,13 @@ const char *mnt_get_fstab_path(void)
 /**
  * mnt_get_mtab_path:
  *
- * This function returns the *default* location of the mtab file. The result does
- * not have to be writable. See also mnt_has_regular_mtab().
+ * This function returns the *default* location of the mtab file.
+ *
  *
  * Returns: path to /etc/mtab or $LIBMOUNT_MTAB.
+ *
+ * Deprecated: libmount uses /proc/self/mountinfo only.
+ *
  */
 const char *mnt_get_mtab_path(void)
 {

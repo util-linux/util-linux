@@ -13,7 +13,7 @@
 /**
  * SECTION: fs
  * @title: Filesystem
- * @short_description: represents one entry from fstab, mtab, or mountinfo file
+ * @short_description: represents one entry from fstab, or mountinfo file
  *
  */
 #include <ctype.h>

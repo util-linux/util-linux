@@ -55,10 +55,6 @@ mkfs.ext4 -L "$LABEL" -U "$UUID" $DEVICE &> /dev/null
 
 ts_log "Do tests..."
 
-export LIBMOUNT_MTAB=$TS_OUTPUT.mtab
-rm -f $LIBMOUNT_MTAB
-ln -s /proc/mounts $LIBMOUNT_MTAB
-
 export LIBMOUNT_UTAB=$TS_OUTPUT.utab
 rm -f $LIBMOUNT_UTAB
 > $LIBMOUNT_UTAB

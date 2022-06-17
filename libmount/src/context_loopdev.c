@@ -100,7 +100,7 @@ is_mounted_same_loopfile(struct libmnt_context *cxt,
 	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
-	if (mnt_context_get_mtab(cxt, &tb))
+	if (mnt_context_get_mountinfo(cxt, &tb))
 		return 0;
 
 	ns_old = mnt_context_switch_target_ns(cxt);
@@ -115,7 +115,7 @@ is_mounted_same_loopfile(struct libmnt_context *cxt,
 
 	bf = cache ? mnt_resolve_path(backing_file, cache) : backing_file;
 
-	/* Search for a mountpoint node in mtab, proceed if any of these have the
+	/* Search for a mountpoint node in mountinfo, proceed if any of these have the
 	 * loop option set or the device is a loop device
 	 */
 	while (rc == 0 && mnt_table_next_fs(tb, &itr, &fs) == 0) {
@@ -319,11 +319,10 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	if (rc)
 		goto done;
 
-	/* since 2.6.37 we don't have to store backing filename to mtab
+	/* since 2.6.37 we don't have to store backing filename to mountinfo
 	 * because kernel provides the name in /sys.
 	 */
-	if (get_linux_version() >= KERNEL_VERSION(2, 6, 37) ||
-	    !mnt_context_mtab_writable(cxt)) {
+	if (get_linux_version() >= KERNEL_VERSION(2, 6, 37)) {
 		DBG(LOOP, ul_debugobj(cxt, "enabling AUTOCLEAR flag"));
 		lo_flags |= LO_FLAGS_AUTOCLEAR;
 	}
@@ -379,9 +378,9 @@ success:
 		    loopcxt_is_autoclear(&lc))) {
 			/*
 			 * autoclear flag accepted by the kernel, don't store
-			 * the "loop=" option to mtab.
+			 * the "loop=" option to utab.
 			 */
-			DBG(LOOP, ul_debugobj(cxt, "removing unnecessary loop= from mtab"));
+			DBG(LOOP, ul_debugobj(cxt, "removing unnecessary loop= from utab"));
 			cxt->user_mountflags &= ~MNT_MS_LOOP;
 			mnt_optstr_remove_option(&cxt->fs->user_optstr, "loop");
 		}

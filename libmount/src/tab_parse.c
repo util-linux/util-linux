@@ -28,7 +28,7 @@
 #include "strutils.h"
 
 struct libmnt_parser {
-	FILE	*f;		/* fstab, mtab, swaps or mountinfo ... */
+	FILE	*f;		/* fstab, swaps or mountinfo ... */
 	const char *filename;	/* file name or NULL */
 	char	*buf;		/* buffer (the current line content) */
 	size_t	bufsiz;		/* size of the buffer */
@@ -455,7 +455,7 @@ static int guess_table_format(const char *line)
 	if (strncmp(line, "Filename\t", 9) == 0)
 		return MNT_FMT_SWAPS;
 
-	return MNT_FMT_FSTAB;		/* fstab, mtab or /proc/mounts */
+	return MNT_FMT_FSTAB;		/* fstab, or /proc/mounts */
 }
 
 static int is_comment_line(const char *line)
@@ -1161,7 +1161,7 @@ static struct libmnt_fs *mnt_table_merge_user_fs(struct libmnt_table *tb, struct
 
 /* default filename is /proc/self/mountinfo
  */
-int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
+int __mnt_table_parse_mountinfo(struct libmnt_table *tb, const char *filename,
 			   struct libmnt_table *u_tb)
 {
 	int rc = 0, priv_utab = 0;
@@ -1170,12 +1170,12 @@ int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
 	assert(tb);
 
 	if (filename)
-		DBG(TAB, ul_debugobj(tb, "%s requested as mtab", filename));
+		DBG(TAB, ul_debugobj(tb, "%s requested as mount table", filename));
 
 	if (!filename || strcmp(filename, _PATH_PROC_MOUNTINFO) == 0) {
 		filename = _PATH_PROC_MOUNTINFO;
 		tb->fmt = MNT_FMT_MOUNTINFO;
-		DBG(TAB, ul_debugobj(tb, "mtab parse: #1 read mountinfo"));
+		DBG(TAB, ul_debugobj(tb, "mountinfo parse: #1 read mountinfo"));
 	} else
 		tb->fmt = MNT_FMT_GUESS;
 
@@ -1191,7 +1191,7 @@ int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
 
 	if (!is_mountinfo(tb))
 		return 0;
-	DBG(TAB, ul_debugobj(tb, "mtab parse: #2 read utab"));
+	DBG(TAB, ul_debugobj(tb, "mountinfo parse: #2 read utab"));
 
 	if (mnt_table_get_nents(tb) == 0)
 		return 0;			/* empty, ignore utab */
@@ -1215,7 +1215,7 @@ int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
 		priv_utab = 1;
 	}
 
-	DBG(TAB, ul_debugobj(tb, "mtab parse: #3 merge utab"));
+	DBG(TAB, ul_debugobj(tb, "mountinfo parse: #3 merge utab"));
 
 	if (rc == 0) {
 		struct libmnt_fs *u_fs;
@@ -1242,8 +1242,8 @@ int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
  * mountinfo file then /run/mount/utabs is parsed too and both files are merged
  * to the one libmnt_table.
  *
- * If libmount is compiled with classic mtab file support, and the /etc/mtab is
- * a regular file then this file is parsed.
+ * The file /etc/mtab is no more used. The function uses "mtab" in the name for
+ * backward compatibility only.
  *
  * It's strongly recommended to use NULL as a @filename to keep code portable.
  *
@@ -1253,5 +1253,5 @@ int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
  */
 int mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename)
 {
-	return __mnt_table_parse_mtab(tb, filename, NULL);
+	return __mnt_table_parse_mountinfo(tb, filename, NULL);
 }

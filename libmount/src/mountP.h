@@ -135,7 +135,7 @@ extern int mnt_table_set_parser_fltrcb(	struct libmnt_table *tb,
 					int (*cb)(struct libmnt_fs *, void *),
 					void *data);
 
-extern int __mnt_table_parse_mtab(struct libmnt_table *tb,
+extern int __mnt_table_parse_mountinfo(struct libmnt_table *tb,
 					const char *filename,
 					struct libmnt_table *u_tb);
 
@@ -176,7 +176,7 @@ struct libmnt_iter {
 
 
 /*
- * This struct represents one entry in a mtab/fstab/mountinfo file.
+ * This struct represents one entry in a fstab/mountinfo file.
  * (note that fstab[1] means the first column from fstab, and so on...)
  */
 struct libmnt_fs {
@@ -233,7 +233,7 @@ struct libmnt_fs {
 #define MNT_FS_MERGED	(1 << 5) /* already merged data from /run/mount/utab */
 
 /*
- * mtab/fstab/mountinfo file
+ * fstab/mountinfo file
  */
 struct libmnt_table {
 	int		fmt;		/* MNT_FMT_* file format */
@@ -304,8 +304,8 @@ struct libmnt_context
 	struct libmnt_fs *fs;		/* filesystem description (type, mountpoint, device, ...) */
 	struct libmnt_fs *fs_template;	/* used for @fs on mnt_reset_context() */
 
-	struct libmnt_table *fstab;	/* fstab (or mtab for some remounts) entries */
-	struct libmnt_table *mtab;	/* mtab entries */
+	struct libmnt_table *fstab;	/* fstab entries */
+	struct libmnt_table *mountinfo;	/* already mounted filesystems */
 	struct libmnt_table *utab;	/* rarely used by umount only */
 
 	int	(*table_errcb)(struct libmnt_table *tb,	/* callback for libmnt_table structs */
@@ -328,11 +328,10 @@ struct libmnt_context
 	struct list_head	addmounts;	/* additional mounts */
 
 	struct libmnt_cache	*cache;	/* paths cache */
-	struct libmnt_lock	*lock;	/* mtab lock */
-	struct libmnt_update	*update;/* mtab/utab update */
+	struct libmnt_lock	*lock;	/* utab lock */
+	struct libmnt_update	*update;/* utab update */
 
-	const char	*mtab_path; /* path to mtab */
-	int		mtab_writable; /* is mtab writable */
+	const char	*mountinfo_path; /* usualy /proc/self/moutinfo */
 
 	const char	*utab_path; /* path to utab */
 	int		utab_writable; /* is utab writable */
@@ -378,7 +377,7 @@ struct libmnt_context
 #define MNT_FL_ONLYONCE		(1 << 15)
 
 #define MNT_FL_MOUNTDATA	(1 << 20)
-#define MNT_FL_TAB_APPLIED	(1 << 21)	/* mtab/fstab merged to cxt->fs */
+#define MNT_FL_TAB_APPLIED	(1 << 21)	/* fstab merged to cxt->fs */
 #define MNT_FL_MOUNTFLAGS_MERGED (1 << 22)	/* MS_* flags was read from optstr */
 #define MNT_FL_SAVED_USER	(1 << 23)
 #define MNT_FL_PREPARED		(1 << 24)
@@ -415,8 +414,7 @@ extern int mnt_optstr_fix_secontext(char **optstr, char *value, size_t valsz, ch
 extern int mnt_optstr_fix_user(char **optstr);
 
 /* fs.c */
-extern struct libmnt_fs *mnt_copy_mtab_fs(const struct libmnt_fs *fs)
-			__attribute__((nonnull));
+extern struct libmnt_fs *mnt_copy_mtab_fs(const struct libmnt_fs *fs);
 extern int __mnt_fs_set_source_ptr(struct libmnt_fs *fs, char *source)
 			__attribute__((nonnull(1)));
 extern int __mnt_fs_set_fstype_ptr(struct libmnt_fs *fs, char *fstype)
@@ -424,12 +422,12 @@ extern int __mnt_fs_set_fstype_ptr(struct libmnt_fs *fs, char *fstype)
 
 /* context.c */
 extern struct libmnt_context *mnt_copy_context(struct libmnt_context *o);
-extern int mnt_context_mtab_writable(struct libmnt_context *cxt);
 extern int mnt_context_utab_writable(struct libmnt_context *cxt);
 extern const char *mnt_context_get_writable_tabpath(struct libmnt_context *cxt);
 
-extern int mnt_context_get_mtab_for_target(struct libmnt_context *cxt,
-				    struct libmnt_table **mtab, const char *tgt);
+extern int mnt_context_get_mountinfo(struct libmnt_context *cxt, struct libmnt_table **tb);
+extern int mnt_context_get_mountinfo_for_target(struct libmnt_context *cxt,
+				    struct libmnt_table **mountinfo, const char *tgt);
 
 extern int mnt_context_prepare_srcpath(struct libmnt_context *cxt);
 extern int mnt_context_prepare_target(struct libmnt_context *cxt);
@@ -480,8 +478,7 @@ extern int mnt_context_setup_veritydev(struct libmnt_context *cxt);
 extern int mnt_context_deferred_delete_veritydev(struct libmnt_context *cxt);
 
 /* tab_update.c */
-extern int mnt_update_set_filename(struct libmnt_update *upd,
-				   const char *filename, int userspace_only);
+extern int mnt_update_set_filename(struct libmnt_update *upd, const char *filename);
 extern int mnt_update_already_done(struct libmnt_update *upd,
 				   struct libmnt_lock *lc);
 

@@ -2154,14 +2154,8 @@ static int test_is_mounted(struct libmnt_test *ts, int argc, char *argv[])
 	struct libmnt_fs *fs;
 	struct libmnt_iter *itr = NULL;
 	struct libmnt_cache *mpc = NULL;
-	int writable = 0;
-	const char *path = NULL;
 
-	if (mnt_has_regular_mtab(&path, &writable) == 1 && writable == 0)
-		tb = mnt_new_table_from_file(path);
-	else
-		tb = mnt_new_table_from_file("/proc/self/mountinfo");
-
+	tb = mnt_new_table_from_file("/proc/self/mountinfo");
 	if (!tb) {
 		fprintf(stderr, "failed to parse mountinfo\n");
 		return -1;
