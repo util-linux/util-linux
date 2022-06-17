@@ -1214,48 +1214,6 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 	} else
 		res = do_mount_by_pattern(cxt, cxt->fstype_pattern);
 
-#ifdef USE_LIBMOUNT_SUPPORT_MTAB
-	if (mnt_context_get_status(cxt)
-	    && !mnt_context_is_fake(cxt)
-	    && !cxt->helper
-	    && mnt_context_mtab_writable(cxt)) {
-
-		int is_rdonly = -1;
-
-		DBG(CXT, ul_debugobj(cxt, "checking for RDONLY mismatch"));
-
-		/*
-		 * Mounted by mount(2), do some post-mount checks
-		 *
-		 * Kernel can be used to use MS_RDONLY for bind mounts, but the
-		 * read-only request could be silently ignored. Check it to
-		 * avoid 'ro' in mtab and 'rw' in /proc/mounts.
-		 */
-		if ((cxt->mountflags & MS_BIND)
-		    && (cxt->mountflags & MS_RDONLY)) {
-
-			if (is_rdonly < 0)
-				is_rdonly = mnt_is_readonly(mnt_context_get_target(cxt));
-			if (!is_rdonly)
-				mnt_context_set_mflags(cxt, cxt->mountflags & ~MS_RDONLY);
-		}
-
-
-		/* Kernel can silently add MS_RDONLY flag when mounting file
-		 * system that does not have write support. Check this to avoid
-		 * 'ro' in /proc/mounts and 'rw' in mtab.
-		 */
-		if (!(cxt->mountflags & (MS_RDONLY | MS_MOVE))
-		    && !mnt_context_propagation_only(cxt)) {
-
-			if (is_rdonly < 0)
-				is_rdonly = mnt_is_readonly(mnt_context_get_target(cxt));
-			if (is_rdonly)
-				mnt_context_set_mflags(cxt, cxt->mountflags | MS_RDONLY);
-		}
-	}
-#endif
-
 	/* Cleanup will be immediate on failure, and deferred to umount on success */
 	if (mnt_context_is_veritydev(cxt))
 		mnt_context_deferred_delete_veritydev(cxt);

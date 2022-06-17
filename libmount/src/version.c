@@ -34,9 +34,6 @@ static const char *lib_features[] = {
 #ifdef HAVE_CRYPTSETUP
 	"verity",
 #endif
-#ifdef USE_LIBMOUNT_SUPPORT_MTAB
-	"mtab",
-#endif
 #ifdef USE_LIBMOUNT_SUPPORT_NAMESPACES
 	"namespaces",
 #endif

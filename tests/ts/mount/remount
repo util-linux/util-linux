@@ -35,10 +35,6 @@ ts_device_init
 DEVICE=$TS_LODEV
 
 MTAB_FILE="/proc/mounts"
-has_mtab=$( ts_has_mtab_support )
-if [ "$has_mtab" == "yes" ]; then
-	MTAB_FILE="/etc/mtab"
-fi
 
 mkfs.ext2 $DEVICE &> /dev/null || ts_die "Cannot make ext2 on $DEVICE"
 

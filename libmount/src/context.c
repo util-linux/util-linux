@@ -346,12 +346,6 @@ static int context_init_paths(struct libmnt_context *cxt, int writable)
 
 	assert(cxt);
 
-#ifdef USE_LIBMOUNT_SUPPORT_MTAB
-	if (!cxt->mtab_path) {
-		cxt->mtab_path = mnt_get_mtab_path();
-		DBG(CXT, ul_debugobj(cxt, "mtab path initialized to: %s", cxt->mtab_path));
-	}
-#endif
 	if (!cxt->utab_path) {
 		cxt->utab_path = mnt_get_utab_path();
 		DBG(CXT, ul_debugobj(cxt, "utab path initialized to: %s", cxt->utab_path));
@@ -372,12 +366,7 @@ static int context_init_paths(struct libmnt_context *cxt, int writable)
 	if (!ns_old)
 		return -MNT_ERR_NAMESPACE;
 
-#ifdef USE_LIBMOUNT_SUPPORT_MTAB
-	mnt_has_regular_mtab(&cxt->mtab_path, &cxt->mtab_writable);
-	if (!cxt->mtab_writable)
-#endif
-		/* use /run/mount/utab if /etc/mtab is useless */
-		mnt_has_regular_utab(&cxt->utab_path, &cxt->utab_writable);
+	mnt_has_regular_utab(&cxt->utab_path, &cxt->utab_writable);
 
 	if (!mnt_context_switch_ns(cxt, ns_old))
 		return -MNT_ERR_NAMESPACE;

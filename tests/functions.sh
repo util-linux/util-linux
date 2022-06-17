@@ -1073,15 +1073,6 @@ function ts_init_socket_to_file {
 	fi
 }
 
-function ts_has_mtab_support {
-	grep -q '#define USE_LIBMOUNT_SUPPORT_MTAB' ${top_builddir}/config.h
-	if [ $? == 0 ]; then
-		echo "yes"
-	else
-		echo "no"
-	fi
-}
-
 function ts_has_ncurses_support {
 	grep -q '#define HAVE_LIBNCURSES' ${top_builddir}/config.h
 	if [ $? == 0 ]; then

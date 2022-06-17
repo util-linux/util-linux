@@ -1172,27 +1172,6 @@ int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
 	if (filename)
 		DBG(TAB, ul_debugobj(tb, "%s requested as mtab", filename));
 
-#ifdef USE_LIBMOUNT_SUPPORT_MTAB
-	if (mnt_has_regular_mtab(&filename, NULL)) {
-
-		DBG(TAB, ul_debugobj(tb, "force mtab usage [filename=%s]", filename));
-
-		rc = mnt_table_parse_file(tb, filename);
-
-		/*
-		 * If @filename forces us to read from /proc then also read
-		 * utab file to merge userspace mount options.
-		 */
-		if (rc == 0 && is_mountinfo(tb))
-			goto read_utab;
-
-		if (!rc)
-			return 0;
-		filename = NULL;	/* failed */
-	} else
-		filename = NULL;	/* mtab useless */
-#endif
-
 	if (!filename || strcmp(filename, _PATH_PROC_MOUNTINFO) == 0) {
 		filename = _PATH_PROC_MOUNTINFO;
 		tb->fmt = MNT_FMT_MOUNTINFO;
@@ -1212,9 +1191,6 @@ int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
 
 	if (!is_mountinfo(tb))
 		return 0;
-#ifdef USE_LIBMOUNT_SUPPORT_MTAB
-read_utab:
-#endif
 	DBG(TAB, ul_debugobj(tb, "mtab parse: #2 read utab"));
 
 	if (mnt_table_get_nents(tb) == 0)

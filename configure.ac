@@ -1176,10 +1176,6 @@ AC_ARG_ENABLE([libmount-support-mtab],
   [], [enable_libmount_support_mtab=no]
 )
 
-AS_IF([test "x$enable_libmount_support_mtab" = xyes], [
-  AC_DEFINE([USE_LIBMOUNT_SUPPORT_MTAB], [1], [Define to 1 if want to support mtab.])
-])
-
 dnl
 dnl libsmartcols
 dnl
