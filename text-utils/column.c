@@ -358,7 +358,7 @@ static void apply_columnflag_from_list(struct column_control *ctl, const char *l
 		/* parse range (N-M) */
 		if (strchr(*one, '-') && parse_range(*one, &low, &up, 0) == 0) {
 			for (; low <= up; low++) {
-				cl = scols_table_get_column(ctl->tab, low);
+				cl = scols_table_get_column(ctl->tab, low-1);
 				if (cl)
 					column_set_flag(cl, flag);
 			}
