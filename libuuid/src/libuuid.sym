@@ -60,6 +60,7 @@ global:
 UUIDD_PRIVATE {
 global:
 	__uuid_generate_time;
+	__uuid_generate_time_cont;
 	__uuid_generate_random;
 local:
 	*;

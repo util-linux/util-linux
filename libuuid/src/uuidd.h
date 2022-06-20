@@ -49,6 +49,7 @@
 #define UUIDD_MAX_OP			UUIDD_OP_BULK_RANDOM_UUID
 
 extern int __uuid_generate_time(uuid_t out, int *num);
+extern int __uuid_generate_time_cont(uuid_t out, int *num, uint32_t cont);
 extern int __uuid_generate_random(uuid_t out, int *num);
 
 #endif /* _UUID_UUID_H */

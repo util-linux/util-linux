@@ -209,6 +209,8 @@ static int get_node_id(unsigned char *node_id)
 
 /* Assume that the gettimeofday() has microsecond granularity */
 #define MAX_ADJUSTMENT 10
+/* Reserve a clock_seq value for the 'continuous clock' implementation */
+#define CLOCK_SEQ_CONT 0
 
 /*
  * Get clock from global sequence clock counter.
@@ -275,8 +277,10 @@ static int get_clock(uint32_t *clock_high, uint32_t *clock_low,
 	}
 
 	if ((last.tv_sec == 0) && (last.tv_usec == 0)) {
-		ul_random_get_bytes(&clock_seq, sizeof(clock_seq));
-		clock_seq &= 0x3FFF;
+		do {
+			ul_random_get_bytes(&clock_seq, sizeof(clock_seq));
+			clock_seq &= 0x3FFF;
+		} while (clock_seq == CLOCK_SEQ_CONT);
 		gettimeofday(&last, NULL);
 		last.tv_sec--;
 	}
@@ -286,7 +290,9 @@ try_again:
 	if ((tv.tv_sec < last.tv_sec) ||
 	    ((tv.tv_sec == last.tv_sec) &&
 	     (tv.tv_usec < last.tv_usec))) {
-		clock_seq = (clock_seq+1) & 0x3FFF;
+		do {
+			clock_seq = (clock_seq+1) & 0x3FFF;
+		} while (clock_seq == CLOCK_SEQ_CONT);
 		adjustment = 0;
 		last = tv;
 	} else if ((tv.tv_sec == last.tv_sec) &&
@@ -329,6 +335,64 @@ try_again:
 	*clock_low = clock_reg;
 	*ret_clock_seq = clock_seq;
 	return ret;
+}
+
+/*
+ * Get current time in 100ns ticks.
+ */
+static uint64_t get_clock_counter(void)
+{
+	struct timeval tv;
+	uint64_t clock_reg;
+
+	gettimeofday(&tv, NULL);
+	clock_reg = tv.tv_usec*10;
+	clock_reg += ((uint64_t) tv.tv_sec) * 10000000ULL;
+
+	return clock_reg;
+}
+
+/*
+ * Get continuous clock value.
+ *
+ * Return -1 if there is no further clock counter available,
+ * otherwise return 0.
+ *
+ * This implementation doesn't deliver clock counters based on
+ * the current time because last_clock_reg is only incremented
+ * by the number of requested UUIDs.
+ * max_clock_offset is used to limit the offset of last_clock_reg.
+ */
+static int get_clock_cont(uint32_t *clock_high,
+			  uint32_t *clock_low,
+			  int num,
+			  uint32_t max_clock_offset)
+{
+	/* 100ns based time offset according to RFC 4122. 4.1.4. */
+	const uint64_t reg_offset = (((uint64_t) 0x01B21DD2) << 32) + 0x13814000;
+	static uint64_t last_clock_reg = 0;
+	uint64_t clock_reg;
+
+	if (last_clock_reg == 0)
+		last_clock_reg = get_clock_counter();
+
+	clock_reg = get_clock_counter();
+	if (max_clock_offset) {
+		uint64_t clock_offset = max_clock_offset * 10000000ULL;
+		if (last_clock_reg < (clock_reg - clock_offset))
+			last_clock_reg = clock_reg - clock_offset;
+	}
+
+	clock_reg += MAX_ADJUSTMENT;
+
+	if ((last_clock_reg + num) >= clock_reg)
+		return -1;
+
+	*clock_high = (last_clock_reg + reg_offset) >> 32;
+	*clock_low = last_clock_reg + reg_offset;
+	last_clock_reg += num;
+
+	return 0;
 }
 
 #if defined(HAVE_UUIDD) && defined(HAVE_SYS_UN_H)
@@ -403,7 +467,7 @@ static int get_uuid_via_daemon(int op __attribute__((__unused__)),
 }
 #endif
 
-int __uuid_generate_time(uuid_t out, int *num)
+static int __uuid_generate_time_internal(uuid_t out, int *num, uint32_t cont_offset)
 {
 	static unsigned char node_id[6];
 	static int has_init = 0;
@@ -423,13 +487,30 @@ int __uuid_generate_time(uuid_t out, int *num)
 		}
 		has_init = 1;
 	}
-	ret = get_clock(&clock_mid, &uu.time_low, &uu.clock_seq, num);
+	if (cont_offset) {
+		ret = get_clock_cont(&clock_mid, &uu.time_low, *num, cont_offset);
+		uu.clock_seq = CLOCK_SEQ_CONT;
+		if (ret != 0)	/* fallback to previous implpementation */
+			ret = get_clock(&clock_mid, &uu.time_low, &uu.clock_seq, num);
+	} else {
+		ret = get_clock(&clock_mid, &uu.time_low, &uu.clock_seq, num);
+	}
 	uu.clock_seq |= 0x8000;
 	uu.time_mid = (uint16_t) clock_mid;
 	uu.time_hi_and_version = ((clock_mid >> 16) & 0x0FFF) | 0x1000;
 	memcpy(uu.node, node_id, 6);
 	uuid_pack(&uu, out);
 	return ret;
+}
+
+int __uuid_generate_time(uuid_t out, int *num)
+{
+	return __uuid_generate_time_internal(out, num, 0);
+}
+
+int __uuid_generate_time_cont(uuid_t out, int *num, uint32_t cont_offset)
+{
+	return __uuid_generate_time_internal(out, num, cont_offset);
 }
 
 /*
