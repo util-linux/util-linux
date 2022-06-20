@@ -1353,7 +1353,7 @@ int main(int argc, char *argv[])
 
 	rc = ul_fileeq_init(&fileeq, opts.method);
 	if (rc != 0 && strcmp(opts.method, "memcmp") != 0) {
-		warnx(_("cannot initialize %s method, use 'memcmp' fallback"), opts.method);
+		jlog(JLOG_INFO, _("cannot initialize %s method, use 'memcmp' fallback"), opts.method);
 		opts.method = "memcmp";
 		rc = ul_fileeq_init(&fileeq, opts.method);
 	}
