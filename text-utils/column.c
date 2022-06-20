@@ -348,10 +348,24 @@ static void apply_columnflag_from_list(struct column_control *ctl, const char *l
 
 	/* apply to columns specified by name */
 	STRV_FOREACH(one, all) {
+		int low = 0, up = 0;
+
 		if (strcmp(*one, "-") == 0) {
 			unnamed = 1;
 			continue;
 		}
+
+		/* parse range (N-M) */
+		if (strchr(*one, '-') && parse_range(*one, &low, &up, 0) == 0) {
+			for (; low <= up; low++) {
+				cl = scols_table_get_column(ctl->tab, low);
+				if (cl)
+					column_set_flag(cl, flag);
+			}
+			continue;
+		}
+
+		/* one item in the list */
 		cl = string_to_column(ctl, *one);
 		if (cl)
 			column_set_flag(cl, flag);
