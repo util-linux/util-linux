@@ -28,23 +28,23 @@
  * A system on which lsfd is built may have multiple
  * fctl.h files:
  *
- * - /usr/include/asm-generic/fcntl.h (a part of Linux kernel)
  * - /usr/include/asm/fcntl.h         (a part of Linux kernel)
+ * - /usr/include/asm-generic/fcntl.h (a part of Linux kernel)
  * - /usr/include/fcntl.h             (a part of glibc)
  * - /usr/include/bits/fcntl.h        (a part of glibc)
  *
- * For decoding purpose, /usr/include/asm-generic/fcntl.h or
- * /usr/include/asm/fcntl.h is needed.
+ * For decoding purpose, /usr/include/asm/fcntl.h or
+ * /usr/include/asm-generic/fcntl.h is needed.
  *
  * /usr/include/bits/fcntl.h and /usr/include/fcntl.h are
  * not suitable for decoding. They should not be included.
  * /usr/include/fcntl.h includes /usr/include/bits/fcntl.h.
  */
 
-#ifdef HAVE_ASM_GENERIC_FCNTL_H
-#include <asm-generic/fcntl.h>
-#elif HAVE_ASM_FCNTL_H
+#if defined HAVE_ASM_FCNTL_H
 #include <asm/fcntl.h>
+#elif defined HAVE_ASM_GENERIC_FCNTL_H
+#include <asm-generic/fcntl.h>
 #else
 #error "kernel's fcntl.h is not available"
 #endif
