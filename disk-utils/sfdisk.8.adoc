@@ -420,7 +420,7 @@ Since version 2.26 *sfdisk* does not provide the *--DOS*, *--IBM*, *--DOS-extend
 *sfdisk --list --label-nested=mbr /dev/sda*::
 Print protective MBR on device with GPT disk label.
 
-*echo -e ',10M,L\n,10M,L\n,,+\n' | sfdisk /dev/sdc*::
+*echo -e ',10M,L\n,10M,L\n,+,\n' | sfdisk /dev/sdc*::
 Create three Linux partitions, with the default start, the size of the first two partitions is 10MiB, and the last partition fills all available space on the device.
 
 *echo -e 'size=10M, type=L\n size=10M, type=L\n size=+\n' | sfdisk /dev/sdc*::
