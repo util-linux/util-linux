@@ -858,12 +858,13 @@ static void free_ipc(struct ipc *ipc)
 {
 	if (ipc->class->free)
 		ipc->class->free(ipc);
+	free(ipc);
 }
 
 static void finalize_ipc_table(void)
 {
 	for (int i = 0; i < IPC_TABLE_SIZE; i++)
-		list_free(ipc_table.tables, struct ipc, ipcs, free_ipc);
+		list_free(&ipc_table.tables[i], struct ipc, ipcs, free_ipc);
 }
 
 struct ipc *get_ipc(struct file *file)
