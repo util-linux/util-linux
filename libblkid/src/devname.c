@@ -149,33 +149,25 @@ done:
 /* Directories where we will try to search for device names */
 static const char *dirlist[] = { "/dev", "/devfs", "/devices", NULL };
 
+/*
+ * Return 1 if the device is a device-mapper 'leaf' node
+ * not holding any other devices in its hierarchy.
+ */
 static int is_dm_leaf(const char *devname)
 {
-	struct dirent	*de, *d_de;
-	DIR		*dir, *d_dir;
+	struct dirent	*de;
+	DIR		*dir;
 	char		path[NAME_MAX + 18 + 1];
 	int		ret = 1;
 
-	if ((dir = opendir("/sys/block")) == NULL)
+	snprintf(path, sizeof(path), "/sys/block/%s/holders", devname);
+	if ((dir = opendir(path)) == NULL)
 		return 0;
 	while ((de = readdir(dir)) != NULL) {
-		if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, "..") ||
-		    !strcmp(de->d_name, devname) ||
-		    strncmp(de->d_name, "dm-", 3) != 0 ||
-		    strlen(de->d_name) > sizeof(path)-32)
+		if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, ".."))
 			continue;
-		snprintf(path, sizeof(path), "/sys/block/%s/slaves", de->d_name);
-		if ((d_dir = opendir(path)) == NULL)
-			continue;
-		while ((d_de = readdir(d_dir)) != NULL) {
-			if (!strcmp(d_de->d_name, devname)) {
-				ret = 0;
-				break;
-			}
-		}
-		closedir(d_dir);
-		if (!ret)
-			break;
+		ret = 0;
+		break;
 	}
 	closedir(dir);
 	return ret;
