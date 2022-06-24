@@ -27,6 +27,7 @@
 #include "c.h"
 #include "list.h"
 #include "debug.h"
+#include "buffer.h"
 #include "libmount.h"
 
 /*
@@ -469,6 +470,10 @@ extern int mnt_optstr_fix_gid(char **optstr, char *value, size_t valsz, char **n
 extern int mnt_optstr_fix_uid(char **optstr, char *value, size_t valsz, char **next);
 extern int mnt_optstr_fix_secontext(char **optstr, char *value, size_t valsz, char **next);
 extern int mnt_optstr_fix_user(char **optstr);
+
+extern int mnt_buffer_append_option(struct ul_buffer *buf,
+                        const char *name, size_t namesz,
+                        const char *val, size_t valsz);
 
 /* fs.c */
 extern struct libmnt_fs *mnt_copy_mtab_fs(const struct libmnt_fs *fs);

@@ -27,7 +27,6 @@
 
 #include "strutils.h"
 #include "mountP.h"
-#include "buffer.h"
 
 /*
  * Option location
@@ -104,7 +103,7 @@ int mnt_optstr_next_option(char **optstr, char **name, size_t *namesz,
 	return ul_optstr_next(optstr, name, namesz, value, valuesz);
 }
 
-static int __buffer_append_option(struct ul_buffer *buf,
+int mnt_buffer_append_option(struct ul_buffer *buf,
 			const char *name, size_t namesz,
 			const char *val, size_t valsz)
 {
@@ -151,7 +150,7 @@ int mnt_optstr_append_option(char **optstr, const char *name, const char *value)
 	ul_buffer_refer_string(&buf, *optstr);
 	ul_buffer_set_chunksize(&buf, osz + nsz + vsz + 3);	/* to call realloc() only once */
 
-	rc = __buffer_append_option(&buf, name, nsz, value, vsz);
+	rc = mnt_buffer_append_option(&buf, name, nsz, value, vsz);
 
 	*optstr = ul_buffer_get_data(&buf, NULL, NULL);
 	return rc;
@@ -182,7 +181,7 @@ int mnt_optstr_prepend_option(char **optstr, const char *name, const char *value
 
 	ul_buffer_set_chunksize(&buf, osz + nsz + vsz + 3);   /* to call realloc() only once */
 
-	rc = __buffer_append_option(&buf, name, nsz, value, vsz);
+	rc = mnt_buffer_append_option(&buf, name, nsz, value, vsz);
 	if (*optstr && !rc) {
 		rc = ul_buffer_append_data(&buf, ",", 1);
 		if (!rc)
@@ -480,7 +479,7 @@ int mnt_split_optstr(const char *optstr, char **user, char **vfs,
 		if (buf) {
 			if (ul_buffer_is_empty(buf))
 				ul_buffer_set_chunksize(buf, chunsz);
-			rc = __buffer_append_option(buf, name, namesz, val, valsz);
+			rc = mnt_buffer_append_option(buf, name, namesz, val, valsz);
 		}
 		if (rc)
 			break;
@@ -550,7 +549,7 @@ int mnt_optstr_get_options(const char *optstr, char **subset,
 		if (valsz && mnt_optmap_entry_novalue(ent))
 			continue;
 
-		rc = __buffer_append_option(&buf, name, namesz, val, valsz);
+		rc = mnt_buffer_append_option(&buf, name, namesz, val, valsz);
 		if (rc)
 			break;
 	}
@@ -765,7 +764,7 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 			} else
 				sz = strlen(ent->name);
 
-			rc = __buffer_append_option(&buf, ent->name, sz, NULL, 0);
+			rc = mnt_buffer_append_option(&buf, ent->name, sz, NULL, 0);
 			if (rc)
 				goto err;
 		}
