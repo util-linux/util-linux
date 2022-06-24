@@ -151,8 +151,11 @@ int mnt_optstr_append_option(char **optstr, const char *name, const char *value)
 	ul_buffer_set_chunksize(&buf, osz + nsz + vsz + 3);	/* to call realloc() only once */
 
 	rc = mnt_buffer_append_option(&buf, name, nsz, value, vsz);
+	if (!rc)
+		*optstr = ul_buffer_get_data(&buf, NULL, NULL);
+	else
+		ul_buffer_free_data(&buf);
 
-	*optstr = ul_buffer_get_data(&buf, NULL, NULL);
 	return rc;
 }
 /**
@@ -189,7 +192,11 @@ int mnt_optstr_prepend_option(char **optstr, const char *name, const char *value
 		free(*optstr);
 	}
 
-	*optstr = ul_buffer_get_data(&buf, NULL, NULL);
+	if (!rc)
+		*optstr = ul_buffer_get_data(&buf, NULL, NULL);
+	else
+		ul_buffer_free_data(&buf);
+
 	return rc;
 }
 
@@ -766,10 +773,14 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 
 			rc = mnt_buffer_append_option(&buf, ent->name, sz, NULL, 0);
 			if (rc)
-				goto err;
+				break;
 		}
 
-		*optstr = ul_buffer_get_data(&buf, NULL, NULL);
+		if (rc) {
+			ul_buffer_free_data(&buf);
+			goto err;
+		} else
+			*optstr = ul_buffer_get_data(&buf, NULL, NULL);
 	}
 
 	DBG(CXT, ul_debug("new optstr '%s'", *optstr));
