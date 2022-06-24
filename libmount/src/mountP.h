@@ -49,6 +49,7 @@
 #define MNT_DEBUG_LOOP		(1 << 13)
 #define MNT_DEBUG_VERITY	(1 << 14)
 #define MNT_DEBUG_HOOK		(1 << 15)
+#define MNT_DEBUG_OPTLIST	(1 << 16)
 
 #define MNT_DEBUG_ALL		0xFFFF
 
@@ -474,6 +475,44 @@ extern int mnt_optstr_fix_user(char **optstr);
 extern int mnt_buffer_append_option(struct ul_buffer *buf,
                         const char *name, size_t namesz,
                         const char *val, size_t valsz);
+
+/* optlist.h */
+struct libmnt_opt;
+struct libmnt_optlist;
+
+extern struct libmnt_optlist *mnt_new_optlist(void);
+extern void mnt_ref_optlist(struct libmnt_optlist *ls);
+extern void mnt_unref_optlist(struct libmnt_optlist *ls);
+extern int mnt_optlist_register_map(struct libmnt_optlist *ls, const struct libmnt_optmap *map);
+extern int mnt_optlist_remove_opt(struct libmnt_optlist *ls, struct libmnt_opt *opt);
+extern int mnt_optlist_next_opt(struct libmnt_optlist *ls,
+                        struct libmnt_iter *itr, struct libmnt_opt **opt);
+extern struct libmnt_opt *mnt_optlist_get_opt(struct libmnt_optlist *ls,
+                        unsigned long id, const struct libmnt_optmap *map);
+extern struct libmnt_opt *mnt_optlist_get_named(struct libmnt_optlist *ls,
+                          char *name, const struct libmnt_optmap *map);
+extern int mnt_optlist_set_optstr(struct libmnt_optlist *ls, const char *optstr,
+                          const struct libmnt_optmap *map);
+extern int mnt_optlist_append_optstr(struct libmnt_optlist *ls, const char *optstr,
+                        const struct libmnt_optmap *map);
+extern int mnt_optlist_prepend_optstr(struct libmnt_optlist *ls, const char *optstr,
+                        const struct libmnt_optmap *map);
+extern int mnt_optlist_append_flags(struct libmnt_optlist *ls, unsigned long flags,
+                          const struct libmnt_optmap *map);
+extern int mnt_optlist_set_flags(struct libmnt_optlist *ls, unsigned long flags,
+                          const struct libmnt_optmap *map);
+extern int mnt_optlist_insert_flags(struct libmnt_optlist *ls, unsigned long flags,
+                        const struct libmnt_optmap *map,
+                        unsigned long after,
+                        const struct libmnt_optmap *after_map);
+extern int mnt_optlist_get_flags(struct libmnt_optlist *ls, unsigned long *flags,
+                          const struct libmnt_optmap *map);
+extern int mnt_optlist_get_optstr(struct libmnt_optlist *ol, char **optstr,
+                        const struct libmnt_optmap *map);
+extern int mnt_optlist_get_propagation(struct libmnt_optlist *ls);
+extern int mnt_optlist_is_propagation_only(struct libmnt_optlist *ls);
+extern int mnt_opt_has_value(struct libmnt_opt *opt);
+
 
 /* fs.c */
 extern struct libmnt_fs *mnt_copy_mtab_fs(const struct libmnt_fs *fs);

@@ -16,6 +16,7 @@ libmount_la_SOURCES = \
 	libmount/src/iter.c \
 	libmount/src/lock.c \
 	libmount/src/optmap.c \
+	libmount/src/optlist.c \
 	libmount/src/optstr.c \
 	libmount/src/tab.c \
 	libmount/src/tab_diff.c \
