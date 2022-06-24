@@ -2792,7 +2792,7 @@ static void output_special_char(struct issue *ie,
 		localtime_r(&now, &tm);
 
 		if (c == 'd') /* ISO 8601 */
-			fprintf(ie->output, "%s %s %d  %d",
+			fprintf(ie->output, "%s %s %2d  %d",
 				      nl_langinfo(ABDAY_1 + tm.tm_wday),
 				      nl_langinfo(ABMON_1 + tm.tm_mon),
 				      tm.tm_mday,
