@@ -78,7 +78,8 @@ mailto:kzak@redhat.com[Karel Zak]
 *unshare*(1),
 *clone*(2),
 *namespaces*(7),
-*ioctl_ns*(2)
+*ioctl_ns*(2),
+*ip-netns*(8)
 
 include::man-common/bugreports.adoc[]
 
