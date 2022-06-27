@@ -33,6 +33,7 @@ UL_DEBUG_DEFINE_MASKNAMES(libmount) =
 	{ "locks", MNT_DEBUG_LOCKS,	"mtab and utab locking" },
 	{ "loop", MNT_DEBUG_LOOP,	"loop devices routines" },
 	{ "options", MNT_DEBUG_OPTIONS,	"mount options parsing" },
+	{ "optlist", MNT_DEBUG_OPTLIST, "mount options container" },
 	{ "tab", MNT_DEBUG_TAB,		"fstab, mtab, mountinfo routines" },
 	{ "update", MNT_DEBUG_UPDATE,	"mtab, utab updates" },
 	{ "utils", MNT_DEBUG_UTILS,	"misc library utils" },
@@ -68,7 +69,7 @@ void mnt_init_debug(int mask)
 		mnt_get_library_version(&ver);
 		mnt_get_library_features(&features);
 
-		DBG(INIT, ul_debug("library debug mask: 0x%04x", libmount_debug_mask));
+		DBG(INIT, ul_debug("library debug mask: 0x%06x", libmount_debug_mask));
 		DBG(INIT, ul_debug("library version: %s", ver));
 		p = features;
 		while (p && *p)

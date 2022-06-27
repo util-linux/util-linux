@@ -173,7 +173,7 @@ static inline void ul_debug_print_masks(
 	for (d = flagnames; d && d->name; d++) {
 		if (!d->help)
 			continue;
-		fprintf(stderr, "   %-8s [0x%04x] : %s\n",
+		fprintf(stderr, "   %-8s [0x%06x] : %s\n",
 				d->name, d->mask, d->help);
 	}
 }

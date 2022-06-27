@@ -87,6 +87,7 @@ check_PROGRAMS += \
 	test_mount_cache \
 	test_mount_lock \
 	test_mount_optstr \
+	test_mount_optlist \
 	test_mount_tab \
 	test_mount_tab_diff \
 	test_mount_tab_update \
@@ -133,6 +134,11 @@ test_mount_optstr_SOURCES = libmount/src/optstr.c
 test_mount_optstr_CFLAGS = $(libmount_tests_cflags)
 test_mount_optstr_LDFLAGS = $(libmount_tests_ldflags)
 test_mount_optstr_LDADD = $(libmount_tests_ldadd)
+
+test_mount_optlist_SOURCES = libmount/src/optlist.c
+test_mount_optlist_CFLAGS = $(libmount_tests_cflags)
+test_mount_optlist_LDFLAGS = $(libmount_tests_ldflags)
+test_mount_optlist_LDADD = $(libmount_tests_ldadd)
 
 test_mount_tab_SOURCES = libmount/src/tab.c
 test_mount_tab_CFLAGS = $(libmount_tests_cflags)

@@ -51,7 +51,7 @@
 #define MNT_DEBUG_HOOK		(1 << 15)
 #define MNT_DEBUG_OPTLIST	(1 << 16)
 
-#define MNT_DEBUG_ALL		0xFFFF
+#define MNT_DEBUG_ALL		0xFFFFFF
 
 UL_DEBUG_DECLARE_MASK(libmount);
 #define DBG(m, x)	__UL_DBG(libmount, MNT_DEBUG_, m, x)

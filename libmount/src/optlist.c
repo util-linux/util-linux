@@ -52,7 +52,8 @@ struct libmnt_optlist {
 struct libmnt_optlist *mnt_new_optlist(void)
 {
 	struct libmnt_optlist *ls = calloc(1, sizeof(*ls));
-	if (ls)
+
+	if (!ls)
 		return NULL;
 
 	ls->refcount = 1;
@@ -114,6 +115,7 @@ int mnt_optlist_remove_opt(struct libmnt_optlist *ls, struct libmnt_opt *opt)
 	if (!opt)
 		return -EINVAL;
 
+	DBG(OPTLIST, ul_debugobj(ls, " remove %s", opt->name));
 	if (opt->map && opt->ent
 	    && opt->map == ls->linux_map && opt->ent->id & MS_PROPAGATION)
 		ls->propagation &= ~opt->ent->id;
@@ -309,7 +311,7 @@ static int optlist_add_flags(struct libmnt_optlist *ls, unsigned long flags,
 	if (!ls || !map)
 		return -EINVAL;
 
-	if (map && (rc =  mnt_optlist_register_map(ls, map)))
+	if (map && (rc = mnt_optlist_register_map(ls, map)))
 		return rc;
 
 	for (ent = map; ent && ent->name; ent++) {
@@ -346,7 +348,10 @@ static int optlist_add_flags(struct libmnt_optlist *ls, unsigned long flags,
 int mnt_optlist_append_flags(struct libmnt_optlist *ls, unsigned long flags,
 			  const struct libmnt_optmap *map)
 {
-	DBG(OPTLIST, ul_debugobj(ls, "append %lx", flags));
+	if (!ls || !map)
+		return -EINVAL;
+
+	DBG(OPTLIST, ul_debugobj(ls, "append 0x%08lx", flags));
 	return optlist_add_flags(ls, flags, map, NULL);
 }
 
@@ -359,7 +364,7 @@ int mnt_optlist_set_flags(struct libmnt_optlist *ls, unsigned long flags,
 	if (!ls || !map)
 		return -EINVAL;
 
-	DBG(OPTLIST, ul_debugobj(ls, "set %lx", flags));
+	DBG(OPTLIST, ul_debugobj(ls, "set 0x%08lx", flags));
 
 	/* remove all previous options defined by flag */
 	list_for_each_safe(p, next, &ls->opts) {
@@ -384,7 +389,7 @@ int mnt_optlist_insert_flags(struct libmnt_optlist *ls, unsigned long flags,
 	if (!ls || !map || !after || !after_map)
 		return -EINVAL;
 
-	DBG(OPTLIST, ul_debugobj(ls, "insert %lx (after %s)",
+	DBG(OPTLIST, ul_debugobj(ls, "insert 0x%08lx (after %s)",
 				flags, opt->ent ? opt->ent->name : "???"));
 
 	opt = mnt_optlist_get_opt(ls, after, after_map);
@@ -476,3 +481,156 @@ int mnt_opt_has_value(struct libmnt_opt *opt)
 {
 	return opt && opt->value;
 }
+
+#ifdef TEST_PROGRAM
+#include "xalloc.h"
+
+static int mk_optlist(struct libmnt_optlist **ol, const char *optstr)
+{
+	int rc = 0;
+
+	*ol = mnt_new_optlist();
+	if (!*ol)
+		rc = -ENOMEM;
+
+	if (!rc)
+		rc = mnt_optlist_register_map(*ol, mnt_get_builtin_optmap(MNT_LINUX_MAP));
+	if (!rc)
+		rc = mnt_optlist_register_map(*ol, mnt_get_builtin_optmap(MNT_USERSPACE_MAP));
+	if (!rc && optstr)
+		rc = mnt_optlist_append_optstr(*ol, optstr, NULL);
+	if (rc) {
+		mnt_unref_optlist(*ol);
+		*ol = NULL;
+	}
+	return rc;
+}
+
+static void dump_optlist(struct libmnt_optlist *ol)
+{
+	struct libmnt_iter itr;
+	struct libmnt_opt *opt;
+	int i = 0;
+
+	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
+
+	while (mnt_optlist_next_opt(ol, &itr, &opt) == 0) {
+		if (opt->ent)
+			printf("#%02d [%p:0x%08x] name:'%s',\tvalue:'%s'\n",
+				++i, opt->map, opt->ent->id, opt->name, opt->value);
+		else
+			printf("#%02d [         unknown         ] name:'%s',\tvalue:'%s'\n",
+				++i, opt->name, opt->value);
+
+	}
+}
+
+static const struct libmnt_optmap *get_map(const char *name)
+{
+	if (name && strcmp(name, "linux") == 0)
+		return mnt_get_builtin_optmap(MNT_LINUX_MAP);
+	if (name && strcmp(name, "user") == 0)
+		return mnt_get_builtin_optmap(MNT_USERSPACE_MAP);
+	return NULL;
+}
+
+static inline unsigned long str2flg(const char *str)
+{
+	return (unsigned long) strtox64_or_err(str, "connt convert string to flags");
+}
+
+static int test_append_str(struct libmnt_test *ts, int argc, char *argv[])
+{
+	struct libmnt_optlist *ol;
+	int rc;
+
+	if (argc < 3)
+		return -EINVAL;
+	rc = mk_optlist(&ol, argv[1]);
+	if (!rc)
+		rc = mnt_optlist_append_optstr(ol, argv[2], get_map(argv[3]));
+	if (!rc)
+		dump_optlist(ol);
+	mnt_unref_optlist(ol);
+	return rc;
+}
+
+static int test_prepend_str(struct libmnt_test *ts, int argc, char *argv[])
+{
+	struct libmnt_optlist *ol;
+	int rc;
+
+	if (argc < 3)
+		return -EINVAL;
+	rc = mk_optlist(&ol, argv[1]);
+	if (!rc)
+		rc = mnt_optlist_prepend_optstr(ol, argv[2], get_map(argv[3]));
+	if (!rc)
+		dump_optlist(ol);
+	mnt_unref_optlist(ol);
+	return rc;
+}
+
+static int test_set_str(struct libmnt_test *ts, int argc, char *argv[])
+{
+	struct libmnt_optlist *ol;
+	int rc;
+
+	if (argc < 3)
+		return -EINVAL;
+	rc = mk_optlist(&ol, argv[1]);
+	if (!rc)
+		rc = mnt_optlist_set_optstr(ol, argv[2], get_map(argv[3]));
+	if (!rc)
+		dump_optlist(ol);
+	mnt_unref_optlist(ol);
+	return rc;
+}
+
+static int test_append_flg(struct libmnt_test *ts, int argc, char *argv[])
+{
+	struct libmnt_optlist *ol;
+	int rc;
+
+	if (argc < 4)
+		return -EINVAL;
+	rc = mk_optlist(&ol, argv[1]);
+	if (!rc)
+		rc = mnt_optlist_append_flags(ol, str2flg(argv[2]), get_map(argv[3]));
+	if (!rc)
+		dump_optlist(ol);
+	mnt_unref_optlist(ol);
+	return rc;
+}
+
+static int test_set_flg(struct libmnt_test *ts, int argc, char *argv[])
+{
+	struct libmnt_optlist *ol;
+	int rc;
+
+	if (argc < 4)
+		return -EINVAL;
+	rc = mk_optlist(&ol, argv[1]);
+	if (!rc)
+		rc = mnt_optlist_set_flags(ol, str2flg(argv[2]), get_map(argv[3]));
+	if (!rc)
+		dump_optlist(ol);
+	mnt_unref_optlist(ol);
+	return rc;
+}
+
+int main(int argc, char *argv[])
+{
+	struct libmnt_test tss[] = {
+		{ "--append-str",  test_append_str,  "<list> <str> [linux|user]  append to the list" },
+		{ "--prepend-str", test_prepend_str, "<list> <str> [linux|user]  prepend to the list" },
+		{ "--set-str",     test_set_str,     "<list> <str> [linux|user]  set to the list" },
+		{ "--append-flg",  test_append_flg,  "<list> <flg> linux|user    append to the list" },
+		{ "--set-flg",     test_set_flg,     "<list> <flg> linux|user    set to the list" },
+
+	{ NULL }
+
+	};
+	return  mnt_run_test(tss, argc, argv);
+}
+#endif /* TEST_PROGRAM */
