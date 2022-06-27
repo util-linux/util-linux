@@ -155,20 +155,16 @@ static const char *dirlist[] = { "/dev", "/devfs", "/devices", NULL };
  */
 static int is_dm_leaf(const char *devname)
 {
-	struct dirent	*de;
-	DIR		*dir;
-	char		path[NAME_MAX + 18 + 1];
-	int		ret = 1;
+	DIR *dir;
+	char path[NAME_MAX + 18 + 1];
+	int ret;
 
 	snprintf(path, sizeof(path), "/sys/block/%s/holders", devname);
 	if ((dir = opendir(path)) == NULL)
 		return 0;
-	while ((de = readdir(dir)) != NULL) {
-		if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, ".."))
-			continue;
-		ret = 0;
-		break;
-	}
+
+	ret = xreaddir(dir) == NULL ? 1 : 0;	/* 'leaf' has no entries */
+
 	closedir(dir);
 	return ret;
 }
