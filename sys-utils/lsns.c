@@ -1199,6 +1199,28 @@ static int show_namespace_processes(struct lsns *ls, struct lsns_namespace *ns)
 	return 0;
 }
 
+static void free_lsns_process(struct lsns_process *lsns_p)
+{
+	free(lsns_p);
+}
+
+static void free_netnsid_caches(struct netnsid_cache *cache)
+{
+	free(cache);
+}
+
+static void free_lsns_namespace(struct lsns_namespace *lsns_n)
+{
+	free(lsns_n);
+}
+
+static void free_all(struct lsns *ls)
+{
+	list_free(&ls->processes, struct lsns_process, processes, free_lsns_process);
+	list_free(&netnsids_cache, struct netnsid_cache, netnsids, free_netnsid_caches);
+	list_free(&ls->namespaces, struct lsns_namespace, namespaces, free_lsns_namespace);
+}
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
@@ -1432,5 +1454,8 @@ int main(int argc, char *argv[])
 	if (netlink_fd >= 0)
 		close(netlink_fd);
 	free_idcache(uid_cache);
+
+	free_all(&ls);
+
 	return r == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }
