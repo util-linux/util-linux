@@ -47,6 +47,8 @@ struct libmnt_optlist {
 
 	unsigned long		propagation;	/* propagation MS_ flags */
 	struct list_head	opts;		/* parsed options */
+
+	unsigned int merged : 1;		/* don't care about MNT_OPTSRC_* */
 };
 
 struct libmnt_optlist *mnt_new_optlist(void)
@@ -107,6 +109,15 @@ int mnt_optlist_register_map(struct libmnt_optlist *ls, const struct libmnt_optm
 
 	DBG(OPTLIST, ul_debugobj(ls, "registr map %p", map));
 	ls->maps[ls->nmaps++] = map;
+	return 0;
+}
+
+
+int mnt_optlist_set_merged(struct libmnt_optlist *ls, int enable)
+{
+	if (!ls)
+		return -EINVAL;
+	ls->merged = enable ? 1 : 0;
 	return 0;
 }
 
@@ -267,7 +278,14 @@ static int optlist_add_optstr(struct libmnt_optlist *ls, const char *optstr,
 	return 0;
 }
 
-/* replaces all existing options with options from @optstr */
+/*
+ * The library differentiate between options specified by flags and strings by
+ * default.  In this case mnt_optlist_set_optstr() replaces all options
+ * specified by strings for the @map or for all maps if @map is NULL
+  *
+  * If optlist is marked as merged by mnt_optlist_set_merged() than this
+  * function replaced all options for the @map or for all maps if @map is NULL.
+ */
 int mnt_optlist_set_optstr(struct libmnt_optlist *ls, const char *optstr,
 			  const struct libmnt_optmap *map)
 {
@@ -275,13 +293,15 @@ int mnt_optlist_set_optstr(struct libmnt_optlist *ls, const char *optstr,
 
 	DBG(OPTLIST, ul_debugobj(ls, "set %s", optstr));
 
-	/* remove all previous options set by optstr */
+	/* remove all already set options */
 	list_for_each_safe(p, next, &ls->opts) {
 		struct libmnt_opt *opt = list_entry(p, struct libmnt_opt, opts);
 
 		if (opt->external)
 			continue;
-		if (opt->src == MNT_OPTSRC_STRING)
+		if (map && opt->map != map)
+			continue;
+		if (ls->merged || opt->src == MNT_OPTSRC_STRING)
 			mnt_optlist_remove_opt(ls, opt);
 	}
 
@@ -321,6 +341,7 @@ static int optlist_add_flags(struct libmnt_optlist *ls, unsigned long flags,
 		struct libmnt_opt *opt;
 
 		if ((ent->mask & MNT_INVERT)
+		    || ent->name == NULL
 		    || ent->id == 0
 		    || (flags & ent->id) != (unsigned long) ent->id)
 			continue;
@@ -333,8 +354,10 @@ static int optlist_add_flags(struct libmnt_optlist *ls, unsigned long flags,
 			else
 				continue;	/* name=<value> */
 			sz = p - ent->name;
-		} else
+		} else {
+			p = (char *) ent->name;
 			sz = strlen(ent->name); /* alone "name" */
+		}
 
 		opt = optlist_new_opt(ls, p, sz, NULL, 0, map, ent, where);
 		if (!opt)
@@ -366,13 +389,15 @@ int mnt_optlist_set_flags(struct libmnt_optlist *ls, unsigned long flags,
 
 	DBG(OPTLIST, ul_debugobj(ls, "set 0x%08lx", flags));
 
-	/* remove all previous options defined by flag */
+	/* remove all already set options */
 	list_for_each_safe(p, next, &ls->opts) {
 		struct libmnt_opt *opt = list_entry(p, struct libmnt_opt, opts);
 
 		if (opt->external)
 			continue;
-		if (opt->src == MNT_OPTSRC_FLAG)
+		if (map && opt->map != map)
+			continue;
+		if (ls->merged || opt->src == MNT_OPTSRC_FLAG)
 			mnt_optlist_remove_opt(ls, opt);
 	}
 
@@ -402,6 +427,7 @@ int mnt_optlist_get_flags(struct libmnt_optlist *ls, unsigned long *flags,
 {
 	struct libmnt_iter itr;
 	struct libmnt_opt *opt;
+	unsigned long fl = *flags;
 
 	if (!ls || !map)
 		return -EINVAL;
@@ -414,12 +440,13 @@ int mnt_optlist_get_flags(struct libmnt_optlist *ls, unsigned long *flags,
 		if (opt->external)
 			continue;
 		if (opt->ent->mask & MNT_INVERT)
-			*flags &= ~opt->ent->id;
+			fl &= ~opt->ent->id;
 		else
-			*flags |= opt->ent->id;
+			fl |= opt->ent->id;
 	}
+	*flags = fl;
 
-	DBG(OPTLIST, ul_debugobj(ls, "return flags %lx [map=%p]", *flags, map));
+	DBG(OPTLIST, ul_debugobj(ls, "return flags 0x%08lx [map=%p]", *flags, map));
 	return 0;
 }
 
@@ -483,7 +510,6 @@ int mnt_opt_has_value(struct libmnt_opt *opt)
 }
 
 #ifdef TEST_PROGRAM
-#include "xalloc.h"
 
 static int mk_optlist(struct libmnt_optlist **ol, const char *optstr)
 {
@@ -619,17 +645,53 @@ static int test_set_flg(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
+static int test_get_str(struct libmnt_test *ts, int argc, char *argv[])
+{
+	struct libmnt_optlist *ol;
+	char *str = NULL;
+	int rc;
+
+	if (argc < 2)
+		return -EINVAL;
+	rc = mk_optlist(&ol, argv[1]);
+	if (!rc)
+		rc = mnt_optlist_get_optstr(ol, &str, get_map(argv[2]));
+	if (!rc)
+		printf("'%s'\n", str);
+	free(str);
+	mnt_unref_optlist(ol);
+	return rc;
+}
+
+static int test_get_flg(struct libmnt_test *ts, int argc, char *argv[])
+{
+	struct libmnt_optlist *ol;
+	unsigned long flags = 0;
+	int rc;
+
+	if (argc < 3)
+		return -EINVAL;
+	rc = mk_optlist(&ol, argv[1]);
+	if (!rc)
+		rc = mnt_optlist_get_flags(ol, &flags, get_map(argv[2]));
+	if (!rc)
+		printf("0x%08lx\n", flags);
+	mnt_unref_optlist(ol);
+	return rc;
+}
+
 int main(int argc, char *argv[])
 {
 	struct libmnt_test tss[] = {
 		{ "--append-str",  test_append_str,  "<list> <str> [linux|user]  append to the list" },
 		{ "--prepend-str", test_prepend_str, "<list> <str> [linux|user]  prepend to the list" },
 		{ "--set-str",     test_set_str,     "<list> <str> [linux|user]  set to the list" },
-		{ "--append-flg",  test_append_flg,  "<list> <flg> linux|user    append to the list" },
-		{ "--set-flg",     test_set_flg,     "<list> <flg> linux|user    set to the list" },
+		{ "--append-flg",  test_append_flg,  "<list> <flg>  linux|user   append to the list" },
+		{ "--set-flg",     test_set_flg,     "<list> <flg>  linux|user   set to the list" },
+		{ "--get-str",     test_get_str,     "<list> [linux|user]        all options in string" },
+		{ "--get-flg",     test_get_flg,     "<list>  linux|user         all options by flags" },
 
-	{ NULL }
-
+		{ NULL }
 	};
 	return  mnt_run_test(tss, argc, argv);
 }

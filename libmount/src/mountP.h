@@ -512,6 +512,7 @@ extern int mnt_optlist_get_optstr(struct libmnt_optlist *ol, char **optstr,
 extern int mnt_optlist_get_propagation(struct libmnt_optlist *ls);
 extern int mnt_optlist_is_propagation_only(struct libmnt_optlist *ls);
 extern int mnt_opt_has_value(struct libmnt_opt *opt);
+extern int mnt_optlist_set_merged(struct libmnt_optlist *ls, int enable);
 
 
 /* fs.c */
