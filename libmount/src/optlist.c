@@ -45,6 +45,9 @@ struct libmnt_optlist {
 	const struct libmnt_optmap	*maps[MNT_OPTLIST_MAXMAPS];
 	size_t nmaps;
 
+	char *cached_str[MNT_OPTLIST_MAXMAPS];
+	char *cached_all;
+
 	unsigned long		propagation;	/* propagation MS_ flags */
 	struct list_head	opts;		/* parsed options */
 
@@ -77,6 +80,8 @@ void mnt_ref_optlist(struct libmnt_optlist *ls)
 
 void mnt_unref_optlist(struct libmnt_optlist *ls)
 {
+	size_t i;
+
 	if (!ls)
 		return;
 
@@ -90,6 +95,10 @@ void mnt_unref_optlist(struct libmnt_optlist *ls)
 		mnt_optlist_remove_opt(ls, opt);
 	}
 
+	for (i = 0; i < ls->nmaps; i++)
+		free(ls->cached_str[i]);
+
+	free(ls->cached_all);
 	free(ls);
 }
 
@@ -112,13 +121,37 @@ int mnt_optlist_register_map(struct libmnt_optlist *ls, const struct libmnt_optm
 	return 0;
 }
 
-
-int mnt_optlist_set_merged(struct libmnt_optlist *ls, int enable)
+static size_t optlist_get_mapidx(struct libmnt_optlist *ls, const struct libmnt_optmap *map)
 {
-	if (!ls)
-		return -EINVAL;
-	ls->merged = enable ? 1 : 0;
-	return 0;
+	size_t i;
+
+	assert(ls);
+	assert(map);
+
+	for (i = 0; i < ls->nmaps; i++)
+		if (map == ls->maps[i])
+			return i;
+
+	return (size_t) -1;
+}
+
+static void optlist_cleanup_cached(struct libmnt_optlist *ls, const struct libmnt_optmap *map)
+{
+	if (list_empty(&ls->opts))
+		return;
+
+	free(ls->cached_all);
+	ls->cached_all = NULL;
+
+	if (map) {
+		size_t idx = optlist_get_mapidx(ls, map);
+
+		if (idx == (size_t) -1)
+			return;
+
+		free(ls->cached_str[idx]);
+		ls->cached_str[idx] = NULL;
+	}
 }
 
 int mnt_optlist_remove_opt(struct libmnt_optlist *ls, struct libmnt_opt *opt)
@@ -130,6 +163,8 @@ int mnt_optlist_remove_opt(struct libmnt_optlist *ls, struct libmnt_opt *opt)
 	if (opt->map && opt->ent
 	    && opt->map == ls->linux_map && opt->ent->id & MS_PROPAGATION)
 		ls->propagation &= ~opt->ent->id;
+
+	optlist_cleanup_cached(ls, opt->map);
 
 	list_del_init(&opt->opts);
 	free(opt->value);
@@ -199,6 +234,57 @@ struct libmnt_opt *mnt_optlist_get_named(struct libmnt_optlist *ls,
 	}
 
 	return NULL;
+}
+
+static int is_equal_opts(struct libmnt_opt *a, struct libmnt_opt *b)
+{
+	if (a->map != b->map)
+		return 0;
+	if (a->ent && b->ent && a->ent != b->ent)
+		return 0;
+	if ((a->value && !b->value) || (!a->value && b->value))
+		return 0;
+	if (strcmp(a->name, b->name) != 0)
+		return 0;
+	if (a->value && b->value && strcmp(a->value, b->value) != 0)
+		return 0;
+
+	return 1;
+}
+
+int mnt_optlist_merge_opts(struct libmnt_optlist *ls)
+{
+	struct libmnt_iter itr;
+	struct libmnt_opt *opt;
+
+	if (!ls)
+		return -EINVAL;
+
+	DBG(OPTLIST, ul_debugobj(ls, "merging"));
+	ls->merged = 1;
+
+	/* deduplicate, keep last instance of the option only */
+	mnt_reset_iter(&itr, MNT_ITER_BACKWARD);
+
+	while (mnt_optlist_next_opt(ls, &itr, &opt) == 0) {
+		struct libmnt_iter xtr;
+		struct libmnt_opt *x;
+
+		mnt_reset_iter(&xtr, MNT_ITER_FORWARD);
+		while (mnt_optlist_next_opt(ls, &xtr, &x) == 0) {
+			if (opt == x)
+				break;	/* no another instance */
+
+			if (is_equal_opts(opt, x)) {
+				/* me sure @itr does not point to removed item */
+				if (itr.p == &x->opts)
+					itr.p = x->opts.prev;
+				mnt_optlist_remove_opt(ls, x);
+			}
+		}
+	}
+
+	return 0;
 }
 
 static struct libmnt_opt *optlist_new_opt(struct libmnt_optlist *ls,
@@ -275,6 +361,8 @@ static int optlist_add_optstr(struct libmnt_optlist *ls, const char *optstr,
 		opt->src = MNT_OPTSRC_STRING;
 	}
 
+	optlist_cleanup_cached(ls, map);
+
 	return 0;
 }
 
@@ -290,6 +378,9 @@ int mnt_optlist_set_optstr(struct libmnt_optlist *ls, const char *optstr,
 			  const struct libmnt_optmap *map)
 {
 	struct list_head *p, *next;
+
+	if (!ls)
+		return -EINVAL;
 
 	DBG(OPTLIST, ul_debugobj(ls, "set %s", optstr));
 
@@ -311,6 +402,9 @@ int mnt_optlist_set_optstr(struct libmnt_optlist *ls, const char *optstr,
 int mnt_optlist_append_optstr(struct libmnt_optlist *ls, const char *optstr,
 			const struct libmnt_optmap *map)
 {
+	if (!ls)
+		return -EINVAL;
+
 	DBG(OPTLIST, ul_debugobj(ls, "append %s", optstr));
 	return optlist_add_optstr(ls, optstr, map, NULL);
 }
@@ -318,6 +412,9 @@ int mnt_optlist_append_optstr(struct libmnt_optlist *ls, const char *optstr,
 int mnt_optlist_prepend_optstr(struct libmnt_optlist *ls, const char *optstr,
 			const struct libmnt_optmap *map)
 {
+	if (!ls)
+		return -EINVAL;
+
 	DBG(OPTLIST, ul_debugobj(ls, "prepend %s", optstr));
 	return optlist_add_optstr(ls, optstr, map, &ls->opts);
 }
@@ -364,6 +461,8 @@ static int optlist_add_flags(struct libmnt_optlist *ls, unsigned long flags,
 			return -ENOMEM;
 		opt->src = MNT_OPTSRC_FLAG;
 	}
+
+	optlist_cleanup_cached(ls, map);
 
 	return 0;
 }
@@ -450,15 +549,31 @@ int mnt_optlist_get_flags(struct libmnt_optlist *ls, unsigned long *flags,
 	return 0;
 }
 
-int mnt_optlist_get_optstr(struct libmnt_optlist *ls, char **optstr,
+int mnt_optlist_get_optstr(struct libmnt_optlist *ls, const char **optstr,
 			const struct libmnt_optmap *map)
 {
 	struct libmnt_iter itr;
 	struct libmnt_opt *opt;
 	struct ul_buffer buf = UL_INIT_BUFFER;
+	size_t idx = 0;
+	char *str = NULL;
 
 	if (!ls || !optstr)
 		return -EINVAL;
+
+	*optstr = NULL;
+
+	if (map) {
+		idx = optlist_get_mapidx(ls, map);
+		if (idx == (size_t) -1)
+			return -EINVAL;
+		if (ls->cached_str[idx])
+			str = ls->cached_str[idx];
+	} else if (ls->cached_all)
+		str = ls->cached_all;
+
+	if (str)
+		goto done;
 
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
@@ -469,7 +584,6 @@ int mnt_optlist_get_optstr(struct libmnt_optlist *ls, char **optstr,
 			continue;
 		if (!opt->name)
 			continue;
-
 		rc = mnt_buffer_append_option(&buf,
 					opt->name, strlen(opt->name),
 					opt->value,
@@ -480,8 +594,17 @@ int mnt_optlist_get_optstr(struct libmnt_optlist *ls, char **optstr,
 		}
 	}
 
-	*optstr = ul_buffer_get_data(&buf, NULL, NULL);
-	DBG(OPTLIST, ul_debugobj(ls, "return optstr %s", *optstr));
+	str = ul_buffer_get_data(&buf, NULL, NULL);
+	if (map)
+		ls->cached_str[idx] = str;
+	else
+		ls->cached_all = str;
+
+done:
+	if (optstr)
+		*optstr = str;
+
+	DBG(OPTLIST, ul_debugobj(ls, "return optstr %s", str));
 	return 0;
 }
 
@@ -648,17 +771,19 @@ static int test_set_flg(struct libmnt_test *ts, int argc, char *argv[])
 static int test_get_str(struct libmnt_test *ts, int argc, char *argv[])
 {
 	struct libmnt_optlist *ol;
-	char *str = NULL;
+	const char *str = NULL;
 	int rc;
 
 	if (argc < 2)
 		return -EINVAL;
 	rc = mk_optlist(&ol, argv[1]);
-	if (!rc)
+	if (!rc) {
+		mnt_optlist_merge_opts(ol);
 		rc = mnt_optlist_get_optstr(ol, &str, get_map(argv[2]));
+	}
 	if (!rc)
 		printf("'%s'\n", str);
-	free(str);
+
 	mnt_unref_optlist(ol);
 	return rc;
 }

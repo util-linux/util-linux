@@ -385,9 +385,10 @@ struct libmnt_context
 	unsigned long	user_mountflags;	/* MNT_MS_* (loop=, user=, ...) */
 	unsigned long	orig_mountflags;	/* original flags (see mnt_context_merge_mflags()) */
 
-	struct libmnt_cache	*cache;	/* paths cache */
-	struct libmnt_lock	*lock;	/* utab lock */
-	struct libmnt_update	*update;/* utab update */
+	struct libmnt_cache	*cache;		/* paths cache */
+	struct libmnt_lock	*lock;		/* utab lock */
+	struct libmnt_update	*update;	/* utab update */
+	struct libmnt_optlist	*optlist;	/* parsed mount options */
 
 	const char	*mountinfo_path; /* usualy /proc/self/moutinfo */
 
@@ -507,12 +508,12 @@ extern int mnt_optlist_insert_flags(struct libmnt_optlist *ls, unsigned long fla
                         const struct libmnt_optmap *after_map);
 extern int mnt_optlist_get_flags(struct libmnt_optlist *ls, unsigned long *flags,
                           const struct libmnt_optmap *map);
-extern int mnt_optlist_get_optstr(struct libmnt_optlist *ol, char **optstr,
+extern int mnt_optlist_get_optstr(struct libmnt_optlist *ol, const char **optstr,
                         const struct libmnt_optmap *map);
 extern int mnt_optlist_get_propagation(struct libmnt_optlist *ls);
 extern int mnt_optlist_is_propagation_only(struct libmnt_optlist *ls);
 extern int mnt_opt_has_value(struct libmnt_opt *opt);
-extern int mnt_optlist_set_merged(struct libmnt_optlist *ls, int enable);
+extern int mnt_optlist_merge_opts(struct libmnt_optlist *ls);
 
 
 /* fs.c */
@@ -576,6 +577,8 @@ extern int mnt_context_is_veritydev(struct libmnt_context *cxt)
 			__attribute__((nonnull));
 extern int mnt_context_setup_veritydev(struct libmnt_context *cxt);
 extern int mnt_context_deferred_delete_veritydev(struct libmnt_context *cxt);
+
+extern struct libmnt_optlist *mnt_context_get_optlist(struct libmnt_context *cxt);
 
 /* tab_update.c */
 extern int mnt_update_set_filename(struct libmnt_update *upd, const char *filename);
