@@ -51,6 +51,9 @@ The default list of columns may be extended if list is specified in the format +
 *-c*, *--offline*::
 Limit the output to offline CPUs. This option may only be specified together with option *-e* or *-p*.
 
+*--hierarchic*[=_when_]::
+Use subsections in summary output. For backward compatibility, the default is to use subsections only when output on a terminal and flattened output on a non-terminal. The optional argument _when_ can be *never*, *always* or *auto*. If the _when_ argument is omitted, it defaults to "always".
+
 *-e*, *--extended*[=_list_]::
 Display the CPU information in human-readable format.
 +
@@ -61,7 +64,10 @@ When specifying the _list_ argument, the string of option, equal sign (=), and _
 The default list of columns may be extended if list is specified in the format +list (e.g., lscpu -e=+MHZ).
 
 *-J*, *--json*::
-Use JSON output format for the default summary or extended output (see *--extended*).
+Use JSON output format for the default summary or extended output (see
+*--extended*).  For backward compatibility, JSON output follows the default
+summary behavior for non-terminals (e.g., pipes) where subsections are missing. See
+also *--hierarchic*.
 
 *-p*, *--parse*[=_list_]::
 Optimize the command output for easy parsing.

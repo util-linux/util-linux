@@ -172,7 +172,7 @@ static struct lscpu_coldesc coldescs_cache[] =
 	[COL_CACHE_COHERENCYSIZE] = { "COHERENCY-SIZE", N_("minimum amount of data in bytes transferred from memory to cache"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER }
 };
 
-static int is_term = 0;
+static int hierarchic = -1;
 
 UL_DEBUG_DEFINE_MASK(lscpu);
 UL_DEBUG_DEFINE_MASKNAMES(lscpu) = UL_DEBUG_EMPTY_MASKNAMES;
@@ -799,8 +799,8 @@ static struct libscols_line *
 	struct libscols_line *ln;
 	va_list args;
 
-	/* Don't print section lines without data on non-terminal output */
-	if (!is_term && fmt == NULL)
+	/* Don't print section lines without data */
+	if (!hierarchic && fmt == NULL)
 		return NULL;
 
 	ln = scols_table_new_line(tb, sec);
@@ -955,7 +955,7 @@ static void print_summary(struct lscpu_cxt *cxt)
 	if (cxt->json) {
 		scols_table_enable_json(tb, 1);
 		scols_table_set_name(tb, "lscpu");
-	} else if (is_term) {
+	} else if (hierarchic) {
 		struct libscols_symbols *sy = scols_new_symbols();
 
 		if (!sy)
@@ -967,7 +967,7 @@ static void print_summary(struct lscpu_cxt *cxt)
 		scols_unref_symbols(sy);
 	}
 
-	if (scols_table_new_column(tb, "field", 0, is_term ? SCOLS_FL_TREE : 0) == NULL ||
+	if (scols_table_new_column(tb, "field", 0, hierarchic ? SCOLS_FL_TREE : 0) == NULL ||
 	    scols_table_new_column(tb, "data", 0, SCOLS_FL_NOEXTREMES | SCOLS_FL_WRAP) == NULL)
 		err(EXIT_FAILURE, _("failed to initialize output column"));
 
@@ -1080,7 +1080,7 @@ static void print_summary(struct lscpu_cxt *cxt)
 				hdr_caches = 1;
 			}
 
-			snprintf(field, sizeof(field), is_term ? _("%s:") : _("%s cache:"), name);
+			snprintf(field, sizeof(field), hierarchic ? _("%s:") : _("%s cache:"), name);
 			if (cxt->bytes)
 				add_summary_sprint(tb, sec, field,
 						P_("%" PRIu64 " (%d instance)",
@@ -1110,7 +1110,7 @@ static void print_summary(struct lscpu_cxt *cxt)
 			sec = add_summary_e(tb, NULL, _("Caches:"));
 			hdr_caches = 1;
 		}
-		snprintf(field, sizeof(field), is_term ? _("%s:") : _("%s cache:"), ca->name);
+		snprintf(field, sizeof(field), hierarchic ? _("%s:") : _("%s cache:"), ca->name);
 		if (cxt->bytes)
 			add_summary_x(tb, sec, field, "%" PRIu64, ca->size);
 		else {
@@ -1141,7 +1141,7 @@ static void print_summary(struct lscpu_cxt *cxt)
 		sec = add_summary_e(tb, NULL, _("Vulnerabilities:"));
 
 		for (i = 0; i < cxt->nvuls; i++) {
-			snprintf(field, sizeof(field), is_term ?
+			snprintf(field, sizeof(field), hierarchic ?
 					_("%s:") : _("Vulnerability %s:"), cxt->vuls[i].name);
 			add_summary_s(tb, sec, field, cxt->vuls[i].text);
 		}
@@ -1174,6 +1174,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -s, --sysroot <dir>     use specified directory as system root\n"), out);
 	fputs(_(" -x, --hex               print hexadecimal masks rather than lists of CPUs\n"), out);
 	fputs(_(" -y, --physical          print physical instead of logical IDs\n"), out);
+	fputs(_("     --hierarchic[=when] use subsections in summary (auto, never, always)\n"), out);
 	fputs(_("     --output-all        print all available columns for -e, -p or -C\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(25));
@@ -1201,6 +1202,7 @@ int main(int argc, char *argv[])
 	size_t i, ncolumns = 0;
 	enum {
 		OPT_OUTPUT_ALL = CHAR_MAX + 1,
+		OPT_HIERARCHIC,
 	};
 	static const struct option longopts[] = {
 		{ "all",        no_argument,       NULL, 'a' },
@@ -1217,6 +1219,7 @@ int main(int argc, char *argv[])
 		{ "hex",	no_argument,	   NULL, 'x' },
 		{ "version",	no_argument,	   NULL, 'V' },
 		{ "output-all",	no_argument,	   NULL, OPT_OUTPUT_ALL },
+		{ "hierarchic", optional_argument, NULL, OPT_HIERARCHIC },
 		{ NULL,		0, NULL, 0 }
 	};
 
@@ -1287,7 +1290,19 @@ int main(int argc, char *argv[])
 		case OPT_OUTPUT_ALL:
 			all = 1;
 			break;
-
+		case OPT_HIERARCHIC:
+			if (optarg) {
+				if (strcmp(optarg, "auto") == 0)
+					hierarchic = -1;
+				else if (strcmp(optarg, "never") == 0)
+					hierarchic = 0;
+				else if (strcmp(optarg, "always") == 0)
+					hierarchic = 1;
+				else
+					errx(EXIT_FAILURE, _("unsupported --flat argument"));
+			} else
+				hierarchic = 1;
+			break;
 		case 'h':
 			usage();
 		case 'V':
@@ -1325,7 +1340,6 @@ int main(int argc, char *argv[])
 		cxt->show_offline = cxt->mode == LSCPU_OUTPUT_READABLE ? 1 : 0;
 	}
 
-	is_term = isatty(STDOUT_FILENO);	/* global variable */
 
 	lscpu_init_debug();
 
@@ -1343,6 +1357,9 @@ int main(int argc, char *argv[])
 	lscpu_decode_arm(cxt);
 
 	cxt->virt = lscpu_read_virtualization(cxt);
+
+	if (hierarchic == -1)
+		hierarchic = isatty(STDOUT_FILENO);	/* default */
 
 	switch(cxt->mode) {
 	case LSCPU_OUTPUT_SUMMARY:
