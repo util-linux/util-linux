@@ -101,10 +101,10 @@ Log output to the _file_. The default is to log output to the file with name _ty
 Log timing information to the _file_. Two timing file formats are supported now. The classic format is used when only one stream (input or output) logging is enabled. The multi-stream format is used on *--log-io* or when *--log-in* and *--log-out* are used together. See also *--logging-format*.
 
 *-m*, *--logging-format* _format_::
-Force use of _advanced_ or _classic_ format. The default is the classic format to log only output and the advanced format when input as well as output logging is requested.
+Force use of _advanced_ or _classic_ timing log format. The default is the classic format to log only output and the advanced format when input as well as output logging is requested.
 +
 *Classic format*;;
-The log contains two fields, separated by a space. The first field indicates how much time elapsed since the previous output. The second field indicates how many characters were output this time.
+The timing log contains two fields, separated by a space. The first field indicates how much time elapsed since the previous output. The second field indicates how many characters were output this time.
 +
 *Advanced (multi-stream) format*;;
 The first field is an entry type identifier ('I'nput, 'O'utput, 'H'eader, 'S'ignal). The second field is how much time elapsed since the previous entry, and the rest of the entry is type-specific data.
