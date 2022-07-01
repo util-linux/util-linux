@@ -167,7 +167,7 @@ static const struct id_part apple_part[] = {
     { 0x031, "Avalanche-T8110" },
     { 0x032, "Blizzard-T8112" },
     { 0x033, "Avalanche-T8112" },
-   { -1, "unknown" },
+    { -1, "unknown" },
 };
 
 static const struct id_part faraday_part[] = {
