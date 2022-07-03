@@ -16,3 +16,4 @@ what is rename_all* *.? doing here?
 `rename_zz_last_zzz.y' -> `rename_zz_last_zAAzzBB.y'
 `rename_zz_last_zzz.z' -> `rename_zz_last_zAAzzBB.z'
 what is rename*last* doing here?
+`rename_all_empty' -> `_r_e_n_a_m_e___a_l_l___e_m_p_t_y_'

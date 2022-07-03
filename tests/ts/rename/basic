@@ -68,4 +68,8 @@ for i in rename*last* ; do
 	echo "what is $i doing here?" >> $TS_OUTPUT
 done
 
+touch rename_all_empty
+$TS_CMD_RENAME -v -a '' _ rename_all_empty >> $TS_OUTPUT 2>> $TS_ERRLOG
+rm -f _r_e_n_a_m_e___a_l_l___e_m_p_t_y_
+
 ts_finalize

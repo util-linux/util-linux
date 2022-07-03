@@ -57,8 +57,8 @@ static int string_replace(char *from, char *to, char *s, char *orig, char **newn
 	if (where == NULL)
 		return 1;
 	count++;
-	while ((all || last) && p) {
-		p = strstr(p + (last ? 1 : fromlen), from);
+	while ((all || last) && p && *p) {
+		p = strstr(p + (last ? 1 : max(fromlen, (size_t) 1)), from);
 		if (p) {
 			if (all)
 				count++;
@@ -75,8 +75,13 @@ static int string_replace(char *from, char *to, char *s, char *orig, char **newn
 		p = to;
 		while (*p)
 			*q++ = *p++;
-		p = where + fromlen;
-		where = strstr(p, from);
+		if (fromlen > 0) {
+			p = where + fromlen;
+			where = strstr(p, from);
+		} else {
+			p = where;
+			where += 1;
+		}
 	}
 	while (*p)
 		*q++ = *p++;
