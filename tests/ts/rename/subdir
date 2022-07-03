@@ -65,4 +65,24 @@ rm -f rename_path_a/test2 rename_path_b/test2
 
 rmdir rename_path_a rename_path_b
 
+echo "== empty 'from' ==" >> $TS_OUTPUT
+
+touch rename_test
+$TS_CMD_RENAME -v '' _ rename_test >> $TS_OUTPUT 2>> $TS_ERRLOG
+rm -f *rename_test
+
+touch rename_test
+$TS_CMD_RENAME -v '' _ ./rename_test >> $TS_OUTPUT 2>> $TS_ERRLOG
+rm -f *rename_test
+
+touch rename_test
+mkdir rename_subdir
+$TS_CMD_RENAME -v '' rename_subdir/ rename_test >> $TS_OUTPUT 2>> $TS_ERRLOG
+rm -rf rename_subdir
+
+touch rename_test
+mkdir rename_subdir
+$TS_CMD_RENAME -v '' rename_subdir/ ./rename_test >> $TS_OUTPUT 2>> $TS_ERRLOG
+rm -rf rename_subdir
+
 ts_finalize

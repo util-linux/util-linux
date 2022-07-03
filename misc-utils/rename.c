@@ -203,8 +203,13 @@ static int do_file(char *from, char *to, char *s, int verbose, int noact,
 		warn(_("stat of %s failed"), s);
 		return 2;
 	}
-	if (strchr(from, '/') == NULL && strchr(to, '/') == NULL)
+	if (strchr(from, '/') == NULL && strchr(to, '/') == NULL) {
 		file = strrchr(s, '/');
+                /* We're going to search for `from` in `file`. If `from` is
+                   empty, we don't want it to match before the '/'. */
+		if (file != NULL)
+			file++;
+	}
 	if (file == NULL)
 		file = s;
 	if (string_replace(from, to, file, s, &newname) != 0)

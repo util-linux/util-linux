@@ -27,3 +27,8 @@ renxme/aa
 rename_path_a
 rename_path_b
 rename_path_b/test2
+== empty 'from' ==
+`rename_test' -> `_rename_test'
+`./rename_test' -> `./_rename_test'
+`rename_test' -> `rename_subdir/rename_test'
+`./rename_test' -> `rename_subdir/./rename_test'
