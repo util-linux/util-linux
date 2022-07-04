@@ -57,8 +57,8 @@ static int string_replace(char *from, char *to, char *s, char *orig, char **newn
 	if (where == NULL)
 		return 1;
 	count++;
-	while ((all || last) && p) {
-		p = strstr(p + (last ? 1 : fromlen), from);
+	while ((all || last) && p && *p) {
+		p = strstr(p + (last ? 1 : max(fromlen, (size_t) 1)), from);
 		if (p) {
 			if (all)
 				count++;
@@ -75,8 +75,13 @@ static int string_replace(char *from, char *to, char *s, char *orig, char **newn
 		p = to;
 		while (*p)
 			*q++ = *p++;
-		p = where + fromlen;
-		where = strstr(p, from);
+		if (fromlen > 0) {
+			p = where + fromlen;
+			where = strstr(p, from);
+		} else {
+			p = where;
+			where += 1;
+		}
 	}
 	while (*p)
 		*q++ = *p++;
@@ -203,8 +208,13 @@ static int do_file(char *from, char *to, char *s, int verbose, int noact,
 		warn(_("stat of %s failed"), s);
 		return 2;
 	}
-	if (strchr(from, '/') == NULL && strchr(to, '/') == NULL)
+	if (strchr(from, '/') == NULL && strchr(to, '/') == NULL) {
 		file = strrchr(s, '/');
+                /* We're going to search for `from` in `file`. If `from` is
+                   empty, we don't want it to match before the '/'. */
+		if (file != NULL)
+			file++;
+	}
 	if (file == NULL)
 		file = s;
 	if (string_replace(from, to, file, s, &newname) != 0)
