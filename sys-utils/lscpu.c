@@ -39,6 +39,7 @@
 
 #include "closestream.h"
 #include "optutils.h"
+#include "c_strtod.h"
 
 #include "lscpu.h"
 
@@ -349,10 +350,10 @@ static char *get_cell_data(
 		snprintf(buf, bufsz, "%d", cpu->logical_id);
 		break;
 	case COL_CPU_BOGOMIPS:
-		if (cpu->bogomips)
-			xstrncpy(buf, cpu->bogomips, bufsz);
-		else if (cpu->type->bogomips)
-			xstrncpy(buf, cpu->type->bogomips, bufsz);
+		if (!cpu->bogomips && !cpu->type->bogomips)
+			break;
+		snprintf(buf, bufsz, "%.2f", (float) c_strtod(
+				cpu->bogomips ? : cpu->type->bogomips, NULL));
 		break;
 	case COL_CPU_CORE:
 		fill_id(cxt, cpu, core, buf, bufsz);
@@ -918,7 +919,7 @@ print_summary_cputype(struct lscpu_cxt *cxt,
 		add_summary_x(tb, sec, _("CPU min MHz:"), "%.4f", lsblk_cputype_get_minmhz(cxt, ct));
 	}
 	if (ct->bogomips)
-		add_summary_s(tb, sec, _("BogoMIPS:"), ct->bogomips);
+		add_summary_x(tb, sec, _("BogoMIPS:"), "%.2f",  (float) c_strtod(ct->bogomips, NULL));
 
 	if (ct->dispatching >= 0)
 		add_summary_s(tb, sec, _("Dispatching mode:"), _(disp_modes[ct->dispatching]));
