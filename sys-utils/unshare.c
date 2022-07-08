@@ -859,14 +859,14 @@ int main(int argc, char *argv[])
 		case OPT_MAPGROUPS:
 			unshare_flags |= CLONE_NEWUSER;
 			if (!strcmp(optarg, "auto"))
-				groupmap = read_subid_range(_PATH_SUBGID, real_egid);
+				groupmap = read_subid_range(_PATH_SUBGID, real_euid);
 			else
 				groupmap = get_map_range(optarg);
 			break;
 		case OPT_MAPAUTO:
 			unshare_flags |= CLONE_NEWUSER;
 			usermap = read_subid_range(_PATH_SUBUID, real_euid);
-			groupmap = read_subid_range(_PATH_SUBGID, real_egid);
+			groupmap = read_subid_range(_PATH_SUBGID, real_euid);
 			break;
 		case OPT_SETGROUPS:
 			setgrpcmd = setgroups_str2id(optarg);
