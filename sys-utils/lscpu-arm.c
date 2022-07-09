@@ -159,14 +159,14 @@ static const struct id_part marvell_part[] = {
 };
 
 static const struct id_part apple_part[] = {
-    { 0x020, "Icestorm-T8101" },
-    { 0x021, "Firestorm-T8101" },
-    { 0x022, "Icestorm-T8103" },
-    { 0x023, "Firestorm-T8103" },
-    { 0x030, "Blizzard-T8110" },
-    { 0x031, "Avalanche-T8110" },
-    { 0x032, "Blizzard-T8112" },
-    { 0x033, "Avalanche-T8112" },
+    { 0x020, "Icestorm (A14)" },
+    { 0x021, "Firestorm (A14)" },
+    { 0x022, "Icestorm (M1)" },
+    { 0x023, "Firestorm (M1)" },
+    { 0x030, "Blizzard (A15)" },
+    { 0x031, "Avalanche (A15)" },
+    { 0x032, "Blizzard (M2)" },
+    { 0x033, "Avalanche (M2)" },
     { -1, "unknown" },
 };
 
