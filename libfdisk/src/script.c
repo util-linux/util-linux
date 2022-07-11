@@ -1553,11 +1553,11 @@ int fdisk_apply_script_headers(struct fdisk_context *cxt, struct fdisk_script *d
 		 */
 		if (fdisk_script_get_header(dp, "first-lba")) {
 			fdisk_script_set_header(dp, "first-lba", NULL);
-			fdisk_info(dp->cxt, _("Ingnore \"first-lba\" header due to sector size mismatch."));
+			fdisk_info(dp->cxt, _("Ignore \"first-lba\" header due to sector size mismatch."));
 		}
 		if (fdisk_script_get_header(dp, "last-lba")) {
 			fdisk_script_set_header(dp, "last-lba", NULL);
-			fdisk_info(dp->cxt, _("Ingnore \"last-lba\" header due to sector size mismatch."));
+			fdisk_info(dp->cxt, _("Ignore \"last-lba\" header due to sector size mismatch."));
 		}
 	}
 
