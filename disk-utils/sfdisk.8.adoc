@@ -235,15 +235,15 @@ Specify the partition table type. For example *dos* or *gpt*.
 *label-id*::
 Specify the partition table identifier. It should be a hexadecimal number (with a 0x prefix) for MBR and a UUID for GPT.
 *first-lba*::
-Specify the first usable sector for GPT partitions.
+Specify the first usable sector for GPT partitions. This header is ignored if the script and device sector size differ. In this case *sfdisk* uses label specific default.
 *last-lba*::
-Specify the last usable sector for GPT partitions.
+Specify the last usable sector for GPT partitions. This header is ignored if the script and device sector size differ. In this case *sfdisk* uses label specific default.
 *table-length*::
 Specify the maximal number of GPT partitions.
 *grain*::
 Specify minimal size in bytes used to calculate partitions alignment. The default is 1MiB and it's strongly recommended to use the default. Do not modify this variable if you're not sure.
 *sector-size*::
-Specify sector size. This header is informative only and it is not used when *sfdisk* creates a new partition table, in this case the real device specific value is always used and sector size from the dump is ignored.
+Specify sector size. *sfdisk* always uses device sector size. Since version 2.39 *sfdisk* recalculates sizes from dump if the script and device sector size differ.
 
 Note that it is only possible to use header lines before the first partition is specified in the input.
 
