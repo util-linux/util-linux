@@ -63,6 +63,8 @@ struct fdisk_script {
 	size_t			nlines;
 	struct fdisk_label	*label;
 
+	unsigned long		sector_size;		/* as defined by script */
+
 	unsigned int		json : 1,		/* JSON output */
 				force_label : 1;	/* label: <name> specified */
 };
@@ -806,6 +808,19 @@ static int parse_line_header(struct fdisk_script *dp, char *s)
 			return -EINVAL;			/* unknown label name */
 		dp->force_label = 1;
 
+	} else if (strcmp(name, "sector-size") == 0) {
+		uint64_t x = 0;
+
+		if (ul_strtou64(value, &x, 10) != 0)
+			return -EINVAL;
+		if (x > ULONG_MAX || x % 512)
+			return -ERANGE;
+		dp->sector_size = (unsigned long) x;
+
+		if (dp->cxt && dp->sector_size && dp->cxt->sector_size
+		    && dp->sector_size != dp->cxt->sector_size)
+			fdisk_warnx(dp->cxt, _("The script and device sector size differ; the sizes will be recalculated to match the device."));
+
 	} else if (strcmp(name, "unit") == 0) {
 		if (strcmp(value, "sectors") != 0)
 			return -EINVAL;			/* only "sectors" supported */
@@ -966,6 +981,27 @@ static int skip_optional_sign(char **str)
 	return 0;
 }
 
+static int recount_script2device_sectors(struct fdisk_script *dp, uint64_t *num)
+{
+	if (!dp->cxt ||
+	    !dp->sector_size ||
+	    !dp->cxt->sector_size)
+		return 0;
+
+	if (dp->sector_size > dp->cxt->sector_size)
+		 *num *= (dp->sector_size / dp->cxt->sector_size);
+
+	else if (dp->sector_size < dp->cxt->sector_size) {
+		uint64_t x = dp->cxt->sector_size / dp->sector_size;
+
+		if (*num % x)
+			return -EINVAL;
+		*num /= x;
+	}
+
+	return 0;
+}
+
 static int parse_start_value(struct fdisk_script *dp, struct fdisk_partition *pa, char **str)
 {
 	char *tk;
@@ -997,7 +1033,14 @@ static int parse_start_value(struct fdisk_script *dp, struct fdisk_partition *pa
 					goto done;
 				}
 				num /= dp->cxt->sector_size;
+			} else {
+				rc = recount_script2device_sectors(dp, &num);
+				if (rc) {
+					fdisk_warnx(dp->cxt, _("Can't recalculate partition start to the device sectors"));
+					goto done;
+				}
 			}
+
 			fdisk_partition_set_start(pa, num);
 
 			pa->movestart = sign == '-' ? FDISK_MOVE_DOWN :
@@ -1046,8 +1089,15 @@ static int parse_size_value(struct fdisk_script *dp, struct fdisk_partition *pa,
 					goto done;
 				}
 				num /= dp->cxt->sector_size;
-			} else	 /* specified as number of sectors */
+			} else {
+				/* specified as number of sectors */
 				fdisk_partition_size_explicit(pa, 1);
+				rc = recount_script2device_sectors(dp, &num);
+				if (rc) {
+					fdisk_warnx(dp->cxt, _("Can't recalculate partition size to the device sectors"));
+					goto done;
+				}
+			}
 
 			fdisk_partition_set_size(pa, num);
 			pa->resize = sign == '-' ? FDISK_RESIZE_REDUCE :
@@ -1491,6 +1541,25 @@ int fdisk_apply_script_headers(struct fdisk_context *cxt, struct fdisk_script *d
 
 	DBG(SCRIPT, ul_debugobj(dp, "applying script headers"));
 	fdisk_set_script(cxt, dp);
+
+	if (dp->sector_size && dp->cxt->sector_size != dp->sector_size) {
+		/*
+		 * Ignore last and first LBA if device sector size mismatch
+		 * with sector size in script.  It would be possible to
+		 * recalculate it, but for GPT it will not work in some cases
+		 * as these offsets are calculated by relative number of
+		 * sectors. It's better to use library defaults than try
+		 * to be smart ...
+		 */
+		if (fdisk_script_get_header(dp, "first-lba")) {
+			fdisk_script_set_header(dp, "first-lba", NULL);
+			fdisk_info(dp->cxt, _("Ingnore \"first-lba\" header due to sector size mismatch."));
+		}
+		if (fdisk_script_get_header(dp, "last-lba")) {
+			fdisk_script_set_header(dp, "last-lba", NULL);
+			fdisk_info(dp->cxt, _("Ingnore \"last-lba\" header due to sector size mismatch."));
+		}
+	}
 
 	str = fdisk_script_get_header(dp, "grain");
 	if (str) {
