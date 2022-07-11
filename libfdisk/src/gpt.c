@@ -2129,7 +2129,7 @@ static int gpt_write_pmbr(struct fdisk_context *cxt)
 		goto do_write;
 
 	rc = gpt_read(cxt, GPT_PMBR_LBA * cxt->sector_size,
-		      current, cxt->sector_size);
+		      current, sizeof(*current));
 	if (!rc)
 		rc = memcmp(pmbr, current, sizeof(*current));
 
