@@ -486,12 +486,14 @@ extern void mnt_ref_optlist(struct libmnt_optlist *ls);
 extern void mnt_unref_optlist(struct libmnt_optlist *ls);
 extern int mnt_optlist_register_map(struct libmnt_optlist *ls, const struct libmnt_optmap *map);
 extern int mnt_optlist_remove_opt(struct libmnt_optlist *ls, struct libmnt_opt *opt);
+extern int mnt_optlist_remove_named(struct libmnt_optlist *ls, const char *name,
+                             const struct libmnt_optmap *map);
 extern int mnt_optlist_next_opt(struct libmnt_optlist *ls,
                         struct libmnt_iter *itr, struct libmnt_opt **opt);
 extern struct libmnt_opt *mnt_optlist_get_opt(struct libmnt_optlist *ls,
                         unsigned long id, const struct libmnt_optmap *map);
 extern struct libmnt_opt *mnt_optlist_get_named(struct libmnt_optlist *ls,
-                          char *name, const struct libmnt_optmap *map);
+                          const char *name, const struct libmnt_optmap *map);
 extern int mnt_optlist_set_optstr(struct libmnt_optlist *ls, const char *optstr,
                           const struct libmnt_optmap *map);
 extern int mnt_optlist_append_optstr(struct libmnt_optlist *ls, const char *optstr,

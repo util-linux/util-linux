@@ -2205,6 +2205,7 @@ end:
  */
 static int apply_fs(struct libmnt_context *cxt, struct libmnt_fs *fs, unsigned long mflags)
 {
+	struct libmnt_optlist *ls;
 	int rc;
 
 	if (!cxt->optsmode) {
@@ -2241,28 +2242,34 @@ static int apply_fs(struct libmnt_context *cxt, struct libmnt_fs *fs, unsigned l
 	if (rc)
 		goto done;
 
+	ls = mnt_context_get_optlist(cxt);
+	if (!ls) {
+		rc = -ENOMEM;
+		goto done;
+	}
+
 	if (cxt->optsmode & MNT_OMODE_IGNORE)
 		;
 	else if (cxt->optsmode & MNT_OMODE_REPLACE) {
-		rc = mnt_fs_set_options(cxt->fs, mnt_fs_get_options(fs));
+		rc = mnt_optlist_set_optstr(ls, mnt_fs_get_options(fs), NULL);
 
 		/* mount --read-only for non-root users is allowed */
 		if (rc == 0 && (mflags & MS_RDONLY)
 		    && mnt_context_is_restricted(cxt)
 		    && cxt->optsmode == MNT_OMODE_USER)
-			rc = mnt_fs_append_options(cxt->fs, "ro");
+			rc = mnt_optlist_append_optstr(ls, "ro", NULL);
 	}
 	else if (cxt->optsmode & MNT_OMODE_APPEND)
-		rc = mnt_fs_append_options(cxt->fs, mnt_fs_get_options(fs));
+		rc = mnt_optlist_append_optstr(ls, mnt_fs_get_options(fs), NULL);
 
 	else if (cxt->optsmode & MNT_OMODE_PREPEND)
-		rc = mnt_fs_prepend_options(cxt->fs, mnt_fs_get_options(fs));
+		rc = mnt_optlist_prepend_optstr(ls, mnt_fs_get_options(fs), NULL);
 
 	if (!rc)
 		cxt->flags |= MNT_FL_TAB_APPLIED;
 
 done:
-	DBG(CXT, ul_debugobj(cxt, "final entry [rc=%d]:", rc));
+	DBG(CXT, ul_debugobj(cxt, "final entry [rc=%d]", rc));
 	DBG(CXT, mnt_fs_print_debug(cxt->fs, stderr));
 
 	return rc;
@@ -2428,10 +2435,10 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 		rc = -MNT_ERR_NOFSTAB;
 
 
-	} else if (isremount && !iscmdbind) {
+	} else if (isremount && !iscmdbind && cxt->optlist) {
 
-		/* remove "bind" from fstab (or no-op if not present) */
-		mnt_optstr_remove_option(&cxt->fs->optstr, "bind");
+		/* ignore "bind" on remount when the flag is read from fstab */
+		mnt_optlist_remove_named(cxt->optlist, "bind", NULL);
 	}
 	return rc;
 }

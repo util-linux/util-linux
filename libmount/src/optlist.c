@@ -174,6 +174,14 @@ int mnt_optlist_remove_opt(struct libmnt_optlist *ls, struct libmnt_opt *opt)
 	return 0;
 }
 
+int mnt_optlist_remove_named(struct libmnt_optlist *ls, const char *name,
+			     const struct libmnt_optmap *map)
+{
+	struct libmnt_opt *opt = mnt_optlist_get_named(ls, name, map);
+
+	return opt ? mnt_optlist_remove_opt(ls, opt) : 0;
+}
+
 int mnt_optlist_next_opt(struct libmnt_optlist *ls,
 			struct libmnt_iter *itr, struct libmnt_opt **opt)
 {
@@ -214,7 +222,7 @@ struct libmnt_opt *mnt_optlist_get_opt(struct libmnt_optlist *ls,
 }
 
 struct libmnt_opt *mnt_optlist_get_named(struct libmnt_optlist *ls,
-			char *name, const struct libmnt_optmap *map)
+			const char *name, const struct libmnt_optmap *map)
 {
 	struct libmnt_iter itr;
 	struct libmnt_opt *opt;
