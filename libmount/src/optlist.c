@@ -511,6 +511,29 @@ int mnt_optlist_set_flags(struct libmnt_optlist *ls, unsigned long flags,
 	return mnt_optlist_append_flags(ls, flags, map);
 }
 
+int mnt_optlist_remove_flags(struct libmnt_optlist *ls, unsigned long flags,
+			const struct libmnt_optmap *map)
+{
+	struct list_head *p, *next;
+
+	if (!ls || !map)
+		return -EINVAL;
+
+	DBG(OPTLIST, ul_debugobj(ls, "remove 0x%08lx", flags));
+
+	list_for_each_safe(p, next, &ls->opts) {
+		struct libmnt_opt *opt = list_entry(p, struct libmnt_opt, opts);
+
+		if (opt->external || !opt->ent)
+			continue;
+		if (map && opt->map != map)
+			continue;
+		if (opt->ent->id & flags)
+			mnt_optlist_remove_opt(ls, opt);
+	}
+	return 0;
+}
+
 int mnt_optlist_insert_flags(struct libmnt_optlist *ls, unsigned long flags,
 			const struct libmnt_optmap *map,
 			unsigned long after,
@@ -638,6 +661,14 @@ int mnt_optlist_is_propagation_only(struct libmnt_optlist *ls)
 int mnt_opt_has_value(struct libmnt_opt *opt)
 {
 	return opt && opt->value;
+}
+
+int mnt_opt_set_external(struct libmnt_opt *opt, int enable)
+{
+	if (!opt)
+		return -EINVAL;
+	opt->external = enable ? 1 : 0;
+	return 0;
 }
 
 #ifdef TEST_PROGRAM
