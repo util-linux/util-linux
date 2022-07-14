@@ -167,7 +167,6 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	cxt->mountdata = NULL;
 	cxt->flags = MNT_FL_DEFAULT;
 	cxt->noautofs = 1;
-	cxt->is_propagation_only = 0;
 
 	mnt_context_reset_status(cxt);
 	mnt_context_deinit_hooksets(cxt);
@@ -293,7 +292,6 @@ struct libmnt_context *mnt_copy_context(struct libmnt_context *o)
 
 	n->mountflags = o->mountflags;
 	n->mountdata = o->mountdata;
-	n->is_propagation_only = o->is_propagation_only;
 
 	mnt_context_reset_status(n);
 
@@ -2461,17 +2459,20 @@ int mnt_context_tab_applied(struct libmnt_context *cxt)
  */
 int mnt_context_propagation_only(struct libmnt_context *cxt)
 {
+	struct libmnt_optlist *ls;
+
 	if (cxt->action != MNT_ACT_MOUNT)
 		return 0;
 
-	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
+	if (cxt->mountdata || cxt->fs == NULL)
+		return 0;
 
-	return cxt->is_propagation_only
-	       && cxt->mountdata == NULL
-	       && cxt->fs
-	       && cxt->fs->fs_optstr == NULL
-	       && (!cxt->fs->fstype || strcmp(cxt->fs->fstype, "none") == 0)
-	       && (!cxt->fs->source || strcmp(cxt->fs->source, "none") == 0);
+	if ((cxt->fs->fstype && strcmp(cxt->fs->fstype, "none") != 0) ||
+	    (cxt->fs->source && strcmp(cxt->fs->source, "none") == 0))
+		return 0;
+
+	ls = mnt_context_get_optlist(cxt);
+	return ls ? mnt_optlist_is_propagation_only(ls) : 0;
 }
 
 /**
