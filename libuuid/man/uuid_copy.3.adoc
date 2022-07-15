@@ -46,7 +46,7 @@ uuid_copy - copy a UUID value
 
 *#include <uuid.h>*
 
-*void uuid_copy(uuid_t __dst__, uuid_t __src__;*
+*void uuid_copy(uuid_t __dst__, uuid_t __src__);*
 
 == DESCRIPTION
 
