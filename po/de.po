@@ -13065,7 +13065,7 @@ msgstr "Regel-Optionen:\n"
 
 #: schedutils/chrt.c:71
 msgid " -b, --batch          set policy to SCHED_BATCH\n"
-msgstr " -n, --batch          Richtlinie auf SCHED_BATCH setzen\n"
+msgstr " -b, --batch          Richtlinie auf SCHED_BATCH setzen\n"
 
 #: schedutils/chrt.c:72
 msgid " -d, --deadline       set policy to SCHED_DEADLINE\n"
