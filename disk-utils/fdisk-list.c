@@ -351,8 +351,10 @@ char *next_proc_partition(FILE **f)
 		if (!cn)
 			continue;
 
-		if (!is_ide_cdrom_or_tape(cn))
+		if (!is_ide_cdrom_or_tape(cn)){
+			fclose(*f);
 			return cn;
+		}
 	}
 	fclose(*f);
 	*f = NULL;
