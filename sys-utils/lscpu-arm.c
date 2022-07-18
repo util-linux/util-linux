@@ -95,8 +95,8 @@ static const struct id_part arm_part[] = {
 };
 
 static const struct id_part brcm_part[] = {
-    { 0x0f, "Brahma B15" },
-    { 0x100, "Brahma B53" },
+    { 0x0f, "Brahma-B15" },
+    { 0x100, "Brahma-B53" },
     { 0x516, "ThunderX2" },
     { -1, "unknown" },
 };
@@ -109,10 +109,10 @@ static const struct id_part dec_part[] = {
 
 static const struct id_part cavium_part[] = {
     { 0x0a0, "ThunderX" },
-    { 0x0a1, "ThunderX 88XX" },
-    { 0x0a2, "ThunderX 81XX" },
-    { 0x0a3, "ThunderX 83XX" },
-    { 0x0af, "ThunderX2 99xx" },
+    { 0x0a1, "ThunderX-88XX" },
+    { 0x0a2, "ThunderX-81XX" },
+    { 0x0a3, "ThunderX-83XX" },
+    { 0x0af, "ThunderX2-99xx" },
     { -1, "unknown" },
 };
 
@@ -129,11 +129,11 @@ static const struct id_part qcom_part[] = {
     { 0x201, "Kryo" },
     { 0x205, "Kryo" },
     { 0x211, "Kryo" },
-    { 0x800, "Falkor V1/Kryo" },
-    { 0x801, "Kryo V2" },
-    { 0x803, "Kryo 3XX Silver" },
-    { 0x804, "Kryo 4XX Gold" },
-    { 0x805, "Kryo 4XX Silver" },
+    { 0x800, "Falkor-V1/Kryo" },
+    { 0x801, "Kryo-V2" },
+    { 0x803, "Kryo-3XX-Silver" },
+    { 0x804, "Kryo-4XX-Gold" },
+    { 0x805, "Kryo-4XX-Silver" },
     { 0xc00, "Falkor" },
     { 0xc01, "Saphira" },
     { -1, "unknown" },
@@ -152,25 +152,25 @@ static const struct id_part nvidia_part[] = {
 };
 
 static const struct id_part marvell_part[] = {
-    { 0x131, "Feroceon 88FR131" },
+    { 0x131, "Feroceon-88FR131" },
     { 0x581, "PJ4/PJ4b" },
     { 0x584, "PJ4B-MP" },
     { -1, "unknown" },
 };
 
 static const struct id_part apple_part[] = {
-    { 0x020, "Icestorm (A14)" },
-    { 0x021, "Firestorm (A14)" },
-    { 0x022, "Icestorm (M1)" },
-    { 0x023, "Firestorm (M1)" },
-    { 0x024, "Icestorm (M1 Pro)" },
-    { 0x025, "Firestorm (M1 Pro)" },
-    { 0x028, "Icestorm (M1 Max)" },
-    { 0x029, "Firestorm (M1 Max)" },
-    { 0x030, "Blizzard (A15)" },
-    { 0x031, "Avalanche (A15)" },
-    { 0x032, "Blizzard (M2)" },
-    { 0x033, "Avalanche (M2)" },
+    { 0x020, "Icestorm-A14)" },
+    { 0x021, "Firestorm-A14)" },
+    { 0x022, "Icestorm-M1)" },
+    { 0x023, "Firestorm-M1)" },
+    { 0x024, "Icestorm-M1-Pro)" },
+    { 0x025, "Firestorm-M1-Pro)" },
+    { 0x028, "Icestorm-M1-Max)" },
+    { 0x029, "Firestorm-M1-Max)" },
+    { 0x030, "Blizzard-A15" },
+    { 0x031, "Avalanche-A15" },
+    { 0x032, "Blizzard-M2" },
+    { 0x033, "Avalanche-M2" },
     { -1, "unknown" },
 };
 
