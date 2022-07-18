@@ -109,6 +109,7 @@ enum {
 	COL_CPU_SCALMHZ,
 	COL_CPU_MAXMHZ,
 	COL_CPU_MINMHZ,
+	COL_CPU_MODELNAME,
 };
 
 enum {
@@ -155,7 +156,8 @@ static struct lscpu_coldesc coldescs_cpu[] =
 	[COL_CPU_MHZ]          = { "MHZ", N_("shows the currently MHz of the CPU"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
 	[COL_CPU_SCALMHZ]      = { "SCALMHZ%", N_("shows scaling percentage of the CPU frequency"), SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER },
 	[COL_CPU_MAXMHZ]       = { "MAXMHZ", N_("shows the maximum MHz of the CPU"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
-	[COL_CPU_MINMHZ]       = { "MINMHZ", N_("shows the minimum MHz of the CPU"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER }
+	[COL_CPU_MINMHZ]       = { "MINMHZ", N_("shows the minimum MHz of the CPU"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
+	[COL_CPU_MODELNAME]    = { "MODELNAME", N_("shows CPU model name"), 0, 0, SCOLS_JSON_STRING }
 };
 
 static struct lscpu_coldesc coldescs_cache[] =
@@ -442,6 +444,10 @@ static char *get_cell_data(
 	case COL_CPU_MINMHZ:
 		if (cpu->mhz_min_freq)
 			snprintf(buf, bufsz, "%.4f", cpu->mhz_min_freq);
+		break;
+	case COL_CPU_MODELNAME:
+		if (cpu->type && cpu->type->modelname)
+			xstrncpy(buf, cpu->type->modelname, bufsz);
 		break;
 	}
 	return buf;
