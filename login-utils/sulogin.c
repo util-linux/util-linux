@@ -944,7 +944,15 @@ int main(int argc, char **argv)
 			opt_e = 1;
 			break;
 		case 'V':
-			print_version(EXIT_SUCCESS);
+		{
+			static const char *features[] = {
+#ifdef USE_SULOGIN_EMERGENCY_MOUNT
+				"emergency-mount",
+#endif
+				NULL
+			};
+			print_version_with_features(EXIT_SUCCESS, features);
+		}
 		case 'h':
 			usage();
 		default:
