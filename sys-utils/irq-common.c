@@ -428,7 +428,7 @@ struct libscols_table *get_scols_cpus_table(struct irq_output *out,
 	struct libscols_column *cl;
 	struct libscols_line *ln;
 	char colname[sizeof("cpu") + sizeof(stringify_value(LONG_MAX))];
-	size_t i, j;
+	size_t i;
 
 	if (prev) {
 		for (i = 0; i < curr->nr_active_cpu; i++) {
