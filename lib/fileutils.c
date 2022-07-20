@@ -77,7 +77,11 @@ int xmkstemp(char **tmpname, const char *dir, const char *prefix)
 	return fd;
 }
 
+#ifdef F_DUPFD_CLOEXEC
 int dup_fd_cloexec(int oldfd, int lowfd)
+#else
+int dup_fd_cloexec(int oldfd, int lowfd  __attribute__((__unused__)))
+#endif
 {
 	int fd, flags, errno_save;
 
