@@ -41,10 +41,11 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#ifdef USE_SULOGIN_EMERGENCY_MOUNT
+#if defined(USE_SULOGIN_EMERGENCY_MOUNT)
 # include <sys/mount.h>
-# include <linux/fs.h>
-# include <linux/magic.h>
+# ifndef MS_RELATIME
+#  define MS_RELATIME  (1<<21)
+# endif
 # ifndef MNT_DETACH
 #  define MNT_DETACH   2
 # endif
