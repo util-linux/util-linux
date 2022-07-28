@@ -868,8 +868,13 @@ static struct node *dparser_compile(struct parser *parser)
 			return NULL;
 		}
 
-		if (node == node0)
+		if (node == node0) {
+			if (node == NULL)
+				strncpy(parser->errmsg,
+					_("error: empty filter expression"),
+					ERRMSG_LEN - 1);
 			return node;
+		}
 		node = node0;
 	}
 }
@@ -1311,6 +1316,7 @@ struct lsfd_filter *lsfd_filter_new(const char *const expr, struct libscols_tabl
 		strcpy(filter->errmsg, parser.errmsg);
 		return filter;
 	}
+	assert(node);
 	if (parser.paren_level > 0) {
 		node_free(node);
 		strncpy(filter->errmsg, _("error: unbalanced parenthesis: ("), ERRMSG_LEN - 1);
