@@ -274,6 +274,11 @@ static int get_clock(uint32_t *clock_high, uint32_t *clock_low,
 			last.tv_usec = tv2;
 			adjustment = a;
 		}
+		// reset in case of reserved CLOCK_SEQ_CONT
+		if (clock_seq == CLOCK_SEQ_CONT) {
+			last.tv_sec = 0;
+			last.tv_usec = 0;
+		}
 	}
 
 	if ((last.tv_sec == 0) && (last.tv_usec == 0)) {
