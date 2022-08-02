@@ -28,7 +28,7 @@ include::man-common/help-version.adoc[]
 
 == EXIT STATUS
 
-*switch_root* returns 0 on success and 1 on failure.
+*switch_root* returns 1 on failure, it never returns on success.
 
 == NOTES
 
