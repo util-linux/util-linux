@@ -25,7 +25,7 @@ libblkid - block device identification library
 
 == DESCRIPTION
 
-The *libblkid* library is used to identify block devices (disks) as to their content (e.g., filesystem type) as well as extracting additional information such as filesystem labels/volume names, unique identifiers/serial numbers. A common use is to allow use of *LABEL=* and *UUID=* tags instead of hard-coding specific block device names into configuration files.
+The *libblkid* library is used to identify block devices (disks) as to their content (e.g., filesystem type) as well as extracting additional information such as filesystem labels/volume names, unique identifiers/serial numbers. A common use is to allow use of *LABEL=* and *UUID=* tags instead of hard-coding specific block device names into configuration files. See list of all available tags in *TAGS* section.
 
 The low-level part of the library also allows the extraction of information about partitions and block device topology.
 
@@ -42,6 +42,83 @@ In some cases (modular kernels), block devices are not even visible until after 
 == CONFIGURATION FILE
 
 The standard location of the _/etc/blkid.conf_ config file can be overridden by the environment variable *BLKID_CONF*. For more details about the config file see *blkid*(8) man page.
+
+== TAGS
+
+All available tags are listed below. Not all tags are supported for all file systems. To enable a tag, set one of the following flags with *blkid_probe_set_superblocks_flags*():
+
+BLKID_SUBLKS_TYPE::
+
+- TYPE - filesystem type
+
+BLKID_SUBLKS_SECTYPE::
+
+- SEC_TYPE - secondary filesystem type
+
+BLKID_SUBLKS_LABEL::
+
+- LABEL - filesystem label
+
+BLKID_SUBLKS_LABELRAW::
+
+- LABEL_RAW - raw label from FS superblock
+
+BLKID_SUBLKS_UUID::
+
+- UUID - filesystem UUID (lower case)
+
+- UUID_SUB - subvolume uuid (e.g. btrfs)
+
+- LOGUUID - external log UUID (e.g. xfs)
+
+BLKID_SUBLKS_UUIDRAW::
+
+- UUID_RAW - raw UUID from FS superblock
+
+BLKID_SUBLKS_USAGE::
+
+- USAGE - usage string: "raid", "filesystem", etc.
+
+BLKID_SUBLKS_VERSION::
+
+- VERSION - filesystem version
+
+BLKID_SUBLKS_MAGIC::
+
+- SBMAGIC - super block magic string
+
+- SBMAGIC_OFFSET - offset of SBMAGIC
+
+BLKID_SUBLKS_FSINFO::
+
+- FSSIZE - size of filesystem. Note that for XFS this will return the same value
+  as lsblk (without XFS's metadata), but for ext4 it will return the size with
+  metadata and for BTRFS will not count overhead of RAID configuration
+  (redundant data).
+
+- FSLASTBLOCK - last fsblock/total number of fsblocks
+
+- FSBLOCKSIZE - file system block size
+
+The following tags are always enabled::
+
+- BLOCK_SIZE - minimal block size accessible by file system
+
+- MOUNT - cluster mount name (ocfs only)
+
+- EXT_JOURNAL - external journal UUID
+
+- SYSTEM_ID - ISO9660 system identifier
+
+- VOLUME_SET_ID - ISO9660 volume set identifier
+
+- DATA_PREPARER_ID - ISO9660 data identifier
+
+- PUBLISHER_ID - ISO9660 publisher identifier
+
+- APPLICATION_ID - ISO9660 application identifier
+
+- BOOT_SYSTEM_ID - ISO9660 boot system identifier
 
 == AUTHORS
 
