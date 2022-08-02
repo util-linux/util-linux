@@ -1,0 +1,7 @@
+lsfd: error: empty filter expression
+lsfd: error: empty filter expression
+lsfd: error: unbalanced parenthesis: )
+lsfd: error: unexpected token: garbage after OP2
+lsfd: error: bool expression is expected: FD
+lsfd: unknown column: NOSUCHCOLUMN
+lsfd: error: no such column: NOSUCHCOLUMN
