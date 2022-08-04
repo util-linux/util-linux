@@ -1,0 +1,109 @@
+util-linux 2.38.1 Release Notes
+===============================
+
+BSD:
+   - Use byteswap.h and endian.h defined macos when present  [Warner Losh]
+column:
+   - fix buffer overflow when -l specified  [Karel Zak]
+   - fix greedy mode on -l  [Karel Zak]
+configure.ac:
+   - add lsns option  [Fabrice Fontaine]
+dmesg:
+   - fix --since and --until  [Karel Zak]
+docs:
+   - update AUTHORS file  [Karel Zak]
+fstrim:
+   - Remove all skipped entries before de-duplication  [Scott Shambarger]
+   - check for ENOSYS when using --quiet-unsupported  [Narthorn]
+hardlink:
+   - Document '-c' option in manpage  [FeRD (Frank Dana)]
+   - Fix man page docs for '-v/--verbose'  [FeRD (Frank Dana)]
+   - Move -c option in --help  [FeRD (Frank Dana)]
+   - require statfs_magic.h only when reflink support enabled  [Karel Zak]
+   - use info rather than warning message  [Karel Zak]
+irqtop:
+   - fix compiler warning [-Werror=format-truncation=]  [Karel Zak]
+   - remove unused variable  [Karel Zak]
+lib/fileutils:
+   - fix compiler warning  [Karel Zak]
+lib/logindefs:
+   - fix compiler warning [-Werror=format-truncation=]  [Karel Zak]
+lib/strutils:
+   - add ul_strchr_escaped()  [Karel Zak]
+libblkid:
+   - (bsd) fix buffer pointer use [fuzzing]  [Karel Zak]
+   - (hfs) fix label use [fuzzing]  [Karel Zak]
+   - (hfs) fix make sure buffer is large enough  [Karel Zak]
+   - (mac) make sure block size is large enough [fuzzing]  [Karel Zak]
+   - (probe) fix size and offset overflows [fuzzing]  [Karel Zak]
+   - (swap) fix magic string memcmp [fuzzing]  [Karel Zak]
+   - simplify 'leaf' detection  [Karel Zak]
+   - update documentation of BLOCK_SIZE tag  [Andrey Albershteyn]
+libfdisk:
+   - (gpt) Add UUID for Marvell Armada 3700 Boot partition  [Pali Rohár]
+   - meson.build fix typo  [Anatoly Pugachev]
+libmount:
+   - fix and improve utab update on MS_MOVE  [Karel Zak]
+   - when moving a mount point, all sub mount entries in utab should also be updated  [Franck Bui]
+libuuid:
+   - (man) uuid_copy() -- add missing parenthesis  [Andrew Price]
+   - improve cache handling  [d032747]
+logger:
+   - make sure structured data are escaped  [Karel Zak]
+loopdev:
+   - set block_size when using LOOP_CONFIGURE  [Hideki EIRAKU]
+losetup:
+   - Fix typo for the --sector-size docs  [Alberto Ruiz]
+lsblk:
+   - fix JSON output when without --bytes  [Karel Zak]
+lscpu:
+   - keep bogomips locale output locale sensitive  [Karel Zak]
+lsfd:
+   - add static modifier to nodev_table  [Masatake YAMATO]
+   - delete __unused__ attribute for an used parameter  [Masatake YAMATO]
+   - fix compiler warning [-Werror=maybe-uninitialized]  [Karel Zak]
+   - fix crash triggered by an empty filter expression  [Masatake YAMATO]
+lsirq:
+   - improve --sort IRQ  [Karel Zak]
+lslogins:
+   - fix free()  invalid pointer  [Karel Zak]
+   - improve prefixes interpretation  [Karel Zak]
+lsns:
+   - (man) add ip-netns to "SEE ALSO" section  [Masatake YAMATO]
+   - improve dependence on NS_GET_ ioctls  [Karel Zak]
+meson:
+   - fix compilation without systemd  [Rosen Penev]
+   - fix when HAVE_CLOCK_GETTIME is set  [Nicolas Caramelli]
+more:
+   - avoid infinite loop on --squeeze  [Karel Zak]
+po:
+   - merge changes  [Karel Zak]
+   - update de.po (from translationproject.org)  [Mario Blättermann]
+   - update hr.po (from translationproject.org)  [Božidar Putanec]
+   - update ja.po (from translationproject.org)  [Takeshi Hamasaki]
+   - update uk.po (from translationproject.org)  [Yuri Chornoivan]
+po-man:
+   - merge changes  [Karel Zak]
+   - update fr.po (from translationproject.org)  [Frédéric Marchal]
+   - update uk.po (from translationproject.org)  [Yuri Chornoivan]
+sfdiks:
+   - (man) fix example  [Karel Zak]
+sulogin:
+   - fix includes  [Karel Zak]
+switch_root:
+   - (man) fix return code description  [Karel Zak]
+taskset:
+   - fix use of  err_affinity()  [csbo98]
+tests:
+   - don't compile lsfd/mkfds helper on macos, since it's linux only  [Anatoly Pugachev]
+   - fdisk/bsd  update expected output for ppc64le  [Chris Hofstaedtler]
+   - fix misc/setarch run in a docker environment  [Anatoly Pugachev]
+   - make libmount tests more portable  [Karel Zak]
+   - report failed tests  [Karel Zak]
+unshare:
+   - Fix "you (user xxxx) don't exist" error when uid differs from primary gid  [Sol Boucher]
+uuidd:
+   - allow AF_INET in systemd service  [Karel Zak]
+   - remove also PrivateNetwork=yes from systemd service  [Karel Zak]
+zramctl:
+   - fix compiler warning [-Werror=maybe-uninitialized]  [Karel Zak]
