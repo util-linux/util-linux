@@ -39,6 +39,7 @@ struct anon_ops {
 };
 
 static struct anon_ops anon_generic_ops;
+static struct anon_ops anon_pidfd_ops;
 
 static bool unkn_fill_column(struct proc *proc __attribute__((__unused__)),
 			     struct file *file,
@@ -88,7 +89,13 @@ static void unkn_init_content(struct file *file)
 
 	if (major(file->stat.st_dev) == 0
 	    && strncmp(file->name, "anon_inode:", 11) == 0) {
-		unkn->anon_ops = &anon_generic_ops;
+		const char *rest = file->name + 11;
+
+		if (strncmp(rest, "[pidfd]", 7) == 0)
+			unkn->anon_ops = &anon_pidfd_ops;
+		else
+			unkn->anon_ops = &anon_generic_ops;
+
 		if (unkn->anon_ops->init)
 			unkn->anon_ops->init(unkn);
 	}
@@ -112,6 +119,71 @@ static int unkn_handle_fdinfo(struct file *file, const char *key, const char *va
 		return unkn->anon_ops->handle_fdinfo(unkn, key, value);
 	return 0;		/* Should be handled in parents */
 }
+
+/*
+ * pidfd
+ */
+struct anon_pidfd_data {
+	pid_t pid;
+	char *nspid;
+};
+
+static char *anon_pidfd_get_name(struct unkn *unkn)
+{
+	char *str = NULL;
+	struct anon_pidfd_data *data = (struct anon_pidfd_data *)unkn->anon_data;
+
+	char *comm = NULL;
+	struct proc *proc = get_proc(data->pid);
+	if (proc)
+		comm = proc->command;
+
+	xasprintf(&str, "pidfd: pid=%d comm=%s nspid=%s",
+		  data->pid,
+		  comm? comm: "",
+		  data->nspid? data->nspid: "");
+	return str;
+}
+
+static void anon_pidfd_init(struct unkn *unkn)
+{
+	unkn->anon_data = xcalloc(1, sizeof(struct anon_pidfd_data));
+}
+
+static void anon_pidfd_free(struct unkn *unkn)
+{
+	struct anon_pidfd_data *data = (struct anon_pidfd_data *)unkn->anon_data;
+
+	if (data->nspid)
+		free(data->nspid);
+	free(data);
+}
+
+static int anon_pidfd_handle_fdinfo(struct unkn *unkn, const char *key, const char *value)
+{
+	if (strcmp(key, "Pid") == 0) {
+		uint64_t pid;
+
+		int rc = ul_strtou64(value, &pid, 10);
+		if (rc < 0)
+			return 0; /* ignore -- parse failed */
+		((struct anon_pidfd_data *)unkn->anon_data)->pid = (pid_t)pid;
+		return 1;
+	}
+	else if (strcmp(key, "NSpid") == 0) {
+		((struct anon_pidfd_data *)unkn->anon_data)->nspid = xstrdup(value);
+		return 1;
+
+	}
+	return 0;
+}
+
+static struct anon_ops anon_pidfd_ops = {
+	.get_name = anon_pidfd_get_name,
+	.init = anon_pidfd_init,
+	.free = anon_pidfd_free,
+	.handle_fdinfo = anon_pidfd_handle_fdinfo,
+};
 
 /*
  * generic (fallback implementation)
