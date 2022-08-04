@@ -18,7 +18,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.37-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-28 13:24+0200\n"
+"POT-Creation-Date: 2022-08-04 10:46+0200\n"
 "PO-Revision-Date: 2021-06-05 22:04-0300\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <ldpbr-translation@lists.sourceforge.net>\n"
@@ -65,7 +65,7 @@ msgstr "argumentos insuficientes"
 #: login-utils/sulogin.c:497 login-utils/sulogin.c:534
 #: login-utils/utmpdump.c:142 login-utils/utmpdump.c:367
 #: login-utils/utmpdump.c:391 login-utils/vipw.c:257 login-utils/vipw.c:275
-#: misc-utils/findmnt.c:1227 misc-utils/logger.c:1229 misc-utils/mcookie.c:119
+#: misc-utils/findmnt.c:1227 misc-utils/logger.c:1253 misc-utils/mcookie.c:119
 #: misc-utils/uuidd.c:231 sys-utils/blkdiscard.c:230 sys-utils/blkzone.c:144
 #: sys-utils/dmesg.c:541 sys-utils/eject.c:501 sys-utils/eject.c:696
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:116 sys-utils/fstrim.c:105
@@ -667,7 +667,7 @@ msgstr "Você tem certeza de que deseja gravar a tabela de partição no disco? 
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr "Digite \"sim\" ou \"não\" ou pressione ESC para sair do diálogo."
 
-#: disk-utils/cfdisk.c:2516 login-utils/lslogins.c:219 sys-utils/lscpu.c:325
+#: disk-utils/cfdisk.c:2516 login-utils/lslogins.c:219 sys-utils/lscpu.c:326
 #: sys-utils/lsmem.c:266
 msgid "yes"
 msgstr "sim"
@@ -889,7 +889,7 @@ msgstr "trilha final definida pelo usuário excede máximo específico da mídia
 msgid "user defined start track exceeds the user defined end track"
 msgstr "trilha inicial definida pelo usuário excede a trilha final definida pelo mesmo"
 
-#: disk-utils/fdformat.c:253 misc-utils/logger.c:1032
+#: disk-utils/fdformat.c:253 misc-utils/logger.c:1056
 msgid "close failed"
 msgstr "close falhou"
 
@@ -1185,7 +1185,7 @@ msgstr "As propriedades de dispositivo (tamanho e geometria do setor) devem ser 
 #: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:188
 #: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1580
 #: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
-#: sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656 sys-utils/mount.c:877
+#: sys-utils/lscpu.c:1319 sys-utils/lsmem.c:656 sys-utils/mount.c:877
 #: sys-utils/mount.c:885 sys-utils/mount.c:932 sys-utils/mount.c:945
 #: sys-utils/mount.c:1017 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
 #: sys-utils/swapoff.c:258 sys-utils/swapon.c:1006 sys-utils/switch_root.c:270
@@ -1273,31 +1273,31 @@ msgid "failed to allocate iterator"
 msgstr "falha ao alocar iterador"
 
 #: disk-utils/fdisk-list.c:126 disk-utils/fdisk-list.c:247
-#: disk-utils/partx.c:669 login-utils/lslogins.c:1073 misc-utils/fincore.c:356
-#: misc-utils/findmnt.c:1763 misc-utils/lsblk.c:2240 misc-utils/lsfd.c:1634
+#: disk-utils/partx.c:669 login-utils/lslogins.c:1095 misc-utils/fincore.c:356
+#: misc-utils/findmnt.c:1763 misc-utils/lsblk.c:2240 misc-utils/lsfd.c:1635
 #: misc-utils/lslocks.c:472 misc-utils/uuidparse.c:252 misc-utils/wipefs.c:157
-#: sys-utils/losetup.c:325 sys-utils/lscpu.c:586 sys-utils/lscpu.c:741
-#: sys-utils/lscpu.c:952 sys-utils/lsipc.c:354 sys-utils/prlimit.c:311
+#: sys-utils/losetup.c:325 sys-utils/lscpu.c:587 sys-utils/lscpu.c:742
+#: sys-utils/lscpu.c:953 sys-utils/lsipc.c:354 sys-utils/prlimit.c:311
 #: sys-utils/rfkill.c:474 sys-utils/swapon.c:296 sys-utils/wdctl.c:349
 #: sys-utils/zramctl.c:496 text-utils/column.c:210
 msgid "failed to allocate output table"
 msgstr "falha ao alocar tabela da saída"
 
 #: disk-utils/fdisk-list.c:167 disk-utils/fdisk-list.c:271
-#: disk-utils/partx.c:583 login-utils/lslogins.c:1133 misc-utils/fincore.c:123
+#: disk-utils/partx.c:583 login-utils/lslogins.c:1155 misc-utils/fincore.c:123
 #: misc-utils/findmnt.c:788 misc-utils/findmnt.c:806 misc-utils/lsblk.c:1166
-#: misc-utils/lsfd.c:856 misc-utils/lslocks.c:400 misc-utils/uuidparse.c:154
+#: misc-utils/lsfd.c:857 misc-utils/lslocks.c:400 misc-utils/uuidparse.c:154
 #: misc-utils/wipefs.c:202 sys-utils/losetup.c:348 sys-utils/losetup.c:377
-#: sys-utils/lscpu.c:500 sys-utils/lscpu.c:776 sys-utils/lscpu.c:808
+#: sys-utils/lscpu.c:501 sys-utils/lscpu.c:777 sys-utils/lscpu.c:809
 #: sys-utils/lsipc.c:486 sys-utils/lsipc.c:567 sys-utils/lsipc.c:669
 #: sys-utils/lsipc.c:761 sys-utils/lsipc.c:925 sys-utils/prlimit.c:240
 #: sys-utils/rfkill.c:389 sys-utils/swapon.c:179 sys-utils/wdctl.c:299
-#: sys-utils/zramctl.c:414 text-utils/column.c:472 text-utils/column.c:497
+#: sys-utils/zramctl.c:414 text-utils/column.c:487 text-utils/column.c:512
 msgid "failed to allocate output line"
 msgstr "falha ao alocar linha de saída"
 
 #: disk-utils/fdisk-list.c:177 disk-utils/fdisk-list.c:278
-#: disk-utils/partx.c:646 login-utils/lslogins.c:1237 misc-utils/fincore.c:159
+#: disk-utils/partx.c:646 login-utils/lslogins.c:1259 misc-utils/fincore.c:159
 #: misc-utils/findmnt.c:792 misc-utils/findmnt.c:811 misc-utils/lsblk.c:1207
 #: misc-utils/lsfd-bdev.c:48 misc-utils/lsfd-bdev.c:61
 #: misc-utils/lsfd-bdev.c:87 misc-utils/lsfd-bdev.c:89
@@ -1313,10 +1313,10 @@ msgstr "falha ao alocar linha de saída"
 #: misc-utils/lsfd-sock.c:75 misc-utils/lsfd-unkn.c:39
 #: misc-utils/lsfd-unkn.c:53 misc-utils/lsfd-unkn.c:55 misc-utils/lslocks.c:459
 #: misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242 sys-utils/losetup.c:305
-#: sys-utils/lscpu.c:568 sys-utils/lscpu.c:783 sys-utils/lscpu.c:812
-#: sys-utils/lscpu.c:822 sys-utils/lsipc.c:526 sys-utils/lsipc.c:651
+#: sys-utils/lscpu.c:569 sys-utils/lscpu.c:784 sys-utils/lscpu.c:813
+#: sys-utils/lscpu.c:823 sys-utils/lsipc.c:526 sys-utils/lsipc.c:651
 #: sys-utils/prlimit.c:275 sys-utils/rfkill.c:417 sys-utils/swapon.c:227
-#: sys-utils/wdctl.c:327 sys-utils/zramctl.c:481 text-utils/column.c:481
+#: sys-utils/wdctl.c:327 sys-utils/zramctl.c:481 text-utils/column.c:496
 msgid "failed to add output data"
 msgstr "falha ao adicionar dados de saída"
 
@@ -1810,7 +1810,7 @@ msgstr "%s não está montado\n"
 #: disk-utils/fsck.cramfs.c:188 disk-utils/fsck.cramfs.c:244
 #: disk-utils/fsck.cramfs.c:265 disk-utils/sfdisk.c:308 libfdisk/src/bsd.c:647
 #: login-utils/last.c:215 login-utils/last.c:252 login-utils/sulogin.c:721
-#: misc-utils/hardlink.c:795 schedutils/uclampset.c:111
+#: misc-utils/hardlink.c:802 schedutils/uclampset.c:111
 #: sys-utils/ctrlaltdel.c:44 sys-utils/irq-common.c:259 sys-utils/rfkill.c:216
 #: sys-utils/setpriv.c:265 term-utils/setterm.c:746 term-utils/setterm.c:802
 #: term-utils/setterm.c:806 term-utils/setterm.c:813
@@ -3755,11 +3755,11 @@ msgid "%s: failed to set up loop device"
 msgstr "%s: falha ao configurar dispositivo de loop"
 
 #: disk-utils/partx.c:161 login-utils/lslogins.c:322 misc-utils/fincore.c:92
-#: misc-utils/findmnt.c:383 misc-utils/lsblk.c:333 misc-utils/lsfd.c:309
+#: misc-utils/findmnt.c:383 misc-utils/lsblk.c:333 misc-utils/lsfd.c:310
 #: misc-utils/lslocks.c:351 misc-utils/uuidparse.c:125 misc-utils/wipefs.c:132
-#: sys-utils/irq-common.c:102 sys-utils/losetup.c:112 sys-utils/lscpu.c:196
-#: sys-utils/lscpu.c:211 sys-utils/lsipc.c:233 sys-utils/lsmem.c:178
-#: sys-utils/lsns.c:257 sys-utils/prlimit.c:291 sys-utils/rfkill.c:162
+#: sys-utils/irq-common.c:102 sys-utils/losetup.c:112 sys-utils/lscpu.c:197
+#: sys-utils/lscpu.c:212 sys-utils/lsipc.c:233 sys-utils/lsmem.c:178
+#: sys-utils/lsns.c:259 sys-utils/prlimit.c:291 sys-utils/rfkill.c:162
 #: sys-utils/swapon.c:150 sys-utils/wdctl.c:179 sys-utils/zramctl.c:147
 #, c-format
 msgid "unknown column: %s"
@@ -3858,9 +3858,9 @@ msgstr[0] "#%2d: %9ju-%9ju (%9ju setor, %6ju MB)\n"
 msgstr[1] "#%2d: %9ju-%9ju (%9ju setores, %6ju MB)\n"
 
 #: disk-utils/partx.c:680 misc-utils/fincore.c:370 misc-utils/findmnt.c:1792
-#: misc-utils/lsblk.c:2284 misc-utils/lsfd.c:356 misc-utils/lsfd.c:1648
-#: misc-utils/lslocks.c:487 sys-utils/losetup.c:339 sys-utils/lscpu.c:598
-#: sys-utils/lscpu.c:754 sys-utils/prlimit.c:320 sys-utils/rfkill.c:487
+#: misc-utils/lsblk.c:2284 misc-utils/lsfd.c:357 misc-utils/lsfd.c:1649
+#: misc-utils/lslocks.c:487 sys-utils/losetup.c:339 sys-utils/lscpu.c:599
+#: sys-utils/lscpu.c:755 sys-utils/prlimit.c:320 sys-utils/rfkill.c:487
 #: sys-utils/swapon.c:305 sys-utils/wdctl.c:360
 msgid "failed to allocate output column"
 msgstr "falha ao alocar coluna de saída"
@@ -4185,13 +4185,15 @@ msgid "Leaving."
 msgstr "Deixando."
 
 #: disk-utils/sfdisk.c:554
-#, c-format
-msgid "cannot read at offset: %zu; continue"
+#, fuzzy, c-format
+#| msgid "cannot read at offset: %zu; continue"
+msgid "cannot read at offset: %ju; continue"
 msgstr "não foi possível ler na posição: %zu; continuar"
 
 #: disk-utils/sfdisk.c:565
-#, c-format
-msgid "cannot write at offset: %zu; continue"
+#, fuzzy, c-format
+#| msgid "cannot write at offset: %zu; continue"
+msgid "cannot write at offset: %ju; continue"
 msgstr "não foi possível escrever na posição: %zu; continuar"
 
 #: disk-utils/sfdisk.c:594
@@ -4479,7 +4481,7 @@ msgstr " Exemplo:\n"
 msgid "   , 4G     Creates a 4GiB partition at default start offset.\n"
 msgstr "   , 4G     Cria uma partição de 4GB na posição inicial padrão.\n"
 
-#: disk-utils/sfdisk.c:1545 sys-utils/dmesg.c:1672
+#: disk-utils/sfdisk.c:1545 sys-utils/dmesg.c:1674
 msgid "unsupported command"
 msgstr "comando sem suporte"
 
@@ -5998,6 +6000,10 @@ msgstr "HiFive Unleashed BBL"
 
 #: include/pt-gpt-partnames.h:268
 msgid "Haiku BFS"
+msgstr ""
+
+#: include/pt-gpt-partnames.h:271
+msgid "Marvell Armada 3700 Boot partition"
 msgstr ""
 
 #: include/pt-mbr-partnames.h:1
@@ -8198,7 +8204,7 @@ msgstr "format_iso_time: estouro de buffer."
 msgid "time %<PRId64> is out of range."
 msgstr "tempo %<PRId64> está fora do intervalo."
 
-#: login-utils/chfn.c:91 login-utils/chsh.c:69 login-utils/lslogins.c:1402
+#: login-utils/chfn.c:91 login-utils/chsh.c:69 login-utils/lslogins.c:1424
 #, c-format
 msgid " %s [options] [<username>]\n"
 msgstr " %s [opções] [usuário>]\n"
@@ -8410,7 +8416,7 @@ msgstr "Shell alterado.\n"
 msgid "Usage: %s <passwordfile> <username>...\n"
 msgstr "Uso: %s <arquivo-senha> <usuário>...\n"
 
-#: login-utils/last.c:175 login-utils/lslogins.c:1393 sys-utils/dmesg.c:1340
+#: login-utils/last.c:175 login-utils/lslogins.c:1415 sys-utils/dmesg.c:1340
 #: sys-utils/lsipc.c:283
 #, c-format
 msgid "unknown time format: %s"
@@ -8793,11 +8799,11 @@ msgstr "Erro na leitura de login.defs: %s"
 msgid "couldn't fetch %s: %s"
 msgstr "não foi possível obter %s: %s"
 
-#: login-utils/logindefs.c:537
+#: login-utils/logindefs.c:538
 msgid "hush login status: restore original IDs failed"
 msgstr "status de login da hush: restauração de IDs originais falhou"
 
-#: login-utils/lslogins.c:218 sys-utils/lscpu.c:325 sys-utils/lsmem.c:266
+#: login-utils/lslogins.c:218 sys-utils/lscpu.c:326 sys-utils/lsmem.c:266
 msgid "no"
 msgstr "não"
 
@@ -8814,11 +8820,15 @@ msgid "user ID"
 msgstr "ID do usuário"
 
 #: login-utils/lslogins.c:229
-msgid "password not required"
+#, fuzzy
+#| msgid "password not required"
+msgid "password not defined"
 msgstr "senha não é necessária"
 
 #: login-utils/lslogins.c:229
-msgid "Password not required"
+#, fuzzy
+#| msgid "Password not required"
+msgid "Password not required (empty)"
 msgstr "Senha não necessária"
 
 #: login-utils/lslogins.c:230
@@ -9027,16 +9037,16 @@ msgstr "falha ao compor o texto de tempo"
 msgid "failed to get supplementary groups"
 msgstr "falha ao obter grupos suplementares"
 
-#: login-utils/lslogins.c:1053
+#: login-utils/lslogins.c:1075
 #, c-format
 msgid "cannot found '%s'"
 msgstr "não foi possível localizar \"%s\""
 
-#: login-utils/lslogins.c:1233
+#: login-utils/lslogins.c:1255
 msgid "internal error: unknown column"
 msgstr "erro interno: coluna desconhecida"
 
-#: login-utils/lslogins.c:1341
+#: login-utils/lslogins.c:1363
 #, c-format
 msgid ""
 "\n"
@@ -9045,117 +9055,117 @@ msgstr ""
 "\n"
 "Último login:\n"
 
-#: login-utils/lslogins.c:1405
+#: login-utils/lslogins.c:1427
 msgid "Display information about known users in the system.\n"
 msgstr "Exibe informação sobre usuários conhecidos no sistema.\n"
 
-#: login-utils/lslogins.c:1408
+#: login-utils/lslogins.c:1430
 msgid " -a, --acc-expiration     display info about passwords expiration\n"
 msgstr " -a, --acc-expiration     exibe informação sobre expiração de senhas\n"
 
-#: login-utils/lslogins.c:1409
+#: login-utils/lslogins.c:1431
 msgid " -c, --colon-separate     display data in a format similar to /etc/passwd\n"
 msgstr " -c, --colon-separate     exibe dados em um formato similar a /etc/passwd\n"
 
-#: login-utils/lslogins.c:1410 sys-utils/lsipc.c:311
+#: login-utils/lslogins.c:1432 sys-utils/lsipc.c:311
 msgid " -e, --export             display in an export-able output format\n"
 msgstr " -e, --export             exibe em um formato de saída exportável\n"
 
-#: login-utils/lslogins.c:1411
+#: login-utils/lslogins.c:1433
 msgid " -f, --failed             display data about the users' last failed logins\n"
 msgstr " -f, --failed             exibe dados das últimas falhas de login do usuário\n"
 
-#: login-utils/lslogins.c:1412
+#: login-utils/lslogins.c:1434
 msgid " -G, --supp-groups        display information about groups\n"
 msgstr " -G, --supp-groups        exibe informação sobre grupos\n"
 
-#: login-utils/lslogins.c:1413
+#: login-utils/lslogins.c:1435
 msgid " -g, --groups=<groups>    display users belonging to a group in <groups>\n"
 msgstr " -g, --groups=<grupos>    exibe usuários pertencentes a um grupo em <grupos>\n"
 
-#: login-utils/lslogins.c:1414
+#: login-utils/lslogins.c:1436
 msgid " -L, --last               show info about the users' last login sessions\n"
 msgstr ""
 " -L, --last               mostra informações sobre sessões do último login\n"
 "                            dos usuários\n"
 
-#: login-utils/lslogins.c:1415
+#: login-utils/lslogins.c:1437
 msgid " -l, --logins=<logins>    display only users from <logins>\n"
 msgstr " -l, --logins=<logins>    exibe apenas usuários de <logins>\n"
 
-#: login-utils/lslogins.c:1416 sys-utils/lsipc.c:313
+#: login-utils/lslogins.c:1438 sys-utils/lsipc.c:313
 msgid " -n, --newline            display each piece of information on a new line\n"
 msgstr " -n, --newline            exibe cada pedaço de informação em uma nova linha\n"
 
-#: login-utils/lslogins.c:1417 sys-utils/lsipc.c:306
+#: login-utils/lslogins.c:1439 sys-utils/lsipc.c:306
 msgid "     --noheadings         don't print headings\n"
 msgstr "     --noheadings         não exibe cabeçalhos\n"
 
-#: login-utils/lslogins.c:1418 sys-utils/lsipc.c:307
+#: login-utils/lslogins.c:1440 sys-utils/lsipc.c:307
 msgid "     --notruncate         don't truncate output\n"
 msgstr "     --notruncate         não trunca a saída\n"
 
-#: login-utils/lslogins.c:1419 sys-utils/lsipc.c:315
+#: login-utils/lslogins.c:1441 sys-utils/lsipc.c:315
 msgid " -o, --output[=<list>]    define the columns to output\n"
 msgstr " -o, --output[=<lista>]   define as colunas a serem exibidas\n"
 
-#: login-utils/lslogins.c:1420
+#: login-utils/lslogins.c:1442
 msgid "     --output-all         output all columns\n"
 msgstr "     --output-all         mostra todas as colunas\n"
 
-#: login-utils/lslogins.c:1421
+#: login-utils/lslogins.c:1443
 msgid " -p, --pwd                display information related to login by password.\n"
 msgstr " -p, --pwd                exibe informação relacionada a login por senha.\n"
 
-#: login-utils/lslogins.c:1422 sys-utils/lsipc.c:317
+#: login-utils/lslogins.c:1444 sys-utils/lsipc.c:317
 msgid " -r, --raw                display in raw mode\n"
 msgstr " -r, --raw                exibe em modo não tratado\n"
 
-#: login-utils/lslogins.c:1423
+#: login-utils/lslogins.c:1445
 msgid " -s, --system-accs        display system accounts\n"
 msgstr " -s, --system-accs        exibe contas de sistema\n"
 
-#: login-utils/lslogins.c:1424 sys-utils/lsipc.c:308
+#: login-utils/lslogins.c:1446 sys-utils/lsipc.c:308
 msgid "     --time-format=<type> display dates in short, full or iso format\n"
 msgstr "     --time-format=<tipo> exibe datas no formato, curto, completo ou iso\n"
 
-#: login-utils/lslogins.c:1425
+#: login-utils/lslogins.c:1447
 msgid " -u, --user-accs          display user accounts\n"
 msgstr " -u, --user-accs          exibe contas de usuários\n"
 
-#: login-utils/lslogins.c:1426 sys-utils/lsipc.c:319
+#: login-utils/lslogins.c:1448 sys-utils/lsipc.c:319
 msgid " -y, --shell              use column names to be usable as shell variable identifiers\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1427
+#: login-utils/lslogins.c:1449
 msgid " -Z, --context            display SELinux contexts\n"
 msgstr " -Z, --context            exibe contextos SELinux\n"
 
-#: login-utils/lslogins.c:1428
+#: login-utils/lslogins.c:1450
 msgid " -z, --print0             delimit user entries with a nul character\n"
 msgstr " -z, --print0             delimita entradas de usuários com um caractere nulo\n"
 
-#: login-utils/lslogins.c:1429
+#: login-utils/lslogins.c:1451
 msgid "     --wtmp-file <path>   set an alternate path for wtmp\n"
 msgstr ""
 "     --wtmp-file <caminho>\n"
 "                          define um caminho alternativo para wtmp\n"
 
-#: login-utils/lslogins.c:1430
+#: login-utils/lslogins.c:1452
 msgid "     --btmp-file <path>   set an alternate path for btmp\n"
 msgstr ""
 "     --btmp-file <caminho>\n"
 "                          define um caminho alternativo para btmp\n"
 
-#: login-utils/lslogins.c:1431
+#: login-utils/lslogins.c:1453
 msgid "     --lastlog <path>     set an alternate path for lastlog\n"
 msgstr "     --lastlog <caminho>  define um caminho alternativo para lastlog\n"
 
-#: login-utils/lslogins.c:1624
+#: login-utils/lslogins.c:1646
 msgid "failed to request selinux state"
 msgstr "falha ao requisitar estado de selinux"
 
-#: login-utils/lslogins.c:1638 login-utils/lslogins.c:1643
+#: login-utils/lslogins.c:1660 login-utils/lslogins.c:1665
 msgid "Only one user may be specified. Use -l for multiple users."
 msgstr "Apenas um usuário pode ser especificado. Use -l para múltiplos usuários."
 
@@ -9201,10 +9211,10 @@ msgstr "grupo inexistente"
 msgid "setuid failed"
 msgstr "setuid falhou"
 
-#: login-utils/nologin.c:28 misc-utils/lsfd.c:1251 misc-utils/lslocks.c:545
+#: login-utils/nologin.c:28 misc-utils/lsfd.c:1252 misc-utils/lslocks.c:545
 #: misc-utils/mcookie.c:83 misc-utils/uuidd.c:95 misc-utils/uuidgen.c:26
 #: sys-utils/dmesg.c:276 sys-utils/ipcmk.c:67 sys-utils/irqtop.c:257
-#: sys-utils/lscpu.c:1160 sys-utils/lsipc.c:292 sys-utils/lsirq.c:57
+#: sys-utils/lscpu.c:1161 sys-utils/lsipc.c:292 sys-utils/lsirq.c:57
 #: sys-utils/lsmem.c:519 sys-utils/readprofile.c:106 sys-utils/rtcwake.c:99
 #: term-utils/scriptlive.c:57 term-utils/scriptreplay.c:47
 #: term-utils/setterm.c:381 text-utils/line.c:31
@@ -10094,7 +10104,7 @@ msgstr "falha ao fazer fstat: %s"
 msgid " %s [options] file...\n"
 msgstr " %s [opções] arquivo...\n"
 
-#: misc-utils/fincore.c:265 misc-utils/lsfd.c:1255
+#: misc-utils/fincore.c:265 misc-utils/lsfd.c:1256
 msgid " -J, --json            use JSON output format\n"
 msgstr " -J, --json            usa formato de saída JSON\n"
 
@@ -10102,15 +10112,15 @@ msgstr " -J, --json            usa formato de saída JSON\n"
 msgid " -b, --bytes           print sizes in bytes rather than in human readable format\n"
 msgstr " -b, --bytes           exibe tamanhos em bytes em vez de um formato legível\n"
 
-#: misc-utils/fincore.c:267 misc-utils/lsfd.c:1256
+#: misc-utils/fincore.c:267 misc-utils/lsfd.c:1257
 msgid " -n, --noheadings      don't print headings\n"
 msgstr " -n, --noheadings      não exibe os cabeçalhos\n"
 
-#: misc-utils/fincore.c:268 misc-utils/lsfd.c:1257
+#: misc-utils/fincore.c:268 misc-utils/lsfd.c:1258
 msgid " -o, --output <list>   output columns\n"
 msgstr " -o, --output <lista>  mostra colunas\n"
 
-#: misc-utils/fincore.c:269 misc-utils/lsfd.c:1258
+#: misc-utils/fincore.c:269 misc-utils/lsfd.c:1259
 msgid " -r, --raw             use raw output format\n"
 msgstr " -r, --raw             usa formato de saída não tratado\n"
 
@@ -10271,7 +10281,7 @@ msgstr "não foi possível ler %s"
 
 #: misc-utils/findmnt.c:1145 misc-utils/findmnt.c:1211
 #: misc-utils/findmnt-verify.c:101 misc-utils/findmnt-verify.c:529
-#: sys-utils/fstrim.c:316 sys-utils/mount.c:132 sys-utils/mount.c:180
+#: sys-utils/fstrim.c:326 sys-utils/mount.c:132 sys-utils/mount.c:180
 #: sys-utils/mount.c:247 sys-utils/swapoff.c:63 sys-utils/swapoff.c:173
 #: sys-utils/swapon.c:247 sys-utils/swapon.c:290 sys-utils/swapon.c:750
 #: sys-utils/umount.c:190
@@ -10388,12 +10398,12 @@ msgstr " -f, --first-only       exibe apenas o primeiro sistema de arquivos enco
 msgid " -i, --invert           invert the sense of matching\n"
 msgstr " -i, --invert           inverte o sentido das ocorrências\n"
 
-#: misc-utils/findmnt.c:1352 misc-utils/lslocks.c:552 sys-utils/lsns.c:1214
+#: misc-utils/findmnt.c:1352 misc-utils/lslocks.c:552 sys-utils/lsns.c:1216
 #: sys-utils/rfkill.c:639
 msgid " -J, --json             use JSON output format\n"
 msgstr " -J, --json             usa formato de saída JSON\n"
 
-#: misc-utils/findmnt.c:1353 sys-utils/lsns.c:1215
+#: misc-utils/findmnt.c:1353 sys-utils/lsns.c:1217
 msgid " -l, --list             use list format output\n"
 msgstr " -l, --list             usa saída no formato de lista\n"
 
@@ -10475,7 +10485,7 @@ msgstr " -t, --types <lista>    limita o conjunto de sistemas de arquivos por ti
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
 msgstr " -U, --uniq             ignora sistemas de arquivos com alvos duplicados\n"
 
-#: misc-utils/findmnt.c:1372 misc-utils/lslocks.c:559 sys-utils/lsns.c:1221
+#: misc-utils/findmnt.c:1372 misc-utils/lslocks.c:559 sys-utils/lsns.c:1223
 msgid " -u, --notruncate       don't truncate text in columns\n"
 msgstr " -u, --notruncate       não trunca texto em colunas\n"
 
@@ -10518,7 +10528,7 @@ msgstr "--poll só aceita um arquivo, mas mais especificamente por --tab-file"
 msgid "options --target and --source can't be used together with command line element that is not an option"
 msgstr "as opções --target e --source não pode ser usada junto com um elemento de linha de comando que não é uma opção"
 
-#: misc-utils/findmnt.c:1740 sys-utils/fstrim.c:295
+#: misc-utils/findmnt.c:1740 sys-utils/fstrim.c:305
 msgid "failed to initialize libmount cache"
 msgstr "falha ao inicializar o cache do libmount"
 
@@ -10783,204 +10793,208 @@ msgstr "faltando o argumento optstring"
 msgid "internal error, contact the author."
 msgstr "erro interno, entre em contato com o autor."
 
-#: misc-utils/hardlink.c:262
+#: misc-utils/hardlink.c:269
 #, c-format
 msgid "could not compile regular expression %s: %s"
 msgstr "não foi possível compilar a expressão regular %s: %s"
 
-#: misc-utils/hardlink.c:345
+#: misc-utils/hardlink.c:352
 msgid "Mode:"
 msgstr "Modo:"
 
-#: misc-utils/hardlink.c:346
+#: misc-utils/hardlink.c:353
 msgid "dry-run"
 msgstr "dry-run (teste)"
 
-#: misc-utils/hardlink.c:346
+#: misc-utils/hardlink.c:353
 msgid "real"
 msgstr "real"
 
-#: misc-utils/hardlink.c:347
+#: misc-utils/hardlink.c:354
 msgid "Method:"
 msgstr ""
 
-#: misc-utils/hardlink.c:348
+#: misc-utils/hardlink.c:355
 msgid "Files:"
 msgstr "Arquivos:"
 
-#: misc-utils/hardlink.c:349 misc-utils/hardlink.c:355
-#: misc-utils/hardlink.c:359
+#: misc-utils/hardlink.c:356 misc-utils/hardlink.c:362
+#: misc-utils/hardlink.c:366
 #, fuzzy, c-format
 #| msgid "%-15s %zu files"
 msgid "%-25s %zu files"
 msgstr "%-15s %zu arquivos"
 
-#: misc-utils/hardlink.c:349
+#: misc-utils/hardlink.c:356
 msgid "Linked:"
 msgstr "Vinculado:"
 
-#: misc-utils/hardlink.c:352
+#: misc-utils/hardlink.c:359
 #, fuzzy, c-format
 #| msgid "%-15s %zu xattrs"
 msgid "%-25s %zu xattrs"
 msgstr "%-15s %zu xattrs"
 
-#: misc-utils/hardlink.c:352 misc-utils/hardlink.c:355
+#: misc-utils/hardlink.c:359 misc-utils/hardlink.c:362
 msgid "Compared:"
 msgstr "Comparado:"
 
-#: misc-utils/hardlink.c:359
+#: misc-utils/hardlink.c:366
 msgid "Skipped reflinks:"
 msgstr ""
 
-#: misc-utils/hardlink.c:366
+#: misc-utils/hardlink.c:373
 msgid "Saved:"
 msgstr "Salvo:"
 
-#: misc-utils/hardlink.c:369
+#: misc-utils/hardlink.c:376
 #, fuzzy, c-format
 #| msgid "%-15s %<PRId64>.%06<PRId64> seconds"
 msgid "%-25s %<PRId64>.%06<PRId64> seconds"
 msgstr "%-15s %<PRId64>.%06<PRId64> segundos"
 
-#: misc-utils/hardlink.c:369
+#: misc-utils/hardlink.c:376
 msgid "Duration:"
 msgstr "Duração:"
 
-#: misc-utils/hardlink.c:407
+#: misc-utils/hardlink.c:414
 #, c-format
 msgid "cannot get xattr names for %s"
 msgstr "não foi possível obter nomes xattr para %s"
 
-#: misc-utils/hardlink.c:423
+#: misc-utils/hardlink.c:430
 #, c-format
 msgid "cannot get xattr value of %s for %s"
 msgstr "não foi possível obter valor xattr de %s para %s"
 
-#: misc-utils/hardlink.c:503
+#: misc-utils/hardlink.c:510
 #, c-format
 msgid "Comparing xattrs of %s to %s"
 msgstr "Comparando xattrs de %s para %s"
 
-#: misc-utils/hardlink.c:671
+#: misc-utils/hardlink.c:678
 msgid "Reflinking failed, fallback to hardlinking"
 msgstr ""
 
-#: misc-utils/hardlink.c:706
+#: misc-utils/hardlink.c:713
 #, fuzzy, c-format
 #| msgid "%sLinking %s to %s (-%s)"
 msgid "%s%sLinking %s to %s (-%s)"
 msgstr "%sCriando link %s a %s (-%s)"
 
-#: misc-utils/hardlink.c:707
+#: misc-utils/hardlink.c:714
 msgid "[DryRun] "
 msgstr "[DryRun] "
 
-#: misc-utils/hardlink.c:721
+#: misc-utils/hardlink.c:728
 #, c-format
 msgid "cannot link %s to %s"
 msgstr "não foi possível criar link %s a %s"
 
-#: misc-utils/hardlink.c:724
+#: misc-utils/hardlink.c:731
 #, c-format
 msgid "cannot rename %s to %s"
 msgstr "não foi possível renomear %s para %s"
 
-#: misc-utils/hardlink.c:810
+#: misc-utils/hardlink.c:817
 #, c-format
 msgid "Skipped %s (smaller than configured size)"
 msgstr "Ignorado %s (menor que o tamanho configurado)"
 
-#: misc-utils/hardlink.c:820
+#: misc-utils/hardlink.c:827
 #, fuzzy, c-format
 #| msgid "Skipped %s (smaller than configured size)"
 msgid "Skipped %s (greater than configured size)"
 msgstr "Ignorado %s (menor que o tamanho configurado)"
 
-#: misc-utils/hardlink.c:847
+#: misc-utils/hardlink.c:854
 #, fuzzy, c-format
 #| msgid "target specified more than once"
 msgid "Skipped %s (specified more than once)"
 msgstr "alvo especificado mais de uma vez"
 
-#: misc-utils/hardlink.c:886
+#: misc-utils/hardlink.c:893
 msgid "cannot continue"
 msgstr "não foi possível continuar"
 
-#: misc-utils/hardlink.c:1054
+#: misc-utils/hardlink.c:1061
 #, fuzzy, c-format
 #| msgid "unsupported GPT attribute bit '%s'"
 msgid "Skipped (attributes mismatch) %s"
 msgstr "sem suporte ao bit \"%s\" atributo de GPT"
 
-#: misc-utils/hardlink.c:1060
+#: misc-utils/hardlink.c:1067
 #, c-format
 msgid "Skipped (already reflink) %s"
 msgstr ""
 
-#: misc-utils/hardlink.c:1081
+#: misc-utils/hardlink.c:1088
 #, c-format
 msgid "Skipped (content mismatch) %s"
 msgstr ""
 
-#: misc-utils/hardlink.c:1111
+#: misc-utils/hardlink.c:1118
 #, c-format
 msgid " %s [options] <directory>|<file> ...\n"
 msgstr " %s [opções] <diretório>|<arquivo> ...\n"
 
-#: misc-utils/hardlink.c:1115
+#: misc-utils/hardlink.c:1122
 msgid "Consolidate duplicate files using hardlinks.\n"
 msgstr "Consolida arquivos duplicados usando links físicos.\n"
 
-#: misc-utils/hardlink.c:1118
+#: misc-utils/hardlink.c:1125
 msgid " -v, --verbose              verbose output (repeat for more verbosity)\n"
 msgstr " -v, --verbose              saída detalhada (repita para mais detalhes)\n"
 
-#: misc-utils/hardlink.c:1119
+#: misc-utils/hardlink.c:1126
 msgid " -q, --quiet                quiet mode - don't print anything\n"
 msgstr " -q, --quiet                modo silencioso - não mostra nada\n"
 
-#: misc-utils/hardlink.c:1120
+#: misc-utils/hardlink.c:1127
 msgid " -n, --dry-run              don't actually link anything\n"
 msgstr " -n, --dry-run              não chega a criar links\n"
 
-#: misc-utils/hardlink.c:1121
+#: misc-utils/hardlink.c:1128
 #, fuzzy
 #| msgid " -f, --file <file>        log the contents of this file\n"
 msgid " -y, --method <name>        file content comparison method\n"
 msgstr " -f, --file <arquivo>     registra o conteúdo deste arquivo\n"
 
-#: misc-utils/hardlink.c:1123
+#: misc-utils/hardlink.c:1130
 msgid " -f, --respect-name         filenames have to be identical\n"
 msgstr " -f, --respect-name         nomes de arquivos devem ser idênticos\n"
 
-#: misc-utils/hardlink.c:1124
+#: misc-utils/hardlink.c:1131
 msgid " -p, --ignore-mode          ignore changes of file mode\n"
 msgstr " -p, --ignore-mode          ignora alterações do modo de arquivo\n"
 
-#: misc-utils/hardlink.c:1125
+#: misc-utils/hardlink.c:1132
 msgid " -o, --ignore-owner         ignore owner changes\n"
 msgstr " -o, --ignore-owner         ignora alterações de proprietário\n"
 
-#: misc-utils/hardlink.c:1126
+#: misc-utils/hardlink.c:1133
 msgid " -t, --ignore-time          ignore timestamps (when testing for equality)\n"
 msgstr " -t, --ignore-time          ignora marcas de tempo (ao testar por igualdade)\n"
 
-#: misc-utils/hardlink.c:1128
+#: misc-utils/hardlink.c:1134
+msgid " -c, --content              compare only file contents, same as -pot\n"
+msgstr " -c, --content              compara apenas conteúdos de arquivos, igual a -pot\n"
+
+#: misc-utils/hardlink.c:1136
 msgid " -X, --respect-xattrs       respect extended attributes\n"
 msgstr " -X, --respect-xattrs       respeita atributos estendidos\n"
 
-#: misc-utils/hardlink.c:1131
+#: misc-utils/hardlink.c:1139
 #, fuzzy
 #| msgid " -E, --echo <when>             echo input in session (auto, always or never)\n"
 msgid "     --reflink[=<when>]     create clone/CoW copies (auto, always, never)\n"
 msgstr " -E, --echo <quando>           ecoa entrada na sessão (auto, always ou never)\n"
 
-#: misc-utils/hardlink.c:1132
+#: misc-utils/hardlink.c:1140
 msgid "     --skip-reflinks        skip already cloned files (enabled on --reflink)\n"
 msgstr ""
 
-#: misc-utils/hardlink.c:1134
+#: misc-utils/hardlink.c:1142
 msgid ""
 " -m, --maximize             maximize the hardlink count, remove the file with\n"
 "                              lowest hardlink count\n"
@@ -10988,11 +11002,11 @@ msgstr ""
 " -m, --maximize             maximiza a contagem de links físicos, remove o\n"
 "                              arquivo com a menor contagem de links físicos\n"
 
-#: misc-utils/hardlink.c:1136
+#: misc-utils/hardlink.c:1144
 msgid " -M, --minimize             reverse the meaning of -m\n"
 msgstr " -M, --minimize             inverte o significado de -m\n"
 
-#: misc-utils/hardlink.c:1137
+#: misc-utils/hardlink.c:1145
 msgid ""
 " -O, --keep-oldest          keep the oldest file of multiple equal files\n"
 "                              (lower precedence than minimize/maximize)\n"
@@ -11001,21 +11015,21 @@ msgstr ""
 "                              arquivos iguais (menor precedência do que\n"
 "                              minimizar/maximizar)\n"
 
-#: misc-utils/hardlink.c:1139
+#: misc-utils/hardlink.c:1147
 msgid " -x, --exclude <regex>      regular expression to exclude files\n"
 msgstr " -x, --exclude <regex>      expressão regular para excluir arquivos\n"
 
-#: misc-utils/hardlink.c:1140
+#: misc-utils/hardlink.c:1148
 msgid " -i, --include <regex>      regular expression to include files/dirs\n"
 msgstr " -i, --include <regex>      expressão regular para incluir arquivos/dirs\n"
 
-#: misc-utils/hardlink.c:1141
+#: misc-utils/hardlink.c:1149
 msgid " -s, --minimum-size <size>  minimum size for files.\n"
 msgstr ""
 " -s, --minimum-size <tamanho>\n"
 "                            tamanho mínimo para arquivos.\n"
 
-#: misc-utils/hardlink.c:1142
+#: misc-utils/hardlink.c:1150
 #, fuzzy
 #| msgid " -s, --minimum-size <size>  minimum size for files.\n"
 msgid " -S, --maximum-size <size>  maximum size for files.\n"
@@ -11023,82 +11037,78 @@ msgstr ""
 " -s, --minimum-size <tamanho>\n"
 "                            tamanho mínimo para arquivos.\n"
 
-#: misc-utils/hardlink.c:1143
+#: misc-utils/hardlink.c:1151
 #, fuzzy
 #| msgid " -S, --size <size>        maximum size for a single message\n"
 msgid " -b, --io-size <size>       I/O buffer size for file reading (speedup, using more RAM)\n"
 msgstr " -S, --size <tamanho>     tamanho máximo de uma única mensagem\n"
 
-#: misc-utils/hardlink.c:1144
+#: misc-utils/hardlink.c:1152
 #, fuzzy
 #| msgid " -S, --size <size>        maximum size for a single message\n"
 msgid " -r, --cache-size <size>    memory limit for cached file content data\n"
 msgstr " -S, --size <tamanho>     tamanho máximo de uma única mensagem\n"
 
-#: misc-utils/hardlink.c:1145
-msgid " -c, --content              compare only file contents, same as -pot\n"
-msgstr " -c, --content              compara apenas conteúdos de arquivos, igual a -pot\n"
-
-#: misc-utils/hardlink.c:1256
+#: misc-utils/hardlink.c:1263
 #, fuzzy
 #| msgid "failed to parse size"
 msgid "failed to parse minimum size"
 msgstr "falha ao analisar o tamanho"
 
-#: misc-utils/hardlink.c:1259
+#: misc-utils/hardlink.c:1266
 #, fuzzy
 #| msgid "failed to parse size"
 msgid "failed to parse maximum size"
 msgstr "falha ao analisar o tamanho"
 
-#: misc-utils/hardlink.c:1262
+#: misc-utils/hardlink.c:1269
 #, fuzzy
 #| msgid "failed to parse size"
 msgid "failed to parse cache size"
 msgstr "falha ao analisar o tamanho"
 
-#: misc-utils/hardlink.c:1265
+#: misc-utils/hardlink.c:1272
 #, fuzzy
 #| msgid "failed to parse size"
 msgid "failed to parse I/O size"
 msgstr "falha ao analisar o tamanho"
 
-#: misc-utils/hardlink.c:1278
+#: misc-utils/hardlink.c:1285
 #, fuzzy, c-format
 #| msgid "unsupported lock mode: %s"
 msgid "unsupported reflink mode; %s"
 msgstr "sem suporte a modo de trava: %s"
 
-#: misc-utils/hardlink.c:1338
+#: misc-utils/hardlink.c:1345
 msgid "cannot register exit handler"
 msgstr "não foi possível registrar o manipulador de saída"
 
-#: misc-utils/hardlink.c:1343
+#: misc-utils/hardlink.c:1350
 msgid "no directory or file specified"
 msgstr "nenhum diretório ou arquivo especificado"
 
-#: misc-utils/hardlink.c:1349
+#: misc-utils/hardlink.c:1356
 #, c-format
 msgid "cannot initialize %s method, use 'memcmp' fallback"
 msgstr ""
 
-#: misc-utils/hardlink.c:1354
+#: misc-utils/hardlink.c:1361
 #, fuzzy
 #| msgid "failed to initialize loopcxt"
 msgid "failed to initialize files comparior"
 msgstr "falha ao inicializar loopcxt"
 
-#: misc-utils/hardlink.c:1366
+#: misc-utils/hardlink.c:1373
 msgid "Scanning [device/inode/links]:"
 msgstr ""
 
 # realpath é uma variável no código do arquivo fonte -- Rafael
-#: misc-utils/hardlink.c:1371 sys-utils/fstrim.c:96
+#: misc-utils/hardlink.c:1378 sys-utils/fstrim.c:96
 #, c-format
 msgid "cannot get realpath: %s"
 msgstr "não foi possível obter realpath: %s"
 
-#: misc-utils/hardlink.c:1375
+#: misc-utils/hardlink.c:1382
 #, c-format
 msgid "cannot process %s"
 msgstr "não foi possível processar %s"
@@ -11282,104 +11292,104 @@ msgstr "ID \"%s\" de dados estruturados não é único"
 msgid "--sd-id was not specified for --sd-param %s"
 msgstr "--sd-id não foi especificado para --sd-param %s"
 
-#: misc-utils/logger.c:784
+#: misc-utils/logger.c:808
 msgid "localtime() failed"
 msgstr "localtime() falhou"
 
-#: misc-utils/logger.c:794
+#: misc-utils/logger.c:818
 #, c-format
 msgid "hostname '%s' is too long"
 msgstr "nome de máquina \"%s\" é longo demais"
 
-#: misc-utils/logger.c:800
+#: misc-utils/logger.c:824
 #, c-format
 msgid "tag '%s' is too long"
 msgstr "tag \"%s\" é longo demais"
 
-#: misc-utils/logger.c:863
+#: misc-utils/logger.c:887
 #, c-format
 msgid "ignoring unknown option argument: %s"
 msgstr "ignorando argumento de opção desconhecido: %s"
 
-#: misc-utils/logger.c:875
+#: misc-utils/logger.c:899
 #, c-format
 msgid "invalid argument: %s: using automatic errors"
 msgstr "argumento inválido: %s: usando erros automáticos"
 
-#: misc-utils/logger.c:1041
+#: misc-utils/logger.c:1065
 #, c-format
 msgid " %s [options] [<message>]\n"
 msgstr " %s [opções] [<mensagem>]\n"
 
-#: misc-utils/logger.c:1044
+#: misc-utils/logger.c:1068
 msgid "Enter messages into the system log.\n"
 msgstr "Insere mensagens no sistema de registro de logs.\n"
 
-#: misc-utils/logger.c:1047
+#: misc-utils/logger.c:1071
 msgid " -i                       log the logger command's PID\n"
 msgstr " -i                       registra o PID do comando logger\n"
 
-#: misc-utils/logger.c:1048
+#: misc-utils/logger.c:1072
 msgid "     --id[=<id>]          log the given <id>, or otherwise the PID\n"
 msgstr "     --id[=<id>]          registra o <id> fornecido ou, senão, o PID\n"
 
-#: misc-utils/logger.c:1049
+#: misc-utils/logger.c:1073
 msgid " -f, --file <file>        log the contents of this file\n"
 msgstr " -f, --file <arquivo>     registra o conteúdo deste arquivo\n"
 
-#: misc-utils/logger.c:1050
+#: misc-utils/logger.c:1074
 msgid " -e, --skip-empty         do not log empty lines when processing files\n"
 msgstr " -e, --skip-empty         não registra linhas vazias ao processar arquivos\n"
 
-#: misc-utils/logger.c:1051
+#: misc-utils/logger.c:1075
 msgid "     --no-act             do everything except the write the log\n"
 msgstr "     --no-act             faz tudo, exceto gravar no log\n"
 
-#: misc-utils/logger.c:1052
+#: misc-utils/logger.c:1076
 msgid " -p, --priority <prio>    mark given message with this priority\n"
 msgstr " -p, --priority <prio>    marca a mensagem dada com esta prioridade\n"
 
-#: misc-utils/logger.c:1053
+#: misc-utils/logger.c:1077
 msgid "     --octet-count        use rfc6587 octet counting\n"
 msgstr "     --octet-count        usa a contagem de octeto do rfc6587\n"
 
-#: misc-utils/logger.c:1054
+#: misc-utils/logger.c:1078
 msgid "     --prio-prefix        look for a prefix on every line read from stdin\n"
 msgstr "     --prio-prefix        procura por prefixo em cada linha lida da entrada\n"
 
-#: misc-utils/logger.c:1055
+#: misc-utils/logger.c:1079
 msgid " -s, --stderr             output message to standard error as well\n"
 msgstr " -s, --stderr             mostra mensagem para a saída de erro também\n"
 
-#: misc-utils/logger.c:1056
+#: misc-utils/logger.c:1080
 msgid " -S, --size <size>        maximum size for a single message\n"
 msgstr " -S, --size <tamanho>     tamanho máximo de uma única mensagem\n"
 
-#: misc-utils/logger.c:1057
+#: misc-utils/logger.c:1081
 msgid " -t, --tag <tag>          mark every line with this tag\n"
 msgstr " -t, --tag <tag>          marca cada linha com esta tag\n"
 
-#: misc-utils/logger.c:1058
+#: misc-utils/logger.c:1082
 msgid " -n, --server <name>      write to this remote syslog server\n"
 msgstr " -n, --server <nome>      escreve para este servidor syslog remoto\n"
 
-#: misc-utils/logger.c:1059
+#: misc-utils/logger.c:1083
 msgid " -P, --port <port>        use this port for UDP or TCP connection\n"
 msgstr " -P, --port <porta>       usa esta porta para conexão UDP ou TCP\n"
 
-#: misc-utils/logger.c:1060
+#: misc-utils/logger.c:1084
 msgid " -T, --tcp                use TCP only\n"
 msgstr " -T, --tcp                usa apenas TCP\n"
 
-#: misc-utils/logger.c:1061
+#: misc-utils/logger.c:1085
 msgid " -d, --udp                use UDP only\n"
 msgstr " -d, --udp                usa apenas UDP\n"
 
-#: misc-utils/logger.c:1062
+#: misc-utils/logger.c:1086
 msgid "     --rfc3164            use the obsolete BSD syslog protocol\n"
 msgstr "     --rfc3164            usa o protocolo obsoleto de syslog do BSD\n"
 
-#: misc-utils/logger.c:1063
+#: misc-utils/logger.c:1087
 msgid ""
 "     --rfc5424[=<snip>]   use the syslog protocol (the default for remote);\n"
 "                            <snip> can be notime, or notq, and/or nohost\n"
@@ -11387,23 +11397,23 @@ msgstr ""
 "     --rfc5424[=<trecho>] usa o protocolo syslog (padrão para remoto);\n"
 "                            <trecho> pode ser notime ou notq e/ou nohost\n"
 
-#: misc-utils/logger.c:1065
+#: misc-utils/logger.c:1089
 msgid "     --sd-id <id>         rfc5424 structured data ID\n"
 msgstr "     --sd-id <id>         ID de dados estruturados rfc5424\n"
 
-#: misc-utils/logger.c:1066
+#: misc-utils/logger.c:1090
 msgid "     --sd-param <data>    rfc5424 structured data name=value\n"
 msgstr "     --sd-param <dados>   nome=valor de dados estruturados rfc5424\n"
 
-#: misc-utils/logger.c:1067
+#: misc-utils/logger.c:1091
 msgid "     --msgid <msgid>      set rfc5424 message id field\n"
 msgstr "     --msgid <msgid>      define campo id da mensagem de rfc5424\n"
 
-#: misc-utils/logger.c:1068
+#: misc-utils/logger.c:1092
 msgid " -u, --socket <socket>    write to this Unix socket\n"
 msgstr " -u, --socket <soquete>   grava neste soquete Unix\n"
 
-#: misc-utils/logger.c:1069
+#: misc-utils/logger.c:1093
 msgid ""
 "     --socket-errors[=<on|off|auto>]\n"
 "                          print connection errors when using Unix sockets\n"
@@ -11411,44 +11421,44 @@ msgstr ""
 "     --socket-errors[=<on|off|auto>]\n"
 "                          mostra erros de conexão ao usar soquete Unix\n"
 
-#: misc-utils/logger.c:1072
+#: misc-utils/logger.c:1096
 msgid "     --journald[=<file>]  write journald entry\n"
 msgstr ""
 "     --journald[=<arquivo>]\n"
 "                          escreve entrada journald\n"
 
-#: misc-utils/logger.c:1158
+#: misc-utils/logger.c:1182
 #, c-format
 msgid "file %s"
 msgstr "arquivo %s"
 
-#: misc-utils/logger.c:1173
+#: misc-utils/logger.c:1197
 msgid "failed to parse id"
 msgstr "falha ao analisar o id"
 
-#: misc-utils/logger.c:1191
+#: misc-utils/logger.c:1215
 msgid "failed to parse message size"
 msgstr "falha ao analisar o tamanho da mensagem"
 
-#: misc-utils/logger.c:1221
+#: misc-utils/logger.c:1245
 msgid "--msgid cannot contain space"
 msgstr "--msgid não pode ter espaço"
 
-#: misc-utils/logger.c:1243
+#: misc-utils/logger.c:1267
 #, c-format
 msgid "invalid structured data ID: '%s'"
 msgstr "ID de dados estruturados inválido: \"%s\""
 
-#: misc-utils/logger.c:1248
+#: misc-utils/logger.c:1272
 #, c-format
 msgid "invalid structured data parameter: '%s'"
 msgstr "parâmetro de dados estruturados inválido: \"%s\""
 
-#: misc-utils/logger.c:1263
+#: misc-utils/logger.c:1287
 msgid "--file <file> and <message> are mutually exclusive, message is ignored"
 msgstr "--file <arquivo> e <mensagem> são mutuamente exclusivos, mensagem é ignorada"
 
-#: misc-utils/logger.c:1270
+#: misc-utils/logger.c:1294
 msgid "journald entry could not be written"
 msgstr "entrada de journald não pôde ser gravada"
 
@@ -11884,328 +11894,328 @@ msgstr "argumento inválido de número de largura da saída"
 msgid "failed to allocate device tree"
 msgstr "falha ao alocar árvore de dispositivo"
 
-#: misc-utils/lsfd.c:111
+#: misc-utils/lsfd.c:112
 #, fuzzy
 #| msgid "cannot create child process"
 msgid "association between file and process"
 msgstr "não foi possível criar processo filho"
 
-#: misc-utils/lsfd.c:113
+#: misc-utils/lsfd.c:114
 msgid "block device driver name resolved by /proc/devices"
 msgstr ""
 
-#: misc-utils/lsfd.c:115
+#: misc-utils/lsfd.c:116
 msgid "character device driver name resolved by /proc/devices"
 msgstr ""
 
-#: misc-utils/lsfd.c:117
+#: misc-utils/lsfd.c:118
 #, fuzzy
 #| msgid "command of the process holding the lock"
 msgid "command of the process opening the file"
 msgstr "comando do processo mantendo a trava"
 
-#: misc-utils/lsfd.c:119
+#: misc-utils/lsfd.c:120
 msgid "reachability from the file system"
 msgstr ""
 
-#: misc-utils/lsfd.c:121
+#: misc-utils/lsfd.c:122
 #, fuzzy
 #| msgid "device backing file"
 msgid "ID of device containing file"
 msgstr "arquivo de dispositivo de backend"
 
-#: misc-utils/lsfd.c:123
+#: misc-utils/lsfd.c:124
 msgid "device type (blk, char, or nodev)"
 msgstr ""
 
-#: misc-utils/lsfd.c:125
+#: misc-utils/lsfd.c:126
 msgid "flags specified when opening the file"
 msgstr ""
 
-#: misc-utils/lsfd.c:127
+#: misc-utils/lsfd.c:128
 #, fuzzy
 #| msgid "bad file descriptor"
 msgid "file descriptor for the file"
 msgstr "descritor de arquivo inválido"
 
-#: misc-utils/lsfd.c:129
+#: misc-utils/lsfd.c:130
 #, fuzzy
 #| msgid "max number of open files"
 msgid "user ID number of the file's owner"
 msgstr "número máximo de arquivos abertos"
 
-#: misc-utils/lsfd.c:131 misc-utils/lslocks.c:79
+#: misc-utils/lsfd.c:132 misc-utils/lslocks.c:79
 #, fuzzy
 #| msgid "logical NUMA node number"
 msgid "inode number"
 msgstr "número de nó NUMA"
 
-#: misc-utils/lsfd.c:133
+#: misc-utils/lsfd.c:134
 msgid "opened by a kernel thread"
 msgstr ""
 
-#: misc-utils/lsfd.c:135
+#: misc-utils/lsfd.c:136
 msgid "device ID for special, or ID of device containing file"
 msgstr ""
 
-#: misc-utils/lsfd.c:137
+#: misc-utils/lsfd.c:138
 msgid "length of file mapping (in page)"
 msgstr ""
 
-#: misc-utils/lsfd.c:139
+#: misc-utils/lsfd.c:140
 msgid "misc character device name resolved by /proc/misc"
 msgstr ""
 
-#: misc-utils/lsfd.c:141
+#: misc-utils/lsfd.c:142
 #, fuzzy
 #| msgid "mount"
 msgid "mount id"
 msgstr "montar"
 
-#: misc-utils/lsfd.c:143
+#: misc-utils/lsfd.c:144
 #, fuzzy
 #| msgid "lock access mode"
 msgid "access mode (rwx)"
 msgstr "modo trava de acesso"
 
-#: misc-utils/lsfd.c:145
+#: misc-utils/lsfd.c:146
 #, fuzzy
 #| msgid "size of the file"
 msgid "name of the file"
 msgstr "tamanho do arquivo"
 
-#: misc-utils/lsfd.c:147
+#: misc-utils/lsfd.c:148
 #, fuzzy
 #| msgid "ncount"
 msgid "link count"
 msgstr "ncount"
 
-#: misc-utils/lsfd.c:149
+#: misc-utils/lsfd.c:150
 #, fuzzy
 #| msgid "size of the file"
 msgid "owner of the file"
 msgstr "tamanho do arquivo"
 
-#: misc-utils/lsfd.c:151
+#: misc-utils/lsfd.c:152
 #, fuzzy
 #| msgid "PID of the process holding the lock"
 msgid "PID of the process opening the file"
 msgstr "PID do processo mantendo a trava"
 
-#: misc-utils/lsfd.c:153
+#: misc-utils/lsfd.c:154
 msgid "block device name resolved by /proc/partition"
 msgstr ""
 
-#: misc-utils/lsfd.c:155
+#: misc-utils/lsfd.c:156
 #, fuzzy
 #| msgid "%s: cannot get file position"
 msgid "file position"
 msgstr "%s: não foi possível obter posição do arquivo"
 
-#: misc-utils/lsfd.c:157
+#: misc-utils/lsfd.c:158
 #, fuzzy
 #| msgid "partition name"
 msgid "protocol name"
 msgstr "nome da partição"
 
-#: misc-utils/lsfd.c:159
+#: misc-utils/lsfd.c:160
 #, fuzzy
 #| msgid "no device specified"
 msgid "device ID (if special file)"
 msgstr "nenhum dispositivo especificado"
 
-#: misc-utils/lsfd.c:161
+#: misc-utils/lsfd.c:162
 #, fuzzy
 #| msgid "max file size"
 msgid "file size"
 msgstr "tamanho máximo de arquivo"
 
-#: misc-utils/lsfd.c:163
+#: misc-utils/lsfd.c:164
 #, fuzzy
 #| msgid "failed to read new partition from device; ignoring --move-data"
 msgid "file system, partition, or device containing file"
 msgstr "falha ao ler nova partição do dispositivo; ignorando --move-data"
 
-#: misc-utils/lsfd.c:165
+#: misc-utils/lsfd.c:166
 #, fuzzy
 #| msgid "PID of the process holding the lock"
 msgid "thread ID of the process opening the file"
 msgstr "PID do processo mantendo a trava"
 
-#: misc-utils/lsfd.c:167
+#: misc-utils/lsfd.c:168
 #, fuzzy
 #| msgid "filesystem type"
 msgid "file type"
 msgstr "tipo do sistema de arquivos"
 
-#: misc-utils/lsfd.c:169
+#: misc-utils/lsfd.c:170
 #, fuzzy
 #| msgid "Number of attached processes"
 msgid "user ID number of the process"
 msgstr "Número de processos anexados"
 
-#: misc-utils/lsfd.c:171
+#: misc-utils/lsfd.c:172
 #, fuzzy
 #| msgid "Number of attached processes"
 msgid "user of the process"
 msgstr "Número de processos anexados"
 
-#: misc-utils/lsfd.c:215 sys-utils/prlimit.c:87
+#: misc-utils/lsfd.c:216 sys-utils/prlimit.c:87
 msgid "processes"
 msgstr "processos"
 
-#: misc-utils/lsfd.c:219
+#: misc-utils/lsfd.c:220
 #, fuzzy
 #| msgid "Attached processes"
 msgid "root owned processes"
 msgstr "Processos anexados"
 
-#: misc-utils/lsfd.c:223
+#: misc-utils/lsfd.c:224
 #, fuzzy
 #| msgid "kernel messages"
 msgid "kernel threads"
 msgstr "mensagens de kernel"
 
-#: misc-utils/lsfd.c:227
+#: misc-utils/lsfd.c:228
 #, fuzzy
 #| msgid "open failed"
 msgid "open files"
 msgstr "abertura falhou"
 
-#: misc-utils/lsfd.c:231
+#: misc-utils/lsfd.c:232
 #, fuzzy
 #| msgid "open failed"
 msgid "RO open files"
 msgstr "abertura falhou"
 
-#: misc-utils/lsfd.c:235
+#: misc-utils/lsfd.c:236
 #, fuzzy
 #| msgid "open failed"
 msgid "WO open files"
 msgstr "abertura falhou"
 
-#: misc-utils/lsfd.c:239
+#: misc-utils/lsfd.c:240
 msgid "shared mappings"
 msgstr ""
 
-#: misc-utils/lsfd.c:243
+#: misc-utils/lsfd.c:244
 msgid "RO shared mappings"
 msgstr ""
 
-#: misc-utils/lsfd.c:247
+#: misc-utils/lsfd.c:248
 msgid "WO shared mappings"
 msgstr ""
 
 # quantidade de espaços ajustado para promover alinhamento às linhas vizinhas -- Rafael
-#: misc-utils/lsfd.c:251
+#: misc-utils/lsfd.c:252
 #, fuzzy
 #| msgid "Regular files: %9lld\n"
 msgid "regular files"
 msgstr "Arquivos comuns: %9lld\n"
 
-#: misc-utils/lsfd.c:255
+#: misc-utils/lsfd.c:256
 #, fuzzy
 #| msgid "Sectors"
 msgid "directories"
 msgstr "Setores"
 
-#: misc-utils/lsfd.c:259
+#: misc-utils/lsfd.c:260
 #, fuzzy
 #| msgid "socket"
 msgid "sockets"
 msgstr "soquete"
 
-#: misc-utils/lsfd.c:263
+#: misc-utils/lsfd.c:264
 msgid "fifos/pipes"
 msgstr ""
 
-#: misc-utils/lsfd.c:267
+#: misc-utils/lsfd.c:268
 #, fuzzy
 #| msgid "/dev/%s: not a character device"
 msgid "character devices"
 msgstr "/dev/%s: não é um dispositivo de caracteres"
 
-#: misc-utils/lsfd.c:271
+#: misc-utils/lsfd.c:272
 #, fuzzy
 #| msgid "block device name"
 msgid "block devices"
 msgstr "nome de dispositivo de bloco"
 
-#: misc-utils/lsfd.c:275
+#: misc-utils/lsfd.c:276
 #, fuzzy
 #| msgid "unknown user %s"
 msgid "unknown types"
 msgstr "usuário desconhecido %s"
 
-#: misc-utils/lsfd.c:350
+#: misc-utils/lsfd.c:351
 msgid "too many columns are added via filter expression"
 msgstr ""
 
-#: misc-utils/lsfd.c:1039
+#: misc-utils/lsfd.c:1040
 #, fuzzy
 #| msgid "failed to allocate UID cache"
 msgid "failed to allocate an idcache"
 msgstr "falha ao alocar cache de UID"
 
-#: misc-utils/lsfd.c:1094 misc-utils/lslocks.c:292
+#: misc-utils/lsfd.c:1095 misc-utils/lslocks.c:292
 msgid "(unknown)"
 msgstr "(desconhecida)"
 
-#: misc-utils/lsfd.c:1178
+#: misc-utils/lsfd.c:1179
 #, fuzzy, c-format
 #| msgid "unexpected value in %s: %ju"
 msgid "unexpected value for pid specification: %s"
 msgstr "valor inesperado em %s: %ju"
 
-#: misc-utils/lsfd.c:1180
+#: misc-utils/lsfd.c:1181
 #, c-format
 msgid "garbage at the end of pid specification: %s"
 msgstr ""
 
-#: misc-utils/lsfd.c:1182
+#: misc-utils/lsfd.c:1183
 #, c-format
 msgid "out of range value for pid specification: %ld"
 msgstr ""
 
-#: misc-utils/lsfd.c:1226
+#: misc-utils/lsfd.c:1227
 #, fuzzy
 #| msgid "failed to allocate pty handler"
 msgid "failed to alloc procfs handler"
 msgstr "falha ao alocar manipulador de pty"
 
-#: misc-utils/lsfd.c:1230
+#: misc-utils/lsfd.c:1231
 #, fuzzy
 #| msgid "failed to open: %s"
 msgid "failed to open /proc"
 msgstr "falha ao abrir: %s"
 
-#: misc-utils/lsfd.c:1254
+#: misc-utils/lsfd.c:1255
 #, fuzzy
 #| msgid " -n, --noheadings          don't print headings\n"
 msgid " -l, --threads         list in threads level\n"
 msgstr " -n, --noheadings          não exibe cabeçalhos\n"
 
-#: misc-utils/lsfd.c:1259
+#: misc-utils/lsfd.c:1260
 #, fuzzy
 #| msgid " -u, --notruncate       don't truncate text in columns\n"
 msgid " -u, --notruncate      don't truncate text in columns\n"
 msgstr " -u, --notruncate       não trunca texto em colunas\n"
 
-#: misc-utils/lsfd.c:1260
+#: misc-utils/lsfd.c:1261
 #, fuzzy
 #| msgid " -p, --pid <pid>...     act on these already running processes\n"
 msgid " -p, --pid  <pid(s)>   collect information only specified processes\n"
 msgstr " -p, --pid <pid>...     age nesses processos já em execução\n"
 
-#: misc-utils/lsfd.c:1261
+#: misc-utils/lsfd.c:1262
 msgid " -Q, --filter <expr>   apply display filter\n"
 msgstr ""
 
-#: misc-utils/lsfd.c:1262
+#: misc-utils/lsfd.c:1263
 msgid "     --debug-filter    dump the internal data structure of filter and exit\n"
 msgstr ""
 
-#: misc-utils/lsfd.c:1263
+#: misc-utils/lsfd.c:1264
 #, fuzzy
 #| msgid ""
 #| "     --target-prefix <path>\n"
@@ -12217,11 +12227,11 @@ msgstr ""
 "     --target-prefix <caminho>\n"
 "                         especifica uso de caminho para os pontos de montagem\n"
 
-#: misc-utils/lsfd.c:1265
+#: misc-utils/lsfd.c:1266
 msgid "     --dump-counters   dump counter definitions\n"
 msgstr ""
 
-#: misc-utils/lsfd.c:1266
+#: misc-utils/lsfd.c:1267
 #, fuzzy
 #| msgid "     --summary[=when] print summary information (never,always or only)\n"
 msgid "     --summary[=when]  print summary information (only, append, or never)\n"
@@ -12229,67 +12239,67 @@ msgstr ""
 "     --summary[=quando]\n"
 "                      mostra informação resumida (never, always ou only)\n"
 
-#: misc-utils/lsfd.c:1288
+#: misc-utils/lsfd.c:1289
 #, fuzzy
 #| msgid "failed to allocate memory: %m"
 msgid "failed to allocate memory for string"
 msgstr "falha ao alocar memória: %m"
 
-#: misc-utils/lsfd.c:1345
+#: misc-utils/lsfd.c:1346
 #, c-format
 msgid "too short counter specification: -C/--counter %s"
 msgstr ""
 
-#: misc-utils/lsfd.c:1349 misc-utils/lsfd.c:1355
+#: misc-utils/lsfd.c:1350 misc-utils/lsfd.c:1356
 #, c-format
 msgid "no name for counter: -C/--counter %s"
 msgstr ""
 
-#: misc-utils/lsfd.c:1359
+#: misc-utils/lsfd.c:1360
 #, c-format
 msgid "empty counter expression given: -C/--counter %s"
 msgstr ""
 
-#: misc-utils/lsfd.c:1367
+#: misc-utils/lsfd.c:1368
 #, c-format
 msgid "don't use `{' in the name of a counter: %s"
 msgstr ""
 
-#: misc-utils/lsfd.c:1388
+#: misc-utils/lsfd.c:1389
 msgid "failed in making filter for a counter: "
 msgstr ""
 
-#: misc-utils/lsfd.c:1456
+#: misc-utils/lsfd.c:1457
 #, fuzzy
 #| msgid "failed to allocate output table"
 msgid "failed to allocate summary table"
 msgstr "falha ao alocar tabela da saída"
 
-#: misc-utils/lsfd.c:1466
+#: misc-utils/lsfd.c:1467
 msgid "VALUE"
 msgstr ""
 
-#: misc-utils/lsfd.c:1468 misc-utils/lsfd.c:1474
+#: misc-utils/lsfd.c:1469 misc-utils/lsfd.c:1475
 #, fuzzy
 #| msgid "failed to allocate output column"
 msgid "failed to allocate summary column"
 msgstr "falha ao alocar coluna de saída"
 
-#: misc-utils/lsfd.c:1472
+#: misc-utils/lsfd.c:1473
 msgid "COUNTER"
 msgstr ""
 
-#: misc-utils/lsfd.c:1487 misc-utils/lsfd.c:1489 misc-utils/lsfd.c:1492
+#: misc-utils/lsfd.c:1488 misc-utils/lsfd.c:1490 misc-utils/lsfd.c:1493
 #, fuzzy
 #| msgid "failed to add output data"
 msgid "failed to add summary data"
 msgstr "falha ao adicionar dados de saída"
 
-#: misc-utils/lsfd.c:1597 sys-utils/lsmem.c:641
+#: misc-utils/lsfd.c:1598 sys-utils/lsmem.c:641
 msgid "unsupported --summary argument"
 msgstr "sem suporte ao argumento de --summary"
 
-#: misc-utils/lsfd-file.c:384 misc-utils/namei.c:414 sys-utils/lsns.c:1403
+#: misc-utils/lsfd-file.c:384 misc-utils/namei.c:414 sys-utils/lsns.c:1405
 msgid "failed to allocate UID cache"
 msgstr "falha ao alocar cache de UID"
 
@@ -12360,53 +12370,59 @@ msgstr "erro interno: sem suporte ao tipo de diálogo %d"
 msgid "error: empty right side expression: %s"
 msgstr ""
 
-#: misc-utils/lsfd-filter.c:970
+#: misc-utils/lsfd-filter.c:874
+#, fuzzy
+#| msgid "could not compile regular expression %s: %s"
+msgid "error: empty filter expression"
+msgstr "não foi possível compilar a expressão regular %s: %s"
+
+#: misc-utils/lsfd-filter.c:975
 #, fuzzy, c-format
 #| msgid "unexpected end of file on %s"
 msgid "unexpected type in filter application: %s"
 msgstr "fim de arquivo inesperado em %s"
 
-#: misc-utils/lsfd-filter.c:1071
+#: misc-utils/lsfd-filter.c:1076
 #, fuzzy, c-format
 #| msgid "input error: unexpected character %c after %s field"
 msgid "error: unexpected operand type %s for: %s"
 msgstr "erro de entrada: caractere inesperado %c após o campo %s"
 
-#: misc-utils/lsfd-filter.c:1194 misc-utils/lsfd-filter.c:1227
-#: misc-utils/lsfd-filter.c:1249
+#: misc-utils/lsfd-filter.c:1199 misc-utils/lsfd-filter.c:1232
+#: misc-utils/lsfd-filter.c:1254
 #, fuzzy, c-format
 #| msgid "input error: unexpected character %c after %s field"
 msgid "error: unexpected left operand type %s for: %s"
 msgstr "erro de entrada: caractere inesperado %c após o campo %s"
 
-#: misc-utils/lsfd-filter.c:1202 misc-utils/lsfd-filter.c:1235
-#: misc-utils/lsfd-filter.c:1257
+#: misc-utils/lsfd-filter.c:1207 misc-utils/lsfd-filter.c:1240
+#: misc-utils/lsfd-filter.c:1262
 #, fuzzy, c-format
 #| msgid "input error: unexpected character %c after %s field"
 msgid "error: unexpected right operand type %s for: %s"
 msgstr "erro de entrada: caractere inesperado %c após o campo %s"
 
-#: misc-utils/lsfd-filter.c:1264
+#: misc-utils/lsfd-filter.c:1269
 #, c-format
 msgid "error: string literal is expected as right operand for: %s"
 msgstr ""
 
-#: misc-utils/lsfd-filter.c:1280
+#: misc-utils/lsfd-filter.c:1285
 #, fuzzy, c-format
 #| msgid "could not compile regular expression %s: %s"
 msgid "error: could not compile regular expression %s: %s"
 msgstr "não foi possível compilar a expressão regular %s: %s"
 
-#: misc-utils/lsfd-filter.c:1316
+#: misc-utils/lsfd-filter.c:1322
 msgid "error: unbalanced parenthesis: ("
 msgstr ""
 
-#: misc-utils/lsfd-filter.c:1322
+#: misc-utils/lsfd-filter.c:1328
 #, c-format
 msgid "error: garbage at the end of expression: %s"
 msgstr ""
 
-#: misc-utils/lsfd-filter.c:1328
+#: misc-utils/lsfd-filter.c:1334
 #, c-format
 msgid "error: bool expression is expected: %s"
 msgstr ""
@@ -12489,15 +12505,15 @@ msgstr " -b, --bytes            exibe TAMANHO em bytes em vez de formato legíve
 msgid " -i, --noinaccessible   ignore locks without read permissions\n"
 msgstr " -i, --noinaccessible   ignora travas sem permissão de leitura\n"
 
-#: misc-utils/lslocks.c:554 sys-utils/lsns.c:1216 sys-utils/rfkill.c:640
+#: misc-utils/lslocks.c:554 sys-utils/lsns.c:1218 sys-utils/rfkill.c:640
 msgid " -n, --noheadings       don't print headings\n"
 msgstr " -n, --noheadings       não exibe os cabeçalhos\n"
 
-#: misc-utils/lslocks.c:555 sys-utils/lsns.c:1217 sys-utils/rfkill.c:641
+#: misc-utils/lslocks.c:555 sys-utils/lsns.c:1219 sys-utils/rfkill.c:641
 msgid " -o, --output <list>    define which output columns to use\n"
 msgstr " -o, --output <lista>   define quais colunas de saída se deve usar\n"
 
-#: misc-utils/lslocks.c:556 sys-utils/lsns.c:1218 sys-utils/rfkill.c:642
+#: misc-utils/lslocks.c:556 sys-utils/lsns.c:1220 sys-utils/rfkill.c:642
 msgid "     --output-all       output all columns\n"
 msgstr "     --output-all       mostra todas as colunas\n"
 
@@ -12505,13 +12521,13 @@ msgstr "     --output-all       mostra todas as colunas\n"
 msgid " -p, --pid <pid>        display only locks held by this process\n"
 msgstr " -p, --pid <pid>        exibe apenas travas mantidas por este processo\n"
 
-#: misc-utils/lslocks.c:558 sys-utils/lsns.c:1220 sys-utils/rfkill.c:643
+#: misc-utils/lslocks.c:558 sys-utils/lsns.c:1222 sys-utils/rfkill.c:643
 msgid " -r, --raw              use the raw output format\n"
 msgstr " -r, --raw              usa formato de saída não tratado (raw)\n"
 
 #: misc-utils/lslocks.c:623 schedutils/chrt.c:413 schedutils/ionice.c:179
 #: schedutils/taskset.c:171 schedutils/uclampset.c:257 sys-utils/choom.c:102
-#: sys-utils/lsns.c:1305 sys-utils/prlimit.c:604
+#: sys-utils/lsns.c:1307 sys-utils/prlimit.c:604
 msgid "invalid PID argument"
 msgstr "argumento inválido de PID"
 
@@ -12532,7 +12548,7 @@ msgid " -v, --verbose         explain what is being done\n"
 msgstr " -v, --verbose         explica o que está sendo feito\n"
 
 #: misc-utils/mcookie.c:97 misc-utils/wipefs.c:652 sys-utils/blkdiscard.c:107
-#: sys-utils/fallocate.c:107 sys-utils/fstrim.c:463
+#: sys-utils/fallocate.c:107 sys-utils/fstrim.c:471
 msgid "<num>"
 msgstr "<núm>"
 
@@ -12548,7 +12564,7 @@ msgstr[1] "Obtidos %zu bytes de %s\n"
 msgid "closing %s failed"
 msgstr "fechamento de %s falhou"
 
-#: misc-utils/mcookie.c:168 sys-utils/blkdiscard.c:189 sys-utils/fstrim.c:529
+#: misc-utils/mcookie.c:168 sys-utils/blkdiscard.c:189 sys-utils/fstrim.c:537
 #: text-utils/hexdump.c:124
 msgid "failed to parse length"
 msgstr "falha ao analisar comprimento"
@@ -12836,8 +12852,8 @@ msgid "timeout [%d sec]\n"
 msgstr "tempo limite [%d segundos]\n"
 
 #: misc-utils/uuidd.c:470 sys-utils/irqtop.c:223 sys-utils/irqtop.c:226
-#: sys-utils/irqtop.c:243 term-utils/setterm.c:920 text-utils/column.c:529
-#: text-utils/column.c:559
+#: sys-utils/irqtop.c:243 term-utils/setterm.c:920 text-utils/column.c:544
+#: text-utils/column.c:574
 msgid "read failed"
 msgstr "leitura falhou"
 
@@ -13082,8 +13098,8 @@ msgid "sha1-based"
 msgstr "baseado em sha1"
 
 #: misc-utils/uuidparse.c:267 misc-utils/wipefs.c:178
-#: sys-utils/irq-common.c:155 sys-utils/irq-common.c:460 sys-utils/lscpu.c:972
-#: sys-utils/lsns.c:1093 sys-utils/zramctl.c:505
+#: sys-utils/irq-common.c:155 sys-utils/irq-common.c:460 sys-utils/lscpu.c:973
+#: sys-utils/lsns.c:1095 sys-utils/zramctl.c:505
 msgid "failed to initialize output column"
 msgstr "falha ao inicializar coluna da saída"
 
@@ -13787,7 +13803,7 @@ msgstr " -z, --zeroout       preenche com zero, ao invés de descartar\n"
 msgid " -v, --verbose       print aligned length and offset\n"
 msgstr " -v, --verbose       emite quantidade e posição alinhados\n"
 
-#: sys-utils/blkdiscard.c:193 sys-utils/fstrim.c:533 sys-utils/losetup.c:710
+#: sys-utils/blkdiscard.c:193 sys-utils/fstrim.c:541 sys-utils/losetup.c:710
 #: text-utils/hexdump.c:131
 msgid "failed to parse offset"
 msgstr "falha ao analisar posição"
@@ -13797,7 +13813,7 @@ msgid "failed to parse step"
 msgstr "falha ao analisar a etapa"
 
 #: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:499 sys-utils/fallocate.c:382
-#: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561 sys-utils/umount.c:610
+#: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:569 sys-utils/umount.c:610
 msgid "unexpected number of arguments"
 msgstr "número inesperado de argumentos"
 
@@ -14715,23 +14731,23 @@ msgstr ""
 msgid "invalid buffer size argument"
 msgstr "argumento inválido de tamanho de buffer"
 
-#: sys-utils/dmesg.c:1611
+#: sys-utils/dmesg.c:1613
 msgid "--show-delta is ignored when used together with iso8601 time format"
 msgstr "--show-delta é ignorado quando usado junto do formato de tempo iso8601"
 
-#: sys-utils/dmesg.c:1635
+#: sys-utils/dmesg.c:1637
 msgid "--raw can be used together with --level or --facility only when reading messages from /dev/kmsg"
 msgstr "--raw pode ser usado com --level ou --facility apenas ao ler mensagens de /dev/kmsg"
 
-#: sys-utils/dmesg.c:1655
+#: sys-utils/dmesg.c:1657
 msgid "read kernel buffer failed"
 msgstr "leitura de buffer de kernel falhou"
 
-#: sys-utils/dmesg.c:1662
+#: sys-utils/dmesg.c:1664
 msgid "clear kernel buffer failed"
 msgstr "limpeza de buffer de kernel falhou"
 
-#: sys-utils/dmesg.c:1678
+#: sys-utils/dmesg.c:1680
 msgid "klogctl failed"
 msgstr "klogctl falhou"
 
@@ -15349,92 +15365,92 @@ msgstr "%s: 0 B (dry-run) descartado em %s\n"
 msgid "%s: 0 B (dry run) trimmed\n"
 msgstr "%s: 0 B (dry-run) descartado\n"
 
-#: sys-utils/fstrim.c:131
+#: sys-utils/fstrim.c:132
 #, c-format
 msgid "%s: FITRIM ioctl failed"
 msgstr "%s: ioctl de FITRIM falhou"
 
 #. TRANSLATORS: The standard value here is a very large number.
-#: sys-utils/fstrim.c:141
+#: sys-utils/fstrim.c:142
 #, c-format
 msgid "%s: %s (%<PRIu64> bytes) trimmed on %s\n"
 msgstr "%s: %s (%<PRIu64> bytes) descartado em %s\n"
 
 #. TRANSLATORS: The standard value here is a very large number.
-#: sys-utils/fstrim.c:145
+#: sys-utils/fstrim.c:146
 #, c-format
 msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
 msgstr "%s: %s (%<PRIu64> bytes) descartado\n"
 
-#: sys-utils/fstrim.c:277 sys-utils/lsns.c:1412 sys-utils/swapon.c:746
+#: sys-utils/fstrim.c:287 sys-utils/lsns.c:1414 sys-utils/swapon.c:746
 #: sys-utils/umount.c:262
 #, c-format
 msgid "failed to parse %s"
 msgstr "falha ao analisar %s"
 
-#: sys-utils/fstrim.c:303
+#: sys-utils/fstrim.c:313
 msgid "failed to allocate FS handler"
 msgstr "falha ao alocar manipulador de sistema de arquivos"
 
-#: sys-utils/fstrim.c:392 sys-utils/fstrim.c:575
+#: sys-utils/fstrim.c:400 sys-utils/fstrim.c:583
 #, c-format
 msgid "%s: the discard operation is not supported"
 msgstr "%s: sem suporte a operação de descarte"
 
-#: sys-utils/fstrim.c:443
+#: sys-utils/fstrim.c:451
 #, c-format
 msgid " %s [options] <mount point>\n"
 msgstr " %s [opções] <ponto-montagem>\n"
 
-#: sys-utils/fstrim.c:446
+#: sys-utils/fstrim.c:454
 msgid "Discard unused blocks on a mounted filesystem.\n"
 msgstr "Descarta blocos não usados em um sistema de arquivos montados.\n"
 
-#: sys-utils/fstrim.c:449
+#: sys-utils/fstrim.c:457
 msgid " -a, --all                trim mounted filesystems\n"
 msgstr " -a, --all                descarta sistemas de arquivos montados\n"
 
-#: sys-utils/fstrim.c:450
+#: sys-utils/fstrim.c:458
 msgid " -A, --fstab              trim filesystems from /etc/fstab\n"
 msgstr " -A, --fstab              descarta sistemas de arquivos de /etc/fstab\n"
 
-#: sys-utils/fstrim.c:451
+#: sys-utils/fstrim.c:459
 msgid " -I, --listed-in <list>   trim filesystems listed in specified files\n"
 msgstr ""
 " -I, --listed-in <lista>  descarta sistemas de arquivos listados em\n"
 "                            arquivos especificados\n"
 
-#: sys-utils/fstrim.c:452
+#: sys-utils/fstrim.c:460
 msgid " -o, --offset <num>       the offset in bytes to start discarding from\n"
 msgstr " -o, --offset <núm>       a posição em bytes onde será iniciado o descarte\n"
 
-#: sys-utils/fstrim.c:453
+#: sys-utils/fstrim.c:461
 msgid " -l, --length <num>       the number of bytes to discard\n"
 msgstr " -l, --length <núm>       o número de bytes para descartar\n"
 
-#: sys-utils/fstrim.c:454
+#: sys-utils/fstrim.c:462
 msgid " -m, --minimum <num>      the minimum extent length to discard\n"
 msgstr " -m, --minimum <núm>      o comprimento de extensão mínima para descartar\n"
 
-#: sys-utils/fstrim.c:455
+#: sys-utils/fstrim.c:463
 msgid " -v, --verbose            print number of discarded bytes\n"
 msgstr " -v, --verbose            mostra o número de bytes descartados\n"
 
-#: sys-utils/fstrim.c:456
+#: sys-utils/fstrim.c:464
 msgid "     --quiet-unsupported  suppress error messages if trim unsupported\n"
 msgstr ""
 "     --quiet-unsupported  suprime as mensagens de erro caso não haja\n"
 "                            suporte ao descarte\n"
 
-#: sys-utils/fstrim.c:457
+#: sys-utils/fstrim.c:465
 msgid " -n, --dry-run            does everything, but trim\n"
 msgstr " -n, --dry-run            faz tudo, menos descartar\n"
 
-#: sys-utils/fstrim.c:537
+#: sys-utils/fstrim.c:545
 msgid "failed to parse minimum extent length"
 msgstr "falha ao analisar comprimento mínimo da extensão"
 
-#: sys-utils/fstrim.c:556
+#: sys-utils/fstrim.c:564
 msgid "no mountpoint specified"
 msgstr "nenhum ponto de montagem especificada"
 
@@ -16873,11 +16889,11 @@ msgid "name"
 msgstr "nome"
 
 #: sys-utils/irq-common.c:138 sys-utils/irq-common.c:444 sys-utils/lsmem.c:702
-#: sys-utils/lsns.c:1063
+#: sys-utils/lsns.c:1065
 msgid "failed to initialize output table"
 msgstr "falha ao inicializar tabela da saída"
 
-#: sys-utils/irq-common.c:172 sys-utils/lsns.c:984
+#: sys-utils/irq-common.c:172 sys-utils/lsns.c:986
 msgid "failed to add line to output"
 msgstr "falha ao adicionar linha à saída"
 
@@ -17374,161 +17390,161 @@ msgstr "%s: definição de e/s direta falhou"
 msgid "%s: set logical block size failed"
 msgstr "%s: definição de tamanho de bloco lógico falhou"
 
-#: sys-utils/lscpu.c:46
+#: sys-utils/lscpu.c:47
 msgid "none"
 msgstr "nenhum"
 
-#: sys-utils/lscpu.c:47
+#: sys-utils/lscpu.c:48
 msgid "para"
 msgstr "para"
 
-#: sys-utils/lscpu.c:48
+#: sys-utils/lscpu.c:49
 msgid "full"
 msgstr "completo"
 
-#: sys-utils/lscpu.c:49
+#: sys-utils/lscpu.c:50
 msgid "container"
 msgstr "recipiente"
 
-#: sys-utils/lscpu.c:73
+#: sys-utils/lscpu.c:74
 msgid "horizontal"
 msgstr "horizontal"
 
-#: sys-utils/lscpu.c:74
+#: sys-utils/lscpu.c:75
 msgid "vertical"
 msgstr "vertical"
 
-#: sys-utils/lscpu.c:141
+#: sys-utils/lscpu.c:142
 msgid "crude measurement of CPU speed"
 msgstr "medição bruta da velocidade da CPU"
 
-#: sys-utils/lscpu.c:142
+#: sys-utils/lscpu.c:143
 msgid "logical CPU number"
 msgstr "número da CPU lógica"
 
-#: sys-utils/lscpu.c:143
+#: sys-utils/lscpu.c:144
 msgid "logical core number"
 msgstr "número do núcleo lógico"
 
-#: sys-utils/lscpu.c:144
+#: sys-utils/lscpu.c:145
 msgid "logical cluster number"
 msgstr "número do cluster lógico"
 
-#: sys-utils/lscpu.c:145
+#: sys-utils/lscpu.c:146
 msgid "logical socket number"
 msgstr "número do soquete lógico"
 
-#: sys-utils/lscpu.c:146
+#: sys-utils/lscpu.c:147
 msgid "logical NUMA node number"
 msgstr "número de nó NUMA"
 
 # Não é livro, é um grupo de processadores, arquitetura da IBM. Desconheço tradução mais apropriada --Rafael
 # https://en.wikipedia.org/wiki/Processor_book
-#: sys-utils/lscpu.c:147
+#: sys-utils/lscpu.c:148
 msgid "logical book number"
 msgstr "número de books lógicos"
 
-#: sys-utils/lscpu.c:148
+#: sys-utils/lscpu.c:149
 msgid "logical drawer number"
 msgstr "número do drawers lógicos"
 
-#: sys-utils/lscpu.c:149
+#: sys-utils/lscpu.c:150
 msgid "shows how caches are shared between CPUs"
 msgstr "mostra como caches são compartilhados entre CPUs"
 
-#: sys-utils/lscpu.c:150
+#: sys-utils/lscpu.c:151
 msgid "CPU dispatching mode on virtual hardware"
 msgstr "modo de despacho da CPU em hardware virtual"
 
-#: sys-utils/lscpu.c:151
+#: sys-utils/lscpu.c:152
 msgid "physical address of a CPU"
 msgstr "endereço físico de uma CPU"
 
-#: sys-utils/lscpu.c:152
+#: sys-utils/lscpu.c:153
 msgid "shows if the hypervisor has allocated the CPU"
 msgstr "mostra se o hipervisor alocou a CPU"
 
-#: sys-utils/lscpu.c:153
+#: sys-utils/lscpu.c:154
 msgid "shows if Linux currently makes use of the CPU"
 msgstr "mostra se Linux faz uso da CPU"
 
-#: sys-utils/lscpu.c:154
+#: sys-utils/lscpu.c:155
 msgid "shows the currently MHz of the CPU"
 msgstr "mostra o MHz atual da CPU"
 
-#: sys-utils/lscpu.c:155
+#: sys-utils/lscpu.c:156
 msgid "shows scaling percentage of the CPU frequency"
 msgstr ""
 
-#: sys-utils/lscpu.c:156
+#: sys-utils/lscpu.c:157
 msgid "shows the maximum MHz of the CPU"
 msgstr "mostra o MHz máximo da CPU"
 
-#: sys-utils/lscpu.c:157
+#: sys-utils/lscpu.c:158
 msgid "shows the minimum MHz of the CPU"
 msgstr "mostra o MHz mínimo da CPU"
 
-#: sys-utils/lscpu.c:162
+#: sys-utils/lscpu.c:163
 msgid "size of all system caches"
 msgstr "tamanho de todos os caches de sistema"
 
-#: sys-utils/lscpu.c:163
+#: sys-utils/lscpu.c:164
 msgid "cache level"
 msgstr "nível do cache"
 
-#: sys-utils/lscpu.c:164
+#: sys-utils/lscpu.c:165
 msgid "cache name"
 msgstr "nome do cache"
 
-#: sys-utils/lscpu.c:165
+#: sys-utils/lscpu.c:166
 msgid "size of one cache"
 msgstr "tamanho de um cache"
 
-#: sys-utils/lscpu.c:166
+#: sys-utils/lscpu.c:167
 msgid "cache type"
 msgstr "tipo do cache"
 
-#: sys-utils/lscpu.c:167
+#: sys-utils/lscpu.c:168
 msgid "ways of associativity"
 msgstr "formas de associatividade"
 
-#: sys-utils/lscpu.c:168
+#: sys-utils/lscpu.c:169
 msgid "allocation policy"
 msgstr "política de alocação"
 
-#: sys-utils/lscpu.c:169
+#: sys-utils/lscpu.c:170
 msgid "write policy"
 msgstr "política de escrita"
 
-#: sys-utils/lscpu.c:170
+#: sys-utils/lscpu.c:171
 msgid "number of physical cache line per cache t"
 msgstr "número de linha de cache físico por cache t"
 
-#: sys-utils/lscpu.c:171
+#: sys-utils/lscpu.c:172
 msgid "number of sets in the cache; set lines has the same cache index"
 msgstr "número de conjuntos no cache; linhas de conjunto têm o mesmo índice de cache"
 
-#: sys-utils/lscpu.c:172
+#: sys-utils/lscpu.c:173
 msgid "minimum amount of data in bytes transferred from memory to cache"
 msgstr "quantidade mínima de dados em bytes transferidos da memória para cache"
 
-#: sys-utils/lscpu.c:223
+#: sys-utils/lscpu.c:224
 msgid "failed to initialize CPUs sysfs handler"
 msgstr "falha ao inicializar manipulador de sysfs de CPUs"
 
-#: sys-utils/lscpu.c:230
+#: sys-utils/lscpu.c:231
 msgid "failed to initialize procfs handler"
 msgstr "falha ao inicializar manipulador de procfs"
 
-#: sys-utils/lscpu.c:322
+#: sys-utils/lscpu.c:323
 msgid "Y"
 msgstr "S"
 
-#: sys-utils/lscpu.c:322
+#: sys-utils/lscpu.c:323
 msgid "N"
 msgstr "N"
 
-#: sys-utils/lscpu.c:659
+#: sys-utils/lscpu.c:660
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -17539,310 +17555,310 @@ msgstr ""
 "# cada item diferente em cada coluna tem um ID único geralmente\n"
 "# começando no zero.\n"
 
-#: sys-utils/lscpu.c:862
+#: sys-utils/lscpu.c:863
 msgid "Model name:"
 msgstr "Nome do modelo:"
 
-#: sys-utils/lscpu.c:864
+#: sys-utils/lscpu.c:865
 msgid "BIOS Model name:"
 msgstr "Nome do modelo da BIOS:"
 
-#: sys-utils/lscpu.c:866
+#: sys-utils/lscpu.c:867
 #, fuzzy
 #| msgid "CPU family:"
 msgid "BIOS CPU family:"
 msgstr "Família da CPU:"
 
-#: sys-utils/lscpu.c:868
+#: sys-utils/lscpu.c:869
 msgid "Machine type:"
 msgstr "Tipo da máquina:"
 
-#: sys-utils/lscpu.c:870
+#: sys-utils/lscpu.c:871
 msgid "CPU family:"
 msgstr "Família da CPU:"
 
-#: sys-utils/lscpu.c:872
+#: sys-utils/lscpu.c:873
 msgid "Model:"
 msgstr "Modelo:"
 
-#: sys-utils/lscpu.c:874
+#: sys-utils/lscpu.c:875
 msgid "Thread(s) per core:"
 msgstr "Thread(s) per núcleo:"
 
-#: sys-utils/lscpu.c:876
+#: sys-utils/lscpu.c:877
 msgid "Core(s) per cluster:"
 msgstr "Núcleo(s) por cluster:"
 
-#: sys-utils/lscpu.c:878
+#: sys-utils/lscpu.c:879
 msgid "Core(s) per socket:"
 msgstr "Núcleo(s) por soquete:"
 
 # Não é livro, é um grupo de processadores, arquitetura da IBM. Desconheço tradução mais apropriada --Rafael
 # https://en.wikipedia.org/wiki/Processor_book
-#: sys-utils/lscpu.c:881
+#: sys-utils/lscpu.c:882
 msgid "Socket(s) per book:"
 msgstr "Soquete(s) por book:"
 
-#: sys-utils/lscpu.c:883
+#: sys-utils/lscpu.c:884
 msgid "Book(s) per drawer:"
 msgstr "Book(s) por drawer:"
 
-#: sys-utils/lscpu.c:884
+#: sys-utils/lscpu.c:885
 msgid "Drawer(s):"
 msgstr "Drawer(s):"
 
 # Não é livro, é um grupo de processadores, arquitetura da IBM. Desconheço tradução mais apropriada --Rafael
 # https://en.wikipedia.org/wiki/Processor_book
-#: sys-utils/lscpu.c:886
+#: sys-utils/lscpu.c:887
 msgid "Book(s):"
 msgstr "Book(s):"
 
-#: sys-utils/lscpu.c:890 sys-utils/lscpu.c:892 sys-utils/lscpu.c:897
+#: sys-utils/lscpu.c:891 sys-utils/lscpu.c:893 sys-utils/lscpu.c:898
 msgid "Socket(s):"
 msgstr "Soquete(s):"
 
-#: sys-utils/lscpu.c:894
+#: sys-utils/lscpu.c:895
 msgid "Cluster(s):"
 msgstr "Cluster(s):"
 
-#: sys-utils/lscpu.c:902
+#: sys-utils/lscpu.c:903
 msgid "Stepping:"
 msgstr "Step:"
 
-#: sys-utils/lscpu.c:904
+#: sys-utils/lscpu.c:905
 msgid "Frequency boost:"
 msgstr "Aumento de frequência:"
 
-#: sys-utils/lscpu.c:905
+#: sys-utils/lscpu.c:906
 msgid "enabled"
 msgstr "habilitado"
 
-#: sys-utils/lscpu.c:905
+#: sys-utils/lscpu.c:906
 msgid "disabled"
 msgstr "desabilitado"
 
-#: sys-utils/lscpu.c:909
+#: sys-utils/lscpu.c:910
 msgid "CPU dynamic MHz:"
 msgstr "CPU com MHz dinâmico:"
 
-#: sys-utils/lscpu.c:911
+#: sys-utils/lscpu.c:912
 msgid "CPU static MHz:"
 msgstr "CPU com MHz estático:"
 
-#: sys-utils/lscpu.c:916
+#: sys-utils/lscpu.c:917
 #, fuzzy
 #| msgid "CPU min MHz:"
 msgid "CPU(s) scaling MHz:"
 msgstr "CPU MHz mín.:"
 
-#: sys-utils/lscpu.c:917
+#: sys-utils/lscpu.c:918
 msgid "CPU max MHz:"
 msgstr "CPU MHz máx.:"
 
-#: sys-utils/lscpu.c:918
+#: sys-utils/lscpu.c:919
 msgid "CPU min MHz:"
 msgstr "CPU MHz mín.:"
 
-#: sys-utils/lscpu.c:921
+#: sys-utils/lscpu.c:922
 msgid "BogoMIPS:"
 msgstr "BogoMIPS:"
 
-#: sys-utils/lscpu.c:924
+#: sys-utils/lscpu.c:925
 msgid "Dispatching mode:"
 msgstr "Modo de despacho:"
 
-#: sys-utils/lscpu.c:927
+#: sys-utils/lscpu.c:928
 msgid "Physical sockets:"
 msgstr "Soquetes físicos:"
 
-#: sys-utils/lscpu.c:928
+#: sys-utils/lscpu.c:929
 msgid "Physical chips:"
 msgstr "Chips físicos:"
 
-#: sys-utils/lscpu.c:929
+#: sys-utils/lscpu.c:930
 msgid "Physical cores/chip:"
 msgstr "núcleos/chips físicos:"
 
-#: sys-utils/lscpu.c:933
+#: sys-utils/lscpu.c:934
 msgid "Flags:"
 msgstr "Opções:"
 
-#: sys-utils/lscpu.c:978
+#: sys-utils/lscpu.c:979
 msgid "Architecture:"
 msgstr "Arquitetura:"
 
-#: sys-utils/lscpu.c:991
+#: sys-utils/lscpu.c:992
 msgid "CPU op-mode(s):"
 msgstr "Modo(s) operacional da CPU:"
 
-#: sys-utils/lscpu.c:994
+#: sys-utils/lscpu.c:995
 msgid "Address sizes:"
 msgstr "Tamanhos de endereço:"
 
-#: sys-utils/lscpu.c:996 sys-utils/lscpu.c:998
+#: sys-utils/lscpu.c:997 sys-utils/lscpu.c:999
 msgid "Byte Order:"
 msgstr "Ordem dos bytes:"
 
-#: sys-utils/lscpu.c:1002
+#: sys-utils/lscpu.c:1003
 msgid "CPU(s):"
 msgstr "CPU(s):"
 
-#: sys-utils/lscpu.c:1006
+#: sys-utils/lscpu.c:1007
 msgid "On-line CPU(s) mask:"
 msgstr "Máscara de CPU(s) on-line:"
 
-#: sys-utils/lscpu.c:1007
+#: sys-utils/lscpu.c:1008
 msgid "On-line CPU(s) list:"
 msgstr "Lista de CPU(s) on-line:"
 
 # set = conjunto de instruções? ou outra característica do cpu?
-#: sys-utils/lscpu.c:1019
+#: sys-utils/lscpu.c:1020
 msgid "failed to callocate cpu set"
 msgstr "falha ao callocate o conjunto da cpu"
 
-#: sys-utils/lscpu.c:1028
+#: sys-utils/lscpu.c:1029
 msgid "Off-line CPU(s) mask:"
 msgstr "Máscara de CPU(s) off-line:"
 
-#: sys-utils/lscpu.c:1029
+#: sys-utils/lscpu.c:1030
 msgid "Off-line CPU(s) list:"
 msgstr "Lista de CPU(s) off-line:"
 
-#: sys-utils/lscpu.c:1036
+#: sys-utils/lscpu.c:1037
 msgid "Vendor ID:"
 msgstr "ID de fornecedor:"
 
-#: sys-utils/lscpu.c:1038
+#: sys-utils/lscpu.c:1039
 msgid "BIOS Vendor ID:"
 msgstr "ID de fornecedor da BIOS:"
 
-#: sys-utils/lscpu.c:1046
+#: sys-utils/lscpu.c:1047
 msgid "Virtualization features:"
 msgstr "Recursos de virtualização:"
 
-#: sys-utils/lscpu.c:1048 sys-utils/lscpu.c:1050
+#: sys-utils/lscpu.c:1049 sys-utils/lscpu.c:1051
 msgid "Virtualization:"
 msgstr "Virtualização:"
 
-#: sys-utils/lscpu.c:1053
+#: sys-utils/lscpu.c:1054
 msgid "Hypervisor:"
 msgstr "Hipervisor:"
 
-#: sys-utils/lscpu.c:1055
+#: sys-utils/lscpu.c:1056
 msgid "Hypervisor vendor:"
 msgstr "Fabricante do hipervisor:"
 
-#: sys-utils/lscpu.c:1056
+#: sys-utils/lscpu.c:1057
 msgid "Virtualization type:"
 msgstr "Tipo de virtualização:"
 
-#: sys-utils/lscpu.c:1079
+#: sys-utils/lscpu.c:1080
 msgid "Caches (sum of all):"
 msgstr "Caches (soma de todos):"
 
-#: sys-utils/lscpu.c:1083 sys-utils/lscpu.c:1113 sys-utils/lscpu.c:1145
+#: sys-utils/lscpu.c:1084 sys-utils/lscpu.c:1114 sys-utils/lscpu.c:1146
 #, c-format
 msgid "%s:"
 msgstr "%s:"
 
-#: sys-utils/lscpu.c:1083 sys-utils/lscpu.c:1113
+#: sys-utils/lscpu.c:1084 sys-utils/lscpu.c:1114
 #, c-format
 msgid "%s cache:"
 msgstr "cache de %s:"
 
-#: sys-utils/lscpu.c:1086
+#: sys-utils/lscpu.c:1087
 #, c-format
 msgid "%<PRIu64> (%d instance)"
 msgid_plural "%<PRIu64> (%d instances)"
 msgstr[0] "%<PRIu64> (%d instância)"
 msgstr[1] "%<PRIu64> (%d instâncias)"
 
-#: sys-utils/lscpu.c:1095
+#: sys-utils/lscpu.c:1096
 #, c-format
 msgid "%s (%d instance)"
 msgid_plural "%s (%d instances)"
 msgstr[0] "%s (%d instância)"
 msgstr[1] "%s (%d instâncias)"
 
-#: sys-utils/lscpu.c:1110
+#: sys-utils/lscpu.c:1111
 msgid "Caches:"
 msgstr "Caches:"
 
-#: sys-utils/lscpu.c:1129
+#: sys-utils/lscpu.c:1130
 msgid "NUMA:"
 msgstr "NUMA:"
 
-#: sys-utils/lscpu.c:1131
+#: sys-utils/lscpu.c:1132
 msgid "NUMA node(s):"
 msgstr "Nó(s) de NUMA:"
 
-#: sys-utils/lscpu.c:1133
+#: sys-utils/lscpu.c:1134
 #, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr "CPU(s) de nó%d NUMA:"
 
-#: sys-utils/lscpu.c:1141
+#: sys-utils/lscpu.c:1142
 msgid "Vulnerabilities:"
 msgstr "Vulnerabilidades:"
 
-#: sys-utils/lscpu.c:1145
+#: sys-utils/lscpu.c:1146
 #, c-format
 msgid "Vulnerability %s:"
 msgstr "Vulnerabilidade %s:"
 
-#: sys-utils/lscpu.c:1163
+#: sys-utils/lscpu.c:1164
 msgid "Display information about the CPU architecture.\n"
 msgstr "Exibe informações sobre a arquitetura da CPU.\n"
 
-#: sys-utils/lscpu.c:1166
+#: sys-utils/lscpu.c:1167
 msgid " -a, --all               print both online and offline CPUs (default for -e)\n"
 msgstr " -a, --all                exibe CPUs on-lines e off-lines (padrão para -e)\n"
 
-#: sys-utils/lscpu.c:1167
+#: sys-utils/lscpu.c:1168
 msgid " -b, --online            print online CPUs only (default for -p)\n"
 msgstr " -b, --online             exibe apenas CPUs on-line (padrão para -p)\n"
 
-#: sys-utils/lscpu.c:1168
+#: sys-utils/lscpu.c:1169
 msgid " -B, --bytes             print sizes in bytes rather than in human readable format\n"
 msgstr " -B, --bytes              exibe tamanhos em bytes em vez de um formato legível\n"
 
-#: sys-utils/lscpu.c:1169
+#: sys-utils/lscpu.c:1170
 msgid " -C, --caches[=<list>]   info about caches in extended readable format\n"
 msgstr " -C, --caches[=<lista>]   informações sobre caches em formato legível estendido\n"
 
-#: sys-utils/lscpu.c:1170
+#: sys-utils/lscpu.c:1171
 msgid " -c, --offline           print offline CPUs only\n"
 msgstr " -c, --offline            exibe apenas CPUs off-line\n"
 
-#: sys-utils/lscpu.c:1171
+#: sys-utils/lscpu.c:1172
 msgid " -J, --json              use JSON for default or extended format\n"
 msgstr " -J, --json               usa JSON para formato padrão ou estendido\n"
 
-#: sys-utils/lscpu.c:1172
+#: sys-utils/lscpu.c:1173
 msgid " -e, --extended[=<list>] print out an extended readable format\n"
 msgstr " -e, --extended[=<lista>] exibe um formato legível estendido\n"
 
-#: sys-utils/lscpu.c:1173
+#: sys-utils/lscpu.c:1174
 msgid " -p, --parse[=<list>]    print out a parsable format\n"
 msgstr " -p, --parse[=<lista>]    exibe um formato analisável\n"
 
-#: sys-utils/lscpu.c:1174
+#: sys-utils/lscpu.c:1175
 msgid " -s, --sysroot <dir>     use specified directory as system root\n"
 msgstr " -s, --sysroot <dir>      usa o diretório especificado como raiz do sistema\n"
 
-#: sys-utils/lscpu.c:1175
+#: sys-utils/lscpu.c:1176
 msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
 msgstr " -x, --hex                exibe máscaras hexadecimais em vez de listas de CPUs\n"
 
-#: sys-utils/lscpu.c:1176
+#: sys-utils/lscpu.c:1177
 msgid " -y, --physical          print physical instead of logical IDs\n"
 msgstr " -y, --physical           exibe IDs físicos em vez de lógicos\n"
 
-#: sys-utils/lscpu.c:1177
+#: sys-utils/lscpu.c:1178
 msgid "     --output-all        print all available columns for -e, -p or -C\n"
 msgstr "     --output-all         exibe todas as colunas disponíveis para -e, -p ou -C\n"
 
-#: sys-utils/lscpu.c:1181
+#: sys-utils/lscpu.c:1182
 msgid ""
 "\n"
 "Available output columns for -e or -p:\n"
@@ -17850,7 +17866,7 @@ msgstr ""
 "\n"
 "Colunas de saída disponíveis para -e ou -p:\n"
 
-#: sys-utils/lscpu.c:1185
+#: sys-utils/lscpu.c:1186
 msgid ""
 "\n"
 "Available output columns for -C:\n"
@@ -17858,7 +17874,7 @@ msgstr ""
 "\n"
 "Colunas de saída disponíveis para -C:\n"
 
-#: sys-utils/lscpu.c:1311
+#: sys-utils/lscpu.c:1312
 #, c-format
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr "%s: as opções --all, --online e --offline podem só podem ser usadas com as opções --extended ou --parse.\n"
@@ -18370,113 +18386,113 @@ msgstr "argumento inválido para --sysroot"
 msgid "Failed to initialize output column"
 msgstr "Falha ao inicializar coluna da saída"
 
-#: sys-utils/lsns.c:107
+#: sys-utils/lsns.c:109
 msgid "namespace identifier (inode number)"
 msgstr "identificador de espaço de nome (número de inode)"
 
-#: sys-utils/lsns.c:108
+#: sys-utils/lsns.c:110
 msgid "kind of namespace"
 msgstr "tipo de espaço de nome"
 
-#: sys-utils/lsns.c:109
+#: sys-utils/lsns.c:111
 msgid "path to the namespace"
 msgstr "caminho do espaço de nome"
 
-#: sys-utils/lsns.c:110
+#: sys-utils/lsns.c:112
 msgid "number of processes in the namespace"
 msgstr "número de processos no espaço de nome"
 
-#: sys-utils/lsns.c:111
+#: sys-utils/lsns.c:113
 msgid "lowest PID in the namespace"
 msgstr "menor PID no espaço de nome"
 
-#: sys-utils/lsns.c:112
+#: sys-utils/lsns.c:114
 msgid "PPID of the PID"
 msgstr "PPID do PID"
 
-#: sys-utils/lsns.c:113
+#: sys-utils/lsns.c:115
 msgid "command line of the PID"
 msgstr "linha de comando do PID"
 
-#: sys-utils/lsns.c:114
+#: sys-utils/lsns.c:116
 msgid "UID of the PID"
 msgstr "UID do PID"
 
-#: sys-utils/lsns.c:115
+#: sys-utils/lsns.c:117
 msgid "username of the PID"
 msgstr "nome de usuário do PID"
 
-#: sys-utils/lsns.c:116
+#: sys-utils/lsns.c:118
 msgid "namespace ID as used by network subsystem"
 msgstr "ID de espaço de nomes conforme usado por subsistema de rede"
 
-#: sys-utils/lsns.c:117
+#: sys-utils/lsns.c:119
 msgid "nsfs mountpoint (usually used network subsystem)"
 msgstr "ponto de montagem nsfs (geralmente o subsistema de rede usado)"
 
-#: sys-utils/lsns.c:118
+#: sys-utils/lsns.c:120
 msgid "parent namespace identifier (inode number)"
 msgstr "identificador de espaço de nome pai (número de inode)"
 
-#: sys-utils/lsns.c:119
+#: sys-utils/lsns.c:121
 msgid "owner namespace identifier (inode number)"
 msgstr "identificador de espaço de proprietário (número de inode)"
 
-#: sys-utils/lsns.c:1208
+#: sys-utils/lsns.c:1210
 #, c-format
 msgid " %s [options] [<namespace>]\n"
 msgstr " %s [opções] [<espaço de nome>]\n"
 
-#: sys-utils/lsns.c:1211
+#: sys-utils/lsns.c:1213
 msgid "List system namespaces.\n"
 msgstr "Lista espaços de nomes de sistema.\n"
 
-#: sys-utils/lsns.c:1219
+#: sys-utils/lsns.c:1221
 msgid " -p, --task <pid>       print process namespaces\n"
 msgstr " -p, --task <pid>       exibe espaços de nomes do processo\n"
 
-#: sys-utils/lsns.c:1222
+#: sys-utils/lsns.c:1224
 msgid " -W, --nowrap           don't use multi-line representation\n"
 msgstr " -W, --nowrap           não usa representação multilinha\n"
 
-#: sys-utils/lsns.c:1223
+#: sys-utils/lsns.c:1225
 msgid " -t, --type <name>      namespace type (mnt, net, ipc, user, pid, uts, cgroup, time)\n"
 msgstr ""
 " -t, --type <nome>      tipo de espaço de nomes (mnt, net, ipc, user, pid, uts,\n"
 "                          cgroup, time)\n"
 
-#: sys-utils/lsns.c:1224
+#: sys-utils/lsns.c:1226
 #, fuzzy
 #| msgid "     --tree             enable tree format output if possible\n"
 msgid " -T, --tree <rel>       use tree format (parent, owner, or process)\n"
 msgstr "     --tree             habilita saída no formato de árvore se possível\n"
 
-#: sys-utils/lsns.c:1320
+#: sys-utils/lsns.c:1322
 #, c-format
 msgid "unknown namespace type: %s"
 msgstr "tipo de espaço de nome desconhecido: %s"
 
-#: sys-utils/lsns.c:1340
+#: sys-utils/lsns.c:1342
 #, fuzzy, c-format
 #| msgid "unknown namespace type: %s"
 msgid "unknown tree type: %s"
 msgstr "tipo de espaço de nome desconhecido: %s"
 
-#: sys-utils/lsns.c:1362
+#: sys-utils/lsns.c:1364
 msgid "--task is mutually exclusive with <namespace>"
 msgstr "--task é mutuamente exclusiva com <espaço de nome>"
 
-#: sys-utils/lsns.c:1363
+#: sys-utils/lsns.c:1365
 msgid "invalid namespace argument"
 msgstr "argumento inválido de espaço de nome"
 
-#: sys-utils/lsns.c:1393
+#: sys-utils/lsns.c:1395
 #, fuzzy
 #| msgid "--pty is not supported for your system"
 msgid "--tree={parent|owner} is unsupported for your system"
 msgstr "não há suporte a --pty no seu sistema"
 
-#: sys-utils/lsns.c:1423
+#: sys-utils/lsns.c:1425
 #, c-format
 msgid "not found namespace: %ju"
 msgstr "espaço de nome não encontrado: %ju"
@@ -22643,7 +22659,7 @@ msgstr "-- linha já descarregada"
 msgid "bad -l argument"
 msgstr "argumento inválido de -l"
 
-#: text-utils/colcrt.c:82 text-utils/column.c:661
+#: text-utils/colcrt.c:82 text-utils/column.c:676
 #, c-format
 msgid " %s [options] [<file>...]\n"
 msgstr " %s [opções] [<arquivo>...]\n"
@@ -22725,142 +22741,142 @@ msgstr "falha ao analisar a lista de --table-wrap"
 msgid "failed to parse --table-hide list"
 msgstr "falha ao analisar a lista de --table-hide"
 
-#: text-utils/column.c:463
+#: text-utils/column.c:478
 #, c-format
 msgid "line %zu: for JSON the name of the column %zu is required"
 msgstr "linha %zu: para JSON o nome da coluna %zu é necessário"
 
-#: text-utils/column.c:479
+#: text-utils/column.c:494
 msgid "failed to allocate output data"
 msgstr "falha ao alocar dados de saída"
 
-#: text-utils/column.c:664
+#: text-utils/column.c:679
 msgid "Columnate lists.\n"
 msgstr "Listas de colunas.\n"
 
-#: text-utils/column.c:667
+#: text-utils/column.c:682
 msgid " -t, --table                      create a table\n"
 msgstr " -t, --table                      cria uma tabela\n"
 
-#: text-utils/column.c:668
+#: text-utils/column.c:683
 msgid " -n, --table-name <name>          table name for JSON output\n"
 msgstr " -n, --table-name <nome>          nome da tabela para saída JSON\n"
 
-#: text-utils/column.c:669
+#: text-utils/column.c:684
 msgid " -O, --table-order <columns>      specify order of output columns\n"
 msgstr " -O, --table-order <colunas>      especifica a ordem de colunas de saída\n"
 
-#: text-utils/column.c:670
+#: text-utils/column.c:685
 msgid " -N, --table-columns <names>      comma separated columns names\n"
 msgstr " -N, --table-columns <nomes>      nomes de colunas separadas por vírgula\n"
 
-#: text-utils/column.c:671
+#: text-utils/column.c:686
 msgid " -l, --table-columns-limit <num>  maximal number of input columns\n"
 msgstr " -l, --table-columns-limit <núm>  número máximo de colunas de entrada\n"
 
-#: text-utils/column.c:672
+#: text-utils/column.c:687
 msgid " -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"
 msgstr ""
 " -E, --table-noextreme <colunas>  não conta texto longos de colunas para\n"
 "                                    largura de coluna\n"
 
-#: text-utils/column.c:673
+#: text-utils/column.c:688
 msgid " -d, --table-noheadings           don't print header\n"
 msgstr " -d, --table-noheadings           não exibe cabeçalhos\n"
 
-#: text-utils/column.c:674
+#: text-utils/column.c:689
 msgid " -e, --table-header-repeat        repeat header for each page\n"
 msgstr " -e, --table-header-repeat        repete o cabeçalho de cada página\n"
 
-#: text-utils/column.c:675
+#: text-utils/column.c:690
 msgid " -H, --table-hide <columns>       don't print the columns\n"
 msgstr " -H, --table-hide <colunas>       não exige as colunas\n"
 
-#: text-utils/column.c:676
+#: text-utils/column.c:691
 msgid " -R, --table-right <columns>      right align text in these columns\n"
 msgstr " -R, --table-right <colunas>      alinha texto à direita nestes colunas\n"
 
-#: text-utils/column.c:677
+#: text-utils/column.c:692
 msgid " -T, --table-truncate <columns>   truncate text in the columns when necessary\n"
 msgstr " -T, --table-truncate <colunas>   trunca texto nas colunas quando necessário\n"
 
-#: text-utils/column.c:678
+#: text-utils/column.c:693
 msgid " -W, --table-wrap <columns>       wrap text in the columns when necessary\n"
 msgstr " -W, --table-wrap <colunas>       quebra linha nas colunas quando necessário\n"
 
-#: text-utils/column.c:679
+#: text-utils/column.c:694
 msgid " -L, --keep-empty-lines           don't ignore empty lines\n"
 msgstr " -L, --keep-empty-lines           não ignora linhas vazias\n"
 
-#: text-utils/column.c:680
+#: text-utils/column.c:695
 msgid " -J, --json                       use JSON output format for table\n"
 msgstr " -J, --json                       usa o formato de saída JSON para tabela\n"
 
-#: text-utils/column.c:683
+#: text-utils/column.c:698
 msgid " -r, --tree <column>              column to use tree-like output for the table\n"
 msgstr ""
 " -r, --tree <coluna>              coluna para usar a saída tipo árvore para\n"
 "                                    a tabela\n"
 
-#: text-utils/column.c:684
+#: text-utils/column.c:699
 msgid " -i, --tree-id <column>           line ID to specify child-parent relation\n"
 msgstr ""
 " -i, --tree-id <coluna>           ID de linha para especificar a relação\n"
 "                                    filho-pai\n"
 
-#: text-utils/column.c:685
+#: text-utils/column.c:700
 msgid " -p, --tree-parent <column>       parent to specify child-parent relation\n"
 msgstr " -p, --tree-parent <coluna>       pai para especificar relação filho-pai\n"
 
-#: text-utils/column.c:688
+#: text-utils/column.c:703
 msgid " -c, --output-width <width>       width of output in number of characters\n"
 msgstr " -c, --output-width <largura>     largura da saída em número de caracteres\n"
 
-#: text-utils/column.c:689
+#: text-utils/column.c:704
 msgid " -o, --output-separator <string>  columns separator for table output (default is two spaces)\n"
 msgstr ""
 " -o, --output-separator <texto>   separador de colunas para saída de tabela\n"
 "                                    (padrão é dois espaços)\n"
 
-#: text-utils/column.c:690
+#: text-utils/column.c:705
 msgid " -s, --separator <string>         possible table delimiters\n"
 msgstr " -s, --separator <texto>          delimitadores de tabela possíveis\n"
 
-#: text-utils/column.c:691
+#: text-utils/column.c:706
 msgid " -x, --fillrows                   fill rows before columns\n"
 msgstr " -x, --fillrows                   preenche linhas antes de colunas\n"
 
-#: text-utils/column.c:762
+#: text-utils/column.c:777
 msgid "invalid columns argument"
 msgstr "argumento inválido de colunas"
 
-#: text-utils/column.c:787
+#: text-utils/column.c:802
 msgid "invalid columns limit argument"
 msgstr "argumento inválido de limite de colunas"
 
-#: text-utils/column.c:789
+#: text-utils/column.c:804
 msgid "columns limit must be greater than zero"
 msgstr "o limite de colunas deve ser maior que zero"
 
-#: text-utils/column.c:792
+#: text-utils/column.c:807
 msgid "failed to parse column names"
 msgstr "falha ao analisar os nomes de coluna"
 
-#: text-utils/column.c:816
+#: text-utils/column.c:831
 #, fuzzy
 #| msgid "failed to allocate iterator"
 msgid "failed to use input separator"
 msgstr "falha ao alocar iterador"
 
-#: text-utils/column.c:849
+#: text-utils/column.c:864
 msgid "options --tree-id and --tree-parent are required for tree formatting"
 msgstr "as opções --tree-id e --tree-parent são exigidas para formatação em árvore"
 
-#: text-utils/column.c:857
+#: text-utils/column.c:872
 msgid "option --table required for all --table-*"
 msgstr "opção --table exigida para todas --table-*"
 
-#: text-utils/column.c:860
+#: text-utils/column.c:875
 msgid "option --table-columns required for --json"
 msgstr "opção --table-columns exigida para --json"
 
