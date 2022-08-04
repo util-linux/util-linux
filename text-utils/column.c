@@ -507,7 +507,7 @@ static void modify_table(struct column_control *ctl)
 static int add_line_to_table(struct column_control *ctl, wchar_t *wcs0)
 {
 	wchar_t *wcdata, *sv = NULL, *wcs = wcs0;
-	size_t n = 0, nchars = 0, len;
+	size_t n = 0, nchars = 0, skip = 0, len;
 	struct libscols_line *ln = NULL;
 
 	if (!ctl->tab)
@@ -519,12 +519,21 @@ static int add_line_to_table(struct column_control *ctl, wchar_t *wcs0)
 		char *data;
 
 		if (ctl->maxncols && n + 1 == ctl->maxncols) {
-			if (nchars < len)
-				wcdata = wcs0 + nchars;
+			if (nchars + skip < len)
+				wcdata = wcs0 + (nchars + skip);
 			else
 				wcdata = NULL;
-		} else
+		} else {
 			wcdata = local_wcstok(ctl, wcs, &sv);
+
+			/* For the default separator ('greedy' mode) it uses
+			 * strtok() and it skips leading white chars. In this
+			 * case we need to remember size of the ignored white
+			 * chars due to wcdata calculation in maxncols case */
+			if (wcdata && ctl->greedy
+			    && n == 0 && nchars == 0 && wcdata > wcs)
+				skip = wcdata - wcs;
+		}
 
 		if (!wcdata)
 			break;
