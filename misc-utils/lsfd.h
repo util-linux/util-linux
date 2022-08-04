@@ -104,6 +104,8 @@ struct proc {
 	unsigned int kthread: 1;
 };
 
+struct proc *get_proc(pid_t pid);
+
 /*
  * File class
  */

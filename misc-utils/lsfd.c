@@ -30,6 +30,7 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <ctype.h>
+#include <search.h>
 
 #include <linux/sched.h>
 #include <sys/syscall.h>
@@ -306,6 +307,25 @@ struct lsfd_control {
 	struct lsfd_filter *filter;
 	struct lsfd_counter **counters;		/* NULL terminated array. */
 };
+
+static void *proc_tree;			/* for tsearch/tfind */
+
+static int proc_tree_compare(const void *a, const void *b)
+{
+	if (((struct proc *)a)->pid < ((struct proc *)b)->pid)
+		return -1;
+	if (((struct proc *)a)->pid > ((struct proc *)b)->pid)
+		return 1;
+	return 0;
+}
+
+struct proc *get_proc(pid_t pid)
+{
+	struct proc **node = tfind(&pid, &proc_tree, proc_tree_compare);
+	if (node)
+		return *node;
+	return NULL;
+}
 
 static int column_name_to_id(const char *name, size_t namesz)
 {
@@ -959,6 +979,12 @@ static void convert(struct list_head *procs, struct lsfd_control *ctl)
 
 static void delete(struct list_head *procs, struct lsfd_control *ctl)
 {
+	struct list_head *p;
+
+	list_for_each (p, procs) {
+		struct proc *proc = list_entry(p, struct proc, procs);
+		tdelete(proc, &proc_tree, proc_tree_compare);
+	}
 	list_free(procs, struct proc, procs, free_proc);
 
 	scols_unref_table(ctl->tb);
@@ -1231,6 +1257,8 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 		collect_fd_files(pc, proc);
 
 	list_add_tail(&proc->procs, &ctl->procs);
+	if (tsearch(proc, &proc_tree, proc_tree_compare) == NULL)
+		errx(EXIT_FAILURE, _("failed to allocate memory"));
 
 	/* The tasks collecting overwrites @pc by /proc/<task-pid>/. Keep it as
 	 * the last path based operation in read_process()
