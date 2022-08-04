@@ -443,17 +443,23 @@ static void modify_table(struct column_control *ctl)
 static int add_line_to_table(struct column_control *ctl, wchar_t *wcs0)
 {
 	wchar_t *wcdata, *sv = NULL, *wcs = wcs0;
-	size_t n = 0, nchars = 0;
+	size_t n = 0, nchars = 0, len;
 	struct libscols_line *ln = NULL;
 
 	if (!ctl->tab)
 		init_table(ctl);
+
+	len = wcslen(wcs0);
+
 	do {
 		char *data;
 
-		if (ctl->maxncols && n + 1 == ctl->maxncols)
-			wcdata = wcs0 + nchars;
-		else
+		if (ctl->maxncols && n + 1 == ctl->maxncols) {
+			if (nchars < len)
+				wcdata = wcs0 + nchars;
+			else
+				wcdata = NULL;
+		} else
 			wcdata = local_wcstok(ctl, wcs, &sv);
 
 		if (!wcdata)
