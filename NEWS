@@ -1,3 +1,7 @@
+util-linux 2.38.1: Aug 4 2022
+* see Documentation/releases/v2.38.1-ReleaseNotes or the complete changelog at
+  https://www.kernel.org/pub/linux/utils/util-linux/v2.38/v2.38.1-ChangeLog
+
 util-linux 2.38: Mar 28 2022
 * see Documentation/releases/v2.38-ReleaseNotes or the complete changelog at
   https://www.kernel.org/pub/linux/utils/util-linux/v2.38/v2.38-ChangeLog
