@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-man 2.37-rc2\n"
-"POT-Creation-Date: 2022-03-28 13:25+0200\n"
+"POT-Creation-Date: 2022-08-04 10:48+0200\n"
 "PO-Revision-Date: 2021-08-31 20:06-0300\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <ldpbr-translation@lists.sourceforge."
@@ -161,8 +161,8 @@ msgid ""
 "By default, the unit, sizes are expressed in, is byte, and unit prefixes are "
 "in power of 2^10 (1024). Abbreviations of symbols are exhibited truncated in "
 "order to reach a better readability, by exhibiting alone the first letter of "
-"them; examples: \"1 KiB\" and \"1 MiB\" are respectively exhibited as \"1 K"
-"\" and \"1 M\", then omitting on purpose the mention \"iB\", which is part "
+"them; examples: \"1 KiB\" and \"1 MiB\" are respectively exhibited as \"1 "
+"K\" and \"1 M\", then omitting on purpose the mention \"iB\", which is part "
 "of these abbreviations."
 msgstr ""
 
@@ -1145,8 +1145,8 @@ msgid ""
 "more. This functionality is provided by the utilities *partx*(8) and "
 "*lsblk*(8) in a very comfortable and rich way."
 msgstr ""
-"Desde a versão 2.25, o *cfdisk* também não fornece mais um comando \"print"
-"\". Esta funcionalidade é fornecida pelos utilitários *partx*(8) e "
+"Desde a versão 2.25, o *cfdisk* também não fornece mais um comando "
+"\"print\". Esta funcionalidade é fornecida pelos utilitários *partx*(8) e "
 "*lsblk*(8) de uma forma muito confortável e rica."
 
 #. type: Plain text
@@ -2225,12 +2225,12 @@ msgid ""
 "*-u* option by a space, the correct form is for example '**-"
 "u=**__cylinders__'."
 msgstr ""
-"Ao listar as tabelas de partição, mostra os tamanhos em setores (\"sectors"
-"\") ou em cilindros (\"cylinders\"). O padrão é mostrar tamanhos em setores. "
-"Para compatibilidade com versões anteriores, é possível usar a opção sem o "
-"argumento _unidade_ -- então o padrão é usado. Observe que o argumento "
-"opcional _unidade_ não pode ser separado da opção *-u* por um espaço, a "
-"forma correta é, por exemplo, \"*-u=*_cylinders_\"."
+"Ao listar as tabelas de partição, mostra os tamanhos em setores "
+"(\"sectors\") ou em cilindros (\"cylinders\"). O padrão é mostrar tamanhos "
+"em setores. Para compatibilidade com versões anteriores, é possível usar a "
+"opção sem o argumento _unidade_ -- então o padrão é usado. Observe que o "
+"argumento opcional _unidade_ não pode ser separado da opção *-u* por um "
+"espaço, a forma correta é, por exemplo, \"*-u=*_cylinders_\"."
 
 #. type: Labeled list
 #: ../disk-utils/fdisk.8.adoc:85
@@ -3682,15 +3682,16 @@ msgstr "*fsck.cramfs* é usado para verificar o sistema de arquivos cramfs.\n"
 #. type: Labeled list
 #: ../disk-utils/fsck.cramfs.8.adoc:23 ../disk-utils/fsck.minix.8.adoc:56
 #: ../disk-utils/mkfs.bfs.8.adoc:38 ../disk-utils/partx.8.adoc:96
-#: ../misc-utils/mcookie.1.adoc:39 ../misc-utils/rename.1.adoc:28
-#: ../schedutils/chrt.1.adoc:101 ../schedutils/uclampset.1.adoc:83
-#: ../sys-utils/blkdiscard.8.adoc:49 ../sys-utils/blkzone.8.adoc:98
-#: ../sys-utils/chmem.8.adoc:49 ../sys-utils/eject.1.adoc:84
-#: ../sys-utils/fallocate.1.adoc:64 ../sys-utils/hwclock.8.adoc:168
-#: ../sys-utils/losetup.8.adoc:95 ../sys-utils/mount.8.adoc:436
-#: ../sys-utils/readprofile.8.adoc:51 ../sys-utils/rtcwake.8.adoc:105
-#: ../sys-utils/setarch.8.adoc:37 ../sys-utils/swapon.8.adoc:86
-#: ../sys-utils/umount.8.adoc:111 ../term-utils/mesg.1.adoc:71
+#: ../misc-utils/hardlink.1.adoc:45 ../misc-utils/mcookie.1.adoc:39
+#: ../misc-utils/rename.1.adoc:28 ../schedutils/chrt.1.adoc:101
+#: ../schedutils/uclampset.1.adoc:83 ../sys-utils/blkdiscard.8.adoc:49
+#: ../sys-utils/blkzone.8.adoc:98 ../sys-utils/chmem.8.adoc:49
+#: ../sys-utils/eject.1.adoc:84 ../sys-utils/fallocate.1.adoc:64
+#: ../sys-utils/hwclock.8.adoc:168 ../sys-utils/losetup.8.adoc:95
+#: ../sys-utils/mount.8.adoc:436 ../sys-utils/readprofile.8.adoc:51
+#: ../sys-utils/rtcwake.8.adoc:105 ../sys-utils/setarch.8.adoc:37
+#: ../sys-utils/swapon.8.adoc:86 ../sys-utils/umount.8.adoc:111
+#: ../term-utils/mesg.1.adoc:71
 #, no-wrap
 msgid "*-v*, *--verbose*"
 msgstr "*-v*, *--verbose*"
@@ -4275,7 +4276,7 @@ msgstr ""
 #: ../disk-utils/mkfs.8.adoc:41 ../disk-utils/raw.8.adoc:51
 #: ../login-utils/login.1.adoc:151 ../login-utils/utmpdump.1.adoc:67
 #: ../misc-utils/cal.1.adoc:153 ../misc-utils/getopt.1.adoc:141
-#: ../misc-utils/hardlink.1.adoc:129 ../misc-utils/mcookie.1.adoc:50
+#: ../misc-utils/hardlink.1.adoc:134 ../misc-utils/mcookie.1.adoc:50
 #: ../misc-utils/namei.1.adoc:61 ../sys-utils/lscpu.1.adoc:89
 #: ../sys-utils/mount.8.adoc:1548 ../sys-utils/readprofile.8.adoc:67
 #: ../term-utils/agetty.8.adoc:313 ../term-utils/script.1.adoc:155
@@ -4517,7 +4518,7 @@ msgstr ""
 "mas pode se estender além dele.)"
 
 #. type: Title ==
-#: ../disk-utils/mkfs.cramfs.8.adoc:27 ../misc-utils/hardlink.1.adoc:125
+#: ../disk-utils/mkfs.cramfs.8.adoc:27 ../misc-utils/hardlink.1.adoc:130
 #: ../misc-utils/kill.1.adoc:35 ../term-utils/agetty.8.adoc:35
 #: ../term-utils/mesg.1.adoc:59
 #, no-wrap
@@ -5001,7 +5002,7 @@ msgstr ""
 
 #. type: Labeled list
 #: ../disk-utils/mkswap.8.adoc:49 ../disk-utils/sfdisk.8.adoc:195
-#: ../misc-utils/getopt.1.adoc:47 ../misc-utils/hardlink.1.adoc:46
+#: ../misc-utils/getopt.1.adoc:47 ../misc-utils/hardlink.1.adoc:48
 #: ../misc-utils/uuidd.8.adoc:46 ../misc-utils/wipefs.8.adoc:72
 #: ../sys-utils/mountpoint.1.adoc:28 ../sys-utils/umount.8.adoc:99
 #: ../term-utils/script.1.adoc:115
@@ -5831,8 +5832,8 @@ msgid ""
 msgstr ""
 "O comando Linux *dd*(1) deve ser usado sem a opção *bs=*, ou o tamanho do "
 "bloco precisa ser um múltiplo do tamanho do setor do dispositivo (geralmente "
-"512 bytes), caso contrário, ele falhará com mensagens \"Argumento inválido"
-"\" (*EINVAL*)."
+"512 bytes), caso contrário, ele falhará com mensagens \"Argumento "
+"inválido\" (*EINVAL*)."
 
 #. type: Plain text
 #: ../disk-utils/raw.8.adoc:56
@@ -7107,10 +7108,10 @@ msgstr ""
 "O _tipo_ de partição é fornecido em hexadecimal para MBR (DOS) onde o "
 "prefixo 0x é opcional; uma string GUID para GPT; um atalho ou apelido. "
 "Recomenda-se usar duas letras para códigos hexadecimais MBR para evitar a "
-"colisão entre o atalho descontinuado \"E\" e o código hexadecimal MBR \"0E"
-"\". Para compatibilidade com versões anteriores, *sfdisk* tenta interpretar "
-"_tipo_ como um atalho como uma primeira possibilidade em scripts de "
-"particionamento, embora em outros lugares (por exemplo, comando *--part-"
+"colisão entre o atalho descontinuado \"E\" e o código hexadecimal MBR "
+"\"0E\". Para compatibilidade com versões anteriores, *sfdisk* tenta "
+"interpretar _tipo_ como um atalho como uma primeira possibilidade em scripts "
+"de particionamento, embora em outros lugares (por exemplo, comando *--part-"
 "type*) tente atalhos como a última possibilidade."
 
 #. type: Plain text
@@ -7420,10 +7421,10 @@ msgstr "**type=**__código__"
 #: ../disk-utils/sfdisk.8.adoc:335
 msgid ""
 "A hexadecimal number (without 0x) for an MBR partition, a GUID for a GPT "
-"partition, a shortcut as for unnamed-fields format or a type name (e.g. type="
-"\"Linux /usr (x86)\"). See above the section about the unnamed-fields format "
-"for more details. For backward compatibility the *Id=* field has the same "
-"meaning."
+"partition, a shortcut as for unnamed-fields format or a type name (e.g. "
+"type=\"Linux /usr (x86)\"). See above the section about the unnamed-fields "
+"format for more details. For backward compatibility the *Id=* field has the "
+"same meaning."
 msgstr ""
 "Um número hexadecimal (sem 0x) para uma partição MBR, um GUID para uma "
 "partição GPT, um atalho para formato de campos sem nome ou um nome de tipo "
@@ -7665,7 +7666,7 @@ msgstr ""
 #: ../disk-utils/sfdisk.8.adoc:423
 #, fuzzy, no-wrap
 #| msgid "*echo 'label: gpt' | sfdisk /dev/sdb*\n"
-msgid "*echo -e ',10M,L\\n,10M,L\\n,,+\\n' | sfdisk /dev/sdc*"
+msgid "*echo -e ',10M,L\\n,10M,L\\n,+,\\n' | sfdisk /dev/sdc*"
 msgstr "*echo 'label: gpt' | sfdisk /dev/sdb*\n"
 
 #. type: Plain text
@@ -8626,7 +8627,7 @@ msgstr "Cria um novo valor de UUID.\n"
 #. type: Plain text
 #: ../libuuid/man/uuid_copy.3.adoc:50
 #, no-wrap
-msgid "*void uuid_copy(uuid_t __dst__, uuid_t __src__;*\n"
+msgid "*void uuid_copy(uuid_t __dst__, uuid_t __src__);*\n"
 msgstr ""
 
 #. type: Plain text
@@ -9786,8 +9787,8 @@ msgid ""
 "passwd_ file. There is one exception if the user ID is zero. In this case, "
 "only the primary group ID of the account is set. This should allow the "
 "system administrator to login even in case of network problems. The "
-"environment variable values for *$HOME*, *$USER*, *$SHELL*, *$PATH*, *"
-"$LOGNAME*, and *$MAIL* are set according to the appropriate fields in the "
+"environment variable values for *$HOME*, *$USER*, *$SHELL*, *$PATH*, "
+"*$LOGNAME*, and *$MAIL* are set according to the appropriate fields in the "
 "password entry. *$PATH* defaults to _/usr/local/bin:/bin:/usr/bin_ for "
 "normal users, and to _/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/"
 "usr/bin_ for root, if not otherwise configured."
@@ -14568,7 +14569,7 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: ../misc-utils/getopt.1.adoc:147 ../misc-utils/hardlink.1.adoc:135
+#: ../misc-utils/getopt.1.adoc:147 ../misc-utils/hardlink.1.adoc:140
 #: ../misc-utils/uuidd.8.adoc:77
 #, no-wrap
 msgid "AUTHOR"
@@ -14640,37 +14641,38 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:45
+#: ../misc-utils/hardlink.1.adoc:47
 msgid ""
-"If specified once, every hardlinked file is displayed, if specified twice, "
-"it also shows every comparison."
+"Verbose output, explain to the user what is being done. If specified once, "
+"every hardlinked file is displayed. If specified twice, it also shows every "
+"comparison."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:48
+#: ../misc-utils/hardlink.1.adoc:50
 #, fuzzy
 msgid "Quiet mode, don't print anything."
 msgstr " -q, --quiet                modo silencioso - não mostra nada\n"
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:49 ../sys-utils/rtcwake.8.adoc:93
+#: ../misc-utils/hardlink.1.adoc:51 ../sys-utils/rtcwake.8.adoc:93
 #, fuzzy, no-wrap
 msgid "*-n*, *--dry-run*"
 msgstr " -n, --dry-run            faz tudo, menos descartar\n"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:51
+#: ../misc-utils/hardlink.1.adoc:53
 msgid "Do not act, just print what would happen."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:52
+#: ../misc-utils/hardlink.1.adoc:54
 #, fuzzy, no-wrap
 msgid "*-y*, *--method* _name_"
 msgstr " -N, --name nome     gera uuid baseado em hash deste nome\n"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:58
+#: ../misc-utils/hardlink.1.adoc:60
 msgid ""
 "Set the file content comparison method. The currently supported methods are "
 "sha256, sha1, crc32c and memcmp. The default is sha256, or memcmp if Linux "
@@ -14680,14 +14682,14 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:59
+#: ../misc-utils/hardlink.1.adoc:61
 #, fuzzy, no-wrap
 #| msgid "*--color*[=_when_]"
 msgid "*--reflink*[=_when_]"
 msgstr "*--color*[=_quando_]"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:64
+#: ../misc-utils/hardlink.1.adoc:66
 msgid ""
 "Create copy-on-write clones (aka reflinks) rather than hardlinks. The "
 "reflinked files share only on-disk data, but the file mode and owner can be "
@@ -14697,7 +14699,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:70
+#: ../misc-utils/hardlink.1.adoc:72
 msgid ""
 "The optional argument _when_ can be *never*, *always*, or *auto*. If the "
 "_when_ argument is omitted, it defaults to *auto*, in this case, *hardlink* "
@@ -14708,26 +14710,26 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:71
+#: ../misc-utils/hardlink.1.adoc:73
 #, fuzzy, no-wrap
 msgid "*--skip-reflinks*"
 msgstr " -n, --skip-login           não pergunta pelo nome para inciar sessão\n"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:73
+#: ../misc-utils/hardlink.1.adoc:75
 msgid ""
 "Ignore already cloned files. This option may be used without *--reflink* "
 "when creating classic hardlinks."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:74
+#: ../misc-utils/hardlink.1.adoc:76
 #, fuzzy, no-wrap
 msgid "*-f*, *--respect-name*"
 msgstr " -f, --respect-name         nomes de arquivos devem ser idênticos\n"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:76
+#: ../misc-utils/hardlink.1.adoc:78
 msgid ""
 "Only try to link files with the same (base)name. It's strongly recommended "
 "to use long options rather than *-f* which is interpreted in a different way "
@@ -14735,57 +14737,70 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:77
+#: ../misc-utils/hardlink.1.adoc:79
 #, no-wrap
 msgid "*-p*, *--ignore-mode*"
 msgstr "*-p*, *--ignore-mode*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:79
+#: ../misc-utils/hardlink.1.adoc:81
 msgid ""
 "Link and compare files even if their mode is different. Results may be "
 "slightly unpredictable."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:80
+#: ../misc-utils/hardlink.1.adoc:82
 #, fuzzy, no-wrap
 msgid "*-o*, *--ignore-owner*"
 msgstr " -o, --ignore-owner         ignora alterações de proprietário\n"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:82
+#: ../misc-utils/hardlink.1.adoc:84
 msgid ""
 "Link and compare files even if their owner information (user and group) "
 "differs. Results may be unpredictable."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:83
+#: ../misc-utils/hardlink.1.adoc:85
 #, fuzzy, no-wrap
 msgid "*-t*, *--ignore-time*"
 msgstr " -t, --ignore-time          ignora marcas de tempo (ao testar por igualdade)\n"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:85
+#: ../misc-utils/hardlink.1.adoc:87
 msgid ""
 "Link and compare files even if their time of modification is different. This "
 "is usually a good choice."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:86
+#: ../misc-utils/hardlink.1.adoc:88
+#, fuzzy, no-wrap
+msgid "*-c* *--content*"
+msgstr " -Z, --context            exibe contextos SELinux\n"
+
+#. type: Plain text
+#: ../misc-utils/hardlink.1.adoc:90
+msgid ""
+"Consider only file content, not attributes, when determining whether two "
+"files are equal. Same as *-pot*."
+msgstr ""
+
+#. type: Labeled list
+#: ../misc-utils/hardlink.1.adoc:91
 #, fuzzy, no-wrap
 msgid "*-X*, *--respect-xattrs*"
 msgstr " -X, --respect-xattrs       respeita atributos estendidos\n"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:88
+#: ../misc-utils/hardlink.1.adoc:93
 msgid "Only try to link files with the same extended attributes."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:89
+#: ../misc-utils/hardlink.1.adoc:94
 #, fuzzy, no-wrap
 msgid "*-m*, *--maximize*"
 msgstr ""
@@ -14793,23 +14808,23 @@ msgstr ""
 "                              arquivo com a menor contagem de links físicos\n"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:91
+#: ../misc-utils/hardlink.1.adoc:96
 msgid "Among equal files, keep the file with the highest link count."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:92
+#: ../misc-utils/hardlink.1.adoc:97
 #, fuzzy, no-wrap
 msgid "*-M*, *--minimize*"
 msgstr " -M, --minimize             inverte o significado de -m\n"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:94
+#: ../misc-utils/hardlink.1.adoc:99
 msgid "Among equal files, keep the file with the lowest link count."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:95
+#: ../misc-utils/hardlink.1.adoc:100
 #, fuzzy, no-wrap
 msgid "*-O*, *--keep-oldest*"
 msgstr ""
@@ -14818,7 +14833,7 @@ msgstr ""
 "                              minimizar/maximizar)\n"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:97
+#: ../misc-utils/hardlink.1.adoc:102
 msgid ""
 "Among equal files, keep the oldest file (least recent modification time). By "
 "default, the newest file is kept. If *--maximize* or *--minimize* is "
@@ -14827,25 +14842,25 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:98
+#: ../misc-utils/hardlink.1.adoc:103
 #, fuzzy, no-wrap
 msgid "*-x*, *--exclude* _regex_"
 msgstr " -x, --exclude <regex>      expressão regular para excluir arquivos\n"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:100
+#: ../misc-utils/hardlink.1.adoc:105
 msgid ""
 "A regular expression which excludes files from being compared and linked."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:101
+#: ../misc-utils/hardlink.1.adoc:106
 #, fuzzy, no-wrap
 msgid "*-i*, *--include* _regex_"
 msgstr " -i, --include <regex>      expressão regular para incluir arquivos/dirs\n"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:103
+#: ../misc-utils/hardlink.1.adoc:108
 msgid ""
 "A regular expression to include files. If the option *--exclude* has been "
 "given, this option re-includes files which would otherwise be excluded. If "
@@ -14854,7 +14869,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:104
+#: ../misc-utils/hardlink.1.adoc:109
 #, fuzzy, no-wrap
 msgid "*-s*, *--minimum-size* _size_"
 msgstr ""
@@ -14862,7 +14877,7 @@ msgstr ""
 "                            tamanho mínimo para arquivos.\n"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:106
+#: ../misc-utils/hardlink.1.adoc:111
 msgid ""
 "The minimum size to consider. By default this is 1, so empty files will not "
 "be linked. The _size_ argument may be followed by the multiplicative "
@@ -14872,7 +14887,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:107
+#: ../misc-utils/hardlink.1.adoc:112
 #, fuzzy, no-wrap
 msgid "*-S*, *--maximum-size* _size_"
 msgstr ""
@@ -14880,13 +14895,13 @@ msgstr ""
 "                            tamanho mínimo para arquivos.\n"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:109
+#: ../misc-utils/hardlink.1.adoc:114
 #, fuzzy
 #| msgid ""
 #| "In the case the size is specified in bytes than the number may be "
 #| "followed by the multiplicative suffixes KiB=1024, MiB=1024*1024, and so "
-#| "on for GiB, TiB, PiB, EiB, ZiB and YiB. The \"iB\" is optional, e.g., \"K"
-#| "\" has the same meaning as \"KiB\"."
+#| "on for GiB, TiB, PiB, EiB, ZiB and YiB. The \"iB\" is optional, e.g., "
+#| "\"K\" has the same meaning as \"KiB\"."
 msgid ""
 "The maximum size to consider. By default this is 0 and 0 has the special "
 "meaning of unlimited. The _size_ argument may be followed by the "
@@ -14900,14 +14915,14 @@ msgstr ""
 "\"K\" tem o mesmo significado que \"KiB\"."
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:110
+#: ../misc-utils/hardlink.1.adoc:115
 #, fuzzy, no-wrap
 #| msgid "*-S*, *--size* _size_"
 msgid "*-b*, *--io-size* _size_"
 msgstr "*-S*, *--size* _tamanho_"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:118
+#: ../misc-utils/hardlink.1.adoc:123
 msgid ""
 "The size of the *read*(2) or *sendfile*(2) buffer used when comparing file "
 "contents.  The _size_ argument may be followed by the multiplicative "
@@ -14919,14 +14934,14 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:119
+#: ../misc-utils/hardlink.1.adoc:124
 #, fuzzy, no-wrap
 #| msgid "*-p*, *--pagesize* _size_"
 msgid "*-r*, *--cache-size* _size_"
 msgstr "*-p*, *--pagesize* _tamanho_"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:124
+#: ../misc-utils/hardlink.1.adoc:129
 msgid ""
 "The size of the cache for content checksums. All non-memcmp methods "
 "calculate checksum for each file content block (see *--io-size*), these "
@@ -14935,13 +14950,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:128
+#: ../misc-utils/hardlink.1.adoc:133
 #, no-wrap
 msgid "*hardlink* takes one or more directories which will be searched for files to be linked.\n"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:132
+#: ../misc-utils/hardlink.1.adoc:137
 msgid ""
 "The original *hardlink* implementation uses the option *-f* to force "
 "hardlinks creation between filesystem. This very rarely usable feature is no "
@@ -14949,13 +14964,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:134
+#: ../misc-utils/hardlink.1.adoc:139
 #, no-wrap
 msgid "*hardlink* assumes that the trees it operates on do not change during operation. If a tree does change, the result is undefined and potentially dangerous. For example, if a regular file is replaced by a device, *hardlink* may start reading from the device. If a component of a path is replaced by a symbolic link or file permissions change, security may be compromised. Do not run *hardlink* on a changing tree or on a tree controlled by another user.\n"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:138
+#: ../misc-utils/hardlink.1.adoc:143
 msgid ""
 "There are multiple *hardlink* implementations. The very first implementation "
 "is from Jakub Jelinek for Fedora distribution, this implementation has been "
@@ -19249,8 +19264,8 @@ msgstr " -b         pesquisa apenas por executáveis\n"
 #: ../misc-utils/whereis.1.adoc:105
 msgid ""
 "By default *whereis* tries to find files from hard-coded paths, which are "
-"defined with glob patterns. The command attempts to use the contents of *"
-"$PATH* and *$MANPATH* environment variables as default search path. The "
+"defined with glob patterns. The command attempts to use the contents of "
+"*$PATH* and *$MANPATH* environment variables as default search path. The "
 "easiest way to know what paths are in use is to add the *-l* listing option. "
 "Effects of the *-B*, *-M*, and *-S* are displayed with *-l*."
 msgstr ""
@@ -24919,10 +24934,10 @@ msgstr ""
 #. type: Plain text
 #: ../sys-utils/hwclock.8.adoc:204
 msgid ""
-"On an ISA compatible system, *hwclock* can directly access the \"CMOS memory"
-"\" registers that constitute the clock, by doing I/O to Ports 0x70 and 0x71. "
-"It does this with actual I/O instructions and consequently can only do it if "
-"running with superuser effective userid. This method may be used by "
+"On an ISA compatible system, *hwclock* can directly access the \"CMOS "
+"memory\" registers that constitute the clock, by doing I/O to Ports 0x70 and "
+"0x71. It does this with actual I/O instructions and consequently can only do "
+"it if running with superuser effective userid. This method may be used by "
 "specifying the *--directisa* option."
 msgstr ""
 
@@ -25154,9 +25169,9 @@ msgstr ""
 #. type: Plain text
 #: ../sys-utils/hwclock.8.adoc:256
 msgid ""
-"Note that this section is only relevant when you are using the \"direct ISA"
-"\" method of accessing the Hardware Clock. ACPI provides a standard way to "
-"access century values, when they are supported by the hardware."
+"Note that this section is only relevant when you are using the \"direct "
+"ISA\" method of accessing the Hardware Clock. ACPI provides a standard way "
+"to access century values, when they are supported by the hardware."
 msgstr ""
 
 #. type: Title ==
@@ -26908,8 +26923,8 @@ msgstr "*-b*, *--sector-size* _tamanho_"
 #: ../sys-utils/losetup.8.adoc:82
 msgid ""
 "Set the logical sector size of the loop device in bytes (since Linux 4.14). "
-"The option may be used when create a new loop device as well as stand-alone "
-"command to modify sector size of the already existing loop device."
+"The option may be used when creating a new loop device as well as a stand-"
+"alone command to modify sector size of the already existing loop device."
 msgstr ""
 
 #. type: Labeled list
@@ -27128,9 +27143,9 @@ msgstr ""
 msgid ""
 "The default output formatting on terminal is subject to change and maybe "
 "optimized for better readability. The output for non-terminals (e.g., pipes) "
-"is never affected by this optimization and it is always in \"Field: data\\n"
-"\" format. Use for example \"*lscpu | less*\" to see the default output "
-"without optimizations."
+"is never affected by this optimization and it is always in \"Field: "
+"data\\n\" format. Use for example \"*lscpu | less*\" to see the default "
+"output without optimizations."
 msgstr ""
 
 #. type: Plain text
@@ -27804,14 +27819,15 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/lsns.8.adoc:82
+#: ../sys-utils/lsns.8.adoc:83
 #, no-wrap
 msgid ""
 "*nsenter*(1),\n"
 "*unshare*(1),\n"
 "*clone*(2),\n"
 "*namespaces*(7),\n"
-"*ioctl_ns*(2)\n"
+"*ioctl_ns*(2),\n"
+"*ip-netns*(8)\n"
 msgstr ""
 
 #
@@ -31429,8 +31445,8 @@ msgstr " -u, --user <usuário>            nome de usuário\n"
 #. type: delimited block _
 #: ../sys-utils/mount.8.adoc:1022
 msgid ""
-"Use the \"*user.overlay.*\" xattr namespace instead of \"*trusted.overlay.*"
-"\". This is useful for unprivileged mounting of overlayfs."
+"Use the \"*user.overlay.*\" xattr namespace instead of \"*trusted.overlay."
+"*\". This is useful for unprivileged mounting of overlayfs."
 msgstr ""
 
 #. type: Labeled list
@@ -31443,9 +31459,10 @@ msgstr ""
 #: ../sys-utils/mount.8.adoc:1025
 msgid ""
 "If the _redirect_dir_ feature is enabled, then the directory will be copied "
-"up (but not the contents). Then the \"{**trusted**|**user**}.overlay.redirect"
-"\" extended attribute is set to the path of the original location from the "
-"root of the overlay. Finally the directory is moved to the new location."
+"up (but not the contents). Then the \"{**trusted**|**user**}.overlay."
+"redirect\" extended attribute is set to the path of the original location "
+"from the root of the overlay. Finally the directory is moved to the new "
+"location."
 msgstr ""
 
 #. type: Labeled list
@@ -31515,8 +31532,8 @@ msgstr ""
 #. type: delimited block _
 #: ../sys-utils/mount.8.adoc:1037
 msgid ""
-"Redirects are not created and not followed (equivalent to \"redirect_dir=off"
-"\" if \"redirect_always_follow\" feature is not enabled)."
+"Redirects are not created and not followed (equivalent to "
+"\"redirect_dir=off\" if \"redirect_always_follow\" feature is not enabled)."
 msgstr ""
 
 #. type: Labeled list
@@ -31674,10 +31691,10 @@ msgstr ""
 #: ../sys-utils/mount.8.adoc:1095
 msgid ""
 "When overlay filesystem has multiple lower layers, a middle layer directory "
-"may have a \"redirect\" to lower directory. Because middle layer \"redirects"
-"\" are not indexed, a lower file handle that was encoded from the \"redirect"
-"\" origin directory, cannot be used to find the middle or upper layer "
-"directory.  Similarly, a lower file handle that was encoded from a "
+"may have a \"redirect\" to lower directory. Because middle layer "
+"\"redirects\" are not indexed, a lower file handle that was encoded from the "
+"\"redirect\" origin directory, cannot be used to find the middle or upper "
+"layer directory.  Similarly, a lower file handle that was encoded from a "
 "descendant of the \"redirect\" origin directory, cannot be used to "
 "reconstruct a connected overlay path. To mitigate the cases of directories "
 "that cannot be decoded from a lower file handle, these directories are "
@@ -35087,10 +35104,10 @@ msgstr " -w, --fullnames      exibe os nomes de domínio e usuário completos\n"
 #: ../sys-utils/renice.1.adoc:79
 msgid ""
 "Users other than the superuser may only alter the priority of processes they "
-"own. Furthermore, an unprivileged user can only _increase_ the \"nice value"
-"\" (i.e., choose a lower priority) and such changes are irreversible unless "
-"(since Linux 2.6.12) the user has a suitable \"nice\" resource limit (see "
-"*ulimit*(1p) and *getrlimit*(2))."
+"own. Furthermore, an unprivileged user can only _increase_ the \"nice "
+"value\" (i.e., choose a lower priority) and such changes are irreversible "
+"unless (since Linux 2.6.12) the user has a suitable \"nice\" resource limit "
+"(see *ulimit*(1p) and *getrlimit*(2))."
 msgstr ""
 
 #. type: Plain text
@@ -36817,7 +36834,7 @@ msgstr ""
 #. type: Plain text
 #: ../sys-utils/switch_root.8.adoc:32
 #, no-wrap
-msgid "*switch_root* returns 0 on success and 1 on failure.\n"
+msgid "*switch_root* returns 1 on failure, it never returns on success.\n"
 msgstr ""
 
 #. type: Plain text
@@ -37775,12 +37792,12 @@ msgid ""
 "Run the program only after the block of user IDs of size _count_ beginning "
 "at _outeruid_ has been mapped to the block of user IDs beginning at "
 "_inneruid_. This mapping is created with **newuidmap**(1). If the range of "
-"user IDs overlaps with the mapping specified by *--map-user*, then a \"hole"
-"\" will be removed from the mapping. This may result in the highest user ID "
-"of the mapping not being mapped. The special value *auto* will map the first "
-"block of user IDs owned by the effective user from _/etc/subuid_ to a block "
-"starting at user ID 0. If this option is specified multiple times, the last "
-"occurrence takes precedence. This option implies *--user*."
+"user IDs overlaps with the mapping specified by *--map-user*, then a "
+"\"hole\" will be removed from the mapping. This may result in the highest "
+"user ID of the mapping not being mapped. The special value *auto* will map "
+"the first block of user IDs owned by the effective user from _/etc/subuid_ "
+"to a block starting at user ID 0. If this option is specified multiple "
+"times, the last occurrence takes precedence. This option implies *--user*."
 msgstr ""
 
 #. type: Labeled list
@@ -37809,12 +37826,12 @@ msgid ""
 "Run the program only after the block of group IDs of size _count_ beginning "
 "at _outergid_ has been mapped to the block of group IDs beginning at "
 "_innergid_. This mapping is created with **newgidmap**(1). If the range of "
-"group IDs overlaps with the mapping specified by *--map-group*, then a \"hole"
-"\" will be removed from the mapping. This may result in the highest group ID "
-"of the mapping not being mapped. The special value *auto* will map the first "
-"block of user IDs owned by the effective user from _/etc/subgid_ to a block "
-"starting at group ID 0. If this option is specified multiple times, the last "
-"occurrence takes precedence. This option implies *--user*."
+"group IDs overlaps with the mapping specified by *--map-group*, then a "
+"\"hole\" will be removed from the mapping. This may result in the highest "
+"group ID of the mapping not being mapped. The special value *auto* will map "
+"the first block of user IDs owned by the effective user from _/etc/subgid_ "
+"to a block starting at group ID 0. If this option is specified multiple "
+"times, the last occurrence takes precedence. This option implies *--user*."
 msgstr ""
 
 #. type: Labeled list

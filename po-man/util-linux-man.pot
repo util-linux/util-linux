@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-03-28 13:25+0200\n"
+"POT-Creation-Date: 2022-08-04 10:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3156,15 +3156,16 @@ msgstr ""
 #. type: Labeled list
 #: ../disk-utils/fsck.cramfs.8.adoc:23 ../disk-utils/fsck.minix.8.adoc:56
 #: ../disk-utils/mkfs.bfs.8.adoc:38 ../disk-utils/partx.8.adoc:96
-#: ../misc-utils/mcookie.1.adoc:39 ../misc-utils/rename.1.adoc:28
-#: ../schedutils/chrt.1.adoc:101 ../schedutils/uclampset.1.adoc:83
-#: ../sys-utils/blkdiscard.8.adoc:49 ../sys-utils/blkzone.8.adoc:98
-#: ../sys-utils/chmem.8.adoc:49 ../sys-utils/eject.1.adoc:84
-#: ../sys-utils/fallocate.1.adoc:64 ../sys-utils/hwclock.8.adoc:168
-#: ../sys-utils/losetup.8.adoc:95 ../sys-utils/mount.8.adoc:436
-#: ../sys-utils/readprofile.8.adoc:51 ../sys-utils/rtcwake.8.adoc:105
-#: ../sys-utils/setarch.8.adoc:37 ../sys-utils/swapon.8.adoc:86
-#: ../sys-utils/umount.8.adoc:111 ../term-utils/mesg.1.adoc:71
+#: ../misc-utils/hardlink.1.adoc:45 ../misc-utils/mcookie.1.adoc:39
+#: ../misc-utils/rename.1.adoc:28 ../schedutils/chrt.1.adoc:101
+#: ../schedutils/uclampset.1.adoc:83 ../sys-utils/blkdiscard.8.adoc:49
+#: ../sys-utils/blkzone.8.adoc:98 ../sys-utils/chmem.8.adoc:49
+#: ../sys-utils/eject.1.adoc:84 ../sys-utils/fallocate.1.adoc:64
+#: ../sys-utils/hwclock.8.adoc:168 ../sys-utils/losetup.8.adoc:95
+#: ../sys-utils/mount.8.adoc:436 ../sys-utils/readprofile.8.adoc:51
+#: ../sys-utils/rtcwake.8.adoc:105 ../sys-utils/setarch.8.adoc:37
+#: ../sys-utils/swapon.8.adoc:86 ../sys-utils/umount.8.adoc:111
+#: ../term-utils/mesg.1.adoc:71
 #, no-wrap
 msgid "*-v*, *--verbose*"
 msgstr ""
@@ -3674,7 +3675,7 @@ msgstr ""
 #: ../disk-utils/mkfs.8.adoc:41 ../disk-utils/raw.8.adoc:51
 #: ../login-utils/login.1.adoc:151 ../login-utils/utmpdump.1.adoc:67
 #: ../misc-utils/cal.1.adoc:153 ../misc-utils/getopt.1.adoc:141
-#: ../misc-utils/hardlink.1.adoc:129 ../misc-utils/mcookie.1.adoc:50
+#: ../misc-utils/hardlink.1.adoc:134 ../misc-utils/mcookie.1.adoc:50
 #: ../misc-utils/namei.1.adoc:61 ../sys-utils/lscpu.1.adoc:89
 #: ../sys-utils/mount.8.adoc:1548 ../sys-utils/readprofile.8.adoc:67
 #: ../term-utils/agetty.8.adoc:313 ../term-utils/script.1.adoc:155
@@ -3872,7 +3873,7 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: ../disk-utils/mkfs.cramfs.8.adoc:27 ../misc-utils/hardlink.1.adoc:125
+#: ../disk-utils/mkfs.cramfs.8.adoc:27 ../misc-utils/hardlink.1.adoc:130
 #: ../misc-utils/kill.1.adoc:35 ../term-utils/agetty.8.adoc:35
 #: ../term-utils/mesg.1.adoc:59
 #, no-wrap
@@ -4283,7 +4284,7 @@ msgstr ""
 
 #. type: Labeled list
 #: ../disk-utils/mkswap.8.adoc:49 ../disk-utils/sfdisk.8.adoc:195
-#: ../misc-utils/getopt.1.adoc:47 ../misc-utils/hardlink.1.adoc:46
+#: ../misc-utils/getopt.1.adoc:47 ../misc-utils/hardlink.1.adoc:48
 #: ../misc-utils/uuidd.8.adoc:46 ../misc-utils/wipefs.8.adoc:72
 #: ../sys-utils/mountpoint.1.adoc:28 ../sys-utils/umount.8.adoc:99
 #: ../term-utils/script.1.adoc:115
@@ -6515,7 +6516,7 @@ msgstr ""
 #. type: Labeled list
 #: ../disk-utils/sfdisk.8.adoc:423
 #, no-wrap
-msgid "*echo -e ',10M,L\\n,10M,L\\n,,+\\n' | sfdisk /dev/sdc*"
+msgid "*echo -e ',10M,L\\n,10M,L\\n,+,\\n' | sfdisk /dev/sdc*"
 msgstr ""
 
 #. type: Plain text
@@ -7454,7 +7455,7 @@ msgstr ""
 #. type: Plain text
 #: ../libuuid/man/uuid_copy.3.adoc:50
 #, no-wrap
-msgid "*void uuid_copy(uuid_t __dst__, uuid_t __src__;*\n"
+msgid "*void uuid_copy(uuid_t __dst__, uuid_t __src__);*\n"
 msgstr ""
 
 #. type: Plain text
@@ -13349,7 +13350,7 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: ../misc-utils/getopt.1.adoc:147 ../misc-utils/hardlink.1.adoc:135
+#: ../misc-utils/getopt.1.adoc:147 ../misc-utils/hardlink.1.adoc:140
 #: ../misc-utils/uuidd.8.adoc:77
 #, no-wrap
 msgid "AUTHOR"
@@ -13423,36 +13424,37 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:45
+#: ../misc-utils/hardlink.1.adoc:47
 msgid ""
-"If specified once, every hardlinked file is displayed, if specified twice, "
-"it also shows every comparison."
+"Verbose output, explain to the user what is being done. If specified once, "
+"every hardlinked file is displayed. If specified twice, it also shows every "
+"comparison."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:48
+#: ../misc-utils/hardlink.1.adoc:50
 msgid "Quiet mode, don't print anything."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:49 ../sys-utils/rtcwake.8.adoc:93
+#: ../misc-utils/hardlink.1.adoc:51 ../sys-utils/rtcwake.8.adoc:93
 #, no-wrap
 msgid "*-n*, *--dry-run*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:51
+#: ../misc-utils/hardlink.1.adoc:53
 msgid "Do not act, just print what would happen."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:52
+#: ../misc-utils/hardlink.1.adoc:54
 #, no-wrap
 msgid "*-y*, *--method* _name_"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:58
+#: ../misc-utils/hardlink.1.adoc:60
 msgid ""
 "Set the file content comparison method. The currently supported methods are "
 "sha256, sha1, crc32c and memcmp. The default is sha256, or memcmp if Linux "
@@ -13462,13 +13464,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:59
+#: ../misc-utils/hardlink.1.adoc:61
 #, no-wrap
 msgid "*--reflink*[=_when_]"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:64
+#: ../misc-utils/hardlink.1.adoc:66
 msgid ""
 "Create copy-on-write clones (aka reflinks) rather than hardlinks. The "
 "reflinked files share only on-disk data, but the file mode and owner can be "
@@ -13478,7 +13480,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:70
+#: ../misc-utils/hardlink.1.adoc:72
 msgid ""
 "The optional argument _when_ can be *never*, *always*, or *auto*. If the "
 "_when_ argument is omitted, it defaults to *auto*, in this case, *hardlink* "
@@ -13489,26 +13491,26 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:71
+#: ../misc-utils/hardlink.1.adoc:73
 #, no-wrap
 msgid "*--skip-reflinks*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:73
+#: ../misc-utils/hardlink.1.adoc:75
 msgid ""
 "Ignore already cloned files. This option may be used without *--reflink* "
 "when creating classic hardlinks."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:74
+#: ../misc-utils/hardlink.1.adoc:76
 #, no-wrap
 msgid "*-f*, *--respect-name*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:76
+#: ../misc-utils/hardlink.1.adoc:78
 msgid ""
 "Only try to link files with the same (base)name. It's strongly recommended "
 "to use long options rather than *-f* which is interpreted in a different way "
@@ -13516,85 +13518,98 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:77
+#: ../misc-utils/hardlink.1.adoc:79
 #, no-wrap
 msgid "*-p*, *--ignore-mode*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:79
+#: ../misc-utils/hardlink.1.adoc:81
 msgid ""
 "Link and compare files even if their mode is different. Results may be "
 "slightly unpredictable."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:80
+#: ../misc-utils/hardlink.1.adoc:82
 #, no-wrap
 msgid "*-o*, *--ignore-owner*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:82
+#: ../misc-utils/hardlink.1.adoc:84
 msgid ""
 "Link and compare files even if their owner information (user and group) "
 "differs. Results may be unpredictable."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:83
+#: ../misc-utils/hardlink.1.adoc:85
 #, no-wrap
 msgid "*-t*, *--ignore-time*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:85
+#: ../misc-utils/hardlink.1.adoc:87
 msgid ""
 "Link and compare files even if their time of modification is different. This "
 "is usually a good choice."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:86
+#: ../misc-utils/hardlink.1.adoc:88
+#, no-wrap
+msgid "*-c* *--content*"
+msgstr ""
+
+#. type: Plain text
+#: ../misc-utils/hardlink.1.adoc:90
+msgid ""
+"Consider only file content, not attributes, when determining whether two "
+"files are equal. Same as *-pot*."
+msgstr ""
+
+#. type: Labeled list
+#: ../misc-utils/hardlink.1.adoc:91
 #, no-wrap
 msgid "*-X*, *--respect-xattrs*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:88
+#: ../misc-utils/hardlink.1.adoc:93
 msgid "Only try to link files with the same extended attributes."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:89
+#: ../misc-utils/hardlink.1.adoc:94
 #, no-wrap
 msgid "*-m*, *--maximize*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:91
+#: ../misc-utils/hardlink.1.adoc:96
 msgid "Among equal files, keep the file with the highest link count."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:92
+#: ../misc-utils/hardlink.1.adoc:97
 #, no-wrap
 msgid "*-M*, *--minimize*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:94
+#: ../misc-utils/hardlink.1.adoc:99
 msgid "Among equal files, keep the file with the lowest link count."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:95
+#: ../misc-utils/hardlink.1.adoc:100
 #, no-wrap
 msgid "*-O*, *--keep-oldest*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:97
+#: ../misc-utils/hardlink.1.adoc:102
 msgid ""
 "Among equal files, keep the oldest file (least recent modification time). By "
 "default, the newest file is kept. If *--maximize* or *--minimize* is "
@@ -13603,24 +13618,24 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:98
+#: ../misc-utils/hardlink.1.adoc:103
 #, no-wrap
 msgid "*-x*, *--exclude* _regex_"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:100
+#: ../misc-utils/hardlink.1.adoc:105
 msgid "A regular expression which excludes files from being compared and linked."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:101
+#: ../misc-utils/hardlink.1.adoc:106
 #, no-wrap
 msgid "*-i*, *--include* _regex_"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:103
+#: ../misc-utils/hardlink.1.adoc:108
 msgid ""
 "A regular expression to include files. If the option *--exclude* has been "
 "given, this option re-includes files which would otherwise be excluded. If "
@@ -13629,13 +13644,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:104
+#: ../misc-utils/hardlink.1.adoc:109
 #, no-wrap
 msgid "*-s*, *--minimum-size* _size_"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:106
+#: ../misc-utils/hardlink.1.adoc:111
 msgid ""
 "The minimum size to consider. By default this is 1, so empty files will not "
 "be linked. The _size_ argument may be followed by the multiplicative "
@@ -13645,13 +13660,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:107
+#: ../misc-utils/hardlink.1.adoc:112
 #, no-wrap
 msgid "*-S*, *--maximum-size* _size_"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:109
+#: ../misc-utils/hardlink.1.adoc:114
 msgid ""
 "The maximum size to consider. By default this is 0 and 0 has the special "
 "meaning of unlimited. The _size_ argument may be followed by the "
@@ -13661,13 +13676,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:110
+#: ../misc-utils/hardlink.1.adoc:115
 #, no-wrap
 msgid "*-b*, *--io-size* _size_"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:118
+#: ../misc-utils/hardlink.1.adoc:123
 msgid ""
 "The size of the *read*(2) or *sendfile*(2) buffer used when comparing file "
 "contents.  The _size_ argument may be followed by the multiplicative "
@@ -13679,13 +13694,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:119
+#: ../misc-utils/hardlink.1.adoc:124
 #, no-wrap
 msgid "*-r*, *--cache-size* _size_"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:124
+#: ../misc-utils/hardlink.1.adoc:129
 msgid ""
 "The size of the cache for content checksums. All non-memcmp methods "
 "calculate checksum for each file content block (see *--io-size*), these "
@@ -13694,7 +13709,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:128
+#: ../misc-utils/hardlink.1.adoc:133
 #, no-wrap
 msgid ""
 "*hardlink* takes one or more directories which will be searched for files to "
@@ -13702,7 +13717,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:132
+#: ../misc-utils/hardlink.1.adoc:137
 msgid ""
 "The original *hardlink* implementation uses the option *-f* to force "
 "hardlinks creation between filesystem. This very rarely usable feature is no "
@@ -13710,7 +13725,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:134
+#: ../misc-utils/hardlink.1.adoc:139
 #, no-wrap
 msgid ""
 "*hardlink* assumes that the trees it operates on do not change during "
@@ -13723,7 +13738,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:138
+#: ../misc-utils/hardlink.1.adoc:143
 msgid ""
 "There are multiple *hardlink* implementations. The very first implementation "
 "is from Jakub Jelinek for Fedora distribution, this implementation has been "
@@ -25406,7 +25421,7 @@ msgstr ""
 #: ../sys-utils/losetup.8.adoc:82
 msgid ""
 "Set the logical sector size of the loop device in bytes (since Linux "
-"4.14). The option may be used when create a new loop device as well as "
+"4.14). The option may be used when creating a new loop device as well as a "
 "stand-alone command to modify sector size of the already existing loop "
 "device."
 msgstr ""
@@ -26280,14 +26295,15 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/lsns.8.adoc:82
+#: ../sys-utils/lsns.8.adoc:83
 #, no-wrap
 msgid ""
 "*nsenter*(1),\n"
 "*unshare*(1),\n"
 "*clone*(2),\n"
 "*namespaces*(7),\n"
-"*ioctl_ns*(2)\n"
+"*ioctl_ns*(2),\n"
+"*ip-netns*(8)\n"
 msgstr ""
 
 #. Copyright (c) 1996-2004 Andries Brouwer
@@ -35029,7 +35045,7 @@ msgstr ""
 #. type: Plain text
 #: ../sys-utils/switch_root.8.adoc:32
 #, no-wrap
-msgid "*switch_root* returns 0 on success and 1 on failure.\n"
+msgid "*switch_root* returns 1 on failure, it never returns on success.\n"
 msgstr ""
 
 #. type: Plain text
