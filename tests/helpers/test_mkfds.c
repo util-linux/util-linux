@@ -17,19 +17,26 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include <arpa/inet.h>
 #include <ctype.h>
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <getopt.h>
+#include <linux/if_ether.h>
+#include <linux/if_packet.h>
+#include <net/if.h>
 #include <signal.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <sys/mman.h>
 #include <sys/prctl.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/un.h>
+#include <sys/user.h>
 #include <unistd.h>
 
 #include "c.h"
@@ -535,6 +542,130 @@ static void open_ro_blkdev(const struct factory *factory, struct fdesc fdescs[],
 	};
 }
 
+static int make_packet_socket(int socktype, const char *interface)
+{
+	int sd;
+	struct sockaddr_ll addr;
+
+	sd = socket(AF_PACKET, socktype, htons(ETH_P_ALL));
+	if (sd < 0)
+		err(EXIT_FAILURE, "failed to make a socket with AF_PACKET");
+
+	if (interface == NULL)
+		return sd;	/* Just making a socket */
+
+	memset(&addr, 0, sizeof(struct sockaddr_ll));
+	addr.sll_family = AF_PACKET;
+	addr.sll_protocol = ETH_P_ALL;
+	addr.sll_ifindex = if_nametoindex(interface);
+	if (addr.sll_ifindex == 0) {
+		int e = errno;
+		close(sd);
+		errno = e;
+		err(EXIT_FAILURE,
+		    "failed to get the interface index for %s", interface);
+	}
+	if (bind(sd, (struct sockaddr *)&addr, sizeof(struct sockaddr_ll)) < 0) {
+		int e = errno;
+		close(sd);
+		errno = e;
+		err(EXIT_FAILURE,
+		    "failed to get the interface index for %s", interface);
+	}
+
+	return sd;
+}
+
+struct munmap_data {
+	void *ptr;
+	size_t len;
+};
+
+static void close_fdesc_after_munmap(int fd, void *data)
+{
+	struct munmap_data *munmap_data = data;
+	munmap(munmap_data->ptr, munmap_data->len);
+	free(data);
+	close(fd);
+}
+
+static void make_mmapped_packet_socket(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
+				       int argc, char ** argv)
+{
+	int sd;
+	struct arg socktype = decode_arg("socktype", factory->params, argc, argv);
+	struct arg interface = decode_arg("interface", factory->params, argc, argv);
+
+	int isocktype;
+	const char *sinterface;
+	struct tpacket_req req;
+	struct munmap_data *munmap_data;
+
+	if (strcmp(ARG_STRING(socktype), "DGRAM") == 0)
+		isocktype = SOCK_DGRAM;
+	else if (strcmp(ARG_STRING(socktype), "RAW") == 0)
+		isocktype = SOCK_RAW;
+	else
+		errx(EXIT_FAILURE,
+		     "unknown socket type for socket(AF_PACKET,...): %s",
+		     ARG_STRING(socktype));
+	free_arg(&socktype);
+
+	sinterface = ARG_STRING(interface);
+	sd = make_packet_socket(isocktype, sinterface);
+	free_arg(&interface);
+
+	/* Specify the spec of ring buffers.
+	 *
+	 * ref.
+	 * - linux/Documentation/networking/packet_mmap.rst
+	 * - https://sites.google.com/site/packetmmap/home
+	 */
+	req.tp_block_size = PAGE_SIZE;
+	req.tp_frame_size = PAGE_SIZE;
+	req.tp_block_nr = 1;
+	req.tp_frame_nr = 1;
+	if (setsockopt(sd, SOL_PACKET, PACKET_TX_RING, (char *)&req, sizeof(req)) < 0) {
+		int e = errno;
+		close(sd);
+		errno = e;
+		err(EXIT_FAILURE, "failed to specify a buffer spec to a packet socket");
+	}
+
+	munmap_data = malloc(sizeof (*munmap_data));
+	if (munmap_data == NULL) {
+		close(sd);
+		errx(EXIT_FAILURE, "memory exhausted");
+	}
+	munmap_data->len = req.tp_block_size * req.tp_block_nr;
+	munmap_data->ptr = mmap(NULL, munmap_data->len, PROT_WRITE, MAP_SHARED, sd, 0);
+	if (munmap_data->ptr == MAP_FAILED) {
+		int e = errno;
+		close(sd);
+		free(munmap_data);
+		errno = e;
+		err(EXIT_FAILURE, "failed to do mmap a packet socket");
+	}
+
+	if (sd != fdescs[0].fd) {
+		if (dup2(sd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(sd);
+			munmap(munmap_data->ptr, munmap_data->len);
+			free(munmap_data);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", sd, fdescs[0].fd);
+		}
+		close(sd);
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc_after_munmap,
+		.data  = munmap_data,
+	};
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -683,6 +814,30 @@ static const struct factory factories[] = {
 				.type = PTYPE_STRING,
 				.desc = "block device node to be opened",
 				.defv.string = "/dev/nullb0",
+			},
+			PARAM_END
+		},
+	},
+	{
+		.name = "mapped-packet-socket",
+		.desc = "mmap'ed AF_PACKET socket",
+		.priv = true,
+		.N = 1,
+		.EX_N = 0,
+		.fork = false,
+		.make = make_mmapped_packet_socket,
+		.params = (struct parameter []) {
+			{
+				.name = "socktype",
+				.type = PTYPE_STRING,
+				.desc = "DGRAM or RAW",
+				.defv.string = "RAW",
+			},
+			{
+				.name = "interface",
+				.type = PTYPE_STRING,
+				.desc = "a name of network interface like eth0 or lo",
+				.defv.string = "lo",
 			},
 			PARAM_END
 		},
