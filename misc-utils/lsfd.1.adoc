@@ -181,6 +181,24 @@ Access mode (rwx).
 
 NAME <``string``>::
 Name of the file.
+//
+// It seems that the manpage backend of asciidoctor has limitations
+// about emitting text with nested face specifications like:
+//
+//   `_u_` p
+//
+// Not only u but also p is decorated with underline.
+//
+For the most of all files, *lsfd* extracts their names
+from ``/proc/``_pid_``/fd/``_fd_ or ``/proc/``_pid_``/map_files/``_region_.
++
+Some files have special formats and information sources:
++
+pidfd:::
+pidfd: pid=_TARGET-PID_ comm=_TARGET-COMMAND_ nspid=_TARGET-NSPIDS_
++
+*lsfd* extracts _TARGET-PID_ and _TARGET-NSPIDS_ from
+``/proc/``_pid_``/fdinfo/``_fd_.
 
 NLINK <``number``>::
 Link count.
