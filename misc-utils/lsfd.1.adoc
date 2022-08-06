@@ -213,7 +213,7 @@ TID <``number``>::
 Thread ID of the process opening the file.
 
 TYPE <``string``>::
-File type.
+File types: BLK, CHR, DIR, FIFO, LINK, REG, SOCK, or UNKN.
 
 UID <``number``>::
 User ID number.
