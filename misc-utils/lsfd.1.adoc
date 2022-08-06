@@ -47,7 +47,7 @@ Specify which output columns to print. See the *OUTPUT COLUMNS*
 section for details of available columns.
 +
 The default list of columns may be extended if _list_ is specified in
-the format _+list_ (e.g., *lsfd -o +DELETED*).
+the format +_list_ (e.g., *lsfd -o +DELETED*).
 
 *-r*, *--raw*::
 Use raw output format.
@@ -255,7 +255,7 @@ flavored aliases: `&&`, `||`, `==`, `!=`, `<`, `<=`, `>=`, and `>`.
 `eq`, `ne`, and their aliases expect operands have the same data type.
 Applying these operators return a `boolean`.
 
-`and`, `or`, `not` and their aliases expect operands have `bool` data
+`and`, `or`, `not` and their aliases expect operands have `boolean` data
 type. Applying these operators return a `boolean`.
 
 `lt`, `le`, `gt`, `ge`, and their aliases expect operands have
