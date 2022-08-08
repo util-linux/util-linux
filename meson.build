@@ -302,9 +302,16 @@ conf.set('HAVE_LIBUDEV', lib_udev.found() ? 1 : false)
 
 lib_crypt = cc.find_library('crypt')
 
-req_libpam = not (get_option('build-login').disabled() or get_option('build-chfn-chsh').disabled()
-  or get_option('build-su').disabled() or get_option('build-runuser').disabled())
-lib_pam = cc.find_library('pam', required : req_libpam)
+lib_pam = cc.find_library('pam', required : get_option('build-login'))
+if not lib_pam.found()
+  lib_pam = cc.find_library('pam', required : get_option('build-chfn-chsh'))
+endif
+if not lib_pam.found()
+  lib_pam = cc.find_library('pam', required : get_option('build-su'))
+endif
+if not lib_pam.found()
+  lib_pam = cc.find_library('pam', required : get_option('build-runuser'))
+endif
 if lib_pam.found()
   lib_pam_misc = cc.find_library('pam_misc')
   lib_pam = [lib_pam, lib_pam_misc]
