@@ -381,7 +381,7 @@ static char *get_subsystem(char *chain, char *buf, size_t bufsz)
 }
 
 /*
- * Returns complete path to the device, the patch contains all subsystems
+ * Returns complete path to the device, the path contains all subsystems
  * used for the device.
  */
 char *sysfs_blkdev_get_devchain(struct path_cxt *pc, char *buf, size_t bufsz)
@@ -399,7 +399,7 @@ char *sysfs_blkdev_get_devchain(struct path_cxt *pc, char *buf, size_t bufsz)
 	if (prefix)
 		psz = strlen(prefix);
 
-	/* create absolute patch from the link */
+	/* create absolute path from the link */
 	memmove(buf + psz + sizeof(_PATH_SYS_DEVBLOCK "/") - 1, buf, sz);
 	if (prefix)
 		memcpy(buf, prefix, psz);
