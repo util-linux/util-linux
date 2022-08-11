@@ -621,8 +621,8 @@ static void make_mmapped_packet_socket(const struct factory *factory, struct fde
 	 * - linux/Documentation/networking/packet_mmap.rst
 	 * - https://sites.google.com/site/packetmmap/home
 	 */
-	req.tp_block_size = PAGE_SIZE;
-	req.tp_frame_size = PAGE_SIZE;
+	req.tp_block_size = getpagesize();
+	req.tp_frame_size = getpagesize();
 	req.tp_block_nr = 1;
 	req.tp_frame_nr = 1;
 	if (setsockopt(sd, SOL_PACKET, PACKET_TX_RING, (char *)&req, sizeof(req)) < 0) {
