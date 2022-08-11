@@ -227,7 +227,7 @@ done:
 	close(pipes[0]);
 
 	/* We make a best effort to reap child */
-	waitpid(pid, NULL, 0);
+	ignore_result( waitpid(pid, NULL, 0) );
 
 	errno = errsv;
 	return canonical;
