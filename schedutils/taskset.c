@@ -35,6 +35,10 @@
 #include "c.h"
 #include "closestream.h"
 
+#ifndef PF_NO_SETAFFINITY
+# define PF_NO_SETAFFINITY 0x04000000
+#endif
+
 struct taskset {
 	pid_t		pid;		/* task PID */
 	cpu_set_t	*set;		/* task CPU mask */
@@ -112,6 +116,7 @@ static void __attribute__((__noreturn__)) err_affinity(pid_t pid, int set)
 	err(EXIT_FAILURE, msg, pid ? pid : getpid());
 }
 
+
 static void do_taskset(struct taskset *ts, size_t setsize, cpu_set_t *set)
 {
 	/* read the current mask */
@@ -125,8 +130,22 @@ static void do_taskset(struct taskset *ts, size_t setsize, cpu_set_t *set)
 		return;
 
 	/* set new mask */
-	if (sched_setaffinity(ts->pid, setsize, set) < 0)
+	if (sched_setaffinity(ts->pid, setsize, set) < 0) {
+		uintmax_t flags = 0;
+		struct path_cxt *pc;
+		int errsv = errno;
+
+		if (errno != EPERM
+		    && (pc = ul_new_procfs_path(ts->pid, NULL))
+		    && procfs_process_get_stat_nth(pc, 9, &flags) == 0
+		    && (flags & PF_NO_SETAFFINITY)) {
+			warnx(_("affinity cannot be set due to PF_NO_SETAFFINITY flag set"));
+			errno = EINVAL;
+		} else
+			errno = errsv;
+
 		err_affinity(ts->pid, 1);
+	}
 
 	/* re-read the current mask */
 	if (ts->pid) {
