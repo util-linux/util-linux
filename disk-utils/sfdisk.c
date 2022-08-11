@@ -566,8 +566,9 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 				ioerr++;
 				goto next;
 			}
-			if (sf->movefsync)
-				fsync(fd);
+			if (sf->movefsync && fsync(fd) != 0)
+				fdisk_warn(sf->cxt,
+					_("cannot fsync at offset: %ju; continue"), dst);
 		}
 
 		/* write log */
