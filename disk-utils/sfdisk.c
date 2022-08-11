@@ -435,7 +435,6 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	from = fdisk_partition_get_start(orig_pa);
 	to = fdisk_partition_get_start(pa);
 
-
 	if ((to >= from && from + nsectors >= to) ||
 	    (from >= to && to + nsectors >= from)) {
 		/* source and target overlay, check if we need to copy
@@ -462,7 +461,8 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 
 #if defined(POSIX_FADV_SEQUENTIAL) && defined(HAVE_POSIX_FADVISE)
 	if (!backward)
-		posix_fadvise(fd, from * ss, nsectors * ss, POSIX_FADV_SEQUENTIAL);
+		ignore_result( posix_fadvise(fd, from * ss,
+					nsectors * ss, POSIX_FADV_SEQUENTIAL) );
 #endif
 	devname = fdisk_partname(fdisk_get_devname(sf->cxt), partno+1);
 	if (sf->move_typescript)
@@ -608,7 +608,7 @@ next:
 			src += step_bytes, dst += step_bytes;
 	}
 
-	if (progress) {
+	if (progress && nsectors) {
 		int x = get_terminal_width(80);
 		for (; x > 0; x--)
 			fputc(' ', stdout);
