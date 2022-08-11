@@ -2045,7 +2045,8 @@ static int gpt_write(struct fdisk_context *cxt, off_t offset, void *buf, size_t 
 	if (write_all(cxt->dev_fd, buf, count))
 		return -errno;
 
-	fsync(cxt->dev_fd);
+	if (fsync(cxt->dev_fd) != 0)
+		return -errno;
 
 	DBG(GPT, ul_debug("  write OK [offset=%zu, size=%zu]",
 				(size_t) offset, count));
