@@ -324,7 +324,10 @@ err:
  */
 static int evaluate_permissions(struct libmnt_context *cxt)
 {
-	unsigned long u_flags = 0;
+	struct libmnt_optlist *ol;
+	unsigned long user_flags = 0;	/* userspace mount flags */
+	const struct libmnt_optmap *user_map;	/* map with userspace options */
+	int rc;
 
 	assert(cxt);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
@@ -334,15 +337,30 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 
 	DBG(CXT, ul_debugobj(cxt, "mount: evaluating permissions"));
 
-	mnt_context_get_user_mflags(cxt, &u_flags);
+	ol = mnt_context_get_optlist(cxt);
+	if (!ol)
+		return -EINVAL;
+
+	user_map = mnt_get_builtin_optmap(MNT_USERSPACE_MAP);
+	assert(user_map);
+
+	/* get userspace mount flags (user[=<name>] etc.*/
+	rc = mnt_optlist_get_flags(ol, &user_flags, user_map);
+	if (rc)
+		return rc;
 
 	if (!mnt_context_is_restricted(cxt)) {
 		/*
 		 * superuser mount
 		 */
-		cxt->user_mountflags &= ~MNT_MS_OWNER;
-		cxt->user_mountflags &= ~MNT_MS_GROUP;
+		if (user_flags & (MNT_MS_OWNER | MNT_MS_GROUP))
+			mnt_optlist_remove_flags(ol,
+					MNT_MS_OWNER | MNT_MS_GROUP, user_map);
+		DBG(CXT, ul_debugobj(cxt, "perms: superuser"));
 	} else {
+		struct libmnt_opt *opt;
+		const struct libmnt_optmap *sys_map;	/* map with system mount flags */
+
 		/*
 		 * user mount
 		 */
@@ -352,23 +370,35 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 			return -EPERM;
 		}
 
+		sys_map = mnt_get_builtin_optmap(MNT_LINUX_MAP);
+		assert(sys_map);
+
 		/*
-		 * MS_OWNERSECURE and MS_SECURE mount options are already
-		 * applied by mnt_optstr_get_flags() in mnt_context_merge_mflags()
-		 * if "user" (but no user=<name> !) options is set.
-		 *
-		 * Let's ignore all user=<name> (if <name> is set) requests.
-		 */
-		if (cxt->user_mountflags & MNT_MS_USER) {
-			size_t valsz = 0;
+		* Ignore user=<name> (if <name> is set). Let's keep it hidden
+		* for normal library operations, but visible for /sbin/mount.<type>
+		* helpers.
+		*/
+		if (user_flags & MNT_MS_USER
+		    && (opt = mnt_optlist_get_opt(ol, MNT_MS_USER, user_map))
+		    && mnt_opt_has_value(opt)) {
+			DBG(CXT, ul_debugobj(cxt, "perms: user=<name> detected, ignore"));
 
-			if (!mnt_optstr_get_option(cxt->fs->user_optstr,
-					"user", NULL, &valsz) && valsz) {
-
-				DBG(CXT, ul_debugobj(cxt, "perms: user=<name> detected, ignore"));
-				cxt->user_mountflags &= ~MNT_MS_USER;
-			}
+			mnt_opt_set_external(opt, 1);
+			user_flags &= ~MNT_MS_USER;
 		}
+
+		/*
+		 * Insert MS_SECURE between system flags on position where is MNT_MS_USER
+		 */
+		if ((user_flags & MNT_MS_USER)
+		    && (rc = mnt_optlist_insert_flags(ol, MS_SECURE, sys_map,
+						    MNT_MS_USER, user_map)))
+			return rc;
+
+		if ((user_flags & MNT_MS_USERS)
+		    && (rc = mnt_optlist_insert_flags(ol, MS_SECURE, sys_map,
+						    MNT_MS_USERS, user_map)))
+			return rc;
 
 		/*
 		 * MS_OWNER: Allow owners to mount when fstab contains the
@@ -377,11 +407,13 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		 * the console the possibility of mounting a floppy.  MS_GROUP:
 		 * Allow members of device group to mount. (Martin Dickopp)
 		 */
-		if (u_flags & (MNT_MS_OWNER | MNT_MS_GROUP)) {
+		if (user_flags & (MNT_MS_OWNER | MNT_MS_GROUP)) {
 			struct stat sb;
 			struct libmnt_cache *cache = NULL;
 			char *xsrc = NULL;
 			const char *srcpath = mnt_fs_get_srcpath(cxt->fs);
+
+			DBG(CXT, ul_debugobj(cxt, "perms: owner/group"));
 
 			if (!srcpath) {					/* Ah... source is TAG */
 				cache = mnt_context_get_cache(cxt);
@@ -397,17 +429,30 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 
 			if (strncmp(srcpath, "/dev/", 5) == 0 &&
 			    stat(srcpath, &sb) == 0 &&
-			    (((u_flags & MNT_MS_OWNER) && getuid() == sb.st_uid) ||
-			     ((u_flags & MNT_MS_GROUP) && mnt_in_group(sb.st_gid))))
+			    (((user_flags & MNT_MS_OWNER) && getuid() == sb.st_uid) ||
+			     ((user_flags & MNT_MS_GROUP) && mnt_in_group(sb.st_gid)))) {
 
-				cxt->user_mountflags |= MNT_MS_USER;
+				/* insert MS_OWNERSECURE between system flags */
+				if (user_flags & MNT_MS_OWNER)
+					mnt_optlist_insert_flags(ol,
+							MS_OWNERSECURE, sys_map,
+							MNT_MS_OWNER, user_map);
+				if (user_flags & MNT_MS_GROUP)
+					mnt_optlist_insert_flags(ol,
+							MS_OWNERSECURE, sys_map,
+							MNT_MS_GROUP, user_map);
+
+				/* continue as like "user" was specified */
+				user_flags |= MNT_MS_USER;
+				mnt_optlist_append_flags(ol, MNT_MS_USER, user_map);
+			}
 
 			if (!cache)
 				free(xsrc);
 		}
 
-		if (!(cxt->user_mountflags & (MNT_MS_USER | MNT_MS_USERS))) {
-			DBG(CXT, ul_debugobj(cxt, "permissions evaluation ends with -EPERMS"));
+		if (!(user_flags & (MNT_MS_USER | MNT_MS_USERS))) {
+			DBG(CXT, ul_debugobj(cxt, "perms: evaluation ends with -EPERMS [flags=0x%08lx]", user_flags));
 			return -EPERM;
 		}
 	}
@@ -1820,3 +1865,57 @@ int mnt_context_get_mount_excode(
 	return MNT_EX_FAIL;
 }
 
+#ifdef TEST_PROGRAM
+
+static int test_perms(struct libmnt_test *ts, int argc, char *argv[])
+{
+	struct libmnt_context *cxt;
+	struct libmnt_optlist *ls;
+	int rc;
+
+	cxt = mnt_new_context();
+
+	if (!cxt)
+		return -ENOMEM;
+
+	cxt->restricted = 1;		/* emulate suid mount(8) */
+	mnt_context_get_fs(cxt);	/* due to assert() in evaluate_permissions() */
+
+	if (argc != 2) {
+		 warn("missing fstab options");
+		 return -EPERM;
+	}
+
+	ls = mnt_context_get_optlist(cxt);
+	if (!ls)
+		return -ENOMEM;
+	rc = mnt_optlist_set_optstr(ls, argv[1], NULL);
+	if (rc) {
+		warn("cannot apply fstab options");
+		return rc;
+	}
+	cxt->flags |= MNT_FL_TAB_APPLIED;	/* emulate mnt_context_apply_fstab() */
+
+	mnt_context_merge_mflags(cxt);
+
+	rc = evaluate_permissions(cxt);
+	if (rc) {
+		warn("evaluate permission failed [rc=%d]", rc);
+		return rc;
+	}
+	printf("user can mount\n");
+
+	mnt_free_context(cxt);
+	return 0;
+}
+
+int main(int argc, char *argv[])
+{
+	struct libmnt_test tss[] = {
+	{ "--perms",  test_perms,  "<fstab-options>" },
+	{ NULL }};
+
+	return mnt_run_test(tss, argc, argv);
+}
+
+#endif /* TEST_PROGRAM */

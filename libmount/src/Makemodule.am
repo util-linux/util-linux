@@ -95,7 +95,7 @@ check_PROGRAMS += \
 	test_mount_version \
 	test_mount_debug
 if LINUX
-check_PROGRAMS += test_mount_context
+check_PROGRAMS += test_mount_context test_mount_context_mount
 check_PROGRAMS += test_mount_monitor
 endif
 
@@ -124,6 +124,11 @@ test_mount_context_SOURCES = libmount/src/context.c
 test_mount_context_CFLAGS = $(libmount_tests_cflags)
 test_mount_context_LDFLAGS = $(libmount_tests_ldflags)
 test_mount_context_LDADD = $(libmount_tests_ldadd)
+
+test_mount_context_mount_SOURCES = libmount/src/context_mount.c
+test_mount_context_mount_CFLAGS = $(libmount_tests_cflags)
+test_mount_context_mount_LDFLAGS = $(libmount_tests_ldflags)
+test_mount_context_mount_LDADD = $(libmount_tests_ldadd)
 
 test_mount_lock_SOURCES = libmount/src/lock.c
 test_mount_lock_CFLAGS = $(libmount_tests_cflags)
