@@ -1101,8 +1101,22 @@ struct libmnt_optlist *mnt_context_get_optlist(struct libmnt_context *cxt)
 {
 	if (!cxt)
 		return NULL;
+	if (!cxt->optlist) {
+		cxt->optlist = mnt_new_optlist();
+		if (!cxt->optlist)
+			return NULL;
+		if (mnt_optlist_register_map(cxt->optlist,
+				mnt_get_builtin_optmap(MNT_LINUX_MAP)))
+			goto fail;
+		if (mnt_optlist_register_map(cxt->optlist,
+				mnt_get_builtin_optmap(MNT_USERSPACE_MAP)))
+			goto fail;
+	}
 
-	return cxt->optlist ? : (cxt->optlist = mnt_new_optlist());
+	return cxt->optlist;
+fail:
+	mnt_unref_optlist(cxt->optlist);
+	return NULL;
 }
 
 /**
