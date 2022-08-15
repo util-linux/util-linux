@@ -214,7 +214,7 @@ struct libmnt_opt *mnt_optlist_get_opt(struct libmnt_optlist *ls,
 
 	while (mnt_optlist_next_opt(ls, &itr, &opt) == 0) {
 		if (!opt->external && opt->map == map
-		    && opt->ent && opt->ent->id == (int) id)
+		    && opt->ent && (unsigned long) opt->ent->id == id)
 			return opt;
 	}
 
@@ -332,7 +332,12 @@ static struct libmnt_opt *optlist_new_opt(struct libmnt_optlist *ls,
 	if (map && ent && map == ls->linux_map && ent->id & MS_PROPAGATION)
 		ls->propagation |= ent->id;
 
-	DBG(OPTLIST, ul_debugobj(ls, " added %s", opt->name));
+	if (ent && map) {
+		DBG(OPTLIST, ul_debugobj(ls, " added %s [id=0x%08x map=%p]",
+				opt->name, ent->id, map));
+	} else {
+		DBG(OPTLIST, ul_debugobj(ls, " added %s", opt->name));
+	}
 	return opt;
 fail:
 	mnt_optlist_remove_opt(ls, opt);
@@ -544,10 +549,13 @@ int mnt_optlist_insert_flags(struct libmnt_optlist *ls, unsigned long flags,
 	if (!ls || !map || !after || !after_map)
 		return -EINVAL;
 
+	opt = mnt_optlist_get_opt(ls, after, after_map);
+	if (!opt)
+		return -EINVAL;
+
 	DBG(OPTLIST, ul_debugobj(ls, "insert 0x%08lx (after %s)",
 				flags, opt->ent ? opt->ent->name : "???"));
 
-	opt = mnt_optlist_get_opt(ls, after, after_map);
 	return optlist_add_flags(ls, flags, map, &opt->opts);
 }
 
