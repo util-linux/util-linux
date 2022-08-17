@@ -103,6 +103,10 @@ static int probe_dm_tp(blkid_probe pr,
 	if (!stream)
 		goto nothing;
 
+	if (dmpipe[1] != -1) {
+		close(dmpipe[1]);
+	}
+
 	if (fscanf(stream, "%lld %lld striped %d %d ",
 			&offset, &size, &stripes, &stripesize) != 0)
 		goto nothing;
@@ -111,7 +115,6 @@ static int probe_dm_tp(blkid_probe pr,
 	blkid_topology_set_optimal_io_size(pr, (stripes * stripesize) << 9);
 
 	fclose(stream);
-	close(dmpipe[1]);
 	return 0;
 
 nothing:
@@ -119,8 +122,6 @@ nothing:
 		fclose(stream);
 	else if (dmpipe[0] != -1)
 		close(dmpipe[0]);
-	if (dmpipe[1] != -1)
-		close(dmpipe[1]);
 	return 1;
 }
 
