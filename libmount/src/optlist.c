@@ -590,6 +590,35 @@ int mnt_optlist_insert_flags(struct libmnt_optlist *ls, unsigned long flags,
 	return optlist_add_flags(ls, flags, map, &opt->opts);
 }
 
+static int is_wanted_opt(struct libmnt_opt *opt, const struct libmnt_optmap *map,
+		unsigned int what)
+{
+	switch (what) {
+	case MNT_OL_FLTR_DFLT:
+		if (opt->external)
+			return 0;
+		if (map && opt->map != map)
+			return 0;
+		break;
+	case MNT_OL_FLTR_ALL:
+		break;
+	case MNT_OL_FLTR_UNKNOWN:
+		if (opt->map || opt->external)
+			return 0;
+		break;
+	case MNT_OL_FLTR_HELPERS:
+		if (opt->ent && opt->ent->mask & MNT_NOHLPS)
+			return 0;
+		break;
+	case MNT_OL_FLTR_MTAB:
+		if (opt->ent && opt->ent->mask & MNT_NOMTAB)
+			return 0;
+		break;
+	}
+
+	return 1;
+}
+
 /* like mnt_optstr_get_flags() */
 int mnt_optlist_get_flags(struct libmnt_optlist *ls, unsigned long *flags,
 			  const struct libmnt_optmap *map, unsigned int what)
@@ -608,7 +637,7 @@ int mnt_optlist_get_flags(struct libmnt_optlist *ls, unsigned long *flags,
 			continue;
 		if (!opt->ent || !opt->ent->id)
 			continue;
-		if (opt->external && !(what & MNT_OL_FLTR_ALL))
+		if (!is_wanted_opt(opt, map, what))
 			continue;
 
 		if (opt->ent->mask & MNT_INVERT)
@@ -651,30 +680,8 @@ int mnt_optlist_strdup_optstr(struct libmnt_optlist *ls, char **optstr,
 			continue;
 		if (opt->map == ls->linux_map && opt->ent->id == MS_RDONLY)
 			continue;
-
-		switch (what) {
-		case MNT_OL_FLTR_DFLT:
-			if (opt->external)
-				continue;
-			if (map && opt->map != map)
-				continue;
-			break;
-		case MNT_OL_FLTR_ALL:
-			break;
-		case MNT_OL_FLTR_UNKNOWN:
-			if (opt->map || opt->external)
-				continue;
-			break;
-		case MNT_OL_FLTR_HELPERS:
-			if (opt->ent && opt->ent->mask & MNT_NOHLPS)
-				continue;
-			break;
-		case MNT_OL_FLTR_MTAB:
-			if (opt->ent && opt->ent->mask & MNT_NOMTAB)
-				continue;
-			break;
-		}
-
+		if (!is_wanted_opt(opt, map, what))
+			continue;
 		rc = mnt_buffer_append_option(&buf,
 					opt->name, strlen(opt->name),
 					opt->value,
