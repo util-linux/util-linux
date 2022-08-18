@@ -509,15 +509,30 @@ extern int mnt_optlist_insert_flags(struct libmnt_optlist *ls, unsigned long fla
                         const struct libmnt_optmap *map,
                         unsigned long after,
                         const struct libmnt_optmap *after_map);
+/* "what" argument */
+enum {
+	MNT_OPTLIST_DEFAULT = 0,	/* all (including uknonwn), but exclude external options */
+	MNT_OPTLIST_UNKNOWN = (1 << 1),	/* only uknonwn options */
+	MNT_OPTLIST_EXTERNAL = (1 << 2) /* include also external options */
+};
+
 extern int mnt_optlist_get_flags(struct libmnt_optlist *ls, unsigned long *flags,
-                          const struct libmnt_optmap *map);
+                          const struct libmnt_optmap *map, unsigned int what);
 extern int mnt_optlist_get_optstr(struct libmnt_optlist *ol, const char **optstr,
-                        const struct libmnt_optmap *map);
+                        const struct libmnt_optmap *map, unsigned int what);
+
 extern int mnt_optlist_get_propagation(struct libmnt_optlist *ls);
 extern int mnt_optlist_is_propagation_only(struct libmnt_optlist *ls);
-extern int mnt_opt_has_value(struct libmnt_opt *opt);
-extern int mnt_opt_set_external(struct libmnt_opt *opt, int enable);
+extern int mnt_optlist_is_remount(struct libmnt_optlist *ls);
 extern int mnt_optlist_merge_opts(struct libmnt_optlist *ls);
+
+extern int mnt_opt_has_value(struct libmnt_opt *opt);
+extern const char *mnt_opt_get_value(struct libmnt_opt *opt);
+extern const char *mnt_opt_get_name(struct libmnt_opt *opt);
+extern int mnt_opt_set_external(struct libmnt_opt *opt, int enable);
+extern int mnt_opt_set_value(struct libmnt_opt *opt, const char *str);
+extern int mnt_opt_set_u64value(struct libmnt_opt *opt, uint64_t num);
+extern int mnt_opt_set_quoted_value(struct libmnt_opt *opt, const char *str);
 
 
 /* fs.c */
