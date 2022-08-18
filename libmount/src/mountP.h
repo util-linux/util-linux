@@ -514,9 +514,13 @@ enum {
 	/* Default -- if @map specified then returns all options for the map, otherwise
 	 *            returns all options including uknonwn options, exclude external options  */
 	MNT_OL_FLTR_DFLT = 0,
+	/* Options as expected by mount.<type> helpers */
+	MNT_OL_FLTR_HELPERS,
+	/* Options as expected in mtab */
+	MNT_OL_FLTR_MTAB,
 	/* All options -- include mapped, unknown and external options */
 	MNT_OL_FLTR_ALL,
-	/* All unknown options -- exclude external */
+	/* All unknown options -- exclude external (usually FS specific options) */
 	MNT_OL_FLTR_UNKNOWN,
 
 	__MNT_OL_FLTR_COUNT	/* keep it last */

@@ -665,6 +665,14 @@ int mnt_optlist_strdup_optstr(struct libmnt_optlist *ls, char **optstr,
 			if (opt->map || opt->external)
 				continue;
 			break;
+		case MNT_OL_FLTR_HELPERS:
+			if (opt->ent && opt->ent->mask & MNT_NOHLPS)
+				continue;
+			break;
+		case MNT_OL_FLTR_MTAB:
+			if (opt->ent && opt->ent->mask & MNT_NOMTAB)
+				continue;
+			break;
 		}
 
 		rc = mnt_buffer_append_option(&buf,
@@ -707,10 +715,10 @@ int mnt_optlist_get_optstr(struct libmnt_optlist *ls, const char **optstr,
 			cache = &ls->cache_all[MNT_OL_FLTR_DFLT];
 		break;
 	case MNT_OL_FLTR_ALL:
-		cache = &ls->cache_all[MNT_OL_FLTR_ALL];
-		break;
 	case MNT_OL_FLTR_UNKNOWN:
-		cache = &ls->cache_all[MNT_OL_FLTR_UNKNOWN];
+	case MNT_OL_FLTR_HELPERS:
+	case MNT_OL_FLTR_MTAB:
+		cache = &ls->cache_all[what];
 		break;
 	default:
 		return -EINVAL;
