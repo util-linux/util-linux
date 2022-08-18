@@ -908,9 +908,6 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 
 	DBG(CXT, ul_debugobj(cxt, "mount: do mount"));
 
-	if (!(cxt->flags & MNT_FL_MOUNTDATA))
-		cxt->mountdata = (char *) mnt_fs_get_fs_options(cxt->fs);
-
 	ns_old = mnt_context_switch_target_ns(cxt);
 	if (!ns_old)
 		return -MNT_ERR_NAMESPACE;

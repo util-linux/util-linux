@@ -211,22 +211,40 @@ static int hook_mount(struct libmnt_context *cxt,
 		      void *data __attribute__((__unused__)))
 {
 	int rc = 0;
-	const char *src, *target, *type;
+	unsigned long flags = 0;
+	struct libmnt_optlist *ol = NULL;
+	const char *src, *target, *type, *options = NULL;
 
 	src = mnt_fs_get_srcpath(cxt->fs);
 	target = mnt_fs_get_target(cxt->fs);
 	type = mnt_fs_get_fstype(cxt->fs);
 
+	ol = mnt_context_get_optlist(cxt);
+	if (!ol)
+		return -ENOMEM;
 	if (!target)
 		return -EINVAL;
 	if (!src)
 		src = "none";
 
+	/* FS specific mount options/data */
+	if (cxt->flags & MNT_FL_MOUNTDATA)
+		options = cxt->mountdata;
+	else
+		rc = mnt_optlist_get_optstr(ol, &options,
+				NULL, MNT_OL_FLTR_UNKNOWN);
+	/* mount flags */
+	if (!rc)
+		rc = mnt_optlist_get_flags(ol, &flags,
+				mnt_get_builtin_optmap(MNT_LINUX_MAP), 0);
+	if (rc)
+		return rc;
+
 	DBG(HOOK, ul_debugobj(hs, "  mount(2) "
-		"[source=%s, target=%s, type=%s,"
-		" mountflags=0x%08lx, mountdata=%s]",
-		src, target, type,
-		cxt->mountflags, cxt->mountdata ? "yes" : "<none>"));
+		"[source=%s, target=%s, type=%s, flags=0x%08lx, options=%s]",
+		src, target, type, flags,
+		options ? (cxt->flags & MNT_FL_MOUNTDATA) ? "binary" :
+			  options : "<none>"));
 
 	if (mnt_context_is_fake(cxt)) {
 		DBG(HOOK, ul_debugobj(hs, " FAKE (-f)"));
@@ -234,7 +252,7 @@ static int hook_mount(struct libmnt_context *cxt,
 		return 0;
 	}
 
-	if (mount(src, target, type, cxt->mountflags, cxt->mountdata)) {
+	if (mount(src, target, type, flags, options)) {
 		cxt->syscall_status = -errno;
 		DBG(HOOK, ul_debugobj(hs, "  mount(2) failed [errno=%d %m]",
 					-cxt->syscall_status));
