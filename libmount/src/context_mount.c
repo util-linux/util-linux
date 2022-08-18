@@ -216,7 +216,7 @@ static int fix_optstr(struct libmnt_context *cxt)
 		strdup_to_struct_member(fs, optstr, p);
 
 		/* FS options */
-		mnt_optlist_get_optstr(ol, &p, NULL, MNT_OPTLIST_UNKNOWN);
+		mnt_optlist_get_optstr(ol, &p, NULL, MNT_OL_FLTR_UNKNOWN);
 		strdup_to_struct_member(fs, fs_optstr, p);
 
 		/* VFS options */
@@ -1962,7 +1962,7 @@ static int test_fixopts(struct libmnt_test *ts, int argc, char *argv[])
 	mnt_optlist_get_optstr(ls, &p, NULL, 0);
 	printf("options (dfl): '%s'\n", p);
 
-	mnt_optlist_get_optstr(ls, &p, NULL, MNT_OPTLIST_EXTERNAL);
+	mnt_optlist_get_optstr(ls, &p, NULL, MNT_OL_FLTR_ALL);
 	printf("options (ex.): '%s'\n", p);
 
 	mnt_free_context(cxt);

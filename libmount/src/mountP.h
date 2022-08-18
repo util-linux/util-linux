@@ -511,9 +511,15 @@ extern int mnt_optlist_insert_flags(struct libmnt_optlist *ls, unsigned long fla
                         const struct libmnt_optmap *after_map);
 /* "what" argument */
 enum {
-	MNT_OPTLIST_DEFAULT = 0,	/* all (including uknonwn), but exclude external options */
-	MNT_OPTLIST_UNKNOWN = (1 << 1),	/* only uknonwn options */
-	MNT_OPTLIST_EXTERNAL = (1 << 2) /* include also external options */
+	/* Default -- if @map specified then returns all options for the map, otherwise
+	 *            returns all options including uknonwn options, exclude external options  */
+	MNT_OL_FLTR_DFLT = 0,
+	/* All options -- include mapped, unknown and external options */
+	MNT_OL_FLTR_ALL,
+	/* All unknown options -- exclude external */
+	MNT_OL_FLTR_UNKNOWN,
+
+	__MNT_OL_FLTR_COUNT	/* keep it last */
 };
 
 extern int mnt_optlist_get_flags(struct libmnt_optlist *ls, unsigned long *flags,
