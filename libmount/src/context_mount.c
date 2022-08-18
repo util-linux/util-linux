@@ -461,6 +461,10 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 			DBG(CXT, ul_debugobj(cxt, "perms: evaluation ends with -EPERMS [flags=0x%08lx]", user_flags));
 			return -EPERM;
 		}
+
+		/* we have modified some flags (noexec, ...), let's cleanup the
+		 * options to remove duplicate stuff etc.*/
+		mnt_optlist_merge_opts(ol);
 	}
 
 	return 0;
@@ -1920,6 +1924,7 @@ static int test_fixopts(struct libmnt_test *ts, int argc, char *argv[])
 {
 	struct libmnt_context *cxt;
 	struct libmnt_optlist *ls;
+	unsigned long flags = 0;
 	const char *p;
 	int rc;
 
@@ -1959,8 +1964,11 @@ static int test_fixopts(struct libmnt_test *ts, int argc, char *argv[])
 		warn("fix options failed [rc=%d]", rc);
 		return rc;
 	}
+
 	mnt_optlist_get_optstr(ls, &p, NULL, 0);
-	printf("options (dfl): '%s'\n", p);
+
+	mnt_optlist_get_flags(ls, &flags, mnt_get_builtin_optmap(MNT_LINUX_MAP), 0);
+	printf("options (dfl): '%s' [mount flags: %08lx]\n", p, flags);
 
 	mnt_optlist_get_optstr(ls, &p, NULL, MNT_OL_FLTR_ALL);
 	printf("options (ex.): '%s'\n", p);
