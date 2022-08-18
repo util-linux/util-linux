@@ -293,15 +293,29 @@ int mnt_optlist_merge_opts(struct libmnt_optlist *ls)
 
 		mnt_reset_iter(&xtr, MNT_ITER_FORWARD);
 		while (mnt_optlist_next_opt(ls, &xtr, &x) == 0) {
+			int rem = 0;
+
 			if (opt == x)
 				break;	/* no another instance */
 
-			if (is_equal_opts(opt, x)) {
+			/* remove duplicate option */
+			if (is_equal_opts(opt, x))
+				rem = 1;
+
+			/* remove inverted option */
+			else if (opt->ent && x->ent
+			    && opt->ent->id == x->ent->id
+			    && (opt->ent->mask & MNT_INVERT
+				    || x->ent->mask & MNT_INVERT))
+				rem = 1;
+
+			if (rem) {
 				/* me sure @itr does not point to removed item */
 				if (itr.p == &x->opts)
 					itr.p = x->opts.prev;
 				mnt_optlist_remove_opt(ls, x);
 			}
+
 		}
 	}
 
@@ -590,6 +604,8 @@ int mnt_optlist_get_flags(struct libmnt_optlist *ls, unsigned long *flags,
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
 	while (mnt_optlist_next_opt(ls, &itr, &opt) == 0) {
+		if (map != opt->map)
+			continue;
 		if (!opt->ent || !opt->ent->id)
 			continue;
 		if (opt->external && !(what & MNT_OL_FLTR_ALL))
