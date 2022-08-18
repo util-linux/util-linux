@@ -244,82 +244,6 @@ done:
 }
 
 /*
- * Converts the already evaluated and fixed options to the form that is compatible
- * with /sbin/mount.type helpers.
- */
-static int generate_helper_optstr(struct libmnt_context *cxt, char **optstr)
-{
-	struct libmnt_optmap const *maps[2];
-	char *next, *name, *val;
-	size_t namesz, valsz;
-	int rc = 0;
-
-	assert(cxt);
-	assert(cxt->fs);
-	assert(optstr);
-
-	DBG(CXT, ul_debugobj(cxt, "mount: generate helper mount options"));
-
-	*optstr = mnt_fs_strdup_options(cxt->fs);
-	if (!*optstr)
-		return -ENOMEM;
-
-	if ((cxt->user_mountflags & MNT_MS_USER) ||
-	    (cxt->user_mountflags & MNT_MS_USERS)) {
-		/*
-		 * This is unnecessary for real user-mounts as mount.<type>
-		 * helpers always have to follow fstab rather than mount
-		 * options on the command line.
-		 *
-		 * However, if you call mount.<type> as root, then the helper follows
-		 * the command line. If there is (for example) "user,exec" in fstab,
-		 * then we have to manually append the "exec" back to the options
-		 * string, because there is nothing like MS_EXEC (we only have
-		 * MS_NOEXEC in mount flags and we don't care about the original
-		 * mount string in libmount for VFS options).
-		 *
-		 * This use-case makes sense for MS_SECURE flags only (see
-		 * mnt_optstr_get_flags() and mnt_context_merge_mflags()).
-		 */
-		if (!(cxt->mountflags & MS_NOEXEC))
-			mnt_optstr_append_option(optstr, "exec", NULL);
-		if (!(cxt->mountflags & MS_NOSUID))
-			mnt_optstr_append_option(optstr, "suid", NULL);
-		if (!(cxt->mountflags & MS_NODEV))
-			mnt_optstr_append_option(optstr, "dev", NULL);
-	}
-
-	if (cxt->flags & MNT_FL_SAVED_USER)
-		rc = mnt_optstr_set_option(optstr, "user", cxt->orig_user);
-	if (rc)
-		goto err;
-
-	/* remove userspace options with MNT_NOHLPS flag */
-	maps[0] = mnt_get_builtin_optmap(MNT_USERSPACE_MAP);
-	maps[1] = mnt_get_builtin_optmap(MNT_LINUX_MAP);
-	next = *optstr;
-
-	while (!mnt_optstr_next_option(&next, &name, &namesz, &val, &valsz)) {
-		const struct libmnt_optmap *ent;
-
-		mnt_optmap_get_entry(maps, 2, name, namesz, &ent);
-		if (ent && ent->id && (ent->mask & MNT_NOHLPS)) {
-			next = name;
-			rc = mnt_optstr_remove_option_at(optstr, name,
-					val ? val + valsz : name + namesz);
-			if (rc)
-				goto err;
-		}
-	}
-
-	return rc;
-err:
-	free(*optstr);
-	*optstr = NULL;
-	return rc;
-}
-
-/*
  * this has to be called before fix_optstr()
  *
  * Note that user=<name> may be used by some filesystems as a filesystem
@@ -526,8 +450,10 @@ int mnt_context_mount_setopt(struct libmnt_context *cxt, int c, char *arg)
 
 static int exec_helper(struct libmnt_context *cxt)
 {
-	char *o = NULL, *namespace = NULL;
+	struct libmnt_optlist *ol;
 	struct libmnt_ns *ns_tgt = mnt_context_get_target_ns(cxt);
+	const char *o = NULL;
+	char *namespace = NULL;
 	int rc;
 	pid_t pid;
 
@@ -538,14 +464,17 @@ static int exec_helper(struct libmnt_context *cxt)
 
 	DBG(CXT, ul_debugobj(cxt, "mount: executing helper %s", cxt->helper));
 
-	rc = generate_helper_optstr(cxt, &o);
+	ol = mnt_context_get_optlist(cxt);
+	if (!ol)
+		return -ENOMEM;
+
+	rc = mnt_optlist_get_optstr(ol, &o, NULL, MNT_OL_FLTR_HELPERS);
 	if (rc)
-		return -EINVAL;
+		return rc;
 
 	if (ns_tgt->fd != -1
 	    && asprintf(&namespace, "/proc/%i/fd/%i",
 			getpid(), ns_tgt->fd) == -1) {
-		free(o);
 		return -ENOMEM;
 	}
 
@@ -624,7 +553,6 @@ static int exec_helper(struct libmnt_context *cxt)
 		break;
 	}
 
-	free(o);
 	free(namespace);
 	return rc;
 }
