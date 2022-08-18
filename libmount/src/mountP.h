@@ -526,6 +526,8 @@ extern int mnt_optlist_get_flags(struct libmnt_optlist *ls, unsigned long *flags
                           const struct libmnt_optmap *map, unsigned int what);
 extern int mnt_optlist_get_optstr(struct libmnt_optlist *ol, const char **optstr,
                         const struct libmnt_optmap *map, unsigned int what);
+extern int mnt_optlist_strdup_optstr(struct libmnt_optlist *ls, char **optstr,
+                        const struct libmnt_optmap *map, unsigned int what);
 
 extern int mnt_optlist_get_propagation(struct libmnt_optlist *ls);
 extern int mnt_optlist_is_propagation_only(struct libmnt_optlist *ls);

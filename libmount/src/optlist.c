@@ -622,46 +622,19 @@ int mnt_optlist_get_flags(struct libmnt_optlist *ls, unsigned long *flags,
 	return 0;
 }
 
-int mnt_optlist_get_optstr(struct libmnt_optlist *ls, const char **optstr,
+int mnt_optlist_strdup_optstr(struct libmnt_optlist *ls, char **optstr,
 			const struct libmnt_optmap *map, unsigned int what)
 {
 	struct libmnt_iter itr;
 	struct libmnt_opt *opt;
 	struct ul_buffer buf = UL_INIT_BUFFER;
-	size_t idx = 0;
-	char *str = NULL, **cache = NULL;
+	char *str = NULL;
 	int rc = 0;
 
 	if (!ls || !optstr)
 		return -EINVAL;
 
 	*optstr = NULL;
-
-	switch (what) {
-	case MNT_OL_FLTR_DFLT:
-		if (map) {
-			idx = optlist_get_mapidx(ls, map);
-			if (idx == (size_t) -1)
-				return -EINVAL;
-			if (ls->cache_mapped[idx])
-				cache = &ls->cache_mapped[idx];
-		} else
-			cache = &ls->cache_all[MNT_OL_FLTR_DFLT];
-		break;
-	case MNT_OL_FLTR_ALL:
-		cache = &ls->cache_all[MNT_OL_FLTR_ALL];
-		break;
-	case MNT_OL_FLTR_UNKNOWN:
-		cache = &ls->cache_all[MNT_OL_FLTR_UNKNOWN];
-		break;
-	default:
-		return -EINVAL;
-	}
-
-	if (cache && *cache) {
-		str = *cache;
-		goto done;
-	}
 
 	/* For generic options stings ro/rw is expected at the begining */
 	if (!map && (what == MNT_OL_FLTR_DFLT || what == MNT_OL_FLTR_ALL)) {
@@ -674,10 +647,8 @@ int mnt_optlist_get_optstr(struct libmnt_optlist *ls, const char **optstr,
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
 	while (mnt_optlist_next_opt(ls, &itr, &opt) == 0) {
-
 		if (!opt->name)
 			continue;
-
 		if (opt->map == ls->linux_map && opt->ent->id == MS_RDONLY)
 			continue;
 
@@ -705,18 +676,63 @@ int mnt_optlist_get_optstr(struct libmnt_optlist *ls, const char **optstr,
 	}
 
 	str = ul_buffer_get_data(&buf, NULL, NULL);
-
-	if (cache)
-		*cache = str;
-done:
 	if (optstr)
 		*optstr = str;
-
-	DBG(OPTLIST, ul_debugobj(ls, "return optstr %s", str));
 	return 0;
 fail:
 	ul_buffer_free_data(&buf);
 	return rc;
+}
+
+int mnt_optlist_get_optstr(struct libmnt_optlist *ls, const char **optstr,
+			const struct libmnt_optmap *map, unsigned int what)
+{
+	size_t idx = 0;
+	char **cache = NULL;
+	int rc = 0;
+
+	if (!ls || !optstr)
+		return -EINVAL;
+
+	*optstr = NULL;
+
+	switch (what) {
+	case MNT_OL_FLTR_DFLT:
+		if (map) {
+			idx = optlist_get_mapidx(ls, map);
+			if (idx == (size_t) -1)
+				return -EINVAL;
+			cache = &ls->cache_mapped[idx];
+		} else
+			cache = &ls->cache_all[MNT_OL_FLTR_DFLT];
+		break;
+	case MNT_OL_FLTR_ALL:
+		cache = &ls->cache_all[MNT_OL_FLTR_ALL];
+		break;
+	case MNT_OL_FLTR_UNKNOWN:
+		cache = &ls->cache_all[MNT_OL_FLTR_UNKNOWN];
+		break;
+	default:
+		return -EINVAL;
+	}
+
+	assert(cache);
+
+	if (!*cache) {
+		char *str = NULL;
+
+		rc = mnt_optlist_strdup_optstr(ls, &str, map, what);
+		if (rc)
+			return rc;
+		*cache = str;
+		DBG(OPTLIST, ul_debugobj(ls, " optstr %s", str));
+	} else {
+		DBG(OPTLIST, ul_debugobj(ls, " optstr %s (cached)", *cache));
+	}
+
+	if (optstr)
+		*optstr = *cache;
+	return 0;
 }
 
 int mnt_optlist_get_propagation(struct libmnt_optlist *ls)
@@ -956,22 +972,31 @@ static int test_get_str(struct libmnt_test *ts, int argc, char *argv[])
 	map = get_map(argv[2]);
 	mnt_optlist_merge_opts(ol);
 
+	/* We always call mnt_optlist_get_optstr() two times to test the cache */
 	if (map) {
 		rc = mnt_optlist_get_optstr(ol, &str, map, MNT_OL_FLTR_DFLT);
+		if (!rc)
+			rc = mnt_optlist_get_optstr(ol, &str, map, MNT_OL_FLTR_DFLT);
 		if (!rc)
 			printf("Default: %s (in %s map)\n", str, argv[2]);
 	}
 
 	rc = mnt_optlist_get_optstr(ol, &str, NULL, MNT_OL_FLTR_DFLT);
 	if (!rc)
+		rc = mnt_optlist_get_optstr(ol, &str, NULL, MNT_OL_FLTR_DFLT);
+	if (!rc)
 		printf("Default: %s\n", str);
 
 
 	rc = mnt_optlist_get_optstr(ol, &str, NULL, MNT_OL_FLTR_ALL);
 	if (!rc)
+		rc = mnt_optlist_get_optstr(ol, &str, NULL, MNT_OL_FLTR_ALL);
+	if (!rc)
 		printf("All:     %s\n", str);
 
 	rc = mnt_optlist_get_optstr(ol, &str, NULL, MNT_OL_FLTR_UNKNOWN);
+	if (!rc)
+		rc = mnt_optlist_get_optstr(ol, &str, NULL, MNT_OL_FLTR_UNKNOWN);
 	if (!rc)
 		printf("Unknown: %s\n", str);
 done:
