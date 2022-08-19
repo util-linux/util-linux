@@ -163,7 +163,6 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	cxt->orig_user = NULL;
 	cxt->mountflags = 0;
 	cxt->user_mountflags = 0;
-	cxt->orig_mountflags = 0;
 	cxt->mountdata = NULL;
 	cxt->flags = MNT_FL_DEFAULT;
 	cxt->noautofs = 1;

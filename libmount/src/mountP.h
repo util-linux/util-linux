@@ -383,7 +383,6 @@ struct libmnt_context
 	const void	*mountdata;	/* final mount(2) data, string or binary data */
 
 	unsigned long	user_mountflags;	/* MNT_MS_* (loop=, user=, ...) */
-	unsigned long	orig_mountflags;	/* original flags (see mnt_context_merge_mflags()) */
 
 	struct libmnt_cache	*cache;		/* paths cache */
 	struct libmnt_lock	*lock;		/* utab lock */
