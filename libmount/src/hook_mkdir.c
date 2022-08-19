@@ -29,39 +29,47 @@ static int hookset_deinit(struct libmnt_context *cxt, const struct libmnt_hookse
 	return 0;
 }
 
-static int is_mkdir_required(const char *tgt, struct libmnt_fs *fs, mode_t *mode, int *rc)
+static int is_mkdir_required(struct libmnt_context *cxt, const char *tgt, mode_t *mode, int *rc)
 {
-	char *mstr = NULL;
-	size_t mstr_sz = 0;
+	struct libmnt_optlist *ol;
+	struct libmnt_opt *opt;
+	const char *mstr = NULL;
 	struct stat st;
 
+	assert(cxt);
+	assert(cxt->map_userspace);
 	assert(tgt);
-	assert(fs);
 	assert(mode);
 	assert(rc);
 
 	*mode = 0;
 	*rc = 0;
 
-	if (mnt_optstr_get_option(fs->user_optstr, "X-mount.mkdir", &mstr, &mstr_sz) != 0 &&
-	    mnt_optstr_get_option(fs->user_optstr, "x-mount.mkdir", &mstr, &mstr_sz) != 0)   	/* obsolete */
+	ol = mnt_context_get_optlist(cxt);
+	if (!ol)
+		return -ENOMEM;
+
+	opt = mnt_optlist_get_named(ol, "X-mount.mkdir", cxt->map_userspace);
+	if (!opt)
+		opt = mnt_optlist_get_named(ol, "x-mount.mkdir", cxt->map_userspace);
+	if (!opt)
 		return 0;
 
 	if (mnt_stat_mountpoint(tgt, &st) == 0)
 		return 0;
 
-	DBG(HOOK, ul_debug("mkdir %s (%s) wanted", tgt, mstr));
+	mstr = mnt_opt_get_value(opt);
 
-	if (mstr && mstr_sz) {
+	if (mstr && *mstr) {
 		char *end = NULL;
 
 		if (*mstr == '"')
-			mstr++, mstr_sz-=2;
+			mstr++;
 
 		errno = 0;
 		*mode = strtol(mstr, &end, 8);
 
-		if (errno || !end || mstr + mstr_sz != end) {
+		if (errno || !end || !(*end == '"' || *end == '\0')) {
 			DBG(HOOK, ul_debug("failed to parse mkdir mode '%s'", mstr));
 			*rc = -MNT_ERR_MOUNTOPT;
 			return 0;
@@ -72,6 +80,8 @@ static int is_mkdir_required(const char *tgt, struct libmnt_fs *fs, mode_t *mode
 		*mode = S_IRWXU |			/* 0755 */
 		       S_IRGRP | S_IXGRP |
 		       S_IROTH | S_IXOTH;
+
+	DBG(HOOK, ul_debug("mkdir %s (%o) wanted", tgt, *mode));
 
 	return 1;
 }
@@ -84,6 +94,7 @@ static int hook_prepare_target(
 	int rc = 0;
 	mode_t mode = 0;
 	const char *tgt;
+	unsigned long flags = 0;
 
 	assert(cxt);
 
@@ -91,10 +102,13 @@ static int hook_prepare_target(
 	if (!tgt)
 		return 0;
 
+	rc = mnt_context_get_user_mflags(cxt, &flags);
+	if (rc)
+		return rc;
+
 	if (cxt->action == MNT_ACT_MOUNT
-	    && (cxt->user_mountflags & MNT_MS_XCOMMENT ||
-		cxt->user_mountflags & MNT_MS_XFSTABCOMM)
-	    && is_mkdir_required(tgt, cxt->fs, &mode, &rc)) {
+	    && (flags & MNT_MS_XCOMMENT || flags & MNT_MS_XFSTABCOMM)
+	    && is_mkdir_required(cxt, tgt, &mode, &rc)) {
 
 		struct libmnt_cache *cache;
 
