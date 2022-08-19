@@ -740,9 +740,9 @@ int mnt_optlist_get_optstr(struct libmnt_optlist *ls, const char **optstr,
 		if (rc)
 			return rc;
 		*cache = str;
-		DBG(OPTLIST, ul_debugobj(ls, " optstr %s", str));
+		/*DBG(OPTLIST, ul_debugobj(ls, " optstr %s", str));*/
 	} else {
-		DBG(OPTLIST, ul_debugobj(ls, " optstr %s (cached)", *cache));
+		/*DBG(OPTLIST, ul_debugobj(ls, " optstr %s (cached)", *cache));*/
 	}
 
 	if (optstr)
