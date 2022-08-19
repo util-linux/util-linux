@@ -94,7 +94,6 @@ static int hook_prepare_target(
 	int rc = 0;
 	mode_t mode = 0;
 	const char *tgt;
-	unsigned long flags = 0;
 
 	assert(cxt);
 
@@ -102,12 +101,7 @@ static int hook_prepare_target(
 	if (!tgt)
 		return 0;
 
-	rc = mnt_context_get_user_mflags(cxt, &flags);
-	if (rc)
-		return rc;
-
 	if (cxt->action == MNT_ACT_MOUNT
-	    && (flags & MNT_MS_XCOMMENT || flags & MNT_MS_XFSTABCOMM)
 	    && is_mkdir_required(cxt, tgt, &mode, &rc)) {
 
 		struct libmnt_cache *cache;
