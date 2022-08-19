@@ -228,28 +228,33 @@ static int hook_mount_pre(
 
 static int is_subdir_required(struct libmnt_context *cxt, int *rc, char **subdir)
 {
-	char *dir = NULL;
-	size_t sz;
+	struct libmnt_optlist *ol;
+	struct libmnt_opt *opt;
+	const char *dir = NULL;
 
 	assert(cxt);
 	assert(rc);
 
 	*rc = 0;
 
-	if (!cxt->fs
-	    || !cxt->fs->user_optstr
-	    || mnt_optstr_get_option(cxt->fs->user_optstr,
-				  "X-mount.subdir", &dir, &sz) != 0)
+	ol = mnt_context_get_optlist(cxt);
+	if (!ol)
+		return -ENOMEM;
+
+	opt = mnt_optlist_get_named(ol, "X-mount.subdir", cxt->map_userspace);
+	if (!opt)
 		return 0;
 
-	if (dir && *dir == '"')
-		dir++, sz-=2;
+	dir = mnt_opt_get_value(opt);
 
-	if (!dir || sz < 1) {
+	if (dir && *dir == '"')
+		dir++;
+
+	if (!dir || !*dir) {
 		DBG(HOOK, ul_debug("failed to parse X-mount.subdir '%s'", dir));
 		*rc = -MNT_ERR_MOUNTOPT;
 	} else {
-		*subdir = strndup(dir, sz);
+		*subdir = strdup(dir);
 		if (!*subdir)
 			*rc = -ENOMEM;
 	}
@@ -274,9 +279,7 @@ static int hook_prepare_target(
 	if (!tgt)
 		return 0;
 
-	/* X-mount.subdir= target */
 	if (cxt->action == MNT_ACT_MOUNT
-	    && (cxt->user_mountflags & MNT_MS_XFSTABCOMM)
 	    && is_subdir_required(cxt, &rc, &subdir)) {
 
 		/* create a global data */
