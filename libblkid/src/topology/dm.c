@@ -34,10 +34,10 @@ static int probe_dm_tp(blkid_probe pr,
 		"/usr/sbin/dmsetup",
 		"/sbin/dmsetup"
 	};
-	int dmpipe[] = { -1, -1 }, stripes, stripesize;
+	int dmpipe[] = { -1, -1 }, stripes = 0, stripesize = 0;
 	const char *cmd = NULL;
 	FILE *stream = NULL;
-	long long  offset, size;
+	long long  offset = 0, size = 0;
 	size_t i;
 	dev_t devno = blkid_probe_get_devno(pr);
 
