@@ -389,6 +389,9 @@ struct libmnt_context
 	struct libmnt_update	*update;	/* utab update */
 	struct libmnt_optlist	*optlist;	/* parsed mount options */
 
+	const struct libmnt_optmap *map_linux;		/* system options map */
+	const struct libmnt_optmap *map_userspace;	/* userspace options map */
+
 	const char	*mountinfo_path; /* usualy /proc/self/moutinfo */
 
 	const char	*utab_path; /* path to utab */

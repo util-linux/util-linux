@@ -75,10 +75,7 @@ static int fix_optstr(struct libmnt_context *cxt)
 
 	/* Fix user (convert "user" to "user=username") */
 	if (mnt_context_is_restricted(cxt)) {
-		const struct libmnt_optmap *map = mnt_get_builtin_optmap(MNT_USERSPACE_MAP);
-		assert(map);
-
-		opt = mnt_optlist_get_opt(ol, MNT_MS_USER, map);
+		opt = mnt_optlist_get_opt(ol, MNT_MS_USER, cxt->map_userspace);
 		if (opt) {
 			char *name = mnt_get_username(getuid());
 
@@ -208,7 +205,6 @@ static int fix_optstr(struct libmnt_context *cxt)
 
 	/* For backward compatinility update context fs mount options */
 	if (fs) {
-		const struct libmnt_optmap *map;
 		const char *p;
 
 		/* All options */
@@ -220,13 +216,11 @@ static int fix_optstr(struct libmnt_context *cxt)
 		strdup_to_struct_member(fs, fs_optstr, p);
 
 		/* VFS options */
-		map = mnt_get_builtin_optmap(MNT_LINUX_MAP);
-		mnt_optlist_get_optstr(ol, &p, map, 0);
+		mnt_optlist_get_optstr(ol, &p, cxt->map_linux, 0);
 		strdup_to_struct_member(fs, vfs_optstr, p);
 
 		/* Userspace options */
-		map = mnt_get_builtin_optmap(MNT_USERSPACE_MAP);
-		mnt_optlist_get_optstr(ol, &p, map, 0);
+		mnt_optlist_get_optstr(ol, &p, cxt->map_userspace, 0);
 		strdup_to_struct_member(fs, user_optstr, p);
 
 		DBG(CXT, ul_debugobj(cxt, " fixed options: "
@@ -254,7 +248,6 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 {
 	struct libmnt_optlist *ol;
 	unsigned long user_flags = 0;	/* userspace mount flags */
-	const struct libmnt_optmap *user_map;	/* map with userspace options */
 	int rc;
 
 	assert(cxt);
@@ -269,11 +262,8 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 	if (!ol)
 		return -EINVAL;
 
-	user_map = mnt_get_builtin_optmap(MNT_USERSPACE_MAP);
-	assert(user_map);
-
 	/* get userspace mount flags (user[=<name>] etc.*/
-	rc = mnt_optlist_get_flags(ol, &user_flags, user_map, 0);
+	rc = mnt_optlist_get_flags(ol, &user_flags, cxt->map_userspace, 0);
 	if (rc)
 		return rc;
 
@@ -283,11 +273,10 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		 */
 		if (user_flags & (MNT_MS_OWNER | MNT_MS_GROUP))
 			mnt_optlist_remove_flags(ol,
-					MNT_MS_OWNER | MNT_MS_GROUP, user_map);
+					MNT_MS_OWNER | MNT_MS_GROUP, cxt->map_userspace);
 		DBG(CXT, ul_debugobj(cxt, "perms: superuser"));
 	} else {
 		struct libmnt_opt *opt;
-		const struct libmnt_optmap *sys_map;	/* map with system mount flags */
 
 		/*
 		 * user mount
@@ -298,16 +287,13 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 			return -EPERM;
 		}
 
-		sys_map = mnt_get_builtin_optmap(MNT_LINUX_MAP);
-		assert(sys_map);
-
 		/*
 		* Ignore user=<name> (if <name> is set). Let's keep it hidden
 		* for normal library operations, but visible for /sbin/mount.<type>
 		* helpers.
 		*/
 		if (user_flags & MNT_MS_USER
-		    && (opt = mnt_optlist_get_opt(ol, MNT_MS_USER, user_map))
+		    && (opt = mnt_optlist_get_opt(ol, MNT_MS_USER, cxt->map_userspace))
 		    && mnt_opt_has_value(opt)) {
 			DBG(CXT, ul_debugobj(cxt, "perms: user=<name> detected, ignore"));
 
@@ -321,13 +307,13 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		 * Insert MS_SECURE between system flags on position where is MNT_MS_USER
 		 */
 		if ((user_flags & MNT_MS_USER)
-		    && (rc = mnt_optlist_insert_flags(ol, MS_SECURE, sys_map,
-						    MNT_MS_USER, user_map)))
+		    && (rc = mnt_optlist_insert_flags(ol, MS_SECURE, cxt->map_linux,
+						    MNT_MS_USER, cxt->map_userspace)))
 			return rc;
 
 		if ((user_flags & MNT_MS_USERS)
-		    && (rc = mnt_optlist_insert_flags(ol, MS_SECURE, sys_map,
-						    MNT_MS_USERS, user_map)))
+		    && (rc = mnt_optlist_insert_flags(ol, MS_SECURE, cxt->map_linux,
+						    MNT_MS_USERS, cxt->map_userspace)))
 			return rc;
 
 		/*
@@ -365,16 +351,16 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 				/* insert MS_OWNERSECURE between system flags */
 				if (user_flags & MNT_MS_OWNER)
 					mnt_optlist_insert_flags(ol,
-							MS_OWNERSECURE, sys_map,
-							MNT_MS_OWNER, user_map);
+							MS_OWNERSECURE, cxt->map_linux,
+							MNT_MS_OWNER, cxt->map_userspace);
 				if (user_flags & MNT_MS_GROUP)
 					mnt_optlist_insert_flags(ol,
-							MS_OWNERSECURE, sys_map,
-							MNT_MS_GROUP, user_map);
+							MS_OWNERSECURE, cxt->map_linux,
+							MNT_MS_GROUP, cxt->map_userspace);
 
 				/* continue as like "user" was specified */
 				user_flags |= MNT_MS_USER;
-				mnt_optlist_append_flags(ol, MNT_MS_USER, user_map);
+				mnt_optlist_append_flags(ol, MNT_MS_USER, cxt->map_userspace);
 			}
 
 			if (!cache)
@@ -1892,7 +1878,7 @@ static int test_fixopts(struct libmnt_test *ts, int argc, char *argv[])
 
 	mnt_optlist_get_optstr(ls, &p, NULL, 0);
 
-	mnt_optlist_get_flags(ls, &flags, mnt_get_builtin_optmap(MNT_LINUX_MAP), 0);
+	mnt_optlist_get_flags(ls, &flags, cxt->map_linux, 0);
 	printf("options (dfl): '%s' [mount flags: %08lx]\n", p, flags);
 
 	mnt_optlist_get_optstr(ls, &p, NULL, MNT_OL_FLTR_ALL);
