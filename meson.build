@@ -184,6 +184,7 @@ headers = '''
         sys/mkdev.h
         sys/mount.h
         sys/param.h
+        sys/pidfd.h
         sys/prctl.h
         sys/resource.h
 	sys/sendfile.h
