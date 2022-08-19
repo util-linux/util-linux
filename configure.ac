@@ -1570,8 +1570,10 @@ AC_ARG_WITH([libmagic],
 )
 AS_IF([test "x$with_libmagic" = xno], [have_magic=no], [
   AC_CHECK_LIB([magic], [magic_open], [
-    AC_DEFINE([HAVE_MAGIC], [1], [Define to 1 if you have the libmagic present.])
-    MAGIC_LIBS="-lmagic"
+    AC_CHECK_HEADER(magic.h, [
+      AC_DEFINE([HAVE_MAGIC], [1], [Define to 1 if you have the libmagic present.])
+      MAGIC_LIBS="-lmagic"
+    ])
   ])
 ])
 AC_SUBST([MAGIC_LIBS])
