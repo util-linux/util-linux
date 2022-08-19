@@ -47,7 +47,7 @@ Specify which output columns to print. See the *OUTPUT COLUMNS*
 section for details of available columns.
 +
 The default list of columns may be extended if _list_ is specified in
-the format _+list_ (e.g., *lsfd -o +DELETED*).
+the format +_list_ (e.g., *lsfd -o +DELETED*).
 
 *-r*, *--raw*::
 Use raw output format.
@@ -77,7 +77,7 @@ counter named _label_. *lsfd* applies filters defined with *--filter*
 options before counting; files excluded by the filters are not counted.
 +
 See *FILTER EXPRESSION* about _filter_expr_.
-_label_ should not include _{_ nor _:_. You can define multiple
+_label_ should not include `{` nor `:`. You can define multiple
 counters by specifying this option multiple times.
 +
 See also *COUNTER EXAMPLES*.
@@ -112,118 +112,138 @@ Each column has a type. Types are surround by < and >.
 CAUTION{colon} The names and types of columns are not stable yet.
 They may be changed in the future releases.
 
-ASSOC <__string__>::
+ASSOC <``string``>::
 Association between file and process.
 
-BLKDRV <__string__>::
-Block device driver name resolved by _/proc/devices_.
+BLKDRV <``string``>::
+Block device driver name resolved by `/proc/devices`.
 
-CHRDRV <__string__>::
-Character device driver name resolved by _/proc/devices_.
+CHRDRV <``string``>::
+Character device driver name resolved by `/proc/devices`.
 
-COMMAND <__string__>::
+COMMAND <``string``>::
 Command of the process opening the file.
 
-DELETED <__boolean__>::
+DELETED <``boolean``>::
 Reachability from the file system.
 
-DEV <__string__>::
+DEV <``string``>::
 ID of the device containing the file.
 
-DEVTYPE <__string__>::
-Device type (_blk_, _char_, or _nodev_).
+DEVTYPE <``string``>::
+Device type (`blk`, `char`, or `nodev`).
 
-ENDPOINT <__string__>::
+ENDPOINT <``string``>::
 IPC endpoints information communicated with the fd.
 The format of the column depends on the object associated
 with the fd:
++
+FIFO type:::
+_PID_,_COMMAND_,_ASSOC_[-r][-w]
++
+The last characters ([-r][-w]) represents the read and/or
+write mode of the endpoint.
 
- FIFO type::: _PID_,_COMMAND_,_ASSOC_[-r][-w]
-
- The last characters ([-r][-w]) represents the read and/or
- write mode of the endpoint.
-
++
 *lsfd* collects endpoints within the processes that
 *lsfd* scans; *lsfd* may miss some endpoints
 if you limits the processes with *-p* option.
 
-FD <__number__>::
+FD <``number``>::
 File descriptor for the file.
 
-FLAGS <__string__>::
+FLAGS <``string``>::
 Flags specified when opening the file.
 
-FUID <__number__>::
+FUID <``number``>::
 User ID number of the file's owner.
 
-INODE <__number__>::
+INODE <``number``>::
 Inode number.
 
-KTHREAD <__boolean__>::
+KTHREAD <``boolean``>::
 Whether the process is a kernel thread or not.
 
-MAJ:MIN <__string__>::
+MAJ:MIN <``string``>::
 Device ID for special, or ID of device containing file.
 
-MAPLEN <__number__>::
+MAPLEN <``number``>::
 Length of file mapping (in page).
 
-MISCDEV <__string__>::
-Misc character device name resolved by _/proc/misc_.
+MISCDEV <``string``>::
+Misc character device name resolved by `/proc/misc`.
 
-MNTID <__number__>::
+MNTID <``number``>::
 Mount ID.
 
-MODE <__string__>::
+MODE <``string``>::
 Access mode (rwx).
 
-NAME <__string__>::
+NAME <``string``>::
 Name of the file.
+//
+// It seems that the manpage backend of asciidoctor has limitations
+// about emitting text with nested face specifications like:
+//
+//   `_u_` p
+//
+// Not only u but also p is decorated with underline.
+//
+For the most of all files, *lsfd* extracts their names
+from ``/proc/``_pid_``/fd/``_fd_ or ``/proc/``_pid_``/map_files/``_region_.
++
+Some files have special formats and information sources:
++
+pidfd:::
+pidfd: pid=_TARGET-PID_ comm=_TARGET-COMMAND_ nspid=_TARGET-NSPIDS_
++
+*lsfd* extracts _TARGET-PID_ and _TARGET-NSPIDS_ from
+``/proc/``_pid_``/fdinfo/``_fd_.
 
-NLINK <__number__>::
+NLINK <``number``>::
 Link count.
 
-OWNER <__string__>::
+OWNER <``string``>::
 Owner of the file.
 
-PARTITION <__string__>::
-Block device name resolved by _/proc/partition_.
+PARTITION <``string``>::
+Block device name resolved by `/proc/partition`.
 
-PID <__number__>::
+PID <``number``>::
 PID of the process opening the file.
 
-POS <__number__>::
+POS <``number``>::
 File position.
 
-PROTONAME <__string__>::
+PROTONAME <``string``>::
 Protocol name.
 
-RDEV <__string__>::
+RDEV <``string``>::
 Device ID (if special file).
 
-SIZE <__number__>::
+SIZE <``number``>::
 File size.
 
-SOURCE <__string__>::
+SOURCE <``string``>::
 File system, partition, or device containing the file.
 
-TID <__number__>::
+TID <``number``>::
 Thread ID of the process opening the file.
 
-TYPE <__string__>::
-File type.
+TYPE <``string``>::
+File types: BLK, CHR, DIR, FIFO, LINK, REG, SOCK, or UNKN.
 
-UID <__number__>::
+UID <``number``>::
 User ID number.
 
-USER <__string__>::
+USER <``string``>::
 User of the process.
 
 == FILTER EXPRESSION
 
 *lsfd* evaluates the expression passed to *--filter* option every time
 before printing a file line. *lsfd* prints the line only if the result
-of evaluation is _true_.
+of evaluation is `true`.
 
 An expression consists of column names, literals and, operators like:
 `DELETED`, `(PID == 1)`, `(NAME == "/etc/passwd")`, `(PID == 1) && DELETED`.
@@ -233,10 +253,10 @@ An expression consists of column names, literals and, operators like:
 
 Before evaluation, *lsfd* substitutes column names in the given
 expression with actual column values in the line. There are three
-different data types: _boolean_, _string_, and _number_.  For columns
-with a _boolean_ type, the value can be stand-alone.  For _string_ and
-_number_ values, the value must be an operand of an operator, for
-example, `(PID == 1)`. See the "OUTPUT COLUMNS" about the types of
+different data types: `boolean`, `string`, and `number`.  For columns
+with a `boolean` type, the value can be stand-alone.  For `string` and
+`number` values, the value must be an operand of an operator, for
+example, `(PID == 1)`. See *OUTPUT COLUMNS* about the types of
 columns.
 
 Literal is for representing a value directly. See BOOLLIT, STRLIT, and
@@ -246,44 +266,44 @@ An operator works with one or two operand(s). An operator has an
 expectation about the data type(s) of its operands. Giving an
 unexpected data type to an operator causes a syntax error.
 
-Operators taking two operands are _and_, _or_, _eq_, _ne_, _le_, _lt_, _ge_, _gt_, _=~_, _!~_.
+Operators taking two operands are `and`, `or`, `eq`, `ne`, `le`, `lt`, `ge`, `gt`, `=~`, `!~`.
 Alphabetically named operators have C-language
-flavored aliases: _&&_, _||_, _==_, _!=_, _<_, _<=_, _>=_, and _>_.
+flavored aliases: `&&`, `||`, `==`, `!=`, `<`, `<=`, `>=`, and `>`.
 
-_!_ is the only operator that takes one operand.
+`!` is the only operator that takes one operand.
 
-_eq_, _ne_, and their aliases expect operands have the same data type.
-Applying these operators return a _boolean_.
+`eq`, `ne`, and their aliases expect operands have the same data type.
+Applying these operators return a `boolean`.
 
-_and_, _or_, _not_ and their aliases expect operands have _bool_ data
-type. Applying these operators return a _boolean_.
+`and`, `or`, `not` and their aliases expect operands have `boolean` data
+type. Applying these operators return a `boolean`.
 
-_lt_, _le_, _gt_, _ge_, and their aliases expect operands have
-_number_ data types. Applying these operators return a _boolean_.
+`lt`, `le`, `gt`, `ge`, and their aliases expect operands have
+`number` data types. Applying these operators return a `boolean`.
 
-_=~_ is for regular expression matching; if a string at the right side
+`=~` is for regular expression matching; if a string at the right side
 matches a regular expression at the left side, the result is true.
 The right side operand must be a string literal. See STRLIT about the
 syntax.
 
-_!~_ is a short-hand version of `not (STR =~ PAT)`; it inverts the
-result of _=~_.
+`!~` is a short-hand version of `not (STR =~ PAT)`; it inverts the
+result of `=~`.
 
 === Limitations
 
 The current implementation does not define precedences within
-operators.  Use _(_ and _)_ explicitly for grouping the
+operators.  Use `(` and `)` explicitly for grouping the
 sub-expressions if your expression uses more than two operators.
 
-About _number_ typed values, the filter engine supports only
+About `number` typed values, the filter engine supports only
 non-negative integers.
 
 === Semi-formal syntax
 
-//TRANSLATORS: In the following messages, translate only the <__variables__>.
+//TRANSLATORS: In the following messages, translate only the <``variables``>.
 EXPR :: BOOLEXP
 
-BOOLEXP0 :: COLUMN <__boolean__> | BOOLLIT | _(_ BOOLEXP _)_
+BOOLEXP0 :: COLUMN <``boolean``> | BOOLLIT | _(_ BOOLEXP _)_
 
 BOOLEXP :: BOOLEXP0 | BOOLOP1 | BOOLOP2 | BOOLOP2BL | BOOLOP2CMP | BOOLOP2REG
 
@@ -291,9 +311,9 @@ COLUMN :: [\_A-Za-z][-_:A-Za-z0-9]*
 
 BOOLOP1 :: _!_ BOOLEXP0 | _not_ BOOLEXP0
 
-STREXP :: COLUMN <__string__> | STRLIT
+STREXP :: COLUMN <``string``> | STRLIT
 
-NUMEXP :: COLUMN <__number__> | NUMLIT
+NUMEXP :: COLUMN <``number``> | NUMLIT
 
 BOOLLIT :: _true_ | _false_
 

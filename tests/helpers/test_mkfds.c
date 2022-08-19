@@ -34,6 +34,7 @@
 #include <sys/mman.h>
 #include <sys/prctl.h>
 #include <sys/socket.h>
+#include <sys/syscall.h>
 #include <sys/types.h>
 #include <sys/un.h>
 #include <sys/user.h>
@@ -44,6 +45,8 @@
 #include "xalloc.h"
 
 #define _U_ __attribute__((__unused__))
+
+static int pidfd_open(pid_t pid, unsigned int flags);
 
 static void __attribute__((__noreturn__)) usage(FILE *out, int status)
 {
@@ -666,6 +669,34 @@ static void make_mmapped_packet_socket(const struct factory *factory, struct fde
 	};
 }
 
+static void make_pidfd(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
+		       int argc, char ** argv)
+{
+	struct arg target_pid = decode_arg("target-pid", factory->params, argc, argv);
+	pid_t pid = ARG_INTEGER(target_pid);
+
+	int fd = pidfd_open(pid, 0);
+	if (fd < 0)
+		err(EXIT_FAILURE, "failed in pidfd_open(%d)", (int)pid);
+	free_arg(&target_pid);
+
+	if (fd != fdescs[0].fd) {
+		if (dup2(fd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(fd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", fd, fdescs[0].fd);
+		}
+		close(fd);
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL
+	};
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -842,6 +873,25 @@ static const struct factory factories[] = {
 			PARAM_END
 		},
 	},
+	{
+
+		.name = "pidfd",
+		.desc = "pidfd returned from pidfd_open(2)",
+		.priv = false,
+		.N    = 1,
+		.EX_N = 0,
+		.fork = false,
+		.make = make_pidfd,
+		.params = (struct parameter []) {
+			{
+				.name = "target-pid",
+				.type = PTYPE_INTEGER,
+				.desc = "the pid of the target process",
+				.defv.integer = 1,
+			},
+			PARAM_END
+		},
+	},
 };
 
 static int count_parameters(const struct factory *factory)
@@ -909,6 +959,22 @@ static void rename_self(const char *comm)
 static void do_nothing(int signum _U_)
 {
 }
+
+#ifdef __NR_pidfd_open
+
+static int
+pidfd_open(pid_t pid, unsigned int flags)
+{
+	return syscall(__NR_pidfd_open, pid, flags);
+}
+#else
+static int
+pidfd_open(pid_t pid _U_, unsigned int flags _U_)
+{
+	errno = ENOSYS;
+	return -1;
+}
+#endif
 
 int main(int argc, char **argv)
 {
