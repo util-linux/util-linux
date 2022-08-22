@@ -19,36 +19,45 @@
 
 #include "mountP.h"
 #include "loopdev.h"
+#include "strutils.h"
 #include "linux_version.h"
-
 
 int mnt_context_is_loopdev(struct libmnt_context *cxt)
 {
+	int rc;
 	const char *type, *src;
+	struct libmnt_optlist *ol;
+	unsigned long flags = 0;
 
 	assert(cxt);
 
-	/* The mount flags have to be merged, otherwise we have to use
-	 * expensive mnt_context_get_user_mflags() instead of cxt->user_mountflags. */
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
 	if (!cxt->fs)
 		return 0;
+
+	ol = mnt_context_get_optlist(cxt);
+	if (!ol)
+		return 0;
+
+	if (mnt_optlist_is_bind(ol)
+	    || mnt_optlist_is_move(ol)
+	    || mnt_context_propagation_only(cxt))
+		return 0;
+
 	src = mnt_fs_get_srcpath(cxt->fs);
 	if (!src)
 		return 0;		/* backing file not set */
 
-	if (cxt->user_mountflags & (MNT_MS_LOOP |
-				    MNT_MS_OFFSET |
-				    MNT_MS_SIZELIMIT)) {
+	/* userspace specific flags */
+	rc = mnt_context_get_user_mflags(cxt, &flags);
+	if (rc)
+		return 0;
 
+	if (flags & (MNT_MS_LOOP | MNT_MS_OFFSET | MNT_MS_SIZELIMIT)) {
 		DBG(LOOP, ul_debugobj(cxt, "loopdev specific options detected"));
 		return 1;
 	}
-
-	if ((cxt->mountflags & (MS_BIND | MS_MOVE))
-	    || mnt_context_propagation_only(cxt))
-		return 0;
 
 	/* Automatically create a loop device from a regular file if a
 	 * filesystem is not specified or the filesystem is known for libblkid
@@ -68,9 +77,9 @@ int mnt_context_is_loopdev(struct libmnt_context *cxt)
 
 		if (stat(src, &st) == 0 && S_ISREG(st.st_mode) &&
 		    st.st_size > 1024) {
+
 			DBG(LOOP, ul_debugobj(cxt, "automatically enabling loop= option"));
-			cxt->user_mountflags |= MNT_MS_LOOP;
-			mnt_optstr_append_option(&cxt->fs->user_optstr, "loop", NULL);
+			mnt_optlist_append_flags(ol, MNT_MS_LOOP, cxt->map_userspace);
 			return 1;
 		}
 	}
@@ -95,6 +104,7 @@ is_mounted_same_loopfile(struct libmnt_context *cxt,
 	const char *bf;
 	int rc = 0;
 	struct libmnt_ns *ns_old;
+	unsigned long flags = 0;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -109,6 +119,10 @@ is_mounted_same_loopfile(struct libmnt_context *cxt,
 
 	DBG(LOOP, ul_debugobj(cxt, "checking if %s mounted on %s",
 				backing_file, target));
+
+	rc = mnt_context_get_user_mflags(cxt, &flags);
+	if (rc)
+		return 0;
 
 	cache = mnt_context_get_cache(cxt);
 	mnt_reset_iter(&itr, MNT_ITER_BACKWARD);
@@ -132,7 +146,7 @@ is_mounted_same_loopfile(struct libmnt_context *cxt,
 		if (strncmp(src, "/dev/loop", 9) == 0) {
 			rc = loopdev_is_used((char *) src, bf, offset, 0, LOOPDEV_FL_OFFSET);
 
-		} else if (opts && (cxt->user_mountflags & MNT_MS_LOOP) &&
+		} else if (opts && (flags & MNT_MS_LOOP) &&
 		    mnt_optstr_get_option(opts, "loop", &val, &len) == 0 && val) {
 
 			val = strndup(val, len);
@@ -150,13 +164,13 @@ is_mounted_same_loopfile(struct libmnt_context *cxt,
 
 int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 {
-	const char *backing_file, *optstr, *loopdev = NULL;
-	char *val = NULL, *loopval = NULL;
-	size_t len;
+	const char *backing_file, *loopdev = NULL;
 	struct loopdev_cxt lc;
 	int rc = 0, lo_flags = 0;
 	uint64_t offset = 0, sizelimit = 0;
 	bool reuse = FALSE;
+	struct libmnt_optlist *ol;
+	struct libmnt_opt *opt, *loopopt = NULL;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -168,29 +182,27 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 
 	DBG(LOOP, ul_debugobj(cxt, "trying to setup device for %s", backing_file));
 
-	if (cxt->mountflags & MS_RDONLY) {
+	ol = mnt_context_get_optlist(cxt);
+	if (!ol)
+		return -ENOMEM;
+
+	if (mnt_optlist_is_rdonly(ol)) {
 		DBG(LOOP, ul_debugobj(cxt, "enabling READ-ONLY flag"));
 		lo_flags |= LO_FLAGS_READ_ONLY;
 	}
 
-	optstr = mnt_fs_get_user_options(cxt->fs);
-
 	/*
 	 * loop=
 	 */
-	if (rc == 0 && (cxt->user_mountflags & MNT_MS_LOOP) &&
-	    mnt_optstr_get_option(optstr, "loop", &val, &len) == 0 && val) {
-		loopval = strndup(val, len);
-		rc = loopval ? 0 : -ENOMEM;
-	}
+	if (!rc)
+		loopopt = mnt_optlist_get_opt(ol, MNT_MS_LOOP, cxt->map_userspace);
 
 	/*
 	 * offset=
 	 */
-	if (rc == 0 && (cxt->user_mountflags & MNT_MS_OFFSET) &&
-	    mnt_optstr_get_option(optstr, "offset", &val, &len) == 0) {
-		rc = mnt_parse_offset(val, len, &offset);
-		if (rc) {
+	if (!rc && (opt = mnt_optlist_get_opt(ol, MNT_MS_OFFSET, cxt->map_userspace))
+	    && mnt_opt_has_value(opt)) {
+		if (strtosize(mnt_opt_get_value(opt), &offset)) {
 			DBG(LOOP, ul_debugobj(cxt, "failed to parse offset="));
 			rc = -MNT_ERR_MOUNTOPT;
 		}
@@ -199,10 +211,9 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	/*
 	 * sizelimit=
 	 */
-	if (rc == 0 && (cxt->user_mountflags & MNT_MS_SIZELIMIT) &&
-	    mnt_optstr_get_option(optstr, "sizelimit", &val, &len) == 0) {
-		rc = mnt_parse_offset(val, len, &sizelimit);
-		if (rc) {
+	if (!rc && (opt = mnt_optlist_get_opt(ol, MNT_MS_SIZELIMIT, cxt->map_userspace))
+	    && mnt_opt_has_value(opt)) {
+		if (strtosize(mnt_opt_get_value(opt), &sizelimit)) {
 			DBG(LOOP, ul_debugobj(cxt, "failed to parse sizelimit="));
 			rc = -MNT_ERR_MOUNTOPT;
 		}
@@ -211,13 +222,12 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	/*
 	 * encryption=
 	 */
-	if (rc == 0 && (cxt->user_mountflags & MNT_MS_ENCRYPTION) &&
-	    mnt_optstr_get_option(optstr, "encryption", &val, &len) == 0) {
+	if (!rc && mnt_optlist_get_opt(ol, MNT_MS_ENCRYPTION, cxt->map_userspace)) {
 		DBG(LOOP, ul_debugobj(cxt, "encryption no longer supported"));
 		rc = -MNT_ERR_MOUNTOPT;
 	}
 
-	if (rc == 0 && is_mounted_same_loopfile(cxt,
+	if (!rc && is_mounted_same_loopfile(cxt,
 				mnt_context_get_target(cxt),
 				backing_file, offset))
 		rc = -EBUSY;
@@ -294,7 +304,7 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 			}
 			rc = 0;
 			/* loop= used with argument. Conflict will occur. */
-			if (loopval) {
+			if (mnt_opt_has_value(loopopt)) {
 				rc = -MNT_ERR_LOOPOVERLAP;
 				goto done;
 			} else {
@@ -311,8 +321,8 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	rc = loopcxt_init(&lc, 0);
 	if (rc)
 		goto done_no_deinit;
-	if (loopval) {
-		rc = loopcxt_set_device(&lc, loopval);
+	if (mnt_opt_has_value(loopopt)) {
+		rc = loopcxt_set_device(&lc, mnt_opt_get_value(loopopt));
 		if (rc == 0)
 			loopdev = loopcxt_get_device(&lc);
 	}
@@ -372,26 +382,24 @@ success:
 
 	if (!rc) {
 		/* success */
-		cxt->flags |= MNT_FL_LOOPDEV_READY;
+		cxt->flags |= MNT_FL_LOOPDEV_READY;	/* TODO??? */
 
-		if (reuse || ( (cxt->user_mountflags & MNT_MS_LOOP) &&
-		    loopcxt_is_autoclear(&lc))) {
+		if (loopopt && (reuse || loopcxt_is_autoclear(&lc))) {
 			/*
 			 * autoclear flag accepted by the kernel, don't store
 			 * the "loop=" option to utab.
 			 */
 			DBG(LOOP, ul_debugobj(cxt, "removing unnecessary loop= from utab"));
-			cxt->user_mountflags &= ~MNT_MS_LOOP;
-			mnt_optstr_remove_option(&cxt->fs->user_optstr, "loop");
+			mnt_optlist_remove_opt(ol, loopopt);
+			loopopt = NULL;
 		}
 
-		if (!(cxt->mountflags & MS_RDONLY) &&
-		    loopcxt_is_readonly(&lc))
+		if (!mnt_optlist_is_rdonly(ol) && loopcxt_is_readonly(&lc))
 			/*
 			 * mount planned read-write, but loopdev is read-only,
 			 * let's fix mount options...
 			 */
-			mnt_context_set_mflags(cxt, cxt->mountflags | MS_RDONLY);
+			mnt_optlist_append_flags(ol, MS_RDONLY, cxt->map_linux);
 
 		/* we have to keep the device open until mount(1),
 		 * otherwise it will be auto-cleared by kernel
@@ -406,7 +414,6 @@ success:
 done:
 	loopcxt_deinit(&lc);
 done_no_deinit:
-	free(loopval);
 	return rc;
 }
 
