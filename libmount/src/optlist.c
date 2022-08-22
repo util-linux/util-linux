@@ -51,8 +51,11 @@ struct libmnt_optlist {
 	unsigned long		propagation;	/* propagation MS_ flags */
 	struct list_head	opts;		/* parsed options */
 
-	unsigned int merged : 1,		/* don't care about MNT_OPTSRC_* */
-		     remount : 1;
+	unsigned int	merged : 1,		/* don't care about MNT_OPTSRC_* */
+			is_remount : 1,
+			is_bind : 1,
+			is_rdonly : 1,
+			is_move : 1;
 };
 
 struct libmnt_optlist *mnt_new_optlist(void)
@@ -171,7 +174,13 @@ int mnt_optlist_remove_opt(struct libmnt_optlist *ls, struct libmnt_opt *opt)
 		if (opt->ent->id & MS_PROPAGATION)
 			ls->propagation &= ~opt->ent->id;
 		else if (opt->ent->id == MS_REMOUNT)
-			ls->remount = 0;
+			ls->is_remount = 0;
+		else if (opt->ent->id == MS_BIND)
+			ls->is_bind = 0;
+		else if (opt->ent->id == MS_RDONLY)
+			ls->is_rdonly = 0;
+		else if (opt->ent->id == MS_MOVE)
+			ls->is_move = 0;
 	}
 
 	optlist_cleanup_cache(ls, opt->map);
@@ -359,8 +368,14 @@ static struct libmnt_opt *optlist_new_opt(struct libmnt_optlist *ls,
 	if (map && ent && map == ls->linux_map) {
 		if (ent->id & MS_PROPAGATION)
 			ls->propagation |= ent->id;
-		else if (ent->id == MS_REMOUNT)
-			ls->remount = 1;
+		else if (opt->ent->id == MS_REMOUNT)
+			ls->is_remount = 1;
+		else if (opt->ent->id == MS_BIND)
+			ls->is_bind = 1;
+		else if (opt->ent->id == MS_RDONLY)
+			ls->is_rdonly = 1;
+		else if (opt->ent->id == MS_MOVE)
+			ls->is_move = 1;
 	}
 
 	if (ent && map) {
@@ -495,6 +510,7 @@ static int optlist_add_flags(struct libmnt_optlist *ls, unsigned long flags,
 			else
 				continue;	/* name=<value> */
 			sz = p - ent->name;
+			p -= sz;
 		} else {
 			p = (char *) ent->name;
 			sz = strlen(ent->name); /* alone "name" */
@@ -771,8 +787,24 @@ int mnt_optlist_is_propagation_only(struct libmnt_optlist *ls)
 
 int mnt_optlist_is_remount(struct libmnt_optlist *ls)
 {
-	return ls && ls->remount;
+	return ls && ls->is_remount;
 }
+
+int mnt_optlist_is_move(struct libmnt_optlist *ls)
+{
+	return ls && ls->is_move;
+}
+
+int mnt_optlist_is_bind(struct libmnt_optlist *ls)
+{
+	return ls && ls->is_bind;
+}
+
+int mnt_optlist_is_rdonly(struct libmnt_optlist *ls)
+{
+	return ls && ls->is_rdonly;
+}
+
 
 int mnt_opt_has_value(struct libmnt_opt *opt)
 {
