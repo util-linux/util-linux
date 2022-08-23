@@ -12,8 +12,9 @@
 
 #include "mountP.h"
 
+/* mount(2) flags for additional propagation changes etc. */
 struct hook_data {
-	unsigned long mountflags;
+	unsigned long flags;
 };
 
 static int hookset_deinit(struct libmnt_context *cxt, const struct libmnt_hookset *hs)
@@ -44,14 +45,16 @@ static int hook_propagation(struct libmnt_context *cxt,
 {
 	int rc;
 	struct hook_data *hd = (struct hook_data *) data;
+	unsigned long extra = 0;
 
 	assert(hd);
 	assert(cxt);
 	assert(cxt->fs);
+	assert(cxt->optlist);
 
 	DBG(HOOK, ul_debugobj(hs, " calling mount(2) for propagation: 0x%08lx %s",
-				hd->mountflags,
-				hd->mountflags & MS_REC ? " (recursive)" : ""));
+				hd->flags,
+				hd->flags & MS_REC ? " (recursive)" : ""));
 
 	if (mnt_context_is_fake(cxt)) {
 		DBG(CXT, ul_debugobj(cxt, "  FAKE (-f)"));
@@ -60,14 +63,17 @@ static int hook_propagation(struct libmnt_context *cxt,
 	}
 
 	/*
-	 * hd->mountflags are propagation flags as set in prepare_propagation()
+	 * hd->flags are propagation flags as set in prepare_propagation()
 	 *
-	 * cxt->mountflags are global mount flags, may be modified after
-	 * preparation stage (for example when libmount blindly tries FS type then
-	 * it uses MS_SILENT)
+	 * @cxt contains global mount flags, may be modified after preparation
+	 * stage (for example when libmount blindly tries FS type then it uses
+	 * MS_SILENT)
 	 */
+	if (mnt_optlist_is_silent(cxt->optlist))
+		extra |= MS_SILENT;
+
 	rc = mount("none", mnt_fs_get_target(cxt->fs), NULL,
-			hd->mountflags | (cxt->mountflags & MS_SILENT), NULL);
+			hd->flags | extra, NULL);
 
 	if (rc) {
 		/* Update global syscall status if only this function called */
@@ -86,43 +92,35 @@ static int hook_propagation(struct libmnt_context *cxt,
 static int prepare_propagation(struct libmnt_context *cxt,
 				const struct libmnt_hookset *hs)
 {
-	char *name;
-	char *opts;
-	size_t namesz;
-	struct libmnt_optmap const *maps[1];
-	int rec_count = 0;
+	struct libmnt_optlist *ol;
+	struct libmnt_iter itr;
+	struct libmnt_opt *opt;
 
 	assert(cxt);
 	assert(cxt->fs);
 
-	opts = (char *) mnt_fs_get_vfs_options(cxt->fs);
-	if (!opts)
-		return 0;
+	ol = mnt_context_get_optlist(cxt);
+	if (!ol)
+		return -ENOMEM;
 
-	maps[0] = mnt_get_builtin_optmap(MNT_LINUX_MAP);
+	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
-	while (!mnt_optstr_next_option(&opts, &name, &namesz, NULL, NULL)) {
-		struct hook_data *data;
-		const struct libmnt_optmap *ent;
+	while (mnt_optlist_next_opt(ol, &itr, &opt) == 0) {
 		int rc;
+		struct hook_data *data;
+		const struct libmnt_optmap *map = mnt_opt_get_map(opt);
+		const struct libmnt_optmap *ent = mnt_opt_get_mapent(opt);
 
-		if (!mnt_optmap_get_entry(maps, 1, name, namesz, &ent) || !ent)
+		if (!map || map != cxt->map_linux)
 			continue;
-
-		/* Note that MS_REC may be used for more flags, so we have to keep
-		 * track about number of recursive options to keep the MS_REC in the
-		 * mountflags if necessary.
-		 */
-		if (ent->id & MS_REC)
-			rec_count++;
-
 		if (!(ent->id & MS_PROPAGATION))
 			continue;
 
 		data = new_hook_data();
 		if (!data)
 			return -ENOMEM;
-		data->mountflags = ent->id;
+
+		data->flags = ent->id;
 
 		DBG(HOOK, ul_debugobj(hs, " adding mount(2) call for %s", ent->name));
 		rc = mnt_context_append_hook(cxt, hs,
@@ -133,14 +131,8 @@ static int prepare_propagation(struct libmnt_context *cxt,
 			return rc;
 
 		DBG(HOOK, ul_debugobj(hs, " removing '%s' flag from primary mount(2)", ent->name));
-		cxt->mountflags &= ~ent->id;
-
-		if (ent->id & MS_REC)
-			rec_count--;
+		mnt_optlist_remove_opt(ol, opt);
 	}
-
-	if (rec_count)
-		cxt->mountflags |= MS_REC;
 
 	return 0;
 }
@@ -151,10 +143,11 @@ static int hook_bindremount(struct libmnt_context *cxt,
 {
 	int rc;
 	struct hook_data *hd = (struct hook_data *) data;
+	unsigned long extra = 0;
 
 	DBG(HOOK, ul_debugobj(hs, " mount(2) for bind-remount: 0x%08lx %s",
-				hd->mountflags,
-				hd->mountflags & MS_REC ? " (recursive)" : ""));
+				hd->flags,
+				hd->flags & MS_REC ? " (recursive)" : ""));
 
 	if (mnt_context_is_fake(cxt)) {
 		DBG(CXT, ul_debugobj(cxt, "  FAKE (-f)"));
@@ -162,9 +155,12 @@ static int hook_bindremount(struct libmnt_context *cxt,
 		return 0;
 	}
 
+	if (mnt_optlist_is_silent(cxt->optlist))
+		extra |= MS_SILENT;
+
 	/* for the flags see comment in hook_propagation() */
 	rc = mount("none", mnt_fs_get_target(cxt->fs), NULL,
-			hd->mountflags | (cxt->mountflags & MS_SILENT), NULL);
+			hd->flags | extra, NULL);
 
 	if (rc)
 		DBG(HOOK, ul_debugobj(hs, "  mount(2) failed"
@@ -183,8 +179,6 @@ static int prepare_bindremount(struct libmnt_context *cxt,
 	int rc;
 
 	assert(cxt);
-	assert(cxt->mountflags & MS_BIND);
-	assert(!(cxt->mountflags & MS_REMOUNT));
 
 	DBG(HOOK, ul_debugobj(hs, " adding mount(2) call for bint-remount"));
 
@@ -192,8 +186,11 @@ static int prepare_bindremount(struct libmnt_context *cxt,
 	if (!data)
 		return -ENOMEM;
 
-	data->mountflags = cxt->mountflags;
-	data->mountflags |= (MS_REMOUNT | MS_BIND);
+	mnt_context_get_mflags(cxt, &data->flags);
+	assert(cxt->flags & MS_BIND);
+	assert(!(cxt->flags & MS_REMOUNT));
+
+	data->flags |= (MS_REMOUNT | MS_BIND);
 
 	rc = mnt_context_append_hook(cxt, hs,
 				MNT_STAGE_MOUNT_POST, data, hook_bindremount);
@@ -272,6 +269,7 @@ static int hook_prepare(struct libmnt_context *cxt,
 			void *data __attribute__((__unused__)))
 {
 	int rc = 0;
+	unsigned long flags = 0;
 
 	assert(cxt);
 	assert(hs == &hookset_mount_legacy);
@@ -281,17 +279,21 @@ static int hook_prepare(struct libmnt_context *cxt,
 	if (mnt_context_has_hook(cxt, &hookset_mount, 0, NULL))
 		return 0;
 #endif
+	rc = mnt_context_get_mflags(cxt, &flags);
+	if (rc)
+		return rc;
+
 	/* add extra mount(2) calls for each propagation flag  */
-	if (cxt->mountflags & MS_PROPAGATION) {
+	if (flags & MS_PROPAGATION) {
 		rc = prepare_propagation(cxt, hs);
 		if (rc)
 			return rc;
 	}
 
 	/* add extra mount(2) call to implement "bind,remount,<flags>" */
-	if ((cxt->mountflags & MS_BIND)
-	    && (cxt->mountflags & MNT_BIND_SETTABLE)
-	    && !(cxt->mountflags & MS_REMOUNT)) {
+	if ((flags & MS_BIND)
+	    && (flags & MNT_BIND_SETTABLE)
+	    && !(flags & MS_REMOUNT)) {
 		rc = prepare_bindremount(cxt, hs);
 		if (rc)
 			return rc;
