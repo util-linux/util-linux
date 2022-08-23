@@ -555,6 +555,7 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 {
 	int rc = 0;
 	char *org_type = NULL;
+	struct libmnt_optlist *ol = NULL;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -577,7 +578,10 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 	}
 
 	if (try_type) {
-		cxt->mountflags |= MS_SILENT;
+		ol = mnt_context_get_optlist(cxt);
+		assert(ol);
+
+		mnt_optlist_append_flags(ol, MS_SILENT, cxt->map_linux);
 		if (mnt_fs_get_fstype(cxt->fs)) {
 			org_type = strdup(mnt_fs_get_fstype(cxt->fs));
 			if (!org_type) {
@@ -606,8 +610,8 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 	}
 
 done:
-	if (try_type)
-		cxt->mountflags &= ~MS_SILENT;
+	if (try_type && ol)
+		mnt_optlist_remove_flags(ol, MS_SILENT, cxt->map_linux);
 	free(org_type);
 	return rc;
 }
