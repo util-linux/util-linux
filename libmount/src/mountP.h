@@ -543,6 +543,8 @@ extern int mnt_optlist_merge_opts(struct libmnt_optlist *ls);
 extern int mnt_opt_has_value(struct libmnt_opt *opt);
 extern const char *mnt_opt_get_value(struct libmnt_opt *opt);
 extern const char *mnt_opt_get_name(struct libmnt_opt *opt);
+extern const struct libmnt_optmap *mnt_opt_get_map(struct libmnt_opt *opt);
+extern const struct libmnt_optmap *mnt_opt_get_mapent(struct libmnt_opt *opt);
 extern int mnt_opt_set_external(struct libmnt_opt *opt, int enable);
 extern int mnt_opt_set_value(struct libmnt_opt *opt, const char *str);
 extern int mnt_opt_set_u64value(struct libmnt_opt *opt, uint64_t num);

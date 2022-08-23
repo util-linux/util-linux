@@ -832,6 +832,16 @@ const char *mnt_opt_get_name(struct libmnt_opt *opt)
 	return opt->name;
 }
 
+const struct libmnt_optmap *mnt_opt_get_map(struct libmnt_opt *opt)
+{
+	return opt->map;
+}
+
+const struct libmnt_optmap *mnt_opt_get_mapent(struct libmnt_opt *opt)
+{
+	return opt->ent;
+}
+
 int mnt_opt_set_value(struct libmnt_opt *opt, const char *str)
 {
 	return strdup_to_struct_member(opt, value, str);
