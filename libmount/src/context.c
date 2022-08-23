@@ -1787,6 +1787,7 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 	const char *t, *v, *src, *type;
 	int rc = 0;
 	struct libmnt_ns *ns_old;
+	struct libmnt_optlist *ol;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -1845,7 +1846,13 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 	if (!path)
 		path = src;
 
-	if ((cxt->mountflags & (MS_BIND | MS_MOVE | MS_REMOUNT))
+	ol = mnt_context_get_optlist(cxt);
+	if (!ol)
+		return -ENOMEM;
+
+	if (mnt_optlist_is_bind(ol)
+	    || mnt_optlist_is_move(ol)
+	    || mnt_optlist_is_remount(ol)
 	    || mnt_fs_is_pseudofs(cxt->fs)) {
 		DBG(CXT, ul_debugobj(cxt, "REMOUNT/BIND/MOVE/pseudo FS source: %s", path));
 		goto end;
@@ -1940,6 +1947,7 @@ int mnt_context_guess_srcpath_fstype(struct libmnt_context *cxt, char **type)
  */
 int mnt_context_guess_fstype(struct libmnt_context *cxt)
 {
+	struct libmnt_optlist *ol;
 	char *type;
 	int rc = 0;
 
@@ -1949,7 +1957,12 @@ int mnt_context_guess_fstype(struct libmnt_context *cxt)
 
 	DBG(CXT, ul_debugobj(cxt, "--> preparing fstype"));
 
-	if ((cxt->mountflags & (MS_BIND | MS_MOVE))
+	ol = mnt_context_get_optlist(cxt);
+	if (!ol)
+		return -ENOMEM;
+
+	if (mnt_optlist_is_bind(ol)
+	    || mnt_optlist_is_move(ol)
 	    || mnt_context_propagation_only(cxt))
 		goto none;
 
@@ -1961,7 +1974,7 @@ int mnt_context_guess_fstype(struct libmnt_context *cxt)
 
 	if (type)
 		goto done;
-	if (cxt->mountflags & MS_REMOUNT)
+	if (mnt_optlist_is_remount(ol))
 		goto none;
 	if (cxt->fstype_pattern)
 		goto done;
@@ -2088,6 +2101,7 @@ int mnt_context_prepare_update(struct libmnt_context *cxt)
 {
 	int rc;
 	const char *target;
+	unsigned long flags = 0;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -2139,11 +2153,13 @@ int mnt_context_prepare_update(struct libmnt_context *cxt)
 		mnt_update_set_filename(cxt->update, name);
 	}
 
+	mnt_context_get_mflags(cxt, &flags);
+
 	if (cxt->action == MNT_ACT_UMOUNT)
-		rc = mnt_update_set_fs(cxt->update, cxt->mountflags,
+		rc = mnt_update_set_fs(cxt->update, flags,
 					mnt_context_get_target(cxt), NULL);
 	else
-		rc = mnt_update_set_fs(cxt->update, cxt->mountflags,
+		rc = mnt_update_set_fs(cxt->update, flags,
 					NULL, cxt->fs);
 
 	return rc < 0 ? rc : 0;
@@ -2151,7 +2167,6 @@ int mnt_context_prepare_update(struct libmnt_context *cxt)
 
 int mnt_context_update_tabs(struct libmnt_context *cxt)
 {
-	unsigned long fl;
 	int rc = 0;
 	struct libmnt_ns *ns_old;
 
@@ -2191,14 +2206,6 @@ int mnt_context_update_tabs(struct libmnt_context *cxt)
 		DBG(CXT, ul_debugobj(cxt, "don't update: syscall/helper failed/not called"));
 		goto end;
 	}
-
-	fl = mnt_update_get_mflags(cxt->update);
-	if ((cxt->mountflags & MS_RDONLY) != (fl & MS_RDONLY))
-		/*
-		 * fix MS_RDONLY in options
-		 */
-		mnt_update_force_rdonly(cxt->update,
-				cxt->mountflags & MS_RDONLY);
 
 	rc = mnt_update_table(cxt->update, cxt->lock);
 
