@@ -345,22 +345,22 @@ static int hook_prepare_options(
 			void *data __attribute__((__unused__)))
 {
 	struct hook_data *hd = NULL;
+	struct libmnt_optlist *ol;
+	struct libmnt_opt *opt;
 	int rc;
-	char *value;
-	size_t valsz;
-	char *saveptr = NULL, *tok;
+	const char *value = NULL;
+	char *saveptr = NULL, *tok, *buf = NULL;
 
-	const char *o = mnt_fs_get_user_options(cxt->fs);
-	if (!o)
+	ol = mnt_context_get_optlist(cxt);
+	if (!ol)
 		return 0;
 
-	rc = mnt_optstr_get_option(o, "X-mount.idmap", &value, &valsz);
-	if (rc < 0)
-		return -MNT_ERR_MOUNTOPT;
-	if (rc > 0)
-		return 0;	/* not found */
+	opt = mnt_optlist_get_named(ol, "X-mount.idmap", cxt->map_userspace);
+	if (!opt)
+		return 0;
+	value = mnt_opt_get_value(opt);
 
-	if (!valsz)
+	if (!value)
 		return errno = EINVAL, -MNT_ERR_MOUNTOPT;
 
 	hd = new_hook_data();
@@ -375,6 +375,10 @@ static int hook_prepare_options(
 		goto done;
 	}
 
+	buf = strdup(value);
+	if (!buf)
+		return -ENOMEM;
+
 	/*
 	 * This is an explicit ID-mapping list of the form:
 	 * [id-type]:id-mount:id-host:id-range [...]
@@ -385,7 +389,7 @@ static int hook_prepare_options(
 	 * A long while ago I made the kernel support up to 340 individual
 	 * ID-mappings. So users have quite a bit of freedom here.
 	 */
-	for (tok = strtok_r(value, " ", &saveptr); tok;
+	for (tok = strtok_r(buf, " ", &saveptr); tok;
 	     tok = strtok_r(NULL, " ", &saveptr)) {
 		struct id_map *idmap;
 		idmap_type_t map_type;
@@ -436,6 +440,8 @@ static int hook_prepare_options(
 		goto err;
 
 done:
+	free(buf);
+
 	/* define post-mount hook to enter the namespace */
 	DBG(HOOK, ul_debugobj(hs, " wanted new user namespace"));
 	rc = mnt_context_append_hook(cxt, hs,
@@ -448,6 +454,7 @@ done:
 err:
 	DBG(HOOK, ul_debugobj(hs, " failed to setup idmap"));
 	free_hook_data(hd);
+	free(buf);
 	return -MNT_ERR_MOUNTOPT;
 }
 
