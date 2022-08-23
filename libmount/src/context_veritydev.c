@@ -19,6 +19,7 @@
 #endif
 #include <libcryptsetup.h>
 #include "path.h"
+#include "strutils.h"
 
 #ifdef CRYPTSETUP_VIA_DLOPEN
 static void *get_symbol(struct libmnt_context *cxt, void *dl, const char *name, int *rc)
@@ -75,12 +76,14 @@ static size_t crypt_hex_to_bytes(const char *hex, char **result)
 
 int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 {
-	const char *backing_file, *optstr;
-	char *val = NULL, *key = NULL, *root_hash_binary = NULL, *mapper_device = NULL,
+	struct libmnt_optlist *ol;
+	struct libmnt_opt *opt;
+	const char *backing_file, *hash_device = NULL, *root_hash_file = NULL, *fec_device = NULL,
+	           *root_hash_sig_file = NULL;
+	char *key = NULL, *root_hash_binary = NULL, *mapper_device = NULL,
 		*mapper_device_full = NULL, *backing_file_basename = NULL, *root_hash = NULL,
-		*hash_device = NULL, *root_hash_file = NULL, *fec_device = NULL, *hash_sig = NULL,
-		*root_hash_sig_file = NULL;
-	size_t len, hash_size, hash_sig_size = 0, keysize = 0;
+		*hash_sig = NULL;
+	size_t hash_size, hash_sig_size = 0, keysize = 0;
 	struct crypt_params_verity crypt_params = {};
 	struct crypt_device *crypt_dev = NULL;
 	int rc = 0;
@@ -124,8 +127,12 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
+	ol = mnt_context_get_optlist(cxt);
+	if (!ol)
+		return -ENOMEM;
+
 	/* dm-verity volumes are read-only, and mount will fail if not set */
-	mnt_context_set_mflags(cxt, (cxt->mountflags | MS_RDONLY));
+	mnt_optlist_append_flags(ol, MS_RDONLY, cxt->map_linux);
 
 	backing_file = mnt_fs_get_srcpath(cxt->fs);
 	if (!backing_file)
@@ -141,33 +148,26 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 
 	DBG(VERITY, ul_debugobj(cxt, "trying to setup verity device for %s", backing_file));
 
-	optstr = mnt_fs_get_user_options(cxt->fs);
-
 	/*
 	 * verity.hashdevice=
 	 */
-	if (rc == 0 && (cxt->user_mountflags & MNT_MS_HASH_DEVICE) &&
-	    mnt_optstr_get_option(optstr, "verity.hashdevice", &val, &len) == 0 && val) {
-		hash_device = strndup(val, len);
-		rc = hash_device ? 0 : -ENOMEM;
-	}
+	if (!rc && (opt = mnt_optlist_get_opt(ol, MNT_MS_HASH_DEVICE, cxt->map_userspace)))
+		hash_device = mnt_opt_get_value(opt);
 
 	/*
 	 * verity.roothash=
 	 */
-	if (rc == 0 && (cxt->user_mountflags & MNT_MS_ROOT_HASH) &&
-	    mnt_optstr_get_option(optstr, "verity.roothash", &val, &len) == 0 && val) {
-		root_hash = strndup(val, len);
+	if (!rc && (opt = mnt_optlist_get_opt(ol, MNT_MS_ROOT_HASH, cxt->map_userspace))) {
+		root_hash = strdup(mnt_opt_get_value(opt));
 		rc = root_hash ? 0 : -ENOMEM;
 	}
 
 	/*
 	 * verity.hashoffset=
 	 */
-	if (rc == 0 && (cxt->user_mountflags & MNT_MS_HASH_OFFSET) &&
-	    mnt_optstr_get_option(optstr, "verity.hashoffset", &val, &len) == 0) {
-		rc = mnt_parse_offset(val, len, &offset);
-		if (rc) {
+	if (!rc && (opt = mnt_optlist_get_opt(ol, MNT_MS_HASH_OFFSET, cxt->map_userspace))
+	    && mnt_opt_has_value(opt)) {
+		if (strtosize(mnt_opt_get_value(opt), &offset)) {
 			DBG(VERITY, ul_debugobj(cxt, "failed to parse verity.hashoffset="));
 			rc = -MNT_ERR_MOUNTOPT;
 		}
@@ -176,28 +176,21 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 	/*
 	 * verity.roothashfile=
 	 */
-	if (rc == 0 && (cxt->user_mountflags & MNT_MS_ROOT_HASH_FILE) &&
-	    mnt_optstr_get_option(optstr, "verity.roothashfile", &val, &len) == 0 && val) {
-		root_hash_file = strndup(val, len);
-		rc = root_hash_file ? 0 : -ENOMEM;
-	}
+	if (!rc && (opt = mnt_optlist_get_opt(ol, MNT_MS_ROOT_HASH_FILE, cxt->map_userspace)))
+		root_hash_file = mnt_opt_get_value(opt);
 
 	/*
 	 * verity.fecdevice=
 	 */
-	if (rc == 0 && (cxt->user_mountflags & MNT_MS_FEC_DEVICE) &&
-	    mnt_optstr_get_option(optstr, "verity.fecdevice", &val, &len) == 0 && val) {
-		fec_device = strndup(val, len);
-		rc = fec_device ? 0 : -ENOMEM;
-	}
+	if (!rc && (opt = mnt_optlist_get_opt(ol, MNT_MS_FEC_DEVICE, cxt->map_userspace)))
+		fec_device = mnt_opt_get_value(opt);
 
 	/*
 	 * verity.fecoffset=
 	 */
-	if (rc == 0 && (cxt->user_mountflags & MNT_MS_FEC_OFFSET) &&
-	    mnt_optstr_get_option(optstr, "verity.fecoffset", &val, &len) == 0) {
-		rc = mnt_parse_offset(val, len, &fec_offset);
-		if (rc) {
+	if (!rc && (opt = mnt_optlist_get_opt(ol, MNT_MS_FEC_OFFSET, cxt->map_userspace))
+	    && mnt_opt_has_value(opt)) {
+		if (strtosize(mnt_opt_get_value(opt), &fec_offset)) {
 			DBG(VERITY, ul_debugobj(cxt, "failed to parse verity.fecoffset="));
 			rc = -MNT_ERR_MOUNTOPT;
 		}
@@ -206,10 +199,9 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 	/*
 	 * verity.fecroots=
 	 */
-	if (rc == 0 && (cxt->user_mountflags & MNT_MS_FEC_ROOTS) &&
-	    mnt_optstr_get_option(optstr, "verity.fecroots", &val, &len) == 0) {
-		rc = mnt_parse_offset(val, len, &fec_roots);
-		if (rc) {
+	if (!rc && (opt = mnt_optlist_get_opt(ol, MNT_MS_FEC_ROOTS, cxt->map_userspace))
+	    && mnt_opt_has_value(opt)) {
+		if (strtosize(mnt_opt_get_value(opt), &fec_roots)) {
 			DBG(VERITY, ul_debugobj(cxt, "failed to parse verity.fecroots="));
 			rc = -MNT_ERR_MOUNTOPT;
 		}
@@ -218,12 +210,11 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 	/*
 	 * verity.roothashsig=
 	 */
-	if (rc == 0 && (cxt->user_mountflags & MNT_MS_ROOT_HASH_SIG) &&
-	    mnt_optstr_get_option(optstr, "verity.roothashsig", &val, &len) == 0 && val) {
-		root_hash_sig_file = strndup(val, len);
-		rc = root_hash_sig_file ? 0 : -ENOMEM;
-		if (rc == 0)
-			rc = ul_path_stat(NULL, &hash_sig_st, 0, root_hash_sig_file);
+	if (!rc && (opt = mnt_optlist_get_opt(ol, MNT_MS_ROOT_HASH_SIG, cxt->map_userspace))
+	    && mnt_opt_has_value(opt)) {
+		root_hash_sig_file = mnt_opt_get_value(opt);
+
+		rc = ul_path_stat(NULL, &hash_sig_st, 0, root_hash_sig_file);
 		if (rc == 0)
 			rc = !S_ISREG(hash_sig_st.st_mode) || !hash_sig_st.st_size ? -EINVAL : 0;
 		if (rc == 0) {
@@ -240,13 +231,14 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 	/*
 	 * verity.oncorruption=
 	 */
-	if (rc == 0 && (cxt->user_mountflags & MNT_MS_VERITY_ON_CORRUPTION) &&
-	    mnt_optstr_get_option(optstr, "verity.oncorruption", &val, &len) == 0) {
-		if (!strncmp(val, "ignore", len))
+	if (!rc && (opt = mnt_optlist_get_opt(ol, MNT_MS_VERITY_ON_CORRUPTION, cxt->map_userspace))
+	    && mnt_opt_has_value(opt)) {
+		const char *val =  mnt_opt_get_value(opt);
+		if (!strcmp(val, "ignore"))
 			crypt_activate_flags |= CRYPT_ACTIVATE_IGNORE_CORRUPTION;
-		else if (!strncmp(val, "restart", len))
+		else if (!strcmp(val, "restart"))
 			crypt_activate_flags |= CRYPT_ACTIVATE_RESTART_ON_CORRUPTION;
-		else if (!strncmp(val, "panic", len))
+		else if (!strcmp(val, "panic"))
 			/* Added by libcryptsetup v2.3.4 - ignore on lower versions, as with other optional features */
 #ifdef CRYPT_ACTIVATE_PANIC_ON_CORRUPTION
 			crypt_activate_flags |= CRYPT_ACTIVATE_PANIC_ON_CORRUPTION;
@@ -435,11 +427,7 @@ done:
 	free(root_hash_binary);
 	free(mapper_device_full);
 	free(mapper_device);
-	free(hash_device);
 	free(root_hash);
-	free(root_hash_file);
-	free(root_hash_sig_file);
-	free(fec_device);
 	free(hash_sig);
 	free(key);
 	return rc;
@@ -527,22 +515,32 @@ int mnt_context_deferred_delete_veritydev(struct libmnt_context *cxt __attribute
 int mnt_context_is_veritydev(struct libmnt_context *cxt)
 {
 	const char *src;
+	unsigned long flags;
+	struct libmnt_optlist *ol;
 
 	assert(cxt);
-
-	/* The mount flags have to be merged, otherwise we have to use
-	 * expensive mnt_context_get_user_mflags() instead of cxt->user_mountflags. */
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
+	if (cxt->action != MNT_ACT_MOUNT)
+		return 0;
 	if (!cxt->fs)
 		return 0;
 	src = mnt_fs_get_srcpath(cxt->fs);
 	if (!src)
 		return 0;		/* backing file not set */
 
-	if (cxt->user_mountflags & (MNT_MS_HASH_DEVICE |
-				    MNT_MS_ROOT_HASH |
-				    MNT_MS_HASH_OFFSET)) {
+	ol = mnt_context_get_optlist(cxt);
+	if (!ol)
+		return 0;
+	if (mnt_optlist_is_bind(ol)
+	    || mnt_optlist_is_move(ol)
+	    || mnt_context_propagation_only(cxt))
+		return 0;
+
+	if (mnt_context_get_user_mflags(cxt, &flags))
+		return 0;
+
+	if (flags & (MNT_MS_HASH_DEVICE | MNT_MS_ROOT_HASH | MNT_MS_HASH_OFFSET)) {
 #ifndef HAVE_CRYPTSETUP
 		DBG(VERITY, ul_debugobj(cxt, "veritydev specific options detected but libmount built without libcryptsetup"));
 		return -ENOTSUP;
