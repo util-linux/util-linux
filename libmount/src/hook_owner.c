@@ -33,8 +33,7 @@ static int hookset_deinit(struct libmnt_context *cxt, const struct libmnt_hookse
 
 	/* remove all our hooks and free hook data */
 	while (mnt_context_remove_hook(cxt, hs, 0, &data) == 0) {
-		if (data)
-			free(data);
+		free(data);
 		data = NULL;
 	}
 
