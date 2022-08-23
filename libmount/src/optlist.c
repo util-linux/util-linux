@@ -647,9 +647,9 @@ int mnt_optlist_get_flags(struct libmnt_optlist *ls, unsigned long *flags,
 {
 	struct libmnt_iter itr;
 	struct libmnt_opt *opt;
-	unsigned long fl = *flags;
+	unsigned long fl = 0;
 
-	if (!ls || !map)
+	if (!ls || !map || !flags)
 		return -EINVAL;
 
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);

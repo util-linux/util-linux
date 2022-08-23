@@ -515,7 +515,7 @@ int mnt_context_deferred_delete_veritydev(struct libmnt_context *cxt __attribute
 int mnt_context_is_veritydev(struct libmnt_context *cxt)
 {
 	const char *src;
-	unsigned long flags;
+	unsigned long flags = 0;
 	struct libmnt_optlist *ol;
 
 	assert(cxt);
