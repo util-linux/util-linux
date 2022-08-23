@@ -536,6 +536,7 @@ extern int mnt_optlist_is_remount(struct libmnt_optlist *ls);
 extern int mnt_optlist_is_bind(struct libmnt_optlist *ls);
 extern int mnt_optlist_is_move(struct libmnt_optlist *ls);
 extern int mnt_optlist_is_rdonly(struct libmnt_optlist *ls);
+extern int mnt_optlist_is_silent(struct libmnt_optlist *ls);
 
 extern int mnt_optlist_merge_opts(struct libmnt_optlist *ls);
 

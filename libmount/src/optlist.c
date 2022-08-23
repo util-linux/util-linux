@@ -55,7 +55,8 @@ struct libmnt_optlist {
 			is_remount : 1,
 			is_bind : 1,
 			is_rdonly : 1,
-			is_move : 1;
+			is_move : 1,
+			is_silent : 1;
 };
 
 struct libmnt_optlist *mnt_new_optlist(void)
@@ -181,6 +182,8 @@ int mnt_optlist_remove_opt(struct libmnt_optlist *ls, struct libmnt_opt *opt)
 			ls->is_rdonly = 0;
 		else if (opt->ent->id == MS_MOVE)
 			ls->is_move = 0;
+		else if (opt->ent->id == MS_SILENT)
+			ls->is_silent = 0;
 	}
 
 	optlist_cleanup_cache(ls, opt->map);
@@ -365,6 +368,7 @@ static struct libmnt_opt *optlist_new_opt(struct libmnt_optlist *ls,
 	else
 		list_add_tail(&opt->opts, &ls->opts);
 
+	/* shortcuts */
 	if (map && ent && map == ls->linux_map) {
 		if (ent->id & MS_PROPAGATION)
 			ls->propagation |= ent->id;
@@ -376,6 +380,8 @@ static struct libmnt_opt *optlist_new_opt(struct libmnt_optlist *ls,
 			ls->is_rdonly = 1;
 		else if (opt->ent->id == MS_MOVE)
 			ls->is_move = 1;
+		else if (opt->ent->id == MS_SILENT)
+			ls->is_silent = 1;
 	}
 
 	if (ent && map) {
@@ -803,6 +809,11 @@ int mnt_optlist_is_bind(struct libmnt_optlist *ls)
 int mnt_optlist_is_rdonly(struct libmnt_optlist *ls)
 {
 	return ls && ls->is_rdonly;
+}
+
+int mnt_optlist_is_silent(struct libmnt_optlist *ls)
+{
+	return ls && ls->is_silent;
 }
 
 
