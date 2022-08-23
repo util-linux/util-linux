@@ -92,54 +92,56 @@ static int hook_prepare_options(
 			void *data __attribute__((__unused__)))
 {
 	struct hook_data *hd = NULL;
-	const char *o;
+	struct libmnt_optlist *ol;
+	struct libmnt_opt *opt;
 	int rc = 0;
-	char *value;
-	size_t valsz;
 
-	o = mnt_fs_get_user_options(cxt->fs);
-	if (!o)
-		return 0;
+	assert(cxt);
+	assert(cxt->map_userspace);
 
-	if ((rc = mnt_optstr_get_option(o, "X-mount.owner", &value, &valsz)) < 0)
-		goto fail;
-	if (rc == 0) {
-		if (!valsz)
+	ol = mnt_context_get_optlist(cxt);
+	if (!ol)
+		return -ENOMEM;
+
+	opt = mnt_optlist_get_named(ol, "X-mount.owner", cxt->map_userspace);
+	if (opt) {
+		const char *value = mnt_opt_get_value(opt);
+		if (!value)
 			goto fail;
 		if (!hd) {
 			hd = new_hook_data();
 			if (!hd)
 				goto fail;
 		}
-		if (mnt_parse_uid(value, valsz, &hd->owner))
+		if (mnt_parse_uid(value, strlen(value), &hd->owner))
 			goto fail;
 	}
 
-	if ((rc = mnt_optstr_get_option(o, "X-mount.group", &value, &valsz)) < 0)
-		goto fail;
-	if (rc == 0) {
-		if (!valsz)
+	opt = mnt_optlist_get_named(ol, "X-mount.group", cxt->map_userspace);
+	if (opt) {
+		const char *value = mnt_opt_get_value(opt);
+		if (!value)
 			goto fail;
 		if (!hd) {
 			hd = new_hook_data();
 			if (!hd)
 				goto fail;
 		}
-		if (mnt_parse_gid(value, valsz, &hd->group))
+		if (mnt_parse_gid(value, strlen(value), &hd->group))
 			goto fail;
 	}
 
-	if ((rc = mnt_optstr_get_option(o, "X-mount.mode", &value, &valsz)) < 0)
-		goto fail;
-	if (rc == 0) {
-		if (!valsz)
+	opt = mnt_optlist_get_named(ol, "X-mount.mode", cxt->map_userspace);
+	if (opt) {
+		const char *value = mnt_opt_get_value(opt);
+		if (!value)
 			goto fail;
 		if (!hd) {
 			hd = new_hook_data();
 			if (!hd)
 				goto fail;
 		}
-		if (mnt_parse_mode(value, valsz, &hd->mode))
+		if (mnt_parse_mode(value, strlen(value), &hd->mode))
 			goto fail;
 	}
 
