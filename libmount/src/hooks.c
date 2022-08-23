@@ -25,6 +25,7 @@
 static const struct libmnt_hookset *hooksets[] =
 {
 #ifdef __linux__
+	&hookset_loopdev,
 	&hookset_mkdir,
 	&hookset_subdir,
 	&hookset_mount_legacy,

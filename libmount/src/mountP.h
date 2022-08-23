@@ -311,6 +311,7 @@ extern const struct libmnt_hookset hookset_mkdir;
 extern const struct libmnt_hookset hookset_subdir;
 extern const struct libmnt_hookset hookset_owner;
 extern const struct libmnt_hookset hookset_idmap;
+extern const struct libmnt_hookset hookset_loopdev;
 
 extern int mnt_context_deinit_hooksets(struct libmnt_context *cxt);
 extern const struct libmnt_hookset *mnt_context_get_hookset(struct libmnt_context *cxt, const char *name);
@@ -377,7 +378,6 @@ struct libmnt_context
 	void	(*pwd_release_cb)(struct libmnt_context *, char *);	/* release password */
 
 	int	optsmode;	/* fstab optstr mode MNT_OPTSMODE_{AUTO,FORCE,IGNORE} */
-	int	loopdev_fd;	/* open loopdev */
 
 	unsigned long	mountflags;	/* final mount(2) flags */
 	const void	*mountdata;	/* final mount(2) data, string or binary data */
@@ -446,7 +446,6 @@ struct libmnt_context
 #define MNT_FL_SAVED_USER	(1 << 23)
 #define MNT_FL_PREPARED		(1 << 24)
 #define MNT_FL_HELPER		(1 << 25)	/* [u]mount.<type> */
-#define MNT_FL_LOOPDEV_READY	(1 << 26)	/* /dev/loop<N> initialized by the library */
 #define MNT_FL_MOUNTOPTS_FIXED  (1 << 27)
 #define MNT_FL_TABPATHS_CHECKED	(1 << 28)
 #define MNT_FL_FORCED_RDONLY	(1 << 29)	/* mounted read-only on write-protected device */
@@ -579,15 +578,10 @@ extern int mnt_context_update_tabs(struct libmnt_context *cxt);
 extern int mnt_context_umount_setopt(struct libmnt_context *cxt, int c, char *arg);
 extern int mnt_context_mount_setopt(struct libmnt_context *cxt, int c, char *arg);
 
-extern int mnt_context_is_loopdev(struct libmnt_context *cxt)
-			__attribute__((nonnull));
-
 extern int mnt_context_propagation_only(struct libmnt_context *cxt)
 			__attribute__((nonnull));
 
-extern int mnt_context_setup_loopdev(struct libmnt_context *cxt);
 extern int mnt_context_delete_loopdev(struct libmnt_context *cxt);
-extern int mnt_context_clear_loopdev(struct libmnt_context *cxt);
 
 extern int mnt_fork_context(struct libmnt_context *cxt);
 

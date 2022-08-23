@@ -61,8 +61,6 @@ struct libmnt_context *mnt_new_context(void)
 
 	mnt_context_reset_status(cxt);
 
-	cxt->loopdev_fd = -1;
-
 	cxt->ns_orig.fd = -1;
 	cxt->ns_tgt.fd = -1;
 	cxt->ns_cur = &cxt->ns_orig;
@@ -107,7 +105,6 @@ void mnt_free_context(struct libmnt_context *cxt)
 	mnt_unref_fs(cxt->fs_template);
 	mnt_unref_optlist(cxt->optlist);
 
-	mnt_context_clear_loopdev(cxt);
 	mnt_free_lock(cxt->lock);
 	mnt_free_update(cxt->update);
 
@@ -1854,6 +1851,9 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 		goto end;
 	}
 
+	rc = mnt_context_call_hooks(cxt, MNT_STAGE_PREP_SOURCE);
+	if (rc)
+		goto end;
 
 	/*
 	 * Initialize verity or loop device
@@ -1866,10 +1866,6 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 			goto end;
 	} else if (rc) {
 		rc = mnt_context_setup_veritydev(cxt);
-		if (rc)
-			goto end;
-	} else if (mnt_context_is_loopdev(cxt)) {
-		rc = mnt_context_setup_loopdev(cxt);
 		if (rc)
 			goto end;
 	}

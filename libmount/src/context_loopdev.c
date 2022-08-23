@@ -2,7 +2,7 @@
 /*
  * This file is part of libmount from util-linux project.
  *
- * Copyright (C) 2011-2018 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2011-2022 Karel Zak <kzak@redhat.com>
  *
  * libmount is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -22,71 +22,36 @@
 #include "strutils.h"
 #include "linux_version.h"
 
-int mnt_context_is_loopdev(struct libmnt_context *cxt)
+struct hook_data {
+	int loopdev_fd;
+};
+
+/* de-initiallize this module */
+static int hookset_deinit(struct libmnt_context *cxt, const struct libmnt_hookset *hs)
 {
-	int rc;
-	const char *type, *src;
-	struct libmnt_optlist *ol;
-	unsigned long flags = 0;
+	void *data;
 
-	assert(cxt);
+	DBG(HOOK, ul_debugobj(hs, "deinit '%s'", hs->name));
 
-	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
-
-	if (!cxt->fs)
-		return 0;
-
-	ol = mnt_context_get_optlist(cxt);
-	if (!ol)
-		return 0;
-
-	if (mnt_optlist_is_bind(ol)
-	    || mnt_optlist_is_move(ol)
-	    || mnt_context_propagation_only(cxt))
-		return 0;
-
-	src = mnt_fs_get_srcpath(cxt->fs);
-	if (!src)
-		return 0;		/* backing file not set */
-
-	/* userspace specific flags */
-	rc = mnt_context_get_user_mflags(cxt, &flags);
-	if (rc)
-		return 0;
-
-	if (flags & (MNT_MS_LOOP | MNT_MS_OFFSET | MNT_MS_SIZELIMIT)) {
-		DBG(LOOP, ul_debugobj(cxt, "loopdev specific options detected"));
-		return 1;
-	}
-
-	/* Automatically create a loop device from a regular file if a
-	 * filesystem is not specified or the filesystem is known for libblkid
-	 * (these filesystems work with block devices only). The file size
-	 * should be at least 1KiB, otherwise we will create an empty loopdev with
-	 * no mountable filesystem...
-	 *
-	 * Note that there is no restriction (on kernel side) that would prevent a regular
-	 * file as a mount(2) source argument. A filesystem that is able to mount
-	 * regular files could be implemented.
-	 */
-	type = mnt_fs_get_fstype(cxt->fs);
-
-	if (mnt_fs_is_regularfs(cxt->fs) &&
-	    (!type || strcmp(type, "auto") == 0 || blkid_known_fstype(type))) {
-		struct stat st;
-
-		if (stat(src, &st) == 0 && S_ISREG(st.st_mode) &&
-		    st.st_size > 1024) {
-
-			DBG(LOOP, ul_debugobj(cxt, "automatically enabling loop= option"));
-			mnt_optlist_append_flags(ol, MNT_MS_LOOP, cxt->map_userspace);
-			return 1;
-		}
+	/* remove all our hooks */
+	while (mnt_context_remove_hook(cxt, hs, 0, &data) == 0) {
+		free(data);
+		data = NULL;
 	}
 
 	return 0;
 }
 
+static inline struct hook_data *new_hook_data(void)
+{
+	struct hook_data *hd = calloc(1, sizeof(*hd));
+
+	if (!hd)
+		return NULL;
+
+	hd->loopdev_fd =  -1;
+	return hd;
+}
 
 /* Check if there already exists a mounted loop device on the mountpoint node
  * with the same parameters.
@@ -162,19 +127,15 @@ is_mounted_same_loopfile(struct libmnt_context *cxt,
 	return rc;
 }
 
-int mnt_context_setup_loopdev(struct libmnt_context *cxt)
+static int setup_loopdev(struct libmnt_context *cxt,
+			 struct libmnt_optlist *ol, struct hook_data *hd)
 {
 	const char *backing_file, *loopdev = NULL;
 	struct loopdev_cxt lc;
 	int rc = 0, lo_flags = 0;
 	uint64_t offset = 0, sizelimit = 0;
 	bool reuse = FALSE;
-	struct libmnt_optlist *ol;
 	struct libmnt_opt *opt, *loopopt = NULL;
-
-	assert(cxt);
-	assert(cxt->fs);
-	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
 	backing_file = mnt_fs_get_srcpath(cxt->fs);
 	if (!backing_file)
@@ -381,9 +342,6 @@ success:
 		rc = mnt_fs_set_source(cxt->fs, loopcxt_get_device(&lc));
 
 	if (!rc) {
-		/* success */
-		cxt->flags |= MNT_FL_LOOPDEV_READY;	/* TODO??? */
-
 		if (loopopt && (reuse || loopcxt_is_autoclear(&lc))) {
 			/*
 			 * autoclear flag accepted by the kernel, don't store
@@ -404,8 +362,8 @@ success:
 		/* we have to keep the device open until mount(1),
 		 * otherwise it will be auto-cleared by kernel
 		 */
-		cxt->loopdev_fd = loopcxt_get_fd(&lc);
-		if (cxt->loopdev_fd < 0) {
+		hd->loopdev_fd = loopcxt_get_fd(&lc);
+		if (hd->loopdev_fd < 0) {
 			DBG(LOOP, ul_debugobj(cxt, "failed to get loopdev FD"));
 			rc = -errno;
 		} else
@@ -417,10 +375,7 @@ done_no_deinit:
 	return rc;
 }
 
-/*
- * Deletes loop device
- */
-int mnt_context_delete_loopdev(struct libmnt_context *cxt)
+static int delete_loopdev(struct libmnt_context *cxt, struct hook_data *hd)
 {
 	const char *src;
 	int rc;
@@ -432,40 +387,147 @@ int mnt_context_delete_loopdev(struct libmnt_context *cxt)
 	if (!src)
 		return -EINVAL;
 
-	if (cxt->loopdev_fd > -1)
-		close(cxt->loopdev_fd);
+	if (hd && hd->loopdev_fd > -1) {
+		close(hd->loopdev_fd);
+		hd->loopdev_fd = -1;
+	}
 
-	rc = loopdev_delete(src);
-	cxt->flags &= ~MNT_FL_LOOPDEV_READY;
-	cxt->loopdev_fd = -1;
+	rc = loopdev_delete(src);	/* see lib/loopdev.c */
 
 	DBG(LOOP, ul_debugobj(cxt, "deleted [rc=%d]", rc));
 	return rc;
 }
 
-/*
- * Clears loopdev stuff in context, should be called after
- * failed or successful mount(2).
- */
-int mnt_context_clear_loopdev(struct libmnt_context *cxt)
+/* Now used by umount until context_umount.c will use hooks toosee  */
+int mnt_context_delete_loopdev(struct libmnt_context *cxt)
 {
-	assert(cxt);
+	return delete_loopdev(cxt, NULL);
+}
 
-	if (mnt_context_get_status(cxt) == 0 &&
-	    (cxt->flags & MNT_FL_LOOPDEV_READY)) {
+static int is_loopdev_required(struct libmnt_context *cxt, struct libmnt_optlist *ol)
+{
+	const char *src, *type;
+	unsigned long flags = 0;
+
+	if (cxt->action != MNT_ACT_MOUNT)
+		return 0;
+	if (!cxt->fs)
+		return 0;
+	if (mnt_optlist_is_bind(ol)
+	    || mnt_optlist_is_move(ol)
+	    || mnt_context_propagation_only(cxt))
+		return 0;
+
+	src = mnt_fs_get_srcpath(cxt->fs);
+	if (!src)
+		return 0;		/* backing file not set */
+
+	/* userspace flags */
+	if (mnt_context_get_user_mflags(cxt, &flags))
+		return 0;
+
+	if (flags & (MNT_MS_LOOP | MNT_MS_OFFSET | MNT_MS_SIZELIMIT)) {
+		DBG(LOOP, ul_debugobj(cxt, "loopdev specific options detected"));
+		return 1;
+	}
+
+	/* Automatically create a loop device from a regular file if a
+	 * filesystem is not specified or the filesystem is known for libblkid
+	 * (these filesystems work with block devices only). The file size
+	 * should be at least 1KiB, otherwise we will create an empty loopdev with
+	 * no mountable filesystem...
+	 *
+	 * Note that there is no restriction (on kernel side) that would prevent a regular
+	 * file as a mount(2) source argument. A filesystem that is able to mount
+	 * regular files could be implemented.
+	 */
+	type = mnt_fs_get_fstype(cxt->fs);
+
+	if (mnt_fs_is_regularfs(cxt->fs) &&
+	    (!type || strcmp(type, "auto") == 0 || blkid_known_fstype(type))) {
+		struct stat st;
+
+		if (stat(src, &st) == 0 && S_ISREG(st.st_mode) &&
+		    st.st_size > 1024) {
+
+			DBG(LOOP, ul_debugobj(cxt, "automatically enabling loop= option"));
+			mnt_optlist_append_flags(ol, MNT_MS_LOOP, cxt->map_userspace);
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
+/* call after mount(2) */
+static int hook_cleanup_loopdev(
+			struct libmnt_context *cxt,
+			const struct libmnt_hookset *hs __attribute__((__unused__)),
+			void *data)
+{
+	struct hook_data *hd = (struct hook_data *) data;
+
+	if (!hd || hd->loopdev_fd < 0)
+		return 0;
+
+	if (mnt_context_get_status(cxt) == 0) {
 		/*
 		 * mount(2) failed, delete loopdev
 		 */
-		mnt_context_delete_loopdev(cxt);
+		delete_loopdev(cxt, hd);
 
-	} else if (cxt->loopdev_fd > -1) {
+	} else {
 		/*
 		 * mount(2) success, close the device
 		 */
 		DBG(LOOP, ul_debugobj(cxt, "closing FD"));
-		close(cxt->loopdev_fd);
+		close(hd->loopdev_fd);
+		hd->loopdev_fd = -1;
 	}
-	cxt->loopdev_fd = -1;
+
 	return 0;
 }
 
+/* call to prepare mount source */
+static int hook_prepare_loopdev(
+                        struct libmnt_context *cxt,
+                        const struct libmnt_hookset *hs,
+                        void *data __attribute__((__unused__)))
+{
+	struct libmnt_optlist *ol;
+	struct hook_data *hd;
+	int rc;
+
+	assert(cxt);
+
+	ol = mnt_context_get_optlist(cxt);
+	if (!ol)
+		return -ENOMEM;
+	if (!is_loopdev_required(cxt, ol))
+		return 0;
+	hd = new_hook_data();
+	if (!hd)
+		return -ENOMEM;
+
+	rc = setup_loopdev(cxt, ol, hd);
+	if (!rc)
+		rc = mnt_context_append_hook(cxt, hs,
+				MNT_STAGE_MOUNT_POST,
+				hd, hook_cleanup_loopdev);
+	if (rc) {
+		delete_loopdev(cxt, hd);
+		free(hd);
+	}
+	return rc;
+}
+
+
+const struct libmnt_hookset hookset_loopdev =
+{
+        .name = "__loopdev",
+
+        .firststage = MNT_STAGE_PREP_SOURCE,
+        .firstcall = hook_prepare_loopdev,
+
+        .deinit = hookset_deinit
+};
