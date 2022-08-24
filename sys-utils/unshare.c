@@ -437,7 +437,7 @@ static struct map_range *read_subid_range(char *filename, uid_t uid)
 	struct map_range *map;
 
 	map = xmalloc(sizeof(*map));
-	map->inner = 0;
+	map->inner = -1;
 
 	pw = xgetpwuid(uid, &pwbuf);
 	if (!pw)
@@ -538,10 +538,10 @@ map_ids(const char *idmapper, int ppid, unsigned int outer, unsigned int inner,
 	push_ul(ppid);
 	if ((int)inner == -1) {
 		/*
-		 * If we don't have a "single" mapping, then we can just use
-		 * map directly
+		 * If we don't have a "single" mapping, then we can just use map
+		 * directly, starting inner IDs from zero for an auto mapping
 		 */
-		push_ul(map->inner);
+		push_ul(map->inner + 1 ? map->inner : 0);
 		push_ul(map->outer);
 		push_ul(map->count);
 		push_str(NULL);
@@ -550,9 +550,14 @@ map_ids(const char *idmapper, int ppid, unsigned int outer, unsigned int inner,
 		errexec(idmapper);
 	}
 
-	/* If the mappings overlap, remove an ID from map */
-	if ((outer >= map->outer && outer <= map->outer + map->count) ||
-	    (inner >= map->inner && inner <= map->inner + map->count))
+	/*
+	 * Start inner IDs from zero for an auto mapping; otherwise, if the two
+	 * fixed mappings overlap, remove an ID from map
+	 */
+	if (map->inner + 1 == 0)
+		map->inner = 0;
+	else if ((outer >= map->outer && outer <= map->outer + map->count) ||
+		 (inner >= map->inner && inner <= map->inner + map->count))
 		map->count--;
 
 	/* Determine where the splits between lo, mid, and hi will be */
