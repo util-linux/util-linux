@@ -2100,7 +2100,7 @@ int mnt_context_merge_mflags(struct libmnt_context *cxt)
 int mnt_context_prepare_update(struct libmnt_context *cxt)
 {
 	int rc;
-	const char *target;
+	const char *target, *name;
 	unsigned long flags = 0;
 
 	assert(cxt);
@@ -2125,7 +2125,8 @@ int mnt_context_prepare_update(struct libmnt_context *cxt)
 		DBG(CXT, ul_debugobj(cxt, "skip update: NOMTAB flag"));
 		return 0;
 	}
-	if (!mnt_context_get_writable_tabpath(cxt)) {
+	name = mnt_context_get_writable_tabpath(cxt);
+	if (!name) {
 		DBG(CXT, ul_debugobj(cxt, "skip update: no writable destination"));
 		return 0;
 	}
@@ -2138,11 +2139,8 @@ int mnt_context_prepare_update(struct libmnt_context *cxt)
 	}
 
 	if (!cxt->update) {
-		const char *name = mnt_context_get_writable_tabpath(cxt);
-
 		if (cxt->action == MNT_ACT_UMOUNT && is_file_empty(name)) {
-			DBG(CXT, ul_debugobj(cxt,
-				"skip update: umount, no table"));
+			DBG(CXT, ul_debugobj(cxt, "skip update: umount, no table"));
 			return 0;
 		}
 
