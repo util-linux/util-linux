@@ -312,7 +312,7 @@ Since version 2.35 it is possible to use the command line option *-o* to alter m
 Note that it is a bad practice to use *mount -a* for _fstab_ checking. The recommended solution is *findmnt --verify*.
 
 *-B*, *--bind*::
-Remount a subtree somewhere else (so that its contents are available in both places). See above, under *Bind mounts*.
+Remount a subtree somewhere else (so that its contents are available in both places). See above, under *Bind mount operation*.
 
 *-c*, *--no-canonicalize*::
 Don't canonicalize paths. The *mount* command canonicalizes all paths (from the command line or _fstab_) by default. This option can be used together with the *-f* flag for already canonicalized absolute paths. The option is designed for mount helpers which call *mount -i*. It is strongly recommended to not use this command-line option for normal mount operations.
@@ -385,7 +385,7 @@ Source of default options. _source_ is a comma-separated list of *fstab*, *mtab*
 Use options from _fstab_/_mtab_ even if both _device_ and _dir_ are specified.
 
 *-R*, *--rbind*::
-Remount a subtree and all possible submounts somewhere else (so that its contents are available in both places). See above, the subsection *Bind mounts*.
+Remount a subtree and all possible submounts somewhere else (so that its contents are available in both places). See above, the subsection *Bind mount operation*.
 
 *-r*, *--read-only*::
 Mount the filesystem read-only. A synonym is *-o ro*.
@@ -586,7 +586,7 @@ Allow an ordinary user to mount the filesystem if that user is the owner of the 
 *remount*::
 Attempt to remount an already-mounted filesystem. This is commonly used to change the mount flags for a filesystem, especially to make a readonly filesystem writable. It does not change device or mount point.
 +
-The remount operation together with the *bind* flag has special semantics. See above, the subsection *Bind mounts*.
+The remount operation together with the *bind* flag has special semantics. See above, the subsection *Bind mount operation*.
 +
 The remount functionality follows the standard way the *mount* command works with options from _fstab_. This means that *mount* does not read _fstab_ (or _mtab_) only when both _device_ and _dir_ are specified.
 +
