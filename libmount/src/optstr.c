@@ -785,37 +785,6 @@ err:
 	return rc;
 }
 
-/*
- * Converts value from @optstr addressed by @name to uid.
- *
- * Returns: 0 on success, <0 on error
- */
-int mnt_optstr_get_uid(const char *optstr, const char *name, uid_t *uid)
-{
-	char *value = NULL;
-	size_t valsz = 0;
-	int rc;
-
-	assert(optstr);
-	assert(name);
-	assert(uid);
-
-	rc = mnt_optstr_get_option(optstr, name, &value, &valsz);
-	if (rc != 0)
-		goto fail;
-
-	rc = mnt_parse_uid(value, valsz, uid);
-	if (rc != 0) {
-		rc = -errno;
-		goto fail;
-	}
-
-	return 0;
-fail:
-	DBG(UTILS, ul_debug("failed to convert '%s'= to number [rc=%d]", name, rc));
-	return rc;
-}
-
 /**
  * mnt_match_options:
  * @optstr: options string
