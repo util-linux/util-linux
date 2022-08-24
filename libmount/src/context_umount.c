@@ -343,7 +343,7 @@ static int lookup_umount_fs_by_mountinfo(struct libmnt_context *cxt, const char 
 	return 0;
 }
 
-/* This finction search for FS according to cxt->fs->target,
+/* This function searchs for FS according to cxt->fs->target,
  * apply result to cxt->fs and it's umount replacement to
  * mnt_context_apply_fstab(), use mnt_context_tab_applied()
  * to check result.
@@ -370,15 +370,27 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 	/* try get fs type by statfs() */
 	rc = lookup_umount_fs_by_statfs(cxt, tgt);
 	if (rc <= 0)
-		return rc;
+		goto done;
 
 	/* get complete fs from fs entry from mountinfo */
 	rc = lookup_umount_fs_by_mountinfo(cxt, tgt);
 	if (rc <= 0)
-		return rc;
+		goto done;
 
 	DBG(CXT, ul_debugobj(cxt, " cannot find '%s'", tgt));
 	return 0;	/* this is correct! */
+
+done:
+	if (rc == 0 && cxt->fs) {
+		struct libmnt_optlist *ol = mnt_context_get_optlist(cxt);
+
+		if (!ol)
+			return -ENOMEM;
+
+		rc = mnt_optlist_set_optstr(ol, mnt_fs_get_options(cxt->fs), NULL);
+	}
+	DBG(CXT, ul_debugobj(cxt, "  lookup done [rc=%d]", rc));
+	return rc;
 }
 
 /* check if @devname is loopdev and if the device is associated
@@ -414,41 +426,36 @@ static int is_associated_fs(const char *devname, struct libmnt_fs *fs)
 	return loopdev_is_used(devname, src, offset, 0, flags);
 }
 
-static int prepare_helper_from_options(struct libmnt_context *cxt,
+static int prepare_helper_from_option(struct libmnt_context *cxt,
 				       const char *name)
 {
-	char *suffix = NULL;
-	const char *opts;
-	size_t valsz;
-	int rc;
+	struct libmnt_optlist *ol;
+	struct libmnt_opt *opt;
+	const char *suffix;
 
 	if (mnt_context_is_nohelpers(cxt))
 		return 0;
-
-	opts = mnt_fs_get_user_options(cxt->fs);
-	if (!opts)
-		return 0;
-
-	if (mnt_optstr_get_option(opts, name, &suffix, &valsz))
-		return 0;
-
-	suffix = strndup(suffix, valsz);
-	if (!suffix)
+	ol = mnt_context_get_optlist(cxt);
+	if (!ol)
 		return -ENOMEM;
 
+	opt = mnt_optlist_get_named(ol, name, cxt->map_userspace);
+	if (!opt || !mnt_opt_has_value(opt))
+		return 0;
+
+	suffix = mnt_opt_get_value(opt);
 	DBG(CXT, ul_debugobj(cxt, "umount: umount.%s %s requested", suffix, name));
 
-	rc = mnt_context_prepare_helper(cxt, "umount", suffix);
-	free(suffix);
-
-	return rc;
+	return mnt_context_prepare_helper(cxt, "umount", suffix);
 }
 
 static int is_fuse_usermount(struct libmnt_context *cxt, int *errsv)
 {
 	struct libmnt_ns *ns_old;
+	struct libmnt_optlist *ol;
+	struct libmnt_opt *opt;
 	const char *type = mnt_fs_get_fstype(cxt->fs);
-	const char *optstr;
+	const char *val = NULL;;
 	uid_t uid, entry_uid;
 
 	*errsv = 0;
@@ -462,11 +469,17 @@ static int is_fuse_usermount(struct libmnt_context *cxt, int *errsv)
 	    strncmp(type, "fuseblk.", 8) != 0)
 		return 0;
 
-	/* get user_id= from mount table */
-	optstr = mnt_fs_get_fs_options(cxt->fs);
-	if (!optstr)
+	ol = mnt_context_get_optlist(cxt);
+	if (!ol)
 		return 0;
-	if (mnt_optstr_get_uid(optstr, "user_id", &entry_uid) != 0)
+
+	opt = mnt_optlist_get_named(ol, "user_id", NULL);
+	if (opt)
+		val = mnt_opt_get_value(opt);
+	if (!val || mnt_opt_get_map(opt))
+		return 0;
+
+	if (mnt_parse_uid(val, strlen(val), &entry_uid) != 0)
 		return 0;
 
 	/* get current user */
@@ -515,7 +528,7 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 
 	if (cxt->user_mountflags & MNT_MS_UHELPER) {
 		/* on uhelper= mount option based helper */
-		rc = prepare_helper_from_options(cxt, "uhelper");
+		rc = prepare_helper_from_option(cxt, "uhelper");
 		if (rc)
 			return rc;
 		if (cxt->helper)
@@ -949,10 +962,9 @@ int mnt_context_prepare_umount(struct libmnt_context *cxt)
 		rc = evaluate_permissions(cxt);
 
 	if (!rc && !cxt->helper) {
-
 		if (cxt->user_mountflags & MNT_MS_HELPER)
 			/* on helper= mount option based helper */
-			rc = prepare_helper_from_options(cxt, "helper");
+			rc = prepare_helper_from_option(cxt, "helper");
 
 		if (!rc && !cxt->helper)
 			/* on fstype based helper */
