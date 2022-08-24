@@ -604,7 +604,7 @@ static int get_nprocs(const uid_t uid)
 }
 #endif
 
-static const char *get_pwd_method(const char *str, const char **next, unsigned int *sz)
+static const char *get_pwd_method(const char *str, const char **next)
 {
 	const char *p = str;
 	const char *res = NULL;
@@ -612,32 +612,50 @@ static const char *get_pwd_method(const char *str, const char **next, unsigned i
 	if (!p || *p++ != '$')
 		return NULL;
 
-	if (sz)
-		*sz = 0;
-
 	switch (*p) {
 	case '1':
 		res = "MD5";
-		if (sz)
-			*sz = 22;
 		break;
 	case '2':
-		p++;
-		if (*p == 'a' || *p == 'y')
+		switch(*(p+1)) {
+		case 'a':
+		case 'y':
+			p++;
 			res = "Blowfish";
+			break;
+		case 'b':
+			p++;
+			res = "bcrypt";
+			break;
+		}
+		break;
+	case '3':
+		res = "NT";
 		break;
 	case '5':
 		res = "SHA-256";
-		if (sz)
-			*sz = 43;
 		break;
 	case '6':
 		res = "SHA-512";
-		if (sz)
-			*sz = 86;
+		break;
+	case '7':
+		res = "scrypt";
+		break;
+	case 'y':
+		res = "yescrypt";
+		break;
+	case 'g':
+		if (*(p + 1) == 'y') {
+			p++;
+			res = "gost-yescrypt";
+		}
+		break;
+	case '_':
+		res = "bsdicrypt";
 		break;
 	default:
-		return NULL;
+		res = "unknown";
+		break;
 	}
 	p++;
 
@@ -648,7 +666,10 @@ static const char *get_pwd_method(const char *str, const char **next, unsigned i
 	return res;
 }
 
-#define is_valid_pwd_char(x)	(isalnum((unsigned char) (x)) || (x) ==  '.' || (x) == '/')
+#define is_invalid_pwd_char(x)	(isspace((unsigned char) (x)) || \
+				 (x) == ':' || (x) == ';' || (x) == '*' || \
+				 (x) == '!' || (x) == '\\')
+#define is_valid_pwd_char(x)	(isascii((unsigned char) (x)) && !is_invalid_pwd_char(x))
 
 /*
  * This function do not accept empty passwords or locked accouns.
@@ -656,17 +677,16 @@ static const char *get_pwd_method(const char *str, const char **next, unsigned i
 static int valid_pwd(const char *str)
 {
 	const char *p = str;
-	unsigned int sz = 0, n;
 
 	if (!str || !*str)
 		return 0;
 
 	/* $id$ */
-	if (get_pwd_method(str, &p, &sz) == NULL)
-		return 0;
-	if (!p || !*p)
+	if (get_pwd_method(str, &p) == NULL)
 		return 0;
 
+	if (!p || !*p)
+		return 0;
 	/* salt$ */
 	for (; *p; p++) {
 		if (*p == '$') {
@@ -676,17 +696,15 @@ static int valid_pwd(const char *str)
 		if (!is_valid_pwd_char(*p))
 			return 0;
 	}
+
 	if (!*p)
 		return 0;
-
 	/* encrypted */
-	for (n = 0; *p; p++, n++) {
-		if (!is_valid_pwd_char(*p))
+	for (; *p; p++) {
+		if (!is_valid_pwd_char(*p)) {
 			return 0;
+		}
 	}
-
-	if (sz && n != sz)
-		return 0;
 	return 1;
 }
 
@@ -869,7 +887,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 
 				while (p && (*p == '!' || *p == '*'))
 					p++;
-				user->pwd_method = get_pwd_method(p, NULL, NULL);
+				user->pwd_method = get_pwd_method(p, NULL);
 			} else
 				user->pwd_method = NULL;
 			break;
