@@ -49,7 +49,6 @@ static int fix_optstr(struct libmnt_context *cxt)
 	struct libmnt_optlist *ol;
 	struct libmnt_opt *opt;
 	struct libmnt_ns *ns_old;
-	struct libmnt_fs *fs;
 	const char *val;
 	int rc = 0;
 #ifdef HAVE_LIBSELINUX
@@ -60,8 +59,6 @@ static int fix_optstr(struct libmnt_context *cxt)
 
 	if (cxt->flags & MNT_FL_MOUNTOPTS_FIXED)
 		return 0;
-
-	fs = cxt->fs;
 
 	DBG(CXT, ul_debugobj(cxt, "--> preparing options"));
 
@@ -202,32 +199,6 @@ static int fix_optstr(struct libmnt_context *cxt)
 	}
 #endif
 	mnt_context_call_hooks(cxt, MNT_STAGE_PREP_OPTIONS);
-
-	/* For backward compatinility update context fs mount options */
-	if (fs) {
-		const char *p;
-
-		/* All options */
-		mnt_optlist_get_optstr(ol, &p, NULL, 0);
-		strdup_to_struct_member(fs, optstr, p);
-
-		/* FS options */
-		mnt_optlist_get_optstr(ol, &p, NULL, MNT_OL_FLTR_UNKNOWN);
-		strdup_to_struct_member(fs, fs_optstr, p);
-
-		/* VFS options */
-		mnt_optlist_get_optstr(ol, &p, cxt->map_linux, 0);
-		strdup_to_struct_member(fs, vfs_optstr, p);
-
-		/* Userspace options */
-		mnt_optlist_get_optstr(ol, &p, cxt->map_userspace, 0);
-		strdup_to_struct_member(fs, user_optstr, p);
-
-		DBG(CXT, ul_debugobj(cxt, " fixed options: "
-			"vfs: '%s' fs: '%s' user: '%s', optstr: '%s'",
-			fs->vfs_optstr, fs->fs_optstr, fs->user_optstr, fs->optstr));
-	}
-
 done:
 	DBG(CXT, ul_debugobj(cxt, "<-- preparing options done [rc=%d]", rc));
 	cxt->flags |= MNT_FL_MOUNTOPTS_FIXED;
@@ -820,6 +791,8 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
 	rc = mnt_context_apply_fstab(cxt);
 	if (!rc)
 		rc = mnt_context_merge_mflags(cxt);
+	if (!rc && cxt->fs && cxt->optlist)
+		rc = mnt_fs_follow_optlist(cxt->fs, cxt->optlist);
 	if (!rc)
 		rc = evaluate_permissions(cxt);
 	if (!rc)

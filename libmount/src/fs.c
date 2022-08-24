@@ -59,6 +59,8 @@ void mnt_free_fs(struct libmnt_fs *fs)
 
 	DBG(FS, ul_debugobj(fs, "free [refcount=%d]", fs->refcount));
 
+	mnt_unref_optlist(fs->optlist);
+
 	mnt_reset_fs(fs);
 	free(fs);
 }
@@ -94,6 +96,8 @@ void mnt_reset_fs(struct libmnt_fs *fs)
 	free(fs->attrs);
 	free(fs->opt_fields);
 	free(fs->comment);
+
+	fs->opts_age = 0;
 
 	memset(fs, 0, sizeof(*fs));
 	INIT_LIST_HEAD(&fs->ents);
@@ -166,6 +170,63 @@ static inline int cpy_str_at_offset(void *new, const void *old, size_t offset)
 	return update_str(n, *o);
 }
 
+static inline int sync_opts_from_optlist(struct libmnt_fs *fs, struct libmnt_optlist *ol)
+{
+	unsigned int age = mnt_optlist_get_age(ol);
+
+	if (age != fs->opts_age) {
+		const char *p;
+		int rc;
+
+		/* All options */
+		rc = mnt_optlist_get_optstr(ol, &p, NULL, 0);
+		if (!rc)
+			rc = strdup_to_struct_member(fs, optstr, p);
+
+		/* FS options */
+		if (!rc)
+			rc = mnt_optlist_get_optstr(ol, &p, NULL, MNT_OL_FLTR_UNKNOWN);
+		if (!rc)
+			rc = strdup_to_struct_member(fs, fs_optstr, p);
+
+		/* VFS options */
+		if (!rc)
+			rc = mnt_optlist_get_optstr(ol, &p, mnt_get_builtin_optmap(MNT_LINUX_MAP), 0);
+		if (!rc)
+			rc = strdup_to_struct_member(fs, vfs_optstr, p);
+
+		/* Userspace options */
+		if (!rc)
+			rc = mnt_optlist_get_optstr(ol, &p, mnt_get_builtin_optmap(MNT_USERSPACE_MAP), 0);
+		if (!rc)
+			rc = strdup_to_struct_member(fs, user_optstr, p);
+
+		if (rc) {
+			DBG(FS, ul_debugobj(fs, "sync failed [rc=%d]", rc));
+			return rc;
+		} else {
+			DBG(FS, ul_debugobj(fs, "synced: "
+				"vfs: '%s' fs: '%s' user: '%s', optstr: '%s'",
+				fs->vfs_optstr, fs->fs_optstr, fs->user_optstr, fs->optstr));
+			fs->opts_age = age;
+		}
+	}
+	return 0;
+}
+
+/* If @optlist is not NULL then @fs will read all option strings from @optlist.
+ * It means that mnt_fs_get_*_options() won't be read-only operations. */
+int mnt_fs_follow_optlist(struct libmnt_fs *fs, struct libmnt_optlist *ol)
+{
+	if (fs->optlist == ol)
+		return 0;
+
+	fs->opts_age = 0;
+	fs->optlist = ol;
+	mnt_ref_optlist(ol);
+	return 0;
+}
+
 /**
  * mnt_copy_fs:
  * @dest: destination FS
@@ -233,6 +294,10 @@ struct libmnt_fs *mnt_copy_fs(struct libmnt_fs *dest,
 	dest->usedsize   = src->usedsize;
 	dest->priority   = src->priority;
 
+	dest->opts_age   = src->opts_age;
+	dest->optlist    = src->optlist;
+	mnt_ref_optlist(dest->optlist);
+
 	return dest;
 err:
 	if (!org)
@@ -247,13 +312,15 @@ err:
  *
  * Returns: copy of @fs.
  */
-struct libmnt_fs *mnt_copy_mtab_fs(const struct libmnt_fs *fs)
+struct libmnt_fs *mnt_copy_mtab_fs(struct libmnt_fs *fs)
 {
 	struct libmnt_fs *n = mnt_new_fs();
 
 	assert(fs);
 	if (!n)
 		return NULL;
+	if (fs->optlist)
+		sync_opts_from_optlist(fs, fs->optlist);
 
 	if (strdup_between_structs(n, fs, source))
 		goto err;
@@ -786,6 +853,8 @@ char *mnt_fs_strdup_options(struct libmnt_fs *fs)
 
 	if (!fs)
 		return NULL;
+	if (fs->optlist)
+		sync_opts_from_optlist(fs, fs->optlist);
 
 	errno = 0;
 	if (fs->optstr)
@@ -810,6 +879,9 @@ char *mnt_fs_strdup_options(struct libmnt_fs *fs)
  */
 const char *mnt_fs_get_options(struct libmnt_fs *fs)
 {
+	if (fs && fs->optlist)
+		sync_opts_from_optlist(fs, fs->optlist);
+
 	return fs ? fs->optstr : NULL;
 }
 
@@ -841,6 +913,8 @@ int mnt_fs_set_options(struct libmnt_fs *fs, const char *optstr)
 
 	if (!fs)
 		return -EINVAL;
+	fs->opts_age = 0;
+
 	if (optstr) {
 		int rc = mnt_split_optstr(optstr, &u, &v, &f, 0, 0);
 		if (rc)
@@ -889,6 +963,8 @@ int mnt_fs_append_options(struct libmnt_fs *fs, const char *optstr)
 	if (!optstr)
 		return 0;
 
+	fs->opts_age = 0;
+
 	rc = mnt_split_optstr(optstr, &u, &v, &f, 0, 0);
 	if (rc)
 		return rc;
@@ -931,6 +1007,8 @@ int mnt_fs_prepend_options(struct libmnt_fs *fs, const char *optstr)
 	if (!optstr)
 		return 0;
 
+	fs->opts_age = 0;
+
 	rc = mnt_split_optstr(optstr, &u, &v, &f, 0, 0);
 	if (rc)
 		return rc;
@@ -951,7 +1029,8 @@ int mnt_fs_prepend_options(struct libmnt_fs *fs, const char *optstr)
 	return rc;
 }
 
-/*
+
+/**
  * mnt_fs_get_fs_options:
  * @fs: fstab/mtab/mountinfo entry pointer
  *
@@ -959,6 +1038,9 @@ int mnt_fs_prepend_options(struct libmnt_fs *fs, const char *optstr)
  */
 const char *mnt_fs_get_fs_options(struct libmnt_fs *fs)
 {
+	if (fs->optlist)
+		sync_opts_from_optlist(fs, fs->optlist);
+
 	return fs ? fs->fs_optstr : NULL;
 }
 
@@ -970,6 +1052,9 @@ const char *mnt_fs_get_fs_options(struct libmnt_fs *fs)
  */
 const char *mnt_fs_get_vfs_options(struct libmnt_fs *fs)
 {
+	if (fs->optlist)
+		sync_opts_from_optlist(fs, fs->optlist);
+
 	return fs ? fs->vfs_optstr : NULL;
 }
 
@@ -1013,6 +1098,9 @@ char *mnt_fs_get_vfs_options_all(struct libmnt_fs *fs)
  */
 const char *mnt_fs_get_user_options(struct libmnt_fs *fs)
 {
+	if (fs->optlist)
+		sync_opts_from_optlist(fs, fs->optlist);
+
 	return fs ? fs->user_optstr : NULL;
 }
 
@@ -1303,6 +1391,10 @@ int mnt_fs_get_option(struct libmnt_fs *fs, const char *name,
 
 	if (!fs)
 		return -EINVAL;
+
+	if (fs->optlist)
+		sync_opts_from_optlist(fs, fs->optlist);
+
 	if (fs->fs_optstr)
 		rc = mnt_optstr_get_option(fs->fs_optstr, name, value, valsz);
 	if (rc == 1 && fs->vfs_optstr)
@@ -1552,6 +1644,10 @@ int mnt_fs_print_debug(struct libmnt_fs *fs, FILE *file)
 {
 	if (!fs || !file)
 		return -EINVAL;
+
+	if (fs->optlist)
+		sync_opts_from_optlist(fs, fs->optlist);
+
 	fprintf(file, "------ fs:\n");
 	fprintf(file, "source: %s\n", mnt_fs_get_source(fs));
 	fprintf(file, "target: %s\n", mnt_fs_get_target(fs));

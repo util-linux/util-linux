@@ -190,6 +190,10 @@ struct libmnt_fs {
 	struct libmnt_table *tab;
 
 	int		refcount;	/* reference counter */
+
+	unsigned int	opts_age;	/* to sync with optlist */
+	struct libmnt_optlist *optlist;
+
 	int		id;		/* mountinfo[1]: ID */
 	int		parent;		/* mountinfo[2]: parent */
 	dev_t		devno;		/* mountinfo[3]: st_dev */
@@ -480,6 +484,7 @@ struct libmnt_optlist;
 extern struct libmnt_optlist *mnt_new_optlist(void);
 extern void mnt_ref_optlist(struct libmnt_optlist *ls);
 extern void mnt_unref_optlist(struct libmnt_optlist *ls);
+extern unsigned int mnt_optlist_get_age(struct libmnt_optlist *ls);
 extern int mnt_optlist_register_map(struct libmnt_optlist *ls, const struct libmnt_optmap *map);
 extern int mnt_optlist_remove_opt(struct libmnt_optlist *ls, struct libmnt_opt *opt);
 extern int mnt_optlist_remove_named(struct libmnt_optlist *ls, const char *name,
@@ -552,7 +557,8 @@ extern int mnt_opt_set_quoted_value(struct libmnt_opt *opt, const char *str);
 
 
 /* fs.c */
-extern struct libmnt_fs *mnt_copy_mtab_fs(const struct libmnt_fs *fs);
+extern int mnt_fs_follow_optlist(struct libmnt_fs *fs, struct libmnt_optlist *ol);
+extern struct libmnt_fs *mnt_copy_mtab_fs(struct libmnt_fs *fs);
 extern int __mnt_fs_set_source_ptr(struct libmnt_fs *fs, char *source)
 			__attribute__((nonnull(1)));
 extern int __mnt_fs_set_fstype_ptr(struct libmnt_fs *fs, char *fstype)

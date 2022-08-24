@@ -40,6 +40,7 @@ struct libmnt_opt {
 
 struct libmnt_optlist {
 	int refcount;
+	unsigned int age;			/* incremented after each change */
 
 	const struct libmnt_optmap	*linux_map;	/* map with MS_ flags */
 	const struct libmnt_optmap	*maps[MNT_OL_MAXMAPS];
@@ -144,6 +145,8 @@ static size_t optlist_get_mapidx(struct libmnt_optlist *ls, const struct libmnt_
 static void optlist_cleanup_cache(struct libmnt_optlist *ls, const struct libmnt_optmap *map)
 {
 	size_t i;
+
+	ls->age++;
 
 	if (list_empty(&ls->opts))
 		return;
@@ -772,6 +775,11 @@ int mnt_optlist_get_optstr(struct libmnt_optlist *ls, const char **optstr,
 	return 0;
 }
 
+unsigned int mnt_optlist_get_age(struct libmnt_optlist *ls)
+{
+	return ls ? ls->age : 0;
+}
+
 int mnt_optlist_get_propagation(struct libmnt_optlist *ls)
 {
 	return ls ? ls->propagation : 0;
@@ -887,6 +895,8 @@ int mnt_opt_set_external(struct libmnt_opt *opt, int enable)
 	opt->external = enable ? 1 : 0;
 	return 0;
 }
+
+
 
 #ifdef TEST_PROGRAM
 
