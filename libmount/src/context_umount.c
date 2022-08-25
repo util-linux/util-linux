@@ -619,9 +619,9 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 	 */
 	if (fstab_flags & (MNT_MS_USER | MNT_MS_OWNER | MNT_MS_GROUP)) {
 
-		char *curr_user;
-		char *utab_user = NULL;
-		size_t sz;
+		struct libmnt_optlist *ol;
+		struct libmnt_opt *opt;
+		char *curr_user = NULL;
 		struct libmnt_ns *ns_old;
 
 		DBG(CXT, ul_debugobj(cxt,
@@ -643,11 +643,13 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 			goto eperm;
 		}
 
-		/* get options from utab */
-		optstr = mnt_fs_get_user_options(cxt->fs);
-		if (optstr && !mnt_optstr_get_option(optstr,
-					"user", &utab_user, &sz) && sz)
-			ok = !strncmp(curr_user, utab_user, sz);
+		/* get "user=" from utab */
+		ol = mnt_context_get_optlist(cxt);
+		if (!ol)
+			return -ENOMEM;
+		opt = mnt_optlist_get_named(ol, "user", cxt->map_userspace);
+		if (opt && mnt_opt_has_value(opt))
+			ok = !strcmp(curr_user, mnt_opt_get_value(opt));
 
 		free(curr_user);
 	}
