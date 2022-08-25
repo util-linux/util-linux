@@ -426,6 +426,7 @@ static int is_associated_fs(const char *devname, struct libmnt_fs *fs)
 	return loopdev_is_used(devname, src, offset, 0, flags);
 }
 
+/* returns: <0 on error; 1 not found (not wanted) */
 static int prepare_helper_from_option(struct libmnt_context *cxt,
 				       const char *name)
 {
@@ -433,15 +434,13 @@ static int prepare_helper_from_option(struct libmnt_context *cxt,
 	struct libmnt_opt *opt;
 	const char *suffix;
 
-	if (mnt_context_is_nohelpers(cxt))
-		return 0;
 	ol = mnt_context_get_optlist(cxt);
 	if (!ol)
 		return -ENOMEM;
 
 	opt = mnt_optlist_get_named(ol, name, cxt->map_userspace);
 	if (!opt || !mnt_opt_has_value(opt))
-		return 0;
+		return 1;
 
 	suffix = mnt_opt_get_value(opt);
 	DBG(CXT, ul_debugobj(cxt, "umount: umount.%s %s requested", suffix, name));
@@ -504,8 +503,8 @@ static int is_fuse_usermount(struct libmnt_context *cxt, int *errsv)
  */
 static int evaluate_permissions(struct libmnt_context *cxt)
 {
+	unsigned long fstab_flags = 0;
 	struct libmnt_table *fstab;
-	unsigned long u_flags = 0;
 	const char *tgt, *src, *optstr;
 	int rc = 0, ok = 0;
 	struct libmnt_fs *fs;
@@ -526,12 +525,11 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		goto eperm;
 	}
 
-	if (cxt->user_mountflags & MNT_MS_UHELPER) {
-		/* on uhelper= mount option based helper */
+	if (!mnt_context_is_nohelpers(cxt)) {
 		rc = prepare_helper_from_option(cxt, "uhelper");
-		if (rc)
-			return rc;
-		if (cxt->helper)
+		if (rc < 0)
+			return rc;	/* error */
+		if (rc == 0 && cxt->helper)
 			return 0;	/* we'll call /sbin/umount.<uhelper> */
 	}
 
@@ -606,11 +604,11 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 	if (!optstr)
 		goto eperm;
 
-	if (mnt_optstr_get_flags(optstr, &u_flags,
+	if (mnt_optstr_get_flags(optstr, &fstab_flags,
 				mnt_get_builtin_optmap(MNT_USERSPACE_MAP)))
 		goto eperm;
 
-	if (u_flags & MNT_MS_USERS) {
+	if (fstab_flags & MNT_MS_USERS) {
 		DBG(CXT, ul_debugobj(cxt,
 			"umount: promiscuous setting ('users') in fstab"));
 		return 0;
@@ -619,7 +617,7 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 	 * Check user=<username> setting from utab if there is a user, owner or
 	 * group option in /etc/fstab
 	 */
-	if (u_flags & (MNT_MS_USER | MNT_MS_OWNER | MNT_MS_GROUP)) {
+	if (fstab_flags & (MNT_MS_USER | MNT_MS_OWNER | MNT_MS_GROUP)) {
 
 		char *curr_user;
 		char *utab_user = NULL;
@@ -961,12 +959,12 @@ int mnt_context_prepare_umount(struct libmnt_context *cxt)
 	if (!rc)
 		rc = evaluate_permissions(cxt);
 
-	if (!rc && !cxt->helper) {
-		if (cxt->user_mountflags & MNT_MS_HELPER)
-			/* on helper= mount option based helper */
-			rc = prepare_helper_from_option(cxt, "helper");
-
-		if (!rc && !cxt->helper)
+	if (!rc && !mnt_context_is_nohelpers(cxt) && !cxt->helper) {
+		/* on helper= mount option based helper */
+		rc = prepare_helper_from_option(cxt, "helper");
+		if (rc < 0)
+			return rc;
+		if (!cxt->helper)
 			/* on fstype based helper */
 			rc = mnt_context_prepare_helper(cxt, "umount", NULL);
 	}
