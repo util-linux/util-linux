@@ -57,7 +57,8 @@ struct libmnt_optlist {
 			is_bind : 1,
 			is_rdonly : 1,
 			is_move : 1,
-			is_silent : 1;
+			is_silent : 1,
+			is_recursive : 1;
 };
 
 struct libmnt_optlist *mnt_new_optlist(void)
@@ -179,7 +180,7 @@ int mnt_optlist_remove_opt(struct libmnt_optlist *ls, struct libmnt_opt *opt)
 			ls->propagation &= ~opt->ent->id;
 		else if (opt->ent->id == MS_REMOUNT)
 			ls->is_remount = 0;
-		else if (opt->ent->id == MS_BIND)
+		else if (opt->ent->id & MS_BIND)	/* MS_BIND or MS_REC|MS_BIND */
 			ls->is_bind = 0;
 		else if (opt->ent->id == MS_RDONLY)
 			ls->is_rdonly = 0;
@@ -187,6 +188,10 @@ int mnt_optlist_remove_opt(struct libmnt_optlist *ls, struct libmnt_opt *opt)
 			ls->is_move = 0;
 		else if (opt->ent->id == MS_SILENT)
 			ls->is_silent = 0;
+
+		if (opt->ent->id & MS_REC)
+			ls->is_recursive = 0;
+
 	}
 
 	optlist_cleanup_cache(ls, opt->map);
@@ -377,7 +382,7 @@ static struct libmnt_opt *optlist_new_opt(struct libmnt_optlist *ls,
 			ls->propagation |= ent->id;
 		else if (opt->ent->id == MS_REMOUNT)
 			ls->is_remount = 1;
-		else if (opt->ent->id == MS_BIND)
+		else if (opt->ent->id & MS_BIND)	/* MS_BIND or MS_REC|MS_BIND */
 			ls->is_bind = 1;
 		else if (opt->ent->id == MS_RDONLY)
 			ls->is_rdonly = 1;
@@ -385,6 +390,9 @@ static struct libmnt_opt *optlist_new_opt(struct libmnt_optlist *ls,
 			ls->is_move = 1;
 		else if (opt->ent->id == MS_SILENT)
 			ls->is_silent = 1;
+
+		if (opt->ent->id & MS_REC)
+			ls->is_recursive = 1;
 	}
 
 	if (ent && map) {
@@ -802,6 +810,11 @@ int mnt_optlist_is_propagation_only(struct libmnt_optlist *ls)
 int mnt_optlist_is_remount(struct libmnt_optlist *ls)
 {
 	return ls && ls->is_remount;
+}
+
+int mnt_optlist_is_recursive(struct libmnt_optlist *ls)
+{
+	return ls && ls->is_recursive;
 }
 
 int mnt_optlist_is_move(struct libmnt_optlist *ls)
