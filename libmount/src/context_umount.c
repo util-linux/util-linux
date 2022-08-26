@@ -889,9 +889,12 @@ static int do_umount(struct libmnt_context *cxt)
 	    && cxt->syscall_status == -EBUSY
 	    && mnt_context_is_rdonly_umount(cxt)
 	    && src) {
+		struct libmnt_optlist *ol = mnt_context_get_optlist(cxt);
 
-		mnt_context_set_mflags(cxt, (cxt->mountflags |
-					     MS_REMOUNT | MS_RDONLY));
+		/* keep info about remount in mount flags */
+		assert(ol);
+		mnt_optlist_append_flags(ol, MS_REMOUNT | MS_RDONLY, cxt->map_linux);
+
 		mnt_context_enable_loopdel(cxt, FALSE);
 
 		DBG(CXT, ul_debugobj(cxt,
@@ -935,6 +938,7 @@ static int do_umount(struct libmnt_context *cxt)
 int mnt_context_prepare_umount(struct libmnt_context *cxt)
 {
 	int rc;
+	unsigned long flags;
 	struct libmnt_ns *ns_old;
 
 	if (!cxt || !cxt->fs || mnt_fs_is_swaparea(cxt->fs))
@@ -971,7 +975,10 @@ int mnt_context_prepare_umount(struct libmnt_context *cxt)
 			rc = mnt_context_prepare_helper(cxt, "umount", NULL);
 	}
 
-	if (!rc && (cxt->user_mountflags & MNT_MS_LOOP))
+	if (!rc)
+		rc = mnt_context_get_user_mflags(cxt, &flags);
+
+	if (!rc && (flags & MNT_MS_LOOP))
 		/* loop option explicitly specified in utab, detach this loop */
 		mnt_context_enable_loopdel(cxt, TRUE);
 
@@ -1041,7 +1048,7 @@ int mnt_context_do_umount(struct libmnt_context *cxt)
 		 *	  umount has been performed
 		 */
 		if (mnt_context_is_loopdel(cxt)
-		    && !(cxt->mountflags & MS_REMOUNT))
+		    && !mnt_optlist_is_remount(cxt->optlist))
 			rc = mnt_context_delete_loopdev(cxt);
 	}
 end:
