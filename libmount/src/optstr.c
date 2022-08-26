@@ -648,6 +648,8 @@ int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
  *	MS_NOATIME and "foo,bar,noexec"   --returns->  "foo,bar,noatime"
  *
  * Returns: 0 on success or negative number in case of error.
+ *
+ * Deprecated: since v2.39.
  */
 int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 				const struct libmnt_optmap *map)
