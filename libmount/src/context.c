@@ -154,15 +154,11 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	mnt_unref_table(cxt->utab);
 
 	free(cxt->helper);
-	free(cxt->orig_user);
 
 	cxt->fs = NULL;
 	cxt->mountinfo = NULL;
 	cxt->utab = NULL;
 	cxt->helper = NULL;
-	cxt->orig_user = NULL;
-	cxt->mountflags = 0;
-	cxt->user_mountflags = 0;
 	cxt->mountdata = NULL;
 	cxt->flags = MNT_FL_DEFAULT;
 	cxt->noautofs = 1;
@@ -289,11 +285,6 @@ struct libmnt_context *mnt_copy_context(struct libmnt_context *o)
 		goto failed;
 	if (strdup_between_structs(n, o, helper))
 		goto failed;
-	if (strdup_between_structs(n, o, orig_user))
-		goto failed;
-
-	n->mountflags = o->mountflags;
-	n->mountdata = o->mountdata;
 
 	n->map_linux = o->map_linux;
 	n->map_userspace = o->map_userspace;

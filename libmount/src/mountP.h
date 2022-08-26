@@ -383,10 +383,7 @@ struct libmnt_context
 
 	int	optsmode;	/* fstab optstr mode MNT_OPTSMODE_{AUTO,FORCE,IGNORE} */
 
-	unsigned long	mountflags;	/* final mount(2) flags */
 	const void	*mountdata;	/* final mount(2) data, string or binary data */
-
-	unsigned long	user_mountflags;	/* MNT_MS_* (loop=, user=, ...) */
 
 	struct libmnt_cache	*cache;		/* paths cache */
 	struct libmnt_lock	*lock;		/* utab lock */
@@ -408,8 +405,6 @@ struct libmnt_context
 	char	*helper;	/* name of the used /sbin/[u]mount.<type> helper */
 	int	helper_status;	/* helper wait(2) status */
 	int	helper_exec_status; /* 1: not called yet, 0: success, <0: -errno */
-
-	char	*orig_user;	/* original (non-fixed) user= option */
 
 	pid_t	*children;	/* "mount -a --fork" PIDs */
 	int	nchildren;	/* number of children */
