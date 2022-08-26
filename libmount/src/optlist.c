@@ -744,19 +744,20 @@ int mnt_optlist_strdup_optstr(struct libmnt_optlist *ls, char **optstr,
 	struct libmnt_opt *opt;
 	struct ul_buffer buf = UL_INIT_BUFFER;
 	char *str = NULL;
-	int rc = 0;
+	int rc = 0, is_rdonly = 0, xx_wanted = 0;
 
 	if (!ls || !optstr)
 		return -EINVAL;
 
 	*optstr = NULL;
 
-	/* For generic options stings ro/rw is expected at the begining */
-	if (!map && (what == MNT_OL_FLTR_DFLT || what == MNT_OL_FLTR_ALL)) {
-		opt = mnt_optlist_get_opt(ls, MS_RDONLY, ls->linux_map);
-		rc = mnt_buffer_append_option(&buf, opt ? "ro" : "rw", 2, NULL, 0);
+	/* For generic options srings ro/rw is expected at the begining */
+	if ((!map || map == ls->linux_map)
+	     && (what == MNT_OL_FLTR_DFLT || what == MNT_OL_FLTR_ALL)) {
+		rc = mnt_buffer_append_option(&buf, "rw", 2, NULL, 0);
 		if (rc)
 			goto fail;
+		xx_wanted = 1;
 	}
 
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
@@ -764,8 +765,10 @@ int mnt_optlist_strdup_optstr(struct libmnt_optlist *ls, char **optstr,
 	while (mnt_optlist_next_opt(ls, &itr, &opt) == 0) {
 		if (!opt->name)
 			continue;
-		if (opt->map == ls->linux_map && opt->ent->id == MS_RDONLY)
+		if (opt->map == ls->linux_map && opt->ent->id == MS_RDONLY) {
+			is_rdonly = opt->ent->mask & MNT_INVERT ? 0 : 1;
 			continue;
+		}
 		if (!is_wanted_opt(opt, map, what))
 			continue;
 		rc = mnt_buffer_append_option(&buf,
@@ -777,6 +780,14 @@ int mnt_optlist_strdup_optstr(struct libmnt_optlist *ls, char **optstr,
 	}
 
 	str = ul_buffer_get_data(&buf, NULL, NULL);
+
+	/* convert 'rw' at the beginning to 'ro' if necessary */
+	if (str && is_rdonly && xx_wanted
+	    && (what == MNT_OL_FLTR_DFLT || what == MNT_OL_FLTR_ALL)) {
+		str[0] = 'r';
+		str[1] = 'o';
+	}
+
 	if (optstr)
 		*optstr = str;
 	return 0;
