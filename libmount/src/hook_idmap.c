@@ -284,12 +284,11 @@ static int hook_mount_post(
 		.attr_set	= MOUNT_ATTR_IDMAP,
 		.userns_fd	= hd->userns_fd
 	};
-	const int recursive = cxt->mountflags & MS_REC;
+	const int recursive = mnt_optlist_is_recursive(cxt->optlist);
 	const char *target = mnt_fs_get_target(cxt->fs);
 	int fd_tree = -1;
 	int rc;
 
-	assert(cxt);
 	assert(hd);
 	assert(target);
 	assert(hd->userns_fd >= 0);
