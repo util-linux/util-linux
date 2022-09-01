@@ -366,7 +366,7 @@ void free_irqstat(struct irq_stat *stat)
 static inline int cmp_name(const struct irq_info *a,
 		     const struct irq_info *b)
 {
-	return (strcmp(a->name, b->name) > 0) ? 1 : 0;
+	return strcoll(a->name, b->name);
 }
 
 static inline int cmp_total(const struct irq_info *a,
@@ -384,7 +384,7 @@ static inline int cmp_delta(const struct irq_info *a,
 static inline int cmp_interrupts(const struct irq_info *a,
 			   const struct irq_info *b)
 {
-	return (strverscmp(a->irq, b->irq) > 0) ? 1 : 0;
+	return strverscmp(a->irq, b->irq);
 }
 
 static void sort_result(struct irq_output *out,
