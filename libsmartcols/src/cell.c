@@ -129,10 +129,10 @@ void *scols_cell_get_userdata(struct libscols_cell *ce)
  * @b: pointer to cell
  * @data: unused pointer to private data (defined by API)
  *
- * Compares cells data by strcmp(). The function is designed for
+ * Compares cells data by strcoll(). The function is designed for
  * scols_column_set_cmpfunc() and scols_sort_table().
  *
- * Returns: follows strcmp() return values.
+ * Returns: follows strcoll() return values.
  */
 int scols_cmpstr_cells(struct libscols_cell *a,
 		       struct libscols_cell *b,
@@ -152,7 +152,7 @@ int scols_cmpstr_cells(struct libscols_cell *a,
 		return -1;
 	if (bdata == NULL)
 		return 1;
-	return strcmp(adata, bdata);
+	return strcoll(adata, bdata);
 }
 
 /**
