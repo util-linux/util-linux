@@ -71,6 +71,7 @@ enum {
 	COL_DALIGN,
 	COL_DAX,
 	COL_DGRAN,
+	COL_DISKSEQ,
 	COL_DMAX,
 	COL_DZERO,
 	COL_FSAVAIL,
@@ -171,6 +172,7 @@ static struct colinfo infos[] = {
 	[COL_DALIGN] = { "DISC-ALN", 6, SCOLS_FL_RIGHT, N_("discard alignment offset"), COLTYPE_NUM },
 	[COL_DAX] = { "DAX", 1, SCOLS_FL_RIGHT, N_("dax-capable device"), COLTYPE_BOOL },
 	[COL_DGRAN] = { "DISC-GRAN", 6, SCOLS_FL_RIGHT, N_("discard granularity"), COLTYPE_SIZE },
+	[COL_DISKSEQ] = { "DISK-SEQ", 1, SCOLS_FL_RIGHT, N_("disk sequence number"), COLTYPE_NUM },
 	[COL_DMAX] = { "DISC-MAX", 6, SCOLS_FL_RIGHT, N_("discard max bytes"), COLTYPE_SIZE },
 	[COL_DZERO] = { "DISC-ZERO", 1, SCOLS_FL_RIGHT, N_("discard zeroes data"), COLTYPE_BOOL },
 	[COL_FSAVAIL] = { "FSAVAIL", 5, SCOLS_FL_RIGHT, N_("filesystem size available"), COLTYPE_SIZE },
@@ -1168,6 +1170,11 @@ static char *device_get_data(
 		break;
 	case COL_MQ:
 		process_mq(dev, &str);
+		break;
+	case COL_DISKSEQ:
+		ul_path_read_string(dev->sysfs, &str, "diskseq");
+		if (sortdata)
+			str2u64(str, sortdata);
 		break;
 	};
 
