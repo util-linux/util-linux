@@ -874,7 +874,6 @@ static const struct factory factories[] = {
 		},
 	},
 	{
-
 		.name = "pidfd",
 		.desc = "pidfd returned from pidfd_open(2)",
 		.priv = false,
