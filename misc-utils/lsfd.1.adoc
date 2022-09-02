@@ -112,6 +112,9 @@ Each column has a type. Types are surround by < and >.
 CAUTION{colon} The names and types of columns are not stable yet.
 They may be changed in the future releases.
 
+AINODECLASS <``string``>::
+Class of anonymous inode.
+
 ASSOC <``string``>::
 Association between file and process.
 

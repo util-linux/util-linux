@@ -36,6 +36,7 @@
  * column IDs
  */
 enum {
+	COL_AINODECLASS,
 	COL_ASSOC,
 	COL_BLKDRV,
 	COL_CHRDRV,

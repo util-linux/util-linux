@@ -32,6 +32,7 @@ struct unkn {
 };
 
 struct anon_ops {
+	const char *class;
 	char * (*get_name)(struct unkn *);
 	void (*init)(struct unkn *);
 	void (*free)(struct unkn *);
@@ -40,6 +41,25 @@ struct anon_ops {
 
 static struct anon_ops anon_generic_ops;
 static struct anon_ops anon_pidfd_ops;
+
+static char * anon_get_class(struct unkn *unkn)
+{
+	char *name;
+
+	if (unkn->anon_ops->class)
+		return strdup(unkn->anon_ops->class);
+
+	/* See unkn_init_content() */
+	name = ((struct file *)unkn)->name + 11;
+	/* Does it have the form anon_inode:[class]? */
+	if (*name == '[') {
+		size_t len = strlen(name + 1);
+		if (*(name + 1 + len - 1) == ']')
+			return strndup(name + 1, len - 1);
+	}
+
+	return strdup(name);
+}
 
 static bool unkn_fill_column(struct proc *proc __attribute__((__unused__)),
 			     struct file *file,
@@ -62,6 +82,12 @@ static bool unkn_fill_column(struct proc *proc __attribute__((__unused__)),
 		if (scols_line_set_data(ln, column_index, "UNKN"))
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
+	case COL_AINODECLASS:
+		if (unkn->anon_ops) {
+			str = anon_get_class(unkn);
+			break;
+		}
+		return false;
 	case COL_SOURCE:
 		if (unkn->anon_ops) {
 			str = strdup("anon_inodefs");
@@ -179,6 +205,7 @@ static int anon_pidfd_handle_fdinfo(struct unkn *unkn, const char *key, const ch
 }
 
 static struct anon_ops anon_pidfd_ops = {
+	.class = "pidfd",
 	.get_name = anon_pidfd_get_name,
 	.init = anon_pidfd_init,
 	.free = anon_pidfd_free,
@@ -189,6 +216,7 @@ static struct anon_ops anon_pidfd_ops = {
  * generic (fallback implementation)
  */
 static struct anon_ops anon_generic_ops = {
+	.class = NULL,
 	.get_name = NULL,
 	.init = NULL,
 	.free = NULL,

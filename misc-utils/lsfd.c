@@ -120,6 +120,9 @@ struct colinfo {
 
 /* columns descriptions */
 static struct colinfo infos[] = {
+	[COL_AINODECLASS]
+		      = { "AINODECLASS",0,SCOLS_FL_RIGHT,SCOLS_JSON_STRING,
+		N_("class of anonymous inode") },
 	[COL_ASSOC]   = { "ASSOC",    0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("association between file and process") },
 	[COL_BLKDRV]  = { "BLKDRV",   0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
