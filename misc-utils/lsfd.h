@@ -63,6 +63,7 @@ enum {
 	COL_RDEV,
 	COL_SIZE,
 	COL_SOURCE,
+	COL_STTYPE,
 	COL_TID,
 	COL_TYPE,
 	COL_UID,		/* process */

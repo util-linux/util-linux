@@ -179,10 +179,12 @@ static struct colinfo infos[] = {
 		N_("file size"), },
 	[COL_SOURCE] = { "SOURCE",    0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("file system, partition, or device containing file") },
+	[COL_STTYPE] = { "STTYPE",    0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
+		N_("file type (raw)") },
 	[COL_TID]    = { "TID",       5, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 		N_("thread ID of the process opening the file") },
 	[COL_TYPE]    = { "TYPE",     0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
-		N_("file type") },
+		N_("file type (cooked)") },
 	[COL_UID]     = { "UID",      0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 		N_("user ID number of the process") },
 	[COL_USER]    = { "USER",     0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
@@ -267,31 +269,31 @@ static struct counter_spec default_counter_specs[] = {
 	},
 	{
 		.name = N_("regular files"),
-		.expr = "(FD >= 0) && (TYPE == 'REG')",
+		.expr = "(FD >= 0) && (_TYPE == 'REG')",
 	},
 	{
 		.name = N_("directories"),
-		.expr = "(FD >= 0) && (TYPE == 'DIR')",
+		.expr = "(FD >= 0) && (_TYPE == 'DIR')",
 	},
 	{
 		.name = N_("sockets"),
-		.expr = "(FD >= 0) && (TYPE == 'SOCK')",
+		.expr = "(FD >= 0) && (_TYPE == 'SOCK')",
 	},
 	{
 		.name = N_("fifos/pipes"),
-		.expr = "(FD >= 0) && (TYPE == 'FIFO')",
+		.expr = "(FD >= 0) && (_TYPE == 'FIFO')",
 	},
 	{
 		.name = N_("character devices"),
-		.expr = "(FD >= 0) && (TYPE == 'CHR')",
+		.expr = "(FD >= 0) && (_TYPE == 'CHR')",
 	},
 	{
 		.name = N_("block devices"),
-		.expr = "(FD >= 0) && (TYPE == 'BLK')",
+		.expr = "(FD >= 0) && (_TYPE == 'BLK')",
 	},
 	{
 		.name = N_("unknown types"),
-		.expr = "(FD >= 0) && (TYPE == 'UNKN')",
+		.expr = "(FD >= 0) && (_TYPE == 'UNKN')",
 	}
 };
 

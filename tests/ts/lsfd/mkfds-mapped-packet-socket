@@ -37,7 +37,7 @@ INTERFACE=lo
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" mapped-packet-socket $FD interface=${INTERFACE}; }
     if read -u ${MKFDS[0]} PID; then
-	EXPR='(ASSOC == "shm") and (TYPE == "SOCK") and (MODE == "-w-")'
+	EXPR='(ASSOC == "shm") and (STTYPE == "SOCK") and (MODE == "-w-")'
 	${TS_CMD_LSFD} -p "$PID" -n -o PROTONAME -Q "${EXPR}"
 	echo 'PROTONAME': $?
     fi

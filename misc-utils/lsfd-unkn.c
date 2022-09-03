@@ -79,9 +79,9 @@ static bool unkn_fill_column(struct proc *proc __attribute__((__unused__)),
 		}
 		return false;
 	case COL_TYPE:
-		if (scols_line_set_data(ln, column_index, "UNKN"))
-			err(EXIT_FAILURE, _("failed to add output data"));
-		return true;
+		if (!unkn->anon_ops)
+			return false;
+		/* FALL THROUGH */
 	case COL_AINODECLASS:
 		if (unkn->anon_ops) {
 			str = anon_get_class(unkn);

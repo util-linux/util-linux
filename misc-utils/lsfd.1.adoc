@@ -230,11 +230,16 @@ File size.
 SOURCE <``string``>::
 File system, partition, or device containing the file.
 
+STTYPE <``string``>::
+Raw file types returned from stat(2): BLK, CHR, DIR, FIFO, LINK, REG, SOCK, or UNKN.
+
 TID <``number``>::
 Thread ID of the process opening the file.
 
 TYPE <``string``>::
-File types: BLK, CHR, DIR, FIFO, LINK, REG, SOCK, or UNKN.
+Cooked version of STTYPE. It is same as STTYPE with exceptions.
+For SOCK, print the value for PROTONAME.
+For UNKN, print the value for AINODECLASS if SOURCE is anon_inodefs.
 
 UID <``number``>::
 User ID number.
@@ -479,6 +484,7 @@ mailto:kzak@redhat.com[Karel Zak]
 *lsof*(8)
 *pidof*(1)
 *proc*(5)
+*stat*(2)
 
 include::man-common/bugreports.adoc[]
 

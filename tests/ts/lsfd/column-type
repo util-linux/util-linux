@@ -15,7 +15,7 @@
 # GNU General Public License for more details.
 #
 TS_TOPDIR="${0%/*}/../.."
-TS_DESC="ainodeclass column"
+TS_DESC="TYPE and STTYPE column"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
@@ -30,11 +30,17 @@ FD=3
 EXPR="(FD == 3)"
 
 {
-    for C in pidfd inotify; do
-	coproc MKFDS { "$TS_HELPER_MKFDS" $C $FD ; }
+    for C in ro-regular-file pidfd inotify socketpair; do
+	coproc MKFDS {
+	    case $C in
+		socketpair)
+		    argv="$((FD + 1)) socktype=DGRAM"
+	    esac
+	    "$TS_HELPER_MKFDS" $C $FD ${argv}
+	}
 	if read -u ${MKFDS[0]} PID; then
-	    ${TS_CMD_LSFD} -n -o ASSOC,STTYPE,AINODECLASS -p "${PID}" -Q "${EXPR}"
-	    echo "$C"':ASSOC,STTYPE,AINODECLASS': $?
+	    ${TS_CMD_LSFD} -n -o ASSOC,STTYPE,TYPE -p "${PID}" -Q "${EXPR}"
+	    echo "$C"':ASSOC,STTYPE,TYPE': $?
 
 	    kill -CONT ${PID}
 	    wait ${MKFDS_PID}
