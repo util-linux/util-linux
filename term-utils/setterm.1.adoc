@@ -89,7 +89,7 @@ Sets the foreground text color.
 *--half-bright* on|off::
 Turns dim (half-brightness) mode on or off. Except on a virtual console, *--half-bright off* turns off all attributes (bold, half-brightness, blink, reverse).
 
-*--hbcolor* [bright] _16-color_::
+*--hbcolor* _16-color_::
 Sets the color for half-bright characters.
 
 *--initialize*::
@@ -148,7 +148,7 @@ Sets tab stops at the given horizontal cursor positions, in the range *1-160*. W
 *--term* _terminal_name_::
 Overrides the *TERM* environment variable.
 
-*--ulcolor* [bright] _16-color_::
+*--ulcolor* _16-color_::
 Sets the color for underlined characters. Virtual consoles only.
 
 *--underline* on|off::
