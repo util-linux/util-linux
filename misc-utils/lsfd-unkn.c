@@ -164,7 +164,7 @@ static char *anon_pidfd_get_name(struct unkn *unkn)
 	if (proc)
 		comm = proc->command;
 
-	xasprintf(&str, "pidfd: pid=%d comm=%s nspid=%s",
+	xasprintf(&str, "pid=%d comm=%s nspid=%s",
 		  data->pid,
 		  comm? comm: "",
 		  data->nspid? data->nspid: "");
