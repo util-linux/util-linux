@@ -74,6 +74,7 @@ struct lsblk_devprop {
 	char *partuuid;		/* partition UUID */
 	char *partlabel;	/* partition label */
 	char *partflags;	/* partition flags */
+	char *partn;		/* partition number */
 	char *wwn;		/* storage WWN */
 	char *serial;		/* disk serial number */
 	char *model;		/* disk model */

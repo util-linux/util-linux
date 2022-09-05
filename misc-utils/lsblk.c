@@ -97,6 +97,7 @@ enum {
 	COL_OWNER,
 	COL_PARTFLAGS,
 	COL_PARTLABEL,
+	COL_PARTN,
 	COL_PARTTYPE,
 	COL_PARTTYPENAME,
 	COL_PARTUUID,
@@ -198,6 +199,7 @@ static struct colinfo infos[] = {
 	[COL_OWNER] = { "OWNER", 0.1, SCOLS_FL_TRUNC, N_("user name"), },
 	[COL_PARTFLAGS] = { "PARTFLAGS", 36,  0, N_("partition flags") },
 	[COL_PARTLABEL] = { "PARTLABEL", 0.1, 0, N_("partition LABEL") },
+	[COL_PARTN] = { "PARTN", 2, SCOLS_FL_RIGHT, N_("partition number as read from the partition table"), COLTYPE_NUM },
 	[COL_PARTTYPENAME]  = { "PARTTYPENAME",  0.1,  0, N_("partition type name") },
 	[COL_PARTTYPE] = { "PARTTYPE", 36,  0, N_("partition type code or UUID") },
 	[COL_PARTUUID] = { "PARTUUID", 36,  0, N_("partition UUID") },
@@ -948,6 +950,11 @@ static char *device_get_data(
 		prop = lsblk_device_get_properties(dev);
 		if (prop && prop->partflags)
 			str = xstrdup(prop->partflags);
+		break;
+	case COL_PARTN:
+		prop = lsblk_device_get_properties(dev);
+		if (prop && prop->partn)
+			str = xstrdup(prop->partn);
 		break;
 	case COL_WWN:
 		prop = lsblk_device_get_properties(dev);

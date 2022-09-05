@@ -32,6 +32,7 @@ void lsblk_device_free_properties(struct lsblk_devprop *p)
 	free(p->parttype);
 	free(p->partuuid);
 	free(p->partlabel);
+	free(p->partn);
 	free(p->wwn);
 	free(p->serial);
 	free(p->model);
@@ -106,6 +107,8 @@ static struct lsblk_devprop *get_properties_by_udev(struct lsblk_device *ld)
 		prop->parttype = xstrdup(data);
 	if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_UUID")))
 		prop->partuuid = xstrdup(data);
+	if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_NUMBER")))
+		prop->partn = xstrdup(data);
 	if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_FLAGS")))
 		prop->partflags = xstrdup(data);
 
@@ -243,6 +246,7 @@ static struct lsblk_devprop *get_properties_by_file(struct lsblk_device *ld)
 		else if (lookup(buf, "ID_PART_ENTRY_TYPE", &prop->parttype)) ;
 		else if (lookup(buf, "ID_PART_ENTRY_UUID", &prop->partuuid)) ;
 		else if (lookup(buf, "ID_PART_ENTRY_FLAGS", &prop->partflags)) ;
+		else if (lookup(buf, "ID_PART_ENTRY_NUMBER", &prop->partn)) ;
 		else if (lookup(buf, "ID_MODEL", &prop->model)) ;
 		else if (lookup(buf, "ID_WWN_WITH_EXTENSION", &prop->wwn)) ;
 		else if (lookup(buf, "ID_WWN", &prop->wwn)) ;
@@ -321,6 +325,8 @@ static struct lsblk_devprop *get_properties_by_blkid(struct lsblk_device *dev)
 			prop->partlabel = xstrdup(data);
 		if (!blkid_probe_lookup_value(pr, "PART_ENTRY_FLAGS", &data, NULL))
 			prop->partflags = xstrdup(data);
+		if (!blkid_probe_lookup_value(pr, "PART_ENTRY_NUMBER", &data, NULL))
+			prop->partn = xstrdup(data);
 
 		DBG(DEV, ul_debugobj(dev, "%s: found blkid properties", dev->name));
 	}
