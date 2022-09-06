@@ -181,6 +181,7 @@ int parse_timestamp(const char *t, usec_t *usec)
 	 *
 	 *   2012-09-22 16:34:22
 	 *   2012-09-22T16:34:22
+	 *   1348331662		  (seconds since the Epoch (1970-01-01 00:00 UTC))
 	 *   2012-09-22 16:34	  (seconds will be set to 0)
 	 *   2012-09-22		  (time will be set to 00:00:00)
 	 *   16:34:22		  (date will be set to today)
@@ -320,6 +321,13 @@ int parse_timestamp(const char *t, usec_t *usec)
 
 	tm = copy;
 	k = strptime(t, "%Y%m%d%H%M%S", &tm);
+	if (k && *k == 0) {
+		tm.tm_sec = 0;
+		goto finish;
+	}
+
+	tm = copy;
+	k = strptime(t, "%s", &tm);
 	if (k && *k == 0) {
 		tm.tm_sec = 0;
 		goto finish;
