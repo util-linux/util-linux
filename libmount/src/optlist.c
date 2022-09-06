@@ -428,10 +428,12 @@ static int optlist_add_optstr(struct libmnt_optlist *ls, const char *optstr,
 	size_t namesz, valsz;
 	int rc;
 
-	if (!ls || !optstr)
+	if (!ls)
 		return -EINVAL;
 	if (map && (rc =  mnt_optlist_register_map(ls, map)))
 		return rc;
+	if (!optstr)
+		return 0;
 
 	while (ul_optstr_next(&p, &name, &namesz, &val, &valsz) == 0) {
 
