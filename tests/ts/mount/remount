@@ -42,7 +42,7 @@ mkfs.ext2 $DEVICE &> /dev/null || ts_die "Cannot make ext2 on $DEVICE"
 $TS_CMD_MOUNT $DEVICE $TS_MOUNTPOINT || ts_die "Cannot mount $TS_MOUNTPOINT"
 
 # check the mount
-egrep -q "^$DEVICE $TS_MOUNTPOINT" $MTAB_FILE \
+grep -E -q "^$DEVICE $TS_MOUNTPOINT" $MTAB_FILE \
  || ts_die "Cannot find $TS_MOUNTPOINT in $MTAB_FILE"
 
 # remount

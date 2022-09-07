@@ -22,8 +22,8 @@
 #
 # for example:
 #
-#	cat words.raw | egrep --invert-match "'s$" | \
-#		egrep  "^[[:alnum:]'&!,./-]+$" | \
+#	cat words.raw | grep -E --invert-match "'s$" | \
+#		grep -E "^[[:alnum:]'&!,./-]+$" | \
 #		sort --ignore-case --dictionary-order | \
 #		uniq >  words
 #
