@@ -3,6 +3,7 @@
  * This file is part of libmount from util-linux project.
  *
  * Copyright (C) 2019 Microsoft Corporation
+ * Copyright (C) 2022 Karel Zak <kzak@redhat.com>
  *
  * libmount is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -22,21 +23,121 @@
 #include "strutils.h"
 
 #ifdef CRYPTSETUP_VIA_DLOPEN
-static void *get_symbol(struct libmnt_context *cxt, void *dl, const char *name, int *rc)
+struct verity_opers {
+	void (*crypt_set_debug_level)(int);
+	void (*crypt_set_log_callback)(struct crypt_device *, void (*log)(int, const char *, void *), void *);
+	int (*crypt_init_data_device)(struct crypt_device **, const char *, const char *);
+	int (*crypt_load)(struct crypt_device *, const char *, void *);
+	int (*crypt_get_volume_key_size)(struct crypt_device *);
+# ifdef HAVE_CRYPT_ACTIVATE_BY_SIGNED_KEY
+	int (*crypt_activate_by_signed_key)(struct crypt_device *, const char *, const char *, size_t, const char *, size_t, uint32_t);
+# endif
+	int (*crypt_activate_by_volume_key)(struct crypt_device *, const char *, const char *, size_t, uint32_t);
+	void (*crypt_free)(struct crypt_device *);
+	int (*crypt_init_by_name)(struct crypt_device **, const char *);
+	int (*crypt_get_verity_info)(struct crypt_device *, struct crypt_params_verity *);
+	int (*crypt_volume_key_get)(struct crypt_device *, int, char *, size_t *, const char *, size_t);
+
+	int (*crypt_deactivate_by_name)(struct crypt_device *, const char *, uint32_t);
+};
+
+/* symbols for dlopen() */
+struct verity_sym {
+	const char *name;
+	size_t offset;		/* offset of the symbol in verity_opers */
+};
+
+# define DEF_VERITY_SYM(_name) \
+	{ \
+		.name = # _name, \
+		.offset = offsetof(struct verity_opers, _name), \
+	}
+
+static const struct verity_sym verity_symbols[] =
 {
-	char *dl_error = NULL;
-	void *sym = dlsym(dl, name);
+	DEF_VERITY_SYM( crypt_set_debug_level ),
+	DEF_VERITY_SYM( crypt_set_log_callback ),
+	DEF_VERITY_SYM( crypt_init_data_device ),
+	DEF_VERITY_SYM( crypt_load ),
+	DEF_VERITY_SYM( crypt_get_volume_key_size ),
+# ifdef HAVE_CRYPT_ACTIVATE_BY_SIGNED_KEY
+	DEF_VERITY_SYM( crypt_activate_by_signed_key ),
+# endif
+	DEF_VERITY_SYM( crypt_activate_by_volume_key ),
+	DEF_VERITY_SYM( crypt_free ),
+	DEF_VERITY_SYM( crypt_init_by_name ),
+	DEF_VERITY_SYM( crypt_get_verity_info ),
+	DEF_VERITY_SYM( crypt_volume_key_get ),
 
-	*rc = 0;
-	if ((dl_error = dlerror()) == NULL)
-		return sym;
+	DEF_VERITY_SYM( crypt_deactivate_by_name ),
+};
 
-	DBG(VERITY, ul_debugobj(cxt, "veritydev specific options detected but cannot dlopen symbol %s: %s", name, dl_error));
-	*rc = -ENOTSUP;
+static int verity_load_symbols(struct libmnt_context *cxt, void **dl, struct verity_opers *oprs)
+{
+	size_t i;
 
-	return NULL;
-}
+	if (!dl)
+		return -EINVAL;
+	/*
+	 * dlopen()
+	 */
+	if (!*dl) {
+		int flags = RTLD_LAZY | RTLD_LOCAL;
+
+		/* glibc extension: mnt_context_deferred_delete_veritydev is called immediately after, don't unload on dl_close */
+#ifdef RTLD_NODELETE
+		flags |= RTLD_NODELETE;
 #endif
+		/* glibc extension: might help to avoid further symbols clashes */
+#ifdef RTLD_DEEPBIND
+		flags |= RTLD_DEEPBIND;
+#endif
+		*dl = dlopen("libcryptsetup.so.12", flags);
+		if (!*dl) {
+			DBG(VERITY, ul_debugobj(cxt, "veritydev specific options detected but cannot dlopen libcryptsetup"));
+			return -ENOTSUP;
+		}
+	}
+
+	/* clear errors first, then load all the libcryptsetup symbols */
+	dlerror();
+
+	/*
+	 * dlsym()
+	 */
+	for (i = 0; i < ARRAY_SIZE(verity_symbols); i++) {
+		char *errmsg;
+		const struct verity_sym *def = &verity_symbols[i];
+		void **sym;
+
+		sym = (void **) ((char *) oprs + def->offset);
+		*sym = dlsym(*dl, def->name);
+
+		errmsg = dlerror();
+		if (errmsg) {
+			DBG(VERITY, ul_debugobj(cxt, "cannot obtain address of a '%s' symbol: %s", def->name, errmsg));
+			return -ENOTSUP;
+		}
+	}
+	return 0;
+}
+
+/*
+ * with dlopen --  call pointer to libcryptsetup function, the pointer is
+ *                 stored in __verity_opers and initialized by dlsym() in
+ *                 verity_load_symbols().
+ */
+# define verity_call(_func)	( __verity_opers._func )
+
+#else /* !CRYPTSETUP_VIA_DLOPEN */
+
+/*
+ * without dlopen -- call linked libcryptsetup function
+ */
+# define verity_call(_func)	(_func)
+
+#endif /* CRYPTSETUP_VIA_DLOPEN */
+
 
 static void libcryptsetup_log(int level __attribute__((__unused__)), const char *msg, void *data)
 {
@@ -92,37 +193,9 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 	uint32_t crypt_activate_flags = CRYPT_ACTIVATE_READONLY;
 	struct stat hash_sig_st;
 #ifdef CRYPTSETUP_VIA_DLOPEN
-	/* To avoid linking libmount to libcryptsetup, and keep the default dependencies list down, use dlopen */
 	void *dl = NULL;
-	void (*sym_crypt_set_debug_level)(int) = NULL;
-	void (*sym_crypt_set_log_callback)(struct crypt_device *, void (*log)(int, const char *, void *), void *) = NULL;
-	int (*sym_crypt_init_data_device)(struct crypt_device **, const char *, const char *) = NULL;
-	int (*sym_crypt_load)(struct crypt_device *, const char *, void *) = NULL;
-	int (*sym_crypt_get_volume_key_size)(struct crypt_device *) = NULL;
-#ifdef HAVE_CRYPT_ACTIVATE_BY_SIGNED_KEY
-	int (*sym_crypt_activate_by_signed_key)(struct crypt_device *, const char *, const char *, size_t, const char *, size_t, uint32_t) = NULL;
+	struct verity_opers __verity_opers = { NULL } ;	/* see verity_call() macro */
 #endif
-	int (*sym_crypt_activate_by_volume_key)(struct crypt_device *, const char *, const char *, size_t, uint32_t) = NULL;
-	void (*sym_crypt_free)(struct crypt_device *) = NULL;
-	int (*sym_crypt_init_by_name)(struct crypt_device **, const char *) = NULL;
-	int (*sym_crypt_get_verity_info)(struct crypt_device *, struct crypt_params_verity *) = NULL;
-	int (*sym_crypt_volume_key_get)(struct crypt_device *, int, char *, size_t *, const char *, size_t) = NULL;
-#else
-	void (*sym_crypt_set_debug_level)(int) = &crypt_set_debug_level;
-	void (*sym_crypt_set_log_callback)(struct crypt_device *, void (*log)(int, const char *, void *), void *) = &crypt_set_log_callback;
-	int (*sym_crypt_init_data_device)(struct crypt_device **, const char *, const char *) = &crypt_init_data_device;
-	int (*sym_crypt_load)(struct crypt_device *, const char *, void *) = &crypt_load;
-	int (*sym_crypt_get_volume_key_size)(struct crypt_device *) = &crypt_get_volume_key_size;
-#ifdef HAVE_CRYPT_ACTIVATE_BY_SIGNED_KEY
-	int (*sym_crypt_activate_by_signed_key)(struct crypt_device *, const char *, const char *, size_t, const char *, size_t, uint32_t) = &crypt_activate_by_signed_key;
-#endif
-	int (*sym_crypt_activate_by_volume_key)(struct crypt_device *, const char *, const char *, size_t, uint32_t) = &crypt_activate_by_volume_key;
-	void (*sym_crypt_free)(struct crypt_device *) = &crypt_free;
-	int (*sym_crypt_init_by_name)(struct crypt_device **, const char *) = &crypt_init_by_name;
-	int (*sym_crypt_get_verity_info)(struct crypt_device *, struct crypt_params_verity *) = &crypt_get_verity_info;
-	int (*sym_crypt_volume_key_get)(struct crypt_device *, int, char *, size_t *, const char *, size_t) = &crypt_volume_key_get;
-#endif
-
 	assert(cxt);
 	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
@@ -214,14 +287,18 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 	    && mnt_opt_has_value(opt)) {
 		root_hash_sig_file = mnt_opt_get_value(opt);
 
+		DBG(VERITY, ul_debugobj(cxt, "checking %s", root_hash_sig_file));
+
 		rc = ul_path_stat(NULL, &hash_sig_st, 0, root_hash_sig_file);
 		if (rc == 0)
-			rc = !S_ISREG(hash_sig_st.st_mode) || !hash_sig_st.st_size ? -EINVAL : 0;
+			rc = S_ISREG(hash_sig_st.st_mode) && hash_sig_st.st_size ? 0 : -EINVAL;
+
 		if (rc == 0) {
 			hash_sig_size = hash_sig_st.st_size;
 			hash_sig = malloc(hash_sig_size);
 			rc = hash_sig ? 0 : -ENOMEM;
 		}
+
 		if (rc == 0) {
 			rc = ul_path_read(NULL, hash_sig, hash_sig_size, root_hash_sig_file);
 			rc = rc < (int)hash_sig_size ? -1 : 0;
@@ -265,59 +342,18 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 	}
 
 #ifdef CRYPTSETUP_VIA_DLOPEN
-	if (rc == 0) {
-		int dl_flags = RTLD_LAZY | RTLD_LOCAL;
-		/* glibc extension: mnt_context_deferred_delete_veritydev is called immediately after, don't unload on dl_close */
-#ifdef RTLD_NODELETE
-		dl_flags |= RTLD_NODELETE;
-#endif
-		/* glibc extension: might help to avoid further symbols clashes */
-#ifdef RTLD_DEEPBIND
-		dl_flags |= RTLD_DEEPBIND;
-#endif
-		dl = dlopen("libcryptsetup.so.12", dl_flags);
-		if (!dl) {
-			DBG(VERITY, ul_debugobj(cxt, "veritydev specific options detected but cannot dlopen libcryptsetup"));
-			rc = -ENOTSUP;
-		}
-	}
-
-	/* clear errors first, then load all the libcryptsetup symbols */
-	dlerror();
-
 	if (rc == 0)
-		*(void **)(&sym_crypt_set_debug_level) = get_symbol(cxt, dl, "crypt_set_debug_level", &rc);
-	if (rc == 0)
-		*(void **)(&sym_crypt_set_log_callback) = get_symbol(cxt, dl, "crypt_set_log_callback", &rc);
-	if (rc == 0)
-		*(void **)(&sym_crypt_init_data_device) = get_symbol(cxt, dl, "crypt_init_data_device", &rc);
-	if (rc == 0)
-		*(void **)(&sym_crypt_load) = get_symbol(cxt, dl, "crypt_load", &rc);
-	if (rc == 0)
-		*(void **)(&sym_crypt_get_volume_key_size) = get_symbol(cxt, dl, "crypt_get_volume_key_size", &rc);
-#ifdef HAVE_CRYPT_ACTIVATE_BY_SIGNED_KEY
-	if (rc == 0)
-		*(void **)(&sym_crypt_activate_by_signed_key) = get_symbol(cxt, dl, "crypt_activate_by_signed_key", &rc);
-#endif
-	if (rc == 0)
-		*(void **)(&sym_crypt_activate_by_volume_key) = get_symbol(cxt, dl, "crypt_activate_by_volume_key", &rc);
-	if (rc == 0)
-		*(void **)(&sym_crypt_free) = get_symbol(cxt, dl, "crypt_free", &rc);
-	if (rc == 0)
-		*(void **)(&sym_crypt_init_by_name) = get_symbol(cxt, dl, "crypt_init_by_name", &rc);
-	if (rc == 0)
-		*(void **)(&sym_crypt_get_verity_info) = get_symbol(cxt, dl, "crypt_get_verity_info", &rc);
-	if (rc == 0)
-		*(void **)(&sym_crypt_volume_key_get) = get_symbol(cxt, dl, "crypt_volume_key_get", &rc);
+		rc = verity_load_symbols(cxt, &dl, &__verity_opers);
 #endif
 	if (rc)
 		goto done;
 
 	if (mnt_context_is_verbose(cxt))
-		(*sym_crypt_set_debug_level)(CRYPT_DEBUG_ALL);
-	(*sym_crypt_set_log_callback)(NULL, libcryptsetup_log, cxt);
+		verity_call( crypt_set_debug_level(CRYPT_DEBUG_ALL) );
 
-	rc = (*sym_crypt_init_data_device)(&crypt_dev, hash_device, backing_file);
+	verity_call( crypt_set_log_callback(NULL, libcryptsetup_log, cxt) );
+
+	rc = verity_call( crypt_init_data_device(&crypt_dev, hash_device, backing_file) );
 	if (rc)
 		goto done;
 
@@ -327,27 +363,30 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 	crypt_params.fec_roots = fec_roots;
 	crypt_params.fec_device = fec_device;
 	crypt_params.flags = 0;
-	rc = (*sym_crypt_load)(crypt_dev, CRYPT_VERITY, &crypt_params);
+
+	rc = verity_call( crypt_load(crypt_dev, CRYPT_VERITY, &crypt_params) );
 	if (rc < 0)
 		goto done;
 
-	hash_size = (*sym_crypt_get_volume_key_size)(crypt_dev);
+	hash_size = verity_call( crypt_get_volume_key_size(crypt_dev) );
 	if (crypt_hex_to_bytes(root_hash, &root_hash_binary) != hash_size) {
 		DBG(VERITY, ul_debugobj(cxt, "root hash %s is not of length %zu", root_hash, hash_size));
 		rc = -EINVAL;
 		goto done;
 	}
+
 	if (hash_sig) {
 #ifdef HAVE_CRYPT_ACTIVATE_BY_SIGNED_KEY
-		rc = (*sym_crypt_activate_by_signed_key)(crypt_dev, mapper_device, root_hash_binary, hash_size,
-				hash_sig, hash_sig_size, crypt_activate_flags);
+		rc = verity_call( crypt_activate_by_signed_key(crypt_dev, mapper_device, root_hash_binary, hash_size,
+				hash_sig, hash_sig_size, crypt_activate_flags) );
 #else
 		rc = -EINVAL;
 		DBG(VERITY, ul_debugobj(cxt, "verity.roothashsig=%s passed but libcryptsetup does not provide crypt_activate_by_signed_key()", hash_sig));
 #endif
 	} else
-		rc = (*sym_crypt_activate_by_volume_key)(crypt_dev, mapper_device, root_hash_binary, hash_size,
-				crypt_activate_flags);
+		rc = verity_call( crypt_activate_by_volume_key(crypt_dev, mapper_device, root_hash_binary, hash_size,
+				crypt_activate_flags) );
+
 	/*
 	 * If the mapper device already exists, and if libcryptsetup supports it, get the root
 	 * hash associated with the existing one and compare it with the parameter passed by
@@ -360,10 +399,10 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 	 */
 	if (rc == -EEXIST) {
 		DBG(VERITY, ul_debugobj(cxt, "%s already in use as /dev/mapper/%s", backing_file, mapper_device));
-		(*sym_crypt_free)(crypt_dev);
-		rc = (*sym_crypt_init_by_name)(&crypt_dev, mapper_device);
+		verity_call( crypt_free(crypt_dev) );
+		rc = verity_call( crypt_init_by_name(&crypt_dev, mapper_device) );
 		if (!rc) {
-			rc = (*sym_crypt_get_verity_info)(crypt_dev, &crypt_params);
+			rc = verity_call( crypt_get_verity_info(crypt_dev, &crypt_params) );
 			if (!rc) {
 				key = calloc(hash_size, 1);
 				if (!key) {
@@ -373,7 +412,7 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 			}
 			if (!rc) {
 				keysize = hash_size;
-				rc = (*sym_crypt_volume_key_get)(crypt_dev, CRYPT_ANY_SLOT, key, &keysize, NULL, 0);
+				rc = verity_call( crypt_volume_key_get(crypt_dev, CRYPT_ANY_SLOT, key, &keysize, NULL, 0) );
 			}
 			if (!rc) {
 				DBG(VERITY, ul_debugobj(cxt, "comparing root hash of existing device with %s", root_hash));
@@ -418,8 +457,7 @@ int mnt_context_setup_veritydev(struct libmnt_context *cxt)
 	}
 
 done:
-	if (sym_crypt_free)
-		(*sym_crypt_free)(crypt_dev);
+	verity_call( crypt_free(crypt_dev) );
 #ifdef CRYPTSETUP_VIA_DLOPEN
 	if (dl)
 		dlclose(dl);
@@ -440,18 +478,7 @@ int mnt_context_deferred_delete_veritydev(struct libmnt_context *cxt)
 	uint32_t flags = mnt_context_get_status(cxt) ? CRYPT_DEACTIVATE_DEFERRED : 0;
 #ifdef CRYPTSETUP_VIA_DLOPEN
 	void *dl = NULL;
-	int dl_flags = RTLD_LAZY | RTLD_LOCAL;
-	/* glibc extension: might help to avoid further symbols clashes */
-#ifdef RTLD_DEEPBIND
-	dl_flags |= RTLD_DEEPBIND;
-#endif
-	void (*sym_crypt_set_debug_level)(int) = NULL;
-	void (*sym_crypt_set_log_callback)(struct crypt_device *, void (*log)(int, const char *, void *), void *) = NULL;
-	int (*sym_crypt_deactivate_by_name)(struct crypt_device *, const char *, uint32_t) = NULL;
-#else
-	void (*sym_crypt_set_debug_level)(int) = &crypt_set_debug_level;
-	void (*sym_crypt_set_log_callback)(struct crypt_device *, void (*log)(int, const char *, void *), void *) = &crypt_set_log_callback;
-	int (*sym_crypt_deactivate_by_name)(struct crypt_device *, const char *, uint32_t) = &crypt_deactivate_by_name;
+	struct verity_opers __verity_opers = { NULL } ;	/* see verity_call() macro */
 #endif
 	int rc = 0;
 
@@ -466,28 +493,15 @@ int mnt_context_deferred_delete_veritydev(struct libmnt_context *cxt)
 		return -EINVAL;
 
 #ifdef CRYPTSETUP_VIA_DLOPEN
-	dl = dlopen("libcryptsetup.so.12", dl_flags);
-	if (!dl) {
-		DBG(VERITY, ul_debugobj(cxt, "veritydev specific options detected but cannot dlopen libcryptsetup"));
-		return -ENOTSUP;
-	}
-
-	/* clear errors first */
-	dlerror();
-
-	if (!rc)
-		*(void **)(&sym_crypt_set_debug_level) = get_symbol(cxt, dl, "crypt_set_debug_level", &rc);
-	if (!rc)
-		*(void **)(&sym_crypt_set_log_callback) = get_symbol(cxt, dl, "crypt_set_log_callback", &rc);
-	if (!rc)
-		*(void **)(&sym_crypt_deactivate_by_name) = get_symbol(cxt, dl, "crypt_deactivate_by_name", &rc);
+	rc = verity_load_symbols(cxt, &dl, &__verity_opers);
 #endif
 	if (!rc) {
 		if (mnt_context_is_verbose(cxt))
-			(*sym_crypt_set_debug_level)(CRYPT_DEBUG_ALL);
-		(*sym_crypt_set_log_callback)(NULL, libcryptsetup_log, cxt);
+			verity_call( crypt_set_debug_level(CRYPT_DEBUG_ALL) );
 
-		rc = (*sym_crypt_deactivate_by_name)(NULL, src, flags);
+		verity_call( crypt_set_log_callback(NULL, libcryptsetup_log, cxt) );
+
+		rc = verity_call( crypt_deactivate_by_name(NULL, src, flags) );
 		if (!rc)
 			cxt->flags &= ~MNT_FL_VERITYDEV_READY;
 	}
