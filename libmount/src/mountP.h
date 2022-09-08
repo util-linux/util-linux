@@ -316,6 +316,9 @@ extern const struct libmnt_hookset hookset_subdir;
 extern const struct libmnt_hookset hookset_owner;
 extern const struct libmnt_hookset hookset_idmap;
 extern const struct libmnt_hookset hookset_loopdev;
+#ifdef HAVE_CRYPTSETUP
+extern const struct libmnt_hookset hookset_veritydev;
+#endif
 
 extern int mnt_context_deinit_hooksets(struct libmnt_context *cxt);
 extern const struct libmnt_hookset *mnt_context_get_hookset(struct libmnt_context *cxt, const char *name);
@@ -603,11 +606,6 @@ extern int mnt_context_apply_template(struct libmnt_context *cxt);
 extern int mnt_context_save_template(struct libmnt_context *cxt);
 
 extern int mnt_context_apply_fs(struct libmnt_context *cxt, struct libmnt_fs *fs);
-
-extern int mnt_context_is_veritydev(struct libmnt_context *cxt)
-			__attribute__((nonnull));
-extern int mnt_context_setup_veritydev(struct libmnt_context *cxt);
-extern int mnt_context_deferred_delete_veritydev(struct libmnt_context *cxt);
 
 extern struct libmnt_optlist *mnt_context_get_optlist(struct libmnt_context *cxt);
 

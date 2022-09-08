@@ -29,7 +29,6 @@ libmount_la_SOURCES = \
 if LINUX
 libmount_la_SOURCES += \
 	libmount/src/context.c \
-	libmount/src/context_veritydev.c \
 	libmount/src/context_mount.c \
 	libmount/src/context_umount.c \
 	libmount/src/hook_mount_legacy.c \
@@ -38,6 +37,7 @@ libmount_la_SOURCES += \
 	libmount/src/hook_owner.c \
 	libmount/src/hook_idmap.c \
 	libmount/src/hook_loopdev.c \
+	libmount/src/hook_veritydev.c \
 	libmount/src/monitor.c
 
 if HAVE_BTRFS
