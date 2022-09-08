@@ -9,8 +9,10 @@
  * under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation; either version 2.1 of the License, or
  * (at your option) any later version.
+ *
+ *
+ * Please, see comment in libmount/src/hooks.c to understand how hooks work.
  */
-
 #include "mountP.h"
 
 #ifdef HAVE_CRYPTSETUP

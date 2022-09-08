@@ -8,12 +8,9 @@
  * under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation; either version 2.1 of the License, or
  * (at your option) any later version.
+ *
+ * Please, see the comment in libmount/src/hooks.c to understand how hooks work.
  */
-
-/*
- * DOCS: - "lo@" prefix for fstype is unsupported
- */
-
 #include <blkid.h>
 #include <stdbool.h>
 

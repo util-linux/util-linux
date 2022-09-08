@@ -10,14 +10,22 @@
  * (at your option) any later version.
  *
  *
- * The "hookset" is set of callbacks (hooks) that implement some functionality.
- * It supports two kinds of data:
+ * The "hookset" is a set of callbacks (hooks) that implement some functionality.
+ * The library defines stages where hooks are called (e.g. when preparing source, post
+ * mount(2), etc.). An arbitrary hook can, on the fly, define another hook for the
+ * arbitrary stage. The first hook from the hookset which goes to the game is a
+ * "firstcall" (defined in struct libmnt_hookset). This first hook controls
+ * what will happen in the next stages (usually nothing).
  *
- *  - global data    : accessible for all callbacks, independent on defined hooks
+ * The library supports two kinds of data for hooksets:
  *
- *  - per-hook data  : usually used by the callback function
+ * - global data;  accessible for all callbacks. Makes sense for complex
+ *   hooksets with more callbacks in more stages. Usually implemented by
+ *   locally defined 'struct hookset_data' in hook_*.c.
+ *
+ * - per-hook data; acessible for specific callback
+ *   Usually implemented by locally defined 'struct hook_data' in hook_*.c.
  */
-
 #include "mountP.h"
 #include "mount-api-utils.h"
 
@@ -39,7 +47,7 @@ static const struct libmnt_hookset *hooksets[] =
 #endif
 };
 
-/* hooksets data */
+/* hooksets data (this is global list of hookset data) */
 struct hookset_data {
 	const struct libmnt_hookset *hookset;
 	void *data;

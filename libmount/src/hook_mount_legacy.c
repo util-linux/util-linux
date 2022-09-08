@@ -8,6 +8,11 @@
  * under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation; either version 2.1 of the License, or
  * (at your option) any later version.
+ *
+ *
+ * This is classic mount(2) based mount.
+ *
+ * Please, see the comment in libmount/src/hooks.c to understand how hooks work.
  */
 
 #include "mountP.h"

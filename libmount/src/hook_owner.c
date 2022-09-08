@@ -11,8 +11,9 @@
  *
  *
  * This is X-mount.owner=, X-mount.group= and X-mount.mode= implementation.
+ *
+ * Please, see the comment in libmount/src/hooks.c to understand how hooks work.
  */
-
 #include <sched.h>
 
 #include "mountP.h"

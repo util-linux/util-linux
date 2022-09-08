@@ -12,8 +12,9 @@
  *
  * This is X-mount.subdir= implementation. The code uses global hookset data
  * rather than per-callback (hook) data.
+ *
+ * Please, see the comment in libmount/src/hooks.c to understand how hooks work.
  */
-
 #include <sched.h>
 
 #include "mountP.h"

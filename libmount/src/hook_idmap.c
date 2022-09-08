@@ -12,6 +12,8 @@
  *
  *
  * This is X-mount.idmap= implementation.
+ *
+ * Please, see the comment in libmount/src/hooks.c to understand how hooks work.
  */
 #include <stdbool.h>
 #include <sys/socket.h>
