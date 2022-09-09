@@ -32,11 +32,13 @@ EXPR="(FD == 3)"
 {
     for C in ro-regular-file pidfd inotify socketpair; do
 	coproc MKFDS {
+	    argv=()
 	    case $C in
 		socketpair)
-		    argv="$((FD + 1)) socktype=DGRAM"
+		    argv[0]="$((FD + 1))"
+		    argv[1]="socktype=DGRAM"
 	    esac
-	    "$TS_HELPER_MKFDS" $C $FD ${argv}
+	    "$TS_HELPER_MKFDS" $C $FD "${argv[@]}"
 	}
 	if read -r -u "${MKFDS[0]}" PID; then
 	    ${TS_CMD_LSFD} -n -o ASSOC,STTYPE,TYPE -p "${PID}" -Q "${EXPR}"
