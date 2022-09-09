@@ -17,7 +17,7 @@
 TS_TOPDIR="${0%/*}/../.."
 TS_DESC="TYPE and STTYPE column"
 
-. $TS_TOPDIR/functions.sh
+. "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_LSFD"
@@ -38,14 +38,14 @@ EXPR="(FD == 3)"
 	    esac
 	    "$TS_HELPER_MKFDS" $C $FD ${argv}
 	}
-	if read -u ${MKFDS[0]} PID; then
+	if read -r -u "${MKFDS[0]}" PID; then
 	    ${TS_CMD_LSFD} -n -o ASSOC,STTYPE,TYPE -p "${PID}" -Q "${EXPR}"
 	    echo "$C"':ASSOC,STTYPE,TYPE': $?
 
-	    kill -CONT ${PID}
-	    wait ${MKFDS_PID}
+	    kill -CONT "${PID}"
+	    wait "${MKFDS_PID}"
 	fi
     done
-} > $TS_OUTPUT 2>&1
+} > "$TS_OUTPUT" 2>&1
 
 ts_finalize
