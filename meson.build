@@ -272,6 +272,18 @@ lib_readline_static = dependency(
   static : true,
   required : need_static_libs ? get_option('readline') : disabler())
 
+if meson.version().version_compare('>= 0.59.0')
+  lib_intl = dependency(
+    'intl',
+    required : get_option('nls'))
+  conf.set('ENABLE_NLS', lib_intl.found() ? 1 : false)
+else
+  if get_option('nls').enabled()
+    error('nls is not supported with meson before 0.59.0')
+  endif
+  lib_intl = dependency('', required : false)
+endif
+
 lib_user = dependency(
   'libuser',
   version : '>= 0.58',
