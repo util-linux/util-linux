@@ -31,13 +31,13 @@ ts_cd "$TS_OUTDIR"
 PID=
 FD=3
 TARGET=1
-EXPR="(PID != ${TARGET}) and (FD == 3)"
+EXPR="(PID != ${TARGET}) and (FD == 3) and (PIDFD.PID == ${TARGET})"
 
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" pidfd $FD target-pid=${TARGET} ; }
     if read -u ${MKFDS[0]} PID; then
-	${TS_CMD_LSFD} -n -o ASSOC,STTYPE,SOURCE,NAME -p "${PID}" -p ${TARGET} -Q "${EXPR}"
-	echo 'ASSOC,STTYPE,SOURCE,NAME': $?
+	${TS_CMD_LSFD} -n -o ASSOC,STTYPE,SOURCE,NAME,PIDFD.COMM,PIDFD.PID -p "${PID}" -p ${TARGET} -Q "${EXPR}"
+	echo 'ASSOC,STTYPE,SOURCE,NAME,PIDFD.COMM,PIDFD.PID': $?
 
 	kill -CONT ${PID}
 	wait ${MKFDS_PID}

@@ -34,6 +34,13 @@ struct unkn {
 struct anon_ops {
 	const char *class;
 	char * (*get_name)(struct unkn *);
+	/* Return true is handled the column. */
+	bool (*fill_column)(struct proc *,
+			    struct unkn *,
+			    struct libscols_line *,
+			    int,
+			    size_t,
+			    char **str);
 	void (*init)(struct unkn *);
 	void (*free)(struct unkn *);
 	int (*handle_fdinfo)(struct unkn *, const char *, const char *);
@@ -61,7 +68,7 @@ static char * anon_get_class(struct unkn *unkn)
 	return strdup(name);
 }
 
-static bool unkn_fill_column(struct proc *proc __attribute__((__unused__)),
+static bool unkn_fill_column(struct proc *proc,
 			     struct file *file,
 			     struct libscols_line *ln,
 			     int column_id,
@@ -95,6 +102,11 @@ static bool unkn_fill_column(struct proc *proc __attribute__((__unused__)),
 		}
 		return false;
 	default:
+		if (unkn->anon_ops && unkn->anon_ops->fill_column) {
+			if (unkn->anon_ops->fill_column(proc, unkn, ln,
+							column_id, column_index, &str))
+				break;
+		}
 		return false;
 	}
 
@@ -204,9 +216,45 @@ static int anon_pidfd_handle_fdinfo(struct unkn *unkn, const char *key, const ch
 	return 0;
 }
 
+static bool anon_pidfd_fill_column(struct proc *proc  __attribute__((__unused__)),
+				   struct unkn *unkn,
+				   struct libscols_line *ln __attribute__((__unused__)),
+				   int column_id,
+				   size_t column_index __attribute__((__unused__)),
+				   char **str)
+{
+	struct anon_pidfd_data *data = (struct anon_pidfd_data *)unkn->anon_data;
+
+	switch(column_id) {
+	case COL_PIDFD_COMM: {
+		struct proc *pidfd_proc = get_proc(data->pid);
+		char *pidfd_comm = NULL;
+		if (pidfd_proc)
+			pidfd_comm = pidfd_proc->command;
+		if (pidfd_comm) {
+			*str = strdup(pidfd_comm);
+			return true;
+		}
+		break;
+	}
+	case COL_PIDFD_NSPID:
+		if (data->nspid) {
+			*str = strdup(data->nspid);
+			return true;
+		}
+		break;
+	case COL_PIDFD_PID:
+		xasprintf(str, "%d", (int)data->pid);
+		return true;
+	}
+
+	return false;
+}
+
 static struct anon_ops anon_pidfd_ops = {
 	.class = "pidfd",
 	.get_name = anon_pidfd_get_name,
+	.fill_column = anon_pidfd_fill_column,
 	.init = anon_pidfd_init,
 	.free = anon_pidfd_free,
 	.handle_fdinfo = anon_pidfd_handle_fdinfo,
@@ -218,6 +266,7 @@ static struct anon_ops anon_pidfd_ops = {
 static struct anon_ops anon_generic_ops = {
 	.class = NULL,
 	.get_name = NULL,
+	.fill_column = NULL,
 	.init = NULL,
 	.free = NULL,
 	.handle_fdinfo = NULL,
