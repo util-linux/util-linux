@@ -36,9 +36,10 @@ add_project_arguments('-D_GNU_SOURCE', language : 'c')
 cc = meson.get_compiler('c')
 
 conf = configuration_data()
+conf.set_quoted('PACKAGE', meson.project_name())
+conf.set_quoted('PACKAGE_VERSION', meson.project_version())
 package_string = '@0@ @1@'.format(meson.project_name(), meson.project_version())
 conf.set_quoted('PACKAGE_STRING', package_string)
-conf.set_quoted('PACKAGE_VERSION', meson.project_version())
 
 codes = [''' {print $1}  ''',
          ''' {sub("-.*","",$2); print $2} ''',
