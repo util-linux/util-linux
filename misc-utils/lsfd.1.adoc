@@ -217,6 +217,28 @@ Block device name resolved by `/proc/partition`.
 PID <``number``>::
 PID of the process opening the file.
 
+PIDFD.COMM <``string``>::
+Command of the process targeted by the pidfd.
+
+PIDFD.NSPID <``string``>::
+Value of NSpid field in ``/proc/``_pid_``/fdinfo/``_fd_ of the pidfd.
++
+Quoted from kernel/fork.c of Linux source tree:
++
+____
+If pid namespaces are supported then this function will also print
+the pid of a given pidfd refers to for all descendant pid namespaces
+starting from the current pid namespace of the instance, i.e. the
+Pid field and the first entry in the NSpid field will be identical.
+...
+Note that this differs from the Pid and NSpid fields in
+/proc/<pid>/status where Pid and NSpid are always shown relative to
+the  pid namespace of the procfs instance.
+____
+
+PIDFD.PID <``number``>::
+PID of the process targeted by the pidfd.
+
 POS <``number``>::
 File position.
 
