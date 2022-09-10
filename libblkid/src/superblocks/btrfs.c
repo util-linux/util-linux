@@ -18,9 +18,15 @@
 #endif
 
 #include "superblocks.h"
+#include "crc32c.h"
+
+union btrfs_super_block_csum {
+	uint8_t bytes[32];
+	uint32_t crc32c;
+};
 
 struct btrfs_super_block {
-	uint8_t csum[32];
+	union btrfs_super_block_csum csum;
 	uint8_t fsid[16];
 	uint64_t bytenr;
 	uint64_t flags;
@@ -64,6 +70,7 @@ struct btrfs_super_block {
 		uint8_t fsid[16];
 	} __attribute__ ((__packed__)) dev_item;
 	uint8_t label[256];
+	uint8_t padding[3541]; /* pad to BTRFS_SUPER_INFO_SIZE for csum calculation */
 } __attribute__ ((__packed__));
 
 #define BTRFS_SUPER_INFO_SIZE 4096
@@ -202,6 +209,21 @@ out:
 }
 #endif
 
+static int btrfs_verify_csum(blkid_probe pr, const struct btrfs_super_block *bfs)
+{
+	int csum_type = le16_to_cpu(bfs->csum_type);
+	if (csum_type != 0) {
+		DBG(LOWPROBE, ul_debug("(btrfs) unknown checksum type %d, skipping validation",
+				       csum_type));
+		return 1;
+	}
+	uint32_t crc = crc32c(~0L, (char *) bfs + sizeof(bfs->csum),
+			sizeof(*bfs) - sizeof(bfs->csum)
+	);
+	crc ^= ~0L;
+	return blkid_probe_verify_csum(pr, crc, le32_to_cpu(bfs->csum.crc32c));
+}
+
 static int probe_btrfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct btrfs_super_block *bfs;
@@ -226,6 +248,9 @@ static int probe_btrfs(blkid_probe pr, const struct blkid_idmag *mag)
 	}
 	if (!bfs)
 		return errno ? -errno : 1;
+
+	if (!btrfs_verify_csum(pr, bfs))
+		return 1;
 
 	if (*bfs->label)
 		blkid_probe_set_label(pr,
