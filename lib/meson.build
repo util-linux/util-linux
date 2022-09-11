@@ -21,6 +21,7 @@ lib_common_sources = '''
 	pwdutils.c
 	randutils.c
 	sha1.c
+	sha256.c
 	signames.c
 	strutils.c
 	strv.c
