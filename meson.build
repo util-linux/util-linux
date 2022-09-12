@@ -36,9 +36,10 @@ add_project_arguments('-D_GNU_SOURCE', language : 'c')
 cc = meson.get_compiler('c')
 
 conf = configuration_data()
+conf.set_quoted('PACKAGE', meson.project_name())
+conf.set_quoted('PACKAGE_VERSION', meson.project_version())
 package_string = '@0@ @1@'.format(meson.project_name(), meson.project_version())
 conf.set_quoted('PACKAGE_STRING', package_string)
-conf.set_quoted('PACKAGE_VERSION', meson.project_version())
 
 codes = [''' {print $1}  ''',
          ''' {sub("-.*","",$2); print $2} ''',
@@ -271,6 +272,18 @@ lib_readline_static = dependency(
   static : true,
   required : need_static_libs ? get_option('readline') : disabler())
 
+if meson.version().version_compare('>= 0.59.0')
+  lib_intl = dependency(
+    'intl',
+    required : get_option('nls'))
+  conf.set('ENABLE_NLS', lib_intl.found() ? 1 : false)
+else
+  if get_option('nls').enabled()
+    error('nls is not supported with meson before 0.59.0')
+  endif
+  lib_intl = dependency('', required : false)
+endif
+
 lib_user = dependency(
   'libuser',
   version : '>= 0.58',
@@ -326,9 +339,11 @@ lib_cryptsetup = dependency(
 conf.set('HAVE_CRYPTSETUP', lib_cryptsetup.found() ? 1 : false)
 
 if not get_option('cryptsetup').disabled() and get_option('cryptsetup-dlopen').enabled()
-  lib_dl = cc.find_library(
-    'libdl',
-    required : true)
+  if meson.version().version_compare('>= 0.62.0')
+    lib_dl = dependency('dl')
+  else
+    lib_dl = cc.find_library('dl')
+  endif
   conf.set('CRYPTSETUP_VIA_DLOPEN', 1)
   summary('cryptsetup support (dlopen)',
           'enabled',
