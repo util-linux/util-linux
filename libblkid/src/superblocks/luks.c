@@ -17,6 +17,7 @@
 #include <stdint.h>
 
 #include "superblocks.h"
+#include "sha256.h"
 
 #define LUKS_CIPHERNAME_L		32
 #define LUKS_CIPHERMODE_L		32
@@ -96,6 +97,23 @@ static int luks_attributes(blkid_probe pr, struct luks2_phdr *header, uint64_t o
 	return BLKID_PROBE_OK;
 }
 
+static int luks_verify_csum(blkid_probe pr, struct luks2_phdr *header)
+{
+	if (strncmp(header->checksum_alg, "sha256", sizeof(header->checksum_alg)))
+		return 1;
+
+	uint64_t header_size = be64_to_cpu(header->hdr_size);
+	unsigned char *checksummed = blkid_probe_get_buffer(pr, 0, header_size);
+	if (!checksummed)
+		return 0;
+	memset(checksummed + offsetof(struct luks2_phdr, csum), 0, LUKS2_CHECKSUM_L);
+
+	unsigned char csum[32];
+	ul_SHA256(csum, checksummed, header_size);
+
+	return blkid_probe_verify_csum(pr, 1, !memcmp(header->csum, csum, 32));
+}
+
 static int probe_luks(blkid_probe pr, const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	struct luks2_phdr *header;
@@ -106,6 +124,8 @@ static int probe_luks(blkid_probe pr, const struct blkid_idmag *mag __attribute_
 		return errno ? -errno : BLKID_PROBE_NONE;
 
 	if (!memcmp(header->magic, LUKS_MAGIC, LUKS_MAGIC_L)) {
+		if (!luks_verify_csum(pr, header))
+			return BLKID_PROBE_NONE;
 		/* LUKS primary header was found. */
 		return luks_attributes(pr, header, 0);
 	}
