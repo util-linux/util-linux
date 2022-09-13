@@ -8,9 +8,11 @@
 #include <string.h>
 
 #include "superblocks.h"
+#include "crc32c.h"
 
 #define EROFS_SUPER_OFFSET      1024
 #define EROFS_SB_KBOFF		(EROFS_SUPER_OFFSET >> 10)
+#define EROFS_FEATURE_SB_CSUM	(1 << 0)
 
 #define EROFS_SUPER_MAGIC_V1	"\xe2\xe1\xf5\xe0"
 #define EROFS_MAGIC_OFF		0
@@ -37,6 +39,25 @@ struct erofs_super_block {
 	uint8_t		reserved2[44];
 };
 
+static int erofs_verify_checksum(blkid_probe pr, const struct blkid_idmag *mag,
+		const struct erofs_super_block *sb)
+{
+	if (!(le32_to_cpu(sb->feature_compat) & EROFS_FEATURE_SB_CSUM))
+		return 1;
+
+	uint32_t expected = le32_to_cpu(sb->checksum);
+
+	size_t csummed_size = (1U << sb->blkszbits) - EROFS_SUPER_OFFSET;
+	unsigned char *csummed = blkid_probe_get_sb_buffer(pr, mag, csummed_size);
+	if (!csummed)
+		return 0;
+
+	memset(csummed + offsetof(struct erofs_super_block, checksum), 0, sizeof(uint32_t));
+	uint32_t csum = crc32c(~0L, csummed, csummed_size);
+
+	return blkid_probe_verify_csum(pr, csum, expected);
+}
+
 static int probe_erofs(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct erofs_super_block *sb;
@@ -44,6 +65,9 @@ static int probe_erofs(blkid_probe pr, const struct blkid_idmag *mag)
 	sb = blkid_probe_get_sb(pr, mag, struct erofs_super_block);
 	if (!sb)
 		return errno ? -errno : BLKID_PROBE_NONE;
+
+	if (!erofs_verify_checksum(pr, mag, sb))
+		return BLKID_PROBE_NONE;
 
 	if (sb->volume_name[0])
 		blkid_probe_set_label(pr, (unsigned char *)sb->volume_name,
