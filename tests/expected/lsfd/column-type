@@ -1,0 +1,8 @@
+    3    REG  REG
+ro-regular-file:ASSOC,STTYPE,TYPE: 0
+    3   UNKN pidfd
+pidfd:ASSOC,STTYPE,TYPE: 0
+    3   UNKN inotify
+inotify:ASSOC,STTYPE,TYPE: 0
+    3   SOCK UNIX
+socketpair:ASSOC,STTYPE,TYPE: 0

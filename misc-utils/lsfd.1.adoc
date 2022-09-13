@@ -112,6 +112,9 @@ Each column has a type. Types are surround by < and >.
 CAUTION{colon} The names and types of columns are not stable yet.
 They may be changed in the future releases.
 
+AINODECLASS <``string``>::
+Class of anonymous inode.
+
 ASSOC <``string``>::
 Association between file and process.
 
@@ -161,6 +164,18 @@ User ID number of the file's owner.
 INODE <``number``>::
 Inode number.
 
+KNAME <``string``>::
+//
+// It seems that the manpage backend of asciidoctor has limitations
+// about emitting text with nested face specifications like:
+//
+//   `_u_` p
+//
+// Not only u but also p is decorated with underline.
+//
+Raw file name extracted from
+from ``/proc/``_pid_``/fd/``_fd_ or ``/proc/``_pid_``/map_files/``_region_.
+
 KTHREAD <``boolean``>::
 Whether the process is a kernel thread or not.
 
@@ -180,22 +195,12 @@ MODE <``string``>::
 Access mode (rwx).
 
 NAME <``string``>::
-Name of the file.
-//
-// It seems that the manpage backend of asciidoctor has limitations
-// about emitting text with nested face specifications like:
-//
-//   `_u_` p
-//
-// Not only u but also p is decorated with underline.
-//
-For the most of all files, *lsfd* extracts their names
-from ``/proc/``_pid_``/fd/``_fd_ or ``/proc/``_pid_``/map_files/``_region_.
+Cooked version of KNAME. It is mostly same as KNAME.
 +
 Some files have special formats and information sources:
 +
 pidfd:::
-pidfd: pid=_TARGET-PID_ comm=_TARGET-COMMAND_ nspid=_TARGET-NSPIDS_
+pid=_TARGET-PID_ comm=_TARGET-COMMAND_ nspid=_TARGET-NSPIDS_
 +
 *lsfd* extracts _TARGET-PID_ and _TARGET-NSPIDS_ from
 ``/proc/``_pid_``/fdinfo/``_fd_.
@@ -212,6 +217,28 @@ Block device name resolved by `/proc/partition`.
 PID <``number``>::
 PID of the process opening the file.
 
+PIDFD.COMM <``string``>::
+Command of the process targeted by the pidfd.
+
+PIDFD.NSPID <``string``>::
+Value of NSpid field in ``/proc/``_pid_``/fdinfo/``_fd_ of the pidfd.
++
+Quoted from kernel/fork.c of Linux source tree:
++
+____
+If pid namespaces are supported then this function will also print
+the pid of a given pidfd refers to for all descendant pid namespaces
+starting from the current pid namespace of the instance, i.e. the
+Pid field and the first entry in the NSpid field will be identical.
+...
+Note that this differs from the Pid and NSpid fields in
+/proc/<pid>/status where Pid and NSpid are always shown relative to
+the  pid namespace of the procfs instance.
+____
+
+PIDFD.PID <``number``>::
+PID of the process targeted by the pidfd.
+
 POS <``number``>::
 File position.
 
@@ -227,11 +254,16 @@ File size.
 SOURCE <``string``>::
 File system, partition, or device containing the file.
 
+STTYPE <``string``>::
+Raw file types returned from stat(2): BLK, CHR, DIR, FIFO, LINK, REG, SOCK, or UNKN.
+
 TID <``number``>::
 Thread ID of the process opening the file.
 
 TYPE <``string``>::
-File types: BLK, CHR, DIR, FIFO, LINK, REG, SOCK, or UNKN.
+Cooked version of STTYPE. It is same as STTYPE with exceptions.
+For SOCK, print the value for PROTONAME.
+For UNKN, print the value for AINODECLASS if SOURCE is anon_inodefs.
 
 UID <``number``>::
 User ID number.
@@ -476,6 +508,7 @@ mailto:kzak@redhat.com[Karel Zak]
 *lsof*(8)
 *pidof*(1)
 *proc*(5)
+*stat*(2)
 
 include::man-common/bugreports.adoc[]
 

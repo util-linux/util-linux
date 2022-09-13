@@ -1,0 +1,4 @@
+    3   UNKN       pidfd
+pidfd:ASSOC,STTYPE,AINODECLASS: 0
+    3   UNKN     inotify
+inotify:ASSOC,STTYPE,AINODECLASS: 0

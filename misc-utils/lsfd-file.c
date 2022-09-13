@@ -121,11 +121,13 @@ static bool file_fill_column(struct proc *proc,
 		    && scols_line_set_data(ln, column_index, proc->command))
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
+	case COL_KNAME:
 	case COL_NAME:
 		if (file->name
 		    && scols_line_set_data(ln, column_index, file->name))
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
+	case COL_STTYPE:
 	case COL_TYPE:
 		ftype = file->stat.st_mode & S_IFMT;
 		if (scols_line_set_data(ln, column_index, strftype(ftype)))

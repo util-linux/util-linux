@@ -32,7 +32,15 @@ struct unkn {
 };
 
 struct anon_ops {
+	const char *class;
 	char * (*get_name)(struct unkn *);
+	/* Return true is handled the column. */
+	bool (*fill_column)(struct proc *,
+			    struct unkn *,
+			    struct libscols_line *,
+			    int,
+			    size_t,
+			    char **str);
 	void (*init)(struct unkn *);
 	void (*free)(struct unkn *);
 	int (*handle_fdinfo)(struct unkn *, const char *, const char *);
@@ -41,7 +49,26 @@ struct anon_ops {
 static struct anon_ops anon_generic_ops;
 static struct anon_ops anon_pidfd_ops;
 
-static bool unkn_fill_column(struct proc *proc __attribute__((__unused__)),
+static char * anon_get_class(struct unkn *unkn)
+{
+	char *name;
+
+	if (unkn->anon_ops->class)
+		return strdup(unkn->anon_ops->class);
+
+	/* See unkn_init_content() */
+	name = ((struct file *)unkn)->name + 11;
+	/* Does it have the form anon_inode:[class]? */
+	if (*name == '[') {
+		size_t len = strlen(name + 1);
+		if (*(name + 1 + len - 1) == ']')
+			return strndup(name + 1, len - 1);
+	}
+
+	return strdup(name);
+}
+
+static bool unkn_fill_column(struct proc *proc,
 			     struct file *file,
 			     struct libscols_line *ln,
 			     int column_id,
@@ -59,9 +86,15 @@ static bool unkn_fill_column(struct proc *proc __attribute__((__unused__)),
 		}
 		return false;
 	case COL_TYPE:
-		if (scols_line_set_data(ln, column_index, "UNKN"))
-			err(EXIT_FAILURE, _("failed to add output data"));
-		return true;
+		if (!unkn->anon_ops)
+			return false;
+		/* FALL THROUGH */
+	case COL_AINODECLASS:
+		if (unkn->anon_ops) {
+			str = anon_get_class(unkn);
+			break;
+		}
+		return false;
 	case COL_SOURCE:
 		if (unkn->anon_ops) {
 			str = strdup("anon_inodefs");
@@ -69,6 +102,11 @@ static bool unkn_fill_column(struct proc *proc __attribute__((__unused__)),
 		}
 		return false;
 	default:
+		if (unkn->anon_ops && unkn->anon_ops->fill_column) {
+			if (unkn->anon_ops->fill_column(proc, unkn, ln,
+							column_id, column_index, &str))
+				break;
+		}
 		return false;
 	}
 
@@ -138,7 +176,7 @@ static char *anon_pidfd_get_name(struct unkn *unkn)
 	if (proc)
 		comm = proc->command;
 
-	xasprintf(&str, "pidfd: pid=%d comm=%s nspid=%s",
+	xasprintf(&str, "pid=%d comm=%s nspid=%s",
 		  data->pid,
 		  comm? comm: "",
 		  data->nspid? data->nspid: "");
@@ -178,8 +216,45 @@ static int anon_pidfd_handle_fdinfo(struct unkn *unkn, const char *key, const ch
 	return 0;
 }
 
+static bool anon_pidfd_fill_column(struct proc *proc  __attribute__((__unused__)),
+				   struct unkn *unkn,
+				   struct libscols_line *ln __attribute__((__unused__)),
+				   int column_id,
+				   size_t column_index __attribute__((__unused__)),
+				   char **str)
+{
+	struct anon_pidfd_data *data = (struct anon_pidfd_data *)unkn->anon_data;
+
+	switch(column_id) {
+	case COL_PIDFD_COMM: {
+		struct proc *pidfd_proc = get_proc(data->pid);
+		char *pidfd_comm = NULL;
+		if (pidfd_proc)
+			pidfd_comm = pidfd_proc->command;
+		if (pidfd_comm) {
+			*str = strdup(pidfd_comm);
+			return true;
+		}
+		break;
+	}
+	case COL_PIDFD_NSPID:
+		if (data->nspid) {
+			*str = strdup(data->nspid);
+			return true;
+		}
+		break;
+	case COL_PIDFD_PID:
+		xasprintf(str, "%d", (int)data->pid);
+		return true;
+	}
+
+	return false;
+}
+
 static struct anon_ops anon_pidfd_ops = {
+	.class = "pidfd",
 	.get_name = anon_pidfd_get_name,
+	.fill_column = anon_pidfd_fill_column,
 	.init = anon_pidfd_init,
 	.free = anon_pidfd_free,
 	.handle_fdinfo = anon_pidfd_handle_fdinfo,
@@ -189,7 +264,9 @@ static struct anon_ops anon_pidfd_ops = {
  * generic (fallback implementation)
  */
 static struct anon_ops anon_generic_ops = {
+	.class = NULL,
 	.get_name = NULL,
+	.fill_column = NULL,
 	.init = NULL,
 	.free = NULL,
 	.handle_fdinfo = NULL,

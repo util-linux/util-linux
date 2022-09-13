@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/inotify.h>
 #include <sys/mman.h>
 #include <sys/prctl.h>
 #include <sys/socket.h>
@@ -697,6 +698,30 @@ static void make_pidfd(const struct factory *factory, struct fdesc fdescs[], pid
 	};
 }
 
+static void make_inotify_fd(const struct factory *factory _U_, struct fdesc fdescs[], pid_t * child _U_,
+			    int argc _U_, char ** argv _U_)
+{
+	int fd = inotify_init();
+	if (fd < 0)
+		err(EXIT_FAILURE, "failed in inotify_init()");
+
+	if (fd != fdescs[0].fd) {
+		if (dup2(fd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(fd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", fd, fdescs[0].fd);
+		}
+		close(fd);
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL
+	};
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -874,7 +899,6 @@ static const struct factory factories[] = {
 		},
 	},
 	{
-
 		.name = "pidfd",
 		.desc = "pidfd returned from pidfd_open(2)",
 		.priv = false,
@@ -889,6 +913,18 @@ static const struct factory factories[] = {
 				.desc = "the pid of the target process",
 				.defv.integer = 1,
 			},
+			PARAM_END
+		},
+	},
+	{
+		.name = "inotify",
+		.desc = "inotify fd returned from inotify_init(2)",
+		.priv = false,
+		.N    = 1,
+		.EX_N = 0,
+		.fork = false,
+		.make = make_inotify_fd,
+		.params = (struct parameter []) {
 			PARAM_END
 		},
 	},

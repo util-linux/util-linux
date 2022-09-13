@@ -15,35 +15,44 @@
 # GNU General Public License for more details.
 #
 TS_TOPDIR="${0%/*}/../.."
-TS_DESC="mmap'ed AF_PACKET socket"
+TS_DESC="NAME and KNAME column"
 
-. $TS_TOPDIR/functions.sh
+. "$TS_TOPDIR"/functions.sh
 ts_init "$*"
-ts_skip_nonroot
-
-. $TS_SELF/lsfd-functions.bash
 
 ts_check_test_command "$TS_CMD_LSFD"
-
 ts_check_test_command "$TS_HELPER_MKFDS"
+ts_check_prog "sed"
 
 ts_cd "$TS_OUTDIR"
 
 PID=
 FD=3
-EXPR=
-INTERFACE=lo
+EXPR="(FD == 3)"
 
 {
-    coproc MKFDS { "$TS_HELPER_MKFDS" mapped-packet-socket $FD interface=${INTERFACE}; }
-    if read -u ${MKFDS[0]} PID; then
-	EXPR='(ASSOC == "shm") and (STTYPE == "SOCK") and (MODE == "-w-")'
-	${TS_CMD_LSFD} -p "$PID" -n -o PROTONAME -Q "${EXPR}"
-	echo 'PROTONAME': $?
-    fi
+    for C in ro-regular-file pidfd socketpair; do
+	coproc MKFDS {
+	    argv=()
+	    case $C in
+		socketpair)
+		    argv[0]="$((FD + 1))"
+		    argv[1]="socktype=DGRAM"
+	    esac
+	    "$TS_HELPER_MKFDS" $C $FD "${argv[@]}"
+	}
+	if read -r -u "${MKFDS[0]}" PID; then
+	    ${TS_CMD_LSFD} -n -o ASSOC,KNAME,NAME -p "${PID}" -Q "${EXPR}" | {
+		# Replace the unpredictable an inode number for the socket
+		# with "INODENUM".
+		sed -e 's/\[[0-9]\+\]/[INODENUM]/g'
+	    }
+	    echo "$C"':ASSOC,KNAME,NAME': $?
 
-    kill -CONT ${PID}
-    wait ${MKFDS_PID}
-} > $TS_OUTPUT 2>&1
+	    kill -CONT "${PID}"
+	    wait "${MKFDS_PID}"
+	fi
+    done
+} > "$TS_OUTPUT" 2>&1
 
 ts_finalize
