@@ -114,6 +114,47 @@ static struct exfat_entry_label *find_label(blkid_probe pr,
 	return NULL;
 }
 
+/* From https://docs.microsoft.com/en-us/windows/win32/fileio/exfat-specification#34-main-and-backup-boot-checksum-sub-regions */
+static uint32_t exfat_boot_checksum(unsigned char *sectors,
+				    size_t sector_size)
+{
+	uint32_t n_bytes = sector_size * 11;
+	uint32_t checksum = 0;
+
+	for (size_t i = 0; i < n_bytes; i++) {
+		if ((i == 106) || (i == 107) || (i == 112))
+			continue;
+
+		checksum = ((checksum & 1) ? 0x80000000 : 0) + (checksum >> 1)
+			+ (uint32_t) sectors[i];
+	}
+
+	return checksum;
+}
+
+static int exfat_validate_checksum(blkid_probe pr,
+		const struct exfat_super_block *sb)
+{
+	size_t sector_size = BLOCK_SIZE(sb);
+	/* 11 sectors will be checksummed, the 12th contains the expected */
+	unsigned char *data = blkid_probe_get_buffer(pr, 0, sector_size * 12);
+	if (!data)
+		return 0;
+
+	uint32_t checksum = exfat_boot_checksum(data, sector_size);
+
+	/* The expected checksum is repeated, check all of them */
+	for (size_t i = 0; i < sector_size / sizeof(uint32_t); i++) {
+		size_t offset = sector_size * 11 + i * 4;
+		uint32_t *expected_addr = (uint32_t *) &data[offset];
+		uint32_t expected = le32_to_cpu(*expected_addr);
+		if (!blkid_probe_verify_csum(pr, checksum, expected))
+			return 0;
+	};
+
+	return 1;
+}
+
 static int probe_exfat(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct exfat_super_block *sb;
@@ -122,6 +163,9 @@ static int probe_exfat(blkid_probe pr, const struct blkid_idmag *mag)
 	sb = blkid_probe_get_sb(pr, mag, struct exfat_super_block);
 	if (!sb || !CLUSTER_SIZE(sb))
 		return errno ? -errno : BLKID_PROBE_NONE;
+
+	if (!exfat_validate_checksum(pr, sb))
+		return BLKID_PROBE_NONE;
 
 	label = find_label(pr, sb);
 	if (label)
