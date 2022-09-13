@@ -52,10 +52,12 @@ struct bcachefs_sb_field_members {
 enum bcachefs_sb_csum_type {
 	BCACHEFS_SB_CSUM_TYPE_NONE = 0,
 	BCACHEFS_SB_CSUM_TYPE_CRC32C = 1,
+	BCACHEFS_SB_CSUM_TYPE_CRC64 = 2,
 };
 
 union bcachefs_sb_csum {
 	uint32_t crc32c;
+	uint64_t crc64;
 	uint8_t raw[16];
 } __attribute__((packed));
 
@@ -204,6 +206,10 @@ static int bcachefs_validate_checksum(blkid_probe pr, const struct bcachefs_supe
 		case BCACHEFS_SB_CSUM_TYPE_CRC32C: {
 			uint32_t crc = crc32c(~0LL, checksummed_data_start, checksummed_data_size) ^ ~0LL;
 			return blkid_probe_verify_csum(pr, crc, le32_to_cpu(bcs->csum.crc32c));
+		}
+		case BCACHEFS_SB_CSUM_TYPE_CRC64: {
+			uint64_t crc = ul_crc64_we(checksummed_data_start, checksummed_data_size);
+			return blkid_probe_verify_csum(pr, crc, le64_to_cpu(bcs->csum.crc64));
 		}
 		default:
 			DBG(LOWPROBE, ul_debug("bcachefs: unknown checksum type %d, ignoring.", checksum_type));
