@@ -19,6 +19,7 @@
 #include <stdint.h>
 
 #include "superblocks.h"
+#include "crc32c.h"
 
 struct xfs_super_block {
 	uint32_t	sb_magicnum;	/* magic number == XFS_SB_MAGIC */
@@ -106,6 +107,9 @@ struct xfs_super_block {
 #define XFS_MIN_DBLOCKS(s) ((uint64_t)((s)->sb_agcount - 1) *	\
 			 (s)->sb_agblocks + XFS_MIN_AG_BLOCKS)
 
+#define XFS_SB_VERSION_MOREBITSBIT	0x8000
+#define XFS_SB_VERSION2_CRCBIT		0x00000100
+
 
 static void sb_from_disk(struct xfs_super_block *from,
 			 struct xfs_super_block *to)
@@ -166,7 +170,8 @@ static void sb_from_disk(struct xfs_super_block *from,
 	to->sb_rrmapino = be64_to_cpu(from->sb_rrmapino);
 }
 
-static int xfs_verify_sb(struct xfs_super_block *ondisk)
+static int xfs_verify_sb(struct xfs_super_block *ondisk, blkid_probe pr,
+		const struct blkid_idmag *mag)
 {
 	struct xfs_super_block sb, *sbp = &sb;
 
@@ -199,7 +204,20 @@ static int xfs_verify_sb(struct xfs_super_block *ondisk)
 	    sbp->sb_dblocks < XFS_MIN_DBLOCKS(sbp))
 		return 0;
 
-	/* TODO: version 5 has also checksum CRC32, maybe we can check it too */
+	if ((sbp->sb_versionnum & 0x0f) == 5) {
+		if (!(sbp->sb_versionnum | XFS_SB_VERSION_MOREBITSBIT))
+			return 0;
+		if (!(sbp->sb_features2 | XFS_SB_VERSION2_CRCBIT))
+			return 0;
+		uint32_t expected = sbp->sb_crc;
+		unsigned char *csummed = blkid_probe_get_sb_buffer(
+				pr, mag, sbp->sb_sectsize);
+		ondisk->sb_crc = 0;
+		uint32_t crc = crc32c(~0LL, csummed, sbp->sb_sectsize);
+		crc = bswap_32(crc ^ ~0LL);
+		if (!blkid_probe_verify_csum(pr, crc, expected))
+			return 0;
+	}
 
 	return 1;
 }
@@ -221,7 +239,7 @@ static int probe_xfs(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!xs)
 		return errno ? -errno : 1;
 
-	if (!xfs_verify_sb(xs))
+	if (!xfs_verify_sb(xs, pr, mag))
 		return 1;
 
 	if (*xs->sb_fname != '\0')
