@@ -55,9 +55,32 @@ struct xfs_super_block {
 	uint64_t	sb_ifree;	/* free inodes */
 	uint64_t	sb_fdblocks;	/* free data blocks */
 	uint64_t	sb_frextents;	/* free realtime extents */
+	uint64_t	sb_uquotino;	/* inode for user quotas */
+	uint64_t	sb_gquotino;	/* inode for group or project quotas */
+	uint16_t	sb_qflags;	/* quota flags */
+	uint8_t		sb_flags;	/* misc flags */
+	uint8_t		sb_shared_vn;	/* reserved, zeroed */
+	uint32_t	sb_inoalignmt;	/* inode alignment */
+	uint32_t	sb_unit;	/* stripe or raid unit */
+	uint32_t	sb_width;	/* stripe or raid width */
+	uint8_t		sb_dirblklog;	/* directory block allocation granularity */
+	uint8_t		sb_logsectlog;	/* log sector sector size */
+	uint16_t	sb_logsectsize;	/* log sector size */
+	uint32_t	sb_logsunit;	/* log device stripe or raid unit */
+	uint32_t	sb_features2;	/* additional version flags */
+	uint32_t	sb_bad_features2;	/* mirror of sb_features2 */
 
-	/* this is not all... but enough for libblkid */
-
+	/* version 5 fields */
+	uint32_t	sb_features_compat;		/* rw compatible flags */
+	uint32_t	sb_features_ro_compat;		/* ro compatible flags */
+	uint32_t	sb_features_incompat;		/* rw incompatible flags */
+	uint32_t	sb_features_log_incompat;	/* rw log incompatible flags */
+	uint32_t	sb_crc;				/* superblock checksum */
+	uint32_t	sb_spino_align;			/* sparse inode alignment */
+	uint64_t	sb_pquotino;			/* project quote inode */
+	uint64_t	sb_lsn;			/* superblock update sequence number */
+	unsigned char	sb_meta_uuid[16]; 	/* superblock meta uuid */
+	uint64_t	sb_rrmapino;		/* realtime reversemapping inode */
 } __attribute__((packed));
 
 #define XFS_MIN_BLOCKSIZE_LOG	9	/* i.e. 512 bytes */
@@ -118,6 +141,29 @@ static void sb_from_disk(struct xfs_super_block *from,
 	to->sb_ifree = be64_to_cpu(from->sb_ifree);
 	to->sb_fdblocks = be64_to_cpu(from->sb_fdblocks);
 	to->sb_frextents = be64_to_cpu(from->sb_frextents);
+	to->sb_uquotino = be64_to_cpu(from->sb_uquotino);
+	to->sb_gquotino = be64_to_cpu(from->sb_gquotino);
+	to->sb_qflags = be16_to_cpu(from->sb_qflags);
+	to->sb_flags = from-> sb_flags;
+	to->sb_shared_vn = from-> sb_shared_vn;
+	to->sb_inoalignmt = be32_to_cpu(from->sb_inoalignmt);
+	to->sb_unit = be32_to_cpu(from->sb_unit);
+	to->sb_width = be32_to_cpu(from->sb_width);
+	to->sb_dirblklog = from-> sb_dirblklog;
+	to->sb_logsectlog = from-> sb_logsectlog;
+	to->sb_logsectsize = be16_to_cpu(from->sb_logsectsize);
+	to->sb_logsunit = be32_to_cpu(from->sb_logsunit);
+	to->sb_features2 = be32_to_cpu(from->sb_features2);
+	to->sb_bad_features2 = be32_to_cpu(from->sb_bad_features2);
+	to->sb_features_compat = be32_to_cpu(from->sb_features_compat);
+	to->sb_features_ro_compat = be32_to_cpu(from->sb_features_ro_compat);
+	to->sb_features_incompat = be32_to_cpu(from->sb_features_incompat);
+	to->sb_features_log_incompat = be32_to_cpu(from->sb_features_log_incompat);
+	to->sb_crc = be32_to_cpu(from->sb_crc);
+	to->sb_spino_align = be32_to_cpu(from->sb_spino_align);
+	to->sb_pquotino = be64_to_cpu(from->sb_pquotino);
+	to->sb_lsn = be64_to_cpu(from->sb_lsn);
+	to->sb_rrmapino = be64_to_cpu(from->sb_rrmapino);
 }
 
 static int xfs_verify_sb(struct xfs_super_block *ondisk)
