@@ -12,6 +12,7 @@
 #include <stdio.h>
 
 #include "superblocks.h"
+#include "crc64.h"
 
 #define SB_LABEL_SIZE      32
 #define SB_JOURNAL_BUCKETS 256U
@@ -41,6 +42,19 @@ struct bcache_super_block {
 #define BCACHE_SB_KBOFF     (BCACHE_SB_OFF >> 10)
 /* magic string offset within super block */
 #define BCACHE_SB_MAGIC_OFF offsetof (struct bcache_super_block, magic)
+/* start of checksummed data within superblock */
+#define BCACHE_SB_CSUMMED_START 8
+/* end of checksummed data within superblock */
+#define BCACHE_SB_CSUMMED_END 208
+
+static int bcache_verify_checksum(blkid_probe pr, const struct blkid_idmag *mag,
+		const struct bcache_super_block *bcs)
+{
+	unsigned char *csummed = blkid_probe_get_sb_buffer(pr, mag, BCACHE_SB_CSUMMED_END);
+	uint64_t csum = ul_crc64_we(csummed + BCACHE_SB_CSUMMED_START,
+			BCACHE_SB_CSUMMED_END - BCACHE_SB_CSUMMED_START);
+	return blkid_probe_verify_csum(pr, csum, le64_to_cpu(bcs->csum));
+}
 
 static int probe_bcache (blkid_probe pr, const struct blkid_idmag *mag)
 {
@@ -49,6 +63,9 @@ static int probe_bcache (blkid_probe pr, const struct blkid_idmag *mag)
 	bcs = blkid_probe_get_sb(pr, mag, struct bcache_super_block);
 	if (!bcs)
 		return errno ? -errno : BLKID_PROBE_NONE;
+
+	if (!bcache_verify_checksum(pr, mag, bcs))
+		return BLKID_PROBE_NONE;
 
 	if (le64_to_cpu(bcs->offset) != BCACHE_SB_OFF / 512)
 		return BLKID_PROBE_NONE;

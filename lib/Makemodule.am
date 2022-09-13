@@ -18,6 +18,7 @@ libcommon_la_SOURCES = \
 	lib/color-names.c \
 	lib/crc32.c \
 	lib/crc32c.c \
+	lib/crc64.c \
 	lib/c_strtod.c \
 	lib/encode.c \
 	lib/env.c \
