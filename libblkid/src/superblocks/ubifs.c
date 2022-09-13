@@ -11,6 +11,7 @@
 #include <stdint.h>
 
 #include "superblocks.h"
+#include "crc32.h"
 
 /*
  * struct ubifs_ch - common header node.
@@ -93,6 +94,15 @@ struct ubifs_sb_node {
 	uint8_t padding2[3968];
 } __attribute__ ((packed));
 
+static int ubifs_verify_csum(blkid_probe pr, const struct ubifs_sb_node *sb)
+{
+	size_t csummed_offset = offsetof(struct ubifs_ch, sqnum);
+	uint32_t crc = ul_crc32(~0LL,
+			(unsigned char *) sb + csummed_offset,
+			sizeof(*sb) - csummed_offset);
+	return blkid_probe_verify_csum(pr, crc, le32_to_cpu(sb->ch.crc));
+}
+
 static int probe_ubifs(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct ubifs_sb_node *sb;
@@ -100,6 +110,9 @@ static int probe_ubifs(blkid_probe pr, const struct blkid_idmag *mag)
 	sb = blkid_probe_get_sb(pr, mag, struct ubifs_sb_node);
 	if (!sb)
 		return errno ? -errno : 1;
+
+	if (!ubifs_verify_csum(pr, sb))
+		return 1;
 
 	blkid_probe_set_uuid(pr, sb->uuid);
 	blkid_probe_sprintf_version(pr, "w%dr%d",
