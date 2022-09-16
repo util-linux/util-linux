@@ -1045,6 +1045,8 @@ int su_main(int argc, char **argv, int mode)
 	bool use_gid = false;
 	gid_t gid = 0;
 
+	const int nargs = argc;
+
 	static const struct option longopts[] = {
 		{"command", required_argument, NULL, 'c'},
 		{"session-command", required_argument, NULL, 'C'},
@@ -1075,6 +1077,19 @@ int su_main(int argc, char **argv, int mode)
 
 	su_init_debug();
 	su->conv.appdata_ptr = (void *) su;
+
+	/* in case "-" or "--" is supplied as a flag, stop parsing prematurely */
+	/* to avoid getopt interpreting flags that should be passed to the new */
+	/* command as our own flags */
+	int pass_flags_on = false;
+	for (int i = 0; i<argc; ++i) {
+		printf("i: %d, argc: %i, argv[i]: '%s'\n", i, argc, argv[i]);
+		if ((0==strcmp(argv[i], "-")) || (0==strcmp(argv[i], "--"))) {
+			argc = i;
+			su->simulate_login = true;
+			pass_flags_on = true;
+		}
+	}
 
 	while ((optc =
 		getopt_long(argc, argv, "c:fg:G:lmpPs:u:hVw:", longopts,
@@ -1150,9 +1165,8 @@ int su_main(int argc, char **argv, int mode)
 
 	su->restricted = is_not_root();
 
-	if (optind < argc && !strcmp(argv[optind], "-")) {
-		su->simulate_login = true;
-		++optind;
+	if (pass_flags_on) {
+		optind += 2;
 	}
 
 	if (su->simulate_login && !su->change_environment) {
@@ -1285,7 +1299,7 @@ int su_main(int argc, char **argv, int mode)
 	(void) pam_end(su->pamh, PAM_SUCCESS|PAM_DATA_SILENT);
 
 	if (shell)
-		run_shell(su, shell, command, argv + optind, max(0, argc - optind));
+		run_shell(su, shell, command, argv + optind, max(0, nargs - optind));
 
 	execvp(argv[optind], &argv[optind]);
 	err(EXIT_FAILURE, _("failed to execute %s"), argv[optind]);
