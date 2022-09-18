@@ -62,6 +62,8 @@ static int f2fs_validate_checksum(blkid_probe pr, size_t sb_off,
 	uint32_t csum_off = le32_to_cpu(sb->checksum_offset);
 	if (!csum_off)
 		return 1;
+	if (csum_off + sizeof(uint32_t) > 4096)
+		return 0;
 
 	unsigned char *csum_data = blkid_probe_get_buffer(pr,
 			sb_off + csum_off, sizeof(uint32_t));
