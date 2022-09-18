@@ -74,7 +74,7 @@ static int f2fs_validate_checksum(blkid_probe pr, size_t sb_off,
 	if (!csummed)
 		return 0;
 
-	uint32_t csum = ul_crc32(be32_to_cpu(0x1020F5F2), csummed, csum_off);
+	uint32_t csum = ul_crc32(0xF2F52010, csummed, csum_off);
 
 	return blkid_probe_verify_csum(pr, csum, expected);
 }
