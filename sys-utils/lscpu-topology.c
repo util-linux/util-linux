@@ -106,7 +106,7 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 		struct lscpu_cpu *cpu = cxt->cpus[i];
 		cpu_set_t *thread_siblings = NULL, *core_siblings = NULL;
 		cpu_set_t *book_siblings = NULL, *drawer_siblings = NULL;
-		int num, n;
+		int num, n = 0;
 
 		if (!cpu || cpu->type != ct)
 			continue;
@@ -126,7 +126,8 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 		ul_path_readf_cpuset(sys, &drawer_siblings, cxt->maxcpus,
 					"cpu%d/topology/drawer_siblings", num);
 
-		n = CPU_COUNT_S(cxt->setsize, thread_siblings);
+		if (thread_siblings)
+			n = CPU_COUNT_S(cxt->setsize, thread_siblings);
 		if (!n)
 			n = 1;
 		if (n > nthreads)
@@ -140,9 +141,9 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 		 * E.g. completely virtualized architectures like s390 may
 		 * have multiple sockets of different sizes.
 		 */
-		if (!ct->coremaps)
+		if (!ct->coremaps && thread_siblings)
 			ct->coremaps = xcalloc(npos, sizeof(cpu_set_t *));
-		if (!ct->socketmaps)
+		if (!ct->socketmaps && core_siblings)
 			ct->socketmaps = xcalloc(npos, sizeof(cpu_set_t *));
 		if (!ct->bookmaps && book_siblings)
 			ct->bookmaps = xcalloc(npos, sizeof(cpu_set_t *));
@@ -150,9 +151,10 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 			ct->drawermaps = xcalloc(npos, sizeof(cpu_set_t *));
 
 		/* add to topology maps */
-		add_cpuset_to_array(ct->coremaps, &ct->ncores, thread_siblings, cxt->setsize);
-		add_cpuset_to_array(ct->socketmaps, &ct->nsockets, core_siblings, cxt->setsize);
-
+		if (thread_siblings)
+			add_cpuset_to_array(ct->coremaps, &ct->ncores, thread_siblings, cxt->setsize);
+		if (core_siblings)
+			add_cpuset_to_array(ct->socketmaps, &ct->nsockets, core_siblings, cxt->setsize);
 		if (book_siblings)
 			add_cpuset_to_array(ct->bookmaps, &ct->nbooks, book_siblings, cxt->setsize);
 		if (drawer_siblings)
