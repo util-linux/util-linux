@@ -3,6 +3,8 @@
  *
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License
+ *
+ * https://www.kernel.org/doc/html/latest/filesystems/erofs.html
  */
 #include <stddef.h>
 #include <string.h>
@@ -42,18 +44,22 @@ struct erofs_super_block {
 static int erofs_verify_checksum(blkid_probe pr, const struct blkid_idmag *mag,
 		const struct erofs_super_block *sb)
 {
+	uint32_t expected, csum;
+	size_t csummed_size;
+	unsigned char *csummed;
+
 	if (!(le32_to_cpu(sb->feature_compat) & EROFS_FEATURE_SB_CSUM))
 		return 1;
 
-	uint32_t expected = le32_to_cpu(sb->checksum);
+	expected = le32_to_cpu(sb->checksum);
+	csummed_size = (1U << sb->blkszbits) - EROFS_SUPER_OFFSET;
 
-	size_t csummed_size = (1U << sb->blkszbits) - EROFS_SUPER_OFFSET;
-	unsigned char *csummed = blkid_probe_get_sb_buffer(pr, mag, csummed_size);
+	csummed = blkid_probe_get_sb_buffer(pr, mag, csummed_size);
 	if (!csummed)
 		return 0;
 
 	memset(csummed + offsetof(struct erofs_super_block, checksum), 0, sizeof(uint32_t));
-	uint32_t csum = crc32c(~0L, csummed, csummed_size);
+	csum = crc32c(~0L, csummed, csummed_size);
 
 	return blkid_probe_verify_csum(pr, csum, expected);
 }
@@ -66,6 +72,10 @@ static int probe_erofs(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!sb)
 		return errno ? -errno : BLKID_PROBE_NONE;
 
+	/* EROFS is restricted to 4KiB block size */
+	if ((1U << sb->blkszbits) > 4096)
+		return BLKID_PROBE_NONE;
+
 	if (!erofs_verify_checksum(pr, mag, sb))
 		return BLKID_PROBE_NONE;
 
@@ -74,11 +84,8 @@ static int probe_erofs(blkid_probe pr, const struct blkid_idmag *mag)
 				      sizeof(sb->volume_name));
 
 	blkid_probe_set_uuid(pr, sb->uuid);
-
-	if (sb->blkszbits < 32){
-		blkid_probe_set_fsblocksize(pr, 1U << sb->blkszbits);
-		blkid_probe_set_block_size(pr, 1U << sb->blkszbits);
-	}
+	blkid_probe_set_fsblocksize(pr, 1U << sb->blkszbits);
+	blkid_probe_set_block_size(pr, 1U << sb->blkszbits);
 
 	return BLKID_PROBE_OK;
 }
