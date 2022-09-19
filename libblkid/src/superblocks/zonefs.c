@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include "superblocks.h"
+#include "crc32.h"
 
 #define ZONEFS_MAGIC		"SFOZ" /* 0x5a4f4653 'Z' 'O' 'F' 'S' */
 #define ZONEFS_MAGIC_SIZE	4
@@ -44,9 +45,17 @@ struct zonefs_super {
 	int32_t		s_perm;
 
 	/* Padding to 4096 bytes */
-	/* uint8_t		s_reserved[4020]; */
+	uint8_t		s_reserved[4020];
 
 } __attribute__ ((packed));
+
+static int zonefs_verify_csum(blkid_probe pr, struct zonefs_super *sb)
+{
+	uint32_t expected = le32_to_cpu(sb->s_crc);
+	sb->s_crc = 0;
+	uint32_t crc = ul_crc32(~0LL, (unsigned char *) sb, sizeof(*sb));
+	return blkid_probe_verify_csum(pr, crc, expected);
+}
 
 static int probe_zonefs(blkid_probe pr,
 		const struct blkid_idmag *mag  __attribute__((__unused__)))
@@ -58,6 +67,9 @@ static int probe_zonefs(blkid_probe pr,
 				       sizeof(struct zonefs_super));
 	if (!sb)
 		return errno ? -errno : 1;
+
+	if (!zonefs_verify_csum(pr, sb))
+		return 1;
 
 	if (sb->s_label[0])
 		blkid_probe_set_label(pr, (unsigned char *) sb->s_label,
