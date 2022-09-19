@@ -15,10 +15,6 @@
 #include "crc64.h"
 
 #define SB_LABEL_SIZE      32
-#define SB_JOURNAL_BUCKETS 256U
-
-#define node(i, j)         ((i)->d + (j))
-#define end(i)             node(i, le16_to_cpu((i)->keys))
 
 /*
  * The bcache_super_block is heavily simplified version of struct cache_sb in kernel.
@@ -72,6 +68,8 @@ static int probe_bcache (blkid_probe pr, const struct blkid_idmag *mag)
 
 	if (blkid_probe_set_uuid(pr, bcs->uuid) < 0)
 		return BLKID_PROBE_NONE;
+
+	blkid_probe_set_wiper(pr, 0, BCACHE_SB_OFF);
 
 	return BLKID_PROBE_OK;
 }
