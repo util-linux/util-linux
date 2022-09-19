@@ -282,8 +282,25 @@ void lsblk_unref_devtree(struct lsblk_devtree *tr)
 	}
 }
 
+static int has_root(struct lsblk_devtree *tr, struct lsblk_device *dev)
+{
+	struct lsblk_iter itr;
+	struct lsblk_device *x = NULL;
+
+	lsblk_reset_iter(&itr, LSBLK_ITER_FORWARD);
+
+	while (lsblk_devtree_next_root(tr, &itr, &x) == 0) {
+		if (x == dev)
+			return 1;
+	}
+	return 0;
+}
+
 int lsblk_devtree_add_root(struct lsblk_devtree *tr, struct lsblk_device *dev)
 {
+	if (has_root(tr, dev))
+		return 0;
+
 	if (!lsblk_devtree_has_device(tr, dev))
 		lsblk_devtree_add_device(tr, dev);
 
