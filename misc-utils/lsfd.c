@@ -277,31 +277,31 @@ static struct counter_spec default_counter_specs[] = {
 	},
 	{
 		.name = N_("regular files"),
-		.expr = "(FD >= 0) && (_TYPE == 'REG')",
+		.expr = "(FD >= 0) && (STTYPE == 'REG')",
 	},
 	{
 		.name = N_("directories"),
-		.expr = "(FD >= 0) && (_TYPE == 'DIR')",
+		.expr = "(FD >= 0) && (STTYPE == 'DIR')",
 	},
 	{
 		.name = N_("sockets"),
-		.expr = "(FD >= 0) && (_TYPE == 'SOCK')",
+		.expr = "(FD >= 0) && (STTYPE == 'SOCK')",
 	},
 	{
 		.name = N_("fifos/pipes"),
-		.expr = "(FD >= 0) && (_TYPE == 'FIFO')",
+		.expr = "(FD >= 0) && (STTYPE == 'FIFO')",
 	},
 	{
 		.name = N_("character devices"),
-		.expr = "(FD >= 0) && (_TYPE == 'CHR')",
+		.expr = "(FD >= 0) && (STTYPE == 'CHR')",
 	},
 	{
 		.name = N_("block devices"),
-		.expr = "(FD >= 0) && (_TYPE == 'BLK')",
+		.expr = "(FD >= 0) && (STTYPE == 'BLK')",
 	},
 	{
 		.name = N_("unknown types"),
-		.expr = "(FD >= 0) && (_TYPE == 'UNKN')",
+		.expr = "(FD >= 0) && (STTYPE == 'UNKN')",
 	}
 };
 
