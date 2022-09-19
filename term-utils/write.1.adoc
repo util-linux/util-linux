@@ -75,7 +75,7 @@ include::man-common/help-version.adoc[]
 
 == HISTORY
 
-A *write* command appeared in Version 6 AT&T UNIX.
+A *write* command appeared in Version 5 AT&T UNIX (Jun 1974).
 
 == SEE ALSO
 
