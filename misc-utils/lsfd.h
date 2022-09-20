@@ -75,6 +75,7 @@ enum {
 	COL_TID,
 	COL_TYPE,
 	COL_UID,		/* process */
+	COL_UNIX_PATH,
 	COL_USER,		/* process */
 	COL_FUID,		/* file */
 	COL_OWNER,		/* file */

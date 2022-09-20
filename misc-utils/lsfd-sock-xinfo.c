@@ -18,8 +18,14 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include <fcntl.h>		/* open(2) */
+#include <linux/net.h>		/* SS_* */
+#include <linux/un.h>		/* UNIX_PATH_MAX */
 #include <sched.h>		/* for setns(2) */
 #include <search.h>
+#include <stdint.h>
+#include <string.h>
+#include <sys/socket.h>		/* SOCK_* */
 
 #include "xalloc.h"
 #include "nls.h"
@@ -27,6 +33,8 @@
 
 #include "lsfd.h"
 #include "lsfd-sock.h"
+
+static void load_xinfo_from_proc_unix(ino_t netns_inode);
 
 static int self_netns_fd = -1;
 struct stat self_netns_sb;
@@ -60,9 +68,9 @@ static void mark_sock_xinfo_loaded(ino_t ino)
 		errx(EXIT_FAILURE, _("failed to allocate memory"));
 }
 
-static void load_sock_xinfo_no_nsswitch(ino_t netns __attribute__((__unused__)))
+static void load_sock_xinfo_no_nsswitch(ino_t netns)
 {
-	/* TODO: load files under /proc/ns */
+	load_xinfo_from_proc_unix(netns);
 }
 
 static void load_sock_xinfo_with_fd(int fd, ino_t netns)
@@ -165,6 +173,14 @@ static int xinfo_compare(const void *a, const void *b)
 	return 0;
 }
 
+static void add_sock_info(struct sock_xinfo *xinfo)
+{
+	struct sock_xinfo **tmp = tsearch(xinfo, &xinfo_tree, xinfo_compare);
+
+	if (tmp == NULL)
+		errx(EXIT_FAILURE, _("failed to allocate memory"));
+}
+
 struct sock_xinfo *get_sock_xinfo(ino_t netns_inode)
 {
 	struct sock_xinfo **xinfo = tfind(&netns_inode, &xinfo_tree, xinfo_compare);
@@ -177,4 +193,188 @@ struct sock_xinfo *get_sock_xinfo(ino_t netns_inode)
 bool is_nsfs_dev(dev_t dev)
 {
 	return (dev == self_netns_sb.st_dev);
+}
+
+static const char *sock_decode_type(uint16_t type)
+{
+	switch (type) {
+	case SOCK_STREAM:
+		return "stream";
+	case SOCK_DGRAM:
+		return "dgram";
+	case SOCK_RAW:
+		return "raw";
+	case SOCK_RDM:
+		return "rdm";
+	case SOCK_SEQPACKET:
+		return "seqpacket";
+	case SOCK_DCCP:
+		return "dccp";
+	case SOCK_PACKET:
+		return "packet";
+	default:
+		return "unknown";
+	}
+}
+
+/*
+ * Protocol specific code
+ */
+
+/*
+ * UNIX
+ */
+struct unix_xinfo {
+	struct sock_xinfo sock;
+	int acceptcon;	/* flags */
+	uint16_t type;
+	uint8_t  st;
+	char path[
+		  UNIX_PATH_MAX
+		  + 1		/* for @ */
+		  + 1		/* \0? */
+		  ];
+};
+
+static const char *unix_decode_state(uint8_t st)
+{
+	switch (st) {
+	case SS_FREE:
+		return "free";
+	case SS_UNCONNECTED:
+		return "unconnected";
+	case SS_CONNECTING:
+		return "connecting";
+	case SS_CONNECTED:
+		return "connected";
+	case SS_DISCONNECTING:
+		return "disconnecting";
+	default:
+		return "unknown";
+	}
+}
+
+static char *unix_get_name(struct sock_xinfo *sock_xinfo,
+			   struct sock *sock)
+{
+	struct unix_xinfo *ux = (struct unix_xinfo *)sock_xinfo;
+	const char *state = unix_decode_state(ux->st);
+	char *str = NULL;
+
+	if (sock->protoname && (strcmp(sock->protoname, "UNIX-STREAM") == 0))
+		xasprintf(&str, "state=%s%s%s",
+			  (ux->acceptcon)? "listen": state,
+			  *(ux->path)? " path=": "",
+			  *(ux->path)? ux->path: "");
+	else
+		xasprintf(&str, "state=%s%s%s type=%s",
+			  (ux->acceptcon)? "listen": state,
+			  *(ux->path)? " path=": "",
+			  *(ux->path)? ux->path: "",
+			  sock_decode_type(ux->type));
+	return str;
+}
+
+static char *unix_get_type(struct sock_xinfo *sock_xinfo,
+			   struct sock *sock __attribute__((__unused__)))
+{
+	const char *str;
+	struct unix_xinfo *ux = (struct unix_xinfo *)sock_xinfo;
+
+	str = sock_decode_type(ux->type);
+	return strdup(str);
+}
+
+static char *unix_get_state(struct sock_xinfo *sock_xinfo,
+			    struct sock *sock __attribute__((__unused__)))
+{
+	const char *str;
+	struct unix_xinfo *ux = (struct unix_xinfo *)sock_xinfo;
+
+	if (ux->acceptcon)
+		return strdup("listen");
+
+	str = unix_decode_state(ux->st);
+	return strdup(str);
+}
+
+static bool unix_fill_column(struct proc *proc __attribute__((__unused__)),
+			     struct sock_xinfo *sock_xinfo,
+			     struct sock *sock __attribute__((__unused__)),
+			     struct libscols_line *ln __attribute__((__unused__)),
+			     int column_id,
+			     size_t column_index __attribute__((__unused__)),
+			     char **str)
+{
+	struct unix_xinfo *ux = (struct unix_xinfo *)sock_xinfo;
+
+	switch(column_id) {
+	case COL_UNIX_PATH:
+		if (*ux->path) {
+			*str = strdup(ux->path);
+			return true;
+		}
+		break;
+	}
+
+	return false;
+}
+
+static struct sock_xinfo_class unix_xinfo_class = {
+	.class = "unix",
+	.get_name = unix_get_name,
+	.get_type = unix_get_type,
+	.get_state = unix_get_state,
+	.fill_column = unix_fill_column,
+	.free = NULL,
+};
+
+/* #define UNIX_LINE_LEN 54 + 21 + UNIX_LINE_LEN + 1 */
+#define UNIX_LINE_LEN 256
+static void load_xinfo_from_proc_unix(ino_t netns_inode)
+{
+	char line[UNIX_LINE_LEN];
+	FILE *unix_fp;
+
+	unix_fp = fopen("/proc/net/unix", "r");
+	if (!unix_fp)
+		return;
+
+	if (fgets(line, sizeof(line), unix_fp) == NULL)
+		goto out;
+	if (! (line[0] == 'N' && line[1] == 'u' && line[2] == 'm'))
+		/* Unexpected line */
+		goto out;
+
+	while (fgets(line, sizeof(line), unix_fp)) {
+		uint64_t flags;
+		uint32_t type;
+		unsigned int st;
+		unsigned long inode;
+		char path[1 + UNIX_PATH_MAX +1];
+		struct unix_xinfo *ux;
+
+		memset(path, 0, sizeof(path));
+		if (sscanf(line, "%*x: %*x %*x %lx %x %x %lu %s",
+			   &flags, &type, &st, &inode, path) < 4)
+			continue;
+
+		if (inode == 0)
+			continue;
+
+		ux = xmalloc(sizeof(struct unix_xinfo));
+		ux->sock.class = &unix_xinfo_class;
+		ux->sock.inode = (ino_t)inode;
+		ux->sock.netns_inode = netns_inode;
+
+		ux->acceptcon = !!flags;
+		ux->type = type;
+		ux->st = st;
+		strcpy(ux->path, path);
+
+		add_sock_info((struct sock_xinfo *)ux);
+	}
+
+ out:
+	fclose(unix_fp);
 }
