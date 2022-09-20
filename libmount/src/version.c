@@ -40,6 +40,7 @@ static const char *lib_features[] = {
 #endif
 #ifdef UL_HAVE_MOUNT_API
 	"idmapping",
+	"fd-based-mount",
 #endif
 #if !defined(NDEBUG)
 	"assert",	/* libc assert.h stuff */
