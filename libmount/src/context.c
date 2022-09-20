@@ -1701,7 +1701,7 @@ int mnt_context_get_mflags(struct libmnt_context *cxt, unsigned long *flags)
 	if (!ls)
 		return -ENOMEM;
 
-	return mnt_optlist_get_flags(ls, flags, cxt->map_userspace, 0);
+	return mnt_optlist_get_flags(ls, flags, cxt->map_linux, 0);
 }
 
 /**
