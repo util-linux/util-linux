@@ -29,6 +29,7 @@
 #include "debug.h"
 #include "buffer.h"
 #include "libmount.h"
+#include "mount-api-utils.h"
 
 /*
  * Debug
@@ -311,6 +312,7 @@ struct libmnt_hookset {
 
 /* built-in hooks */
 extern const struct libmnt_hookset hookset_mount_legacy;
+extern const struct libmnt_hookset hookset_mount;
 extern const struct libmnt_hookset hookset_mkdir;
 extern const struct libmnt_hookset hookset_subdir;
 extern const struct libmnt_hookset hookset_owner;
@@ -527,6 +529,7 @@ enum {
 
 extern int mnt_optlist_get_flags(struct libmnt_optlist *ls, unsigned long *flags,
                           const struct libmnt_optmap *map, unsigned int what);
+extern int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *attrs);
 extern int mnt_optlist_get_optstr(struct libmnt_optlist *ol, const char **optstr,
                         const struct libmnt_optmap *map, unsigned int what);
 extern int mnt_optlist_strdup_optstr(struct libmnt_optlist *ls, char **optstr,
@@ -537,6 +540,7 @@ extern int mnt_optlist_is_propagation_only(struct libmnt_optlist *ls);
 extern int mnt_optlist_is_remount(struct libmnt_optlist *ls);
 extern int mnt_optlist_is_recursive(struct libmnt_optlist *ls);
 extern int mnt_optlist_is_bind(struct libmnt_optlist *ls);
+extern int mnt_optlist_is_rbind(struct libmnt_optlist *ls);
 extern int mnt_optlist_is_move(struct libmnt_optlist *ls);
 extern int mnt_optlist_is_rdonly(struct libmnt_optlist *ls);
 extern int mnt_optlist_is_silent(struct libmnt_optlist *ls);
@@ -617,6 +621,14 @@ extern int mnt_update_already_done(struct libmnt_update *upd,
 #if __linux__
 /* btrfs.c */
 extern uint64_t btrfs_get_default_subvol_id(const char *path);
+#endif
+
+#ifdef UL_HAVE_MOUNT_API
+/* fsconfig/fsopen based stuff */
+struct libmnt_sysapi {
+	int	fd_fs;		/* FD from fsopen() or fspick() */
+	int	fd_tree;	/* FD from fsmount() or open_tree() */
+};
 #endif
 
 #endif /* _LIBMOUNT_PRIVATE_H */
