@@ -24,7 +24,10 @@
 #ifndef UTIL_LINUX_LSFD_SOCK_H
 #define UTIL_LINUX_LSFD_SOCK_H
 
+#include <stdbool.h>
 #include <sys/stat.h>
+
+#include "libsmartcols.h"
 
 /*
  * xinfo: eXtra inforation about sockets
@@ -36,8 +39,28 @@ struct sock_xinfo {
 	const struct sock_xinfo_class *class;
 };
 
+struct sock {
+	struct file file;
+	char *protoname;
+	struct sock_xinfo *xinfo;
+};
+
 struct sock_xinfo_class {
 	const char *class;
+	/* Methods for filling socket related columns */
+	char * (*get_name)(struct sock_xinfo *, struct sock *);
+	char * (*get_type)(struct sock_xinfo *, struct sock *);
+	char * (*get_state)(struct sock_xinfo *, struct sock *);
+	/* Method for class specific columns.
+	 * Return true when the method fills the column. */
+	bool (*fill_column)(struct proc *,
+			    struct sock_xinfo *,
+			    struct sock *,
+			    struct libscols_line *,
+			    int,
+			    size_t,
+			    char **str);
+
 	void (*free)(struct sock_xinfo *);
 };
 
