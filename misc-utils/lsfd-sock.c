@@ -27,11 +27,19 @@
 #include "libsmartcols.h"
 
 #include "lsfd.h"
+#include "lsfd-sock.h"
 
 struct sock {
 	struct file file;
 	char *protoname;
+	struct sock_xinfo *xinfo;
 };
+
+static void attach_sock_xinfo(struct file *file)
+{
+	struct sock *sock = (struct sock *)file;
+	sock->xinfo = get_sock_xinfo(file->stat.st_ino);
+}
 
 static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
 			     struct file *file,
@@ -110,10 +118,23 @@ static void free_sock_content(struct file *file)
 	}
 }
 
+static void initialize_sock_class(void)
+{
+	initialize_sock_xinfos();
+}
+
+static void finalize_sock_class(void)
+{
+	finalize_sock_xinfos();
+}
+
 const struct file_class sock_class = {
 	.super = &file_class,
 	.size = sizeof(struct sock),
 	.fill_column = sock_fill_column,
+	.attach_xinfo = attach_sock_xinfo,
 	.initialize_content = init_sock_content,
 	.free_content = free_sock_content,
+	.initialize_class = initialize_sock_class,
+	.finalize_class = finalize_sock_class,
 };

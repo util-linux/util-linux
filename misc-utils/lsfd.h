@@ -30,6 +30,7 @@
 #include <inttypes.h>
 
 #include "list.h"
+#include "path.h"
 #include "strutils.h"
 
 /*
@@ -145,6 +146,7 @@ struct file_class {
 			    int column_id,
 			    size_t column_index);
 	int  (*handle_fdinfo)(struct file *file, const char *key, const char* value);
+	void (*attach_xinfo)(struct file *file);
 	void (*initialize_content)(struct file *file);
 	void (*free_content)(struct file *file);
 	struct ipc_class *(*get_ipc_class)(struct file *file);
@@ -202,5 +204,11 @@ static inline void xstrputc(char **a, char c)
 	char b[] = {c, '\0'};
 	xstrappend(a, b);
 }
+
+/*
+ * Net namespace
+ */
+void load_sock_xinfo(struct path_cxt *pc, const char *name, ino_t netns);
+bool is_nsfs_dev(dev_t dev);
 
 #endif /* UTIL_LINUX_LSFD_H */

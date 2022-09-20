@@ -51,6 +51,8 @@ lsfd_sources = files (
   'lsfd-cdev.c',
   'lsfd-bdev.c',
   'lsfd-sock.c',
+  'lsfd-sock.h',
+  'lsfd-sock-xinfo.c',
   'lsfd-unkn.c',
   'lsfd-fifo.c',
 )
