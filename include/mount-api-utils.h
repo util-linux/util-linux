@@ -99,12 +99,12 @@ static inline int move_mount(int from_dfd, const char *from_pathname, int to_dfd
 #endif
 
 #ifndef HAVE_STRUCT_MOUNT_ATTR
-# include <linux/types.h>
+# include <inttypes.h>
 struct mount_attr {
-	__u64 attr_set;
-	__u64 attr_clr;
-	__u64 propagation;
-	__u64 userns_fd;
+	uint64_t attr_set;
+	uint64_t attr_clr;
+	uint64_t propagation;
+	uint64_t userns_fd;
 };
 #endif
 
