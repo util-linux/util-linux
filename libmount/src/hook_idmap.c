@@ -23,7 +23,6 @@
 #include "mountP.h"
 #include "strutils.h"
 #include "all-io.h"
-#include "mount-api-utils.h"
 #include "include/namespace.h"
 
 #ifdef HAVE_LINUX_NSFS_H
