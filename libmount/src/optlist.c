@@ -63,6 +63,7 @@ struct libmnt_optlist {
 	unsigned int	merged : 1,		/* don't care about MNT_OPTSRC_* */
 			is_remount : 1,
 			is_bind : 1,
+			is_rbind : 1,
 			is_rdonly : 1,
 			is_move : 1,
 			is_silent : 1,
@@ -194,7 +195,9 @@ int mnt_optlist_remove_opt(struct libmnt_optlist *ls, struct libmnt_opt *opt)
 			ls->propagation &= ~opt->ent->id;
 		else if (opt->ent->id == MS_REMOUNT)
 			ls->is_remount = 0;
-		else if (opt->ent->id & MS_BIND)	/* MS_BIND or MS_REC|MS_BIND */
+		else if (opt->ent->id == (MS_BIND|MS_REC))
+			ls->is_rbind = 0;
+		else if (opt->ent->id == MS_BIND)
 			ls->is_bind = 0;
 		else if (opt->ent->id == MS_RDONLY)
 			ls->is_rdonly = 0;
@@ -396,7 +399,9 @@ static struct libmnt_opt *optlist_new_opt(struct libmnt_optlist *ls,
 			ls->propagation |= ent->id;
 		else if (opt->ent->id == MS_REMOUNT)
 			ls->is_remount = 1;
-		else if (opt->ent->id & MS_BIND)	/* MS_BIND or MS_REC|MS_BIND */
+		else if (opt->ent->id == (MS_REC|MS_BIND))
+			ls->is_rbind = 1;
+		else if (opt->ent->id == MS_BIND)
 			ls->is_bind = 1;
 		else if (opt->ent->id == MS_RDONLY)
 			ls->is_rdonly = 1;
@@ -695,7 +700,9 @@ static struct optlist_cache *get_cache(	struct libmnt_optlist *ls,
 	return NULL;
 }
 
-/* like mnt_optstr_get_flags() */
+/*
+ * Returns flags (bit mask from options map entries).
+ */
 int mnt_optlist_get_flags(struct libmnt_optlist *ls, unsigned long *flags,
 			  const struct libmnt_optmap *map, unsigned int what)
 {
@@ -736,6 +743,41 @@ int mnt_optlist_get_flags(struct libmnt_optlist *ls, unsigned long *flags,
 	*flags = cache->flags;
 
 	DBG(OPTLIST, ul_debugobj(ls, "return flags 0x%08lx [map=%p]", *flags, map));
+	return 0;
+}
+
+/*
+ * Like mnt_optlist_get_flags() for VFS flags, but converts classic MS_* flags to
+ * new MOUNT_ATTR_*
+ */
+int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *attrs)
+{
+#ifdef UL_HAVE_MOUNT_API
+	int rc;
+	unsigned long flags = 0;
+
+	assert(ls);
+	assert(ls->linux_map);
+
+	rc = mnt_optlist_get_flags(ls, &flags, ls->linux_map, 0);
+	if (rc)
+		return rc;
+
+	if (flags & MS_RDONLY)
+		*attrs |= MOUNT_ATTR_RDONLY;
+	if (flags & MS_NOSUID)
+		*attrs |= MOUNT_ATTR_NOSUID;
+	if (flags & MS_NOEXEC)
+		*attrs |= MOUNT_ATTR_NOEXEC;
+	if (flags & MS_NODIRATIME)
+		*attrs |= MOUNT_ATTR_NODIRATIME;
+	if (flags & MS_RELATIME)
+		*attrs |= MOUNT_ATTR_RELATIME;
+	if (flags & MS_NOATIME)
+		*attrs |= MOUNT_ATTR_NOATIME;
+	if (flags & MS_STRICTATIME)
+		*attrs |= MOUNT_ATTR_STRICTATIME;
+#endif
 	return 0;
 }
 
@@ -872,7 +914,12 @@ int mnt_optlist_is_move(struct libmnt_optlist *ls)
 
 int mnt_optlist_is_bind(struct libmnt_optlist *ls)
 {
-	return ls && ls->is_bind;
+	return ls && (ls->is_bind || ls->is_rbind);
+}
+
+int mnt_optlist_is_rbind(struct libmnt_optlist *ls)
+{
+	return ls && ls->is_rbind;
 }
 
 int mnt_optlist_is_rdonly(struct libmnt_optlist *ls)
