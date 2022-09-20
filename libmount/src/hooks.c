@@ -39,6 +39,7 @@ static const struct libmnt_hookset *hooksets[] =
 #endif
 	&hookset_mkdir,
 	&hookset_subdir,
+	&hookset_mount,
 	&hookset_mount_legacy,
 #ifdef UL_HAVE_MOUNT_API
 	&hookset_idmap,
@@ -278,38 +279,39 @@ int mnt_context_call_hooks(struct libmnt_context *cxt, int stage)
 {
 	struct list_head *p, *next;
 	size_t i;
+	int rc = 0;
+
+	DBG(CXT, ul_debugobj(cxt, "---> ENTER-STAGE %s", stagenames[stage]));
 
 	/* call initial hooks */
 	for (i = 0; i <  ARRAY_SIZE(hooksets); i++) {
-		int rc;
 		const struct libmnt_hookset *hs = hooksets[i];
 
 		if (hs->firststage != stage)
 			continue;
 
-		DBG(CXT, ul_debugobj(cxt, "calling %s hook from %s",
-                        stagenames[hs->firststage], hs->name));
+		DBG(CXT, ul_debugobj(cxt, "calling %s hook", hs->name));
 
 		rc = hs->firstcall(cxt, hs, NULL);
 		if (rc < 0)
-			return rc;
+			goto done;
 	}
 
 	/* call already active hooks */
 	list_for_each_safe(p, next, &cxt->hooksets_hooks) {
-		int rc;
 		struct hookset_hook *x = list_entry(p, struct hookset_hook, hooks);
 
 		if (x->stage != stage)
 			continue;
 
-		DBG(CXT, ul_debugobj(cxt, "calling %s hook from %s",
-			stagenames[x->stage], x->hookset->name));
+		DBG(CXT, ul_debugobj(cxt, "calling %s hook", x->hookset->name));
 
 		rc = x->func(cxt, x->hookset, x->data);
 		if (rc < 0)
-			return rc;
+			goto done;
 	}
 
-	return 0;
+done:
+	DBG(CXT, ul_debugobj(cxt, "<--- DONE-STAGE %s [rc=%d]", stagenames[stage], rc));
+	return rc;
 }
