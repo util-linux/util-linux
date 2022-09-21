@@ -312,6 +312,7 @@ int mnt_context_call_hooks(struct libmnt_context *cxt, int stage)
 	}
 
 done:
-	DBG(CXT, ul_debugobj(cxt, "<--- DONE-STAGE %s [rc=%d]", stagenames[stage], rc));
+	DBG(CXT, ul_debugobj(cxt, "<--- DONE-STAGE %s [rc=%d status=%d]",
+				stagenames[stage], rc, cxt->syscall_status));
 	return rc;
 }

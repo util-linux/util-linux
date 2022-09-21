@@ -864,7 +864,6 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 	assert(cxt);
 	assert(cxt->fs);
 	assert(cxt->helper_exec_status == 1);
-	assert(cxt->syscall_status == 1);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 	assert((cxt->flags & MNT_FL_PREPARED));
 	assert((cxt->action == MNT_ACT_MOUNT));
@@ -1029,7 +1028,6 @@ int mnt_context_mount(struct libmnt_context *cxt)
 	assert(cxt);
 	assert(cxt->fs);
 	assert(cxt->helper_exec_status == 1);
-	assert(cxt->syscall_status == 1);
 
 	ns_old = mnt_context_switch_target_ns(cxt);
 	if (!ns_old)
@@ -1579,7 +1577,7 @@ int mnt_context_get_mount_excode(
 	}
 
 	/*
-	 * mount(2) errors
+	 * mount(2) and other mount related syscalls errors
 	 */
 	syserr = mnt_context_get_syscall_errno(cxt);
 

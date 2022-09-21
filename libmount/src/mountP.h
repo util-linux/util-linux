@@ -416,6 +416,7 @@ struct libmnt_context
 	pid_t	pid;		/* 0=parent; PID=child */
 
 	int	syscall_status;	/* 1: not called yet, 0: success, <0: -errno */
+	const char *syscall_name;	/* failed syscall name */
 
 	struct libmnt_ns	ns_orig;	/* original namespace */
 	struct libmnt_ns	ns_tgt;		/* target namespace */

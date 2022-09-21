@@ -47,6 +47,15 @@
 
 #include <inttypes.h>
 
+#define set_syscall_status(_cxt, _name, _x) __extension__ ({ \
+		if (!(_x)) { \
+			(_cxt)->syscall_status = -errno; \
+			(_cxt)->syscall_name = (_name); \
+		} else \
+			(_cxt)->syscall_status = 0; \
+	})
+
+
 /*
  * This hookset uses 'struct libmnt_sysapi' (mountP.h) as hookset data.
  */
@@ -57,6 +66,7 @@ static void free_hookset_data(	struct libmnt_context *cxt,
 
 	if (!api)
 		return;
+
 	if (api->fd_fs >= 0)
 		close(api->fd_fs);
 	if (api->fd_tree >= 0)
@@ -111,6 +121,7 @@ static int set_vfs_flags(int fd, struct libmnt_context *cxt, int recursive)
 	struct mount_attr attr = { .attr_clr = 0 };
 	unsigned int callflags = AT_EMPTY_PATH;
 	uint64_t mask = 0;
+	int rc;
 
 	ol= mnt_context_get_optlist(cxt);
 	if (!ol)
@@ -122,12 +133,10 @@ static int set_vfs_flags(int fd, struct libmnt_context *cxt, int recursive)
 		callflags |= AT_RECURSIVE;
 
 	DBG(HOOK, ul_debug(" mount_setattr(set=0x%" PRIx64")", mask));
-	if (mount_setattr(fd, "", callflags, &attr, sizeof(attr))) {
-		cxt->syscall_status = -errno;
-		return -errno;
-	}
+	rc = mount_setattr(fd, "", callflags, &attr, sizeof(attr));
+	set_syscall_status(cxt, "move_setattr", rc == 0);
 
-	return 0;
+	return rc == 0 ? 0 : -errno;
 }
 
 static int is_recursive_bind(struct libmnt_context *cxt)
@@ -146,6 +155,7 @@ static int hook_attach_target(struct libmnt_context *cxt,
 {
 	struct libmnt_sysapi *api;
 	const char *target;
+	int rc;
 
 	DBG(HOOK, ul_debugobj(hs, "attach"));
 
@@ -158,12 +168,11 @@ static int hook_attach_target(struct libmnt_context *cxt,
 		return -EINVAL;
 
 	DBG(HOOK, ul_debugobj(hs, " move_mount(to=%s)", target));
-	if (move_mount(api->fd_tree, "", AT_FDCWD, target, MOVE_MOUNT_F_EMPTY_PATH)) {
-		cxt->syscall_status = -errno;
-		return -errno;
-	}
 
-	return 0;
+	rc = move_mount(api->fd_tree, "", AT_FDCWD, target, MOVE_MOUNT_F_EMPTY_PATH);
+	set_syscall_status(cxt, "move_mount", rc == 0);
+
+	return rc == 0 ? 0 : -errno;
 }
 
 static int hook_bind_setflags(struct libmnt_context *cxt,
@@ -296,10 +305,10 @@ static int hook_prepare(struct libmnt_context *cxt,
 
 		DBG(HOOK, ul_debugobj(hs, "fsopen(%s)", type));
 		api->fd_fs = fsopen(type, FSOPEN_CLOEXEC);
-		if (api->fd_fs < 0) {
-			cxt->syscall_status = -errno;
+		set_syscall_status(cxt, "fsopen", api->fd_fs >= 0);
+
+		if (api->fd_fs < 0)
 			goto nothing;
-		}
 	}
 
 	if (mnt_context_is_fake(cxt))
@@ -313,10 +322,10 @@ static int hook_prepare(struct libmnt_context *cxt,
 		DBG(HOOK, ul_debugobj(hs, "open_tree(path=%s, flags=0x%lx)",
 					tree_path, open_flags));
 		api->fd_tree = open_tree(AT_FDCWD, tree_path, open_flags);
-		if (api->fd_tree <= 0) {
-			cxt->syscall_status = -errno;
+		set_syscall_status(cxt, "open_tree", api->fd_tree >= 0);
+
+		if (api->fd_tree <= 0)
 			goto nothing;
-		}
 	}
 
 	return mnt_context_append_hook(cxt, hs, next_stage, NULL, next_hook);
