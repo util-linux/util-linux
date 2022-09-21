@@ -281,7 +281,7 @@ int mnt_context_call_hooks(struct libmnt_context *cxt, int stage)
 	size_t i;
 	int rc = 0;
 
-	DBG(CXT, ul_debugobj(cxt, "---> ENTER-STAGE %s", stagenames[stage]));
+	DBG(CXT, ul_debugobj(cxt, "---> stage:%s", stagenames[stage]));
 
 	/* call initial hooks */
 	for (i = 0; i <  ARRAY_SIZE(hooksets); i++) {
@@ -312,7 +312,7 @@ int mnt_context_call_hooks(struct libmnt_context *cxt, int stage)
 	}
 
 done:
-	DBG(CXT, ul_debugobj(cxt, "<--- DONE-STAGE %s [rc=%d status=%d]",
+	DBG(CXT, ul_debugobj(cxt, "<--- stage:%s [rc=%d status=%d]",
 				stagenames[stage], rc, cxt->syscall_status));
 	return rc;
 }
