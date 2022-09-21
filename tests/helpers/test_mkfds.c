@@ -227,7 +227,7 @@ struct factory {
 #define MAX_N 5
 	int  N;			/* the number of fds this factory makes */
 	int  EX_N;		/* fds made optionally */
-	void (*make)(const struct factory *, struct fdesc[], pid_t *, int, char **);
+	void (*make)(const struct factory *, struct fdesc[], int, char **);
 	const struct parameter * params;
 };
 
@@ -236,7 +236,7 @@ static void close_fdesc(int fd, void *data _U_)
 	close(fd);
 }
 
-static void open_ro_regular_file(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
+static void open_ro_regular_file(const struct factory *factory, struct fdesc fdescs[],
 				 int argc, char ** argv)
 {
 	struct arg file = decode_arg("file", factory->params, argc, argv);
@@ -274,7 +274,7 @@ static void open_ro_regular_file(const struct factory *factory, struct fdesc fde
 	};
 }
 
-static void make_pipe(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
+static void make_pipe(const struct factory *factory, struct fdesc fdescs[],
 		      int argc, char ** argv)
 {
 	int pd[2];
@@ -376,7 +376,7 @@ static void close_dir(int fd, void *data)
 		close_fdesc(fd, NULL);
 }
 
-static void open_directory(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
+static void open_directory(const struct factory *factory, struct fdesc fdescs[],
 			   int argc, char ** argv)
 {
 	struct arg dir = decode_arg("dir", factory->params, argc, argv);
@@ -426,7 +426,7 @@ static void open_directory(const struct factory *factory, struct fdesc fdescs[],
 	};
 }
 
-static void open_rw_chrdev(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
+static void open_rw_chrdev(const struct factory *factory, struct fdesc fdescs[],
 			   int argc, char ** argv)
 {
 	struct arg chrdev = decode_arg("chrdev", factory->params, argc, argv);
@@ -452,7 +452,7 @@ static void open_rw_chrdev(const struct factory *factory, struct fdesc fdescs[],
 	};
 }
 
-static void make_socketpair(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
+static void make_socketpair(const struct factory *factory, struct fdesc fdescs[],
 			    int argc, char ** argv)
 {
 	int sd[2];
@@ -493,7 +493,7 @@ static void make_socketpair(const struct factory *factory, struct fdesc fdescs[]
 	}
 }
 
-static void open_with_opath(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
+static void open_with_opath(const struct factory *factory, struct fdesc fdescs[],
 			    int argc, char ** argv)
 {
 	struct arg path = decode_arg("path", factory->params, argc, argv);
@@ -519,7 +519,7 @@ static void open_with_opath(const struct factory *factory, struct fdesc fdescs[]
 	};
 }
 
-static void open_ro_blkdev(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
+static void open_ro_blkdev(const struct factory *factory, struct fdesc fdescs[],
 			    int argc, char ** argv)
 {
 	struct arg blkdev = decode_arg("blkdev", factory->params, argc, argv);
@@ -592,7 +592,7 @@ static void close_fdesc_after_munmap(int fd, void *data)
 	close(fd);
 }
 
-static void make_mmapped_packet_socket(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
+static void make_mmapped_packet_socket(const struct factory *factory, struct fdesc fdescs[],
 				       int argc, char ** argv)
 {
 	int sd;
@@ -669,7 +669,7 @@ static void make_mmapped_packet_socket(const struct factory *factory, struct fde
 	};
 }
 
-static void make_pidfd(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
+static void make_pidfd(const struct factory *factory, struct fdesc fdescs[],
 		       int argc, char ** argv)
 {
 	struct arg target_pid = decode_arg("target-pid", factory->params, argc, argv);
@@ -697,7 +697,7 @@ static void make_pidfd(const struct factory *factory, struct fdesc fdescs[], pid
 	};
 }
 
-static void make_inotify_fd(const struct factory *factory _U_, struct fdesc fdescs[], pid_t * child _U_,
+static void make_inotify_fd(const struct factory *factory _U_, struct fdesc fdescs[],
 			    int argc _U_, char ** argv _U_)
 {
 	int fd = inotify_init();
@@ -1003,14 +1003,10 @@ pidfd_open(pid_t pid _U_, unsigned int flags _U_)
 int main(int argc, char **argv)
 {
 	int c;
-	pid_t pid[2];
 	const struct factory *factory;
 	struct fdesc fdescs[MAX_N];
 	bool quiet = false;
 	bool cont  = false;
-
-	pid[0] = getpid();
-	pid[1] = -1;
 
 	static const struct option longopts[] = {
 		{ "list",	no_argument, NULL, 'l' },
@@ -1083,14 +1079,12 @@ int main(int argc, char **argv)
 	}
 	optind += factory->N;
 
-	factory->make(factory, fdescs, pid + 1, argc - optind, argv + optind);
+	factory->make(factory, fdescs, argc - optind, argv + optind);
 
 	signal(SIGCONT, do_nothing);
 
 	if (!quiet) {
-		printf("%d", pid[0]);
-		if (pid[1] != -1)
-			printf(" %d", pid[1]);
+		printf("%d", getpid());
 		putchar('\n');
 		fflush(stdout);
 	}
