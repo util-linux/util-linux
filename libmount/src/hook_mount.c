@@ -152,7 +152,7 @@ static int hook_set_vfsflags(struct libmnt_context *cxt,
 	if (rc)
 		return rc;
 
-	if (mnt_optlist_is_rbind(ol))
+	if (mnt_optlist_is_recursive(ol))
 		callflags |= AT_RECURSIVE;
 
 	DBG(HOOK, ul_debugobj(hs, "mount_setattr(set=0x%" PRIx64")", mask));
@@ -230,10 +230,9 @@ static int init_sysapi(struct libmnt_context *cxt,
 	if (path) {
 		unsigned long oflg = OPEN_TREE_CLOEXEC;
 
-		/* TODO
-		if (mnt_context_is_recursive(cxt))
+		if (mnt_optlist_is_recursive(cxt->optlist))
 			oflg |= AT_RECURSIVE;
-		*/
+
 		if (flags & MS_BIND)
 			oflg |= OPEN_TREE_CLONE;
 
