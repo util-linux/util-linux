@@ -42,7 +42,6 @@ int main(int argc, char *argv[])
 
 	while (nlines--) {
 		struct libscols_line *ln = scols_table_new_line(tb, NULL);
-		int rc;
 
 		rc = scols_line_set_data(ln, COL_LEFT, "A");
 		if (!rc)
