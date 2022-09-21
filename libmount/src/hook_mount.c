@@ -111,7 +111,6 @@ static int set_vfs_flags(int fd, struct libmnt_context *cxt, int recursive)
 	struct mount_attr attr = { .attr_clr = 0 };
 	unsigned int callflags = AT_EMPTY_PATH;
 	uint64_t mask = 0;
-	int rc;
 
 	ol= mnt_context_get_optlist(cxt);
 	if (!ol)
@@ -123,9 +122,10 @@ static int set_vfs_flags(int fd, struct libmnt_context *cxt, int recursive)
 		callflags |= AT_RECURSIVE;
 
 	DBG(HOOK, ul_debug(" mount_setattr(set=0x%" PRIx64")", mask));
-	rc = mount_setattr(fd, "", callflags, &attr, sizeof(attr));
-	if (rc)
+	if (mount_setattr(fd, "", callflags, &attr, sizeof(attr))) {
+		cxt->syscall_status = -errno;
 		return -errno;
+	}
 
 	return 0;
 }
@@ -158,8 +158,10 @@ static int hook_attach_target(struct libmnt_context *cxt,
 		return -EINVAL;
 
 	DBG(HOOK, ul_debugobj(hs, " move_mount(to=%s)", target));
-	if (move_mount(api->fd_tree, "", AT_FDCWD, target, MOVE_MOUNT_F_EMPTY_PATH))
+	if (move_mount(api->fd_tree, "", AT_FDCWD, target, MOVE_MOUNT_F_EMPTY_PATH)) {
+		cxt->syscall_status = -errno;
 		return -errno;
+	}
 
 	return 0;
 }
@@ -270,7 +272,7 @@ static int hook_prepare(struct libmnt_context *cxt,
 		DBG(HOOK, ul_debugobj(hs, " prepare move"));
 		tree_path = src;
 		next_stage = MNT_STAGE_MOUNT_POST;
-		/*next_hook = hook_move;*/
+		next_hook = hook_attach_target;
 
 	} else if (mnt_context_propagation_only(cxt)) {
 		DBG(HOOK, ul_debugobj(hs, " prepare propagation change"));
@@ -289,11 +291,19 @@ static int hook_prepare(struct libmnt_context *cxt,
 		if (!type)
 			return -EINVAL;
 
+		if (mnt_context_is_fake(cxt))
+			goto fake;
+
 		DBG(HOOK, ul_debugobj(hs, "fsopen(%s)", type));
 		api->fd_fs = fsopen(type, FSOPEN_CLOEXEC);
-		if (api->fd_fs < 0)
+		if (api->fd_fs < 0) {
+			cxt->syscall_status = -errno;
 			goto nothing;
+		}
 	}
+
+	if (mnt_context_is_fake(cxt))
+		goto fake;
 
 	if (api->fd_fs == -1) {
 		if (!tree_path) {
@@ -303,8 +313,10 @@ static int hook_prepare(struct libmnt_context *cxt,
 		DBG(HOOK, ul_debugobj(hs, "open_tree(path=%s, flags=0x%lx)",
 					tree_path, open_flags));
 		api->fd_tree = open_tree(AT_FDCWD, tree_path, open_flags);
-		if (api->fd_tree <= 0)
+		if (api->fd_tree <= 0) {
+			cxt->syscall_status = -errno;
 			goto nothing;
+		}
 	}
 
 	return mnt_context_append_hook(cxt, hs, next_stage, NULL, next_hook);
@@ -312,6 +324,10 @@ nothing:
 	/* let's assume that fsopen/open_tree() is not supported */
 	DBG(HOOK, ul_debugobj(hs, " open fs/tree failed [errno=%d %m]", errno));
 	free_hookset_data(cxt, hs);
+	return 0;
+fake:
+	DBG(CXT, ul_debugobj(cxt, "  FAKE (-f)"));
+	cxt->syscall_status = 0;
 	return 0;
 }
 
