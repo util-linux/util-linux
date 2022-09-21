@@ -227,7 +227,6 @@ struct factory {
 #define MAX_N 5
 	int  N;			/* the number of fds this factory makes */
 	int  EX_N;		/* fds made optionally */
-	bool fork;		/* whether this factory make a child process or not */
 	void (*make)(const struct factory *, struct fdesc[], pid_t *, int, char **);
 	const struct parameter * params;
 };
@@ -730,7 +729,6 @@ static const struct factory factories[] = {
 		.priv = false,
 		.N    = 1,
 		.EX_N = 0,
-		.fork = false,
 		.make = open_ro_regular_file,
 		.params = (struct parameter []) {
 			{
@@ -754,7 +752,6 @@ static const struct factory factories[] = {
 		.priv = false,
 		.N    = 2,
 		.EX_N = 2,
-		.fork = false,
 		.make = make_pipe,
 		.params = (struct parameter []) {
 			{
@@ -784,7 +781,6 @@ static const struct factory factories[] = {
 		.priv = false,
 		.N    = 1,
 		.EX_N = 0,
-		.fork = false,
 		.make = open_directory,
 		.params = (struct parameter []) {
 			{
@@ -808,7 +804,6 @@ static const struct factory factories[] = {
 		.priv = false,
 		.N    = 1,
 		.EX_N = 0,
-		.fork = false,
 		.make = open_rw_chrdev,
 		.params = (struct parameter []) {
 			{
@@ -826,7 +821,6 @@ static const struct factory factories[] = {
 		.priv = false,
 		.N    = 2,
 		.EX_N = 0,
-		.fork = false,
 		.make = make_socketpair,
 		.params = (struct parameter []) {
 			{
@@ -844,7 +838,6 @@ static const struct factory factories[] = {
 		.priv = false,
 		.N    = 1,
 		.EX_N = 0,
-		.fork = false,
 		.make = open_with_opath,
 		.params = (struct parameter []) {
 			{
@@ -862,7 +855,6 @@ static const struct factory factories[] = {
 		.priv = true,
 		.N = 1,
 		.EX_N = 0,
-		.fork = false,
 		.make = open_ro_blkdev,
 		.params = (struct parameter []) {
 			{
@@ -880,7 +872,6 @@ static const struct factory factories[] = {
 		.priv = true,
 		.N = 1,
 		.EX_N = 0,
-		.fork = false,
 		.make = make_mmapped_packet_socket,
 		.params = (struct parameter []) {
 			{
@@ -904,7 +895,6 @@ static const struct factory factories[] = {
 		.priv = false,
 		.N    = 1,
 		.EX_N = 0,
-		.fork = false,
 		.make = make_pidfd,
 		.params = (struct parameter []) {
 			{
@@ -922,7 +912,6 @@ static const struct factory factories[] = {
 		.priv = false,
 		.N    = 1,
 		.EX_N = 0,
-		.fork = false,
 		.make = make_inotify_fd,
 		.params = (struct parameter []) {
 			PARAM_END
@@ -943,18 +932,17 @@ static int count_parameters(const struct factory *factory)
 
 static void print_factory(const struct factory *factory)
 {
-	printf("%-20s %4s %5d %4s %6d %s\n",
+	printf("%-20s %4s %5d %6d %s\n",
 	       factory->name,
 	       factory->priv? "yes": "no",
 	       factory->N,
-	       factory->fork? "yes": "no",
 	       count_parameters(factory),
 	       factory->desc);
 }
 
 static void list_factories(void)
 {
-	printf("%-20s PRIV COUNT FORK NPARAM DESCRIPTION\n", "FACTORY");
+	printf("%-20s PRIV COUNT NPARAM DESCRIPTION\n", "FACTORY");
 	for (size_t i = 0; i < ARRAY_SIZE(factories); i++)
 		print_factory(factories + i);
 }
