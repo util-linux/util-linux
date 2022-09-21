@@ -140,14 +140,14 @@ static int is_recursive_bind(struct libmnt_context *cxt)
 	return mnt_optlist_is_rbind(ol);
 }
 
-static int hook_bind_attach(struct libmnt_context *cxt,
+static int hook_attach_target(struct libmnt_context *cxt,
 		const struct libmnt_hookset *hs,
 		void *data __attribute__((__unused__)))
 {
 	struct libmnt_sysapi *api;
 	const char *target;
 
-	DBG(HOOK, ul_debugobj(hs, "bind: attach"));
+	DBG(HOOK, ul_debugobj(hs, "attach"));
 
 	target = mnt_fs_get_target(cxt->fs);
 	if (!target)
@@ -182,7 +182,7 @@ static int hook_bind_setflags(struct libmnt_context *cxt,
 		return rc;
 
 	return mnt_context_append_hook(cxt, hs,
-			MNT_STAGE_MOUNT_POST, NULL, hook_bind_attach);
+			MNT_STAGE_MOUNT_POST, NULL, hook_attach_target);
 }
 
 /*
@@ -255,9 +255,13 @@ static int hook_prepare(struct libmnt_context *cxt,
 	} else if (flags & MS_BIND) {
 		DBG(HOOK, ul_debugobj(hs, " prepare bind"));
 		tree_path = src;
-		next_stage = MNT_STAGE_MOUNT;
-		next_hook = (flags & MNT_BIND_SETTABLE) ? hook_bind_setflags :
-							  hook_bind_attach;
+		if (flags & MNT_BIND_SETTABLE) {		/* -obind,ro */
+			next_stage = MNT_STAGE_MOUNT;
+			next_hook = hook_bind_setflags;
+		} else {
+			next_stage = MNT_STAGE_MOUNT_POST;	/* only bind */
+			next_hook = hook_attach_target;
+		}
 		open_flags |= OPEN_TREE_CLONE;
 		if (is_recursive_bind(cxt))
 			open_flags |= AT_RECURSIVE;
