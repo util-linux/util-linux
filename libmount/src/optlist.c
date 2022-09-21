@@ -777,6 +777,8 @@ int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *attrs)
 		*attrs |= MOUNT_ATTR_NOATIME;
 	if (flags & MS_STRICTATIME)
 		*attrs |= MOUNT_ATTR_STRICTATIME;
+	if (flags & MS_NOSYMFOLLOW)
+		*attrs |= MOUNT_ATTR_NOSYMFOLLOW;
 #endif
 	return 0;
 }
