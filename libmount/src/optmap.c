@@ -136,6 +136,9 @@ static const struct libmnt_optmap linux_flags_map[] =
    { "symfollow", MS_NOSYMFOLLOW, MNT_INVERT }, /* Don't follow symlinks */
    { "nosymfollow", MS_NOSYMFOLLOW },
 #endif
+#ifdef MS_MOVE
+   { "move",	MS_MOVE,	MNT_NOHLPS | MNT_NOMTAB | MNT_NOFSTAB }, /* --move */
+#endif
    { NULL, 0, 0 }
 };
 
