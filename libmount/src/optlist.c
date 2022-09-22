@@ -746,39 +746,65 @@ int mnt_optlist_get_flags(struct libmnt_optlist *ls, unsigned long *flags,
 	return 0;
 }
 
+#ifdef UL_HAVE_MOUNT_API
+static inline uint64_t flags_to_attrs(unsigned long flags)
+{
+	uint64_t attrs = 0;
+
+	if (flags & MS_RDONLY)
+		attrs |= MOUNT_ATTR_RDONLY;
+	if (flags & MS_NOSUID)
+		attrs |= MOUNT_ATTR_NOSUID;
+	if (flags & MS_NOEXEC)
+		attrs |= MOUNT_ATTR_NOEXEC;
+	if (flags & MS_NODIRATIME)
+		attrs |= MOUNT_ATTR_NODIRATIME;
+	if (flags & MS_RELATIME)
+		attrs |= MOUNT_ATTR_RELATIME;
+	if (flags & MS_NOATIME)
+		attrs |= MOUNT_ATTR_NOATIME;
+	if (flags & MS_STRICTATIME)
+		attrs |= MOUNT_ATTR_STRICTATIME;
+	if (flags & MS_NOSYMFOLLOW)
+		attrs |= MOUNT_ATTR_NOSYMFOLLOW;
+
+	return attrs;
+}
+#endif
+
 /*
  * Like mnt_optlist_get_flags() for VFS flags, but converts classic MS_* flags to
  * new MOUNT_ATTR_*
  */
-int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *attrs)
+int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *clr)
 {
 #ifdef UL_HAVE_MOUNT_API
-	int rc;
-	unsigned long flags = 0;
+	struct libmnt_iter itr;
+	struct libmnt_opt *opt;
 
-	assert(ls);
-	assert(ls->linux_map);
+	if (!ls || !ls->linux_map || !set || !clr)
+		return -EINVAL;
 
-	rc = mnt_optlist_get_flags(ls, &flags, ls->linux_map, 0);
-	if (rc)
-		return rc;
+	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
-	if (flags & MS_RDONLY)
-		*attrs |= MOUNT_ATTR_RDONLY;
-	if (flags & MS_NOSUID)
-		*attrs |= MOUNT_ATTR_NOSUID;
-	if (flags & MS_NOEXEC)
-		*attrs |= MOUNT_ATTR_NOEXEC;
-	if (flags & MS_NODIRATIME)
-		*attrs |= MOUNT_ATTR_NODIRATIME;
-	if (flags & MS_RELATIME)
-		*attrs |= MOUNT_ATTR_RELATIME;
-	if (flags & MS_NOATIME)
-		*attrs |= MOUNT_ATTR_NOATIME;
-	if (flags & MS_STRICTATIME)
-		*attrs |= MOUNT_ATTR_STRICTATIME;
-	if (flags & MS_NOSYMFOLLOW)
-		*attrs |= MOUNT_ATTR_NOSYMFOLLOW;
+	while (mnt_optlist_next_opt(ls, &itr, &opt) == 0) {
+		if (ls->linux_map != opt->map)
+			continue;
+		if (!opt->ent || !opt->ent->id)
+			continue;
+		if (!is_wanted_opt(opt, ls->linux_map, MNT_OL_FLTR_DFLT))
+			continue;
+
+		if (opt->ent->mask & MNT_INVERT)
+			*clr |= flags_to_attrs( opt->ent->id );
+		else
+			*set |= flags_to_attrs( opt->ent->id );
+	}
+
+	DBG(OPTLIST, ul_debugobj(ls, "return attrs set=0x%08" PRIx64
+				      ", clr=0x08%" PRIx64, *set, *clr));
+	return 0;
+
 #endif
 	return 0;
 }

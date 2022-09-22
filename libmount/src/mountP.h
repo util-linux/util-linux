@@ -530,7 +530,7 @@ enum {
 
 extern int mnt_optlist_get_flags(struct libmnt_optlist *ls, unsigned long *flags,
                           const struct libmnt_optmap *map, unsigned int what);
-extern int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *attrs);
+extern int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *clr);
 extern int mnt_optlist_get_optstr(struct libmnt_optlist *ol, const char **optstr,
                         const struct libmnt_optmap *map, unsigned int what);
 extern int mnt_optlist_strdup_optstr(struct libmnt_optlist *ls, char **optstr,

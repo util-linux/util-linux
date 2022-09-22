@@ -137,7 +137,7 @@ static int hook_set_vfsflags(struct libmnt_context *cxt,
 	struct libmnt_optlist *ol;
 	struct mount_attr attr = { .attr_clr = 0 };
 	unsigned int callflags = AT_EMPTY_PATH;
-	uint64_t mask = 0;
+	uint64_t set = 0, clr = 0;
 	int rc;
 
 	api = get_sysapi(cxt, hs);
@@ -148,15 +148,17 @@ static int hook_set_vfsflags(struct libmnt_context *cxt,
 	if (!ol)
 		return -ENOMEM;
 
-	rc = mnt_optlist_get_attrs(ol, &mask);
+	rc = mnt_optlist_get_attrs(ol, &set, &clr);
 	if (rc)
 		return rc;
 
 	if (mnt_optlist_is_recursive(ol))
 		callflags |= AT_RECURSIVE;
 
-	DBG(HOOK, ul_debugobj(hs, "mount_setattr(set=0x%" PRIx64")", mask));
-	attr.attr_set = mask;
+	DBG(HOOK, ul_debugobj(hs,
+			"mount_setattr(set=0x%08" PRIx64" clr=0x%08" PRIx64")", set, clr));
+	attr.attr_set = set;
+	attr.attr_clr = clr;
 
 	rc = mount_setattr(api->fd_tree, "", callflags, &attr, sizeof(attr));
 	set_syscall_status(cxt, "move_setattr", rc == 0);
@@ -287,7 +289,7 @@ static int hook_prepare(struct libmnt_context *cxt,
 {
 	struct libmnt_optlist *ol;
 	unsigned long flags = 0;
-	uint64_t attrs = 0;
+	uint64_t set = 0, clr = 0;
 	int rc = 0;
 
 	assert(cxt);
@@ -304,7 +306,7 @@ static int hook_prepare(struct libmnt_context *cxt,
 
 	/* MOUNT_ATTR_* flags for mount_setattr() */
 	if (!rc)
-		rc = mnt_optlist_get_attrs(ol, &attrs);
+		rc = mnt_optlist_get_attrs(ol, &set, &clr);
 
 	/* open_tree() or fsopen() */
 	if (!rc)
@@ -322,7 +324,7 @@ static int hook_prepare(struct libmnt_context *cxt,
 					hook_reconfigure_mount);
 
 	/* call mount_setattr() */
-	if (!rc && attrs != 0)
+	if (!rc && (set != 0 || clr != 0))
 		rc = mnt_context_append_hook(cxt, hs, MNT_STAGE_MOUNT, NULL,
 					hook_set_vfsflags);
 
