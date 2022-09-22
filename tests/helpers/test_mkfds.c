@@ -229,6 +229,7 @@ struct factory {
 	int  EX_N;		/* fds made optionally */
 	void *(*make)(const struct factory *, struct fdesc[], int, char **);
 	void (*free)(const struct factory *, void *);
+	void (*report)(const struct factory *, void *, FILE *);
 	const struct parameter * params;
 };
 
@@ -1108,6 +1109,8 @@ int main(int argc, char **argv)
 	if (!quiet) {
 		printf("%d", getpid());
 		putchar('\n');
+		if (factory->report)
+			factory->report(factory, data, stdout);
 		fflush(stdout);
 	}
 
