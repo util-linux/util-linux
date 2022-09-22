@@ -1028,7 +1028,7 @@ static int ul_path_cpuparse(struct path_cxt *pc, cpu_set_t **set, int maxcpus, i
 	if (!f)
 		return -errno;
 
-	rc = fgets(buf, len, f) == NULL ? -errno : 0;
+	rc = fgets(buf, len, f) == NULL ? -EIO : 0;
 	fclose(f);
 
 	if (rc)
