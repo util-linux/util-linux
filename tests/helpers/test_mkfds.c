@@ -459,7 +459,6 @@ static void *open_directory(const struct factory *factory, struct fdesc fdescs[]
 	}
 	free_arg(&dentries);
 
-
 	fdescs[0] = (struct fdesc){
 		.fd    = fdescs[0].fd,
 		.close = close_dir,
@@ -1098,7 +1097,6 @@ int main(int argc, char **argv)
 			usage(stderr, EXIT_FAILURE);
 		}
 	}
-
 
 	if (optind == argc)
 		errx(EXIT_FAILURE, _("no file descriptor specification given"));
