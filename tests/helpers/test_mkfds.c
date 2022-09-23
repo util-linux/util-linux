@@ -34,6 +34,7 @@
 #include <sys/inotify.h>
 #include <sys/mman.h>
 #include <sys/prctl.h>
+#include <sys/select.h>
 #include <sys/socket.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
@@ -1056,6 +1057,27 @@ pidfd_open(pid_t pid _U_, unsigned int flags _U_)
 }
 #endif
 
+static void wait_event(void)
+{
+	fd_set readfds;
+	sigset_t sigset;
+	int n = 0;
+
+	FD_ZERO(&readfds);
+	/* Monitor the standard input only when the process
+	 * is in foreground. */
+	if (tcgetpgrp(STDIN_FILENO) == getpgrp()) {
+		n = 1;
+		FD_SET(0, &readfds);
+	}
+
+	sigemptyset(&sigset);
+
+	if (pselect(n, &readfds, NULL, NULL, NULL, &sigset) < 0
+	    && errno != EINTR)
+		errx(EXIT_FAILURE, _("failed in pselect"));
+}
+
 int main(int argc, char **argv)
 {
 	int c;
@@ -1150,7 +1172,7 @@ int main(int argc, char **argv)
 	}
 
 	if (!cont)
-		pause();
+		wait_event();
 
 	for (int i = 0; i < factory->N + factory->EX_N; i++)
 		if (fdescs[i].fd >= 0 && fdescs[i].close)
