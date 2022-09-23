@@ -74,11 +74,13 @@ static void __attribute__((__noreturn__)) usage(FILE *out, int status)
 union value {
 	const char *string;
 	long integer;
+	bool boolean;
 };
 
 enum ptype {
 	PTYPE_STRING,
 	PTYPE_INTEGER,
+	PTYPE_BOOLEAN,
 };
 
 struct ptype_class {
@@ -99,6 +101,7 @@ struct ptype_class {
 
 #define ARG_STRING(A) (A.v.string)
 #define ARG_INTEGER(A) (A.v.integer)
+#define ARG_BOOLEAN(A) (A.v.boolean)
 struct arg {
 	union value v;
 	void (*free)(union value value);
@@ -155,6 +158,32 @@ static void integer_free(union value value _U_)
 	/* Do nothing */
 }
 
+static char *boolean_sprint(const union value *value)
+{
+	return xstrdup(value->boolean? "true": "false");
+}
+
+static union value boolean_read(const char *arg, const union value *defv)
+{
+	union value r;
+
+	if (!arg)
+		return *defv;
+
+	if (strcasecmp(arg, "true") == 0
+	    || strcmp(arg, "1") == 0
+	    || strcasecmp(arg, "yes") == 0
+	    || strcasecmp(arg, "y") == 0)
+		r.boolean = true;
+	else
+		r.boolean = false;
+	return r;
+}
+
+static void boolean_free(union value value _U_)
+{
+	/* Do nothing */
+}
 
 struct ptype_class ptype_classes [] = {
 	[PTYPE_STRING] = {
@@ -168,6 +197,12 @@ struct ptype_class ptype_classes [] = {
 		.sprint = integer_sprint,
 		.read   = integer_read,
 		.free   = integer_free,
+	},
+	[PTYPE_BOOLEAN] = {
+		.name = "boolean",
+		.sprint = boolean_sprint,
+		.read   = boolean_read,
+		.free   = boolean_free,
 	},
 };
 
