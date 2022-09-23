@@ -1111,8 +1111,10 @@ int main(int argc, char **argv)
 		errx(EXIT_FAILURE, _("not enough file descriptors given for %s"),
 		     factory->name);
 
-	for (int i = 0; i < MAX_N; i++)
+	for (int i = 0; i < MAX_N; i++) {
 		fdescs[i].fd = -1;
+		fdescs[i].close = NULL;
+	}
 
 	for (int i = 0; i < factory->N; i++) {
 		char *str = argv[optind + i];
@@ -1151,7 +1153,7 @@ int main(int argc, char **argv)
 		pause();
 
 	for (int i = 0; i < factory->N + factory->EX_N; i++)
-		if (fdescs[i].fd >= 0)
+		if (fdescs[i].fd >= 0 && fdescs[i].close)
 			fdescs[i].close(fdescs[i].fd, fdescs[i].data);
 
 	if (factory->free)
