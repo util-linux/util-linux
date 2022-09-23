@@ -805,7 +805,7 @@ static void *make_unix_stream(const struct factory *factory, struct fdesc fdescs
 	struct arg client_shutdown = decode_arg("client-shutdown", factory->params, argc, argv);
 	int iclient_shutdown = ARG_INTEGER(client_shutdown);
 
-	int ssd, csd, asd;	/* server, client, accepted socket descriptor */
+	int ssd, csd, asd;	/* server, client, and accepted socket descriptors */
 	struct sockaddr_un un;
 	size_t un_len = sizeof(un);
 

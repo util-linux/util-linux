@@ -1,0 +1,12 @@
+    3   SOCK state=listen path=test_mkfds-unix-stream       listen   stream test_mkfds-unix-stream
+    4   SOCK state=connected                             connected   stream 
+    5   SOCK state=connected path=test_mkfds-unix-stream connected   stream test_mkfds-unix-stream
+ASSOC,STTYPE,NAME,SOCKSTATE,SOCKTYPE,UNIX.PATH: 0
+    3   SOCK state=listen path=@test_mkfds-unix-stream-abs       listen   stream @test_mkfds-unix-stream-abs
+    4   SOCK state=connected                                  connected   stream 
+    5   SOCK state=connected path=@test_mkfds-unix-stream-abs connected   stream @test_mkfds-unix-stream-abs
+(abs) ASSOC,STTYPE,NAME,SOCKSTATE,SOCKTYPE,UNIX.PATH: 0
+    3   SOCK state=listen path=test_mkfds-unix-stream-shutdown       listen   stream test_mkfds-unix-stream-shutdown
+    4   SOCK state=connected                                      connected   stream 
+    5   SOCK state=connected path=test_mkfds-unix-stream-shutdown connected   stream test_mkfds-unix-stream-shutdown
+(shutdown) ASSOC,STTYPE,NAME,SOCKSTATE,SOCKTYPE,UNIX.PATH: 0
