@@ -61,6 +61,7 @@ TS_CMD_FALLOCATE=${TS_CMD_FALLOCATE-"${ts_commandsdir}fallocate"}
 TS_CMD_FDISK=${TS_CMD_FDISK-"${ts_commandsdir}fdisk"}
 TS_CMD_FLOCK=${TS_CMD_FLOCK-"${ts_commandsdir}flock"}
 TS_CMD_SFDISK=${TS_CMD_SFDISK-"${ts_commandsdir}sfdisk"}
+TS_CMD_FADVISE=${TS_CMD_FADVISE-"${ts_commandsdir}fadvise"}
 TS_CMD_FINCORE=${TS_CMD_FINCORE-"${ts_commandsdir}fincore"}
 TS_CMD_FINDMNT=${TS_CMD_FINDMNT-"${ts_commandsdir}findmnt"}
 TS_CMD_FSCKCRAMFS=${TS_CMD_FSCKCRAMFS:-"${ts_commandsdir}fsck.cramfs"}

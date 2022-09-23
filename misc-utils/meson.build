@@ -147,3 +147,7 @@ cal_sources = files(
 pipesz_sources = files(
   'pipesz.c',
 )
+
+fadvise_sources = files(
+  'fadvise.c',
+)

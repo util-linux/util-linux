@@ -1,0 +1,23 @@
+  RES PAGES SIZE FILE
+  32K     8  32K ddtest
+
+whole file
+status: 0
+RES PAGES SIZE FILE
+ 0B     0  32K ddtest
+
+offset: 8192
+status: 0
+RES PAGES SIZE FILE
+ 8K     2  32K ddtest
+
+length: 16384
+status: 0
+  RES PAGES SIZE FILE
+  16K     4  32K ddtest
+
+offset: 8192, length: 16384 fd: 42
+status: 0
+  RES PAGES SIZE FILE
+  16K     4  32K ddtest
+

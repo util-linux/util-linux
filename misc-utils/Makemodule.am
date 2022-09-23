@@ -279,3 +279,12 @@ pipesz_SOURCES = misc-utils/pipesz.c
 pipesz_LDADD = $(LDADD) libcommon.la
 pipesz_CFLAGS = $(AM_CFLAGS)
 endif
+
+if BUILD_FADVISE
+usrbin_exec_PROGRAMS += fadvise
+MANPAGES += misc-utils/fadvise.1
+dist_noinst_DATA += misc-utils/fadvise.1.adoc
+fadvise_SOURCES = misc-utils/fadvise.c
+fadvise_LDADD = $(LDADD) libcommon.la
+fadvise_CFLAGS = $(AM_CFLAGS)
+endif

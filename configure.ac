@@ -1794,6 +1794,10 @@ UL_BUILD_INIT([pipesz])
 UL_REQUIRES_LINUX([pipesz])
 AM_CONDITIONAL([BUILD_PIPESZ], [test "x$build_pipesz" = xyes])
 
+UL_BUILD_INIT([fadvise], [check])
+UL_REQUIRES_LINUX([fadvise])
+AM_CONDITIONAL([BUILD_FADVISE], [test "x$build_fadvise" = xyes])
+
 UL_BUILD_INIT([getopt], [yes])
 AM_CONDITIONAL([BUILD_GETOPT], [test "x$build_getopt" = xyes])
 
