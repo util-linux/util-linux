@@ -778,6 +778,163 @@ static void *make_inotify_fd(const struct factory *factory _U_, struct fdesc fde
 	return NULL;
 }
 
+static void close_unix_socket(int fd, void *data)
+{
+	char *path = data;
+	close(fd);
+	if (path) {
+		unlink(path);
+		free(path);
+	}
+}
+
+static void *make_unix_stream(const struct factory *factory, struct fdesc fdescs[],
+			      int argc, char ** argv)
+{
+	struct arg path = decode_arg("path", factory->params, argc, argv);
+	const char *spath = ARG_STRING(path);
+
+	struct arg backlog = decode_arg("backlog", factory->params, argc, argv);
+	int ibacklog = ARG_INTEGER(path);
+
+	struct arg abstract = decode_arg("abstract", factory->params, argc, argv);
+	bool babstract = ARG_BOOLEAN(abstract);
+
+	struct arg server_shutdown = decode_arg("server-shutdown", factory->params, argc, argv);
+	int iserver_shutdown = ARG_INTEGER(server_shutdown);
+	struct arg client_shutdown = decode_arg("client-shutdown", factory->params, argc, argv);
+	int iclient_shutdown = ARG_INTEGER(client_shutdown);
+
+	int ssd, csd, asd;	/* server, client, accepted socket descriptor */
+	struct sockaddr_un un;
+	size_t un_len = sizeof(un);
+
+	memset(&un, 0, sizeof(un));
+	un.sun_family = AF_UNIX;
+	if (babstract) {
+		strncpy(un.sun_path + 1, spath, sizeof(un.sun_path) - 1 - 1);
+		size_t pathlen = strlen(spath);
+		if (sizeof(un.sun_path) - 1 > pathlen)
+			un_len = sizeof(un) - sizeof(un.sun_path) + 1 + pathlen;
+	} else
+		strncpy(un.sun_path,     spath, sizeof(un.sun_path) - 1    );
+
+	free_arg(&client_shutdown);
+	free_arg(&server_shutdown);
+	free_arg(&abstract);
+	free_arg(&backlog);
+	free_arg(&path);
+
+	if (iserver_shutdown < 0 || iserver_shutdown > 3)
+		errx(EXIT_FAILURE, "the server shudown specification in unexpected range");
+	if (iclient_shutdown < 0 || iclient_shutdown > 3)
+		errx(EXIT_FAILURE, "the client shudown specification in unexpected range");
+
+	ssd = socket(AF_UNIX, SOCK_STREAM, 0);
+	if (ssd < 0)
+		err(EXIT_FAILURE,
+		    "failed to make a socket with AF_UNIX + SOCK_STREAM (server side)");
+	if (ssd != fdescs[0].fd) {
+		if (dup2(ssd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(ssd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", ssd, fdescs[0].fd);
+		}
+		close(ssd);
+		ssd = fdescs[0].fd;
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_unix_socket,
+		.data  = NULL,
+	};
+
+	if (!babstract)
+		unlink(un.sun_path);
+	if (bind(ssd, (const struct sockaddr *)&un, un_len) < 0) {
+		int e = errno;
+		close(ssd);
+		errno = e;
+		err(EXIT_FAILURE, "failed to bind a socket for listening");
+	}
+
+	if (!babstract)
+		fdescs[0].data = xstrdup(un.sun_path);
+	if (listen(ssd, ibacklog) < 0) {
+		int e = errno;
+		close_unix_socket(ssd, fdescs[0].data);
+		errno = e;
+		err(EXIT_FAILURE, "failed to listen a socket");
+	}
+
+	csd = socket(AF_UNIX, SOCK_STREAM, 0);
+	if (csd < 0)
+		err(EXIT_FAILURE,
+		    "failed to make a socket with AF_UNIX + SOCK_STREAM (client side)");
+	if (csd != fdescs[1].fd) {
+		if (dup2(csd, fdescs[1].fd) < 0) {
+			int e = errno;
+			close(csd);
+			close_unix_socket(ssd, fdescs[0].data);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", csd, fdescs[1].fd);
+		}
+		close(csd);
+		csd = fdescs[1].fd;
+	}
+
+	fdescs[1] = (struct fdesc){
+		.fd    = fdescs[1].fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+
+	if (connect(csd, (const struct sockaddr *)&un, un_len) < 0) {
+		int e = errno;
+		close_fdesc(csd, NULL);
+		close_unix_socket(ssd, fdescs[0].data);
+		errno = e;
+		err(EXIT_FAILURE, "failed to connect a socket to the listening socket");
+	}
+
+	if (!babstract)
+		unlink(un.sun_path);
+
+	asd = accept(ssd, NULL, NULL);
+	if (asd < 0) {
+		int e = errno;
+		close_fdesc(csd, NULL);
+		close_unix_socket(ssd, fdescs[0].data);
+		errno = e;
+		err(EXIT_FAILURE, "failed to accept a socket from the listening socket");
+	}
+	if (asd != fdescs[2].fd) {
+		if (dup2(asd, fdescs[2].fd) < 0) {
+			int e = errno;
+			close(asd);
+			close_fdesc(csd, NULL);
+			close_unix_socket(ssd, fdescs[0].data);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", asd, fdescs[2].fd);
+		}
+		close(asd);
+		asd = fdescs[2].fd;
+	}
+
+	if (iserver_shutdown & (1 << 0))
+		shutdown(asd, SHUT_RD);
+	if (iserver_shutdown & (1 << 1))
+		shutdown(asd, SHUT_WR);
+	if (iclient_shutdown & (1 << 0))
+		shutdown(csd, SHUT_RD);
+	if (iclient_shutdown & (1 << 1))
+		shutdown(csd, SHUT_WR);
+
+	return NULL;
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -971,6 +1128,47 @@ static const struct factory factories[] = {
 		.EX_N = 0,
 		.make = make_inotify_fd,
 		.params = (struct parameter []) {
+			PARAM_END
+		},
+	},
+	{
+		.name = "unix-stream",
+		.desc = "AF_UNIX+SOCK_STREAM sockets",
+		.priv = false,
+		.N    = 3,
+		.EX_N = 0,
+		.make = make_unix_stream,
+		.params = (struct parameter []) {
+			{
+				.name = "path",
+				.type = PTYPE_STRING,
+				.desc = "path for listening-socket bound to",
+				.defv.string = "/tmp/test_mkfds-unix-stream",
+			},
+			{
+				.name = "backlog",
+				.type = PTYPE_INTEGER,
+				.desc = "backlog passed to listen(2)",
+				.defv.integer = 5,
+			},
+			{
+				.name = "abstract",
+				.type = PTYPE_BOOLEAN,
+				.desc = "use PATH as an abstract socket address",
+				.defv.boolean = false,
+			},
+			{
+				.name = "server-shutdown",
+				.type = PTYPE_INTEGER,
+				.desc = "shutdown the accepted socket; 1: R, 2: W, 3: RW",
+				.defv.integer = 0,
+			},
+			{
+				.name = "client-shutdown",
+				.type = PTYPE_INTEGER,
+				.desc = "shutdown the client socket; 1: R, 2: W, 3: RW",
+				.defv.integer = 0,
+			},
 			PARAM_END
 		},
 	},
