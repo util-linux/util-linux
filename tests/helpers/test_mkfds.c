@@ -26,6 +26,7 @@
 #include <linux/if_ether.h>
 #include <linux/if_packet.h>
 #include <net/if.h>
+#include <sched.h>
 #include <signal.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -1053,6 +1054,175 @@ static void *make_unix_dgram(const struct factory *factory, struct fdesc fdescs[
 	return NULL;
 }
 
+static void *make_unix_in_new_netns(const struct factory *factory, struct fdesc fdescs[],
+				    int argc, char ** argv)
+{
+	struct arg type = decode_arg("type", factory->params, argc, argv);
+	const char *stype = ARG_STRING(type);
+
+	struct arg path = decode_arg("path", factory->params, argc, argv);
+	const char *spath = ARG_STRING(path);
+
+	struct arg abstract = decode_arg("abstract", factory->params, argc, argv);
+	bool babstract = ARG_BOOLEAN(abstract);
+
+	int typesym;
+	const char *typestr;
+
+	struct sockaddr_un un;
+	size_t un_len = sizeof(un);
+
+	int self_netns, tmp_netns, sd;
+
+	if (strcmp(stype, "stream") == 0) {
+		typesym = SOCK_STREAM;
+		typestr = "STREAM";
+	} else if (strcmp(stype, "seqpacket") == 0) {
+		typesym = SOCK_SEQPACKET;
+		typestr = "SEQPACKET";
+	} else if (strcmp(stype, "dgram") == 0) {
+		typesym = SOCK_DGRAM;
+		typestr = "DGRAM";
+	} else {
+		free_arg(&abstract);
+		free_arg(&path);
+		free_arg(&type);
+		errx(EXIT_FAILURE, _("unknown unix socket type: %s"), stype);
+	}
+
+	memset(&un, 0, sizeof(un));
+	un.sun_family = AF_UNIX;
+	if (babstract) {
+		strncpy(un.sun_path + 1, spath, sizeof(un.sun_path) - 1 - 1);
+		size_t pathlen = strlen(spath);
+		if (sizeof(un.sun_path) - 1 > pathlen)
+			un_len = sizeof(un) - sizeof(un.sun_path) + 1 + pathlen;
+	} else
+		strncpy(un.sun_path,     spath, sizeof(un.sun_path) - 1    );
+
+	free_arg(&abstract);
+	free_arg(&path);
+	free_arg(&type);
+
+	self_netns = open("/proc/self/ns/net", O_RDONLY);
+	if (self_netns < 0)
+		err(EXIT_FAILURE, _("failed to open /proc/self/ns/net"));
+	if (self_netns != fdescs[0].fd) {
+		if (dup2(self_netns, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(self_netns);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", self_netns, fdescs[0].fd);
+		}
+		close(self_netns);
+		self_netns = fdescs[0].fd;
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+
+	if (unshare(CLONE_NEWNET) < 0) {
+		int e = errno;
+		close_fdesc(self_netns, NULL);
+		errno = e;
+		err(EXIT_FAILURE, "failed in unshare");
+	}
+
+	tmp_netns = open("/proc/self/ns/net", O_RDONLY);
+	if (tmp_netns < 0) {
+		int e = errno;
+		close_fdesc(self_netns, NULL);
+		errno = e;
+		err(EXIT_FAILURE, _("failed to open /proc/self/ns/net for the new netns"));
+	}
+	if (tmp_netns != fdescs[1].fd) {
+		if (dup2(tmp_netns, fdescs[1].fd) < 0) {
+			int e = errno;
+			close_fdesc(self_netns, NULL);
+			close(tmp_netns);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", tmp_netns, fdescs[1].fd);
+		}
+		close(tmp_netns);
+		tmp_netns = fdescs[1].fd;
+	}
+
+	fdescs[1] = (struct fdesc){
+		.fd    = fdescs[1].fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+
+	sd = socket(AF_UNIX, typesym, 0);
+	if (sd < 0) {
+		int e = errno;
+		close_fdesc(self_netns, NULL);
+		close_fdesc(tmp_netns, NULL);
+		errno = e;
+		err(EXIT_FAILURE,
+		    _("failed to make a socket with AF_UNIX + SOCK_%s"),
+		    typestr);
+	}
+
+	if (sd != fdescs[2].fd) {
+		if (dup2(sd, fdescs[2].fd) < 0) {
+			int e = errno;
+			close_fdesc(self_netns, NULL);
+			close_fdesc(tmp_netns, NULL);
+			close(sd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", sd, fdescs[2].fd);
+		}
+		close(sd);
+		sd = fdescs[2].fd;
+	}
+
+	fdescs[2] = (struct fdesc){
+		.fd    = fdescs[2].fd,
+		.close = close_unix_socket,
+		.data  = NULL,
+	};
+
+	if (!babstract)
+		unlink(un.sun_path);
+	if (bind(sd, (const struct sockaddr *)&un, un_len) < 0) {
+		int e = errno;
+		close_fdesc(self_netns, NULL);
+		close_fdesc(tmp_netns, NULL);
+		close_unix_socket(sd, NULL);
+		errno = e;
+		err(EXIT_FAILURE, "failed to bind a socket");
+	}
+
+	if (!babstract)
+		fdescs[2].data = xstrdup(un.sun_path);
+
+	if (typesym != SOCK_DGRAM) {
+		if (listen(sd, 1) < 0) {
+			int e = errno;
+			close_fdesc(self_netns, NULL);
+			close_fdesc(tmp_netns, NULL);
+			close_unix_socket(sd, fdescs[2].data);
+			errno = e;
+			err(EXIT_FAILURE, "failed to listen a socket");
+		}
+	}
+
+	if (setns(self_netns, CLONE_NEWNET) < 0) {
+		int e = errno;
+		close_fdesc(self_netns, NULL);
+		close_fdesc(tmp_netns, NULL);
+		close_unix_socket(sd, fdescs[2].data);
+		errno = e;
+		err(EXIT_FAILURE, "failed to swich back to the original net namespace");
+	}
+
+	return NULL;
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -1309,6 +1479,35 @@ static const struct factory factories[] = {
 				.type = PTYPE_STRING,
 				.desc = "path for unix non-stream bound to",
 				.defv.string = "/tmp/test_mkfds-unix-dgram",
+			},
+			{
+				.name = "abstract",
+				.type = PTYPE_BOOLEAN,
+				.desc = "use PATH as an abstract socket address",
+				.defv.boolean = false,
+			},
+			PARAM_END
+		},
+	},
+	{
+		.name = "unix-in-netns",
+		.desc = "make a unix socket in a new network namespace",
+		.priv = true,
+		.N    = 3,
+		.EX_N = 0,
+		.make = make_unix_in_new_netns,
+		.params = (struct parameter []) {
+			{
+				.name = "type",
+				.type = PTYPE_STRING,
+				.desc = "dgram, stream, or seqpacket",
+				.defv.string = "stream",
+			},
+			{
+				.name = "path",
+				.type = PTYPE_STRING,
+				.desc = "path for unix non-stream bound to",
+				.defv.string = "/tmp/test_mkfds-unix-in-netns",
 			},
 			{
 				.name = "abstract",
