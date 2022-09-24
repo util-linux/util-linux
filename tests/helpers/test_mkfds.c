@@ -935,6 +935,101 @@ static void *make_unix_stream(const struct factory *factory, struct fdesc fdescs
 	return NULL;
 }
 
+static void *make_unix_dgram(const struct factory *factory, struct fdesc fdescs[],
+			     int argc, char ** argv)
+{
+	struct arg path = decode_arg("path", factory->params, argc, argv);
+	const char *spath = ARG_STRING(path);
+
+	struct arg abstract = decode_arg("abstract", factory->params, argc, argv);
+	bool babstract = ARG_BOOLEAN(abstract);
+
+	int ssd, csd;	/* server and client socket descriptors */
+
+	struct sockaddr_un un;
+	size_t un_len = sizeof(un);
+
+	memset(&un, 0, sizeof(un));
+	un.sun_family = AF_UNIX;
+	if (babstract) {
+		strncpy(un.sun_path + 1, spath, sizeof(un.sun_path) - 1 - 1);
+		size_t pathlen = strlen(spath);
+		if (sizeof(un.sun_path) - 1 > pathlen)
+			un_len = sizeof(un) - sizeof(un.sun_path) + 1 + pathlen;
+	} else
+		strncpy(un.sun_path,     spath, sizeof(un.sun_path) - 1    );
+
+	free_arg(&abstract);
+	free_arg(&path);
+
+	ssd = socket(AF_UNIX, SOCK_DGRAM, 0);
+	if (ssd < 0)
+		err(EXIT_FAILURE,
+		    "failed to make a socket with AF_UNIX + SOCK_DGRAM (server side)");
+	if (ssd != fdescs[0].fd) {
+		if (dup2(ssd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(ssd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", ssd, fdescs[0].fd);
+		}
+		close(ssd);
+		ssd = fdescs[0].fd;
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_unix_socket,
+		.data  = NULL,
+	};
+
+	if (!babstract)
+		unlink(un.sun_path);
+	if (bind(ssd, (const struct sockaddr *)&un, un_len) < 0) {
+		int e = errno;
+		close(ssd);
+		errno = e;
+		err(EXIT_FAILURE, "failed to bind a socket for server");
+	}
+
+	if (!babstract)
+		fdescs[0].data = xstrdup(un.sun_path);
+	csd = socket(AF_UNIX, SOCK_DGRAM, 0);
+	if (csd < 0)
+		err(EXIT_FAILURE,
+		    "failed to make a socket with AF_UNIX + SOCK_DGRAM (client side)");
+	if (csd != fdescs[1].fd) {
+		if (dup2(csd, fdescs[1].fd) < 0) {
+			int e = errno;
+			close(csd);
+			close_unix_socket(ssd, fdescs[0].data);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", csd, fdescs[1].fd);
+		}
+		close(csd);
+		csd = fdescs[1].fd;
+	}
+
+	fdescs[1] = (struct fdesc){
+		.fd    = fdescs[1].fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+
+	if (connect(csd, (const struct sockaddr *)&un, un_len) < 0) {
+		int e = errno;
+		close_fdesc(csd, NULL);
+		close_unix_socket(ssd, fdescs[0].data);
+		errno = e;
+		err(EXIT_FAILURE, "failed to connect a socket to the server socket");
+	}
+
+	if (!babstract)
+		unlink(un.sun_path);
+
+	return NULL;
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -1168,6 +1263,29 @@ static const struct factory factories[] = {
 				.type = PTYPE_INTEGER,
 				.desc = "shutdown the client socket; 1: R, 2: W, 3: RW",
 				.defv.integer = 0,
+			},
+			PARAM_END
+		},
+	},
+	{
+		.name = "unix-dgram",
+		.desc = "AF_UNIX+SOCK_DGRAM sockets",
+		.priv = false,
+		.N    = 2,
+		.EX_N = 0,
+		.make = make_unix_dgram,
+		.params = (struct parameter []) {
+			{
+				.name = "path",
+				.type = PTYPE_STRING,
+				.desc = "path for unix non-stream bound to",
+				.defv.string = "/tmp/test_mkfds-unix-dgram",
+			},
+			{
+				.name = "abstract",
+				.type = PTYPE_BOOLEAN,
+				.desc = "use PATH as an abstract socket address",
+				.defv.boolean = false,
 			},
 			PARAM_END
 		},
