@@ -788,8 +788,8 @@ static void close_unix_socket(int fd, void *data)
 	}
 }
 
-static void *make_unix_stream(const struct factory *factory, struct fdesc fdescs[],
-			      int argc, char ** argv)
+static void *make_unix_stream_core(const struct factory *factory, struct fdesc fdescs[],
+				   int argc, char ** argv, int type, const char *typestr)
 {
 	struct arg path = decode_arg("path", factory->params, argc, argv);
 	const char *spath = ARG_STRING(path);
@@ -830,10 +830,10 @@ static void *make_unix_stream(const struct factory *factory, struct fdesc fdescs
 	if (iclient_shutdown < 0 || iclient_shutdown > 3)
 		errx(EXIT_FAILURE, "the client shudown specification in unexpected range");
 
-	ssd = socket(AF_UNIX, SOCK_STREAM, 0);
+	ssd = socket(AF_UNIX, type, 0);
 	if (ssd < 0)
 		err(EXIT_FAILURE,
-		    "failed to make a socket with AF_UNIX + SOCK_STREAM (server side)");
+		    "failed to make a socket with AF_UNIX + SOCK_%s (server side)", typestr);
 	if (ssd != fdescs[0].fd) {
 		if (dup2(ssd, fdescs[0].fd) < 0) {
 			int e = errno;
@@ -869,10 +869,10 @@ static void *make_unix_stream(const struct factory *factory, struct fdesc fdescs
 		err(EXIT_FAILURE, "failed to listen a socket");
 	}
 
-	csd = socket(AF_UNIX, SOCK_STREAM, 0);
+	csd = socket(AF_UNIX, type, 0);
 	if (csd < 0)
 		err(EXIT_FAILURE,
-		    "failed to make a socket with AF_UNIX + SOCK_STREAM (client side)");
+		    "failed to make a socket with AF_UNIX + SOCK_%s (client side)", typestr);
 	if (csd != fdescs[1].fd) {
 		if (dup2(csd, fdescs[1].fd) < 0) {
 			int e = errno;
@@ -933,6 +933,29 @@ static void *make_unix_stream(const struct factory *factory, struct fdesc fdescs
 		shutdown(csd, SHUT_WR);
 
 	return NULL;
+}
+
+static void *make_unix_stream(const struct factory *factory, struct fdesc fdescs[],
+			      int argc, char ** argv)
+{
+	struct arg type = decode_arg("type", factory->params, argc, argv);
+	const char *stype = ARG_STRING(type);
+
+	int typesym;
+	const char *typestr;
+
+	if (strcmp(stype, "stream") == 0) {
+		typesym = SOCK_STREAM;
+		typestr = "STREAM";
+	} else if (strcmp(stype, "seqpacket") == 0) {
+		typesym = SOCK_SEQPACKET;
+		typestr = "SEQPACKET";
+	} else
+		errx(EXIT_FAILURE, _("unknown unix socket type: %s"), stype);
+
+	free_arg(&type);
+
+	return make_unix_stream_core(factory, fdescs, argc, argv, typesym, typestr);
 }
 
 static void *make_unix_dgram(const struct factory *factory, struct fdesc fdescs[],
@@ -1263,6 +1286,12 @@ static const struct factory factories[] = {
 				.type = PTYPE_INTEGER,
 				.desc = "shutdown the client socket; 1: R, 2: W, 3: RW",
 				.defv.integer = 0,
+			},
+			{
+				.name = "type",
+				.type = PTYPE_STRING,
+				.desc = "stream or seqpacket",
+				.defv.string = "stream",
 			},
 			PARAM_END
 		},
