@@ -747,28 +747,27 @@ int mnt_optlist_get_flags(struct libmnt_optlist *ls, unsigned long *flags,
 }
 
 #ifdef UL_HAVE_MOUNT_API
-static inline uint64_t flags_to_attrs(unsigned long flags)
+static inline uint64_t flag_to_attr(unsigned long flag)
 {
-	uint64_t attrs = 0;
-
-	if (flags & MS_RDONLY)
-		attrs |= MOUNT_ATTR_RDONLY;
-	if (flags & MS_NOSUID)
-		attrs |= MOUNT_ATTR_NOSUID;
-	if (flags & MS_NOEXEC)
-		attrs |= MOUNT_ATTR_NOEXEC;
-	if (flags & MS_NODIRATIME)
-		attrs |= MOUNT_ATTR_NODIRATIME;
-	if (flags & MS_RELATIME)
-		attrs |= MOUNT_ATTR_RELATIME;
-	if (flags & MS_NOATIME)
-		attrs |= MOUNT_ATTR_NOATIME;
-	if (flags & MS_STRICTATIME)
-		attrs |= MOUNT_ATTR_STRICTATIME;
-	if (flags & MS_NOSYMFOLLOW)
-		attrs |= MOUNT_ATTR_NOSYMFOLLOW;
-
-	return attrs;
+	switch (flag) {
+	case MS_RDONLY:
+		return MOUNT_ATTR_RDONLY;
+	case MS_NOSUID:
+		return MOUNT_ATTR_NOSUID;
+	case MS_NOEXEC:
+		return MOUNT_ATTR_NOEXEC;
+	case MS_NODIRATIME:
+		return MOUNT_ATTR_NODIRATIME;
+	case MS_RELATIME:
+		return MOUNT_ATTR_RELATIME;
+	case MS_NOATIME:
+		return MOUNT_ATTR_NOATIME;
+	case MS_STRICTATIME:
+		return MOUNT_ATTR_STRICTATIME;
+	case MS_NOSYMFOLLOW:
+		return MOUNT_ATTR_NOSYMFOLLOW;
+	}
+	return 0;
 }
 #endif
 
@@ -785,24 +784,30 @@ int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *cl
 	if (!ls || !ls->linux_map || !set || !clr)
 		return -EINVAL;
 
+	*set = 0, *clr = 0;
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
 	while (mnt_optlist_next_opt(ls, &itr, &opt) == 0) {
+		uint64_t x;
+
 		if (ls->linux_map != opt->map)
 			continue;
 		if (!opt->ent || !opt->ent->id)
 			continue;
 		if (!is_wanted_opt(opt, ls->linux_map, MNT_OL_FLTR_DFLT))
 			continue;
+		x = flag_to_attr( opt->ent->id );
+		if (!x)
+			continue;
 
 		if (opt->ent->mask & MNT_INVERT)
-			*clr |= flags_to_attrs( opt->ent->id );
+			*clr |= x;
 		else
-			*set |= flags_to_attrs( opt->ent->id );
+			*set |= x;
 	}
 
 	DBG(OPTLIST, ul_debugobj(ls, "return attrs set=0x%08" PRIx64
-				      ", clr=0x08%" PRIx64, *set, *clr));
+				      ", clr=0x%08" PRIx64, *set, *clr));
 	return 0;
 
 #endif
@@ -922,7 +927,7 @@ int mnt_optlist_is_propagation_only(struct libmnt_optlist *ls)
 		return 0;
 
 	rest = flags & ~MS_PROPAGATION;
-	return (rest == 0 || rest == MS_SILENT);
+	return (rest == 0 || (rest & (MS_SILENT | MS_REC)));
 }
 
 int mnt_optlist_is_remount(struct libmnt_optlist *ls)
@@ -1032,6 +1037,10 @@ int mnt_opt_set_external(struct libmnt_opt *opt, int enable)
 	return 0;
 }
 
+int mnt_opt_is_external(struct libmnt_opt *opt)
+{
+	return opt && opt->external ? 1 : 0;
+}
 
 
 #ifdef TEST_PROGRAM

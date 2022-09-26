@@ -2456,12 +2456,11 @@ int mnt_context_propagation_only(struct libmnt_context *cxt)
 
 	if (cxt->action != MNT_ACT_MOUNT)
 		return 0;
-
 	if (cxt->mountdata || cxt->fs == NULL)
 		return 0;
-
-	if ((cxt->fs->fstype && strcmp(cxt->fs->fstype, "none") != 0) ||
-	    (cxt->fs->source && strcmp(cxt->fs->source, "none") == 0))
+	if (cxt->fs->fstype && strcmp(cxt->fs->fstype, "none") != 0)
+		return 0;
+	if (cxt->fs->source && strcmp(cxt->fs->source, "none") != 0)
 		return 0;
 
 	ls = mnt_context_get_optlist(cxt);

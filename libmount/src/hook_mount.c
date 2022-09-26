@@ -140,6 +140,8 @@ static int hook_set_vfsflags(struct libmnt_context *cxt,
 	uint64_t set = 0, clr = 0;
 	int rc;
 
+	DBG(HOOK, ul_debugobj(hs, "setting VFS flags"));
+
 	api = get_sysapi(cxt, hs);
 	assert(api);
 	assert(api->fd_tree >= 0);
@@ -166,10 +168,55 @@ static int hook_set_vfsflags(struct libmnt_context *cxt,
 	return rc == 0 ? 0 : -errno;
 }
 
-static int hook_set_propagation(struct libmnt_context *cxt __attribute__((__unused__)),
-			const struct libmnt_hookset *hs __attribute__((__unused__)),
+static int hook_set_propagation(struct libmnt_context *cxt,
+			const struct libmnt_hookset *hs,
 			void *data __attribute__((__unused__)))
 {
+	struct libmnt_sysapi *api;
+	struct libmnt_optlist *ol;
+	struct libmnt_iter itr;
+	struct libmnt_opt *opt;
+	int rc = 0;
+
+	DBG(HOOK, ul_debugobj(hs, "setting propagation"));
+
+	ol = mnt_context_get_optlist(cxt);
+	if (!ol)
+		return -ENOMEM;
+
+	api = get_sysapi(cxt, hs);
+	assert(api);
+	assert(api->fd_tree >= 0);
+
+	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
+
+	while (mnt_optlist_next_opt(ol, &itr, &opt) == 0) {
+		const struct libmnt_optmap *map = mnt_opt_get_map(opt);
+		const struct libmnt_optmap *ent = mnt_opt_get_mapent(opt);
+		struct mount_attr attr = { .attr_clr = 0 };
+		unsigned int flgs = AT_EMPTY_PATH;
+
+		if (cxt->map_linux != map)
+			continue;
+		if (mnt_opt_is_external(opt))
+			continue;
+		if (!ent || !ent->id || !(ent->id & MS_PROPAGATION))
+			continue;
+
+		attr.propagation = ent->id & MS_PROPAGATION;
+		if (ent->id & MS_REC)
+			flgs |= AT_RECURSIVE;
+
+		DBG(HOOK, ul_debugobj(hs,
+			"mount_setattr(propagation=0x%08" PRIx64")",
+			(uint64_t) attr.propagation));
+
+		rc = mount_setattr(api->fd_tree, "", flgs, &attr, sizeof(attr));
+		set_syscall_status(cxt, "move_setattr", rc == 0);
+		if (rc != 0)
+			return rc;
+	}
+
 	return 0;
 }
 
@@ -210,9 +257,12 @@ static int init_sysapi(struct libmnt_context *cxt,
 	assert(cxt);
 	assert(hs);
 
+	DBG(HOOK, ul_debugobj(hs, "initialize API fds"));
+
 	/* A) tree based operation -- the tree is mount source */
 	if ((flags & MS_BIND)
 	    || (flags & MS_MOVE)) {
+		DBG(HOOK, ul_debugobj(hs, " BIND/MOVE"));
 		path = mnt_fs_get_srcpath(cxt->fs);
 		if (!path)
 			return -EINVAL;
@@ -220,6 +270,7 @@ static int init_sysapi(struct libmnt_context *cxt,
 	/* B) tree based operation -- the tree is mount point */
 	} else if ((flags & MS_REMOUNT)
 	    || mnt_context_propagation_only(cxt)) {
+		DBG(HOOK, ul_debugobj(hs, " REMOUNT/propagation"));
 		path = mnt_fs_get_target(cxt->fs);
 		if (!path)
 			return -EINVAL;
@@ -238,7 +289,7 @@ static int init_sysapi(struct libmnt_context *cxt,
 		if (flags & MS_BIND)
 			oflg |= OPEN_TREE_CLONE;
 
-		DBG(HOOK, ul_debugobj(hs, "open_tree(%s)", path));
+		DBG(HOOK, ul_debugobj(hs, "open_tree(path=%s, flgs=0x%08lx)", path, oflg));
 		if (mnt_context_is_fake(cxt))
 			goto fake;
 
@@ -249,6 +300,7 @@ static int init_sysapi(struct libmnt_context *cxt,
 
 	/* C) FS based operation */
 	} else {
+		DBG(HOOK, ul_debugobj(hs, " new FS"));
 		const char *type = mnt_fs_get_fstype(cxt->fs);
 
 		if (!type)
@@ -345,7 +397,7 @@ static int hook_prepare(struct libmnt_context *cxt,
 					hook_attach_target);
 
 	/* set propagation (has to be attached to VFS) */
-	if (!rc && mnt_optlist_get_propagation(ol) != 0)
+	if (!rc && mnt_optlist_get_propagation(ol))
 		rc = mnt_context_append_hook(cxt, hs, MNT_STAGE_MOUNT_POST, NULL,
 					hook_set_propagation);
 
