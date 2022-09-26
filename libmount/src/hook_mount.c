@@ -122,11 +122,93 @@ static int hook_reconfigure_mount(struct libmnt_context *cxt __attribute__((__un
 	return 0;
 }
 
-static int hook_create_mount(struct libmnt_context *cxt __attribute__((__unused__)),
-			const struct libmnt_hookset *hs __attribute__((__unused__)),
+static int configure_superblock(struct libmnt_context *cxt,
+				const struct libmnt_hookset *hs, int fd)
+{
+	struct libmnt_optlist *ol;
+	struct libmnt_iter itr;
+	struct libmnt_opt *opt;
+	int rc;
+
+	DBG(HOOK, ul_debugobj(hs, " configure FS"));
+
+	ol = mnt_context_get_optlist(cxt);
+	if (!ol)
+		return -ENOMEM;
+
+	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
+
+	while (mnt_optlist_next_opt(ol, &itr, &opt) == 0) {
+		const char *name = mnt_opt_get_name(opt);
+		const char *value = mnt_opt_get_value(opt);
+		const struct libmnt_optmap *ent = mnt_opt_get_mapent(opt);
+
+		if (ent && mnt_opt_get_map(opt) == cxt->map_linux &&
+		    ent->id == MS_RDONLY)
+			;
+		else if (!name || mnt_opt_get_map(opt) || mnt_opt_is_external(opt))
+			continue;
+
+		DBG(HOOK, ul_debugobj(hs, "  fsconfig(name=%s,value=%s)", name, value));
+		if (value)
+			rc = fsconfig(fd, FSCONFIG_SET_STRING, name, value, 0);
+		else
+			rc = fsconfig(fd, FSCONFIG_SET_FLAG, name, NULL, 0);
+
+		set_syscall_status(cxt, "fsconfig", rc == 0);
+		if (rc != 0)
+			return -errno;
+	}
+
+	return 0;
+}
+
+static int hook_create_mount(struct libmnt_context *cxt,
+			const struct libmnt_hookset *hs,
 			void *data __attribute__((__unused__)))
 {
-	return 0;
+	struct libmnt_sysapi *api;
+	const char *src;
+	int rc = 0;
+
+	assert(cxt);
+	assert(cxt->fs);
+
+	api = get_sysapi(cxt, hs);
+	assert(api);
+	assert(api->fd_fs >= 0);
+
+	src = mnt_fs_get_srcpath(cxt->fs);
+	if (!src)
+		return -EINVAL;
+
+	DBG(HOOK, ul_debugobj(hs, "create FS instance"));
+
+	rc = fsconfig(api->fd_fs, FSCONFIG_SET_STRING, "source", src, 0);
+	set_syscall_status(cxt, "fsconfig", rc == 0);
+
+	if (!rc)
+		rc = configure_superblock(cxt, hs, api->fd_fs);
+	if (!rc) {
+		rc = fsconfig(api->fd_fs, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+		set_syscall_status(cxt, "fsconfig", rc == 0);
+	}
+
+	if (!rc) {
+		api->fd_tree = fsmount(api->fd_fs, FSMOUNT_CLOEXEC, 0);
+		set_syscall_status(cxt, "fsmount", api->fd_tree >= 0);
+		if (api->fd_tree < 0)
+			return -errno;
+	}
+	if (!rc && cxt->fs) {
+		struct statx st;
+
+		rc = statx(api->fd_tree, "", AT_EMPTY_PATH, STATX_MNT_ID, &st);
+		cxt->fs->id = (int) st.stx_mnt_id;
+	}
+
+	DBG(HOOK, ul_debugobj(hs, "create FS done [rc=%d]", rc));
+	return rc;
 }
 
 static int hook_set_vfsflags(struct libmnt_context *cxt,
@@ -375,19 +457,19 @@ static int hook_prepare(struct libmnt_context *cxt,
 		rc = mnt_context_append_hook(cxt, hs, MNT_STAGE_MOUNT, NULL,
 					hook_reconfigure_mount);
 
-	/* call mount_setattr() */
-	if (!rc && (set != 0 || clr != 0))
-		rc = mnt_context_append_hook(cxt, hs, MNT_STAGE_MOUNT, NULL,
-					hook_set_vfsflags);
-
 	/* create a new FS instance */
-	if (!rc
+	else if (!rc
 	    && !(flags & MS_BIND)
 	    && !(flags & MS_MOVE)
 	    && !(flags & MS_REMOUNT)
 	    && !mnt_optlist_is_propagation_only(ol))
 		rc = mnt_context_append_hook(cxt, hs, MNT_STAGE_MOUNT, NULL,
 					hook_create_mount);
+
+	/* call mount_setattr() */
+	if (!rc && (set != 0 || clr != 0))
+		rc = mnt_context_append_hook(cxt, hs, MNT_STAGE_MOUNT, NULL,
+					hook_set_vfsflags);
 
 	/* call move_mount() to attach target */
 	if (!rc
