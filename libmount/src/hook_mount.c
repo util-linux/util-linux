@@ -25,7 +25,7 @@
  *
  * remount:
  *	- open_tree	PRE
- *	- reconfigure   MOUNT
+ *	- fsconfig      MOUNT (FS reconfigure)
  *	- mount_setattr	MOUNT (VFS flags)
  *	- mount_setattr POST (propagation)
  *
@@ -115,13 +115,6 @@ static inline struct libmnt_sysapi *get_sysapi(struct libmnt_context *cxt,
 	return mnt_context_get_hookset_data(cxt, hs);
 }
 
-static int hook_reconfigure_mount(struct libmnt_context *cxt __attribute__((__unused__)),
-			const struct libmnt_hookset *hs __attribute__((__unused__)),
-			void *data __attribute__((__unused__)))
-{
-	return 0;
-}
-
 static int configure_superblock(struct libmnt_context *cxt,
 				const struct libmnt_hookset *hs, int fd)
 {
@@ -208,6 +201,37 @@ static int hook_create_mount(struct libmnt_context *cxt,
 	}
 
 	DBG(HOOK, ul_debugobj(hs, "create FS done [rc=%d]", rc));
+	return rc;
+}
+
+static int hook_reconfigure_mount(struct libmnt_context *cxt,
+			const struct libmnt_hookset *hs,
+			void *data __attribute__((__unused__)))
+{
+	struct libmnt_sysapi *api;
+	int rc = 0;
+
+	assert(cxt);
+
+	api = get_sysapi(cxt, hs);
+	assert(api);
+	assert(api->fd_tree >= 0);
+
+	if (api->fd_fs < 0) {
+		api->fd_fs = fspick(api->fd_tree, "", FSPICK_EMPTY_PATH |
+						      FSPICK_NO_AUTOMOUNT);
+		set_syscall_status(cxt, "fspick", api->fd_fs >= 0);
+		if (api->fd_fs < 0)
+			return -errno;
+	}
+
+	rc = configure_superblock(cxt, hs, api->fd_fs);
+	if (!rc) {
+		rc = fsconfig(api->fd_fs, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0);
+		set_syscall_status(cxt, "fsconfig", rc == 0);
+	}
+
+	DBG(HOOK, ul_debugobj(hs, "reconf FS done [rc=%d]", rc));
 	return rc;
 }
 
@@ -341,19 +365,19 @@ static int init_sysapi(struct libmnt_context *cxt,
 
 	DBG(HOOK, ul_debugobj(hs, "initialize API fds"));
 
-	/* A) tree based operation -- the tree is mount source */
-	if ((flags & MS_BIND)
-	    || (flags & MS_MOVE)) {
-		DBG(HOOK, ul_debugobj(hs, " BIND/MOVE"));
-		path = mnt_fs_get_srcpath(cxt->fs);
-		if (!path)
-			return -EINVAL;
-
-	/* B) tree based operation -- the tree is mount point */
-	} else if ((flags & MS_REMOUNT)
+	/* A) tree based operation -- the tree is mount point */
+	if ((flags & MS_REMOUNT)
 	    || mnt_context_propagation_only(cxt)) {
 		DBG(HOOK, ul_debugobj(hs, " REMOUNT/propagation"));
 		path = mnt_fs_get_target(cxt->fs);
+		if (!path)
+			return -EINVAL;
+
+	/* B) tree based operation -- the tree is mount source */
+	} else if ((flags & MS_BIND)
+	    || (flags & MS_MOVE)) {
+		DBG(HOOK, ul_debugobj(hs, " BIND/MOVE"));
+		path = mnt_fs_get_srcpath(cxt->fs);
 		if (!path)
 			return -EINVAL;
 	}
@@ -368,7 +392,9 @@ static int init_sysapi(struct libmnt_context *cxt,
 		if (mnt_optlist_is_recursive(cxt->optlist))
 			oflg |= AT_RECURSIVE;
 
-		if (flags & MS_BIND)
+		/* Classic -oremount,bind,ro is not bind operation, it's just
+		 * VFS flags update only */
+		if ((flags & MS_BIND) && !(flags & MS_REMOUNT))
 			oflg |= OPEN_TREE_CLONE;
 
 		DBG(HOOK, ul_debugobj(hs, "open_tree(path=%s, flgs=0x%08lx)", path, oflg));
@@ -452,7 +478,7 @@ static int hook_prepare(struct libmnt_context *cxt,
 	if (!rc && (flags & MS_MOVE) && (flags & MS_REMOUNT))
 		return -EINVAL;
 
-	/* classic remount (note -oremount,bind,ro is handled as bind) */
+	/* classic remount (note -oremount,bind,ro is not superblock reconfiguration) */
 	if (!rc && (flags & MS_REMOUNT) && !(flags & MS_BIND))
 		rc = mnt_context_append_hook(cxt, hs, MNT_STAGE_MOUNT, NULL,
 					hook_reconfigure_mount);
