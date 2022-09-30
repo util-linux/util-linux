@@ -134,6 +134,7 @@ static const struct id_part qcom_part[] = {
     { 0x211, "Kryo" },
     { 0x800, "Falkor-V1/Kryo" },
     { 0x801, "Kryo-V2" },
+    { 0x802, "Kryo-3XX-Gold" },
     { 0x803, "Kryo-3XX-Silver" },
     { 0x804, "Kryo-4XX-Gold" },
     { 0x805, "Kryo-4XX-Silver" },
