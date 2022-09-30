@@ -26,6 +26,7 @@
 #include <linux/if_ether.h>
 #include <linux/if_packet.h>
 #include <net/if.h>
+#include <sched.h>
 #include <signal.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -34,6 +35,7 @@
 #include <sys/inotify.h>
 #include <sys/mman.h>
 #include <sys/prctl.h>
+#include <sys/select.h>
 #include <sys/socket.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
@@ -74,11 +76,13 @@ static void __attribute__((__noreturn__)) usage(FILE *out, int status)
 union value {
 	const char *string;
 	long integer;
+	bool boolean;
 };
 
 enum ptype {
 	PTYPE_STRING,
 	PTYPE_INTEGER,
+	PTYPE_BOOLEAN,
 };
 
 struct ptype_class {
@@ -99,6 +103,7 @@ struct ptype_class {
 
 #define ARG_STRING(A) (A.v.string)
 #define ARG_INTEGER(A) (A.v.integer)
+#define ARG_BOOLEAN(A) (A.v.boolean)
 struct arg {
 	union value v;
 	void (*free)(union value value);
@@ -155,6 +160,32 @@ static void integer_free(union value value _U_)
 	/* Do nothing */
 }
 
+static char *boolean_sprint(const union value *value)
+{
+	return xstrdup(value->boolean? "true": "false");
+}
+
+static union value boolean_read(const char *arg, const union value *defv)
+{
+	union value r;
+
+	if (!arg)
+		return *defv;
+
+	if (strcasecmp(arg, "true") == 0
+	    || strcmp(arg, "1") == 0
+	    || strcasecmp(arg, "yes") == 0
+	    || strcasecmp(arg, "y") == 0)
+		r.boolean = true;
+	else
+		r.boolean = false;
+	return r;
+}
+
+static void boolean_free(union value value _U_)
+{
+	/* Do nothing */
+}
 
 struct ptype_class ptype_classes [] = {
 	[PTYPE_STRING] = {
@@ -168,6 +199,12 @@ struct ptype_class ptype_classes [] = {
 		.sprint = integer_sprint,
 		.read   = integer_read,
 		.free   = integer_free,
+	},
+	[PTYPE_BOOLEAN] = {
+		.name = "boolean",
+		.sprint = boolean_sprint,
+		.read   = boolean_read,
+		.free   = boolean_free,
 	},
 };
 
@@ -227,8 +264,9 @@ struct factory {
 #define MAX_N 5
 	int  N;			/* the number of fds this factory makes */
 	int  EX_N;		/* fds made optionally */
-	bool fork;		/* whether this factory make a child process or not */
-	void (*make)(const struct factory *, struct fdesc[], pid_t *, int, char **);
+	void *(*make)(const struct factory *, struct fdesc[], int, char **);
+	void (*free)(const struct factory *, void *);
+	void (*report)(const struct factory *, void *, FILE *);
 	const struct parameter * params;
 };
 
@@ -237,8 +275,8 @@ static void close_fdesc(int fd, void *data _U_)
 	close(fd);
 }
 
-static void open_ro_regular_file(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
-				 int argc, char ** argv)
+static void *open_ro_regular_file(const struct factory *factory, struct fdesc fdescs[],
+				  int argc, char ** argv)
 {
 	struct arg file = decode_arg("file", factory->params, argc, argv);
 	struct arg offset = decode_arg("offset", factory->params, argc, argv);
@@ -273,10 +311,12 @@ static void open_ro_regular_file(const struct factory *factory, struct fdesc fde
 		.close = close_fdesc,
 		.data  = NULL
 	};
+
+	return NULL;
 }
 
-static void make_pipe(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
-		      int argc, char ** argv)
+static void *make_pipe(const struct factory *factory, struct fdesc fdescs[],
+		       int argc, char ** argv)
 {
 	int pd[2];
 	int nonblock_flags[2] = {0, 0};
@@ -366,6 +406,8 @@ static void make_pipe(const struct factory *factory, struct fdesc fdescs[], pid_
 			};
 		}
 	}
+
+	return NULL;
 }
 
 static void close_dir(int fd, void *data)
@@ -377,8 +419,8 @@ static void close_dir(int fd, void *data)
 		close_fdesc(fd, NULL);
 }
 
-static void open_directory(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
-			   int argc, char ** argv)
+static void *open_directory(const struct factory *factory, struct fdesc fdescs[],
+			    int argc, char ** argv)
 {
 	struct arg dir = decode_arg("dir", factory->params, argc, argv);
 	struct arg dentries = decode_arg("dentries", factory->params, argc, argv);
@@ -419,16 +461,17 @@ static void open_directory(const struct factory *factory, struct fdesc fdescs[],
 	}
 	free_arg(&dentries);
 
-
 	fdescs[0] = (struct fdesc){
 		.fd    = fdescs[0].fd,
 		.close = close_dir,
 		.data  = dp
 	};
+
+	return NULL;
 }
 
-static void open_rw_chrdev(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
-			   int argc, char ** argv)
+static void *open_rw_chrdev(const struct factory *factory, struct fdesc fdescs[],
+			    int argc, char ** argv)
 {
 	struct arg chrdev = decode_arg("chrdev", factory->params, argc, argv);
 	int fd = open(ARG_STRING(chrdev), O_RDWR);
@@ -451,10 +494,12 @@ static void open_rw_chrdev(const struct factory *factory, struct fdesc fdescs[],
 		.close = close_fdesc,
 		.data  = NULL
 	};
+
+	return NULL;
 }
 
-static void make_socketpair(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
-			    int argc, char ** argv)
+static void *make_socketpair(const struct factory *factory, struct fdesc fdescs[],
+			     int argc, char ** argv)
 {
 	int sd[2];
 	struct arg socktype = decode_arg("socktype", factory->params, argc, argv);
@@ -492,10 +537,12 @@ static void make_socketpair(const struct factory *factory, struct fdesc fdescs[]
 			.data  = NULL
 		};
 	}
+
+	return NULL;
 }
 
-static void open_with_opath(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
-			    int argc, char ** argv)
+static void *open_with_opath(const struct factory *factory, struct fdesc fdescs[],
+			     int argc, char ** argv)
 {
 	struct arg path = decode_arg("path", factory->params, argc, argv);
 	int fd = open(ARG_STRING(path), O_PATH|O_NOFOLLOW);
@@ -518,9 +565,11 @@ static void open_with_opath(const struct factory *factory, struct fdesc fdescs[]
 		.close = close_fdesc,
 		.data  = NULL
 	};
+
+	return NULL;
 }
 
-static void open_ro_blkdev(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
+static void *open_ro_blkdev(const struct factory *factory, struct fdesc fdescs[],
 			    int argc, char ** argv)
 {
 	struct arg blkdev = decode_arg("blkdev", factory->params, argc, argv);
@@ -544,6 +593,8 @@ static void open_ro_blkdev(const struct factory *factory, struct fdesc fdescs[],
 		.close = close_fdesc,
 		.data  = NULL,
 	};
+
+	return NULL;
 }
 
 static int make_packet_socket(int socktype, const char *interface)
@@ -593,8 +644,8 @@ static void close_fdesc_after_munmap(int fd, void *data)
 	close(fd);
 }
 
-static void make_mmapped_packet_socket(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
-				       int argc, char ** argv)
+static void *make_mmapped_packet_socket(const struct factory *factory, struct fdesc fdescs[],
+					int argc, char ** argv)
 {
 	int sd;
 	struct arg socktype = decode_arg("socktype", factory->params, argc, argv);
@@ -668,10 +719,12 @@ static void make_mmapped_packet_socket(const struct factory *factory, struct fde
 		.close = close_fdesc_after_munmap,
 		.data  = munmap_data,
 	};
+
+	return NULL;
 }
 
-static void make_pidfd(const struct factory *factory, struct fdesc fdescs[], pid_t * child _U_,
-		       int argc, char ** argv)
+static void *make_pidfd(const struct factory *factory, struct fdesc fdescs[],
+			int argc, char ** argv)
 {
 	struct arg target_pid = decode_arg("target-pid", factory->params, argc, argv);
 	pid_t pid = ARG_INTEGER(target_pid);
@@ -696,10 +749,12 @@ static void make_pidfd(const struct factory *factory, struct fdesc fdescs[], pid
 		.close = close_fdesc,
 		.data  = NULL
 	};
+
+	return NULL;
 }
 
-static void make_inotify_fd(const struct factory *factory _U_, struct fdesc fdescs[], pid_t * child _U_,
-			    int argc _U_, char ** argv _U_)
+static void *make_inotify_fd(const struct factory *factory _U_, struct fdesc fdescs[],
+			     int argc _U_, char ** argv _U_)
 {
 	int fd = inotify_init();
 	if (fd < 0)
@@ -720,6 +775,452 @@ static void make_inotify_fd(const struct factory *factory _U_, struct fdesc fdes
 		.close = close_fdesc,
 		.data  = NULL
 	};
+
+	return NULL;
+}
+
+static void close_unix_socket(int fd, void *data)
+{
+	char *path = data;
+	close(fd);
+	if (path) {
+		unlink(path);
+		free(path);
+	}
+}
+
+static void *make_unix_stream_core(const struct factory *factory, struct fdesc fdescs[],
+				   int argc, char ** argv, int type, const char *typestr)
+{
+	struct arg path = decode_arg("path", factory->params, argc, argv);
+	const char *spath = ARG_STRING(path);
+
+	struct arg backlog = decode_arg("backlog", factory->params, argc, argv);
+	int ibacklog = ARG_INTEGER(path);
+
+	struct arg abstract = decode_arg("abstract", factory->params, argc, argv);
+	bool babstract = ARG_BOOLEAN(abstract);
+
+	struct arg server_shutdown = decode_arg("server-shutdown", factory->params, argc, argv);
+	int iserver_shutdown = ARG_INTEGER(server_shutdown);
+	struct arg client_shutdown = decode_arg("client-shutdown", factory->params, argc, argv);
+	int iclient_shutdown = ARG_INTEGER(client_shutdown);
+
+	int ssd, csd, asd;	/* server, client, and accepted socket descriptors */
+	struct sockaddr_un un;
+	size_t un_len = sizeof(un);
+
+	memset(&un, 0, sizeof(un));
+	un.sun_family = AF_UNIX;
+	if (babstract) {
+		strncpy(un.sun_path + 1, spath, sizeof(un.sun_path) - 1 - 1);
+		size_t pathlen = strlen(spath);
+		if (sizeof(un.sun_path) - 1 > pathlen)
+			un_len = sizeof(un) - sizeof(un.sun_path) + 1 + pathlen;
+	} else
+		strncpy(un.sun_path,     spath, sizeof(un.sun_path) - 1    );
+
+	free_arg(&client_shutdown);
+	free_arg(&server_shutdown);
+	free_arg(&abstract);
+	free_arg(&backlog);
+	free_arg(&path);
+
+	if (iserver_shutdown < 0 || iserver_shutdown > 3)
+		errx(EXIT_FAILURE, "the server shudown specification in unexpected range");
+	if (iclient_shutdown < 0 || iclient_shutdown > 3)
+		errx(EXIT_FAILURE, "the client shudown specification in unexpected range");
+
+	ssd = socket(AF_UNIX, type, 0);
+	if (ssd < 0)
+		err(EXIT_FAILURE,
+		    "failed to make a socket with AF_UNIX + SOCK_%s (server side)", typestr);
+	if (ssd != fdescs[0].fd) {
+		if (dup2(ssd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(ssd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", ssd, fdescs[0].fd);
+		}
+		close(ssd);
+		ssd = fdescs[0].fd;
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_unix_socket,
+		.data  = NULL,
+	};
+
+	if (!babstract)
+		unlink(un.sun_path);
+	if (bind(ssd, (const struct sockaddr *)&un, un_len) < 0) {
+		int e = errno;
+		close(ssd);
+		errno = e;
+		err(EXIT_FAILURE, "failed to bind a socket for listening");
+	}
+
+	if (!babstract)
+		fdescs[0].data = xstrdup(un.sun_path);
+	if (listen(ssd, ibacklog) < 0) {
+		int e = errno;
+		close_unix_socket(ssd, fdescs[0].data);
+		errno = e;
+		err(EXIT_FAILURE, "failed to listen a socket");
+	}
+
+	csd = socket(AF_UNIX, type, 0);
+	if (csd < 0)
+		err(EXIT_FAILURE,
+		    "failed to make a socket with AF_UNIX + SOCK_%s (client side)", typestr);
+	if (csd != fdescs[1].fd) {
+		if (dup2(csd, fdescs[1].fd) < 0) {
+			int e = errno;
+			close(csd);
+			close_unix_socket(ssd, fdescs[0].data);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", csd, fdescs[1].fd);
+		}
+		close(csd);
+		csd = fdescs[1].fd;
+	}
+
+	fdescs[1] = (struct fdesc){
+		.fd    = fdescs[1].fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+
+	if (connect(csd, (const struct sockaddr *)&un, un_len) < 0) {
+		int e = errno;
+		close_fdesc(csd, NULL);
+		close_unix_socket(ssd, fdescs[0].data);
+		errno = e;
+		err(EXIT_FAILURE, "failed to connect a socket to the listening socket");
+	}
+
+	if (!babstract)
+		unlink(un.sun_path);
+
+	asd = accept(ssd, NULL, NULL);
+	if (asd < 0) {
+		int e = errno;
+		close_fdesc(csd, NULL);
+		close_unix_socket(ssd, fdescs[0].data);
+		errno = e;
+		err(EXIT_FAILURE, "failed to accept a socket from the listening socket");
+	}
+	if (asd != fdescs[2].fd) {
+		if (dup2(asd, fdescs[2].fd) < 0) {
+			int e = errno;
+			close(asd);
+			close_fdesc(csd, NULL);
+			close_unix_socket(ssd, fdescs[0].data);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", asd, fdescs[2].fd);
+		}
+		close(asd);
+		asd = fdescs[2].fd;
+	}
+
+	if (iserver_shutdown & (1 << 0))
+		shutdown(asd, SHUT_RD);
+	if (iserver_shutdown & (1 << 1))
+		shutdown(asd, SHUT_WR);
+	if (iclient_shutdown & (1 << 0))
+		shutdown(csd, SHUT_RD);
+	if (iclient_shutdown & (1 << 1))
+		shutdown(csd, SHUT_WR);
+
+	return NULL;
+}
+
+static void *make_unix_stream(const struct factory *factory, struct fdesc fdescs[],
+			      int argc, char ** argv)
+{
+	struct arg type = decode_arg("type", factory->params, argc, argv);
+	const char *stype = ARG_STRING(type);
+
+	int typesym;
+	const char *typestr;
+
+	if (strcmp(stype, "stream") == 0) {
+		typesym = SOCK_STREAM;
+		typestr = "STREAM";
+	} else if (strcmp(stype, "seqpacket") == 0) {
+		typesym = SOCK_SEQPACKET;
+		typestr = "SEQPACKET";
+	} else
+		errx(EXIT_FAILURE, _("unknown unix socket type: %s"), stype);
+
+	free_arg(&type);
+
+	return make_unix_stream_core(factory, fdescs, argc, argv, typesym, typestr);
+}
+
+static void *make_unix_dgram(const struct factory *factory, struct fdesc fdescs[],
+			     int argc, char ** argv)
+{
+	struct arg path = decode_arg("path", factory->params, argc, argv);
+	const char *spath = ARG_STRING(path);
+
+	struct arg abstract = decode_arg("abstract", factory->params, argc, argv);
+	bool babstract = ARG_BOOLEAN(abstract);
+
+	int ssd, csd;	/* server and client socket descriptors */
+
+	struct sockaddr_un un;
+	size_t un_len = sizeof(un);
+
+	memset(&un, 0, sizeof(un));
+	un.sun_family = AF_UNIX;
+	if (babstract) {
+		strncpy(un.sun_path + 1, spath, sizeof(un.sun_path) - 1 - 1);
+		size_t pathlen = strlen(spath);
+		if (sizeof(un.sun_path) - 1 > pathlen)
+			un_len = sizeof(un) - sizeof(un.sun_path) + 1 + pathlen;
+	} else
+		strncpy(un.sun_path,     spath, sizeof(un.sun_path) - 1    );
+
+	free_arg(&abstract);
+	free_arg(&path);
+
+	ssd = socket(AF_UNIX, SOCK_DGRAM, 0);
+	if (ssd < 0)
+		err(EXIT_FAILURE,
+		    "failed to make a socket with AF_UNIX + SOCK_DGRAM (server side)");
+	if (ssd != fdescs[0].fd) {
+		if (dup2(ssd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(ssd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", ssd, fdescs[0].fd);
+		}
+		close(ssd);
+		ssd = fdescs[0].fd;
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_unix_socket,
+		.data  = NULL,
+	};
+
+	if (!babstract)
+		unlink(un.sun_path);
+	if (bind(ssd, (const struct sockaddr *)&un, un_len) < 0) {
+		int e = errno;
+		close(ssd);
+		errno = e;
+		err(EXIT_FAILURE, "failed to bind a socket for server");
+	}
+
+	if (!babstract)
+		fdescs[0].data = xstrdup(un.sun_path);
+	csd = socket(AF_UNIX, SOCK_DGRAM, 0);
+	if (csd < 0)
+		err(EXIT_FAILURE,
+		    "failed to make a socket with AF_UNIX + SOCK_DGRAM (client side)");
+	if (csd != fdescs[1].fd) {
+		if (dup2(csd, fdescs[1].fd) < 0) {
+			int e = errno;
+			close(csd);
+			close_unix_socket(ssd, fdescs[0].data);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", csd, fdescs[1].fd);
+		}
+		close(csd);
+		csd = fdescs[1].fd;
+	}
+
+	fdescs[1] = (struct fdesc){
+		.fd    = fdescs[1].fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+
+	if (connect(csd, (const struct sockaddr *)&un, un_len) < 0) {
+		int e = errno;
+		close_fdesc(csd, NULL);
+		close_unix_socket(ssd, fdescs[0].data);
+		errno = e;
+		err(EXIT_FAILURE, "failed to connect a socket to the server socket");
+	}
+
+	if (!babstract)
+		unlink(un.sun_path);
+
+	return NULL;
+}
+
+static void *make_unix_in_new_netns(const struct factory *factory, struct fdesc fdescs[],
+				    int argc, char ** argv)
+{
+	struct arg type = decode_arg("type", factory->params, argc, argv);
+	const char *stype = ARG_STRING(type);
+
+	struct arg path = decode_arg("path", factory->params, argc, argv);
+	const char *spath = ARG_STRING(path);
+
+	struct arg abstract = decode_arg("abstract", factory->params, argc, argv);
+	bool babstract = ARG_BOOLEAN(abstract);
+
+	int typesym;
+	const char *typestr;
+
+	struct sockaddr_un un;
+	size_t un_len = sizeof(un);
+
+	int self_netns, tmp_netns, sd;
+
+	if (strcmp(stype, "stream") == 0) {
+		typesym = SOCK_STREAM;
+		typestr = "STREAM";
+	} else if (strcmp(stype, "seqpacket") == 0) {
+		typesym = SOCK_SEQPACKET;
+		typestr = "SEQPACKET";
+	} else if (strcmp(stype, "dgram") == 0) {
+		typesym = SOCK_DGRAM;
+		typestr = "DGRAM";
+	} else {
+		free_arg(&abstract);
+		free_arg(&path);
+		free_arg(&type);
+		errx(EXIT_FAILURE, _("unknown unix socket type: %s"), stype);
+	}
+
+	memset(&un, 0, sizeof(un));
+	un.sun_family = AF_UNIX;
+	if (babstract) {
+		strncpy(un.sun_path + 1, spath, sizeof(un.sun_path) - 1 - 1);
+		size_t pathlen = strlen(spath);
+		if (sizeof(un.sun_path) - 1 > pathlen)
+			un_len = sizeof(un) - sizeof(un.sun_path) + 1 + pathlen;
+	} else
+		strncpy(un.sun_path,     spath, sizeof(un.sun_path) - 1    );
+
+	free_arg(&abstract);
+	free_arg(&path);
+	free_arg(&type);
+
+	self_netns = open("/proc/self/ns/net", O_RDONLY);
+	if (self_netns < 0)
+		err(EXIT_FAILURE, _("failed to open /proc/self/ns/net"));
+	if (self_netns != fdescs[0].fd) {
+		if (dup2(self_netns, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(self_netns);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", self_netns, fdescs[0].fd);
+		}
+		close(self_netns);
+		self_netns = fdescs[0].fd;
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+
+	if (unshare(CLONE_NEWNET) < 0) {
+		int e = errno;
+		close_fdesc(self_netns, NULL);
+		errno = e;
+		err(EXIT_FAILURE, "failed in unshare");
+	}
+
+	tmp_netns = open("/proc/self/ns/net", O_RDONLY);
+	if (tmp_netns < 0) {
+		int e = errno;
+		close_fdesc(self_netns, NULL);
+		errno = e;
+		err(EXIT_FAILURE, _("failed to open /proc/self/ns/net for the new netns"));
+	}
+	if (tmp_netns != fdescs[1].fd) {
+		if (dup2(tmp_netns, fdescs[1].fd) < 0) {
+			int e = errno;
+			close_fdesc(self_netns, NULL);
+			close(tmp_netns);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", tmp_netns, fdescs[1].fd);
+		}
+		close(tmp_netns);
+		tmp_netns = fdescs[1].fd;
+	}
+
+	fdescs[1] = (struct fdesc){
+		.fd    = fdescs[1].fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+
+	sd = socket(AF_UNIX, typesym, 0);
+	if (sd < 0) {
+		int e = errno;
+		close_fdesc(self_netns, NULL);
+		close_fdesc(tmp_netns, NULL);
+		errno = e;
+		err(EXIT_FAILURE,
+		    _("failed to make a socket with AF_UNIX + SOCK_%s"),
+		    typestr);
+	}
+
+	if (sd != fdescs[2].fd) {
+		if (dup2(sd, fdescs[2].fd) < 0) {
+			int e = errno;
+			close_fdesc(self_netns, NULL);
+			close_fdesc(tmp_netns, NULL);
+			close(sd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", sd, fdescs[2].fd);
+		}
+		close(sd);
+		sd = fdescs[2].fd;
+	}
+
+	fdescs[2] = (struct fdesc){
+		.fd    = fdescs[2].fd,
+		.close = close_unix_socket,
+		.data  = NULL,
+	};
+
+	if (!babstract)
+		unlink(un.sun_path);
+	if (bind(sd, (const struct sockaddr *)&un, un_len) < 0) {
+		int e = errno;
+		close_fdesc(self_netns, NULL);
+		close_fdesc(tmp_netns, NULL);
+		close_unix_socket(sd, NULL);
+		errno = e;
+		err(EXIT_FAILURE, "failed to bind a socket");
+	}
+
+	if (!babstract)
+		fdescs[2].data = xstrdup(un.sun_path);
+
+	if (typesym != SOCK_DGRAM) {
+		if (listen(sd, 1) < 0) {
+			int e = errno;
+			close_fdesc(self_netns, NULL);
+			close_fdesc(tmp_netns, NULL);
+			close_unix_socket(sd, fdescs[2].data);
+			errno = e;
+			err(EXIT_FAILURE, "failed to listen a socket");
+		}
+	}
+
+	if (setns(self_netns, CLONE_NEWNET) < 0) {
+		int e = errno;
+		close_fdesc(self_netns, NULL);
+		close_fdesc(tmp_netns, NULL);
+		close_unix_socket(sd, fdescs[2].data);
+		errno = e;
+		err(EXIT_FAILURE, "failed to swich back to the original net namespace");
+	}
+
+	return NULL;
 }
 
 #define PARAM_END { .name = NULL, }
@@ -730,7 +1231,6 @@ static const struct factory factories[] = {
 		.priv = false,
 		.N    = 1,
 		.EX_N = 0,
-		.fork = false,
 		.make = open_ro_regular_file,
 		.params = (struct parameter []) {
 			{
@@ -754,7 +1254,6 @@ static const struct factory factories[] = {
 		.priv = false,
 		.N    = 2,
 		.EX_N = 2,
-		.fork = false,
 		.make = make_pipe,
 		.params = (struct parameter []) {
 			{
@@ -784,7 +1283,6 @@ static const struct factory factories[] = {
 		.priv = false,
 		.N    = 1,
 		.EX_N = 0,
-		.fork = false,
 		.make = open_directory,
 		.params = (struct parameter []) {
 			{
@@ -808,7 +1306,6 @@ static const struct factory factories[] = {
 		.priv = false,
 		.N    = 1,
 		.EX_N = 0,
-		.fork = false,
 		.make = open_rw_chrdev,
 		.params = (struct parameter []) {
 			{
@@ -826,7 +1323,6 @@ static const struct factory factories[] = {
 		.priv = false,
 		.N    = 2,
 		.EX_N = 0,
-		.fork = false,
 		.make = make_socketpair,
 		.params = (struct parameter []) {
 			{
@@ -844,7 +1340,6 @@ static const struct factory factories[] = {
 		.priv = false,
 		.N    = 1,
 		.EX_N = 0,
-		.fork = false,
 		.make = open_with_opath,
 		.params = (struct parameter []) {
 			{
@@ -862,7 +1357,6 @@ static const struct factory factories[] = {
 		.priv = true,
 		.N = 1,
 		.EX_N = 0,
-		.fork = false,
 		.make = open_ro_blkdev,
 		.params = (struct parameter []) {
 			{
@@ -880,7 +1374,6 @@ static const struct factory factories[] = {
 		.priv = true,
 		.N = 1,
 		.EX_N = 0,
-		.fork = false,
 		.make = make_mmapped_packet_socket,
 		.params = (struct parameter []) {
 			{
@@ -904,7 +1397,6 @@ static const struct factory factories[] = {
 		.priv = false,
 		.N    = 1,
 		.EX_N = 0,
-		.fork = false,
 		.make = make_pidfd,
 		.params = (struct parameter []) {
 			{
@@ -922,9 +1414,107 @@ static const struct factory factories[] = {
 		.priv = false,
 		.N    = 1,
 		.EX_N = 0,
-		.fork = false,
 		.make = make_inotify_fd,
 		.params = (struct parameter []) {
+			PARAM_END
+		},
+	},
+	{
+		.name = "unix-stream",
+		.desc = "AF_UNIX+SOCK_STREAM sockets",
+		.priv = false,
+		.N    = 3,
+		.EX_N = 0,
+		.make = make_unix_stream,
+		.params = (struct parameter []) {
+			{
+				.name = "path",
+				.type = PTYPE_STRING,
+				.desc = "path for listening-socket bound to",
+				.defv.string = "/tmp/test_mkfds-unix-stream",
+			},
+			{
+				.name = "backlog",
+				.type = PTYPE_INTEGER,
+				.desc = "backlog passed to listen(2)",
+				.defv.integer = 5,
+			},
+			{
+				.name = "abstract",
+				.type = PTYPE_BOOLEAN,
+				.desc = "use PATH as an abstract socket address",
+				.defv.boolean = false,
+			},
+			{
+				.name = "server-shutdown",
+				.type = PTYPE_INTEGER,
+				.desc = "shutdown the accepted socket; 1: R, 2: W, 3: RW",
+				.defv.integer = 0,
+			},
+			{
+				.name = "client-shutdown",
+				.type = PTYPE_INTEGER,
+				.desc = "shutdown the client socket; 1: R, 2: W, 3: RW",
+				.defv.integer = 0,
+			},
+			{
+				.name = "type",
+				.type = PTYPE_STRING,
+				.desc = "stream or seqpacket",
+				.defv.string = "stream",
+			},
+			PARAM_END
+		},
+	},
+	{
+		.name = "unix-dgram",
+		.desc = "AF_UNIX+SOCK_DGRAM sockets",
+		.priv = false,
+		.N    = 2,
+		.EX_N = 0,
+		.make = make_unix_dgram,
+		.params = (struct parameter []) {
+			{
+				.name = "path",
+				.type = PTYPE_STRING,
+				.desc = "path for unix non-stream bound to",
+				.defv.string = "/tmp/test_mkfds-unix-dgram",
+			},
+			{
+				.name = "abstract",
+				.type = PTYPE_BOOLEAN,
+				.desc = "use PATH as an abstract socket address",
+				.defv.boolean = false,
+			},
+			PARAM_END
+		},
+	},
+	{
+		.name = "unix-in-netns",
+		.desc = "make a unix socket in a new network namespace",
+		.priv = true,
+		.N    = 3,
+		.EX_N = 0,
+		.make = make_unix_in_new_netns,
+		.params = (struct parameter []) {
+			{
+				.name = "type",
+				.type = PTYPE_STRING,
+				.desc = "dgram, stream, or seqpacket",
+				.defv.string = "stream",
+			},
+			{
+				.name = "path",
+				.type = PTYPE_STRING,
+				.desc = "path for unix non-stream bound to",
+				.defv.string = "/tmp/test_mkfds-unix-in-netns",
+			},
+			{
+				.name = "abstract",
+				.type = PTYPE_BOOLEAN,
+				.desc = "use PATH as an abstract socket address",
+				.defv.boolean = false,
+			},
 			PARAM_END
 		},
 	},
@@ -943,18 +1533,17 @@ static int count_parameters(const struct factory *factory)
 
 static void print_factory(const struct factory *factory)
 {
-	printf("%-20s %4s %5d %4s %6d %s\n",
+	printf("%-20s %4s %5d %6d %s\n",
 	       factory->name,
 	       factory->priv? "yes": "no",
 	       factory->N,
-	       factory->fork? "yes": "no",
 	       count_parameters(factory),
 	       factory->desc);
 }
 
 static void list_factories(void)
 {
-	printf("%-20s PRIV COUNT FORK NPARAM DESCRIPTION\n", "FACTORY");
+	printf("%-20s PRIV COUNT NPARAM DESCRIPTION\n", "FACTORY");
 	for (size_t i = 0; i < ARRAY_SIZE(factories); i++)
 		print_factory(factories + i);
 }
@@ -1012,17 +1601,35 @@ pidfd_open(pid_t pid _U_, unsigned int flags _U_)
 }
 #endif
 
+static void wait_event(void)
+{
+	fd_set readfds;
+	sigset_t sigset;
+	int n = 0;
+
+	FD_ZERO(&readfds);
+	/* Monitor the standard input only when the process
+	 * is in foreground. */
+	if (tcgetpgrp(STDIN_FILENO) == getpgrp()) {
+		n = 1;
+		FD_SET(0, &readfds);
+	}
+
+	sigemptyset(&sigset);
+
+	if (pselect(n, &readfds, NULL, NULL, NULL, &sigset) < 0
+	    && errno != EINTR)
+		errx(EXIT_FAILURE, _("failed in pselect"));
+}
+
 int main(int argc, char **argv)
 {
 	int c;
-	pid_t pid[2];
 	const struct factory *factory;
 	struct fdesc fdescs[MAX_N];
 	bool quiet = false;
 	bool cont  = false;
-
-	pid[0] = getpid();
-	pid[1] = -1;
+	void *data;
 
 	static const struct option longopts[] = {
 		{ "list",	no_argument, NULL, 'l' },
@@ -1057,7 +1664,6 @@ int main(int argc, char **argv)
 		}
 	}
 
-
 	if (optind == argc)
 		errx(EXIT_FAILURE, _("no file descriptor specification given"));
 
@@ -1071,8 +1677,10 @@ int main(int argc, char **argv)
 		errx(EXIT_FAILURE, _("not enough file descriptors given for %s"),
 		     factory->name);
 
-	for (int i = 0; i < MAX_N; i++)
+	for (int i = 0; i < MAX_N; i++) {
 		fdescs[i].fd = -1;
+		fdescs[i].close = NULL;
+	}
 
 	for (int i = 0; i < factory->N; i++) {
 		char *str = argv[optind + i];
@@ -1095,24 +1703,27 @@ int main(int argc, char **argv)
 	}
 	optind += factory->N;
 
-	factory->make(factory, fdescs, pid + 1, argc - optind, argv + optind);
+	data = factory->make(factory, fdescs, argc - optind, argv + optind);
 
 	signal(SIGCONT, do_nothing);
 
 	if (!quiet) {
-		printf("%d", pid[0]);
-		if (pid[1] != -1)
-			printf(" %d", pid[1]);
+		printf("%d", getpid());
 		putchar('\n');
+		if (factory->report)
+			factory->report(factory, data, stdout);
 		fflush(stdout);
 	}
 
 	if (!cont)
-		pause();
+		wait_event();
 
 	for (int i = 0; i < factory->N + factory->EX_N; i++)
-		if (fdescs[i].fd >= 0)
+		if (fdescs[i].fd >= 0 && fdescs[i].close)
 			fdescs[i].close(fdescs[i].fd, fdescs[i].data);
+
+	if (factory->free)
+		factory->free (factory, data);
 
 	exit(EXIT_SUCCESS);
 }

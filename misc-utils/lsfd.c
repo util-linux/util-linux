@@ -185,6 +185,12 @@ static struct colinfo infos[] = {
 		N_("device ID (if special file)") },
 	[COL_SIZE]    = { "SIZE",     4, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 		N_("file size"), },
+	[COL_SOCKNETNS]={"SOCKNETNS", 0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
+		N_("inode identifying network namespace where the socket belongs to") },
+	[COL_SOCKSTATE]={"SOCKSTATE", 0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
+		N_("State of socket") },
+	[COL_SOCKTYPE] ={"SOCKTYPE",  0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
+		N_("Type of socket") },
 	[COL_SOURCE] = { "SOURCE",    0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("file system, partition, or device containing file") },
 	[COL_STTYPE] = { "STTYPE",    0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
@@ -195,6 +201,8 @@ static struct colinfo infos[] = {
 		N_("file type (cooked)") },
 	[COL_UID]     = { "UID",      0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 		N_("user ID number of the process") },
+	[COL_UNIX_PATH]={ "UNIX.PATH",0.4,SCOLS_FL_TRUNC,SCOLS_JSON_STRING,
+		N_("filesystem pathname for UNIX doamin socketo") },
 	[COL_USER]    = { "USER",     0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("user of the process") },
 };
@@ -605,6 +613,8 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 
 	if (is_association(f, NS_MNT))
 		proc->ns_mnt = f->stat.st_ino;
+	else if (is_association(f, NS_NET))
+		load_sock_xinfo(pc, name, f->stat.st_ino);
 
 	else if (assoc >= 0) {
 		/* file-descriptor based association */
@@ -612,6 +622,9 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 
 		if (ul_path_stat(pc, &sb, AT_SYMLINK_NOFOLLOW, name) == 0)
 			f->mode = sb.st_mode;
+
+		if (is_nsfs_dev(f->stat.st_dev))
+			load_sock_xinfo(pc, name, f->stat.st_ino);
 
 		fdinfo = ul_path_fopenf(pc, "r", "fdinfo/%d", assoc);
 		if (fdinfo) {
@@ -1620,6 +1633,22 @@ static void emit_summary(struct lsfd_control *ctl, struct lsfd_counter **counter
 	scols_unref_table(tb);
 }
 
+static void attach_xinfos(struct list_head *procs)
+{
+	struct list_head *p;
+
+	list_for_each (p, procs) {
+		struct proc *proc = list_entry(p, struct proc, procs);
+		struct list_head *f;
+
+		list_for_each (f, &proc->files) {
+			struct file *file = list_entry(f, struct file, files);
+			if (file->class->attach_xinfo)
+				file->class->attach_xinfo(file);
+		}
+	}
+}
+
 int main(int argc, char *argv[])
 {
 	int c;
@@ -1805,6 +1834,8 @@ int main(int argc, char *argv[])
 
 	collect_processes(&ctl, pids, n_pids);
 	free(pids);
+
+	attach_xinfos(&ctl.procs);
 
 	convert(&ctl.procs, &ctl);
 

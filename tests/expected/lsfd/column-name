@@ -2,5 +2,5 @@
 ro-regular-file:ASSOC,KNAME,NAME: 0
     3 anon_inode:[pidfd] pid=1 comm= nspid=1
 pidfd:ASSOC,KNAME,NAME: 0
-    3 socket:[INODENUM] socket:[INODENUM]
+    3 socket:[INODENUM] state=connected type=dgram
 socketpair:ASSOC,KNAME,NAME: 0

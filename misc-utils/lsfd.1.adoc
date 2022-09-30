@@ -204,6 +204,12 @@ pid=_TARGET-PID_ comm=_TARGET-COMMAND_ nspid=_TARGET-NSPIDS_
 +
 *lsfd* extracts _TARGET-PID_ and _TARGET-NSPIDS_ from
 ``/proc/``_pid_``/fdinfo/``_fd_.
++
+UNIX-STREAM:::
+state=_SOCKSTATE_[ path=_UNIX.PATH_]
++
+UNIX:::
+state=_SOCKSTATE_[ path=_UNIX.PATH_] type=_SOCKTYPE_
 
 NLINK <``number``>::
 Link count.
@@ -251,6 +257,24 @@ Device ID (if special file).
 SIZE <``number``>::
 File size.
 
+SOCKNETS <``number``>::
+Inode identifying network namespace where the socket belogs to.
+
+SOCKSTATE <``string``>::
+State of socket.
+
+SOCKTYPE <``string``>::
+Type of socket. Here type means the second parameter of
+socket system call:
++
+* stream
+* dgram
+* raw
+* rdm
+* seqpacket
+* dccp
+* packet
+
 SOURCE <``string``>::
 File system, partition, or device containing the file.
 
@@ -267,6 +291,9 @@ For UNKN, print the value for AINODECLASS if SOURCE is anon_inodefs.
 
 UID <``number``>::
 User ID number.
+
+UNIX.PATH <``string``>::
+Filesystem pathname for UNIX doamin socket.
 
 USER <``string``>::
 User of the process.
@@ -508,6 +535,7 @@ mailto:kzak@redhat.com[Karel Zak]
 *lsof*(8)
 *pidof*(1)
 *proc*(5)
+*socket*(2)
 *stat*(2)
 
 include::man-common/bugreports.adoc[]
