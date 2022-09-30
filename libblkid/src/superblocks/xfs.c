@@ -19,6 +19,7 @@
 #include <stdint.h>
 
 #include "superblocks.h"
+#include "crc32c.h"
 
 struct xfs_super_block {
 	uint32_t	sb_magicnum;	/* magic number == XFS_SB_MAGIC */
@@ -55,9 +56,32 @@ struct xfs_super_block {
 	uint64_t	sb_ifree;	/* free inodes */
 	uint64_t	sb_fdblocks;	/* free data blocks */
 	uint64_t	sb_frextents;	/* free realtime extents */
+	uint64_t	sb_uquotino;	/* inode for user quotas */
+	uint64_t	sb_gquotino;	/* inode for group or project quotas */
+	uint16_t	sb_qflags;	/* quota flags */
+	uint8_t		sb_flags;	/* misc flags */
+	uint8_t		sb_shared_vn;	/* reserved, zeroed */
+	uint32_t	sb_inoalignmt;	/* inode alignment */
+	uint32_t	sb_unit;	/* stripe or raid unit */
+	uint32_t	sb_width;	/* stripe or raid width */
+	uint8_t		sb_dirblklog;	/* directory block allocation granularity */
+	uint8_t		sb_logsectlog;	/* log sector sector size */
+	uint16_t	sb_logsectsize;	/* log sector size */
+	uint32_t	sb_logsunit;	/* log device stripe or raid unit */
+	uint32_t	sb_features2;	/* additional version flags */
+	uint32_t	sb_bad_features2;	/* mirror of sb_features2 */
 
-	/* this is not all... but enough for libblkid */
-
+	/* version 5 fields */
+	uint32_t	sb_features_compat;		/* rw compatible flags */
+	uint32_t	sb_features_ro_compat;		/* ro compatible flags */
+	uint32_t	sb_features_incompat;		/* rw incompatible flags */
+	uint32_t	sb_features_log_incompat;	/* rw log incompatible flags */
+	uint32_t	sb_crc;				/* superblock checksum */
+	uint32_t	sb_spino_align;			/* sparse inode alignment */
+	uint64_t	sb_pquotino;			/* project quote inode */
+	uint64_t	sb_lsn;			/* superblock update sequence number */
+	unsigned char	sb_meta_uuid[16]; 	/* superblock meta uuid */
+	uint64_t	sb_rrmapino;		/* realtime reversemapping inode */
 } __attribute__((packed));
 
 #define XFS_MIN_BLOCKSIZE_LOG	9	/* i.e. 512 bytes */
@@ -82,6 +106,9 @@ struct xfs_super_block {
 #define XFS_MAX_DBLOCKS(s) ((uint64_t)(s)->sb_agcount * (s)->sb_agblocks)
 #define XFS_MIN_DBLOCKS(s) ((uint64_t)((s)->sb_agcount - 1) *	\
 			 (s)->sb_agblocks + XFS_MIN_AG_BLOCKS)
+
+#define XFS_SB_VERSION_MOREBITSBIT	0x8000
+#define XFS_SB_VERSION2_CRCBIT		0x00000100
 
 
 static void sb_from_disk(struct xfs_super_block *from,
@@ -118,9 +145,33 @@ static void sb_from_disk(struct xfs_super_block *from,
 	to->sb_ifree = be64_to_cpu(from->sb_ifree);
 	to->sb_fdblocks = be64_to_cpu(from->sb_fdblocks);
 	to->sb_frextents = be64_to_cpu(from->sb_frextents);
+	to->sb_uquotino = be64_to_cpu(from->sb_uquotino);
+	to->sb_gquotino = be64_to_cpu(from->sb_gquotino);
+	to->sb_qflags = be16_to_cpu(from->sb_qflags);
+	to->sb_flags = from-> sb_flags;
+	to->sb_shared_vn = from-> sb_shared_vn;
+	to->sb_inoalignmt = be32_to_cpu(from->sb_inoalignmt);
+	to->sb_unit = be32_to_cpu(from->sb_unit);
+	to->sb_width = be32_to_cpu(from->sb_width);
+	to->sb_dirblklog = from-> sb_dirblklog;
+	to->sb_logsectlog = from-> sb_logsectlog;
+	to->sb_logsectsize = be16_to_cpu(from->sb_logsectsize);
+	to->sb_logsunit = be32_to_cpu(from->sb_logsunit);
+	to->sb_features2 = be32_to_cpu(from->sb_features2);
+	to->sb_bad_features2 = be32_to_cpu(from->sb_bad_features2);
+	to->sb_features_compat = be32_to_cpu(from->sb_features_compat);
+	to->sb_features_ro_compat = be32_to_cpu(from->sb_features_ro_compat);
+	to->sb_features_incompat = be32_to_cpu(from->sb_features_incompat);
+	to->sb_features_log_incompat = be32_to_cpu(from->sb_features_log_incompat);
+	to->sb_crc = be32_to_cpu(from->sb_crc);
+	to->sb_spino_align = be32_to_cpu(from->sb_spino_align);
+	to->sb_pquotino = be64_to_cpu(from->sb_pquotino);
+	to->sb_lsn = be64_to_cpu(from->sb_lsn);
+	to->sb_rrmapino = be64_to_cpu(from->sb_rrmapino);
 }
 
-static int xfs_verify_sb(struct xfs_super_block *ondisk)
+static int xfs_verify_sb(struct xfs_super_block *ondisk, blkid_probe pr,
+		const struct blkid_idmag *mag)
 {
 	struct xfs_super_block sb, *sbp = &sb;
 
@@ -153,7 +204,20 @@ static int xfs_verify_sb(struct xfs_super_block *ondisk)
 	    sbp->sb_dblocks < XFS_MIN_DBLOCKS(sbp))
 		return 0;
 
-	/* TODO: version 5 has also checksum CRC32, maybe we can check it too */
+	if ((sbp->sb_versionnum & 0x0f) == 5) {
+		if (!(sbp->sb_versionnum | XFS_SB_VERSION_MOREBITSBIT))
+			return 0;
+		if (!(sbp->sb_features2 | XFS_SB_VERSION2_CRCBIT))
+			return 0;
+		uint32_t expected = sbp->sb_crc;
+		unsigned char *csummed = blkid_probe_get_sb_buffer(
+				pr, mag, sbp->sb_sectsize);
+		ondisk->sb_crc = 0;
+		uint32_t crc = crc32c(~0LL, csummed, sbp->sb_sectsize);
+		crc = bswap_32(crc ^ ~0LL);
+		if (!blkid_probe_verify_csum(pr, crc, expected))
+			return 0;
+	}
 
 	return 1;
 }
@@ -175,7 +239,7 @@ static int probe_xfs(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!xs)
 		return errno ? -errno : 1;
 
-	if (!xfs_verify_sb(xs))
+	if (!xfs_verify_sb(xs, pr, mag))
 		return 1;
 
 	if (*xs->sb_fname != '\0')
