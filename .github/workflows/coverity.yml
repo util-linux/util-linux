@@ -6,6 +6,9 @@ on:
     # send data to Coverity daily at midnight
     - cron:  '0 0 * * *'
 
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
 jobs:
   build:
     runs-on: ubuntu-latest

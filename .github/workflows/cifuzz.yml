@@ -12,8 +12,15 @@ on:
       - master
     paths:
       - '**'
+permissions:
+  contents: read # to clone the repo (google/oss-fuzz/infra/cifuzz/actions/run_fuzzers)
+
 jobs:
   Fuzzing:
+    permissions:
+      actions: read # to fetch the artifacts (google/oss-fuzz/infra/cifuzz/actions/run_fuzzers)
+      contents: read # to clone the repo (google/oss-fuzz/infra/cifuzz/actions/run_fuzzers)
+
     runs-on: ubuntu-latest
     if: github.repository == 'util-linux/util-linux'
     strategy:
