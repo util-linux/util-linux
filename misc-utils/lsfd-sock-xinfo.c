@@ -75,9 +75,9 @@ static void load_sock_xinfo_no_nsswitch(ino_t netns)
 
 static void load_sock_xinfo_with_fd(int fd, ino_t netns)
 {
-	if (setns (fd, CLONE_NEWNET) == 0) {
+	if (setns(fd, CLONE_NEWNET) == 0) {
 		load_sock_xinfo_no_nsswitch(netns);
-		setns (self_netns_fd, CLONE_NEWNET);
+		setns(self_netns_fd, CLONE_NEWNET);
 	}
 }
 
@@ -148,11 +148,11 @@ void initialize_sock_xinfos(void)
 	ul_unref_path(pc);
 }
 
-static void free_sock_xinfo (void *node)
+static void free_sock_xinfo(void *node)
 {
 	struct sock_xinfo *xinfo = node;
 	if (xinfo->class->free)
-		xinfo->class->free (xinfo);
+		xinfo->class->free(xinfo);
 	free(node);
 }
 
@@ -351,7 +351,7 @@ static void load_xinfo_from_proc_unix(ino_t netns_inode)
 
 	if (fgets(line, sizeof(line), unix_fp) == NULL)
 		goto out;
-	if (! (line[0] == 'N' && line[1] == 'u' && line[2] == 'm'))
+	if (!(line[0] == 'N' && line[1] == 'u' && line[2] == 'm'))
 		/* Unexpected line */
 		goto out;
 
