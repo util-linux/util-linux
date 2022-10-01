@@ -254,9 +254,6 @@ PID of the process targeted by the pidfd.
 POS <``number``>::
 File position.
 
-PROTONAME <``string``>::
-Protocol name.
-
 RDEV <``string``>::
 Device ID (if special file).
 
@@ -268,6 +265,9 @@ Listening socket.
 
 SOCK.NETS <``number``>::
 Inode identifying network namespace where the socket belogs to.
+
+SOCK.PROTONAME <``string``>::
+Protocol name.
 
 SOCK.STATE <``string``>::
 State of socket.
@@ -307,7 +307,7 @@ Thread ID of the process opening the file.
 
 TYPE <``string``>::
 Cooked version of STTYPE. It is same as STTYPE with exceptions.
-For SOCK, print the value for PROTONAME.
+For SOCK, print the value for SOCK.PROTONAME.
 For UNKN, print the value for AINODECLASS if SOURCE is anon_inodefs.
 
 UID <``number``>::

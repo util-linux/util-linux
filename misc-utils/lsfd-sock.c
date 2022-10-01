@@ -48,7 +48,7 @@ static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
 		if (!sock->protoname)
 			return false;
 		/* FALL THROUGH */
-	case COL_PROTONAME:
+	case COL_SOCK_PROTONAME:
 		if (sock->protoname)
 			if (scols_line_set_data(ln, column_index, sock->protoname))
 				err(EXIT_FAILURE, _("failed to add output data"));
