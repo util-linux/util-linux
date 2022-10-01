@@ -1,6 +1,6 @@
-    3   SOCK state=connected path=test_mkfds-unix-dgram type=dgram connected    dgram test_mkfds-unix-dgram
-    4   SOCK state=connected type=dgram                            connected    dgram 
-ASSOC,STTYPE,NAME,SOCKSTATE,SOCKTYPE,UNIX.PATH: 0
-    3   SOCK state=connected path=@test_mkfds-unix-dgram type=dgram connected    dgram @test_mkfds-unix-dgram
-    4   SOCK state=connected type=dgram                             connected    dgram 
-ASSOC,STTYPE,NAME,SOCKSTATE,SOCKTYPE,UNIX.PATH: 0
+    3   SOCK state=connected path=test_mkfds-unix-dgram type=dgram connected    dgram             0 test_mkfds-unix-dgram
+    4   SOCK state=connected type=dgram                            connected    dgram             0 
+ASSOC,STTYPE,NAME,SOCKSTATE,SOCKTYPE,SOCKLISTENING,UNIX.PATH: 0
+    3   SOCK state=connected path=@test_mkfds-unix-dgram type=dgram connected    dgram             0 @test_mkfds-unix-dgram
+    4   SOCK state=connected type=dgram                             connected    dgram             0 
+ASSOC,STTYPE,NAME,SOCKSTATE,SOCKTYPE,SOCKLISTENING,UNIX.PATH: 0

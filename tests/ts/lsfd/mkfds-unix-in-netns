@@ -60,9 +60,9 @@ compare_net_namespaces()
 					  type=$t ; }
 	if read -r -u "${MKFDS[0]}" PID; then
 	    ${TS_CMD_LSFD} -n \
-			   -o ASSOC,STTYPE,NAME,SOCKSTATE,SOCKTYPE,UNIX.PATH \
+			   -o ASSOC,STTYPE,NAME,SOCKSTATE,SOCKTYPE,SOCKLISTENING,UNIX.PATH \
 			   -p "${PID}" -Q "${EXPR}"
-	    echo 'ASSOC,STTYPE,NAME,SOCKSTATE,SOCKTYPE,UNIX.PATH': $?
+	    echo 'ASSOC,STTYPE,NAME,SOCKSTATE,SOCKTYPE,SOCKLISTENING,UNIX.PATH': $?
 
 	    compare_net_namespaces "$t" "${PID}"
 
@@ -76,9 +76,9 @@ compare_net_namespaces()
 					  type=$t ; }
 	if read -r -u "${MKFDS[0]}" PID; then
 	    ${TS_CMD_LSFD} -n \
-			   -o ASSOC,STTYPE,NAME,SOCKSTATE,SOCKTYPE,UNIX.PATH \
+			   -o ASSOC,STTYPE,NAME,SOCKSTATE,SOCKTYPE,SOCKLISTENING,UNIX.PATH \
 			   -p "${PID}" -Q "${EXPR}"
-	    echo 'ASSOC,STTYPE,NAME,SOCKSTATE,SOCKTYPE,UNIX.PATH': $?
+	    echo 'ASSOC,STTYPE,NAME,SOCKSTATE,SOCKTYPE,SOCKLISTENING,UNIX.PATH': $?
 
 	    compare_net_namespaces "abstract $t" "${PID}"
 

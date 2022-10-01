@@ -185,6 +185,8 @@ static struct colinfo infos[] = {
 		N_("device ID (if special file)") },
 	[COL_SIZE]    = { "SIZE",     4, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 		N_("file size"), },
+	[COL_SOCKLISTENING]={"SOCKLISTENING",0,SCOLS_FL_RIGHT,SCOLS_JSON_BOOLEAN,
+		N_("listening socket") },
 	[COL_SOCKNETNS]={"SOCKNETNS", 0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 		N_("inode identifying network namespace where the socket belongs to") },
 	[COL_SOCKSTATE]={"SOCKSTATE", 0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,

@@ -257,6 +257,9 @@ Device ID (if special file).
 SIZE <``number``>::
 File size.
 
+SOCKLISTENING <``boolean``>::
+Listening socket.
+
 SOCKNETS <``number``>::
 Inode identifying network namespace where the socket belogs to.
 

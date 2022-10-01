@@ -298,6 +298,14 @@ static char *unix_get_state(struct sock_xinfo *sock_xinfo,
 	return strdup(str);
 }
 
+static bool unix_get_listening(struct sock_xinfo *sock_xinfo,
+			       struct sock *sock __attribute__((__unused__)))
+{
+	struct unix_xinfo *ux = (struct unix_xinfo *)sock_xinfo;
+
+	return ux->acceptcon;
+}
+
 static bool unix_fill_column(struct proc *proc __attribute__((__unused__)),
 			     struct sock_xinfo *sock_xinfo,
 			     struct sock *sock __attribute__((__unused__)),
@@ -325,6 +333,7 @@ static struct sock_xinfo_class unix_xinfo_class = {
 	.get_name = unix_get_name,
 	.get_type = unix_get_type,
 	.get_state = unix_get_state,
+	.get_listening = unix_get_listening,
 	.fill_column = unix_fill_column,
 	.free = NULL,
 };

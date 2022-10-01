@@ -35,9 +35,9 @@ EXPR='(TYPE == "UNIX") and ((FD == 3) or (FD == 4))'
 				      path=test_mkfds-unix-dgram ; }
     if read -r -u "${MKFDS[0]}" PID; then
 	${TS_CMD_LSFD} -n \
-		       -o ASSOC,STTYPE,NAME,SOCKSTATE,SOCKTYPE,UNIX.PATH \
+		       -o ASSOC,STTYPE,NAME,SOCKSTATE,SOCKTYPE,SOCKLISTENING,UNIX.PATH \
 		       -p "${PID}" -Q "${EXPR}"
-	echo 'ASSOC,STTYPE,NAME,SOCKSTATE,SOCKTYPE,UNIX.PATH': $?
+	echo 'ASSOC,STTYPE,NAME,SOCKSTATE,SOCKTYPE,SOCKLISTENING,UNIX.PATH': $?
 
 	kill -CONT "${PID}"
 	wait "${MKFDS_PID}"
@@ -48,9 +48,9 @@ EXPR='(TYPE == "UNIX") and ((FD == 3) or (FD == 4))'
 				      abstract=true ; }
     if read -r -u "${MKFDS[0]}" PID; then
 	${TS_CMD_LSFD} -n \
-		       -o ASSOC,STTYPE,NAME,SOCKSTATE,SOCKTYPE,UNIX.PATH \
+		       -o ASSOC,STTYPE,NAME,SOCKSTATE,SOCKTYPE,SOCKLISTENING,UNIX.PATH \
 		       -p "${PID}" -Q "${EXPR}"
-	echo 'ASSOC,STTYPE,NAME,SOCKSTATE,SOCKTYPE,UNIX.PATH': $?
+	echo 'ASSOC,STTYPE,NAME,SOCKSTATE,SOCKTYPE,SOCKLISTENING,UNIX.PATH': $?
 
 	kill -CONT "${PID}"
 	wait "${MKFDS_PID}"
