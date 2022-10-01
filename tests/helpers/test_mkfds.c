@@ -26,6 +26,8 @@
 #include <linux/if_ether.h>
 #include <linux/if_packet.h>
 #include <net/if.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <sched.h>
 #include <signal.h>
 #include <stdbool.h>
@@ -1223,6 +1225,153 @@ static void *make_unix_in_new_netns(const struct factory *factory, struct fdesc 
 	return NULL;
 }
 
+static void *make_tcp(const struct factory *factory, struct fdesc fdescs[],
+				    int argc, char ** argv)
+{
+	struct arg server_port = decode_arg("server-port", factory->params, argc, argv);
+	unsigned short iserver_port = (unsigned short)ARG_INTEGER(server_port);
+	struct arg client_port = decode_arg("client-port", factory->params, argc, argv);
+	unsigned short iclient_port = (unsigned short)ARG_INTEGER(client_port);
+
+	struct sockaddr_in sin, cin;
+	int ssd, csd, asd;
+
+	const int y = 1;
+
+	free_arg(&server_port);
+	free_arg(&client_port);
+
+	ssd = socket(AF_INET, SOCK_STREAM, 0);
+	if (ssd < 0)
+		err(EXIT_FAILURE,
+		    _("failed to make a tcp socket for listening"));
+
+	if (setsockopt(ssd, SOL_SOCKET,
+		       SO_REUSEADDR, (const char *)&y, sizeof(y)) < 0) {
+		int e = errno;
+		close(ssd);
+		errno = e;
+		err(EXIT_FAILURE, "failed to setsockopt(SO_REUSEADDR)");
+	}
+
+	if (ssd != fdescs[0].fd) {
+		if (dup2(ssd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(ssd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", ssd, fdescs[0].fd);
+		}
+		close(ssd);
+		ssd = fdescs[0].fd;
+	}
+
+	memset(&sin, 0, sizeof(sin));
+	sin.sin_family = AF_INET;
+	sin.sin_port = htons(iserver_port);
+	sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+	if (bind(ssd, &sin, sizeof(sin)) < 0) {
+		int e = errno;
+		close(ssd);
+		errno = e;
+		err(EXIT_FAILURE, "failed to bind a listening socket");
+	}
+
+	if (listen(ssd, 1) < 0) {
+		int e = errno;
+		close(ssd);
+		errno = e;
+		err(EXIT_FAILURE, "failed to listen a socket");
+	}
+
+	csd = socket(AF_INET, SOCK_STREAM, 0);
+	if (csd < 0) {
+		int e = errno;
+		close(ssd);
+		errno = e;
+		err(EXIT_FAILURE,
+		    _("failed to make a tcp client socket"));
+	}
+
+	if (setsockopt(csd, SOL_SOCKET,
+		       SO_REUSEADDR, (const char *)&y, sizeof(y)) < 0) {
+		int e = errno;
+		close(ssd);
+		close(csd);
+		errno = e;
+		err(EXIT_FAILURE, "failed to setsockopt(SO_REUSEADDR)");
+	}
+
+	if (csd != fdescs[1].fd) {
+		if (dup2(csd, fdescs[1].fd) < 0) {
+			int e = errno;
+			close(ssd);
+			close(csd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", csd, fdescs[1].fd);
+		}
+		close(csd);
+		csd = fdescs[1].fd;
+	}
+
+	memset(&cin, 0, sizeof(cin));
+	cin.sin_family = AF_INET;
+	cin.sin_port = htons(iclient_port);
+	cin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+	if (bind(csd, &cin, sizeof(cin)) < 0) {
+		int e = errno;
+		close(ssd);
+		close(csd);
+		errno = e;
+		err(EXIT_FAILURE, "failed to bind a client socket");
+	}
+
+	if (connect(csd, &sin, sizeof(sin)) < 0) {
+		int e = errno;
+		close(ssd);
+		close(csd);
+		errno = e;
+		err(EXIT_FAILURE, "failed to connect a client socket to the serer socket");
+	}
+
+	asd = accept(ssd, NULL, NULL);
+	if (asd < 0) {
+		int e = errno;
+		close(ssd);
+		close(csd);
+		errno = e;
+		err(EXIT_FAILURE, "failed to accept a socket from the listening socket");
+	}
+	if (asd != fdescs[2].fd) {
+		if (dup2(asd, fdescs[2].fd) < 0) {
+			int e = errno;
+			close(ssd);
+			close(csd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", asd, fdescs[2].fd);
+		}
+		close(asd);
+		asd = fdescs[2].fd;
+	}
+
+	fdescs[0] = (struct fdesc) {
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+	fdescs[1] = (struct fdesc) {
+		.fd    = fdescs[1].fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+	fdescs[2] = (struct fdesc) {
+		.fd    = fdescs[2].fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+
+	return NULL;
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -1517,6 +1666,29 @@ static const struct factory factories[] = {
 			},
 			PARAM_END
 		},
+	},
+	{
+		.name = "tcp",
+		.desc = "AF_INET+SOCK_STREAM sockets",
+		.priv = false,
+		.N    = 3,
+		.EX_N = 0,
+		.make = make_tcp,
+		.params = (struct parameter []) {
+			{
+				.name = "server-port",
+				.type = PTYPE_INTEGER,
+				.desc = "TCP port the server may listen",
+				.defv.integer = 12345,
+			},
+			{
+				.name = "client-port",
+				.type = PTYPE_INTEGER,
+				.desc = "TCP port the client may bind",
+				.defv.integer = 23456,
+			},
+			PARAM_END
+		}
 	},
 };
 
