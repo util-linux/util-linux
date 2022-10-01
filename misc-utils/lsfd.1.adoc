@@ -212,10 +212,10 @@ pid=_TARGET-PID_ comm=_TARGET-COMMAND_ nspid=_TARGET-NSPIDS_
 ``/proc/``_pid_``/fdinfo/``_fd_.
 +
 UNIX-STREAM:::
-state=_SOCKSTATE_[ path=_UNIX.PATH_]
+state=_SOCK.STATE_[ path=_UNIX.PATH_]
 +
 UNIX:::
-state=_SOCKSTATE_[ path=_UNIX.PATH_] type=_SOCKTYPE_
+state=_SOCK.STATE_[ path=_UNIX.PATH_] type=_SOCK.TYPE_
 
 NLINK <``number``>::
 Link count.
@@ -263,16 +263,16 @@ Device ID (if special file).
 SIZE <``number``>::
 File size.
 
-SOCKLISTENING <``boolean``>::
+SOCK.LISTENING <``boolean``>::
 Listening socket.
 
-SOCKNETS <``number``>::
+SOCK.NETS <``number``>::
 Inode identifying network namespace where the socket belogs to.
 
-SOCKSTATE <``string``>::
+SOCK.STATE <``string``>::
 State of socket.
 
-SOCKTYPE <``string``>::
+SOCK.TYPE <``string``>::
 Type of socket. Here type means the second parameter of
 socket system call:
 +

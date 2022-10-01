@@ -68,14 +68,14 @@ static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
 			break;
 		}
 		return false;
-	case COL_SOCKNETNS:
+	case COL_SOCK_NETNS:
 		if (sock->xinfo) {
 			xasprintf(&str, "%llu",
 				  (unsigned long long)sock->xinfo->netns_inode);
 			break;
 		}
 		return false;
-	case COL_SOCKTYPE:
+	case COL_SOCK_TYPE:
 		if (sock->xinfo
 		    && sock->xinfo->class && sock->xinfo->class->get_type) {
 			str = sock->xinfo->class->get_type(sock->xinfo, sock);
@@ -83,7 +83,7 @@ static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
 				break;
 		}
 		return false;
-	case COL_SOCKSTATE:
+	case COL_SOCK_STATE:
 		if (sock->xinfo
 		    && sock->xinfo->class && sock->xinfo->class->get_state) {
 			str = sock->xinfo->class->get_state(sock->xinfo, sock);
@@ -91,7 +91,7 @@ static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
 				break;
 		}
 		return false;
-	case COL_SOCKLISTENING:
+	case COL_SOCK_LISTENING:
 		str = xstrdup((sock->xinfo
 			       && sock->xinfo->class
 			       && sock->xinfo->class->get_listening
