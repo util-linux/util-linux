@@ -18,6 +18,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include <arpa/inet.h>		/* inet_ntop */
 #include <fcntl.h>		/* open(2) */
 #include <linux/net.h>		/* SS_* */
 #include <linux/un.h>		/* UNIX_PATH_MAX */
@@ -35,6 +36,7 @@
 #include "lsfd-sock.h"
 
 static void load_xinfo_from_proc_unix(ino_t netns_inode);
+static void load_xinfo_from_proc_tcp(ino_t netns_inode);
 
 static int self_netns_fd = -1;
 struct stat self_netns_sb;
@@ -71,6 +73,7 @@ static void mark_sock_xinfo_loaded(ino_t ino)
 static void load_sock_xinfo_no_nsswitch(ino_t netns)
 {
 	load_xinfo_from_proc_unix(netns);
+	load_xinfo_from_proc_tcp(netns);
 }
 
 static void load_sock_xinfo_with_fd(int fd, ino_t netns)
@@ -386,4 +389,260 @@ static void load_xinfo_from_proc_unix(ino_t netns_inode)
 
  out:
 	fclose(unix_fp);
+}
+
+/*
+ * AF_INET
+ */
+struct inet_xinfo {
+	struct sock_xinfo sock;
+	uint32_t local_addr;
+	uint32_t remote_addr;
+};
+
+static bool inet_fill_column(struct proc *proc __attribute__((__unused__)),
+			     struct inet_xinfo *inet,
+			     struct sock *sock __attribute__((__unused__)),
+			     struct libscols_line *ln __attribute__((__unused__)),
+			     int column_id,
+			     size_t column_index __attribute__((__unused__)),
+			     char **str)
+{
+	struct in_addr n;
+	struct in_addr *nptr = NULL;
+	char s[INET_ADDRSTRLEN];
+
+	switch(column_id) {
+	case COL_INET_LADDR:
+		n.s_addr = inet->local_addr;
+		nptr = &n;
+		break;
+	case COL_INET_RADDR:
+		n.s_addr = inet->remote_addr;
+		nptr = &n;
+		break;
+	default:
+		return false;
+	}
+
+	if (nptr && inet_ntop(AF_INET, &n, s, sizeof(s))) {
+		*str = strdup(s);
+		return true;
+	}
+	return false;
+}
+
+/*
+ * TCP
+ */
+struct tcp_xinfo {
+	struct inet_xinfo inet;
+	uint16_t local_port;
+	uint16_t remote_port;
+	unsigned int st;
+};
+
+enum tcp_state {
+	/*
+	 * Taken from linux/include/net/tcp_states.h.
+	 * (GPL-2.0-or-later)
+	 */
+	TCP_ESTABLISHED = 1,
+	TCP_SYN_SENT,
+	TCP_SYN_RECV,
+	TCP_FIN_WAIT1,
+	TCP_FIN_WAIT2,
+	TCP_TIME_WAIT,
+	TCP_CLOSE,
+	TCP_CLOSE_WAIT,
+	TCP_LAST_ACK,
+	TCP_LISTEN,
+	TCP_CLOSING,
+	TCP_NEW_SYN_RECV,
+
+	TCP_MAX_STATES	/* Leave at the end! */
+};
+
+static const char *tcp_decode_state(unsigned int st)
+{
+	const char * table [] = {
+		[TCP_ESTABLISHED] = "established",
+		[TCP_SYN_SENT] = "syn-sent",
+		[TCP_SYN_RECV] = "syn-recv",
+		[TCP_FIN_WAIT1] = "fin-wait1",
+		[TCP_FIN_WAIT2] = "fin-wait2",
+		[TCP_TIME_WAIT] = "time-wait",
+		[TCP_CLOSE] = "close",
+		[TCP_CLOSE_WAIT] = "close-wait",
+		[TCP_LAST_ACK] = "last-ack",
+		[TCP_LISTEN] = "listen",
+		[TCP_CLOSING] = "closing",
+		[TCP_NEW_SYN_RECV] = "new-syn-recv",
+	};
+
+	if (st < TCP_MAX_STATES)
+		return table[st];
+	return "unknown";
+}
+
+static char *tcp_get_name(struct sock_xinfo *sock_xinfo,
+			  struct sock *sock  __attribute__((__unused__)))
+{
+	char *str = NULL;
+	struct inet_xinfo *inet = ((struct inet_xinfo *)sock_xinfo);
+	struct tcp_xinfo *tcp = ((struct tcp_xinfo *)sock_xinfo);
+	struct in_addr local_n, remote_n;
+	char local_s[INET_ADDRSTRLEN], remote_s[INET_ADDRSTRLEN];
+
+	local_n.s_addr = inet->local_addr;
+	remote_n.s_addr = inet->remote_addr;
+	if (!inet_ntop(AF_INET, &local_n, local_s, sizeof(local_s)))
+		xasprintf(&str, "state=%s", tcp_decode_state(tcp->st));
+	else if (tcp->st == TCP_LISTEN
+		 || !inet_ntop(AF_INET, &remote_n, remote_s, sizeof(remote_s)))
+		xasprintf(&str, "state=%s laddr=%s:%u",
+			  tcp_decode_state(tcp->st),
+			  local_s, tcp->local_port);
+	else
+		xasprintf(&str, "state=%s laddr=%s:%u raddr=%s:%u",
+			  tcp_decode_state(tcp->st),
+			  local_s, tcp->local_port,
+			  remote_s, tcp->remote_port);
+	return str;
+}
+
+static char *tcp_get_type(struct sock_xinfo *sock_xinfo __attribute__((__unused__)),
+			   struct sock *sock __attribute__((__unused__)))
+{
+	return strdup("stream");
+}
+
+static char *tcp_get_state(struct sock_xinfo *sock_xinfo,
+			   struct sock *sock __attribute__((__unused__)))
+{
+	struct tcp_xinfo *tcp = (struct tcp_xinfo *)sock_xinfo;
+
+	return strdup(tcp_decode_state(tcp->st));
+}
+
+static bool tcp_get_listening(struct sock_xinfo *sock_xinfo,
+			      struct sock *sock __attribute__((__unused__)))
+{
+	struct tcp_xinfo *tcp = (struct tcp_xinfo *)sock_xinfo;
+	return tcp->st == TCP_LISTEN;
+}
+
+static bool tcp_fill_column(struct proc *proc,
+			    struct sock_xinfo *sock_xinfo,
+			    struct sock *sock,
+			    struct libscols_line *ln,
+			    int column_id,
+			    size_t column_index,
+			    char **str)
+{
+	struct tcp_xinfo *tcp = (struct tcp_xinfo *)sock_xinfo;
+	struct inet_xinfo *inet = (struct inet_xinfo *)sock_xinfo;
+	struct in_addr n;
+	bool has_laddr = false;
+	char s[INET_ADDRSTRLEN];
+	unsigned int p;
+	bool has_lport = false;
+
+	if (inet_fill_column(proc, (struct inet_xinfo *)sock_xinfo, sock, ln,
+			     column_id, column_index, str))
+		return true;
+
+	switch(column_id) {
+	case COL_TCP_LADDR:
+		n.s_addr = inet->local_addr;
+		has_laddr = true;
+		p = (unsigned int)tcp->local_port;
+		/* FALL THROUGH */
+	case COL_TCP_RADDR:
+		if (!has_laddr) {
+			n.s_addr = inet->remote_addr;
+			p = (unsigned int)tcp->remote_port;
+		}
+		if (inet_ntop(AF_INET, &n, s, sizeof(s)))
+			xasprintf(str, "%s:%u", s, p);
+		break;
+	case COL_TCP_LPORT:
+		p = (unsigned int)tcp->local_port;
+		has_lport = true;
+		/* FALL THROUGH */
+	case COL_TCP_RPORT:
+		if (!has_lport)
+			p = (unsigned int)tcp->remote_port;
+		xasprintf(str, "%u", p);
+		break;
+	default:
+		return false;
+	}
+
+	return true;
+}
+
+static struct sock_xinfo_class tcp_xinfo_class = {
+	.class = "tcp",
+	.get_name = tcp_get_name,
+	.get_type = tcp_get_type,
+	.get_state = tcp_get_state,
+	.get_listening = tcp_get_listening,
+	.fill_column = tcp_fill_column,
+	.free = NULL,
+};
+
+#define TCP_LINE_LEN 256
+static void load_xinfo_from_proc_tcp(ino_t netns_inode)
+{
+	char line[TCP_LINE_LEN];
+	FILE *tcp_fp;
+
+	tcp_fp = fopen("/proc/net/tcp", "r");
+	if (!tcp_fp)
+		return;
+
+	if (fgets(line, sizeof(line), tcp_fp) == NULL)
+		goto out;
+	if (!(line[0] == ' ' && line[1] == ' '
+	      && line[2] == 's' && line[3] == 'l'))
+		/* Unexpected line */
+		goto out;
+
+	while (fgets(line, sizeof(line), tcp_fp)) {
+		unsigned long local_addr;
+		unsigned long local_port;
+		unsigned long remote_addr;
+		unsigned long remote_port;
+		unsigned long st;
+		unsigned long long inode;
+		struct tcp_xinfo *tcp;
+		struct inet_xinfo *inet;
+		struct sock_xinfo *sock;
+
+		if (sscanf(line, "%*d: %lx:%lx %lx:%lx %lx %*x:%*x %*x:%*x %*x %*u %*u %lld",
+			   &local_addr, &local_port, &remote_addr, &remote_port,
+			   &st, &inode) != 6)
+			continue;
+
+		if (inode == 0)
+			continue;
+
+		tcp = xmalloc(sizeof(struct tcp_xinfo));
+		inet = (struct inet_xinfo *)tcp;
+		sock = (struct sock_xinfo *)inet;
+		sock->class = &tcp_xinfo_class;
+		sock->inode = (ino_t)inode;
+		sock->netns_inode = netns_inode;
+		inet->local_addr = local_addr;
+		tcp->local_port = local_port;
+		inet->remote_addr = remote_addr;
+		tcp->remote_port = remote_port;
+		tcp->st = st;
+
+		add_sock_info(sock);
+	}
+
+ out:
+	fclose(tcp_fp);
 }
