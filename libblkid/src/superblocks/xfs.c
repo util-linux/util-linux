@@ -205,16 +205,23 @@ static int xfs_verify_sb(struct xfs_super_block *ondisk, blkid_probe pr,
 		return 0;
 
 	if ((sbp->sb_versionnum & 0x0f) == 5) {
+		uint32_t expected, crc;
+		unsigned char *csummed;
+
 		if (!(sbp->sb_versionnum | XFS_SB_VERSION_MOREBITSBIT))
 			return 0;
 		if (!(sbp->sb_features2 | XFS_SB_VERSION2_CRCBIT))
 			return 0;
-		uint32_t expected = sbp->sb_crc;
-		unsigned char *csummed = blkid_probe_get_sb_buffer(
-				pr, mag, sbp->sb_sectsize);
+
+		expected = sbp->sb_crc;
+		csummed = blkid_probe_get_sb_buffer(pr, mag, sbp->sb_sectsize);
+		if (!csummed)
+			return 0;
+
 		ondisk->sb_crc = 0;
-		uint32_t crc = crc32c(~0LL, csummed, sbp->sb_sectsize);
+		crc = crc32c(~0LL, csummed, sbp->sb_sectsize);
 		crc = bswap_32(crc ^ ~0LL);
+
 		if (!blkid_probe_verify_csum(pr, crc, expected))
 			return 0;
 	}
