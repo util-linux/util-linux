@@ -133,10 +133,6 @@ ts_run $TESTPROG --apply --user \
 	"something,loop=/dev/looop0,x-gvfs-hide,x-gdu.hide,x-canary,X-foo,X-bar" 0x00022400 &> $TS_OUTPUT
 ts_finalize_subtest
 
-ts_init_subtest "fix"
-ts_run $TESTPROG --fix "uid=root,gid=root" &> $TS_OUTPUT
-ts_finalize_subtest
-
 ts_init_subtest "deduplicate"
 ts_run $TESTPROG --dedup bbb,ccc,AAA,xxx,AAA=a,AAA=bbb,ddd,AAA=ccc,fff=eee AAA &> $TS_OUTPUT
 ts_finalize_subtest
