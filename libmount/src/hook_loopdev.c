@@ -59,7 +59,7 @@ is_mounted_same_loopfile(struct libmnt_context *cxt,
 				    const char *backing_file,
 				    uint64_t offset)
 {
-	struct libmnt_table *tb;
+	struct libmnt_table *tb = NULL;
 	struct libmnt_iter itr;
 	struct libmnt_fs *fs;
 	struct libmnt_cache *cache;
