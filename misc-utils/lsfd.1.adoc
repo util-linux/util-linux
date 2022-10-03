@@ -161,6 +161,12 @@ Flags specified when opening the file.
 FUID <``number``>::
 User ID number of the file's owner.
 
+INET.LADDR <``string``>::
+Local IP address.
+
+INET.RADDR <``string``>::
+Remote IP address.
+
 INODE <``number``>::
 Inode number.
 
@@ -257,6 +263,9 @@ Device ID (if special file).
 SIZE <``number``>::
 File size.
 
+SOCKLISTENING <``boolean``>::
+Listening socket.
+
 SOCKNETS <``number``>::
 Inode identifying network namespace where the socket belogs to.
 
@@ -280,6 +289,18 @@ File system, partition, or device containing the file.
 
 STTYPE <``string``>::
 Raw file types returned from stat(2): BLK, CHR, DIR, FIFO, LINK, REG, SOCK, or UNKN.
+
+TCP.LADDR <``string``>::
+Local IP address and local TCP port.
+
+TCP.LPORT <``integer``>::
+Local TCP port.
+
+TCP.RADDR <``string``>::
+Remote IP address and remote TCP port.
+
+TCP.RPORT <``integer``>::
+Remote TCP port.
 
 TID <``number``>::
 Thread ID of the process opening the file.

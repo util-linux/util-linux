@@ -51,6 +51,7 @@ struct sock_xinfo_class {
 	char * (*get_name)(struct sock_xinfo *, struct sock *);
 	char * (*get_type)(struct sock_xinfo *, struct sock *);
 	char * (*get_state)(struct sock_xinfo *, struct sock *);
+	bool (*get_listening)(struct sock_xinfo *, struct sock *);
 	/* Method for class specific columns.
 	 * Return true when the method fills the column. */
 	bool (*fill_column)(struct proc *,

@@ -56,7 +56,7 @@ static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
 	case COL_NAME:
 		if (sock->xinfo
 		    && sock->xinfo->class && sock->xinfo->class->get_name) {
-			str = sock->xinfo->class->get_name (sock->xinfo, sock);
+			str = sock->xinfo->class->get_name(sock->xinfo, sock);
 			if (str)
 				break;
 		}
@@ -91,6 +91,14 @@ static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
 				break;
 		}
 		return false;
+	case COL_SOCKLISTENING:
+		str = xstrdup((sock->xinfo
+			       && sock->xinfo->class
+			       && sock->xinfo->class->get_listening
+			       && sock->xinfo->class->get_listening(sock->xinfo, sock))
+			      ? "1"
+			      : "0");
+		break;
 	default:
 		if (sock->xinfo && sock->xinfo->class
 		    && sock->xinfo->class->fill_column) {
