@@ -208,9 +208,9 @@ static int xfs_verify_sb(struct xfs_super_block *ondisk, blkid_probe pr,
 		uint32_t expected, crc;
 		unsigned char *csummed;
 
-		if (!(sbp->sb_versionnum | XFS_SB_VERSION_MOREBITSBIT))
+		if (!(sbp->sb_versionnum & XFS_SB_VERSION_MOREBITSBIT))
 			return 0;
-		if (!(sbp->sb_features2 | XFS_SB_VERSION2_CRCBIT))
+		if (!(sbp->sb_features2 & XFS_SB_VERSION2_CRCBIT))
 			return 0;
 
 		expected = sbp->sb_crc;
