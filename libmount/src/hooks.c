@@ -39,7 +39,9 @@ static const struct libmnt_hookset *hooksets[] =
 #endif
 	&hookset_mkdir,
 	&hookset_subdir,
+#ifdef UL_HAVE_MOUNT_API
 	&hookset_mount,
+#endif
 	&hookset_mount_legacy,
 #ifdef UL_HAVE_MOUNT_API
 	&hookset_idmap,

@@ -44,8 +44,9 @@
  */
 
 #include "mountP.h"
-
 #include <inttypes.h>
+
+#ifdef UL_HAVE_MOUNT_API
 
 #define set_syscall_status(_cxt, _name, _x) __extension__ ({ \
 		if (!(_x)) { \
@@ -522,3 +523,4 @@ const struct libmnt_hookset hookset_mount =
 
 	.deinit = hookset_deinit
 };
+#endif /* UL_HAVE_MOUNT_API */
