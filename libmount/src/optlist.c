@@ -836,7 +836,10 @@ int mnt_optlist_strdup_optstr(struct libmnt_optlist *ls, char **optstr,
 
 	/* For generic options srings ro/rw is expected at the begining */
 	if ((!map || map == ls->linux_map)
-	     && (what == MNT_OL_FLTR_DFLT || what == MNT_OL_FLTR_ALL)) {
+	     && (what == MNT_OL_FLTR_DFLT ||
+		 what == MNT_OL_FLTR_ALL ||
+		 what == MNT_OL_FLTR_HELPERS)) {
+
 		rc = mnt_buffer_append_option(&buf, "rw", 2, NULL, 0);
 		if (rc)
 			goto fail;
@@ -866,7 +869,10 @@ int mnt_optlist_strdup_optstr(struct libmnt_optlist *ls, char **optstr,
 
 	/* convert 'rw' at the beginning to 'ro' if necessary */
 	if (str && is_rdonly && xx_wanted
-	    && (what == MNT_OL_FLTR_DFLT || what == MNT_OL_FLTR_ALL)) {
+	    && (what == MNT_OL_FLTR_DFLT ||
+		what == MNT_OL_FLTR_ALL ||
+		what == MNT_OL_FLTR_HELPERS)) {
+
 		str[0] = 'r';
 		str[1] = 'o';
 	}
@@ -1233,6 +1239,12 @@ static int test_get_str(struct libmnt_test *ts, int argc, char *argv[])
 		rc = mnt_optlist_get_optstr(ol, &str, NULL, MNT_OL_FLTR_UNKNOWN);
 	if (!rc)
 		printf("Unknown: %s\n", str);
+
+	rc = mnt_optlist_get_optstr(ol, &str, NULL, MNT_OL_FLTR_HELPERS);
+	if (!rc)
+		rc = mnt_optlist_get_optstr(ol, &str, NULL, MNT_OL_FLTR_HELPERS);
+	if (!rc)
+		printf("Helpers: %s\n", str);
 done:
 	mnt_unref_optlist(ol);
 	return rc;

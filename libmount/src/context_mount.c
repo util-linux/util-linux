@@ -538,15 +538,8 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 			return rc;
 	}
 
-	if (cxt->helper) {
-		rc = exec_helper(cxt);
-
-		if (mnt_context_helper_executed(cxt)
-		    && mnt_context_get_helper_status(cxt) == 0)
-			return -MNT_ERR_APPLYFLAGS;
-
-		return rc;
-	}
+	if (cxt->helper)
+		return exec_helper(cxt);
 
 	if (try_type) {
 		ol = mnt_context_get_optlist(cxt);
@@ -898,6 +891,7 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 	if (!mnt_context_switch_ns(cxt, ns_old))
 		return -MNT_ERR_NAMESPACE;
 
+	DBG(CXT, ul_debugobj(cxt, "mnt_context_do_mount() done [rc=%d]", res));
 	return res;
 }
 
@@ -1074,8 +1068,9 @@ again:
 	mnt_context_deinit_hooksets(cxt);
 
 	if (!mnt_context_switch_ns(cxt, ns_old))
-		return -MNT_ERR_NAMESPACE;
+		rc = -MNT_ERR_NAMESPACE;
 
+	DBG(CXT, ul_debugobj(cxt, "mnt_context_mount() done [rc=%d]", rc));
 	return rc;
 }
 
