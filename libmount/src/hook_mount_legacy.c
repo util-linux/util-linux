@@ -287,6 +287,11 @@ static int hook_prepare(struct libmnt_context *cxt,
 	if (mnt_context_has_hook(cxt, &hookset_mount, 0, NULL))
 		return 0;
 #endif
+	/* append regual FS mount(2) */
+	if (!mnt_context_propagation_only(cxt))
+		rc = mnt_context_append_hook(cxt, hs,
+				MNT_STAGE_MOUNT, NULL, hook_mount);
+
 	rc = mnt_context_get_mflags(cxt, &flags);
 	if (rc)
 		return rc;
@@ -306,11 +311,6 @@ static int hook_prepare(struct libmnt_context *cxt,
 		if (rc)
 			return rc;
 	}
-
-	/* append regual FS mount(2) */
-	if (!mnt_context_propagation_only(cxt))
-		rc = mnt_context_append_hook(cxt, hs,
-				MNT_STAGE_MOUNT, NULL, hook_mount);
 
 	return rc;
 }
