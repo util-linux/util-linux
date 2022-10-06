@@ -59,8 +59,6 @@ void mnt_free_fs(struct libmnt_fs *fs)
 
 	DBG(FS, ul_debugobj(fs, "free [refcount=%d]", fs->refcount));
 
-	mnt_unref_optlist(fs->optlist);
-
 	mnt_reset_fs(fs);
 	free(fs);
 }
@@ -96,6 +94,9 @@ void mnt_reset_fs(struct libmnt_fs *fs)
 	free(fs->attrs);
 	free(fs->opt_fields);
 	free(fs->comment);
+
+	mnt_unref_optlist(fs->optlist);
+	fs->optlist = NULL;
 
 	fs->opts_age = 0;
 
@@ -236,7 +237,7 @@ int mnt_fs_follow_optlist(struct libmnt_fs *fs, struct libmnt_optlist *ol)
  * set, then the field is NOT overwritten.
  *
  * This function does not copy userdata (se mnt_fs_set_userdata()). A new copy is
- * not linked with any existing mnt_tab.
+ * not linked with any existing mnt_tab or optlist.
  *
  * Returns: @dest or NULL in case of error
  */
@@ -293,10 +294,6 @@ struct libmnt_fs *mnt_copy_fs(struct libmnt_fs *dest,
 	dest->size	 = src->size;
 	dest->usedsize   = src->usedsize;
 	dest->priority   = src->priority;
-
-	dest->opts_age   = src->opts_age;
-	dest->optlist    = src->optlist;
-	mnt_ref_optlist(dest->optlist);
 
 	return dest;
 err:
