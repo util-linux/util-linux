@@ -102,7 +102,8 @@ void mnt_free_context(struct libmnt_context *cxt)
 	mnt_unref_table(cxt->fstab);
 	mnt_unref_cache(cxt->cache);
 	mnt_unref_fs(cxt->fs);
-	mnt_unref_fs(cxt->fs_template);
+
+	mnt_unref_optlist(cxt->optlist_saved);
 	mnt_unref_optlist(cxt->optlist);
 
 	mnt_free_lock(cxt->lock);
@@ -152,11 +153,13 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	mnt_unref_fs(cxt->fs);
 	mnt_unref_table(cxt->mountinfo);
 	mnt_unref_table(cxt->utab);
+	mnt_unref_optlist(cxt->optlist);
 
 	free(cxt->helper);
 
 	cxt->fs = NULL;
 	cxt->mountinfo = NULL;
+	cxt->optlist = NULL;
 	cxt->utab = NULL;
 	cxt->helper = NULL;
 	cxt->mountdata = NULL;
@@ -194,7 +197,7 @@ int mnt_reset_context(struct libmnt_context *cxt)
 }
 
 /*
- * Saves the current context FS setting (mount options, etc) to make it usable after
+ * Saves the current context setting (mount options, etc) to make it usable after
  * mnt_reset_context() or by mnt_context_apply_template(). This is usable for
  * example for mnt_context_next_mount() where for the next mount operation we
  * need to restore to the original context setting.
@@ -203,21 +206,17 @@ int mnt_reset_context(struct libmnt_context *cxt)
  */
 int mnt_context_save_template(struct libmnt_context *cxt)
 {
-	struct libmnt_fs *fs = NULL;
-
 	if (!cxt)
 		return -EINVAL;
 
-	DBG(CXT, ul_debugobj(cxt, "save FS as template"));
+	DBG(CXT, ul_debugobj(cxt, "saving template"));
 
-	if (cxt->fs) {
-		fs = mnt_copy_fs(NULL, cxt->fs);
-		if (!fs)
-			return -ENOMEM;
-	}
+	/* reset old saved data */
+	mnt_unref_optlist(cxt->optlist_saved);
+	cxt->optlist_saved = NULL;
 
-	mnt_unref_fs(cxt->fs_template);
-	cxt->fs_template = fs;
+	if (cxt->optlist)
+		cxt->optlist_saved = mnt_copy_optlist(cxt->optlist);
 
 	return 0;
 }
@@ -230,31 +229,22 @@ int mnt_context_save_template(struct libmnt_context *cxt)
  */
 int mnt_context_apply_template(struct libmnt_context *cxt)
 {
-	struct libmnt_fs *fs = NULL;
-	int rc = 0;
-
 	if (!cxt)
 		return -EINVAL;
 
-	if (cxt->fs_template) {
-		DBG(CXT, ul_debugobj(cxt, "copy FS from template"));
-		fs = mnt_copy_fs(NULL, cxt->fs_template);
-		if (!fs)
-			return -ENOMEM;
-		rc = mnt_context_set_fs(cxt, fs);
-		mnt_unref_fs(fs);
-	} else {
-		DBG(CXT, ul_debugobj(cxt, "no FS template, reset only"));
-		mnt_unref_fs(cxt->fs);
-		cxt->fs = NULL;
-	}
+	DBG(CXT, ul_debugobj(cxt, "restoring template"));
+	mnt_unref_optlist(cxt->optlist);
+	cxt->optlist = NULL;
 
-	return rc;
+	if (cxt->optlist_saved)
+		cxt->optlist = mnt_copy_optlist(cxt->optlist_saved);
+
+	return 0;
 }
 
 int mnt_context_has_template(struct libmnt_context *cxt)
 {
-	return cxt && cxt->fs_template ? 1 : 0;
+	return cxt && cxt->optlist_saved ? 1 : 0;
 }
 
 struct libmnt_context *mnt_copy_context(struct libmnt_context *o)
@@ -1163,13 +1153,10 @@ int mnt_context_append_options(struct libmnt_context *cxt, const char *optstr)
  */
 const char *mnt_context_get_options(struct libmnt_context *cxt)
 {
-	struct libmnt_optlist *ls = mnt_context_get_optlist(cxt);
 	const char *str = NULL;
 
-	if (!ls)
-		return NULL;
-
-	mnt_optlist_get_optstr(ls, &str, NULL, 0);
+	if (cxt->optlist && !mnt_optlist_is_empty(cxt->optlist))
+		mnt_optlist_get_optstr(cxt->optlist, &str, NULL, 0);
 	return str;
 }
 
@@ -2199,6 +2186,8 @@ static int apply_fs(struct libmnt_context *cxt, struct libmnt_fs *fs, unsigned l
 	struct libmnt_optlist *ls;
 	int rc;
 
+
+
 	if (!cxt->optsmode) {
 		if (mnt_context_is_restricted(cxt)) {
 			DBG(CXT, ul_debugobj(cxt, "force fstab usage for non-root users!"));
@@ -2209,6 +2198,9 @@ static int apply_fs(struct libmnt_context *cxt, struct libmnt_fs *fs, unsigned l
 		}
 
 	}
+
+	if (!mnt_context_get_fs(cxt))
+		return -ENOMEM;
 
 	DBG(CXT, ul_debugobj(cxt, "apply entry:"));
 	DBG(CXT, mnt_fs_print_debug(fs, stderr));

@@ -918,6 +918,48 @@ int mnt_optlist_get_optstr(struct libmnt_optlist *ls, const char **optstr,
 	return 0;
 }
 
+struct libmnt_optlist *mnt_copy_optlist(struct libmnt_optlist *ls)
+{
+	struct libmnt_optlist *n = mnt_new_optlist();
+	struct libmnt_iter itr;
+	struct libmnt_opt *opt;
+	size_t i;
+
+	if (!n)
+		return NULL;
+
+	n->age = ls->age;
+	n->linux_map = ls->linux_map;
+
+	for (i = 0; i < ls->nmaps; i++)
+		n->maps[i] = ls->maps[i];
+	n->nmaps = ls->nmaps;
+
+	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
+
+	while (mnt_optlist_next_opt(ls, &itr, &opt) == 0) {
+		struct libmnt_opt *no;
+
+		no = optlist_new_opt(n,
+			opt->name, opt->name ? strlen(opt->name) : 0,
+			opt->value, opt->value ? strlen(opt->value) : 0,
+			opt->map, opt->ent, NULL);
+		if (no) {
+			no->src = opt->src;
+			no->external = opt->external;
+		}
+	}
+
+	n->merged = ls->merged;
+	return n;
+}
+
+
+int mnt_optlist_is_empty(struct libmnt_optlist *ls)
+{
+	return ls == NULL || list_empty(&ls->opts);
+}
+
 unsigned int mnt_optlist_get_age(struct libmnt_optlist *ls)
 {
 	return ls ? ls->age : 0;

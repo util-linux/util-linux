@@ -371,7 +371,6 @@ struct libmnt_context
 	char	*optstr_pattern;	/* for mnt_match_options() */
 
 	struct libmnt_fs *fs;		/* filesystem description (type, mountpoint, device, ...) */
-	struct libmnt_fs *fs_template;	/* used for @fs on mnt_reset_context() */
 
 	struct libmnt_table *fstab;	/* fstab entries */
 	struct libmnt_table *mountinfo;	/* already mounted filesystems */
@@ -393,7 +392,9 @@ struct libmnt_context
 	struct libmnt_cache	*cache;		/* paths cache */
 	struct libmnt_lock	*lock;		/* utab lock */
 	struct libmnt_update	*update;	/* utab update */
+
 	struct libmnt_optlist	*optlist;	/* parsed mount options */
+	struct libmnt_optlist	*optlist_saved;	/* save/apply context template */
 
 	const struct libmnt_optmap *map_linux;		/* system options map */
 	const struct libmnt_optmap *map_userspace;	/* userspace options map */
@@ -484,6 +485,8 @@ struct libmnt_optlist;
 extern struct libmnt_optlist *mnt_new_optlist(void);
 extern void mnt_ref_optlist(struct libmnt_optlist *ls);
 extern void mnt_unref_optlist(struct libmnt_optlist *ls);
+extern struct libmnt_optlist *mnt_copy_optlist(struct libmnt_optlist *ls);
+extern int mnt_optlist_is_empty(struct libmnt_optlist *ls);
 extern unsigned int mnt_optlist_get_age(struct libmnt_optlist *ls);
 extern int mnt_optlist_register_map(struct libmnt_optlist *ls, const struct libmnt_optmap *map);
 extern int mnt_optlist_remove_opt(struct libmnt_optlist *ls, struct libmnt_opt *opt);
