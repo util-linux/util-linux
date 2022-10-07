@@ -851,7 +851,7 @@ end:
 int mnt_context_do_mount(struct libmnt_context *cxt)
 {
 	const char *type;
-	int res, rc;
+	int res = 0, rc = 0;
 	struct libmnt_ns *ns_old;
 
 	assert(cxt);
@@ -884,9 +884,11 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 		res = do_mount_by_pattern(cxt, cxt->fstype_pattern);
 
 	/* after mount stage */
-	rc = mnt_context_call_hooks(cxt, MNT_STAGE_MOUNT_POST);
-	if (rc)
-		return rc;
+	if (res == 0) {
+		rc = mnt_context_call_hooks(cxt, MNT_STAGE_MOUNT_POST);
+		if (rc)
+			return rc;
+	}
 
 	if (!mnt_context_switch_ns(cxt, ns_old))
 		return -MNT_ERR_NAMESPACE;

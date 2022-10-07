@@ -50,10 +50,13 @@
 
 #define set_syscall_status(_cxt, _name, _x) __extension__ ({ \
 		if (!(_x)) { \
+			DBG(HOOK, ul_debug("syscall '%s' [%m]", _name)); \
 			(_cxt)->syscall_status = -errno; \
 			(_cxt)->syscall_name = (_name); \
-		} else \
+		} else { \
+			DBG(HOOK, ul_debug("syscall '%s' [succes]", _name)); \
 			(_cxt)->syscall_status = 0; \
+		} \
 	})
 
 
@@ -264,6 +267,9 @@ static int hook_set_vfsflags(struct libmnt_context *cxt,
 	if (mnt_optlist_is_recursive(ol))
 		callflags |= AT_RECURSIVE;
 
+	if (set & (MOUNT_ATTR_RELATIME | MOUNT_ATTR_NOATIME | MOUNT_ATTR_STRICTATIME))
+		clr |= MOUNT_ATTR__ATIME;
+
 	DBG(HOOK, ul_debugobj(hs,
 			"mount_setattr(set=0x%08" PRIx64" clr=0x%08" PRIx64")", set, clr));
 	attr.attr_set = set;
@@ -417,7 +423,7 @@ static int init_sysapi(struct libmnt_context *cxt,
 		if (mnt_context_is_fake(cxt))
 			goto fake;
 
-		DBG(HOOK, ul_debugobj(hs, "fsopen(%s)", type));
+		DBG(HOOK, ul_debugobj(hs, " fsopen(%s)", type));
 		if (mnt_context_is_fake(cxt))
 			goto fake;
 

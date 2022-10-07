@@ -800,10 +800,13 @@ int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *cl
 		if (!x)
 			continue;
 
-		if (opt->ent->mask & MNT_INVERT)
+		if (opt->ent->mask & MNT_INVERT) {
+			DBG(OPTLIST, ul_debugobj(ls, " clr: %s", opt->ent->name));
 			*clr |= x;
-		else
+		} else {
+			DBG(OPTLIST, ul_debugobj(ls, " set: %s", opt->ent->name));
 			*set |= x;
+		}
 	}
 
 	DBG(OPTLIST, ul_debugobj(ls, "return attrs set=0x%08" PRIx64
