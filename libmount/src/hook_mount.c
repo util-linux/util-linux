@@ -396,13 +396,14 @@ static int init_sysapi(struct libmnt_context *cxt,
 	if (path) {
 		unsigned long oflg = OPEN_TREE_CLOEXEC;
 
-		if (mnt_optlist_is_recursive(cxt->optlist))
-			oflg |= AT_RECURSIVE;
-
 		/* Classic -oremount,bind,ro is not bind operation, it's just
 		 * VFS flags update only */
-		if ((flags & MS_BIND) && !(flags & MS_REMOUNT))
+		if ((flags & MS_BIND) && !(flags & MS_REMOUNT)) {
 			oflg |= OPEN_TREE_CLONE;
+
+			if (mnt_optlist_is_rbind(cxt->optlist))
+				oflg |= AT_RECURSIVE;
+		}
 
 		DBG(HOOK, ul_debugobj(hs, "open_tree(path=%s, flgs=0x%08lx)", path, oflg));
 		if (mnt_context_is_fake(cxt))
