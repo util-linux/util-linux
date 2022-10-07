@@ -27,7 +27,9 @@ PACKAGES_OPTIONAL=(
 )
 
 # scsi_debug
-PACKAGES+=(linux-modules-extra-$(uname -r))
+if [[ "$QEMU_USER" != "1" ]]; then
+	PACKAGES+=(linux-modules-extra-$(uname -r))
+fi
 
 COMPILER="${COMPILER:?}"
 RELEASE="$(lsb_release -cs)"
