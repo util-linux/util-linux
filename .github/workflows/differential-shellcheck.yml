@@ -1,5 +1,5 @@
----
 # https://github.com/redhat-plumbers-in-action/differential-shellcheck#readme
+---
 
 name: Differential ShellCheck
 on:
@@ -14,10 +14,6 @@ jobs:
   lint:
     runs-on: ubuntu-latest
 
-    permissions:
-      security-events: write
-      pull-requests: write
-
     steps:
       - name: Repository checkout
         uses: actions/checkout@v3
@@ -25,6 +21,7 @@ jobs:
           fetch-depth: 0
 
       - name: Differential ShellCheck
-        uses: redhat-plumbers-in-action/differential-shellcheck@v2
+        uses: redhat-plumbers-in-action/differential-shellcheck@v3
         with:
+          severity: warning
           token: ${{ secrets.GITHUB_TOKEN }}
