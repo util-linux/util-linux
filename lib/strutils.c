@@ -1120,18 +1120,20 @@ int ul_stralnumcmp(const char *p1, const char *p2)
 /*
  * Parses the first option from @optstr. The @optstr pointer is set to the beginning
  * of the next option. The options string looks like 'aaa,bbb=data,foo,bar="xxx"'.
+ * @opt_sep: comma or custom options separator (can be changed in this function).
  *
  * Note this function is used by libmount to parse mount options. Be careful when modify.
  *
  * Returns -EINVAL on parse error, 1 at the end of optstr and 0 on success.
  */
 int ul_optstr_next(char **optstr, char **name, size_t *namesz,
-		   char **value, size_t *valsz)
+		   char **value, size_t *valsz, char *opt_sep)
 {
 	int open_quote = 0;
 	char *start = NULL, *stop = NULL, *p, *sep = NULL;
 	char *optstr0;
 
+	assert(opt_sep);
 	assert(optstr);
 	assert(*optstr);
 
@@ -1146,9 +1148,21 @@ int ul_optstr_next(char **optstr, char **name, size_t *namesz,
 	if (valsz)
 		*valsz = 0;
 
-	/* trim leading commas as to not invalidate option
-	 * strings with multiple consecutive commas */
-	while (optstr0 && *optstr0 == ',')
+	/* Check for separator override (first mount option after the -o)
+	 * Example: -o sep=!user=myname!domain=mydom */
+	{
+		const char *const sep_token = "sep=";
+		size_t sep_token_len = strlen(sep_token);
+		if ((strlen(optstr0) > sep_token_len) &&
+			(strstr(optstr0, sep_token) == optstr0)) {
+			opt_sep[0] = optstr0[sep_token_len];
+			optstr0 += sep_token_len + 1; /* Exclude "sep=X" from options */
+		}
+	}
+
+	/* trim leading commas (or custom separators) as to not invalidate option
+	 * strings with multiple consecutive separators */
+	while (optstr0 && *optstr0 == opt_sep[0])
 		optstr0++;
 
 	for (p = optstr0; p && *p; p++) {
@@ -1160,7 +1174,7 @@ int ul_optstr_next(char **optstr, char **name, size_t *namesz,
 			continue;		/* still in quoted block */
 		if (!sep && p > start && *p == '=')
 			sep = p;		/* name and value separator */
-		if (*p == ',')
+		if (*p == opt_sep[0])
 			stop = p;		/* terminate the option item */
 		else if (*(p + 1) == '\0')
 			stop = p + 1;		/* end of optstr */

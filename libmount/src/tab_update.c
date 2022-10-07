@@ -287,9 +287,9 @@ static int utab_new_entry(struct libmnt_update *upd, struct libmnt_fs *fs,
 
 	if (o) {
 		/* remove non-mtab options */
-		rc = mnt_optstr_get_options(o, &u,
+		rc = mnt_optstr_get_options_sep(o, &u,
 				mnt_get_builtin_optmap(MNT_USERSPACE_MAP),
-				MNT_NOMTAB);
+				MNT_NOMTAB, fs->opt_sep);
 		if (rc)
 			goto err;
 	}

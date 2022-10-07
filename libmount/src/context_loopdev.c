@@ -70,7 +70,8 @@ int mnt_context_is_loopdev(struct libmnt_context *cxt)
 		    st.st_size > 1024) {
 			DBG(LOOP, ul_debugobj(cxt, "automatically enabling loop= option"));
 			cxt->user_mountflags |= MNT_MS_LOOP;
-			mnt_optstr_append_option(&cxt->fs->user_optstr, "loop", NULL);
+			mnt_optstr_append_option_sep(&cxt->fs->user_optstr, "loop", NULL,
+				cxt->fs->opt_sep);
 			return 1;
 		}
 	}
@@ -133,7 +134,7 @@ is_mounted_same_loopfile(struct libmnt_context *cxt,
 			rc = loopdev_is_used((char *) src, bf, offset, 0, LOOPDEV_FL_OFFSET);
 
 		} else if (opts && (cxt->user_mountflags & MNT_MS_LOOP) &&
-		    mnt_optstr_get_option(opts, "loop", &val, &len) == 0 && val) {
+		    mnt_optstr_get_option_sep(opts, "loop", &val, &len, fs->opt_sep) == 0 && val) {
 
 			val = strndup(val, len);
 			rc = loopdev_is_used((char *) val, bf, offset, 0, LOOPDEV_FL_OFFSET);
@@ -179,7 +180,7 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	 * loop=
 	 */
 	if (rc == 0 && (cxt->user_mountflags & MNT_MS_LOOP) &&
-	    mnt_optstr_get_option(optstr, "loop", &val, &len) == 0 && val) {
+	    mnt_optstr_get_option_sep(optstr, "loop", &val, &len, cxt->fs->opt_sep) == 0 && val) {
 		loopval = strndup(val, len);
 		rc = loopval ? 0 : -ENOMEM;
 	}
@@ -188,7 +189,7 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	 * offset=
 	 */
 	if (rc == 0 && (cxt->user_mountflags & MNT_MS_OFFSET) &&
-	    mnt_optstr_get_option(optstr, "offset", &val, &len) == 0) {
+	    mnt_optstr_get_option_sep(optstr, "offset", &val, &len, cxt->fs->opt_sep) == 0) {
 		rc = mnt_parse_offset(val, len, &offset);
 		if (rc) {
 			DBG(LOOP, ul_debugobj(cxt, "failed to parse offset="));
@@ -200,7 +201,7 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	 * sizelimit=
 	 */
 	if (rc == 0 && (cxt->user_mountflags & MNT_MS_SIZELIMIT) &&
-	    mnt_optstr_get_option(optstr, "sizelimit", &val, &len) == 0) {
+	    mnt_optstr_get_option_sep(optstr, "sizelimit", &val, &len, cxt->fs->opt_sep) == 0) {
 		rc = mnt_parse_offset(val, len, &sizelimit);
 		if (rc) {
 			DBG(LOOP, ul_debugobj(cxt, "failed to parse sizelimit="));
@@ -212,7 +213,7 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	 * encryption=
 	 */
 	if (rc == 0 && (cxt->user_mountflags & MNT_MS_ENCRYPTION) &&
-	    mnt_optstr_get_option(optstr, "encryption", &val, &len) == 0) {
+	    mnt_optstr_get_option_sep(optstr, "encryption", &val, &len, cxt->fs->opt_sep) == 0) {
 		DBG(LOOP, ul_debugobj(cxt, "encryption no longer supported"));
 		rc = -MNT_ERR_MOUNTOPT;
 	}
@@ -382,7 +383,7 @@ success:
 			 */
 			DBG(LOOP, ul_debugobj(cxt, "removing unnecessary loop= from utab"));
 			cxt->user_mountflags &= ~MNT_MS_LOOP;
-			mnt_optstr_remove_option(&cxt->fs->user_optstr, "loop");
+			mnt_optstr_remove_option_sep(&cxt->fs->user_optstr, "loop", cxt->fs->opt_sep);
 		}
 
 		if (!(cxt->mountflags & MS_RDONLY) &&

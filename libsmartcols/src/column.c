@@ -659,13 +659,14 @@ int scols_column_set_properties(struct libscols_column *cl, const char *opts)
 	char *str = (char *) opts;
 	char *name, *value;
 	size_t namesz, valuesz;
+	char opt_sep[2] = ",";
 	unsigned int flags = 0;
 	int rc = 0;
 
 	DBG(COL, ul_debugobj(cl, "apply properties '%s'", opts));
 
 	while (rc == 0
-	       && !ul_optstr_next(&str, &name, &namesz, &value, &valuesz)) {
+	       && !ul_optstr_next(&str, &name, &namesz, &value, &valuesz, opt_sep)) {
 
 		if (strncmp(name, "trunc", namesz) == 0)
 			flags |= SCOLS_FL_TRUNC;

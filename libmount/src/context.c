@@ -1672,10 +1672,11 @@ int mnt_context_set_mflags(struct libmnt_context *cxt, unsigned long flags)
 		/*
 		 * the final mount options are already generated, refresh...
 		 */
-		return mnt_optstr_apply_flags(
+		return mnt_optstr_apply_flags_sep(
 				&cxt->fs->vfs_optstr,
 				cxt->mountflags,
-				mnt_get_builtin_optmap(MNT_LINUX_MAP));
+				mnt_get_builtin_optmap(MNT_LINUX_MAP),
+				cxt->fs->opt_sep);
 
 	return 0;
 }
@@ -1702,8 +1703,8 @@ int mnt_context_get_mflags(struct libmnt_context *cxt, unsigned long *flags)
 	if (!(cxt->flags & MNT_FL_MOUNTFLAGS_MERGED) && cxt->fs) {
 		const char *o = mnt_fs_get_options(cxt->fs);
 		if (o)
-			rc = mnt_optstr_get_flags(o, flags,
-				    mnt_get_builtin_optmap(MNT_LINUX_MAP));
+			rc = mnt_optstr_get_flags_sep(o, flags,
+				    mnt_get_builtin_optmap(MNT_LINUX_MAP), cxt->fs->opt_sep);
 	}
 
 	list_for_each(p, &cxt->addmounts) {
@@ -1758,8 +1759,8 @@ int mnt_context_get_user_mflags(struct libmnt_context *cxt, unsigned long *flags
 	if (!(cxt->flags & MNT_FL_MOUNTFLAGS_MERGED) && cxt->fs) {
 		const char *o = mnt_fs_get_user_options(cxt->fs);
 		if (o)
-			rc = mnt_optstr_get_flags(o, flags,
-				mnt_get_builtin_optmap(MNT_USERSPACE_MAP));
+			rc = mnt_optstr_get_flags_sep(o, flags,
+				mnt_get_builtin_optmap(MNT_USERSPACE_MAP), cxt->fs->opt_sep);
 	}
 	if (!rc)
 		*flags |= cxt->user_mountflags;
@@ -1939,8 +1940,8 @@ static int is_mkdir_required(const char *tgt, struct libmnt_fs *fs, mode_t *mode
 	*mode = 0;
 	*rc = 0;
 
-	if (mnt_optstr_get_option(fs->user_optstr, "X-mount.mkdir", &mstr, &mstr_sz) != 0 &&
-	    mnt_optstr_get_option(fs->user_optstr, "x-mount.mkdir", &mstr, &mstr_sz) != 0)   	/* obsolete */
+	if (mnt_optstr_get_option_sep(fs->user_optstr, "X-mount.mkdir", &mstr, &mstr_sz, fs->opt_sep) != 0 &&
+	    mnt_optstr_get_option_sep(fs->user_optstr, "x-mount.mkdir", &mstr, &mstr_sz, fs->opt_sep) != 0)   	/* obsolete */
 		return 0;
 
 	if (mnt_stat_mountpoint(tgt, &st) == 0)
@@ -2634,7 +2635,7 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 	} else if (isremount && !iscmdbind) {
 
 		/* remove "bind" from fstab (or no-op if not present) */
-		mnt_optstr_remove_option(&cxt->fs->optstr, "bind");
+		mnt_optstr_remove_option_sep(&cxt->fs->optstr, "bind", cxt->fs->opt_sep);
 	}
 	return rc;
 }

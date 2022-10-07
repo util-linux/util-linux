@@ -624,6 +624,59 @@ static pid_t parse_pid(const char *str)
 	return ret;
 }
 
+/* Check for separator override (first mount option after the -o)
+ * Example: -o sep=!user=myname!domain=mydom
+ *
+ * To get around getopt_long's reusability bugs (it can change the order of lines
+ * in argv), we have to use our own algorithm here.
+ */
+static void find_custom_separator_in_options(const int argc,
+	char *argv[], char *const opt_sep)
+{
+	const char *const token_f1 = "-o";
+	const char *const token_f2 = "--options";
+	const char *const token_f3 = "--options=";
+	size_t token_f3_len = strlen(token_f3);
+	const char *const sep_token = "sep=";
+	size_t sep_token_len = strlen(sep_token);
+	int is_option_arg = 0;
+
+	assert(argc);
+	assert(argv);
+	assert(opt_sep);
+
+	opt_sep[0] = ',';
+	for (int i = 1; i < argc; ++i) {
+		const char *const arg = argv[i];
+		size_t arg_len = strlen(arg);
+
+		// "--options=sep=X"
+		if (strstr(arg, token_f3) == arg
+			&& arg_len > (token_f3_len + sep_token_len)
+			&& strstr(arg, sep_token) == (arg + token_f3_len)) {
+			opt_sep[0] = arg[sep_token_len + token_f3_len];
+			break;
+		}
+
+		// "--options sep=X", "-o sep=X", "-vo sep=X"
+		if (is_option_arg) {
+			is_option_arg = 0;
+			if ((arg_len > sep_token_len) &&
+				(strstr(arg, sep_token) == arg)) {
+				opt_sep[0] = arg[sep_token_len];
+				break;
+			}
+		}
+
+		if (strcmp(token_f1, arg) == 0 /* "-o" */
+			|| strcmp(token_f2, arg) == 0  /* "--options" */
+			|| ('-' == arg[0] && token_f1[1] == arg[arg_len - 1]) /* "-vo" */
+			) {
+			is_option_arg = 1;
+		}
+	}
+}
+
 int main(int argc, char **argv)
 {
 	int c, rc = MNT_EX_SUCCESS, all = 0, show_labels = 0;
@@ -718,6 +771,15 @@ int main(int argc, char **argv)
 		err(MNT_EX_SYSERR, _("libmount context allocation failed"));
 
 	mnt_context_set_tables_errcb(cxt, table_parser_errcb);
+
+	{
+		char opt_sep[2] = ",";
+		find_custom_separator_in_options(argc, argv, opt_sep);
+		if (',' != opt_sep[0]) {
+			struct libmnt_fs *fs = mnt_context_get_fs(cxt);
+			mnt_fs_set_options_separator(fs, opt_sep);
+		}
+	}
 
 	while ((c = getopt_long(argc, argv, "aBcfFhilL:m::Mno:O:rRsU:vVwt:T:N:",
 					longopts, NULL)) != -1) {

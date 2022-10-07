@@ -370,6 +370,9 @@ Use the specified mount options. The _opts_ argument is a comma-separated list. 
 +
 *mount LABEL=mydisk -o noatime,nodev,nosuid*
 +
+For the cifs filesystem, you can use your own options separator
+(see "sep" in mount.cifs(8)).
++
 For more details, see the *FILESYSTEM-INDEPENDENT MOUNT OPTIONS* and *FILESYSTEM-SPECIFIC MOUNT OPTIONS* sections.
 
 *--onlyonce*::
