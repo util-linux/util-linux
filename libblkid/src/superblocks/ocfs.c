@@ -129,10 +129,12 @@ static int probe_ocfs(blkid_probe pr, const struct blkid_idmag *mag)
 		blkid_probe_set_value(pr, "SEC_TYPE",
 				(unsigned char *) "ntocfs", sizeof("ntocfs"));
 
-	blkid_probe_set_label(pr, (unsigned char *) ovl.label,
-				ocfslabellen(ovl));
-	blkid_probe_set_value(pr, "MOUNT", (unsigned char *) ovh.mount,
-				ocfsmountlen(ovh));
+	if (ocfslabellen(ovl) < sizeof(ovl.label))
+		blkid_probe_set_label(pr, (unsigned char *) ovl.label,
+					ocfslabellen(ovl));
+	if (ocfsmountlen(ovh) < sizeof(ovh.mount))
+		blkid_probe_set_value(pr, "MOUNT", (unsigned char *) ovh.mount,
+					ocfsmountlen(ovh));
 	blkid_probe_set_uuid(pr, ovl.vol_id);
 	blkid_probe_sprintf_version(pr, "%u.%u", maj, min);
 	return 0;
