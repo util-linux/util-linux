@@ -497,6 +497,8 @@ funcs = '''
         inotify_init
         jrand48
         lchown
+        lgetxattr
+        llistxattr
         llseek
 	newlocale
         mempcpy
