@@ -23,6 +23,7 @@ ts_init "$*"
 ts_check_test_command "$TS_CMD_LSFD"
 ts_check_test_command "$TS_HELPER_MKFDS"
 ts_check_prog "sed"
+ts_skip_qemu_user
 
 ts_cd "$TS_OUTDIR"
 

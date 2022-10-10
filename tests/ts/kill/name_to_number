@@ -26,6 +26,9 @@ fi
 ts_check_test_command "$TS_CMD_KILL"
 ts_check_test_command "$TS_HELPER_SIGRECEIVE"
 
+# SIGRTMAX-0 and SIGRTMAX-1 are not usable under QEMU
+ts_skip_qemu_user
+
 . "$TS_SELF/kill_functions.sh"
 
 all_ok=true

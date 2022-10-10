@@ -134,6 +134,12 @@ function ts_skip_nonroot {
 	fi
 }
 
+function ts_skip_qemu_user {
+	if [ "$QEMU_USER" == "1" ]; then
+		ts_skip "running under qemu-user emulation"
+	fi
+}
+
 function ts_failed_subtest {
 	local msg="FAILED"
 	local ret=1
