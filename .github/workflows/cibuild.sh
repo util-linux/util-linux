@@ -105,14 +105,14 @@ for phase in "${PHASES[@]}"; do
             CXXFLAGS+=(-shared-libasan)
         fi
 
-        sudo -E git clean -xdf
+        git clean -xdf
 
         ./autogen.sh
         CC="$CC" CXX="$CXX" CFLAGS="${CFLAGS[@]}" CXXFLAGS="${CXXFLAGS[@]}" LDFLAGS="${LDFLAGS[@]}" ./configure "${opts[@]}"
         ;;
     MAKE)
-        make -j
-        make -j check-programs
+        make -j"$(nproc)"
+        make -j"$(nproc)" check-programs
         ;;
     INSTALL)
         make install DESTDIR=/tmp/dest
