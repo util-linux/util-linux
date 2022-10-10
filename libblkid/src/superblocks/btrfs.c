@@ -252,6 +252,10 @@ static int probe_btrfs(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!btrfs_verify_csum(pr, bfs))
 		return 1;
 
+	/* Invalid sector size; total_bytes would be bogus. */
+	if (!le32_to_cpu(bfs->sectorsize))
+		return 1;
+
 	if (*bfs->label)
 		blkid_probe_set_label(pr,
 				(unsigned char *) bfs->label,
