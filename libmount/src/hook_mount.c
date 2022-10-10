@@ -160,6 +160,24 @@ static int configure_superblock(struct libmnt_context *cxt,
 	return 0;
 }
 
+static int open_fs_configuration_context(struct libmnt_context *cxt, const char *type)
+{
+	int fd;
+
+	DBG(HOOK, ul_debug(" new FS '%s'", type));
+
+	if (!type)
+		return -EINVAL;
+
+	DBG(HOOK, ul_debug(" fsopen(%s)", type));
+
+	fd = fsopen(type, FSOPEN_CLOEXEC);
+	set_syscall_status(cxt, "fsopen", fd >= 0);
+	if (fd < 0)
+		return -errno;
+	return fd;
+}
+
 static int hook_create_mount(struct libmnt_context *cxt,
 			const struct libmnt_hookset *hs,
 			void *data __attribute__((__unused__)))
@@ -173,7 +191,16 @@ static int hook_create_mount(struct libmnt_context *cxt,
 
 	api = get_sysapi(cxt, hs);
 	assert(api);
-	assert(api->fd_fs >= 0);
+
+	if (api->fd_fs < 0) {
+		const char *type = mnt_fs_get_fstype(cxt->fs);
+
+		api->fd_fs = open_fs_configuration_context(cxt, type);
+		if (api->fd_fs < 0) {
+			rc = api->fd_fs;
+			goto done;
+		}
+	}
 
 	src = mnt_fs_get_srcpath(cxt->fs);
 	if (!src)
@@ -195,8 +222,16 @@ static int hook_create_mount(struct libmnt_context *cxt,
 		api->fd_tree = fsmount(api->fd_fs, FSMOUNT_CLOEXEC, 0);
 		set_syscall_status(cxt, "fsmount", api->fd_tree >= 0);
 		if (api->fd_tree < 0)
-			return -errno;
+			rc = -errno;
 	}
+
+	if (rc) {
+		/* cleanup after fail (libmount may only try the FS type) */
+		close(api->fd_tree);
+		close(api->fd_fs);
+		api->fd_tree = api->fd_fs = -1;
+	}
+
 	if (!rc && cxt->fs) {
 		struct statx st;
 
@@ -204,6 +239,7 @@ static int hook_create_mount(struct libmnt_context *cxt,
 		cxt->fs->id = (int) st.stx_mnt_id;
 	}
 
+done:
 	DBG(HOOK, ul_debugobj(hs, "create FS done [rc=%d]", rc));
 	return rc;
 }
@@ -414,25 +450,21 @@ static int init_sysapi(struct libmnt_context *cxt,
 		if (api->fd_tree <= 0)
 			goto fail;
 
-	/* C) FS based operation */
+	/* C) FS based operation
+	 *
+	 *  Note, fstype is optinal and may be specified later if mount by
+	 *  list of FS types (mount -t foo,bar,ext4). In this case fsopen()
+	 *  is called later in hook_create_mount(). */
 	} else {
-		DBG(HOOK, ul_debugobj(hs, " new FS"));
 		const char *type = mnt_fs_get_fstype(cxt->fs);
 
-		if (!type)
-			return -EINVAL;
 		if (mnt_context_is_fake(cxt))
 			goto fake;
-
-		DBG(HOOK, ul_debugobj(hs, " fsopen(%s)", type));
-		if (mnt_context_is_fake(cxt))
-			goto fake;
-
-		api->fd_fs = fsopen(type, FSOPEN_CLOEXEC);
-
-		set_syscall_status(cxt, "fsopen", api->fd_fs >= 0);
-		if (api->fd_fs < 0)
-			goto fail;
+		if (type && !strchr(type, ',')) {
+			api->fd_fs = open_fs_configuration_context(cxt, type);
+			if (api->fd_fs < 0)
+				goto fail;
+		}
 	}
 
 	return 0;
