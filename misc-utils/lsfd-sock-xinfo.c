@@ -635,9 +635,13 @@ static void load_xinfo_from_proc_tcp(ino_t netns_inode)
 		sock->inode = (ino_t)inode;
 		sock->netns_inode = netns_inode;
 		inet->local_addr = local_addr;
+		inet->local_addr = ntohl(inet->local_addr);
 		tcp->local_port = local_port;
+		tcp->local_port = ntohs(tcp->local_port);
 		inet->remote_addr = remote_addr;
+		inet->remote_addr = ntohl(inet->remote_addr);
 		tcp->remote_port = remote_port;
+		tcp->remote_port = ntohs(tcp->remote_port);
 		tcp->st = st;
 
 		add_sock_info(sock);
