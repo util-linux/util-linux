@@ -694,7 +694,7 @@ static void *make_mmapped_packet_socket(const struct factory *factory, struct fd
 		close(sd);
 		errx(EXIT_FAILURE, "memory exhausted");
 	}
-	munmap_data->len = req.tp_block_size * req.tp_block_nr;
+	munmap_data->len = (size_t) req.tp_block_size * req.tp_block_nr;
 	munmap_data->ptr = mmap(NULL, munmap_data->len, PROT_WRITE, MAP_SHARED, sd, 0);
 	if (munmap_data->ptr == MAP_FAILED) {
 		int e = errno;
