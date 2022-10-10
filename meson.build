@@ -3114,6 +3114,13 @@ exe = executable(
   include_directories : includes)
 exes += exe
 
+# XXX: LINUX
+exe = executable(
+  'test_mkfds',
+  'tests/helpers/test_mkfds.c',
+  include_directories : includes)
+exes += exe
+
 ############################################################
 
 # XXX: HAVE_OPENAT
