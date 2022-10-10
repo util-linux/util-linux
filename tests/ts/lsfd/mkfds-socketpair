@@ -37,8 +37,8 @@ EXPR=
     coproc MKFDS { "$TS_HELPER_MKFDS" socketpair $FD0 $FD1 socktype=DGRAM; }
     if read -u ${MKFDS[0]} PID; then
 	EXPR='(PID == '"${PID}"') and ((FD == '"$FD0"') or (FD == '"$FD1"'))'
-	${TS_CMD_LSFD} -n -o ASSOC,MODE,STTYPE,SOURCE,PROTONAME -Q "${EXPR}" | sed -e 's/UNIX-DGRAM/UNIX/'
-	echo 'ASSOC,MODE,STTYPE,SOURCE,PROTONAME': $?
+	${TS_CMD_LSFD} -n -o ASSOC,MODE,STTYPE,SOURCE,SOCK.PROTONAME -Q "${EXPR}" | sed -e 's/UNIX-DGRAM/UNIX/'
+	echo 'ASSOC,MODE,STTYPE,SOURCE,SOCK.PROTONAME': $?
 
 	kill -CONT ${PID}
 	wait ${MKFDS_PID}
