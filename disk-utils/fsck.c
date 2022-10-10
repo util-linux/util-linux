@@ -730,6 +730,8 @@ static int kill_all(int signum)
 	for (inst = instance_list; inst; inst = inst->next) {
 		if (inst->flags & FLAG_DONE)
 			continue;
+		if (inst->pid <= 0)
+			continue;
 		kill(inst->pid, signum);
 		n++;
 	}
