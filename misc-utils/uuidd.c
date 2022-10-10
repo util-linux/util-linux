@@ -519,9 +519,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			break;
 		case UUIDD_OP_RANDOM_UUID:
 			num = 1;
-			ret = __uuid_generate_time_cont(uu, &num, uuidd_cxt->cont_clock_offset);
-			if (ret < 0 && !uuidd_cxt->quiet)
-				warnx(_("failed to open/lock clock counter"));
+			__uuid_generate_random(uu, &num);
 			if (uuidd_cxt->debug) {
 				uuid_unparse(uu, str);
 				fprintf(stderr, _("Generated random UUID: %s\n"), str);
