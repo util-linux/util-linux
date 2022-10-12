@@ -178,6 +178,38 @@ static int open_fs_configuration_context(struct libmnt_context *cxt, const char 
 	return fd;
 }
 
+static int open_mount_tree(struct libmnt_context *cxt, const char *path, unsigned long mflg)
+{
+	unsigned long oflg = OPEN_TREE_CLOEXEC;
+	int rc = 0, fd = -1;
+
+	if (mflg == (unsigned long) -1) {
+		rc = mnt_optlist_get_flags(cxt->optlist, &mflg, cxt->map_linux, 0);
+		if (rc)
+			return rc;
+	}
+	if (!path) {
+		path = mnt_fs_get_target(cxt->fs);
+		if (!path)
+			return -EINVAL;
+	}
+
+	/* Classic -oremount,bind,ro is not bind operation, it's just
+	 * VFS flags update only */
+	if ((mflg & MS_BIND) && !(mflg & MS_REMOUNT)) {
+		oflg |= OPEN_TREE_CLONE;
+
+		if (mnt_optlist_is_rbind(cxt->optlist))
+			oflg |= AT_RECURSIVE;
+	}
+
+	DBG(HOOK, ul_debug("open_tree(path=%s, flgs=0x%08lx)", path, oflg));
+	fd = open_tree(AT_FDCWD, path, oflg);
+	set_syscall_status(cxt, "open_tree", fd >= 0);
+
+	return fd;
+}
+
 static int hook_create_mount(struct libmnt_context *cxt,
 			const struct libmnt_hookset *hs,
 			void *data __attribute__((__unused__)))
@@ -284,13 +316,21 @@ static int hook_set_vfsflags(struct libmnt_context *cxt,
 	struct mount_attr attr = { .attr_clr = 0 };
 	unsigned int callflags = AT_EMPTY_PATH;
 	uint64_t set = 0, clr = 0;
-	int rc;
+	int rc = 0;
 
 	DBG(HOOK, ul_debugobj(hs, "setting VFS flags"));
 
 	api = get_sysapi(cxt, hs);
 	assert(api);
-	assert(api->fd_tree >= 0);
+
+	/* fallback only; necessary when init_sysapi() during preparation
+	 * cannot open the tree -- for example when we call /sbin/mount.<type> */
+	if (api->fd_tree < 0 && mnt_fs_get_target(cxt->fs)) {
+		rc = api->fd_tree = open_mount_tree(cxt, NULL, (unsigned long) -1);
+		if (rc < 0)
+			goto done;
+		rc = 0;
+	}
 
 	ol = mnt_context_get_optlist(cxt);
 	if (!ol)
@@ -313,7 +353,7 @@ static int hook_set_vfsflags(struct libmnt_context *cxt,
 
 	rc = mount_setattr(api->fd_tree, "", callflags, &attr, sizeof(attr));
 	set_syscall_status(cxt, "move_setattr", rc == 0);
-
+done:
 	return rc == 0 ? 0 : -errno;
 }
 
@@ -335,7 +375,15 @@ static int hook_set_propagation(struct libmnt_context *cxt,
 
 	api = get_sysapi(cxt, hs);
 	assert(api);
-	assert(api->fd_tree >= 0);
+
+	/* fallback only; necessary when init_sysapi() during preparation
+	 * cannot open the tree -- for example when we call /sbin/mount.<type> */
+	if (api->fd_tree < 0 && mnt_fs_get_target(cxt->fs)) {
+		rc = api->fd_tree = open_mount_tree(cxt, NULL, (unsigned long) -1);
+		if (rc < 0)
+			goto done;
+		rc = 0;
+	}
 
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
@@ -363,10 +411,10 @@ static int hook_set_propagation(struct libmnt_context *cxt,
 		rc = mount_setattr(api->fd_tree, "", flgs, &attr, sizeof(attr));
 		set_syscall_status(cxt, "move_setattr", rc == 0);
 		if (rc != 0)
-			return rc;
+			break;
 	}
-
-	return 0;
+done:
+	return rc == 0 ? 0 : -errno;
 }
 
 static int hook_attach_target(struct libmnt_context *cxt,
@@ -375,7 +423,7 @@ static int hook_attach_target(struct libmnt_context *cxt,
 {
 	struct libmnt_sysapi *api;
 	const char *target;
-	int rc;
+	int rc = 0;
 
 	target = mnt_fs_get_target(cxt->fs);
 	if (!target)
@@ -385,11 +433,12 @@ static int hook_attach_target(struct libmnt_context *cxt,
 	assert(api);
 	assert(api->fd_tree >= 0);
 
-	DBG(HOOK, ul_debugobj(hs, "move_mount(to=%s)", target));
+	if (!rc) {
+		DBG(HOOK, ul_debugobj(hs, "move_mount(to=%s)", target));
 
-	rc = move_mount(api->fd_tree, "", AT_FDCWD, target, MOVE_MOUNT_F_EMPTY_PATH);
-	set_syscall_status(cxt, "move_mount", rc == 0);
-
+		rc = move_mount(api->fd_tree, "", AT_FDCWD, target, MOVE_MOUNT_F_EMPTY_PATH);
+		set_syscall_status(cxt, "move_mount", rc == 0);
+	}
 	return rc == 0 ? 0 : -errno;
 }
 
@@ -429,25 +478,12 @@ static int init_sysapi(struct libmnt_context *cxt,
 	if (!api)
 		return -ENOMEM;
 
+	if (mnt_context_is_fake(cxt))
+		goto fake;
+
 	if (path) {
-		unsigned long oflg = OPEN_TREE_CLOEXEC;
-
-		/* Classic -oremount,bind,ro is not bind operation, it's just
-		 * VFS flags update only */
-		if ((flags & MS_BIND) && !(flags & MS_REMOUNT)) {
-			oflg |= OPEN_TREE_CLONE;
-
-			if (mnt_optlist_is_rbind(cxt->optlist))
-				oflg |= AT_RECURSIVE;
-		}
-
-		DBG(HOOK, ul_debugobj(hs, "open_tree(path=%s, flgs=0x%08lx)", path, oflg));
-		if (mnt_context_is_fake(cxt))
-			goto fake;
-
-		api->fd_tree = open_tree(AT_FDCWD, path, oflg);
-		set_syscall_status(cxt, "open_tree", api->fd_tree >= 0);
-		if (api->fd_tree <= 0)
+		api->fd_tree = open_mount_tree(cxt, path, flags);
+		if (api->fd_tree < 0)
 			goto fail;
 
 	/* C) FS based operation
@@ -460,7 +496,7 @@ static int init_sysapi(struct libmnt_context *cxt,
 
 		if (mnt_context_is_fake(cxt))
 			goto fake;
-		if (type && !strchr(type, ',')) {
+		if (cxt->helper == NULL && type && !strchr(type, ',')) {
 			api->fd_fs = open_fs_configuration_context(cxt, type);
 			if (api->fd_fs < 0)
 				goto fail;
@@ -519,12 +555,16 @@ static int hook_prepare(struct libmnt_context *cxt,
 		return -EINVAL;
 
 	/* classic remount (note -oremount,bind,ro is not superblock reconfiguration) */
-	if (!rc && (flags & MS_REMOUNT) && !(flags & MS_BIND))
+	if (!rc
+	    && cxt->helper == NULL
+	    && (flags & MS_REMOUNT)
+	    && !(flags & MS_BIND))
 		rc = mnt_context_append_hook(cxt, hs, MNT_STAGE_MOUNT, NULL,
 					hook_reconfigure_mount);
 
 	/* create a new FS instance */
 	else if (!rc
+	    && cxt->helper == NULL
 	    && !(flags & MS_BIND)
 	    && !(flags & MS_MOVE)
 	    && !(flags & MS_REMOUNT)
@@ -533,12 +573,15 @@ static int hook_prepare(struct libmnt_context *cxt,
 					hook_create_mount);
 
 	/* call mount_setattr() */
-	if (!rc && (set != 0 || clr != 0))
+	if (!rc
+	    && cxt->helper == NULL
+	    && (set != 0 || clr != 0))
 		rc = mnt_context_append_hook(cxt, hs, MNT_STAGE_MOUNT, NULL,
 					hook_set_vfsflags);
 
 	/* call move_mount() to attach target */
 	if (!rc
+	    && cxt->helper == NULL
 	    && !(flags & MS_REMOUNT)
 	    && !mnt_context_propagation_only(cxt))
 		rc = mnt_context_append_hook(cxt, hs, MNT_STAGE_MOUNT_POST, NULL,
