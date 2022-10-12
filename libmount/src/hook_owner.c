@@ -41,7 +41,7 @@ static int hookset_deinit(struct libmnt_context *cxt, const struct libmnt_hookse
 	return 0;
 }
 
-static int hook_mount_post(
+static int hook_post(
 			struct libmnt_context *cxt,
 			const struct libmnt_hookset *hs __attribute__((__unused__)),
 			void *data)
@@ -150,8 +150,8 @@ static int hook_prepare_options(
 		DBG(CXT, ul_debugobj(cxt, " wanted ownership %d:%d, mode %04o",
 					hd->owner, hd->group, hd->mode));
 		rc = mnt_context_append_hook(cxt, hs,
-				MNT_STAGE_MOUNT_POST,
-				hd, hook_mount_post);
+				MNT_STAGE_POST,
+				hd, hook_post);
 		if (rc < 0)
 			goto fail;
 	}

@@ -1067,6 +1067,9 @@ again:
 		}
 	}
 
+	if (rc == 0)
+		rc = mnt_context_call_hooks(cxt, MNT_STAGE_POST);
+
 	mnt_context_deinit_hooksets(cxt);
 
 	if (!mnt_context_switch_ns(cxt, ns_old))
