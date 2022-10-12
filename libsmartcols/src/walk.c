@@ -11,7 +11,7 @@ static int walk_line(struct libscols_table *tb,
 {
 	int rc = 0;
 
-	DBG(LINE, ul_debugobj(ln, " wall line"));
+/*	DBG(LINE, ul_debugobj(ln, " wall line")); */
 
 	/* we list group children in __scols_print_tree() after tree root node */
 	if (is_group_member(ln) && is_last_group_member(ln) && has_group_children(ln))
@@ -26,7 +26,7 @@ static int walk_line(struct libscols_table *tb,
 	if (rc == 0 && has_children(ln)) {
 		struct list_head *p;
 
-		DBG(LINE, ul_debugobj(ln, " children walk"));
+/*		DBG(LINE, ul_debugobj(ln, " children walk"));*/
 
 		list_for_each(p, &ln->ln_branch) {
 			struct libscols_line *chld = list_entry(p,
@@ -38,7 +38,7 @@ static int walk_line(struct libscols_table *tb,
 		}
 	}
 
-	DBG(LINE, ul_debugobj(ln, "<- walk line done [rc=%d]", rc));
+/*	DBG(LINE, ul_debugobj(ln, "<- walk line done [rc=%d]", rc)); */
 	return rc;
 }
 
@@ -90,7 +90,7 @@ int scols_walk_tree(struct libscols_table *tb,
 	struct libscols_iter itr;
 
 	assert(tb);
-	DBG(TAB, ul_debugobj(tb, ">> walk start"));
+/*	DBG(TAB, ul_debugobj(tb, ">> walk start"));*/
 
 	/* init */
 	tb->ngrpchlds_pending = 0;
@@ -147,6 +147,6 @@ int scols_walk_tree(struct libscols_table *tb,
 
 	tb->ngrpchlds_pending = 0;
 	tb->walk_last_done = 0;
-	DBG(TAB, ul_debugobj(tb, "<< walk end [rc=%d]", rc));
+/*	DBG(TAB, ul_debugobj(tb, "<< walk end [rc=%d]", rc));*/
 	return rc;
 }

@@ -419,7 +419,7 @@ struct libscols_column *scols_table_new_column(struct libscols_table *tb,
 	if (!tb)
 		return NULL;
 
-	DBG(TAB, ul_debugobj(tb, "new column name=%s, whint=%g, flags=%d",
+	DBG(TAB, ul_debugobj(tb, "new column name=%s, whint=%g, flags=0x%04x",
 				name, whint, flags));
 	cl = scols_new_column();
 	if (!cl)
