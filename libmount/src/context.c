@@ -110,11 +110,10 @@ void mnt_free_context(struct libmnt_context *cxt)
 	mnt_free_update(cxt->update);
 
 	mnt_context_set_target_ns(cxt, NULL);
-	mnt_context_deinit_hooksets(cxt);
 
 	free(cxt->children);
 
-	DBG(CXT, ul_debugobj(cxt, "<---- free"));
+	DBG(CXT, ul_debugobj(cxt, "free"));
 	free(cxt);
 }
 
@@ -232,12 +231,15 @@ int mnt_context_apply_template(struct libmnt_context *cxt)
 	if (!cxt)
 		return -EINVAL;
 
-	DBG(CXT, ul_debugobj(cxt, "restoring template"));
-	mnt_unref_optlist(cxt->optlist);
-	cxt->optlist = NULL;
+	if (cxt->optlist) {
+		mnt_unref_optlist(cxt->optlist);
+		cxt->optlist = NULL;
+	}
 
-	if (cxt->optlist_saved)
+	if (cxt->optlist_saved) {
+		DBG(CXT, ul_debugobj(cxt, "restoring template"));
 		cxt->optlist = mnt_copy_optlist(cxt->optlist_saved);
+	}
 
 	return 0;
 }
@@ -1973,6 +1975,8 @@ int mnt_context_prepare_helper(struct libmnt_context *cxt, const char *name,
 	assert(cxt);
 	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
+
+	DBG(CXT, ul_debugobj(cxt, "checking for helper"));
 
 	if (cxt->helper) {
 		free(cxt->helper);

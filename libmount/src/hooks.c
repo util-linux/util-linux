@@ -92,9 +92,6 @@ int mnt_context_deinit_hooksets(struct libmnt_context *cxt)
 
 	assert(cxt);
 
-	if (list_empty(&cxt->hooksets_hooks))
-		return 0;
-
 	for (i = 0; i <  ARRAY_SIZE(hooksets); i++) {
 		const struct libmnt_hookset *hs = hooksets[i];
 
