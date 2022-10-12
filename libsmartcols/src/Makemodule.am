@@ -23,7 +23,7 @@ libsmartcols_la_SOURCES= \
 	libsmartcols/src/walk.c \
 	libsmartcols/src/init.c
 
-libsmartcols_la_LIBADD = $(LDADD) libcommon.la
+libsmartcols_la_LIBADD = $(LDADD) $(MATH_LIBS) libcommon.la
 
 libsmartcols_la_CFLAGS = \
 	$(AM_CFLAGS) \

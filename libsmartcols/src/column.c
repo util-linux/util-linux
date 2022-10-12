@@ -105,13 +105,11 @@ struct libscols_column *scols_copy_column(const struct libscols_column *cl)
 		goto err;
 
 	ret->width	= cl->width;
-	ret->width_min	= cl->width_min;
-	ret->width_max	= cl->width_max;
-	ret->width_avg	= cl->width_avg;
 	ret->width_hint	= cl->width_hint;
 	ret->flags	= cl->flags;
-	ret->is_extreme = cl->is_extreme;
 	ret->is_groups  = cl->is_groups;
+
+	memcpy(&ret->wstat, &cl->wstat, sizeof(cl->wstat));
 
 	return ret;
 err:
@@ -169,7 +167,7 @@ int scols_column_set_flags(struct libscols_column *cl, int flags)
 			cl->table->ntreecols--;
 	}
 
-	DBG(COL, ul_debugobj(cl, "setting flags from 0%x to 0%x", cl->flags, flags));
+	DBG(COL, ul_debugobj(cl, "setting flags from 0x%04x to 0x%04x", cl->flags, flags));
 	cl->flags = flags;
 	return 0;
 }

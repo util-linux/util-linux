@@ -83,9 +83,20 @@ struct libscols_cell {
 	char	*color;
 	void    *userdata;
 	int	flags;
+	size_t	width;
 };
 
 extern int scols_line_move_cells(struct libscols_line *ln, size_t newn, size_t oldn);
+
+struct libscols_wstat {
+	size_t	width_min;
+	size_t	width_max;
+	double	width_avg;
+	double  width_sqr_sum;
+	double  width_deviation;
+
+	size_t  width_treeart;
+};
 
 /*
  * Table column
@@ -94,15 +105,11 @@ struct libscols_column {
 	int	refcount;	/* reference counter */
 	size_t	seqnum;		/* column index */
 
-	size_t	width;		/* real column width */
-	size_t	width_min;	/* minimal width (usually header width) */
-	size_t  width_max;	/* maximal width */
-	size_t  width_avg;	/* average width, used to detect extreme fields */
-	size_t	width_treeart;	/* size of the tree ascii art */
+	size_t	width;		/* expected column width */
+	size_t  width_treeart;
 	double	width_hint;	/* hint (N < 1 is in percent of termwidth) */
 
-	size_t	extreme_sum;
-	int	extreme_count;
+	struct libscols_wstat wstat;	/* private __scols_calculate() data */
 
 	int	json_type;	/* SCOLS_JSON_* */
 
@@ -133,8 +140,7 @@ struct libscols_column {
 
 	struct libscols_table	*table;
 
-	unsigned int	is_extreme : 1,		/* extreme width in the column */
-			is_groups  : 1;		/* print group chart */
+	unsigned int	is_groups  : 1;		/* print group chart */
 
 };
 
