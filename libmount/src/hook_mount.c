@@ -528,7 +528,7 @@ static int hook_prepare(struct libmnt_context *cxt,
 	    && !(flags & MS_BIND)
 	    && !(flags & MS_MOVE)
 	    && !(flags & MS_REMOUNT)
-	    && !mnt_optlist_is_propagation_only(ol))
+	    && !mnt_context_propagation_only(cxt))
 		rc = mnt_context_append_hook(cxt, hs, MNT_STAGE_MOUNT, NULL,
 					hook_create_mount);
 

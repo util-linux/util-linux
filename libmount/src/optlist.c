@@ -984,6 +984,9 @@ int mnt_optlist_is_propagation_only(struct libmnt_optlist *ls)
 		return 0;
 
 	rest = flags & ~MS_PROPAGATION;
+	DBG(OPTLIST, ul_debugobj(ls, " propagation-only: %s",
+		(rest == 0 || (rest & (MS_SILENT | MS_REC)) ? "y" : "n")));
+
 	return (rest == 0 || (rest & (MS_SILENT | MS_REC)));
 }
 
