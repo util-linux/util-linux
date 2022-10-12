@@ -70,7 +70,7 @@ struct colinfo {
 
 static struct colinfo infos[] = {
 	[COL_AUTOCLR]     = { "AUTOCLEAR",    1, SCOLS_FL_RIGHT, N_("autoclear flag set"), SCOLS_JSON_BOOLEAN},
-	[COL_BACK_FILE]   = { "BACK-FILE",  0.3, 0, N_("device backing file")},
+	[COL_BACK_FILE]   = { "BACK-FILE",  0.3, SCOLS_FL_NOEXTREMES, N_("device backing file")},
 	[COL_BACK_INO]    = { "BACK-INO",     4, SCOLS_FL_RIGHT, N_("backing file inode number"), SCOLS_JSON_NUMBER},
 	[COL_BACK_MAJMIN] = { "BACK-MAJ:MIN", 6, 0, N_("backing file major:minor device number")},
 	[COL_NAME]        = { "NAME",      0.25, 0, N_("loop device name")},
