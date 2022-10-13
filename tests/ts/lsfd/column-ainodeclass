@@ -20,9 +20,9 @@ TS_DESC="ainodeclass column"
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
+. "$TS_SELF/lsfd-functions.bash"
 ts_check_test_command "$TS_CMD_LSFD"
 ts_check_test_command "$TS_HELPER_MKFDS"
-ts_skip_qemu_user
 
 ts_cd "$TS_OUTDIR"
 
@@ -38,7 +38,10 @@ EXPR="(FD == 3)"
 	    echo "$C"':ASSOC,STTYPE,AINODECLASS': $?
 
 	    kill -CONT "${PID}"
-	    wait "${MKFDS_PID}"
+	fi
+	wait "${MKFDS_PID}"
+	if [[ $? == "$UNSUPPORTED" ]]; then
+	    ts_skip "pidfs_open(2) is not available"
 	fi
     done
 } > "$TS_OUTPUT" 2>&1
