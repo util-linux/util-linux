@@ -1,8 +1,6 @@
 #include "smartcolsP.h"
 #include "mbsalign.h"
 
-#include <math.h>
-
 static void dbg_column(struct libscols_table *tb, struct libscols_column *cl)
 {
 	struct libscols_wstat *st;
@@ -87,6 +85,17 @@ static int walk_count_cell_width(struct libscols_table *tb,
 	return count_cell_width(tb, ln, cl, (struct ul_buffer *) data);
 }
 
+static double sqrtroot(double num)
+{
+	double tmp = 0, sq = num / 2;
+
+	while (sq != tmp){
+		tmp = sq;
+		sq = (num / tmp + tmp) / 2;
+	}
+	return sq;
+}
+
 static void count_column_deviation(struct libscols_table *tb, struct libscols_column *cl)
 {
 	struct libscols_wstat *st;
@@ -124,7 +133,7 @@ static void count_column_deviation(struct libscols_table *tb, struct libscols_co
 		}
 
 		variance = st->width_sqr_sum / (n - 1);
-		st->width_deviation = sqrt(variance);
+		st->width_deviation = sqrtroot(variance);
 	}
 
 	DBG(COL, ul_debugobj(cl, "%15s avg=%g, deviation=%g",
