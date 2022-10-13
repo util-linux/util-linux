@@ -473,7 +473,7 @@ conf.set('HAVE_LANGINFO_NL_ABALTMON', have ? 1 : false)
 
 funcs = '''
         clearenv
-	close_range
+        close_range
         __fpurge
         fpurge
         __fpending
@@ -497,8 +497,10 @@ funcs = '''
         inotify_init
         jrand48
         lchown
+        lgetxattr
+        llistxattr
         llseek
-	newlocale
+        newlocale
         mempcpy
         mkostemp
         nanosleep
@@ -512,7 +514,7 @@ funcs = '''
         rpmatch
         scandirat
         setprogname
-	sendfile
+        sendfile
         setns
         setresgid
         setresuid
@@ -523,7 +525,7 @@ funcs = '''
         strnchr
         strndup
         strnlen
-	strtod_l
+        strtod_l
         sysconf
         sysinfo
         swapon
@@ -531,8 +533,8 @@ funcs = '''
         timegm
         unshare
         usleep
-	uselocale
-	utimensat
+        uselocale
+        utimensat
         vwarnx
         warn
         warnx
