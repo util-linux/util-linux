@@ -51,6 +51,10 @@
 #include "nls.h"
 #include "xalloc.h"
 
+#define EXIT_ENOSYS 17
+#define EXIT_EPERM  18
+#define EXIT_ENOPROTOOPT 19
+
 #define _U_ __attribute__((__unused__))
 
 static int pidfd_open(pid_t pid, unsigned int flags);

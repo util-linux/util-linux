@@ -15,6 +15,11 @@
 # GNU General Public License for more details.
 #
 
+# The exit-status used in a test target.
+readonly ENOSYS=17
+readonly EPERM=18
+readonly ENOPROTOOPT=19
+
 function lsfd_wait_for_pausing {
 	ts_check_prog "sleep"
 
