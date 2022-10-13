@@ -22,6 +22,22 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_LSFD"
 ts_check_test_command "$TS_HELPER_MKFDS"
+
+# This test cases doesn't work well on Qemu user mode emulation.
+#
+# tests_mkfds command uses hton* functions when passing
+# IP addresses and TCP ports to Linux via bind(2) and connect(2).
+# On the other hand, Linux provides these information in host
+# byte order via /proc/net/tcp that lsfd reads.
+#
+# If Qemu emulates a big-endian architecture (e.g. s390) but its
+# host Linux runs on little-endian architecture (e.g. x86_64),
+# this test case doesn't work.
+#
+# test_mkfds built for s390 passes htonl(127.0.0.1) value to
+# x86_64 Linux. The linux may receive 1.0.0.127. The Linux
+# prints "1.0.0.127" in /proc/net/tcp. lsfd reads the string.
+# The string doesn't much 127.0.0.1.
 ts_skip_qemu_user
 
 ts_cd "$TS_OUTDIR"
