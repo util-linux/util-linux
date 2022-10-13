@@ -482,9 +482,6 @@ int __scols_calculate(struct libscols_table *tb, struct ul_buffer *buf)
 			if (cl->width == 0)
 				continue;
 
-			if (cl->wstat.width_deviation / 2 > 1.0)
-				reduce = (size_t) cl->wstat.width_deviation;
-
 			trunc_flag = scols_column_is_trunc(cl)
 				    || (scols_column_is_wrap(cl) && !scols_column_is_customwrap(cl));
 
@@ -498,7 +495,7 @@ int __scols_calculate(struct libscols_table *tb, struct ul_buffer *buf)
 				if (cl->width < (size_t) (cl->width_hint * tb->termwidth)) /* ignore: smaller than expected width */
 					break;
 
-				DBG(TAB, ul_debugobj(tb, "     reducing (relative with flag)"));
+				DBG(TAB, ul_debugobj(tb, "     reducing -%zu (relative with flag)", reduce));
 				cl->width -= reduce;
 				width -= reduce;
 				break;
@@ -508,7 +505,7 @@ int __scols_calculate(struct libscols_table *tb, struct ul_buffer *buf)
 				if (!trunc_flag)		/* ignore: missing flag */
 					break;
 
-				DBG(TAB, ul_debugobj(tb, "     reducing (all with flag)"));
+				DBG(TAB, ul_debugobj(tb, "     reducing -%zu (all with flag)", reduce));
 				cl->width -= reduce;
 				width -= reduce;
 				break;
@@ -518,7 +515,7 @@ int __scols_calculate(struct libscols_table *tb, struct ul_buffer *buf)
 				if (cl->width_hint <= 0 || cl->width_hint >= 1)	/* ignore: no relative */
 					break;
 
-				DBG(TAB, ul_debugobj(tb, "     reducing (relative without flag)"));
+				DBG(TAB, ul_debugobj(tb, "     reducing -%zu (relative without flag)", reduce));
 				cl->width -= reduce;
 				width -= reduce;
 				break;
