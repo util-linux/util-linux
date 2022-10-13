@@ -16,6 +16,7 @@
 #include <stdint.h>
 
 #include "superblocks.h"
+#include "crc32.h"
 
 struct cramfs_super
 {
@@ -34,6 +35,24 @@ struct cramfs_super
 	uint8_t		name[16];
 } __attribute__((packed));
 
+#define CRAMFS_FLAG_FSID_VERSION_2	0x00000001	/* fsid version #2 */
+
+static int cramfs_verify_csum(blkid_probe pr, const struct blkid_idmag *mag, struct cramfs_super *cs)
+{
+	if (!(cs->flags & CRAMFS_FLAG_FSID_VERSION_2))
+		return 1;
+
+	uint32_t expected = le32_to_cpu(cs->info.crc);
+	uint32_t csummed_size = le32_to_cpu(cs->size);
+	if (csummed_size > 1 << 16)
+		return 0;
+
+	unsigned char *csummed = blkid_probe_get_sb_buffer(pr, mag, csummed_size);
+	memset(csummed + offsetof(struct cramfs_super, info.crc), 0, sizeof(uint32_t));
+	uint32_t crc = ~ul_crc32(~0LL, csummed, csummed_size);
+	return blkid_probe_verify_csum(pr, crc, expected);
+}
+
 static int probe_cramfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct cramfs_super *cs;
@@ -41,6 +60,9 @@ static int probe_cramfs(blkid_probe pr, const struct blkid_idmag *mag)
 	cs = blkid_probe_get_sb(pr, mag, struct cramfs_super);
 	if (!cs)
 		return errno ? -errno : 1;
+
+	if (!cramfs_verify_csum(pr, mag, cs))
+		return 1;
 
 	blkid_probe_set_label(pr, cs->name, sizeof(cs->name));
 	return 0;
