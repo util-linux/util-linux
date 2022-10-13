@@ -15,6 +15,8 @@
 # GNU General Public License for more details.
 #
 
+readonly UNSUPPORTED=17
+
 function lsfd_wait_for_pausing {
 	ts_check_prog "sleep"
 

@@ -49,6 +49,8 @@
 #include "nls.h"
 #include "xalloc.h"
 
+#define EXIT_UNSUPPORTED 17
+
 #define _U_ __attribute__((__unused__))
 
 static int pidfd_open(pid_t pid, unsigned int flags);
@@ -686,7 +688,8 @@ static void *make_mmapped_packet_socket(const struct factory *factory, struct fd
 		int e = errno;
 		close(sd);
 		errno = e;
-		err(EXIT_FAILURE, "failed to specify a buffer spec to a packet socket");
+		err((errno == ENOPROTOOPT? EXIT_UNSUPPORTED: EXIT_FAILURE),
+		    "failed to specify a buffer spec to a packet socket");
 	}
 
 	munmap_data = malloc(sizeof (*munmap_data));
@@ -733,7 +736,8 @@ static void *make_pidfd(const struct factory *factory, struct fdesc fdescs[],
 
 	int fd = pidfd_open(pid, 0);
 	if (fd < 0)
-		err(EXIT_FAILURE, "failed in pidfd_open(%d)", (int)pid);
+		err((errno == ENOSYS? EXIT_UNSUPPORTED: EXIT_FAILURE),
+		    "failed in pidfd_open(%d)", (int)pid);
 	free_arg(&target_pid);
 
 	if (fd != fdescs[0].fd) {
@@ -1130,7 +1134,8 @@ static void *make_unix_in_new_netns(const struct factory *factory, struct fdesc 
 		int e = errno;
 		close_fdesc(self_netns, NULL);
 		errno = e;
-		err(EXIT_FAILURE, "failed in unshare");
+		err((errno == EPERM? EXIT_UNSUPPORTED: EXIT_FAILURE),
+		    "failed in unshare");
 	}
 
 	tmp_netns = open("/proc/self/ns/net", O_RDONLY);
