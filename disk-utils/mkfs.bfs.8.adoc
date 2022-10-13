@@ -35,6 +35,9 @@ Specify the volume _label_. I have no idea if/where this is used.
 *-F*, *--fname* _name_::
 Specify the filesystem _name_. I have no idea if/where this is used.
 
+*--lock*[=_mode_]::
+Use exclusive BSD lock for device or file it operates. The optional argument _mode_ can be *yes*, *no* (or 1 and 0) or *nonblock*. If the _mode_ argument is omitted, it defaults to *yes*. This option overwrites environment variable *$LOCK_BLOCK_DEVICE*. The default is not to use any lock at all, but it's recommended to avoid collisions with *systemd-udevd*(8) or other tools.
+
 *-v*, *--verbose*::
 Explain what is being done.
 
