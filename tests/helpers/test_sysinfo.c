@@ -35,7 +35,7 @@ static int hlp_wordsize(void)
 
 static int hlp_endianness(void)
 {
-#if !defined(WORDS_BIGENDIAN)
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 	printf("LE\n");
 #else
 	printf("BE\n");

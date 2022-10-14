@@ -999,7 +999,7 @@ static void print_summary(struct lscpu_cxt *cxt)
 	}
 	if (ct && ct->addrsz)
 		add_summary_s(tb, sec, _("Address sizes:"), ct->addrsz);
-#if !defined(WORDS_BIGENDIAN)
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 	add_summary_s(tb, sec, _("Byte Order:"), "Little Endian");
 #else
 	add_summary_s(tb, sec, _("Byte Order:"), "Big Endian");

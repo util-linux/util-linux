@@ -36,11 +36,7 @@
 #define CRAMFS_OFFSET_WIDTH 26
 
 #ifndef HOST_IS_BIG_ENDIAN
-#ifdef WORDS_BIGENDIAN
-#define HOST_IS_BIG_ENDIAN 1
-#else
-#define HOST_IS_BIG_ENDIAN 0
-#endif
+#define HOST_IS_BIG_ENDIAN (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
 #endif
 
 /*

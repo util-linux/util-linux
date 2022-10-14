@@ -61,7 +61,7 @@ static int get_minix_version(const unsigned char *data, int *other_endian)
 	if (!version)
 		return -1;
 
-#if defined(WORDS_BIGENDIAN)
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 	endian = *other_endian ? "LE" : "BE";
 #else
 	endian = *other_endian ? "BE" : "LE";

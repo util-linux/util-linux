@@ -19,7 +19,7 @@
 #define rol(value, bits) (((value) << (bits)) | ((value) >> (32 - (bits))))
 
 /* blk0() and blk() perform the initial expand. */
-#ifdef WORDS_BIGENDIAN
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 # define blk0(i) block->l[i]
 #else
 # define blk0(i) (block->l[i] = (rol(block->l[i],24)&0xFF00FF00) \
