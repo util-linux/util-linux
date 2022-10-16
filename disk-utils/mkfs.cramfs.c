@@ -44,6 +44,7 @@
  */
 #include <zlib.h>
 
+#include "blkdev.h"
 #include "c.h"
 #include "cramfs.h"
 #include "md5.h"
@@ -140,6 +141,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	printf(_(" -p             pad by %d bytes for boot code\n"), PAD_SIZE);
 	puts(_(  " -s             sort directory entries (old option, ignored)"));
 	puts(_(  " -z             make explicit holes"));
+	puts(_(  " -l lockmode    use exclusive device lock (yes, no or nonblock)"));
 	puts(_(  " dirname        root of the filesystem to be compressed"));
 	puts(_(  " outfile        output file"));
 	fputs(USAGE_SEPARATOR, stdout);
@@ -707,6 +709,7 @@ int main(int argc, char **argv)
 	loff_t fslen_ub = sizeof(struct cramfs_super);
 	unsigned int fslen_max;
 	char const *dirname, *outfile;
+	char *lockmode = 0;
 	uint32_t crc = crc32(0L, NULL, 0);
 	int c;
 	cramfs_is_big_endian = HOST_IS_BIG_ENDIAN; /* default is to use host order */
@@ -730,7 +733,7 @@ int main(int argc, char **argv)
 	strutils_set_exitcode(MKFS_EX_USAGE);
 
 	/* command line options */
-	while ((c = getopt(argc, argv, "hb:Ee:i:n:N:psVvz")) != EOF) {
+	while ((c = getopt(argc, argv, "hb:Ee:i:n:N:l:psVvz")) != EOF) {
 		switch (c) {
 		case 'h':
 			usage();
@@ -760,6 +763,14 @@ int main(int argc, char **argv)
 				err(MKFS_EX_USAGE, _("stat of %s failed"), opt_image);
 			image_length = st.st_size; /* may be padded later */
 			fslen_ub += (image_length + 3); /* 3 is for padding */
+			break;
+		case 'l':
+                        lockmode = "1";
+			if (optarg) {
+                                if (*optarg == '=')
+					optarg++;
+				lockmode = optarg;
+			}
 			break;
 		case 'n':
 			opt_name = optarg;
@@ -799,6 +810,9 @@ int main(int argc, char **argv)
 	fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0666);
 	if (fd < 0)
 		err(MKFS_EX_USAGE, _("cannot open %s"), outfile);
+
+        if (blkdev_lock(fd, outfile, lockmode) != 0)
+		exit(MKFS_EX_ERROR);
 
 	root_entry = xcalloc(1, sizeof(struct entry));
 	root_entry->mode = st.st_mode;
