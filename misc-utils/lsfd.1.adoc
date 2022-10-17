@@ -214,6 +214,11 @@ pid=_TARGET-PID_ comm=_TARGET-COMMAND_ nspid=_TARGET-NSPIDS_
 TCP:::
 state=_SOCK.STATE_[ laddr=_TCP.LADDR_:_TCP.LPORT_ [ raddr=_TCP.RADDR_:_TCP.RPORT_]]
 +
+UDP:::
+state=_SOCK.STATE_[ laddr=_UDP.LADDR_:_UDP.LPORT_ [ raddr=_UDP.RADDR_:_UDP.RPORT_]]
++
+*lsfd* hides ``raddr=`` if _UDP.RADDR_ is ``0.0.0.0`` and _UDP.RPORT_ is 0.
++
 UNIX-STREAM:::
 state=_SOCK.STATE_[ path=_UNIX.PATH_]
 +
@@ -312,6 +317,18 @@ TYPE <``string``>::
 Cooked version of STTYPE. It is same as STTYPE with exceptions.
 For SOCK, print the value for SOCK.PROTONAME.
 For UNKN, print the value for AINODECLASS if SOURCE is anon_inodefs.
+
+UDP.LADDR <``string``>::
+Local IP address and local UDP port.
+
+UDP.LPORT <``integer``>::
+Local UDP port.
+
+UDP.RADDR <``string``>::
+Remote IP address and remote UDP port.
+
+UDP.RPORT <``integer``>::
+Remote UDP port.
 
 UID <``number``>::
 User ID number.

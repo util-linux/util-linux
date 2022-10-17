@@ -37,6 +37,7 @@
 
 static void load_xinfo_from_proc_unix(ino_t netns_inode);
 static void load_xinfo_from_proc_tcp(ino_t netns_inode);
+static void load_xinfo_from_proc_udp(ino_t netns_inode);
 
 static int self_netns_fd = -1;
 struct stat self_netns_sb;
@@ -74,6 +75,7 @@ static void load_sock_xinfo_no_nsswitch(ino_t netns)
 {
 	load_xinfo_from_proc_unix(netns);
 	load_xinfo_from_proc_tcp(netns);
+	load_xinfo_from_proc_udp(netns);
 }
 
 static void load_sock_xinfo_with_fd(int fd, ino_t netns)
@@ -532,56 +534,58 @@ static bool tcp_get_listening(struct sock_xinfo *sock_xinfo,
 	return tcp->st == TCP_LISTEN;
 }
 
-static bool tcp_fill_column(struct proc *proc,
-			    struct sock_xinfo *sock_xinfo,
-			    struct sock *sock,
-			    struct libscols_line *ln,
-			    int column_id,
-			    size_t column_index,
-			    char **str)
-{
-	struct tcp_xinfo *tcp = (struct tcp_xinfo *)sock_xinfo;
-	struct inet_xinfo *inet = (struct inet_xinfo *)sock_xinfo;
-	struct in_addr n;
-	bool has_laddr = false;
-	char s[INET_ADDRSTRLEN];
-	unsigned int p;
-	bool has_lport = false;
-
-	if (inet_fill_column(proc, (struct inet_xinfo *)sock_xinfo, sock, ln,
-			     column_id, column_index, str))
-		return true;
-
-	switch(column_id) {
-	case COL_TCP_LADDR:
-		n.s_addr = inet->local_addr;
-		has_laddr = true;
-		p = (unsigned int)tcp->local_port;
-		/* FALL THROUGH */
-	case COL_TCP_RADDR:
-		if (!has_laddr) {
-			n.s_addr = inet->remote_addr;
-			p = (unsigned int)tcp->remote_port;
-		}
-		if (inet_ntop(AF_INET, &n, s, sizeof(s)))
-			xasprintf(str, "%s:%u", s, p);
-		break;
-	case COL_TCP_LPORT:
-		p = (unsigned int)tcp->local_port;
-		has_lport = true;
-		/* FALL THROUGH */
-	case COL_TCP_RPORT:
-		if (!has_lport)
-			p = (unsigned int)tcp->remote_port;
-		xasprintf(str, "%u", p);
-		break;
-	default:
-		return false;
+#define define_fill_column_func(l3,L3)					\
+	static bool l3##_fill_column(struct proc *proc,			\
+				     struct sock_xinfo *sock_xinfo,	\
+				     struct sock *sock,			\
+				     struct libscols_line *ln,		\
+				     int column_id,			\
+				     size_t column_index,		\
+				     char **str)			\
+	{								\
+		struct tcp_xinfo *tcp = (struct tcp_xinfo *)sock_xinfo;	\
+		struct inet_xinfo *inet = (struct inet_xinfo *)sock_xinfo; \
+		struct in_addr n;					\
+		bool has_laddr = false;					\
+		char s[INET_ADDRSTRLEN];				\
+		unsigned int p;						\
+		bool has_lport = false;					\
+									\
+		if (inet_fill_column(proc, (struct inet_xinfo *)sock_xinfo, sock, ln, \
+				     column_id, column_index, str))	\
+			return true;					\
+									\
+		switch(column_id) {					\
+		case COL_##L3##_LADDR:					\
+			n.s_addr = inet->local_addr;			\
+			has_laddr = true;				\
+			p = (unsigned int)tcp->local_port;		\
+			/* FALL THROUGH */				\
+		case COL_##L3##_RADDR:					\
+			if (!has_laddr) {				\
+				n.s_addr = inet->remote_addr;		\
+				p = (unsigned int)tcp->remote_port;	\
+			}						\
+			if (inet_ntop(AF_INET, &n, s, sizeof(s)))	\
+				xasprintf(str, "%s:%u", s, p);		\
+			break;						\
+		case COL_##L3##_LPORT:					\
+			p = (unsigned int)tcp->local_port;		\
+			has_lport = true;				\
+			/* FALL THROUGH */				\
+		case COL_##L3##_RPORT:					\
+			if (!has_lport)					\
+				p = (unsigned int)tcp->remote_port;	\
+			xasprintf(str, "%u", p);			\
+			break;						\
+		default:						\
+			return false;					\
+		}							\
+									\
+		return true;						\
 	}
 
-	return true;
-}
-
+define_fill_column_func(tcp, TCP);
 static struct sock_xinfo_class tcp_xinfo_class = {
 	.class = "tcp",
 	.get_name = tcp_get_name,
@@ -593,19 +597,20 @@ static struct sock_xinfo_class tcp_xinfo_class = {
 };
 
 #define TCP_LINE_LEN 256
-static void load_xinfo_from_proc_tcp(ino_t netns_inode)
+static void load_xinfo_from_proc_inet_L3(ino_t netns_inode, const char *proc_file,
+					 bool (*verify_initial_line)(const char *),
+					 struct sock_xinfo_class *class)
 {
 	char line[TCP_LINE_LEN];
 	FILE *tcp_fp;
 
-	tcp_fp = fopen("/proc/net/tcp", "r");
+	tcp_fp = fopen(proc_file, "r");
 	if (!tcp_fp)
 		return;
 
 	if (fgets(line, sizeof(line), tcp_fp) == NULL)
 		goto out;
-	if (!(line[0] == ' ' && line[1] == ' '
-	      && line[2] == 's' && line[3] == 'l'))
+	if (!verify_initial_line(line))
 		/* Unexpected line */
 		goto out;
 
@@ -631,7 +636,7 @@ static void load_xinfo_from_proc_tcp(ino_t netns_inode)
 		tcp = xmalloc(sizeof(struct tcp_xinfo));
 		inet = (struct inet_xinfo *)tcp;
 		sock = (struct sock_xinfo *)inet;
-		sock->class = &tcp_xinfo_class;
+		sock->class = class;
 		sock->inode = (ino_t)inode;
 		sock->netns_inode = netns_inode;
 		inet->local_addr = local_addr;
@@ -645,4 +650,78 @@ static void load_xinfo_from_proc_tcp(ino_t netns_inode)
 
  out:
 	fclose(tcp_fp);
+}
+
+static bool tcp_verify_initial_line(const char *line)
+{
+	return (line[0] == ' ' && line[1] == ' '
+		&& line[2] == 's' && line[3] == 'l');
+}
+
+static void load_xinfo_from_proc_tcp(ino_t netns_inode)
+{
+	load_xinfo_from_proc_inet_L3(netns_inode,
+				     "/proc/net/tcp", tcp_verify_initial_line,
+				     &tcp_xinfo_class);
+}
+
+/*
+ * UDP
+ */
+static char *udp_get_name(struct sock_xinfo *sock_xinfo,
+			  struct sock *sock  __attribute__((__unused__)))
+{
+	char *str = NULL;
+	struct inet_xinfo *inet = ((struct inet_xinfo *)sock_xinfo);
+	struct tcp_xinfo *tcp = ((struct tcp_xinfo *)sock_xinfo);
+	struct in_addr local_n, remote_n;
+	char local_s[INET_ADDRSTRLEN], remote_s[INET_ADDRSTRLEN];
+
+	local_n.s_addr = inet->local_addr;
+	remote_n.s_addr = inet->remote_addr;
+	if (!inet_ntop(AF_INET, &local_n, local_s, sizeof(local_s)))
+		xasprintf(&str, "state=%s", tcp_decode_state(tcp->st));
+	else if ((remote_n.s_addr == 0 && tcp->remote_port == 0)
+		 || !inet_ntop(AF_INET, &remote_n, remote_s, sizeof(remote_s)))
+		xasprintf(&str, "state=%s laddr=%s:%u",
+			  tcp_decode_state(tcp->st),
+			  local_s, tcp->local_port);
+	else
+		xasprintf(&str, "state=%s laddr=%s:%u raddr=%s:%u",
+			  tcp_decode_state(tcp->st),
+			  local_s, tcp->local_port,
+			  remote_s, tcp->remote_port);
+	return str;
+}
+
+static char *udp_get_type(struct sock_xinfo *sock_xinfo __attribute__((__unused__)),
+			  struct sock *sock __attribute__((__unused__)))
+{
+	return strdup("dgram");
+}
+
+define_fill_column_func(udp, UDP);
+static struct sock_xinfo_class udp_xinfo_class = {
+	.class = "udp",
+	.get_name = udp_get_name,
+	.get_type = udp_get_type,
+	.get_state = tcp_get_state,
+	.get_listening = NULL,
+	.fill_column = udp_fill_column,
+	.free = NULL,
+};
+
+static bool udp_verify_initial_line(const char *line)
+{
+	return (line[0] == ' ' && line[1] == ' ' && line[2] == ' '
+		&& line[3] == 's' && line[4] == 'l');
+}
+
+
+static void load_xinfo_from_proc_udp(ino_t netns_inode)
+{
+	load_xinfo_from_proc_inet_L3(netns_inode,
+				     "/proc/net/udp",
+				     udp_verify_initial_line,
+				     &udp_xinfo_class);
 }
