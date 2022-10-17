@@ -81,8 +81,8 @@ GSYMS
 /cfdisk
 /chcpu
 /chfn
-/choom
 /chmem
+/choom
 /chrt
 /chsh
 /col
@@ -93,6 +93,7 @@ GSYMS
 /delpart
 /dmesg
 /eject
+/fadvise
 /fallocate
 /fdformat
 /fdisk
@@ -124,10 +125,10 @@ GSYMS
 /look
 /losetup
 /lsblk
+/lscpu
 /lsfd
 /lsipc
 /lsirq
-/lscpu
 /lslocks
 /lslogins
 /lsmem
@@ -162,8 +163,8 @@ GSYMS
 /runuser
 /sample-*
 /script
-/scriptreplay
 /scriptlive
+/scriptreplay
 /setarch
 /setpriv
 /setsid
@@ -178,6 +179,7 @@ GSYMS
 /taskset
 /test_*
 /tunelp
+/uclampset
 /ul
 /umount
 /unshare
@@ -192,5 +194,4 @@ GSYMS
 /wipefs
 /write
 /zramctl
-/uclampset
 /build*/
