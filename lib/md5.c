@@ -18,7 +18,7 @@
 
 #include "md5.h"
 
-#if !defined(WORDS_BIGENDIAN)
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 # define byteReverse(buf, len)	/* Nothing */
 #else
 static void byteReverse(unsigned char *buf, unsigned longs);
@@ -38,7 +38,7 @@ static void byteReverse(unsigned char *buf, unsigned longs)
     } while (--longs);
 }
 #endif /* !ASM_MD5 */
-#endif /* !WORDS_BIGENDIAN */
+#endif /* __ORDER_LITTLE_ENDIAN__ */
 
 /*
  * Start MD5 accumulation.  Set bit count to 0 and buffer to mysterious

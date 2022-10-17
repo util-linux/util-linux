@@ -127,7 +127,6 @@ AC_PROG_YACC
 AC_CANONICAL_HOST
 AC_C_CONST
 AC_C_VOLATILE
-AC_C_BIGENDIAN
 
 dnl Compiler warnings
 UL_WARN_ADD([-fno-common])

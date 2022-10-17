@@ -87,7 +87,7 @@
 #endif
 
 #ifndef htobe16
-# if !defined(WORDS_BIGENDIAN)
+# if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 #  define htobe16(x) bswap_16 (x)
 #  define htole16(x) (x)
 #  define be16toh(x) bswap_16 (x)
