@@ -39,17 +39,26 @@ struct cramfs_super
 
 static int cramfs_verify_csum(blkid_probe pr, const struct blkid_idmag *mag, struct cramfs_super *cs)
 {
+	uint32_t crc, expected, csummed_size;
+	unsigned char *csummed;
+
 	if (!(cs->flags & CRAMFS_FLAG_FSID_VERSION_2))
 		return 1;
 
-	uint32_t expected = le32_to_cpu(cs->info.crc);
-	uint32_t csummed_size = le32_to_cpu(cs->size);
-	if (csummed_size > 1 << 16)
+	expected = le32_to_cpu(cs->info.crc);
+	csummed_size = le32_to_cpu(cs->size);
+
+	if (csummed_size > (1 << 16)
+	    || csummed_size < sizeof(struct cramfs_super))
 		return 0;
 
-	unsigned char *csummed = blkid_probe_get_sb_buffer(pr, mag, csummed_size);
+	csummed = blkid_probe_get_sb_buffer(pr, mag, csummed_size);
+	if (!csummed)
+		return 0;
 	memset(csummed + offsetof(struct cramfs_super, info.crc), 0, sizeof(uint32_t));
-	uint32_t crc = ~ul_crc32(~0LL, csummed, csummed_size);
+
+	crc = ~ul_crc32(~0LL, csummed, csummed_size);
+
 	return blkid_probe_verify_csum(pr, crc, expected);
 }
 
