@@ -147,25 +147,71 @@ static int tmptgt_cleanup(int old_ns_fd)
 #endif
 }
 
-static int do_mount_subdir(const char *root,
-			   const char *subdir,
-			   const char *target)
+static int do_mount_subdir(
+			struct libmnt_context *cxt,
+			const char *root,
+			const char *subdir,
+			const char *target)
 {
-	char *src = NULL;
 	int rc = 0;
 
-	if (asprintf(&src, "%s/%s", root, subdir) < 0)
-		return -ENOMEM;
+#ifdef UL_HAVE_MOUNT_API
+	struct libmnt_sysapi *api;
 
-	DBG(HOOK, ul_debug("mount subdir %s to %s", src, target));
-	if (mount(src, target, NULL, MS_BIND | MS_REC, NULL) != 0)
-		rc = -MNT_ERR_APPLYFLAGS;
+	api = mnt_context_get_sysapi(cxt);
+	if (api) {
+		/* FD based way - unfortunately, it's impossible to open
+		 * sub-directory on not-yet attached mount. It means hook_mount.c
+		 * attaches to FS to temporary directory, and we clone
+		 * and move the subdir, and umount the old temporary tree.
+		 *
+		 * The old mount(2) way does the same, but by BIND.
+		 */
+		int fd;
 
-	DBG(HOOK, ul_debug("umount old root %s", root));
-	if (umount(root) != 0)
-		rc = -MNT_ERR_APPLYFLAGS;
+		DBG(HOOK, ul_debug("attach subdir  %s", subdir));
+		fd = open_tree(api->fd_tree, subdir,
+					OPEN_TREE_CLOEXEC | OPEN_TREE_CLONE);
+		set_syscall_status(cxt, "open_tree", fd >= 0);
+		if (fd < 0)
+			rc = -errno;
 
-	free(src);
+		if (!rc) {
+			rc = move_mount(fd, "", AT_FDCWD, target, MOVE_MOUNT_F_EMPTY_PATH);
+			set_syscall_status(cxt, "move_mount", rc == 0);
+			if (rc)
+				rc = -errno;
+		}
+		if (!rc) {
+			close(api->fd_tree);
+			api->fd_tree = fd;
+		}
+	} else
+#endif
+	{
+		char *src = NULL;
+
+		if (asprintf(&src, "%s/%s", root, subdir) < 0)
+			return -ENOMEM;
+
+		/* Classic mount(2) based way */
+		DBG(HOOK, ul_debug("mount subdir %s to %s", src, target));
+		rc = mount(src, target, NULL, MS_BIND, NULL);
+
+		set_syscall_status(cxt, "mount", rc == 0);
+		if (rc)
+			rc = -errno;
+		free(src);
+	}
+
+	if (!rc) {
+		DBG(HOOK, ul_debug("umount old root %s", root));
+		rc = umount(root);
+		set_syscall_status(cxt, "umount", rc == 0);
+		if (rc)
+			rc = -errno;
+	}
+
 	return rc;
 }
 
@@ -186,7 +232,7 @@ static int hook_mount_post(
 	mnt_fs_set_target(cxt->fs, hsd->org_target);
 
 	/* bind subdir to the real target, umount temporary target */
-	rc = do_mount_subdir(MNT_PATH_TMPTGT,
+	rc = do_mount_subdir(cxt, MNT_PATH_TMPTGT,
 			hsd->subdir,
 			mnt_fs_get_target(cxt->fs));
 	if (rc)

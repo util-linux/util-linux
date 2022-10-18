@@ -50,18 +50,6 @@
 
 #define get_sysapi(_cxt) mnt_context_get_sysapi(_cxt)
 
-#define set_syscall_status(_cxt, _name, _x) __extension__ ({ \
-		if (!(_x)) { \
-			DBG(HOOK, ul_debug("syscall '%s' [%m]", _name)); \
-			(_cxt)->syscall_status = -errno; \
-			(_cxt)->syscall_name = (_name); \
-		} else { \
-			DBG(HOOK, ul_debug("syscall '%s' [succes]", _name)); \
-			(_cxt)->syscall_status = 0; \
-		} \
-	})
-
-
 /*
  * This hookset uses 'struct libmnt_sysapi' (mountP.h) as hookset data.
  */

@@ -463,6 +463,17 @@ struct libmnt_context
 /* Flags usable with MS_BIND|MS_REMOUNT */
 #define MNT_BIND_SETTABLE	(MS_NOSUID|MS_NODEV|MS_NOEXEC|MS_NOATIME|MS_NODIRATIME|MS_RELATIME|MS_RDONLY|MS_NOSYMFOLLOW)
 
+#define set_syscall_status(_cxt, _name, _x) __extension__ ({ \
+		if (!(_x)) { \
+			DBG(CXT, ul_debug("syscall '%s' [%m]", _name)); \
+			(_cxt)->syscall_status = -errno; \
+			(_cxt)->syscall_name = (_name); \
+		} else { \
+			DBG(CXT, ul_debug("syscall '%s' [succes]", _name)); \
+			(_cxt)->syscall_status = 0; \
+		} \
+	})
+
 /* optmap.c */
 extern const struct libmnt_optmap *mnt_optmap_get_entry(
 			     struct libmnt_optmap const **maps,
