@@ -48,6 +48,8 @@
 
 #ifdef UL_HAVE_MOUNT_API
 
+#define get_sysapi(_cxt) mnt_context_get_sysapi(_cxt)
+
 #define set_syscall_status(_cxt, _name, _x) __extension__ ({ \
 		if (!(_x)) { \
 			DBG(HOOK, ul_debug("syscall '%s' [%m]", _name)); \
@@ -113,11 +115,6 @@ static int hookset_deinit(struct libmnt_context *cxt, const struct libmnt_hookse
 	return 0;
 }
 
-static inline struct libmnt_sysapi *get_sysapi(struct libmnt_context *cxt,
-					const struct libmnt_hookset *hs)
-{
-	return mnt_context_get_hookset_data(cxt, hs);
-}
 
 static int configure_superblock(struct libmnt_context *cxt,
 				const struct libmnt_hookset *hs, int fd)
@@ -221,7 +218,7 @@ static int hook_create_mount(struct libmnt_context *cxt,
 	assert(cxt);
 	assert(cxt->fs);
 
-	api = get_sysapi(cxt, hs);
+	api = get_sysapi(cxt);
 	assert(api);
 
 	if (api->fd_fs < 0) {
@@ -285,7 +282,7 @@ static int hook_reconfigure_mount(struct libmnt_context *cxt,
 
 	assert(cxt);
 
-	api = get_sysapi(cxt, hs);
+	api = get_sysapi(cxt);
 	assert(api);
 	assert(api->fd_tree >= 0);
 
@@ -320,7 +317,7 @@ static int hook_set_vfsflags(struct libmnt_context *cxt,
 
 	DBG(HOOK, ul_debugobj(hs, "setting VFS flags"));
 
-	api = get_sysapi(cxt, hs);
+	api = get_sysapi(cxt);
 	assert(api);
 
 	/* fallback only; necessary when init_sysapi() during preparation
@@ -373,7 +370,7 @@ static int hook_set_propagation(struct libmnt_context *cxt,
 	if (!ol)
 		return -ENOMEM;
 
-	api = get_sysapi(cxt, hs);
+	api = get_sysapi(cxt);
 	assert(api);
 
 	/* fallback only; necessary when init_sysapi() during preparation
@@ -429,7 +426,7 @@ static int hook_attach_target(struct libmnt_context *cxt,
 	if (!target)
 		return -EINVAL;
 
-	api = get_sysapi(cxt, hs);
+	api = get_sysapi(cxt);
 	assert(api);
 	assert(api->fd_tree >= 0);
 

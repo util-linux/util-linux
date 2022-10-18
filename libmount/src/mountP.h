@@ -633,6 +633,11 @@ struct libmnt_sysapi {
 	int	fd_fs;		/* FD from fsopen() or fspick() */
 	int	fd_tree;	/* FD from fsmount() or open_tree() */
 };
+
+static inline struct libmnt_sysapi *mnt_context_get_sysapi(struct libmnt_context *cxt)
+{
+	return mnt_context_get_hookset_data(cxt, &hookset_mount);
+}
 #endif
 
 #endif /* _LIBMOUNT_PRIVATE_H */
