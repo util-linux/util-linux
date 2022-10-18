@@ -85,7 +85,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		       " -v, --verbose       explain what is being done\n"
 		       " -c                  this option is silently ignored\n"
 		       " -l                  this option is silently ignored\n"
-		       " --lock=[=<mode>]    use exclusive device lock (yes, no or nonblock)\n"
+		       " --lock[=<mode>]     use exclusive device lock (yes, no or nonblock)\n"
 		       ));
 	printf(USAGE_HELP_OPTIONS(21));
 

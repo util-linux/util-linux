@@ -141,7 +141,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	printf(_(" -p             pad by %d bytes for boot code\n"), PAD_SIZE);
 	puts(_(  " -s             sort directory entries (old option, ignored)"));
 	puts(_(  " -z             make explicit holes"));
-	puts(_(  " -l lockmode    use exclusive device lock (yes, no or nonblock)"));
+	puts(_(  " -l[=<mode>]    use exclusive device lock (yes, no or nonblock)"));
 	puts(_(  " dirname        root of the filesystem to be compressed"));
 	puts(_(  " outfile        output file"));
 	fputs(USAGE_SEPARATOR, stdout);
@@ -733,7 +733,7 @@ int main(int argc, char **argv)
 	strutils_set_exitcode(MKFS_EX_USAGE);
 
 	/* command line options */
-	while ((c = getopt(argc, argv, "hb:Ee:i:n:N:l:psVvz")) != EOF) {
+	while ((c = getopt(argc, argv, "hb:Ee:i:n:N:l::psVvz")) != EOF) {
 		switch (c) {
 		case 'h':
 			usage();
