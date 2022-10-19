@@ -68,14 +68,6 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-struct fadvise_args {
-	int fd;
-	off_t offset;
-	off_t len;
-	int advice;
-};
-
-
 int main(int argc, char ** argv)
 {
 	int c;
