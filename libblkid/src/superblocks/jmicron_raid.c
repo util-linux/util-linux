@@ -16,14 +16,75 @@
 
 #include "superblocks.h"
 
-struct jm_metadata {
-	int8_t		signature[2];
-	uint8_t		minor_version;
-	uint8_t		major_version;
-	uint16_t	checksum;
-};
-
 #define JM_SIGNATURE		"JM"
+#define	JM_MINOR_VERSION(_x)	((_x)->version & 0xFF)
+#define	JM_MAJOR_VERSION(_x)	((_x)->version >> 8)
+#define	JM_SPARES	2
+#define	JM_MEMBERS	8
+
+struct jm_metadata {
+	int8_t		signature[2];	/* 0x0 - 0x01 */
+
+	uint16_t	version;	/* 0x03 - 0x04 JMicron version */
+
+	uint16_t	checksum;	/* 0x04 - 0x05 */
+	uint8_t		filler[10];
+
+	uint32_t	identity;	/* 0x10 - 0x13 */
+
+	struct {
+		uint32_t	base;	/* 0x14 - 0x17 */
+		uint32_t	range;	/* 0x18 - 0x1B range */
+		uint16_t	range2;	/* 0x1C - 0x1D range2 */
+	} segment;
+
+	int8_t		name[16];	/* 0x20 - 0x2F */
+
+	uint8_t		mode;		/* 0x30 RAID level */
+	uint8_t		block;		/* 0x31 stride size (2=4K, 3=8K, ...) */
+	uint16_t	attribute;	/* 0x32 - 0x33 */
+	uint8_t		filler1[4];
+
+	uint32_t	spare[JM_SPARES];	/* 0x38 - 0x3F */
+	uint32_t	member[JM_MEMBERS];	/* 0x40 - 0x5F */
+
+	uint8_t		filler2[0x20];
+} __attribute__ ((packed));
+
+static void jm_to_cpu(struct jm_metadata *jm)
+{
+	unsigned int i;
+
+	le16_to_cpu(jm->version);
+	le16_to_cpu(jm->checksum);
+	le32_to_cpu(jm->identity);
+
+	le32_to_cpu(jm->segment.base);
+	le32_to_cpu(jm->segment.range);
+	le16_to_cpu(jm->segment.range2);
+
+	le16_to_cpu(jm->attribute);
+
+	for (i = 0; i < JM_SPARES; i++)
+		le32_to_cpu(jm->spare[i]);
+
+	for (i = 0; i < JM_MEMBERS; i++)
+		le32_to_cpu(jm->member[i]);
+}
+
+static int jm_checksum(struct jm_metadata *jm)
+{
+	size_t count = 64;
+	char *buf = (char *) jm;
+	uint16_t *p = (uint16_t *) buf, sum = 0;
+
+	assert(count <= sizeof(struct jm_metadata));
+
+	while (count--)
+		sum += *p++;
+
+	return !sum || sum == 1;
+}
 
 static int probe_jmraid(blkid_probe pr,
 		const struct blkid_idmag *mag __attribute__((__unused__)))
@@ -46,8 +107,14 @@ static int probe_jmraid(blkid_probe pr,
 
 	if (memcmp(jm->signature, JM_SIGNATURE, sizeof(JM_SIGNATURE) - 1) != 0)
 		return 1;
+
+	jm_to_cpu(jm);
+
+	if (!jm_checksum(jm))
+		return 1;
+
 	if (blkid_probe_sprintf_version(pr, "%u.%u",
-				jm->major_version, jm->minor_version) != 0)
+			JM_MAJOR_VERSION(jm), JM_MINOR_VERSION(jm)) != 0)
 		return 1;
 	if (blkid_probe_set_magic(pr, off, sizeof(jm->signature),
 				(unsigned char *) jm->signature))
@@ -61,5 +128,3 @@ const struct blkid_idinfo jmraid_idinfo = {
 	.probefunc	= probe_jmraid,
 	.magics		= BLKID_NONE_MAGIC
 };
-
-
