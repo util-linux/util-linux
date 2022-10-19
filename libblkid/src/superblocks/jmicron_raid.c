@@ -17,10 +17,10 @@
 #include "superblocks.h"
 
 #define JM_SIGNATURE		"JM"
-#define	JM_MINOR_VERSION(_x)	((_x)->version & 0xFF)
-#define	JM_MAJOR_VERSION(_x)	((_x)->version >> 8)
-#define	JM_SPARES	2
-#define	JM_MEMBERS	8
+#define JM_MINOR_VERSION(_x)	((_x)->version & 0xFF)
+#define JM_MAJOR_VERSION(_x)	((_x)->version >> 8)
+#define JM_SPARES		2
+#define JM_MEMBERS		8
 
 struct jm_metadata {
 	int8_t		signature[2];	/* 0x0 - 0x01 */
