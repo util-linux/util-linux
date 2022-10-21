@@ -114,7 +114,7 @@ jobs:
             export QEMU_USER=1
 
             apt-get update
-            apt-get install -y --no-install-recommends lsb-release software-properties-common gpg-agent git
+            apt-get install -y --no-install-recommends lsb-release software-properties-common gpg-agent git squashfs-tools iproute2 dmsetup
 
             git config --global --add safe.directory "$PWD"
 
