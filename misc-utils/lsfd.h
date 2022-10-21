@@ -81,6 +81,10 @@ enum {
 	COL_TCP_RPORT,
 	COL_TID,
 	COL_TYPE,
+	COL_UDP_LADDR,
+	COL_UDP_RADDR,
+	COL_UDP_LPORT,
+	COL_UDP_RPORT,
 	COL_UID,		/* process */
 	COL_UNIX_PATH,
 	COL_USER,		/* process */

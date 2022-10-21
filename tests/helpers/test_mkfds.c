@@ -1372,6 +1372,137 @@ static void *make_tcp(const struct factory *factory, struct fdesc fdescs[],
 	return NULL;
 }
 
+static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
+				    int argc, char ** argv)
+{
+	struct arg server_port = decode_arg("server-port", factory->params, argc, argv);
+	unsigned short iserver_port = (unsigned short)ARG_INTEGER(server_port);
+	struct arg client_port = decode_arg("client-port", factory->params, argc, argv);
+	unsigned short iclient_port = (unsigned short)ARG_INTEGER(client_port);
+
+	struct arg server_do_bind = decode_arg("server-do-bind", factory->params, argc, argv);
+	bool bserver_do_bind = ARG_BOOLEAN(server_do_bind);
+	struct arg client_do_bind = decode_arg("client-do-bind", factory->params, argc, argv);
+	bool bclient_do_bind = ARG_BOOLEAN(client_do_bind);
+	struct arg client_do_connect = decode_arg("client-do-connect", factory->params, argc, argv);
+	bool bclient_do_connect = ARG_BOOLEAN(client_do_connect);
+
+	struct sockaddr_in sin, cin;
+	int ssd, csd;
+
+	const int y = 1;
+
+	free_arg(&client_do_connect);
+	free_arg(&client_do_bind);
+	free_arg(&server_do_bind);
+	free_arg(&server_port);
+	free_arg(&client_port);
+
+	ssd = socket(AF_INET, SOCK_DGRAM, 0);
+	if (ssd < 0)
+		err(EXIT_FAILURE,
+		    _("failed to make a udp socket for server"));
+
+	if (setsockopt(ssd, SOL_SOCKET,
+		       SO_REUSEADDR, (const char *)&y, sizeof(y)) < 0) {
+		int e = errno;
+		close(ssd);
+		errno = e;
+		err(EXIT_FAILURE, "failed to setsockopt(SO_REUSEADDR)");
+	}
+
+	if (ssd != fdescs[0].fd) {
+		if (dup2(ssd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(ssd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", ssd, fdescs[0].fd);
+		}
+		close(ssd);
+		ssd = fdescs[0].fd;
+	}
+
+	memset(&sin, 0, sizeof(sin));
+	sin.sin_family = AF_INET;
+	sin.sin_port = htons(iserver_port);
+	sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+	if (bserver_do_bind) {
+		if (bind(ssd, &sin, sizeof(sin)) < 0) {
+			int e = errno;
+			close(ssd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to bind a srever socket");
+		}
+	}
+
+	csd = socket(AF_INET, SOCK_DGRAM, 0);
+	if (csd < 0) {
+		int e = errno;
+		close(ssd);
+		errno = e;
+		err(EXIT_FAILURE,
+		    _("failed to make a udp client socket"));
+	}
+
+	if (setsockopt(csd, SOL_SOCKET,
+		       SO_REUSEADDR, (const char *)&y, sizeof(y)) < 0) {
+		int e = errno;
+		close(ssd);
+		close(csd);
+		errno = e;
+		err(EXIT_FAILURE, "failed to setsockopt(SO_REUSEADDR)");
+	}
+
+	if (csd != fdescs[1].fd) {
+		if (dup2(csd, fdescs[1].fd) < 0) {
+			int e = errno;
+			close(ssd);
+			close(csd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", csd, fdescs[1].fd);
+		}
+		close(csd);
+		csd = fdescs[1].fd;
+	}
+
+	if (bclient_do_bind) {
+		memset(&cin, 0, sizeof(cin));
+		cin.sin_family = AF_INET;
+		cin.sin_port = htons(iclient_port);
+		cin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+		if (bind(csd, &cin, sizeof(cin)) < 0) {
+			int e = errno;
+			close(ssd);
+			close(csd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to bind a client socket");
+		}
+	}
+
+	if (bclient_do_connect) {
+		if (connect(csd, &sin, sizeof(sin)) < 0) {
+			int e = errno;
+			close(ssd);
+			close(csd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to connect a client socket to the serer socket");
+		}
+	}
+
+	fdescs[0] = (struct fdesc) {
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+	fdescs[1] = (struct fdesc) {
+		.fd    = fdescs[1].fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+
+	return NULL;
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -1690,6 +1821,47 @@ static const struct factory factories[] = {
 			PARAM_END
 		}
 	},
+	{
+		.name = "udp",
+		.desc = "AF_INET+SOCK_DGRAM sockets",
+		.priv = false,
+		.N    = 2,
+		.EX_N = 0,
+		.make = make_udp,
+		.params = (struct parameter []) {
+			{
+				.name = "server-port",
+				.type = PTYPE_INTEGER,
+				.desc = "TCP port the server may listen",
+				.defv.integer = 12345,
+			},
+			{
+				.name = "client-port",
+				.type = PTYPE_INTEGER,
+				.desc = "TCP port the client may bind",
+				.defv.integer = 23456,
+			},
+			{
+				.name = "server-do-bind",
+				.type = PTYPE_BOOLEAN,
+				.desc = "call bind with the server socket",
+				.defv.boolean = true,
+			},
+			{
+				.name = "client-do-bind",
+				.type = PTYPE_BOOLEAN,
+				.desc = "call bind with the client socket",
+				.defv.boolean = true,
+			},
+			{
+				.name = "client-do-connect",
+				.type = PTYPE_BOOLEAN,
+				.desc = "call connect with the client socket",
+				.defv.boolean = true,
+			},
+			PARAM_END
+		}
+	}
 };
 
 static int count_parameters(const struct factory *factory)
