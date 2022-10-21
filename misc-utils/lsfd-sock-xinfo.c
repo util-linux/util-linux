@@ -585,7 +585,7 @@ static bool tcp_get_listening(struct sock_xinfo *sock_xinfo,
 		return true;						\
 	}
 
-define_fill_column_func(tcp, TCP);
+define_fill_column_func(tcp, TCP)
 static struct sock_xinfo_class tcp_xinfo_class = {
 	.class = "tcp",
 	.get_name = tcp_get_name,
@@ -700,7 +700,7 @@ static char *udp_get_type(struct sock_xinfo *sock_xinfo __attribute__((__unused_
 	return strdup("dgram");
 }
 
-define_fill_column_func(udp, UDP);
+define_fill_column_func(udp, UDP)
 static struct sock_xinfo_class udp_xinfo_class = {
 	.class = "udp",
 	.get_name = udp_get_name,
