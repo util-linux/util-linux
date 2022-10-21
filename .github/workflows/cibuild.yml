@@ -98,3 +98,29 @@ jobs:
         run: .github/workflows/cibuild.sh CONFIGURE
       - name: Make distcheck
         run: .github/workflows/cibuild.sh DISTCHECK
+  build-s390x:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository checkout
+        uses: actions/checkout@v1
+      - uses: uraimo/run-on-arch-action@v2
+        with:
+          arch: s390x
+          distro: ubuntu_latest
+          run: |
+            export COMPILER=gcc
+            export COMPILER_VERSION=10
+            export SANITIZE=no
+            export QEMU_USER=1
+
+            apt-get update
+            apt-get install -y --no-install-recommends lsb-release software-properties-common gpg-agent git
+
+            git config --global --add safe.directory "$PWD"
+
+            # name: Ubuntu setup
+            .github/workflows/cibuild-setup-ubuntu.sh
+            # Configure & Make
+            .github/workflows/cibuild.sh CONFIGURE MAKE
+            # Check
+            .github/workflows/cibuild.sh CHECK
