@@ -55,35 +55,38 @@ static void jm_to_cpu(struct jm_metadata *jm)
 {
 	unsigned int i;
 
-	le16_to_cpu(jm->version);
-	le16_to_cpu(jm->checksum);
-	le32_to_cpu(jm->identity);
+	jm->version = le16_to_cpu(jm->version);
+	jm->checksum = le16_to_cpu(jm->checksum);
+	jm->identity = le32_to_cpu(jm->identity);
+	jm->segment.base = le32_to_cpu(jm->segment.base);
+	jm->segment.range = le32_to_cpu(jm->segment.range);
+	jm->segment.range2 = le16_to_cpu(jm->segment.range2);
 
-	le32_to_cpu(jm->segment.base);
-	le32_to_cpu(jm->segment.range);
-	le16_to_cpu(jm->segment.range2);
-
-	le16_to_cpu(jm->attribute);
+	jm->attribute = le16_to_cpu(jm->attribute);
 
 	for (i = 0; i < JM_SPARES; i++)
-		le32_to_cpu(jm->spare[i]);
+		jm->spare[i] = le32_to_cpu(jm->spare[i]);
 
 	for (i = 0; i < JM_MEMBERS; i++)
-		le32_to_cpu(jm->member[i]);
+		jm->member[i] = le32_to_cpu(jm->member[i]);
 }
 
-static int jm_checksum(struct jm_metadata *jm)
+static int jm_checksum(const struct jm_metadata *jm)
 {
-	size_t count = 64;
-	char *buf = (char *) jm;
-	uint16_t *p = (uint16_t *) buf, sum = 0;
+        size_t count = sizeof(*jm) / sizeof(uint16_t);
+        uint16_t sum = 0;
+        unsigned char *ptr = (unsigned char *) jm;
 
-	assert(count <= sizeof(struct jm_metadata));
+        while (count--) {
+                uint16_t val;
 
-	while (count--)
-		sum += *p++;
+                memcpy(&val, ptr, sizeof(uint16_t));
+                sum += le16_to_cpu(val);
 
-	return !sum || sum == 1;
+                ptr += sizeof(uint16_t);
+        }
+
+        return sum == 0 || sum == 1;
 }
 
 static int probe_jmraid(blkid_probe pr,
@@ -108,9 +111,12 @@ static int probe_jmraid(blkid_probe pr,
 	if (memcmp(jm->signature, JM_SIGNATURE, sizeof(JM_SIGNATURE) - 1) != 0)
 		return 1;
 
+	if (!jm_checksum(jm))
+		return 1;
+
 	jm_to_cpu(jm);
 
-	if (!jm_checksum(jm))
+	if (jm->mode > 5)
 		return 1;
 
 	if (blkid_probe_sprintf_version(pr, "%u.%u",
