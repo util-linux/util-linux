@@ -712,7 +712,8 @@ static struct sock_xinfo_class udp_xinfo_class = {
 
 static bool udp_verify_initial_line(const char *line)
 {
-	return !strncmp(line, "   sl", 5);
+	return !strncmp(line, "   sl", 5) ||
+	       !strncmp(line, "  sl", 4);
 }
 
 
