@@ -51,11 +51,11 @@ static uint32_t cfs32_to_cpu(int le, uint32_t value)
 		return be32_to_cpu(value);
 }
 
-static int cramfs_verify_csum(blkid_probe pr, const struct blkid_idmag *mag, struct cramfs_super *cs)
+static int cramfs_verify_csum(blkid_probe pr, const struct blkid_idmag *mag,
+		struct cramfs_super *cs, int le)
 {
 	uint32_t crc, expected, csummed_size;
 	unsigned char *csummed;
-	int le = cramfs_is_little_endian(mag);
 
 	if (!(cfs32_to_cpu(le, cs->flags) & CRAMFS_FLAG_FSID_VERSION_2))
 		return 1;
@@ -85,10 +85,13 @@ static int probe_cramfs(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!cs)
 		return errno ? -errno : 1;
 
-	if (!cramfs_verify_csum(pr, mag, cs))
+	int le = cramfs_is_little_endian(mag);
+
+	if (!cramfs_verify_csum(pr, mag, cs, le))
 		return 1;
 
 	blkid_probe_set_label(pr, cs->name, sizeof(cs->name));
+	blkid_probe_set_fssize(pr, cfs32_to_cpu(le, cs->size));
 	return 0;
 }
 
