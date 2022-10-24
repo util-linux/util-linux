@@ -19,6 +19,8 @@
 #include <limits.h>
 #include <dirent.h>
 #include <fcntl.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 
 #include "fileutils.h"
@@ -33,6 +35,8 @@ struct libmnt_parser {
 	char	*buf;		/* buffer (the current line content) */
 	size_t	bufsiz;		/* size of the buffer */
 	size_t	line;		/* current line */
+	int     rc;		/* rc from mnt_guess_system_root() */
+	const char *real;	/* guess from mmnt_guess_system_root() */
 };
 
 static void parser_cleanup(struct libmnt_parser *pa)
@@ -652,9 +656,9 @@ done:
 	return tid;
 }
 
-static int kernel_fs_postparse(struct libmnt_table *tb,
-			       struct libmnt_fs *fs, pid_t *tid,
-			       const char *filename)
+static int kernel_fs_postparse(struct libmnt_parser *pa,
+			       struct libmnt_table *tb,
+			       struct libmnt_fs *fs, pid_t *tid)
 {
 	int rc = 0;
 	const char *src = mnt_fs_get_srcpath(fs);
@@ -662,8 +666,8 @@ static int kernel_fs_postparse(struct libmnt_table *tb,
 	/* This is a filesystem description from /proc, so we're in some process
 	 * namespace. Let's remember the process PID.
 	 */
-	if (filename && *tid == -1)
-		*tid = path_to_tid(filename);
+	if (pa->filename && *tid == -1)
+		*tid = path_to_tid(pa->filename);
 
 	fs->tid = *tid;
 
@@ -673,7 +677,28 @@ static int kernel_fs_postparse(struct libmnt_table *tb,
 	if (src && strcmp(src, "/dev/root") == 0) {
 		char *real = NULL;
 
-		rc = mnt_guess_system_root(fs->devno, tb->cache, &real);
+		/* We will only call mnt_guess_system_root() if it has not
+		 * been called before. Inside a container, mountinfo can contain
+		 * many lines with /dev/root.
+		 */
+		if (pa->rc == 0 && pa->real == NULL) {
+			rc = mnt_guess_system_root(fs->devno, tb->cache, &real);
+			if (rc == 0)
+				pa->real = real;
+			pa->rc = rc;
+		} else {
+			/* This means that we already have run the
+			 * mnt_guess_system_root() and that we want to reuse the
+			 * old result.
+			 */
+			rc = pa->rc;
+			if (rc == 0 && pa->real != NULL) {
+				real = strdup(pa->real);
+				if (real == NULL)
+					return -ENOMEM;
+			}
+		}
+
 		if (rc < 0)
 			return rc;
 
@@ -704,7 +729,7 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 	int rc = -1;
 	int flags = 0;
 	pid_t tid = -1;
-	struct libmnt_parser pa = { .line = 0 };
+	struct libmnt_parser pa = { .line = 0, .rc = 0, .real = NULL };
 
 	assert(tb);
 	assert(f);
@@ -748,7 +773,7 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 			fs->flags |= flags;
 
 			if (rc == 0 && tb->fmt == MNT_FMT_MOUNTINFO) {
-				rc = kernel_fs_postparse(tb, fs, &tid, filename);
+				rc = kernel_fs_postparse(&pa, tb, fs, &tid);
 				if (rc)
 					mnt_table_remove_fs(tb, fs);
 			}
