@@ -928,7 +928,7 @@ int main(int argc, char **argv)
 		{ "type",           required_argument, NULL, 't' },
 		{ "units",          optional_argument, NULL, 'u' },
 		{ "version",        no_argument,       NULL, 'V' },
-		{ "output",         no_argument,       NULL, 'o' },
+		{ "output",         required_argument, NULL, 'o' },
 		{ "protect-boot",   no_argument,       NULL, 'B' },
 		{ "wipe",           required_argument, NULL, 'w' },
 		{ "wipe-partitions",required_argument, NULL, 'W' },
