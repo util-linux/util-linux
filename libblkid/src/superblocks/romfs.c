@@ -60,6 +60,7 @@ static int probe_romfs(blkid_probe pr, const struct blkid_idmag *mag)
 				sizeof(ros->ros_volume));
 
 	blkid_probe_set_fsblocksize(pr, 1024);
+	blkid_probe_set_fssize(pr, be32_to_cpu(ros->ros_full_size));
 	blkid_probe_set_block_size(pr, 1024);
 
 	return 0;
