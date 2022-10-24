@@ -15,7 +15,7 @@ ts_skip_nonroot
 ts_check_losetup
 ts_check_prog "mkfs.ext2"
 ts_check_prog "id"
-ts_check_prog "ls"
+ts_check_prog "stat"
 
 
 do_one() {
@@ -23,8 +23,7 @@ do_one() {
 	what="$1"; shift
 	where="$1"; shift
 	$TS_CMD_MOUNT "$@" "$what" "$where" >> $TS_OUTPUT 2>> $TS_ERRLOG
-	read -r m _ o g _ < <(ls -nd "$where")
-	actual="$m $o $g"
+	actual=$(stat --format="%A %u %g" "$where")
 	[ "$actual" = "$expected" ] || echo "$*: $actual != $expected" >> $TS_ERRLOG
 	$TS_CMD_UMOUNT "$where" >> $TS_OUTPUT 2>> $TS_ERRLOG
 }
