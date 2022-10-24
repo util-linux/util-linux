@@ -113,13 +113,9 @@ jobs:
             export SANITIZE=no
             export QEMU_USER=1
 
-            apt-get update
-            apt-get install -y --no-install-recommends lsb-release software-properties-common gpg-agent git
-
-            git config --global --add safe.directory "$PWD"
-
             # name: Ubuntu setup
             .github/workflows/cibuild-setup-ubuntu.sh
+            git config --global --add safe.directory "$PWD"
             # Configure & Make
             .github/workflows/cibuild.sh CONFIGURE MAKE
             # Check

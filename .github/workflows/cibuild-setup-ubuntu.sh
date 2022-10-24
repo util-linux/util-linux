@@ -19,6 +19,11 @@ PACKAGES=(
 	asciidoctor
 	meson
 	lcov
+	gpg-agent
+	git
+	squashfs-tools
+	iproute2
+	dmsetup
 )
 
 PACKAGES_OPTIONAL=(
@@ -30,6 +35,9 @@ PACKAGES_OPTIONAL=(
 if [[ "$QEMU_USER" != "1" ]]; then
 	PACKAGES+=(linux-modules-extra-$(uname -r))
 fi
+
+apt-get -y update --fix-missing
+apt install -y lsb-release software-properties-common
 
 COMPILER="${COMPILER:?}"
 RELEASE="$(lsb_release -cs)"
