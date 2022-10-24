@@ -101,7 +101,7 @@ static struct exfat_entry_label *find_label(blkid_probe pr,
 			return (struct exfat_entry_label *) entry;
 
 		offset += EXFAT_ENTRY_SIZE;
-		if (offset % CLUSTER_SIZE(sb) == 0) {
+		if (CLUSTER_SIZE(sb) && (offset % CLUSTER_SIZE(sb)) == 0) {
 			cluster = next_cluster(pr, sb, cluster);
 			if (cluster < EXFAT_FIRST_DATA_CLUSTER)
 				return NULL;
