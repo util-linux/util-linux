@@ -654,8 +654,7 @@ static void load_xinfo_from_proc_inet_L3(ino_t netns_inode, const char *proc_fil
 
 static bool tcp_verify_initial_line(const char *line)
 {
-	return (line[0] == ' ' && line[1] == ' '
-		&& line[2] == 's' && line[3] == 'l');
+	return !strncmp(line, "  sl", 4);
 }
 
 static void load_xinfo_from_proc_tcp(ino_t netns_inode)
@@ -713,8 +712,7 @@ static struct sock_xinfo_class udp_xinfo_class = {
 
 static bool udp_verify_initial_line(const char *line)
 {
-	return (line[0] == ' ' && line[1] == ' ' && line[2] == ' '
-		&& line[3] == 's' && line[4] == 'l');
+	return !strncmp(line, "   sl", 5);
 }
 
 
