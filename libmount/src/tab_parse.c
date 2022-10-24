@@ -19,6 +19,8 @@
 #include <limits.h>
 #include <dirent.h>
 #include <fcntl.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 
 #include "fileutils.h"
@@ -33,6 +35,8 @@ struct libmnt_parser {
 	char	*buf;		/* buffer (the current line content) */
 	size_t	bufsiz;		/* size of the buffer */
 	size_t	line;		/* current line */
+	int     sysroot_rc;	/* rc from mnt_guess_system_root() */
+	char	*sysroot;	/* guess from mmnt_guess_system_root() */
 };
 
 static void parser_cleanup(struct libmnt_parser *pa)
@@ -40,6 +44,7 @@ static void parser_cleanup(struct libmnt_parser *pa)
 	if (!pa)
 		return;
 	free(pa->buf);
+	free(pa->sysroot);
 	memset(pa, 0, sizeof(*pa));
 }
 
@@ -652,9 +657,9 @@ done:
 	return tid;
 }
 
-static int kernel_fs_postparse(struct libmnt_table *tb,
-			       struct libmnt_fs *fs, pid_t *tid,
-			       const char *filename)
+static int kernel_fs_postparse(struct libmnt_parser *pa,
+			       struct libmnt_table *tb,
+			       struct libmnt_fs *fs, pid_t *tid)
 {
 	int rc = 0;
 	const char *src = mnt_fs_get_srcpath(fs);
@@ -662,8 +667,8 @@ static int kernel_fs_postparse(struct libmnt_table *tb,
 	/* This is a filesystem description from /proc, so we're in some process
 	 * namespace. Let's remember the process PID.
 	 */
-	if (filename && *tid == -1)
-		*tid = path_to_tid(filename);
+	if (pa->filename && *tid == -1)
+		*tid = path_to_tid(pa->filename);
 
 	fs->tid = *tid;
 
@@ -671,13 +676,28 @@ static int kernel_fs_postparse(struct libmnt_table *tb,
 	 * Convert obscure /dev/root to something more usable
 	 */
 	if (src && strcmp(src, "/dev/root") == 0) {
-		char *real = NULL;
 
-		rc = mnt_guess_system_root(fs->devno, tb->cache, &real);
+		/* We will only call mnt_guess_system_root() if it has not
+		 * been called before. Inside a container, mountinfo can contain
+		 * many lines with /dev/root.
+		 */
+		if (pa->sysroot_rc == 0 && pa->sysroot == NULL)
+			pa->sysroot_rc = mnt_guess_system_root(fs->devno,
+						tb->cache, &pa->sysroot);
+
+		rc = pa->sysroot_rc;
 		if (rc < 0)
 			return rc;
 
-		if (rc == 0 && real) {
+		/* This means that we already have run the mnt_guess_system_root()
+		 * and that we want to reuse the result.
+		 */
+		if (rc == 0 && pa->sysroot != NULL) {
+			char *real = strdup(pa->sysroot);
+
+			if (!real)
+				return -ENOMEM;
+
 			DBG(TAB, ul_debugobj(tb, "canonical root FS: %s", real));
 			rc = __mnt_fs_set_source_ptr(fs, real);
 
@@ -748,7 +768,7 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 			fs->flags |= flags;
 
 			if (rc == 0 && tb->fmt == MNT_FMT_MOUNTINFO) {
-				rc = kernel_fs_postparse(tb, fs, &tid, filename);
+				rc = kernel_fs_postparse(&pa, tb, fs, &tid);
 				if (rc)
 					mnt_table_remove_fs(tb, fs);
 			}
