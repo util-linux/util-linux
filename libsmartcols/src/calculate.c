@@ -14,7 +14,7 @@ static void dbg_column(struct libscols_table *tb, struct libscols_column *cl)
 
 	DBG(COL, ul_debugobj(cl, "%15s seq=%zu, width=%zd, "
 				 "hint=%d, max=%zu, min=%zu, "
-				 "0x04%x [%s]",
+				 "0x04%x [%s%s%s]",
 
 		cl->header.data, cl->seqnum, cl->width,
 		cl->width_hint >= 1.0 ? (int) cl->width_hint :
@@ -22,7 +22,9 @@ static void dbg_column(struct libscols_table *tb, struct libscols_column *cl)
 		st->width_max,
 		st->width_min,
 		cl->flags,
-		cl->flags & SCOLS_FL_TRUNC ? "trunc" : ""));
+		cl->flags & SCOLS_FL_TRUNC ? "trunc" : "",
+		scols_column_is_right(cl) ? " right" : "",
+		scols_column_is_noextremes(cl) ? " noextrem" : ""));
 }
 
 static void dbg_columns(struct libscols_table *tb)
@@ -296,37 +298,60 @@ static int reduce_column(struct libscols_table *tb,
 {
 	struct libscols_wstat *st = &cl->wstat;
 	size_t wanted, org_width, reduce = 1;
+	int is_trunc = 0;
 
-	if (scols_column_is_hidden(cl))
-		return 0;
 	if (tb->termwidth >= *width)
 		return 1;
+	/* ignore hidden columns */
+	if (scols_column_is_hidden(cl))
+		return 0;
+	/* never truncate if already minimal width */
+	if (cl->width == cl->wstat.width_min)
+		return 0;
+	/* nothing to truncate */
+	if (cl->width == 0)
+		return 0;
+	/* never truncate the tree */
+	if (scols_column_is_tree(cl) && *width <= cl->width_treeart)
+		return 0;
 
 	org_width = cl->width;
 	wanted = *width - tb->termwidth;
 
+	is_trunc = scols_column_is_trunc(cl)
+			|| (scols_column_is_wrap(cl) && !scols_column_is_customwrap(cl));
+
 	switch (stage) {
 	case 0:
+		/* reduce 1st column if with trunc or extreme flag (the
+		 * columns are sorted by deviation, so 1st is the worst) */
+		if (!is_trunc && !scols_column_is_noextremes(cl))
+			break;
+		if (nth != 0)
+			break;
+		reduce_to_68(cl, wanted);
+		break;
+
+	case 1:
 		/* reduce extreme columns with large width deviation */
-		if (st->width_deviation < st->width_avg / 2)
+		if (st->width_deviation < st->width_avg / 2.0)
 			break;
 		/* fallthrough */
-	case 1:
+	case 2:
 		/* reduce extreme columns */
 		if (!scols_column_is_noextremes(cl))
 			break;
 		reduce_to_68(cl, wanted);
 		break;
 
-	case 2:
+	case 3:
 		/* reduce columns with trunc flag and relative whint and large width deviation */
-		if (st->width_deviation < st->width_avg / 2)
+		if (st->width_deviation < st->width_avg / 2.0)
 			break;
 		/* fallthrough */
-	case 3:
+	case 4:
 		/* reduce columns with trunc flag and relative whint */
-		if (!scols_column_is_trunc(cl)
-		    && !(scols_column_is_wrap(cl) && !scols_column_is_customwrap(cl)))
+		if (!is_trunc)
 			break;
 		if (cl->width_hint <= 0 || cl->width_hint >= 1)
 			break;
@@ -335,53 +360,23 @@ static int reduce_column(struct libscols_table *tb,
 		reduce_to_68(cl, wanted);
 		break;
 
-	case 4:
-		/* reduce all columns with trunc flag and large deviation */
-		if (st->width_deviation < st->width_avg / 2)
-			break;
-		/* fallthrough */
 	case 5:
-		/* reduce all columns with trunc flag */
-		if (!scols_column_is_trunc(cl))
-			break;
-		reduce_to_68(cl, wanted);
-		break;
-
-	case 6:
-		/* reduce all columns with relative whint and large deviation */
-		if (st->width_deviation < st->width_avg / 2)
+		/* reduce all columns with trunc flag large width deviation */
+		if (st->width_deviation < st->width_avg / 2.2)
 			break;
 		/* fallthrough */
-	case 7:
-		/* reduce all columns with relative whint */
-		if (cl->width_hint <= 0 || cl->width_hint >= 1)
-			break;
-		reduce_to_68(cl, wanted);
-		break;
-
-	case 8:
-		/* reduce all columns with large deviation */
-		if (st->width_deviation < st->width_avg / 2)
+	case 6:
+		/* reduce all columns with trunc flag */
+		if (!is_trunc && !scols_column_is_noextremes(cl))
 			break;
 		if (nth == 0)
 			/* columns are reduced in "bad first" way, be more
 			 * agresive for the the worst column */
 			reduce = 3;
-		/* fallthrough */
-	case 9:
-		/* ... but exclude compact columns */
-		if (st->width_deviation < 1.0)
-			break;
-		/* fallthrough */
-	case 10:
-		/* reduce all columns */
-		if (cl->width <= st->width_min)
-			break;
 		if (cl->width - reduce < st->width_min)
 			reduce = cl->width - st->width_min;
 		cl->width -= reduce;
 		break;
-
 	default:
 		return -1;	/* no more stages */
 	}
@@ -391,7 +386,8 @@ static int reduce_column(struct libscols_table *tb,
 		cl->flags |= SCOLS_FL_HIDDEN;
 
 	if (cl->width != org_width)
-		DBG(COL, ul_debugobj(cl, " %s reduced %zu-->%zu",
+		DBG(COL, ul_debugobj(cl, " [%02zd] %s reduced %zu-->%zu",
+					cl->seqnum,
 					cl->header.data, org_width, cl->width));
 
 	*width -= org_width - cl->width;
