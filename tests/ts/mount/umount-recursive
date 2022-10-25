@@ -67,7 +67,7 @@ ts_log "Do tests..."
 
 ts_log "A) Mount root"
 $TS_CMD_MOUNT ${TS_DEVICE}1 $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_MOUNT --make-shared $TS_MOUNTPOINT
+$TS_CMD_MOUNT --make-shared $TS_MOUNTPOINT &> /dev/null
 
 ts_log "B) Mount child"
 mkdir -p $TS_MOUNTPOINT/mntB
@@ -86,7 +86,7 @@ $TS_CMD_MOUNT ${TS_DEVICE}4 $TS_MOUNTPOINT/mntB/mntD >> $TS_OUTPUT 2>> $TS_ERRLO
 
 ts_log "E) Mount child-bind"
 mkdir -p $TS_MOUNTPOINT/bindC
-$TS_CMD_MOUNT --bind $TS_MOUNTPOINT/mntB/mntC $TS_MOUNTPOINT/bindC
+$TS_CMD_MOUNT --bind $TS_MOUNTPOINT/mntB/mntC $TS_MOUNTPOINT/bindC &> /dev/nul
 
 udevadm settle
 $TS_CMD_UMOUNT --recursive $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG

@@ -33,7 +33,7 @@ function mount_and_check {
 	# last arg must be an existing or to-be-mounted mountpoint
 	local mountpoint="${@: -1}"
 
-	$TS_CMD_MOUNT "$@" \
+	$TS_CMD_MOUNT "$@" &> /dev/null \
 		|| ts_die "error: mount $*"
 
 	$TS_CMD_MOUNTPOINT -q "$mountpoint" \

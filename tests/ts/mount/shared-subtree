@@ -17,7 +17,7 @@ ts_check_prog "mkfs.ext2"
 [ -d $TS_MOUNTPOINT ] || mkdir -p $TS_MOUNTPOINT
 
 # bind
-$TS_CMD_MOUNT --bind $TS_MOUNTPOINT $TS_MOUNTPOINT
+$TS_CMD_MOUNT --bind $TS_MOUNTPOINT $TS_MOUNTPOINT &> /dev/null
 [ "$?" = "0" ] || ts_die "error: mount --bind"
 
 # check the bind

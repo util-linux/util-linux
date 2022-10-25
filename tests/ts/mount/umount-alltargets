@@ -107,11 +107,11 @@ ts_finalize_subtest
 ts_init_subtest "all-targets-recursive"
 multi_mount ${TS_DEVICE}1 $MOUNTPOINT
 [ -d "${MOUNTPOINT}1/subA" ] || mkdir -p ${MOUNTPOINT}1/subA
-$TS_CMD_MOUNT ${TS_DEVICE}2 ${MOUNTPOINT}1/subA
+$TS_CMD_MOUNT ${TS_DEVICE}2 ${MOUNTPOINT}1/subA &> /dev/null
 [ -d "${MOUNTPOINT}1/subA/subAB" ] || mkdir -p ${MOUNTPOINT}1/subA/subAB
-$TS_CMD_MOUNT ${TS_DEVICE}3 ${MOUNTPOINT}1/subA/subAB
+$TS_CMD_MOUNT ${TS_DEVICE}3 ${MOUNTPOINT}1/subA/subAB &> /dev/null
 [ -d "${MOUNTPOINT}1/subB" ] || mkdir -p ${MOUNTPOINT}1/subB
-$TS_CMD_MOUNT ${TS_DEVICE}4 ${MOUNTPOINT}1/subB
+$TS_CMD_MOUNT ${TS_DEVICE}4 ${MOUNTPOINT}1/subB &> /dev/null
 $TS_CMD_UMOUNT --recursive --all-targets ${TS_DEVICE}1 >> $TS_OUTPUT 2>> $TS_ERRLOG
 [ $? == 0 ] || ts_log "umount failed"
 ts_finalize_subtest
