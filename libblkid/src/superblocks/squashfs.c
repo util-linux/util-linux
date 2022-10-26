@@ -53,6 +53,7 @@ static int probe_squashfs3(blkid_probe pr, const struct blkid_idmag *mag)
 	struct sqsh_super_block *sq;
 	uint16_t vermaj;
 	uint16_t vermin;
+	enum BLKID_ENDIANNESS endianness;
 
 	sq = blkid_probe_get_sb(pr, mag, struct sqsh_super_block);
 	if (!sq)
@@ -61,9 +62,11 @@ static int probe_squashfs3(blkid_probe pr, const struct blkid_idmag *mag)
 	if (strcmp(mag->magic, "sqsh") == 0) {
 		vermaj = be16_to_cpu(sq->s_major);
 		vermin = be16_to_cpu(sq->s_minor);
+		endianness = BLKID_ENDIANNESS_BIG;
 	} else {
 		vermaj = le16_to_cpu(sq->s_major);
 		vermin = le16_to_cpu(sq->s_minor);
+		endianness = BLKID_ENDIANNESS_LITTLE;
 	}
 
 	if (vermaj > 3)
@@ -73,6 +76,7 @@ static int probe_squashfs3(blkid_probe pr, const struct blkid_idmag *mag)
 
 	blkid_probe_set_fsblocksize(pr, 1024);
 	blkid_probe_set_block_size(pr, 1024);
+	blkid_probe_set_fsendianness(pr, endianness);
 
 	return 0;
 }
