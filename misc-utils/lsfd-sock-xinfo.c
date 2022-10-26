@@ -654,9 +654,18 @@ static void load_xinfo_from_proc_inet_L3(ino_t netns_inode, const char *proc_fil
 
 static bool tcp_verify_initial_line(const char *line)
 {
-	return (line[0] == ' ' && line[1] == ' '
-		&& line[2] == 's' && line[3] == 'l');
+	/* At least we expect two white spaces. */
+	if (strncmp (line, "  ", 2) != 0)
+		return false;
+	line += 2;
+
+	/* Skip white spaces. */
+	while (*line == ' ')
+		line++;
+
+	return (strncmp(line, "sl", 2) == 0);
 }
+
 
 static void load_xinfo_from_proc_tcp(ino_t netns_inode)
 {
@@ -711,17 +720,10 @@ static struct sock_xinfo_class udp_xinfo_class = {
 	.free = NULL,
 };
 
-static bool udp_verify_initial_line(const char *line)
-{
-	return (line[0] == ' ' && line[1] == ' ' && line[2] == ' '
-		&& line[3] == 's' && line[4] == 'l');
-}
-
-
 static void load_xinfo_from_proc_udp(ino_t netns_inode)
 {
 	load_xinfo_from_proc_inet_L3(netns_inode,
 				     "/proc/net/udp",
-				     udp_verify_initial_line,
+				     tcp_verify_initial_line,
 				     &udp_xinfo_class);
 }
