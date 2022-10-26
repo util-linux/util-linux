@@ -62,6 +62,8 @@ Similar to *-l*, but it will print signal names and their corresponding numbers.
 Do not restrict the command-name-to-PID conversion to processes with the same UID as the present process.
 *-p*, *--pid*::
 Only print the process ID (PID) of the named processes, do not send any signals.
+*-r*, *--require-handler*::
+Do not send the signal if it is not caught in userspace by the signalled process.
 *--verbose*::
 Print PID(s) that will be signaled with *kill* along with the signal.
 *-q*, *--queue* _value_::
