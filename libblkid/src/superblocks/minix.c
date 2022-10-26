@@ -150,6 +150,8 @@ static int probe_minix(blkid_probe pr,
 	blkid_probe_sprintf_version(pr, "%d", version);
 	blkid_probe_set_fsblocksize(pr, block_size);
 	blkid_probe_set_block_size(pr, block_size);
+	blkid_probe_set_fsendianness(pr, !swabme ?
+			BLKID_ENDIANNESS_NATIVE : BLKID_ENDIANNESS_OTHER);
 	return 0;
 }
 
