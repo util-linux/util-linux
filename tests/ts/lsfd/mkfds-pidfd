@@ -40,8 +40,8 @@ EXPR="(PID != ${TARGET}) and (FD == 3) and (PIDFD.PID == ${TARGET})"
 	echo 'ASSOC,STTYPE,SOURCE,NAME,PIDFD.COMM,PIDFD.PID': $?
 
 	kill -CONT ${PID}
-	wait ${MKFDS_PID}
     fi
+    wait ${MKFDS_PID}
 } > $TS_OUTPUT 2>&1
 
 ts_finalize

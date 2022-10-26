@@ -46,8 +46,8 @@ EXPR="(FD == 3)"
 	    echo "$C"':ASSOC,STTYPE,TYPE': $?
 
 	    kill -CONT "${PID}"
-	    wait "${MKFDS_PID}"
 	fi
+	wait "${MKFDS_PID}"
     done
 } > "$TS_OUTPUT" 2>&1
 

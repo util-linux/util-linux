@@ -45,8 +45,8 @@ EXPR='(((TYPE == "UNIX-STREAM") or (TYPE == "UNIX")) and (FD >= 3) and (FD <= 5)
 	    echo 'ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': $?
 
 	    kill -CONT "${PID}"
-	    wait "${MKFDS_PID}"
 	fi
+	wait "${MKFDS_PID}"
 
 	coproc MKFDS { "$TS_HELPER_MKFDS" unix-stream $FDS $FDC $FDA \
 					  path=test_mkfds-unix-${t}-abs \
@@ -58,8 +58,8 @@ EXPR='(((TYPE == "UNIX-STREAM") or (TYPE == "UNIX")) and (FD >= 3) and (FD <= 5)
 	    echo '(abs) ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': $?
 
 	    kill -CONT "${PID}"
-	    wait "${MKFDS_PID}"
 	fi
+	wait "${MKFDS_PID}"
 
 	coproc MKFDS { "$TS_HELPER_MKFDS" unix-stream $FDS $FDC $FDA \
 					  path=test_mkfds-unix-${t}-shutdown \
@@ -74,8 +74,8 @@ EXPR='(((TYPE == "UNIX-STREAM") or (TYPE == "UNIX")) and (FD >= 3) and (FD <= 5)
 	    # Surprisingly, the socket status doesn't change at all.
 
 	    kill -CONT "${PID}"
-	    wait "${MKFDS_PID}"
 	fi
+	wait "${MKFDS_PID}"
 
 	coproc MKFDS { "$TS_HELPER_MKFDS" unix-stream $FDS $FDC $FDA \
 					  path="test_mkfds-unix with spaces ${t}" \
@@ -87,8 +87,8 @@ EXPR='(((TYPE == "UNIX-STREAM") or (TYPE == "UNIX")) and (FD >= 3) and (FD <= 5)
 	    echo 'ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': $?
 
 	    kill -CONT "${PID}"
-	    wait "${MKFDS_PID}"
 	fi
+	wait "${MKFDS_PID}"
 
     done
 } > "$TS_OUTPUT" 2>&1

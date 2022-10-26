@@ -61,8 +61,8 @@ for lite in 0 1; do
 	echo "ASSOC,TYPE,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,INET.LADDR,INET.RADDR,${COLNS[$lite]}.LADDR,${COLNS[$lite]}.LPORT,${COLNS[$lite]}.RADDR,${COLNS[$lite]}.RPORT": $?
 
 	kill -CONT "${PID}"
-	wait "${MKFDS_PID}"
     fi
+    wait "${MKFDS_PID}"
 
     coproc MKFDS { "$TS_HELPER_MKFDS" udp $FDS $FDC \
 				      server-port=34567 \
@@ -86,8 +86,8 @@ for lite in 0 1; do
 	fi
 
 	kill -CONT "${PID}"
-	wait "${MKFDS_PID}"
     fi
+    wait "${MKFDS_PID}"
 
     coproc MKFDS { "$TS_HELPER_MKFDS" udp $FDS $FDC \
 				      server-port=34567 \
@@ -116,8 +116,8 @@ for lite in 0 1; do
 	fi
 
 	kill -CONT "${PID}"
-	wait "${MKFDS_PID}"
     fi
+    wait "${MKFDS_PID}"
 
     coproc MKFDS { "$TS_HELPER_MKFDS" udp $FDS $FDC \
 				      server-port=34567 \
@@ -131,8 +131,8 @@ for lite in 0 1; do
 	echo 'ASSOC,TYPE,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,INET.LADDR,INET.RADDR,UDP.LADDR,UDP.LPORT,UDP.RADDR,UDP.RPORT': $?
 
 	kill -CONT "${PID}"
-	wait "${MKFDS_PID}"
     fi
+    wait "${MKFDS_PID}"
 done > "$TS_OUTPUT" 2>&1
 
 ts_finalize

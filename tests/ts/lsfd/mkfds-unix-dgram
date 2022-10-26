@@ -40,8 +40,8 @@ EXPR='(TYPE == "UNIX") and ((FD == 3) or (FD == 4))'
 	echo 'ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': $?
 
 	kill -CONT "${PID}"
-	wait "${MKFDS_PID}"
     fi
+    wait "${MKFDS_PID}"
 
     coproc MKFDS { "$TS_HELPER_MKFDS" unix-dgram $FDS $FDC \
 				      path=test_mkfds-unix-dgram \
@@ -53,8 +53,8 @@ EXPR='(TYPE == "UNIX") and ((FD == 3) or (FD == 4))'
 	echo 'ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': $?
 
 	kill -CONT "${PID}"
-	wait "${MKFDS_PID}"
     fi
+    wait "${MKFDS_PID}"
 } > "$TS_OUTPUT" 2>&1
 
 ts_finalize
