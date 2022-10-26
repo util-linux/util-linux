@@ -1,6 +1,6 @@
 ID_FS_FSSIZE=4096
-ID_FS_LABEL=test-cram
-ID_FS_LABEL_ENC=test-cram
+ID_FS_LABEL=Compressed
+ID_FS_LABEL_ENC=Compressed
 ID_FS_TYPE=cramfs
 ID_FS_USAGE=filesystem
 ID_FS_VERSION=2
