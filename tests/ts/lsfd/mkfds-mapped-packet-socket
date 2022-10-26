@@ -41,9 +41,9 @@ INTERFACE=lo
 	EXPR='(ASSOC == "shm") and (STTYPE == "SOCK") and (MODE == "-w-")'
 	${TS_CMD_LSFD} -p "$PID" -n -o SOCK.PROTONAME -Q "${EXPR}"
 	echo 'SOCK.PROTONAME': $?
+	kill -CONT ${PID}
     fi
 
-    kill -CONT ${PID}
     wait ${MKFDS_PID}
 } > $TS_OUTPUT 2>&1
 
