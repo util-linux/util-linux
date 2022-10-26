@@ -20,6 +20,8 @@ TS_DESC="block device with O_RDONLY"
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 ts_skip_nonroot
+
+# losetup cannot find an unused loop device.
 ts_skip_qemu_user
 
 . "$TS_SELF"/lsfd-functions.bash
