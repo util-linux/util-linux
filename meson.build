@@ -636,7 +636,7 @@ thread_libs = dependency('threads')
 
 have = cc.has_function('timer_create')
 if not have
-  realtime_libs = cc.find_library('rt', required : true)
+  realtime_libs = [cc.find_library('rt', required : true)]
   have = cc.has_function('timer_create',
                          dependencies : realtime_libs)
   if not have
