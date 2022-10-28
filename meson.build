@@ -25,8 +25,6 @@ runstatedir = '/run'
 execprefixdir = prefixdir
 usrbin_exec_dir = join_paths(execprefixdir, bindir)
 usrsbin_exec_dir = join_paths(execprefixdir, sbindir)
-sysconfdir = '/etc'
-localstatedir = '/var'
 bash_completion = dependency('bash-completion', required : get_option('build-bash-completion'))
 
 vendordir = get_option('vendordir')
@@ -210,11 +208,6 @@ lib_m = cc.find_library('m')
 lib_tinfo = dependency(
   'tinfo',
   required : get_option('tinfo'))
-
-lib_tinfo_static = dependency(
-  'tinfo',
-  static : true,
-  required : need_static_libs ? get_option('tinfo') : disabler())
 
 lib_ncursesw = dependency(
   'ncursesw',
@@ -777,7 +770,7 @@ bison_gen = generator(
 meson_make_symlink = meson.current_source_dir() + '/tools/meson-make-symlink.sh'
 meson_make_manpage_stub = meson.current_source_dir() + '/tools/meson-make-manpage-stub.sh'
 
-config_h = configure_file(
+configure_file(
   output : 'config.h',
   configuration : conf)
 

@@ -6,7 +6,7 @@ defs.set('LIBFDISK_MAJOR_VERSION', pc_version.split('.')[0])
 defs.set('LIBFDISK_MINOR_VERSION', pc_version.split('.')[1])
 defs.set('LIBFDISK_PATCH_VERSION', pc_version.split('.')[2])
 
-libfdisk_h = configure_file(
+configure_file(
   input : 'src/libfdisk.h.in',
   output : 'libfdisk.h',
   configuration : defs,

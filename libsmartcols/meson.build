@@ -3,7 +3,7 @@ dir_libsmartcols = include_directories('.', 'src')
 defs = configuration_data()
 defs.set('LIBSMARTCOLS_VERSION', pc_version)
 
-libsmartcols_h = configure_file(
+configure_file(
   input : 'src/libsmartcols.h.in',
   output : 'libsmartcols.h',
   configuration : defs,
