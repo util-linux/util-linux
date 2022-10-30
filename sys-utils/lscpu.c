@@ -949,7 +949,7 @@ static void print_summary(struct lscpu_cxt *cxt)
 	char field[256];
 	size_t i = 0;
 	struct libscols_table *tb;
-	struct libscols_line *sec = NULL;
+	struct libscols_line *sec;
 	int hdr_caches = 0;
 
 	scols_init_debug(0);
@@ -981,9 +981,8 @@ static void print_summary(struct lscpu_cxt *cxt)
 	ct = lscpu_cputype_get_default(cxt);
 
 	/* Section: architecture */
-	if (cxt->arch)
-		sec = add_summary_s(tb, NULL, _("Architecture:"), cxt->arch->name);
-	if (cxt->arch && (cxt->arch->bit32 || cxt->arch->bit64)) {
+	sec = add_summary_s(tb, NULL, _("Architecture:"), cxt->arch->name);
+	if (cxt->arch->bit32 || cxt->arch->bit64) {
 		char buf[32], *p = buf;
 
 		if (cxt->arch->bit32) {
