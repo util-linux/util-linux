@@ -119,6 +119,7 @@
 #define _PATH_SYS_DEVCHAR	"/sys/dev/char"
 #define _PATH_SYS_CLASS		"/sys/class"
 #define _PATH_SYS_SCSI		"/sys/bus/scsi"
+#define _PATH_SYS_CPU_BYTEORDER	"/sys/kernel/cpu_byteorder"
 
 #define _PATH_SYS_SELINUX	"/sys/fs/selinux"
 #define _PATH_SYS_APPARMOR	"/sys/kernel/security/apparmor"
