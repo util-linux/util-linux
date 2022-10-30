@@ -40,6 +40,7 @@
 #include "closestream.h"
 #include "optutils.h"
 #include "c_strtod.h"
+#include "sysfs.h"
 
 #include "lscpu.h"
 
@@ -998,11 +999,11 @@ static void print_summary(struct lscpu_cxt *cxt)
 	}
 	if (ct && ct->addrsz)
 		add_summary_s(tb, sec, _("Address sizes:"), ct->addrsz);
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-	add_summary_s(tb, sec, _("Byte Order:"), "Little Endian");
-#else
-	add_summary_s(tb, sec, _("Byte Order:"), "Big Endian");
-#endif
+
+	if (sysfs_get_byteorder() == SYSFS_BYTEORDER_LITTLE)
+		add_summary_s(tb, sec, _("Byte Order:"), "Little Endian");
+	else
+		add_summary_s(tb, sec, _("Byte Order:"), "Big Endian");
 
 	/* Section: CPU lists */
 	sec = add_summary_n(tb, NULL, _("CPU(s):"), cxt->npresents);
