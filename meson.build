@@ -2736,6 +2736,19 @@ if not is_disabler(exe)
   exes += exe
 endif
 
+exe = executable(
+  'fadvise',
+  fadvise_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  manadocs += ['misc-utils/fadvise.1.adoc']
+  bashcompletions += ['fadvise']
+endif
+
 ############################################################
 
 opt = not get_option('build-schedutils').disabled()
