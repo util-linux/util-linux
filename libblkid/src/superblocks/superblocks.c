@@ -626,6 +626,29 @@ int blkid_probe_set_fsblocksize(blkid_probe pr, uint32_t block_size)
 			block_size);
 }
 
+int blkid_probe_set_fsendianness(blkid_probe pr, enum BLKID_ENDIANNESS endianness)
+{
+	struct blkid_chain *chn = blkid_probe_get_chain(pr);
+
+	if (!(chn->flags & BLKID_SUBLKS_FSINFO))
+		return 0;
+
+	const char *value;
+
+	switch (endianness) {
+		case BLKID_ENDIANNESS_LITTLE:
+			value = "LITTLE";
+			break;
+		case BLKID_ENDIANNESS_BIG:
+			value = "BIG";
+			break;
+		default:
+			return -EINVAL;
+	}
+
+	return blkid_probe_sprintf_value(pr, "ENDIANNESS", "%s", value);
+}
+
 int blkid_probe_set_id_label(blkid_probe pr, const char *name,
 			     const unsigned char *data, size_t len)
 {

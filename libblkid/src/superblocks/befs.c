@@ -523,6 +523,8 @@ static int probe_befs(blkid_probe pr, const struct blkid_idmag *mag)
 
 	blkid_probe_set_fsblocksize(pr, block_size);
 	blkid_probe_set_block_size(pr, block_size);
+	blkid_probe_set_fsendianness(pr,
+			fs_le ? BLKID_ENDIANNESS_LITTLE : BLKID_ENDIANNESS_BIG);
 
 	return BLKID_PROBE_OK;
 }

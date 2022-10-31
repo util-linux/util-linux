@@ -317,6 +317,9 @@ static int probe_zfs(blkid_probe pr,
 				(unsigned char *) &ub->ub_magic))
 		return 1;
 
+	blkid_probe_set_fsendianness(pr, !swab_endian ?
+			BLKID_ENDIANNESS_NATIVE : BLKID_ENDIANNESS_OTHER);
+
 	return 0;
 }
 

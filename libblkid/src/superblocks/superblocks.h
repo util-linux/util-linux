@@ -9,6 +9,18 @@
 
 #include "blkidP.h"
 
+enum BLKID_ENDIANNESS {
+	BLKID_ENDIANNESS_LITTLE,
+	BLKID_ENDIANNESS_BIG,
+};
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#define BLKID_ENDIANNESS_NATIVE BLKID_ENDIANNESS_LITTLE
+#define BLKID_ENDIANNESS_OTHER BLKID_ENDIANNESS_BIG
+#else
+#define BLKID_ENDIANNESS_NATIVE BLKID_ENDIANNESS_BIG
+#define BLKID_ENDIANNESS_OTHER BLKID_ENDIANNESS_LITTLE
+#endif
+
 extern const struct blkid_idinfo cramfs_idinfo;
 extern const struct blkid_idinfo swap_idinfo;
 extern const struct blkid_idinfo swsuspend_idinfo;
@@ -114,6 +126,7 @@ int blkid_probe_set_block_size(blkid_probe pr, unsigned block_size);
 int blkid_probe_set_fssize(blkid_probe pr, uint64_t size);
 int blkid_probe_set_fslastblock(blkid_probe pr, uint64_t lastblock);
 int blkid_probe_set_fsblocksize(blkid_probe pr, uint32_t block_size);
+int blkid_probe_set_fsendianness(blkid_probe pr, enum BLKID_ENDIANNESS endianness);
 
 extern int blkid_probe_is_bitlocker(blkid_probe pr);
 extern int blkid_probe_is_ntfs(blkid_probe pr);

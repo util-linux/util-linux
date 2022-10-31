@@ -91,6 +91,8 @@ static int probe_cramfs(blkid_probe pr, const struct blkid_idmag *mag)
 	blkid_probe_set_label(pr, cs->name, sizeof(cs->name));
 	blkid_probe_set_fssize(pr, cfs32_to_cpu(le, cs->size));
 	blkid_probe_sprintf_version(pr, "%d", v2 ? 2 : 1);
+	blkid_probe_set_fsendianness(pr,
+			le ? BLKID_ENDIANNESS_LITTLE : BLKID_ENDIANNESS_BIG);
 	return 0;
 }
 

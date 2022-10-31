@@ -241,6 +241,8 @@ found:
 
 	blkid_probe_set_fsblocksize(pr, bsize);
 	blkid_probe_set_block_size(pr, bsize);
+	blkid_probe_set_fsendianness(pr, is_be ?
+			BLKID_ENDIANNESS_BIG : BLKID_ENDIANNESS_LITTLE);
 
 	return 0;
 }
