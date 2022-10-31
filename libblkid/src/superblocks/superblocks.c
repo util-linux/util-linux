@@ -575,7 +575,7 @@ int blkid_probe_set_block_size(blkid_probe pr, unsigned block_size)
 static int blkid_probe_set_usage(blkid_probe pr, int usage)
 {
 	struct blkid_chain *chn = blkid_probe_get_chain(pr);
-	char *u = NULL;
+	const char *u = NULL;
 
 	if (!(chn->flags & BLKID_SUBLKS_USAGE))
 		return 0;
@@ -591,7 +591,8 @@ static int blkid_probe_set_usage(blkid_probe pr, int usage)
 	else
 		u = "unknown";
 
-	return blkid_probe_set_value(pr, "USAGE", (unsigned char *) u, strlen(u) + 1);
+	return blkid_probe_set_value(pr, "USAGE",
+			(const unsigned char *) u, strlen(u) + 1);
 }
 
 int blkid_probe_set_fssize(blkid_probe pr, uint64_t size)
@@ -629,11 +630,10 @@ int blkid_probe_set_fsblocksize(blkid_probe pr, uint32_t block_size)
 int blkid_probe_set_fsendianness(blkid_probe pr, enum BLKID_ENDIANNESS endianness)
 {
 	struct blkid_chain *chn = blkid_probe_get_chain(pr);
+	const char *value;
 
 	if (!(chn->flags & BLKID_SUBLKS_FSINFO))
 		return 0;
-
-	const char *value;
 
 	switch (endianness) {
 		case BLKID_ENDIANNESS_LITTLE:
@@ -646,7 +646,9 @@ int blkid_probe_set_fsendianness(blkid_probe pr, enum BLKID_ENDIANNESS endiannes
 			return -EINVAL;
 	}
 
-	return blkid_probe_sprintf_value(pr, "ENDIANNESS", "%s", value);
+	return blkid_probe_set_value(pr, "ENDIANNESS",
+			(const unsigned char *) value, strlen(value) + 1);
+
 }
 
 int blkid_probe_set_id_label(blkid_probe pr, const char *name,

@@ -28,7 +28,7 @@ extern int blkid_partitions_do_subprobe(blkid_probe pr,
 
 extern int blkid_partitions_need_typeonly(blkid_probe pr);
 extern int blkid_partitions_set_ptuuid(blkid_probe pr, unsigned char *uuid);
-extern int blkid_partitions_strcpy_ptuuid(blkid_probe pr, char *str);
+extern int blkid_partitions_strcpy_ptuuid(blkid_probe pr, const char *str);
 
 
 extern int blkid_is_nested_dimension(blkid_partition par,

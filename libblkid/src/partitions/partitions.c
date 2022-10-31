@@ -1144,7 +1144,7 @@ int blkid_partitions_set_ptuuid(blkid_probe pr, unsigned char *uuid)
 
 /* set PTUUID variable for non-binary API for tables where
  * the ID is just a string */
-int blkid_partitions_strcpy_ptuuid(blkid_probe pr, char *str)
+int blkid_partitions_strcpy_ptuuid(blkid_probe pr, const char *str)
 {
 	struct blkid_chain *chn = blkid_probe_get_chain(pr);
 
