@@ -119,7 +119,9 @@ static void count_column_deviation(struct libscols_table *tb, struct libscols_co
 		n++;
 		sum += ce->width + extra;
 	}
-	st->width_avg = sum / n;
+
+	if (n)
+		st->width_avg = sum / n;
 
 	/* count deviation */
 	if (n > 1) {
