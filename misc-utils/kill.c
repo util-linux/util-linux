@@ -95,6 +95,7 @@ struct kill_control {
 		check_all:1,
 		do_kill:1,
 		do_pid:1,
+		require_handler:1,
 		use_sigval:1,
 #ifdef UL_HAVE_PIDFD
 		timeout:1,
@@ -212,6 +213,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -p, --pid              print pids without signaling them\n"), out);
 	fputs(_(" -l, --list[=<signal>]  list signal names, or convert a signal number to a name\n"), out);
 	fputs(_(" -L, --table            list signal names and numbers\n"), out);
+	fputs(_(" -r, --require-handler  do not send signal if signal handler is not present\n"), out);
 	fputs(_("     --verbose          print pids that will be signaled\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -301,6 +303,10 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 		if (!strcmp(arg, "-L") || !strcmp(arg, "--table")) {
 			print_all_signals(stdout, 1);
 			exit(EXIT_SUCCESS);
+		}
+		if (!strcmp(arg, "-r") || !strcmp(arg, "--require-handler")) {
+			ctl->require_handler = 1;
+			continue;
 		}
 		if (!strcmp(arg, "-p") || !strcmp(arg, "--pid")) {
 			ctl->do_pid = 1;
@@ -448,6 +454,32 @@ static int kill_verbose(const struct kill_control *ctl)
 	return rc;
 }
 
+static int check_signal_handler(const struct kill_control *ctl)
+{
+	uintmax_t sigcgt = 0;
+	int rc = 0, has_hnd = 0;
+	struct path_cxt *pc;
+
+	if (!ctl->require_handler)
+		return 1;
+
+	pc = ul_new_procfs_path(ctl->pid, NULL);
+	if (!pc)
+		return -ENOMEM;
+
+	rc = procfs_process_get_stat_nth(pc, 34, &sigcgt);
+	if (rc)
+		return -EINVAL;
+
+	ul_unref_path(pc);
+
+	has_hnd = ((1UL << (ctl->numsig - 1)) & sigcgt) != 0;
+	if (ctl->verbose && !has_hnd)
+		printf(_("not signalling pid %d, it has no userspace handler for signal %d\n"), ctl->pid, ctl->numsig);
+
+	return has_hnd;
+}
+
 int main(int argc, char **argv)
 {
 	struct kill_control ctl = { .numsig = SIGTERM };
@@ -470,6 +502,8 @@ int main(int argc, char **argv)
 		errno = 0;
 		ctl.pid = strtol(ctl.arg, &ep, 10);
 		if (errno == 0 && ep && *ep == '\0' && ctl.arg < ep) {
+			if (check_signal_handler(&ctl) <= 0)
+				continue;
 			if (kill_verbose(&ctl) != 0)
 				nerrs++;
 			ct++;
@@ -490,6 +524,8 @@ int main(int argc, char **argv)
 				    !procfs_dirent_match_name(dir, d, ctl.arg))
 					continue;
 				if (procfs_dirent_get_pid(d, &ctl.pid) != 0)
+					continue;
+				if (check_signal_handler(&ctl) <= 0)
 					continue;
 
 				if (kill_verbose(&ctl) != 0)
