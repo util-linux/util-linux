@@ -29,13 +29,17 @@ static int romfs_verify_csum(blkid_probe pr, const struct blkid_idmag *mag,
 {
 	uint32_t csummed_size = min((uint32_t) 512,
 			be32_to_cpu(ros->ros_full_size));
+	unsigned char *csummed;
+	uint32_t csum;
+
 	if (csummed_size % sizeof(uint32_t) != 0)
 		return 0;
 
-	unsigned char *csummed = blkid_probe_get_sb_buffer(pr, mag,
-			csummed_size);
+	csummed = blkid_probe_get_sb_buffer(pr, mag, csummed_size);
+	if (!csummed)
+		return 0;
 
-	uint32_t csum = 0;
+	csum = 0;
 	while (csummed_size) {
 		csum += be32_to_cpu(*(uint32_t *) csummed);
 		csummed_size -= sizeof(uint32_t);
