@@ -77,6 +77,7 @@ summary('libuuid', build_libuuid ? 'enabled' : 'disabled', section : 'components
 
 build_libmount = not get_option('build-libmount').disabled()
 conf.set('HAVE_LIBMOUNT', build_libmount ? 1 : false)
+conf.set('USE_LIBMOUNT_SUPPORT_NAMESPACES', 1)
 summary('libmount', build_libmount ? 'enabled' : 'disabled', section : 'components')
 
 build_libsmartcols = not get_option('build-libsmartcols').disabled()
