@@ -558,8 +558,7 @@ int main(int argc, char **argv)
 		if (username) {
 			if (options.autolog)
 				login_argv[login_argc++] = "-f";
-			else
-				login_argv[login_argc++] = "--";
+			login_argv[login_argc++] = "--";
 			login_argv[login_argc++] = username;
 		}
 	}
