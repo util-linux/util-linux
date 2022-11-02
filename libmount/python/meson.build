@@ -24,6 +24,7 @@ python.extension_module(
   subdir : 'libmount',
   link_with : lib_mount,
   dependencies : python.dependency(),
+  c_args : [ '-Wno-cast-function-type' ],
   install : true)
 
 if build_python
