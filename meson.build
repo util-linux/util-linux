@@ -777,6 +777,38 @@ configure_file(
 
 add_project_arguments('-include', meson.current_build_dir() / 'config.h', language : 'c')
 
+compiler_flags = [
+  '-fno-common',
+
+  '-Waddress-of-packed-member',
+  '-Wdiscarded-qualifiers',
+  '-Wembedded-directive',
+  '-Wextra-semi',
+  '-Wformat-security',
+  '-Wimplicit-function-declaration',
+  '-Wmissing-declarations',
+  '-Wmissing-parameter-type',
+  '-Wmissing-prototypes',
+  '-Wnested-externs',
+  '-Wno-missing-field-initializers',
+  '-Wpointer-arith',
+  '-Wredundant-decls',
+  '-Wsign-compare',
+  '-Wstrict-prototypes',
+  '-Wtype-limits',
+  '-Wuninitialized',
+  '-Wunused-but-set-parameter',
+  '-Wunused-but-set-variable',
+  '-Wunused-parameter',
+  '-Wunused-result',
+  '-Wunused-variable',
+]
+foreach compiler_flag : compiler_flags
+  if cc.has_argument(compiler_flag)
+    add_project_arguments(compiler_flag, language : 'c')
+  endif
+endforeach
+
 manadocs = []
 manlinks = {}
 
