@@ -99,4 +99,38 @@ if build_libmount
   endif
 endif
 
+libmount_tests = [
+  'cache',
+  'context',
+  'lock',
+  'optstr',
+  'tab',
+  'tab_diff',
+  'monitor',
+  'tab_update',
+  'utils',
+  'version',
+  'debug',
+]
+
+libmount_test_src_override = {
+  'debug': 'init',
+}
+
+foreach libmount_test: libmount_tests
+  test_name = 'test_mount_' + libmount_test
+  exe = executable(
+    test_name,
+    'src/' + libmount_test_src_override.get(libmount_test, libmount_test) + '.c',
+    include_directories : [dir_include, dir_libblkid],
+    link_with : [lib__mount, lib_common, lib_blkid_static],
+    dependencies : [lib_cryptsetup],
+    c_args : ['-DTEST_PROGRAM'],
+  )
+  # the test-setup expects the helpers in the toplevel build-directory
+  link = meson.build_root() / test_name
+  run_command('ln', '-srf', exe.full_path(), link,
+    check : true)
+endforeach
+
 subdir('python')
