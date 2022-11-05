@@ -45,7 +45,7 @@ BUG REPORTING:
 NLS (PO TRANSLATIONS):
 
       PO files are maintained by:
-	  http://translationproject.org/domain/util-linux.html
+	  https://translationproject.org/domain/util-linux.html
 
 VERSION SCHEMA:
 
@@ -77,7 +77,7 @@ SOURCE CODE:
 	  git clone git://github.com/util-linux/util-linux.git
 
     Web interfaces:
-	  http://git.kernel.org/cgit/utils/util-linux/util-linux.git
+	  https://git.kernel.org/cgit/utils/util-linux/util-linux.git
 	  https://github.com/util-linux/util-linux
 
       Note: the GitHub repository may contain temporary development branches too.

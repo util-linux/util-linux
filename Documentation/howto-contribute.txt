@@ -32,7 +32,7 @@ Sending Patches
 	  Hint: use 'git clean -Xd'.
 
         * don't include po/ (translations) changes to the upstream patches.
-          The po/ stuff is maintained on http://translationproject.org/domain/util-linux.html
+          The po/ stuff is maintained on https://translationproject.org/domain/util-linux.html
           and updated always before the next release.
 
 	* neutrality: the files in util-linux should be distribution-neutral.
@@ -162,7 +162,7 @@ Coding Style
 	* the preferred coding style is based on the linux kernel coding-style.
 	  Available here:
 
-	http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/plain/Documentation/process/coding-style.rst
+	https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/plain/Documentation/process/coding-style.rst
 
 	* use 'FIXME:' with a good description, if you want to inform others
 	  that something is not quite right, and you are unwilling to fix the
@@ -244,5 +244,5 @@ Standards Compliance
 		The Single UNIX(TM) Specification, Version 2
 		Copyright (C) 1997 The Open Group
 
-		http://pubs.opengroup.org/onlinepubs/7908799/xcuix.html
+		https://pubs.opengroup.org/onlinepubs/7908799/xcuix.html
 
