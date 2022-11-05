@@ -564,11 +564,6 @@ int blkid_probe_sprintf_version(blkid_probe pr, const char *fmt, ...)
 
 int blkid_probe_set_block_size(blkid_probe pr, unsigned block_size)
 {
-	struct blkid_chain *chn = blkid_probe_get_chain(pr);
-
-	if (!(chn->flags & BLKID_SUBLKS_FSINFO))
-		return 0;
-
 	return blkid_probe_sprintf_value(pr, "BLOCK_SIZE", "%u", block_size);
 }
 
