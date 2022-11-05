@@ -19,6 +19,7 @@
 #include <time.h>
 
 #include "superblocks.h"
+#include "crc32c.h"
 
 struct ext2_super_block {
 	uint32_t		s_inodes_count;
@@ -74,7 +75,8 @@ struct ext2_super_block {
 	uint16_t		s_mmp_interval;
 	uint64_t		s_mmp_block;
 	uint32_t		s_raid_stripe_width;
-	uint32_t		s_reserved[163];
+	uint32_t		s_reserved[162];
+	uint32_t		s_checksum;
 } __attribute__((packed));
 
 /* magic string */
@@ -102,6 +104,7 @@ struct ext2_super_block {
 #define EXT4_FEATURE_RO_COMPAT_GDT_CSUM		0x0010
 #define EXT4_FEATURE_RO_COMPAT_DIR_NLINK	0x0020
 #define EXT4_FEATURE_RO_COMPAT_EXTRA_ISIZE	0x0040
+#define EXT4_FEATURE_RO_COMPAT_METADATA_CSUM	0x0400
 
 /* for s_feature_incompat */
 #define EXT2_FEATURE_INCOMPAT_FILETYPE		0x0002
@@ -148,9 +151,14 @@ static struct ext2_super_block *ext_get_super(
 	struct ext2_super_block *es;
 
 	es = (struct ext2_super_block *)
-			blkid_probe_get_buffer(pr, EXT_SB_OFF, 0x200);
+			blkid_probe_get_buffer(pr, EXT_SB_OFF, sizeof(struct ext2_super_block));
 	if (!es)
 		return NULL;
+	if (le32_to_cpu(es->s_feature_ro_compat) & EXT4_FEATURE_RO_COMPAT_METADATA_CSUM) {
+		uint32_t csum = crc32c(~0, es, offsetof(struct ext2_super_block, s_checksum));
+		if (!blkid_probe_verify_csum(pr, csum, le32_to_cpu(es->s_checksum)))
+			return NULL;
+	}
 	if (fc)
 		*fc = le32_to_cpu(es->s_feature_compat);
 	if (fi)
