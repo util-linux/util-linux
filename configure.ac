@@ -1,7 +1,7 @@
 AC_INIT([util-linux],
 	m4_esyscmd([tools/git-version-gen .tarball-version]),
 	[kzak@redhat.com], [],
-	[http://www.kernel.org/pub/linux/utils/util-linux/])
+	[https://www.kernel.org/pub/linux/utils/util-linux/])
 
 
 AC_PREREQ([2.64])

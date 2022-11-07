@@ -4,9 +4,9 @@
          xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
          xmlns:foaf="http://xmlns.com/foaf/0.1/">
-  <Project rdf:about="http://www.kernel.org/pub/linux/utils/util-linux/">
+  <Project rdf:about="https://www.kernel.org/pub/linux/utils/util-linux/">
     <name>util-linux</name>
-    <homepage rdf:resource="http://www.kernel.org/pub/linux/utils/util-linux/" />
+    <homepage rdf:resource="https://www.kernel.org/pub/linux/utils/util-linux/" />
     <shortdesc>
       util-linux is a random collection of Linux utilities
     </shortdesc>
@@ -21,7 +21,7 @@
     <repository>
       <GitRepository>
         <location rdf:resource="git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git"/>
-        <browse rdf:resource="http://git.kernel.org/cgit/utils/util-linux/util-linux.git"/>
+        <browse rdf:resource="https://git.kernel.org/cgit/utils/util-linux/util-linux.git"/>
       </GitRepository>
     </repository>
     <maintainer>

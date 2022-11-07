@@ -121,4 +121,4 @@ Copyright (C) 1997 The Open Group
 	line
 	pg
 
-  http://pubs.opengroup.org/onlinepubs/7908799/xcu/intro.html#tag_001_003_003
+  https://pubs.opengroup.org/onlinepubs/7908799/xcu/intro.html#tag_001_003_003
