@@ -41,6 +41,7 @@ _lsns_module()
 					--noheadings
 					--output
 					--output-all
+					--persistent
 					--task
 					--raw
 					--notruncate
