@@ -5,7 +5,7 @@ _rfkill_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
-		'list'|'block'|'unblock')
+		'list'|'block'|'unblock'|'toggle')
 			local targets
 			targets="$(rfkill --output=id,type --noheadings list)"
 			COMPREPLY=( $(compgen -W "all $targets" -- $cur) )
@@ -33,6 +33,7 @@ _rfkill_module()
 		list
 		block
 		unblock
+		toggle
 		--json
 		--noheadings
 		--output
