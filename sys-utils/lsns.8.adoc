@@ -48,6 +48,10 @@ The default list of columns may be extended if _list_ is specified in the format
 *--output-all*::
 Output all available columns.
 
+*-P*, *--persistent*::
+Display only the namespaces without processes (aka persistent namespaces), created by bind mounting
+/proc/pid/ns/type files to a filesystem path.
+
 *-p*, *--task* _PID_::
 Display only the namespaces held by the process with this _PID_.
 
