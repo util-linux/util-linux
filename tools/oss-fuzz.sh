@@ -27,5 +27,9 @@ for d in "$(dirname $0)"/../tests/ts/fuzzers/test_*_fuzz_files; do
     zip -jqr $OUT/${fuzzer}_seed_corpus.zip "$d"
 done
 
+# create seed corpus for blkid fuzzing
+unxz -k "$(dirname $0)"/../tests/ts/blkid/images-*/*.xz
+zip -jqrm $OUT/test_blkid_fuzz_seed_corpus.zip "$(dirname $0)"/../tests/ts/blkid/images-*/*.img
+
 find . -maxdepth 1 -type f -executable -name "test_*_fuzz" -exec mv {} $OUT \;
 find . -type f -name "fuzz-*.dict" -exec cp {} $OUT \;
