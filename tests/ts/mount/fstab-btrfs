@@ -51,6 +51,8 @@ DEVICE=$TS_LODEV
 [ -d "$TS_MOUNTPOINT_BIND" ] || mkdir -p "$TS_MOUNTPOINT_BIND"
 mkfs.btrfs -d single -m single $DEVICE &> /dev/null || ts_die "Cannot make btrfs on $DEVICE"
 
+btrfs device ready $DEVICE 2>/dev/null || ts_skip "btrfs kernel support is missing"
+
 $TS_CMD_MOUNT -o loop "$DEVICE" "$TS_MOUNTPOINT_CREATE" &> /dev/null
 pushd . >/dev/null
 cd "$TS_MOUNTPOINT_CREATE"
