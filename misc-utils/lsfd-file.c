@@ -228,8 +228,7 @@ static bool file_fill_column(struct proc *proc,
 			xasprintf(&str, "%c%c%c",
 				  file->mode & S_IRUSR? 'r': '-',
 				  file->mode & S_IWUSR? 'w': '-',
-				  ((file->association == -ASSOC_SHM
-				   || file->association == -ASSOC_MEM)
+				  (is_mapped_file(file)
 				   && file->mode & S_IXUSR)? 'x': '-');
 		else
 			xasprintf(&str, "---");
@@ -254,8 +253,7 @@ static bool file_fill_column(struct proc *proc,
 		break;
 	}
 	case COL_MAPLEN:
-		if (file->association != -ASSOC_SHM
-		    && file->association != -ASSOC_MEM)
+		if (!is_mapped_file(file))
 			return true;
 		xasprintf(&str, "%ju", (uintmax_t)get_map_length(file));
 		break;

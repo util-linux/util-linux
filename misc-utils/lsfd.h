@@ -149,6 +149,7 @@ struct file {
 };
 
 #define is_opened_file(_f) ((_f)->association >= 0)
+#define is_mapped_file(_f) (is_association((_f), SHM) || is_association((_f), MEM))
 #define is_association(_f, a)	((_f)->association < 0 && (_f)->association == -ASSOC_ ## a)
 
 struct file_class {
