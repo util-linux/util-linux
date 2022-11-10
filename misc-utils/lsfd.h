@@ -148,6 +148,7 @@ struct file {
 	unsigned int mnt_id;
 };
 
+#define is_opened_file(_f) ((_f)->association >= 0)
 #define is_association(_f, a)	((_f)->association < 0 && (_f)->association == -ASSOC_ ## a)
 
 struct file_class {

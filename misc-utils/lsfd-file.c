@@ -153,11 +153,11 @@ static bool file_fill_column(struct proc *proc,
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
 	case COL_FD:
-		if (file->association < 0)
+		if (!is_opened_file(file))
 			return false;
 		/* FALL THROUGH */
 	case COL_ASSOC:
-		if (file->association >= 0)
+		if (is_opened_file(file))
 			xasprintf(&str, "%d", file->association);
 		else {
 			int assoc = file->association * -1;
@@ -221,7 +221,7 @@ static bool file_fill_column(struct proc *proc,
 		xasprintf(&str, "%u", proc->kthread);
 		break;
 	case COL_MNT_ID:
-		xasprintf(&str, "%d", file->association < 0? 0: file->mnt_id);
+		xasprintf(&str, "%d", is_opened_file(file)? file->mnt_id: 0);
 		break;
 	case COL_MODE:
 		if (does_file_has_fdinfo_alike(file))
@@ -241,7 +241,7 @@ static bool file_fill_column(struct proc *proc,
 	case COL_FLAGS: {
 		struct ul_buffer buf = UL_INIT_BUFFER;
 
-		if (file->association < 0)
+		if (!is_opened_file(file))
 			return true;
 
 		if (file->sys_flags == 0)
