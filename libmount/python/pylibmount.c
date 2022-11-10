@@ -195,8 +195,8 @@ static struct PyModuleDef moduledef = {
         NULL
 };
 #define INITERROR return NULL
-PyObject * PyInit_pylibmount(void);
-PyObject * PyInit_pylibmount(void)
+PyMODINIT_FUNC PyInit_pylibmount(void);
+PyMODINIT_FUNC PyInit_pylibmount(void)
 #else
 #define INITERROR return
 # ifndef PyMODINIT_FUNC
