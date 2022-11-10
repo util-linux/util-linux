@@ -60,6 +60,8 @@ enum {
 	COL_MODE,
 	COL_NAME,
 	COL_NLINK,
+	COL_NS_NAME,
+	COL_NS_TYPE,
 	COL_PARTITION,
 	COL_PID,
 	COL_PIDFD_COMM,
@@ -169,7 +171,8 @@ struct file_class {
 	struct ipc_class *(*get_ipc_class)(struct file *file);
 };
 
-extern const struct file_class file_class, cdev_class, bdev_class, sock_class, unkn_class, fifo_class;
+extern const struct file_class file_class, cdev_class, bdev_class, sock_class, unkn_class, fifo_class,
+	nsfs_file_class;
 
 /*
  * IPC

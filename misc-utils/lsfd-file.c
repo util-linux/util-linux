@@ -24,6 +24,15 @@
 
 #include <unistd.h>
 
+#ifdef HAVE_LINUX_NSFS_H
+# include <linux/nsfs.h>
+# if defined(NS_GET_NSTYPE)
+#  define USE_NS_GET_API	1
+#  include <sys/ioctl.h>
+# endif
+#endif
+#include <linux/sched.h>
+
 #include "xalloc.h"
 #include "nls.h"
 #include "buffer.h"
@@ -315,4 +324,142 @@ const struct file_class file_class = {
 	.fill_column = file_fill_column,
 	.handle_fdinfo = file_handle_fdinfo,
 	.free_content = file_free_content,
+};
+
+/*
+ * Regular files on NSFS
+ */
+
+struct nsfs_file {
+	struct file file;
+	int clone_type;
+};
+
+static const char *get_ns_type_name(int clone_type)
+{
+	switch (clone_type) {
+#ifdef USE_NS_GET_API
+	case CLONE_NEWNS:
+		return "mnt";
+	case CLONE_NEWCGROUP:
+		return "cgroup";
+	case CLONE_NEWUTS:
+		return "uts";
+	case CLONE_NEWIPC:
+		return "ipc";
+	case CLONE_NEWUSER:
+		return "user";
+	case CLONE_NEWPID:
+		return "pid";
+	case CLONE_NEWNET:
+		return "net";
+#ifdef CLONE_NEWTIME
+	case CLONE_NEWTIME:
+		return "time";
+#endif	/* CLONE_NEWTIME */
+#endif	/* USE_NS_GET_API */
+	default:
+		return "unknown";
+	}
+}
+
+static void init_nsfs_file_content(struct file *file)
+{
+	struct nsfs_file *nsfs_file = (struct nsfs_file *)file;
+	nsfs_file->clone_type = -1;
+
+#ifdef USE_NS_GET_API
+	char *proc_fname = NULL;
+	int ns_fd;
+	int ns_type;
+
+	if (is_association (file, NS_CGROUP))
+		nsfs_file->clone_type = CLONE_NEWCGROUP;
+	else if (is_association (file, NS_IPC))
+		nsfs_file->clone_type = CLONE_NEWIPC;
+	else if (is_association (file, NS_MNT))
+		nsfs_file->clone_type = CLONE_NEWNS;
+	else if (is_association (file, NS_NET))
+		nsfs_file->clone_type = CLONE_NEWNET;
+	else if (is_association (file, NS_PID)
+		 || is_association (file, NS_PID4C))
+		nsfs_file->clone_type = CLONE_NEWPID;
+#ifdef CLONE_NEWTIME
+	else if (is_association (file, NS_TIME)
+		 || is_association (file, NS_TIME4C))
+		nsfs_file->clone_type = CLONE_NEWTIME;
+#endif
+	else if (is_association (file, NS_USER))
+		nsfs_file->clone_type = CLONE_NEWUSER;
+	else if (is_association (file, NS_UTS))
+		nsfs_file->clone_type = CLONE_NEWUTS;
+
+	if (nsfs_file->clone_type != -1)
+		return;
+
+	if (!is_opened_file(file))
+		return;
+
+	if (!file->name)
+		return;
+
+	xasprintf(&proc_fname, "/proc/%d/fd/%d",
+		  file->proc->pid, file->association);
+	ns_fd = open(proc_fname, O_RDONLY);
+	free(proc_fname);
+	if (ns_fd < 0)
+		return;
+
+	ns_type = ioctl(ns_fd, NS_GET_NSTYPE);
+	close(ns_fd);
+	if (ns_type < 0)
+		return;
+
+	nsfs_file->clone_type = ns_type;
+#endif	/* USE_NS_GET_API */
+}
+
+
+static bool nsfs_file_fill_column(struct proc *proc __attribute__((__unused__)),
+				  struct file *file,
+				  struct libscols_line *ln,
+				  int column_id,
+				  size_t column_index)
+{
+	struct nsfs_file *nsfs_file = (struct nsfs_file *)file;
+	char *name = NULL;
+
+	if (nsfs_file->clone_type == -1)
+		return false;
+
+	switch (column_id) {
+	case COL_NS_NAME:
+		xasprintf(&name, "%s:[%llu]",
+			  get_ns_type_name(nsfs_file->clone_type),
+			  (unsigned long long)file->stat.st_ino);
+		break;
+	case COL_NS_TYPE:
+		if (scols_line_set_data(ln, column_index,
+					get_ns_type_name(nsfs_file->clone_type)))
+			err(EXIT_FAILURE, _("failed to add output data"));
+		return true;
+	default:
+		return false;
+	}
+
+	if (name && scols_line_refer_data(ln, column_index, name))
+		err(EXIT_FAILURE, _("failed to add output data"));
+
+	return true;
+}
+
+const struct file_class nsfs_file_class = {
+	.super = &file_class,
+	.size = sizeof(struct nsfs_file),
+	.initialize_class = NULL,
+	.finalize_class = NULL,
+	.initialize_content = init_nsfs_file_content,
+	.free_content = NULL,
+	.fill_column = nsfs_file_fill_column,
+	.handle_fdinfo = NULL,
 };
