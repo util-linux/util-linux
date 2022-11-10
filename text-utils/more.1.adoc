@@ -45,7 +45,7 @@ Copyright (c) 1992 Rik Faith (faith@cs.unc.edu)
 
 == NAME
 
-more - file perusal filter for crt viewing
+more - display the contents of a file in a terminal
 
 == SYNOPSIS
 

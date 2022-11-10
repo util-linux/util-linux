@@ -238,7 +238,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	printf(_(" %s [options] <file>...\n"), program_invocation_short_name);
 
 	printf("%s", USAGE_SEPARATOR);
-	printf("%s\n", _("A file perusal filter for CRT viewing."));
+	printf("%s\n", _("Display the contents of a file in a terminal."));
 
 	printf("%s", USAGE_OPTIONS);
 	printf("%s\n", _(" -d, --silent          display help instead of ringing bell"));
