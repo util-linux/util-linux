@@ -67,7 +67,7 @@ if build_plymouth_support
 '''.split()
 endif
 
-if conf.get('HAVE_LANGINFO_H') in [1]
+if conf.get('HAVE_LANGINFO_H') not in [1]
   lib_common_sources += 'langinfo.c'
 endif
 
