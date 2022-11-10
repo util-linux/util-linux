@@ -708,7 +708,7 @@ static int dos_create_disklabel(struct fdisk_context *cxt)
 	/* Put MBR signature */
 	mbr_set_magic(cxt->firstsector);
 
-	fdisk_info(cxt, _("Created a new DOS disklabel with disk "
+	fdisk_info(cxt, _("Created a new DOS (MBR) disklabel with disk "
 			 "identifier 0x%08x."), id);
 	return 0;
 }
