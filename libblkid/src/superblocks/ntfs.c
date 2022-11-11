@@ -138,9 +138,11 @@ static int __probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag, int save_
 	if (ns->clusters_per_mft_record > 0)
 		mft_record_size = ns->clusters_per_mft_record *
 				  sectors_per_cluster * sector_size;
-	else
-		mft_record_size = 1 << (0 - ns->clusters_per_mft_record);
-
+	else {
+        if ((0 - ns->clusters_per_mft_record) > 30)
+            return 1;
+        mft_record_size = 1 << (0 - ns->clusters_per_mft_record);
+    }
 	nr_clusters = le64_to_cpu(ns->number_of_sectors) / sectors_per_cluster;
 
 	if ((le64_to_cpu(ns->mft_cluster_location) > nr_clusters) ||
