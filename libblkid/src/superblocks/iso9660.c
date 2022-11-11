@@ -195,7 +195,7 @@ static size_t merge_utf16be_ascii(unsigned char *out, const unsigned char *utf16
 		}
 	}
 
-	for (; a < len; o += 2, a++) {
+	for (; o < (len * 2) - 1 && a < len; o += 2, a++) {
 		out[o] = 0x00;
 		out[o + 1] = ascii[a];
 	}
