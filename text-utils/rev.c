@@ -127,6 +127,7 @@ int main(int argc, char *argv[])
 	uintmax_t line;
 
 	static const struct option longopts[] = {
+		{ "zero",       no_argument,       NULL, '0' },
 		{ "version",    no_argument,       NULL, 'V' },
 		{ "help",       no_argument,       NULL, 'h' },
 		{ NULL,         0, NULL, 0 }
@@ -140,8 +141,11 @@ int main(int argc, char *argv[])
 	signal(SIGINT, sig_handler);
 	signal(SIGTERM, sig_handler);
 
-	while ((ch = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1)
+	while ((ch = getopt_long(argc, argv, "Vh0", longopts, NULL)) != -1)
 		switch(ch) {
+		case '0':
+			sep = L'\0';
+			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
 		case 'h':

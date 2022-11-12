@@ -58,6 +58,9 @@ This utility is a line-oriented tool and it uses in-memory allocated buffer for 
 
 include::man-common/help-version.adoc[]
 
+*-0*, *--zero*::
+_Zero termination_. Use the byte '\0' as line separator.
+
 == SEE ALSO
 
 *tac*(1)
