@@ -96,7 +96,7 @@ static void reverse_str(wchar_t *str, size_t n)
 	}
 }
 
-static size_t read_line(wchar_t *str, size_t n, FILE *stream)
+static size_t read_line(wchar_t sep, wchar_t *str, size_t n, FILE *stream)
 {
 	size_t r = 0;
 	while (r < n) {
@@ -104,7 +104,7 @@ static size_t read_line(wchar_t *str, size_t n, FILE *stream)
 		if (c == WEOF)
 			break;
 		str[r++] = c;
-		if (c == L'\n')
+		if ((wchar_t) c == sep)
 			break;
 	}
 	return r;
@@ -120,6 +120,7 @@ int main(int argc, char *argv[])
 {
 	char const *filename = "stdin";
 	wchar_t *buf;
+	wchar_t sep = L'\n';
 	size_t len, bufsiz = BUFSIZ;
 	FILE *fp = stdin;
 	int ch, rval = EXIT_SUCCESS;
@@ -167,7 +168,7 @@ int main(int argc, char *argv[])
 
 		line = 0;
 		while (!feof(fp)) {
-			len = read_line(buf, bufsiz, fp);
+			len = read_line(sep, buf, bufsiz, fp);
 			if (len == 0)
 				continue;
 
@@ -180,9 +181,9 @@ int main(int argc, char *argv[])
 				buf = xrealloc(buf, bufsiz * sizeof(wchar_t));
 
 				/* And fill the rest of the buffer */
-				len += read_line(&buf[len], bufsiz/2, fp);
+				len += read_line(sep, &buf[len], bufsiz/2, fp);
 			}
-			reverse_str(buf, buf[len - 1] == L'\n' ? len - 1 : len);
+			reverse_str(buf, buf[len - 1] == sep ? len - 1 : len);
 			write_line(buf, len, stdout);
 			line++;
 		}
