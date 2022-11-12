@@ -96,6 +96,26 @@ static void reverse_str(wchar_t *str, size_t n)
 	}
 }
 
+static size_t read_line(wchar_t *str, size_t n, FILE *stream)
+{
+	size_t r = 0;
+	while (r < n) {
+		wint_t c = fgetwc(stream);
+		if (c == WEOF)
+			break;
+		str[r++] = c;
+		if (c == L'\n')
+			break;
+	}
+	return r;
+}
+
+static void write_line(wchar_t *str, size_t n, FILE *stream)
+{
+	for (size_t i = 0; i < n; i++)
+		fputwc(str[i], stream);
+}
+
 int main(int argc, char *argv[])
 {
 	char const *filename = "stdin";
@@ -146,14 +166,13 @@ int main(int argc, char *argv[])
 		}
 
 		line = 0;
-		while (fgetws(buf, bufsiz, fp)) {
-			len = wcslen(buf);
-
+		while (!feof(fp)) {
+			len = read_line(buf, bufsiz, fp);
 			if (len == 0)
 				continue;
 
 			/* This is my hack from setpwnam.c -janl */
-			while (buf[len-1] != '\n' && !feof(fp)) {
+			while (len == bufsiz && !feof(fp)) {
 				/* Extend input buffer if it failed getting the whole line */
 				/* So now we double the buffer size */
 				bufsiz *= 2;
@@ -161,15 +180,10 @@ int main(int argc, char *argv[])
 				buf = xrealloc(buf, bufsiz * sizeof(wchar_t));
 
 				/* And fill the rest of the buffer */
-				if (!fgetws(&buf[len], bufsiz/2, fp))
-					break;
-
-				len = wcslen(buf);
+				len += read_line(&buf[len], bufsiz/2, fp);
 			}
-			if (buf[len - 1] == '\n')
-				buf[len--] = '\0';
-			reverse_str(buf, len);
-			fputws(buf, stdout);
+			reverse_str(buf, buf[len - 1] == L'\n' ? len - 1 : len);
+			write_line(buf, len, stdout);
 			line++;
 		}
 		if (ferror(fp)) {
