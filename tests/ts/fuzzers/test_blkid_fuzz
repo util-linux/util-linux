@@ -23,7 +23,7 @@ ts_check_test_command "$TS_HELPER_BLKID_FUZZ"
 ASAN_RT_PATH="$(ts_get_asan_rt_path "$TS_HELPER_BLKID_FUZZ")"
 [ -n "$ASAN_RT_PATH" ] && export LD_PRELOAD="$ASAN_RT_PATH:$LD_PRELOAD"
 
-mkdir -p ${TS_OUTPUT}_workdir
+mkdir -p ${TS_OUTPUT}_workdir ${TS_SCRIPT}_files
 ts_run $TS_HELPER_BLKID_FUZZ ${TS_OUTPUT}_workdir ${TS_SCRIPT}_files -max_total_time=10 >$TS_OUTPUT 2>$TS_ERRLOG
 
 ts_finalize
