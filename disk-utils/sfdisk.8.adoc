@@ -181,7 +181,13 @@ See also *--move-use-fsync*.
 +
 In the example below, the first command creates a 100MiB free area before the first partition and moves the data it contains (e.g., a filesystem), the next command creates a new partition from the free space (at offset 2048), and the last command reorders partitions to match disk order (the original sdc1 will become sdc2).
 +
-*echo '+100M,' | sfdisk --move-data /dev/sdc -N 1* *echo '2048,' | sfdisk /dev/sdc --append* *sfdisk /dev/sdc --reorder*
+____
+*echo '+100M,' | sfdisk --move-data /dev/sdc -N 1*
+
+*echo '2048,' | sfdisk /dev/sdc --append*
+
+*sfdisk /dev/sdc --reorder*
+____
 
 *--move-use-fsync*::
 Use the *fsync*(2) system call after each write when moving data to a new location by *--move-data*.
@@ -435,7 +441,7 @@ The same as the previous example, but without script use.
 *sfdisk --delete /dev/sdc 2*::
 Delete 2nd partition.
 
-*echo "+,+" | sfdisk -N 3 --move-data /dev/sdc*::
+*echo "\+,+" | sfdisk -N 3 --move-data /dev/sdc*::
 Enlarge 3rd partition in both directions, move start to use free space before the partition and enlarge the size to use all free space after to the partition, and move partition data too.
 
 == AUTHORS
