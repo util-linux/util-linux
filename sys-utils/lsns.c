@@ -706,6 +706,10 @@ static int clone_type_to_lsns_type(int clone_type)
 		return LSNS_ID_PID;
 	case CLONE_NEWNET:
 		return LSNS_ID_NET;
+#ifdef CLONE_NEWTIME
+	case CLONE_NEWTIME:
+		return LSNS_ID_TIME;
+#endif
 	default:
 		return -1;
 	}
