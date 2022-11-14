@@ -113,7 +113,7 @@ static int get_bitlocker_headers(blkid_probe pr,
 		goto nothing;
 	}
 
-	if (!off)
+	if (!off || off % 64)
 		goto nothing;
 	if (buf_hdr)
 		*buf_hdr = buf;
