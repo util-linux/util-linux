@@ -117,6 +117,15 @@ function ts_check_losetup {
 	ts_skip "no loop-device support"
 }
 
+function ts_check_wcsspn {
+	# https://gitlab.com/qemu-project/qemu/-/issues/1248
+	if [ -e "$TS_HELPER_SYSINFO" ] &&
+		[ "$("$TS_HELPER_SYSINFO" wcsspn-ok)" = "0" ]; then
+
+		ts_skip "non-functional widestring functions"
+	fi
+}
+
 function ts_report_skip {
 	ts_report " SKIPPED ($1)"
 }
