@@ -542,6 +542,8 @@ static void create_watching_parent(struct su_context *su)
 		/* create pty */
 		if (ul_pty_setup(su->pty))
 			err(EXIT_FAILURE, _("failed to create pseudo-terminal"));
+		if (ul_pty_signals_setup(su->pty))
+			err(EXIT_FAILURE, _("failed to initialize signals handler"));
 	}
 #endif
 	fflush(stdout);			/* ??? */

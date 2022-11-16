@@ -160,12 +160,12 @@ static void pty_signals_cleanup(struct ul_pty *pty)
 int ul_pty_setup(struct ul_pty *pty)
 {
 	struct termios attrs;
-	sigset_t ourset;
 	int rc = 0;
 
 	assert(pty->sigfd == -1);
 
-	/* save the current signals setting */
+	/* save the current signals setting (to make ul_pty_cleanup() usable,
+	 * otherwise see ul_pty_signals_setup() */
 	sigprocmask(0, NULL, &pty->orgsig);
 
 	if (pty->isterm) {
@@ -211,6 +211,26 @@ int ul_pty_setup(struct ul_pty *pty)
 
 	fcntl(pty->master, F_SETFL, O_NONBLOCK);
 
+done:
+	if (rc)
+		ul_pty_cleanup(pty);
+
+	DBG(SETUP, ul_debugobj(pty, "pty setup done [master=%d, slave=%d, rc=%d]",
+				pty->master, pty->slave, rc));
+	return rc;
+}
+
+/* call me before fork() */
+int ul_pty_signals_setup(struct ul_pty *pty)
+{
+	sigset_t ourset;
+	int rc = 0;
+
+	assert(pty->sigfd == -1);
+
+	/* save the current signals setting */
+	sigprocmask(0, NULL, &pty->orgsig);
+
 	sigfillset(&ourset);
 	if (sigprocmask(SIG_BLOCK, &ourset, NULL)) {
 		rc = -errno;
@@ -234,8 +254,7 @@ done:
 	if (rc)
 		ul_pty_cleanup(pty);
 
-	DBG(SETUP, ul_debugobj(pty, "pty setup done [master=%d, slave=%d, rc=%d]",
-				pty->master, pty->slave, rc));
+	DBG(SETUP, ul_debugobj(pty, "pty signals setup done [rc=%d]", rc));
 	return rc;
 }
 
@@ -783,6 +802,8 @@ int main(int argc, char *argv[])
 
 	if (ul_pty_setup(pty))
 		err(EXIT_FAILURE, "failed to create pseudo-terminal");
+	if (ul_pty_signals_setup(pty))
+		err(EXIT_FAILURE, "failed to initialize signals handler");
 
 	fflush(stdout);			/* ??? */
 
