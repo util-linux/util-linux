@@ -947,13 +947,16 @@ int main(int argc, char **argv)
 		printf(_(".\n"));
 	}
 
-#ifdef HAVE_LIBUTEMPTER
-	utempter_add_record(ul_pty_get_childfd(ctl.pty), NULL);
-#endif
 
 	if (ul_pty_setup(ctl.pty))
 		err(EXIT_FAILURE, _("failed to create pseudo-terminal"));
 
+#ifdef HAVE_LIBUTEMPTER
+	utempter_add_record(ul_pty_get_childfd(ctl.pty), NULL);
+#endif
+
+	if (ul_pty_signals_setup(ctl.pty))
+		err(EXIT_FAILURE, _("failed to initialize signals handler"));
 	fflush(stdout);
 
 	/*
