@@ -96,16 +96,38 @@ static void reverse_str(wchar_t *str, size_t n)
 	}
 }
 
+static size_t read_line(wchar_t sep, wchar_t *str, size_t n, FILE *stream)
+{
+	size_t r = 0;
+	while (r < n) {
+		wint_t c = fgetwc(stream);
+		if (c == WEOF)
+			break;
+		str[r++] = c;
+		if ((wchar_t) c == sep)
+			break;
+	}
+	return r;
+}
+
+static void write_line(wchar_t *str, size_t n, FILE *stream)
+{
+	for (size_t i = 0; i < n; i++)
+		fputwc(str[i], stream);
+}
+
 int main(int argc, char *argv[])
 {
 	char const *filename = "stdin";
 	wchar_t *buf;
+	wchar_t sep = L'\n';
 	size_t len, bufsiz = BUFSIZ;
 	FILE *fp = stdin;
 	int ch, rval = EXIT_SUCCESS;
 	uintmax_t line;
 
 	static const struct option longopts[] = {
+		{ "zero",       no_argument,       NULL, '0' },
 		{ "version",    no_argument,       NULL, 'V' },
 		{ "help",       no_argument,       NULL, 'h' },
 		{ NULL,         0, NULL, 0 }
@@ -119,8 +141,11 @@ int main(int argc, char *argv[])
 	signal(SIGINT, sig_handler);
 	signal(SIGTERM, sig_handler);
 
-	while ((ch = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1)
+	while ((ch = getopt_long(argc, argv, "Vh0", longopts, NULL)) != -1)
 		switch(ch) {
+		case '0':
+			sep = L'\0';
+			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
 		case 'h':
@@ -146,14 +171,13 @@ int main(int argc, char *argv[])
 		}
 
 		line = 0;
-		while (fgetws(buf, bufsiz, fp)) {
-			len = wcslen(buf);
-
+		while (!feof(fp)) {
+			len = read_line(sep, buf, bufsiz, fp);
 			if (len == 0)
 				continue;
 
 			/* This is my hack from setpwnam.c -janl */
-			while (buf[len-1] != '\n' && !feof(fp)) {
+			while (len == bufsiz && !feof(fp)) {
 				/* Extend input buffer if it failed getting the whole line */
 				/* So now we double the buffer size */
 				bufsiz *= 2;
@@ -161,15 +185,10 @@ int main(int argc, char *argv[])
 				buf = xrealloc(buf, bufsiz * sizeof(wchar_t));
 
 				/* And fill the rest of the buffer */
-				if (!fgetws(&buf[len], bufsiz/2, fp))
-					break;
-
-				len = wcslen(buf);
+				len += read_line(sep, &buf[len], bufsiz/2, fp);
 			}
-			if (buf[len - 1] == '\n')
-				buf[len--] = '\0';
-			reverse_str(buf, len);
-			fputws(buf, stdout);
+			reverse_str(buf, buf[len - 1] == sep ? len - 1 : len);
+			write_line(buf, len, stdout);
 			line++;
 		}
 		if (ferror(fp)) {
