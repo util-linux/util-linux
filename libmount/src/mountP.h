@@ -199,6 +199,7 @@ struct libmnt_fs {
 	char		*target;	/* mountinfo[5], fstab[2]: mountpoint */
 	char		*fstype;	/* mountinfo[9], fstab[3]: filesystem type */
 
+	char		opt_sep[2];	/* comma (",") or custom options separator */
 	char		*optstr;	/* fstab[4], merged options */
 	char		*vfs_optstr;	/* mountinfo[6]: fs-independent (VFS) options */
 	char		*opt_fields;	/* mountinfo[7]: optional fields */
@@ -404,11 +405,15 @@ extern const struct libmnt_optmap *mnt_optmap_get_entry(
 
 /* optstr.c */
 extern int mnt_optstr_get_uid(const char *optstr, const char *name, uid_t *uid);
-extern int mnt_optstr_remove_option_at(char **optstr, char *begin, char *end);
-extern int mnt_optstr_fix_gid(char **optstr, char *value, size_t valsz, char **next);
-extern int mnt_optstr_fix_uid(char **optstr, char *value, size_t valsz, char **next);
-extern int mnt_optstr_fix_secontext(char **optstr, char *value, size_t valsz, char **next);
-extern int mnt_optstr_fix_user(char **optstr);
+extern int mnt_optstr_remove_option_at(char **optstr, char *begin, char *end,
+	const char *opt_sep);
+extern int mnt_optstr_fix_gid(char **optstr, char *value, size_t valsz,
+	char **next, const char *opt_sep);
+extern int mnt_optstr_fix_uid(char **optstr, char *value, size_t valsz,
+	char **next, const char *opt_sep);
+extern int mnt_optstr_fix_secontext(char **optstr, char *value, size_t valsz,
+	char **next, const char *opt_sep);
+extern int mnt_optstr_fix_user(char **optstr, char *opt_sep);
 
 /* fs.c */
 extern struct libmnt_fs *mnt_copy_mtab_fs(const struct libmnt_fs *fs);

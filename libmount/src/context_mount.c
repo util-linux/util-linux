@@ -90,7 +90,8 @@ static int init_propagation(struct libmnt_context *cxt)
 
 	maps[0] = mnt_get_builtin_optmap(MNT_LINUX_MAP);
 
-	while (!mnt_optstr_next_option(&opts, &name, &namesz, NULL, NULL)) {
+	while (!mnt_optstr_next_option_sep(&opts, &name, &namesz, NULL, NULL,
+		cxt->fs->opt_sep)) {
 		const struct libmnt_optmap *ent;
 		struct libmnt_addmount *ad;
 		int rc;
@@ -238,8 +239,8 @@ static int fix_optstr(struct libmnt_context *cxt)
 	 * "user" setting.
 	 */
 	if (cxt->user_mountflags & MNT_MS_USER) {
-		if (!mnt_optstr_get_option(fs->user_optstr,
-					"user", &val, &valsz) && val) {
+		if (!mnt_optstr_get_option_sep(fs->user_optstr,
+					"user", &val, &valsz, fs->opt_sep) && val) {
 			cxt->orig_user = strndup(val, valsz);
 			if (!cxt->orig_user) {
 				rc = -ENOMEM;
@@ -253,14 +254,14 @@ static int fix_optstr(struct libmnt_context *cxt)
 	 * Sync mount options with mount flags
 	 */
 	DBG(CXT, ul_debugobj(cxt, "mount: fixing vfs optstr"));
-	rc = mnt_optstr_apply_flags(&fs->vfs_optstr, cxt->mountflags,
-				mnt_get_builtin_optmap(MNT_LINUX_MAP));
+	rc = mnt_optstr_apply_flags_sep(&fs->vfs_optstr, cxt->mountflags,
+				mnt_get_builtin_optmap(MNT_LINUX_MAP), fs->opt_sep);
 	if (rc)
 		goto done;
 
 	DBG(CXT, ul_debugobj(cxt, "mount: fixing user optstr"));
-	rc = mnt_optstr_apply_flags(&fs->user_optstr, cxt->user_mountflags,
-				mnt_get_builtin_optmap(MNT_USERSPACE_MAP));
+	rc = mnt_optstr_apply_flags_sep(&fs->user_optstr, cxt->user_mountflags,
+				mnt_get_builtin_optmap(MNT_USERSPACE_MAP), fs->opt_sep);
 	if (rc)
 		goto done;
 
@@ -310,19 +311,20 @@ static int fix_optstr(struct libmnt_context *cxt)
 		/* de-duplicate SELinux options */
 		const struct libmnt_optname *p;
 		for (p = selinux_options; p && p->name; p++)
-			mnt_optstr_deduplicate_option(&fs->fs_optstr, p->name);
+			mnt_optstr_deduplicate_option_sep(&fs->fs_optstr, p->name,
+				fs->opt_sep);
 	}
 #endif
 #ifdef HAVE_SMACK
 	if (access("/sys/fs/smackfs", F_OK) != 0)
 		sm_rem = 1;
 #endif
-	while (!mnt_optstr_next_option(&next, &name, &namesz, &val, &valsz)) {
+	while (!mnt_optstr_next_option_sep(&next, &name, &namesz, &val, &valsz, fs->opt_sep)) {
 
 		if (namesz == 3 && !strncmp(name, "uid", 3))
-			rc = mnt_optstr_fix_uid(&fs->fs_optstr, val, valsz, &next);
+			rc = mnt_optstr_fix_uid(&fs->fs_optstr, val, valsz, &next, fs->opt_sep);
 		else if (namesz == 3 && !strncmp(name, "gid", 3))
-			rc = mnt_optstr_fix_gid(&fs->fs_optstr, val, valsz, &next);
+			rc = mnt_optstr_fix_gid(&fs->fs_optstr, val, valsz, &next, fs->opt_sep);
 #ifdef HAVE_LIBSELINUX
 		else if ((se_rem || se_fix)
 			 && is_option(name, namesz, selinux_options)) {
@@ -333,11 +335,11 @@ static int fix_optstr(struct libmnt_context *cxt)
 				rc = mnt_optstr_remove_option_at(&fs->fs_optstr,
 						name,
 						val ? val + valsz :
-						      name + namesz);
+						      name + namesz, fs->opt_sep);
 			} else if (se_fix && val && valsz)
 				/* translate selinux contexts */
 				rc = mnt_optstr_fix_secontext(&fs->fs_optstr,
-							val, valsz, &next);
+							val, valsz, &next, fs->opt_sep);
 		}
 #endif
 #ifdef HAVE_SMACK
@@ -346,7 +348,7 @@ static int fix_optstr(struct libmnt_context *cxt)
 			next = name;
 			rc = mnt_optstr_remove_option_at(&fs->fs_optstr,
 					name,
-					val ? val + valsz : name + namesz);
+					val ? val + valsz : name + namesz, fs->opt_sep);
 		}
 #endif
 		if (rc)
@@ -359,7 +361,7 @@ static int fix_optstr(struct libmnt_context *cxt)
 		if (!ns_old)
 			return -MNT_ERR_NAMESPACE;
 
-		rc = mnt_optstr_fix_user(&fs->user_optstr);
+		rc = mnt_optstr_fix_user(&fs->user_optstr, fs->opt_sep);
 
 		if (!mnt_context_switch_ns(cxt, ns_old))
 			return -MNT_ERR_NAMESPACE;
@@ -402,6 +404,12 @@ static int generate_helper_optstr(struct libmnt_context *cxt, char **optstr)
 	if (!*optstr)
 		return -ENOMEM;
 
+	/* Separator override (first mount option after the -o)
+	 * Example: -o sep=!user=myname!domain=mydom */
+	if (',' != cxt->fs->opt_sep[0]) {
+		mnt_optstr_prepend_option_sep(optstr, "sep=", NULL, cxt->fs->opt_sep);
+	}
+
 	if ((cxt->user_mountflags & MNT_MS_USER) ||
 	    (cxt->user_mountflags & MNT_MS_USERS)) {
 		/*
@@ -420,15 +428,15 @@ static int generate_helper_optstr(struct libmnt_context *cxt, char **optstr)
 		 * mnt_optstr_get_flags() and mnt_context_merge_mflags()).
 		 */
 		if (!(cxt->mountflags & MS_NOEXEC))
-			mnt_optstr_append_option(optstr, "exec", NULL);
+			mnt_optstr_append_option_sep(optstr, "exec", NULL, cxt->fs->opt_sep);
 		if (!(cxt->mountflags & MS_NOSUID))
-			mnt_optstr_append_option(optstr, "suid", NULL);
+			mnt_optstr_append_option_sep(optstr, "suid", NULL, cxt->fs->opt_sep);
 		if (!(cxt->mountflags & MS_NODEV))
-			mnt_optstr_append_option(optstr, "dev", NULL);
+			mnt_optstr_append_option_sep(optstr, "dev", NULL, cxt->fs->opt_sep);
 	}
 
 	if (cxt->flags & MNT_FL_SAVED_USER)
-		rc = mnt_optstr_set_option(optstr, "user", cxt->orig_user);
+		rc = mnt_optstr_set_option_sep(optstr, "user", cxt->orig_user, cxt->fs->opt_sep);
 	if (rc)
 		goto err;
 
@@ -437,14 +445,14 @@ static int generate_helper_optstr(struct libmnt_context *cxt, char **optstr)
 	maps[1] = mnt_get_builtin_optmap(MNT_LINUX_MAP);
 	next = *optstr;
 
-	while (!mnt_optstr_next_option(&next, &name, &namesz, &val, &valsz)) {
+	while (!mnt_optstr_next_option_sep(&next, &name, &namesz, &val, &valsz, cxt->fs->opt_sep)) {
 		const struct libmnt_optmap *ent;
 
 		mnt_optmap_get_entry(maps, 2, name, namesz, &ent);
 		if (ent && ent->id && (ent->mask & MNT_NOHLPS)) {
 			next = name;
 			rc = mnt_optstr_remove_option_at(optstr, name,
-					val ? val + valsz : name + namesz);
+					val ? val + valsz : name + namesz, cxt->fs->opt_sep);
 			if (rc)
 				goto err;
 		}
@@ -504,8 +512,9 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		if (cxt->user_mountflags & MNT_MS_USER) {
 			size_t valsz = 0;
 
-			if (!mnt_optstr_get_option(cxt->fs->user_optstr,
-					"user", NULL, &valsz) && valsz) {
+			if (!mnt_optstr_get_option_sep(cxt->fs->user_optstr,
+					"user", NULL, &valsz,
+					cxt->fs->opt_sep) && valsz) {
 
 				DBG(CXT, ul_debugobj(cxt, "perms: user=<name> detected, ignore"));
 				cxt->user_mountflags &= ~MNT_MS_USER;
@@ -1474,7 +1483,7 @@ int mnt_context_next_mount(struct libmnt_context *cxt,
 	   (tgt && (strcmp(tgt, "/") == 0 || strcmp(tgt, "root") == 0)) ||
 
 	/* ignore noauto filesystems */
-	   (o && mnt_optstr_get_option(o, "noauto", NULL, NULL) == 0) ||
+	   (o && mnt_optstr_get_option_sep(o, "noauto", NULL, NULL, (*fs)->opt_sep) == 0) ||
 
 	/* ignore filesystems which don't match options patterns */
 	   (cxt->fstype_pattern && !mnt_fs_match_fstype(*fs,

@@ -38,6 +38,7 @@ struct libmnt_fs *mnt_new_fs(void)
 		return NULL;
 
 	fs->refcount = 1;
+	fs->opt_sep[0] = ',';
 	INIT_LIST_HEAD(&fs->ents);
 	DBG(FS, ul_debugobj(fs, "alloc"));
 	return fs;
@@ -98,6 +99,7 @@ void mnt_reset_fs(struct libmnt_fs *fs)
 	memset(fs, 0, sizeof(*fs));
 	INIT_LIST_HEAD(&fs->ents);
 	fs->refcount = ref;
+	fs->opt_sep[0] = ',';
 }
 
 /**
@@ -232,6 +234,7 @@ struct libmnt_fs *mnt_copy_fs(struct libmnt_fs *dest,
 	dest->size	 = src->size;
 	dest->usedsize   = src->usedsize;
 	dest->priority   = src->priority;
+	dest->opt_sep[0] = src->opt_sep[0];
 
 	return dest;
 err:
@@ -264,17 +267,17 @@ struct libmnt_fs *mnt_copy_mtab_fs(const struct libmnt_fs *fs)
 
 	if (fs->vfs_optstr) {
 		char *p = NULL;
-		mnt_optstr_get_options(fs->vfs_optstr, &p,
+		mnt_optstr_get_options_sep(fs->vfs_optstr, &p,
 				mnt_get_builtin_optmap(MNT_LINUX_MAP),
-				MNT_NOMTAB);
+				MNT_NOMTAB, (char*)fs->opt_sep);
 		n->vfs_optstr = p;
 	}
 
 	if (fs->user_optstr) {
 		char *p = NULL;
-		mnt_optstr_get_options(fs->user_optstr, &p,
+		mnt_optstr_get_options_sep(fs->user_optstr, &p,
 				mnt_get_builtin_optmap(MNT_USERSPACE_MAP),
-				MNT_NOMTAB);
+				MNT_NOMTAB, (char*)fs->opt_sep);
 		n->user_optstr = p;
 	}
 
@@ -288,6 +291,7 @@ struct libmnt_fs *mnt_copy_mtab_fs(const struct libmnt_fs *fs)
 	n->freq       = fs->freq;
 	n->passno     = fs->passno;
 	n->flags      = fs->flags;
+	n->opt_sep[0] = fs->opt_sep[0];
 
 	return n;
 err:
@@ -714,22 +718,25 @@ int mnt_fs_set_fstype(struct libmnt_fs *fs, const char *fstype)
  * Merges @vfs and @fs options strings into a new string.
  * This function cares about 'ro/rw' options. The 'ro' is
  * always used if @vfs or @fs is read-only.
+ * @opt_sep: comma or custom options separator.
+ *
  * For example:
  *
- *    mnt_merge_optstr("rw,noexec", "ro,journal=update")
+ *    merge_optstr("rw,noexec", "ro,journal=update", fs->opt_sep)
  *
  *           returns: "ro,noexec,journal=update"
  *
- *    mnt_merge_optstr("rw,noexec", "rw,journal=update")
+ *    merge_optstr("rw,noexec", "rw,journal=update", fs->opt_sep)
  *
  *           returns: "rw,noexec,journal=update"
  */
-static char *merge_optstr(const char *vfs, const char *fs)
+static char *merge_optstr(const char *vfs, const char *fs, char *opt_sep)
 {
 	char *res, *p;
 	size_t sz;
 	int ro = 0, rw = 0;
 
+	assert(opt_sep);
 	if (!vfs && !fs)
 		return NULL;
 	if (!vfs || !fs)
@@ -744,23 +751,25 @@ static char *merge_optstr(const char *vfs, const char *fs)
 		return NULL;
 	p = res + 3;			/* make a room for rw/ro flag */
 
-	snprintf(p, sz - 3, "%s,%s", vfs, fs);
+	snprintf(p, sz - 3, "%s%s%s", vfs, opt_sep, fs);
 
 	/* remove 'rw' flags */
-	rw += !mnt_optstr_remove_option(&p, "rw");	/* from vfs */
-	rw += !mnt_optstr_remove_option(&p, "rw");	/* from fs */
+	rw += !mnt_optstr_remove_option_sep(&p, "rw", opt_sep);	/* from vfs */
+	rw += !mnt_optstr_remove_option_sep(&p, "rw", opt_sep);	/* from fs */
 
 	/* remove 'ro' flags if necessary */
 	if (rw != 2) {
-		ro += !mnt_optstr_remove_option(&p, "ro");
+		ro += !mnt_optstr_remove_option_sep(&p, "ro", opt_sep);
 		if (ro + rw < 2)
-			ro += !mnt_optstr_remove_option(&p, "ro");
+			ro += !mnt_optstr_remove_option_sep(&p, "ro", opt_sep);
 	}
 
 	if (!strlen(p))
 		memcpy(res, ro ? "ro" : "rw", 3);
-	else
-		memcpy(res, ro ? "ro," : "rw,", 3);
+	else {
+		memcpy(res, ro ? "ro" : "rw", 2);
+		res[2] = opt_sep[0];
+	}
 	return res;
 }
 
@@ -784,11 +793,11 @@ char *mnt_fs_strdup_options(struct libmnt_fs *fs)
 	if (fs->optstr)
 		return strdup(fs->optstr);
 
-	res = merge_optstr(fs->vfs_optstr, fs->fs_optstr);
+	res = merge_optstr(fs->vfs_optstr, fs->fs_optstr, fs->opt_sep);
 	if (!res && errno)
 		return NULL;
 	if (fs->user_optstr &&
-	    mnt_optstr_append_option(&res, fs->user_optstr, NULL)) {
+	    mnt_optstr_append_option_sep(&res, fs->user_optstr, NULL, fs->opt_sep)) {
 		free(res);
 		res = NULL;
 	}
@@ -819,6 +828,22 @@ const char *mnt_fs_get_optional_fields(struct libmnt_fs *fs)
 }
 
 /**
+ * mnt_fs_set_options_separator:
+ * @fs: fstab/mtab/mountinfo entry pointer
+ * @opt_sep: options separator string
+ *
+ * Returns: 0 on success, or negative number in case of error.
+ */
+int mnt_fs_set_options_separator(struct libmnt_fs *fs,
+	const char *opt_sep)
+{
+	if (!fs || !opt_sep)
+		return -EINVAL;
+	fs->opt_sep[0] = opt_sep[0];
+	return 0;
+}
+
+/**
  * mnt_fs_set_options:
  * @fs: fstab/mtab/mountinfo entry pointer
  * @optstr: options string
@@ -835,7 +860,7 @@ int mnt_fs_set_options(struct libmnt_fs *fs, const char *optstr)
 	if (!fs)
 		return -EINVAL;
 	if (optstr) {
-		int rc = mnt_split_optstr(optstr, &u, &v, &f, 0, 0);
+		int rc = mnt_split_optstr_sep(optstr, &u, &v, &f, 0, 0, fs->opt_sep);
 		if (rc)
 			return rc;
 		n = strdup(optstr);
@@ -882,18 +907,18 @@ int mnt_fs_append_options(struct libmnt_fs *fs, const char *optstr)
 	if (!optstr)
 		return 0;
 
-	rc = mnt_split_optstr(optstr, &u, &v, &f, 0, 0);
+	rc = mnt_split_optstr_sep(optstr, &u, &v, &f, 0, 0, fs->opt_sep);
 	if (rc)
 		return rc;
 
 	if (!rc && v)
-		rc = mnt_optstr_append_option(&fs->vfs_optstr, v, NULL);
+		rc = mnt_optstr_append_option_sep(&fs->vfs_optstr, v, NULL, fs->opt_sep);
 	if (!rc && f)
-		rc = mnt_optstr_append_option(&fs->fs_optstr, f, NULL);
+		rc = mnt_optstr_append_option_sep(&fs->fs_optstr, f, NULL, fs->opt_sep);
 	if (!rc && u)
-		rc = mnt_optstr_append_option(&fs->user_optstr, u, NULL);
+		rc = mnt_optstr_append_option_sep(&fs->user_optstr, u, NULL, fs->opt_sep);
 	if (!rc)
-		rc = mnt_optstr_append_option(&fs->optstr, optstr, NULL);
+		rc = mnt_optstr_append_option_sep(&fs->optstr, optstr, NULL, fs->opt_sep);
 
 	free(v);
 	free(f);
@@ -924,18 +949,18 @@ int mnt_fs_prepend_options(struct libmnt_fs *fs, const char *optstr)
 	if (!optstr)
 		return 0;
 
-	rc = mnt_split_optstr(optstr, &u, &v, &f, 0, 0);
+	rc = mnt_split_optstr_sep(optstr, &u, &v, &f, 0, 0, fs->opt_sep);
 	if (rc)
 		return rc;
 
 	if (!rc && v)
-		rc = mnt_optstr_prepend_option(&fs->vfs_optstr, v, NULL);
+		rc = mnt_optstr_prepend_option_sep(&fs->vfs_optstr, v, NULL, fs->opt_sep);
 	if (!rc && f)
-		rc = mnt_optstr_prepend_option(&fs->fs_optstr, f, NULL);
+		rc = mnt_optstr_prepend_option_sep(&fs->fs_optstr, f, NULL, fs->opt_sep);
 	if (!rc && u)
-		rc = mnt_optstr_prepend_option(&fs->user_optstr, u, NULL);
+		rc = mnt_optstr_prepend_option_sep(&fs->user_optstr, u, NULL, fs->opt_sep);
 	if (!rc)
-		rc = mnt_optstr_prepend_option(&fs->optstr, optstr, NULL);
+		rc = mnt_optstr_prepend_option_sep(&fs->optstr, optstr, NULL, fs->opt_sep);
 
 	free(v);
 	free(f);
@@ -1055,7 +1080,7 @@ int mnt_fs_append_attributes(struct libmnt_fs *fs, const char *optstr)
 		return -EINVAL;
 	if (!optstr)
 		return 0;
-	return mnt_optstr_append_option(&fs->attrs, optstr, NULL);
+	return mnt_optstr_append_option_sep(&fs->attrs, optstr, NULL, fs->opt_sep);
 }
 
 /**
@@ -1073,7 +1098,7 @@ int mnt_fs_prepend_attributes(struct libmnt_fs *fs, const char *optstr)
 		return -EINVAL;
 	if (!optstr)
 		return 0;
-	return mnt_optstr_prepend_option(&fs->attrs, optstr, NULL);
+	return mnt_optstr_prepend_option_sep(&fs->attrs, optstr, NULL, fs->opt_sep);
 }
 
 
@@ -1297,11 +1322,11 @@ int mnt_fs_get_option(struct libmnt_fs *fs, const char *name,
 	if (!fs)
 		return -EINVAL;
 	if (fs->fs_optstr)
-		rc = mnt_optstr_get_option(fs->fs_optstr, name, value, valsz);
+		rc = mnt_optstr_get_option_sep(fs->fs_optstr, name, value, valsz, fs->opt_sep);
 	if (rc == 1 && fs->vfs_optstr)
-		rc = mnt_optstr_get_option(fs->vfs_optstr, name, value, valsz);
+		rc = mnt_optstr_get_option_sep(fs->vfs_optstr, name, value, valsz, fs->opt_sep);
 	if (rc == 1 && fs->user_optstr)
-		rc = mnt_optstr_get_option(fs->user_optstr, name, value, valsz);
+		rc = mnt_optstr_get_option_sep(fs->user_optstr, name, value, valsz, fs->opt_sep);
 	return rc;
 }
 
@@ -1322,7 +1347,7 @@ int mnt_fs_get_attribute(struct libmnt_fs *fs, const char *name,
 	if (!fs)
 		return -EINVAL;
 	if (fs->attrs)
-		rc = mnt_optstr_get_option(fs->attrs, name, value, valsz);
+		rc = mnt_optstr_get_option_sep(fs->attrs, name, value, valsz, fs->opt_sep);
 	return rc;
 }
 
@@ -1531,7 +1556,7 @@ int mnt_fs_match_fstype(struct libmnt_fs *fs, const char *types)
  */
 int mnt_fs_match_options(struct libmnt_fs *fs, const char *options)
 {
-	return mnt_match_options(mnt_fs_get_options(fs), options);
+	return mnt_match_options_sep(mnt_fs_get_options(fs), options, fs->opt_sep);
 }
 
 /**

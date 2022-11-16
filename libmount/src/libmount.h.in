@@ -335,6 +335,9 @@ extern int mnt_fstype_is_pseudofs(const char *type);
 
 extern int mnt_match_fstype(const char *type, const char *pattern)
 			__ul_attribute__((warn_unused_result));
+extern int mnt_match_options_sep(const char *optstr, const char *pattern,
+			char *opt_sep)
+			__ul_attribute__((warn_unused_result));
 extern int mnt_match_options(const char *optstr, const char *pattern)
 			__ul_attribute__((warn_unused_result));
 extern const char *mnt_get_fstab_path(void);
@@ -382,29 +385,56 @@ extern char *mnt_pretty_path(const char *path, struct libmnt_cache *cache)
 			__ul_attribute__((warn_unused_result));
 
 /* optstr.c */
+extern int mnt_optstr_next_option_sep(char **optstr, char **name, size_t *namesz,
+				char **value, size_t *valuesz, char *opt_sep);
 extern int mnt_optstr_next_option(char **optstr, char **name, size_t *namesz,
 				char **value, size_t *valuesz);
+extern int mnt_optstr_append_option_sep(char **optstr, const char *name,
+				const char *value, const char *opt_sep);
 extern int mnt_optstr_append_option(char **optstr, const char *name,
 				const char *value);
+extern int mnt_optstr_prepend_option_sep(char **optstr, const char *name,
+				const char *value, const char *opt_sep);
 extern int mnt_optstr_prepend_option(char **optstr, const char *name,
 				const char *value);
 
+extern int mnt_optstr_get_option_sep(const char *optstr, const char *name,
+				char **value, size_t *valsz, char *opt_sep);
 extern int mnt_optstr_get_option(const char *optstr, const char *name,
 				char **value, size_t *valsz);
+extern int mnt_optstr_set_option_sep(char **optstr, const char *name,
+				const char *value, char *opt_sep);
 extern int mnt_optstr_set_option(char **optstr, const char *name,
 				const char *value);
+extern int mnt_optstr_remove_option_sep(char **optstr, const char *name,
+				char *opt_sep);
 extern int mnt_optstr_remove_option(char **optstr, const char *name);
+extern int mnt_optstr_deduplicate_option_sep(char **optstr, const char *name,
+				char *opt_sep);
 extern int mnt_optstr_deduplicate_option(char **optstr, const char *name);
+
+extern int mnt_split_optstr_sep(const char *optstr,
+			    char **user, char **vfs, char **fs,
+			    int ignore_user, int ignore_vfs, char *opt_sep);
 
 extern int mnt_split_optstr(const char *optstr,
 			    char **user, char **vfs, char **fs,
 			    int ignore_user, int ignore_vfs);
 
+extern int mnt_optstr_get_options_sep(const char *optstr, char **subset,
+				const struct libmnt_optmap *map, int ignore, char *opt_sep);
+
 extern int mnt_optstr_get_options(const char *optstr, char **subset,
                             const struct libmnt_optmap *map, int ignore);
 
+extern int mnt_optstr_get_flags_sep(const char *optstr, unsigned long *flags,
+				const struct libmnt_optmap *map, char *opt_sep);
+
 extern int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
 				const struct libmnt_optmap *map);
+
+extern int mnt_optstr_apply_flags_sep(char **optstr, unsigned long flags,
+                                const struct libmnt_optmap *map, char *opt_sep);
 
 extern int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
                                 const struct libmnt_optmap *map);
@@ -477,6 +507,9 @@ extern const char *mnt_fs_get_options(struct libmnt_fs *fs)
 extern const char *mnt_fs_get_optional_fields(struct libmnt_fs *fs)
 			__ul_attribute__((warn_unused_result));
 extern int mnt_fs_get_propagation(struct libmnt_fs *fs, unsigned long *flags);
+
+extern int mnt_fs_set_options_separator(struct libmnt_fs *fs,
+	const char *opt_sep);
 
 extern int mnt_fs_set_options(struct libmnt_fs *fs, const char *optstr);
 extern int mnt_fs_append_options(struct libmnt_fs *fs, const char *optstr);

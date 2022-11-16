@@ -404,7 +404,7 @@ static int is_associated_fs(const char *devname, struct libmnt_fs *fs)
 	optstr = mnt_fs_get_user_options(fs);
 
 	if (optstr &&
-	    mnt_optstr_get_option(optstr, "offset", &val, &valsz) == 0) {
+	    mnt_optstr_get_option_sep(optstr, "offset", &val, &valsz, fs->opt_sep) == 0) {
 		flags |= LOOPDEV_FL_OFFSET;
 
 		if (mnt_parse_offset(val, valsz, &offset) != 0)
@@ -429,7 +429,7 @@ static int prepare_helper_from_options(struct libmnt_context *cxt,
 	if (!opts)
 		return 0;
 
-	if (mnt_optstr_get_option(opts, name, &suffix, &valsz))
+	if (mnt_optstr_get_option_sep(opts, name, &suffix, &valsz, cxt->fs->opt_sep))
 		return 0;
 
 	suffix = strndup(suffix, valsz);
@@ -593,8 +593,9 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 	if (!optstr)
 		goto eperm;
 
-	if (mnt_optstr_get_flags(optstr, &u_flags,
-				mnt_get_builtin_optmap(MNT_USERSPACE_MAP)))
+	if (mnt_optstr_get_flags_sep(optstr, &u_flags,
+				mnt_get_builtin_optmap(MNT_USERSPACE_MAP),
+				cxt->fs->opt_sep))
 		goto eperm;
 
 	if (u_flags & MNT_MS_USERS) {
@@ -634,8 +635,8 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 
 		/* get options from utab */
 		optstr = mnt_fs_get_user_options(cxt->fs);
-		if (optstr && !mnt_optstr_get_option(optstr,
-					"user", &utab_user, &sz) && sz)
+		if (optstr && !mnt_optstr_get_option_sep(optstr,
+					"user", &utab_user, &sz, cxt->fs->opt_sep) && sz)
 			ok = !strncmp(curr_user, utab_user, sz);
 
 		free(curr_user);

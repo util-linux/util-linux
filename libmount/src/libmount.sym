@@ -371,4 +371,17 @@ MOUNT_2_39 {
 	mnt_context_enable_onlyonce;
 	mnt_context_is_lazy;
 	mnt_context_get_mountinfo_userdata;
+	mnt_fs_set_options_separator;
+	mnt_match_options_sep;
+	mnt_optstr_next_option_sep;
+	mnt_optstr_append_option_sep;
+	mnt_optstr_prepend_option_sep;
+	mnt_optstr_get_option_sep;
+	mnt_optstr_set_option_sep;
+	mnt_optstr_remove_option_sep;
+	mnt_optstr_deduplicate_option_sep;
+	mnt_split_optstr_sep;
+	mnt_optstr_get_options_sep;
+	mnt_optstr_get_flags_sep;
+	mnt_optstr_apply_flags_sep;
 } MOUNT_2_38;
