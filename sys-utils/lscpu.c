@@ -1000,7 +1000,7 @@ static void print_summary(struct lscpu_cxt *cxt)
 	if (ct && ct->addrsz)
 		add_summary_s(tb, sec, _("Address sizes:"), ct->addrsz);
 
-	if (sysfs_get_byteorder() == SYSFS_BYTEORDER_LITTLE)
+	if (sysfs_get_byteorder(NULL) == SYSFS_BYTEORDER_LITTLE)
 		add_summary_s(tb, sec, _("Byte Order:"), "Little Endian");
 	else
 		add_summary_s(tb, sec, _("Byte Order:"), "Big Endian");

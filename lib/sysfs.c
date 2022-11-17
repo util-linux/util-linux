@@ -1072,13 +1072,13 @@ char *sysfs_chrdev_devno_to_devname(dev_t devno, char *buf, size_t bufsiz)
 
 }
 
-enum sysfs_byteorder sysfs_get_byteorder(void)
+enum sysfs_byteorder sysfs_get_byteorder(struct path_cxt *pc)
 {
 	int rc;
 	char buf[BUFSIZ];
 	enum sysfs_byteorder ret;
 
-	rc = ul_path_read_buffer(NULL, buf, sizeof(buf), _PATH_SYS_CPU_BYTEORDER);
+	rc = ul_path_read_buffer(pc, buf, sizeof(buf), _PATH_SYS_CPU_BYTEORDER);
 	if (rc < 0)
 		goto unknown;
 

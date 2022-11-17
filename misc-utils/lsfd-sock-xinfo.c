@@ -637,7 +637,7 @@ static void load_xinfo_from_proc_inet_L3(ino_t netns_inode, const char *proc_fil
 		/* Unexpected line */
 		goto out;
 
-	enum sysfs_byteorder byteorder = sysfs_get_byteorder();
+	enum sysfs_byteorder byteorder = sysfs_get_byteorder(NULL);
 
 	while (fgets(line, sizeof(line), tcp_fp)) {
 		unsigned long local_addr;
