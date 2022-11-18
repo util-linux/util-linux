@@ -126,6 +126,12 @@ function ts_check_wcsspn {
 	fi
 }
 
+function ts_check_native_byteorder {
+	if [ "$QEMU_USER" == "1" ] && [ ! -e /sys/kernel/cpu_byteorder ]; then
+		ts_skip "non-native byteorder"
+	fi
+}
+
 function ts_report_skip {
 	ts_report " SKIPPED ($1)"
 }
