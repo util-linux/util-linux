@@ -14,6 +14,7 @@
 #include "superblocks.h"
 #include "crc32c.h"
 #include "crc64.h"
+#include "xxhash.h"
 
 #define SB_LABEL_SIZE      32
 
@@ -53,11 +54,13 @@ enum bcachefs_sb_csum_type {
 	BCACHEFS_SB_CSUM_TYPE_NONE = 0,
 	BCACHEFS_SB_CSUM_TYPE_CRC32C = 1,
 	BCACHEFS_SB_CSUM_TYPE_CRC64 = 2,
+	BCACHEFS_SB_CSUM_TYPE_XXHASH = 7,
 };
 
 union bcachefs_sb_csum {
 	uint32_t crc32c;
 	uint64_t crc64;
+	XXH64_hash_t xxh64;
 	uint8_t raw[16];
 } __attribute__((packed));
 
@@ -210,6 +213,10 @@ static int bcachefs_validate_checksum(blkid_probe pr, const struct bcachefs_supe
 		case BCACHEFS_SB_CSUM_TYPE_CRC64: {
 			uint64_t crc = ul_crc64_we(checksummed_data_start, checksummed_data_size);
 			return blkid_probe_verify_csum(pr, crc, le64_to_cpu(bcs->csum.crc64));
+		}
+		case BCACHEFS_SB_CSUM_TYPE_XXHASH: {
+			XXH64_hash_t xxh64 = XXH64(checksummed_data_start, checksummed_data_size, 0);
+			return blkid_probe_verify_csum(pr, xxh64, le64_to_cpu(bcs->csum.xxh64));
 		}
 		default:
 			DBG(LOWPROBE, ul_debug("bcachefs: unknown checksum type %d, ignoring.", checksum_type));
