@@ -17,6 +17,13 @@ export CXXFLAGS=${CXXFLAGS:-$flags}
 export OUT=${OUT:-$(pwd)/out}
 mkdir -p $OUT
 
+if [[ "$SANITIZER" == undefined ]]; then
+    additional_ubsan_checks=alignment
+    UBSAN_FLAGS="-fsanitize=$additional_ubsan_checks -fno-sanitize-recover=$additional_ubsan_checks"
+    CFLAGS+=" $UBSAN_FLAGS"
+    CXXFLAGS+=" $UBSAN_FLAGS"
+fi
+
 ./autogen.sh
 ./configure --disable-all-programs --enable-libuuid --enable-libfdisk --enable-last --enable-fuzzing-engine --enable-libmount --enable-libblkid
 make -j$(nproc) V=1 check-programs
