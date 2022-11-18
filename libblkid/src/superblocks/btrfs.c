@@ -20,15 +20,18 @@
 #include "superblocks.h"
 #include "crc32c.h"
 #include "sha256.h"
+#include "xxhash.h"
 
 enum btrfs_super_block_csum_type {
 	BTRFS_SUPER_BLOCK_CSUM_TYPE_CRC32C = 0,
+	BTRFS_SUPER_BLOCK_CSUM_TYPE_XXHASH = 1,
 	BTRFS_SUPER_BLOCK_CSUM_TYPE_SHA256 = 2,
 };
 
 union btrfs_super_block_csum {
 	uint8_t bytes[32];
 	uint32_t crc32c;
+	XXH64_hash_t xxh64;
 	uint8_t sha256[UL_SHA256LENGTH];
 };
 
@@ -226,6 +229,11 @@ static int btrfs_verify_csum(blkid_probe pr, const struct btrfs_super_block *bfs
 			uint32_t crc = ~crc32c(~0L, csum_data, csum_data_size);
 			return blkid_probe_verify_csum(pr, crc,
 					le32_to_cpu(bfs->csum.crc32c));
+		}
+		case BTRFS_SUPER_BLOCK_CSUM_TYPE_XXHASH: {
+			XXH64_hash_t xxh64 = XXH64(csum_data, csum_data_size, 0);
+			return blkid_probe_verify_csum(pr, xxh64,
+					le64_to_cpu(bfs->csum.xxh64));
 		}
 		case BTRFS_SUPER_BLOCK_CSUM_TYPE_SHA256: {
 			uint8_t sha256[UL_SHA256LENGTH];
