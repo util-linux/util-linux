@@ -19,14 +19,17 @@
 
 #include "superblocks.h"
 #include "crc32c.h"
+#include "sha256.h"
 
 enum btrfs_super_block_csum_type {
 	BTRFS_SUPER_BLOCK_CSUM_TYPE_CRC32C = 0,
+	BTRFS_SUPER_BLOCK_CSUM_TYPE_SHA256 = 2,
 };
 
 union btrfs_super_block_csum {
 	uint8_t bytes[32];
 	uint32_t crc32c;
+	uint8_t sha256[UL_SHA256LENGTH];
 };
 
 struct btrfs_super_block {
@@ -223,6 +226,12 @@ static int btrfs_verify_csum(blkid_probe pr, const struct btrfs_super_block *bfs
 			uint32_t crc = ~crc32c(~0L, csum_data, csum_data_size);
 			return blkid_probe_verify_csum(pr, crc,
 					le32_to_cpu(bfs->csum.crc32c));
+		}
+		case BTRFS_SUPER_BLOCK_CSUM_TYPE_SHA256: {
+			uint8_t sha256[UL_SHA256LENGTH];
+			ul_SHA256(sha256, csum_data, csum_data_size);
+			return blkid_probe_verify_csum_buf(pr, UL_SHA256LENGTH,
+					sha256, bfs->csum.sha256);
 		}
 		default:
 			DBG(LOWPROBE, ul_debug("(btrfs) unknown checksum type %d, skipping validation",
