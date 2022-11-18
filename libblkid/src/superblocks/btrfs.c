@@ -20,6 +20,10 @@
 #include "superblocks.h"
 #include "crc32c.h"
 
+enum btrfs_super_block_csum_type {
+	BTRFS_SUPER_BLOCK_CSUM_TYPE_CRC32C = 0,
+};
+
 union btrfs_super_block_csum {
 	uint8_t bytes[32];
 	uint32_t crc32c;
@@ -211,17 +215,20 @@ out:
 
 static int btrfs_verify_csum(blkid_probe pr, const struct btrfs_super_block *bfs)
 {
-	int csum_type = le16_to_cpu(bfs->csum_type);
-	if (csum_type != 0) {
-		DBG(LOWPROBE, ul_debug("(btrfs) unknown checksum type %d, skipping validation",
-				       csum_type));
-		return 1;
+	uint16_t csum_type = le16_to_cpu(bfs->csum_type);
+	const void *csum_data = (char *) bfs + sizeof(bfs->csum);
+	size_t csum_data_size = sizeof(*bfs) - sizeof(bfs->csum);
+	switch (csum_type) {
+		case BTRFS_SUPER_BLOCK_CSUM_TYPE_CRC32C: {
+			uint32_t crc = ~crc32c(~0L, csum_data, csum_data_size);
+			return blkid_probe_verify_csum(pr, crc,
+					le32_to_cpu(bfs->csum.crc32c));
+		}
+		default:
+			DBG(LOWPROBE, ul_debug("(btrfs) unknown checksum type %d, skipping validation",
+					       csum_type));
+			return 1;
 	}
-	uint32_t crc = crc32c(~0L, (char *) bfs + sizeof(bfs->csum),
-			sizeof(*bfs) - sizeof(bfs->csum)
-	);
-	crc ^= ~0L;
-	return blkid_probe_verify_csum(pr, crc, le32_to_cpu(bfs->csum.crc32c));
 }
 
 static int probe_btrfs(blkid_probe pr, const struct blkid_idmag *mag)
