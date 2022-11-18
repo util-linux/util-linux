@@ -889,15 +889,24 @@ int main(int argc, char **argv)
 
 	/* default if no --log-* specified */
 	if (!outfile && !infile) {
-		if (argc > 0)
+		if (argc > 0) {
 			outfile = argv[0];
-		else {
+			argc--;
+			argv++;
+		} else {
 			die_if_link(&ctl, DEFAULT_TYPESCRIPT_FILENAME);
 			outfile = DEFAULT_TYPESCRIPT_FILENAME;
 		}
 
 		/* associate stdout with typescript file */
 		log_associate(&ctl, &ctl.out, outfile, SCRIPT_FMT_RAW);
+	}
+
+	if (argc > 0) {
+		/* only one filename is accepted. if --log-out was given,
+		 * freestanding filename is ignored */
+		warnx(_("unexpected number of arguments"));
+		errtryhelp(EXIT_FAILURE);
 	}
 
 	if (timingfile) {
