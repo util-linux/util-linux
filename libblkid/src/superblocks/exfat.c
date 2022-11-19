@@ -167,6 +167,16 @@ static int probe_exfat(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!sb || !CLUSTER_SIZE(sb))
 		return errno ? -errno : BLKID_PROBE_NONE;
 
+	if (le16_to_cpu(sb->BootSignature) != 0xAA55)
+		return BLKID_PROBE_NONE;
+
+	if (memcmp(sb->JumpBoot, "\xEB\x76\x90", 3) != 0)
+		return BLKID_PROBE_NONE;
+
+	for (size_t i = 0; i < sizeof(sb->MustBeZero); i++)
+		if (sb->MustBeZero[i] != 0x00)
+			return BLKID_PROBE_NONE;
+
 	if (!exfat_validate_checksum(pr, sb))
 		return BLKID_PROBE_NONE;
 
