@@ -1780,16 +1780,34 @@ int blkid_probe_set_magic(blkid_probe pr, uint64_t offset,
 	return rc;
 }
 
-int blkid_probe_verify_csum(blkid_probe pr, uint64_t csum, uint64_t expected)
+static void blkid_probe_log_csum_mismatch(blkid_probe pr, size_t n, const void *csum,
+		const void *expected)
 {
-	if (csum != expected) {
+	char csum_hex[256];
+	char expected_hex[sizeof(csum_hex)];
+	int hex_size = min(sizeof(csum_hex), n * 2);
+
+	for (int i = 0; i < hex_size; i+=2) {
+		sprintf(&csum_hex[i], "%02X", ((const unsigned char *) csum)[i / 2]);
+		sprintf(&expected_hex[i], "%02X", ((const unsigned char *) expected)[i / 2]);
+	}
+
+	ul_debug(
+		"incorrect checksum for type %s,"
+		" got %*s, expected %*s",
+		blkid_probe_get_probername(pr),
+		hex_size, csum_hex, hex_size, expected_hex);
+}
+
+
+int blkid_probe_verify_csum_buf(blkid_probe pr, size_t n, const void *csum,
+		const void *expected)
+{
+	if (memcmp(csum, expected, n) != 0) {
 		struct blkid_chain *chn = blkid_probe_get_chain(pr);
 
-		DBG(LOWPROBE, ul_debug(
-				"incorrect checksum for type %s,"
-				" got %"PRIX64", expected %"PRIX64"",
-				blkid_probe_get_probername(pr),
-				csum, expected));
+		ON_DBG(LOWPROBE, blkid_probe_log_csum_mismatch(pr, n, csum, expected));
+
 		/*
 		 * Accept bad checksum if BLKID_SUBLKS_BADCSUM flags is set
 		 */
@@ -1803,6 +1821,11 @@ int blkid_probe_verify_csum(blkid_probe pr, uint64_t csum, uint64_t expected)
 
 accept:
 	return 1;
+}
+
+int blkid_probe_verify_csum(blkid_probe pr, uint64_t csum, uint64_t expected)
+{
+	return blkid_probe_verify_csum_buf(pr, sizeof(csum), &csum, &expected);
 }
 
 /**
