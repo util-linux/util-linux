@@ -158,26 +158,66 @@ static int exfat_validate_checksum(blkid_probe pr,
 	return 1;
 }
 
+static int exfat_valid_superblock(blkid_probe pr, const struct exfat_super_block *sb)
+{
+	if (le16_to_cpu(sb->BootSignature) != 0xAA55)
+		return 0;
+
+	if (!CLUSTER_SIZE(sb))
+		return 0;
+
+	if (memcmp(sb->JumpBoot, "\xEB\x76\x90", 3) != 0)
+		return 0;
+
+	for (size_t i = 0; i < sizeof(sb->MustBeZero); i++)
+		if (sb->MustBeZero[i] != 0x00)
+			return 0;
+
+	if (!exfat_validate_checksum(pr, sb))
+		return 0;
+
+	return 1;
+}
+
+/* function prototype to avoid warnings (duplicate in partitions/dos.c) */
+extern int blkid_probe_is_exfat(blkid_probe pr);
+
+/*
+ * This function is used by MBR partition table parser to avoid
+ * misinterpretation of exFAT filesystem.
+ */
+int blkid_probe_is_exfat(blkid_probe pr)
+{
+	struct exfat_super_block *sb;
+	const struct blkid_idmag *mag = NULL;
+	int rc;
+
+	rc = blkid_probe_get_idmag(pr, &vfat_idinfo, NULL, &mag);
+	if (rc < 0)
+		return rc;	/* error */
+	if (rc != BLKID_PROBE_OK || !mag)
+		return 0;
+
+	sb = blkid_probe_get_sb(pr, mag, struct exfat_super_block);
+	if (!sb)
+		return 0;
+
+	if (memcmp(sb->FileSystemName, "EXFAT   ", 8) != 0)
+		return 0;
+
+	return exfat_valid_superblock(pr, sb);
+}
+
 static int probe_exfat(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct exfat_super_block *sb;
 	struct exfat_entry_label *label;
 
 	sb = blkid_probe_get_sb(pr, mag, struct exfat_super_block);
-	if (!sb || !CLUSTER_SIZE(sb))
+	if (!sb)
 		return errno ? -errno : BLKID_PROBE_NONE;
 
-	if (le16_to_cpu(sb->BootSignature) != 0xAA55)
-		return BLKID_PROBE_NONE;
-
-	if (memcmp(sb->JumpBoot, "\xEB\x76\x90", 3) != 0)
-		return BLKID_PROBE_NONE;
-
-	for (size_t i = 0; i < sizeof(sb->MustBeZero); i++)
-		if (sb->MustBeZero[i] != 0x00)
-			return BLKID_PROBE_NONE;
-
-	if (!exfat_validate_checksum(pr, sb))
+	if (!exfat_valid_superblock(pr, sb))
 		return BLKID_PROBE_NONE;
 
 	label = find_label(pr, sb);
