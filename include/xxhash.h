@@ -76,6 +76,10 @@ XXH64       13.8 GB/s            1.9 GB/s
 XXH32        6.8 GB/s            6.0 GB/s
 */
 
+/* util-linux customizations */
+#define XXH_NO_XXH3
+#define XXH_NAMESPACE ul_
+
 #if defined (__cplusplus)
 extern "C" {
 #endif
