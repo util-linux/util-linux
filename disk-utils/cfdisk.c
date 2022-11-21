@@ -124,12 +124,14 @@ enum {
 	CFDISK_CL_FREESPACE,
 	CFDISK_CL_INFO
 };
+#ifdef HAVE_USE_DEFAULT_COLORS
 static const int color_pairs[][2] = {
 	/* color            foreground, background */
 	[CFDISK_CL_WARNING]   = { COLOR_RED, -1 },
 	[CFDISK_CL_FREESPACE] = { COLOR_GREEN, -1 },
 	[CFDISK_CL_INFO]      = { COLOR_BLUE, -1 }
 };
+#endif
 
 struct cfdisk;
 
