@@ -111,7 +111,7 @@ for phase in "${PHASES[@]}"; do
         CC="$CC" CXX="$CXX" CFLAGS="${CFLAGS[@]}" CXXFLAGS="${CXXFLAGS[@]}" LDFLAGS="${LDFLAGS[@]}" ./configure "${opts[@]}"
         ;;
     MAKE)
-        make -j"$(nproc)"
+        make -j"$(nproc)" V=1
         make -j"$(nproc)" check-programs
         ;;
     INSTALL)
