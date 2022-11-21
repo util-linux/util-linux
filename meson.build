@@ -734,6 +734,7 @@ conf.set('USE_HWCLOCK_CMOS', use_hwclock_cmos ? 1 : false)
 
 conf.set('HAVE_TLS', get_option('use-tls') ? 1 : false)
 conf.set('PG_BELL', get_option('pg-bell') ? 1 : false)
+conf.set('USE_COLORS_BY_DEFAULT', get_option('colors-default') ? 1 : false)
 
 ############################################################
 
