@@ -378,7 +378,9 @@ static inline int cmp_total(const struct irq_info *a,
 static inline int cmp_delta(const struct irq_info *a,
 		      const struct irq_info *b)
 {
-	return a->delta < b->delta;
+	if (a->delta != b->delta)
+		return a->delta < b->delta;
+	return cmp_name(a, b);
 }
 
 static inline int cmp_interrupts(const struct irq_info *a,
