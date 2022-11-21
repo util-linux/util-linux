@@ -19,6 +19,8 @@
 
 /* see superblocks/vfat.c */
 extern int blkid_probe_is_vfat(blkid_probe pr);
+/* see superblocks/exfat.c */
+extern int blkid_probe_is_exfat(blkid_probe pr);
 
 static const struct dos_subtypes {
 	unsigned char type;
@@ -218,7 +220,7 @@ static int probe_dos_pt(blkid_probe pr,
 	 * either the boot sector of a FAT filesystem or a DOS-type
 	 * partition table.
 	 */
-	if (blkid_probe_is_vfat(pr) == 1) {
+	if (blkid_probe_is_vfat(pr) == 1 || blkid_probe_is_exfat(pr) == 1) {
 		DBG(LOWPROBE, ul_debug("probably FAT -- ignore"));
 		goto nothing;
 	}

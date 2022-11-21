@@ -7,27 +7,30 @@
 #include "superblocks.h"
 
 struct exfat_super_block {
-	uint8_t jump[3];
-	uint8_t oem_name[8];
-	uint8_t	__unused1[53];
-	uint64_t block_start;
-	uint64_t block_count;
-	uint32_t fat_block_start;
-	uint32_t fat_block_count;
-	uint32_t cluster_block_start;
-	uint32_t cluster_count;
-	uint32_t rootdir_cluster;
-	uint8_t volume_serial[4];
+	uint8_t JumpBoot[3];
+	uint8_t FileSystemName[8];
+	uint8_t MustBeZero[53];
+	uint64_t PartitionOffset;
+	uint64_t VolumeLength;
+	uint32_t FatOffset;
+	uint32_t FatLength;
+	uint32_t ClusterHeapOffset;
+	uint32_t ClusterCount;
+	uint32_t FirstClusterOfRootDirectory;
+	uint8_t VolumeSerialNumber[4];
 	struct {
 		uint8_t vermin;
 		uint8_t vermaj;
-	} version;
-	uint16_t volume_state;
-	uint8_t block_bits;
-	uint8_t bpc_bits;
-	uint8_t fat_count;
-	uint8_t drive_no;
-	uint8_t allocated_percent;
+	} FileSystemRevision;
+	uint16_t VolumeFlags;
+	uint8_t BytesPerSectorShift;
+	uint8_t SectorsPerClusterShift;
+	uint8_t NumberOfFats;
+	uint8_t DriveSelect;
+	uint8_t PercentInUse;
+	uint8_t Reserved[7];
+	uint8_t BootCode[390];
+	uint16_t BootSignature;
 } __attribute__((__packed__));
 
 struct exfat_entry_label {
@@ -37,8 +40,8 @@ struct exfat_entry_label {
 	uint8_t reserved[8];
 } __attribute__((__packed__));
 
-#define BLOCK_SIZE(sb) ((sb)->block_bits < 32 ? (1u << (sb)->block_bits) : 0)
-#define CLUSTER_SIZE(sb) ((sb)->bpc_bits < 32 ? (BLOCK_SIZE(sb) << (sb)->bpc_bits) : 0)
+#define BLOCK_SIZE(sb) ((sb)->BytesPerSectorShift < 32 ? (1u << (sb)->BytesPerSectorShift) : 0)
+#define CLUSTER_SIZE(sb) ((sb)->SectorsPerClusterShift < 32 ? (BLOCK_SIZE(sb) << (sb)->SectorsPerClusterShift) : 0)
 #define EXFAT_FIRST_DATA_CLUSTER 2
 #define EXFAT_LAST_DATA_CLUSTER 0xffffff6
 #define EXFAT_ENTRY_SIZE 32
@@ -49,15 +52,15 @@ struct exfat_entry_label {
 static uint64_t block_to_offset(const struct exfat_super_block *sb,
 		uint64_t block)
 {
-	return block << sb->block_bits;
+	return block << sb->BytesPerSectorShift;
 }
 
 static uint64_t cluster_to_block(const struct exfat_super_block *sb,
 		uint32_t cluster)
 {
-	return le32_to_cpu(sb->cluster_block_start) +
+	return le32_to_cpu(sb->ClusterHeapOffset) +
 			((uint64_t) (cluster - EXFAT_FIRST_DATA_CLUSTER)
-					<< sb->bpc_bits);
+					<< sb->SectorsPerClusterShift);
 }
 
 static uint64_t cluster_to_offset(const struct exfat_super_block *sb,
@@ -72,7 +75,7 @@ static uint32_t next_cluster(blkid_probe pr,
 	uint32_t *next;
 	uint64_t fat_offset;
 
-	fat_offset = block_to_offset(sb, le32_to_cpu(sb->fat_block_start))
+	fat_offset = block_to_offset(sb, le32_to_cpu(sb->FatOffset))
 		+ (uint64_t) cluster * sizeof(cluster);
 	next = (uint32_t *) blkid_probe_get_buffer(pr, fat_offset,
 			sizeof(uint32_t));
@@ -84,7 +87,7 @@ static uint32_t next_cluster(blkid_probe pr,
 static struct exfat_entry_label *find_label(blkid_probe pr,
 		const struct exfat_super_block *sb)
 {
-	uint32_t cluster = le32_to_cpu(sb->rootdir_cluster);
+	uint32_t cluster = le32_to_cpu(sb->FirstClusterOfRootDirectory);
 	uint64_t offset = cluster_to_offset(sb, cluster);
 	uint8_t *entry;
 	const size_t max_iter = 10000;
@@ -155,16 +158,66 @@ static int exfat_validate_checksum(blkid_probe pr,
 	return 1;
 }
 
+static int exfat_valid_superblock(blkid_probe pr, const struct exfat_super_block *sb)
+{
+	if (le16_to_cpu(sb->BootSignature) != 0xAA55)
+		return 0;
+
+	if (!CLUSTER_SIZE(sb))
+		return 0;
+
+	if (memcmp(sb->JumpBoot, "\xEB\x76\x90", 3) != 0)
+		return 0;
+
+	for (size_t i = 0; i < sizeof(sb->MustBeZero); i++)
+		if (sb->MustBeZero[i] != 0x00)
+			return 0;
+
+	if (!exfat_validate_checksum(pr, sb))
+		return 0;
+
+	return 1;
+}
+
+/* function prototype to avoid warnings (duplicate in partitions/dos.c) */
+extern int blkid_probe_is_exfat(blkid_probe pr);
+
+/*
+ * This function is used by MBR partition table parser to avoid
+ * misinterpretation of exFAT filesystem.
+ */
+int blkid_probe_is_exfat(blkid_probe pr)
+{
+	struct exfat_super_block *sb;
+	const struct blkid_idmag *mag = NULL;
+	int rc;
+
+	rc = blkid_probe_get_idmag(pr, &vfat_idinfo, NULL, &mag);
+	if (rc < 0)
+		return rc;	/* error */
+	if (rc != BLKID_PROBE_OK || !mag)
+		return 0;
+
+	sb = blkid_probe_get_sb(pr, mag, struct exfat_super_block);
+	if (!sb)
+		return 0;
+
+	if (memcmp(sb->FileSystemName, "EXFAT   ", 8) != 0)
+		return 0;
+
+	return exfat_valid_superblock(pr, sb);
+}
+
 static int probe_exfat(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct exfat_super_block *sb;
 	struct exfat_entry_label *label;
 
 	sb = blkid_probe_get_sb(pr, mag, struct exfat_super_block);
-	if (!sb || !CLUSTER_SIZE(sb))
+	if (!sb)
 		return errno ? -errno : BLKID_PROBE_NONE;
 
-	if (!exfat_validate_checksum(pr, sb))
+	if (!exfat_valid_superblock(pr, sb))
 		return BLKID_PROBE_NONE;
 
 	label = find_label(pr, sb);
@@ -175,16 +228,17 @@ static int probe_exfat(blkid_probe pr, const struct blkid_idmag *mag)
 	else if (errno)
 		return -errno;
 
-	blkid_probe_sprintf_uuid(pr, sb->volume_serial, 4,
+	blkid_probe_sprintf_uuid(pr, sb->VolumeSerialNumber, 4,
 			"%02hhX%02hhX-%02hhX%02hhX",
-			sb->volume_serial[3], sb->volume_serial[2],
-			sb->volume_serial[1], sb->volume_serial[0]);
+			sb->VolumeSerialNumber[3], sb->VolumeSerialNumber[2],
+			sb->VolumeSerialNumber[1], sb->VolumeSerialNumber[0]);
 
 	blkid_probe_sprintf_version(pr, "%u.%u",
-			sb->version.vermaj, sb->version.vermin);
+			sb->FileSystemRevision.vermaj, sb->FileSystemRevision.vermin);
 
 	blkid_probe_set_fsblocksize(pr, BLOCK_SIZE(sb));
 	blkid_probe_set_block_size(pr, BLOCK_SIZE(sb));
+	blkid_probe_set_fssize(pr, BLOCK_SIZE(sb) * le64_to_cpu(sb->VolumeLength));
 
 	return BLKID_PROBE_OK;
 }
