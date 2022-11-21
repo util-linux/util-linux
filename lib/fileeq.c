@@ -423,7 +423,7 @@ static ssize_t get_digest(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 	sz = eq->method->digsiz;
 
 	if (!data->blocks) {
-		DBG(DATA, ul_debugobj(data, "  alloc cache %zu", eq->blocksmax * sz));
+		DBG(DATA, ul_debugobj(data, "  alloc cache %" PRIu64, eq->blocksmax * sz));
 		data->blocks = malloc(eq->blocksmax * sz);
 		if (!data->blocks)
 			return -ENOMEM;

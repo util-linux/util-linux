@@ -369,7 +369,7 @@ static void load_xinfo_from_proc_unix(ino_t netns_inode)
 		struct unix_xinfo *ux;
 
 		memset(path, 0, sizeof(path));
-		if (sscanf(line, "%*x: %*x %*x %lx %x %x %lu %s",
+		if (sscanf(line, "%*x: %*x %*x %" SCNx64 " %x %x %lu %s",
 			   &flags, &type, &st, &inode, path) < 4)
 			continue;
 
