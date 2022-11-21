@@ -211,7 +211,8 @@ extern int string_add_to_idarray(const char *list, int ary[],
 				 int (name2id)(const char *, size_t));
 
 extern int string_to_bitarray(const char *list, char *ary,
-			    int (*name2bit)(const char *, size_t));
+			    int (*name2bit)(const char *, size_t),
+			    size_t allow_range);
 
 extern int string_to_bitmask(const char *list,
 			     unsigned long *mask,

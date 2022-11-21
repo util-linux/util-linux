@@ -84,6 +84,14 @@ Restrict output to the given (comma-separated) _list_ of levels. For example:
 *dmesg --level=err,warn*
 +
 will print error and warning messages only. For all supported levels see the *--help* output.
++
+Appending a plus *+* to a level name also includes all higher levels. For example:
++
+*dmesg --level=err+*
++
+will print levels *err*, *crit*, *alert* and *emerg*.
++
+Prepending it will include all lower levels.
 
 *-n*, *--console-level* _level_::
 Set the _level_ at which printing of messages is done to the console. The _level_ is a level number or abbreviation of the level name. For all supported levels see the *--help* output.

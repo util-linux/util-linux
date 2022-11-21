@@ -1475,7 +1475,7 @@ int main(int argc, char *argv[])
 		case 'f':
 			ctl.fltr_fac = 1;
 			if (string_to_bitarray(optarg,
-					     ctl.facilities, parse_facility) < 0)
+					     ctl.facilities, parse_facility, 0) < 0)
 				return EXIT_FAILURE;
 			break;
 		case 'H':
@@ -1499,7 +1499,8 @@ int main(int argc, char *argv[])
 		case 'l':
 			ctl.fltr_lev= 1;
 			if (string_to_bitarray(optarg,
-					     ctl.levels, parse_level) < 0)
+					     ctl.levels, parse_level,
+					     ARRAY_SIZE(level_names)) < 0)
 				return EXIT_FAILURE;
 			break;
 		case 'n':

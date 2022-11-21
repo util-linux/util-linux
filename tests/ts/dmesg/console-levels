@@ -27,4 +27,10 @@ for I in {-1..8}; do
 	$TS_HELPER_DMESG -F $TS_SELF/input -l $I >> $TS_OUTPUT 2>/dev/null
 done
 
+$TS_HELPER_DMESG -F $TS_SELF/input -l err+ >> $TS_OUTPUT 2>/dev/null
+$TS_HELPER_DMESG -F $TS_SELF/input -l emerg+ >> $TS_OUTPUT 2>/dev/null
+$TS_HELPER_DMESG -F $TS_SELF/input -l +err >> $TS_OUTPUT 2>/dev/null
+$TS_HELPER_DMESG -F $TS_SELF/input -l +debug >> $TS_OUTPUT 2>/dev/null
+$TS_HELPER_DMESG -F $TS_SELF/input -l + 2>> $TS_OUTPUT >/dev/null
+
 ts_finalize

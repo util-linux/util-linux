@@ -724,11 +724,16 @@ int string_add_to_idarray(const char *list, int ary[], size_t arysz,
  * as a position in the 'ary' bit array. It means that the 'id' has to be in
  * range <0..N> where N < sizeof(ary) * NBBY.
  *
+ * If allow_range is enabled:
+ * An item ending in '+' also sets all bits in <0..N>.
+ * An item beginning with '+' also sets all bits in <N..allow_minus>.
+ *
  * Returns: 0 on success, <0 on error.
  */
 int string_to_bitarray(const char *list,
 		     char *ary,
-		     int (*name2bit)(const char *, size_t))
+		     int (*name2bit)(const char *, size_t),
+		     size_t allow_range)
 {
 	const char *begin = NULL, *p;
 
@@ -737,7 +742,7 @@ int string_to_bitarray(const char *list,
 
 	for (p = list; p && *p; p++) {
 		const char *end = NULL;
-		int bit;
+		int bit, set_lower = 0, set_higher = 0;
 
 		if (!begin)
 			begin = p;		/* begin of the level name */
@@ -749,11 +754,26 @@ int string_to_bitarray(const char *list,
 			continue;
 		if (end <= begin)
 			return -1;
+		if (allow_range) {
+			if (*(end - 1) == '+') {
+				end--;
+				set_lower = 1;
+			} else if (*begin == '+') {
+				begin++;
+				set_higher = 1;
+			}
+		}
 
 		bit = name2bit(begin, end - begin);
 		if (bit < 0)
 			return bit;
 		setbit(ary, bit);
+		if (set_lower)
+			while (--bit >= 0)
+				setbit(ary, bit);
+		else if (set_higher)
+			while (++bit < (int) allow_range)
+				setbit(ary, bit);
 		begin = NULL;
 		if (end && !*end)
 			break;
