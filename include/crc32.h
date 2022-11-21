@@ -1,5 +1,5 @@
-#ifndef UL_NG_CRC32_H
-#define UL_NG_CRC32_H
+#ifndef UL_CRC32_H
+#define UL_CRC32_H
 
 #include <sys/types.h>
 #include <stdint.h>

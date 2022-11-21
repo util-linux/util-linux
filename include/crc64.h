@@ -1,5 +1,5 @@
-#ifndef UL_NG_CRC64_H
-#define UL_NG_CRC64_H
+#ifndef UL_CRC64_H
+#define UL_CRC64_H
 
 #include <sys/types.h>
 #include <stdint.h>
