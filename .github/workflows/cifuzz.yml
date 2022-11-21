@@ -27,6 +27,10 @@ jobs:
       fail-fast: false
       matrix:
         sanitizer: [address, undefined, memory]
+        architecture: [x86_64]
+        include:
+          - sanitizer: address
+            architecture: i386
     steps:
       - name: Build Fuzzers (${{ matrix.sanitizer }})
         id: build
@@ -36,6 +40,7 @@ jobs:
           dry-run: false
           allowed-broken-targets-percentage: 0
           sanitizer: ${{ matrix.sanitizer }}
+          architecture: ${{ matrix.architecture }}
       - name: Run Fuzzers (${{ matrix.sanitizer }})
         uses: google/oss-fuzz/infra/cifuzz/actions/run_fuzzers@master
         with:
@@ -47,5 +52,5 @@ jobs:
         uses: actions/upload-artifact@v1
         if: failure() && steps.build.outcome == 'success'
         with:
-          name: ${{ matrix.sanitizer }}-artifacts
+          name: ${{ matrix.sanitizer }}-${{ matrix.architecture }}-artifacts
           path: ./out/artifacts
