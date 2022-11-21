@@ -28,6 +28,7 @@ jobs:
           - { COMPILER: "gcc",   COMPILER_VERSION: "10", SANITIZE: "no"   }
           - { COMPILER: "clang", COMPILER_VERSION: "10", SANITIZE: "yes"  }
           - { COMPILER: "clang", COMPILER_VERSION: "10", SANITIZE: "no"   }
+          - { COMPILER: "gcc",   COMPILER_VERSION: "10", SANITIZE: "no", CFLAGS: "-m32" }
     env: ${{ matrix.env }}
     steps:
       - name: Repository checkout

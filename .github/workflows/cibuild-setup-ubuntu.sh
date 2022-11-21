@@ -59,6 +59,9 @@ elif [[ "$COMPILER" == gcc ]]; then
     # https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/test
     add-apt-repository -y ppa:ubuntu-toolchain-r/test
     PACKAGES+=(gcc-$COMPILER_VERSION)
+    if [[ "$CFLAGS" == *"-m32"* ]]; then
+      PACKAGES+=(gcc-$COMPILER_VERSION-multilib)
+    fi
 else
     fatal "Unknown compiler: $COMPILER"
 fi

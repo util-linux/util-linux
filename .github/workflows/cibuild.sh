@@ -5,9 +5,9 @@ set -ex
 PHASES=(${@:-CONFIGURE MAKE INSTALL CHECK DISTCHECK})
 COMPILER="${COMPILER:?}"
 COMPILER_VERSION="${COMPILER_VERSION}"
-CFLAGS=(-O1 -g)
-CXXFLAGS=(-O1 -g)
-LDFLAGS=()
+CFLAGS+=(-O1 -g)
+CXXFLAGS+=(-O1 -g)
+LDFLAGS+=()
 COVERITY_SCAN_TOOL_BASE="/tmp/coverity-scan-analysis"
 
 # The project is still called "karelzak/util-linux" on Coverity
