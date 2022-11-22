@@ -39,7 +39,7 @@ struct erofs_super_block {
 	uint8_t		volume_name[16];
 	uint32_t	feature_incompat;
 	uint8_t		reserved2[44];
-};
+} __attribute__((packed));
 
 static int erofs_verify_checksum(blkid_probe pr, const struct blkid_idmag *mag,
 		const struct erofs_super_block *sb)
