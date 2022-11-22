@@ -1205,11 +1205,6 @@ AC_SUBST([LIBMOUNT_PATCH_VERSION], $PACKAGE_VERSION_RELEASE)
 AC_SUBST([LIBMOUNT_VERSION_INFO])
 AC_DEFINE_UNQUOTED([LIBMOUNT_VERSION], ["$LIBMOUNT_VERSION"], [libmount version string])
 
-AC_ARG_ENABLE([libmount-support-mtab],
-  AS_HELP_STRING([--enable-libmount-support-mtab], [support /etc/mtab (default is use /proc/self/mountinfo)]),
-  [], [enable_libmount_support_mtab=no]
-)
-
 AC_ARG_ENABLE([libmount-mountfd-support],
   AS_HELP_STRING([--disable-libmount-mountfd-support], [do not use new mount API based on FDs]),
   [], [enable_libmount_mountfd_support=check]
