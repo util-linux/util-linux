@@ -938,7 +938,7 @@ static int do_umount(struct libmnt_context *cxt)
 int mnt_context_prepare_umount(struct libmnt_context *cxt)
 {
 	int rc;
-	unsigned long flags;
+	unsigned long flags = 0;
 	struct libmnt_ns *ns_old;
 
 	if (!cxt || !cxt->fs || mnt_fs_is_swaparea(cxt->fs))
