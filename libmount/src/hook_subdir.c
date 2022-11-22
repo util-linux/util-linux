@@ -155,7 +155,7 @@ static int do_mount_subdir(
 {
 	int rc = 0;
 
-#ifdef UL_HAVE_MOUNT_API
+#ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
 	struct libmnt_sysapi *api;
 
 	api = mnt_context_get_sysapi(cxt);

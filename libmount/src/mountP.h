@@ -638,7 +638,7 @@ extern int mnt_update_already_done(struct libmnt_update *upd,
 extern uint64_t btrfs_get_default_subvol_id(const char *path);
 #endif
 
-#ifdef UL_HAVE_MOUNT_API
+#ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
 /* fsconfig/fsopen based stuff */
 struct libmnt_sysapi {
 	int	fd_fs;		/* FD from fsopen() or fspick() */

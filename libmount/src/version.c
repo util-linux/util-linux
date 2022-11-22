@@ -38,8 +38,10 @@ static const char *lib_features[] = {
 #ifdef USE_LIBMOUNT_SUPPORT_NAMESPACES
 	"namespaces",
 #endif
-#ifdef UL_HAVE_MOUNT_API
+#ifdef HAVE_MOUNTFD_API
 	"idmapping",
+#endif
+#ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
 	"fd-based-mount",
 #endif
 #if !defined(NDEBUG)

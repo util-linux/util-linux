@@ -746,7 +746,7 @@ int mnt_optlist_get_flags(struct libmnt_optlist *ls, unsigned long *flags,
 	return 0;
 }
 
-#ifdef UL_HAVE_MOUNT_API
+#ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
 static inline uint64_t flag_to_attr(unsigned long flag)
 {
 	switch (flag) {
@@ -775,7 +775,7 @@ static inline uint64_t flag_to_attr(unsigned long flag)
  * Like mnt_optlist_get_flags() for VFS flags, but converts classic MS_* flags to
  * new MOUNT_ATTR_*
  */
-#ifdef UL_HAVE_MOUNT_API
+#ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
 int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *clr)
 {
 	struct libmnt_iter itr;
@@ -821,7 +821,7 @@ int mnt_optlist_get_attrs(struct libmnt_optlist *ls __attribute__((__unused__)),
 {
 	return 0;
 }
-#endif /* UL_HAVE_MOUNT_API */
+#endif /* USE_LIBMOUNT_MOUNTFD_SUPPORT */
 
 int mnt_optlist_strdup_optstr(struct libmnt_optlist *ls, char **optstr,
 			const struct libmnt_optmap *map, unsigned int what)

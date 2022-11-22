@@ -282,7 +282,7 @@ static int hook_prepare(struct libmnt_context *cxt,
 	assert(cxt);
 	assert(hs == &hookset_mount_legacy);
 
-#ifdef UL_HAVE_MOUNT_API
+#ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
 	/* do nothing when a new __mount succesfully registred */
 	if (mnt_context_has_hook(cxt, &hookset_mount, 0, NULL))
 		return 0;

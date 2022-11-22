@@ -29,7 +29,7 @@
 # include <linux/nsfs.h>
 #endif
 
-#ifdef UL_HAVE_MOUNT_API
+#ifdef HAVE_MOUNTFD_API
 
 typedef enum idmap_type_t {
 	ID_TYPE_UID,	/* uidmap entry */
@@ -486,4 +486,4 @@ const struct libmnt_hookset hookset_idmap =
 	.deinit = hookset_deinit
 };
 
-#endif /* UL_HAVE_MOUNT_API */
+#endif /* HAVE_MOUNTFD_API */

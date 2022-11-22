@@ -1,7 +1,8 @@
 #ifndef UTIL_LINUX_MOUNT_API_UTILS
 #define UTIL_LINUX_MOUNT_API_UTILS
 
-#if defined(__linux__)
+#ifdef HAVE_MOUNTFD_API
+
 #include <sys/syscall.h>
 #include <linux/mount.h>
 
@@ -186,22 +187,6 @@ static inline int fspick(int dfd, const char *pathname, unsigned int flags)
 }
 #endif
 
-
-/*
- * UL_HAVE_MOUNT_API is used by applications to check that all new mount API is
- * avalable.
- */
-#if defined(SYS_open_tree) && \
-    defined(SYS_mount_setattr) && \
-    defined(SYS_move_mount) && \
-    defined(SYS_fsconfig) && \
-    defined(SYS_fsopen) && \
-    defined(SYS_fsmount) && \
-    defined(SYS_fspick)
-
-# define UL_HAVE_MOUNT_API 1
-#endif
-
-#endif /* __linux__ */
+#endif /* HAVE_MOUNTFD_API */
 #endif /* UTIL_LINUX_MOUNT_API_UTILS */
 

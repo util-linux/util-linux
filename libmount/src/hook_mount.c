@@ -46,7 +46,7 @@
 #include "mountP.h"
 #include <inttypes.h>
 
-#ifdef UL_HAVE_MOUNT_API
+#ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
 
 #define get_sysapi(_cxt) mnt_context_get_sysapi(_cxt)
 
@@ -590,4 +590,4 @@ const struct libmnt_hookset hookset_mount =
 
 	.deinit = hookset_deinit
 };
-#endif /* UL_HAVE_MOUNT_API */
+#endif /* USE_LIBMOUNT_MOUNTFD_SUPPORT */

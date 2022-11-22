@@ -635,6 +635,20 @@ UL_CHECK_SYSCALL([mount_setattr])
 UL_CHECK_SYSCALL([move_mount])
 UL_CHECK_SYSCALL([open_tree])
 
+AS_IF([test "x$ul_cv_syscall_fsconfig" = xno ||
+       test "x$ul_cv_syscall_fsmount" = xno ||
+       test "x$ul_cv_syscall_fsopen" = xno ||
+       test "x$ul_cv_syscall_fspick" = xno ||
+       test "x$ul_cv_syscall_mount_setattr" = xno ||
+       test "x$ul_cv_syscall_move_mount" = xno ||
+       test "x$ul_cv_syscall_open_tree" = xno],
+   [
+	have_mountfd_api="no"
+   ],[
+        have_mountfd_api="yes"
+	AC_DEFINE([HAVE_MOUNTFD_API], [1], [Define to 1 if you want mount API based on FDs.])
+   ])
+
 
 AC_CHECK_FUNCS([isnan], [],
 	[AC_CHECK_LIB([m], [isnan], [MATH_LIBS="-lm"])]
@@ -1195,6 +1209,19 @@ AC_ARG_ENABLE([libmount-support-mtab],
   AS_HELP_STRING([--enable-libmount-support-mtab], [support /etc/mtab (default is use /proc/self/mountinfo)]),
   [], [enable_libmount_support_mtab=no]
 )
+
+AC_ARG_ENABLE([libmount-mountfd-support],
+  AS_HELP_STRING([--disable-libmount-mountfd-support], [do not use new mount API based on FDs]),
+  [], [enable_libmount_mountfd_support=check]
+)
+UL_BUILD_INIT([libmount_mountfd_support])
+UL_REQUIRES_BUILD([libmount_mountfd_support], [libmount])
+UL_REQUIRES_LINUX([libmount_mountfd_support])
+UL_REQUIRES_HAVE([libmount_mountfd_support], [mountfd_api], [mount FDs based API])
+AS_IF([test "x$build_libmount_mountfd_support" = xyes ], [
+  AC_DEFINE([USE_LIBMOUNT_MOUNTFD_SUPPORT], [1], [Enable support for new mount FD based kernel API])
+])
+
 
 dnl
 dnl libsmartcols
