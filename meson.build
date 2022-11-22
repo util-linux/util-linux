@@ -77,9 +77,14 @@ build_libuuid = not get_option('build-libuuid').disabled()
 conf.set('HAVE_LIBUUID', build_libuuid ? 1 : false)
 summary('libuuid', build_libuuid ? 'enabled' : 'disabled', section : 'components')
 
+have_mountfd_api = cc.sizeof('struct mount_attr', prefix : '#include <linux/mount.h>') > 0
+conf.set('HAVE_STRUCT_MOUNT_ATTR', have_mountfd_api ? 1 : false)
+conf.set('HAVE_MOUNTFD_API', have_mountfd_api ? 1 : false)
+
 build_libmount = not get_option('build-libmount').disabled()
 conf.set('HAVE_LIBMOUNT', build_libmount ? 1 : false)
 conf.set('USE_LIBMOUNT_SUPPORT_NAMESPACES', 1)
+conf.set('USE_LIBMOUNT_MOUNTFD_SUPPORT', have_mountfd_api ? 1 : false)
 summary('libmount', build_libmount ? 'enabled' : 'disabled', section : 'components')
 
 build_libsmartcols = not get_option('build-libsmartcols').disabled()
@@ -589,11 +594,9 @@ have = cc.has_member('struct tm', 'tm_gmtoff',
 conf.set('HAVE_TM_GMTOFF', have ? 1 : false)
 
 
-have = cc.sizeof('struct mount_attr', prefix : '#include <linux/mount.h>') > 0
-conf.set('HAVE_STRUCT_MOUNT_ATTR', have ? 1 : false)
 
 have = cc.sizeof('enum fsconfig_command', prefix : '#include <linux/mount.h>') > 0
-conf.set('HAVE_ENUM_FSCONFIG_COMMANS', have ? 1 : false)
+conf.set('HAVE_ENUM_FSCONFIG_COMMAND', have ? 1 : false)
 
 have = cc.has_member('struct termios', 'c_line',
                      prefix : '#include <termios.h>')

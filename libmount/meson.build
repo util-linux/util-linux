@@ -38,17 +38,20 @@ lib_mount_sources = '''
 
 if LINUX
   lib_mount_sources += '''
-    src/context.c
-    src/context_loopdev.c
-    src/context_veritydev.c
-    src/context_mount.c
-    src/context_umount.c
-    src/hook_mount_legacy.c
-    src/hook_mkdir.c
+    src/hooks.c
+    src/monitor.c
+    src/optlist.c
+    src/hook_veritydev.c
     src/hook_subdir.c
     src/hook_owner.c
+    src/hook_mount.c
+    src/hook_mount_legacy.c
+    src/hook_mkdir.c
+    src/hook_loopdev.c
     src/hook_idmap.c
-    src/monitor.c
+    src/context_umount.c
+    src/context_mount.c
+    src/context.c
 '''.split()
 endif
 
