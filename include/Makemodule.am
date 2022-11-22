@@ -74,4 +74,5 @@ dist_noinst_HEADERS += \
 	include/timeutils.h \
 	include/ttyutils.h \
 	include/widechar.h \
-	include/xalloc.h
+	include/xalloc.h \
+	include/xxhash.h

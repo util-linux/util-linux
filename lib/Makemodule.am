@@ -39,7 +39,8 @@ libcommon_la_SOURCES = \
 	lib/strutils.c \
 	lib/strv.c \
 	lib/timeutils.c \
-	lib/ttyutils.c
+	lib/ttyutils.c \
+	lib/xxhash.c
 
 if LINUX
 libcommon_la_SOURCES += \

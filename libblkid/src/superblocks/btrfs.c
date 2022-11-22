@@ -19,10 +19,20 @@
 
 #include "superblocks.h"
 #include "crc32c.h"
+#include "sha256.h"
+#include "xxhash.h"
+
+enum btrfs_super_block_csum_type {
+	BTRFS_SUPER_BLOCK_CSUM_TYPE_CRC32C = 0,
+	BTRFS_SUPER_BLOCK_CSUM_TYPE_XXHASH = 1,
+	BTRFS_SUPER_BLOCK_CSUM_TYPE_SHA256 = 2,
+};
 
 union btrfs_super_block_csum {
 	uint8_t bytes[32];
 	uint32_t crc32c;
+	XXH64_hash_t xxh64;
+	uint8_t sha256[UL_SHA256LENGTH];
 };
 
 struct btrfs_super_block {
@@ -211,17 +221,31 @@ out:
 
 static int btrfs_verify_csum(blkid_probe pr, const struct btrfs_super_block *bfs)
 {
-	int csum_type = le16_to_cpu(bfs->csum_type);
-	if (csum_type != 0) {
-		DBG(LOWPROBE, ul_debug("(btrfs) unknown checksum type %d, skipping validation",
-				       csum_type));
-		return 1;
+	uint16_t csum_type = le16_to_cpu(bfs->csum_type);
+	const void *csum_data = (char *) bfs + sizeof(bfs->csum);
+	size_t csum_data_size = sizeof(*bfs) - sizeof(bfs->csum);
+	switch (csum_type) {
+		case BTRFS_SUPER_BLOCK_CSUM_TYPE_CRC32C: {
+			uint32_t crc = ~crc32c(~0L, csum_data, csum_data_size);
+			return blkid_probe_verify_csum(pr, crc,
+					le32_to_cpu(bfs->csum.crc32c));
+		}
+		case BTRFS_SUPER_BLOCK_CSUM_TYPE_XXHASH: {
+			XXH64_hash_t xxh64 = XXH64(csum_data, csum_data_size, 0);
+			return blkid_probe_verify_csum(pr, xxh64,
+					le64_to_cpu(bfs->csum.xxh64));
+		}
+		case BTRFS_SUPER_BLOCK_CSUM_TYPE_SHA256: {
+			uint8_t sha256[UL_SHA256LENGTH];
+			ul_SHA256(sha256, csum_data, csum_data_size);
+			return blkid_probe_verify_csum_buf(pr, UL_SHA256LENGTH,
+					sha256, bfs->csum.sha256);
+		}
+		default:
+			DBG(LOWPROBE, ul_debug("(btrfs) unknown checksum type %d, skipping validation",
+					       csum_type));
+			return 1;
 	}
-	uint32_t crc = crc32c(~0L, (char *) bfs + sizeof(bfs->csum),
-			sizeof(*bfs) - sizeof(bfs->csum)
-	);
-	crc ^= ~0L;
-	return blkid_probe_verify_csum(pr, crc, le32_to_cpu(bfs->csum.crc32c));
 }
 
 static int probe_btrfs(blkid_probe pr, const struct blkid_idmag *mag)
