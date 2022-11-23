@@ -18,6 +18,7 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_MOUNT"
 ts_skip_nonroot
+ts_check_losetup
 
 $TS_CMD_MOUNT --version | grep -q 'fd-based' || ts_skip "no fd-based API"
 
