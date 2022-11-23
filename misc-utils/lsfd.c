@@ -1279,8 +1279,6 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	    || kcmp(proc->leader->pid, proc->pid, KCMP_FS, 0, 0) != 0)
 		collect_fs_files(pc, proc);
 
-	collect_namespace_files(pc, proc);
-
 	if (proc->ns_mnt == 0 || !has_mnt_ns(proc->ns_mnt)) {
 		FILE *mnt = ul_path_fopen(pc, "r", "mountinfo");
 		if (mnt) {
@@ -1290,6 +1288,8 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 			fclose(mnt);
 		}
 	}
+
+	collect_namespace_files(pc, proc);
 
 	/* If kcmp is not available,
 	 * there is no way to no whether threads share resources.
