@@ -19,7 +19,7 @@ FILES="$TS_TOPDIR/ts/hexdump/files"
 #for i in range(256):
 #	print(chr(i), end= ' ')
 
-. $TS_TOPDIR/functions.sh
+. "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_HEXDUMP"

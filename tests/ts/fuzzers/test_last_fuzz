@@ -15,7 +15,7 @@
 TS_TOPDIR="${0%/*}/../.."
 TS_DESC="test_last_fuzz"
 
-. $TS_TOPDIR/functions.sh
+. "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
 ts_check_test_command "$TS_HELPER_LAST_FUZZ"

@@ -15,7 +15,7 @@
 TS_TOPDIR="${0%/*}/../.."
 TS_DESC="to binary"
 
-. $TS_TOPDIR/functions.sh
+. "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
 . "$TS_SELF/utmp_functions.sh"

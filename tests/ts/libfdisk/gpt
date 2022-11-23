@@ -17,7 +17,7 @@
 TS_TOPDIR="${0%/*}/../.."
 TS_DESC="GPT"
 
-. $TS_TOPDIR/functions.sh
+. "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
 TESTPROG="$TS_HELPER_LIBFDISK_GPT"

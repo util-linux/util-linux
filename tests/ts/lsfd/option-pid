@@ -17,7 +17,7 @@
 TS_TOPDIR="${0%/*}/../.."
 TS_DESC="--pid option"
 
-. $TS_TOPDIR/functions.sh
+. "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 ts_skip_nonroot
 

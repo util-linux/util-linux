@@ -15,7 +15,7 @@
 TS_TOPDIR="${0%/*}/../.."
 TS_DESC="options"
 
-. $TS_TOPDIR/functions.sh
+. "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
 export SCRIPT_TEST_SECOND_SINCE_EPOCH=1432489398

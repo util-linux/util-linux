@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 TS_TOPDIR="${0%/*}/../.."
-. $TS_TOPDIR/functions.sh
+. "$TS_TOPDIR"/functions.sh
 
 ts_init "$*"
 

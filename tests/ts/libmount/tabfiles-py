@@ -5,7 +5,7 @@
 TS_TOPDIR="${0%/*}/../.."
 TS_DESC="tab files-py"
 
-. $TS_TOPDIR/functions.sh
+. "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 ts_init_py libmount
 

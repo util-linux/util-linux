@@ -15,7 +15,7 @@
 TS_TOPDIR="${0%/*}/../.."
 TS_DESC="subsecond"
 
-. $TS_TOPDIR/functions.sh
+. "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
 # this test is arch independent, no need for utmp_functions.sh

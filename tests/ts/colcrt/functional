@@ -18,7 +18,7 @@ TS_DESC="functional"
 
 export LC_CTYPE='C'
 
-. $TS_TOPDIR/functions.sh
+. "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 ts_check_wcsspn
 

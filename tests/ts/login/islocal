@@ -18,7 +18,7 @@
 TS_TOPDIR="${0%/*}/../.."
 TS_DESC="islocal"
 
-. $TS_TOPDIR/functions.sh
+. "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
 ts_check_test_command "$TS_HELPER_ISLOCAL"

@@ -17,10 +17,10 @@
 TS_TOPDIR="${0%/*}/../.."
 TS_DESC="--summary option"
 
-. $TS_TOPDIR/functions.sh
+. "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
-. $TS_SELF/lsfd-functions.bash
+. "$TS_SELF"/lsfd-functions.bash
 
 ts_check_test_command "$TS_CMD_LSFD"
 ts_check_test_command "$TS_HELPER_MKFDS"

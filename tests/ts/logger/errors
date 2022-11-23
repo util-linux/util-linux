@@ -19,7 +19,7 @@
 TS_TOPDIR="${0%/*}/../.."
 TS_DESC="errors"
 
-. $TS_TOPDIR/functions.sh
+. "$TS_TOPDIR"/functions.sh
 
 ts_init "$*"
 

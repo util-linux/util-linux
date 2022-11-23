@@ -15,7 +15,7 @@
 TS_TOPDIR="${0%/*}/../.."
 TS_DESC="facilities"
 
-. $TS_TOPDIR/functions.sh
+. "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
 ts_check_test_command "$TS_HELPER_DMESG"

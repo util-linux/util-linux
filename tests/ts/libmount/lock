@@ -7,7 +7,7 @@ TS_DESC="lock"
 
 TS_OPTIONAL="yes"
 
-. $TS_TOPDIR/functions.sh
+. "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
 TESTPROG="$TS_HELPER_LIBMOUNT_LOCK"
