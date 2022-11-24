@@ -72,16 +72,17 @@ static uint64_t cluster_to_offset(const struct exfat_super_block *sb,
 static uint32_t next_cluster(blkid_probe pr,
 		const struct exfat_super_block *sb, uint32_t cluster)
 {
-	uint32_t *next;
+	uint32_t *nextp, next;
 	uint64_t fat_offset;
 
 	fat_offset = block_to_offset(sb, le32_to_cpu(sb->FatOffset))
 		+ (uint64_t) cluster * sizeof(cluster);
-	next = (uint32_t *) blkid_probe_get_buffer(pr, fat_offset,
+	nextp = (uint32_t *) blkid_probe_get_buffer(pr, fat_offset,
 			sizeof(uint32_t));
-	if (!next)
+	if (!nextp)
 		return 0;
-	return le32_to_cpu(*next);
+	memcpy(&next, nextp, sizeof(next));
+	return le32_to_cpu(next);
 }
 
 static struct exfat_entry_label *find_label(blkid_probe pr,
