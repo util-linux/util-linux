@@ -228,6 +228,14 @@ state=_SOCK.STATE_[ path=_UNIX.PATH_] type=_SOCK.TYPE_
 NLINK <``number``>::
 Link count.
 
+NS.NAME <``string``>::
+Name (_NS.TYPE_:[_INODE_]) of the namespace specified with the file.
+
+NS.TYPE <``string``>::
+Type of the namespace specified with the file.
+The type is `mnt`, `cgroup`, `uts`, `ipc`, `user`, `pid`, `net`,
+`time`, or `unknown`.
+
 OWNER <``string``>::
 Owner of the file.
 

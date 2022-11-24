@@ -169,6 +169,10 @@ static struct colinfo infos[] = {
 		N_("name of the file (cooked)") },
 	[COL_NLINK]   = { "NLINK",    0, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 		N_("link count") },
+	[COL_NS_NAME] = { "NS.NAME",  0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
+		N_("name of the namespace (NS.TYPE:[INODE])") },
+	[COL_NS_TYPE] = { "NS.TYPE",  0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
+		N_("type of the namespace") },
 	[COL_OWNER]   = { "OWNER",    0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("owner of the file") },
 	[COL_PARTITION]={ "PARTITION",0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
@@ -473,6 +477,9 @@ static void add_mnt_ns(ino_t id)
 
 static const struct file_class *stat2class(struct stat *sb)
 {
+	const char *fs;
+	dev_t dev;
+
 	assert(sb);
 
 	switch (sb->st_mode & S_IFMT) {
@@ -485,8 +492,17 @@ static const struct file_class *stat2class(struct stat *sb)
 	case S_IFIFO:
 		return &fifo_class;
 	case S_IFLNK:
-	case S_IFREG:
 	case S_IFDIR:
+		return &file_class;
+	case S_IFREG:
+		dev = sb->st_dev;
+		if (major(dev) != 0)
+			return &file_class;
+
+		fs = get_nodev_filesystem(minor(dev));
+		if (fs && strcmp(fs, "nsfs") == 0)
+			return &nsfs_file_class;
+
 		return &file_class;
 	default:
 		break;
@@ -1279,8 +1295,6 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	    || kcmp(proc->leader->pid, proc->pid, KCMP_FS, 0, 0) != 0)
 		collect_fs_files(pc, proc);
 
-	collect_namespace_files(pc, proc);
-
 	if (proc->ns_mnt == 0 || !has_mnt_ns(proc->ns_mnt)) {
 		FILE *mnt = ul_path_fopen(pc, "r", "mountinfo");
 		if (mnt) {
@@ -1290,6 +1304,8 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 			fclose(mnt);
 		}
 	}
+
+	collect_namespace_files(pc, proc);
 
 	/* If kcmp is not available,
 	 * there is no way to no whether threads share resources.

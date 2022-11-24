@@ -60,6 +60,8 @@ enum {
 	COL_MODE,
 	COL_NAME,
 	COL_NLINK,
+	COL_NS_NAME,
+	COL_NS_TYPE,
 	COL_PARTITION,
 	COL_PID,
 	COL_PIDFD_COMM,
@@ -148,6 +150,8 @@ struct file {
 	unsigned int mnt_id;
 };
 
+#define is_opened_file(_f) ((_f)->association >= 0)
+#define is_mapped_file(_f) (is_association((_f), SHM) || is_association((_f), MEM))
 #define is_association(_f, a)	((_f)->association < 0 && (_f)->association == -ASSOC_ ## a)
 
 struct file_class {
@@ -167,7 +171,8 @@ struct file_class {
 	struct ipc_class *(*get_ipc_class)(struct file *file);
 };
 
-extern const struct file_class file_class, cdev_class, bdev_class, sock_class, unkn_class, fifo_class;
+extern const struct file_class file_class, cdev_class, bdev_class, sock_class, unkn_class, fifo_class,
+	nsfs_file_class;
 
 /*
  * IPC

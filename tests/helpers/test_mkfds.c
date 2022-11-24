@@ -25,6 +25,7 @@
 #include <getopt.h>
 #include <linux/if_ether.h>
 #include <linux/if_packet.h>
+#include <linux/sockios.h>  /* SIOCGSKNS */
 #include <net/if.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
@@ -35,6 +36,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/inotify.h>
+#include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/prctl.h>
 #include <sys/select.h>
@@ -1503,6 +1505,37 @@ static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
 	return NULL;
 }
 
+static void *make_netns(const struct factory *factory _U_, struct fdesc fdescs[],
+			int argc _U_, char ** argv _U_)
+{
+	int sd = socket(AF_UNIX, SOCK_STREAM, 0);
+	if (sd < 0)
+		err(EXIT_FAILURE, "failed in socket()");
+
+	int ns = ioctl(sd, SIOCGSKNS);
+	if (ns < 0)
+		err(EXIT_FAILURE, "failed in ioctl(SIOCGSKNS)");
+	close(sd);
+
+	if (ns != fdescs[0].fd) {
+		if (dup2(ns, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(ns);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", ns, fdescs[0].fd);
+		}
+		close(ns);
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL
+	};
+
+	return NULL;
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -1861,7 +1894,18 @@ static const struct factory factories[] = {
 			},
 			PARAM_END
 		}
-	}
+	},
+	{
+		.name = "netns",
+		.desc = "open a file specifying a netns",
+		.priv = true,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_netns,
+		.params = (struct parameter []) {
+			PARAM_END
+		}
+	},
 };
 
 static int count_parameters(const struct factory *factory)
