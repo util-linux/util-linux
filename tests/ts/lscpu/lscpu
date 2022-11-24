@@ -49,8 +49,10 @@ for dump in $(ls $TS_SELF/dumps/*.tar.gz | sort); do
 	"${TS_CMD_LSCPU}" -p -y -s "${dumpdir}/${name}" \
 		 >> ${TS_OUTPUT} 2>> $TS_ERRLOG
 
-	# LE/BE depends on binary
-	sed -i -e '/Byte Order:.*/d' $TS_OUTPUT
+	if [[ ! -e "${dumpdir}/${name}/sys/kernel/cpu_byteorder" ]]; then
+		# LE/BE depends on binary if we can't read it from the dump
+		sed -i -e '/Byte Order:.*/d' $TS_OUTPUT
+	fi
 
 	ts_finalize_subtest
 done

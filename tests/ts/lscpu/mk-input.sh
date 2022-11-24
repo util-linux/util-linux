@@ -37,6 +37,11 @@ fi
 $CP /sys/devices/system/cpu/* $TS_DUMP
 $CP /sys/devices/system/node/*/cpumap $TS_DUMP
 
+if [ -e "/sys/kernel/cpu_byteorder" ]; then
+	$CP /sys/kernel/cpu_byteorder $TS_DUMP
+fi
+
+
 tar zcvf $TS_NAME.tar.gz $TS_DUMP
 rm -rf $TS_DUMP
 
