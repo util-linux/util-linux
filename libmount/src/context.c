@@ -77,6 +77,8 @@ struct libmnt_context *mnt_new_context(void)
 	/* if we're really root and aren't running setuid */
 	cxt->restricted = (uid_t) 0 == ruid && ruid == euid ? 0 : 1;
 
+	cxt->noautofs = 1;
+
 	DBG(CXT, ul_debugobj(cxt, "----> allocate %s",
 				cxt->restricted ? "[RESTRICTED]" : ""));
 
@@ -171,6 +173,7 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	cxt->mountdata = NULL;
 	cxt->subdir = NULL;
 	cxt->flags = MNT_FL_DEFAULT;
+	cxt->noautofs = 1;
 
 	/* free additional mounts list */
 	while (!list_empty(&cxt->addmounts)) {
@@ -310,6 +313,8 @@ struct libmnt_context *mnt_copy_context(struct libmnt_context *o)
 
 	n->table_fltrcb = o->table_fltrcb;
 	n->table_fltrcb_data = o->table_fltrcb_data;
+
+	n->noautofs = o->noautofs;
 
 	return n;
 failed:
@@ -1298,6 +1303,8 @@ int mnt_context_get_mountinfo(struct libmnt_context *cxt, struct libmnt_table **
 			rc = -ENOMEM;
 			goto end;
 		}
+
+		mnt_table_enable_noautofs(cxt->mountinfo, cxt->noautofs);
 
 		if (cxt->table_errcb)
 			mnt_table_set_parser_errcb(cxt->mountinfo, cxt->table_errcb);
@@ -2778,6 +2785,23 @@ int mnt_context_strerror(struct libmnt_context *cxt __attribute__((__unused__)),
 	return 0;
 }
 
+/**
+ * mnt_context_enable_noautofs:
+ * @cxt: context
+ * @ignore: ignore or don't ignore
+ *
+ * Enable/disable ignore autofs mount table entries on reading the
+ * mount table. Only effective if the "ignore" mount option is being
+ * used for autofs mounts (such as if automount(8) has been configured
+ * to do so).
+ */
+int mnt_context_enable_noautofs(struct libmnt_context *cxt, int ignore)
+{
+	if (!cxt)
+		return -EINVAL;
+	cxt->noautofs = ignore ? 1 : 0;
+	return 0;
+}
 
 int mnt_context_get_generic_excode(int rc, char *buf, size_t bufsz, const char *fmt, ...)
 {

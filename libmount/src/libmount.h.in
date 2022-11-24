@@ -863,6 +863,8 @@ extern int mnt_context_strerror(struct libmnt_context *cxt, char *buf,
 				size_t bufsiz)
 				__ul_attribute__((deprecated));
 
+extern int mnt_context_enable_noautofs(struct libmnt_context *cxt, int ignore);
+
 extern int mnt_context_get_excode(struct libmnt_context *cxt,
                         int rc, char *buf, size_t bufsz);
 

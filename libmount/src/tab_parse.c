@@ -762,6 +762,14 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 		if (rc == 0 && tb->fltrcb && tb->fltrcb(fs, tb->fltrcb_data))
 			rc = 1;	/* filtered out by callback... */
 
+		if (rc == 0 && mnt_table_is_noautofs(tb)) {
+			const char *fstype = mnt_fs_get_fstype(fs);
+
+			if (fstype && strcmp(fstype, "autofs") == 0 &&
+			    mnt_fs_get_option(fs, "ignore", NULL, NULL) == 0)
+				rc = 1; /* Skip "ignore" autofs entry */
+		}
+
 		/* add to the table */
 		if (rc == 0) {
 			rc = mnt_table_add_fs(tb, fs);
@@ -1057,6 +1065,32 @@ int mnt_table_set_parser_fltrcb(struct libmnt_table *tb,
 	tb->fltrcb = cb;
 	tb->fltrcb_data = data;
 	return 0;
+}
+
+/*
+ * mnt_table_enable_noautofs:
+ * @tb: table
+ * @ignore: ignore or don't ignore
+ *
+ * Enable/disable ignore autofs mount table entries on reading.
+ */
+int mnt_table_enable_noautofs(struct libmnt_table *tb, int ignore)
+{
+	if (!tb)
+		return -EINVAL;
+	tb->noautofs = ignore ? 1 : 0;
+	return 0;
+}
+
+/*
+ * mnt_table_is_noautofs:
+ * @tb: table
+ *
+ * Return the the enabled status of ignore autofs mount table entries.
+ */
+int mnt_table_is_noautofs(struct libmnt_table *tb)
+{
+	return tb ? tb->noautofs : 0;
 }
 
 /**

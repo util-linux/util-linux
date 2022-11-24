@@ -148,6 +148,9 @@ extern int __mnt_table_is_fs_mounted(	struct libmnt_table *tb,
 					struct libmnt_fs *fstab_fs,
 					const char *tgt_prefix);
 
+extern int mnt_table_enable_noautofs(struct libmnt_table *tb, int ignore);
+extern int mnt_table_is_noautofs(struct libmnt_table *tb);
+
 /*
  * Generic iterator
  */
@@ -251,6 +254,7 @@ struct libmnt_table {
 	int		(*fltrcb)(struct libmnt_fs *fs, void *data);
 	void		*fltrcb_data;
 
+	int		noautofs;	/* ignore autofs mounts */
 
 	struct list_head	ents;	/* list of entries (libmnt_fs) */
 	void		*userdata;
@@ -357,7 +361,8 @@ struct libmnt_context
 	struct libmnt_ns	ns_tgt;		/* target namespace */
 	struct libmnt_ns	*ns_cur;	/* pointer to current namespace */
 
-	unsigned int	enabled_textdomain : 1;		/* bindtextdomain() called */
+	unsigned int	enabled_textdomain : 1;	/* bindtextdomain() called */
+	unsigned int 	noautofs : 1;		/* ignore autofs mounts */
 };
 
 /* flags */
