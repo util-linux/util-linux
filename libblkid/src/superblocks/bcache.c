@@ -26,7 +26,7 @@ struct bcache_super_block {
 	uint64_t		version;
 	uint8_t			magic[16];	/* bcache file system identifier */
 	uint8_t			uuid[16];	/* device identifier */
-};
+} __attribute__((packed));
 
 /* magic string */
 #define BCACHE_SB_MAGIC     "\xc6\x85\x73\xf6\x4e\x1a\x45\xca\x82\x65\xf5\x7f\x48\xba\x6d\x81"
