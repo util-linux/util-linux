@@ -88,10 +88,8 @@ struct libmnt_optlist *mnt_new_optlist(void)
 
 void mnt_ref_optlist(struct libmnt_optlist *ls)
 {
-	if (ls) {
+	if (ls)
 		ls->refcount++;
-		/*DBG(OPTLIST, ul_debugobj(ls, "ref=%d", ls->refcount));*/
-	}
 }
 
 static void reset_cache(struct optlist_cache *cache)
@@ -113,7 +111,6 @@ void mnt_unref_optlist(struct libmnt_optlist *ls)
 	if (ls->refcount > 0)
 		return;
 
-	/*DBG(OPTLIST, ul_debugobj(ls, "unref=%d", ls->refcount));*/
 	while (!list_empty(&ls->opts)) {
 		struct libmnt_opt *opt = list_entry(ls->opts.next, struct libmnt_opt, opts);
 		mnt_optlist_remove_opt(ls, opt);
@@ -911,10 +908,6 @@ int mnt_optlist_get_optstr(struct libmnt_optlist *ls, const char **optstr,
 
 		cache->optstr = str;
 		cache->optstr_ready = 1;
-
-		/*DBG(OPTLIST, ul_debugobj(ls, " optstr %s", str));*/
-	} else {
-		/*DBG(OPTLIST, ul_debugobj(ls, " optstr %s (cached)", *cache));*/
 	}
 
 	*optstr = cache->optstr;
