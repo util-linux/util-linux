@@ -11,7 +11,7 @@ _rename_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="--verbose --symlink --help --version --no-act --all --last --no-override --interactive"
+			OPTS="--verbose --symlink --help --version --no-act --all --last --no-overwrite --interactive"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;
