@@ -323,7 +323,14 @@ static int mnt_parse_utab_line(struct libmnt_fs *fs, const char *s)
 		if (!*p)
 			break;
 
-		if (!fs->source && !strncmp(p, "SRC=", 4)) {
+		if (!fs->id && !strncmp(p, "ID=", 3)) {
+			int rc = 0;
+
+			end = next_s32(p + 3, &fs->id, &rc);
+			if (!end || rc)
+				return rc;
+
+		} else if (!fs->source && !strncmp(p, "SRC=", 4)) {
 			char *v = unmangle(p + 4, &end);
 			if (!v)
 				goto enomem;
@@ -1171,6 +1178,7 @@ static struct libmnt_fs *mnt_table_merge_user_fs(struct libmnt_table *tb, struct
 	struct libmnt_fs *fs;
 	struct libmnt_iter itr;
 	const char *optstr, *src, *target, *root, *attrs;
+	int id;
 
 	if (!tb || !uf)
 		return NULL;
@@ -1182,6 +1190,7 @@ static struct libmnt_fs *mnt_table_merge_user_fs(struct libmnt_table *tb, struct
 	optstr = mnt_fs_get_user_options(uf);
 	attrs = mnt_fs_get_attributes(uf);
 	root = mnt_fs_get_root(uf);
+	id = mnt_fs_get_id(uf);
 
 	if (!src || !target || !root || (!attrs && !optstr))
 		return NULL;
@@ -1194,20 +1203,23 @@ static struct libmnt_fs *mnt_table_merge_user_fs(struct libmnt_table *tb, struct
 		if (fs->flags & MNT_FS_MERGED)
 			continue;
 
-		if (r && strcmp(r, root) == 0
+		if (id > 0 && mnt_fs_get_id(fs)) {
+			DBG(TAB, ul_debugobj(tb, " using ID"));
+			if (mnt_fs_get_id(fs) == id)
+				break;
+		} else if (r && strcmp(r, root) == 0
 		    && mnt_fs_streq_target(fs, target)
 		    && mnt_fs_streq_srcpath(fs, src))
 			break;
 	}
 
 	if (fs) {
-		DBG(TAB, ul_debugobj(tb, "found fs -- appending user optstr"));
+		DBG(TAB, ul_debugobj(tb, " found"));
 		mnt_fs_append_options(fs, optstr);
 		mnt_fs_append_attributes(fs, attrs);
 		mnt_fs_set_bindsrc(fs, mnt_fs_get_bindsrc(uf));
 		fs->flags |= MNT_FS_MERGED;
 
-		DBG(TAB, ul_debugobj(tb, "found fs:"));
 		DBG(TAB, mnt_fs_print_debug(fs, stderr));
 	}
 	return fs;
