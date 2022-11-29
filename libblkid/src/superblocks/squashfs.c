@@ -54,6 +54,8 @@ static int probe_squashfs(blkid_probe pr, const struct blkid_idmag *mag)
 		return 1;
 
 	blkid_probe_sprintf_version(pr, "%u.%u", vermaj, vermin);
+	blkid_probe_set_fsblocksize(pr, le32_to_cpu(sq->block_size));
+	blkid_probe_set_block_size(pr, le32_to_cpu(sq->block_size));
 
 	return 0;
 }
