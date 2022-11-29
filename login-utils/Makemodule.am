@@ -152,10 +152,13 @@ if HAVE_ECONF
 chfn_LDADD += -leconf
 endif
 
-chsh_SOURCES = login-utils/chsh.c $(chfn_chsh_sources)
+chsh_SOURCES = login-utils/chsh.c lib/shells.c $(chfn_chsh_sources)
 chsh_CFLAGS = $(chfn_chsh_cflags)
 chsh_LDFLAGS = $(chfn_chsh_ldflags)
 chsh_LDADD = $(LDADD) $(chfn_chsh_ldadd)
+if HAVE_ECONF
+chsh_LDADD += -leconf
+endif
 endif # BUILD_CHFN_CHSH
 
 
@@ -167,7 +170,8 @@ su_SOURCES = \
 	login-utils/su.c \
 	login-utils/su-common.c \
 	login-utils/su-common.h \
-	lib/logindefs.c
+	lib/logindefs.c \
+	lib/shells.c
 su_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 su_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 su_LDADD = $(LDADD) libcommon.la -lpam
@@ -194,7 +198,8 @@ runuser_SOURCES = \
 	login-utils/runuser.c \
 	login-utils/su-common.c \
 	login-utils/su-common.h \
-	lib/logindefs.c
+	lib/logindefs.c \
+	lib/shells.c
 runuser_LDADD = $(LDADD) libcommon.la -lpam
 if HAVE_LINUXPAM
 runuser_LDADD += -lpam_misc

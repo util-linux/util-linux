@@ -68,6 +68,7 @@
 
 #include "logindefs.h"
 #include "su-common.h"
+#include "shells.h"
 
 #include "debug.h"
 
@@ -867,18 +868,14 @@ static void run_shell(
  */
 static bool is_restricted_shell(const char *shell)
 {
-	char *line;
-
-	setusershell();
-	while ((line = getusershell()) != NULL) {
-		if (*line != '#' && !strcmp(line, shell)) {
-			endusershell();
-			return false;
-		}
+	if (is_known_shell(shell)) {
+		return false;
 	}
-	endusershell();
-
+#ifdef USE_VENDORDIR
+	DBG(MISC, ul_debug("%s is restricted shell (not in e.g. vendor shells file, /etc/shells, ...)", shell));
+#else
 	DBG(MISC, ul_debug("%s is restricted shell (not in /etc/shells)", shell));
+#endif
 	return true;
 }
 

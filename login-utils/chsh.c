@@ -44,6 +44,7 @@
 #include "xalloc.h"
 
 #include "ch-common.h"
+#include "shells.h"
 
 #ifdef HAVE_LIBSELINUX
 # include <selinux/selinux.h>
@@ -79,28 +80,6 @@ static void __attribute__((__noreturn__)) usage(void)
 	printf( " -v, --version        %s\n", USAGE_OPTSTR_VERSION);
 	printf(USAGE_MAN_TAIL("chsh(1)"));
 	exit(EXIT_SUCCESS);
-}
-
-/*
- *  is_known_shell() -- if the given shell appears in /etc/shells,
- *	return true.  if not, return false.
- */
-static int is_known_shell(const char *shell_name)
-{
-	char *s, ret = 0;
-
-	if (!shell_name)
-		return 0;
-
-	setusershell();
-	while ((s = getusershell())) {
-		if (strcmp(shell_name, s) == 0) {
-			ret = 1;
-			break;
-		}
-	}
-	endusershell();
-	return ret;
 }
 
 /*
