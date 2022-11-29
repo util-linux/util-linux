@@ -254,10 +254,16 @@ static int hook_create_mount(struct libmnt_context *cxt,
 
 		rc = statx(api->fd_tree, "", AT_EMPTY_PATH, STATX_MNT_ID, &st);
 		cxt->fs->id = (int) st.stx_mnt_id;
+
+		if (cxt->update) {
+			struct libmnt_fs *fs = mnt_update_get_fs(cxt->update);
+			if (fs)
+				fs->id = cxt->fs->id;
+		}
 	}
 
 done:
-	DBG(HOOK, ul_debugobj(hs, "create FS done [rc=%d]", rc));
+	DBG(HOOK, ul_debugobj(hs, "create FS done [rc=%d, id=%d]", rc, cxt->fs ? cxt->fs->id : -1));
 	return rc;
 }
 
