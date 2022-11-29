@@ -185,10 +185,11 @@ static int fat_valid_superblock(blkid_probe pr,
 			const struct blkid_idmag *mag,
 			struct msdos_super_block *ms,
 			struct vfat_super_block *vs,
-			uint32_t *cluster_count, uint32_t *fat_size)
+			uint32_t *cluster_count, uint32_t *fat_size,
+			uint32_t *sect_count)
 {
 	uint16_t sector_size, dir_entries, reserved;
-	uint32_t sect_count, __fat_size, dir_size, __cluster_count, fat_length;
+	uint32_t __sect_count, __fat_size, dir_size, __cluster_count, fat_length;
 	uint32_t max_count;
 
 	/* extra check for FATs without magic strings */
@@ -230,10 +231,10 @@ static int fat_valid_superblock(blkid_probe pr,
 
 	dir_entries = unaligned_le16(&ms->ms_dir_entries);
 	reserved =  le16_to_cpu(ms->ms_reserved);
-	sect_count = unaligned_le16(&ms->ms_sectors);
+	__sect_count = unaligned_le16(&ms->ms_sectors);
 
-	if (sect_count == 0)
-		sect_count = le32_to_cpu(ms->ms_total_sect);
+	if (__sect_count == 0)
+		__sect_count = le32_to_cpu(ms->ms_total_sect);
 
 	fat_length = le16_to_cpu(ms->ms_fat_length);
 	if (fat_length == 0)
@@ -243,7 +244,7 @@ static int fat_valid_superblock(blkid_probe pr,
 	dir_size = ((dir_entries * sizeof(struct vfat_dir_entry)) +
 					(sector_size-1)) / sector_size;
 
-	__cluster_count = (sect_count - (reserved + __fat_size + dir_size)) /
+	__cluster_count = (__sect_count - (reserved + __fat_size + dir_size)) /
 							ms->ms_cluster_size;
 	if (!ms->ms_fat_length && vs->vs_fat32_length)
 		max_count = FAT32_MAX;
@@ -257,6 +258,8 @@ static int fat_valid_superblock(blkid_probe pr,
 		*fat_size = __fat_size;
 	if (cluster_count)
 		*cluster_count = __cluster_count;
+	if (sect_count)
+		*sect_count = __sect_count;
 
 	if (blkid_probe_is_bitlocker(pr))
 		return 0;
@@ -291,7 +294,7 @@ int blkid_probe_is_vfat(blkid_probe pr)
 	if (!vs)
 		return errno ? -errno : 0;
 
-	return fat_valid_superblock(pr, mag, ms, vs, NULL, NULL);
+	return fat_valid_superblock(pr, mag, ms, vs, NULL, NULL, NULL);
 }
 
 /* FAT label extraction from the root directory taken from Kay
@@ -304,7 +307,7 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 	const unsigned char *boot_label = NULL;
 	unsigned char *vol_serno = NULL, vol_label_buf[11];
 	uint16_t sector_size = 0, reserved;
-	uint32_t cluster_count, fat_size;
+	uint32_t cluster_count, fat_size, sect_count;
 	const char *version = NULL;
 
 	ms = blkid_probe_get_sb(pr, mag, struct msdos_super_block);
@@ -315,7 +318,8 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!vs)
 		return errno ? -errno : 1;
 
-	if (!fat_valid_superblock(pr, mag, ms, vs, &cluster_count, &fat_size))
+	if (!fat_valid_superblock(pr, mag, ms, vs, &cluster_count, &fat_size,
+				&sect_count))
 		return 1;
 
 	sector_size = unaligned_le16(&ms->ms_sector_size);
@@ -435,6 +439,7 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 
 	blkid_probe_set_fsblocksize(pr, vs->vs_cluster_size * sector_size);
 	blkid_probe_set_block_size(pr, sector_size);
+	blkid_probe_set_fssize(pr, (uint64_t) sector_size * sect_count);
 
 	return 0;
 }
