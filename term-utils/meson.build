@@ -20,8 +20,7 @@ scriptreplay_sources = files(
 
 agetty_sources = files(
   'agetty.c',
-) + \
-  logindefs_c
+)
 
 setterm_sources = files(
   'setterm.c',

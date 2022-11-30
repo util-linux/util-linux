@@ -847,7 +847,7 @@ exe = executable(
   chfn_sources,
   chfn_chsh_sources,
   include_directories : includes,
-  link_with : lib_common,
+  link_with : [lib_common, logindefs_c],
   dependencies : chfn_chsh_deps,
   install_dir : usrbin_exec_dir,
   install : opt,
@@ -943,7 +943,7 @@ exe = executable(
   pty_session_c,
   monotonic_c,
   include_directories : includes,
-  link_with : lib_common,
+  link_with : [lib_common, logindefs_c],
   dependencies : [lib_pam,
                   lib_pam_misc,
                   lib_util,
@@ -977,7 +977,8 @@ exe = executable(
   'lib/logindefs.c',
   include_directories : includes,
   link_with : [lib_common,
-               lib_smartcols],
+               lib_smartcols,
+               logindefs_c],
   dependencies : [lib_selinux,
                   lib_systemd],
   install_dir : usrbin_exec_dir,
@@ -1018,7 +1019,7 @@ exe = executable(
   pty_session_c,
   monotonic_c,
   include_directories : includes,
-  link_with : lib_common,
+  link_with : [lib_common, logindefs_c],
   dependencies : [lib_pam,
                   lib_pam_misc,
                   lib_util,
@@ -2274,7 +2275,7 @@ exe = executable(
   'agetty',
   agetty_sources,
   include_directories : includes,
-  link_with : [lib_common],
+  link_with : [lib_common, logindefs_c],
   dependencies : BSD ? lib_util : [],
   install_dir : sbindir,
   install : opt,
@@ -2355,7 +2356,7 @@ exe = executable(
   'login',
   login_sources,
   include_directories : includes,
-  link_with : [lib_common],
+  link_with : [lib_common, logindefs_c],
   dependencies : [lib_pam,
                   lib_audit,
                   lib_selinux],
@@ -2982,7 +2983,7 @@ exe = executable(
   'lib/logindefs.c',
   c_args : ['-DTEST_PROGRAM'],
   include_directories : dir_include,
-  link_with : lib_common)
+  link_with : [lib_common, logindefs_c])
 exes += exe
 
 
