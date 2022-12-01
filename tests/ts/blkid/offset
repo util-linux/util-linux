@@ -41,7 +41,7 @@ ts_fdisk_clean $TS_DEVICE
 udevadm settle
 
 
-mkfs.ext2 -L FOO -U ccf3dc28-f697-4577-971b-0bc79300a700 ${TS_DEVICE}2 &> /dev/null
+mkfs.ext2 -b 4096 -L FOO -U ccf3dc28-f697-4577-971b-0bc79300a700 ${TS_DEVICE}2 &> /dev/null
 udevadm settle
 ts_device_has "TYPE" "ext2" ${TS_DEVICE}2 ||
 		ts_die "Cannot find ext2 on ${TS_DEVICE}2"
