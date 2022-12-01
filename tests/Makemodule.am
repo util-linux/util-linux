@@ -13,7 +13,7 @@ clean-local-tests:
 
 CLEAN_LOCALS += clean-local-tests
 
-TESTS_OPTIONS = --nonroot
+TESTS_OPTIONS = --nonroot --show-diff
 TESTS_PARALLEL = --parallel
 TESTS_COMMAND = $(top_srcdir)/tests/run.sh \
 	--srcdir=$(abs_top_srcdir) \
