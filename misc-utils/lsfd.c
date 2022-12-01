@@ -746,7 +746,7 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 		file_set_path(f, &sb, path, -assoc);
 	} else {
 		/* As used in tcpdump, AF_PACKET socket can be mmap'ed. */
-		char map_file[sizeof("map_files/000000000000-ffffffffffff")];
+		char map_file[sizeof("map_files/0000000000000000-ffffffffffffffff")];
 		char sym[PATH_MAX] = { '\0' };
 
 	try_map_files:
