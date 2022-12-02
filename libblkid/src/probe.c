@@ -71,7 +71,7 @@
  *
  * <informalexample>
  *   <programlisting>
- *	while((blkid_do_probe(pr) == 0)
+ *	while((blkid_do_probe(pr) == BLKID_PROBE_OK)
  *		... use result ...
  *   </programlisting>
  * </informalexample>
@@ -1218,7 +1218,7 @@ static inline void blkid_probe_end(blkid_probe pr)
  * <example>
  *   <title>basic case - use the first result only</title>
  *   <programlisting>
- *	if (blkid_do_probe(pr) == 0) {
+ *	if (blkid_do_probe(pr) == BLKID_PROBE_OK) {
  *		int nvals = blkid_probe_numof_values(pr);
  *		for (n = 0; n < nvals; n++) {
  *			if (blkid_probe_get_value(pr, n, &name, &data, &len) == 0)
@@ -1231,7 +1231,7 @@ static inline void blkid_probe_end(blkid_probe pr)
  * <example>
  *   <title>advanced case - probe for all signatures</title>
  *   <programlisting>
- *	while (blkid_do_probe(pr) == 0) {
+ *	while (blkid_do_probe(pr) == BLKID_PROBE_OK) {
  *		int nvals = blkid_probe_numof_values(pr);
  *		...
  *	}
@@ -1247,7 +1247,7 @@ int blkid_do_probe(blkid_probe pr)
 	int rc = 1;
 
 	if (pr->flags & BLKID_FL_NOSCAN_DEV)
-		return 1;
+		return BLKID_PROBE_NONE;
 
 	do {
 		struct blkid_chain *chn = pr->cur_chain;
@@ -1272,7 +1272,7 @@ int blkid_do_probe(blkid_probe pr)
 				chn = pr->cur_chain = &pr->chains[idx];
 			else {
 				blkid_probe_end(pr);
-				return 1;	/* all chains already probed */
+				return BLKID_PROBE_NONE;	/* all chains already probed */
 			}
 		}
 
@@ -1289,7 +1289,10 @@ int blkid_do_probe(blkid_probe pr)
 		/* rc: -1 = error, 0 = success, 1 = no result */
 		rc = chn->driver->probe(pr, chn);
 
-	} while (rc == 1);
+	} while (rc == BLKID_PROBE_NONE);
+
+	if (rc < 0)
+	       return BLKID_PROBE_ERROR;
 
 	return rc;
 }
@@ -1373,7 +1376,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 
 	chn = pr->cur_chain;
 	if (!chn)
-		return -1;
+		return BLKID_PROBE_ERROR;
 
 	switch (chn->driver->id) {
 	case BLKID_CHAIN_SUBLKS:
@@ -1387,28 +1390,28 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 			rc = blkid_probe_lookup_value(pr, "PTMAGIC", NULL, &len);
 		break;
 	default:
-		return 0;
+		return BLKID_PROBE_OK;
 	}
 
 	if (rc || len == 0 || off == NULL)
-		return 0;
+		return BLKID_PROBE_OK;
 
 	errno = 0;
 	magoff = strtoumax(off, NULL, 10);
 	if (errno)
-		return 0;
+		return BLKID_PROBE_OK;
 
 	offset = magoff + pr->off;
 	fd = blkid_probe_get_fd(pr);
 	if (fd < 0)
-		return -1;
+		return BLKID_PROBE_ERROR;
 
 	if (len > sizeof(buf))
 		len = sizeof(buf);
 
 	rc = is_conventional(pr, offset);
 	if (rc < 0)
-		return rc;
+		return BLKID_PROBE_ERROR;
 	conventional = rc == 1;
 
 	DBG(LOWPROBE, ul_debug(
@@ -1416,7 +1419,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 	    offset, offset, len, chn->driver->name, chn->idx, dryrun ? "yes" : "not"));
 
 	if (lseek(fd, offset, SEEK_SET) == (off_t) -1)
-		return -1;
+		return BLKID_PROBE_ERROR;
 
 	if (!dryrun && len) {
 		if (conventional) {
@@ -1424,9 +1427,9 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 
 			/* wipen on device */
 			if (write_all(fd, buf, len))
-				return -1;
+				return BLKID_PROBE_ERROR;
 			if (fsync(fd) != 0)
-				return -1;
+				return BLKID_PROBE_ERROR;
 		} else {
 #ifdef HAVE_LINUX_BLKZONED_H
 			uint64_t zone_mask = ~(pr->zone_size - 1);
@@ -1437,7 +1440,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 
 			rc = ioctl(fd, BLKRESETZONE, &range);
 			if (rc < 0)
-				return -1;
+				return BLKID_PROBE_ERROR;
 #else
 			/* Should not reach here */
 			assert(0);
@@ -1456,7 +1459,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 		return blkid_probe_step_back(pr);
 	}
 
-	return 0;
+	return BLKID_PROBE_OK;
 }
 
 /**
@@ -1485,7 +1488,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
  *      blkid_probe_enable_partitions(pr, 1);
  *      blkid_probe_set_partitions_flags(pr, BLKID_PARTS_MAGIC);
  *
- *	while (blkid_do_probe(pr) == 0) {
+ *	while (blkid_do_probe(pr) == BLKID_PROBE_OK) {
  *		const char *ostr = NULL;
  *		size_t len = 0;
  *
@@ -1571,7 +1574,7 @@ int blkid_do_safeprobe(blkid_probe pr)
 	int i, count = 0, rc = 0;
 
 	if (pr->flags & BLKID_FL_NOSCAN_DEV)
-		return 1;
+		return BLKID_PROBE_NONE;
 
 	blkid_probe_start(pr);
 
@@ -1604,8 +1607,9 @@ int blkid_do_safeprobe(blkid_probe pr)
 done:
 	blkid_probe_end(pr);
 	if (rc < 0)
-		return rc;
-	return count ? 0 : 1;
+		return BLKID_PROBE_ERROR;
+
+	return count == 0 ? BLKID_PROBE_NONE : BLKID_PROBE_OK;
 }
 
 /**
@@ -1625,7 +1629,7 @@ int blkid_do_fullprobe(blkid_probe pr)
 	int i, count = 0, rc = 0;
 
 	if (pr->flags & BLKID_FL_NOSCAN_DEV)
-		return 1;
+		return BLKID_PROBE_NONE;
 
 	blkid_probe_start(pr);
 
@@ -1658,8 +1662,9 @@ int blkid_do_fullprobe(blkid_probe pr)
 done:
 	blkid_probe_end(pr);
 	if (rc < 0)
-		return rc;
-	return count ? 0 : 1;
+		return BLKID_PROBE_ERROR;
+
+	return count == 0 ? BLKID_PROBE_NONE : BLKID_PROBE_OK;
 }
 
 /* same sa blkid_probe_get_buffer() but works with 512-sectors */

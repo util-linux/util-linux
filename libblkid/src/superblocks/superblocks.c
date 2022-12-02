@@ -506,7 +506,7 @@ static int superblocks_safeprobe(blkid_probe pr, struct blkid_chain *chn)
 		DBG(LOWPROBE, ul_debug("ERROR: superblocks chain: "
 			       "ambivalent result detected (%d filesystems)!",
 			       count));
-		rc = -2;		/* error, ambivalent result (more FS) */
+		rc = BLKID_PROBE_AMBIGUOUS;	/* error, ambivalent result (more FS) */
 		goto done;
 	}
 	if (!count) {

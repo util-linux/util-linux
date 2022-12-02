@@ -313,9 +313,6 @@ struct blkid_struct_cache
 /* old systems */
 #define BLKID_CACHE_FILE_OLD	"/etc/blkid.tab"
 
-#define BLKID_PROBE_OK	 0
-#define BLKID_PROBE_NONE 1
-
 #define BLKID_ERR_IO	 5
 #define BLKID_ERR_SYSFS	 9
 #define BLKID_ERR_MEM	12

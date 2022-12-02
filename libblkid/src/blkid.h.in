@@ -418,6 +418,13 @@ extern int blkid_do_safeprobe(blkid_probe pr)
 extern int blkid_do_fullprobe(blkid_probe pr)
 			__ul_attribute__((nonnull));
 
+enum {
+	BLKID_PROBE_OK		= 0,
+	BLKID_PROBE_NONE	= 1,
+	BLKID_PROBE_ERROR	= -1,
+	BLKID_PROBE_AMBIGUOUS	= -2
+};
+
 extern int blkid_probe_numof_values(blkid_probe pr)
 			__ul_attribute__((nonnull));
 extern int blkid_probe_get_value(blkid_probe pr, int num, const char **name,
