@@ -303,8 +303,8 @@ int main(int argc, char **argv)
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
 		{"debug", no_argument, NULL, 'd'},
-	        {"intro-command", no_argument, NULL, 'c'},
-	        {"pause", no_argument, NULL, 'p'},
+	        {"intro-command", required_argument, NULL, 'c'},
+	        {"pause", required_argument, NULL, 'p'},
 		{NULL, 0, NULL, 0}
 	};
 
