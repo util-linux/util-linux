@@ -418,12 +418,31 @@ extern int blkid_do_safeprobe(blkid_probe pr)
 extern int blkid_do_fullprobe(blkid_probe pr)
 			__ul_attribute__((nonnull));
 
-enum {
-	BLKID_PROBE_OK		= 0,
-	BLKID_PROBE_NONE	= 1,
-	BLKID_PROBE_ERROR	= -1,
-	BLKID_PROBE_AMBIGUOUS	= -2
-};
+/**
+ * BLKID_PROBE_OK:
+ *
+ * probing return value; superblock (RAID, partiton table, ...) succesfully detected
+ */
+#define BLKID_PROBE_OK	0
+/**
+ * BLKID_PROBE_NONE:
+ *
+ * probing return value; found nothing
+ */
+#define BLKID_PROBE_NONE	1
+/**
+ * BLKID_PROBE_ERROR:
+ *
+ * probing return value; probing ends with en error (see errno for more details)
+ */
+#define BLKID_PROBE_ERROR	-1
+/**
+ * BLKID_PROBE_AMBIGUOUS:
+ *
+ * probing return value; more than one probing result, in this case, it's not
+ * safe to use the device automaticaly and user intervention is recommended
+ */
+#define BLKID_PROBE_AMBIGUOUS	-2
 
 extern int blkid_probe_numof_values(blkid_probe pr)
 			__ul_attribute__((nonnull));

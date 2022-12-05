@@ -63,6 +63,10 @@ blkid_probe_set_hint
 blkid_probe_set_sectorsize
 blkid_probe_step_back
 blkid_reset_probe
+BLKID_PROBE_OK
+BLKID_PROBE_NONE
+BLKID_PROBE_ERROR
+BLKID_PROBE_AMBIGUOUS
 </SECTION>
 
 <SECTION>
