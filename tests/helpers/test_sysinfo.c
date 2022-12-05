@@ -1,4 +1,6 @@
 /*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ *
  * Copyright (C) 2007 Karel Zak <kzak@redhat.com>
  *
  * This file is part of util-linux.

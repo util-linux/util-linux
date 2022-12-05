@@ -1,11 +1,10 @@
 /*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ *
  * This test program prints errno messages to allow for portable
  * verification of error messages.
  *
  * Copyright (C) 2019 Patrick Steinhardt <ps@pks.im
- *
- * This file may be redistributed under the terms of the GNU Public
- * License.
  */
 
 #include <errno.h>

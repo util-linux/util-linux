@@ -1,11 +1,10 @@
 /*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ *
  * This testing program makes sure the byteswap functions work
  *
  * Copyright (C) 2000 by Theodore Ts'o.
  * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
- *
- * This file may be redistributed under the terms of the GNU Public
- * License.
  */
 #include <stdio.h>
 #include <string.h>

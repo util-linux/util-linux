@@ -1,4 +1,8 @@
-
+/*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ *
+ * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
+ */
 #include <stdio.h>
 #include <unistd.h>
 

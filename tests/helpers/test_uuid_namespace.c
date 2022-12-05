@@ -1,3 +1,8 @@
+/*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ *
+ * Copyright (C) 2017 Philip Prindeville <philipp@redfish-solutions.com>
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
