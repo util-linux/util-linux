@@ -95,13 +95,13 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -f, --force         disable all checking\n"), out);
-	fputs(_(" -o, --offset <num>  offset in bytes to discard from\n"), out);
 	fputs(_(" -l, --length <num>  length of bytes to discard from the offset\n"), out);
+	fputs(_(" -o, --offset <num>  offset in bytes to discard from\n"), out);
 	fputs(_(" -p, --step <num>    size of the discard iterations within the offset\n"), out);
 	fputs(_(" -q, --quiet         suppress warning messages\n"), out);
 	fputs(_(" -s, --secure        perform secure discard\n"), out);
-	fputs(_(" -z, --zeroout       zero-fill rather than discard\n"), out);
 	fputs(_(" -v, --verbose       print aligned length and offset\n"), out);
+	fputs(_(" -z, --zeroout       zero-fill rather than discard\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(21));
@@ -162,15 +162,15 @@ int main(int argc, char **argv)
 	int act = ACT_DISCARD;
 
 	static const struct option longopts[] = {
-	    { "help",      no_argument,       NULL, 'h' },
-	    { "version",   no_argument,       NULL, 'V' },
-	    { "offset",    required_argument, NULL, 'o' },
 	    { "force",     no_argument,       NULL, 'f' },
+	    { "help",      no_argument,       NULL, 'h' },
 	    { "length",    required_argument, NULL, 'l' },
-	    { "step",      required_argument, NULL, 'p' },
+	    { "offset",    required_argument, NULL, 'o' },
 	    { "quiet",     no_argument,       NULL, 'q' },
 	    { "secure",    no_argument,       NULL, 's' },
+	    { "step",      required_argument, NULL, 'p' },
 	    { "verbose",   no_argument,       NULL, 'v' },
+	    { "version",   no_argument,       NULL, 'V' },
 	    { "zeroout",   no_argument,       NULL, 'z' },
 	    { NULL, 0, NULL, 0 }
 	};
