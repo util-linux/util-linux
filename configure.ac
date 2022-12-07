@@ -2029,7 +2029,7 @@ AC_ARG_ENABLE([scriptutils],
 
 UL_ENABLE_ALIAS([script], [scriptutils])
 UL_BUILD_INIT([script])
-UL_REQUIRES_HAVE([script], [pty])
+UL_REQUIRES_HAVE([script], [pty], [openpty function (libutil)])
 AM_CONDITIONAL([BUILD_SCRIPT], [test "x$build_script" = xyes])
 
 UL_ENABLE_ALIAS([scriptreplay], [scriptutils])
@@ -2038,7 +2038,7 @@ AM_CONDITIONAL([BUILD_SCRIPTREPLAY], [test "x$build_scriptreplay" = xyes])
 
 UL_ENABLE_ALIAS([scriptlive], [scriptutils])
 UL_BUILD_INIT([scriptlive])
-UL_REQUIRES_HAVE([scriptlive], [pty])
+UL_REQUIRES_HAVE([scriptlive], [pty], [openpty function (libutil)])
 AM_CONDITIONAL([BUILD_SCRIPTLIVE], [test "x$build_scriptlive" = xyes])
 
 
