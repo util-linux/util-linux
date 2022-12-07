@@ -40,6 +40,9 @@ The number of bytes to discard (counting from the starting point). The provided 
 *-p*, *--step* _length_::
 The number of bytes to discard within one iteration. The default is to discard all by one ioctl call.
 
+*-q*, *--quiet*::
+Suppress warning messages.
+
 *-s*, *--secure*::
 Perform a secure discard. A secure discard is the same as a regular discard except that all copies of the discarded blocks that were possibly created by garbage collection must also be erased. This requires support from the device.
 

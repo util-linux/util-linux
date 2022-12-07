@@ -66,6 +66,8 @@ enum {
 	ACT_SECURE
 };
 
+static int quiet;
+
 static void print_stats(int act, char *path, uint64_t stats[])
 {
 	switch (act) {
@@ -96,6 +98,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -o, --offset <num>  offset in bytes to discard from\n"), out);
 	fputs(_(" -l, --length <num>  length of bytes to discard from the offset\n"), out);
 	fputs(_(" -p, --step <num>    size of the discard iterations within the offset\n"), out);
+	fputs(_(" -q, --quiet         suppress warning messages\n"), out);
 	fputs(_(" -s, --secure        perform secure discard\n"), out);
 	fputs(_(" -z, --zeroout       zero-fill rather than discard\n"), out);
 	fputs(_(" -v, --verbose       print aligned length and offset\n"), out);
@@ -134,12 +137,13 @@ static int probe_device(int fd, char *path)
 	if (ret)
 		goto out;
 
-	if (!blkid_probe_lookup_value(pr, "TYPE", &type, NULL)) {
-		warnx("%s contains existing file system (%s).",path ,type);
-	} else if (!blkid_probe_lookup_value(pr, "PTTYPE", &type, NULL)) {
-		warnx("%s contains existing partition (%s).",path ,type);
-	} else {
-		warnx("%s contains existing signature.", path);
+	if (!quiet) {
+		if (!blkid_probe_lookup_value(pr, "TYPE", &type, NULL))
+			warnx("%s contains existing file system (%s).",path ,type);
+		else if (!blkid_probe_lookup_value(pr, "PTTYPE", &type, NULL))
+			warnx("%s contains existing partition (%s).",path ,type);
+		else
+			warnx("%s contains existing signature.", path);
 	}
 
 out:
@@ -164,6 +168,7 @@ int main(int argc, char **argv)
 	    { "force",     no_argument,       NULL, 'f' },
 	    { "length",    required_argument, NULL, 'l' },
 	    { "step",      required_argument, NULL, 'p' },
+	    { "quiet",     no_argument,       NULL, 'q' },
 	    { "secure",    no_argument,       NULL, 's' },
 	    { "verbose",   no_argument,       NULL, 'v' },
 	    { "zeroout",   no_argument,       NULL, 'z' },
@@ -179,7 +184,7 @@ int main(int argc, char **argv)
 	range[1] = ULLONG_MAX;
 	step = 0;
 
-	while ((c = getopt_long(argc, argv, "hfVsvo:l:p:z", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "hfVsvo:l:p:qz", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'f':
 			force = 1;
@@ -195,6 +200,9 @@ int main(int argc, char **argv)
 		case 'p':
 			step = strtosize_or_err(optarg,
 					_("failed to parse step"));
+			break;
+		case 'q':
+			quiet = 1;
 			break;
 		case 's':
 			act = ACT_SECURE;
@@ -258,9 +266,10 @@ int main(int argc, char **argv)
 		errx(EXIT_FAILURE, _("%s: length %" PRIu64 " is not aligned "
 			 "to sector size %i"), path, range[1], secsize);
 #ifdef HAVE_LIBBLKID
-	if (force)
-		warnx(_("Operation forced, data will be lost!"));
-	else {
+	if (force) {
+		if (!quiet)
+			warnx(_("Operation forced, data will be lost!"));
+	} else {
 		 /* Check for existing signatures on the device */
 		switch(probe_device(fd, path)) {
 		case 0: /* signature detected */
