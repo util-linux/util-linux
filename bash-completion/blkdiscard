@@ -19,6 +19,7 @@ _blkdiscard_module()
 				--force
 				--offset
 				--length
+				--quiet
 				--step
 				--secure
 				--zeroout
