@@ -54,9 +54,23 @@ Display the aligned values of _offset_ and _length_. If the *--step* option is s
 
 include::man-common/help-version.adoc[]
 
+== EXIT STATUS
+
+*blkdiscard* has the following exit status values:
+
+*0*::
+success
+
+*1*::
+failure; incorrect invocation, permissions or any other generic error
+
+*2*::
+failure; since v2.39, the device does not support discard operation
+
 == AUTHORS
 
-mailto:lczerner@redhat.com[Lukas Czerner]
+mailto:lczerner@redhat.com[Lukas Czerner],
+mailto:kzak@redhat.com[Karel Zak]
 
 == SEE ALSO
 

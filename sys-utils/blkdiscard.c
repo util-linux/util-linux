@@ -48,6 +48,9 @@
 #include "closestream.h"
 #include "monotonic.h"
 
+/* exit() status if discard unsupported by device */
+#define BLKDISCARD_EXIT_NOTSUPP		(EXIT_FAILURE + 1)
+
 #ifndef BLKDISCARD
 # define BLKDISCARD	_IO(0x12,119)
 #endif
@@ -151,6 +154,15 @@ out:
 	return ret;
 }
 #endif /* HAVE_LIBBLKID */
+
+static void __attribute__((__noreturn__)) err_on_ioctl(
+			const char *ioctlname, const char *path)
+{
+	int exno = errno == EOPNOTSUPP ?
+			BLKDISCARD_EXIT_NOTSUPP : EXIT_FAILURE;
+
+	err(exno, _("%s: %s ioctl failed"), ioctlname, path);
+}
 
 int main(int argc, char **argv)
 {
@@ -299,18 +311,20 @@ int main(int argc, char **argv)
 		if (range[0] + range[1] > end)
 			range[1] = end - range[0];
 
+		errno = 0;
+
 		switch (act) {
 		case ACT_ZEROOUT:
 			if (ioctl(fd, BLKZEROOUT, &range))
-				 err(EXIT_FAILURE, _("%s: BLKZEROOUT ioctl failed"), path);
+				err_on_ioctl("BLKZEROOUT", path);
 			break;
 		case ACT_SECURE:
 			if (ioctl(fd, BLKSECDISCARD, &range))
-				err(EXIT_FAILURE, _("%s: BLKSECDISCARD ioctl failed"), path);
+				err_on_ioctl("BLKSECDISCARD", path);
 			break;
 		case ACT_DISCARD:
 			if (ioctl(fd, BLKDISCARD, &range))
-				err(EXIT_FAILURE, _("%s: BLKDISCARD ioctl failed"), path);
+				err_on_ioctl("BLKDISCARD", path);
 			break;
 		}
 
