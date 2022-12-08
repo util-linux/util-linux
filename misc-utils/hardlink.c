@@ -1161,37 +1161,36 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Consolidate duplicate files using hardlinks.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -v, --verbose              verbose output (repeat for more verbosity)\n"), out);
-	fputs(_(" -q, --quiet                quiet mode - don't print anything\n"), out);
-	fputs(_(" -n, --dry-run              don't actually link anything\n"), out);
-	fputs(_(" -y, --method <name>        file content comparison method\n"), out);
-
-	fputs(_(" -f, --respect-name         filenames have to be identical\n"), out);
-	fputs(_(" -d, --respect-dir          directory names have to be identical\n"), out);
-	fputs(_(" -p, --ignore-mode          ignore changes of file mode\n"), out);
-	fputs(_(" -o, --ignore-owner         ignore owner changes\n"), out);
-	fputs(_(" -t, --ignore-time          ignore timestamps (when testing for equality)\n"), out);
 	fputs(_(" -c, --content              compare only file contents, same as -pot\n"), out);
+	fputs(_(" -b, --io-size <size>       I/O buffer size for file reading\n"
+	        "                              (speedup, using more RAM)\n"), out);
+	fputs(_(" -d, --respect-dir          directory names have to be identical\n"), out);
+	fputs(_(" -f, --respect-name         filenames have to be identical\n"), out);
+	fputs(_(" -i, --include <regex>      regular expression to include files/dirs\n"), out);
+	fputs(_(" -m, --maximize             maximize the hardlink count, remove the file with\n"
+	        "                              lowest hardlink count\n"), out);
+	fputs(_(" -M, --minimize             reverse the meaning of -m\n"), out);
+	fputs(_(" -n, --dry-run              don't actually link anything\n"), out);
+	fputs(_(" -o, --ignore-owner         ignore owner changes\n"), out);
+	fputs(_(" -O, --keep-oldest          keep the oldest file of multiple equal files\n"
+		"                              (lower precedence than minimize/maximize)\n"), out);
+	fputs(_(" -p, --ignore-mode          ignore changes of file mode\n"), out);
+	fputs(_(" -q, --quiet                quiet mode - don't print anything\n"), out);
+	fputs(_(" -r, --cache-size <size>    memory limit for cached file content data\n"), out);
+	fputs(_(" -s, --minimum-size <size>  minimum size for files.\n"), out);
+	fputs(_(" -S, --maximum-size <size>  maximum size for files.\n"), out);
+	fputs(_(" -t, --ignore-time          ignore timestamps (when testing for equality)\n"), out);
+	fputs(_(" -v, --verbose              verbose output (repeat for more verbosity)\n"), out);
+	fputs(_(" -x, --exclude <regex>      regular expression to exclude files\n"), out);
 #ifdef USE_XATTR
 	fputs(_(" -X, --respect-xattrs       respect extended attributes\n"), out);
 #endif
+	fputs(_(" -y, --method <name>        file content comparison method\n"), out);
+
 #ifdef USE_REFLINK
 	fputs(_("     --reflink[=<when>]     create clone/CoW copies (auto, always, never)\n"), out);
 	fputs(_("     --skip-reflinks        skip already cloned files (enabled on --reflink)\n"), out);
 #endif
-	fputs(_(" -m, --maximize             maximize the hardlink count, remove the file with\n"
-	        "                              lowest hardlink count\n"), out);
-	fputs(_(" -M, --minimize             reverse the meaning of -m\n"), out);
-	fputs(_(" -O, --keep-oldest          keep the oldest file of multiple equal files\n"
-		"                              (lower precedence than minimize/maximize)\n"), out);
-	fputs(_(" -x, --exclude <regex>      regular expression to exclude files\n"), out);
-	fputs(_(" -i, --include <regex>      regular expression to include files/dirs\n"), out);
-	fputs(_(" -s, --minimum-size <size>  minimum size for files.\n"), out);
-	fputs(_(" -S, --maximum-size <size>  maximum size for files.\n"), out);
-	fputs(_(" -b, --io-size <size>       I/O buffer size for file reading\n"
-	        "                              (speedup, using more RAM)\n"), out);
-	fputs(_(" -r, --cache-size <size>    memory limit for cached file content data\n"), out);
-
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(28));
 	printf(USAGE_MAN_TAIL("hardlink(1)"));

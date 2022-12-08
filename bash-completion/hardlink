@@ -9,6 +9,34 @@ _hardlink_module()
 			COMPREPLY=( $(compgen -W "regex" -- $cur) )
 			return 0
 			;;
+		'-i'|'--include')
+			COMPREPLY=( $(compgen -W "regex" -- $cur) )
+			return 0
+			;;
+		'-s'|'--minimum-size')
+			COMPREPLY=( $(compgen -W "number" -- $cur) )
+			return 0
+			;;
+		'-S'|'--maximum-size')
+			COMPREPLY=( $(compgen -W "number" -- $cur) )
+			return 0
+			;;
+		'-b'|'--io-size')
+			COMPREPLY=( $(compgen -W "number" -- $cur) )
+			return 0
+			;;
+		'-r'|'--cache-size')
+			COMPREPLY=( $(compgen -W "number" -- $cur) )
+			return 0
+			;;
+		'-y'|'--method')
+			COMPREPLY=( $(compgen -W "sha256 sha1 crc32c memcmp" -- $cur) )
+			return 0
+			;;
+		'--reflink')
+			COMPREPLY=( $(compgen -W "never always auto" -- $cur) )
+			return 0
+			;;
 		'-H'|'--help'|'-V'|'--version')
 			return 0
 			;;
@@ -17,10 +45,19 @@ _hardlink_module()
 		-*)
 		OPTS="
 			--content
+			--respect-dir
+			--respect-name
+			--maximize
+			--minimize
 			--dry-run
+			--ignore-owner
+			--keep-oldest
+			--ignore-mode
+			--quiet
+			--ignore-time
 			--verbose
-			--force
-			--exclude
+			--respect-xattrs
+			--skip-reflinks
 			--version
 			--help
 		"
