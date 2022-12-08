@@ -66,6 +66,7 @@
 #endif
 
 static int quiet;		/* don't print anything */
+static int rootbasesz;		/* size of the directory for nftw() */
 
 #ifdef USE_REFLINK
 enum {
@@ -96,6 +97,7 @@ struct file {
 	struct link {
 		struct link *next;
 		int basename;
+		int dirname;
 #if __STDC_VERSION__ >= 199901L
 		char path[];
 #elif __GNUC__
@@ -174,6 +176,7 @@ static struct options {
 	unsigned int respect_mode:1;
 	unsigned int respect_owner:1;
 	unsigned int respect_name:1;
+	unsigned int respect_dir:1;
 	unsigned int respect_time:1;
 	unsigned int respect_xattrs:1;
 	unsigned int maximise:1;
@@ -310,6 +313,41 @@ static int compare_nodes(const void *_a, const void *_b)
 	return diff;
 }
 
+/* Compare only filenames */
+static inline int filename_strcmp(const struct file *a, const struct file *b)
+{
+	return strcmp(	a->links->path + a->links->basename,
+			b->links->path + b->links->basename);
+}
+
+/**
+ * Compare only directory names (ignores root directory and basename (filename))
+ *
+ * The complete path conrains three fragments:
+ *
+ * <rootdir> is specified on hardlink command line
+ * <dirname> is all betweehn rootdir and filename
+ * <filename> is last component (aka basename)
+ */
+static inline int dirname_strcmp(const struct file *a, const struct file *b)
+{
+	int diff = 0;
+	int asz = a->links->basename - a->links->dirname,
+	    bsz = b->links->basename - b->links->dirname;
+
+	diff = CMP(asz, bsz);
+
+	if (diff == 0) {
+		const char *a_start, *b_start;
+
+		a_start = a->links->path + a->links->dirname;
+		b_start = b->links->path + b->links->dirname;
+
+		diff = strncmp(a_start, b_start, asz);
+	}
+	return diff;
+}
+
 /**
  * compare_nodes_ino - Node comparison function
  * @_a: The first node (a #struct file)
@@ -332,8 +370,9 @@ static int compare_nodes_ino(const void *_a, const void *_b)
 	 * contain only links with the same basename to keep the rest simple.
 	 */
 	if (diff == 0 && opts.respect_name)
-		diff = strcmp(a->links->path + a->links->basename,
-			      b->links->path + b->links->basename);
+		diff = filename_strcmp(a, b);
+	if (diff == 0 && opts.respect_dir)
+		diff = dirname_strcmp(a, b);
 
 	return diff;
 }
@@ -609,9 +648,8 @@ static int file_may_link_to(const struct file *a, const struct file *b)
 		(!opts.respect_owner || a->st.st_uid == b->st.st_uid) &&
 		(!opts.respect_owner || a->st.st_gid == b->st.st_gid) &&
 		(!opts.respect_time || a->st.st_mtime == b->st.st_mtime) &&
-		(!opts.respect_name
-		 || strcmp(a->links->path + a->links->basename,
-			   b->links->path + b->links->basename) == 0) &&
+		(!opts.respect_name || filename_strcmp(a, b) == 0) &&
+		(!opts.respect_dir || dirname_strcmp(a, b) == 0) &&
 		(!opts.respect_xattrs || file_xattrs_equal(a, b)));
 }
 
@@ -835,6 +873,7 @@ static int inserter(const char *fpath, const struct stat *sb,
 
 	fil->st = *sb;
 	fil->links->basename = ftwbuf->base;
+	fil->links->dirname = rootbasesz;
 	fil->links->next = NULL;
 
 	memcpy(fil->links->path, fpath, pathlen);
@@ -1128,6 +1167,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -y, --method <name>        file content comparison method\n"), out);
 
 	fputs(_(" -f, --respect-name         filenames have to be identical\n"), out);
+	fputs(_(" -d, --respect-dir          directory names have to be identical\n"), out);
 	fputs(_(" -p, --ignore-mode          ignore changes of file mode\n"), out);
 	fputs(_(" -o, --ignore-owner         ignore owner changes\n"), out);
 	fputs(_(" -t, --ignore-time          ignore timestamps (when testing for equality)\n"), out);
@@ -1170,13 +1210,14 @@ static int parse_options(int argc, char *argv[])
 		OPT_REFLINK = CHAR_MAX + 1,
 		OPT_SKIP_RELINKS
 	};
-	static const char optstr[] = "VhvnfpotXcmMOx:y:i:r:S:s:b:q";
+	static const char optstr[] = "VhvndfpotXcmMOx:y:i:r:S:s:b:q";
 	static const struct option long_options[] = {
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
 		{"verbose", no_argument, NULL, 'v'},
 		{"dry-run", no_argument, NULL, 'n'},
 		{"respect-name", no_argument, NULL, 'f'},
+		{"respect-dir", no_argument, NULL, 'd'},
 		{"ignore-mode", no_argument, NULL, 'p'},
 		{"ignore-owner", no_argument, NULL, 'o'},
 		{"ignore-time", no_argument, NULL, 't'},
@@ -1204,7 +1245,7 @@ static int parse_options(int argc, char *argv[])
 		{0}
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
-	int c;
+	int c, content_only = 0;
 
 	while ((c = getopt_long(argc, argv, optstr, long_options, NULL)) != -1) {
 
@@ -1235,6 +1276,9 @@ static int parse_options(int argc, char *argv[])
 		case 'f':
 			opts.respect_name = TRUE;
 			break;
+		case 'd':
+			opts.respect_dir = TRUE;
+			break;
 		case 'v':
 			opts.verbosity++;
 			break;
@@ -1242,11 +1286,7 @@ static int parse_options(int argc, char *argv[])
 			quiet = TRUE;
 			break;
 		case 'c':
-			opts.respect_mode = FALSE;
-			opts.respect_name = FALSE;
-			opts.respect_owner = FALSE;
-			opts.respect_time = FALSE;
-			opts.respect_xattrs = FALSE;
+			content_only = 1;
 			break;
 		case 'n':
 			opts.dry_run = 1;
@@ -1312,6 +1352,14 @@ static int parse_options(int argc, char *argv[])
 		}
 	}
 
+	if (content_only) {
+		opts.respect_mode = FALSE;
+		opts.respect_name = FALSE;
+		opts.respect_dir = FALSE;
+		opts.respect_owner = FALSE;
+		opts.respect_time = FALSE;
+		opts.respect_xattrs = FALSE;
+	}
 	return 0;
 }
 
@@ -1391,9 +1439,12 @@ int main(int argc, char *argv[])
 			warn(_("cannot get realpath: %s"), argv[optind]);
 			continue;
 		}
+		if (opts.respect_dir)
+			rootbasesz = strlen(path);
 		if (nftw(path, inserter, 20, FTW_PHYS) == -1)
 			warn(_("cannot process %s"), path);
 		free(path);
+		rootbasesz = 0;
 	}
 
 	twalk(files, visitor);

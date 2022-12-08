@@ -61,6 +61,9 @@ calculation is done in kernel.
 *-f*, *--respect-name*::
 Only try to link files with the same (base)name. It's strongly recommended to use long options rather than *-f* which is interpreted in a different way by other *hardlink* implementations.
 
+*-d*, *--respect-dir*::
+Only try to link files with the same directory name. The top-level directory (as specified on the hardlink command line) is ignored. For example, *hardlink --respect-dir /foo /bar* will link /foo/some/file with /bar/some/file, but not /bar/other/file. If combined with *--respect-name*, then entire paths (except the top-level directory) are compared.
+
 *-p*, *--ignore-mode*::
 Link and compare files even if their mode is different. Results may be slightly unpredictable.
 
