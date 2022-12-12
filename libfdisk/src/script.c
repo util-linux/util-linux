@@ -554,7 +554,6 @@ static int write_file_json(struct fdisk_script *dp, FILE *f)
 	struct fdisk_partition *pa;
 	struct fdisk_iter itr;
 	const char *devname = NULL;
-	int ct = 0;
 	struct ul_jsonwrt json;
 
 	assert(dp);
@@ -608,7 +607,6 @@ static int write_file_json(struct fdisk_script *dp, FILE *f)
 	while (fdisk_table_next_partition(dp->table, &itr, &pa) == 0) {
 		char *p = NULL;
 
-		ct++;
 		ul_jsonwrt_object_open(&json, NULL);
 		if (devname)
 			p = fdisk_partname(devname, pa->partno + 1);
