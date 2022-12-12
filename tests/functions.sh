@@ -853,7 +853,7 @@ function ts_fdisk_clean {
 
 	# remove non comparable parts of fdisk output
 	if [ -n "${DEVNAME}" ]; then
-		# escape "@" with "@@" in $img. This way sed correctly
+		# escape "@" with "@@" in $DEVNAME. This way sed correctly
 		# replaces paths containing "@" characters
 		sed -i -e "s@${DEVNAME//\@/\\\@}@<removed>@;" $TS_OUTPUT $TS_ERRLOG
 	fi
