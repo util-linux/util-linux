@@ -939,7 +939,6 @@ exe = executable(
   'login-utils/su.c',
   'login-utils/su-common.c',
   'login-utils/su-common.h',
-  'lib/logindefs.c',
   pty_session_c,
   monotonic_c,
   include_directories : includes,
@@ -974,7 +973,6 @@ opt = not get_option('build-lslogins').disabled()
 exe = executable(
   'lslogins',
   'login-utils/lslogins.c',
-  'lib/logindefs.c',
   include_directories : includes,
   link_with : [lib_common,
                lib_smartcols,
@@ -1015,7 +1013,6 @@ exe = executable(
   'login-utils/runuser.c',
   'login-utils/su-common.c',
   'login-utils/su-common.h',
-  'lib/logindefs.c',
   pty_session_c,
   monotonic_c,
   include_directories : includes,
