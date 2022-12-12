@@ -12,7 +12,7 @@ fstrim - discard unused blocks on a mounted filesystem
 
 == SYNOPSIS
 
-*fstrim* [*-Aa*] [*-o* _offset_] [*-l* _length_] [*-m* _minimum-size_] [*-v* _mountpoint_]
+*fstrim* [*-Aav*] [*-o* _offset_] [*-l* _length_] [*-m* _minimum-size_] [_mountpoint_]
 
 == DESCRIPTION
 
@@ -20,7 +20,7 @@ fstrim - discard unused blocks on a mounted filesystem
 
 By default, *fstrim* will discard all unused blocks in the filesystem. Options may be used to modify this behavior based on range or size, as explained below.
 
-The _mountpoint_ argument is the pathname of the directory where the filesystem is mounted.
+The _mountpoint_ argument is the pathname of the directory where the filesystem is mounted and is required when *_-A_*, *_-a_*, *_--fstab_*, or *_--all_* are unspecified.
 
 Running *fstrim* frequently, or even using *mount -o discard*, might negatively affect the lifetime of poor-quality SSD devices. For most desktop and server systems a sufficient trimming frequency is once a week. Note that not all devices support a queued trim, so each trim command incurs a performance penalty on whatever else might be trying to use the disk at the time.
 
