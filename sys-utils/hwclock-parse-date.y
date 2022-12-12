@@ -34,6 +34,13 @@
  * TZ strings in dates.
  */
 
+#ifdef __clang__
+/* clang 15 detects yynerrs as unused.
+ * Will be fixed in future versions of bison.
+ */
+#pragma clang diagnostic ignored "-Wunused-but-set-variable"
+#endif
+
 /**
  * FIXME: Check for arithmetic overflow in all cases, not just
  * some of them.
