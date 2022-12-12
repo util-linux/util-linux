@@ -60,7 +60,7 @@ extern int is_known_shell(const char *shell_name)
 
 	setusershell();
 	while ((s = getusershell())) {
-		if (strcmp(shell_name, s) == 0) {
+		if (*s != '#' && strcmp(shell_name, s) == 0) {
 			ret = 1;
 			break;
 		}
