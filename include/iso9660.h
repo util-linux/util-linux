@@ -34,7 +34,7 @@ static inline uint32_t isonum_731(const unsigned char *p)
 	return ((p[0] & 0xff)
 		| ((p[1] & 0xff) << 8)
 		| ((p[2] & 0xff) << 16)
-		| ((p[3] & 0xff) << 24));
+		| (((uint32_t) p[3] & 0xff) << 24));
 }
 
 static inline uint32_t isonum_732(const unsigned char *p)
@@ -42,7 +42,7 @@ static inline uint32_t isonum_732(const unsigned char *p)
 	return ((p[3] & 0xff)
 		| ((p[2] & 0xff) << 8)
 		| ((p[1] & 0xff) << 16)
-		| ((p[0] & 0xff) << 24));
+		| (((uint32_t) p[0] & 0xff) << 24));
 }
 
 static inline uint32_t isonum_733(const unsigned char *p, bool check_match)
