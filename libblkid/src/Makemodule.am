@@ -50,6 +50,7 @@ libblkid_la_SOURCES = \
 	libblkid/src/superblocks/bitlocker.c \
 	libblkid/src/superblocks/bluestore.c \
 	libblkid/src/superblocks/btrfs.c \
+	libblkid/src/superblocks/cs_fvault2.c \
 	libblkid/src/superblocks/cramfs.c \
 	libblkid/src/superblocks/ddf_raid.c \
 	libblkid/src/superblocks/drbd.c \
