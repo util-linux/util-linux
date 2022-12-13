@@ -100,7 +100,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -h, --home-phone <phone>     home phone number\n"), fp);
 	fputs(USAGE_SEPARATOR, fp);
 	printf( " -u, --help                   %s\n", USAGE_OPTSTR_HELP);
-	printf( " -v, --version                %s\n", USAGE_OPTSTR_VERSION);
+	printf( " -V, --version                %s\n", USAGE_OPTSTR_VERSION);
 	printf(USAGE_MAN_TAIL("chfn(1)"));
 	exit(EXIT_SUCCESS);
 }
@@ -139,11 +139,11 @@ static void parse_argv(struct chfn_control *ctl, int argc, char **argv)
 		{ "office-phone", required_argument, NULL, 'p' },
 		{ "home-phone",   required_argument, NULL, 'h' },
 		{ "help",         no_argument,       NULL, 'u' },
-		{ "version",      no_argument,       NULL, 'v' },
+		{ "version",      no_argument,       NULL, 'V' },
 		{ NULL, 0, NULL, 0 },
 	};
 
-	while ((c = getopt_long(argc, argv, "f:r:p:h:o:uv", long_options,
+	while ((c = getopt_long(argc, argv, "f:r:p:h:o:uvV", long_options,
 				&index)) != -1) {
 		switch (c) {
 		case 'f':
@@ -170,7 +170,8 @@ static void parse_argv(struct chfn_control *ctl, int argc, char **argv)
 			ctl->newf.home_phone = optarg;
 			status += check_gecos_string(_("Home Phone"), optarg);
 			break;
-		case 'v':
+		case 'v': /* deprecated */
+		case 'V':
 			print_version(EXIT_SUCCESS);
 		case 'u':
 			usage();

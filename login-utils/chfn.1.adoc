@@ -20,7 +20,7 @@ chfn - change your finger information
 
 == SYNOPSIS
 
-*chfn* [*-f* _full-name_] [*-o* _office_] [*-p* _office-phone_] [*-h* _home-phone_] [*-u*] [*-v*] [_username_]
+*chfn* [*-f* _full-name_] [*-o* _office_] [*-p* _office-phone_] [*-h* _home-phone_] [*-u*] [*-V*] [_username_]
 
 == DESCRIPTION
 
@@ -45,6 +45,13 @@ Specify your office phone number.
 
 *-h*, *--home-phone* _home-phone_::
 Specify your home phone number.
+
+*-u*, *--help*::
+Display help text and exit.
+
+*-V*, *--version*::
+Print version and exit. The short options *-V* have been used since version 2.39; old versions use
+deprecated *-v*.
 
 include::man-common/help-version.adoc[]
 
