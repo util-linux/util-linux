@@ -20,7 +20,7 @@ chsh - change your login shell
 
 == SYNOPSIS
 
-*chsh* [*-s* _shell_] [*-l*] [*-h*] [*-v*] [_username_]
+*chsh* [*-s* _shell_] [*-l*] [*-h*] [*-V*] [_username_]
 
 == DESCRIPTION
 
@@ -35,6 +35,14 @@ Specify your login shell.
 
 *-l*, *--list-shells*::
 Print the list of shells listed in _/etc/shells_ and exit.
+
+*-h*, *--help*::
+Display help text and exit. The short options *-h* have been used since version 2.30; old versions use
+deprecated *-u*.
+
+*-V*, *--version*::
+Print version and exit. The short options *-V* have been used since version 2.39; old versions use
+deprecated *-v*.
 
 include::man-common/help-version.adoc[]
 
