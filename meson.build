@@ -792,6 +792,7 @@ compiler_flags = [
   '-Wmissing-prototypes',
   '-Wnested-externs',
   '-Wno-missing-field-initializers',
+  '-Wold-style-definition',
   '-Wpointer-arith',
   '-Wredundant-decls',
   '-Wsign-compare',
