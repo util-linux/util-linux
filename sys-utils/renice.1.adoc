@@ -46,16 +46,24 @@ renice - alter priority of running processes
 
 == SYNOPSIS
 
-*renice* [*-n*] _priority_ [*-g*|*-p*|*-u*] _identifier_...
+*renice* [*--priority|--relative*] _priority_ [*-g*|*-p*|*-u*] _identifier_...
 
 == DESCRIPTION
 
 *renice* alters the scheduling priority of one or more running processes. The first argument is the _priority_ value to be used. The other arguments are interpreted as process IDs (by default), process group IDs, user IDs, or user names. *renice*'ing a process group causes all processes in the process group to have their scheduling priority altered. *renice*'ing a user causes all processes owned by the user to have their scheduling priority altered.
 
+If no *-n*, *--priority* or *--relative* option is used, then the priority is set as *absolute*.
+
 == OPTIONS
 
-*-n*, *--priority* _priority_::
-Specify the scheduling _priority_ to be used for the process, process group, or user. Use of the option *-n* or *--priority* is optional, but when used it must be the first argument.
+*-n* _priority_::
+Specify the *absolute* or *relative* (depending on environment variable POSIXLY_CORRECT) scheduling _priority_ to be used for the process, process group, or user. Use of the option *-n* is optional, but when used it must be the first argument. See *NOTES* for more information.
+
+*--priority* _priority_::
+Specify an *absolute* scheduling _priority_. _Priority_ is set to the given value. This is the default, when no option is specified.
+
+*--relative* _priority_::
+Specify a *relative* scheduling _priority_. Same a the standard POSIX *-n* option. _Priority_ gets _incremented/decremented_ by the given value.
 
 *-g*, *--pgrp*::
 Interpret the succeeding arguments as process group IDs.
@@ -78,6 +86,8 @@ to map user names to user IDs
 Users other than the superuser may only alter the priority of processes they own. Furthermore, an unprivileged user can only _increase_ the "nice value" (i.e., choose a lower priority) and such changes are irreversible unless (since Linux 2.6.12) the user has a suitable "nice" resource limit (see *ulimit*(1p) and *getrlimit*(2)).
 
 The superuser may alter the priority of any process and set the priority to any value in the range -20 to 19. Useful priorities are: 19 (the affected processes will run only when nothing else in the system wants to), 0 (the "base" scheduling priority), anything negative (to make things go very fast).
+
+For historical reasons in this implementation, the *-n* option did not follow the POSIX specification, therefore instead of setting a *relative* priority it sets an *absolute* priority by default. As this may not be desirable, this behavior can be controlled by setting the environment variable POSIXLY_CORRECT to be fully POSIX compliant. See *-n* option for details. See *--relative* and *--priority* for options that don't change behavior depending on environment variables.
 
 == HISTORY
 
