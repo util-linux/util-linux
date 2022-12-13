@@ -2,25 +2,26 @@
 #define UTIL_LINUX_ISO_H
 
 #include <stdbool.h>
+#include <stdint.h>
 
 #include "c.h"
 
-static inline int isonum_721(unsigned char *p)
+static inline uint16_t isonum_721(const unsigned char *p)
 {
 	return ((p[0] & 0xff)
 		| ((p[1] & 0xff) << 8));
 }
 
-static inline int isonum_722(unsigned char *p)
+static inline uint16_t isonum_722(const unsigned char *p)
 {
 	return ((p[1] & 0xff)
 		| ((p[0] & 0xff) << 8));
 }
 
-static inline int isonum_723(unsigned char *p, bool check_match)
+static inline uint16_t isonum_723(const unsigned char *p, bool check_match)
 {
-	int le = isonum_721(p);
-	int be = isonum_722(p + 2);
+	uint16_t le = isonum_721(p);
+	uint16_t be = isonum_722(p + 2);
 
 	if (check_match && le != be)
 		/* translation is useless */
@@ -28,7 +29,7 @@ static inline int isonum_723(unsigned char *p, bool check_match)
 	return (le);
 }
 
-static inline int isonum_731(unsigned char *p)
+static inline uint32_t isonum_731(const unsigned char *p)
 {
 	return ((p[0] & 0xff)
 		| ((p[1] & 0xff) << 8)
@@ -36,7 +37,7 @@ static inline int isonum_731(unsigned char *p)
 		| ((p[3] & 0xff) << 24));
 }
 
-static inline int isonum_732(unsigned char *p)
+static inline uint32_t isonum_732(const unsigned char *p)
 {
 	return ((p[3] & 0xff)
 		| ((p[2] & 0xff) << 8)
@@ -44,10 +45,10 @@ static inline int isonum_732(unsigned char *p)
 		| ((p[0] & 0xff) << 24));
 }
 
-static inline int isonum_733(unsigned char *p, bool check_match)
+static inline uint32_t isonum_733(const unsigned char *p, bool check_match)
 {
-	int le = isonum_731(p);
-	int be = isonum_732(p + 4);
+	uint32_t le = isonum_731(p);
+	uint32_t be = isonum_732(p + 4);
 
 	if (check_match && le != be)
 		/* translation is useless */
