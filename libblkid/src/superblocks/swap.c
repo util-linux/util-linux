@@ -36,6 +36,14 @@ struct swap_header_v1_2 {
 #define TOI_MAGIC_STRING	"\xed\xc3\x02\xe9\x98\x56\xe5\x0c"
 #define TOI_MAGIC_STRLEN	(sizeof(TOI_MAGIC_STRING) - 1)
 
+static void swap_set_info_swap1(blkid_probe pr,
+		const struct swap_header_v1_2 *hdr)
+{
+	enum BLKID_ENDIANNESS endianness = le32_to_cpu(hdr->version) == 1 ?
+		BLKID_ENDIANNESS_LITTLE : BLKID_ENDIANNESS_BIG;
+	blkid_probe_set_fsendianness(pr, endianness);
+}
+
 static int swap_set_info(blkid_probe pr, const char *version)
 {
 	struct swap_header_v1_2 *hdr;
@@ -56,6 +64,7 @@ static int swap_set_info(blkid_probe pr, const char *version)
 			DBG(LOWPROBE, ul_debug("not set last swap page"));
 			return 1;
 		}
+		swap_set_info_swap1(pr, hdr);
 	}
 
 	/* arbitrary sanity check.. is there any garbage down there? */
