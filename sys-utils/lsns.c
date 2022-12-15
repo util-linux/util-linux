@@ -73,8 +73,16 @@ UL_DEBUG_DEFINE_MASKNAMES(lsns) = UL_DEBUG_EMPTY_MASKNAMES;
 #define DBG(m, x)       __UL_DBG(lsns, LSNS_DEBUG_, m, x)
 #define ON_DBG(m, x)    __UL_DBG_CALL(lsns, LSNS_DEBUG_, m, x)
 
+#define lsns_ioctl(fildes, request, ...) __extension__ ({ \
+	int ret = ioctl(fildes, request, ##__VA_ARGS__); \
+	if (ret == -1 && errno == ENOTTY) \
+		warnx("Unsupported ioctl %s", #request); \
+	ret; })
+
 #define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(lsns)
 #include "debugobj.h"
+
+#define EXIT_UNSUPPORTED_IOCTL 2
 
 static struct idcache *uid_cache = NULL;
 
@@ -306,7 +314,7 @@ static int get_ns_ino(int dir, const char *nsname, ino_t *ino, ino_t *pino, ino_
 	if (fd < 0)
 		return -errno;
 	if (strcmp(nsname, "pid") == 0 || strcmp(nsname, "user") == 0) {
-		if ((pfd = ioctl(fd, NS_GET_PARENT)) < 0) {
+		if ((pfd = lsns_ioctl(fd, NS_GET_PARENT)) < 0) {
 			if (errno == EPERM)
 				goto user;
 			close(fd);
@@ -321,7 +329,7 @@ static int get_ns_ino(int dir, const char *nsname, ino_t *ino, ino_t *pino, ino_
 		close(pfd);
 	}
  user:
-	if ((ofd = ioctl(fd, NS_GET_USERNS)) < 0) {
+	if ((ofd = lsns_ioctl(fd, NS_GET_USERNS)) < 0) {
 		if (errno == EPERM)
 			goto out;
 		close(fd);
@@ -723,14 +731,14 @@ static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, in
 	struct lsns_namespace *ns;
 	int clone_type, lsns_type;
 
-	clone_type = ioctl(fd, NS_GET_NSTYPE);
+	clone_type = lsns_ioctl(fd, NS_GET_NSTYPE);
 	if (clone_type < 0)
 		return NULL;
 	lsns_type = clone_type_to_lsns_type(clone_type);
 	if (lsns_type < 0 || ls->fltr_types[lsns_type] == 0)
 		return NULL;
 
-	fd_owner = ioctl(fd, NS_GET_USERNS);
+	fd_owner = lsns_ioctl(fd, NS_GET_USERNS);
 	if (fd_owner < 0)
 		goto parent;
 	if (fstat(fd_owner, &st_owner) < 0)
@@ -738,7 +746,7 @@ static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, in
 	ino_owner = st_owner.st_ino;
 
  parent:
-	fd_parent = ioctl(fd, NS_GET_PARENT);
+	fd_parent = lsns_ioctl(fd, NS_GET_PARENT);
 	if (fd_parent < 0)
 		goto add_ns;
 	if (fstat(fd_parent, &st_parent) < 0)
@@ -747,7 +755,7 @@ static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, in
 
  add_ns:
 	ns = add_namespace(ls, lsns_type, ino, ino_parent, ino_owner);
-	ioctl(fd, NS_GET_OWNER_UID, &ns->uid_fallback);
+	lsns_ioctl(fd, NS_GET_OWNER_UID, &ns->uid_fallback);
 	add_uid(uid_cache, ns->uid_fallback);
 
 	if ((lsns_type == LSNS_ID_USER || lsns_type == LSNS_ID_PID)
@@ -793,7 +801,7 @@ static void interpolate_missing_namespaces(struct lsns *ls, struct lsns_namespac
 	if (fd_orphan < 0)
 		return;
 
-	fd_missing = ioctl(fd_orphan, cmd[rela]);
+	fd_missing = lsns_ioctl(fd_orphan, cmd[rela]);
 	close(fd_orphan);
 	if (fd_missing < 0)
 		return;
@@ -1506,5 +1514,9 @@ int main(int argc, char *argv[])
 
 	free_all(&ls);
 
-	return r == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
+	switch (r) {
+		case 0: return EXIT_SUCCESS;
+		case -ENOTTY: return EXIT_UNSUPPORTED_IOCTL;
+		default: return EXIT_FAILURE;
+	}
 }
