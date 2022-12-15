@@ -70,6 +70,9 @@ generate a new randomly-generated UUID
 *time*;;
 generate a new time-based UUID
 
+*-e*, *--endianness* _ENDIANNESS_::
+Specify the _ENDIANNESS_ to use, valid arguments are *native*, *little* or *big*. The default is *native*.
+
 *-v*, *--swapversion 1*::
 Specify the swap-space version. (This option is currently pointless, as the old *-v 0* option has become obsolete and now only *-v 1* is supported. The kernel has not supported v0 swap-space format since 2.5.22 (June 2002). The new version v1 is supported since 2.1.117 (August 1998).)
 

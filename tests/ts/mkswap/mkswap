@@ -28,26 +28,38 @@ ts_check_test_command "$TS_HELPER_SYSINFO"
 ts_check_prog "xz"
 ts_check_prog "cmp"
 
-BYTE_ORDER="$("$TS_HELPER_SYSINFO" byte-order)"
 UUID=4c08e1cd-3c82-46bf-a55b-0c3270d6dfeb
 
 for PAGESIZE in 4096 8192; do
-	name="${BYTE_ORDER}-${PAGESIZE}"
-	outimg="$TS_OUTDIR/${name}.img"
-	origimg="$TS_OUTDIR/${name}.img.orig"
+	for ENDIANNESS in native little big; do
+		case "$ENDIANNESS" in 
+			native) BYTE_ORDER="$("$TS_HELPER_SYSINFO" byte-order)";;
+			little) BYTE_ORDER=LE;;
+			big) BYTE_ORDER=BE;;
+		esac
 
-	ts_init_subtest $name
+		if [ "$ENDIANNESS" == "native" ]; then
+			name="NATIVE-${PAGESIZE}"
+		else
+			name="${BYTE_ORDER}-${PAGESIZE}"
+		fi
+		outimg="$TS_OUTDIR/${BYTE_ORDER}-${PAGESIZE}.img"
+		origimg="$TS_OUTDIR/${BYTE_ORDER}-${PAGESIZE}.img.orig"
 
-	rm -f "$outimg"
-	truncate -s $(( PAGESIZE * 10 )) "$outimg" > $TS_ERRLOG 2>&1
+		ts_init_subtest $name
 
-	"$TS_CMD_MKSWAP" -q -L label -U "$UUID" -p "$PAGESIZE" "$outimg" \
-		> "$TS_OUTPUT" 2> "$TS_ERRLOG" || ts_log "mkswap failed"
-	xz -dc "$TS_SELF/${name}.img.xz" > "$origimg"
+		rm -f "$outimg"
+		truncate -s $(( PAGESIZE * 10 )) "$outimg" > $TS_ERRLOG 2>&1
 
-	cmp "$origimg" "$outimg" > "$TS_ERRLOG" 2>&1
+		"$TS_CMD_MKSWAP" -q -L label -U "$UUID" -e "$ENDIANNESS" -p "$PAGESIZE" "$outimg" \
+			> "$TS_OUTPUT" 2>/dev/null \
+			|| ts_log "mkswap failed"
+		xz -dc "$TS_SELF/${BYTE_ORDER}-${PAGESIZE}.img.xz" > "$origimg"
 
-	ts_finalize_subtest
+		cmp "$origimg" "$outimg" > "$TS_ERRLOG" 2>&1
+
+		ts_finalize_subtest
+	done
 done
 
 ts_finalize
