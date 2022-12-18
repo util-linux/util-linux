@@ -92,6 +92,16 @@ if build_uuidd and systemd.found()
     uuidd_socket,
     install_dir : systemdsystemunitdir)
 endif
+if build_uuidd and sysvinit
+  uuidd_rc = configure_file(
+    input : 'uuidd.rc.in',
+    output : 'uuidd.rc',
+    configuration : conf)
+  install_data(
+    uuidd_rc,
+    install_mode : 'rwxr-xr-x',
+    install_dir : sysvinitrcdir)
+endif
 
 blkid_sources = files(
   'blkid.c',

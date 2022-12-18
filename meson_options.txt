@@ -20,6 +20,8 @@ option('smack',       type : 'feature', value : 'disabled')
 option('magic',       type : 'feature')
 option('econf',       type : 'feature')
 option('systemd',     type : 'feature')
+option('sysvinit',    type : 'feature', value : 'disabled',
+       description : 'build and install sysvinit startup scripts')
 option('btrfs',       type : 'feature')
 option('widechar',    type : 'feature',
        description : 'compile with wide character support')

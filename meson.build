@@ -23,6 +23,7 @@ docdir = join_paths(prefixdir, get_option('datadir'), 'doc', 'util-linux')
 mandir = join_paths(prefixdir, get_option('mandir'))
 runstatedir = '/run'
 execprefixdir = prefixdir
+sysconfdir = join_paths(prefixdir, get_option('sysconfdir'))
 usrbin_exec_dir = join_paths(execprefixdir, bindir)
 usrsbin_exec_dir = join_paths(execprefixdir, sbindir)
 bash_completion = dependency('bash-completion', required : get_option('build-bash-completion'))
@@ -57,6 +58,7 @@ conf.set_quoted('LIBBLKID_DATE', libblkid_date)
 conf.set('bindir', bindir)
 conf.set('sbindir', sbindir)
 conf.set('runstatedir', runstatedir)
+conf.set('sysconfdir', sysconfdir)
 conf.set('usrsbin_execdir', usrsbin_exec_dir)
 conf.set('docdir', docdir)
 conf.set_quoted('_PATH_SYSCONFSTATICDIR', sysconfstaticdir)
@@ -750,6 +752,9 @@ systemdsystemunitdir = ''
 if systemd.found()
   systemdsystemunitdir = systemd.get_variable(pkgconfig : 'systemdsystemunitdir')
 endif
+
+sysvinit = get_option('sysvinit').enabled()
+sysvinitrcdir = sysconfdir + '/init.d'
 
 chfn_chsh_password = get_option('chfn-chsh-password') or lib_user.found()
 conf.set('CHFN_CHSH_PASSWORD', chfn_chsh_password ? 1 : false)
