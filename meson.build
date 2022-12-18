@@ -374,7 +374,7 @@ lib_econf = dependency(
 conf.set('HAVE_LIBECONF', lib_econf.found() ? 1 : false)
 
 lib_audit = dependency(
-  'libaudit',
+  'audit',
   required : get_option('audit'))
 conf.set('HAVE_LIBAUDIT', lib_audit.found() ? 1 : false)
 
