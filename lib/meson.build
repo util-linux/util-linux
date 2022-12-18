@@ -57,6 +57,7 @@ logindefs_c = static_library('logindefs',
   include_directories : dir_include,
   dependencies : lib_econf,
 )
+selinux_utils_c = files('selinux-utils.c')
 
 if LINUX
   lib_common_sources += '''

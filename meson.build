@@ -2449,6 +2449,7 @@ exe = executable(
   'namei',
   namei_sources,
   include_directories : includes,
+  dependencies : [lib_selinux],
   install_dir : usrbin_exec_dir,
   install : true)
 exes += exe

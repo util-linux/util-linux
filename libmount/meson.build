@@ -72,6 +72,11 @@ lib_mount_static = static_library(
   dependencies : [realtime_libs],
   install : false)
 
+lib__mount_deps = [
+  lib_selinux,
+  get_option('cryptsetup-dlopen').enabled() ? lib_dl : lib_cryptsetup,
+  realtime_libs
+]
 lib_mount = library(
   'mount',
   link_whole : lib__mount,
@@ -83,9 +88,7 @@ lib_mount = library(
   link_args : ['-Wl,--version-script=@0@'.format(libmount_sym_path)],
   link_with : [lib_common,
                lib_blkid],
-  dependencies : [lib_selinux,
-                  get_option('cryptsetup-dlopen').enabled() ? lib_dl : lib_cryptsetup,
-                  realtime_libs],
+  dependencies : lib__mount_deps,
   install : build_libmount)
 mount_dep = declare_dependency(link_with: lib_mount, include_directories: '.')
 
@@ -124,7 +127,7 @@ foreach libmount_test: libmount_tests
     'src/' + libmount_test_src_override.get(libmount_test, libmount_test) + '.c',
     include_directories : [dir_include, dir_libblkid],
     link_with : [lib__mount, lib_common, lib_blkid_static],
-    dependencies : [lib_cryptsetup],
+    dependencies : lib__mount_deps,
     c_args : ['-DTEST_PROGRAM'],
   )
   # the test-setup expects the helpers in the toplevel build-directory

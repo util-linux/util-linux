@@ -14,6 +14,9 @@ mkswap_sources = files(
   'mkswap.c',
 ) + \
   ismounted_c
+if lib_selinux.found()
+  mkswap_sources += selinux_utils_c
+endif
 
 swaplabel_sources = files(
   'swaplabel.c',
