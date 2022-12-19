@@ -551,6 +551,7 @@ static int read_watchdog_from_sysfs(struct wd_device *wd)
 
 	ul_path_read_buffer(sys, (char *) wd->ident.identity, sizeof(wd->ident.identity), "identity");
 	ul_path_read_u32(sys, &wd->ident.firmware_version, "fw_version");
+	ul_path_scanf(sys, "options", "%x", &wd->ident.options);
 
 	ul_path_scanf(sys, "status", "%x", &wd->status);
 	ul_path_read_u32(sys, &wd->bstatus, "bootstatus");
