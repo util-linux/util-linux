@@ -231,6 +231,7 @@ usrbin_exec_PROGRAMS += setarch
 MANPAGES += sys-utils/setarch.8
 dist_noinst_DATA += sys-utils/setarch.8.adoc
 setarch_SOURCES = sys-utils/setarch.c
+setarch_LDADD = $(LDADD) libcommon.la
 
 SETARCH_LINKS = uname26 linux32 linux64
 

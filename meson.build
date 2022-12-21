@@ -1439,6 +1439,7 @@ exe = executable(
   'setarch',
   setarch_sources,
   include_directories : includes,
+  link_with : [lib_common],
   install_dir : usrbin_exec_dir,
   install : true)
 exes += exe
