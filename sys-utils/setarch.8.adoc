@@ -31,6 +31,11 @@ Since version 2.33 the _arch_ command line argument is optional and *setarch* ma
 *--list*::
 List the architectures that *setarch* knows about. Whether *setarch* can actually set each of these architectures depends on the running kernel.
 
+*--show[=personality]*::
+Show the currently active personality and flags.
+If the *personality* argument is provided, it is shown instead of the current one.
+*personality* is a hexadecimal numbers with values was described in *sys/personality.h*.
+
 *--uname-2.6*::
 Causes the _program_ to see a kernel version number beginning with 2.6. Turns on *UNAME26*.
 
