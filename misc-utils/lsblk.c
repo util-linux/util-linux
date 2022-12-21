@@ -524,6 +524,8 @@ static const char *get_transport(struct lsblk_device *dev)
 		trans = "nvme";
 	} else if (strncmp(dev->name, "vd", 2) == 0)
 		trans = "virtio";
+	else if (strncmp(dev->name, "mmcblk", 6) == 0)
+		trans = "mmc";
 
 	return trans;
 }
