@@ -1169,6 +1169,7 @@ manipulate_rtc_param(const struct hwclock_control *ctl)
 
 		printf(_("The RTC parameter 0x%jx is set to 0x%jx.\n"),
 		       (uintmax_t) id, (uintmax_t) value);
+		return 0;
 
 	} else if (ctl->param_set_option) {
 		if (ctl->testing)
