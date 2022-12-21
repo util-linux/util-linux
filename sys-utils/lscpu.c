@@ -40,6 +40,7 @@
 #include "closestream.h"
 #include "optutils.h"
 #include "c_strtod.h"
+#include "sysfs.h"
 
 #include "lscpu.h"
 
@@ -220,6 +221,15 @@ static void lscpu_context_init_paths(struct lscpu_cxt *cxt)
 	DBG(MISC, ul_debugobj(cxt, "initialize paths"));
 	ul_path_init_debug();
 
+	/* / */
+	cxt->rootfs = NULL;
+	if (cxt->prefix) {
+		cxt->rootfs = ul_new_path("/");
+		if (!cxt->rootfs)
+			err(EXIT_FAILURE, _("failed to initialize rootfs handler"));
+		ul_path_set_prefix(cxt->rootfs, cxt->prefix);
+	}
+
 	/* /sys/devices/system/cpu */
 	cxt->syscpu = ul_new_path(_PATH_SYS_CPU);
 	if (!cxt->syscpu)
@@ -252,6 +262,7 @@ static void lscpu_free_context(struct lscpu_cxt *cxt)
 	DBG(MISC, ul_debugobj(cxt, " de-initialize paths"));
 	ul_unref_path(cxt->syscpu);
 	ul_unref_path(cxt->procfs);
+	ul_unref_path(cxt->rootfs);
 
 	DBG(MISC, ul_debugobj(cxt, " freeing cpus"));
 	for (i = 0; i < cxt->npossibles; i++) {
@@ -998,11 +1009,11 @@ static void print_summary(struct lscpu_cxt *cxt)
 	}
 	if (ct && ct->addrsz)
 		add_summary_s(tb, sec, _("Address sizes:"), ct->addrsz);
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-	add_summary_s(tb, sec, _("Byte Order:"), "Little Endian");
-#else
-	add_summary_s(tb, sec, _("Byte Order:"), "Big Endian");
-#endif
+
+	if (sysfs_get_byteorder(cxt->rootfs) == SYSFS_BYTEORDER_LITTLE)
+		add_summary_s(tb, sec, _("Byte Order:"), "Little Endian");
+	else
+		add_summary_s(tb, sec, _("Byte Order:"), "Big Endian");
 
 	/* Section: CPU lists */
 	sec = add_summary_n(tb, NULL, _("CPU(s):"), cxt->npresents);

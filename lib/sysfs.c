@@ -1072,6 +1072,36 @@ char *sysfs_chrdev_devno_to_devname(dev_t devno, char *buf, size_t bufsiz)
 
 }
 
+enum sysfs_byteorder sysfs_get_byteorder(struct path_cxt *pc)
+{
+	int rc;
+	char buf[BUFSIZ];
+	enum sysfs_byteorder ret;
+
+	rc = ul_path_read_buffer(pc, buf, sizeof(buf), _PATH_SYS_CPU_BYTEORDER);
+	if (rc < 0)
+		goto unknown;
+
+	if (strncmp(buf, "little", sizeof(buf)) == 0) {
+		ret = SYSFS_BYTEORDER_LITTLE;
+		goto out;
+	} else if (strncmp(buf, "big", sizeof(buf)) == 0) {
+		ret = SYSFS_BYTEORDER_BIG;
+		goto out;
+	}
+
+unknown:
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+	ret = SYSFS_BYTEORDER_LITTLE;
+#elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+	ret = SYSFS_BYTEORDER_BIG;
+#else
+#error Unknown byte order
+#endif
+
+out:
+	return ret;
+}
 
 
 #ifdef TEST_PROGRAM_SYSFS

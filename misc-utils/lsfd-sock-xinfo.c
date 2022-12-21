@@ -31,6 +31,8 @@
 #include "xalloc.h"
 #include "nls.h"
 #include "libsmartcols.h"
+#include "sysfs.h"
+#include "bitops.h"
 
 #include "lsfd.h"
 #include "lsfd-sock.h"
@@ -610,6 +612,14 @@ static bool L3_verify_initial_line(const char *line)
 	return (strncmp(line, "sl", 2) == 0);
 }
 
+static uint32_t kernel32_to_cpu(enum sysfs_byteorder byteorder, uint32_t v)
+{
+	if (byteorder == SYSFS_BYTEORDER_LITTLE)
+		return le32_to_cpu(v);
+	else
+		return be32_to_cpu(v);
+}
+
 #define TCP_LINE_LEN 256
 static void load_xinfo_from_proc_inet_L3(ino_t netns_inode, const char *proc_file,
 					 struct sock_xinfo_class *class)
@@ -626,6 +636,8 @@ static void load_xinfo_from_proc_inet_L3(ino_t netns_inode, const char *proc_fil
 	if (!L3_verify_initial_line(line))
 		/* Unexpected line */
 		goto out;
+
+	enum sysfs_byteorder byteorder = sysfs_get_byteorder(NULL);
 
 	while (fgets(line, sizeof(line), tcp_fp)) {
 		unsigned long local_addr;
@@ -652,9 +664,9 @@ static void load_xinfo_from_proc_inet_L3(ino_t netns_inode, const char *proc_fil
 		sock->class = class;
 		sock->inode = (ino_t)inode;
 		sock->netns_inode = netns_inode;
-		inet->local_addr = local_addr;
+		inet->local_addr = kernel32_to_cpu(byteorder, local_addr);
 		tcp->local_port = local_port;
-		inet->remote_addr = remote_addr;
+		inet->remote_addr = kernel32_to_cpu(byteorder, remote_addr);
 		tcp->remote_port = remote_port;
 		tcp->st = st;
 
