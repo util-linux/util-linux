@@ -65,3 +65,8 @@ void blkid_init_debug(int mask)
 	ON_DBG(HELP, ul_debug_print_masks("LIBBLKID_DEBUG",
 				UL_DEBUG_MASKNAMES(libblkid)));
 }
+
+static void __attribute__ ((constructor)) blkid_init_default_debug(void)
+{
+	blkid_init_debug(0);
+}
