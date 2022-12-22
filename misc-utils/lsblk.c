@@ -2,7 +2,7 @@
  * lsblk(8) - list block devices
  *
  * Copyright (C) 2010-2018 Red Hat, Inc. All rights reserved.
- * Written by Milan Broz <mbroz@redhat.com>
+ * Written by Milan Broz <gmazyland@gmail.com>
  *            Karel Zak <kzak@redhat.com>
  *
  * This program is free software; you can redistribute it and/or modify

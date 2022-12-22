@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010-2018 Red Hat, Inc. All rights reserved.
- * Written by Milan Broz <mbroz@redhat.com>
+ * Written by Milan Broz <gmazyland@gmail.com>
  *            Karel Zak <kzak@redhat.com>
  */
 #ifndef UTIL_LINUX_LSBLK_H
