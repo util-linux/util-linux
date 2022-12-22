@@ -34,6 +34,7 @@ ts_init_subtest "one-process"
 
 test_cmd --one 1
 test_cmd --one 2
+test_cmd --one 3
 
 ts_finalize_subtest
 
@@ -47,6 +48,9 @@ test_cmd --stat-nth 1 4
 
 test_cmd --stat-nth 2 1
 test_cmd --stat-nth 2 4
+
+test_cmd --stat-nth 3 1
+test_cmd --stat-nth 3 4
 
 ts_finalize_subtest
 

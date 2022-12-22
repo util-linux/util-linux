@@ -191,7 +191,7 @@ int procfs_process_get_stat_nth(struct path_cxt *pc, int n, uintmax_t *re)
 			return ul_strtou64(tok, re, 10);
 
 		/* skip rest of the process name */
-		if (i == 2 && (p = strchr(key, ')')))
+		if (i == 2 && (p = strrchr(key, ')')))
 			key = p + 2;
 	}
 
