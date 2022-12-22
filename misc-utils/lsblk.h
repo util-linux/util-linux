@@ -79,6 +79,7 @@ struct lsblk_devprop {
 	char *serial;		/* disk serial number */
 	char *model;		/* disk model */
 	char *idlink;		/* /dev/disk/by-id/<name> */
+	char *revision;		/* firmware revision/version */
 
 	/* lsblk specific (for --sysroot only)  */
 	char *owner;		/* user name */

@@ -1013,8 +1013,13 @@ static char *device_get_data(
 		}
 		break;
 	case COL_REV:
-		if (!device_is_partition(dev) && dev->nslaves == 0)
-			ul_path_read_string(dev->sysfs, &str, "device/rev");
+		if (!device_is_partition(dev) && dev->nslaves == 0) {
+			prop = lsblk_device_get_properties(dev);
+			if (prop && prop->revision)
+				str = xstrdup(prop->revision);
+			else
+				ul_path_read_string(dev->sysfs, &str, "device/rev");
+		}
 		break;
 	case COL_VENDOR:
 		if (!device_is_partition(dev) && dev->nslaves == 0)
