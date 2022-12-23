@@ -141,7 +141,7 @@ static ssize_t read_procfs_file(int fd, char *buf, size_t bufsz)
 	return sz;
 }
 
-static ssize_t procfs_process_get_line_for(struct path_cxt *pc, char *buf, size_t bufsz,
+static ssize_t procfs_process_get_data_for(struct path_cxt *pc, char *buf, size_t bufsz,
 					    const char *fname)
 {
 	int fd = ul_path_open(pc, O_RDONLY|O_CLOEXEC, fname);
@@ -156,17 +156,17 @@ static ssize_t procfs_process_get_line_for(struct path_cxt *pc, char *buf, size_
 
 ssize_t procfs_process_get_cmdline(struct path_cxt *pc, char *buf, size_t bufsz)
 {
-	return procfs_process_get_line_for(pc, buf, bufsz, "cmdline");
+	return procfs_process_get_data_for(pc, buf, bufsz, "cmdline");
 }
 
 ssize_t procfs_process_get_cmdname(struct path_cxt *pc, char *buf, size_t bufsz)
 {
-	return procfs_process_get_line_for(pc, buf, bufsz, "comm");
+	return procfs_process_get_data_for(pc, buf, bufsz, "comm");
 }
 
 ssize_t procfs_process_get_stat(struct path_cxt *pc, char *buf, size_t bufsz)
 {
-	return procfs_process_get_line_for(pc, buf, bufsz, "stat");
+	return procfs_process_get_data_for(pc, buf, bufsz, "stat");
 }
 
 int procfs_process_get_stat_nth(struct path_cxt *pc, int n, uintmax_t *re)
@@ -179,7 +179,7 @@ int procfs_process_get_stat_nth(struct path_cxt *pc, int n, uintmax_t *re)
 	if (n == 2 || n == 3)		/* process name and status (strings) */
 		return -EINVAL;
 
-	rc = procfs_process_get_line_for(pc, buf, sizeof(buf), "stat");
+	rc = procfs_process_get_data_for(pc, buf, sizeof(buf), "stat");
 	if (rc < 0)
 		return rc;
 
