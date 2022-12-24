@@ -43,6 +43,7 @@ extern double strtod_or_err(const char *str, const char *errmesg);
 extern long double strtold_or_err(const char *str, const char *errmesg);
 
 #define strtol_or_err(_s, _e)	(long) str2num_or_err(_s, 10, _e, LONG_MIN, LONG_MAX)
+#define strtopid_or_err(_s, _e)	(pid_t) str2num_or_err(_s, 10, _e, 1, SINT_MAX(pid_t))
 #define strtoul_or_err(_s, _e)	(unsigned long) str2unum_or_err(_s, 10, _e, ULONG_MAX)
 
 extern void strtotimeval_or_err(const char *str, struct timeval *tv,

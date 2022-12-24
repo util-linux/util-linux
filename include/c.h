@@ -526,4 +526,6 @@ static inline void print_features(const char **features, const char *prefix)
 # define MAP_ANONYMOUS  (MAP_ANON)
 #endif
 
+#define SINT_MAX(t) (((size_t) 1 << (sizeof(t) * 8 - 1)) - 1)
+
 #endif /* UTIL_LINUX_C_H */
