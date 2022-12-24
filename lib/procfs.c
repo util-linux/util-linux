@@ -581,7 +581,7 @@ static int test_process_stat_nth(int argc, char *argv[])
 	pid_t pid;
 	struct path_cxt *pc;
 	uintmax_t num = 0;
-	int n;
+	int n, ret;
 
 	if (argc != 3)
 		return EXIT_FAILURE;
@@ -592,8 +592,9 @@ static int test_process_stat_nth(int argc, char *argv[])
 	if (!pc)
 		err(EXIT_FAILURE, "cannot alloc procfs handler");
 
-	if (procfs_process_get_stat_nth(pc, n, &num) != 0)
-		err(EXIT_FAILURE, "read %dth number failed", n);
+	ret = procfs_process_get_stat_nth(pc, n, &num);
+	if (ret)
+		errx(EXIT_FAILURE, "read %dth number failed: %s", n, strerror(-ret));
 
 	printf("%d: %dth %ju\n", (int) pid, n, num);
 	ul_unref_path(pc);
