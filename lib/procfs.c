@@ -606,7 +606,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "usage: %1$s --tasks <pid>\n"
 				"       %1$s --fds <pid>\n"
 				"       %1$s --is-procfs [<dir>]\n"
-				"       %1$s --processes [---name <name>] [--uid <uid>]\n"
+				"       %1$s --processes [--name <name>] [--uid <uid>]\n"
 				"       %1$s --one <pid>\n"
 				"       %1$s --stat-nth <pid> <n>\n",
 				program_invocation_short_name);
