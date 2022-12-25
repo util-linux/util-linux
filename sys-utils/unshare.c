@@ -485,7 +485,7 @@ static struct map_range *read_subid_range(char *filename, uid_t uid)
 		return map;
 	}
 
-	err(EXIT_FAILURE, _("no line matching user \"%s\" in %s"),
+	errx(EXIT_FAILURE, _("no line matching user \"%s\" in %s"),
 	pw->pw_name, filename);
 }
 
