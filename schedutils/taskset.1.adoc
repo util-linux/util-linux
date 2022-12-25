@@ -93,6 +93,14 @@ You can also retrieve the CPU affinity of an existing task{colon}::
 Or set it{colon}::
 *taskset -p* _mask pid_
 
+//TRANSLATORS: Keep {colon} untranslated.
+When a cpu-list is specified for an existing process, the 'p' and 'c' options must be grouped together{colon}::
+*taskset -pc* _cpu-list pid_
+
+//TRANSLATORS: Keep {colon} untranslated.
+The *--cpu-list* form is applicable only for launching new commands{colon}::
+*taskset --cpu-list* _cpu-list command_
+
 == PERMISSIONS
 
 A user can change the CPU affinity of a process belonging to the same user. A user must possess *CAP_SYS_NICE* to change the CPU affinity of a process belonging to another user. A user can retrieve the affinity mask of any process.
