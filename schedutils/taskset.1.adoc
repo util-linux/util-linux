@@ -52,10 +52,10 @@ is processor #0,
 *0x00000003*::
 is processors #0 and #1,
 
-*0xFFFFFFFF*::
+*FFFFFFFF*::
 is processors #0 through #31,
 
-*32*::
+*0x32*::
 is processors #1, #4, and #5,
 
 *--cpu-list 0-2,6*::
