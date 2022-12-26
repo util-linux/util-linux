@@ -241,7 +241,7 @@ static struct gpt_header *get_gpt_header(
 			offsetof(struct gpt_header, header_crc32),
 			sizeof(h->header_crc32));
 
-	if (crc != le32_to_cpu(h->header_crc32)) {
+	if (!blkid_probe_verify_csum(pr, crc, le32_to_cpu(h->header_crc32))) {
 		DBG(LOWPROBE, ul_debug("GPT header corrupted"));
 		return NULL;
 	}
