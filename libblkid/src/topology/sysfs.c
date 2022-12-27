@@ -43,7 +43,7 @@ static struct topology_val {
 static int probe_sysfs_tp(blkid_probe pr,
 		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
-	dev_t dev;
+	dev_t dev, disk = 0;
 	int rc, set_parent = 1;
 	struct path_cxt *pc;
 	size_t i, count = 0;
@@ -63,9 +63,11 @@ static int probe_sysfs_tp(blkid_probe pr,
 
 		rc = 1;	/* nothing */
 
-		if (!ok && set_parent) {
-			dev_t disk = blkid_probe_get_wholedisk_devno(pr);
-			set_parent = 0;
+		if (!ok) {
+			if (set_parent) {
+				disk = blkid_probe_get_wholedisk_devno(pr);
+				set_parent = 0;
+			}
 
 			/*
 			 * Read attributes from "disk" if the current device is
