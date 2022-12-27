@@ -3,16 +3,26 @@ _umount_points_list()
 	# List of characters to escape shamelessly stolen from "scp" completion
 	local escape_chars='[][(){}<>\",:;^&!$=?`|\\'\'' \t\f\n\r\v]'
 
-	findmnt -lno TARGET | awk '{
-		if ($0 ~ "^"ENVIRON["HOME"]) {
+	findmnt -lno TARGET | awk '
+
+	function literal_ere(s) {
+		gsub(/[][^$.*?+{}\\()|]/, "\\\\&", s)
+		return s
+	}
+
+	{
+		home_ere = literal_ere(ENVIRON["HOME"])
+		print home_ere
+		if ($0 ~ "^"home_ere) {
 			homeless = $0
-			sub("^"ENVIRON["HOME"], "~", homeless)
+			sub("^"home_ere, "~", homeless)
 			gsub("'"$escape_chars"'", "\\\\&", homeless)
 			print homeless " "
 		}
-		if ($0 ~ "^"ENVIRON["PWD"]) {
+		pwd_ere = literal_ere(ENVIRON["PWD"])
+		if ($0 ~ "^"pwd_ere) {
 			reldir = $0
-			sub("^"ENVIRON["PWD"]"/?", "", reldir)
+			sub("^"pwd_ere"/?", "", reldir)
 			gsub("'"$escape_chars"'", "\\\\&", reldir)
 			print "./" reldir " "
 			print reldir " "
