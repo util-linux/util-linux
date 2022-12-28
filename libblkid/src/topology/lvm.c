@@ -35,7 +35,7 @@ static int is_lvm_device(dev_t devno)
 static int probe_lvm_tp(blkid_probe pr,
 		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
-	const char *paths[] = {
+	const char * const paths[] = {
 		"/usr/local/sbin/lvdisplay",
 		"/usr/sbin/lvdisplay",
 		"/sbin/lvdisplay"
