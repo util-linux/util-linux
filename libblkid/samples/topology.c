@@ -11,6 +11,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <inttypes.h>
 
 #include <blkid.h>
 
@@ -53,6 +54,8 @@ int main(int argc, char *argv[])
 				blkid_topology_get_physical_sector_size(tp));
 		printf("\tdax support          : %lu\n",
 				blkid_topology_get_dax(tp));
+		printf("\tdiskseq              : %"PRId64"\n",
+				blkid_topology_get_diskseq(tp));
 	}
 
 	/*

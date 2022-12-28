@@ -38,6 +38,7 @@ static struct topology_val {
 	{ "queue/optimal_io_size", blkid_topology_set_optimal_io_size },
 	{ "queue/physical_block_size", blkid_topology_set_physical_sector_size },
 	{ "queue/dax", blkid_topology_set_dax },
+	{ "diskseq", blkid_topology_set_diskseq },
 };
 
 static int probe_sysfs_tp(blkid_probe pr,

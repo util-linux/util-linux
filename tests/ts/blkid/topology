@@ -36,6 +36,7 @@ echo -e 'label: dos\n- - - -' | "$TS_CMD_SFDISK" -q "$TS_LODEV"
 
 "$TS_CMD_BLKID" -i -o udev "$TS_LODEV" \
 	2> "$TS_ERRLOG" \
+	| sed -E -e 's/^ID_FS_DISKSEQ=[[:digit:]]+$/ID_FS_DISKSEQ=S/' \
 	| sort > "$TS_OUTPUT"
 
 ts_finalize_subtest
@@ -45,6 +46,7 @@ ts_init_subtest partition
 
 "$TS_CMD_BLKID" -i -o udev "$TS_LODEV"p1 \
 	2> "$TS_ERRLOG" \
+	| sed -E -e 's/^ID_FS_DISKSEQ=[[:digit:]]+$/ID_FS_DISKSEQ=S/' \
 	| sort > "$TS_OUTPUT"
 
 ts_finalize_subtest

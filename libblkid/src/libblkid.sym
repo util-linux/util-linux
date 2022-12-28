@@ -183,3 +183,7 @@ BLKID_2_37 {
 	blkid_probe_set_hint;
 	blkid_probe_reset_hints;
 } BLKID_2_36;
+
+BLKID_2_39 {
+	blkid_topology_get_diskseq;
+} BLKID_2_37;

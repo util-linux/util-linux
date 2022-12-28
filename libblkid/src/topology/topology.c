@@ -68,6 +68,7 @@ struct blkid_struct_topology {
 	unsigned long	logical_sector_size;
 	unsigned long	physical_sector_size;
 	unsigned long   dax;
+	uint64_t	diskseq;
 };
 
 /*
@@ -312,6 +313,14 @@ int blkid_topology_set_dax(blkid_probe pr, unsigned long val)
 			val);
 }
 
+int blkid_topology_set_diskseq(blkid_probe pr, uint64_t val)
+{
+	return topology_set_value(pr,
+			"DISKSEQ",
+			offsetof(struct blkid_struct_topology, diskseq),
+			val);
+}
+
 /**
  * blkid_topology_get_alignment_offset:
  * @tp: topology
@@ -378,4 +387,17 @@ unsigned long blkid_topology_get_physical_sector_size(blkid_topology tp)
 unsigned long blkid_topology_get_dax(blkid_topology tp)
 {
 	return tp->dax;
+}
+
+/**
+ * blkid_topology_get_diskseq
+ * @tp: topology
+ *
+ * Returns: disk sequence number
+ *
+ * Since: 2.39
+ */
+uint64_t blkid_topology_get_diskseq(blkid_topology tp)
+{
+	return tp->diskseq;
 }
