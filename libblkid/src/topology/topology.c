@@ -207,7 +207,7 @@ static void topology_free(blkid_probe pr __attribute__((__unused__)),
 }
 
 static int topology_set_value(blkid_probe pr, const char *name,
-				size_t structoff, unsigned long data)
+				size_t structoff, unsigned long long data)
 {
 	struct blkid_chain *chn = blkid_probe_get_chain(pr);
 
@@ -220,7 +220,7 @@ static int topology_set_value(blkid_probe pr, const char *name,
 		memcpy((char *) chn->data + structoff, &data, sizeof(data));
 		return 0;
 	}
-	return blkid_probe_sprintf_value(pr, name, "%lu", data);
+	return blkid_probe_sprintf_value(pr, name, "%llu", data);
 }
 
 
