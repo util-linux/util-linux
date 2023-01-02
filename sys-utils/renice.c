@@ -70,9 +70,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -n <num>               specify the nice value\n"), out);
 	fputs(_("                          If POSIXLY_CORRECT flag is set in environment\n"), out);
-	fputs(_("                          environment then the priority is 'relative'\n"), out);
-	fputs(_("                          to current process priority. Otherwise it is\n"), out);
-	fputs(_("                          'absolute'.\n"), out);
+	fputs(_("                          then the priority is 'relative' to current\n"), out);
+	fputs(_("                          process priority. Otherwise it is 'absolute'.\n"), out);
 	fputs(_(" --priority <num>       specify the 'absolute' nice value\n"), out);
 	fputs(_(" --relative <num>       specify the 'relative' nice value\n"), out);
 	fputs(_(" -p, --pid              interpret arguments as process ID (default)\n"), out);
@@ -101,10 +100,11 @@ static int donice(const int which, const int who, const int prio, const int rela
 
 	if (getprio(which, who, &oldprio) != 0)
 		return 1;
+	
+	newprio = prio; // if not relative, set absolute priority
 
-	newprio = oldprio;
 	if (relative)
-	    newprio += prio;
+		newprio = oldprio + prio;
 
 	if (setpriority(which, who, newprio) < 0) {
 		warn(_("failed to set priority for %d (%s)"), who, idtype[which]);
