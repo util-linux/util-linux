@@ -41,7 +41,7 @@ AUTHORS (merged projects & commands):
       libmount:        Karel Zak <kzak@redhat.com>
       libuuid:         Theodore Ts'o <tytso@mit.edu>
       lscpu:           Cai Qian <qcai@redhat.com>
-      lsblk:           Milan Broz <mbroz@redhat.com>
+      lsblk:           Milan Broz <gmazyland@gmail.com>
                        Karel Zak <kzak@redhat.com>
       lsfd:            Masatake YAMATO <yamato@redhat.com>
       lsipc:           Ondrej Oprala <ooprala@redhat.com>
@@ -612,7 +612,7 @@ CONTRIBUTORS:
       Miklos Szeredi <mszeredi@suse.cz>
       Mikulas Patocka <mpatocka@redhat.com>
       Milan Bouchet-Valat <nalimilan@club.fr>
-      Milan Broz <mbroz@redhat.com>
+      Milan Broz <gmazyland@gmail.com>
       Ming Lei <tom.leiming@gmail.com>
       Miquel van Smoorenburg <miquels@maestro.htsa.aha.nl>
       Mister Me <gdg@localhost.localdomain>

@@ -38,6 +38,7 @@ void lsblk_device_free_properties(struct lsblk_devprop *p)
 	free(p->model);
 	free(p->partflags);
 	free(p->idlink);
+	free(p->revision);
 
 	free(p->mode);
 	free(p->owner);
@@ -129,6 +130,9 @@ static struct lsblk_devprop *get_properties_by_udev(struct lsblk_device *ld)
 		prop->serial = xstrdup(data);
 		normalize_whitespace((unsigned char *) prop->serial);
 	}
+
+	if ((data = udev_device_get_property_value(dev, "ID_REVISION")))
+		prop->revision = xstrdup(data);
 
 	if ((data = udev_device_get_property_value(dev, "ID_MODEL_ENC"))) {
 		prop->model = xstrdup(data);
@@ -254,6 +258,7 @@ static struct lsblk_devprop *get_properties_by_file(struct lsblk_device *ld)
 		else if (lookup(buf, "ID_SCSI_SERIAL", &prop->serial)) ;
 		else if (lookup(buf, "ID_SERIAL_SHORT", &prop->serial)) ;
 		else if (lookup(buf, "ID_SERIAL", &prop->serial)) ;
+		else if (lookup(buf, "ID_REVISION", &prop->revision)) ;
 
 		/* lsblk specific */
 		else if (lookup(buf, "MODE", &prop->mode)) ;

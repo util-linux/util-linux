@@ -168,7 +168,7 @@ The *lsblk* command needs to be able to look up each block device by major:minor
 
 == AUTHORS
 
-mailto:mbroz@redhat.com[Milan Broz],
+mailto:gmazyland@gmail.com[Milan Broz],
 mailto:kzak@redhat.com[Karel Zak]
 
 == SEE ALSO
