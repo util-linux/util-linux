@@ -86,6 +86,7 @@ static int probe_erofs(blkid_probe pr, const struct blkid_idmag *mag)
 	blkid_probe_set_uuid(pr, sb->uuid);
 	blkid_probe_set_fsblocksize(pr, 1U << sb->blkszbits);
 	blkid_probe_set_block_size(pr, 1U << sb->blkszbits);
+	blkid_probe_set_fssize(pr, (uint64_t) (1U << sb->blkszbits) * le32_to_cpu(sb->blocks));
 
 	return BLKID_PROBE_OK;
 }

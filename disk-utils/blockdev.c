@@ -169,6 +169,12 @@ static const struct bdc bdcms[] =
 		.argval = -1,
 		.help = N_("get filesystem readahead")
 	},{
+		IOCTL_ENTRY(BLKGETDISKSEQ),
+		.name = "--getdiskseq",
+		.argtype = ARG_ULLONG,
+		.argval = -1,
+		.help = N_("get disk sequence number")
+	},{
 		IOCTL_ENTRY(BLKFLSBUF),
 		.name = "--flushbufs",
 		.help = N_("flush buffers")

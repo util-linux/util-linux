@@ -218,6 +218,7 @@ static int __probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag, int save_
 
 	blkid_probe_set_fsblocksize(pr, sector_size * sectors_per_cluster);
 	blkid_probe_set_block_size(pr, sector_size);
+	blkid_probe_set_fssize(pr, le64_to_cpu(ns->number_of_sectors) * sector_size);
 
 	blkid_probe_sprintf_uuid(pr,
 			(unsigned char *) &ns->volume_serial,

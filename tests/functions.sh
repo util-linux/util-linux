@@ -126,6 +126,12 @@ function ts_check_wcsspn {
 	fi
 }
 
+function ts_check_native_byteorder {
+	if [ "$QEMU_USER" == "1" ] && [ ! -e /sys/kernel/cpu_byteorder ]; then
+		ts_skip "non-native byteorder"
+	fi
+}
+
 function ts_report_skip {
 	ts_report " SKIPPED ($1)"
 }
@@ -669,7 +675,7 @@ function ts_device_init {
 	local dev
 
 	img=$(ts_image_init $1 $2)
-	dev=$($TS_CMD_LOSETUP --show -f "$img")
+	dev=$($TS_CMD_LOSETUP --show --partscan -f "$img")
 	if [ "$?" != "0" -o "$dev" = "" ]; then
 		ts_die "Cannot init device"
 	fi
@@ -853,7 +859,7 @@ function ts_fdisk_clean {
 
 	# remove non comparable parts of fdisk output
 	if [ -n "${DEVNAME}" ]; then
-		# escape "@" with "@@" in $DEVNAME. This way sed correctly
+		# escape "@" with "\@" in $DEVNAME. This way sed correctly
 		# replaces paths containing "@" characters
 		sed -i -e "s@${DEVNAME//\@/\\\@}@<removed>@;" $TS_OUTPUT $TS_ERRLOG
 	fi

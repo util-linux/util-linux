@@ -64,6 +64,11 @@
 #  define BLKDISCARDZEROES _IO(0x12,124)
 # endif
 
+/* disk sequence number, introduced in 5.15 (commit 7957d93b) */
+# ifndef BLKGETDISKSEQ
+#  define BLKGETDISKSEQ _IOR(0x12, 128, uint64_t)
+# endif
+
 /* filesystem freeze, introduced in 2.6.29 (commit fcccf502) */
 # ifndef FIFREEZE
 #  define FIFREEZE   _IOWR('X', 119, int)    /* Freeze */

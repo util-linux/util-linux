@@ -206,6 +206,7 @@ struct lscpu_cxt {
 
 	struct path_cxt	*syscpu; /* _PATH_SYS_CPU path handler */
 	struct path_cxt *procfs; /* /proc path handler */
+	struct path_cxt *rootfs; /* / path handler */
 
 	size_t ncputypes;
 	struct lscpu_cputype **cputypes;

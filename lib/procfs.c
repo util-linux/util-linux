@@ -141,7 +141,7 @@ static ssize_t read_procfs_file(int fd, char *buf, size_t bufsz)
 	return sz;
 }
 
-static ssize_t procfs_process_get_line_for(struct path_cxt *pc, char *buf, size_t bufsz,
+static ssize_t procfs_process_get_data_for(struct path_cxt *pc, char *buf, size_t bufsz,
 					    const char *fname)
 {
 	int fd = ul_path_open(pc, O_RDONLY|O_CLOEXEC, fname);
@@ -156,17 +156,17 @@ static ssize_t procfs_process_get_line_for(struct path_cxt *pc, char *buf, size_
 
 ssize_t procfs_process_get_cmdline(struct path_cxt *pc, char *buf, size_t bufsz)
 {
-	return procfs_process_get_line_for(pc, buf, bufsz, "cmdline");
+	return procfs_process_get_data_for(pc, buf, bufsz, "cmdline");
 }
 
 ssize_t procfs_process_get_cmdname(struct path_cxt *pc, char *buf, size_t bufsz)
 {
-	return procfs_process_get_line_for(pc, buf, bufsz, "comm");
+	return procfs_process_get_data_for(pc, buf, bufsz, "comm");
 }
 
 ssize_t procfs_process_get_stat(struct path_cxt *pc, char *buf, size_t bufsz)
 {
-	return procfs_process_get_line_for(pc, buf, bufsz, "stat");
+	return procfs_process_get_data_for(pc, buf, bufsz, "stat");
 }
 
 int procfs_process_get_stat_nth(struct path_cxt *pc, int n, uintmax_t *re)
@@ -179,7 +179,7 @@ int procfs_process_get_stat_nth(struct path_cxt *pc, int n, uintmax_t *re)
 	if (n == 2 || n == 3)		/* process name and status (strings) */
 		return -EINVAL;
 
-	rc = procfs_process_get_line_for(pc, buf, sizeof(buf), "stat");
+	rc = procfs_process_get_data_for(pc, buf, sizeof(buf), "stat");
 	if (rc < 0)
 		return rc;
 
@@ -191,7 +191,7 @@ int procfs_process_get_stat_nth(struct path_cxt *pc, int n, uintmax_t *re)
 			return ul_strtou64(tok, re, 10);
 
 		/* skip rest of the process name */
-		if (i == 2 && (p = strchr(key, ')')))
+		if (i == 2 && (p = strrchr(key, ')')))
 			key = p + 2;
 	}
 
@@ -446,7 +446,7 @@ char *pid_get_cmdline(pid_t pid)
 
 #ifdef TEST_PROGRAM_PROCFS
 
-static int test_tasks(int argc, char *argv[])
+static int test_tasks(int argc, char *argv[], const char *prefix)
 {
 	DIR *sub = NULL;
 	struct path_cxt *pc;
@@ -458,7 +458,7 @@ static int test_tasks(int argc, char *argv[])
 	pid = strtol(argv[1], (char **) NULL, 10);
 	printf("PID=%d, TIDs:", pid);
 
-	pc = ul_new_procfs_path(pid, NULL);
+	pc = ul_new_procfs_path(pid, prefix);
 	if (!pc)
 		err(EXIT_FAILURE, "alloc procfs handler failed");
 
@@ -470,7 +470,7 @@ static int test_tasks(int argc, char *argv[])
 	return EXIT_SUCCESS;
 }
 
-static int test_fds(int argc, char *argv[])
+static int test_fds(int argc, char *argv[], const char *prefix)
 {
 	DIR *sub = NULL;
 	struct path_cxt *pc;
@@ -483,7 +483,7 @@ static int test_fds(int argc, char *argv[])
 	pid = strtol(argv[1], (char **) NULL, 10);
 	printf("PID=%d, FDs:", pid);
 
-	pc = ul_new_procfs_path(pid, NULL);
+	pc = ul_new_procfs_path(pid, prefix);
 	if (!pc)
 		err(EXIT_FAILURE, "alloc procfs handler failed");
 
@@ -530,7 +530,7 @@ static int test_processes(int argc, char *argv[])
 	return EXIT_SUCCESS;
 }
 
-static int test_one_process(int argc, char *argv[])
+static int test_one_process(int argc, char *argv[], const char *prefix)
 {
 	pid_t pid;
 	struct path_cxt *pc;
@@ -541,7 +541,7 @@ static int test_one_process(int argc, char *argv[])
 		return EXIT_FAILURE;
 	pid = strtol(argv[1], (char **) NULL, 10);
 
-	pc = ul_new_procfs_path(pid, NULL);
+	pc = ul_new_procfs_path(pid, prefix);
 	if (!pc)
 		err(EXIT_FAILURE, "cannot alloc procfs handler");
 
@@ -576,24 +576,25 @@ static int test_isprocfs(int argc, char *argv[])
 	return is ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
-static int test_process_stat_nth(int argc, char *argv[])
+static int test_process_stat_nth(int argc, char *argv[], const char *prefix)
 {
 	pid_t pid;
 	struct path_cxt *pc;
 	uintmax_t num = 0;
-	int n;
+	int n, ret;
 
 	if (argc != 3)
 		return EXIT_FAILURE;
 	pid = strtol(argv[1], (char **) NULL, 10);
 	n = strtol(argv[2], (char **) NULL, 10);
 
-	pc = ul_new_procfs_path(pid, NULL);
+	pc = ul_new_procfs_path(pid, prefix);
 	if (!pc)
 		err(EXIT_FAILURE, "cannot alloc procfs handler");
 
-	if (procfs_process_get_stat_nth(pc, n, &num) != 0)
-		err(EXIT_FAILURE, "read %dth number failed", n);
+	ret = procfs_process_get_stat_nth(pc, n, &num);
+	if (ret)
+		errx(EXIT_FAILURE, "read %dth number failed: %s", n, strerror(-ret));
 
 	printf("%d: %dth %ju\n", (int) pid, n, num);
 	ul_unref_path(pc);
@@ -602,29 +603,37 @@ static int test_process_stat_nth(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
+	const char *prefix = NULL;
+
+	if (argc > 2 && strcmp(argv[1], "--prefix") == 0) {
+		prefix = argv[2];
+		argc -= 2;
+		argv += 2;
+	}
+
 	if (argc < 2) {
-		fprintf(stderr, "usage: %1$s --tasks <pid>\n"
-				"       %1$s --fds <pid>\n"
+		fprintf(stderr, "usage: %1$s [--prefix <prefix>] --tasks <pid>\n"
+				"       %1$s [--prefix <prefix>] --fds <pid>\n"
 				"       %1$s --is-procfs [<dir>]\n"
-				"       %1$s --processes [---name <name>] [--uid <uid>]\n"
-				"       %1$s --one <pid>\n"
-				"       %1$s --stat-nth <pid> <n>\n",
+				"       %1$s --processes [--name <name>] [--uid <uid>]\n"
+				"       %1$s [--prefix <prefix>] --one <pid>\n"
+				"       %1$s [--prefix <prefix>] --stat-nth <pid> <n>\n",
 				program_invocation_short_name);
 		return EXIT_FAILURE;
 	}
 
 	if (strcmp(argv[1], "--tasks") == 0)
-		return test_tasks(argc - 1, argv + 1);
+		return test_tasks(argc - 1, argv + 1, prefix);
 	if (strcmp(argv[1], "--fds") == 0)
-		return test_fds(argc - 1, argv + 1);
+		return test_fds(argc - 1, argv + 1, prefix);
 	if (strcmp(argv[1], "--processes") == 0)
 		return test_processes(argc - 1, argv + 1);
 	if (strcmp(argv[1], "--is-procfs") == 0)
 		return test_isprocfs(argc - 1, argv + 1);
 	if (strcmp(argv[1], "--one") == 0)
-		return test_one_process(argc - 1, argv + 1);
+		return test_one_process(argc - 1, argv + 1, prefix);
 	if (strcmp(argv[1], "--stat-nth") == 0)
-		return test_process_stat_nth(argc - 1, argv + 1);
+		return test_process_stat_nth(argc - 1, argv + 1, prefix);
 
 	return EXIT_FAILURE;
 }

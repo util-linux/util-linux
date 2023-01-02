@@ -55,6 +55,7 @@ lib_blkid_sources = '''
   src/superblocks/bitlocker.c
   src/superblocks/bluestore.c
   src/superblocks/btrfs.c
+  src/superblocks/cs_fvault2.c
   src/superblocks/cramfs.c
   src/superblocks/ddf_raid.c
   src/superblocks/drbd.c

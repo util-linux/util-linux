@@ -333,6 +333,8 @@ extern unsigned long blkid_topology_get_physical_sector_size(blkid_topology tp)
 			__ul_attribute__((nonnull));
 extern unsigned long blkid_topology_get_dax(blkid_topology tp)
 			__ul_attribute__((nonnull));
+extern uint64_t blkid_topology_get_diskseq(blkid_topology tp)
+			__ul_attribute__((nonnull));
 
 /*
  * partitions probing

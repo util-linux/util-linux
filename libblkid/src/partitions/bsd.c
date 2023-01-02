@@ -26,6 +26,18 @@
 #define BLKID_MAG_LASTOFFSET(_mag) \
 		 (BLKID_MAG_OFFSET(_mag) - (BLKID_MAG_SECTOR(_mag) << 9))
 
+static uint16_t bsd_checksum(const struct bsd_disklabel *l)
+{
+	uint16_t v, csum = 0;
+	const char *end = (const char *) (l + 1);
+
+	for (const char *c = (const char *) l; c < end; c += sizeof(uint16_t)) {
+		memcpy(&v, c, sizeof(v));
+		csum ^= v;
+	}
+	return csum ^ le16_to_cpu(l->d_checksum);
+}
+
 static int probe_bsd_pt(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct bsd_disklabel *l;
@@ -51,6 +63,11 @@ static int probe_bsd_pt(blkid_probe pr, const struct blkid_idmag *mag)
 	}
 
 	l = (struct bsd_disklabel *) (data + BLKID_MAG_LASTOFFSET(mag));
+
+	if (!blkid_probe_verify_csum(pr, bsd_checksum(l), le16_to_cpu(l->d_checksum))) {
+		rc = BLKID_PROBE_NONE;
+		goto nothing;
+	}
 
 	ls = blkid_probe_get_partlist(pr);
 	if (!ls)

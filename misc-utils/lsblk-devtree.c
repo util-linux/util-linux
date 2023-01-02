@@ -30,7 +30,7 @@ void lsblk_reset_iter(struct lsblk_iter *itr, int direction)
 	itr->direction = direction;
 }
 
-struct lsblk_device *lsblk_new_device()
+struct lsblk_device *lsblk_new_device(void)
 {
 	struct lsblk_device *dev;
 
@@ -233,7 +233,7 @@ int lsblk_device_next_parent(
 	return rc;
 }
 
-struct lsblk_devtree *lsblk_new_devtree()
+struct lsblk_devtree *lsblk_new_devtree(void)
 {
 	struct lsblk_devtree *tr;
 

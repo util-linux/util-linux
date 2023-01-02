@@ -50,7 +50,7 @@ done
 
 rm -f $img
 
-# escape "@" with "@@" in $img. This way sed correctly
+# escape "@" with "\@" in $img. This way sed correctly
 # replaces paths containing "@" characters
 sed -i "s@${img//\@/\\\@}@image@g" $TS_OUTPUT
 

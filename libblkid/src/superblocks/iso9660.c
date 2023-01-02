@@ -20,6 +20,7 @@
 
 #include "superblocks.h"
 #include "cctype.h"
+#include "iso9660.h"
 
 struct iso9660_date {
 	unsigned char year[4];
@@ -43,12 +44,14 @@ struct iso_volume_descriptor {
 	unsigned char	unused[8];
 	unsigned char	space_size[8];
 	unsigned char	escape_sequences[8];
-	unsigned char  unused2[94];
+	unsigned char  unused2[32];
+	unsigned char  logical_block_size[4];
+	unsigned char  unused3[58];
 	unsigned char  volume_set_id[128];
 	unsigned char  publisher_id[128];
 	unsigned char  data_preparer_id[128];
 	unsigned char  application_id[128];
-	unsigned char  unused3[111];
+	unsigned char  unused4[111];
 	struct iso9660_date created;
 	struct iso9660_date modified;
 } __attribute__((packed));
@@ -253,8 +256,12 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!pvd)
 		return errno ? -errno : 1;
 
-	blkid_probe_set_fsblocksize(pr, ISO_SECTOR_SIZE);
-	blkid_probe_set_block_size(pr, ISO_SECTOR_SIZE);
+	uint16_t logical_block_size = isonum_723(pvd->logical_block_size, true);
+	uint32_t space_size = isonum_733(pvd->space_size, true);
+
+	blkid_probe_set_fsblocksize(pr, logical_block_size);
+	blkid_probe_set_block_size(pr, logical_block_size);
+	blkid_probe_set_fssize(pr, (uint64_t) space_size * logical_block_size);
 
 	if (joliet && (len = merge_utf16be_ascii(buf, sizeof(buf), joliet->system_id, pvd->system_id, sizeof(pvd->system_id))) != 0)
 		blkid_probe_set_utf8_id_label(pr, "SYSTEM_ID", buf, len, UL_ENCODE_UTF16BE);

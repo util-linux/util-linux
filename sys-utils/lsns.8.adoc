@@ -72,6 +72,17 @@ Use tree-like output format. If *process* is given as _rel_, print process tree(
 
 include::man-common/help-version.adoc[]
 
+== EXIT STATUS
+
+The *lsns* utility exits with one of the following values:
+
+*0*::
+Success.
+*1*::
+General error.
+*2*::
+An ioctl was unknown to the kernel.
+
 == AUTHORS
 
 mailto:kzak@redhat.com[Karel Zak]

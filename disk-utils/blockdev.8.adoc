@@ -57,6 +57,9 @@ Print the blocksize in bytes. This size does not describe device topology. It's 
 *--getdiscardzeroes*::
 Get discard zeroes support status.
 
+*--getdiskseq*::
+Get disk sequence number.
+
 *--getfra*::
 Get filesystem readahead in 512-byte sectors.
 

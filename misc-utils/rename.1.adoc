@@ -23,7 +23,7 @@ rename - rename files
 == OPTIONS
 
 *-s*, *--symlink*::
-Do not rename a symlink but its target.
+Do not rename a symlink but change where it points.
 
 *-v*, *--verbose*::
 Show which files were renamed, if any.
@@ -48,6 +48,12 @@ include::man-common/help-version.adoc[]
 == WARNING
 
 The renaming has no safeguards by default or without any one of the options *--no-overwrite*, *--interactive* or *--no-act*. If the user has permission to rewrite file names, the command will perform the action without any questions. For example, the result can be quite drastic when the command is run as root in the _/lib_ directory. Always make a backup before running the command, unless you truly know what you are doing.
+
+== EDGE CASES
+
+If the _expression_ is empty, then by default _replacement_ will be added to the start of the filename. With *--all*, _replacement_ will be inserted in between every two characters of the filename, as well as at the start and end.
+
+Normally, only the final path component of a filename is updated. But if either _expression_ or _replacement_ contains a _/_, the full path is updated. This can cause a file to be moved between folders. Creating folders, and moving files between filesystems, is not supported. With *--symlink*, the update is always applied to the link's full path.
 
 == INTERACTIVE MODE
 

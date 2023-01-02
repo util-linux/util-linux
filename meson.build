@@ -23,6 +23,7 @@ docdir = join_paths(prefixdir, get_option('datadir'), 'doc', 'util-linux')
 mandir = join_paths(prefixdir, get_option('mandir'))
 runstatedir = '/run'
 execprefixdir = prefixdir
+sysconfdir = join_paths(prefixdir, get_option('sysconfdir'))
 usrbin_exec_dir = join_paths(execprefixdir, bindir)
 usrsbin_exec_dir = join_paths(execprefixdir, sbindir)
 bash_completion = dependency('bash-completion', required : get_option('build-bash-completion'))
@@ -57,6 +58,7 @@ conf.set_quoted('LIBBLKID_DATE', libblkid_date)
 conf.set('bindir', bindir)
 conf.set('sbindir', sbindir)
 conf.set('runstatedir', runstatedir)
+conf.set('sysconfdir', sysconfdir)
 conf.set('usrsbin_execdir', usrsbin_exec_dir)
 conf.set('docdir', docdir)
 conf.set_quoted('_PATH_SYSCONFSTATICDIR', sysconfstaticdir)
@@ -374,7 +376,7 @@ lib_econf = dependency(
 conf.set('HAVE_LIBECONF', lib_econf.found() ? 1 : false)
 
 lib_audit = dependency(
-  'libaudit',
+  'audit',
   required : get_option('audit'))
 conf.set('HAVE_LIBAUDIT', lib_audit.found() ? 1 : false)
 
@@ -751,6 +753,9 @@ if systemd.found()
   systemdsystemunitdir = systemd.get_variable(pkgconfig : 'systemdsystemunitdir')
 endif
 
+sysvinit = get_option('sysvinit').enabled()
+sysvinitrcdir = sysconfdir + '/init.d'
+
 chfn_chsh_password = get_option('chfn-chsh-password') or lib_user.found()
 conf.set('CHFN_CHSH_PASSWORD', chfn_chsh_password ? 1 : false)
 
@@ -792,6 +797,7 @@ compiler_flags = [
   '-Wmissing-prototypes',
   '-Wnested-externs',
   '-Wno-missing-field-initializers',
+  '-Wold-style-definition',
   '-Wpointer-arith',
   '-Wredundant-decls',
   '-Wsign-compare',
@@ -856,6 +862,7 @@ exe = executable(
 exe2 = executable(
   'chsh',
   'login-utils/chsh.c',
+  'lib/shells.c',
   chfn_chsh_sources,
   include_directories : includes,
   link_with : lib_common,
@@ -939,7 +946,7 @@ exe = executable(
   'login-utils/su.c',
   'login-utils/su-common.c',
   'login-utils/su-common.h',
-  'lib/logindefs.c',
+  'lib/shells.c',
   pty_session_c,
   monotonic_c,
   include_directories : includes,
@@ -974,7 +981,6 @@ opt = not get_option('build-lslogins').disabled()
 exe = executable(
   'lslogins',
   'login-utils/lslogins.c',
-  'lib/logindefs.c',
   include_directories : includes,
   link_with : [lib_common,
                lib_smartcols,
@@ -1015,7 +1021,7 @@ exe = executable(
   'login-utils/runuser.c',
   'login-utils/su-common.c',
   'login-utils/su-common.h',
-  'lib/logindefs.c',
+  'lib/shells.c',
   pty_session_c,
   monotonic_c,
   include_directories : includes,
@@ -1438,6 +1444,7 @@ exe = executable(
   'setarch',
   setarch_sources,
   include_directories : includes,
+  link_with : [lib_common],
   install_dir : usrbin_exec_dir,
   install : true)
 exes += exe
@@ -2448,6 +2455,7 @@ exe = executable(
   'namei',
   namei_sources,
   include_directories : includes,
+  dependencies : [lib_selinux],
   install_dir : usrbin_exec_dir,
   install : true)
 exes += exe

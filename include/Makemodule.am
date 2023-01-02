@@ -62,6 +62,7 @@ dist_noinst_HEADERS += \
 	include/rpmatch.h \
 	include/sha1.h \
 	include/sha256.h \
+	include/shells.h \
 	include/signames.h \
 	include/selinux-utils.h \
 	include/statfs_magic.h \

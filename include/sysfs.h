@@ -111,5 +111,12 @@ int sysfs_blkdev_scsi_path_contains(struct path_cxt *pc, const char *pattern);
 
 char *sysfs_chrdev_devno_to_devname(dev_t devno, char *buf, size_t bufsiz);
 
+enum sysfs_byteorder {
+	SYSFS_BYTEORDER_LITTLE,
+	SYSFS_BYTEORDER_BIG,
+};
+
+extern enum sysfs_byteorder sysfs_get_byteorder(struct path_cxt *pc);
+extern int sysfs_get_address_bits(struct path_cxt *pc);
 
 #endif /* UTIL_LINUX_SYSFS_H */

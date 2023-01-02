@@ -22,7 +22,7 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_LSFD"
 ts_check_test_command "$TS_HELPER_MKFDS"
-ts_skip_qemu_user
+ts_check_native_byteorder
 
 ts_cd "$TS_OUTDIR"
 

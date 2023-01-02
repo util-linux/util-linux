@@ -93,7 +93,7 @@ int main(int argc, char ** argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long (argc, argv, "a:d:hl:o:", longopts, NULL)) != -1) {
+	while ((c = getopt_long (argc, argv, "a:d:hl:o:V", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'a':
 			break;

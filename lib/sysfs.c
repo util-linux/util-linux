@@ -155,8 +155,8 @@ struct path_cxt *sysfs_blkdev_get_parent(struct path_cxt *pc)
 }
 
 /*
- * Redirects ENOENT errors to the parent, if the path is to the queue/
- * sysfs directory. For example
+ * Redirects ENOENT errors to the parent.
+ * For example
  *
  *	/sys/dev/block/8:1/queue/logical_block_size redirects to
  *	/sys/dev/block/8:0/queue/logical_block_size
@@ -165,7 +165,7 @@ static int sysfs_blkdev_enoent_redirect(struct path_cxt *pc, const char *path, i
 {
 	struct sysfs_blkdev *blk = ul_path_get_dialect(pc);
 
-	if (blk && blk->parent && path && strncmp(path, "queue/", 6) == 0) {
+	if (blk && blk->parent && path) {
 		*dirfd = ul_path_get_dirfd(blk->parent);
 		if (*dirfd >= 0) {
 			DBG(CXT, ul_debugobj(pc, "%s redirected to parent", path));
@@ -1072,6 +1072,49 @@ char *sysfs_chrdev_devno_to_devname(dev_t devno, char *buf, size_t bufsiz)
 
 }
 
+enum sysfs_byteorder sysfs_get_byteorder(struct path_cxt *pc)
+{
+	int rc;
+	char buf[BUFSIZ];
+	enum sysfs_byteorder ret;
+
+	rc = ul_path_read_buffer(pc, buf, sizeof(buf), _PATH_SYS_CPU_BYTEORDER);
+	if (rc < 0)
+		goto unknown;
+
+	if (strncmp(buf, "little", sizeof(buf)) == 0) {
+		ret = SYSFS_BYTEORDER_LITTLE;
+		goto out;
+	} else if (strncmp(buf, "big", sizeof(buf)) == 0) {
+		ret = SYSFS_BYTEORDER_BIG;
+		goto out;
+	}
+
+unknown:
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+	ret = SYSFS_BYTEORDER_LITTLE;
+#elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+	ret = SYSFS_BYTEORDER_BIG;
+#else
+#error Unknown byte order
+#endif
+
+out:
+	return ret;
+}
+
+int sysfs_get_address_bits(struct path_cxt *pc)
+{
+	int rc;
+	int address_bits;
+
+	rc = ul_path_scanf(pc, _PATH_SYS_ADDRESS_BITS, "%d", &address_bits);
+	if (rc < 0)
+		return rc;
+	if (address_bits < 0)
+		return -EINVAL;
+	return address_bits;
+}
 
 
 #ifdef TEST_PROGRAM_SYSFS
@@ -1157,7 +1200,7 @@ int main(int argc, char *argv[])
 
 
 	chain = sysfs_blkdev_get_devchain(pc, path, sizeof(path));
-	printf(" SUBSUSTEMS:\n");
+	printf(" SUBSYSTEMS:\n");
 
 	while (chain && sysfs_blkdev_next_subsystem(pc, chain, &sub) == 0) {
 		printf("\t%s\n", sub);

@@ -2,7 +2,7 @@
  * lsblk(8) - list block devices
  *
  * Copyright (C) 2010-2018 Red Hat, Inc. All rights reserved.
- * Written by Milan Broz <mbroz@redhat.com>
+ * Written by Milan Broz <gmazyland@gmail.com>
  *            Karel Zak <kzak@redhat.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -524,6 +524,8 @@ static const char *get_transport(struct lsblk_device *dev)
 		trans = "nvme";
 	} else if (strncmp(dev->name, "vd", 2) == 0)
 		trans = "virtio";
+	else if (strncmp(dev->name, "mmcblk", 6) == 0)
+		trans = "mmc";
 
 	return trans;
 }
@@ -1013,8 +1015,13 @@ static char *device_get_data(
 		}
 		break;
 	case COL_REV:
-		if (!device_is_partition(dev) && dev->nslaves == 0)
-			ul_path_read_string(dev->sysfs, &str, "device/rev");
+		if (!device_is_partition(dev) && dev->nslaves == 0) {
+			prop = lsblk_device_get_properties(dev);
+			if (prop && prop->revision)
+				str = xstrdup(prop->revision);
+			else
+				ul_path_read_string(dev->sysfs, &str, "device/rev");
+		}
 		break;
 	case COL_VENDOR:
 		if (!device_is_partition(dev) && dev->nslaves == 0)
@@ -2238,6 +2245,7 @@ int main(int argc, char *argv[])
 			add_uniq_column(COL_TYPE);
 			add_uniq_column(COL_MODEL);
 			add_uniq_column(COL_SERIAL);
+			add_uniq_column(COL_REV);
 			add_uniq_column(COL_TRANSPORT);
 			add_uniq_column(COL_RQ_SIZE);
 			add_uniq_column(COL_MQ);

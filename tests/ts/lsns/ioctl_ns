@@ -34,13 +34,9 @@ ts_check_prog "mkfifo"
 ts_check_prog "touch"
 ts_check_prog "uniq"
 
-# 32bit userspace (NS ioctls) does not work as expected with 64bit kernel
-WORDSIZE=$($TS_HELPER_SYSINFO WORDSIZE)
-if [ $WORDSIZE -eq 32 ]; then
-	uname -m | grep -q 64
-	if [ $? -eq 0 ]; then
-		TS_KNOWN_FAIL="yes"
-	fi
+"$TS_CMD_LSNS" > /dev/null 2>&1
+if [ $? -eq 2 ]; then
+	ts_skip "ioctl not supported"
 fi
 
 $TS_CMD_UNSHARE --user --pid --mount-proc --fork true &> /dev/null || ts_skip "no namespace support"

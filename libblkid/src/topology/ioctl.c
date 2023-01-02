@@ -21,7 +21,7 @@
 /*
  * ioctl topology values
  */
-static struct topology_val {
+static const struct topology_val {
 
 	long  ioc;
 
@@ -33,7 +33,8 @@ static struct topology_val {
 	{ BLKALIGNOFF, NULL, blkid_topology_set_alignment_offset },
 	{ BLKIOMIN, blkid_topology_set_minimum_io_size },
 	{ BLKIOOPT, blkid_topology_set_optimal_io_size },
-	{ BLKPBSZGET, blkid_topology_set_physical_sector_size }
+	{ BLKPBSZGET, blkid_topology_set_physical_sector_size },
+	{ BLKGETDISKSEQ, blkid_topology_set_diskseq },
 	/* we read BLKSSZGET in topology.c */
 };
 
@@ -43,7 +44,7 @@ static int probe_ioctl_tp(blkid_probe pr,
 	size_t i;
 
 	for (i = 0; i < ARRAY_SIZE(topology_vals); i++) {
-		struct topology_val *val = &topology_vals[i];
+		const struct topology_val *val = &topology_vals[i];
 		int rc = 1;
 		unsigned int data;
 
