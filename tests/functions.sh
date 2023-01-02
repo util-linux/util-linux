@@ -675,7 +675,7 @@ function ts_device_init {
 	local dev
 
 	img=$(ts_image_init $1 $2)
-	dev=$($TS_CMD_LOSETUP --show -f "$img")
+	dev=$($TS_CMD_LOSETUP --show --partscan -f "$img")
 	if [ "$?" != "0" -o "$dev" = "" ]; then
 		ts_die "Cannot init device"
 	fi

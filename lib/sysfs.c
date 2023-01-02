@@ -155,8 +155,8 @@ struct path_cxt *sysfs_blkdev_get_parent(struct path_cxt *pc)
 }
 
 /*
- * Redirects ENOENT errors to the parent, if the path is to the queue/
- * sysfs directory. For example
+ * Redirects ENOENT errors to the parent.
+ * For example
  *
  *	/sys/dev/block/8:1/queue/logical_block_size redirects to
  *	/sys/dev/block/8:0/queue/logical_block_size
@@ -165,7 +165,7 @@ static int sysfs_blkdev_enoent_redirect(struct path_cxt *pc, const char *path, i
 {
 	struct sysfs_blkdev *blk = ul_path_get_dialect(pc);
 
-	if (blk && blk->parent && path && strncmp(path, "queue/", 6) == 0) {
+	if (blk && blk->parent && path) {
 		*dirfd = ul_path_get_dirfd(blk->parent);
 		if (*dirfd >= 0) {
 			DBG(CXT, ul_debugobj(pc, "%s redirected to parent", path));

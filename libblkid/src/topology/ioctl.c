@@ -33,7 +33,8 @@ static const struct topology_val {
 	{ BLKALIGNOFF, NULL, blkid_topology_set_alignment_offset },
 	{ BLKIOMIN, blkid_topology_set_minimum_io_size },
 	{ BLKIOOPT, blkid_topology_set_optimal_io_size },
-	{ BLKPBSZGET, blkid_topology_set_physical_sector_size }
+	{ BLKPBSZGET, blkid_topology_set_physical_sector_size },
+	{ BLKGETDISKSEQ, blkid_topology_set_diskseq },
 	/* we read BLKSSZGET in topology.c */
 };
 

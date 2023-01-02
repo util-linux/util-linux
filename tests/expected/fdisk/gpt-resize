@@ -27,8 +27,7 @@ Created a new partition <removed>.
 
 Command (m for help): The partition table has been altered.
 Calling ioctl() to re-read partition table.
-
-The kernel still uses the old table. The new table will be used at the next reboot or after you run partprobe(8) or partx(8).
+Syncing disks.
 
 ----- list result: -----
 Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors

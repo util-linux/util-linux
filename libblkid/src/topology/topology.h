@@ -8,6 +8,7 @@ extern int blkid_topology_set_minimum_io_size(blkid_probe pr, unsigned long val)
 extern int blkid_topology_set_optimal_io_size(blkid_probe pr, unsigned long val);
 extern int blkid_topology_set_physical_sector_size(blkid_probe pr, unsigned long val);
 extern int blkid_topology_set_dax(blkid_probe pr, unsigned long val);
+extern int blkid_topology_set_diskseq(blkid_probe pr, uint64_t val);
 
 /*
  * topology probers
