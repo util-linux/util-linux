@@ -39,15 +39,6 @@ if [ $? -eq 2 ]; then
 	ts_skip "ioctl not supported"
 fi
 
-# 32bit userspace (NS ioctls) does not work as expected with 64bit kernel
-WORDSIZE=$($TS_HELPER_SYSINFO WORDSIZE)
-if [ $WORDSIZE -eq 32 ]; then
-	uname -m | grep -q 64
-	if [ $? -eq 0 ]; then
-		TS_KNOWN_FAIL="yes"
-	fi
-fi
-
 $TS_CMD_UNSHARE --user --pid --mount-proc --fork true &> /dev/null || ts_skip "no namespace support"
 
 ts_cd "$TS_OUTDIR"
