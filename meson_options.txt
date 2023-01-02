@@ -195,7 +195,7 @@ option('use-tls',
 option('pg-bell',
        type : 'boolean', value : true,
        description : 'should pg ring the bell on invalid keys?')
-option('colors-default', type: 'boolean', value: 'true',
+option('colors-default', type: 'boolean', value: true,
        description: 'Enables colorized output from utils by default')
 
 option('fs-search-path',
