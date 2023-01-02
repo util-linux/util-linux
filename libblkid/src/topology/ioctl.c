@@ -21,7 +21,7 @@
 /*
  * ioctl topology values
  */
-static struct topology_val {
+static const struct topology_val {
 
 	long  ioc;
 
@@ -43,7 +43,7 @@ static int probe_ioctl_tp(blkid_probe pr,
 	size_t i;
 
 	for (i = 0; i < ARRAY_SIZE(topology_vals); i++) {
-		struct topology_val *val = &topology_vals[i];
+		const struct topology_val *val = &topology_vals[i];
 		int rc = 1;
 		unsigned int data;
 

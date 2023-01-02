@@ -23,7 +23,7 @@
 /*
  * Sysfs topology values (since 2.6.31, May 2009).
  */
-static struct topology_val {
+static const struct topology_val {
 
 	/* /sys/dev/block/<maj>:<min>/<ATTR> */
 	const char *attr;
@@ -58,7 +58,7 @@ static int probe_sysfs_tp(blkid_probe pr,
 	rc = 1;		/* nothing (default) */
 
 	for (i = 0; i < ARRAY_SIZE(topology_vals); i++) {
-		struct topology_val *val = &topology_vals[i];
+		const struct topology_val *val = &topology_vals[i];
 		int ok = ul_path_access(pc, F_OK, val->attr) == 0;
 
 		rc = 1;	/* nothing */

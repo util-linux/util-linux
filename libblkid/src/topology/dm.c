@@ -29,7 +29,7 @@ static int is_dm_device(dev_t devno)
 static int probe_dm_tp(blkid_probe pr,
 		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
-	const char *paths[] = {
+	const char * const paths[] = {
 		"/usr/local/sbin/dmsetup",
 		"/usr/sbin/dmsetup",
 		"/sbin/dmsetup"

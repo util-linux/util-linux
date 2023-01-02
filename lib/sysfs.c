@@ -1200,7 +1200,7 @@ int main(int argc, char *argv[])
 
 
 	chain = sysfs_blkdev_get_devchain(pc, path, sizeof(path));
-	printf(" SUBSUSTEMS:\n");
+	printf(" SUBSYSTEMS:\n");
 
 	while (chain && sysfs_blkdev_next_subsystem(pc, chain, &sub) == 0) {
 		printf("\t%s\n", sub);

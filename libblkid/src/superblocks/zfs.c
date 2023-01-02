@@ -85,7 +85,7 @@ static void zfs_process_value(blkid_probe pr, char *name, size_t namelen,
 		    (uint64_t)nvs_strlen + sizeof(*nvs) > max_value_size)
 			return;
 
-		DBG(LOWPROBE, ul_debug("nvstring: type %u string %*s\n",
+		DBG(LOWPROBE, ul_debug("nvstring: type %u string %*s",
 				       nvs_type, nvs_strlen, nvs->nvs_string));
 
 		blkid_probe_set_label(pr, nvs->nvs_string, nvs_strlen);
@@ -102,7 +102,7 @@ static void zfs_process_value(blkid_probe pr, char *name, size_t namelen,
 		if (nvu_type != DATA_TYPE_UINT64)
 			return;
 
-		DBG(LOWPROBE, ul_debug("nvuint64: type %u value %"PRIu64"\n",
+		DBG(LOWPROBE, ul_debug("nvuint64: type %u value %"PRIu64,
 				       nvu_type, nvu_value));
 
 		blkid_probe_sprintf_value(pr, "UUID_SUB",
@@ -120,7 +120,7 @@ static void zfs_process_value(blkid_probe pr, char *name, size_t namelen,
 		if (nvu_type != DATA_TYPE_UINT64)
 			return;
 
-		DBG(LOWPROBE, ul_debug("nvuint64: type %u value %"PRIu64"\n",
+		DBG(LOWPROBE, ul_debug("nvuint64: type %u value %"PRIu64,
 				       nvu_type, nvu_value));
 
 		blkid_probe_sprintf_uuid(pr, (unsigned char *) &nvu_value,
@@ -163,7 +163,7 @@ static void zfs_extract_guid_name(blkid_probe pr, loff_t offset)
 	if (!p)
 		return;
 
-	DBG(LOWPROBE, ul_debug("zfs_extract: nvlist offset %jd\n",
+	DBG(LOWPROBE, ul_debug("zfs_extract: nvlist offset %jd",
 			       (intmax_t)offset));
 
 	nvl = (struct nvlist *) p;
@@ -185,7 +185,7 @@ static void zfs_extract_guid_name(blkid_probe pr, loff_t offset)
 			goto cont;
 		}
 
-		DBG(LOWPROBE, ul_debug("left %zd nvp_size %u\n",
+		DBG(LOWPROBE, ul_debug("left %zd nvp_size %u",
 				       left, nvp_size));
 
 		/* nvpair fits in buffer and name fits in nvpair? */
@@ -193,7 +193,7 @@ static void zfs_extract_guid_name(blkid_probe pr, loff_t offset)
 			break;
 
 		DBG(LOWPROBE,
-		    ul_debug("nvlist: size %u, namelen %u, name %*s\n",
+		    ul_debug("nvlist: size %u, namelen %u, name %*s",
 			     nvp_size, nvp_namelen, nvp_namelen,
 			     nvp->nvp_name));
 
@@ -235,14 +235,14 @@ static int find_uberblocks(const void *label, loff_t *ub_offset, int *swap_endia
 			*ub_offset = offset;
 			*swap_endian = 0;
 			found++;
-			DBG(LOWPROBE, ul_debug("probe_zfs: found little-endian uberblock at %jd\n", (intmax_t)offset >> 10));
+			DBG(LOWPROBE, ul_debug("probe_zfs: found little-endian uberblock at %jd", (intmax_t)offset >> 10));
 		}
 
 		if (ub->ub_magic == swab_magic) {
 			*ub_offset = offset;
 			*swap_endian = 1;
 			found++;
-			DBG(LOWPROBE, ul_debug("probe_zfs: found big-endian uberblock at %jd\n", (intmax_t)offset >> 10));
+			DBG(LOWPROBE, ul_debug("probe_zfs: found big-endian uberblock at %jd", (intmax_t)offset >> 10));
 		}
 	}
 
@@ -262,7 +262,7 @@ static int probe_zfs(blkid_probe pr,
 	void *label;
 	loff_t blk_align = (pr->size % (256 * 1024ULL));
 
-	DBG(PROBE, ul_debug("probe_zfs\n"));
+	DBG(PROBE, ul_debug("probe_zfs"));
 	/* Look for at least 4 uberblocks to ensure a positive match */
 	for (label_no = 0; label_no < 4; label_no++) {
 		switch(label_no) {
