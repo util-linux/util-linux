@@ -31,10 +31,7 @@ else
 endif
 
 if lib_selinux.found()
-  chfn_chsh_sources += files(
-    'selinux_utils.c',
-    'selinux_utils.h',
-  )
+  chfn_chsh_sources += selinux_utils_c
   chfn_chsh_deps += [lib_selinux]
 endif
 
