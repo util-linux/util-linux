@@ -14,6 +14,7 @@
 # GNU General Public License for more details.
 #
 
+TS_EXIT_NOTSUPP=2
 
 function ts_abspath {
 	cd $1
