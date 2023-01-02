@@ -117,5 +117,6 @@ enum sysfs_byteorder {
 };
 
 extern enum sysfs_byteorder sysfs_get_byteorder(struct path_cxt *pc);
+extern int sysfs_get_address_bits(struct path_cxt *pc);
 
 #endif /* UTIL_LINUX_SYSFS_H */

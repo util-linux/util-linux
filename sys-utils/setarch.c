@@ -35,6 +35,7 @@
 #include "nls.h"
 #include "c.h"
 #include "closestream.h"
+#include "sysfs.h"
 
 #ifndef HAVE_PERSONALITY
 # include <syscall.h>
@@ -232,7 +233,9 @@ static struct arch_domain *init_arch_domains(void)
 		if (!strcmp(un.machine, transitions[i].target_arch))
 			break;
 	if (transitions[i].perval < 0) {
-		unsigned long wrdsz = CHAR_BIT * sizeof(void *);
+		int wrdsz = sysfs_get_address_bits(NULL);
+		if (wrdsz < 0)
+			wrdsz = CHAR_BIT * sizeof(void *);
 		if (wrdsz == 32 || wrdsz == 64) {
 			/* fill up the place holder */
 			transitions[i].perval = wrdsz == 32 ? PER_LINUX32 : PER_LINUX;

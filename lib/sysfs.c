@@ -1103,6 +1103,19 @@ out:
 	return ret;
 }
 
+int sysfs_get_address_bits(struct path_cxt *pc)
+{
+	int rc;
+	int address_bits;
+
+	rc = ul_path_scanf(pc, _PATH_SYS_ADDRESS_BITS, "%d", &address_bits);
+	if (rc < 0)
+		return rc;
+	if (address_bits < 0)
+		return -EINVAL;
+	return address_bits;
+}
+
 
 #ifdef TEST_PROGRAM_SYSFS
 #include <errno.h>
