@@ -56,3 +56,5 @@ for f in $PO_NEW; do
 	do_commit "po/$f" "po: add $f (from translationproject.org)"
 done
 
+LINGUAS=$(find po/ -name '*.po' -type f -printf '%P\n' | sed 's/\.po//g' | sort)
+echo "$LINGUAS" > po/LINGUAS
