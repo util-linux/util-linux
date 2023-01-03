@@ -59,16 +59,21 @@ static void __attribute__((__noreturn__)) usage(void)
 	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
-	      _(" %1$s [-n] <priority> [-p|--pid] <pid>...\n"
-		" %1$s [-n] <priority>  -g|--pgrp <pgid>...\n"
-		" %1$s [-n] <priority>  -u|--user <user>...\n"),
+	      _(" %1$s [-n|--priority|--relative] <priority> [-p|--pid] <pid>...\n"
+		" %1$s [-n|--priority|--relative] <priority>  -g|--pgrp <pgid>...\n"
+		" %1$s [-n|--priority|--relative] <priority>  -u|--user <user>...\n"),
 		program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Alter the priority of running processes.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -n, --priority <num>   specify the nice value\n"), out);
+	fputs(_(" -n <num>               specify the nice value\n"), out);
+	fputs(_("                          If POSIXLY_CORRECT flag is set in environment\n"), out);
+	fputs(_("                          then the priority is 'relative' to current\n"), out);
+	fputs(_("                          process priority. Otherwise it is 'absolute'.\n"), out);
+	fputs(_(" --priority <num>       specify the 'absolute' nice value\n"), out);
+	fputs(_(" --relative <num>       specify the 'relative' nice value\n"), out);
 	fputs(_(" -p, --pid              interpret arguments as process ID (default)\n"), out);
 	fputs(_(" -g, --pgrp             interpret arguments as process group ID\n"), out);
 	fputs(_(" -u, --user             interpret arguments as username or user ID\n"), out);
@@ -89,13 +94,19 @@ static int getprio(const int which, const int who, int *prio)
 	return 0;
 }
 
-static int donice(const int which, const int who, const int prio)
+static int donice(const int which, const int who, const int prio, const int relative)
 {
 	int oldprio, newprio;
 
 	if (getprio(which, who, &oldprio) != 0)
 		return 1;
-	if (setpriority(which, who, prio) < 0) {
+	
+	newprio = prio; // if not relative, set absolute priority
+
+	if (relative)
+		newprio = oldprio + prio;
+
+	if (setpriority(which, who, newprio) < 0) {
 		warn(_("failed to set priority for %d (%s)"), who, idtype[which]);
 		return 1;
 	}
@@ -114,6 +125,7 @@ int main(int argc, char **argv)
 {
 	int which = PRIO_PROCESS;
 	int who = 0, prio, errs = 0;
+	int relative = 0;
 	char *endptr = NULL;
 
 	setlocale(LC_ALL, "");
@@ -135,9 +147,28 @@ int main(int argc, char **argv)
 			print_version(EXIT_SUCCESS);
 	}
 
-	if (*argv && (strcmp(*argv, "-n") == 0 || strcmp(*argv, "--priority") == 0)) {
-		argc--;
-		argv++;
+	if (*argv)
+	{
+		if (strcmp(*argv, "-n") == 0)
+		{
+			// Fully conform to posix only if POSIXLY_CORRECT is
+			// set in the environment. If not, use the absolute
+			// value as it's been used (incorrectly) since 2009
+			relative = getenv("POSIXLY_CORRECT") == NULL ? 0 : 1;
+			argc--;
+			argv++;
+		}
+		else if (strcmp(*argv, "--relative") == 0)
+		{
+			relative = 1;
+			argc--;
+			argv++;
+		}
+		else if (strcmp(*argv, "--priority") == 0) {
+			relative = 0;
+			argc--;
+			argv++;
+		}
 	}
 
 	if (argc < 2 || !*argv) {
@@ -188,7 +219,7 @@ int main(int argc, char **argv)
 				continue;
 			}
 		}
-		errs |= donice(which, who, prio);
+		errs |= donice(which, who, prio, relative);
 	}
 	return errs != 0 ? EXIT_FAILURE : EXIT_SUCCESS;
 }
