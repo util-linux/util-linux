@@ -65,6 +65,13 @@ rm -f rename_path_a/test2 rename_path_b/test2
 
 rmdir rename_path_a rename_path_b
 
+ln -s some/nonexistent/path rename_link
+$TS_CMD_RENAME -s -v t/p _ rename_link >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_RENAME -s -v exist / rename_link >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_RENAME -s -v e x rename_link >> $TS_OUTPUT 2>> $TS_ERRLOG
+readlink rename_link >> $TS_OUTPUT 2>> $TS_ERRLOG
+rm rename_link
+
 echo "== empty 'from' ==" >> $TS_OUTPUT
 
 touch rename_test
