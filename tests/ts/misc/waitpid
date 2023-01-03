@@ -22,6 +22,8 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_WAITPID"
 
+ts_init_subtest normal
+
 (sleep 0.2; echo 1 >> "$TS_OUTPUT") &
 BG1="$!"
 
@@ -33,5 +35,12 @@ echo 3 >> "$TS_OUTPUT"
 ts_skip_exitcode_not_supported
 
 echo 4 >> "$TS_OUTPUT"
+
+ts_finalize_subtest
+
+ts_init_subtest timeout
+"$TS_CMD_WAITPID" -v -t 0.1 1 >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+echo $? >> "$TS_OUTPUT"
+ts_finalize_subtest
 
 ts_finalize
