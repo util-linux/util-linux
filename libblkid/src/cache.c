@@ -97,8 +97,6 @@ int blkid_get_cache(blkid_cache *ret_cache, const char *filename)
 	if (!ret_cache)
 		return -BLKID_ERR_PARAM;
 
-	blkid_init_debug(0);
-
 	if (!(cache = calloc(1, sizeof(struct blkid_struct_cache))))
 		return -BLKID_ERR_MEM;
 

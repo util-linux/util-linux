@@ -139,7 +139,6 @@ blkid_probe blkid_new_probe(void)
 	int i;
 	blkid_probe pr;
 
-	blkid_init_debug(0);
 	pr = calloc(1, sizeof(struct blkid_struct_probe));
 	if (!pr)
 		return NULL;
