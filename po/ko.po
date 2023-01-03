@@ -1,14 +1,14 @@
 # Korean Translation of the GNU util-linux.
 # Copyright (C) 2021 Karel Zak <kzak@redhat.com>
 # This file is distributed under the same license as the util-linux package.
-# Seong-ho Cho <darkcircle.0426@gmail.com>, 2021-2022.
+# Seong-ho Cho <darkcircle.0426@gmail.com>, 2021-2023.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.38-rc4\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
 "POT-Creation-Date: 2022-03-16 18:08+0100\n"
-"PO-Revision-Date: 2022-03-18 00:53+0900\n"
+"PO-Revision-Date: 2023-01-03 04:15+0900\n"
 "Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
 "Language-Team: Korean <translation-team-ko@googlegroups.com>\n"
 "Language: ko\n"
@@ -208,7 +208,7 @@ msgstr "사용할 수 있는 명령:"
 #: disk-utils/blockdev.c:205
 #, c-format
 msgid " %-25s get size in 512-byte sectors\n"
-msgstr " 512 바이트 섹터 단위로 %-25s 크기 가져옴\n"
+msgstr " %-25s 512 바이트 섹터 단위로 크기 가져옴\n"
 
 #: disk-utils/blockdev.c:287 disk-utils/fdformat.c:219
 #: disk-utils/fsck.minix.c:1336 disk-utils/isosize.c:155
@@ -676,11 +676,11 @@ msgstr "분할 영역 읽기 실패"
 
 #: disk-utils/cfdisk.c:2622
 msgid "Device is open in read-only mode. Changes will remain in memory only."
-msgstr "장치를 읽기 전용 모드로 열었습니다. 메모리 내에서만 변경 내용이 남게 됩니다."
+msgstr "장치를 읽기 전용 모드로 열었습니다. 메모리 내에서만 변경 내용이 남습니다."
 
 #: disk-utils/cfdisk.c:2624
 msgid "Device is currently in use, repartitioning is probably a bad idea."
-msgstr "장치를 사용 중입니다. 분할 영역 재배치는 별로 좋은 생각은 아닐지도 모릅니다."
+msgstr "장치를 사용 중입니다. 분할 영역 재배치는 별로 좋은 생각이 아닐 수도 있습니다."
 
 #: disk-utils/cfdisk.c:2710
 #, c-format
@@ -1020,7 +1020,7 @@ msgstr " -b, --sector-size <크기>      물리 및 논리 섹터 크기\n"
 
 #: disk-utils/fdisk.c:859
 msgid " -B, --protect-boot            don't erase bootbits when creating a new label\n"
-msgstr " -B, --protect-boot            새 레이블을 만들 떄 부트비트를 지우지 않음\n"
+msgstr " -B, --protect-boot            새 레이블을 만들 떄 부팅 비트를 지우지 않음\n"
 
 #: disk-utils/fdisk.c:860
 msgid " -c, --compatibility[=<mode>]  mode is 'dos' or 'nondos' (default)\n"
@@ -1045,7 +1045,7 @@ msgstr " -n, --noauto-pt               빈 장치에 기본 분할 영역 배치
 
 #: disk-utils/fdisk.c:869
 msgid " -o, --output <list>           output columns\n"
-msgstr " -o, --output <목록>           지정 열 항목 출력\n"
+msgstr " -o, --output <목록>           지정 내용 항목 출력\n"
 
 #: disk-utils/fdisk.c:870
 msgid " -t, --type <type>             recognize specified partition table type only\n"
@@ -1080,15 +1080,15 @@ msgstr " -W, --wipe-partitions <모드>  새 분할 영역의 서명 소거(%s, 
 
 #: disk-utils/fdisk.c:882
 msgid " -C, --cylinders <number>      specify the number of cylinders\n"
-msgstr " -C, --cylinders <숫자>      실린더 수 지정\n"
+msgstr " -C, --cylinders <숫자>        실린더 수 지정\n"
 
 #: disk-utils/fdisk.c:883
 msgid " -H, --heads <number>          specify the number of heads\n"
-msgstr " -H, --heads <숫자>          헤드 수 지정\n"
+msgstr " -H, --heads <숫자>            헤드 수 지정\n"
 
 #: disk-utils/fdisk.c:884
 msgid " -S, --sectors <number>        specify the number of sectors per track\n"
-msgstr " -S, --sectors <숫자>        트랙당 섹터 수 지정\n"
+msgstr " -S, --sectors <숫자>          트랙당 섹터 수 지정\n"
 
 #: disk-utils/fdisk.c:959 disk-utils/fdisk.c:961 disk-utils/partx.c:882
 msgid "invalid sector size argument"
@@ -1181,7 +1181,7 @@ msgstr "합성 GPT 형식을 발견했습니다. 합성 MBR을 직접 동기화�
 #: disk-utils/fdisk-list.c:43
 #, c-format
 msgid "Disklabel type: %s"
-msgstr "디스크레이블 형식: %s"
+msgstr "디스크 레이블 형식: %s"
 
 #: disk-utils/fdisk-list.c:47
 #, c-format
@@ -1548,7 +1548,7 @@ msgstr "부팅 분할 영역 선택"
 
 #: disk-utils/fdisk-menu.c:207
 msgid "edit bootfile entry"
-msgstr "부트 파일 항목 편집"
+msgstr "부팅 파일 항목 편집"
 
 #: disk-utils/fdisk-menu.c:208
 msgid "select sgi swap partition"
@@ -1907,7 +1907,7 @@ msgstr "--대기-- (%d회 성공)\n"
 #: disk-utils/fsck.c:1390
 #, c-format
 msgid " %s [options] -- [fs-options] [<filesystem> ...]\n"
-msgstr " %s [<옵션>] -- [<파일 시스템-옵션>] [<파일 시스템> ...]\n"
+msgstr " %s [<옵션>] -- [<파일시스템-옵션>] [<파일시스템> ...]\n"
 
 #: disk-utils/fsck.c:1394
 msgid "Check and repair a Linux filesystem.\n"
@@ -1915,7 +1915,7 @@ msgstr "리눅스 파일 시스템을 검사하고 복구합니다.\n"
 
 #: disk-utils/fsck.c:1397
 msgid " -A         check all filesystems\n"
-msgstr " -A         모든 파일 시스템 검사\n"
+msgstr " -A             모든 파일 시스템 검사\n"
 
 #: disk-utils/fsck.c:1398
 msgid " -C [<fd>]  display progress bar; file descriptor is for GUIs\n"
@@ -1923,23 +1923,23 @@ msgstr " -C [<파일서술자>]  진행 표시줄 표시. <파일서술자>는 G
 
 #: disk-utils/fsck.c:1399
 msgid " -l         lock the device to guarantee exclusive access\n"
-msgstr " -l         동시 접근 방지 보장 목적으로 장치 잠금\n"
+msgstr " -l             동시 접근 방지 보장 목적으로 장치 잠금\n"
 
 #: disk-utils/fsck.c:1400
 msgid " -M         do not check mounted filesystems\n"
-msgstr " -M         마운트한 파일 시스템 검사하지 않음\n"
+msgstr " -M             마운트한 파일 시스템 검사하지 않음\n"
 
 #: disk-utils/fsck.c:1401
 msgid " -N         do not execute, just show what would be done\n"
-msgstr " -N         실행하지 않고 어떤 항목을 완료할 지 표시\n"
+msgstr " -N             실행하지 않고 어떤 항목을 완료할 지 표시\n"
 
 #: disk-utils/fsck.c:1402
 msgid " -P         check filesystems in parallel, including root\n"
-msgstr " -P         루트도 마찬가지로 파일 시스템을 동시에 검사\n"
+msgstr " -P             루트도 마찬가지로 파일 시스템을 동시에 검사\n"
 
 #: disk-utils/fsck.c:1403
 msgid " -R         skip root filesystem; useful only with '-A'\n"
-msgstr " -R         루트 파일 시스템 진행 무시. '-A' 옵션에만 해당합니다\n"
+msgstr " -R             루트 파일 시스템 진행 무시. '-A' 옵션에만 해당합니다\n"
 
 #: disk-utils/fsck.c:1404
 msgid ""
@@ -1947,27 +1947,27 @@ msgid ""
 "            file descriptor is for GUIs\n"
 msgstr ""
 " -r [<파일서술자>]  검사한 각 장치의 통계를 보고합니다.\n"
-"            <파일서술자>는 GUI용\n"
+"                <파일서술자>는 GUI용\n"
 
 #: disk-utils/fsck.c:1406
 msgid " -s         serialize the checking operations\n"
-msgstr " -s         검사 동작을 직렬화합니다\n"
+msgstr " -s             검사 동작을 직렬화합니다\n"
 
 #: disk-utils/fsck.c:1407
 msgid " -T         do not show the title on startup\n"
-msgstr " -T         시작시 제목 표시 안함\n"
+msgstr " -T             시작시 제목 표시 안함\n"
 
 #: disk-utils/fsck.c:1408
 msgid ""
 " -t <type>  specify filesystem types to be checked;\n"
 "            <type> is allowed to be a comma-separated list\n"
 msgstr ""
-" -t <형식>  검사할 파일 시스템 형식을 지정합니다.\n"
-"            <형식>은 쉼표로 구분한 값을 허용합니다\n"
+" -t <형식>      검사할 파일 시스템 형식을 지정합니다.\n"
+"                  <형식>은 쉼표로 구분한 값을 허용합니다\n"
 
 #: disk-utils/fsck.c:1410
 msgid " -V         explain what is being done\n"
-msgstr " -V         완료한 항목을 설명합니다\n"
+msgstr " -V             완료한 항목을 설명합니다\n"
 
 #: disk-utils/fsck.c:1416
 msgid "See the specific fsck.* commands for available fs-options."
@@ -2769,7 +2769,7 @@ msgstr "ISO-9660 파일 시스템의 길이를 보여줍니다.\n"
 
 #: disk-utils/isosize.c:106
 msgid " -d, --divisor=<number>  divide the amount of bytes by <number>\n"
-msgstr " -d, --divisor=<숫자>  <숫자>만큼의 바이트 양으로 나눕니다\n"
+msgstr " -d, --divisor=<숫자>    <숫자> 만큼의 바이트 양으로 나눕니다\n"
 
 #: disk-utils/isosize.c:107
 msgid " -x, --sectors           show sector count and size\n"
@@ -2802,12 +2802,12 @@ msgid ""
 msgstr ""
 "\n"
 "옵션:\n"
-" -N, --inodes=<숫자>    원하는 아이노드 갯수 지정\n"
+" -N, --inodes=<숫자>   원하는 아이노드 갯수 지정\n"
 " -V, --vname=<이름>    볼륨 이름 지정\n"
 " -F, --fname=<이름>    파일 시스템 이름 지정\n"
-" -v, --verbose       완료한 작업 항목을 설명합니다\n"
-" -c                  이 옵션은 조용하게 무시합니다\n"
-" -l                  이 옵션은 조용하게 무시합니다\n"
+" -v, --verbose         완료한 작업 항목을 설명합니다\n"
+" -c                    이 옵션은 조용하게 무시합니다\n"
+" -l                    이 옵션은 조용하게 무시합니다\n"
 
 #: disk-utils/mkfs.bfs.c:139
 msgid "invalid number of inodes"
@@ -2916,7 +2916,7 @@ msgstr "%s 닫기 오류"
 #: disk-utils/mkfs.c:45
 #, c-format
 msgid " %s [options] [-t <type>] [fs-options] <device> [<size>]\n"
-msgstr " %s [<옵션>] [-t <형식>] [<파일 시스템_옵션>] <장치> [<크기>]\n"
+msgstr " %s [<옵션>] [-t <형식>] [<파일시스템-옵션>] <장치> [<크기>]\n"
 
 #: disk-utils/mkfs.c:49
 msgid "Make a Linux filesystem.\n"
@@ -2930,7 +2930,7 @@ msgstr " -t, --type=<형식>  파일 시스템 형식. 지정하지 않으면 ex
 #: disk-utils/mkfs.c:53
 #, c-format
 msgid "     fs-options     parameters for the real filesystem builder\n"
-msgstr "     <파일 시스템_옵션>     실제 파일 시스템 빌더용 매개변수\n"
+msgstr "     <파일시스템-옵션>     실제 파일 시스템 빌더용 매개변수\n"
 
 #: disk-utils/mkfs.c:54
 #, c-format
@@ -2969,19 +2969,19 @@ msgstr "압축 ROM 파일 시스템을 만듭니다."
 
 #: disk-utils/mkfs.cramfs.c:133
 msgid " -v             be verbose"
-msgstr " -v             자세한 내용 출력"
+msgstr " -v               자세한 내용 출력"
 
 #: disk-utils/mkfs.cramfs.c:134
 msgid " -E             make all warnings errors (non-zero exit status)"
-msgstr " -E             모든 경고를 오류로 만듭니다 (0이 아닌 종료 상태 코드)"
+msgstr " -E               모든 경고를 오류로 만듭니다 (0이 아닌 종료 상태 코드)"
 
 #: disk-utils/mkfs.cramfs.c:135
 msgid " -b blksize     use this blocksize, must equal page size"
-msgstr " -b <블록크기>     지정 <블록크기>를 사용합니다. 페이지 크기와 동일해야합니다"
+msgstr " -b <블록크기>    지정 <블록크기>를 사용합니다. 페이지 크기와 동일해야합니다"
 
 #: disk-utils/mkfs.cramfs.c:136
 msgid " -e edition     set edition number (part of fsid)"
-msgstr " -e <에디션>     <에디션> 번호를 설정합니다 (fsid 일부)"
+msgstr " -e <에디션>      <에디션> 번호를 설정합니다 (fsid 일부)"
 
 #: disk-utils/mkfs.cramfs.c:137
 #, c-format
@@ -2999,23 +2999,23 @@ msgstr " -n <이름>        cramfs 파일 시스템 이름을 지정합니다"
 #: disk-utils/mkfs.cramfs.c:140
 #, c-format
 msgid " -p             pad by %d bytes for boot code\n"
-msgstr " -p             부팅 코드에 %d 바이트 공백영역을 줍니다\n"
+msgstr " -p               부팅 코드에 %d 바이트 공백영역을 줍니다\n"
 
 #: disk-utils/mkfs.cramfs.c:141
 msgid " -s             sort directory entries (old option, ignored)"
-msgstr " -s             디렉터리 항목 정렬 (오래된 옵션, 무시)"
+msgstr " -s               디렉터리 항목 정렬 (오래된 옵션, 무시)"
 
 #: disk-utils/mkfs.cramfs.c:142
 msgid " -z             make explicit holes"
-msgstr " -z             명백한 홀을 만듭니다"
+msgstr " -z               분명한 홀을 만듭니다"
 
 #: disk-utils/mkfs.cramfs.c:143
 msgid " dirname        root of the filesystem to be compressed"
-msgstr " <디렉터리이름>        압축할 파일 시스템의 루트"
+msgstr " <디렉터리이름>   압축할 파일 시스템의 루트"
 
 #: disk-utils/mkfs.cramfs.c:144
 msgid " outfile        output file"
-msgstr " <출력파일>        출력 파일"
+msgstr " <출력파일>       출력 파일"
 
 #: disk-utils/mkfs.cramfs.c:164
 #, c-format
@@ -3154,11 +3154,11 @@ msgstr " -3                      미닉스 버전 3 활용\n"
 
 #: disk-utils/mkfs.minix.c:144
 msgid " -n, --namelength <num>  maximum length of filenames\n"
-msgstr " -n, --namelength <숫자>  파일 이름 최대 길이\n"
+msgstr " -n, --namelength <숫자> 파일 이름 최대 길이\n"
 
 #: disk-utils/mkfs.minix.c:145
 msgid " -i, --inodes <num>      number of inodes for the filesystem\n"
-msgstr " -i, --inodes <숫자>      파일 시스템 아이노드 갯수\n"
+msgstr " -i, --inodes <숫자>     파일 시스템 아이노드 갯수\n"
 
 #: disk-utils/mkfs.minix.c:146
 msgid " -c, --check             check the device for bad blocks\n"
@@ -3403,19 +3403,19 @@ msgstr " -q, --quiet               출력 및 경고 메시지를 숨깁니다\n
 
 #: disk-utils/mkswap.c:171
 msgid " -p, --pagesize SIZE       specify page size in bytes\n"
-msgstr " -p, --pagesize <크기>       바이트 단위 페이지 크기 지정\n"
+msgstr " -p, --pagesize <크기>     바이트 단위 페이지 크기 지정\n"
 
 #: disk-utils/mkswap.c:172
 msgid " -L, --label LABEL         specify label\n"
-msgstr " -L, --label <레이블>         레이블 지정\n"
+msgstr " -L, --label <레이블>      레이블 지정\n"
 
 #: disk-utils/mkswap.c:173
 msgid " -v, --swapversion NUM     specify swap-space version number\n"
-msgstr " -v, --swapversion <숫자>     스왑 영역 버전 번호 지정\n"
+msgstr " -v, --swapversion <숫자>  스왑 영역 버전 번호 지정\n"
 
 #: disk-utils/mkswap.c:174
 msgid " -U, --uuid UUID           specify the uuid to use\n"
-msgstr " -U, --uuid <UUID>           사용할 UUID 지정\n"
+msgstr " -U, --uuid <UUID>         사용할 UUID 지정\n"
 
 #: disk-utils/mkswap.c:175
 msgid "     --verbose             verbose output\n"
@@ -3494,7 +3494,7 @@ msgstr "스왑 장치를 되감기할 수 없습니다"
 
 #: disk-utils/mkswap.c:405
 msgid "unable to erase bootbits sectors"
-msgstr "부트 비트 섹터는 지울 수 없습니다"
+msgstr "부팅 비트 섹터는 지울 수 없습니다"
 
 #: disk-utils/mkswap.c:422
 #, c-format
@@ -3504,7 +3504,7 @@ msgstr "%s: 경고: 오래된 %s 서명을 제거합니다."
 #: disk-utils/mkswap.c:427
 #, c-format
 msgid "%s: warning: don't erase bootbits sectors"
-msgstr "%s: 경고: 부트 비트 섹터를 삭제하지 마십시오"
+msgstr "%s: 경고: 부팅 비트 섹터를 삭제하지 마십시오"
 
 #: disk-utils/mkswap.c:430
 #, c-format
@@ -3695,7 +3695,7 @@ msgstr "%s: 루프 장치 설정 실패"
 #: sys-utils/swapon.c:150 sys-utils/wdctl.c:179 sys-utils/zramctl.c:147
 #, c-format
 msgid "unknown column: %s"
-msgstr "알 수 없는 열 항목: %s"
+msgstr "알 수 없는 내용 항목: %s"
 
 #: disk-utils/partx.c:209
 #, c-format
@@ -3794,7 +3794,7 @@ msgstr[0] "#%2d: %9ju-%9ju (%9ju 섹터, %6ju MB)\n"
 #: sys-utils/lscpu.c:754 sys-utils/prlimit.c:320 sys-utils/rfkill.c:487
 #: sys-utils/swapon.c:305 sys-utils/wdctl.c:360
 msgid "failed to allocate output column"
-msgstr "출력 열 항목 할당 실패"
+msgstr "출력 내용 항목 할당 실패"
 
 #: disk-utils/partx.c:724
 #, c-format
@@ -3859,11 +3859,11 @@ msgstr " -n, --nr <n:m>       분할 영역 범위를 지정합니다 (예: --nr
 
 #: disk-utils/partx.c:769 sys-utils/irqtop.c:265 sys-utils/lsirq.c:66
 msgid " -o, --output <list>  define which output columns to use\n"
-msgstr " -o, --output <목록>  활용할 출력 열 항목을 지정합니다\n"
+msgstr " -o, --output <목록>  활용할 출력 내용 항목을 지정합니다\n"
 
 #: disk-utils/partx.c:770 sys-utils/lsmem.c:531
 msgid "     --output-all     output all columns\n"
-msgstr "     --output-all     모든 열 항목을 출력합니다\n"
+msgstr "     --output-all     모든 내용 항목을 출력합니다\n"
 
 #: disk-utils/partx.c:771 misc-utils/lsblk.c:1909 sys-utils/lsirq.c:64
 #: sys-utils/lsmem.c:526
@@ -4118,12 +4118,12 @@ msgstr "나갑니다."
 #: disk-utils/sfdisk.c:554
 #, c-format
 msgid "cannot read at offset: %zu; continue"
-msgstr "오프셋을 읽을 수 없음: %zu. 계속합니다"
+msgstr "다음 오프셋에서 읽어올 수 없음: %zu; 계속합니다"
 
 #: disk-utils/sfdisk.c:565
 #, c-format
 msgid "cannot write at offset: %zu; continue"
-msgstr "오프셋을 기록할 수 없음: %zu. 계속합니다"
+msgstr "다음 오프셋에서 기록할 수 없음: %zu; 계속합니다"
 
 #: disk-utils/sfdisk.c:594
 #, c-format
@@ -4600,7 +4600,7 @@ msgstr " -J, --json <장치>                  JSON 형식으로 분할 영역 �
 
 #: disk-utils/sfdisk.c:2049
 msgid " -B, --backup-pt-sectors <dev>     binary partition table backup (see -b and -O)\n"
-msgstr " -b, --backup-pt-sectors <장치>    이진 분할 영역 배치 백업(-b 및 -O 참고)\n"
+msgstr " -b, --backup-pt-sectors <장치>     이진 분할 영역 배치 백업(-b 및 -O 참고)\n"
 
 #: disk-utils/sfdisk.c:2050
 msgid " -g, --show-geometry [<dev> ...]   list geometry of all or specified devices\n"
@@ -4612,7 +4612,7 @@ msgstr " -l, --list [<장치> ...]            각 장치의 분할 영역을 보
 
 #: disk-utils/sfdisk.c:2052
 msgid " -F, --list-free [<dev> ...]       list unpartitioned free areas of each device\n"
-msgstr " -F, --list-free [<장치> ...]       각 장치에서 분할 영역으로 지정하지 않은 잔여 영역을 보여줍니다\n"
+msgstr " -F, --list-free [<장치> ...]       각 장치에서 분할 영역으로 지정하지 않은 여분 영역을 보여줍니다\n"
 
 #: disk-utils/sfdisk.c:2053
 msgid " -r, --reorder <dev>               fix partitions order (by start offset)\n"
@@ -4624,7 +4624,7 @@ msgstr " -s, --show-size [<장치> ...]       모든 장치 또는 지정 장치
 
 #: disk-utils/sfdisk.c:2055
 msgid " -T, --list-types                  print the recognized types (see -X)\n"
-msgstr " -T, --list-types                  인식한 형식을 출력합니다(-X 참조)\n"
+msgstr " -T, --list-types                   인식한 형식을 출력합니다(-X 참조)\n"
 
 #: disk-utils/sfdisk.c:2056
 msgid " -V, --verify [<dev> ...]          test whether partitions seem correct\n"
@@ -4652,7 +4652,7 @@ msgstr " --part-attrs <장치> <분할영역> [<문자열>] 분할 영역 속성
 
 #: disk-utils/sfdisk.c:2066
 msgid " --disk-id <dev> [<str>]           print or change disk label ID (UUID)\n"
-msgstr " --disk-id <장치> [<문자열>]           디스크 레이블 ID(UUID)를 출력하거나 바꿉니다\n"
+msgstr " --disk-id <장치> [<문자열>]        디스크 레이블 ID(UUID)를 출력하거나 바꿉니다\n"
 
 #: disk-utils/sfdisk.c:2067
 msgid " --relocate <oper> <dev>           move partition header\n"
@@ -4660,11 +4660,11 @@ msgstr " --relocate <동작> <장치>           분할 영역 헤더를 옮깁�
 
 #: disk-utils/sfdisk.c:2070
 msgid " <dev>                     device (usually disk) path\n"
-msgstr " <장치>                     장치 경로 (보통 디스크를 가리킴)\n"
+msgstr " <장치>                    장치 경로 (보통 디스크를 가리킴)\n"
 
 #: disk-utils/sfdisk.c:2071
 msgid " <part>                    partition number\n"
-msgstr " <분할영역>                    분할 영역 번호\n"
+msgstr " <분할영역>                분할 영역 번호\n"
 
 #: disk-utils/sfdisk.c:2072
 msgid " <type>                    partition type, GUID for GPT, hex for MBR\n"
@@ -4701,7 +4701,7 @@ msgstr "     --color[=<시기>]      출력 내용에 색상을 입힙니다 (%s
 
 #: disk-utils/sfdisk.c:2088
 msgid " -N, --partno <num>        specify partition number\n"
-msgstr " -N, --partno <번호>        분할 영역 번호를 지정합니다\n"
+msgstr " -N, --partno <번호>       분할 영역 번호를 지정합니다\n"
 
 #: disk-utils/sfdisk.c:2089
 msgid " -n, --no-act              do everything except write to device\n"
@@ -4721,7 +4721,7 @@ msgstr " -O, --backup-file <경로>  기본 백업 파일 이름 대신 적용\n
 
 #: disk-utils/sfdisk.c:2093
 msgid " -o, --output <list>       output columns\n"
-msgstr " -o, --output <목록>       지정 열 항목 출력\n"
+msgstr " -o, --output <목록>       지정 내용 항목 출력\n"
 
 #: disk-utils/sfdisk.c:2094
 msgid " -q, --quiet               suppress extra info messages\n"
@@ -4818,7 +4818,7 @@ msgid ""
 " -U, --uuid <uuid>   specify a new uuid\n"
 msgstr ""
 " -L, --label <레이블> 새 레이블을 지정합니다\n"
-" -U, --uuid <UUID>   새 UUID를 지정합니다\n"
+" -U, --uuid <UUID>    새 UUID를 지정합니다\n"
 
 #: disk-utils/swaplabel.c:171
 msgid "ignore -U (UUIDs are unsupported)"
@@ -4875,7 +4875,7 @@ msgid ""
 "Available output columns:\n"
 msgstr ""
 "\n"
-"가용 출력 열 항목:\n"
+"가용 출력 내용 항목:\n"
 
 #: include/c.h:418
 msgid "display this help"
@@ -4962,11 +4962,11 @@ msgstr "PowerPC PReP 부트"
 
 #: include/pt-gpt-partnames.h:32
 msgid "ONIE boot"
-msgstr "ONIE boot"
+msgstr "ONIE 부팅"
 
 #: include/pt-gpt-partnames.h:33
 msgid "ONIE config"
-msgstr "ONIE config"
+msgstr "ONIE 설정"
 
 #: include/pt-gpt-partnames.h:36
 msgid "Microsoft reserved"
@@ -5307,7 +5307,7 @@ msgstr "리눅스 /usr 베리티 (PPC64)"
 
 #: include/pt-gpt-partnames.h:124
 msgid "Linux /usr verity (PPC64LE)"
-msgstr "Linux /usr verity (PPC64LE)"
+msgstr "리눅스 /usr 베리티 (PPC64LE)"
 
 #: include/pt-gpt-partnames.h:125
 msgid "Linux /usr verity (RISC-V-32)"
@@ -5759,7 +5759,7 @@ msgstr "AIX"
 
 #: include/pt-mbr-partnames.h:10
 msgid "AIX bootable"
-msgstr "AIX 부팅"
+msgstr "AIX 부팅 가능 영역"
 
 #: include/pt-mbr-partnames.h:11
 msgid "OS/2 Boot Manager"
@@ -5791,7 +5791,7 @@ msgstr "FAT12 (숨김)"
 
 #: include/pt-mbr-partnames.h:18
 msgid "Compaq diagnostics"
-msgstr "컴팩 진단"
+msgstr "컴팩 진단 영역"
 
 #: include/pt-mbr-partnames.h:19
 msgid "Hidden FAT16 <32M"
@@ -5807,7 +5807,7 @@ msgstr "HPFS/NTFS (숨김)"
 
 #: include/pt-mbr-partnames.h:22
 msgid "AST SmartSleep"
-msgstr "AST SmartSleep"
+msgstr "AST 스마트슬립"
 
 #: include/pt-mbr-partnames.h:23
 msgid "Hidden W95 FAT32"
@@ -6619,7 +6619,7 @@ msgstr "분할 영역 형식"
 #: libfdisk/src/dos.c:2016
 #, c-format
 msgid "%u primary, %d extended, %u free"
-msgstr "주 %u, 확장 %d, 잔여 %u"
+msgstr "주 %u, 확장 %d, 여분 %u"
 
 #: libfdisk/src/dos.c:2021
 msgid "primary"
@@ -6657,7 +6657,7 @@ msgstr "디스크 식별자"
 
 #: libfdisk/src/dos.c:2357
 msgid "Type 0 means free space to many systems. Having partitions of type 0 is probably unwise."
-msgstr "0번 형식은 대부분의 시스템에서 잔여 영역을 의미합니다. 0번 형식 분할 영역 설정은 온당치 않습니다."
+msgstr "0번 형식은 대부분의 시스템에서 여분 영역을 의미합니다. 0번 형식 분할 영역 설정은 온당치 않습니다."
 
 #: libfdisk/src/dos.c:2362
 msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
@@ -7056,7 +7056,7 @@ msgstr "분할 영역 순서 수정에 실패했습니다."
 
 #: libfdisk/src/partition.c:871
 msgid "Free space"
-msgstr "잔여 공간"
+msgstr "여분 공간"
 
 #: libfdisk/src/partition.c:1365
 #, c-format
@@ -7151,39 +7151,39 @@ msgstr "Bootfile"
 
 #: libfdisk/src/sgi.c:394
 msgid "Invalid bootfile!  The bootfile must be an absolute non-zero pathname, e.g. \"/unix\" or \"/unix.save\"."
-msgstr "부적절한 부트 파일!  부트 파일은 \"/unix\" 또는 \"/unix.save\"와 같이 0 길이가 아닌 절대 경로 이름이어야 합니다."
+msgstr "부적절한 부팅 파일!  부팅 파일은 \"/unix\" 또는 \"/unix.save\"와 같이 0 길이가 아닌 절대 경로 이름이어야 합니다."
 
 #: libfdisk/src/sgi.c:402
 #, c-format
 msgid "Name of bootfile is too long: %zu byte maximum."
 msgid_plural "Name of bootfile is too long: %zu bytes maximum."
-msgstr[0] "부트 파일 이름이 너무 깁니다: 최대 %zu 바이트입니다."
+msgstr[0] "부팅 파일 이름이 너무 깁니다: 최대 %zu 바이트입니다."
 
 #: libfdisk/src/sgi.c:411
 msgid "Bootfile must have a fully qualified pathname."
-msgstr "부트 파일은 완전한 경로를 갖춘 이름이어야 합니다."
+msgstr "부팅 파일은 완전한 경로를 갖춘 이름이어야 합니다."
 
 #: libfdisk/src/sgi.c:417
 msgid "Be aware that the bootfile is not checked for existence.  SGI's default is \"/unix\", and for backup \"/unix.save\"."
-msgstr "부트 파일 존재 여부를 확인하지 않았음을 인지하십시오. SGI 기본 설정은 \"/unix\" 이며, 백업본은 \"/unix.save\" 입니다."
+msgstr "부팅 파일 존재 여부를 확인하지 않았음을 인지하십시오. SGI 기본 설정은 \"/unix\" 이며, 백업본은 \"/unix.save\" 입니다."
 
 #: libfdisk/src/sgi.c:442
 #, c-format
 msgid "The current boot file is: %s"
-msgstr "현재 부트 파일: %s"
+msgstr "현재 부팅 파일: %s"
 
 #: libfdisk/src/sgi.c:444
 msgid "Enter of the new boot file"
-msgstr "새 부트 파일을 입력하십시오"
+msgstr "새 부팅 파일을 입력하십시오"
 
 #: libfdisk/src/sgi.c:449
 msgid "Boot file is unchanged."
-msgstr "부트 파일을 바꾸지 않았습니다."
+msgstr "부팅 파일을 바꾸지 않았습니다."
 
 #: libfdisk/src/sgi.c:460
 #, c-format
 msgid "Bootfile has been changed to \"%s\"."
-msgstr "부트 파일을 \"%s\"(으)로 바꾸었습니다."
+msgstr "부팅 파일을 \"%s\"(으)로 바꾸었습니다."
 
 #: libfdisk/src/sgi.c:599
 msgid "More than one entire disk entry present."
@@ -7232,7 +7232,7 @@ msgstr "스왑 분할 영역에 스왑 형식이 없습니다."
 
 #: libfdisk/src/sgi.c:712
 msgid "You have chosen an unusual bootfile name."
-msgstr "정상적이지 않은 부트 파일 이름을 입력했습니다."
+msgstr "정상적이지 않은 부팅 파일 이름을 입력했습니다."
 
 #: libfdisk/src/sgi.c:762
 msgid "Partition overlap on the disk."
@@ -7482,7 +7482,7 @@ msgid ""
 msgstr ""
 "오프셋 0의 분할 영역을 UFS, EXT2FS, SunOS 스왑 중\n"
 "하나로 둘 것을 권장합니다. 리눅스 스왑 분할 영역을 두면\n"
-"분할 영역 배치와 부트 블록을 깰 수 있습니다.\n"
+"분할 영역 배치와 부팅 블록을 깰 수 있습니다.\n"
 "정말로 분할 영역 태그를 리눅스 스왑으로 설정하시겠습니까?"
 
 #: libmount/src/context.c:2851
@@ -7589,7 +7589,7 @@ msgstr "잠금 실패"
 #: sys-utils/umount.c:252 sys-utils/umount.c:268
 #, c-format
 msgid "failed to switch namespace"
-msgstr "이름 공간 전환 실패"
+msgstr "이름 영역 전환 실패"
 
 #: libmount/src/context_mount.c:1809
 #, c-format
@@ -8124,11 +8124,11 @@ msgstr "최근 로그인 한 사용자 목록을 표시합니다.\n"
 
 #: login-utils/last.c:588
 msgid " -<number>            how many lines to show\n"
-msgstr "-<숫자>            표시할 줄 수\n"
+msgstr " -<숫자>              표시할 줄 수\n"
 
 #: login-utils/last.c:589
 msgid " -a, --hostlast       display hostnames in the last column\n"
-msgstr " -a, --hostlast       최종 열 항목에 호스트이름 표시\n"
+msgstr " -a, --hostlast       최종 내용 항목에 호스트이름 표시\n"
 
 #: login-utils/last.c:590
 msgid " -d, --dns            translate the IP number back into a hostname\n"
@@ -8149,7 +8149,7 @@ msgstr " -i, --ip             숫자 점 표기 방식으로 IP 숫자 값을 �
 
 #: login-utils/last.c:595
 msgid " -n, --limit <number> how many lines to show\n"
-msgstr " -n, --limit <숫자> 표시할 줄 수\n"
+msgstr " -n, --limit <숫자>   표시할 줄 수\n"
 
 #: login-utils/last.c:596
 msgid " -R, --nohostname     don't display the hostname field\n"
@@ -8498,11 +8498,11 @@ msgstr "사용자 ID"
 
 #: login-utils/lslogins.c:229
 msgid "password not required"
-msgstr "암호는 필요하지 않습니다"
+msgstr "암호가 필요하지 않습니다"
 
 #: login-utils/lslogins.c:229
 msgid "Password not required"
-msgstr "암호는 필요하지 않습니다"
+msgstr "암호가 필요하지 않습니다"
 
 #: login-utils/lslogins.c:230
 msgid "login by password disabled"
@@ -8696,7 +8696,7 @@ msgstr "실행 프로세스"
 #: sys-utils/lsipc.c:205 sys-utils/lsmem.c:145
 #, c-format
 msgid "too many columns specified, the limit is %zu columns"
-msgstr "너무나 많은 열 항목을 지정했습니다. %zu 열 제한."
+msgstr "너무나 많은 내용 항목을 지정했습니다. %zu 열 제한."
 
 #: login-utils/lslogins.c:357 sys-utils/lsipc.c:472
 msgid "unsupported time type"
@@ -8717,7 +8717,7 @@ msgstr "'%s'을(를) 찾을 수 없음"
 
 #: login-utils/lslogins.c:1233
 msgid "internal error: unknown column"
-msgstr "내부 오류: 알 수 없는 열 항목"
+msgstr "내부 오류: 알 수 없는 내용 항목"
 
 #: login-utils/lslogins.c:1341
 #, c-format
@@ -8778,11 +8778,11 @@ msgstr "     --notruncate         출력 내용 자르지 않음\n"
 
 #: login-utils/lslogins.c:1419 sys-utils/lsipc.c:315
 msgid " -o, --output[=<list>]    define the columns to output\n"
-msgstr " -o, --output[=<목록>]    출력할 열 항목 지정\n"
+msgstr " -o, --output[=<목록>]    출력할 내용 항목 지정\n"
 
 #: login-utils/lslogins.c:1420
 msgid "     --output-all         output all columns\n"
-msgstr "     --output-all         모든 열 항목 출력\n"
+msgstr "     --output-all         모든 내용 항목 출력\n"
 
 #: login-utils/lslogins.c:1421
 msgid " -p, --pwd                display information related to login by password.\n"
@@ -9017,39 +9017,39 @@ msgstr " -w, --whitelist-environment <목록>  지정 변수 재설정하지 않
 
 #: login-utils/su-common.c:889
 msgid " -g, --group <group>             specify the primary group\n"
-msgstr " -g, --group <그룹>             주 그룹 지정\n"
+msgstr " -g, --group <그룹>                  주 그룹 지정\n"
 
 #: login-utils/su-common.c:890
 msgid " -G, --supp-group <group>        specify a supplemental group\n"
-msgstr " -G, --supp-group <그룹>        추가 그룹 지정\n"
+msgstr " -G, --supp-group <그룹>             추가 그룹 지정\n"
 
 #: login-utils/su-common.c:893
 msgid " -, -l, --login                  make the shell a login shell\n"
-msgstr " -, -l, --login                  셸을 로그인 셸로 지정\n"
+msgstr " -, -l, --login                      셸을 로그인 셸로 지정\n"
 
 #: login-utils/su-common.c:894
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
-msgstr " -c, --command <명령>         단일 명령을 -c 옵션으로 전달\n"
+msgstr " -c, --command <명령>                단일 명령을 -c 옵션으로 전달\n"
 
 #: login-utils/su-common.c:895
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
 msgstr ""
-" --session-command <명령>     단일 명령을 셸에 -c 옵션으로 전달\n"
-"                                   하며 새 세션을 만들지 않음\n"
+" --session-command <명령>                   단일 명령을 셸에 -c 옵션으로 전달하며\n"
+"                                              새 세션을 만들지 않음\n"
 
 #: login-utils/su-common.c:897
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
-msgstr " -f, --fast                      -f 옵션을 셸에 전달(csh, tcsh 용)\n"
+msgstr " -f, --fast                          -f 옵션을 셸에 전달(csh, tcsh 용)\n"
 
 #: login-utils/su-common.c:898
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
-msgstr " -s, --shell <셸>             /etc/shells에서 허용할 경우 <셸>을 실행합니다\n"
+msgstr " -s, --shell <셸>                    /etc/shells에서 허용할 경우 <셸>을 실행합니다\n"
 
 #: login-utils/su-common.c:899
 msgid " -P, --pty                       create a new pseudo-terminal\n"
-msgstr " -P, --pty                       새 의사 터미널을 만듭니다\n"
+msgstr " -P, --pty                           새 의사 터미널을 만듭니다\n"
 
 #: login-utils/su-common.c:909
 #, c-format
@@ -9225,7 +9225,7 @@ msgid ""
 " -e, --force              examine password files directly if getpwnam(3) fails\n"
 msgstr ""
 " -p, --login-shell        로그인 셸을 시작합니다\n"
-" -t, --timeout <초>  암호 입력 최대 대기 시간 (기본: 제한없음)\n"
+" -t, --timeout <초>       암호 입력 최대 대기 시간 (기본: 제한없음)\n"
 " -e, --force              getpwnam(3)에 실패했을 때 암호 파일을 직접 확인\n"
 
 #: login-utils/sulogin.c:938 misc-utils/findmnt.c:1619 sys-utils/wdctl.c:762
@@ -9430,8 +9430,8 @@ msgid ""
 " -o, --output <format>      output format; can be one of:\n"
 "                              value, device, export or full; (default: full)\n"
 msgstr ""
-" -o, --output <형식>      출력 형식입니다. value, device,\n"
-"                               export, full 중 하나일 수 있습니다 (기본값: full)\n"
+" -o, --output <형식>        출력 형식입니다. value, device, export, full\n"
+"                              중 하나일 수 있습니다 (기본값: full)\n"
 
 #: misc-utils/blkid.c:85
 msgid " -k, --list-filesystems     list all known filesystems/RAIDs and exit\n"
@@ -9439,11 +9439,11 @@ msgstr " -k, --list-filesystems     알려진 모든 파일 시스템/RAID를 �
 
 #: misc-utils/blkid.c:86
 msgid " -s, --match-tag <tag>      show specified tag(s) (default show all tags)\n"
-msgstr " -s, --match-tag <태그>      지정 태그를 표시합니다 (기본 동작은 모든 태그를 표시)\n"
+msgstr " -s, --match-tag <태그>     지정 태그를 표시합니다 (기본 동작은 모든 태그를 표시)\n"
 
 #: misc-utils/blkid.c:87
 msgid " -t, --match-token <token>  find device with a specific token (NAME=value pair)\n"
-msgstr " -t, --match-token <토큰>  지정 토큰에 해당하는 장치를 찾습니다 (이름=값 쌍)\n"
+msgstr " -t, --match-token <토큰>   지정 토큰에 해당하는 장치를 찾습니다 (이름=값 쌍)\n"
 
 #: misc-utils/blkid.c:88
 msgid " -l, --list-one             look up only first device with token specified by -t\n"
@@ -9451,7 +9451,7 @@ msgstr " -l, --list-one             -t로 지정한 토큰에 해당하는 첫�
 
 #: misc-utils/blkid.c:89
 msgid " -L, --label <label>        convert LABEL to device name\n"
-msgstr " -L, --label <레이블>        <레이블>을 장치 이름으로 변환합니다\n"
+msgstr " -L, --label <레이블>       <레이블>을 장치 이름으로 변환합니다\n"
 
 #: misc-utils/blkid.c:90
 msgid " -U, --uuid <uuid>          convert UUID to device name\n"
@@ -9471,7 +9471,7 @@ msgstr " -i, --info                 입출력 제한 정보 수집\n"
 
 #: misc-utils/blkid.c:95
 msgid " -H, --hint <value>         set hint for probing function\n"
-msgstr " -H, --hint <값>         감지 기능의 힌트 설정\n"
+msgstr " -H, --hint <값>            감지 기능의 힌트 설정\n"
 
 #: misc-utils/blkid.c:96
 msgid " -S, --size <size>          overwrite device size\n"
@@ -9655,7 +9655,7 @@ msgstr " -3, --three           날짜를 쭉 늘여서 세달치를 표시\n"
 
 #: misc-utils/cal.c:1258
 msgid " -n, --months <num>    show num months starting with date's month\n"
-msgstr " -n, --months <숫자>    이번달로부터 지정한 <숫자> 월 수 만큼 달력을 표시\n"
+msgstr " -n, --months <숫자>   이번 달부터 지정한 <숫자> 월 수 만큼 달력을 표시\n"
 
 #: misc-utils/cal.c:1259
 msgid " -S, --span            span the date when displaying multiple months\n"
@@ -9675,7 +9675,7 @@ msgstr " -j, --julian          모든 달력에 연중 일자 사용\n"
 
 #: misc-utils/cal.c:1263
 msgid "     --reform <val>    Gregorian reform date (1752|gregorian|iso|julian)\n"
-msgstr "     --reform <값>    그레고리안 날짜 재구성 (1752|gregorian|iso|julian)\n"
+msgstr "     --reform <값>     그레고리안 날짜 재구성 (1752|gregorian|iso|julian)\n"
 
 #: misc-utils/cal.c:1264
 msgid "     --iso             alias for --reform=iso\n"
@@ -9691,7 +9691,7 @@ msgstr " -Y, --twelve          다음 12달 달력을 표시\n"
 
 #: misc-utils/cal.c:1267
 msgid " -w, --week[=<num>]    show US or ISO-8601 week numbers\n"
-msgstr " -w, --week[=<숫자>]    US 또는 ISO-8601 주차 번호 표시\n"
+msgstr " -w, --week[=<숫자>]   US 또는 ISO-8601 주차 번호 표시\n"
 
 #: misc-utils/cal.c:1268
 msgid " -v, --vertical        show day vertically instead of line\n"
@@ -9745,23 +9745,23 @@ msgstr " %s [<옵션>] <파일>...\n"
 
 #: misc-utils/fincore.c:265 misc-utils/lsfd.c:1255
 msgid " -J, --json            use JSON output format\n"
-msgstr " -J, --json            JSON 출력 형식 사용\n"
+msgstr " -J, --json             JSON 출력 형식 사용\n"
 
 #: misc-utils/fincore.c:266
 msgid " -b, --bytes           print sizes in bytes rather than in human readable format\n"
-msgstr " -b, --bytes           가독성 형식이 아닌 바이트 단위 <크기> 값 출력\n"
+msgstr " -b, --bytes            가독성 형식이 아닌 바이트 단위 <크기> 값 출력\n"
 
 #: misc-utils/fincore.c:267 misc-utils/lsfd.c:1256
 msgid " -n, --noheadings      don't print headings\n"
-msgstr " -n, --noheadings      머릿글은 출력하지 않습니다\n"
+msgstr " -n, --noheadings       머릿글은 출력 안함\n"
 
 #: misc-utils/fincore.c:268 misc-utils/lsfd.c:1257
 msgid " -o, --output <list>   output columns\n"
-msgstr " -o, --output <목록>   지정 열 항목 출력\n"
+msgstr " -o, --output <목록>    지정 내용 항목 출력\n"
 
 #: misc-utils/fincore.c:269 misc-utils/lsfd.c:1258
 msgid " -r, --raw             use raw output format\n"
-msgstr " -r, --raw             원시 형식으로 출력\n"
+msgstr " -r, --raw              원시 형식으로 출력\n"
 
 #: misc-utils/fincore.c:338 sys-utils/losetup.c:828
 msgid "no file specified"
@@ -10049,11 +10049,11 @@ msgstr " -O, --options <목록>   마운트 옵션으로 파일 시스템 지정
 
 #: misc-utils/findmnt.c:1357
 msgid " -o, --output <list>    the output columns to be shown\n"
-msgstr " -o, --output <목록>    나타낼 지정 열 항목 출력\n"
+msgstr " -o, --output <목록>    나타낼 지정 내용 항목 출력\n"
 
 #: misc-utils/findmnt.c:1358
 msgid "     --output-all       output all available columns\n"
-msgstr "     --output-all       모든 열 항목 출력\n"
+msgstr "     --output-all       모든 내용 항목 출력\n"
 
 #: misc-utils/findmnt.c:1359
 msgid " -P, --pairs            use key=\"value\" output format\n"
@@ -10073,7 +10073,7 @@ msgstr " -R, --submounts        일치하는 파일 시스템의 모든 하위 �
 
 #: misc-utils/findmnt.c:1363
 msgid " -r, --raw              use raw output format\n"
-msgstr " -r, --raw             원시 형식 출력\n"
+msgstr " -r, --raw              원시 형식 출력\n"
 
 #: misc-utils/findmnt.c:1364
 msgid "     --real             print only real filesystems\n"
@@ -10109,7 +10109,7 @@ msgstr " -U, --uniq             중복 대상 파일 시스템 무시\n"
 
 #: misc-utils/findmnt.c:1372 misc-utils/lslocks.c:559 sys-utils/lsns.c:1221
 msgid " -u, --notruncate       don't truncate text in columns\n"
-msgstr " -u, --notruncate       열 항목의 텍스트 자르지 않음\n"
+msgstr " -u, --notruncate       내용 항목의 텍스트 자르지 않음\n"
 
 #: misc-utils/findmnt.c:1373
 msgid " -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
@@ -10155,7 +10155,7 @@ msgstr "libmount 캐시 초기화 실패"
 #: misc-utils/findmnt.c:1785
 #, c-format
 msgid "%s column is requested, but --poll is not enabled"
-msgstr "%s 열 항목을 요청했지만, --poll 옵션을 사용하지 않았습니다"
+msgstr "%s 내용 항목을 요청했지만, --poll 옵션을 사용하지 않았습니다"
 
 #: misc-utils/findmnt-verify.c:125
 msgid "target specified more than once"
@@ -10988,7 +10988,7 @@ msgstr "     --msgid <msgid>      rfc5424 메시지 ID 필드 지정\n"
 
 #: misc-utils/logger.c:1068
 msgid " -u, --socket <socket>    write to this Unix socket\n"
-msgstr " -u, --socket <소켓>    이 유닉스 소켓에 기록\n"
+msgstr " -u, --socket <소켓>      이 유닉스 소켓에 기록\n"
 
 #: misc-utils/logger.c:1069
 msgid ""
@@ -11333,7 +11333,7 @@ msgstr " -A, --noempty        빈 장치 출력 안함\n"
 
 #: misc-utils/lsblk.c:1903
 msgid " -D, --discard        print discard capabilities\n"
-msgstr " -D, --discard        버려진 권한을 출력합니다.\n"
+msgstr " -D, --discard        버려진 권한 출력\n"
 
 #: misc-utils/lsblk.c:1904
 msgid " -E, --dedup <column> de-duplicate output by <column>\n"
@@ -11341,7 +11341,7 @@ msgstr " -E, --dedup <열> <열> 항목에 따라 중복 제거 출력\n"
 
 #: misc-utils/lsblk.c:1905
 msgid " -I, --include <list> show only devices with specified major numbers\n"
-msgstr " -I, --include <목록> 지정 주 번호에 해당하는 장치만 표시합니다\n"
+msgstr " -I, --include <목록> 지정 주 번호에 해당하는 장치만 표시\n"
 
 #: misc-utils/lsblk.c:1906 sys-utils/lsirq.c:63 sys-utils/lsmem.c:525
 msgid " -J, --json           use JSON output format\n"
@@ -11349,71 +11349,71 @@ msgstr " -J, --json           JSON 출력 형식 사용\n"
 
 #: misc-utils/lsblk.c:1907
 msgid " -M, --merge          group parents of sub-trees (usable for RAIDs, Multi-path)\n"
-msgstr " -M, --merge          하위 트리를 상위 그룹으로 묶습니다 (RAID, Multi-path 장비에 활용)\n"
+msgstr " -M, --merge          하위 트리를 상위 그룹으로 묶기(RAID, Multi-path 장비에 활용)\n"
 
 #: misc-utils/lsblk.c:1908
 msgid " -O, --output-all     output all columns\n"
-msgstr " -O, --output-all     모든 열 항목 출력\n"
+msgstr " -O, --output-all     모든 내용 항목 출력\n"
 
 #: misc-utils/lsblk.c:1910
 msgid " -S, --scsi           output info about SCSI devices\n"
-msgstr " -S, --scsi           SCSI 장치 정보를 출력합니다\n"
+msgstr " -S, --scsi           SCSI 장치 정보 출력\n"
 
 #: misc-utils/lsblk.c:1911
 msgid " -T, --tree[=<column>] use tree format output\n"
-msgstr " -T, --tree[=<열>] 트리 형식 출력 사용\n"
+msgstr " -T, --tree[=<열>]    트리 형식 출력 사용\n"
 
 #: misc-utils/lsblk.c:1912
 msgid " -a, --all            print all devices\n"
-msgstr " -a, --all            모든 장치를 출력합니다\n"
+msgstr " -a, --all            모든 장치 출력\n"
 
 #: misc-utils/lsblk.c:1914
 msgid " -d, --nodeps         don't print slaves or holders\n"
-msgstr " -d, --nodeps         부속 장치 또는 홀더는 출력하지 않습니다\n"
+msgstr " -d, --nodeps         부속 장치 또는 홀더는 출력하지 않음\n"
 
 #: misc-utils/lsblk.c:1915
 msgid " -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"
-msgstr " -e, --exclude <목록> 지정 주 번호로 장치를 제외합니다 (기본값: 램디스크)\n"
+msgstr " -e, --exclude <목록> 지정 주 번호로 장치 제외(기본값: 램디스크)\n"
 
 #: misc-utils/lsblk.c:1916
 msgid " -f, --fs             output info about filesystems\n"
-msgstr " -f, --fs             파일 시스템 정보를 출력합니다\n"
+msgstr " -f, --fs             파일 시스템 정보 출력\n"
 
 #: misc-utils/lsblk.c:1917
 msgid " -i, --ascii          use ascii characters only\n"
-msgstr " -i, --ascii          ASCII 문자만 사용합니다\n"
+msgstr " -i, --ascii          ASCII 문자만 사용\n"
 
 #: misc-utils/lsblk.c:1918
 msgid " -l, --list           use list format output\n"
-msgstr " -l, --list           목록 방식으로 출력합니다\n"
+msgstr " -l, --list           목록 방식으로 출력\n"
 
 #: misc-utils/lsblk.c:1919
 msgid " -m, --perms          output info about permissions\n"
-msgstr " -m, --perms          권한 정보를 출력합니다\n"
+msgstr " -m, --perms          권한 정보 출력\n"
 
 #: misc-utils/lsblk.c:1920 sys-utils/lsirq.c:65 sys-utils/lsmem.c:529
 msgid " -n, --noheadings     don't print headings\n"
-msgstr " -n, --noheadings     머릿글은 출력하지 않습니다\n"
+msgstr " -n, --noheadings     머릿글은 출력하지 않음\n"
 
 #: misc-utils/lsblk.c:1921 sys-utils/lsmem.c:530
 msgid " -o, --output <list>  output columns\n"
-msgstr " -o, --output <목록>  지정 열 항목 출력\n"
+msgstr " -o, --output <목록>  지정 내용 항목 출력\n"
 
 #: misc-utils/lsblk.c:1922
 msgid " -p, --paths          print complete device path\n"
-msgstr " -p, --paths          완전한 장치 경로를 출력합니다\n"
+msgstr " -p, --paths          완전한 장치 경로를 출력\n"
 
 #: misc-utils/lsblk.c:1924
 msgid " -s, --inverse        inverse dependencies\n"
-msgstr " -s, --inverse        의존 관계를 뒤집어 나타냅니다\n"
+msgstr " -s, --inverse        의존 관계를 뒤집어 나타냄\n"
 
 #: misc-utils/lsblk.c:1925
 msgid " -t, --topology       output info about topology\n"
-msgstr " -t, --topology       토폴로지 정보를 출력합니다\n"
+msgstr " -t, --topology       토폴로지 정보 출력\n"
 
 #: misc-utils/lsblk.c:1926
 msgid " -w, --width <num>    specifies output width as number of characters\n"
-msgstr " -w, --width <숫자>    문자 갯수 단위로 출력 너비 지정\n"
+msgstr " -w, --width <숫자>   문자 갯수 단위로 출력 너비 지정\n"
 
 #: misc-utils/lsblk.c:1927
 msgid " -x, --sort <column>  sort output by <column>\n"
@@ -11421,15 +11421,15 @@ msgstr " -x, --sort <열>  <열> 항목순 정렬 출력\n"
 
 #: misc-utils/lsblk.c:1928
 msgid " -y, --shell          use column names to be usable as shell variable identifiers\n"
-msgstr " -y, --shell          셸 변수 식별자로 활용할 수 있는 컬럼 이름을 사용합니다\n"
+msgstr " -y, --shell          셸 변수 식별자로 활용할 수 있는 내용 이름 사용\n"
 
 #: misc-utils/lsblk.c:1929
 msgid " -z, --zoned          print zone related information\n"
-msgstr " -z, --zoned          영역 관련 정보를 출력합니다\n"
+msgstr " -z, --zoned          영역 관련 정보 출력\n"
 
 #: misc-utils/lsblk.c:1930
 msgid "     --sysroot <dir>  use specified directory as system root\n"
-msgstr "     --sysroot <디렉터리>  지정 디렉터리를 시스템 루트로 사용합니다\n"
+msgstr "     --sysroot <디렉터리>  지정 디렉터리를 시스템 루트로 사용\n"
 
 #: misc-utils/lsblk.c:1947
 #, c-format
@@ -11669,11 +11669,11 @@ msgstr "/proc 열기 실패"
 
 #: misc-utils/lsfd.c:1254
 msgid " -l, --threads         list in threads level\n"
-msgstr " -l, --threads         스레드 레벨로 보여줍니다\n"
+msgstr " -l, --threads          스레드 레벨로 보여줍니다\n"
 
 #: misc-utils/lsfd.c:1259
 msgid " -u, --notruncate      don't truncate text in columns\n"
-msgstr " -u, --notruncate      열 항목의 텍스트 자르지 않음\n"
+msgstr " -u, --notruncate       내용 항목의 텍스트 자르지 않음\n"
 
 #: misc-utils/lsfd.c:1260
 msgid " -p, --pid  <pid(s)>   collect information only specified processes\n"
@@ -11681,11 +11681,11 @@ msgstr " -p, --pid <PID>...     지정 프로세스에서만 정보 수집\n"
 
 #: misc-utils/lsfd.c:1261
 msgid " -Q, --filter <expr>   apply display filter\n"
-msgstr " -Q, --filter <표현식>   디스플레이 필터 적용\n"
+msgstr " -Q, --filter <표현식>  디스플레이 필터 적용\n"
 
 #: misc-utils/lsfd.c:1262
 msgid "     --debug-filter    dump the internal data structure of filter and exit\n"
-msgstr "     --debug-filter    필터의 내부 데이터 구조를 덤핑하고 나갑니다\n"
+msgstr "     --debug-filter     필터의 내부 데이터 구조를 덤핑하고 나갑니다\n"
 
 #: misc-utils/lsfd.c:1263
 msgid ""
@@ -11693,11 +11693,11 @@ msgid ""
 "                       define custom counter for --summary output\n"
 msgstr ""
 " -C, --counter <이름>:<표현식>\n"
-"                       --summary 출력의 개별 카운터를 정의합니다\n"
+"                        --summary 출력의 개별 카운터를 정의합니다\n"
 
 #: misc-utils/lsfd.c:1265
 msgid "     --dump-counters   dump counter definitions\n"
-msgstr "     --dump-counters   카운터 정의를 덤핑합니다\n"
+msgstr "     --dump-counters    카운터 정의를 덤핑합니다\n"
 
 #: misc-utils/lsfd.c:1266
 msgid "     --summary[=when]  print summary information (only, append, or never)\n"
@@ -11948,11 +11948,11 @@ msgstr " -n, --noheadings       머릿글은 출력하지 않습니다\n"
 
 #: misc-utils/lslocks.c:555 sys-utils/lsns.c:1217 sys-utils/rfkill.c:641
 msgid " -o, --output <list>    define which output columns to use\n"
-msgstr " -o, --output <목록>    어떤 열 항목을 출력에 활용할 지 지정\n"
+msgstr " -o, --output <목록>    어떤 내용 항목을 출력에 활용할 지 지정\n"
 
 #: misc-utils/lslocks.c:556 sys-utils/lsns.c:1218 sys-utils/rfkill.c:642
 msgid "     --output-all       output all columns\n"
-msgstr "     --output-all       모든 열 항목 출력\n"
+msgstr "     --output-all       모든 내용 항목 출력\n"
 
 #: misc-utils/lslocks.c:557
 msgid " -p, --pid <pid>        display only locks held by this process\n"
@@ -11978,7 +11978,7 @@ msgstr " -f, --file <파일>     쿠키 시드 파일\n"
 
 #: misc-utils/mcookie.c:90
 msgid " -m, --max-size <num>  limit how much is read from seed files\n"
-msgstr " -m, --max-size <숫자>  시드 파일에서 읽을 최대 용량 한계\n"
+msgstr " -m, --max-size <숫자> 시드 파일에서 읽을 최대 용량 한계\n"
 
 #: misc-utils/mcookie.c:91
 msgid " -v, --verbose         explain what is being done\n"
@@ -11993,9 +11993,7 @@ msgstr "<숫자>"
 #, c-format
 msgid "Got %zu byte from %s\n"
 msgid_plural "Got %zu bytes from %s\n"
-msgstr[0] ""
-"%2$s에서 %1$zu 바이트 읽음\n"
-"\n"
+msgstr[0] "%2$s에서 %1$zu 바이트 읽음\n"
 
 #: misc-utils/mcookie.c:129
 #, c-format
@@ -12415,7 +12413,7 @@ msgstr "                       가용 이름 영역: %s\n"
 
 #: misc-utils/uuidgen.c:36
 msgid " -N, --name name     generate hash-based uuid from this name\n"
-msgstr " -N, --name <이름>     이 이름을 가진 해시 기반 UUID를 만듭니다\n"
+msgstr " -N, --name <이름>   이 이름을 가진 해시 기반 UUID를 만듭니다\n"
 
 #: misc-utils/uuidgen.c:37
 msgid " -m, --md5           generate md5 hash\n"
@@ -12529,7 +12527,7 @@ msgstr "sha1 기반"
 #: sys-utils/irq-common.c:155 sys-utils/irq-common.c:460 sys-utils/lscpu.c:972
 #: sys-utils/lsns.c:1093 sys-utils/zramctl.c:505
 msgid "failed to initialize output column"
-msgstr "출력 열 항목 초기화 실패"
+msgstr "출력 내용 항목 초기화 실패"
 
 #: misc-utils/whereis.c:201
 #, c-format
@@ -12542,7 +12540,7 @@ msgstr "명령 바이너리, 소스 코드, 설명서 페이지 파일 위치를
 
 #: misc-utils/whereis.c:207
 msgid " -b         search only for binaries\n"
-msgstr " -b         바이너리 파일만 검색\n"
+msgstr " -b             바이너리 파일만 검색\n"
 
 #: misc-utils/whereis.c:208
 msgid " -B <dirs>  define binaries lookup path\n"
@@ -12550,7 +12548,7 @@ msgstr " -B <디렉터리>  바이너리 검색 경로 지정\n"
 
 #: misc-utils/whereis.c:209
 msgid " -m         search only for manuals and infos\n"
-msgstr " -m         설명서와 정보만 검색\n"
+msgstr " -m             설명서와 정보만 검색\n"
 
 #: misc-utils/whereis.c:210
 msgid " -M <dirs>  define man and info lookup path\n"
@@ -12558,7 +12556,7 @@ msgstr " -M <디렉터리>  설명서 정보 검색 경로 지정\n"
 
 #: misc-utils/whereis.c:211
 msgid " -s         search only for sources\n"
-msgstr " -s         소스 코드만 검색\n"
+msgstr " -s             소스 코드만 검색\n"
 
 #: misc-utils/whereis.c:212
 msgid " -S <dirs>  define sources lookup path\n"
@@ -12566,15 +12564,15 @@ msgstr " -S <디렉터리>  소스 코드 검색 경로 지정\n"
 
 #: misc-utils/whereis.c:213
 msgid " -f         terminate <dirs> argument list\n"
-msgstr " -f         <디렉터리> 인자 목록으로 끝냅니다\n"
+msgstr " -f             <디렉터리> 인자 목록으로 끝냅니다\n"
 
 #: misc-utils/whereis.c:214
 msgid " -u         search for unusual entries\n"
-msgstr " -u         비 일반 항목 검색\n"
+msgstr " -u             비 일반 항목 검색\n"
 
 #: misc-utils/whereis.c:215
 msgid " -l         output effective lookup paths\n"
-msgstr " -l         사실상 검색 경로 출력\n"
+msgstr " -l             사실상 검색 경로 출력\n"
 
 #: misc-utils/whereis.c:655
 msgid "option -f is missing"
@@ -13387,15 +13385,15 @@ msgstr "주어진 블록 장치에서 영역 명령을 실행합니다.\n"
 
 #: sys-utils/blkzone.c:406
 msgid " -o, --offset <sector>  start sector of zone to act (in 512-byte sectors)\n"
-msgstr " -o, --offset <섹터>  동작을 실행할 영역 시작 섹터(512 바이트 섹터 단위)\n"
+msgstr " -o, --offset <섹터>    동작을 실행할 영역 시작 섹터(512 바이트 섹터 단위)\n"
 
 #: sys-utils/blkzone.c:407
 msgid " -l, --length <sectors> maximum sectors to act (in 512-byte sectors)\n"
-msgstr " -l, --length <섹터> 동작을 실행할 최데 섹터 수(512 바이트 섹터 단위)\n"
+msgstr " -l, --length <섹터>    동작을 실행할 최데 섹터 수(512 바이트 섹터 단위)\n"
 
 #: sys-utils/blkzone.c:408
 msgid " -c, --count <number>   maximum number of zones\n"
-msgstr " -c, --count <숫자>   최대 영역 수\n"
+msgstr " -c, --count <숫자>     최대 영역 수\n"
 
 #: sys-utils/blkzone.c:409
 msgid " -f, --force            enforce on block devices used by the system\n"
@@ -14207,7 +14205,7 @@ msgstr ""
 " -t, --trayclose             트레이를 잠급니다\n"
 " -T, --traytoggle            트레이 상태를 전환합니다\n"
 " -v, --verbose               자세한 내용 출력을 활성화합니다\n"
-" -x, --cdspeed <속도>       CD-ROM 최대 속도를 설정합니다\n"
+" -x, --cdspeed <속도>        CD-ROM 최대 속도를 설정합니다\n"
 " -X, --listspeed             CD-ROM 가용 재생 속도를 표시합니다\n"
 
 #: sys-utils/eject.c:169
@@ -15234,7 +15232,7 @@ msgstr "   매개변수 및 값은 커널의 include/uapi/linux/rtc.h 헤더를 
 
 #: sys-utils/hwclock.c:1255
 msgid " <param> and <value> accept hexadecimal values if prefixed with 0x, otherwise decimal."
-msgstr " <매개변수>와 <값>은 0x를 앞에 붙이면 16진수값으로 받아들이며, 그 외의 경우는 10진수 값입니다."
+msgstr " <매개변수>와 <값>은 0x를 앞에 붙이면 16진수 값으로 받아들이며, 그 외의 경우는 10진수 값입니다."
 
 #: sys-utils/hwclock.c:1356
 msgid "Unable to connect to audit system"
@@ -16228,7 +16226,7 @@ msgstr "출력 행 추가에 실패"
 
 #: sys-utils/irq-common.c:402
 msgid "unsupported column name to sort output"
-msgstr "출력 정력에 지원하지 않는 열 항목 이름"
+msgstr "출력 정력에 지원하지 않는 내용 항목 이름"
 
 #: sys-utils/irq-common.c:452
 msgid "cpu-interrupts"
@@ -16286,7 +16284,7 @@ msgstr " -d, --delay <초>   지연 시간 업데이트\n"
 
 #: sys-utils/irqtop.c:266 sys-utils/lsirq.c:67
 msgid " -s, --sort <column>  specify sort column\n"
-msgstr " -s, --sort <열>  정렬 기준 열 항목 지정\n"
+msgstr " -s, --sort <열>  정렬 기준 내용 항목 지정\n"
 
 #: sys-utils/irqtop.c:267 sys-utils/lsirq.c:68
 msgid " -S, --softirq        show softirqs instead of interrupts\n"
@@ -16602,15 +16600,15 @@ msgstr " -l, --list                    전체 또는 지정 정보를 표시합�
 
 #: sys-utils/losetup.c:433
 msgid " -n, --noheadings              don't print headings for --list output\n"
-msgstr " -n, --noheadings              --list 출력에 열 항목 제목을 표시하지 않습니다\n"
+msgstr " -n, --noheadings              --list 출력에 내용 항목 제목을 표시하지 않습니다\n"
 
 #: sys-utils/losetup.c:434
 msgid " -O, --output <cols>           specify columns to output for --list\n"
-msgstr " -O, --output <열>           --list 옵션에 대한 출력 대상 열 항목 지정\n"
+msgstr " -O, --output <열>           --list 옵션에 대한 출력 대상 내용 항목 지정\n"
 
 #: sys-utils/losetup.c:435
 msgid "     --output-all              output all columns\n"
-msgstr "     --output-all              모든 열 항목 출력\n"
+msgstr "     --output-all              모든 내용 항목 출력\n"
 
 #: sys-utils/losetup.c:436
 msgid "     --raw                     use raw --list output format\n"
@@ -16862,7 +16860,7 @@ msgid ""
 "# starting usually from zero.\n"
 msgstr ""
 "# 다음은 다른 프로그램에서 인식하여 해석할 수 있는 형식입니다.\n"
-"# 모든 열 항목의 제각기 다른 항목에는 0으로 시작하는 고유 ID가 \n"
+"# 모든 내용 항목의 제각기 다른 항목에는 0으로 시작하는 고유 ID가 \n"
 "# 붙습니다.\n"
 
 #: sys-utils/lscpu.c:862
@@ -17143,7 +17141,7 @@ msgstr " -p, --parse[=<목록>]    해석 가능한 형식을 표시\n"
 
 #: sys-utils/lscpu.c:1174
 msgid " -s, --sysroot <dir>     use specified directory as system root\n"
-msgstr " -s, --sysroot <디렉터리>     지정 디렉터리를 시스템 루트 처럼 활용\n"
+msgstr " -s, --sysroot <디렉터리>     지정 디렉터리를 시스템 루트처럼 활용\n"
 
 #: sys-utils/lscpu.c:1175
 msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
@@ -17155,7 +17153,7 @@ msgstr " -y, --physical          논리 ID 대신 물리 ID 표시\n"
 
 #: sys-utils/lscpu.c:1177
 msgid "     --output-all        print all available columns for -e, -p or -C\n"
-msgstr "     --output-all        -e, -p, -C에 해당하는 모든 가용 열 항목 출력\n"
+msgstr "     --output-all        -e, -p, -C에 해당하는 모든 가용 내용 항목 출력\n"
 
 #: sys-utils/lscpu.c:1181
 msgid ""
@@ -17163,7 +17161,7 @@ msgid ""
 "Available output columns for -e or -p:\n"
 msgstr ""
 "\n"
-"-e 또는 -p로 출력할 수 있는 열 항목은 다음과 같습니다:\n"
+"-e 또는 -p로 출력할 수 있는 내용 항목은 다음과 같습니다:\n"
 
 #: sys-utils/lscpu.c:1185
 msgid ""
@@ -17171,7 +17169,7 @@ msgid ""
 "Available output columns for -C:\n"
 msgstr ""
 "\n"
-"-C로 출력할 수 있는 열 항목은 다음과 같습니다:\n"
+"-C로 출력할 수 있는 내용 항목은 다음과 같습니다:\n"
 
 #: sys-utils/lscpu.c:1311
 #, c-format
@@ -17422,7 +17420,7 @@ msgstr "제한"
 #: sys-utils/lsipc.c:226
 #, c-format
 msgid "column %s does not apply to the specified IPC"
-msgstr "%s 열 항목을 지정 IPC에 적용하지 않았습니다"
+msgstr "%s 내용 항목을 지정 IPC에 적용하지 않았습니다"
 
 #: sys-utils/lsipc.c:302
 msgid " -g, --global      info about system-wide usage (may be used with -m, -q and -s)\n"
@@ -17450,7 +17448,7 @@ msgstr " -l, --list               출력 형식(이를테면 --id)을 목록으�
 
 #: sys-utils/lsipc.c:316
 msgid " -P, --numeric-perms      print numeric permissions (PERMS column)\n"
-msgstr " -P, --numeric-perms      숫자 권한 출력 (<권한> 열 항목)\n"
+msgstr " -P, --numeric-perms      숫자 권한 출력 (<권한> 내용 항목)\n"
 
 #: sys-utils/lsipc.c:318
 msgid " -t, --time               show attach, detach and change times\n"
@@ -17463,7 +17461,7 @@ msgid ""
 "Generic columns:\n"
 msgstr ""
 "\n"
-"일반 열 항목:\n"
+"일반 내용 항목:\n"
 
 #: sys-utils/lsipc.c:329
 #, c-format
@@ -17472,7 +17470,7 @@ msgid ""
 "Shared-memory columns (--shmems):\n"
 msgstr ""
 "\n"
-"공유 메모리 열 항목 (--shmems):\n"
+"공유 메모리 내용 항목 (--shmems):\n"
 
 #: sys-utils/lsipc.c:333
 #, c-format
@@ -17481,7 +17479,7 @@ msgid ""
 "Message-queue columns (--queues):\n"
 msgstr ""
 "\n"
-"메시지 큐 열 항목 (--queues):\n"
+"메시지 큐 내용 항목 (--queues):\n"
 
 #: sys-utils/lsipc.c:337
 #, c-format
@@ -17490,7 +17488,7 @@ msgid ""
 "Semaphore columns (--semaphores):\n"
 msgstr ""
 "\n"
-"세마포어 열 항목 (--semaphores):\n"
+"세마포어 내용 항목 (--semaphores):\n"
 
 #: sys-utils/lsipc.c:341
 #, c-format
@@ -17499,7 +17497,7 @@ msgid ""
 "Summary columns (--global):\n"
 msgstr ""
 "\n"
-"요약 열 항목 (--global):\n"
+"요약 내용 항목 (--global):\n"
 
 #: sys-utils/lsipc.c:429
 #, c-format
@@ -17657,7 +17655,7 @@ msgstr " -a, --all            각 개별 메모리 블록 표시\n"
 
 #: sys-utils/lsmem.c:533
 msgid " -S, --split <list>   split ranges by specified columns\n"
-msgstr " -S, --split <목록>   지정 열 항목 기준으로 범위 분할\n"
+msgstr " -S, --split <목록>   지정 내용 항목 기준으로 범위 분할\n"
 
 #: sys-utils/lsmem.c:534
 msgid " -s, --sysroot <dir>  use the specified directory as system root\n"
@@ -17677,7 +17675,7 @@ msgstr "--sysroot에 부적절한 인자"
 
 #: sys-utils/lsmem.c:717
 msgid "Failed to initialize output column"
-msgstr "출력 열 항목 초기화 실패"
+msgstr "출력 내용 항목 초기화 실패"
 
 #: sys-utils/lsns.c:107
 msgid "namespace identifier (inode number)"
@@ -17887,7 +17885,7 @@ msgstr ""
 
 #: sys-utils/mount.c:491
 msgid "Mount a filesystem.\n"
-msgstr "파일 시스템에 마운트합니다.\n"
+msgstr "파일 시스템을 마운트합니다.\n"
 
 #: sys-utils/mount.c:495
 #, c-format
@@ -17952,7 +17950,7 @@ msgstr ""
 " -o, --options <목록>    쉼표로 구분한 마운트 옵션 목록\n"
 " -O, --test-opts <목록>  파일 시스템 설정 제한 (-a 옵션과)\n"
 " -r, --read-only         읽기 전용 파일 시스템 마운트 (-o ro와 동일)\n"
-" -t, --types <목록>      파일 시스템 형식 설정 제한\n"
+" -t, --types <목록>      파일 시스템 형식 설정을 제한합니다\n"
 
 #: sys-utils/mount.c:521
 #, c-format
@@ -17960,8 +17958,8 @@ msgid ""
 "     --source <src>      explicitly specifies source (path, label, uuid)\n"
 "     --target <target>   explicitly specifies mountpoint\n"
 msgstr ""
-"     --source <원본>      원본을 분명하게 지정 (경로, 레이블, UUID)\n"
-"     --target <대상>   마운트 지점을 분명하게 지정\n"
+"     --source <원본>     원본을 분명하게 지정합니다(경로, 레이블, UUID)\n"
+"     --target <대상>     마운트 지점을 분명하게 지정합니다\n"
 
 #: sys-utils/mount.c:524
 #, c-format
@@ -17985,7 +17983,7 @@ msgstr " -w, --rw, --read-write  파일 시스템을 읽기-쓰기로 마운트 
 #: sys-utils/mount.c:531
 #, c-format
 msgid " -N, --namespace <ns>    perform mount in another namespace\n"
-msgstr " -N, --namespace <이름공간>   다른 이름공간에서 마운트 수행\n"
+msgstr " -N, --namespace <이름영역>   다른 이름영역에서 마운트 수행\n"
 
 #: sys-utils/mount.c:537
 #, c-format
@@ -18002,13 +18000,13 @@ msgid ""
 msgstr ""
 "\n"
 "원본:\n"
-" -L, --label <레이블>     LABEL=<레이블>의 동의 표현\n"
+" -L, --label <레이블>    LABEL=<레이블>의 동의 표현\n"
 " -U, --uuid <UUID>       UUID=<UUID>의 동의 표현\n"
-" LABEL=<레이블>           파일 시스템 레이블로 장치 지정\n"
+" LABEL=<레이블>          파일 시스템 레이블로 장치 지정\n"
 " UUID=<UUID>             파일 시스템 UUID로 장치 지정\n"
-" PARTLABEL=<레이블>       분할 영역 레이블로 장치 지정\n"
+" PARTLABEL=<레이블>      분할 영역 레이블로 장치 지정\n"
 " PARTUUID=<UUID>         분할 영역 UUID로 장치 지정\n"
-" ID=<ID>                 udev 하드웨어 ID로 장치 지\n"
+" ID=<ID>                 udev 하드웨어 ID로 장치 지정\n"
 
 #: sys-utils/mount.c:547
 #, c-format
@@ -18017,8 +18015,8 @@ msgid ""
 " <directory>             mountpoint for bind mounts (see --bind/rbind)\n"
 " <file>                  regular file for loopdev setup\n"
 msgstr ""
-" <장치>                경로로 장치 지정\n"
-" <디렉터리>             마운트 대상을 묶기 위한 마운트 지점 (--bind/rbind 참조)\n"
+" <장치>                  경로로 장치 지정\n"
+" <디렉터리>              마운트 대상을 묶는 마운트 지점(--bind/rbind 참조)\n"
 " <파일>                  루프 장치 설정용 일반 파일\n"
 
 #: sys-utils/mount.c:552
@@ -18073,7 +18071,7 @@ msgstr "옵션 패턴 지정 실패"
 #: sys-utils/mount.c:828 sys-utils/umount.c:590
 #, c-format
 msgid "failed to set target namespace to %s"
-msgstr "%s 대상 이름공간 지정 실패"
+msgstr "%s 대상 이름영역 지정 실패"
 
 #: sys-utils/mount.c:994
 msgid "source specified more than once"
@@ -18393,7 +18391,7 @@ msgid ""
 "     --verbose          verbose output\n"
 msgstr ""
 " -p, --pid <PID>        프로세스 ID\n"
-" -o, --output <목록>    어떤 열 항목을 출력할 지 정의\n"
+" -o, --output <목록>    어떤 내용 항목을 출력할 지 정의\n"
 "     --noheadings       머리 제목은 출력하지 않음\n"
 "     --raw              원시 출력 형식 사용\n"
 "     --verbose          자세한 출력\n"
@@ -18611,7 +18609,7 @@ msgstr "실행 프로세스 우선순위를 바꿉니다.\n"
 
 #: sys-utils/renice.c:71
 msgid " -n, --priority <num>   specify the nice value\n"
-msgstr " -n, --priority <숫자>   nice 값을 지정합니다\n"
+msgstr " -n, --priority <숫자>  nice 값을 지정합니다\n"
 
 #: sys-utils/renice.c:72
 msgid " -p, --pid              interpret arguments as process ID (default)\n"
@@ -18623,7 +18621,7 @@ msgstr " -g, --pgrp             인자 값을 프로세스 그룹 ID로 해석�
 
 #: sys-utils/renice.c:74
 msgid " -u, --user             interpret arguments as username or user ID\n"
-msgstr " -u, --user             인자값을 사용자이름 또는 사용자 ID로 해석합니다\n"
+msgstr " -u, --user             인자 값을 사용자 이름 또는 사용자 ID로 해석합니다\n"
 
 #: sys-utils/renice.c:86
 #, c-format
@@ -19013,11 +19011,11 @@ msgstr " -Z, --mmap-page-zero     MMAP_PAGE_ZERO 활성\n"
 
 #: sys-utils/setarch.c:114
 msgid " -3, --3gb                limits the used address space to a maximum of 3 GB\n"
-msgstr " -3, --3gb                주소 영역을 3 GB 까지만 사용하도록 제한\n"
+msgstr " -3, --3gb                주소 영역을 3GB 까지만 사용하도록 제한\n"
 
 #: sys-utils/setarch.c:115
 msgid "     --4gb                ignored (for backward compatibility only)\n"
-msgstr "     --4gb                무시 (하위 호환성 전용)\n"
+msgstr "     --4gb                무시(하위 호환성 전용)\n"
 
 #: sys-utils/setarch.c:116
 msgid "     --uname-2.6          turns on UNAME26\n"
@@ -19574,11 +19572,11 @@ msgid ""
 msgstr ""
 "\n"
 "<사양> 매개변수:\n"
-" -L <레이블>             사용할 장치 <레이블>\n"
+" -L <레이블>            사용할 장치 <레이블>\n"
 " -U <UUID>              사용할 장치 <UUID>\n"
-" LABEL=<레이블>          사용할 장치 <레이블>\n"
+" LABEL=<레이블>         사용할 장치 <레이블>\n"
 " UUID=<UUID>            사용할 장치 <UUID>\n"
-" <장치>               사용할 장치 <이름>\n"
+" <장치>                 사용할 장치 <이름>\n"
 " <파일>                 사용할 <파일> 이름\n"
 
 #: sys-utils/swapon.c:96
@@ -19720,7 +19718,7 @@ msgstr " -a, --all                /etc/fstab의 모든 스왑 가동\n"
 
 #: sys-utils/swapon.c:814
 msgid " -d, --discard[=<policy>] enable swap discards, if supported by device\n"
-msgstr " -d, --discard[=<정책>] 장치에서 지원하면 스왑 철회 활성\n"
+msgstr " -d, --discard[=<정책>]   장치에서 지원하면 스왑 철회 활성\n"
 
 #: sys-utils/swapon.c:815
 msgid " -e, --ifexists           silently skip devices that do not exist\n"
@@ -19778,13 +19776,13 @@ msgstr ""
 "\n"
 "<사양> 매개변수:\n"
 " -L <레이블>             LABEL=<레이블>과 동의 표현 \n"
-" -U <UUID>              UUID=<UUID>와 동의 표현\n"
+" -U <UUID>               UUID=<UUID>와 동의 표현\n"
 " LABEL=<레이블>          스왑 영역 레이블로 장치 지정\n"
-" UUID=<UUID>            스왑 영역 UUID로 장치 지정\n"
+" UUID=<UUID>             스왑 영역 UUID로 장치 지정\n"
 " PARTLABEL=<레이블>      분할 영역 레이블로 장치 지정\n"
-" PARTUUID=<UUID>        분할 영역 UUID로 장치 지정\n"
-" <장치>               사용할 장치 이름\n"
-" <파일>                 사용할 파일 이름\n"
+" PARTUUID=<UUID>         분할 영역 UUID로 장치 지정\n"
+" <장치>                  사용할 장치 이름\n"
+" <파일>                  사용할 파일 이름\n"
 
 #: sys-utils/swapon.c:839
 msgid ""
@@ -20005,8 +20003,8 @@ msgid ""
 " -A, --all-targets       unmount all mountpoints for the given device in the\n"
 "                           current namespace\n"
 msgstr ""
-" -A, --all-targets       현재 이름영역에 주어진 장치로 붙은 모든 마운트 지점의\n"
-"                           마운트를 해제합니다\n"
+" -A, --all-targets       현재 이름 영역에 주어진 장치로 붙은 모든\n"
+"                           마운트 지점의 마운트를 해제합니다\n"
 
 #: sys-utils/umount.c:94
 msgid " -c, --no-canonicalize   don't canonicalize paths\n"
@@ -20054,7 +20052,7 @@ msgstr " -q, --quiet             '마운트 하지 않음' 오류 메시지를 �
 
 #: sys-utils/umount.c:107
 msgid " -N, --namespace <ns>    perform umount in another namespace\n"
-msgstr " -N, --namespace <이름공간>    다른 이름 공간에 대해 마운트 해제를 수행\n"
+msgstr " -N, --namespace <이름영역>    다른 이름 영역에 대해 마운트 해제를 수행\n"
 
 #: sys-utils/umount.c:152
 #, c-format
@@ -20247,7 +20245,7 @@ msgstr ""
 
 #: sys-utils/unshare.c:683
 msgid " --mount-proc[=<dir>]      mount proc filesystem first (implies --mount)\n"
-msgstr " --mount-proc[=<디렉터리>]      우선 proc 파일 시스템을 마운트합니다 (--mount 생략)\n"
+msgstr " --mount-proc[=<디렉터리>] 우선 proc 파일 시스템을 마운트합니다 (--mount 생략)\n"
 
 #: sys-utils/unshare.c:684
 msgid ""
@@ -20267,11 +20265,11 @@ msgstr " --keep-caps               사용자 이름 영역에서 허용한 권�
 
 #: sys-utils/unshare.c:689
 msgid " -R, --root=<dir>          run the command with root directory set to <dir>\n"
-msgstr " -R, --root=<디렉터리>          <디렉터리>로 지정한 루트 디렉터리에서 명령을 실행합니다\n"
+msgstr " -R, --root=<디렉터리>     <디렉터리>로 지정한 루트 디렉터리에서 명령을 실행합니다\n"
 
 #: sys-utils/unshare.c:690
 msgid " -w, --wd=<dir>            change working directory to <dir>\n"
-msgstr " -w, --wd=<디렉터리>            작업 디렉터리를 지정 <디렉터리>로 바꿉니다\n"
+msgstr " -w, --wd=<디렉터리>       작업 디렉터리를 지정 <디렉터리>로 바꿉니다\n"
 
 #: sys-utils/unshare.c:691
 msgid " -S, --setuid <uid>        set uid in entered namespace\n"
@@ -20454,12 +20452,12 @@ msgstr ""
 " -I, --noident          와치독 식별 정보를 출력하지 않습니다\n"
 " -n, --noheadings       플래그 이름의 머릿글은 출력하지 않습니다\n"
 " -O, --oneline          모든 정보를 한 줄로 표시합니다\n"
-" -o, --output <목록>    플래그 지정 열 항목을 출력합니다\n"
+" -o, --output <목록>    플래그 지정 내용 항목을 출력합니다\n"
 " -p, --setpretimeout <초> 시간 초과 전 와치독을 설정합니다\n"
 " -g, --setpregovernor <이름> 시간 초과 전 정책을 설정합니다\n"
 " -r, --raw              플래그 테이블에 원시 출력 형식을 사용합니다\n"
 " -T, --notimeouts       와치독 제한 시간을 출력하지 않음\n"
-" -s, --settimeout <초> 와치독 제한 시간을 지정합니다\n"
+" -s, --settimeout <초>  와치독 제한 시간을 지정합니다\n"
 " -x, --flags-only       플래그 테이블만 출력합니다 (-I -T 옵션과 동일)\n"
 
 #: sys-utils/wdctl.c:249
@@ -20655,11 +20653,11 @@ msgstr " -n, --noheadings          머릿글은 출력하지 않습니다\n"
 
 #: sys-utils/zramctl.c:554
 msgid " -o, --output <list>       columns to use for status output\n"
-msgstr " -o, --output <목록>       상태 출력에 활용할 열 항목\n"
+msgstr " -o, --output <목록>       상태 출력에 활용할 내용 항목\n"
 
 #: sys-utils/zramctl.c:555
 msgid "     --output-all          output all columns\n"
-msgstr "     --output-all          모든 열 항목 출력\n"
+msgstr "     --output-all          모든 내용 항목 출력\n"
 
 #: sys-utils/zramctl.c:556
 msgid "     --raw                 use raw status output format\n"
@@ -20675,7 +20673,7 @@ msgstr " -s, --size <크기>         장치 크기\n"
 
 #: sys-utils/zramctl.c:559
 msgid " -t, --streams <number>    number of compression streams\n"
-msgstr " -t, --streams <숫자>    압축 스트림 수\n"
+msgstr " -t, --streams <숫자>      압축 스트림 수\n"
 
 #: sys-utils/zramctl.c:567
 msgid " <alg> specify algorithm, supported are:\n"
@@ -20921,7 +20919,7 @@ msgstr " -8, --8bits                8-bit tty로 가정합니다\n"
 
 #: term-utils/agetty.c:2483
 msgid " -a, --autologin <user>     login the specified user automatically\n"
-msgstr " -a, --autologin <사용자>     지정 사용자로 자동으로 로그인합니다.\n"
+msgstr " -a, --autologin <사용자>   지정 사용자로 자동으로 로그인합니다.\n"
 
 #: term-utils/agetty.c:2484
 msgid " -c, --noreset              do not reset control mode\n"
@@ -20989,7 +20987,7 @@ msgstr " -p, --login-pause          로그인 전 키 입력을 기다립니다\
 
 #: term-utils/agetty.c:2500
 msgid " -r, --chroot <dir>         change root to the directory\n"
-msgstr " -r, --chroot <디렉터리>         루트 위치를 지정 디렉터리로 전환합니다\n"
+msgstr " -r, --chroot <디렉터리>    루트 위치를 지정 디렉터리로 전환합니다\n"
 
 #: term-utils/agetty.c:2501
 msgid " -R, --hangup               do virtually hangup on the tty\n"
@@ -21001,7 +20999,7 @@ msgstr " -s, --keep-baud            터미널 중단 후 보 전송율 유지를
 
 #: term-utils/agetty.c:2503
 msgid " -t, --timeout <number>     login process timeout\n"
-msgstr " -t, --timeout <숫자>     로그인 프로세스 제한 시간\n"
+msgstr " -t, --timeout <숫자>       로그인 프로세스 제한 시간\n"
 
 #: term-utils/agetty.c:2504
 msgid " -U, --detect-case          detect uppercase terminal\n"
@@ -21033,19 +21031,19 @@ msgstr "     --kill-chars <문자열>  추가 kill 문자\n"
 
 #: term-utils/agetty.c:2511
 msgid "     --chdir <directory>    chdir before the login\n"
-msgstr "     --chdir <디렉터리>    로그인 전 지정 디렉터리로 이동합니다\n"
+msgstr "     --chdir <디렉터리>     로그인 전 지정 디렉터리로 이동합니다\n"
 
 #: term-utils/agetty.c:2512
 msgid "     --delay <number>       sleep seconds before prompt\n"
-msgstr "     --delay <숫자>       묻기 전 지정 초 만큼 대기합니다\n"
+msgstr "     --delay <숫자>         묻기 전 지정 초 만큼 대기합니다\n"
 
 #: term-utils/agetty.c:2513
 msgid "     --nice <number>        run login with this priority\n"
-msgstr "     --nice <숫자>        지정 우선 순위로 로그인을 실행합니다\n"
+msgstr "     --nice <숫자>          지정 우선 순위로 로그인을 실행합니다\n"
 
 #: term-utils/agetty.c:2514
 msgid "     --reload               reload prompts on running agetty instances\n"
-msgstr "     --reload               실행 중인 agetty 인스턴스의 프롬프트를 다시 불러옵니다\n"
+msgstr "     --reload               실행중인 agetty 인스턴스의 프롬프트를 다시 불러옵니다\n"
 
 #: term-utils/agetty.c:2515
 msgid "     --list-speeds          display supported baud rates\n"
@@ -21155,7 +21153,7 @@ msgstr " -a, --append                  로그 파일에 내용 추가\n"
 
 #: term-utils/script.c:210
 msgid " -c, --command <command>       run command rather than interactive shell\n"
-msgstr " -c, --command <명령>       대화형 셸을 실행하기보다는 명령을 실행합니다\n"
+msgstr " -c, --command <명령>          대화형 셸을 실행하기보다는 명령을 실행합니다\n"
 
 #: term-utils/script.c:211
 msgid " -e, --return                  return exit code of the child process\n"
@@ -21309,12 +21307,12 @@ msgstr " -c, --command <명령> 대화형 셸을 실행하기보다는 명령을
 #: term-utils/scriptlive.c:74 term-utils/scriptreplay.c:67
 msgid " -d, --divisor <num>     speed up or slow down execution with time divisor\n"
 msgstr ""
-" -d, --divisor <숫자>     시간 배수로 실행 속도를 올리거나 늦춥니다\n"
+" -d, --divisor <숫자>    시간 배수로 실행 속도를 올리거나 늦춥니다\n"
 "\n"
 
 #: term-utils/scriptlive.c:75 term-utils/scriptreplay.c:68
 msgid " -m, --maxdelay <num>    wait at most this many seconds between updates\n"
-msgstr " -m, --maxdelay <숫자>    업데이트 진행간 최대 지정 초 동안 대기합니다\n"
+msgstr " -m, --maxdelay <숫자>   업데이트 진행간 최대 지정 초 동안 대기합니다\n"
 
 #: term-utils/scriptlive.c:226 term-utils/scriptreplay.c:233
 msgid "failed to parse maximal delay argument"
@@ -21418,7 +21416,7 @@ msgstr "터미널 속성을 설정합니다.\n"
 
 #: term-utils/setterm.c:387
 msgid " --term <terminal_name>        override TERM environment variable\n"
-msgstr " --term <터미널_이름>        TERM 환경 변수 값을 덮어씁니다\n"
+msgstr " --term <터미널_이름>          TERM 환경 변수 값을 덮어씁니다\n"
 
 #: term-utils/setterm.c:388
 msgid " --reset                       reset terminal to power-on state\n"
@@ -21470,19 +21468,19 @@ msgstr " --msglevel <0-8>              커널 콘솔 로그 수준\n"
 
 #: term-utils/setterm.c:406
 msgid " --foreground default|<color>  set foreground color\n"
-msgstr " --foreground default|<색상>  전경 색상을 설정합니다\n"
+msgstr " --foreground default|<색상>   전경 색상을 설정합니다\n"
 
 #: term-utils/setterm.c:407
 msgid " --background default|<color>  set background color\n"
-msgstr " --background default|<색상>  배경 색상을 설정합니다\n"
+msgstr " --background default|<색상>   배경 색상을 설정합니다\n"
 
 #: term-utils/setterm.c:408
 msgid " --ulcolor [bright] <color>    set underlined text color\n"
-msgstr " --ulcolor [bright] <색상>    밑줄 텍스트 색상을 설정합니다\n"
+msgstr " --ulcolor [bright] <색상>     밑줄 텍스트 색상을 설정합니다\n"
 
 #: term-utils/setterm.c:409
 msgid " --hbcolor [bright] <color>    set half-bright text color\n"
-msgstr " --hbcolor [bright] <색상>    중간 밝기 텍스트 색상을 설정합니다\n"
+msgstr " --hbcolor [bright] <색상>     중간 밝기 텍스트 색상을 설정합니다\n"
 
 #: term-utils/setterm.c:410
 msgid "        <color>: black blue cyan green grey magenta red white yellow\n"
@@ -21514,11 +21512,11 @@ msgstr " --clear[=<all|rest>]          화면을 비우고 커서 위치를 설�
 
 #: term-utils/setterm.c:421
 msgid " --tabs[=<number>...]          set these tab stop positions, or show them\n"
-msgstr " --tabs[=<숫자>...]          탭 간격 위치를 설정하거나 표시합니다\n"
+msgstr " --tabs[=<숫자>...]            탭 간격 위치를 설정하거나 표시합니다\n"
 
 #: term-utils/setterm.c:422
 msgid " --clrtabs[=<number>...]       clear these tab stop positions, or all\n"
-msgstr " --clrtabs[=<숫자>...]       지정 탭 간격 위치 또는 모두를 삭제합니다\n"
+msgstr " --clrtabs[=<숫자>...]         지정 탭 간격 위치 또는 모두를 삭제합니다\n"
 
 #: term-utils/setterm.c:423
 msgid " --regtabs[=1-160]             set a regular tab stop interval\n"
@@ -21530,15 +21528,15 @@ msgstr " --blank[=0-60|force|poke]     화면을 비우기 전 비활성 시간�
 
 #: term-utils/setterm.c:427
 msgid " --dump[=<number>]             write vcsa<number> console dump to file\n"
-msgstr " --dump[=<숫자>]             vcsa<숫자> 콘솔 덤프를 파일에 기록합니다\n"
+msgstr " --dump[=<숫자>]               vcsa<숫자> 콘솔 덤프를 파일에 기록합니다\n"
 
 #: term-utils/setterm.c:428
 msgid " --append <number>             append vcsa<number> console dump to file\n"
-msgstr " --append <숫자>             vcsa<숫자> 콘솔 덤프를 파일에 추가합니다\n"
+msgstr " --append <숫자>               vcsa<숫자> 콘솔 덤프를 파일에 추가합니다\n"
 
 #: term-utils/setterm.c:429
 msgid " --file <filename>             name of the dump file\n"
-msgstr " --file <파일 이름>             덤프 파일 이름\n"
+msgstr " --file <파일이름>             덤프 파일 이름\n"
 
 #: term-utils/setterm.c:432
 msgid " --powersave on|vsync|hsync|powerdown|off\n"
@@ -21799,7 +21797,7 @@ msgstr ""
 " -p, --pass             알 수 없는 제어 시퀀스 넘김\n"
 " -h, --tabs             공백을 탭으로 변환\n"
 " -x, --spaces           탭을 공백으로 변환\n"
-" -l, --lines <숫자>      최소 <숫자>행만큼 버퍼링\n"
+" -l, --lines <숫자>     최소 <숫자>행만큼 버퍼링\n"
 
 #: text-utils/col.c:496
 #, c-format
@@ -21848,7 +21846,7 @@ msgstr ""
 
 #: text-utils/colrm.c:65
 msgid "Filter out the specified columns.\n"
-msgstr "지정 열 항목을 별도로 출력합니다.\n"
+msgstr "지정 내용 항목을 별도로 출력합니다.\n"
 
 #: text-utils/colrm.c:69
 #, c-format
@@ -21869,12 +21867,12 @@ msgstr "두번째 인자"
 
 #: text-utils/column.c:236
 msgid "failed to parse column"
-msgstr "열 항목 해석 실패"
+msgstr "내용 항목 해석 실패"
 
 #: text-utils/column.c:246
 #, c-format
 msgid "undefined column name '%s'"
-msgstr "지정하지 않은 '%s' 열 항목 이름"
+msgstr "지정하지 않은 '%s' 내용 항목 이름"
 
 #: text-utils/column.c:334
 msgid "failed to parse --table-order list"
@@ -21903,7 +21901,7 @@ msgstr "--table-hide 목록 해석 실패"
 #: text-utils/column.c:463
 #, c-format
 msgid "line %zu: for JSON the name of the column %zu is required"
-msgstr "%zu행: JSON용 %zu 열 항목 이름이 필요합니다"
+msgstr "%zu행: JSON용 %zu 내용 항목 이름이 필요합니다"
 
 #: text-utils/column.c:479
 msgid "failed to allocate output data"
@@ -21911,7 +21909,7 @@ msgstr "출력 데이터 할당 실패"
 
 #: text-utils/column.c:664
 msgid "Columnate lists.\n"
-msgstr "목록을 열 항목으로 정리합니다.\n"
+msgstr "목록을 내용 항목으로 정리합니다.\n"
 
 #: text-utils/column.c:667
 msgid " -t, --table                      create a table\n"
@@ -21920,24 +21918,24 @@ msgstr " -t, --table                      표를 만듭니다\n"
 #: text-utils/column.c:668
 msgid " -n, --table-name <name>          table name for JSON output\n"
 msgstr ""
-" -n, --table-name <이름>          JSON 출력의 테이블 이름을 지정합니다\n"
-"머릿글은 출력하지 않습니다\n"
+"-n, --table-name <이름>           JSON 출력의 테이블 이름을 지정합니다\n"
+"                                    머릿글은 출력하지 않습니다\n"
 
 #: text-utils/column.c:669
 msgid " -O, --table-order <columns>      specify order of output columns\n"
-msgstr " -O, --table-order <열>      출력 열 항목의 순서를 지정합니다\n"
+msgstr " -O, --table-order <열>           출력 내용 항목의 순서를 지정합니다\n"
 
 #: text-utils/column.c:670
 msgid " -N, --table-columns <names>      comma separated columns names\n"
-msgstr " -N, --table-columns <다수이름>      쉼표로 구분한 열 항목 이름\n"
+msgstr " -N, --table-columns <다수이름>   쉼표로 구분한 내용 항목 이름\n"
 
 #: text-utils/column.c:671
 msgid " -l, --table-columns-limit <num>  maximal number of input columns\n"
-msgstr " -l, --table-columns-limit <숫자>  최대 입력 열 항목 수maximal number of input columns\n"
+msgstr " -l, --table-columns-limit <숫자> 최대 입력 내용 항목 수\n"
 
 #: text-utils/column.c:672
 msgid " -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"
-msgstr " -E, --table-noextreme <열>  열 너비까지 도달하는 열의 긴 텍스트 문자수는 세지 않음\n"
+msgstr " -E, --table-noextreme <열>       열 너비까지 도달하는 열의 긴 텍스트 문자수는 세지 않음\n"
 
 #: text-utils/column.c:673
 msgid " -d, --table-noheadings           don't print header\n"
@@ -21949,19 +21947,19 @@ msgstr " -e, --table-header-repeat        각 페이지에 머릿글 반복\n"
 
 #: text-utils/column.c:675
 msgid " -H, --table-hide <columns>       don't print the columns\n"
-msgstr " -H, --table-hide <열>       열 항목 출력하지 않음\n"
+msgstr " -H, --table-hide <열>            내용 항목 출력하지 않음\n"
 
 #: text-utils/column.c:676
 msgid " -R, --table-right <columns>      right align text in these columns\n"
-msgstr " -R, --table-right <열>      지정한 열 항목의 텍스트를 오른쪽 정렬\n"
+msgstr " -R, --table-right <열>           지정한 내용 항목의 텍스트를 오른쪽 정렬\n"
 
 #: text-utils/column.c:677
 msgid " -T, --table-truncate <columns>   truncate text in the columns when necessary\n"
-msgstr " -T, --table-truncate <열>   필요할 경우 열 항목의 텍스트를 자름\n"
+msgstr " -T, --table-truncate <열>        필요할 경우 내용 항목의 텍스트를 자름\n"
 
 #: text-utils/column.c:678
 msgid " -W, --table-wrap <columns>       wrap text in the columns when necessary\n"
-msgstr " -W, --table-wrap <열>       필요할 경우 열 항목의 텍스트를 줄바꿈\n"
+msgstr " -W, --table-wrap <열>            필요할 경우 내용 항목의 텍스트를 줄바꿈\n"
 
 #: text-utils/column.c:679
 msgid " -L, --keep-empty-lines           don't ignore empty lines\n"
@@ -21973,23 +21971,23 @@ msgstr " -J, --json                       표에 JSON 출력 형식 사용\n"
 
 #: text-utils/column.c:683
 msgid " -r, --tree <column>              column to use tree-like output for the table\n"
-msgstr " -r, --tree <열>              표의 트리 방식 출력에 활용할 열 항목\n"
+msgstr " -r, --tree <열>                  표의 트리 방식 출력에 활용할 내용 항목\n"
 
 #: text-utils/column.c:684
 msgid " -i, --tree-id <column>           line ID to specify child-parent relation\n"
-msgstr " -i, --tree-id <열>           상하위 관계를 지정할 행 ID\n"
+msgstr " -i, --tree-id <열>               상하위 관계를 지정할 행 ID\n"
 
 #: text-utils/column.c:685
 msgid " -p, --tree-parent <column>       parent to specify child-parent relation\n"
-msgstr " -p, --tree-parent <열>       상하위 관계를 지정할 상위 요소\n"
+msgstr " -p, --tree-parent <열>           상하위 관계를 지정할 상위 요소\n"
 
 #: text-utils/column.c:688
 msgid " -c, --output-width <width>       width of output in number of characters\n"
-msgstr " -c, --output-width <너비>       문자 수 단위 출력 너비\n"
+msgstr " -c, --output-width <너비>        문자 수 단위 출력 너비\n"
 
 #: text-utils/column.c:689
 msgid " -o, --output-separator <string>  columns separator for table output (default is two spaces)\n"
-msgstr " -o, --output-separator <문자열>  표 출력용 열 항목 구분자 (기본은 공백 문자 2개)\n"
+msgstr " -o, --output-separator <문자열>  표 출력용 내용 항목 구분자 (기본은 공백 문자 2개)\n"
 
 #: text-utils/column.c:690
 msgid " -s, --separator <string>         possible table delimiters\n"
@@ -21997,23 +21995,23 @@ msgstr " -s, --separator <문자열>         가능한 표 구분자\n"
 
 #: text-utils/column.c:691
 msgid " -x, --fillrows                   fill rows before columns\n"
-msgstr " -x, --fillrows                   열 항목 이전에 행 부터 채웁니다\n"
+msgstr " -x, --fillrows                   내용 항목 이전에 행 부터 채웁니다\n"
 
 #: text-utils/column.c:762
 msgid "invalid columns argument"
-msgstr "잘못된 열 항목 인자"
+msgstr "잘못된 내용 항목 인자"
 
 #: text-utils/column.c:787
 msgid "invalid columns limit argument"
-msgstr "부적절한 열 항목 제한 인자"
+msgstr "부적절한 내용 항목 제한 인자"
 
 #: text-utils/column.c:789
 msgid "columns limit must be greater than zero"
-msgstr "열 항목 제한은 0보다 커야 합니다"
+msgstr "내용 항목 제한은 0보다 커야 합니다"
 
 #: text-utils/column.c:792
 msgid "failed to parse column names"
-msgstr "열 항목 이름 해석 실패"
+msgstr "내용 항목 이름 해석 실패"
 
 #: text-utils/column.c:816
 msgid "failed to use input separator"
@@ -22070,7 +22068,7 @@ msgstr " -L, --color[=<모드>]      색상 구성 지정자 해석\n"
 
 #: text-utils/hexdump.c:177
 msgid " -e, --format <format>     format string to be used for displaying data\n"
-msgstr " -e, --format <형식>     데이터 표시에 활용할 형식 문자열\n"
+msgstr " -e, --format <형식>       데이터 표시에 활용할 형식 문자열\n"
 
 #: text-utils/hexdump.c:178
 msgid " -f, --format-file <file>  file that contains format strings\n"
@@ -22078,7 +22076,7 @@ msgstr " -f, --format-file <파일>  형식 문자열이 들어간 파일\n"
 
 #: text-utils/hexdump.c:179
 msgid " -n, --length <length>     interpret only length bytes of input\n"
-msgstr " -n, --length <길이>     지정 입력 바이트 길이만 해석\n"
+msgstr " -n, --length <길이>       지정 입력 바이트 길이만 해석\n"
 
 #: text-utils/hexdump.c:180
 msgid " -s, --skip <offset>       skip offset bytes from the beginning\n"
@@ -22126,7 +22124,7 @@ msgstr "한 줄을 읽습니다.\n"
 
 #: text-utils/more.c:241
 msgid "A file perusal filter for CRT viewing."
-msgstr "CRT 화면 표시 목적의 파일 통독 필터입니다."
+msgstr "CRT 화면 표시 목적의 파일 속독 필터입니다."
 
 #: text-utils/more.c:244
 msgid " -d, --silent          display help instead of ringing bell"
@@ -22150,7 +22148,7 @@ msgstr " -p, --clean-print     스크롤 하지 않고, 화면을 비운 후 텍
 
 #: text-utils/more.c:249
 msgid " -e, --exit-on-eof     exit on end-of-file"
-msgstr " -e, --exit-on-eof     파일-끝 에서 나감"
+msgstr " -e, --exit-on-eof     파일-끝에서 나감"
 
 #: text-utils/more.c:250
 msgid " -s, --squeeze         squeeze multiple blank lines into one"
@@ -22162,19 +22160,19 @@ msgstr " -u, --plain           밑줄과 강조를 끕니다"
 
 #: text-utils/more.c:252
 msgid " -n, --lines <number>  the number of lines per screenful"
-msgstr " -n, --lines <숫자>  화면당 줄 수"
+msgstr " -n, --lines <숫자>    화면당 줄 수"
 
 #: text-utils/more.c:253
 msgid " -<number>             same as --lines"
-msgstr " -<숫자>             --lines 옵션과 동일"
+msgstr " -<숫자>               --lines 옵션과 동일"
 
 #: text-utils/more.c:254
 msgid " +<number>             display file beginning from line number"
-msgstr " +<숫자>             시작 행부터 파일 내용을 표시합니다"
+msgstr " +<숫자>               시작 행부터 파일 내용을 표시합니다"
 
 #: text-utils/more.c:255
 msgid " +/<pattern>           display file beginning from pattern match"
-msgstr " +/<패턴>           패턴이 일치하는 부분부터 파일 내용을 표시합니다"
+msgstr " +/<패턴>              패턴이 일치하는 부분부터 파일 내용을 표시합니다"
 
 #: text-utils/more.c:358
 msgid "MORE environment variable"
@@ -22398,16 +22396,16 @@ msgid ""
 msgstr ""
 "-------------------------------------------------------\n"
 "  h                       이 화면\n"
-"  q 또는 Q                  프로그램 나가기\n"
+"  q 또는 Q                프로그램 나가기\n"
 "  <newline>               다음 페이지\n"
 "  f                       전방 페이지 넘기기\n"
-"  d 또는 ^D                 다음 반쪽\n"
+"  d 또는 ^D               다음 반쪽\n"
 "  l                       다음 줄\n"
 "  $                       마지막 페이지\n"
 "  /regex/                 정규식 전위 검색\n"
-"  ?regex? or ^regex^      정규식 후위 검색\n"
-"  . or ^L                 화면 다시 기름\n"
-"  w or z                  페이지 크기 설정 및 다음 페이지 이동\n"
+"  ?regex? 또는 ^regex^    정규식 후위 검색\n"
+"  . 또는 ^L               화면 다시 기름\n"
+"  w 또는 z                페이지 크기 설정 및 다음 페이지 이동\n"
 "  s filename              현재 파일을 filename으로 저장\n"
 "  !command                셸 이스케이핑\n"
 "  p                       이전 파일로 이동\n"
@@ -22426,7 +22424,7 @@ msgstr " %s [<옵션>] [+<행>] [+/<패턴>/] [<파일>]\n"
 
 #: text-utils/pg.c:235
 msgid "Browse pagewise through text files.\n"
-msgstr "페이지 방식으로 텍스트 파일을 둘러봅니다.\n"
+msgstr "페이지 방식으로 텍스트 파일을 살펴봅니다.\n"
 
 #: text-utils/pg.c:238
 msgid " -number      lines per page\n"
@@ -22466,7 +22464,7 @@ msgstr " +<숫자>      지정 행에서 시작\n"
 
 #: text-utils/pg.c:247
 msgid " +/pattern/   start at the line containing pattern\n"
-msgstr " +/<패턴>/   지정 패턴에 일치하는 행에서 시작\n"
+msgstr " +/<패턴>/    지정 패턴에 일치하는 행에서 시작\n"
 
 #: text-utils/pg.c:258
 #, c-format
@@ -22594,293 +22592,26 @@ msgstr "terminfo 읽는 중 문제가 있습니다"
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr "`%s' 터미널을 알 수 없어 `dumb'를 기본으로 함"
 
-#~ msgid "failed to cache size"
-#~ msgstr "캐시 크기 해석 실패"
+#~ msgid "cannot read at offset: %ju; continue"
+#~ msgstr "다음 오프셋을 읽어올 수 없음: %ju; 계속합니다"
 
-#~ msgid "Comparing %s to %s"
-#~ msgstr "%s와(과) %s 비교"
+#~ msgid "cannot write at offset: %ju; continue"
+#~ msgstr "다음 오프셋에 기록할 수 없음: %ju; 계속합니다"
 
-#~ msgid "Visiting %s (file %zu)"
-#~ msgstr "%s 방문 중(파일 %zu개)"
+#~ msgid "Apple Silicon boot"
+#~ msgstr "애플 실리콘 부팅"
 
-#~ msgid " -v, --verbose        display more details"
-#~ msgstr " -v, --verbose        더 자세하게 표시"
+#~ msgid "Apple Silicon recovery"
+#~ msgstr "애플 실리콘 복구"
 
-#~ msgid ""
-#~ "\n"
-#~ "General Options:\n"
-#~ msgstr ""
-#~ "\n"
-#~ "일반 옵션:\n"
+#~ msgid "Marvell Armada 3700 Boot partition"
+#~ msgstr "마벨 아르마다 3700 부팅 분할 영역"
 
-#~ msgid ""
-#~ "\n"
-#~ "Resources Options:\n"
-#~ msgstr ""
-#~ "\n"
-#~ "자원 옵션:\n"
+#~ msgid "password not defined"
+#~ msgstr "암호를 지정하지 않았습니다"
 
-#~ msgid "cannot stat %s"
-#~ msgstr "%s 상태 정보 확인 불가"
+#~ msgid "Password not required (empty)"
+#~ msgstr "암호가 필요하지 않습니다(비어있음)"
 
-#~ msgid "pipe failed"
-#~ msgstr "파이프 실패"
-
-#~ msgid "failed to read pipe"
-#~ msgstr "파이프 읽기 실패"
-
-#~ msgid "Select a type to create a new label or press 'L' to load script file."
-#~ msgstr "새 레이블의 형식을 선택하십시오. 'L'을 누르면 스크립트 파일을 불러옵니다."
-
-#~ msgid "error %d (%m) while executing fsck.%s for %s"
-#~ msgstr "fsck 실행 중 오류 %1$d (%m).%3$s의 %2$s"
-
-#~ msgid ""
-#~ "\n"
-#~ "Usage:\n"
-#~ " %s [options] device [size]\n"
-#~ msgstr ""
-#~ "\n"
-#~ "사용법:\n"
-#~ " %s [<옵션>] <장치> [<크기>]\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "Options:\n"
-#~ " -c, --check               check bad blocks before creating the swap area\n"
-#~ " -f, --force               allow swap size area be larger than device\n"
-#~ " -p, --pagesize SIZE       specify page size in bytes\n"
-#~ " -L, --label LABEL         specify label\n"
-#~ " -v, --swapversion NUM     specify swap-space version number\n"
-#~ " -U, --uuid UUID           specify the uuid to use\n"
-#~ msgstr ""
-#~ "\n"
-#~ "옵션:\n"
-#~ " -c, --check                 스왑 영역을 만들기 전 불량 블록 검사\n"
-#~ " -f, --force                 스왑 크기 영역을 장치보다 크게 설정하도록 허용\n"
-#~ " -p, --pagesize <크기>       바이트 단위로 페이지 크기 지정\n"
-#~ " -L, --label <레이블>         레이블 지정\n"
-#~ " -v, --swapversion <숫자>     스왑 공간 버전 번호 지정\n"
-#~ " -U, --uuid <UUID>           활용할 UUID 지정\n"
-
-#~ msgid "unable to matchpathcon()"
-#~ msgstr "matchpathcon() 실행 불가"
-
-#~ msgid "The device contains '%s' signature and it will be removed by a write command. See sfdisk(8) man page and --wipe option for more details."
-#~ msgstr "장치에 '%s' 서명이 있으며 기록 명령으로 제거합니다. 자세한 내용은 sfdisk(8) man 페이지의 --wipe 옵션을 참조하십시오."
-
-#~ msgid "time %ld is out of range."
-#~ msgstr "%ld 시간이 범위를 벗어났습니다."
-
-#~ msgid "chown (%s, %lu, %lu) failed: %m"
-#~ msgstr "chown (%s, %lu, %lu) 실패: %m"
-
-#~ msgid "from %.*s\n"
-#~ msgstr "%.*s에서\n"
-
-#~ msgid "on %.*s\n"
-#~ msgstr "%.*s에\n"
-
-#~ msgid "     --tree             enable tree format output is possible\n"
-#~ msgstr "     --tree             트리 형식 출력\n"
-
-#~ msgid "Directories:   %9lld\n"
-#~ msgstr "디렉터리:   %9lld\n"
-
-#~ msgid "Objects:       %9lld\n"
-#~ msgstr "객체:       %9lld\n"
-
-#~ msgid "Comparisons:   %9lld\n"
-#~ msgstr "비교:   %9lld\n"
-
-#~ msgid "Would link:    "
-#~ msgstr "링크 예정:    "
-
-#~ msgid "Linked:        "
-#~ msgstr "링크함:        "
-
-#~ msgid "Would save:   "
-#~ msgstr "저장 예정:   "
-
-#~ msgid "Saved:        "
-#~ msgstr "저장함:        "
-
-#~ msgid " %s [options] directory...\n"
-#~ msgstr " %s [<옵션>] <디렉터리>...\n"
-
-#~ msgid "Consolidate duplicate files using hardlinks."
-#~ msgstr "하드링크를 활용하여 복제 파일을 통합합니다."
-
-#~ msgid " -c, --content          compare only contents, ignore permission, etc."
-#~ msgstr " -c, --content          권한 등은 무시하고 내용만 비교"
-
-#~ msgid " -n, --dry-run          don't actually link anything"
-#~ msgstr " -n, --dry-run          실제로 아무것도 링크하지 않음"
-
-#~ msgid " -v, --verbose          print summary after hardlinking"
-#~ msgstr " -v, --verbose          하드 링크한 다음 요약 출력"
-
-#~ msgid " -vv                    print every hardlinked file and summary"
-#~ msgstr " -vv                    모든 하드 링크 파일 및 요약문 출력"
-
-#~ msgid " -f, --force            force hardlinking across filesystems"
-#~ msgstr " -f, --force            파일 시스템이 달라도 강제로 하드링크"
-
-#~ msgid " -x, --exclude <regex>  exclude files matching pattern"
-#~ msgstr " -x, --exclude <정규식> 패턴에 일치하는 파일은 제외"
-
-#~ msgid "integer overflow"
-#~ msgstr "정수 범위 초과"
-
-#~ msgid "%s is on different filesystem than the rest (use -f option to override)."
-#~ msgstr "%s 은 다른 파일 시스템에 있습니다 (무시하고 실행하려면 -f 옵션 사용)."
-
-#~ msgid "file %s changed underneath us"
-#~ msgstr "%s 파일이 순식간에 바뀌었습니다"
-
-#~ msgid "failed to hardlink %s to %s (create temporary link as %s failed)"
-#~ msgstr "%2$s에 대한 %1$s 하드링크 실패 (%3$s 임시 링크 생성 실패)"
-
-#~ msgid "failed to hardlink %s to %s (rename temporary link to %s failed)"
-#~ msgstr "%2$s에 대한 %1$s 하드링크 실패 (%3$s 임시 링크 이름 바꾸기 실패)"
-
-#~ msgid "failed to remove temporary link %s"
-#~ msgstr "%s 임시 링크 제거 실패"
-
-#~ msgid "Would link"
-#~ msgstr "링크 예정"
-
-#~ msgid "Linked"
-#~ msgstr "링크함"
-
-#~ msgid "would save"
-#~ msgstr "저장 예정"
-
-#~ msgid "option --exclude not supported (built without pcre2)"
-#~ msgstr "--exclude 옵션을 지원하지 않습니다 (pcre2를 제외하고 빌드함)"
-
-#~ msgid "no directory specified"
-#~ msgstr "지정한 디렉터리가 없습니다"
-
-#~ msgid "pattern error at offset %d: %s"
-#~ msgstr "%d 오프셋에 패턴 오류: %s"
-
-#~ msgid "Skipping %s%s\n"
-#~ msgstr "%s%s 건너뜀\n"
-
-#~ msgid " -R, --reset-on-fork       set SCHED_RESET_ON_FORK for FIFO or RR\n"
-#~ msgstr " -R, --reset-on-fork       FIFO 또는 RR에 SCHED_RESET_ON_FORK 설정\n"
-
-#~ msgid "--reset-on-fork option is supported for SCHED_FIFO and SCHED_RR policies only"
-#~ msgstr "--reset-on-fork 옵션은 SCHED_FIFO 과 SCHED_RR 정책만 지원합니다"
-
-#~ msgid "%s: successfull %s of zones in range from %<PRIu64>, to %<PRIu64>"
-#~ msgstr "%1$s: 영역의 %3$<PRIu64> ~ %4$<PRIu64> 범위내 %2$s 명령 수행 성공"
-
-#~ msgid "%s: getting lock took %ld.%06ld seconds\n"
-#~ msgstr "%s: 잠금 확인에 %ld.%06ld 초를 소요했습니다\n"
-
-#~ msgid "Last drift adjustment done at %ld seconds after 1969\n"
-#~ msgstr "1969년 이후로 최종 드리프트 조정을 %ld 초에 끝냈습니다\n"
-
-#~ msgid "Last calibration done at %ld seconds after 1969\n"
-#~ msgstr "1969년 이후로 최종 보정을 %ld초에 끝냈습니다\n"
-
-#~ msgid "Hw clock time : %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld seconds since 1969\n"
-#~ msgstr "하드웨어 시계 시간: %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld 초, 1969년 이후 기준.\n"
-
-#~ msgid "Setting Hardware Clock to %.2d:%.2d:%.2d = %ld seconds since 1969\n"
-#~ msgstr "Setting Hardware Clock to %.2d:%.2d:%.2d = %ld초, 1969년 이후\n"
-
-#~ msgid "time jumped backward %.6f seconds to %ld.%06ld - retargeting\n"
-#~ msgstr "시간이 %.6f초 뒤로 %ld.%06ld(으)로 바뀌었습니다 - 대상 재지정 중\n"
-
-#~ msgid "missed it - %ld.%06ld is too far past %ld.%06ld (%.6f > %.6f)\n"
-#~ msgstr "놓침 - %ld.%06ld은(는) %ld.%06ld 에 비해 상당히 오래전입니다 (%.6f > %.6f)\n"
-
-#~ msgid ""
-#~ "%ld.%06ld is close enough to %ld.%06ld (%.6f < %.6f)\n"
-#~ "Set RTC to %ld (%ld + %d; refsystime = %ld.%06ld)\n"
-#~ msgstr ""
-#~ "%ld.%06ld은(는) %ld.%06ld 에 충분히 근접합니다(%.6f < %.6f)\n"
-#~ "RTC를 %ld(으)로 설정합니다 (%ld + %d; refsystime = %ld.%06ld)\n"
-
-#~ msgid "Calling settimeofday(%ld.%06ld, NULL) to set the System time.\n"
-#~ msgstr "settimeofday(%ld.%06ld, NULL)를 호출하여 시스템 시간을 설정합니다.\n"
-
-#~ msgid "Time since last adjustment is %ld second\n"
-#~ msgid_plural "Time since last adjustment is %ld seconds\n"
-#~ msgstr[0] "최근 시간 조정에 걸린 시간은 %ld초입니다\n"
-
-#~ msgid "Calculated Hardware Clock drift is %ld.%06ld seconds\n"
-#~ msgstr "확인한 하드웨어 시계 오차는 %ld.%06ld초입니다\n"
-
-#~ msgid "Target date:   %ld\n"
-#~ msgstr "대상 일자:   %ld\n"
-
-#~ msgid "Predicted RTC: %ld\n"
-#~ msgstr "예측 RTC: %ld\n"
-
-#~ msgid "System Time: %ld.%06ld\n"
-#~ msgstr "시스템 시각: %ld.%06ld\n"
-
-#~ msgid "unssupported column name to sort output"
-#~ msgstr "출력 내용을 정렬할 열 항목 이름을 지원하지 않습니다"
-
-#~ msgid ""
-#~ "# The following is the parsable format, which can be fed to other\n"
-#~ "# programs. Each different item in every column has an unique ID\n"
-#~ "# starting from zero.\n"
-#~ msgstr ""
-#~ "# 다음은 해석 가능한 형식이며, 다른 프로그램에 이식할 수 있습니다.\n"
-#~ "# 모든 열 항목의 제각기 상이한 항목에 대해서는  0부터 시작하는 고유\n"
-#~ "# ID를 부여해두었습니다.\n"
-
-#~ msgid "CPU MHz:"
-#~ msgstr "CPU MHz:"
-
-#~ msgid ""
-#~ "mount: %s does not contain SELinux labels.\n"
-#~ "       You just mounted an file system that supports labels which does not\n"
-#~ "       contain labels, onto an SELinux box. It is likely that confined\n"
-#~ "       applications will generate AVC messages and not be allowed access to\n"
-#~ "       this file system.  For more details see restorecon(8) and mount(8).\n"
-#~ msgstr ""
-#~ "mount: %s에 SELinux 레이블이 없습니다.\n"
-#~ "       레이블을 지원하지만 레이블이 없는 SELinux 머신의 파일 시스템에 마운트\n"
-#~ "       했습니다. AVC 메시지를 만드는 프로그램의 구동에 국한하며, 이 파일시스템\n"
-#~ "       에 접근을 허용하지 않으려는 것 같습니다.  더 자세한 내용은 restorecon(8)\n"
-#~ "       과 mount(8)를 참조하십시오.\n"
-
-#~ msgid "wrong size of rfkill event: %zu < %d"
-#~ msgstr "rfkill 이벤트의 잘못된 크기: %zu < %d"
-
-#~ msgid "alarm %ld, sys_time %ld, rtc_time %ld, seconds %u\n"
-#~ msgstr "alarm %ld, sys_time %ld, rtc_time %ld, seconds %u\n"
-
-#~ msgid "libcap-ng is too old for \"all\" caps"
-#~ msgstr "libcap-ng 버전이 \"모든\" 캡처를 다루기에 너무 오래되었습니다"
-
-#~ msgid "%s\t\t\t\tType\t\tSize\tUsed\tPriority\n"
-#~ msgstr "%s\t\t\t\t형식\t\t크기\t사용\t우선순위\n"
-
-#~ msgid "Filename"
-#~ msgstr "파일 이름"
-
-#~ msgid "umount %s failed"
-#~ msgstr "%s 마운트 해제 실패"
-
-#~ msgid "Filter out reverse line feeds.\n"
-#~ msgstr "역방향 라인 피드를 걸러냅니다.\n"
-
-#~ msgid "failed on line %d"
-#~ msgstr "%d행에서 실패"
-
-#~ msgid " -L, --table-empty-lines          don't ignore empty lines\n"
-#~ msgstr " -L, --table-empty-lines          빈 줄을 무시하지 않음\n"
-
-#~ msgid "magic failed: %s\n"
-#~ msgstr "매직 실패: %s\n"
-
-#~ msgid "Input line too long."
-#~ msgstr "입력 행이 너무 깁니다."
+#~ msgid "error: empty filter expression"
+#~ msgstr "오류: 빈 필터 표현식"
