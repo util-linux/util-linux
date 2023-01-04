@@ -148,7 +148,7 @@ int mnt_optstr_append_option(char **optstr, const char *name, const char *value)
 	rc = mnt_buffer_append_option(&buf, name, nsz, value, vsz);
 	if (!rc)
 		*optstr = ul_buffer_get_data(&buf, NULL, NULL);
-	else
+	else if (osz == 0)
 		ul_buffer_free_data(&buf);
 
 	return rc;
