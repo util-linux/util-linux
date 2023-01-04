@@ -50,6 +50,16 @@
 
 #define get_sysapi(_cxt) mnt_context_get_sysapi(_cxt)
 
+static void close_sysapi_fds(struct libmnt_sysapi *api)
+{
+	if (api->fd_fs >= 0)
+		close(api->fd_fs);
+	if (api->fd_tree >= 0)
+		close(api->fd_tree);
+
+	api->fd_tree = api->fd_fs = -1;
+}
+
 /*
  * This hookset uses 'struct libmnt_sysapi' (mountP.h) as hookset data.
  */
@@ -61,10 +71,7 @@ static void free_hookset_data(	struct libmnt_context *cxt,
 	if (!api)
 		return;
 
-	if (api->fd_fs >= 0)
-		close(api->fd_fs);
-	if (api->fd_tree >= 0)
-		close(api->fd_tree);
+	close_sysapi_fds(api);
 
 	free(api);
 	mnt_context_set_hookset_data(cxt, hs, NULL);
@@ -242,12 +249,9 @@ static int hook_create_mount(struct libmnt_context *cxt,
 			rc = -errno;
 	}
 
-	if (rc) {
+	if (rc)
 		/* cleanup after fail (libmount may only try the FS type) */
-		close(api->fd_tree);
-		close(api->fd_fs);
-		api->fd_tree = api->fd_fs = -1;
-	}
+		close_sysapi_fds(api);
 
 	if (!rc && cxt->fs) {
 		struct statx st;
