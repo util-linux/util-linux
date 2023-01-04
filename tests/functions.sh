@@ -1119,3 +1119,9 @@ function ts_get_asan_rt_path {
 		echo "$rt_path"
 	fi
 }
+
+function ts_skip_exitcode_not_supported {
+	if [ $? -eq $TS_EXIT_NOTSUPP ]; then
+		ts_skip "functionality not implemented by system"
+	fi
+}
