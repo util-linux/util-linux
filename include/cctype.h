@@ -322,4 +322,38 @@ static inline int c_toupper (int c)
 	}
 }
 
+static inline int c_strncasecmp(const char *a, const char *b, size_t n)
+{
+	int res = 0;
+
+        for (; n > 0; a++, b++, n--) {
+		unsigned int x = (unsigned int) *a;
+		unsigned int y = (unsigned int) *b;
+
+		res = c_tolower(x) - c_tolower(y);
+                if (res)
+                        break;
+        }
+        return res;
+}
+
+static inline int c_strcasecmp(const char *a, const char *b)
+{
+	int res = 0;
+
+	if (a == b)
+		return 0;
+
+	for (; *a != '\0'; a++, b++) {
+		unsigned int x = (unsigned int) *a;
+		unsigned int y = (unsigned int) *b;
+
+		res = c_tolower(x) - c_tolower(y);
+		if (res)
+			break;
+	}
+
+	return res;
+}
+
 #endif /* UTIL_LINUX_CCTYPE_H */

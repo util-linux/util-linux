@@ -1208,6 +1208,9 @@ int ul_optstr_next(char **optstr, char **name, size_t *namesz,
 }
 
 #ifdef TEST_PROGRAM_STRUTILS
+
+#include "cctype.h"
+
 struct testS {
 	char *name;
 	char *value;
@@ -1308,6 +1311,23 @@ done:
 	return EXIT_SUCCESS;
 }
 
+static int test_strutils_cstrcasecmp(int argc, char *argv[])
+{
+	char *a, *b;
+
+	if (argc < 3)
+		return EXIT_FAILURE;
+
+	a = argv[1];
+	b = argv[2];
+
+	printf("cmp    '%s' '%s' = %d\n", a, b, strcasecmp(a, b));
+	printf("c_cmp  '%s' '%s' = %d\n", a, b, c_strcasecmp(a, b));
+	printf("c_ncmp '%s' '%s' = %d\n", a, b, c_strncasecmp(a, b, strlen(a)));
+
+	return EXIT_SUCCESS;
+}
+
 int main(int argc, char *argv[])
 {
 	if (argc == 3 && strcmp(argv[1], "--size") == 0) {
@@ -1323,9 +1343,12 @@ int main(int argc, char *argv[])
 		printf("%s\n", ul_stralnumcmp(argv[2], argv[3]) == 0 ?
 				"match" : "dismatch");
 		return EXIT_SUCCESS;
+
+	} else if (argc == 4 && strcmp(argv[1], "--cstrcasecmp") == 0) {
+		return test_strutils_cstrcasecmp(argc - 1, argv + 1);
+
 	} else if (argc == 3 && strcmp(argv[1], "--normalize") == 0) {
 		return test_strutils_normalize(argc - 1, argv + 1);
-
 
 	} else if (argc == 3 && strcmp(argv[1], "--strtos64") == 0) {
 		printf("'%s'-->%jd\n", argv[2], strtos64_or_err(argv[2], "strtos64 failed"));
@@ -1355,6 +1378,7 @@ int main(int argc, char *argv[])
 				"       %1$s --cmp-paths <path> <path>\n"
 				"       %1$s --strdup-member <str> <str>\n"
 				"       %1$s --stralnumcmp <str> <str>\n"
+				"       %1$s --cstrcasecmp <str> <str>\n"
 				"       %1$s --normalize <str>\n"
 				"       %1$s --strto{s,u}{16,32,64} <str>\n",
 				argv[0]);
