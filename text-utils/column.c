@@ -251,23 +251,27 @@ static void init_table(struct column_control *ctl)
 
 }
 
-static struct libscols_column *get_last_visible_column(struct column_control *ctl)
+static struct libscols_column *get_last_visible_column(struct column_control *ctl, int n)
 {
 	struct libscols_iter *itr;
-	struct libscols_column *cl, *last = NULL;
+	struct libscols_column *cl, *res = NULL;
 
-	itr = scols_new_iter(SCOLS_ITER_FORWARD);
+	itr = scols_new_iter(SCOLS_ITER_BACKWARD);
 	if (!itr)
 		err_oom();
 
 	while (scols_table_next_column(ctl->tab, itr, &cl) == 0) {
 		if (scols_column_get_flags(cl) & SCOLS_FL_HIDDEN)
 			continue;
-		last = cl;
+		if (n == 0) {
+			res = cl;
+			break;
+		}
+		n--;
 	}
 
 	scols_free_iter(itr);
-	return last;
+	return res;
 }
 
 static struct libscols_column *string_to_column(struct column_control *ctl, const char *str)
@@ -279,7 +283,7 @@ static struct libscols_column *string_to_column(struct column_control *ctl, cons
 
 		cl = scols_table_get_column(ctl->tab, n);
 	} else if (strcmp(str, "-1") == 0)
-		cl = get_last_visible_column(ctl);
+		cl = get_last_visible_column(ctl, 0);
 	else
 		cl = scols_table_get_column_by_name(ctl->tab, str);
 
@@ -358,7 +362,10 @@ static void apply_columnflag_from_list(struct column_control *ctl, const char *l
 		/* parse range (N-M) */
 		if (strchr(*one, '-') && parse_range(*one, &low, &up, 0) == 0) {
 			for (; low <= up; low++) {
-				cl = scols_table_get_column(ctl->tab, low-1);
+				if (low < 0)
+					cl = get_last_visible_column(ctl, (low * -1) -1);
+				else
+					cl = scols_table_get_column(ctl->tab, low-1);
 				if (cl)
 					column_set_flag(cl, flag);
 			}
@@ -490,7 +497,7 @@ static void modify_table(struct column_control *ctl)
 				SCOLS_FL_WRAP , _("failed to parse --table-wrap list"));
 
 	if (!ctl->tab_colnoextrem) {
-		struct libscols_column *cl = get_last_visible_column(ctl);
+		struct libscols_column *cl = get_last_visible_column(ctl, 0);
 		if (cl)
 			column_set_flag(cl, SCOLS_FL_NOEXTREMES);
 	}
