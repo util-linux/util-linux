@@ -332,9 +332,10 @@ static int hook_prepare_target(
 		/* create a global data */
 		struct hookset_data *hsd = new_hookset_data(cxt, hs);
 
-		if (!hsd)
+		if (!hsd) {
+			free(subdir);
 			return -ENOMEM;
-
+		}
 		hsd->subdir = subdir;
 
 		DBG(HOOK, ul_debugobj(hs, "subdir %s wanted", subdir));
