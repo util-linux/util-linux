@@ -377,7 +377,7 @@ static int hook_prepare_options(
 
 	buf = strdup(value);
 	if (!buf)
-		return -ENOMEM;
+		goto err;
 
 	/*
 	 * This is an explicit ID-mapping list of the form:
@@ -440,8 +440,6 @@ static int hook_prepare_options(
 		goto err;
 
 done:
-	free(buf);
-
 	/* define post-mount hook to enter the namespace */
 	DBG(HOOK, ul_debugobj(hs, " wanted new user namespace"));
 	rc = mnt_context_append_hook(cxt, hs,
@@ -449,6 +447,8 @@ done:
 				hd, hook_mount_post);
 	if (rc < 0)
 		goto err;
+
+	free(buf);
 	return 0;
 
 err:
