@@ -125,4 +125,24 @@ ts_init_subtest "empty-column-at-eol2"
 printf '||' | $TS_CMD_COLUMN --separator '|' --output-separator '|' --table >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
+ts_init_subtest "neg-1"
+echo "A B C D" | $TS_CMD_COLUMN --output-separator '|' --table --table-maxout \
+	--table-right -1 --output-width=80 >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
+ts_init_subtest "neg-2"
+echo "A B C D" | $TS_CMD_COLUMN --output-separator '|' --table --table-maxout \
+	--table-right -2 --output-width=80 >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
+ts_init_subtest "neg-1-2"
+echo "A B C D" | $TS_CMD_COLUMN --output-separator '|' --table --table-maxout \
+	--table-right -1,-2 --output-width=80 >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
+ts_init_subtest "range"
+echo "A B C D" | $TS_CMD_COLUMN --output-separator '|' --table --table-maxout \
+	--table-right 2-3 --output-width=80 >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
 ts_finalize
