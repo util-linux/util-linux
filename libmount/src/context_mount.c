@@ -78,8 +78,10 @@ static int fix_optstr(struct libmnt_context *cxt)
 
 			if (!name)
 				rc = -ENOMEM;
-			else
+			else {
 				rc = mnt_opt_set_value(opt, name);
+				free(name);
+			}
 			if (rc)
 				goto done;
 		}
