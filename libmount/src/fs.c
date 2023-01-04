@@ -34,6 +34,7 @@
 struct libmnt_fs *mnt_new_fs(void)
 {
 	struct libmnt_fs *fs = calloc(1, sizeof(*fs));
+
 	if (!fs)
 		return NULL;
 
@@ -173,8 +174,12 @@ static inline int cpy_str_at_offset(void *new, const void *old, size_t offset)
 
 static inline int sync_opts_from_optlist(struct libmnt_fs *fs, struct libmnt_optlist *ol)
 {
-	unsigned int age = mnt_optlist_get_age(ol);
+	unsigned int age;
 
+	assert(fs);
+	assert(ol);
+
+	age = mnt_optlist_get_age(ol);
 	if (age != fs->opts_age) {
 		const char *p;
 		int rc;
@@ -219,6 +224,8 @@ static inline int sync_opts_from_optlist(struct libmnt_fs *fs, struct libmnt_opt
  * It means that mnt_fs_get_*_options() won't be read-only operations. */
 int mnt_fs_follow_optlist(struct libmnt_fs *fs, struct libmnt_optlist *ol)
 {
+	assert(fs);
+
 	if (fs->optlist == ol)
 		return 0;
 
@@ -618,6 +625,8 @@ int mnt_fs_set_target(struct libmnt_fs *fs, const char *tgt)
 
 int __mnt_fs_set_target_ptr(struct libmnt_fs *fs, char *tgt)
 {
+	assert(fs);
+
 	free(fs->target);
 	fs->target = tgt;
 	return 0;
@@ -1035,10 +1044,12 @@ int mnt_fs_prepend_options(struct libmnt_fs *fs, const char *optstr)
  */
 const char *mnt_fs_get_fs_options(struct libmnt_fs *fs)
 {
+	if (!fs)
+		return NULL;
 	if (fs->optlist)
 		sync_opts_from_optlist(fs, fs->optlist);
 
-	return fs ? fs->fs_optstr : NULL;
+	return fs->fs_optstr;
 }
 
 /**
@@ -1049,10 +1060,12 @@ const char *mnt_fs_get_fs_options(struct libmnt_fs *fs)
  */
 const char *mnt_fs_get_vfs_options(struct libmnt_fs *fs)
 {
+	if (!fs)
+		return NULL;
 	if (fs->optlist)
 		sync_opts_from_optlist(fs, fs->optlist);
 
-	return fs ? fs->vfs_optstr : NULL;
+	return fs->vfs_optstr;
 }
 
 /**
@@ -1095,10 +1108,12 @@ char *mnt_fs_get_vfs_options_all(struct libmnt_fs *fs)
  */
 const char *mnt_fs_get_user_options(struct libmnt_fs *fs)
 {
+	if (!fs)
+		return NULL;
 	if (fs->optlist)
 		sync_opts_from_optlist(fs, fs->optlist);
 
-	return fs ? fs->user_optstr : NULL;
+	return fs->user_optstr;
 }
 
 /**
