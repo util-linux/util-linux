@@ -161,3 +161,7 @@ pipesz_sources = files(
 fadvise_sources = files(
   'fadvise.c',
 )
+
+waitpid_sources = files(
+  'waitpid.c',
+)

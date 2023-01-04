@@ -1,0 +1,1 @@
+complete -F _pids waitpid

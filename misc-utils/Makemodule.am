@@ -288,3 +288,12 @@ fadvise_SOURCES = misc-utils/fadvise.c
 fadvise_LDADD = $(LDADD) libcommon.la
 fadvise_CFLAGS = $(AM_CFLAGS)
 endif
+
+if BUILD_WAITPID
+usrbin_exec_PROGRAMS += waitpid
+MANPAGES += misc-utils/waitpid.1
+dist_noinst_DATA += misc-utils/waitpid.1.adoc
+waitpid_SOURCES = misc-utils/waitpid.c
+waitpid_LDADD = $(LDADD) libcommon.la
+waitpid_CFLAGS = $(AM_CFLAGS)
+endif

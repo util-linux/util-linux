@@ -9,6 +9,7 @@
 #  endif
 #  include <sys/types.h>
 #  ifndef HAVE_PIDFD_SEND_SIGNAL
+#   include <sys/wait.h>
 static inline int pidfd_send_signal(int pidfd, int sig, siginfo_t *info,
 				    unsigned int flags)
 {

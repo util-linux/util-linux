@@ -22,4 +22,6 @@
 #define FSCK_EX_USAGE		16	/* Usage or syntax error */
 #define FSCK_EX_LIBRARY		128	/* Shared library error */
 
+#define EXIT_NOTSUPP 2
+
 #endif	/* UTIL_LINUX_EXITCODES_H */

@@ -14,6 +14,7 @@
 # GNU General Public License for more details.
 #
 
+TS_EXIT_NOTSUPP=2
 
 function ts_abspath {
 	cd $1
@@ -1116,5 +1117,11 @@ function ts_get_asan_rt_path {
 	rt_path="$(ldd "$binary" | awk '/lib.+asan.*.so/ {print $3; exit}')"
 	if [ -n "$rt_path" -a -f "$rt_path" ]; then
 		echo "$rt_path"
+	fi
+}
+
+function ts_skip_exitcode_not_supported {
+	if [ $? -eq $TS_EXIT_NOTSUPP ]; then
+		ts_skip "functionality not implemented by system"
 	fi
 }

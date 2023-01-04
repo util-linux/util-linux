@@ -47,9 +47,7 @@
 #include "c.h"
 #include "closestream.h"
 #include "monotonic.h"
-
-/* exit() status if discard unsupported by device */
-#define BLKDISCARD_EXIT_NOTSUPP		(EXIT_FAILURE + 1)
+#include "exitcodes.h"
 
 #ifndef BLKDISCARD
 # define BLKDISCARD	_IO(0x12,119)
@@ -159,7 +157,7 @@ static void __attribute__((__noreturn__)) err_on_ioctl(
 			const char *ioctlname, const char *path)
 {
 	int exno = errno == EOPNOTSUPP ?
-			BLKDISCARD_EXIT_NOTSUPP : EXIT_FAILURE;
+			EXIT_NOTSUPP : EXIT_FAILURE;
 
 	err(exno, _("%s: %s ioctl failed"), ioctlname, path);
 }
