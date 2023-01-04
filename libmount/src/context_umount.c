@@ -645,8 +645,10 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 
 		/* get "user=" from utab */
 		ol = mnt_context_get_optlist(cxt);
-		if (!ol)
+		if (!ol) {
+			free(curr_user);
 			return -ENOMEM;
+		}
 		opt = mnt_optlist_get_named(ol, "user", cxt->map_userspace);
 		if (opt && mnt_opt_has_value(opt))
 			ok = !strcmp(curr_user, mnt_opt_get_value(opt));
