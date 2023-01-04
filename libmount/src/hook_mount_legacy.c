@@ -292,7 +292,8 @@ static int hook_prepare(struct libmnt_context *cxt,
 		rc = mnt_context_append_hook(cxt, hs,
 				MNT_STAGE_MOUNT, NULL, hook_mount);
 
-	rc = mnt_context_get_mflags(cxt, &flags);
+	if (!rc)
+		rc = mnt_context_get_mflags(cxt, &flags);
 	if (rc)
 		return rc;
 
