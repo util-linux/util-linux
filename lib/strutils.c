@@ -12,6 +12,7 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <string.h>
+#include <strings.h>
 #include <assert.h>
 
 #include "c.h"
