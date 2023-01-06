@@ -24,8 +24,8 @@ jobs:
       fail-fast: false
       matrix:
         env:
-          - { COMPILER: "gcc",   COMPILER_VERSION: "12", SANITIZE: "yes"  }
-          - { COMPILER: "gcc",   COMPILER_VERSION: "12", SANITIZE: "no"   }
+          - { COMPILER: "gcc",   COMPILER_VERSION: "10", SANITIZE: "yes"  }
+          - { COMPILER: "gcc",   COMPILER_VERSION: "10", SANITIZE: "no"   }
           - { COMPILER: "clang", COMPILER_VERSION: "15", SANITIZE: "yes"  }
           - { COMPILER: "clang", COMPILER_VERSION: "15", SANITIZE: "no"   }
     env: ${{ matrix.env }}
