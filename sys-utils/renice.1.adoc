@@ -57,13 +57,13 @@ If no *-n*, *--priority* or *--relative* option is used, then the priority is se
 == OPTIONS
 
 *-n* _priority_::
-Specify the *absolute* or *relative* (depending on environment variable POSIXLY_CORRECT) scheduling _priority_ to be used for the process, process group, or user. Use of the option *-n* is optional, but when used it must be the first argument. See *NOTES* for more information.
+Specify the *absolute* or *relative* (depending on environment variable POSIXLY_CORRECT) scheduling _priority_ to be used for the process, process group, or user. Use of the option *-n* is optional, but when used, it must be the first argument. See *NOTES* for more information.
 
 *--priority* _priority_::
 Specify an *absolute* scheduling _priority_. _Priority_ is set to the given value. This is the default, when no option is specified.
 
 *--relative* _priority_::
-Specify a *relative* scheduling _priority_. Same a the standard POSIX *-n* option. _Priority_ gets _incremented/decremented_ by the given value.
+Specify a *relative* scheduling _priority_. Same as the standard POSIX *-n* option. _Priority_ gets _incremented/decremented_ by the given value.
 
 *-g*, *--pgrp*::
 Interpret the succeeding arguments as process group IDs.
@@ -87,7 +87,7 @@ Users other than the superuser may only alter the priority of processes they own
 
 The superuser may alter the priority of any process and set the priority to any value in the range -20 to 19. Useful priorities are: 19 (the affected processes will run only when nothing else in the system wants to), 0 (the "base" scheduling priority), anything negative (to make things go very fast).
 
-For historical reasons in this implementation, the *-n* option did not follow the POSIX specification, therefore instead of setting a *relative* priority it sets an *absolute* priority by default. As this may not be desirable, this behavior can be controlled by setting the environment variable POSIXLY_CORRECT to be fully POSIX compliant. See *-n* option for details. See *--relative* and *--priority* for options that don't change behavior depending on environment variables.
+For historical reasons in this implementation, the *-n* option did not follow the POSIX specification. Therefore, instead of setting a *relative* priority, it sets an *absolute* priority by default. As this may not be desirable, this behavior can be controlled by setting the environment variable POSIXLY_CORRECT to be fully POSIX compliant. See the *-n* option for details. See *--relative* and *--priority* for options that do not change behavior depending on environment variables.
 
 == HISTORY
 
