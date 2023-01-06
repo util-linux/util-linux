@@ -36,6 +36,7 @@
 #include "c.h"
 #include "closestream.h"
 #include "sysfs.h"
+#include "strutils.h"
 
 #ifndef HAVE_PERSONALITY
 # include <syscall.h>
@@ -83,6 +84,44 @@
 # define ADDR_LIMIT_3GB          0x8000000
 #endif
 
+#define ALL_PERSONALITIES \
+    X(PER_LINUX) \
+    X(PER_LINUX_32BIT) \
+    X(PER_LINUX_FDPIC) \
+    X(PER_SVR4) \
+    X(PER_SVR3) \
+    X(PER_SCOSVR3) \
+    X(PER_OSR5) \
+    X(PER_WYSEV386) \
+    X(PER_ISCR4) \
+    X(PER_BSD) \
+    X(PER_SUNOS) \
+    X(PER_XENIX) \
+    X(PER_LINUX32) \
+    X(PER_LINUX32_3GB) \
+    X(PER_IRIX32) \
+    X(PER_IRIXN32) \
+    X(PER_IRIX64) \
+    X(PER_RISCOS) \
+    X(PER_SOLARIS) \
+    X(PER_UW7) \
+    X(PER_OSF4) \
+    X(PER_HPUX) \
+
+
+#define ALL_OPTIONS \
+    X(UNAME26) \
+    X(ADDR_NO_RANDOMIZE) \
+    X(FDPIC_FUNCPTRS) \
+    X(MMAP_PAGE_ZERO) \
+    X(ADDR_COMPAT_LAYOUT) \
+    X(READ_IMPLIES_EXEC) \
+    X(ADDR_LIMIT_32BIT) \
+    X(SHORT_INODE) \
+    X(WHOLE_SECONDS) \
+    X(STICKY_TIMEOUTS) \
+    X(ADDR_LIMIT_3GB) \
+
 
 struct arch_domain {
 	int		perval;		/* PER_* */
@@ -117,8 +156,10 @@ static void __attribute__((__noreturn__)) usage(int archwrapper)
 	fputs(_("     --uname-2.6          turns on UNAME26\n"), stdout);
 	fputs(_(" -v, --verbose            say what options are being switched on\n"), stdout);
 
-	if (!archwrapper)
+	if (!archwrapper) {
 		fputs(_("     --list               list settable architectures, and exit\n"), stdout);
+		fputs(_("     --show[=personality] show current or specific personality and exit\n"), stdout);
+	}
 
 	fputs(USAGE_SEPARATOR, stdout);
 	printf(USAGE_HELP_OPTIONS(26));
@@ -296,6 +337,73 @@ static void verify_arch_domain(struct arch_domain *doms, struct arch_domain *tar
 	errx(EXIT_FAILURE, _("Kernel cannot set architecture to %s"), wanted);
 }
 
+static const struct { int value; const char * const name; } all_personalities[] = {
+#define X(opt) { .value = opt, .name = #opt },
+	ALL_PERSONALITIES
+#undef X
+};
+
+static const struct { int value; const char * const name; } all_options[] = {
+#define X(opt) { .value = opt, .name = #opt },
+	ALL_OPTIONS
+#undef X
+};
+
+static void show_personality(int pers)
+{
+	int options;
+	size_t i;
+
+	/* Test for exact matches including options */
+	for (i = 0; i < ARRAY_SIZE(all_personalities); i++) {
+		if (pers == all_personalities[i].value) {
+			printf("%s\n", all_personalities[i].name);
+			return;
+		}
+	}
+
+	options = pers & ~PER_MASK;
+	pers &= PER_MASK;
+
+	/* Second test for type-only matches */
+	for (i = 0; i < ARRAY_SIZE(all_personalities); i++) {
+		if (pers == all_personalities[i].value) {
+			printf("%s", all_personalities[i].name);
+			break;
+		}
+	}
+
+	if (i == ARRAY_SIZE(all_personalities))
+		printf("0x%02x", pers);
+
+	if (options) {
+		printf(" (");
+
+		for (i = 0; i < ARRAY_SIZE(all_options); i++) {
+			if (options & all_options[i].value) {
+				printf("%s", all_options[i].name);
+
+				options &= ~all_options[i].value;
+				if (options)
+					printf(" ");
+			}
+		}
+		if (options)
+			printf("0x%08x", options);
+		printf(")");
+	}
+	printf("\n");
+}
+
+static void show_current_personality(void)
+{
+	int pers = personality(0xffffffff);
+	if (pers == -1)
+		err(EXIT_FAILURE, _("Can not get current kernel personality"));
+
+	show_personality(pers);
+}
+
 int main(int argc, char *argv[])
 {
 	const char *arch = NULL;
@@ -311,29 +419,31 @@ int main(int argc, char *argv[])
 	enum {
 		OPT_4GB = CHAR_MAX + 1,
 		OPT_UNAME26,
-		OPT_LIST
+		OPT_LIST,
+		OPT_SHOW,
 	};
 
 	/* Options --3gb and --4gb are for compatibility with an old
 	 * Debian setarch implementation.  */
 	static const struct option longopts[] = {
-		{"help",		no_argument,	NULL,	'h'},
-		{"version",		no_argument,	NULL,	'V'},
-		{"verbose",		no_argument,	NULL,	'v'},
-		{"addr-no-randomize",	no_argument,	NULL,	'R'},
-		{"fdpic-funcptrs",	no_argument,	NULL,	'F'},
-		{"mmap-page-zero",	no_argument,	NULL,	'Z'},
-		{"addr-compat-layout",	no_argument,	NULL,	'L'},
-		{"read-implies-exec",	no_argument,	NULL,	'X'},
-		{"32bit",		no_argument,	NULL,	'B'},
-		{"short-inode",		no_argument,	NULL,	'I'},
-		{"whole-seconds",	no_argument,	NULL,	'S'},
-		{"sticky-timeouts",	no_argument,	NULL,	'T'},
-		{"3gb",			no_argument,	NULL,	'3'},
-		{"4gb",			no_argument,	NULL,	OPT_4GB},
-		{"uname-2.6",		no_argument,	NULL,	OPT_UNAME26},
-		{"list",		no_argument,	NULL,	OPT_LIST},
-		{NULL,			0,		NULL,	0}
+		{"help",		no_argument,		NULL,	'h'},
+		{"version",		no_argument,		NULL,	'V'},
+		{"verbose",		no_argument,		NULL,	'v'},
+		{"addr-no-randomize",	no_argument,		NULL,	'R'},
+		{"fdpic-funcptrs",	no_argument,		NULL,	'F'},
+		{"mmap-page-zero",	no_argument,		NULL,	'Z'},
+		{"addr-compat-layout",	no_argument,		NULL,	'L'},
+		{"read-implies-exec",	no_argument,		NULL,	'X'},
+		{"32bit",		no_argument,		NULL,	'B'},
+		{"short-inode",		no_argument,		NULL,	'I'},
+		{"whole-seconds",	no_argument,		NULL,	'S'},
+		{"sticky-timeouts",	no_argument,		NULL,	'T'},
+		{"3gb",			no_argument,		NULL,	'3'},
+		{"4gb",			no_argument,		NULL,	OPT_4GB},
+		{"uname-2.6",		no_argument,		NULL,	OPT_UNAME26},
+		{"list",		no_argument,		NULL,	OPT_LIST},
+		{"show",		optional_argument,	NULL,	OPT_SHOW},
+		{NULL,			0,			NULL,	0}
 	};
 
 	setlocale(LC_ALL, "");
@@ -411,8 +521,22 @@ int main(int argc, char *argv[])
 				return EXIT_SUCCESS;
 			} else
 				warnx(_("unrecognized option '--list'"));
-			/* fallthrough */
+			goto error_getopts;
+		case OPT_SHOW:
+			if (!archwrapper) {
+				if (!optarg || strcmp(optarg, "current") == 0)
+					show_current_personality();
+				else
+					show_personality(str2num_or_err(
+						optarg, 16,
+						_("could not parse personality"),
+						0, INT_MAX));
+				return EXIT_SUCCESS;
+			} else
+				warnx(_("unrecognized option '--show'"));
+			goto error_getopts;
 
+error_getopts:
 		default:
 			errtryhelp(EXIT_FAILURE);
 		case 'h':

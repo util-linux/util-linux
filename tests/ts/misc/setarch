@@ -89,4 +89,21 @@ ts_init_subtest uname26-version
 ts_finalize_subtest
 fi # conditional subtest
 
+ts_init_subtest show
+echo "###### --show" >>$TS_OUTPUT
+
+show() {
+	echo -n "$1: " >> $TS_OUTPUT
+	$TS_CMD_SETARCH --show=$1 >> $TS_OUTPUT 2> $TS_ERRLOG
+}
+
+show 0x00000000
+show 0x00800000
+show 0x00880000
+show 0x00000008
+show 0x08000008
+show 0x000040ff
+
+ts_finalize_subtest
+
 ts_finalize
