@@ -48,6 +48,8 @@ extern long double strtold_or_err(const char *str, const char *errmesg);
 
 extern void strtotimeval_or_err(const char *str, struct timeval *tv,
 		const char *errmesg);
+extern void strtotimespec_or_err(const char *str, struct timespec *ts,
+		const char *errmesg);
 extern time_t strtotime_or_err(const char *str, const char *errmesg);
 
 extern int isdigit_strend(const char *str, const char **end);
