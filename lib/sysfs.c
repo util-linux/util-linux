@@ -17,6 +17,7 @@
 #include "all-io.h"
 #include "debug.h"
 #include "strutils.h"
+#include "buffer.h"
 
 static void sysfs_blkdev_deinit_path(struct path_cxt *pc);
 static int  sysfs_blkdev_enoent_redirect(struct path_cxt *pc, const char *path, int *dirfd);
@@ -387,25 +388,29 @@ static char *get_subsystem(char *chain, char *buf, size_t bufsz)
 char *sysfs_blkdev_get_devchain(struct path_cxt *pc, char *buf, size_t bufsz)
 {
 	/* read /sys/dev/block/<maj>:<min> symlink */
-	ssize_t sz = ul_path_readlink(pc, buf, bufsz, NULL);
-	const char *prefix;
-	size_t psz = 0;
+	ssize_t ssz;
+	size_t sz = 0;
+	struct ul_buffer tmp = UL_INIT_BUFFER;
+	const char *p;
+	char *res = NULL;
 
-	if (sz <= 0 || sz + sizeof(_PATH_SYS_DEVBLOCK "/") > bufsz)
+	ssz = ul_path_readlink(pc, buf, bufsz, NULL);
+	if (ssz <= 0)
 		return NULL;
 
-	sz++;
-	prefix = ul_path_get_prefix(pc);
-	if (prefix)
-		psz = strlen(prefix);
+	if ((p = ul_path_get_prefix(pc)))
+		ul_buffer_append_string(&tmp, p);
 
-	/* create absolute path from the link */
-	memmove(buf + psz + sizeof(_PATH_SYS_DEVBLOCK "/") - 1, buf, sz);
-	if (prefix)
-		memcpy(buf, prefix, psz);
+	ul_buffer_append_string(&tmp, _PATH_SYS_DEVBLOCK "/");
+	ul_buffer_append_data(&tmp, buf, ssz);
 
-	memcpy(buf + psz, _PATH_SYS_DEVBLOCK "/", sizeof(_PATH_SYS_DEVBLOCK "/") - 1);
-	return buf;
+	p = ul_buffer_get_data(&tmp, &sz, NULL);
+	if (p && sz < bufsz) {
+		memcpy(buf, p, sz);
+		res = buf;
+	}
+	ul_buffer_free_data(&tmp);
+	return res;
 }
 
 /*
