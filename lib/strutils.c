@@ -1322,6 +1322,9 @@ static int test_strutils_cstrcasecmp(int argc, char *argv[])
 	a = argv[1];
 	b = argv[2];
 
+	if (!a || !b)
+		return EXIT_FAILURE;
+
 	printf("cmp    '%s' '%s' = %d\n", a, b, strcasecmp(a, b));
 	printf("c_cmp  '%s' '%s' = %d\n", a, b, c_strcasecmp(a, b));
 	printf("c_ncmp '%s' '%s' = %d\n", a, b, c_strncasecmp(a, b, strlen(a)));
