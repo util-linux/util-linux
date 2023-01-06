@@ -34,11 +34,13 @@ asciidoc_man_cmd = $(ASCIIDOCTOR) \
 	-a 'package-docdir=$(docdir)' \
 	-a 'VERSION=$(VERSION)' \
 	-a 'ADJTIME_PATH=$(ADJTIME_PATH)' \
+	--failure-level ERROR \
 	--load-path '$(top_srcdir)/tools' \
 	--require asciidoctor-unicodeconverter
 
 gen-mans: gen-trans
-	@for l in $(PO_LANGS); do \
+	@set -e; \
+	  for l in $(PO_LANGS); do \
 	  gendir="$(abs_builddir)/$$l"; \
 	  genfiles=`echo $${gendir}/*.adoc`; \
 	  if test "$$genfiles" != '$${gendir}/*.adoc'; then \
