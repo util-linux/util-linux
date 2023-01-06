@@ -478,8 +478,9 @@ static int has_remount_flag(struct libmnt_context *cxt)
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
+
 	fputs(USAGE_HEADER, out);
-	fprintf(out, _(
+	printf(_(
 		" %1$s [-lhV]\n"
 		" %1$s -a [options]\n"
 		" %1$s [options] [--source] <source> | [--target] <directory>\n"
@@ -491,80 +492,63 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Mount a filesystem.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fprintf(out, _(
-	" -a, --all               mount all filesystems mentioned in fstab\n"
-	" -c, --no-canonicalize   don't canonicalize paths\n"
-	" -f, --fake              dry run; skip the mount(2) syscall\n"
-	" -F, --fork              fork off for each device (use with -a)\n"
-	" -T, --fstab <path>      alternative file to /etc/fstab\n"));
-	fprintf(out, _(
-	" -i, --internal-only     don't call the mount.<type> helpers\n"));
-	fprintf(out, _(
-	" -l, --show-labels       show also filesystem labels\n"));
-	fprintf(out, _(
-	" -m, --mkdir[=<mode>]    alias to '-o X-mount.mkdir[=<mode>]'\n"));
-	fprintf(out, _(
-	" -n, --no-mtab           don't write to /etc/mtab\n"));
-	fprintf(out, _(
-	"     --options-mode <mode>\n"
-	"                         what to do with options loaded from fstab\n"
-	"     --options-source <source>\n"
-	"                         mount options source\n"
-	"     --options-source-force\n"
-	"                         force use of options from fstab/mtab\n"));
-	fprintf(out, _(
-	"     --onlyonce          check if filesystem is already mounted\n"));
-	fprintf(out, _(
-	" -o, --options <list>    comma-separated list of mount options\n"
-	" -O, --test-opts <list>  limit the set of filesystems (use with -a)\n"
-	" -r, --read-only         mount the filesystem read-only (same as -o ro)\n"
-	" -t, --types <list>      limit the set of filesystem types\n"));
-	fprintf(out, _(
-	"     --source <src>      explicitly specifies source (path, label, uuid)\n"
-	"     --target <target>   explicitly specifies mountpoint\n"));
-	fprintf(out, _(
-	"     --target-prefix <path>\n"
-	"                         specifies path used for all mountpoints\n"));
-	fprintf(out, _(
-	" -v, --verbose           say what is being done\n"));
-	fprintf(out, _(
-	" -w, --rw, --read-write  mount the filesystem read-write (default)\n"));
-	fprintf(out, _(
-	" -N, --namespace <ns>    perform mount in another namespace\n"));
+	fputs(_(" -a, --all               mount all filesystems mentioned in fstab\n"), out);
+	fputs(_(" -c, --no-canonicalize   don't canonicalize paths\n"), out);
+	fputs(_(" -f, --fake              dry run; skip the mount(2) syscall\n"), out);
+	fputs(_(" -F, --fork              fork off for each device (use with -a)\n"), out);
+	fputs(_(" -T, --fstab <path>      alternative file to /etc/fstab\n"), out);
+	fputs(_(" -i, --internal-only     don't call the mount.<type> helpers\n"), out);
+	fputs(_(" -l, --show-labels       show also filesystem labels\n"), out);
+	fputs(_(" -m, --mkdir[=<mode>]    alias to '-o X-mount.mkdir[=<mode>]'\n"), out);
+	fputs(_(" -n, --no-mtab           don't write to /etc/mtab\n"), out);
+	fputs(_("     --options-mode <mode>\n"
+		"                         what to do with options loaded from fstab\n"), out);
+	fputs(_("     --options-source <source>\n"
+		"                         mount options source\n"), out);
+	fputs(_("     --options-source-force\n"
+		"                         force use of options from fstab/mtab\n"), out);
+	fputs(_("     --onlyonce          check if filesystem is already mounted\n"), out);
+	fputs(_(" -o, --options <list>    comma-separated list of mount options\n"), out);
+	fputs(_(" -O, --test-opts <list>  limit the set of filesystems (use with -a)\n"), out);
+	fputs(_(" -r, --read-only         mount the filesystem read-only (same as -o ro)\n"), out);
+	fputs(_(" -t, --types <list>      limit the set of filesystem types\n"), out);
+	fputs(_("     --source <src>      explicitly specifies source (path, label, uuid)\n"), out);
+	fputs(_("     --target <target>   explicitly specifies mountpoint\n"), out);
+	fputs(_("     --target-prefix <path>\n"
+		"                         specifies path used for all mountpoints\n"), out);
+	fputs(_(" -v, --verbose           say what is being done\n"), out);
+	fputs(_(" -w, --rw, --read-write  mount the filesystem read-write (default)\n"), out);
+	fputs(_(" -N, --namespace <ns>    perform mount in another namespace\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(25));
 
-	fprintf(out, _(
-	"\nSource:\n"
-	" -L, --label <label>     synonym for LABEL=<label>\n"
-	" -U, --uuid <uuid>       synonym for UUID=<uuid>\n"
-	" LABEL=<label>           specifies device by filesystem label\n"
-	" UUID=<uuid>             specifies device by filesystem UUID\n"
-	" PARTLABEL=<label>       specifies device by partition label\n"
-	" PARTUUID=<uuid>         specifies device by partition UUID\n"
-	" ID=<id>                 specifies device by udev hardware ID\n"));
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Source:\n"), out);
+	fputs(_(" -L, --label <label>     synonym for LABEL=<label>\n"), out);
+	fputs(_(" -U, --uuid <uuid>       synonym for UUID=<uuid>\n"), out);
+	fputs(_(" LABEL=<label>           specifies device by filesystem label\n"), out);
+	fputs(_(" UUID=<uuid>             specifies device by filesystem UUID\n"), out);
+	fputs(_(" PARTLABEL=<label>       specifies device by partition label\n"), out);
+	fputs(_(" PARTUUID=<uuid>         specifies device by partition UUID\n"), out);
+	fputs(_(" ID=<id>                 specifies device by udev hardware ID\n"), out);
+	fputs(_(" <device>                specifies device by path\n"), out);
+	fputs(_(" <directory>             mountpoint for bind mounts (see --bind/rbind)\n"), out);
+	fputs(_(" <file>                  regular file for loopdev setup\n"), out);
 
-	fprintf(out, _(
-	" <device>                specifies device by path\n"
-	" <directory>             mountpoint for bind mounts (see --bind/rbind)\n"
-	" <file>                  regular file for loopdev setup\n"));
-
-	fprintf(out, _(
-	"\nOperations:\n"
-	" -B, --bind              mount a subtree somewhere else (same as -o bind)\n"
-	" -M, --move              move a subtree to some other place\n"
-	" -R, --rbind             mount a subtree and all submounts somewhere else\n"));
-	fprintf(out, _(
-	" --make-shared           mark a subtree as shared\n"
-	" --make-slave            mark a subtree as slave\n"
-	" --make-private          mark a subtree as private\n"
-	" --make-unbindable       mark a subtree as unbindable\n"));
-	fprintf(out, _(
-	" --make-rshared          recursively mark a whole subtree as shared\n"
-	" --make-rslave           recursively mark a whole subtree as slave\n"
-	" --make-rprivate         recursively mark a whole subtree as private\n"
-	" --make-runbindable      recursively mark a whole subtree as unbindable\n"));
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Operations:\n"), out);
+	fputs(_(" -B, --bind              mount a subtree somewhere else (same as -o bind)\n"), out);
+	fputs(_(" -M, --move              move a subtree to some other place\n"), out);
+	fputs(_(" -R, --rbind             mount a subtree and all submounts somewhere else\n"), out);
+	fputs(_(" --make-shared           mark a subtree as shared\n"), out);
+	fputs(_(" --make-slave            mark a subtree as slave\n"), out);
+	fputs(_(" --make-private          mark a subtree as private\n"), out);
+	fputs(_(" --make-unbindable       mark a subtree as unbindable\n"), out);
+	fputs(_(" --make-rshared          recursively mark a whole subtree as shared\n"), out);
+	fputs(_(" --make-rslave           recursively mark a whole subtree as slave\n"), out);
+	fputs(_(" --make-rprivate         recursively mark a whole subtree as private\n"), out);
+	fputs(_(" --make-runbindable      recursively mark a whole subtree as unbindable\n"), out);
 
 	printf(USAGE_MAN_TAIL("mount(8)"));
 
