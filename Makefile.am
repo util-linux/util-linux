@@ -229,7 +229,9 @@ asciidoc_man_cmd = $(ASCIIDOCTOR) \
 	-a 'release-version=$(VERSION)' \
 	-a 'package-docdir=$(docdir)' \
 	-a 'VERSION=$(VERSION)' \
-	-a 'ADJTIME_PATH=$(ADJTIME_PATH)'
+	-a 'ADJTIME_PATH=$(ADJTIME_PATH)' \
+	--load-path '$(abs_srcdir)/tools' \
+	--require asciidoctor-includetracker
 
 SUFFIXES = .1.adoc .3.adoc .5.adoc .8.adoc .1 .3 .5 .8
 .1.adoc.1 .3.adoc.3 .5.adoc.5 .8.adoc.8:
@@ -237,6 +239,12 @@ SUFFIXES = .1.adoc .3.adoc .5.adoc .8.adoc .1 .3 .5 .8
 		$(MKDIR_P) $$(dirname $@) && \
 		$(asciidoc_man_cmd) --base-dir=$(abs_srcdir) \
 				    --destination-dir $(abs_builddir)/$$(dirname $@) $<
+
+-include \
+	$(abs_builddir)/**.1.deps \
+	$(abs_builddir)/**.3.deps \
+	$(abs_builddir)/**.5.deps \
+	$(abs_builddir)/**.8.deps
 
 $(MANLINKS): $(MANPAGES)
 gen-man: $(man_MANS)
