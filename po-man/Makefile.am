@@ -14,7 +14,7 @@ util-linux-man.pot: Makefile
 
 po4a-gen.stamp: $(PO_FILES)
 	@echo 'po4a: generate man-pages translations'
-	$(AM_V_GEN) $(PO4A) po4a.cfg
+	$(AM_V_GEN) $(PO4A) --srcdir $(srcdir) $(srcdir)/po4a.cfg
 	@touch po4a-gen.stamp
 
 # We need to call po4a --force only on 'make dist', otherwise .po and .pot
@@ -24,7 +24,7 @@ po4a-gen.stamp: $(PO_FILES)
 # only.
 util-linux-man.pot:
 	@echo 'po4a: force pot-update'
-	$(AM_V_GEN) $(PO4A) --force po4a.cfg
+	$(AM_V_GEN) $(PO4A) --force --srcdir $(srcdir) $(srcdir)/po4a.cfg
 
 gen-trans: $(PO_STAMPS)
 
