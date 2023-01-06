@@ -500,6 +500,15 @@ void strtotimeval_or_err(const char *str, struct timeval *tv, const char *errmes
 	tv->tv_usec = (suseconds_t)((user_input - tv->tv_sec) * 1000000);
 }
 
+void strtotimespec_or_err(const char *str, struct timespec *ts, const char *errmesg)
+{
+	long double user_input;
+
+	user_input = strtold_or_err(str, errmesg);
+	ts->tv_sec = (time_t) user_input;
+	ts->tv_nsec = (long)((user_input - ts->tv_sec) * 1000000000);
+}
+
 time_t strtotime_or_err(const char *str, const char *errmesg)
 {
 	int64_t user_input;

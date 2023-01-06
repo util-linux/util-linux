@@ -12,7 +12,7 @@ waitpid - utility to wait for arbitrary processes
 
 == SYNOPSIS
 
-*waitpid* [-v] pid...
+*waitpid* [-v] [*--timeout*|*-t* _seconds_] pid...
 
 == DESCRIPTION
 
@@ -26,6 +26,9 @@ exited.
 *-v*, *--verbose*::
 Be more verbose.
 
+*-t*, *--timeout* _seconds_::
+Maximum wait time.
+
 include::man-common/help-version.adoc[]
 
 == EXIT STATUS
@@ -38,6 +41,8 @@ success
 unspecified failure
 *2*::
 system does not provide necessary functionality
+*3*::
+timeout expired
 
 == AUTHORS
 
