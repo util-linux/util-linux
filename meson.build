@@ -3341,9 +3341,12 @@ if asciidoctor.found()
 	  '-a', 'package-docdir=' + docdir,
 	  '--base-dir=' + meson.current_source_dir(),
           '--destination-dir=' + meson.current_build_dir(),
+          '--load-path', '@SOURCE_ROOT@/tools',
+          '--require', 'asciidoctor-includetracker',
 	  '@INPUT@'],
       input : input,
       output : [page],
+      depfile : page + '.deps',
       install: true,
       install_dir : mandirn)
   endforeach
