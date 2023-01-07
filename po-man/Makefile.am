@@ -33,7 +33,9 @@ asciidoc_man_cmd = $(ASCIIDOCTOR) \
 	-a 'release-version=$(VERSION)' \
 	-a 'package-docdir=$(docdir)' \
 	-a 'VERSION=$(VERSION)' \
-	-a 'ADJTIME_PATH=$(ADJTIME_PATH)'
+	-a 'ADJTIME_PATH=$(ADJTIME_PATH)' \
+	--load-path '$(top_srcdir)/tools' \
+	--require asciidoctor-unicodeconverter
 
 gen-mans: gen-trans
 	@for l in $(PO_LANGS); do \
