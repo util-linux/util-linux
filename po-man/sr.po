@@ -4406,7 +4406,7 @@ msgstr "mkfs.cramfs(8)"
 #. type: Plain text
 #: ../disk-utils/mkfs.cramfs.8.adoc:12
 msgid "mkfs.cramfs - make compressed ROM file system"
-msgstr "makefs.cramfs – прави сажети ROM систем датотека"
+msgstr "mkfs.cramfs – прави сажети ROM систем датотека"
 
 #. type: Plain text
 #: ../disk-utils/mkfs.cramfs.8.adoc:16
