@@ -2967,6 +2967,7 @@ exe = executable(
   'lib/sysfs.c',
   'lib/path.c',
   'lib/buffer.c',
+  'lib/mbsalign.c',
   'lib/fileutils.c',
   have_cpu_set_t ? 'lib/cpuset.c' : [],
   c_args : ['-DTEST_PROGRAM_SYSFS'],
