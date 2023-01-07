@@ -696,7 +696,8 @@ int main(int argc, char **argv)
 
 #ifdef HAVE_LIBSELINUX
 	if (S_ISREG(ctl.devstat.st_mode) && is_selinux_enabled() > 0) {
-		char *context_string, *oldcontext;
+		const char *context_string;
+		char *oldcontext;
 		context_t newcontext;
 
 		if (fgetfilecon(ctl.fd, &oldcontext) < 0) {
