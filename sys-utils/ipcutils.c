@@ -18,6 +18,8 @@
 
 int ipc_msg_get_limits(struct ipc_limits *lim)
 {
+	memset(lim, 0, sizeof(*lim));
+
 	if (access(_PATH_PROC_IPC_MSGMNI, F_OK) == 0 &&
 	    access(_PATH_PROC_IPC_MSGMNB, F_OK) == 0 &&
 	    access(_PATH_PROC_IPC_MSGMAX, F_OK) == 0) {
