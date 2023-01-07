@@ -29,6 +29,9 @@ Be more verbose.
 *-t*, *--timeout* _seconds_::
 Maximum wait time.
 
+*-e*, *--exited*::
+Don't error on already exited PIDs.
+
 include::man-common/help-version.adoc[]
 
 == EXIT STATUS
