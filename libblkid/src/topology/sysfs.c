@@ -31,6 +31,7 @@ static const struct topology_val {
 	/* functions to set probing result */
 	int (*set_ulong)(blkid_probe, unsigned long);
 	int (*set_int)(blkid_probe, int);
+	int (*set_u64)(blkid_probe, uint64_t);
 
 } topology_vals[] = {
 	{ "alignment_offset", NULL, blkid_topology_set_alignment_offset },
@@ -38,7 +39,7 @@ static const struct topology_val {
 	{ "queue/optimal_io_size", blkid_topology_set_optimal_io_size },
 	{ "queue/physical_block_size", blkid_topology_set_physical_sector_size },
 	{ "queue/dax", blkid_topology_set_dax },
-	{ "diskseq", blkid_topology_set_diskseq },
+	{ "diskseq", .set_u64 = blkid_topology_set_diskseq },
 };
 
 static int probe_sysfs_tp(blkid_probe pr,
@@ -101,6 +102,12 @@ static int probe_sysfs_tp(blkid_probe pr,
 			if (ul_path_read_s64(pc, &data, val->attr) != 0)
 				continue;
 			rc = val->set_int(pr, (int) data);
+		} else if (val->set_u64) {
+			uint64_t data;
+
+			if (ul_path_read_u64(pc, &data, val->attr) != 0)
+				continue;
+			rc = val->set_u64(pr, data);
 		}
 
 		if (rc < 0)
