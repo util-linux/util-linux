@@ -713,7 +713,7 @@ int main(int argc, char *argv[])
 	struct wd_device wd;
 	struct wd_control ctl = { .hide_headings = 0 };
 	int c, res = EXIT_SUCCESS, count = 0;
-	uint32_t wanted = 0;
+	unsigned long wanted = 0;
 	const char *dflt_device = NULL;
 
 	static const struct option long_opts[] = {
@@ -767,7 +767,7 @@ int main(int argc, char *argv[])
 			ctl.set_pretimeout = 1;
 			break;
 		case 'f':
-			if (string_to_bitmask(optarg, (unsigned long *) &wanted, name2bit) != 0)
+			if (string_to_bitmask(optarg, &wanted, name2bit) != 0)
 				return EXIT_FAILURE;
 			break;
 		case 'F':
