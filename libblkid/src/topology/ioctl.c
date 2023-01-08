@@ -46,15 +46,18 @@ static int probe_ioctl_tp(blkid_probe pr,
 	for (i = 0; i < ARRAY_SIZE(topology_vals); i++) {
 		const struct topology_val *val = &topology_vals[i];
 		int rc = 1;
-		unsigned int data;
+		union {
+			unsigned long ul;
+			int i;
+		} data;
 
 		if (ioctl(pr->fd, val->ioc, &data) == -1)
 			goto nothing;
 
 		if (val->set_int)
-			rc = val->set_int(pr, (int) data);
+			rc = val->set_int(pr, data.i);
 		else
-			rc = val->set_ulong(pr, (unsigned long) data);
+			rc = val->set_ulong(pr, data.ul);
 		if (rc)
 			goto err;
 	}
