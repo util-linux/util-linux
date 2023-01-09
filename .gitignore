@@ -1,6 +1,7 @@
 #
 # generic stuff
 #
+*.deps
 *.gcda
 *.gcno
 *.gcov
@@ -188,6 +189,7 @@ GSYMS
 /uuidgen
 /uuidparse
 /vipw
+/waitpid
 /wall
 /wdctl
 /whereis
