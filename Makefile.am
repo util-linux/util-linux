@@ -230,6 +230,7 @@ asciidoc_man_cmd = $(ASCIIDOCTOR) \
 	-a 'package-docdir=$(docdir)' \
 	-a 'VERSION=$(VERSION)' \
 	-a 'ADJTIME_PATH=$(ADJTIME_PATH)' \
+	--failure-level ERROR \
 	--load-path '$(abs_srcdir)/tools' \
 	--require asciidoctor-includetracker
 

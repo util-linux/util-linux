@@ -4406,7 +4406,7 @@ msgstr "mkfs.cramfs(8)"
 #. type: Plain text
 #: ../disk-utils/mkfs.cramfs.8.adoc:12
 msgid "mkfs.cramfs - make compressed ROM file system"
-msgstr "makefs.cramfs – прави сажети ROM систем датотека"
+msgstr "mkfs.cramfs – прави сажети ROM систем датотека"
 
 #. type: Plain text
 #: ../disk-utils/mkfs.cramfs.8.adoc:16
@@ -13375,7 +13375,7 @@ msgstr "cal(1)"
 #. type: Plain text
 #: ../misc-utils/cal.1.adoc:50
 msgid "cal - display a calendar"
-msgstr "cal приказује календар"
+msgstr "cal - приказује календар"
 
 #. type: Plain text
 #: ../misc-utils/cal.1.adoc:54
