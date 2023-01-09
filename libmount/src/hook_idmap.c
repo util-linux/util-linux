@@ -210,8 +210,14 @@ static int get_userns_fd_from_idmap(struct list_head *idmap)
 		if (rc < 0)
 			_exit(EXIT_FAILURE);
 
+		/* Let parent know we're ready to have the idmapping written. */
 		rc = write_all(sock_fds[0], &c, 1);
 		if (rc)
+			_exit(EXIT_FAILURE);
+
+		/* Hang around until the parent has persisted our namespace. */
+		rc = read_all(sock_fds[0], &c, 1);
+		if (rc != 1)
 			_exit(EXIT_FAILURE);
 
 		close(sock_fds[0]);
@@ -221,6 +227,7 @@ static int get_userns_fd_from_idmap(struct list_head *idmap)
 	close(sock_fds[0]);
 	sock_fds[0] = -1;
 
+	/* Wait for child to set up a new namespace. */
 	rc = read_all(sock_fds[1], &c, 1);
 	if (rc != 1)
 		goto err_wait;
@@ -231,6 +238,9 @@ static int get_userns_fd_from_idmap(struct list_head *idmap)
 
 	snprintf(path, sizeof(path), "/proc/%d/ns/user", pid);
 	fd_userns = open(path, O_RDONLY | O_CLOEXEC | O_NOCTTY);
+
+	/* Let child know we've persisted its namespace. */
+	(void)write_all(sock_fds[0], &c, 1);
 
 err_wait:
 	rc = wait_for_pid(pid);
