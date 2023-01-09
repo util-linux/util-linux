@@ -1484,7 +1484,7 @@ int mnt_context_get_mount_excode(
 			if (buf)
 				snprintf(buf, bufsz, restricted ?
 						_("failed to determine filesystem type") :
-						_("no filesystem type specified"));
+						_("no valid filesystem type specified"));
 			return MNT_EX_USAGE;
 		case -MNT_ERR_NOSOURCE:
 			if (uflags & MNT_MS_NOFAIL)

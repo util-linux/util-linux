@@ -39,6 +39,7 @@
 #include "mountP.h"
 #include "strutils.h"
 #include "namespace.h"
+#include "match.h"
 
 #include <sys/wait.h>
 
@@ -1902,6 +1903,28 @@ int mnt_context_guess_srcpath_fstype(struct libmnt_context *cxt, char **type)
 
 	if (!mnt_context_switch_ns(cxt, ns_old))
 		return -MNT_ERR_NAMESPACE;
+
+	if (rc == 0 && *type) {
+		struct libmnt_optlist *ol = mnt_context_get_optlist(cxt);
+		struct libmnt_opt *opt;
+		const char *allowed;
+
+		if (!ol)
+			return -ENOMEM;
+
+		opt = mnt_optlist_get_named(ol,
+				"X-mount.auto-fstypes", cxt->map_userspace);
+
+		if (opt
+		    && (allowed = mnt_opt_get_value(opt))
+		    && !match_fstype(*type, allowed)) {
+			DBG(CXT, ul_debugobj(cxt, "%s is not allowd by auto-fstypes=%s",
+						*type, allowed));
+			free(*type);
+			*type = NULL;
+			rc = -MNT_ERR_NOFSTYPE;
+		}
+	}
 
 	return rc;
 }

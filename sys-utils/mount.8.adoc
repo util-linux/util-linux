@@ -630,6 +630,30 @@ The same as *X-** options, but stored permanently in user space. This means the 
 +
 Note that before util-linux v2.30 the x-* options have not been maintained by libmount and stored in user space (functionality was the same as for X-* now), but due to the growing number of use-cases (in initrd, systemd etc.) the functionality has been extended to keep existing _fstab_ configurations usable without a change.
 
+*X-mount.auto-fstypes*=_list_::
+Specifies allowed or forbidden filesystem types for automatic filesystem
+detection.
++
+The _list_ is a comma-separated list of the filesystem names. The
+automatic filesystem detection is triggered by the "auto" filesystem type or
+when the filesystem type is not specified.
++
+Thy _list_ follows how mount
+evaluates type patterns (see *-t* for more details). Only specified filesystem
+types are allowed, or all specified types are forbidden if the list is prefixed
+by "no". 
++
+For example, X-mount.auto-fstypes="ext4,btrfs" accepts only ext4 and
+btrfs, and X-mount.auto-fstypes="novfat,xfs" accepts all filesystems except vfat
+and xfs.
++
+Note that comma is used as a separator between mount options, it means
+that auto-fstypes values have to be properly quoted, don’t forget that the shell
+strips off quotes and thus double quoting is required. For example:
+____
+mount -t auto -o'X-mount.auto-fstypes="noext2,ext3"'  /dev/sdc1 /mnt/test
+____
+
 *X-mount.mkdir*[=_mode_]::
 Allow to make a target directory (mountpoint) if it does not exist yet. The optional argument _mode_ specifies the filesystem access mode used for *mkdir*(2) in octal notation. The default mode is 0755. This functionality is supported only for root users or when *mount* is executed without suid permissions. The option is also supported as *x-mount.mkdir*, but this notation is deprecated since v2.30. See also *--mkdir* command line option.
 
