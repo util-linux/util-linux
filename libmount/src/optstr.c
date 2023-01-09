@@ -100,7 +100,8 @@ int mnt_optstr_next_option(char **optstr, char **name, size_t *namesz,
 
 int mnt_buffer_append_option(struct ul_buffer *buf,
 			const char *name, size_t namesz,
-			const char *val, size_t valsz)
+			const char *val, size_t valsz,
+			int quoted)
 {
 	int rc = 0;
 
@@ -112,8 +113,14 @@ int mnt_buffer_append_option(struct ul_buffer *buf,
 		/* we need to append '=' is value is empty string, see
 		 * 727c689908c5e68c92aa1dd65e0d3bdb6d91c1e5 */
 		rc = ul_buffer_append_data(buf, "=", 1);
-		if (!rc && valsz)
-			rc = ul_buffer_append_data(buf, val, valsz);
+		if (!rc && valsz) {
+			if (quoted)
+				rc = ul_buffer_append_data(buf, "\"", 1);
+			if (!rc)
+				rc = ul_buffer_append_data(buf, val, valsz);
+			if (quoted)
+				rc = ul_buffer_append_data(buf, "\"", 1);
+		}
 	}
 	return rc;
 }
@@ -145,7 +152,7 @@ int mnt_optstr_append_option(char **optstr, const char *name, const char *value)
 	ul_buffer_refer_string(&buf, *optstr);
 	ul_buffer_set_chunksize(&buf, osz + nsz + vsz + 3);	/* to call realloc() only once */
 
-	rc = mnt_buffer_append_option(&buf, name, nsz, value, vsz);
+	rc = mnt_buffer_append_option(&buf, name, nsz, value, vsz, 0);
 	if (!rc)
 		*optstr = ul_buffer_get_data(&buf, NULL, NULL);
 	else if (osz == 0)
@@ -179,7 +186,7 @@ int mnt_optstr_prepend_option(char **optstr, const char *name, const char *value
 
 	ul_buffer_set_chunksize(&buf, osz + nsz + vsz + 3);   /* to call realloc() only once */
 
-	rc = mnt_buffer_append_option(&buf, name, nsz, value, vsz);
+	rc = mnt_buffer_append_option(&buf, name, nsz, value, vsz, 0);
 	if (*optstr && !rc) {
 		rc = ul_buffer_append_data(&buf, ",", 1);
 		if (!rc)
@@ -481,7 +488,7 @@ int mnt_split_optstr(const char *optstr, char **user, char **vfs,
 		if (buf) {
 			if (ul_buffer_is_empty(buf))
 				ul_buffer_set_chunksize(buf, chunsz);
-			rc = mnt_buffer_append_option(buf, name, namesz, val, valsz);
+			rc = mnt_buffer_append_option(buf, name, namesz, val, valsz, 0);
 		}
 		if (rc)
 			break;
@@ -551,7 +558,7 @@ int mnt_optstr_get_options(const char *optstr, char **subset,
 		if (valsz && mnt_optmap_entry_novalue(ent))
 			continue;
 
-		rc = mnt_buffer_append_option(&buf, name, namesz, val, valsz);
+		rc = mnt_buffer_append_option(&buf, name, namesz, val, valsz, 0);
 		if (rc)
 			break;
 	}
@@ -768,7 +775,7 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 			} else
 				sz = strlen(ent->name);
 
-			rc = mnt_buffer_append_option(&buf, ent->name, sz, NULL, 0);
+			rc = mnt_buffer_append_option(&buf, ent->name, sz, NULL, 0, 0);
 			if (rc)
 				break;
 		}

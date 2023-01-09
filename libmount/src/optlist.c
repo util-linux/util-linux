@@ -43,7 +43,8 @@ struct libmnt_opt {
 
 	enum libmnt_optsrc	src;
 
-	unsigned int external : 1;	/* visible for external helpers only */
+	unsigned int external : 1,	/* visible for external helpers only */
+		     quoted : 1;	/* name="value" */
 };
 
 struct libmnt_optlist {
@@ -375,6 +376,11 @@ static struct libmnt_opt *optlist_new_opt(struct libmnt_optlist *ls,
 	opt->ent = ent;
 
 	if (valsz) {
+		if (*value == '"' && *(value + valsz - 1) == '"') {
+			opt->quoted = 1;
+			value++;
+			valsz -= 2;
+		}
 		opt->value = strndup(value, valsz);
 		if (!opt->value)
 			goto fail;
@@ -840,7 +846,7 @@ int mnt_optlist_strdup_optstr(struct libmnt_optlist *ls, char **optstr,
 		 what == MNT_OL_FLTR_ALL ||
 		 what == MNT_OL_FLTR_HELPERS)) {
 
-		rc = mnt_buffer_append_option(&buf, "rw", 2, NULL, 0);
+		rc = mnt_buffer_append_option(&buf, "rw", 2, NULL, 0, 0);
 		if (rc)
 			goto fail;
 		xx_wanted = 1;
@@ -860,7 +866,8 @@ int mnt_optlist_strdup_optstr(struct libmnt_optlist *ls, char **optstr,
 		rc = mnt_buffer_append_option(&buf,
 					opt->name, strlen(opt->name),
 					opt->value,
-					opt->value ? strlen(opt->value) : 0);
+					opt->value ? strlen(opt->value) : 0,
+					opt->quoted);
 		if (rc)
 			goto fail;
 	}
@@ -943,6 +950,7 @@ struct libmnt_optlist *mnt_copy_optlist(struct libmnt_optlist *ls)
 		if (no) {
 			no->src = opt->src;
 			no->external = opt->external;
+			no->quoted = opt->quoted;
 		}
 	}
 
@@ -1060,26 +1068,8 @@ int mnt_opt_set_u64value(struct libmnt_opt *opt, uint64_t num)
 
 int mnt_opt_set_quoted_value(struct libmnt_opt *opt, const char *str)
 {
-	char *value = NULL;
-
-	if (str && *str) {
-		size_t len = strlen(str);
-		char *p;
-
-		assert(len);
-		p = value = malloc(len + 3);
-		if (!value)
-			return -ENOMEM;
-		*p++ = '"';
-		memcpy(p, str, len);
-		p += len;
-		*p = '"';
-	}
-
-	free(opt->value);
-	opt->value = value;
-
-	return 0;
+	opt->quoted = 1;
+	return mnt_opt_set_value(opt, str);
 }
 
 int mnt_opt_set_external(struct libmnt_opt *opt, int enable)

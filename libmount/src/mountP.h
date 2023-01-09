@@ -487,7 +487,7 @@ extern int mnt_optstr_remove_option_at(char **optstr, char *begin, char *end);
 
 extern int mnt_buffer_append_option(struct ul_buffer *buf,
                         const char *name, size_t namesz,
-                        const char *val, size_t valsz);
+                        const char *val, size_t valsz, int quoted);
 
 /* optlist.h */
 struct libmnt_opt;
