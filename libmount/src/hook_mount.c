@@ -348,6 +348,9 @@ static int hook_set_vfsflags(struct libmnt_context *cxt,
 
 	rc = mount_setattr(api->fd_tree, "", callflags, &attr, sizeof(attr));
 	set_syscall_status(cxt, "move_setattr", rc == 0);
+
+	if (rc && errno == EINVAL)
+		return -MNT_ERR_APPLYFLAGS;
 done:
 	return rc == 0 ? 0 : -errno;
 }
@@ -405,6 +408,9 @@ static int hook_set_propagation(struct libmnt_context *cxt,
 
 		rc = mount_setattr(api->fd_tree, "", flgs, &attr, sizeof(attr));
 		set_syscall_status(cxt, "move_setattr", rc == 0);
+
+		if (rc && errno == EINVAL)
+			return -MNT_ERR_APPLYFLAGS;
 		if (rc != 0)
 			break;
 	}
