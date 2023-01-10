@@ -45,6 +45,7 @@
 
 static bool verbose = false;
 static struct timespec timeout;
+static bool allow_exited = false;
 
 static pid_t *parse_pids(size_t n_strings, char * const *strings)
 {
@@ -62,8 +63,13 @@ static int *open_pidfds(size_t n_pids, pid_t *pids)
 
 	for (size_t i = 0; i < n_pids; i++) {
 		pidfds[i] = pidfd_open(pids[i], 0);
-		if (pidfds[i] == -1)
+		if (pidfds[i] == -1) {
+			if (allow_exited && errno == ESRCH) {
+				warnx(_("PID %d has exited, skipping"), pids[i]);
+				continue;
+			}
 			err_nosys(EXIT_FAILURE, _("could not open pid %u"), pids[i]);
+		}
 	}
 
 	return pidfds;
@@ -90,8 +96,9 @@ static int open_timeoutfd(void)
 
 }
 
-static void add_listeners(int epll, size_t n_pids, int * const pidfds, int timeoutfd)
+static size_t add_listeners(int epll, size_t n_pids, int * const pidfds, int timeoutfd)
 {
+	size_t skipped = 0;
 	struct epoll_event evt = {
 		.events = EPOLLIN,
 	};
@@ -103,16 +110,22 @@ static void add_listeners(int epll, size_t n_pids, int * const pidfds, int timeo
 	}
 
 	for (size_t i = 0; i < n_pids; i++) {
+		if (pidfds[i] == -1) {
+			skipped++;
+			continue;
+		}
 		evt.data.u64 = i;
 		if (epoll_ctl(epll, EPOLL_CTL_ADD, pidfds[i], &evt))
 			err_nosys(EXIT_FAILURE, _("could not add listener"));
 	}
+
+	return n_pids - skipped;
 }
 
-static void wait_for_exits(int epll, size_t n_pids, pid_t * const pids,
+static void wait_for_exits(int epll, size_t active_pids, pid_t * const pids,
 			   int * const pidfds)
 {
-	while (n_pids) {
+	while (active_pids) {
 		struct epoll_event evt;
 		int ret, fd;
 
@@ -130,10 +143,10 @@ static void wait_for_exits(int epll, size_t n_pids, pid_t * const pids,
 		}
 		if (verbose)
 			printf(_("PID %d finished\n"), pids[evt.data.u64]);
-		assert((size_t) ret <= n_pids);
+		assert((size_t) ret <= active_pids);
 		fd = pidfds[evt.data.u64];
 		epoll_ctl(epll, EPOLL_CTL_DEL, fd, NULL);
-		n_pids -= ret;
+		active_pids -= ret;
 	}
 }
 
@@ -147,6 +160,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -v, --verbose           be more verbose\n"), out);
 	fputs(_(" -t, --timeout=<timeout> wait at most timeout seconds\n"), out);
+	fputs(_(" -e, --exited            allow exited PIDs\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(23));
@@ -162,12 +176,13 @@ static int parse_options(int argc, char **argv)
 	static const struct option longopts[] = {
 		{ "verbose", no_argument,       NULL, 'v' },
 		{ "timeout", required_argument, NULL, 't' },
+		{ "exited",  no_argument,       NULL, 'e' },
 		{ "version", no_argument,       NULL, 'V' },
 		{ "help",    no_argument,       NULL, 'h' },
 		{ NULL, 0, NULL, 0 },
 	};
 
-	while ((c = getopt_long (argc, argv, "vVht:", longopts, NULL)) != -1) {
+	while ((c = getopt_long (argc, argv, "vVht:e", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'v':
 			verbose = true;
@@ -175,6 +190,9 @@ static int parse_options(int argc, char **argv)
 		case 't':
 			strtotimespec_or_err(optarg, &timeout,
 					     _("Could not parse timeout"));
+			break;
+		case 'e':
+			allow_exited = true;
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
@@ -190,9 +208,8 @@ static int parse_options(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
-	int pid_idx, epoll;
-	size_t n_pids;
-	int *pidfds, timeoutfd;
+	int pid_idx, epoll, timeoutfd, *pidfds;
+	size_t n_pids, active_pids;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -211,6 +228,6 @@ int main(int argc, char **argv)
 	if (epoll == -1)
 		err_nosys(EXIT_FAILURE, _("could not create epoll"));
 
-	add_listeners(epoll, n_pids, pidfds, timeoutfd);
-	wait_for_exits(epoll, n_pids, pids, pidfds);
+	active_pids = add_listeners(epoll, n_pids, pidfds, timeoutfd);
+	wait_for_exits(epoll, active_pids, pids, pidfds);
 }
