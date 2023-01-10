@@ -3892,7 +3892,7 @@ msgstr ""
 
 #: disk-utils/partx.c:766 misc-utils/lsblk.c:1913 sys-utils/lsmem.c:528
 msgid " -b, --bytes          print SIZE in bytes rather than in human readable format\n"
-msgstr " -b, --btyes          muestra el TAMAÑO en bytes en lugar de hacerlo en formato legible para humanos\n"
+msgstr " -b, --bytes          muestra el TAMAÑO en bytes en lugar de hacerlo en formato legible para humanos\n"
 
 #: disk-utils/partx.c:767
 msgid " -g, --noheadings     don't print headings for --show\n"
@@ -3913,7 +3913,7 @@ msgstr "     --output-all     saca todas las columnas\n"
 #: disk-utils/partx.c:771 misc-utils/lsblk.c:1909 sys-utils/lsirq.c:64
 #: sys-utils/lsmem.c:526
 msgid " -P, --pairs          use key=\"value\" output format\n"
-msgstr " -P, --paris          utiliza el formato de salida clave=\"valor\"\n"
+msgstr " -P, --pairs          utiliza el formato de salida clave=\"valor\"\n"
 
 #: disk-utils/partx.c:772 misc-utils/lsblk.c:1923 sys-utils/lsmem.c:532
 msgid " -r, --raw            use raw output format\n"
