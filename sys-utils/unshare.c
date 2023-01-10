@@ -376,48 +376,30 @@ struct map_range {
 #define UID_BUFSIZ  sizeof(stringify_value(ULONG_MAX))
 
 /**
- * uint_to_id() - Convert a string into a user/group ID
- * @name: The string representation of the ID
- * @sz: The length of @name, without an (optional) nul-terminator
- *
- * This converts a (possibly not nul-terminated_ string into user or group ID.
- * No name lookup is performed.
- *
- * Return: @name as a numeric ID
- */
-static int uint_to_id(const char *name, size_t sz)
-{
-	char buf[UID_BUFSIZ];
-
-	mem2strcpy(buf, name, sz, sizeof(buf));
-	return strtoul_or_err(buf, _("could not parse ID"));
-}
-
-/**
  * get_map_range() - Parse a mapping range from a string
- * @s: A string of the format outer,inner,count
+ * @s: A string of the format inner:outer:count or outer,inner,count
  *
- * Parse a string of the form outer,inner,count into a new mapping range.
+ * Parse a string of the form inner:outer:count or outer,inner,count into
+ * a new mapping range.
  *
  * Return: A new &struct map_range
  */
 static struct map_range *get_map_range(const char *s)
 {
-	int n, map[3];
+	int end;
 	struct map_range *ret;
 
-	n = string_to_idarray(s, map, ARRAY_SIZE(map), uint_to_id);
-	if (n < 0)
-		errx(EXIT_FAILURE, _("too many elements for mapping '%s'"), s);
-	if (n != ARRAY_SIZE(map))
-		errx(EXIT_FAILURE, _("mapping '%s' contains only %d elements"),
-		     s, n);
-
 	ret = xmalloc(sizeof(*ret));
-	ret->outer = map[0];
-	ret->inner = map[1];
-	ret->count = map[2];
-	return ret;
+
+	if (sscanf(s, "%u:%u:%u%n", &ret->inner, &ret->outer, &ret->count,
+		   &end) >= 3 && !s[end])
+		return ret; /* inner:outer:count */
+
+	if (sscanf(s, "%u,%u,%u%n", &ret->outer, &ret->inner, &ret->count,
+		   &end) >= 3 && !s[end])
+		return ret; /* outer,inner,count */
+
+	errx(EXIT_FAILURE, _("invalid mapping '%s'"), s);
 }
 
 /**
@@ -680,9 +662,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -r, --map-root-user       map current user to root (implies --user)\n"), out);
 	fputs(_(" -c, --map-current-user    map current user to itself (implies --user)\n"), out);
 	fputs(_(" --map-auto                map users and groups automatically (implies --user)\n"), out);
-	fputs(_(" --map-users=<outeruid>,<inneruid>,<count>\n"
+	fputs(_(" --map-users=<inneruid>:<outeruid>:<count>\n"
 		"                           map count users from outeruid to inneruid (implies --user)\n"), out);
-	fputs(_(" --map-groups=<outergid>,<innergid>,<count>\n"
+	fputs(_(" --map-groups=<innergid>:<outergid>:<count>\n"
 		"                           map count groups from outergid to innergid (implies --user)\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" --kill-child[=<signame>]  when dying, kill the forked child (implies --fork)\n"
