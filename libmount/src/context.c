@@ -1918,7 +1918,7 @@ int mnt_context_guess_srcpath_fstype(struct libmnt_context *cxt, char **type)
 		if (opt
 		    && (allowed = mnt_opt_get_value(opt))
 		    && !match_fstype(*type, allowed)) {
-			DBG(CXT, ul_debugobj(cxt, "%s is not allowd by auto-fstypes=%s",
+			DBG(CXT, ul_debugobj(cxt, "%s is not allowed by auto-fstypes=%s",
 						*type, allowed));
 			free(*type);
 			*type = NULL;
