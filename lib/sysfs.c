@@ -487,6 +487,8 @@ int sysfs_blkdev_is_removable(struct path_cxt *pc)
 {
 	int rc = 0;
 
+	// FIXME usb is not actually removable
+
 	/* check /sys/dev/block/<maj>:<min>/removable attribute */
 	if (ul_path_read_s32(pc, &rc, "removable") == 0)
 		return rc;
