@@ -440,47 +440,67 @@ int sysfs_blkdev_next_subsystem(struct path_cxt *pc __attribute__((unused)),
 	return 1;
 }
 
+#define REMOVABLE_FILENAME	"/removable"
 
-static int is_hotpluggable_subsystem(const char *name)
+/*
+ * For example:
+ *
+ * chain: /sys/dev/block/../../devices/pci0000:00/0000:00:1a.0/usb1/1-1/1-1.2/ \
+ *                           1-1.2:1.0/host65/target65:0:0/65:0:0:0/block/sdb
+ */
+static int sysfs_devchain_is_removable(char *chain)
 {
-	static const char * const hotplug_subsystems[] = {
-		"usb",
-		"ieee1394",
-		"pcmcia",
-		"mmc",
-		"ccw"
-	};
-	size_t i;
+	size_t len;
+	char buf[20];
+	char *p;
 
-	for (i = 0; i < ARRAY_SIZE(hotplug_subsystems); i++)
-		if (strcmp(name, hotplug_subsystems[i]) == 0)
-			return 1;
+	if (!chain || !*chain)
+		return 0;
+
+	len = strlen(chain);
+	if (len + sizeof(REMOVABLE_FILENAME) > PATH_MAX)
+		return 0;
+
+	do {
+		int fd, rc;
+
+		/* append "/removable" to the path */
+		memcpy(chain + len, REMOVABLE_FILENAME, sizeof(REMOVABLE_FILENAME));
+
+		/* try to read it */
+		fd = open(chain, O_RDONLY);
+		if (fd != -1) {
+			rc = read_all(fd, buf, sizeof(buf));
+			close(fd);
+
+			if (rc > 0) {
+				if (strncmp(buf, "fixed", min(rc, 5)) == 0) {
+					return 0;
+				} else if (strncmp(buf, "removable", min(rc, 9)) == 0) {
+					return 1;
+				}
+			}
+		}
+
+		/* remove last subsystem from chain */
+		chain[len] = '\0';
+		p = strrchr(chain, '/');
+		if (p) {
+			*p = '\0';
+			len = p - chain;
+		}
+
+	} while (p);
 
 	return 0;
 }
 
 int sysfs_blkdev_is_hotpluggable(struct path_cxt *pc)
 {
-	char buf[PATH_MAX], *chain, *sub;
-	int rc = 0;
-
-
-	/* check /sys/devices/.../removable attribute */
-	if (ul_path_read_s32(pc, &rc, "removable") == 0 && rc == 1)
-		return 1;
+	char buf[PATH_MAX], *chain;
 
 	chain = sysfs_blkdev_get_devchain(pc, buf, sizeof(buf));
-
-	while (chain && sysfs_blkdev_next_subsystem(pc, chain, &sub) == 0) {
-		rc = is_hotpluggable_subsystem(sub);
-		if (rc) {
-			free(sub);
-			break;
-		}
-		free(sub);
-	}
-
-	return rc;
+	return sysfs_devchain_is_removable(chain);
 }
 
 int sysfs_blkdev_is_removable(struct path_cxt *pc)
