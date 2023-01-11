@@ -465,7 +465,7 @@ int sysfs_blkdev_is_hotpluggable(struct path_cxt *pc)
 	int rc = 0;
 
 
-	/* check /sys/dev/block/<maj>:<min>/removable attribute */
+	/* check /sys/devices/.../removable attribute */
 	if (ul_path_read_s32(pc, &rc, "removable") == 0 && rc == 1)
 		return 1;
 
@@ -481,6 +481,17 @@ int sysfs_blkdev_is_hotpluggable(struct path_cxt *pc)
 	}
 
 	return rc;
+}
+
+int sysfs_blkdev_is_removable(struct path_cxt *pc)
+{
+	int rc = 0;
+
+	/* check /sys/dev/block/<maj>:<min>/removable attribute */
+	if (ul_path_read_s32(pc, &rc, "removable") == 0)
+		return rc;
+
+	return 0;
 }
 
 static int get_dm_wholedisk(struct path_cxt *pc, char *diskname,
@@ -1182,6 +1193,7 @@ int main(int argc, char *argv[])
 	}
 
 	printf(" HOTPLUG: %s\n", sysfs_blkdev_is_hotpluggable(pc) ? "yes" : "no");
+	printf(" REMOVABLE: %s\n", sysfs_blkdev_is_removable(pc) ? "yes" : "no");
 	printf(" SLAVES: %d\n", ul_path_count_dirents(pc, "slaves"));
 
 	if (!is_part) {
