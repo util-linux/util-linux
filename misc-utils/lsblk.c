@@ -84,6 +84,7 @@ enum {
 	COL_GROUP,
 	COL_HCTL,
 	COL_HOTPLUG,
+	COL_REMOVABLE,
 	COL_KNAME,
 	COL_LABEL,
 	COL_LOGSEC,
@@ -185,7 +186,8 @@ static struct colinfo infos[] = {
 	[COL_FSVERSION] = { "FSVER", 0.1, SCOLS_FL_TRUNC, N_("filesystem version") },
 	[COL_GROUP] = { "GROUP", 0.1, SCOLS_FL_TRUNC, N_("group name") },
 	[COL_HCTL] = { "HCTL", 10, 0, N_("Host:Channel:Target:Lun for SCSI") },
-	[COL_HOTPLUG] = { "HOTPLUG", 1, SCOLS_FL_RIGHT, N_("removable or hotplug device (usb, pcmcia, ...)"), COLTYPE_BOOL },
+	[COL_HOTPLUG] = { "HOTPLUG", 1, SCOLS_FL_RIGHT, N_("hotplug device (usb, pcmcia, ...)"), COLTYPE_BOOL },
+	[COL_REMOVABLE] = { "REMOVABLE", 1, SCOLS_FL_RIGHT, N_("removable device (cdrom, ...)"), COLTYPE_BOOL },
 	[COL_KNAME] = { "KNAME", 0.3, 0, N_("internal kernel device name") },
 	[COL_LABEL] = { "LABEL", 0.1, 0, N_("filesystem LABEL") },
 	[COL_LOGSEC] = { "LOG-SEC", 7, SCOLS_FL_RIGHT, N_("logical sector size"), COLTYPE_NUM },
@@ -989,6 +991,9 @@ static char *device_get_data(
 		break;
 	case COL_HOTPLUG:
 		str = sysfs_blkdev_is_hotpluggable(dev->sysfs) ? xstrdup("1") : xstrdup("0");
+		break;
+	case COL_REMOVABLE:
+		str = sysfs_blkdev_is_removable(dev->sysfs) ? xstrdup("1") : xstrdup("0");
 		break;
 	case COL_ROTA:
 		ul_path_read_string(dev->sysfs, &str, "queue/rotational");
