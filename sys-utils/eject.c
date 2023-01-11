@@ -807,7 +807,7 @@ done:
 	return count;
 }
 
-static int is_hotpluggable(const struct eject_control *ctl)
+static int is_ejectable(const struct eject_control *ctl)
 {
 	struct path_cxt *pc = NULL;
 	dev_t devno;
@@ -819,7 +819,7 @@ static int is_hotpluggable(const struct eject_control *ctl)
 	if (!pc)
 		return 0;
 
-	rc = sysfs_blkdev_is_hotpluggable(pc);
+	rc = sysfs_blkdev_is_hotpluggable(pc) || sysfs_blkdev_is_removable(pc);
 	ul_unref_path(pc);
 	return rc;
 }
@@ -911,8 +911,8 @@ int main(int argc, char **argv)
 		verbose(&ctl, _("%s: is whole-disk device"), ctl.device);
 	}
 
-	if (ctl.F_option == 0 && is_hotpluggable(&ctl) == 0)
-		errx(EXIT_FAILURE, _("%s: is not hot-pluggable device"), ctl.device);
+	if (ctl.F_option == 0 && is_ejectable(&ctl) == 0)
+		errx(EXIT_FAILURE, _("%s: is not ejectable device"), ctl.device);
 
 	/* handle -n option */
 	if (ctl.n_option) {
