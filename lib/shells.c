@@ -1,4 +1,6 @@
-
+/*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
 #include <sys/syslog.h>
 #if defined (HAVE_LIBECONF) && defined (USE_VENDORDIR)
 #include <libeconf.h>

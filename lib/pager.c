@@ -1,4 +1,9 @@
 /*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ *
+ * This file may be redistributed under the terms of the GNU Public
+ * License.
+ *
  * Based on linux-perf/git scm
  *
  * Some modifications and simplifications for util-linux

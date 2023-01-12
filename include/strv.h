@@ -1,3 +1,6 @@
+/*
+ * SPDX-License-Identifier: LGPL-2.1-or-later
+ */
 #ifndef UTIL_LINUX_STRV
 #define UTIL_LINUX_STRV
 

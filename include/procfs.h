@@ -1,4 +1,7 @@
 /*
+ * No copyright is claimed.  This code is in the public domain; do with
+ * it what you wish.
+ *
  * Copyright (C) 2021 Karel Zak <kzak@redhat.com>
  */
 #ifndef UTIL_LINUX_PROCFS_H

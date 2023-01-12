@@ -1,3 +1,7 @@
+/*
+ * No copyright is claimed.  This code is in the public domain; do with
+ * it what you wish.
+ */
 #ifndef _SWAPHEADER_H
 #define _SWAPHEADER_H
 

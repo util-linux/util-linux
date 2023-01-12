@@ -1,4 +1,7 @@
 /***
+  SPDX-License-Identifier: LGPL-2.1-or-later
+
+
   First set of functions in this file are part of systemd, and were
   copied to util-linux at August 2013.
 

@@ -1,3 +1,12 @@
+/*
+ * SPDX-License-Identifier: LGPL-2.1-or-later
+ *
+ * Copyright (C) 2014 Ondrej Oprala <ooprala@redhat.com>
+ * Copyright (C) 2014 Karel Zak <kzak@redhat.com>
+ *
+ * This file may be distributed under the terms of the
+ * GNU Lesser General Public License.
+ */
 #ifndef UTIL_LINUX_DEBUGOBJ_H
 #define UTIL_LINUX_DEBUGOBJ_H
 
