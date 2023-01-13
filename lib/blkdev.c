@@ -31,6 +31,7 @@
 # define EBADFD 77		/* File descriptor in bad state */
 #endif
 
+#include "all-io.h"
 #include "blkdev.h"
 #include "c.h"
 #include "linux_version.h"
@@ -43,7 +44,7 @@ blkdev_valid_offset (int fd, off_t offset) {
 
 	if (lseek (fd, offset, 0) < 0)
 		return 0;
-	if (read (fd, &ch, 1) < 1)
+	if (read_all (fd, &ch, 1) < 1)
 		return 0;
 	return 1;
 }
