@@ -77,7 +77,7 @@ Note that the system logging infrastructure (for example *systemd* when listenin
 
 *--journald*[**=**__file__]::
 Write a *systemd* journal entry. The entry is read from the given _file_, when specified, otherwise from standard input. Each line must begin with a field that is accepted by *journald*; see *systemd.journal-fields*(7) for details. The use of a MESSAGE_ID field is generally a good idea, as it makes finding entries easy. Examples:
-
++
 ____
     logger --journald <<end
     MESSAGE_ID=67feb6ffbaf24c5cbec13c008dd72309
@@ -88,6 +88,7 @@ ____
 
     logger --journald=entry.txt
 ____
++
 Notice that *--journald* will ignore values of other options, such as priority. If priority is needed it must be within input, and use PRIORITY field. The simple execution of *journalctl*(1) will display MESSAGE field. Use *journalctl --output json-pretty* to see rest of the fields.
 +
 To include newlines in MESSAGE, specify MESSAGE several times. This is handled as a special case, other fields will be stored as an array in the journal if they appear multiple times.
@@ -230,8 +231,13 @@ For the priority order and intended purposes of these facilities and levels, see
 The *logger* command is expected to be IEEE Std 1003.2 ("POSIX.2") compatible.
 
 == EXAMPLES
+____
+logger System rebooted
 
-*logger System rebooted* *logger -p local0.notice -t HOSTIDM -f /dev/idmc* *logger -n loghost.example.com System rebooted*
+logger -p local0.notice -t HOSTIDM -f /dev/idmc
+
+logger -n loghost.example.com System rebooted
+____
 
 == AUTHORS
 
