@@ -345,8 +345,9 @@ static unsigned long long get_size(const struct mkswap_control *ctl)
 	fd = open(ctl->devname, O_RDONLY);
 	if (fd < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), ctl->devname);
-	if (blkdev_get_size(fd, &size) == 0)
-		size /= ctl->pagesize;
+	if (blkdev_get_size(fd, &size) < 0)
+		err(EXIT_FAILURE, _("cannot determine size of %s"), ctl->devname);
+	size /= ctl->pagesize;
 
 	close(fd);
 	return size;
