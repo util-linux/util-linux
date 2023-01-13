@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <sys/file.h>
 #include <sys/ioctl.h>
+#include <errno.h>
 #include <unistd.h>
 #include <stdint.h>
 
@@ -60,8 +61,10 @@ blkdev_find_size (int fd) {
 	uintmax_t high, low = 0;
 
 	for (high = 1024; blkdev_valid_offset (fd, high); ) {
-		if (high == UINTMAX_MAX)
+		if (high == UINTMAX_MAX) {
+			errno = EFBIG;
 			return -1;
+		}
 
 		low = high;
 
@@ -167,8 +170,10 @@ blkdev_get_size(int fd, unsigned long long *bytes)
 			*bytes = st.st_size;
 			return 0;
 		}
-		if (!S_ISBLK(st.st_mode))
+		if (!S_ISBLK(st.st_mode)) {
+			errno = ENOTBLK;
 			return -1;
+		}
 	}
 
 	*bytes = blkdev_find_size(fd);
