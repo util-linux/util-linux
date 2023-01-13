@@ -58,25 +58,25 @@ int is_blkdev(int fd)
 
 off_t
 blkdev_find_size (int fd) {
-	uintmax_t high, low = 0;
+	off_t high, low = 0;
 
 	for (high = 1024; blkdev_valid_offset (fd, high); ) {
-		if (high == UINTMAX_MAX) {
+		if (high == SINT_MAX(off_t)) {
 			errno = EFBIG;
 			return -1;
 		}
 
 		low = high;
 
-		if (high >= UINTMAX_MAX/2)
-			high = UINTMAX_MAX;
+		if (high >= SINT_MAX(off_t)/2)
+			high = SINT_MAX(off_t);
 		else
 			high *= 2;
 	}
 
 	while (low < high - 1)
 	{
-		uintmax_t mid = (low + high) / 2;
+		off_t mid = (low + high) / 2;
 
 		if (blkdev_valid_offset (fd, mid))
 			low = mid;
