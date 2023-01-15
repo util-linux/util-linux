@@ -342,12 +342,12 @@ static void tcfinal(struct console *con)
 static void alrm_handler(int sig __attribute__((unused)))
 {
 	/* Timeout expired */
-	alarm_rised++;
+	alarm_rised = 1;
 }
 
 static void chld_handler(int sig __attribute__((unused)))
 {
-	sigchild++;
+	sigchild = 1;
 }
 
 static void mask_signal(int signal, void (*handler)(int),
