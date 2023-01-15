@@ -218,7 +218,7 @@ static void *files_by_ino;
  * The last signal we received. We store the signal here in order to be able
  * to break out of loops gracefully and to return from our nftw() handler.
  */
-static int last_signal;
+static volatile sig_atomic_t last_signal;
 
 
 #define is_log_enabled(_level)  (quiet == 0 && (_level) <= (unsigned int)opts.verbosity)
