@@ -149,7 +149,7 @@ static FILE *report_stats_file;
 static int num_running;
 static int max_running;
 
-static volatile int cancel_requested;
+static volatile sig_atomic_t cancel_requested;
 static int kill_sent;
 static char *fstype;
 static struct fsck_instance *instance_list;
