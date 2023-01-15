@@ -1422,7 +1422,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 static void signal_cancel(int sig __attribute__((__unused__)))
 {
-	cancel_requested++;
+	cancel_requested = 1;
 }
 
 static void parse_argv(int argc, char *argv[])
