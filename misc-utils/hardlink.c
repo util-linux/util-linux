@@ -1380,7 +1380,8 @@ static void sighandler(int i)
 	if (last_signal != SIGINT)
 		last_signal = i;
 	if (i == SIGINT)
-		putchar('\n');
+		/* can't use stdio on signal handler */
+		ignore_result(write(STDOUT_FILENO, "\n", sizeof("\n")-1));
 }
 
 int main(int argc, char *argv[])
