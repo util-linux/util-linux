@@ -219,7 +219,7 @@ static my_sighandler_t my_sigset(int sig, my_sighandler_t disp)
 /* Quit pg. */
 static void __attribute__((__noreturn__)) quit(int status)
 {
-	exit(status < 0100 ? status : 077);
+	_exit(status < 0100 ? status : 077);
 }
 
 /* Usage message and similar routines. */
