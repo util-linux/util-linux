@@ -5,7 +5,7 @@
 
 extern struct libmnt_cache *mntcache;
 
-extern struct libmnt_table *get_fstab(void);
+extern struct libmnt_table *get_fstab(const char *filename);
 extern struct libmnt_table *get_swaps(void);
 extern void free_tables(void);
 

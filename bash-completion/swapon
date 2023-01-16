@@ -59,6 +59,7 @@ _swapon_module()
 				--discard
 				--ifexists
 				--fixpgsz
+				--fstab
 				--priority
 				--summary
 				--show

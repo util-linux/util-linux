@@ -735,9 +735,9 @@ static int parse_options(struct swap_prop *props, const char *options)
 }
 
 
-static int swapon_all(struct swapon_ctl *ctl)
+static int swapon_all(struct swapon_ctl *ctl, const char *filename)
 {
-	struct libmnt_table *tb = get_fstab();
+	struct libmnt_table *tb = get_fstab(filename);
 	struct libmnt_iter *itr;
 	struct libmnt_fs *fs;
 	int status = 0;
@@ -817,6 +817,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -o, --options <list>     comma-separated list of swap options\n"), out);
 	fputs(_(" -p, --priority <prio>    specify the priority of the swap device\n"), out);
 	fputs(_(" -s, --summary            display summary about used swap devices (DEPRECATED)\n"), out);
+	fputs(_(" -T, --fstab <path>       alternative file to /etc/fstab\n"), out);
 	fputs(_("     --show[=<columns>]   display summary in definable table\n"), out);
 	fputs(_("     --noheadings         don't print table heading (with --show)\n"), out);
 	fputs(_("     --raw                use the raw output format (with --show)\n"), out);
@@ -853,7 +854,7 @@ int main(int argc, char *argv[])
 {
 	int status = 0, c;
 	size_t i;
-	char *options = NULL;
+	char *options = NULL, *fstab_filename = NULL;
 
 	enum {
 		BYTES_OPTION = CHAR_MAX + 1,
@@ -879,6 +880,7 @@ int main(int argc, char *argv[])
 		{ "noheadings", no_argument,       NULL, NOHEADINGS_OPTION },
 		{ "raw",        no_argument,       NULL, RAW_OPTION        },
 		{ "bytes",      no_argument,       NULL, BYTES_OPTION      },
+		{ "fstab",      required_argument, NULL, 'T'               },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -904,7 +906,7 @@ int main(int argc, char *argv[])
 	mnt_init_debug(0);
 	mntcache = mnt_new_cache();
 
-	while ((c = getopt_long(argc, argv, "ahd::efo:p:svVL:U:",
+	while ((c = getopt_long(argc, argv, "ahd::efo:p:svVL:U:T:",
 				long_opts, NULL)) != -1) {
 
 		err_exclusive_options(c, long_opts, excl, excl_st);
@@ -925,6 +927,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'U':
 			add_uuid(optarg);
+			break;
+		case 'T':
+			fstab_filename = optarg;
 			break;
 		case 'd':
 			ctl.props.discard |= SWAP_FLAG_DISCARD;
@@ -1008,7 +1013,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (ctl.all)
-		status |= swapon_all(&ctl);
+		status |= swapon_all(&ctl, fstab_filename);
 
 	if (options)
 		parse_options(&ctl.props, options);

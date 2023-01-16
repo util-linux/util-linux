@@ -192,7 +192,7 @@ static int swapoff_all(void)
 	 * already, so errors are not bad.  Doing swapoff -a twice should not
 	 * give error messages.
 	 */
-	tb = get_fstab();
+	tb = get_fstab(NULL);
 	mnt_reset_iter(itr, MNT_ITER_FORWARD);
 
 	while (tb && mnt_table_find_next_fs(tb, itr, match_swap, NULL, &fs) == 0) {

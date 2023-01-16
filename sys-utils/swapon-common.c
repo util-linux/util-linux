@@ -20,7 +20,7 @@ static int table_parser_errcb(struct libmnt_table *tb __attribute__((__unused__)
 	return 1;
 }
 
-struct libmnt_table *get_fstab(void)
+struct libmnt_table *get_fstab(const char *filename)
 {
 	if (!fstab) {
 		fstab = mnt_new_table();
@@ -28,7 +28,7 @@ struct libmnt_table *get_fstab(void)
 			return NULL;
 		mnt_table_set_parser_errcb(fstab, table_parser_errcb);
 		mnt_table_set_cache(fstab, mntcache);
-		if (mnt_table_parse_fstab(fstab, NULL) != 0)
+		if (mnt_table_parse_fstab(fstab, filename) != 0)
 			return NULL;
 	}
 
