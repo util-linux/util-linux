@@ -35,6 +35,7 @@
 #include "blkidP.h"
 #include "pathnames.h"
 #include "sysfs.h"
+#include "strutils.h"
 
 static char *blkid_strconcat(const char *a, const char *b, const char *c)
 {
@@ -52,16 +53,13 @@ static char *blkid_strconcat(const char *a, const char *b, const char *c)
 	if (!res)
 		return NULL;
 	if (al) {
-		memcpy(p, a, al);
-		p += al;
+		p = mempcpy(p, a, al);
 	}
 	if (bl) {
-		memcpy(p, b, bl);
-		p += bl;
+		p = mempcpy(p, b, bl);
 	}
 	if (cl) {
-		memcpy(p, c, cl);
-		p += cl;
+		p = mempcpy(p, c, cl);
 	}
 	*p = '\0';
 	return res;

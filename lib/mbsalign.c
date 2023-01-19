@@ -305,8 +305,7 @@ char *mbs_invalid_encode_to_buffer(const char *s, size_t *width, char *buf)
 			r += 4;
 			*width += 4;
 		} else {
-			memcpy(r, p, len);
-			r += len;
+			r = mempcpy(r, p, len);
 			*width += wcwidth(wc);
 		}
 		p += len;

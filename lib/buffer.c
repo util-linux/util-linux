@@ -6,6 +6,7 @@
  */
 #include "buffer.h"
 #include "mbsalign.h"
+#include "strutils.h"
 
 void ul_buffer_reset_data(struct ul_buffer *buf)
 {
@@ -147,8 +148,7 @@ int ul_buffer_append_data(struct ul_buffer *buf, const char *data, size_t sz)
 	if (!buf->end)
 		return -EINVAL;	/* make static analyzers happy */
 
-	memcpy(buf->end, data, sz);
-	buf->end += sz;
+	buf->end = mempcpy(buf->end, data, sz);
 	*buf->end = '\0';	/* make sure it's terminated */
 	return 0;
 }

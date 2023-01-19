@@ -618,13 +618,11 @@ static char *replace_u(char *str, char *username)
 
 		if (p != str) {
 			/* copy chars before \u */
-			memcpy(tp, str, p - str);
-			tp += p - str;
+			tp = mempcpy(tp, str, p - str);
 		}
 		if (usz) {
 			/* copy username */
-			memcpy(tp, username, usz);
-			tp += usz;
+			tp = mempcpy(tp, username, usz);
 		}
 		if (*(p + 2))
 			/* copy chars after \u + \0 */
@@ -2972,8 +2970,7 @@ static ssize_t append(char *dest, size_t len, const char  *sep, const char *src)
 
 	p = dest + dsz;
 	if (ssz) {
-		memcpy(p, sep, ssz);
-		p += ssz;
+		p = mempcpy(p, sep, ssz);
 	}
 	memcpy(p, src, sz);
 	*(p + sz) = '\0';
