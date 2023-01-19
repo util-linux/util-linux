@@ -403,12 +403,10 @@ static int append_str(char **res, size_t *sz, const char *a, const char *b)
 	str += *sz;
 
 	if (a) {
-		memcpy(str, a, asz);
-		str += asz;
+		str = mempcpy(str, a, asz);
 	}
 	if (b) {
-		memcpy(str, b, bsz);
-		str += bsz;
+		str = mempcpy(str, b, bsz);
 	}
 	*str = '\0';
 	*sz = len;
