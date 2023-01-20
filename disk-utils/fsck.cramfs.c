@@ -148,10 +148,10 @@ static int get_superblock_endianness(uint32_t magic)
 	return -1;
 }
 
-static void test_super(int *start, size_t * length)
+static void test_super(int *start)
 {
 	struct stat st;
-
+	unsigned long long length;
 
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)
@@ -162,18 +162,16 @@ static void test_super(int *start, size_t * length)
 		err(FSCK_EX_ERROR, _("stat of %s failed"), filename);
 
 	if (S_ISBLK(st.st_mode)) {
-		unsigned long long bytes;
-		if (blkdev_get_size(fd, &bytes))
+		if (blkdev_get_size(fd, &length))
 			err(FSCK_EX_ERROR,
 			    _("ioctl failed: unable to determine device size: %s"),
 			    filename);
-		*length = bytes;
 	} else if (S_ISREG(st.st_mode))
-		*length = st.st_size;
+		length = st.st_size;
 	else
 		errx(FSCK_EX_ERROR, _("not a block device or file: %s"), filename);
 
-	if (*length < sizeof(struct cramfs_super))
+	if (length < sizeof(struct cramfs_super))
 		errx(FSCK_EX_UNCORRECTED, _("file length too short"));
 
 	/* find superblock */
@@ -181,7 +179,7 @@ static void test_super(int *start, size_t * length)
 		err(FSCK_EX_ERROR, _("cannot read %s"), filename);
 	if (get_superblock_endianness(super.magic) != -1)
 		*start = 0;
-	else if (*length >= (PAD_SIZE + sizeof(super))) {
+	else if (length >= (PAD_SIZE + sizeof(super))) {
 		if (lseek(fd, PAD_SIZE, SEEK_SET) == (off_t) -1)
 			err(FSCK_EX_ERROR, _("seek on %s failed"), filename);
 		if (read(fd, &super, sizeof(super)) != sizeof(super))
@@ -209,9 +207,9 @@ static void test_super(int *start, size_t * length)
 	if (super.flags & CRAMFS_FLAG_FSID_VERSION_2) {
 		if (super.fsid.files == 0)
 			errx(FSCK_EX_UNCORRECTED, _("zero file count"));
-		if (*length < super.size)
+		if (length < super.size)
 			errx(FSCK_EX_UNCORRECTED, _("file length too short"));
-		else if (*length > super.size)
+		else if (length > super.size)
 			warnx(_("file extends past end of filesystem"));
 	} else
 		warnx(_("old cramfs format"));
@@ -654,7 +652,6 @@ int main(int argc, char **argv)
 {
 	int c;			/* for getopt */
 	int start = 0;
-	size_t length = 0;
 
 	static const struct option longopts[] = {
 		{"verbose",   no_argument,       NULL, 'v'},
@@ -705,7 +702,7 @@ int main(int argc, char **argv)
 	}
 	filename = argv[optind];
 
-	test_super(&start, &length);
+	test_super(&start);
 	test_crc(start);
 
 	if (opt_extract) {
