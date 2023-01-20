@@ -324,10 +324,8 @@ static int parse_timestamp_reference(time_t x, const char *t, usec_t *usec)
 
 	tm = copy;
 	k = strptime(t, "%Y%m%d%H%M%S", &tm);
-	if (k && *k == 0) {
-		tm.tm_sec = 0;
+	if (k && *k == 0)
 		goto finish;
-	}
 
 	return -EINVAL;
 
@@ -600,6 +598,7 @@ static int run_unittest_timestamp(void)
 		{ "tomorrow"           , 1674259200000000 },
 		{ "+5min"              , 1674180727000000 },
 		{ "-5days"             , 1673748427000000 },
+		{ "20120922163422"     , 1348331662000000 },
 	};
 
 	if (unsetenv("TZ"))
