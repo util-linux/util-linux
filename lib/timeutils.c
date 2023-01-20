@@ -580,14 +580,63 @@ time_t timegm(struct tm *tm)
 
 #ifdef TEST_PROGRAM_TIMEUTILS
 
+static int run_unittest_timestamp(void)
+{
+	int rc = EXIT_SUCCESS;
+	time_t reference = 1674180427;
+	static const struct testcase {
+		const char * const input;
+		usec_t expected;
+	} testcases[] = {
+		{ "2012-09-22 16:34:22", 1348331662000000 },
+		{ "@1348331662"        , 1348331662000000 },
+		{ "2012-09-22 16:34"   , 1348331640000000 },
+		{ "2012-09-22"         , 1348272000000000 },
+		{ "16:34:22"           , 1674232462000000 },
+		{ "16:34"              , 1674232440000000 },
+		{ "now"                , 1674180427000000 },
+		{ "yesterday"          , 1674086400000000 },
+		{ "today"              , 1674172800000000 },
+		{ "tomorrow"           , 1674259200000000 },
+		{ "+5min"              , 1674180727000000 },
+		{ "-5days"             , 1673748427000000 },
+	};
+
+	if (unsetenv("TZ"))
+		rc = EXIT_FAILURE;
+	tzset();
+
+	for (size_t i = 0; i < ARRAY_SIZE(testcases); i++) {
+		struct testcase t = testcases[i];
+		usec_t result;
+		int r = parse_timestamp_reference(reference, t.input, &result);
+		if (r) {
+			fprintf(stderr, "Could not parse '%s'\n", t.input);
+			rc = EXIT_FAILURE;
+		}
+
+		if (result != t.expected) {
+			fprintf(stderr, "#%02zu %-25s: %"PRId64" != %"PRId64"\n",
+				i, t.input, result, t.expected);
+			rc = EXIT_FAILURE;
+		}
+	}
+
+	return rc;
+}
+
 int main(int argc, char *argv[])
 {
 	struct timeval tv = { 0 };
 	char buf[ISO_BUFSIZ];
 
 	if (argc < 2) {
-		fprintf(stderr, "usage: %s [<time> [<usec>]] | [--timestamp <str>]\n", argv[0]);
+		fprintf(stderr, "usage: %s [<time> [<usec>]] | [--timestamp <str>] | [--unittest-timestamp]\n", argv[0]);
 		exit(EXIT_FAILURE);
+	}
+
+	if (strcmp(argv[1], "--unittest-timestamp") == 0) {
+		return run_unittest_timestamp();
 	}
 
 	if (strcmp(argv[1], "--timestamp") == 0) {
