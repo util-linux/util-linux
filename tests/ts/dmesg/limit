@@ -23,7 +23,7 @@ ts_check_test_command "$TS_HELPER_DMESG"
 export TZ="GMT"
 export DMESG_TEST_BOOTIME="1234567890.123456"
 
-$TS_HELPER_DMESG --since @1234567892 --until @1234567991 -F $TS_SELF/input \
+$TS_HELPER_DMESG --since @1234567890.124 --until @1234567991 -F $TS_SELF/input \
 	>> $TS_OUTPUT 2> $TS_ERRLOG
 
 ts_finalize

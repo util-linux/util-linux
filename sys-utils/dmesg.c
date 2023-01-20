@@ -181,8 +181,8 @@ struct dmesg_control {
 	ssize_t		kmsg_first_read;/* initial read() return code */
 	char		kmsg_buf[BUFSIZ];/* buffer to read kmsg data */
 
-	time_t		since;		/* filter records by time */
-	time_t		until;		/* filter records by time */
+	usec_t		since;		/* filter records by time */
+	usec_t		until;		/* filter records by time */
 
 	/*
 	 * For the --file option we mmap whole file. The unnecessary (already
@@ -784,9 +784,11 @@ static int get_next_syslog_record(struct dmesg_control *ctl,
 	return 1;
 }
 
-static time_t record_time(struct dmesg_control *ctl, struct dmesg_record *rec)
+static usec_t record_time(struct dmesg_control *ctl, struct dmesg_record *rec)
 {
-	return ctl->boot_time.tv_sec + ctl->suspended_time / USEC_PER_SEC + rec->tv.tv_sec;
+	return timeval_to_usec(&ctl->boot_time) +
+		ctl->suspended_time +
+		timeval_to_usec(&rec->tv);
 }
 
 static int accept_record(struct dmesg_control *ctl, struct dmesg_record *rec)
@@ -842,7 +844,7 @@ static struct tm *record_localtime(struct dmesg_control *ctl,
 				   struct dmesg_record *rec,
 				   struct tm *tm)
 {
-	time_t t = record_time(ctl, rec);
+	time_t t = record_time(ctl, rec) / USEC_PER_SEC;
 	return localtime_r(&t, tm);
 }
 
@@ -1554,18 +1556,14 @@ int main(int argc, char *argv[])
 			break;
 		case OPT_SINCE:
 		{
-			usec_t p;
-			if (parse_timestamp(optarg, &p) < 0)
+			if (parse_timestamp(optarg, &ctl.since) < 0)
 				errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
-			ctl.since = (time_t) (p / 1000000);
 			break;
 		}
 		case OPT_UNTIL:
 		{
-			usec_t p;
-			if (parse_timestamp(optarg, &p) < 0)
+			if (parse_timestamp(optarg, &ctl.until) < 0)
 				errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
-			ctl.until = (time_t) (p / 1000000);
 			break;
 		}
 		case 'h':
