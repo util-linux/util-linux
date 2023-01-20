@@ -367,10 +367,10 @@ static void load_xinfo_from_proc_unix(ino_t netns_inode)
 		uint32_t type;
 		unsigned int st;
 		unsigned long inode;
-		char path[1 + UNIX_PATH_MAX +1];
 		struct unix_xinfo *ux;
+		char path[ sizeof_member(struct unix_xinfo, path) ] = { 0 };
 
-		memset(path, 0, sizeof(path));
+
 		if (sscanf(line, "%*x: %*x %*x %" SCNx64 " %x %x %lu %s",
 			   &flags, &type, &st, &inode, path) < 4)
 			continue;
@@ -378,7 +378,7 @@ static void load_xinfo_from_proc_unix(ino_t netns_inode)
 		if (inode == 0)
 			continue;
 
-		ux = xmalloc(sizeof(struct unix_xinfo));
+		ux = xcalloc(1, sizeof(struct unix_xinfo));
 		ux->sock.class = &unix_xinfo_class;
 		ux->sock.inode = (ino_t)inode;
 		ux->sock.netns_inode = netns_inode;
@@ -386,7 +386,7 @@ static void load_xinfo_from_proc_unix(ino_t netns_inode)
 		ux->acceptcon = !!flags;
 		ux->type = type;
 		ux->st = st;
-		strcpy(ux->path, path);
+		xstrncpy(ux->path, path, sizeof(ux->path));
 
 		add_sock_info((struct sock_xinfo *)ux);
 	}
@@ -658,7 +658,7 @@ static void load_xinfo_from_proc_inet_L3(ino_t netns_inode, const char *proc_fil
 		if (inode == 0)
 			continue;
 
-		tcp = xmalloc(sizeof(struct tcp_xinfo));
+		tcp = xcalloc(1, sizeof(struct tcp_xinfo));
 		inet = (struct inet_xinfo *)tcp;
 		sock = (struct sock_xinfo *)inet;
 		sock->class = class;
