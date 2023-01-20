@@ -147,7 +147,7 @@ static int parse_sec(const char *t, usec_t *usec)
 	return 0;
 }
 
-int parse_timestamp(const char *t, usec_t *usec)
+static int parse_timestamp_reference(time_t x, const char *t, usec_t *usec)
 {
 	static const struct {
 		const char *name;
@@ -171,7 +171,6 @@ int parse_timestamp(const char *t, usec_t *usec)
 
 	const char *k;
 	struct tm tm, copy;
-	time_t x;
 	usec_t plus = 0, minus = 0, ret;
 	int r, weekday = -1;
 	unsigned i;
@@ -198,7 +197,6 @@ int parse_timestamp(const char *t, usec_t *usec)
 	assert(t);
 	assert(usec);
 
-	x = time(NULL);
 	localtime_r(&x, &tm);
 	tm.tm_isdst = -1;
 
@@ -352,6 +350,11 @@ int parse_timestamp(const char *t, usec_t *usec)
 	*usec = ret;
 
 	return 0;
+}
+
+int parse_timestamp(const char *t, usec_t *usec)
+{
+	return parse_timestamp_reference(time(NULL), t, usec);
 }
 
 /* Returns the difference in seconds between its argument and GMT. If if TP is
