@@ -193,6 +193,11 @@ enum {
 	WEEK_NUM_US=0x200,
 };
 
+enum {
+	COLUMNS_MAX_THREE = -1,
+	COLUMNS_AUTO = -2,
+};
+
 /* utf-8 can have up to 6 bytes per char; and an extra byte for ending \0 */
 static char day_headings[(WEEK_LEN + 1) * 6 + 1];
 
@@ -281,7 +286,7 @@ int main(int argc, char **argv)
 	struct tm local_time;
 	char *term;
 	time_t now;
-	int ch = 0, yflag = 0, Yflag = 0;
+	int ch = 0, yflag = 0, Yflag = 0, cols = COLUMNS_MAX_THREE;
 
 	static struct cal_control ctl = {
 		.reform_year = DEFAULT_REFORM_YEAR,
@@ -318,6 +323,7 @@ int main(int argc, char **argv)
 		{"twelve", no_argument, NULL, 'Y'},
 		{"help", no_argument, NULL, 'h'},
 		{"vertical", no_argument, NULL,'v'},
+		{"column", required_argument, NULL,'c'},
 		{NULL, 0, NULL, 0}
 	};
 
@@ -376,7 +382,7 @@ int main(int argc, char **argv)
 		ctl.weekstart = (wfd + *nl_langinfo(_NL_TIME_FIRST_WEEKDAY) - 1) % DAYS_IN_WEEK;
 	}
 #endif
-	while ((ch = getopt_long(argc, argv, "13mjn:sSywYvVh", longopts, NULL)) != -1) {
+	while ((ch = getopt_long(argc, argv, "13mjn:sSywYvc:Vh", longopts, NULL)) != -1) {
 
 		err_exclusive_options(ch, longopts, excl, excl_st);
 
@@ -434,6 +440,12 @@ int main(int argc, char **argv)
 			break;
 		case 'v':
 			ctl.vertical = 1;
+			break;
+		case 'c':
+			if (strcmp(optarg, "auto") == 0)
+				cols = COLUMNS_AUTO;
+			else
+				cols = strtosize_or_err(optarg, "foo");
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
@@ -589,7 +601,9 @@ int main(int argc, char **argv)
 	if (ctl.num_months > 1 && ctl.months_in_row == 0) {
 		ctl.months_in_row = MONTHS_IN_YEAR_ROW;		/* default */
 
-		if (isatty(STDOUT_FILENO)) {
+		if (cols > 0)
+			ctl.months_in_row = cols;
+		else if (isatty(STDOUT_FILENO)) {
 			int w, mw, extra, new_n;
 
 			w = get_terminal_width(80);
@@ -601,8 +615,15 @@ int main(int argc, char **argv)
 			extra = ((w / mw) - 1) * ctl.gutter_width;
 			new_n = (w - extra) / mw;
 
-			if (new_n < MONTHS_IN_YEAR_ROW)
+			switch (cols) {
+			case COLUMNS_MAX_THREE:
+				if (new_n < MONTHS_IN_YEAR_ROW)
+					ctl.months_in_row = new_n > 0 ? new_n : 1;
+				break;
+			case COLUMNS_AUTO:
 				ctl.months_in_row = new_n > 0 ? new_n : 1;
+				break;
+			}
 		}
 	} else if (!ctl.months_in_row)
 		ctl.months_in_row = 1;
@@ -1263,6 +1284,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -Y, --twelve          show the next twelve months\n"), out);
 	fputs(_(" -w, --week[=<num>]    show US or ISO-8601 week numbers\n"), out);
 	fputs(_(" -v, --vertical        show day vertically instead of line\n"), out);
+	fputs(_(" -c, --columns <width> amount of columns to use\n"), out);
 	fprintf(out,
 	      _("     --color[=<when>]  colorize messages (%s, %s or %s)\n"), "auto", "always", "never");
 	fprintf(out,
