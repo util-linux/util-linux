@@ -1055,10 +1055,10 @@ int main(int argc, char **argv)
 			ctl.until = (time_t) (p / 1000000);
 			break;
 		case 'w':
-			if (ctl.name_len < sizeof(((struct utmpx *) 0)->ut_user))
-				ctl.name_len = sizeof(((struct utmpx *) 0)->ut_user);
-			if (ctl.domain_len < sizeof(((struct utmpx *) 0)->ut_host))
-				ctl.domain_len = sizeof(((struct utmpx *) 0)->ut_host);
+			if (ctl.name_len < sizeof_member(struct utmpx, ut_user))
+				ctl.name_len = sizeof_member(struct utmpx, ut_user);
+			if (ctl.domain_len < sizeof_member(struct utmpx, ut_host))
+				ctl.domain_len = sizeof_member(struct utmpx, ut_host);
 			break;
 		case '0': case '1': case '2': case '3': case '4':
 		case '5': case '6': case '7': case '8': case '9':
