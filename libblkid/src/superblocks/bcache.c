@@ -184,7 +184,7 @@ static void probe_bcachefs_sb_fields(blkid_probe pr, const struct bcachefs_super
 	while (1) {
 		struct bcachefs_sb_field *field = (struct bcachefs_sb_field *) field_addr;
 		uint64_t field_size;
-		int32_t type;
+		uint32_t type;
 
 		if ((unsigned char *) field + sizeof(*field) > sb_end)
 			break;
