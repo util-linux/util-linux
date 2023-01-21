@@ -725,7 +725,7 @@ int main(int argc, char **argv)
 
 	parse_options(argc, argv, &uuidd_cxt, &uuidd_opts);
 
-	if (strlen(uuidd_opts.socket_path) >= sizeof(((struct sockaddr_un *)0)->sun_path))
+	if (strlen(uuidd_opts.socket_path) >= sizeof_member(struct sockaddr_un, sun_path))
 		errx(EXIT_FAILURE, _("socket name too long: %s"), uuidd_opts.socket_path);
 
 	if (!uuidd_opts.no_pid && !uuidd_opts.pidfile_path)
