@@ -256,8 +256,8 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!pvd)
 		return errno ? -errno : 1;
 
-	uint16_t logical_block_size = isonum_723(pvd->logical_block_size, true);
-	uint32_t space_size = isonum_733(pvd->space_size, true);
+	uint16_t logical_block_size = isonum_723(pvd->logical_block_size, false);
+	uint32_t space_size = isonum_733(pvd->space_size, false);
 
 	blkid_probe_set_fsblocksize(pr, logical_block_size);
 	blkid_probe_set_block_size(pr, logical_block_size);
