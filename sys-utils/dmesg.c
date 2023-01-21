@@ -170,7 +170,7 @@ struct dmesg_control {
 	struct timeval	lasttime;	/* last printed timestamp */
 	struct tm	lasttm;		/* last localtime */
 	struct timeval	boot_time;	/* system boot time */
-	time_t		suspended_time;	/* time spent in suspended state */
+	usec_t		suspended_time;	/* time spent in suspended state */
 
 	int		action;		/* SYSLOG_ACTION_* */
 	int		method;		/* DMESG_METHOD_* */
@@ -786,7 +786,7 @@ static int get_next_syslog_record(struct dmesg_control *ctl,
 
 static time_t record_time(struct dmesg_control *ctl, struct dmesg_record *rec)
 {
-	return ctl->boot_time.tv_sec + ctl->suspended_time + rec->tv.tv_sec;
+	return ctl->boot_time.tv_sec + ctl->suspended_time / USEC_PER_SEC + rec->tv.tv_sec;
 }
 
 static int accept_record(struct dmesg_control *ctl, struct dmesg_record *rec)
@@ -877,7 +877,7 @@ static char *iso_8601_time(struct dmesg_control *ctl, struct dmesg_record *rec,
 			   char *buf, size_t bufsz)
 {
 	struct timeval tv = {
-		.tv_sec = ctl->boot_time.tv_sec + ctl->suspended_time + rec->tv.tv_sec,
+		.tv_sec = ctl->boot_time.tv_sec + ctl->suspended_time / USEC_PER_SEC + rec->tv.tv_sec,
 		.tv_usec = rec->tv.tv_usec
 	};
 
@@ -1355,7 +1355,7 @@ static inline int dmesg_get_boot_time(struct timeval *tv)
 	return get_boot_time(tv);
 }
 
-static inline time_t dmesg_get_suspended_time(void)
+static inline usec_t dmesg_get_suspended_time(void)
 {
 	if (getenv("DMESG_TEST_BOOTIME"))
 		return 0;
