@@ -52,15 +52,12 @@ static char *blkid_strconcat(const char *a, const char *b, const char *c)
 	p = res = malloc(len + 1);
 	if (!res)
 		return NULL;
-	if (al) {
+	if (al)
 		p = mempcpy(p, a, al);
-	}
-	if (bl) {
+	if (bl)
 		p = mempcpy(p, b, bl);
-	}
-	if (cl) {
+	if (cl)
 		p = mempcpy(p, c, cl);
-	}
 	*p = '\0';
 	return res;
 }

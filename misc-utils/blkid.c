@@ -402,12 +402,11 @@ static int append_str(char **res, size_t *sz, const char *a, const char *b)
 	*res = str = xrealloc(str, len + 1);
 	str += *sz;
 
-	if (a) {
+	if (a)
 		str = mempcpy(str, a, asz);
-	}
-	if (b) {
+	if (b)
 		str = mempcpy(str, b, bsz);
-	}
+
 	*str = '\0';
 	*sz = len;
 	return 0;
