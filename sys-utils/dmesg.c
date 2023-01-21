@@ -878,10 +878,10 @@ static char *short_ctime(struct tm *tm, char *buf, size_t bufsiz)
 static char *iso_8601_time(struct dmesg_control *ctl, struct dmesg_record *rec,
 			   char *buf, size_t bufsz)
 {
-	struct timeval tv = {
-		.tv_sec = ctl->boot_time.tv_sec + ctl->suspended_time / USEC_PER_SEC + rec->tv.tv_sec,
-		.tv_usec = rec->tv.tv_usec
-	};
+	struct timeval tv = usec_to_timeval(
+		timeval_to_usec(&ctl->boot_time) + ctl->suspended_time +
+		timeval_to_usec(&rec->tv)
+	);
 
 	if (strtimeval_iso(&tv,	ISO_TIMESTAMP_COMMA_T, buf, bufsz) != 0)
 		return NULL;
