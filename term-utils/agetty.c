@@ -616,14 +616,13 @@ static char *replace_u(char *str, char *username)
 		if (!tp)
 			log_err(_("failed to allocate memory: %m"));
 
-		if (p != str) {
+		if (p != str)
 			/* copy chars before \u */
 			tp = mempcpy(tp, str, p - str);
-		}
-		if (usz) {
+		if (usz)
 			/* copy username */
 			tp = mempcpy(tp, username, usz);
-		}
+
 		if (*(p + 2))
 			/* copy chars after \u + \0 */
 			memcpy(tp, p + 2, sz - (p - str) - 1);
