@@ -183,10 +183,19 @@ static void probe_bcachefs_sb_fields(blkid_probe pr, const struct bcachefs_super
 
 	while (1) {
 		struct bcachefs_sb_field *field = (struct bcachefs_sb_field *) field_addr;
+		uint64_t field_size;
 		int32_t type;
 
 		if ((unsigned char *) field + sizeof(*field) > sb_end)
-			return;
+			break;
+
+		field_size = BYTES(field);
+
+		if (field_size < sizeof(*field))
+			break;
+
+		if ((unsigned char *) field + field_size > sb_end)
+			break;
 
 		type = le32_to_cpu(field->type);
 		if (!type)
