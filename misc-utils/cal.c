@@ -76,6 +76,7 @@
 #include "optutils.h"
 #include "timeutils.h"
 #include "ttyutils.h"
+#include "xalloc.h"
 
 #define DOY_MONTH_WIDTH	27	/* -j month width */
 #define DOM_MONTH_WIDTH	20	/* month width */
@@ -965,7 +966,7 @@ cal_vert_output_months(struct cal_month *month, const struct cal_control *ctl)
 
 static void monthly(const struct cal_control *ctl)
 {
-	struct cal_month m1,m2,m3, *m;
+	struct cal_month *m, *ms;
 	int i, rows, month = ctl->req.start_month ? ctl->req.start_month : ctl->req.month;
 	int32_t year = ctl->req.year;
 
@@ -983,23 +984,18 @@ static void monthly(const struct cal_control *ctl)
 			month = new_month;
 	}
 
-	m1.next = (ctl->months_in_row > 1) ? &m2 : NULL;
-	m2.next = (ctl->months_in_row > 2) ? &m3 : NULL;
-	m3.next = NULL;
+	ms = xcalloc(ctl->months_in_row, sizeof(*ms));
+
+	for (i = 0; i < ctl->months_in_row - 1; i++)
+		ms[i].next = &ms[i + 1];
 
 	rows = (ctl->num_months - 1) / ctl->months_in_row;
 	for (i = 0; i < rows + 1 ; i++){
-		if (i == rows){
-			switch (ctl->num_months % ctl->months_in_row){
-				case 1:
-					m1.next = NULL;
-					/* fallthrough */
-				case 2:
-					m2.next = NULL;
-					/* fallthrough */
-			}
-		}
-		for (m = &m1; m; m = m->next){
+		if (i == rows)
+			for (int n = 0; n < ctl->num_months % ctl->months_in_row; n++)
+				ms[n].next = NULL;
+
+		for (m = ms; m; m = m->next){
 			m->month = month++;
 			m->year = year;
 			if (MONTHS_IN_YEAR < month) {
@@ -1012,13 +1008,14 @@ static void monthly(const struct cal_control *ctl)
 			if (i > 0)
 				fputc('\n', stdout);		/* Add a line between row */
 
-			cal_vert_output_header(&m1, ctl);
-			cal_vert_output_months(&m1, ctl);
+			cal_vert_output_header(ms, ctl);
+			cal_vert_output_months(ms, ctl);
 		} else {
-			cal_output_header(&m1, ctl);
-			cal_output_months(&m1, ctl);
+			cal_output_header(ms, ctl);
+			cal_output_months(ms, ctl);
 		}
 	}
+	free(ms);
 }
 
 static void yearly(const struct cal_control *ctl)
