@@ -74,7 +74,7 @@ struct boot_record {
 #define ISO_VD_END			0xff
 #define ISO_VD_MAX			16
 /* maximal string field size used anywhere in ISO; update if necessary */
-#define ISO_MAX_FIELDSIZ  sizeof(((struct iso_volume_descriptor  *)0)->volume_set_id)
+#define ISO_MAX_FIELDSIZ  sizeof_member(struct iso_volume_descriptor, volume_set_id)
 
 struct high_sierra_volume_descriptor {
 	unsigned char	foo[8];
