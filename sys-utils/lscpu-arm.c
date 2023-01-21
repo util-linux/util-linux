@@ -145,6 +145,7 @@ static const struct id_part qcom_part[] = {
 
 static const struct id_part samsung_part[] = {
     { 0x001, "exynos-m1" },
+    { 0x002, "exynos-m3" },
     { -1, "unknown" },
 };
 
