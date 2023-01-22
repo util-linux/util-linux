@@ -41,7 +41,7 @@ struct type_string {
 };
 
 /* This array should keep align with enum pr_type of linux/types.h */
-static struct type_string pr_type[] = {
+static const struct type_string pr_type[] = {
 	{PR_WRITE_EXCLUSIVE,           "write-exclusive",
 	"  * write-exclusive: Only the initiator that owns the reservation can\n"
 	"    write to the device. Any initiator can read from the device.\n"},
@@ -72,7 +72,7 @@ static struct type_string pr_type[] = {
 	"    a reservation holder if you want to use this type.\n"}
 };
 
-static struct type_string pr_command[] = {
+static const struct type_string pr_command[] = {
 	{IOC_PR_REGISTER,      "register",
 	"  * register: This command registers a new reservation if the key argument\n"
 	"    is non-null. If no existing reservation exists oldkey must be zero, if\n"
@@ -105,14 +105,14 @@ static struct type_string pr_command[] = {
 	"    key registered with the device and drops any existing reservation.\n"},
 };
 
-static struct type_string pr_flag[] = {
+static const struct type_string pr_flag[] = {
 	{PR_FL_IGNORE_KEY, "ignore-key",
 	"  * ignore-key: Ignore the existing reservation key.  This is commonly\n"
 	"    supported for register command, and some implementation may support\n"
 	"    the flag for reserve command.\n"}
 };
 
-static void print_type(FILE *out, struct type_string *ts, size_t nmem)
+static void print_type(FILE *out, const struct type_string *ts, size_t nmem)
 {
 	size_t i;
 
@@ -122,7 +122,7 @@ static void print_type(FILE *out, struct type_string *ts, size_t nmem)
 }
 
 
-static int parse_type_by_str(struct type_string *ts, int nmem, char *pattern)
+static int parse_type_by_str(const struct type_string *ts, int nmem, char *pattern)
 {
 	int i;
 
