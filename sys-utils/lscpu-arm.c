@@ -118,6 +118,14 @@ static const struct id_part cavium_part[] = {
     { 0x0a2, "ThunderX-81XX" },
     { 0x0a3, "ThunderX-83XX" },
     { 0x0af, "ThunderX2-99xx" },
+    { 0x0b0, "OcteonTX2" },
+    { 0x0b1, "OcteonTX2-98XX" },
+    { 0x0b2, "OcteonTX2-96XX" },
+    { 0x0b3, "OcteonTX2-95XX" },
+    { 0x0b4, "OcteonTX2-95XXN" },
+    { 0x0b5, "OcteonTX2-95XXMM" },
+    { 0x0b6, "OcteonTX2-95XXO" },
+    { 0x0b8, "ThunderX3T110" },
     { -1, "unknown" },
 };
 
