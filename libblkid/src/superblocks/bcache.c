@@ -147,7 +147,7 @@ static int probe_bcache (blkid_probe pr, const struct blkid_idmag *mag)
 static unsigned char *member_field_end(
 		const struct bcachefs_sb_field_members *field, size_t idx)
 {
-	return (unsigned char *) &field->members + (sizeof(*field->members) * idx);
+	return (unsigned char *) &field->members + (sizeof(*field->members) * (idx + 1));
 }
 
 static void probe_bcachefs_sb_members(blkid_probe pr,
@@ -162,7 +162,7 @@ static void probe_bcachefs_sb_members(blkid_probe pr,
 	uint8_t i;
 
 	if ((unsigned char *) field + BYTES(field)
-			!= member_field_end(members, bcs->nr_devices))
+			!= member_field_end(members, bcs->nr_devices - 1))
 		return;
 
 	if (member_field_end(members, dev_idx) > sb_end)
