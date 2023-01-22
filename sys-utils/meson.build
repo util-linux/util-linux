@@ -74,6 +74,10 @@ blkzone_sources = files(
   'blkzone.c',
 )
 
+blkpr_sources = files(
+  'blkpr.c',
+)
+
 ldattach_sources = files(
   'ldattach.c',
 )

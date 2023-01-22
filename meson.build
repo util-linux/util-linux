@@ -1436,6 +1436,16 @@ manadocs += ['sys-utils/blkzone.8.adoc']
 bashcompletions += ['blkzone']
 
 exe = executable(
+  'blkpr',
+  blkpr_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : sbindir,
+  install : true)
+exes += exe
+manadocs += ['sys-utils/blkpr.8.adoc']
+
+exe = executable(
   'ldattach',
   ldattach_sources,
   include_directories : includes,
