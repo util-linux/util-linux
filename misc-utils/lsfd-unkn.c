@@ -27,7 +27,7 @@
 
 struct unkn {
 	struct file file;
-	struct anon_ops *anon_ops;
+	const struct anon_ops *anon_ops;
 	void *anon_data;
 };
 
@@ -46,8 +46,8 @@ struct anon_ops {
 	int (*handle_fdinfo)(struct unkn *, const char *, const char *);
 };
 
-static struct anon_ops anon_generic_ops;
-static struct anon_ops anon_pidfd_ops;
+static const struct anon_ops anon_generic_ops;
+static const struct anon_ops anon_pidfd_ops;
 
 static char * anon_get_class(struct unkn *unkn)
 {
@@ -251,7 +251,7 @@ static bool anon_pidfd_fill_column(struct proc *proc  __attribute__((__unused__)
 	return false;
 }
 
-static struct anon_ops anon_pidfd_ops = {
+static const struct anon_ops anon_pidfd_ops = {
 	.class = "pidfd",
 	.get_name = anon_pidfd_get_name,
 	.fill_column = anon_pidfd_fill_column,
@@ -263,7 +263,7 @@ static struct anon_ops anon_pidfd_ops = {
 /*
  * generic (fallback implementation)
  */
-static struct anon_ops anon_generic_ops = {
+static const struct anon_ops anon_generic_ops = {
 	.class = NULL,
 	.get_name = NULL,
 	.fill_column = NULL,

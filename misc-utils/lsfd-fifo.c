@@ -104,9 +104,9 @@ static bool fifo_is_suitable_ipc(struct ipc *ipc, struct file *file)
 	return ((struct fifo_ipc *)ipc)->ino == file->stat.st_ino;
 }
 
-static struct ipc_class *fifo_get_ipc_class(struct file *file __attribute__((__unused__)))
+static const struct ipc_class *fifo_get_ipc_class(struct file *file __attribute__((__unused__)))
 {
-	static struct ipc_class fifo_ipc_class = {
+	static const struct ipc_class fifo_ipc_class = {
 		.get_hash = fifo_get_hash,
 		.is_suitable_ipc = fifo_is_suitable_ipc,
 		.free = NULL,

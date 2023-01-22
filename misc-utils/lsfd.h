@@ -168,7 +168,7 @@ struct file_class {
 	void (*attach_xinfo)(struct file *file);
 	void (*initialize_content)(struct file *file);
 	void (*free_content)(struct file *file);
-	struct ipc_class *(*get_ipc_class)(struct file *file);
+	const struct ipc_class *(*get_ipc_class)(struct file *file);
 };
 
 extern const struct file_class file_class, cdev_class, bdev_class, sock_class, unkn_class, fifo_class,

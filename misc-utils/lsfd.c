@@ -119,7 +119,7 @@ struct colinfo {
 };
 
 /* columns descriptions */
-static struct colinfo infos[] = {
+static const struct colinfo infos[] = {
 	[COL_AINODECLASS]
 		      = { "AINODECLASS",0,SCOLS_FL_RIGHT,SCOLS_JSON_STRING,
 		N_("class of anonymous inode") },
@@ -272,7 +272,7 @@ struct counter_spec {
 	const char *expr;
 };
 
-static struct counter_spec default_counter_specs[] = {
+static const struct counter_spec default_counter_specs[] = {
 	{
 		.name = N_("processes"),
 		.expr = "ASSOC == 'cwd'",
@@ -955,7 +955,7 @@ struct ipc *get_ipc(struct file *file)
 {
 	int slot;
 	struct list_head *e;
-	struct ipc_class *ipc_class;
+	const struct ipc_class *ipc_class;
 
 	if (!file->class->get_ipc_class)
 		return NULL;
@@ -1546,7 +1546,7 @@ static void free_counter_spec(struct counter_spec *counter_spec)
 	free(counter_spec);
 }
 
-static struct lsfd_counter *new_counter(struct counter_spec *spec, struct lsfd_control *ctl)
+static struct lsfd_counter *new_counter(const struct counter_spec *spec, struct lsfd_control *ctl)
 {
 	struct lsfd_filter *filter;
 
@@ -1581,7 +1581,7 @@ static struct lsfd_counter **new_default_counters(struct lsfd_control *ctl)
 
 	counters = xcalloc(len + 1, sizeof(struct lsfd_counter *));
 	for (i = 0; i < len; i++) {
-		struct counter_spec *spec = default_counter_specs + i;
+		const struct counter_spec *spec = default_counter_specs + i;
 		counters[i] = new_counter(spec, ctl);
 	}
 	assert(counters[len] == NULL);
@@ -1596,7 +1596,7 @@ static void dump_default_counter_specs(void)
 
 	puts("default counter specs:");
 	for (i = 0; i < len; i++) {
-		struct counter_spec *spec = default_counter_specs + i;
+		const struct counter_spec *spec = default_counter_specs + i;
 		printf("\t%s:%s\n", spec->name, spec->expr);
 	}
 }
