@@ -157,6 +157,7 @@ static const struct id_part samsung_part[] = {
     { 0x001, "exynos-m1" },
     { 0x002, "exynos-m3" },
     { 0x003, "exynos-m4" },
+    { 0x004, "exynos-m5" },
     { -1, "unknown" },
 };
 
