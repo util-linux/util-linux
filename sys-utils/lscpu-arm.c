@@ -218,6 +218,7 @@ static const struct id_part fujitsu_part[] = {
 
 static const struct id_part hisi_part[] = {
     { 0xd01, "Kunpeng-920" },	/* aka tsv110 */
+    { 0xd40, "Cortex-A76" },	/* HiSilicon uses this ID though advertises A76 */
     { -1, "unknown" },
 };
 
