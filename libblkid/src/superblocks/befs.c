@@ -502,6 +502,9 @@ static int probe_befs(blkid_probe pr, const struct blkid_idmag *mag)
 	    block_size != 1U << block_shift)
 		return BLKID_PROBE_NONE;
 
+	if (FS32_TO_CPU(bs->ag_shift, fs_le) > 64)
+		return BLKID_PROBE_NONE;
+
 	ret = get_uuid(pr, bs, &volume_id, fs_le);
 
 	if (ret != 0)
