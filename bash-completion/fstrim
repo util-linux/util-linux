@@ -22,6 +22,7 @@ _fstrim_module()
 				--offset
 				--length
 				--minimum
+				--types
 				--verbose
 				--dry-run
 				--help
