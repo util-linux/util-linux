@@ -114,7 +114,9 @@ static int wait_or_whine(pid_t pid)
 		if (waiting < 0) {
 			if (errno == EINTR)
 				continue;
-			err(EXIT_FAILURE, _("waitpid failed (%s)"), strerror(errno));
+			/* Can't err() on signal handler */
+			ignore_result(write(STDERR_FILENO, "waitpid failed", 14));
+			_exit(EXIT_FAILURE);
 		}
 		if (waiting != pid)
 			return -1;
@@ -163,8 +165,6 @@ static void wait_for_pager(void)
 	if (pager_process.pid == 0)
 		return;
 
-	fflush(stdout);
-	fflush(stderr);
 	/* signal EOF to pager */
 	close(STDOUT_FILENO);
 	close(STDERR_FILENO);

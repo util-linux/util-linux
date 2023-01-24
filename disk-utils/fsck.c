@@ -149,7 +149,7 @@ static FILE *report_stats_file;
 static int num_running;
 static int max_running;
 
-static volatile int cancel_requested;
+static volatile sig_atomic_t cancel_requested;
 static int kill_sent;
 static char *fstype;
 static struct fsck_instance *instance_list;
@@ -1422,7 +1422,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 static void signal_cancel(int sig __attribute__((__unused__)))
 {
-	cancel_requested++;
+	cancel_requested = 1;
 }
 
 static void parse_argv(int argc, char *argv[])

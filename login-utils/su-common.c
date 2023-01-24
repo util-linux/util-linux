@@ -165,7 +165,7 @@ struct su_context {
 };
 
 
-static sig_atomic_t volatile caught_signal = false;
+static sig_atomic_t volatile caught_signal = 0;
 
 /* Signal handler for parent process.  */
 static void

@@ -267,23 +267,13 @@ static int uread(FILE *fp, struct utmpx *u,  int *quit, const char *filename)
 
 #ifndef FUZZ_TARGET
 /*
- *	Print a short date.
- */
-static char *showdate(void)
-{
-	static char s[CTIME_BUFSIZ];
-
-	ctime_r(&lastdate, s);
-	s[16] = 0;
-	return s;
-}
-
-/*
  *	SIGINT handler
  */
 static void int_handler(int sig __attribute__((unused)))
 {
-	errx(EXIT_FAILURE, _("Interrupted %s"), showdate());
+	/* can't use err on signal handler */
+	write(STDERR_FILENO, "Interrupted\n", sizeof("Interrupted\n")-1);
+	_exit(EXIT_FAILURE);
 }
 
 /*
@@ -291,7 +281,7 @@ static void int_handler(int sig __attribute__((unused)))
  */
 static void quit_handler(int sig __attribute__((unused)))
 {
-	warnx(_("Interrupted %s"), showdate());
+	write(STDERR_FILENO, "Interrupted\n", sizeof("Interrupted\n")-1);
 	signal(SIGQUIT, quit_handler);
 }
 #endif

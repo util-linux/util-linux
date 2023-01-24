@@ -67,7 +67,7 @@
 #include "ttyutils.h"
 #include "xalloc.h"
 
-static sig_atomic_t signal_received = 0;
+static volatile sig_atomic_t signal_received = 0;
 
 struct write_control {
 	uid_t src_uid;

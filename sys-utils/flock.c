@@ -75,7 +75,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static sig_atomic_t timeout_expired = 0;
+static volatile sig_atomic_t timeout_expired = 0;
 
 static void timeout_handler(int sig __attribute__((__unused__)),
 			    siginfo_t *info,
