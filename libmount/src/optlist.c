@@ -232,14 +232,17 @@ int mnt_optlist_next_opt(struct libmnt_optlist *ls,
 {
 	int rc = 1;
 
-	if (!ls || !itr || !opt)
+	if (!ls || !itr)
 		return -EINVAL;
-	*opt = NULL;
+	if (opt)
+		*opt = NULL;
 
 	if (!itr->head)
 		MNT_ITER_INIT(itr, &ls->opts);
 	if (itr->p != itr->head) {
-		MNT_ITER_ITERATE(itr, *opt, struct libmnt_opt, opts);
+		if (opt)
+			*opt = MNT_ITER_GET_ENTRY(itr, struct libmnt_opt, opts);
+		MNT_ITER_ITERATE(itr);
 		rc = 0;
 	}
 

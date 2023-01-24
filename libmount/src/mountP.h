@@ -174,9 +174,11 @@ struct libmnt_iter {
 		(itr)->head = (list); \
 	} while(0)
 
-#define MNT_ITER_ITERATE(itr, res, restype, member) \
+#define MNT_ITER_GET_ENTRY(itr, restype, member) \
+		list_entry((itr)->p, restype, member)
+
+#define MNT_ITER_ITERATE(itr) \
 	do { \
-		res = list_entry((itr)->p, restype, member); \
 		(itr)->p = IS_ITER_FORWARD(itr) ? \
 				(itr)->p->next : (itr)->p->prev; \
 	} while(0)

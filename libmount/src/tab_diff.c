@@ -110,7 +110,8 @@ int mnt_tabdiff_next_change(struct libmnt_tabdiff *df, struct libmnt_iter *itr,
 	if (!itr->head)
 		MNT_ITER_INIT(itr, &df->changes);
 	if (itr->p != itr->head) {
-		MNT_ITER_ITERATE(itr, de, struct tabdiff_entry, changes);
+		de = MNT_ITER_GET_ENTRY(itr, struct tabdiff_entry, changes);
+		MNT_ITER_ITERATE(itr);
 		rc = 0;
 	}
 

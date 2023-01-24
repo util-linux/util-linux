@@ -171,14 +171,16 @@ static int monitor_next_entry(struct libmnt_monitor *mn,
 
 	assert(mn);
 	assert(itr);
-	assert(me);
 
-	*me = NULL;
+	if (me)
+		*me = NULL;
 
 	if (!itr->head)
 		MNT_ITER_INIT(itr, &mn->ents);
 	if (itr->p != itr->head) {
-		MNT_ITER_ITERATE(itr, *me, struct monitor_entry, ents);
+		if (me)
+			*me = MNT_ITER_GET_ENTRY(itr, struct monitor_entry, ents);
+		MNT_ITER_ITERATE(itr);
 		rc = 0;
 	}
 
