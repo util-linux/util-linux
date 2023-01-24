@@ -271,9 +271,7 @@ static int uread(FILE *fp, struct utmpx *u,  int *quit, const char *filename)
  */
 static void int_handler(int sig __attribute__((unused)))
 {
-	/* can't use err on signal handler */
-	write(STDERR_FILENO, "Interrupted\n", sizeof("Interrupted\n")-1);
-	_exit(EXIT_FAILURE);
+	ul_sig_err(EXIT_FAILURE, "Interrupted");
 }
 
 /*
@@ -281,7 +279,7 @@ static void int_handler(int sig __attribute__((unused)))
  */
 static void quit_handler(int sig __attribute__((unused)))
 {
-	write(STDERR_FILENO, "Interrupted\n", sizeof("Interrupted\n")-1);
+	ul_sig_warn("Interrupted");
 	signal(SIGQUIT, quit_handler);
 }
 #endif

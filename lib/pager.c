@@ -114,9 +114,7 @@ static int wait_or_whine(pid_t pid)
 		if (waiting < 0) {
 			if (errno == EINTR)
 				continue;
-			/* Can't err() on signal handler */
-			ignore_result(write(STDERR_FILENO, "waitpid failed", 14));
-			_exit(EXIT_FAILURE);
+			ul_sig_err(EXIT_FAILURE, "waitpid failed");
 		}
 		if (waiting != pid)
 			return -1;

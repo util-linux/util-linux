@@ -407,6 +407,29 @@ static inline int xusleep(useconds_t usec)
 #endif
 }
 
+
+#define ul_err_write(_m) ignore_result( write(STDERR_FILENO, _m, strlen(_m)) )
+
+/*
+ * warn() for signal handlers
+ */
+static inline void ul_sig_warn(const char *mesg)
+{
+	ul_err_write(program_invocation_short_name);
+	ul_err_write(": ");
+	ul_err_write(mesg);
+	ul_err_write("\n");
+}
+
+/*
+ * err() for signal handlers
+ */
+static inline void __attribute__((__noreturn__)) ul_sig_err(int excode, const char *mesg)
+{
+	ul_sig_warn(mesg);
+	_exit(excode);
+}
+
 /*
  * Constant strings for usage() functions. For more info see
  * Documentation/{howto-usage-function.txt,boilerplate.c}
