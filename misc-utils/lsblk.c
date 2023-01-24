@@ -703,21 +703,20 @@ static int is_removable_device(struct lsblk_device *dev, struct lsblk_device *pa
 
 	if (dev->removable != -1)
 		goto done;
-	if (ul_path_scanf(dev->sysfs, "removable", "%d", &dev->removable) == 1)
-		goto done;
 
-	if (parent) {
+	dev->removable = sysfs_blkdev_is_removable(dev->sysfs);
+
+	if (!dev->removable && parent) {
 		pc = sysfs_blkdev_get_parent(dev->sysfs);
 		if (!pc)
 			goto done;
 
-		/* dev is partition and parent is whole-disk  */
 		if (pc == parent->sysfs)
+			/* dev is partition and parent is whole-disk  */
 			dev->removable = is_removable_device(parent, NULL);
-
-		/* parent is something else, use sysfs parent */
-		else if (ul_path_scanf(pc, "removable", "%d", &dev->removable) != 1)
-			dev->removable = 0;
+		else
+			/* parent is something else, use sysfs parent */
+			dev->removable = sysfs_blkdev_is_removable(pc);
 	}
 done:
 	if (dev->removable == -1)
