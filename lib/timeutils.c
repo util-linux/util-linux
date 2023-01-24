@@ -147,7 +147,27 @@ static int parse_sec(const char *t, usec_t *usec)
 	return 0;
 }
 
-int parse_timestamp(const char *t, usec_t *usec)
+static int parse_subseconds(const char *t, usec_t *usec)
+{
+	usec_t ret = 0;
+	int factor = USEC_PER_SEC / 10;
+
+	if (*t != '.' && *t != ',')
+		return -1;
+
+	while (*(++t)) {
+		if (!isdigit(*t) || factor < 1)
+			return -1;
+
+		ret += ((usec_t) *t - '0') * factor;
+		factor /= 10;
+	}
+
+	*usec = ret;
+	return 0;
+}
+
+static int parse_timestamp_reference(time_t x, const char *t, usec_t *usec)
 {
 	static const struct {
 		const char *name;
@@ -171,34 +191,40 @@ int parse_timestamp(const char *t, usec_t *usec)
 
 	const char *k;
 	struct tm tm, copy;
-	time_t x;
-	usec_t plus = 0, minus = 0, ret;
+	usec_t plus = 0, minus = 0, ret = 0;
 	int r, weekday = -1;
 	unsigned i;
 
 	/*
 	 * Allowed syntaxes:
 	 *
-	 *   2012-09-22 16:34:22
-	 *   2012-09-22T16:34:22
-	 *   @1348331662	  (seconds since the Epoch (1970-01-01 00:00 UTC))
-	 *   2012-09-22 16:34	  (seconds will be set to 0)
-	 *   2012-09-22		  (time will be set to 00:00:00)
-	 *   16:34:22		  (date will be set to today)
-	 *   16:34		  (date will be set to today, seconds to 0)
+	 *   2012-09-22 16:34:22 !
+	 *   2012-09-22T16:34:22 !
+	 *   20120922163422      !
+	 *   @1348331662	 ! (seconds since the Epoch (1970-01-01 00:00 UTC))
+	 *   2012-09-22 16:34	   (seconds will be set to 0)
+	 *   2012-09-22		   (time will be set to 00:00:00)
+	 *   16:34:22		 ! (date will be set to today)
+	 *   16:34		   (date will be set to today, seconds to 0)
 	 *   now
-	 *   yesterday		  (time is set to 00:00:00)
-	 *   today		  (time is set to 00:00:00)
-	 *   tomorrow		  (time is set to 00:00:00)
+	 *   yesterday		   (time is set to 00:00:00)
+	 *   today		   (time is set to 00:00:00)
+	 *   tomorrow		   (time is set to 00:00:00)
 	 *   +5min
 	 *   -5days
+	 *
+	 *   Syntaxes marked with '!' also optionally allow up to six digits of
+	 *   subsecond granularity, separated by '.' or ',':
+	 *
+	 *   2012-09-22 16:34:22.12
+	 *   2012-09-22 16:34:22.123456
+	 *
 	 *
 	 */
 
 	assert(t);
 	assert(usec);
 
-	x = time(NULL);
 	localtime_r(&x, &tm);
 	tm.tm_isdst = -1;
 
@@ -237,6 +263,8 @@ int parse_timestamp(const char *t, usec_t *usec)
 		k = strptime(t + 1, "%s", &tm);
 		if (k && *k == 0)
 			goto finish;
+		else if (k && parse_subseconds(k, &ret) == 0)
+			goto finish;
 
 		return -EINVAL;
 	} else if (endswith(t, " ago")) {
@@ -273,15 +301,21 @@ int parse_timestamp(const char *t, usec_t *usec)
 	k = strptime(t, "%y-%m-%d %H:%M:%S", &tm);
 	if (k && *k == 0)
 		goto finish;
+	else if (k && parse_subseconds(k, &ret) == 0)
+		goto finish;
 
 	tm = copy;
 	k = strptime(t, "%Y-%m-%d %H:%M:%S", &tm);
 	if (k && *k == 0)
 		goto finish;
+	else if (k && parse_subseconds(k, &ret) == 0)
+		goto finish;
 
 	tm = copy;
 	k = strptime(t, "%Y-%m-%dT%H:%M:%S", &tm);
 	if (k && *k == 0)
+		goto finish;
+	else if (k && parse_subseconds(k, &ret) == 0)
 		goto finish;
 
 	tm = copy;
@@ -316,6 +350,8 @@ int parse_timestamp(const char *t, usec_t *usec)
 	k = strptime(t, "%H:%M:%S", &tm);
 	if (k && *k == 0)
 		goto finish;
+	else if (k && parse_subseconds(k, &ret) == 0)
+		goto finish;
 
 	tm = copy;
 	k = strptime(t, "%H:%M", &tm);
@@ -326,10 +362,10 @@ int parse_timestamp(const char *t, usec_t *usec)
 
 	tm = copy;
 	k = strptime(t, "%Y%m%d%H%M%S", &tm);
-	if (k && *k == 0) {
-		tm.tm_sec = 0;
+	if (k && *k == 0)
 		goto finish;
-	}
+	else if (k && parse_subseconds(k, &ret) == 0)
+		goto finish;
 
 	return -EINVAL;
 
@@ -341,7 +377,7 @@ int parse_timestamp(const char *t, usec_t *usec)
 	if (weekday >= 0 && tm.tm_wday != weekday)
 		return -EINVAL;
 
-	ret = (usec_t) x *USEC_PER_SEC;
+	ret += (usec_t) x * USEC_PER_SEC;
 
 	ret += plus;
 	if (ret > minus)
@@ -352,6 +388,11 @@ int parse_timestamp(const char *t, usec_t *usec)
 	*usec = ret;
 
 	return 0;
+}
+
+int parse_timestamp(const char *t, usec_t *usec)
+{
+	return parse_timestamp_reference(time(NULL), t, usec);
 }
 
 /* Returns the difference in seconds between its argument and GMT. If if TP is
@@ -577,14 +618,69 @@ time_t timegm(struct tm *tm)
 
 #ifdef TEST_PROGRAM_TIMEUTILS
 
+static int run_unittest_timestamp(void)
+{
+	int rc = EXIT_SUCCESS;
+	time_t reference = 1674180427;
+	static const struct testcase {
+		const char * const input;
+		usec_t expected;
+	} testcases[] = {
+		{ "2012-09-22 16:34:22"    , 1348331662000000 },
+		{ "2012-09-22 16:34:22,012", 1348331662012000 },
+		{ "2012-09-22 16:34:22.012", 1348331662012000 },
+		{ "@1348331662"            , 1348331662000000 },
+		{ "@1348331662.234567"     , 1348331662234567 },
+		{ "2012-09-22 16:34"       , 1348331640000000 },
+		{ "2012-09-22"             , 1348272000000000 },
+		{ "16:34:22"               , 1674232462000000 },
+		{ "16:34:22,123456"        , 1674232462123456 },
+		{ "16:34:22.123456"        , 1674232462123456 },
+		{ "16:34"                  , 1674232440000000 },
+		{ "now"                    , 1674180427000000 },
+		{ "yesterday"              , 1674086400000000 },
+		{ "today"                  , 1674172800000000 },
+		{ "tomorrow"               , 1674259200000000 },
+		{ "+5min"                  , 1674180727000000 },
+		{ "-5days"                 , 1673748427000000 },
+		{ "20120922163422"         , 1348331662000000 },
+	};
+
+	if (unsetenv("TZ"))
+		rc = EXIT_FAILURE;
+	tzset();
+
+	for (size_t i = 0; i < ARRAY_SIZE(testcases); i++) {
+		struct testcase t = testcases[i];
+		usec_t result;
+		int r = parse_timestamp_reference(reference, t.input, &result);
+		if (r) {
+			fprintf(stderr, "Could not parse '%s'\n", t.input);
+			rc = EXIT_FAILURE;
+		}
+
+		if (result != t.expected) {
+			fprintf(stderr, "#%02zu %-25s: %"PRId64" != %"PRId64"\n",
+				i, t.input, result, t.expected);
+			rc = EXIT_FAILURE;
+		}
+	}
+
+	return rc;
+}
+
 int main(int argc, char *argv[])
 {
 	struct timeval tv = { 0 };
 	char buf[ISO_BUFSIZ];
 
 	if (argc < 2) {
-		fprintf(stderr, "usage: %s [<time> [<usec>]] | [--timestamp <str>]\n", argv[0]);
+		fprintf(stderr, "usage: %s [<time> [<usec>]] | [--timestamp <str>] | [--unittest-timestamp]\n", argv[0]);
 		exit(EXIT_FAILURE);
+	}
+
+	if (strcmp(argv[1], "--unittest-timestamp") == 0) {
+		return run_unittest_timestamp();
 	}
 
 	if (strcmp(argv[1], "--timestamp") == 0) {
