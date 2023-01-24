@@ -646,8 +646,7 @@ static int run_unittest_timestamp(void)
 		{ "20120922163422"         , 1348331662000000 },
 	};
 
-	if (unsetenv("TZ"))
-		rc = EXIT_FAILURE;
+	setenv("TZ", "GMT", 1);
 	tzset();
 
 	for (size_t i = 0; i < ARRAY_SIZE(testcases); i++) {
