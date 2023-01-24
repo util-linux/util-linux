@@ -553,7 +553,7 @@ static bool tcp_get_listening(struct sock_xinfo *sock_xinfo,
 		unsigned int p;						\
 		bool has_lport = false;					\
 									\
-		if (inet_fill_column(proc, (struct inet_xinfo *)sock_xinfo, sock, ln, \
+		if (inet_fill_column(proc, inet, sock, ln, \
 				     column_id, column_index, str))	\
 			return true;					\
 									\
