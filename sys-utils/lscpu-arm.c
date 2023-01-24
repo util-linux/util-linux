@@ -78,6 +78,7 @@ static const struct id_part arm_part[] = {
     { 0xd0d, "Cortex-A77" },
     { 0xd0e, "Cortex-A76AE" },
     { 0xd13, "Cortex-R52" },
+    { 0xd15, "Cortex-R82" },
     { 0xd20, "Cortex-M23" },
     { 0xd21, "Cortex-M33" },
     { 0xd40, "Neoverse-V1" },
@@ -94,6 +95,7 @@ static const struct id_part arm_part[] = {
     { 0xd4c, "Cortex-X1C" },
     { 0xd4d, "Cortex-A715" },
     { 0xd4e, "Cortex-X3" },
+    { 0xd4f, "Neoverse-V2" },
     { -1, "unknown" },
 };
 
@@ -116,6 +118,14 @@ static const struct id_part cavium_part[] = {
     { 0x0a2, "ThunderX-81XX" },
     { 0x0a3, "ThunderX-83XX" },
     { 0x0af, "ThunderX2-99xx" },
+    { 0x0b0, "OcteonTX2" },
+    { 0x0b1, "OcteonTX2-98XX" },
+    { 0x0b2, "OcteonTX2-96XX" },
+    { 0x0b3, "OcteonTX2-95XX" },
+    { 0x0b4, "OcteonTX2-95XXN" },
+    { 0x0b5, "OcteonTX2-95XXMM" },
+    { 0x0b6, "OcteonTX2-95XXO" },
+    { 0x0b8, "ThunderX3-T110" },
     { -1, "unknown" },
 };
 
@@ -145,6 +155,9 @@ static const struct id_part qcom_part[] = {
 
 static const struct id_part samsung_part[] = {
     { 0x001, "exynos-m1" },
+    { 0x002, "exynos-m3" },
+    { 0x003, "exynos-m4" },
+    { 0x004, "exynos-m5" },
     { -1, "unknown" },
 };
 
@@ -216,6 +229,13 @@ static const struct id_part fujitsu_part[] = {
 
 static const struct id_part hisi_part[] = {
     { 0xd01, "Kunpeng-920" },	/* aka tsv110 */
+    { 0xd40, "Cortex-A76" },	/* HiSilicon uses this ID though advertises A76 */
+    { -1, "unknown" },
+};
+
+static const struct id_part ampere_part[] = {
+    { 0xac3, "Ampere-1" },
+    { 0xac4, "Ampere-1a" },
     { -1, "unknown" },
 };
 
@@ -255,7 +275,7 @@ static const struct hw_impl hw_implementer[] = {
     { 0x66, faraday_part, "Faraday" },
     { 0x69, intel_part,   "Intel" },
     { 0x70, ft_part,      "Phytium" },
-    { 0xc0, unknown_part, "Ampere" },
+    { 0xc0, ampere_part,  "Ampere" },
     { -1,   unknown_part, "unknown" },
 };
 
