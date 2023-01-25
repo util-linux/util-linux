@@ -61,7 +61,7 @@ struct nilfs_super_block {
 	uint32_t	s_c_interval;
 	uint32_t	s_c_block_max;
 	uint32_t	s_reserved[192];
-};
+} __attribute__((__packed__));
 
 #define NILFS_SB_MAGIC		0x3434
 #define NILFS_SB_OFFSET		0x400
