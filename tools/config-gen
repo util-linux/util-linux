@@ -10,6 +10,13 @@ test -f sys-utils/mount.c || {
 	exit 1
 }
 
+unset CC
+unset CXX
+unset CFLAGS
+unset LDFLAGS
+unset SUID_CFLAGS
+unset SUID_LDFLAGS
+
 . tools/config-gen-functions.sh
 
 if [ $# -eq 0 ]; then
