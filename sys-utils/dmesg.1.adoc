@@ -124,10 +124,10 @@ Print human-readable timestamps.
 *Be aware that the timestamp could be inaccurate!* The *time* source used for the logs is *not updated after* system *SUSPEND*/*RESUME*. Timestamps are adjusted according to current delta between boottime and monotonic clocks, this works only for messages printed after last resume.
 
 *--since* _time_::
-Display record since the specified time. The time is possible to specify in absolute way as well as by relative notation (e.g. '1 hour ago'). Be aware that the timestamp could be inaccurate and see *--ctime* for more details.
+Display record since the specified time. Supported is the subsecond granularity. The time is possible to specify in absolute way as well as by relative notation (e.g. '1 hour ago'). Be aware that the timestamp could be inaccurate and see *--ctime* for more details.
 
 *--until* _time_::
-Display record until the specified time. The time is possible to specify in absolute way as well as by relative notation (e.g. '1 hour ago'). Be aware that the timestamp could be inaccurate and see *--ctime* for more details.
+Display record until the specified time. Supported is the subsecond granularity. The time is possible to specify in absolute way as well as by relative notation (e.g. '1 hour ago'). Be aware that the timestamp could be inaccurate and see *--ctime* for more details.
 
 *-t*, *--notime*::
 Do not print kernel's timestamps.
