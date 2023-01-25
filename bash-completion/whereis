@@ -17,7 +17,7 @@ _whereis_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-b -B -m -M -s -S -f -u -l"
+			OPTS="-b -B -m -M -s -S -f -u -l -g"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

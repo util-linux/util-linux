@@ -50,7 +50,7 @@ whereis - locate the binary, source, and manual page files for a command
 
 == DESCRIPTION
 
-*whereis* locates the binary, source and manual files for the specified command names. The supplied names are first stripped of leading pathname components. Prefixes of *s.* resulting from use of source code control are also dealt with. *whereis* then attempts to locate the desired program in the standard Linux places, and in the places specified by *$PATH* and *$MANPATH*.
+*whereis* locates the binary, source and manual files for the specified command names. The supplied names are *first stripped of leading pathname components*. Prefixes of *s.* resulting from use of source code control are also dealt with. *whereis* then attempts to locate the desired program in the standard Linux places, and in the places specified by *$PATH* and *$MANPATH*.
 
 The search restrictions (options *-b*, *-m* and *-s*) are cumulative and apply to the subsequent _name_ patterns on the command line. Any new search restriction resets the search mask. For example,
 
@@ -96,6 +96,12 @@ Terminates the directory list and signals the start of filenames. It _must_ be u
 
 *-l*::
 Output the list of effective lookup paths that *whereis* is using. When none of *-B*, *-M*, or *-S* is specified, the option will output the hard-coded paths that the command was able to find on the system.
+
+*-g*::
+Interpret the next names as a *glob(7)* patterns. *whereis* always compares only filenames (aka basename) and never complete path. Using directory names in the pattern has no effect. Don’t forget that the shell interprets the pattern when specified on the command line without quotes. It’s necessary to use quotes for the _name_, for example:
+____
+  whereis -g 'find*'
+____
 
 include::man-common/help-version.adoc[]
 

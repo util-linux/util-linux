@@ -545,6 +545,7 @@ AC_CHECK_FUNCS([ \
 	__fpending \
 	__fpurge \
 	fpurge \
+	fnmatch \
 	fsconfig \
 	fsmount \
 	fsopen \

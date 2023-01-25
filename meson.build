@@ -485,6 +485,7 @@ funcs = '''
         errx
         explicit_bzero
         fmemopen
+        fnmatch
         fseeko
         fsconfig
         fsmount
