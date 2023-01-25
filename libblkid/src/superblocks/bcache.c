@@ -167,12 +167,6 @@ static void probe_bcachefs_sb_members(blkid_probe pr,
 			!= member_field_end(members, bcs->nr_devices - 1))
 		return;
 
-	if (member_field_end(members, dev_idx) > sb_end)
-		return;
-
-	if (member_field_end(members, bcs->nr_devices - 1) > sb_end)
-		return;
-
 	blkid_probe_set_uuid_as(pr, members->members[dev_idx].uuid, "UUID_SUB");
 
 	for (i = 0; i < bcs->nr_devices; i++) {
