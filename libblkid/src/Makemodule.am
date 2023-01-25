@@ -219,12 +219,20 @@ test_blkid_fuzz_SOURCES = libblkid/src/fuzz.c
 # https://google.github.io/oss-fuzz/getting-started/new-project-guide/#Requirements
 nodist_EXTRA_test_blkid_fuzz_SOURCES = dummy.cxx
 
-test_blkid_fuzz_CFLAGS = $(blkid_tests_cflags)
+test_blkid_fuzz_CFLAGS = $(blkid_tests_cflags) -DFUZZ_TARGET
 test_blkid_fuzz_LDFLAGS = $(blkid_tests_ldflags) -lpthread
 test_blkid_fuzz_LDADD = $(blkid_tests_ldadd) $(LIB_FUZZING_ENGINE)
 endif
 
 endif # BUILD_LIBBLKID_TESTS
+
+check_PROGRAMS += test_blkid_fuzz_sample
+
+test_blkid_fuzz_sample_SOURCES = libblkid/src/fuzz.c
+
+test_blkid_fuzz_sample_CFLAGS = $(blkid_tests_cflags)
+test_blkid_fuzz_sample_LDFLAGS = $(blkid_tests_ldflags)
+test_blkid_fuzz_sample_LDADD = $(blkid_tests_ldadd)
 
 
 # move lib from $(usrlib_execdir) to $(libdir) if needed
