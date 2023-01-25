@@ -146,25 +146,17 @@ static int probe_bcache (blkid_probe pr, const struct blkid_idmag *mag)
 	return BLKID_PROBE_OK;
 }
 
-static unsigned char *member_field_end(
-		const struct bcachefs_sb_field_members *field, size_t idx)
-{
-	return (unsigned char *) &field->members + (sizeof(*field->members) * (idx + 1));
-}
-
 static void probe_bcachefs_sb_members(blkid_probe pr,
 				     const struct bcachefs_super_block *bcs,
 				     const struct bcachefs_sb_field *field,
-				     uint8_t dev_idx,
-				     const unsigned char *sb_end)
+				     uint8_t dev_idx)
 {
 	struct bcachefs_sb_field_members *members =
 			(struct bcachefs_sb_field_members *) field;
 	uint64_t sectors = 0;
 	uint8_t i;
 
-	if ((unsigned char *) field + BYTES(field)
-			!= member_field_end(members, bcs->nr_devices - 1))
+	if (BYTES(field) != offsetof(typeof(*members), members[bcs->nr_devices]))
 		return;
 
 	blkid_probe_set_uuid_as(pr, members->members[dev_idx].uuid, "UUID_SUB");
@@ -202,7 +194,7 @@ static void probe_bcachefs_sb_fields(blkid_probe pr, const struct bcachefs_super
 			break;
 
 		if (type == BCACHEFS_SB_FIELD_TYPE_MEMBERS)
-			probe_bcachefs_sb_members(pr, bcs, field, bcs->dev_idx, sb_end);
+			probe_bcachefs_sb_members(pr, bcs, field, bcs->dev_idx);
 
 		field_addr += BYTES(field);
 	}
