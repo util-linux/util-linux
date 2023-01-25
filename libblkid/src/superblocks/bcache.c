@@ -168,6 +168,17 @@ static void probe_bcachefs_sb_members(blkid_probe pr,
 	blkid_probe_set_fssize(pr, sectors * BCACHEFS_SECTOR_SIZE);
 }
 
+static int is_within_range(void *start, uint64_t size, void *end)
+{
+	ptrdiff_t diff;
+
+	if (start >= end)
+		return 0; // should not happen
+
+	diff = (unsigned char *) end - (unsigned char *) start;
+	return size <= (uint64_t) diff;
+}
+
 static void probe_bcachefs_sb_fields(blkid_probe pr, const struct bcachefs_super_block *bcs,
 				     unsigned char *sb_start, unsigned char *sb_end)
 {
@@ -178,7 +189,7 @@ static void probe_bcachefs_sb_fields(blkid_probe pr, const struct bcachefs_super
 		uint64_t field_size;
 		uint32_t type;
 
-		if ((unsigned char *) field + sizeof(*field) > sb_end)
+		if (!is_within_range(field, sizeof(*field), sb_end))
 			break;
 
 		field_size = BYTES(field);
@@ -186,7 +197,7 @@ static void probe_bcachefs_sb_fields(blkid_probe pr, const struct bcachefs_super
 		if (field_size < sizeof(*field))
 			break;
 
-		if ((unsigned char *) field + field_size > sb_end)
+		if (!is_within_range(field, field_size, sb_end))
 			break;
 
 		type = le32_to_cpu(field->type);
