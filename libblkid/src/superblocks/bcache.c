@@ -113,7 +113,7 @@ struct bcachefs_super_block {
 /* tag value for members field */
 #define BCACHEFS_SB_FIELD_TYPE_MEMBERS 1
 
-#define BYTES(f) ((le32_to_cpu((f)->u64s) * 8))
+#define BYTES(f) ((((uint64_t) le32_to_cpu((f)->u64s)) * 8))
 
 static int bcache_verify_checksum(blkid_probe pr, const struct blkid_idmag *mag,
 		const struct bcache_super_block *bcs)
@@ -246,8 +246,7 @@ static int probe_bcachefs(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct bcachefs_super_block *bcs;
 	unsigned char *sb, *sb_end;
-	unsigned long sb_size;
-	uint64_t blocksize;
+	uint64_t sb_size, blocksize;
 
 	bcs = blkid_probe_get_sb(pr, mag, struct bcachefs_super_block);
 	if (!bcs)
