@@ -170,7 +170,7 @@ struct dmesg_control {
 	struct timeval	lasttime;	/* last printed timestamp */
 	struct tm	lasttm;		/* last localtime */
 	struct timeval	boot_time;	/* system boot time */
-	time_t		suspended_time;	/* time spent in suspended state */
+	usec_t		suspended_time;	/* time spent in suspended state */
 
 	int		action;		/* SYSLOG_ACTION_* */
 	int		method;		/* DMESG_METHOD_* */
@@ -181,8 +181,8 @@ struct dmesg_control {
 	ssize_t		kmsg_first_read;/* initial read() return code */
 	char		kmsg_buf[BUFSIZ];/* buffer to read kmsg data */
 
-	time_t		since;		/* filter records by time */
-	time_t		until;		/* filter records by time */
+	usec_t		since;		/* filter records by time */
+	usec_t		until;		/* filter records by time */
 
 	/*
 	 * For the --file option we mmap whole file. The unnecessary (already
@@ -784,9 +784,11 @@ static int get_next_syslog_record(struct dmesg_control *ctl,
 	return 1;
 }
 
-static time_t record_time(struct dmesg_control *ctl, struct dmesg_record *rec)
+static usec_t record_time(struct dmesg_control *ctl, struct dmesg_record *rec)
 {
-	return ctl->boot_time.tv_sec + ctl->suspended_time + rec->tv.tv_sec;
+	return timeval_to_usec(&ctl->boot_time) +
+		ctl->suspended_time +
+		timeval_to_usec(&rec->tv);
 }
 
 static int accept_record(struct dmesg_control *ctl, struct dmesg_record *rec)
@@ -842,7 +844,7 @@ static struct tm *record_localtime(struct dmesg_control *ctl,
 				   struct dmesg_record *rec,
 				   struct tm *tm)
 {
-	time_t t = record_time(ctl, rec);
+	time_t t = record_time(ctl, rec) / USEC_PER_SEC;
 	return localtime_r(&t, tm);
 }
 
@@ -876,10 +878,10 @@ static char *short_ctime(struct tm *tm, char *buf, size_t bufsiz)
 static char *iso_8601_time(struct dmesg_control *ctl, struct dmesg_record *rec,
 			   char *buf, size_t bufsz)
 {
-	struct timeval tv = {
-		.tv_sec = ctl->boot_time.tv_sec + ctl->suspended_time + rec->tv.tv_sec,
-		.tv_usec = rec->tv.tv_usec
-	};
+	struct timeval tv = usec_to_timeval(
+		timeval_to_usec(&ctl->boot_time) + ctl->suspended_time +
+		timeval_to_usec(&rec->tv)
+	);
 
 	if (strtimeval_iso(&tv,	ISO_TIMESTAMP_COMMA_T, buf, bufsz) != 0)
 		return NULL;
@@ -1355,7 +1357,7 @@ static inline int dmesg_get_boot_time(struct timeval *tv)
 	return get_boot_time(tv);
 }
 
-static inline time_t dmesg_get_suspended_time(void)
+static inline usec_t dmesg_get_suspended_time(void)
 {
 	if (getenv("DMESG_TEST_BOOTIME"))
 		return 0;
@@ -1554,18 +1556,14 @@ int main(int argc, char *argv[])
 			break;
 		case OPT_SINCE:
 		{
-			usec_t p;
-			if (parse_timestamp(optarg, &p) < 0)
+			if (parse_timestamp(optarg, &ctl.since) < 0)
 				errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
-			ctl.since = (time_t) (p / 1000000);
 			break;
 		}
 		case OPT_UNTIL:
 		{
-			usec_t p;
-			if (parse_timestamp(optarg, &p) < 0)
+			if (parse_timestamp(optarg, &ctl.until) < 0)
 				errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
-			ctl.until = (time_t) (p / 1000000);
 			break;
 		}
 		case 'h':
