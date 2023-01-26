@@ -442,6 +442,23 @@ static void change_file_status(char *path, struct cramfs_inode *i)
 		err(FSCK_EX_ERROR, _("utimes failed: %s"), path);
 }
 
+static int is_dangerous_filename(char *name, int len)
+{
+	return (len == 1 && name[0] == '.') ||
+	       (len == 2 && name[0] == '.' && name[1] == '.');
+}
+
+static void __attribute__((__noreturn__))
+	errx_path(const char *mesg, const char *name, size_t namelen)
+{
+	char buf[PATH_MAX] = { 0 };
+
+	namelen = min(namelen, sizeof(buf) - 1);
+	memcpy(buf, name, namelen);
+
+	errx(FSCK_EX_UNCORRECTED, "%s: %s", mesg, buf);
+}
+
 static void do_directory(char *path, struct cramfs_inode *i)
 {
 	int pathlen = strlen(path);
@@ -471,6 +488,7 @@ static void do_directory(char *path, struct cramfs_inode *i)
 	}
 	while (count > 0) {
 		struct cramfs_inode *child = iget(offset);
+		char *name;
 		int size;
 		int newlen = child->namelen << 2;
 
@@ -478,8 +496,13 @@ static void do_directory(char *path, struct cramfs_inode *i)
 		count -= size;
 
 		offset += sizeof(struct cramfs_inode);
+		name = romfs_read(offset);
 
-		memcpy(newpath + pathlen, romfs_read(offset), newlen);
+		if (memchr(name, '/', newlen) != NULL)
+			errx_path(_("illegal filename"), name, newlen);
+		if (*extract_dir != '\0' && is_dangerous_filename(name, newlen))
+			errx_path(_("dangerous filename"), name, newlen);
+		memcpy(newpath + pathlen, name, newlen);
 		newpath[pathlen + newlen] = 0;
 		if (newlen == 0)
 			errx(FSCK_EX_UNCORRECTED, _("filename length is zero"));
