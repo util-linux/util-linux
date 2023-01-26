@@ -2665,6 +2665,15 @@ if not is_disabler(exe)
   exes += exe
 endif
 
+exe = executable(
+  'test_blkid_fuzz_sample',
+  'libblkid/src/fuzz.c',
+  include_directories: includes,
+  link_with: lib_blkid)
+if not is_disabler(exe)
+  exes += exe
+endif
+
 ############################################################
 
 exe = executable(
