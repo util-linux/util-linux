@@ -103,7 +103,7 @@ Show status information.
 
 include::man-common/help-version.adoc[]
 
-== USAGE
+== EXAMPLES
 
 //TRANSLATORS: Keep {colon} untranslated
 The default behavior is to run a new command{colon}::
@@ -119,6 +119,18 @@ You can also retrieve the real-time attributes of an existing task{colon}::
 Or set them{colon}::
 
 *chrt -r -p* _priority PID_
+
+This, for example, sets real-time scheduling to priority _30_ for the
+process _PID_ with the *SCHED_RR* (round-robin) class:
+
+*chrt -r -p 30 _PID_*
+
+Reset priorities to default for a process:
+
+*chrt -o -p 0 _PID_*
+
+See *sched*(7) for a detailed discussion of the different scheduler
+classes and how they interact.
 
 == PERMISSIONS
 
