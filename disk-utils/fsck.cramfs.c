@@ -434,7 +434,7 @@ static void change_file_status(char *path, struct cramfs_inode *i)
 		if (S_ISLNK(i->mode))
 			return;
 		if (((S_ISUID | S_ISGID) & i->mode) && chmod(path, i->mode) < 0)
-			err(FSCK_EX_ERROR, _("chown failed: %s"), path);
+			err(FSCK_EX_ERROR, _("chmod failed: %s"), path);
 	}
 	if (S_ISLNK(i->mode))
 		return;
