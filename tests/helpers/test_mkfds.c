@@ -1865,13 +1865,13 @@ static const struct factory factories[] = {
 			{
 				.name = "server-port",
 				.type = PTYPE_INTEGER,
-				.desc = "TCP port the server may listen",
+				.desc = "UDP port the server may listen",
 				.defv.integer = 12345,
 			},
 			{
 				.name = "client-port",
 				.type = PTYPE_INTEGER,
-				.desc = "TCP port the client may bind",
+				.desc = "UDP port the client may bind",
 				.defv.integer = 23456,
 			},
 			{
