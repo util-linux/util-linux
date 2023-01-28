@@ -600,8 +600,7 @@ static bool L3_verify_initial_line(const char *line)
 	line += 2;
 
 	/* Skip white spaces. */
-	while (*line == ' ')
-		line++;
+	line = skip_space(line);
 
 	return (strncmp(line, "sl", 2) == 0);
 }
