@@ -50,6 +50,7 @@ INSTALL
 install-sh
 libtool
 m4/*.m4
+m4/libtool.m4.orig
 Makefile
 Makefile.in
 missing
