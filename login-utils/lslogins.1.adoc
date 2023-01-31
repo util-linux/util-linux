@@ -130,7 +130,7 @@ Multiple fields describe password status.
 The password is not set (hash is missing); this is common for locked system accounts. Not requiring a password does not mean the user can log-in without a password. It depends on the password "lock" status.
 
 *"Password is locked"*::
-The password is prefixed by '!!', and the user cannot login although the password is set.
+The password is prefixed by '!!', and the user cannot login although the password is set or empty. This is common for new accounts without a set password.
 
 == HISTORY
 
