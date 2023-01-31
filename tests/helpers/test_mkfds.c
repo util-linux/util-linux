@@ -1332,7 +1332,7 @@ static void *make_tcp(const struct factory *factory, struct fdesc fdescs[],
 		close(ssd);
 		close(csd);
 		errno = e;
-		err(EXIT_FAILURE, "failed to connect a client socket to the serer socket");
+		err(EXIT_FAILURE, "failed to connect a client socket to the server socket");
 	}
 
 	asd = accept(ssd, NULL, NULL);
@@ -1433,7 +1433,7 @@ static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
 			int e = errno;
 			close(ssd);
 			errno = e;
-			err(EXIT_FAILURE, "failed to bind a srever socket");
+			err(EXIT_FAILURE, "failed to bind a server socket");
 		}
 	}
 
@@ -1487,7 +1487,7 @@ static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
 			close(ssd);
 			close(csd);
 			errno = e;
-			err(EXIT_FAILURE, "failed to connect a client socket to the serer socket");
+			err(EXIT_FAILURE, "failed to connect a client socket to the server socket");
 		}
 	}
 
