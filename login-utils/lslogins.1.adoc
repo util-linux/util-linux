@@ -119,6 +119,19 @@ if a serious error occurs (e.g., a corrupt log).
 
 The default UID thresholds are read from _/etc/login.defs_.
 
+=== Password status
+
+Multiple fields describe password status.
+
+*"Login by password disabled"*::
+'yes' means that there is no valid password. The password hash is missing, or the hash method is unknown or contains invalid chars.
+
+*"Password not required (empty)"*::
+The password is not set (hash is missing); this is common for locked system accounts. Not requiring a password does not mean the user can log-in without a password. It depends on the password "lock" status.
+
+*"Password is locked"*::
+The password is prefixed by '!!', and the user cannot login although the password is set.
+
 == HISTORY
 
 The *lslogins* utility is inspired by the *logins* utility, which first appeared in FreeBSD 4.10.
