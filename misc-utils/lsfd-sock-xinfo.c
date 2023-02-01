@@ -601,7 +601,7 @@ static const struct sock_xinfo_class tcp_xinfo_class = {
 static bool L3_verify_initial_line(const char *line)
 {
 	/* At least we expect two white spaces. */
-	if (strncmp (line, "  ", 2) != 0)
+	if (strncmp(line, "  ", 2) != 0)
 		return false;
 	line += 2;
 
