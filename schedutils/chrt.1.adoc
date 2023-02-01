@@ -78,13 +78,13 @@ Specifies deadline parameter for *SCHED_DEADLINE* policy (Linux-specific).
 
 *-R*, *--reset-on-fork*::
 Use *SCHED_RESET_ON_FORK* or *SCHED_FLAG_RESET_ON_FORK* flag. Linux-specific, supported since 2.6.31.
-
++
 Each thread has a _reset-on-fork_ scheduling flag. When this flag is set, children created by *fork*(2) do not inherit privileged scheduling policies. After the _reset-on-fork_ flag has been enabled, it can be reset only if the thread has the *CAP_SYS_NICE* capability. This flag is disabled in child processes created by *fork*(2).
-
++
 More precisely, if the _reset-on-fork_ flag is set, the following rules apply for subsequently created children:
-
++
 * If the calling thread has a scheduling policy of *SCHED_FIFO* or *SCHED_RR*, the policy is reset to *SCHED_OTHER* in child processes.
-
++
 * If the calling process has a negative nice value, the nice value is reset to zero in child processes.
 
 == OPTIONS
@@ -107,30 +107,28 @@ include::man-common/help-version.adoc[]
 
 //TRANSLATORS: Keep {colon} untranslated
 The default behavior is to run a new command{colon}::
-
+____
 *chrt* _priority_ _command_ [_arguments_]
-
+____
 //TRANSLATORS: Keep {colon} untranslated
 You can also retrieve the real-time attributes of an existing task{colon}::
-
+____
 *chrt -p* _PID_
-
+____
 //TRANSLATORS: Keep {colon} untranslated
 Or set them{colon}::
-
+____
 *chrt -r -p* _priority PID_
-
-This, for example, sets real-time scheduling to priority _30_ for the
-process _PID_ with the *SCHED_RR* (round-robin) class:
-
-*chrt -r -p 30 _PID_*
-
-Reset priorities to default for a process:
-
-*chrt -o -p 0 _PID_*
-
-See *sched*(7) for a detailed discussion of the different scheduler
-classes and how they interact.
+____
+This, for example, sets real-time scheduling to priority _30_ for the process _PID_ with the *SCHED_RR* (round-robin) class{colon}::
+____
+*chrt -r -p 30* _PID_
+____
+Reset priorities to default for a process{colon}::
+____
+*chrt -o -p 0* _PID_
+____
+See *sched*(7) for a detailed discussion of the different scheduler classes and how they interact.
 
 == PERMISSIONS
 
