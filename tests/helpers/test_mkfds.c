@@ -2065,6 +2065,9 @@ int main(int argc, char **argv)
 		errx(EXIT_FAILURE, _("not enough file descriptors given for %s"),
 		     factory->name);
 
+	if (factory->priv && getuid() != 0)
+		errx(EXIT_FAILURE, "%s factory requires root privilege", factory->name);
+
 	for (int i = 0; i < MAX_N; i++) {
 		fdescs[i].fd = -1;
 		fdescs[i].close = NULL;
