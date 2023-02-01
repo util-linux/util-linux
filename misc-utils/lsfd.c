@@ -187,6 +187,8 @@ static const struct colinfo infos[] = {
 		N_("PID of the process targeted by the pidfd") },
 	[COL_POS]     = { "POS",      5, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 		N_("file position") },
+	[COL_RAW_PROTOCOL]={ "RAW.PROTOCOL",0,SCOLS_FL_RIGHT,SCOLS_JSON_NUMBER,
+		N_("protocol number of the raw socket") },
 	[COL_RDEV]    = { "RDEV",     0, SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 		N_("device ID (if special file)") },
 	[COL_SIZE]    = { "SIZE",     4, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,

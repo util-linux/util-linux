@@ -38,6 +38,7 @@
 #include "lsfd-sock.h"
 
 static void load_xinfo_from_proc_unix(ino_t netns_inode);
+static void load_xinfo_from_proc_raw(ino_t netns_inode);
 static void load_xinfo_from_proc_tcp(ino_t netns_inode);
 static void load_xinfo_from_proc_udp(ino_t netns_inode);
 
@@ -78,6 +79,7 @@ static void load_sock_xinfo_no_nsswitch(ino_t netns)
 	load_xinfo_from_proc_unix(netns);
 	load_xinfo_from_proc_tcp(netns);
 	load_xinfo_from_proc_udp(netns);
+	load_xinfo_from_proc_raw(netns);
 }
 
 static void load_sock_xinfo_with_fd(int fd, ino_t netns)
@@ -794,4 +796,123 @@ static void load_xinfo_from_proc_udp(ino_t netns_inode)
 	load_xinfo_from_proc_inet_L4(netns_inode,
 				     "/proc/net/udp",
 				     &udp_xinfo_class);
+}
+
+/*
+ * RAW
+ */
+struct raw_xinfo {
+	struct l4_xinfo l4;
+	uint16_t protocol;
+};
+
+static char *raw_get_name(struct sock_xinfo *sock_xinfo,
+			  struct sock *sock  __attribute__((__unused__)))
+{
+	char *str = NULL;
+	struct l4_xinfo_class *class = (struct l4_xinfo_class *)sock_xinfo->class;
+	struct raw_xinfo *raw = ((struct raw_xinfo *)sock_xinfo);
+	struct l4_xinfo *l4 = &raw->l4;
+	const char *st_str = tcp_decode_state(l4->st);
+	void *laddr = class->get_addr(l4, L4_LOCAL);
+	void *raddr = class->get_addr(l4, L4_REMOTE);
+	char local_s[BUFSIZ];
+	char remote_s[BUFSIZ];
+
+	if (!inet_ntop(class->family, laddr, local_s, sizeof(local_s)))
+		xasprintf(&str, "state=%s", st_str);
+	else if (class->is_any_addr(raddr)
+		 || !inet_ntop(class->family, raddr, remote_s, sizeof(remote_s)))
+		xasprintf(&str, "state=%s protocol=%u laddr=%s",
+			  st_str,
+			  raw->protocol, local_s);
+	else
+		xasprintf(&str, "state=%s protocol=%u laddr=%s raddr=%s",
+			  st_str,
+			  raw->protocol, local_s, remote_s);
+	return str;
+}
+
+static char *raw_get_type(struct sock_xinfo *sock_xinfo __attribute__((__unused__)),
+			  struct sock *sock __attribute__((__unused__)))
+{
+	return strdup("raw");
+}
+
+static bool raw_fill_column(struct proc *proc __attribute__((__unused__)),
+			    struct sock_xinfo *sock_xinfo,
+			    struct sock *sock __attribute__((__unused__)),
+			    struct libscols_line *ln __attribute__((__unused__)),
+			    int column_id,
+			    size_t column_index __attribute__((__unused__)),
+			    char **str)
+{
+	if (l3_fill_column_handler(INET, sock_xinfo, column_id, str))
+		return true;
+
+	if (column_id == COL_RAW_PROTOCOL) {
+		xasprintf(str, "%u",
+			  (unsigned int)(((struct raw_xinfo *)sock_xinfo)->protocol));
+		return true;
+	}
+
+	return false;
+}
+
+static struct sock_xinfo *raw_xinfo_scan_line(const struct sock_xinfo_class *class,
+					      char * line,
+					      ino_t netns_inode,
+					      enum sysfs_byteorder byteorder)
+{
+	unsigned long local_addr;
+	unsigned long protocol;
+	unsigned long remote_addr;
+	unsigned long st;
+	unsigned long long inode;
+	struct raw_xinfo *raw;
+	struct inet_xinfo *inet;
+	struct sock_xinfo *sock;
+
+	if (sscanf(line, "%*d: %lx:%lx %lx:%*x %lx %*x:%*x %*x:%*x %*x %*u %*u %lld",
+		   &local_addr, &protocol, &remote_addr,
+		   &st, &inode) != 5)
+		return NULL;
+
+	if (inode == 0)
+		return NULL;
+
+	raw = xcalloc(1, sizeof(struct raw_xinfo));
+	inet = &raw->l4.inet;
+	sock = &inet->sock;
+	sock->class = class;
+	sock->inode = (ino_t)inode;
+	sock->netns_inode = netns_inode;
+	inet->local_addr.s_addr = kernel32_to_cpu(byteorder, local_addr);
+	inet->remote_addr.s_addr = kernel32_to_cpu(byteorder, remote_addr);
+	raw->protocol = protocol;
+	raw->l4.st = st;
+
+	return sock;
+}
+
+static const struct l4_xinfo_class raw_xinfo_class = {
+	.sock = {
+		.get_name = raw_get_name,
+		.get_type = raw_get_type,
+		.get_state = tcp_get_state,
+		.get_listening = NULL,
+		.fill_column = raw_fill_column,
+		.free = NULL,
+	},
+	.scan_line = raw_xinfo_scan_line,
+	.get_addr = tcp_xinfo_get_addr,
+	.is_any_addr = tcp_xinfo_is_any_addr,
+	.family = AF_INET,
+};
+
+static void load_xinfo_from_proc_raw(ino_t netns_inode)
+{
+	load_xinfo_from_proc_inet_L4(netns_inode,
+				     "/proc/net/raw",
+				     &raw_xinfo_class);
 }
