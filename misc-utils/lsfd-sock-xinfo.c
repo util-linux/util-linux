@@ -432,6 +432,14 @@ static bool inet_fill_column(struct proc *proc __attribute__((__unused__)),
 	return false;
 }
 
+static uint32_t kernel32_to_cpu(enum sysfs_byteorder byteorder, uint32_t v)
+{
+	if (byteorder == SYSFS_BYTEORDER_LITTLE)
+		return le32_to_cpu(v);
+	else
+		return be32_to_cpu(v);
+}
+
 /*
  * TCP
  */
@@ -601,14 +609,6 @@ static bool L3_verify_initial_line(const char *line)
 	line = skip_space(line);
 
 	return (strncmp(line, "sl", 2) == 0);
-}
-
-static uint32_t kernel32_to_cpu(enum sysfs_byteorder byteorder, uint32_t v)
-{
-	if (byteorder == SYSFS_BYTEORDER_LITTLE)
-		return le32_to_cpu(v);
-	else
-		return be32_to_cpu(v);
 }
 
 #define TCP_LINE_LEN 256
