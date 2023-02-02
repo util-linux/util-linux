@@ -445,6 +445,7 @@ static uint32_t kernel32_to_cpu(enum sysfs_byteorder byteorder, uint32_t v)
  */
 struct l4_xinfo {
 	struct inet_xinfo inet;
+	unsigned int st;
 };
 
 enum l4_side { L4_LOCAL, L4_REMOTE };
@@ -467,7 +468,6 @@ struct tcp_xinfo {
 	struct l4_xinfo l4;
 	uint16_t local_port;
 	uint16_t remote_port;
-	unsigned int st;
 };
 
 enum tcp_state {
@@ -517,20 +517,22 @@ static char *tcp_get_name(struct sock_xinfo *sock_xinfo,
 			  struct sock *sock  __attribute__((__unused__)))
 {
 	char *str = NULL;
-	struct inet_xinfo *inet = ((struct inet_xinfo *)sock_xinfo);
 	struct tcp_xinfo *tcp = ((struct tcp_xinfo *)sock_xinfo);
+	struct l4_xinfo *l4 = &tcp->l4;
+	struct inet_xinfo *inet = &l4->inet;
+	unsigned int st = l4->st;
 	char local_s[INET_ADDRSTRLEN], remote_s[INET_ADDRSTRLEN];
 
 	if (!inet_ntop(AF_INET, &inet->local_addr, local_s, sizeof(local_s)))
-		xasprintf(&str, "state=%s", tcp_decode_state(tcp->st));
-	else if (tcp->st == TCP_LISTEN
+		xasprintf(&str, "state=%s", tcp_decode_state(st));
+	else if (st == TCP_LISTEN
 		 || !inet_ntop(AF_INET, &inet->remote_addr, remote_s, sizeof(remote_s)))
 		xasprintf(&str, "state=%s laddr=%s:%u",
-			  tcp_decode_state(tcp->st),
+			  tcp_decode_state(st),
 			  local_s, tcp->local_port);
 	else
 		xasprintf(&str, "state=%s laddr=%s:%u raddr=%s:%u",
-			  tcp_decode_state(tcp->st),
+			  tcp_decode_state(st),
 			  local_s, tcp->local_port,
 			  remote_s, tcp->remote_port);
 	return str;
@@ -545,16 +547,13 @@ static char *tcp_get_type(struct sock_xinfo *sock_xinfo __attribute__((__unused_
 static char *tcp_get_state(struct sock_xinfo *sock_xinfo,
 			   struct sock *sock __attribute__((__unused__)))
 {
-	struct tcp_xinfo *tcp = (struct tcp_xinfo *)sock_xinfo;
-
-	return strdup(tcp_decode_state(tcp->st));
+	return strdup(tcp_decode_state(((struct l4_xinfo *)sock_xinfo)->st));
 }
 
 static bool tcp_get_listening(struct sock_xinfo *sock_xinfo,
 			      struct sock *sock __attribute__((__unused__)))
 {
-	struct tcp_xinfo *tcp = (struct tcp_xinfo *)sock_xinfo;
-	return tcp->st == TCP_LISTEN;
+	return ((struct l4_xinfo *)sock_xinfo)->st == TCP_LISTEN;
 }
 
 #define define_fill_column_func(l4,L4)					\
@@ -641,7 +640,7 @@ static struct sock_xinfo *tcp_xinfo_scan_line(const struct sock_xinfo_class *cla
 	tcp->local_port = local_port;
 	inet->remote_addr.s_addr = kernel32_to_cpu(byteorder, remote_addr);
 	tcp->remote_port = remote_port;
-	tcp->st = st;
+	tcp->l4.st = st;
 
 	return sock;
 }
@@ -730,20 +729,23 @@ static char *udp_get_name(struct sock_xinfo *sock_xinfo,
 			  struct sock *sock  __attribute__((__unused__)))
 {
 	char *str = NULL;
-	struct inet_xinfo *inet = ((struct inet_xinfo *)sock_xinfo);
 	struct tcp_xinfo *tcp = ((struct tcp_xinfo *)sock_xinfo);
+	struct l4_xinfo *l4 = &tcp->l4;
+	struct inet_xinfo *inet = &l4->inet;
+	unsigned int st = l4->st;
+
 	char local_s[INET_ADDRSTRLEN], remote_s[INET_ADDRSTRLEN];
 
 	if (!inet_ntop(AF_INET, &inet->local_addr, local_s, sizeof(local_s)))
-		xasprintf(&str, "state=%s", tcp_decode_state(tcp->st));
+		xasprintf(&str, "state=%s", tcp_decode_state(st));
 	else if ((inet->remote_addr.s_addr == 0 && tcp->remote_port == 0)
 		 || !inet_ntop(AF_INET, &inet->remote_addr, remote_s, sizeof(remote_s)))
 		xasprintf(&str, "state=%s laddr=%s:%u",
-			  tcp_decode_state(tcp->st),
+			  tcp_decode_state(st),
 			  local_s, tcp->local_port);
 	else
 		xasprintf(&str, "state=%s laddr=%s:%u raddr=%s:%u",
-			  tcp_decode_state(tcp->st),
+			  tcp_decode_state(st),
 			  local_s, tcp->local_port,
 			  remote_s, tcp->remote_port);
 	return str;
