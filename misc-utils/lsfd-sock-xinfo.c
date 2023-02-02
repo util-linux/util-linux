@@ -336,7 +336,6 @@ static bool unix_fill_column(struct proc *proc __attribute__((__unused__)),
 }
 
 static const struct sock_xinfo_class unix_xinfo_class = {
-	.class = "unix",
 	.get_name = unix_get_name,
 	.get_type = unix_get_type,
 	.get_state = unix_get_state,
@@ -583,7 +582,6 @@ static bool tcp_get_listening(struct sock_xinfo *sock_xinfo,
 
 define_fill_column_func(tcp, TCP)
 static const struct sock_xinfo_class tcp_xinfo_class = {
-	.class = "tcp",
 	.get_name = tcp_get_name,
 	.get_type = tcp_get_type,
 	.get_state = tcp_get_state,
@@ -711,7 +709,6 @@ static char *udp_get_type(struct sock_xinfo *sock_xinfo __attribute__((__unused_
 
 define_fill_column_func(udp, UDP)
 static const struct sock_xinfo_class udp_xinfo_class = {
-	.class = "udp",
 	.get_name = udp_get_name,
 	.get_type = udp_get_type,
 	.get_state = tcp_get_state,
