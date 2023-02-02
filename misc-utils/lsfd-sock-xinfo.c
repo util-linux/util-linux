@@ -44,6 +44,7 @@ static void load_xinfo_from_proc_raw(ino_t netns_inode);
 static void load_xinfo_from_proc_tcp(ino_t netns_inode);
 static void load_xinfo_from_proc_udp(ino_t netns_inode);
 static void load_xinfo_from_proc_tcp6(ino_t netns_inode);
+static void load_xinfo_from_proc_udp6(ino_t netns_inode);
 
 static int self_netns_fd = -1;
 static struct stat self_netns_sb;
@@ -84,6 +85,7 @@ static void load_sock_xinfo_no_nsswitch(ino_t netns)
 	load_xinfo_from_proc_udp(netns);
 	load_xinfo_from_proc_raw(netns);
 	load_xinfo_from_proc_tcp6(netns);
+	load_xinfo_from_proc_udp6(netns);
 }
 
 static void load_sock_xinfo_with_fd(int fd, ino_t netns)
@@ -775,19 +777,21 @@ static char *udp_get_name(struct sock_xinfo *sock_xinfo,
 	void *raddr = class->get_addr(l4, L4_REMOTE);
 	char local_s[BUFSIZ];
 	char remote_s[BUFSIZ];
+	const char *start = class->l3_decorator[L3_DECO_START];
+	const char *end = class->l3_decorator[L3_DECO_END];
 
 	if (!inet_ntop(class->family, laddr, local_s, sizeof(local_s)))
 		xasprintf(&str, "state=%s", st_str);
 	else if ((class->is_any_addr(raddr) && tcp->remote_port == 0)
 		 || !inet_ntop(class->family, raddr, remote_s, sizeof(remote_s)))
-		xasprintf(&str, "state=%s laddr=%s:%"PRIu16,
+		xasprintf(&str, "state=%s laddr=%s%s%s:%"PRIu16,
 			  st_str,
-			  local_s, tcp->local_port);
+			  start, local_s, end, tcp->local_port);
 	else
-		xasprintf(&str, "state=%s laddr=%s:%"PRIu16" raddr=%s:%"PRIu16,
+		xasprintf(&str, "state=%s laddr=%s%s%s:%"PRIu16" raddr=%s%s%s:%"PRIu16,
 			  st_str,
-			  local_s, tcp->local_port,
-			  remote_s, tcp->remote_port);
+			  start, local_s, end, tcp->local_port,
+			  start, remote_s, end, tcp->remote_port);
 	return str;
 }
 
@@ -1045,4 +1049,42 @@ static void load_xinfo_from_proc_tcp6(ino_t netns_inode)
 	load_xinfo_from_proc_inet_L4(netns_inode,
 				     "/proc/net/tcp6",
 				     &tcp6_xinfo_class);
+}
+
+/*
+ * UDP6
+ */
+static bool udp6_fill_column(struct proc *proc  __attribute__((__unused__)),
+			     struct sock_xinfo *sock_xinfo,
+			     struct sock *sock  __attribute__((__unused__)),
+			     struct libscols_line *ln  __attribute__((__unused__)),
+			     int column_id,
+			     size_t column_index  __attribute__((__unused__)),
+			     char **str)
+{
+	return l3_fill_column_handler(INET6, sock_xinfo, column_id, str)
+		|| l4_fill_column_handler(UDP, sock_xinfo, column_id, str);
+}
+
+static const struct l4_xinfo_class udp6_xinfo_class = {
+	.sock = {
+		.get_name = udp_get_name,
+		.get_type = udp_get_type,
+		.get_state = tcp_get_state,
+		.get_listening = NULL,
+		.fill_column = udp6_fill_column,
+		.free = NULL,
+	},
+	.scan_line = tcp6_xinfo_scan_line,
+	.get_addr = tcp6_xinfo_get_addr,
+	.is_any_addr = tcp6_xinfo_is_any_addr,
+	.family = AF_INET6,
+	.l3_decorator = {"[", "]"},
+};
+
+static void load_xinfo_from_proc_udp6(ino_t netns_inode)
+{
+	load_xinfo_from_proc_inet_L4(netns_inode,
+				     "/proc/net/udp6",
+				     &udp6_xinfo_class);
 }
