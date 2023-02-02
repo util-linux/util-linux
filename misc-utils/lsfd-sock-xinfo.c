@@ -447,12 +447,17 @@ struct l4_xinfo {
 	struct inet_xinfo inet;
 };
 
+enum l4_side { L4_LOCAL, L4_REMOTE };
+
 struct l4_xinfo_class {
 	struct sock_xinfo_class sock;
 	struct sock_xinfo *(*scan_line)(const struct sock_xinfo_class *,
 					char *,
 					ino_t,
 					enum sysfs_byteorder);
+	void * (*get_addr)(struct l4_xinfo *, enum l4_side);
+	bool (*is_any_addr)(void *);
+	int family;
 };
 
 /*
@@ -641,6 +646,18 @@ static struct sock_xinfo *tcp_xinfo_scan_line(const struct sock_xinfo_class *cla
 	return sock;
 }
 
+static void *tcp_xinfo_get_addr(struct l4_xinfo *l4, enum l4_side side)
+{
+	return (side == L4_LOCAL)
+		? &l4->inet.local_addr
+		: &l4->inet.remote_addr;
+}
+
+static bool tcp_xinfo_is_any_addr(void *addr)
+{
+	return ((struct in_addr *)addr)->s_addr == INADDR_ANY;
+}
+
 define_fill_column_func(tcp, TCP)
 static const struct l4_xinfo_class tcp_xinfo_class = {
 	.sock = {
@@ -652,6 +669,9 @@ static const struct l4_xinfo_class tcp_xinfo_class = {
 		.free = NULL,
 	},
 	.scan_line = tcp_xinfo_scan_line,
+	.get_addr = tcp_xinfo_get_addr,
+	.is_any_addr = tcp_xinfo_is_any_addr,
+	.family = AF_INET,
 };
 
 static bool L4_verify_initial_line(const char *line)
@@ -746,6 +766,9 @@ static const struct l4_xinfo_class udp_xinfo_class = {
 		.free = NULL,
 	},
 	.scan_line = tcp_xinfo_scan_line,
+	.get_addr = tcp_xinfo_get_addr,
+	.is_any_addr = tcp_xinfo_is_any_addr,
+	.family = AF_INET,
 };
 
 static void load_xinfo_from_proc_udp(ino_t netns_inode)
