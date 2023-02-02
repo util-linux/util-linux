@@ -449,6 +449,10 @@ struct l4_xinfo {
 
 struct l4_xinfo_class {
 	struct sock_xinfo_class sock;
+	struct sock_xinfo *(*scan_line)(const struct sock_xinfo_class *,
+					char *,
+					ino_t,
+					enum sysfs_byteorder);
 };
 
 /*
@@ -599,6 +603,44 @@ static bool tcp_get_listening(struct sock_xinfo *sock_xinfo,
 		return true;						\
 	}
 
+static struct sock_xinfo *tcp_xinfo_scan_line(const struct sock_xinfo_class *class,
+					      char * line,
+					      ino_t netns_inode,
+					      enum sysfs_byteorder byteorder)
+{
+	unsigned long local_addr;
+	unsigned long local_port;
+	unsigned long remote_addr;
+	unsigned long remote_port;
+	unsigned long st;
+	unsigned long long inode;
+	struct tcp_xinfo *tcp;
+	struct inet_xinfo *inet;
+	struct sock_xinfo *sock;
+
+	if (sscanf(line, "%*d: %lx:%lx %lx:%lx %lx %*x:%*x %*x:%*x %*x %*u %*u %lld",
+		   &local_addr, &local_port, &remote_addr, &remote_port,
+		   &st, &inode) != 6)
+		return NULL;
+
+	if (inode == 0)
+		return NULL;
+
+	tcp = xcalloc(1, sizeof(struct tcp_xinfo));
+	inet = &tcp->l4.inet;
+	sock = &inet->sock;
+	sock->class = class;
+	sock->inode = (ino_t)inode;
+	sock->netns_inode = netns_inode;
+	inet->local_addr.s_addr = kernel32_to_cpu(byteorder, local_addr);
+	tcp->local_port = local_port;
+	inet->remote_addr.s_addr = kernel32_to_cpu(byteorder, remote_addr);
+	tcp->remote_port = remote_port;
+	tcp->st = st;
+
+	return sock;
+}
+
 define_fill_column_func(tcp, TCP)
 static const struct l4_xinfo_class tcp_xinfo_class = {
 	.sock = {
@@ -609,6 +651,7 @@ static const struct l4_xinfo_class tcp_xinfo_class = {
 		.fill_column = tcp_fill_column,
 		.free = NULL,
 	},
+	.scan_line = tcp_xinfo_scan_line,
 };
 
 static bool L4_verify_initial_line(const char *line)
@@ -644,37 +687,9 @@ static void load_xinfo_from_proc_inet_L4(ino_t netns_inode, const char *proc_fil
 	enum sysfs_byteorder byteorder = sysfs_get_byteorder(NULL);
 
 	while (fgets(line, sizeof(line), tcp_fp)) {
-		unsigned long local_addr;
-		unsigned long local_port;
-		unsigned long remote_addr;
-		unsigned long remote_port;
-		unsigned long st;
-		unsigned long long inode;
-		struct tcp_xinfo *tcp;
-		struct inet_xinfo *inet;
-		struct sock_xinfo *sock;
-
-		if (sscanf(line, "%*d: %lx:%lx %lx:%lx %lx %*x:%*x %*x:%*x %*x %*u %*u %lld",
-			   &local_addr, &local_port, &remote_addr, &remote_port,
-			   &st, &inode) != 6)
-			continue;
-
-		if (inode == 0)
-			continue;
-
-		tcp = xcalloc(1, sizeof(struct tcp_xinfo));
-		inet = (struct inet_xinfo *)tcp;
-		sock = (struct sock_xinfo *)inet;
-		sock->class = &class->sock;
-		sock->inode = (ino_t)inode;
-		sock->netns_inode = netns_inode;
-		inet->local_addr.s_addr = kernel32_to_cpu(byteorder, local_addr);
-		tcp->local_port = local_port;
-		inet->remote_addr.s_addr = kernel32_to_cpu(byteorder, remote_addr);
-		tcp->remote_port = remote_port;
-		tcp->st = st;
-
-		add_sock_info(sock);
+		struct sock_xinfo *sock = class->scan_line(&class->sock, line, netns_inode, byteorder);
+		if (sock)
+			add_sock_info(sock);
 	}
 
  out:
@@ -730,6 +745,7 @@ static const struct l4_xinfo_class udp_xinfo_class = {
 		.fill_column = udp_fill_column,
 		.free = NULL,
 	},
+	.scan_line = tcp_xinfo_scan_line,
 };
 
 static void load_xinfo_from_proc_udp(ino_t netns_inode)
