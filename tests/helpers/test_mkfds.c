@@ -1332,7 +1332,7 @@ static void *make_tcp(const struct factory *factory, struct fdesc fdescs[],
 		close(ssd);
 		close(csd);
 		errno = e;
-		err(EXIT_FAILURE, "failed to connect a client socket to the serer socket");
+		err(EXIT_FAILURE, "failed to connect a client socket to the server socket");
 	}
 
 	asd = accept(ssd, NULL, NULL);
@@ -1433,7 +1433,7 @@ static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
 			int e = errno;
 			close(ssd);
 			errno = e;
-			err(EXIT_FAILURE, "failed to bind a srever socket");
+			err(EXIT_FAILURE, "failed to bind a server socket");
 		}
 	}
 
@@ -1487,7 +1487,7 @@ static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
 			close(ssd);
 			close(csd);
 			errno = e;
-			err(EXIT_FAILURE, "failed to connect a client socket to the serer socket");
+			err(EXIT_FAILURE, "failed to connect a client socket to the server socket");
 		}
 	}
 
@@ -1865,13 +1865,13 @@ static const struct factory factories[] = {
 			{
 				.name = "server-port",
 				.type = PTYPE_INTEGER,
-				.desc = "TCP port the server may listen",
+				.desc = "UDP port the server may listen",
 				.defv.integer = 12345,
 			},
 			{
 				.name = "client-port",
 				.type = PTYPE_INTEGER,
-				.desc = "TCP port the client may bind",
+				.desc = "UDP port the client may bind",
 				.defv.integer = 23456,
 			},
 			{
@@ -2064,6 +2064,9 @@ int main(int argc, char **argv)
 	if ((optind + factory->N) > argc)
 		errx(EXIT_FAILURE, _("not enough file descriptors given for %s"),
 		     factory->name);
+
+	if (factory->priv && getuid() != 0)
+		errx(EXIT_FAILURE, "%s factory requires root privilege", factory->name);
 
 	for (int i = 0; i < MAX_N; i++) {
 		fdescs[i].fd = -1;

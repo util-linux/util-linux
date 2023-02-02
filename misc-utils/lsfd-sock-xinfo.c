@@ -400,8 +400,8 @@ static void load_xinfo_from_proc_unix(ino_t netns_inode)
  */
 struct inet_xinfo {
 	struct sock_xinfo sock;
-	uint32_t local_addr;
-	uint32_t remote_addr;
+	struct in_addr local_addr;
+	struct in_addr remote_addr;
 };
 
 static bool inet_fill_column(struct proc *proc __attribute__((__unused__)),
@@ -412,24 +412,21 @@ static bool inet_fill_column(struct proc *proc __attribute__((__unused__)),
 			     size_t column_index __attribute__((__unused__)),
 			     char **str)
 {
-	struct in_addr n;
 	struct in_addr *nptr = NULL;
 	char s[INET_ADDRSTRLEN];
 
 	switch(column_id) {
 	case COL_INET_LADDR:
-		n.s_addr = inet->local_addr;
-		nptr = &n;
+		nptr = &inet->local_addr;
 		break;
 	case COL_INET_RADDR:
-		n.s_addr = inet->remote_addr;
-		nptr = &n;
+		nptr = &inet->remote_addr;
 		break;
 	default:
 		return false;
 	}
 
-	if (nptr && inet_ntop(AF_INET, &n, s, sizeof(s))) {
+	if (nptr && inet_ntop(AF_INET, nptr, s, sizeof(s))) {
 		*str = strdup(s);
 		return true;
 	}
@@ -495,15 +492,12 @@ static char *tcp_get_name(struct sock_xinfo *sock_xinfo,
 	char *str = NULL;
 	struct inet_xinfo *inet = ((struct inet_xinfo *)sock_xinfo);
 	struct tcp_xinfo *tcp = ((struct tcp_xinfo *)sock_xinfo);
-	struct in_addr local_n, remote_n;
 	char local_s[INET_ADDRSTRLEN], remote_s[INET_ADDRSTRLEN];
 
-	local_n.s_addr = inet->local_addr;
-	remote_n.s_addr = inet->remote_addr;
-	if (!inet_ntop(AF_INET, &local_n, local_s, sizeof(local_s)))
+	if (!inet_ntop(AF_INET, &inet->local_addr, local_s, sizeof(local_s)))
 		xasprintf(&str, "state=%s", tcp_decode_state(tcp->st));
 	else if (tcp->st == TCP_LISTEN
-		 || !inet_ntop(AF_INET, &remote_n, remote_s, sizeof(remote_s)))
+		 || !inet_ntop(AF_INET, &inet->remote_addr, remote_s, sizeof(remote_s)))
 		xasprintf(&str, "state=%s laddr=%s:%u",
 			  tcp_decode_state(tcp->st),
 			  local_s, tcp->local_port);
@@ -547,28 +541,28 @@ static bool tcp_get_listening(struct sock_xinfo *sock_xinfo,
 	{								\
 		struct tcp_xinfo *tcp = (struct tcp_xinfo *)sock_xinfo;	\
 		struct inet_xinfo *inet = (struct inet_xinfo *)sock_xinfo; \
-		struct in_addr n;					\
+		struct in_addr *n = NULL;				\
 		bool has_laddr = false;					\
 		char s[INET_ADDRSTRLEN];				\
 		unsigned int p;						\
 		bool has_lport = false;					\
 									\
-		if (inet_fill_column(proc, (struct inet_xinfo *)sock_xinfo, sock, ln, \
+		if (inet_fill_column(proc, inet, sock, ln, \
 				     column_id, column_index, str))	\
 			return true;					\
 									\
 		switch(column_id) {					\
 		case COL_##L3##_LADDR:					\
-			n.s_addr = inet->local_addr;			\
+			n = &inet->local_addr;				\
 			has_laddr = true;				\
 			p = (unsigned int)tcp->local_port;		\
 			/* FALL THROUGH */				\
 		case COL_##L3##_RADDR:					\
 			if (!has_laddr) {				\
-				n.s_addr = inet->remote_addr;		\
+				n = &inet->remote_addr;			\
 				p = (unsigned int)tcp->remote_port;	\
 			}						\
-			if (inet_ntop(AF_INET, &n, s, sizeof(s)))	\
+			if (n && inet_ntop(AF_INET, n, s, sizeof(s)))	\
 				xasprintf(str, "%s:%u", s, p);		\
 			break;						\
 		case COL_##L3##_LPORT:					\
@@ -601,13 +595,12 @@ static const struct sock_xinfo_class tcp_xinfo_class = {
 static bool L3_verify_initial_line(const char *line)
 {
 	/* At least we expect two white spaces. */
-	if (strncmp (line, "  ", 2) != 0)
+	if (strncmp(line, "  ", 2) != 0)
 		return false;
 	line += 2;
 
 	/* Skip white spaces. */
-	while (*line == ' ')
-		line++;
+	line = skip_space(line);
 
 	return (strncmp(line, "sl", 2) == 0);
 }
@@ -664,9 +657,9 @@ static void load_xinfo_from_proc_inet_L3(ino_t netns_inode, const char *proc_fil
 		sock->class = class;
 		sock->inode = (ino_t)inode;
 		sock->netns_inode = netns_inode;
-		inet->local_addr = kernel32_to_cpu(byteorder, local_addr);
+		inet->local_addr.s_addr = kernel32_to_cpu(byteorder, local_addr);
 		tcp->local_port = local_port;
-		inet->remote_addr = kernel32_to_cpu(byteorder, remote_addr);
+		inet->remote_addr.s_addr = kernel32_to_cpu(byteorder, remote_addr);
 		tcp->remote_port = remote_port;
 		tcp->st = st;
 
@@ -693,15 +686,12 @@ static char *udp_get_name(struct sock_xinfo *sock_xinfo,
 	char *str = NULL;
 	struct inet_xinfo *inet = ((struct inet_xinfo *)sock_xinfo);
 	struct tcp_xinfo *tcp = ((struct tcp_xinfo *)sock_xinfo);
-	struct in_addr local_n, remote_n;
 	char local_s[INET_ADDRSTRLEN], remote_s[INET_ADDRSTRLEN];
 
-	local_n.s_addr = inet->local_addr;
-	remote_n.s_addr = inet->remote_addr;
-	if (!inet_ntop(AF_INET, &local_n, local_s, sizeof(local_s)))
+	if (!inet_ntop(AF_INET, &inet->local_addr, local_s, sizeof(local_s)))
 		xasprintf(&str, "state=%s", tcp_decode_state(tcp->st));
-	else if ((remote_n.s_addr == 0 && tcp->remote_port == 0)
-		 || !inet_ntop(AF_INET, &remote_n, remote_s, sizeof(remote_s)))
+	else if ((inet->remote_addr.s_addr == 0 && tcp->remote_port == 0)
+		 || !inet_ntop(AF_INET, &inet->remote_addr, remote_s, sizeof(remote_s)))
 		xasprintf(&str, "state=%s laddr=%s:%u",
 			  tcp_decode_state(tcp->st),
 			  local_s, tcp->local_port);
