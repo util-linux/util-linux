@@ -403,35 +403,6 @@ struct inet_xinfo {
 	struct in_addr remote_addr;
 };
 
-static bool inet_fill_column(struct proc *proc __attribute__((__unused__)),
-			     struct inet_xinfo *inet,
-			     struct sock *sock __attribute__((__unused__)),
-			     struct libscols_line *ln __attribute__((__unused__)),
-			     int column_id,
-			     size_t column_index __attribute__((__unused__)),
-			     char **str)
-{
-	struct in_addr *nptr = NULL;
-	char s[INET_ADDRSTRLEN];
-
-	switch(column_id) {
-	case COL_INET_LADDR:
-		nptr = &inet->local_addr;
-		break;
-	case COL_INET_RADDR:
-		nptr = &inet->remote_addr;
-		break;
-	default:
-		return false;
-	}
-
-	if (nptr && inet_ntop(AF_INET, nptr, s, sizeof(s))) {
-		*str = strdup(s);
-		return true;
-	}
-	return false;
-}
-
 static uint32_t kernel32_to_cpu(enum sysfs_byteorder byteorder, uint32_t v)
 {
 	if (byteorder == SYSFS_BYTEORDER_LITTLE)
@@ -460,6 +431,32 @@ struct l4_xinfo_class {
 	bool (*is_any_addr)(void *);
 	int family;
 };
+
+#define l3_fill_column_handler(L3, SOCK_XINFO, COLUMN_ID, STR)	__extension__ \
+	({								\
+		struct l4_xinfo_class *class = (struct l4_xinfo_class *)SOCK_XINFO->class; \
+		struct l4_xinfo *l4 = (struct l4_xinfo *)SOCK_XINFO;	\
+		void *n = NULL;						\
+		char s[BUFSIZ];						\
+		bool r = false;						\
+									\
+		switch (COLUMN_ID) {					\
+		case COL_##L3##_LADDR:					\
+			n = class->get_addr(l4, L4_LOCAL);		\
+			break;						\
+		case COL_##L3##_RADDR:					\
+			n = class->get_addr(l4, L4_REMOTE);		\
+			break;						\
+		default:						\
+			break;						\
+		}							\
+									\
+		if (n && inet_ntop(class->family, n, s, sizeof(s))) {	\
+			*STR = strdup(s);				\
+			r = true;					\
+		}							\
+		r;							\
+	})
 
 /*
  * TCP
@@ -519,14 +516,17 @@ static char *tcp_get_name(struct sock_xinfo *sock_xinfo,
 	char *str = NULL;
 	struct tcp_xinfo *tcp = ((struct tcp_xinfo *)sock_xinfo);
 	struct l4_xinfo *l4 = &tcp->l4;
-	struct inet_xinfo *inet = &l4->inet;
 	const char *st_str = tcp_decode_state(l4->st);
-	char local_s[INET_ADDRSTRLEN], remote_s[INET_ADDRSTRLEN];
+	struct l4_xinfo_class *class = (struct l4_xinfo_class *)sock_xinfo->class;
+	void *laddr = class->get_addr(l4, L4_LOCAL);
+	void *raddr = class->get_addr(l4, L4_REMOTE);
+	char local_s[BUFSIZ];
+	char remote_s[BUFSIZ];
 
-	if (!inet_ntop(AF_INET, &inet->local_addr, local_s, sizeof(local_s)))
+	if (!inet_ntop(class->family, laddr, local_s, sizeof(local_s)))
 		xasprintf(&str, "state=%s", st_str);
 	else if (l4->st == TCP_LISTEN
-		 || !inet_ntop(AF_INET, &inet->remote_addr, remote_s, sizeof(remote_s)))
+		 || !inet_ntop(class->family, raddr, remote_s, sizeof(remote_s)))
 		xasprintf(&str, "state=%s laddr=%s:%u",
 			  st_str,
 			  local_s, tcp->local_port);
@@ -556,40 +556,31 @@ static bool tcp_get_listening(struct sock_xinfo *sock_xinfo,
 	return ((struct l4_xinfo *)sock_xinfo)->st == TCP_LISTEN;
 }
 
-#define define_fill_column_func(l4,L4)					\
-	static bool l4##_fill_column(struct proc *proc,			\
-				     struct sock_xinfo *sock_xinfo,	\
-				     struct sock *sock,			\
-				     struct libscols_line *ln,		\
-				     int column_id,			\
-				     size_t column_index,		\
-				     char **str)			\
-	{								\
-		struct tcp_xinfo *tcp = (struct tcp_xinfo *)sock_xinfo;	\
-		struct inet_xinfo *inet = (struct inet_xinfo *)sock_xinfo; \
-		struct in_addr *n = NULL;				\
+#define l4_fill_column_handler(L4, SOCK_XINFO, COLUMN_ID, STR)	__extension__ \
+	({								\
+		struct l4_xinfo_class *class = (struct l4_xinfo_class *)SOCK_XINFO->class; \
+		struct tcp_xinfo *tcp = (struct tcp_xinfo *)SOCK_XINFO; \
+		struct l4_xinfo *l4 = &tcp->l4;				\
+		void *n = NULL;						\
 		bool has_laddr = false;					\
-		char s[INET_ADDRSTRLEN];				\
 		unsigned int p;						\
 		bool has_lport = false;					\
+		char s[BUFSIZ];						\
+		bool r = true;						\
 									\
-		if (inet_fill_column(proc, inet, sock, ln, \
-				     column_id, column_index, str))	\
-			return true;					\
-									\
-		switch(column_id) {					\
+		switch (COLUMN_ID) {					\
 		case COL_##L4##_LADDR:					\
-			n = &inet->local_addr;				\
+			n = class->get_addr(l4, L4_LOCAL);		\
 			has_laddr = true;				\
 			p = (unsigned int)tcp->local_port;		\
 			/* FALL THROUGH */				\
 		case COL_##L4##_RADDR:					\
 			if (!has_laddr) {				\
-				n = &inet->remote_addr;			\
+				n = class->get_addr(l4, L4_REMOTE);	\
 				p = (unsigned int)tcp->remote_port;	\
 			}						\
-			if (n && inet_ntop(AF_INET, n, s, sizeof(s)))	\
-				xasprintf(str, "%s:%u", s, p);		\
+			if (n && inet_ntop(class->family, n, s, sizeof(s))) \
+				xasprintf(STR, "%s:%u", s, p);		\
 			break;						\
 		case COL_##L4##_LPORT:					\
 			p = (unsigned int)tcp->local_port;		\
@@ -598,14 +589,14 @@ static bool tcp_get_listening(struct sock_xinfo *sock_xinfo,
 		case COL_##L4##_RPORT:					\
 			if (!has_lport)					\
 				p = (unsigned int)tcp->remote_port;	\
-			xasprintf(str, "%u", p);			\
+			xasprintf(STR, "%u", p);			\
 			break;						\
 		default:						\
-			return false;					\
+			r = false;					\
+			break;						\
 		}							\
-									\
-		return true;						\
-	}
+		r;							\
+	})
 
 static struct sock_xinfo *tcp_xinfo_scan_line(const struct sock_xinfo_class *class,
 					      char * line,
@@ -657,7 +648,18 @@ static bool tcp_xinfo_is_any_addr(void *addr)
 	return ((struct in_addr *)addr)->s_addr == INADDR_ANY;
 }
 
-define_fill_column_func(tcp, TCP)
+static bool tcp_fill_column(struct proc *proc __attribute__((__unused__)),
+			    struct sock_xinfo *sock_xinfo,
+			    struct sock *sock __attribute__((__unused__)),
+			    struct libscols_line *ln __attribute__((__unused__)),
+			    int column_id,
+			    size_t column_index __attribute__((__unused__)),
+			    char **str)
+{
+	return l3_fill_column_handler(INET, sock_xinfo, column_id, str)
+		|| l4_fill_column_handler(TCP, sock_xinfo, column_id, str);
+}
+
 static const struct l4_xinfo_class tcp_xinfo_class = {
 	.sock = {
 		.get_name = tcp_get_name,
@@ -731,15 +733,18 @@ static char *udp_get_name(struct sock_xinfo *sock_xinfo,
 	char *str = NULL;
 	struct tcp_xinfo *tcp = ((struct tcp_xinfo *)sock_xinfo);
 	struct l4_xinfo *l4 = &tcp->l4;
-	struct inet_xinfo *inet = &l4->inet;
 	unsigned int st = l4->st;
 	const char *st_str = tcp_decode_state(st);
-	char local_s[INET_ADDRSTRLEN], remote_s[INET_ADDRSTRLEN];
+	struct l4_xinfo_class *class = (struct l4_xinfo_class *)sock_xinfo->class;
+	void *laddr = class->get_addr(l4, L4_LOCAL);
+	void *raddr = class->get_addr(l4, L4_REMOTE);
+	char local_s[BUFSIZ];
+	char remote_s[BUFSIZ];
 
-	if (!inet_ntop(AF_INET, &inet->local_addr, local_s, sizeof(local_s)))
+	if (!inet_ntop(class->family, laddr, local_s, sizeof(local_s)))
 		xasprintf(&str, "state=%s", st_str);
-	else if ((inet->remote_addr.s_addr == 0 && tcp->remote_port == 0)
-		 || !inet_ntop(AF_INET, &inet->remote_addr, remote_s, sizeof(remote_s)))
+	else if ((class->is_any_addr(raddr) && tcp->remote_port == 0)
+		 || !inet_ntop(class->family, raddr, remote_s, sizeof(remote_s)))
 		xasprintf(&str, "state=%s laddr=%s:%u",
 			  st_str,
 			  local_s, tcp->local_port);
@@ -757,7 +762,18 @@ static char *udp_get_type(struct sock_xinfo *sock_xinfo __attribute__((__unused_
 	return strdup("dgram");
 }
 
-define_fill_column_func(udp, UDP)
+static bool udp_fill_column(struct proc *proc __attribute__((__unused__)),
+			    struct sock_xinfo *sock_xinfo,
+			    struct sock *sock __attribute__((__unused__)),
+			    struct libscols_line *ln __attribute__((__unused__)),
+			    int column_id,
+			    size_t column_index __attribute__((__unused__)),
+			    char **str)
+{
+	return l3_fill_column_handler(INET, sock_xinfo, column_id, str)
+		|| l4_fill_column_handler(UDP, sock_xinfo, column_id, str);
+}
+
 static const struct l4_xinfo_class udp_xinfo_class = {
 	.sock = {
 		.get_name = udp_get_name,
