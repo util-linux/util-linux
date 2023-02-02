@@ -441,10 +441,21 @@ static uint32_t kernel32_to_cpu(enum sysfs_byteorder byteorder, uint32_t v)
 }
 
 /*
+ * L4 abstract-layer for protocols stacked on IP and IP6.
+ */
+struct l4_xinfo {
+	struct inet_xinfo inet;
+};
+
+struct l4_xinfo_class {
+	struct sock_xinfo_class sock;
+};
+
+/*
  * TCP
  */
 struct tcp_xinfo {
-	struct inet_xinfo inet;
+	struct l4_xinfo l4;
 	uint16_t local_port;
 	uint16_t remote_port;
 	unsigned int st;
@@ -589,13 +600,15 @@ static bool tcp_get_listening(struct sock_xinfo *sock_xinfo,
 	}
 
 define_fill_column_func(tcp, TCP)
-static const struct sock_xinfo_class tcp_xinfo_class = {
-	.get_name = tcp_get_name,
-	.get_type = tcp_get_type,
-	.get_state = tcp_get_state,
-	.get_listening = tcp_get_listening,
-	.fill_column = tcp_fill_column,
-	.free = NULL,
+static const struct l4_xinfo_class tcp_xinfo_class = {
+	.sock = {
+		.get_name = tcp_get_name,
+		.get_type = tcp_get_type,
+		.get_state = tcp_get_state,
+		.get_listening = tcp_get_listening,
+		.fill_column = tcp_fill_column,
+		.free = NULL,
+	},
 };
 
 static bool L4_verify_initial_line(const char *line)
@@ -613,7 +626,7 @@ static bool L4_verify_initial_line(const char *line)
 
 #define TCP_LINE_LEN 256
 static void load_xinfo_from_proc_inet_L4(ino_t netns_inode, const char *proc_file,
-					 const struct sock_xinfo_class *class)
+					 const struct l4_xinfo_class *class)
 {
 	char line[TCP_LINE_LEN];
 	FILE *tcp_fp;
@@ -652,7 +665,7 @@ static void load_xinfo_from_proc_inet_L4(ino_t netns_inode, const char *proc_fil
 		tcp = xcalloc(1, sizeof(struct tcp_xinfo));
 		inet = (struct inet_xinfo *)tcp;
 		sock = (struct sock_xinfo *)inet;
-		sock->class = class;
+		sock->class = &class->sock;
 		sock->inode = (ino_t)inode;
 		sock->netns_inode = netns_inode;
 		inet->local_addr.s_addr = kernel32_to_cpu(byteorder, local_addr);
@@ -708,13 +721,15 @@ static char *udp_get_type(struct sock_xinfo *sock_xinfo __attribute__((__unused_
 }
 
 define_fill_column_func(udp, UDP)
-static const struct sock_xinfo_class udp_xinfo_class = {
-	.get_name = udp_get_name,
-	.get_type = udp_get_type,
-	.get_state = tcp_get_state,
-	.get_listening = NULL,
-	.fill_column = udp_fill_column,
-	.free = NULL,
+static const struct l4_xinfo_class udp_xinfo_class = {
+	.sock = {
+		.get_name = udp_get_name,
+		.get_type = udp_get_type,
+		.get_state = tcp_get_state,
+		.get_listening = NULL,
+		.fill_column = udp_fill_column,
+		.free = NULL,
+	},
 };
 
 static void load_xinfo_from_proc_udp(ino_t netns_inode)
