@@ -1,29 +1,24 @@
-/**
- * Character handling in C locale.
- *
- * This file is based on gnulib c-ctype.h-dd7a871 with the
- * other gnulib dependencies removed for use in util-linux.
- *
- * These functions work like the corresponding functions in <ctype.h>,
- * except that they have the C (POSIX) locale hardwired, whereas the
- * <ctype.h> functions' behaviour depends on the current locale set via
- * setlocale.
- *
- * Copyright (C) 2000-2003, 2006, 2008-2017 Free Software Foundation, Inc.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, see <http://www.gnu.org/licenses/>.
- */
+/* Character handling in C locale.
+
+   These functions work like the corresponding functions in <ctype.h>,
+   except that they have the C (POSIX) locale hardwired, whereas the
+   <ctype.h> functions' behaviour depends on the current locale set via
+   setlocale.
+
+   Copyright (C) 2000-2003, 2006, 2008-2023 Free Software Foundation, Inc.
+
+   This file is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Lesser General Public License as
+   published by the Free Software Foundation; either version 2.1 of the
+   License, or (at your option) any later version.
+
+   This file is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 #ifndef UTIL_LINUX_CCTYPE_H
 #define UTIL_LINUX_CCTYPE_H
