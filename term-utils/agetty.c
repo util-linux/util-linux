@@ -2074,7 +2074,8 @@ again:
 		if (!wait_for_term_input(STDIN_FILENO)) {
 			eval_issue_file(ie, op, tp);
 			if (issue_is_changed(ie)) {
-				if (op->flags & F_VCONSOLE)
+				if ((op->flags & F_VCONSOLE)
+				    && (op->flags & F_NOCLEAR) == 0)
 					termio_clear(STDOUT_FILENO);
 				goto again;
 			}
@@ -2216,7 +2217,8 @@ static char *get_logname(struct issue *ie, struct options *op, struct termios *t
 			if (!issue_is_changed(ie))
 				goto no_reload;
 			tcflush(STDIN_FILENO, TCIFLUSH);
-			if (op->flags & F_VCONSOLE)
+			if ((op->flags & F_VCONSOLE)
+			    && (op->flags & F_NOCLEAR) == 0)
 				termio_clear(STDOUT_FILENO);
 			bp = logname;
 			*bp = '\0';
