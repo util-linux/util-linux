@@ -45,6 +45,7 @@ static void load_xinfo_from_proc_tcp(ino_t netns_inode);
 static void load_xinfo_from_proc_udp(ino_t netns_inode);
 static void load_xinfo_from_proc_tcp6(ino_t netns_inode);
 static void load_xinfo_from_proc_udp6(ino_t netns_inode);
+static void load_xinfo_from_proc_raw6(ino_t netns_inode);
 
 static int self_netns_fd = -1;
 static struct stat self_netns_sb;
@@ -86,6 +87,7 @@ static void load_sock_xinfo_no_nsswitch(ino_t netns)
 	load_xinfo_from_proc_raw(netns);
 	load_xinfo_from_proc_tcp6(netns);
 	load_xinfo_from_proc_udp6(netns);
+	load_xinfo_from_proc_raw6(netns);
 }
 
 static void load_sock_xinfo_with_fd(int fd, ino_t netns)
@@ -1087,4 +1089,95 @@ static void load_xinfo_from_proc_udp6(ino_t netns_inode)
 	load_xinfo_from_proc_inet_L4(netns_inode,
 				     "/proc/net/udp6",
 				     &udp6_xinfo_class);
+}
+
+/*
+ * RAW6
+ */
+static struct sock_xinfo *raw6_xinfo_scan_line(const struct sock_xinfo_class *class,
+					       char * line,
+					       ino_t netns_inode,
+					       enum sysfs_byteorder byteorder)
+{
+	uint32_t local_addr[4];
+	unsigned int protocol;
+	uint32_t remote_addr[4];
+	unsigned int st;
+	unsigned long inode;
+	struct raw_xinfo *raw;
+	struct inet6_xinfo *inet6;
+	struct sock_xinfo *sock;
+
+	if (sscanf(line,
+		   "%*d: "
+		   "%08x%08x%08x%08x:%04x "
+		   "%08x%08x%08x%08x:0000 "
+		   "%x %*x:%*x %*x:%*x %*x %*u %*d %lu ",
+		   local_addr+0, local_addr+1, local_addr+2, local_addr+3, &protocol,
+		   remote_addr+0, remote_addr+1, remote_addr+2, remote_addr+3,
+		   &st, &inode) != 11)
+		return NULL;
+
+	if (inode == 0)
+		return NULL;
+
+	raw = xmalloc(sizeof(*raw));
+	inet6 = &raw->l4.inet6;
+	sock = &inet6->sock;
+	sock->class = class;
+	sock->inode = (ino_t)inode;
+	sock->netns_inode = netns_inode;
+	for (int i = 0; i < 4; i++) {
+		inet6->local_addr.s6_addr32[i] = kernel32_to_cpu(byteorder, local_addr[i]);
+		inet6->remote_addr.s6_addr32[i] = kernel32_to_cpu(byteorder, remote_addr[i]);
+	}
+	raw->protocol = protocol;
+	raw->l4.st = st;
+
+	return sock;
+}
+
+static bool raw6_fill_column(struct proc *proc  __attribute__((__unused__)),
+			     struct sock_xinfo *sock_xinfo,
+			     struct sock *sock  __attribute__((__unused__)),
+			     struct libscols_line *ln  __attribute__((__unused__)),
+			     int column_id,
+			     size_t column_index  __attribute__((__unused__)),
+			     char **str)
+{
+	struct raw_xinfo *raw;
+
+	if (l3_fill_column_handler(INET6, sock_xinfo, column_id, str))
+		return true;
+
+	raw = (struct raw_xinfo *)sock_xinfo;
+	if (column_id == COL_RAW_PROTOCOL) {
+		xasprintf(str, "%"PRIu16, raw->protocol);
+		return true;
+	}
+
+	return false;
+}
+
+static const struct l4_xinfo_class raw6_xinfo_class = {
+	.sock = {
+		.get_name = raw_get_name,
+		.get_type = raw_get_type,
+		.get_state = tcp_get_state,
+		.get_listening = NULL,
+		.fill_column = raw6_fill_column,
+		.free = NULL,
+	},
+	.scan_line = raw6_xinfo_scan_line,
+	.get_addr = tcp6_xinfo_get_addr,
+	.is_any_addr = tcp6_xinfo_is_any_addr,
+	.family = AF_INET6,
+	.l3_decorator = {"[", "]"},
+};
+
+static void load_xinfo_from_proc_raw6(ino_t netns_inode)
+{
+	load_xinfo_from_proc_inet_L4(netns_inode,
+				     "/proc/net/raw6",
+				     &raw6_xinfo_class);
 }
