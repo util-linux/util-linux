@@ -212,10 +212,10 @@ pid=_TARGET-PID_ comm=_TARGET-COMMAND_ nspid=_TARGET-NSPIDS_
 ``/proc/``_pid_``/fdinfo/``_fd_.
 +
 TCP:::
-state=_SOCK.STATE_[ laddr=_TCP.LADDR_:_TCP.LPORT_ [ raddr=_TCP.RADDR_:_TCP.RPORT_]]
+state=_SOCK.STATE_[ laddr=_TCP.LADDR_ [ raddr=_TCP.RADDR_]]
 +
 UDP:::
-state=_SOCK.STATE_[ laddr=_UDP.LADDR_:_UDP.LPORT_ [ raddr=_UDP.RADDR_:_UDP.RPORT_]]
+state=_SOCK.STATE_[ laddr=_UDP.LADDR_ [ raddr=_UDP.RADDR_]]
 +
 *lsfd* hides ``raddr=`` if _UDP.RADDR_ is ``0.0.0.0`` and _UDP.RPORT_ is 0.
 +
