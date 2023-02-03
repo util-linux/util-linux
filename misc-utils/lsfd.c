@@ -477,7 +477,6 @@ static void add_mnt_ns(ino_t id)
 
 static const struct file_class *stat2class(struct stat *sb)
 {
-	const char *fs;
 	dev_t dev;
 
 	assert(sb);
@@ -499,8 +498,7 @@ static const struct file_class *stat2class(struct stat *sb)
 		if (major(dev) != 0)
 			return &file_class;
 
-		fs = get_nodev_filesystem(minor(dev));
-		if (fs && strcmp(fs, "nsfs") == 0)
+		if (is_nsfs_dev(dev))
 			return &nsfs_file_class;
 
 		return &file_class;
