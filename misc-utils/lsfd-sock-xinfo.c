@@ -520,19 +520,19 @@ static char *tcp_get_name(struct sock_xinfo *sock_xinfo,
 	struct tcp_xinfo *tcp = ((struct tcp_xinfo *)sock_xinfo);
 	struct l4_xinfo *l4 = &tcp->l4;
 	struct inet_xinfo *inet = &l4->inet;
-	unsigned int st = l4->st;
+	const char *st_str = tcp_decode_state(l4->st);
 	char local_s[INET_ADDRSTRLEN], remote_s[INET_ADDRSTRLEN];
 
 	if (!inet_ntop(AF_INET, &inet->local_addr, local_s, sizeof(local_s)))
-		xasprintf(&str, "state=%s", tcp_decode_state(st));
-	else if (st == TCP_LISTEN
+		xasprintf(&str, "state=%s", st_str);
+	else if (l4->st == TCP_LISTEN
 		 || !inet_ntop(AF_INET, &inet->remote_addr, remote_s, sizeof(remote_s)))
 		xasprintf(&str, "state=%s laddr=%s:%u",
-			  tcp_decode_state(st),
+			  st_str,
 			  local_s, tcp->local_port);
 	else
 		xasprintf(&str, "state=%s laddr=%s:%u raddr=%s:%u",
-			  tcp_decode_state(st),
+			  st_str,
 			  local_s, tcp->local_port,
 			  remote_s, tcp->remote_port);
 	return str;
@@ -733,19 +733,19 @@ static char *udp_get_name(struct sock_xinfo *sock_xinfo,
 	struct l4_xinfo *l4 = &tcp->l4;
 	struct inet_xinfo *inet = &l4->inet;
 	unsigned int st = l4->st;
-
+	const char *st_str = tcp_decode_state(st);
 	char local_s[INET_ADDRSTRLEN], remote_s[INET_ADDRSTRLEN];
 
 	if (!inet_ntop(AF_INET, &inet->local_addr, local_s, sizeof(local_s)))
-		xasprintf(&str, "state=%s", tcp_decode_state(st));
+		xasprintf(&str, "state=%s", st_str);
 	else if ((inet->remote_addr.s_addr == 0 && tcp->remote_port == 0)
 		 || !inet_ntop(AF_INET, &inet->remote_addr, remote_s, sizeof(remote_s)))
 		xasprintf(&str, "state=%s laddr=%s:%u",
-			  tcp_decode_state(st),
+			  st_str,
 			  local_s, tcp->local_port);
 	else
 		xasprintf(&str, "state=%s laddr=%s:%u raddr=%s:%u",
-			  tcp_decode_state(st),
+			  st_str,
 			  local_s, tcp->local_port,
 			  remote_s, tcp->remote_port);
 	return str;
