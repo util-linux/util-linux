@@ -42,7 +42,7 @@ static void load_xinfo_from_proc_tcp(ino_t netns_inode);
 static void load_xinfo_from_proc_udp(ino_t netns_inode);
 
 static int self_netns_fd = -1;
-struct stat self_netns_sb;
+static struct stat self_netns_sb;
 
 static void *xinfo_tree;	/* for tsearch/tfind */
 static void *netns_tree;
