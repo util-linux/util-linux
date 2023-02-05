@@ -323,7 +323,7 @@ static bool unix_fill_column(struct proc *proc __attribute__((__unused__)),
 {
 	struct unix_xinfo *ux = (struct unix_xinfo *)sock_xinfo;
 
-	switch(column_id) {
+	switch (column_id) {
 	case COL_UNIX_PATH:
 		if (*ux->path) {
 			*str = strdup(ux->path);
