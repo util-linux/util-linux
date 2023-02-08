@@ -76,6 +76,7 @@
 #include "optutils.h"
 #include "timeutils.h"
 #include "ttyutils.h"
+#include "xalloc.h"
 
 #define DOY_MONTH_WIDTH	27	/* -j month width */
 #define DOM_MONTH_WIDTH	20	/* month width */
@@ -192,6 +193,11 @@ enum {
 	WEEK_NUM_US=0x200,
 };
 
+enum {
+	COLUMNS_MAX_THREE = -1,
+	COLUMNS_AUTO = -2,
+};
+
 /* utf-8 can have up to 6 bytes per char; and an extra byte for ending \0 */
 static char day_headings[(WEEK_LEN + 1) * 6 + 1];
 
@@ -280,7 +286,7 @@ int main(int argc, char **argv)
 	struct tm local_time;
 	char *term;
 	time_t now;
-	int ch = 0, yflag = 0, Yflag = 0;
+	int ch = 0, yflag = 0, Yflag = 0, cols = COLUMNS_MAX_THREE;
 
 	static struct cal_control ctl = {
 		.reform_year = DEFAULT_REFORM_YEAR,
@@ -317,6 +323,7 @@ int main(int argc, char **argv)
 		{"twelve", no_argument, NULL, 'Y'},
 		{"help", no_argument, NULL, 'h'},
 		{"vertical", no_argument, NULL,'v'},
+		{"column", required_argument, NULL,'c'},
 		{NULL, 0, NULL, 0}
 	};
 
@@ -375,7 +382,7 @@ int main(int argc, char **argv)
 		ctl.weekstart = (wfd + *nl_langinfo(_NL_TIME_FIRST_WEEKDAY) - 1) % DAYS_IN_WEEK;
 	}
 #endif
-	while ((ch = getopt_long(argc, argv, "13mjn:sSywYvVh", longopts, NULL)) != -1) {
+	while ((ch = getopt_long(argc, argv, "13mjn:sSywYvc:Vh", longopts, NULL)) != -1) {
 
 		err_exclusive_options(ch, longopts, excl, excl_st);
 
@@ -433,6 +440,12 @@ int main(int argc, char **argv)
 			break;
 		case 'v':
 			ctl.vertical = 1;
+			break;
+		case 'c':
+			if (strcmp(optarg, "auto") == 0)
+				cols = COLUMNS_AUTO;
+			else
+				cols = strtosize_or_err(optarg, "foo");
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
@@ -588,7 +601,9 @@ int main(int argc, char **argv)
 	if (ctl.num_months > 1 && ctl.months_in_row == 0) {
 		ctl.months_in_row = MONTHS_IN_YEAR_ROW;		/* default */
 
-		if (isatty(STDOUT_FILENO)) {
+		if (cols > 0)
+			ctl.months_in_row = cols;
+		else if (isatty(STDOUT_FILENO)) {
 			int w, mw, extra, new_n;
 
 			w = get_terminal_width(80);
@@ -600,8 +615,15 @@ int main(int argc, char **argv)
 			extra = ((w / mw) - 1) * ctl.gutter_width;
 			new_n = (w - extra) / mw;
 
-			if (new_n < MONTHS_IN_YEAR_ROW)
+			switch (cols) {
+			case COLUMNS_MAX_THREE:
+				if (new_n < MONTHS_IN_YEAR_ROW)
+					ctl.months_in_row = new_n > 0 ? new_n : 1;
+				break;
+			case COLUMNS_AUTO:
 				ctl.months_in_row = new_n > 0 ? new_n : 1;
+				break;
+			}
 		}
 	} else if (!ctl.months_in_row)
 		ctl.months_in_row = 1;
@@ -965,7 +987,7 @@ cal_vert_output_months(struct cal_month *month, const struct cal_control *ctl)
 
 static void monthly(const struct cal_control *ctl)
 {
-	struct cal_month m1,m2,m3, *m;
+	struct cal_month *m, *ms;
 	int i, rows, month = ctl->req.start_month ? ctl->req.start_month : ctl->req.month;
 	int32_t year = ctl->req.year;
 
@@ -983,23 +1005,18 @@ static void monthly(const struct cal_control *ctl)
 			month = new_month;
 	}
 
-	m1.next = (ctl->months_in_row > 1) ? &m2 : NULL;
-	m2.next = (ctl->months_in_row > 2) ? &m3 : NULL;
-	m3.next = NULL;
+	ms = xcalloc(ctl->months_in_row, sizeof(*ms));
+
+	for (i = 0; i < ctl->months_in_row - 1; i++)
+		ms[i].next = &ms[i + 1];
 
 	rows = (ctl->num_months - 1) / ctl->months_in_row;
 	for (i = 0; i < rows + 1 ; i++){
-		if (i == rows){
-			switch (ctl->num_months % ctl->months_in_row){
-				case 1:
-					m1.next = NULL;
-					/* fallthrough */
-				case 2:
-					m2.next = NULL;
-					/* fallthrough */
-			}
-		}
-		for (m = &m1; m; m = m->next){
+		if (i == rows)
+			for (int n = 0; n < ctl->num_months % ctl->months_in_row; n++)
+				ms[n].next = NULL;
+
+		for (m = ms; m; m = m->next){
 			m->month = month++;
 			m->year = year;
 			if (MONTHS_IN_YEAR < month) {
@@ -1012,13 +1029,14 @@ static void monthly(const struct cal_control *ctl)
 			if (i > 0)
 				fputc('\n', stdout);		/* Add a line between row */
 
-			cal_vert_output_header(&m1, ctl);
-			cal_vert_output_months(&m1, ctl);
+			cal_vert_output_header(ms, ctl);
+			cal_vert_output_months(ms, ctl);
 		} else {
-			cal_output_header(&m1, ctl);
-			cal_output_months(&m1, ctl);
+			cal_output_header(ms, ctl);
+			cal_output_months(ms, ctl);
 		}
 	}
+	free(ms);
 }
 
 static void yearly(const struct cal_control *ctl)
@@ -1266,6 +1284,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -Y, --twelve          show the next twelve months\n"), out);
 	fputs(_(" -w, --week[=<num>]    show US or ISO-8601 week numbers\n"), out);
 	fputs(_(" -v, --vertical        show day vertically instead of line\n"), out);
+	fputs(_(" -c, --columns <width> amount of columns to use\n"), out);
 	fprintf(out,
 	      _("     --color[=<when>]  colorize messages (%s, %s or %s)\n"), "auto", "always", "never");
 	fprintf(out,
