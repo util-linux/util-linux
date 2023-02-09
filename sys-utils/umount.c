@@ -154,18 +154,27 @@ static void success_message(struct libmnt_context *cxt)
 		warnx(_("%s unmounted"), tgt);
 }
 
-static int mk_exit_code(struct libmnt_context *cxt, int rc)
+static int mk_exit_code(struct libmnt_context *cxt, int api_rc)
 {
 	char buf[BUFSIZ] = { 0 };
+	int rc;
 
-	rc = mnt_context_get_excode(cxt, rc, buf, sizeof(buf));
+	rc = mnt_context_get_excode(cxt, api_rc, buf, sizeof(buf));
 
 	/* suppress "not mounted" error message */
-	if (quiet &&
-	    rc == MNT_EX_FAIL &&
-	    mnt_context_syscall_called(cxt) &&
-	    mnt_context_get_syscall_errno(cxt) == EINVAL)
-		return rc;
+	if (quiet) {
+		switch (rc) {
+		case MNT_EX_USAGE:
+			if (api_rc == -EPERM)	/* non-root user */
+				return rc;
+			break;
+		case MNT_EX_FAIL:
+			if (mnt_context_syscall_called(cxt) &&
+			    mnt_context_get_syscall_errno(cxt) == EINVAL)
+				return rc;
+			break;
+		}
+	}
 
 	/* print errors/warnings */
 	if (*buf) {
