@@ -417,9 +417,54 @@ static uint32_t kernel32_to_cpu(enum sysfs_byteorder byteorder, uint32_t v)
 /*
  * L4 abstract-layer for protocols stacked on IP and IP6.
  */
+enum l4_state {
+	/*
+	 * Taken from linux/include/net/tcp_states.h.
+	 * (GPL-2.0-or-later)
+	 *
+	 * UDP and RAW sockets also uses the contents in Linux.
+	 */
+	TCP_ESTABLISHED = 1,
+	TCP_SYN_SENT,
+	TCP_SYN_RECV,
+	TCP_FIN_WAIT1,
+	TCP_FIN_WAIT2,
+	TCP_TIME_WAIT,
+	TCP_CLOSE,
+	TCP_CLOSE_WAIT,
+	TCP_LAST_ACK,
+	TCP_LISTEN,
+	TCP_CLOSING,
+	TCP_NEW_SYN_RECV,
+
+	TCP_MAX_STATES	/* Leave at the end! */
+};
+
+static const char *l4_decode_state(enum l4_state st)
+{
+	const char * table [] = {
+		[TCP_ESTABLISHED] = "established",
+		[TCP_SYN_SENT] = "syn-sent",
+		[TCP_SYN_RECV] = "syn-recv",
+		[TCP_FIN_WAIT1] = "fin-wait1",
+		[TCP_FIN_WAIT2] = "fin-wait2",
+		[TCP_TIME_WAIT] = "time-wait",
+		[TCP_CLOSE] = "close",
+		[TCP_CLOSE_WAIT] = "close-wait",
+		[TCP_LAST_ACK] = "last-ack",
+		[TCP_LISTEN] = "listen",
+		[TCP_CLOSING] = "closing",
+		[TCP_NEW_SYN_RECV] = "new-syn-recv",
+	};
+
+	if (st < TCP_MAX_STATES)
+		return table[st];
+	return "unknown";
+}
+
 struct l4_xinfo {
 	struct inet_xinfo inet;
-	unsigned int st;
+	enum l4_state st;
 };
 
 enum l4_side { L4_LOCAL, L4_REMOTE };
@@ -470,56 +515,13 @@ struct tcp_xinfo {
 	uint16_t remote_port;
 };
 
-enum tcp_state {
-	/*
-	 * Taken from linux/include/net/tcp_states.h.
-	 * (GPL-2.0-or-later)
-	 */
-	TCP_ESTABLISHED = 1,
-	TCP_SYN_SENT,
-	TCP_SYN_RECV,
-	TCP_FIN_WAIT1,
-	TCP_FIN_WAIT2,
-	TCP_TIME_WAIT,
-	TCP_CLOSE,
-	TCP_CLOSE_WAIT,
-	TCP_LAST_ACK,
-	TCP_LISTEN,
-	TCP_CLOSING,
-	TCP_NEW_SYN_RECV,
-
-	TCP_MAX_STATES	/* Leave at the end! */
-};
-
-static const char *tcp_decode_state(unsigned int st)
-{
-	const char * table [] = {
-		[TCP_ESTABLISHED] = "established",
-		[TCP_SYN_SENT] = "syn-sent",
-		[TCP_SYN_RECV] = "syn-recv",
-		[TCP_FIN_WAIT1] = "fin-wait1",
-		[TCP_FIN_WAIT2] = "fin-wait2",
-		[TCP_TIME_WAIT] = "time-wait",
-		[TCP_CLOSE] = "close",
-		[TCP_CLOSE_WAIT] = "close-wait",
-		[TCP_LAST_ACK] = "last-ack",
-		[TCP_LISTEN] = "listen",
-		[TCP_CLOSING] = "closing",
-		[TCP_NEW_SYN_RECV] = "new-syn-recv",
-	};
-
-	if (st < TCP_MAX_STATES)
-		return table[st];
-	return "unknown";
-}
-
 static char *tcp_get_name(struct sock_xinfo *sock_xinfo,
 			  struct sock *sock  __attribute__((__unused__)))
 {
 	char *str = NULL;
 	struct tcp_xinfo *tcp = ((struct tcp_xinfo *)sock_xinfo);
 	struct l4_xinfo *l4 = &tcp->l4;
-	const char *st_str = tcp_decode_state(l4->st);
+	const char *st_str = l4_decode_state(l4->st);
 	struct l4_xinfo_class *class = (struct l4_xinfo_class *)sock_xinfo->class;
 	void *laddr = class->get_addr(l4, L4_LOCAL);
 	void *raddr = class->get_addr(l4, L4_REMOTE);
@@ -550,7 +552,7 @@ static char *tcp_get_type(struct sock_xinfo *sock_xinfo __attribute__((__unused_
 static char *tcp_get_state(struct sock_xinfo *sock_xinfo,
 			   struct sock *sock __attribute__((__unused__)))
 {
-	return strdup(tcp_decode_state(((struct l4_xinfo *)sock_xinfo)->st));
+	return strdup(l4_decode_state(((struct l4_xinfo *)sock_xinfo)->st));
 }
 
 static bool tcp_get_listening(struct sock_xinfo *sock_xinfo,
@@ -737,7 +739,7 @@ static char *udp_get_name(struct sock_xinfo *sock_xinfo,
 	struct tcp_xinfo *tcp = ((struct tcp_xinfo *)sock_xinfo);
 	struct l4_xinfo *l4 = &tcp->l4;
 	unsigned int st = l4->st;
-	const char *st_str = tcp_decode_state(st);
+	const char *st_str = l4_decode_state(st);
 	struct l4_xinfo_class *class = (struct l4_xinfo_class *)sock_xinfo->class;
 	void *laddr = class->get_addr(l4, L4_LOCAL);
 	void *raddr = class->get_addr(l4, L4_REMOTE);
@@ -814,7 +816,7 @@ static char *raw_get_name(struct sock_xinfo *sock_xinfo,
 	struct l4_xinfo_class *class = (struct l4_xinfo_class *)sock_xinfo->class;
 	struct raw_xinfo *raw = ((struct raw_xinfo *)sock_xinfo);
 	struct l4_xinfo *l4 = &raw->l4;
-	const char *st_str = tcp_decode_state(l4->st);
+	const char *st_str = l4_decode_state(l4->st);
 	void *laddr = class->get_addr(l4, L4_LOCAL);
 	void *raddr = class->get_addr(l4, L4_REMOTE);
 	char local_s[BUFSIZ];
