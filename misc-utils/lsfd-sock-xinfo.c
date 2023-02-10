@@ -20,6 +20,7 @@
  */
 #include <arpa/inet.h>		/* inet_ntop */
 #include <fcntl.h>		/* open(2) */
+#include <inttypes.h>		/* SCNu16 */
 #include <linux/net.h>		/* SS_* */
 #include <linux/un.h>		/* UNIX_PATH_MAX */
 #include <sched.h>		/* for setns(2) */
@@ -529,11 +530,11 @@ static char *tcp_get_name(struct sock_xinfo *sock_xinfo,
 		xasprintf(&str, "state=%s", st_str);
 	else if (l4->st == TCP_LISTEN
 		 || !inet_ntop(class->family, raddr, remote_s, sizeof(remote_s)))
-		xasprintf(&str, "state=%s laddr=%s:%u",
+		xasprintf(&str, "state=%s laddr=%s:%"SCNu16,
 			  st_str,
 			  local_s, tcp->local_port);
 	else
-		xasprintf(&str, "state=%s laddr=%s:%u raddr=%s:%u",
+		xasprintf(&str, "state=%s laddr=%s:%"SCNu16" raddr=%s:%"SCNu16,
 			  st_str,
 			  local_s, tcp->local_port,
 			  remote_s, tcp->remote_port);
@@ -565,7 +566,7 @@ static bool tcp_get_listening(struct sock_xinfo *sock_xinfo,
 		struct l4_xinfo *l4 = &tcp->l4;				\
 		void *n = NULL;						\
 		bool has_laddr = false;					\
-		unsigned int p;						\
+		unsigned short p;					\
 		bool has_lport = false;					\
 		char s[BUFSIZ];						\
 		bool r = true;						\
@@ -574,24 +575,24 @@ static bool tcp_get_listening(struct sock_xinfo *sock_xinfo,
 		case COL_##L4##_LADDR:					\
 			n = class->get_addr(l4, L4_LOCAL);		\
 			has_laddr = true;				\
-			p = (unsigned int)tcp->local_port;		\
+			p = tcp->local_port;				\
 			/* FALL THROUGH */				\
 		case COL_##L4##_RADDR:					\
 			if (!has_laddr) {				\
 				n = class->get_addr(l4, L4_REMOTE);	\
-				p = (unsigned int)tcp->remote_port;	\
+				p = tcp->remote_port;			\
 			}						\
 			if (n && inet_ntop(class->family, n, s, sizeof(s))) \
-				xasprintf(STR, "%s:%u", s, p);		\
+				xasprintf(STR, "%s:%"SCNu16, s, p);	\
 			break;						\
 		case COL_##L4##_LPORT:					\
-			p = (unsigned int)tcp->local_port;		\
+			p = tcp->local_port;				\
 			has_lport = true;				\
 			/* FALL THROUGH */				\
 		case COL_##L4##_RPORT:					\
 			if (!has_lport)					\
-				p = (unsigned int)tcp->remote_port;	\
-			xasprintf(STR, "%u", p);			\
+				p = tcp->remote_port;			\
+			xasprintf(STR, "%"SCNu16, p);			\
 			break;						\
 		default:						\
 			r = false;					\
@@ -747,11 +748,11 @@ static char *udp_get_name(struct sock_xinfo *sock_xinfo,
 		xasprintf(&str, "state=%s", st_str);
 	else if ((class->is_any_addr(raddr) && tcp->remote_port == 0)
 		 || !inet_ntop(class->family, raddr, remote_s, sizeof(remote_s)))
-		xasprintf(&str, "state=%s laddr=%s:%u",
+		xasprintf(&str, "state=%s laddr=%s:%"SCNu16,
 			  st_str,
 			  local_s, tcp->local_port);
 	else
-		xasprintf(&str, "state=%s laddr=%s:%u raddr=%s:%u",
+		xasprintf(&str, "state=%s laddr=%s:%"SCNu16" raddr=%s:%"SCNu16,
 			  st_str,
 			  local_s, tcp->local_port,
 			  remote_s, tcp->remote_port);
@@ -823,11 +824,11 @@ static char *raw_get_name(struct sock_xinfo *sock_xinfo,
 		xasprintf(&str, "state=%s", st_str);
 	else if (class->is_any_addr(raddr)
 		 || !inet_ntop(class->family, raddr, remote_s, sizeof(remote_s)))
-		xasprintf(&str, "state=%s protocol=%u laddr=%s",
+		xasprintf(&str, "state=%s protocol=%"SCNu16" laddr=%s",
 			  st_str,
 			  raw->protocol, local_s);
 	else
-		xasprintf(&str, "state=%s protocol=%u laddr=%s raddr=%s",
+		xasprintf(&str, "state=%s protocol=%"SCNu16" laddr=%s raddr=%s",
 			  st_str,
 			  raw->protocol, local_s, remote_s);
 	return str;
@@ -851,8 +852,8 @@ static bool raw_fill_column(struct proc *proc __attribute__((__unused__)),
 		return true;
 
 	if (column_id == COL_RAW_PROTOCOL) {
-		xasprintf(str, "%u",
-			  (unsigned int)(((struct raw_xinfo *)sock_xinfo)->protocol));
+		xasprintf(str, "%"SCNu16,
+			  ((struct raw_xinfo *)sock_xinfo)->protocol);
 		return true;
 	}
 
