@@ -202,7 +202,7 @@ struct sock_xinfo *get_sock_xinfo(ino_t netns_inode)
 
 bool is_nsfs_dev(dev_t dev)
 {
-	return (dev == self_netns_sb.st_dev);
+	return dev == self_netns_sb.st_dev;
 }
 
 static const char *sock_decode_type(uint16_t type)
@@ -690,7 +690,7 @@ static bool L4_verify_initial_line(const char *line)
 	/* Skip white spaces. */
 	line = skip_space(line);
 
-	return (strncmp(line, "sl", 2) == 0);
+	return strncmp(line, "sl", 2) == 0;
 }
 
 #define TCP_LINE_LEN 256
