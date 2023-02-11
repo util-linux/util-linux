@@ -218,7 +218,7 @@ int main(int argc, char **argv)
 	pid_idx = parse_options(argc, argv);
 	n_pids = argc - pid_idx;
 	if (!n_pids)
-		return EXIT_FAILURE;
+		errx(EXIT_FAILURE, _("no PIDs specified"));
 
 	pid_t *pids = parse_pids(argc - pid_idx, argv + pid_idx);
 
