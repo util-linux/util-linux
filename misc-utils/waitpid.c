@@ -163,7 +163,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -e, --exited            allow exited PIDs\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fprintf(out, USAGE_HELP_OPTIONS(23));
+	fprintf(out, USAGE_HELP_OPTIONS(25));
 
 	fprintf(out, USAGE_MAN_TAIL("waitpid(1)"));
 
