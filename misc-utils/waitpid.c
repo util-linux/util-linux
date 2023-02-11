@@ -179,7 +179,7 @@ static int parse_options(int argc, char **argv)
 		{ "exited",  no_argument,       NULL, 'e' },
 		{ "version", no_argument,       NULL, 'V' },
 		{ "help",    no_argument,       NULL, 'h' },
-		{ NULL, 0, NULL, 0 },
+		{ 0 }
 	};
 
 	while ((c = getopt_long (argc, argv, "vVht:e", longopts, NULL)) != -1) {
