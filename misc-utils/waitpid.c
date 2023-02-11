@@ -82,7 +82,7 @@ static int open_timeoutfd(void)
 
 	if (!timeout.tv_sec && !timeout.tv_nsec)
 		return -1;
-	
+
 	timer.it_value = timeout;
 
 	fd = timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC);
