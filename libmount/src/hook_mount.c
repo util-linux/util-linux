@@ -47,7 +47,20 @@
 #include <inttypes.h>
 
 #ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
-
+#ifndef statx
+#include <sys/syscall.h>
+#include <sys/stat.h>
+#if __x86_64__
+#define __NR_statx 332
+#else
+#if __aarch64__
+#define __NR_statx 291
+#else
+#define __NR_statx 383
+#endif
+#endif
+#define statx(a,b,c,d,e) syscall(__NR_statx,(a),(b),(c),(d),(e))
+#endif
 #define get_sysapi(_cxt) mnt_context_get_sysapi(_cxt)
 
 static void close_sysapi_fds(struct libmnt_sysapi *api)
