@@ -44,6 +44,7 @@
  */
 
 #include "mountP.h"
+#include "fileutils.h"	/* statx() fallback */
 #include <inttypes.h>
 
 #ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT

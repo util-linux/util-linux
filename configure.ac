@@ -591,6 +591,7 @@ AC_CHECK_FUNCS([ \
 	setresuid \
 	sigqueue \
 	srandom \
+	statx \
 	strnchr \
 	strndup \
 	strnlen \

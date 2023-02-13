@@ -531,6 +531,7 @@ funcs = '''
         sched_setscheduler
         sigqueue
         srandom
+        statx
         strnchr
         strndup
         strnlen
