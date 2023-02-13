@@ -602,12 +602,14 @@ static int is_phantom(const struct last_control *ctl, struct utmpx *ut)
 {
 	struct passwd *pw;
 	char path[sizeof(ut->ut_line) + 16];
+	char user[sizeof(ut->ut_user) + 1];
 	int ret = 0;
 
 	if (ut->ut_tv.tv_sec < ctl->boot_time.tv_sec)
 		return 1;
-	ut->ut_user[sizeof(ut->ut_user) - 1] = '\0';
-	pw = getpwnam(ut->ut_user);
+
+	mem2strcpy(user, ut->ut_user, sizeof(ut->ut_user), sizeof(user));
+	pw = getpwnam(user);
 	if (!pw)
 		return 1;
 	snprintf(path, sizeof(path), "/proc/%u/loginuid", ut->ut_pid);
