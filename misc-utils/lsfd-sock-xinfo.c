@@ -347,7 +347,12 @@ static const struct sock_xinfo_class unix_xinfo_class = {
 	.free = NULL,
 };
 
-/* #define UNIX_LINE_LEN 54 + 21 + UNIX_LINE_LEN + 1 */
+/* #define UNIX_LINE_LEN 54 + 21 + UNIX_LINE_LEN + 1
+ *
+ * An actual number must be used in this definition
+ * since UNIX_LINE_LEN is specified as an argument for
+ * stringify_value().
+ */
 #define UNIX_LINE_LEN 256
 static void load_xinfo_from_proc_unix(ino_t netns_inode)
 {
@@ -370,10 +375,11 @@ static void load_xinfo_from_proc_unix(ino_t netns_inode)
 		unsigned int st;
 		unsigned long inode;
 		struct unix_xinfo *ux;
-		char path[UNIX_LINE_LEN] = { 0 };
+		char path[UNIX_LINE_LEN + 1] = { 0 };
 
 
-		if (sscanf(line, "%*x: %*x %*x %" SCNx64 " %x %x %lu %s",
+		if (sscanf(line, "%*x: %*x %*x %" SCNx64 " %x %x %lu %"
+			   stringify_value(UNIX_LINE_LEN) "[^\n]",
 			   &flags, &type, &st, &inode, path) < 4)
 			continue;
 
