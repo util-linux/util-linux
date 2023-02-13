@@ -212,7 +212,7 @@ pid=_TARGET-PID_ comm=_TARGET-COMMAND_ nspid=_TARGET-NSPIDS_
 ``/proc/``_pid_``/fdinfo/``_fd_.
 +
 RAW:::
-state=_SOCK.STATE_[ protocol=_RAW.PROTOCOL_ [ laddr=_INET.LADDR_ [ raddr=_INET.RADDR_]]
+state=_SOCK.STATE_[ protocol=_RAW.PROTOCOL_ [ laddr=_INET.LADDR_ [ raddr=_INET.RADDR_]]]
 +
 TCP:::
 state=_SOCK.STATE_[ laddr=_TCP.LADDR_ [ raddr=_TCP.RADDR_]]
@@ -273,7 +273,7 @@ PID of the process targeted by the pidfd.
 POS <``number``>::
 File position.
 
-RAW.PROTOCOL <``number``>>::
+RAW.PROTOCOL <``number``>::
 Protocol number of the raw socket.
 
 RDEV <``string``>::
