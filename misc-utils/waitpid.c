@@ -82,7 +82,7 @@ static int open_timeoutfd(void)
 
 	if (!timeout.tv_sec && !timeout.tv_nsec)
 		return -1;
-	
+
 	timer.it_value = timeout;
 
 	fd = timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC);
@@ -163,7 +163,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -e, --exited            allow exited PIDs\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fprintf(out, USAGE_HELP_OPTIONS(23));
+	fprintf(out, USAGE_HELP_OPTIONS(25));
 
 	fprintf(out, USAGE_MAN_TAIL("waitpid(1)"));
 
@@ -179,7 +179,7 @@ static int parse_options(int argc, char **argv)
 		{ "exited",  no_argument,       NULL, 'e' },
 		{ "version", no_argument,       NULL, 'V' },
 		{ "help",    no_argument,       NULL, 'h' },
-		{ NULL, 0, NULL, 0 },
+		{ 0 }
 	};
 
 	while ((c = getopt_long (argc, argv, "vVht:e", longopts, NULL)) != -1) {
@@ -218,7 +218,7 @@ int main(int argc, char **argv)
 	pid_idx = parse_options(argc, argv);
 	n_pids = argc - pid_idx;
 	if (!n_pids)
-		return EXIT_FAILURE;
+		errx(EXIT_FAILURE, _("no PIDs specified"));
 
 	pid_t *pids = parse_pids(argc - pid_idx, argv + pid_idx);
 
