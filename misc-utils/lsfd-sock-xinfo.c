@@ -370,7 +370,7 @@ static void load_xinfo_from_proc_unix(ino_t netns_inode)
 		unsigned int st;
 		unsigned long inode;
 		struct unix_xinfo *ux;
-		char path[ sizeof_member(struct unix_xinfo, path) ] = { 0 };
+		char path[UNIX_LINE_LEN] = { 0 };
 
 
 		if (sscanf(line, "%*x: %*x %*x %" SCNx64 " %x %x %lu %s",
