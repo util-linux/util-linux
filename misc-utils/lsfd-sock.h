@@ -46,7 +46,6 @@ struct sock {
 };
 
 struct sock_xinfo_class {
-	const char *class;
 	/* Methods for filling socket related columns */
 	char * (*get_name)(struct sock_xinfo *, struct sock *);
 	char * (*get_type)(struct sock_xinfo *, struct sock *);

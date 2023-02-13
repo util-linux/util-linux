@@ -1505,6 +1505,59 @@ static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
 	return NULL;
 }
 
+static void *make_raw(const struct factory *factory, struct fdesc fdescs[],
+				    int argc, char ** argv)
+{
+	struct arg protocol = decode_arg("protocol", factory->params, argc, argv);
+	int iprotocol = ARG_INTEGER(protocol);
+	int ssd;
+	struct sockaddr_in sin;
+
+	free_arg(&protocol);
+
+	ssd = socket(AF_INET, SOCK_RAW, iprotocol);
+	if (ssd < 0)
+		err(EXIT_FAILURE,
+		    _("failed to make a udp socket for server"));
+
+	if (ssd != fdescs[0].fd) {
+		if (dup2(ssd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(ssd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", ssd, fdescs[0].fd);
+		}
+		close(ssd);
+		ssd = fdescs[0].fd;
+	}
+
+	memset(&sin, 0, sizeof(sin));
+	sin.sin_family = AF_INET;
+	sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+	if (bind(ssd, &sin, sizeof(sin)) < 0) {
+		int e = errno;
+		close(ssd);
+		errno = e;
+		err(EXIT_FAILURE, "failed in bind(2)");
+	}
+
+	sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK + 1);
+	if (connect(ssd, &sin, sizeof(sin)) < 0) {
+		int e = errno;
+		close(ssd);
+		errno = e;
+		err(EXIT_FAILURE, "failed in connect(2)");
+	}
+
+	fdescs[0] = (struct fdesc) {
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+
+	return NULL;
+}
+
 static void *make_netns(const struct factory *factory _U_, struct fdesc fdescs[],
 			int argc _U_, char ** argv _U_)
 {
@@ -1894,6 +1947,24 @@ static const struct factory factories[] = {
 			},
 			PARAM_END
 		}
+	},
+	{
+		.name = "raw",
+		.desc = "AF_INET+SOCK_RAW sockets",
+		.priv = true,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_raw,
+		.params = (struct parameter []) {
+			{
+				.name = "protocol",
+				.type = PTYPE_INTEGER,
+				.desc = "protocol passed to socket(AF_INET, SOCK_RAW, protocol)",
+				.defv.integer = IPPROTO_IPIP,
+			},
+			PARAM_END
+		}
+
 	},
 	{
 		.name = "netns",
