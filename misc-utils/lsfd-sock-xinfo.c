@@ -389,7 +389,7 @@ static void load_xinfo_from_proc_unix(ino_t netns_inode)
 		if (inode == 0)
 			continue;
 
-		ux = xcalloc(1, sizeof(struct unix_xinfo));
+		ux = xcalloc(1, sizeof(*ux));
 		ux->sock.class = &unix_xinfo_class;
 		ux->sock.inode = (ino_t)inode;
 		ux->sock.netns_inode = netns_inode;
@@ -655,7 +655,7 @@ static struct sock_xinfo *tcp_xinfo_scan_line(const struct sock_xinfo_class *cla
 	if (inode == 0)
 		return NULL;
 
-	tcp = xcalloc(1, sizeof(struct tcp_xinfo));
+	tcp = xcalloc(1, sizeof(*tcp));
 	inet = &tcp->l4.inet;
 	sock = &inet->sock;
 	sock->class = class;
@@ -915,7 +915,7 @@ static struct sock_xinfo *raw_xinfo_scan_line(const struct sock_xinfo_class *cla
 	if (inode == 0)
 		return NULL;
 
-	raw = xcalloc(1, sizeof(struct raw_xinfo));
+	raw = xcalloc(1, sizeof(*raw));
 	inet = &raw->l4.inet;
 	sock = &inet->sock;
 	sock->class = class;
@@ -983,7 +983,7 @@ static struct sock_xinfo *tcp6_xinfo_scan_line(const struct sock_xinfo_class *cl
 	if (inode == 0)
 		return NULL;
 
-	tcp = xmalloc(sizeof(struct tcp_xinfo));
+	tcp = xmalloc(sizeof(*tcp));
 	inet6 = &tcp->l4.inet6;
 	sock = &inet6->sock;
 	sock->class = class;
