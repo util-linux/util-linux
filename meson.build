@@ -171,6 +171,7 @@ headers = '''
 	linux/gsmmux.h
         linux/net_namespace.h
         linux/nsfs.h
+        linux/stat.h
         linux/securebits.h
         linux/tiocl.h
         linux/version.h

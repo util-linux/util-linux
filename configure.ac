@@ -315,6 +315,7 @@ AC_CHECK_HEADERS([ \
 	linux/nsfs.h \
 	linux/pr.h \
 	linux/raw.h \
+	linux/stat.h \
 	linux/securebits.h \
 	linux/tiocl.h \
 	linux/version.h \
