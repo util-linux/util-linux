@@ -79,7 +79,7 @@ This manual page was written by mailto:linux@youmustbejoking.demon.co.uk[Darren 
 
 *powertop*(8),
 *systemd-rfkill*(8),
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/driver-api/rfkill.rst[Linux kernel documentation]
+https://docs.kernel.org/driver-api/rfkill.html[Linux kernel documentation]
 
 include::man-common/bugreports.adoc[]
 

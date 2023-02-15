@@ -99,7 +99,7 @@ mailto:kzak@redhat.com[Karel Zak]
 
 == SEE ALSO
 
-link:http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/admin-guide/blockdev/zram.rst[Linux kernel documentation]
+link:https://docs.kernel.org/admin-guide/blockdev/zram.html[Linux kernel documentation]
 
 include::man-common/bugreports.adoc[]
 

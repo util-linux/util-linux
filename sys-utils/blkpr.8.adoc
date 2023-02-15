@@ -53,7 +53,7 @@ mailto:pizhenwei@bytedance.com[zhenwei pi]
 
 *sg_persist*(8)
 
-Linux documentation at: <https://www.kernel.org/doc/Documentation/block/pr.txt>
+Linux documentation at: <https://docs.kernel.org/block/pr.html>
 iSCSI specification at: <https://datatracker.ietf.org/doc/html/rfc3720>
 NVMe-oF specification at: <https://nvmexpress.org/nvme-over-fabrics-part-two/>
 
