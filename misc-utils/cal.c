@@ -81,7 +81,44 @@
 #define DOY_MONTH_WIDTH	27	/* -j month width */
 #define DOM_MONTH_WIDTH	20	/* month width */
 
-static const char *Senter = "", *Sexit = "";	/* enter and exit standout mode */
+enum {
+	CAL_COLOR_TODAY,
+	CAL_COLOR_HEADER,
+	CAL_COLOR_WEEKNUMBER,
+};
+
+static const struct { const char * const scheme; const char * dflt; } colors[] =
+{
+        [CAL_COLOR_TODAY]      = { "today",      UL_COLOR_REVERSE },
+        [CAL_COLOR_WEEKNUMBER] = { "weeknumber", UL_COLOR_REVERSE },
+        [CAL_COLOR_HEADER]     = { "header",     ""               },
+};
+
+static inline void cal_enable_color(int id)
+{
+	color_scheme_enable(colors[id].scheme, colors[id].dflt);
+}
+
+static inline const char *cal_get_color_sequence(int id)
+{
+	return color_scheme_get_sequence(colors[id].scheme, colors[id].dflt);
+}
+
+static inline void cal_disable_color(int id)
+{
+	const char *seq = cal_get_color_sequence(id);
+	if (seq && seq[0])
+		color_disable();
+}
+
+static inline const char *cal_get_color_disable_sequence(int id)
+{
+	const char *seq = cal_get_color_sequence(id);
+	if (seq && seq[0])
+		return UL_COLOR_RESET;
+	else
+		return "";
+}
 
 #include "widechar.h"
 
@@ -515,10 +552,7 @@ int main(int argc, char **argv)
 	weekdays_init(&ctl);
 	headers_init(&ctl);
 
-	if (colors_init(ctl.colormode, "cal") > 0) {
-		Senter = UL_COLOR_REVERSE;
-		Sexit = UL_COLOR_RESET;
-	} else {
+	if (colors_init(ctl.colormode, "cal") == 0) {
 		/* disable */
 		ctl.req.day = 0;
 		ctl.weektype &= ~WEEK_NUM_MASK;
@@ -733,6 +767,8 @@ static void cal_output_header(struct cal_month *month, const struct cal_control 
 	char out[FMT_ST_CHARS];
 	struct cal_month *i;
 
+	cal_enable_color(CAL_COLOR_HEADER);
+
 	if (ctl->header_hint || ctl->header_year) {
 		for (i = month; i; i = i->next) {
 			snprintf(out, sizeof(out), "%s", ctl->full_month[i->month - 1]);
@@ -763,6 +799,7 @@ static void cal_output_header(struct cal_month *month, const struct cal_control 
 		if (i->next != NULL)
 			printf("%*s", ctl->gutter_width, "");
 	}
+	cal_disable_color(CAL_COLOR_HEADER);
 	fputc('\n', stdout);
 }
 
@@ -824,7 +861,10 @@ static void cal_output_months(struct cal_month *month, const struct cal_control 
 			if (ctl->weektype) {
 				if (0 < i->weeks[week_line]) {
 					if ((ctl->weektype & WEEK_NUM_MASK) == i->weeks[week_line])
-						printf("%s%2d%s", Senter, i->weeks[week_line], Sexit);
+						printf("%s%2d%s",
+						       cal_get_color_sequence(CAL_COLOR_WEEKNUMBER),
+						       i->weeks[week_line],
+						       cal_get_color_disable_sequence(CAL_COLOR_WEEKNUMBER));
 					else
 						printf("%2d", i->weeks[week_line]);
 				} else
@@ -841,8 +881,8 @@ static void cal_output_months(struct cal_month *month, const struct cal_control 
 					if (reqday == i->days[d])
 						printf("%*s%s%*d%s",
 							skip - (ctl->julian ? 3 : 2),
-							"", Senter, (ctl->julian ? 3 : 2),
-							i->days[d], Sexit);
+							"", cal_get_color_sequence(CAL_COLOR_TODAY), (ctl->julian ? 3 : 2),
+							i->days[d], cal_get_color_disable_sequence(CAL_COLOR_TODAY));
 					else
 						printf("%*d", skip, i->days[d]);
 				} else
@@ -885,8 +925,11 @@ cal_vert_output_months(struct cal_month *month, const struct cal_control *ctl)
 					if (reqday == m->days[d]) {
 						printf("%*s%s%*d%s",
 						       skip - (ctl->julian ? 3 : 2),
-						       "", Senter, (ctl->julian ? 3 : 2),
-						       m->days[d], Sexit);
+						       "",
+						       cal_get_color_sequence(CAL_COLOR_TODAY),
+						       (ctl->julian ? 3 : 2),
+						       m->days[d],
+						       cal_get_color_disable_sequence(CAL_COLOR_TODAY));
 					} else {
 						printf("%*d",  skip, m->days[d]);
 					}
@@ -909,9 +952,10 @@ cal_vert_output_months(struct cal_month *month, const struct cal_control *ctl)
 			if (0 < m->weeks[week]) {
 				if ((ctl->weektype & WEEK_NUM_MASK) == m->weeks[week])
 					printf("%s%*d%s",
-						 Senter,
+						 cal_get_color_sequence(CAL_COLOR_WEEKNUMBER),
 						 skip - (ctl->julian ? 3 : 2),
-						 m->weeks[week], Sexit);
+						 m->weeks[week],
+						 cal_get_color_disable_sequence(CAL_COLOR_WEEKNUMBER));
 				else
 					printf("%*d", skip, m->weeks[week]);
 			} else
