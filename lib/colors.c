@@ -809,6 +809,17 @@ void color_fdisable(FILE *f)
 }
 
 /*
+ * Get reset sequence
+ */
+const char *color_get_disable_sequence(void)
+{
+	if (!ul_colors.disabled && ul_colors.has_colors)
+		return UL_COLOR_RESET;
+	else
+		return "";
+}
+
+/*
  * Parses @str to return UL_COLORMODE_*
  */
 int colormode_from_string(const char *str)
