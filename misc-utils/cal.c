@@ -81,50 +81,7 @@
 #define DOY_MONTH_WIDTH	27	/* -j month width */
 #define DOM_MONTH_WIDTH	20	/* month width */
 
-static int has_term = 0;
 static const char *Senter = "", *Sexit = "";	/* enter and exit standout mode */
-
-#if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW)
-# if defined(HAVE_NCURSESW_TERM_H)
-#  include <ncursesw/term.h>
-# elif defined(HAVE_NCURSES_TERM_H)
-#  include <ncurses/term.h>
-# elif defined(HAVE_TERM_H)
-#  include <term.h>
-# endif
-#endif
-
-static int setup_terminal(char *term
-#if !defined(HAVE_LIBNCURSES) && !defined(HAVE_LIBNCURSESW)
-			__attribute__((__unused__))
-#endif
-		)
-{
-#if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW)
-	int ret;
-
-	if (setupterm(term, STDOUT_FILENO, &ret) != 0 || ret != 1)
-		return -1;
-#endif
-	return 0;
-}
-
-static const char *my_tgetstr(char *ss
-#if !defined(HAVE_LIBNCURSES) && !defined(HAVE_LIBNCURSESW)
-			__attribute__((__unused__))
-#endif
-		)
-{
-	const char *ret = NULL;
-
-#if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW)
-	if (has_term)
-		ret = tigetstr(ss);
-#endif
-	if (!ret || ret == (char *)-1)
-		return "";
-	return ret;
-}
 
 #include "widechar.h"
 
@@ -284,7 +241,6 @@ static time_t cal_time(time_t *t)
 int main(int argc, char **argv)
 {
 	struct tm local_time;
-	char *term;
 	time_t now;
 	int ch = 0, yflag = 0, Yflag = 0, cols = COLUMNS_MAX_THREE;
 
@@ -337,15 +293,6 @@ int main(int argc, char **argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	close_stdout_atexit();
-
-	term = getenv("TERM");
-	if (term) {
-		has_term = setup_terminal(term) == 0;
-		if (has_term) {
-			Senter = my_tgetstr("smso");
-			Sexit = my_tgetstr("rmso");
-		}
-	}
 
 /*
  * The traditional Unix cal utility starts the week at Sunday,
@@ -568,21 +515,13 @@ int main(int argc, char **argv)
 	weekdays_init(&ctl);
 	headers_init(&ctl);
 
-	if (colors_init(ctl.colormode, "cal") == 0) {
-		/*
-		 * If standout mode available (Senter and Sexit are set) and
-		 * user or terminal-colors.d do not disable colors than
-		 * ignore colors_init().
-		 */
-		if (*Senter && *Sexit && colors_mode() != UL_COLORMODE_NEVER) {
-			/* let use standout mode */
-			;
-		} else {
-			/* disable */
-			Senter = ""; Sexit = "";
-			ctl.req.day = 0;
-			ctl.weektype &= ~WEEK_NUM_MASK;
-		}
+	if (colors_init(ctl.colormode, "cal") > 0) {
+		Senter = UL_COLOR_REVERSE;
+		Sexit = UL_COLOR_RESET;
+	} else {
+		/* disable */
+		ctl.req.day = 0;
+		ctl.weektype &= ~WEEK_NUM_MASK;
 	}
 
 	if (yflag || Yflag) {
