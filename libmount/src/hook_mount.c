@@ -134,9 +134,9 @@ static int configure_superblock(struct libmnt_context *cxt,
 		const struct libmnt_optmap *ent = mnt_opt_get_mapent(opt);
 
 		if (ent && mnt_opt_get_map(opt) == cxt->map_linux &&
-		    ent->id == MS_RDONLY)
-			;
-		else if (!name || mnt_opt_get_map(opt) || mnt_opt_is_external(opt))
+		    ent->id == MS_RDONLY) {
+			value = NULL;
+		} else if (!name || mnt_opt_get_map(opt) || mnt_opt_is_external(opt))
 			continue;
 
 		DBG(HOOK, ul_debugobj(hs, "  fsconfig(name=%s,value=%s)", name, value));
@@ -303,18 +303,14 @@ static int hook_reconfigure_mount(struct libmnt_context *cxt,
 	return rc;
 }
 
-static int hook_set_vfsflags(struct libmnt_context *cxt,
+static int set_vfsflags(struct libmnt_context *cxt,
 			const struct libmnt_hookset *hs,
-			void *data __attribute__((__unused__)))
+			uint64_t set, uint64_t clr, int recursive)
 {
 	struct libmnt_sysapi *api;
-	struct libmnt_optlist *ol;
 	struct mount_attr attr = { .attr_clr = 0 };
 	unsigned int callflags = AT_EMPTY_PATH;
-	uint64_t set = 0, clr = 0;
-	int rc = 0;
-
-	DBG(HOOK, ul_debugobj(hs, "setting VFS flags"));
+	int rc;
 
 	api = get_sysapi(cxt);
 	assert(api);
@@ -324,19 +320,11 @@ static int hook_set_vfsflags(struct libmnt_context *cxt,
 	if (api->fd_tree < 0 && mnt_fs_get_target(cxt->fs)) {
 		rc = api->fd_tree = open_mount_tree(cxt, NULL, (unsigned long) -1);
 		if (rc < 0)
-			goto done;
+			return rc;
 		rc = 0;
 	}
 
-	ol = mnt_context_get_optlist(cxt);
-	if (!ol)
-		return -ENOMEM;
-
-	rc = mnt_optlist_get_attrs(ol, &set, &clr);
-	if (rc)
-		return rc;
-
-	if (mnt_optlist_is_recursive(ol))
+	if (recursive)
 		callflags |= AT_RECURSIVE;
 
 	if (set & (MOUNT_ATTR_RELATIME | MOUNT_ATTR_NOATIME | MOUNT_ATTR_STRICTATIME))
@@ -347,13 +335,43 @@ static int hook_set_vfsflags(struct libmnt_context *cxt,
 	attr.attr_set = set;
 	attr.attr_clr = clr;
 
+	errno = 0;
 	rc = mount_setattr(api->fd_tree, "", callflags, &attr, sizeof(attr));
 	set_syscall_status(cxt, "move_setattr", rc == 0);
 
 	if (rc && errno == EINVAL)
 		return -MNT_ERR_APPLYFLAGS;
-done:
+
 	return rc == 0 ? 0 : -errno;
+}
+
+static int hook_set_vfsflags(struct libmnt_context *cxt,
+			const struct libmnt_hookset *hs,
+			void *data __attribute__((__unused__)))
+{
+	struct libmnt_optlist *ol;
+	uint64_t set = 0, clr = 0;
+	int rc = 0;
+
+	DBG(HOOK, ul_debugobj(hs, "setting VFS flags"));
+
+	ol = mnt_context_get_optlist(cxt);
+	if (!ol)
+		return -ENOMEM;
+
+	/* normal flags */
+	rc = mnt_optlist_get_attrs(ol, &set, &clr, MNT_OL_NOREC);
+	if (!rc && (set || clr))
+		rc = set_vfsflags(cxt, hs, set, clr, 0);
+
+	/* recursive flags */
+	set = clr = 0;
+	if (!rc)
+		rc = mnt_optlist_get_attrs(ol, &set, &clr, MNT_OL_REC);
+	if (!rc && (set || clr))
+		rc = set_vfsflags(cxt, hs, set, clr, 1);
+
+	return rc;
 }
 
 static int hook_set_propagation(struct libmnt_context *cxt,
@@ -544,7 +562,7 @@ static int hook_prepare(struct libmnt_context *cxt,
 
 	/* MOUNT_ATTR_* flags for mount_setattr() */
 	if (!rc)
-		rc = mnt_optlist_get_attrs(ol, &set, &clr);
+		rc = mnt_optlist_get_attrs(ol, &set, &clr, 0);
 
 	/* open_tree() or fsopen() */
 	if (!rc)

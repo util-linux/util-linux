@@ -44,6 +44,8 @@ struct libmnt_opt {
 	enum libmnt_optsrc	src;
 
 	unsigned int external : 1,	/* visible for external helpers only */
+		     recursive : 1,	/* recursive flag */
+		     is_linux : 1,	/* defined in ls->linux_map (VFS attr) */
 		     quoted : 1;	/* name="value" */
 };
 
@@ -206,7 +208,6 @@ int mnt_optlist_remove_opt(struct libmnt_optlist *ls, struct libmnt_opt *opt)
 
 		if (opt->ent->id & MS_REC)
 			ls->is_recursive = 0;
-
 	}
 
 	optlist_cleanup_cache(ls, opt->map);
@@ -360,6 +361,42 @@ int mnt_optlist_merge_opts(struct libmnt_optlist *ls)
 	return 0;
 }
 
+#ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
+static inline uint64_t flag_to_attr(unsigned long flag)
+{
+	switch (flag) {
+	case MS_RDONLY:
+		return MOUNT_ATTR_RDONLY;
+	case MS_NOSUID:
+		return MOUNT_ATTR_NOSUID;
+	case MS_NOEXEC:
+		return MOUNT_ATTR_NOEXEC;
+	case MS_NODIRATIME:
+		return MOUNT_ATTR_NODIRATIME;
+	case MS_RELATIME:
+		return MOUNT_ATTR_RELATIME;
+	case MS_NOATIME:
+		return MOUNT_ATTR_NOATIME;
+	case MS_STRICTATIME:
+		return MOUNT_ATTR_STRICTATIME;
+	case MS_NOSYMFOLLOW:
+		return MOUNT_ATTR_NOSYMFOLLOW;
+	}
+	return 0;
+}
+
+/*
+ * Is the @opt relevant for mount_setattr() ?
+ */
+static inline int is_vfs_opt(struct libmnt_opt *opt)
+{
+	if (!opt->map || !opt->ent || !opt->ent->id || !opt->is_linux)
+		return 0;
+
+	return flag_to_attr(opt->ent->id) == 0 ? 0 : 1;
+}
+#endif
+
 static struct libmnt_opt *optlist_new_opt(struct libmnt_optlist *ls,
 			const char *name, size_t namesz,
 			const char *value, size_t valsz,
@@ -401,6 +438,8 @@ static struct libmnt_opt *optlist_new_opt(struct libmnt_optlist *ls,
 
 	/* shortcuts */
 	if (map && ent && map == ls->linux_map) {
+		opt->is_linux = 1;
+
 		if (ent->id & MS_PROPAGATION)
 			ls->propagation |= ent->id;
 		else if (opt->ent->id == MS_REMOUNT)
@@ -416,10 +455,16 @@ static struct libmnt_opt *optlist_new_opt(struct libmnt_optlist *ls,
 		else if (opt->ent->id == MS_SILENT)
 			ls->is_silent = 1;
 
-		if (opt->ent->id & MS_REC)
+		if (opt->ent->id & MS_REC) {
 			ls->is_recursive = 1;
+			opt->recursive = 1;
+		}
 	}
-
+#ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
+	if (!opt->recursive && opt->value
+	    && is_vfs_opt(opt) && strcmp(opt->value, "recursive") == 0)
+		opt->recursive = 1;
+#endif
 	if (ent && map) {
 		DBG(OPTLIST, ul_debugobj(ls, " added %s [id=0x%08x map=%p]",
 				opt->name, ent->id, map));
@@ -752,37 +797,13 @@ int mnt_optlist_get_flags(struct libmnt_optlist *ls, unsigned long *flags,
 	return 0;
 }
 
-#ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
-static inline uint64_t flag_to_attr(unsigned long flag)
-{
-	switch (flag) {
-	case MS_RDONLY:
-		return MOUNT_ATTR_RDONLY;
-	case MS_NOSUID:
-		return MOUNT_ATTR_NOSUID;
-	case MS_NOEXEC:
-		return MOUNT_ATTR_NOEXEC;
-	case MS_NODIRATIME:
-		return MOUNT_ATTR_NODIRATIME;
-	case MS_RELATIME:
-		return MOUNT_ATTR_RELATIME;
-	case MS_NOATIME:
-		return MOUNT_ATTR_NOATIME;
-	case MS_STRICTATIME:
-		return MOUNT_ATTR_STRICTATIME;
-	case MS_NOSYMFOLLOW:
-		return MOUNT_ATTR_NOSYMFOLLOW;
-	}
-	return 0;
-}
-#endif
 
 /*
  * Like mnt_optlist_get_flags() for VFS flags, but converts classic MS_* flags to
  * new MOUNT_ATTR_*
  */
 #ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
-int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *clr)
+int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *clr, int rec)
 {
 	struct libmnt_iter itr;
 	struct libmnt_opt *opt;
@@ -800,6 +821,12 @@ int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *cl
 			continue;
 		if (!opt->ent || !opt->ent->id)
 			continue;
+
+		if (rec == MNT_OL_REC && !opt->recursive)
+			continue;
+		if (rec == MNT_OL_NOREC && opt->recursive)
+			continue;
+
 		if (!is_wanted_opt(opt, ls->linux_map, MNT_OL_FLTR_DFLT))
 			continue;
 		x = flag_to_attr( opt->ent->id );
@@ -823,7 +850,8 @@ int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *cl
 #else
 int mnt_optlist_get_attrs(struct libmnt_optlist *ls __attribute__((__unused__)),
 			  uint64_t *set __attribute__((__unused__)),
-			  uint64_t *clr __attribute__((__unused__)))
+			  uint64_t *clr __attribute__((__unused__)),
+			  int mask)
 {
 	return 0;
 }
@@ -1057,7 +1085,14 @@ const struct libmnt_optmap *mnt_opt_get_mapent(struct libmnt_opt *opt)
 
 int mnt_opt_set_value(struct libmnt_opt *opt, const char *str)
 {
-	return strdup_to_struct_member(opt, value, str);
+	int rc;
+
+	opt->recursive = 0;
+	rc = strdup_to_struct_member(opt, value, str);
+
+	if (rc == 0 && str && strcmp(str, "recursive") == 0)
+		opt->recursive = 1;
+	return rc;
 }
 
 int mnt_opt_set_u64value(struct libmnt_opt *opt, uint64_t num)

@@ -544,9 +544,16 @@ enum {
 	__MNT_OL_FLTR_COUNT	/* keep it last */
 };
 
+
 extern int mnt_optlist_get_flags(struct libmnt_optlist *ls, unsigned long *flags,
                           const struct libmnt_optmap *map, unsigned int what);
-extern int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *clr);
+
+/* recursive status for mnt_optlist_get_attrs() */
+#define MNT_OL_REC	1
+#define MNT_OL_NOREC	2
+
+extern int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *clr, int rec);
+
 extern int mnt_optlist_get_optstr(struct libmnt_optlist *ol, const char **optstr,
                         const struct libmnt_optmap *map, unsigned int what);
 extern int mnt_optlist_strdup_optstr(struct libmnt_optlist *ls, char **optstr,

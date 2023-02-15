@@ -234,7 +234,7 @@ ____
 
 Note that a read-only bind will create a read-only mountpoint (VFS entry), but the original filesystem superblock will still be writable, meaning that the _olddir_ will be writable, but the _newdir_ will be read-only.
 
-It's also possible to change nosuid, nodev, noexec, noatime, nodiratime, relatime and nosymfollow VFS entry flags via a "remount,bind" operation. The other flags (for example filesystem-specific flags) are silently ignored. It's impossible to change mount options recursively (for example with *-o rbind,ro*).
+It's also possible to change nosuid, nodev, noexec, noatime, nodiratime, relatime and nosymfollow VFS entry flags via a "remount,bind" operation. The other flags (for example filesystem-specific flags) are silently ignored. The classic mount(2) system call does not allow to change mount options recursively (for example with *-o rbind,ro*). The recursive semantic is possible with a new mount_setattr(2) kernel system call and it's supported since libmount from util-linux v2.39 by a new experimental "recursive" option argument (e.g. *-o rbind,ro=recursive*). For more details see the *FILESYSTEM-INDEPENDENT MOUNT OPTIONS* section for more details.
 
 Since util-linux 2.31, *mount* ignores the *bind* flag from _/etc/fstab_ on a *remount* operation (if *-o remount* is specified on command line). This is necessary to fully control mount options on remount by command line. In previous versions the bind flag has been always applied and it was impossible to re-define mount options without interaction with the bind semantic. This *mount* behavior does not affect situations when "remount,bind" is specified in the _/etc/fstab_ file.
 
@@ -453,6 +453,34 @@ include::man-common/help-version.adoc[]
 Some of these options are only useful when they appear in the _/etc/fstab_ file.
 
 Some of these options could be enabled or disabled by default in the system kernel. To check the current setting see the options in _/proc/mounts_. Note that filesystems also have per-filesystem specific default mount options (see for example *tune2fs -l* output for ext__N__ filesystems).
+
+The options *nosuid*, *noexec*, *nodiratime*, *relatime*, *noatime*, *strictatime*, and *nosymfollow* are interpreted only by the abstract VFS kernel layer and applied to the mountpoint node rather than to the filesystem itself. Try:  
+____
+
+ findmnt -o TARGET,VFS-OPTIONS,FS-OPTIONS
+____
+
+to get a complete overview of filesystems and VFS options.
+
+The read-only setting (*ro* or *rw*) is interpreted by VFS and the filesystem
+and depends on how the option is specified on the mount(8) command line. The
+default is to interpret it on the filesystem level. The operation "-o bind,remount,ro"
+is applied only to the VFS mountpoint, and operation "-o remount,ro" is applied to
+VFS and filesystem superblock. This semantic allows create a read-only
+mountpoint but keeps the filesystem writable from another mountpoint.
+
+Since v2.39 libmount can use a new kernel mount interface to set the VFS
+options recursive. For backward compatibility, this feature is not enabled by
+default, although recursive operation (e.g. rbind) has been requested. The new
+option argument "recursive" could be specified, for example:
+____
+
+ mount -orbind,ro=recursive,noexec=recursive,nosuid /foo /bar
+____
+
+recursively binds filesystems from /foo to /bar, /bar, and all submounts will
+be read-only and noexec, but only /bar itself will be "nosuid". The "recursive"
+optional argument for VFS mount options is an EXPERIMENTAL feature. 
 
 The following options apply to any filesystem that is being mounted (but not every filesystem actually honors them - e.g., the *sync* option today has an effect only for ext2, ext3, ext4, fat, vfat, ufs and xfs):
 
