@@ -120,7 +120,7 @@ static int configure_superblock(struct libmnt_context *cxt,
 	struct libmnt_opt *opt;
 	int rc;
 
-	DBG(HOOK, ul_debugobj(hs, " configure FS"));
+	DBG(HOOK, ul_debugobj(hs, " config FS"));
 
 	ol = mnt_context_get_optlist(cxt);
 	if (!ol)
@@ -150,6 +150,7 @@ static int configure_superblock(struct libmnt_context *cxt,
 			return -errno;
 	}
 
+	DBG(HOOK, ul_debugobj(hs, " config done [rc=0]"));
 	return 0;
 }
 
@@ -231,7 +232,7 @@ static int hook_create_mount(struct libmnt_context *cxt,
 	if (!src)
 		return -EINVAL;
 
-	DBG(HOOK, ul_debugobj(hs, "create FS instance"));
+	DBG(HOOK, ul_debugobj(hs, "init FS"));
 
 	rc = fsconfig(api->fd_fs, FSCONFIG_SET_STRING, "source", src, 0);
 	set_syscall_status(cxt, "fsconfig", rc == 0);
@@ -239,6 +240,7 @@ static int hook_create_mount(struct libmnt_context *cxt,
 	if (!rc)
 		rc = configure_superblock(cxt, hs, api->fd_fs);
 	if (!rc) {
+		DBG(HOOK, ul_debugobj(hs, "create FS"));
 		rc = fsconfig(api->fd_fs, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
 		set_syscall_status(cxt, "fsconfig", rc == 0);
 	}
@@ -550,6 +552,22 @@ static int hook_prepare(struct libmnt_context *cxt,
 
 	assert(cxt);
 	assert(hs == &hookset_mount);
+
+	/*
+	 * The current kernel btrfs driver does not completely implement
+	 * fsconfig() as it does not work with selinux stuff.
+	 *
+	 * Don't use the new mount API in this situation. Let's hope this issue
+	 * is temporary.
+	 */
+	{
+		const char *type = mnt_fs_get_fstype(cxt->fs);
+
+		if (type && strcmp(type, "btrfs") == 0 && cxt->has_selinux_opt) {
+			DBG(HOOK, ul_debugobj(hs, "don't use new API (btrfs issue)"));
+			return 0;
+		}
+	}
 
 	DBG(HOOK, ul_debugobj(hs, "prepare mount"));
 

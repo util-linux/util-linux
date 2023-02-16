@@ -427,6 +427,7 @@ struct libmnt_context
 
 	unsigned int	enabled_textdomain : 1;	/* bindtextdomain() called */
 	unsigned int	noautofs : 1;		/* ignore autofs mounts */
+	unsigned int	has_selinux_opt : 1;	/* temporary for broken fsconfig() syscall */
 
 	struct list_head	hooksets_datas;	/* global hooksets data */
 	struct list_head	hooksets_hooks;	/* global hooksets data */

@@ -165,6 +165,7 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	cxt->mountdata = NULL;
 	cxt->flags = MNT_FL_DEFAULT;
 	cxt->noautofs = 1;
+	cxt->has_selinux_opt = 0;
 
 	cxt->map_linux = mnt_get_builtin_optmap(MNT_LINUX_MAP);
 	cxt->map_userspace = mnt_get_builtin_optmap(MNT_USERSPACE_MAP);
@@ -288,6 +289,7 @@ struct libmnt_context *mnt_copy_context(struct libmnt_context *o)
 	n->table_fltrcb_data = o->table_fltrcb_data;
 
 	n->noautofs = o->noautofs;
+	n->has_selinux_opt = o->has_selinux_opt;
 
 	return n;
 failed:

@@ -169,6 +169,9 @@ static int fix_optstr(struct libmnt_context *cxt)
 					rc = mnt_opt_set_quoted_value(opt, raw);
 				if (raw)
 					freecon(raw);
+
+				/* temporary for broken fsconfig() syscall */
+				cxt->has_selinux_opt = 1;
 			}
 			if (rc)
 				goto done;
