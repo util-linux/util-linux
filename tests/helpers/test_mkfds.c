@@ -2097,6 +2097,7 @@ int main(int argc, char **argv)
 		{ "quiet",	no_argument, NULL, 'q' },
 		{ "dont-puase", no_argument, NULL, 'c' },
 		{ "help",	no_argument, NULL, 'h' },
+		{ NULL, 0, NULL, 0 },
 	};
 
 	while ((c = getopt_long(argc, argv, "lhqcI:r:", longopts, NULL)) != -1) {
