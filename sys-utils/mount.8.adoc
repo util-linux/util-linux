@@ -1192,7 +1192,7 @@ read-write mount and will result in an error.
 *xino=*{**on**|**off**|**auto**}::
 The "xino" feature composes a unique object identifier from the real object st_ino and an underlying fsid index. The "xino" feature uses the high inode number bits for fsid, because the underlying filesystems rarely use the high inode number bits. In case the underlying inode number does overflow into the high xino bits, overlay filesystem will fall back to the non xino behavior for that inode.
 +
-For a detailed description of the effect of this option please refer to https://www.kernel.org/doc/html/latest/filesystems/overlayfs.html?highlight=overlayfs
+For a detailed description of the effect of this option please refer to https://docs.kernel.org/filesystems/overlayfs.html
 
 *metacopy=*{**on**|**off**}::
 When metadata only copy up feature is enabled, overlayfs will only copy up metadata (as opposed to whole file), when a metadata specific operation like chown/chmod is performed. Full file will be copied up later when file is opened for WRITE operation.

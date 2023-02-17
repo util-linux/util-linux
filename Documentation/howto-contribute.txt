@@ -162,7 +162,7 @@ Coding Style
 	* the preferred coding style is based on the linux kernel coding-style.
 	  Available here:
 
-	https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/plain/Documentation/process/coding-style.rst
+	https://docs.kernel.org/process/coding-style.html
 
 	* use 'FIXME:' with a good description, if you want to inform others
 	  that something is not quite right, and you are unwilling to fix the

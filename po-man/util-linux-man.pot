@@ -30166,7 +30166,7 @@ msgstr ""
 #: ../sys-utils/mount.8.adoc:1108
 msgid ""
 "For a detailed description of the effect of this option please refer to "
-"https://www.kernel.org/doc/html/latest/filesystems/overlayfs.html?highlight=overlayfs"
+"https://docs.kernel.org/filesystems/overlayfs.html"
 msgstr ""
 
 #. type: Labeled list
@@ -33508,7 +33508,7 @@ msgstr ""
 msgid ""
 "*powertop*(8),\n"
 "*systemd-rfkill*(8),\n"
-"https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/driver-api/rfkill.rst[Linux "
+"https://docs.kernel.org/driver-api/rfkill.html[Linux "
 "kernel documentation]\n"
 msgstr ""
 
@@ -36817,7 +36817,7 @@ msgstr ""
 #. type: Plain text
 #: ../sys-utils/zramctl.8.adoc:103
 msgid ""
-"link:http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/admin-guide/blockdev/zram.rst[Linux "
+"https://docs.kernel.org/admin-guide/blockdev/zram.html[Linux "
 "kernel documentation]"
 msgstr ""
 

@@ -4,7 +4,7 @@
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License
  *
- * https://www.kernel.org/doc/html/latest/filesystems/erofs.html
+ * https://docs.kernel.org/filesystems/erofs.html
  */
 #include <stddef.h>
 #include <string.h>
