@@ -85,6 +85,8 @@ enum {
 	CAL_COLOR_TODAY,
 	CAL_COLOR_HEADER,
 	CAL_COLOR_WEEKNUMBER,
+	CAL_COLOR_WORKDAY,
+	CAL_COLOR_WEEKEND
 };
 
 static const struct { const char * const scheme; const char * dflt; } colors[] =
@@ -92,6 +94,8 @@ static const struct { const char * const scheme; const char * dflt; } colors[] =
         [CAL_COLOR_TODAY]      = { "today",      UL_COLOR_REVERSE },
         [CAL_COLOR_WEEKNUMBER] = { "weeknumber", UL_COLOR_REVERSE },
         [CAL_COLOR_HEADER]     = { "header",     ""               },
+	[CAL_COLOR_WORKDAY]    = { "workday",    ""               },
+	[CAL_COLOR_WEEKEND]    = { "weekend",    ""               }
 };
 
 static inline void cal_enable_color(int id)
@@ -839,11 +843,20 @@ static void cal_vert_output_header(struct cal_month *month,
 	fputc('\n', stdout);
 }
 
+#define fput_seq(_s)	do { if ((_s) && *(_s)) fputs((_s), stdout); } while(0)
+
 static void cal_output_months(struct cal_month *month, const struct cal_control *ctl)
 {
 	int reqday, week_line, d;
 	int skip;
 	struct cal_month *i;
+	int firstwork = ctl->weekstart == SUNDAY ? 1 : 0;	/* first workday in week */
+
+	/* Let's keep sequence cached rather than search it for each day */
+	const char *seq_wo_start = cal_get_color_sequence(CAL_COLOR_WORKDAY);
+	const char *seq_wo_end = cal_get_color_disable_sequence(CAL_COLOR_WORKDAY);
+	const char *seq_we_start = cal_get_color_sequence(CAL_COLOR_WEEKEND);
+	const char *seq_we_end = cal_get_color_disable_sequence(CAL_COLOR_WEEKEND);
 
 	for (week_line = 0; week_line < MAXDAYS / DAYS_IN_WEEK; week_line++) {
 		for (i = month; i; i = i->next) {
@@ -877,7 +890,13 @@ static void cal_output_months(struct cal_month *month, const struct cal_control 
 
 			for (d = DAYS_IN_WEEK * week_line;
 			     d < DAYS_IN_WEEK * week_line + DAYS_IN_WEEK; d++) {
+
+				int workday = d >= DAYS_IN_WEEK * week_line + firstwork &&
+					      d <= DAYS_IN_WEEK * week_line + firstwork + 4;
+
 				if (0 < i->days[d]) {
+					fput_seq(workday ? seq_wo_start : seq_we_start);
+
 					if (reqday == i->days[d])
 						printf("%*s%s%*d%s",
 							skip - (ctl->julian ? 3 : 2),
@@ -885,6 +904,8 @@ static void cal_output_months(struct cal_month *month, const struct cal_control 
 							i->days[d], cal_get_color_disable_sequence(CAL_COLOR_TODAY));
 					else
 						printf("%*d", skip, i->days[d]);
+
+					fput_seq(workday ? seq_wo_end : seq_we_end);
 				} else
 					printf("%*s", skip, "");
 
