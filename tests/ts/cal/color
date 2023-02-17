@@ -76,5 +76,19 @@ fi
 $TS_CMD_CAL --color=always -3 31 12 9999 >> $TS_OUTPUT
 ts_finalize_subtest
 
+ts_init_subtest "vertical"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL --color=always 15 2 2023
+fi
+$TS_CMD_CAL --color=always --vertical 15 2 2023 >> $TS_OUTPUT
+ts_finalize_subtest
+
+ts_init_subtest "vertical-week"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL --color=always 15 2 2023
+fi
+$TS_CMD_CAL --color=always --vertical --week=15 15 2 2023 >> $TS_OUTPUT
+ts_finalize_subtest
+
 
 ts_finalize
