@@ -1390,8 +1390,12 @@ static void *make_tcp(const struct factory *factory, struct fdesc fdescs[],
 			       (struct sockaddr *)&sin, (struct sockaddr *)&cin);
 }
 
-static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
-				    int argc, char ** argv)
+static void *make_udp_common(const struct factory *factory, struct fdesc fdescs[],
+			     int argc, char ** argv,
+			     int family,
+			     void (*init_addr)(struct sockaddr *, unsigned short),
+			     size_t addr_size,
+			     struct sockaddr * sin, struct sockaddr * cin)
 {
 	struct arg server_port = decode_arg("server-port", factory->params, argc, argv);
 	unsigned short iserver_port = (unsigned short)ARG_INTEGER(server_port);
@@ -1405,7 +1409,6 @@ static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
 	struct arg client_do_connect = decode_arg("client-do-connect", factory->params, argc, argv);
 	bool bclient_do_connect = ARG_BOOLEAN(client_do_connect);
 
-	struct sockaddr_in sin, cin;
 	int ssd, csd;
 
 	const int y = 1;
@@ -1416,7 +1419,7 @@ static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
 	free_arg(&server_port);
 	free_arg(&client_port);
 
-	ssd = socket(AF_INET, SOCK_DGRAM, 0);
+	ssd = socket(family, SOCK_DGRAM, 0);
 	if (ssd < 0)
 		err(EXIT_FAILURE,
 		    _("failed to make a udp socket for server"));
@@ -1440,12 +1443,9 @@ static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
 		ssd = fdescs[0].fd;
 	}
 
-	memset(&sin, 0, sizeof(sin));
-	sin.sin_family = AF_INET;
-	sin.sin_port = htons(iserver_port);
-	sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+	init_addr(sin, iserver_port);
 	if (bserver_do_bind) {
-		if (bind(ssd, &sin, sizeof(sin)) < 0) {
+		if (bind(ssd, sin, addr_size) < 0) {
 			int e = errno;
 			close(ssd);
 			errno = e;
@@ -1453,7 +1453,7 @@ static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
 		}
 	}
 
-	csd = socket(AF_INET, SOCK_DGRAM, 0);
+	csd = socket(family, SOCK_DGRAM, 0);
 	if (csd < 0) {
 		int e = errno;
 		close(ssd);
@@ -1484,11 +1484,8 @@ static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
 	}
 
 	if (bclient_do_bind) {
-		memset(&cin, 0, sizeof(cin));
-		cin.sin_family = AF_INET;
-		cin.sin_port = htons(iclient_port);
-		cin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-		if (bind(csd, &cin, sizeof(cin)) < 0) {
+		init_addr(cin, iclient_port);
+		if (bind(csd, cin, addr_size) < 0) {
 			int e = errno;
 			close(ssd);
 			close(csd);
@@ -1498,7 +1495,7 @@ static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
 	}
 
 	if (bclient_do_connect) {
-		if (connect(csd, &sin, sizeof(sin)) < 0) {
+		if (connect(csd, sin, addr_size) < 0) {
 			int e = errno;
 			close(ssd);
 			close(csd);
@@ -1519,6 +1516,16 @@ static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
 	};
 
 	return NULL;
+}
+
+static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
+				    int argc, char ** argv)
+{
+	struct sockaddr_in sin, cin;
+	return make_udp_common(factory, fdescs, argc, argv,
+			       AF_INET,
+			       tcp_init_addr, sizeof(sin),
+			       (struct sockaddr *)&sin, (struct sockaddr *)&cin);
 }
 
 static void *make_raw(const struct factory *factory, struct fdesc fdescs[],
@@ -1589,6 +1596,16 @@ static void *make_tcp6(const struct factory *factory, struct fdesc fdescs[],
 {
 	struct sockaddr_in6 sin, cin;
 	return make_tcp_common(factory, fdescs, argc, argv,
+			       AF_INET6,
+			       tcp6_init_addr, sizeof(sin),
+			       (struct sockaddr *)&sin, (struct sockaddr *)&cin);
+}
+
+static void *make_udp6(const struct factory *factory, struct fdesc fdescs[],
+		       int argc, char ** argv)
+{
+	struct sockaddr_in6 sin, cin;
+	return make_udp_common(factory, fdescs, argc, argv,
 			       AF_INET6,
 			       tcp6_init_addr, sizeof(sin),
 			       (struct sockaddr *)&sin, (struct sockaddr *)&cin);
@@ -2021,6 +2038,47 @@ static const struct factory factories[] = {
 				.type = PTYPE_INTEGER,
 				.desc = "TCP port the client may bind",
 				.defv.integer = 23456,
+			},
+			PARAM_END
+		}
+	},
+	{
+		.name = "udp6",
+		.desc = "AF_INET6+SOCK_DGRAM sockets",
+		.priv = false,
+		.N    = 2,
+		.EX_N = 0,
+		.make = make_udp6,
+		.params = (struct parameter []) {
+			{
+				.name = "server-port",
+				.type = PTYPE_INTEGER,
+				.desc = "UDP port the server may listen",
+				.defv.integer = 12345,
+			},
+			{
+				.name = "client-port",
+				.type = PTYPE_INTEGER,
+				.desc = "UDP port the client may bind",
+				.defv.integer = 23456,
+			},
+			{
+				.name = "server-do-bind",
+				.type = PTYPE_BOOLEAN,
+				.desc = "call bind with the server socket",
+				.defv.boolean = true,
+			},
+			{
+				.name = "client-do-bind",
+				.type = PTYPE_BOOLEAN,
+				.desc = "call bind with the client socket",
+				.defv.boolean = true,
+			},
+			{
+				.name = "client-do-connect",
+				.type = PTYPE_BOOLEAN,
+				.desc = "call connect with the client socket",
+				.defv.boolean = true,
 			},
 			PARAM_END
 		}
