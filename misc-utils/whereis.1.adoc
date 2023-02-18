@@ -118,7 +118,8 @@ enables debug output.
 
 To find all files in _/usr/bin_ which are not documented in _/usr/man/man1_ or have no source in _/usr/src_:
 
-*cd /usr/bin* *whereis -u -ms -M /usr/man/man1 -S /usr/src -f **
+*cd /usr/bin* +
+*whereis -u -ms -M /usr/man/man1 -S /usr/src -f **
 
 include::man-common/bugreports.adoc[]
 
