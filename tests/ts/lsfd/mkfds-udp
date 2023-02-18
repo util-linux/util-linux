@@ -29,7 +29,6 @@ ts_cd "$TS_OUTDIR"
 PID=
 FDS=3
 FDC=4
-EXTRA_PARAMS=
 EXPR='(TYPE == "UDP") and (FD >= 3) and (FD <= 4)'
 EXPR_server='(TYPE == "UDP") and (FD == 3)'
 EXPR_client='(TYPE == "UDP") and (FD == 4)'
