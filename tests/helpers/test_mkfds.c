@@ -1528,17 +1528,20 @@ static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
 			       (struct sockaddr *)&sin, (struct sockaddr *)&cin);
 }
 
-static void *make_raw(const struct factory *factory, struct fdesc fdescs[],
-				    int argc, char ** argv)
+static void *make_raw_common(const struct factory *factory, struct fdesc fdescs[],
+			     int argc, char ** argv,
+			     int family,
+			     void (*init_addr)(struct sockaddr *, bool),
+			     size_t addr_size,
+			     struct sockaddr * sin)
 {
 	struct arg protocol = decode_arg("protocol", factory->params, argc, argv);
 	int iprotocol = ARG_INTEGER(protocol);
 	int ssd;
-	struct sockaddr_in sin;
 
 	free_arg(&protocol);
 
-	ssd = socket(AF_INET, SOCK_RAW, iprotocol);
+	ssd = socket(family, SOCK_RAW, iprotocol);
 	if (ssd < 0)
 		err(EXIT_FAILURE,
 		    _("failed to make a udp socket for server"));
@@ -1554,18 +1557,16 @@ static void *make_raw(const struct factory *factory, struct fdesc fdescs[],
 		ssd = fdescs[0].fd;
 	}
 
-	memset(&sin, 0, sizeof(sin));
-	sin.sin_family = AF_INET;
-	sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-	if (bind(ssd, &sin, sizeof(sin)) < 0) {
+	init_addr(sin, false);
+	if (bind(ssd, sin, addr_size) < 0) {
 		int e = errno;
 		close(ssd);
 		errno = e;
 		err(EXIT_FAILURE, "failed in bind(2)");
 	}
 
-	sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK + 1);
-	if (connect(ssd, &sin, sizeof(sin)) < 0) {
+	init_addr(sin, true);
+	if (connect(ssd, sin, addr_size) < 0) {
 		int e = errno;
 		close(ssd);
 		errno = e;
@@ -1579,6 +1580,24 @@ static void *make_raw(const struct factory *factory, struct fdesc fdescs[],
 	};
 
 	return NULL;
+}
+
+static void raw_init_addr(struct sockaddr * addr, bool remote_addr)
+{
+	struct sockaddr_in *in = (struct sockaddr_in *)addr;
+	memset(in, 0, sizeof(*in));
+	in->sin_family = AF_INET;
+	in->sin_addr.s_addr = htonl(INADDR_LOOPBACK + (remote_addr? 1: 0));
+}
+
+static void *make_raw(const struct factory *factory, struct fdesc fdescs[],
+				    int argc, char ** argv)
+{
+	struct sockaddr_in sin;
+	return make_raw_common(factory, fdescs, argc, argv,
+			       AF_INET,
+			       raw_init_addr, sizeof(sin),
+			       (struct sockaddr *)&sin);
 }
 
 static void tcp6_init_addr(struct sockaddr *addr, unsigned short port)
@@ -1610,6 +1629,32 @@ static void *make_udp6(const struct factory *factory, struct fdesc fdescs[],
 			       tcp6_init_addr, sizeof(sin),
 			       (struct sockaddr *)&sin, (struct sockaddr *)&cin);
 }
+
+static void raw6_init_addr(struct sockaddr *addr, bool remote_addr)
+{
+	struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)addr;
+	memset(in6, 0, sizeof(*in6));
+	in6->sin6_family = AF_INET6;
+	in6->sin6_flowinfo = 0;
+
+	if (remote_addr) {
+		/* ::ffff:127.0.0.1 */
+		in6->sin6_addr.s6_addr16[5] = 0xffff;
+		in6->sin6_addr.s6_addr32[3] = htonl(INADDR_LOOPBACK);
+	} else
+		in6->sin6_addr = in6addr_loopback;
+}
+
+static void *make_raw6(const struct factory *factory, struct fdesc fdescs[],
+		       int argc, char ** argv)
+{
+	struct sockaddr_in6 sin;
+	return make_raw_common(factory, fdescs, argc, argv,
+			       AF_INET6,
+			       raw6_init_addr, sizeof(sin),
+			       (struct sockaddr *)&sin);
+}
+
 
 static void *make_netns(const struct factory *factory _U_, struct fdesc fdescs[],
 			int argc _U_, char ** argv _U_)
@@ -2082,6 +2127,24 @@ static const struct factory factories[] = {
 			},
 			PARAM_END
 		}
+	},
+	{
+		.name = "raw6",
+		.desc = "AF_INET6+SOCK_RAW sockets",
+		.priv = true,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_raw6,
+		.params = (struct parameter []) {
+			{
+				.name = "protocol",
+				.type = PTYPE_INTEGER,
+				.desc = "protocol passed to socket(AF_INET6, SOCK_RAW, protocol)",
+				.defv.integer = IPPROTO_IPIP,
+			},
+			PARAM_END
+		}
+
 	},
 	{
 		.name = "netns",
