@@ -350,7 +350,7 @@ static const struct sock_xinfo_class unix_xinfo_class = {
 	.free = NULL,
 };
 
-/* #define UNIX_LINE_LEN 54 + 21 + UNIX_LINE_LEN + 1
+/* UNIX_LINE_LEN need at least 54 + 21 + UNIX_PATH_MAX + 1.
  *
  * An actual number must be used in this definition
  * since UNIX_LINE_LEN is specified as an argument for
