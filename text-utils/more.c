@@ -83,7 +83,6 @@
 #include "xalloc.h"
 #include "widechar.h"
 #include "closestream.h"
-#include "rpmatch.h"
 #include "env.h"
 
 #ifdef TEST_PROGRAM
