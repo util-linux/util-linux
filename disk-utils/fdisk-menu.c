@@ -433,8 +433,10 @@ int process_fdisk_menu(struct fdisk_context **cxt0)
 		/* Map ^C and ^D in main menu to 'q' */
 		if (is_interactive
 		    && fdisk_label_is_changed(fdisk_get_label(cxt, NULL))) {
+			/* TRANSLATORS: these yes no questions use rpmatch(),
+			 * and should be translated.  */
 			rc = get_user_reply(
-				_("\nAll unwritten changes will be lost, do you really want to quit? "),
+				_("\nAll unwritten changes will be lost, do you really want to quit? (y/n)"),
 				buf, sizeof(buf));
 			if (rc || !rpmatch(buf))
 				return 0;
