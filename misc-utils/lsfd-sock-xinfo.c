@@ -399,7 +399,7 @@ static void load_xinfo_from_proc_unix(ino_t netns_inode)
 		ux->st = st;
 		xstrncpy(ux->path, path, sizeof(ux->path));
 
-		add_sock_info((struct sock_xinfo *)ux);
+		add_sock_info(&ux->sock);
 	}
 
  out:
