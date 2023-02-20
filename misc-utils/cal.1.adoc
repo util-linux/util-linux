@@ -148,6 +148,22 @@ A year starts on January 1. The first day of the week is determined by the local
 The week numbering depends on the choice of the first day of the week. If it is Sunday then the customary North American numbering is used, where 1 January is in week number 1. If it is Monday (*-m*) then the ISO 8601 standard week numbering is used, where the first Thursday is in week number 1.
 
 include::man-common/colors.adoc[]
+The logical color names supported by *cal* are:
+
+*today*::
+The current day.
+
+*weeknumber*::
+The number of the week.
+
+*header*::
+The header of a month.
+
+*workday*::
+Days that fall within the work-week.
+
+*weekend*::
+Days that fall outside the work-week.
 
 == HISTORY
 
@@ -158,6 +174,10 @@ A *cal* command appeared in Version 6 AT&T UNIX.
 The default *cal* output uses 3 September 1752 as the Gregorian calendar reform date. The historical reform dates for the other locales, including its introduction in October 1582, are not implemented.
 
 Alternative calendars, such as the Umm al-Qura, the Solar Hijri, the Ge'ez, or the lunisolar Hindu, are not supported.
+
+== SEE ALSO
+
+*terminal-colors.d*(5)
 
 include::man-common/bugreports.adoc[]
 
