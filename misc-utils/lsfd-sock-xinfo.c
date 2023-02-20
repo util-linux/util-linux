@@ -23,6 +23,7 @@
 #include <fcntl.h>		/* open(2) */
 #include <inttypes.h>		/* SCNu16 */
 #include <linux/net.h>		/* SS_* */
+#include <linux/netlink.h>	/* NETLINK_* */
 #include <linux/un.h>		/* UNIX_PATH_MAX */
 #include <sched.h>		/* for setns(2) */
 #include <search.h>
@@ -50,6 +51,7 @@ static void load_xinfo_from_proc_tcp6(ino_t netns_inode);
 static void load_xinfo_from_proc_udp6(ino_t netns_inode);
 static void load_xinfo_from_proc_udplite6(ino_t netns_inode);
 static void load_xinfo_from_proc_raw6(ino_t netns_inode);
+static void load_xinfo_from_proc_netlink(ino_t netns_inode);
 
 static int self_netns_fd = -1;
 static struct stat self_netns_sb;
@@ -96,6 +98,7 @@ static void load_sock_xinfo_no_nsswitch(ino_t netns)
 	load_xinfo_from_proc_raw6(netns);
 	load_xinfo_from_proc_icmp(netns);
 	load_xinfo_from_proc_icmp6(netns);
+	load_xinfo_from_proc_netlink(netns);
 }
 
 static void load_sock_xinfo_with_fd(int fd, ino_t netns)
@@ -1377,4 +1380,171 @@ static void load_xinfo_from_proc_icmp6(ino_t netns_inode)
 	load_xinfo_from_proc_inet_L4(netns_inode,
 				     "/proc/net/icmp6",
 				     &ping6_xinfo_class);
+}
+
+/*
+ * NETLINK
+ */
+struct netlink_xinfo {
+	struct sock_xinfo sock;
+	uint16_t protocol;
+	uint32_t lportid;	/* netlink_diag may provide rportid.  */
+	uint32_t groups;
+};
+
+static const char *netlink_decode_protocol(uint16_t protocol)
+{
+	switch (protocol) {
+	case NETLINK_ROUTE:
+		return "route";
+	case NETLINK_UNUSED:
+		return "unused";
+	case NETLINK_USERSOCK:
+		return "usersock";
+	case NETLINK_FIREWALL:
+		return "firewall";
+	case NETLINK_SOCK_DIAG:
+		return "sock_diag";
+	case NETLINK_NFLOG:
+		return "nflog";
+	case NETLINK_XFRM:
+		return "xfrm";
+	case NETLINK_SELINUX:
+		return "selinux";
+	case NETLINK_ISCSI:
+		return "iscsi";
+	case NETLINK_AUDIT:
+		return "audit";
+	case NETLINK_FIB_LOOKUP:
+		return "fib_lookup";
+	case NETLINK_CONNECTOR:
+		return "connector";
+	case NETLINK_NETFILTER:
+		return "netfilter";
+	case NETLINK_IP6_FW:
+		return "ip6_fw";
+	case NETLINK_DNRTMSG:
+		return "dnrtmsg";
+	case NETLINK_KOBJECT_UEVENT:
+		return "kobject_uevent";
+	case NETLINK_GENERIC:
+		return "generic";
+	case NETLINK_SCSITRANSPORT:
+		return "scsitransport";
+	case NETLINK_ECRYPTFS:
+		return "ecryptfs";
+	case NETLINK_RDMA:
+		return "rdma";
+	case NETLINK_CRYPTO:
+		return "crypto";
+#ifdef NETLINK_SMC
+	case NETLINK_SMC:
+		return "smc";
+#endif
+	default:
+		return "unknown";
+	}
+}
+
+static char *netlink_get_name(struct sock_xinfo *sock_xinfo,
+			      struct sock *sock __attribute__((__unused__)))
+{
+	struct netlink_xinfo *nl = (struct netlink_xinfo *)sock_xinfo;
+	char *str = NULL;
+	const char *protocol = netlink_decode_protocol(nl->protocol);
+
+	if (nl->groups)
+		xasprintf(&str, "protocol=%s lport=%"PRIu16 " groups=%"PRIu32,
+			  protocol,
+			  nl->lportid, nl->groups);
+	else
+		xasprintf(&str, "protocol=%s lport=%"PRIu16,
+			  protocol,
+			  nl->lportid);
+	return str;
+}
+
+static char *netlink_get_type(struct sock_xinfo *sock_xinfo __attribute__((__unused__)),
+			      struct sock *sock __attribute__((__unused__)))
+{
+	return strdup("raw");
+}
+
+static bool netlink_fill_column(struct proc *proc __attribute__((__unused__)),
+				struct sock_xinfo *sock_xinfo,
+				struct sock *sock __attribute__((__unused__)),
+				struct libscols_line *ln __attribute__((__unused__)),
+				int column_id,
+				size_t column_index __attribute__((__unused__)),
+				char **str)
+{
+	struct netlink_xinfo *nl = (struct netlink_xinfo *)sock_xinfo;
+
+	switch (column_id) {
+	case COL_NETLINK_GROUPS:
+		xasprintf(str, "%"PRIu32, nl->groups);
+		return true;
+	case COL_NETLINK_LPORT:
+		xasprintf(str, "%"PRIu32, nl->lportid);
+		return true;
+	case COL_NETLINK_PROTOCOL:
+		*str = strdup(netlink_decode_protocol(nl->protocol));
+		return true;
+	}
+
+	return false;
+}
+
+static const struct sock_xinfo_class netlink_xinfo_class = {
+	.get_name = netlink_get_name,
+	.get_type = netlink_get_type,
+	.get_state = NULL,
+	.get_listening = NULL,
+	.fill_column = netlink_fill_column,
+	.free = NULL,
+};
+
+static void load_xinfo_from_proc_netlink(ino_t netns_inode)
+{
+	char line[BUFSIZ];
+	FILE *netlink_fp;
+
+	netlink_fp = fopen("/proc/net/netlink", "r");
+	if (!netlink_fp)
+		return;
+
+	if (fgets(line, sizeof(line), netlink_fp) == NULL)
+		goto out;
+	if (!(line[0] == 's' && line[1] == 'k'))
+		/* Unexpected line */
+		goto out;
+
+	while (fgets(line, sizeof(line), netlink_fp)) {
+		uint16_t protocol;
+		uint32_t lportid;
+		uint32_t groups;
+		unsigned long inode;
+		struct netlink_xinfo *nl;
+
+		if (sscanf(line, "%*x %" SCNu16 " %" SCNu32 " %" SCNx32 " %*d %*d %*d %*d %*u %lu",
+			   &protocol, &lportid, &groups, &inode) < 4)
+			continue;
+
+		if (inode == 0)
+			continue;
+
+		nl = xcalloc(1, sizeof(*nl));
+		nl->sock.class = &netlink_xinfo_class;
+		nl->sock.inode = (ino_t)inode;
+		nl->sock.netns_inode = netns_inode;
+
+		nl->protocol = protocol;
+		nl->lportid = lportid;
+		nl->groups = groups;
+
+		add_sock_info(&nl->sock);
+	}
+
+ out:
+	fclose(netlink_fp);
 }
