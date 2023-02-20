@@ -557,11 +557,11 @@ static char *tcp_get_name(struct sock_xinfo *sock_xinfo,
 		xasprintf(&str, "state=%s", st_str);
 	else if (l4->st == TCP_LISTEN
 		 || !inet_ntop(class->family, raddr, remote_s, sizeof(remote_s)))
-		xasprintf(&str, "state=%s laddr=%s%s%s:%"SCNu16,
+		xasprintf(&str, "state=%s laddr=%s%s%s:%"PRIu16,
 			  st_str,
 			  start, local_s, end, tcp->local_port);
 	else
-		xasprintf(&str, "state=%s laddr=%s%s%s:%"SCNu16" raddr=%s%s%s:%"SCNu16,
+		xasprintf(&str, "state=%s laddr=%s%s%s:%"PRIu16" raddr=%s%s%s:%"PRIu16,
 			  st_str,
 			  start, local_s, end, tcp->local_port,
 			  start, remote_s, end, tcp->remote_port);
@@ -610,7 +610,7 @@ static bool tcp_get_listening(struct sock_xinfo *sock_xinfo,
 				p = tcp->remote_port;			\
 			}						\
 			if (n && inet_ntop(class->family, n, s, sizeof(s))) \
-				xasprintf(STR, "%s%s%s:%"SCNu16, \
+				xasprintf(STR, "%s%s%s:%"PRIu16, \
 					  class->l3_decorator[L3_DECO_START], \
 					  s,				\
 					  class->l3_decorator[L3_DECO_END], \
@@ -623,7 +623,7 @@ static bool tcp_get_listening(struct sock_xinfo *sock_xinfo,
 		case COL_##L4##_RPORT:					\
 			if (!has_lport)					\
 				p = tcp->remote_port;			\
-			xasprintf(STR, "%"SCNu16, p);			\
+			xasprintf(STR, "%"PRIu16, p);			\
 			break;						\
 		default:						\
 			r = false;					\
@@ -780,11 +780,11 @@ static char *udp_get_name(struct sock_xinfo *sock_xinfo,
 		xasprintf(&str, "state=%s", st_str);
 	else if ((class->is_any_addr(raddr) && tcp->remote_port == 0)
 		 || !inet_ntop(class->family, raddr, remote_s, sizeof(remote_s)))
-		xasprintf(&str, "state=%s laddr=%s:%"SCNu16,
+		xasprintf(&str, "state=%s laddr=%s:%"PRIu16,
 			  st_str,
 			  local_s, tcp->local_port);
 	else
-		xasprintf(&str, "state=%s laddr=%s:%"SCNu16" raddr=%s:%"SCNu16,
+		xasprintf(&str, "state=%s laddr=%s:%"PRIu16" raddr=%s:%"PRIu16,
 			  st_str,
 			  local_s, tcp->local_port,
 			  remote_s, tcp->remote_port);
@@ -857,11 +857,11 @@ static char *raw_get_name(struct sock_xinfo *sock_xinfo,
 		xasprintf(&str, "state=%s", st_str);
 	else if (class->is_any_addr(raddr)
 		 || !inet_ntop(class->family, raddr, remote_s, sizeof(remote_s)))
-		xasprintf(&str, "state=%s protocol=%"SCNu16" laddr=%s",
+		xasprintf(&str, "state=%s protocol=%"PRIu16" laddr=%s",
 			  st_str,
 			  raw->protocol, local_s);
 	else
-		xasprintf(&str, "state=%s protocol=%"SCNu16" laddr=%s raddr=%s",
+		xasprintf(&str, "state=%s protocol=%"PRIu16" laddr=%s raddr=%s",
 			  st_str,
 			  raw->protocol, local_s, remote_s);
 	return str;
@@ -885,7 +885,7 @@ static bool raw_fill_column(struct proc *proc __attribute__((__unused__)),
 		return true;
 
 	if (column_id == COL_RAW_PROTOCOL) {
-		xasprintf(str, "%"SCNu16,
+		xasprintf(str, "%"PRIu16,
 			  ((struct raw_xinfo *)sock_xinfo)->protocol);
 		return true;
 	}
