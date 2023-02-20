@@ -117,10 +117,10 @@ enables debug output.
 == EXAMPLES
 
 To find all files in _/usr/bin_ which are not documented in _/usr/man/man1_ or have no source in _/usr/src_:
-
+____
 *cd /usr/bin* +
 *whereis -u -ms -M /usr/man/man1 -S /usr/src -f **
-
+____
 include::man-common/bugreports.adoc[]
 
 include::man-common/footer.adoc[]
