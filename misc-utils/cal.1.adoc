@@ -102,7 +102,7 @@ This option sets the adoption date of the Gregorian calendar reform. Calendar da
 * _gregorian_ - display Gregorian calendars exclusively. This special placeholder sets the reform date below the smallest year that *cal* can use; meaning all calendar output uses the Gregorian calendar system. This is called the proleptic Gregorian calendar, because dates prior to the calendar system's creation use extrapolated values.
 * _iso_ - alias of _gregorian_. The ISO 8601 standard for the representation of dates and times in information interchange requires using the proleptic Gregorian calendar.
 * _julian_ - display Julian calendars exclusively. This special placeholder sets the reform date above the largest year that *cal* can use; meaning all calendar output uses the Julian calendar system.
-
++
 See *DESCRIPTION* above.
 
 *-y*, *--year*::
@@ -164,6 +164,11 @@ Days that fall within the work-week.
 
 *weekend*::
 Days that fall outside the work-week.
+
+For example:
+____
+echo -e 'weekend 35\ntoday 1;41\nheader yellow' > $HOME/.config/terminal-colors.d/cal.scheme
+____
 
 == HISTORY
 
