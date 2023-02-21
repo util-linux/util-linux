@@ -1397,6 +1397,9 @@ static void *make_udp_common(const struct factory *factory, struct fdesc fdescs[
 			     size_t addr_size,
 			     struct sockaddr * sin, struct sockaddr * cin)
 {
+	struct arg lite = decode_arg("lite", factory->params, argc, argv);
+	bool blite = ARG_BOOLEAN(lite);
+
 	struct arg server_port = decode_arg("server-port", factory->params, argc, argv);
 	unsigned short iserver_port = (unsigned short)ARG_INTEGER(server_port);
 	struct arg client_port = decode_arg("client-port", factory->params, argc, argv);
@@ -1418,8 +1421,9 @@ static void *make_udp_common(const struct factory *factory, struct fdesc fdescs[
 	free_arg(&server_do_bind);
 	free_arg(&server_port);
 	free_arg(&client_port);
+	free_arg(&lite);
 
-	ssd = socket(family, SOCK_DGRAM, 0);
+	ssd = socket(family, SOCK_DGRAM, blite? IPPROTO_UDPLITE: 0);
 	if (ssd < 0)
 		err(EXIT_FAILURE,
 		    _("failed to make a udp socket for server"));
@@ -1453,7 +1457,7 @@ static void *make_udp_common(const struct factory *factory, struct fdesc fdescs[
 		}
 	}
 
-	csd = socket(family, SOCK_DGRAM, 0);
+	csd = socket(family, SOCK_DGRAM, blite? IPPROTO_UDPLITE: 0);
 	if (csd < 0) {
 		int e = errno;
 		close(ssd);
@@ -2014,6 +2018,12 @@ static const struct factory factories[] = {
 		.make = make_udp,
 		.params = (struct parameter []) {
 			{
+				.name = "lite",
+				.type = PTYPE_BOOLEAN,
+				.desc = "Use UDPLITE instead of UDP",
+				.defv.boolean = false,
+			},
+			{
 				.name = "server-port",
 				.type = PTYPE_INTEGER,
 				.desc = "UDP port the server may listen",
@@ -2095,6 +2105,12 @@ static const struct factory factories[] = {
 		.EX_N = 0,
 		.make = make_udp6,
 		.params = (struct parameter []) {
+			{
+				.name = "lite",
+				.type = PTYPE_BOOLEAN,
+				.desc = "Use UDPLITE instead of UDP",
+				.defv.boolean = false,
+			},
 			{
 				.name = "server-port",
 				.type = PTYPE_INTEGER,
