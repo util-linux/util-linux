@@ -43,6 +43,7 @@ static void load_xinfo_from_proc_unix(ino_t netns_inode);
 static void load_xinfo_from_proc_raw(ino_t netns_inode);
 static void load_xinfo_from_proc_tcp(ino_t netns_inode);
 static void load_xinfo_from_proc_udp(ino_t netns_inode);
+static void load_xinfo_from_proc_udplite(ino_t netns_inode);
 static void load_xinfo_from_proc_tcp6(ino_t netns_inode);
 static void load_xinfo_from_proc_udp6(ino_t netns_inode);
 static void load_xinfo_from_proc_raw6(ino_t netns_inode);
@@ -84,6 +85,7 @@ static void load_sock_xinfo_no_nsswitch(ino_t netns)
 	load_xinfo_from_proc_unix(netns);
 	load_xinfo_from_proc_tcp(netns);
 	load_xinfo_from_proc_udp(netns);
+	load_xinfo_from_proc_udplite(netns);
 	load_xinfo_from_proc_raw(netns);
 	load_xinfo_from_proc_tcp6(netns);
 	load_xinfo_from_proc_udp6(netns);
@@ -837,6 +839,45 @@ static void load_xinfo_from_proc_udp(ino_t netns_inode)
 				     "/proc/net/udp",
 				     &udp_xinfo_class);
 }
+
+/*
+ * UDP-Lite
+ */
+static bool udplite_fill_column(struct proc *proc __attribute__((__unused__)),
+				struct sock_xinfo *sock_xinfo,
+				struct sock *sock __attribute__((__unused__)),
+				struct libscols_line *ln __attribute__((__unused__)),
+				int column_id,
+				size_t column_index __attribute__((__unused__)),
+				char **str)
+{
+	return l3_fill_column_handler(INET, sock_xinfo, column_id, str)
+		|| l4_fill_column_handler(UDPLITE, sock_xinfo, column_id, str);
+}
+
+static const struct l4_xinfo_class udplite_xinfo_class = {
+	.sock = {
+		.get_name = udp_get_name,
+		.get_type = udp_get_type,
+		.get_state = tcp_get_state,
+		.get_listening = NULL,
+		.fill_column = udplite_fill_column,
+		.free = NULL,
+	},
+	.scan_line = tcp_xinfo_scan_line,
+	.get_addr = tcp_xinfo_get_addr,
+	.is_any_addr = tcp_xinfo_is_any_addr,
+	.family = AF_INET,
+	.l3_decorator = {"", ""},
+};
+
+static void load_xinfo_from_proc_udplite(ino_t netns_inode)
+{
+	load_xinfo_from_proc_inet_L4(netns_inode,
+				     "/proc/net/udplite",
+				     &udplite_xinfo_class);
+}
+
 
 /*
  * RAW
