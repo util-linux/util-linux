@@ -508,7 +508,7 @@ The *fscontext=* option works for all filesystems, regardless of their xattr sup
 +
 You can set the default security context for unlabeled files using *defcontext=* option. This overrides the value set for unlabeled files in the policy and requires a filesystem that supports xattr labeling.
 +
-The *rootcontext=* option allows you to explicitly label the root inode of a FS being mounted before that FS or inode becomes visible to userspace. This was found to be useful for things like stateless Linux.
+The *rootcontext=* option allows you to explicitly label the root inode of a FS being mounted before that FS or inode becomes visible to userspace. This was found to be useful for things like stateless Linux. The special value *@target* can be used to assign the current context of the target mountpoint location.
 +
 Note that the kernel rejects any remount request that includes the context option, *even* when unchanged from the current context.
 +

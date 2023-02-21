@@ -154,7 +154,9 @@ static int fix_optstr(struct libmnt_context *cxt)
 		mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
 		while (mnt_optlist_next_opt(ol, &itr, &opt) == 0) {
-			if (!is_option(mnt_opt_get_name(opt), selinux_options))
+			const char *opt_name = mnt_opt_get_name(opt);
+
+			if (!is_option(opt_name, selinux_options))
 				continue;
 			if (se_rem)
 				rc = mnt_optlist_remove_opt(ol, opt);
@@ -162,9 +164,17 @@ static int fix_optstr(struct libmnt_context *cxt)
 				const char *val = mnt_opt_get_value(opt);
 				char *raw = NULL;
 
-				rc = selinux_trans_to_raw_context(val, &raw);
-				if (rc == -1 || !raw)
-					rc = -EINVAL;
+				if (strcmp(opt_name, "rootcontext") == 0 && strcmp(val, "@target") == 0) {
+					rc = getfilecon_raw(cxt->fs->target, &raw);
+					if (rc <= 0 || !raw)
+						rc = errno ? -errno : -EINVAL;
+					else
+						rc = 0;  /* getfilecon_raw(3) returns the size of the extended attribute value */
+				} else {
+					rc = selinux_trans_to_raw_context(val, &raw);
+					if (rc == -1 || !raw)
+						rc = -EINVAL;
+				}
 				if (!rc)
 					rc = mnt_opt_set_quoted_value(opt, raw);
 				if (raw)
