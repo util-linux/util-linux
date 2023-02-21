@@ -167,6 +167,12 @@ Local IP address.
 INET.RADDR <``string``>::
 Remote IP address.
 
+INET6.LADDR <``string``>::
+Local IP6 address.
+
+INET6.RADDR <``string``>::
+Remote IP6 address.
+
 INODE <``number``>::
 Inode number.
 
@@ -212,7 +218,7 @@ pid=_TARGET-PID_ comm=_TARGET-COMMAND_ nspid=_TARGET-NSPIDS_
 ``/proc/``_pid_``/fdinfo/``_fd_.
 +
 RAW:::
-state=_SOCK.STATE_[ protocol=_RAW.PROTOCOL_ [ laddr=_INET.LADDR_ [ raddr=_INET.RADDR_]]
+state=_SOCK.STATE_[ protocol=_RAW.PROTOCOL_ [ laddr=_INET.LADDR_ [ raddr=_INET.RADDR_]]]
 +
 TCP:::
 state=_SOCK.STATE_[ laddr=_TCP.LADDR_ [ raddr=_TCP.RADDR_]]
@@ -273,7 +279,7 @@ PID of the process targeted by the pidfd.
 POS <``number``>::
 File position.
 
-RAW.PROTOCOL <``number``>>::
+RAW.PROTOCOL <``number``>::
 Protocol number of the raw socket.
 
 RDEV <``string``>::
@@ -313,13 +319,13 @@ STTYPE <``string``>::
 Raw file types returned from stat(2): BLK, CHR, DIR, FIFO, LINK, REG, SOCK, or UNKN.
 
 TCP.LADDR <``string``>::
-Local IP address and local TCP port.
+Local L3 (INET.LADDR or INET6.LADDR) address and local TCP port.
 
 TCP.LPORT <``integer``>::
 Local TCP port.
 
 TCP.RADDR <``string``>::
-Remote IP address and remote TCP port.
+Remote L3 (INET.RADDR or INET6.RADDR) address and remote TCP port.
 
 TCP.RPORT <``integer``>::
 Remote TCP port.

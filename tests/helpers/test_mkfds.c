@@ -1227,15 +1227,18 @@ static void *make_unix_in_new_netns(const struct factory *factory, struct fdesc 
 	return NULL;
 }
 
-static void *make_tcp(const struct factory *factory, struct fdesc fdescs[],
-				    int argc, char ** argv)
+static void *make_tcp_common(const struct factory *factory, struct fdesc fdescs[],
+			     int argc, char ** argv,
+			     int family,
+			     void (*init_addr)(struct sockaddr *, unsigned short),
+			     size_t addr_size,
+			     struct sockaddr * sin, struct sockaddr * cin)
 {
 	struct arg server_port = decode_arg("server-port", factory->params, argc, argv);
 	unsigned short iserver_port = (unsigned short)ARG_INTEGER(server_port);
 	struct arg client_port = decode_arg("client-port", factory->params, argc, argv);
 	unsigned short iclient_port = (unsigned short)ARG_INTEGER(client_port);
 
-	struct sockaddr_in sin, cin;
 	int ssd, csd, asd;
 
 	const int y = 1;
@@ -1243,7 +1246,7 @@ static void *make_tcp(const struct factory *factory, struct fdesc fdescs[],
 	free_arg(&server_port);
 	free_arg(&client_port);
 
-	ssd = socket(AF_INET, SOCK_STREAM, 0);
+	ssd = socket(family, SOCK_STREAM, 0);
 	if (ssd < 0)
 		err(EXIT_FAILURE,
 		    _("failed to make a tcp socket for listening"));
@@ -1267,11 +1270,8 @@ static void *make_tcp(const struct factory *factory, struct fdesc fdescs[],
 		ssd = fdescs[0].fd;
 	}
 
-	memset(&sin, 0, sizeof(sin));
-	sin.sin_family = AF_INET;
-	sin.sin_port = htons(iserver_port);
-	sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-	if (bind(ssd, &sin, sizeof(sin)) < 0) {
+	init_addr(sin, iserver_port);
+	if (bind(ssd, sin, addr_size) < 0) {
 		int e = errno;
 		close(ssd);
 		errno = e;
@@ -1285,7 +1285,7 @@ static void *make_tcp(const struct factory *factory, struct fdesc fdescs[],
 		err(EXIT_FAILURE, "failed to listen a socket");
 	}
 
-	csd = socket(AF_INET, SOCK_STREAM, 0);
+	csd = socket(family, SOCK_STREAM, 0);
 	if (csd < 0) {
 		int e = errno;
 		close(ssd);
@@ -1315,11 +1315,8 @@ static void *make_tcp(const struct factory *factory, struct fdesc fdescs[],
 		csd = fdescs[1].fd;
 	}
 
-	memset(&cin, 0, sizeof(cin));
-	cin.sin_family = AF_INET;
-	cin.sin_port = htons(iclient_port);
-	cin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-	if (bind(csd, &cin, sizeof(cin)) < 0) {
+	init_addr(cin, iclient_port);
+	if (bind(csd, cin, addr_size) < 0) {
 		int e = errno;
 		close(ssd);
 		close(csd);
@@ -1327,7 +1324,7 @@ static void *make_tcp(const struct factory *factory, struct fdesc fdescs[],
 		err(EXIT_FAILURE, "failed to bind a client socket");
 	}
 
-	if (connect(csd, &sin, sizeof(sin)) < 0) {
+	if (connect(csd, sin, addr_size) < 0) {
 		int e = errno;
 		close(ssd);
 		close(csd);
@@ -1372,6 +1369,25 @@ static void *make_tcp(const struct factory *factory, struct fdesc fdescs[],
 	};
 
 	return NULL;
+}
+
+static void tcp_init_addr(struct sockaddr *addr, unsigned short port)
+{
+	struct sockaddr_in *in = (struct sockaddr_in *)addr;
+	memset(in, 0, sizeof(*in));
+	in->sin_family = AF_INET;
+	in->sin_port = htons(port);
+	in->sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+}
+
+static void *make_tcp(const struct factory *factory, struct fdesc fdescs[],
+				    int argc, char ** argv)
+{
+	struct sockaddr_in sin, cin;
+	return make_tcp_common(factory, fdescs, argc, argv,
+			       AF_INET,
+			       tcp_init_addr, sizeof(sin),
+			       (struct sockaddr *)&sin, (struct sockaddr *)&cin);
 }
 
 static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
@@ -1556,6 +1572,26 @@ static void *make_raw(const struct factory *factory, struct fdesc fdescs[],
 	};
 
 	return NULL;
+}
+
+static void tcp6_init_addr(struct sockaddr *addr, unsigned short port)
+{
+	struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)addr;
+	memset(in6, 0, sizeof(*in6));
+	in6->sin6_family = AF_INET6;
+	in6->sin6_flowinfo = 0;
+	in6->sin6_port = htons(port);
+	in6->sin6_addr = in6addr_loopback;
+}
+
+static void *make_tcp6(const struct factory *factory, struct fdesc fdescs[],
+		       int argc, char ** argv)
+{
+	struct sockaddr_in6 sin, cin;
+	return make_tcp_common(factory, fdescs, argc, argv,
+			       AF_INET6,
+			       tcp6_init_addr, sizeof(sin),
+			       (struct sockaddr *)&sin, (struct sockaddr *)&cin);
 }
 
 static void *make_netns(const struct factory *factory _U_, struct fdesc fdescs[],
@@ -1965,6 +2001,29 @@ static const struct factory factories[] = {
 			PARAM_END
 		}
 
+	},
+	{
+		.name = "tcp6",
+		.desc = "AF_INET6+SOCK_STREAM sockets",
+		.priv = false,
+		.N    = 3,
+		.EX_N = 0,
+		.make = make_tcp6,
+		.params = (struct parameter []) {
+			{
+				.name = "server-port",
+				.type = PTYPE_INTEGER,
+				.desc = "TCP port the server may listen",
+				.defv.integer = 12345,
+			},
+			{
+				.name = "client-port",
+				.type = PTYPE_INTEGER,
+				.desc = "TCP port the client may bind",
+				.defv.integer = 23456,
+			},
+			PARAM_END
+		}
 	},
 	{
 		.name = "netns",

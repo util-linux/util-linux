@@ -1,0 +1,4 @@
+    3 TCPv6   SOCK state=listen laddr=[::1]:34567                             listen    stream              1         ::1          :: [::1]:34567     34567      [::]:0         0
+    4 TCPv6   SOCK state=established laddr=[::1]:23456 raddr=[::1]:34567 established    stream              0         ::1         ::1 [::1]:23456     23456 [::1]:34567     34567
+    5 TCPv6   SOCK state=established laddr=[::1]:34567 raddr=[::1]:23456 established    stream              0         ::1         ::1 [::1]:34567     34567 [::1]:23456     23456
+ASSOC,TYPE,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,INET6.LADDR,INET6.RADDR,TCP.LADDR,TCP.LPORT,TCP.RADDR,TCP.RPORT: 0

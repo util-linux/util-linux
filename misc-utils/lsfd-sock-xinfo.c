@@ -19,6 +19,7 @@
  * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include <arpa/inet.h>		/* inet_ntop */
+#include <netinet/in.h>		/* in6_addr */
 #include <fcntl.h>		/* open(2) */
 #include <inttypes.h>		/* SCNu16 */
 #include <linux/net.h>		/* SS_* */
@@ -42,6 +43,7 @@ static void load_xinfo_from_proc_unix(ino_t netns_inode);
 static void load_xinfo_from_proc_raw(ino_t netns_inode);
 static void load_xinfo_from_proc_tcp(ino_t netns_inode);
 static void load_xinfo_from_proc_udp(ino_t netns_inode);
+static void load_xinfo_from_proc_tcp6(ino_t netns_inode);
 
 static int self_netns_fd = -1;
 static struct stat self_netns_sb;
@@ -81,6 +83,7 @@ static void load_sock_xinfo_no_nsswitch(ino_t netns)
 	load_xinfo_from_proc_tcp(netns);
 	load_xinfo_from_proc_udp(netns);
 	load_xinfo_from_proc_raw(netns);
+	load_xinfo_from_proc_tcp6(netns);
 }
 
 static void load_sock_xinfo_with_fd(int fd, ino_t netns)
@@ -386,7 +389,7 @@ static void load_xinfo_from_proc_unix(ino_t netns_inode)
 		if (inode == 0)
 			continue;
 
-		ux = xcalloc(1, sizeof(struct unix_xinfo));
+		ux = xcalloc(1, sizeof(*ux));
 		ux->sock.class = &unix_xinfo_class;
 		ux->sock.inode = (ino_t)inode;
 		ux->sock.netns_inode = netns_inode;
@@ -419,6 +422,15 @@ static uint32_t kernel32_to_cpu(enum sysfs_byteorder byteorder, uint32_t v)
 	else
 		return be32_to_cpu(v);
 }
+
+/*
+ * AF_INET6
+ */
+struct inet6_xinfo {
+	struct sock_xinfo sock;
+	struct in6_addr local_addr;
+	struct in6_addr remote_addr;
+};
 
 /*
  * L4 abstract-layer for protocols stacked on IP and IP6.
@@ -469,11 +481,15 @@ static const char *l4_decode_state(enum l4_state st)
 }
 
 struct l4_xinfo {
-	struct inet_xinfo inet;
+	union {
+		struct inet_xinfo inet;
+		struct inet6_xinfo inet6;
+	};
 	enum l4_state st;
 };
 
 enum l4_side { L4_LOCAL, L4_REMOTE };
+enum l3_decorator { L3_DECO_START, L3_DECO_END };
 
 struct l4_xinfo_class {
 	struct sock_xinfo_class sock;
@@ -484,6 +500,7 @@ struct l4_xinfo_class {
 	void * (*get_addr)(struct l4_xinfo *, enum l4_side);
 	bool (*is_any_addr)(void *);
 	int family;
+	const char *l3_decorator[2];
 };
 
 #define l3_fill_column_handler(L3, SOCK_XINFO, COLUMN_ID, STR)	__extension__ \
@@ -533,19 +550,21 @@ static char *tcp_get_name(struct sock_xinfo *sock_xinfo,
 	void *raddr = class->get_addr(l4, L4_REMOTE);
 	char local_s[BUFSIZ];
 	char remote_s[BUFSIZ];
+	const char *start = class->l3_decorator[L3_DECO_START];
+	const char *end = class->l3_decorator[L3_DECO_END];
 
 	if (!inet_ntop(class->family, laddr, local_s, sizeof(local_s)))
 		xasprintf(&str, "state=%s", st_str);
 	else if (l4->st == TCP_LISTEN
 		 || !inet_ntop(class->family, raddr, remote_s, sizeof(remote_s)))
-		xasprintf(&str, "state=%s laddr=%s:%"SCNu16,
+		xasprintf(&str, "state=%s laddr=%s%s%s:%"PRIu16,
 			  st_str,
-			  local_s, tcp->local_port);
+			  start, local_s, end, tcp->local_port);
 	else
-		xasprintf(&str, "state=%s laddr=%s:%"SCNu16" raddr=%s:%"SCNu16,
+		xasprintf(&str, "state=%s laddr=%s%s%s:%"PRIu16" raddr=%s%s%s:%"PRIu16,
 			  st_str,
-			  local_s, tcp->local_port,
-			  remote_s, tcp->remote_port);
+			  start, local_s, end, tcp->local_port,
+			  start, remote_s, end, tcp->remote_port);
 	return str;
 }
 
@@ -591,7 +610,11 @@ static bool tcp_get_listening(struct sock_xinfo *sock_xinfo,
 				p = tcp->remote_port;			\
 			}						\
 			if (n && inet_ntop(class->family, n, s, sizeof(s))) \
-				xasprintf(STR, "%s:%"SCNu16, s, p);	\
+				xasprintf(STR, "%s%s%s:%"PRIu16, \
+					  class->l3_decorator[L3_DECO_START], \
+					  s,				\
+					  class->l3_decorator[L3_DECO_END], \
+					  p);				\
 			break;						\
 		case COL_##L4##_LPORT:					\
 			p = tcp->local_port;				\
@@ -600,7 +623,7 @@ static bool tcp_get_listening(struct sock_xinfo *sock_xinfo,
 		case COL_##L4##_RPORT:					\
 			if (!has_lport)					\
 				p = tcp->remote_port;			\
-			xasprintf(STR, "%"SCNu16, p);			\
+			xasprintf(STR, "%"PRIu16, p);			\
 			break;						\
 		default:						\
 			r = false;					\
@@ -632,7 +655,7 @@ static struct sock_xinfo *tcp_xinfo_scan_line(const struct sock_xinfo_class *cla
 	if (inode == 0)
 		return NULL;
 
-	tcp = xcalloc(1, sizeof(struct tcp_xinfo));
+	tcp = xcalloc(1, sizeof(*tcp));
 	inet = &tcp->l4.inet;
 	sock = &inet->sock;
 	sock->class = class;
@@ -684,6 +707,7 @@ static const struct l4_xinfo_class tcp_xinfo_class = {
 	.get_addr = tcp_xinfo_get_addr,
 	.is_any_addr = tcp_xinfo_is_any_addr,
 	.family = AF_INET,
+	.l3_decorator = {"", ""},
 };
 
 static bool L4_verify_initial_line(const char *line)
@@ -756,11 +780,11 @@ static char *udp_get_name(struct sock_xinfo *sock_xinfo,
 		xasprintf(&str, "state=%s", st_str);
 	else if ((class->is_any_addr(raddr) && tcp->remote_port == 0)
 		 || !inet_ntop(class->family, raddr, remote_s, sizeof(remote_s)))
-		xasprintf(&str, "state=%s laddr=%s:%"SCNu16,
+		xasprintf(&str, "state=%s laddr=%s:%"PRIu16,
 			  st_str,
 			  local_s, tcp->local_port);
 	else
-		xasprintf(&str, "state=%s laddr=%s:%"SCNu16" raddr=%s:%"SCNu16,
+		xasprintf(&str, "state=%s laddr=%s:%"PRIu16" raddr=%s:%"PRIu16,
 			  st_str,
 			  local_s, tcp->local_port,
 			  remote_s, tcp->remote_port);
@@ -798,6 +822,7 @@ static const struct l4_xinfo_class udp_xinfo_class = {
 	.get_addr = tcp_xinfo_get_addr,
 	.is_any_addr = tcp_xinfo_is_any_addr,
 	.family = AF_INET,
+	.l3_decorator = {"", ""},
 };
 
 static void load_xinfo_from_proc_udp(ino_t netns_inode)
@@ -832,11 +857,11 @@ static char *raw_get_name(struct sock_xinfo *sock_xinfo,
 		xasprintf(&str, "state=%s", st_str);
 	else if (class->is_any_addr(raddr)
 		 || !inet_ntop(class->family, raddr, remote_s, sizeof(remote_s)))
-		xasprintf(&str, "state=%s protocol=%"SCNu16" laddr=%s",
+		xasprintf(&str, "state=%s protocol=%"PRIu16" laddr=%s",
 			  st_str,
 			  raw->protocol, local_s);
 	else
-		xasprintf(&str, "state=%s protocol=%"SCNu16" laddr=%s raddr=%s",
+		xasprintf(&str, "state=%s protocol=%"PRIu16" laddr=%s raddr=%s",
 			  st_str,
 			  raw->protocol, local_s, remote_s);
 	return str;
@@ -860,7 +885,7 @@ static bool raw_fill_column(struct proc *proc __attribute__((__unused__)),
 		return true;
 
 	if (column_id == COL_RAW_PROTOCOL) {
-		xasprintf(str, "%"SCNu16,
+		xasprintf(str, "%"PRIu16,
 			  ((struct raw_xinfo *)sock_xinfo)->protocol);
 		return true;
 	}
@@ -890,7 +915,7 @@ static struct sock_xinfo *raw_xinfo_scan_line(const struct sock_xinfo_class *cla
 	if (inode == 0)
 		return NULL;
 
-	raw = xcalloc(1, sizeof(struct raw_xinfo));
+	raw = xcalloc(1, sizeof(*raw));
 	inet = &raw->l4.inet;
 	sock = &inet->sock;
 	sock->class = class;
@@ -917,6 +942,7 @@ static const struct l4_xinfo_class raw_xinfo_class = {
 	.get_addr = tcp_xinfo_get_addr,
 	.is_any_addr = tcp_xinfo_is_any_addr,
 	.family = AF_INET,
+	.l3_decorator = {"", ""},
 };
 
 static void load_xinfo_from_proc_raw(ino_t netns_inode)
@@ -924,4 +950,99 @@ static void load_xinfo_from_proc_raw(ino_t netns_inode)
 	load_xinfo_from_proc_inet_L4(netns_inode,
 				     "/proc/net/raw",
 				     &raw_xinfo_class);
+}
+
+/*
+ * TCP6
+ */
+static struct sock_xinfo *tcp6_xinfo_scan_line(const struct sock_xinfo_class *class,
+					       char * line,
+					       ino_t netns_inode,
+					       enum sysfs_byteorder byteorder)
+{
+	uint32_t local_addr[4];
+	unsigned int local_port;
+	uint32_t remote_addr[4];
+	unsigned int remote_port;
+	unsigned int st;
+	unsigned long inode;
+	struct tcp_xinfo *tcp;
+	struct inet6_xinfo *inet6;
+	struct sock_xinfo *sock;
+
+	if (sscanf(line,
+		   "%*d: "
+		   "%08x%08x%08x%08x:%04x "
+		   "%08x%08x%08x%08x:%04x "
+		   "%x %*x:%*x %*x:%*x %*x %*u %*d %lu ",
+		   local_addr+0, local_addr+1, local_addr+2, local_addr+3, &local_port,
+		   remote_addr+0, remote_addr+1, remote_addr+2, remote_addr+3, &remote_port,
+		   &st, &inode) != 12)
+		return NULL;
+
+	if (inode == 0)
+		return NULL;
+
+	tcp = xmalloc(sizeof(*tcp));
+	inet6 = &tcp->l4.inet6;
+	sock = &inet6->sock;
+	sock->class = class;
+	sock->inode = (ino_t)inode;
+	sock->netns_inode = netns_inode;
+	tcp->local_port = local_port;
+	for (int i = 0; i < 4; i++) {
+		inet6->local_addr.s6_addr32[i] = kernel32_to_cpu(byteorder, local_addr[i]);
+		inet6->remote_addr.s6_addr32[i] = kernel32_to_cpu(byteorder, remote_addr[i]);
+	}
+	tcp->remote_port = remote_port;
+	tcp->l4.st = st;
+
+	return sock;
+}
+
+static bool tcp6_fill_column(struct proc *proc  __attribute__((__unused__)),
+			     struct sock_xinfo *sock_xinfo,
+			     struct sock *sock  __attribute__((__unused__)),
+			     struct libscols_line *ln  __attribute__((__unused__)),
+			     int column_id,
+			     size_t column_index  __attribute__((__unused__)),
+			     char **str)
+{
+	return l3_fill_column_handler(INET6, sock_xinfo, column_id, str)
+		|| l4_fill_column_handler(TCP, sock_xinfo, column_id, str);
+}
+
+static void *tcp6_xinfo_get_addr(struct l4_xinfo * l4, enum l4_side side)
+{
+	return (side == L4_LOCAL)
+		? &l4->inet6.local_addr
+		: &l4->inet6.remote_addr;
+}
+
+static bool tcp6_xinfo_is_any_addr(void *addr)
+{
+	return IN6_ARE_ADDR_EQUAL(addr, &(struct in6_addr)IN6ADDR_ANY_INIT);
+}
+
+static const struct l4_xinfo_class tcp6_xinfo_class = {
+	.sock = {
+		.get_name = tcp_get_name,
+		.get_type = tcp_get_type,
+		.get_state = tcp_get_state,
+		.get_listening = tcp_get_listening,
+		.fill_column = tcp6_fill_column,
+		.free = NULL,
+	},
+	.scan_line = tcp6_xinfo_scan_line,
+	.get_addr = tcp6_xinfo_get_addr,
+	.is_any_addr = tcp6_xinfo_is_any_addr,
+	.family = AF_INET6,
+	.l3_decorator = {"[", "]"},
+};
+
+static void load_xinfo_from_proc_tcp6(ino_t netns_inode)
+{
+	load_xinfo_from_proc_inet_L4(netns_inode,
+				     "/proc/net/tcp6",
+				     &tcp6_xinfo_class);
 }
