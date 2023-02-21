@@ -29,9 +29,9 @@
 #include "strutils.h"
 
 #if defined(HAVE_LIBSELINUX) || defined(HAVE_SMACK)
-static int is_option(const char *name, const char **names)
+static int is_option(const char *name, const char *const *names)
 {
-	const char **p;
+	const char *const *p;
 
 	for (p = names; p && *p; p++) {
 		if (strcmp(name, *p) == 0)
@@ -141,7 +141,7 @@ static int fix_optstr(struct libmnt_context *cxt)
 
 	/* Fix SELinux contexts */
 	if (se_rem || se_fix) {
-		static const char *selinux_options[] = {
+		static const char *const selinux_options[] = {
 			"context",
 			"fscontext",
 			"defcontext",
@@ -184,7 +184,7 @@ static int fix_optstr(struct libmnt_context *cxt)
 	if (access("/sys/fs/smackfs", F_OK) != 0) {
 		struct libmnt_iter itr;
 
-		static const char *smack_options[] = {
+		static const char *const smack_options[] = {
 			"smackfsdef",
 			"smackfsfloor",
 			"smackfshat",
