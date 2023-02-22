@@ -110,6 +110,9 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include <limits.h>
+#ifdef HAVE_OPAL_GET_STATUS
+#include <linux/sed-opal.h>
+#endif
 
 #include "blkidP.h"
 #include "all-io.h"
@@ -578,8 +581,23 @@ static struct blkid_bufinfo *read_buffer(blkid_probe pr, uint64_t real_off, uint
 
 		/* I/O errors on CDROMs are non-fatal to work with hybrid
 		 * audio+data disks */
-		if (ret >= 0 || blkid_probe_is_cdrom(pr))
+		if (ret >= 0 || blkid_probe_is_cdrom(pr) || blkdid_probe_is_opal_locked(pr))
 			errno = 0;
+#ifdef HAVE_OPAL_GET_STATUS
+		else {
+			struct opal_status st = { };
+
+			/* If the device is locked with OPAL, we'll fail to read with I/O
+			 * errors when probing deep into the block device. Do not return
+			 * an error, so that we can move on to different types of checks.*/
+			ret = ioctl(pr->fd, IOC_OPAL_GET_STATUS, &st);
+			if (ret == 0 && (st.flags & OPAL_FL_LOCKED)) {
+				pr->flags |= BLKID_FL_OPAL_LOCKED;
+				errno = 0;
+			}
+		}
+#endif
+
 		return NULL;
 	}
 
@@ -813,6 +831,11 @@ int blkid_probe_is_tiny(blkid_probe pr)
 int blkid_probe_is_cdrom(blkid_probe pr)
 {
 	return (pr->flags & BLKID_FL_CDROM_DEV);
+}
+
+int blkdid_probe_is_opal_locked(blkid_probe pr)
+{
+	return (pr->flags & BLKID_FL_OPAL_LOCKED);
 }
 
 #ifdef CDROM_GET_CAPABILITY

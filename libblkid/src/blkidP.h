@@ -237,6 +237,7 @@ struct blkid_struct_probe
 #define BLKID_FL_CDROM_DEV	(1 << 3)	/* is a CD/DVD drive */
 #define BLKID_FL_NOSCAN_DEV	(1 << 4)	/* do not scan this device */
 #define BLKID_FL_MODIF_BUFF	(1 << 5)	/* cached buffers has been modified */
+#define BLKID_FL_OPAL_LOCKED	(1 << 6)	/* OPAL device is locked (I/O errors) */
 
 /* private per-probing flags */
 #define BLKID_PROBE_FL_IGNORE_PT (1 << 1)	/* ignore partition table */
@@ -405,6 +406,9 @@ extern int blkid_probe_is_tiny(blkid_probe pr)
 			__attribute__((nonnull))
 			__attribute__((warn_unused_result));
 extern int blkid_probe_is_cdrom(blkid_probe pr)
+			__attribute__((nonnull))
+			__attribute__((warn_unused_result));
+extern int blkdid_probe_is_opal_locked(blkid_probe pr)
 			__attribute__((nonnull))
 			__attribute__((warn_unused_result));
 
