@@ -39,7 +39,7 @@ static const struct libmnt_hookset *hooksets[] =
 #endif
 	&hookset_mkdir,
 #ifdef HAVE_LIBSELINUX
-	&hookset_selinux_target,
+	&hookset_selinux,
 #endif
 	&hookset_subdir,
 #ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT

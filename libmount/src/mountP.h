@@ -324,7 +324,7 @@ extern const struct libmnt_hookset hookset_loopdev;
 extern const struct libmnt_hookset hookset_veritydev;
 #endif
 #ifdef HAVE_LIBSELINUX
-extern const struct libmnt_hookset hookset_selinux_target;
+extern const struct libmnt_hookset hookset_selinux;
 #endif
 
 extern int mnt_context_deinit_hooksets(struct libmnt_context *cxt);

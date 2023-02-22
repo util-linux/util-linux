@@ -15,20 +15,13 @@
  * @title: Mount context
  * @short_description: high-level API to mount operation.
  */
-
-#ifdef HAVE_LIBSELINUX
-#include <selinux/selinux.h>
-#include <selinux/context.h>
-#endif
-
 #include <sys/wait.h>
 #include <sys/mount.h>
 
-#include "linux_version.h"
 #include "mountP.h"
 #include "strutils.h"
 
-#if defined(HAVE_LIBSELINUX) || defined(HAVE_SMACK)
+#if defined(HAVE_SMACK)
 static int is_option(const char *name, const char *const *names)
 {
 	const char *const *p;
@@ -39,7 +32,7 @@ static int is_option(const char *name, const char *const *names)
 	}
 	return 0;
 }
-#endif /* HAVE_LIBSELINUX || HAVE_SMACK */
+#endif /* HAVE_SMACK */
 
 /*
  * this has to be called after mnt_context_evaluate_permissions()
@@ -51,9 +44,7 @@ static int fix_optstr(struct libmnt_context *cxt)
 	struct libmnt_ns *ns_old;
 	const char *val;
 	int rc = 0;
-#ifdef HAVE_LIBSELINUX
-	int se_fix = 0, se_rem = 0;
-#endif
+
 	assert(cxt);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
@@ -119,76 +110,6 @@ static int fix_optstr(struct libmnt_context *cxt)
 
 	if (!mnt_context_switch_ns(cxt, ns_old))
 		return -MNT_ERR_NAMESPACE;
-
-#ifdef HAVE_LIBSELINUX
-	if (!is_selinux_enabled())
-		/* Always remove SELinux garbage if SELinux disabled */
-		se_rem = 1;
-	else if (mnt_optlist_is_remount(ol))
-		/*
-		 * Linux kernel < 2.6.39 does not support remount operation
-		 * with any selinux specific mount options.
-		 *
-		 * Kernel 2.6.39 commits:  ff36fe2c845cab2102e4826c1ffa0a6ebf487c65
-		 *                         026eb167ae77244458fa4b4b9fc171209c079ba7
-		 * fix this odd behavior, so we don't have to care about it in
-		 * userspace.
-		 */
-		se_rem = get_linux_version() < KERNEL_VERSION(2, 6, 39);
-	else
-		/* For normal mount, contexts are translated */
-		se_fix = 1;
-
-	/* Fix SELinux contexts */
-	if (se_rem || se_fix) {
-		static const char *const selinux_options[] = {
-			"context",
-			"fscontext",
-			"defcontext",
-			"rootcontext",
-			"seclabel",
-			NULL
-		};
-		struct libmnt_iter itr;
-
-		mnt_reset_iter(&itr, MNT_ITER_FORWARD);
-
-		while (mnt_optlist_next_opt(ol, &itr, &opt) == 0) {
-			const char *opt_name = mnt_opt_get_name(opt);
-
-			if (!is_option(opt_name, selinux_options))
-				continue;
-			if (se_rem)
-				rc = mnt_optlist_remove_opt(ol, opt);
-			else if (se_fix && mnt_opt_has_value(opt)) {
-				const char *val = mnt_opt_get_value(opt);
-				char *raw = NULL;
-
-				/* @target placeholder is replaced in hook_selinux_target.c,
-				 * because the mountpoint does not have to existe yet
-				 * (for example "-o X-mount.mkdir=" or --target-prefix).
-				 */
-				if (strcmp(opt_name, "rootcontext") == 0 &&
-				    strcmp(val, "@target") == 0)
-					continue;
-				else {
-					rc = selinux_trans_to_raw_context(val, &raw);
-					if (rc == -1 || !raw)
-						rc = -EINVAL;
-				}
-				if (!rc)
-					rc = mnt_opt_set_quoted_value(opt, raw);
-				if (raw)
-					freecon(raw);
-
-				/* temporary for broken fsconfig() syscall */
-				cxt->has_selinux_opt = 1;
-			}
-			if (rc)
-				goto done;
-		}
-	}
-#endif
 
 #ifdef HAVE_SMACK
 	/* Fix Smack */
