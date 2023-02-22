@@ -692,6 +692,9 @@ int main(void) {
 have = cc.compiles(code, name : 'using __progname')
 conf.set('HAVE___PROGNAME', have ? 1 : false)
 
+have_opal_get_status= cc.has_header_symbol('linux/sed-opal.h', 'IOC_OPAL_GET_STATUS')
+conf.set('HAVE_OPAL_GET_STATUS', have_opal_get_status ? 1 : false)
+
 build_plymouth_support = get_option('build-plymouth-support')
 have_tiocglcktrmios = cc.has_header_symbol(
   'sys/ioctl.h', 'TIOCGLCKTRMIOS',

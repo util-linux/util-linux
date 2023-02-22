@@ -751,6 +751,11 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([extern char *__progname;],
 	   AC_MSG_RESULT([yes]),
 	   AC_MSG_RESULT([no]))
 
+AC_CHECK_DECL([IOC_OPAL_GET_STATUS],
+	[AC_DEFINE([HAVE_OPAL_GET_STATUS], [1],
+		[Define to 1 if OPAL status ioctl is defined])],,
+	      [#include <linux/sed-opal.h>])
+
 dnl Static compilation
 m4_define([UL_STATIC_PROGRAMS], [blkid, fdisk, losetup, mount, nsenter, sfdisk, umount, unshare])
 
