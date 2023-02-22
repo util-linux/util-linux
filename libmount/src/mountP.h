@@ -349,6 +349,14 @@ extern int mnt_context_append_hook(struct libmnt_context *cxt,
 			int (*func)(struct libmnt_context *,
 				const struct libmnt_hookset *,
 				void *));
+extern int mnt_context_insert_hook(struct libmnt_context *cxt,
+			const char *after,
+			const struct libmnt_hookset *hs,
+			int stage,
+			void *data,
+			int (*func)(struct libmnt_context *,
+				const struct libmnt_hookset *,
+				void *));
 
 extern int mnt_context_remove_hook(struct libmnt_context *cxt,
 			const struct libmnt_hookset *hs,
