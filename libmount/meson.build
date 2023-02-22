@@ -47,6 +47,7 @@ if LINUX
     src/hook_mount.c
     src/hook_mount_legacy.c
     src/hook_mkdir.c
+    src/hook_selinux_target.c
     src/hook_loopdev.c
     src/hook_idmap.c
     src/context_umount.c

@@ -164,13 +164,14 @@ static int fix_optstr(struct libmnt_context *cxt)
 				const char *val = mnt_opt_get_value(opt);
 				char *raw = NULL;
 
-				if (strcmp(opt_name, "rootcontext") == 0 && strcmp(val, "@target") == 0) {
-					rc = getfilecon_raw(cxt->fs->target, &raw);
-					if (rc <= 0 || !raw)
-						rc = errno ? -errno : -EINVAL;
-					else
-						rc = 0;  /* getfilecon_raw(3) returns the size of the extended attribute value */
-				} else {
+				/* @target placeholder is replaced in hook_selinux_target.c,
+				 * because the mountpoint does not have to existe yet
+				 * (for example "-o X-mount.mkdir=" or --target-prefix).
+				 */
+				if (strcmp(opt_name, "rootcontext") == 0 &&
+				    strcmp(val, "@target") == 0)
+					continue;
+				else {
 					rc = selinux_trans_to_raw_context(val, &raw);
 					if (rc == -1 || !raw)
 						rc = -EINVAL;

@@ -38,6 +38,9 @@ static const struct libmnt_hookset *hooksets[] =
 	&hookset_veritydev,
 #endif
 	&hookset_mkdir,
+#ifdef HAVE_LIBSELINUX
+	&hookset_selinux_target,
+#endif
 	&hookset_subdir,
 #ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
 	&hookset_mount,

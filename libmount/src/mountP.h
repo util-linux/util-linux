@@ -323,6 +323,9 @@ extern const struct libmnt_hookset hookset_loopdev;
 #ifdef HAVE_CRYPTSETUP
 extern const struct libmnt_hookset hookset_veritydev;
 #endif
+#ifdef HAVE_LIBSELINUX
+extern const struct libmnt_hookset hookset_selinux_target;
+#endif
 
 extern int mnt_context_deinit_hooksets(struct libmnt_context *cxt);
 extern const struct libmnt_hookset *mnt_context_get_hookset(struct libmnt_context *cxt, const char *name);
