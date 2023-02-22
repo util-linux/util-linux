@@ -15,7 +15,7 @@
 # GNU General Public License for more details.
 #
 TS_TOPDIR="${0%/*}/../.."
-TS_DESC="UDP sockets"
+TS_DESC="UDP and UDP-Lite sockets"
 
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
@@ -29,22 +29,36 @@ ts_cd "$TS_OUTDIR"
 PID=
 FDS=3
 FDC=4
-EXPR='(TYPE == "UDP") and (FD >= 3) and (FD <= 4)'
-EXPR_server='(TYPE == "UDP") and (FD == 3)'
-EXPR_client='(TYPE == "UDP") and (FD == 4)'
+EXPR=(
+    '(TYPE == "UDP") and (FD >= 3) and (FD <= 4)'
+    '(TYPE == "UDP-Lite") and (FD >= 3) and (FD <= 4)'
+)
+EXPR_server=(
+    '(TYPE == "UDP") and (FD == 3)'
+    '(TYPE == "UDP-Lite") and (FD == 3)'
+)
+EXPR_client=(
+    '(TYPE == "UDP") and (FD == 4)'
+    '(TYPE == "UDP-Lite") and (FD == 4)'
+)
+COLNS=(
+    'UDP'
+    'UDPLite'
+)
 NAME=
 LADDR=
 LPORT=
 
-{
+for lite in 0 1; do
     coproc MKFDS { "$TS_HELPER_MKFDS" udp $FDS $FDC \
 				      server-port=34567 \
-				      client-port=23456 ; }
+				      client-port=23456 \
+				      lite=$lite; }
     if read -r -u "${MKFDS[0]}" PID; then
 	${TS_CMD_LSFD} -n \
-		       -o ASSOC,TYPE,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,INET.LADDR,INET.RADDR,UDP.LADDR,UDP.LPORT,UDP.RADDR,UDP.RPORT \
-		       -p "${PID}" -Q "${EXPR}"
-	echo 'ASSOC,TYPE,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,INET.LADDR,INET.RADDR,UDP.LADDR,UDP.LPORT,UDP.RADDR,UDP.RPORT': $?
+		       -o ASSOC,TYPE,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,INET.LADDR,INET.RADDR,${COLNS[$lite]}.LADDR,${COLNS[$lite]}.LPORT,${COLNS[$lite]}.RADDR,${COLNS[$lite]}.RPORT \
+		       -p "${PID}" -Q "${EXPR[$lite]}"
+	echo "ASSOC,TYPE,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,INET.LADDR,INET.RADDR,${COLNS[$lite]}.LADDR,${COLNS[$lite]}.LPORT,${COLNS[$lite]}.RADDR,${COLNS[$lite]}.RPORT": $?
 
 	kill -CONT "${PID}"
 	wait "${MKFDS_PID}"
@@ -53,17 +67,18 @@ LPORT=
     coproc MKFDS { "$TS_HELPER_MKFDS" udp $FDS $FDC \
 				      server-port=34567 \
 				      client-port=23456 \
-				      server-do-bind=no; }
+				      server-do-bind=no \
+				      lite=$lite; }
     if read -r -u "${MKFDS[0]}" PID; then
 	${TS_CMD_LSFD} -n \
-		       -o ASSOC,TYPE,STTYPE,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,INET.LADDR,INET.RADDR,UDP.LADDR,UDP.LPORT,UDP.RADDR,UDP.RPORT \
-		       -p "${PID}" -Q "${EXPR_server}"
-	echo 'ASSOC,TYPE,STTYPE,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,INET.LADDR,INET.RADDR,UDP.LADDR,UDP.LPORT,UDP.RADDR,UDP.RPORT': $?
+		       -o ASSOC,TYPE,STTYPE,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,INET.LADDR,INET.RADDR,${COLNS[$lite]}.LADDR,${COLNS[$lite]}.LPORT,${COLNS[$lite]}.RADDR,${COLNS[$lite]}.RPORT \
+		       -p "${PID}" -Q "${EXPR_server[$lite]}"
+	echo "ASSOC,TYPE,STTYPE,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,INET.LADDR,INET.RADDR,${COLNS[$lite]}.LADDR,${COLNS[$lite]}.LPORT,${COLNS[$lite]}.RADDR,${COLNS[$lite]}.RPORT": $?
 
 	NAME=$(${TS_CMD_LSFD} -n \
-			       --raw \
+			      --raw \
 			      -o NAME \
-			      -p "${PID}" -Q "${EXPR_server}")
+			      -p "${PID}" -Q "${EXPR_server[$lite]}")
 	if [[ "$NAME" =~ ^socket:\[[[:digit:]]+\]$ ]]; then
 	    echo "NAME pattern match: OK"
 	else
@@ -77,28 +92,29 @@ LPORT=
     coproc MKFDS { "$TS_HELPER_MKFDS" udp $FDS $FDC \
 				      server-port=34567 \
 				      client-port=23456 \
-				      client-do-bind=no; }
+				      client-do-bind=no \
+				      lite=$lite; }
     if read -r -u "${MKFDS[0]}" PID; then
 	${TS_CMD_LSFD} -n \
-		       -o ASSOC,TYPE,STTYPE,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,INET.LADDR,INET.RADDR,UDP.RADDR,UDP.RPORT \
-		       -p "${PID}" -Q "${EXPR_client}"
-	echo 'ASSOC,TYPE,STTYPE,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,INET.LADDR,INET.RADDR,UDP.RADDR,UDP.RPORT': $?
+		       -o ASSOC,TYPE,STTYPE,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,INET.LADDR,INET.RADDR,${COLNS[$lite]}.RADDR,${COLNS[$lite]}.RPORT \
+		       -p "${PID}" -Q "${EXPR_client[$lite]}"
+	echo "ASSOC,TYPE,STTYPE,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,INET.LADDR,INET.RADDR,${COLNS[$lite]}.RADDR,${COLNS[$lite]}.RPORT": $?
 
 	LADDR=$(${TS_CMD_LSFD} -n \
 			       --raw \
-			       -o UDP.LADDR \
-			       -p "${PID}" -Q "${EXPR_client}")
+			       -o ${COLNS[$lite]}.LADDR \
+			       -p "${PID}" -Q "${EXPR_client[$lite]}")
 	LPORT=$(${TS_CMD_LSFD} -n \
 			       --raw \
-			       -o UDP.LPORT \
-			       -p "${PID}" -Q "${EXPR_client}")
+			       -o ${COLNS[$lite]}.LPORT \
+			       -p "${PID}" -Q "${EXPR_client[$lite]}")
 
 	if [[ 127.0.0.1:$LPORT == ${LADDR} ]]; then
 	    echo "LADDR/LPORT pattern match: OK"
 	else
 	    echo "LADDR/LPORT pattern match: FAILED (LADDR=$LADDR, LPORT=$LPORT)"
 	fi
-	
+
 	kill -CONT "${PID}"
 	wait "${MKFDS_PID}"
     fi
@@ -106,16 +122,17 @@ LPORT=
     coproc MKFDS { "$TS_HELPER_MKFDS" udp $FDS $FDC \
 				      server-port=34567 \
 				      client-port=23456 \
-				      client-do-connect=no; }
+				      client-do-connect=no \
+				      lite=$lite; }
     if read -r -u "${MKFDS[0]}" PID; then
 	${TS_CMD_LSFD} -n \
 		       -o ASSOC,TYPE,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,INET.LADDR,INET.RADDR,UDP.LADDR,UDP.LPORT,UDP.RADDR,UDP.RPORT \
-		       -p "${PID}" -Q "${EXPR}"
+		       -p "${PID}" -Q "${EXPR[$lite]}"
 	echo 'ASSOC,TYPE,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,INET.LADDR,INET.RADDR,UDP.LADDR,UDP.LPORT,UDP.RADDR,UDP.RPORT': $?
 
 	kill -CONT "${PID}"
 	wait "${MKFDS_PID}"
     fi
-} > "$TS_OUTPUT" 2>&1
+done > "$TS_OUTPUT" 2>&1
 
 ts_finalize
