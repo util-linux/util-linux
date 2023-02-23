@@ -279,6 +279,9 @@ ____
 PIDFD.PID <``number``>::
 PID of the process targeted by the pidfd.
 
+PING.ID <`number`>::
+ICMP echo request id used on the PING socket.
+
 POS <``number``>::
 File position.
 

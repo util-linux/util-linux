@@ -39,6 +39,7 @@
 #include "lsfd.h"
 #include "lsfd-sock.h"
 
+static void load_xinfo_from_proc_icmp(ino_t netns_inode);
 static void load_xinfo_from_proc_unix(ino_t netns_inode);
 static void load_xinfo_from_proc_raw(ino_t netns_inode);
 static void load_xinfo_from_proc_tcp(ino_t netns_inode);
@@ -92,6 +93,7 @@ static void load_sock_xinfo_no_nsswitch(ino_t netns)
 	load_xinfo_from_proc_udp6(netns);
 	load_xinfo_from_proc_udplite6(netns);
 	load_xinfo_from_proc_raw6(netns);
+	load_xinfo_from_proc_icmp(netns);
 }
 
 static void load_sock_xinfo_with_fd(int fd, ino_t netns)
@@ -889,8 +891,9 @@ struct raw_xinfo {
 	uint16_t protocol;
 };
 
-static char *raw_get_name(struct sock_xinfo *sock_xinfo,
-			  struct sock *sock  __attribute__((__unused__)))
+static char *raw_get_name_common(struct sock_xinfo *sock_xinfo,
+				 struct sock *sock  __attribute__((__unused__)),
+				 const char *port_label)
 {
 	char *str = NULL;
 	struct l4_xinfo_class *class = (struct l4_xinfo_class *)sock_xinfo->class;
@@ -906,14 +909,22 @@ static char *raw_get_name(struct sock_xinfo *sock_xinfo,
 		xasprintf(&str, "state=%s", st_str);
 	else if (class->is_any_addr(raddr)
 		 || !inet_ntop(class->family, raddr, remote_s, sizeof(remote_s)))
-		xasprintf(&str, "state=%s protocol=%"PRIu16" laddr=%s",
+		xasprintf(&str, "state=%s %s=%"PRIu16" laddr=%s",
 			  st_str,
+			  port_label,
 			  raw->protocol, local_s);
 	else
-		xasprintf(&str, "state=%s protocol=%"PRIu16" laddr=%s raddr=%s",
+		xasprintf(&str, "state=%s %s=%"PRIu16" laddr=%s raddr=%s",
 			  st_str,
+			  port_label,
 			  raw->protocol, local_s, remote_s);
 	return str;
+}
+
+static char *raw_get_name(struct sock_xinfo *sock_xinfo,
+			  struct sock *sock  __attribute__((__unused__)))
+{
+	return raw_get_name_common(sock_xinfo, sock, "protocol");
 }
 
 static char *raw_get_type(struct sock_xinfo *sock_xinfo __attribute__((__unused__)),
@@ -999,6 +1010,64 @@ static void load_xinfo_from_proc_raw(ino_t netns_inode)
 	load_xinfo_from_proc_inet_L4(netns_inode,
 				     "/proc/net/raw",
 				     &raw_xinfo_class);
+}
+
+/*
+ * PING
+ */
+static char *ping_get_name(struct sock_xinfo *sock_xinfo,
+			  struct sock *sock  __attribute__((__unused__)))
+{
+	return raw_get_name_common(sock_xinfo, sock, "id");
+}
+
+static char *ping_get_type(struct sock_xinfo *sock_xinfo __attribute__((__unused__)),
+			   struct sock *sock __attribute__((__unused__)))
+{
+	return strdup("dgram");
+}
+
+static bool ping_fill_column(struct proc *proc __attribute__((__unused__)),
+			     struct sock_xinfo *sock_xinfo,
+			     struct sock *sock __attribute__((__unused__)),
+			     struct libscols_line *ln __attribute__((__unused__)),
+			     int column_id,
+			     size_t column_index __attribute__((__unused__)),
+			     char **str)
+{
+	if (l3_fill_column_handler(INET, sock_xinfo, column_id, str))
+		return true;
+
+	if (column_id == COL_PING_ID) {
+		xasprintf(str, "%"PRIu16,
+			  ((struct raw_xinfo *)sock_xinfo)->protocol);
+		return true;
+	}
+
+	return false;
+}
+
+static const struct l4_xinfo_class ping_xinfo_class = {
+	.sock = {
+		.get_name = ping_get_name,
+		.get_type = ping_get_type,
+		.get_state = tcp_get_state,
+		.get_listening = NULL,
+		.fill_column = ping_fill_column,
+		.free = NULL,
+	},
+	.scan_line = raw_xinfo_scan_line,
+	.get_addr = tcp_xinfo_get_addr,
+	.is_any_addr = tcp_xinfo_is_any_addr,
+	.family = AF_INET,
+	.l3_decorator = {"", ""},
+};
+
+static void load_xinfo_from_proc_icmp(ino_t netns_inode)
+{
+	load_xinfo_from_proc_inet_L4(netns_inode,
+				     "/proc/net/icmp",
+				     &ping_xinfo_class);
 }
 
 /*

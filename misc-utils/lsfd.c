@@ -189,6 +189,8 @@ static const struct colinfo infos[] = {
 		N_("NSpid field in fdinfo of the pidfd") },
 	[COL_PIDFD_PID]={ "PIDFD.PID",5, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 		N_("PID of the process targeted by the pidfd") },
+	[COL_PING_ID]={ "PING.ID",    0,SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
+		N_("ICMP echo request ID") },
 	[COL_POS]     = { "POS",      5, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 		N_("file position") },
 	[COL_RAW_PROTOCOL]={ "RAW.PROTOCOL",0,SCOLS_FL_RIGHT,SCOLS_JSON_NUMBER,
