@@ -318,6 +318,8 @@ static int colors_readdir(struct ul_color_ctl *cc, const char *dirname)
 		sfile[sizeof(sfile) - 1] = '\0';
 		if (asprintf(&cc->sfile, "%s/%s", dirname, sfile) <= 0)
 			rc = -ENOMEM;
+	} else {
+		rc = -ENOENT;
 	}
 
 	closedir(dir);
