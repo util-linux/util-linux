@@ -40,6 +40,7 @@
 #include "lsfd-sock.h"
 
 static void load_xinfo_from_proc_icmp(ino_t netns_inode);
+static void load_xinfo_from_proc_icmp6(ino_t netns_inode);
 static void load_xinfo_from_proc_unix(ino_t netns_inode);
 static void load_xinfo_from_proc_raw(ino_t netns_inode);
 static void load_xinfo_from_proc_tcp(ino_t netns_inode);
@@ -94,6 +95,7 @@ static void load_sock_xinfo_no_nsswitch(ino_t netns)
 	load_xinfo_from_proc_udplite6(netns);
 	load_xinfo_from_proc_raw6(netns);
 	load_xinfo_from_proc_icmp(netns);
+	load_xinfo_from_proc_icmp6(netns);
 }
 
 static void load_sock_xinfo_with_fd(int fd, ino_t netns)
@@ -882,7 +884,6 @@ static void load_xinfo_from_proc_udplite(ino_t netns_inode)
 				     &udplite_xinfo_class);
 }
 
-
 /*
  * RAW
  */
@@ -1330,4 +1331,50 @@ static void load_xinfo_from_proc_raw6(ino_t netns_inode)
 	load_xinfo_from_proc_inet_L4(netns_inode,
 				     "/proc/net/raw6",
 				     &raw6_xinfo_class);
+}
+
+/*
+ * PINGv6
+ */
+static bool ping6_fill_column(struct proc *proc __attribute__((__unused__)),
+			     struct sock_xinfo *sock_xinfo,
+			     struct sock *sock __attribute__((__unused__)),
+			     struct libscols_line *ln __attribute__((__unused__)),
+			     int column_id,
+			     size_t column_index __attribute__((__unused__)),
+			     char **str)
+{
+	if (l3_fill_column_handler(INET6, sock_xinfo, column_id, str))
+		return true;
+
+	if (column_id == COL_PING_ID) {
+		xasprintf(str, "%"PRIu16,
+			  ((struct raw_xinfo *)sock_xinfo)->protocol);
+		return true;
+	}
+
+	return false;
+}
+
+static const struct l4_xinfo_class ping6_xinfo_class = {
+	.sock = {
+		.get_name = ping_get_name,
+		.get_type = ping_get_type,
+		.get_state = tcp_get_state,
+		.get_listening = NULL,
+		.fill_column = ping6_fill_column,
+		.free = NULL,
+	},
+	.scan_line = raw6_xinfo_scan_line,
+	.get_addr = tcp6_xinfo_get_addr,
+	.is_any_addr = tcp6_xinfo_is_any_addr,
+	.family = AF_INET6,
+	.l3_decorator = {"[", "]"},
+};
+
+static void load_xinfo_from_proc_icmp6(ino_t netns_inode)
+{
+	load_xinfo_from_proc_inet_L4(netns_inode,
+				     "/proc/net/icmp6",
+				     &ping6_xinfo_class);
 }
