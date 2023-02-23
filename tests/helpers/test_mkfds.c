@@ -1604,6 +1604,93 @@ static void *make_raw(const struct factory *factory, struct fdesc fdescs[],
 			       (struct sockaddr *)&sin);
 }
 
+static void *make_ping_common(const struct factory *factory, struct fdesc fdescs[],
+			      int argc, char ** argv,
+			      int family, int protocol,
+			      void (*init_addr)(struct sockaddr *, unsigned short),
+			      size_t addr_size,
+			      struct sockaddr *sin)
+{
+	struct arg connect_ = decode_arg("connect", factory->params, argc, argv);
+	bool bconnect = ARG_BOOLEAN(connect_);
+
+	struct arg bind_ = decode_arg("bind", factory->params, argc, argv);
+	bool bbind = ARG_BOOLEAN(bind_);
+
+	struct arg id = decode_arg("id", factory->params, argc, argv);
+	unsigned short iid = (unsigned short)ARG_INTEGER(id);
+
+	int sd;
+
+	free_arg(&id);
+	free_arg(&bind_);
+	free_arg(&connect_);
+
+	sd = socket(family, SOCK_DGRAM, protocol);
+	if (sd < 0)
+		err(EXIT_FAILURE,
+		    _("failed to make an icmp socket"));
+
+	if (sd != fdescs[0].fd) {
+		if (dup2(sd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(sd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", sd, fdescs[0].fd);
+		}
+		close(sd);
+		sd = fdescs[0].fd;
+	}
+
+	if (bbind) {
+		init_addr(sin, iid);
+		if (bind(sd, sin, addr_size) < 0) {
+			int e = errno;
+			close(sd);
+			errno = e;
+			err(EXIT_FAILURE, "failed in bind(2)");
+		}
+	}
+
+	if (bconnect) {
+		init_addr(sin, 0);
+		if (connect(sd, sin, addr_size) < 0) {
+			int e = errno;
+			close(sd);
+			errno = e;
+			err(EXIT_FAILURE, "failed in connect(2)");
+		}
+	}
+
+	fdescs[0] = (struct fdesc) {
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+
+	return NULL;
+}
+
+static void ping_init_addr(struct sockaddr *addr, unsigned short id)
+{
+	struct sockaddr_in *in = (struct sockaddr_in *)addr;
+	memset(in, 0, sizeof(*in));
+	in->sin_family = AF_INET;
+	in->sin_port = htons(id);
+	in->sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+}
+
+static void *make_ping(const struct factory *factory, struct fdesc fdescs[],
+		       int argc, char ** argv)
+{
+	struct sockaddr_in in;
+	return make_ping_common(factory, fdescs, argc, argv,
+				AF_INET, IPPROTO_ICMP,
+				ping_init_addr,
+				sizeof(in),
+				(struct sockaddr *)&in);
+}
+
 static void tcp6_init_addr(struct sockaddr *addr, unsigned short port)
 {
 	struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)addr;
@@ -1659,6 +1746,25 @@ static void *make_raw6(const struct factory *factory, struct fdesc fdescs[],
 			       (struct sockaddr *)&sin);
 }
 
+static void ping6_init_addr(struct sockaddr *addr, unsigned short id)
+{
+	struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)addr;
+	memset(in6, 0, sizeof(*in6));
+	in6->sin6_family = AF_INET6;
+	in6->sin6_port = htons(id);
+	in6->sin6_addr = in6addr_loopback;
+}
+
+static void *make_ping6(const struct factory *factory, struct fdesc fdescs[],
+			int argc, char ** argv)
+{
+	struct sockaddr_in6 in6;
+	return make_ping_common(factory, fdescs, argc, argv,
+				AF_INET6, IPPROTO_ICMPV6,
+				ping6_init_addr,
+				sizeof(in6),
+				(struct sockaddr *)&in6);
+}
 
 static void *make_netns(const struct factory *factory _U_, struct fdesc fdescs[],
 			int argc _U_, char ** argv _U_)
@@ -2075,6 +2181,35 @@ static const struct factory factories[] = {
 
 	},
 	{
+		.name = "ping",
+		.desc = "AF_INET+SOCK_DGRAM+IPPROTO_ICMP sockets",
+		.priv = false,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_ping,
+		.params = (struct parameter []) {
+			{
+				.name = "connect",
+				.type = PTYPE_BOOLEAN,
+				.desc = "call connect(2) with the socket",
+				.defv.boolean = true,
+			},
+			{
+				.name = "bind",
+				.type = PTYPE_BOOLEAN,
+				.desc = "call bind(2) with the socket",
+				.defv.boolean = true,
+			},
+			{
+				.name = "id",
+				.type = PTYPE_INTEGER,
+				.desc = "ICMP echo request id",
+				.defv.integer = 0,
+			},
+			PARAM_END
+		}
+	},
+	{
 		.name = "tcp6",
 		.desc = "AF_INET6+SOCK_STREAM sockets",
 		.priv = false,
@@ -2161,6 +2296,35 @@ static const struct factory factories[] = {
 			PARAM_END
 		}
 
+	},
+	{
+		.name = "ping6",
+		.desc = "AF_INET6+SOCK_DGRAM+IPPROTO_ICMPV6 sockets",
+		.priv = false,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_ping6,
+		.params = (struct parameter []) {
+			{
+				.name = "connect",
+				.type = PTYPE_BOOLEAN,
+				.desc = "call connect(2) with the socket",
+				.defv.boolean = true,
+			},
+			{
+				.name = "bind",
+				.type = PTYPE_BOOLEAN,
+				.desc = "call bind(2) with the socket",
+				.defv.boolean = true,
+			},
+			{
+				.name = "id",
+				.type = PTYPE_INTEGER,
+				.desc = "ICMP echo request id",
+				.defv.integer = 0,
+			},
+			PARAM_END
+		}
 	},
 	{
 		.name = "netns",
