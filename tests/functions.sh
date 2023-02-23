@@ -1125,3 +1125,7 @@ function ts_skip_exitcode_not_supported {
 		ts_skip "functionality not implemented by system"
 	fi
 }
+
+function ts_inhibit_custom_colorscheme {
+	export XDG_CONFIG_HOME=/dev/null
+}
