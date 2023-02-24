@@ -1,5 +1,5 @@
 /*
- * test_lsfd - make various file descriptors
+ * test_mkfds - make various file descriptors
  *
  * Written by Masatake YAMATO <yamato@redhat.com>
  *
