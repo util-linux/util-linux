@@ -1138,7 +1138,8 @@ static void *make_unix_in_new_netns(const struct factory *factory, struct fdesc 
 		int e = errno;
 		close_fdesc(self_netns, NULL);
 		errno = e;
-		err(EXIT_FAILURE, "failed in unshare");
+		err((errno == EPERM? EXIT_EPERM: EXIT_FAILURE),
+		    "failed in unshare");
 	}
 
 	tmp_netns = open("/proc/self/ns/net", O_RDONLY);
