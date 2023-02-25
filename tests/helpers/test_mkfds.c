@@ -1782,7 +1782,8 @@ static void *make_netns(const struct factory *factory _U_, struct fdesc fdescs[]
 
 	int ns = ioctl(sd, SIOCGSKNS);
 	if (ns < 0)
-		err(EXIT_FAILURE, "failed in ioctl(SIOCGSKNS)");
+		err((errno == ENOSYS? EXIT_ENOSYS: EXIT_FAILURE),
+		    "failed in ioctl(SIOCGSKNS)");
 	close(sd);
 
 	if (ns != fdescs[0].fd) {
