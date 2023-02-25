@@ -20,7 +20,6 @@ TS_DESC="UNIX sockets made in a differenct net namespace"
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 ts_skip_nonroot
-ts_skip_qemu_user
 
 ts_check_test_command "$TS_CMD_LSFD"
 

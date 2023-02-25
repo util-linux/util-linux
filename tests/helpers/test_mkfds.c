@@ -739,7 +739,8 @@ static void *make_pidfd(const struct factory *factory, struct fdesc fdescs[],
 
 	int fd = pidfd_open(pid, 0);
 	if (fd < 0)
-		err(EXIT_FAILURE, "failed in pidfd_open(%d)", (int)pid);
+		err((errno == ENOSYS? EXIT_ENOSYS: EXIT_FAILURE),
+		    "failed in pidfd_open(%d)", (int)pid);
 	free_arg(&target_pid);
 
 	if (fd != fdescs[0].fd) {

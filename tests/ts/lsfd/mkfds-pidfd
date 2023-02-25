@@ -20,6 +20,7 @@ TS_DESC="pidfd"
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
+. "$TS_SELF/lsfd-functions.bash"
 ts_check_test_command "$TS_CMD_LSFD"
 ts_check_test_command "$TS_HELPER_MKFDS"
 ts_check_prog "ps"
@@ -43,5 +44,8 @@ EXPR="(PID != ${TARGET}) and (FD == 3) and (PIDFD.PID == ${TARGET})"
     fi
     wait ${MKFDS_PID}
 } > $TS_OUTPUT 2>&1
+if [ "$?" == "$ENOSYS" ]; then
+    ts_skip "pidfd_open(2) is not available"
+fi
 
 ts_finalize
