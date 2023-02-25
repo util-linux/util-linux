@@ -20,7 +20,6 @@ TS_DESC="mmap'ed AF_PACKET socket"
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 ts_skip_nonroot
-ts_skip_qemu_user
 
 . "$TS_SELF"/lsfd-functions.bash
 
@@ -46,5 +45,9 @@ INTERFACE=lo
 
     wait ${MKFDS_PID}
 } > $TS_OUTPUT 2>&1
+
+if [[ $? == "$ENOPROTOOPT" ]]; then
+    ts_skip "packet socket doesn't support attaching a buffer on this platform"
+fi
 
 ts_finalize

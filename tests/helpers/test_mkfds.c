@@ -692,7 +692,8 @@ static void *make_mmapped_packet_socket(const struct factory *factory, struct fd
 		int e = errno;
 		close(sd);
 		errno = e;
-		err(EXIT_FAILURE, "failed to specify a buffer spec to a packet socket");
+		err((errno == ENOPROTOOPT? EXIT_ENOPROTOOPT: EXIT_FAILURE),
+		    "failed to specify a buffer spec to a packet socket");
 	}
 
 	munmap_data = malloc(sizeof (*munmap_data));
