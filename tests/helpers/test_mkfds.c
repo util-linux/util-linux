@@ -25,6 +25,7 @@
 #include <getopt.h>
 #include <linux/if_ether.h>
 #include <linux/if_packet.h>
+#include <linux/netlink.h>
 #include <linux/sockios.h>  /* SIOCGSKNS */
 #include <net/if.h>
 #include <netinet/in.h>
@@ -240,6 +241,12 @@ struct ptype_class ptype_classes [] = {
 		.sprint = integer_sprint,
 		.read   = integer_read,
 		.free   = integer_free,
+	},
+	[PTYPE_UINTEGER] = {
+		.name = "uinteger",
+		.sprint = uinteger_sprint,
+		.read   = uinteger_read,
+		.free   = uinteger_free,
 	},
 	[PTYPE_BOOLEAN] = {
 		.name = "boolean",
@@ -1838,6 +1845,52 @@ static void *make_netns(const struct factory *factory _U_, struct fdesc fdescs[]
 	return NULL;
 }
 
+static void *make_netlink(const struct factory *factory, struct fdesc fdescs[],
+			  int argc, char ** argv)
+{
+	struct arg protocol = decode_arg("protocol", factory->params, argc, argv);
+	int iprotocol = ARG_INTEGER(protocol);
+	struct arg groups = decode_arg("groups", factory->params, argc, argv);
+	unsigned int ugroups = ARG_UINTEGER(groups);
+	int sd;
+
+	free_arg(&protocol);
+
+	sd = socket(AF_NETLINK, SOCK_RAW, iprotocol);
+	if (sd < 0)
+		err((errno == EPROTONOSUPPORT)? EXIT_EPROTONOSUPPORT: EXIT_FAILURE,
+		    "failed in socket()");
+
+	if (sd != fdescs[0].fd) {
+		if (dup2(sd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(sd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", sd, fdescs[0].fd);
+		}
+		close(sd);
+	}
+
+	struct sockaddr_nl nl;
+	memset(&nl, 0, sizeof(nl));
+	nl.nl_family = AF_NETLINK;
+	nl.nl_groups = ugroups;
+	if (bind(sd, (struct sockaddr*)&nl, sizeof(nl)) < 0) {
+		int e = errno;
+		close(sd);
+		errno = e;
+		err(EXIT_FAILURE, "failed in bind(2)");
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL
+	};
+
+	return NULL;
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -2375,6 +2428,29 @@ static const struct factory factories[] = {
 		.EX_N = 0,
 		.make = make_netns,
 		.params = (struct parameter []) {
+			PARAM_END
+		}
+	},
+	{
+		.name = "netlink",
+		.desc = "AF_NETLINK sockets",
+		.priv = false,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_netlink,
+		.params = (struct parameter []) {
+			{
+				.name = "protocol",
+				.type = PTYPE_INTEGER,
+				.desc = "protocol passed to socket(AF_NETLINK, SOCK_RAW, protocol)",
+				.defv.integer = NETLINK_USERSOCK,
+			},
+			{
+				.name = "groups",
+				.type = PTYPE_UINTEGER,
+				.desc = "multicast groups of netlink communication (requires CAP_NET_ADMIN)",
+				.defv.uinteger = 0,
+			},
 			PARAM_END
 		}
 	},
