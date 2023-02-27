@@ -141,4 +141,20 @@ ts_init_subtest "deduplicate-empty"
 ts_run $TESTPROG --dedup bbb,ccc,AAA,xxx,AAA=a,AAA=bbb,ddd,AAA=,fff=eee AAA &> $TS_OUTPUT
 ts_finalize_subtest
 
+ts_init_subtest "match"
+ts_run $TESTPROG --match "xxx,yyy,zzz" "nozzz"		&>> $TS_OUTPUT
+ts_run $TESTPROG --match "xxx,yyy,zzz" "xxx,noeee"	&>> $TS_OUTPUT
+ts_run $TESTPROG --match "bar,zzz"     "nofoo"		&>> $TS_OUTPUT
+ts_run $TESTPROG --match "nofoo,bar"   "nofoo"		&>> $TS_OUTPUT
+ts_run $TESTPROG --match "nofoo,bar"   "+nofoo"		&>> $TS_OUTPUT
+ts_run $TESTPROG --match "bar,zzz"     "+nofoo"		&>> $TS_OUTPUT
+ts_run $TESTPROG --match "bar,zzz"     ""		&>> $TS_OUTPUT
+ts_run $TESTPROG --match "bar,zzz"     "+"		&>> $TS_OUTPUT
+ts_run $TESTPROG --match ""            ""		&>> $TS_OUTPUT
+ts_run $TESTPROG --match ""            "foo"		&>> $TS_OUTPUT
+ts_run $TESTPROG --match ""            "nofoo"		&>> $TS_OUTPUT
+ts_run $TESTPROG --match ""            "no,foo"		&>> $TS_OUTPUT
+ts_run $TESTPROG --match "no"          "+no"		&>> $TS_OUTPUT
+ts_finalize_subtest
+
 ts_finalize

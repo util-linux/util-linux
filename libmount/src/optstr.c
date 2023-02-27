@@ -58,6 +58,8 @@ static int mnt_optstr_locate_option(char *optstr, const char *name,
 	assert(name);
 
 	namesz = strlen(name);
+	if (!namesz)
+		return 1;
 
 	do {
 		rc = ul_optstr_next(&optstr, &n, &nsz,
@@ -808,6 +810,8 @@ err:
  * The "no" prefix interpretation could be disabled by the "+" prefix, for example
  * "+noauto" matches if @optstr literally contains the "noauto" string.
  *
+ * The alone "no" is error and all matching ends with False.
+ *
  * "xxx,yyy,zzz" : "nozzz"	-> False
  *
  * "xxx,yyy,zzz" : "xxx,noeee"	-> True
@@ -820,6 +824,17 @@ err:
  *
  * "bar,zzz"     : "+nofoo"     -> False	(does not contain "nofoo")
  *
+ * "bar,zzz"     : "" or  "+"   -> True		(empty pattern is matching)
+ *
+ * ""            : ""           -> True
+ *
+ * ""            : "foo"        -> False
+ *
+ * ""            : "nofoo"      -> True
+ *
+ * ""            : "no,foo"     -> False	(alone "no" is error)
+ *
+ * "no"          : "+no"        -> True		("no" is an option due to "+")
  *
  * Returns: 1 if pattern is matching, else 0. This function also returns 0
  *          if @pattern is NULL and @optstr is non-NULL.
@@ -827,17 +842,15 @@ err:
 int mnt_match_options(const char *optstr, const char *pattern)
 {
 	char *name, *pat = (char *) pattern;
-	char *buf, *patval;
+	char *buf = NULL, *patval;
 	size_t namesz = 0, patvalsz = 0;
 	int match = 1;
 
 	if (!pattern && !optstr)
 		return 1;
+	if (pattern && optstr && !*pattern && !*optstr)
+		return 1;
 	if (!pattern)
-		return 0;
-
-	buf = malloc(strlen(pattern) + 1);
-	if (!buf)
 		return 0;
 
 	/* walk on pattern string
@@ -845,17 +858,34 @@ int mnt_match_options(const char *optstr, const char *pattern)
 	while (match && !mnt_optstr_next_option(&pat, &name, &namesz,
 						&patval, &patvalsz)) {
 		char *val;
-		size_t sz;
+		size_t sz = 0;
 		int no = 0, rc;
 
 		if (*name == '+')
 			name++, namesz--;
-		else if ((no = (startswith(name, "no") != NULL)))
+		else if ((no = (startswith(name, "no") != NULL))) {
 			name += 2, namesz -= 2;
+			if (!*name) {
+				match = 0;
+				break;	/* alone "no" keyword is error */
+			}
+		}
 
-		xstrncpy(buf, name, namesz + 1);
+		if (optstr && *optstr && *name) {
+			if (!buf) {
+				buf = malloc(strlen(pattern) + 1);
+				if (!buf)
+					return 0;
+			}
 
-		rc = mnt_optstr_get_option(optstr, buf, &val, &sz);
+			xstrncpy(buf, name, namesz + 1);
+			rc = mnt_optstr_get_option(optstr, buf, &val, &sz);
+
+		} else if (!*name) {
+			rc = 0;		/* empty pattern matches */
+		} else {
+			rc = 1;		/* not found in empty string */
+		}
 
 		/* check also value (if the pattern is "foo=value") */
 		if (rc == 0 && patvalsz > 0 &&
@@ -873,7 +903,6 @@ int mnt_match_options(const char *optstr, const char *pattern)
 			match = 0;
 			break;
 		}
-
 	}
 
 	free(buf);
@@ -1091,6 +1120,21 @@ static int test_dedup(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
+static int test_match(struct libmnt_test *ts, int argc, char *argv[])
+{
+	char *optstr, *pattern;
+
+	if (argc < 3)
+		return -EINVAL;
+
+	optstr = argv[1];
+	pattern = argv[2];
+	printf("%-6s: \"%s\"\t:\t\"%s\"\n",
+			mnt_match_options(optstr, pattern) == 1 ? "true" : "false",
+			optstr, pattern);
+	return 0;
+}
+
 int main(int argc, char *argv[])
 {
 	struct libmnt_test tss[] = {
@@ -1100,6 +1144,7 @@ int main(int argc, char *argv[])
 		{ "--get",    test_get,    "<optstr> <name>            search name in optstr" },
 		{ "--remove", test_remove, "<optstr> <name>            remove name in optstr" },
 		{ "--dedup",  test_dedup,  "<optstr> <name>            deduplicate name in optstr" },
+		{ "--match",  test_match,  "<optstr> <pattern>         compare optstr with pattern" },
 		{ "--split",  test_split,  "<optstr>                   split into FS, VFS and userspace" },
 		{ "--flags",  test_flags,  "<optstr>                   convert options to MS_* flags" },
 		{ "--apply",  test_apply,  "--{linux,user} <optstr> <mask>    apply mask to optstr" },
