@@ -2736,9 +2736,12 @@ static void output_special_char(struct issue *ie,
 		char escname[UL_COLORNAME_MAXSZ];
 
 		if (get_escape_argument(fp, escname, sizeof(escname))) {
-			const char *esc = color_sequence_from_colorname(escname);
-			if (esc)
+			char *esc = color_get_sequence(escname);
+
+			if (esc) {
 				fputs(esc, ie->output);
+				free(esc);
+			}
 		} else
 			fputs("\033", ie->output);
 		break;
