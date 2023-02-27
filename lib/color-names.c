@@ -7,6 +7,8 @@
 #include "c.h"
 #include "color-names.h"
 
+#include <ctype.h>
+
 struct ul_color_name {
 	const char *name;
 	const char *seq;
@@ -61,4 +63,109 @@ const char *color_sequence_from_colorname(const char *str)
 				sizeof(struct ul_color_name),
 				cmp_color_name);
 	return res ? res->seq : NULL;
+}
+
+
+int color_is_sequence(const char *color)
+{
+	if (color && *color == 0x1B) {
+		size_t len = strlen(color);
+
+		if (len >= 4 &&
+		    *(color + 1) == '[' &&
+		    isdigit(*(color + 2)) &&
+		    *(color + len - 1) == 'm')
+		return 1;
+	}
+
+	return 0;
+}
+
+/* canonicalize sequence */
+static int __color_canonicalize(const char *str, char **seq)
+{
+	char *in, *out;
+	int len;
+
+	if (!str)
+		return -EINVAL;
+
+	*seq = NULL;
+
+	/* convert color names like "red" to the real sequence */
+	if (*str != '\\' && isalpha(*str)) {
+		const char *s = color_sequence_from_colorname(str);
+		*seq = strdup(s ? s : str);
+
+		return *seq ? 0 : -ENOMEM;
+	}
+
+	/* convert xx;yy sequences to "\033[xx;yy" */
+	if ((len = asprintf(seq, "\033[%sm", str)) < 1)
+		return -ENOMEM;
+
+	for (in = *seq, out = *seq; in && *in; in++) {
+		if (*in != '\\') {
+			*out++ = *in;
+			continue;
+		}
+		switch(*(in + 1)) {
+		case 'a':
+			*out++ = '\a';	/* Bell */
+			break;
+		case 'b':
+			*out++ = '\b';	/* Backspace */
+			break;
+		case 'e':
+			*out++ = '\033';	/* Escape */
+			break;
+		case 'f':
+			*out++ = '\f';	/* Form Feed */
+			break;
+		case 'n':
+			*out++ = '\n';	/* Newline */
+			break;
+		case 'r':
+			*out++ = '\r';	/* Carriage Return */
+			break;
+		case 't':
+			*out++ = '\t';	/* Tab */
+			break;
+		case 'v':
+			*out++ = '\v';	/* Vertical Tab */
+			break;
+		case '\\':
+			*out++ = '\\';	/* Backslash */
+			break;
+		case '_':
+			*out++ = ' ';	/* Space */
+			break;
+		case '#':
+			*out++ = '#';	/* Hash mark */
+			break;
+		case '?':
+			*out++ = '?';	/* Question mark */
+			break;
+		default:
+			*out++ = *in;
+			*out++ = *(in + 1);
+			break;
+		}
+		in++;
+	}
+
+	if (out) {
+		assert ((out - *seq) <= len);
+		*out = '\0';
+	}
+
+	return 0;
+}
+
+char *color_get_sequence(const char *color)
+{
+	char *seq = NULL;
+	int rc = __color_canonicalize(color, &seq);
+
+	return rc ? NULL : seq;
 }

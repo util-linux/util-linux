@@ -41,4 +41,7 @@
 
 extern const char *color_sequence_from_colorname(const char *str);
 
+extern int color_is_sequence(const char *color);
+extern char *color_get_sequence(const char *color);
+
 #endif /* UTIL_LINUX_COLOR_NAMES_H */

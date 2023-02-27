@@ -353,88 +353,6 @@ static char *colors_get_homedir(char *buf, size_t bufsz)
 	return NULL;
 }
 
-/* canonicalize sequence */
-static int cn_sequence(const char *str, char **seq)
-{
-	char *in, *out;
-	int len;
-
-	if (!str)
-		return -EINVAL;
-
-	*seq = NULL;
-
-	/* convert logical names like "red" to the real sequence */
-	if (*str != '\\' && isalpha(*str)) {
-		const char *s = color_sequence_from_colorname(str);
-		*seq = strdup(s ? s : str);
-
-		return *seq ? 0 : -ENOMEM;
-	}
-
-	/* convert xx;yy sequences to "\033[xx;yy" */
-	if ((len = asprintf(seq, "\033[%sm", str)) < 1)
-		return -ENOMEM;
-
-	for (in = *seq, out = *seq; in && *in; in++) {
-		if (*in != '\\') {
-			*out++ = *in;
-			continue;
-		}
-		switch(*(in + 1)) {
-		case 'a':
-			*out++ = '\a';	/* Bell */
-			break;
-		case 'b':
-			*out++ = '\b';	/* Backspace */
-			break;
-		case 'e':
-			*out++ = '\033';	/* Escape */
-			break;
-		case 'f':
-			*out++ = '\f';	/* Form Feed */
-			break;
-		case 'n':
-			*out++ = '\n';	/* Newline */
-			break;
-		case 'r':
-			*out++ = '\r';	/* Carriage Return */
-			break;
-		case 't':
-			*out++ = '\t';	/* Tab */
-			break;
-		case 'v':
-			*out++ = '\v';	/* Vertical Tab */
-			break;
-		case '\\':
-			*out++ = '\\';	/* Backslash */
-			break;
-		case '_':
-			*out++ = ' ';	/* Space */
-			break;
-		case '#':
-			*out++ = '#';	/* Hash mark */
-			break;
-		case '?':
-			*out++ = '?';	/* Question mark */
-			break;
-		default:
-			*out++ = *in;
-			*out++ = *(in + 1);
-			break;
-		}
-		in++;
-	}
-
-	if (out) {
-		assert ((out - *seq) <= len);
-		*out = '\0';
-	}
-
-	return 0;
-}
-
-
 /*
  * Adds one color sequence to array with color scheme.
  * When returning success (0) this function takes ownership of
@@ -453,29 +371,10 @@ static int colors_add_scheme(struct ul_color_ctl *cc,
 
 	DBG(SCHEME, ul_debug("add '%s'", name));
 
-	rc = cn_sequence(seq0, &seq);
-	if (rc)
-		return rc;
-
+	seq = color_get_sequence(seq0);
+	if (!seq)
+		return -EINVAL;
 	rc = -ENOMEM;
-
-	/* convert logical name (e.g. "red") to real ESC code */
-	if (isalpha(*seq)) {
-		const char *s = color_sequence_from_colorname(seq);
-		char *p;
-
-		if (!s) {
-			DBG(SCHEME, ul_debug("unknown logical name: %s", seq));
-			rc = -EINVAL;
-			goto err;
-		}
-
-		p = strdup(s);
-		if (!p)
-			goto err;
-		free(seq);
-		seq = p;
-	}
 
 	/* enlarge the array */
 	if (cc->nschemes == cc->schemes_sz) {
@@ -875,7 +774,7 @@ int main(int argc, char *argv[])
 	};
 	int c, mode = UL_COLORMODE_UNDEF;	/* default */
 	const char *color = "red", *name = NULL, *color_scheme = NULL;
-	const char *seq = NULL;
+	char *seq = NULL;
 
 	while ((c = getopt_long(argc, argv, "C:c:m:n:", longopts, NULL)) != -1) {
 		switch (c) {
@@ -904,7 +803,10 @@ int main(int argc, char *argv[])
 
 	colors_init(mode, name ? name : program_invocation_short_name);
 
-	seq = color_sequence_from_colorname(color);
+	if (color_is_sequence(color))
+		seq = strdup(color);
+	else
+		seq = color_get_sequence(color);
 
 	if (color_scheme)
 		color_scheme_enable(color_scheme, seq);
@@ -913,6 +815,8 @@ int main(int argc, char *argv[])
 	printf("Hello World!");
 	color_disable();
 	fputc('\n', stdout);
+
+	free(seq);
 
 	return EXIT_SUCCESS;
 }
