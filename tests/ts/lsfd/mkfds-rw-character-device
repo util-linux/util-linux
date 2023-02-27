@@ -43,8 +43,8 @@ EXPR=
 	lsfd_compare_dev "${TS_CMD_LSFD}" $target "${EXPR}"
 
 	kill -CONT ${PID}
-	wait ${MKFDS_PID}
     fi
+    wait ${MKFDS_PID}
 } > $TS_OUTPUT 2>&1
 
 ts_finalize

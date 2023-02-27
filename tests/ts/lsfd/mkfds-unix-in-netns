@@ -20,7 +20,8 @@ TS_DESC="UNIX sockets made in a differenct net namespace"
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 ts_skip_nonroot
-ts_skip_qemu_user
+
+. "$TS_SELF/lsfd-functions.bash"
 
 ts_check_test_command "$TS_CMD_LSFD"
 
@@ -54,8 +55,9 @@ compare_net_namespaces()
     fi
 }
 
-{
-    for t in stream dgram seqpacket; do
+for t in stream dgram seqpacket; do
+    ts_init_subtest "$t"
+    {
 	coproc MKFDS { "$TS_HELPER_MKFDS" unix-in-netns $FDSELFNS $FDALTNS $FDSOCK \
 					  path=test_mkfds-unix-$t-ns \
 					  type=$t ; }
@@ -68,8 +70,8 @@ compare_net_namespaces()
 	    compare_net_namespaces "$t" "${PID}"
 
 	    kill -CONT "${PID}"
-	    wait "${MKFDS_PID}"
 	fi
+	wait "${MKFDS_PID}"
 
 	coproc MKFDS { "$TS_HELPER_MKFDS" unix-in-netns $FDSELFNS $FDALTNS $FDSOCK \
 					  path=test_mkfds-unix-$t-ns \
@@ -84,9 +86,15 @@ compare_net_namespaces()
 	    compare_net_namespaces "abstract $t" "${PID}"
 
 	    kill -CONT "${PID}"
-	    wait "${MKFDS_PID}"
 	fi
-    done
-} > "$TS_OUTPUT" 2>&1
+	wait "${MKFDS_PID}"
+    } > "$TS_OUTPUT" 2>&1
+    if [ "$?" == "$EPERM" ]; then
+	ts_skip_subtest "unshare(2) is not permitted on this platform"
+	continue
+    fi
+    ts_finalize_subtest
+done
+
 
 ts_finalize

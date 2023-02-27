@@ -1,0 +1,83 @@
+#!/bin/bash
+#
+# Copyright (C) 2023 Masatake YAMATO <yamato@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="PING and PINGv6 sockets"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_skip_nonroot
+
+ts_check_test_command "$TS_CMD_LSFD"
+ts_check_test_command "$TS_HELPER_MKFDS"
+ts_check_native_byteorder
+
+ts_cd "$TS_OUTDIR"
+
+PID=
+FD=3
+EXPR=(
+    '(TYPE == "PING") and (FD == 3)'
+    '(TYPE == "PINGv6") and (FD == 3)'
+)
+FACTORY=(
+    ping
+    ping6
+)
+TYPE=(
+    'PING'
+    'PINGv6'
+)
+COLNS=(
+    INET
+    INET6
+)
+ID=9999
+
+for i in 0 1; do
+    if ! "$TS_HELPER_MKFDS"  -c -q "${FACTORY[$i]}" 3 id=$ID; then
+	ts_skip "making ${TYPE[$i]} socket with specifying id is failed (blocked by SELinux?)"
+    fi
+done
+
+for i in 0 1; do
+    ts_init_subtest "${FACTORY[$i]}"
+    {
+	coproc MKFDS { "$TS_HELPER_MKFDS" "${FACTORY[$i]}" $FD id=$ID; }
+	if read -r -u "${MKFDS[0]}" PID; then
+	    ${TS_CMD_LSFD} -n \
+			   -o ASSOC,TYPE,NAME,SOCK.STATE,SOCK.TYPE,${COLNS[$i]}.LADDR,${COLNS[$i]}.RADDR,PING.ID \
+			   -p "${PID}" -Q "${EXPR[$i]}"
+	    echo "ASSOC,TYPE,NAME,SOCK.STATE,SOCK.TYPE,${COLNS[$i]}.LADDR,${COLNS[$i]}.RADDR,PING.ID": $?
+	    kill -CONT "${PID}"
+	fi
+	wait "${MKFDS_PID}"
+
+	coproc MKFDS { "$TS_HELPER_MKFDS" "${FACTORY[$i]}" $FD id=$ID connect=0; }
+	if read -r -u "${MKFDS[0]}" PID; then
+	    ${TS_CMD_LSFD} -n \
+			   -o ASSOC,TYPE,NAME,SOCK.STATE,SOCK.TYPE,${COLNS[$i]}.LADDR,${COLNS[$i]}.RADDR,PING.ID \
+			   -p "${PID}" -Q "${EXPR[$i]}"
+	    echo "ASSOC,TYPE,NAME,SOCK.STATE,SOCK.TYPE,${COLNS[$i]}.LADDR,${COLNS[$i]}.RADDR,PING.ID": $?
+	    kill -CONT "${PID}"
+	fi
+    } > "$TS_OUTPUT" 2>&1
+    wait "${MKFDS_PID}"
+    ts_finalize_subtest
+done
+
+ts_finalize

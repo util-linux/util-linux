@@ -1,5 +1,5 @@
 /*
- * test_lsfd - make various file descriptors
+ * test_mkfds - make various file descriptors
  *
  * Written by Masatake YAMATO <yamato@redhat.com>
  *
@@ -50,6 +50,10 @@
 #include "c.h"
 #include "nls.h"
 #include "xalloc.h"
+
+#define EXIT_ENOSYS 17
+#define EXIT_EPERM  18
+#define EXIT_ENOPROTOOPT 19
 
 #define _U_ __attribute__((__unused__))
 
@@ -688,7 +692,8 @@ static void *make_mmapped_packet_socket(const struct factory *factory, struct fd
 		int e = errno;
 		close(sd);
 		errno = e;
-		err(EXIT_FAILURE, "failed to specify a buffer spec to a packet socket");
+		err((errno == ENOPROTOOPT? EXIT_ENOPROTOOPT: EXIT_FAILURE),
+		    "failed to specify a buffer spec to a packet socket");
 	}
 
 	munmap_data = malloc(sizeof (*munmap_data));
@@ -735,7 +740,8 @@ static void *make_pidfd(const struct factory *factory, struct fdesc fdescs[],
 
 	int fd = pidfd_open(pid, 0);
 	if (fd < 0)
-		err(EXIT_FAILURE, "failed in pidfd_open(%d)", (int)pid);
+		err((errno == ENOSYS? EXIT_ENOSYS: EXIT_FAILURE),
+		    "failed in pidfd_open(%d)", (int)pid);
 	free_arg(&target_pid);
 
 	if (fd != fdescs[0].fd) {
@@ -1132,7 +1138,8 @@ static void *make_unix_in_new_netns(const struct factory *factory, struct fdesc 
 		int e = errno;
 		close_fdesc(self_netns, NULL);
 		errno = e;
-		err(EXIT_FAILURE, "failed in unshare");
+		err((errno == EPERM? EXIT_EPERM: EXIT_FAILURE),
+		    "failed in unshare");
 	}
 
 	tmp_netns = open("/proc/self/ns/net", O_RDONLY);
@@ -1390,9 +1397,16 @@ static void *make_tcp(const struct factory *factory, struct fdesc fdescs[],
 			       (struct sockaddr *)&sin, (struct sockaddr *)&cin);
 }
 
-static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
-				    int argc, char ** argv)
+static void *make_udp_common(const struct factory *factory, struct fdesc fdescs[],
+			     int argc, char ** argv,
+			     int family,
+			     void (*init_addr)(struct sockaddr *, unsigned short),
+			     size_t addr_size,
+			     struct sockaddr * sin, struct sockaddr * cin)
 {
+	struct arg lite = decode_arg("lite", factory->params, argc, argv);
+	bool blite = ARG_BOOLEAN(lite);
+
 	struct arg server_port = decode_arg("server-port", factory->params, argc, argv);
 	unsigned short iserver_port = (unsigned short)ARG_INTEGER(server_port);
 	struct arg client_port = decode_arg("client-port", factory->params, argc, argv);
@@ -1405,7 +1419,6 @@ static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
 	struct arg client_do_connect = decode_arg("client-do-connect", factory->params, argc, argv);
 	bool bclient_do_connect = ARG_BOOLEAN(client_do_connect);
 
-	struct sockaddr_in sin, cin;
 	int ssd, csd;
 
 	const int y = 1;
@@ -1415,8 +1428,9 @@ static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
 	free_arg(&server_do_bind);
 	free_arg(&server_port);
 	free_arg(&client_port);
+	free_arg(&lite);
 
-	ssd = socket(AF_INET, SOCK_DGRAM, 0);
+	ssd = socket(family, SOCK_DGRAM, blite? IPPROTO_UDPLITE: 0);
 	if (ssd < 0)
 		err(EXIT_FAILURE,
 		    _("failed to make a udp socket for server"));
@@ -1440,12 +1454,9 @@ static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
 		ssd = fdescs[0].fd;
 	}
 
-	memset(&sin, 0, sizeof(sin));
-	sin.sin_family = AF_INET;
-	sin.sin_port = htons(iserver_port);
-	sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+	init_addr(sin, iserver_port);
 	if (bserver_do_bind) {
-		if (bind(ssd, &sin, sizeof(sin)) < 0) {
+		if (bind(ssd, sin, addr_size) < 0) {
 			int e = errno;
 			close(ssd);
 			errno = e;
@@ -1453,7 +1464,7 @@ static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
 		}
 	}
 
-	csd = socket(AF_INET, SOCK_DGRAM, 0);
+	csd = socket(family, SOCK_DGRAM, blite? IPPROTO_UDPLITE: 0);
 	if (csd < 0) {
 		int e = errno;
 		close(ssd);
@@ -1484,11 +1495,8 @@ static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
 	}
 
 	if (bclient_do_bind) {
-		memset(&cin, 0, sizeof(cin));
-		cin.sin_family = AF_INET;
-		cin.sin_port = htons(iclient_port);
-		cin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-		if (bind(csd, &cin, sizeof(cin)) < 0) {
+		init_addr(cin, iclient_port);
+		if (bind(csd, cin, addr_size) < 0) {
 			int e = errno;
 			close(ssd);
 			close(csd);
@@ -1498,7 +1506,7 @@ static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
 	}
 
 	if (bclient_do_connect) {
-		if (connect(csd, &sin, sizeof(sin)) < 0) {
+		if (connect(csd, sin, addr_size) < 0) {
 			int e = errno;
 			close(ssd);
 			close(csd);
@@ -1521,17 +1529,30 @@ static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
 	return NULL;
 }
 
-static void *make_raw(const struct factory *factory, struct fdesc fdescs[],
+static void *make_udp(const struct factory *factory, struct fdesc fdescs[],
 				    int argc, char ** argv)
+{
+	struct sockaddr_in sin, cin;
+	return make_udp_common(factory, fdescs, argc, argv,
+			       AF_INET,
+			       tcp_init_addr, sizeof(sin),
+			       (struct sockaddr *)&sin, (struct sockaddr *)&cin);
+}
+
+static void *make_raw_common(const struct factory *factory, struct fdesc fdescs[],
+			     int argc, char ** argv,
+			     int family,
+			     void (*init_addr)(struct sockaddr *, bool),
+			     size_t addr_size,
+			     struct sockaddr * sin)
 {
 	struct arg protocol = decode_arg("protocol", factory->params, argc, argv);
 	int iprotocol = ARG_INTEGER(protocol);
 	int ssd;
-	struct sockaddr_in sin;
 
 	free_arg(&protocol);
 
-	ssd = socket(AF_INET, SOCK_RAW, iprotocol);
+	ssd = socket(family, SOCK_RAW, iprotocol);
 	if (ssd < 0)
 		err(EXIT_FAILURE,
 		    _("failed to make a udp socket for server"));
@@ -1547,18 +1568,16 @@ static void *make_raw(const struct factory *factory, struct fdesc fdescs[],
 		ssd = fdescs[0].fd;
 	}
 
-	memset(&sin, 0, sizeof(sin));
-	sin.sin_family = AF_INET;
-	sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-	if (bind(ssd, &sin, sizeof(sin)) < 0) {
+	init_addr(sin, false);
+	if (bind(ssd, sin, addr_size) < 0) {
 		int e = errno;
 		close(ssd);
 		errno = e;
 		err(EXIT_FAILURE, "failed in bind(2)");
 	}
 
-	sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK + 1);
-	if (connect(ssd, &sin, sizeof(sin)) < 0) {
+	init_addr(sin, true);
+	if (connect(ssd, sin, addr_size) < 0) {
 		int e = errno;
 		close(ssd);
 		errno = e;
@@ -1572,6 +1591,111 @@ static void *make_raw(const struct factory *factory, struct fdesc fdescs[],
 	};
 
 	return NULL;
+}
+
+static void raw_init_addr(struct sockaddr * addr, bool remote_addr)
+{
+	struct sockaddr_in *in = (struct sockaddr_in *)addr;
+	memset(in, 0, sizeof(*in));
+	in->sin_family = AF_INET;
+	in->sin_addr.s_addr = htonl(INADDR_LOOPBACK + (remote_addr? 1: 0));
+}
+
+static void *make_raw(const struct factory *factory, struct fdesc fdescs[],
+				    int argc, char ** argv)
+{
+	struct sockaddr_in sin;
+	return make_raw_common(factory, fdescs, argc, argv,
+			       AF_INET,
+			       raw_init_addr, sizeof(sin),
+			       (struct sockaddr *)&sin);
+}
+
+static void *make_ping_common(const struct factory *factory, struct fdesc fdescs[],
+			      int argc, char ** argv,
+			      int family, int protocol,
+			      void (*init_addr)(struct sockaddr *, unsigned short),
+			      size_t addr_size,
+			      struct sockaddr *sin)
+{
+	struct arg connect_ = decode_arg("connect", factory->params, argc, argv);
+	bool bconnect = ARG_BOOLEAN(connect_);
+
+	struct arg bind_ = decode_arg("bind", factory->params, argc, argv);
+	bool bbind = ARG_BOOLEAN(bind_);
+
+	struct arg id = decode_arg("id", factory->params, argc, argv);
+	unsigned short iid = (unsigned short)ARG_INTEGER(id);
+
+	int sd;
+
+	free_arg(&id);
+	free_arg(&bind_);
+	free_arg(&connect_);
+
+	sd = socket(family, SOCK_DGRAM, protocol);
+	if (sd < 0)
+		err(EXIT_FAILURE,
+		    _("failed to make an icmp socket"));
+
+	if (sd != fdescs[0].fd) {
+		if (dup2(sd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(sd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", sd, fdescs[0].fd);
+		}
+		close(sd);
+		sd = fdescs[0].fd;
+	}
+
+	if (bbind) {
+		init_addr(sin, iid);
+		if (bind(sd, sin, addr_size) < 0) {
+			int e = errno;
+			close(sd);
+			errno = e;
+			err(EXIT_FAILURE, "failed in bind(2)");
+		}
+	}
+
+	if (bconnect) {
+		init_addr(sin, 0);
+		if (connect(sd, sin, addr_size) < 0) {
+			int e = errno;
+			close(sd);
+			errno = e;
+			err(EXIT_FAILURE, "failed in connect(2)");
+		}
+	}
+
+	fdescs[0] = (struct fdesc) {
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+
+	return NULL;
+}
+
+static void ping_init_addr(struct sockaddr *addr, unsigned short id)
+{
+	struct sockaddr_in *in = (struct sockaddr_in *)addr;
+	memset(in, 0, sizeof(*in));
+	in->sin_family = AF_INET;
+	in->sin_port = htons(id);
+	in->sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+}
+
+static void *make_ping(const struct factory *factory, struct fdesc fdescs[],
+		       int argc, char ** argv)
+{
+	struct sockaddr_in in;
+	return make_ping_common(factory, fdescs, argc, argv,
+				AF_INET, IPPROTO_ICMP,
+				ping_init_addr,
+				sizeof(in),
+				(struct sockaddr *)&in);
 }
 
 static void tcp6_init_addr(struct sockaddr *addr, unsigned short port)
@@ -1594,6 +1718,61 @@ static void *make_tcp6(const struct factory *factory, struct fdesc fdescs[],
 			       (struct sockaddr *)&sin, (struct sockaddr *)&cin);
 }
 
+static void *make_udp6(const struct factory *factory, struct fdesc fdescs[],
+		       int argc, char ** argv)
+{
+	struct sockaddr_in6 sin, cin;
+	return make_udp_common(factory, fdescs, argc, argv,
+			       AF_INET6,
+			       tcp6_init_addr, sizeof(sin),
+			       (struct sockaddr *)&sin, (struct sockaddr *)&cin);
+}
+
+static void raw6_init_addr(struct sockaddr *addr, bool remote_addr)
+{
+	struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)addr;
+	memset(in6, 0, sizeof(*in6));
+	in6->sin6_family = AF_INET6;
+	in6->sin6_flowinfo = 0;
+
+	if (remote_addr) {
+		/* ::ffff:127.0.0.1 */
+		in6->sin6_addr.s6_addr16[5] = 0xffff;
+		in6->sin6_addr.s6_addr32[3] = htonl(INADDR_LOOPBACK);
+	} else
+		in6->sin6_addr = in6addr_loopback;
+}
+
+static void *make_raw6(const struct factory *factory, struct fdesc fdescs[],
+		       int argc, char ** argv)
+{
+	struct sockaddr_in6 sin;
+	return make_raw_common(factory, fdescs, argc, argv,
+			       AF_INET6,
+			       raw6_init_addr, sizeof(sin),
+			       (struct sockaddr *)&sin);
+}
+
+static void ping6_init_addr(struct sockaddr *addr, unsigned short id)
+{
+	struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)addr;
+	memset(in6, 0, sizeof(*in6));
+	in6->sin6_family = AF_INET6;
+	in6->sin6_port = htons(id);
+	in6->sin6_addr = in6addr_loopback;
+}
+
+static void *make_ping6(const struct factory *factory, struct fdesc fdescs[],
+			int argc, char ** argv)
+{
+	struct sockaddr_in6 in6;
+	return make_ping_common(factory, fdescs, argc, argv,
+				AF_INET6, IPPROTO_ICMPV6,
+				ping6_init_addr,
+				sizeof(in6),
+				(struct sockaddr *)&in6);
+}
+
 static void *make_netns(const struct factory *factory _U_, struct fdesc fdescs[],
 			int argc _U_, char ** argv _U_)
 {
@@ -1603,7 +1782,8 @@ static void *make_netns(const struct factory *factory _U_, struct fdesc fdescs[]
 
 	int ns = ioctl(sd, SIOCGSKNS);
 	if (ns < 0)
-		err(EXIT_FAILURE, "failed in ioctl(SIOCGSKNS)");
+		err((errno == ENOSYS? EXIT_ENOSYS: EXIT_FAILURE),
+		    "failed in ioctl(SIOCGSKNS)");
 	close(sd);
 
 	if (ns != fdescs[0].fd) {
@@ -1952,6 +2132,12 @@ static const struct factory factories[] = {
 		.make = make_udp,
 		.params = (struct parameter []) {
 			{
+				.name = "lite",
+				.type = PTYPE_BOOLEAN,
+				.desc = "Use UDPLITE instead of UDP",
+				.defv.boolean = false,
+			},
+			{
 				.name = "server-port",
 				.type = PTYPE_INTEGER,
 				.desc = "UDP port the server may listen",
@@ -2003,6 +2189,35 @@ static const struct factory factories[] = {
 
 	},
 	{
+		.name = "ping",
+		.desc = "AF_INET+SOCK_DGRAM+IPPROTO_ICMP sockets",
+		.priv = false,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_ping,
+		.params = (struct parameter []) {
+			{
+				.name = "connect",
+				.type = PTYPE_BOOLEAN,
+				.desc = "call connect(2) with the socket",
+				.defv.boolean = true,
+			},
+			{
+				.name = "bind",
+				.type = PTYPE_BOOLEAN,
+				.desc = "call bind(2) with the socket",
+				.defv.boolean = true,
+			},
+			{
+				.name = "id",
+				.type = PTYPE_INTEGER,
+				.desc = "ICMP echo request id",
+				.defv.integer = 0,
+			},
+			PARAM_END
+		}
+	},
+	{
 		.name = "tcp6",
 		.desc = "AF_INET6+SOCK_STREAM sockets",
 		.priv = false,
@@ -2021,6 +2236,100 @@ static const struct factory factories[] = {
 				.type = PTYPE_INTEGER,
 				.desc = "TCP port the client may bind",
 				.defv.integer = 23456,
+			},
+			PARAM_END
+		}
+	},
+	{
+		.name = "udp6",
+		.desc = "AF_INET6+SOCK_DGRAM sockets",
+		.priv = false,
+		.N    = 2,
+		.EX_N = 0,
+		.make = make_udp6,
+		.params = (struct parameter []) {
+			{
+				.name = "lite",
+				.type = PTYPE_BOOLEAN,
+				.desc = "Use UDPLITE instead of UDP",
+				.defv.boolean = false,
+			},
+			{
+				.name = "server-port",
+				.type = PTYPE_INTEGER,
+				.desc = "UDP port the server may listen",
+				.defv.integer = 12345,
+			},
+			{
+				.name = "client-port",
+				.type = PTYPE_INTEGER,
+				.desc = "UDP port the client may bind",
+				.defv.integer = 23456,
+			},
+			{
+				.name = "server-do-bind",
+				.type = PTYPE_BOOLEAN,
+				.desc = "call bind with the server socket",
+				.defv.boolean = true,
+			},
+			{
+				.name = "client-do-bind",
+				.type = PTYPE_BOOLEAN,
+				.desc = "call bind with the client socket",
+				.defv.boolean = true,
+			},
+			{
+				.name = "client-do-connect",
+				.type = PTYPE_BOOLEAN,
+				.desc = "call connect with the client socket",
+				.defv.boolean = true,
+			},
+			PARAM_END
+		}
+	},
+	{
+		.name = "raw6",
+		.desc = "AF_INET6+SOCK_RAW sockets",
+		.priv = true,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_raw6,
+		.params = (struct parameter []) {
+			{
+				.name = "protocol",
+				.type = PTYPE_INTEGER,
+				.desc = "protocol passed to socket(AF_INET6, SOCK_RAW, protocol)",
+				.defv.integer = IPPROTO_IPIP,
+			},
+			PARAM_END
+		}
+
+	},
+	{
+		.name = "ping6",
+		.desc = "AF_INET6+SOCK_DGRAM+IPPROTO_ICMPV6 sockets",
+		.priv = false,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_ping6,
+		.params = (struct parameter []) {
+			{
+				.name = "connect",
+				.type = PTYPE_BOOLEAN,
+				.desc = "call connect(2) with the socket",
+				.defv.boolean = true,
+			},
+			{
+				.name = "bind",
+				.type = PTYPE_BOOLEAN,
+				.desc = "call bind(2) with the socket",
+				.defv.boolean = true,
+			},
+			{
+				.name = "id",
+				.type = PTYPE_INTEGER,
+				.desc = "ICMP echo request id",
+				.defv.integer = 0,
 			},
 			PARAM_END
 		}

@@ -227,6 +227,9 @@ UDP:::
 state=_SOCK.STATE_[ laddr=_UDP.LADDR_ [ raddr=_UDP.RADDR_]]
 +
 *lsfd* hides ``raddr=`` if _UDP.RADDR_ is ``0.0.0.0`` and _UDP.RPORT_ is 0.
+
+UDPLITE:::
+state=_SOCK.STATE_[ laddr=_UDPLITE.LADDR_ [ raddr=_UDPLITE.RADDR_]]
 +
 UNIX-STREAM:::
 state=_SOCK.STATE_[ path=_UNIX.PATH_]
@@ -275,6 +278,9 @@ ____
 
 PIDFD.PID <``number``>::
 PID of the process targeted by the pidfd.
+
+PING.ID <`number`>::
+ICMP echo request id used on the PING socket.
 
 POS <``number``>::
 File position.
@@ -348,6 +354,18 @@ UDP.RADDR <``string``>::
 Remote IP address and remote UDP port.
 
 UDP.RPORT <``integer``>::
+Remote UDP port.
+
+UDPLITE.LADDR <``string``>::
+Local IP address and local UDPLite port.
+
+UDPLITE.LPORT <``integer``>::
+Local UDP port.
+
+UDPLITE.RADDR <``string``>::
+Remote IP address and remote UDPLite port.
+
+UDPLITE.RPORT <``integer``>::
 Remote UDP port.
 
 UID <``number``>::

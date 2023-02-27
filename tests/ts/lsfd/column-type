@@ -20,9 +20,9 @@ TS_DESC="TYPE and STTYPE column"
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
+. "$TS_SELF/lsfd-functions.bash"
 ts_check_test_command "$TS_CMD_LSFD"
 ts_check_test_command "$TS_HELPER_MKFDS"
-ts_skip_qemu_user
 
 ts_cd "$TS_OUTDIR"
 
@@ -30,8 +30,9 @@ PID=
 FD=3
 EXPR="(FD == 3)"
 
-{
-    for C in ro-regular-file pidfd inotify socketpair; do
+for C in ro-regular-file pidfd inotify socketpair; do
+    ts_init_subtest $C
+    {
 	coproc MKFDS {
 	    argv=()
 	    case $C in
@@ -46,9 +47,14 @@ EXPR="(FD == 3)"
 	    echo "$C"':ASSOC,STTYPE,TYPE': $?
 
 	    kill -CONT "${PID}"
-	    wait "${MKFDS_PID}"
 	fi
-    done
-} > "$TS_OUTPUT" 2>&1
+	wait "${MKFDS_PID}"
+    } > "$TS_OUTPUT" 2>&1
+    if [ "$C-$?" == "pidfd-$ENOSYS" ]; then
+	ts_skip_subtest "pidfd_open(2) is not available"
+	continue
+    fi
+    ts_finalize_subtest
+done
 
 ts_finalize

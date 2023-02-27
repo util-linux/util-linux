@@ -41,8 +41,8 @@ EXPR=
 	echo 'ASSOC,MODE,STTYPE,SOURCE,SOCK.PROTONAME': $?
 
 	kill -CONT ${PID}
-	wait ${MKFDS_PID}
     fi
+    wait ${MKFDS_PID}
 } > $TS_OUTPUT 2>&1
 
 ts_finalize
