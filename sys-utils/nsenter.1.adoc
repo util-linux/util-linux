@@ -121,6 +121,9 @@ Set the working directory. If no directory is specified, set the working directo
 *-W*, *--wdns*[=_directory_]::
 Set the working directory. The _directory_ is open after switch to the requested namespaces and after *chroot*(2) call. The options *--wd* and *--wdns* are mutually exclusive.
 
+*-e*, *--env*::
+Pass environment variables from the target process to the new process being created. If this option is not provided, the environment variables will remain the same as in the current namespace..
+
 *-F*, *--no-fork*::
 Do not fork before exec'ing the specified program. By default, when entering a PID namespace, *nsenter* calls *fork* before calling *exec* so that any children will also be in the newly entered PID namespace.
 

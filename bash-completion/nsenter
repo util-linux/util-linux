@@ -49,6 +49,7 @@ _nsenter_module()
 				--root=
 				--wd=
 				--wdns=
+				--env
 				--no-fork
 				--help
 				--version

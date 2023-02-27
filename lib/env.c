@@ -19,6 +19,7 @@
 #include <sys/types.h>
 
 #include "env.h"
+#include "all-io.h"
 
 #ifndef HAVE_ENVIRON_DECL
 extern char **environ;
@@ -78,6 +79,29 @@ static struct ul_env_list *env_list_add(struct ul_env_list *ls0, const char *str
 	ls->env = p;
 
 	ls->next = ls0;
+	return ls;
+}
+
+/*
+ * Use env_from_fd() to read environment from @fd.
+ *
+ * @fd must be /proc/<pid>/environ file.
+*/
+struct ul_env_list *env_from_fd(int fd)
+{
+	char *buf = NULL;
+	size_t rc = 0;
+	struct ul_env_list *ls = NULL;
+
+	if ((rc = read_all_alloc(fd, &buf)) < 1)
+		return NULL;
+	buf[rc] = '\0';
+
+	while (rc > 0) {
+		ls = env_list_add(ls, buf);
+		buf += strlen(buf) + 1;
+		rc -= strlen(buf) + 1;
+	}
 	return ls;
 }
 

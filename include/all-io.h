@@ -84,6 +84,36 @@ static inline ssize_t read_all(int fd, char *buf, size_t count)
 	return c;
 }
 
+static inline ssize_t read_all_alloc(int fd, char **buf)
+{
+	size_t size = 1024, c = 0;
+	ssize_t ret;
+
+	*buf = malloc(size);
+	if (!*buf)
+		return -1;
+
+	while (1) {
+		ret = read_all(fd, *buf + c, size - c);
+		if (ret < 0) {
+			free(*buf);
+			*buf = NULL;
+			return -1;
+		}
+
+		if (ret == 0)
+			return c;
+
+		c += ret;
+		if (c == size) {
+			size *= 2;
+			*buf = realloc(*buf, size);
+			if (!*buf)
+				return -1;
+		}
+	}
+}
+
 static inline ssize_t sendfile_all(int out, int in, off_t *off, size_t count)
 {
 #if defined(HAVE_SENDFILE) && defined(__linux__)
