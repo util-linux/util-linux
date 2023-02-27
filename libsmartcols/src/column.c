@@ -339,10 +339,13 @@ const char *scols_column_get_name_as_shellvar(struct libscols_column *cl)
  */
 int scols_column_set_color(struct libscols_column *cl, const char *color)
 {
-	if (color && isalpha(*color)) {
-		color = color_sequence_from_colorname(color);
-		if (!color)
+	if (color && !color_is_sequence(color)) {
+		char *seq = color_get_sequence(color);
+		if (!seq)
 			return -EINVAL;
+		free(cl->color);
+		cl->color = seq;
+		return 0;
 	}
 	return strdup_to_struct_member(cl, color, color);
 }
