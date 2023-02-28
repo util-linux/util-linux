@@ -38,7 +38,7 @@ EXPR=
     if read -u ${MKFDS[0]} PID; then
 	EXPR='(PID == '"${PID}"') and ((FD == '"$FD0"') or (FD == '"$FD1"'))'
 	${TS_CMD_LSFD} -n -o ASSOC,MODE,STTYPE,SOURCE,SOCK.PROTONAME -Q "${EXPR}" | sed -e 's/UNIX-DGRAM/UNIX/'
-	echo 'ASSOC,MODE,STTYPE,SOURCE,SOCK.PROTONAME': $?
+	echo 'ASSOC,MODE,STTYPE,SOURCE,SOCK.PROTONAME': ${PIPESTATUS[0]}
 
 	kill -CONT ${PID}
     fi
