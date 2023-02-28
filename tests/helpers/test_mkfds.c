@@ -84,12 +84,14 @@ static void __attribute__((__noreturn__)) usage(FILE *out, int status)
 union value {
 	const char *string;
 	long integer;
+	unsigned long uinteger;
 	bool boolean;
 };
 
 enum ptype {
 	PTYPE_STRING,
 	PTYPE_INTEGER,
+	PTYPE_UINTEGER,
 	PTYPE_BOOLEAN,
 };
 
@@ -111,6 +113,7 @@ struct ptype_class {
 
 #define ARG_STRING(A) (A.v.string)
 #define ARG_INTEGER(A) (A.v.integer)
+#define ARG_UINTEGER(A) (A.v.uinteger)
 #define ARG_BOOLEAN(A) (A.v.boolean)
 struct arg {
 	union value v;
@@ -164,6 +167,35 @@ static union value integer_read(const char *arg, const union value *defv)
 }
 
 static void integer_free(union value value _U_)
+{
+	/* Do nothing */
+}
+
+static char *uinteger_sprint(const union value *value)
+{
+	char *str = NULL;
+	xasprintf(&str, "%lu", value->uinteger);
+	return str;
+}
+
+static union value uinteger_read(const char *arg, const union value *defv)
+{
+	char *ep;
+	union value r;
+
+	if (!arg)
+		return *defv;
+
+	errno = 0;
+	r.uinteger = strtoul(arg, &ep, 10);
+	if (errno)
+		err(EXIT_FAILURE, _("fail to make a number from %s"), arg);
+	else if (*ep != '\0')
+		errx(EXIT_FAILURE, _("garbage at the end of number: %s"), arg);
+	return r;
+}
+
+static void uinteger_free(union value value _U_)
 {
 	/* Do nothing */
 }
