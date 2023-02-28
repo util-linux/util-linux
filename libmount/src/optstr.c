@@ -865,7 +865,7 @@ int mnt_match_options(const char *optstr, const char *pattern)
 			name++, namesz--;
 		else if ((no = (startswith(name, "no") != NULL))) {
 			name += 2, namesz -= 2;
-			if (!*name) {
+			if (!*name || *name == ',') {
 				match = 0;
 				break;	/* alone "no" keyword is error */
 			}
