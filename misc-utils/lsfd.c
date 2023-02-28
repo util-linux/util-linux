@@ -1443,19 +1443,20 @@ static void __attribute__((__noreturn__)) usage(void)
 	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -l, --threads         list in threads level\n"), out);
-	fputs(_(" -J, --json            use JSON output format\n"), out);
-	fputs(_(" -n, --noheadings      don't print headings\n"), out);
-	fputs(_(" -o, --output <list>   output columns\n"), out);
-	fputs(_(" -r, --raw             use raw output format\n"), out);
-	fputs(_(" -u, --notruncate      don't truncate text in columns\n"), out);
-	fputs(_(" -p, --pid  <pid(s)>   collect information only specified processes\n"), out);
-	fputs(_(" -Q, --filter <expr>   apply display filter\n"), out);
-	fputs(_("     --debug-filter    dump the internal data structure of filter and exit\n"), out);
-	fputs(_(" -C, --counter <name>:<expr>\n"
-		"                       define custom counter for --summary output\n"), out);
-	fputs(_("     --dump-counters   dump counter definitions\n"), out);
-	fputs(_("     --summary[=when]  print summary information (only, append, or never)\n"), out);
+	fputs(_(" -l,      --threads           list in threads level\n"), out);
+	fputs(_(" -J,      --json              use JSON output format\n"), out);
+	fputs(_(" -n,      --noheadings        don't print headings\n"), out);
+	fputs(_(" -o,      --output <list>     output columns\n"), out);
+	fputs(_(" -r,      --raw               use raw output format\n"), out);
+	fputs(_(" -u,      --notruncate        don't truncate text in columns\n"), out);
+	fputs(_(" -p,      --pid  <pid(s)>     collect information only specified processes\n"), out);
+	fputs(_(" -i[4|6], --inet[=4|6]        list only IPv4 and/or IPv6 sockets\n"), out);
+	fputs(_(" -Q,      --filter <expr>     apply display filter\n"), out);
+	fputs(_("          --debug-filter      dump the internal data structure of filter and exit\n"), out);
+	fputs(_(" -C,      --counter <name>:<expr>\n"
+		"                              define custom counter for --summary output\n"), out);
+	fputs(_("          --dump-counters     dump counter definitions\n"), out);
+	fputs(_("          --summary[=<when>]  print summary information (only, append, or never)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(23));
@@ -1701,6 +1702,29 @@ static void attach_xinfos(struct list_head *procs)
 	}
 }
 
+/* Filter expressions for implementing -i option.
+ *
+ * To list up the protocol names, use the following command line
+ *
+ *   cd linux/net;
+ *   find . -type f -exec grep -A 1 --color=auto -nH --null -e 'struct proto .*{' \{\} +
+ *
+ */
+#define INET_SUBEXP_BEGIN "(SOCK.PROTONAME =~ \"^("
+#define INET4_REG         "TCP|UDP|RAW|PING|UDP-Lite|SCTP|DCCP|L2TP/IP|SMC"
+#define INET6_REG         "TCPv6|UDPv6|RAWv6|PINGv6|UDPLITEv6|SCTPv6|DCCPv6|L2TP/IPv6|SMC6"
+#define INET_SUBEXP_END   ")$\")"
+
+static const char *inet4_subexpr = INET_SUBEXP_BEGIN
+	INET4_REG
+	INET_SUBEXP_END;
+static const char *inet6_subexpr = INET_SUBEXP_BEGIN
+	INET6_REG
+	INET_SUBEXP_END;
+static const char *inet46_subexpr = INET_SUBEXP_BEGIN
+	INET4_REG "|" INET6_REG
+	INET_SUBEXP_END;
+
 int main(int argc, char *argv[])
 {
 	int c;
@@ -1734,6 +1758,7 @@ int main(int argc, char *argv[])
 		{ "threads",    no_argument, NULL, 'l' },
 		{ "notruncate", no_argument, NULL, 'u' },
 		{ "pid",        required_argument, NULL, 'p' },
+		{ "inet",       optional_argument, NULL, 'i' },
 		{ "filter",     required_argument, NULL, 'Q' },
 		{ "debug-filter",no_argument, NULL, OPT_DEBUG_FILTER },
 		{ "summary",    optional_argument, NULL,  OPT_SUMMARY },
@@ -1747,7 +1772,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "no:JrVhluQ:p:C:s", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "no:JrVhluQ:p:i::C:s", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'n':
 			ctl.noheadings = 1;
@@ -1770,6 +1795,22 @@ int main(int argc, char *argv[])
 		case 'p':
 			parse_pids(optarg, &pids, &n_pids);
 			break;
+		case 'i': {
+			const char *subexpr = NULL;
+			if (optarg == NULL)
+				subexpr = inet46_subexpr;
+			else if (strcmp(optarg, "4") == 0)
+				subexpr = inet4_subexpr;
+			else if (strcmp(optarg, "6") == 0)
+				subexpr = inet6_subexpr;
+			else
+				errx(EXIT_FAILURE,
+				     _("unknown -i/--inet argument: %s"),
+				     optarg);
+
+			append_filter_expr(&filter_expr, subexpr, true);
+			break;
+		}
 		case 'Q':
 			append_filter_expr(&filter_expr, optarg, true);
 			break;
