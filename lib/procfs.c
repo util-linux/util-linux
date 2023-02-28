@@ -369,7 +369,7 @@ int procfs_dirent_get_name(DIR *procfs, struct dirent *d, char *buf, size_t bufs
 		end++;
 
 	sz = end - p;
-	if (sz > bufsz)
+	if (sz >= bufsz)
 		sz = bufsz - 1;
 
 	memcpy(buf, p, sz);
