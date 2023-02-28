@@ -1463,7 +1463,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fprintf(out, USAGE_COLUMNS);
 
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
-		fprintf(out, " %11s  %-10s%s\n", infos[i].name,
+		fprintf(out, " %16s  %-10s%s\n", infos[i].name,
 			infos[i].json_type == SCOLS_JSON_STRING?  "<string>":
 			infos[i].json_type == SCOLS_JSON_NUMBER?  "<number>":
 			"<boolean>",
