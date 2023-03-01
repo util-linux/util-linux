@@ -59,9 +59,21 @@ static struct stat self_netns_sb;
 static void *xinfo_tree;	/* for tsearch/tfind */
 static void *netns_tree;
 
+struct netns {
+	ino_t inode;
+};
+
 static int netns_compare(const void *a, const void *b)
 {
-	return *(ino_t *)a - *(ino_t *)b;
+	const struct netns *netns_a = a;
+	const struct netns *netns_b = b;
+
+	return netns_a->inode - netns_b->inode;
+}
+
+static void netns_free(void *netns)
+{
+	free(netns);
 }
 
 static bool is_sock_xinfo_loaded(ino_t netns)
@@ -69,19 +81,22 @@ static bool is_sock_xinfo_loaded(ino_t netns)
 	return tfind(&netns, &netns_tree, netns_compare)? true: false;
 }
 
-static void mark_sock_xinfo_loaded(ino_t ino)
+static struct netns *mark_sock_xinfo_loaded(ino_t ino)
 {
-	ino_t *netns = xmalloc(sizeof(ino));
+	struct netns *netns = xmalloc(sizeof(*netns));
 	ino_t **tmp;
 
-	*netns = ino;
+	netns->inode = ino;
 	tmp = tsearch(netns, &netns_tree, netns_compare);
 	if (tmp == NULL)
 		errx(EXIT_FAILURE, _("failed to allocate memory"));
+	return *(struct netns **)tmp;
 }
 
-static void load_sock_xinfo_no_nsswitch(ino_t netns)
+static void load_sock_xinfo_no_nsswitch(struct netns *nsobj)
 {
+	ino_t netns = nsobj? nsobj->inode: 0;
+
 	load_xinfo_from_proc_unix(netns);
 	load_xinfo_from_proc_tcp(netns);
 	load_xinfo_from_proc_udp(netns);
@@ -96,10 +111,10 @@ static void load_sock_xinfo_no_nsswitch(ino_t netns)
 	load_xinfo_from_proc_netlink(netns);
 }
 
-static void load_sock_xinfo_with_fd(int fd, ino_t netns)
+static void load_sock_xinfo_with_fd(int fd, struct netns *nsobj)
 {
 	if (setns(fd, CLONE_NEWNET) == 0) {
-		load_sock_xinfo_no_nsswitch(netns);
+		load_sock_xinfo_no_nsswitch(nsobj);
 		setns(self_netns_fd, CLONE_NEWNET);
 	}
 }
@@ -111,13 +126,12 @@ void load_sock_xinfo(struct path_cxt *pc, const char *name, ino_t netns)
 
 	if (!is_sock_xinfo_loaded(netns)) {
 		int fd;
-
-		mark_sock_xinfo_loaded(netns);
+		struct netns *nsobj = mark_sock_xinfo_loaded(netns);
 		fd = ul_path_open(pc, O_RDONLY, name);
 		if (fd < 0)
 			return;
 
-		load_sock_xinfo_with_fd(fd, netns);
+		load_sock_xinfo_with_fd(fd, nsobj);
 		close(fd);
 	}
 }
@@ -131,11 +145,11 @@ void initialize_sock_xinfos(void)
 	self_netns_fd = open("/proc/self/ns/net", O_RDONLY);
 
 	if (self_netns_fd < 0)
-		load_sock_xinfo_no_nsswitch(0);
+		load_sock_xinfo_no_nsswitch(NULL);
 	else {
 		if (fstat(self_netns_fd, &self_netns_sb) == 0) {
-			mark_sock_xinfo_loaded(self_netns_sb.st_ino);
-			load_sock_xinfo_no_nsswitch(self_netns_sb.st_ino);
+			struct netns *nsobj = mark_sock_xinfo_loaded(self_netns_sb.st_ino);
+			load_sock_xinfo_no_nsswitch(nsobj);
 		}
 	}
 
@@ -156,15 +170,16 @@ void initialize_sock_xinfos(void)
 	while ((d = readdir(dir))) {
 		struct stat sb;
 		int fd;
+		struct netns *nsobj;
 		if (ul_path_stat(pc, &sb, 0, d->d_name) < 0)
 			continue;
 		if (is_sock_xinfo_loaded(sb.st_ino))
 			continue;
-		mark_sock_xinfo_loaded(sb.st_ino);
+		nsobj = mark_sock_xinfo_loaded(sb.st_ino);
 		fd = ul_path_open(pc, O_RDONLY, d->d_name);
 		if (fd < 0)
 			continue;
-		load_sock_xinfo_with_fd(fd, sb.st_ino);
+		load_sock_xinfo_with_fd(fd, nsobj);
 		close(fd);
 	}
 	closedir(dir);
@@ -183,7 +198,7 @@ void finalize_sock_xinfos(void)
 {
 	if (self_netns_fd != -1)
 		close(self_netns_fd);
-	tdestroy(netns_tree, free);
+	tdestroy(netns_tree, netns_free);
 	tdestroy(xinfo_tree, free_sock_xinfo);
 }
 
