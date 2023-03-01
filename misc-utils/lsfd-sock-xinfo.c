@@ -21,7 +21,9 @@
 #include <arpa/inet.h>		/* inet_ntop */
 #include <netinet/in.h>		/* in6_addr */
 #include <fcntl.h>		/* open(2) */
+#include <ifaddrs.h>		/* getifaddrs */
 #include <inttypes.h>		/* SCNu16 */
+#include <net/if.h>		/* if_nametoindex */
 #include <linux/net.h>		/* SS_* */
 #include <linux/netlink.h>	/* NETLINK_* */
 #include <linux/un.h>		/* UNIX_PATH_MAX */
@@ -59,8 +61,16 @@ static struct stat self_netns_sb;
 static void *xinfo_tree;	/* for tsearch/tfind */
 static void *netns_tree;
 
+struct iface {
+	unsigned int index;
+	char name[IF_NAMESIZE];
+};
+
+static const char *get_iface_name(ino_t netns, unsigned int iface_index);
+
 struct netns {
 	ino_t inode;
+	struct iface *ifaces;
 };
 
 static int netns_compare(const void *a, const void *b)
@@ -73,7 +83,55 @@ static int netns_compare(const void *a, const void *b)
 
 static void netns_free(void *netns)
 {
+	struct netns *nsobj = netns;
+
+	free(nsobj->ifaces);
 	free(netns);
+}
+
+/*
+ * iface index -> iface name mappings
+ */
+static void load_ifaces_from_getifaddrs(struct netns *nsobj)
+{
+	struct ifaddrs *ifa_list;
+	struct ifaddrs *ifa;
+	size_t i, count = 0;
+
+	if (getifaddrs(&ifa_list) < 0)
+		return;
+
+	for (ifa = ifa_list; ifa != NULL; ifa = ifa->ifa_next)
+		count++;
+
+	nsobj->ifaces = xcalloc(count + 1, sizeof(*nsobj->ifaces));
+
+	for (ifa = ifa_list, i = 0; ifa != NULL; ifa = ifa->ifa_next, i++) {
+		unsigned int if_index = if_nametoindex(ifa->ifa_name);
+
+		nsobj->ifaces[i].index = if_index;
+		strncpy(nsobj->ifaces[i].name, ifa->ifa_name, IF_NAMESIZE - 1);
+		/* The slot for the last byte is already filled by calloc. */
+	}
+	/* nsobj->ifaces[count] is the sentinel value. */
+
+	freeifaddrs(ifa_list);
+
+	return;
+}
+
+static const char *get_iface_name(ino_t netns, unsigned int iface_index)
+{
+	struct netns **nsobj = tfind(&netns, &netns_tree, netns_compare);
+	if (!nsobj)
+		return NULL;
+
+	for (size_t i = 0; (*nsobj)->ifaces[i].index; i++) {
+		if ((*nsobj)->ifaces[i].index == iface_index)
+			return (*nsobj)->ifaces[i].name;
+	}
+
+	return NULL;
 }
 
 static bool is_sock_xinfo_loaded(ino_t netns)
@@ -83,7 +141,7 @@ static bool is_sock_xinfo_loaded(ino_t netns)
 
 static struct netns *mark_sock_xinfo_loaded(ino_t ino)
 {
-	struct netns *netns = xmalloc(sizeof(*netns));
+	struct netns *netns = xcalloc(1, sizeof(*netns));
 	ino_t **tmp;
 
 	netns->inode = ino;
@@ -109,6 +167,9 @@ static void load_sock_xinfo_no_nsswitch(struct netns *nsobj)
 	load_xinfo_from_proc_icmp(netns);
 	load_xinfo_from_proc_icmp6(netns);
 	load_xinfo_from_proc_netlink(netns);
+
+	if (nsobj)
+		load_ifaces_from_getifaddrs(nsobj);
 }
 
 static void load_sock_xinfo_with_fd(int fd, struct netns *nsobj)
