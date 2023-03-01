@@ -54,6 +54,7 @@
 #define EXIT_ENOSYS 17
 #define EXIT_EPERM  18
 #define EXIT_ENOPROTOOPT 19
+#define EXIT_EPROTONOSUPPORT 20
 
 #define _U_ __attribute__((__unused__))
 
