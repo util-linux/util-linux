@@ -1459,7 +1459,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("          --summary[=<when>]  print summary information (only, append, or never)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(23));
+	printf(USAGE_HELP_OPTIONS(30));
 
 	fprintf(out, USAGE_COLUMNS);
 

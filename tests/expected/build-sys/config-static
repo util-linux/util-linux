@@ -46,6 +46,7 @@ zramctl:  libsmartcols
 addpart:  
 agetty:  
 blkid.static: STATIC
+blkpr:  
 blkzone:  
 blockdev:  
 cal:  libtinfo 
@@ -61,6 +62,7 @@ colrm:
 ctrlaltdel:  
 delpart:  
 dmesg:  libtinfo 
+fadvise:  
 fallocate:  
 fdisk.static: STATIC
 flock:  
@@ -95,6 +97,7 @@ namei:
 nologin:  
 nsenter:  
 nsenter.static: STATIC
+pipesz:  
 pivot_root:  
 readprofile:  
 rename:  
@@ -121,5 +124,6 @@ umount.static: STATIC
 unshare:  
 unshare.static: STATIC
 utmpdump:  
+waitpid:  
 wall:  
 whereis:  

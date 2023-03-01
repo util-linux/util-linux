@@ -45,6 +45,7 @@ wipefs:  libblkid libsmartcols
 zramctl:  libsmartcols 
 addpart:  
 agetty:  
+blkpr:  
 blkzone:  
 blockdev:  
 cal:  libtinfo 
@@ -60,6 +61,7 @@ colrm:
 ctrlaltdel:  
 delpart:  
 dmesg:  libtinfo 
+fadvise:  
 fallocate:  
 fdformat:  
 flock:  
@@ -89,11 +91,12 @@ mkfs.bfs:
 mkfs.cramfs:  libz 
 mkfs.minix:  
 more:  libtinfo 
-namei:  
+namei:  libselinux 
 newgrp:  libcrypt 
 nologin:  
 nsenter:  libselinux 
 pg:  libncursesw libtinfo 
+pipesz:  
 pivot_root:  
 readprofile:  
 rename:  
@@ -119,6 +122,7 @@ ul:  libtinfo
 unshare:  
 utmpdump:  
 vipw:  libselinux 
+waitpid:  
 wall:  
 whereis:  
 write:  

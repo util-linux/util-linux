@@ -37,6 +37,7 @@ wipefs:  libblkid libsmartcols
 zramctl:  libsmartcols 
 addpart:  
 agetty:  
+blkpr:  
 blkzone:  
 blockdev:  
 cal:  libtinfo 
@@ -52,6 +53,7 @@ colrm:
 ctrlaltdel:  
 delpart:  
 dmesg:  libtinfo 
+fadvise:  
 fallocate:  
 flock:  
 fsck.cramfs:  libz 
@@ -82,6 +84,7 @@ more:  libtinfo
 namei:  
 nologin:  
 nsenter:  
+pipesz:  
 pivot_root:  
 readprofile:  
 rename:  
@@ -105,5 +108,6 @@ uclampset:
 ul:  libtinfo 
 unshare:  
 utmpdump:  
+waitpid:  
 wall:  
 whereis:  
