@@ -240,7 +240,7 @@ static int get_userns_fd_from_idmap(struct list_head *idmap)
 	fd_userns = open(path, O_RDONLY | O_CLOEXEC | O_NOCTTY);
 
 	/* Let child know we've persisted its namespace. */
-	(void)write_all(sock_fds[0], &c, 1);
+	(void)write_all(sock_fds[1], &c, 1);
 
 err_wait:
 	rc = wait_for_pid(pid);
