@@ -65,6 +65,9 @@ and *-p* option, e.g. -p 1, may print the same output but using *-p*
 option is much more efficient because *-p* option works at a much earlier
 stage of processing than the *-Q* option.
 
+*-i[4|6]*, *--inet[=4|6]::
+List only IPv4 sockets and/or IPv6 sockets.
+
 *-Q*, *--filter* _expr_::
 Print only the files matching the condition represented by the _expr_.
 See also *FILTER EXAMPLES*.
