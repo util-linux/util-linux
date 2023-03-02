@@ -23,15 +23,6 @@
 #endif
 
 static inline
-__attribute__((__noreturn__))
-void __err_oom(const char *file, unsigned int line)
-{
-	err(XALLOC_EXIT_CODE, "%s: %u: cannot allocate memory", file, line);
-}
-
-#define err_oom()	__err_oom(__FILE__, __LINE__)
-
-static inline
 __ul_alloc_size(1)
 __ul_returns_nonnull
 void *xmalloc(const size_t size)

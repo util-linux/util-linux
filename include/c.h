@@ -286,6 +286,15 @@ errmsg(char doexit, int excode, char adderr, const char *fmt, ...)
 #endif /* !HAVE_ERR_H */
 
 
+static inline
+__attribute__((__noreturn__))
+void __err_oom(const char *file, unsigned int line)
+{
+	err(EXIT_FAILURE, "%s: %u: cannot allocate memory", file, line);
+}
+#define err_oom()	__err_oom(__FILE__, __LINE__)
+
+
 /* Don't use inline function to avoid '#include "nls.h"' in c.h
  */
 #define errtryhelp(eval) __extension__ ({ \
@@ -299,7 +308,6 @@ errmsg(char doexit, int excode, char adderr, const char *fmt, ...)
 #define EX_EXEC_ENOENT		127	/* Could not find program to exec.  */
 #define errexec(name)	err(errno == ENOENT ? EX_EXEC_ENOENT : EX_EXEC_FAILED, \
 			_("failed to execute %s"), name)
-
 
 static inline __attribute__((const)) int is_power_of_2(unsigned long num)
 {
