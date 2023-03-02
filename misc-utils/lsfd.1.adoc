@@ -217,6 +217,9 @@ Some files have special formats and information sources:
 NETLINK:::
 protocol=_NETLINK.PROTOCOL_[ lport=_NETLINK.LPORT_[ group=_NETLINK.GROUPS_]]
 +
+PACKET:::
+type=_SOCK.TYPE_[ protocol=_PACKET.PROTOCOL_][ iface=_PACKET.IFACE_]
++
 pidfd:::
 pid=_TARGET-PID_ comm=_TARGET-COMMAND_ nspid=_TARGET-NSPIDS_
 +
@@ -265,6 +268,12 @@ The type is `mnt`, `cgroup`, `uts`, `ipc`, `user`, `pid`, `net`,
 
 OWNER <``string``>::
 Owner of the file.
+
+PACKET.IFACE <``string``>::
+Interface name associated with the packet socket.
+
+PACKET.PROTOCOL <``string``>::
+L3 protocol associated with the packet socket.
 
 PARTITION <``string``>::
 Block device name resolved by `/proc/partition`.
