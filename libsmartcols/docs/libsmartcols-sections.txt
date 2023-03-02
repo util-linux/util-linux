@@ -144,6 +144,7 @@ scols_table_enable_nowrap
 scols_table_enable_raw
 scols_table_enable_shellvar
 scols_table_get_column
+scols_table_get_column_by_name
 scols_table_get_column_separator
 scols_table_get_line
 scols_table_get_line_separator
