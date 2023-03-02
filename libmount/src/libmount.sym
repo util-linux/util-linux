@@ -370,7 +370,6 @@ MOUNT_2_38 {
 MOUNT_2_39 {
 	mnt_context_enable_onlyonce;
 	mnt_context_is_lazy;
-	mnt_context_get_mountinfo_userdata;
 	mnt_context_enable_noautofs;
 	mnt_table_enable_noautofs;
 	mnt_table_is_noautofs;
