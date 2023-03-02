@@ -310,8 +310,9 @@ static inline __attribute__((const)) int is_power_of_2(unsigned long num)
 typedef int64_t loff_t;
 #endif
 
-#if !defined(HAVE_DIRFD) && (!defined(HAVE_DECL_DIRFD) || HAVE_DECL_DIRFD == 0) && defined(HAVE_DIR_DD_FD)
-#include <sys/types.h>
+#if !defined(HAVE_DIRFD) \
+    && (!defined(HAVE_DECL_DIRFD) || HAVE_DECL_DIRFD == 0) \
+    && defined(HAVE_DIR_DD_FD)
 #include <dirent.h>
 static inline int dirfd(DIR *d)
 {
