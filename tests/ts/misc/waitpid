@@ -48,4 +48,12 @@ ts_init_subtest exited
 echo $? >> "$TS_ERRLOG"
 ts_finalize_subtest
 
+ts_init_subtest count
+(sleep 0.2; echo 1 >> "$TS_OUTPUT") &
+BG1="$!"
+
+"$TS_CMD_WAITPID" -c 1 1 "$BG1" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+echo $? >> "$TS_ERRLOG"
+ts_finalize_subtest
+
 ts_finalize
