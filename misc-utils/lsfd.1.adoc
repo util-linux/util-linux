@@ -214,6 +214,9 @@ Cooked version of KNAME. It is mostly same as KNAME.
 +
 Some files have special formats and information sources:
 +
+NETLINK:::
+protocol=_NETLINK.PROTOCOL_[ lport=_NETLINK.LPORT_[ group=_NETLINK.GROUPS_]]
++
 pidfd:::
 pid=_TARGET-PID_ comm=_TARGET-COMMAND_ nspid=_TARGET-NSPIDS_
 +
@@ -239,6 +242,15 @@ state=_SOCK.STATE_[ path=_UNIX.PATH_]
 +
 UNIX:::
 state=_SOCK.STATE_[ path=_UNIX.PATH_] type=_SOCK.TYPE_
+
+NETLINK.GROUPS <``number``>>::
+Netlink multicast groups.
+
+NETLINK.LPORT <``number``>>::
+Netlink local port id.
+
+NETLINK.PROTOCOL <``string``>>::
+Netlink protocol.
 
 NLINK <``number``>::
 Link count.

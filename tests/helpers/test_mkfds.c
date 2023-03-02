@@ -25,6 +25,7 @@
 #include <getopt.h>
 #include <linux/if_ether.h>
 #include <linux/if_packet.h>
+#include <linux/netlink.h>
 #include <linux/sockios.h>  /* SIOCGSKNS */
 #include <net/if.h>
 #include <netinet/in.h>
@@ -54,6 +55,7 @@
 #define EXIT_ENOSYS 17
 #define EXIT_EPERM  18
 #define EXIT_ENOPROTOOPT 19
+#define EXIT_EPROTONOSUPPORT 20
 
 #define _U_ __attribute__((__unused__))
 
@@ -84,12 +86,14 @@ static void __attribute__((__noreturn__)) usage(FILE *out, int status)
 union value {
 	const char *string;
 	long integer;
+	unsigned long uinteger;
 	bool boolean;
 };
 
 enum ptype {
 	PTYPE_STRING,
 	PTYPE_INTEGER,
+	PTYPE_UINTEGER,
 	PTYPE_BOOLEAN,
 };
 
@@ -111,6 +115,7 @@ struct ptype_class {
 
 #define ARG_STRING(A) (A.v.string)
 #define ARG_INTEGER(A) (A.v.integer)
+#define ARG_UINTEGER(A) (A.v.uinteger)
 #define ARG_BOOLEAN(A) (A.v.boolean)
 struct arg {
 	union value v;
@@ -168,6 +173,35 @@ static void integer_free(union value value _U_)
 	/* Do nothing */
 }
 
+static char *uinteger_sprint(const union value *value)
+{
+	char *str = NULL;
+	xasprintf(&str, "%lu", value->uinteger);
+	return str;
+}
+
+static union value uinteger_read(const char *arg, const union value *defv)
+{
+	char *ep;
+	union value r;
+
+	if (!arg)
+		return *defv;
+
+	errno = 0;
+	r.uinteger = strtoul(arg, &ep, 10);
+	if (errno)
+		err(EXIT_FAILURE, _("fail to make a number from %s"), arg);
+	else if (*ep != '\0')
+		errx(EXIT_FAILURE, _("garbage at the end of number: %s"), arg);
+	return r;
+}
+
+static void uinteger_free(union value value _U_)
+{
+	/* Do nothing */
+}
+
 static char *boolean_sprint(const union value *value)
 {
 	return xstrdup(value->boolean? "true": "false");
@@ -207,6 +241,12 @@ struct ptype_class ptype_classes [] = {
 		.sprint = integer_sprint,
 		.read   = integer_read,
 		.free   = integer_free,
+	},
+	[PTYPE_UINTEGER] = {
+		.name = "uinteger",
+		.sprint = uinteger_sprint,
+		.read   = uinteger_read,
+		.free   = uinteger_free,
 	},
 	[PTYPE_BOOLEAN] = {
 		.name = "boolean",
@@ -1805,6 +1845,52 @@ static void *make_netns(const struct factory *factory _U_, struct fdesc fdescs[]
 	return NULL;
 }
 
+static void *make_netlink(const struct factory *factory, struct fdesc fdescs[],
+			  int argc, char ** argv)
+{
+	struct arg protocol = decode_arg("protocol", factory->params, argc, argv);
+	int iprotocol = ARG_INTEGER(protocol);
+	struct arg groups = decode_arg("groups", factory->params, argc, argv);
+	unsigned int ugroups = ARG_UINTEGER(groups);
+	int sd;
+
+	free_arg(&protocol);
+
+	sd = socket(AF_NETLINK, SOCK_RAW, iprotocol);
+	if (sd < 0)
+		err((errno == EPROTONOSUPPORT)? EXIT_EPROTONOSUPPORT: EXIT_FAILURE,
+		    "failed in socket()");
+
+	if (sd != fdescs[0].fd) {
+		if (dup2(sd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(sd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", sd, fdescs[0].fd);
+		}
+		close(sd);
+	}
+
+	struct sockaddr_nl nl;
+	memset(&nl, 0, sizeof(nl));
+	nl.nl_family = AF_NETLINK;
+	nl.nl_groups = ugroups;
+	if (bind(sd, (struct sockaddr*)&nl, sizeof(nl)) < 0) {
+		int e = errno;
+		close(sd);
+		errno = e;
+		err(EXIT_FAILURE, "failed in bind(2)");
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL
+	};
+
+	return NULL;
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -2342,6 +2428,29 @@ static const struct factory factories[] = {
 		.EX_N = 0,
 		.make = make_netns,
 		.params = (struct parameter []) {
+			PARAM_END
+		}
+	},
+	{
+		.name = "netlink",
+		.desc = "AF_NETLINK sockets",
+		.priv = false,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_netlink,
+		.params = (struct parameter []) {
+			{
+				.name = "protocol",
+				.type = PTYPE_INTEGER,
+				.desc = "protocol passed to socket(AF_NETLINK, SOCK_RAW, protocol)",
+				.defv.integer = NETLINK_USERSOCK,
+			},
+			{
+				.name = "groups",
+				.type = PTYPE_UINTEGER,
+				.desc = "multicast groups of netlink communication (requires CAP_NET_ADMIN)",
+				.defv.uinteger = 0,
+			},
 			PARAM_END
 		}
 	},
