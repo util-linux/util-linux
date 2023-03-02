@@ -910,8 +910,6 @@ int mnt_match_options(const char *optstr, const char *pattern)
 }
 
 #ifdef TEST_PROGRAM
-#include "xalloc.h"
-
 static int test_append(struct libmnt_test *ts, int argc, char *argv[])
 {
 	const char *value = NULL, *name;
@@ -920,7 +918,9 @@ static int test_append(struct libmnt_test *ts, int argc, char *argv[])
 
 	if (argc < 3)
 		return -EINVAL;
-	optstr = xstrdup(argv[1]);
+	optstr = strdup(argv[1]);
+	if (!optstr)
+		err_oom();
 	name = argv[2];
 
 	if (argc == 4)
@@ -941,7 +941,9 @@ static int test_prepend(struct libmnt_test *ts, int argc, char *argv[])
 
 	if (argc < 3)
 		return -EINVAL;
-	optstr = xstrdup(argv[1]);
+	optstr = strdup(argv[1]);
+	if (!optstr)
+		err_oom();
 	name = argv[2];
 
 	if (argc == 4)
@@ -962,7 +964,9 @@ static int test_split(struct libmnt_test *ts, int argc, char *argv[])
 	if (argc < 2)
 		return -EINVAL;
 
-	optstr = xstrdup(argv[1]);
+	optstr = strdup(argv[1]);
+	if (!optstr)
+		err_oom();
 
 	rc = mnt_split_optstr(optstr, &user, &vfs, &fs, 0, 0);
 	if (!rc) {
@@ -987,7 +991,9 @@ static int test_flags(struct libmnt_test *ts, int argc, char *argv[])
 	if (argc < 2)
 		return -EINVAL;
 
-	optstr = xstrdup(argv[1]);
+	optstr = strdup(argv[1]);
+	if (!optstr)
+		err_oom();
 
 	rc = mnt_optstr_get_flags(optstr, &fl, mnt_get_builtin_optmap(MNT_LINUX_MAP));
 	if (rc)
@@ -1022,7 +1028,9 @@ static int test_apply(struct libmnt_test *ts, int argc, char *argv[])
 		return -EINVAL;
 	}
 
-	optstr = xstrdup(argv[2]);
+	optstr = strdup(argv[2]);
+	if (!optstr)
+		err_oom();
 	flags = strtoul(argv[3], NULL, 16);
 
 	printf("flags:  0x%08lx\n", flags);
@@ -1042,7 +1050,9 @@ static int test_set(struct libmnt_test *ts, int argc, char *argv[])
 
 	if (argc < 3)
 		return -EINVAL;
-	optstr = xstrdup(argv[1]);
+	optstr = strdup(argv[1]);
+	if (!optstr)
+		err_oom();
 	name = argv[2];
 
 	if (argc == 4)
@@ -1092,7 +1102,9 @@ static int test_remove(struct libmnt_test *ts, int argc, char *argv[])
 
 	if (argc < 3)
 		return -EINVAL;
-	optstr = xstrdup(argv[1]);
+	optstr = strdup(argv[1]);
+	if (!optstr)
+		err_oom();
 	name = argv[2];
 
 	rc = mnt_optstr_remove_option(&optstr, name);
@@ -1110,7 +1122,9 @@ static int test_dedup(struct libmnt_test *ts, int argc, char *argv[])
 
 	if (argc < 3)
 		return -EINVAL;
-	optstr = xstrdup(argv[1]);
+	optstr = strdup(argv[1]);
+	if (!optstr)
+		err_oom();
 	name = argv[2];
 
 	rc = mnt_optstr_deduplicate_option(&optstr, name);
