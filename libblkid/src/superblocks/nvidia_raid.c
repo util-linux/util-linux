@@ -24,6 +24,8 @@ struct nv_metadata {
 } __attribute__((packed));
 
 #define NVIDIA_SIGNATURE		"NVIDIA"
+#define NVIDIA_SUPERBLOCK_SIZE		120
+
 
 static int probe_nvraid(blkid_probe pr,
 		const struct blkid_idmag *mag __attribute__((__unused__)))
@@ -45,6 +47,8 @@ static int probe_nvraid(blkid_probe pr,
 		return errno ? -errno : 1;
 
 	if (memcmp(nv->vendor, NVIDIA_SIGNATURE, sizeof(NVIDIA_SIGNATURE)-1) != 0)
+		return 1;
+	if (le32_to_cpu(nv->size) * 4 != NVIDIA_SUPERBLOCK_SIZE)
 		return 1;
 	if (blkid_probe_sprintf_version(pr, "%u", le16_to_cpu(nv->version)) != 0)
 		return 1;
