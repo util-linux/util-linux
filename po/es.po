@@ -6,7 +6,7 @@
 #
 # Beth Powell <bpowell@turbolinux.com>, 2000.
 # Santiago Vila Doncel <sanvila@unex.es>, 2001, 2002, 2003, 2004, 2010, 2014.
-# Antonio Ceballos Roa <aceballos@gmail.com>, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021.
+# Antonio Ceballos Roa <aceballos@gmail.com>, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022.
 #
 # Permission is granted to freely copy and distribute
 # this file and modified versions, provided that this
@@ -15,10 +15,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.37-rc2\n"
+"Project-Id-Version: util-linux 2.38-rc4\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-28 13:24+0200\n"
-"PO-Revision-Date: 2021-06-13 09:32+0200\n"
+"POT-Creation-Date: 2022-03-16 18:08+0100\n"
+"PO-Revision-Date: 2022-09-25 14:04+0200\n"
 "Last-Translator: Antonio Ceballos Roa <aceballos@gmail.com>\n"
 "Language-Team: Spanish <es@tp.org.es>\n"
 "Language: es\n"
@@ -56,7 +56,7 @@ msgstr "no hay suficientes argumentos"
 #: disk-utils/isosize.c:53 disk-utils/mkfs.bfs.c:186
 #: disk-utils/mkfs.cramfs.c:173 disk-utils/mkfs.cramfs.c:662
 #: disk-utils/mkfs.cramfs.c:801 disk-utils/mkfs.minix.c:838
-#: disk-utils/mkswap.c:325 disk-utils/mkswap.c:354 disk-utils/partx.c:1022
+#: disk-utils/mkswap.c:325 disk-utils/mkswap.c:354 disk-utils/partx.c:1021
 #: disk-utils/resizepart.c:104 disk-utils/sfdisk.c:381 disk-utils/sfdisk.c:502
 #: disk-utils/sfdisk.c:813 disk-utils/sfdisk.c:1117 disk-utils/swaplabel.c:65
 #: libfdisk/src/bsd.c:642 login-utils/islocal.c:86 login-utils/last.c:695
@@ -243,10 +243,8 @@ msgid "%s requires an argument"
 msgstr "%s necesita un argumento"
 
 #: disk-utils/blockdev.c:355
-#, fuzzy
-#| msgid "failed to parse argument"
 msgid "failed to parse command argument"
-msgstr "no se ha podido analizar el argumento"
+msgstr "no se ha podido analizar el argumento de la orden"
 
 #: disk-utils/blockdev.c:386 disk-utils/blockdev.c:498
 #, c-format
@@ -269,10 +267,9 @@ msgid "N/A"
 msgstr "N/A"
 
 #: disk-utils/blockdev.c:506
-#, fuzzy, c-format
-#| msgid "RO    RA   SSZ   BSZ   StartSec            Size   Device\n"
+#, c-format
 msgid "RO    RA   SSZ   BSZ        StartSec            Size   Device\n"
-msgstr "RO    RA   SSZ   BSZ   PrimerSec           Tam.   Dispo.\n"
+msgstr "RO    RA   SSZ   BSZ        PrimerSec           Tam.   Dispo.\n"
 
 #: disk-utils/cfdisk.c:196
 msgid "Bootable"
@@ -493,7 +490,8 @@ msgstr "No se ha podido leer el fichero de transcripción %s"
 msgid "Select label type"
 msgstr "Selecciona el tipo de etiqueta"
 
-#: disk-utils/cfdisk.c:2195 disk-utils/fdisk.c:1162 disk-utils/fdisk-menu.c:490
+#: disk-utils/cfdisk.c:2195 disk-utils/fdisk.c:1162
+#: disk-utils/fdisk-menu.c:490
 msgid "Device does not contain a recognized partition table."
 msgstr "El dispositivo no contiene una tabla de particiones reconocida."
 
@@ -640,7 +638,8 @@ msgstr "Nuevo tamaño:"
 msgid "Partition %zu resized."
 msgstr "Se ha cambiado el tamaño de la partición nº %zu."
 
-#: disk-utils/cfdisk.c:2504 disk-utils/fdisk.c:1138 disk-utils/fdisk-menu.c:593
+#: disk-utils/cfdisk.c:2504 disk-utils/fdisk.c:1138
+#: disk-utils/fdisk-menu.c:593
 msgid "Device is open in read-only mode."
 msgstr "El dispositivo está abierto en modo de sólo lectura."
 
@@ -782,8 +781,8 @@ msgstr ""
 "Continuando... "
 
 #: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:629 sys-utils/blkdiscard.c:89
-#: sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:629
+#: sys-utils/blkdiscard.c:89 sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [opciones] <dispositivo>\n"
@@ -840,7 +839,7 @@ msgstr "argumento no válido - repair"
 msgid "stat of %s failed"
 msgstr "stat de %s ha fallado"
 
-#: disk-utils/fdformat.c:226 disk-utils/partx.c:1019 misc-utils/lsblk.c:1578
+#: disk-utils/fdformat.c:226 disk-utils/partx.c:1018 misc-utils/lsblk.c:1578
 #: sys-utils/blkdiscard.c:235 sys-utils/blkzone.c:149
 #: sys-utils/mountpoint.c:109
 #, c-format
@@ -1152,21 +1151,21 @@ msgstr "modo de borrado no implementado"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Las propiedades del dispositivo (tamaño de sector y geometría) deben utilizarse con un solo dispositivo especificado."
 
-#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122 disk-utils/fsck.cramfs.c:703
-#: disk-utils/mkfs.bfs.c:192 disk-utils/mkfs.cramfs.c:788
-#: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
-#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:524
-#: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:580
-#: misc-utils/whereis.c:591 misc-utils/whereis.c:602 misc-utils/whereis.c:644
-#: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:188
-#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1580
-#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
-#: sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656 sys-utils/mount.c:877
-#: sys-utils/mount.c:885 sys-utils/mount.c:932 sys-utils/mount.c:945
-#: sys-utils/mount.c:1017 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
-#: sys-utils/swapoff.c:258 sys-utils/swapon.c:1006 sys-utils/switch_root.c:270
-#: sys-utils/umount.c:620 term-utils/setterm.c:1197 text-utils/col.c:584
-#: text-utils/more.c:2094
+#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122
+#: disk-utils/fsck.cramfs.c:703 disk-utils/mkfs.bfs.c:192
+#: disk-utils/mkfs.cramfs.c:788 disk-utils/partx.c:975 disk-utils/raw.c:136
+#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
+#: misc-utils/cal.c:524 misc-utils/findfs.c:58 misc-utils/look.c:147
+#: misc-utils/whereis.c:580 misc-utils/whereis.c:591 misc-utils/whereis.c:602
+#: misc-utils/whereis.c:644 schedutils/chrt.c:442 schedutils/ionice.c:264
+#: schedutils/taskset.c:188 sys-utils/chcpu.c:355 sys-utils/chmem.c:429
+#: sys-utils/dmesg.c:1580 sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321
+#: sys-utils/losetup.c:918 sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656
+#: sys-utils/mount.c:877 sys-utils/mount.c:885 sys-utils/mount.c:932
+#: sys-utils/mount.c:945 sys-utils/mount.c:1017 sys-utils/mountpoint.c:191
+#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:258 sys-utils/swapon.c:1006
+#: sys-utils/switch_root.c:270 sys-utils/umount.c:620
+#: term-utils/setterm.c:1197 text-utils/col.c:584 text-utils/more.c:2094
 msgid "bad usage"
 msgstr "uso incorrecto"
 
@@ -1218,10 +1217,9 @@ msgid "Disk model: %s"
 msgstr "Modelo de disco: %s"
 
 #: disk-utils/fdisk-list.c:71
-#, fuzzy, c-format
-#| msgid "Geometry: %d heads, %llu sectors/track, %llu cylinders"
+#, c-format
 msgid "Geometry: %d heads, %ju sectors/track, %ju cylinders"
-msgstr "Geometría: %d cabezas, %llu sectores/pista, %llu cilindros"
+msgstr "Geometría: %d cabezas, %ju sectores/pista, %ju cilindros"
 
 #: disk-utils/fdisk-list.c:76 disk-utils/fdisk-list.c:299
 #, c-format
@@ -1287,12 +1285,13 @@ msgstr "no se ha podido reservar la línea de salida"
 #: misc-utils/lsfd-file.c:349 misc-utils/lsfd-sock.c:47
 #: misc-utils/lsfd-sock.c:52 misc-utils/lsfd-sock.c:73
 #: misc-utils/lsfd-sock.c:75 misc-utils/lsfd-unkn.c:39
-#: misc-utils/lsfd-unkn.c:53 misc-utils/lsfd-unkn.c:55 misc-utils/lslocks.c:459
-#: misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242 sys-utils/losetup.c:305
-#: sys-utils/lscpu.c:568 sys-utils/lscpu.c:783 sys-utils/lscpu.c:812
-#: sys-utils/lscpu.c:822 sys-utils/lsipc.c:526 sys-utils/lsipc.c:651
-#: sys-utils/prlimit.c:275 sys-utils/rfkill.c:417 sys-utils/swapon.c:227
-#: sys-utils/wdctl.c:327 sys-utils/zramctl.c:481 text-utils/column.c:481
+#: misc-utils/lsfd-unkn.c:53 misc-utils/lsfd-unkn.c:55
+#: misc-utils/lslocks.c:459 misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242
+#: sys-utils/losetup.c:305 sys-utils/lscpu.c:568 sys-utils/lscpu.c:783
+#: sys-utils/lscpu.c:812 sys-utils/lscpu.c:822 sys-utils/lsipc.c:526
+#: sys-utils/lsipc.c:651 sys-utils/prlimit.c:275 sys-utils/rfkill.c:417
+#: sys-utils/swapon.c:227 sys-utils/wdctl.c:327 sys-utils/zramctl.c:481
+#: text-utils/column.c:481
 msgid "failed to add output data"
 msgstr "no se han podido añadir los datos de salida"
 
@@ -1597,10 +1596,8 @@ msgid "move beginning of data in a partition"
 msgstr "mueve el principio de los datos de una partición"
 
 #: disk-utils/fdisk-menu.c:224
-#, fuzzy
-#| msgid "fix partitions order"
 msgid "fix partitions C/H/S values"
-msgstr "corrige el orden de las particiones"
+msgstr "corrige los valores C/C/S de las particiones"
 
 #: disk-utils/fdisk-menu.c:225
 msgid "change the disk identifier"
@@ -1746,13 +1743,11 @@ msgstr "Entrando en la etiqueta BSD anidada de disco."
 
 #: disk-utils/fdisk-menu.c:876
 msgid "C/H/S values fixed."
-msgstr ""
+msgstr "Valores C/C/S corregidos"
 
 #: disk-utils/fdisk-menu.c:878
-#, fuzzy
-#| msgid "Nothing to do. Ordering is correct already."
 msgid "Nothing to do. C/H/S values are correct already."
-msgstr "No hay nada que hacer. El orden ya es correcto."
+msgstr "No hay que hacer nada. Los valroes C/C/S ya son correctos."
 
 #: disk-utils/fdisk-menu.c:1045
 msgid "Number of cylinders"
@@ -2767,7 +2762,7 @@ msgstr ""
 "----------------------------------\n"
 
 #: disk-utils/fsck.minix.c:1429 disk-utils/mkfs.minix.c:854
-#: disk-utils/mkswap.c:700 disk-utils/partx.c:1071 disk-utils/resizepart.c:115
+#: disk-utils/mkswap.c:700 disk-utils/partx.c:1068 disk-utils/resizepart.c:115
 #: login-utils/utmpdump.c:408 sys-utils/dmesg.c:684 sys-utils/wdctl.c:457
 #: sys-utils/wdctl.c:536 term-utils/setterm.c:908 text-utils/col.c:195
 #: text-utils/pg.c:1255
@@ -3439,10 +3434,8 @@ msgid " -f, --force               allow swap size area be larger than device\n"
 msgstr " -f, --force               permite que la zona de intercambio sea mayor que el dispositivo\n"
 
 #: disk-utils/mkswap.c:170
-#, fuzzy
-#| msgid " -q, --quiet               suppress extra info messages\n"
 msgid " -q, --quiet               suppress output and warning messages\n"
-msgstr " -q, --quiet               suprime los mensajes de información suplementarios\n"
+msgstr " -q, --quiet               suprime la salida y los mensajes de aviso\n"
 
 #: disk-utils/mkswap.c:171
 msgid " -p, --pagesize SIZE       specify page size in bytes\n"
@@ -3962,7 +3955,7 @@ msgstr "%s: no se pueden borrar las particiones"
 msgid "%s: partitioned loop devices unsupported"
 msgstr "%s: los dispositivos de bucle particionados no se admiten"
 
-#: disk-utils/partx.c:1031
+#: disk-utils/partx.c:1030
 #, c-format
 msgid "%s: failed to initialize blkid prober"
 msgstr "%s: no se ha podido inicializar el sondeo blkid"
@@ -4596,10 +4589,9 @@ msgid "Failed to apply script headers, disk label not created"
 msgstr "No se han podido aplicar las cabeceras del script; no se ha creado la etiqueta del disco"
 
 #: disk-utils/sfdisk.c:1954
-#, fuzzy, c-format
-#| msgid "Failed to add #%d partition"
+#, c-format
 msgid "Failed to add #%zu partition"
-msgstr "Fallo al añadir la partición #%d"
+msgstr "Fallo al añadir la partición #%zu"
 
 #: disk-utils/sfdisk.c:1977
 msgid "Script header accepted."
@@ -4647,10 +4639,8 @@ msgid " -J, --json <dev>                  dump partition table in JSON format\n"
 msgstr " -J, --json <dispo>                vuelca la tabla de particiones en formato JSON\n"
 
 #: disk-utils/sfdisk.c:2049
-#, fuzzy
-#| msgid " -b, --backup              backup partition table sectors (see -O)\n"
 msgid " -B, --backup-pt-sectors <dev>     binary partition table backup (see -b and -O)\n"
-msgstr " -b, --backup              hace copia de respaldo de los sectores de la tabla de particiones (véase -O)\n"
+msgstr " -B, --backup-pt-sectors <dispo>   copia de respaldo de la tabla de partición binaria (véase -b y -O)\n"
 
 #: disk-utils/sfdisk.c:2050
 msgid " -g, --show-geometry [<dev> ...]   list geometry of all or specified devices\n"
@@ -5075,16 +5065,12 @@ msgid "Linux root (x86-64)"
 msgstr "Raíz de Linux (x86-64)"
 
 #: include/pt-gpt-partnames.h:54
-#, fuzzy
-#| msgid "Linux root (ARM)"
 msgid "Linux root (Alpha)"
-msgstr "Raíz de Linux (ARM)"
+msgstr "Raíz de Linux (Alpha)"
 
 #: include/pt-gpt-partnames.h:55
-#, fuzzy
-#| msgid "Linux root (ARM)"
 msgid "Linux root (ARC)"
-msgstr "Raíz de Linux (ARM)"
+msgstr "Raíz de Linux (ARC)"
 
 #: include/pt-gpt-partnames.h:56
 msgid "Linux root (ARM)"
@@ -5099,70 +5085,48 @@ msgid "Linux root (IA-64)"
 msgstr "Raíz de Linux (IA-64)"
 
 #: include/pt-gpt-partnames.h:59
-#, fuzzy
-#| msgid "Linux root (IA-64)"
 msgid "Linux root (LoongArch-64)"
-msgstr "Raíz de Linux (IA-64)"
+msgstr "Raíz de Linux (LoongArch-64)"
 
 #: include/pt-gpt-partnames.h:60
-#, fuzzy
-#| msgid "Linux root (IA-64)"
 msgid "Linux root (MIPS-32 LE)"
-msgstr "Raíz de Linux (IA-64)"
+msgstr "Raíz de Linux (MIPS-32 LE)"
 
 #: include/pt-gpt-partnames.h:61
-#, fuzzy
-#| msgid "Linux root (IA-64)"
 msgid "Linux root (MIPS-64 LE)"
-msgstr "Raíz de Linux (IA-64)"
+msgstr "Raíz de Linux (MIPS-64 LE)"
 
 #: include/pt-gpt-partnames.h:62
-#, fuzzy
-#| msgid "Linux root (x86)"
 msgid "Linux root (PPC)"
-msgstr "Raíz de Linux (x86)"
+msgstr "Raíz de Linux (PPC)"
 
 #: include/pt-gpt-partnames.h:63
-#, fuzzy
-#| msgid "Linux root (IA-64)"
 msgid "Linux root (PPC64)"
-msgstr "Raíz de Linux (IA-64)"
+msgstr "Raíz de Linux (PPC64)"
 
 #: include/pt-gpt-partnames.h:64
-#, fuzzy
-#| msgid "Linux root (IA-64)"
 msgid "Linux root (PPC64LE)"
-msgstr "Raíz de Linux (IA-64)"
+msgstr "Raíz de Linux (PPC64LE)"
 
 #: include/pt-gpt-partnames.h:65
-#, fuzzy
-#| msgid "Linux root (IA-64)"
 msgid "Linux root (RISC-V-32)"
-msgstr "Raíz de Linux (IA-64)"
+msgstr "Raíz de Linux (RISC-V-32)"
 
 #: include/pt-gpt-partnames.h:66
-#, fuzzy
-#| msgid "Linux root (IA-64)"
 msgid "Linux root (RISC-V-64)"
-msgstr "Raíz de Linux (IA-64)"
+msgstr "Raíz de Linux (RISC-V-64)"
 
 #: include/pt-gpt-partnames.h:67
-#, fuzzy
-#| msgid "Linux root (x86)"
 msgid "Linux root (S390)"
-msgstr "Raíz de Linux (x86)"
+msgstr "Raíz de Linux (S390)"
 
 #: include/pt-gpt-partnames.h:68
-#, fuzzy
-#| msgid "Linux root (x86)"
 msgid "Linux root (S390X)"
-msgstr "Raíz de Linux (x86)"
+msgstr "Raíz de Linux (S390X)"
 
 #: include/pt-gpt-partnames.h:69
-#, fuzzy
-#| msgid "Linux root (IA-64)"
 msgid "Linux root (TILE-Gx)"
-msgstr "Raíz de Linux (IA-64)"
+msgstr "Raíz de Linux(TILE-Gx)"
 
 #: include/pt-gpt-partnames.h:70
 msgid "Linux reserved"
@@ -5198,16 +5162,12 @@ msgid "Linux /usr (x86-64)"
 msgstr "/usr de Linux (x86-64)"
 
 #: include/pt-gpt-partnames.h:78
-#, fuzzy
-#| msgid "Linux /usr (ARM)"
 msgid "Linux /usr (Alpha)"
-msgstr "/usr de Linux (ARM)"
+msgstr "/usr de Linux (Alpha)"
 
 #: include/pt-gpt-partnames.h:79
-#, fuzzy
-#| msgid "Linux /usr (ARM)"
 msgid "Linux /usr (ARC)"
-msgstr "/usr de Linux (ARM)"
+msgstr "/usr de Linux (ARC)"
 
 #: include/pt-gpt-partnames.h:80
 msgid "Linux /usr (ARM)"
@@ -5222,70 +5182,48 @@ msgid "Linux /usr (IA-64)"
 msgstr "/usr de Linux (IA-64)"
 
 #: include/pt-gpt-partnames.h:83
-#, fuzzy
-#| msgid "Linux /usr (IA-64)"
 msgid "Linux /usr (LoongArch-64)"
-msgstr "/usr de Linux (IA-64)"
+msgstr "/usr de Linux (LoongArch-64)"
 
 #: include/pt-gpt-partnames.h:84
-#, fuzzy
-#| msgid "Linux /usr (IA-64)"
 msgid "Linux /usr (MIPS-32 LE)"
-msgstr "/usr de Linux (IA-64)"
+msgstr "/usr de Linux (MIPS-32 LE)"
 
 #: include/pt-gpt-partnames.h:85
-#, fuzzy
-#| msgid "Linux /usr (IA-64)"
 msgid "Linux /usr (MIPS-64 LE)"
-msgstr "/usr de Linux (IA-64)"
+msgstr "/usr de Linux (MIPS-64 LE)"
 
 #: include/pt-gpt-partnames.h:86
-#, fuzzy
-#| msgid "Linux /usr (x86)"
 msgid "Linux /usr (PPC)"
-msgstr "/usr de Linux (x86)"
+msgstr "/usr de Linux (PPC)"
 
 #: include/pt-gpt-partnames.h:87
-#, fuzzy
-#| msgid "Linux /usr (IA-64)"
 msgid "Linux /usr (PPC64)"
-msgstr "/usr de Linux (IA-64)"
+msgstr "/usr de Linux (PPC64)"
 
 #: include/pt-gpt-partnames.h:88
-#, fuzzy
-#| msgid "Linux /usr (IA-64)"
 msgid "Linux /usr (PPC64LE)"
-msgstr "/usr de Linux (IA-64)"
+msgstr "/usr de Linux (PPC64LE)"
 
 #: include/pt-gpt-partnames.h:89
-#, fuzzy
-#| msgid "Linux /usr (IA-64)"
 msgid "Linux /usr (RISC-V-32)"
-msgstr "/usr de Linux (IA-64)"
+msgstr "/usr de Linux (RISC-V-32)"
 
 #: include/pt-gpt-partnames.h:90
-#, fuzzy
-#| msgid "Linux /usr (IA-64)"
 msgid "Linux /usr (RISC-V-64)"
-msgstr "/usr de Linux (IA-64)"
+msgstr "/usr de Linux (RISC-V-64)"
 
 #: include/pt-gpt-partnames.h:91
-#, fuzzy
-#| msgid "Linux /usr (x86)"
 msgid "Linux /usr (S390)"
-msgstr "/usr de Linux (x86)"
+msgstr "/usr de Linux (S390)"
 
 #: include/pt-gpt-partnames.h:92
-#, fuzzy
-#| msgid "Linux /usr (x86)"
 msgid "Linux /usr (S390X)"
-msgstr "/usr de Linux (x86)"
+msgstr "/usr de Linux (S390X)"
 
 #: include/pt-gpt-partnames.h:93
-#, fuzzy
-#| msgid "Linux /usr (IA-64)"
 msgid "Linux /usr (TILE-Gx)"
-msgstr "/usr de Linux (IA-64)"
+msgstr "/usr de Linux (TILE-Gx)"
 
 #: include/pt-gpt-partnames.h:94
 msgid "Linux root verity (x86)"
@@ -5296,16 +5234,12 @@ msgid "Linux root verity (x86-64)"
 msgstr "Verity raíz de Linux (x86-64)"
 
 #: include/pt-gpt-partnames.h:96
-#, fuzzy
-#| msgid "Linux root verity (ARM)"
 msgid "Linux root verity (Alpha)"
-msgstr "Verity raíz de Linux (ARM)"
+msgstr "Verity raíz de Linux (Alpha)"
 
 #: include/pt-gpt-partnames.h:97
-#, fuzzy
-#| msgid "Linux root verity (ARM)"
 msgid "Linux root verity (ARC)"
-msgstr "Verity raíz de Linux (ARM)"
+msgstr "Verity raíz de Linux (ARC)"
 
 #: include/pt-gpt-partnames.h:98
 msgid "Linux root verity (ARM)"
@@ -5320,70 +5254,48 @@ msgid "Linux root verity (IA-64)"
 msgstr "Verity raíz de Linux (IA-64)"
 
 #: include/pt-gpt-partnames.h:101
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity (LoongArch-64)"
-msgstr "Verity raíz de Linux (IA-64)"
+msgstr "Verity raíz de Linux (LoongArch-64)"
 
 #: include/pt-gpt-partnames.h:102
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity (MIPS-32 LE)"
-msgstr "Verity raíz de Linux (IA-64)"
+msgstr "Verity raíz de Linux (MIPS-32 LE)"
 
 #: include/pt-gpt-partnames.h:103
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity (MIPS-64 LE)"
-msgstr "Verity raíz de Linux (IA-64)"
+msgstr "Verity raíz de Linux (MIPS-64 LE)"
 
 #: include/pt-gpt-partnames.h:104
-#, fuzzy
-#| msgid "Linux root verity (x86)"
 msgid "Linux root verity (PPC)"
-msgstr "Verity raíz de Linux (x86)"
+msgstr "Verity raíz de Linux (PPC)"
 
 #: include/pt-gpt-partnames.h:105
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity (PPC64)"
-msgstr "Verity raíz de Linux (IA-64)"
+msgstr "Verity raíz de Linux (PPC64)"
 
 #: include/pt-gpt-partnames.h:106
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity (PPC64LE)"
-msgstr "Verity raíz de Linux (IA-64)"
+msgstr "Verity raíz de Linux (PPC64LE)"
 
 #: include/pt-gpt-partnames.h:107
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity (RISC-V-32)"
-msgstr "Verity raíz de Linux (IA-64)"
+msgstr "Verity raíz de Linux (RISC-V-32)"
 
 #: include/pt-gpt-partnames.h:108
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity (RISC-V-64)"
-msgstr "Verity raíz de Linux (IA-64)"
+msgstr "Verity raíz de Linux (RISC-V-64)"
 
 #: include/pt-gpt-partnames.h:109
-#, fuzzy
-#| msgid "Linux root verity (x86)"
 msgid "Linux root verity (S390)"
-msgstr "Verity raíz de Linux (x86)"
+msgstr "Verity raíz de Linux (S390)"
 
 #: include/pt-gpt-partnames.h:110
-#, fuzzy
-#| msgid "Linux root verity (x86)"
 msgid "Linux root verity (S390X)"
-msgstr "Verity raíz de Linux (x86)"
+msgstr "Verity raíz de Linux (S390X)"
 
 #: include/pt-gpt-partnames.h:111
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity (TILE-Gx)"
-msgstr "Verity raíz de Linux (IA-64)"
+msgstr "Verity raíz de Linux (TILE-Gx)"
 
 #: include/pt-gpt-partnames.h:112
 msgid "Linux /usr verity (x86)"
@@ -5394,16 +5306,12 @@ msgid "Linux /usr verity (x86-64)"
 msgstr "Verity /usr de Linux (x86-64)"
 
 #: include/pt-gpt-partnames.h:114
-#, fuzzy
-#| msgid "Linux /usr verity (ARM)"
 msgid "Linux /usr verity (Alpha)"
-msgstr "Verity /usr de Linux (ARM)"
+msgstr "Verity /usr de Linux (Alpha)"
 
 #: include/pt-gpt-partnames.h:115
-#, fuzzy
-#| msgid "Linux /usr verity (ARM)"
 msgid "Linux /usr verity (ARC)"
-msgstr "Verity /usr de Linux (ARM)"
+msgstr "Verity /usr de Linux (ARC)"
 
 #: include/pt-gpt-partnames.h:116
 msgid "Linux /usr verity (ARM)"
@@ -5418,286 +5326,192 @@ msgid "Linux /usr verity (IA-64)"
 msgstr "Verity /usr de Linux (IA-64)"
 
 #: include/pt-gpt-partnames.h:119
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity (LoongArch-64)"
-msgstr "Verity /usr de Linux (IA-64)"
+msgstr "Verity /usr de Linux (LoongArch-64)"
 
 #: include/pt-gpt-partnames.h:120
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity (MIPS-32 LE)"
-msgstr "Verity /usr de Linux (IA-64)"
+msgstr "Verity /usr de Linux (MIPS-32 LE)"
 
 #: include/pt-gpt-partnames.h:121
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity (MIPS-64 LE)"
-msgstr "Verity /usr de Linux (IA-64)"
+msgstr "Verity /usr de Linux (MIPS-64 LE)"
 
 #: include/pt-gpt-partnames.h:122
-#, fuzzy
-#| msgid "Linux /usr verity (x86)"
 msgid "Linux /usr verity (PPC)"
-msgstr "Verity /usr de Linux (x86)"
+msgstr "Verity /usr de Linux (PPC)"
 
 #: include/pt-gpt-partnames.h:123
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity (PPC64)"
-msgstr "Verity /usr de Linux (IA-64)"
+msgstr "Verity /usr de Linux (PPC64)"
 
 #: include/pt-gpt-partnames.h:124
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity (PPC64LE)"
-msgstr "Verity /usr de Linux (IA-64)"
+msgstr "Verity /usr de Linux (PPC64LE)"
 
 #: include/pt-gpt-partnames.h:125
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity (RISC-V-32)"
-msgstr "Verity /usr de Linux (IA-64)"
+msgstr "Verity /usr de Linux (RISC-V-32)"
 
 #: include/pt-gpt-partnames.h:126
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity (RISC-V-64)"
-msgstr "Verity /usr de Linux (IA-64)"
+msgstr "Verity /usr de Linux (RISC-V-64)"
 
 #: include/pt-gpt-partnames.h:127
-#, fuzzy
-#| msgid "Linux /usr verity (x86)"
 msgid "Linux /usr verity (S390)"
-msgstr "Verity /usr de Linux (x86)"
+msgstr "Verity /usr de Linux (S390)"
 
 #: include/pt-gpt-partnames.h:128
-#, fuzzy
-#| msgid "Linux /usr verity (x86)"
 msgid "Linux /usr verity (S390X)"
-msgstr "Verity /usr de Linux (x86)"
+msgstr "Verity /usr de Linux (S390X)"
 
 #: include/pt-gpt-partnames.h:129
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity (TILE-Gx)"
-msgstr "Verity /usr de Linux (IA-64)"
+msgstr "Verity /usr de Linux (TILE-Gx)"
 
 #: include/pt-gpt-partnames.h:130
-#, fuzzy
-#| msgid "Linux root verity (x86)"
 msgid "Linux root verity sign. (x86)"
-msgstr "Verity raíz de Linux (x86)"
+msgstr "Firma verity raíz de Linux (x86)"
 
 #: include/pt-gpt-partnames.h:131
-#, fuzzy
-#| msgid "Linux root verity (x86-64)"
 msgid "Linux root verity sign. (x86-64)"
-msgstr "Verity raíz de Linux (x86-64)"
+msgstr "Firma verity raíz de Linux. (x86-64)"
 
 #: include/pt-gpt-partnames.h:132
-#, fuzzy
-#| msgid "Linux root verity (ARM)"
 msgid "Linux root verity sign. (Alpha)"
-msgstr "Verity raíz de Linux (ARM)"
+msgstr "Firma verity raíz de Linux. (Alpha)"
 
 #: include/pt-gpt-partnames.h:133
-#, fuzzy
-#| msgid "Linux root verity (ARM)"
 msgid "Linux root verity sign. (ARC)"
-msgstr "Verity raíz de Linux (ARM)"
+msgstr "Firma verity raíz de Linux. (ARC)"
 
 #: include/pt-gpt-partnames.h:134
-#, fuzzy
-#| msgid "Linux root verity (ARM)"
 msgid "Linux root verity sign. (ARM)"
-msgstr "Verity raíz de Linux (ARM)"
+msgstr "Firma verity raíz de Linux. (ARM)"
 
 #: include/pt-gpt-partnames.h:135
-#, fuzzy
-#| msgid "Linux root verity (ARM-64)"
 msgid "Linux root verity sign. (ARM-64)"
-msgstr "Verity raíz de Linux (ARM-64)"
+msgstr "Firma verity raíz de Linux. (ARM-64)"
 
 #: include/pt-gpt-partnames.h:136
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (IA-64)"
-msgstr "Verity raíz de Linux (IA-64)"
+msgstr "Firma verity raíz de Linux. (IA-64)"
 
 #: include/pt-gpt-partnames.h:137
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (LoongArch-64)"
-msgstr "Verity raíz de Linux (IA-64)"
+msgstr "Firma verity raíz de Linux. (LoongArch-64)"
 
 #: include/pt-gpt-partnames.h:138
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (MIPS-32 LE)"
-msgstr "Verity raíz de Linux (IA-64)"
+msgstr "Firma verity raíz de Linux. (MIPS-32 LE)"
 
 #: include/pt-gpt-partnames.h:139
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (MIPS-64 LE)"
-msgstr "Verity raíz de Linux (IA-64)"
+msgstr "Firma verity raíz de Linux. (MIPS-64 LE)"
 
 #: include/pt-gpt-partnames.h:140
-#, fuzzy
-#| msgid "Linux root verity (x86)"
 msgid "Linux root verity sign. (PPC)"
-msgstr "Verity raíz de Linux (x86)"
+msgstr "Firma verity raíz de Linux. (PPC)"
 
 #: include/pt-gpt-partnames.h:141
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (PPC64)"
-msgstr "Verity raíz de Linux (IA-64)"
+msgstr "Firma verity raíz de Linux. (PPC64)"
 
 #: include/pt-gpt-partnames.h:142
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (PPC64LE)"
-msgstr "Verity raíz de Linux (IA-64)"
+msgstr "Firma verity raíz de Linux. (PPC64LE)"
 
 #: include/pt-gpt-partnames.h:143
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (RISC-V-32)"
-msgstr "Verity raíz de Linux (IA-64)"
+msgstr "Firma verity raíz de Linux. (RISC-V-32)"
 
 #: include/pt-gpt-partnames.h:144
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (RISC-V-64)"
-msgstr "Verity raíz de Linux (IA-64)"
+msgstr "Firma verity raíz de Linux. (RISC-V-64)"
 
 #: include/pt-gpt-partnames.h:145
-#, fuzzy
-#| msgid "Linux root verity (x86)"
 msgid "Linux root verity sign. (S390)"
-msgstr "Verity raíz de Linux (x86)"
+msgstr "Firma verity raíz de Linux. (S390)"
 
 #: include/pt-gpt-partnames.h:146
-#, fuzzy
-#| msgid "Linux root verity (x86)"
 msgid "Linux root verity sign. (S390X)"
-msgstr "Verity raíz de Linux (x86)"
+msgstr "Firma verity raíz de Linux. (S390X)"
 
 #: include/pt-gpt-partnames.h:147
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (TILE-Gx)"
-msgstr "Verity raíz de Linux (IA-64)"
+msgstr "Firma verity raíz de Linux. (TILE-Gx)"
 
 #: include/pt-gpt-partnames.h:148
-#, fuzzy
-#| msgid "Linux /usr verity (x86)"
 msgid "Linux /usr verity sign. (x86)"
-msgstr "Verity /usr de Linux (x86)"
+msgstr "Firma verity /usr de Linux. (x86)"
 
 #: include/pt-gpt-partnames.h:149
-#, fuzzy
-#| msgid "Linux /usr verity (x86-64)"
 msgid "Linux /usr verity sign. (x86-64)"
-msgstr "Verity /usr de Linux (x86-64)"
+msgstr "Firma verity /usr de Linux. (x86-64)"
 
 #: include/pt-gpt-partnames.h:150
-#, fuzzy
-#| msgid "Linux /usr verity (ARM)"
 msgid "Linux /usr verity sign. (Alpha)"
-msgstr "Verity /usr de Linux (ARM)"
+msgstr "Firma verity /usr de Linux. (Alpha)"
 
 #: include/pt-gpt-partnames.h:151
-#, fuzzy
-#| msgid "Linux /usr verity (ARM)"
 msgid "Linux /usr verity sign. (ARC)"
-msgstr "Verity /usr de Linux (ARM)"
+msgstr "Firma verity /usr de Linux. (ARC)"
 
 #: include/pt-gpt-partnames.h:152
-#, fuzzy
-#| msgid "Linux /usr verity (ARM)"
 msgid "Linux /usr verity sign. (ARM)"
-msgstr "Verity /usr de Linux (ARM)"
+msgstr "Firma verity /usr de Linux. (ARM)"
 
 #: include/pt-gpt-partnames.h:153
-#, fuzzy
-#| msgid "Linux /usr verity (ARM-64)"
 msgid "Linux /usr verity sign. (ARM-64)"
-msgstr "Verity /usr de Linux (ARM-64)"
+msgstr "Firma verity /usr de Linux. (ARM-64)"
 
 #: include/pt-gpt-partnames.h:154
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (IA-64)"
-msgstr "Verity /usr de Linux (IA-64)"
+msgstr "Firma verity /usr de Linux. (IA-64)"
 
 #: include/pt-gpt-partnames.h:155
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (LoongArch-64)"
-msgstr "Verity /usr de Linux (IA-64)"
+msgstr "Firma verity /usr de Linux. (LoongArch-64)"
 
 #: include/pt-gpt-partnames.h:156
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (MIPS-32 LE)"
-msgstr "Verity /usr de Linux (IA-64)"
+msgstr "Firma verity /usr de Linux. (MIPS-32 LE)"
 
 #: include/pt-gpt-partnames.h:157
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (MIPS-64 LE)"
-msgstr "Verity /usr de Linux (IA-64)"
+msgstr "Firma verity /usr de Linux. (MIPS-64 LE)"
 
 #: include/pt-gpt-partnames.h:158
-#, fuzzy
-#| msgid "Linux /usr verity (x86)"
 msgid "Linux /usr verity sign. (PPC)"
-msgstr "Verity /usr de Linux (x86)"
+msgstr "Firma verity /usr de Linux. (PPC)"
 
 #: include/pt-gpt-partnames.h:159
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (PPC64)"
-msgstr "Verity /usr de Linux (IA-64)"
+msgstr "Firma verity /usr de Linux. (PPC64)"
 
 #: include/pt-gpt-partnames.h:160
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (PPC64LE)"
-msgstr "Verity /usr de Linux (IA-64)"
+msgstr "Firma verity /usr de Linux. (PPC64LE)"
 
 #: include/pt-gpt-partnames.h:161
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (RISC-V-32)"
-msgstr "Verity /usr de Linux (IA-64)"
+msgstr "Firma verity /usr de Linux. (RISC-V-32)"
 
 #: include/pt-gpt-partnames.h:162
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (RISC-V-64)"
-msgstr "Verity /usr de Linux (IA-64)"
+msgstr "Firma verity /usr de Linux. (RISC-V-64)"
 
 #: include/pt-gpt-partnames.h:163
-#, fuzzy
-#| msgid "Linux /usr verity (x86)"
 msgid "Linux /usr verity sign. (S390)"
-msgstr "Verity /usr de Linux (x86)"
+msgstr "Firma verity /usr de Linux. (S390)"
 
 #: include/pt-gpt-partnames.h:164
-#, fuzzy
-#| msgid "Linux /usr verity (x86)"
 msgid "Linux /usr verity sign. (S390X)"
-msgstr "Verity /usr de Linux (x86)"
+msgstr "Firma verity /usr de Linux. (S390X)"
 
 #: include/pt-gpt-partnames.h:165
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (TILE-Gx)"
-msgstr "Verity /usr de Linux (IA-64)"
+msgstr "Firma verity /usr de Linux. (TILE-Gx)"
 
 #: include/pt-gpt-partnames.h:171 include/pt-mbr-partnames.h:95
 msgid "Linux extended boot"
@@ -5767,201 +5581,185 @@ msgstr "Recuperación de Apple TV"
 msgid "Apple Core storage"
 msgstr "Almacenamiento Core de Apple"
 
-#: include/pt-gpt-partnames.h:194
-#, fuzzy
-#| msgid "Apple boot"
-msgid "Apple Silicon boot"
-msgstr "Arranque de Apple"
-
-#: include/pt-gpt-partnames.h:195
-#, fuzzy
-#| msgid "Apple TV recovery"
-msgid "Apple Silicon recovery"
-msgstr "Recuperación de Apple TV"
-
-#: include/pt-gpt-partnames.h:198 include/pt-mbr-partnames.h:77
+#: include/pt-gpt-partnames.h:196 include/pt-mbr-partnames.h:77
 msgid "Solaris boot"
 msgstr "arranque de Solaris"
 
-#: include/pt-gpt-partnames.h:199
+#: include/pt-gpt-partnames.h:197
 msgid "Solaris root"
 msgstr "Raíz de Solaris"
 
-#: include/pt-gpt-partnames.h:201
+#: include/pt-gpt-partnames.h:199
 msgid "Solaris /usr & Apple ZFS"
 msgstr "/usr de Solaris y ZFS de Apple"
 
-#: include/pt-gpt-partnames.h:202
+#: include/pt-gpt-partnames.h:200
 msgid "Solaris swap"
 msgstr "Swap de Solaris"
 
-#: include/pt-gpt-partnames.h:203
+#: include/pt-gpt-partnames.h:201
 msgid "Solaris backup"
 msgstr "Respaldo de Solaris"
 
-#: include/pt-gpt-partnames.h:204
+#: include/pt-gpt-partnames.h:202
 msgid "Solaris /var"
 msgstr "/var de Solaris"
 
-#: include/pt-gpt-partnames.h:205
+#: include/pt-gpt-partnames.h:203
 msgid "Solaris /home"
 msgstr "/home de Solaris"
 
-#: include/pt-gpt-partnames.h:206
+#: include/pt-gpt-partnames.h:204
 msgid "Solaris alternate sector"
 msgstr "Sector alternativo de Solaris"
 
-#: include/pt-gpt-partnames.h:207
+#: include/pt-gpt-partnames.h:205
 msgid "Solaris reserved 1"
 msgstr "Reservado para Solaris 1"
 
-#: include/pt-gpt-partnames.h:208
+#: include/pt-gpt-partnames.h:206
 msgid "Solaris reserved 2"
 msgstr "Reservado para Solaris 2"
 
-#: include/pt-gpt-partnames.h:209
+#: include/pt-gpt-partnames.h:207
 msgid "Solaris reserved 3"
 msgstr "Reservador para Solaris 3"
 
-#: include/pt-gpt-partnames.h:210
+#: include/pt-gpt-partnames.h:208
 msgid "Solaris reserved 4"
 msgstr "Reservado para Solaris 4"
 
-#: include/pt-gpt-partnames.h:211
+#: include/pt-gpt-partnames.h:209
 msgid "Solaris reserved 5"
 msgstr "Reservado para Solaris 5"
 
-#: include/pt-gpt-partnames.h:219
+#: include/pt-gpt-partnames.h:217
 msgid "NetBSD swap"
 msgstr "Swap de NetBSD"
 
-#: include/pt-gpt-partnames.h:220
+#: include/pt-gpt-partnames.h:218
 msgid "NetBSD FFS"
 msgstr "FFS de NetBSD"
 
-#: include/pt-gpt-partnames.h:221
+#: include/pt-gpt-partnames.h:219
 msgid "NetBSD LFS"
 msgstr "LFS de NetBSD"
 
-#: include/pt-gpt-partnames.h:222
+#: include/pt-gpt-partnames.h:220
 msgid "NetBSD concatenated"
 msgstr "NetBSD concatenado"
 
-#: include/pt-gpt-partnames.h:223
+#: include/pt-gpt-partnames.h:221
 msgid "NetBSD encrypted"
 msgstr "NetBSD cifrado"
 
-#: include/pt-gpt-partnames.h:224
+#: include/pt-gpt-partnames.h:222
 msgid "NetBSD RAID"
 msgstr "RAID de NetBSD"
 
-#: include/pt-gpt-partnames.h:227
+#: include/pt-gpt-partnames.h:225
 msgid "ChromeOS kernel"
 msgstr "Núcleo de ChromeOS"
 
-#: include/pt-gpt-partnames.h:228
+#: include/pt-gpt-partnames.h:226
 msgid "ChromeOS root fs"
 msgstr "Sistema raíz de ChromeOS"
 
-#: include/pt-gpt-partnames.h:229
+#: include/pt-gpt-partnames.h:227
 msgid "ChromeOS reserved"
 msgstr "Reservado para ChromeOS"
 
-#: include/pt-gpt-partnames.h:232
+#: include/pt-gpt-partnames.h:230
 msgid "MidnightBSD data"
 msgstr "Datos de MidnightBSD"
 
-#: include/pt-gpt-partnames.h:233
+#: include/pt-gpt-partnames.h:231
 msgid "MidnightBSD boot"
 msgstr "Arranque de MidnightBSD"
 
-#: include/pt-gpt-partnames.h:234
+#: include/pt-gpt-partnames.h:232
 msgid "MidnightBSD swap"
 msgstr "Swap de MidnightBSD"
 
-#: include/pt-gpt-partnames.h:235
+#: include/pt-gpt-partnames.h:233
 msgid "MidnightBSD UFS"
 msgstr "UFS de MidnightBSD"
 
-#: include/pt-gpt-partnames.h:236
+#: include/pt-gpt-partnames.h:234
 msgid "MidnightBSD ZFS"
 msgstr "ZFS de MidnightBSD"
 
-#: include/pt-gpt-partnames.h:237
+#: include/pt-gpt-partnames.h:235
 msgid "MidnightBSD Vinum"
 msgstr "Vinum de MidnightBSD"
 
-#: include/pt-gpt-partnames.h:240
+#: include/pt-gpt-partnames.h:238
 msgid "Ceph Journal"
 msgstr "Journal de Ceph"
 
-#: include/pt-gpt-partnames.h:241
+#: include/pt-gpt-partnames.h:239
 msgid "Ceph Encrypted Journal"
 msgstr "Journal cifrado de Ceph"
 
-#: include/pt-gpt-partnames.h:242
+#: include/pt-gpt-partnames.h:240
 msgid "Ceph OSD"
 msgstr "OSD de Ceph"
 
-#: include/pt-gpt-partnames.h:243
+#: include/pt-gpt-partnames.h:241
 msgid "Ceph crypt OSD"
 msgstr "OSD cifrado de Ceph"
 
-#: include/pt-gpt-partnames.h:244
+#: include/pt-gpt-partnames.h:242
 msgid "Ceph disk in creation"
 msgstr "Disco de Ceph creándose"
 
-#: include/pt-gpt-partnames.h:245
+#: include/pt-gpt-partnames.h:243
 msgid "Ceph crypt disk in creation"
 msgstr "Disco cifrado de Ceph creándose"
 
-#: include/pt-gpt-partnames.h:248 include/pt-mbr-partnames.h:105
+#: include/pt-gpt-partnames.h:246 include/pt-mbr-partnames.h:105
 msgid "VMware VMFS"
 msgstr "VMFS de VMware"
 
-#: include/pt-gpt-partnames.h:249
+#: include/pt-gpt-partnames.h:247
 msgid "VMware Diagnostic"
 msgstr "Diagnósticos de VMware"
 
-#: include/pt-gpt-partnames.h:250
+#: include/pt-gpt-partnames.h:248
 msgid "VMware Virtual SAN"
 msgstr "SAN virtual de VMware"
 
-#: include/pt-gpt-partnames.h:251
+#: include/pt-gpt-partnames.h:249
 msgid "VMware Virsto"
 msgstr "Almacenamiento virtual de VMware"
 
-#: include/pt-gpt-partnames.h:252
+#: include/pt-gpt-partnames.h:250
 msgid "VMware Reserved"
 msgstr "Reservado para VMware"
 
-#: include/pt-gpt-partnames.h:255
+#: include/pt-gpt-partnames.h:253
 msgid "OpenBSD data"
 msgstr "Datos OpenBSD"
 
-#: include/pt-gpt-partnames.h:258
+#: include/pt-gpt-partnames.h:256
 msgid "QNX6 file system"
 msgstr "Sistema de ficheros de QNX6"
 
-#: include/pt-gpt-partnames.h:261
+#: include/pt-gpt-partnames.h:259
 msgid "Plan 9 partition"
 msgstr "Partición del plan 9"
 
-#: include/pt-gpt-partnames.h:264
-#, fuzzy
-#| msgid "HiFive Unleashed FSBL"
+#: include/pt-gpt-partnames.h:262
 msgid "HiFive FSBL"
-msgstr "HiFive Unleashed FSBL"
+msgstr "HiFive FSBL"
 
-#: include/pt-gpt-partnames.h:265
-#, fuzzy
-#| msgid "HiFive Unleashed BBL"
+#: include/pt-gpt-partnames.h:263
 msgid "HiFive BBL"
-msgstr "HiFive Unleashed BBL"
+msgstr "HiFive BBL"
 
-#: include/pt-gpt-partnames.h:268
+#: include/pt-gpt-partnames.h:266
 msgid "Haiku BFS"
-msgstr ""
+msgstr "Haiku BFS"
 
 #: include/pt-mbr-partnames.h:1
 msgid "Empty"
@@ -6742,10 +6540,9 @@ msgid "No free sectors available."
 msgstr "No hay disponible ningún sector libre."
 
 #: libfdisk/src/dos.c:1342
-#, fuzzy, c-format
-#| msgid "Sector %llu is already allocated."
+#, c-format
 msgid "Sector %ju is already allocated."
-msgstr "El sector %llu ya está asignado."
+msgstr "El sector %ju ya está asignado."
 
 #: libfdisk/src/dos.c:1562
 #, c-format
@@ -6760,25 +6557,22 @@ msgstr "Partición %zu: contiene el sector 0"
 #: libfdisk/src/dos.c:1598
 #, c-format
 msgid "Partition %zu: head %d greater than maximum %d"
-msgstr "Partición %zu: la cabeza %d supera el máximo %d"
+msgstr "Partición %zu: la cabeza %d excede el máximo %d"
 
 #: libfdisk/src/dos.c:1603
-#, fuzzy, c-format
-#| msgid "Partition %zu: sector %d greater than maximum %llu"
+#, c-format
 msgid "Partition %zu: sector %d greater than maximum %ju"
-msgstr "Partición %zu: el sector %d supera el máximo %llu"
+msgstr "Partición %zu: el sector %d excede el máximo %ju"
 
 #: libfdisk/src/dos.c:1609
-#, fuzzy, c-format
-#| msgid "Partition %zu: cylinder %d greater than maximum %llu"
+#, c-format
 msgid "Partition %zu: cylinder %d greater than maximum %ju"
-msgstr "Partición %zu: el cilindro %d supera el máximo %llu"
+msgstr "Partición %zu: el cilindro %d excede el máximo %ju"
 
 #: libfdisk/src/dos.c:1616
-#, fuzzy, c-format
-#| msgid "Partition %zu: previous sectors %u disagrees with total %u"
+#, c-format
 msgid "Partition %zu: LBA sector %u disagrees with C/H/S calculated sector %u"
-msgstr "Partición %zu: los sectores previous %u no concuerdan con el total %u"
+msgstr "Partición %zu: el sector LBA %u no concuerda con el sector %u calculado según C/C/S"
 
 #: libfdisk/src/dos.c:1675
 #, c-format
@@ -6820,16 +6614,14 @@ msgid "No errors detected."
 msgstr "No se ha detectado ningún error."
 
 #: libfdisk/src/dos.c:1811
-#, fuzzy, c-format
-#| msgid "Total allocated sectors %llu greater than the maximum %llu."
+#, c-format
 msgid "Total allocated sectors %ju greater than the maximum %ju."
-msgstr "El total de sectores asignados %llu supera el máximo %llu."
+msgstr "El total de sectores asignados %ju excede el máximo %ju."
 
 #: libfdisk/src/dos.c:1814
-#, fuzzy, c-format
-#| msgid "Remaining %lld unallocated %ld-byte sectors."
+#, c-format
 msgid "Remaining %ju unallocated %ld-byte sectors."
-msgstr "Quedan %lld sectores no asignados de %ld bytes."
+msgstr "Quedan sin asignar %ju sectores de %ld bytes."
 
 #: libfdisk/src/dos.c:1818 libfdisk/src/gpt.c:2305
 #, c-format
@@ -7011,16 +6803,12 @@ msgid "GPT Backup Header"
 msgstr "Cabecera de respaldo GPT"
 
 #: libfdisk/src/gpt.c:1303
-#, fuzzy
-#| msgid "First LBA"
 msgid "First usable LBA"
-msgstr "Primera LBA"
+msgstr "Primera LBA utilizable"
 
 #: libfdisk/src/gpt.c:1308
-#, fuzzy
-#| msgid "Last LBA"
 msgid "Last usable LBA"
-msgstr "Última LBA"
+msgstr "Última LBA utilizable"
 
 #. TRANSLATORS: The LBA (Logical Block Address) of the backup GPT header.
 #: libfdisk/src/gpt.c:1314
@@ -7029,17 +6817,13 @@ msgstr "LBA alternativa"
 
 #. TRANSLATORS: The start of the array of partition entries.
 #: libfdisk/src/gpt.c:1320
-#, fuzzy
-#| msgid "Partition entries LBA"
 msgid "Partition entries starting LBA"
-msgstr "LBA de las particiones LBA"
+msgstr "LBA inicial de las entradas de las particiones"
 
 #. TRANSLATORS: The end of the array of partition entries.
 #: libfdisk/src/gpt.c:1326
-#, fuzzy
-#| msgid "Partition entries LBA"
 msgid "Partition entries ending LBA"
-msgstr "LBA de las particiones LBA"
+msgstr "LBA final de las entradas de las particiones"
 
 #: libfdisk/src/gpt.c:1333
 msgid "Allocated partition entries"
@@ -7178,10 +6962,8 @@ msgid "All partitions are already in use."
 msgstr "Ya se están usando todas las particiones."
 
 #: libfdisk/src/gpt.c:2435
-#, fuzzy
-#| msgid "No free sectors available."
 msgid "No enough free sectors available."
-msgstr "No hay disponible ningún sector libre."
+msgstr "No hay suficientes sectores libres disponibles."
 
 #: libfdisk/src/gpt.c:2449 libfdisk/src/gpt.c:2476
 #, c-format
@@ -7209,10 +6991,9 @@ msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr "Se ha creado una nueva etiqueta de disco GPT (GUID: %s)."
 
 #: libfdisk/src/gpt.c:2706
-#, fuzzy, c-format
-#| msgid "The maximal number of partitions is %d (default is %d)."
+#, c-format
 msgid "The maximal number of partitions is %zu (default is %zu)."
-msgstr "El número máximo de particiones es %d (el predefinido es %d)."
+msgstr "El número máximo de particiones es %zu (el predefinido es %zu)."
 
 #: libfdisk/src/gpt.c:2728
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
@@ -7255,10 +7036,9 @@ msgid "Cannot allocate memory!"
 msgstr "¡No se puede asignar memoria!"
 
 #: libfdisk/src/gpt.c:2887
-#, fuzzy, c-format
-#| msgid "Partition table length changed from %<PRIu32> to %<PRIu64>."
+#, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu32>."
-msgstr "La longitud de la table de particiones ha cambiado de %<PRIu32> a %<PRIu64>."
+msgstr "La longitud de la tabla de particiones ha cambiado de %<PRIu32> a %<PRIu32>."
 
 #: libfdisk/src/gpt.c:2997
 #, c-format
@@ -7533,10 +7313,9 @@ msgid "Last %s or +%s or +size{K,M,G,T,P}"
 msgstr "Último %s o +%s o +tamaño{K,M,G,T,P}"
 
 #: libfdisk/src/sgi.c:989 libfdisk/src/sun.c:248
-#, fuzzy, c-format
-#| msgid "BLKGETSIZE ioctl failed on %s. Using geometry cylinder value of %llu. This value may be truncated for devices > 33.8 GB."
+#, c-format
 msgid "BLKGETSIZE ioctl failed on %s. Using geometry cylinder value of %ju. This value may be truncated for devices > 33.8 GB."
-msgstr "El ioctl de BLKGETSIZE falló en %s. Se usará un valor para la geometría del cilindro de %llu. Este valor podría ser truncado para dispositivos > 33.8 GB."
+msgstr "El ioctl de BLKGETSIZE falló en %s. Se usará un valor para la geometría del cilindro de %ju. Este valor podría ser truncado para dispositivos > 33.8 GB."
 
 #: libfdisk/src/sgi.c:1056
 msgid "Created a new SGI disklabel."
@@ -7599,16 +7378,14 @@ msgid "SunOS reserved"
 msgstr "reservado SunOS"
 
 #: libfdisk/src/sun.c:86
-#, fuzzy, c-format
-#| msgid "%#zu: start cylinder overflows Sun label limits"
+#, c-format
 msgid "#%zu: start cylinder overflows Sun label limits"
-msgstr "%#zu: cilindro inicial desborda los límites de la etiqueta Sun"
+msgstr "#%zu: el cilindro inicial desborda los límites de la etiqueta Sun"
 
 #: libfdisk/src/sun.c:89
-#, fuzzy, c-format
-#| msgid "%#zu: number of sectors overflow Sun label limits"
+#, c-format
 msgid "#%zu: number of sectors overflow Sun label limits"
-msgstr "%#zu: número de sectores desborda los límites de la etiqueta Sun"
+msgstr "#%zu: el número de sectores desborda los límites de la etiqueta Sun"
 
 #: libfdisk/src/sun.c:136
 msgid "Detected sun disklabel with wrong checksum. Probably you'll have to set all the values, e.g. heads, sectors, cylinders and partitions or force a fresh label (s command in main menu)"
@@ -7822,16 +7599,14 @@ msgid "no mount source specified"
 msgstr "no se ha especificado origen de montaje"
 
 #: libmount/src/context_mount.c:1784
-#, fuzzy, c-format
-#| msgid "failed to parse mount options: %m"
+#, c-format
 msgid "failed to parse mount options '%s': %m"
-msgstr "fallo al analizar las opciones de montaje: %m"
+msgstr "fallo al analizar las opciones de montaje '%s': %m"
 
 #: libmount/src/context_mount.c:1785
-#, fuzzy, c-format
-#| msgid "failed to parse mount options: %m"
+#, c-format
 msgid "failed to parse mount options '%s'"
-msgstr "fallo al analizar las opciones de montaje: %m"
+msgstr "fallo al analizar las opciones de montaje '%s'"
 
 #: libmount/src/context_mount.c:1788
 #, c-format
@@ -8530,10 +8305,9 @@ msgid "FATAL: bad tty"
 msgstr "ERROR FATAL: Terminal errónea"
 
 #: login-utils/login.c:551
-#, fuzzy, c-format
-#| msgid "TIOCSCTTY failed: %m"
+#, c-format
 msgid "TIOCGWINSZ ioctl failed: %m"
-msgstr "Fallo en TIOCSCTTY: %m"
+msgstr "Fallo en el ioctl de TIOCSCTTY: %m"
 
 #: login-utils/login.c:559
 #, c-format
@@ -8541,10 +8315,9 @@ msgid "FATAL: %s: change permissions failed: %m"
 msgstr "ERROR FATAL: %s: no se han podido cambiar los permisos: %m"
 
 #: login-utils/login.c:588
-#, fuzzy, c-format
-#| msgid "TIOCSCTTY failed: %m"
+#, c-format
 msgid "TIOCSWINSZ ioctl failed: %m"
-msgstr "Fallo en TIOCSCTTY: %m"
+msgstr "Fallo en el ioctl de TIOCSCTTY: %m"
 
 #: login-utils/login.c:694
 #, c-format
@@ -9233,10 +9006,8 @@ msgid "failed to create pseudo-terminal"
 msgstr "error al crear pseudoterminal"
 
 #: login-utils/su-common.c:559
-#, fuzzy
-#| msgid "cannot set signal handler"
 msgid "cannot set child signal handler"
-msgstr "no se puede establecer el manejador de señales"
+msgstr "no se puede establecer el manejador de señales hijo"
 
 #: login-utils/su-common.c:569 term-utils/script.c:965
 #: term-utils/scriptlive.c:303
@@ -10141,10 +9912,8 @@ msgid "filesystem size"
 msgstr "tamaño del sistema de ficheros"
 
 #: misc-utils/findmnt.c:122
-#, fuzzy
-#| msgid "source device"
 msgid "all possible source devices"
-msgstr "dispositivo de origen"
+msgstr "todos los dispositivos de origen posibles"
 
 #: misc-utils/findmnt.c:123
 msgid "source device"
@@ -10570,16 +10339,13 @@ msgid "%s seems unsupported by the current kernel"
 msgstr "parece que el núcleo actual no admite %s"
 
 #: misc-utils/findmnt-verify.c:452
-#, fuzzy
-#| msgid "Unknown"
 msgid "reason unknown"
-msgstr "Desconocido"
+msgstr "razón desconocida"
 
 #: misc-utils/findmnt-verify.c:455 misc-utils/findmnt-verify.c:457
-#, fuzzy, c-format
-#| msgid "cannot detect on-disk filesystem type"
+#, c-format
 msgid "cannot detect on-disk filesystem type (%s)"
-msgstr "no se puede detectar el tipo de sistema de ficheros en disco"
+msgstr "no se puede detectar el tipo de sistema de ficheros en disco (%s)"
 
 #: misc-utils/findmnt-verify.c:467
 #, c-format
@@ -10727,20 +10493,18 @@ msgstr "Ficheros:"
 
 #: misc-utils/hardlink.c:349 misc-utils/hardlink.c:355
 #: misc-utils/hardlink.c:359
-#, fuzzy, c-format
-#| msgid "%-15s %zu files"
+#, c-format
 msgid "%-25s %zu files"
-msgstr "%-15s %zu ficheros"
+msgstr "%-25s %zu ficheros"
 
 #: misc-utils/hardlink.c:349
 msgid "Linked:"
 msgstr "Enlazado:"
 
 #: misc-utils/hardlink.c:352
-#, fuzzy, c-format
-#| msgid "%-15s %zu xattrs"
+#, c-format
 msgid "%-25s %zu xattrs"
-msgstr "%-15s %zu xattrs"
+msgstr "%-25s %zu xattrs"
 
 #: misc-utils/hardlink.c:352 misc-utils/hardlink.c:355
 msgid "Compared:"
@@ -10748,17 +10512,16 @@ msgstr "Comparado:"
 
 #: misc-utils/hardlink.c:359
 msgid "Skipped reflinks:"
-msgstr ""
+msgstr "Enlaces de referencias ignorados:"
 
 #: misc-utils/hardlink.c:366
 msgid "Saved:"
 msgstr "Guardado:"
 
 #: misc-utils/hardlink.c:369
-#, fuzzy, c-format
-#| msgid "%-15s %<PRId64>.%06<PRId64> seconds"
+#, c-format
 msgid "%-25s %<PRId64>.%06<PRId64> seconds"
-msgstr "%-15s %<PRId64>.%06<PRId64> segundos"
+msgstr "%-25s %<PRId64>.%06<PRId64> segundos"
 
 #: misc-utils/hardlink.c:369
 msgid "Duration:"
@@ -10784,10 +10547,9 @@ msgid "Reflinking failed, fallback to hardlinking"
 msgstr ""
 
 #: misc-utils/hardlink.c:706
-#, fuzzy, c-format
-#| msgid "%sLinking %s to %s (-%s)"
+#, c-format
 msgid "%s%sLinking %s to %s (-%s)"
-msgstr "%sEnlazando %s con %s (-%s)"
+msgstr "%s%sEnlazando %s con %s (-%s)"
 
 #: misc-utils/hardlink.c:707
 msgid "[DryRun] "
@@ -10809,36 +10571,33 @@ msgid "Skipped %s (smaller than configured size)"
 msgstr "Se ha saltado %s (menor que el tamaño configurado)"
 
 #: misc-utils/hardlink.c:820
-#, fuzzy, c-format
-#| msgid "Skipped %s (smaller than configured size)"
+#, c-format
 msgid "Skipped %s (greater than configured size)"
-msgstr "Se ha saltado %s (menor que el tamaño configurado)"
+msgstr "Se ha saltado %s (mayor que el tamaño configurado)"
 
 #: misc-utils/hardlink.c:847
-#, fuzzy, c-format
-#| msgid "target specified more than once"
+#, c-format
 msgid "Skipped %s (specified more than once)"
-msgstr "se ha especificado el destino más de una vez"
+msgstr "Se ha saltado %s (especificado más de una vez)"
 
 #: misc-utils/hardlink.c:886
 msgid "cannot continue"
 msgstr "no se puede continuar"
 
 #: misc-utils/hardlink.c:1054
-#, fuzzy, c-format
-#| msgid "unsupported GPT attribute bit '%s'"
+#, c-format
 msgid "Skipped (attributes mismatch) %s"
-msgstr "atributo de bit GPT no soportado: '%s'"
+msgstr "Ignorado (discordancia en los atributos) %s"
 
 #: misc-utils/hardlink.c:1060
 #, c-format
 msgid "Skipped (already reflink) %s"
-msgstr ""
+msgstr "Ignorado (ya enlace de referencia) %s"
 
 #: misc-utils/hardlink.c:1081
 #, c-format
 msgid "Skipped (content mismatch) %s"
-msgstr ""
+msgstr "Ignorado (discordancia en el contenido) %s"
 
 #: misc-utils/hardlink.c:1111
 #, c-format
@@ -10862,10 +10621,8 @@ msgid " -n, --dry-run              don't actually link anything\n"
 msgstr " -n, --dry-run              no enlaza nada en realidad\n"
 
 #: misc-utils/hardlink.c:1121
-#, fuzzy
-#| msgid " -f, --file <file>        log the contents of this file\n"
 msgid " -y, --method <name>        file content comparison method\n"
-msgstr " -f, --file <fichero>     anota el contenido de este fichero\n"
+msgstr " -y, --method <nombre>      método de comparación del contenido del fichero\n"
 
 #: misc-utils/hardlink.c:1123
 msgid " -f, --respect-name         filenames have to be identical\n"
@@ -10888,16 +10645,14 @@ msgid " -X, --respect-xattrs       respect extended attributes\n"
 msgstr " -X, --respect-xattrs       respeta los atributos extendidos\n"
 
 #: misc-utils/hardlink.c:1131
-#, fuzzy
-#| msgid " -E, --echo <when>             echo input in session (auto, always or never)\n"
 msgid "     --reflink[=<when>]     create clone/CoW copies (auto, always, never)\n"
 msgstr ""
-" -E, --echo <cuándo>           repite la entrada de la sesión \n"
-"                                («auto», «always» (siempre) o «never» (nunca))\n"
+"     --reflink[=<cuándo>]   crea clones o copias al escribir\n"
+"                             («auto», «always» (siempre) o «never» (nunca))\n"
 
 #: misc-utils/hardlink.c:1132
 msgid "     --skip-reflinks        skip already cloned files (enabled on --reflink)\n"
-msgstr ""
+msgstr "     --skip-reflinks        se salta los ficheros ya clonados (se activa con --reflink)\n"
 
 #: misc-utils/hardlink.c:1134
 msgid ""
@@ -10932,56 +10687,43 @@ msgid " -s, --minimum-size <size>  minimum size for files.\n"
 msgstr " -s, --minimum-size <tamaño> tamaño mínimo de los ficheros.\n"
 
 #: misc-utils/hardlink.c:1142
-#, fuzzy
-#| msgid " -s, --minimum-size <size>  minimum size for files.\n"
 msgid " -S, --maximum-size <size>  maximum size for files.\n"
-msgstr " -s, --minimum-size <tamaño> tamaño mínimo de los ficheros.\n"
+msgstr " -S, --maximum-size <tamaño> tamaño máximo de los ficheros.\n"
 
 #: misc-utils/hardlink.c:1143
-#, fuzzy
-#| msgid " -S, --size <size>        maximum size for a single message\n"
 msgid " -b, --io-size <size>       I/O buffer size for file reading (speedup, using more RAM)\n"
-msgstr " -S, --size <tamaño>      máximo tamaño de un mensaje\n"
+msgstr ""
+" -b, --io-size <tamaño>     máximo tamaño de «buffer» E/S para lectura de ficheros\n"
+"                             (acelera utilizando más RAM)\n"
 
 #: misc-utils/hardlink.c:1144
-#, fuzzy
-#| msgid " -S, --size <size>        maximum size for a single message\n"
 msgid " -r, --cache-size <size>    memory limit for cached file content data\n"
-msgstr " -S, --size <tamaño>      máximo tamaño de un mensaje\n"
+msgstr " -s, --cache-size <tamaño>  límite de memoria para contenido de fichero en caché\n"
 
 #: misc-utils/hardlink.c:1145
 msgid " -c, --content              compare only file contents, same as -pot\n"
 msgstr " -c, --content              compara solo contenido de ficheros, igual que -pot\n"
 
 #: misc-utils/hardlink.c:1256
-#, fuzzy
-#| msgid "failed to parse size"
 msgid "failed to parse minimum size"
-msgstr "fallo al analizar el tamaño"
+msgstr "fallo al analizar el tamaño mínimo"
 
 #: misc-utils/hardlink.c:1259
-#, fuzzy
-#| msgid "failed to parse size"
 msgid "failed to parse maximum size"
-msgstr "fallo al analizar el tamaño"
+msgstr "fallo al analizar el tamaño máximo"
 
 #: misc-utils/hardlink.c:1262
-#, fuzzy
-#| msgid "failed to parse size"
 msgid "failed to parse cache size"
-msgstr "fallo al analizar el tamaño"
+msgstr "fallo al analizar el tamaño de la caché"
 
 #: misc-utils/hardlink.c:1265
-#, fuzzy
-#| msgid "failed to parse size"
 msgid "failed to parse I/O size"
-msgstr "fallo al analizar el tamaño"
+msgstr "fallo al analizar el tamaño de E/S"
 
 #: misc-utils/hardlink.c:1278
-#, fuzzy, c-format
-#| msgid "unsupported lock mode: %s"
+#, c-format
 msgid "unsupported reflink mode; %s"
-msgstr "modo de bloqueo no implementado: %s"
+msgstr "modo de «reflink» no implementado: %s"
 
 #: misc-utils/hardlink.c:1338
 msgid "cannot register exit handler"
@@ -10994,17 +10736,15 @@ msgstr "no se ha especificado ningún directorio ni fichero"
 #: misc-utils/hardlink.c:1349
 #, c-format
 msgid "cannot initialize %s method, use 'memcmp' fallback"
-msgstr ""
+msgstr "no se puede inicializar el método %s; utilice 'memcmp' como alternativa"
 
 #: misc-utils/hardlink.c:1354
-#, fuzzy
-#| msgid "failed to initialize loopcxt"
 msgid "failed to initialize files comparior"
-msgstr "no se ha podido inicializar loopcxt"
+msgstr "no se ha podido inicializar el comparador de ficheros"
 
 #: misc-utils/hardlink.c:1366
 msgid "Scanning [device/inode/links]:"
-msgstr ""
+msgstr "Explorando [dispositivo/nodo-i/enlaces]:"
 
 #: misc-utils/hardlink.c:1371 sys-utils/fstrim.c:96
 #, c-format
@@ -13693,8 +13433,9 @@ msgstr "fallo al analizar el desplazamiento"
 msgid "failed to parse step"
 msgstr "fallo al analizar el paso"
 
-#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:499 sys-utils/fallocate.c:382
-#: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561 sys-utils/umount.c:610
+#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:499
+#: sys-utils/fallocate.c:382 sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561
+#: sys-utils/umount.c:610
 msgid "unexpected number of arguments"
 msgstr "número de argumentos inesperado"
 
@@ -23205,21 +22946,9 @@ msgstr "Problemas al leer terminfo"
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr "el terminal `%s' es desconocido, se adopta `dumb' como predeterminado"
 
-#, fuzzy
-#~| msgid "failed to parse size"
-#~ msgid "failed to cache size"
-#~ msgstr "fallo al analizar el tamaño"
-
-#, fuzzy
-#~| msgid "child exit failed"
-#~ msgid "child kill failed"
-#~ msgstr "la finalización del hijo ha fallado"
-
-#, c-format
 #~ msgid "Comparing %s to %s"
 #~ msgstr "Comparación de %s con %s"
 
-#, c-format
 #~ msgid "Visiting %s (file %zu)"
 #~ msgstr "Visitando %s (fichero %zu)"
 
@@ -23240,7 +22969,6 @@ msgstr "el terminal `%s' es desconocido, se adopta `dumb' como predeterminado"
 #~ "\n"
 #~ "Opciones de los recursos:\n"
 
-#, c-format
 #~ msgid "cannot stat %s"
 #~ msgstr "no se puede efectuar `stat' %s"
 
