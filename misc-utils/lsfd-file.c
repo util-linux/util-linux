@@ -190,7 +190,7 @@ static bool file_fill_column(struct proc *proc,
 	case COL_PARTITION:
 		partition = get_partition(file->stat.st_dev);
 		if (partition) {
-			str = strdup(partition);
+			str = xstrdup(partition);
 			break;
 		}
 		/* FALL THROUGH */

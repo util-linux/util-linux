@@ -54,7 +54,7 @@ static char * anon_get_class(struct unkn *unkn)
 	char *name;
 
 	if (unkn->anon_ops->class)
-		return strdup(unkn->anon_ops->class);
+		return xstrdup(unkn->anon_ops->class);
 
 	/* See unkn_init_content() */
 	name = ((struct file *)unkn)->name + 11;
@@ -65,7 +65,7 @@ static char * anon_get_class(struct unkn *unkn)
 			return strndup(name + 1, len - 1);
 	}
 
-	return strdup(name);
+	return xstrdup(name);
 }
 
 static bool unkn_fill_column(struct proc *proc,
@@ -97,7 +97,7 @@ static bool unkn_fill_column(struct proc *proc,
 		return false;
 	case COL_SOURCE:
 		if (unkn->anon_ops) {
-			str = strdup("anon_inodefs");
+			str = xstrdup("anon_inodefs");
 			break;
 		}
 		return false;
@@ -232,14 +232,14 @@ static bool anon_pidfd_fill_column(struct proc *proc  __attribute__((__unused__)
 		if (pidfd_proc)
 			pidfd_comm = pidfd_proc->command;
 		if (pidfd_comm) {
-			*str = strdup(pidfd_comm);
+			*str = xstrdup(pidfd_comm);
 			return true;
 		}
 		break;
 	}
 	case COL_PIDFD_NSPID:
 		if (data->nspid) {
-			*str = strdup(data->nspid);
+			*str = xstrdup(data->nspid);
 			return true;
 		}
 		break;

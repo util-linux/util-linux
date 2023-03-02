@@ -310,7 +310,7 @@ static char *unix_get_type(struct sock_xinfo *sock_xinfo,
 	struct unix_xinfo *ux = (struct unix_xinfo *)sock_xinfo;
 
 	str = sock_decode_type(ux->type);
-	return strdup(str);
+	return xstrdup(str);
 }
 
 static char *unix_get_state(struct sock_xinfo *sock_xinfo,
@@ -320,10 +320,10 @@ static char *unix_get_state(struct sock_xinfo *sock_xinfo,
 	struct unix_xinfo *ux = (struct unix_xinfo *)sock_xinfo;
 
 	if (ux->acceptcon)
-		return strdup("listen");
+		return xstrdup("listen");
 
 	str = unix_decode_state(ux->st);
-	return strdup(str);
+	return xstrdup(str);
 }
 
 static bool unix_get_listening(struct sock_xinfo *sock_xinfo,
@@ -347,7 +347,7 @@ static bool unix_fill_column(struct proc *proc __attribute__((__unused__)),
 	switch (column_id) {
 	case COL_UNIX_PATH:
 		if (*ux->path) {
-			*str = strdup(ux->path);
+			*str = xstrdup(ux->path);
 			return true;
 		}
 		break;
@@ -538,7 +538,7 @@ struct l4_xinfo_class {
 		}							\
 									\
 		if (n && inet_ntop(class->family, n, s, sizeof(s))) {	\
-			*STR = strdup(s);				\
+			*STR = xstrdup(s);				\
 			r = true;					\
 		}							\
 		r;							\
@@ -586,13 +586,13 @@ static char *tcp_get_name(struct sock_xinfo *sock_xinfo,
 static char *tcp_get_type(struct sock_xinfo *sock_xinfo __attribute__((__unused__)),
 			   struct sock *sock __attribute__((__unused__)))
 {
-	return strdup("stream");
+	return xstrdup("stream");
 }
 
 static char *tcp_get_state(struct sock_xinfo *sock_xinfo,
 			   struct sock *sock __attribute__((__unused__)))
 {
-	return strdup(l4_decode_state(((struct l4_xinfo *)sock_xinfo)->st));
+	return xstrdup(l4_decode_state(((struct l4_xinfo *)sock_xinfo)->st));
 }
 
 static bool tcp_get_listening(struct sock_xinfo *sock_xinfo,
@@ -811,7 +811,7 @@ static char *udp_get_name(struct sock_xinfo *sock_xinfo,
 static char *udp_get_type(struct sock_xinfo *sock_xinfo __attribute__((__unused__)),
 			  struct sock *sock __attribute__((__unused__)))
 {
-	return strdup("dgram");
+	return xstrdup("dgram");
 }
 
 static bool udp_fill_column(struct proc *proc __attribute__((__unused__)),
@@ -934,7 +934,7 @@ static char *raw_get_name(struct sock_xinfo *sock_xinfo,
 static char *raw_get_type(struct sock_xinfo *sock_xinfo __attribute__((__unused__)),
 			  struct sock *sock __attribute__((__unused__)))
 {
-	return strdup("raw");
+	return xstrdup("raw");
 }
 
 static bool raw_fill_column(struct proc *proc __attribute__((__unused__)),
@@ -1028,7 +1028,7 @@ static char *ping_get_name(struct sock_xinfo *sock_xinfo,
 static char *ping_get_type(struct sock_xinfo *sock_xinfo __attribute__((__unused__)),
 			   struct sock *sock __attribute__((__unused__)))
 {
-	return strdup("dgram");
+	return xstrdup("dgram");
 }
 
 static bool ping_fill_column(struct proc *proc __attribute__((__unused__)),
@@ -1467,7 +1467,7 @@ static char *netlink_get_name(struct sock_xinfo *sock_xinfo,
 static char *netlink_get_type(struct sock_xinfo *sock_xinfo __attribute__((__unused__)),
 			      struct sock *sock __attribute__((__unused__)))
 {
-	return strdup("raw");
+	return xstrdup("raw");
 }
 
 static bool netlink_fill_column(struct proc *proc __attribute__((__unused__)),
@@ -1488,7 +1488,7 @@ static bool netlink_fill_column(struct proc *proc __attribute__((__unused__)),
 		xasprintf(str, "%"PRIu32, nl->lportid);
 		return true;
 	case COL_NETLINK_PROTOCOL:
-		*str = strdup(netlink_decode_protocol(nl->protocol));
+		*str = xstrdup(netlink_decode_protocol(nl->protocol));
 		return true;
 	}
 

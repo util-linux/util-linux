@@ -53,7 +53,7 @@ static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
 		if (devdrv && strcmp(devdrv, "misc") == 0) {
 			miscdev = get_miscdev(minor(file->stat.st_rdev));
 			if (miscdev)
-				str = strdup(miscdev);
+				str = xstrdup(miscdev);
 			else
 				xasprintf(&str, "%u",
 					  minor(file->stat.st_rdev));
@@ -68,7 +68,7 @@ static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
 	case COL_CHRDRV:
 		devdrv = get_chrdrv(major(file->stat.st_rdev));
 		if (devdrv)
-			str = strdup(devdrv);
+			str = xstrdup(devdrv);
 		else
 			xasprintf(&str, "%u",
 				  major(file->stat.st_rdev));
