@@ -34,8 +34,12 @@ jobs:
         uses: actions/checkout@v1
       - name: Ubuntu setup
         run: sudo -E .github/workflows/cibuild-setup-ubuntu.sh
+      - name: Configure
+        run: .github/workflows/cibuild.sh CONFIGURE
+      - name: Code checks
+        run: .github/workflows/cibuild.sh CODECHECK
       - name: Configure & Make
-        run: .github/workflows/cibuild.sh CONFIGURE MAKE
+        run: .github/workflows/cibuild.sh MAKE
       - name: Check
         run: sudo -E .github/workflows/cibuild.sh CHECK
       - name: Make install

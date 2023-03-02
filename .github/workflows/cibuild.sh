@@ -123,6 +123,10 @@ for phase in "${PHASES[@]}"; do
     MESONBUILD)
         ninja -C build
         ;;
+    CODECHECK)
+	make checklibdoc
+	make checkxalloc
+	;;
     CHECK)
         if [[ "$SANITIZE" == "yes" ]]; then
             # All the following black magic is to make test/eject/umount work, since
