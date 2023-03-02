@@ -23,7 +23,7 @@ struct nv_metadata {
 	uint16_t	version;
 } __attribute__((packed));
 
-#define NVIDIA_SIGNATURE		"NVIDIA"
+#define NVIDIA_SIGNATURE		"NVIDIA  "
 #define NVIDIA_SUPERBLOCK_SIZE		120
 
 
