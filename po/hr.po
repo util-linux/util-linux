@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.38-rc4\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2022-03-28 13:24+0200\n"
-"PO-Revision-Date: 2022-03-24 17:17-0700\n"
+"POT-Creation-Date: 2022-03-16 18:08+0100\n"
+"PO-Revision-Date: 2022-11-06 17:37-0800\n"
 "Last-Translator: Božidar Putanec <bozidarp@yahoo.com>\n"
 "Language-Team: Croatian <lokalizacija@linux.hr>\n"
 "Language: hr\n"
@@ -52,7 +52,7 @@ msgstr "nema dovoljno argumenata"
 #: disk-utils/isosize.c:53 disk-utils/mkfs.bfs.c:186
 #: disk-utils/mkfs.cramfs.c:173 disk-utils/mkfs.cramfs.c:662
 #: disk-utils/mkfs.cramfs.c:801 disk-utils/mkfs.minix.c:838
-#: disk-utils/mkswap.c:325 disk-utils/mkswap.c:354 disk-utils/partx.c:1022
+#: disk-utils/mkswap.c:325 disk-utils/mkswap.c:354 disk-utils/partx.c:1021
 #: disk-utils/resizepart.c:104 disk-utils/sfdisk.c:381 disk-utils/sfdisk.c:502
 #: disk-utils/sfdisk.c:813 disk-utils/sfdisk.c:1117 disk-utils/swaplabel.c:65
 #: libfdisk/src/bsd.c:642 login-utils/islocal.c:86 login-utils/last.c:695
@@ -320,7 +320,7 @@ msgstr "Tip"
 
 #: disk-utils/cfdisk.c:201
 msgid "Change the partition type"
-msgstr "T = mijenjanje/odabiranje vrste (tipa) particije"
+msgstr "T = mijenjanje/odabiranje tipa particije"
 
 #: disk-utils/cfdisk.c:202
 msgid "Help"
@@ -357,7 +357,7 @@ msgstr "U = sprema particijsku tablicu kao kompatibilnu sfdisk skriptu"
 #: disk-utils/cfdisk.c:650 disk-utils/fdisk.c:465
 #, c-format
 msgid "internal error: unsupported dialog type %d"
-msgstr "**interna programska greška**: nepodržana vrsta dijaloga %d"
+msgstr "**interna programska greška**: nepodržani tip dijaloga %d"
 
 #: disk-utils/cfdisk.c:1316
 #, c-format
@@ -440,7 +440,7 @@ msgstr "Veličina nije razumljiva."
 
 #: disk-utils/cfdisk.c:2044
 msgid "Select partition type"
-msgstr "Odaberite vrstu particije"
+msgstr "Odaberite tip particije"
 
 #: disk-utils/cfdisk.c:2094 disk-utils/cfdisk.c:2124
 msgid "Enter script file name: "
@@ -489,15 +489,16 @@ msgstr "Nije uspjelo zapisati skriptu %s"
 
 #: disk-utils/cfdisk.c:2192
 msgid "Select label type"
-msgstr "Odaberite vrstu oznake"
+msgstr "Odaberite tip oznake"
 
-#: disk-utils/cfdisk.c:2195 disk-utils/fdisk.c:1162 disk-utils/fdisk-menu.c:490
+#: disk-utils/cfdisk.c:2195 disk-utils/fdisk.c:1162
+#: disk-utils/fdisk-menu.c:490
 msgid "Device does not contain a recognized partition table."
 msgstr "Uređaj ne sadrži prepoznatljivu particijsku tablicu."
 
 #: disk-utils/cfdisk.c:2203
 msgid "Select a type to create a new label, press 'L' to load script file, 'Q' quits."
-msgstr "Odaberite vrstu za novu oznaku, pritisnite „L“ da učitate skriptu, „Q“ da iziđete."
+msgstr "Odaberite tip za novu oznaku, pritisnite „L“ da učitate skriptu, „Q“ da iziđete."
 
 #: disk-utils/cfdisk.c:2252
 msgid "This is cfdisk, a curses-based disk partitioning program."
@@ -545,7 +546,7 @@ msgstr "  s        korigira poredak particija (ako nisu u korektno poredane)"
 
 #: disk-utils/cfdisk.c:2264
 msgid "  t          Change the partition type"
-msgstr "  t        promijeni vrstu particije"
+msgstr "  t        promijeni tip particije"
 
 #: disk-utils/cfdisk.c:2265
 msgid "  u          Dump disk layout to sfdisk compatible script file"
@@ -620,12 +621,12 @@ msgstr "Veličina particije: "
 #: disk-utils/cfdisk.c:2448
 #, c-format
 msgid "Changed type of partition %zu."
-msgstr "Vrsta particije %zu je promijenjena."
+msgstr "Tip particije %zu je promijenjena."
 
 #: disk-utils/cfdisk.c:2450
 #, c-format
 msgid "The type of partition %zu is unchanged."
-msgstr "Vrsta particije %zu nije promijenjena."
+msgstr "Tip particije %zu nije promijenjena."
 
 #: disk-utils/cfdisk.c:2471
 msgid "New size: "
@@ -636,7 +637,8 @@ msgstr "Nova veličina: "
 msgid "Partition %zu resized."
 msgstr "Veličina particije %zu je promijenjena."
 
-#: disk-utils/cfdisk.c:2504 disk-utils/fdisk.c:1138 disk-utils/fdisk-menu.c:593
+#: disk-utils/cfdisk.c:2504 disk-utils/fdisk.c:1138
+#: disk-utils/fdisk-menu.c:593
 msgid "Device is open in read-only mode."
 msgstr "Uređaj je otvoren samo za čitanje."
 
@@ -676,7 +678,7 @@ msgstr "Uređaj već sadrži potpis %s; naredba pisanja će ga ukloniti"
 
 #: disk-utils/cfdisk.c:2600
 msgid "failed to create a new disklabel"
-msgstr "nije uspjelo kreirati novu oznaku diska"
+msgstr "nije uspjelo stvoriti novu oznaku diska"
 
 #: disk-utils/cfdisk.c:2609
 msgid "failed to read partitions"
@@ -773,8 +775,8 @@ msgstr ""
 "Nastavlja se... "
 
 #: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:629 sys-utils/blkdiscard.c:89
-#: sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:629
+#: sys-utils/blkdiscard.c:89 sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [opcije] <uređaj>\n"
@@ -831,7 +833,7 @@ msgstr "nevaljani argument - repair"
 msgid "stat of %s failed"
 msgstr "stat() od %s nije uspio"
 
-#: disk-utils/fdformat.c:226 disk-utils/partx.c:1019 misc-utils/lsblk.c:1578
+#: disk-utils/fdformat.c:226 disk-utils/partx.c:1018 misc-utils/lsblk.c:1578
 #: sys-utils/blkdiscard.c:235 sys-utils/blkzone.c:149
 #: sys-utils/mountpoint.c:109
 #, c-format
@@ -840,7 +842,7 @@ msgstr "%s: nije blok-uređaj"
 
 #: disk-utils/fdformat.c:231
 msgid "could not determine current format type"
-msgstr "nije moguće odrediti trenutnu vrstu formata"
+msgstr "nije moguće odrediti trenutni tip formata"
 
 #: disk-utils/fdformat.c:233
 #, c-format
@@ -869,7 +871,7 @@ msgstr "početni zapis definiran korisnikom prelazi konačnu granicu definiranu 
 
 #: disk-utils/fdformat.c:253 misc-utils/logger.c:1032
 msgid "close failed"
-msgstr "greška pri zatvaranju"
+msgstr "zatvaranje nije uspjelo"
 
 #: disk-utils/fdisk.c:206
 #, c-format
@@ -926,7 +928,7 @@ msgstr "Hex kȏd ili alias (pritisnite L za kompletan popis): "
 
 #: disk-utils/fdisk.c:487
 msgid "Partition type or alias (type L to list all): "
-msgstr "Vrsta particije ili alias (pritisnite L za kompletan popis): "
+msgstr "Tip particije ili alias (pritisnite L za kompletan popis): "
 
 #: disk-utils/fdisk.c:490
 msgid "Hex code (type L to list all codes): "
@@ -934,12 +936,12 @@ msgstr "Hex kȏd (pritisnite L za popis svih kodova): "
 
 #: disk-utils/fdisk.c:491
 msgid "Partition type (type L to list all types): "
-msgstr "Vrsta particije (L za popis svih vrsta): "
+msgstr "Tip particije (L za popis svih tipova): "
 
 #: disk-utils/fdisk.c:511
 #, c-format
 msgid "Failed to parse '%s' partition type."
-msgstr "nije uspjelo raščlaniti vrstu particije „%s“."
+msgstr "nije uspjelo raščlaniti tip particije „%s“."
 
 #: disk-utils/fdisk.c:602
 msgid ""
@@ -974,7 +976,7 @@ msgstr "Tip particije „%s“ promijenjen je na „%s“."
 #: disk-utils/fdisk.c:670
 #, c-format
 msgid "Type of partition %zu is unchanged: %s."
-msgstr "Vrsta particije %zu nije promijenjena: %s."
+msgstr "Tip particije %zu nije promijenjena: %s."
 
 #: disk-utils/fdisk.c:766
 #, c-format
@@ -1063,7 +1065,7 @@ msgstr " -o, --output <lista>          izlazni stupci\n"
 
 #: disk-utils/fdisk.c:870
 msgid " -t, --type <type>             recognize specified partition table type only\n"
-msgstr " -t, --type <tip>              prepoznaje samo vrstu „tip“ particijskih tablica\n"
+msgstr " -t, --type <tip>              prepoznaje samo tip „tip“ particijskih tablica\n"
 
 #: disk-utils/fdisk.c:871
 msgid " -u, --units[=<unit>]          display units: 'cylinders' or 'sectors' (default)\n"
@@ -1152,23 +1154,23 @@ msgstr ""
 "Svojstva uređaja (veličina sektora i geometrija) treba koristiti\n"
 "samo s jednim specificiranim uređajem."
 
-#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122 disk-utils/fsck.cramfs.c:703
-#: disk-utils/mkfs.bfs.c:192 disk-utils/mkfs.cramfs.c:788
-#: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
-#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:524
-#: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:580
-#: misc-utils/whereis.c:591 misc-utils/whereis.c:602 misc-utils/whereis.c:644
-#: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:188
-#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1580
-#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
-#: sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656 sys-utils/mount.c:877
-#: sys-utils/mount.c:885 sys-utils/mount.c:932 sys-utils/mount.c:945
-#: sys-utils/mount.c:1017 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
-#: sys-utils/swapoff.c:258 sys-utils/swapon.c:1006 sys-utils/switch_root.c:270
-#: sys-utils/umount.c:620 term-utils/setterm.c:1197 text-utils/col.c:584
-#: text-utils/more.c:2094
+#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122
+#: disk-utils/fsck.cramfs.c:703 disk-utils/mkfs.bfs.c:192
+#: disk-utils/mkfs.cramfs.c:788 disk-utils/partx.c:975 disk-utils/raw.c:136
+#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
+#: misc-utils/cal.c:524 misc-utils/findfs.c:58 misc-utils/look.c:147
+#: misc-utils/whereis.c:580 misc-utils/whereis.c:591 misc-utils/whereis.c:602
+#: misc-utils/whereis.c:644 schedutils/chrt.c:442 schedutils/ionice.c:264
+#: schedutils/taskset.c:188 sys-utils/chcpu.c:355 sys-utils/chmem.c:429
+#: sys-utils/dmesg.c:1580 sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321
+#: sys-utils/losetup.c:918 sys-utils/lscpu.c:1318 sys-utils/lsmem.c:656
+#: sys-utils/mount.c:877 sys-utils/mount.c:885 sys-utils/mount.c:932
+#: sys-utils/mount.c:945 sys-utils/mount.c:1017 sys-utils/mountpoint.c:191
+#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:258 sys-utils/swapon.c:1006
+#: sys-utils/switch_root.c:270 sys-utils/umount.c:620
+#: term-utils/setterm.c:1197 text-utils/col.c:584 text-utils/more.c:2094
 msgid "bad usage"
-msgstr "pogrešna uporaba"
+msgstr "loša uporaba"
 
 #: disk-utils/fdisk.c:1128
 #, c-format
@@ -1288,12 +1290,13 @@ msgstr "nije uspjelo rezervirati memoriju za izlazni redak"
 #: misc-utils/lsfd-file.c:349 misc-utils/lsfd-sock.c:47
 #: misc-utils/lsfd-sock.c:52 misc-utils/lsfd-sock.c:73
 #: misc-utils/lsfd-sock.c:75 misc-utils/lsfd-unkn.c:39
-#: misc-utils/lsfd-unkn.c:53 misc-utils/lsfd-unkn.c:55 misc-utils/lslocks.c:459
-#: misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242 sys-utils/losetup.c:305
-#: sys-utils/lscpu.c:568 sys-utils/lscpu.c:783 sys-utils/lscpu.c:812
-#: sys-utils/lscpu.c:822 sys-utils/lsipc.c:526 sys-utils/lsipc.c:651
-#: sys-utils/prlimit.c:275 sys-utils/rfkill.c:417 sys-utils/swapon.c:227
-#: sys-utils/wdctl.c:327 sys-utils/zramctl.c:481 text-utils/column.c:481
+#: misc-utils/lsfd-unkn.c:53 misc-utils/lsfd-unkn.c:55
+#: misc-utils/lslocks.c:459 misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242
+#: sys-utils/losetup.c:305 sys-utils/lscpu.c:568 sys-utils/lscpu.c:783
+#: sys-utils/lscpu.c:812 sys-utils/lscpu.c:822 sys-utils/lsipc.c:526
+#: sys-utils/lsipc.c:651 sys-utils/prlimit.c:275 sys-utils/rfkill.c:417
+#: sys-utils/swapon.c:227 sys-utils/wdctl.c:327 sys-utils/zramctl.c:481
+#: text-utils/column.c:481
 msgid "failed to add output data"
 msgstr "nije uspjelo dodati izlazne podatke"
 
@@ -1369,7 +1372,7 @@ msgstr "ispiše particijsku tablicu"
 
 #: disk-utils/fdisk-menu.c:102
 msgid "change a partition type"
-msgstr "mijenja vrstu particije"
+msgstr "mijenja tip particije"
 
 #: disk-utils/fdisk-menu.c:103
 msgid "verify the partition table"
@@ -1772,7 +1775,7 @@ msgstr "Broj sektora"
 #: disk-utils/fdisk-menu.c:1109
 #, c-format
 msgid "Failed to create '%s' disk label"
-msgstr "nije uspjelo kreirati oznaku diska „%s“"
+msgstr "nije uspjelo stvoriti oznaku diska „%s“"
 
 #: disk-utils/fsck.c:214
 #, c-format
@@ -1804,7 +1807,7 @@ msgstr "greška pri raščlambi: %s"
 #: disk-utils/fsck.c:359
 #, c-format
 msgid "cannot create directory %s"
-msgstr "nije moguće kreirati direktorij %s"
+msgstr "nije moguće stvoriti direktorij %s"
 
 #: disk-utils/fsck.c:372
 #, c-format
@@ -1918,7 +1921,7 @@ msgstr ""
 #: disk-utils/fsck.c:1155
 #, c-format
 msgid "%s: skipping unknown filesystem type\n"
-msgstr "%s: preskače se nepoznata vrsta datotečnog sustava\n"
+msgstr "%s: preskače se nepoznati tip datotečnog sustava\n"
 
 #: disk-utils/fsck.c:1169
 #, c-format
@@ -1992,8 +1995,8 @@ msgid ""
 " -t <type>  specify filesystem types to be checked;\n"
 "            <type> is allowed to be a comma-separated list\n"
 msgstr ""
-" -t <vrsta>  vrste datotečnih sustava koje treba provjeriti;\n"
-"               <vrsta> može biti popis odvojen zarezima\n"
+" -t <tip>    tipovi datotečnih sustava koje treba provjeriti;\n"
+"               <tip> može biti popis odvojen zarezima\n"
 
 #: disk-utils/fsck.c:1410
 msgid " -V         explain what is being done\n"
@@ -2198,7 +2201,7 @@ msgstr "ne-blok (%ld) bajta"
 #: disk-utils/fsck.cramfs.c:420
 #, c-format
 msgid "non-size (%ld vs %ld) bytes"
-msgstr "pogrešna veličina (%ld umjesto %ld) bajta"
+msgstr "veličina bez dimenzije (%ld umjesto %ld) bajta"
 
 #: disk-utils/fsck.cramfs.c:425 disk-utils/fsck.cramfs.c:527
 #: disk-utils/swaplabel.c:109 misc-utils/uuidd.c:403 sys-utils/fallocate.c:440
@@ -2274,7 +2277,7 @@ msgstr "simbolička poveznica nije uspjela: %s"
 #: disk-utils/fsck.cramfs.c:580
 #, c-format
 msgid "special file has non-zero offset: %s"
-msgstr "posebna datoteka ima odmak != 0: %s"
+msgstr "specijalna datoteka ima odmak != 0: %s"
 
 #: disk-utils/fsck.cramfs.c:590
 #, c-format
@@ -2465,7 +2468,7 @@ msgstr "nije moguće pročitati superblok"
 
 #: disk-utils/fsck.minix.c:587
 msgid "bad magic number in super-block"
-msgstr "pogrešni magični broj u superbloku"
+msgstr "loš magični broj u superbloku"
 
 #: disk-utils/fsck.minix.c:589
 msgid "Only 1k blocks/zones supported"
@@ -2771,7 +2774,7 @@ msgstr ""
 "-------------------------------\n"
 
 #: disk-utils/fsck.minix.c:1429 disk-utils/mkfs.minix.c:854
-#: disk-utils/mkswap.c:700 disk-utils/partx.c:1071 disk-utils/resizepart.c:115
+#: disk-utils/mkswap.c:700 disk-utils/partx.c:1068 disk-utils/resizepart.c:115
 #: login-utils/utmpdump.c:408 sys-utils/dmesg.c:684 sys-utils/wdctl.c:457
 #: sys-utils/wdctl.c:536 term-utils/setterm.c:908 text-utils/col.c:195
 #: text-utils/pg.c:1255
@@ -2952,7 +2955,7 @@ msgstr "greška pri zatvaranju %s"
 #, c-format
 msgid " %s [options] [-t <type>] [fs-options] <device> [<size>]\n"
 msgstr ""
-" %s [opcije] [-t <vrsta_datotečnogsustava>] [opcije_datotečnogsustava]\n"
+" %s [opcije] [-t <tip_datotečnogsustava>] [opcije_datotečnogsustava]\n"
 "               <uređaj> [<veličina>]\n"
 
 #: disk-utils/mkfs.c:49
@@ -2962,7 +2965,7 @@ msgstr "Kreira datotečni sustav Linux.\n"
 #: disk-utils/mkfs.c:52
 #, c-format
 msgid " -t, --type=<type>  filesystem type; when unspecified, ext2 is used\n"
-msgstr " -t, --type=<vrsta> vrsta datotečnog sustava (ako nije dana: ext2)\n"
+msgstr " -t, --type=<tip> tip datotečnog sustava (ako nije dana: ext2)\n"
 
 #: disk-utils/mkfs.c:53
 #, c-format
@@ -3395,7 +3398,7 @@ msgstr "nepodržana inačica datotečnog sustava Minix: %d"
 
 #: disk-utils/mkfs.minix.c:778
 msgid "-v is ambiguous, use '-2' instead"
-msgstr "opcija -v nije jednoznačna; umjesto „-v“, koristite „-2“"
+msgstr "opcija -v je dvosmislena; umjesto „-v“, koristite „-2“"
 
 #: disk-utils/mkfs.minix.c:789
 msgid "failed to parse maximum length of filenames"
@@ -3678,7 +3681,7 @@ msgstr "%s: nije moguće dobiti zadanu oznaku SELinux datoteke"
 
 #: disk-utils/mkswap.c:679
 msgid "unable to create new selinux context"
-msgstr "nije moguće kreirati SELinux kontekst"
+msgstr "nije moguće stvoriti SELinux kontekst"
 
 #: disk-utils/mkswap.c:681
 msgid "couldn't compute selinux context"
@@ -3719,7 +3722,7 @@ msgstr "UUID particije"
 
 #: disk-utils/partx.c:93
 msgid "partition table type (dos, gpt, ...)"
-msgstr "vrsta particijske tablice (DOS, GPT, ...)"
+msgstr "tip particijske tablice (DOS, GPT, ...)"
 
 #: disk-utils/partx.c:94 misc-utils/lsblk.c:191
 msgid "partition flags"
@@ -3727,7 +3730,7 @@ msgstr "particijski flagovi (flags)"
 
 #: disk-utils/partx.c:95
 msgid "partition type (a string, a UUID, or hex)"
-msgstr "vrsta particije (string, UUID ili hex)"
+msgstr "tip particije (string, UUID ili hex)"
 
 #: disk-utils/partx.c:114 sys-utils/losetup.c:534 sys-utils/losetup.c:652
 msgid "failed to initialize loopcxt"
@@ -3949,11 +3952,11 @@ msgstr " -S, --sector-size <broj>  prekopiše veličinu sektora\n"
 
 #: disk-utils/partx.c:774
 msgid " -t, --type <type>    specify the partition type\n"
-msgstr " -t, --type <vrsta>    specifikacija vrste particije\n"
+msgstr " -t, --type <tip>      specifikacija tipa particije\n"
 
 #: disk-utils/partx.c:775
 msgid "     --list-types     list supported partition types and exit\n"
-msgstr "     --list-types      ispiše popis podržanih particijske vrsta i iziđe\n"
+msgstr "     --list-types      ispiše popis podržanih particijske tipova i iziđe\n"
 
 #: disk-utils/partx.c:776 sys-utils/fallocate.c:101
 msgid " -v, --verbose        verbose mode\n"
@@ -3986,7 +3989,7 @@ msgstr "%s: nije moguće izbrisati particije"
 msgid "%s: partitioned loop devices unsupported"
 msgstr "%s: particioniranje loop-uređaja nije podržano"
 
-#: disk-utils/partx.c:1031
+#: disk-utils/partx.c:1030
 #, c-format
 msgid "%s: failed to initialize blkid prober"
 msgstr "%s: nije uspjelo inicijalizirati blkid sondu (identifikator blokova)"
@@ -4252,7 +4255,7 @@ msgstr ""
 
 #: disk-utils/sfdisk.c:766
 msgid "unrecognized partition table type"
-msgstr "neprepoznata vrsta particijske tablice"
+msgstr "neprepoznati tip particijske tablice"
 
 #: disk-utils/sfdisk.c:819
 #, c-format
@@ -4346,17 +4349,17 @@ msgstr "neočekivani argumenti"
 #: disk-utils/sfdisk.c:1173
 #, c-format
 msgid "%s: partition %zu: failed to get partition type"
-msgstr "%s: particija %zu: nije uspjelo doznati vrstu particije"
+msgstr "%s: particija %zu: nije uspjelo doznati tip particije"
 
 #: disk-utils/sfdisk.c:1196
 #, c-format
 msgid "failed to parse %s partition type '%s'"
-msgstr "nije uspjelo raščlaniti vrstu particije %s „%s“"
+msgstr "nije uspjelo raščlaniti tip particije %s „%s“"
 
 #: disk-utils/sfdisk.c:1200
 #, c-format
 msgid "%s: partition %zu: failed to set partition type"
-msgstr "%s: particija %zu: nije uspjelo postaviti vrstu particije"
+msgstr "%s: particija %zu: nije uspjelo postaviti tip particije"
 
 #: disk-utils/sfdisk.c:1238
 #, c-format
@@ -4434,7 +4437,7 @@ msgstr " Ulazni format:\n"
 
 #: disk-utils/sfdisk.c:1489
 msgid "   <start>, <size>, <type>, <bootable>\n"
-msgstr "   <početak>, <veličina>, <vrsta>, <bootable>\n"
+msgstr "   <početak>, <veličina>, <tip>, <bootable>\n"
 
 #: disk-utils/sfdisk.c:1492
 msgid ""
@@ -4458,7 +4461,7 @@ msgstr ""
 
 #: disk-utils/sfdisk.c:1502
 msgid "   <type>   The partition type.  Default is a Linux data partition.\n"
-msgstr "   <vrsta>   Vrsta particije (zadano: podatkovna Linux particija).\n"
+msgstr "   <tip>       Tip particije (zadano: podatkovna Linux particija).\n"
 
 #: disk-utils/sfdisk.c:1503
 msgid "            MBR: hex or L,S,Ex,X,U,R,V shortcuts.\n"
@@ -4591,8 +4594,8 @@ msgid ""
 "to override the default."
 msgstr ""
 "\n"
-"sfdisk će kreirati novu oznaku diska „%s“.\n"
-"Koristite „label: <ime>“ za promjenu vrste oznake particije\n"
+"sfdisk će stvoriti novu oznaku diska „%s“.\n"
+"Koristite „label: <ime>“ za promjenu tipa oznake particije\n"
 "prije kreiranja prve particije."
 
 #: disk-utils/sfdisk.c:1856
@@ -4708,7 +4711,7 @@ msgstr " -s, --show-size [<uređaj>...]     izlista veličine svih ili navedenih
 
 #: disk-utils/sfdisk.c:2055
 msgid " -T, --list-types                  print the recognized types (see -X)\n"
-msgstr " -T, --list-types                  ispiše sve poznate vrste (v. -X)\n"
+msgstr " -T, --list-types                  ispiše sve poznate tipove (v. -X)\n"
 
 #: disk-utils/sfdisk.c:2056
 msgid " -V, --verify [<dev> ...]          test whether partitions seem correct\n"
@@ -4727,7 +4730,7 @@ msgstr ""
 #: disk-utils/sfdisk.c:2061
 msgid " --part-type <dev> <part> [<type>] print or change partition type\n"
 msgstr ""
-" --part-type <uređaj> <particija> [<vrsta>]    ispiše ili promijeni vrstu\n"
+" --part-type <uređaj> <particija> [<tip>]        ispiše ili promijeni tip\n"
 "                                                 particije\n"
 
 #: disk-utils/sfdisk.c:2062
@@ -4760,7 +4763,7 @@ msgstr " <particija>               broj particije\n"
 
 #: disk-utils/sfdisk.c:2072
 msgid " <type>                    partition type, GUID for GPT, hex for MBR\n"
-msgstr " <vrsta>                   vrsta particije: GUID za GPT, hex za MBR\n"
+msgstr " <tip>                    tip particije: GUID za GPT, hex za MBR\n"
 
 #: disk-utils/sfdisk.c:2075
 msgid " -a, --append              append partitions to existing partition table\n"
@@ -4832,11 +4835,11 @@ msgstr " -w, --wipe <kȁd>          briše potpise (%s, %s or %s)\n"
 
 #: disk-utils/sfdisk.c:2099
 msgid " -X, --label <name>        specify label type (dos, gpt, ...)\n"
-msgstr " -X, --label <vrsta>       specificira vrstu oznake (dos, gpt, ...)\n"
+msgstr " -X, --label <tip>         specificira tip oznake (dos, gpt, ...)\n"
 
 #: disk-utils/sfdisk.c:2100
 msgid " -Y, --label-nested <name> specify nested label type (dos, bsd)\n"
-msgstr " -Y, --label-nested <vrsta>  specificira vrstu ugniježđene oznake (dos, bsd)\n"
+msgstr " -Y, --label-nested <tip>  specificira tip ugniježđene oznake (dos, bsd)\n"
 
 #: disk-utils/sfdisk.c:2102
 msgid " -G, --show-pt-geometry    deprecated, alias to --show-geometry\n"
@@ -5639,195 +5642,183 @@ msgstr "Apple TV recovery"
 msgid "Apple Core storage"
 msgstr "Apple Core storage"
 
-#: include/pt-gpt-partnames.h:194
-#, fuzzy
-#| msgid "Apple boot"
-msgid "Apple Silicon boot"
-msgstr "Apple boot"
-
-#: include/pt-gpt-partnames.h:195
-#, fuzzy
-#| msgid "Apple TV recovery"
-msgid "Apple Silicon recovery"
-msgstr "Apple TV recovery"
-
-#: include/pt-gpt-partnames.h:198 include/pt-mbr-partnames.h:77
+#: include/pt-gpt-partnames.h:196 include/pt-mbr-partnames.h:77
 msgid "Solaris boot"
 msgstr "Solaris boot"
 
-#: include/pt-gpt-partnames.h:199
+#: include/pt-gpt-partnames.h:197
 msgid "Solaris root"
 msgstr "Solaris root"
 
-#: include/pt-gpt-partnames.h:201
+#: include/pt-gpt-partnames.h:199
 msgid "Solaris /usr & Apple ZFS"
 msgstr "Solaris /usr & Apple ZFS"
 
-#: include/pt-gpt-partnames.h:202
+#: include/pt-gpt-partnames.h:200
 msgid "Solaris swap"
 msgstr "Solaris swap"
 
-#: include/pt-gpt-partnames.h:203
+#: include/pt-gpt-partnames.h:201
 msgid "Solaris backup"
 msgstr "Solaris backup"
 
-#: include/pt-gpt-partnames.h:204
+#: include/pt-gpt-partnames.h:202
 msgid "Solaris /var"
 msgstr "Solaris /var"
 
-#: include/pt-gpt-partnames.h:205
+#: include/pt-gpt-partnames.h:203
 msgid "Solaris /home"
 msgstr "Solaris /home"
 
-#: include/pt-gpt-partnames.h:206
+#: include/pt-gpt-partnames.h:204
 msgid "Solaris alternate sector"
 msgstr "Solaris alternate sector"
 
-#: include/pt-gpt-partnames.h:207
+#: include/pt-gpt-partnames.h:205
 msgid "Solaris reserved 1"
 msgstr "Solaris reserved 1"
 
-#: include/pt-gpt-partnames.h:208
+#: include/pt-gpt-partnames.h:206
 msgid "Solaris reserved 2"
 msgstr "Solaris reserved 2"
 
-#: include/pt-gpt-partnames.h:209
+#: include/pt-gpt-partnames.h:207
 msgid "Solaris reserved 3"
 msgstr "Solaris reserved 3"
 
-#: include/pt-gpt-partnames.h:210
+#: include/pt-gpt-partnames.h:208
 msgid "Solaris reserved 4"
 msgstr "Solaris reserved 4"
 
-#: include/pt-gpt-partnames.h:211
+#: include/pt-gpt-partnames.h:209
 msgid "Solaris reserved 5"
 msgstr "Solaris reserved 5"
 
-#: include/pt-gpt-partnames.h:219
+#: include/pt-gpt-partnames.h:217
 msgid "NetBSD swap"
 msgstr "NetBSD swap"
 
-#: include/pt-gpt-partnames.h:220
+#: include/pt-gpt-partnames.h:218
 msgid "NetBSD FFS"
 msgstr "NetBSD FFS"
 
-#: include/pt-gpt-partnames.h:221
+#: include/pt-gpt-partnames.h:219
 msgid "NetBSD LFS"
 msgstr "NetBSD LFS"
 
-#: include/pt-gpt-partnames.h:222
+#: include/pt-gpt-partnames.h:220
 msgid "NetBSD concatenated"
 msgstr "NetBSD concatenated"
 
-#: include/pt-gpt-partnames.h:223
+#: include/pt-gpt-partnames.h:221
 msgid "NetBSD encrypted"
 msgstr "NetBSD encrypted"
 
-#: include/pt-gpt-partnames.h:224
+#: include/pt-gpt-partnames.h:222
 msgid "NetBSD RAID"
 msgstr "NetBSD RAID"
 
-#: include/pt-gpt-partnames.h:227
+#: include/pt-gpt-partnames.h:225
 msgid "ChromeOS kernel"
 msgstr "ChromeOS kernel"
 
-#: include/pt-gpt-partnames.h:228
+#: include/pt-gpt-partnames.h:226
 msgid "ChromeOS root fs"
 msgstr "ChromeOS root FS"
 
-#: include/pt-gpt-partnames.h:229
+#: include/pt-gpt-partnames.h:227
 msgid "ChromeOS reserved"
 msgstr "ChromeOS reserved"
 
-#: include/pt-gpt-partnames.h:232
+#: include/pt-gpt-partnames.h:230
 msgid "MidnightBSD data"
 msgstr "MidnightBSD data"
 
-#: include/pt-gpt-partnames.h:233
+#: include/pt-gpt-partnames.h:231
 msgid "MidnightBSD boot"
 msgstr "MidnightBSD boot"
 
-#: include/pt-gpt-partnames.h:234
+#: include/pt-gpt-partnames.h:232
 msgid "MidnightBSD swap"
 msgstr "MidnightBSD swap"
 
-#: include/pt-gpt-partnames.h:235
+#: include/pt-gpt-partnames.h:233
 msgid "MidnightBSD UFS"
 msgstr "MidnightBSD UFS"
 
-#: include/pt-gpt-partnames.h:236
+#: include/pt-gpt-partnames.h:234
 msgid "MidnightBSD ZFS"
 msgstr "MidnightBSD ZFS"
 
-#: include/pt-gpt-partnames.h:237
+#: include/pt-gpt-partnames.h:235
 msgid "MidnightBSD Vinum"
 msgstr "MidnightBSD Vinum"
 
-#: include/pt-gpt-partnames.h:240
+#: include/pt-gpt-partnames.h:238
 msgid "Ceph Journal"
 msgstr "Ceph Journal"
 
-#: include/pt-gpt-partnames.h:241
+#: include/pt-gpt-partnames.h:239
 msgid "Ceph Encrypted Journal"
 msgstr "Ceph Encrypted Journal"
 
-#: include/pt-gpt-partnames.h:242
+#: include/pt-gpt-partnames.h:240
 msgid "Ceph OSD"
 msgstr "Ceph OSD"
 
-#: include/pt-gpt-partnames.h:243
+#: include/pt-gpt-partnames.h:241
 msgid "Ceph crypt OSD"
 msgstr "Ceph crypt OSD"
 
-#: include/pt-gpt-partnames.h:244
+#: include/pt-gpt-partnames.h:242
 msgid "Ceph disk in creation"
 msgstr "Ceph disk in creation"
 
-#: include/pt-gpt-partnames.h:245
+#: include/pt-gpt-partnames.h:243
 msgid "Ceph crypt disk in creation"
 msgstr "Ceph crypt disk in creation"
 
-#: include/pt-gpt-partnames.h:248 include/pt-mbr-partnames.h:105
+#: include/pt-gpt-partnames.h:246 include/pt-mbr-partnames.h:105
 msgid "VMware VMFS"
 msgstr "VMware VMFS"
 
-#: include/pt-gpt-partnames.h:249
+#: include/pt-gpt-partnames.h:247
 msgid "VMware Diagnostic"
 msgstr "VMware Diagnostic"
 
-#: include/pt-gpt-partnames.h:250
+#: include/pt-gpt-partnames.h:248
 msgid "VMware Virtual SAN"
 msgstr "VMware Virtual SAN"
 
-#: include/pt-gpt-partnames.h:251
+#: include/pt-gpt-partnames.h:249
 msgid "VMware Virsto"
 msgstr "VMware Virsto"
 
-#: include/pt-gpt-partnames.h:252
+#: include/pt-gpt-partnames.h:250
 msgid "VMware Reserved"
 msgstr "VMware Reserved"
 
-#: include/pt-gpt-partnames.h:255
+#: include/pt-gpt-partnames.h:253
 msgid "OpenBSD data"
 msgstr "OpenBSD data"
 
-#: include/pt-gpt-partnames.h:258
+#: include/pt-gpt-partnames.h:256
 msgid "QNX6 file system"
 msgstr "QNX6 file system"
 
-#: include/pt-gpt-partnames.h:261
+#: include/pt-gpt-partnames.h:259
 msgid "Plan 9 partition"
 msgstr "Plan 9 partition"
 
-#: include/pt-gpt-partnames.h:264
+#: include/pt-gpt-partnames.h:262
 msgid "HiFive FSBL"
 msgstr "HiFive FSBL"
 
-#: include/pt-gpt-partnames.h:265
+#: include/pt-gpt-partnames.h:263
 msgid "HiFive BBL"
 msgstr "HiFive BBL"
 
-#: include/pt-gpt-partnames.h:268
+#: include/pt-gpt-partnames.h:266
 msgid "Haiku BFS"
 msgstr "Haiku BFS"
 
@@ -6250,7 +6241,7 @@ msgstr "Broj particije"
 #: libfdisk/src/ask.c:1031
 #, c-format
 msgid "Created a new partition %d of type '%s' and of size %s."
-msgstr "Kreirana je nova particija %d vrste „%s“ i veličine %s."
+msgstr "Kreirana je nova particija %d tipa „%s“ i veličine %s."
 
 #: libfdisk/src/bsd.c:165
 #, c-format
@@ -6281,7 +6272,7 @@ msgstr "Uređaj %s ne sadrži BSD oznaku diska"
 
 #: libfdisk/src/bsd.c:383
 msgid "Do you want to create a BSD disklabel?"
-msgstr "Želite li kreirati BSD oznaku diska?"
+msgstr "Želite li stvoriti BSD oznaku diska?"
 
 #: libfdisk/src/bsd.c:449
 msgid "Disk"
@@ -6748,7 +6739,7 @@ msgstr "Za više particija, zamijenite primarnu particiju s proširenom particij
 
 #: libfdisk/src/dos.c:2012
 msgid "Partition type"
-msgstr "Vrsta particije"
+msgstr "Tip particije"
 
 #: libfdisk/src/dos.c:2016
 #, c-format
@@ -6778,7 +6769,7 @@ msgstr "numerirano od 5"
 #: libfdisk/src/dos.c:2064
 #, c-format
 msgid "Invalid partition type `%c'."
-msgstr "Nevaljana vrsta particije „%c“."
+msgstr "Nevaljani tip particije „%c“."
 
 #: libfdisk/src/dos.c:2082
 #, c-format
@@ -6792,13 +6783,13 @@ msgstr "Identifikator diska"
 #: libfdisk/src/dos.c:2357
 msgid "Type 0 means free space to many systems. Having partitions of type 0 is probably unwise."
 msgstr ""
-"Većini sustava, vrsta 0 znači „slobodni prostor“.\n"
-"Zato i nije mudro imati particije vrsta 0."
+"Većini sustava, tip 0 znači „slobodni prostor“.\n"
+"Zato i nije mudro imati particije tip 0."
 
 #: libfdisk/src/dos.c:2362
 msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
 msgstr ""
-"Nije moguće promijeniti vrstu proširene particije ako ju već koriste logičke\n"
+"Nije moguće promijeniti tip proširene particije ako ju već koriste logičke\n"
 "particije. Izbrišite prvo logičke particije."
 
 #: libfdisk/src/dos.c:2684
@@ -7072,7 +7063,7 @@ msgstr "Sector %ju je već iskorišten."
 #: libfdisk/src/gpt.c:2550
 #, c-format
 msgid "Could not create partition %zu"
-msgstr "Nije (bilo) moguće kreirati particiju %zu"
+msgstr "Nije (bilo) moguće stvoriti particiju %zu"
 
 #: libfdisk/src/gpt.c:2557
 #, c-format
@@ -7175,7 +7166,7 @@ msgstr "Flag %s na particiji %zu je sad deaktiviran."
 
 #: libfdisk/src/gpt.c:3220
 msgid "Type-UUID"
-msgstr "Vrsta-UUID"
+msgstr "Tip-UUID"
 
 #: libfdisk/src/gpt.c:3221
 msgid "UUID"
@@ -7382,7 +7373,7 @@ msgstr "Particija za odlagalište (swap) ne postoji."
 
 #: libfdisk/src/sgi.c:709
 msgid "The swap partition has no swap type."
-msgstr "Particija za odlagalište (swap) nije od vrste prikladne za odlagalište (swap)"
+msgstr "Particija za odlagalište (swap) nije od tipa prikladne za odlagalište (swap)"
 
 #: libfdisk/src/sgi.c:712
 msgid "You have chosen an unusual bootfile name."
@@ -7413,7 +7404,7 @@ msgstr "Prva %s"
 msgid "It is highly recommended that the eleventh partition covers the entire disk and is of type 'SGI volume'."
 msgstr ""
 "Preporučuje se da jedanaesta particija pokrije cijeli disk\n"
-"i da bude vrste „SGI volumen“."
+"i da bude tipa „SGI volumen“."
 
 #: libfdisk/src/sgi.c:917
 #, c-format
@@ -7434,7 +7425,7 @@ msgstr "Kreirana je nova oznaka diska SGI."
 
 #: libfdisk/src/sgi.c:1075
 msgid "Sorry, only for non-empty partitions you can change the tag."
-msgstr "Pardon, ali samo ne-praznim particijama možete mijenjati vrstu."
+msgstr "Pardon, ali samo ne-praznim particijama možete mijenjati tip."
 
 #: libfdisk/src/sgi.c:1081
 msgid "Consider leaving partition 9 as volume header (0), and partition 11 as entire volume (6), as IRIX expects it."
@@ -7445,10 +7436,10 @@ msgstr ""
 #: libfdisk/src/sgi.c:1090
 msgid "It is highly recommended that the partition at offset 0 is of type \"SGI volhdr\", the IRIX system will rely on it to retrieve from its directory standalone tools like sash and fx. Only the \"SGI volume\" entire disk section may violate this. Are you sure about tagging this partition differently?"
 msgstr ""
-"Preporučuje se da particija na odmaku 0 bude vrste „SGI volhdr“.\n"
+"Preporučuje se da particija na odmaku 0 bude tipa „SGI volhdr“.\n"
 "IRIX to očekuje kada traži programe kao što su ‘sash’ i ‘fx’. Jedina iznimka\n"
 "ovoj preporuci je ako „SGI volumen“ zauzima cijeli disk.\n"
-"Jeste li sigurni da želite promijeniti vrstu ove particije?"
+"Jeste li sigurni da želite promijeniti tip ove particije?"
 
 #: libfdisk/src/sun.c:39
 msgid "Unassigned"
@@ -7575,7 +7566,7 @@ msgstr ""
 msgid "It is highly recommended that the third partition covers the whole disk and is of type `Whole disk'"
 msgstr ""
 "Preporučuje se da treća particija prekrije cijeli disk\n"
-"i da bude vrste „cijeli disk“ („Whole disk“)."
+"i da bude tipa „cijeli disk“ („Whole disk“)."
 
 #: libfdisk/src/sun.c:601
 #, c-format
@@ -7706,12 +7697,12 @@ msgstr "nije moguće naći izvor montiranja %s u %s"
 #: libmount/src/context_mount.c:1758
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
-msgstr "na %s je pronađeno nekoliko datotečnih sustava; rabite -t <vrsta> ili wipefs(8)"
+msgstr "na %s je pronađeno nekoliko datotečnih sustava; rabite -t <tip> ili wipefs(8)"
 
 #: libmount/src/context_mount.c:1763
 #, c-format
 msgid "failed to determine filesystem type"
-msgstr "nije uspjelo odrediti vrstu datotečnog sustava"
+msgstr "nije uspjelo odrediti tip datotečnog sustava"
 
 #: libmount/src/context_mount.c:1764
 #, c-format
@@ -7867,14 +7858,14 @@ msgstr "loša opcija; nije podržano premještanje montiranja ispod dijeljenog m
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 "loša opcija; za nekoliko datotečnih sustava (npr. nfs, cifs) možda će vam\n"
-"zatrebati pomoćni program /sbin/mount.<vrsta>"
+"zatrebati pomoćni program /sbin/mount.<tip>"
 
 #: libmount/src/context_mount.c:1925
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr ""
 "krivi datotečni sustav / loša opcija / oštećeni superblok na %s,\n"
-"nedostaje codepage ili pomoćni program odnosno neka druga greška"
+"manjka codepage ili pomoćni program ili neka druga greška"
 
 #: libmount/src/context_mount.c:1932
 #, c-format
@@ -7889,12 +7880,12 @@ msgstr "nije moguće pročitati superblok na %s"
 #: libmount/src/context_mount.c:1944
 #, c-format
 msgid "unknown filesystem type '%s'"
-msgstr "nepoznata vrsta datotečnog sustava „%s“"
+msgstr "nepoznati tip datotečnog sustava „%s“"
 
 #: libmount/src/context_mount.c:1947
 #, c-format
 msgid "unknown filesystem type"
-msgstr "nepoznata vrsta datotečnog sustava"
+msgstr "nepoznati tip datotečnog sustava"
 
 #: libmount/src/context_mount.c:1956
 #, c-format
@@ -8051,7 +8042,7 @@ msgstr "%s: nije moguće ispitati uređaj"
 #: lib/swapprober.c:37
 #, c-format
 msgid "%s: ambiguous probing result; use wipefs(8)"
-msgstr "%s: višeznačni rezultat ispitivanja; koristite wipefs(8)"
+msgstr "%s: dvosmisleni rezultat ispitivanja; koristite wipefs(8)"
 
 #: lib/swapprober.c:39
 #, c-format
@@ -8105,7 +8096,7 @@ msgstr "polje %s je predugo"
 #: login-utils/chfn.c:122 login-utils/chsh.c:201
 #, c-format
 msgid "%s: has illegal characters"
-msgstr "%s: sadrži nevažeće znakove"
+msgstr "%s: sadrži nelegalne znakove"
 
 #: login-utils/chfn.c:151 login-utils/chfn.c:157 login-utils/chfn.c:163
 #: login-utils/chfn.c:169
@@ -8890,7 +8881,7 @@ msgstr "navedeno je previše stupaca; maksimum je %zu stupaca"
 
 #: login-utils/lslogins.c:357 sys-utils/lsipc.c:472
 msgid "unsupported time type"
-msgstr "nepodržana vrsta vremena"
+msgstr "nepodržani tip vremena"
 
 #: login-utils/lslogins.c:361
 msgid "failed to compose time string"
@@ -9098,7 +9089,7 @@ msgstr "Ovaj račun nije trenutno dostupan.\n"
 
 #: login-utils/su-common.c:232
 msgid " (core dumped)"
-msgstr " (**krah**: stanje (dump) memorije je zapisano!)"
+msgstr " (ispis memorije je spremljen!)"
 
 #: login-utils/su-common.c:280
 msgid "change owner or mode for pseudo-terminal failed"
@@ -9149,7 +9140,7 @@ msgstr "nije moguće postaviti signalnu masku"
 #: login-utils/su-common.c:544 term-utils/script.c:955
 #: term-utils/scriptlive.c:296
 msgid "failed to create pseudo-terminal"
-msgstr "nije uspjelo kreirati pseudo-terminal"
+msgstr "nije uspjelo stvoriti pseudo-terminal"
 
 #: login-utils/su-common.c:559
 msgid "cannot set child signal handler"
@@ -9158,7 +9149,7 @@ msgstr "nije moguće postaviti rukovatelja signala potomka"
 #: login-utils/su-common.c:569 term-utils/script.c:965
 #: term-utils/scriptlive.c:303
 msgid "cannot create child process"
-msgstr "nije moguće kreirati potomka (dijete-proces)"
+msgstr "nije moguće stvoriti potomka (dijete-proces)"
 
 #: login-utils/su-common.c:588 sys-utils/nsenter.c:489
 #: sys-utils/switch_root.c:189
@@ -9531,7 +9522,7 @@ msgstr "nije moguće otvoriti privremenu datoteku"
 #: login-utils/vipw.c:152
 #, c-format
 msgid "%s: create a link to %s failed"
-msgstr "%s: kreirati poveznicu na %s nije uspjelo"
+msgstr "%s: stvoriti poveznicu na %s nije uspjelo"
 
 #: login-utils/vipw.c:160
 #, c-format
@@ -9696,7 +9687,7 @@ msgstr " -u, --usages <popis>       filtrira po \"uporabi\" (npr. -u filesystem,
 #: misc-utils/blkid.c:99
 msgid " -n, --match-types <list>   filter by filesystem type (e.g. -n vfat,ext3)\n"
 msgstr ""
-" -n, --match-types <popis>  filtrira po vrsti datotečnog sustava\n"
+" -n, --match-types <popis>  filtrira po tipu datotečnog sustava\n"
 "                              (npr. -n vfat,ext3)\n"
 
 #: misc-utils/blkid.c:100
@@ -9791,7 +9782,7 @@ msgstr "nije uspjelo iskoristiti savjet za probanje %s"
 
 #: misc-utils/blkid.c:959
 msgid "The lookup option requires a search type specified using -t"
-msgstr "Opcija -l za gledanje zahtijeva za traženje vrstu specificiranu uz opciju -t"
+msgstr "Opcija -l za gledanje zahtijeva za traženje tipa specificiranog uz opciju -t"
 
 #: misc-utils/cal.c:408
 msgid "invalid month argument"
@@ -9803,7 +9794,7 @@ msgstr "nevaljani argument za tjedan"
 
 #: misc-utils/cal.c:418
 msgid "illegal week value: use 1-54"
-msgstr "pogrešna vrijednost za tjedan: koristite 1-54"
+msgstr "nelegalna vrijednost za tjedan: koristite 1-54"
 
 #: misc-utils/cal.c:470
 #, c-format
@@ -9812,16 +9803,16 @@ msgstr "vremenski žig nije razumljiv ili je nepoznato ime mjeseca: %s"
 
 #: misc-utils/cal.c:479
 msgid "illegal day value"
-msgstr "pogrešna vrijednost za dan"
+msgstr "nelegalna vrijednost za dan"
 
 #: misc-utils/cal.c:481 misc-utils/cal.c:505
 #, c-format
 msgid "illegal day value: use 1-%d"
-msgstr "pogrešna vrijednost za dan: koristite 1-%d"
+msgstr "nelegalna vrijednost za dan: koristite 1-%d"
 
 #: misc-utils/cal.c:485 misc-utils/cal.c:493
 msgid "illegal month value: use 1-12"
-msgstr "pogrešna vrijednost za mjesec: koristite 1-12"
+msgstr "nelegalna vrijednost za mjesec: koristite 1-12"
 
 #: misc-utils/cal.c:489
 #, c-format
@@ -9830,16 +9821,16 @@ msgstr "nepoznato ime mjeseca : %s"
 
 #: misc-utils/cal.c:496 misc-utils/cal.c:500
 msgid "illegal year value"
-msgstr "pogrešna vrijednost za godinu"
+msgstr "nelegalna vrijednost za godinu"
 
 #: misc-utils/cal.c:498
 msgid "illegal year value: use positive integer"
-msgstr "pogrešna vrijednost za godinu: koristite prirodni broj (> 0)"
+msgstr "nelegalna vrijednost za godinu: koristite prirodni broj (> 0)"
 
 #: misc-utils/cal.c:534 misc-utils/cal.c:547
 #, c-format
 msgid "illegal week value: year %d doesn't have week %d"
-msgstr "pogrešna vrijednost za tjedan: godina %d nema %d tjedan"
+msgstr "nelegalna vrijednost za tjedan: godina %d nema %d tjedan"
 
 #: misc-utils/cal.c:1248
 #, c-format
@@ -10013,7 +10004,7 @@ msgstr "korijen datotečnog sustava"
 
 #: misc-utils/findmnt.c:107 misc-utils/lsblk.c:174
 msgid "filesystem type"
-msgstr "vrsta datotečnog sustava"
+msgstr "tip datotečnog sustava"
 
 #: misc-utils/findmnt.c:108
 msgid "FS specific mount options"
@@ -10323,7 +10314,7 @@ msgstr " -M, --mountpoint <dir>  direktorij točke montiranja\n"
 
 #: misc-utils/findmnt.c:1370
 msgid " -t, --types <list>     limit the set of filesystems by FS types\n"
-msgstr " -t, --types <popis>    datotečne sustave ograniči na popisane vrste\n"
+msgstr " -t, --types <popis>    datotečne sustave ograniči na popisane tipove\n"
 
 #: misc-utils/findmnt.c:1371
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
@@ -10495,12 +10486,12 @@ msgstr "opcije prioriteta za odlagalište (swaparea) nisu razumljive"
 #: misc-utils/findmnt-verify.c:421
 #, c-format
 msgid "do not check %s FS type (pseudo/net)"
-msgstr "ne provjeravati vrstu datotečnog sustava %s (pseudo/net)"
+msgstr "ne provjeravati tip datotečnog sustava %s (pseudo/net)"
 
 #: misc-utils/findmnt-verify.c:433
 msgid "\"none\" FS type is recommended for bind or move oprations only"
 msgstr ""
-"vrsta datotečnog sustava \"none\" preporučuje se samo za\n"
+"tip datotečnog sustava \"none\" preporučuje se samo za\n"
 "„bind“ ili „move“ operacije"
 
 #: misc-utils/findmnt-verify.c:445
@@ -10515,7 +10506,7 @@ msgstr "nepoznat razlog"
 #: misc-utils/findmnt-verify.c:455 misc-utils/findmnt-verify.c:457
 #, c-format
 msgid "cannot detect on-disk filesystem type (%s)"
-msgstr "nije moguće prepoznati vrstu (%s) datotečnog sustava na disku"
+msgstr "nije moguće prepoznati tip (%s) datotečnog sustava na disku"
 
 #: misc-utils/findmnt-verify.c:467
 #, c-format
@@ -10530,7 +10521,7 @@ msgstr "izgleda da trenutna jezgra (kernel) ne podržava %s na disku"
 #: misc-utils/findmnt-verify.c:475
 #, c-format
 msgid "FS type is %s"
-msgstr "vrsta datotečnog sustava je %s"
+msgstr "tip datotečnog sustava je %s"
 
 #: misc-utils/findmnt-verify.c:492
 #, c-format
@@ -10635,7 +10626,7 @@ msgstr " -u, --unquoted                ne citira izlazne podatke\n"
 
 #: misc-utils/getopt.c:409 misc-utils/getopt.c:468
 msgid "missing optstring argument"
-msgstr "nedostaje opcijski_string"
+msgstr "nema optstring argumenta"
 
 #: misc-utils/getopt.c:463
 msgid "internal error, contact the author."
@@ -10847,7 +10838,7 @@ msgid ""
 "                              (lower precedence than minimize/maximize)\n"
 msgstr ""
 " -O, --keep-oldest        zadrži najstariju od više istih datoteka\n"
-"                            (niži prioritet neko minimizira/maksimizira)\n"
+"                            (niži prioritet od minimizira/maksimizira)\n"
 
 #: misc-utils/hardlink.c:1139
 msgid " -x, --exclude <regex>      regular expression to exclude files\n"
@@ -11384,11 +11375,11 @@ msgstr "OZNAKA particije"
 
 #: misc-utils/lsblk.c:193
 msgid "partition type name"
-msgstr "ime vrste particije"
+msgstr "ime tipa particije"
 
 #: misc-utils/lsblk.c:194
 msgid "partition type code or UUID"
-msgstr "kȏd vrste particije ili UUID particije"
+msgstr "kȏd tipa particije ili UUID particije"
 
 #: misc-utils/lsblk.c:196
 msgid "path to the device node"
@@ -11404,7 +11395,7 @@ msgstr "interno jezgrino (kernel) ime nadređenog uređaja"
 
 #: misc-utils/lsblk.c:199
 msgid "partition table type"
-msgstr "vrsta particijske tablice"
+msgstr "tip particijske tablice"
 
 #: misc-utils/lsblk.c:200
 msgid "partition table identifier (usually UUID)"
@@ -11472,11 +11463,11 @@ msgstr "lokacija na koju je uređaj montiran"
 
 #: misc-utils/lsblk.c:216
 msgid "device transport type"
-msgstr "vrsta transporta podataka uređaja"
+msgstr "tip transporta podataka uređaja"
 
 #: misc-utils/lsblk.c:217
 msgid "device type"
-msgstr "vrsta uređaja"
+msgstr "tip uređaja"
 
 #: misc-utils/lsblk.c:219
 msgid "device vendor"
@@ -11716,7 +11707,7 @@ msgstr "ID uređaja s datoekom (koji sadrži datoteku)"
 
 #: misc-utils/lsfd.c:123
 msgid "device type (blk, char, or nodev)"
-msgstr "vrsta uređaja (blk, char, or nodev)"
+msgstr "tip uređaja (blk, char, or nodev)"
 
 #: misc-utils/lsfd.c:125
 msgid "flags specified when opening the file"
@@ -11804,7 +11795,7 @@ msgstr "ID dretve procesa koja otvara datoteku"
 
 #: misc-utils/lsfd.c:167
 msgid "file type"
-msgstr "vrsta datoteke"
+msgstr "tip datoteke"
 
 #: misc-utils/lsfd.c:169
 msgid "user ID number of the process"
@@ -11876,7 +11867,7 @@ msgstr "blok uređaji"
 
 #: misc-utils/lsfd.c:275
 msgid "unknown types"
-msgstr "nepoznate vrste"
+msgstr "nepoznatog tipa"
 
 #: misc-utils/lsfd.c:350
 msgid "too many columns are added via filter expression"
@@ -11959,7 +11950,7 @@ msgstr "prekratka specifikacija za brojilo: -C/--counter %s"
 #: misc-utils/lsfd.c:1349 misc-utils/lsfd.c:1355
 #, c-format
 msgid "no name for counter: -C/--counter %s"
-msgstr "nedostaje ime za brojilo: -C/--counter %s"
+msgstr "nema imena za brojilo: -C/--counter %s"
 
 #: misc-utils/lsfd.c:1359
 #, c-format
@@ -12056,7 +12047,7 @@ msgstr "greška: nije moguće dodati stupac tabeli: %s"
 #: misc-utils/lsfd-filter.c:759
 #, c-format
 msgid "error: unsupported column data type: %d, column: %s"
-msgstr "greška: nepodržana vrsta podataka za stupac: %d, stupac: %s"
+msgstr "greška: nepodržani tip podataka za stupac: %d, stupac: %s"
 
 #: misc-utils/lsfd-filter.c:804 misc-utils/lsfd-filter.c:834
 #, c-format
@@ -12066,24 +12057,24 @@ msgstr "greška: prazna desna strana izraza: %s"
 #: misc-utils/lsfd-filter.c:970
 #, c-format
 msgid "unexpected type in filter application: %s"
-msgstr "neočekivana vrsta u primijeni filtra: %s"
+msgstr "neočekivani tip u primijeni filtra: %s"
 
 #: misc-utils/lsfd-filter.c:1071
 #, c-format
 msgid "error: unexpected operand type %s for: %s"
-msgstr "greška: neočekivani vrsta %s operanda za: %s"
+msgstr "greška: neočekivani tip %s operanda za: %s"
 
 #: misc-utils/lsfd-filter.c:1194 misc-utils/lsfd-filter.c:1227
 #: misc-utils/lsfd-filter.c:1249
 #, c-format
 msgid "error: unexpected left operand type %s for: %s"
-msgstr "greška: neočekivana vrsta lijevog operanda %s za: %s"
+msgstr "greška: neočekivani tip lijevog operanda %s za: %s"
 
 #: misc-utils/lsfd-filter.c:1202 misc-utils/lsfd-filter.c:1235
 #: misc-utils/lsfd-filter.c:1257
 #, c-format
 msgid "error: unexpected right operand type %s for: %s"
-msgstr "greška: neočekivana vrsta desnog operanda %s za: %s"
+msgstr "greška: neočekivani tip desnog operanda %s za: %s"
 
 #: misc-utils/lsfd-filter.c:1264
 #, c-format
@@ -12119,7 +12110,7 @@ msgstr "PID procesa koji drži bravu (lock)"
 
 #: misc-utils/lslocks.c:77
 msgid "kind of lock"
-msgstr "vrsta brave (lock)"
+msgstr "tip brave (lock)"
 
 #: misc-utils/lslocks.c:78
 msgid "size of the lock"
@@ -12295,7 +12286,7 @@ msgstr ""
 
 #: misc-utils/namei.c:408
 msgid "pathname argument is missing"
-msgstr "nedostaje argument za stazu (pathname)"
+msgstr "nema argumenta za stazu (pathname)"
 
 #: misc-utils/namei.c:417
 msgid "failed to allocate GID cache"
@@ -12466,7 +12457,7 @@ msgstr "pročitati broj"
 
 #: misc-utils/uuidd.c:194
 msgid "bad response length"
-msgstr "pogrešna duljina odgovora"
+msgstr "loša duljina odgovora"
 
 #: misc-utils/uuidd.c:245
 #, c-format
@@ -12721,7 +12712,7 @@ msgstr "ime varijante"
 
 #: misc-utils/uuidparse.c:78
 msgid "type name"
-msgstr "ime vrste"
+msgstr "ime tipa"
 
 #: misc-utils/uuidparse.c:79
 msgid "timestamp"
@@ -12832,7 +12823,7 @@ msgstr " -l                prikaže efektivne staže pretraživanja\n"
 
 #: misc-utils/whereis.c:655
 msgid "option -f is missing"
-msgstr "nedostaje opcija -f"
+msgstr "nema opcije -f"
 
 #: misc-utils/wipefs.c:109
 msgid "partition/filesystem UUID"
@@ -12844,7 +12835,7 @@ msgstr "duljina magičnog stringa"
 
 #: misc-utils/wipefs.c:112
 msgid "superblok type"
-msgstr "vrsta superbloka"
+msgstr "tip superbloka"
 
 #: misc-utils/wipefs.c:113
 msgid "magic string offset"
@@ -12852,7 +12843,7 @@ msgstr "odmak magičnog stringa (magic string offset)"
 
 #: misc-utils/wipefs.c:114
 msgid "type description"
-msgstr "opis vrste"
+msgstr "opis tipa"
 
 #: misc-utils/wipefs.c:115
 msgid "block device name"
@@ -13437,7 +13428,7 @@ msgstr "nevaljani argument za util_max"
 
 #: schedutils/uclampset.c:296
 msgid "missing -p option"
-msgstr "nedostaje -p opcija"
+msgstr "nema -p opcije"
 
 #: schedutils/uclampset.c:314
 msgid "no cmd to execute"
@@ -13494,8 +13485,9 @@ msgstr "nije uspjelo razabrati odmak"
 msgid "failed to parse step"
 msgstr "nije uspjelo razabrati iteraciju (korak)"
 
-#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:499 sys-utils/fallocate.c:382
-#: sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561 sys-utils/umount.c:610
+#: sys-utils/blkdiscard.c:224 sys-utils/blkzone.c:499
+#: sys-utils/fallocate.c:382 sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:561
+#: sys-utils/umount.c:610
 msgid "unexpected number of arguments"
 msgstr "neočekivan broj argumenata"
 
@@ -13603,7 +13595,7 @@ msgstr "Pronađeno je %d zona od 0x%<PRIx64>\n"
 #: sys-utils/blkzone.c:302
 #, c-format
 msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, cap 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
-msgstr "  poč: 0x%09<PRIx64>, duž 0x%06<PRIx64>, kap 0x%06<PRIx64>, w-pok 0x%06<PRIx64> reset:%u nesek:%u, z-uvjet:%2u(%s) [vrsta: %u(%s)]\n"
+msgstr "  poč: 0x%09<PRIx64>, duž 0x%06<PRIx64>, kap 0x%06<PRIx64>, w-pok 0x%06<PRIx64> reset:%u nesek:%u, z-uvjet:%2u(%s) [type: %u(%s)]\n"
 
 # start:Zone start sector
 # len:Zone length in number of sectors
@@ -13615,7 +13607,7 @@ msgstr "  poč: 0x%09<PRIx64>, duž 0x%06<PRIx64>, kap 0x%06<PRIx64>, w-pok 0x%0
 #: sys-utils/blkzone.c:310
 #, c-format
 msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
-msgstr "  poč: 0x%09<PRIx64>, duž 0x%06<PRIx64>, w-pok 0x%06<PRIx64> reset:%u nesek:%u, z-uvjet:%2u(%s) [vrsta: %u(%s)]\n"
+msgstr "  poč: 0x%09<PRIx64>, duž 0x%06<PRIx64>, w-pok 0x%06<PRIx64> reset:%u nesek:%u, z-uvjet:%2u(%s) [tip: %u(%s)]\n"
 
 #: sys-utils/blkzone.c:326
 #, c-format
@@ -14476,7 +14468,7 @@ msgstr ""
 " -c, --changerslot <slot>    izmjeni diskove u CD-ROM mjenjaču\n"
 " -d, --default               pokaže zadani uređaj\n"
 " -f, --floppy                izbaci disketu\n"
-" -F, --force                 nije važna vrsta uređaja\n"
+" -F, --force                 nije važan tip uređaja\n"
 " -i, --manualeject <on|off>  uključi/isključi ručno izbacivanje\n"
 " -m, --no-unmount            ne demontira uređaj čak i ako je montiran\n"
 " -M, --no-partitions-unmount  ne demontira neku drugu particiju\n"
@@ -14609,7 +14601,7 @@ msgstr "nije uspjelo ukloniti prava pristupa"
 
 #: sys-utils/eject.c:671
 msgid "unable to fork"
-msgstr "nije moguće započeti novi proces"
+msgstr "nije moguće stvoriti novi proces (greška u fork())"
 
 #: sys-utils/eject.c:678
 #, c-format
@@ -15213,7 +15205,7 @@ msgstr "Hardverski sat postavljamo na %.2d:%.2d:%.2d = %<PRId64> sekunda nakon 1
 #: sys-utils/hwclock.c:455
 #, c-format
 msgid "RTC type: '%s'\n"
-msgstr "RTC vrsta: „%s“\n"
+msgstr "RTC tip: „%s“\n"
 
 #: sys-utils/hwclock.c:555
 #, c-format
@@ -16551,7 +16543,7 @@ msgstr ""
 
 #: sys-utils/irqtop.c:182
 msgid "cannot not create timerfd"
-msgstr "nije moguće kreirati timerfd"
+msgstr "nije moguće stvoriti timerfd"
 
 #: sys-utils/irqtop.c:184
 msgid "cannot set timerfd"
@@ -16571,7 +16563,7 @@ msgstr "sigprocmask nije uspjela"
 
 #: sys-utils/irqtop.c:202
 msgid "cannot not create signalfd"
-msgstr "nije moguće kreirati signalfd"
+msgstr "nije moguće stvoriti signalfd"
 
 #: sys-utils/irqtop.c:260
 msgid "Interactive utility to display kernel interrupt information."
@@ -16813,7 +16805,7 @@ msgstr ", maksimalna veličina %ju"
 #: sys-utils/losetup.c:162
 #, c-format
 msgid ", encryption %s (type %u)"
-msgstr ", šifriranje %s (vrsta %u)"
+msgstr ", šifriranje %s (tip %u)"
 
 #: sys-utils/losetup.c:206
 #, c-format
@@ -17113,7 +17105,7 @@ msgstr "veličina jednog cache-a"
 
 #: sys-utils/lscpu.c:166
 msgid "cache type"
-msgstr "vrsta cache-a"
+msgstr "tip cache-a"
 
 #: sys-utils/lscpu.c:167
 msgid "ways of associativity"
@@ -17184,7 +17176,7 @@ msgstr "BIOS CPU familija:"
 
 #: sys-utils/lscpu.c:868
 msgid "Machine type:"
-msgstr "Vrsta stroja:"
+msgstr "Tip stroja:"
 
 #: sys-utils/lscpu.c:870
 msgid "CPU family:"
@@ -17357,7 +17349,7 @@ msgstr "Proizvođač hipervizora:"
 
 #: sys-utils/lscpu.c:1056
 msgid "Virtualization type:"
-msgstr "Vrsta virtualizacije:"
+msgstr "Tip virtualizacije:"
 
 #: sys-utils/lscpu.c:1079
 msgid "Caches (sum of all):"
@@ -17997,7 +17989,7 @@ msgstr "identifikator imenskog prostora (inodov broj)"
 
 #: sys-utils/lsns.c:108
 msgid "kind of namespace"
-msgstr "vrsta imenskog prostora"
+msgstr "tip imenskog prostora"
 
 #: sys-utils/lsns.c:109
 msgid "path to the namespace"
@@ -18063,7 +18055,7 @@ msgstr " -W, --nowrap           ne koristi višeredni prikaz\n"
 #: sys-utils/lsns.c:1223
 msgid " -t, --type <name>      namespace type (mnt, net, ipc, user, pid, uts, cgroup, time)\n"
 msgstr ""
-" -t, --type <vrsta>     vrsta imenskog prostora\n"
+" -t, --type <tip>       tip imenskog prostora\n"
 "                          (mnt, net, ipc, user, pid, uts, cgroup, time)\n"
 
 #: sys-utils/lsns.c:1224
@@ -18222,7 +18214,7 @@ msgstr ""
 #: sys-utils/mount.c:501
 #, c-format
 msgid " -i, --internal-only     don't call the mount.<type> helpers\n"
-msgstr " -i, --internal-only     ne poziva mount.<vrsta> pomoćni program iz /sbin\n"
+msgstr " -i, --internal-only     ne poziva mount.<tip> pomoćni program iz /sbin\n"
 
 #: sys-utils/mount.c:503
 #, c-format
@@ -18270,7 +18262,7 @@ msgstr ""
 "                            ima smisla samo uz opciju -a\n"
 " -r, --read-only         montira datotečni sustav samo-za-čitanje\n"
 "                           (isto kao -o ro)\n"
-" -t, --types <popis>     datotečne sustave ograniči na popisane vrste\n"
+" -t, --types <popis>     datotečne sustave ograniči na popisane tipove\n"
 "                           (zarezom odijeljene)\n"
 
 #: sys-utils/mount.c:521
@@ -18988,11 +18980,11 @@ msgstr "vrijednost identifikatora uređaja"
 
 #: sys-utils/rfkill.c:133
 msgid "device type name that can be used as identifier"
-msgstr "ime vrste uređaja koje se može koristiti kao identifikator"
+msgstr "ime tipa uređaja koje se može koristiti kao identifikator"
 
 #: sys-utils/rfkill.c:134
 msgid "device type description"
-msgstr "opis vrste uređaja"
+msgstr "opis tipa uređaja"
 
 #: sys-utils/rfkill.c:135
 msgid "status of software block"
@@ -19487,7 +19479,7 @@ msgstr "Ovaj alat može biti opasan. Pročitajte priručnik i budite oprezni.\n"
 
 #: sys-utils/setpriv.c:170
 msgid "invalid capability type"
-msgstr "nevaljana vrsta sposobnosti"
+msgstr "nevaljani tip sposobnosti"
 
 #: sys-utils/setpriv.c:193 sys-utils/setpriv.c:412
 #, c-format
@@ -19612,7 +19604,7 @@ msgstr "setresgid() nije uspjela"
 
 #: sys-utils/setpriv.c:511
 msgid "unsupported capability type"
-msgstr "nepodržana vrsta sposobnosti"
+msgstr "nepodržani tip sposobnosti"
 
 #: sys-utils/setpriv.c:528
 msgid "bad capability string"
@@ -19908,7 +19900,7 @@ msgstr "datoteka uređaja ili staza particije"
 
 #: sys-utils/swapon.c:97
 msgid "type of the device"
-msgstr "vrsta uređaja"
+msgstr "tip uređaja"
 
 #: sys-utils/swapon.c:98
 msgid "size of the swap area"
@@ -19934,7 +19926,7 @@ msgstr "swap label (oznaka odlagališta)"
 #: sys-utils/swapon.c:250
 #, c-format
 msgid "Filename\t\t\t\tType\t\tSize\t\tUsed\t\tPriority\n"
-msgstr "Datoteka\t\t\t\tVrsta\t\tVeličina\t\tKorišteno\t\tPrioritet\n"
+msgstr "Datoteka\t\t\t\tTip\t\tVeličina\t\tKorišteno\t\tPrioritet\n"
 
 #: sys-utils/swapon.c:328
 #, c-format
@@ -20119,7 +20111,7 @@ msgid ""
 "If no policy is selected, both discard types are enabled (default).\n"
 msgstr ""
 "\n"
-"Dostupne vrste politike odbacivanja (za opciju --discard):\n"
+"Dostupne tipovi politike odbacivanja (za opciju --discard):\n"
 " once    : koristi samo jednokratno odbacivanje iz područja\n"
 " pages   : oslobođene stranice odbace se prije ponovne uporabe\n"
 "Ako politika nije odabrana, koriste se oba tipa (zadano).\n"
@@ -20352,7 +20344,7 @@ msgstr " -f, --force             prisilno demontira (ako NFS sustav nije dostupa
 
 #: sys-utils/umount.c:98
 msgid " -i, --internal-only     don't call the umount.<type> helpers\n"
-msgstr " -i, --internal-only     ne poziva umount.<vrsta> pomoćne programe\n"
+msgstr " -i, --internal-only     ne poziva umount.<tip> pomoćne programe\n"
 
 #: sys-utils/umount.c:100
 msgid " -l, --lazy              detach the filesystem now, clean up things later\n"
@@ -20377,7 +20369,7 @@ msgstr ""
 #: sys-utils/umount.c:104
 msgid " -t, --types <list>      limit the set of filesystem types\n"
 msgstr ""
-" -t, --types <popis>     datotečne sustave ograniči na popisane vrste\n"
+" -t, --types <popis>     datotečne sustave ograniči na popisane tipove\n"
 "                           (zarezom odijeljene)\n"
 
 #: sys-utils/umount.c:106
@@ -21199,7 +21191,7 @@ msgstr "nije moguće otvoriti datoteku os-release"
 #: term-utils/agetty.c:1721
 #, c-format
 msgid "failed to create reload file: %s: %m"
-msgstr "nije uspjelo kreirati datoteku za ponovno pokretanje: %s: %m"
+msgstr "nije uspjelo stvoriti datoteku za ponovno pokretanje: %s: %m"
 
 #: term-utils/agetty.c:2041
 #, c-format
@@ -21266,8 +21258,8 @@ msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
 " %1$s [options] <baud_rate>,... <line> [<termtype>]\n"
 msgstr ""
-" %1$s [opcije] <linija> [<brzina_u_bodovima>,...] [<vrsta_terminala>]\n"
-" %1$s [opcije] <brzina_u_bodovima>,... <linija> [<vrsta_terminala>]\n"
+" %1$s [opcije] <linija> [<brzina_u_bodovima>,...] [<tip_terminala>]\n"
+" %1$s [opcije] <brzina_u_bodovima>,... <linija> [<tip_terminala>]\n"
 
 #: term-utils/agetty.c:2479
 msgid "Open a terminal and set its mode.\n"
@@ -21403,7 +21395,7 @@ msgstr "     --nice <broj>             prijavu izvrši s tim prioritetom\n"
 
 #: term-utils/agetty.c:2514
 msgid "     --reload               reload prompts on running agetty instances\n"
-msgstr "     --reload                  obnovi promptove na već pokrenutim agetty-ma\n"
+msgstr "     --reload                  obnovi promptove na već pokrenutim agetty instancama\n"
 
 #: term-utils/agetty.c:2515
 msgid "     --list-speeds          display supported baud rates\n"
@@ -21446,7 +21438,7 @@ msgstr " -v, --verbose  objašnjava što radi\n"
 
 #: term-utils/mesg.c:130
 msgid "no tty"
-msgstr "nema terminala"
+msgstr "nema tty"
 
 #: term-utils/mesg.c:139
 #, c-format
@@ -21727,11 +21719,11 @@ msgstr "     --summary            prikaže pregled o snimljenoj sjednici i iziđ
 
 #: term-utils/scriptreplay.c:69
 msgid " -x, --stream <name>     stream type (out, in, signal or info)\n"
-msgstr " -x, --stream <vrsta>     vrsta toka (out, in, signal ili info)\n"
+msgstr " -x, --stream <tip>     tip toka (out, in, signal ili info)\n"
 
 #: term-utils/scriptreplay.c:70
 msgid " -c, --cr-mode <type>    CR char mode (auto, never, always)\n"
-msgstr " -c, --cr-mode <vrsta>    način za znak CR (auto, never ili always)\n"
+msgstr " -c, --cr-mode <tip>    način za znak CR (auto, never ili always)\n"
 
 #: term-utils/scriptreplay.c:131
 msgid "unexpected tcgetattr failure"
@@ -21740,7 +21732,7 @@ msgstr "neočekivani neuspjeh tcgetattr()"
 #: term-utils/scriptreplay.c:212
 #, c-format
 msgid "unsupported mode name: '%s'"
-msgstr "nepodržano ime vrste za način znaka CR: „%s“"
+msgstr "nepodržano ime tipa za način znaka CR: „%s“"
 
 #: term-utils/scriptreplay.c:245
 #, c-format
@@ -21980,7 +21972,7 @@ msgstr "nije moguće naći bazu podataka terminfo"
 #: term-utils/setterm.c:1176
 #, c-format
 msgid "%s: unknown terminal type"
-msgstr "%s: nepoznata vrsta terminala"
+msgstr "%s: nepoznati tip terminala"
 
 #: term-utils/setterm.c:1178
 msgid "terminal is hardcopy"
@@ -22879,7 +22871,7 @@ msgstr "Nepoznata greška u datoteci %s"
 
 #: text-utils/pg.c:945
 msgid "Cannot create temporary file"
-msgstr "Nije moguće kreirati privremenu datoteku"
+msgstr "Nije moguće stvoriti privremenu datoteku"
 
 #: text-utils/pg.c:954 text-utils/pg.c:1121 text-utils/pg.c:1147
 msgid "RE error: "
@@ -22942,7 +22934,7 @@ msgstr "Podcrtava.\n"
 
 #: text-utils/ul.c:129
 msgid " -t, -T, --terminal TERMINAL  override the TERM environment variable\n"
-msgstr " -t, -T, --terminal TERMINAL  koristi ovu vrstu terminala (umjesto $TERM)\n"
+msgstr " -t, -T, --terminal TERMINAL  koristi ovaj tip terminala (umjesto $TERM)\n"
 
 #: text-utils/ul.c:130
 msgid " -i, --indicated              underlining is indicated via a separate line\n"
@@ -23107,7 +23099,7 @@ msgstr "terminal „%s“ nije poznat; koristit će se „dumb“ terminal"
 #~ msgstr "greška u retku %d"
 
 #~ msgid "Input line too long."
-#~ msgstr "Ulazni redak je predugačak."
+#~ msgstr "Ulazni redak je predug."
 
 #~ msgid "%s: failed to read partition start from sysfs"
 #~ msgstr "%s: nije uspjelo pročitati početak particije iz sysfs"
