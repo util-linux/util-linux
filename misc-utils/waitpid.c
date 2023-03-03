@@ -46,6 +46,7 @@
 static bool verbose = false;
 static struct timespec timeout;
 static bool allow_exited = false;
+static size_t count;
 
 static pid_t *parse_pids(size_t n_strings, char * const *strings)
 {
@@ -161,6 +162,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -v, --verbose           be more verbose\n"), out);
 	fputs(_(" -t, --timeout=<timeout> wait at most timeout seconds\n"), out);
 	fputs(_(" -e, --exited            allow exited PIDs\n"), out);
+	fputs(_(" -c, --count=<count>     number of process exits to wait for\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(25));
@@ -177,12 +179,13 @@ static int parse_options(int argc, char **argv)
 		{ "verbose", no_argument,       NULL, 'v' },
 		{ "timeout", required_argument, NULL, 't' },
 		{ "exited",  no_argument,       NULL, 'e' },
+		{ "count",   required_argument, NULL, 'c' },
 		{ "version", no_argument,       NULL, 'V' },
 		{ "help",    no_argument,       NULL, 'h' },
 		{ 0 }
 	};
 
-	while ((c = getopt_long (argc, argv, "vVht:e", longopts, NULL)) != -1) {
+	while ((c = getopt_long (argc, argv, "vVht:c:e", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'v':
 			verbose = true;
@@ -194,6 +197,10 @@ static int parse_options(int argc, char **argv)
 		case 'e':
 			allow_exited = true;
 			break;
+		case 'c':
+			count = str2num_or_err(optarg, 10, _("Invalid count"),
+					       1, INT64_MAX);
+			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
 		case 'h':
@@ -202,6 +209,10 @@ static int parse_options(int argc, char **argv)
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
+
+	if (allow_exited && count)
+		errx(EXIT_FAILURE,
+		     _("-e/--exited and -c/--count are incompatible"));
 
 	return optind;
 }
@@ -220,6 +231,10 @@ int main(int argc, char **argv)
 	if (!n_pids)
 		errx(EXIT_FAILURE, _("no PIDs specified"));
 
+	if (count && count > n_pids)
+		errx(EXIT_FAILURE,
+		     _("can't want for %zu of %zu PIDs"), count, n_pids);
+
 	pid_t *pids = parse_pids(argc - pid_idx, argv + pid_idx);
 
 	pidfds = open_pidfds(n_pids, pids);
@@ -229,5 +244,7 @@ int main(int argc, char **argv)
 		err_nosys(EXIT_FAILURE, _("could not create epoll"));
 
 	active_pids = add_listeners(epoll, n_pids, pidfds, timeoutfd);
+	if (count)
+		active_pids = min(active_pids, count);
 	wait_for_exits(epoll, active_pids, pids, pidfds);
 }

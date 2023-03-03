@@ -9,6 +9,9 @@ _waitpid_module()
 			COMPREPLY=( $(compgen -W "seconds" -- $cur) )
 			return 0
 			;;
+		'-c'|'--count')
+			return 0
+			;;
 		'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
@@ -18,6 +21,7 @@ _waitpid_module()
 			OPTS="--verbose
 				--timeout
 				--exited
+				--count
 				--help
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )

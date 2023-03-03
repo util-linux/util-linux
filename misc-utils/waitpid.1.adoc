@@ -32,6 +32,9 @@ Maximum wait time.
 *-e*, *--exited*::
 Don't error on already exited PIDs.
 
+*-c*, *--count* _count_::
+Number of process exits to wait for.
+
 include::man-common/help-version.adoc[]
 
 == EXIT STATUS
