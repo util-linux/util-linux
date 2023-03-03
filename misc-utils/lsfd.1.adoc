@@ -160,6 +160,9 @@ write mode of the endpoint.
 *lsfd* scans; *lsfd* may miss some endpoints
 if you limits the processes with *-p* option.
 
+EVENTFD.ID <``number``>::
+Eventfd ID.
+
 FD <``number``>::
 File descriptor for the file.
 
@@ -218,6 +221,9 @@ NAME <``string``>::
 Cooked version of KNAME. It is mostly same as KNAME.
 +
 Some files have special formats and information sources:
++
+eventfd:::
+id=_EVENTFD.ID_
 +
 NETLINK:::
 protocol=_NETLINK.PROTOCOL_[ lport=_NETLINK.LPORT_[ group=_NETLINK.GROUPS_]]

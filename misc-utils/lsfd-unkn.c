@@ -264,6 +264,79 @@ static const struct anon_ops anon_pidfd_ops = {
 };
 
 /*
+ * eventfd
+ */
+struct anon_eventfd_data {
+	int id;
+};
+
+static bool anon_eventfd_probe(const char *str)
+{
+	return (strncmp(str, "[eventfd]", 9) == 0);
+}
+
+static char *anon_eventfd_get_name(struct unkn *unkn)
+{
+	char *str = NULL;
+	struct anon_eventfd_data *data = (struct anon_eventfd_data *)unkn->anon_data;
+
+	xasprintf(&str, "id=%d", data->id);
+	return str;
+}
+
+static void anon_eventfd_init(struct unkn *unkn)
+{
+	unkn->anon_data = xcalloc(1, sizeof(struct anon_eventfd_data));
+}
+
+static void anon_eventfd_free(struct unkn *unkn)
+{
+	free(unkn->anon_data);
+}
+
+static int anon_eventfd_handle_fdinfo(struct unkn *unkn, const char *key, const char *value)
+{
+	if (strcmp(key, "eventfd-id") == 0) {
+		int64_t id;
+
+		int rc = ul_strtos64(value, &id, 10);
+		if (rc < 0)
+			return 0;
+		((struct anon_eventfd_data *)unkn->anon_data)->id = (int)id;
+		return 1;
+	}
+	return 0;
+}
+
+static bool anon_eventfd_fill_column(struct proc *proc  __attribute__((__unused__)),
+				     struct unkn *unkn,
+				     struct libscols_line *ln __attribute__((__unused__)),
+				     int column_id,
+				     size_t column_index __attribute__((__unused__)),
+				     char **str)
+{
+	struct anon_eventfd_data *data = (struct anon_eventfd_data *)unkn->anon_data;
+
+	switch(column_id) {
+	case COL_EVENTFD_ID:
+		xasprintf(str, "%d", data->id);
+		return true;
+	default:
+		return false;
+	}
+}
+
+static const struct anon_ops anon_eventfd_ops = {
+	.class = "eventfd",
+	.probe = anon_eventfd_probe,
+	.get_name = anon_eventfd_get_name,
+	.fill_column = anon_eventfd_fill_column,
+	.init = anon_eventfd_init,
+	.free = anon_eventfd_free,
+	.handle_fdinfo = anon_eventfd_handle_fdinfo,
+};
+
+/*
  * generic (fallback implementation)
  */
 static const struct anon_ops anon_generic_ops = {
@@ -277,6 +350,7 @@ static const struct anon_ops anon_generic_ops = {
 
 static const struct anon_ops *anon_ops[] = {
 	&anon_pidfd_ops,
+	&anon_eventfd_ops,
 };
 
 static const struct anon_ops *anon_probe(const char *str)
