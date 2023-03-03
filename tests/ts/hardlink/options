@@ -45,7 +45,6 @@ summary_clean()
 	sed -i \
 		-e 's/^Duration:.*/Duration: [Redacted]/' \
 		-e 's/^Method:.*/Method: [Redacted]/' \
-		-e 's/^Compared:.*files/Compared: [Redacted] files/' \
 		$TS_OUTPUT
 }
 
