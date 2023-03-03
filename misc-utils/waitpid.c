@@ -35,6 +35,7 @@
 #include "strutils.h"
 #include "exitcodes.h"
 #include "timeutils.h"
+#include "optutils.h"
 
 #define EXIT_TIMEOUT_EXPIRED 3
 
@@ -184,8 +185,16 @@ static int parse_options(int argc, char **argv)
 		{ "help",    no_argument,       NULL, 'h' },
 		{ 0 }
 	};
+	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */
+		{ 'c', 'e' },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
 	while ((c = getopt_long (argc, argv, "vVht:c:e", longopts, NULL)) != -1) {
+
+		err_exclusive_options(c, longopts, excl, excl_st);
+
 		switch (c) {
 		case 'v':
 			verbose = true;
@@ -209,10 +218,6 @@ static int parse_options(int argc, char **argv)
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
-
-	if (allow_exited && count)
-		errx(EXIT_FAILURE,
-		     _("-e/--exited and -c/--count are incompatible"));
 
 	return optind;
 }
