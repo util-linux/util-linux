@@ -268,6 +268,7 @@ static const struct anon_ops anon_pidfd_ops = {
  */
 struct anon_eventfd_data {
 	int id;
+	struct unkn *backptr;
 };
 
 static bool anon_eventfd_probe(const char *str)
@@ -287,6 +288,7 @@ static char *anon_eventfd_get_name(struct unkn *unkn)
 static void anon_eventfd_init(struct unkn *unkn)
 {
 	unkn->anon_data = xcalloc(1, sizeof(struct anon_eventfd_data));
+	((struct anon_eventfd_data *)unkn->anon_data)->backptr = unkn;
 }
 
 static void anon_eventfd_free(struct unkn *unkn)
