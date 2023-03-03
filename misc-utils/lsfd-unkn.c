@@ -33,6 +33,7 @@ struct unkn {
 
 struct anon_ops {
 	const char *class;
+	bool (*probe)(const char *);
 	char * (*get_name)(struct unkn *);
 	/* Return true is handled the column. */
 	bool (*fill_column)(struct proc *,
@@ -46,8 +47,7 @@ struct anon_ops {
 	int (*handle_fdinfo)(struct unkn *, const char *, const char *);
 };
 
-static const struct anon_ops anon_generic_ops;
-static const struct anon_ops anon_pidfd_ops;
+static const struct anon_ops *anon_probe(const char *);
 
 static char * anon_get_class(struct unkn *unkn)
 {
@@ -129,10 +129,7 @@ static void unkn_init_content(struct file *file)
 	    && strncmp(file->name, "anon_inode:", 11) == 0) {
 		const char *rest = file->name + 11;
 
-		if (strncmp(rest, "[pidfd]", 7) == 0)
-			unkn->anon_ops = &anon_pidfd_ops;
-		else
-			unkn->anon_ops = &anon_generic_ops;
+		unkn->anon_ops = anon_probe(rest);
 
 		if (unkn->anon_ops->init)
 			unkn->anon_ops->init(unkn);
@@ -165,6 +162,11 @@ struct anon_pidfd_data {
 	pid_t pid;
 	char *nspid;
 };
+
+static bool anon_pidfd_probe(const char *str)
+{
+	return (strncmp(str, "[pidfd]", 7) == 0);
+}
 
 static char *anon_pidfd_get_name(struct unkn *unkn)
 {
@@ -253,6 +255,7 @@ static bool anon_pidfd_fill_column(struct proc *proc  __attribute__((__unused__)
 
 static const struct anon_ops anon_pidfd_ops = {
 	.class = "pidfd",
+	.probe = anon_pidfd_probe,
 	.get_name = anon_pidfd_get_name,
 	.fill_column = anon_pidfd_fill_column,
 	.init = anon_pidfd_init,
@@ -271,6 +274,18 @@ static const struct anon_ops anon_generic_ops = {
 	.free = NULL,
 	.handle_fdinfo = NULL,
 };
+
+static const struct anon_ops *anon_ops[] = {
+	&anon_pidfd_ops,
+};
+
+static const struct anon_ops *anon_probe(const char *str)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(anon_ops); i++)
+		if (anon_ops[i]->probe(str))
+			return anon_ops[i];
+	return &anon_generic_ops;
+}
 
 const struct file_class unkn_class = {
 	.super = &file_class,
