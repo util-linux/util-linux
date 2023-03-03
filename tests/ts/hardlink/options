@@ -103,6 +103,4 @@ summary_clean
 show_srcdir >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
-
-rm -rf "$SRCDIR"
 ts_finalize
