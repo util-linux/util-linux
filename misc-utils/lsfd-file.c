@@ -268,7 +268,7 @@ static bool file_fill_column(struct proc *proc,
 		break;
 	default:
 		return false;
-	};
+	}
 
 	if (!str)
 		err(EXIT_FAILURE, _("failed to add output data"));
