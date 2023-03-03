@@ -365,7 +365,8 @@ struct lsfd_control {
 			notrunc : 1,
 			threads : 1,
 			show_main : 1,		/* print main table */
-			show_summary : 1;	/* print summary/counters */
+			show_summary : 1,	/* print summary/counters */
+			sockets_only : 1;	/* display only SOCKETS */
 
 	struct lsfd_filter *filter;
 	struct lsfd_counter **counters;		/* NULL terminated array. */
@@ -636,7 +637,8 @@ static void read_fdinfo(struct file *file, FILE *fdinfo)
 static struct file *collect_file_symlink(struct path_cxt *pc,
 					 struct proc *proc,
 					 const char *name,
-					 int assoc)
+					 int assoc,
+					 bool sockets_only)
 {
 	char sym[PATH_MAX] = { '\0' };
 	struct stat sb;
@@ -654,10 +656,20 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 		f = copy_file(prev);
 		f->association = assoc;
 	} else {
+		const struct file_class *class;
+
 		if (ul_path_stat(pc, &sb, 0, name) < 0)
 			return NULL;
 
-		f = new_file(proc, stat2class(&sb));
+		class = stat2class(&sb);
+		if (sockets_only
+		    /* A nsfs is not a socket but the nsfs can be used to
+		     * collect information from other network namespaces.
+		     * Besed on the information, various columns of sockets.
+		     */
+		    && (class != &sock_class)&& (class != &nsfs_file_class))
+			return NULL;
+		f = new_file(proc, class);
 		file_set_path(f, &sb, sym, assoc);
 	}
 
@@ -690,7 +702,8 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 
 /* read symlinks from /proc/#/fd
  */
-static void collect_fd_files(struct path_cxt *pc, struct proc *proc)
+static void collect_fd_files(struct path_cxt *pc, struct proc *proc,
+			     bool sockets_only)
 {
 	DIR *sub = NULL;
 	struct dirent *d = NULL;
@@ -703,7 +716,7 @@ static void collect_fd_files(struct path_cxt *pc, struct proc *proc)
 			continue;
 
 		snprintf(path, sizeof(path), "fd/%ju", (uintmax_t) num);
-		collect_file_symlink(pc, proc, path, num);
+		collect_file_symlink(pc, proc, path, num, sockets_only);
 	}
 }
 
@@ -809,31 +822,37 @@ static void collect_outofbox_files(struct path_cxt *pc,
 				   struct proc *proc,
 				   enum association assocs[],
 				   const char *names[],
-				   size_t count)
+				   size_t count,
+				   bool sockets_only)
 {
 	size_t i;
 
 	for (i = 0; i < count; i++)
-		collect_file_symlink(pc, proc, names[assocs[i]], assocs[i] * -1);
+		collect_file_symlink(pc, proc, names[assocs[i]], assocs[i] * -1,
+				     sockets_only);
 }
 
-static void collect_execve_file(struct path_cxt *pc, struct proc *proc)
+static void collect_execve_file(struct path_cxt *pc, struct proc *proc,
+				bool sockets_only)
 {
 	enum association assocs[] = { ASSOC_EXE };
 	const char *names[] = {
 		[ASSOC_EXE]  = "exe",
 	};
-	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs));
+	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs),
+			       sockets_only);
 }
 
-static void collect_fs_files(struct path_cxt *pc, struct proc *proc)
+static void collect_fs_files(struct path_cxt *pc, struct proc *proc,
+			     bool sockets_only)
 {
 	enum association assocs[] = { ASSOC_EXE, ASSOC_CWD, ASSOC_ROOT };
 	const char *names[] = {
 		[ASSOC_CWD]  = "cwd",
 		[ASSOC_ROOT] = "root",
 	};
-	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs));
+	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs),
+			       sockets_only);
 }
 
 static void collect_namespace_files(struct path_cxt *pc, struct proc *proc)
@@ -862,7 +881,9 @@ static void collect_namespace_files(struct path_cxt *pc, struct proc *proc)
 		[ASSOC_NS_USER]   = "ns/user",
 		[ASSOC_NS_UTS]    = "ns/uts",
 	};
-	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs));
+	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs),
+			       /* Namespace information is alwasys needed. */
+			       false);
 }
 
 static struct nodev *new_nodev(unsigned long minor, const char *filesystem)
@@ -1303,11 +1324,11 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 		free(pat);
 	}
 
-	collect_execve_file(pc, proc);
+	collect_execve_file(pc, proc, ctl->sockets_only);
 
 	if (proc->pid == proc->leader->pid
 	    || kcmp(proc->leader->pid, proc->pid, KCMP_FS, 0, 0) != 0)
-		collect_fs_files(pc, proc);
+		collect_fs_files(pc, proc, ctl->sockets_only);
 
 	if (proc->ns_mnt == 0 || !has_mnt_ns(proc->ns_mnt)) {
 		FILE *mnt = ul_path_fopen(pc, "r", "mountinfo");
@@ -1326,13 +1347,14 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	 * In such cases, we must pay the costs: call collect_mem_files()
 	 * and collect_fd_files().
 	 */
-	if (proc->pid == proc->leader->pid
-	    || kcmp(proc->leader->pid, proc->pid, KCMP_VM, 0, 0) != 0)
+	if ((!ctl->sockets_only)
+	    && (proc->pid == proc->leader->pid
+		|| kcmp(proc->leader->pid, proc->pid, KCMP_VM, 0, 0) != 0))
 		collect_mem_files(pc, proc);
 
 	if (proc->pid == proc->leader->pid
 	    || kcmp(proc->leader->pid, proc->pid, KCMP_FILES, 0, 0) != 0)
-		collect_fd_files(pc, proc);
+		collect_fd_files(pc, proc, ctl->sockets_only);
 
 	list_add_tail(&proc->procs, &ctl->procs);
 	if (tsearch(proc, &proc_tree, proc_tree_compare) == NULL)
@@ -1797,6 +1819,8 @@ int main(int argc, char *argv[])
 			break;
 		case 'i': {
 			const char *subexpr = NULL;
+
+			ctl.sockets_only = 1;
 			if (optarg == NULL)
 				subexpr = inet46_subexpr;
 			else if (strcmp(optarg, "4") == 0)
