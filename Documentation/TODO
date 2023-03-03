@@ -66,11 +66,6 @@ lscpu
   - read cpuid and uname information from file if --sysroot is specified, then
     we can prepare regression tests completely independent on hw and architecture.
 
-nsenter(1)
-----------
- - read the default UID and GID from the target process.
-   http://thread.gmane.org/gmane.linux.utilities.util-linux-ng/9553/focus=9585
-
 hwclock
 ------
  - use /var/lib/hwclock/drift to store hw-clock drift numbers.
