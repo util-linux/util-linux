@@ -659,7 +659,6 @@ static int make_packet_socket(int socktype, const char *interface)
 
 	memset(&addr, 0, sizeof(struct sockaddr_ll));
 	addr.sll_family = AF_PACKET;
-	addr.sll_protocol = ETH_P_ALL;
 	addr.sll_ifindex = if_nametoindex(interface);
 	if (addr.sll_ifindex == 0) {
 		int e = errno;
