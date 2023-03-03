@@ -92,8 +92,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -C, --cgroup[=<file>]  enter cgroup namespace\n"), out);
 	fputs(_(" -U, --user[=<file>]    enter user namespace\n"), out);
 	fputs(_(" -T, --time[=<file>]    enter time namespace\n"), out);
-	fputs(_(" -S, --setuid <uid>     set uid in entered namespace\n"), out);
-	fputs(_(" -G, --setgid <gid>     set gid in entered namespace\n"), out);
+	fputs(_(" -S, --setuid[=<uid>]   set uid in entered namespace\n"), out);
+	fputs(_(" -G, --setgid[=<gid>]   set gid in entered namespace\n"), out);
 	fputs(_("     --preserve-credentials do not touch uids or gids\n"), out);
 	fputs(_(" -r, --root[=<dir>]     set the root directory\n"), out);
 	fputs(_(" -w, --wd[=<dir>]       set the working directory\n"), out);
@@ -115,6 +115,7 @@ static pid_t namespace_target_pid = 0;
 static int root_fd = -1;
 static int wd_fd = -1;
 static int env_fd = -1;
+static int uid_gid_fd = -1;
 
 static void open_target_fd(int *fd, const char *type, const char *path)
 {
@@ -246,8 +247,8 @@ int main(int argc, char *argv[])
 		{ "user", optional_argument, NULL, 'U' },
 		{ "cgroup", optional_argument, NULL, 'C' },
 		{ "time", optional_argument, NULL, 'T' },
-		{ "setuid", required_argument, NULL, 'S' },
-		{ "setgid", required_argument, NULL, 'G' },
+		{ "setuid", optional_argument, NULL, 'S' },
+		{ "setgid", optional_argument, NULL, 'G' },
 		{ "root", optional_argument, NULL, 'r' },
 		{ "wd", optional_argument, NULL, 'w' },
 		{ "wdns", optional_argument, NULL, 'W' },
@@ -267,8 +268,8 @@ int main(int argc, char *argv[])
 
 	struct namespace_file *nsfile;
 	int c, pass, namespaces = 0, setgroups_nerrs = 0, preserve_cred = 0;
-	bool do_rd = false, do_wd = false, force_uid = false, force_gid = false, do_env = false;
-	bool do_all = false;
+	bool do_rd = false, do_wd = false, do_uid = false, force_uid = false,
+	     do_gid = false, force_gid = false, do_env = false, do_all = false;
 	int do_fork = -1; /* unknown yet */
 	char *wdns = NULL;
 	uid_t uid = 0;
@@ -284,7 +285,7 @@ int main(int argc, char *argv[])
 	close_stdout_atexit();
 
 	while ((c =
-		getopt_long(argc, argv, "+ahVt:m::u::i::n::p::C::U::T::S:G:r::w::W::eFZ",
+		getopt_long(argc, argv, "+ahVt:m::u::i::n::p::C::U::T::S::G::r::w::W::eFZ",
 			    longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -346,11 +347,17 @@ int main(int argc, char *argv[])
 				namespaces |= CLONE_NEWTIME;
 			break;
 		case 'S':
-			uid = strtoul_or_err(optarg, _("failed to parse uid"));
+			if (optarg)
+				uid = strtoul_or_err(optarg, _("failed to parse uid"));
+			else
+				do_uid = true;
 			force_uid = true;
 			break;
 		case 'G':
-			gid = strtoul_or_err(optarg, _("failed to parse gid"));
+			if (optarg)
+				gid = strtoul_or_err(optarg, _("failed to parse gid"));
+			else
+				do_gid = true;
 			force_gid = true;
 			break;
 		case 'F':
@@ -432,6 +439,8 @@ int main(int argc, char *argv[])
 		open_target_fd(&wd_fd, "cwd", NULL);
 	if (do_env)
 		open_target_fd(&env_fd, "environ", NULL);
+	if (do_uid || do_gid)
+		open_target_fd(&uid_gid_fd, "", NULL);
 
 	/*
 	 * Update namespaces variable to contain all requested namespaces
@@ -531,6 +540,21 @@ int main(int argc, char *argv[])
 			err(EXIT_FAILURE, _("failed to set environment variables"));
 		env_list_free(envls);
 		close(env_fd);
+	}
+
+	if (uid_gid_fd >= 0) {
+		struct stat st;
+
+		if (fstat(uid_gid_fd, &st) > 0)
+			err(EXIT_FAILURE, _("can not get process stat"));
+
+		close(uid_gid_fd);
+		uid_gid_fd = -1;
+
+		if (do_uid)
+			uid = st.st_uid;
+		if (do_gid)
+			gid = st.st_gid;
 	}
 
 	if (do_fork == 1)
