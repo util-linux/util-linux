@@ -23,7 +23,17 @@ struct nv_metadata {
 	uint16_t	version;
 } __attribute__((packed));
 
-#define NVIDIA_SIGNATURE		"NVIDIA"
+#define NVIDIA_SIGNATURE		"NVIDIA  "
+#define NVIDIA_SUPERBLOCK_SIZE		120
+
+
+static int nvraid_verify_checksum(blkid_probe pr, const struct nv_metadata *nv)
+{
+	uint32_t csum = le32_to_cpu(nv->chksum);
+	for (size_t i = 0; i < le32_to_cpu(nv->size); i++)
+		csum += le32_to_cpu(((uint32_t *) nv)[i]);
+	return blkid_probe_verify_csum(pr, csum, le32_to_cpu(nv->chksum));
+}
 
 static int probe_nvraid(blkid_probe pr,
 		const struct blkid_idmag *mag __attribute__((__unused__)))
@@ -40,11 +50,15 @@ static int probe_nvraid(blkid_probe pr,
 	nv = (struct nv_metadata *)
 		blkid_probe_get_buffer(pr,
 				off,
-				sizeof(struct nv_metadata));
+				NVIDIA_SUPERBLOCK_SIZE);
 	if (!nv)
 		return errno ? -errno : 1;
 
 	if (memcmp(nv->vendor, NVIDIA_SIGNATURE, sizeof(NVIDIA_SIGNATURE)-1) != 0)
+		return 1;
+	if (le32_to_cpu(nv->size) * 4 != NVIDIA_SUPERBLOCK_SIZE)
+		return 1;
+	if (!nvraid_verify_checksum(pr, nv))
 		return 1;
 	if (blkid_probe_sprintf_version(pr, "%u", le16_to_cpu(nv->version)) != 0)
 		return 1;
