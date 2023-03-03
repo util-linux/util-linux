@@ -17,10 +17,6 @@ tests
   - add Coverity to GitHub Actions (see for example .github/workflows/coverity.yml
     in systemd repo).
 
-agetty
-------
-   - follow LOGIN_PLAIN_PROMPT from /etc/login.defs as alternative to --nohostname
-
 fstrim
 ------
   - "fstrim --fstab" uses root= from /proc/cmdline to get root FS when it's missing
