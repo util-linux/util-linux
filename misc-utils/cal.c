@@ -1016,8 +1016,8 @@ static void monthly(const struct cal_control *ctl)
 
 	rows = (ctl->num_months - 1) / ctl->months_in_row;
 	for (i = 0; i < rows + 1 ; i++){
-		if (i == rows)
-			for (int n = 0; n < ctl->num_months % ctl->months_in_row; n++)
+		if (i == rows && ctl->num_months % ctl->months_in_row > 0)
+			for (int n = (ctl->num_months % ctl->months_in_row) - 1; n < ctl->months_in_row; n++)
 				ms[n].next = NULL;
 
 		for (m = ms; m; m = m->next){
