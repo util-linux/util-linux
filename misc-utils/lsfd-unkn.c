@@ -45,6 +45,8 @@ struct anon_ops {
 	void (*init)(struct unkn *);
 	void (*free)(struct unkn *);
 	int (*handle_fdinfo)(struct unkn *, const char *, const char *);
+	void (*attach_xinfo)(struct unkn *);
+	const struct ipc_class *ipc_class;
 };
 
 static const struct anon_ops *anon_probe(const char *);
@@ -115,6 +117,22 @@ static bool unkn_fill_column(struct proc *proc,
 	if (scols_line_refer_data(ln, column_index, str))
 		err(EXIT_FAILURE, _("failed to add output data"));
 	return true;
+}
+
+static void unkn_attach_xinfo(struct file *file)
+{
+	struct unkn *unkn = (struct unkn *)file;
+	if (unkn->anon_ops && unkn->anon_ops->attach_xinfo)
+		unkn->anon_ops->attach_xinfo(unkn);
+}
+
+static const struct ipc_class *unkn_get_ipc_class(struct file *file)
+{
+	struct unkn *unkn = (struct unkn *)file;
+
+	if (unkn->anon_ops && unkn->anon_ops->ipc_class)
+		return unkn->anon_ops->ipc_class;
+	return NULL;
 }
 
 static void unkn_init_content(struct file *file)
@@ -269,6 +287,35 @@ static const struct anon_ops anon_pidfd_ops = {
 struct anon_eventfd_data {
 	int id;
 	struct unkn *backptr;
+	struct ipc_endpoint endpoint;
+};
+
+struct eventfd_ipc {
+	struct ipc ipc;
+	int id;
+};
+
+static unsigned int anon_eventfd_get_hash(struct file *file)
+{
+	struct unkn *unkn = (struct unkn *)file;
+	struct anon_eventfd_data *data = (struct anon_eventfd_data *)unkn->anon_data;
+
+	return (unsigned int)data->id;
+}
+
+static bool anon_eventfd_is_suitable_ipc(struct ipc *ipc, struct file *file)
+{
+	struct unkn *unkn = (struct unkn *)file;
+	struct anon_eventfd_data *data = (struct anon_eventfd_data *)unkn->anon_data;
+
+	return ((struct eventfd_ipc *)ipc)->id == data->id;
+}
+
+static const struct ipc_class anon_eventfd_ipc_class = {
+	.size = sizeof(struct eventfd_ipc),
+	.get_hash = anon_eventfd_get_hash,
+	.is_suitable_ipc = anon_eventfd_is_suitable_ipc,
+	.free = NULL,
 };
 
 static bool anon_eventfd_probe(const char *str)
@@ -287,13 +334,33 @@ static char *anon_eventfd_get_name(struct unkn *unkn)
 
 static void anon_eventfd_init(struct unkn *unkn)
 {
-	unkn->anon_data = xcalloc(1, sizeof(struct anon_eventfd_data));
-	((struct anon_eventfd_data *)unkn->anon_data)->backptr = unkn;
+	struct anon_eventfd_data *data = xcalloc(1, sizeof(struct anon_eventfd_data));
+	init_endpoint(&data->endpoint);
+	data->backptr = unkn;
+	unkn->anon_data = data;
 }
 
 static void anon_eventfd_free(struct unkn *unkn)
 {
 	free(unkn->anon_data);
+}
+
+static void anon_eventfd_attach_xinfo(struct unkn *unkn)
+{
+	struct anon_eventfd_data *data = (struct anon_eventfd_data *)unkn->anon_data;
+	unsigned int hash;
+	struct ipc *ipc = get_ipc(&unkn->file);
+	if (ipc)
+		goto link;
+
+	ipc = new_ipc(&anon_eventfd_ipc_class);
+	((struct eventfd_ipc *)ipc)->id = data->id;
+
+	hash = anon_eventfd_get_hash(&unkn->file);
+	add_ipc(ipc, hash);
+
+ link:
+	add_endpoint(&data->endpoint, ipc);
 }
 
 static int anon_eventfd_handle_fdinfo(struct unkn *unkn, const char *key, const char *value)
@@ -310,6 +377,14 @@ static int anon_eventfd_handle_fdinfo(struct unkn *unkn, const char *key, const 
 	return 0;
 }
 
+static inline char *anon_eventfd_data_xstrendpoint(struct file *file)
+{
+	char *str = NULL;
+	xasprintf(&str, "%d,%s,%d",
+		  file->proc->pid, file->proc->command, file->association);
+	return str;
+}
+
 static bool anon_eventfd_fill_column(struct proc *proc  __attribute__((__unused__)),
 				     struct unkn *unkn,
 				     struct libscols_line *ln __attribute__((__unused__)),
@@ -323,6 +398,25 @@ static bool anon_eventfd_fill_column(struct proc *proc  __attribute__((__unused_
 	case COL_EVENTFD_ID:
 		xasprintf(str, "%d", data->id);
 		return true;
+	case COL_ENDPOINTS: {
+		struct list_head *e;
+		char *estr;
+		foreach_endpoint(e, data->endpoint) {
+			struct anon_eventfd_data *other = list_entry(e,
+								     struct anon_eventfd_data,
+								     endpoint.endpoints);
+			if (data == other)
+				continue;
+			if (*str)
+				xstrputc(str, '\n');
+			estr = anon_eventfd_data_xstrendpoint(&other->backptr->file);
+			xstrappend(str, estr);
+			free(estr);
+		}
+		if (!*str)
+			return false;
+		return true;
+	}
 	default:
 		return false;
 	}
@@ -336,6 +430,8 @@ static const struct anon_ops anon_eventfd_ops = {
 	.init = anon_eventfd_init,
 	.free = anon_eventfd_free,
 	.handle_fdinfo = anon_eventfd_handle_fdinfo,
+	.attach_xinfo = anon_eventfd_attach_xinfo,
+	.ipc_class = &anon_eventfd_ipc_class,
 };
 
 /*
@@ -370,4 +466,6 @@ const struct file_class unkn_class = {
 	.initialize_content = unkn_init_content,
 	.free_content = unkn_content_free,
 	.handle_fdinfo = unkn_handle_fdinfo,
+	.attach_xinfo = unkn_attach_xinfo,
+	.get_ipc_class = unkn_get_ipc_class,
 };
