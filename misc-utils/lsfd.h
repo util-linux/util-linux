@@ -212,6 +212,7 @@ struct ipc_class {
 struct ipc *new_ipc(const struct ipc_class *class);
 struct ipc *get_ipc(struct file *file);
 void add_ipc(struct ipc *ipc, unsigned int hash);
+void init_endpoint(struct ipc_endpoint *endpoint);
 void add_endpoint(struct ipc_endpoint *endpoint, struct ipc *ipc);
 
 /*

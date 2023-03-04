@@ -121,7 +121,7 @@ static void fifo_initialize_content(struct file *file)
 	struct ipc *ipc;
 	unsigned int hash;
 
-	INIT_LIST_HEAD(&fifo->endpoint.endpoints);
+	init_endpoint(&fifo->endpoint);
 	ipc = get_ipc(file);
 	if (ipc)
 		goto link;

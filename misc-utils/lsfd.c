@@ -1101,6 +1101,11 @@ void add_ipc(struct ipc *ipc, unsigned int hash)
 	list_add(&ipc->ipcs, &ipc_table.tables[slot]);
 }
 
+void init_endpoint(struct ipc_endpoint *endpoint)
+{
+	INIT_LIST_HEAD(&endpoint->endpoints);
+}
+
 void add_endpoint(struct ipc_endpoint *endpoint, struct ipc *ipc)
 {
 	endpoint->ipc = ipc;
