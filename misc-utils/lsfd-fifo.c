@@ -68,7 +68,7 @@ static bool fifo_fill_column(struct proc *proc __attribute__((__unused__)),
 	case COL_ENDPOINTS: {
 		struct fifo *this = (struct fifo *)file;
 		struct list_head *e;
-		list_for_each_backwardly(e, &this->endpoint.ipc->endpoints) {
+		foreach_endpoint(e, this->endpoint) {
 			char *estr;
 			struct fifo *other = list_entry(e, struct fifo, endpoint.endpoints);
 			if (this == other)

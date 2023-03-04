@@ -214,6 +214,7 @@ struct ipc *get_ipc(struct file *file);
 void add_ipc(struct ipc *ipc, unsigned int hash);
 void init_endpoint(struct ipc_endpoint *endpoint);
 void add_endpoint(struct ipc_endpoint *endpoint, struct ipc *ipc);
+#define foreach_endpoint(E,ENDPOINT) list_for_each_backwardly(E, &((ENDPOINT).ipc->endpoints))
 
 /*
  * Name managing
