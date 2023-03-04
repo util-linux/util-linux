@@ -203,11 +203,13 @@ struct ipc_endpoint {
 };
 
 struct ipc_class {
+	size_t size;
 	unsigned int (*get_hash)(struct file *file);
 	bool (*is_suitable_ipc)(struct ipc *ipc, struct file *file);
 	void (*free)(struct ipc *ipc);
 };
 
+struct ipc *new_ipc(const struct ipc_class *class);
 struct ipc *get_ipc(struct file *file);
 void add_ipc(struct ipc *ipc, unsigned int hash);
 

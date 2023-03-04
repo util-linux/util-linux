@@ -1062,6 +1062,15 @@ static void finalize_ipc_table(void)
 		list_free(&ipc_table.tables[i], struct ipc, ipcs, free_ipc);
 }
 
+struct ipc *new_ipc(const struct ipc_class *class)
+{
+	struct ipc *ipc = xcalloc(1, class->size);
+	ipc->class = class;
+	INIT_LIST_HEAD(&ipc->endpoints);
+	INIT_LIST_HEAD(&ipc->ipcs);
+	return ipc;
+}
+
 struct ipc *get_ipc(struct file *file)
 {
 	int slot;

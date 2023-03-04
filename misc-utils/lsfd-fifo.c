@@ -107,6 +107,7 @@ static bool fifo_is_suitable_ipc(struct ipc *ipc, struct file *file)
 static const struct ipc_class *fifo_get_ipc_class(struct file *file __attribute__((__unused__)))
 {
 	static const struct ipc_class fifo_ipc_class = {
+		.size = sizeof(struct fifo_ipc),
 		.get_hash = fifo_get_hash,
 		.is_suitable_ipc = fifo_is_suitable_ipc,
 		.free = NULL,
@@ -125,10 +126,7 @@ static void fifo_initialize_content(struct file *file)
 	if (ipc)
 		goto link;
 
-	ipc = xmalloc(sizeof(struct fifo_ipc));
-	ipc->class = fifo_get_ipc_class(file);
-	INIT_LIST_HEAD(&ipc->endpoints);
-	INIT_LIST_HEAD(&ipc->ipcs);
+	ipc = new_ipc(fifo_get_ipc_class(file));
 	((struct fifo_ipc *)ipc)->ino = file->stat.st_ino;
 
 	hash = fifo_get_hash(file);
