@@ -357,12 +357,12 @@ dist_noinst_DATA += \
 	sys-utils/fstab.5.adoc \
 	sys-utils/umount.8.adoc
 mount_SOURCES = sys-utils/mount.c
-mount_LDADD = $(LDADD) libcommon.la libmount.la $(SELINUX_LIBS)
+mount_LDADD = $(LDADD) libcommon.la libmount.la libblkid.la $(SELINUX_LIBS)
 mount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS) -I$(ul_libmount_incdir)
 mount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 
 umount_SOURCES = sys-utils/umount.c
-umount_LDADD = $(LDADD) libcommon.la libmount.la
+umount_LDADD = $(LDADD) libcommon.la libmount.la libblkid.la
 umount_CFLAGS = $(AM_CFLAGS) $(SUID_CFLAGS) -I$(ul_libmount_incdir)
 umount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 
