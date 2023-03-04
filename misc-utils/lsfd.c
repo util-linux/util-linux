@@ -1101,6 +1101,12 @@ void add_ipc(struct ipc *ipc, unsigned int hash)
 	list_add(&ipc->ipcs, &ipc_table.tables[slot]);
 }
 
+void add_endpoint(struct ipc_endpoint *endpoint, struct ipc *ipc)
+{
+	endpoint->ipc = ipc;
+	list_add(&endpoint->endpoints, &ipc->endpoints);
+}
+
 static void fill_column(struct proc *proc,
 			struct file *file,
 			struct libscols_line *ln,

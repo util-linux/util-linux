@@ -132,8 +132,7 @@ static void fifo_initialize_content(struct file *file)
 	hash = fifo_get_hash(file);
 	add_ipc(ipc, hash);
  link:
-	fifo->endpoint.ipc = ipc;
-	list_add(&fifo->endpoint.endpoints, &ipc->endpoints);
+	add_endpoint(&fifo->endpoint, ipc);
 }
 
 const struct file_class fifo_class = {
