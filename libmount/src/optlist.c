@@ -851,7 +851,7 @@ int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *cl
 int mnt_optlist_get_attrs(struct libmnt_optlist *ls __attribute__((__unused__)),
 			  uint64_t *set __attribute__((__unused__)),
 			  uint64_t *clr __attribute__((__unused__)),
-			  int mask)
+			  int mask __attribute__((__unused__)))
 {
 	return 0;
 }
