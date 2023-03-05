@@ -878,9 +878,9 @@ static int gpt_mknew_header(struct fdisk_context *cxt,
 	if (!has_id) {
 		struct gpt_guid guid;
 
-		uuid_generate_random((unsigned char *) &header->disk_guid);
-		guid = header->disk_guid;
+		uuid_generate_random((unsigned char *) &guid);
 		swap_efi_guid(&guid);
+		header->disk_guid = guid;
 	}
 	return 0;
 }
@@ -2621,9 +2621,9 @@ static int gpt_add_partition(
 		 */
 		struct gpt_guid guid;
 
-		uuid_generate_random((unsigned char *) &e->partition_guid);
-		guid = e->partition_guid;
+		uuid_generate_random((unsigned char *) &guid);
 		swap_efi_guid(&guid);
+		e->partition_guid = guid;
 	}
 
 	if (pa && pa->name && *pa->name)
