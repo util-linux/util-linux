@@ -61,12 +61,7 @@ static void *netns_tree;
 
 static int netns_compare(const void *a, const void *b)
 {
-	if (*(ino_t *)a < *(ino_t *)b)
-		return -1;
-	else if (*(ino_t *)a > *(ino_t *)b)
-		return 1;
-	else
-		return 0;
+	return *(ino_t *)a - *(ino_t *)b;
 }
 
 static bool is_sock_xinfo_loaded(ino_t netns)
@@ -194,11 +189,7 @@ void finalize_sock_xinfos(void)
 
 static int xinfo_compare(const void *a, const void *b)
 {
-	if (((struct sock_xinfo *)a)->inode < ((struct sock_xinfo *)b)->inode)
-		return -1;
-	if (((struct sock_xinfo *)a)->inode > ((struct sock_xinfo *)b)->inode)
-		return 1;
-	return 0;
+	return ((struct sock_xinfo *)a)->inode - ((struct sock_xinfo *)b)->inode;
 }
 
 static void add_sock_info(struct sock_xinfo *xinfo)

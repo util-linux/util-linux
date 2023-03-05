@@ -447,11 +447,7 @@ static void *proc_tree;			/* for tsearch/tfind */
 
 static int proc_tree_compare(const void *a, const void *b)
 {
-	if (((struct proc *)a)->pid < ((struct proc *)b)->pid)
-		return -1;
-	if (((struct proc *)a)->pid > ((struct proc *)b)->pid)
-		return 1;
-	return 0;
+	return ((struct proc *)a)->pid - ((struct proc *)b)->pid;
 }
 
 struct proc *get_proc(pid_t pid)
