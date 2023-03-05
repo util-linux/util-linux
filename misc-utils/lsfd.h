@@ -186,7 +186,7 @@ struct file_class {
 };
 
 extern const struct file_class file_class, cdev_class, bdev_class, sock_class, unkn_class, fifo_class,
-	nsfs_file_class;
+	nsfs_file_class, mqueue_file_class;
 
 /*
  * IPC
@@ -249,5 +249,11 @@ static inline void xstrputc(char **a, char c)
  */
 void load_sock_xinfo(struct path_cxt *pc, const char *name, ino_t netns);
 bool is_nsfs_dev(dev_t dev);
+
+/*
+ * POSIX Mqueue
+ */
+/* 0 is assumed as the major dev for DEV. */
+bool is_mqueue_dev(dev_t dev);
 
 #endif /* UTIL_LINUX_LSFD_H */

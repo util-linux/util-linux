@@ -463,3 +463,38 @@ const struct file_class nsfs_file_class = {
 	.fill_column = nsfs_file_fill_column,
 	.handle_fdinfo = NULL,
 };
+
+/*
+ * POSIX Mqueue
+ */
+bool is_mqueue_dev(dev_t dev)
+{
+	const char *fs = get_nodev_filesystem(minor(dev));
+
+	if (fs && (strcmp (fs, "mqueue") == 0))
+		return true;
+
+	return false;
+}
+
+static bool mqueue_file_fill_column(struct proc *proc __attribute__((__unused__)),
+				    struct file *file __attribute__((__unused__)),
+				    struct libscols_line *ln,
+				    int column_id,
+				    size_t column_index)
+{
+	switch (column_id) {
+	case COL_TYPE:
+		if (scols_line_set_data(ln, column_index, "mqueue"))
+			err(EXIT_FAILURE, _("failed to add output data"));
+		return true;
+	default:
+		return false;
+	}
+}
+
+const struct file_class mqueue_file_class = {
+	.super = &file_class,
+	.size = sizeof(struct file),
+	.fill_column = mqueue_file_fill_column,
+};
