@@ -467,6 +467,16 @@ const struct file_class nsfs_file_class = {
 /*
  * POSIX Mqueue
  */
+struct mqueue_file {
+	struct file file;
+	struct ipc_endpoint endpoint;
+};
+
+struct mqueue_file_ipc {
+	struct ipc ipc;
+	ino_t ino;
+};
+
 bool is_mqueue_dev(dev_t dev)
 {
 	const char *fs = get_nodev_filesystem(minor(dev));
@@ -475,6 +485,16 @@ bool is_mqueue_dev(dev_t dev)
 		return true;
 
 	return false;
+}
+
+static inline char *mqueue_file_xstrendpoint(struct file *file)
+{
+	char *str = NULL;
+	xasprintf(&str, "%d,%s,%d%c%c",
+		  file->proc->pid, file->proc->command, file->association,
+		  (file->mode & S_IRUSR)? 'r': '-',
+		  (file->mode & S_IWUSR)? 'w': '-');
+	return str;
 }
 
 static bool mqueue_file_fill_column(struct proc *proc __attribute__((__unused__)),
@@ -488,13 +508,77 @@ static bool mqueue_file_fill_column(struct proc *proc __attribute__((__unused__)
 		if (scols_line_set_data(ln, column_index, "mqueue"))
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
+	case COL_ENDPOINTS: {
+		char *str = NULL;
+		struct mqueue_file *this = (struct mqueue_file *)file;
+		struct list_head *e;
+		foreach_endpoint(e, this->endpoint) {
+			char *estr;
+			struct mqueue_file *other = list_entry(e, struct mqueue_file,
+							       endpoint.endpoints);
+			if (this == other)
+				continue;
+			if (str)
+				xstrputc(&str, '\n');
+			estr = mqueue_file_xstrendpoint(&other->file);
+			xstrappend(&str, estr);
+			free(estr);
+		}
+		if (!str)
+			return false;
+		if (scols_line_refer_data(ln, column_index, str))
+			err(EXIT_FAILURE, _("failed to add output data"));
+		return true;
+	}
 	default:
 		return false;
 	}
 }
 
+static unsigned int mqueue_file_get_hash(struct file *file)
+{
+	return (unsigned int)(file->stat.st_ino % UINT_MAX);
+}
+
+static bool mqueue_file_is_suitable_ipc(struct ipc *ipc, struct file *file)
+{
+	return ((struct mqueue_file_ipc *)ipc)->ino == file->stat.st_ino;
+}
+
+static const struct ipc_class *mqueue_file_get_ipc_class(struct file *file __attribute__((__unused__)))
+{
+	static const struct ipc_class mqueue_file_ipc_class = {
+		.size = sizeof(struct mqueue_file_ipc),
+		.get_hash = mqueue_file_get_hash,
+		.is_suitable_ipc = mqueue_file_is_suitable_ipc,
+	};
+	return &mqueue_file_ipc_class;
+}
+
+static void init_mqueue_file_content(struct file *file)
+{
+	struct mqueue_file *mqueue_file = (struct mqueue_file *)file;
+	struct ipc *ipc;
+	unsigned int hash;
+
+	init_endpoint(&mqueue_file->endpoint);
+	ipc = get_ipc(file);
+	if (ipc)
+		goto link;
+
+	ipc = new_ipc(mqueue_file_get_ipc_class(file));
+	((struct mqueue_file_ipc *)ipc)->ino = file->stat.st_ino;
+
+	hash = mqueue_file_get_hash(file);
+	add_ipc(ipc, hash);
+ link:
+	add_endpoint(&mqueue_file->endpoint, ipc);
+}
+
 const struct file_class mqueue_file_class = {
 	.super = &file_class,
-	.size = sizeof(struct file),
+	.size = sizeof(struct mqueue_file),
+	.initialize_content = init_mqueue_file_content,
 	.fill_column = mqueue_file_fill_column,
+	.get_ipc_class = mqueue_file_get_ipc_class,
 };

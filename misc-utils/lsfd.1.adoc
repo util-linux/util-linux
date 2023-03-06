@@ -155,6 +155,7 @@ The format of the column depends on the object associated
 with the fd:
 
 FIFO type:::
+mqueue type:::
 _PID_,_COMMAND_,_ASSOC_[-r][-w]
 +
 The last characters ([-r][-w]) represents the read and/or
