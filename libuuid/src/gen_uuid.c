@@ -528,25 +528,35 @@ int __uuid_generate_time_cont(uuid_t out, int *num, uint32_t cont_offset)
  */
 static int uuid_generate_time_generic(uuid_t out) {
 #ifdef HAVE_TLS
+	/* thread local cache for uuidd based requests */
+	const int			cs_min = (1<<6);
+	const int			cs_max = (1<<18);
+	const int			cs_factor = 2;
 	THREAD_LOCAL int		num = 0;
-	THREAD_LOCAL int		cache_size = 1;
+	THREAD_LOCAL int		cache_size = cs_min;
+	THREAD_LOCAL int		last_used = 0;
 	THREAD_LOCAL struct uuid	uu;
 	THREAD_LOCAL time_t		last_time = 0;
 	time_t				now;
 
-	if (num > 0) {
+	if (num > 0) { /* expire cache */
 		now = time(NULL);
-		if (now > last_time+1)
+		if (now > last_time+1) {
+			last_used = cache_size - num;
 			num = 0;
+		}
 	}
-	if (num <= 0) {
+	if (num <= 0) { /* fill cache */
 		/*
 		 * num + OP_BULK provides a local cache in each application.
 		 * Start with a small cache size to cover short running applications
-		 * and increment the cache size over the runntime.
+		 * and adjust the cache size over the runntime.
 		 */
-		if (cache_size < 1000000)
-			cache_size *= 10;
+		if ((last_used == cache_size) && (cache_size < cs_max))
+			cache_size *= cs_factor;
+		else if ((last_used < (cache_size / cs_factor)) && (cache_size > cs_min))
+			cache_size /= cs_factor;
+
 		num = cache_size;
 
 		if (get_uuid_via_daemon(UUIDD_OP_BULK_TIME_UUID,
@@ -556,9 +566,11 @@ static int uuid_generate_time_generic(uuid_t out) {
 			num--;
 			return 0;
 		}
+		/* request to daemon failed, reset cache */
 		num = 0;
+		cache_size = cs_min;
 	}
-	if (num > 0) {
+	if (num > 0) { /* serve uuid from cache */
 		uu.time_low++;
 		if (uu.time_low == 0) {
 			uu.time_mid++;
@@ -567,6 +579,8 @@ static int uuid_generate_time_generic(uuid_t out) {
 		}
 		num--;
 		uuid_pack(&uu, out);
+		if (num == 0)
+			last_used = cache_size;
 		return 0;
 	}
 #else
