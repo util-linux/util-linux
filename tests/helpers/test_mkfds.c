@@ -2645,9 +2645,10 @@ int main(int argc, char **argv)
 
 	if (!quiet) {
 		printf("%d", getpid());
-		putchar('\n');
-		if (factory->report)
+		if (factory->report) {
+			putchar(' ');
 			factory->report(factory, data, stdout);
+		}
 		fflush(stdout);
 	}
 
