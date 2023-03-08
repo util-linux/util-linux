@@ -312,9 +312,10 @@ struct factory {
 #define MAX_N 5
 	int  N;			/* the number of fds this factory makes */
 	int  EX_N;		/* fds made optionally */
+	int  EX_R;		/* the number of extra words printed to stdout. */
 	void *(*make)(const struct factory *, struct fdesc[], int, char **);
 	void (*free)(const struct factory *, void *);
-	void (*report)(const struct factory *, void *, FILE *);
+	void (*report)(const struct factory *, int, void *, FILE *);
 	const struct parameter * params;
 };
 
@@ -2465,17 +2466,18 @@ static int count_parameters(const struct factory *factory)
 
 static void print_factory(const struct factory *factory)
 {
-	printf("%-20s %4s %5d %6d %s\n",
+	printf("%-20s %4s %5d %7d %6d %s\n",
 	       factory->name,
 	       factory->priv? "yes": "no",
 	       factory->N,
+	       factory->EX_R + 1,
 	       count_parameters(factory),
 	       factory->desc);
 }
 
 static void list_factories(void)
 {
-	printf("%-20s PRIV COUNT NPARAM DESCRIPTION\n", "FACTORY");
+	printf("%-20s PRIV COUNT NRETURN NPARAM DESCRIPTION\n", "FACTORY");
 	for (size_t i = 0; i < ARRAY_SIZE(factories); i++)
 		print_factory(factories + i);
 }
@@ -2646,9 +2648,12 @@ int main(int argc, char **argv)
 	if (!quiet) {
 		printf("%d", getpid());
 		if (factory->report) {
-			putchar(' ');
-			factory->report(factory, data, stdout);
+			for (int i = 0; i < factory->EX_R; i++) {
+				putchar(' ');
+				factory->report(factory, i, data, stdout);
+			}
 		}
+		putchar('\n');
 		fflush(stdout);
 	}
 
