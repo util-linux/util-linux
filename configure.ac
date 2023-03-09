@@ -2780,6 +2780,14 @@ AC_ARG_VAR([ADJTIME_PATH],
 AS_IF([test "x$ADJTIME_PATH" = x], [ADJTIME_PATH="/etc/adjtime"])
 AC_DEFINE_UNQUOTED([CONFIG_ADJTIME_PATH], "$ADJTIME_PATH", [Path to hwclock adjtime file])
 
+if test "x${build_alias}" != "x${host_alias}"; then
+  AC_MSG_NOTICE([setting link_all_deplibs=unknown for libtool])
+  # work around Debian patch to libtool breaking cross-compiles
+  # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=702737
+  # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=297726
+  link_all_deplibs=unknown
+fi
+
 
 LIBS=""
 
