@@ -265,8 +265,8 @@ mailto:kzak@redhat.com[Karel Zak]
 
 == SEE ALSO
 
-*newuidmap*(1)
-*newgidmap*(1)
+*newuidmap*(1),
+*newgidmap*(1),
 *clone*(2),
 *unshare*(2),
 *namespaces*(7),
