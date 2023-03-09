@@ -89,19 +89,22 @@ static struct ul_env_list *env_list_add(struct ul_env_list *ls0, const char *str
 */
 struct ul_env_list *env_from_fd(int fd)
 {
-	char *buf = NULL;
+	char *buf = NULL, *p;
 	size_t rc = 0;
 	struct ul_env_list *ls = NULL;
 
 	if ((rc = read_all_alloc(fd, &buf)) < 1)
 		return NULL;
 	buf[rc] = '\0';
+	p = buf;
 
 	while (rc > 0) {
-		ls = env_list_add(ls, buf);
-		buf += strlen(buf) + 1;
-		rc -= strlen(buf) + 1;
+		ls = env_list_add(ls, p);
+		p += strlen(p) + 1;
+		rc -= strlen(p) + 1;
 	}
+
+	free(buf);
 	return ls;
 }
 
