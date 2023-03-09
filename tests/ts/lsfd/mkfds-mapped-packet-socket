@@ -33,20 +33,31 @@ PID=
 FD=3
 EXPR=
 INTERFACE=lo
+SOCKTYPE=
+ERR=
 
-{
-    coproc MKFDS { "$TS_HELPER_MKFDS" mapped-packet-socket $FD interface=${INTERFACE}; }
+for SOCKTYPE in RAW DGRAM; do
+    coproc MKFDS { "$TS_HELPER_MKFDS" mapped-packet-socket $FD \
+				      interface=${INTERFACE} socktype=${SOCKTYPE}; }
     if read -u ${MKFDS[0]} PID; then
 	EXPR='(ASSOC == "shm") and (STTYPE == "SOCK") and (MODE == "-w-")'
 	${TS_CMD_LSFD} -p "$PID" -n -o SOCK.PROTONAME -Q "${EXPR}"
 	echo 'SOCK.PROTONAME': $?
+
+	EXPR="(FD == $FD)"
+	${TS_CMD_LSFD} -p "$PID" -n -o NAME,SOCK.TYPE,SOCK.PROTONAME,PACKET.IFACE,PACKET.PROTOCOL -Q "${EXPR}"
+	echo 'NAME,SOCK.TYPE,SOCK.PROTONAME,PACKET.IFACE,PACKET.PROTOCOL': $?
+
 	kill -CONT ${PID}
     fi
-
     wait ${MKFDS_PID}
-} > $TS_OUTPUT 2>&1
+    ERR=$?
+    if [ $ERR != 0 ]; then
+	   break
+    fi
+done > $TS_OUTPUT 2>&1
 
-if [[ $? == "$ENOPROTOOPT" ]]; then
+if [[ "$ERR" == "$ENOPROTOOPT" ]]; then
     ts_skip "packet socket doesn't support attaching a buffer on this platform"
 fi
 

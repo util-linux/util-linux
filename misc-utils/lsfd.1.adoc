@@ -217,24 +217,39 @@ Some files have special formats and information sources:
 NETLINK:::
 protocol=_NETLINK.PROTOCOL_[ lport=_NETLINK.LPORT_[ group=_NETLINK.GROUPS_]]
 +
+PACKET:::
+type=_SOCK.TYPE_[ protocol=_PACKET.PROTOCOL_][ iface=_PACKET.IFACE_]
++
 pidfd:::
 pid=_TARGET-PID_ comm=_TARGET-COMMAND_ nspid=_TARGET-NSPIDS_
 +
 *lsfd* extracts _TARGET-PID_ and _TARGET-NSPIDS_ from
 ``/proc/``_pid_``/fdinfo/``_fd_.
 +
+PING:::
+state=_SOCK.STATE_[ id=_PING.ID_][ laddr=_INET.LADDR_ [ raddr=_INET.RADDR_]]
++
+PINGv6:::
+state=_SOCK.STATE_[ id=_PING.ID_][ laddr=_INET6.LADDR_ [ raddr=_INET6.RADDR_]]
++
 RAW:::
 state=_SOCK.STATE_[ protocol=_RAW.PROTOCOL_ [ laddr=_INET.LADDR_ [ raddr=_INET.RADDR_]]]
 +
+RAWv6:::
+state=_SOCK.STATE_[ protocol=_RAW.PROTOCOL_ [ laddr=_INET6.LADDR_ [ raddr=_INET6.RADDR_]]]
++
 TCP:::
+TCPv6:::
 state=_SOCK.STATE_[ laddr=_TCP.LADDR_ [ raddr=_TCP.RADDR_]]
 +
 UDP:::
+UDPv6:::
 state=_SOCK.STATE_[ laddr=_UDP.LADDR_ [ raddr=_UDP.RADDR_]]
 +
 *lsfd* hides ``raddr=`` if _UDP.RADDR_ is ``0.0.0.0`` and _UDP.RPORT_ is 0.
-
-UDPLITE:::
++
+UDP-LITE:::
+UDPLITEv6:::
 state=_SOCK.STATE_[ laddr=_UDPLITE.LADDR_ [ raddr=_UDPLITE.RADDR_]]
 +
 UNIX-STREAM:::
@@ -265,6 +280,12 @@ The type is `mnt`, `cgroup`, `uts`, `ipc`, `user`, `pid`, `net`,
 
 OWNER <``string``>::
 Owner of the file.
+
+PACKET.IFACE <``string``>::
+Interface name associated with the packet socket.
+
+PACKET.PROTOCOL <``string``>::
+L3 protocol associated with the packet socket.
 
 PARTITION <``string``>::
 Block device name resolved by `/proc/partition`.

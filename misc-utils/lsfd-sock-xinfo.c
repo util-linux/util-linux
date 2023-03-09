@@ -21,7 +21,10 @@
 #include <arpa/inet.h>		/* inet_ntop */
 #include <netinet/in.h>		/* in6_addr */
 #include <fcntl.h>		/* open(2) */
+#include <ifaddrs.h>		/* getifaddrs */
 #include <inttypes.h>		/* SCNu16 */
+#include <net/if.h>		/* if_nametoindex */
+#include <linux/if_ether.h>	/* ETH_P_* */
 #include <linux/net.h>		/* SS_* */
 #include <linux/netlink.h>	/* NETLINK_* */
 #include <linux/un.h>		/* UNIX_PATH_MAX */
@@ -52,6 +55,7 @@ static void load_xinfo_from_proc_udp6(ino_t netns_inode);
 static void load_xinfo_from_proc_udplite6(ino_t netns_inode);
 static void load_xinfo_from_proc_raw6(ino_t netns_inode);
 static void load_xinfo_from_proc_netlink(ino_t netns_inode);
+static void load_xinfo_from_proc_packet(ino_t netns_inode);
 
 static int self_netns_fd = -1;
 static struct stat self_netns_sb;
@@ -59,14 +63,77 @@ static struct stat self_netns_sb;
 static void *xinfo_tree;	/* for tsearch/tfind */
 static void *netns_tree;
 
+struct iface {
+	unsigned int index;
+	char name[IF_NAMESIZE];
+};
+
+static const char *get_iface_name(ino_t netns, unsigned int iface_index);
+
+struct netns {
+	ino_t inode;
+	struct iface *ifaces;
+};
+
 static int netns_compare(const void *a, const void *b)
 {
-	if (*(ino_t *)a < *(ino_t *)b)
-		return -1;
-	else if (*(ino_t *)a > *(ino_t *)b)
-		return 1;
-	else
-		return 0;
+	const struct netns *netns_a = a;
+	const struct netns *netns_b = b;
+
+	return netns_a->inode - netns_b->inode;
+}
+
+static void netns_free(void *netns)
+{
+	struct netns *nsobj = netns;
+
+	free(nsobj->ifaces);
+	free(netns);
+}
+
+/*
+ * iface index -> iface name mappings
+ */
+static void load_ifaces_from_getifaddrs(struct netns *nsobj)
+{
+	struct ifaddrs *ifa_list;
+	struct ifaddrs *ifa;
+	size_t i, count = 0;
+
+	if (getifaddrs(&ifa_list) < 0)
+		return;
+
+	for (ifa = ifa_list; ifa != NULL; ifa = ifa->ifa_next)
+		count++;
+
+	nsobj->ifaces = xcalloc(count + 1, sizeof(*nsobj->ifaces));
+
+	for (ifa = ifa_list, i = 0; ifa != NULL; ifa = ifa->ifa_next, i++) {
+		unsigned int if_index = if_nametoindex(ifa->ifa_name);
+
+		nsobj->ifaces[i].index = if_index;
+		strncpy(nsobj->ifaces[i].name, ifa->ifa_name, IF_NAMESIZE - 1);
+		/* The slot for the last byte is already filled by calloc. */
+	}
+	/* nsobj->ifaces[count] is the sentinel value. */
+
+	freeifaddrs(ifa_list);
+
+	return;
+}
+
+static const char *get_iface_name(ino_t netns, unsigned int iface_index)
+{
+	struct netns **nsobj = tfind(&netns, &netns_tree, netns_compare);
+	if (!nsobj)
+		return NULL;
+
+	for (size_t i = 0; (*nsobj)->ifaces[i].index; i++) {
+		if ((*nsobj)->ifaces[i].index == iface_index)
+			return (*nsobj)->ifaces[i].name;
+	}
+
+	return NULL;
 }
 
 static bool is_sock_xinfo_loaded(ino_t netns)
@@ -74,19 +141,22 @@ static bool is_sock_xinfo_loaded(ino_t netns)
 	return tfind(&netns, &netns_tree, netns_compare)? true: false;
 }
 
-static void mark_sock_xinfo_loaded(ino_t ino)
+static struct netns *mark_sock_xinfo_loaded(ino_t ino)
 {
-	ino_t *netns = xmalloc(sizeof(ino));
+	struct netns *netns = xcalloc(1, sizeof(*netns));
 	ino_t **tmp;
 
-	*netns = ino;
+	netns->inode = ino;
 	tmp = tsearch(netns, &netns_tree, netns_compare);
 	if (tmp == NULL)
 		errx(EXIT_FAILURE, _("failed to allocate memory"));
+	return *(struct netns **)tmp;
 }
 
-static void load_sock_xinfo_no_nsswitch(ino_t netns)
+static void load_sock_xinfo_no_nsswitch(struct netns *nsobj)
 {
+	ino_t netns = nsobj? nsobj->inode: 0;
+
 	load_xinfo_from_proc_unix(netns);
 	load_xinfo_from_proc_tcp(netns);
 	load_xinfo_from_proc_udp(netns);
@@ -99,12 +169,16 @@ static void load_sock_xinfo_no_nsswitch(ino_t netns)
 	load_xinfo_from_proc_icmp(netns);
 	load_xinfo_from_proc_icmp6(netns);
 	load_xinfo_from_proc_netlink(netns);
+	load_xinfo_from_proc_packet(netns);
+
+	if (nsobj)
+		load_ifaces_from_getifaddrs(nsobj);
 }
 
-static void load_sock_xinfo_with_fd(int fd, ino_t netns)
+static void load_sock_xinfo_with_fd(int fd, struct netns *nsobj)
 {
 	if (setns(fd, CLONE_NEWNET) == 0) {
-		load_sock_xinfo_no_nsswitch(netns);
+		load_sock_xinfo_no_nsswitch(nsobj);
 		setns(self_netns_fd, CLONE_NEWNET);
 	}
 }
@@ -116,13 +190,12 @@ void load_sock_xinfo(struct path_cxt *pc, const char *name, ino_t netns)
 
 	if (!is_sock_xinfo_loaded(netns)) {
 		int fd;
-
-		mark_sock_xinfo_loaded(netns);
+		struct netns *nsobj = mark_sock_xinfo_loaded(netns);
 		fd = ul_path_open(pc, O_RDONLY, name);
 		if (fd < 0)
 			return;
 
-		load_sock_xinfo_with_fd(fd, netns);
+		load_sock_xinfo_with_fd(fd, nsobj);
 		close(fd);
 	}
 }
@@ -136,11 +209,11 @@ void initialize_sock_xinfos(void)
 	self_netns_fd = open("/proc/self/ns/net", O_RDONLY);
 
 	if (self_netns_fd < 0)
-		load_sock_xinfo_no_nsswitch(0);
+		load_sock_xinfo_no_nsswitch(NULL);
 	else {
 		if (fstat(self_netns_fd, &self_netns_sb) == 0) {
-			mark_sock_xinfo_loaded(self_netns_sb.st_ino);
-			load_sock_xinfo_no_nsswitch(self_netns_sb.st_ino);
+			struct netns *nsobj = mark_sock_xinfo_loaded(self_netns_sb.st_ino);
+			load_sock_xinfo_no_nsswitch(nsobj);
 		}
 	}
 
@@ -161,15 +234,16 @@ void initialize_sock_xinfos(void)
 	while ((d = readdir(dir))) {
 		struct stat sb;
 		int fd;
+		struct netns *nsobj;
 		if (ul_path_stat(pc, &sb, 0, d->d_name) < 0)
 			continue;
 		if (is_sock_xinfo_loaded(sb.st_ino))
 			continue;
-		mark_sock_xinfo_loaded(sb.st_ino);
+		nsobj = mark_sock_xinfo_loaded(sb.st_ino);
 		fd = ul_path_open(pc, O_RDONLY, d->d_name);
 		if (fd < 0)
 			continue;
-		load_sock_xinfo_with_fd(fd, sb.st_ino);
+		load_sock_xinfo_with_fd(fd, nsobj);
 		close(fd);
 	}
 	closedir(dir);
@@ -188,17 +262,13 @@ void finalize_sock_xinfos(void)
 {
 	if (self_netns_fd != -1)
 		close(self_netns_fd);
-	tdestroy(netns_tree, free);
+	tdestroy(netns_tree, netns_free);
 	tdestroy(xinfo_tree, free_sock_xinfo);
 }
 
 static int xinfo_compare(const void *a, const void *b)
 {
-	if (((struct sock_xinfo *)a)->inode < ((struct sock_xinfo *)b)->inode)
-		return -1;
-	if (((struct sock_xinfo *)a)->inode > ((struct sock_xinfo *)b)->inode)
-		return 1;
-	return 0;
+	return ((struct sock_xinfo *)a)->inode - ((struct sock_xinfo *)b)->inode;
 }
 
 static void add_sock_info(struct sock_xinfo *xinfo)
@@ -1547,4 +1617,406 @@ static void load_xinfo_from_proc_netlink(ino_t netns_inode)
 
  out:
 	fclose(netlink_fp);
+}
+
+/*
+ * PACKET
+ */
+struct packet_xinfo {
+	struct sock_xinfo sock;
+	uint16_t type;
+	uint16_t protocol;
+	unsigned int iface;
+};
+
+static const char *packet_decode_protocol(uint16_t proto)
+{
+	switch (proto) {
+	case 0:
+		return NULL;
+	case ETH_P_802_3:
+		return "802_3";
+	case ETH_P_AX25:
+		return "ax25";
+	case ETH_P_ALL:
+		return "all";
+	case ETH_P_802_2:
+		return "802_2";
+	case ETH_P_SNAP:
+		return "snap";
+	case ETH_P_DDCMP:
+		return "ddcmp";
+	case ETH_P_WAN_PPP:
+		return "wan_ppp";
+	case ETH_P_PPP_MP:
+		return "ppp_mp";
+	case ETH_P_LOCALTALK:
+		return "localtalk";
+	case ETH_P_CAN:
+		return "can";
+	case ETH_P_CANFD:
+		return "canfd";
+#ifdef ETH_P_CANXL
+	case ETH_P_CANXL:
+		return "canxl";
+#endif
+	case ETH_P_PPPTALK:
+		return "ppptalk";
+	case ETH_P_TR_802_2:
+		return "tr_802_2";
+	case ETH_P_MOBITEX:
+		return "mobitex";
+	case ETH_P_CONTROL:
+		return "control";
+	case ETH_P_IRDA:
+		return "irda";
+	case ETH_P_ECONET:
+		return "econet";
+	case ETH_P_HDLC:
+		return "hdlc";
+	case ETH_P_ARCNET:
+		return "arcnet";
+	case ETH_P_DSA:
+		return "dsa";
+	case ETH_P_TRAILER:
+		return "trailer";
+	case ETH_P_PHONET:
+		return "phonet";
+	case ETH_P_IEEE802154:
+		return "ieee802154";
+	case ETH_P_CAIF:
+		return "caif";
+#ifdef ETH_P_XDSA
+	case ETH_P_XDSA:
+		return "xdsa";
+#endif
+#ifdef ETH_P_MAP
+	case ETH_P_MAP:
+		return "map";
+#endif
+#ifdef ETH_P_MCTP
+	case ETH_P_MCTP:
+		return "mctp";
+#endif
+	case ETH_P_LOOP:
+		return "loop";
+	case ETH_P_PUP:
+		return "pup";
+	case ETH_P_PUPAT:
+		return "pupat";
+#ifdef ETH_P_TSN
+	case ETH_P_TSN:
+		return "tsn";
+#endif
+#ifdef ETH_P_ERSPAN2
+	case ETH_P_ERSPAN2:
+		return "erspan2";
+#endif
+	case ETH_P_IP:
+		return "ip";
+	case ETH_P_X25:
+		return "x25";
+	case ETH_P_ARP:
+		return "arp";
+	case ETH_P_BPQ:
+		return "bpq";
+	case ETH_P_IEEEPUP:
+		return "ieeepup";
+	case ETH_P_IEEEPUPAT:
+		return "ieeepupat";
+	case ETH_P_BATMAN:
+		return "batman";
+	case ETH_P_DEC:
+		return "dec";
+	case ETH_P_DNA_DL:
+		return "dna_dl";
+	case ETH_P_DNA_RC:
+		return "dna_rc";
+	case ETH_P_DNA_RT:
+		return "dna_rt";
+	case ETH_P_LAT:
+		return "lat";
+	case ETH_P_DIAG:
+		return "diag";
+	case ETH_P_CUST:
+		return "cust";
+	case ETH_P_SCA:
+		return "sca";
+	case ETH_P_TEB:
+		return "teb";
+	case ETH_P_RARP:
+		return "rarp";
+	case ETH_P_ATALK:
+		return "atalk";
+	case ETH_P_AARP:
+		return "aarp";
+	case ETH_P_8021Q:
+		return "8021q";
+#ifdef ETH_P_ERSPAN
+	case ETH_P_ERSPAN:
+		return "erspan";
+#endif
+	case ETH_P_IPX:
+		return "ipx";
+	case ETH_P_IPV6:
+		return "ipv6";
+	case ETH_P_PAUSE:
+		return "pause";
+	case ETH_P_SLOW:
+		return "slow";
+	case ETH_P_WCCP:
+		return "wccp";
+	case ETH_P_MPLS_UC:
+		return "mpls_uc";
+	case ETH_P_MPLS_MC:
+		return "mpls_mc";
+	case ETH_P_ATMMPOA:
+		return "atmmpoa";
+#ifdef ETH_P_PPP_DISC
+	case ETH_P_PPP_DISC:
+		return "ppp_disc";
+#endif
+#ifdef ETH_P_PPP_SES
+	case ETH_P_PPP_SES:
+		return "ppp_ses";
+#endif
+	case ETH_P_LINK_CTL:
+		return "link_ctl";
+	case ETH_P_ATMFATE:
+		return "atmfate";
+	case ETH_P_PAE:
+		return "pae";
+#ifdef ETH_P_PROFINET
+	case ETH_P_PROFINET:
+		return "profinet";
+#endif
+#ifdef ETH_P_REALTEK
+	case ETH_P_REALTEK:
+		return "realtek";
+#endif
+	case ETH_P_AOE:
+		return "aoe";
+#ifdef ETH_P_ETHERCAT
+	case ETH_P_ETHERCAT:
+		return "ethercat";
+#endif
+	case ETH_P_8021AD:
+		return "8021ad";
+	case ETH_P_802_EX1:
+		return "802_ex1";
+#ifdef ETH_P_PREAUTH
+	case ETH_P_PREAUTH:
+		return "preauth";
+#endif
+	case ETH_P_TIPC:
+		return "tipc";
+#ifdef ETH_P_LLDP
+	case ETH_P_LLDP:
+		return "lldp";
+#endif
+#ifdef ETH_P_MRP
+	case ETH_P_MRP:
+		return "mrp";
+#endif
+#ifdef ETH_P_MACSEC
+	case ETH_P_MACSEC:
+		return "macsec";
+#endif
+	case ETH_P_8021AH:
+		return "8021ah";
+#ifdef ETH_P_MVRP
+	case ETH_P_MVRP:
+		return "mvrp";
+#endif
+	case ETH_P_1588:
+		return "1588";
+#ifdef ETH_P_NCSI
+	case ETH_P_NCSI:
+		return "ncsi";
+#endif
+#ifdef ETH_P_PRP
+	case ETH_P_PRP:
+		return "prp";
+#endif
+#ifdef ETH_P_CFM
+	case ETH_P_CFM:
+		return "cfm";
+#endif
+	case ETH_P_FCOE:
+		return "fcoe";
+#ifdef ETH_P_IBOE
+	case ETH_P_IBOE:
+		return "iboe";
+#endif
+	case ETH_P_TDLS:
+		return "tdls";
+	case ETH_P_FIP:
+		return "fip";
+#ifdef ETH_P_80221
+	case ETH_P_80221:
+		return "80221";
+#endif
+#ifdef ETH_P_HSR
+	case ETH_P_HSR:
+		return "hsr";
+#endif
+#ifdef ETH_P_NSH
+	case ETH_P_NSH:
+		return "nsh";
+#endif
+#ifdef ETH_P_LOOPBACK
+	case ETH_P_LOOPBACK:
+		return "loopback";
+#endif
+	case ETH_P_QINQ1:
+		return "qinq1";
+	case ETH_P_QINQ2:
+		return "qinq2";
+	case ETH_P_QINQ3:
+		return "qinq3";
+	case ETH_P_EDSA:
+		return "edsa";
+#ifdef ETH_P_DSA_8021Q
+	case ETH_P_DSA_8021Q:
+		return "dsa_8021q";
+#endif
+#ifdef ETH_P_DSA_A5PSW
+	case ETH_P_DSA_A5PSW:
+		return "dsa_a5psw";
+#endif
+#ifdef ETH_P_IFE
+	case ETH_P_IFE:
+		return "ife";
+#endif
+	case ETH_P_AF_IUCV:
+		return "af_iucv";
+#ifdef ETH_P_802_3_MIN
+	case ETH_P_802_3_MIN:
+		return "802_3_min";
+#endif
+	default:
+		return "unknown";
+	}
+}
+
+static char *packet_get_name(struct sock_xinfo *sock_xinfo,
+			     struct sock *sock __attribute__((__unused__)))
+{
+	struct packet_xinfo *pkt = (struct packet_xinfo *)sock_xinfo;
+	char *str = NULL;
+	const char *type = sock_decode_type(pkt->type);
+	const char *proto = packet_decode_protocol(pkt->protocol);
+	const char *iface = get_iface_name(sock_xinfo->netns_inode,
+					   pkt->iface);
+
+	if (iface && proto)
+		xasprintf(&str, "type=%s protocol=%s iface=%s",
+			  type, proto, iface);
+	else if (proto)
+		xasprintf(&str, "type=%s protocol=%s",
+			  type, proto);
+	else if (iface)
+		xasprintf(&str, "type=%s iface=%s",
+			  type, iface);
+	else
+		xasprintf(&str, "type=%s", type);
+
+	return str;
+}
+
+static char *packet_get_type(struct sock_xinfo *sock_xinfo __attribute__((__unused__)),
+			     struct sock *sock __attribute__((__unused__)))
+{
+	const char *str;
+	struct packet_xinfo *pkt = (struct packet_xinfo *)sock_xinfo;
+
+	str = sock_decode_type(pkt->type);
+	return xstrdup(str);
+}
+
+static bool packet_fill_column(struct proc *proc __attribute__((__unused__)),
+			       struct sock_xinfo *sock_xinfo,
+			       struct sock *sock __attribute__((__unused__)),
+			       struct libscols_line *ln __attribute__((__unused__)),
+			       int column_id,
+			       size_t column_index __attribute__((__unused__)),
+			       char **str)
+{
+	struct packet_xinfo *pkt = (struct packet_xinfo *)sock_xinfo;
+
+	switch (column_id) {
+	case COL_PACKET_IFACE: {
+		const char *iface;
+		iface = get_iface_name(sock_xinfo->netns_inode,
+				       pkt->iface);
+		if (iface) {
+			*str = xstrdup(iface);
+			return true;
+		}
+		break;
+	}
+	case COL_PACKET_PROTOCOL: {
+		const char *proto;
+		proto = packet_decode_protocol(pkt->protocol);
+		if (proto) {
+			*str = xstrdup(proto);
+			return true;
+		}
+		break;
+	}
+	default:
+		break;
+	}
+	return false;
+}
+
+static const struct sock_xinfo_class packet_xinfo_class = {
+	.get_name = packet_get_name,
+	.get_type = packet_get_type,
+	.get_state = NULL,
+	.get_listening = NULL,
+	.fill_column = packet_fill_column,
+	.free = NULL,
+};
+
+static void load_xinfo_from_proc_packet(ino_t netns_inode)
+{
+	char line[BUFSIZ];
+	FILE *packet_fp;
+
+	packet_fp = fopen("/proc/net/packet", "r");
+	if (!packet_fp)
+		return;
+
+	if (fgets(line, sizeof(line), packet_fp) == NULL)
+		goto out;
+	if (!(line[0] == 's' && line[1] == 'k'))
+		/* Unexpected line */
+		goto out;
+
+	while (fgets(line, sizeof(line), packet_fp)) {
+		uint16_t type;
+		uint16_t protocol;
+		unsigned int iface;
+		unsigned long inode;
+		struct packet_xinfo *pkt;
+
+		if (sscanf(line, "%*x %*d %" SCNu16 " %" SCNu16 " %u %*d %*d %*d %lu",
+			   &type, &protocol, &iface, &inode) < 4)
+			continue;
+
+		pkt = xcalloc(1, sizeof(*pkt));
+		pkt->sock.class = &packet_xinfo_class;
+		pkt->sock.inode = (ino_t)inode;
+		pkt->sock.netns_inode = netns_inode;
+
+		pkt->type = type;
+		pkt->protocol = protocol;
+		pkt->iface = iface;
+
+		add_sock_info(&pkt->sock);
+	}
+
+ out:
+	fclose(packet_fp);
 }
