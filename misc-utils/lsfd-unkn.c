@@ -165,7 +165,7 @@ struct anon_pidfd_data {
 
 static bool anon_pidfd_probe(const char *str)
 {
-	return (strncmp(str, "[pidfd]", 7) == 0);
+	return strncmp(str, "[pidfd]", 7) == 0;
 }
 
 static char *anon_pidfd_get_name(struct unkn *unkn)
