@@ -6,53 +6,83 @@ Release highlights
 
 mount(8) and libmount:
 
+
  * no more supports --enable-libmount-support-mtab. Yes, classic
    writable /etc/mtab is completely dead now.
 
+
  * supports new file descriptors based mount kernel API. This change is
-   very aggressive to libmount code, but hopefully it does not introduce
-   regressions in traditional mount(8) behavior. The library is still backwardly
-   compatible with old kernels and it's able to fall back to classic mount(2) API
-   if necessary. The old mount(2) is also use for btrfs when used with SELinux
-   context= mount options, because btrfs kernel driver does not support this
-   use-case yet; it's possible we will see more in-kernel issue... Use 
+   very aggressive to libmount code, but hopefully, it does not introduce
+   regressions in traditional mount(8) behavior. The library is still backward
+   compatible with old kernels and can fall back to classic mount(2) API
+   if necessary. The old mount(2) is also used for btrfs when used with SELinux
+   context= mount options because the btrfs kernel driver does not support this
+   use-case yet; we may see the more in-kernel issue... Use
    --disable-libmount-mountfd-support to disable this feature.
 
-  * X-mount.idmap= is a new mount option to create idmapped mount. Thanks to
-    Christian Brauner.
+  * X-mount.idmap= is a new mount option to create an ID-mapped mount.
+    Thanks to Christian Brauner.
 
   * supports a new "recursive" argument for VFS flags, for example
     "mount -o bind,ro=recursive"
 
-  * X-mount.auto-fstypes is a new options to specify allowed or forbidden filesystem
-    types for automatic filesystem detection.
+  * X-mount.auto-fstypes is a new option for automatic filesystem detection to
+    specify allowed or forbidden filesystem types.
 
-  * rootcontext=@target is a new mount option to set the root SELinux context of
-    the new filesystem to the current context of the target mountpoint. 
+  * rootcontext=@target is a new mount option to set the root SELinux context
+    of the new filesystem to the current context of the target mountpoint.
 
-  * X-mount.{owner,group,mode}= is a new mount option which take a user, group,
-    and mode, respectively, and set them on the target after mounting
+  * X-mount.{owner,group,mode}= is a new mount option that takes a user, group,
+    and mode and sets them on the target after mounting.
 
-  * uses autofs mount hint to ignore autofs mount entries
+  * uses autofs mount hint to ignore autofs mount entries.
+
 
 blkpr(8) is a NEW COMMAND to run persistent reservations ioctls on a device
 (typically SCSI and NVMe disk).
 
-pipesz(1) is a NEW COMMAND to set or examine pipe and FIFO buffer sizes
+pipesz(1) is a NEW COMMAND to set or examine pipe and FIFO buffer sizes.
 
-waitpid(1) is a NEW COMMAND to wait for arbitrary processes
+waitpid(1) is a NEW COMMAND to wait for arbitrary processes.
 
-renice(1) support posix-compliant -n (via POSIXLY_CORRECT) and add a new option --relative
+renice(1) supports posix-compliant -n (via POSIXLY_CORRECT) and add a new
+option --relative.
 
-blockdev(8) now supports BLKGETDISKSEQ ioctl
+blockdev(8) supports BLKGETDISKSEQ ioctl now.
 
 lsfd(1):
 
-  * massively improved information about network socket
+  * uses NAME column to show cooked file names. Refer KNAME column if you need
+    raw file names that appeared in /proc/$pid/fd.
 
-cal(1) can be configured to use colors by terminal-colors.d(5)
+  * uses TYPE column to show cooked file type names. Refer STTYPE if you need
+    raw type reported by stat(2).
 
-dmesg(1) supports subsecond granularity for --since and --until
+  * adds ENDPOINTS column for printing the endpoints of IPCs. This version
+    supports FIFO.
+
+  * decodes flags field of /proc/$PID/fdinfo/$fd correctly
+
+  * adds columns for pidfd
+  
+  * adds columns for AF_INET and AF_INET6 sockets. This version uses /proc/net/*
+    files as information sources.
+
+  * adds columns for AF_NETLINK sockets.
+
+  * adds columns for AF_PACKET sockets.
+
+  * supports -i, --inet options for displaying only AF_INET and/or AF_INET6
+    sockets.
+
+cal(1) can be configured to use colors by terminal-colors.d(5).
+
+dmesg(1):
+
+  * supports subsecond granularity for --since and --until.
+
+  * option --level accepts '+' prefix or postfix for a level name to specify
+    all higher or all lower levels.
 
 fstrim(8) supports a new option --types to filter out by filesystem types
 
@@ -62,27 +92,34 @@ blkid(8) and libblkid:
 
   * reports endianness (minix, befs, cramfs, ufs, squashfs3, zfs)
 
-  * calculates check-sums for many filesystems and RAIDs to avoid
+  * calculates check-sums for many filesystems and RAIDs to avoid false-positive
+    detections (zonefs, nvidia reail, ubi, luks, romfs, f2fs, ...)
 
-  * false-positive detections (zonefs, nvidia reail,
-    ubi, luks, romfs, f2fs, ...)
 
 lsblk(8):
 
-   * new options --nvme and --virtio
+   * --nvme and --virtio are new options to filter out devices.
 
-   * new columns ID (udev ID), ID-LINK (the shortest udev /dev/disk/by-id link name),
-     PARTN (partition number) and MQ (device queues).
+   * adds columns ID (udev ID), ID-LINK (the shortest udev /dev/disk/by-id
+    link name), PARTN (partition number), and MQ (device queues).
 
-   * improved detection of hotplug and removable status 
+   * improves detection of hotplug and removable status.
 
-nsenter(1) supports a new option --env for allowing environment variables inheritance
+nsenter(1) supports a new option --env for allowing environment variables
+inheritance.
 
-namei(1) suports a new option -Z to report SELinux contexts
+namei(1) supports a new option -Z to report SELinux contexts
+
+Upstream automated builds and testing have been improved to use more distros
+and architectures.
+
+The Meson build has been massively improved.
+
+More man pages have been translated.
 
 
-Extra thanks to Masatake YAMATO for his work on lsfd(1) and to Thomas Weißschuh for
-his work on many areas.
+Extra thanks to Masatake YAMATO for his work on lsfd(1) and to Thomas Weißschuh
+for his work on many areas.
 
 
 Changes between v2.38 and v2.39
