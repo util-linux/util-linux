@@ -27,6 +27,7 @@
 #include <linux/if_packet.h>
 #include <linux/netlink.h>
 #include <linux/sockios.h>  /* SIOCGSKNS */
+#include <mqueue.h>
 #include <net/if.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
@@ -2012,6 +2013,179 @@ static void free_eventfd(const struct factory * factory _U_, void *data)
 	}
 }
 
+struct mqueue_data {
+	pid_t pid;
+	const char *path;
+	bool created;
+};
+
+static void mqueue_data_free(struct mqueue_data *data)
+{
+	if (data->created)
+		mq_unlink(data->path);
+	free((void *)data->path);
+	free(data);
+}
+
+static void report_mqueue(const struct factory *factory _U_,
+			  int nth, void *data, FILE *fp)
+{
+	if (nth == 0) {
+		fprintf(fp, "%d", ((struct mqueue_data *)data)->pid);
+	}
+}
+
+static void close_mqueue(int fd, void *data _U_)
+{
+	mq_close(fd);
+}
+
+static void free_mqueue(const struct factory * factory _U_, void *data)
+{
+	struct mqueue_data *mqueue_data = data;
+	pid_t child = mqueue_data->pid;
+	int wstatus;
+
+	mqueue_data_free(mqueue_data);
+
+	kill(child, SIGCONT);
+	if (waitpid(child, &wstatus, 0) < 0)
+		err(EXIT_FAILURE, "failed in waitpid()");
+
+	if (WIFEXITED(wstatus)) {
+		int s = WEXITSTATUS(wstatus);
+		if (s != 0)
+			err(EXIT_FAILURE, "the child process got an error: %d", s);
+	} else if (WIFSIGNALED(wstatus)) {
+		int s = WTERMSIG(wstatus);
+		if (WTERMSIG(wstatus) != 0)
+			err(EXIT_FAILURE, "the child process got a signal: %d", s);
+	}
+}
+
+static void *make_mqueue(const struct factory *factory _U_, struct fdesc fdescs[],
+			 int argc _U_, char ** argv _U_)
+{
+	struct mqueue_data *mqueue_data;
+	struct arg path = decode_arg("path", factory->params, argc, argv);
+	const char *spath = ARG_STRING(path);
+
+	struct mq_attr attr = {
+		.mq_maxmsg = 1,
+		.mq_msgsize = 1,
+	};
+
+	int fd;
+
+	if (spath[0] != '/')
+		errx(EXIT_FAILURE, "the path for mqueue must start with '/': %s", spath);
+
+	if (spath[0] == '\0')
+		err(EXIT_FAILURE, "the path should not be empty");
+
+	if (fdescs[0].fd == fdescs[1].fd)
+		errx(EXIT_FAILURE, "specify three different numbers as file descriptors");
+
+	mqueue_data = xmalloc(sizeof(*mqueue_data));
+	mqueue_data->pid = 0;
+	mqueue_data->path = xstrdup(spath);
+	mqueue_data->created = false;
+
+	free_arg(&path);
+
+	fd = mq_open(mqueue_data->path, O_CREAT|O_EXCL | O_RDONLY, S_IRUSR | S_IWUSR, &attr);
+	if (fd < 0) {
+		mqueue_data_free(mqueue_data);
+		err(EXIT_FAILURE, "failed in mq_open(3) for reading");
+	}
+
+	mqueue_data->created = true;
+	if (fd != fdescs[0].fd) {
+		if (dup2(fd, fdescs[0].fd) < 0) {
+			int e = errno;
+			mq_close(fd);
+			mqueue_data_free(mqueue_data);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", fd, fdescs[0].fd);
+		}
+		mq_close(fd);
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_mqueue,
+		.data  = NULL
+	};
+
+	fd = mq_open(mqueue_data->path, O_WRONLY, S_IRUSR | S_IWUSR, NULL);
+	if (fd < 0) {
+		int e = errno;
+		mq_close(fdescs[0].fd);
+		mqueue_data_free(mqueue_data);
+		errno = e;
+		err(EXIT_FAILURE, "failed in mq_open(3) for writing");
+	}
+
+	if (fd != fdescs[1].fd) {
+		if (dup2(fd, fdescs[1].fd) < 0) {
+			int e = errno;
+			mq_close(fd);
+			mq_close(fdescs[0].fd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", fd, fdescs[1].fd);
+		}
+		mq_close(fd);
+	}
+	fdescs[1] = (struct fdesc){
+		.fd    = fdescs[1].fd,
+		.close = close_mqueue,
+		.data  = NULL
+	};
+
+	signal(SIGCHLD, abort_with_child_death_message);
+	mqueue_data->pid = fork();
+	if (mqueue_data->pid < -1) {
+		int e = errno;
+		mq_close(fdescs[0].fd);
+		mq_close(fdescs[1].fd);
+		mqueue_data_free(mqueue_data);
+		errno = e;
+		err(EXIT_FAILURE, "failed in fork()");
+	} else if (mqueue_data->pid == 0) {
+		mqueue_data->created = false;
+		mqueue_data_free(mqueue_data);
+		mq_close(fdescs[0].fd);
+
+		signal(SIGCONT, do_nothing);
+		/* Notify the parent that I'm ready. */
+		if (mq_send(fdescs[1].fd, "", 0, 0) < 0)
+			err(EXIT_FAILURE,
+			    "failed in mq_send() to notify the readiness to the prent");
+		/* Wait till the parent lets me go. */
+		pause();
+
+		mq_close(fdescs[1].fd);
+		exit(0);
+	} else {
+		char c;
+
+		/* The child owns fdescs[1]. */
+		mq_close(fdescs[1].fd);
+		fdescs[1].fd = -1;
+
+		/* Wait till the child is ready. */
+		if (mq_receive(fdescs[0].fd, &c, 1, NULL) < 0) {
+			mq_close(fdescs[0].fd);
+			mqueue_data_free(mqueue_data);
+			err(EXIT_FAILURE,
+			    "failed in mq_receive() the readiness notification from the child");
+		}
+		signal(SIGCHLD, SIG_DFL);
+	}
+
+	return mqueue_data;
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -2586,6 +2760,26 @@ static const struct factory factories[] = {
 		.report = report_eventfd,
 		.free = free_eventfd,
 		.params = (struct parameter []) {
+			PARAM_END
+		}
+	},
+	{
+		.name = "mqueue",
+		.desc = "make a mqueue connecting two processes",
+		.priv = false,
+		.N    = 2,
+		.EX_N = 0,
+		.EX_R = 1,
+		.make = make_mqueue,
+		.report = report_mqueue,
+		.free = free_mqueue,
+		.params = (struct parameter []) {
+			{
+				.name = "path",
+				.type = PTYPE_STRING,
+				.desc = "path for mqueue",
+				.defv.string = "/test_mkfds-mqueue",
+			},
 			PARAM_END
 		}
 	},
