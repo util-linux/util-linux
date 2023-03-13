@@ -65,7 +65,7 @@ and *-p* option, e.g. -p 1, may print the same output but using *-p*
 option is much more efficient because *-p* option works at a much earlier
 stage of processing than the *-Q* option.
 
-*-i[4|6]*, *--inet[=4|6]::
+*-i*[4|6], *--inet*[=4|6]::
 List only IPv4 sockets and/or IPv6 sockets.
 
 *-Q*, *--filter* _expr_::
@@ -305,11 +305,11 @@ ____
 If pid namespaces are supported then this function will also print
 the pid of a given pidfd refers to for all descendant pid namespaces
 starting from the current pid namespace of the instance, i.e. the
-Pid field and the first entry in the NSpid field will be identical.
-...
+Pid field and the first entry in the NSpid field will be identical. +
+... +
 Note that this differs from the Pid and NSpid fields in
 /proc/<pid>/status where Pid and NSpid are always shown relative to
-the  pid namespace of the procfs instance.
+the pid namespace of the procfs instance.
 ____
 
 PIDFD.PID <``number``>::
