@@ -75,7 +75,7 @@ struct libmnt_context *mnt_new_context(void)
 	/* if we're really root and aren't running setuid */
 	cxt->restricted = (uid_t) 0 == ruid && ruid == euid ? 0 : 1;
 
-	cxt->noautofs = 1;
+	cxt->noautofs = 0;
 
 	DBG(CXT, ul_debugobj(cxt, "----> allocate %s",
 				cxt->restricted ? "[RESTRICTED]" : ""));
@@ -164,7 +164,7 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	cxt->helper = NULL;
 	cxt->mountdata = NULL;
 	cxt->flags = MNT_FL_DEFAULT;
-	cxt->noautofs = 1;
+	cxt->noautofs = 0;
 	cxt->has_selinux_opt = 0;
 
 	cxt->map_linux = mnt_get_builtin_optmap(MNT_LINUX_MAP);
