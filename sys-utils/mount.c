@@ -124,6 +124,8 @@ static void print_all(struct libmnt_context *cxt, char *pattern, int show_label)
 	struct libmnt_fs *fs;
 	struct libmnt_cache *cache = NULL;
 
+	mnt_context_enable_noautofs(cxt, 1);
+
 	if (mnt_context_get_mtab(cxt, &tb))
 		err(MNT_EX_SYSERR, _("failed to read mtab"));
 
