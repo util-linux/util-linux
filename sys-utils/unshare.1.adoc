@@ -163,7 +163,7 @@ $ id -u; id -g
 1000
 1000
 $ unshare --user --map-root-user \
-        sh -c ''whoami; cat /proc/self/uid_map /proc/self/gid_map''
+        sh -c 'whoami; cat /proc/self/uid_map /proc/self/gid_map'
 root
          0       1000          1
          0       1000          1
@@ -214,11 +214,8 @@ The following commands demonstrate the use of the *--kill-child* option when cre
 ....
 # set +m                # Don't print job status messages
 
-
 # unshare --pid --fork --mount-proc --kill-child -- \
-
-
-       bash --norc -c ''(sleep 555 &) && (ps a &) && sleep 999'' &
+       bash --norc -c '(sleep 555 &) && (ps a &) && sleep 999' &
 [1] 53456
 #     PID TTY      STAT   TIME COMMAND
       1 pts/3    S+     0:00 sleep 999
@@ -235,9 +232,7 @@ The *pidof*(1) command prints no output, because the *sleep* processes have been
 
 ....
 # unshare --pid --fork --mount-proc -- \
-
-
-       bash --norc -c ''(sleep 555 &) && (ps a &) && sleep 999'' &
+       bash --norc -c '(sleep 555 &) && (ps a &) && sleep 999' &
 [1] 53479
 #     PID TTY      STAT   TIME COMMAND
       1 pts/3    S+     0:00 sleep 999
