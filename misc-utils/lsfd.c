@@ -850,7 +850,7 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 		char sym[PATH_MAX] = { '\0' };
 
 	try_map_files:
-		snprintf(map_file, sizeof(map_file), "map_files/%"SCNx64"-%"SCNx64, start, end);
+		snprintf(map_file, sizeof(map_file), "map_files/%"PRIx64"-%"PRIx64, start, end);
 		if (ul_path_stat(pc, &sb, 0, map_file) < 0)
 			return;
 		if (ul_path_readlink(pc, sym, sizeof(sym), map_file) < 0)
