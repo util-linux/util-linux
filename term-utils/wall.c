@@ -274,29 +274,13 @@ int main(int argc, char **argv)
 	exit(EXIT_SUCCESS);
 }
 
-static void buf_putc_careful(FILE *fs, int c)
-{
-	if (isprint(c) || c == '\a' || c == '\t' || c == '\r' || c == '\n')
-		fputc(c, fs);
-	else if (!c_isascii(c))
-		fprintf(fs, "\\%3o", (unsigned char)c);
-	else
-		fputs((char[]){ '^', c ^ 0x40, '\0' }, fs);
-}
-
 static char *makemsg(char *fname, char **mvec, int mvecsz,
 		     size_t *mbufsize, int print_banner)
 {
-	register int ch, cnt;
-	char *p, *lbuf, *retbuf;
+	char *lbuf, *retbuf;
 	FILE * fs = open_memstream(&retbuf, mbufsize);
-	long line_max;
-
-	line_max = sysconf(_SC_LINE_MAX);
-	if (line_max <= 0)
-		line_max = 512;
-
-	lbuf = xmalloc(line_max);
+	size_t lbuflen = 512;
+	lbuf = xmalloc(lbuflen);
 
 	if (print_banner == TRUE) {
 		char *hostname = xgethostname();
@@ -329,7 +313,7 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 		   will not overflow as long as %d takes at most 100 chars */
 		fprintf(fs, "\r%*s\r\n", TERM_WIDTH, " ");
 
-		snprintf(lbuf, line_max,
+		snprintf(lbuf, lbuflen,
 				_("Broadcast message from %s@%s (%s) (%s):"),
 				whom, hostname, where, date);
 		fprintf(fs, "%-*.*s\007\007\r\n", TERM_WIDTH, TERM_WIDTH, lbuf);
@@ -373,18 +357,8 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 		/*
 		 * Read message from stdin.
 		 */
-		while (fgets(lbuf, line_max, stdin)) {
-			for (cnt = 0, p = lbuf; (ch = *p) != '\0'; ++p, ++cnt) {
-				if (cnt == TERM_WIDTH || ch == '\n') {
-					fprintf(fs, "%*s\r\n", TERM_WIDTH - cnt, "");
-					cnt = 0;
-				}
-				if (ch == '\t')
-					cnt += (7 - (cnt % 8));
-				if (ch != '\n')
-					buf_putc_careful(fs, ch);
-			}
-		}
+		while (getline(&lbuf, &lbuflen, stdin) >= 0)
+			fputs_careful(lbuf, fs, '^', true, TERM_WIDTH);
 	}
 	fprintf(fs, "%*s\r\n", TERM_WIDTH, " ");
 

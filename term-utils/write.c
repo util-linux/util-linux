@@ -276,7 +276,7 @@ static void do_write(const struct write_control *ctl)
 		if (signal_received)
 			break;
 
-		if (fputs_careful(line, stdout, '^', true) == EOF)
+		if (fputs_careful(line, stdout, '^', true, 0) == EOF)
 			err(EXIT_FAILURE, _("carefulputc failed"));
 	}
 	free(line);

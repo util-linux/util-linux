@@ -547,7 +547,7 @@ static int list(const struct last_control *ctl, struct utmpx *p, time_t logout_t
 	/*
 	 *	Print out "final" string safely.
 	 */
-	fputs_careful(final, stdout, '*', false);
+	fputs_careful(final, stdout, '*', false, 0);
 
 	if (len < 0 || (size_t)len >= sizeof(final))
 		putchar('\n');
