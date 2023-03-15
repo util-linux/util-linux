@@ -274,74 +274,22 @@ int main(int argc, char **argv)
 	exit(EXIT_SUCCESS);
 }
 
-struct buffer {
-	size_t	sz;
-	size_t	used;
-	char	*data;
-};
-
-static void buf_enlarge(struct buffer *bs, size_t len)
+static void buf_putc_careful(FILE *fs, int c)
 {
-	if (bs->sz == 0 || len > bs->sz - bs->used) {
-		bs->sz += len < 128 ? 128 : len;
-		bs->data = xrealloc(bs->data, bs->sz);
-	}
-}
-
-static void buf_puts(struct buffer *bs, const char *s)
-{
-	size_t len = strlen(s);
-
-	buf_enlarge(bs, len + 1);
-	memcpy(bs->data + bs->used, s, len + 1);
-	bs->used += len;
-}
-
-static void __attribute__((__format__ (__printf__, 2, 3)))
-	buf_printf(struct buffer *bs, const char *fmt, ...)
-{
-	int rc;
-	va_list ap;
-	size_t limit;
-
-	buf_enlarge(bs, 0);	/* default size */
-	limit = bs->sz - bs->used;
-
-	va_start(ap, fmt);
-	rc = vsnprintf(bs->data + bs->used, limit, fmt, ap);
-	va_end(ap);
-
-	if (rc >= 0 && (size_t) rc >= limit) {	/* not enough, enlarge */
-		buf_enlarge(bs, (size_t)rc + 1);
-		limit = bs->sz - bs->used;
-		va_start(ap, fmt);
-		rc = vsnprintf(bs->data  + bs->used, limit, fmt, ap);
-		va_end(ap);
-	}
-
-	if (rc > 0)
-		bs->used += rc;
-}
-
-static void buf_putc_careful(struct buffer *bs, int c)
-{
-	if (isprint(c) || c == '\a' || c == '\t' || c == '\r' || c == '\n') {
-		buf_enlarge(bs, 1);
-		bs->data[bs->used++] = c;
-	} else if (!c_isascii(c))
-		buf_printf(bs, "\\%3o", (unsigned char)c);
-	else {
-		char tmp[] = { '^', c ^ 0x40, '\0' };
-		buf_puts(bs, tmp);
-	}
+	if (isprint(c) || c == '\a' || c == '\t' || c == '\r' || c == '\n')
+		fputc(c, fs);
+	else if (!c_isascii(c))
+		fprintf(fs, "\\%3o", (unsigned char)c);
+	else
+		fputs((char[]){ '^', c ^ 0x40, '\0' }, fs);
 }
 
 static char *makemsg(char *fname, char **mvec, int mvecsz,
 		     size_t *mbufsize, int print_banner)
 {
-	struct buffer _bs = {.used = 0}, *bs = &_bs;
 	register int ch, cnt;
-	char *p, *lbuf;
+	char *p, *lbuf, *retbuf;
+	FILE * fs = open_memstream(&retbuf, mbufsize);
 	long line_max;
 
 	line_max = sysconf(_SC_LINE_MAX);
@@ -379,15 +327,15 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 		 */
 		/* snprintf is not always available, but the sprintf's here
 		   will not overflow as long as %d takes at most 100 chars */
-		buf_printf(bs, "\r%*s\r\n", TERM_WIDTH, " ");
+		fprintf(fs, "\r%*s\r\n", TERM_WIDTH, " ");
 
 		snprintf(lbuf, line_max,
 				_("Broadcast message from %s@%s (%s) (%s):"),
 				whom, hostname, where, date);
-		buf_printf(bs, "%-*.*s\007\007\r\n", TERM_WIDTH, TERM_WIDTH, lbuf);
+		fprintf(fs, "%-*.*s\007\007\r\n", TERM_WIDTH, TERM_WIDTH, lbuf);
 		free(hostname);
 	}
-	buf_printf(bs, "%*s\r\n", TERM_WIDTH, " ");
+	fprintf(fs, "%*s\r\n", TERM_WIDTH, " ");
 
 	 if (mvec) {
 		/*
@@ -396,11 +344,11 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 		int i;
 
 		for (i = 0; i < mvecsz; i++) {
-			buf_puts(bs, mvec[i]);
+			fputs(mvec[i], fs);
 			if (i < mvecsz - 1)
-				buf_puts(bs, " ");
+				fputc(' ', fs);
 		}
-		buf_puts(bs, "\r\n");
+		fputs("\r\n", fs);
 	} else {
 		/*
 		 * read message from <file>
@@ -428,23 +376,20 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 		while (fgets(lbuf, line_max, stdin)) {
 			for (cnt = 0, p = lbuf; (ch = *p) != '\0'; ++p, ++cnt) {
 				if (cnt == TERM_WIDTH || ch == '\n') {
-					for (; cnt < TERM_WIDTH; ++cnt)
-						buf_puts(bs, " ");
-					buf_puts(bs, "\r\n");
+					fprintf(fs, "%*s\r\n", TERM_WIDTH - cnt, "");
 					cnt = 0;
 				}
 				if (ch == '\t')
 					cnt += (7 - (cnt % 8));
 				if (ch != '\n')
-					buf_putc_careful(bs, ch);
+					buf_putc_careful(fs, ch);
 			}
 		}
 	}
-	buf_printf(bs, "%*s\r\n", TERM_WIDTH, " ");
+	fprintf(fs, "%*s\r\n", TERM_WIDTH, " ");
 
 	free(lbuf);
 
-	bs->data[bs->used] = '\0';	/* be paranoid */
-	*mbufsize = bs->used;
-	return bs->data;
+	fclose(fs);
+	return retbuf;
 }
