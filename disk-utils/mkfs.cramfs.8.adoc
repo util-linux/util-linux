@@ -62,14 +62,13 @@ This option is ignored. Originally the *-s* turned on directory entry sorting.
 *-z*::
 Make explicit holes.
 
-*-l*\fR[=\fImode\fR]::
+*-l* _mode_::
  Use exclusive BSD lock for device or file it operates.  The optional argument
- \fImode\fP can be \fByes\fR, \fBno\fR (or 1 and 0) or \fBnonblock\fR.  If the \fImode\fR
- argument is omitted, it defaults to \fB"yes"\fR.  This option overwrites
- environment variable \fB$LOCK_BLOCK_DEVICE\fR.  The default is not to use any
+ _mode_ can be _yes_, _no_ (or 1 and 0) or _nonblock_.  If the \fImode\fR
+ argument is omitted, it defaults to _"yes"_.  This option overwrites
+ environment variable *$LOCK_BLOCK_DEVICE*.  The default is not to use any
  lock at all, but it's recommended to avoid collisions with udevd or other
  tools.
- .TP
 
 include::man-common/help-version.adoc[]
 
