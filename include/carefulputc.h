@@ -1,31 +1,59 @@
 #ifndef UTIL_LINUX_CAREFULPUTC_H
 #define UTIL_LINUX_CAREFULPUTC_H
 
-/*
- * A putc() for use in write and wall (that sometimes are sgid tty).
- * It avoids control characters in our locale, and also ASCII control
- * characters.   Note that the locale of the recipient is unknown.
-*/
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#ifdef HAVE_WIDECHAR
+#include <wctype.h>
+#endif
+#include <stdbool.h>
 
 #include "cctype.h"
 
-static inline int fputc_careful(int c, FILE *fp, const char fail)
+/*
+ * A puts() for use in write and wall (that sometimes are sgid tty).
+ * It avoids control and invalid characters.
+ * The locale of the recipient is nominally unknown,
+ * but it's a solid bet that the encoding is compatible with the author's.
+ */
+static inline int fputs_careful(const char * s, FILE *fp, const char ctrl, bool cr_lf)
 {
-	int ret;
+	int ret = 0;
 
-	if (isprint(c) || c == '\a' || c == '\t' || c == '\r' || c == '\n')
-		ret = putc(c, fp);
-	else if (!c_isascii(c))
-		ret = fprintf(fp, "\\%3o", (unsigned char)c);
-	else {
-		ret = putc(fail, fp);
-		if (ret != EOF)
-			ret = putc(c ^ 0x40, fp);
+	for (size_t slen = strlen(s); *s; ++s, --slen) {
+		if (*s == '\n')
+			ret = fputs(cr_lf ? "\r\n" : "\n", fp);
+		else if (isprint(*s) || *s == '\a' || *s == '\t' || *s == '\r')
+			ret = putc(*s, fp);
+		else if (!c_isascii(*s)) {
+#ifdef HAVE_WIDECHAR
+			wchar_t w;
+			size_t clen = mbtowc(&w, s, slen);
+			switch(clen) {
+				case (size_t)-2:  // incomplete
+				case (size_t)-1:  // EILSEQ
+					mbtowc(NULL, NULL, 0);
+				nonprint:
+					ret = fprintf(fp, "\\%3hho", *s);
+					break;
+				default:
+					if(!iswprint(w))
+						goto nonprint;
+					ret = fwrite(s, 1, clen, fp);
+					s += clen - 1;
+					slen -= clen - 1;
+					break;
+			}
+#else
+			ret = fprintf(fp, "\\%3hho", *s);
+#endif
+		} else
+			ret = fputs((char[]){ ctrl, *s ^ 0x40, '\0' }, fp);
+		if (ret < 0)
+			return EOF;
 	}
-	return (ret < 0) ? EOF : 0;
+	return 0;
 }
 
 static inline void fputs_quoted_case(const char *data, FILE *out, int dir)

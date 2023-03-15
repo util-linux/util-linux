@@ -392,7 +392,6 @@ static int list(const struct last_control *ctl, struct utmpx *p, time_t logout_t
 	char		final[512];
 	char		utline[sizeof(p->ut_line) + 1];
 	char		domain[256];
-	char		*s;
 	int		mins, hours, days;
 	int		r, len;
 	struct last_timefmt *fmt;
@@ -548,8 +547,7 @@ static int list(const struct last_control *ctl, struct utmpx *p, time_t logout_t
 	/*
 	 *	Print out "final" string safely.
 	 */
-	for (s = final; *s; s++)
-		fputc_careful(*s, stdout, '*');
+	fputs_careful(final, stdout, '*', false);
 
 	if (len < 0 || (size_t)len >= sizeof(final))
 		putchar('\n');

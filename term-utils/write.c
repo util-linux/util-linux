@@ -224,21 +224,6 @@ static void signal_handler(int signo)
 }
 
 /*
- * write_line - like fputs(), but makes control characters visible and
- *     turns \n into \r\n.
- */
-static void write_line(char *s)
-{
-	while (*s) {
-		const int c = *s++;
-
-		if ((c == '\n' && fputc_careful('\r', stdout, '^') == EOF)
-		    || fputc_careful(c, stdout, '^') == EOF)
-			err(EXIT_FAILURE, _("carefulputc failed"));
-	}
-}
-
-/*
  * do_write - actually make the connection
  */
 static void do_write(const struct write_control *ctl)
@@ -247,7 +232,8 @@ static void do_write(const struct write_control *ctl)
 	struct passwd *pwd;
 	time_t now;
 	struct tm *tm;
-	char *host, line[512];
+	char *host, *line = NULL;
+	size_t linelen = 0;
 	struct sigaction sigact;
 
 	/* Determine our login name(s) before the we reopen() stdout */
@@ -286,11 +272,14 @@ static void do_write(const struct write_control *ctl)
 	free(host);
 	printf("\r\n");
 
-	while (fgets(line, sizeof(line), stdin) != NULL) {
+	while (getline(&line, &linelen, stdin) >= 0) {
 		if (signal_received)
 			break;
-		write_line(line);
+
+		if (fputs_careful(line, stdout, '^', true) == EOF)
+			err(EXIT_FAILURE, _("carefulputc failed"));
 	}
+	free(line);
 	printf("EOF\r\n");
 }
 
