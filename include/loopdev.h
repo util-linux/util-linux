@@ -122,7 +122,7 @@ struct loopdev_cxt {
 	unsigned int    control_ok:1;	/* /dev/loop-control success */
 
 	struct path_cxt		*sysfs; /* pointer to /sys/dev/block/<maj:min>/ */
-	struct loop_config 	config;	/* for GET/SET ioctl */
+	struct loop_config	config;	/* for GET/SET ioctl */
 	struct loopdev_iter	iter;	/* scans /sys or /dev for used/free devices */
 };
 
@@ -195,8 +195,10 @@ int loopcxt_set_sizelimit(struct loopdev_cxt *lc, uint64_t sizelimit);
 int loopcxt_set_blocksize(struct loopdev_cxt *lc, uint64_t blocksize);
 int loopcxt_set_flags(struct loopdev_cxt *lc, uint32_t flags);
 int loopcxt_set_backing_file(struct loopdev_cxt *lc, const char *filename);
+int loopcxt_set_refname(struct loopdev_cxt *lc, const char *refname);
 
 extern char *loopcxt_get_backing_file(struct loopdev_cxt *lc);
+extern char *loopcxt_get_refname(struct loopdev_cxt *lc);
 extern int loopcxt_get_backing_devno(struct loopdev_cxt *lc, dev_t *devno);
 extern int loopcxt_get_backing_inode(struct loopdev_cxt *lc, ino_t *ino);
 extern int loopcxt_get_offset(struct loopdev_cxt *lc, uint64_t *offset);

@@ -48,6 +48,7 @@ enum {
 	COL_MAJMIN,
 	COL_OFFSET,
 	COL_PARTSCAN,
+	COL_REF,
 	COL_RO,
 	COL_SIZELIMIT,
 	COL_DIO,
@@ -76,6 +77,7 @@ static const struct colinfo infos[] = {
 	[COL_NAME]        = { "NAME",      0.25, 0, N_("loop device name")},
 	[COL_OFFSET]      = { "OFFSET",       5, SCOLS_FL_RIGHT, N_("offset from the beginning"), SCOLS_JSON_NUMBER},
 	[COL_PARTSCAN]    = { "PARTSCAN",     1, SCOLS_FL_RIGHT, N_("partscan flag set"), SCOLS_JSON_BOOLEAN},
+	[COL_REF]         = { "REF",        0.1, 0, N_("loop device reference string")},
 	[COL_RO]          = { "RO",           1, SCOLS_FL_RIGHT, N_("read-only device"), SCOLS_JSON_BOOLEAN},
 	[COL_SIZELIMIT]   = { "SIZELIMIT",    5, SCOLS_FL_RIGHT, N_("size limit of the file in bytes"), SCOLS_JSON_NUMBER},
 	[COL_MAJMIN]      = { "MAJ:MIN",      3, 0, N_("loop device major:minor number")},
@@ -291,6 +293,9 @@ static int set_scols_data(struct loopdev_cxt *lc, struct libscols_line *ln)
 			if (loopcxt_get_blocksize(lc, &x) == 0)
 				xasprintf(&np, "%jd", x);
 			break;
+		case COL_REF:
+			np = loopcxt_get_refname(lc);
+			break;
 		default:
 			return -EINVAL;
 		}
@@ -423,6 +428,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -P, --partscan                create a partitioned loop device\n"), out);
 	fputs(_(" -r, --read-only               set up a read-only loop device\n"), out);
 	fputs(_("     --direct-io[=<on|off>]    open backing file with O_DIRECT\n"), out);
+	fputs(_("     --loop-ref <string>       loop device reference\n"), out);
 	fputs(_("     --show                    print device name after setup (with -f)\n"), out);
 	fputs(_(" -v, --verbose                 verbose mode\n"), out);
 
@@ -491,7 +497,8 @@ static int find_unused(struct loopdev_cxt *lc)
 
 static int create_loop(struct loopdev_cxt *lc,
 		       int nooverlap, int lo_flags, int flags,
-		       const char *file, uint64_t offset, uint64_t sizelimit,
+		       const char *file, const char *refname,
+		       uint64_t offset, uint64_t sizelimit,
 		       uint64_t blocksize)
 {
 	int hasdev = loopcxt_has_device(lc);
@@ -580,7 +587,10 @@ static int create_loop(struct loopdev_cxt *lc,
 			loopcxt_set_flags(lc, lo_flags);
 		if (blocksize > 0)
 			loopcxt_set_blocksize(lc, blocksize);
-
+		if (refname && (rc = loopcxt_set_refname(lc, refname))) {
+			warnx(_("cannot set loop reference string"));
+			break;
+		}
 		if ((rc = loopcxt_set_backing_file(lc, file))) {
 			warn(_("%s: failed to use backing file"), file);
 			break;
@@ -610,7 +620,7 @@ int main(int argc, char **argv)
 {
 	struct loopdev_cxt lc;
 	int act = 0, flags = 0, no_overlap = 0, c;
-	char *file = NULL;
+	char *file = NULL, *refname = NULL;
 	uint64_t offset = 0, sizelimit = 0, blocksize = 0;
 	int res = 0, showdev = 0, lo_flags = 0;
 	char *outarg = NULL;
@@ -621,6 +631,7 @@ int main(int argc, char **argv)
 		OPT_SIZELIMIT = CHAR_MAX + 1,
 		OPT_SHOW,
 		OPT_RAW,
+		OPT_REF,
 		OPT_DIO,
 		OPT_OUTPUT_ALL
 	};
@@ -645,6 +656,7 @@ int main(int argc, char **argv)
 		{ "read-only",    no_argument,       NULL, 'r'           },
 		{ "direct-io",    optional_argument, NULL, OPT_DIO       },
 		{ "raw",          no_argument,       NULL, OPT_RAW       },
+		{ "loop-ref",     required_argument, NULL, OPT_REF,      },
 		{ "show",         no_argument,       NULL, OPT_SHOW      },
 		{ "verbose",      no_argument,       NULL, 'v'           },
 		{ "version",      no_argument,       NULL, 'V'           },
@@ -690,6 +702,9 @@ int main(int argc, char **argv)
 			break;
 		case 'r':
 			lo_flags |= LO_FLAGS_READ_ONLY;
+			break;
+		case OPT_REF:
+			refname = optarg;
 			break;
 		case 'd':
 			act = A_DELETE;
@@ -862,7 +877,7 @@ int main(int argc, char **argv)
 
 	switch (act) {
 	case A_CREATE:
-		res = create_loop(&lc, no_overlap, lo_flags, flags, file,
+		res = create_loop(&lc, no_overlap, lo_flags, flags, file, refname,
 				  offset, sizelimit, blocksize);
 		if (res == 0) {
 			if (showdev)

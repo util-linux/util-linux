@@ -30,7 +30,7 @@ Detach all associated loop devices:
 
 Set up a loop device:
 
-*losetup* [*-o* _offset_] [*--sizelimit* _size_] [*--sector-size* _size_] [*-Pr*] [*--show*] *-f*|_loopdev file_
+*losetup* [*-o* _offset_] [*--sizelimit* _size_] [*--sector-size* _size_] [*--loop-ref* _name_] [*-Pr*] [*--show*] *-f*|_loopdev file_
 
 Resize a loop device:
 
@@ -73,6 +73,9 @@ Show the status of all loop devices associated with the given _file_.
 
 *-o*, *--offset* _offset_::
 The data start is moved _offset_ bytes into the specified file or device. The _offset_ may be followed by the multiplicative suffixes; see above.
+
+*--loop-ref* _string_::
+Set reference string. The backwardly compatible default is to use the backing filename as a reference in loop setup ioctl (aka lo_file_name). This option can overwrite this default behavior and set the reference to the _string_. The reference may be used by udevd in /dev/loop/by-ref. Linux kernel does not use the reference at all, but it could be used by some old utils that cannot read the backing file from sysfs. The reference is readable only for the root user (see *--output* +REF) and it is restricted to 64 bytes.
 
 *--sizelimit* _size_::
 The data end is set to no more than _size_ bytes after the data start. The _size_ may be followed by the multiplicative suffixes; see above.

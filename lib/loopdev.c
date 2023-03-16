@@ -749,6 +749,26 @@ char *loopcxt_get_backing_file(struct loopdev_cxt *lc)
 
 /*
  * @lc: context
+ *
+ * Returns (allocated) string with loop reference. The same as backing file by
+ * default.
+ */
+char *loopcxt_get_refname(struct loopdev_cxt *lc)
+{
+	char *res = NULL;
+	struct loop_info64 *lo = loopcxt_get_info(lc);
+
+	if (lo) {
+		lo->lo_file_name[LO_NAME_SIZE - 1] = '\0';
+		res = strdup((char *) lo->lo_file_name);
+	}
+
+	DBG(CXT, ul_debugobj(lc, "get_refname [%s]", res));
+	return res;
+}
+
+/*
+ * @lc: context
  * @offset: returns offset number for the given device
  *
  * Returns: <0 on error, 0 on success
@@ -1182,6 +1202,28 @@ int loopcxt_set_flags(struct loopdev_cxt *lc, uint32_t flags)
 
 /*
  * @lc: context
+ * @refname: reference name (used to overwrite lo_file_name where is backing
+ *           file by default)
+ *
+ * The setting is removed by loopcxt_set_device() loopcxt_next()!
+ *
+ * Returns: 0 on success, <0 on error.
+ */
+int loopcxt_set_refname(struct loopdev_cxt *lc, const char *refname)
+{
+	if (!lc)
+		return -EINVAL;
+
+	memset(lc->config.info.lo_file_name, 0, sizeof(lc->config.info.lo_file_name));
+	if (refname)
+		xstrncpy((char *)lc->config.info.lo_file_name, refname, LO_NAME_SIZE);
+
+	DBG(CXT, ul_debugobj(lc, "set refname=%s", (char *)lc->config.info.lo_file_name));
+	return 0;
+}
+
+/*
+ * @lc: context
  * @filename: backing file path (the path will be canonicalized)
  *
  * The setting is removed by loopcxt_set_device() loopcxt_next()!
@@ -1197,9 +1239,10 @@ int loopcxt_set_backing_file(struct loopdev_cxt *lc, const char *filename)
 	if (!lc->filename)
 		return -errno;
 
-	xstrncpy((char *)lc->config.info.lo_file_name, lc->filename, LO_NAME_SIZE);
+	if (!lc->config.info.lo_file_name[0])
+		loopcxt_set_refname(lc, lc->filename);
 
-	DBG(CXT, ul_debugobj(lc, "set backing file=%s", lc->config.info.lo_file_name));
+	DBG(CXT, ul_debugobj(lc, "set backing file=%s", lc->filename));
 	return 0;
 }
 
