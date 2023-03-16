@@ -1943,6 +1943,8 @@ int main(int argc, char *argv[])
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
+	if (argv[optind])
+		errtryhelp(EXIT_FAILURE);
 
 #define INITIALIZE_COLUMNS(COLUMN_SPEC)				\
 	for (i = 0; i < ARRAY_SIZE(COLUMN_SPEC); i++)	\
