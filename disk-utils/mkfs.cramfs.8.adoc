@@ -64,7 +64,7 @@ Make explicit holes.
 
 *-l*[=_mode_]::
  Use exclusive BSD lock for device or file it operates.  The optional argument
- _mode_ can be _yes_, _no_ (or 1 and 0) or _nonblock_.  If the \fImode\fR
+ _mode_ can be _yes_, _no_ (or 1 and 0) or _nonblock_.  If the _mode_
  argument is omitted, it defaults to _"yes"_.  This option overwrites
  environment variable *$LOCK_BLOCK_DEVICE*.  The default is not to use any
  lock at all, but it's recommended to avoid collisions with udevd or other
