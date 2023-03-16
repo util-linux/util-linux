@@ -320,7 +320,7 @@ static const struct colinfo infos[] = {
 				   N_("user ID number of the process") },
 	[COL_UNIX_PATH]        = { "UNIX.PATH",
 				   0.4, SCOLS_FL_TRUNC, SCOLS_JSON_STRING,
-				   N_("filesystem pathname for UNIX doamin socketo") },
+				   N_("filesystem pathname for UNIX domain socket") },
 	[COL_USER]             = { "USER",
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 				   N_("user of the process") },
