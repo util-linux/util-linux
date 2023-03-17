@@ -18,9 +18,11 @@ lsblk - list block devices
 
 *lsblk* lists information about all available or the specified block devices. The *lsblk* command reads the *sysfs* filesystem and *udev db* to gather information. If the udev db is not available or *lsblk* is compiled without udev support, then it tries to read LABELs, UUIDs and filesystem types from the block device. In this case root permissions are necessary.
 
-The command prints all block devices (except RAM disks) in a tree-like format by default. Use *lsblk --help* to get a list of all available columns.
+By default, the command prints all block devices (except RAM disks) in a tree-like format. The same device can be repeated in the tree if it relates to other devices. The *--merge* option is recommended for more complicated setups to gather groups of devices and describe complex N:M relationships.
 
 The default output, as well as the default output from options like *--fs* and *--topology*, is subject to change. So whenever possible, you should avoid using default outputs in your scripts. Always explicitly define expected columns by using *--output* _columns-list_ and *--list* in environments where a stable output is required.
+
+Use *lsblk --help* to get a list of all available columns.
 
 Note that *lsblk* might be executed in time when *udev* does not have all information about recently added or modified devices yet. In this case it is recommended to use *udevadm settle* before *lsblk* to synchronize with udev.
 
