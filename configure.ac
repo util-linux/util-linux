@@ -2859,6 +2859,7 @@ AC_MSG_RESULT([
         ldflags:                   ${LDFLAGS}
         suid ldflags:              ${SUID_LDFLAGS}
         ASAN enabled:              ${enable_asan}
+	Fuzzing enabled:           ${enable_fuzzing_engine}
 
         cflags:                    ${CFLAGS}
 
