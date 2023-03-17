@@ -28,8 +28,13 @@ specific features like namespaces with simpler code. *lsfd* is not a
 drop-in replacement for *lsof*; they are different in the command line
 interface and output formats.
 
+The default output is subject to change. So whenever possible, you should avoid using
+default outputs in your scripts. Always explicitly define expected columns by using
+*--output* _columns-list_ in environments where a stable output is required.
+
 *lsfd* uses Libsmartcols for output formatting and filtering. See the description of *--output*
-option for customizing the output format, and *--filter* option for filtering.
+option for customizing the output format, and *--filter* option for filtering. Use *lsfd --help*
+to get a list of all available columns.
 
 == OPTIONS
 
