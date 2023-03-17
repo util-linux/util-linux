@@ -27,7 +27,7 @@ The device may be specified by device name, major:minor numbers, filesystem labe
 
 The command-line option *--target* accepts any file or directory and then *findmnt* displays the filesystem for the given path.
 
-The command prints all mounted filesystems in the tree-like format by default.
+The command prints all mounted filesystems in the tree-like format by default. The default output, is subject to change. So whenever possible, you should avoid using default output in your scripts. Always explicitly define expected columns by using *--output columns-list* in environments where a stable output is required.
 
 The relationship between block devices and filesystems is not always one-to-one. The filesystem may use more block devices. This is why *findmnt* provides  SOURCE and SOURCES (pl.) columns. The column SOURCES displays all devices where it is possible to find the same filesystem  UUID (or another tag specified in _fstab_ when executed with *--fstab* and *--evaluate*).
 
