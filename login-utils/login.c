@@ -46,6 +46,7 @@
 #include <grp.h>
 #include <pwd.h>
 #include <utmpx.h>
+#include <path.h>
 
 #ifdef HAVE_LASTLOG_H
 # include <lastlog.h>
@@ -1287,6 +1288,39 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
+static void load_credentials(struct login_context *cxt) {
+	char *env;
+	DIR *dir;
+	struct dirent *d;
+	struct path_cxt *pc;
+
+	env = safe_getenv("CREDENTIALS_DIRECTORY");
+        if (!env)
+                return;
+
+	pc = ul_new_path("%s", env);
+	if (!pc) {
+		syslog(LOG_WARNING, _("failed to initialize path context"));
+		return;
+	}
+
+	dir = ul_path_opendir(pc, NULL);
+	if (!dir) {
+		syslog(LOG_WARNING, _("failed to open credentials directory"));
+		return;
+	}
+
+	while ((d = xreaddir(dir))) {
+		char *str;
+
+		if (strcmp(d->d_name, "login.noauth") == 0) {
+			ul_path_read_string(pc, &str, d->d_name);
+			if (str && strcmp(str, "yes") == 0)
+				cxt->noauth = 1;
+		}
+	}
+}
+
 static void initialize(int argc, char **argv, struct login_context *cxt)
 {
 	int c;
@@ -1317,6 +1351,8 @@ static void initialize(int argc, char **argv, struct login_context *cxt)
 
 	setpriority(PRIO_PROCESS, 0, 0);
 	process_title_init(argc, argv);
+
+	load_credentials(cxt);
 
 	while ((c = getopt_long(argc, argv, "fHh:pV", longopts, NULL)) != -1)
 		switch (c) {
