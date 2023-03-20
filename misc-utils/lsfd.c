@@ -983,6 +983,14 @@ static void free_nodev(struct nodev *nodev)
 	free(nodev);
 }
 
+void add_nodev(unsigned long minor, const char *filesystem)
+{
+	struct nodev *nodev = new_nodev(minor, filesystem);
+	unsigned long slot = nodev->minor % NODEV_TABLE_SIZE;
+
+	list_add_tail(&nodev->nodevs, &nodev_table.tables[slot]);
+}
+
 static void initialize_nodevs(void)
 {
 	int i;
@@ -1023,9 +1031,6 @@ static void add_nodevs(FILE *mnt)
 	while (fgets(line, sizeof(line), mnt)) {
 		unsigned long major, minor;
 		char filesystem[256];
-		struct nodev *nodev;
-		int slot;
-
 
 		/* 23 61 0:22 / /sys rw,nosuid,nodev,noexec,relatime shared:2 - sysfs sysfs rw,seclabel */
 		if(sscanf(line, "%*d %*d %lu:%lu %*s %*s %*s %*[^-] - %s %*[^\n]",
@@ -1040,10 +1045,7 @@ static void add_nodevs(FILE *mnt)
 		if (get_nodev_filesystem(minor))
 			continue;
 
-		nodev = new_nodev(minor, filesystem);
-		slot = minor % NODEV_TABLE_SIZE;
-
-		list_add_tail(&nodev->nodevs, &nodev_table.tables[slot]);
+		add_nodev(minor, filesystem);
 	}
 }
 

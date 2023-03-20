@@ -231,6 +231,7 @@ const char *get_blkdrv(unsigned long major);
 const char *get_chrdrv(unsigned long major);
 const char *get_miscdev(unsigned long minor);
 const char *get_nodev_filesystem(unsigned long minor);
+void add_nodev(unsigned long minor, const char *filesystem);
 
 static inline void xstrappend(char **a, const char *b)
 {
