@@ -45,6 +45,8 @@
 
 static struct idcache *username_cache;
 
+static size_t pagesize;
+
 static const char *assocstr[N_ASSOCS] = {
 	[ASSOC_CWD]       = "cwd",
 	[ASSOC_EXE]       = "exe",
@@ -102,14 +104,8 @@ static uint64_t get_map_length(struct file *file)
 {
 	uint64_t res = 0;
 
-	if (is_association(file, SHM) || is_association(file, MEM)) {
-		static size_t pagesize = 0;
-
-		if (!pagesize)
-			pagesize = getpagesize();
-
+	if (is_association(file, SHM) || is_association(file, MEM))
 		res = (file->map_end - file->map_start) / pagesize;
-	}
 
 	return res;
 }
@@ -306,6 +302,9 @@ static void file_free_content(struct file *file)
 
 static void file_class_initialize(void)
 {
+	if (!pagesize)
+		pagesize = getpagesize();
+
 	username_cache = new_idcache();
 	if (!username_cache)
 		err(EXIT_FAILURE, _("failed to allocate UID cache"));
