@@ -747,7 +747,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 		     * other network namespaces. Besed on the information,
 		     * various columns of sockets can be filled.
 		     */
-		    && (class != &sock_class)&& (class != &nsfs_file_class))
+		    && (class != &sock_class) && (class != &nsfs_file_class))
 			return NULL;
 		f = new_file(proc, class);
 		file_set_path(f, &sb, sym, assoc);
