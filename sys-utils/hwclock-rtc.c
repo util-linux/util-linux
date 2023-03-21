@@ -74,6 +74,22 @@ struct linux_rtc_time {
 	int tm_isdst;
 };
 
+#define RTC_TM_FIELD_EQ(f) \
+	(offsetof(struct linux_rtc_time, f) == offsetof(struct tm, f) \
+	 && sizeof(((struct linux_rtc_time *)0)->f) == sizeof(((struct tm *)0)->f))
+
+static_assert(sizeof(struct linux_rtc_time) <= sizeof(struct tm)
+	      && RTC_TM_FIELD_EQ(tm_sec)
+	      && RTC_TM_FIELD_EQ(tm_min)
+	      && RTC_TM_FIELD_EQ(tm_hour)
+	      && RTC_TM_FIELD_EQ(tm_mday)
+	      && RTC_TM_FIELD_EQ(tm_mon)
+	      && RTC_TM_FIELD_EQ(tm_year)
+	      && RTC_TM_FIELD_EQ(tm_wday)
+	      && RTC_TM_FIELD_EQ(tm_yday)
+	      && RTC_TM_FIELD_EQ(tm_isdst),
+	      "struct linux_rtc_time is not compatible with struct tm");
+
 /* RTC_RD_TIME etc have this definition since 1.99.9 (pre2.0-9) */
 #ifndef RTC_RD_TIME
 # define RTC_RD_TIME	_IOR('p', 0x09, struct linux_rtc_time)
@@ -203,6 +219,7 @@ static int do_rtc_read_ioctl(int rtc_fd, struct tm *tm)
 	struct sparc_rtc_time stm;
 #endif
 
+	memset(tm, 0, sizeof(*tm));
 	ioctlname = "RTC_RD_TIME";
 	rc = ioctl(rtc_fd, RTC_RD_TIME, tm);
 
