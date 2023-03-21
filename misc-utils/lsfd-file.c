@@ -32,6 +32,7 @@
 # endif
 #endif
 #include <linux/sched.h>
+#include <sys/shm.h>
 
 #include "xalloc.h"
 #include "nls.h"
@@ -39,6 +40,7 @@
 #include "idcache.h"
 #include "strutils.h"
 
+#include "procfs.h"
 #include "libsmartcols.h"
 
 #include "lsfd.h"
@@ -300,14 +302,63 @@ static void file_free_content(struct file *file)
 	free(file->name);
 }
 
+static unsigned long get_minor_for_sysvipc(void)
+{
+	int id;
+	void *start;
+
+	pid_t self = getpid();
+	struct path_cxt *pc = NULL;
+	char map_file[sizeof("map_files/0000000000000000-ffffffffffffffff")];
+
+	struct stat sb;
+	unsigned long m = 0;
+
+	id = shmget(IPC_PRIVATE, pagesize, IPC_CREAT | 0600);
+	if (id == -1)
+		return 0;
+
+	start = shmat(id, NULL, SHM_RDONLY);
+	if (start == (void *) -1) {
+		shmctl(id, IPC_RMID, NULL);
+		return 0;
+	}
+
+	pc = ul_new_path(NULL);
+	if (!pc)
+		goto out;
+
+	if (procfs_process_init_path(pc, self) != 0)
+		goto out;
+
+	snprintf(map_file, sizeof(map_file),
+		 "map_files/%lx-%lx", (long)start, (long)start + pagesize);
+	if (ul_path_stat(pc, &sb, 0, map_file) < 0)
+		goto out;
+
+	m = minor(sb.st_dev);
+ out:
+	if (pc)
+		ul_unref_path(pc);
+	shmdt(start);
+	shmctl(id, IPC_RMID, NULL);
+	return m;
+}
+
 static void file_class_initialize(void)
 {
+	unsigned long m;
+
 	if (!pagesize)
 		pagesize = getpagesize();
 
 	username_cache = new_idcache();
 	if (!username_cache)
 		err(EXIT_FAILURE, _("failed to allocate UID cache"));
+
+	m = get_minor_for_sysvipc();
+	if (m)
+		add_nodev(m, "tmpfs");
 }
 
 static void file_class_finalize(void)
