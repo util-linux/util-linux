@@ -843,7 +843,10 @@ int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *cl
 	}
 
 	DBG(OPTLIST, ul_debugobj(ls, "return attrs set=0x%08" PRIx64
-				      ", clr=0x%08" PRIx64, *set, *clr));
+				      ", clr=0x%08" PRIx64 " %s",
+				*set, *clr,
+				rec == MNT_OL_REC ? "[rec]" :
+				rec == MNT_OL_NOREC ? "[norec]" : ""));
 	return 0;
 }
 
