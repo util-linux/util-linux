@@ -16414,7 +16414,7 @@ msgstr " -S, --semaphore <ile>    utworzenie tablicy semaforów o tylu elementac
 
 #: sys-utils/ipcmk.c:75
 msgid " -Q, --queue              create message queue\n"
-msgstr " -Q, --quue               utworzenie kolejki komunikatów\n"
+msgstr " -Q, --queue              utworzenie kolejki komunikatów\n"
 
 #: sys-utils/ipcmk.c:76
 msgid " -p, --mode <mode>        permission for the resource (default is 0644)\n"
