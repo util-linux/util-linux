@@ -174,7 +174,8 @@ enum {
 	PAT_TYPE,
 	PAT_VARIANT,
 	PAT_VENDOR,
-	PAT_CACHE
+	PAT_CACHE,
+	PAT_ISA,
 };
 
 /*
@@ -201,6 +202,7 @@ static const struct cpuinfo_pattern type_patterns[] =
 	DEF_PAT_CPUTYPE( "CPU revision",	PAT_REVISION,	revision),	/* aarch64 */
 	DEF_PAT_CPUTYPE( "CPU variant",		PAT_VARIANT,	stepping),	/* aarch64 */
 	DEF_PAT_CPUTYPE( "Features",		PAT_FEATURES,	flags),		/* aarch64 */
+	DEF_PAT_CPUTYPE( "ISA",			PAT_ISA,	isa),		/* loongarch */
 	DEF_PAT_CPUTYPE( "Model Name",		PAT_MODEL_NAME,	modelname),	/* loongarch */
 	DEF_PAT_CPUTYPE( "address sizes",	PAT_ADDRESS_SIZES,	addrsz),/* x86 */
 	DEF_PAT_CPUTYPE( "bogomips per cpu",	PAT_BOGOMIPS,	bogomips),	/* s390 */
@@ -644,6 +646,16 @@ struct lscpu_arch *lscpu_read_architecture(struct lscpu_cxt *cxt)
 			ar->bit32 = 1, ar->bit64 = 1;			/* s390x */
 		if (strstr(buf, " sun4v ") || strstr(buf, " sun4u "))
 			ar->bit32 = 1, ar->bit64 = 1;			/* sparc64 */
+	}
+
+	if (ct && ct->isa) {
+		char buf[BUFSIZ];
+
+		snprintf(buf, sizeof(buf), " %s ", ct->isa);
+		if (strstr(buf, " loongarch32 "))
+			ar->bit32 = 1;
+		if (strstr(buf, " loongarch64 "))
+			ar->bit64 = 1;
 	}
 
 	if (ar->name && !cxt->noalive) {
