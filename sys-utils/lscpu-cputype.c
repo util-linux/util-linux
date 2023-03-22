@@ -193,11 +193,14 @@ static const struct cpuinfo_pattern type_patterns[] =
 	/* Sort by fields name! */
 	DEF_PAT_CPUTYPE( "ASEs implemented",	PAT_FLAGS,	flags),		/* mips */
 	DEF_PAT_CPUTYPE( "BogoMIPS",		PAT_BOGOMIPS,	bogomips),	/* aarch64 */
+	DEF_PAT_CPUTYPE( "CPU Family",		PAT_FAMILY,	family),	/* LoongArch */
+	DEF_PAT_CPUTYPE( "CPU Revision",	PAT_REVISION,	revision),	/* LoongArch */
 	DEF_PAT_CPUTYPE( "CPU implementer",	PAT_IMPLEMENTER,vendor),	/* ARM and aarch64 */
 	DEF_PAT_CPUTYPE( "CPU part",		PAT_PART,	model),		/* ARM and aarch64 */
 	DEF_PAT_CPUTYPE( "CPU revision",	PAT_REVISION,	revision),	/* aarch64 */
 	DEF_PAT_CPUTYPE( "CPU variant",		PAT_VARIANT,	stepping),	/* aarch64 */
-	DEF_PAT_CPUTYPE( "Features",		PAT_FEATURES,	flags),		/* aarch64 */
+	DEF_PAT_CPUTYPE( "Features",		PAT_FEATURES,	flags),		/* aarch64 and LoongArch */
+	DEF_PAT_CPUTYPE( "Model Name",		PAT_MODEL_NAME,	modelname),	/* LoongArch */
 	DEF_PAT_CPUTYPE( "address sizes",	PAT_ADDRESS_SIZES,	addrsz),/* x86 */
 	DEF_PAT_CPUTYPE( "bogomips per cpu",	PAT_BOGOMIPS,	bogomips),	/* s390 */
 	DEF_PAT_CPUTYPE( "cpu",			PAT_CPU,	modelname),	/* ppc, sparc */
