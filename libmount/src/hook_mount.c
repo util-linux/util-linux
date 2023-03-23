@@ -610,7 +610,7 @@ static int hook_prepare(struct libmnt_context *cxt,
 	/* call mount_setattr() */
 	if (!rc
 	    && cxt->helper == NULL
-	    && (set != 0 || clr != 0))
+	    && (set != 0 || clr != 0 || (flags & MS_REMOUNT)))
 		rc = mnt_context_append_hook(cxt, hs, MNT_STAGE_MOUNT, NULL,
 					hook_set_vfsflags);
 

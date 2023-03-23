@@ -831,12 +831,26 @@ int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *cl
 {
 	struct libmnt_iter itr;
 	struct libmnt_opt *opt;
+	uint64_t remount_reset = 0;
 
 	if (!ls || !ls->linux_map || !set || !clr)
 		return -EINVAL;
 
 	*set = 0, *clr = 0;
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
+
+	/* The classic mount(2) MS_REMOUNT resets all flags which are not
+	 * specified (except atime stuff). For backward compatibility we need
+	 * to emulate this semantic by mount_setattr(). The new
+	 * mount_setattr() has simple set/unset sematinc and nothing is
+	 * internally in kernel reseted.
+	 */
+	if (mnt_optlist_is_remount(ls)
+	    && !mnt_optlist_is_bind(ls)
+	    && rec == MNT_OL_NOREC)
+		remount_reset = (MOUNT_ATTR_RDONLY| MOUNT_ATTR_NOSUID| \
+				 MOUNT_ATTR_NODEV | MOUNT_ATTR_NOEXEC| \
+				 MOUNT_ATTR_NOSYMFOLLOW);
 
 	while (mnt_optlist_next_opt(ls, &itr, &opt) == 0) {
 		uint64_t x = 0;
@@ -856,6 +870,9 @@ int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *cl
 		if (flag_to_attr( opt->ent->id, &x) < 0)
 			continue;
 
+		if (x && remount_reset)
+			remount_reset &= ~x;
+
 		if (opt->ent->mask & MNT_INVERT) {
 			DBG(OPTLIST, ul_debugobj(ls, " clr: %s", opt->ent->name));
 			*clr |= x;
@@ -868,6 +885,9 @@ int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *cl
 				*clr |= MOUNT_ATTR__ATIME;
 		}
 	}
+
+	if (remount_reset)
+		*clr |= remount_reset;
 
 	DBG(OPTLIST, ul_debugobj(ls, "return attrs set=0x%08" PRIx64
 				      ", clr=0x%08" PRIx64 " %s",
