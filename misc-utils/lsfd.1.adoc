@@ -413,7 +413,7 @@ UID <``number``>::
 User ID number.
 
 UNIX.PATH <``string``>::
-Filesystem pathname for UNIX doamin socket.
+Filesystem pathname for UNIX domain socket.
 
 USER <``string``>::
 User of the process.
