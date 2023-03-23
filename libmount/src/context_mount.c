@@ -155,6 +155,8 @@ done:
 static int evaluate_permissions(struct libmnt_context *cxt)
 {
 	struct libmnt_optlist *ol;
+	struct libmnt_opt *opt = NULL;
+
 	unsigned long user_flags = 0;	/* userspace mount flags */
 	int rc;
 
@@ -178,13 +180,44 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 	if (!mnt_context_is_restricted(cxt)) {
 		/*
 		 * superuser mount
+		 *
+		 * Let's convert user, users, owenr and groups to MS_* flags
+		 * to be compatible with non-root execution.
+		 *
+		 * The old deprecated way is to use mnt_optstr_get_flags().
 		 */
 		if (user_flags & (MNT_MS_OWNER | MNT_MS_GROUP))
-			mnt_optlist_remove_flags(ol,
+			rc = mnt_optlist_remove_flags(ol,
 					MNT_MS_OWNER | MNT_MS_GROUP, cxt->map_userspace);
-		DBG(CXT, ul_debugobj(cxt, "perms: superuser"));
+
+		if (!rc && (user_flags & MNT_MS_OWNER))
+			rc = mnt_optlist_insert_flags(ol,
+					MS_OWNERSECURE, cxt->map_linux,
+					MNT_MS_OWNER, cxt->map_userspace);
+
+		if (!rc && (user_flags & MNT_MS_GROUP))
+			rc = mnt_optlist_insert_flags(ol,
+					MS_OWNERSECURE, cxt->map_linux,
+					MNT_MS_GROUP, cxt->map_userspace);
+
+		if (!rc && (user_flags & MNT_MS_USER)
+		    && (opt = mnt_optlist_get_opt(ol, MNT_MS_USER, cxt->map_userspace))
+		    && !mnt_opt_has_value(opt))
+			rc = mnt_optlist_insert_flags(ol, MS_SECURE, cxt->map_linux,
+					MNT_MS_USER, cxt->map_userspace);
+
+		if (!rc && (user_flags & MNT_MS_USERS))
+			rc = mnt_optlist_insert_flags(ol, MS_SECURE, cxt->map_linux,
+					MNT_MS_USERS, cxt->map_userspace);
+
+		DBG(CXT, ul_debugobj(cxt, "perms: superuser [rc=%d]", rc));
+		if (rc)
+			return rc;
+
+		if (user_flags & (MNT_MS_OWNER | MNT_MS_GROUP |
+				  MNT_MS_USER | MNT_MS_USERS))
+			mnt_optlist_merge_opts(ol);
 	} else {
-		struct libmnt_opt *opt;
 
 		/*
 		 * user mount
