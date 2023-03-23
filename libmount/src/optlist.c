@@ -369,6 +369,8 @@ static inline uint64_t flag_to_attr(unsigned long flag)
 		return MOUNT_ATTR_RDONLY;
 	case MS_NOSUID:
 		return MOUNT_ATTR_NOSUID;
+	case MS_NODEV:
+		return MOUNT_ATTR_NODEV;
 	case MS_NOEXEC:
 		return MOUNT_ATTR_NOEXEC;
 	case MS_NODIRATIME:
