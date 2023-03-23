@@ -329,9 +329,6 @@ static int set_vfsflags(struct libmnt_context *cxt,
 	if (recursive)
 		callflags |= AT_RECURSIVE;
 
-	if (set & (MOUNT_ATTR_RELATIME | MOUNT_ATTR_NOATIME | MOUNT_ATTR_STRICTATIME))
-		clr |= MOUNT_ATTR__ATIME;
-
 	DBG(HOOK, ul_debugobj(hs,
 			"mount_setattr(set=0x%08" PRIx64" clr=0x%08" PRIx64")", set, clr));
 	attr.attr_set = set;

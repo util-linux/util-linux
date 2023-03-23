@@ -362,28 +362,44 @@ int mnt_optlist_merge_opts(struct libmnt_optlist *ls)
 }
 
 #ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
-static inline uint64_t flag_to_attr(unsigned long flag)
+static inline int flag_to_attr(unsigned long flag, uint64_t *attr)
 {
+	uint64_t a = 0;
+
 	switch (flag) {
 	case MS_RDONLY:
-		return MOUNT_ATTR_RDONLY;
+		a = MOUNT_ATTR_RDONLY;
+		break;
 	case MS_NOSUID:
-		return MOUNT_ATTR_NOSUID;
+		a = MOUNT_ATTR_NOSUID;
+		break;
 	case MS_NODEV:
-		return MOUNT_ATTR_NODEV;
+		a = MOUNT_ATTR_NODEV;
+		break;
 	case MS_NOEXEC:
-		return MOUNT_ATTR_NOEXEC;
+		a = MOUNT_ATTR_NOEXEC;
+		break;
 	case MS_NODIRATIME:
-		return MOUNT_ATTR_NODIRATIME;
+		a = MOUNT_ATTR_NODIRATIME;
+		break;
 	case MS_RELATIME:
-		return MOUNT_ATTR_RELATIME;
+		a = MOUNT_ATTR_RELATIME;
+		break;
 	case MS_NOATIME:
-		return MOUNT_ATTR_NOATIME;
+		a =  MOUNT_ATTR_NOATIME;
+		break;
 	case MS_STRICTATIME:
-		return MOUNT_ATTR_STRICTATIME;
+		a = MOUNT_ATTR_STRICTATIME;
+		break;
 	case MS_NOSYMFOLLOW:
-		return MOUNT_ATTR_NOSYMFOLLOW;
+		a = MOUNT_ATTR_NOSYMFOLLOW;
+		break;
+	default:
+		return -1;
 	}
+
+	if (attr)
+		*attr = a;
 	return 0;
 }
 
@@ -395,7 +411,7 @@ static inline int is_vfs_opt(struct libmnt_opt *opt)
 	if (!opt->map || !opt->ent || !opt->ent->id || !opt->is_linux)
 		return 0;
 
-	return flag_to_attr(opt->ent->id) == 0 ? 0 : 1;
+	return flag_to_attr(opt->ent->id, NULL) < 0 ? 0 : 1;
 }
 #endif
 
@@ -805,6 +821,12 @@ int mnt_optlist_get_flags(struct libmnt_optlist *ls, unsigned long *flags,
  * new MOUNT_ATTR_*
  */
 #ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
+
+#define MNT_RESETABLE_ATTRS	(MOUNT_ATTR_RDONLY| MOUNT_ATTR_NOSUID| \
+				 MOUNT_ATTR_NODEV | MOUNT_ATTR_NOEXEC| \
+				 MOUNT_ATTR_NOATIME|  MOUNT_ATTR_NODIRATIME | \
+				 MOUNT_ATTR_NOSYMFOLLOW)
+
 int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *clr, int rec)
 {
 	struct libmnt_iter itr;
@@ -817,7 +839,7 @@ int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *cl
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
 	while (mnt_optlist_next_opt(ls, &itr, &opt) == 0) {
-		uint64_t x;
+		uint64_t x = 0;
 
 		if (ls->linux_map != opt->map)
 			continue;
@@ -831,8 +853,7 @@ int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *cl
 
 		if (!is_wanted_opt(opt, ls->linux_map, MNT_OL_FLTR_DFLT))
 			continue;
-		x = flag_to_attr( opt->ent->id );
-		if (!x)
+		if (flag_to_attr( opt->ent->id, &x) < 0)
 			continue;
 
 		if (opt->ent->mask & MNT_INVERT) {
@@ -841,6 +862,10 @@ int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *cl
 		} else {
 			DBG(OPTLIST, ul_debugobj(ls, " set: %s", opt->ent->name));
 			*set |= x;
+
+			if (x == MOUNT_ATTR_RELATIME || x == MOUNT_ATTR_NOATIME ||
+			    x == MOUNT_ATTR_STRICTATIME)
+				*clr |= MOUNT_ATTR__ATIME;
 		}
 	}
 
