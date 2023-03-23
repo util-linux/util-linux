@@ -229,12 +229,16 @@ static int get_userns_fd_from_idmap(struct list_head *idmap)
 
 	/* Wait for child to set up a new namespace. */
 	rc = read_all(sock_fds[1], &c, 1);
-	if (rc != 1)
+	if (rc != 1) {
+		kill(pid, SIGKILL);
 		goto err_wait;
+	}
 
 	rc = map_ids(idmap, pid);
-	if (rc < 0)
+	if (rc < 0) {
+		kill(pid, SIGKILL);
 		goto err_wait;
+	}
 
 	snprintf(path, sizeof(path), "/proc/%d/ns/user", pid);
 	fd_userns = open(path, O_RDONLY | O_CLOEXEC | O_NOCTTY);
