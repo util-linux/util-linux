@@ -97,6 +97,10 @@ Enter the PID namespace. If no file is specified, enter the PID namespace of the
 *-U*, *--user*[=_file_]::
 Enter the user namespace. If no file is specified, enter the user namespace of the target process. If _file_ is specified, enter the user namespace specified by _file_. See also the *--setuid* and *--setgid* options.
 
+*--user-parent*::
+Enter the parent user namespace. Parent user namespace will be acquired from any other enabled namespace.
+If combined with *--user* option the parent user namespace will be fetched from the user namespace and replace it.
+
 *-C*, *--cgroup*[=_file_]::
 Enter the cgroup namespace. If no file is specified, enter the cgroup namespace of the target process. If _file_ is specified, enter the cgroup namespace specified by _file_.
 
@@ -138,6 +142,10 @@ Do not fork before exec'ing the specified program. By default, when entering a P
 Set the SELinux security context used for executing a new process according to already running process specified by *--target* PID. (The util-linux has to be compiled with SELinux support otherwise the option is unavailable.)
 
 include::man-common/help-version.adoc[]
+
+== NOTES
+
+The *--user-parent* option requires Linux 4.9 or higher, older kernels will raise inappropriate ioctl for device error.
 
 == AUTHORS
 

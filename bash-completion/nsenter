@@ -42,6 +42,7 @@ _nsenter_module()
 				--pid=
 				--cgroup=
 				--user=
+				--user-parent
 				--time=
 				--setuid
 				--setgid

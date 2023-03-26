@@ -31,6 +31,14 @@
 #include <grp.h>
 #include <sys/stat.h>
 
+#include <sys/ioctl.h>
+#ifdef HAVE_LINUX_NSFS_H
+# include <linux/nsfs.h>
+#endif
+#ifndef NS_GET_USERNS
+# define NS_GET_USERNS           _IO(0xb7, 0x1)
+#endif
+
 #ifdef HAVE_LIBSELINUX
 # include <selinux/selinux.h>
 #endif
@@ -92,6 +100,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -p, --pid[=<file>]     enter pid namespace\n"), out);
 	fputs(_(" -C, --cgroup[=<file>]  enter cgroup namespace\n"), out);
 	fputs(_(" -U, --user[=<file>]    enter user namespace\n"), out);
+	fputs(_("     --user-parent      enter parent user namespace\n"), out);
 	fputs(_(" -T, --time[=<file>]    enter time namespace\n"), out);
 	fputs(_(" -S, --setuid[=<uid>]   set uid in entered namespace\n"), out);
 	fputs(_(" -G, --setgid[=<gid>]   set gid in entered namespace\n"), out);
@@ -118,6 +127,33 @@ static int root_fd = -1;
 static int wd_fd = -1;
 static int env_fd = -1;
 static int uid_gid_fd = -1;
+
+static void set_parent_user_ns_fd(void)
+{
+	struct namespace_file *nsfile = NULL;
+	struct namespace_file *user_nsfile = NULL;
+	int parent_ns = -1;
+
+	for (nsfile = namespace_files; nsfile->nstype; nsfile++) {
+		if (nsfile->nstype == CLONE_NEWUSER)
+			user_nsfile = nsfile;
+
+		if (nsfile->fd == -1)
+			continue;
+
+		parent_ns = ioctl(nsfile->fd, NS_GET_USERNS);
+		if (parent_ns < 0)
+			err(EXIT_FAILURE, _("failed to open parent ns of %s"), nsfile->name);
+
+		break;
+	}
+
+	if (parent_ns < 0)
+		errx(EXIT_FAILURE, _("no namespaces to get parent of"));
+
+	user_nsfile->fd = parent_ns;
+}
+
 
 static void open_target_fd(int *fd, const char *type, const char *path)
 {
@@ -236,6 +272,7 @@ int main(int argc, char *argv[])
 	enum {
 		OPT_PRESERVE_CRED = CHAR_MAX + 1,
 		OPT_KEEPCAPS,
+		OPT_USER_PARENT,
 	};
 	static const struct option longopts[] = {
 		{ "all", no_argument, NULL, 'a' },
@@ -259,6 +296,7 @@ int main(int argc, char *argv[])
 		{ "no-fork", no_argument, NULL, 'F' },
 		{ "preserve-credentials", no_argument, NULL, OPT_PRESERVE_CRED },
 		{ "keep-caps", no_argument, NULL, OPT_KEEPCAPS },
+		{ "user-parent", no_argument, NULL, OPT_USER_PARENT},
 #ifdef HAVE_LIBSELINUX
 		{ "follow-context", no_argument, NULL, 'Z' },
 #endif
@@ -273,7 +311,8 @@ int main(int argc, char *argv[])
 	struct namespace_file *nsfile;
 	int c, pass, namespaces = 0, setgroups_nerrs = 0, preserve_cred = 0;
 	bool do_rd = false, do_wd = false, do_uid = false, force_uid = false,
-	     do_gid = false, force_gid = false, do_env = false, do_all = false;
+	     do_gid = false, force_gid = false, do_env = false, do_all = false,
+	     do_user_parent = false;
 	int do_fork = -1; /* unknown yet */
 	char *wdns = NULL;
 	uid_t uid = 0;
@@ -392,6 +431,9 @@ int main(int argc, char *argv[])
 		case OPT_KEEPCAPS:
 			keepcaps = 1;
 			break;
+		case OPT_USER_PARENT:
+			do_user_parent = true;
+			break;
 #ifdef HAVE_LIBSELINUX
 		case 'Z':
 			selinux = 1;
@@ -449,6 +491,12 @@ int main(int argc, char *argv[])
 		open_target_fd(&env_fd, "environ", NULL);
 	if (do_uid || do_gid)
 		open_target_fd(&uid_gid_fd, "", NULL);
+
+	/*
+	 * Get parent userns from any available ns.
+	 */
+	if (do_user_parent)
+		set_parent_user_ns_fd();
 
 	/*
 	 * Update namespaces variable to contain all requested namespaces
