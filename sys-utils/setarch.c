@@ -236,6 +236,10 @@ static struct arch_domain *init_arch_domains(void)
 		{PER_LINUX,	"alphaev6",	"alpha"},
 		{PER_LINUX,	"alphaev67",	"alpha"},
 #endif
+#if defined(__loongarch__)
+		{PER_LINUX,	"loongarch",	"loongarch64"},
+		{PER_LINUX,	"loongarch64",	"loongarch64"},
+#endif
 #if defined(__e2k__)
 		{PER_LINUX,	"e2k",      "e2k"},
 		{PER_LINUX,	"e2kv4",	"e2k"},
