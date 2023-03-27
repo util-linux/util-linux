@@ -439,6 +439,7 @@ struct libmnt_context
 	unsigned int	enabled_textdomain : 1;	/* bindtextdomain() called */
 	unsigned int	noautofs : 1;		/* ignore autofs mounts */
 	unsigned int	has_selinux_opt : 1;	/* temporary for broken fsconfig() syscall */
+	unsigned int    force_clone : 1;	/* OPEN_TREE_CLONE */
 
 	struct list_head	hooksets_datas;	/* global hooksets data */
 	struct list_head	hooksets_hooks;	/* global hooksets data */
@@ -664,6 +665,8 @@ extern uint64_t btrfs_get_default_subvol_id(const char *path);
 struct libmnt_sysapi {
 	int	fd_fs;		/* FD from fsopen() or fspick() */
 	int	fd_tree;	/* FD from fsmount() or open_tree() */
+
+	unsigned int is_new_fs : 1 ;	/* fd_fs comes from fsopen() */
 };
 
 static inline struct libmnt_sysapi *mnt_context_get_sysapi(struct libmnt_context *cxt)

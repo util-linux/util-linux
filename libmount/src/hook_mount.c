@@ -154,10 +154,10 @@ static int configure_superblock(struct libmnt_context *cxt,
 	return 0;
 }
 
-static int open_fs_configuration_context(struct libmnt_context *cxt, const char *type)
+static int open_fs_configuration_context(struct libmnt_context *cxt,
+					 struct libmnt_sysapi *api,
+					 const char *type)
 {
-	int fd;
-
 	DBG(HOOK, ul_debug(" new FS '%s'", type));
 
 	if (!type)
@@ -165,11 +165,12 @@ static int open_fs_configuration_context(struct libmnt_context *cxt, const char 
 
 	DBG(HOOK, ul_debug(" fsopen(%s)", type));
 
-	fd = fsopen(type, FSOPEN_CLOEXEC);
-	set_syscall_status(cxt, "fsopen", fd >= 0);
-	if (fd < 0)
+	api->fd_fs = fsopen(type, FSOPEN_CLOEXEC);
+	set_syscall_status(cxt, "fsopen", api->fd_fs >= 0);
+	if (api->fd_fs < 0)
 		return -errno;
-	return fd;
+	api->is_new_fs = 1;
+	return api->fd_fs;
 }
 
 static int open_mount_tree(struct libmnt_context *cxt, const char *path, unsigned long mflg)
@@ -197,7 +198,12 @@ static int open_mount_tree(struct libmnt_context *cxt, const char *path, unsigne
 			oflg |= AT_RECURSIVE;
 	}
 
-	DBG(HOOK, ul_debug("open_tree(path=%s, flgs=0x%08lx)", path, oflg));
+	if (cxt->force_clone)
+		oflg |= OPEN_TREE_CLONE;
+
+	DBG(HOOK, ul_debug("open_tree(path=%s%s%s)", path,
+				oflg & OPEN_TREE_CLONE ? " clone" : "",
+				oflg & AT_RECURSIVE ? " recursive" : ""));
 	fd = open_tree(AT_FDCWD, path, oflg);
 	set_syscall_status(cxt, "open_tree", fd >= 0);
 
@@ -221,8 +227,8 @@ static int hook_create_mount(struct libmnt_context *cxt,
 	if (api->fd_fs < 0) {
 		const char *type = mnt_fs_get_fstype(cxt->fs);
 
-		api->fd_fs = open_fs_configuration_context(cxt, type);
-		if (api->fd_fs < 0) {
+		rc = open_fs_configuration_context(cxt, api, type);
+		if (rc < 0) {
 			rc = api->fd_fs;
 			goto done;
 		}
@@ -452,12 +458,20 @@ static int hook_attach_target(struct libmnt_context *cxt,
 	assert(api);
 	assert(api->fd_tree >= 0);
 
-	if (!rc) {
-		DBG(HOOK, ul_debugobj(hs, "move_mount(to=%s)", target));
+	DBG(HOOK, ul_debugobj(hs, "move_mount(to=%s)", target));
 
-		rc = move_mount(api->fd_tree, "", AT_FDCWD, target, MOVE_MOUNT_F_EMPTY_PATH);
-		set_syscall_status(cxt, "move_mount", rc == 0);
+	/* umount old target if we created a clone */
+	if (cxt->force_clone
+	    && !api->is_new_fs
+	    && !mnt_optlist_is_bind(cxt->optlist)) {
+
+		DBG(HOOK, ul_debugobj(hs, "remove expired target"));
+		umount2(target, MNT_DETACH);
 	}
+
+	rc = move_mount(api->fd_tree, "", AT_FDCWD, target, MOVE_MOUNT_F_EMPTY_PATH);
+	set_syscall_status(cxt, "move_mount", rc == 0);
+
 	return rc == 0 ? 0 : -errno;
 }
 
@@ -515,11 +529,10 @@ static int init_sysapi(struct libmnt_context *cxt,
 
 		if (mnt_context_is_fake(cxt))
 			goto fake;
-		if (cxt->helper == NULL && type && !strchr(type, ',')) {
-			api->fd_fs = open_fs_configuration_context(cxt, type);
-			if (api->fd_fs < 0)
-				goto fail;
-		}
+		if (cxt->helper == NULL
+		    && type && !strchr(type, ',')
+		    && open_fs_configuration_context(cxt, api, type) < 0)
+			goto fail;
 	}
 
 	return 0;
@@ -617,8 +630,8 @@ static int hook_prepare(struct libmnt_context *cxt,
 	/* call move_mount() to attach target */
 	if (!rc
 	    && cxt->helper == NULL
-	    && !(flags & MS_REMOUNT)
-	    && !mnt_context_propagation_only(cxt))
+	    && (cxt->force_clone ||
+			(!(flags & MS_REMOUNT) && !mnt_context_propagation_only(cxt))))
 		rc = mnt_context_append_hook(cxt, hs, MNT_STAGE_MOUNT_POST, NULL,
 					hook_attach_target);
 
