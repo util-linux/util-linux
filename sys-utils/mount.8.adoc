@@ -619,11 +619,11 @@ Attempt to remount an already-mounted filesystem. This is commonly used to chang
 The remount operation together with the *bind* flag has special semantics. See above, the subsection *Bind mount operation*.
 +
 The default kernel behavior for VFS mount flags (nodev,nosuid,noexec,ro) is to
-reset all unspecified flags on remount. That's why mount(8) tries to
-keep the current setting according to fstab or /proc/self/mountinfo. This
+reset all unspecified flags on remount. That's why *mount*(8) tries to
+keep the current setting according to _fstab_ or _/proc/self/mountinfo_. This
 default behavior is possible to change by *--options-mode*. The recursive
-change of the mount flags (supported since v2.39 on systems with mount_setattr
-syscall), for example, "mount -o remount,ro=recursive", do not use
+change of the mount flags (supported since v2.39 on systems with *mount_setattr*(2)
+syscall), for example, *mount -o remount,ro=recursive*, do not use
 "reset-unspecified" behavior, and it works as a simple add/remove operation
 and unspecified flags are not modified.
 +
@@ -635,7 +635,7 @@ After this call all old mount options are replaced and arbitrary stuff from _fst
 +
 *mount -o remount,rw /dir*
 +
-After this call, *mount* reads _fstab_ and merges these options with the options from the command line (*-o*). If no mountpoint is found in _fstab_, then it defaults to mount options from /proc/self/mountinfo.
+After this call, *mount* reads _fstab_ and merges these options with the options from the command line (*-o*). If no mountpoint is found in _fstab_, then it defaults to mount options from _/proc/self/mountinfo_.
 +
 
 *mount* allows the use of *--all* to remount all already mounted filesystems which match a specified filter (*-O* and *-t*). For example:
