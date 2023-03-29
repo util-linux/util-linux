@@ -24,6 +24,7 @@
 #include "caputils.h"
 #include "pathnames.h"
 #include "procfs.h"
+#include "nls.h"
 
 static int test_cap(unsigned int cap)
 {
@@ -85,6 +86,43 @@ int cap_last_cap(void)
 		cap_last_by_bsearch(&cap);
 
 	return cap;
+}
+
+void cap_permitted_to_ambient(void)
+{
+	/* We use capabilities system calls to propagate the permitted
+	 * capabilities into the ambient set because we may have
+	 * already forked so be in async-signal-safe context. */
+	struct __user_cap_header_struct header = {
+		.version = _LINUX_CAPABILITY_VERSION_3,
+		.pid = 0,
+	};
+	struct __user_cap_data_struct payload[_LINUX_CAPABILITY_U32S_3] = {{ 0 }};
+	uint64_t effective, cap;
+
+	if (capget(&header, payload) < 0)
+		err(EXIT_FAILURE, _("capget failed"));
+
+	/* In order the make capabilities ambient, we first need to ensure
+	 * that they are all inheritable. */
+	payload[0].inheritable = payload[0].permitted;
+	payload[1].inheritable = payload[1].permitted;
+
+	if (capset(&header, payload) < 0)
+		err(EXIT_FAILURE, _("capset failed"));
+
+	effective = ((uint64_t)payload[1].effective << 32) |  (uint64_t)payload[0].effective;
+
+	for (cap = 0; cap < (sizeof(effective) * 8); cap++) {
+		/* This is the same check as cap_valid(), but using
+		 * the runtime value for the last valid cap. */
+		if (cap > (uint64_t) cap_last_cap())
+			continue;
+
+		if ((effective & (1 << cap))
+		    && prctl(PR_CAP_AMBIENT, PR_CAP_AMBIENT_RAISE, cap, 0, 0) < 0)
+			err(EXIT_FAILURE, _("prctl(PR_CAP_AMBIENT) failed"));
+	}
 }
 
 #ifdef TEST_PROGRAM_CAPUTILS
