@@ -45,6 +45,7 @@
 #include "xalloc.h"
 #include "all-io.h"
 #include "env.h"
+#include "caputils.h"
 
 static struct namespace_file {
 	int nstype;
@@ -95,6 +96,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -S, --setuid[=<uid>]   set uid in entered namespace\n"), out);
 	fputs(_(" -G, --setgid[=<gid>]   set gid in entered namespace\n"), out);
 	fputs(_("     --preserve-credentials do not touch uids or gids\n"), out);
+	fputs(_("     --keep-caps        retain capabilities granted in user namespaces\n"), out);
 	fputs(_(" -r, --root[=<dir>]     set the root directory\n"), out);
 	fputs(_(" -w, --wd[=<dir>]       set the working directory\n"), out);
 	fputs(_(" -W, --wdns <dir>       set the working directory in namespace\n"), out);
@@ -232,7 +234,8 @@ static void continue_as_child(void)
 int main(int argc, char *argv[])
 {
 	enum {
-		OPT_PRESERVE_CRED = CHAR_MAX + 1
+		OPT_PRESERVE_CRED = CHAR_MAX + 1,
+		OPT_KEEPCAPS,
 	};
 	static const struct option longopts[] = {
 		{ "all", no_argument, NULL, 'a' },
@@ -255,6 +258,7 @@ int main(int argc, char *argv[])
 		{ "env", no_argument, NULL, 'e' },
 		{ "no-fork", no_argument, NULL, 'F' },
 		{ "preserve-credentials", no_argument, NULL, OPT_PRESERVE_CRED },
+		{ "keep-caps", no_argument, NULL, OPT_KEEPCAPS },
 #ifdef HAVE_LIBSELINUX
 		{ "follow-context", no_argument, NULL, 'Z' },
 #endif
@@ -274,6 +278,7 @@ int main(int argc, char *argv[])
 	char *wdns = NULL;
 	uid_t uid = 0;
 	gid_t gid = 0;
+	int keepcaps = 0;
 	struct ul_env_list *envls;
 #ifdef HAVE_LIBSELINUX
 	bool selinux = 0;
@@ -383,6 +388,9 @@ int main(int argc, char *argv[])
 			break;
 		case OPT_PRESERVE_CRED:
 			preserve_cred = 1;
+			break;
+		case OPT_KEEPCAPS:
+			keepcaps = 1;
 			break;
 #ifdef HAVE_LIBSELINUX
 		case 'Z':
@@ -568,6 +576,9 @@ int main(int argc, char *argv[])
 		if (force_uid && setuid(uid) < 0)		/* change UID */
 			err(EXIT_FAILURE, _("setuid failed"));
 	}
+
+	if (keepcaps && (namespaces & CLONE_NEWUSER))
+		cap_permitted_to_ambient();
 
 	if (optind < argc) {
 		execvp(argv[optind], argv + optind);
