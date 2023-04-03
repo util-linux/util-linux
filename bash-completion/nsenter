@@ -6,11 +6,11 @@ _nsenter_module()
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
 		'-S'|'--uid')
-			COMPREPLY=( $(compgen -W "uid" -- $cur) )
+			COMPREPLY=( follow $(compgen -W "uid" -- $cur) )
 			return 0
 			;;
 		'-G'|'--gid')
-			COMPREPLY=( $(compgen -W "gid" -- $cur) )
+			COMPREPLY=( follow $(compgen -W "gid" -- $cur) )
 			return 0
 			;;
 		'-t'|'--target')
