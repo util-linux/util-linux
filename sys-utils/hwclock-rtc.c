@@ -33,32 +33,6 @@
  */
 
 /*
- * On Sparcs, there is a <asm/rtc.h> that defines different ioctls (that are
- * required on my machine). However, this include file does not exist on
- * other architectures.
- */
-/* One might do:
-#ifdef __sparc__
-# include <asm/rtc.h>
-#endif
- */
-#ifdef __sparc__
-/* The following is roughly equivalent */
-struct sparc_rtc_time
-{
-	int sec;	/* Seconds		0-59 */
-	int min;	/* Minutes		0-59 */
-	int hour;	/* Hour			0-23 */
-	int dow;	/* Day of the week	1-7  */
-	int dom;	/* Day of the month	1-31 */
-	int month;	/* Month of year	1-12 */
-	int year;	/* Year			0-99 */
-};
-#define RTCGET _IOR('p', 20, struct sparc_rtc_time)
-#define RTCSET _IOW('p', 21, struct sparc_rtc_time)
-#endif
-
-/*
  * struct rtc_time is present since 1.3.99.
  * Earlier (since 1.3.89), a struct tm was used.
  */
@@ -197,35 +171,12 @@ static int open_rtc_or_exit(const struct hwclock_control *ctl)
 static int do_rtc_read_ioctl(int rtc_fd, struct tm *tm)
 {
 	int rc = -1;
-	char *ioctlname;
-#ifdef __sparc__
-	/* some but not all sparcs use a different ioctl and struct */
-	struct sparc_rtc_time stm;
-#endif
 
-	ioctlname = "RTC_RD_TIME";
 	rc = ioctl(rtc_fd, RTC_RD_TIME, tm);
 
-#ifdef __sparc__
-	if (rc == -1) {		/* sparc sbus */
-		ioctlname = "RTCGET";
-		rc = ioctl(rtc_fd, RTCGET, &stm);
-		if (rc == 0) {
-			tm->tm_sec = stm.sec;
-			tm->tm_min = stm.min;
-			tm->tm_hour = stm.hour;
-			tm->tm_mday = stm.dom;
-			tm->tm_mon = stm.month - 1;
-			tm->tm_year = stm.year - 1900;
-			tm->tm_wday = stm.dow - 1;
-			tm->tm_yday = -1;	/* day in the year */
-		}
-	}
-#endif
-
 	if (rc == -1) {
-		warn(_("ioctl(%s) to %s to read the time failed"),
-			ioctlname, rtc_dev_name);
+		warn(_("ioctl(RTC_RD_NAME) to %s to read the time failed"),
+			rtc_dev_name);
 		return -1;
 	}
 
@@ -360,38 +311,19 @@ static int set_hardware_clock_rtc(const struct hwclock_control *ctl,
 {
 	int rc = -1;
 	int rtc_fd;
-	char *ioctlname;
 
 	rtc_fd = open_rtc_or_exit(ctl);
 
-	ioctlname = "RTC_SET_TIME";
 	rc = ioctl(rtc_fd, RTC_SET_TIME, new_broken_time);
 
-#ifdef __sparc__
-	if (rc == -1) {		/* sparc sbus */
-		struct sparc_rtc_time stm;
-
-		stm.sec = new_broken_time->tm_sec;
-		stm.min = new_broken_time->tm_min;
-		stm.hour = new_broken_time->tm_hour;
-		stm.dom = new_broken_time->tm_mday;
-		stm.month = new_broken_time->tm_mon + 1;
-		stm.year = new_broken_time->tm_year + 1900;
-		stm.dow = new_broken_time->tm_wday + 1;
-
-		ioctlname = "RTCSET";
-		rc = ioctl(rtc_fd, RTCSET, &stm);
-	}
-#endif
-
 	if (rc == -1) {
-		warn(_("ioctl(%s) to %s to set the time failed"),
-			ioctlname, rtc_dev_name);
+		warn(_("ioctl(RTC_SET_TIME) to %s to set the time failed"),
+			rtc_dev_name);
 		hwclock_exit(ctl, EXIT_FAILURE);
 	}
 
 	if (ctl->verbose)
-		printf(_("ioctl(%s) was successful.\n"), ioctlname);
+		printf(_("ioctl(RTC_SET_TIME) was successful.\n"));
 
 	return 0;
 }
