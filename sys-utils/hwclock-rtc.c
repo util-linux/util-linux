@@ -142,7 +142,7 @@ static void close_rtc(void)
 
 static int open_rtc(const struct hwclock_control *ctl)
 {
-	static const char *fls[] = {
+	static const char * const fls[] = {
 #ifdef __ia64__
 		"/dev/efirtc",
 		"/dev/misc/efirtc",
@@ -406,7 +406,7 @@ static const char *get_device_path(void)
 	return rtc_dev_name;
 }
 
-static struct clock_ops rtc_interface = {
+static const struct clock_ops rtc_interface = {
 	N_("Using the rtc interface to the clock."),
 	get_permissions_rtc,
 	read_hardware_clock_rtc,
@@ -416,7 +416,7 @@ static struct clock_ops rtc_interface = {
 };
 
 /* return &rtc if /dev/rtc can be opened, NULL otherwise */
-struct clock_ops *probe_for_rtc_clock(const struct hwclock_control *ctl)
+const struct clock_ops *probe_for_rtc_clock(const struct hwclock_control *ctl)
 {
 	const int rtc_fd = open_rtc(ctl);
 
