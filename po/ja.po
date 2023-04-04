@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.38-rc4\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-03-09 13:37+0100\n"
+"POT-Creation-Date: 2023-04-04 14:02+0200\n"
 "PO-Revision-Date: 2022-04-14 01:12+0900\n"
 "Last-Translator: Takeshi Hamasaki <hmatrjp@users.sourceforge.jp>\n"
 "Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
@@ -63,7 +63,7 @@ msgstr "十分な引数がありません"
 #: disk-utils/mkswap.c:347 disk-utils/mkswap.c:377 disk-utils/partx.c:1022
 #: disk-utils/resizepart.c:104 disk-utils/sfdisk.c:381 disk-utils/sfdisk.c:502
 #: disk-utils/sfdisk.c:814 disk-utils/sfdisk.c:1118 disk-utils/swaplabel.c:65
-#: libfdisk/src/bsd.c:642 login-utils/islocal.c:86 login-utils/last.c:685
+#: libfdisk/src/bsd.c:642 login-utils/islocal.c:86 login-utils/last.c:683
 #: login-utils/sulogin.c:497 login-utils/sulogin.c:534
 #: login-utils/utmpdump.c:142 login-utils/utmpdump.c:367
 #: login-utils/utmpdump.c:391 login-utils/vipw.c:257 login-utils/vipw.c:275
@@ -76,7 +76,7 @@ msgstr "十分な引数がありません"
 #: sys-utils/hwclock-rtc.c:438 sys-utils/hwclock-rtc.c:474
 #: sys-utils/hwclock-rtc.c:528 sys-utils/hwclock-rtc.c:581
 #: sys-utils/irq-common.c:263 sys-utils/ldattach.c:392
-#: sys-utils/lscpu-cputype.c:470 sys-utils/lsmem.c:671 sys-utils/nsenter.c:139
+#: sys-utils/lscpu-cputype.c:477 sys-utils/lsmem.c:671 sys-utils/nsenter.c:139
 #: sys-utils/rfkill.c:195 sys-utils/rtcwake.c:137 sys-utils/rtcwake.c:292
 #: sys-utils/setpriv.c:256 sys-utils/setpriv.c:622 sys-utils/setpriv.c:645
 #: sys-utils/swapon.c:382 sys-utils/swapon.c:525 sys-utils/switch_root.c:174
@@ -86,7 +86,7 @@ msgstr "十分な引数がありません"
 #: term-utils/scriptlive.c:259 term-utils/scriptlive.c:262
 #: term-utils/scriptreplay.c:281 term-utils/scriptreplay.c:284
 #: term-utils/scriptreplay.c:287 term-utils/scriptreplay.c:290
-#: term-utils/wall.c:421 text-utils/colcrt.c:284 text-utils/more.c:459
+#: term-utils/wall.c:353 text-utils/colcrt.c:284 text-utils/more.c:459
 #: text-utils/rev.c:165 text-utils/ul.c:637
 #, c-format
 msgid "cannot open %s"
@@ -830,7 +830,7 @@ msgstr "引数が正しくありません - 修復試行回数"
 #: disk-utils/mkfs.bfs.c:198 disk-utils/mkfs.cramfs.c:341
 #: disk-utils/mkfs.cramfs.c:763 disk-utils/mkfs.cramfs.c:809
 #: disk-utils/mkfs.minix.c:835 disk-utils/mkswap.c:374 disk-utils/partx.c:959
-#: login-utils/last.c:699 login-utils/utmpdump.c:145 misc-utils/namei.c:146
+#: login-utils/last.c:697 login-utils/utmpdump.c:145 misc-utils/namei.c:146
 #: misc-utils/rename.c:164 misc-utils/rename.c:229 sys-utils/blkdiscard.c:251
 #: sys-utils/blkzone.c:147 sys-utils/dmesg.c:543 sys-utils/fallocate.c:201
 #: sys-utils/fsfreeze.c:119 sys-utils/fstrim.c:78 sys-utils/nsenter.c:187
@@ -1161,9 +1161,9 @@ msgstr "デバイスのプロパティ (セクタサイズ及びジオメトリ)
 #: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:207
 #: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1579
 #: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
-#: sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656 sys-utils/mount.c:865
-#: sys-utils/mount.c:873 sys-utils/mount.c:922 sys-utils/mount.c:935
-#: sys-utils/mount.c:1007 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
+#: sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656 sys-utils/mount.c:867
+#: sys-utils/mount.c:875 sys-utils/mount.c:924 sys-utils/mount.c:937
+#: sys-utils/mount.c:1009 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
 #: sys-utils/swapoff.c:258 sys-utils/swapon.c:1011 sys-utils/switch_root.c:270
 #: sys-utils/umount.c:629 term-utils/setterm.c:1197 text-utils/col.c:584
 #: text-utils/more.c:2096
@@ -1250,7 +1250,7 @@ msgstr "列挙子の割り当てに失敗しました"
 
 #: disk-utils/fdisk-list.c:126 disk-utils/fdisk-list.c:247
 #: disk-utils/partx.c:669 login-utils/lslogins.c:1113 misc-utils/fincore.c:356
-#: misc-utils/findmnt.c:1763 misc-utils/lsblk.c:2351 misc-utils/lsfd.c:1968
+#: misc-utils/findmnt.c:1763 misc-utils/lsblk.c:2351 misc-utils/lsfd.c:1970
 #: misc-utils/lslocks.c:472 misc-utils/uuidparse.c:252 misc-utils/wipefs.c:157
 #: sys-utils/losetup.c:325 sys-utils/lscpu.c:604 sys-utils/lscpu.c:759
 #: sys-utils/lscpu.c:970 sys-utils/lsipc.c:354 sys-utils/prlimit.c:311
@@ -3853,7 +3853,7 @@ msgid_plural "#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n"
 msgstr[0] "#%2d: %9ju-%9ju (%9ju セクタ, %6ju MB)\n"
 
 #: disk-utils/partx.c:680 misc-utils/fincore.c:370 misc-utils/findmnt.c:1792
-#: misc-utils/lsblk.c:2395 misc-utils/lsfd.c:532 misc-utils/lsfd.c:1982
+#: misc-utils/lsblk.c:2395 misc-utils/lsfd.c:532 misc-utils/lsfd.c:1984
 #: misc-utils/lslocks.c:487 sys-utils/losetup.c:339 sys-utils/lscpu.c:616
 #: sys-utils/lscpu.c:772 sys-utils/prlimit.c:320 sys-utils/rfkill.c:487
 #: sys-utils/swapon.c:305 sys-utils/wdctl.c:360
@@ -7876,306 +7876,306 @@ msgstr "ハッシュログイン状態: オリジナルの ID の復元に失敗
 msgid "operation failed: %m"
 msgstr "処理に失敗しました: %m"
 
-#: libmount/src/context_mount.c:1371
+#: libmount/src/context_mount.c:1404
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "警告: 伝播フラグの適用に失敗しました"
 
-#: libmount/src/context_mount.c:1381
+#: libmount/src/context_mount.c:1414
 #, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "警告: ソースは書き込み禁止です、読み込み専用でマウントします"
 
-#: libmount/src/context_mount.c:1395
+#: libmount/src/context_mount.c:1428
 #, c-format
 msgid "operation permitted for root only"
 msgstr "この操作を実行できるのは root だけです"
 
-#: libmount/src/context_mount.c:1399
+#: libmount/src/context_mount.c:1432
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s はマウント済みです"
 
-#: libmount/src/context_mount.c:1405
+#: libmount/src/context_mount.c:1438
 #, c-format
 msgid "can't find in %s"
 msgstr "%s 内に見つかりません"
 
-#: libmount/src/context_mount.c:1408
+#: libmount/src/context_mount.c:1441
 #, c-format
 msgid "can't find mount point in %s"
 msgstr "%s 内にマウントポイントが見つかりません"
 
-#: libmount/src/context_mount.c:1411
+#: libmount/src/context_mount.c:1444
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "%2$s 内にマウント元 %1$s が見つかりません"
 
-#: libmount/src/context_mount.c:1416
+#: libmount/src/context_mount.c:1449
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr "複数のファイルシステムが %s に検出されました; -t <type> で指定するか wipefs(8) を実行してください"
 
-#: libmount/src/context_mount.c:1421
+#: libmount/src/context_mount.c:1454
 #, c-format
 msgid "failed to determine filesystem type"
 msgstr "ファイルシステムの判別に失敗しました"
 
-#: libmount/src/context_mount.c:1422
+#: libmount/src/context_mount.c:1455
 #, fuzzy, c-format
 #| msgid "no filesystem type specified"
 msgid "no valid filesystem type specified"
 msgstr "ファイルシステムタイプが指定されていません"
 
-#: libmount/src/context_mount.c:1429
+#: libmount/src/context_mount.c:1462
 #, c-format
 msgid "can't find %s"
 msgstr "%s が見つかりません"
 
-#: libmount/src/context_mount.c:1431
+#: libmount/src/context_mount.c:1464
 #, c-format
 msgid "no mount source specified"
 msgstr "マウント対象が指定されていません"
 
-#: libmount/src/context_mount.c:1442
+#: libmount/src/context_mount.c:1475
 #, fuzzy, c-format
 #| msgid "failed to parse mount options: %m"
 msgid "failed to parse mount options '%s': %m"
 msgstr "マウントオプションの解釈に失敗しました: %m"
 
-#: libmount/src/context_mount.c:1443
+#: libmount/src/context_mount.c:1476
 #, fuzzy, c-format
 #| msgid "failed to parse mount options: %m"
 msgid "failed to parse mount options '%s'"
 msgstr "マウントオプションの解釈に失敗しました: %m"
 
-#: libmount/src/context_mount.c:1446
+#: libmount/src/context_mount.c:1479
 #, c-format
 msgid "failed to parse mount options: %m"
 msgstr "マウントオプションの解釈に失敗しました: %m"
 
-#: libmount/src/context_mount.c:1447
+#: libmount/src/context_mount.c:1480
 #, c-format
 msgid "failed to parse mount options"
 msgstr "マウントオプションの解釈に失敗しました"
 
-#: libmount/src/context_mount.c:1452
+#: libmount/src/context_mount.c:1485
 #, c-format
 msgid "failed to setup loop device for %s"
 msgstr "%s 用のループバックデバイスの設定に失敗しました"
 
-#: libmount/src/context_mount.c:1456
+#: libmount/src/context_mount.c:1489
 #, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "%s 用の重複するループバックデバイスが存在します"
 
-#: libmount/src/context_mount.c:1460 libmount/src/context_umount.c:1263
+#: libmount/src/context_mount.c:1493 libmount/src/context_umount.c:1263
 #, c-format
 msgid "locking failed"
 msgstr "ロックに失敗しました"
 
-#: libmount/src/context_mount.c:1464 libmount/src/context_umount.c:1269
+#: libmount/src/context_mount.c:1497 libmount/src/context_umount.c:1269
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, c-format
 msgid "failed to switch namespace"
 msgstr "名前空間を切り替えられません"
 
-#: libmount/src/context_mount.c:1468
+#: libmount/src/context_mount.c:1501
 #, fuzzy, c-format
 #| msgid "%s is already mounted"
 msgid "filesystem already mounted"
 msgstr "%s はマウント済みです"
 
-#: libmount/src/context_mount.c:1471
+#: libmount/src/context_mount.c:1504
 #, c-format
 msgid "mount failed: %m"
 msgstr "マウントに失敗しました: %m"
 
-#: libmount/src/context_mount.c:1481
+#: libmount/src/context_mount.c:1514
 #, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "ファイルシステムをマウントしましたが、 ユーザー空間のマウントテーブルの更新が失敗しました"
 
-#: libmount/src/context_mount.c:1487
+#: libmount/src/context_mount.c:1520
 #, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "ファイルシステムをマウントしましたが、名前空間を元に戻せませんでした"
 
-#: libmount/src/context_mount.c:1493
+#: libmount/src/context_mount.c:1526
 #, fuzzy, c-format
 #| msgid "filesystem was mounted, but failed to switch namespace back"
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "ファイルシステムをマウントしましたが、名前空間を元に戻せませんでした"
 
-#: libmount/src/context_mount.c:1499
+#: libmount/src/context_mount.c:1532
 #, fuzzy, c-format
 #| msgid "filesystem was mounted, but failed to switch namespace back"
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "ファイルシステムをマウントしましたが、名前空間を元に戻せませんでした"
 
-#: libmount/src/context_mount.c:1505
+#: libmount/src/context_mount.c:1538
 #, fuzzy, c-format
 #| msgid "filesystem was mounted, but failed to switch namespace back"
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "ファイルシステムをマウントしましたが、名前空間を元に戻せませんでした"
 
-#: libmount/src/context_mount.c:1511
+#: libmount/src/context_mount.c:1544
 #, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "ファイルシステムをマウントしましたが、続く操作が失敗しました: %m"
 
-#: libmount/src/context_mount.c:1529 libmount/src/context_mount.c:1574
+#: libmount/src/context_mount.c:1562 libmount/src/context_mount.c:1607
 #, c-format
 msgid "mount point is not a directory"
 msgstr "マウントポイントがディレクトリではありません"
 
-#: libmount/src/context_mount.c:1531 login-utils/newgrp.c:228
+#: libmount/src/context_mount.c:1564 login-utils/newgrp.c:228
 #, c-format
 msgid "permission denied"
 msgstr "アクセスが拒否されました"
 
-#: libmount/src/context_mount.c:1533
+#: libmount/src/context_mount.c:1566
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "mount を使用するにはスーパーユーザでなければなりません"
 
-#: libmount/src/context_mount.c:1540
+#: libmount/src/context_mount.c:1573
 #, c-format
 msgid "mount point is busy"
 msgstr "マウントポイントは使用中です"
 
-#: libmount/src/context_mount.c:1547
+#: libmount/src/context_mount.c:1580
 #, c-format
 msgid "%s already mounted on %s"
 msgstr "%s は %s にマウント済みです"
 
-#: libmount/src/context_mount.c:1551
+#: libmount/src/context_mount.c:1584
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s はマウント済み、もしくはマウントポイントが使用中です"
 
-#: libmount/src/context_mount.c:1556
+#: libmount/src/context_mount.c:1589
 #, c-format
 msgid "mount point does not exist"
 msgstr "マウントポイントが存在しません"
 
-#: libmount/src/context_mount.c:1559
+#: libmount/src/context_mount.c:1592
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "マウントポイントは存在しない場所を指すシンボリックリンクです"
 
-#: libmount/src/context_mount.c:1564
+#: libmount/src/context_mount.c:1597
 #, c-format
 msgid "special device %s does not exist"
 msgstr "スペシャルデバイス %s が存在しません"
 
-#: libmount/src/context_mount.c:1567 libmount/src/context_mount.c:1583
-#: libmount/src/context_mount.c:1667 libmount/src/context_mount.c:1690
+#: libmount/src/context_mount.c:1600 libmount/src/context_mount.c:1616
+#: libmount/src/context_mount.c:1700 libmount/src/context_mount.c:1723
 #, c-format
 msgid "mount(2) system call failed: %m"
 msgstr "mount(2) システムコールが失敗しました: %m"
 
-#: libmount/src/context_mount.c:1579
+#: libmount/src/context_mount.c:1612
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "スペシャルデバイス %s が存在しません (パスプレフィクスがディレクトリではありません)"
 
-#: libmount/src/context_mount.c:1591
+#: libmount/src/context_mount.c:1624
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr "マウントポイントにはマウントされていないか、オプション設定が正しくありません"
 
-#: libmount/src/context_mount.c:1593
+#: libmount/src/context_mount.c:1626
 #, c-format
 msgid "not mount point or bad option"
 msgstr "マウントポイントではないか、オプション設定が正しくありません"
 
-#: libmount/src/context_mount.c:1596
+#: libmount/src/context_mount.c:1629
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr "間違ったオプション設定; 共有マウント内のマウントを移動する処理には、対応していません。"
 
-#: libmount/src/context_mount.c:1600
+#: libmount/src/context_mount.c:1633
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr "間違ったオプション設定; (nfs, cifs など)ファイルシステムによっては /sbin/mount.<タイプ> のヘルパープログラムが必要です"
 
-#: libmount/src/context_mount.c:1604
+#: libmount/src/context_mount.c:1637
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr "ファイルシステムタイプ, オプション, %s 上のスーパーブロック, 必要なコードページ指定／ヘルパープログラムなど、何かが間違っています。"
 
-#: libmount/src/context_mount.c:1611
+#: libmount/src/context_mount.c:1644
 #, c-format
 msgid "mount table full"
 msgstr "マウントテーブルがいっぱいです"
 
-#: libmount/src/context_mount.c:1616
+#: libmount/src/context_mount.c:1649
 #, c-format
 msgid "can't read superblock on %s"
 msgstr "%s のスーパーブロックを読み込むことができません"
 
-#: libmount/src/context_mount.c:1623
+#: libmount/src/context_mount.c:1656
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "未知のファイルシステムタイプ '%s' です"
 
-#: libmount/src/context_mount.c:1626
+#: libmount/src/context_mount.c:1659
 #, c-format
 msgid "unknown filesystem type"
 msgstr "未知のファイルシステムタイプです"
 
-#: libmount/src/context_mount.c:1635
+#: libmount/src/context_mount.c:1668
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s はブロックデバイスではありません (そのために stat(2) が失敗した可能性があります)"
 
-#: libmount/src/context_mount.c:1638
+#: libmount/src/context_mount.c:1671
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr "このカーネルは %s をブロックデバイスとして認識していません;おそらく `modprobe ドライバ' を実行する必要があります"
 
-#: libmount/src/context_mount.c:1641
+#: libmount/src/context_mount.c:1674
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s はブロックデバイスではありません (`-o loop' を指定すると解決できるかもしれません)"
 
-#: libmount/src/context_mount.c:1643
+#: libmount/src/context_mount.c:1676
 #, c-format
 msgid "%s is not a block device"
 msgstr "%s はブロックデバイスではありません"
 
-#: libmount/src/context_mount.c:1650
+#: libmount/src/context_mount.c:1683
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s は正常なブロックデバイスではありません"
 
-#: libmount/src/context_mount.c:1658
+#: libmount/src/context_mount.c:1691
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "%s を読み込み専用でマウントできません"
 
-#: libmount/src/context_mount.c:1660
+#: libmount/src/context_mount.c:1693
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s は書き込み禁止ですが、明示的に読み書きモードが指定されています"
 
-#: libmount/src/context_mount.c:1662
+#: libmount/src/context_mount.c:1695
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "%s を読み書き可能な状態で再マウントできません、ライトプロテクトされています"
 
-#: libmount/src/context_mount.c:1664
+#: libmount/src/context_mount.c:1697
 #, c-format
 msgid "bind %s failed"
 msgstr "bind %s が失敗しました"
 
-#: libmount/src/context_mount.c:1675
+#: libmount/src/context_mount.c:1708
 #, c-format
 msgid "no medium found on %s"
 msgstr "%s にメディアが挿入されていません"
 
-#: libmount/src/context_mount.c:1682
+#: libmount/src/context_mount.c:1715
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "マウントできません; おそらく %s のファイルシステムが壊れています"
@@ -8524,73 +8524,73 @@ msgid "unknown time format: %s"
 msgstr "時間の形式が不明です: %s"
 
 # Translator's NOTE: 意味不明
-#: login-utils/last.c:440 login-utils/last.c:451 login-utils/last.c:903
+#: login-utils/last.c:439 login-utils/last.c:450 login-utils/last.c:901
 msgid "preallocation size exceeded"
 msgstr "事前に割り当てたサイズを超えています"
 
-#: login-utils/last.c:570
+#: login-utils/last.c:568
 #, c-format
 msgid " %s [options] [<username>...] [<tty>...]\n"
 msgstr " %s [オプション] [<ユーザ名>...] [<TTY>...]\n"
 
-#: login-utils/last.c:573
+#: login-utils/last.c:571
 msgid "Show a listing of last logged in users.\n"
 msgstr "これまでにログインしたユーザーの一覧を表示します。\n"
 
-#: login-utils/last.c:576
+#: login-utils/last.c:574
 msgid " -<number>            how many lines to show\n"
 msgstr " -<数値>                  表示する行数\n"
 
-#: login-utils/last.c:577
+#: login-utils/last.c:575
 msgid " -a, --hostlast       display hostnames in the last column\n"
 msgstr " -a, --hostlast           最後の列に表示するホスト名\n"
 
-#: login-utils/last.c:578
+#: login-utils/last.c:576
 msgid " -d, --dns            translate the IP number back into a hostname\n"
 msgstr " -d, --dns                IP アドレスからホスト名に逆引き変換します\n"
 
-#: login-utils/last.c:580
+#: login-utils/last.c:578
 #, c-format
 msgid " -f, --file <file>    use a specific file instead of %s\n"
 msgstr " -F, --file <ファイル>    %s ではなく、指定したファイルを使用して出力します\n"
 
-#: login-utils/last.c:581
+#: login-utils/last.c:579
 msgid " -F, --fulltimes      print full login and logout times and dates\n"
 msgstr " -F, --fulltimes          ログイン、ログアウトの時刻と日付を完全な形式で出力します\n"
 
-#: login-utils/last.c:582
+#: login-utils/last.c:580
 msgid " -i, --ip             display IP numbers in numbers-and-dots notation\n"
 msgstr " -i, --ip                 IP アドレスを数字とピリオドの表記で表示します\n"
 
-#: login-utils/last.c:583
+#: login-utils/last.c:581
 msgid " -n, --limit <number> how many lines to show\n"
 msgstr " -n, --limit <数値>       表示する行数\n"
 
-#: login-utils/last.c:584
+#: login-utils/last.c:582
 msgid " -R, --nohostname     don't display the hostname field\n"
 msgstr " -R, --nohostname         ホスト名の項目を表示しない\n"
 
-#: login-utils/last.c:585
+#: login-utils/last.c:583
 msgid " -s, --since <time>   display the lines since the specified time\n"
 msgstr " -s, --since <時刻>       指定した時刻以降の行を表示します\n"
 
-#: login-utils/last.c:586
+#: login-utils/last.c:584
 msgid " -t, --until <time>   display the lines until the specified time\n"
 msgstr " -t, --until <時刻>       指定した時刻以前の行を表示します\n"
 
-#: login-utils/last.c:587
+#: login-utils/last.c:585
 msgid " -p, --present <time> display who were present at the specified time\n"
 msgstr " -p, --present <時刻>     指定した時刻にログインしていたユーザを表示します\n"
 
-#: login-utils/last.c:588
+#: login-utils/last.c:586
 msgid " -w, --fullnames      display full user and domain names\n"
 msgstr " -w, --fullnames          ユーザ名とドメイン名を完全な形式で表示します\n"
 
-#: login-utils/last.c:589
+#: login-utils/last.c:587
 msgid " -x, --system         display system shutdown entries and run level changes\n"
 msgstr " -x, --system             システムのシャットダウン項目とランレベルの変更を表示します\n"
 
-#: login-utils/last.c:590
+#: login-utils/last.c:588
 msgid ""
 "     --time-format <format>  show timestamps in the specified <format>:\n"
 "                               notime|short|full|iso\n"
@@ -8598,7 +8598,7 @@ msgstr ""
 "     --time-format <形式>    タイムスタンプの表示形式を指定します:\n"
 "                               notime|short|full|iso\n"
 
-#: login-utils/last.c:904
+#: login-utils/last.c:902
 #, c-format
 msgid ""
 "\n"
@@ -8607,13 +8607,13 @@ msgstr ""
 "\n"
 "%s は %s から始まっています\n"
 
-#: login-utils/last.c:1013 term-utils/scriptlive.c:85
+#: login-utils/last.c:1011 term-utils/scriptlive.c:85
 #: term-utils/scriptlive.c:89 term-utils/scriptreplay.c:80
 #: term-utils/scriptreplay.c:84 text-utils/more.c:285 text-utils/more.c:291
 msgid "failed to parse number"
 msgstr "数値の解析に失敗"
 
-#: login-utils/last.c:1034 login-utils/last.c:1039 login-utils/last.c:1044
+#: login-utils/last.c:1032 login-utils/last.c:1037 login-utils/last.c:1042
 #: sys-utils/dmesg.c:1560 sys-utils/dmesg.c:1566 sys-utils/rtcwake.c:511
 #, c-format
 msgid "invalid time value \"%s\""
@@ -10449,7 +10449,7 @@ msgid "move"
 msgstr "移動"
 
 #: misc-utils/findmnt.c:927 misc-utils/findmnt.c:1205 sys-utils/eject.c:715
-#: sys-utils/mount.c:406
+#: sys-utils/mount.c:408
 msgid "failed to initialize libmount table"
 msgstr "libmount テーブルの準備に失敗しました"
 
@@ -10460,8 +10460,8 @@ msgstr "%s を読み込むことができません"
 
 #: misc-utils/findmnt.c:1145 misc-utils/findmnt.c:1211
 #: misc-utils/findmnt-verify.c:101 misc-utils/findmnt-verify.c:529
-#: sys-utils/fstrim.c:329 sys-utils/mount.c:132 sys-utils/mount.c:180
-#: sys-utils/mount.c:247 sys-utils/swapoff.c:63 sys-utils/swapoff.c:173
+#: sys-utils/fstrim.c:329 sys-utils/mount.c:134 sys-utils/mount.c:182
+#: sys-utils/mount.c:249 sys-utils/swapoff.c:63 sys-utils/swapoff.c:173
 #: sys-utils/swapon.c:247 sys-utils/swapon.c:290 sys-utils/swapon.c:750
 #: sys-utils/umount.c:199
 msgid "failed to initialize libmount iterator"
@@ -12547,7 +12547,7 @@ msgid "user ID number of the process"
 msgstr "プロセスの最大数"
 
 #: misc-utils/lsfd.c:323
-msgid "filesystem pathname for UNIX doamin socketo"
+msgid "filesystem pathname for UNIX domain socket"
 msgstr ""
 
 #: misc-utils/lsfd.c:326
@@ -15915,7 +15915,7 @@ msgstr ""
 "\n"
 "利用可能なログ分類:\n"
 
-#: sys-utils/chmem.c:394 sys-utils/lscpu-cputype.c:872 sys-utils/lsmem.c:667
+#: sys-utils/chmem.c:394 sys-utils/lscpu-cputype.c:889 sys-utils/lsmem.c:667
 #, c-format
 msgid "failed to initialize %s handler"
 msgstr "%s ハンドラの準備に失敗しました"
@@ -19676,16 +19676,16 @@ msgstr "未対応の --summary 引数です"
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr "%s: --all, --online, --offline の各パラメータは、 --extended か --parse のオプションと共に使用します。\n"
 
-#: sys-utils/lscpu-cputype.c:597
+#: sys-utils/lscpu-cputype.c:604
 msgid "error: uname failed"
 msgstr "エラー: uname が失敗しました"
 
-#: sys-utils/lscpu-cputype.c:694
+#: sys-utils/lscpu-cputype.c:711
 #, c-format
 msgid "failed to determine number of CPUs: %s"
 msgstr "CPU 番号の判別に失敗しました: %s"
 
-#: sys-utils/lscpu-cputype.c:897
+#: sys-utils/lscpu-cputype.c:914
 msgid "Failed to extract the node number"
 msgstr "ノード番号の抽出に失敗しました"
 
@@ -20429,41 +20429,41 @@ msgstr "落とす"
 msgid "%s from %s (libmount %s"
 msgstr "%s from %s (libmount %s"
 
-#: sys-utils/mount.c:128
+#: sys-utils/mount.c:130
 msgid "failed to read mtab"
 msgstr "mtab の読み込みに失敗しました"
 
-#: sys-utils/mount.c:190 sys-utils/mount.c:257 sys-utils/umount.c:209
+#: sys-utils/mount.c:192 sys-utils/mount.c:259 sys-utils/umount.c:209
 #, c-format
 msgid "%-25s: ignored\n"
 msgstr "%-25s: 無視しました\n"
 
-#: sys-utils/mount.c:191
+#: sys-utils/mount.c:193
 #, c-format
 msgid "%-25s: already mounted\n"
 msgstr "%-25s: 既にマウントされています\n"
 
-#: sys-utils/mount.c:298
+#: sys-utils/mount.c:300
 #, c-format
 msgid "%s: %s moved to %s.\n"
 msgstr "%s: %s を %s に移動しました。\n"
 
-#: sys-utils/mount.c:300
+#: sys-utils/mount.c:302
 #, c-format
 msgid "%s: %s bound on %s.\n"
 msgstr "%s: %s は %s にバインドされました。\n"
 
-#: sys-utils/mount.c:303 sys-utils/mount.c:307
+#: sys-utils/mount.c:305 sys-utils/mount.c:309
 #, c-format
 msgid "%s: %s mounted on %s.\n"
 msgstr "%s: %s は %s にマウントされました。\n"
 
-#: sys-utils/mount.c:305
+#: sys-utils/mount.c:307
 #, c-format
 msgid "%s: %s propagation flags changed.\n"
 msgstr "%s: %s 伝播フラグを変更しました。\n"
 
-#: sys-utils/mount.c:325
+#: sys-utils/mount.c:327
 #, fuzzy, c-format
 #| msgid ""
 #| "mount: %s does not contain SELinux labels.\n"
@@ -20485,34 +20485,34 @@ msgstr ""
 "       存在するファイルにアクセスできない可能性があります。詳しい情報に\n"
 "       ついては、 restorecon(8) および mount(8) をお読みください。\n"
 
-#: sys-utils/mount.c:354
+#: sys-utils/mount.c:356
 #, c-format
 msgid ""
 "mount: (hint) your fstab has been modified, but systemd still uses\n"
 "       the old version; use 'systemctl daemon-reload' to reload.\n"
 msgstr ""
 
-#: sys-utils/mount.c:386
+#: sys-utils/mount.c:388
 #, c-format
 msgid "       dmesg(1) may have more information after failed mount system call.\n"
 msgstr ""
 
-#: sys-utils/mount.c:415
+#: sys-utils/mount.c:417
 #, c-format
 msgid "%s: failed to parse"
 msgstr "%s: 解釈に失敗しました"
 
-#: sys-utils/mount.c:457
+#: sys-utils/mount.c:459
 #, c-format
 msgid "unsupported option format: %s"
 msgstr "未対応のオプション形式です: %s"
 
-#: sys-utils/mount.c:463
+#: sys-utils/mount.c:465
 #, c-format
 msgid "failed to append option '%s'"
 msgstr "オプション '%s' を追加することができません"
 
-#: sys-utils/mount.c:484
+#: sys-utils/mount.c:486
 #, c-format
 msgid ""
 " %1$s [-lhV]\n"
@@ -20527,7 +20527,7 @@ msgstr ""
 " %1$s [オプション] <ソース> <ディレクトリ>\n"
 " %1$s <操作> <マウントポイント> [<ターゲット>]\n"
 
-#: sys-utils/mount.c:492
+#: sys-utils/mount.c:494
 #, fuzzy
 #| msgid "Checking all file systems.\n"
 msgid "Mount a filesystem.\n"
@@ -20536,35 +20536,35 @@ msgstr ""
 "                   proc ファイルシステムを最初にマウントします\n"
 "                     (これには --mount の意味を含みます)\n"
 
-#: sys-utils/mount.c:495
+#: sys-utils/mount.c:497
 #, fuzzy
 #| msgid " -a, --all               unmount all filesystems\n"
 msgid " -a, --all               mount all filesystems mentioned in fstab\n"
 msgstr " -a, --all               すべてのファイルシステムをアンマウントします\n"
 
-#: sys-utils/mount.c:496 sys-utils/umount.c:94
+#: sys-utils/mount.c:498 sys-utils/umount.c:94
 msgid " -c, --no-canonicalize   don't canonicalize paths\n"
 msgstr " -c, --no-canonicalize   パスを正規化しないようにします\n"
 
-#: sys-utils/mount.c:497
+#: sys-utils/mount.c:499
 #, fuzzy
 #| msgid "     --fake              dry run; skip the umount(2) syscall\n"
 msgid " -f, --fake              dry run; skip the mount(2) syscall\n"
 msgstr "     --fake              実際には umount(2) のシステムコールを行いません\n"
 
-#: sys-utils/mount.c:498
+#: sys-utils/mount.c:500
 #, fuzzy
 #| msgid " -f, --fs             output info about filesystems\n"
 msgid " -F, --fork              fork off for each device (use with -a)\n"
 msgstr " -f, --fs             ファイルシステムに関する情報を出力します\n"
 
-#: sys-utils/mount.c:499
+#: sys-utils/mount.c:501
 #, fuzzy
 #| msgid " -a, --all               unmount all filesystems\n"
 msgid " -T, --fstab <path>      alternative file to /etc/fstab\n"
 msgstr " -a, --all               すべてのファイルシステムをアンマウントします\n"
 
-#: sys-utils/mount.c:500
+#: sys-utils/mount.c:502
 #, fuzzy
 #| msgid " -i, --internal-only     don't call the umount.<type> helpers\n"
 msgid " -i, --internal-only     don't call the mount.<type> helpers\n"
@@ -20574,27 +20574,27 @@ msgstr ""
 " -l, --show-labels       すべてのマウントをラベル付きで表示します\n"
 " -n, --no-mtab           /etc/mtab に書き込まないようにします\n"
 
-#: sys-utils/mount.c:501
+#: sys-utils/mount.c:503
 #, fuzzy
 #| msgid " -b, --bytes       show sizes in bytes\n"
 msgid " -l, --show-labels       show also filesystem labels\n"
 msgstr " -b, --bytes       サイズをバイト単位で表示します\n"
 
-#: sys-utils/mount.c:502
+#: sys-utils/mount.c:504
 msgid " -m, --mkdir[=<mode>]    alias to '-o X-mount.mkdir[=<mode>]'\n"
 msgstr ""
 
-#: sys-utils/mount.c:503 sys-utils/umount.c:99
+#: sys-utils/mount.c:505 sys-utils/umount.c:99
 msgid " -n, --no-mtab           don't write to /etc/mtab\n"
 msgstr " -n, --no-mtab           /etc/mtab に書き込まないようにします\n"
 
-#: sys-utils/mount.c:504
+#: sys-utils/mount.c:506
 msgid ""
 "     --options-mode <mode>\n"
 "                         what to do with options loaded from fstab\n"
 msgstr ""
 
-#: sys-utils/mount.c:506
+#: sys-utils/mount.c:508
 #, fuzzy
 #| msgid "     --fake              dry run; skip the umount(2) syscall\n"
 msgid ""
@@ -20602,39 +20602,39 @@ msgid ""
 "                         mount options source\n"
 msgstr "     --fake              実際には umount(2) のシステムコールを行いません\n"
 
-#: sys-utils/mount.c:508
+#: sys-utils/mount.c:510
 msgid ""
 "     --options-source-force\n"
 "                         force use of options from fstab/mtab\n"
 msgstr ""
 
-#: sys-utils/mount.c:510
+#: sys-utils/mount.c:512
 #, fuzzy
 #| msgid " -P         check filesystems in parallel, including root\n"
 msgid "     --onlyonce          check if filesystem is already mounted\n"
 msgstr " -P         ルートファイルシステムを含め、チェックを並列で処理します\n"
 
-#: sys-utils/mount.c:511
+#: sys-utils/mount.c:513
 #, fuzzy
 #| msgid " -O, --options <list>   limit the set of filesystems by mount options\n"
 msgid " -o, --options <list>    comma-separated list of mount options\n"
 msgstr " -O, --options <list>   マウントオプションでファイルシステムの出力を制限します\n"
 
-#: sys-utils/mount.c:512 sys-utils/umount.c:101
+#: sys-utils/mount.c:514 sys-utils/umount.c:101
 msgid " -O, --test-opts <list>  limit the set of filesystems (use with -a)\n"
 msgstr " -O, --test-opts <リスト> ファイルシステムを指定します (-a と併用します)\n"
 
-#: sys-utils/mount.c:513
+#: sys-utils/mount.c:515
 #, fuzzy
 #| msgid " -r, --read-only          forced open cfdisk in read-only mode\n"
 msgid " -r, --read-only         mount the filesystem read-only (same as -o ro)\n"
 msgstr " -r, --read-only          cfdisk を強制的に読み込み専用で開きます\n"
 
-#: sys-utils/mount.c:514 sys-utils/umount.c:104
+#: sys-utils/mount.c:516 sys-utils/umount.c:104
 msgid " -t, --types <list>      limit the set of filesystem types\n"
 msgstr " -t, --types <リスト>    ファイルシステムの種類を指定します\n"
 
-#: sys-utils/mount.c:515
+#: sys-utils/mount.c:517
 #, fuzzy
 #| msgid ""
 #| "     --source <src>      explicitly specifies source (path, label, uuid)\n"
@@ -20644,7 +20644,7 @@ msgstr ""
 "     --source <src>      マウント元を明示的に指定します (パス, ラベル, uuid のいずれか)\n"
 "     --target <target>   マウントポイントを明示的に指定します\n"
 
-#: sys-utils/mount.c:516
+#: sys-utils/mount.c:518
 #, fuzzy
 #| msgid ""
 #| "     --source <src>      explicitly specifies source (path, label, uuid)\n"
@@ -20654,7 +20654,7 @@ msgstr ""
 "     --source <src>      マウント元を明示的に指定します (パス, ラベル, uuid のいずれか)\n"
 "     --target <target>   マウントポイントを明示的に指定します\n"
 
-#: sys-utils/mount.c:517
+#: sys-utils/mount.c:519
 #, fuzzy
 #| msgid " --default                         use default terminal settings\n"
 msgid ""
@@ -20662,11 +20662,11 @@ msgid ""
 "                         specifies path used for all mountpoints\n"
 msgstr " --default                         端末のデフォルト設定を使用します\n"
 
-#: sys-utils/mount.c:519 sys-utils/umount.c:105
+#: sys-utils/mount.c:521 sys-utils/umount.c:105
 msgid " -v, --verbose           say what is being done\n"
 msgstr " -v, --verbose           何が行われるのかを表示します\n"
 
-#: sys-utils/mount.c:520
+#: sys-utils/mount.c:522
 #, fuzzy
 msgid " -w, --rw, --read-write  mount the filesystem read-write (default)\n"
 msgstr ""
@@ -20674,19 +20674,19 @@ msgstr ""
 " -V, --version           バージョン情報を表示して終了します\n"
 " -w, --rw, --read-write  ファイルシステムを読み書き可能な状態でマウントします (既定値)\n"
 
-#: sys-utils/mount.c:521
+#: sys-utils/mount.c:523
 #, fuzzy
 #| msgid " -S, --setuid <uid>     set uid in user namespace\n"
 msgid " -N, --namespace <ns>    perform mount in another namespace\n"
 msgstr " -S, --setuid <uid>        ユーザネームスペースでの uid をセットします\n"
 
-#: sys-utils/mount.c:527
+#: sys-utils/mount.c:529
 #, fuzzy
 #| msgid "Resource"
 msgid "Source:\n"
 msgstr "リソース"
 
-#: sys-utils/mount.c:528
+#: sys-utils/mount.c:530
 #, fuzzy
 #| msgid " -s, --size <size>         device size\n"
 msgid " -L, --label <label>     synonym for LABEL=<label>\n"
@@ -20694,53 +20694,53 @@ msgstr ""
 " -s, --size <サイズ>       デバイスのサイズ\n"
 "\n"
 
-#: sys-utils/mount.c:529
+#: sys-utils/mount.c:531
 #, fuzzy
 #| msgid " -u, --user <user>             username\n"
 msgid " -U, --uuid <uuid>       synonym for UUID=<uuid>\n"
 msgstr " -u, --user <ユーザ>             ユーザ名\n"
 
-#: sys-utils/mount.c:530
+#: sys-utils/mount.c:532
 #, fuzzy
 #| msgid " -L, --label LABEL         specify label\n"
 msgid " LABEL=<label>           specifies device by filesystem label\n"
 msgstr " -L, --label LABEL         ラベルを指定します\n"
 
-#: sys-utils/mount.c:531
+#: sys-utils/mount.c:533
 msgid " UUID=<uuid>             specifies device by filesystem UUID\n"
 msgstr ""
 
-#: sys-utils/mount.c:532
+#: sys-utils/mount.c:534
 msgid " PARTLABEL=<label>       specifies device by partition label\n"
 msgstr ""
 
-#: sys-utils/mount.c:533
+#: sys-utils/mount.c:535
 msgid " PARTUUID=<uuid>         specifies device by partition UUID\n"
 msgstr ""
 
-#: sys-utils/mount.c:534
+#: sys-utils/mount.c:536
 #, fuzzy
 #| msgid " <dev>                     device (usually disk) path\n"
 msgid " ID=<id>                 specifies device by udev hardware ID\n"
 msgstr " <dev>                     デバイス（通常はディスク）のパス\n"
 
-#: sys-utils/mount.c:535
+#: sys-utils/mount.c:537
 #, fuzzy
 #| msgid " <dev>                     device (usually disk) path\n"
 msgid " <device>                specifies device by path\n"
 msgstr " <dev>                     デバイス（通常はディスク）のパス\n"
 
-#: sys-utils/mount.c:536
+#: sys-utils/mount.c:538
 msgid " <directory>             mountpoint for bind mounts (see --bind/rbind)\n"
 msgstr ""
 
-#: sys-utils/mount.c:537
+#: sys-utils/mount.c:539
 #, fuzzy
 #| msgid " -f, --file <file>    use a specific file instead of %s\n"
 msgid " <file>                  regular file for loopdev setup\n"
 msgstr " -F, --file <ファイル>    %s ではなく、指定したファイルを使用して出力します\n"
 
-#: sys-utils/mount.c:540
+#: sys-utils/mount.c:542
 #, fuzzy
 #| msgid ""
 #| "\n"
@@ -20750,81 +20750,81 @@ msgstr ""
 "\n"
 "オプション:\n"
 
-#: sys-utils/mount.c:541
+#: sys-utils/mount.c:543
 #, fuzzy
 #| msgid " -1, --one             show only a single month (default)\n"
 msgid " -B, --bind              mount a subtree somewhere else (same as -o bind)\n"
 msgstr " -1, --one             1 か月分だけを表示します (既定値)\n"
 
-#: sys-utils/mount.c:542
+#: sys-utils/mount.c:544
 #, fuzzy
 #| msgid " -n, --net                 unshare network namespace\n"
 msgid " -M, --move              move a subtree to some other place\n"
 msgstr " -n, --net         ネットワークネームスペースの共有を解除します\n"
 
-#: sys-utils/mount.c:543
+#: sys-utils/mount.c:545
 #, fuzzy
 #| msgid " -m, --mount               unshare mounts namespace\n"
 msgid " -R, --rbind             mount a subtree and all submounts somewhere else\n"
 msgstr " -m, --mount       マウントネームスペースの共有を解除します\n"
 
-#: sys-utils/mount.c:544
+#: sys-utils/mount.c:546
 #, fuzzy
 #| msgid " -s, --shared             get a shared lock\n"
 msgid " --make-shared           mark a subtree as shared\n"
 msgstr " -s, --shared             共有ロックを取得します\n"
 
-#: sys-utils/mount.c:545
+#: sys-utils/mount.c:547
 #, fuzzy
 #| msgid " -s, --shared             get a shared lock\n"
 msgid " --make-slave            mark a subtree as slave\n"
 msgstr " -s, --shared             共有ロックを取得します\n"
 
-#: sys-utils/mount.c:546
+#: sys-utils/mount.c:548
 msgid " --make-private          mark a subtree as private\n"
 msgstr ""
 
-#: sys-utils/mount.c:547
+#: sys-utils/mount.c:549
 msgid " --make-unbindable       mark a subtree as unbindable\n"
 msgstr ""
 
-#: sys-utils/mount.c:548
+#: sys-utils/mount.c:550
 #, fuzzy
 #| msgid " -s, --shared             get a shared lock\n"
 msgid " --make-rshared          recursively mark a whole subtree as shared\n"
 msgstr " -s, --shared             共有ロックを取得します\n"
 
-#: sys-utils/mount.c:549
+#: sys-utils/mount.c:551
 #, fuzzy
 #| msgid " -R, --recursive         recursively unmount a target with all its children\n"
 msgid " --make-rslave           recursively mark a whole subtree as slave\n"
 msgstr " -R, --recursive         指定したものと、それ以下のディレクトリすべてをアンマウントします\n"
 
-#: sys-utils/mount.c:550
+#: sys-utils/mount.c:552
 #, fuzzy
 #| msgid " -R, --recursive         recursively unmount a target with all its children\n"
 msgid " --make-rprivate         recursively mark a whole subtree as private\n"
 msgstr " -R, --recursive         指定したものと、それ以下のディレクトリすべてをアンマウントします\n"
 
-#: sys-utils/mount.c:551
+#: sys-utils/mount.c:553
 msgid " --make-runbindable      recursively mark a whole subtree as unbindable\n"
 msgstr ""
 
-#: sys-utils/mount.c:702 sys-utils/umount.c:520
+#: sys-utils/mount.c:704 sys-utils/umount.c:520
 msgid "libmount context allocation failed"
 msgstr "libmount のコンテキスト作成に失敗しました"
 
-#: sys-utils/mount.c:764 sys-utils/umount.c:582
+#: sys-utils/mount.c:766 sys-utils/umount.c:582
 msgid "failed to set options pattern"
 msgstr "オプションパターンの設定に失敗しました"
 
-#: sys-utils/mount.c:816 sys-utils/umount.c:599
+#: sys-utils/mount.c:818 sys-utils/umount.c:599
 #, fuzzy, c-format
 #| msgid "Failed to set personality to %s"
 msgid "failed to set target namespace to %s"
 msgstr "ネームスペース '%s' の再割り当てに失敗しました"
 
-#: sys-utils/mount.c:984
+#: sys-utils/mount.c:986
 #, fuzzy
 #| msgid "You specified more cylinders than fit on disk"
 msgid "source specified more than once"
@@ -20990,11 +20990,11 @@ msgstr ""
 msgid "neither filename nor target pid supplied for %s"
 msgstr "%s 向けのファイル名も、ターゲットの PID も指定されていません。"
 
-#: sys-utils/nsenter.c:351 sys-utils/unshare.c:828 sys-utils/unshare.c:884
+#: sys-utils/nsenter.c:353 sys-utils/unshare.c:828 sys-utils/unshare.c:884
 msgid "failed to parse uid"
 msgstr "uid の解釈に失敗しました"
 
-#: sys-utils/nsenter.c:358 sys-utils/unshare.c:832 sys-utils/unshare.c:888
+#: sys-utils/nsenter.c:360 sys-utils/unshare.c:832 sys-utils/unshare.c:888
 msgid "failed to parse gid"
 msgstr "gid の解釈に失敗しました"
 
@@ -21958,54 +21958,54 @@ msgstr "     --list               設定可能なアーキテクチャを表示�
 msgid "     --show[=personality] show current or specific personality and exit\n"
 msgstr ""
 
-#: sys-utils/setarch.c:337
+#: sys-utils/setarch.c:341
 #, fuzzy, c-format
 #| msgid "cannot set timeout for %s"
 msgid "Kernel cannot set architecture to %s"
 msgstr "出力ファイルはアーキテクチャ `%s' を表すことができません"
 
-#: sys-utils/setarch.c:402
+#: sys-utils/setarch.c:406
 msgid "Can not get current kernel personality"
 msgstr ""
 
-#: sys-utils/setarch.c:455
+#: sys-utils/setarch.c:459
 msgid "Not enough arguments"
 msgstr "引数が不足しています"
 
-#: sys-utils/setarch.c:523
+#: sys-utils/setarch.c:527
 msgid "unrecognized option '--list'"
 msgstr "認識できないオプション '--list' です"
 
-#: sys-utils/setarch.c:532
+#: sys-utils/setarch.c:536
 #, fuzzy
 #| msgid "mount parent ID"
 msgid "could not parse personality"
 msgstr "マウント親ID"
 
-#: sys-utils/setarch.c:536
+#: sys-utils/setarch.c:540
 #, fuzzy
 #| msgid "unrecognized option '--list'"
 msgid "unrecognized option '--show'"
 msgstr "認識できないオプション '--list' です"
 
-#: sys-utils/setarch.c:550
+#: sys-utils/setarch.c:554
 #, fuzzy
 #| msgid "no length argument specified"
 msgid "no architecture argument or personality flags specified"
 msgstr "アーキテクチャ:"
 
-#: sys-utils/setarch.c:562
+#: sys-utils/setarch.c:566
 #, c-format
 msgid "%s: Unrecognized architecture"
 msgstr " %s: 認識できないアーキテクチャです"
 
-#: sys-utils/setarch.c:580
+#: sys-utils/setarch.c:584
 #, fuzzy, c-format
 #| msgid "Failed to set personality to %s"
 msgid "failed to set personality to %s"
 msgstr "パーソナリティを %s に設定する処理が失敗しました"
 
-#: sys-utils/setarch.c:592
+#: sys-utils/setarch.c:596
 #, c-format
 msgid "Execute command `%s'.\n"
 msgstr "コマンドを実行します。 `%s'\n"
@@ -25013,17 +25013,17 @@ msgstr "--nobanner は root だけが使用できます"
 msgid "invalid timeout argument: %s"
 msgstr "制限時間の引数が正しくありません: %s"
 
-#: term-utils/wall.c:361
+#: term-utils/wall.c:293
 msgid "cannot get passwd uid"
 msgstr "passwd uid を取得できません"
 
 # Translator's NOTE: whom, hostname, where, date
-#: term-utils/wall.c:385
+#: term-utils/wall.c:317
 #, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "%s@%s から流れてきた全体周知メッセージ (%s) (%s):"
 
-#: term-utils/wall.c:417
+#: term-utils/wall.c:349
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr "%s からは読み込みません - 標準入力をお使いください。"
@@ -25061,32 +25061,32 @@ msgstr "%s はメッセージを無効にしています"
 msgid "%s is logged in more than once; writing to %s"
 msgstr "%s は複数ログインしています; %s に書き込みます"
 
-#: term-utils/write.c:237
-msgid "carefulputc failed"
-msgstr "carefulputc に失敗しました"
-
-#: term-utils/write.c:279
+#: term-utils/write.c:265
 #, fuzzy, c-format
 #| msgid "Message from %s@%s (as %s) on %s at %s ..."
 msgid "Message from %s@%s (as %s) on %s at %02d:%02d ..."
 msgstr "%s@%s から流れてきた全体周知メッセージ (%s) (%s):"
 
-#: term-utils/write.c:283
+#: term-utils/write.c:269
 #, fuzzy, c-format
 #| msgid "Message from %s@%s on %s at %s ..."
 msgid "Message from %s@%s on %s at %02d:%02d ..."
 msgstr "%s@%s から流れてきた全体周知メッセージ (%s) (%s):"
 
-#: term-utils/write.c:329
+#: term-utils/write.c:280
+msgid "carefulputc failed"
+msgstr "carefulputc に失敗しました"
+
+#: term-utils/write.c:318
 msgid "you have write permission turned off"
 msgstr "書き込み権限を無効にしたままになっています"
 
-#: term-utils/write.c:352
+#: term-utils/write.c:341
 #, c-format
 msgid "%s is not logged in on %s"
 msgstr "%s は %s にログインしていません"
 
-#: term-utils/write.c:358
+#: term-utils/write.c:347
 #, c-format
 msgid "%s has messages disabled on %s"
 msgstr "%s は %s でメッセージを無効にしています"
@@ -25500,7 +25500,7 @@ msgstr "書式が正しくありません {%s}"
 msgid "bad conversion character %%%s"
 msgstr "変換文字が正しくありません %%%s"
 
-#: text-utils/hexdump-parse.c:438
+#: text-utils/hexdump-parse.c:440
 msgid "byte count with multiple conversion characters"
 msgstr "複数の変換文字のあるバイトカウントです"
 
