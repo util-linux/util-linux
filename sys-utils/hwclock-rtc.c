@@ -5,6 +5,8 @@
  */
 #include <asm/ioctl.h>
 #include <errno.h>
+#include <linux/rtc.h>
+#include <linux/types.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,57 +23,16 @@
 
 #include "hwclock.h"
 
-/*
- * Get defines for rtc stuff.
- *
- * Getting the rtc defines is nontrivial. The obvious way is by including
- * <linux/mc146818rtc.h> but that again includes <asm/io.h> which again
- * includes ... and on sparc and alpha this gives compilation errors for
- * many kernel versions. So, we give the defines ourselves here. Moreover,
- * some Sparc person decided to be incompatible, and used a struct rtc_time
- * different from that used in mc146818rtc.h.
- */
-
-/*
- * struct rtc_time is present since 1.3.99.
- * Earlier (since 1.3.89), a struct tm was used.
- */
-struct linux_rtc_time {
-	int tm_sec;
-	int tm_min;
-	int tm_hour;
-	int tm_mday;
-	int tm_mon;
-	int tm_year;
-	int tm_wday;
-	int tm_yday;
-	int tm_isdst;
-};
-
-/* RTC_RD_TIME etc have this definition since 1.99.9 (pre2.0-9) */
-#ifndef RTC_RD_TIME
-# define RTC_RD_TIME	_IOR('p', 0x09, struct linux_rtc_time)
-# define RTC_SET_TIME	_IOW('p', 0x0a, struct linux_rtc_time)
-# define RTC_UIE_ON	_IO('p', 0x03)	/* Update int. enable on */
-# define RTC_UIE_OFF	_IO('p', 0x04)	/* Update int. enable off */
-#endif
-
-/* RTC_EPOCH_READ and RTC_EPOCH_SET are present since 2.0.34 and 2.1.89 */
-#ifndef RTC_EPOCH_READ
-# define RTC_EPOCH_READ	_IOR('p', 0x0d, unsigned long)	/* Read epoch */
-# define RTC_EPOCH_SET	_IOW('p', 0x0e, unsigned long)	/* Set epoch */
-#endif
-
 #ifndef RTC_PARAM_GET
 struct rtc_param {
-	uint64_t param;
+	__u64 param;
 	union {
-		uint64_t uvalue;
-		int64_t svalue;
-		uint64_t ptr;
+		__u64 uvalue;
+		__s64 svalue;
+		__u64 ptr;
 	};
-	uint32_t index;
-	uint32_t __pad;
+	__u32 index;
+	__u32 __pad;
 };
 
 # define RTC_PARAM_GET	_IOW('p', 0x13, struct rtc_param)
@@ -423,7 +384,7 @@ int set_epoch_rtc(const struct hwclock_control *ctl)
 
 
 
-static int resolve_rtc_param_alias(const char *alias, uint64_t *value)
+static int resolve_rtc_param_alias(const char *alias, __u64 *value)
 {
 	const struct hwclock_param *param = &hwclock_params[0];
 
@@ -438,6 +399,12 @@ static int resolve_rtc_param_alias(const char *alias, uint64_t *value)
 	return 1;
 }
 
+/* kernel uapi __u64 can be defined differently than uint64_t */
+static int strtoku64(const char *str, __u64 *num, int base)
+{
+	return ul_strtou64(str, (uint64_t *) &num, base);
+}
+
 /*
  * Get the Hardware Clock parameter setting from the kernel.
  */
@@ -449,7 +416,7 @@ int get_param_rtc(const struct hwclock_control *ctl,
 
 	/* handle name */
 	if (resolve_rtc_param_alias(name, &param.param) != 0
-	    && ul_strtou64(name, &param.param, 0) != 0) {
+	    && strtoku64(name, &param.param, 0) != 0) {
 		warnx(_("could not convert parameter name to number"));
 		return 1;
 	}
@@ -491,7 +458,7 @@ int set_param_rtc(const struct hwclock_control *ctl, const char *opt0)
 	/* handle name */
 	tok = strtok(opt, "=");
 	if (resolve_rtc_param_alias(tok, &param.param) != 0
-	    && ul_strtou64(tok, &param.param, 0) != 0) {
+	    && strtoku64(tok, &param.param, 0) != 0) {
 		warnx(_("could not convert parameter name to number"));
 		goto done;
 	}
@@ -502,7 +469,7 @@ int set_param_rtc(const struct hwclock_control *ctl, const char *opt0)
 		warnx(_("expected <param>=<value>"));
 		goto done;
 	}
-	if (ul_strtou64(tok, &param.uvalue, 0) != 0) {
+	if (strtoku64(tok, &param.uvalue, 0) != 0) {
 		warnx(_("could not convert parameter value to number"));
 		goto done;
 	}
