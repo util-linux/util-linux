@@ -106,12 +106,12 @@ Enter the time namespace. If no file is specified, enter the time namespace of t
 *-G*, *--setgid* _gid_::
 Set the group ID which will be used in the entered namespace and drop supplementary groups.
 *nsenter* always sets GID for user namespaces, the default is 0.
-If the argument _follow_ is specified the GID of the target process is used.
+If the argument "follow" is specified the GID of the target process is used.
 
 *-S*, *--setuid* _uid_::
 Set the user ID which will be used in the entered namespace.
 *nsenter* always sets UID for user namespaces, the default is 0.
-If the argument _follow_ is specified the UID of the target process is used.
+If the argument "follow" is specified the UID of the target process is used.
 
 *--preserve-credentials*::
 Don't modify UID and GID when enter user namespace. The default is to drops supplementary groups and sets GID and UID to 0.
