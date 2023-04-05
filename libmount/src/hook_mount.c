@@ -111,14 +111,33 @@ static int hookset_deinit(struct libmnt_context *cxt, const struct libmnt_hookse
 	return 0;
 }
 
+static inline int fsconfig_set_value(
+			struct libmnt_context *cxt,
+			const struct libmnt_hookset *hs,
+			int fd,
+			const char *name, const char *value)
+{
+	int rc;
+
+	DBG(HOOK, ul_debugobj(hs, "  fsconfig(name=%s,value=%s)", name,
+				value ? : ""));
+	if (value)
+		rc = fsconfig(fd, FSCONFIG_SET_STRING, name, value, 0);
+	else
+		rc = fsconfig(fd, FSCONFIG_SET_FLAG, name, NULL, 0);
+
+	set_syscall_status(cxt, "fsconfig", rc == 0);
+	return rc;
+}
 
 static int configure_superblock(struct libmnt_context *cxt,
-				const struct libmnt_hookset *hs, int fd)
+				const struct libmnt_hookset *hs,
+				int fd, int force_rwro)
 {
 	struct libmnt_optlist *ol;
 	struct libmnt_iter itr;
 	struct libmnt_opt *opt;
-	int rc;
+	int rc = 0, has_rwro = 0;
 
 	DBG(HOOK, ul_debugobj(hs, " config FS"));
 
@@ -136,22 +155,21 @@ static int configure_superblock(struct libmnt_context *cxt,
 		if (ent && mnt_opt_get_map(opt) == cxt->map_linux &&
 		    ent->id == MS_RDONLY) {
 			value = NULL;
+			has_rwro = 1;
 		} else if (!name || mnt_opt_get_map(opt) || mnt_opt_is_external(opt))
 			continue;
 
-		DBG(HOOK, ul_debugobj(hs, "  fsconfig(name=%s,value=%s)", name, value));
-		if (value)
-			rc = fsconfig(fd, FSCONFIG_SET_STRING, name, value, 0);
-		else
-			rc = fsconfig(fd, FSCONFIG_SET_FLAG, name, NULL, 0);
-
-		set_syscall_status(cxt, "fsconfig", rc == 0);
+		rc = fsconfig_set_value(cxt, hs, fd, name, value);
 		if (rc != 0)
-			return -errno;
+			goto done;
 	}
 
-	DBG(HOOK, ul_debugobj(hs, " config done [rc=0]"));
-	return 0;
+	if (force_rwro && !has_rwro)
+		rc = fsconfig_set_value(cxt, hs, fd, "rw", NULL);
+
+done:
+	DBG(HOOK, ul_debugobj(hs, " config done [rc=%d]", rc));
+	return rc != 0 && errno ? -errno : rc;
 }
 
 static int open_fs_configuration_context(struct libmnt_context *cxt,
@@ -244,7 +262,7 @@ static int hook_create_mount(struct libmnt_context *cxt,
 	set_syscall_status(cxt, "fsconfig", rc == 0);
 
 	if (!rc)
-		rc = configure_superblock(cxt, hs, api->fd_fs);
+		rc = configure_superblock(cxt, hs, api->fd_fs, 0);
 	if (!rc) {
 		DBG(HOOK, ul_debugobj(hs, "create FS"));
 		rc = fsconfig(api->fd_fs, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
@@ -301,8 +319,9 @@ static int hook_reconfigure_mount(struct libmnt_context *cxt,
 			return -errno;
 	}
 
-	rc = configure_superblock(cxt, hs, api->fd_fs);
+	rc = configure_superblock(cxt, hs, api->fd_fs, 1);
 	if (!rc) {
+		DBG(HOOK, ul_debugobj(hs, "re-configurate FS"));
 		rc = fsconfig(api->fd_fs, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0);
 		set_syscall_status(cxt, "fsconfig", rc == 0);
 	}
