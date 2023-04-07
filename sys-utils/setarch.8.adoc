@@ -70,10 +70,10 @@ Obsolete bug emulation flag. Turns on *WHOLE_SECONDS*.
 This makes *select*(2), *pselect*(2), and *ppoll*(2) system calls preserve the timeout value instead of modifying it to reflect the amount of time not slept when interrupted by a signal handler. Use when _program_ depends on this behavior. For more details see the timeout description in *select*(2) manual page. Turns on *STICKY_TIMEOUTS*.
 
 *-X*, *--read-implies-exec*::
-If this is set then *mmap*(3p) *PROT_READ* will also add the *PROT_EXEC* bit - as expected by legacy x86 binaries. Notice that the ELF loader will automatically set this bit when it encounters a legacy binary. Turns on *READ_IMPLIES_EXEC*.
+If this is set then *mmap*(2) *PROT_READ* will also add the *PROT_EXEC* bit - as expected by legacy x86 binaries. Notice that the ELF loader will automatically set this bit when it encounters a legacy binary. Turns on *READ_IMPLIES_EXEC*.
 
 *-Z*, *--mmap-page-zero*::
-SVr4 bug emulation that will set *mmap*(3p) page zero as read-only. Use when _program_ depends on this behavior, and the source code is not available to be fixed. Turns on *MMAP_PAGE_ZERO*.
+SVr4 bug emulation that will set *mmap*(2) page zero as read-only. Use when _program_ depends on this behavior, and the source code is not available to be fixed. Turns on *MMAP_PAGE_ZERO*.
 
 include::man-common/help-version.adoc[]
 
