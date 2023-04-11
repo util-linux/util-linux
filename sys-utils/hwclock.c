@@ -381,7 +381,7 @@ static int
 read_hardware_clock(const struct hwclock_control *ctl,
 		    int *valid_p, time_t *systime_p)
 {
-	struct tm tm;
+	struct tm tm = { 0 };
 	int err;
 
 	err = ur->read_hardware_clock(ctl, &tm);
@@ -404,7 +404,7 @@ read_hardware_clock(const struct hwclock_control *ctl,
 static void
 set_hardware_clock(const struct hwclock_control *ctl, const time_t newtime)
 {
-	struct tm new_broken_time;
+	struct tm new_broken_time = { 0 };
 	/*
 	 * Time to which we will set Hardware Clock, in broken down format,
 	 * in the time zone of caller's choice
@@ -705,7 +705,7 @@ static int
 set_system_clock(const struct hwclock_control *ctl,
 		 const struct timeval newtime)
 {
-	struct tm broken;
+	struct tm broken = { 0 };
 	int minuteswest;
 	int rc = 0;
 

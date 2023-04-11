@@ -155,9 +155,9 @@ static int do_rtc_read_ioctl(int rtc_fd, struct tm *tm)
 static int busywait_for_rtc_clock_tick(const struct hwclock_control *ctl,
 				       const int rtc_fd)
 {
-	struct tm start_time;
+	struct tm start_time = { 0 };
 	/* The time when we were called (and started waiting) */
-	struct tm nowtime;
+	struct tm nowtime = { 0 };
 	int rc;
 	struct timeval begin = { 0 }, now = { 0 };
 
