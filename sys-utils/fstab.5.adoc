@@ -92,14 +92,14 @@ More than one type may be specified in a comma-separated list.
 
 This field describes the mount options associated with the filesystem.
 
-It is formatted as a comma-separated list of options and is optional for mount(8) or swapon(8). The usual convention is to use at least "defaults" keyword there.
+It is formatted as a comma-separated list of options and is optional for *mount*(8) or *swapon*(8). The usual convention is to use at least "defaults" keyword there.
 
 It usually contains the type of mount (*ro* or *rw*, the default is *rw*), plus any additional options appropriate to the filesystem type (including performance-tuning options). For details, see *mount*(8) or *swapon*(8).
 
 Basic filesystem-independent options are:
 
 *defaults*::
-use default options. The default depends on the kernel and the filesystem. mount(8) does not have any hardcoded set of default options. The kernel default is usually rw, suid, dev, exec, auto, nouser, and async.
+use default options. The default depends on the kernel and the filesystem. *mount*(8) does not have any hardcoded set of default options. The kernel default is usually rw, suid, dev, exec, auto, nouser, and async.
 *noauto*::
 do not mount when *mount -a* is given (e.g., at boot time)
 *user*::
