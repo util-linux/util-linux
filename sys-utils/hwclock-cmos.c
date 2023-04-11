@@ -369,7 +369,7 @@ static const char *get_device_path(void)
 	return NULL;
 }
 
-static struct clock_ops cmos_interface = {
+static const struct clock_ops cmos_interface = {
 	N_("Using direct ISA access to the clock"),
 	get_permissions_cmos,
 	read_hardware_clock_cmos,
@@ -381,7 +381,7 @@ static struct clock_ops cmos_interface = {
 /*
  * return &cmos if cmos clock present, NULL otherwise.
  */
-struct clock_ops *probe_for_cmos_clock(void)
+const struct clock_ops *probe_for_cmos_clock(void)
 {
 	return &cmos_interface;
 }

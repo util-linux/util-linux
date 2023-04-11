@@ -65,8 +65,8 @@ struct clock_ops {
 	const char *(*get_device_path) (void);
 };
 
-extern struct clock_ops *probe_for_cmos_clock(void);
-extern struct clock_ops *probe_for_rtc_clock(const struct hwclock_control *ctl);
+extern const struct clock_ops *probe_for_cmos_clock(void);
+extern const struct clock_ops *probe_for_rtc_clock(const struct hwclock_control *ctl);
 
 /* hwclock.c */
 extern double time_diff(struct timeval subtrahend, struct timeval subtractor);
