@@ -94,7 +94,7 @@ Or set it{colon}::
 *taskset -p* _mask pid_
 
 //TRANSLATORS: Keep {colon} untranslated.
-When a cpu-list is specified for an existing process, the 'p' and 'c' options must be grouped together{colon}::
+When a cpu-list is specified for an existing process, the *-p* and *-c* options must be grouped together{colon}::
 *taskset -pc* _cpu-list pid_
 
 //TRANSLATORS: Keep {colon} untranslated.
@@ -107,9 +107,9 @@ A user can change the CPU affinity of a process belonging to the same user. A us
 
 == RETURN VALUE
 
-*Taskset* returns 0 in its affinity-getting mode as long as the provided PID exists.
+*taskset* returns 0 in its affinity-getting mode as long as the provided PID exists.
 
-*Taskset* returns 0 in its affinity-setting mode as long as the underlying *sched_setaffinity()* system call does.     The success of the command does not guarantee that the specified thread has actually migrated to the indicated CPU(s), but only that the thread will not migrate to a CPU outside the new affinity mask.   For example, the affinity of the kernel thread kswapd can be set, but the thread may not immediately migrate and is not guaranteed to ever do so:
+*taskset* returns 0 in its affinity-setting mode as long as the underlying *sched_setaffinity*(2) system call does.  The success of the command does not guarantee that the specified thread has actually migrated to the indicated CPU(s), but only that the thread will not migrate to a CPU outside the new affinity mask.  For example, the affinity of the kernel thread kswapd can be set, but the thread may not immediately migrate and is not guaranteed to ever do so:
 
 $ ps ax -o comm,psr,pid | grep kswapd +
 kswapd0           4      82 +
