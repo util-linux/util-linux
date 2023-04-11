@@ -95,7 +95,7 @@ Determine the number of columns the input contains and create a table. Columns a
 *-C, --table-column* _properties_::
 Define one column by comma separated list of column attributes.
 This option can be used more than once, every use defines just one column.
-The properties replace some of --table- options. For example *--table-column
+The properties replace some of *--table-* options. For example *--table-column
 name=FOO,right* define one column where text is aligned to right. The option is
 mutually exclusive to *--table-columns*.
 +
