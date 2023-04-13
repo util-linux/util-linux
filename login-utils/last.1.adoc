@@ -117,7 +117,7 @@ The files _wtmp_ and _btmp_ might not be found. The system only logs information
 
 An empty entry is a valid type of wtmp entry. It means that an empty file or file with zeros is not interpreted as an error.
 
-The utmp file format uses fixed sizes of strings, which means that very long strings are impossible to store in the file and impossible to display by last. The usual limits are 32 bytes for a user and line name and 256 bytes for a hostname.
+The utmp file format uses fixed sizes of strings, which means that very long strings are impossible to store in the file and impossible to display by *last*. The usual limits are 32 bytes for a user and line name and 256 bytes for a hostname.
 
 == AUTHORS
 

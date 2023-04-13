@@ -544,6 +544,9 @@ extern int blkid_probe_get_hint(blkid_probe pr, const char *name, uint64_t *valu
 			__attribute__((nonnull(1,2)))
 			__attribute__((warn_unused_result));
 
+extern int blkid_probe_get_partitions_flags(blkid_probe pr)
+			__attribute__((nonnull));
+
 /* filter bitmap macros */
 #define blkid_bmp_wordsize		(8 * sizeof(unsigned long))
 #define blkid_bmp_idx_bit(item)		(1UL << ((item) % blkid_bmp_wordsize))

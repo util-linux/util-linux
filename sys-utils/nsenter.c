@@ -247,8 +247,8 @@ int main(int argc, char *argv[])
 		{ "user", optional_argument, NULL, 'U' },
 		{ "cgroup", optional_argument, NULL, 'C' },
 		{ "time", optional_argument, NULL, 'T' },
-		{ "setuid", optional_argument, NULL, 'S' },
-		{ "setgid", optional_argument, NULL, 'G' },
+		{ "setuid", required_argument, NULL, 'S' },
+		{ "setgid", required_argument, NULL, 'G' },
 		{ "root", optional_argument, NULL, 'r' },
 		{ "wd", optional_argument, NULL, 'w' },
 		{ "wdns", optional_argument, NULL, 'W' },
@@ -285,7 +285,7 @@ int main(int argc, char *argv[])
 	close_stdout_atexit();
 
 	while ((c =
-		getopt_long(argc, argv, "+ahVt:m::u::i::n::p::C::U::T::S::G::r::w::W::eFZ",
+		getopt_long(argc, argv, "+ahVt:m::u::i::n::p::C::U::T::S:G:r::w::W::eFZ",
 			    longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -347,17 +347,17 @@ int main(int argc, char *argv[])
 				namespaces |= CLONE_NEWTIME;
 			break;
 		case 'S':
-			if (optarg)
-				uid = strtoul_or_err(optarg, _("failed to parse uid"));
-			else
+			if (strcmp(optarg, "follow") == 0)
 				do_uid = true;
+			else
+				uid = strtoul_or_err(optarg, _("failed to parse uid"));
 			force_uid = true;
 			break;
 		case 'G':
-			if (optarg)
-				gid = strtoul_or_err(optarg, _("failed to parse gid"));
-			else
+			if (strcmp(optarg, "follow") == 0)
 				do_gid = true;
+			else
+				gid = strtoul_or_err(optarg, _("failed to parse gid"));
 			force_gid = true;
 			break;
 		case 'F':

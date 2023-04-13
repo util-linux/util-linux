@@ -229,12 +229,16 @@ static int get_userns_fd_from_idmap(struct list_head *idmap)
 
 	/* Wait for child to set up a new namespace. */
 	rc = read_all(sock_fds[1], &c, 1);
-	if (rc != 1)
+	if (rc != 1) {
+		kill(pid, SIGKILL);
 		goto err_wait;
+	}
 
 	rc = map_ids(idmap, pid);
-	if (rc < 0)
+	if (rc < 0) {
+		kill(pid, SIGKILL);
 		goto err_wait;
+	}
 
 	snprintf(path, sizeof(path), "/proc/%d/ns/user", pid);
 	fd_userns = open(path, O_RDONLY | O_CLOEXEC | O_NOCTTY);
@@ -298,7 +302,7 @@ static int hook_mount_post(
 	const int recursive = mnt_optlist_is_recursive(cxt->optlist);
 	const char *target = mnt_fs_get_target(cxt->fs);
 	int fd_tree = -1;
-	int rc;
+	int rc, is_private = 1;
 
 	assert(hd);
 	assert(target);
@@ -310,7 +314,19 @@ static int hook_mount_post(
 	 * Once a mount has been attached to the filesystem it can't be
 	 * idmapped anymore. So create a new detached mount.
 	 */
-	fd_tree = open_tree(-1, target,
+#ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
+	{
+		struct libmnt_sysapi *api = mnt_context_get_sysapi(cxt);
+
+		if (api && api->fd_tree >= 0) {
+			fd_tree = api->fd_tree;
+			is_private = 0;
+			DBG(HOOK, ul_debugobj(hs, " reuse tree FD"));
+		}
+	}
+#endif
+	if (fd_tree < 0)
+		fd_tree = open_tree(-1, target,
 			    OPEN_TREE_CLONE | OPEN_TREE_CLOEXEC |
 			    (recursive ? AT_RECURSIVE : 0));
 	if (fd_tree < 0) {
@@ -326,20 +342,19 @@ static int hook_mount_post(
 		DBG(HOOK, ul_debugobj(hs, " failed to set attributes"));
 		goto done;
 	}
-	/* Unmount the old, non-idmapped mount we just cloned and idmapped. */
-	rc = umount(target);
-	if (rc < 0) {
-		DBG(HOOK, ul_debugobj(hs, " failed to set umount target"));
-		goto done;
-	}
 
 	/* Attach the idmapped mount. */
-	rc = move_mount(fd_tree, "", -1, target, MOVE_MOUNT_F_EMPTY_PATH);
-	if (rc)
-		DBG(HOOK, ul_debugobj(hs, " failed to set move mount"));
+	if (is_private) {
+		/* Unmount the old, non-idmapped mount we just cloned and idmapped. */
+		umount2(target, MNT_DETACH);
 
+		rc = move_mount(fd_tree, "", -1, target, MOVE_MOUNT_F_EMPTY_PATH);
+		if (rc)
+			DBG(HOOK, ul_debugobj(hs, " failed to set move mount"));
+	}
 done:
-	close(fd_tree);
+	if (is_private)
+		close(fd_tree);
 	if (rc < 0)
 		return -MNT_ERR_IDMAP;
 
@@ -452,6 +467,7 @@ static int hook_prepare_options(
 done:
 	/* define post-mount hook to enter the namespace */
 	DBG(HOOK, ul_debugobj(hs, " wanted new user namespace"));
+	cxt->force_clone = 1; /* require OPEN_TREE_CLONE */
 	rc = mnt_context_append_hook(cxt, hs,
 				MNT_STAGE_MOUNT_POST,
 				hd, hook_mount_post);

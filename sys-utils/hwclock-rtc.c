@@ -5,6 +5,8 @@
  */
 #include <asm/ioctl.h>
 #include <errno.h>
+#include <linux/rtc.h>
+#include <linux/types.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,58 +23,6 @@
 
 #include "hwclock.h"
 
-/*
- * Get defines for rtc stuff.
- *
- * Getting the rtc defines is nontrivial. The obvious way is by including
- * <linux/mc146818rtc.h> but that again includes <asm/io.h> which again
- * includes ... and on sparc and alpha this gives compilation errors for
- * many kernel versions. So, we give the defines ourselves here. Moreover,
- * some Sparc person decided to be incompatible, and used a struct rtc_time
- * different from that used in mc146818rtc.h.
- */
-
-/*
- * On Sparcs, there is a <asm/rtc.h> that defines different ioctls (that are
- * required on my machine). However, this include file does not exist on
- * other architectures.
- */
-/* One might do:
-#ifdef __sparc__
-# include <asm/rtc.h>
-#endif
- */
-#ifdef __sparc__
-/* The following is roughly equivalent */
-struct sparc_rtc_time
-{
-	int sec;	/* Seconds		0-59 */
-	int min;	/* Minutes		0-59 */
-	int hour;	/* Hour			0-23 */
-	int dow;	/* Day of the week	1-7  */
-	int dom;	/* Day of the month	1-31 */
-	int month;	/* Month of year	1-12 */
-	int year;	/* Year			0-99 */
-};
-#define RTCGET _IOR('p', 20, struct sparc_rtc_time)
-#define RTCSET _IOW('p', 21, struct sparc_rtc_time)
-#endif
-
-/*
- * struct rtc_time is present since 1.3.99.
- * Earlier (since 1.3.89), a struct tm was used.
- */
-struct linux_rtc_time {
-	int tm_sec;
-	int tm_min;
-	int tm_hour;
-	int tm_mday;
-	int tm_mon;
-	int tm_year;
-	int tm_wday;
-	int tm_yday;
-	int tm_isdst;
-};
 
 #define RTC_TM_FIELD_EQ(f) \
 	(offsetof(struct linux_rtc_time, f) == offsetof(struct tm, f) \
@@ -90,30 +40,17 @@ static_assert(sizeof(struct linux_rtc_time) <= sizeof(struct tm)
 	      && RTC_TM_FIELD_EQ(tm_isdst),
 	      "struct linux_rtc_time is not compatible with struct tm");
 
-/* RTC_RD_TIME etc have this definition since 1.99.9 (pre2.0-9) */
-#ifndef RTC_RD_TIME
-# define RTC_RD_TIME	_IOR('p', 0x09, struct linux_rtc_time)
-# define RTC_SET_TIME	_IOW('p', 0x0a, struct linux_rtc_time)
-# define RTC_UIE_ON	_IO('p', 0x03)	/* Update int. enable on */
-# define RTC_UIE_OFF	_IO('p', 0x04)	/* Update int. enable off */
-#endif
-
-/* RTC_EPOCH_READ and RTC_EPOCH_SET are present since 2.0.34 and 2.1.89 */
-#ifndef RTC_EPOCH_READ
-# define RTC_EPOCH_READ	_IOR('p', 0x0d, unsigned long)	/* Read epoch */
-# define RTC_EPOCH_SET	_IOW('p', 0x0e, unsigned long)	/* Set epoch */
-#endif
 
 #ifndef RTC_PARAM_GET
 struct rtc_param {
-	uint64_t param;
+	__u64 param;
 	union {
-		uint64_t uvalue;
-		int64_t svalue;
-		uint64_t ptr;
+		__u64 uvalue;
+		__s64 svalue;
+		__u64 ptr;
 	};
-	uint32_t index;
-	uint32_t __pad;
+	__u32 index;
+	__u32 __pad;
 };
 
 # define RTC_PARAM_GET	_IOW('p', 0x13, struct rtc_param)
@@ -158,7 +95,7 @@ static void close_rtc(void)
 
 static int open_rtc(const struct hwclock_control *ctl)
 {
-	static const char *fls[] = {
+	static const char * const fls[] = {
 #ifdef __ia64__
 		"/dev/efirtc",
 		"/dev/misc/efirtc",
@@ -213,36 +150,13 @@ static int open_rtc_or_exit(const struct hwclock_control *ctl)
 static int do_rtc_read_ioctl(int rtc_fd, struct tm *tm)
 {
 	int rc = -1;
-	char *ioctlname;
-#ifdef __sparc__
-	/* some but not all sparcs use a different ioctl and struct */
-	struct sparc_rtc_time stm;
-#endif
 
 	memset(tm, 0, sizeof(*tm));
-	ioctlname = "RTC_RD_TIME";
 	rc = ioctl(rtc_fd, RTC_RD_TIME, tm);
 
-#ifdef __sparc__
-	if (rc == -1) {		/* sparc sbus */
-		ioctlname = "RTCGET";
-		rc = ioctl(rtc_fd, RTCGET, &stm);
-		if (rc == 0) {
-			tm->tm_sec = stm.sec;
-			tm->tm_min = stm.min;
-			tm->tm_hour = stm.hour;
-			tm->tm_mday = stm.dom;
-			tm->tm_mon = stm.month - 1;
-			tm->tm_year = stm.year - 1900;
-			tm->tm_wday = stm.dow - 1;
-			tm->tm_yday = -1;	/* day in the year */
-		}
-	}
-#endif
-
 	if (rc == -1) {
-		warn(_("ioctl(%s) to %s to read the time failed"),
-			ioctlname, rtc_dev_name);
+		warn(_("ioctl(RTC_RD_NAME) to %s to read the time failed"),
+			rtc_dev_name);
 		return -1;
 	}
 
@@ -260,9 +174,9 @@ static int do_rtc_read_ioctl(int rtc_fd, struct tm *tm)
 static int busywait_for_rtc_clock_tick(const struct hwclock_control *ctl,
 				       const int rtc_fd)
 {
-	struct tm start_time;
+	struct tm start_time = { 0 };
 	/* The time when we were called (and started waiting) */
-	struct tm nowtime;
+	struct tm nowtime = { 0 };
 	int rc;
 	struct timeval begin = { 0 }, now = { 0 };
 
@@ -377,38 +291,19 @@ static int set_hardware_clock_rtc(const struct hwclock_control *ctl,
 {
 	int rc = -1;
 	int rtc_fd;
-	char *ioctlname;
 
 	rtc_fd = open_rtc_or_exit(ctl);
 
-	ioctlname = "RTC_SET_TIME";
 	rc = ioctl(rtc_fd, RTC_SET_TIME, new_broken_time);
 
-#ifdef __sparc__
-	if (rc == -1) {		/* sparc sbus */
-		struct sparc_rtc_time stm;
-
-		stm.sec = new_broken_time->tm_sec;
-		stm.min = new_broken_time->tm_min;
-		stm.hour = new_broken_time->tm_hour;
-		stm.dom = new_broken_time->tm_mday;
-		stm.month = new_broken_time->tm_mon + 1;
-		stm.year = new_broken_time->tm_year + 1900;
-		stm.dow = new_broken_time->tm_wday + 1;
-
-		ioctlname = "RTCSET";
-		rc = ioctl(rtc_fd, RTCSET, &stm);
-	}
-#endif
-
 	if (rc == -1) {
-		warn(_("ioctl(%s) to %s to set the time failed"),
-			ioctlname, rtc_dev_name);
+		warn(_("ioctl(RTC_SET_TIME) to %s to set the time failed"),
+			rtc_dev_name);
 		hwclock_exit(ctl, EXIT_FAILURE);
 	}
 
 	if (ctl->verbose)
-		printf(_("ioctl(%s) was successful.\n"), ioctlname);
+		printf(_("ioctl(RTC_SET_TIME) was successful.\n"));
 
 	return 0;
 }
@@ -423,7 +318,7 @@ static const char *get_device_path(void)
 	return rtc_dev_name;
 }
 
-static struct clock_ops rtc_interface = {
+static const struct clock_ops rtc_interface = {
 	N_("Using the rtc interface to the clock."),
 	get_permissions_rtc,
 	read_hardware_clock_rtc,
@@ -433,7 +328,7 @@ static struct clock_ops rtc_interface = {
 };
 
 /* return &rtc if /dev/rtc can be opened, NULL otherwise */
-struct clock_ops *probe_for_rtc_clock(const struct hwclock_control *ctl)
+const struct clock_ops *probe_for_rtc_clock(const struct hwclock_control *ctl)
 {
 	const int rtc_fd = open_rtc(ctl);
 
@@ -508,7 +403,7 @@ int set_epoch_rtc(const struct hwclock_control *ctl)
 
 
 
-static int resolve_rtc_param_alias(const char *alias, uint64_t *value)
+static int resolve_rtc_param_alias(const char *alias, __u64 *value)
 {
 	const struct hwclock_param *param = &hwclock_params[0];
 
@@ -523,6 +418,12 @@ static int resolve_rtc_param_alias(const char *alias, uint64_t *value)
 	return 1;
 }
 
+/* kernel uapi __u64 can be defined differently than uint64_t */
+static int strtoku64(const char *str, __u64 *num, int base)
+{
+	return ul_strtou64(str, (uint64_t *) &num, base);
+}
+
 /*
  * Get the Hardware Clock parameter setting from the kernel.
  */
@@ -534,7 +435,7 @@ int get_param_rtc(const struct hwclock_control *ctl,
 
 	/* handle name */
 	if (resolve_rtc_param_alias(name, &param.param) != 0
-	    && ul_strtou64(name, &param.param, 0) != 0) {
+	    && strtoku64(name, &param.param, 0) != 0) {
 		warnx(_("could not convert parameter name to number"));
 		return 1;
 	}
@@ -576,7 +477,7 @@ int set_param_rtc(const struct hwclock_control *ctl, const char *opt0)
 	/* handle name */
 	tok = strtok(opt, "=");
 	if (resolve_rtc_param_alias(tok, &param.param) != 0
-	    && ul_strtou64(tok, &param.param, 0) != 0) {
+	    && strtoku64(tok, &param.param, 0) != 0) {
 		warnx(_("could not convert parameter name to number"));
 		goto done;
 	}
@@ -587,7 +488,7 @@ int set_param_rtc(const struct hwclock_control *ctl, const char *opt0)
 		warnx(_("expected <param>=<value>"));
 		goto done;
 	}
-	if (ul_strtou64(tok, &param.uvalue, 0) != 0) {
+	if (strtoku64(tok, &param.uvalue, 0) != 0) {
 		warnx(_("could not convert parameter value to number"));
 		goto done;
 	}

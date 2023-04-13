@@ -310,8 +310,8 @@ ____
 If pid namespaces are supported then this function will also print
 the pid of a given pidfd refers to for all descendant pid namespaces
 starting from the current pid namespace of the instance, i.e. the
-Pid field and the first entry in the NSpid field will be identical. +
-... +
+Pid field and the first entry in the NSpid field will be identical.
+
 Note that this differs from the Pid and NSpid fields in
 /proc/<pid>/status where Pid and NSpid are always shown relative to
 the pid namespace of the procfs instance.
@@ -339,7 +339,7 @@ SOCK.LISTENING <``boolean``>::
 Listening socket.
 
 SOCK.NETS <``number``>::
-Inode identifying network namespace where the socket belogs to.
+Inode identifying network namespace where the socket belongs to.
 
 SOCK.PROTONAME <``string``>::
 Protocol name.
@@ -363,7 +363,7 @@ SOURCE <``string``>::
 File system, partition, or device containing the file.
 
 STTYPE <``string``>::
-Raw file types returned from stat(2): BLK, CHR, DIR, FIFO, LINK, REG, SOCK, or UNKN.
+Raw file types returned from *stat*(2): BLK, CHR, DIR, FIFO, LINK, REG, SOCK, or UNKN.
 
 TCP.LADDR <``string``>::
 Local L3 (INET.LADDR or INET6.LADDR) address and local TCP port.
@@ -413,7 +413,7 @@ UID <``number``>::
 User ID number.
 
 UNIX.PATH <``string``>::
-Filesystem pathname for UNIX doamin socket.
+Filesystem pathname for UNIX domain socket.
 
 USER <``string``>::
 User of the process.

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.38-rc4\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-03-09 13:37+0100\n"
+"POT-Creation-Date: 2023-04-04 14:02+0200\n"
 "PO-Revision-Date: 2022-06-19 17:35+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
@@ -52,7 +52,7 @@ msgstr "недостатньо аргументів"
 #: disk-utils/mkswap.c:347 disk-utils/mkswap.c:377 disk-utils/partx.c:1022
 #: disk-utils/resizepart.c:104 disk-utils/sfdisk.c:381 disk-utils/sfdisk.c:502
 #: disk-utils/sfdisk.c:814 disk-utils/sfdisk.c:1118 disk-utils/swaplabel.c:65
-#: libfdisk/src/bsd.c:642 login-utils/islocal.c:86 login-utils/last.c:685
+#: libfdisk/src/bsd.c:642 login-utils/islocal.c:86 login-utils/last.c:683
 #: login-utils/sulogin.c:497 login-utils/sulogin.c:534
 #: login-utils/utmpdump.c:142 login-utils/utmpdump.c:367
 #: login-utils/utmpdump.c:391 login-utils/vipw.c:257 login-utils/vipw.c:275
@@ -65,7 +65,7 @@ msgstr "недостатньо аргументів"
 #: sys-utils/hwclock-rtc.c:438 sys-utils/hwclock-rtc.c:474
 #: sys-utils/hwclock-rtc.c:528 sys-utils/hwclock-rtc.c:581
 #: sys-utils/irq-common.c:263 sys-utils/ldattach.c:392
-#: sys-utils/lscpu-cputype.c:470 sys-utils/lsmem.c:671 sys-utils/nsenter.c:139
+#: sys-utils/lscpu-cputype.c:477 sys-utils/lsmem.c:671 sys-utils/nsenter.c:139
 #: sys-utils/rfkill.c:195 sys-utils/rtcwake.c:137 sys-utils/rtcwake.c:292
 #: sys-utils/setpriv.c:256 sys-utils/setpriv.c:622 sys-utils/setpriv.c:645
 #: sys-utils/swapon.c:382 sys-utils/swapon.c:525 sys-utils/switch_root.c:174
@@ -75,7 +75,7 @@ msgstr "недостатньо аргументів"
 #: term-utils/scriptlive.c:259 term-utils/scriptlive.c:262
 #: term-utils/scriptreplay.c:281 term-utils/scriptreplay.c:284
 #: term-utils/scriptreplay.c:287 term-utils/scriptreplay.c:290
-#: term-utils/wall.c:421 text-utils/colcrt.c:284 text-utils/more.c:459
+#: term-utils/wall.c:353 text-utils/colcrt.c:284 text-utils/more.c:459
 #: text-utils/rev.c:165 text-utils/ul.c:637
 #, c-format
 msgid "cannot open %s"
@@ -818,7 +818,7 @@ msgstr "некоректний аргумент - repair"
 #: disk-utils/mkfs.bfs.c:198 disk-utils/mkfs.cramfs.c:341
 #: disk-utils/mkfs.cramfs.c:763 disk-utils/mkfs.cramfs.c:809
 #: disk-utils/mkfs.minix.c:835 disk-utils/mkswap.c:374 disk-utils/partx.c:959
-#: login-utils/last.c:699 login-utils/utmpdump.c:145 misc-utils/namei.c:146
+#: login-utils/last.c:697 login-utils/utmpdump.c:145 misc-utils/namei.c:146
 #: misc-utils/rename.c:164 misc-utils/rename.c:229 sys-utils/blkdiscard.c:251
 #: sys-utils/blkzone.c:147 sys-utils/dmesg.c:543 sys-utils/fallocate.c:201
 #: sys-utils/fsfreeze.c:119 sys-utils/fstrim.c:78 sys-utils/nsenter.c:187
@@ -1149,9 +1149,9 @@ msgstr "Властивості пристрою (розмір сектора т�
 #: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:207
 #: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1579
 #: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
-#: sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656 sys-utils/mount.c:865
-#: sys-utils/mount.c:873 sys-utils/mount.c:922 sys-utils/mount.c:935
-#: sys-utils/mount.c:1007 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
+#: sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656 sys-utils/mount.c:867
+#: sys-utils/mount.c:875 sys-utils/mount.c:924 sys-utils/mount.c:937
+#: sys-utils/mount.c:1009 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
 #: sys-utils/swapoff.c:258 sys-utils/swapon.c:1011 sys-utils/switch_root.c:270
 #: sys-utils/umount.c:629 term-utils/setterm.c:1197 text-utils/col.c:584
 #: text-utils/more.c:2096
@@ -1237,7 +1237,7 @@ msgstr "не вдалося розподілити ітератор"
 
 #: disk-utils/fdisk-list.c:126 disk-utils/fdisk-list.c:247
 #: disk-utils/partx.c:669 login-utils/lslogins.c:1113 misc-utils/fincore.c:356
-#: misc-utils/findmnt.c:1763 misc-utils/lsblk.c:2351 misc-utils/lsfd.c:1968
+#: misc-utils/findmnt.c:1763 misc-utils/lsblk.c:2351 misc-utils/lsfd.c:1970
 #: misc-utils/lslocks.c:472 misc-utils/uuidparse.c:252 misc-utils/wipefs.c:157
 #: sys-utils/losetup.c:325 sys-utils/lscpu.c:604 sys-utils/lscpu.c:759
 #: sys-utils/lscpu.c:970 sys-utils/lsipc.c:354 sys-utils/prlimit.c:311
@@ -3858,7 +3858,7 @@ msgstr[2] "#%2d: %9ju-%9ju (%9ju секторів, %6ju МБ)\n"
 msgstr[3] "#%2d: %9ju-%9ju (%9ju сектор, %6ju МБ)\n"
 
 #: disk-utils/partx.c:680 misc-utils/fincore.c:370 misc-utils/findmnt.c:1792
-#: misc-utils/lsblk.c:2395 misc-utils/lsfd.c:532 misc-utils/lsfd.c:1982
+#: misc-utils/lsblk.c:2395 misc-utils/lsfd.c:532 misc-utils/lsfd.c:1984
 #: misc-utils/lslocks.c:487 sys-utils/losetup.c:339 sys-utils/lscpu.c:616
 #: sys-utils/lscpu.c:772 sys-utils/prlimit.c:320 sys-utils/rfkill.c:487
 #: sys-utils/swapon.c:305 sys-utils/wdctl.c:360
@@ -7689,304 +7689,304 @@ msgstr "стан входу без додаткових повідомлень: 
 msgid "operation failed: %m"
 msgstr "помилка дії: %m"
 
-#: libmount/src/context_mount.c:1371
+#: libmount/src/context_mount.c:1404
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "ПОПЕРЕДЖЕННЯ: не вдалося застосувати прапорці поширення"
 
-#: libmount/src/context_mount.c:1381
+#: libmount/src/context_mount.c:1414
 #, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "Попередження: джерело захищено від запису, змонтовано у режимі лише читання"
 
-#: libmount/src/context_mount.c:1395
+#: libmount/src/context_mount.c:1428
 #, c-format
 msgid "operation permitted for root only"
 msgstr "дію може виконувати лише адміністратор (root)"
 
-#: libmount/src/context_mount.c:1399
+#: libmount/src/context_mount.c:1432
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s вже змонтовано"
 
-#: libmount/src/context_mount.c:1405
+#: libmount/src/context_mount.c:1438
 #, c-format
 msgid "can't find in %s"
 msgstr "не вдалося знайти у %s"
 
-#: libmount/src/context_mount.c:1408
+#: libmount/src/context_mount.c:1441
 #, c-format
 msgid "can't find mount point in %s"
 msgstr "не вдалося знайти точку монтування у %s"
 
-#: libmount/src/context_mount.c:1411
+#: libmount/src/context_mount.c:1444
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "не вдалося знайти джерело монтування %s у %s"
 
-#: libmount/src/context_mount.c:1416
+#: libmount/src/context_mount.c:1449
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr "на %s виявлено інші файлові системи; скористайтеся -t <тип> або wipefs(8)"
 
-#: libmount/src/context_mount.c:1421
+#: libmount/src/context_mount.c:1454
 #, c-format
 msgid "failed to determine filesystem type"
 msgstr "не вдалося визначити тип файлової системи"
 
-#: libmount/src/context_mount.c:1422
+#: libmount/src/context_mount.c:1455
 #, fuzzy, c-format
 #| msgid "no filesystem type specified"
 msgid "no valid filesystem type specified"
 msgstr "не вказано типу файлової системи"
 
-#: libmount/src/context_mount.c:1429
+#: libmount/src/context_mount.c:1462
 #, c-format
 msgid "can't find %s"
 msgstr "не вдалося знайти %s"
 
-#: libmount/src/context_mount.c:1431
+#: libmount/src/context_mount.c:1464
 #, c-format
 msgid "no mount source specified"
 msgstr "не вказано джерела монтування"
 
-#: libmount/src/context_mount.c:1442
+#: libmount/src/context_mount.c:1475
 #, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr "не вдалося обробити параметри монтування «%s»: %m"
 
-#: libmount/src/context_mount.c:1443
+#: libmount/src/context_mount.c:1476
 #, c-format
 msgid "failed to parse mount options '%s'"
 msgstr "не вдалося обробити параметри монтування: «%s»"
 
-#: libmount/src/context_mount.c:1446
+#: libmount/src/context_mount.c:1479
 #, c-format
 msgid "failed to parse mount options: %m"
 msgstr "не вдалося обробити параметри монтування: %m"
 
-#: libmount/src/context_mount.c:1447
+#: libmount/src/context_mount.c:1480
 #, c-format
 msgid "failed to parse mount options"
 msgstr "не вдалося обробити параметри монтування"
 
-#: libmount/src/context_mount.c:1452
+#: libmount/src/context_mount.c:1485
 #, c-format
 msgid "failed to setup loop device for %s"
 msgstr "не вдалося налаштувати петльовий пристрій для %s"
 
-#: libmount/src/context_mount.c:1456
+#: libmount/src/context_mount.c:1489
 #, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "існує петльовий пристрій із перекриттям для %s"
 
-#: libmount/src/context_mount.c:1460 libmount/src/context_umount.c:1263
+#: libmount/src/context_mount.c:1493 libmount/src/context_umount.c:1263
 #, c-format
 msgid "locking failed"
 msgstr "спроба блокування зазнала невдачі"
 
-#: libmount/src/context_mount.c:1464 libmount/src/context_umount.c:1269
+#: libmount/src/context_mount.c:1497 libmount/src/context_umount.c:1269
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, c-format
 msgid "failed to switch namespace"
 msgstr "не вдалося перемкнути простір назв"
 
-#: libmount/src/context_mount.c:1468
+#: libmount/src/context_mount.c:1501
 #, fuzzy, c-format
 #| msgid "%s is already mounted"
 msgid "filesystem already mounted"
 msgstr "%s вже змонтовано"
 
-#: libmount/src/context_mount.c:1471
+#: libmount/src/context_mount.c:1504
 #, c-format
 msgid "mount failed: %m"
 msgstr "помилка монтування: %m"
 
-#: libmount/src/context_mount.c:1481
+#: libmount/src/context_mount.c:1514
 #, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "файлову систему змонтовано, але не вдалося оновити таблицю монтування у просторі користувача"
 
-#: libmount/src/context_mount.c:1487
+#: libmount/src/context_mount.c:1520
 #, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "файлову систему змонтовано, але не вдалося повернутися у просторі назв назад"
 
-#: libmount/src/context_mount.c:1493
+#: libmount/src/context_mount.c:1526
 #, fuzzy, c-format
 #| msgid "filesystem was mounted, but failed to switch namespace back"
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "файлову систему змонтовано, але не вдалося повернутися у просторі назв назад"
 
-#: libmount/src/context_mount.c:1499
+#: libmount/src/context_mount.c:1532
 #, fuzzy, c-format
 #| msgid "filesystem was mounted, but failed to switch namespace back"
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "файлову систему змонтовано, але не вдалося повернутися у просторі назв назад"
 
-#: libmount/src/context_mount.c:1505
+#: libmount/src/context_mount.c:1538
 #, fuzzy, c-format
 #| msgid "filesystem was mounted, but failed to switch namespace back"
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "файлову систему змонтовано, але не вдалося повернутися у просторі назв назад"
 
-#: libmount/src/context_mount.c:1511
+#: libmount/src/context_mount.c:1544
 #, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "файлову систему змонтовано, але усі наступні дії виконати не вдалося: %m"
 
-#: libmount/src/context_mount.c:1529 libmount/src/context_mount.c:1574
+#: libmount/src/context_mount.c:1562 libmount/src/context_mount.c:1607
 #, c-format
 msgid "mount point is not a directory"
 msgstr "точка монтування не є каталогом"
 
-#: libmount/src/context_mount.c:1531 login-utils/newgrp.c:228
+#: libmount/src/context_mount.c:1564 login-utils/newgrp.c:228
 #, c-format
 msgid "permission denied"
 msgstr "відмовлено у доступі"
 
-#: libmount/src/context_mount.c:1533
+#: libmount/src/context_mount.c:1566
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "для використання mount слід мати права адміністратора"
 
-#: libmount/src/context_mount.c:1540
+#: libmount/src/context_mount.c:1573
 #, c-format
 msgid "mount point is busy"
 msgstr "точку монтування зайнято"
 
-#: libmount/src/context_mount.c:1547
+#: libmount/src/context_mount.c:1580
 #, c-format
 msgid "%s already mounted on %s"
 msgstr "%s вже змонтовано до %s"
 
-#: libmount/src/context_mount.c:1551
+#: libmount/src/context_mount.c:1584
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s вже змонтовано або точку монтування зайнято"
 
-#: libmount/src/context_mount.c:1556
+#: libmount/src/context_mount.c:1589
 #, c-format
 msgid "mount point does not exist"
 msgstr "точки монтування не існує"
 
-#: libmount/src/context_mount.c:1559
+#: libmount/src/context_mount.c:1592
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "точка монтування є символічним посиланням, яке нікуди не вказує"
 
-#: libmount/src/context_mount.c:1564
+#: libmount/src/context_mount.c:1597
 #, c-format
 msgid "special device %s does not exist"
 msgstr "спеціального пристрою %s не існує"
 
-#: libmount/src/context_mount.c:1567 libmount/src/context_mount.c:1583
-#: libmount/src/context_mount.c:1667 libmount/src/context_mount.c:1690
+#: libmount/src/context_mount.c:1600 libmount/src/context_mount.c:1616
+#: libmount/src/context_mount.c:1700 libmount/src/context_mount.c:1723
 #, c-format
 msgid "mount(2) system call failed: %m"
 msgstr "помилка системного виклику mount(2): %m"
 
-#: libmount/src/context_mount.c:1579
+#: libmount/src/context_mount.c:1612
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "спеціального пристрою %s не існує (префікс шляху не є каталогом)"
 
-#: libmount/src/context_mount.c:1591
+#: libmount/src/context_mount.c:1624
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr "точку монтування не змонтовано або вказано помилковий параметр"
 
-#: libmount/src/context_mount.c:1593
+#: libmount/src/context_mount.c:1626
 #, c-format
 msgid "not mount point or bad option"
 msgstr "не є точкою монтування або помилкові параметри"
 
-#: libmount/src/context_mount.c:1596
+#: libmount/src/context_mount.c:1629
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr "помилковий параметр. Підтримки пересування точки монтування у разі спільного монтування не передбачено."
 
-#: libmount/src/context_mount.c:1600
+#: libmount/src/context_mount.c:1633
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr "помилковий параметр; (для роботи з деякими файловими системами (зокрема nfs, cifs) вам може знадобитися допоміжна програма /sbin/mount.<тип>"
 
-#: libmount/src/context_mount.c:1604
+#: libmount/src/context_mount.c:1637
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr "помилковий тип ФС, помилковий параметр, помилковий суперблок на %s, не вистачає кодової сторінки або допоміжної програми чи інша помилка"
 
-#: libmount/src/context_mount.c:1611
+#: libmount/src/context_mount.c:1644
 #, c-format
 msgid "mount table full"
 msgstr "таблиця монтування переповнена"
 
-#: libmount/src/context_mount.c:1616
+#: libmount/src/context_mount.c:1649
 #, c-format
 msgid "can't read superblock on %s"
 msgstr "не вдалося прочитати суперблок на %s"
 
-#: libmount/src/context_mount.c:1623
+#: libmount/src/context_mount.c:1656
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "невідомий тип файлової системи «%s»"
 
-#: libmount/src/context_mount.c:1626
+#: libmount/src/context_mount.c:1659
 #, c-format
 msgid "unknown filesystem type"
 msgstr "невідомий тип файлової системи"
 
-#: libmount/src/context_mount.c:1635
+#: libmount/src/context_mount.c:1668
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s не є блоковим пристроєм, а спроба виконання stat(2) зазнала невдачі?"
 
-#: libmount/src/context_mount.c:1638
+#: libmount/src/context_mount.c:1671
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr "пристрій %s не розпізнано ядром як блоковий; можливо, слід вказати «modprobe драйвер»"
 
-#: libmount/src/context_mount.c:1641
+#: libmount/src/context_mount.c:1674
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s не є блоковим пристроєм; спробуйте «-o loop»"
 
-#: libmount/src/context_mount.c:1643
+#: libmount/src/context_mount.c:1676
 #, c-format
 msgid "%s is not a block device"
 msgstr "%s не є блоковим пристроєм"
 
-#: libmount/src/context_mount.c:1650
+#: libmount/src/context_mount.c:1683
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s не є коректним блоковим пристроєм"
 
-#: libmount/src/context_mount.c:1658
+#: libmount/src/context_mount.c:1691
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "не вдалося змонтувати %s у режимі лише читання"
 
-#: libmount/src/context_mount.c:1660
+#: libmount/src/context_mount.c:1693
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s захищено від запису, втім, було явно вказано режим читання-запису"
 
-#: libmount/src/context_mount.c:1662
+#: libmount/src/context_mount.c:1695
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "не вдалося повторно змонтувати %s у режимі читання-запису, пристрій захищено від запису"
 
-#: libmount/src/context_mount.c:1664
+#: libmount/src/context_mount.c:1697
 #, c-format
 msgid "bind %s failed"
 msgstr "помилка прив'язування %s"
 
-#: libmount/src/context_mount.c:1675
+#: libmount/src/context_mount.c:1708
 #, c-format
 msgid "no medium found on %s"
 msgstr "у %s не знайдено носія даних"
 
-#: libmount/src/context_mount.c:1682
+#: libmount/src/context_mount.c:1715
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "не вдалося змонтувати; ймовірно, файлову систему на %s пошкоджено"
@@ -8334,73 +8334,73 @@ msgstr "Користування: %s <файл_паролів> <користув
 msgid "unknown time format: %s"
 msgstr "невідомий формат запису часу: %s"
 
-#: login-utils/last.c:440 login-utils/last.c:451 login-utils/last.c:903
+#: login-utils/last.c:439 login-utils/last.c:450 login-utils/last.c:901
 msgid "preallocation size exceeded"
 msgstr "перевищено розмір області попереднього розміщення"
 
-#: login-utils/last.c:570
+#: login-utils/last.c:568
 #, c-format
 msgid " %s [options] [<username>...] [<tty>...]\n"
 msgstr " %s [параметри] [<користувач>...] [<tty>...]\n"
 
-#: login-utils/last.c:573
+#: login-utils/last.c:571
 msgid "Show a listing of last logged in users.\n"
 msgstr "Показати список користувачів, які входили до системи останніми.\n"
 
-#: login-utils/last.c:576
+#: login-utils/last.c:574
 msgid " -<number>            how many lines to show\n"
 msgstr " -<кількість>         кількість рядків, які слід показати\n"
 
-#: login-utils/last.c:577
+#: login-utils/last.c:575
 msgid " -a, --hostlast       display hostnames in the last column\n"
 msgstr " -a, --hostlast       показати назви вузлів у останньому стовпчику\n"
 
-#: login-utils/last.c:578
+#: login-utils/last.c:576
 msgid " -d, --dns            translate the IP number back into a hostname\n"
 msgstr " -d, --dns            визначити за значенням IP назву вузла\n"
 
-#: login-utils/last.c:580
+#: login-utils/last.c:578
 #, c-format
 msgid " -f, --file <file>    use a specific file instead of %s\n"
 msgstr " -f, --file <файл>    використовувати вказаний файл замість %s\n"
 
-#: login-utils/last.c:581
+#: login-utils/last.c:579
 msgid " -F, --fulltimes      print full login and logout times and dates\n"
 msgstr " -F, --fulltimes      виводити час і дату входу і виходу повністю\n"
 
-#: login-utils/last.c:582
+#: login-utils/last.c:580
 msgid " -i, --ip             display IP numbers in numbers-and-dots notation\n"
 msgstr " -i, --ip             показувати IP-адреси у форматі чисел з точками\n"
 
-#: login-utils/last.c:583
+#: login-utils/last.c:581
 msgid " -n, --limit <number> how many lines to show\n"
 msgstr " -n, --limit <кількість> кількість рядків, які слід показувати\n"
 
-#: login-utils/last.c:584
+#: login-utils/last.c:582
 msgid " -R, --nohostname     don't display the hostname field\n"
 msgstr " -R, --nohostname     не показувати поля назви вузла\n"
 
-#: login-utils/last.c:585
+#: login-utils/last.c:583
 msgid " -s, --since <time>   display the lines since the specified time\n"
 msgstr " -s, --since <час>    показати рядки, які було записано після вказаного моменту часу\n"
 
-#: login-utils/last.c:586
+#: login-utils/last.c:584
 msgid " -t, --until <time>   display the lines until the specified time\n"
 msgstr " -t, --until <час>    показувати рядки, які було записано до вказаного моменту часу\n"
 
-#: login-utils/last.c:587
+#: login-utils/last.c:585
 msgid " -p, --present <time> display who were present at the specified time\n"
 msgstr " -p, --present <час>  показати, хто працював у системі у вказаний час\n"
 
-#: login-utils/last.c:588
+#: login-utils/last.c:586
 msgid " -w, --fullnames      display full user and domain names\n"
 msgstr " -w, --fullnames      показувати назви записів користувачів і домени повністю\n"
 
-#: login-utils/last.c:589
+#: login-utils/last.c:587
 msgid " -x, --system         display system shutdown entries and run level changes\n"
 msgstr " -x, --system         показати записи завершення роботи системи та зміни рівня запуску\n"
 
-#: login-utils/last.c:590
+#: login-utils/last.c:588
 msgid ""
 "     --time-format <format>  show timestamps in the specified <format>:\n"
 "                               notime|short|full|iso\n"
@@ -8408,7 +8408,7 @@ msgstr ""
 "     --time-format <формат>  показувати часові позначки у вказаному форматі:\n"
 "                               notime|short|full|iso\n"
 
-#: login-utils/last.c:904
+#: login-utils/last.c:902
 #, c-format
 msgid ""
 "\n"
@@ -8417,13 +8417,13 @@ msgstr ""
 "\n"
 "%s розпочинає %s\n"
 
-#: login-utils/last.c:1013 term-utils/scriptlive.c:85
+#: login-utils/last.c:1011 term-utils/scriptlive.c:85
 #: term-utils/scriptlive.c:89 term-utils/scriptreplay.c:80
 #: term-utils/scriptreplay.c:84 text-utils/more.c:285 text-utils/more.c:291
 msgid "failed to parse number"
 msgstr "не вдалося обробити число"
 
-#: login-utils/last.c:1034 login-utils/last.c:1039 login-utils/last.c:1044
+#: login-utils/last.c:1032 login-utils/last.c:1037 login-utils/last.c:1042
 #: sys-utils/dmesg.c:1560 sys-utils/dmesg.c:1566 sys-utils/rtcwake.c:511
 #, c-format
 msgid "invalid time value \"%s\""
@@ -10203,7 +10203,7 @@ msgid "move"
 msgstr "move"
 
 #: misc-utils/findmnt.c:927 misc-utils/findmnt.c:1205 sys-utils/eject.c:715
-#: sys-utils/mount.c:406
+#: sys-utils/mount.c:408
 msgid "failed to initialize libmount table"
 msgstr "не вдалося ініціалізувати таблицю libmount"
 
@@ -10214,8 +10214,8 @@ msgstr "не вдалося прочитати %s"
 
 #: misc-utils/findmnt.c:1145 misc-utils/findmnt.c:1211
 #: misc-utils/findmnt-verify.c:101 misc-utils/findmnt-verify.c:529
-#: sys-utils/fstrim.c:329 sys-utils/mount.c:132 sys-utils/mount.c:180
-#: sys-utils/mount.c:247 sys-utils/swapoff.c:63 sys-utils/swapoff.c:173
+#: sys-utils/fstrim.c:329 sys-utils/mount.c:134 sys-utils/mount.c:182
+#: sys-utils/mount.c:249 sys-utils/swapoff.c:63 sys-utils/swapoff.c:173
 #: sys-utils/swapon.c:247 sys-utils/swapon.c:290 sys-utils/swapon.c:750
 #: sys-utils/umount.c:199
 msgid "failed to initialize libmount iterator"
@@ -12089,7 +12089,7 @@ msgid "user ID number of the process"
 msgstr "ідентифікаційний номер користувача процесу"
 
 #: misc-utils/lsfd.c:323
-msgid "filesystem pathname for UNIX doamin socketo"
+msgid "filesystem pathname for UNIX domain socket"
 msgstr ""
 
 #: misc-utils/lsfd.c:326
@@ -14743,7 +14743,7 @@ msgstr ""
 "\n"
 "Підтримувані зони:\n"
 
-#: sys-utils/chmem.c:394 sys-utils/lscpu-cputype.c:872 sys-utils/lsmem.c:667
+#: sys-utils/chmem.c:394 sys-utils/lscpu-cputype.c:889 sys-utils/lsmem.c:667
 #, c-format
 msgid "failed to initialize %s handler"
 msgstr "не вдалося ініціалізувати обробник %s"
@@ -18196,16 +18196,16 @@ msgstr "непідтримуваний аргумент --summary"
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr "%s: параметри --all, --online і --offline можна використовувати лише разом з параметром --extended або --parse.\n"
 
-#: sys-utils/lscpu-cputype.c:597
+#: sys-utils/lscpu-cputype.c:604
 msgid "error: uname failed"
 msgstr "помилка: не вдалося виконати uname"
 
-#: sys-utils/lscpu-cputype.c:694
+#: sys-utils/lscpu-cputype.c:711
 #, c-format
 msgid "failed to determine number of CPUs: %s"
 msgstr "не вдалося визначити кількість процесорів: %s"
 
-#: sys-utils/lscpu-cputype.c:897
+#: sys-utils/lscpu-cputype.c:914
 msgid "Failed to extract the node number"
 msgstr "Не вдалося видобути номер вузла"
 
@@ -18816,41 +18816,41 @@ msgstr "не вдалося скинути права доступу."
 msgid "%s from %s (libmount %s"
 msgstr "%s з %s (libmount %s"
 
-#: sys-utils/mount.c:128
+#: sys-utils/mount.c:130
 msgid "failed to read mtab"
 msgstr "не вдалося прочитати таблицю монтування"
 
-#: sys-utils/mount.c:190 sys-utils/mount.c:257 sys-utils/umount.c:209
+#: sys-utils/mount.c:192 sys-utils/mount.c:259 sys-utils/umount.c:209
 #, c-format
 msgid "%-25s: ignored\n"
 msgstr "%-25s: проігноровано\n"
 
-#: sys-utils/mount.c:191
+#: sys-utils/mount.c:193
 #, c-format
 msgid "%-25s: already mounted\n"
 msgstr "%-25s: вже змонтовано\n"
 
-#: sys-utils/mount.c:298
+#: sys-utils/mount.c:300
 #, c-format
 msgid "%s: %s moved to %s.\n"
 msgstr "%s: %s пересунуто до %s.\n"
 
-#: sys-utils/mount.c:300
+#: sys-utils/mount.c:302
 #, c-format
 msgid "%s: %s bound on %s.\n"
 msgstr "%s: %s прив'язано до %s.\n"
 
-#: sys-utils/mount.c:303 sys-utils/mount.c:307
+#: sys-utils/mount.c:305 sys-utils/mount.c:309
 #, c-format
 msgid "%s: %s mounted on %s.\n"
 msgstr "%s: %s змонтовано до %s.\n"
 
-#: sys-utils/mount.c:305
+#: sys-utils/mount.c:307
 #, c-format
 msgid "%s: %s propagation flags changed.\n"
 msgstr "%s: змінено прапорці поширення %s.\n"
 
-#: sys-utils/mount.c:325
+#: sys-utils/mount.c:327
 #, c-format
 msgid ""
 "mount: %s does not contain SELinux labels.\n"
@@ -18867,7 +18867,7 @@ msgstr ""
 "       Щоб дізнатися більше, ознайомтеся з документацією до restorecon(8) і\n"
 "       mount(8).\n"
 
-#: sys-utils/mount.c:354
+#: sys-utils/mount.c:356
 #, c-format
 msgid ""
 "mount: (hint) your fstab has been modified, but systemd still uses\n"
@@ -18876,27 +18876,27 @@ msgstr ""
 "mount: (підказка) до вашого fstab внесено зміни, але systemd все ще\n"
 "       використовує стару версію; скористайтеся systemctl daemon-reload для перезавантаження.\n"
 
-#: sys-utils/mount.c:386
+#: sys-utils/mount.c:388
 #, c-format
 msgid "       dmesg(1) may have more information after failed mount system call.\n"
 msgstr "       dmesg(1) може надати додаткові відомості після помилки системного виклику монтування.\n"
 
-#: sys-utils/mount.c:415
+#: sys-utils/mount.c:417
 #, c-format
 msgid "%s: failed to parse"
 msgstr "%s: не вдалося обробити"
 
-#: sys-utils/mount.c:457
+#: sys-utils/mount.c:459
 #, c-format
 msgid "unsupported option format: %s"
 msgstr "непідтримуваний формат параметрів: %s"
 
-#: sys-utils/mount.c:463
+#: sys-utils/mount.c:465
 #, c-format
 msgid "failed to append option '%s'"
 msgstr "не вдалося дописати параметр «%s»"
 
-#: sys-utils/mount.c:484
+#: sys-utils/mount.c:486
 #, c-format
 msgid ""
 " %1$s [-lhV]\n"
@@ -18911,55 +18911,55 @@ msgstr ""
 " %1$s [параметри] <джерело> <каталог>\n"
 " %1$s <дія> <точка монтування> [<призначення>]\n"
 
-#: sys-utils/mount.c:492
+#: sys-utils/mount.c:494
 msgid "Mount a filesystem.\n"
 msgstr "Змонтувати файлову систему.\n"
 
-#: sys-utils/mount.c:495
+#: sys-utils/mount.c:497
 #, fuzzy
 #| msgid " -a, --all               unmount all filesystems\n"
 msgid " -a, --all               mount all filesystems mentioned in fstab\n"
 msgstr " -a, --all               демонтувати всі файлові системи\n"
 
-#: sys-utils/mount.c:496 sys-utils/umount.c:94
+#: sys-utils/mount.c:498 sys-utils/umount.c:94
 msgid " -c, --no-canonicalize   don't canonicalize paths\n"
 msgstr " -c, --no-canonicalize   не переводити шляхи у канонічну форму\n"
 
-#: sys-utils/mount.c:497
+#: sys-utils/mount.c:499
 #, fuzzy
 #| msgid "     --fake              dry run; skip the umount(2) syscall\n"
 msgid " -f, --fake              dry run; skip the mount(2) syscall\n"
 msgstr "     --fake              тестовий запуск; пропустити системний виклик umount(2)\n"
 
-#: sys-utils/mount.c:498
+#: sys-utils/mount.c:500
 #, fuzzy
 #| msgid " -f, --force            enforce on block devices used by the system\n"
 msgid " -F, --fork              fork off for each device (use with -a)\n"
 msgstr " -f, --force            примусово виконати на блокових пристроях, які використано у системі\n"
 
-#: sys-utils/mount.c:499
+#: sys-utils/mount.c:501
 #, fuzzy
 #| msgid " -A, --fstab              trim filesystems from /etc/fstab\n"
 msgid " -T, --fstab <path>      alternative file to /etc/fstab\n"
 msgstr " -A, --fstab             обрізати файлові системи з /etc/fstab\n"
 
-#: sys-utils/mount.c:500
+#: sys-utils/mount.c:502
 msgid " -i, --internal-only     don't call the mount.<type> helpers\n"
 msgstr " -i, --internal-only     не викликати допоміжні програми mount.<тип>\n"
 
-#: sys-utils/mount.c:501
+#: sys-utils/mount.c:503
 msgid " -l, --show-labels       show also filesystem labels\n"
 msgstr " -l, --show-labels       вивести також мітки файлових систем\n"
 
-#: sys-utils/mount.c:502
+#: sys-utils/mount.c:504
 msgid " -m, --mkdir[=<mode>]    alias to '-o X-mount.mkdir[=<mode>]'\n"
 msgstr " -m, --mkdir[=<режим>]   альтернатива до «-o X-mount.mkdir[=<режим>]»\n"
 
-#: sys-utils/mount.c:503 sys-utils/umount.c:99
+#: sys-utils/mount.c:505 sys-utils/umount.c:99
 msgid " -n, --no-mtab           don't write to /etc/mtab\n"
 msgstr " -n, --no-mtab           не виконувати запис до /etc/mtab\n"
 
-#: sys-utils/mount.c:504
+#: sys-utils/mount.c:506
 #, fuzzy
 #| msgid ""
 #| "     --timeout <milliseconds> <follow-up signal>\n"
@@ -18971,7 +18971,7 @@ msgstr ""
 "     --timeout <мілісекунди> <сигнал-продовження>\n"
 "                        зачекати вказану кількість мілісекунд і надіслати сигнал-продовження\n"
 
-#: sys-utils/mount.c:506
+#: sys-utils/mount.c:508
 #, fuzzy
 #| msgid ""
 #| " --propagation slave|shared|private|unchanged\n"
@@ -18983,39 +18983,39 @@ msgstr ""
 " --propagation slave|shared|private|unchanged\n"
 "                           змінити поширення монтування у просторі назв монтувань\n"
 
-#: sys-utils/mount.c:508
+#: sys-utils/mount.c:510
 msgid ""
 "     --options-source-force\n"
 "                         force use of options from fstab/mtab\n"
 msgstr ""
 
-#: sys-utils/mount.c:510
+#: sys-utils/mount.c:512
 #, fuzzy
 #| msgid " -P         check filesystems in parallel, including root\n"
 msgid "     --onlyonce          check if filesystem is already mounted\n"
 msgstr " -P         перевірити файлові системи, зокрема кореневу, у паралельному режимі\n"
 
-#: sys-utils/mount.c:511
+#: sys-utils/mount.c:513
 #, fuzzy
 #| msgid " -o, --options <list>     comma-separated list of swap options\n"
 msgid " -o, --options <list>    comma-separated list of mount options\n"
 msgstr " -o, --options <список>   список відокремлених комами параметрів свопінгу (резервної пам'яті)\n"
 
-#: sys-utils/mount.c:512 sys-utils/umount.c:101
+#: sys-utils/mount.c:514 sys-utils/umount.c:101
 msgid " -O, --test-opts <list>  limit the set of filesystems (use with -a)\n"
 msgstr " -O, --test-opts <список> обмежити набір файлових систем (скористайтеся з -a)\n"
 
-#: sys-utils/mount.c:513
+#: sys-utils/mount.c:515
 #, fuzzy
 #| msgid " -r, --read-only          forced open cfdisk in read-only mode\n"
 msgid " -r, --read-only         mount the filesystem read-only (same as -o ro)\n"
 msgstr " -r, --read-only          примусово відкрити cfdisk у режимі лише читання\n"
 
-#: sys-utils/mount.c:514 sys-utils/umount.c:104
+#: sys-utils/mount.c:516 sys-utils/umount.c:104
 msgid " -t, --types <list>      limit the set of filesystem types\n"
 msgstr " -t, --types <список>     обмежити набір типів файлових систем\n"
 
-#: sys-utils/mount.c:515
+#: sys-utils/mount.c:517
 #, fuzzy
 #| msgid ""
 #| "     --source <src>      explicitly specifies source (path, label, uuid)\n"
@@ -19025,7 +19025,7 @@ msgstr ""
 "     --source <джерело>  вказати джерело явно (шлях, мітка, uuid)\n"
 "     --target <ціль>     вказати точку монтування явно\n"
 
-#: sys-utils/mount.c:516
+#: sys-utils/mount.c:518
 #, fuzzy
 #| msgid ""
 #| "     --source <src>      explicitly specifies source (path, label, uuid)\n"
@@ -19035,7 +19035,7 @@ msgstr ""
 "     --source <джерело>  вказати джерело явно (шлях, мітка, uuid)\n"
 "     --target <ціль>     вказати точку монтування явно\n"
 
-#: sys-utils/mount.c:517
+#: sys-utils/mount.c:519
 msgid ""
 "     --target-prefix <path>\n"
 "                         specifies path used for all mountpoints\n"
@@ -19043,19 +19043,19 @@ msgstr ""
 "     --target-prefix <шлях>\n"
 "                         вказати шлях, який слід використати для усіх точок монтування\n"
 
-#: sys-utils/mount.c:519 sys-utils/umount.c:105
+#: sys-utils/mount.c:521 sys-utils/umount.c:105
 msgid " -v, --verbose           say what is being done\n"
 msgstr " -v, --verbose            повідомити про дії, які буде виконано\n"
 
-#: sys-utils/mount.c:520
+#: sys-utils/mount.c:522
 msgid " -w, --rw, --read-write  mount the filesystem read-write (default)\n"
 msgstr " -w, --rw, --read-write  змонтувати файлову систему у режимі читання-запису (типово)\n"
 
-#: sys-utils/mount.c:521
+#: sys-utils/mount.c:523
 msgid " -N, --namespace <ns>    perform mount in another namespace\n"
 msgstr " -N, --namespace <пн>    виконати монтування у іншому просторі назв\n"
 
-#: sys-utils/mount.c:527
+#: sys-utils/mount.c:529
 #, fuzzy
 #| msgid ""
 #| "\n"
@@ -19065,59 +19065,59 @@ msgstr ""
 "\n"
 "Ресурси:\n"
 
-#: sys-utils/mount.c:528
+#: sys-utils/mount.c:530
 #, fuzzy
 #| msgid " -L, --label <label>        convert LABEL to device name\n"
 msgid " -L, --label <label>     synonym for LABEL=<label>\n"
 msgstr " -L, --label <мітка>        перетворити мітку на назву пристрою\n"
 
-#: sys-utils/mount.c:529
+#: sys-utils/mount.c:531
 #, fuzzy
 #| msgid " -U, --uuid <uuid>          convert UUID to device name\n"
 msgid " -U, --uuid <uuid>       synonym for UUID=<uuid>\n"
 msgstr " -U, --uuid <uuid>          перетворити UUID на назву пристрою\n"
 
-#: sys-utils/mount.c:530
+#: sys-utils/mount.c:532
 #, fuzzy
 #| msgid " -L, --label LABEL         specify label\n"
 msgid " LABEL=<label>           specifies device by filesystem label\n"
 msgstr " -L, --label МІТКА         вказати мітку\n"
 
-#: sys-utils/mount.c:531
+#: sys-utils/mount.c:533
 msgid " UUID=<uuid>             specifies device by filesystem UUID\n"
 msgstr ""
 
-#: sys-utils/mount.c:532
+#: sys-utils/mount.c:534
 msgid " PARTLABEL=<label>       specifies device by partition label\n"
 msgstr ""
 
-#: sys-utils/mount.c:533
+#: sys-utils/mount.c:535
 msgid " PARTUUID=<uuid>         specifies device by partition UUID\n"
 msgstr ""
 
-#: sys-utils/mount.c:534
+#: sys-utils/mount.c:536
 #, fuzzy
 #| msgid " <dev>                     device (usually disk) path\n"
 msgid " ID=<id>                 specifies device by udev hardware ID\n"
 msgstr " <пристрій>                шлях до пристрою (зазвичай, диска)\n"
 
-#: sys-utils/mount.c:535
+#: sys-utils/mount.c:537
 #, fuzzy
 #| msgid " <dev>                     device (usually disk) path\n"
 msgid " <device>                specifies device by path\n"
 msgstr " <пристрій>                шлях до пристрою (зазвичай, диска)\n"
 
-#: sys-utils/mount.c:536
+#: sys-utils/mount.c:538
 msgid " <directory>             mountpoint for bind mounts (see --bind/rbind)\n"
 msgstr ""
 
-#: sys-utils/mount.c:537
+#: sys-utils/mount.c:539
 #, fuzzy
 #| msgid " -f, --rtc <file>                use an alternate file to %1$s\n"
 msgid " <file>                  regular file for loopdev setup\n"
 msgstr " -f, --rtc <файл>                використовувати альтернативний файл %1$s\n"
 
-#: sys-utils/mount.c:540
+#: sys-utils/mount.c:542
 #, fuzzy
 #| msgid ""
 #| "\n"
@@ -19127,80 +19127,80 @@ msgstr ""
 "\n"
 "Параметри:\n"
 
-#: sys-utils/mount.c:541
+#: sys-utils/mount.c:543
 #, fuzzy
 #| msgid " -c, --content              compare only file contents, same as -pot\n"
 msgid " -B, --bind              mount a subtree somewhere else (same as -o bind)\n"
 msgstr " -c, --content              порівняти файли лише за вмістом, те саме, що і -pot\n"
 
-#: sys-utils/mount.c:542
+#: sys-utils/mount.c:544
 #, fuzzy
 #| msgid " -r, --reset                  reset the port\n"
 msgid " -M, --move              move a subtree to some other place\n"
 msgstr " -r, --reset                  скинути номер порту\n"
 
-#: sys-utils/mount.c:543
+#: sys-utils/mount.c:545
 #, fuzzy
 #| msgid " -f, --find                find a free device\n"
 msgid " -R, --rbind             mount a subtree and all submounts somewhere else\n"
 msgstr " -f, --find                знайти вільний пристрій\n"
 
-#: sys-utils/mount.c:544
+#: sys-utils/mount.c:546
 #, fuzzy
 #| msgid " -s, --shared             get a shared lock\n"
 msgid " --make-shared           mark a subtree as shared\n"
 msgstr " -s, --shared             отримати блокування спільного використання\n"
 
-#: sys-utils/mount.c:545
+#: sys-utils/mount.c:547
 #, fuzzy
 #| msgid " -s, --shared             get a shared lock\n"
 msgid " --make-slave            mark a subtree as slave\n"
 msgstr " -s, --shared             отримати блокування спільного використання\n"
 
-#: sys-utils/mount.c:546
+#: sys-utils/mount.c:548
 msgid " --make-private          mark a subtree as private\n"
 msgstr ""
 
-#: sys-utils/mount.c:547
+#: sys-utils/mount.c:549
 msgid " --make-unbindable       mark a subtree as unbindable\n"
 msgstr ""
 
-#: sys-utils/mount.c:548
+#: sys-utils/mount.c:550
 #, fuzzy
 #| msgid " -s, --shared             get a shared lock\n"
 msgid " --make-rshared          recursively mark a whole subtree as shared\n"
 msgstr " -s, --shared             отримати блокування спільного використання\n"
 
-#: sys-utils/mount.c:549
+#: sys-utils/mount.c:551
 #, fuzzy
 #| msgid " -R, --recursive         recursively unmount a target with all its children\n"
 msgid " --make-rslave           recursively mark a whole subtree as slave\n"
 msgstr " -R, --recursive         рекурсивно демонтувати призначення з усіма дочірніми вузлами\n"
 
-#: sys-utils/mount.c:550
+#: sys-utils/mount.c:552
 #, fuzzy
 #| msgid " -R, --recursive         recursively unmount a target with all its children\n"
 msgid " --make-rprivate         recursively mark a whole subtree as private\n"
 msgstr " -R, --recursive         рекурсивно демонтувати призначення з усіма дочірніми вузлами\n"
 
-#: sys-utils/mount.c:551
+#: sys-utils/mount.c:553
 msgid " --make-runbindable      recursively mark a whole subtree as unbindable\n"
 msgstr ""
 
-#: sys-utils/mount.c:702 sys-utils/umount.c:520
+#: sys-utils/mount.c:704 sys-utils/umount.c:520
 msgid "libmount context allocation failed"
 msgstr "не вдалося розподілити контекст libmount"
 
-#: sys-utils/mount.c:764 sys-utils/umount.c:582
+#: sys-utils/mount.c:766 sys-utils/umount.c:582
 msgid "failed to set options pattern"
 msgstr "не вдалося встановити шаблон параметрів"
 
-#: sys-utils/mount.c:816 sys-utils/umount.c:599
+#: sys-utils/mount.c:818 sys-utils/umount.c:599
 #, c-format
 msgid "failed to set target namespace to %s"
 msgstr "не вдалося встановити для простору назв призначення значення %s"
 
-#: sys-utils/mount.c:984
+#: sys-utils/mount.c:986
 msgid "source specified more than once"
 msgstr "джерело вказано декілька разів"
 
@@ -19337,11 +19337,11 @@ msgstr " -Z, --follow-context   встановити контекст SELinux в
 msgid "neither filename nor target pid supplied for %s"
 msgstr "не вказано ні назви файла ні pid призначення для %s"
 
-#: sys-utils/nsenter.c:351 sys-utils/unshare.c:828 sys-utils/unshare.c:884
+#: sys-utils/nsenter.c:353 sys-utils/unshare.c:828 sys-utils/unshare.c:884
 msgid "failed to parse uid"
 msgstr "не вдалося обробити uid"
 
-#: sys-utils/nsenter.c:358 sys-utils/unshare.c:832 sys-utils/unshare.c:888
+#: sys-utils/nsenter.c:360 sys-utils/unshare.c:832 sys-utils/unshare.c:888
 msgid "failed to parse gid"
 msgstr "не вдалося обробити gid"
 
@@ -20224,50 +20224,50 @@ msgstr "     --list               вивести придатні для вст�
 msgid "     --show[=personality] show current or specific personality and exit\n"
 msgstr ""
 
-#: sys-utils/setarch.c:337
+#: sys-utils/setarch.c:341
 #, c-format
 msgid "Kernel cannot set architecture to %s"
 msgstr "Ядро не може встановити архітектуру %s"
 
-#: sys-utils/setarch.c:402
+#: sys-utils/setarch.c:406
 msgid "Can not get current kernel personality"
 msgstr ""
 
-#: sys-utils/setarch.c:455
+#: sys-utils/setarch.c:459
 msgid "Not enough arguments"
 msgstr "Недостатньо аргументів"
 
-#: sys-utils/setarch.c:523
+#: sys-utils/setarch.c:527
 msgid "unrecognized option '--list'"
 msgstr "невідомий параметр «--list»"
 
-#: sys-utils/setarch.c:532
+#: sys-utils/setarch.c:536
 #, fuzzy
 #| msgid "could not parse ID"
 msgid "could not parse personality"
 msgstr "не вдалося обробити ідентифікатор"
 
-#: sys-utils/setarch.c:536
+#: sys-utils/setarch.c:540
 #, fuzzy
 #| msgid "unrecognized option '--list'"
 msgid "unrecognized option '--show'"
 msgstr "невідомий параметр «--list»"
 
-#: sys-utils/setarch.c:550
+#: sys-utils/setarch.c:554
 msgid "no architecture argument or personality flags specified"
 msgstr "немає аргументу архітектури або вказано прапорці персональності"
 
-#: sys-utils/setarch.c:562
+#: sys-utils/setarch.c:566
 #, c-format
 msgid "%s: Unrecognized architecture"
 msgstr "%s: нерозпізнана архітектура"
 
-#: sys-utils/setarch.c:580
+#: sys-utils/setarch.c:584
 #, c-format
 msgid "failed to set personality to %s"
 msgstr "не вдалося встановити спеціалізацію у значення %s"
 
-#: sys-utils/setarch.c:592
+#: sys-utils/setarch.c:596
 #, c-format
 msgid "Execute command `%s'.\n"
 msgstr "Виконати команду «%s».\n"
@@ -22920,16 +22920,16 @@ msgstr "--nobanner може користуватися лише адмініст
 msgid "invalid timeout argument: %s"
 msgstr "некоректний аргумент часу очікування: %s"
 
-#: term-utils/wall.c:361
+#: term-utils/wall.c:293
 msgid "cannot get passwd uid"
 msgstr "не вдалося отримати UID passwd"
 
-#: term-utils/wall.c:385
+#: term-utils/wall.c:317
 #, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "Трансляційне повідомлення від %s@%s (%s) (%s):"
 
-#: term-utils/wall.c:417
+#: term-utils/wall.c:349
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr "не буде прочитано %s — використовується stdin."
@@ -22967,30 +22967,30 @@ msgstr "повідомлення %s вимкнено"
 msgid "%s is logged in more than once; writing to %s"
 msgstr "%s увійшов до системи більше одного разу; надсилаємо до %s"
 
-#: term-utils/write.c:237
-msgid "carefulputc failed"
-msgstr "помилка carefulputc"
-
-#: term-utils/write.c:279
+#: term-utils/write.c:265
 #, c-format
 msgid "Message from %s@%s (as %s) on %s at %02d:%02d ..."
 msgstr "Повідомлення від %s@%s (як %s) до %s у %02d:%02d …"
 
-#: term-utils/write.c:283
+#: term-utils/write.c:269
 #, c-format
 msgid "Message from %s@%s on %s at %02d:%02d ..."
 msgstr "Повідомлення від %s@%s на %s у %02d:%02d ..."
 
-#: term-utils/write.c:329
+#: term-utils/write.c:280
+msgid "carefulputc failed"
+msgstr "помилка carefulputc"
+
+#: term-utils/write.c:318
 msgid "you have write permission turned off"
 msgstr "ваші права доступу щодо запису вимкнено"
 
-#: term-utils/write.c:352
+#: term-utils/write.c:341
 #, c-format
 msgid "%s is not logged in on %s"
 msgstr "%s не ввійшов до системи на %s"
 
-#: term-utils/write.c:358
+#: term-utils/write.c:347
 #, c-format
 msgid "%s has messages disabled on %s"
 msgstr "повідомлення %s на %s вимкнено"
@@ -23347,7 +23347,7 @@ msgstr "помилкове форматування {%s}"
 msgid "bad conversion character %%%s"
 msgstr "помилковий символ перетворення %%%s"
 
-#: text-utils/hexdump-parse.c:438
+#: text-utils/hexdump-parse.c:440
 msgid "byte count with multiple conversion characters"
 msgstr "кількість байтів з декількома символами перетворення"
 

@@ -136,6 +136,7 @@ Rename:
 TODO:
    - drop agetty LOGIN_PLAIN_PROMPT todo  [Thomas Weißschuh]
 agetty:
+   - (man) fix typos  [Jakub Wilk]
    - add support for LOGIN_PLAIN_PROMPT  [Karel Zak]
    - always pass user name to login with --  [dana]
    - cleanup login prompt macro use  [Karel Zak]
@@ -191,11 +192,14 @@ build-sys:
    - add hint to have_pty check  [Karel Zak]
    - check for mount_attr in linux/mount.h  [Karel Zak]
    - don't call AC_SUBST() if unnecessary  [Karel Zak]
+   - fix libblkid fuzz sample test if-endif  [Karel Zak]
    - improve dependences for lib/procfs.c  [Karel Zak]
    - make pipesz optional  [Karel Zak]
    - move login-utils/logindefs.c to lib  [Karel Zak]
+   - release++ (v2.39-rc1)  [Karel Zak]
    - remove --enable-libmount-support-mtab  [Karel Zak]
    - rename libmount loopdev code file  [Karel Zak]
+   - report fuzzing support status  [Karel Zak]
    - sort the gitignore and add fadvise  [Thomas Voss]
    - use PKG_CHECK_VAR()  [Karel Zak]
    - work around broken cross-compiles on Debian  [Thomas Weißschuh]
@@ -274,6 +278,8 @@ doc:
    - update renice.1 for spelling and style  [Jan Engelhardt]
 docs:
    - update AUTHORS file  [Karel Zak]
+   - update v2.39-ReleaseNotes  [Karel Zak]
+   - update v2.39-rc1-ReleaseNotes  [Karel Zak]
 documentation:
    - link to HTML versions of kernel docs on docs.kernel.org  [nl6720]
 eject:
@@ -293,6 +299,8 @@ fdisk:
    - make it more obvious that DOS means MBR  [Karel Zak]
 fileeq/lsfd:
    - use correct format specifier  [Thomas Weißschuh]
+findmnt:
+   - (man) add hint about the default output  [Karel Zak]
 flock:
    - timeout_expired must be volatile qualified  [Cristian Rodríguez]
 fsck:
@@ -303,6 +311,8 @@ fsck.cramfs:
    - check directory entry names  [Samanta Navarro]
    - fix error message  [Samanta Navarro]
    - print correct error on 32-bit systems  [Samanta Navarro]
+fstab:
+   - improve 4th field description  [Karel Zak]
 fstrim:
    - Remove all skipped entries before de-duplication  [Scott Shambarger]
    - add --types to filter out by filesystem types  [Karel Zak]
@@ -326,8 +336,12 @@ hardlink:
    - print supported feature on --version  [Karel Zak]
    - require statfs_magic.h only when reflink support enabled  [Karel Zak]
    - use info rather than warning message  [Karel Zak]
+hexdump-parse:
+   - handle truncated format pattern  [Ronan Pigott]
 hwclock:
    - fix return value on successful --param-get  [Bastian Krause]
+idmap:
+   - kill child when writing the idmap fails  [Christian Brauner]
 include:
    - Add additional GPT partition types (HPPA/PARISC)  [Sam James]
    - add MOVE_MOUNT_SET_GROUP fallback  [Karel Zak]
@@ -508,6 +522,7 @@ libblkid:
    - cleanup definitions and add docs for return values  [Karel Zak]
    - cleanup indentation  [Karel Zak]
    - cleanup romfs prober  [Karel Zak]
+   - copy BLKID_PARTS_FORCE_GPT to whole-disk prober  [Karel Zak]
    - cramfs  add checksum support  [Thomas Weißschuh]
    - cramfs  handle cross-endianess for checksums  [Thomas Weißschuh]
    - cramfs  report endianness  [Thomas Weißschuh]
@@ -614,6 +629,7 @@ libmount:
    - (context) use default options maps  [Karel Zak]
    - (docs) mark mnt_optstr_apply_flags() as deprecated  [Karel Zak]
    - (idmap) fix leak and doble free [coverity scan]  [Karel Zak]
+   - (idmap) reuse tree FD, fix umount  [Karel Zak]
    - (idmap) use optlist  [Karel Zak]
    - (legacy mount) use optlist  [Karel Zak]
    - (legacy) init regualer mount before propagation  [Karel Zak]
@@ -681,6 +697,7 @@ libmount:
    - add info about support for new mount syscalls  [Karel Zak]
    - add inline function to access API file descritors  [Karel Zak]
    - add libmnt_optlist  [Karel Zak]
+   - add missing MOUNT_ATTR_NODEV  [Karel Zak]
    - add missing symbols to docs  [Karel Zak]
    - add mnt_optlist_remove_flags() and mnt_opt_set_external()  [Karel Zak]
    - add optlist tests  [Karel Zak]
@@ -692,7 +709,10 @@ libmount:
    - declare array of LSM options const  [Christian Göttsche]
    - don't refer optlist when copy libmnt_fs  [Karel Zak]
    - don't require return argument in get-like functions  [Karel Zak]
+   - dont ignore autofs mounts by default  [Ian Kent]
    - ensure child hangs around until we persisted namespace  [Christian Brauner]
+   - fix MS_REMOUNT emulation by mount_setattr()  [Karel Zak]
+   - fix and cleanup relatime use  [Karel Zak]
    - fix and improve utab update on MS_MOVE  [Karel Zak]
    - fix compilation  [Karel Zak]
    - fix compilation without new API  [Karel Zak]
@@ -707,9 +727,11 @@ libmount:
    - fix possible leaks on error  [Karel Zak]
    - fix potentially uninitialized local variable [CodeQL]  [Karel Zak]
    - fix typo in debug message  [Karel Zak]
+   - fix typo, improve debug  [Karel Zak]
    - fix typos  [наб]
    - fix unused value [coverity scan]  [Karel Zak]
    - fix unused variable [coverity scan]  [Karel Zak]
+   - fix user/users for superuser  [Karel Zak]
    - idmap  fix sock write to child  [Pedro Tammela]
    - implement X-mount.auto-fstypes  [Karel Zak]
    - implement hooks for a legacy mount(2)  [Karel Zak]
@@ -788,6 +810,7 @@ losetup:
    - Fix typo for the --sector-size docs  [Alberto Ruiz]
    - improve backing-file column formatting  [Karel Zak]
 lsblk:
+   - (man) add hint about --merge  [Karel Zak]
    - add -N/--nvme  [zhenwei pi]
    - add -v/--virtio  [zhenwei pi]
    - add DISK-SEQ (aka /sys/block//diskseq  [Karel Zak]
@@ -812,9 +835,12 @@ lsblk:
    - use sysfs_blkdev_is_removable()  [Karel Zak]
 lscpu:
    - (arm) don't use space in names  [Karel Zak]
+   - Add "ISA" field into lscpu_cputype and determine loongarch op-mode from its value  [Xi Ruoyao]
    - Add Kryo 3XX Gold core  [ThomasKaiser]
    - Add Snapdragon parts  [Jeremy Linton]
+   - Add loongarch testcase  [Xi Ruoyao]
    - Even more Arm part numbers  [Jeremy Linton]
+   - Parse loongarch specific lines  [Xi Ruoyao]
    - add --hierarchic  [Karel Zak]
    - add MODELNAME column (for -e)  [Karel Zak]
    - add missing Apple parts  [James Calligeros]
@@ -830,7 +856,9 @@ lsfd:
    - (filter)  accept '.' used in column names  [Masatake YAMATO]
    - (filter)  fix a codeing style of if/else  [Masatake YAMATO]
    - (filter)  parse "" in filter expression correctly  [Masatake YAMATO]
+   - (man) fix po-man warnings  [Karel Zak]
    - (man) fix the description of NAME fields for TCP and UDP sockets  [Masatake YAMATO]
+   - (man) fix typo  [Thomas Weißschuh]
    - (man) fix typos  [Masatake YAMATO]
    - (man) write about PIDFD.* columns  [Masatake YAMATO]
    - (man) write about TCP scokets  [Masatake YAMATO]
@@ -863,6 +891,7 @@ lsfd:
    - delete an unnecessary cast operation  [Masatake YAMATO]
    - don't put a spcae between a function and its arguments  [Masatake YAMATO]
    - don't require nsfs to be mounted  [Thomas Weißschuh]
+   - error if extraneous argument given  [наб]
    - facilitate the way to attach extra info loaded from /proc/net/* to sockets  [Masatake YAMATO]
    - fill ENDPOINTS column for FIFOs  [Masatake YAMATO]
    - fix compiler warning [-Werror,-Wextra-semi]  [Karel Zak]
@@ -870,6 +899,7 @@ lsfd:
    - fix crash triggered by an empty filter expression  [Masatake YAMATO]
    - fix memory leak related to ENDPOINTS field  [Masatake YAMATO]
    - fix wrong counter expression used in --summary output  [Masatake YAMATO]
+   - fix wrong format specifiers in snptinrf()  [Masatake YAMATO]
    - fix wrong identifier namings (L3->L4)  [Masatake YAMATO]
    - fix wrongly checked flag constants  [Masatake YAMATO]
    - implement -i/--inet option  [Masatake YAMATO]
@@ -932,6 +962,7 @@ lsfd:
    - use xstrdup() if included xalloc.h  [Karel Zak]
 lsfd.1.adoc:
    - fix a wrong formatting  [Masatake YAMATO]
+   - fix text formats  [Masatake YAMATO]
    - fix typos  [Masatake YAMATO]
    - use monospace face instead of italic face  [Masatake YAMATO]
    - write about how pidfds are represented in NAME column  [Masatake YAMATO]
@@ -1011,6 +1042,7 @@ mkfs.bfs:
 mkfs.bfs, mkfs.cramfs:
    - cleanup optional argument use  [Karel Zak]
 mkfs.cramfs:
+   - (man) Fix markup in makefs.cramfs.8.adoc  [Mario Blättermann]
    - Support BSD lock  [root]
 mkswap:
    - add tests  [Thomas Weißschuh]
@@ -1025,15 +1057,21 @@ more:
    - update basic command  description  [Karel Zak]
 mount:
    - (docs) fix typos in bind-mount references  [Karel Zak]
+   - (man) Add usual Asciidoctor markup  [Mario Blättermann]
    - (man) add missing commas  [Jakub Wilk]
    - (man) add note about options order  [Karel Zak]
+   - (man) add notes about remount behavior  [Karel Zak]
    - add rootcontext=@target  [Christian Göttsche]
+   - ignore autofs entries in mount listing  [Ian Kent]
+   - relatime allows equality  [Stephen Kitt]
    - split and cleanup usage()  [Karel Zak]
 namei:
    - add -Z (selinux context report)  [Karel Zak, CJ Kucera]
 nsenter:
+   - (man) imropve readability  [Karel Zak]
    - add --env for allowing environment variables inheritance  [u2386]
    - read default UID and GID from target process  [Thomas Weißschuh]
+   - use explicit argument to follow target PID/GID  [Thomas Weißschuh]
 oss-fuzz:
    - turn on the alignment check explicitly  [Evgeny Vereshchagin]
 pg:
@@ -1058,6 +1096,7 @@ po:
    - update hr.po (from translationproject.org)  [Božidar Putanec]
    - update ja.po (from translationproject.org)  [Takeshi Hamasaki]
    - update ko.po (from translationproject.org)  [Seong-ho Cho]
+   - update pl.po (from translationproject.org)  [Jakub Bogusz]
    - update uk.po (from translationproject.org)  [Yuri Chornoivan]
 po-man:
    - add waitpid.1 manpage  [Thomas Weißschuh]
@@ -1095,6 +1134,7 @@ script:
    - abort if unused arguments are given  [Chris Hofstaedtler]
    - fix use of utempter  [Karel Zak]
 setarch:
+   - add loongarch support  [Enze Li]
    - show current personality  [Thomas Weißschuh]
    - use kernel address size if possible  [Thomas Weißschuh]
 setterm:
@@ -1138,6 +1178,7 @@ test_mkfds:
    - add missing terminator of the option spec list  [Masatake YAMATO]
    - avoid multiplication overflow  [Thomas Weißschuh]
 tests:
+   - (build-sys) add --conf=<path>  [Karel Zak]
    - (column) add range and negative numbers column addresses  [Karel Zak]
    - (hardlink) remove runtime depend output  [Karel Zak]
    - (libmount) remove unsupported test  [Karel Zak]
@@ -1199,6 +1240,7 @@ tests:
    - add X-mount.subdir test  [Karel Zak]
    - add blkid --offset test  [Karel Zak]
    - add complex mount test  [Karel Zak]
+   - add cryptsetup build results  [Karel Zak]
    - add function to inhibit loading of custom colorschemes  [Thomas Weißschuh]
    - add ts_check_native_byteorder  [Thomas Weißschuh]
    - add ts_skip_exitcode_not_supported  [Thomas Weißschuh]
@@ -1208,6 +1250,7 @@ tests:
    - disable nonfunctional tests under qemu user emulation  [Thomas Weißschuh]
    - don't compile lsfd/mkfds helper on macos, since it's linux only  [Anatoly Pugachev]
    - don't print mount hins on terminal  [Karel Zak]
+   - fclose(stdin) UB  [Cristian Rodríguez]
    - fdisk/bsd  update expected output for ppc64le  [Chris Hofstaedtler]
    - fix misc/setarch run in a docker environment  [Anatoly Pugachev]
    - fix test file name  [Karel Zak]
@@ -1232,6 +1275,7 @@ umount:
    - don't ignore --quiet for non-root users  [Karel Zak]
    - properly handle special characters in completion  [Thomas Weißschuh]
 unshare:
+   - (man) fix example formatting  [Jakub Wilk]
    - Don't waste an ID when -r is used with --map-auto  [Chris Webb]
    - Fix "you (user xxxx) don't exist" error when uid differs from primary gid  [Sol Boucher]
    - Fix PDEATHSIG race for --kill-child with --pid  [Earl Chew]
@@ -1255,6 +1299,9 @@ waitpid:
    - detect exlusive options with standard mechanism  [Thomas Weißschuh]
    - fix help alignment  [Thomas Weißschuh]
    - prettify options terminator  [Thomas Weißschuh]
+wall:
+   - convert homebrew buffering to open_memstream()  [наб]
+   - use fputs_careful()  [наб]
 wdctl:
    - mark flags field as unsigned long  [Thomas Weißschuh]
    - read firmware version from sysfs  [Thomas Weißschuh]
@@ -1265,6 +1312,7 @@ whereis:
    - add glob(7) support (new option -g)  [Karel Zak]
 write:
    - (man) fix history section  [Karel Zak]
+   - correctly handle wide characters  [наб]
    - signal_received should be volatile qualified  [Cristian Rodríguez]
 zramctl:
    - fix compiler warning [-Werror=maybe-uninitialized]  [Karel Zak]

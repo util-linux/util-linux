@@ -1,6 +1,10 @@
-util-linux 2.39: Mar 10 2023
+util-linux 2.39-rc2: Apr 04 2023
 * see Documentation/releases/v2.39-ReleaseNotes or the complete changelog at
-  https://www.kernel.org/pub/linux/utils/util-linux/v2.39/v2.39-ChangeLog
+  https://www.kernel.org/pub/linux/utils/util-linux/v2.39/v2.39-rc2-ChangeLog
+
+util-linux 2.39-rc1: Mar 10 2023
+* see Documentation/releases/v2.39-ReleaseNotes or the complete changelog at
+  https://www.kernel.org/pub/linux/utils/util-linux/v2.39/v2.39-rc1-ChangeLog
 
 util-linux 2.38: Mar 28 2022
 * see Documentation/releases/v2.38-ReleaseNotes or the complete changelog at

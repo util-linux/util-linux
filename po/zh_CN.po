@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.38-rc4\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-03-09 13:37+0100\n"
+"POT-Creation-Date: 2023-04-04 14:02+0200\n"
 "PO-Revision-Date: 2022-03-17 10:51-0400\n"
 "Last-Translator: Boyuan Yang <073plan@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -52,7 +52,7 @@ msgstr "参数不够"
 #: disk-utils/mkswap.c:347 disk-utils/mkswap.c:377 disk-utils/partx.c:1022
 #: disk-utils/resizepart.c:104 disk-utils/sfdisk.c:381 disk-utils/sfdisk.c:502
 #: disk-utils/sfdisk.c:814 disk-utils/sfdisk.c:1118 disk-utils/swaplabel.c:65
-#: libfdisk/src/bsd.c:642 login-utils/islocal.c:86 login-utils/last.c:685
+#: libfdisk/src/bsd.c:642 login-utils/islocal.c:86 login-utils/last.c:683
 #: login-utils/sulogin.c:497 login-utils/sulogin.c:534
 #: login-utils/utmpdump.c:142 login-utils/utmpdump.c:367
 #: login-utils/utmpdump.c:391 login-utils/vipw.c:257 login-utils/vipw.c:275
@@ -65,7 +65,7 @@ msgstr "参数不够"
 #: sys-utils/hwclock-rtc.c:438 sys-utils/hwclock-rtc.c:474
 #: sys-utils/hwclock-rtc.c:528 sys-utils/hwclock-rtc.c:581
 #: sys-utils/irq-common.c:263 sys-utils/ldattach.c:392
-#: sys-utils/lscpu-cputype.c:470 sys-utils/lsmem.c:671 sys-utils/nsenter.c:139
+#: sys-utils/lscpu-cputype.c:477 sys-utils/lsmem.c:671 sys-utils/nsenter.c:139
 #: sys-utils/rfkill.c:195 sys-utils/rtcwake.c:137 sys-utils/rtcwake.c:292
 #: sys-utils/setpriv.c:256 sys-utils/setpriv.c:622 sys-utils/setpriv.c:645
 #: sys-utils/swapon.c:382 sys-utils/swapon.c:525 sys-utils/switch_root.c:174
@@ -75,7 +75,7 @@ msgstr "参数不够"
 #: term-utils/scriptlive.c:259 term-utils/scriptlive.c:262
 #: term-utils/scriptreplay.c:281 term-utils/scriptreplay.c:284
 #: term-utils/scriptreplay.c:287 term-utils/scriptreplay.c:290
-#: term-utils/wall.c:421 text-utils/colcrt.c:284 text-utils/more.c:459
+#: term-utils/wall.c:353 text-utils/colcrt.c:284 text-utils/more.c:459
 #: text-utils/rev.c:165 text-utils/ul.c:637
 #, c-format
 msgid "cannot open %s"
@@ -820,7 +820,7 @@ msgstr "无效参数 - repair"
 #: disk-utils/mkfs.bfs.c:198 disk-utils/mkfs.cramfs.c:341
 #: disk-utils/mkfs.cramfs.c:763 disk-utils/mkfs.cramfs.c:809
 #: disk-utils/mkfs.minix.c:835 disk-utils/mkswap.c:374 disk-utils/partx.c:959
-#: login-utils/last.c:699 login-utils/utmpdump.c:145 misc-utils/namei.c:146
+#: login-utils/last.c:697 login-utils/utmpdump.c:145 misc-utils/namei.c:146
 #: misc-utils/rename.c:164 misc-utils/rename.c:229 sys-utils/blkdiscard.c:251
 #: sys-utils/blkzone.c:147 sys-utils/dmesg.c:543 sys-utils/fallocate.c:201
 #: sys-utils/fsfreeze.c:119 sys-utils/fstrim.c:78 sys-utils/nsenter.c:187
@@ -1152,9 +1152,9 @@ msgstr "设备属性(扇区大小和几何属性)只能用于某个指定的设�
 #: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:207
 #: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1579
 #: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
-#: sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656 sys-utils/mount.c:865
-#: sys-utils/mount.c:873 sys-utils/mount.c:922 sys-utils/mount.c:935
-#: sys-utils/mount.c:1007 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
+#: sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656 sys-utils/mount.c:867
+#: sys-utils/mount.c:875 sys-utils/mount.c:924 sys-utils/mount.c:937
+#: sys-utils/mount.c:1009 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
 #: sys-utils/swapoff.c:258 sys-utils/swapon.c:1011 sys-utils/switch_root.c:270
 #: sys-utils/umount.c:629 term-utils/setterm.c:1197 text-utils/col.c:584
 #: text-utils/more.c:2096
@@ -1239,7 +1239,7 @@ msgstr "分配迭代器失败"
 
 #: disk-utils/fdisk-list.c:126 disk-utils/fdisk-list.c:247
 #: disk-utils/partx.c:669 login-utils/lslogins.c:1113 misc-utils/fincore.c:356
-#: misc-utils/findmnt.c:1763 misc-utils/lsblk.c:2351 misc-utils/lsfd.c:1968
+#: misc-utils/findmnt.c:1763 misc-utils/lsblk.c:2351 misc-utils/lsfd.c:1970
 #: misc-utils/lslocks.c:472 misc-utils/uuidparse.c:252 misc-utils/wipefs.c:157
 #: sys-utils/losetup.c:325 sys-utils/lscpu.c:604 sys-utils/lscpu.c:759
 #: sys-utils/lscpu.c:970 sys-utils/lsipc.c:354 sys-utils/prlimit.c:311
@@ -3842,7 +3842,7 @@ msgid_plural "#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n"
 msgstr[0] "#%2d：%9ju-%9ju (%9ju 扇区%6ju MB)\n"
 
 #: disk-utils/partx.c:680 misc-utils/fincore.c:370 misc-utils/findmnt.c:1792
-#: misc-utils/lsblk.c:2395 misc-utils/lsfd.c:532 misc-utils/lsfd.c:1982
+#: misc-utils/lsblk.c:2395 misc-utils/lsfd.c:532 misc-utils/lsfd.c:1984
 #: misc-utils/lslocks.c:487 sys-utils/losetup.c:339 sys-utils/lscpu.c:616
 #: sys-utils/lscpu.c:772 sys-utils/prlimit.c:320 sys-utils/rfkill.c:487
 #: sys-utils/swapon.c:305 sys-utils/wdctl.c:360
@@ -7825,312 +7825,312 @@ msgstr "静默(hush)登录状态：恢复原 ID 失败"
 msgid "operation failed: %m"
 msgstr "操作失败：%m"
 
-#: libmount/src/context_mount.c:1371
+#: libmount/src/context_mount.c:1404
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "警告：应用传播标志失败"
 
-#: libmount/src/context_mount.c:1381
+#: libmount/src/context_mount.c:1414
 #, fuzzy, c-format
 #| msgid "WARNING: device write-protected, mounted read-only"
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "警告：设备写保护，使用只读方式挂载"
 
-#: libmount/src/context_mount.c:1395
+#: libmount/src/context_mount.c:1428
 #, c-format
 msgid "operation permitted for root only"
 msgstr "操作只允许由 root 进行"
 
-#: libmount/src/context_mount.c:1399
+#: libmount/src/context_mount.c:1432
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s 已经挂载"
 
-#: libmount/src/context_mount.c:1405
+#: libmount/src/context_mount.c:1438
 #, c-format
 msgid "can't find in %s"
 msgstr "无法在 %s 中找到"
 
-#: libmount/src/context_mount.c:1408
+#: libmount/src/context_mount.c:1441
 #, c-format
 msgid "can't find mount point in %s"
 msgstr "无法在 %s 中找到挂载点"
 
-#: libmount/src/context_mount.c:1411
+#: libmount/src/context_mount.c:1444
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "在 %2$s 中找不到挂载源 %1$s"
 
-#: libmount/src/context_mount.c:1416
+#: libmount/src/context_mount.c:1449
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr "%s 上探测到了更多文件系统；请使用 -t <类型> 或 wipefs(8)"
 
-#: libmount/src/context_mount.c:1421
+#: libmount/src/context_mount.c:1454
 #, c-format
 msgid "failed to determine filesystem type"
 msgstr "无法确定文件系统类型"
 
-#: libmount/src/context_mount.c:1422
+#: libmount/src/context_mount.c:1455
 #, fuzzy, c-format
 #| msgid "no filesystem type specified"
 msgid "no valid filesystem type specified"
 msgstr "未指定文件系统类型"
 
-#: libmount/src/context_mount.c:1429
+#: libmount/src/context_mount.c:1462
 #, c-format
 msgid "can't find %s"
 msgstr "找不到 %s"
 
-#: libmount/src/context_mount.c:1431
+#: libmount/src/context_mount.c:1464
 #, c-format
 msgid "no mount source specified"
 msgstr "未指定挂载来源"
 
-#: libmount/src/context_mount.c:1442
+#: libmount/src/context_mount.c:1475
 #, fuzzy, c-format
 #| msgid "failed to parse mount options: %m"
 msgid "failed to parse mount options '%s': %m"
 msgstr "解析挂臷选项失败：%m"
 
-#: libmount/src/context_mount.c:1443
+#: libmount/src/context_mount.c:1476
 #, fuzzy, c-format
 #| msgid "failed to parse mount options: %m"
 msgid "failed to parse mount options '%s'"
 msgstr "解析挂臷选项失败：%m"
 
-#: libmount/src/context_mount.c:1446
+#: libmount/src/context_mount.c:1479
 #, c-format
 msgid "failed to parse mount options: %m"
 msgstr "解析挂臷选项失败：%m"
 
-#: libmount/src/context_mount.c:1447
+#: libmount/src/context_mount.c:1480
 #, c-format
 msgid "failed to parse mount options"
 msgstr "解析挂臷选项失败"
 
-#: libmount/src/context_mount.c:1452
+#: libmount/src/context_mount.c:1485
 #, fuzzy, c-format
 #| msgid "%s: failed to setup loop device"
 msgid "failed to setup loop device for %s"
 msgstr "%s：设置回环设备失败"
 
-#: libmount/src/context_mount.c:1456
+#: libmount/src/context_mount.c:1489
 #, fuzzy, c-format
 #| msgid "%s: overlapping loop device exists"
 msgid "overlapping loop device exists for %s"
 msgstr "%s: 重叠的回环设备已存在"
 
-#: libmount/src/context_mount.c:1460 libmount/src/context_umount.c:1263
+#: libmount/src/context_mount.c:1493 libmount/src/context_umount.c:1263
 #, c-format
 msgid "locking failed"
 msgstr "锁定失败"
 
-#: libmount/src/context_mount.c:1464 libmount/src/context_umount.c:1269
+#: libmount/src/context_mount.c:1497 libmount/src/context_umount.c:1269
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, c-format
 msgid "failed to switch namespace"
 msgstr "切换名字空间失败"
 
-#: libmount/src/context_mount.c:1468
+#: libmount/src/context_mount.c:1501
 #, fuzzy, c-format
 #| msgid "%s is already mounted"
 msgid "filesystem already mounted"
 msgstr "%s 已经挂载"
 
-#: libmount/src/context_mount.c:1471
+#: libmount/src/context_mount.c:1504
 #, c-format
 msgid "mount failed: %m"
 msgstr "挂载失败：%m"
 
-#: libmount/src/context_mount.c:1481
+#: libmount/src/context_mount.c:1514
 #, fuzzy, c-format
 #| msgid "%s: filesystem was unmounted, but mount(8) failed"
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "%s：文件系统已卸载，但 mount(8) 失败"
 
-#: libmount/src/context_mount.c:1487
+#: libmount/src/context_mount.c:1520
 #, fuzzy, c-format
 #| msgid "%s: filesystem was unmounted, but mount(8) failed"
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "%s：文件系统已卸载，但 mount(8) 失败"
 
-#: libmount/src/context_mount.c:1493
+#: libmount/src/context_mount.c:1526
 #, fuzzy, c-format
 #| msgid "%s: filesystem was unmounted, but mount(8) failed"
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "%s：文件系统已卸载，但 mount(8) 失败"
 
-#: libmount/src/context_mount.c:1499
+#: libmount/src/context_mount.c:1532
 #, fuzzy, c-format
 #| msgid "%s: filesystem was unmounted, but mount(8) failed"
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "%s：文件系统已卸载，但 mount(8) 失败"
 
-#: libmount/src/context_mount.c:1505
+#: libmount/src/context_mount.c:1538
 #, fuzzy, c-format
 #| msgid "%s: filesystem was unmounted, but mount(8) failed"
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "%s：文件系统已卸载，但 mount(8) 失败"
 
-#: libmount/src/context_mount.c:1511
+#: libmount/src/context_mount.c:1544
 #, fuzzy, c-format
 #| msgid "%s: filesystem was unmounted, but mount(8) failed"
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "%s：文件系统已卸载，但 mount(8) 失败"
 
-#: libmount/src/context_mount.c:1529 libmount/src/context_mount.c:1574
+#: libmount/src/context_mount.c:1562 libmount/src/context_mount.c:1607
 #, c-format
 msgid "mount point is not a directory"
 msgstr "挂载点不是目录"
 
-#: libmount/src/context_mount.c:1531 login-utils/newgrp.c:228
+#: libmount/src/context_mount.c:1564 login-utils/newgrp.c:228
 #, c-format
 msgid "permission denied"
 msgstr "权限不足"
 
-#: libmount/src/context_mount.c:1533
+#: libmount/src/context_mount.c:1566
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "必须以超级用户身份使用 mount"
 
-#: libmount/src/context_mount.c:1540
+#: libmount/src/context_mount.c:1573
 #, c-format
 msgid "mount point is busy"
 msgstr "挂载点忙"
 
-#: libmount/src/context_mount.c:1547
+#: libmount/src/context_mount.c:1580
 #, c-format
 msgid "%s already mounted on %s"
 msgstr "%s 已挂载于 %s"
 
-#: libmount/src/context_mount.c:1551
+#: libmount/src/context_mount.c:1584
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s 已经挂载或挂载点忙"
 
-#: libmount/src/context_mount.c:1556
+#: libmount/src/context_mount.c:1589
 #, c-format
 msgid "mount point does not exist"
 msgstr "挂载点不存在"
 
-#: libmount/src/context_mount.c:1559
+#: libmount/src/context_mount.c:1592
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "挂载点是一个没有目标的符号链接"
 
-#: libmount/src/context_mount.c:1564
+#: libmount/src/context_mount.c:1597
 #, c-format
 msgid "special device %s does not exist"
 msgstr "特殊设备 %s 不存在"
 
-#: libmount/src/context_mount.c:1567 libmount/src/context_mount.c:1583
-#: libmount/src/context_mount.c:1667 libmount/src/context_mount.c:1690
+#: libmount/src/context_mount.c:1600 libmount/src/context_mount.c:1616
+#: libmount/src/context_mount.c:1700 libmount/src/context_mount.c:1723
 #, c-format
 msgid "mount(2) system call failed: %m"
 msgstr "mount(2) 系统调用失败：%m"
 
-#: libmount/src/context_mount.c:1579
+#: libmount/src/context_mount.c:1612
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "特殊设备 %s 不存在(路径前缀不是目录)"
 
-#: libmount/src/context_mount.c:1591
+#: libmount/src/context_mount.c:1624
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr "挂载点未挂载或选项有误"
 
-#: libmount/src/context_mount.c:1593
+#: libmount/src/context_mount.c:1626
 #, c-format
 msgid "not mount point or bad option"
 msgstr "不是一个挂载点或选项有误"
 
-#: libmount/src/context_mount.c:1596
+#: libmount/src/context_mount.c:1629
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr "选项错误；不支持移动位于共享挂载内的挂载"
 
-#: libmount/src/context_mount.c:1600
+#: libmount/src/context_mount.c:1633
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr "选项错误；对某些文件系统（如 nfs、cifs）您可能需要一款 /sbin/mount.<类型> 的帮助程序"
 
-#: libmount/src/context_mount.c:1604
+#: libmount/src/context_mount.c:1637
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr "文件系统类型错误、选项错误、%s 上有坏超级块、缺少代码页或帮助程序或其他错误"
 
-#: libmount/src/context_mount.c:1611
+#: libmount/src/context_mount.c:1644
 #, c-format
 msgid "mount table full"
 msgstr "挂载表满"
 
-#: libmount/src/context_mount.c:1616
+#: libmount/src/context_mount.c:1649
 #, c-format
 msgid "can't read superblock on %s"
 msgstr "无法读取 %s 上的超级块"
 
-#: libmount/src/context_mount.c:1623
+#: libmount/src/context_mount.c:1656
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "未知的文件系统类型“%s”"
 
-#: libmount/src/context_mount.c:1626
+#: libmount/src/context_mount.c:1659
 #, c-format
 msgid "unknown filesystem type"
 msgstr "未知的文件系统类型"
 
-#: libmount/src/context_mount.c:1635
+#: libmount/src/context_mount.c:1668
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s 不是块设备，而且 stat(2) 失败？"
 
-#: libmount/src/context_mount.c:1638
+#: libmount/src/context_mount.c:1671
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr "内核无法将 %s 识别为块设备；也许需要“modprobe driver”"
 
-#: libmount/src/context_mount.c:1641
+#: libmount/src/context_mount.c:1674
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s 不是块设备；请尝试“-o loop”"
 
-#: libmount/src/context_mount.c:1643
+#: libmount/src/context_mount.c:1676
 #, c-format
 msgid "%s is not a block device"
 msgstr "%s 不是一个块设备"
 
-#: libmount/src/context_mount.c:1650
+#: libmount/src/context_mount.c:1683
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s 不是一个有效的块设备"
 
-#: libmount/src/context_mount.c:1658
+#: libmount/src/context_mount.c:1691
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "无法以只读方式挂载 %s"
 
-#: libmount/src/context_mount.c:1660
+#: libmount/src/context_mount.c:1693
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s 是写保护的，但明确请求了读写模式"
 
-#: libmount/src/context_mount.c:1662
+#: libmount/src/context_mount.c:1695
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "无法以读写方式重新挂载 %s，它是写保护的"
 
-#: libmount/src/context_mount.c:1664
+#: libmount/src/context_mount.c:1697
 #, c-format
 msgid "bind %s failed"
 msgstr "绑定 %s 失败"
 
-#: libmount/src/context_mount.c:1675
+#: libmount/src/context_mount.c:1708
 #, c-format
 msgid "no medium found on %s"
 msgstr "在 %s 上找不到媒体"
 
-#: libmount/src/context_mount.c:1682
+#: libmount/src/context_mount.c:1715
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "无法挂载；%s 上的文件系统可能已损坏"
@@ -8479,73 +8479,73 @@ msgstr "用法：%s <密码文件> <用户名>...\n"
 msgid "unknown time format: %s"
 msgstr "未知时间格式: %s"
 
-#: login-utils/last.c:440 login-utils/last.c:451 login-utils/last.c:903
+#: login-utils/last.c:439 login-utils/last.c:450 login-utils/last.c:901
 msgid "preallocation size exceeded"
 msgstr "超过了预分配大小"
 
-#: login-utils/last.c:570
+#: login-utils/last.c:568
 #, c-format
 msgid " %s [options] [<username>...] [<tty>...]\n"
 msgstr " %s [选项] [<用户名>...] [<tty>...]\n"
 
-#: login-utils/last.c:573
+#: login-utils/last.c:571
 msgid "Show a listing of last logged in users.\n"
 msgstr "显示上次登录用户的列表。\n"
 
-#: login-utils/last.c:576
+#: login-utils/last.c:574
 msgid " -<number>            how many lines to show\n"
 msgstr " -<数字>              显示行数\n"
 
-#: login-utils/last.c:577
+#: login-utils/last.c:575
 msgid " -a, --hostlast       display hostnames in the last column\n"
 msgstr " -a, --hostlast       最后一列显示主机名\n"
 
-#: login-utils/last.c:578
+#: login-utils/last.c:576
 msgid " -d, --dns            translate the IP number back into a hostname\n"
 msgstr " -d, --dns            将 IP 号转换回主机名\n"
 
-#: login-utils/last.c:580
+#: login-utils/last.c:578
 #, c-format
 msgid " -f, --file <file>    use a specific file instead of %s\n"
 msgstr " -F, --file <文件>    用指定文件代替 %s\n"
 
-#: login-utils/last.c:581
+#: login-utils/last.c:579
 msgid " -F, --fulltimes      print full login and logout times and dates\n"
 msgstr " -F, --fulltimes      打印完整的登录和注销时间和日期\n"
 
-#: login-utils/last.c:582
+#: login-utils/last.c:580
 msgid " -i, --ip             display IP numbers in numbers-and-dots notation\n"
 msgstr " -i, --ip             以数字和点的形式显示 IP 号\n"
 
-#: login-utils/last.c:583
+#: login-utils/last.c:581
 msgid " -n, --limit <number> how many lines to show\n"
 msgstr " -n, --limit <数字>   要显示的行数\n"
 
-#: login-utils/last.c:584
+#: login-utils/last.c:582
 msgid " -R, --nohostname     don't display the hostname field\n"
 msgstr " -R, --nohostname     不显示主机名字段\n"
 
-#: login-utils/last.c:585
+#: login-utils/last.c:583
 msgid " -s, --since <time>   display the lines since the specified time\n"
 msgstr " -s, --since <时间>   显示从指定时间起的行\n"
 
-#: login-utils/last.c:586
+#: login-utils/last.c:584
 msgid " -t, --until <time>   display the lines until the specified time\n"
 msgstr " -t, --until <时间>   显示到指定时间为止的行\n"
 
-#: login-utils/last.c:587
+#: login-utils/last.c:585
 msgid " -p, --present <time> display who were present at the specified time\n"
 msgstr " -p, --present <时间> 显示在指定时间谁在场(present)\n"
 
-#: login-utils/last.c:588
+#: login-utils/last.c:586
 msgid " -w, --fullnames      display full user and domain names\n"
 msgstr " -w, --fullnames      显示完整的用户名和域名\n"
 
-#: login-utils/last.c:589
+#: login-utils/last.c:587
 msgid " -x, --system         display system shutdown entries and run level changes\n"
 msgstr " -x, --system         显示系统关机项和运行级别更改\n"
 
-#: login-utils/last.c:590
+#: login-utils/last.c:588
 msgid ""
 "     --time-format <format>  show timestamps in the specified <format>:\n"
 "                               notime|short|full|iso\n"
@@ -8553,7 +8553,7 @@ msgstr ""
 "     --time-format <格式>    以指定<格式>显示时间戳：\n"
 "                               notime|short|full|iso\n"
 
-#: login-utils/last.c:904
+#: login-utils/last.c:902
 #, fuzzy, c-format
 #| msgid ""
 #| "\n"
@@ -8565,13 +8565,13 @@ msgstr ""
 "\n"
 "%s 开始 %s"
 
-#: login-utils/last.c:1013 term-utils/scriptlive.c:85
+#: login-utils/last.c:1011 term-utils/scriptlive.c:85
 #: term-utils/scriptlive.c:89 term-utils/scriptreplay.c:80
 #: term-utils/scriptreplay.c:84 text-utils/more.c:285 text-utils/more.c:291
 msgid "failed to parse number"
 msgstr "解析数字失败"
 
-#: login-utils/last.c:1034 login-utils/last.c:1039 login-utils/last.c:1044
+#: login-utils/last.c:1032 login-utils/last.c:1037 login-utils/last.c:1042
 #: sys-utils/dmesg.c:1560 sys-utils/dmesg.c:1566 sys-utils/rtcwake.c:511
 #, c-format
 msgid "invalid time value \"%s\""
@@ -10424,7 +10424,7 @@ msgid "move"
 msgstr "移动"
 
 #: misc-utils/findmnt.c:927 misc-utils/findmnt.c:1205 sys-utils/eject.c:715
-#: sys-utils/mount.c:406
+#: sys-utils/mount.c:408
 msgid "failed to initialize libmount table"
 msgstr "初始化 libmount table 失败"
 
@@ -10435,8 +10435,8 @@ msgstr "不能读 %s"
 
 #: misc-utils/findmnt.c:1145 misc-utils/findmnt.c:1211
 #: misc-utils/findmnt-verify.c:101 misc-utils/findmnt-verify.c:529
-#: sys-utils/fstrim.c:329 sys-utils/mount.c:132 sys-utils/mount.c:180
-#: sys-utils/mount.c:247 sys-utils/swapoff.c:63 sys-utils/swapoff.c:173
+#: sys-utils/fstrim.c:329 sys-utils/mount.c:134 sys-utils/mount.c:182
+#: sys-utils/mount.c:249 sys-utils/swapoff.c:63 sys-utils/swapoff.c:173
 #: sys-utils/swapon.c:247 sys-utils/swapon.c:290 sys-utils/swapon.c:750
 #: sys-utils/umount.c:199
 msgid "failed to initialize libmount iterator"
@@ -12429,7 +12429,7 @@ msgid "user ID number of the process"
 msgstr "附加的进程数"
 
 #: misc-utils/lsfd.c:323
-msgid "filesystem pathname for UNIX doamin socketo"
+msgid "filesystem pathname for UNIX domain socket"
 msgstr ""
 
 #: misc-utils/lsfd.c:326
@@ -15249,7 +15249,7 @@ msgstr ""
 "\n"
 "支持的日志设施：\n"
 
-#: sys-utils/chmem.c:394 sys-utils/lscpu-cputype.c:872 sys-utils/lsmem.c:667
+#: sys-utils/chmem.c:394 sys-utils/lscpu-cputype.c:889 sys-utils/lsmem.c:667
 #, fuzzy, c-format
 #| msgid "%s: failed to initialize sysfs handler"
 msgid "failed to initialize %s handler"
@@ -18914,16 +18914,16 @@ msgstr "不支持的 --summary 参数"
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr "%s：--all、--online 和 --offline 选项只能与 --extended 或 --parse 选项一起使用。\n"
 
-#: sys-utils/lscpu-cputype.c:597
+#: sys-utils/lscpu-cputype.c:604
 msgid "error: uname failed"
 msgstr "错误：uname 失败"
 
-#: sys-utils/lscpu-cputype.c:694
+#: sys-utils/lscpu-cputype.c:711
 #, c-format
 msgid "failed to determine number of CPUs: %s"
 msgstr "确定 CPU 数 失败：%s"
 
-#: sys-utils/lscpu-cputype.c:897
+#: sys-utils/lscpu-cputype.c:914
 msgid "Failed to extract the node number"
 msgstr "提取节点号失败"
 
@@ -19578,41 +19578,41 @@ msgstr "权限不足"
 msgid "%s from %s (libmount %s"
 msgstr "%s，来自 %s(libmount %s"
 
-#: sys-utils/mount.c:128
+#: sys-utils/mount.c:130
 msgid "failed to read mtab"
 msgstr "读取 mtab 失败"
 
-#: sys-utils/mount.c:190 sys-utils/mount.c:257 sys-utils/umount.c:209
+#: sys-utils/mount.c:192 sys-utils/mount.c:259 sys-utils/umount.c:209
 #, c-format
 msgid "%-25s: ignored\n"
 msgstr "%-25s：已忽略\n"
 
-#: sys-utils/mount.c:191
+#: sys-utils/mount.c:193
 #, c-format
 msgid "%-25s: already mounted\n"
 msgstr "%-25s：已经挂载\n"
 
-#: sys-utils/mount.c:298
+#: sys-utils/mount.c:300
 #, c-format
 msgid "%s: %s moved to %s.\n"
 msgstr "%s：%s 已移到 %s。\n"
 
-#: sys-utils/mount.c:300
+#: sys-utils/mount.c:302
 #, c-format
 msgid "%s: %s bound on %s.\n"
 msgstr "%s：%s 已绑定到 %s 。\n"
 
-#: sys-utils/mount.c:303 sys-utils/mount.c:307
+#: sys-utils/mount.c:305 sys-utils/mount.c:309
 #, c-format
 msgid "%s: %s mounted on %s.\n"
 msgstr "%s：%s 已挂臷到 %s。\n"
 
-#: sys-utils/mount.c:305
+#: sys-utils/mount.c:307
 #, c-format
 msgid "%s: %s propagation flags changed.\n"
 msgstr "%s：%s 传播标志已更改。\n"
 
-#: sys-utils/mount.c:325
+#: sys-utils/mount.c:327
 #, fuzzy, c-format
 #| msgid ""
 #| "mount: %s does not contain SELinux labels.\n"
@@ -19632,34 +19632,34 @@ msgstr ""
 "       受限制的应用程序可能会生成 AVC 消息，并被阻止访问该文件系统。\n"
 "       更多详细信息请参阅 restorecon(8) 和 mount(8)。\n"
 
-#: sys-utils/mount.c:354
+#: sys-utils/mount.c:356
 #, c-format
 msgid ""
 "mount: (hint) your fstab has been modified, but systemd still uses\n"
 "       the old version; use 'systemctl daemon-reload' to reload.\n"
 msgstr ""
 
-#: sys-utils/mount.c:386
+#: sys-utils/mount.c:388
 #, c-format
 msgid "       dmesg(1) may have more information after failed mount system call.\n"
 msgstr ""
 
-#: sys-utils/mount.c:415
+#: sys-utils/mount.c:417
 #, c-format
 msgid "%s: failed to parse"
 msgstr "%s：解析失败"
 
-#: sys-utils/mount.c:457
+#: sys-utils/mount.c:459
 #, c-format
 msgid "unsupported option format: %s"
 msgstr "不支持的参数格式：%s"
 
-#: sys-utils/mount.c:463
+#: sys-utils/mount.c:465
 #, c-format
 msgid "failed to append option '%s'"
 msgstr "追加选项“%s”失败"
 
-#: sys-utils/mount.c:484
+#: sys-utils/mount.c:486
 #, c-format
 msgid ""
 " %1$s [-lhV]\n"
@@ -19674,61 +19674,61 @@ msgstr ""
 " %1$s [选项] <源> <目录>\n"
 " %1$s <操作> <挂载点> [<目标>]\n"
 
-#: sys-utils/mount.c:492
+#: sys-utils/mount.c:494
 msgid "Mount a filesystem.\n"
 msgstr "挂载文件系统。\n"
 
-#: sys-utils/mount.c:495
+#: sys-utils/mount.c:497
 #, fuzzy
 #| msgid " -a, --all               unmount all filesystems\n"
 msgid " -a, --all               mount all filesystems mentioned in fstab\n"
 msgstr " -a, --all               卸载所有文件系统\n"
 
-#: sys-utils/mount.c:496 sys-utils/umount.c:94
+#: sys-utils/mount.c:498 sys-utils/umount.c:94
 msgid " -c, --no-canonicalize   don't canonicalize paths\n"
 msgstr " -c, --no-canonicalize   不对路径规范化\n"
 
-#: sys-utils/mount.c:497
+#: sys-utils/mount.c:499
 #, fuzzy
 #| msgid "     --fake              dry run; skip the umount(2) syscall\n"
 msgid " -f, --fake              dry run; skip the mount(2) syscall\n"
 msgstr "     --fake              空运行；跳过 umount(2) 系统调用\n"
 
-#: sys-utils/mount.c:498
+#: sys-utils/mount.c:500
 #, fuzzy
 #| msgid " -f, --force            force hardlinking across filesystems"
 msgid " -F, --fork              fork off for each device (use with -a)\n"
 msgstr " -f, --force            强制跨文件系统进行硬链接"
 
-#: sys-utils/mount.c:499
+#: sys-utils/mount.c:501
 #, fuzzy
 #| msgid " -a, --all           trim all mounted filesystems that are supported\n"
 msgid " -T, --fstab <path>      alternative file to /etc/fstab\n"
 msgstr " -a, --all           修剪不支持的所有已挂载文件系统\n"
 
-#: sys-utils/mount.c:500
+#: sys-utils/mount.c:502
 msgid " -i, --internal-only     don't call the mount.<type> helpers\n"
 msgstr " -i, --internal-only     不调用 mount.<type> 辅助程序\n"
 
-#: sys-utils/mount.c:501
+#: sys-utils/mount.c:503
 msgid " -l, --show-labels       show also filesystem labels\n"
 msgstr " -l, --show-labels       也显示文件系统标签\n"
 
-#: sys-utils/mount.c:502
+#: sys-utils/mount.c:504
 msgid " -m, --mkdir[=<mode>]    alias to '-o X-mount.mkdir[=<mode>]'\n"
 msgstr ""
 
-#: sys-utils/mount.c:503 sys-utils/umount.c:99
+#: sys-utils/mount.c:505 sys-utils/umount.c:99
 msgid " -n, --no-mtab           don't write to /etc/mtab\n"
 msgstr " -n, --no-mtab           不写 /etc/mtab\n"
 
-#: sys-utils/mount.c:504
+#: sys-utils/mount.c:506
 msgid ""
 "     --options-mode <mode>\n"
 "                         what to do with options loaded from fstab\n"
 msgstr ""
 
-#: sys-utils/mount.c:506
+#: sys-utils/mount.c:508
 #, fuzzy
 #| msgid ""
 #| "     --propagation slave|shared|private|unchanged\n"
@@ -19740,39 +19740,39 @@ msgstr ""
 "     --propagation slave|shared|private|unchanged\n"
 "                           修改 mount 名字空间中的 mount 传播\n"
 
-#: sys-utils/mount.c:508
+#: sys-utils/mount.c:510
 msgid ""
 "     --options-source-force\n"
 "                         force use of options from fstab/mtab\n"
 msgstr ""
 
-#: sys-utils/mount.c:510
+#: sys-utils/mount.c:512
 #, fuzzy
 #| msgid " -P         check filesystems in parallel, including root\n"
 msgid "     --onlyonce          check if filesystem is already mounted\n"
 msgstr " -P         并行检查文件系统，包括 root\n"
 
-#: sys-utils/mount.c:511
+#: sys-utils/mount.c:513
 #, fuzzy
 #| msgid " -o, --options <list>     comma-separated list of swap options\n"
 msgid " -o, --options <list>    comma-separated list of mount options\n"
 msgstr " -o, --options <列表>     以英文逗号分隔的 swap 选项\n"
 
-#: sys-utils/mount.c:512 sys-utils/umount.c:101
+#: sys-utils/mount.c:514 sys-utils/umount.c:101
 msgid " -O, --test-opts <list>  limit the set of filesystems (use with -a)\n"
 msgstr " -O, --test-opts <列表>  限制文件系统集合(和 -a 选项一起使用)\n"
 
-#: sys-utils/mount.c:513
+#: sys-utils/mount.c:515
 #, fuzzy
 #| msgid " -r, --read-only          forced open cfdisk in read-only mode\n"
 msgid " -r, --read-only         mount the filesystem read-only (same as -o ro)\n"
 msgstr " -r, --read-only          强制以只读模式打开 cfdisk\n"
 
-#: sys-utils/mount.c:514 sys-utils/umount.c:104
+#: sys-utils/mount.c:516 sys-utils/umount.c:104
 msgid " -t, --types <list>      limit the set of filesystem types\n"
 msgstr " -t, --types <列表>      限制文件系统集合\n"
 
-#: sys-utils/mount.c:515
+#: sys-utils/mount.c:517
 #, fuzzy
 #| msgid ""
 #| "     --source <src>      explicitly specifies source (path, label, uuid)\n"
@@ -19782,7 +19782,7 @@ msgstr ""
 "     --source <源>       指明源(路径、标签、uuid)\n"
 "     --target <目标>     指明挂载点\n"
 
-#: sys-utils/mount.c:516
+#: sys-utils/mount.c:518
 #, fuzzy
 #| msgid ""
 #| "     --source <src>      explicitly specifies source (path, label, uuid)\n"
@@ -19792,7 +19792,7 @@ msgstr ""
 "     --source <源>       指明源(路径、标签、uuid)\n"
 "     --target <目标>     指明挂载点\n"
 
-#: sys-utils/mount.c:517
+#: sys-utils/mount.c:519
 #, fuzzy
 #| msgid " --default                         use default terminal settings\n"
 msgid ""
@@ -19800,79 +19800,79 @@ msgid ""
 "                         specifies path used for all mountpoints\n"
 msgstr " --default                         使用默认终端设置\n"
 
-#: sys-utils/mount.c:519 sys-utils/umount.c:105
+#: sys-utils/mount.c:521 sys-utils/umount.c:105
 msgid " -v, --verbose           say what is being done\n"
 msgstr " -v, --verbose           打印当前进行的操作\n"
 
-#: sys-utils/mount.c:520
+#: sys-utils/mount.c:522
 msgid " -w, --rw, --read-write  mount the filesystem read-write (default)\n"
 msgstr " -w, --rw, --read-write  以读写方式挂载文件系统(默认)\n"
 
-#: sys-utils/mount.c:521
+#: sys-utils/mount.c:523
 #, fuzzy
 #| msgid " -S, --setuid <uid>     set uid in entered namespace\n"
 msgid " -N, --namespace <ns>    perform mount in another namespace\n"
 msgstr " -S, --setuid <uid>     设置进入空间中的 uid\n"
 
-#: sys-utils/mount.c:527
+#: sys-utils/mount.c:529
 #, fuzzy
 #| msgid "Resource"
 msgid "Source:\n"
 msgstr "资源"
 
-#: sys-utils/mount.c:528
+#: sys-utils/mount.c:530
 #, fuzzy
 #| msgid " -s, --size <size>         device size\n"
 msgid " -L, --label <label>     synonym for LABEL=<label>\n"
 msgstr " -s, --size <尺寸>         设备尺寸\n"
 
-#: sys-utils/mount.c:529
+#: sys-utils/mount.c:531
 #, fuzzy
 #| msgid " -U, --uuid <uuid>          convert UUID to device name\n"
 msgid " -U, --uuid <uuid>       synonym for UUID=<uuid>\n"
 msgstr " -U, --uuid <uuid>          将 UUID 转换为设备名\n"
 
-#: sys-utils/mount.c:530
+#: sys-utils/mount.c:532
 #, fuzzy
 #| msgid " -L, --label LABEL         specify label\n"
 msgid " LABEL=<label>           specifies device by filesystem label\n"
 msgstr " -L, --label 标签          指定标签\n"
 
-#: sys-utils/mount.c:531
+#: sys-utils/mount.c:533
 msgid " UUID=<uuid>             specifies device by filesystem UUID\n"
 msgstr ""
 
-#: sys-utils/mount.c:532
+#: sys-utils/mount.c:534
 msgid " PARTLABEL=<label>       specifies device by partition label\n"
 msgstr ""
 
-#: sys-utils/mount.c:533
+#: sys-utils/mount.c:535
 msgid " PARTUUID=<uuid>         specifies device by partition UUID\n"
 msgstr ""
 
-#: sys-utils/mount.c:534
+#: sys-utils/mount.c:536
 #, fuzzy
 #| msgid " <dev>                     device (usually disk) path\n"
 msgid " ID=<id>                 specifies device by udev hardware ID\n"
 msgstr " <设备>                    设备(通常是磁盘)的路径\n"
 
-#: sys-utils/mount.c:535
+#: sys-utils/mount.c:537
 #, fuzzy
 #| msgid " <dev>                     device (usually disk) path\n"
 msgid " <device>                specifies device by path\n"
 msgstr " <设备>                    设备(通常是磁盘)的路径\n"
 
-#: sys-utils/mount.c:536
+#: sys-utils/mount.c:538
 msgid " <directory>             mountpoint for bind mounts (see --bind/rbind)\n"
 msgstr ""
 
-#: sys-utils/mount.c:537
+#: sys-utils/mount.c:539
 #, fuzzy
 #| msgid " -f, --file <file>    use a specific file instead of %s\n"
 msgid " <file>                  regular file for loopdev setup\n"
 msgstr " -F, --file <文件>    用指定文件代替 %s\n"
 
-#: sys-utils/mount.c:540
+#: sys-utils/mount.c:542
 #, fuzzy
 #| msgid ""
 #| "\n"
@@ -19882,81 +19882,81 @@ msgstr ""
 "\n"
 "选项：\n"
 
-#: sys-utils/mount.c:541
+#: sys-utils/mount.c:543
 #, fuzzy
 #| msgid " -c, --content          compare only contents, ignore permission, etc."
 msgid " -B, --bind              mount a subtree somewhere else (same as -o bind)\n"
 msgstr " -c, --content          只比较内容，忽略权限等其它信息"
 
-#: sys-utils/mount.c:542
+#: sys-utils/mount.c:544
 #, fuzzy
 #| msgid " -n, --net                 unshare network namespace\n"
 msgid " -M, --move              move a subtree to some other place\n"
 msgstr " -n, --net                 取消共享网络名字空间\n"
 
-#: sys-utils/mount.c:543
+#: sys-utils/mount.c:545
 #, fuzzy
 #| msgid " -m, --mount               unshare mounts namespace\n"
 msgid " -R, --rbind             mount a subtree and all submounts somewhere else\n"
 msgstr " -m, --mount               取消共享挂载名字空间\n"
 
-#: sys-utils/mount.c:544
+#: sys-utils/mount.c:546
 #, fuzzy
 #| msgid " -s, --shared             get a shared lock\n"
 msgid " --make-shared           mark a subtree as shared\n"
 msgstr " -s, --shared             获取共享锁\n"
 
-#: sys-utils/mount.c:545
+#: sys-utils/mount.c:547
 #, fuzzy
 #| msgid " -s, --shared             get a shared lock\n"
 msgid " --make-slave            mark a subtree as slave\n"
 msgstr " -s, --shared             获取共享锁\n"
 
-#: sys-utils/mount.c:546
+#: sys-utils/mount.c:548
 msgid " --make-private          mark a subtree as private\n"
 msgstr ""
 
-#: sys-utils/mount.c:547
+#: sys-utils/mount.c:549
 msgid " --make-unbindable       mark a subtree as unbindable\n"
 msgstr ""
 
-#: sys-utils/mount.c:548
+#: sys-utils/mount.c:550
 #, fuzzy
 #| msgid " -s, --shared             get a shared lock\n"
 msgid " --make-rshared          recursively mark a whole subtree as shared\n"
 msgstr " -s, --shared             获取共享锁\n"
 
-#: sys-utils/mount.c:549
+#: sys-utils/mount.c:551
 #, fuzzy
 #| msgid " -R, --recursive         recursively unmount a target with all its children\n"
 msgid " --make-rslave           recursively mark a whole subtree as slave\n"
 msgstr " -R, --recursive         递归卸载目录及其子对象\n"
 
-#: sys-utils/mount.c:550
+#: sys-utils/mount.c:552
 #, fuzzy
 #| msgid " -R, --recursive         recursively unmount a target with all its children\n"
 msgid " --make-rprivate         recursively mark a whole subtree as private\n"
 msgstr " -R, --recursive         递归卸载目录及其子对象\n"
 
-#: sys-utils/mount.c:551
+#: sys-utils/mount.c:553
 msgid " --make-runbindable      recursively mark a whole subtree as unbindable\n"
 msgstr ""
 
-#: sys-utils/mount.c:702 sys-utils/umount.c:520
+#: sys-utils/mount.c:704 sys-utils/umount.c:520
 msgid "libmount context allocation failed"
 msgstr "libmount 环境(context)分配失败"
 
-#: sys-utils/mount.c:764 sys-utils/umount.c:582
+#: sys-utils/mount.c:766 sys-utils/umount.c:582
 msgid "failed to set options pattern"
 msgstr "设置选项模式失败"
 
-#: sys-utils/mount.c:816 sys-utils/umount.c:599
+#: sys-utils/mount.c:818 sys-utils/umount.c:599
 #, fuzzy, c-format
 #| msgid "failed to set personality to %s"
 msgid "failed to set target namespace to %s"
 msgstr "无法将人格(personality)设置为 %s"
 
-#: sys-utils/mount.c:984
+#: sys-utils/mount.c:986
 msgid "source specified more than once"
 msgstr "源指定了多次"
 
@@ -20099,11 +20099,11 @@ msgstr " -Z, --follow-context  根据 --target PID 设置 SELinux 环境\n"
 msgid "neither filename nor target pid supplied for %s"
 msgstr "没有为 %s 提供文件名或目标 pid"
 
-#: sys-utils/nsenter.c:351 sys-utils/unshare.c:828 sys-utils/unshare.c:884
+#: sys-utils/nsenter.c:353 sys-utils/unshare.c:828 sys-utils/unshare.c:884
 msgid "failed to parse uid"
 msgstr "解析 uid 失败"
 
-#: sys-utils/nsenter.c:358 sys-utils/unshare.c:832 sys-utils/unshare.c:888
+#: sys-utils/nsenter.c:360 sys-utils/unshare.c:832 sys-utils/unshare.c:888
 msgid "failed to parse gid"
 msgstr "解析 gid 失败"
 
@@ -21029,51 +21029,51 @@ msgstr "     --list               列出可设置的架构并退出\n"
 msgid "     --show[=personality] show current or specific personality and exit\n"
 msgstr ""
 
-#: sys-utils/setarch.c:337
+#: sys-utils/setarch.c:341
 #, c-format
 msgid "Kernel cannot set architecture to %s"
 msgstr "内核不能设置为 %s 的架构"
 
-#: sys-utils/setarch.c:402
+#: sys-utils/setarch.c:406
 msgid "Can not get current kernel personality"
 msgstr ""
 
-#: sys-utils/setarch.c:455
+#: sys-utils/setarch.c:459
 msgid "Not enough arguments"
 msgstr "参数不够"
 
-#: sys-utils/setarch.c:523
+#: sys-utils/setarch.c:527
 msgid "unrecognized option '--list'"
 msgstr "无法识别的“--list”选项"
 
-#: sys-utils/setarch.c:532
+#: sys-utils/setarch.c:536
 #, fuzzy
 #| msgid "mount ID"
 msgid "could not parse personality"
 msgstr "挂载 ID"
 
-#: sys-utils/setarch.c:536
+#: sys-utils/setarch.c:540
 #, fuzzy
 #| msgid "unrecognized option '--list'"
 msgid "unrecognized option '--show'"
 msgstr "无法识别的“--list”选项"
 
-#: sys-utils/setarch.c:550
+#: sys-utils/setarch.c:554
 #, fuzzy
 msgid "no architecture argument or personality flags specified"
 msgstr "未指定架构参数"
 
-#: sys-utils/setarch.c:562
+#: sys-utils/setarch.c:566
 #, c-format
 msgid "%s: Unrecognized architecture"
 msgstr "%s：未识别的架构"
 
-#: sys-utils/setarch.c:580
+#: sys-utils/setarch.c:584
 #, c-format
 msgid "failed to set personality to %s"
 msgstr "无法将人格(personality)设置为 %s"
 
-#: sys-utils/setarch.c:592
+#: sys-utils/setarch.c:596
 #, c-format
 msgid "Execute command `%s'.\n"
 msgstr "执行命令“%s”。\n"
@@ -23864,16 +23864,16 @@ msgstr "--nobanner 只有 root 能用"
 msgid "invalid timeout argument: %s"
 msgstr "无效的超时参数：%s"
 
-#: term-utils/wall.c:361
+#: term-utils/wall.c:293
 msgid "cannot get passwd uid"
 msgstr "无法获取 passwd uid"
 
-#: term-utils/wall.c:385
+#: term-utils/wall.c:317
 #, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "来自 %s@%s (%s) (%s) 的广播消息："
 
-#: term-utils/wall.c:417
+#: term-utils/wall.c:349
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr "将不读 %s - 使用 stdin。"
@@ -23911,30 +23911,30 @@ msgstr "%s 禁用了消息"
 msgid "%s is logged in more than once; writing to %s"
 msgstr "%s 登录了多次；将记入 %s"
 
-#: term-utils/write.c:237
-msgid "carefulputc failed"
-msgstr "carefulputc 失败"
-
-#: term-utils/write.c:279
+#: term-utils/write.c:265
 #, c-format
 msgid "Message from %s@%s (as %s) on %s at %02d:%02d ..."
 msgstr "%s@%s (作为 %s) 于 %s 在 %02d:%02d 发的消息..."
 
-#: term-utils/write.c:283
+#: term-utils/write.c:269
 #, c-format
 msgid "Message from %s@%s on %s at %02d:%02d ..."
 msgstr "%s@%s 于 %s 在 %02d:%02d 发的消息..."
 
-#: term-utils/write.c:329
+#: term-utils/write.c:280
+msgid "carefulputc failed"
+msgstr "carefulputc 失败"
+
+#: term-utils/write.c:318
 msgid "you have write permission turned off"
 msgstr "您关闭了写权限"
 
-#: term-utils/write.c:352
+#: term-utils/write.c:341
 #, c-format
 msgid "%s is not logged in on %s"
 msgstr "%s 未在 %s 上登录"
 
-#: term-utils/write.c:358
+#: term-utils/write.c:347
 #, c-format
 msgid "%s has messages disabled on %s"
 msgstr "%s 在 %s 上禁用了消息"
@@ -24333,7 +24333,7 @@ msgstr "格式损坏 {%s}"
 msgid "bad conversion character %%%s"
 msgstr "转换字符 %%%s 有误"
 
-#: text-utils/hexdump-parse.c:438
+#: text-utils/hexdump-parse.c:440
 msgid "byte count with multiple conversion characters"
 msgstr "对字符计数使用了多个转换字符"
 

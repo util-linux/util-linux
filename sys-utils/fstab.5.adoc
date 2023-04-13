@@ -62,7 +62,7 @@ LABEL=t-home2   /home      ext4    defaults,auto_da_alloc      0  2
 
 === The first field (_fs_spec_).
 
-This field describes the block special device, remote filesystem or filesystem image for loop device to be mounted or swap file or swap partition to be enabled.
+This field describes the block special device, remote filesystem or filesystem image for loop device to be mounted or swap file or swap device to be enabled.
 
 For ordinary mounts, it will hold (a link to) a block special device node (as created by *mknod*(2)) for the device to be mounted, like _/dev/cdrom_ or _/dev/sdb7_. For NFS mounts, this field is _<host>:<dir>_, e.g., _knuth.aeb.nl:/_. For filesystems with no storage, any string can be used, and will show up in *df*(1) output, for example. Typical usage is _proc_ for *procfs*; _mem_, _none_, or _tmpfs_ for *tmpfs*. Other special filesystems, like *udev* and *sysfs*, are typically not listed in *fstab*.
 
@@ -76,7 +76,7 @@ Note that *mount*(8) uses UUIDs as strings. The string representation of the UUI
 
 === The second field (_fs_file_).
 
-This field describes the mount point (target) for the filesystem. For swap partitions, this field should be specified as `none'. If the name of the mount point contains spaces or tabs these can be escaped as `\040' and '\011' respectively.
+This field describes the mount point (target) for the filesystem. For swap area, this field should be specified as `none'. If the name of the mount point contains spaces or tabs these can be escaped as `\040' and '\011' respectively.
 
 === The third field (_fs_vfstype_).
 
@@ -92,12 +92,14 @@ More than one type may be specified in a comma-separated list.
 
 This field describes the mount options associated with the filesystem.
 
-It is formatted as a comma-separated list of options. It contains at least the type of mount (*ro* or *rw*), plus any additional options appropriate to the filesystem type (including performance-tuning options). For details, see *mount*(8) or *swapon*(8).
+It is formatted as a comma-separated list of options and is optional for *mount*(8) or *swapon*(8). The usual convention is to use at least "defaults" keyword there.
+
+It usually contains the type of mount (*ro* or *rw*, the default is *rw*), plus any additional options appropriate to the filesystem type (including performance-tuning options). For details, see *mount*(8) or *swapon*(8).
 
 Basic filesystem-independent options are:
 
 *defaults*::
-use default options: rw, suid, dev, exec, auto, nouser, and async.
+use default options. The default depends on the kernel and the filesystem. *mount*(8) does not have any hardcoded set of default options. The kernel default is usually rw, suid, dev, exec, auto, nouser, and async.
 *noauto*::
 do not mount when *mount -a* is given (e.g., at boot time)
 *user*::

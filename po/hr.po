@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.38-rc4\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-03-09 13:37+0100\n"
+"POT-Creation-Date: 2023-04-04 14:02+0200\n"
 "PO-Revision-Date: 2022-11-06 17:37-0800\n"
 "Last-Translator: Božidar Putanec <bozidarp@yahoo.com>\n"
 "Language-Team: Croatian <lokalizacija@linux.hr>\n"
@@ -56,7 +56,7 @@ msgstr "nema dovoljno argumenata"
 #: disk-utils/mkswap.c:347 disk-utils/mkswap.c:377 disk-utils/partx.c:1022
 #: disk-utils/resizepart.c:104 disk-utils/sfdisk.c:381 disk-utils/sfdisk.c:502
 #: disk-utils/sfdisk.c:814 disk-utils/sfdisk.c:1118 disk-utils/swaplabel.c:65
-#: libfdisk/src/bsd.c:642 login-utils/islocal.c:86 login-utils/last.c:685
+#: libfdisk/src/bsd.c:642 login-utils/islocal.c:86 login-utils/last.c:683
 #: login-utils/sulogin.c:497 login-utils/sulogin.c:534
 #: login-utils/utmpdump.c:142 login-utils/utmpdump.c:367
 #: login-utils/utmpdump.c:391 login-utils/vipw.c:257 login-utils/vipw.c:275
@@ -69,7 +69,7 @@ msgstr "nema dovoljno argumenata"
 #: sys-utils/hwclock-rtc.c:438 sys-utils/hwclock-rtc.c:474
 #: sys-utils/hwclock-rtc.c:528 sys-utils/hwclock-rtc.c:581
 #: sys-utils/irq-common.c:263 sys-utils/ldattach.c:392
-#: sys-utils/lscpu-cputype.c:470 sys-utils/lsmem.c:671 sys-utils/nsenter.c:139
+#: sys-utils/lscpu-cputype.c:477 sys-utils/lsmem.c:671 sys-utils/nsenter.c:139
 #: sys-utils/rfkill.c:195 sys-utils/rtcwake.c:137 sys-utils/rtcwake.c:292
 #: sys-utils/setpriv.c:256 sys-utils/setpriv.c:622 sys-utils/setpriv.c:645
 #: sys-utils/swapon.c:382 sys-utils/swapon.c:525 sys-utils/switch_root.c:174
@@ -79,7 +79,7 @@ msgstr "nema dovoljno argumenata"
 #: term-utils/scriptlive.c:259 term-utils/scriptlive.c:262
 #: term-utils/scriptreplay.c:281 term-utils/scriptreplay.c:284
 #: term-utils/scriptreplay.c:287 term-utils/scriptreplay.c:290
-#: term-utils/wall.c:421 text-utils/colcrt.c:284 text-utils/more.c:459
+#: term-utils/wall.c:353 text-utils/colcrt.c:284 text-utils/more.c:459
 #: text-utils/rev.c:165 text-utils/ul.c:637
 #, c-format
 msgid "cannot open %s"
@@ -827,7 +827,7 @@ msgstr "nevaljani argument - repair"
 #: disk-utils/mkfs.bfs.c:198 disk-utils/mkfs.cramfs.c:341
 #: disk-utils/mkfs.cramfs.c:763 disk-utils/mkfs.cramfs.c:809
 #: disk-utils/mkfs.minix.c:835 disk-utils/mkswap.c:374 disk-utils/partx.c:959
-#: login-utils/last.c:699 login-utils/utmpdump.c:145 misc-utils/namei.c:146
+#: login-utils/last.c:697 login-utils/utmpdump.c:145 misc-utils/namei.c:146
 #: misc-utils/rename.c:164 misc-utils/rename.c:229 sys-utils/blkdiscard.c:251
 #: sys-utils/blkzone.c:147 sys-utils/dmesg.c:543 sys-utils/fallocate.c:201
 #: sys-utils/fsfreeze.c:119 sys-utils/fstrim.c:78 sys-utils/nsenter.c:187
@@ -1169,9 +1169,9 @@ msgstr ""
 #: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:207
 #: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1579
 #: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
-#: sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656 sys-utils/mount.c:865
-#: sys-utils/mount.c:873 sys-utils/mount.c:922 sys-utils/mount.c:935
-#: sys-utils/mount.c:1007 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
+#: sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656 sys-utils/mount.c:867
+#: sys-utils/mount.c:875 sys-utils/mount.c:924 sys-utils/mount.c:937
+#: sys-utils/mount.c:1009 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
 #: sys-utils/swapoff.c:258 sys-utils/swapon.c:1011 sys-utils/switch_root.c:270
 #: sys-utils/umount.c:629 term-utils/setterm.c:1197 text-utils/col.c:584
 #: text-utils/more.c:2096
@@ -1259,7 +1259,7 @@ msgstr "nije uspjelo rezervirati memoriju za iterator"
 
 #: disk-utils/fdisk-list.c:126 disk-utils/fdisk-list.c:247
 #: disk-utils/partx.c:669 login-utils/lslogins.c:1113 misc-utils/fincore.c:356
-#: misc-utils/findmnt.c:1763 misc-utils/lsblk.c:2351 misc-utils/lsfd.c:1968
+#: misc-utils/findmnt.c:1763 misc-utils/lsblk.c:2351 misc-utils/lsfd.c:1970
 #: misc-utils/lslocks.c:472 misc-utils/uuidparse.c:252 misc-utils/wipefs.c:157
 #: sys-utils/losetup.c:325 sys-utils/lscpu.c:604 sys-utils/lscpu.c:759
 #: sys-utils/lscpu.c:970 sys-utils/lsipc.c:354 sys-utils/prlimit.c:311
@@ -3915,7 +3915,7 @@ msgstr[1] "#%2d: %9ju-%9ju (%9ju sektora, %6ju MB)\n"
 msgstr[2] "#%2d: %9ju-%9ju (%9ju sektora, %6ju MB)\n"
 
 #: disk-utils/partx.c:680 misc-utils/fincore.c:370 misc-utils/findmnt.c:1792
-#: misc-utils/lsblk.c:2395 misc-utils/lsfd.c:532 misc-utils/lsfd.c:1982
+#: misc-utils/lsblk.c:2395 misc-utils/lsfd.c:532 misc-utils/lsfd.c:1984
 #: misc-utils/lslocks.c:487 sys-utils/losetup.c:339 sys-utils/lscpu.c:616
 #: sys-utils/lscpu.c:772 sys-utils/prlimit.c:320 sys-utils/rfkill.c:487
 #: sys-utils/swapon.c:305 sys-utils/wdctl.c:360
@@ -7822,310 +7822,310 @@ msgstr "tihi prijavni status: nije uspjelo vratiti originalni ID"
 msgid "operation failed: %m"
 msgstr "operacija nije uspjela: %m"
 
-#: libmount/src/context_mount.c:1371
+#: libmount/src/context_mount.c:1404
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "UPOZORENJE: nije uspjelo primijeniti propagacijske flagove"
 
-#: libmount/src/context_mount.c:1381
+#: libmount/src/context_mount.c:1414
 #, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "UPOZORENJE: uređaj je zaštićen od pisanja; montiramo ga samo-za-čitanje"
 
-#: libmount/src/context_mount.c:1395
+#: libmount/src/context_mount.c:1428
 #, c-format
 msgid "operation permitted for root only"
 msgstr "samo root može koristiti ovu operaciju"
 
-#: libmount/src/context_mount.c:1399
+#: libmount/src/context_mount.c:1432
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s je već montiran"
 
-#: libmount/src/context_mount.c:1405
+#: libmount/src/context_mount.c:1438
 #, c-format
 msgid "can't find in %s"
 msgstr "nije moguće naći u %s"
 
-#: libmount/src/context_mount.c:1408
+#: libmount/src/context_mount.c:1441
 #, c-format
 msgid "can't find mount point in %s"
 msgstr "nije moguće naći točku montiranja u %s"
 
-#: libmount/src/context_mount.c:1411
+#: libmount/src/context_mount.c:1444
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "nije moguće naći izvor montiranja %s u %s"
 
-#: libmount/src/context_mount.c:1416
+#: libmount/src/context_mount.c:1449
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr "na %s je pronađeno nekoliko datotečnih sustava; rabite -t <tip> ili wipefs(8)"
 
-#: libmount/src/context_mount.c:1421
+#: libmount/src/context_mount.c:1454
 #, c-format
 msgid "failed to determine filesystem type"
 msgstr "nije uspjelo odrediti tip datotečnog sustava"
 
-#: libmount/src/context_mount.c:1422
+#: libmount/src/context_mount.c:1455
 #, fuzzy, c-format
 #| msgid "no filesystem type specified"
 msgid "no valid filesystem type specified"
 msgstr "ni jedan datotečni sustav nije specificiran"
 
-#: libmount/src/context_mount.c:1429
+#: libmount/src/context_mount.c:1462
 #, c-format
 msgid "can't find %s"
 msgstr "nije moguće naći %s"
 
-#: libmount/src/context_mount.c:1431
+#: libmount/src/context_mount.c:1464
 #, c-format
 msgid "no mount source specified"
 msgstr "ni jedan izvor montiranja nije specificiran"
 
-#: libmount/src/context_mount.c:1442
+#: libmount/src/context_mount.c:1475
 #, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr "nije uspjelo raščlaniti opcije „%s“ za montiranje: %m"
 
-#: libmount/src/context_mount.c:1443
+#: libmount/src/context_mount.c:1476
 #, c-format
 msgid "failed to parse mount options '%s'"
 msgstr "nije uspjelo raščlaniti opcije „%s“ za montiranje"
 
-#: libmount/src/context_mount.c:1446
+#: libmount/src/context_mount.c:1479
 #, c-format
 msgid "failed to parse mount options: %m"
 msgstr "nije uspjelo raščlaniti opcije za montiranje: %m"
 
-#: libmount/src/context_mount.c:1447
+#: libmount/src/context_mount.c:1480
 #, c-format
 msgid "failed to parse mount options"
 msgstr "nije uspjelo raščlaniti opcije za montiranje"
 
-#: libmount/src/context_mount.c:1452
+#: libmount/src/context_mount.c:1485
 #, c-format
 msgid "failed to setup loop device for %s"
 msgstr "nije uspjelo postaviti loop uređaj za %s"
 
-#: libmount/src/context_mount.c:1456
+#: libmount/src/context_mount.c:1489
 #, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "za %s postoji preklapajući loop-uređaj"
 
-#: libmount/src/context_mount.c:1460 libmount/src/context_umount.c:1263
+#: libmount/src/context_mount.c:1493 libmount/src/context_umount.c:1263
 #, c-format
 msgid "locking failed"
 msgstr "zaključavanje nije uspjelo"
 
-#: libmount/src/context_mount.c:1464 libmount/src/context_umount.c:1269
+#: libmount/src/context_mount.c:1497 libmount/src/context_umount.c:1269
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, c-format
 msgid "failed to switch namespace"
 msgstr "nije uspjelo zamijeniti imenski prostor"
 
-#: libmount/src/context_mount.c:1468
+#: libmount/src/context_mount.c:1501
 #, fuzzy, c-format
 #| msgid "%s is already mounted"
 msgid "filesystem already mounted"
 msgstr "%s je već montiran"
 
-#: libmount/src/context_mount.c:1471
+#: libmount/src/context_mount.c:1504
 #, c-format
 msgid "mount failed: %m"
 msgstr "montiranje nije uspjelo: %m"
 
-#: libmount/src/context_mount.c:1481
+#: libmount/src/context_mount.c:1514
 #, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr ""
 "datotečni sustav je montiran, ali ažurirati tablicu montiranja u korisničkom\n"
 "prostoru nije uspjelo"
 
-#: libmount/src/context_mount.c:1487
+#: libmount/src/context_mount.c:1520
 #, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "datotečni sustav je montiran, ali povratak u imenski prostor nije uspio"
 
-#: libmount/src/context_mount.c:1493
+#: libmount/src/context_mount.c:1526
 #, fuzzy, c-format
 #| msgid "filesystem was mounted, but failed to switch namespace back"
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "datotečni sustav je montiran, ali povratak u imenski prostor nije uspio"
 
-#: libmount/src/context_mount.c:1499
+#: libmount/src/context_mount.c:1532
 #, fuzzy, c-format
 #| msgid "filesystem was mounted, but failed to switch namespace back"
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "datotečni sustav je montiran, ali povratak u imenski prostor nije uspio"
 
-#: libmount/src/context_mount.c:1505
+#: libmount/src/context_mount.c:1538
 #, fuzzy, c-format
 #| msgid "filesystem was mounted, but failed to switch namespace back"
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "datotečni sustav je montiran, ali povratak u imenski prostor nije uspio"
 
-#: libmount/src/context_mount.c:1511
+#: libmount/src/context_mount.c:1544
 #, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "datotečni sustav je montiran, ali sljedeća operacija nije uspjela: %m"
 
-#: libmount/src/context_mount.c:1529 libmount/src/context_mount.c:1574
+#: libmount/src/context_mount.c:1562 libmount/src/context_mount.c:1607
 #, c-format
 msgid "mount point is not a directory"
 msgstr "točka montiranja nije direktorij"
 
-#: libmount/src/context_mount.c:1531 login-utils/newgrp.c:228
+#: libmount/src/context_mount.c:1564 login-utils/newgrp.c:228
 #, c-format
 msgid "permission denied"
 msgstr "pristup je odbijen"
 
-#: libmount/src/context_mount.c:1533
+#: libmount/src/context_mount.c:1566
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "za koristiti mount morate biti superuser (root)"
 
-#: libmount/src/context_mount.c:1540
+#: libmount/src/context_mount.c:1573
 #, c-format
 msgid "mount point is busy"
 msgstr "točka montiranja je zauzeta"
 
-#: libmount/src/context_mount.c:1547
+#: libmount/src/context_mount.c:1580
 #, c-format
 msgid "%s already mounted on %s"
 msgstr "%s je već montiran na %s"
 
-#: libmount/src/context_mount.c:1551
+#: libmount/src/context_mount.c:1584
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s je već montiran ili je točka montiranja zauzeta"
 
-#: libmount/src/context_mount.c:1556
+#: libmount/src/context_mount.c:1589
 #, c-format
 msgid "mount point does not exist"
 msgstr "točka montiranja ne postoji"
 
-#: libmount/src/context_mount.c:1559
+#: libmount/src/context_mount.c:1592
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "točka montiranja je simbolička poveznica u „nikuda“"
 
-#: libmount/src/context_mount.c:1564
+#: libmount/src/context_mount.c:1597
 #, c-format
 msgid "special device %s does not exist"
 msgstr "specijalni uređaj %s ne postoji"
 
-#: libmount/src/context_mount.c:1567 libmount/src/context_mount.c:1583
-#: libmount/src/context_mount.c:1667 libmount/src/context_mount.c:1690
+#: libmount/src/context_mount.c:1600 libmount/src/context_mount.c:1616
+#: libmount/src/context_mount.c:1700 libmount/src/context_mount.c:1723
 #, c-format
 msgid "mount(2) system call failed: %m"
 msgstr "sustavski poziv mount(2) nije uspio: %m"
 
-#: libmount/src/context_mount.c:1579
+#: libmount/src/context_mount.c:1612
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "specijalni uređaj %s ne postoji (prefiks staze nije direktorij)"
 
-#: libmount/src/context_mount.c:1591
+#: libmount/src/context_mount.c:1624
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr "točka montiranja nije montirana ili je dana loša opcija"
 
-#: libmount/src/context_mount.c:1593
+#: libmount/src/context_mount.c:1626
 #, c-format
 msgid "not mount point or bad option"
 msgstr "nije točka montiranja ili je opcija loša"
 
-#: libmount/src/context_mount.c:1596
+#: libmount/src/context_mount.c:1629
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr "loša opcija; nije podržano premještanje montiranja ispod dijeljenog montiranja"
 
-#: libmount/src/context_mount.c:1600
+#: libmount/src/context_mount.c:1633
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 "loša opcija; za nekoliko datotečnih sustava (npr. nfs, cifs) možda će vam\n"
 "zatrebati pomoćni program /sbin/mount.<tip>"
 
-#: libmount/src/context_mount.c:1604
+#: libmount/src/context_mount.c:1637
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr ""
 "krivi datotečni sustav / loša opcija / oštećeni superblok na %s,\n"
 "manjka codepage ili pomoćni program ili neka druga greška"
 
-#: libmount/src/context_mount.c:1611
+#: libmount/src/context_mount.c:1644
 #, c-format
 msgid "mount table full"
 msgstr "tablica montiranja je popunjena"
 
-#: libmount/src/context_mount.c:1616
+#: libmount/src/context_mount.c:1649
 #, c-format
 msgid "can't read superblock on %s"
 msgstr "nije moguće pročitati superblok na %s"
 
-#: libmount/src/context_mount.c:1623
+#: libmount/src/context_mount.c:1656
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "nepoznati tip datotečnog sustava „%s“"
 
-#: libmount/src/context_mount.c:1626
+#: libmount/src/context_mount.c:1659
 #, c-format
 msgid "unknown filesystem type"
 msgstr "nepoznati tip datotečnog sustava"
 
-#: libmount/src/context_mount.c:1635
+#: libmount/src/context_mount.c:1668
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s nije blok-uređaj, a poziv stat(2) nije uspješan?"
 
-#: libmount/src/context_mount.c:1638
+#: libmount/src/context_mount.c:1671
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr "jezgra (kernel) ne prepoznaje %s kao blok-uređaj; možda je potrebno izvršiti „modprobe driver“"
 
-#: libmount/src/context_mount.c:1641
+#: libmount/src/context_mount.c:1674
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s nije blok-uređaj; probajte s „-o loop“"
 
-#: libmount/src/context_mount.c:1643
+#: libmount/src/context_mount.c:1676
 #, c-format
 msgid "%s is not a block device"
 msgstr "%s: nije blok-uređaj"
 
-#: libmount/src/context_mount.c:1650
+#: libmount/src/context_mount.c:1683
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s nije valjani blok-uređaj"
 
-#: libmount/src/context_mount.c:1658
+#: libmount/src/context_mount.c:1691
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "nije moguće montirati %s sprzątanie później"
 
-#: libmount/src/context_mount.c:1660
+#: libmount/src/context_mount.c:1693
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s je zaštićen od pisanja, a eksplicitno je zatražen način za čitanje i pisanje"
 
-#: libmount/src/context_mount.c:1662
+#: libmount/src/context_mount.c:1695
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "nije moguće remontirati %s za čitanje i pisanje jer je zaštićen od pisanja"
 
-#: libmount/src/context_mount.c:1664
+#: libmount/src/context_mount.c:1697
 #, c-format
 msgid "bind %s failed"
 msgstr "vezanje %s nije uspjelo"
 
-#: libmount/src/context_mount.c:1675
+#: libmount/src/context_mount.c:1708
 #, c-format
 msgid "no medium found on %s"
 msgstr "ni jedan medij nije nađen na %s"
 
-#: libmount/src/context_mount.c:1682
+#: libmount/src/context_mount.c:1715
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "nije moguće montirati; datotečni sustav na %s je vjerojatno oštećen"
@@ -8479,73 +8479,73 @@ msgstr "Uporaba: %s <datoteka_s_lozinkama> <ime_korisnika>...\n"
 msgid "unknown time format: %s"
 msgstr "nepoznati format za vrijeme: %s"
 
-#: login-utils/last.c:440 login-utils/last.c:451 login-utils/last.c:903
+#: login-utils/last.c:439 login-utils/last.c:450 login-utils/last.c:901
 msgid "preallocation size exceeded"
 msgstr "rezervirana veličina je prekoračena"
 
-#: login-utils/last.c:570
+#: login-utils/last.c:568
 #, c-format
 msgid " %s [options] [<username>...] [<tty>...]\n"
 msgstr " %s [opcije] [<ime_korisnika>...] [<tty>...]\n"
 
-#: login-utils/last.c:573
+#: login-utils/last.c:571
 msgid "Show a listing of last logged in users.\n"
 msgstr "Popis posljednjih prijavljenih korisnika.\n"
 
-#: login-utils/last.c:576
+#: login-utils/last.c:574
 msgid " -<number>            how many lines to show\n"
 msgstr " -<broj>              ispiše toliki (broj) redaka\n"
 
-#: login-utils/last.c:577
+#: login-utils/last.c:575
 msgid " -a, --hostlast       display hostnames in the last column\n"
 msgstr " -a, --hostlast       hostname (računalo) pokaže u zadnjem stupcu\n"
 
-#: login-utils/last.c:578
+#: login-utils/last.c:576
 msgid " -d, --dns            translate the IP number back into a hostname\n"
 msgstr " -d, --dns            prevede IP broj opet u hostname\n"
 
-#: login-utils/last.c:580
+#: login-utils/last.c:578
 #, c-format
 msgid " -f, --file <file>    use a specific file instead of %s\n"
 msgstr " -f, --file <datoteka>  rabi tu datoteku umjesto %s\n"
 
-#: login-utils/last.c:581
+#: login-utils/last.c:579
 msgid " -F, --fulltimes      print full login and logout times and dates\n"
 msgstr " -F, --fulltimes      ispiše potpuna vremena i datume prijava i odjava\n"
 
-#: login-utils/last.c:582
+#: login-utils/last.c:580
 msgid " -i, --ip             display IP numbers in numbers-and-dots notation\n"
 msgstr " -i, --ip             IP brojeve pokaže u broj-točka notaciji\n"
 
-#: login-utils/last.c:583
+#: login-utils/last.c:581
 msgid " -n, --limit <number> how many lines to show\n"
 msgstr " -n, --limit <broj>   ispiše toliki (broj) redaka\n"
 
-#: login-utils/last.c:584
+#: login-utils/last.c:582
 msgid " -R, --nohostname     don't display the hostname field\n"
 msgstr " -R, --nohostname     ne pokaže polje hostname\n"
 
-#: login-utils/last.c:585
+#: login-utils/last.c:583
 msgid " -s, --since <time>   display the lines since the specified time\n"
 msgstr " -s, --since <vrijeme>  ispiše retke nakon ovog <vremena>\n"
 
-#: login-utils/last.c:586
+#: login-utils/last.c:584
 msgid " -t, --until <time>   display the lines until the specified time\n"
 msgstr " -t, --until <vrijeme>  ispiše retke do ovog <vremena>\n"
 
-#: login-utils/last.c:587
+#: login-utils/last.c:585
 msgid " -p, --present <time> display who were present at the specified time\n"
 msgstr " -p, --present <vrijeme>  pokaže prijavljene korisnike u to <vrijeme>\n"
 
-#: login-utils/last.c:588
+#: login-utils/last.c:586
 msgid " -w, --fullnames      display full user and domain names\n"
 msgstr " -w, --fullnames      ispiše puna imena korisnika i domena\n"
 
-#: login-utils/last.c:589
+#: login-utils/last.c:587
 msgid " -x, --system         display system shutdown entries and run level changes\n"
 msgstr " -x, --system         isključivanja sustava i promjene u „runlevel“ razini\n"
 
-#: login-utils/last.c:590
+#: login-utils/last.c:588
 msgid ""
 "     --time-format <format>  show timestamps in the specified <format>:\n"
 "                               notime|short|full|iso\n"
@@ -8553,7 +8553,7 @@ msgstr ""
 "     --time-format <format>  vremenske žigove pokaže u danom <formatu>\n"
 "                               format je jedan od: notime, short, full ili iso\n"
 
-#: login-utils/last.c:904
+#: login-utils/last.c:902
 #, c-format
 msgid ""
 "\n"
@@ -8562,13 +8562,13 @@ msgstr ""
 "\n"
 "%s počinje %s\n"
 
-#: login-utils/last.c:1013 term-utils/scriptlive.c:85
+#: login-utils/last.c:1011 term-utils/scriptlive.c:85
 #: term-utils/scriptlive.c:89 term-utils/scriptreplay.c:80
 #: term-utils/scriptreplay.c:84 text-utils/more.c:285 text-utils/more.c:291
 msgid "failed to parse number"
 msgstr "nije uspjelo razabrati broj"
 
-#: login-utils/last.c:1034 login-utils/last.c:1039 login-utils/last.c:1044
+#: login-utils/last.c:1032 login-utils/last.c:1037 login-utils/last.c:1042
 #: sys-utils/dmesg.c:1560 sys-utils/dmesg.c:1566 sys-utils/rtcwake.c:511
 #, c-format
 msgid "invalid time value \"%s\""
@@ -10362,7 +10362,7 @@ msgid "move"
 msgstr "move"
 
 #: misc-utils/findmnt.c:927 misc-utils/findmnt.c:1205 sys-utils/eject.c:715
-#: sys-utils/mount.c:406
+#: sys-utils/mount.c:408
 msgid "failed to initialize libmount table"
 msgstr "nije uspjelo inicijalizirati libmount-tablicu"
 
@@ -10373,8 +10373,8 @@ msgstr "nije moguće čitati %s"
 
 #: misc-utils/findmnt.c:1145 misc-utils/findmnt.c:1211
 #: misc-utils/findmnt-verify.c:101 misc-utils/findmnt-verify.c:529
-#: sys-utils/fstrim.c:329 sys-utils/mount.c:132 sys-utils/mount.c:180
-#: sys-utils/mount.c:247 sys-utils/swapoff.c:63 sys-utils/swapoff.c:173
+#: sys-utils/fstrim.c:329 sys-utils/mount.c:134 sys-utils/mount.c:182
+#: sys-utils/mount.c:249 sys-utils/swapoff.c:63 sys-utils/swapoff.c:173
 #: sys-utils/swapon.c:247 sys-utils/swapon.c:290 sys-utils/swapon.c:750
 #: sys-utils/umount.c:199
 msgid "failed to initialize libmount iterator"
@@ -12268,7 +12268,7 @@ msgid "user ID number of the process"
 msgstr "ID broj korisnika procesa"
 
 #: misc-utils/lsfd.c:323
-msgid "filesystem pathname for UNIX doamin socketo"
+msgid "filesystem pathname for UNIX domain socket"
 msgstr ""
 
 #: misc-utils/lsfd.c:326
@@ -14929,7 +14929,7 @@ msgstr ""
 "\n"
 "Podržane zone:\n"
 
-#: sys-utils/chmem.c:394 sys-utils/lscpu-cputype.c:872 sys-utils/lsmem.c:667
+#: sys-utils/chmem.c:394 sys-utils/lscpu-cputype.c:889 sys-utils/lsmem.c:667
 #, c-format
 msgid "failed to initialize %s handler"
 msgstr "nije uspjelo inicijalizirati rukovatelja %s"
@@ -18421,16 +18421,16 @@ msgstr ""
 "%s: opcije --all, --online i --offline mogu se koristiti\n"
 "samo s opcijama --extended ili --parse.\n"
 
-#: sys-utils/lscpu-cputype.c:597
+#: sys-utils/lscpu-cputype.c:604
 msgid "error: uname failed"
 msgstr "greška: uname() nije uspjela"
 
-#: sys-utils/lscpu-cputype.c:694
+#: sys-utils/lscpu-cputype.c:711
 #, c-format
 msgid "failed to determine number of CPUs: %s"
 msgstr "nije uspjelo odrediti broj CPU-a: %s"
 
-#: sys-utils/lscpu-cputype.c:897
+#: sys-utils/lscpu-cputype.c:914
 msgid "Failed to extract the node number"
 msgstr "Nije uspjelo doznati broj čvora"
 
@@ -19043,41 +19043,41 @@ msgstr "nije uspjelo ukloniti prava pristupa"
 msgid "%s from %s (libmount %s"
 msgstr "%s iz %s (libmount %s)"
 
-#: sys-utils/mount.c:128
+#: sys-utils/mount.c:130
 msgid "failed to read mtab"
 msgstr "nije uspjelo pročitati mtab"
 
-#: sys-utils/mount.c:190 sys-utils/mount.c:257 sys-utils/umount.c:209
+#: sys-utils/mount.c:192 sys-utils/mount.c:259 sys-utils/umount.c:209
 #, c-format
 msgid "%-25s: ignored\n"
 msgstr "%-25s: zanemareno je\n"
 
-#: sys-utils/mount.c:191
+#: sys-utils/mount.c:193
 #, c-format
 msgid "%-25s: already mounted\n"
 msgstr "%-25s: je već montiran\n"
 
-#: sys-utils/mount.c:298
+#: sys-utils/mount.c:300
 #, c-format
 msgid "%s: %s moved to %s.\n"
 msgstr "%s: %s je premješten na %s.\n"
 
-#: sys-utils/mount.c:300
+#: sys-utils/mount.c:302
 #, c-format
 msgid "%s: %s bound on %s.\n"
 msgstr "%s: %s je vezan na %s.\n"
 
-#: sys-utils/mount.c:303 sys-utils/mount.c:307
+#: sys-utils/mount.c:305 sys-utils/mount.c:309
 #, c-format
 msgid "%s: %s mounted on %s.\n"
 msgstr "%s: %s je montiran na %s.\n"
 
-#: sys-utils/mount.c:305
+#: sys-utils/mount.c:307
 #, c-format
 msgid "%s: %s propagation flags changed.\n"
 msgstr "%s: %s promijenjeni su flagovi propagacije.\n"
 
-#: sys-utils/mount.c:325
+#: sys-utils/mount.c:327
 #, c-format
 msgid ""
 "mount: %s does not contain SELinux labels.\n"
@@ -19092,7 +19092,7 @@ msgstr ""
 "    programi generirati AVC poruke i neće im se dopustiti pristup datotečnom\n"
 "    sustavu. Za detalje pogledajte restorecon(8) i mount(8).\n"
 
-#: sys-utils/mount.c:354
+#: sys-utils/mount.c:356
 #, c-format
 msgid ""
 "mount: (hint) your fstab has been modified, but systemd still uses\n"
@@ -19101,27 +19101,27 @@ msgstr ""
 "mount: vaš fstab je promijenjen, but systemd još uvijek koristi staru verziju\n"
 "       koristite „systemctl daemon-reload“ za ponovno učitavanje.\n"
 
-#: sys-utils/mount.c:386
+#: sys-utils/mount.c:388
 #, c-format
 msgid "       dmesg(1) may have more information after failed mount system call.\n"
 msgstr "       dmesg(1) možda ima više informacija nakon što montiranje nije uspjelo.\n"
 
-#: sys-utils/mount.c:415
+#: sys-utils/mount.c:417
 #, c-format
 msgid "%s: failed to parse"
 msgstr "%s: nije uspjelo raščlaniti"
 
-#: sys-utils/mount.c:457
+#: sys-utils/mount.c:459
 #, c-format
 msgid "unsupported option format: %s"
 msgstr "nepodržani format opcije: %s"
 
-#: sys-utils/mount.c:463
+#: sys-utils/mount.c:465
 #, c-format
 msgid "failed to append option '%s'"
 msgstr "nije uspjelo pripojiti opciju „%s“"
 
-#: sys-utils/mount.c:484
+#: sys-utils/mount.c:486
 #, c-format
 msgid ""
 " %1$s [-lhV]\n"
@@ -19136,55 +19136,55 @@ msgstr ""
 " %1$s [opcije] <izvor> <direktorij>\n"
 " %1$s <operacija> <točka_montiranja> [<cilj>]\n"
 
-#: sys-utils/mount.c:492
+#: sys-utils/mount.c:494
 msgid "Mount a filesystem.\n"
 msgstr "Montira datotečni sustav.\n"
 
-#: sys-utils/mount.c:495
+#: sys-utils/mount.c:497
 #, fuzzy
 #| msgid " -a, --all               unmount all filesystems\n"
 msgid " -a, --all               mount all filesystems mentioned in fstab\n"
 msgstr " -a, --all               demontira sve datotečne sustave\n"
 
-#: sys-utils/mount.c:496 sys-utils/umount.c:94
+#: sys-utils/mount.c:498 sys-utils/umount.c:94
 msgid " -c, --no-canonicalize   don't canonicalize paths\n"
 msgstr " -c, --no-canonicalize   ne normalizira staze (ne prevodi ih u kanonsku formu)\n"
 
-#: sys-utils/mount.c:497
+#: sys-utils/mount.c:499
 #, fuzzy
 #| msgid "     --fake              dry run; skip the umount(2) syscall\n"
 msgid " -f, --fake              dry run; skip the mount(2) syscall\n"
 msgstr "     --fake              samo testira; preskače sustavski poziv mount(2)\n"
 
-#: sys-utils/mount.c:498
+#: sys-utils/mount.c:500
 #, fuzzy
 #| msgid " -f, --force            enforce on block devices used by the system\n"
 msgid " -F, --fork              fork off for each device (use with -a)\n"
 msgstr " -f, --force          primora na blok uređaje koje koristi sustav\n"
 
-#: sys-utils/mount.c:499
+#: sys-utils/mount.c:501
 #, fuzzy
 #| msgid " -A, --fstab              trim filesystems from /etc/fstab\n"
 msgid " -T, --fstab <path>      alternative file to /etc/fstab\n"
 msgstr " -A, --fstab           podreže datotečne sustave iz /etc/fstab\n"
 
-#: sys-utils/mount.c:500
+#: sys-utils/mount.c:502
 msgid " -i, --internal-only     don't call the mount.<type> helpers\n"
 msgstr " -i, --internal-only     ne poziva mount.<tip> pomoćni program iz /sbin\n"
 
-#: sys-utils/mount.c:501
+#: sys-utils/mount.c:503
 msgid " -l, --show-labels       show also filesystem labels\n"
 msgstr " -l, --show-labels       također pokaže i oznake datotečnog sustava\n"
 
-#: sys-utils/mount.c:502
+#: sys-utils/mount.c:504
 msgid " -m, --mkdir[=<mode>]    alias to '-o X-mount.mkdir[=<mode>]'\n"
 msgstr " -m, --mkdir[=<mode>]    isto kao '-o X-mount.mkdir[=<mode>]'\n"
 
-#: sys-utils/mount.c:503 sys-utils/umount.c:99
+#: sys-utils/mount.c:505 sys-utils/umount.c:99
 msgid " -n, --no-mtab           don't write to /etc/mtab\n"
 msgstr " -n, --no-mtab           ne piše u /etc/mtab\n"
 
-#: sys-utils/mount.c:504
+#: sys-utils/mount.c:506
 #, fuzzy
 #| msgid ""
 #| "     --timeout <milliseconds> <follow-up signal>\n"
@@ -19196,7 +19196,7 @@ msgstr ""
 "     --timeout <milliseconds> <follow-up signal>\n"
 "                        wait up to timeout and send follow-up signal\n"
 
-#: sys-utils/mount.c:506
+#: sys-utils/mount.c:508
 #, fuzzy
 #| msgid ""
 #| " --propagation slave|shared|private|unchanged\n"
@@ -19208,43 +19208,43 @@ msgstr ""
 " --propagation slave|shared|private|unchanged  modificira propagaciju montiranja\n"
 "                                                 u montiranom imenskom prostoru\n"
 
-#: sys-utils/mount.c:508
+#: sys-utils/mount.c:510
 msgid ""
 "     --options-source-force\n"
 "                         force use of options from fstab/mtab\n"
 msgstr ""
 
-#: sys-utils/mount.c:510
+#: sys-utils/mount.c:512
 #, fuzzy
 #| msgid " -P         check filesystems in parallel, including root\n"
 msgid "     --onlyonce          check if filesystem is already mounted\n"
 msgstr " -P         paralelno provjerava datotečne sustave, uključujući i korijenski\n"
 
-#: sys-utils/mount.c:511
+#: sys-utils/mount.c:513
 #, fuzzy
 #| msgid " -o, --options <list>     comma-separated list of swap options\n"
 msgid " -o, --options <list>    comma-separated list of mount options\n"
 msgstr " -o, --options <list>        zarezima odvojen popis (swap) opcija za razmjenu\n"
 
-#: sys-utils/mount.c:512 sys-utils/umount.c:101
+#: sys-utils/mount.c:514 sys-utils/umount.c:101
 msgid " -O, --test-opts <list>  limit the set of filesystems (use with -a)\n"
 msgstr ""
 " -O, --test-opts <popis>  datotečne sustave ograniči popisom opcija;\n"
 "                            ima smisla samo uz opciju -a\n"
 
-#: sys-utils/mount.c:513
+#: sys-utils/mount.c:515
 #, fuzzy
 #| msgid " -r, --read-only          forced open cfdisk in read-only mode\n"
 msgid " -r, --read-only         mount the filesystem read-only (same as -o ro)\n"
 msgstr " -r, --read-only               otvori cfdisk samo samo-za-čitanje\n"
 
-#: sys-utils/mount.c:514 sys-utils/umount.c:104
+#: sys-utils/mount.c:516 sys-utils/umount.c:104
 msgid " -t, --types <list>      limit the set of filesystem types\n"
 msgstr ""
 " -t, --types <popis>     datotečne sustave ograniči na popisane tipove\n"
 "                           (zarezom odijeljene)\n"
 
-#: sys-utils/mount.c:515
+#: sys-utils/mount.c:517
 #, fuzzy
 #| msgid ""
 #| "     --source <src>      explicitly specifies source (path, label, uuid)\n"
@@ -19254,7 +19254,7 @@ msgstr ""
 "     --source <izvor>    eksplicitna specifikacija izvora (staza, oznaka, UUID)\n"
 "     --target <cilj>     eksplicitna specifikacija točke montiranja\n"
 
-#: sys-utils/mount.c:516
+#: sys-utils/mount.c:518
 #, fuzzy
 #| msgid ""
 #| "     --source <src>      explicitly specifies source (path, label, uuid)\n"
@@ -19264,25 +19264,25 @@ msgstr ""
 "     --source <izvor>    eksplicitna specifikacija izvora (staza, oznaka, UUID)\n"
 "     --target <cilj>     eksplicitna specifikacija točke montiranja\n"
 
-#: sys-utils/mount.c:517
+#: sys-utils/mount.c:519
 msgid ""
 "     --target-prefix <path>\n"
 "                         specifies path used for all mountpoints\n"
 msgstr "     --target-prefix <staza>  specifikacija staze za sve točke montiranja\n"
 
-#: sys-utils/mount.c:519 sys-utils/umount.c:105
+#: sys-utils/mount.c:521 sys-utils/umount.c:105
 msgid " -v, --verbose           say what is being done\n"
 msgstr " -v, --verbose           objašnjava što radi\n"
 
-#: sys-utils/mount.c:520
+#: sys-utils/mount.c:522
 msgid " -w, --rw, --read-write  mount the filesystem read-write (default)\n"
 msgstr " -w, --rw, --read-write  montira datotečni sustav za čitanje i pisanje (zadano)\n"
 
-#: sys-utils/mount.c:521
+#: sys-utils/mount.c:523
 msgid " -N, --namespace <ns>    perform mount in another namespace\n"
 msgstr " -N, --namespace <ip>    montiranje izvrši u tom <ip> imenskom prostoru\n"
 
-#: sys-utils/mount.c:527
+#: sys-utils/mount.c:529
 #, fuzzy
 #| msgid ""
 #| "\n"
@@ -19292,59 +19292,59 @@ msgstr ""
 "\n"
 "Resursi:\n"
 
-#: sys-utils/mount.c:528
+#: sys-utils/mount.c:530
 #, fuzzy
 #| msgid " -L, --label <label>        convert LABEL to device name\n"
 msgid " -L, --label <label>     synonym for LABEL=<label>\n"
 msgstr " -L, --label <oznaka>       prevede OZNAKU u ime uređaja\n"
 
-#: sys-utils/mount.c:529
+#: sys-utils/mount.c:531
 #, fuzzy
 #| msgid " -U, --uuid <uuid>          convert UUID to device name\n"
 msgid " -U, --uuid <uuid>       synonym for UUID=<uuid>\n"
 msgstr " -U, --uuid <uuid>          prevede UUID u ime uređaja\n"
 
-#: sys-utils/mount.c:530
+#: sys-utils/mount.c:532
 #, fuzzy
 #| msgid " -L, --label LABEL         specify label\n"
 msgid " LABEL=<label>           specifies device by filesystem label\n"
 msgstr " -L, --label LABEL         specifikacija oznaka\n"
 
-#: sys-utils/mount.c:531
+#: sys-utils/mount.c:533
 msgid " UUID=<uuid>             specifies device by filesystem UUID\n"
 msgstr ""
 
-#: sys-utils/mount.c:532
+#: sys-utils/mount.c:534
 msgid " PARTLABEL=<label>       specifies device by partition label\n"
 msgstr ""
 
-#: sys-utils/mount.c:533
+#: sys-utils/mount.c:535
 msgid " PARTUUID=<uuid>         specifies device by partition UUID\n"
 msgstr ""
 
-#: sys-utils/mount.c:534
+#: sys-utils/mount.c:536
 #, fuzzy
 #| msgid " <dev>                     device (usually disk) path\n"
 msgid " ID=<id>                 specifies device by udev hardware ID\n"
 msgstr " <uređaj>                  uređaj (obično je to disk) staza (path)\n"
 
-#: sys-utils/mount.c:535
+#: sys-utils/mount.c:537
 #, fuzzy
 #| msgid " <dev>                     device (usually disk) path\n"
 msgid " <device>                specifies device by path\n"
 msgstr " <uređaj>                  uređaj (obično je to disk) staza (path)\n"
 
-#: sys-utils/mount.c:536
+#: sys-utils/mount.c:538
 msgid " <directory>             mountpoint for bind mounts (see --bind/rbind)\n"
 msgstr ""
 
-#: sys-utils/mount.c:537
+#: sys-utils/mount.c:539
 #, fuzzy
 #| msgid " -f, --rtc <file>                use an alternate file to %1$s\n"
 msgid " <file>                  regular file for loopdev setup\n"
 msgstr " -f, --rtc <datoteka>  koristi <datoteku> za %1$s\n"
 
-#: sys-utils/mount.c:540
+#: sys-utils/mount.c:542
 #, fuzzy
 #| msgid ""
 #| "\n"
@@ -19354,80 +19354,80 @@ msgstr ""
 "\n"
 "Opcije:\n"
 
-#: sys-utils/mount.c:541
+#: sys-utils/mount.c:543
 #, fuzzy
 #| msgid " -c, --content              compare only file contents, same as -pot\n"
 msgid " -B, --bind              mount a subtree somewhere else (same as -o bind)\n"
 msgstr " -c, --content            usporedi samo sadržaje, isto kao -pot\n"
 
-#: sys-utils/mount.c:542
+#: sys-utils/mount.c:544
 #, fuzzy
 #| msgid " -r, --reset                  reset the port\n"
 msgid " -M, --move              move a subtree to some other place\n"
 msgstr " -r, --reset                  resetira port\n"
 
-#: sys-utils/mount.c:543
+#: sys-utils/mount.c:545
 #, fuzzy
 #| msgid " -f, --find                find a free device\n"
 msgid " -R, --rbind             mount a subtree and all submounts somewhere else\n"
 msgstr " -f, --find                potraži prvi neiskorišteni ZRAM-uređaj\n"
 
-#: sys-utils/mount.c:544
+#: sys-utils/mount.c:546
 #, fuzzy
 #| msgid " -s, --shared             get a shared lock\n"
 msgid " --make-shared           mark a subtree as shared\n"
 msgstr " -s, --shared             dobije zajedničku (dijeljenu) bravu \n"
 
-#: sys-utils/mount.c:545
+#: sys-utils/mount.c:547
 #, fuzzy
 #| msgid " -s, --shared             get a shared lock\n"
 msgid " --make-slave            mark a subtree as slave\n"
 msgstr " -s, --shared             dobije zajedničku (dijeljenu) bravu \n"
 
-#: sys-utils/mount.c:546
+#: sys-utils/mount.c:548
 msgid " --make-private          mark a subtree as private\n"
 msgstr ""
 
-#: sys-utils/mount.c:547
+#: sys-utils/mount.c:549
 msgid " --make-unbindable       mark a subtree as unbindable\n"
 msgstr ""
 
-#: sys-utils/mount.c:548
+#: sys-utils/mount.c:550
 #, fuzzy
 #| msgid " -s, --shared             get a shared lock\n"
 msgid " --make-rshared          recursively mark a whole subtree as shared\n"
 msgstr " -s, --shared             dobije zajedničku (dijeljenu) bravu \n"
 
-#: sys-utils/mount.c:549
+#: sys-utils/mount.c:551
 #, fuzzy
 #| msgid " -R, --recursive         recursively unmount a target with all its children\n"
 msgid " --make-rslave           recursively mark a whole subtree as slave\n"
 msgstr " -R, --recursive         rekurzivno demontira cilj i sve njegove potomke\n"
 
-#: sys-utils/mount.c:550
+#: sys-utils/mount.c:552
 #, fuzzy
 #| msgid " -R, --recursive         recursively unmount a target with all its children\n"
 msgid " --make-rprivate         recursively mark a whole subtree as private\n"
 msgstr " -R, --recursive         rekurzivno demontira cilj i sve njegove potomke\n"
 
-#: sys-utils/mount.c:551
+#: sys-utils/mount.c:553
 msgid " --make-runbindable      recursively mark a whole subtree as unbindable\n"
 msgstr ""
 
-#: sys-utils/mount.c:702 sys-utils/umount.c:520
+#: sys-utils/mount.c:704 sys-utils/umount.c:520
 msgid "libmount context allocation failed"
 msgstr "nije uspjelo rezervirati memoriju za libmount kontekst"
 
-#: sys-utils/mount.c:764 sys-utils/umount.c:582
+#: sys-utils/mount.c:766 sys-utils/umount.c:582
 msgid "failed to set options pattern"
 msgstr "nije uspjelo postaviti uzorak opcija"
 
-#: sys-utils/mount.c:816 sys-utils/umount.c:599
+#: sys-utils/mount.c:818 sys-utils/umount.c:599
 #, c-format
 msgid "failed to set target namespace to %s"
 msgstr "nije uspjelo uspostaviti ciljani imenski prostor %s"
 
-#: sys-utils/mount.c:984
+#: sys-utils/mount.c:986
 msgid "source specified more than once"
 msgstr "izvor je naveden više od jedanput"
 
@@ -19564,11 +19564,11 @@ msgstr " -Z, --follow-context   postavi kontekst SELinux prema --target PID\n"
 msgid "neither filename nor target pid supplied for %s"
 msgstr "nije dȃna ni datoteka ni ciljani PID za %s"
 
-#: sys-utils/nsenter.c:351 sys-utils/unshare.c:828 sys-utils/unshare.c:884
+#: sys-utils/nsenter.c:353 sys-utils/unshare.c:828 sys-utils/unshare.c:884
 msgid "failed to parse uid"
 msgstr "nije uspjelo raščlaniti UID"
 
-#: sys-utils/nsenter.c:358 sys-utils/unshare.c:832 sys-utils/unshare.c:888
+#: sys-utils/nsenter.c:360 sys-utils/unshare.c:832 sys-utils/unshare.c:888
 msgid "failed to parse gid"
 msgstr "nije uspjelo raščlaniti GID"
 
@@ -20459,50 +20459,50 @@ msgstr "     --list               izlista moguće arhitekture i završi\n"
 msgid "     --show[=personality] show current or specific personality and exit\n"
 msgstr ""
 
-#: sys-utils/setarch.c:337
+#: sys-utils/setarch.c:341
 #, c-format
 msgid "Kernel cannot set architecture to %s"
 msgstr "jezgra (kernel) ne može postaviti arhitekturu na %s"
 
-#: sys-utils/setarch.c:402
+#: sys-utils/setarch.c:406
 msgid "Can not get current kernel personality"
 msgstr ""
 
-#: sys-utils/setarch.c:455
+#: sys-utils/setarch.c:459
 msgid "Not enough arguments"
 msgstr "Nema dovoljno argumenata"
 
-#: sys-utils/setarch.c:523
+#: sys-utils/setarch.c:527
 msgid "unrecognized option '--list'"
 msgstr "neprepoznata opcija „--list“"
 
-#: sys-utils/setarch.c:532
+#: sys-utils/setarch.c:536
 #, fuzzy
 #| msgid "could not parse ID"
 msgid "could not parse personality"
 msgstr "nije bili moguće razabrati ID"
 
-#: sys-utils/setarch.c:536
+#: sys-utils/setarch.c:540
 #, fuzzy
 #| msgid "unrecognized option '--list'"
 msgid "unrecognized option '--show'"
 msgstr "neprepoznata opcija „--list“"
 
-#: sys-utils/setarch.c:550
+#: sys-utils/setarch.c:554
 msgid "no architecture argument or personality flags specified"
 msgstr "ni argument arhitekture ni karakteristika osobnosti nije specificirana"
 
-#: sys-utils/setarch.c:562
+#: sys-utils/setarch.c:566
 #, c-format
 msgid "%s: Unrecognized architecture"
 msgstr "%s: Neprepoznata arhitektura"
 
-#: sys-utils/setarch.c:580
+#: sys-utils/setarch.c:584
 #, c-format
 msgid "failed to set personality to %s"
 msgstr "nije uspjelo postaviti osobnost na %s"
 
-#: sys-utils/setarch.c:592
+#: sys-utils/setarch.c:596
 #, c-format
 msgid "Execute command `%s'.\n"
 msgstr "Izvrši naredbu „%s“.\n"
@@ -23176,16 +23176,16 @@ msgstr "opciju --nobanner može koristiti samo root"
 msgid "invalid timeout argument: %s"
 msgstr "nevaljani argument za opciju --timeout: %s"
 
-#: term-utils/wall.c:361
+#: term-utils/wall.c:293
 msgid "cannot get passwd uid"
 msgstr "nije moguće dobiti ID korisnika"
 
-#: term-utils/wall.c:385
+#: term-utils/wall.c:317
 #, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "Emitirana poruka od %s@%s (%s) (%s):"
 
-#: term-utils/wall.c:417
+#: term-utils/wall.c:349
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr "neće čitati iz %s; koristite standardni ulaz"
@@ -23223,30 +23223,30 @@ msgstr "%s je onemogućio poruke"
 msgid "%s is logged in more than once; writing to %s"
 msgstr "%s je prijavljen nekoliko puta; piše se u %s"
 
-#: term-utils/write.c:237
-msgid "carefulputc failed"
-msgstr "carefulputc() nije uspjela"
-
-#: term-utils/write.c:279
+#: term-utils/write.c:265
 #, c-format
 msgid "Message from %s@%s (as %s) on %s at %02d:%02d ..."
 msgstr "Poruka od %s@%s (kao %s) na %s pri %02d:%02d ..."
 
-#: term-utils/write.c:283
+#: term-utils/write.c:269
 #, c-format
 msgid "Message from %s@%s on %s at %02d:%02d ..."
 msgstr "Poruka od %s@%s na %s pri %02d:%02d..."
 
-#: term-utils/write.c:329
+#: term-utils/write.c:280
+msgid "carefulputc failed"
+msgstr "carefulputc() nije uspjela"
+
+#: term-utils/write.c:318
 msgid "you have write permission turned off"
 msgstr "nemate uključeno primanje poruka"
 
-#: term-utils/write.c:352
+#: term-utils/write.c:341
 #, c-format
 msgid "%s is not logged in on %s"
 msgstr "%s nije prijavljen na %s"
 
-#: term-utils/write.c:358
+#: term-utils/write.c:347
 #, c-format
 msgid "%s has messages disabled on %s"
 msgstr "%s je isključio poruke na %s"
@@ -23608,7 +23608,7 @@ msgstr "loš format {%s}"
 msgid "bad conversion character %%%s"
 msgstr "nepravilni znak konverzije %%%s"
 
-#: text-utils/hexdump-parse.c:438
+#: text-utils/hexdump-parse.c:440
 msgid "byte count with multiple conversion characters"
 msgstr "broj bajtova s višestrukim znakovima konverzije"
 

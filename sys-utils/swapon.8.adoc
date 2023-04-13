@@ -32,7 +32,7 @@ Calls to *swapon* normally occur in the system boot scripts making all swap devi
 All devices marked as "swap" in _/etc/fstab_ are made available, except for those with the "noauto" option. Devices that are already being used as swap are silently skipped.
 
 *-T*, *--fstab* _path_::
-Specifies an alternative fstab file for compatibility with *mount(8)*. If _path_ is a directory, then the files in the directory are sorted by strverscmp(3); files that start with "." or without an .fstab extension are ignored. The option can be specified more than once. This option is mostly designed for initramfs or chroot scripts where additional configuration is specified beyond standard system configuration.
+Specifies an alternative fstab file for compatibility with *mount*(8). If _path_ is a directory, then the files in the directory are sorted by *strverscmp*(3); files that start with "." or without an .fstab extension are ignored. The option can be specified more than once. This option is mostly designed for initramfs or chroot scripts where additional configuration is specified beyond standard system configuration.
 
 *-d*, *--discard*[**=**__policy__]::
 Enable swap discards, if the swap backing device supports the discard or trim operation. This may improve performance on some Solid State Devices, but often it does not. The option allows one to select between two available swap discard policies:

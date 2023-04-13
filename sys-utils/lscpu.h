@@ -103,6 +103,8 @@ struct lscpu_cputype {
 			has_addresses : 1;
 
 	size_t nr_socket_on_cluster; /* the number of sockets if the is_cluster is 1 */
+
+	char	*isa;	/* loongarch */
 };
 
 /* dispatching modes */

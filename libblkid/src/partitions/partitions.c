@@ -234,6 +234,11 @@ int blkid_probe_set_partitions_flags(blkid_probe pr, int flags)
 	return 0;
 }
 
+int blkid_probe_get_partitions_flags(blkid_probe pr)
+{
+	return pr->chains[BLKID_CHAIN_PARTS].flags;
+}
+
 /**
  * blkid_probe_reset_partitions_filter:
  * @pr: prober

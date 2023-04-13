@@ -234,7 +234,7 @@ ____
 
 Note that a read-only bind will create a read-only mountpoint (VFS entry), but the original filesystem superblock will still be writable, meaning that the _olddir_ will be writable, but the _newdir_ will be read-only.
 
-It's also possible to change nosuid, nodev, noexec, noatime, nodiratime, relatime and nosymfollow VFS entry flags via a "remount,bind" operation. The other flags (for example filesystem-specific flags) are silently ignored. The classic mount(2) system call does not allow to change mount options recursively (for example with *-o rbind,ro*). The recursive semantic is possible with a new mount_setattr(2) kernel system call and it's supported since libmount from util-linux v2.39 by a new experimental "recursive" option argument (e.g. *-o rbind,ro=recursive*). For more details see the *FILESYSTEM-INDEPENDENT MOUNT OPTIONS* section for more details.
+It's also possible to change nosuid, nodev, noexec, noatime, nodiratime, relatime and nosymfollow VFS entry flags via a "remount,bind" operation. The other flags (for example filesystem-specific flags) are silently ignored. The classic *mount*(2) system call does not allow to change mount options recursively (for example with *-o rbind,ro*). The recursive semantic is possible with a new *mount_setattr*(2) kernel system call and it's supported since libmount from util-linux v2.39 by a new experimental "recursive" option argument (e.g. *-o rbind,ro=recursive*). For more details see the *FILESYSTEM-INDEPENDENT MOUNT OPTIONS* section.
 
 Since util-linux 2.31, *mount* ignores the *bind* flag from _/etc/fstab_ on a *remount* operation (if *-o remount* is specified on command line). This is necessary to fully control mount options on remount by command line. In previous versions the bind flag has been always applied and it was impossible to re-define mount options without interaction with the bind semantic. This *mount* behavior does not affect situations when "remount,bind" is specified in the _/etc/fstab_ file.
 
@@ -465,7 +465,7 @@ ____
 to get a complete overview of filesystems and VFS options.
 
 The read-only setting (*ro* or *rw*) is interpreted by VFS and the filesystem
-and depends on how the option is specified on the mount(8) command line. The
+and depends on how the option is specified on the *mount*(8) command line. The
 default is to interpret it on the filesystem level. The operation "-o bind,remount,ro"
 is applied only to the VFS mountpoint, and operation "-o remount,ro" is applied to
 VFS and filesystem superblock. This semantic allows create a read-only
@@ -570,7 +570,7 @@ The filesystem resides on a device that requires network access (used to prevent
 Do not report errors for this device if it does not exist.
 
 *relatime*::
-Update inode access times relative to modify or change time. Access time is only updated if the previous access time was earlier than the current modify or change time. (Similar to *noatime*, but it doesn't break *mutt*(1) or other applications that need to know if a file has been read since the last time it was modified.)
+Update inode access times relative to modify or change time. Access time is only updated if the previous access time was earlier than or equal to the current modify or change time. (Similar to *noatime*, but it doesn't break *mutt*(1) or other applications that need to know if a file has been read since the last time it was modified.)
 +
 Since Linux 2.6.30, the kernel defaults to the behavior provided by this option (unless *noatime* was specified), and the *strictatime* option is required to obtain traditional semantics. In addition, since Linux 2.6.30, the file's last access time is always updated if it is more than 1 day old.
 
@@ -618,6 +618,15 @@ Attempt to remount an already-mounted filesystem. This is commonly used to chang
 +
 The remount operation together with the *bind* flag has special semantics. See above, the subsection *Bind mount operation*.
 +
+The default kernel behavior for VFS mount flags (nodev,nosuid,noexec,ro) is to
+reset all unspecified flags on remount. That's why *mount*(8) tries to
+keep the current setting according to _fstab_ or _/proc/self/mountinfo_. This
+default behavior is possible to change by *--options-mode*. The recursive
+change of the mount flags (supported since v2.39 on systems with *mount_setattr*(2)
+syscall), for example, *mount -o remount,ro=recursive*, do not use
+"reset-unspecified" behavior, and it works as a simple add/remove operation
+and unspecified flags are not modified.
++
 The remount functionality follows the standard way the *mount* command works with options from _fstab_. This means that *mount* does not read _fstab_ (or _mtab_) only when both _device_ and _dir_ are specified.
 +
 *mount -o remount,rw /dev/foo /dir*
@@ -626,8 +635,9 @@ After this call all old mount options are replaced and arbitrary stuff from _fst
 +
 *mount -o remount,rw /dir*
 +
-After this call, *mount* reads _fstab_ and merges these options with the options from the command line (*-o*). If no mountpoint is found in _fstab_, then a remount with unspecified source is allowed.
+After this call, *mount* reads _fstab_ and merges these options with the options from the command line (*-o*). If no mountpoint is found in _fstab_, then it defaults to mount options from _/proc/self/mountinfo_.
 +
+
 *mount* allows the use of *--all* to remount all already mounted filesystems which match a specified filter (*-O* and *-t*). For example:
 +
 *mount --all -o remount,ro -t vfat*

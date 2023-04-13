@@ -1930,6 +1930,7 @@ blkid_probe blkid_probe_get_wholedisk_probe(blkid_probe pr)
 	if (!pr->disk_probe) {
 		/* Open a new disk prober */
 		char *disk_path = blkid_devno_to_devname(disk);
+		int flags;
 
 		if (!disk_path)
 			return NULL;
@@ -1942,6 +1943,11 @@ blkid_probe blkid_probe_get_wholedisk_probe(blkid_probe pr)
 
 		if (!pr->disk_probe)
 			return NULL;	/* ENOMEM? */
+
+		flags = blkid_probe_get_partitions_flags(pr);
+		if (flags & BLKID_PARTS_FORCE_GPT)
+			blkid_probe_set_partitions_flags(pr->disk_probe,
+							 BLKID_PARTS_FORCE_GPT);
 	}
 
 	return pr->disk_probe;

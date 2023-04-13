@@ -157,7 +157,7 @@ Wait for the user or the modem to send a carriage-return or a linefeed character
 Do not print hints about Num, Caps and Scroll Locks.
 
 *--nohostname*::
-By default the hostname will be printed. With this option enabled, no hostname at all will be shown. This seeting is also possible to able by LOGIN_PLAIN_PROMPT option in the _/etc/login.defs_ configuration file (see below for more details).
+By default the hostname will be printed. With this option enabled, no hostname at all will be shown. This setting is also possible to able by LOGIN_PLAIN_PROMPT option in the _/etc/login.defs_ configuration file (see below for more details).
 
 *--long-hostname*::
 By default the hostname is only printed until the first dot. With this option enabled, the fully qualified hostname by *gethostname*(3P) or (if not found) by *getaddrinfo*(3) is shown.
@@ -185,7 +185,7 @@ include::man-common/help-version.adoc[]
 == CONFIG FILE ITEMS
 *agetty* reads the _/etc/login.defs_ configuration file (see *login.defs*(5)).
 Note that the configuration file could be distributed with another package (usually shadow-utils).
-The following configuration items are relevant for *aggety*:
+The following configuration items are relevant for *agetty*:
 
 *LOGIN_PLAIN_PROMPT* (boolean)::
 

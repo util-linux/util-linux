@@ -79,6 +79,10 @@ static inline int move_mount(int from_dfd, const char *from_pathname, int to_dfd
 # define MOUNT_ATTR_NOSUID 0x00000002
 #endif
 
+#ifndef MOUNT_ATTR_NODEV
+# define MOUNT_ATTR_NODEV 0x00000004
+#endif
+
 #ifndef MOUNT_ATTR_NOEXEC
 # define MOUNT_ATTR_NOEXEC 0x00000008
 #endif

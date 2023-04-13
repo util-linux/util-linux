@@ -15,6 +15,7 @@ PAST MAINTAINERS:
 AUTHORS (merged projects & commands):
 
       blkdiscard:      Lukas Czerner <lczerner@redhat.com>
+      blkpr:           zhenwei pi <pizhenwei@bytedance.com>
       blkzone:         Shaun Tancheff <shaun@tancheff.com>
                        Damien Le Moal <damien.lemoal@wdc.com>
       fallocate:       Eric Sandeen <sandeen@redhat.com>
@@ -775,6 +776,7 @@ CONTRIBUTORS:
       Romain Bouvier <skunnyk@alteroot.org>
       Romain Izard <romain.izard.pro@gmail.com>
       Romain Naour <romain.naour@gmail.com>
+      Ronan Pigott <ronan@rjp.ie>
       Ronny Chevalier <chevalier.ronny@gmail.com>
       Ron Sommeling <sommel@sci.kun.nl>
       Rosen Penev <rosenp@gmail.com>
@@ -877,6 +879,7 @@ CONTRIBUTORS:
       Thomas Deutschmann <whissi@gentoo.org>
       Thomas Fehr <fehr@suse.de>
       Thomas Haller <thaller@redhat.com>
+      Thomas Kaiser <ThomasKaiser@users.noreply.github.com>
       Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
       Thomas Schwinge <thomas@codesourcery.com>
       Thomas Voss <mail@thomasvoss.com>
@@ -957,6 +960,7 @@ CONTRIBUTORS:
       WUEBBELS, Josef <Josef.WUEBBELS@mtu.de>
       Wylmer Wang <wantinghard@gmail.com>
       W.Z. Venema
+      Xi Ruoyao <xry111@xry111.site>
       Yann Droneaud <yann@droneaud.fr>
       Yannick Le Pennec <yannick.lepennec@live.fr>
       Yegor Yefremov <yegorslists@googlemail.com>

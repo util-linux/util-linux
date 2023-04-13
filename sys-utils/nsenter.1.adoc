@@ -103,15 +103,15 @@ Enter the cgroup namespace. If no file is specified, enter the cgroup namespace 
 *-T*, *--time*[=_file_]::
 Enter the time namespace. If no file is specified, enter the time namespace of the target process. If _file_ is specified, enter the time namespace specified by _file_.
 
-*-G*, *--setgid*[=_gid_]::
+*-G*, *--setgid* _gid_::
 Set the group ID which will be used in the entered namespace and drop supplementary groups.
 *nsenter* always sets GID for user namespaces, the default is 0.
-If no argument is specified the GID of the target process is used.
+If the argument "follow" is specified the GID of the target process is used.
 
-*-S*, *--setuid*[=_uid_]::
+*-S*, *--setuid* _uid_::
 Set the user ID which will be used in the entered namespace.
 *nsenter* always sets UID for user namespaces, the default is 0.
-If no argument is specified the UID of the target process is used.
+If the argument "follow" is specified the UID of the target process is used.
 
 *--preserve-credentials*::
 Don't modify UID and GID when enter user namespace. The default is to drops supplementary groups and sets GID and UID to 0.

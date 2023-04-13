@@ -58,7 +58,7 @@ Show mountpoint directories with a 'D' rather than a 'd'.
 
 *-Z*, *--context*::
 Show security context of the file or "?" if not available.
-The support for security contexts is optional and does not have to be compiled to the namei.
+The support for security contexts is optional and does not have to be compiled to the *namei* binary.
 
 include::man-common/help-version.adoc[]
 

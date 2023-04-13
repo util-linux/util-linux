@@ -464,11 +464,11 @@ static int verify_fstype(struct verify_context *vfy)
 				|| strcmp(realtype, "btrfs") == 0;
 
 		if (type && !isauto && strcmp(type, realtype) != 0) {
-			verify_err(vfy, _("%s does not match with on-disk %s"), type, realtype);
+			verify_warn(vfy, _("%s does not match with on-disk %s"), type, realtype);
 			goto done;
 		}
 		if (!isswap && !is_supported_filesystem(vfy, realtype)) {
-			verify_err(vfy, _("on-disk %s seems unsupported by the current kernel"), realtype);
+			verify_warn(vfy, _("on-disk %s seems unsupported by the current kernel"), realtype);
 			goto done;
 		}
 
