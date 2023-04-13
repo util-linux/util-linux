@@ -45,6 +45,7 @@ _nsenter_module()
 				--time=
 				--setuid
 				--setgid
+				--keep-caps
 				--preserve-credentials
 				--root=
 				--wd=
