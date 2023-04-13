@@ -25,10 +25,10 @@
 
 
 #define RTC_TM_FIELD_EQ(f) \
-	(offsetof(struct linux_rtc_time, f) == offsetof(struct tm, f) \
-	 && sizeof(((struct linux_rtc_time *)0)->f) == sizeof(((struct tm *)0)->f))
+	(offsetof(struct rtc_time, f) == offsetof(struct tm, f) \
+	 && sizeof(((struct rtc_time *)0)->f) == sizeof(((struct tm *)0)->f))
 
-static_assert(sizeof(struct linux_rtc_time) <= sizeof(struct tm)
+static_assert(sizeof(struct rtc_time) <= sizeof(struct tm)
 	      && RTC_TM_FIELD_EQ(tm_sec)
 	      && RTC_TM_FIELD_EQ(tm_min)
 	      && RTC_TM_FIELD_EQ(tm_hour)
@@ -38,7 +38,7 @@ static_assert(sizeof(struct linux_rtc_time) <= sizeof(struct tm)
 	      && RTC_TM_FIELD_EQ(tm_wday)
 	      && RTC_TM_FIELD_EQ(tm_yday)
 	      && RTC_TM_FIELD_EQ(tm_isdst),
-	      "struct linux_rtc_time is not compatible with struct tm");
+	      "struct rtc_time is not compatible with struct tm");
 
 
 #ifndef RTC_PARAM_GET
@@ -151,7 +151,6 @@ static int do_rtc_read_ioctl(int rtc_fd, struct tm *tm)
 {
 	int rc = -1;
 
-	memset(tm, 0, sizeof(*tm));
 	rc = ioctl(rtc_fd, RTC_RD_TIME, tm);
 
 	if (rc == -1) {
