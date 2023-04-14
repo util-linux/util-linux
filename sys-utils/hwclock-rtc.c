@@ -133,6 +133,7 @@ static int do_rtc_read_ioctl(int rtc_fd, struct tm *tm)
 {
 	int rc = -1;
 	struct rtc_time rtc_tm;
+
 	rc = ioctl(rtc_fd, RTC_RD_TIME, &rtc_tm);
 
 	if (rc == -1) {
