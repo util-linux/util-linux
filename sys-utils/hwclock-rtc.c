@@ -23,24 +23,6 @@
 
 #include "hwclock.h"
 
-
-#define RTC_TM_FIELD_EQ(f) \
-	(offsetof(struct rtc_time, f) == offsetof(struct tm, f) \
-	 && sizeof(((struct rtc_time *)0)->f) == sizeof(((struct tm *)0)->f))
-
-static_assert(sizeof(struct rtc_time) <= sizeof(struct tm)
-	      && RTC_TM_FIELD_EQ(tm_sec)
-	      && RTC_TM_FIELD_EQ(tm_min)
-	      && RTC_TM_FIELD_EQ(tm_hour)
-	      && RTC_TM_FIELD_EQ(tm_mday)
-	      && RTC_TM_FIELD_EQ(tm_mon)
-	      && RTC_TM_FIELD_EQ(tm_year)
-	      && RTC_TM_FIELD_EQ(tm_wday)
-	      && RTC_TM_FIELD_EQ(tm_yday)
-	      && RTC_TM_FIELD_EQ(tm_isdst),
-	      "struct rtc_time is not compatible with struct tm");
-
-
 #ifndef RTC_PARAM_GET
 struct rtc_param {
 	__u64 param;
@@ -150,8 +132,8 @@ static int open_rtc_or_exit(const struct hwclock_control *ctl)
 static int do_rtc_read_ioctl(int rtc_fd, struct tm *tm)
 {
 	int rc = -1;
-
-	rc = ioctl(rtc_fd, RTC_RD_TIME, tm);
+	struct rtc_time rtc_tm;
+	rc = ioctl(rtc_fd, RTC_RD_TIME, &rtc_tm);
 
 	if (rc == -1) {
 		warn(_("ioctl(RTC_RD_NAME) to %s to read the time failed"),
@@ -159,6 +141,14 @@ static int do_rtc_read_ioctl(int rtc_fd, struct tm *tm)
 		return -1;
 	}
 
+	tm->tm_sec = rtc_tm.tm_sec;
+	tm->tm_min = rtc_tm.tm_min;
+	tm->tm_hour = rtc_tm.tm_hour;
+	tm->tm_mday = rtc_tm.tm_mday;
+	tm->tm_mon = rtc_tm.tm_mon;
+	tm->tm_year = rtc_tm.tm_year;
+	tm->tm_wday = rtc_tm.tm_wday;
+	tm->tm_yday = rtc_tm.tm_yday;
 	tm->tm_isdst = -1;	/* don't know whether it's dst */
 	return 0;
 }
