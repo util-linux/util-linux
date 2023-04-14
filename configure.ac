@@ -2545,6 +2545,22 @@ AS_IF([test "x$with_vendordir" != x], [
   AC_DEFINE([USE_VENDORDIR], [1], [Define to 1 to use vendordir])
 ])
 
+AC_ARG_WITH([lastlog2],
+  AS_HELP_STRING([--without-lastlog2], [do not use liblastlog2]),
+  [], [with_lastlog2=check]
+)
+
+have_lastlog2=no
+AS_IF([test "x$with_lastlog2" != xno], [
+  PKG_CHECK_MODULES([LASTLOG2], [liblastlog2], [have_lastlog2=yes], [have_lastlog2=no])
+    AS_CASE([$with_lastlog2:$have_lastlog2],
+    [yes:no],
+      [AC_MSG_ERROR([liblastlog2 expected but liblastlog2 not found])],
+    [*:yes],
+       AC_DEFINE([HAVE_LASTLOG2], [1], [Define if liblastlog2 is available])
+  )
+])
+AM_CONDITIONAL([HAVE_LASTLOG2], [test "x$have_lastlog2" = xyes])
 
 AC_ARG_ENABLE([bash-completion],
   AS_HELP_STRING([--disable-bash-completion], [do not install bash completion files]),

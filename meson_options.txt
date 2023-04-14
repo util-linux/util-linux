@@ -25,6 +25,7 @@ option('sysvinit',    type : 'feature', value : 'disabled',
 option('btrfs',       type : 'feature')
 option('widechar',    type : 'feature',
        description : 'compile with wide character support')
+option('lastlog2',    type : 'feature')
 
 # enable building of various programs and features ("build-" prefix)
 

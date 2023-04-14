@@ -386,6 +386,11 @@ lib_audit = dependency(
   required : get_option('audit'))
 conf.set('HAVE_LIBAUDIT', lib_audit.found() ? 1 : false)
 
+lib_lastlog2 = dependency(
+  'liblastlog2',
+  required : get_option('lastlog2'))
+conf.set('HAVE_LASTLOG2', lib_lastlog2.found() ? 1 : false)
+
 conf.set('HAVE_SMACK', not get_option('smack').disabled())
 
 foreach header : headers
@@ -1008,7 +1013,8 @@ exe = executable(
   link_with : [lib_common,
                lib_smartcols,
                logindefs_c],
-  dependencies : [lib_selinux,
+  dependencies : [lib_lastlog2,
+                  lib_selinux,
                   lib_systemd],
   install_dir : usrbin_exec_dir,
   install : opt,

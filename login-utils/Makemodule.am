@@ -249,6 +249,10 @@ endif
 if HAVE_ECONF
 lslogins_LDADD += -leconf
 endif
+if HAVE_LASTLOG2
+lslogins_LDADD += $(LASTLOG2_LIBS)
+lslogins_CFLAGS += $(LASTLOG2_CFLAGS)
+endif
 endif # BUILD_LSLOGINS
 
 
