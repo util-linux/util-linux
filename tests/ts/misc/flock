@@ -80,6 +80,24 @@ do_lock "--nonblock --exclusive --conflict-exit-code 123" 123 "You will never se
 ts_finalize_subtest
 
 
+ts_init_subtest "fd"
+cd "$TS_OUTDIR"
+rm 4 2> /dev/null
+exec 4<>$TS_OUTDIR/lockfile || ts_log "Could not open lockfile"
+$TS_CMD_FLOCK --nonblock --exclusive --conflict-exit-code 123 4 \
+	>> $TS_OUTPUT 2>> $TS_ERRLOG
+
+rc="$?"
+
+if [  "$rc" == "123" ]; then
+	ts_log "Success"
+else
+	ts_log "Failed [rc=$rc]"
+fi
+[ -f 4 ] && ts_log "fd file should not exist"
+ts_finalize_subtest
+
+
 ts_init_subtest "timeout"
 do_lock "--timeout 5 --conflict-exit-code 5" 0 "After timeout."
 END=$(date '+%s')
