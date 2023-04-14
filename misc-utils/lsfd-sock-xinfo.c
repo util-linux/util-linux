@@ -549,7 +549,7 @@ enum l4_state {
 
 static const char *l4_decode_state(enum l4_state st)
 {
-	const char * table [] = {
+	const char * const table [] = {
 		[TCP_ESTABLISHED] = "established",
 		[TCP_SYN_SENT] = "syn-sent",
 		[TCP_SYN_RECV] = "syn-recv",
