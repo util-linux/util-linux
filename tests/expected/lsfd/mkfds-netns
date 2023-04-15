@@ -1,4 +1,4 @@
     net
-net:[4026531840] == net:[4026531840]: 0
-net:[4026531840] == net:[4026531840]: 0
-net:[4026531840] == net:[4026531840]: 0
+NAME_FD == NAME_NS: 0
+NAME_FD == net:[INO_FD]: 0
+NAME_FD == net:[INO_NS]: 0
