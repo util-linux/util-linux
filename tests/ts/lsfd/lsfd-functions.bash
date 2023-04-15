@@ -66,3 +66,16 @@ lsfd_strip_type_stream()
     # NAME column. Let's delete the appended string before comparing.
     sed -e 's/ type=stream//'
 }
+
+lsfd_make_state_connected()
+{
+    # Newer kernels report the states of unix dgram sockets created by
+    # sockerpair(2) are "connected" via /proc/net/unix though Older
+    # kernels report "unconnected".
+    #
+    # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=83301b5367a98c17ec0d76c7bc0ccdc3c7e7ad6d
+    #
+    # This rewriting adjusts the output of lsfd running on older kernels
+    # to that on newer kernels.
+    sed -e 's/state=unconnected/state=connected/'
+}
