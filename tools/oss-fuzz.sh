@@ -24,8 +24,17 @@ if [[ "$SANITIZER" == undefined ]]; then
     CXXFLAGS+=" $UBSAN_FLAGS"
 fi
 
+CONFIGURE_ARGS="--disable-all-programs --enable-libuuid --enable-libfdisk --enable-last --enable-fuzzing-engine --enable-libmount --enable-libblkid"
+
+LIBC_VERSION="$(dpkg -s libc6 | grep Version | cut -d' ' -f2)"
+
+# Ubuntu focal uses glibc 2.31 but 2.34 is necessary
+if dpkg --compare-versions "$LIBC_VERSION" 'lt' '2.34'; then
+	CONFIGURE_ARGS="$CONFIGURE_ARGS --disable-year2038"
+fi
+
 ./autogen.sh
-./configure --disable-all-programs --enable-libuuid --enable-libfdisk --enable-last --enable-fuzzing-engine --enable-libmount --enable-libblkid
+./configure $CONFIGURE_ARGS
 make -j$(nproc) V=1 check-programs
 
 for d in "$(dirname $0)"/../tests/ts/fuzzers/test_*_fuzz_files; do
