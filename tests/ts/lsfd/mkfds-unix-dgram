@@ -20,6 +20,7 @@ TS_DESC="UNIX dgram sockets"
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
+. "$TS_SELF/lsfd-functions.bash"
 ts_check_test_command "$TS_CMD_LSFD"
 ts_check_test_command "$TS_HELPER_MKFDS"
 
@@ -30,14 +31,21 @@ FDS=3
 FDC=4
 EXPR='(TYPE == "UNIX") and ((FD == 3) or (FD == 4))'
 
+make_state_connected()
+{
+    # The first one is for rewriting NAME column.
+    # The second one is for rewriting STATE column.
+    lsfd_make_state_connected | sed -e 's/unconnected/ connected/'
+}
+
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" unix-dgram $FDS $FDC \
 				      path=test_mkfds-unix-dgram ; }
     if read -r -u "${MKFDS[0]}" PID; then
 	${TS_CMD_LSFD} -n \
 		       -o ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH \
-		       -p "${PID}" -Q "${EXPR}"
-	echo 'ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': $?
+		       -p "${PID}" -Q "${EXPR}" | make_state_connected
+	echo 'ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': ${PIPESTATUS[0]}
 
 	kill -CONT "${PID}"
     fi
@@ -49,7 +57,7 @@ EXPR='(TYPE == "UNIX") and ((FD == 3) or (FD == 4))'
     if read -r -u "${MKFDS[0]}" PID; then
 	${TS_CMD_LSFD} -n \
 		       -o ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH \
-		       -p "${PID}" -Q "${EXPR}"
+		       -p "${PID}" -Q "${EXPR}" | make_state_connected
 	echo 'ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': $?
 
 	kill -CONT "${PID}"

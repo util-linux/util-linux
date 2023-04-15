@@ -73,6 +73,9 @@ lsfd_make_state_connected()
     # sockerpair(2) are "connected" via /proc/net/unix though Older
     # kernels report "unconnected".
     #
+    # Newer kernels report the states of unix dgram sockets already
+    # connect(2)'ed are "connected", too.
+    #
     # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=83301b5367a98c17ec0d76c7bc0ccdc3c7e7ad6d
     #
     # This rewriting adjusts the output of lsfd running on older kernels
