@@ -49,7 +49,7 @@ for C in ro-regular-file pidfd socketpair; do
 		# with "INODENUM".
 		sed -e 's/\[[0-9]\+\]/[INODENUM]/g'
 	    }
-	    echo "$C"':ASSOC,KNAME,NAME': $?
+	    echo "$C"':ASSOC,KNAME,NAME': ${PIPESTATUS[0]}
 
 	    kill -CONT "${PID}"
 	fi
