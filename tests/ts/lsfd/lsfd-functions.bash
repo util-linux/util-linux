@@ -57,3 +57,12 @@ function lsfd_compare_dev {
 	echo 'STAT_DEVNUM:' "${STAT_DEVNUM}"
     fi
 }
+
+lsfd_strip_type_stream()
+{
+    # lsfd changes the output of NAME column for a unix stream socket
+    # whether the kernel reports it is a "UNIX-STREAM" socket or a
+    # "UNIX" socket. For "UNIX", lsfd appends "type=stream" to the
+    # NAME column. Let's delete the appended string before comparing.
+    sed -e 's/ type=stream//'
+}

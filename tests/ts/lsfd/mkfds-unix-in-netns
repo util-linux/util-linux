@@ -55,6 +55,15 @@ compare_net_namespaces()
     fi
 }
 
+strip_type_stream()
+{
+    if [ "$1" = stream ]; then
+	lsfd_strip_type_stream
+    else
+	cat
+    fi
+}
+
 for t in stream dgram seqpacket; do
     ts_init_subtest "$t"
     {
@@ -64,8 +73,8 @@ for t in stream dgram seqpacket; do
 	if read -r -u "${MKFDS[0]}" PID; then
 	    ${TS_CMD_LSFD} -n \
 			   -o ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH \
-			   -p "${PID}" -Q "${EXPR}"
-	    echo 'ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': $?
+			   -p "${PID}" -Q "${EXPR}" | strip_type_stream $t
+	    echo 'ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': ${PIPESTATUS[0]}
 
 	    compare_net_namespaces "$t" "${PID}"
 
@@ -80,8 +89,8 @@ for t in stream dgram seqpacket; do
 	if read -r -u "${MKFDS[0]}" PID; then
 	    ${TS_CMD_LSFD} -n \
 			   -o ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH \
-			   -p "${PID}" -Q "${EXPR}"
-	    echo 'ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': $?
+			   -p "${PID}" -Q "${EXPR}" | strip_type_stream $t
+	    echo 'ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': ${PIPESTATUS[0]}
 
 	    compare_net_namespaces "abstract $t" "${PID}"
 
