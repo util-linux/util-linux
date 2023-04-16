@@ -153,7 +153,7 @@ int main(int argc, char ** argv)
 			   offset, len,
 			   advice);
 	if (rc != 0)
-		warn(_("failed to advise"));
+		warnx(_("failed to advise: %s"), strerror(rc));
 
 	if (do_close)
 		close(fd);
