@@ -125,7 +125,7 @@ static int hlp_fsopen_ok(void)
 	return 0;
 }
 
-static mntHlpfnc hlps[] =
+static const mntHlpfnc hlps[] =
 {
 	{ "WORDSIZE",	hlp_wordsize	},
 	{ "pagesize",	hlp_pagesize	},
@@ -145,7 +145,7 @@ static mntHlpfnc hlps[] =
 int main(int argc, char **argv)
 {
 	int re = 0;
-	mntHlpfnc *fn;
+	const mntHlpfnc *fn;
 
 	if (argc == 1) {
 		for (fn = hlps; fn->name; fn++) {
