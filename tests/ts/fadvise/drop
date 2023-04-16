@@ -23,6 +23,8 @@ create_file() {
 }
 
 {
+    getconf PAGESIZE
+
     create_file
     "$TS_CMD_FINCORE" "$FILE"
     echo
