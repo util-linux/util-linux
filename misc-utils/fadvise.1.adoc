@@ -39,6 +39,8 @@ If this option is omitted, 0 is used as default advice.
 Specifies the length of the range, in bytes.
 If this option is omitted, 0 is used as default advice.
 
+include::man-common/help-version.adoc[]
+
 == AUTHORS
 
 mailto:yamato@redhat.com[Masatake YAMATO]
