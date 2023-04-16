@@ -19,7 +19,7 @@ BS=4k
 COUNT=8
 
 create_file() {
-    dd if=/dev/zero of="$FILE" bs=$BS count=$COUNT >& /dev/null
+    dd if=/dev/zero of="$FILE" bs=$BS count=$COUNT conv=fsync >& /dev/null
 }
 
 {
