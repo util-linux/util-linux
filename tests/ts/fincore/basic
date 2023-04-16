@@ -20,6 +20,9 @@ TS_DESC="basic test"
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
+# mincore() on mmap(PROT_NONE) does not work on qemu-user
+# https://lore.kernel.org/qemu-devel/20230416195103.607948-1-thomas@t-8ch.de/
+ts_skip_qemu_user
 ts_check_test_command "$TS_CMD_FINCORE"
 
 "$TS_CMD_FINCORE" "$TS_CMD_FINCORE" > /dev/null || ts_failed "foo"
