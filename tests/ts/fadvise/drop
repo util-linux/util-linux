@@ -31,28 +31,28 @@ create_file() {
 
     create_file
     echo "whole file"
-    "$TS_CMD_FADVISE" "$FILE"
+    "$TS_CMD_FADVISE" -s "$FILE"
     echo status: $?
     "$TS_CMD_FINCORE" "$FILE"
     echo
 
     create_file
     echo "offset: 8192"
-    "$TS_CMD_FADVISE" -o 8192 "$FILE"
+    "$TS_CMD_FADVISE" -s -o 8192 "$FILE"
     echo status: $?
     "$TS_CMD_FINCORE" "$FILE"
     echo
 
     create_file
     echo "length: 16384"
-    "$TS_CMD_FADVISE" -l 16384 "$FILE"
+    "$TS_CMD_FADVISE" -s -l 16384 "$FILE"
     echo status: $?
     "$TS_CMD_FINCORE" "$FILE"
     echo
 
     create_file
     echo "offset: 8192, length: 16384 fd: 42"
-    "$TS_CMD_FADVISE" -o 8192 -l 16384 --fd 42 42<"$FILE"
+    "$TS_CMD_FADVISE" -s -o 8192 -l 16384 --fd 42 42<"$FILE"
     echo status: $?
     "$TS_CMD_FINCORE" "$FILE"
     echo

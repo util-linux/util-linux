@@ -53,6 +53,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -a, --advice <advice> applying advice to the file (default: \"dontneed\")\n"), out);
 	fputs(_(" -l, --length <num>    length for range operations, in bytes\n"), out);
 	fputs(_(" -o, --offset <num>    offset for range operations, in bytes\n"), out);
+	fputs(_(" -s, --sync            do sync the range before DONTNEED operation\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(23));
@@ -79,12 +80,14 @@ int main(int argc, char ** argv)
 	off_t offset = 0;
 	off_t len = 0;
 	int advice = POSIX_FADV_DONTNEED;
+	bool sync = false;
 
 	static const struct option longopts[] = {
 		{ "advice",     required_argument, NULL, 'a' },
 		{ "fd",         required_argument, NULL, 'd' },
 		{ "length",     required_argument, NULL, 'l' },
 		{ "offset",     required_argument, NULL, 'o' },
+		{ "sync",       required_argument, NULL, 's' },
 		{ "version",    no_argument,       NULL, 'V' },
 		{ "help",	no_argument,       NULL, 'h' },
 		{ NULL, 0, NULL, 0 },
@@ -94,7 +97,7 @@ int main(int argc, char ** argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long (argc, argv, "a:d:hl:o:V", longopts, NULL)) != -1) {
+	while ((c = getopt_long (argc, argv, "a:d:hl:o:sV", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'a':
 			advice = -1;
@@ -118,6 +121,9 @@ int main(int argc, char ** argv)
 		case 'o':
 			offset = strtosize_or_err(optarg,
 						  _("invalid offset argument"));
+			break;
+		case 's':
+			sync = true;
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
@@ -150,12 +156,21 @@ int main(int argc, char ** argv)
 		do_close = true;
 	}
 
+	if (advice == POSIX_FADV_DONTNEED && sync) {
+		rc = sync_file_range(fd, offset, len,
+				     SYNC_FILE_RANGE_WAIT_BEFORE | SYNC_FILE_RANGE_WRITE);
+		if (rc != 0) {
+			warn(_("failed in sysnc_file_range"));
+			goto out;
+		}
+	}
 	rc = posix_fadvise(fd,
 			   offset, len,
 			   advice);
 	if (rc != 0)
 		warn(_("failed to advise"));
 
+ out:
 	if (do_close)
 		close(fd);
 
