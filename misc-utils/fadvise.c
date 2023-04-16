@@ -158,5 +158,5 @@ int main(int argc, char ** argv)
 	if (do_close)
 		close(fd);
 
-	return rc;
+	return rc == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }
