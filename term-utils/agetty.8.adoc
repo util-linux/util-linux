@@ -319,6 +319,14 @@ problem reports (if *syslog*(3) is not used).
 _/etc/inittab_::
 *init*(8) configuration file for SysV-style init daemon.
 
+== CREDENTIALS
+
+*agetty* supports configuration via systemd credentials (see https://systemd.io/CREDENTIALS/). *agetty* reads the following systemd credentials:
+
+*agetty.autologin* (string)::
+
+If set, configures *agetty* to automatically log in the specified user without asking for a username or password, similarly to the *--autologin* option.
+
 == BUGS
 
 The baud-rate detection feature (the *--extract-baud* option) requires that *agetty* be scheduled soon enough after completion of a dial-in call (within 30 ms with modems that talk at 2400 baud). For robustness, always use the *--extract-baud* option in combination with a multiple baud rate command-line argument, so that BREAK processing is enabled.
