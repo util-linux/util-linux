@@ -31,6 +31,15 @@ PID=
 FD=3
 EXPR="(FD == 3)"
 
+make_state_connected()
+{
+    if [ "$1" = "socketpair" ]; then
+	lsfd_make_state_connected
+    else
+	cat
+    fi
+}
+
 for C in ro-regular-file pidfd socketpair; do
     ts_init_subtest $C
     {
@@ -47,9 +56,9 @@ for C in ro-regular-file pidfd socketpair; do
 	    ${TS_CMD_LSFD} -n -o ASSOC,KNAME,NAME -p "${PID}" -Q "${EXPR}" | {
 		# Replace the unpredictable an inode number for the socket
 		# with "INODENUM".
-		sed -e 's/\[[0-9]\+\]/[INODENUM]/g'
+		sed -e 's/\[[0-9]\+\]/[INODENUM]/g' | make_state_connected $C
 	    }
-	    echo "$C"':ASSOC,KNAME,NAME': $?
+	    echo "$C"':ASSOC,KNAME,NAME': ${PIPESTATUS[0]}
 
 	    kill -CONT "${PID}"
 	fi

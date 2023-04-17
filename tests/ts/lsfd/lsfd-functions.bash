@@ -57,3 +57,28 @@ function lsfd_compare_dev {
 	echo 'STAT_DEVNUM:' "${STAT_DEVNUM}"
     fi
 }
+
+lsfd_strip_type_stream()
+{
+    # lsfd changes the output of NAME column for a unix stream socket
+    # whether the kernel reports it is a "UNIX-STREAM" socket or a
+    # "UNIX" socket. For "UNIX", lsfd appends "type=stream" to the
+    # NAME column. Let's delete the appended string before comparing.
+    sed -e 's/ type=stream//'
+}
+
+lsfd_make_state_connected()
+{
+    # Newer kernels report the states of unix dgram sockets created by
+    # sockerpair(2) are "connected" via /proc/net/unix though Older
+    # kernels report "unconnected".
+    #
+    # Newer kernels report the states of unix dgram sockets already
+    # connect(2)'ed are "connected", too.
+    #
+    # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=83301b5367a98c17ec0d76c7bc0ccdc3c7e7ad6d
+    #
+    # This rewriting adjusts the output of lsfd running on older kernels
+    # to that on newer kernels.
+    sed -e 's/state=unconnected/state=connected/'
+}

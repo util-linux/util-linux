@@ -42,14 +42,23 @@ INO_NS=
 	INO_FD=$( "${TS_CMD_LSFD}" -n -oINODE   -p "${PID}" -Q "(FD == $FD)")
 	INO_NS=$( "${TS_CMD_LSFD}" -n -oINODE   -p "${PID}" -Q '(ASSOC == "net")')
 
-	[[ "$NAME_FD" = "$NAME_NS" ]]
-	echo "$NAME_FD" == "$NAME_NS": $?
+	if [[ "$NAME_FD" = "$NAME_NS" ]]; then
+	    echo "NAME_FD" == "NAME_NS": $?
+	else
+	    echo "NAME_FD: $NAME_FD" == "NAME_NS: $NAME_NS": $?
+	fi
 
-	[[ "$NAME_FD" = "net:[$INO_FD]" ]]
-	echo "$NAME_FD" == "net:[$INO_FD]": $?
+	if [[ "$NAME_FD" = "net:[$INO_FD]" ]]; then
+	    echo "NAME_FD" == "net:[INO_FD]": $?
+	else
+	    echo "NAME_FD: $NAME_FD" == "net:[INO_FD: $INO_FD]": $?
+	fi
 
-	[[ "$NAME_FD" = "net:[$INO_NS]" ]]
-	echo "$NAME_FD" == "net:[$INO_NS]": $?
+	if [[ "$NAME_FD" = "net:[$INO_NS]" ]]; then
+	    echo "NAME_FD" == "net:[INO_NS]": $?
+	else
+	    echo "NAME_FD: $NAME_FD" == "net:[INO_NS: $INO_NS]": $?
+	fi
 
 	kill -CONT ${PID}
     fi

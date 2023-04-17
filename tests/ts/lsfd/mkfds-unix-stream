@@ -20,6 +20,8 @@ TS_DESC="UNIX stream sockets"
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
+. "$TS_SELF/lsfd-functions.bash"
+
 ts_check_test_command "$TS_CMD_LSFD"
 ts_check_test_command "$TS_HELPER_MKFDS"
 
@@ -41,8 +43,8 @@ EXPR='(((TYPE == "UNIX-STREAM") or (TYPE == "UNIX")) and (FD >= 3) and (FD <= 5)
 	if read -r -u "${MKFDS[0]}" PID; then
 	    ${TS_CMD_LSFD} -n \
 			   -o ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH \
-			   -p "${PID}" -Q "${EXPR}"
-	    echo 'ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': $?
+			   -p "${PID}" -Q "${EXPR}" | lsfd_strip_type_stream
+	    echo 'ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': ${PIPESTATUS[0]}
 
 	    kill -CONT "${PID}"
 	fi
@@ -54,8 +56,8 @@ EXPR='(((TYPE == "UNIX-STREAM") or (TYPE == "UNIX")) and (FD >= 3) and (FD <= 5)
 	if read -r -u "${MKFDS[0]}" PID; then
 	    ${TS_CMD_LSFD} -n \
 			   -o ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH \
-			   -p "${PID}" -Q "${EXPR}"
-	    echo '(abs) ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': $?
+			   -p "${PID}" -Q "${EXPR}" | lsfd_strip_type_stream
+	    echo '(abs) ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': ${PIPESTATUS[0]}
 
 	    kill -CONT "${PID}"
 	fi
@@ -69,8 +71,8 @@ EXPR='(((TYPE == "UNIX-STREAM") or (TYPE == "UNIX")) and (FD >= 3) and (FD <= 5)
 	if read -r -u "${MKFDS[0]}" PID; then
 	    ${TS_CMD_LSFD} -n \
 			   -o ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH \
-			   -p "${PID}" -Q "${EXPR}"
-	    echo '(shutdown) ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': $?
+			   -p "${PID}" -Q "${EXPR}" | lsfd_strip_type_stream
+	    echo '(shutdown) ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': ${PIPESTATUS[0]}
 	    # Surprisingly, the socket status doesn't change at all.
 
 	    kill -CONT "${PID}"
@@ -83,8 +85,8 @@ EXPR='(((TYPE == "UNIX-STREAM") or (TYPE == "UNIX")) and (FD >= 3) and (FD <= 5)
 	if read -r -u "${MKFDS[0]}" PID; then
 	    ${TS_CMD_LSFD} -n \
 			   -o ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH \
-			   -p "${PID}" -Q "${EXPR}"
-	    echo 'ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': $?
+			   -p "${PID}" -Q "${EXPR}" | lsfd_strip_type_stream
+	    echo 'ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': ${PIPESTATUS[0]}
 
 	    kill -CONT "${PID}"
 	fi
