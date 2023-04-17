@@ -14,9 +14,6 @@ if [[ "$FS" = "tmpfs" ]]; then
 	ts_skip "fincore does not work on tmpfs"
 fi
 
-# Send patch if you know how to keep it portable and robust. Thanks.
-TS_KNOWN_FAIL="yes"
-
 function footer
 {
     echo "return value: $1"
