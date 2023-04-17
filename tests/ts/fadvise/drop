@@ -8,6 +8,7 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_FADVISE"
 ts_check_test_command "$TS_CMD_FINCORE"
+ts_check_test_command "$TS_CMD_FINDMNT"
 
 ts_check_prog "dd"
 ts_check_prog "sleep"
@@ -18,33 +19,42 @@ FILE="ddtest"
 BS=4k
 COUNT=8
 
+FILE_FS="$("$TS_CMD_FINDMNT" -nr -o FSTYPE -T "$PWD")"
+if [[ "$FILE_FS" = "tmpfs" ]]; then
+	ts_skip "fincore does not work on tmpfs"
+fi
+
+create_file() {
+    dd if=/dev/zero of="$FILE" bs=$BS count=$COUNT conv=fsync >& /dev/null
+}
+
 {
-    dd if=/dev/zero of="$FILE" bs=$BS count=$COUNT >& /dev/null
+    create_file
     "$TS_CMD_FINCORE" "$FILE"
     echo
 
-    dd if=/dev/zero of="$FILE" bs=$BS count=$COUNT >& /dev/null
+    create_file
     echo "whole file"
     "$TS_CMD_FADVISE" "$FILE"
     echo status: $?
     "$TS_CMD_FINCORE" "$FILE"
     echo
 
-    dd if=/dev/zero of="$FILE" bs=$BS count=$COUNT >& /dev/null
+    create_file
     echo "offset: 8192"
     "$TS_CMD_FADVISE" -o 8192 "$FILE"
     echo status: $?
     "$TS_CMD_FINCORE" "$FILE"
     echo
 
-    dd if=/dev/zero of="$FILE" bs=$BS count=$COUNT >& /dev/null
+    create_file
     echo "length: 16384"
     "$TS_CMD_FADVISE" -l 16384 "$FILE"
     echo status: $?
     "$TS_CMD_FINCORE" "$FILE"
     echo
 
-    dd if=/dev/zero of="$FILE" bs=$BS count=$COUNT >& /dev/null
+    create_file
     echo "offset: 8192, length: 16384 fd: 42"
     "$TS_CMD_FADVISE" -o 8192 -l 16384 --fd 42 42<"$FILE"
     echo status: $?

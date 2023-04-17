@@ -204,7 +204,8 @@ static int fincore_fd (struct fincore_control *ctl,
 		if (len >= (off_t) window_size)
 			len = window_size;
 
-		window = mmap(window, len, PROT_NONE, MAP_PRIVATE, fd, file_offset);
+		/* PROT_NONE is enough for Linux, but qemu-user wants PROT_READ */
+		window = mmap(window, len, PROT_READ, MAP_PRIVATE, fd, file_offset);
 		if (window == MAP_FAILED) {
 			rc = -EINVAL;
 			warn(_("failed to do mmap: %s"), name);
