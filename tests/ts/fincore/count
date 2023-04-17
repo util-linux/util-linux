@@ -6,7 +6,7 @@ TS_DESC="count file contents in core"
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
-ts_check_test_command "$TS_HELPER_FINDMNT"
+ts_check_test_command "$TS_CMD_FINDMNT"
 ts_check_test_command "$TS_HELPER_SYSINFO"
 
 FS="$("$TS_CMD_FINDMNT" -nr -o FSTYPE -T "$PWD")"
