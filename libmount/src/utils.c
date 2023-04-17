@@ -118,6 +118,14 @@ int mnt_lstat_mountpoint(const char *target, struct stat *st)
 #endif
 }
 
+/* Don't use access() or stat() here, we need a way how to check the path
+ * without trigger an automount or hangs on NFS, etc. */
+int mnt_is_path(const char *target)
+{
+	struct stat st;
+
+	return mnt_stat_mountpoint(target, &st) == 0;
+}
 
 /*
  * Note that the @target has to be an absolute path (so at least "/").  The

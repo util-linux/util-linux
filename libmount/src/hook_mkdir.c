@@ -36,7 +36,6 @@ static int is_mkdir_required(struct libmnt_context *cxt, const char *tgt, mode_t
 	struct libmnt_optlist *ol;
 	struct libmnt_opt *opt;
 	const char *mstr = NULL;
-	struct stat st;
 
 	assert(cxt);
 	assert(cxt->map_userspace);
@@ -57,7 +56,7 @@ static int is_mkdir_required(struct libmnt_context *cxt, const char *tgt, mode_t
 	if (!opt)
 		return 0;
 
-	if (mnt_stat_mountpoint(tgt, &st) == 0)
+	if (mnt_is_path(tgt))
 		return 0;
 
 	mstr = mnt_opt_get_value(opt);
