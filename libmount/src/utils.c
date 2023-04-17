@@ -100,22 +100,53 @@ static int fstype_cmp(const void *v1, const void *v2)
 	return strcmp(s1, s2);
 }
 
+static int safe_stat(const char *target, struct stat *st, int nofollow)
+{
+	assert(target);
+	assert(st);
+
+	memset(st, 0, sizeof(struct stat));
+
+#ifdef AT_STATX_DONT_SYNC
+	{
+		int rc;
+		struct statx stx = { 0 };
+
+		rc = statx(-1,	target,
+				/* flags */
+				AT_STATX_DONT_SYNC
+					| AT_NO_AUTOMOUNT
+					| (nofollow ? AT_SYMLINK_NOFOLLOW : 0),
+				/* mask */
+				STATX_TYPE
+					| STATX_MODE
+					| STATX_INO,
+				&stx);
+		if (rc == 0) {
+			st->st_ino  = stx.stx_ino;
+			st->st_dev  = makedev(stx.stx_dev_major, stx.stx_dev_minor);
+			st->st_mode = stx.stx_mode;
+		}
+		return rc;
+	}
+#else
+# ifdef AT_NO_AUTOMOUNT
+	return fstatat(AT_FDCWD, target, st,
+			AT_NO_AUTOMOUNT | (nofollow ? AT_SYMLINK_NOFOLLOW : 0));
+# else
+	return nofollow ? lstat(target, st) : stat(target, st);
+# endif
+#endif
+}
+
 int mnt_stat_mountpoint(const char *target, struct stat *st)
 {
-#ifdef AT_NO_AUTOMOUNT
-	return fstatat(AT_FDCWD, target, st, AT_NO_AUTOMOUNT);
-#else
-	return stat(target, st);
-#endif
+	return safe_stat(target, st, 0);
 }
 
 int mnt_lstat_mountpoint(const char *target, struct stat *st)
 {
-#ifdef AT_NO_AUTOMOUNT
-	return fstatat(AT_FDCWD, target, st, AT_NO_AUTOMOUNT | AT_SYMLINK_NOFOLLOW);
-#else
-	return lstat(target, st);
-#endif
+	return safe_stat(target, st, 1);
 }
 
 /* Don't use access() or stat() here, we need a way how to check the path
@@ -124,7 +155,7 @@ int mnt_is_path(const char *target)
 {
 	struct stat st;
 
-	return mnt_stat_mountpoint(target, &st) == 0;
+	return safe_stat(target, &st, 0) == 0;
 }
 
 /*
@@ -1450,6 +1481,32 @@ static int tests_parse_mode(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
+static int tests_stat(struct libmnt_test *ts, int argc, char *argv[])
+{
+	char *path = argv[1];
+	struct stat st;
+	int rc;
+
+	if (strcmp(argv[0], "--lstat") == 0)
+		rc = mnt_lstat_mountpoint(path, &st);
+	else
+		rc = mnt_stat_mountpoint(path, &st);
+	if (rc)
+		printf("%s: failed: rc=%d: %m\n", path, rc);
+	else {
+		printf("%s: \n", path);
+		printf(" S_ISDIR: %s\n", S_ISDIR(st.st_mode) ? "y" : "n");
+		printf(" S_ISREG: %s\n", S_ISREG(st.st_mode) ? "y" : "n");
+		printf(" S_IFLNK: %s\n", S_ISLNK(st.st_mode) ? "y" : "n");
+
+		printf("   devno: %lu (%d:%d)\n", (unsigned long) st.st_dev,
+					  major(st.st_dev), minor(st.st_dev));
+		printf("     ino: %lu\n", (unsigned long) st.st_ino);
+
+	}
+	return rc;
+}
+
 int main(int argc, char *argv[])
 {
 	struct libmnt_test tss[] = {
@@ -1467,6 +1524,8 @@ int main(int argc, char *argv[])
 	{ "--parse-uid",     tests_parse_uid,      "<username|uid>" },
 	{ "--parse-gid",     tests_parse_gid,      "<groupname|gid>" },
 	{ "--parse-mode",    tests_parse_mode,     "<number>" },
+	{ "--stat",          tests_stat,           "<path>" },
+	{ "--lstat",         tests_stat,           "<path>" },
 	{ NULL }
 	};
 
