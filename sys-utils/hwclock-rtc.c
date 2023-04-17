@@ -132,8 +132,9 @@ static int open_rtc_or_exit(const struct hwclock_control *ctl)
 static int do_rtc_read_ioctl(int rtc_fd, struct tm *tm)
 {
 	int rc = -1;
+	struct rtc_time rtc_tm = { 0 };
 
-	rc = ioctl(rtc_fd, RTC_RD_TIME, tm);
+	rc = ioctl(rtc_fd, RTC_RD_TIME, &rtc_tm);
 
 	if (rc == -1) {
 		warn(_("ioctl(RTC_RD_NAME) to %s to read the time failed"),
@@ -141,6 +142,15 @@ static int do_rtc_read_ioctl(int rtc_fd, struct tm *tm)
 		return -1;
 	}
 
+	/* kernel uses private struct tm definition to be self contained */
+	tm->tm_sec   = rtc_tm.tm_sec;
+	tm->tm_min   = rtc_tm.tm_min;
+	tm->tm_hour  = rtc_tm.tm_hour;
+	tm->tm_mday  = rtc_tm.tm_mday;
+	tm->tm_mon   = rtc_tm.tm_mon;
+	tm->tm_year  = rtc_tm.tm_year;
+	tm->tm_wday  = rtc_tm.tm_wday;
+	tm->tm_yday  = rtc_tm.tm_yday;
 	tm->tm_isdst = -1;	/* don't know whether it's dst */
 	return 0;
 }
@@ -272,10 +282,22 @@ static int set_hardware_clock_rtc(const struct hwclock_control *ctl,
 {
 	int rc = -1;
 	int rtc_fd;
+	struct rtc_time rtc_tm = { 0 };
 
 	rtc_fd = open_rtc_or_exit(ctl);
 
-	rc = ioctl(rtc_fd, RTC_SET_TIME, new_broken_time);
+	/* kernel uses private struct tm definition to be self contained */
+	rtc_tm.tm_sec   = new_broken_time->tm_sec;
+	rtc_tm.tm_min   = new_broken_time->tm_min;
+	rtc_tm.tm_hour  = new_broken_time->tm_hour;
+	rtc_tm.tm_mday  = new_broken_time->tm_mday;
+	rtc_tm.tm_mon   = new_broken_time->tm_mon;
+	rtc_tm.tm_year  = new_broken_time->tm_year;
+	rtc_tm.tm_wday  = new_broken_time->tm_wday;
+	rtc_tm.tm_yday  = new_broken_time->tm_yday;
+	rtc_tm.tm_isdst = new_broken_time->tm_isdst;
+
+	rc = ioctl(rtc_fd, RTC_SET_TIME, &rtc_tm);
 
 	if (rc == -1) {
 		warn(_("ioctl(RTC_SET_TIME) to %s to set the time failed"),
