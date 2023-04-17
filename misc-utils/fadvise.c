@@ -96,6 +96,15 @@ int main(int argc, char ** argv)
 	while ((c = getopt_long (argc, argv, "a:d:hl:o:V", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'a':
+			advice = -1;
+			for (size_t i = 0; i < ARRAY_SIZE(advices); i++) {
+				if (strcmp(optarg, advices[i].name) == 0) {
+					advice = advices[i].num;
+					break;
+				}
+			}
+			if (advice == -1)
+				errx(EXIT_FAILURE, "invalid advice argument: '%s'", optarg);
 			break;
 		case 'd':
 			fd = strtos32_or_err(optarg,
@@ -144,10 +153,10 @@ int main(int argc, char ** argv)
 			   offset, len,
 			   advice);
 	if (rc != 0)
-		warn(_("failed to advise"));
+		warnx(_("failed to advise: %s"), strerror(rc));
 
 	if (do_close)
 		close(fd);
 
-	return rc;
+	return rc == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }

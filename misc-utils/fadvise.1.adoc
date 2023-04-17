@@ -39,6 +39,17 @@ If this option is omitted, 0 is used as default advice.
 Specifies the length of the range, in bytes.
 If this option is omitted, 0 is used as default advice.
 
+include::man-common/help-version.adoc[]
+
+== EXIT STATUS
+
+*fadvise* has the following exit status values:
+
+*0*::
+success
+*1*::
+unspecified failure
+
 == AUTHORS
 
 mailto:yamato@redhat.com[Masatake YAMATO]
