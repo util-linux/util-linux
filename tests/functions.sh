@@ -77,6 +77,9 @@ function ts_report {
 
 function ts_check_test_command {
 	case "$1" in
+	"")
+		ts_failed "invalid test_command requested"
+		;;
 	*/*)
 		# paths
 		if [ ! -x "$1" ]; then
@@ -99,6 +102,7 @@ function ts_check_test_command {
 
 function ts_check_prog {
 	local cmd=$1
+	[ -z "$cmd" ] && ts_failed "invalid prog requested"
 	type "$cmd" >/dev/null 2>&1 || ts_skip "missing in PATH: $cmd"
 }
 
