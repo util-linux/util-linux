@@ -10,6 +10,7 @@
  *  code or tables extracted from it, as desired without restriction.
  */
 
+#include <assert.h>
 #include "crc32c.h"
 
 static const uint32_t crc32Table[256] = {
@@ -98,5 +99,22 @@ crc32c(uint32_t crc, const void *buf, size_t size)
 	while (size--)
 		crc = crc32Table[(crc ^ *p++) & 0xff] ^ (crc >> 8);
 
+	return crc;
+}
+
+uint32_t
+ul_crc32c_exclude_offset(uint32_t crc, const unsigned char *buf, size_t size,
+			 size_t exclude_off, size_t exclude_len)
+{
+	size_t i;
+	assert((exclude_off + exclude_len) < size);
+
+	crc = crc32c(crc, buf, exclude_off);
+	for (i = 0; i < exclude_len; i++) {
+		uint8_t zero = 0;
+		crc = crc32c(crc, &zero, 1);
+	}
+	crc = crc32c(crc, &buf[exclude_off + exclude_len],
+		     size - (exclude_off + exclude_len));
 	return crc;
 }
