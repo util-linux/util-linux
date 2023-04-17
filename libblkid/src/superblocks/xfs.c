@@ -207,7 +207,6 @@ static int xfs_verify_sb(struct xfs_super_block *ondisk, blkid_probe pr,
 	if ((sbp->sb_versionnum & 0x0f) == 5) {
 		uint32_t expected, crc;
 		unsigned char *csummed;
-		int crc_offset = offsetof(struct xfs_super_block, sb_crc);
 
 		if (!(sbp->sb_versionnum & XFS_SB_VERSION_MOREBITSBIT))
 			return 0;
@@ -220,7 +219,8 @@ static int xfs_verify_sb(struct xfs_super_block *ondisk, blkid_probe pr,
 			return 0;
 
 		crc = ul_crc32c_exclude_offset(~0LL, csummed, sbp->sb_sectsize,
-					       crc_offset, sizeof(sbp->sb_crc));
+			                       offsetof(struct xfs_super_block, sb_crc),
+			                       sizeof_member(struct xfs_super_block, sb_crc));
 		crc = bswap_32(crc ^ ~0LL);
 
 		if (!blkid_probe_verify_csum(pr, crc, expected))

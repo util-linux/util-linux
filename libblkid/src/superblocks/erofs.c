@@ -58,8 +58,9 @@ static int erofs_verify_checksum(blkid_probe pr, const struct blkid_idmag *mag,
 	if (!csummed)
 		return 0;
 
-	memset(csummed + offsetof(struct erofs_super_block, checksum), 0, sizeof(uint32_t));
-	csum = crc32c(~0L, csummed, csummed_size);
+	csum = ul_crc32c_exclude_offset(~0L, csummed, csummed_size,
+			                offsetof(struct erofs_super_block, checksum),
+					sizeof_member(struct erofs_super_block, checksum));
 
 	return blkid_probe_verify_csum(pr, csum, expected);
 }
