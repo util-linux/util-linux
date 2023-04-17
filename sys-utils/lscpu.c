@@ -1444,6 +1444,7 @@ int main(int argc, char *argv[])
 		print_cpus_readable(cxt, columns, ncolumns);
 		break;
 	case LSCPU_OUTPUT_PARSABLE:
+		cxt->show_compatible = 1;
 		if (!ncolumns) {
 			columns[ncolumns++] = COL_CPU_CPU;
 			columns[ncolumns++] = COL_CPU_CORE;
@@ -1453,7 +1454,6 @@ int main(int argc, char *argv[])
 				columns[ncolumns++] = COL_CPU_SOCKET;
 			columns[ncolumns++] = COL_CPU_NODE;
 			columns[ncolumns++] = COL_CPU_CACHE;
-			cxt->show_compatible = 1;
 		}
 		if (outarg && string_add_to_idarray(outarg, columns,
 					ARRAY_SIZE(columns),
