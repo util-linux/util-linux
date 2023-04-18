@@ -24,6 +24,7 @@ ts_skip_nonroot
 
 ts_check_test_command "$TS_CMD_LSFD"
 ts_check_test_command "$TS_HELPER_MKFDS"
+ts_check_prog "id"
 ts_check_native_byteorder
 
 ts_cd "$TS_OUTDIR"
@@ -47,6 +48,44 @@ COLNS=(
     INET6
 )
 ID=9999
+
+range_check()
+{
+    local v=$1
+    local min=$2
+    local max=$3
+
+    [[ $min -le $v && $v -le $max ]]
+    return $?
+}
+
+ping_group_range_check()
+{
+    local g
+    local group_min group_max
+
+    if ! read group_min group_max < /proc/sys/net/ipv4/ping_group_range; then
+	# We can say nothing. Just allow to go ahead.
+	return 0
+    fi
+
+    if [[ -z "$group_min" || -z "$group_max" ]]; then
+	# We can say nothing. Just allow to go ahead.
+	return 0
+    fi
+
+    for g in $(id -G); do
+	if range_check "$g" "$group_min" "$group_max"; then
+	   return 0
+	fi
+    done
+
+    return 1
+}
+
+if ! ping_group_range_check; then
+    ts_skip "the group(s) of the process ($(id -G)) are not in the expected range [$(cat /proc/sys/net/ipv4/ping_group_range)]"
+fi
 
 for i in 0 1; do
     if ! "$TS_HELPER_MKFDS"  -c -q "${FACTORY[$i]}" 3 id=$ID; then
