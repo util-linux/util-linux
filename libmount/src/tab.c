@@ -1775,7 +1775,7 @@ int __mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_f
 		struct stat st;
 
 		devno = mnt_fs_get_devno(fstab_fs);
-		if (!devno && stat(src, &st) == 0 && S_ISBLK(st.st_mode))
+		if (!devno && mnt_safe_stat(src, &st) == 0 && S_ISBLK(st.st_mode))
 			devno = st.st_rdev;
 	}
 

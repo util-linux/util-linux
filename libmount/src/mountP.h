@@ -128,8 +128,8 @@ extern void mnt_free_filesystems(char **filesystems);
 
 extern char *mnt_get_kernel_cmdline_option(const char *name);
 
-extern int mnt_stat_mountpoint(const char *target, struct stat *st);
-extern int mnt_lstat_mountpoint(const char *target, struct stat *st);
+extern int mnt_safe_stat(const char *target, struct stat *st);
+extern int mnt_safe_lstat(const char *target, struct stat *st);
 extern int mnt_is_path(const char *target);
 
 extern int mnt_tmptgt_unshare(int *old_ns_fd);

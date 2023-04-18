@@ -100,6 +100,10 @@ static int fstype_cmp(const void *v1, const void *v2)
 	return strcmp(s1, s2);
 }
 
+/* This very simplified stat() alternative uses cached VFS data and does not
+ * directly ask the filesystem for details. It requires a kernel that supports
+ * statx(). It's usable only for file type, rdev and ino!
+ */
 static int safe_stat(const char *target, struct stat *st, int nofollow)
 {
 	assert(target);
@@ -125,26 +129,28 @@ static int safe_stat(const char *target, struct stat *st, int nofollow)
 		if (rc == 0) {
 			st->st_ino  = stx.stx_ino;
 			st->st_dev  = makedev(stx.stx_dev_major, stx.stx_dev_minor);
+			st->st_rdev = makedev(stx.stx_rdev_major, stx.stx_rdev_minor);
 			st->st_mode = stx.stx_mode;
 		}
-		return rc;
+
+		if (rc == 0 || errno != EOPNOTSUPP)
+			return rc;
 	}
-#else
-# ifdef AT_NO_AUTOMOUNT
+#endif
+
+#ifdef AT_NO_AUTOMOUNT
 	return fstatat(AT_FDCWD, target, st,
 			AT_NO_AUTOMOUNT | (nofollow ? AT_SYMLINK_NOFOLLOW : 0));
-# else
-	return nofollow ? lstat(target, st) : stat(target, st);
-# endif
 #endif
+	return nofollow ? lstat(target, st) : stat(target, st);
 }
 
-int mnt_stat_mountpoint(const char *target, struct stat *st)
+int mnt_safe_stat(const char *target, struct stat *st)
 {
 	return safe_stat(target, st, 0);
 }
 
-int mnt_lstat_mountpoint(const char *target, struct stat *st)
+int mnt_safe_lstat(const char *target, struct stat *st)
 {
 	return safe_stat(target, st, 1);
 }
@@ -1074,7 +1080,7 @@ char *mnt_get_mountpoint(const char *path)
 	if (*mnt == '/' && *(mnt + 1) == '\0')
 		goto done;
 
-	if (mnt_stat_mountpoint(mnt, &st))
+	if (mnt_safe_stat(mnt, &st))
 		goto err;
 	base = st.st_dev;
 
@@ -1083,7 +1089,7 @@ char *mnt_get_mountpoint(const char *path)
 
 		if (!p)
 			break;
-		if (mnt_stat_mountpoint(*mnt ? mnt : "/", &st))
+		if (mnt_safe_stat(*mnt ? mnt : "/", &st))
 			goto err;
 		dir = st.st_dev;
 		if (dir != base) {
@@ -1488,9 +1494,9 @@ static int tests_stat(struct libmnt_test *ts, int argc, char *argv[])
 	int rc;
 
 	if (strcmp(argv[0], "--lstat") == 0)
-		rc = mnt_lstat_mountpoint(path, &st);
+		rc = mnt_safe_lstat(path, &st);
 	else
-		rc = mnt_stat_mountpoint(path, &st);
+		rc = mnt_safe_stat(path, &st);
 	if (rc)
 		printf("%s: failed: rc=%d: %m\n", path, rc);
 	else {

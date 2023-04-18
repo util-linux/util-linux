@@ -974,11 +974,10 @@ int mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
 struct libmnt_table *__mnt_new_table_from_file(const char *filename, int fmt, int empty_for_enoent)
 {
 	struct libmnt_table *tb;
-	struct stat st;
 
 	if (!filename)
 		return NULL;
-	if (stat(filename, &st))
+	if (!mnt_is_path(filename))
 		return empty_for_enoent ? mnt_new_table() : NULL;
 
 	tb = mnt_new_table();
@@ -1149,7 +1148,7 @@ int mnt_table_parse_fstab(struct libmnt_table *tb, const char *filename)
 		filename = mnt_get_fstab_path();
 	if (!filename)
 		return -EINVAL;
-	if (stat(filename, &st) != 0)
+	if (mnt_safe_stat(filename, &st) != 0)
 		return -errno;
 
 	tb->fmt = MNT_FMT_FSTAB;

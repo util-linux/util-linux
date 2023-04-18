@@ -1407,7 +1407,7 @@ int mnt_context_get_mountinfo_for_target(struct libmnt_context *cxt,
 	if (mnt_context_is_nocanonicalize(cxt))
 		mnt_context_set_tabfilter(cxt, mountinfo_filter, (void *) tgt);
 
-	else if (mnt_stat_mountpoint(tgt, &st) == 0 && S_ISDIR(st.st_mode)) {
+	else if (mnt_safe_stat(tgt, &st) == 0 && S_ISDIR(st.st_mode)) {
 		cache = mnt_context_get_cache(cxt);
 		cn_tgt = mnt_resolve_path(tgt, cache);
 		if (cn_tgt)
@@ -2025,34 +2025,32 @@ int mnt_context_prepare_helper(struct libmnt_context *cxt, const char *name,
 	if (!ns_old)
 		return -MNT_ERR_NAMESPACE;
 
-	/* Ignore errors when search in $PATH and do not modify
-	 * @rc due to stat() etc.
+	/* Ignore errors when search in $PATH and do not modify @rc
 	 */
 	path = strtok_r(search_path, ":", &p);
 	while (path) {
 		char helper[PATH_MAX];
-		struct stat st;
-		int xrc;
+		int len, found = 0;
 
-		xrc = snprintf(helper, sizeof(helper), "%s/%s.%s",
+		len = snprintf(helper, sizeof(helper), "%s/%s.%s",
 						path, name, type);
 		path = strtok_r(NULL, ":", &p);
 
-		if (xrc < 0 || (size_t) xrc >= sizeof(helper))
+		if (len < 0 || (size_t) len >= sizeof(helper))
 			continue;
 
-		xrc = stat(helper, &st);
-		if (xrc == -1 && errno == ENOENT && strchr(type, '.')) {
+		found = mnt_is_path(helper);
+		if (!found && strchr(type, '.')) {
 			/* If type ends with ".subtype" try without it */
 			char *hs = strrchr(helper, '.');
 			if (hs)
 				*hs = '\0';
-			xrc = stat(helper, &st);
+			found = mnt_is_path(helper);
 		}
 
 		DBG(CXT, ul_debugobj(cxt, "%-25s ... %s", helper,
-					xrc ? "not found" : "found"));
-		if (xrc)
+					found ? "found" : "not found"));
+		if (!found)
 			continue;
 
 		/* success */

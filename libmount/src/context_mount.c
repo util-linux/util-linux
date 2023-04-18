@@ -1558,7 +1558,7 @@ int mnt_context_get_mount_excode(
 		if (!buf)
 			break;
 		if (geteuid() == 0) {
-			if (mnt_stat_mountpoint(tgt, &st) || !S_ISDIR(st.st_mode))
+			if (mnt_safe_stat(tgt, &st) || !S_ISDIR(st.st_mode))
 				snprintf(buf, bufsz, _("mount point is not a directory"));
 			else
 				snprintf(buf, bufsz, _("permission denied"));
@@ -1584,13 +1584,13 @@ int mnt_context_get_mount_excode(
 			snprintf(buf, bufsz, _("%s already mounted or mount point busy"), src);
 		break;
 	case ENOENT:
-		if (tgt && mnt_lstat_mountpoint(tgt, &st)) {
+		if (tgt && mnt_safe_lstat(tgt, &st)) {
 			if (buf)
 				snprintf(buf, bufsz, _("mount point does not exist"));
-		} else if (tgt && mnt_stat_mountpoint(tgt, &st)) {
+		} else if (tgt && mnt_safe_stat(tgt, &st)) {
 			if (buf)
 				snprintf(buf, bufsz, _("mount point is a symbolic link to nowhere"));
-		} else if (src && stat(src, &st)) {
+		} else if (src && !mnt_is_path(src)) {
 			if (uflags & MNT_MS_NOFAIL)
 				return MNT_EX_SUCCESS;
 			if (buf)
@@ -1602,10 +1602,10 @@ int mnt_context_get_mount_excode(
 		break;
 
 	case ENOTDIR:
-		if (mnt_stat_mountpoint(tgt, &st) || ! S_ISDIR(st.st_mode)) {
+		if (mnt_safe_stat(tgt, &st) || ! S_ISDIR(st.st_mode)) {
 			if (buf)
 				snprintf(buf, bufsz, _("mount point is not a directory"));
-		} else if (src && stat(src, &st) && errno == ENOTDIR) {
+		} else if (src && !mnt_is_path(src)) {
 			if (uflags & MNT_MS_NOFAIL)
 				return MNT_EX_SUCCESS;
 			if (buf)
@@ -1664,7 +1664,7 @@ int mnt_context_get_mount_excode(
 			return MNT_EX_SUCCESS;
 		if (!buf)
 			break;
-		if (src && stat(src, &st))
+		if (src && mnt_safe_stat(src, &st))
 			snprintf(buf, bufsz, _("%s is not a block device, and stat(2) fails?"), src);
 		else if (src && S_ISBLK(st.st_mode))
 			snprintf(buf, bufsz,
@@ -1710,7 +1710,7 @@ int mnt_context_get_mount_excode(
 
 	case EBADMSG:
 		/* Bad CRC for classic filesystems (e.g. extN or XFS) */
-		if (buf && src && stat(src, &st) == 0
+		if (buf && src && mnt_safe_stat(src, &st) == 0
 		    && (S_ISBLK(st.st_mode) || S_ISREG(st.st_mode))) {
 			snprintf(buf, bufsz, _("cannot mount; probably corrupted filesystem on %s"), src);
 			break;
