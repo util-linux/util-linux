@@ -107,7 +107,8 @@ ul_crc32c_exclude_offset(uint32_t crc, const unsigned char *buf, size_t size,
 			 size_t exclude_off, size_t exclude_len)
 {
 	size_t i;
-	assert((exclude_off + exclude_len) < size);
+
+	assert((exclude_off + exclude_len) <= size);
 
 	crc = crc32c(crc, buf, exclude_off);
 	for (i = 0; i < exclude_len; i++) {
