@@ -338,5 +338,8 @@ endif
 if BUILD_PIPESZ
 dist_bashcompletion_DATA += bash-completion/pipesz
 endif
+if BUILD_FADVISE
+dist_bashcompletion_DATA += bash-completion/fadvise
+endif
 
 endif # BUILD_BASH_COMPLETION
