@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.39-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-04-04 14:35+0200\n"
+"POT-Creation-Date: 2023-04-19 09:50+0200\n"
 "PO-Revision-Date: 2023-04-15 15:58+0200\n"
 "Last-Translator: Frédéric Marchal <fmarchal@perso.be>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -64,14 +64,14 @@ msgstr "pas assez d'arguments"
 #: login-utils/sulogin.c:497 login-utils/sulogin.c:534
 #: login-utils/utmpdump.c:142 login-utils/utmpdump.c:367
 #: login-utils/utmpdump.c:391 login-utils/vipw.c:257 login-utils/vipw.c:275
-#: misc-utils/fadvise.c:139 misc-utils/findmnt.c:1227 misc-utils/logger.c:1247
+#: misc-utils/fadvise.c:148 misc-utils/findmnt.c:1227 misc-utils/logger.c:1247
 #: misc-utils/mcookie.c:119 misc-utils/pipesz.c:162 misc-utils/uuidd.c:235
 #: sys-utils/blkdiscard.c:248 sys-utils/blkpr.c:164 sys-utils/blkzone.c:144
 #: sys-utils/dmesg.c:541 sys-utils/eject.c:501 sys-utils/eject.c:696
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:116 sys-utils/fstrim.c:106
-#: sys-utils/hwclock.c:241 sys-utils/hwclock.c:912 sys-utils/hwclock-rtc.c:173
-#: sys-utils/hwclock-rtc.c:438 sys-utils/hwclock-rtc.c:474
-#: sys-utils/hwclock-rtc.c:528 sys-utils/hwclock-rtc.c:581
+#: sys-utils/hwclock.c:241 sys-utils/hwclock.c:912 sys-utils/hwclock-rtc.c:108
+#: sys-utils/hwclock-rtc.c:353 sys-utils/hwclock-rtc.c:389
+#: sys-utils/hwclock-rtc.c:449 sys-utils/hwclock-rtc.c:502
 #: sys-utils/irq-common.c:263 sys-utils/ldattach.c:392
 #: sys-utils/lscpu-cputype.c:477 sys-utils/lsmem.c:671 sys-utils/nsenter.c:139
 #: sys-utils/rfkill.c:195 sys-utils/rtcwake.c:137 sys-utils/rtcwake.c:292
@@ -97,8 +97,7 @@ msgstr "argument de numéro de partition incorrect"
 msgid "invalid start argument"
 msgstr "argument de début incorrect"
 
-#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111
-#: misc-utils/fadvise.c:106
+#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111 misc-utils/fadvise.c:115
 msgid "invalid length argument"
 msgstr "argument de longueur incorrect"
 
@@ -497,8 +496,7 @@ msgstr "Échec d’écriture du script %s"
 msgid "Select label type"
 msgstr "Sélectionner un type d’étiquette"
 
-#: disk-utils/cfdisk.c:2197 disk-utils/fdisk.c:1162
-#: disk-utils/fdisk-menu.c:492
+#: disk-utils/cfdisk.c:2197 disk-utils/fdisk.c:1162 disk-utils/fdisk-menu.c:492
 msgid "Device does not contain a recognized partition table."
 msgstr "Le périphérique ne contient pas de table de partitions reconnue."
 
@@ -643,8 +641,7 @@ msgstr "Nouvel taille :"
 msgid "Partition %zu resized."
 msgstr "Partition %zu redimensionnée."
 
-#: disk-utils/cfdisk.c:2506 disk-utils/fdisk.c:1138
-#: disk-utils/fdisk-menu.c:595
+#: disk-utils/cfdisk.c:2506 disk-utils/fdisk.c:1138 disk-utils/fdisk-menu.c:595
 msgid "Device is open in read-only mode."
 msgstr "Le périphérique est ouvert en mode lecture seule."
 
@@ -781,8 +778,8 @@ msgstr ""
 "Poursuite du traitement… "
 
 #: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:633
-#: sys-utils/blkdiscard.c:92 sys-utils/blkpr.c:213 sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:633 sys-utils/blkdiscard.c:92
+#: sys-utils/blkpr.c:213 sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [options] <périphérique>\n"
@@ -1151,21 +1148,21 @@ msgstr "mode nettoyage non pris en charge"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Les propriétés du périphérique (taille de secteur et géométrie) ne doivent être utilisées qu’avec un seul périphérique indiqué."
 
-#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122
-#: disk-utils/fsck.cramfs.c:723 disk-utils/mkfs.bfs.c:211
-#: disk-utils/mkfs.cramfs.c:799 disk-utils/partx.c:975 disk-utils/raw.c:136
-#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
-#: misc-utils/cal.c:525 misc-utils/findfs.c:58 misc-utils/look.c:147
-#: misc-utils/whereis.c:592 misc-utils/whereis.c:603 misc-utils/whereis.c:614
-#: misc-utils/whereis.c:659 schedutils/chrt.c:442 schedutils/ionice.c:264
-#: schedutils/taskset.c:207 sys-utils/chcpu.c:355 sys-utils/chmem.c:429
-#: sys-utils/dmesg.c:1579 sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321
-#: sys-utils/losetup.c:918 sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656
-#: sys-utils/mount.c:867 sys-utils/mount.c:875 sys-utils/mount.c:924
-#: sys-utils/mount.c:937 sys-utils/mount.c:1009 sys-utils/mountpoint.c:191
-#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:258 sys-utils/swapon.c:1011
-#: sys-utils/switch_root.c:270 sys-utils/umount.c:629
-#: term-utils/setterm.c:1197 text-utils/col.c:584 text-utils/more.c:2096
+#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122 disk-utils/fsck.cramfs.c:723
+#: disk-utils/mkfs.bfs.c:211 disk-utils/mkfs.cramfs.c:799
+#: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
+#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:525
+#: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:592
+#: misc-utils/whereis.c:603 misc-utils/whereis.c:614 misc-utils/whereis.c:659
+#: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:207
+#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1579
+#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
+#: sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656 sys-utils/mount.c:867
+#: sys-utils/mount.c:875 sys-utils/mount.c:924 sys-utils/mount.c:937
+#: sys-utils/mount.c:1009 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
+#: sys-utils/swapoff.c:258 sys-utils/swapon.c:1011 sys-utils/switch_root.c:270
+#: sys-utils/umount.c:629 term-utils/setterm.c:1197 text-utils/col.c:584
+#: text-utils/more.c:2096
 msgid "bad usage"
 msgstr "mauvaise utilisation"
 
@@ -1248,7 +1245,7 @@ msgid "failed to allocate iterator"
 msgstr "échec d'allocation d'itérateur"
 
 #: disk-utils/fdisk-list.c:126 disk-utils/fdisk-list.c:247
-#: disk-utils/partx.c:669 login-utils/lslogins.c:1113 misc-utils/fincore.c:356
+#: disk-utils/partx.c:669 login-utils/lslogins.c:1113 misc-utils/fincore.c:357
 #: misc-utils/findmnt.c:1763 misc-utils/lsblk.c:2351 misc-utils/lsfd.c:1970
 #: misc-utils/lslocks.c:472 misc-utils/uuidparse.c:252 misc-utils/wipefs.c:157
 #: sys-utils/losetup.c:325 sys-utils/lscpu.c:604 sys-utils/lscpu.c:759
@@ -3843,7 +3840,7 @@ msgid_plural "#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n"
 msgstr[0] "nº %2d : %9ju-%9ju (%9ju secteur, %6ju Mo)\n"
 msgstr[1] "nº %2d : %9ju-%9ju (%9ju secteurs, %6ju Mo)\n"
 
-#: disk-utils/partx.c:680 misc-utils/fincore.c:370 misc-utils/findmnt.c:1792
+#: disk-utils/partx.c:680 misc-utils/fincore.c:371 misc-utils/findmnt.c:1792
 #: misc-utils/lsblk.c:2395 misc-utils/lsfd.c:532 misc-utils/lsfd.c:1984
 #: misc-utils/lslocks.c:487 sys-utils/losetup.c:339 sys-utils/lscpu.c:616
 #: sys-utils/lscpu.c:772 sys-utils/prlimit.c:320 sys-utils/rfkill.c:487
@@ -7646,7 +7643,7 @@ msgstr "impossible de récupérer %s : %s"
 msgid "hush login status: restore original IDs failed"
 msgstr "état de connexion silencieuse : échec de restauration des identifiants d'origine"
 
-#: libmount/src/context.c:2702
+#: libmount/src/context.c:2700
 #, c-format
 msgid "operation failed: %m"
 msgstr "l'opération a échouée : %m"
@@ -9741,7 +9738,7 @@ msgstr "erreur : l'argument de -u <liste> est vide"
 msgid "unsupported output format %s"
 msgstr "format de sortie non supporté %s"
 
-#: misc-utils/blkid.c:786 misc-utils/fadvise.c:110 misc-utils/wipefs.c:734
+#: misc-utils/blkid.c:786 misc-utils/fadvise.c:119 misc-utils/wipefs.c:734
 msgid "invalid offset argument"
 msgstr "argument d'index incorrect"
 
@@ -9940,24 +9937,26 @@ msgstr ""
 "\n"
 "Valeurs disponibles pour le conseil :\n"
 
-#: misc-utils/fadvise.c:102 misc-utils/pipesz.c:263 misc-utils/pipesz.c:335
+#: misc-utils/fadvise.c:111 misc-utils/pipesz.c:263 misc-utils/pipesz.c:335
 msgid "invalid fd argument"
 msgstr "argument fd incorrect"
 
-#: misc-utils/fadvise.c:122 misc-utils/fincore.c:338 sys-utils/losetup.c:828
+#: misc-utils/fadvise.c:131 misc-utils/fincore.c:339 sys-utils/losetup.c:828
 msgid "no file specified"
 msgstr "aucun fichier indiqué"
 
-#: misc-utils/fadvise.c:127
+#: misc-utils/fadvise.c:136
 msgid "specify either file descriptor or file name"
 msgstr "spécifiez soit un descripteur de fichier ou un nom de fichier"
 
-#: misc-utils/fadvise.c:132
+#: misc-utils/fadvise.c:141
 msgid "specify one file descriptor or file name"
 msgstr "spécifiez un descripteur de fichier ou un nom de fichier"
 
-#: misc-utils/fadvise.c:147
-msgid "failed to advise"
+#: misc-utils/fadvise.c:156
+#, fuzzy, c-format
+#| msgid "failed to advise"
+msgid "failed to advise: %s"
 msgstr "échec du conseil"
 
 #: misc-utils/fincore.c:61
@@ -9981,43 +9980,43 @@ msgstr "Nom de fichier"
 msgid "failed to do mincore: %s"
 msgstr "échec de mincore : %s"
 
-#: misc-utils/fincore.c:210
+#: misc-utils/fincore.c:211
 #, c-format
 msgid "failed to do mmap: %s"
 msgstr "échec de mmap : %s"
 
-#: misc-utils/fincore.c:236
+#: misc-utils/fincore.c:237
 #, c-format
 msgid "failed to open: %s"
 msgstr "échec d'ouverture : %s"
 
-#: misc-utils/fincore.c:241
+#: misc-utils/fincore.c:242
 #, c-format
 msgid "failed to do fstat: %s"
 msgstr "échec de fstat : %s"
 
-#: misc-utils/fincore.c:262
+#: misc-utils/fincore.c:263
 #, c-format
 msgid " %s [options] file...\n"
 msgstr " %s [options] fichier…\n"
 
-#: misc-utils/fincore.c:265
+#: misc-utils/fincore.c:266
 msgid " -J, --json            use JSON output format\n"
 msgstr " -J, --json            utiliser le format de sortie JSON\n"
 
-#: misc-utils/fincore.c:266
+#: misc-utils/fincore.c:267
 msgid " -b, --bytes           print sizes in bytes rather than in human readable format\n"
 msgstr " -b, --bytes           afficher les tailles en octet plutôt qu'en format lisible\n"
 
-#: misc-utils/fincore.c:267
+#: misc-utils/fincore.c:268
 msgid " -n, --noheadings      don't print headings\n"
 msgstr " -n, --noheadings      ne pas afficher les en-têtes\n"
 
-#: misc-utils/fincore.c:268
+#: misc-utils/fincore.c:269
 msgid " -o, --output <list>   output columns\n"
 msgstr " -o, --output <liste>  colonnes affichées\n"
 
-#: misc-utils/fincore.c:269
+#: misc-utils/fincore.c:270
 msgid " -r, --raw             use raw output format\n"
 msgstr " -r, --raw             utiliser le format de sortie brut\n"
 
@@ -16098,129 +16097,132 @@ msgstr "l'accès au port par iopl() a échoué"
 msgid "Using direct ISA access to the clock"
 msgstr "Utilisation d’instructions d’accès ISA à l’horloge"
 
-#: sys-utils/hwclock-rtc.c:113
+#: sys-utils/hwclock-rtc.c:48
 msgid "supported features"
 msgstr "fonctionnalités prises en charge"
 
-#: sys-utils/hwclock-rtc.c:114
+#: sys-utils/hwclock-rtc.c:49
 msgid "time correction"
 msgstr "correction de temps"
 
 # D'après le doc, il s'agit de basculer vers une alimentation de secour en cas de problème avec l'alimentation principale
-#: sys-utils/hwclock-rtc.c:115
+#: sys-utils/hwclock-rtc.c:50
 msgid "backup switch mode"
 msgstr "mode de basculement de secours"
 
-#: sys-utils/hwclock-rtc.c:166
+#: sys-utils/hwclock-rtc.c:101
 #, c-format
 msgid "Trying to open: %s\n"
 msgstr "Essai d’ouverture : %s\n"
 
-#: sys-utils/hwclock-rtc.c:191 sys-utils/hwclock-rtc.c:294
+#: sys-utils/hwclock-rtc.c:126 sys-utils/hwclock-rtc.c:216
 msgid "cannot open rtc device"
 msgstr "impossible d'ouvrir le périphérique rtc"
 
-#: sys-utils/hwclock-rtc.c:227
-#, c-format
-msgid "ioctl(%s) to %s to read the time failed"
+#: sys-utils/hwclock-rtc.c:140
+#, fuzzy, c-format
+#| msgid "ioctl(%s) to %s to read the time failed"
+msgid "ioctl(RTC_RD_NAME) to %s to read the time failed"
 msgstr "Échec d'ioctl(%s) vers %s lors de la lecture de l'heure"
 
-#: sys-utils/hwclock-rtc.c:255
+#: sys-utils/hwclock-rtc.c:177
 #, c-format
 msgid "Waiting in loop for time from %s to change\n"
 msgstr "Attente dans un boucle pour que le temps %s se modifie\n"
 
-#: sys-utils/hwclock-rtc.c:274
+#: sys-utils/hwclock-rtc.c:196
 msgid "Timed out waiting for time change."
 msgstr "Expiration de la minuterie lors de l'attente du changement de l'heure."
 
-#: sys-utils/hwclock-rtc.c:322
+#: sys-utils/hwclock-rtc.c:244
 #, c-format
 msgid "select() to %s to wait for clock tick timed out"
 msgstr "select() de %s dont l'attente d'un tic d'horloge a expiré le délai de la minuterie"
 
-#: sys-utils/hwclock-rtc.c:325
+#: sys-utils/hwclock-rtc.c:247
 #, c-format
 msgid "select() to %s to wait for clock tick failed"
 msgstr "Échec de select() de %s en attente d'un tic d'horloge"
 
-#: sys-utils/hwclock-rtc.c:330
+#: sys-utils/hwclock-rtc.c:252
 #, c-format
 msgid "ioctl() to %s to turn off update interrupts failed"
 msgstr "Échec d'ioctl() de %s pour arrêter les mises à jour par interruption"
 
-#: sys-utils/hwclock-rtc.c:336
+#: sys-utils/hwclock-rtc.c:258
 #, c-format
 msgid "ioctl(%d, RTC_UIE_ON, 0) to %s failed"
 msgstr "Échec de ioctl(%d, RTC_UIE_ON, 0) sur %s"
 
-#: sys-utils/hwclock-rtc.c:388
-#, c-format
-msgid "ioctl(%s) to %s to set the time failed"
+#: sys-utils/hwclock-rtc.c:303
+#, fuzzy, c-format
+#| msgid "ioctl(%s) to %s to set the time failed"
+msgid "ioctl(RTC_SET_TIME) to %s to set the time failed"
 msgstr "Échec de ioctl(%s) vers %s pour initialiser l'heure"
 
-#: sys-utils/hwclock-rtc.c:394
-#, c-format
-msgid "ioctl(%s) was successful.\n"
+#: sys-utils/hwclock-rtc.c:309
+#, fuzzy, c-format
+#| msgid "ioctl(%s) was successful.\n"
+msgid "ioctl(RTC_SET_TIME) was successful.\n"
 msgstr "ioctl(%s) a réussi.\n"
 
-#: sys-utils/hwclock-rtc.c:410
+#: sys-utils/hwclock-rtc.c:325
 msgid "Using the rtc interface to the clock."
 msgstr "Utilisation de l’interface rtc pour l’horloge."
 
-#: sys-utils/hwclock-rtc.c:443
+#: sys-utils/hwclock-rtc.c:358
 #, c-format
 msgid "ioctl(%d, RTC_EPOCH_READ, epoch_p) to %s failed"
 msgstr "Échec de ioctl(%d, RTC_EPOCH_READ, epoch_p) sur %s"
 
-#: sys-utils/hwclock-rtc.c:449
+#: sys-utils/hwclock-rtc.c:364
 #, c-format
 msgid "ioctl(%d, RTC_EPOCH_READ, epoch_p) to %s succeeded.\n"
 msgstr "Réussite de ioctl(%d, RTC_EPOCH_READ, epoch_p) sur %s.\n"
 
-#: sys-utils/hwclock-rtc.c:468
+#: sys-utils/hwclock-rtc.c:383
 #, c-format
 msgid "invalid epoch '%s'."
 msgstr "époque invalide « %s »."
 
-#: sys-utils/hwclock-rtc.c:479
+#: sys-utils/hwclock-rtc.c:394
 #, c-format
 msgid "ioctl(%d, RTC_EPOCH_SET, %lu) to %s failed"
 msgstr "Échec de ioctl(%d, RTC_EPOCH_SET, %lu) sur %s"
 
-#: sys-utils/hwclock-rtc.c:485
+#: sys-utils/hwclock-rtc.c:400
 #, c-format
 msgid "ioctl(%d, RTC_EPOCH_SET, %lu) to %s succeeded.\n"
 msgstr "Réussite de ioctl(%d, RTC_EPOCH_SET, %lu) sur %s.\n"
 
-#: sys-utils/hwclock-rtc.c:521 sys-utils/hwclock-rtc.c:563
+#: sys-utils/hwclock-rtc.c:442 sys-utils/hwclock-rtc.c:484
 msgid "could not convert parameter name to number"
 msgstr "impossible de convertir le nom du paramètre en nombre"
 
-#: sys-utils/hwclock-rtc.c:533
+#: sys-utils/hwclock-rtc.c:454
 #, c-format
 msgid "ioctl(%d, RTC_PARAM_GET, param) to %s failed"
 msgstr "Échec de ioctl(%d, RTC_PARAM_GET, param) sur %s"
 
-#: sys-utils/hwclock-rtc.c:544
+#: sys-utils/hwclock-rtc.c:465
 #, c-format
 msgid "ioctl(%d, RTC_PARAM_GET, param) to %s succeeded.\n"
 msgstr "Réussite de ioctl(%d, RTC_PARAM_GET, param) sur %s.\n"
 
-#: sys-utils/hwclock-rtc.c:570
+#: sys-utils/hwclock-rtc.c:491
 msgid "expected <param>=<value>"
 msgstr "<param>=<valeur> attendu"
 
-#: sys-utils/hwclock-rtc.c:574
+#: sys-utils/hwclock-rtc.c:495
 msgid "could not convert parameter value to number"
 msgstr "impossible de convertir la valeur du paramètre en nombre"
 
-#: sys-utils/hwclock-rtc.c:586
+#: sys-utils/hwclock-rtc.c:507
 #, c-format
 msgid "ioctl(%d, RTC_PARAM_SET, param) to %s failed"
 msgstr "Échec de ioctl(%d, RTC_PARAM_SET, param) sur %s"
 
-#: sys-utils/hwclock-rtc.c:592
+#: sys-utils/hwclock-rtc.c:513
 #, c-format
 msgid "ioctl(%d, RTC_PARAM_SET, param) to %s succeeded.\n"
 msgstr "Réussite de ioctl(%d, RTC_PARAM_SET, param) sur %s.\n"

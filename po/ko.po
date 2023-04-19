@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.39-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-04-04 14:35+0200\n"
+"POT-Creation-Date: 2023-04-19 09:50+0200\n"
 "PO-Revision-Date: 2023-04-05 03:07+0900\n"
 "Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
 "Language-Team: Korean <translation-team-ko@googlegroups.com>\n"
@@ -55,14 +55,14 @@ msgstr "불충분한 인자"
 #: login-utils/sulogin.c:497 login-utils/sulogin.c:534
 #: login-utils/utmpdump.c:142 login-utils/utmpdump.c:367
 #: login-utils/utmpdump.c:391 login-utils/vipw.c:257 login-utils/vipw.c:275
-#: misc-utils/fadvise.c:139 misc-utils/findmnt.c:1227 misc-utils/logger.c:1247
+#: misc-utils/fadvise.c:148 misc-utils/findmnt.c:1227 misc-utils/logger.c:1247
 #: misc-utils/mcookie.c:119 misc-utils/pipesz.c:162 misc-utils/uuidd.c:235
 #: sys-utils/blkdiscard.c:248 sys-utils/blkpr.c:164 sys-utils/blkzone.c:144
 #: sys-utils/dmesg.c:541 sys-utils/eject.c:501 sys-utils/eject.c:696
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:116 sys-utils/fstrim.c:106
-#: sys-utils/hwclock.c:241 sys-utils/hwclock.c:912 sys-utils/hwclock-rtc.c:173
-#: sys-utils/hwclock-rtc.c:438 sys-utils/hwclock-rtc.c:474
-#: sys-utils/hwclock-rtc.c:528 sys-utils/hwclock-rtc.c:581
+#: sys-utils/hwclock.c:241 sys-utils/hwclock.c:912 sys-utils/hwclock-rtc.c:108
+#: sys-utils/hwclock-rtc.c:353 sys-utils/hwclock-rtc.c:389
+#: sys-utils/hwclock-rtc.c:449 sys-utils/hwclock-rtc.c:502
 #: sys-utils/irq-common.c:263 sys-utils/ldattach.c:392
 #: sys-utils/lscpu-cputype.c:477 sys-utils/lsmem.c:671 sys-utils/nsenter.c:139
 #: sys-utils/rfkill.c:195 sys-utils/rtcwake.c:137 sys-utils/rtcwake.c:292
@@ -88,8 +88,7 @@ msgstr "부적절한 분할 영역 번호 인자"
 msgid "invalid start argument"
 msgstr "부적절한 시작 인자"
 
-#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111
-#: misc-utils/fadvise.c:106
+#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111 misc-utils/fadvise.c:115
 msgid "invalid length argument"
 msgstr "부적절한 길이 인자"
 
@@ -488,8 +487,7 @@ msgstr "%s 스크립트 기록 실패"
 msgid "Select label type"
 msgstr "레이블 형식을 선택하십시오"
 
-#: disk-utils/cfdisk.c:2197 disk-utils/fdisk.c:1162
-#: disk-utils/fdisk-menu.c:492
+#: disk-utils/cfdisk.c:2197 disk-utils/fdisk.c:1162 disk-utils/fdisk-menu.c:492
 msgid "Device does not contain a recognized partition table."
 msgstr "장치에 인식 가능한 분할 영역 배치 정보가 없습니다."
 
@@ -634,8 +632,7 @@ msgstr "새 크기: "
 msgid "Partition %zu resized."
 msgstr "%zu 분할 영역의 크기를 조절했습니다."
 
-#: disk-utils/cfdisk.c:2506 disk-utils/fdisk.c:1138
-#: disk-utils/fdisk-menu.c:595
+#: disk-utils/cfdisk.c:2506 disk-utils/fdisk.c:1138 disk-utils/fdisk-menu.c:595
 msgid "Device is open in read-only mode."
 msgstr "장치를 읽기 전용 모드로 열었습니다."
 
@@ -772,8 +769,8 @@ msgstr ""
 "계속합니다 ... "
 
 #: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:633
-#: sys-utils/blkdiscard.c:92 sys-utils/blkpr.c:213 sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:633 sys-utils/blkdiscard.c:92
+#: sys-utils/blkpr.c:213 sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [<옵션>] <장치>\n"
@@ -1140,21 +1137,21 @@ msgstr "지원하지 않는 소거 모드"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "장치 속성(섹터 크기와 수치 사양)은 지정한 장치 하나에 대해서만 사용해야 합니다."
 
-#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122
-#: disk-utils/fsck.cramfs.c:723 disk-utils/mkfs.bfs.c:211
-#: disk-utils/mkfs.cramfs.c:799 disk-utils/partx.c:975 disk-utils/raw.c:136
-#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
-#: misc-utils/cal.c:525 misc-utils/findfs.c:58 misc-utils/look.c:147
-#: misc-utils/whereis.c:592 misc-utils/whereis.c:603 misc-utils/whereis.c:614
-#: misc-utils/whereis.c:659 schedutils/chrt.c:442 schedutils/ionice.c:264
-#: schedutils/taskset.c:207 sys-utils/chcpu.c:355 sys-utils/chmem.c:429
-#: sys-utils/dmesg.c:1579 sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321
-#: sys-utils/losetup.c:918 sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656
-#: sys-utils/mount.c:867 sys-utils/mount.c:875 sys-utils/mount.c:924
-#: sys-utils/mount.c:937 sys-utils/mount.c:1009 sys-utils/mountpoint.c:191
-#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:258 sys-utils/swapon.c:1011
-#: sys-utils/switch_root.c:270 sys-utils/umount.c:629
-#: term-utils/setterm.c:1197 text-utils/col.c:584 text-utils/more.c:2096
+#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122 disk-utils/fsck.cramfs.c:723
+#: disk-utils/mkfs.bfs.c:211 disk-utils/mkfs.cramfs.c:799
+#: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
+#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:525
+#: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:592
+#: misc-utils/whereis.c:603 misc-utils/whereis.c:614 misc-utils/whereis.c:659
+#: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:207
+#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1579
+#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
+#: sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656 sys-utils/mount.c:867
+#: sys-utils/mount.c:875 sys-utils/mount.c:924 sys-utils/mount.c:937
+#: sys-utils/mount.c:1009 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
+#: sys-utils/swapoff.c:258 sys-utils/swapon.c:1011 sys-utils/switch_root.c:270
+#: sys-utils/umount.c:629 term-utils/setterm.c:1197 text-utils/col.c:584
+#: text-utils/more.c:2096
 msgid "bad usage"
 msgstr "잘못된 사용법"
 
@@ -1236,7 +1233,7 @@ msgid "failed to allocate iterator"
 msgstr "반복자 할당 실패"
 
 #: disk-utils/fdisk-list.c:126 disk-utils/fdisk-list.c:247
-#: disk-utils/partx.c:669 login-utils/lslogins.c:1113 misc-utils/fincore.c:356
+#: disk-utils/partx.c:669 login-utils/lslogins.c:1113 misc-utils/fincore.c:357
 #: misc-utils/findmnt.c:1763 misc-utils/lsblk.c:2351 misc-utils/lsfd.c:1970
 #: misc-utils/lslocks.c:472 misc-utils/uuidparse.c:252 misc-utils/wipefs.c:157
 #: sys-utils/losetup.c:325 sys-utils/lscpu.c:604 sys-utils/lscpu.c:759
@@ -3819,7 +3816,7 @@ msgid "#%2d: %9ju-%9ju (%9ju sector, %6ju MB)\n"
 msgid_plural "#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n"
 msgstr[0] "#%2d: %9ju-%9ju (%9ju 섹터, %6ju MB)\n"
 
-#: disk-utils/partx.c:680 misc-utils/fincore.c:370 misc-utils/findmnt.c:1792
+#: disk-utils/partx.c:680 misc-utils/fincore.c:371 misc-utils/findmnt.c:1792
 #: misc-utils/lsblk.c:2395 misc-utils/lsfd.c:532 misc-utils/lsfd.c:1984
 #: misc-utils/lslocks.c:487 sys-utils/losetup.c:339 sys-utils/lscpu.c:616
 #: sys-utils/lscpu.c:772 sys-utils/prlimit.c:320 sys-utils/rfkill.c:487
@@ -7605,7 +7602,7 @@ msgstr "%s을(를) 가져올 수 없음: %s"
 msgid "hush login status: restore original IDs failed"
 msgstr "hush 로그인 상태: 원본 ID 복원 실패"
 
-#: libmount/src/context.c:2702
+#: libmount/src/context.c:2700
 #, c-format
 msgid "operation failed: %m"
 msgstr "처리 실패: %m"
@@ -9662,7 +9659,7 @@ msgstr "오류: -u <목록> 인자가 비었습니다"
 msgid "unsupported output format %s"
 msgstr "지원하지 않는 %s 출력 형식"
 
-#: misc-utils/blkid.c:786 misc-utils/fadvise.c:110 misc-utils/wipefs.c:734
+#: misc-utils/blkid.c:786 misc-utils/fadvise.c:119 misc-utils/wipefs.c:734
 msgid "invalid offset argument"
 msgstr "부적절한 오프셋 인자"
 
@@ -9861,24 +9858,26 @@ msgstr ""
 "\n"
 "자문에 사용 가능한 값:\n"
 
-#: misc-utils/fadvise.c:102 misc-utils/pipesz.c:263 misc-utils/pipesz.c:335
+#: misc-utils/fadvise.c:111 misc-utils/pipesz.c:263 misc-utils/pipesz.c:335
 msgid "invalid fd argument"
 msgstr "부적절한 fd 인자값"
 
-#: misc-utils/fadvise.c:122 misc-utils/fincore.c:338 sys-utils/losetup.c:828
+#: misc-utils/fadvise.c:131 misc-utils/fincore.c:339 sys-utils/losetup.c:828
 msgid "no file specified"
 msgstr "지정한 파일이 없습니다"
 
-#: misc-utils/fadvise.c:127
+#: misc-utils/fadvise.c:136
 msgid "specify either file descriptor or file name"
 msgstr "파일 서술자 또는 파일 이름 중 하나를 지정하십시오"
 
-#: misc-utils/fadvise.c:132
+#: misc-utils/fadvise.c:141
 msgid "specify one file descriptor or file name"
 msgstr "파일 서술자 1건 또는 파일 이름을 지정하십시오"
 
-#: misc-utils/fadvise.c:147
-msgid "failed to advise"
+#: misc-utils/fadvise.c:156
+#, fuzzy, c-format
+#| msgid "failed to advise"
+msgid "failed to advise: %s"
 msgstr "자문 실패"
 
 #: misc-utils/fincore.c:61
@@ -9902,43 +9901,43 @@ msgstr "파일 이름"
 msgid "failed to do mincore: %s"
 msgstr "mincore 수행 실패: %s"
 
-#: misc-utils/fincore.c:210
+#: misc-utils/fincore.c:211
 #, c-format
 msgid "failed to do mmap: %s"
 msgstr "mmap 수행 실패: %s"
 
-#: misc-utils/fincore.c:236
+#: misc-utils/fincore.c:237
 #, c-format
 msgid "failed to open: %s"
 msgstr "열기 실패: %s"
 
-#: misc-utils/fincore.c:241
+#: misc-utils/fincore.c:242
 #, c-format
 msgid "failed to do fstat: %s"
 msgstr "fstat 수행 실패: %s"
 
-#: misc-utils/fincore.c:262
+#: misc-utils/fincore.c:263
 #, c-format
 msgid " %s [options] file...\n"
 msgstr " %s [<옵션>] <파일>...\n"
 
-#: misc-utils/fincore.c:265
+#: misc-utils/fincore.c:266
 msgid " -J, --json            use JSON output format\n"
 msgstr " -J, --json             JSON 출력 형식 사용\n"
 
-#: misc-utils/fincore.c:266
+#: misc-utils/fincore.c:267
 msgid " -b, --bytes           print sizes in bytes rather than in human readable format\n"
 msgstr " -b, --bytes            가독성 형식이 아닌 바이트 단위 <크기> 값 출력\n"
 
-#: misc-utils/fincore.c:267
+#: misc-utils/fincore.c:268
 msgid " -n, --noheadings      don't print headings\n"
 msgstr " -n, --noheadings       머릿글은 출력 안함\n"
 
-#: misc-utils/fincore.c:268
+#: misc-utils/fincore.c:269
 msgid " -o, --output <list>   output columns\n"
 msgstr " -o, --output <목록>    지정 내용 항목 출력\n"
 
-#: misc-utils/fincore.c:269
+#: misc-utils/fincore.c:270
 msgid " -r, --raw             use raw output format\n"
 msgstr " -r, --raw              원시 형식으로 출력\n"
 
@@ -15965,128 +15964,131 @@ msgstr "iopl() 포트 접근 실패"
 msgid "Using direct ISA access to the clock"
 msgstr "시계에 직접 ISA 접근 방식을 사용합니다"
 
-#: sys-utils/hwclock-rtc.c:113
+#: sys-utils/hwclock-rtc.c:48
 msgid "supported features"
 msgstr "지원하는 기능"
 
-#: sys-utils/hwclock-rtc.c:114
+#: sys-utils/hwclock-rtc.c:49
 msgid "time correction"
 msgstr "시간 수집"
 
-#: sys-utils/hwclock-rtc.c:115
+#: sys-utils/hwclock-rtc.c:50
 msgid "backup switch mode"
 msgstr "백업 스위치 모드"
 
-#: sys-utils/hwclock-rtc.c:166
+#: sys-utils/hwclock-rtc.c:101
 #, c-format
 msgid "Trying to open: %s\n"
 msgstr "열기 시도 중: %s\n"
 
-#: sys-utils/hwclock-rtc.c:191 sys-utils/hwclock-rtc.c:294
+#: sys-utils/hwclock-rtc.c:126 sys-utils/hwclock-rtc.c:216
 msgid "cannot open rtc device"
 msgstr "RTC 장치를 열 수 없습니다"
 
-#: sys-utils/hwclock-rtc.c:227
-#, c-format
-msgid "ioctl(%s) to %s to read the time failed"
+#: sys-utils/hwclock-rtc.c:140
+#, fuzzy, c-format
+#| msgid "ioctl(%s) to %s to read the time failed"
+msgid "ioctl(RTC_RD_NAME) to %s to read the time failed"
 msgstr "시간을 읽어올 %2$s에 대한 ioctl(%1$s) 호출 실패"
 
-#: sys-utils/hwclock-rtc.c:255
+#: sys-utils/hwclock-rtc.c:177
 #, c-format
 msgid "Waiting in loop for time from %s to change\n"
 msgstr "%s(으)로 부터 바뀔 때까지 루프 대기 중\n"
 
-#: sys-utils/hwclock-rtc.c:274
+#: sys-utils/hwclock-rtc.c:196
 msgid "Timed out waiting for time change."
 msgstr "시간이 바뀔 동안 기다리는 시간을 초과했습니다."
 
-#: sys-utils/hwclock-rtc.c:322
+#: sys-utils/hwclock-rtc.c:244
 #, c-format
 msgid "select() to %s to wait for clock tick timed out"
 msgstr "시간 틱을 기다리는 %s에 대한 select() 호출 시간이 지났습니다"
 
-#: sys-utils/hwclock-rtc.c:325
+#: sys-utils/hwclock-rtc.c:247
 #, c-format
 msgid "select() to %s to wait for clock tick failed"
 msgstr "시간 틱을 기다리는 %s에 대한 select() 호출에 실패했습니다"
 
-#: sys-utils/hwclock-rtc.c:330
+#: sys-utils/hwclock-rtc.c:252
 #, c-format
 msgid "ioctl() to %s to turn off update interrupts failed"
 msgstr "인터럽트 업데이트를 중단하려는 %s에 대한 ioctl() 호출 실패"
 
-#: sys-utils/hwclock-rtc.c:336
+#: sys-utils/hwclock-rtc.c:258
 #, c-format
 msgid "ioctl(%d, RTC_UIE_ON, 0) to %s failed"
 msgstr "%2$s에 대한 ioctl(%1$d, RTC_UIE_ON, 0) 호출 실패"
 
-#: sys-utils/hwclock-rtc.c:388
-#, c-format
-msgid "ioctl(%s) to %s to set the time failed"
+#: sys-utils/hwclock-rtc.c:303
+#, fuzzy, c-format
+#| msgid "ioctl(%s) to %s to set the time failed"
+msgid "ioctl(RTC_SET_TIME) to %s to set the time failed"
 msgstr "시간을 설정하려는 %2$s에 대한 ioctl(%1$s) 호출 실패"
 
-#: sys-utils/hwclock-rtc.c:394
-#, c-format
-msgid "ioctl(%s) was successful.\n"
+#: sys-utils/hwclock-rtc.c:309
+#, fuzzy, c-format
+#| msgid "ioctl(%s) was successful.\n"
+msgid "ioctl(RTC_SET_TIME) was successful.\n"
 msgstr "ioctl(%s) 호출에 성공했습니다.\n"
 
-#: sys-utils/hwclock-rtc.c:410
+#: sys-utils/hwclock-rtc.c:325
 msgid "Using the rtc interface to the clock."
 msgstr "시계에 RTC 인터페이스를 사용합니다."
 
-#: sys-utils/hwclock-rtc.c:443
+#: sys-utils/hwclock-rtc.c:358
 #, c-format
 msgid "ioctl(%d, RTC_EPOCH_READ, epoch_p) to %s failed"
 msgstr "%2$s에 대한 ioctl(%1$d, RTC_EPOCH_READ, epoch_p) 호출 실패"
 
-#: sys-utils/hwclock-rtc.c:449
+#: sys-utils/hwclock-rtc.c:364
 #, c-format
 msgid "ioctl(%d, RTC_EPOCH_READ, epoch_p) to %s succeeded.\n"
 msgstr "%2$s에 대한 ioctl(%1$d, RTC_EPOCH_READ, epoch_p) 호출 성공.\n"
 
-#: sys-utils/hwclock-rtc.c:468
+#: sys-utils/hwclock-rtc.c:383
 #, c-format
 msgid "invalid epoch '%s'."
 msgstr "잘못된 에포크 '%s'."
 
-#: sys-utils/hwclock-rtc.c:479
+#: sys-utils/hwclock-rtc.c:394
 #, c-format
 msgid "ioctl(%d, RTC_EPOCH_SET, %lu) to %s failed"
 msgstr "%3$s에 대한 ioctl(%1$d, RTC_EPOCH_SET, %2$lu) 호출 실패"
 
-#: sys-utils/hwclock-rtc.c:485
+#: sys-utils/hwclock-rtc.c:400
 #, c-format
 msgid "ioctl(%d, RTC_EPOCH_SET, %lu) to %s succeeded.\n"
 msgstr "%3$s에 대한 ioctl(%1$d, RTC_EPOCH_SET, %2$lu) 호출 성공.\n"
 
-#: sys-utils/hwclock-rtc.c:521 sys-utils/hwclock-rtc.c:563
+#: sys-utils/hwclock-rtc.c:442 sys-utils/hwclock-rtc.c:484
 msgid "could not convert parameter name to number"
 msgstr "매개변수 이름을 숫자로 변환할 수 없습니다"
 
-#: sys-utils/hwclock-rtc.c:533
+#: sys-utils/hwclock-rtc.c:454
 #, c-format
 msgid "ioctl(%d, RTC_PARAM_GET, param) to %s failed"
 msgstr "%2$s(으)로의 ioctl(%1$d, RTC_PARAM_GET, param) 호출 실패"
 
-#: sys-utils/hwclock-rtc.c:544
+#: sys-utils/hwclock-rtc.c:465
 #, c-format
 msgid "ioctl(%d, RTC_PARAM_GET, param) to %s succeeded.\n"
 msgstr "%2$s(으)로의 ioctl(%1$d, RTC_PARAM_GET, param) 호출 성공.\n"
 
-#: sys-utils/hwclock-rtc.c:570
+#: sys-utils/hwclock-rtc.c:491
 msgid "expected <param>=<value>"
 msgstr "<매개변수>=<값>이 필요합니다"
 
-#: sys-utils/hwclock-rtc.c:574
+#: sys-utils/hwclock-rtc.c:495
 msgid "could not convert parameter value to number"
 msgstr "매개변수 값을 숫자로 변환할 수 없습니다"
 
-#: sys-utils/hwclock-rtc.c:586
+#: sys-utils/hwclock-rtc.c:507
 #, c-format
 msgid "ioctl(%d, RTC_PARAM_SET, param) to %s failed"
 msgstr "%2$s(으)로의 ioctl(%1$d, RTC_PARAM_SET, param) 호출 실패"
 
-#: sys-utils/hwclock-rtc.c:592
+#: sys-utils/hwclock-rtc.c:513
 #, c-format
 msgid "ioctl(%d, RTC_PARAM_SET, param) to %s succeeded.\n"
 msgstr "%2$s(으)로의 ioctl(%1$d, RTC_PARAM_SET, param) 호출 성공.\n"

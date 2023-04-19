@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre6\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-04-04 14:02+0200\n"
+"POT-Creation-Date: 2023-04-19 09:50+0200\n"
 "PO-Revision-Date: 2006-03-05 12:29+0200\n"
 "Last-Translator: Simon Mihevc <simonmihevc@email.si>\n"
 "Language-Team: Slovenian <translation-team-sl@lists.sourceforge.net>\n"
@@ -59,14 +59,14 @@ msgstr "Preveè argumentov.\n"
 #: login-utils/sulogin.c:497 login-utils/sulogin.c:534
 #: login-utils/utmpdump.c:142 login-utils/utmpdump.c:367
 #: login-utils/utmpdump.c:391 login-utils/vipw.c:257 login-utils/vipw.c:275
-#: misc-utils/fadvise.c:139 misc-utils/findmnt.c:1227 misc-utils/logger.c:1247
+#: misc-utils/fadvise.c:148 misc-utils/findmnt.c:1227 misc-utils/logger.c:1247
 #: misc-utils/mcookie.c:119 misc-utils/pipesz.c:162 misc-utils/uuidd.c:235
 #: sys-utils/blkdiscard.c:248 sys-utils/blkpr.c:164 sys-utils/blkzone.c:144
 #: sys-utils/dmesg.c:541 sys-utils/eject.c:501 sys-utils/eject.c:696
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:116 sys-utils/fstrim.c:106
-#: sys-utils/hwclock.c:241 sys-utils/hwclock.c:912 sys-utils/hwclock-rtc.c:173
-#: sys-utils/hwclock-rtc.c:438 sys-utils/hwclock-rtc.c:474
-#: sys-utils/hwclock-rtc.c:528 sys-utils/hwclock-rtc.c:581
+#: sys-utils/hwclock.c:241 sys-utils/hwclock.c:912 sys-utils/hwclock-rtc.c:108
+#: sys-utils/hwclock-rtc.c:353 sys-utils/hwclock-rtc.c:389
+#: sys-utils/hwclock-rtc.c:449 sys-utils/hwclock-rtc.c:502
 #: sys-utils/irq-common.c:263 sys-utils/ldattach.c:392
 #: sys-utils/lscpu-cputype.c:477 sys-utils/lsmem.c:671 sys-utils/nsenter.c:139
 #: sys-utils/rfkill.c:195 sys-utils/rtcwake.c:137 sys-utils/rtcwake.c:292
@@ -94,7 +94,7 @@ msgstr "neveljaven id"
 msgid "invalid start argument"
 msgstr "neveljaven id"
 
-#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111 misc-utils/fadvise.c:106
+#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111 misc-utils/fadvise.c:115
 #, fuzzy
 msgid "invalid length argument"
 msgstr "neveljaven id"
@@ -1350,7 +1350,7 @@ msgid "failed to allocate iterator"
 msgstr "Za medpomnilnik ni mogoèe dodeliti pomnilnika.\n"
 
 #: disk-utils/fdisk-list.c:126 disk-utils/fdisk-list.c:247
-#: disk-utils/partx.c:669 login-utils/lslogins.c:1113 misc-utils/fincore.c:356
+#: disk-utils/partx.c:669 login-utils/lslogins.c:1113 misc-utils/fincore.c:357
 #: misc-utils/findmnt.c:1763 misc-utils/lsblk.c:2351 misc-utils/lsfd.c:1970
 #: misc-utils/lslocks.c:472 misc-utils/uuidparse.c:252 misc-utils/wipefs.c:157
 #: sys-utils/losetup.c:325 sys-utils/lscpu.c:604 sys-utils/lscpu.c:759
@@ -4088,7 +4088,7 @@ msgid_plural "#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n"
 msgstr[0] ""
 msgstr[1] ""
 
-#: disk-utils/partx.c:680 misc-utils/fincore.c:370 misc-utils/findmnt.c:1792
+#: disk-utils/partx.c:680 misc-utils/fincore.c:371 misc-utils/findmnt.c:1792
 #: misc-utils/lsblk.c:2395 misc-utils/lsfd.c:532 misc-utils/lsfd.c:1984
 #: misc-utils/lslocks.c:487 sys-utils/losetup.c:339 sys-utils/lscpu.c:616
 #: sys-utils/lscpu.c:772 sys-utils/prlimit.c:320 sys-utils/rfkill.c:487
@@ -8260,7 +8260,7 @@ msgstr "%s ni mogoèe odpreti: %s\n"
 msgid "hush login status: restore original IDs failed"
 msgstr ""
 
-#: libmount/src/context.c:2702
+#: libmount/src/context.c:2700
 #, fuzzy, c-format
 msgid "operation failed: %m"
 msgstr "(Naslednja datoteka: %s)"
@@ -10443,7 +10443,7 @@ msgstr ""
 msgid "unsupported output format %s"
 msgstr "%s: neznan argument: %s\n"
 
-#: misc-utils/blkid.c:786 misc-utils/fadvise.c:110 misc-utils/wipefs.c:734
+#: misc-utils/blkid.c:786 misc-utils/fadvise.c:119 misc-utils/wipefs.c:734
 #, fuzzy
 msgid "invalid offset argument"
 msgstr "neveljaven id"
@@ -10662,29 +10662,29 @@ msgid ""
 "Available values for advice:\n"
 msgstr "Razpolo¾ljivi ukazi:\n"
 
-#: misc-utils/fadvise.c:102 misc-utils/pipesz.c:263 misc-utils/pipesz.c:335
+#: misc-utils/fadvise.c:111 misc-utils/pipesz.c:263 misc-utils/pipesz.c:335
 #, fuzzy
 msgid "invalid fd argument"
 msgstr "neveljaven id"
 
-#: misc-utils/fadvise.c:122 misc-utils/fincore.c:338 sys-utils/losetup.c:828
+#: misc-utils/fadvise.c:131 misc-utils/fincore.c:339 sys-utils/losetup.c:828
 #, fuzzy
 msgid "no file specified"
 msgstr "Izbira --date ni bila podana.\n"
 
-#: misc-utils/fadvise.c:127
+#: misc-utils/fadvise.c:136
 #, fuzzy
 msgid "specify either file descriptor or file name"
 msgstr "bloèna naprava"
 
-#: misc-utils/fadvise.c:132
+#: misc-utils/fadvise.c:141
 #, fuzzy
 msgid "specify one file descriptor or file name"
 msgstr "bloèna naprava"
 
-#: misc-utils/fadvise.c:147
-#, fuzzy
-msgid "failed to advise"
+#: misc-utils/fadvise.c:156
+#, fuzzy, c-format
+msgid "failed to advise: %s"
 msgstr "stanja %s ni mogoèe dobiti"
 
 #: misc-utils/fincore.c:61
@@ -10716,47 +10716,47 @@ msgstr "Neveljavno uporabni¹ko ime"
 msgid "failed to do mincore: %s"
 msgstr "klic ioctl() ni uspel prebrati èasa iz %s"
 
-#: misc-utils/fincore.c:210
+#: misc-utils/fincore.c:211
 #, fuzzy, c-format
 msgid "failed to do mmap: %s"
 msgstr "%s: odpiranje ni uspelo: %s\n"
 
-#: misc-utils/fincore.c:236
+#: misc-utils/fincore.c:237
 #, fuzzy, c-format
 msgid "failed to open: %s"
 msgstr "%s: odpiranje ni uspelo: %s\n"
 
-#: misc-utils/fincore.c:241
+#: misc-utils/fincore.c:242
 #, fuzzy, c-format
 msgid "failed to do fstat: %s"
 msgstr "stanja %s ni mogoèe dobiti"
 
-#: misc-utils/fincore.c:262
+#: misc-utils/fincore.c:263
 #, fuzzy, c-format
 msgid " %s [options] file...\n"
 msgstr "Uporaba: %s [izbire] naprava ...\n"
 
-#: misc-utils/fincore.c:265
+#: misc-utils/fincore.c:266
 #, fuzzy
 msgid " -J, --json            use JSON output format\n"
 msgstr "  -V, --version                Izpi¹i informacije o razlièici\n"
 
-#: misc-utils/fincore.c:266
+#: misc-utils/fincore.c:267
 #, fuzzy
 msgid " -b, --bytes           print sizes in bytes rather than in human readable format\n"
 msgstr "  -u, --unqote                 Ne citiraj izhoda\n"
 
-#: misc-utils/fincore.c:267
+#: misc-utils/fincore.c:268
 #, fuzzy
 msgid " -n, --noheadings      don't print headings\n"
 msgstr "  -u, --unqote                 Ne citiraj izhoda\n"
 
-#: misc-utils/fincore.c:268
+#: misc-utils/fincore.c:269
 #, fuzzy
 msgid " -o, --output <list>   output columns\n"
 msgstr "  -o, --options=nizizbir       Kratke izbire za prepoznavo\n"
 
-#: misc-utils/fincore.c:269
+#: misc-utils/fincore.c:270
 #, fuzzy
 msgid " -r, --raw             use raw output format\n"
 msgstr "  -V, --version                Izpi¹i informacije o razlièici\n"
@@ -17249,131 +17249,132 @@ msgstr "klic open() za %s ni uspel"
 msgid "Using direct ISA access to the clock"
 msgstr ""
 
-#: sys-utils/hwclock-rtc.c:113
+#: sys-utils/hwclock-rtc.c:48
 #, fuzzy
 msgid "supported features"
 msgstr "Vnesite vrsto datoteènega sistema: "
 
-#: sys-utils/hwclock-rtc.c:114
+#: sys-utils/hwclock-rtc.c:49
 msgid "time correction"
 msgstr ""
 
-#: sys-utils/hwclock-rtc.c:115
+#: sys-utils/hwclock-rtc.c:50
 msgid "backup switch mode"
 msgstr ""
 
-#: sys-utils/hwclock-rtc.c:166
+#: sys-utils/hwclock-rtc.c:101
 #, fuzzy, c-format
 msgid "Trying to open: %s\n"
 msgstr "%s posku¹am odklopiti\n"
 
-#: sys-utils/hwclock-rtc.c:191 sys-utils/hwclock-rtc.c:294
+#: sys-utils/hwclock-rtc.c:126 sys-utils/hwclock-rtc.c:216
 #, fuzzy
 msgid "cannot open rtc device"
 msgstr "ni mogoèe odpreti %s"
 
-#: sys-utils/hwclock-rtc.c:227
+#: sys-utils/hwclock-rtc.c:140
 #, fuzzy, c-format
-msgid "ioctl(%s) to %s to read the time failed"
+msgid "ioctl(RTC_RD_NAME) to %s to read the time failed"
 msgstr "klic ioctl() k %s za branje èasa ni uspel\n"
 
-#: sys-utils/hwclock-rtc.c:255
+#: sys-utils/hwclock-rtc.c:177
 #, c-format
 msgid "Waiting in loop for time from %s to change\n"
 msgstr "Èakam v zanki na spremembo èasa iz %s\n"
 
-#: sys-utils/hwclock-rtc.c:274
+#: sys-utils/hwclock-rtc.c:196
 #, fuzzy
 msgid "Timed out waiting for time change."
 msgstr "Sprememba èasa je trajala predolgo.\n"
 
-#: sys-utils/hwclock-rtc.c:322
+#: sys-utils/hwclock-rtc.c:244
 #, fuzzy, c-format
 msgid "select() to %s to wait for clock tick timed out"
 msgstr "klic select() k %s za èakanje na premik ure je trajal predolgo\n"
 
-#: sys-utils/hwclock-rtc.c:325
+#: sys-utils/hwclock-rtc.c:247
 #, c-format
 msgid "select() to %s to wait for clock tick failed"
 msgstr "klic select() k %s za èakanje na premik ure ni uspel"
 
-#: sys-utils/hwclock-rtc.c:330
+#: sys-utils/hwclock-rtc.c:252
 #, c-format
 msgid "ioctl() to %s to turn off update interrupts failed"
 msgstr "klic ioctl() k %s za izklop posodabljanja prekinitev ni uspel"
 
-#: sys-utils/hwclock-rtc.c:336
+#: sys-utils/hwclock-rtc.c:258
 #, fuzzy, c-format
 msgid "ioctl(%d, RTC_UIE_ON, 0) to %s failed"
 msgstr "ioctl(RTC_EPOCH_SET) k %s ni uspel"
 
-#: sys-utils/hwclock-rtc.c:388
+#: sys-utils/hwclock-rtc.c:303
 #, fuzzy, c-format
-msgid "ioctl(%s) to %s to set the time failed"
+msgid "ioctl(RTC_SET_TIME) to %s to set the time failed"
 msgstr "klic ioctl() k %s za nastavitev èasa ni uspel.\n"
 
-#: sys-utils/hwclock-rtc.c:394
-#, c-format
-msgid "ioctl(%s) was successful.\n"
+#: sys-utils/hwclock-rtc.c:309
+#, fuzzy, c-format
+#| msgid "ioctl(%s) was successful.\n"
+msgid "ioctl(RTC_SET_TIME) was successful.\n"
 msgstr "klic ioctl(%s) je bil uspe¹en.\n"
 
-#: sys-utils/hwclock-rtc.c:410
+#: sys-utils/hwclock-rtc.c:325
 msgid "Using the rtc interface to the clock."
 msgstr ""
 
-#: sys-utils/hwclock-rtc.c:443
+#: sys-utils/hwclock-rtc.c:358
 #, fuzzy, c-format
 msgid "ioctl(%d, RTC_EPOCH_READ, epoch_p) to %s failed"
 msgstr "klic ioctl(RTC_EPOCH_READ) k %s ni uspel"
 
-#: sys-utils/hwclock-rtc.c:449
+#: sys-utils/hwclock-rtc.c:364
 #, fuzzy, c-format
 msgid "ioctl(%d, RTC_EPOCH_READ, epoch_p) to %s succeeded.\n"
 msgstr "klic ioctl(RTC_EPOCH_READ) k %s ni uspel"
 
-#: sys-utils/hwclock-rtc.c:468
+#: sys-utils/hwclock-rtc.c:383
 #, fuzzy, c-format
 msgid "invalid epoch '%s'."
 msgstr "neveljavni id: %s\n"
 
-#: sys-utils/hwclock-rtc.c:479
+#: sys-utils/hwclock-rtc.c:394
 #, fuzzy, c-format
 msgid "ioctl(%d, RTC_EPOCH_SET, %lu) to %s failed"
 msgstr "ioctl(RTC_EPOCH_SET) k %s ni uspel"
 
-#: sys-utils/hwclock-rtc.c:485
+#: sys-utils/hwclock-rtc.c:400
 #, fuzzy, c-format
 msgid "ioctl(%d, RTC_EPOCH_SET, %lu) to %s succeeded.\n"
 msgstr "ioctl(RTC_EPOCH_SET) k %s ni uspel"
 
-#: sys-utils/hwclock-rtc.c:521 sys-utils/hwclock-rtc.c:563
+#: sys-utils/hwclock-rtc.c:442 sys-utils/hwclock-rtc.c:484
 msgid "could not convert parameter name to number"
 msgstr ""
 
-#: sys-utils/hwclock-rtc.c:533
+#: sys-utils/hwclock-rtc.c:454
 #, fuzzy, c-format
 msgid "ioctl(%d, RTC_PARAM_GET, param) to %s failed"
 msgstr "ioctl(RTC_EPOCH_SET) k %s ni uspel"
 
-#: sys-utils/hwclock-rtc.c:544
+#: sys-utils/hwclock-rtc.c:465
 #, fuzzy, c-format
 msgid "ioctl(%d, RTC_PARAM_GET, param) to %s succeeded.\n"
 msgstr "ioctl(RTC_EPOCH_SET) k %s ni uspel"
 
-#: sys-utils/hwclock-rtc.c:570
+#: sys-utils/hwclock-rtc.c:491
 msgid "expected <param>=<value>"
 msgstr ""
 
-#: sys-utils/hwclock-rtc.c:574
+#: sys-utils/hwclock-rtc.c:495
 msgid "could not convert parameter value to number"
 msgstr ""
 
-#: sys-utils/hwclock-rtc.c:586
+#: sys-utils/hwclock-rtc.c:507
 #, fuzzy, c-format
 msgid "ioctl(%d, RTC_PARAM_SET, param) to %s failed"
 msgstr "ioctl(RTC_EPOCH_SET) k %s ni uspel"
 
-#: sys-utils/hwclock-rtc.c:592
+#: sys-utils/hwclock-rtc.c:513
 #, fuzzy, c-format
 msgid "ioctl(%d, RTC_PARAM_SET, param) to %s succeeded.\n"
 msgstr "ioctl(RTC_EPOCH_SET) k %s ni uspel"

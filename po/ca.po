@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.38-rc4\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-04-04 14:02+0200\n"
+"POT-Creation-Date: 2023-04-19 09:50+0200\n"
 "PO-Revision-Date: 2022-08-18 13:40+0200\n"
 "Last-Translator: Jordi Mas i Hernàndez <jmas@softcatala.org>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -65,14 +65,14 @@ msgstr "Massa arguments.\n"
 #: login-utils/sulogin.c:497 login-utils/sulogin.c:534
 #: login-utils/utmpdump.c:142 login-utils/utmpdump.c:367
 #: login-utils/utmpdump.c:391 login-utils/vipw.c:257 login-utils/vipw.c:275
-#: misc-utils/fadvise.c:139 misc-utils/findmnt.c:1227 misc-utils/logger.c:1247
+#: misc-utils/fadvise.c:148 misc-utils/findmnt.c:1227 misc-utils/logger.c:1247
 #: misc-utils/mcookie.c:119 misc-utils/pipesz.c:162 misc-utils/uuidd.c:235
 #: sys-utils/blkdiscard.c:248 sys-utils/blkpr.c:164 sys-utils/blkzone.c:144
 #: sys-utils/dmesg.c:541 sys-utils/eject.c:501 sys-utils/eject.c:696
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:116 sys-utils/fstrim.c:106
-#: sys-utils/hwclock.c:241 sys-utils/hwclock.c:912 sys-utils/hwclock-rtc.c:173
-#: sys-utils/hwclock-rtc.c:438 sys-utils/hwclock-rtc.c:474
-#: sys-utils/hwclock-rtc.c:528 sys-utils/hwclock-rtc.c:581
+#: sys-utils/hwclock.c:241 sys-utils/hwclock.c:912 sys-utils/hwclock-rtc.c:108
+#: sys-utils/hwclock-rtc.c:353 sys-utils/hwclock-rtc.c:389
+#: sys-utils/hwclock-rtc.c:449 sys-utils/hwclock-rtc.c:502
 #: sys-utils/irq-common.c:263 sys-utils/ldattach.c:392
 #: sys-utils/lscpu-cputype.c:477 sys-utils/lsmem.c:671 sys-utils/nsenter.c:139
 #: sys-utils/rfkill.c:195 sys-utils/rtcwake.c:137 sys-utils/rtcwake.c:292
@@ -101,7 +101,7 @@ msgstr "Nombre de partició no vàlid per al tipus `%c'\n"
 msgid "invalid start argument"
 msgstr "col: argument -l incorrecte %s.\n"
 
-#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111 misc-utils/fadvise.c:106
+#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111 misc-utils/fadvise.c:115
 #, fuzzy
 msgid "invalid length argument"
 msgstr "Valor establert invàlid: %s\n"
@@ -1505,7 +1505,7 @@ msgid "failed to allocate iterator"
 msgstr "No s'ha pogut assignar la memòria temporal.\n"
 
 #: disk-utils/fdisk-list.c:126 disk-utils/fdisk-list.c:247
-#: disk-utils/partx.c:669 login-utils/lslogins.c:1113 misc-utils/fincore.c:356
+#: disk-utils/partx.c:669 login-utils/lslogins.c:1113 misc-utils/fincore.c:357
 #: misc-utils/findmnt.c:1763 misc-utils/lsblk.c:2351 misc-utils/lsfd.c:1970
 #: misc-utils/lslocks.c:472 misc-utils/uuidparse.c:252 misc-utils/wipefs.c:157
 #: sys-utils/losetup.c:325 sys-utils/lscpu.c:604 sys-utils/lscpu.c:759
@@ -4521,7 +4521,7 @@ msgid_plural "#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n"
 msgstr[0] ")%2d: %9ju-%9ju (%9ju sector, %6ju MB)"
 msgstr[1] ")%2d: %9ju-%9ju (%9ju sectors, %6ju MB)"
 
-#: disk-utils/partx.c:680 misc-utils/fincore.c:370 misc-utils/findmnt.c:1792
+#: disk-utils/partx.c:680 misc-utils/fincore.c:371 misc-utils/findmnt.c:1792
 #: misc-utils/lsblk.c:2395 misc-utils/lsfd.c:532 misc-utils/lsfd.c:1984
 #: misc-utils/lslocks.c:487 sys-utils/losetup.c:339 sys-utils/lscpu.c:616
 #: sys-utils/lscpu.c:772 sys-utils/prlimit.c:320 sys-utils/rfkill.c:487
@@ -9201,7 +9201,7 @@ msgstr "No s'ha pogut obrir %s: %s\n"
 msgid "hush login status: restore original IDs failed"
 msgstr "estat d'inici de sessió del hush: ha fallat la restauració dels ID originals"
 
-#: libmount/src/context.c:2702
+#: libmount/src/context.c:2700
 #, fuzzy, c-format
 msgid "operation failed: %m"
 msgstr "no ha estat possible executar openpty\n"
@@ -11655,7 +11655,7 @@ msgstr "error: -u <list> argument està buit"
 msgid "unsupported output format %s"
 msgstr "Introduïu el tipus del sistema de fitxers: "
 
-#: misc-utils/blkid.c:786 misc-utils/fadvise.c:110 misc-utils/wipefs.c:734
+#: misc-utils/blkid.c:786 misc-utils/fadvise.c:119 misc-utils/wipefs.c:734
 #, fuzzy
 msgid "invalid offset argument"
 msgstr "Valor establert invàlid: %s\n"
@@ -11893,29 +11893,29 @@ msgid ""
 "Available values for advice:\n"
 msgstr "Ordres disponibles:\n"
 
-#: misc-utils/fadvise.c:102 misc-utils/pipesz.c:263 misc-utils/pipesz.c:335
+#: misc-utils/fadvise.c:111 misc-utils/pipesz.c:263 misc-utils/pipesz.c:335
 #, fuzzy
 msgid "invalid fd argument"
 msgstr "id invàlid : %s\n"
 
-#: misc-utils/fadvise.c:122 misc-utils/fincore.c:338 sys-utils/losetup.c:828
+#: misc-utils/fadvise.c:131 misc-utils/fincore.c:339 sys-utils/losetup.c:828
 #, fuzzy
 msgid "no file specified"
 msgstr "No s'ha especificat l'opció --date.\n"
 
-#: misc-utils/fadvise.c:127
+#: misc-utils/fadvise.c:136
 #, fuzzy
 msgid "specify either file descriptor or file name"
 msgstr "descriptor de fitxer per al fitxer"
 
-#: misc-utils/fadvise.c:132
+#: misc-utils/fadvise.c:141
 #, fuzzy
 msgid "specify one file descriptor or file name"
 msgstr "descriptor de fitxer per al fitxer"
 
-#: misc-utils/fadvise.c:147
-#, fuzzy
-msgid "failed to advise"
+#: misc-utils/fadvise.c:156
+#, fuzzy, c-format
+msgid "failed to advise: %s"
 msgstr "No s'ha pogut llegir %s\n"
 
 #: misc-utils/fincore.c:61
@@ -11944,50 +11944,50 @@ msgstr "nom del fitxer"
 msgid "failed to do mincore: %s"
 msgstr "No s'ha pogut llegir %s\n"
 
-#: misc-utils/fincore.c:210
+#: misc-utils/fincore.c:211
 #, fuzzy, c-format
 msgid "failed to do mmap: %s"
 msgstr "no es pot fer stat per a %s"
 
-#: misc-utils/fincore.c:236
+#: misc-utils/fincore.c:237
 #, fuzzy, c-format
 #| msgid "%s: failed to open: %s\n"
 msgid "failed to open: %s"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: misc-utils/fincore.c:241
+#: misc-utils/fincore.c:242
 #, fuzzy, c-format
 msgid "failed to do fstat: %s"
 msgstr "no es pot fer stat per a %s"
 
-#: misc-utils/fincore.c:262
+#: misc-utils/fincore.c:263
 #, fuzzy, c-format
 #| msgid "Usage: %s [options] device ...\n"
 msgid " %s [options] file...\n"
 msgstr "Forma d'ús: %s [opcions] dispositiu ...\n"
 
-#: misc-utils/fincore.c:265
+#: misc-utils/fincore.c:266
 #, fuzzy
 #| msgid "  -V, --version                Output version information\n"
 msgid " -J, --json            use JSON output format\n"
 msgstr "  -V, --version                Mostra la informació de la versió\n"
 
-#: misc-utils/fincore.c:266
+#: misc-utils/fincore.c:267
 #, fuzzy
 msgid " -b, --bytes           print sizes in bytes rather than in human readable format\n"
 msgstr "-b, --bytes imprimeix les mides en bytes en lloc d'en un format llegible per humans"
 
-#: misc-utils/fincore.c:267
+#: misc-utils/fincore.c:268
 #, fuzzy
 msgid " -n, --noheadings      don't print headings\n"
 msgstr "-n, --noheadings no imprimeix encapçalaments"
 
-#: misc-utils/fincore.c:268
+#: misc-utils/fincore.c:269
 #, fuzzy
 msgid " -o, --output <list>   output columns\n"
 msgstr "-o, --output <list> columnes de sortida"
 
-#: misc-utils/fincore.c:269
+#: misc-utils/fincore.c:270
 #, fuzzy
 #| msgid "  -V, --version                Output version information\n"
 msgid " -r, --raw             use raw output format\n"
@@ -19161,49 +19161,49 @@ msgstr "No s'ha pogut executar open() de %s"
 msgid "Using direct ISA access to the clock"
 msgstr "Ús de l'accés directe ISA al rellotge"
 
-#: sys-utils/hwclock-rtc.c:113
+#: sys-utils/hwclock-rtc.c:48
 #, fuzzy
 msgid "supported features"
 msgstr "Introduïu el tipus del sistema de fitxers: "
 
-#: sys-utils/hwclock-rtc.c:114
+#: sys-utils/hwclock-rtc.c:49
 #, fuzzy
 msgid "time correction"
 msgstr "correcció de l'hora"
 
-#: sys-utils/hwclock-rtc.c:115
+#: sys-utils/hwclock-rtc.c:50
 #, fuzzy
 msgid "backup switch mode"
 msgstr "mode de canvi de còpia de seguretat"
 
-#: sys-utils/hwclock-rtc.c:166
+#: sys-utils/hwclock-rtc.c:101
 #, fuzzy, c-format
 msgid "Trying to open: %s\n"
 msgstr "S'està intentant desmuntar %s\n"
 
-#: sys-utils/hwclock-rtc.c:191 sys-utils/hwclock-rtc.c:294
+#: sys-utils/hwclock-rtc.c:126 sys-utils/hwclock-rtc.c:216
 #, fuzzy
 msgid "cannot open rtc device"
 msgstr "no es pot fer \"stat\" al dispositiu %s"
 
-#: sys-utils/hwclock-rtc.c:227
+#: sys-utils/hwclock-rtc.c:140
 #, fuzzy, c-format
 #| msgid "ioctl() to %s to read the time failed.\n"
-msgid "ioctl(%s) to %s to read the time failed"
+msgid "ioctl(RTC_RD_NAME) to %s to read the time failed"
 msgstr "No s'ha pogut executar ioctl() a %s per llegir l'hora.\n"
 
-#: sys-utils/hwclock-rtc.c:255
+#: sys-utils/hwclock-rtc.c:177
 #, c-format
 msgid "Waiting in loop for time from %s to change\n"
 msgstr "S'està esperant en bucle per a canviar l'hora de %s\n"
 
-#: sys-utils/hwclock-rtc.c:274
+#: sys-utils/hwclock-rtc.c:196
 #, fuzzy
 #| msgid "Timed out waiting for time change.\n"
 msgid "Timed out waiting for time change."
 msgstr "S'ha excedit el temps d'espera per a què canviés l'hora.\n"
 
-#: sys-utils/hwclock-rtc.c:322
+#: sys-utils/hwclock-rtc.c:244
 #, fuzzy, c-format
 #| msgid "select() to %s to wait for clock tick timed out\n"
 msgid "select() to %s to wait for clock tick timed out"
@@ -19211,102 +19211,103 @@ msgstr ""
 "S'ha excedit el temps d'espera en executar select() a %s en esperar\n"
 "el tic del rellotge.\n"
 
-#: sys-utils/hwclock-rtc.c:325
+#: sys-utils/hwclock-rtc.c:247
 #, c-format
 msgid "select() to %s to wait for clock tick failed"
 msgstr "No s'ha pogut executar select() a %s per esperar el tic del rellotge."
 
-#: sys-utils/hwclock-rtc.c:330
+#: sys-utils/hwclock-rtc.c:252
 #, c-format
 msgid "ioctl() to %s to turn off update interrupts failed"
 msgstr ""
 "No s'ha pogut executar ioctl() a %s per desactivar les interrupcions\n"
 "d'actualització"
 
-#: sys-utils/hwclock-rtc.c:336
+#: sys-utils/hwclock-rtc.c:258
 #, fuzzy, c-format
 #| msgid "ioctl(RTC_EPOCH_SET) to %s failed"
 msgid "ioctl(%d, RTC_UIE_ON, 0) to %s failed"
 msgstr "No s'ha pogut executar ioctl(RTC_EPOCH_SET) a %s"
 
-#: sys-utils/hwclock-rtc.c:388
+#: sys-utils/hwclock-rtc.c:303
 #, fuzzy, c-format
 #| msgid "ioctl() to %s to set the time failed.\n"
-msgid "ioctl(%s) to %s to set the time failed"
+msgid "ioctl(RTC_SET_TIME) to %s to set the time failed"
 msgstr "No s'ha pogut executar ioctl() a %s per establir l'hora.\n"
 
-#: sys-utils/hwclock-rtc.c:394
-#, c-format
-msgid "ioctl(%s) was successful.\n"
+#: sys-utils/hwclock-rtc.c:309
+#, fuzzy, c-format
+#| msgid "ioctl(%s) was successful.\n"
+msgid "ioctl(RTC_SET_TIME) was successful.\n"
 msgstr "S'ha executat ioctl(%s) satisfactòriament.\n"
 
-#: sys-utils/hwclock-rtc.c:410
+#: sys-utils/hwclock-rtc.c:325
 #, fuzzy
 msgid "Using the rtc interface to the clock."
 msgstr "Ús de la interfície rtc al rellotge."
 
-#: sys-utils/hwclock-rtc.c:443
+#: sys-utils/hwclock-rtc.c:358
 #, fuzzy, c-format
 #| msgid "ioctl(RTC_EPOCH_READ) to %s failed"
 msgid "ioctl(%d, RTC_EPOCH_READ, epoch_p) to %s failed"
 msgstr "No s'ha pogut executar ioctl(RTC_EPOCH_READ) a %s"
 
-#: sys-utils/hwclock-rtc.c:449
+#: sys-utils/hwclock-rtc.c:364
 #, fuzzy, c-format
 #| msgid "ioctl(RTC_EPOCH_READ) to %s failed"
 msgid "ioctl(%d, RTC_EPOCH_READ, epoch_p) to %s succeeded.\n"
 msgstr "No s'ha pogut executar ioctl(RTC_EPOCH_READ) a %s"
 
-#: sys-utils/hwclock-rtc.c:468
+#: sys-utils/hwclock-rtc.c:383
 #, fuzzy, c-format
 msgid "invalid epoch '%s'."
 msgstr "id invàlid : %s\n"
 
-#: sys-utils/hwclock-rtc.c:479
+#: sys-utils/hwclock-rtc.c:394
 #, fuzzy, c-format
 #| msgid "ioctl(RTC_EPOCH_SET) to %s failed"
 msgid "ioctl(%d, RTC_EPOCH_SET, %lu) to %s failed"
 msgstr "No s'ha pogut executar ioctl(RTC_EPOCH_SET) a %s"
 
-#: sys-utils/hwclock-rtc.c:485
+#: sys-utils/hwclock-rtc.c:400
 #, fuzzy, c-format
 #| msgid "ioctl(RTC_EPOCH_SET) to %s failed"
 msgid "ioctl(%d, RTC_EPOCH_SET, %lu) to %s succeeded.\n"
 msgstr "No s'ha pogut executar ioctl(RTC_EPOCH_SET) a %s"
 
-#: sys-utils/hwclock-rtc.c:521 sys-utils/hwclock-rtc.c:563
+#: sys-utils/hwclock-rtc.c:442 sys-utils/hwclock-rtc.c:484
 #, fuzzy
 msgid "could not convert parameter name to number"
 msgstr "no s'ha pogut convertir el nom del paràmetre al número"
 
-#: sys-utils/hwclock-rtc.c:533
+#: sys-utils/hwclock-rtc.c:454
 #, fuzzy, c-format
 #| msgid "ioctl(RTC_EPOCH_SET) to %s failed"
 msgid "ioctl(%d, RTC_PARAM_GET, param) to %s failed"
 msgstr "No s'ha pogut executar ioctl(RTC_EPOCH_SET) a %s"
 
-#: sys-utils/hwclock-rtc.c:544
+#: sys-utils/hwclock-rtc.c:465
 #, fuzzy, c-format
 msgid "ioctl(%d, RTC_PARAM_GET, param) to %s succeeded.\n"
 msgstr "ioctl(%d, RTCPARAMGET, paràmetre) a %s amb èxit."
 
-#: sys-utils/hwclock-rtc.c:570
+#: sys-utils/hwclock-rtc.c:491
 #, fuzzy
 msgid "expected <param>=<value>"
 msgstr "s'esperava <param>=<value>"
 
-#: sys-utils/hwclock-rtc.c:574
+#: sys-utils/hwclock-rtc.c:495
 #, fuzzy
 msgid "could not convert parameter value to number"
 msgstr "no s'ha pogut convertir el valor del paràmetre al nombre"
 
-#: sys-utils/hwclock-rtc.c:586
+#: sys-utils/hwclock-rtc.c:507
 #, fuzzy, c-format
 #| msgid "ioctl(RTC_EPOCH_SET) to %s failed"
 msgid "ioctl(%d, RTC_PARAM_SET, param) to %s failed"
 msgstr "No s'ha pogut executar ioctl(RTC_EPOCH_SET) a %s"
 
-#: sys-utils/hwclock-rtc.c:592
+#: sys-utils/hwclock-rtc.c:513
 #, fuzzy, c-format
 #| msgid "ioctl(RTC_EPOCH_SET) to %s failed"
 msgid "ioctl(%d, RTC_PARAM_SET, param) to %s succeeded.\n"

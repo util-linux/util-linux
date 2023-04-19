@@ -75,7 +75,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.34-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-04-04 14:02+0200\n"
+"POT-Creation-Date: 2023-04-19 09:50+0200\n"
 "PO-Revision-Date: 2019-06-03 14:30+01:00\n"
 "Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
@@ -122,14 +122,14 @@ msgstr "ikke nok parametre"
 #: login-utils/sulogin.c:497 login-utils/sulogin.c:534
 #: login-utils/utmpdump.c:142 login-utils/utmpdump.c:367
 #: login-utils/utmpdump.c:391 login-utils/vipw.c:257 login-utils/vipw.c:275
-#: misc-utils/fadvise.c:139 misc-utils/findmnt.c:1227 misc-utils/logger.c:1247
+#: misc-utils/fadvise.c:148 misc-utils/findmnt.c:1227 misc-utils/logger.c:1247
 #: misc-utils/mcookie.c:119 misc-utils/pipesz.c:162 misc-utils/uuidd.c:235
 #: sys-utils/blkdiscard.c:248 sys-utils/blkpr.c:164 sys-utils/blkzone.c:144
 #: sys-utils/dmesg.c:541 sys-utils/eject.c:501 sys-utils/eject.c:696
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:116 sys-utils/fstrim.c:106
-#: sys-utils/hwclock.c:241 sys-utils/hwclock.c:912 sys-utils/hwclock-rtc.c:173
-#: sys-utils/hwclock-rtc.c:438 sys-utils/hwclock-rtc.c:474
-#: sys-utils/hwclock-rtc.c:528 sys-utils/hwclock-rtc.c:581
+#: sys-utils/hwclock.c:241 sys-utils/hwclock.c:912 sys-utils/hwclock-rtc.c:108
+#: sys-utils/hwclock-rtc.c:353 sys-utils/hwclock-rtc.c:389
+#: sys-utils/hwclock-rtc.c:449 sys-utils/hwclock-rtc.c:502
 #: sys-utils/irq-common.c:263 sys-utils/ldattach.c:392
 #: sys-utils/lscpu-cputype.c:477 sys-utils/lsmem.c:671 sys-utils/nsenter.c:139
 #: sys-utils/rfkill.c:195 sys-utils/rtcwake.c:137 sys-utils/rtcwake.c:292
@@ -155,7 +155,7 @@ msgstr "ugyldig parameter for partitionsnummer"
 msgid "invalid start argument"
 msgstr "ugyldig startparameter"
 
-#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111 misc-utils/fadvise.c:106
+#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111 misc-utils/fadvise.c:115
 msgid "invalid length argument"
 msgstr "ugyldig længdeparameter"
 
@@ -1326,7 +1326,7 @@ msgid "failed to allocate iterator"
 msgstr "kunne ikke allokere iterator"
 
 #: disk-utils/fdisk-list.c:126 disk-utils/fdisk-list.c:247
-#: disk-utils/partx.c:669 login-utils/lslogins.c:1113 misc-utils/fincore.c:356
+#: disk-utils/partx.c:669 login-utils/lslogins.c:1113 misc-utils/fincore.c:357
 #: misc-utils/findmnt.c:1763 misc-utils/lsblk.c:2351 misc-utils/lsfd.c:1970
 #: misc-utils/lslocks.c:472 misc-utils/uuidparse.c:252 misc-utils/wipefs.c:157
 #: sys-utils/losetup.c:325 sys-utils/lscpu.c:604 sys-utils/lscpu.c:759
@@ -3971,7 +3971,7 @@ msgid_plural "#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n"
 msgstr[0] "#%2d: %9ju-%9ju (%9ju sektor, %6ju MB)\n"
 msgstr[1] "#%2d: %9ju-%9ju (%9ju sektorer, %6ju MB)\n"
 
-#: disk-utils/partx.c:680 misc-utils/fincore.c:370 misc-utils/findmnt.c:1792
+#: disk-utils/partx.c:680 misc-utils/fincore.c:371 misc-utils/findmnt.c:1792
 #: misc-utils/lsblk.c:2395 misc-utils/lsfd.c:532 misc-utils/lsfd.c:1984
 #: misc-utils/lslocks.c:487 sys-utils/losetup.c:339 sys-utils/lscpu.c:616
 #: sys-utils/lscpu.c:772 sys-utils/prlimit.c:320 sys-utils/rfkill.c:487
@@ -7953,7 +7953,7 @@ msgstr "kunne ikke læse: %s"
 msgid "hush login status: restore original IDs failed"
 msgstr "hush-logindstatus: gendan af oprindelige id'er mislykkedes"
 
-#: libmount/src/context.c:2702
+#: libmount/src/context.c:2700
 #, c-format
 msgid "operation failed: %m"
 msgstr "operation mislykkedes: %m"
@@ -10055,7 +10055,7 @@ msgstr "fejl: -u <liste> parameter er tom"
 msgid "unsupported output format %s"
 msgstr "ikke understøttet uddataformat %s"
 
-#: misc-utils/blkid.c:786 misc-utils/fadvise.c:110 misc-utils/wipefs.c:734
+#: misc-utils/blkid.c:786 misc-utils/fadvise.c:119 misc-utils/wipefs.c:734
 msgid "invalid offset argument"
 msgstr "ugyldig forskydningsparameter"
 
@@ -10269,32 +10269,32 @@ msgstr ""
 "\n"
 "Tilgængelige kolonner (for -o):\n"
 
-#: misc-utils/fadvise.c:102 misc-utils/pipesz.c:263 misc-utils/pipesz.c:335
+#: misc-utils/fadvise.c:111 misc-utils/pipesz.c:263 misc-utils/pipesz.c:335
 #, fuzzy
 #| msgid "invalid speed argument"
 msgid "invalid fd argument"
 msgstr "ugyldig hastighedsparameter"
 
-#: misc-utils/fadvise.c:122 misc-utils/fincore.c:338 sys-utils/losetup.c:828
+#: misc-utils/fadvise.c:131 misc-utils/fincore.c:339 sys-utils/losetup.c:828
 msgid "no file specified"
 msgstr "ingen fil angivet"
 
-#: misc-utils/fadvise.c:127
+#: misc-utils/fadvise.c:136
 #, fuzzy
 #| msgid "bad file descriptor"
 msgid "specify either file descriptor or file name"
 msgstr "ugyldig filbeskrivelse"
 
-#: misc-utils/fadvise.c:132
+#: misc-utils/fadvise.c:141
 #, fuzzy
 #| msgid "bad file descriptor"
 msgid "specify one file descriptor or file name"
 msgstr "ugyldig filbeskrivelse"
 
-#: misc-utils/fadvise.c:147
-#, fuzzy
+#: misc-utils/fadvise.c:156
+#, fuzzy, c-format
 #| msgid "failed to read pipe"
-msgid "failed to advise"
+msgid "failed to advise: %s"
 msgstr "kunne ikke læse datakanal"
 
 #: misc-utils/fincore.c:61
@@ -10318,43 +10318,43 @@ msgstr "filnavn"
 msgid "failed to do mincore: %s"
 msgstr "kunne ikke udføre mincore: %s"
 
-#: misc-utils/fincore.c:210
+#: misc-utils/fincore.c:211
 #, c-format
 msgid "failed to do mmap: %s"
 msgstr "kunne ikke udføre mmap: %s"
 
-#: misc-utils/fincore.c:236
+#: misc-utils/fincore.c:237
 #, c-format
 msgid "failed to open: %s"
 msgstr "kunne ikke åbne: %s"
 
-#: misc-utils/fincore.c:241
+#: misc-utils/fincore.c:242
 #, c-format
 msgid "failed to do fstat: %s"
 msgstr "kunne ikke udføre fstat: %s"
 
-#: misc-utils/fincore.c:262
+#: misc-utils/fincore.c:263
 #, c-format
 msgid " %s [options] file...\n"
 msgstr " %s [tilvalg] fil ...\n"
 
-#: misc-utils/fincore.c:265
+#: misc-utils/fincore.c:266
 msgid " -J, --json            use JSON output format\n"
 msgstr " -J, --json            brug JSON-uddataformat\n"
 
-#: misc-utils/fincore.c:266
+#: misc-utils/fincore.c:267
 msgid " -b, --bytes           print sizes in bytes rather than in human readable format\n"
 msgstr " -b, --bytes           vis størrelser i byte frem for i et læsevenligt format\n"
 
-#: misc-utils/fincore.c:267
+#: misc-utils/fincore.c:268
 msgid " -n, --noheadings      don't print headings\n"
 msgstr " -n, --noheadings      udskriv ikke teksthoveder\n"
 
-#: misc-utils/fincore.c:268
+#: misc-utils/fincore.c:269
 msgid " -o, --output <list>   output columns\n"
 msgstr " -o, --output <liste>    vis kolonner\n"
 
-#: misc-utils/fincore.c:269
+#: misc-utils/fincore.c:270
 msgid " -r, --raw             use raw output format\n"
 msgstr " -r, --raw             brug rå uddataformat\n"
 
@@ -16836,133 +16836,136 @@ msgstr "iopl()-portadgang mislykkedes"
 msgid "Using direct ISA access to the clock"
 msgstr "Bruger direkte ISA-adgang til uret"
 
-#: sys-utils/hwclock-rtc.c:113
+#: sys-utils/hwclock-rtc.c:48
 #, fuzzy
 #| msgid "unsupported filesystem features"
 msgid "supported features"
 msgstr "filsystemfunktioner er ikke understøttet"
 
-#: sys-utils/hwclock-rtc.c:114
+#: sys-utils/hwclock-rtc.c:49
 msgid "time correction"
 msgstr ""
 
-#: sys-utils/hwclock-rtc.c:115
+#: sys-utils/hwclock-rtc.c:50
 msgid "backup switch mode"
 msgstr ""
 
-#: sys-utils/hwclock-rtc.c:166
+#: sys-utils/hwclock-rtc.c:101
 #, c-format
 msgid "Trying to open: %s\n"
 msgstr "Prøver at åbne: %s\n"
 
-#: sys-utils/hwclock-rtc.c:191 sys-utils/hwclock-rtc.c:294
+#: sys-utils/hwclock-rtc.c:126 sys-utils/hwclock-rtc.c:216
 msgid "cannot open rtc device"
 msgstr "kan ikke åbne rtc-enhed"
 
-#: sys-utils/hwclock-rtc.c:227
-#, c-format
-msgid "ioctl(%s) to %s to read the time failed"
+#: sys-utils/hwclock-rtc.c:140
+#, fuzzy, c-format
+#| msgid "ioctl(%s) to %s to read the time failed"
+msgid "ioctl(RTC_RD_NAME) to %s to read the time failed"
 msgstr "ioctl(%s) til %s for at aflæse tiden mislykkedes"
 
-#: sys-utils/hwclock-rtc.c:255
+#: sys-utils/hwclock-rtc.c:177
 #, c-format
 msgid "Waiting in loop for time from %s to change\n"
 msgstr "Venter i løkke (loop) på at tiden fra %s ændres\n"
 
-#: sys-utils/hwclock-rtc.c:274
+#: sys-utils/hwclock-rtc.c:196
 msgid "Timed out waiting for time change."
 msgstr "Tidsudløb mens der ventedes på tidsændring."
 
-#: sys-utils/hwclock-rtc.c:322
+#: sys-utils/hwclock-rtc.c:244
 #, c-format
 msgid "select() to %s to wait for clock tick timed out"
 msgstr "select() af %s for at afvente på et ur-tik udløb"
 
-#: sys-utils/hwclock-rtc.c:325
+#: sys-utils/hwclock-rtc.c:247
 #, c-format
 msgid "select() to %s to wait for clock tick failed"
 msgstr "select() til %s for at afvente et ur-tik mislykkedes"
 
-#: sys-utils/hwclock-rtc.c:330
+#: sys-utils/hwclock-rtc.c:252
 #, c-format
 msgid "ioctl() to %s to turn off update interrupts failed"
 msgstr "ioctl() til %s for at afbryde opdateringsinterrupts mislykkedes"
 
-#: sys-utils/hwclock-rtc.c:336
+#: sys-utils/hwclock-rtc.c:258
 #, c-format
 msgid "ioctl(%d, RTC_UIE_ON, 0) to %s failed"
 msgstr "ioctl(%d, RTC_UIE_ON, 0) til %s mislykkedes"
 
-#: sys-utils/hwclock-rtc.c:388
-#, c-format
-msgid "ioctl(%s) to %s to set the time failed"
+#: sys-utils/hwclock-rtc.c:303
+#, fuzzy, c-format
+#| msgid "ioctl(%s) to %s to set the time failed"
+msgid "ioctl(RTC_SET_TIME) to %s to set the time failed"
 msgstr "ioctl(%s) til %s for at sætte tiden mislykkedes"
 
-#: sys-utils/hwclock-rtc.c:394
-#, c-format
-msgid "ioctl(%s) was successful.\n"
+#: sys-utils/hwclock-rtc.c:309
+#, fuzzy, c-format
+#| msgid "ioctl(%s) was successful.\n"
+msgid "ioctl(RTC_SET_TIME) was successful.\n"
 msgstr "ioctl(%s) lykkedes.\n"
 
-#: sys-utils/hwclock-rtc.c:410
+#: sys-utils/hwclock-rtc.c:325
 msgid "Using the rtc interface to the clock."
 msgstr "Bruger rtc-grænsefladen til uret."
 
-#: sys-utils/hwclock-rtc.c:443
+#: sys-utils/hwclock-rtc.c:358
 #, c-format
 msgid "ioctl(%d, RTC_EPOCH_READ, epoch_p) to %s failed"
 msgstr "ioctl(%d, RTC_EPOCH_READ, epoch_p) til %s mislykkedes"
 
-#: sys-utils/hwclock-rtc.c:449
+#: sys-utils/hwclock-rtc.c:364
 #, c-format
 msgid "ioctl(%d, RTC_EPOCH_READ, epoch_p) to %s succeeded.\n"
 msgstr "ioctl(%d, RTC_EPOCH_READ, epoch_p) til %s mislykkedes.\n"
 
-#: sys-utils/hwclock-rtc.c:468
+#: sys-utils/hwclock-rtc.c:383
 #, c-format
 msgid "invalid epoch '%s'."
 msgstr "ugyldig epoke »%s«."
 
-#: sys-utils/hwclock-rtc.c:479
+#: sys-utils/hwclock-rtc.c:394
 #, c-format
 msgid "ioctl(%d, RTC_EPOCH_SET, %lu) to %s failed"
 msgstr "ioctl(%d, RTC_EPOCH_SET, %lu) til %s mislykkedes"
 
-#: sys-utils/hwclock-rtc.c:485
+#: sys-utils/hwclock-rtc.c:400
 #, c-format
 msgid "ioctl(%d, RTC_EPOCH_SET, %lu) to %s succeeded.\n"
 msgstr "ioctl(%d, RTC_EPOCH_SET, %lu) til %s mislykkedes.\n"
 
-#: sys-utils/hwclock-rtc.c:521 sys-utils/hwclock-rtc.c:563
+#: sys-utils/hwclock-rtc.c:442 sys-utils/hwclock-rtc.c:484
 msgid "could not convert parameter name to number"
 msgstr ""
 
-#: sys-utils/hwclock-rtc.c:533
+#: sys-utils/hwclock-rtc.c:454
 #, fuzzy, c-format
 #| msgid "ioctl(%d, RTC_EPOCH_SET, %lu) to %s failed"
 msgid "ioctl(%d, RTC_PARAM_GET, param) to %s failed"
 msgstr "ioctl(%d, RTC_EPOCH_SET, %lu) til %s mislykkedes"
 
-#: sys-utils/hwclock-rtc.c:544
+#: sys-utils/hwclock-rtc.c:465
 #, fuzzy, c-format
 #| msgid "ioctl(%d, RTC_EPOCH_SET, %lu) to %s succeeded.\n"
 msgid "ioctl(%d, RTC_PARAM_GET, param) to %s succeeded.\n"
 msgstr "ioctl(%d, RTC_EPOCH_SET, %lu) til %s mislykkedes.\n"
 
-#: sys-utils/hwclock-rtc.c:570
+#: sys-utils/hwclock-rtc.c:491
 msgid "expected <param>=<value>"
 msgstr ""
 
-#: sys-utils/hwclock-rtc.c:574
+#: sys-utils/hwclock-rtc.c:495
 msgid "could not convert parameter value to number"
 msgstr ""
 
-#: sys-utils/hwclock-rtc.c:586
+#: sys-utils/hwclock-rtc.c:507
 #, fuzzy, c-format
 #| msgid "ioctl(%d, RTC_EPOCH_SET, %lu) to %s failed"
 msgid "ioctl(%d, RTC_PARAM_SET, param) to %s failed"
 msgstr "ioctl(%d, RTC_EPOCH_SET, %lu) til %s mislykkedes"
 
-#: sys-utils/hwclock-rtc.c:592
+#: sys-utils/hwclock-rtc.c:513
 #, fuzzy, c-format
 #| msgid "ioctl(%d, RTC_EPOCH_SET, %lu) to %s succeeded.\n"
 msgid "ioctl(%d, RTC_PARAM_SET, param) to %s succeeded.\n"
