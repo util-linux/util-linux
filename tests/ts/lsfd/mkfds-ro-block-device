@@ -28,6 +28,7 @@ ts_skip_qemu_user
 
 ts_check_test_command "$TS_CMD_LSFD"
 
+ts_check_test_command "$TS_CMD_LOSETUP"
 ts_check_test_command "$TS_HELPER_MKFDS"
 
 ts_cd "$TS_OUTDIR"
