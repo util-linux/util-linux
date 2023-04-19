@@ -37,6 +37,8 @@ mount(8) and libmount:
 
   * uses autofs mount hint to ignore autofs mount entries.
 
+  * uses statx(AT_STATX_DONT_SYNC|AT_NO_AUTOMOUNT) to minimize interaction with
+    automount and unreachable network filesystem
 
 blkpr(8) is a NEW COMMAND to run persistent reservations ioctls on a device
 (typically SCSI and NVMe disk).
@@ -197,6 +199,7 @@ build-sys:
    - make pipesz optional  [Karel Zak]
    - move login-utils/logindefs.c to lib  [Karel Zak]
    - release++ (v2.39-rc1)  [Karel Zak]
+   - release++ (v2.39-rc2)  [Karel Zak]
    - remove --enable-libmount-support-mtab  [Karel Zak]
    - rename libmount loopdev code file  [Karel Zak]
    - report fuzzing support status  [Karel Zak]
@@ -249,6 +252,7 @@ ci(lint):
 clang:
    - ignore -Wunused-but-set-variable  [Thomas Weißschuh]
 column:
+   - (man) use markup for option  [Mario Blättermann]
    - add --table-column  [Karel Zak]
    - add --table-maxout  [Karel Zak]
    - add -1 placeholder to address last visible column  [Karel Zak]
@@ -277,6 +281,7 @@ dmesg:
 doc:
    - update renice.1 for spelling and style  [Jan Engelhardt]
 docs:
+   - add blkpr in AUTHORS file  [zhenwei pi]
    - update AUTHORS file  [Karel Zak]
    - update v2.39-ReleaseNotes  [Karel Zak]
    - update v2.39-rc1-ReleaseNotes  [Karel Zak]
@@ -290,8 +295,16 @@ exitcodes:
 fadvice:
    - delete a unused struct definition  [Masatake YAMATO]
 fadvise:
+   - (man) document help and version arguments  [Thomas Weißschuh]
+   - (tests) add helper to create files  [Thomas Weißschuh]
+   - (tests) enable drop test  [Thomas Weißschuh]
+   - (tests) skip test on tmpfs  [Thomas Weißschuh]
+   - (tests) sync data to disk before dropping pages  [Thomas Weißschuh]
    - add bash-completion script  [Masatake YAMATO]
+   - always exit with EXIT_FAILURE on error  [Thomas Weißschuh]
+   - correctly report error from posix_fadvise  [Thomas Weißschuh]
    - fix parsing of option -V  [Thomas Weißschuh]
+   - implement --advice argument  [Thomas Weißschuh]
    - new command wrapping posix_fadvise  [Masatake YAMATO]
 fdisk:
    - document expected answers to quit message  [Thomas Weißschuh]
@@ -299,9 +312,16 @@ fdisk:
    - make it more obvious that DOS means MBR  [Karel Zak]
 fileeq/lsfd:
    - use correct format specifier  [Thomas Weißschuh]
+fincore:
+   - (tests) correctly look for findmnt  [Thomas Weißschuh]
+   - (tests) don't mark tests as known fail  [Thomas Weißschuh]
+   - (tests) don't run tests on tmpfs  [Thomas Weißschuh]
+   - open file with PROT_READ for qemu-user  [Thomas Weißschuh]
 findmnt:
    - (man) add hint about the default output  [Karel Zak]
+   - use warning rather than error from FS type mismatch  [Karel Zak]
 flock:
+   - (tests) add test for fd-based locking  [Thomas Weißschuh]
    - timeout_expired must be volatile qualified  [Cristian Rodríguez]
 fsck:
    - Processes may kill other processes.  [zhanchengbin]
@@ -312,6 +332,7 @@ fsck.cramfs:
    - fix error message  [Samanta Navarro]
    - print correct error on 32-bit systems  [Samanta Navarro]
 fstab:
+   - (man) use markup for external man page links  [Mario Blättermann]
    - improve 4th field description  [Karel Zak]
 fstrim:
    - Remove all skipped entries before de-duplication  [Scott Shambarger]
@@ -323,6 +344,7 @@ git:
 github:
    - call checklibdoc and checkxalloc  [Karel Zak]
 hardlink:
+   - (man) Use markup for file names  [Mario Blättermann]
    - (tests) do not assert amount of compared files  [Thomas Weißschuh]
    - Document '-c' option in manpage  [FeRD (Frank Dana)]
    - Fix man page docs for '-v/--verbose'  [FeRD (Frank Dana)]
@@ -339,7 +361,13 @@ hardlink:
 hexdump-parse:
    - handle truncated format pattern  [Ronan Pigott]
 hwclock:
+   - (tests) add simple test to show rtc time  [Thomas Weißschuh]
+   - constify struct clock_opts  [Thomas Weißschuh]
+   - drop ancient sparc special cases  [Thomas Weißschuh]
    - fix return value on successful --param-get  [Bastian Krause]
+   - make sure struct tm is initialized  [Karel Zak]
+   - use kernel struct rtc_time for RTC ioctls  [Karel Zak]
+   - use linux/rtc.h  [Thomas Weißschuh]
 idmap:
    - kill child when writing the idmap fails  [Christian Brauner]
 include:
@@ -381,12 +409,14 @@ kill:
    - Support mandating the presence of a userspace signal handler  [Chris Down]
    - fix buffer overflow  [Karel Zak]
 last:
+   - (man) use correct markup  [Mario Blättermann]
    - should not use errx/warnx on signal handlers  [Cristian Rodríguez]
    - use full size of the username  [Karel Zak]
    - use sizeof_member  [Thomas Weißschuh]
 ldattach:
    - fix --intro-command and --pause  [Karel Zak]
 lib:
+   - Add crc32c function that can deal with holes  [Jeremy Linton]
    - add crc64 implementation  [Thomas Weißschuh]
    - add sha256 implementation  [Thomas Weißschuh]
    - add xxhash implementation  [Thomas Weißschuh]
@@ -410,6 +440,8 @@ lib/colors:
    - ensure fallback to system directory  [Thomas Weißschuh]
    - introduce color_get_disable_sequence()  [Thomas Weißschuh]
    - move colors canonicalization to lib/color-names.c  [Karel Zak]
+lib/crc32c:
+   - fix assert()  [Karel Zak]
 lib/env:
    - fix memory leak [coverity scan]  [Karel Zak]
 lib/fileeq:
@@ -471,6 +503,7 @@ libblkid:
    - (xfs) cleanup checksum code  [Karel Zak]
    - (xfs) fix typo in operators [coverity scan]  [Karel Zak]
    - Add detection of FileVault2 partitions  [Milan Broz]
+   - Compute CRC with sb_crc zeroed  [Jeremy Linton]
    - add BLKID_SUBLKS_FSINFO to docs  [Karel Zak]
    - add FSBLOCKSIZE tag  [Andrey Albershteyn]
    - add FSLASTBLOCK field interface showing area occupied by fs  [Andrey Albershteyn]
@@ -531,6 +564,7 @@ libblkid:
    - define probing return values  [Karel Zak]
    - dos  ignore exfat superblocks  [Thomas Weißschuh]
    - erofs  add checksum support  [Thomas Weißschuh]
+   - erofs  calculate checksum with offset  [Thomas Weißschuh]
    - erofs  report fssize  [Thomas Weißschuh]
    - erofs - avoid undefined shift  [Milan Broz]
    - exfat  add checksum support  [Thomas Weißschuh]
@@ -606,6 +640,7 @@ libblkid:
    - vfat  report fssize  [Thomas Weißschuh]
    - xfs  add checksum support  [Thomas Weißschuh]
    - xfs  add more superblock fields  [Thomas Weißschuh]
+   - xfs  clean up call to ul_crc32_exclude_offset  [Thomas Weißschuh]
    - zfs  remove unnecessary newline from debug messages  [Thomas Weißschuh]
    - zfs  report endianness  [Thomas Weißschuh]
    - zonefs  add checksum support  [Thomas Weißschuh]
@@ -704,9 +739,11 @@ libmount:
    - apply fstab options to context optlist  [Karel Zak]
    - check for propagation-only in proper way  [Karel Zak]
    - cleanup UID and GIR parsing, add tests  [Karel Zak]
+   - cleanup all stat() use  [Karel Zak]
    - cleanup comments for hooks  [Karel Zak]
    - create a hook to set rootcontext=@target  [Karel Zak]
    - declare array of LSM options const  [Christian Göttsche]
+   - don't define struct stat is unnecessary  [Karel Zak]
    - don't refer optlist when copy libmnt_fs  [Karel Zak]
    - don't require return argument in get-like functions  [Karel Zak]
    - dont ignore autofs mounts by default  [Ian Kent]
@@ -726,6 +763,7 @@ libmount:
    - fix possible double free  [Karel Zak]
    - fix possible leaks on error  [Karel Zak]
    - fix potentially uninitialized local variable [CodeQL]  [Karel Zak]
+   - fix superblock rw/ro reconfiguration  [Karel Zak]
    - fix typo in debug message  [Karel Zak]
    - fix typo, improve debug  [Karel Zak]
    - fix typos  [наб]
@@ -771,6 +809,7 @@ libmount:
    - support VFS flags attributes clear  [Karel Zak]
    - treat comma as terminator in mnt_match_options()  [Karel Zak]
    - use AT_RECURSIVE only when clone tree  [Karel Zak]
+   - use AT_STATX_DONT_SYNC when touch mountpoints  [Karel Zak]
    - use MNT_ERR_APPLYFLAGS for failed mount_setattr()  [Karel Zak]
    - use autofs mount hint to ignore autofs mount entries  [Ian Kent]
    - use mount ID to merge utab and mountinfo files  [Karel Zak]
@@ -846,6 +885,7 @@ lscpu:
    - add missing Apple parts  [James Calligeros]
    - add testcase for Linux 6.2 x86_64  [Thomas Weißschuh]
    - always create Architecture section  [Thomas Weißschuh]
+   - fix -p --output-all caches delimiter  [Karel Zak]
    - fix incomplete column description  [Karel Zak]
    - keep bogomips locale output locale sensitive  [Karel Zak]
    - make Apple part names human-friendly  [James Calligeros]
@@ -856,6 +896,7 @@ lsfd:
    - (filter)  accept '.' used in column names  [Masatake YAMATO]
    - (filter)  fix a codeing style of if/else  [Masatake YAMATO]
    - (filter)  parse "" in filter expression correctly  [Masatake YAMATO]
+   - (man) Fix typo and add markup for external man page link  [Mario Blättermann]
    - (man) fix po-man warnings  [Karel Zak]
    - (man) fix the description of NAME fields for TCP and UDP sockets  [Masatake YAMATO]
    - (man) fix typo  [Thomas Weißschuh]
@@ -911,6 +952,7 @@ lsfd:
    - introduce is_opened_file macro  [Masatake YAMATO]
    - make TCP and UDP related code L3 protocol neutral  [Masatake YAMATO]
    - make a few structs const  [Thomas Weißschuh]
+   - make a test case executable  [Masatake YAMATO]
    - make items in netns_tree extensible  [Masatake YAMATO]
    - make self_netns_sb static  [Thomas Weißschuh]
    - make the logic for verifying the initial line of /proc/net/{tcp,udp} more flexible  [Masatake YAMATO, Thomas Weißschuh, Masatake YAMATO]
@@ -934,6 +976,7 @@ lsfd:
    - simplify functions for comparing items  [Masatake YAMATO]
    - skip test mkfds-netns in qemu-user  [Thomas Weißschuh]
    - skip test mkfds-udp on s390x  [Thomas Weißschuh]
+   - skip test option-inet in qemu-user  [Masatake YAMATO]
    - specify variables instead of types in sizeof operator  [Masatake YAMATO]
    - try including asm/fcntl.h first for decoding flags of fdinfo  [Masatake YAMATO]
    - unify the code for reading /proc/net/tcp and udp  [Masatake YAMATO]
@@ -1061,11 +1104,13 @@ mount:
    - (man) add missing commas  [Jakub Wilk]
    - (man) add note about options order  [Karel Zak]
    - (man) add notes about remount behavior  [Karel Zak]
+   - (man) use markup for command names  [Mario Blättermann]
    - add rootcontext=@target  [Christian Göttsche]
    - ignore autofs entries in mount listing  [Ian Kent]
    - relatime allows equality  [Stephen Kitt]
    - split and cleanup usage()  [Karel Zak]
 namei:
+   - (man) clarify the namei binary  [Mario Blättermann]
    - add -Z (selinux context report)  [Karel Zak, CJ Kucera]
 nsenter:
    - (man) imropve readability  [Karel Zak]
@@ -1091,8 +1136,10 @@ po:
    - add ka.po (from translationproject.org)  [Temuri Doghonadze]
    - merge changes  [Karel Zak]
    - update ca.po (from translationproject.org)  [Jordi Mas i Hernàndez]
+   - update cs.po (from translationproject.org)  [Petr Písař]
    - update de.po (from translationproject.org)  [Mario Blättermann]
    - update es.po (from translationproject.org)  [Antonio Ceballos Roa]
+   - update fr.po (from translationproject.org)  [Frédéric Marchal]
    - update hr.po (from translationproject.org)  [Božidar Putanec]
    - update ja.po (from translationproject.org)  [Takeshi Hamasaki]
    - update ko.po (from translationproject.org)  [Seong-ho Cho]
@@ -1104,6 +1151,7 @@ po-man:
    - enable out of tree builds  [Thomas Weißschuh]
    - merge changes  [Karel Zak]
    - remove unicode dash from manpage NAME section  [Thomas Weißschuh]
+   - update de.po (from translationproject.org)  [Mario Blättermann]
    - update fr.po (from translationproject.org)  [Frédéric Marchal]
    - update sr.po (from translationproject.org)  [Мирослав Николић]
    - update uk.po (from translationproject.org)  [Yuri Chornoivan]
@@ -1134,6 +1182,7 @@ script:
    - abort if unused arguments are given  [Chris Hofstaedtler]
    - fix use of utempter  [Karel Zak]
 setarch:
+   - (man) Fix typo  [Mario Blättermann]
    - add loongarch support  [Enze Li]
    - show current personality  [Thomas Weißschuh]
    - use kernel address size if possible  [Thomas Weißschuh]
@@ -1158,6 +1207,7 @@ sulogin:
    - only assign to variables written by signal handlers  [Cristian Rodríguez]
    - print features on --version  [Karel Zak]
 swapon:
+   - (man) use correct markup for external man page links  [Mario Blättermann]
    - add --fstab command line option  [Karel Zak]
 switch_root:
    - (man) fix return code description  [Karel Zak]
@@ -1166,6 +1216,7 @@ sysfs:
    - read runtime byteorder  [Thomas Weißschuh]
    - sysfs_get_byteorder  add context parameter  [Thomas Weißschuh]
 taskset:
+   - (man) Fix typos and use correct markup  [Mario Blättermann]
    - warn if affinity is not settable  [Karel Zak]
 test:
    - (lsfd) add a case for displaying PROTONAME column of mmap'ed AF_PACKET socket  [Masatake YAMATO]
@@ -1198,7 +1249,12 @@ tests:
    - (lsfd) add comments about the reason using ts_skip_qemu_user()  [Masatake YAMATO]
    - (lsfd) add missing dup2 calls to assign proper file descriptors  [Masatake YAMATO]
    - (lsfd) add more cases for packet sockets  [Masatake YAMATO]
+   - (lsfd) adjust the output for unix datagram sockets already connected  [Masatake YAMATO]
+   - (lsfd) adjust the output for unix datagram sockets created by socketpair  [Masatake YAMATO]
+   - (lsfd) adjust the output for unix stream sockets  [Masatake YAMATO]
+   - (lsfd) check the exit status of the first command in the pipeline  [Masatake YAMATO]
    - (lsfd) delete an unused variable  [Masatake YAMATO]
+   - (lsfd) don't hardcode the inode number of netns in the expected output  [Masatake YAMATO]
    - (lsfd) extend unix-stream test case to test SEQPACKET socket  [Masatake YAMATO]
    - (lsfd) fix the potential problems reported by github-code-scan  [Masatake YAMATO]
    - (lsfd) put double quote characters around variable expansions  [Masatake YAMATO]
@@ -1250,6 +1306,7 @@ tests:
    - disable nonfunctional tests under qemu user emulation  [Thomas Weißschuh]
    - don't compile lsfd/mkfds helper on macos, since it's linux only  [Anatoly Pugachev]
    - don't print mount hins on terminal  [Karel Zak]
+   - don't skip on incorrectly search executables  [Thomas Weißschuh]
    - fclose(stdin) UB  [Cristian Rodríguez]
    - fdisk/bsd  update expected output for ppc64le  [Chris Hofstaedtler]
    - fix misc/setarch run in a docker environment  [Anatoly Pugachev]
