@@ -341,5 +341,8 @@ endif
 if BUILD_FADVISE
 dist_bashcompletion_DATA += bash-completion/fadvise
 endif
+if BUILD_WAITPID
+dist_bashcompletion_DATA += bash-completion/waitpid
+endif
 
 endif # BUILD_BASH_COMPLETION
