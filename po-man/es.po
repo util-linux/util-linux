@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-man 2.37-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-04-04 14:16+0200\n"
+"POT-Creation-Date: 2023-04-19 09:51+0200\n"
 "PO-Revision-Date: 2021-09-11 20:10+0200\n"
 "Last-Translator: Antonio Ceballos Roa <aceballos@gmail.com>\n"
 "Language-Team: Spanish <es@tp.org.es>\n"
@@ -559,7 +559,7 @@ msgstr "La longitud de la partición (en sectores de 512 bytes)."
 #: ../login-utils/runuser.1.adoc:129 ../login-utils/su.1.adoc:145
 #: ../login-utils/utmpdump.1.adoc:75 ../login-utils/vipw.8.adoc:72
 #: ../misc-utils/blkid.8.adoc:179 ../misc-utils/cal.1.adoc:183
-#: ../misc-utils/fadvise.1.adoc:46 ../misc-utils/fincore.1.adoc:53
+#: ../misc-utils/fadvise.1.adoc:57 ../misc-utils/fincore.1.adoc:53
 #: ../misc-utils/findfs.8.adoc:67 ../misc-utils/findmnt.8.adoc:235
 #: ../misc-utils/getopt.1.adoc:151 ../misc-utils/kill.1.adoc:109
 #: ../misc-utils/logger.1.adoc:246 ../misc-utils/look.1.adoc:101
@@ -1047,7 +1047,7 @@ msgstr ""
 #: ../login-utils/login.1.adoc:157 ../login-utils/lslogins.1.adoc:139
 #: ../login-utils/newgrp.1.adoc:34 ../login-utils/nologin.8.adoc:63
 #: ../login-utils/sulogin.8.adoc:70 ../login-utils/utmpdump.1.adoc:71
-#: ../misc-utils/blkid.8.adoc:175 ../misc-utils/fadvise.1.adoc:42
+#: ../misc-utils/blkid.8.adoc:175 ../misc-utils/fadvise.1.adoc:53
 #: ../misc-utils/fincore.1.adoc:49 ../misc-utils/findfs.8.adoc:63
 #: ../misc-utils/findmnt.8.adoc:231 ../misc-utils/kill.1.adoc:102
 #: ../misc-utils/logger.1.adoc:242 ../misc-utils/lsblk.8.adoc:171
@@ -2738,13 +2738,14 @@ msgstr ""
 #. type: Labeled list
 #: ../disk-utils/fsck.8.adoc:29 ../disk-utils/fsck.cramfs.8.adoc:42
 #: ../disk-utils/fsck.minix.8.adoc:80 ../disk-utils/isosize.8.adoc:35
-#: ../disk-utils/mkfs.cramfs.8.adoc:77 ../misc-utils/findfs.8.adoc:51
-#: ../misc-utils/kill.1.adoc:43 ../misc-utils/kill.1.adoc:89
-#: ../misc-utils/rename.1.adoc:68 ../misc-utils/waitpid.1.adoc:44
-#: ../sys-utils/blkdiscard.8.adoc:61 ../sys-utils/chcpu.8.adoc:59
-#: ../sys-utils/chmem.8.adoc:58 ../sys-utils/lsns.8.adoc:79
-#: ../sys-utils/mount.8.adoc:1569 ../sys-utils/mountpoint.1.adoc:43
-#: ../sys-utils/swapon.8.adoc:98 ../term-utils/mesg.1.adoc:80
+#: ../disk-utils/mkfs.cramfs.8.adoc:77 ../misc-utils/fadvise.1.adoc:48
+#: ../misc-utils/findfs.8.adoc:51 ../misc-utils/kill.1.adoc:43
+#: ../misc-utils/kill.1.adoc:89 ../misc-utils/rename.1.adoc:68
+#: ../misc-utils/waitpid.1.adoc:44 ../sys-utils/blkdiscard.8.adoc:61
+#: ../sys-utils/chcpu.8.adoc:59 ../sys-utils/chmem.8.adoc:58
+#: ../sys-utils/lsns.8.adoc:79 ../sys-utils/mount.8.adoc:1569
+#: ../sys-utils/mountpoint.1.adoc:43 ../sys-utils/swapon.8.adoc:98
+#: ../term-utils/mesg.1.adoc:80
 #, no-wrap
 msgid "*0*"
 msgstr "*0*"
@@ -2757,12 +2758,12 @@ msgstr "Sin errores"
 
 #. type: Labeled list
 #: ../disk-utils/fsck.8.adoc:31 ../disk-utils/isosize.8.adoc:37
-#: ../misc-utils/findfs.8.adoc:53 ../misc-utils/kill.1.adoc:91
-#: ../misc-utils/rename.1.adoc:71 ../misc-utils/waitpid.1.adoc:46
-#: ../sys-utils/blkdiscard.8.adoc:64 ../sys-utils/chcpu.8.adoc:62
-#: ../sys-utils/chmem.8.adoc:61 ../sys-utils/lsns.8.adoc:81
-#: ../sys-utils/mount.8.adoc:1572 ../sys-utils/mountpoint.1.adoc:46
-#: ../term-utils/mesg.1.adoc:82
+#: ../misc-utils/fadvise.1.adoc:50 ../misc-utils/findfs.8.adoc:53
+#: ../misc-utils/kill.1.adoc:91 ../misc-utils/rename.1.adoc:71
+#: ../misc-utils/waitpid.1.adoc:46 ../sys-utils/blkdiscard.8.adoc:64
+#: ../sys-utils/chcpu.8.adoc:62 ../sys-utils/chmem.8.adoc:61
+#: ../sys-utils/lsns.8.adoc:81 ../sys-utils/mount.8.adoc:1572
+#: ../sys-utils/mountpoint.1.adoc:46 ../term-utils/mesg.1.adoc:82
 #, no-wrap
 msgid "*1*"
 msgstr "*1*"
@@ -3466,31 +3467,31 @@ msgstr "*-y*"
 #: ../login-utils/chfn.1.adoc:72 ../login-utils/chsh.1.adoc:55
 #: ../login-utils/lslogins.1.adoc:107 ../login-utils/runuser.1.adoc:97
 #: ../login-utils/su.1.adoc:106 ../misc-utils/blkid.8.adoc:148
-#: ../misc-utils/findfs.8.adoc:49 ../misc-utils/findmnt.8.adoc:182
-#: ../misc-utils/kill.1.adoc:85 ../misc-utils/logger.1.adoc:186
-#: ../misc-utils/lsblk.8.adoc:134 ../misc-utils/rename.1.adoc:66
-#: ../misc-utils/waitpid.1.adoc:40 ../sys-utils/blkdiscard.8.adoc:57
-#: ../sys-utils/chcpu.8.adoc:55 ../sys-utils/chmem.8.adoc:54
-#: ../sys-utils/dmesg.1.adoc:181 ../sys-utils/eject.1.adoc:93
-#: ../sys-utils/flock.1.adoc:88 ../sys-utils/fstrim.8.adoc:74
-#: ../sys-utils/hwclock.8.adoc:342 ../sys-utils/losetup.8.adoc:120
-#: ../sys-utils/lsipc.1.adoc:86 ../sys-utils/lsns.8.adoc:75
-#: ../sys-utils/mount.8.adoc:1565 ../sys-utils/mountpoint.1.adoc:39
-#: ../sys-utils/swapon.8.adoc:94 ../sys-utils/switch_root.8.adoc:29
-#: ../sys-utils/zramctl.8.adoc:72 ../term-utils/mesg.1.adoc:76
-#: ../text-utils/hexdump.1.adoc:219
+#: ../misc-utils/fadvise.1.adoc:44 ../misc-utils/findfs.8.adoc:49
+#: ../misc-utils/findmnt.8.adoc:182 ../misc-utils/kill.1.adoc:85
+#: ../misc-utils/logger.1.adoc:186 ../misc-utils/lsblk.8.adoc:134
+#: ../misc-utils/rename.1.adoc:66 ../misc-utils/waitpid.1.adoc:40
+#: ../sys-utils/blkdiscard.8.adoc:57 ../sys-utils/chcpu.8.adoc:55
+#: ../sys-utils/chmem.8.adoc:54 ../sys-utils/dmesg.1.adoc:181
+#: ../sys-utils/eject.1.adoc:93 ../sys-utils/flock.1.adoc:88
+#: ../sys-utils/fstrim.8.adoc:74 ../sys-utils/hwclock.8.adoc:342
+#: ../sys-utils/losetup.8.adoc:120 ../sys-utils/lsipc.1.adoc:86
+#: ../sys-utils/lsns.8.adoc:75 ../sys-utils/mount.8.adoc:1565
+#: ../sys-utils/mountpoint.1.adoc:39 ../sys-utils/swapon.8.adoc:94
+#: ../sys-utils/switch_root.8.adoc:29 ../sys-utils/zramctl.8.adoc:72
+#: ../term-utils/mesg.1.adoc:76 ../text-utils/hexdump.1.adoc:219
 #, no-wrap
 msgid "EXIT STATUS"
 msgstr "ESTADO DE SALIDA"
 
 #. type: Plain text
 #: ../disk-utils/fsck.cramfs.8.adoc:44 ../disk-utils/isosize.8.adoc:37
-#: ../disk-utils/mkfs.cramfs.8.adoc:79 ../misc-utils/findfs.8.adoc:53
-#: ../misc-utils/kill.1.adoc:91 ../misc-utils/lsblk.8.adoc:138
-#: ../misc-utils/waitpid.1.adoc:46 ../sys-utils/blkdiscard.8.adoc:63
-#: ../sys-utils/chcpu.8.adoc:61 ../sys-utils/chmem.8.adoc:60
-#: ../sys-utils/fstrim.8.adoc:78 ../sys-utils/mount.8.adoc:1571
-#: ../sys-utils/swapon.8.adoc:100
+#: ../disk-utils/mkfs.cramfs.8.adoc:79 ../misc-utils/fadvise.1.adoc:50
+#: ../misc-utils/findfs.8.adoc:53 ../misc-utils/kill.1.adoc:91
+#: ../misc-utils/lsblk.8.adoc:138 ../misc-utils/waitpid.1.adoc:46
+#: ../sys-utils/blkdiscard.8.adoc:63 ../sys-utils/chcpu.8.adoc:61
+#: ../sys-utils/chmem.8.adoc:60 ../sys-utils/fstrim.8.adoc:78
+#: ../sys-utils/mount.8.adoc:1571 ../sys-utils/swapon.8.adoc:100
 msgid "success"
 msgstr ""
 
@@ -9385,7 +9386,7 @@ msgstr ""
 msgid ""
 "The utmp file format uses fixed sizes of strings, which means that very long "
 "strings are impossible to store in the file and impossible to display by "
-"last. The usual limits are 32 bytes for a user and line name and 256 bytes "
+"*last*. The usual limits are 32 bytes for a user and line name and 256 bytes "
 "for a hostname."
 msgstr ""
 
@@ -12928,12 +12929,23 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/fadvise.1.adoc:45 ../misc-utils/fincore.1.adoc:52
+#: ../misc-utils/fadvise.1.adoc:47
+#, no-wrap
+msgid "*fadvise* has the following exit status values:\n"
+msgstr ""
+
+#. type: Plain text
+#: ../misc-utils/fadvise.1.adoc:52 ../misc-utils/waitpid.1.adoc:48
+msgid "unspecified failure"
+msgstr ""
+
+#. type: Plain text
+#: ../misc-utils/fadvise.1.adoc:56 ../misc-utils/fincore.1.adoc:52
 msgid "mailto:yamato@redhat.com[Masatake YAMATO]"
 msgstr "mailto:yamato@redhat.com[Masatake YAMATO]"
 
 #. type: Plain text
-#: ../misc-utils/fadvise.1.adoc:49
+#: ../misc-utils/fadvise.1.adoc:60
 #, fuzzy, no-wrap
 #| msgid "*ioprio_set*(2)\n"
 msgid "*posix_fadvise*(2)\n"
@@ -14851,9 +14863,9 @@ msgstr "*-X*, *--respect-xattrs*"
 msgid ""
 "Only try to link files with the same directory name. The top-level directory "
 "(as specified on the hardlink command line) is ignored. For example, "
-"*hardlink --respect-dir /foo /bar* will link /foo/some/file with /bar/some/"
-"file, but not /bar/other/file. If combined with *--respect-name*, then "
-"entire paths (except the top-level directory) are compared."
+"*hardlink --respect-dir /foo /bar* will link _/foo/some/file_ with _/bar/"
+"some/file_, but not _/bar/other/file_. If combined with *--respect-name*, "
+"then entire paths (except the top-level directory) are compared."
 msgstr ""
 
 #. type: Labeled list
@@ -17903,7 +17915,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/lsfd.1.adoc:343
-msgid "Inode identifying network namespace where the socket belogs to."
+msgid "Inode identifying network namespace where the socket belongs to."
 msgstr ""
 
 #. type: Labeled list
@@ -18000,8 +18012,8 @@ msgstr "*TTYPERM* (cadena)"
 #. type: Plain text
 #: ../misc-utils/lsfd.1.adoc:367
 msgid ""
-"Raw file types returned from stat(2): BLK, CHR, DIR, FIFO, LINK, REG, SOCK, "
-"or UNKN."
+"Raw file types returned from *stat*(2): BLK, CHR, DIR, FIFO, LINK, REG, "
+"SOCK, or UNKN."
 msgstr ""
 
 #. type: Labeled list
@@ -19295,7 +19307,7 @@ msgstr ""
 msgid ""
 "Show security context of the file or \"?\" if not available.  The support "
 "for security contexts is optional and does not have to be compiled to the "
-"namei."
+"*namei* binary."
 msgstr ""
 
 #. type: Plain text
@@ -20407,11 +20419,6 @@ msgstr ""
 #: ../misc-utils/waitpid.1.adoc:43
 #, no-wrap
 msgid "*waitpid* has the following exit status values:\n"
-msgstr ""
-
-#. type: Plain text
-#: ../misc-utils/waitpid.1.adoc:48
-msgid "unspecified failure"
 msgstr ""
 
 #. type: Plain text
@@ -21807,7 +21814,7 @@ msgstr ""
 #. type: Labeled list
 #: ../schedutils/taskset.1.adoc:97
 #, no-wrap
-msgid "When a cpu-list is specified for an existing process, the 'p' and 'c' options must be grouped together{colon}"
+msgid "When a cpu-list is specified for an existing process, the *-p* and *-c* options must be grouped together{colon}"
 msgstr ""
 
 #. type: Plain text
@@ -21843,13 +21850,13 @@ msgstr ""
 #. type: Plain text
 #: ../schedutils/taskset.1.adoc:111
 #, no-wrap
-msgid "*Taskset* returns 0 in its affinity-getting mode as long as the provided PID exists.\n"
+msgid "*taskset* returns 0 in its affinity-getting mode as long as the provided PID exists.\n"
 msgstr ""
 
 #. type: Plain text
 #: ../schedutils/taskset.1.adoc:113
 #, no-wrap
-msgid "*Taskset* returns 0 in its affinity-setting mode as long as the underlying *sched_setaffinity()* system call does.     The success of the command does not guarantee that the specified thread has actually migrated to the indicated CPU(s), but only that the thread will not migrate to a CPU outside the new affinity mask.   For example, the affinity of the kernel thread kswapd can be set, but the thread may not immediately migrate and is not guaranteed to ever do so:\n"
+msgid "*taskset* returns 0 in its affinity-setting mode as long as the underlying *sched_setaffinity*(2) system call does.  The success of the command does not guarantee that the specified thread has actually migrated to the indicated CPU(s), but only that the thread will not migrate to a CPU outside the new affinity mask.  For example, the affinity of the kernel thread kswapd can be set, but the thread may not immediately migrate and is not guaranteed to ever do so:\n"
 msgstr ""
 
 #. type: Plain text
@@ -25386,8 +25393,8 @@ msgstr ""
 #: ../sys-utils/fstab.5.adoc:96
 msgid ""
 "It is formatted as a comma-separated list of options and is optional for "
-"mount(8) or swapon(8). The usual convention is to use at least \"defaults\" "
-"keyword there."
+"*mount*(8) or *swapon*(8). The usual convention is to use at least "
+"\"defaults\" keyword there."
 msgstr ""
 
 #. type: Plain text
@@ -25425,7 +25432,7 @@ msgstr "*defaults*"
 #: ../sys-utils/fstab.5.adoc:103
 msgid ""
 "use default options. The default depends on the kernel and the filesystem. "
-"mount(8) does not have any hardcoded set of default options. The kernel "
+"*mount*(8) does not have any hardcoded set of default options. The kernel "
 "default is usually rw, suid, dev, exec, auto, nouser, and async."
 msgstr ""
 
@@ -30485,13 +30492,12 @@ msgid ""
 "It's also possible to change nosuid, nodev, noexec, noatime, nodiratime, "
 "relatime and nosymfollow VFS entry flags via a \"remount,bind\" operation. "
 "The other flags (for example filesystem-specific flags) are silently "
-"ignored. The classic mount(2) system call does not allow to change mount "
+"ignored. The classic *mount*(2) system call does not allow to change mount "
 "options recursively (for example with *-o rbind,ro*). The recursive semantic "
-"is possible with a new mount_setattr(2) kernel system call and it's "
+"is possible with a new *mount_setattr*(2) kernel system call and it's "
 "supported since libmount from util-linux v2.39 by a new experimental "
 "\"recursive\" option argument (e.g. *-o rbind,ro=recursive*). For more "
-"details see the *FILESYSTEM-INDEPENDENT MOUNT OPTIONS* section for more "
-"details."
+"details see the *FILESYSTEM-INDEPENDENT MOUNT OPTIONS* section."
 msgstr ""
 
 #. type: Plain text
@@ -31404,7 +31410,7 @@ msgstr ""
 #: ../sys-utils/mount.8.adoc:473
 msgid ""
 "The read-only setting (*ro* or *rw*) is interpreted by VFS and the "
-"filesystem and depends on how the option is specified on the mount(8) "
+"filesystem and depends on how the option is specified on the *mount*(8) "
 "command line. The default is to interpret it on the filesystem level. The "
 "operation \"-o bind,remount,ro\" is applied only to the VFS mountpoint, and "
 "operation \"-o remount,ro\" is applied to VFS and filesystem superblock. "
@@ -38276,7 +38282,7 @@ msgstr ""
 msgid ""
 "Show the currently active personality and flags.  If the *personality* "
 "argument is provided, it is shown instead of the current one.  *personality* "
-"is a hexadecimal numbers with values was described in *sys/personality.h*."
+"is a hexadecimal number with values was described in *sys/personality.h*."
 msgstr ""
 
 #. type: Labeled list
@@ -38419,7 +38425,7 @@ msgstr "*-X*, *--read-implies-exec*"
 #. type: Plain text
 #: ../sys-utils/setarch.8.adoc:74
 msgid ""
-"If this is set then *mmap*(3p) *PROT_READ* will also add the *PROT_EXEC* bit "
+"If this is set then *mmap*(2) *PROT_READ* will also add the *PROT_EXEC* bit "
 "- as expected by legacy x86 binaries. Notice that the ELF loader will "
 "automatically set this bit when it encounters a legacy binary. Turns on "
 "*READ_IMPLIES_EXEC*."
@@ -38434,7 +38440,7 @@ msgstr "*-Z*, *--mmap-page-zero*"
 #. type: Plain text
 #: ../sys-utils/setarch.8.adoc:77
 msgid ""
-"SVr4 bug emulation that will set *mmap*(3p) page zero as read-only. Use when "
+"SVr4 bug emulation that will set *mmap*(2) page zero as read-only. Use when "
 "_program_ depends on this behavior, and the source code is not available to "
 "be fixed. Turns on *MMAP_PAGE_ZERO*."
 msgstr ""
@@ -39015,9 +39021,9 @@ msgstr ""
 #. type: Plain text
 #: ../sys-utils/swapon.8.adoc:36
 msgid ""
-"Specifies an alternative fstab file for compatibility with *mount(8)*. If "
+"Specifies an alternative fstab file for compatibility with *mount*(8). If "
 "_path_ is a directory, then the files in the directory are sorted by "
-"strverscmp(3); files that start with \".\" or without an .fstab extension "
+"*strverscmp*(3); files that start with \".\" or without an .fstab extension "
 "are ignored. The option can be specified more than once. This option is "
 "mostly designed for initramfs or chroot scripts where additional "
 "configuration is specified beyond standard system configuration."
@@ -44162,7 +44168,7 @@ msgstr "*--resize*"
 msgid ""
 "Reset terminal size by assessing maximum row and column. This is useful when "
 "actual geometry and kernel terminal driver are not in sync. Most notable use "
-"case is with serial consoles, that do not use *ioctl*(3p) but just byte "
+"case is with serial consoles, that do not use *ioctl*(2) but just byte "
 "streams and breaks."
 msgstr ""
 
@@ -45360,7 +45366,7 @@ msgstr "*-N, --table-columns* _nombres_"
 msgid ""
 "Define one column by comma separated list of column attributes.  This option "
 "can be used more than once, every use defines just one column.  The "
-"properties replace some of --table- options. For example *--table-column "
+"properties replace some of *--table-* options. For example *--table-column "
 "name=FOO,right* define one column where text is aligned to right. The option "
 "is mutually exclusive to *--table-columns*."
 msgstr ""
