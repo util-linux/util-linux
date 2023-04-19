@@ -121,6 +121,17 @@ $TS_CMD_UMOUNT ${MOUNTPOINT}{A,B,C,D}
 ts_finalize_subtest
 
 
+ts_init_subtest "relative-path"
+cd "$TS_OUTDIR" > /dev/null
+$TS_CMD_MOUNT --all --fstab $(basename "$MY_FSTAB") >> $TS_OUTPUT 2>> $TS_ERRLOG
+[ $? == 0 ] || ts_log "mount failed"
+udevadm settle
+$TS_CMD_UMOUNT ${MOUNTPOINT}{A,B,C,D}
+[ $? == 0 ] || ts_log "umount failed"
+cd - > /dev/null
+ts_finalize_subtest
+
+
 ts_init_subtest "prefix"
 MY_ROOT="$TS_OUTDIR/${TS_TESTNAME}-rootdir"
 [ -d "${MY_ROOT}" ] || mkdir -p ${MY_ROOT}

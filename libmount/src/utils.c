@@ -116,7 +116,7 @@ static int safe_stat(const char *target, struct stat *st, int nofollow)
 		int rc;
 		struct statx stx = { 0 };
 
-		rc = statx(-1,	target,
+		rc = statx(AT_FDCWD, target,
 				/* flags */
 				AT_STATX_DONT_SYNC
 					| AT_NO_AUTOMOUNT
