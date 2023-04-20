@@ -49,13 +49,13 @@
 #include <unistd.h>
 
 #include "c.h"
-#include "nls.h"
 #include "xalloc.h"
 
 #define EXIT_ENOSYS 17
 #define EXIT_EPERM  18
 #define EXIT_ENOPROTOOPT 19
 #define EXIT_EPROTONOSUPPORT 20
+#define EXIT_EACCESS 21
 
 #define _U_ __attribute__((__unused__))
 
@@ -63,21 +63,21 @@ static int pidfd_open(pid_t pid, unsigned int flags);
 
 static void __attribute__((__noreturn__)) usage(FILE *out, int status)
 {
-	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options] FACTORY FD... [PARAM=VAL...]\n"), program_invocation_short_name);
+	fputs("\nUsage:\n", out);
+	fprintf(out, " %s [options] FACTORY FD... [PARAM=VAL...]\n", program_invocation_short_name);
 
-	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -l, --list                    list available file descriptor factories and exit\n"), out);
-	fputs(_(" -I, --parameters <factory>    list parameters the factory takes\n"), out);
-	fputs(_(" -r, --comm <name>             rename self\n"), out);
-	fputs(_(" -q, --quiet                   don't print pid(s)\n"), out);
-	fputs(_(" -c, --dont-pause              don't pause after making fd(s)\n"), out);
+	fputs("\nOptions:\n", out);
+	fputs(" -l, --list                    list available file descriptor factories and exit\n", out);
+	fputs(" -I, --parameters <factory>    list parameters the factory takes\n", out);
+	fputs(" -r, --comm <name>             rename self\n", out);
+	fputs(" -q, --quiet                   don't print pid(s)\n", out);
+	fputs(" -c, --dont-pause              don't pause after making fd(s)\n", out);
 
-	fputs(USAGE_SEPARATOR, out);
-	fputs(_("Examples:\n"), out);
-	fprintf(out, _("Using 3, open /etc/group:\n\n	$ %s ro-regular-file 3 file=/etc/group\n\n"),
+	fputs("\n", out);
+	fputs("Examples:\n", out);
+	fprintf(out, "Using 3, open /etc/group:\n\n	$ %s ro-regular-file 3 file=/etc/group\n\n",
 		program_invocation_short_name);
-	fprintf(out, _("Using 3 and 4, make a pipe:\n\n	$ %s pipe-no-fork 3 4\n\n"),
+	fprintf(out, "Using 3 and 4, make a pipe:\n\n	$ %s pipe-no-fork 3 4\n\n",
 		program_invocation_short_name);
 
 	exit(status);
@@ -162,9 +162,9 @@ static union value integer_read(const char *arg, const union value *defv)
 	errno = 0;
 	r.integer = strtol(arg, &ep, 10);
 	if (errno)
-		err(EXIT_FAILURE, _("fail to make a number from %s"), arg);
+		err(EXIT_FAILURE, "fail to make a number from %s", arg);
 	else if (*ep != '\0')
-		errx(EXIT_FAILURE, _("garbage at the end of number: %s"), arg);
+		errx(EXIT_FAILURE, "garbage at the end of number: %s", arg);
 	return r;
 }
 
@@ -191,9 +191,9 @@ static union value uinteger_read(const char *arg, const union value *defv)
 	errno = 0;
 	r.uinteger = strtoul(arg, &ep, 10);
 	if (errno)
-		err(EXIT_FAILURE, _("fail to make a number from %s"), arg);
+		err(EXIT_FAILURE, "fail to make a number from %s", arg);
 	else if (*ep != '\0')
-		errx(EXIT_FAILURE, _("garbage at the end of number: %s"), arg);
+		errx(EXIT_FAILURE, "garbage at the end of number: %s", arg);
 	return r;
 }
 
@@ -273,7 +273,7 @@ static struct arg decode_arg(const char *pname,
 		parameters++;
 	}
 	if (p == NULL)
-		errx(EXIT_FAILURE, _("no such parameter: %s"), pname);
+		errx(EXIT_FAILURE, "no such parameter: %s", pname);
 
 	for (int i = 0; i < argc; i++) {
 		if (strncmp(pname, argv[i], len) == 0) {
@@ -283,7 +283,7 @@ static struct arg decode_arg(const char *pname,
 				break;
 			} else if (*v == '\0')
 				errx(EXIT_FAILURE,
-				     _("no value given for \"%s\" parameter"),
+				     "no value given for \"%s\" parameter",
 				     pname);
 			else
 				v = NULL;
@@ -997,7 +997,7 @@ static void *make_unix_stream(const struct factory *factory, struct fdesc fdescs
 		typesym = SOCK_SEQPACKET;
 		typestr = "SEQPACKET";
 	} else
-		errx(EXIT_FAILURE, _("unknown unix socket type: %s"), stype);
+		errx(EXIT_FAILURE, "unknown unix socket type: %s", stype);
 
 	free_arg(&type);
 
@@ -1132,7 +1132,7 @@ static void *make_unix_in_new_netns(const struct factory *factory, struct fdesc 
 		free_arg(&abstract);
 		free_arg(&path);
 		free_arg(&type);
-		errx(EXIT_FAILURE, _("unknown unix socket type: %s"), stype);
+		errx(EXIT_FAILURE, "unknown unix socket type: %s", stype);
 	}
 
 	memset(&un, 0, sizeof(un));
@@ -1151,7 +1151,7 @@ static void *make_unix_in_new_netns(const struct factory *factory, struct fdesc 
 
 	self_netns = open("/proc/self/ns/net", O_RDONLY);
 	if (self_netns < 0)
-		err(EXIT_FAILURE, _("failed to open /proc/self/ns/net"));
+		err(EXIT_FAILURE, "failed to open /proc/self/ns/net");
 	if (self_netns != fdescs[0].fd) {
 		if (dup2(self_netns, fdescs[0].fd) < 0) {
 			int e = errno;
@@ -1182,7 +1182,7 @@ static void *make_unix_in_new_netns(const struct factory *factory, struct fdesc 
 		int e = errno;
 		close_fdesc(self_netns, NULL);
 		errno = e;
-		err(EXIT_FAILURE, _("failed to open /proc/self/ns/net for the new netns"));
+		err(EXIT_FAILURE, "failed to open /proc/self/ns/net for the new netns");
 	}
 	if (tmp_netns != fdescs[1].fd) {
 		if (dup2(tmp_netns, fdescs[1].fd) < 0) {
@@ -1209,7 +1209,7 @@ static void *make_unix_in_new_netns(const struct factory *factory, struct fdesc 
 		close_fdesc(tmp_netns, NULL);
 		errno = e;
 		err(EXIT_FAILURE,
-		    _("failed to make a socket with AF_UNIX + SOCK_%s"),
+		    "failed to make a socket with AF_UNIX + SOCK_%s",
 		    typestr);
 	}
 
@@ -1291,7 +1291,7 @@ static void *make_tcp_common(const struct factory *factory, struct fdesc fdescs[
 	ssd = socket(family, SOCK_STREAM, 0);
 	if (ssd < 0)
 		err(EXIT_FAILURE,
-		    _("failed to make a tcp socket for listening"));
+		    "failed to make a tcp socket for listening");
 
 	if (setsockopt(ssd, SOL_SOCKET,
 		       SO_REUSEADDR, (const char *)&y, sizeof(y)) < 0) {
@@ -1333,7 +1333,7 @@ static void *make_tcp_common(const struct factory *factory, struct fdesc fdescs[
 		close(ssd);
 		errno = e;
 		err(EXIT_FAILURE,
-		    _("failed to make a tcp client socket"));
+		    "failed to make a tcp client socket");
 	}
 
 	if (setsockopt(csd, SOL_SOCKET,
@@ -1468,7 +1468,7 @@ static void *make_udp_common(const struct factory *factory, struct fdesc fdescs[
 	ssd = socket(family, SOCK_DGRAM, blite? IPPROTO_UDPLITE: 0);
 	if (ssd < 0)
 		err(EXIT_FAILURE,
-		    _("failed to make a udp socket for server"));
+		    "failed to make a udp socket for server");
 
 	if (setsockopt(ssd, SOL_SOCKET,
 		       SO_REUSEADDR, (const char *)&y, sizeof(y)) < 0) {
@@ -1505,7 +1505,7 @@ static void *make_udp_common(const struct factory *factory, struct fdesc fdescs[
 		close(ssd);
 		errno = e;
 		err(EXIT_FAILURE,
-		    _("failed to make a udp client socket"));
+		    "failed to make a udp client socket");
 	}
 
 	if (setsockopt(csd, SOL_SOCKET,
@@ -1590,7 +1590,7 @@ static void *make_raw_common(const struct factory *factory, struct fdesc fdescs[
 	ssd = socket(family, SOCK_RAW, iprotocol);
 	if (ssd < 0)
 		err(EXIT_FAILURE,
-		    _("failed to make a udp socket for server"));
+		    "failed to make a udp socket for server");
 
 	if (ssd != fdescs[0].fd) {
 		if (dup2(ssd, fdescs[0].fd) < 0) {
@@ -1670,8 +1670,8 @@ static void *make_ping_common(const struct factory *factory, struct fdesc fdescs
 
 	sd = socket(family, SOCK_DGRAM, protocol);
 	if (sd < 0)
-		err(EXIT_FAILURE,
-		    _("failed to make an icmp socket"));
+		err((errno == EACCES? EXIT_EACCESS: EXIT_FAILURE),
+		    "failed to make an icmp socket");
 
 	if (sd != fdescs[0].fd) {
 		if (dup2(sd, fdescs[0].fd) < 0) {
@@ -1690,7 +1690,8 @@ static void *make_ping_common(const struct factory *factory, struct fdesc fdescs
 			int e = errno;
 			close(sd);
 			errno = e;
-			err(EXIT_FAILURE, "failed in bind(2)");
+			err((errno == EACCES? EXIT_EACCESS: EXIT_FAILURE),
+			    "failed in bind(2)");
 		}
 	}
 
@@ -2493,7 +2494,7 @@ static void list_parameters(const char *factory_name)
 	const char *fmt = "%-15s %-8s %15s %s\n";
 
 	if (!factory)
-		errx(EXIT_FAILURE, _("no such factory: %s"), factory_name);
+		errx(EXIT_FAILURE, "no such factory: %s", factory_name);
 
 	if (!factory->params)
 		return;
@@ -2509,7 +2510,7 @@ static void list_parameters(const char *factory_name)
 static void rename_self(const char *comm)
 {
 	if (prctl(PR_SET_NAME, (unsigned long)comm, 0, 0, 0) < 0)
-		err(EXIT_FAILURE, _("failed to rename self via prctl: %s"), comm);
+		err(EXIT_FAILURE, "failed to rename self via prctl: %s", comm);
 }
 
 static void do_nothing(int signum _U_)
@@ -2550,7 +2551,7 @@ static void wait_event(void)
 
 	if (pselect(n, &readfds, NULL, NULL, NULL, &sigset) < 0
 	    && errno != EINTR)
-		errx(EXIT_FAILURE, _("failed in pselect"));
+		errx(EXIT_FAILURE, "failed in pselect");
 }
 
 int main(int argc, char **argv)
@@ -2597,16 +2598,16 @@ int main(int argc, char **argv)
 	}
 
 	if (optind == argc)
-		errx(EXIT_FAILURE, _("no file descriptor specification given"));
+		errx(EXIT_FAILURE, "no file descriptor specification given");
 
 	factory = find_factory(argv[optind]);
 	if (!factory)
-		errx(EXIT_FAILURE, _("no such factory: %s"), argv[optind]);
+		errx(EXIT_FAILURE, "no such factory: %s", argv[optind]);
 	assert(factory->N + factory->EX_N < MAX_N);
 	optind++;
 
 	if ((optind + factory->N) > argc)
-		errx(EXIT_FAILURE, _("not enough file descriptors given for %s"),
+		errx(EXIT_FAILURE, "not enough file descriptors given for %s",
 		     factory->name);
 
 	if (factory->priv && getuid() != 0)
@@ -2629,7 +2630,7 @@ int main(int argc, char **argv)
 		if (ep == str)
 			errx(EXIT_FAILURE, "failed to convert fd number: %s", str);
 		if (*ep != '\0')
-			errx(EXIT_FAILURE, _("garbage at the end of number: %s"), str);
+			errx(EXIT_FAILURE, "garbage at the end of number: %s", str);
 		if (fd < 0)
 			errx(EXIT_FAILURE, "fd number should not be negative: %s", str);
 		if (fd < 3)
