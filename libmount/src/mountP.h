@@ -29,7 +29,6 @@
 #include "debug.h"
 #include "buffer.h"
 #include "libmount.h"
-#include "mount-api-utils.h"
 
 /*
  * Debug

@@ -19,6 +19,7 @@
 
 #include "mountP.h"
 #include "fileutils.h"
+#include "mount-api-utils.h"
 
 static int tmptgt_cleanup(int old_ns_fd);
 
