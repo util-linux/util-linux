@@ -17,7 +17,7 @@
 #include "list.h"
 #include "mountP.h"
 
-#define MNT_OL_MAXMAPS	64
+#define MNT_OL_MAXMAPS	8
 
 enum libmnt_optsrc {
 	MNT_OPTSRC_STRING,
@@ -97,7 +97,7 @@ void mnt_ref_optlist(struct libmnt_optlist *ls)
 
 static void reset_cache(struct optlist_cache *cache)
 {
-	if (!cache)
+	if (!cache || (cache->flags_ready == 0 && cache->optstr_ready == 0))
 		return;
 	free(cache->optstr);
 	memset(cache, 0, sizeof(*cache));
@@ -161,7 +161,7 @@ static size_t optlist_get_mapidx(struct libmnt_optlist *ls, const struct libmnt_
 	return (size_t) -1;
 }
 
-static void optlist_cleanup_cache(struct libmnt_optlist *ls, const struct libmnt_optmap *map)
+static void optlist_cleanup_cache(struct libmnt_optlist *ls)
 {
 	size_t i;
 
@@ -170,14 +170,8 @@ static void optlist_cleanup_cache(struct libmnt_optlist *ls, const struct libmnt
 	if (list_empty(&ls->opts))
 		return;
 
-	if (map) {
-		size_t idx = optlist_get_mapidx(ls, map);
-
-		if (idx == (size_t) -1)
-			return;
-
-		reset_cache(&ls->cache_mapped[idx]);
-	}
+	for (i = 0; i < ARRAY_SIZE(ls->cache_mapped); i++)
+		reset_cache(&ls->cache_mapped[i]);
 
 	for (i = 0; i < __MNT_OL_FLTR_COUNT; i++)
 		reset_cache(&ls->cache_all[i]);
@@ -210,7 +204,7 @@ int mnt_optlist_remove_opt(struct libmnt_optlist *ls, struct libmnt_opt *opt)
 			ls->is_recursive = 0;
 	}
 
-	optlist_cleanup_cache(ls, opt->map);
+	optlist_cleanup_cache(ls);
 
 	list_del_init(&opt->opts);
 	free(opt->value);
@@ -527,7 +521,7 @@ static int optlist_add_optstr(struct libmnt_optlist *ls, const char *optstr,
 		opt->src = MNT_OPTSRC_STRING;
 	}
 
-	optlist_cleanup_cache(ls, map);
+	optlist_cleanup_cache(ls);
 
 	return 0;
 }
@@ -629,7 +623,7 @@ static int optlist_add_flags(struct libmnt_optlist *ls, unsigned long flags,
 		opt->src = MNT_OPTSRC_FLAG;
 	}
 
-	optlist_cleanup_cache(ls, map);
+	optlist_cleanup_cache(ls);
 
 	return 0;
 }
