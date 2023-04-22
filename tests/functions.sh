@@ -386,7 +386,7 @@ function ts_init_env {
 		TS_ENABLE_UBSAN="yes"
 	fi
 
-	TS_FSTAB="/etc/fstab"
+	TS_FSTAB="$TS_OUTDIR/${TS_TESTNAME}.fstab"
 	BLKID_FILE="$TS_OUTDIR/${TS_TESTNAME}.blkidtab"
 
 	declare -a TS_SUID_PROGS
