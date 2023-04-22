@@ -37,7 +37,7 @@ echo "tmpd $MNT tmpfs" >> "$TS_FSTAB"
 ts_fstab_close
 
 ts_init_subtest "mount"
-$TS_CMD_MOUNT $MNT &> /dev/null
+$TS_CMD_MOUNT -T "$TS_FSTAB" $MNT &> /dev/null
 [ "$?" = "0" ] || ts_log "error: mount $MNT"
 $TS_CMD_FINDMNT --kernel --mountpoint "$MNT" &> /dev/null
 if [ "$?" != "0" ]; then
@@ -56,7 +56,7 @@ ts_finalize_subtest
 
 
 ts_init_subtest "mount-all"
-$TS_CMD_MOUNT -a &> /dev/null
+$TS_CMD_MOUNT -T "$TS_FSTAB" -a &> /dev/null
 [ "$?" = "0" ] || ts_log "error: mount -a"
 $TS_CMD_FINDMNT --kernel --mountpoint "$MNT" &> /dev/null
 if [ "$?" != "0" ]; then

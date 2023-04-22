@@ -39,10 +39,10 @@ ts_fstab_lock
 ts_fstab_open
 
 ts_fstab_addline "$IMG" "$TS_MOUNTPOINT-1" "ext2" "loop"
-$TS_CMD_MOUNT -a >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_MOUNT -T "$TS_FSTAB" -a >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 ts_fstab_addline "$IMG" "$TS_MOUNTPOINT-2" "ext2" "loop"
-$TS_CMD_MOUNT -a >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_MOUNT -T "$TS_FSTAB" -a >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 ts_fstab_close
 

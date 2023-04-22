@@ -41,7 +41,7 @@ ts_device_has "LABEL" $LABEL $DEVICE \
 ts_fstab_add "LABEL=$LABEL"
 ts_udevadm_settle "$DEVICE" "LABEL"
 
-$TS_CMD_MOUNT $DEVICE >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_MOUNT -T "$TS_FSTAB" $DEVICE >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_is_mounted $DEVICE || ts_die "Cannot find $DEVICE in /proc/mounts"
 $TS_CMD_UMOUNT $DEVICE || ts_die "Cannot umount $DEVICE"
 

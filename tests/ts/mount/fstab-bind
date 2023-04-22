@@ -19,7 +19,7 @@ ts_fstab_add $MY_SOURCE "$TS_MOUNTPOINT" "none" "bind,default,noauto"
 mkdir -p $MY_SOURCE
 mkdir -p $TS_MOUNTPOINT
 
-$TS_CMD_MOUNT $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_MOUNT -T "$TS_FSTAB" $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
 [ "$?" = "0" ] || ts_log "error: mount $TS_MOUNTPOINT"
 
 $TS_CMD_FINDMNT --mountpoint "$TS_MOUNTPOINT" &> /dev/null

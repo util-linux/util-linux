@@ -42,13 +42,13 @@ MOUNTPOINT=$TS_MOUNTPOINT
 ts_fstab_add $DEVICE
 
 ts_init_subtest "mountpoint"
-$TS_CMD_MOUNT $MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_MOUNT -T "$TS_FSTAB" $MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_is_mounted $DEVICE || ts_log "Cannot find $DEVICE in /proc/mounts"
 $TS_CMD_UMOUNT $DEVICE || >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "device-name"
-$TS_CMD_MOUNT $DEVICE >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_MOUNT -T "$TS_FSTAB" $DEVICE >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_is_mounted $DEVICE || ts_log "Cannot find $DEVICE in /proc/mounts"
 $TS_CMD_UMOUNT $DEVICE >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest

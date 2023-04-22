@@ -46,7 +46,7 @@ ln -s $DEVICE $LINKNAME
 ts_fstab_add $LINKNAME $TS_MOUNTPOINT "auto" "defaults,user"
 
 # variant A) -- UID=0
-$TS_CMD_MOUNT $LINKNAME >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_MOUNT -T "$TS_FSTAB" $LINKNAME >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_is_mounted $DEVICE || ts_die "A) Cannot find $DEVICE in /proc/mounts"
 $TS_CMD_UMOUNT $LINKNAME || ts_die "A) Cannot umount $LINKNAME"
 
