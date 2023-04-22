@@ -386,6 +386,7 @@ function ts_init_env {
 		TS_ENABLE_UBSAN="yes"
 	fi
 
+	TS_FSTAB="/etc/fstab"
 	BLKID_FILE="$TS_OUTDIR/${TS_TESTNAME}.blkidtab"
 
 	declare -a TS_SUID_PROGS
@@ -824,12 +825,12 @@ function ts_is_mounted {
 }
 
 function ts_fstab_open {
-	echo "# <!-- util-linux test entry" >> /etc/fstab
+	echo "# <!-- util-linux test entry" >> "$TS_FSTAB"
 }
 
 function ts_fstab_close {
-	echo "# -->" >> /etc/fstab
-	sync /etc/fstab 2>/dev/null
+	echo "# -->" >> "$TS_FSTAB"
+	sync "$TS_FSTAB" 2>/dev/null
 }
 
 function ts_fstab_addline {
@@ -838,7 +839,7 @@ function ts_fstab_addline {
 	local FS=${3:-"auto"}
 	local OPT=${4:-"defaults"}
 
-	echo "$SPEC   $MNT   $FS   $OPT   0   0" >> /etc/fstab
+	echo "$SPEC   $MNT   $FS   $OPT   0   0" >> "$TS_FSTAB"
 }
 
 function ts_fstab_lock {
@@ -862,9 +863,9 @@ function ts_fstab_clean {
   ba
 }
 s/# <!-- util-linux.*-->//;
-/^$/d" /etc/fstab
+/^$/d" "$TS_FSTAB"
 
-	sync /etc/fstab 2>/dev/null
+	sync "$TS_FSTAB" 2>/dev/null
 	ts_unlock "fstab"
 }
 
