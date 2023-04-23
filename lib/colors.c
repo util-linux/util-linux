@@ -552,6 +552,14 @@ static void termcolors_init_debug(void)
 	__UL_INIT_DEBUG_FROM_ENV(termcolors, TERMCOLORS_DEBUG_, 0, TERMINAL_COLORS_DEBUG);
 }
 
+#if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW)
+/* atexit() wrapper */
+static void colors_del_curterm(void)
+{
+	del_curterm(cur_term);
+}
+#endif
+
 static int colors_terminal_is_ready(void)
 {
 	int ncolors = -1;
@@ -560,8 +568,10 @@ static int colors_terminal_is_ready(void)
 	{
 		int ret;
 
-		if (setupterm(NULL, STDOUT_FILENO, &ret) == 0 && ret == 1)
+		if (setupterm(NULL, STDOUT_FILENO, &ret) == 0 && ret == 1) {
 			ncolors = tigetnum("colors");
+			atexit(colors_del_curterm);
+		}
 	}
 #endif
 	if (1 < ncolors) {
