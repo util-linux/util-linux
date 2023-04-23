@@ -135,7 +135,7 @@ static int fix_optstr(struct libmnt_context *cxt)
 		}
 	}
 #endif
-	mnt_context_call_hooks(cxt, MNT_STAGE_PREP_OPTIONS);
+	rc = mnt_context_call_hooks(cxt, MNT_STAGE_PREP_OPTIONS);
 done:
 	DBG(CXT, ul_debugobj(cxt, "<-- preparing options done [rc=%d]", rc));
 	cxt->flags |= MNT_FL_MOUNTOPTS_FIXED;
