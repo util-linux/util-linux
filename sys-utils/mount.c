@@ -501,6 +501,12 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -T, --fstab <path>      alternative file to /etc/fstab\n"), out);
 	fputs(_(" -i, --internal-only     don't call the mount.<type> helpers\n"), out);
 	fputs(_(" -l, --show-labels       show also filesystem labels\n"), out);
+	fputs(_("     --map-groups <inner>:<outer>:<count>\n"
+		"                         add the specified GID map to an ID-mapped mount\n"), out);
+	fputs(_("     --map-users <inner>:<outer>:<count>\n"
+		"                         add the specified UID map to an ID-mapped mount\n"), out);
+	fputs(_("     --map-users /proc/<pid>/ns/user\n"
+		"                         specify the user namespace for an ID-mapped mount\n"), out);
 	fputs(_(" -m, --mkdir[=<mode>]    alias to '-o X-mount.mkdir[=<mode>]'\n"), out);
 	fputs(_(" -n, --no-mtab           don't write to /etc/mtab\n"), out);
 	fputs(_("     --options-mode <mode>\n"
@@ -615,6 +621,7 @@ int main(int argc, char **argv)
 	int c, rc = MNT_EX_SUCCESS, all = 0, show_labels = 0;
 	struct libmnt_context *cxt;
 	struct libmnt_table *fstab = NULL;
+	char *idmap = NULL;
 	char *srcbuf = NULL;
 	char *types = NULL;
 	int oper = 0, is_move = 0;
@@ -630,6 +637,8 @@ int main(int argc, char **argv)
 		MOUNT_OPT_RSLAVE,
 		MOUNT_OPT_RPRIVATE,
 		MOUNT_OPT_RUNBINDABLE,
+		MOUNT_OPT_MAP_GROUPS,
+		MOUNT_OPT_MAP_USERS,
 		MOUNT_OPT_TARGET,
 		MOUNT_OPT_TARGET_PREFIX,
 		MOUNT_OPT_SOURCE,
@@ -668,6 +677,8 @@ int main(int argc, char **argv)
 		{ "make-rslave",      no_argument,       NULL, MOUNT_OPT_RSLAVE      },
 		{ "make-rprivate",    no_argument,       NULL, MOUNT_OPT_RPRIVATE    },
 		{ "make-runbindable", no_argument,       NULL, MOUNT_OPT_RUNBINDABLE },
+		{ "map-groups",       required_argument, NULL, MOUNT_OPT_MAP_GROUPS  },
+		{ "map-users",        required_argument, NULL, MOUNT_OPT_MAP_USERS   },
 		{ "mkdir",            optional_argument, NULL, 'm'                   },
 		{ "no-canonicalize",  no_argument,       NULL, 'c'                   },
 		{ "internal-only",    no_argument,       NULL, 'i'                   },
@@ -850,6 +861,23 @@ int main(int argc, char **argv)
 			append_option(cxt, "runbindable", NULL);
 			propa = 1;
 			break;
+		case MOUNT_OPT_MAP_GROUPS:
+		case MOUNT_OPT_MAP_USERS:
+			if (optarg && *optarg == '=')
+				optarg++;
+			if (idmap && (*idmap == '/' || *optarg == '/')) {
+				warnx(_("bad usage"));
+				errtryhelp(MNT_EX_USAGE);
+			} else if (*optarg == '/') {
+				idmap = xstrdup(optarg);
+			} else {
+				char *tmp;
+				xasprintf(&tmp, "%s%s%s%s", idmap ? idmap : "", idmap ? " " : "",
+					c == MOUNT_OPT_MAP_GROUPS ? "g:" : "u:", optarg);
+				free(idmap);
+				idmap = tmp;
+			}
+			break;
 		case MOUNT_OPT_TARGET:
 			mnt_context_disable_swapmatch(cxt, 1);
 			mnt_context_set_target(cxt, optarg);
@@ -897,6 +925,9 @@ int main(int argc, char **argv)
 
 	argc -= optind;
 	argv += optind;
+
+	if (idmap)
+		append_option(cxt, "X-mount.idmap", idmap);
 
 	optmode |= optmode_mode | optmode_src;
 	if (optmode) {

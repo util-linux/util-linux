@@ -340,6 +340,12 @@ Move a subtree to some other place. See above, the subsection *The move operatio
 *-m*, **--mkdir**[=__mode__]::
 Allow to make a target directory (mountpoint) if it does not exist yet. Alias to "-o X-mount.mkdir[=mode]", the default mode is 0755. For more details see *X-mount.mkdir* below.
 
+*--map-groups*, *--map-users* _inner_:_outer_:_count_::
+Add the specified user/group mapping to an *X-mount.idmap* map. These options can be given multiple times to build up complete mappings for users and groups. For more details see *X-mount.idmap* below.
+
+*--map-users* /proc/_PID_/ns/user::
+Use the specified user namespace for user and group mapping in an id-mapped mount. This is an alias for "-o X-mount.idmap=/proc/_PID_/ns/user" and cannot be used twice nor together with the _inner_:_outer_:_count_ option format above. For more details see *X-mount.idmap* below.
+
 *-n*, *--no-mtab*::
 Mount without writing in _/etc/mtab_. This is necessary for example when _/etc_ is on a read-only filesystem.
 
