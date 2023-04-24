@@ -35,6 +35,7 @@ test_mount_fallback() {
 
 test_mount_fallback "open_tree" "-s open_tree"
 test_mount_fallback "fsopen" "-s fsopen"
+# test_mount_fallback "move_mount" "-s move_mount"
 
 ts_fstab_clean
 
