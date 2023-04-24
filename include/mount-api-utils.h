@@ -116,6 +116,7 @@ static inline int move_mount(int from_dfd, const char *from_pathname, int to_dfd
 #endif
 
 #ifndef HAVE_STRUCT_MOUNT_ATTR
+# ifndef MOUNT_ATTR_SIZE_VER0 /* For case mount.h comes from a place invisible for autotools/meson */
 # include <inttypes.h>
 struct mount_attr {
 	uint64_t attr_set;
@@ -123,6 +124,7 @@ struct mount_attr {
 	uint64_t propagation;
 	uint64_t userns_fd;
 };
+# endif
 #endif
 
 #if !defined(HAVE_MOUNT_SETATTR) && defined(SYS_mount_setattr)
@@ -134,6 +136,7 @@ static inline int mount_setattr(int dfd, const char *path, unsigned int flags,
 #endif
 
 #ifndef HAVE_ENUM_FSCONFIG_COMMAND
+# ifndef FSOPEN_CLOEXEC /* For case mount.h comes from a place invisible for autotools/meson */
 enum fsconfig_command {
 	FSCONFIG_SET_FLAG	= 0,	/* Set parameter, supplying no value */
 	FSCONFIG_SET_STRING	= 1,	/* Set parameter, supplying a string value */
@@ -144,6 +147,7 @@ enum fsconfig_command {
 	FSCONFIG_CMD_CREATE	= 6,	/* Invoke superblock creation */
 	FSCONFIG_CMD_RECONFIGURE = 7,	/* Invoke superblock reconfiguration */
 };
+# endif
 #endif
 
 #if !defined(HAVE_FSCONFIG) && defined(SYS_fsconfig)
