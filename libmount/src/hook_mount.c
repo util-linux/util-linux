@@ -571,6 +571,8 @@ fake:
  *
  * Note that this function interprets classic MS_* flags by new Linux mount FD
  * based API.
+ *
+ * Returns: 0 on success, <0 on error, >0 on recover-able error
  */
 static int hook_prepare(struct libmnt_context *cxt,
 			const struct libmnt_hookset *hs,
@@ -614,8 +616,15 @@ static int hook_prepare(struct libmnt_context *cxt,
 		rc = mnt_optlist_get_attrs(ol, &set, &clr, 0);
 
 	/* open_tree() or fsopen() */
-	if (!rc)
+	if (!rc) {
 		rc = init_sysapi(cxt, hs, flags);
+		if (rc && cxt->syscall_status == -ENOSYS) {
+			/* we need to recover from this error, so hook_mount_legacy.c
+			 * can try to continue */
+			reset_syscall_status(cxt);
+			return 1;
+		}
+	}
 
 	/* check mutually exclusive operations */
 	if (!rc && (flags & MS_BIND) && (flags & MS_MOVE))

@@ -490,6 +490,12 @@ struct libmnt_context
 		} \
 	})
 
+#define reset_syscall_status(_cxt)	__extension__ ({ \
+		DBG(CXT, ul_debug("reset sycall status")); \
+		(_cxt)->syscall_status = 0; \
+		(_cxt)->syscall_name = NULL; \
+	})
+
 /* optmap.c */
 extern const struct libmnt_optmap *mnt_optmap_get_entry(
 			     struct libmnt_optmap const **maps,
