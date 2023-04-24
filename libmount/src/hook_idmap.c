@@ -387,9 +387,12 @@ static int hook_prepare_options(
 	opt = mnt_optlist_get_named(ol, "X-mount.idmap", cxt->map_userspace);
 	if (!opt)
 		return 0;
-	value = mnt_opt_get_value(opt);
 
-	if (!value)
+	value = mnt_opt_get_value(opt);
+	while (value && *value == ' ')
+		value++;
+
+	if (!value || !*value)
 		return errno = EINVAL, -MNT_ERR_MOUNTOPT;
 
 	hd = new_hook_data();
