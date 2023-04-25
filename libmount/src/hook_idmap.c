@@ -390,7 +390,7 @@ static int hook_prepare_options(
 
 	value = mnt_opt_get_value(opt);
 	if (value)
-		value = skip_blank(p);
+		value = skip_blank(value);
 	if (!value || !*value)
 		return errno = EINVAL, -MNT_ERR_MOUNTOPT;
 
