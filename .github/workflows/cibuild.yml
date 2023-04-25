@@ -111,16 +111,14 @@ jobs:
         with:
           arch: s390x
           distro: ubuntu_latest
-          githubToken: "${{ github.token }}"
-          env: |
-            COMPILER: gcc
-            COMPILER_VERSION: 10
-            SANITIZE: no
-            QEMU_USER: 1
-          install: |
+          run: |
+            export COMPILER=gcc
+            export COMPILER_VERSION=10
+            export SANITIZE=no
+            export QEMU_USER=1
+
             # name: Ubuntu setup
             .github/workflows/cibuild-setup-ubuntu.sh
-          run: |
             git config --global --add safe.directory "$PWD"
             # Configure & Make
             .github/workflows/cibuild.sh CONFIGURE MAKE
