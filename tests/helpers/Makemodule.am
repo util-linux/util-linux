@@ -34,4 +34,7 @@ test_uuid_namespace_SOURCES = tests/helpers/test_uuid_namespace.c \
 if LINUX
 check_PROGRAMS += test_mkfds
 test_mkfds_SOURCES = tests/helpers/test_mkfds.c
+
+check_PROGRAMS += test_enosys
+test_enosys_SOURCES = tests/helpers/test_enosys.c
 endif

@@ -3229,6 +3229,12 @@ exe = executable(
   include_directories : includes)
 exes += exe
 
+exe = executable(
+  'test_enosys',
+  'tests/helpers/test_enosys.c',
+  include_directories : includes)
+exes += exe
+
 ############################################################
 
 # XXX: HAVE_OPENAT
