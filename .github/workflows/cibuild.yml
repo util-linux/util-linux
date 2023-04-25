@@ -110,6 +110,7 @@ jobs:
       - uses: uraimo/run-on-arch-action@v2
         with:
           arch: s390x
+          dockerRunArgs: --privileged -v /dev:/dev
           distro: ubuntu_latest
           run: |
             export COMPILER=gcc
