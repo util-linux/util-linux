@@ -10,6 +10,7 @@ ts_check_test_command "$TS_HELPER_ENOSYS"
 ts_check_test_command "$TS_CMD_MOUNT"
 ts_check_test_command "$TS_CMD_UMOUNT"
 ts_check_test_command "$TS_CMD_FINDMNT"
+ts_check_test_command "$TS_CMD_LOSETUP"
 
 ts_skip_nonroot
 
@@ -35,9 +36,20 @@ test_mount_fallback() {
 
 test_mount_fallback "open_tree" "-s open_tree"
 test_mount_fallback "fsopen" "-s fsopen"
-# test_mount_fallback "move_mount" "-s move_mount"
 
-ts_fstab_clean
+
+ts_device_init
+DEVICE=$TS_LODEV
+mkfs.ext2 $DEVICE &> /dev/null || ts_die "Cannot make ext2 on $DEVICE"
+ts_udevadm_settle "$DEVICE"
+
+ts_init_subtest "later-fsopen"
+mkdir -p "$TS_MOUNTPOINT"
+$TS_HELPER_ENOSYS -s fsopen -- "$TS_CMD_MOUNT" -t foo,bar,ext2 "$DEVICE" "$TS_MOUNTPOINT" \
+		>> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_is_mounted $DEVICE || ts_log "Cannot find $DEVICE in /proc/mounts"
+$TS_CMD_UMOUNT $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
 
 ts_finalize
 
