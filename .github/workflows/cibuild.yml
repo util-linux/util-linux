@@ -35,6 +35,8 @@ jobs:
             QEMU_USER: 1
           install: |
             # name: Ubuntu setup
+            pwd
+            ls -l
             .github/workflows/cibuild-setup-ubuntu.sh
           run: |
             git config --global --add safe.directory "$PWD"
