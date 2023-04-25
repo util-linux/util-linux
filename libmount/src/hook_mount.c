@@ -496,6 +496,20 @@ static int hook_attach_target(struct libmnt_context *cxt,
 	return rc == 0 ? 0 : -errno;
 }
 
+static inline int fsopen_is_supported(void)
+{
+	int dummy, rc = 1;
+
+	errno = 0;
+	dummy = fsopen(NULL, FSOPEN_CLOEXEC);
+
+	if (errno == ENOSYS)
+		rc = 0;
+	if (dummy >= 0)
+		close(dummy);
+	return rc;
+}
+
 /*
  * open_tree() and fsopen()
  */
@@ -547,12 +561,19 @@ static int init_sysapi(struct libmnt_context *cxt,
 	 *  is called later in hook_create_mount(). */
 	} else {
 		const char *type = mnt_fs_get_fstype(cxt->fs);
+		int rc = 0;
 
-		if (mnt_context_is_fake(cxt))
-			goto fake;
-		if (cxt->helper == NULL
-		    && type && !strchr(type, ',')
-		    && open_fs_configuration_context(cxt, api, type) < 0)
+		/* fsopen() to create a superblock */
+		if (cxt->helper == NULL && type && !strchr(type, ','))
+			rc = open_fs_configuration_context(cxt, api, type);
+
+		/* dummy fsopen() to test if API is available */
+		else if (!fsopen_is_supported()) {
+			errno = ENOSYS;
+			rc = -errno;
+			set_syscall_status(cxt, "fsopen", rc == 0);
+		}
+		if (rc < 0)
 			goto fail;
 	}
 
