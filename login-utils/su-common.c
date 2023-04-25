@@ -343,8 +343,9 @@ static int supam_conv(	int num_msg,
 	return misc_conv(num_msg, msg, resp, data);
 #elif defined(HAVE_SECURITY_OPENPAM_H)
 	return openpam_ttyconv(num_msg, msg, resp, data);
-#endif
+#else
 	return PAM_CONV_ERR;
+#endif
 }
 
 static void supam_cleanup(struct su_context *su, int retcode)
