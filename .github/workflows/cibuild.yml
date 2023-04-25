@@ -37,6 +37,8 @@ jobs:
             # name: Ubuntu setup
             pwd
             ls -l
+            env
+            ls -l /home/runner/work/
             .github/workflows/cibuild-setup-ubuntu.sh
           run: |
             git config --global --add safe.directory "$PWD"
