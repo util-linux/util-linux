@@ -72,7 +72,7 @@ const struct syscall syscalls[] = {
 
 int main(int argc, char **argv)
 {
-	char c;
+	int c;
 	size_t i;
 	bool found;
 	static const struct option longopts[] = {
