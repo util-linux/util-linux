@@ -269,6 +269,9 @@ static int hook_mount_pre(
 		rc = mnt_context_append_hook(cxt, hs,
 				MNT_STAGE_MOUNT_POST,
 				NULL, hook_mount_post);
+
+	DBG(HOOK, ul_debugobj(hs, "unshared tmp target %s [rc=%d]",
+				MNT_PATH_TMPTGT, rc));
 	return rc;
 }
 

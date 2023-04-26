@@ -643,6 +643,7 @@ static int hook_prepare(struct libmnt_context *cxt,
 			/* we need to recover from this error, so hook_mount_legacy.c
 			 * can try to continue */
 			reset_syscall_status(cxt);
+			free_hookset_data(cxt, hs);
 			return 1;
 		}
 	}
