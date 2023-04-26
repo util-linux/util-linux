@@ -133,10 +133,10 @@ int main(int argc, char **argv)
 	};
 
 	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0))
-		return EXIT_NOTSUPP;
+		err(EXIT_NOTSUPP, "prctl(PR_SET_NO_NEW_PRIVS)");
 
 	if (prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog))
-		return EXIT_NOTSUPP;
+		err(EXIT_NOTSUPP, "prctl(PR_SET_SECCOMP)");
 
 	if (execvp(argv[optind], argv + optind))
 		err(EXIT_NOTSUPP, "Could not exec");
