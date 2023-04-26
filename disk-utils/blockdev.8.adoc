@@ -60,6 +60,9 @@ Get discard zeroes support status.
 *--getdiskseq*::
 Get disk sequence number.
 
+*--getzonesz*::
+Get zone size in 512-byte sectors.
+
 *--getfra*::
 Get filesystem readahead in 512-byte sectors.
 
