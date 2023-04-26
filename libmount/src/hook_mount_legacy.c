@@ -194,8 +194,9 @@ static int prepare_bindremount(struct libmnt_context *cxt,
 		return -ENOMEM;
 
 	mnt_context_get_mflags(cxt, &data->flags);
-	assert(cxt->flags & MS_BIND);
-	assert(!(cxt->flags & MS_REMOUNT));
+
+	assert(data->flags & MS_BIND);
+	assert(!(data->flags & MS_REMOUNT));
 
 	data->flags |= (MS_REMOUNT | MS_BIND);
 
