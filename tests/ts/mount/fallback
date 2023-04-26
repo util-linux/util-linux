@@ -43,13 +43,28 @@ DEVICE=$TS_LODEV
 mkfs.ext2 $DEVICE &> /dev/null || ts_die "Cannot make ext2 on $DEVICE"
 ts_udevadm_settle "$DEVICE"
 
+# use the same in all next subtests
+MOUNTPOINT=$TS_MOUNTPOINT
+mkdir -p "$MOUNTPOINT"
+
+
 ts_init_subtest "later-fsopen"
-mkdir -p "$TS_MOUNTPOINT"
-$TS_HELPER_ENOSYS -s fsopen -- "$TS_CMD_MOUNT" -t foo,bar,ext2 "$DEVICE" "$TS_MOUNTPOINT" \
+$TS_HELPER_ENOSYS -s fsopen -- "$TS_CMD_MOUNT" -t foo,bar,ext2 "$DEVICE" "$MOUNTPOINT" \
 		>> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_is_mounted $DEVICE || ts_log "Cannot find $DEVICE in /proc/mounts"
-$TS_CMD_UMOUNT $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
+mkdir -p ${MOUNTPOINT}/subdir
+$TS_CMD_UMOUNT $MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
+
+
+ts_init_subtest "subdir"
+$TS_HELPER_ENOSYS -s fsopen -s open_tree -- \
+	"$TS_CMD_MOUNT" -o X-mount.subdir=subdir "$DEVICE" "$MOUNTPOINT" \
+	>> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_is_mounted $DEVICE || ts_log "Cannot find $DEVICE in /proc/mounts"
+$TS_CMD_UMOUNT $MOUNTPOINT
+ts_finalize_subtest
+
 
 ts_finalize
 
