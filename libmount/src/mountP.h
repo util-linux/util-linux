@@ -485,13 +485,13 @@ struct libmnt_context
 			(_cxt)->syscall_status = -errno; \
 			(_cxt)->syscall_name = (_name); \
 		} else { \
-			DBG(CXT, ul_debug("syscall '%s' [succes]", _name)); \
+			DBG(CXT, ul_debug("syscall '%s' [success]", _name)); \
 			(_cxt)->syscall_status = 0; \
 		} \
 	})
 
 #define reset_syscall_status(_cxt)	__extension__ ({ \
-		DBG(CXT, ul_debug("reset sycall status")); \
+		DBG(CXT, ul_debug("reset syscall status")); \
 		(_cxt)->syscall_status = 0; \
 		(_cxt)->syscall_name = NULL; \
 	})
