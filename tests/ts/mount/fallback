@@ -13,6 +13,8 @@ ts_check_test_command "$TS_CMD_FINDMNT"
 ts_check_test_command "$TS_CMD_LOSETUP"
 
 ts_skip_nonroot
+"$TS_HELPER_ENOSYS" true 2> /dev/null
+[ "$?" -eq "$TS_EXIT_NOTSUPP" ] && ts_skip "test_enosys does not work"
 
 test_mount_fallback() {
 	ts_init_subtest "$1"
