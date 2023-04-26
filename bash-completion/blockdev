@@ -12,6 +12,7 @@ _blockdev_module()
 		--setrw
 		--getro
 		--getdiscardzeroes
+		--getdiskseq
 		--getss
 		--getpbsz
 		--getiomin
