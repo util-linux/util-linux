@@ -66,7 +66,7 @@ struct syscall {
 	int number;
 };
 
-const struct syscall syscalls[] = {
+static const struct syscall syscalls[] = {
 	{ "move_mount", __NR_move_mount },
 	{ "open_tree", __NR_open_tree },
 	{ "fsopen", __NR_fsopen },
