@@ -297,3 +297,10 @@ waitpid_SOURCES = misc-utils/waitpid.c
 waitpid_LDADD = $(LDADD) libcommon.la
 waitpid_CFLAGS = $(AM_CFLAGS)
 endif
+
+if BUILD_ENOSYS
+usrbin_exec_PROGRAMS += enosys
+enosys_SOURCES = misc-utils/enosys.c
+enosys_LDADD = $(LDADD) libcommon.la
+enosys_CFLAGS = $(AM_CFLAGS)
+endif

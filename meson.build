@@ -2856,6 +2856,17 @@ if not is_disabler(exe)
   bashcompletions += ['waitpid']
 endif
 
+exe = executable(
+  'enosys',
+  'misc-utils/enosys.c',
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+endif
+
 ############################################################
 
 opt = not get_option('build-schedutils').disabled()
@@ -3242,12 +3253,6 @@ exes += exe
 exe = executable(
   'test_mkfds',
   'tests/helpers/test_mkfds.c',
-  include_directories : includes)
-exes += exe
-
-exe = executable(
-  'test_enosys',
-  'tests/helpers/test_enosys.c',
   include_directories : includes)
 exes += exe
 
