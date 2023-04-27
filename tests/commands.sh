@@ -5,6 +5,7 @@ TS_TESTUSER=${TS_TESTUSER:-"nobody"}
 TS_HELPER_BYTESWAP="${ts_helpersdir}test_byteswap"
 TS_HELPER_CPUSET="${ts_helpersdir}test_cpuset"
 TS_HELPER_DMESG="${ts_helpersdir}test_dmesg"
+TS_HELPER_ENOSYS="${ts_helpersdir}test_enosys"
 TS_HELPER_ISLOCAL="${ts_helpersdir}test_islocal"
 TS_HELPER_ISMOUNTED="${ts_helpersdir}test_ismounted"
 TS_HELPER_LIBFDISK_GPT="${ts_helpersdir}test_fdisk_gpt"
