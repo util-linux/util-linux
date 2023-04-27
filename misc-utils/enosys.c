@@ -61,6 +61,7 @@
 #define UL_BPF_NOP (struct sock_filter) BPF_JUMP(BPF_JMP | BPF_JA, 0, 0, 0)
 
 #define syscall_nr (offsetof(struct seccomp_data, nr))
+#define syscall_arch (offsetof(struct seccomp_data, arch))
 
 struct syscall {
 	const char *const name;
@@ -132,10 +133,13 @@ int main(int argc, char **argv)
 	if (optind >= argc)
 		errtryhelp(EXIT_FAILURE);
 
-#define N_FILTERS (ARRAY_SIZE(syscalls) + 3)
+#define N_FILTERS (ARRAY_SIZE(syscalls) + 6)
 
 	struct sock_filter filter[N_FILTERS] = {
-		[0]             = BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_nr),
+		[0] = BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arch),
+		[1] = BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, SECCOMP_ARCH_NATIVE, 1, 0),
+		[2] = BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_TRAP),
+		[3] = BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_nr),
 
 		[N_FILTERS - 2] = BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ALLOW),
 		[N_FILTERS - 1] = BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ERRNO | ENOSYS),
@@ -143,12 +147,12 @@ int main(int argc, char **argv)
 
 	for (i = 0; i < ARRAY_SIZE(syscalls); i++) {
 		if (blocked_syscalls[i]) {
-			filter[i + 1] = (struct sock_filter) BPF_JUMP(
+			filter[i + 4] = (struct sock_filter) BPF_JUMP(
 						BPF_JMP | BPF_JEQ | BPF_K,
 						syscalls[i].number,
 						N_FILTERS - 3 - i, 0);
 		} else {
-			filter[i + 1] = UL_BPF_NOP;
+			filter[i + 4] = UL_BPF_NOP;
 		}
 	}
 
