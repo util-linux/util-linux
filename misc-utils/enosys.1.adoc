@@ -27,6 +27,9 @@ syscalls as would happen when running on old kernels.
 *-s*, *--syscall*::
 Syscall to block. Can be specified multiple times.
 
+*-l*, *--list*::
+List syscalls known to *enosys*.
+
 include::man-common/help-version.adoc[]
 
 == EXIT STATUS

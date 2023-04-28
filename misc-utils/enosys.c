@@ -84,6 +84,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -s, --syscall           syscall to block\n"), out);
+	fputs(_(" -l, --list              list known syscalls\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(25));
@@ -100,6 +101,7 @@ int main(int argc, char **argv)
 	bool found;
 	static const struct option longopts[] = {
 		{ "syscall", required_argument, NULL, 's' },
+		{ "list",    no_argument,       NULL, 'l' },
 		{ "version", no_argument,       NULL, 'V' },
 		{ "help",    no_argument,       NULL, 'h' },
 		{ 0 }
@@ -107,7 +109,7 @@ int main(int argc, char **argv)
 
 	bool blocked_syscalls[ARRAY_SIZE(syscalls)] = {};
 
-	while ((c = getopt_long (argc, argv, "Vhs:", longopts, NULL)) != -1) {
+	while ((c = getopt_long (argc, argv, "Vhs:l", longopts, NULL)) != -1) {
 		switch (c) {
 		case 's':
 			found = 0;
@@ -121,6 +123,10 @@ int main(int argc, char **argv)
 			if (!found)
 				errx(EXIT_FAILURE, _("Unknown syscall '%s'"), optarg);
 			break;
+		case 'l':
+			for (i = 0; i < ARRAY_SIZE(syscalls); i++)
+				printf("%s\n", syscalls[i].name);
+			return EXIT_SUCCESS;
 		case 'V':
 			print_version(EXIT_SUCCESS);
 		case 'h':
