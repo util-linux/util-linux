@@ -27,6 +27,7 @@ ts_check_test_command "$TS_CMD_MKSWAP"
 ts_check_test_command "$TS_HELPER_SYSINFO"
 ts_check_prog "xz"
 ts_check_prog "cmp"
+ts_check_prog "truncate"
 
 UUID=4c08e1cd-3c82-46bf-a55b-0c3270d6dfeb
 
