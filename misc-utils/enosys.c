@@ -63,7 +63,7 @@
 
 struct syscall {
 	const char *const name;
-	int number;
+	long number;
 };
 
 static const struct syscall syscalls[] = {
