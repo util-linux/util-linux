@@ -22,8 +22,12 @@ TS_DESC="X-mount.subdir"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_MOUNT"
+ts_check_test_command "$TS_CMD_FINDMNT"
 ts_skip_nonroot
 ts_check_losetup
+
+prop=$($TS_CMD_FINDMNT --task "$$" -n -o PROPAGATION "/")
+[ "$prop" == "private" ] && ts_skip "unshared session"
 
 ts_device_init
 DEVICE=$TS_LODEV
