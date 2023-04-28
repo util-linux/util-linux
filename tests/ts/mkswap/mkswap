@@ -63,4 +63,28 @@ for PAGESIZE in 4096 8192; do
 	done
 done
 
+ts_init_subtest offset
+
+offset=10000
+outimg="$TS_OUTDIR/offset.img"
+
+rm -f "$outimg"
+truncate -s $(( 4096 * 10 )) "$outimg" > $TS_ERRLOG 2>&1
+
+rm -f "$outimg.offset"
+truncate -s $(( 4096 * 10 + $offset )) "$outimg.offset" > $TS_ERRLOG 2>&1
+
+"$TS_CMD_MKSWAP" -q -U "$UUID" -p 4096 "$outimg" \
+	>> "$TS_OUTPUT" 2>/dev/null \
+	|| ts_log "mkswap failed"
+
+"$TS_CMD_MKSWAP" -q -U "$UUID" -p 4096 -o "$offset" "$outimg.offset" \
+	>> "$TS_OUTPUT" 2>/dev/null \
+	|| ts_log "mkswap -o failed"
+
+cmp -n "$offset" "$outimg.offset" /dev/zero >> "$TS_ERRLOG" 2>&1
+cmp "$outimg" "$outimg.offset" 0 "$offset" >> "$TS_ERRLOG" 2>&1
+
+ts_finalize_subtest
+
 ts_finalize
