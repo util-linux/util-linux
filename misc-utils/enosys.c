@@ -164,10 +164,10 @@ int main(int argc, char **argv)
 		err(EXIT_NOTSUPP, _("Seccomp non-functional"));
 
 	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0))
-		err_nosys(EXIT_FAILURE, _("prctl(PR_SET_NO_NEW_PRIVS)"));
+		err_nosys(EXIT_FAILURE, _("Could not run prctl(PR_SET_NO_NEW_PRIVS)"));
 
 	if (prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog))
-		err_nosys(EXIT_FAILURE, _("prctl(PR_SET_SECCOMP)"));
+		err_nosys(EXIT_FAILURE, _("Could not run prctl(PR_SET_SECCOMP)"));
 
 	if (execvp(argv[optind], argv + optind))
 		err(EXIT_NOTSUPP, _("Could not exec"));
