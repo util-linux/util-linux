@@ -137,6 +137,15 @@ function ts_check_native_byteorder {
 	fi
 }
 
+function ts_check_enotty {
+	# https://lore.kernel.org/qemu-devel/20230426070659.80649-1-thomas@t-8ch.de/
+	if [ -e "$TS_HELPER_SYSINFO" ] &&
+		[ "$("$TS_HELPER_SYSINFO" enotty-ok)" = "0" ]; then
+
+		ts_skip "broken ENOTTY return"
+	fi
+}
+
 function ts_report_skip {
 	ts_report " SKIPPED ($1)"
 }

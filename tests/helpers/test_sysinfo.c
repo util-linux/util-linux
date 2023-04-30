@@ -24,6 +24,8 @@
 #include <stdint.h>
 #include <inttypes.h>
 #include <wchar.h>
+#include <errno.h>
+#include <sys/ioctl.h>
 
 typedef struct {
 	const char	*name;
@@ -99,6 +101,15 @@ static int hlp_wcsspn_ok(void)
 	return 0;
 }
 
+static int hlp_enotty_ok(void)
+{
+	errno = 0;
+	ioctl(STDOUT_FILENO, 0);
+
+	printf("%d\n", errno != ENOSYS);
+	return 0;
+}
+
 static mntHlpfnc hlps[] =
 {
 	{ "WORDSIZE",	hlp_wordsize	},
@@ -111,6 +122,7 @@ static mntHlpfnc hlps[] =
 	{ "UINT64_MAX", hlp_u64_max     },
 	{ "byte-order", hlp_endianness  },
 	{ "wcsspn-ok",  hlp_wcsspn_ok   },
+	{ "enotty-ok",  hlp_enotty_ok   },
 	{ NULL, NULL }
 };
 
