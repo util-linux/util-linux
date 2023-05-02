@@ -26,6 +26,7 @@ ts_check_test_command "$TS_CMD_UMOUNT"
 
 ts_skip_nonroot
 ts_check_losetup
+ts_check_enotty
 ts_check_prog "mkfs.btrfs"
 ts_check_prog "btrfs"
 
