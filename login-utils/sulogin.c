@@ -108,7 +108,7 @@ static void tcinit(struct console *con)
 	struct termios *tio = &con->tio;
 	const int fd = con->fd;
 #if defined(TIOCGSERIAL)
-	struct serial_struct serinfo;
+	struct serial_struct serinfo = { .flags = 0 };
 #endif
 #ifdef USE_PLYMOUTH_SUPPORT
 	struct termios lock;
@@ -132,18 +132,18 @@ static void tcinit(struct console *con)
 	errno = 0;
 #endif
 
-#if defined(TIOCGSERIAL)
+#ifdef TIOCGSERIAL
 	if (ioctl(fd, TIOCGSERIAL,  &serinfo) >= 0)
 		con->flags |= CON_SERIAL;
 	errno = 0;
-#else
-# if defined(KDGKBMODE)
-	if (ioctl(fd, KDGKBMODE, &mode) < 0)
-		con->flags |= CON_SERIAL;
-	errno = 0;
-# endif
 #endif
 
+#ifdef KDGKBMODE
+	if (!(con->flags & CON_SERIAL)
+	    && ioctl(fd, KDGKBMODE, &mode) < 0)
+		con->flags |= CON_SERIAL;
+	errno = 0;
+#endif
 	if (tcgetattr(fd, tio) < 0) {
 		int saveno = errno;
 #if defined(KDGKBMODE) || defined(TIOCGSERIAL)
