@@ -26,6 +26,7 @@
 #include <wchar.h>
 #include <errno.h>
 #include <sys/ioctl.h>
+#include <sys/mount.h>
 
 #include "mount-api-utils.h"
 
