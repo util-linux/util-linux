@@ -27,6 +27,11 @@ ts_check_test_command "$TS_CMD_HWCLOCK"
 ts_skip_nonroot
 ts_skip_qemu_user
 
+# RTC interrupts are sometimes broken on GitHub Actions
+if ts_is_virt "microsoft"; then
+	TS_KNOWN_FAIL="yes"
+fi
+
 "$TS_CMD_HWCLOCK" --show > /dev/null 2> "$TS_ERRLOG" || ts_die
 
 ts_finalize

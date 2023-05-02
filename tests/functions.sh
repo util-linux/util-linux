@@ -1133,3 +1133,18 @@ function ts_skip_exitcode_not_supported {
 function ts_inhibit_custom_colorscheme {
 	export XDG_CONFIG_HOME=/dev/null
 }
+
+function ts_is_virt {
+	type "systemd-detect-virt" >/dev/null 2>&1
+	if [ $? -ne 0 ]; then
+		return 1
+	fi
+
+	virt="$(systemd-detect-virt)"
+	for arg in "$@"; do
+		if [ "$virt" = "$arg" ]; then
+			return 0;
+		fi
+	done
+	return 1
+}
