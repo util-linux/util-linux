@@ -26,6 +26,12 @@ ts_check_test_command "$TS_CMD_FINDMNT"
 ts_skip_nonroot
 ts_check_losetup
 
+# unshared session is possible to support only on kernels with new mount API
+if [ "$("$TS_HELPER_SYSINFO" fsopen-ok)" = "0" ]; then
+	prop=$($TS_CMD_FINDMNT --task "$$" -n -o PROPAGATION "/")
+	[[ "$prop" == *"private"* ]] && ts_skip "unsupported session"
+fi
+
 ts_device_init
 DEVICE=$TS_LODEV
 

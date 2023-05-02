@@ -27,6 +27,8 @@
 #include <errno.h>
 #include <sys/ioctl.h>
 
+#include "mount-api-utils.h"
+
 typedef struct {
 	const char	*name;
 	int		(*fnc)(void);
@@ -110,6 +112,18 @@ static int hlp_enotty_ok(void)
 	return 0;
 }
 
+static int hlp_fsopen_ok(void)
+{
+#ifdef FSOPEN_CLOEXEC
+	errno = 0;
+	fsopen(NULL, FSOPEN_CLOEXEC);
+#else
+	errno = ENOSYS;
+#endif
+	printf("%d\n", errno != ENOSYS);
+	return 0;
+}
+
 static mntHlpfnc hlps[] =
 {
 	{ "WORDSIZE",	hlp_wordsize	},
@@ -123,6 +137,7 @@ static mntHlpfnc hlps[] =
 	{ "byte-order", hlp_endianness  },
 	{ "wcsspn-ok",  hlp_wcsspn_ok   },
 	{ "enotty-ok",  hlp_enotty_ok   },
+	{ "fsopen-ok",  hlp_fsopen_ok   },
 	{ NULL, NULL }
 };
 
