@@ -73,6 +73,24 @@ static const struct syscall syscalls[] = {
 	{ "fallocate", __NR_fallocate },
 };
 
+static void __attribute__((__noreturn__)) usage(void)
+{
+	FILE *out = stdout;
+
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options] -- <command>\n"), program_invocation_short_name);
+
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -s, --syscall           syscall to block\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	fprintf(out, USAGE_HELP_OPTIONS(25));
+
+	fprintf(out, USAGE_MAN_TAIL("enosys(1)"));
+
+	exit(EXIT_SUCCESS);
+}
+
 int main(int argc, char **argv)
 {
 	int c;
@@ -80,12 +98,14 @@ int main(int argc, char **argv)
 	bool found;
 	static const struct option longopts[] = {
 		{ "syscall", required_argument, NULL, 's' },
+		{ "version", no_argument,       NULL, 'V' },
+		{ "help",    no_argument,       NULL, 'h' },
 		{ 0 }
 	};
 
 	bool blocked_syscalls[ARRAY_SIZE(syscalls)] = {};
 
-	while ((c = getopt_long (argc, argv, "s:", longopts, NULL)) != -1) {
+	while ((c = getopt_long (argc, argv, "Vhs:", longopts, NULL)) != -1) {
 		switch (c) {
 		case 's':
 			found = 0;
@@ -99,13 +119,17 @@ int main(int argc, char **argv)
 			if (!found)
 				errx(EXIT_FAILURE, "Unknown syscall '%s'", optarg);
 			break;
+		case 'V':
+			print_version(EXIT_SUCCESS);
+		case 'h':
+			usage();
 		default:
-			errx(EXIT_FAILURE, "Unknown option");
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 
 	if (optind >= argc)
-		errx(EXIT_FAILURE, "No executable specified");
+		errtryhelp(EXIT_FAILURE);
 
 #define N_FILTERS (ARRAY_SIZE(syscalls) + 3)
 
