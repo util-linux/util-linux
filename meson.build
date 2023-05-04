@@ -2865,6 +2865,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
+  bashcompletions += ['enosys']
 endif
 
 ############################################################
