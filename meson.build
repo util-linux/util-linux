@@ -2856,9 +2856,15 @@ if not is_disabler(exe)
   bashcompletions += ['waitpid']
 endif
 
+syscalls_h = custom_target('syscalls.h',
+  input : 'tools/all_syscalls',
+  output : 'syscalls.h',
+  command : ['bash', '@INPUT@', cc.cmd_array()],
+)
+
 exe = executable(
   'enosys',
-  'misc-utils/enosys.c',
+  'misc-utils/enosys.c', syscalls_h,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : usrbin_exec_dir,

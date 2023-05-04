@@ -69,11 +69,11 @@ struct syscall {
 };
 
 static const struct syscall syscalls[] = {
-	{ "move_mount", __NR_move_mount },
-	{ "open_tree", __NR_open_tree },
-	{ "fsopen", __NR_fsopen },
-	{ "fallocate", __NR_fallocate },
+#define UL_SYSCALL(name, nr) { name, nr },
+#include "syscalls.h"
+#undef UL_SYSCALL
 };
+static_assert(sizeof(syscalls) > 0, "no syscalls found");
 
 static void __attribute__((__noreturn__)) usage(void)
 {

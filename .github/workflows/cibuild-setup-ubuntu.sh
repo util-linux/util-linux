@@ -27,6 +27,7 @@ PACKAGES=(
 	iproute2
 	dmsetup
 	python3-dev
+	gawk
 )
 
 PACKAGES_OPTIONAL=(
