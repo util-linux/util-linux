@@ -300,6 +300,8 @@ endif
 
 if BUILD_ENOSYS
 usrbin_exec_PROGRAMS += enosys
+MANPAGES += misc-utils/enosys.1
+dist_noinst_DATA += misc-utils/enosys.1.adoc
 enosys_SOURCES = misc-utils/enosys.c
 enosys_LDADD = $(LDADD) libcommon.la
 enosys_CFLAGS = $(AM_CFLAGS)
