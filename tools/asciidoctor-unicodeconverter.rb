@@ -11,7 +11,7 @@ module UnicodeConverter
       lines = reader.read_lines
       state = BEFORE_NAME_SECTION
       lines.map! do |line|
-        if state = IN_NAME_SECTION
+        if state == IN_NAME_SECTION
           line.sub! " \u2013 ", " - "
           line.sub! " \u2014 ", " - "
         end
