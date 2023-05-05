@@ -24,6 +24,7 @@ PACKAGES=(
 	squashfs-tools
 	iproute2
 	dmsetup
+	python3-dev
 )
 
 PACKAGES_OPTIONAL=(

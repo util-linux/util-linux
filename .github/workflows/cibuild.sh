@@ -83,7 +83,6 @@ for phase in "${PHASES[@]}"; do
             --disable-use-tty-group
             --disable-makeinstall-chown
             --enable-all-programs
-            --without-python
             --enable-werror
         )
 
