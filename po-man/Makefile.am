@@ -43,7 +43,7 @@ gen-mans: gen-trans
 	  for l in $(PO_LANGS); do \
 	  gendir="$(abs_builddir)/$$l"; \
 	  genfiles=`echo $${gendir}/*.adoc`; \
-	  if test "$$genfiles" != '$${gendir}/*.adoc'; then \
+	  if test "$$genfiles" != "$${gendir}/*.adoc"; then \
 	    for file in $${genfiles}; do \
 	      manname=`echo $$file | sed -e 's|^.*/||' -e 's|\.adoc||'`;  \
 	      test -f $${gendir}/$${manname} || { \
@@ -68,7 +68,7 @@ install-data-local: gen-mans
 	  mansrcdir="$(abs_builddir)/$$l"; \
 	  for s in $(MAN_SECTIONS); do \
 	    installfiles=`echo $${mansrcdir}/*.$$s`; \
-	    if test "$$installfiles" != '$${mansrcdir}/*.$$s'; then \
+	    if test "$$installfiles" != "$${mansrcdir}/*.$$s"; then \
 	      installdir="$(DESTDIR)$(mandir)/$$l/man$$s"; \
 	      $(MKDIR_P) "$${installdir}" || exit 1; \
 	      for file in $$installfiles; do \
@@ -85,7 +85,7 @@ uninstall-local:
 	  mansrcdir="$(abs_builddir)/$$l"; \
 	  for s in $(MAN_SECTIONS); do \
 	    installfiles=`echo $${mansrcdir}/*.$$s`; \
-	    if test "$$installfiles" != '$${mansrcdir}/*.$$s'; then \
+	    if test "$$installfiles" != "$${mansrcdir}/*.$$s"; then \
 	      installdir="$(DESTDIR)$(mandir)/$$l/man$$s"; \
 	      for file in $$installfiles; do \
 	        manname=`echo $$file | sed -e 's|^.*/||'`;  \
