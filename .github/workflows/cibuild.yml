@@ -93,6 +93,7 @@ jobs:
       COMPILER: gcc
       COMPILER_VERSION: 10
       SANITIZE: no
+      TRANSLATE_MANPAGES: yes
     steps:
       - name: Repository checkout
         uses: actions/checkout@v1

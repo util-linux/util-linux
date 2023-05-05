@@ -37,6 +37,10 @@ if [[ "$QEMU_USER" != "1" ]]; then
 	PACKAGES+=(linux-modules-extra-$(uname -r))
 fi
 
+if [[ "$TRANSLATE_MANPAGES" == "yes" ]];then
+	PACKAGES+=(po4a)
+fi
+
 apt-get -y update --fix-missing
 apt install -y lsb-release software-properties-common
 
