@@ -7,6 +7,7 @@ MAN_SECTIONS = 1 3 5 8
 CLEANFILES = $(PO_STAMPS)
 
 EXTRA_DIST = README.md $(PO_FILES) po4a.cfg util-linux-man.pot
+DISTCLEANFILES = util-linux-man.pot $(PO_FILES)
 
 if ENABLE_POMAN
 util-linux-man.pot: Makefile
