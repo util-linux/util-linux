@@ -102,14 +102,21 @@ jobs:
         run: .github/workflows/cibuild.sh CONFIGURE
       - name: Make distcheck
         run: .github/workflows/cibuild.sh DISTCHECK
-  build-s390x:
+  build-arch:
+    name: build (qemu-user, ${{ matrix.arch }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: s390x
+          - arch: riscv64
     steps:
       - name: Repository checkout
         uses: actions/checkout@v1
       - uses: uraimo/run-on-arch-action@v2
         with:
-          arch: s390x
+          arch: ${{ matrix.arch }}
           dockerRunArgs: --privileged -v /dev:/dev
           distro: ubuntu_latest
           run: |
