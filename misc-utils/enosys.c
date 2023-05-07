@@ -43,10 +43,10 @@
 #    elif __riscv_xlen == 64
 #        define SECCOMP_ARCH_NATIVE AUDIT_ARCH_RISCV64
 #    endif
-#elif __s390__
-# 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_S390
 #elif __s390x__
 # 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_S390X
+#elif __s390__
+# 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_S390
 #elif __PPC64__
 #    if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 # 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_PPC64
