@@ -274,18 +274,18 @@ static void tcfinal(struct console *con)
 	if (con->flags & CON_EIO)
 		return;
 	if ((con->flags & CON_SERIAL) == 0) {
-		xsetenv("TERM", "linux", 1);
+		xsetenv("TERM", "linux", 0);
 		return;
 	}
 	if (con->flags & CON_NOTTY) {
-		xsetenv("TERM", "dumb", 1);
+		xsetenv("TERM", "dumb", 0);
 		return;
 	}
 
 #if defined (__s390__) || defined (__s390x__)
-	xsetenv("TERM", "dumb", 1);
+	xsetenv("TERM", "dumb", 0);
 #else
-	xsetenv("TERM", "vt102", 1);
+	xsetenv("TERM", "vt102", 0);
 #endif
 	tio->c_iflag |= (IXON | IXOFF);
 	tio->c_lflag |= (ICANON | ISIG | ECHO|ECHOE|ECHOK|ECHOKE);
