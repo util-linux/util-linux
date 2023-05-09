@@ -9,6 +9,7 @@ mnt_cache_device_has_tag
 mnt_cache_find_tag_value
 mnt_cache_read_tags
 mnt_cache_set_targets
+mnt_cache_set_sbprobe
 mnt_get_fstype
 mnt_pretty_path
 mnt_resolve_path

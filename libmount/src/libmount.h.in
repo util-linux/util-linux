@@ -363,6 +363,7 @@ extern void mnt_unref_cache(struct libmnt_cache *cache);
 
 extern int mnt_cache_set_targets(struct libmnt_cache *cache,
 				struct libmnt_table *mountinfo);
+extern int mnt_cache_set_sbprobe(struct libmnt_cache *cache, int flags);
 extern int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname);
 
 extern int mnt_cache_device_has_tag(struct libmnt_cache *cache,

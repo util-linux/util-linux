@@ -56,6 +56,7 @@ struct libmnt_cache {
 	size_t			nents;
 	size_t			nallocs;
 	int			refcount;
+	int			probe_sb_extra;	/* extra BLKID_SUBLKS_* flags */
 
 	/* blkid_evaluate_tag() works in two ways:
 	 *
@@ -170,6 +171,23 @@ int mnt_cache_set_targets(struct libmnt_cache *cache,
 	return 0;
 }
 
+/**
+ * mnt_cache_set_sbprobe:
+ * @cache: cache pointer
+ * @flags: BLKID_SUBLKS_* flags
+ *
+ * Add extra flags to the libblkid prober. Don't use if not sure.
+ *
+ * Returns: negative number in case of error, or 0 o success.
+ */
+int mnt_cache_set_sbprobe(struct libmnt_cache *cache, int flags)
+{
+	if (!cache)
+		return -EINVAL;
+
+	cache->probe_sb_extra = flags;
+	return 0;
+}
 
 /* note that the @key could be the same pointer as @value */
 static int cache_add_entry(struct libmnt_cache *cache, char *key,
@@ -346,7 +364,7 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 	blkid_probe_enable_superblocks(pr, 1);
 	blkid_probe_set_superblocks_flags(pr,
 			BLKID_SUBLKS_LABEL | BLKID_SUBLKS_UUID |
-			BLKID_SUBLKS_TYPE);
+			BLKID_SUBLKS_TYPE | cache->probe_sb_extra);
 
 	blkid_probe_enable_partitions(pr, 1);
 	blkid_probe_set_partitions_flags(pr, BLKID_PARTS_ENTRY_DETAILS);
