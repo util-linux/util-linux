@@ -1630,6 +1630,16 @@ int main(int argc, char *argv[])
 	mnt_init_debug(0);		/* init libmount debug mask */
 	mntcache = mnt_new_cache();	/* no fatal error if failed */
 
+	if (mntcache)
+		/* Force libblkid to accept also filesystems with bad
+		 * checksums. This feature is helpful for "fsck /dev/foo," but
+		 * if it evaluates LABEL/UUIDs from fstab, then libmount may
+		 * use cached data from udevd and udev accepts only properly
+		 * detected filesystems.
+		 */
+		mnt_cache_set_sbprobe(mntcache, BLKID_SUBLKS_BADCSUM);
+
+
 	parse_argv(argc, argv);
 
 	if (!notitle)
