@@ -237,8 +237,11 @@ static void __setup_pager(void)
 
 	/* original process continues, but writes to the pipe */
 	dup2(pager_process.in, STDOUT_FILENO);
-	if (isatty(STDERR_FILENO))
+	setvbuf(stdout, NULL, _IOLBF, 0);
+	if (isatty(STDERR_FILENO)) {
 		dup2(pager_process.in, STDERR_FILENO);
+		setvbuf(stderr, NULL, _IOLBF, 0);
+	}
 	close(pager_process.in);
 
 	memset(&sa, 0, sizeof(sa));
