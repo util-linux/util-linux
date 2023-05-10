@@ -17,7 +17,7 @@ module UnicodeConverter
         if state == IN_NAME_SECTION
           line.sub! " \u2013 ", " - "
           line.sub! " \u2014 ", " - "
-          if line.start_with? command and not line.start_with? "#{command} - "
+          if line.start_with? command and not line.include? ',' and not line.start_with? "#{command} - "
             logger.warn "adding dash to name section of #{document.attributes['docfile']}"
             line.sub! command, "#{command} - "
           end
