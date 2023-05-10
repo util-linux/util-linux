@@ -36,7 +36,11 @@ PACKAGES_OPTIONAL=(
 
 # scsi_debug
 if [[ "$QEMU_USER" != "1" ]]; then
-	PACKAGES+=(linux-modules-extra-$(uname -r))
+	MODULES_PACKAGE="linux-modules-extra-$(uname -r)"
+	# may not exist anymore
+	if apt-cache show "$MODULES_PACKAGE" >/dev/null 2>&1; then
+		PACKAGES+=("$MODULES_PACKAGE")
+	fi
 fi
 
 if [[ "$TRANSLATE_MANPAGES" == "yes" ]];then
