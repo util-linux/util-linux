@@ -2,6 +2,8 @@
      
 set -ex
 
+apt-get -y update --fix-missing
+
 # Xenial uses btrfs-tools, but since Focal it's btrfs-progs
 #
 PACKAGES=(
@@ -41,7 +43,6 @@ if [[ "$TRANSLATE_MANPAGES" == "yes" ]];then
 	PACKAGES+=(po4a)
 fi
 
-apt-get -y update --fix-missing
 apt install -y lsb-release software-properties-common
 
 COMPILER="${COMPILER:?}"
