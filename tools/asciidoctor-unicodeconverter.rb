@@ -12,7 +12,7 @@ module UnicodeConverter
     def process document, reader
       lines = reader.read_lines
       state = BEFORE_NAME_SECTION
-      command = document.attributes['docname'].split('.', 2)[0]
+      command = document.attributes['docname'].rpartition('.')[0]
       lines.map! do |line|
         if state == IN_NAME_SECTION
           line.sub! " \u2013 ", " - "
