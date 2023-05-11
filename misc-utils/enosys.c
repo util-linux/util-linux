@@ -132,11 +132,17 @@ int main(int argc, char **argv)
 		.filter = filter,
 	};
 
+	/* *SET* below will return EINVAL when either the filter is invalid or
+	 * seccomp is not supported. To distinguish those cases do a *GET* here
+	 */
+	if (prctl(PR_GET_SECCOMP) == -1 && errno == EINVAL)
+		err(EXIT_NOTSUPP, "Seccomp non-functional");
+
 	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0))
-		err(EXIT_NOTSUPP, "prctl(PR_SET_NO_NEW_PRIVS)");
+		err_nosys(EXIT_FAILURE, "prctl(PR_SET_NO_NEW_PRIVS)");
 
 	if (prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog))
-		err(EXIT_NOTSUPP, "prctl(PR_SET_SECCOMP)");
+		err_nosys(EXIT_FAILURE, "prctl(PR_SET_SECCOMP)");
 
 	if (execvp(argv[optind], argv + optind))
 		err(EXIT_NOTSUPP, "Could not exec");
