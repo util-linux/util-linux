@@ -798,6 +798,14 @@ static int probe_partition_content(struct fdisk_context *cxt, struct fdisk_parti
 
 		DBG(PART, ul_debugobj(pa, "blkid prober: %p", pr));
 
+		blkid_probe_enable_superblocks(pr, 1);
+		blkid_probe_set_superblocks_flags(pr,
+				BLKID_SUBLKS_MAGIC |
+				BLKID_SUBLKS_TYPE |
+				BLKID_SUBLKS_LABEL |
+				BLKID_SUBLKS_UUID |
+				BLKID_SUBLKS_BADCSUM);
+
 		start = fdisk_partition_get_start(pa) * fdisk_get_sector_size(cxt);
 		size = fdisk_partition_get_size(pa) * fdisk_get_sector_size(cxt);
 
