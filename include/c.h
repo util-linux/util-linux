@@ -294,6 +294,9 @@ void __err_oom(const char *file, unsigned int line)
 }
 #define err_oom()	__err_oom(__FILE__, __LINE__)
 
+#define err_nosys(exitcode, ...) \
+	err(errno == ENOSYS ? EXIT_NOTSUPP : exitcode, __VA_ARGS__)
+
 
 /* Don't use inline function to avoid '#include "nls.h"' in c.h
  */
