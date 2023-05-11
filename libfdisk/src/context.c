@@ -631,6 +631,7 @@ static int fdisk_assign_fd(struct fdisk_context *cxt, int fd,
 	/* Don't report collision if there is already a valid partition table.
 	 * The bootbits are wiped when we create a *new* partition table only. */
 	if (fdisk_is_ptcollision(cxt) && fdisk_has_label(cxt)) {
+		DBG(CXT, ul_debugobj(cxt, "ignore old %s", cxt->collision));
 		cxt->pt_collision = 0;
 		free(cxt->collision);
 		cxt->collision = NULL;
