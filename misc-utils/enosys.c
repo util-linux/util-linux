@@ -57,6 +57,8 @@
 #    error Unknown target architecture
 #endif
 
+#define UL_BPF_NOP (struct sock_filter) BPF_JUMP(BPF_JMP | BPF_JA, 0, 0, 0)
+
 #define syscall_nr (offsetof(struct seccomp_data, nr))
 
 struct syscall {
@@ -113,17 +115,14 @@ int main(int argc, char **argv)
 		[N_FILTERS - 1] = BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ERRNO | ENOSYS),
 	};
 
-	const struct sock_filter nop = BPF_JUMP(BPF_JMP | BPF_JA, 0, 0, 0);
-
 	for (i = 0; i < ARRAY_SIZE(syscalls); i++) {
 		if (blocked_syscalls[i]) {
-			const struct sock_filter block = BPF_JUMP(
-					BPF_JMP | BPF_JEQ | BPF_K,
-					syscalls[i].number,
-					N_FILTERS - 3 - i, 0);
-			filter[i + 1] = block;
+			filter[i + 1] = (struct sock_filter) BPF_JUMP(
+						BPF_JMP | BPF_JEQ | BPF_K,
+						syscalls[i].number,
+						N_FILTERS - 3 - i, 0);
 		} else {
-			filter[i + 1] = nop;
+			filter[i + 1] = UL_BPF_NOP;
 		}
 	}
 
