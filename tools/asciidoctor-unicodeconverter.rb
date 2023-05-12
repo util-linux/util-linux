@@ -15,8 +15,10 @@ module UnicodeConverter
       command = document.attributes['docname'].rpartition('.')[0]
       lines.map! do |line|
         if state == IN_NAME_SECTION
-          line.sub! " \u2013 ", " - "
-          line.sub! " \u2014 ", " - "
+          if line.sub! " \u2013 ", " - " or line.sub! " \u2014 ", " - "
+            logger.warn "replacing unicode dash in name section of #{document.attributes['docfile']}"
+          end
+
           if line.start_with? command and not line.include? ',' and not line.start_with? "#{command} - "
             logger.warn "adding dash to name section of #{document.attributes['docfile']}"
             line.sub! command, "#{command} - "
