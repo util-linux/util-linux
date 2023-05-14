@@ -31,9 +31,9 @@ ts_init_subtest basic
 FALLOCATE_TEST="$TS_HELPER_ENOSYS fallocate"
 
 $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
-"$TS_CMD_ENOSYS" -s fallocate -- $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
-"$TS_CMD_ENOSYS" -s fsopen -s fallocate -- $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
-"$TS_CMD_ENOSYS" -s fallocate -s fsopen -- $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
+"$TS_CMD_ENOSYS" -s fallocate $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
+"$TS_CMD_ENOSYS" -s fsopen -s fallocate $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
+"$TS_CMD_ENOSYS" -s fallocate -s fsopen $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
 
 ts_finalize_subtest
 

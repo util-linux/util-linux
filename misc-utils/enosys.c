@@ -109,7 +109,7 @@ int main(int argc, char **argv)
 
 	bool blocked_syscalls[ARRAY_SIZE(syscalls)] = {};
 
-	while ((c = getopt_long (argc, argv, "Vhs:l", longopts, NULL)) != -1) {
+	while ((c = getopt_long (argc, argv, "+Vhs:l", longopts, NULL)) != -1) {
 		switch (c) {
 		case 's':
 			found = 0;
