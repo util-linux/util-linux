@@ -167,10 +167,14 @@ headers = '''
         linux/compiler.h
         linux/falloc.h
         linux/fd.h
+        linux/fs.h
 	linux/fiemap.h
 	linux/gsmmux.h
+        linux/if_alg.h
+        linux/kcmp.h
         linux/net_namespace.h
         linux/nsfs.h
+        linux/pr.h
         linux/stat.h
         linux/securebits.h
         linux/tiocl.h
@@ -200,6 +204,7 @@ headers = '''
         sys/socket.h
         sys/sockio.h
         sys/stat.h
+        sys/statfs.h
         sys/swap.h
         sys/syscall.h
         sys/sysmacros.h
@@ -209,6 +214,7 @@ headers = '''
         sys/types.h
         sys/ucred.h
         sys/un.h
+        sys/vfs.h
 	sys/xattr.h
 '''.split()
 
@@ -310,6 +316,7 @@ lib_systemd = dependency(
   'libsystemd',
   required : get_option('systemd'))
 conf.set('HAVE_LIBSYSTEMD', lib_systemd.found() ? 1 : false)
+conf.set('USE_SYSTEMD', lib_systemd.found() ? 1 : false)
 
 lib_udev = dependency(
   'libudev',
@@ -427,6 +434,9 @@ conf.set10('HAVE_STRSIGNAL_DECL', have)
 have = cc.sizeof('union semun', prefix : '#include <sys/sem.h>') > 0
 conf.set('HAVE_UNION_SEMUN', have ? 1 : false)
 
+have = cc.has_type('loff_t', prefix : '#include <sys/types.h>')
+conf.set('HAVE_LOFF_T', have ? 1 : false)
+
 have = cc.compiles('''
    #define _GNU_SOURCE 1
    #include <langinfo.h>
@@ -485,7 +495,6 @@ funcs = '''
         err
         errx
         explicit_bzero
-        fmemopen
         fnmatch
         fseeko
         fsconfig
@@ -493,6 +502,7 @@ funcs = '''
         fsopen
         fspick
         fsync
+        getttynam
         utimensat
         getdomainname
         getdtablesize
@@ -616,6 +626,12 @@ conf.set('HAVE_STRUCT_TM_TM_ZONE', have ? 1 : false)
 
 have = cc.has_header_symbol('time.h', 'tzname', args: '-D_GNU_SOURCE')
 conf.set('HAVE_DECL_TZNAME', have ? 1 : false)
+
+have = cc.has_header_symbol('linux/blkzoned.h', 'BLK_ZONE_REP_CAPACITY')
+conf.set('HAVE_DECL_BLK_ZONE_REP_CAPACITY', have ? 1 : false)
+
+have = cc.has_header_symbol('linux/pr.h', 'PR_REP_CAPACITY')
+conf.set('HAVE_DECL_PR_REP_CAPACITY', have ? 1 : false)
 
 code = '''
 #include <time.h>
