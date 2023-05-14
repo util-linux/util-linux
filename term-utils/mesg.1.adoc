@@ -54,7 +54,7 @@ The *mesg* utility is invoked by a user to control write access others have to t
 
 Traditionally, write access is allowed by default. However, as users become more conscious of various security risks, there is a trend to remove write access by default, at least for the primary login shell. To make sure your ttys are set the way you want them to be set, *mesg* should be executed in your login scripts.
 
-The *mesg* utility silently exits with error status 2 if not executed on terminal. In this case execute *mesg* is pointless. The command line option *--verbose* forces mesg to print a warning in this situation. This behaviour has been introduced in version 2.33.
+The *mesg* utility silently exits with error status 2 if not executed on a terminal. In this case executing *mesg* is pointless. The command line option *--verbose* forces *mesg* to print a warning in this situation. This behaviour has been introduced in version 2.33.
 
 == ARGUMENTS
 
@@ -86,11 +86,12 @@ An error has occurred.
 
 == FILES
 
-_/dev/[pt]ty[pq]?_
+_/dev/[pt]ty*_, _/dev/pts/[0-9]*_
 
 == HISTORY
 
-A *mesg* command appeared in Version 6 AT&T UNIX.
+*mesg* (I) appears in the UNIX Programmer's Manual.
+It used to invert the current state with no argument before Version 7 AT&T UNIX.
 
 == SEE ALSO
 
