@@ -464,7 +464,7 @@ function ts_init_suid {
 	TS_SUID_USER[$ct]=$(stat --printf="%U" $PROG)
 	TS_SUID_GROUP[$ct]=$(stat --printf="%G" $PROG)
 
-	chown root.root $PROG &> /dev/null
+	chown root:root $PROG &> /dev/null
 	chmod u+s $PROG &> /dev/null
 }
 
@@ -653,7 +653,7 @@ function ts_cleanup_on_exit {
 	for idx in $(seq 0 $((${#TS_SUID_PROGS[*]} - 1))); do
 		PROG=${TS_SUID_PROGS[$idx]}
 		chmod a-s $PROG &> /dev/null
-		chown ${TS_SUID_USER[$idx]}.${TS_SUID_GROUP[$idx]} $PROG &> /dev/null
+		chown ${TS_SUID_USER[$idx]}:${TS_SUID_GROUP[$idx]} $PROG &> /dev/null
 	done
 
 	for dev in "${TS_LOOP_DEVS[@]}"; do
