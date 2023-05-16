@@ -37,4 +37,13 @@ $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
 
 ts_finalize_subtest
 
+ts_init_subtest exec
+
+FALLOCATE_TEST="$TS_HELPER_ENOSYS exec"
+
+$FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
+"$TS_CMD_ENOSYS" -s execve $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
+
+ts_finalize_subtest
+
 ts_finalize

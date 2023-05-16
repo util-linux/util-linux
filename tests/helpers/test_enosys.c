@@ -37,6 +37,13 @@ int main(int argc, char **argv)
 		errno = 0;
 		r = fallocate(-1, 0, 0, 0);
 		errx(EXIT_SUCCESS, "fallocate r=%d errno=%s", r, strerror(errno));
+	} else if (strcmp(argv[1], "exec") == 0) {
+		char *const cmd[] = {
+			"/bin/false",
+			NULL
+		};
+		execve(cmd[0], cmd, NULL);
+		err(EXIT_FAILURE, "exec failed");
 	}
 
 	errx(EXIT_FAILURE, "invalid mode %s", argv[1]);
