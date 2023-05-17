@@ -55,6 +55,20 @@
 #    endif
 #else
 #    error Unknown target architecture
+#elif __powerpc__
+#    define SECCOMP_ARCH_NATIVE AUDIT_ARCH_PPC
+#elif __mips__
+#    if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+# 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_MIPS
+#    else
+# 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_MIPSEL
+#    endif
+#elif __arc__
+#    if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+# 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_ARCV2BE
+#    else
+# 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_ARCV2
+#    endif
 #endif
 
 #define syscall_nr (offsetof(struct seccomp_data, nr))
