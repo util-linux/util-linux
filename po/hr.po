@@ -10,10 +10,10 @@
 # Božidar Putanec <bozidarp@yahoo.com>, 2019, 2020, 2021, 2022, 2023.
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux-2.39-rc2\n"
+"Project-Id-Version: util-linux-2.39-rc3\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-04-19 09:50+0200\n"
-"PO-Revision-Date: 2023-04-10 16:59-0700\n"
+"POT-Creation-Date: 2023-04-19 10:22+0200\n"
+"PO-Revision-Date: 2023-05-01 11:06-0700\n"
 "Last-Translator: Božidar Putanec <bozidarp@yahoo.com>\n"
 "Language-Team: Croatian <lokalizacija@linux.hr>\n"
 "Language: hr\n"
@@ -93,7 +93,8 @@ msgstr "nevaljani argument broja particije"
 msgid "invalid start argument"
 msgstr "nevaljani argument početka"
 
-#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111 misc-utils/fadvise.c:115
+#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111
+#: misc-utils/fadvise.c:115
 msgid "invalid length argument"
 msgstr "nevaljani argument dužine"
 
@@ -497,7 +498,8 @@ msgstr "Nije uspjelo zapisati skriptu %s"
 msgid "Select label type"
 msgstr "Odaberite tip oznake"
 
-#: disk-utils/cfdisk.c:2197 disk-utils/fdisk.c:1162 disk-utils/fdisk-menu.c:492
+#: disk-utils/cfdisk.c:2197 disk-utils/fdisk.c:1162
+#: disk-utils/fdisk-menu.c:492
 msgid "Device does not contain a recognized partition table."
 msgstr "Uređaj ne sadrži prepoznatljivu particijsku tablicu."
 
@@ -642,7 +644,8 @@ msgstr "Nova veličina: "
 msgid "Partition %zu resized."
 msgstr "Veličina particije %zu je promijenjena."
 
-#: disk-utils/cfdisk.c:2506 disk-utils/fdisk.c:1138 disk-utils/fdisk-menu.c:595
+#: disk-utils/cfdisk.c:2506 disk-utils/fdisk.c:1138
+#: disk-utils/fdisk-menu.c:595
 msgid "Device is open in read-only mode."
 msgstr "Uređaj je otvoren samo za čitanje."
 
@@ -779,8 +782,8 @@ msgstr ""
 "Nastavlja se... "
 
 #: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:633 sys-utils/blkdiscard.c:92
-#: sys-utils/blkpr.c:213 sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:633
+#: sys-utils/blkdiscard.c:92 sys-utils/blkpr.c:213 sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [opcije] <uređaj>\n"
@@ -1160,21 +1163,21 @@ msgstr ""
 "Svojstva uređaja (veličina sektora i geometrija) treba koristiti\n"
 "samo s jednim specificiranim uređajem."
 
-#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122 disk-utils/fsck.cramfs.c:723
-#: disk-utils/mkfs.bfs.c:211 disk-utils/mkfs.cramfs.c:799
-#: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
-#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:525
-#: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:592
-#: misc-utils/whereis.c:603 misc-utils/whereis.c:614 misc-utils/whereis.c:659
-#: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:207
-#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1579
-#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
-#: sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656 sys-utils/mount.c:867
-#: sys-utils/mount.c:875 sys-utils/mount.c:924 sys-utils/mount.c:937
-#: sys-utils/mount.c:1009 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
-#: sys-utils/swapoff.c:258 sys-utils/swapon.c:1011 sys-utils/switch_root.c:270
-#: sys-utils/umount.c:629 term-utils/setterm.c:1197 text-utils/col.c:584
-#: text-utils/more.c:2096
+#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122
+#: disk-utils/fsck.cramfs.c:723 disk-utils/mkfs.bfs.c:211
+#: disk-utils/mkfs.cramfs.c:799 disk-utils/partx.c:975 disk-utils/raw.c:136
+#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
+#: misc-utils/cal.c:525 misc-utils/findfs.c:58 misc-utils/look.c:147
+#: misc-utils/whereis.c:592 misc-utils/whereis.c:603 misc-utils/whereis.c:614
+#: misc-utils/whereis.c:659 schedutils/chrt.c:442 schedutils/ionice.c:264
+#: schedutils/taskset.c:207 sys-utils/chcpu.c:355 sys-utils/chmem.c:429
+#: sys-utils/dmesg.c:1579 sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321
+#: sys-utils/losetup.c:918 sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656
+#: sys-utils/mount.c:867 sys-utils/mount.c:875 sys-utils/mount.c:924
+#: sys-utils/mount.c:937 sys-utils/mount.c:1009 sys-utils/mountpoint.c:191
+#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:258 sys-utils/swapon.c:1011
+#: sys-utils/switch_root.c:270 sys-utils/umount.c:629
+#: term-utils/setterm.c:1197 text-utils/col.c:584 text-utils/more.c:2096
 msgid "bad usage"
 msgstr "loša uporaba"
 
@@ -2869,11 +2872,11 @@ msgstr "nevaljani broj inodova"
 
 #: disk-utils/mkfs.bfs.c:152
 msgid "volume name too long"
-msgstr "ime prostora je predugačko"
+msgstr "ime volumena je predugo"
 
 #: disk-utils/mkfs.bfs.c:159
 msgid "fsname name too long"
-msgstr "ime datotečnog sustava je predugačko"
+msgstr "ime datotečnog sustava je predugo"
 
 #: disk-utils/mkfs.bfs.c:209
 msgid "invalid block-count"
@@ -7622,7 +7625,7 @@ msgstr "Otkrivena je Sun oznaka diska s pogrešnim vtoc.nparts [%u]."
 msgid "Warning: Wrong values need to be fixed up and will be corrected by w(rite)"
 msgstr ""
 "Upozorenje: pogrešne vrijednosti moraju biti ispravljene,\n"
-"a biti će korigirane zapisivanjem s (w)rite."
+"a bit će korigirane zapisivanjem s (w)rite."
 
 #: libfdisk/src/sun.c:193
 msgid "Heads"
@@ -8200,7 +8203,7 @@ msgstr "%s: nepodržana verzija odlagališta „%s“"
 
 #: lib/timeutils.c:513
 msgid "format_iso_time: buffer overflow."
-msgstr "format_iso_time: prelijevanje međuspremnika."
+msgstr "format_iso_time: prekoračenje međuspremnika."
 
 #: lib/timeutils.c:531 lib/timeutils.c:555
 #, c-format
@@ -10082,10 +10085,9 @@ msgid "specify one file descriptor or file name"
 msgstr "specificirajte jedan deskriptor datoteke ili ime datoteke"
 
 #: misc-utils/fadvise.c:156
-#, fuzzy, c-format
-#| msgid "failed to advise"
+#, c-format
 msgid "failed to advise: %s"
-msgstr "savjetovanje nije uspjelo"
+msgstr "savjetovanje nije uspjelo: %s"
 
 #: misc-utils/fincore.c:61
 msgid "file data resident in memory in pages"
@@ -16285,10 +16287,9 @@ msgid "cannot open rtc device"
 msgstr "nije moguće otvoriti uređaj RTC"
 
 #: sys-utils/hwclock-rtc.c:140
-#, fuzzy, c-format
-#| msgid "ioctl(%s) to %s to read the time failed"
+#, c-format
 msgid "ioctl(RTC_RD_NAME) to %s to read the time failed"
-msgstr "ioctl(%s) na %s radi očitavanja vremena završila je neuspješno"
+msgstr "ioctl(RTC_RD_NAME) na %s nije uspio pročitati vrijeme"
 
 #: sys-utils/hwclock-rtc.c:177
 #, c-format
@@ -16320,16 +16321,14 @@ msgid "ioctl(%d, RTC_UIE_ON, 0) to %s failed"
 msgstr "ioctl(%d, RTC_UIE_ON, 0) na %s nije uspjela"
 
 #: sys-utils/hwclock-rtc.c:303
-#, fuzzy, c-format
-#| msgid "ioctl(%s) to %s to set the time failed"
+#, c-format
 msgid "ioctl(RTC_SET_TIME) to %s to set the time failed"
-msgstr "ioctl(%s) na %s radi postavljanja vremena nije uspjela"
+msgstr "ioctl(RTC_SET_NAME) na %s nije uspio postaviti vrijeme"
 
 #: sys-utils/hwclock-rtc.c:309
-#, fuzzy, c-format
-#| msgid "ioctl(%s) was successful.\n"
+#, c-format
 msgid "ioctl(RTC_SET_TIME) was successful.\n"
-msgstr "ioctl(%s) bila je uspješna.\n"
+msgstr "ioctl(RTC_SET_NAME) završio je s uspjehom.\n"
 
 #: sys-utils/hwclock-rtc.c:325
 msgid "Using the rtc interface to the clock."
@@ -20289,7 +20288,7 @@ msgstr "[nijedan]\n"
 #: sys-utils/setpriv.c:269
 #, c-format
 msgid "%s: too long"
-msgstr "%s: predugački"
+msgstr "%s: predugi"
 
 #: sys-utils/setpriv.c:297
 #, c-format
@@ -22004,7 +22003,7 @@ msgstr "%s: pročitano: %m"
 #: term-utils/agetty.c:2322
 #, c-format
 msgid "%s: input overrun"
-msgstr "%s: prelijevanje ulaza"
+msgstr "%s: prekoračenje ulaza"
 
 #: term-utils/agetty.c:2342 term-utils/agetty.c:2350
 #, c-format
@@ -23059,7 +23058,7 @@ msgstr " -l, --table-columns-limit <broj> maksimalni broj ulaznih stupaca\n"
 
 #: text-utils/column.c:760
 msgid " -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"
-msgstr " -E, --table-noextreme <stupci>   ne krati (pre)dugački tekst na širinu stupaca\n"
+msgstr " -E, --table-noextreme <stupci>   ne krati (pre)dugi tekst na širinu stupaca\n"
 
 #: text-utils/column.c:761
 msgid " -d, --table-noheadings           don't print header\n"
