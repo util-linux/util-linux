@@ -6,10 +6,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.39-rc2\n"
+"Project-Id-Version: util-linux 2.39-rc3\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-04-19 09:50+0200\n"
-"PO-Revision-Date: 2023-04-14 19:02+0200\n"
+"POT-Creation-Date: 2023-04-19 10:22+0200\n"
+"PO-Revision-Date: 2023-04-19 19:15+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "Language: pl\n"
@@ -88,7 +88,8 @@ msgstr "błędny numer partycji"
 msgid "invalid start argument"
 msgstr "błędna wartość początku"
 
-#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111 misc-utils/fadvise.c:115
+#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111
+#: misc-utils/fadvise.c:115
 msgid "invalid length argument"
 msgstr "błędna wartość długości"
 
@@ -487,7 +488,8 @@ msgstr "Nie udało się zapisać skryptu %s"
 msgid "Select label type"
 msgstr "Proszę wybrać typ etykiety"
 
-#: disk-utils/cfdisk.c:2197 disk-utils/fdisk.c:1162 disk-utils/fdisk-menu.c:492
+#: disk-utils/cfdisk.c:2197 disk-utils/fdisk.c:1162
+#: disk-utils/fdisk-menu.c:492
 msgid "Device does not contain a recognized partition table."
 msgstr "Urządzenie nie zawiera żadnej znanej tablicy partycji."
 
@@ -632,7 +634,8 @@ msgstr "Nowy rozmiar: "
 msgid "Partition %zu resized."
 msgstr "Zmieniono rozmiar partycji %zu."
 
-#: disk-utils/cfdisk.c:2506 disk-utils/fdisk.c:1138 disk-utils/fdisk-menu.c:595
+#: disk-utils/cfdisk.c:2506 disk-utils/fdisk.c:1138
+#: disk-utils/fdisk-menu.c:595
 msgid "Device is open in read-only mode."
 msgstr "Urządzenie jest otwarte w trybie tylko do odczytu."
 
@@ -769,8 +772,8 @@ msgstr ""
 "Kontynuacja... "
 
 #: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:633 sys-utils/blkdiscard.c:92
-#: sys-utils/blkpr.c:213 sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:633
+#: sys-utils/blkdiscard.c:92 sys-utils/blkpr.c:213 sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [opcje] <urządzenie>\n"
@@ -1139,21 +1142,21 @@ msgstr "nie obsługiwany tryb wymazywania"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Właściwości urządzenia (rozmiar sektora i geometria) powinny być używane tylko z jednym określonym urządzeniem."
 
-#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122 disk-utils/fsck.cramfs.c:723
-#: disk-utils/mkfs.bfs.c:211 disk-utils/mkfs.cramfs.c:799
-#: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
-#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:525
-#: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:592
-#: misc-utils/whereis.c:603 misc-utils/whereis.c:614 misc-utils/whereis.c:659
-#: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:207
-#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1579
-#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
-#: sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656 sys-utils/mount.c:867
-#: sys-utils/mount.c:875 sys-utils/mount.c:924 sys-utils/mount.c:937
-#: sys-utils/mount.c:1009 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
-#: sys-utils/swapoff.c:258 sys-utils/swapon.c:1011 sys-utils/switch_root.c:270
-#: sys-utils/umount.c:629 term-utils/setterm.c:1197 text-utils/col.c:584
-#: text-utils/more.c:2096
+#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122
+#: disk-utils/fsck.cramfs.c:723 disk-utils/mkfs.bfs.c:211
+#: disk-utils/mkfs.cramfs.c:799 disk-utils/partx.c:975 disk-utils/raw.c:136
+#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
+#: misc-utils/cal.c:525 misc-utils/findfs.c:58 misc-utils/look.c:147
+#: misc-utils/whereis.c:592 misc-utils/whereis.c:603 misc-utils/whereis.c:614
+#: misc-utils/whereis.c:659 schedutils/chrt.c:442 schedutils/ionice.c:264
+#: schedutils/taskset.c:207 sys-utils/chcpu.c:355 sys-utils/chmem.c:429
+#: sys-utils/dmesg.c:1579 sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321
+#: sys-utils/losetup.c:918 sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656
+#: sys-utils/mount.c:867 sys-utils/mount.c:875 sys-utils/mount.c:924
+#: sys-utils/mount.c:937 sys-utils/mount.c:1009 sys-utils/mountpoint.c:191
+#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:258 sys-utils/swapon.c:1011
+#: sys-utils/switch_root.c:270 sys-utils/umount.c:629
+#: term-utils/setterm.c:1197 text-utils/col.c:584 text-utils/more.c:2096
 msgid "bad usage"
 msgstr "błędna składnia"
 
@@ -9918,10 +9921,9 @@ msgid "specify one file descriptor or file name"
 msgstr "należy podać jeden deskryptor lub nazwę pliku"
 
 #: misc-utils/fadvise.c:156
-#, fuzzy, c-format
-#| msgid "failed to advise"
+#, c-format
 msgid "failed to advise: %s"
-msgstr "nie udało się zastosować podpowiedzi"
+msgstr "nie udało się zastosować podpowiedzi: %s"
 
 #: misc-utils/fincore.c:61
 msgid "file data resident in memory in pages"
@@ -16062,10 +16064,9 @@ msgid "cannot open rtc device"
 msgstr "nie można otworzyć urządzenia rtc"
 
 #: sys-utils/hwclock-rtc.c:140
-#, fuzzy, c-format
-#| msgid "ioctl(%s) to %s to read the time failed"
+#, c-format
 msgid "ioctl(RTC_RD_NAME) to %s to read the time failed"
-msgstr "nie powiódł się ioctl(%s) na %s w celu odczytu czasu"
+msgstr "nie powiódł się ioctl(RTC_RD_NAME) na %s w celu odczytu czasu"
 
 #: sys-utils/hwclock-rtc.c:177
 #, c-format
@@ -16097,16 +16098,14 @@ msgid "ioctl(%d, RTC_UIE_ON, 0) to %s failed"
 msgstr "nie powiódł się ioctl(%d, RTC_UIE_ON, 0) na %s"
 
 #: sys-utils/hwclock-rtc.c:303
-#, fuzzy, c-format
-#| msgid "ioctl(%s) to %s to set the time failed"
+#, c-format
 msgid "ioctl(RTC_SET_TIME) to %s to set the time failed"
-msgstr "nie powiódł się ioctl(%s) na %s w celu ustawienia czasu"
+msgstr "nie powiódł się ioctl(RTC_SET_TIME) na %s w celu ustawienia czasu"
 
 #: sys-utils/hwclock-rtc.c:309
-#, fuzzy, c-format
-#| msgid "ioctl(%s) was successful.\n"
+#, c-format
 msgid "ioctl(RTC_SET_TIME) was successful.\n"
-msgstr "ioctl(%s) powiódł się.\n"
+msgstr "ioctl(RTC_SET_TIME) powiódł się.\n"
 
 #: sys-utils/hwclock-rtc.c:325
 msgid "Using the rtc interface to the clock."
