@@ -31,4 +31,6 @@ extern int capget(cap_user_header_t header, const cap_user_data_t data);
 
 extern int cap_last_cap(void);
 
+extern void cap_permitted_to_ambient(void);
+
 #endif /* CAPUTILS_H */
