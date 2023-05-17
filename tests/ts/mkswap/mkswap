@@ -27,6 +27,7 @@ ts_check_test_command "$TS_CMD_MKSWAP"
 ts_check_test_command "$TS_HELPER_SYSINFO"
 ts_check_prog "xz"
 ts_check_prog "cmp"
+ts_check_prog "truncate"
 
 UUID=4c08e1cd-3c82-46bf-a55b-0c3270d6dfeb
 
@@ -49,17 +50,41 @@ for PAGESIZE in 4096 8192; do
 		ts_init_subtest $name
 
 		rm -f "$outimg"
-		truncate -s $(( PAGESIZE * 10 )) "$outimg" > $TS_ERRLOG 2>&1
+		truncate -s $(( PAGESIZE * 10 )) "$outimg" >> $TS_ERRLOG 2>&1
 
 		"$TS_CMD_MKSWAP" -q -L label -U "$UUID" -e "$ENDIANNESS" -p "$PAGESIZE" "$outimg" \
-			> "$TS_OUTPUT" 2>/dev/null \
+			>> "$TS_OUTPUT" 2>/dev/null \
 			|| ts_log "mkswap failed"
 		xz -dc "$TS_SELF/${BYTE_ORDER}-${PAGESIZE}.img.xz" > "$origimg"
 
-		cmp "$origimg" "$outimg" > "$TS_ERRLOG" 2>&1
+		cmp "$origimg" "$outimg" >> "$TS_ERRLOG" 2>&1
 
 		ts_finalize_subtest
 	done
 done
+
+ts_init_subtest offset
+
+offset=10000
+outimg="$TS_OUTDIR/offset.img"
+
+rm -f "$outimg"
+truncate -s $(( 4096 * 10 )) "$outimg" > $TS_ERRLOG 2>&1
+
+rm -f "$outimg.offset"
+truncate -s $(( 4096 * 10 + $offset )) "$outimg.offset" > $TS_ERRLOG 2>&1
+
+"$TS_CMD_MKSWAP" -q -U "$UUID" -p 4096 "$outimg" \
+	>> "$TS_OUTPUT" 2>/dev/null \
+	|| ts_log "mkswap failed"
+
+"$TS_CMD_MKSWAP" -q -U "$UUID" -p 4096 -o "$offset" "$outimg.offset" \
+	>> "$TS_OUTPUT" 2>/dev/null \
+	|| ts_log "mkswap -o failed"
+
+cmp -n "$offset" "$outimg.offset" /dev/zero >> "$TS_ERRLOG" 2>&1
+cmp "$outimg" "$outimg.offset" 0 "$offset" >> "$TS_ERRLOG" 2>&1
+
+ts_finalize_subtest
 
 ts_finalize

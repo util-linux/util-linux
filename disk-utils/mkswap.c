@@ -76,6 +76,7 @@ struct mkswap_control {
 
 	int			user_pagesize;	/* --pagesize */
 	int			pagesize;	/* final pagesize used for the header */
+	off_t			offset;         /* offset of the header in the target */
 
 	char			*opt_label;	/* LABEL as specified on command line */
 	unsigned char		*uuid;		/* UUID parsed by libbuuid */
@@ -194,6 +195,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fprintf(out,
 	      _(" -e, --endianness=<value>  specify the endianness to use "
 	                                    "(%s, %s or %s)\n"), "native", "little", "big");
+	fputs(_(" -o, --offset OFFSET       specify the offset in the device\n"), out);
 	fputs(_("     --verbose             verbose output\n"), out);
 
 	fprintf(out,
@@ -347,6 +349,9 @@ static unsigned long long get_size(const struct mkswap_control *ctl)
 		err(EXIT_FAILURE, _("cannot open %s"), ctl->devname);
 	if (blkdev_get_size(fd, &size) < 0)
 		err(EXIT_FAILURE, _("cannot determine size of %s"), ctl->devname);
+	if ((unsigned long long) ctl->offset > size)
+		errx(EXIT_FAILURE, _("offset larger than file size"));
+	size -= ctl->offset;
 	size /= ctl->pagesize;
 
 	close(fd);
@@ -465,11 +470,15 @@ static void wipe_device(struct mkswap_control *ctl)
 
 static void write_header_to_device(struct mkswap_control *ctl)
 {
+	off_t offset;
+
 	assert(ctl);
 	assert(ctl->fd > -1);
 	assert(ctl->signature_page);
 
-	if (lseek(ctl->fd, SIGNATURE_OFFSET, SEEK_SET) != SIGNATURE_OFFSET)
+	offset = SIGNATURE_OFFSET + ctl->offset;
+
+	if (lseek(ctl->fd, offset, SEEK_SET) != offset)
 		errx(EXIT_FAILURE, _("unable to rewind swap-device"));
 
 	if (write_all(ctl->fd, (char *) ctl->signature_page + SIGNATURE_OFFSET,
@@ -503,6 +512,7 @@ int main(int argc, char **argv)
 		{ "swapversion", required_argument, NULL, 'v' },
 		{ "uuid",        required_argument, NULL, 'U' },
 		{ "endianness",  required_argument, NULL, 'e' },
+		{ "offset",      required_argument, NULL, 'o' },
 		{ "version",     no_argument,       NULL, 'V' },
 		{ "help",        no_argument,       NULL, 'h' },
 		{ "lock",        optional_argument, NULL, OPT_LOCK },
@@ -521,7 +531,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while((c = getopt_long(argc, argv, "cfp:qL:v:U:e:Vh", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "cfp:qL:v:U:e:o:Vh", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -566,6 +576,10 @@ int main(int argc, char **argv)
 				errx(EXIT_FAILURE,
 					_("invalid endianness %s is not supported"), optarg);
 			}
+			break;
+		case 'o':
+			ctl.offset = str2unum_or_err(optarg,
+					10, _("Invalid offset"), SINT_MAX(off_t));
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
