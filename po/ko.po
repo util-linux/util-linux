@@ -5,19 +5,19 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.39-rc2\n"
+"Project-Id-Version: util-linux 2.39-rc3\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-04-19 09:50+0200\n"
-"PO-Revision-Date: 2023-04-05 03:07+0900\n"
+"POT-Creation-Date: 2023-04-19 10:22+0200\n"
+"PO-Revision-Date: 2023-04-20 11:25+0900\n"
 "Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
 "Language-Team: Korean <translation-team-ko@googlegroups.com>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Bugs: Report translation errors to the Language-Team address.\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.3.1\n"
+"X-Bugs: Report translation errors to the Language-Team address.\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #: disk-utils/addpart.c:15
 #, c-format
@@ -88,7 +88,8 @@ msgstr "부적절한 분할 영역 번호 인자"
 msgid "invalid start argument"
 msgstr "부적절한 시작 인자"
 
-#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111 misc-utils/fadvise.c:115
+#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111
+#: misc-utils/fadvise.c:115
 msgid "invalid length argument"
 msgstr "부적절한 길이 인자"
 
@@ -487,7 +488,8 @@ msgstr "%s 스크립트 기록 실패"
 msgid "Select label type"
 msgstr "레이블 형식을 선택하십시오"
 
-#: disk-utils/cfdisk.c:2197 disk-utils/fdisk.c:1162 disk-utils/fdisk-menu.c:492
+#: disk-utils/cfdisk.c:2197 disk-utils/fdisk.c:1162
+#: disk-utils/fdisk-menu.c:492
 msgid "Device does not contain a recognized partition table."
 msgstr "장치에 인식 가능한 분할 영역 배치 정보가 없습니다."
 
@@ -632,7 +634,8 @@ msgstr "새 크기: "
 msgid "Partition %zu resized."
 msgstr "%zu 분할 영역의 크기를 조절했습니다."
 
-#: disk-utils/cfdisk.c:2506 disk-utils/fdisk.c:1138 disk-utils/fdisk-menu.c:595
+#: disk-utils/cfdisk.c:2506 disk-utils/fdisk.c:1138
+#: disk-utils/fdisk-menu.c:595
 msgid "Device is open in read-only mode."
 msgstr "장치를 읽기 전용 모드로 열었습니다."
 
@@ -769,8 +772,8 @@ msgstr ""
 "계속합니다 ... "
 
 #: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:633 sys-utils/blkdiscard.c:92
-#: sys-utils/blkpr.c:213 sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:633
+#: sys-utils/blkdiscard.c:92 sys-utils/blkpr.c:213 sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [<옵션>] <장치>\n"
@@ -1137,21 +1140,21 @@ msgstr "지원하지 않는 소거 모드"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "장치 속성(섹터 크기와 수치 사양)은 지정한 장치 하나에 대해서만 사용해야 합니다."
 
-#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122 disk-utils/fsck.cramfs.c:723
-#: disk-utils/mkfs.bfs.c:211 disk-utils/mkfs.cramfs.c:799
-#: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
-#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:525
-#: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:592
-#: misc-utils/whereis.c:603 misc-utils/whereis.c:614 misc-utils/whereis.c:659
-#: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:207
-#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1579
-#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
-#: sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656 sys-utils/mount.c:867
-#: sys-utils/mount.c:875 sys-utils/mount.c:924 sys-utils/mount.c:937
-#: sys-utils/mount.c:1009 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
-#: sys-utils/swapoff.c:258 sys-utils/swapon.c:1011 sys-utils/switch_root.c:270
-#: sys-utils/umount.c:629 term-utils/setterm.c:1197 text-utils/col.c:584
-#: text-utils/more.c:2096
+#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122
+#: disk-utils/fsck.cramfs.c:723 disk-utils/mkfs.bfs.c:211
+#: disk-utils/mkfs.cramfs.c:799 disk-utils/partx.c:975 disk-utils/raw.c:136
+#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
+#: misc-utils/cal.c:525 misc-utils/findfs.c:58 misc-utils/look.c:147
+#: misc-utils/whereis.c:592 misc-utils/whereis.c:603 misc-utils/whereis.c:614
+#: misc-utils/whereis.c:659 schedutils/chrt.c:442 schedutils/ionice.c:264
+#: schedutils/taskset.c:207 sys-utils/chcpu.c:355 sys-utils/chmem.c:429
+#: sys-utils/dmesg.c:1579 sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321
+#: sys-utils/losetup.c:918 sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656
+#: sys-utils/mount.c:867 sys-utils/mount.c:875 sys-utils/mount.c:924
+#: sys-utils/mount.c:937 sys-utils/mount.c:1009 sys-utils/mountpoint.c:191
+#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:258 sys-utils/swapon.c:1011
+#: sys-utils/switch_root.c:270 sys-utils/umount.c:629
+#: term-utils/setterm.c:1197 text-utils/col.c:584 text-utils/more.c:2096
 msgid "bad usage"
 msgstr "잘못된 사용법"
 
@@ -9875,10 +9878,9 @@ msgid "specify one file descriptor or file name"
 msgstr "파일 서술자 1건 또는 파일 이름을 지정하십시오"
 
 #: misc-utils/fadvise.c:156
-#, fuzzy, c-format
-#| msgid "failed to advise"
+#, c-format
 msgid "failed to advise: %s"
-msgstr "자문 실패"
+msgstr "자문 실패: %s"
 
 #: misc-utils/fincore.c:61
 msgid "file data resident in memory in pages"
@@ -15986,10 +15988,9 @@ msgid "cannot open rtc device"
 msgstr "RTC 장치를 열 수 없습니다"
 
 #: sys-utils/hwclock-rtc.c:140
-#, fuzzy, c-format
-#| msgid "ioctl(%s) to %s to read the time failed"
+#, c-format
 msgid "ioctl(RTC_RD_NAME) to %s to read the time failed"
-msgstr "시간을 읽어올 %2$s에 대한 ioctl(%1$s) 호출 실패"
+msgstr "시간을 읽어올 %s에 대한 ioctl(RTC_RD_NAME) 호출 실패"
 
 #: sys-utils/hwclock-rtc.c:177
 #, c-format
@@ -16021,16 +16022,14 @@ msgid "ioctl(%d, RTC_UIE_ON, 0) to %s failed"
 msgstr "%2$s에 대한 ioctl(%1$d, RTC_UIE_ON, 0) 호출 실패"
 
 #: sys-utils/hwclock-rtc.c:303
-#, fuzzy, c-format
-#| msgid "ioctl(%s) to %s to set the time failed"
+#, c-format
 msgid "ioctl(RTC_SET_TIME) to %s to set the time failed"
-msgstr "시간을 설정하려는 %2$s에 대한 ioctl(%1$s) 호출 실패"
+msgstr "시간을 설정하려는 %s에 대한 ioctl(RTC_SET_TIME) 호출 실패"
 
 #: sys-utils/hwclock-rtc.c:309
-#, fuzzy, c-format
-#| msgid "ioctl(%s) was successful.\n"
+#, c-format
 msgid "ioctl(RTC_SET_TIME) was successful.\n"
-msgstr "ioctl(%s) 호출에 성공했습니다.\n"
+msgstr "ioctl(RTC_SET_TIME) 호출에 성공했습니다.\n"
 
 #: sys-utils/hwclock-rtc.c:325
 msgid "Using the rtc interface to the clock."
