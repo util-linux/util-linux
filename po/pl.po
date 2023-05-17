@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.39-rc3\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-04-19 10:22+0200\n"
+"POT-Creation-Date: 2023-05-17 11:52+0200\n"
 "PO-Revision-Date: 2023-04-19 19:15+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -88,8 +88,7 @@ msgstr "błędny numer partycji"
 msgid "invalid start argument"
 msgstr "błędna wartość początku"
 
-#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111
-#: misc-utils/fadvise.c:115
+#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111 misc-utils/fadvise.c:115
 msgid "invalid length argument"
 msgstr "błędna wartość długości"
 
@@ -488,8 +487,7 @@ msgstr "Nie udało się zapisać skryptu %s"
 msgid "Select label type"
 msgstr "Proszę wybrać typ etykiety"
 
-#: disk-utils/cfdisk.c:2197 disk-utils/fdisk.c:1162
-#: disk-utils/fdisk-menu.c:492
+#: disk-utils/cfdisk.c:2197 disk-utils/fdisk.c:1162 disk-utils/fdisk-menu.c:492
 msgid "Device does not contain a recognized partition table."
 msgstr "Urządzenie nie zawiera żadnej znanej tablicy partycji."
 
@@ -634,8 +632,7 @@ msgstr "Nowy rozmiar: "
 msgid "Partition %zu resized."
 msgstr "Zmieniono rozmiar partycji %zu."
 
-#: disk-utils/cfdisk.c:2506 disk-utils/fdisk.c:1138
-#: disk-utils/fdisk-menu.c:595
+#: disk-utils/cfdisk.c:2506 disk-utils/fdisk.c:1138 disk-utils/fdisk-menu.c:595
 msgid "Device is open in read-only mode."
 msgstr "Urządzenie jest otwarte w trybie tylko do odczytu."
 
@@ -717,7 +714,7 @@ msgid " -r, --read-only          forced open cfdisk in read-only mode\n"
 msgstr " -r, --read-only          wymuszenie otwarcia cfdiska w trybie tylko do odczytu\n"
 
 #: disk-utils/cfdisk.c:2768 disk-utils/fdisk.c:1014 disk-utils/sfdisk.c:2350
-#: misc-utils/cal.c:421 sys-utils/dmesg.c:1499 text-utils/hexdump.c:121
+#: misc-utils/cal.c:421 sys-utils/dmesg.c:1499 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "nie obsługiwany tryb koloru"
 
@@ -772,8 +769,8 @@ msgstr ""
 "Kontynuacja... "
 
 #: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:633
-#: sys-utils/blkdiscard.c:92 sys-utils/blkpr.c:213 sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:633 sys-utils/blkdiscard.c:92
+#: sys-utils/blkpr.c:213 sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [opcje] <urządzenie>\n"
@@ -1142,21 +1139,21 @@ msgstr "nie obsługiwany tryb wymazywania"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Właściwości urządzenia (rozmiar sektora i geometria) powinny być używane tylko z jednym określonym urządzeniem."
 
-#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122
-#: disk-utils/fsck.cramfs.c:723 disk-utils/mkfs.bfs.c:211
-#: disk-utils/mkfs.cramfs.c:799 disk-utils/partx.c:975 disk-utils/raw.c:136
-#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
-#: misc-utils/cal.c:525 misc-utils/findfs.c:58 misc-utils/look.c:147
-#: misc-utils/whereis.c:592 misc-utils/whereis.c:603 misc-utils/whereis.c:614
-#: misc-utils/whereis.c:659 schedutils/chrt.c:442 schedutils/ionice.c:264
-#: schedutils/taskset.c:207 sys-utils/chcpu.c:355 sys-utils/chmem.c:429
-#: sys-utils/dmesg.c:1579 sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321
-#: sys-utils/losetup.c:918 sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656
-#: sys-utils/mount.c:867 sys-utils/mount.c:875 sys-utils/mount.c:924
-#: sys-utils/mount.c:937 sys-utils/mount.c:1009 sys-utils/mountpoint.c:191
-#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:258 sys-utils/swapon.c:1011
-#: sys-utils/switch_root.c:270 sys-utils/umount.c:629
-#: term-utils/setterm.c:1197 text-utils/col.c:584 text-utils/more.c:2096
+#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122 disk-utils/fsck.cramfs.c:723
+#: disk-utils/mkfs.bfs.c:211 disk-utils/mkfs.cramfs.c:799
+#: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
+#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:525
+#: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:592
+#: misc-utils/whereis.c:603 misc-utils/whereis.c:614 misc-utils/whereis.c:659
+#: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:207
+#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1579
+#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
+#: sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656 sys-utils/mount.c:867
+#: sys-utils/mount.c:875 sys-utils/mount.c:924 sys-utils/mount.c:937
+#: sys-utils/mount.c:1009 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
+#: sys-utils/swapoff.c:258 sys-utils/swapon.c:1011 sys-utils/switch_root.c:270
+#: sys-utils/umount.c:629 term-utils/setterm.c:1197 text-utils/col.c:584
+#: text-utils/more.c:2096
 msgid "bad usage"
 msgstr "błędna składnia"
 
@@ -2023,7 +2020,7 @@ msgstr "opcja '%s' wymaga argumentu"
 msgid "invalid argument of -r: %d"
 msgstr "błędny argument opcji -r: %d"
 
-#: disk-utils/fsck.c:1648
+#: disk-utils/fsck.c:1658
 msgid "the -l option can be used with one device only -- ignore"
 msgstr "opcji -l można użyć tylko z jednym urządzeniem - zignorowano"
 
@@ -2969,7 +2966,7 @@ msgstr ""
 " -V, --verbose      wyjaśnianie wykonywanych czynności; podanie tej opcji\n"
 "                      więcej niż raz powoduje uruchomienie bez faktycznej akcji\n"
 
-#: disk-utils/mkfs.c:133 include/c.h:310 login-utils/su-common.c:1290
+#: disk-utils/mkfs.c:133 include/c.h:310 login-utils/su-common.c:1292
 #: login-utils/sulogin.c:864 login-utils/sulogin.c:868 sys-utils/flock.c:123
 #: sys-utils/rtcwake.c:623
 #, c-format
@@ -6411,7 +6408,7 @@ msgstr "Etykieta dysku zapisana na %s (proszt nie zapomnieć zapisać także ety
 msgid "Disklabel written to %s."
 msgstr "Etykieta dysku zapisana na %s."
 
-#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:776
+#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:777
 msgid "Syncing disks."
 msgstr "Synchronizacja dysków."
 
@@ -6440,62 +6437,62 @@ msgstr "RozmB"
 msgid "Cpg"
 msgstr "Cpg"
 
-#: libfdisk/src/context.c:766
+#: libfdisk/src/context.c:767
 #, c-format
 msgid "%s: fsync device failed"
 msgstr "%s: fsync urządzenia nie powiodło się"
 
-#: libfdisk/src/context.c:771 misc-utils/wipefs.c:619
+#: libfdisk/src/context.c:772 misc-utils/wipefs.c:619
 #, c-format
 msgid "%s: close device failed"
 msgstr "%s: zamknięcie urządzenia nie powiodło się"
 
-#: libfdisk/src/context.c:854
+#: libfdisk/src/context.c:855
 msgid "Calling ioctl() to re-read partition table."
 msgstr "Wywoływanie ioctl() w celu ponownego odczytu tablicy partycji."
 
-#: libfdisk/src/context.c:862
+#: libfdisk/src/context.c:863
 msgid "Re-reading the partition table failed."
 msgstr "Ponowny odczyt tablicy partycji nie powiódł się."
 
-#: libfdisk/src/context.c:864
+#: libfdisk/src/context.c:865
 msgid "The kernel still uses the old table. The new table will be used at the next reboot or after you run partprobe(8) or partx(8)."
 msgstr "Jądro nadal używa starej tablicy. Nowa tablica będzie używana po następnym restarcie systemu albo po uruchomieniu partprobe(8) lub partx(8)."
 
-#: libfdisk/src/context.c:954
+#: libfdisk/src/context.c:955
 #, c-format
 msgid "Failed to remove partition %zu from system"
 msgstr "Nie udało się usunąć partycji %zu z systemu"
 
-#: libfdisk/src/context.c:963
+#: libfdisk/src/context.c:964
 #, c-format
 msgid "Failed to update system information about partition %zu"
 msgstr "Nie udało się uaktualnić informacji systemowych o partycji %zu"
 
-#: libfdisk/src/context.c:983
+#: libfdisk/src/context.c:984
 #, c-format
 msgid "Failed to add partition %zu to system"
 msgstr "Nie udało się dodać partycji %zu do systemu"
 
-#: libfdisk/src/context.c:989
+#: libfdisk/src/context.c:990
 msgid "The kernel still uses the old partitions. The new table will be used at the next reboot. "
 msgstr "Jądro nadal używa starej tablicy partycji. Nowa tablica będzie używana po następnym restarcie systemu. "
 
-#: libfdisk/src/context.c:1193
+#: libfdisk/src/context.c:1194
 msgid "cylinder"
 msgid_plural "cylinders"
 msgstr[0] "cylinder"
 msgstr[1] "cylindry"
 msgstr[2] "cylindrów"
 
-#: libfdisk/src/context.c:1194
+#: libfdisk/src/context.c:1195
 msgid "sector"
 msgid_plural "sectors"
 msgstr[0] "sektor"
 msgstr[1] "sektory"
 msgstr[2] "sektorów"
 
-#: libfdisk/src/context.c:1550
+#: libfdisk/src/context.c:1551
 msgid "Incomplete geometry setting."
 msgstr "Niekompletne ustawienia geometrii."
 
@@ -7162,11 +7159,11 @@ msgstr "Nie ma nic do zrobienia, kolejność już jest prawidłowa."
 msgid "Failed to fix partitions order."
 msgstr "Nie udało się poprawić kolejności partycji."
 
-#: libfdisk/src/partition.c:871
+#: libfdisk/src/partition.c:879
 msgid "Free space"
 msgstr "Wolne miejsce"
 
-#: libfdisk/src/partition.c:1365
+#: libfdisk/src/partition.c:1373
 #, c-format
 msgid "Failed to resize partition #%zu."
 msgstr "Nie udało się zmienić rozmiaru partycji #%zu."
@@ -9063,74 +9060,74 @@ msgstr " (zrzut pamięci)"
 msgid "change owner or mode for pseudo-terminal failed"
 msgstr "zmiana właściciela lub uprawnień pseudoterminala nie powiodła się"
 
-#: login-utils/su-common.c:375
+#: login-utils/su-common.c:377
 msgid "failed to modify environment"
 msgstr "nie udało się zmodyfikować środowiska"
 
-#: login-utils/su-common.c:411
+#: login-utils/su-common.c:413
 msgid "may not be used by non-root users"
 msgstr "runuser może być używane tylko przez roota"
 
-#: login-utils/su-common.c:435
+#: login-utils/su-common.c:437
 msgid "authentication failed"
 msgstr "uwierzytelnienie nie powiodło się"
 
-#: login-utils/su-common.c:448
+#: login-utils/su-common.c:450
 #, c-format
 msgid "cannot open session: %s"
 msgstr "nie można otworzyć sesji: %s"
 
-#: login-utils/su-common.c:467
+#: login-utils/su-common.c:469
 msgid "cannot block signals"
 msgstr "nie można zablokować sygnałów"
 
-#: login-utils/su-common.c:484
+#: login-utils/su-common.c:486
 msgid "cannot initialize signal mask for session"
 msgstr "nie można zainicjować maski sygnałów dla sesji"
 
-#: login-utils/su-common.c:492
+#: login-utils/su-common.c:494
 msgid "cannot initialize signal mask"
 msgstr "nie można zainicjować maski sygnałów"
 
-#: login-utils/su-common.c:502
+#: login-utils/su-common.c:504
 msgid "cannot set signal handler for session"
 msgstr "nie można ustawić procedury obsługi sygnałów dla sesji"
 
-#: login-utils/su-common.c:510 misc-utils/uuidd.c:439
+#: login-utils/su-common.c:512 misc-utils/uuidd.c:439
 #: sys-utils/lscpu-virt.c:489
 msgid "cannot set signal handler"
 msgstr "nie można ustawić procedury obsługi sygnału"
 
-#: login-utils/su-common.c:518
+#: login-utils/su-common.c:520
 msgid "cannot set signal mask"
 msgstr "nie można ustawić maski sygnałów"
 
-#: login-utils/su-common.c:545 term-utils/script.c:961
+#: login-utils/su-common.c:547 term-utils/script.c:961
 #: term-utils/scriptlive.c:296
 msgid "failed to create pseudo-terminal"
 msgstr "nie udało się utworzyć pseudoterminala"
 
-#: login-utils/su-common.c:547 term-utils/script.c:968
+#: login-utils/su-common.c:549 term-utils/script.c:968
 #: term-utils/scriptlive.c:298
 msgid "failed to initialize signals handler"
 msgstr "nie udało się zainicjować obsługi sygnałów"
 
-#: login-utils/su-common.c:562
+#: login-utils/su-common.c:564
 msgid "cannot set child signal handler"
 msgstr "nie można ustawić procedury obsługi sygnału potomka"
 
-#: login-utils/su-common.c:572 term-utils/script.c:977
+#: login-utils/su-common.c:574 term-utils/script.c:977
 #: term-utils/scriptlive.c:305
 msgid "cannot create child process"
 msgstr "nie można utworzyć procesu potomnego"
 
-#: login-utils/su-common.c:591 sys-utils/nsenter.c:510
+#: login-utils/su-common.c:593 sys-utils/nsenter.c:510
 #: sys-utils/switch_root.c:189
 #, c-format
 msgid "cannot change directory to %s"
 msgstr "nie można zmienić katalogu na %s"
 
-#: login-utils/su-common.c:617 term-utils/scriptlive.c:354
+#: login-utils/su-common.c:619 term-utils/scriptlive.c:354
 #, c-format
 msgid ""
 "\n"
@@ -9139,57 +9136,57 @@ msgstr ""
 "\n"
 "Sesja przerwana, zabijanie powłoki..."
 
-#: login-utils/su-common.c:628
+#: login-utils/su-common.c:630
 #, c-format
 msgid " ...killed.\n"
 msgstr " ...zabito.\n"
 
-#: login-utils/su-common.c:725
+#: login-utils/su-common.c:727
 msgid "failed to set the PATH environment variable"
 msgstr "nie udało się ustawić zmiennej środowiskowej PATH"
 
-#: login-utils/su-common.c:802
+#: login-utils/su-common.c:804
 msgid "cannot set groups"
 msgstr "nie można ustawić grup"
 
-#: login-utils/su-common.c:808
+#: login-utils/su-common.c:810
 #, c-format
 msgid "failed to establish user credentials: %s"
 msgstr "nie udało się ustalić danych uwierzytelniających użytkownika: %s"
 
-#: login-utils/su-common.c:818
+#: login-utils/su-common.c:820
 msgid "cannot set group id"
 msgstr "nie można ustawić identyfikatora grupy"
 
-#: login-utils/su-common.c:820
+#: login-utils/su-common.c:822
 msgid "cannot set user id"
 msgstr "nie można ustawić identyfikatora użytkownika"
 
-#: login-utils/su-common.c:884
+#: login-utils/su-common.c:886
 msgid " -m, -p, --preserve-environment      do not reset environment variables\n"
 msgstr " -m, -p, --preserve-environment      bez kasowania zmiennych środowiskowych\n"
 
-#: login-utils/su-common.c:885
+#: login-utils/su-common.c:887
 msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
 msgstr " -w, --whitelist-environment <lista>  bez kasowania podanych zmiennych\n"
 
-#: login-utils/su-common.c:888
+#: login-utils/su-common.c:890
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr " -g, --group <grupa>             określenie grupy głównej\n"
 
-#: login-utils/su-common.c:889
+#: login-utils/su-common.c:891
 msgid " -G, --supp-group <group>        specify a supplemental group\n"
 msgstr " -G, --supp-group <grupa>        określenie grupy dodatkowej\n"
 
-#: login-utils/su-common.c:892
+#: login-utils/su-common.c:894
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr " -, -l, --login                  uczynienie powłoki powłoką logowania\n"
 
-#: login-utils/su-common.c:893
+#: login-utils/su-common.c:895
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr " -c  --command <polecenie>       przekazanie polecenia do powłoki przez -c\n"
 
-#: login-utils/su-common.c:894
+#: login-utils/su-common.c:896
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
@@ -9197,19 +9194,19 @@ msgstr ""
 " --session-command <polecenie>   przekazanie pojedynczego polecenia do powłoki\n"
 "                                   przez -c bez tworzenia nowej sesji\n"
 
-#: login-utils/su-common.c:896
+#: login-utils/su-common.c:898
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr " -f, --fast                      przekazanie -f do powłoki (dla csh i tcsh)\n"
 
-#: login-utils/su-common.c:897
+#: login-utils/su-common.c:899
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr " -s, --shell <powłoka>           uruchomienie <powłoki>, jeśli /etc/shells pozwala\n"
 
-#: login-utils/su-common.c:898
+#: login-utils/su-common.c:900
 msgid " -P, --pty                       create a new pseudo-terminal\n"
 msgstr " -P, --pty                       utworzenie nowego pseudoterminala\n"
 
-#: login-utils/su-common.c:908
+#: login-utils/su-common.c:910
 #, c-format
 msgid ""
 " %1$s [options] -u <user> [[--] <command>]\n"
@@ -9218,7 +9215,7 @@ msgstr ""
 " %1$s [opcje] -u <użytkownik> [[--] <polecenie>]\n"
 " %1$s [opcje] [-] [<użytkownik> [<argument>...]]\n"
 
-#: login-utils/su-common.c:913
+#: login-utils/su-common.c:915
 msgid ""
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
 "not given, fall back to su(1)-compatible semantics and execute standard shell.\n"
@@ -9229,16 +9226,16 @@ msgstr ""
 "i wywołanie standardowej powłoki.\n"
 "Opcje -c, -f, -l i -s wykluczają się z -u.\n"
 
-#: login-utils/su-common.c:918
+#: login-utils/su-common.c:920
 msgid " -u, --user <user>               username\n"
 msgstr " -u, --user <użytkownik>         nazwa użytkownika\n"
 
-#: login-utils/su-common.c:929
+#: login-utils/su-common.c:931
 #, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr " %s [opcje] [-] [<użytkownik> [<argument>...]]\n"
 
-#: login-utils/su-common.c:933
+#: login-utils/su-common.c:935
 msgid ""
 "Change the effective user ID and group ID to that of <user>.\n"
 "A mere - implies -l.  If <user> is not given, root is assumed.\n"
@@ -9246,7 +9243,7 @@ msgstr ""
 "Zmiana efektywnego ID użytkownika i grupy na identyfikatory <użytkownika>.\n"
 "Sam - oznacza -l. Jeśli nie podano <użytkownika>, przyjmowany jest root.\n"
 
-#: login-utils/su-common.c:1010
+#: login-utils/su-common.c:1012
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
@@ -9254,46 +9251,46 @@ msgstr[0] "podanie więcej niż %d grupy dodatkowej nie jest możliwe"
 msgstr[1] "podanie więcej niż %d grup dodatkowych nie jest możliwe"
 msgstr[2] "podanie więcej niż %d grup dodatkowych nie jest możliwe"
 
-#: login-utils/su-common.c:1016
+#: login-utils/su-common.c:1018
 #, c-format
 msgid "group %s does not exist"
 msgstr "grupa %s nie istnieje"
 
-#: login-utils/su-common.c:1125
+#: login-utils/su-common.c:1127
 msgid "--pty is not supported for your system"
 msgstr "--pty nie jest obsługiwane dla tego systemu"
 
-#: login-utils/su-common.c:1159
+#: login-utils/su-common.c:1161
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr "zignorowano --preserve-environment, wyklucza się z --login"
 
-#: login-utils/su-common.c:1173
+#: login-utils/su-common.c:1175
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr "opcje --{shell,fast,command,session-command,login} oraz --user wykluczają się wzajemnie"
 
-#: login-utils/su-common.c:1176
+#: login-utils/su-common.c:1178
 msgid "no command was specified"
 msgstr "nie podano polecenia"
 
-#: login-utils/su-common.c:1188
+#: login-utils/su-common.c:1190
 msgid "only root can specify alternative groups"
 msgstr "tylko root może podawać grupy alternatywne"
 
-#: login-utils/su-common.c:1199
+#: login-utils/su-common.c:1201
 #, c-format
 msgid "user %s does not exist or the user entry does not contain all the required fields"
 msgstr "użytkownik %s nie istnieje lub jego wpis nie zawiera wszystkich wymaganych pól"
 
-#: login-utils/su-common.c:1234
+#: login-utils/su-common.c:1236
 #, c-format
 msgid "using restricted shell %s"
 msgstr "użycie ograniczonej powłoki %s"
 
-#: login-utils/su-common.c:1255
+#: login-utils/su-common.c:1257
 msgid "failed to allocate pty handler"
 msgstr "nie udało się przydzielić obsługi pty"
 
-#: login-utils/su-common.c:1281
+#: login-utils/su-common.c:1283
 #, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "uwaga: nie można zmienić katalogu na %s"
@@ -12464,7 +12461,7 @@ msgid "closing %s failed"
 msgstr "zamknięcie %s nie powiodło się"
 
 #: misc-utils/mcookie.c:168 sys-utils/blkdiscard.c:204 sys-utils/fstrim.c:542
-#: text-utils/hexdump.c:124
+#: text-utils/hexdump.c:117
 msgid "failed to parse length"
 msgstr "niezrozumiała długość"
 
@@ -13930,7 +13927,7 @@ msgid "%s: %s ioctl failed"
 msgstr "%s: ioctl %s nie powiódł się"
 
 #: sys-utils/blkdiscard.c:208 sys-utils/fstrim.c:546 sys-utils/losetup.c:710
-#: text-utils/hexdump.c:131
+#: text-utils/hexdump.c:124
 msgid "failed to parse offset"
 msgstr "niezrozumiały offset"
 

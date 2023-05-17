@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.26-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-04-19 09:50+0200\n"
+"POT-Creation-Date: 2023-05-17 11:52+0200\n"
 "PO-Revision-Date: 2015-02-15 08:31+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -748,7 +748,7 @@ msgid " -r, --read-only          forced open cfdisk in read-only mode\n"
 msgstr " -r, --read-only               cài đặt thiết bị loop chỉ-đọc\n"
 
 #: disk-utils/cfdisk.c:2768 disk-utils/fdisk.c:1014 disk-utils/sfdisk.c:2350
-#: misc-utils/cal.c:421 sys-utils/dmesg.c:1499 text-utils/hexdump.c:121
+#: misc-utils/cal.c:421 sys-utils/dmesg.c:1499 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "không được hỗ trợ tô màu"
 
@@ -2087,7 +2087,7 @@ msgstr "tùy chọn “%s” cần một đối số"
 msgid "invalid argument of -r: %d"
 msgstr "đối số không hợp lệ - đến (to)"
 
-#: disk-utils/fsck.c:1648
+#: disk-utils/fsck.c:1658
 msgid "the -l option can be used with one device only -- ignore"
 msgstr "tùy chọn -l chỉ có thể sử dụng với một thiết bị mà thôi -- ignore"
 
@@ -3050,7 +3050,7 @@ msgstr ""
 " -V, --verbose      giải thích đang làm những gì;\n"
 "                      chỉ định -V nhiều hơn một sẽ thực hiện chạy thử\n"
 
-#: disk-utils/mkfs.c:133 include/c.h:310 login-utils/su-common.c:1290
+#: disk-utils/mkfs.c:133 include/c.h:310 login-utils/su-common.c:1292
 #: login-utils/sulogin.c:864 login-utils/sulogin.c:868 sys-utils/flock.c:123
 #: sys-utils/rtcwake.c:623
 #, c-format
@@ -6709,7 +6709,7 @@ msgstr ""
 msgid "Disklabel written to %s."
 msgstr "Nhãn đĩa được ghi vào %s."
 
-#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:776
+#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:777
 msgid "Syncing disks."
 msgstr "Đang đồng bộ hóa các đĩa."
 
@@ -6738,60 +6738,60 @@ msgstr "Bsize"
 msgid "Cpg"
 msgstr "Cpg"
 
-#: libfdisk/src/context.c:766
+#: libfdisk/src/context.c:767
 #, fuzzy, c-format
 msgid "%s: fsync device failed"
 msgstr "%s: gặp lỗi khi đóng thiết-bị"
 
-#: libfdisk/src/context.c:771 misc-utils/wipefs.c:619
+#: libfdisk/src/context.c:772 misc-utils/wipefs.c:619
 #, c-format
 msgid "%s: close device failed"
 msgstr "%s: gặp lỗi khi đóng thiết-bị"
 
-#: libfdisk/src/context.c:854
+#: libfdisk/src/context.c:855
 msgid "Calling ioctl() to re-read partition table."
 msgstr "Đang gọi hàm ioctl() để đọc lại bảng phân vùng."
 
-#: libfdisk/src/context.c:862
+#: libfdisk/src/context.c:863
 msgid "Re-reading the partition table failed."
 msgstr "Gl khi đọc lại bảng phân vùng."
 
-#: libfdisk/src/context.c:864
+#: libfdisk/src/context.c:865
 #, fuzzy
 msgid "The kernel still uses the old table. The new table will be used at the next reboot or after you run partprobe(8) or partx(8)."
 msgstr "Nhân hệ điều hành vẫn còn dùng bảng cũ. Bảng mới sẽ được dùng ở lần khởi động kế tiếp, hoặc sau khi bạn chạy lệnh partprobe(8) hay kpartx(8)."
 
-#: libfdisk/src/context.c:954
+#: libfdisk/src/context.c:955
 #, fuzzy, c-format
 msgid "Failed to remove partition %zu from system"
 msgstr "gặp lỗi khi gỡ bỏ phân vùng"
 
-#: libfdisk/src/context.c:963
+#: libfdisk/src/context.c:964
 #, fuzzy, c-format
 msgid "Failed to update system information about partition %zu"
 msgstr "Hiển thị thông tin về thiết bị khối.\n"
 
-#: libfdisk/src/context.c:983
+#: libfdisk/src/context.c:984
 #, fuzzy, c-format
 msgid "Failed to add partition %zu to system"
 msgstr "gặp lỗi khi thêm phân vùng"
 
-#: libfdisk/src/context.c:989
+#: libfdisk/src/context.c:990
 #, fuzzy
 msgid "The kernel still uses the old partitions. The new table will be used at the next reboot. "
 msgstr "Nhân hệ điều hành vẫn còn dùng bảng cũ. Bảng mới sẽ được dùng ở lần khởi động kế tiếp, hoặc sau khi bạn chạy lệnh partprobe(8) hay kpartx(8)."
 
-#: libfdisk/src/context.c:1193
+#: libfdisk/src/context.c:1194
 msgid "cylinder"
 msgid_plural "cylinders"
 msgstr[0] "trụ"
 
-#: libfdisk/src/context.c:1194
+#: libfdisk/src/context.c:1195
 msgid "sector"
 msgid_plural "sectors"
 msgstr[0] "cung từ"
 
-#: libfdisk/src/context.c:1550
+#: libfdisk/src/context.c:1551
 msgid "Incomplete geometry setting."
 msgstr "Cài đặt hình học không hoàn thiện."
 
@@ -7484,11 +7484,11 @@ msgstr "Không cần làm gì. Thứ tự đã đúng rồi."
 msgid "Failed to fix partitions order."
 msgstr "sửa thứ tự phân vùng"
 
-#: libfdisk/src/partition.c:871
+#: libfdisk/src/partition.c:879
 msgid "Free space"
 msgstr "Chỗ trống"
 
-#: libfdisk/src/partition.c:1365
+#: libfdisk/src/partition.c:1373
 #, fuzzy, c-format
 msgid "Failed to resize partition #%zu."
 msgstr "thay đổi kích thước phân vùng gặp lỗi"
@@ -9417,83 +9417,83 @@ msgstr "(lõi được đổ)"
 msgid "change owner or mode for pseudo-terminal failed"
 msgstr ""
 
-#: login-utils/su-common.c:375
+#: login-utils/su-common.c:377
 #, fuzzy
 msgid "failed to modify environment"
 msgstr "gặp lỗi khi mở thư mục"
 
-#: login-utils/su-common.c:411
+#: login-utils/su-common.c:413
 msgid "may not be used by non-root users"
 msgstr "không thể được dùng bởi một tài khoản không phải siêu quản trị"
 
-#: login-utils/su-common.c:435
+#: login-utils/su-common.c:437
 #, fuzzy
 msgid "authentication failed"
 msgstr "tcgetattr gặp lỗi"
 
-#: login-utils/su-common.c:448
+#: login-utils/su-common.c:450
 #, c-format
 msgid "cannot open session: %s"
 msgstr "không thể mở phiên: %s"
 
-#: login-utils/su-common.c:467
+#: login-utils/su-common.c:469
 msgid "cannot block signals"
 msgstr "không thể ngăn cản các tín hiệu"
 
-#: login-utils/su-common.c:484
+#: login-utils/su-common.c:486
 msgid "cannot initialize signal mask for session"
 msgstr ""
 
-#: login-utils/su-common.c:492
+#: login-utils/su-common.c:494
 #, fuzzy
 msgid "cannot initialize signal mask"
 msgstr "không thể ngăn cản các tín hiệu"
 
-#: login-utils/su-common.c:502
+#: login-utils/su-common.c:504
 #, fuzzy
 msgid "cannot set signal handler for session"
 msgstr "không đặt bộ tiếp hợp tín hiệu"
 
-#: login-utils/su-common.c:510 misc-utils/uuidd.c:439
+#: login-utils/su-common.c:512 misc-utils/uuidd.c:439
 #: sys-utils/lscpu-virt.c:489
 msgid "cannot set signal handler"
 msgstr "không đặt bộ tiếp hợp tín hiệu"
 
-#: login-utils/su-common.c:518
+#: login-utils/su-common.c:520
 #, fuzzy
 msgid "cannot set signal mask"
 msgstr "không đặt bộ tiếp hợp tín hiệu"
 
-#: login-utils/su-common.c:545 term-utils/script.c:961
+#: login-utils/su-common.c:547 term-utils/script.c:961
 #: term-utils/scriptlive.c:296
 #, fuzzy
 msgid "failed to create pseudo-terminal"
 msgstr "gặp lỗi khi phân bổ bảng kết xuất"
 
-#: login-utils/su-common.c:547 term-utils/script.c:968
+#: login-utils/su-common.c:549 term-utils/script.c:968
 #: term-utils/scriptlive.c:298
 #, fuzzy
 msgid "failed to initialize signals handler"
 msgstr "%s: gặp lỗi ghi khởi tạo bộ tiếp hợp sysfs"
 
-#: login-utils/su-common.c:562
+#: login-utils/su-common.c:564
 #, fuzzy
 #| msgid "cannot set signal handler"
 msgid "cannot set child signal handler"
 msgstr "không đặt bộ tiếp hợp tín hiệu"
 
-#: login-utils/su-common.c:572 term-utils/script.c:977
+#: login-utils/su-common.c:574 term-utils/script.c:977
 #: term-utils/scriptlive.c:305
 msgid "cannot create child process"
 msgstr "không thể tạo tiến trình con"
 
-#: login-utils/su-common.c:591 sys-utils/nsenter.c:510
+#: login-utils/su-common.c:593 sys-utils/nsenter.c:510
 #: sys-utils/switch_root.c:189
 #, c-format
 msgid "cannot change directory to %s"
 msgstr "không chuyển đổi được sang thư mục %s"
 
-#: login-utils/su-common.c:617 term-utils/scriptlive.c:354
+#: login-utils/su-common.c:619 term-utils/scriptlive.c:354
 #, c-format
 msgid ""
 "\n"
@@ -9502,63 +9502,63 @@ msgstr ""
 "\n"
 "Phiên làm việc bị chấm dứt, đang giết shell…"
 
-#: login-utils/su-common.c:628
+#: login-utils/su-common.c:630
 #, c-format
 msgid " ...killed.\n"
 msgstr " …bị giết.\n"
 
-#: login-utils/su-common.c:725
+#: login-utils/su-common.c:727
 #, fuzzy
 msgid "failed to set the PATH environment variable"
 msgstr "gặp lỗi khi đặt giới hạn nguồn %s"
 
-#: login-utils/su-common.c:802
+#: login-utils/su-common.c:804
 msgid "cannot set groups"
 msgstr "không đặt được các nhóm"
 
-#: login-utils/su-common.c:808
+#: login-utils/su-common.c:810
 #, fuzzy, c-format
 msgid "failed to establish user credentials: %s"
 msgstr "không phân tích được mức “%s”"
 
-#: login-utils/su-common.c:818
+#: login-utils/su-common.c:820
 msgid "cannot set group id"
 msgstr "không đặt được mã số nhóm (GID)"
 
-#: login-utils/su-common.c:820
+#: login-utils/su-common.c:822
 msgid "cannot set user id"
 msgstr "không đặt được mã số người dùng (UID)"
 
-#: login-utils/su-common.c:884
+#: login-utils/su-common.c:886
 #, fuzzy
 msgid " -m, -p, --preserve-environment      do not reset environment variables\n"
 msgstr " -m, -p, --preserve-environment  không đặt lại các biến môi trường\n"
 
-#: login-utils/su-common.c:885
+#: login-utils/su-common.c:887
 #, fuzzy
 msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
 msgstr " -m, -p, --preserve-environment  không đặt lại các biến môi trường\n"
 
-#: login-utils/su-common.c:888
+#: login-utils/su-common.c:890
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr " -g, --group <nhóm>              chỉ định nhóm chính\n"
 
-#: login-utils/su-common.c:889
+#: login-utils/su-common.c:891
 #, fuzzy
 msgid " -G, --supp-group <group>        specify a supplemental group\n"
 msgstr ""
 " -G, --supp-group <nhóm>         chỉ định nhóm phụ thêm vào\n"
 "\n"
 
-#: login-utils/su-common.c:892
+#: login-utils/su-common.c:894
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr " -, -l, --login                  làm hệ vỏ đăng nhập hệ vỏ\n"
 
-#: login-utils/su-common.c:893
+#: login-utils/su-common.c:895
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr " -c  --command <lệnh>            chuyển một câu lệnh đơn cho hệ vỏ với -c\n"
 
-#: login-utils/su-common.c:894
+#: login-utils/su-common.c:896
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
@@ -9566,20 +9566,20 @@ msgstr ""
 " --session-command <lệnh>        chuyển một câu lệnh đơn cho hệ vỏ với -c\n"
 "                                    và không tạo một phiên mới\n"
 
-#: login-utils/su-common.c:896
+#: login-utils/su-common.c:898
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr " -f, --fast                      chuyển -f tới hệ vỏ (cho csh hay tcsh)\n"
 
-#: login-utils/su-common.c:897
+#: login-utils/su-common.c:899
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr " -s, --shell <hệ vỏ>             chạy hệ vỏ nếu /etc/shells cho phép nó\n"
 
-#: login-utils/su-common.c:898
+#: login-utils/su-common.c:900
 #, fuzzy
 msgid " -P, --pty                       create a new pseudo-terminal\n"
 msgstr " -t, --table              tạo một bảng\n"
 
-#: login-utils/su-common.c:908
+#: login-utils/su-common.c:910
 #, fuzzy, c-format
 msgid ""
 " %1$s [options] -u <user> [[--] <command>]\n"
@@ -9588,7 +9588,7 @@ msgstr ""
 " %1$s [các tùy chọn] <thiết-bị> [[-N] <phần>]\n"
 " %1$s [các tùy chọn] <lệnh>\n"
 
-#: login-utils/su-common.c:913
+#: login-utils/su-common.c:915
 #, fuzzy
 msgid ""
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
@@ -9600,17 +9600,17 @@ msgstr ""
 "thì có tác dụng giống với su(1) và hệ vỏ tiêu chuẩn được thực thi.\n"
 "Các tùy chọn -c, -f, -l và -s là xung đột với -u.\n"
 
-#: login-utils/su-common.c:918
+#: login-utils/su-common.c:920
 #, fuzzy
 msgid " -u, --user <user>               username\n"
 msgstr " -u, --user <tài-khoản>        tài khoản\n"
 
-#: login-utils/su-common.c:929
+#: login-utils/su-common.c:931
 #, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr " %s [các tùy chọn] [-] [<tài-khoản> [<đối số>…]]\n"
 
-#: login-utils/su-common.c:933
+#: login-utils/su-common.c:935
 #, fuzzy
 msgid ""
 "Change the effective user ID and group ID to that of <user>.\n"
@@ -9620,54 +9620,54 @@ msgstr ""
 "Thay đổi ID người dùng và nhóm cho những cái đó của <NGƯỜI-DÙNG>.\n"
 "- hiểu là -1. Nếu không chỉ ra <NGƯỜI-DÙNG> thì coi là siêu người dùng.\n"
 
-#: login-utils/su-common.c:1010
+#: login-utils/su-common.c:1012
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
 msgstr[0] "không thể chỉ định nhiều hơn %d nhóm phụ thêm"
 
-#: login-utils/su-common.c:1016
+#: login-utils/su-common.c:1018
 #, c-format
 msgid "group %s does not exist"
 msgstr "nhóm %s không tồn tại"
 
-#: login-utils/su-common.c:1125
+#: login-utils/su-common.c:1127
 #, fuzzy
 msgid "--pty is not supported for your system"
 msgstr "hệ thống của bạn không hỗ trợ --reload"
 
-#: login-utils/su-common.c:1159
+#: login-utils/su-common.c:1161
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr "bỏ qua --preserve-environment, nó loại trừ qua lại với --login"
 
-#: login-utils/su-common.c:1173
+#: login-utils/su-common.c:1175
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr "các tùy chọn --{shell,fast,command,session-command,login} và --user loại trừ lẫn nhau"
 
-#: login-utils/su-common.c:1176
+#: login-utils/su-common.c:1178
 msgid "no command was specified"
 msgstr "chưa chỉ ra lệnh"
 
-#: login-utils/su-common.c:1188
+#: login-utils/su-common.c:1190
 msgid "only root can specify alternative groups"
 msgstr "chỉ root có thể chỉ định các nhóm thay thế"
 
-#: login-utils/su-common.c:1199
+#: login-utils/su-common.c:1201
 #, c-format
 msgid "user %s does not exist or the user entry does not contain all the required fields"
 msgstr ""
 
-#: login-utils/su-common.c:1234
+#: login-utils/su-common.c:1236
 #, c-format
 msgid "using restricted shell %s"
 msgstr "sử dụng shell (hệ vỏ) bị giới hạn %s"
 
-#: login-utils/su-common.c:1255
+#: login-utils/su-common.c:1257
 #, fuzzy
 msgid "failed to allocate pty handler"
 msgstr "gặp lỗi khi cấp phát cán của văn lệnh"
 
-#: login-utils/su-common.c:1281
+#: login-utils/su-common.c:1283
 #, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "cảnh báo: không thể chuyển đổi thư mục sang %s"
@@ -13086,7 +13086,7 @@ msgid "closing %s failed"
 msgstr "đóng %s gặp lỗi"
 
 #: misc-utils/mcookie.c:168 sys-utils/blkdiscard.c:204 sys-utils/fstrim.c:542
-#: text-utils/hexdump.c:124
+#: text-utils/hexdump.c:117
 msgid "failed to parse length"
 msgstr "không phân tích được độ dài"
 
@@ -14704,7 +14704,7 @@ msgid "%s: %s ioctl failed"
 msgstr "%s: FITRIM ioctl không thành công"
 
 #: sys-utils/blkdiscard.c:208 sys-utils/fstrim.c:546 sys-utils/losetup.c:710
-#: text-utils/hexdump.c:131
+#: text-utils/hexdump.c:124
 msgid "failed to parse offset"
 msgstr "không phân tích được offset"
 

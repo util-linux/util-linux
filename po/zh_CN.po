@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.38-rc4\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-04-19 09:50+0200\n"
+"POT-Creation-Date: 2023-05-17 11:52+0200\n"
 "PO-Revision-Date: 2022-03-17 10:51-0400\n"
 "Last-Translator: Boyuan Yang <073plan@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -719,7 +719,7 @@ msgid " -r, --read-only          forced open cfdisk in read-only mode\n"
 msgstr " -r, --read-only          强制以只读模式打开 cfdisk\n"
 
 #: disk-utils/cfdisk.c:2768 disk-utils/fdisk.c:1014 disk-utils/sfdisk.c:2350
-#: misc-utils/cal.c:421 sys-utils/dmesg.c:1499 text-utils/hexdump.c:121
+#: misc-utils/cal.c:421 sys-utils/dmesg.c:1499 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "不支持的颜色模式"
 
@@ -2030,7 +2030,7 @@ msgstr "“%s”选项需要一个参数"
 msgid "invalid argument of -r: %d"
 msgstr "-r 的参数无效：%d"
 
-#: disk-utils/fsck.c:1648
+#: disk-utils/fsck.c:1658
 msgid "the -l option can be used with one device only -- ignore"
 msgstr "-l 选项只能用于一个设备 -- 忽略"
 
@@ -2989,7 +2989,7 @@ msgstr ""
 " -V, --verbose      解释正在进行的操作；\n"
 "                      多次指定 -V 将导致空运行(dry-run)\n"
 
-#: disk-utils/mkfs.c:133 include/c.h:310 login-utils/su-common.c:1290
+#: disk-utils/mkfs.c:133 include/c.h:310 login-utils/su-common.c:1292
 #: login-utils/sulogin.c:864 login-utils/sulogin.c:868 sys-utils/flock.c:123
 #: sys-utils/rtcwake.c:623
 #, c-format
@@ -6587,7 +6587,7 @@ msgstr "磁盘标签已写入 %s。(不要忘了也写入 %s 磁盘标签。)"
 msgid "Disklabel written to %s."
 msgstr "磁盘标签已写入 %s。"
 
-#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:776
+#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:777
 msgid "Syncing disks."
 msgstr "正在同步磁盘。"
 
@@ -6616,58 +6616,58 @@ msgstr "Bsize"
 msgid "Cpg"
 msgstr "Cpg"
 
-#: libfdisk/src/context.c:766
+#: libfdisk/src/context.c:767
 #, c-format
 msgid "%s: fsync device failed"
 msgstr "%s：设备 fsync 失败"
 
-#: libfdisk/src/context.c:771 misc-utils/wipefs.c:619
+#: libfdisk/src/context.c:772 misc-utils/wipefs.c:619
 #, c-format
 msgid "%s: close device failed"
 msgstr "%s：关闭设备失败"
 
-#: libfdisk/src/context.c:854
+#: libfdisk/src/context.c:855
 msgid "Calling ioctl() to re-read partition table."
 msgstr "将调用 ioctl() 来重新读分区表。"
 
-#: libfdisk/src/context.c:862
+#: libfdisk/src/context.c:863
 msgid "Re-reading the partition table failed."
 msgstr "重新读取分区表失败。"
 
-#: libfdisk/src/context.c:864
+#: libfdisk/src/context.c:865
 msgid "The kernel still uses the old table. The new table will be used at the next reboot or after you run partprobe(8) or partx(8)."
 msgstr "内核仍在使用旧分区表。新分区表将在下次重启或运行 partprobe(8) 或 partx(8) 后生效。"
 
-#: libfdisk/src/context.c:954
+#: libfdisk/src/context.c:955
 #, c-format
 msgid "Failed to remove partition %zu from system"
 msgstr "从系统上移除分区 %zu 时失败"
 
-#: libfdisk/src/context.c:963
+#: libfdisk/src/context.c:964
 #, c-format
 msgid "Failed to update system information about partition %zu"
 msgstr "更新系统中有关分区 %zu 的信息时失败"
 
-#: libfdisk/src/context.c:983
+#: libfdisk/src/context.c:984
 #, c-format
 msgid "Failed to add partition %zu to system"
 msgstr "添加分区 %zu 至系统时失败"
 
-#: libfdisk/src/context.c:989
+#: libfdisk/src/context.c:990
 msgid "The kernel still uses the old partitions. The new table will be used at the next reboot. "
 msgstr "内核仍在使用旧分区。新分区表将在下次重启后生效。"
 
-#: libfdisk/src/context.c:1193
+#: libfdisk/src/context.c:1194
 msgid "cylinder"
 msgid_plural "cylinders"
 msgstr[0] "柱面"
 
-#: libfdisk/src/context.c:1194
+#: libfdisk/src/context.c:1195
 msgid "sector"
 msgid_plural "sectors"
 msgstr[0] "扇区"
 
-#: libfdisk/src/context.c:1550
+#: libfdisk/src/context.c:1551
 msgid "Incomplete geometry setting."
 msgstr "不完整的几何属性设置。"
 
@@ -7350,11 +7350,11 @@ msgstr "无须操作。顺序已经是正确的了。"
 msgid "Failed to fix partitions order."
 msgstr "修复分区顺序失败。"
 
-#: libfdisk/src/partition.c:871
+#: libfdisk/src/partition.c:879
 msgid "Free space"
 msgstr "剩余空间"
 
-#: libfdisk/src/partition.c:1365
+#: libfdisk/src/partition.c:1373
 #, c-format
 msgid "Failed to resize partition #%zu."
 msgstr "调整分区 #%zu 的大小失败。"
@@ -9268,84 +9268,84 @@ msgstr " (核心已转储)"
 msgid "change owner or mode for pseudo-terminal failed"
 msgstr ""
 
-#: login-utils/su-common.c:375
+#: login-utils/su-common.c:377
 msgid "failed to modify environment"
 msgstr "修改环境失败"
 
-#: login-utils/su-common.c:411
+#: login-utils/su-common.c:413
 msgid "may not be used by non-root users"
 msgstr "非 root 用户不能使用"
 
-#: login-utils/su-common.c:435
+#: login-utils/su-common.c:437
 msgid "authentication failed"
 msgstr "验证失败"
 
-#: login-utils/su-common.c:448
+#: login-utils/su-common.c:450
 #, c-format
 msgid "cannot open session: %s"
 msgstr "无法打开会话：%s"
 
-#: login-utils/su-common.c:467
+#: login-utils/su-common.c:469
 msgid "cannot block signals"
 msgstr "无法阻塞信号"
 
-#: login-utils/su-common.c:484
+#: login-utils/su-common.c:486
 msgid "cannot initialize signal mask for session"
 msgstr ""
 
-#: login-utils/su-common.c:492
+#: login-utils/su-common.c:494
 #, fuzzy
 #| msgid "cannot block signals"
 msgid "cannot initialize signal mask"
 msgstr "无法阻塞信号"
 
-#: login-utils/su-common.c:502
+#: login-utils/su-common.c:504
 #, fuzzy
 #| msgid "cannot set signal handler"
 msgid "cannot set signal handler for session"
 msgstr "无法设置信号处理函数"
 
-#: login-utils/su-common.c:510 misc-utils/uuidd.c:439
+#: login-utils/su-common.c:512 misc-utils/uuidd.c:439
 #: sys-utils/lscpu-virt.c:489
 msgid "cannot set signal handler"
 msgstr "无法设置信号处理函数"
 
-#: login-utils/su-common.c:518
+#: login-utils/su-common.c:520
 #, fuzzy
 #| msgid "cannot set signal handler"
 msgid "cannot set signal mask"
 msgstr "无法设置信号处理函数"
 
-#: login-utils/su-common.c:545 term-utils/script.c:961
+#: login-utils/su-common.c:547 term-utils/script.c:961
 #: term-utils/scriptlive.c:296
 msgid "failed to create pseudo-terminal"
 msgstr "创建伪终端失败"
 
-#: login-utils/su-common.c:547 term-utils/script.c:968
+#: login-utils/su-common.c:549 term-utils/script.c:968
 #: term-utils/scriptlive.c:298
 #, fuzzy
 #| msgid "%s: failed to initialize sysfs handler"
 msgid "failed to initialize signals handler"
 msgstr "%s：初始化 sysfs 处理函数失败"
 
-#: login-utils/su-common.c:562
+#: login-utils/su-common.c:564
 #, fuzzy
 #| msgid "cannot set signal handler"
 msgid "cannot set child signal handler"
 msgstr "无法设置信号处理函数"
 
-#: login-utils/su-common.c:572 term-utils/script.c:977
+#: login-utils/su-common.c:574 term-utils/script.c:977
 #: term-utils/scriptlive.c:305
 msgid "cannot create child process"
 msgstr "无法创建子进程"
 
-#: login-utils/su-common.c:591 sys-utils/nsenter.c:510
+#: login-utils/su-common.c:593 sys-utils/nsenter.c:510
 #: sys-utils/switch_root.c:189
 #, c-format
 msgid "cannot change directory to %s"
 msgstr "无法更改到 %s 目录"
 
-#: login-utils/su-common.c:617 term-utils/scriptlive.c:354
+#: login-utils/su-common.c:619 term-utils/scriptlive.c:354
 #, c-format
 msgid ""
 "\n"
@@ -9354,48 +9354,48 @@ msgstr ""
 "\n"
 "会话已终止，正在杀死 shell..."
 
-#: login-utils/su-common.c:628
+#: login-utils/su-common.c:630
 #, c-format
 msgid " ...killed.\n"
 msgstr " ...已杀死。\n"
 
-#: login-utils/su-common.c:725
+#: login-utils/su-common.c:727
 msgid "failed to set the PATH environment variable"
 msgstr "设置 PATH 环境变量失败"
 
-#: login-utils/su-common.c:802
+#: login-utils/su-common.c:804
 msgid "cannot set groups"
 msgstr "无法设置 组"
 
-#: login-utils/su-common.c:808
+#: login-utils/su-common.c:810
 #, fuzzy, c-format
 #| msgid "failed to parse level '%s'"
 msgid "failed to establish user credentials: %s"
 msgstr "解析级别“%s”失败"
 
-#: login-utils/su-common.c:818
+#: login-utils/su-common.c:820
 msgid "cannot set group id"
 msgstr "无法设置 组 id"
 
-#: login-utils/su-common.c:820
+#: login-utils/su-common.c:822
 msgid "cannot set user id"
 msgstr "无法设置 用户 id"
 
-#: login-utils/su-common.c:884
+#: login-utils/su-common.c:886
 msgid " -m, -p, --preserve-environment      do not reset environment variables\n"
 msgstr " -m, -p, --preserve-environment      不重置环境变量\n"
 
-#: login-utils/su-common.c:885
+#: login-utils/su-common.c:887
 #, fuzzy
 #| msgid " -m, -p, --preserve-environment  do not reset environment variables\n"
 msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
 msgstr " -m, -p, --preserve-environment  不重置环境变量\n"
 
-#: login-utils/su-common.c:888
+#: login-utils/su-common.c:890
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr " -g, --group <组>                指定主组\n"
 
-#: login-utils/su-common.c:889
+#: login-utils/su-common.c:891
 #, fuzzy
 #| msgid ""
 #| " -G, --supp-group <group>        specify a supplemental group\n"
@@ -9405,15 +9405,15 @@ msgstr ""
 " -G, --supp-group <组>        指定一个辅助组\n"
 "\n"
 
-#: login-utils/su-common.c:892
+#: login-utils/su-common.c:894
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr " -, -l, --login                  使 shell 成为登录 shell\n"
 
-#: login-utils/su-common.c:893
+#: login-utils/su-common.c:895
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr " -c, --command <命令>            使用 -c 向 shell 传递一条命令\n"
 
-#: login-utils/su-common.c:894
+#: login-utils/su-common.c:896
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
@@ -9421,19 +9421,19 @@ msgstr ""
 " --session-command <命令>        使用 -c 向 shell 传递一条命令\n"
 "                                   而不创建新会话\n"
 
-#: login-utils/su-common.c:896
+#: login-utils/su-common.c:898
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr " -f, --fast                      向shell 传递 -f 选项(csh 或 tcsh)\n"
 
-#: login-utils/su-common.c:897
+#: login-utils/su-common.c:899
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr " -s, --shell <shell>             若 /etc/shells 允许，运行<shell>\n"
 
-#: login-utils/su-common.c:898
+#: login-utils/su-common.c:900
 msgid " -P, --pty                       create a new pseudo-terminal\n"
 msgstr ""
 
-#: login-utils/su-common.c:908
+#: login-utils/su-common.c:910
 #, fuzzy, c-format
 #| msgid ""
 #| " %1$s [options] <dev> [[-N] <part>]\n"
@@ -9445,7 +9445,7 @@ msgstr ""
 " %1$s [选项] <设备> [[-N] <分区>]\n"
 " %1$s [选项] <命令>\n"
 
-#: login-utils/su-common.c:913
+#: login-utils/su-common.c:915
 #, fuzzy
 #| msgid ""
 #| "\n"
@@ -9462,16 +9462,16 @@ msgstr ""
 "将退而使用与 su(1) 兼容的语法并执行标准 shell。\n"
 "选项 -c、-f、-l 及 -s 与 -u 相互排斥。\n"
 
-#: login-utils/su-common.c:918
+#: login-utils/su-common.c:920
 msgid " -u, --user <user>               username\n"
 msgstr " -u, --user <用户>               用户名\n"
 
-#: login-utils/su-common.c:929
+#: login-utils/su-common.c:931
 #, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr " %s [选项] [-] [<用户> [<参数>...]]\n"
 
-#: login-utils/su-common.c:933
+#: login-utils/su-common.c:935
 #, fuzzy
 #| msgid ""
 #| "\n"
@@ -9485,52 +9485,52 @@ msgstr ""
 "将有效用户 id 和组 id 更改为<用户>的 id。\n"
 "单个 - 视为 -l。如果未指定<用户>，将假定为 root。\n"
 
-#: login-utils/su-common.c:1010
+#: login-utils/su-common.c:1012
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
 msgstr[0] "不能指定多于 %d 个补充组"
 
-#: login-utils/su-common.c:1016
+#: login-utils/su-common.c:1018
 #, c-format
 msgid "group %s does not exist"
 msgstr "组 %s 不存在"
 
-#: login-utils/su-common.c:1125
+#: login-utils/su-common.c:1127
 msgid "--pty is not supported for your system"
 msgstr "--pty 在您的系统上不受支持"
 
-#: login-utils/su-common.c:1159
+#: login-utils/su-common.c:1161
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr "将忽略 --preserve-environment，它与 --login 互斥。"
 
-#: login-utils/su-common.c:1173
+#: login-utils/su-common.c:1175
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr "选项 --{shell,fast,command,session-command,login} 和 --user 互斥"
 
-#: login-utils/su-common.c:1176
+#: login-utils/su-common.c:1178
 msgid "no command was specified"
 msgstr "没有指定命令"
 
-#: login-utils/su-common.c:1188
+#: login-utils/su-common.c:1190
 msgid "only root can specify alternative groups"
 msgstr "只有 root 用户能指定替代组"
 
-#: login-utils/su-common.c:1199
+#: login-utils/su-common.c:1201
 #, c-format
 msgid "user %s does not exist or the user entry does not contain all the required fields"
 msgstr ""
 
-#: login-utils/su-common.c:1234
+#: login-utils/su-common.c:1236
 #, c-format
 msgid "using restricted shell %s"
 msgstr "将使用受限 shell %s"
 
-#: login-utils/su-common.c:1255
+#: login-utils/su-common.c:1257
 msgid "failed to allocate pty handler"
 msgstr ""
 
-#: login-utils/su-common.c:1281
+#: login-utils/su-common.c:1283
 #, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "警告：无法更改到 %s 目录"
@@ -12976,7 +12976,7 @@ msgid "closing %s failed"
 msgstr "关闭 %s 失败"
 
 #: misc-utils/mcookie.c:168 sys-utils/blkdiscard.c:204 sys-utils/fstrim.c:542
-#: text-utils/hexdump.c:124
+#: text-utils/hexdump.c:117
 msgid "failed to parse length"
 msgstr "解析长度失败"
 
@@ -14572,7 +14572,7 @@ msgid "%s: %s ioctl failed"
 msgstr "%s：%s ioctl 失败"
 
 #: sys-utils/blkdiscard.c:208 sys-utils/fstrim.c:546 sys-utils/losetup.c:710
-#: text-utils/hexdump.c:131
+#: text-utils/hexdump.c:124
 msgid "failed to parse offset"
 msgstr "解析偏移失败"
 

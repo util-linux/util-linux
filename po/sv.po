@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.36-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-04-19 09:50+0200\n"
+"POT-Creation-Date: 2023-05-17 11:52+0200\n"
 "PO-Revision-Date: 2021-04-17 18:24+0200\n"
 "Last-Translator: Sebastian Rasmussen <sebras@gmail.com>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -734,7 +734,7 @@ msgid " -r, --read-only          forced open cfdisk in read-only mode\n"
 msgstr " -r, --read-only               ställ in skrivskyddad loopenhet\n"
 
 #: disk-utils/cfdisk.c:2768 disk-utils/fdisk.c:1014 disk-utils/sfdisk.c:2350
-#: misc-utils/cal.c:421 sys-utils/dmesg.c:1499 text-utils/hexdump.c:121
+#: misc-utils/cal.c:421 sys-utils/dmesg.c:1499 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "färgläge stöds ej"
 
@@ -2062,7 +2062,7 @@ msgstr "flagga ”%s” kräver ett argument"
 msgid "invalid argument of -r: %d"
 msgstr "ogiltigt argument för -r: %d"
 
-#: disk-utils/fsck.c:1648
+#: disk-utils/fsck.c:1658
 msgid "the -l option can be used with one device only -- ignore"
 msgstr "flaggan -l kan endast användas med en enhet -- hoppar över"
 
@@ -3021,7 +3021,7 @@ msgstr ""
 " -V, --verbose      förklara vad som händer;\n"
 "                      om -V anges mer än en gång kommer det att orsaka en testkörning\n"
 
-#: disk-utils/mkfs.c:133 include/c.h:310 login-utils/su-common.c:1290
+#: disk-utils/mkfs.c:133 include/c.h:310 login-utils/su-common.c:1292
 #: login-utils/sulogin.c:864 login-utils/sulogin.c:868 sys-utils/flock.c:123
 #: sys-utils/rtcwake.c:623
 #, c-format
@@ -6726,7 +6726,7 @@ msgstr "Disketikett skriven till %s. (Glöm inte att skriva disketiketten %s ock
 msgid "Disklabel written to %s."
 msgstr "Disketikett skriven till %s."
 
-#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:776
+#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:777
 msgid "Syncing disks."
 msgstr "Synkroniserar diskar."
 
@@ -6755,60 +6755,60 @@ msgstr "B-storlek"
 msgid "Cpg"
 msgstr "Cpg"
 
-#: libfdisk/src/context.c:766
+#: libfdisk/src/context.c:767
 #, c-format
 msgid "%s: fsync device failed"
 msgstr "%s: fsync av enhet misslyckades"
 
-#: libfdisk/src/context.c:771 misc-utils/wipefs.c:619
+#: libfdisk/src/context.c:772 misc-utils/wipefs.c:619
 #, c-format
 msgid "%s: close device failed"
 msgstr "%s: stängning av enhet misslyckades"
 
-#: libfdisk/src/context.c:854
+#: libfdisk/src/context.c:855
 msgid "Calling ioctl() to re-read partition table."
 msgstr "Anropar ioctl() för att läsa om partitionstabellen."
 
-#: libfdisk/src/context.c:862
+#: libfdisk/src/context.c:863
 msgid "Re-reading the partition table failed."
 msgstr "Omläsning av partitionstabellen misslyckades."
 
-#: libfdisk/src/context.c:864
+#: libfdisk/src/context.c:865
 msgid "The kernel still uses the old table. The new table will be used at the next reboot or after you run partprobe(8) or partx(8)."
 msgstr "Kärnan använder fortfarande den gamla tabellen. Den nya tabellen kommer att användas vid nästa omstart eller efter att du kört partprobe(8) eller partx(8)."
 
-#: libfdisk/src/context.c:954
+#: libfdisk/src/context.c:955
 #, c-format
 msgid "Failed to remove partition %zu from system"
 msgstr "Misslyckades med att ta bort partition %zu från systemet"
 
-#: libfdisk/src/context.c:963
+#: libfdisk/src/context.c:964
 #, c-format
 msgid "Failed to update system information about partition %zu"
 msgstr "Misslyckades med att uppdatera systeminformation om partition %zu"
 
-#: libfdisk/src/context.c:983
+#: libfdisk/src/context.c:984
 #, c-format
 msgid "Failed to add partition %zu to system"
 msgstr "Misslyckades med att lägga till partition %zu till systemet"
 
-#: libfdisk/src/context.c:989
+#: libfdisk/src/context.c:990
 msgid "The kernel still uses the old partitions. The new table will be used at the next reboot. "
 msgstr "Kärnan använder fortfarande de gamla partitionerna. Den nya tabellen kommer att användas vid nästa omstart. "
 
-#: libfdisk/src/context.c:1193
+#: libfdisk/src/context.c:1194
 msgid "cylinder"
 msgid_plural "cylinders"
 msgstr[0] "cylinder"
 msgstr[1] "cylindrar"
 
-#: libfdisk/src/context.c:1194
+#: libfdisk/src/context.c:1195
 msgid "sector"
 msgid_plural "sectors"
 msgstr[0] "sektor"
 msgstr[1] "sektorer"
 
-#: libfdisk/src/context.c:1550
+#: libfdisk/src/context.c:1551
 msgid "Incomplete geometry setting."
 msgstr "Ofullständig geometriinställning."
 
@@ -7496,11 +7496,11 @@ msgstr "Ingenting att göra. Ordningen är redan korrekt."
 msgid "Failed to fix partitions order."
 msgstr "Misslyckades med att fixa partitionsordning."
 
-#: libfdisk/src/partition.c:871
+#: libfdisk/src/partition.c:879
 msgid "Free space"
 msgstr "Ledigt utrymme"
 
-#: libfdisk/src/partition.c:1365
+#: libfdisk/src/partition.c:1373
 #, c-format
 msgid "Failed to resize partition #%zu."
 msgstr "Misslyckades med att ändra storlek på partitionen #%zu."
@@ -9416,78 +9416,78 @@ msgstr " (minnesfil dumpad)"
 msgid "change owner or mode for pseudo-terminal failed"
 msgstr ""
 
-#: login-utils/su-common.c:375
+#: login-utils/su-common.c:377
 msgid "failed to modify environment"
 msgstr "misslyckades med att modifiera miljö"
 
-#: login-utils/su-common.c:411
+#: login-utils/su-common.c:413
 msgid "may not be used by non-root users"
 msgstr "får inte användas av användare som inte är root"
 
-#: login-utils/su-common.c:435
+#: login-utils/su-common.c:437
 msgid "authentication failed"
 msgstr "authenticering misslyckades"
 
-#: login-utils/su-common.c:448
+#: login-utils/su-common.c:450
 #, c-format
 msgid "cannot open session: %s"
 msgstr "kan inte öppna session: %s"
 
-#: login-utils/su-common.c:467
+#: login-utils/su-common.c:469
 msgid "cannot block signals"
 msgstr "kan inte blockera signaler"
 
-#: login-utils/su-common.c:484
+#: login-utils/su-common.c:486
 msgid "cannot initialize signal mask for session"
 msgstr "kan inte initialisera signalmask för session"
 
-#: login-utils/su-common.c:492
+#: login-utils/su-common.c:494
 msgid "cannot initialize signal mask"
 msgstr "kan inte initialisera signalmask"
 
-#: login-utils/su-common.c:502
+#: login-utils/su-common.c:504
 msgid "cannot set signal handler for session"
 msgstr "kan inte ställa in signalhanterare för session"
 
-#: login-utils/su-common.c:510 misc-utils/uuidd.c:439
+#: login-utils/su-common.c:512 misc-utils/uuidd.c:439
 #: sys-utils/lscpu-virt.c:489
 msgid "cannot set signal handler"
 msgstr "kan inte ställa in signalhanterare"
 
-#: login-utils/su-common.c:518
+#: login-utils/su-common.c:520
 msgid "cannot set signal mask"
 msgstr "kan inte ställa in signalmask"
 
-#: login-utils/su-common.c:545 term-utils/script.c:961
+#: login-utils/su-common.c:547 term-utils/script.c:961
 #: term-utils/scriptlive.c:296
 msgid "failed to create pseudo-terminal"
 msgstr "misslyckades med att skapa pseudoterminal"
 
-#: login-utils/su-common.c:547 term-utils/script.c:968
+#: login-utils/su-common.c:549 term-utils/script.c:968
 #: term-utils/scriptlive.c:298
 #, fuzzy
 #| msgid "failed to initialize %s handler"
 msgid "failed to initialize signals handler"
 msgstr "misslyckades med att initiera %s-hanterare"
 
-#: login-utils/su-common.c:562
+#: login-utils/su-common.c:564
 #, fuzzy
 #| msgid "cannot set signal handler"
 msgid "cannot set child signal handler"
 msgstr "kan inte ställa in signalhanterare"
 
-#: login-utils/su-common.c:572 term-utils/script.c:977
+#: login-utils/su-common.c:574 term-utils/script.c:977
 #: term-utils/scriptlive.c:305
 msgid "cannot create child process"
 msgstr "kan inte skapa barnprocess"
 
-#: login-utils/su-common.c:591 sys-utils/nsenter.c:510
+#: login-utils/su-common.c:593 sys-utils/nsenter.c:510
 #: sys-utils/switch_root.c:189
 #, c-format
 msgid "cannot change directory to %s"
 msgstr "kan inte ändra katalog till %s"
 
-#: login-utils/su-common.c:617 term-utils/scriptlive.c:354
+#: login-utils/su-common.c:619 term-utils/scriptlive.c:354
 #, c-format
 msgid ""
 "\n"
@@ -9496,57 +9496,57 @@ msgstr ""
 "\n"
 "Session avslutad, dödar skal…"
 
-#: login-utils/su-common.c:628
+#: login-utils/su-common.c:630
 #, c-format
 msgid " ...killed.\n"
 msgstr " …dödad.\n"
 
-#: login-utils/su-common.c:725
+#: login-utils/su-common.c:727
 msgid "failed to set the PATH environment variable"
 msgstr "misslyckades med att ställa in miljövariabeln PATH"
 
-#: login-utils/su-common.c:802
+#: login-utils/su-common.c:804
 msgid "cannot set groups"
 msgstr "kan inte ställa in grupper"
 
-#: login-utils/su-common.c:808
+#: login-utils/su-common.c:810
 #, c-format
 msgid "failed to establish user credentials: %s"
 msgstr "misslyckades med etablera inloggingsuppgifter: %s"
 
-#: login-utils/su-common.c:818
+#: login-utils/su-common.c:820
 msgid "cannot set group id"
 msgstr "kan inte ställa in grupp-ID"
 
-#: login-utils/su-common.c:820
+#: login-utils/su-common.c:822
 msgid "cannot set user id"
 msgstr "kan inte ställa in användar-ID"
 
-#: login-utils/su-common.c:884
+#: login-utils/su-common.c:886
 msgid " -m, -p, --preserve-environment      do not reset environment variables\n"
 msgstr " -m, -p, --preserve-environment      återställ inte miljövariabler\n"
 
-#: login-utils/su-common.c:885
+#: login-utils/su-common.c:887
 msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
 msgstr " -w, --whitelist-environment <lista> återställ inte angivna variabler\n"
 
-#: login-utils/su-common.c:888
+#: login-utils/su-common.c:890
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr " -g, --group <grupp>             ange primärgruppen\n"
 
-#: login-utils/su-common.c:889
+#: login-utils/su-common.c:891
 msgid " -G, --supp-group <group>        specify a supplemental group\n"
 msgstr " -G, --supp-group <grupp>        ange en tilläggsgrupp\n"
 
-#: login-utils/su-common.c:892
+#: login-utils/su-common.c:894
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr " -, -l, --login                  gör skalet till ett inloggningsskal\n"
 
-#: login-utils/su-common.c:893
+#: login-utils/su-common.c:895
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr " -c, --command <kommando>        skicka ett enkelt kommando till skalet med -c\n"
 
-#: login-utils/su-common.c:894
+#: login-utils/su-common.c:896
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
@@ -9554,19 +9554,19 @@ msgstr ""
 " --session-command <kommando>    skicka ett enkelt kommando till skalet med -c\n"
 "                                   och skapa inte en ny session\n"
 
-#: login-utils/su-common.c:896
+#: login-utils/su-common.c:898
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr " -f, --fast                      skicka -f till skalet (för csh eller tcsh)\n"
 
-#: login-utils/su-common.c:897
+#: login-utils/su-common.c:899
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr " -s, --shell <skal>              kör <skal> om /etc/shells tillåter det\n"
 
-#: login-utils/su-common.c:898
+#: login-utils/su-common.c:900
 msgid " -P, --pty                       create a new pseudo-terminal\n"
 msgstr " -P, --pty                       skapa en ny pseudoterminal\n"
 
-#: login-utils/su-common.c:908
+#: login-utils/su-common.c:910
 #, c-format
 msgid ""
 " %1$s [options] -u <user> [[--] <command>]\n"
@@ -9575,7 +9575,7 @@ msgstr ""
 " %1$s [flaggor] -u <användare> [[--] <kommando>]\n"
 " %1$s [flaggor] [-] [<användare> [<argument>…]]\n"
 
-#: login-utils/su-common.c:913
+#: login-utils/su-common.c:915
 msgid ""
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
 "not given, fall back to su(1)-compatible semantics and execute standard shell.\n"
@@ -9585,16 +9585,16 @@ msgstr ""
 "anges fall tillbaka till su(1)-kompatibel semantik och kör standardskalet.\n"
 "Bara en utav flaggorna -c, -f, -l och -s får förekomma tillsammans med -u.\n"
 
-#: login-utils/su-common.c:918
+#: login-utils/su-common.c:920
 msgid " -u, --user <user>               username\n"
 msgstr " -u, --user <användare>          användarnamn\n"
 
-#: login-utils/su-common.c:929
+#: login-utils/su-common.c:931
 #, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr " %s [flaggor] [-] [<användare> [<argument>…]]\n"
 
-#: login-utils/su-common.c:933
+#: login-utils/su-common.c:935
 msgid ""
 "Change the effective user ID and group ID to that of <user>.\n"
 "A mere - implies -l.  If <user> is not given, root is assumed.\n"
@@ -9602,53 +9602,53 @@ msgstr ""
 "Ändra det effektiva användare-ID:t och grupp-ID:t till det för <användare>.\n"
 "Ett enkelt - medför -l. Om <användare> inte anges antas root.\n"
 
-#: login-utils/su-common.c:1010
+#: login-utils/su-common.c:1012
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
 msgstr[0] "att ange mer än %d tilläggsgrupp är inte möjligt"
 msgstr[1] "att ange mer än %d tilläggsgrupper är inte möjligt"
 
-#: login-utils/su-common.c:1016
+#: login-utils/su-common.c:1018
 #, c-format
 msgid "group %s does not exist"
 msgstr "gruppen %s existerar inte"
 
-#: login-utils/su-common.c:1125
+#: login-utils/su-common.c:1127
 msgid "--pty is not supported for your system"
 msgstr "--pty stöds inte på ditt system"
 
-#: login-utils/su-common.c:1159
+#: login-utils/su-common.c:1161
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr "hoppar över --preserve-environment, den är ömsesidigt uteslutande med --login"
 
-#: login-utils/su-common.c:1173
+#: login-utils/su-common.c:1175
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr "flaggorna --{shell,fast,command,session-command,login} och --user är ömsesidigt uteslutande"
 
-#: login-utils/su-common.c:1176
+#: login-utils/su-common.c:1178
 msgid "no command was specified"
 msgstr "inget kommando angavs"
 
-#: login-utils/su-common.c:1188
+#: login-utils/su-common.c:1190
 msgid "only root can specify alternative groups"
 msgstr "endast root kan ange alternativa grupper"
 
-#: login-utils/su-common.c:1199
+#: login-utils/su-common.c:1201
 #, c-format
 msgid "user %s does not exist or the user entry does not contain all the required fields"
 msgstr "användare %s finns ej eller så innehåller posten inte alla fält som krävs"
 
-#: login-utils/su-common.c:1234
+#: login-utils/su-common.c:1236
 #, c-format
 msgid "using restricted shell %s"
 msgstr "använder begränsat skal %s"
 
-#: login-utils/su-common.c:1255
+#: login-utils/su-common.c:1257
 msgid "failed to allocate pty handler"
 msgstr "misslyckades med att allokera pty-hanterare"
 
-#: login-utils/su-common.c:1281
+#: login-utils/su-common.c:1283
 #, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "varning: kan inte ändra katalog till %s"
@@ -13081,7 +13081,7 @@ msgid "closing %s failed"
 msgstr "stängning av %s misslyckades"
 
 #: misc-utils/mcookie.c:168 sys-utils/blkdiscard.c:204 sys-utils/fstrim.c:542
-#: text-utils/hexdump.c:124
+#: text-utils/hexdump.c:117
 msgid "failed to parse length"
 msgstr "misslyckades med att tolka längd"
 
@@ -14656,7 +14656,7 @@ msgid "%s: %s ioctl failed"
 msgstr "%s: %s ioctl misslyckades"
 
 #: sys-utils/blkdiscard.c:208 sys-utils/fstrim.c:546 sys-utils/losetup.c:710
-#: text-utils/hexdump.c:131
+#: text-utils/hexdump.c:124
 msgid "failed to parse offset"
 msgstr "misslyckades med att tolka position"
 

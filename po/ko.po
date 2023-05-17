@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.39-rc3\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-04-19 10:22+0200\n"
+"POT-Creation-Date: 2023-05-17 11:52+0200\n"
 "PO-Revision-Date: 2023-04-20 11:25+0900\n"
 "Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
 "Language-Team: Korean <translation-team-ko@googlegroups.com>\n"
@@ -88,8 +88,7 @@ msgstr "부적절한 분할 영역 번호 인자"
 msgid "invalid start argument"
 msgstr "부적절한 시작 인자"
 
-#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111
-#: misc-utils/fadvise.c:115
+#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111 misc-utils/fadvise.c:115
 msgid "invalid length argument"
 msgstr "부적절한 길이 인자"
 
@@ -488,8 +487,7 @@ msgstr "%s 스크립트 기록 실패"
 msgid "Select label type"
 msgstr "레이블 형식을 선택하십시오"
 
-#: disk-utils/cfdisk.c:2197 disk-utils/fdisk.c:1162
-#: disk-utils/fdisk-menu.c:492
+#: disk-utils/cfdisk.c:2197 disk-utils/fdisk.c:1162 disk-utils/fdisk-menu.c:492
 msgid "Device does not contain a recognized partition table."
 msgstr "장치에 인식 가능한 분할 영역 배치 정보가 없습니다."
 
@@ -634,8 +632,7 @@ msgstr "새 크기: "
 msgid "Partition %zu resized."
 msgstr "%zu 분할 영역의 크기를 조절했습니다."
 
-#: disk-utils/cfdisk.c:2506 disk-utils/fdisk.c:1138
-#: disk-utils/fdisk-menu.c:595
+#: disk-utils/cfdisk.c:2506 disk-utils/fdisk.c:1138 disk-utils/fdisk-menu.c:595
 msgid "Device is open in read-only mode."
 msgstr "장치를 읽기 전용 모드로 열었습니다."
 
@@ -717,7 +714,7 @@ msgid " -r, --read-only          forced open cfdisk in read-only mode\n"
 msgstr " -r, --read-only          cfdisk를 읽기 전용으로 열도록 강제\n"
 
 #: disk-utils/cfdisk.c:2768 disk-utils/fdisk.c:1014 disk-utils/sfdisk.c:2350
-#: misc-utils/cal.c:421 sys-utils/dmesg.c:1499 text-utils/hexdump.c:121
+#: misc-utils/cal.c:421 sys-utils/dmesg.c:1499 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "지원하지 않는 컬러 모드"
 
@@ -772,8 +769,8 @@ msgstr ""
 "계속합니다 ... "
 
 #: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:633
-#: sys-utils/blkdiscard.c:92 sys-utils/blkpr.c:213 sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:633 sys-utils/blkdiscard.c:92
+#: sys-utils/blkpr.c:213 sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [<옵션>] <장치>\n"
@@ -1140,21 +1137,21 @@ msgstr "지원하지 않는 소거 모드"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "장치 속성(섹터 크기와 수치 사양)은 지정한 장치 하나에 대해서만 사용해야 합니다."
 
-#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122
-#: disk-utils/fsck.cramfs.c:723 disk-utils/mkfs.bfs.c:211
-#: disk-utils/mkfs.cramfs.c:799 disk-utils/partx.c:975 disk-utils/raw.c:136
-#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
-#: misc-utils/cal.c:525 misc-utils/findfs.c:58 misc-utils/look.c:147
-#: misc-utils/whereis.c:592 misc-utils/whereis.c:603 misc-utils/whereis.c:614
-#: misc-utils/whereis.c:659 schedutils/chrt.c:442 schedutils/ionice.c:264
-#: schedutils/taskset.c:207 sys-utils/chcpu.c:355 sys-utils/chmem.c:429
-#: sys-utils/dmesg.c:1579 sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321
-#: sys-utils/losetup.c:918 sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656
-#: sys-utils/mount.c:867 sys-utils/mount.c:875 sys-utils/mount.c:924
-#: sys-utils/mount.c:937 sys-utils/mount.c:1009 sys-utils/mountpoint.c:191
-#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:258 sys-utils/swapon.c:1011
-#: sys-utils/switch_root.c:270 sys-utils/umount.c:629
-#: term-utils/setterm.c:1197 text-utils/col.c:584 text-utils/more.c:2096
+#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122 disk-utils/fsck.cramfs.c:723
+#: disk-utils/mkfs.bfs.c:211 disk-utils/mkfs.cramfs.c:799
+#: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
+#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:525
+#: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:592
+#: misc-utils/whereis.c:603 misc-utils/whereis.c:614 misc-utils/whereis.c:659
+#: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:207
+#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1579
+#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
+#: sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656 sys-utils/mount.c:867
+#: sys-utils/mount.c:875 sys-utils/mount.c:924 sys-utils/mount.c:937
+#: sys-utils/mount.c:1009 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
+#: sys-utils/swapoff.c:258 sys-utils/swapon.c:1011 sys-utils/switch_root.c:270
+#: sys-utils/umount.c:629 term-utils/setterm.c:1197 text-utils/col.c:584
+#: text-utils/more.c:2096
 msgid "bad usage"
 msgstr "잘못된 사용법"
 
@@ -2022,7 +2019,7 @@ msgstr "'%s' 옵션에 인자가 필요합니다"
 msgid "invalid argument of -r: %d"
 msgstr "-r의 인자가 부적절합니다: %d"
 
-#: disk-utils/fsck.c:1648
+#: disk-utils/fsck.c:1658
 msgid "the -l option can be used with one device only -- ignore"
 msgstr "-l 옵션은 하나의 장치에만 활용할 수 있습니다 -- 무시함"
 
@@ -2968,7 +2965,7 @@ msgstr ""
 " -V, --verbose      완료한 작업 항목을 설명합니다.\n"
 "                      -V 옵션을 여러번 지정하면 시험 동작을 진행합니다\n"
 
-#: disk-utils/mkfs.c:133 include/c.h:310 login-utils/su-common.c:1290
+#: disk-utils/mkfs.c:133 include/c.h:310 login-utils/su-common.c:1292
 #: login-utils/sulogin.c:864 login-utils/sulogin.c:868 sys-utils/flock.c:123
 #: sys-utils/rtcwake.c:623
 #, c-format
@@ -6392,7 +6389,7 @@ msgstr "%s에 디스크 레이블을 기록했습니다.  (%s 디스크 레이�
 msgid "Disklabel written to %s."
 msgstr "%s에 디스크 레이블을 기록했습니다."
 
-#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:776
+#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:777
 msgid "Syncing disks."
 msgstr "디스크를 동기화합니다."
 
@@ -6421,58 +6418,58 @@ msgstr "Bsize"
 msgid "Cpg"
 msgstr "Cpg"
 
-#: libfdisk/src/context.c:766
+#: libfdisk/src/context.c:767
 #, c-format
 msgid "%s: fsync device failed"
 msgstr "%s: 장치 fsync 실패"
 
-#: libfdisk/src/context.c:771 misc-utils/wipefs.c:619
+#: libfdisk/src/context.c:772 misc-utils/wipefs.c:619
 #, c-format
 msgid "%s: close device failed"
 msgstr "%s: 장치 닫기 실패"
 
-#: libfdisk/src/context.c:854
+#: libfdisk/src/context.c:855
 msgid "Calling ioctl() to re-read partition table."
 msgstr "ioctl()을 호출하여 분할 영역 배치를 다시 읽습니다."
 
-#: libfdisk/src/context.c:862
+#: libfdisk/src/context.c:863
 msgid "Re-reading the partition table failed."
 msgstr "분할 영역 배치 다시 읽기에 실패했습니다."
 
-#: libfdisk/src/context.c:864
+#: libfdisk/src/context.c:865
 msgid "The kernel still uses the old table. The new table will be used at the next reboot or after you run partprobe(8) or partx(8)."
 msgstr "커널이 여전히 이전 배치를 사용합니다. 새 배치는 다시 부팅하거나 partprobe(8) 명령 또는 partx(8) 명령을 실행한 후에 사용합니다."
 
-#: libfdisk/src/context.c:954
+#: libfdisk/src/context.c:955
 #, c-format
 msgid "Failed to remove partition %zu from system"
 msgstr "시스템의 분할 영역 %zu번 제거 실패"
 
-#: libfdisk/src/context.c:963
+#: libfdisk/src/context.c:964
 #, c-format
 msgid "Failed to update system information about partition %zu"
 msgstr "분할 영역 %zu 번의 시스템 정보 업데이트 실패"
 
-#: libfdisk/src/context.c:983
+#: libfdisk/src/context.c:984
 #, c-format
 msgid "Failed to add partition %zu to system"
 msgstr "시스템에 분할 영역 %zu번 추가 실패"
 
-#: libfdisk/src/context.c:989
+#: libfdisk/src/context.c:990
 msgid "The kernel still uses the old partitions. The new table will be used at the next reboot. "
 msgstr "커널에서 여전히 오래된 분할 영역을 활용합니다. 다시 부팅하면 새 분할 영역 배치를 사용합니다. "
 
-#: libfdisk/src/context.c:1193
+#: libfdisk/src/context.c:1194
 msgid "cylinder"
 msgid_plural "cylinders"
 msgstr[0] "실린더"
 
-#: libfdisk/src/context.c:1194
+#: libfdisk/src/context.c:1195
 msgid "sector"
 msgid_plural "sectors"
 msgstr[0] "섹터"
 
-#: libfdisk/src/context.c:1550
+#: libfdisk/src/context.c:1551
 msgid "Incomplete geometry setting."
 msgstr "수치 사양 설정이 끝나지 않았습니다."
 
@@ -7135,11 +7132,11 @@ msgstr "할 일 없음. 이미 올바르게 정렬했습니다."
 msgid "Failed to fix partitions order."
 msgstr "분할 영역 순서 수정에 실패했습니다."
 
-#: libfdisk/src/partition.c:871
+#: libfdisk/src/partition.c:879
 msgid "Free space"
 msgstr "여분 공간"
 
-#: libfdisk/src/partition.c:1365
+#: libfdisk/src/partition.c:1373
 #, c-format
 msgid "Failed to resize partition #%zu."
 msgstr "분할 영역 #%zu 번 크기 조절 실패."
@@ -9030,74 +9027,74 @@ msgstr "(코어 덤핑함)"
 msgid "change owner or mode for pseudo-terminal failed"
 msgstr "모조 터미널의 소유자 또는 모드 변경에 실패"
 
-#: login-utils/su-common.c:375
+#: login-utils/su-common.c:377
 msgid "failed to modify environment"
 msgstr "환경 수정 실패"
 
-#: login-utils/su-common.c:411
+#: login-utils/su-common.c:413
 msgid "may not be used by non-root users"
 msgstr "비 루트 사용자는 사용할 수 없습니다"
 
-#: login-utils/su-common.c:435
+#: login-utils/su-common.c:437
 msgid "authentication failed"
 msgstr "인증 실패"
 
-#: login-utils/su-common.c:448
+#: login-utils/su-common.c:450
 #, c-format
 msgid "cannot open session: %s"
 msgstr "세션을 열 수 없습니다: %s"
 
-#: login-utils/su-common.c:467
+#: login-utils/su-common.c:469
 msgid "cannot block signals"
 msgstr "시그널을 차단할 수 없습니다"
 
-#: login-utils/su-common.c:484
+#: login-utils/su-common.c:486
 msgid "cannot initialize signal mask for session"
 msgstr "세션의 시그널 마스크를 초기화할 수 없습니다"
 
-#: login-utils/su-common.c:492
+#: login-utils/su-common.c:494
 msgid "cannot initialize signal mask"
 msgstr "시그널 마스크를 초기화할 수 없습니다"
 
-#: login-utils/su-common.c:502
+#: login-utils/su-common.c:504
 msgid "cannot set signal handler for session"
 msgstr "세션의 시그널 핸들러를 설정할 수 없습니다"
 
-#: login-utils/su-common.c:510 misc-utils/uuidd.c:439
+#: login-utils/su-common.c:512 misc-utils/uuidd.c:439
 #: sys-utils/lscpu-virt.c:489
 msgid "cannot set signal handler"
 msgstr "시그널 핸들러를 설정할 수 없습니다"
 
-#: login-utils/su-common.c:518
+#: login-utils/su-common.c:520
 msgid "cannot set signal mask"
 msgstr "시그널 마스크를 설정할 수 없습니다"
 
-#: login-utils/su-common.c:545 term-utils/script.c:961
+#: login-utils/su-common.c:547 term-utils/script.c:961
 #: term-utils/scriptlive.c:296
 msgid "failed to create pseudo-terminal"
 msgstr "모의 터미널 생성 실패"
 
-#: login-utils/su-common.c:547 term-utils/script.c:968
+#: login-utils/su-common.c:549 term-utils/script.c:968
 #: term-utils/scriptlive.c:298
 msgid "failed to initialize signals handler"
 msgstr "시그널 핸들러 초기화에 실패했습니다"
 
-#: login-utils/su-common.c:562
+#: login-utils/su-common.c:564
 msgid "cannot set child signal handler"
 msgstr "하위 시그널 핸들러를 설정할 수 없습니다"
 
-#: login-utils/su-common.c:572 term-utils/script.c:977
+#: login-utils/su-common.c:574 term-utils/script.c:977
 #: term-utils/scriptlive.c:305
 msgid "cannot create child process"
 msgstr "하위 프로세스를 만들 수 없습니다"
 
-#: login-utils/su-common.c:591 sys-utils/nsenter.c:510
+#: login-utils/su-common.c:593 sys-utils/nsenter.c:510
 #: sys-utils/switch_root.c:189
 #, c-format
 msgid "cannot change directory to %s"
 msgstr "%s 디렉터리로 위치를 바꿀 수 없습니다"
 
-#: login-utils/su-common.c:617 term-utils/scriptlive.c:354
+#: login-utils/su-common.c:619 term-utils/scriptlive.c:354
 #, c-format
 msgid ""
 "\n"
@@ -9106,57 +9103,57 @@ msgstr ""
 "\n"
 "세션을 멈췄습니다. 셸 강제로 끝내는 중..."
 
-#: login-utils/su-common.c:628
+#: login-utils/su-common.c:630
 #, c-format
 msgid " ...killed.\n"
 msgstr " ...강제로 끝났습니다.\n"
 
-#: login-utils/su-common.c:725
+#: login-utils/su-common.c:727
 msgid "failed to set the PATH environment variable"
 msgstr "PATH 환경 변수 설정 실패"
 
-#: login-utils/su-common.c:802
+#: login-utils/su-common.c:804
 msgid "cannot set groups"
 msgstr "그룹을 설정할 수 없습니다"
 
-#: login-utils/su-common.c:808
+#: login-utils/su-common.c:810
 #, c-format
 msgid "failed to establish user credentials: %s"
 msgstr "사용자 보안 수립 실패: %s"
 
-#: login-utils/su-common.c:818
+#: login-utils/su-common.c:820
 msgid "cannot set group id"
 msgstr "그룹 ID를 설정할 수 없습니다"
 
-#: login-utils/su-common.c:820
+#: login-utils/su-common.c:822
 msgid "cannot set user id"
 msgstr "사용자 ID를 설정할 수 없습니다"
 
-#: login-utils/su-common.c:884
+#: login-utils/su-common.c:886
 msgid " -m, -p, --preserve-environment      do not reset environment variables\n"
 msgstr " -m, -p, --preserve-environment      환경 변수 재설정하지 않음\n"
 
-#: login-utils/su-common.c:885
+#: login-utils/su-common.c:887
 msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
 msgstr " -w, --whitelist-environment <목록>  지정 변수 재설정하지 않음\n"
 
-#: login-utils/su-common.c:888
+#: login-utils/su-common.c:890
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr " -g, --group <그룹>                  주 그룹 지정\n"
 
-#: login-utils/su-common.c:889
+#: login-utils/su-common.c:891
 msgid " -G, --supp-group <group>        specify a supplemental group\n"
 msgstr " -G, --supp-group <그룹>             추가 그룹 지정\n"
 
-#: login-utils/su-common.c:892
+#: login-utils/su-common.c:894
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr " -, -l, --login                      셸을 로그인 셸로 지정\n"
 
-#: login-utils/su-common.c:893
+#: login-utils/su-common.c:895
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr " -c, --command <명령>                단일 명령을 -c 옵션으로 전달\n"
 
-#: login-utils/su-common.c:894
+#: login-utils/su-common.c:896
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
@@ -9164,19 +9161,19 @@ msgstr ""
 " --session-command <명령>                   단일 명령을 셸에 -c 옵션으로 전달하며\n"
 "                                              새 세션을 만들지 않음\n"
 
-#: login-utils/su-common.c:896
+#: login-utils/su-common.c:898
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr " -f, --fast                          -f 옵션을 셸에 전달(csh, tcsh 용)\n"
 
-#: login-utils/su-common.c:897
+#: login-utils/su-common.c:899
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr " -s, --shell <셸>                    /etc/shells에서 허용할 경우 <셸>을 실행합니다\n"
 
-#: login-utils/su-common.c:898
+#: login-utils/su-common.c:900
 msgid " -P, --pty                       create a new pseudo-terminal\n"
 msgstr " -P, --pty                           새 의사 터미널을 만듭니다\n"
 
-#: login-utils/su-common.c:908
+#: login-utils/su-common.c:910
 #, c-format
 msgid ""
 " %1$s [options] -u <user> [[--] <command>]\n"
@@ -9185,7 +9182,7 @@ msgstr ""
 " %1$s [<옵션>] -u <사용자> [[--] <명령>]\n"
 " %1$s [<옵션>] [-] [<사용자> [<인자>...]]\n"
 
-#: login-utils/su-common.c:913
+#: login-utils/su-common.c:915
 msgid ""
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
 "not given, fall back to su(1)-compatible semantics and execute standard shell.\n"
@@ -9195,16 +9192,16 @@ msgstr ""
 "제시하지 않으면 su(1) 호환 문법으로 전환하여 표준 셸을 실행합니다.\n"
 "-c, -f, -l, -s 옵션은 -u 옵션과 병용할 수 없습니다.\n"
 
-#: login-utils/su-common.c:918
+#: login-utils/su-common.c:920
 msgid " -u, --user <user>               username\n"
 msgstr " -u, --user <사용자>               사용자 이름\n"
 
-#: login-utils/su-common.c:929
+#: login-utils/su-common.c:931
 #, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr " %s [<옵션>] [-] [<사용자> [<인자>...]]\n"
 
-#: login-utils/su-common.c:933
+#: login-utils/su-common.c:935
 msgid ""
 "Change the effective user ID and group ID to that of <user>.\n"
 "A mere - implies -l.  If <user> is not given, root is assumed.\n"
@@ -9212,52 +9209,52 @@ msgstr ""
 "<사용자>의 사용자 ID과 그룹 ID를 바꿉니다.\n"
 "단순 - 옵션은 -l을 의미합니다. <사용자>가 없다면, 루트 계정으로 간주합니다.\n"
 
-#: login-utils/su-common.c:1010
+#: login-utils/su-common.c:1012
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
 msgstr[0] "추가 그룹은 %d개 이상 지정할 수 없습니다"
 
-#: login-utils/su-common.c:1016
+#: login-utils/su-common.c:1018
 #, c-format
 msgid "group %s does not exist"
 msgstr "%s 그룹이 없습니다"
 
-#: login-utils/su-common.c:1125
+#: login-utils/su-common.c:1127
 msgid "--pty is not supported for your system"
 msgstr "--pty는 시스템에서 지원하지 않습니다"
 
-#: login-utils/su-common.c:1159
+#: login-utils/su-common.c:1161
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr "--preserve-environment 무시함. --login과 병용할 수 없습니다"
 
-#: login-utils/su-common.c:1173
+#: login-utils/su-common.c:1175
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr "--{shell,fast,command,session-command,login} 옵션과 --user 옵션은 병용할 수 없습니다"
 
-#: login-utils/su-common.c:1176
+#: login-utils/su-common.c:1178
 msgid "no command was specified"
 msgstr "지정한 명령이 없습니다"
 
-#: login-utils/su-common.c:1188
+#: login-utils/su-common.c:1190
 msgid "only root can specify alternative groups"
 msgstr "루트 계정만 대체 그룹을 지정할 수 있습니다"
 
-#: login-utils/su-common.c:1199
+#: login-utils/su-common.c:1201
 #, c-format
 msgid "user %s does not exist or the user entry does not contain all the required fields"
 msgstr " %s 사용자가 없거나 해당 사용자에게 필요한 모든 필드 항목이 없습니다"
 
-#: login-utils/su-common.c:1234
+#: login-utils/su-common.c:1236
 #, c-format
 msgid "using restricted shell %s"
 msgstr "%s 제한 셸 사용 중"
 
-#: login-utils/su-common.c:1255
+#: login-utils/su-common.c:1257
 msgid "failed to allocate pty handler"
 msgstr "pty 핸들러 할당 실패"
 
-#: login-utils/su-common.c:1281
+#: login-utils/su-common.c:1283
 #, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "경고: %s 디렉터리로 위치를 바꿀 수 없습니다"
@@ -12400,7 +12397,7 @@ msgid "closing %s failed"
 msgstr "%s 닫기 실패"
 
 #: misc-utils/mcookie.c:168 sys-utils/blkdiscard.c:204 sys-utils/fstrim.c:542
-#: text-utils/hexdump.c:124
+#: text-utils/hexdump.c:117
 msgid "failed to parse length"
 msgstr "길이 해석 실패"
 
@@ -13856,7 +13853,7 @@ msgid "%s: %s ioctl failed"
 msgstr "%s: %s ioctl 실패"
 
 #: sys-utils/blkdiscard.c:208 sys-utils/fstrim.c:546 sys-utils/losetup.c:710
-#: text-utils/hexdump.c:131
+#: text-utils/hexdump.c:124
 msgid "failed to parse offset"
 msgstr "오프셋 해석 실패"
 

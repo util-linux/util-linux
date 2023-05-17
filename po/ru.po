@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.27-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-04-19 09:50+0200\n"
+"POT-Creation-Date: 2023-05-17 11:52+0200\n"
 "PO-Revision-Date: 2015-12-29 22:55+0300\n"
 "Last-Translator: Evgeniy Yakushev <yen81@mail.ru>\n"
 "Language-Team: Russian <gnu@d07.ru>\n"
@@ -728,7 +728,7 @@ msgid " -r, --read-only          forced open cfdisk in read-only mode\n"
 msgstr " -r, --raw                отобразить в формате сырых данных\n"
 
 #: disk-utils/cfdisk.c:2768 disk-utils/fdisk.c:1014 disk-utils/sfdisk.c:2350
-#: misc-utils/cal.c:421 sys-utils/dmesg.c:1499 text-utils/hexdump.c:121
+#: misc-utils/cal.c:421 sys-utils/dmesg.c:1499 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "неподдерживаемый цветовой режим"
 
@@ -2056,7 +2056,7 @@ msgstr "для параметра '%s' требуется аргумент"
 msgid "invalid argument of -r: %d"
 msgstr "неверный iаргмент параметра -r: %d"
 
-#: disk-utils/fsck.c:1648
+#: disk-utils/fsck.c:1658
 msgid "the -l option can be used with one device only -- ignore"
 msgstr "параметр -l может быть использован только с одним устройством -- игнорируем"
 
@@ -3011,7 +3011,7 @@ msgstr ""
 " -V, --verbose      подробная информация о выполняемых действиях;\n"
 "                      указание параметра -V более одного раза приведет к тестовому запуску\n"
 
-#: disk-utils/mkfs.c:133 include/c.h:310 login-utils/su-common.c:1290
+#: disk-utils/mkfs.c:133 include/c.h:310 login-utils/su-common.c:1292
 #: login-utils/sulogin.c:864 login-utils/sulogin.c:868 sys-utils/flock.c:123
 #: sys-utils/rtcwake.c:623
 #, c-format
@@ -6656,7 +6656,7 @@ msgstr ""
 msgid "Disklabel written to %s."
 msgstr "Метка диска записана %s."
 
-#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:776
+#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:777
 msgid "Syncing disks."
 msgstr "Синхронизируются диски."
 
@@ -6685,64 +6685,64 @@ msgstr ""
 msgid "Cpg"
 msgstr ""
 
-#: libfdisk/src/context.c:766
+#: libfdisk/src/context.c:767
 #, fuzzy, c-format
 msgid "%s: fsync device failed"
 msgstr "%s: не удалось закрыть устройство"
 
-#: libfdisk/src/context.c:771 misc-utils/wipefs.c:619
+#: libfdisk/src/context.c:772 misc-utils/wipefs.c:619
 #, c-format
 msgid "%s: close device failed"
 msgstr "%s: не удалось закрыть устройство"
 
-#: libfdisk/src/context.c:854
+#: libfdisk/src/context.c:855
 msgid "Calling ioctl() to re-read partition table."
 msgstr "Вызывается ioctl() для перечитывания таблицы разделов."
 
-#: libfdisk/src/context.c:862
+#: libfdisk/src/context.c:863
 msgid "Re-reading the partition table failed."
 msgstr "Перечитывание таблицы разделов не удалось."
 
-#: libfdisk/src/context.c:864
+#: libfdisk/src/context.c:865
 #, fuzzy
 msgid "The kernel still uses the old table. The new table will be used at the next reboot or after you run partprobe(8) or partx(8)."
 msgstr "Ядро все еще использует старую таблицу. Новая таблица будет использована при следующей перезагрузке или при запуске partprobe(8) или kpartx(8)."
 
-#: libfdisk/src/context.c:954
+#: libfdisk/src/context.c:955
 #, fuzzy, c-format
 msgid "Failed to remove partition %zu from system"
 msgstr "не удалось удалить раздел"
 
-#: libfdisk/src/context.c:963
+#: libfdisk/src/context.c:964
 #, fuzzy, c-format
 msgid "Failed to update system information about partition %zu"
 msgstr "вывести информацию о разделе"
 
-#: libfdisk/src/context.c:983
+#: libfdisk/src/context.c:984
 #, fuzzy, c-format
 msgid "Failed to add partition %zu to system"
 msgstr "не удалось добавить раздел"
 
-#: libfdisk/src/context.c:989
+#: libfdisk/src/context.c:990
 #, fuzzy
 msgid "The kernel still uses the old partitions. The new table will be used at the next reboot. "
 msgstr "Ядро все еще использует старую таблицу. Новая таблица будет использована при следующей перезагрузке или при запуске partprobe(8) или kpartx(8)."
 
-#: libfdisk/src/context.c:1193
+#: libfdisk/src/context.c:1194
 msgid "cylinder"
 msgid_plural "cylinders"
 msgstr[0] "цилиндр"
 msgstr[1] "цилиндра"
 msgstr[2] "цилиндров"
 
-#: libfdisk/src/context.c:1194
+#: libfdisk/src/context.c:1195
 msgid "sector"
 msgid_plural "sectors"
 msgstr[0] "сектор"
 msgstr[1] "сектора"
 msgstr[2] "секторов"
 
-#: libfdisk/src/context.c:1550
+#: libfdisk/src/context.c:1551
 msgid "Incomplete geometry setting."
 msgstr "Неполные параметры геометрии."
 
@@ -7439,11 +7439,11 @@ msgstr "Нечего выполнять. Очередность уже прав�
 msgid "Failed to fix partitions order."
 msgstr "зафиксировать порядок разделов"
 
-#: libfdisk/src/partition.c:871
+#: libfdisk/src/partition.c:879
 msgid "Free space"
 msgstr "Свободное пространство"
 
-#: libfdisk/src/partition.c:1365
+#: libfdisk/src/partition.c:1373
 #, c-format
 msgid "Failed to resize partition #%zu."
 msgstr "Не удалось изменить размер раздела #%zu."
@@ -9396,83 +9396,83 @@ msgstr ""
 msgid "change owner or mode for pseudo-terminal failed"
 msgstr ""
 
-#: login-utils/su-common.c:375
+#: login-utils/su-common.c:377
 #, fuzzy
 msgid "failed to modify environment"
 msgstr "Ошибка записи раздела на %s\n"
 
-#: login-utils/su-common.c:411
+#: login-utils/su-common.c:413
 msgid "may not be used by non-root users"
 msgstr "не может быть использовано не суперпользователями"
 
-#: login-utils/su-common.c:435
+#: login-utils/su-common.c:437
 #, fuzzy
 msgid "authentication failed"
 msgstr "(Следующий файл: %s)"
 
-#: login-utils/su-common.c:448
+#: login-utils/su-common.c:450
 #, c-format
 msgid "cannot open session: %s"
 msgstr "не могу открыть сессию: %s"
 
-#: login-utils/su-common.c:467
+#: login-utils/su-common.c:469
 msgid "cannot block signals"
 msgstr "не могу заблокировать сигналы"
 
-#: login-utils/su-common.c:484
+#: login-utils/su-common.c:486
 msgid "cannot initialize signal mask for session"
 msgstr ""
 
-#: login-utils/su-common.c:492
+#: login-utils/su-common.c:494
 #, fuzzy
 msgid "cannot initialize signal mask"
 msgstr "не могу заблокировать сигналы"
 
-#: login-utils/su-common.c:502
+#: login-utils/su-common.c:504
 #, fuzzy
 msgid "cannot set signal handler for session"
 msgstr "Невозможно установить обработчик сигнала"
 
-#: login-utils/su-common.c:510 misc-utils/uuidd.c:439
+#: login-utils/su-common.c:512 misc-utils/uuidd.c:439
 #: sys-utils/lscpu-virt.c:489
 msgid "cannot set signal handler"
 msgstr "Невозможно установить обработчик сигнала"
 
-#: login-utils/su-common.c:518
+#: login-utils/su-common.c:520
 #, fuzzy
 msgid "cannot set signal mask"
 msgstr "Невозможно установить обработчик сигнала"
 
-#: login-utils/su-common.c:545 term-utils/script.c:961
+#: login-utils/su-common.c:547 term-utils/script.c:961
 #: term-utils/scriptlive.c:296
 #, fuzzy
 msgid "failed to create pseudo-terminal"
 msgstr "Невозможно выделить буфер.\n"
 
-#: login-utils/su-common.c:547 term-utils/script.c:968
+#: login-utils/su-common.c:549 term-utils/script.c:968
 #: term-utils/scriptlive.c:298
 #, fuzzy
 msgid "failed to initialize signals handler"
 msgstr "%s: не удалось инициализировать обработчик sysfs"
 
-#: login-utils/su-common.c:562
+#: login-utils/su-common.c:564
 #, fuzzy
 #| msgid "cannot set signal handler"
 msgid "cannot set child signal handler"
 msgstr "Невозможно установить обработчик сигнала"
 
-#: login-utils/su-common.c:572 term-utils/script.c:977
+#: login-utils/su-common.c:574 term-utils/script.c:977
 #: term-utils/scriptlive.c:305
 msgid "cannot create child process"
 msgstr "не могу создать дочерний процесс"
 
-#: login-utils/su-common.c:591 sys-utils/nsenter.c:510
+#: login-utils/su-common.c:593 sys-utils/nsenter.c:510
 #: sys-utils/switch_root.c:189
 #, c-format
 msgid "cannot change directory to %s"
 msgstr "не могу сменить каталог на %s"
 
-#: login-utils/su-common.c:617 term-utils/scriptlive.c:354
+#: login-utils/su-common.c:619 term-utils/scriptlive.c:354
 #, c-format
 msgid ""
 "\n"
@@ -9481,90 +9481,90 @@ msgstr ""
 "\n"
 "Сессия завершена, завершение работы шелла..."
 
-#: login-utils/su-common.c:628
+#: login-utils/su-common.c:630
 #, c-format
 msgid " ...killed.\n"
 msgstr " ...завершен.\n"
 
-#: login-utils/su-common.c:725
+#: login-utils/su-common.c:727
 #, fuzzy
 msgid "failed to set the PATH environment variable"
 msgstr "Ошибка записи раздела на %s\n"
 
-#: login-utils/su-common.c:802
+#: login-utils/su-common.c:804
 msgid "cannot set groups"
 msgstr "не мог задать группы"
 
-#: login-utils/su-common.c:808
+#: login-utils/su-common.c:810
 #, fuzzy, c-format
 msgid "failed to establish user credentials: %s"
 msgstr "%s: невозможно открыть : %s\n"
 
-#: login-utils/su-common.c:818
+#: login-utils/su-common.c:820
 msgid "cannot set group id"
 msgstr "не мог задать ID группы"
 
-#: login-utils/su-common.c:820
+#: login-utils/su-common.c:822
 msgid "cannot set user id"
 msgstr "не мог задать ID пользователя"
 
-#: login-utils/su-common.c:884
+#: login-utils/su-common.c:886
 msgid " -m, -p, --preserve-environment      do not reset environment variables\n"
 msgstr ""
 
-#: login-utils/su-common.c:885
+#: login-utils/su-common.c:887
 msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
 msgstr ""
 
-#: login-utils/su-common.c:888
+#: login-utils/su-common.c:890
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr " -g, --group <group>             указать первичную группу\n"
 
-#: login-utils/su-common.c:889
+#: login-utils/su-common.c:891
 #, fuzzy
 msgid " -G, --supp-group <group>        specify a supplemental group\n"
 msgstr ""
 " -G, --supp-group <group>        указать дополнительную группу\n"
 "\n"
 
-#: login-utils/su-common.c:892
+#: login-utils/su-common.c:894
 #, fuzzy
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr "  -h, --help                   Это небольшое руководство по использованию\n"
 
-#: login-utils/su-common.c:893
+#: login-utils/su-common.c:895
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr ""
 
-#: login-utils/su-common.c:894
+#: login-utils/su-common.c:896
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
 msgstr ""
 
-#: login-utils/su-common.c:896
+#: login-utils/su-common.c:898
 #, fuzzy
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr "  -T, --test                   Проверка версии getopt(1)\n"
 
-#: login-utils/su-common.c:897
+#: login-utils/su-common.c:899
 #, fuzzy
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr "  -s, --shell=шелл             Установка условий закл. в кавычки для шелла\n"
 
-#: login-utils/su-common.c:898
+#: login-utils/su-common.c:900
 #, fuzzy
 msgid " -P, --pty                       create a new pseudo-terminal\n"
 msgstr "              параметры\n"
 
-#: login-utils/su-common.c:908
+#: login-utils/su-common.c:910
 #, fuzzy, c-format
 msgid ""
 " %1$s [options] -u <user> [[--] <command>]\n"
 " %1$s [options] [-] [<user> [<argument>...]]\n"
 msgstr "Использование: mkfs [-V] [-t тип_фс] [опции_фс] устройство [размер]\n"
 
-#: login-utils/su-common.c:913
+#: login-utils/su-common.c:915
 #, fuzzy
 msgid ""
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
@@ -9576,23 +9576,23 @@ msgstr ""
 "-u не задан, вернуться к su(1)-совместимому значению и запустить стандартный шелл.\n"
 "Параметры -c, -f, -l и -s являются взаимоисклющающими с -u.\n"
 
-#: login-utils/su-common.c:918
+#: login-utils/su-common.c:920
 #, fuzzy
 msgid " -u, --user <user>               username\n"
 msgstr " -u, --user <user>             имя пользователя\n"
 
-#: login-utils/su-common.c:929
+#: login-utils/su-common.c:931
 #, fuzzy, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr "использование: %s программа [аргумент ...]\n"
 
-#: login-utils/su-common.c:933
+#: login-utils/su-common.c:935
 msgid ""
 "Change the effective user ID and group ID to that of <user>.\n"
 "A mere - implies -l.  If <user> is not given, root is assumed.\n"
 msgstr ""
 
-#: login-utils/su-common.c:1010
+#: login-utils/su-common.c:1012
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
@@ -9600,48 +9600,48 @@ msgstr[0] "указание более, чем %d дополнительной �
 msgstr[1] "указание более, чем %d дополнительных групп невозможно"
 msgstr[2] "указание более, чем %d дополнительных групп невозможно"
 
-#: login-utils/su-common.c:1016
+#: login-utils/su-common.c:1018
 #, c-format
 msgid "group %s does not exist"
 msgstr "группа %s не существует"
 
-#: login-utils/su-common.c:1125
+#: login-utils/su-common.c:1127
 #, fuzzy
 msgid "--pty is not supported for your system"
 msgstr "--reload не поддерживается на вашей системе"
 
-#: login-utils/su-common.c:1159
+#: login-utils/su-common.c:1161
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr ""
 
-#: login-utils/su-common.c:1173
+#: login-utils/su-common.c:1175
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr "параметры --{shell,fast,command,session-command,login} и --user - взаимоисключающие"
 
-#: login-utils/su-common.c:1176
+#: login-utils/su-common.c:1178
 msgid "no command was specified"
 msgstr "не указана команда"
 
-#: login-utils/su-common.c:1188
+#: login-utils/su-common.c:1190
 msgid "only root can specify alternative groups"
 msgstr ""
 
-#: login-utils/su-common.c:1199
+#: login-utils/su-common.c:1201
 #, c-format
 msgid "user %s does not exist or the user entry does not contain all the required fields"
 msgstr ""
 
-#: login-utils/su-common.c:1234
+#: login-utils/su-common.c:1236
 #, c-format
 msgid "using restricted shell %s"
 msgstr ""
 
-#: login-utils/su-common.c:1255
+#: login-utils/su-common.c:1257
 #, fuzzy
 msgid "failed to allocate pty handler"
 msgstr "не удалось назначить обработчик сценария"
 
-#: login-utils/su-common.c:1281
+#: login-utils/su-common.c:1283
 #, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "предупреждение: не могу поменять каталог на %s"
@@ -13023,7 +13023,7 @@ msgid "closing %s failed"
 msgstr "не удалось закрыть %s"
 
 #: misc-utils/mcookie.c:168 sys-utils/blkdiscard.c:204 sys-utils/fstrim.c:542
-#: text-utils/hexdump.c:124
+#: text-utils/hexdump.c:117
 msgid "failed to parse length"
 msgstr "не удалось определить длину"
 
@@ -14591,7 +14591,7 @@ msgid "%s: %s ioctl failed"
 msgstr "поиск завершился неудачей"
 
 #: sys-utils/blkdiscard.c:208 sys-utils/fstrim.c:546 sys-utils/losetup.c:710
-#: text-utils/hexdump.c:131
+#: text-utils/hexdump.c:124
 #, fuzzy
 msgid "failed to parse offset"
 msgstr "%s: невозможно открыть : %s\n"

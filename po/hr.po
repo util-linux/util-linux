@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.39-rc3\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-04-19 10:22+0200\n"
+"POT-Creation-Date: 2023-05-17 11:52+0200\n"
 "PO-Revision-Date: 2023-05-01 11:06-0700\n"
 "Last-Translator: Božidar Putanec <bozidarp@yahoo.com>\n"
 "Language-Team: Croatian <lokalizacija@linux.hr>\n"
@@ -93,8 +93,7 @@ msgstr "nevaljani argument broja particije"
 msgid "invalid start argument"
 msgstr "nevaljani argument početka"
 
-#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111
-#: misc-utils/fadvise.c:115
+#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111 misc-utils/fadvise.c:115
 msgid "invalid length argument"
 msgstr "nevaljani argument dužine"
 
@@ -498,8 +497,7 @@ msgstr "Nije uspjelo zapisati skriptu %s"
 msgid "Select label type"
 msgstr "Odaberite tip oznake"
 
-#: disk-utils/cfdisk.c:2197 disk-utils/fdisk.c:1162
-#: disk-utils/fdisk-menu.c:492
+#: disk-utils/cfdisk.c:2197 disk-utils/fdisk.c:1162 disk-utils/fdisk-menu.c:492
 msgid "Device does not contain a recognized partition table."
 msgstr "Uređaj ne sadrži prepoznatljivu particijsku tablicu."
 
@@ -644,8 +642,7 @@ msgstr "Nova veličina: "
 msgid "Partition %zu resized."
 msgstr "Veličina particije %zu je promijenjena."
 
-#: disk-utils/cfdisk.c:2506 disk-utils/fdisk.c:1138
-#: disk-utils/fdisk-menu.c:595
+#: disk-utils/cfdisk.c:2506 disk-utils/fdisk.c:1138 disk-utils/fdisk-menu.c:595
 msgid "Device is open in read-only mode."
 msgstr "Uređaj je otvoren samo za čitanje."
 
@@ -727,7 +724,7 @@ msgid " -r, --read-only          forced open cfdisk in read-only mode\n"
 msgstr " -r, --read-only          otvori cfdisk samo samo-za-čitanje\n"
 
 #: disk-utils/cfdisk.c:2768 disk-utils/fdisk.c:1014 disk-utils/sfdisk.c:2350
-#: misc-utils/cal.c:421 sys-utils/dmesg.c:1499 text-utils/hexdump.c:121
+#: misc-utils/cal.c:421 sys-utils/dmesg.c:1499 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "nepodržani način bojenja"
 
@@ -782,8 +779,8 @@ msgstr ""
 "Nastavlja se... "
 
 #: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:633
-#: sys-utils/blkdiscard.c:92 sys-utils/blkpr.c:213 sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:633 sys-utils/blkdiscard.c:92
+#: sys-utils/blkpr.c:213 sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [opcije] <uređaj>\n"
@@ -1163,21 +1160,21 @@ msgstr ""
 "Svojstva uređaja (veličina sektora i geometrija) treba koristiti\n"
 "samo s jednim specificiranim uređajem."
 
-#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122
-#: disk-utils/fsck.cramfs.c:723 disk-utils/mkfs.bfs.c:211
-#: disk-utils/mkfs.cramfs.c:799 disk-utils/partx.c:975 disk-utils/raw.c:136
-#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
-#: misc-utils/cal.c:525 misc-utils/findfs.c:58 misc-utils/look.c:147
-#: misc-utils/whereis.c:592 misc-utils/whereis.c:603 misc-utils/whereis.c:614
-#: misc-utils/whereis.c:659 schedutils/chrt.c:442 schedutils/ionice.c:264
-#: schedutils/taskset.c:207 sys-utils/chcpu.c:355 sys-utils/chmem.c:429
-#: sys-utils/dmesg.c:1579 sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321
-#: sys-utils/losetup.c:918 sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656
-#: sys-utils/mount.c:867 sys-utils/mount.c:875 sys-utils/mount.c:924
-#: sys-utils/mount.c:937 sys-utils/mount.c:1009 sys-utils/mountpoint.c:191
-#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:258 sys-utils/swapon.c:1011
-#: sys-utils/switch_root.c:270 sys-utils/umount.c:629
-#: term-utils/setterm.c:1197 text-utils/col.c:584 text-utils/more.c:2096
+#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122 disk-utils/fsck.cramfs.c:723
+#: disk-utils/mkfs.bfs.c:211 disk-utils/mkfs.cramfs.c:799
+#: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
+#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:525
+#: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:592
+#: misc-utils/whereis.c:603 misc-utils/whereis.c:614 misc-utils/whereis.c:659
+#: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:207
+#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1579
+#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
+#: sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656 sys-utils/mount.c:867
+#: sys-utils/mount.c:875 sys-utils/mount.c:924 sys-utils/mount.c:937
+#: sys-utils/mount.c:1009 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
+#: sys-utils/swapoff.c:258 sys-utils/swapon.c:1011 sys-utils/switch_root.c:270
+#: sys-utils/umount.c:629 term-utils/setterm.c:1197 text-utils/col.c:584
+#: text-utils/more.c:2096
 msgid "bad usage"
 msgstr "loša uporaba"
 
@@ -2057,7 +2054,7 @@ msgstr "opcija „%s“ zahtijeva argument"
 msgid "invalid argument of -r: %d"
 msgstr "nevaljani argument za -r: %d"
 
-#: disk-utils/fsck.c:1648
+#: disk-utils/fsck.c:1658
 msgid "the -l option can be used with one device only -- ignore"
 msgstr "opcija -l se može koristiti samo s jednim uređajem -- zanemarena je"
 
@@ -3010,7 +3007,7 @@ msgstr ""
 " -V, --verbose      objašnjava što radi;\n"
 "                      više od jedan V (npr. -VV) izvrši probu (dry-run)\n"
 
-#: disk-utils/mkfs.c:133 include/c.h:310 login-utils/su-common.c:1290
+#: disk-utils/mkfs.c:133 include/c.h:310 login-utils/su-common.c:1292
 #: login-utils/sulogin.c:864 login-utils/sulogin.c:868 sys-utils/flock.c:123
 #: sys-utils/rtcwake.c:623
 #, c-format
@@ -6495,7 +6492,7 @@ msgstr "Oznaka diska zapisana je na %s. (Ne zaboravite zapisati i %s oznaku.)"
 msgid "Disklabel written to %s."
 msgstr "Oznaka diska zapisana je na %s."
 
-#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:776
+#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:777
 msgid "Syncing disks."
 msgstr "Sinkroniziramo diskove."
 
@@ -6524,66 +6521,66 @@ msgstr "Blok"
 msgid "Cpg"
 msgstr "Cpg"
 
-#: libfdisk/src/context.c:766
+#: libfdisk/src/context.c:767
 #, c-format
 msgid "%s: fsync device failed"
 msgstr "%s: neuspješan pokušaj sinkronizacije (fsync) uređaja"
 
-#: libfdisk/src/context.c:771 misc-utils/wipefs.c:619
+#: libfdisk/src/context.c:772 misc-utils/wipefs.c:619
 #, c-format
 msgid "%s: close device failed"
 msgstr "%s: zatvaranje uređaja nije uspjelo"
 
-#: libfdisk/src/context.c:854
+#: libfdisk/src/context.c:855
 msgid "Calling ioctl() to re-read partition table."
 msgstr "Pozivamo ioctl() za ponovno čitanje particijske tablice."
 
-#: libfdisk/src/context.c:862
+#: libfdisk/src/context.c:863
 msgid "Re-reading the partition table failed."
 msgstr "Ponovno čitanje particijske tablice nije uspjelo."
 
-#: libfdisk/src/context.c:864
+#: libfdisk/src/context.c:865
 msgid "The kernel still uses the old table. The new table will be used at the next reboot or after you run partprobe(8) or partx(8)."
 msgstr ""
 "Jezgra (kernel) još uvijek koristi staru tablicu. Nova će se tablica koristiti\n"
 "tek nakon ponovnog pokretanja ili ako izvršite partprobe(8) ili partx(8)."
 
-#: libfdisk/src/context.c:954
+#: libfdisk/src/context.c:955
 #, c-format
 msgid "Failed to remove partition %zu from system"
 msgstr "Particiju %zu nije uspjelo ukloniti iz sustava"
 
-#: libfdisk/src/context.c:963
+#: libfdisk/src/context.c:964
 #, c-format
 msgid "Failed to update system information about partition %zu"
 msgstr "Nije uspjelo informirati sustav (ažurirati podatke sustava) o particiji %zu"
 
-#: libfdisk/src/context.c:983
+#: libfdisk/src/context.c:984
 #, c-format
 msgid "Failed to add partition %zu to system"
 msgstr "Particiju %zu nije uspjelo dodati sustavu"
 
-#: libfdisk/src/context.c:989
+#: libfdisk/src/context.c:990
 msgid "The kernel still uses the old partitions. The new table will be used at the next reboot. "
 msgstr ""
 "Jezgra (kernel) još uvijek koristi stare particije. Nova će se tablica\n"
 "koristiti tek nakon ponovnog pokretanja. "
 
-#: libfdisk/src/context.c:1193
+#: libfdisk/src/context.c:1194
 msgid "cylinder"
 msgid_plural "cylinders"
 msgstr[0] "cilindar"
 msgstr[1] "cilindra"
 msgstr[2] "cilindara"
 
-#: libfdisk/src/context.c:1194
+#: libfdisk/src/context.c:1195
 msgid "sector"
 msgid_plural "sectors"
 msgstr[0] "sektor"
 msgstr[1] "sektora"
 msgstr[2] "sektora"
 
-#: libfdisk/src/context.c:1550
+#: libfdisk/src/context.c:1551
 msgid "Incomplete geometry setting."
 msgstr "Nepotpune postavke geometrije."
 
@@ -7272,11 +7269,11 @@ msgstr "Nema ništa za raditi. Particije su već u ispravnom poretku."
 msgid "Failed to fix partitions order."
 msgstr "Nije uspjelo popraviti poredak particija."
 
-#: libfdisk/src/partition.c:871
+#: libfdisk/src/partition.c:879
 msgid "Free space"
 msgstr "Slobodni prostor"
 
-#: libfdisk/src/partition.c:1365
+#: libfdisk/src/partition.c:1373
 #, c-format
 msgid "Failed to resize partition #%zu."
 msgstr "Nije uspjelo promijeniti veličinu particije #%zu."
@@ -9217,74 +9214,74 @@ msgstr " (ispis memorije je spremljen!)"
 msgid "change owner or mode for pseudo-terminal failed"
 msgstr "nije uspjelo promijeniti vlasnika ili način rada za pseudoterminal"
 
-#: login-utils/su-common.c:375
+#: login-utils/su-common.c:377
 msgid "failed to modify environment"
 msgstr "nije uspjelo modificirati okružje"
 
-#: login-utils/su-common.c:411
+#: login-utils/su-common.c:413
 msgid "may not be used by non-root users"
 msgstr "obični korisnici to ne mogu koristiti"
 
-#: login-utils/su-common.c:435
+#: login-utils/su-common.c:437
 msgid "authentication failed"
 msgstr "provjera autentičnosti nije uspjela"
 
-#: login-utils/su-common.c:448
+#: login-utils/su-common.c:450
 #, c-format
 msgid "cannot open session: %s"
 msgstr "nije moguće otvoriti sjednicu: %s"
 
-#: login-utils/su-common.c:467
+#: login-utils/su-common.c:469
 msgid "cannot block signals"
 msgstr "nije moguće blokirati signale"
 
-#: login-utils/su-common.c:484
+#: login-utils/su-common.c:486
 msgid "cannot initialize signal mask for session"
 msgstr "nije moguće inicijalizirati signalnu masku za sjednicu"
 
-#: login-utils/su-common.c:492
+#: login-utils/su-common.c:494
 msgid "cannot initialize signal mask"
 msgstr "nije moguće inicijalizirati signalnu masku"
 
-#: login-utils/su-common.c:502
+#: login-utils/su-common.c:504
 msgid "cannot set signal handler for session"
 msgstr "nije moguće postaviti rukovatelja signala za sjednicu"
 
-#: login-utils/su-common.c:510 misc-utils/uuidd.c:439
+#: login-utils/su-common.c:512 misc-utils/uuidd.c:439
 #: sys-utils/lscpu-virt.c:489
 msgid "cannot set signal handler"
 msgstr "nije moguće postaviti rukovatelja signala"
 
-#: login-utils/su-common.c:518
+#: login-utils/su-common.c:520
 msgid "cannot set signal mask"
 msgstr "nije moguće postaviti signalnu masku"
 
-#: login-utils/su-common.c:545 term-utils/script.c:961
+#: login-utils/su-common.c:547 term-utils/script.c:961
 #: term-utils/scriptlive.c:296
 msgid "failed to create pseudo-terminal"
 msgstr "nije uspjelo stvoriti pseudo-terminal"
 
-#: login-utils/su-common.c:547 term-utils/script.c:968
+#: login-utils/su-common.c:549 term-utils/script.c:968
 #: term-utils/scriptlive.c:298
 msgid "failed to initialize signals handler"
 msgstr "nije uspjelo inicijalizirati rukovatelja signala"
 
-#: login-utils/su-common.c:562
+#: login-utils/su-common.c:564
 msgid "cannot set child signal handler"
 msgstr "nije moguće postaviti rukovatelja signala potomka"
 
-#: login-utils/su-common.c:572 term-utils/script.c:977
+#: login-utils/su-common.c:574 term-utils/script.c:977
 #: term-utils/scriptlive.c:305
 msgid "cannot create child process"
 msgstr "nije moguće stvoriti potomka (dijete-proces)"
 
-#: login-utils/su-common.c:591 sys-utils/nsenter.c:510
+#: login-utils/su-common.c:593 sys-utils/nsenter.c:510
 #: sys-utils/switch_root.c:189
 #, c-format
 msgid "cannot change directory to %s"
 msgstr "nije moguće promijeniti direktorij u %s"
 
-#: login-utils/su-common.c:617 term-utils/scriptlive.c:354
+#: login-utils/su-common.c:619 term-utils/scriptlive.c:354
 #, c-format
 msgid ""
 "\n"
@@ -9293,57 +9290,57 @@ msgstr ""
 "\n"
 "Sesija završava, ubijamo ljusku..."
 
-#: login-utils/su-common.c:628
+#: login-utils/su-common.c:630
 #, c-format
 msgid " ...killed.\n"
 msgstr " ...ubijena.\n"
 
-#: login-utils/su-common.c:725
+#: login-utils/su-common.c:727
 msgid "failed to set the PATH environment variable"
 msgstr "nije uspjelo postaviti varijablu okružja PATH (staza)"
 
-#: login-utils/su-common.c:802
+#: login-utils/su-common.c:804
 msgid "cannot set groups"
 msgstr "nije moguće postaviti grupe"
 
-#: login-utils/su-common.c:808
+#: login-utils/su-common.c:810
 #, c-format
 msgid "failed to establish user credentials: %s"
 msgstr "nije uspjelo uspostaviti vjerodajnice korisnika: %s"
 
-#: login-utils/su-common.c:818
+#: login-utils/su-common.c:820
 msgid "cannot set group id"
 msgstr "nije moguće postaviti ID grupe (GID)"
 
-#: login-utils/su-common.c:820
+#: login-utils/su-common.c:822
 msgid "cannot set user id"
 msgstr "nije moguće postaviti ID korisnika (UID)"
 
-#: login-utils/su-common.c:884
+#: login-utils/su-common.c:886
 msgid " -m, -p, --preserve-environment      do not reset environment variables\n"
 msgstr " -m, -p, --preserve-environment       ne resetira varijable okružja\n"
 
-#: login-utils/su-common.c:885
+#: login-utils/su-common.c:887
 msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
 msgstr " -w, --whitelist-environment <popis>  ne resetira popisane varijable\n"
 
-#: login-utils/su-common.c:888
+#: login-utils/su-common.c:890
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr " -g, --group <grupa>             specifikacija primarne grupe\n"
 
-#: login-utils/su-common.c:889
+#: login-utils/su-common.c:891
 msgid " -G, --supp-group <group>        specify a supplemental group\n"
 msgstr " -G, --supp-group <grupa>        specifikacija dodatnih grupa\n"
 
-#: login-utils/su-common.c:892
+#: login-utils/su-common.c:894
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr " -, -l, --login                  učini ljusku prijavnom ljuskom\n"
 
-#: login-utils/su-common.c:893
+#: login-utils/su-common.c:895
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr " -c, --command <naredba>         preda jednu naredbu ljusci s -c\n"
 
-#: login-utils/su-common.c:894
+#: login-utils/su-common.c:896
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
@@ -9351,19 +9348,19 @@ msgstr ""
 " --session-command <naredna>     preda jednu naredbu ljusci s -c\n"
 "                                   bez kreiranja nove sjednice\n"
 
-#: login-utils/su-common.c:896
+#: login-utils/su-common.c:898
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr " -f, --fast                      preda -f ljusci (za csh ili tcsh)\n"
 
-#: login-utils/su-common.c:897
+#: login-utils/su-common.c:899
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr " -s, --shell <shell>             pokrene <shell> ako to /etc/shells dopušta\n"
 
-#: login-utils/su-common.c:898
+#: login-utils/su-common.c:900
 msgid " -P, --pty                       create a new pseudo-terminal\n"
 msgstr " -P, --pty                       kreira novi pseudo-terminal\n"
 
-#: login-utils/su-common.c:908
+#: login-utils/su-common.c:910
 #, c-format
 msgid ""
 " %1$s [options] -u <user> [[--] <command>]\n"
@@ -9372,7 +9369,7 @@ msgstr ""
 " %1$s [opcije] -u <korisnik> [[--] <naredba>]\n"
 " %1$s [opcije] [-] [<korisnik> [<argument>...]]\n"
 
-#: login-utils/su-common.c:913
+#: login-utils/su-common.c:915
 msgid ""
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
 "not given, fall back to su(1)-compatible semantics and execute standard shell.\n"
@@ -9383,16 +9380,16 @@ msgstr ""
 "i pokrene standardnu ljusku.\n"
 "Opcije -c, -f, -l i -s se ne mogu koristiti zajedno s -u.\n"
 
-#: login-utils/su-common.c:918
+#: login-utils/su-common.c:920
 msgid " -u, --user <user>               username\n"
 msgstr " -u, --user <korisnik>           ime korisnika\n"
 
-#: login-utils/su-common.c:929
+#: login-utils/su-common.c:931
 #, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr " %s [opcije] [-] [<korisnik> [<argument>...]]\n"
 
-#: login-utils/su-common.c:933
+#: login-utils/su-common.c:935
 msgid ""
 "Change the effective user ID and group ID to that of <user>.\n"
 "A mere - implies -l.  If <user> is not given, root is assumed.\n"
@@ -9400,7 +9397,7 @@ msgstr ""
 "Promijeni efektivni ID korisnika i ID grupe na one od navedenog <korisnika>\n"
 "Samo - (crtica) implicira -l. Ako <user> nije dȃn, pretpostavlja se root.\n"
 
-#: login-utils/su-common.c:1010
+#: login-utils/su-common.c:1012
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
@@ -9408,46 +9405,46 @@ msgstr[0] "specificiranje više od %d dodatne grupe nije moguće"
 msgstr[1] "specificiranje više od %d dodatne grupe nije moguće"
 msgstr[2] "specificiranje više od %d dodatnih grupa nije moguće"
 
-#: login-utils/su-common.c:1016
+#: login-utils/su-common.c:1018
 #, c-format
 msgid "group %s does not exist"
 msgstr "grupa %s ne postoji"
 
-#: login-utils/su-common.c:1125
+#: login-utils/su-common.c:1127
 msgid "--pty is not supported for your system"
 msgstr "opcija --pty nije podržana na vašem sustavu"
 
-#: login-utils/su-common.c:1159
+#: login-utils/su-common.c:1161
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr "opcija --preserve-environment je zanemarena; ne može se koristi zajedno s --login"
 
-#: login-utils/su-common.c:1173
+#: login-utils/su-common.c:1175
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr "opcija --{shell,fast,command,session-command,login} se ne može koristiti zajedno s opcijom --user"
 
-#: login-utils/su-common.c:1176
+#: login-utils/su-common.c:1178
 msgid "no command was specified"
 msgstr "nije dȃna nijedna naredba"
 
-#: login-utils/su-common.c:1188
+#: login-utils/su-common.c:1190
 msgid "only root can specify alternative groups"
 msgstr "samo root može specificirati alternativne grupe"
 
-#: login-utils/su-common.c:1199
+#: login-utils/su-common.c:1201
 #, c-format
 msgid "user %s does not exist or the user entry does not contain all the required fields"
 msgstr "korisnik %s ne postoji ili njegov unos ne sadrži sva obvezna polja"
 
-#: login-utils/su-common.c:1234
+#: login-utils/su-common.c:1236
 #, c-format
 msgid "using restricted shell %s"
 msgstr "koristi se restriktivna ljuska %s"
 
-#: login-utils/su-common.c:1255
+#: login-utils/su-common.c:1257
 msgid "failed to allocate pty handler"
 msgstr "nije uspjelo rezervirati memoriju za pty rukovatelja"
 
-#: login-utils/su-common.c:1281
+#: login-utils/su-common.c:1283
 #, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "upozorenje: nije moguće promijeniti direktorij na %s"
@@ -12637,7 +12634,7 @@ msgid "closing %s failed"
 msgstr "zatvaranje %s nije uspjelo"
 
 #: misc-utils/mcookie.c:168 sys-utils/blkdiscard.c:204 sys-utils/fstrim.c:542
-#: text-utils/hexdump.c:124
+#: text-utils/hexdump.c:117
 msgid "failed to parse length"
 msgstr "nije uspjelo razabrati dužinu"
 
@@ -14109,7 +14106,7 @@ msgid "%s: %s ioctl failed"
 msgstr "%s: %s ioctl nije uspjela"
 
 #: sys-utils/blkdiscard.c:208 sys-utils/fstrim.c:546 sys-utils/losetup.c:710
-#: text-utils/hexdump.c:131
+#: text-utils/hexdump.c:124
 msgid "failed to parse offset"
 msgstr "nije uspjelo razabrati odmak"
 
