@@ -56,4 +56,6 @@ EXTRA_DIST += \
 	tools/config-gen.d/non-libmount.conf \
 	\
 	tools/asciidoctor-includetracker.rb \
-	tools/asciidoctor-unicodeconverter.rb
+	tools/asciidoctor-unicodeconverter.rb \
+	\
+	tools/all_syscalls

@@ -1851,6 +1851,10 @@ UL_BUILD_INIT([waitpid], [check])
 UL_REQUIRES_LINUX([waitpid])
 AM_CONDITIONAL([BUILD_WAITPID], [test "x$build_waitpid" = xyes])
 
+UL_BUILD_INIT([enosys], [check])
+UL_REQUIRES_LINUX([enosys])
+AM_CONDITIONAL([BUILD_ENOSYS], [test "x$build_enosys" = xyes])
+
 UL_BUILD_INIT([getopt], [yes])
 AM_CONDITIONAL([BUILD_GETOPT], [test "x$build_getopt" = xyes])
 

@@ -2856,6 +2856,25 @@ if not is_disabler(exe)
   bashcompletions += ['waitpid']
 endif
 
+syscalls_h = custom_target('syscalls.h',
+  input : 'tools/all_syscalls',
+  output : 'syscalls.h',
+  command : ['bash', '@INPUT@', cc.cmd_array()],
+)
+
+exe = executable(
+  'enosys',
+  'misc-utils/enosys.c', syscalls_h,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  manadocs += ['misc-utils/enosys.1.adoc']
+  bashcompletions += ['enosys']
+endif
+
 ############################################################
 
 opt = not get_option('build-schedutils').disabled()

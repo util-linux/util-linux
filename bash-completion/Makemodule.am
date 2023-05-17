@@ -344,5 +344,8 @@ endif
 if BUILD_WAITPID
 dist_bashcompletion_DATA += bash-completion/waitpid
 endif
+if BUILD_ENOSYS
+dist_bashcompletion_DATA += bash-completion/enosys
+endif
 
 endif # BUILD_BASH_COMPLETION

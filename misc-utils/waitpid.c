@@ -41,9 +41,6 @@
 
 #define TIMEOUT_SOCKET_IDX UINT64_MAX
 
-#define err_nosys(exitcode, ...) \
-	err(errno == ENOSYS ? EXIT_NOTSUPP : exitcode, __VA_ARGS__)
-
 static bool verbose = false;
 static struct timespec timeout;
 static bool allow_exited = false;

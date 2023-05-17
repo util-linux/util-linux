@@ -297,3 +297,21 @@ waitpid_SOURCES = misc-utils/waitpid.c
 waitpid_LDADD = $(LDADD) libcommon.la
 waitpid_CFLAGS = $(AM_CFLAGS)
 endif
+
+if BUILD_ENOSYS
+
+misc-utils/enosys.c: syscalls.h
+
+syscalls.h: $(top_srcdir)/tools/all_syscalls
+	$(top_srcdir)/tools/all_syscalls $(CC) $(CFLAGS)
+
+-include syscalls.h.deps
+CLEANFILES += syscalls.h syscalls.h.deps
+
+usrbin_exec_PROGRAMS += enosys
+MANPAGES += misc-utils/enosys.1
+dist_noinst_DATA += misc-utils/enosys.1.adoc
+enosys_SOURCES = misc-utils/enosys.c
+enosys_LDADD = $(LDADD) libcommon.la
+enosys_CFLAGS = $(AM_CFLAGS)
+endif
