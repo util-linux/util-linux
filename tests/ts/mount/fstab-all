@@ -68,16 +68,15 @@ MOUNTPOINT=$TS_MOUNTPOINT
 [ -d "${MOUNTPOINT}D" ] || mkdir -p ${MOUNTPOINT}D
 
 # generic fstab
-MY_FSTAB="$TS_OUTDIR/${TS_TESTNAME}.fstab"
-rm -rf $MY_FSTAB
-echo  "${TS_DEVICE}1 ${MOUNTPOINT}A ext2 rw,defaults 0 0" >> $MY_FSTAB 
-echo  "${TS_DEVICE}2 ${MOUNTPOINT}B ext2 rw,defaults 0 0" >> $MY_FSTAB
-echo  "${TS_DEVICE}3 ${MOUNTPOINT}C ext2 ro,defaults 0 0" >> $MY_FSTAB
-echo  "${TS_DEVICE}4 ${MOUNTPOINT}D ext4 rw,defaults 0 0" >> $MY_FSTAB
+rm -rf "${TS_FSTAB}"
+echo  "${TS_DEVICE}1 ${MOUNTPOINT}A ext2 rw,defaults 0 0" >> "${TS_FSTAB}"
+echo  "${TS_DEVICE}2 ${MOUNTPOINT}B ext2 rw,defaults 0 0" >> "${TS_FSTAB}"
+echo  "${TS_DEVICE}3 ${MOUNTPOINT}C ext2 ro,defaults 0 0" >> "${TS_FSTAB}"
+echo  "${TS_DEVICE}4 ${MOUNTPOINT}D ext4 rw,defaults 0 0" >> "${TS_FSTAB}"
 
 
 ts_init_subtest "basic"
-$TS_CMD_MOUNT --all --fstab $MY_FSTAB >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_MOUNT --all --fstab "${TS_FSTAB}" >> $TS_OUTPUT 2>> $TS_ERRLOG
 [ $? == 0 ] || ts_log "mount failed"
 udevadm settle
 $TS_CMD_UMOUNT ${MOUNTPOINT}{A,B,C,D}
@@ -86,7 +85,7 @@ ts_finalize_subtest
 
 
 ts_init_subtest "filter-type"
-$TS_CMD_MOUNT --all --fstab $MY_FSTAB -t ext4 >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_MOUNT --all --fstab "${TS_FSTAB}" -t ext4 >> $TS_OUTPUT 2>> $TS_ERRLOG
 [ $? == 0 ] || ts_log "mount failed"
 udevadm settle
 $TS_CMD_UMOUNT ${MOUNTPOINT}D
@@ -95,7 +94,7 @@ ts_finalize_subtest
 
 
 ts_init_subtest "filter-notype"
-$TS_CMD_MOUNT --all --fstab $MY_FSTAB -t noext4 >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_MOUNT --all --fstab "${TS_FSTAB}" -t noext4 >> $TS_OUTPUT 2>> $TS_ERRLOG
 [ $? == 0 ] || ts_log "mount failed"
 udevadm settle
 $TS_CMD_UMOUNT ${MOUNTPOINT}{A,B,C}
@@ -104,7 +103,7 @@ ts_finalize_subtest
 
 
 ts_init_subtest "filter-option"
-$TS_CMD_MOUNT --all --fstab $MY_FSTAB -O ro >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_MOUNT --all --fstab "${TS_FSTAB}" -O ro >> $TS_OUTPUT 2>> $TS_ERRLOG
 [ $? == 0 ] || ts_log "mount failed"
 udevadm settle
 $TS_CMD_UMOUNT ${MOUNTPOINT}C
@@ -113,7 +112,7 @@ ts_finalize_subtest
 
 
 ts_init_subtest "override-option"
-$TS_CMD_MOUNT --all --fstab $MY_FSTAB -o ro >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_MOUNT --all --fstab "${TS_FSTAB}" -o ro >> $TS_OUTPUT 2>> $TS_ERRLOG
 [ $? == 0 ] || ts_log "mount failed"
 udevadm settle
 $TS_CMD_UMOUNT ${MOUNTPOINT}{A,B,C,D}
@@ -123,7 +122,7 @@ ts_finalize_subtest
 
 ts_init_subtest "relative-path"
 cd "$TS_OUTDIR" > /dev/null
-$TS_CMD_MOUNT --all --fstab $(basename "$MY_FSTAB") >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_MOUNT --all --fstab $(basename "${TS_FSTAB}") >> $TS_OUTPUT 2>> $TS_ERRLOG
 [ $? == 0 ] || ts_log "mount failed"
 udevadm settle
 $TS_CMD_UMOUNT ${MOUNTPOINT}{A,B,C,D}
@@ -135,16 +134,14 @@ ts_finalize_subtest
 ts_init_subtest "prefix"
 MY_ROOT="$TS_OUTDIR/${TS_TESTNAME}-rootdir"
 [ -d "${MY_ROOT}" ] || mkdir -p ${MY_ROOT}
-# sub-test specific fstab
-MY_FSTAB="$TS_OUTDIR/${TS_TESTNAME}.fstab"
-rm -rf $MY_FSTAB
-echo  "${TS_DEVICE}1 /foo/A ext2 rw,defaults 0 0" >> $MY_FSTAB
-echo  "${TS_DEVICE}2 /foo/B ext2 rw,defaults 0 0" >> $MY_FSTAB
-echo  "${TS_DEVICE}3 /foo/C ext2 rw,defaults 0 0" >> $MY_FSTAB
-echo  "${TS_DEVICE}4 /foo/D ext4 rw,defaults 0 0" >> $MY_FSTAB
+rm -rf "${TS_FSTAB}"
+echo  "${TS_DEVICE}1 /foo/A ext2 rw,defaults 0 0" >> "${TS_FSTAB}"
+echo  "${TS_DEVICE}2 /foo/B ext2 rw,defaults 0 0" >> "${TS_FSTAB}"
+echo  "${TS_DEVICE}3 /foo/C ext2 rw,defaults 0 0" >> "${TS_FSTAB}"
+echo  "${TS_DEVICE}4 /foo/D ext4 rw,defaults 0 0" >> "${TS_FSTAB}"
 # mount all to prefix
 $TS_CMD_MOUNT	--all \
-		--fstab $MY_FSTAB \
+		--fstab "${TS_FSTAB}" \
 		--target-prefix $MY_ROOT \
 		-o X-mount.mkdir >> $TS_OUTPUT 2>> $TS_ERRLOG
 [ $? == 0 ] || ts_log "mount failed"

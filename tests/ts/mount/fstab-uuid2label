@@ -45,13 +45,13 @@ ts_udevadm_settle "$DEVICE" "LABEL" "UUID"
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 
 ts_init_subtest "U-option"
-$TS_CMD_MOUNT -U $UUID >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_MOUNT -T "$TS_FSTAB" -U $UUID >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_is_mounted $DEVICE || ts_log "Cannot find $DEVICE in /proc/mounts"
 $TS_CMD_UMOUNT $DEVICE >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "UUID-option"
-$TS_CMD_MOUNT "UUID=$UUID" >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_MOUNT -T "$TS_FSTAB" "UUID=$UUID" >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_is_mounted $DEVICE || ts_log "Cannot find $DEVICE in /proc/mounts"
 $TS_CMD_UMOUNT $DEVICE >> $TS_OUTPUT 2>>$TS_ERRLOG
 ts_finalize_subtest
