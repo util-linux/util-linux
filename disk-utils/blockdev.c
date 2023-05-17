@@ -10,6 +10,9 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <errno.h>
+#ifdef HAVE_LINUX_BLKZONED_H
+#include <linux/blkzoned.h>
+#endif
 
 #include "c.h"
 #include "nls.h"
@@ -175,6 +178,14 @@ static const struct bdc bdcms[] =
 		.argval = -1,
 		.help = N_("get disk sequence number")
 	},{
+#ifdef HAVE_LINUX_BLKZONED_H
+		IOCTL_ENTRY(BLKGETZONESZ),
+		.name = "--getzonesz",
+		.argtype = ARG_UINT,
+		.argval = -1,
+		.help = N_("get zone size")
+	},{
+#endif
 		IOCTL_ENTRY(BLKFLSBUF),
 		.name = "--flushbufs",
 		.help = N_("flush buffers")
