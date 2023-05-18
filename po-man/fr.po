@@ -9797,7 +9797,7 @@ msgstr "Commandes de l'utilisateur"
 #. type: Plain text
 #: ../login-utils/chfn.1.adoc:20
 msgid "chfn - change your finger information"
-msgstr "chfm - changer vos informations d'identification"
+msgstr "chfn - changer vos informations d'identification"
 
 #. type: Plain text
 #: ../login-utils/chfn.1.adoc:24

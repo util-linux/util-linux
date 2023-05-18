@@ -44060,7 +44060,7 @@ msgstr "umount(8)"
 #. type: Plain text
 #: ../sys-utils/umount.8.adoc:37
 msgid "umount - unmount filesystems"
-msgstr "mount - демонтувати файлову систему"
+msgstr "umount - демонтувати файлову систему"
 
 #. type: Plain text
 #: ../sys-utils/umount.8.adoc:41
