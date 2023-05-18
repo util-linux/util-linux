@@ -119,7 +119,7 @@ void cap_permitted_to_ambient(void)
 		if (cap > (uint64_t) cap_last_cap())
 			continue;
 
-		if ((effective & (1 << cap))
+		if ((effective & (1ULL << cap))
 		    && prctl(PR_CAP_AMBIENT, PR_CAP_AMBIENT_RAISE, cap, 0, 0) < 0)
 			err(EXIT_FAILURE, _("prctl(PR_CAP_AMBIENT) failed"));
 	}
