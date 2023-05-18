@@ -206,7 +206,7 @@ static int xfs_verify_sb(struct xfs_super_block *ondisk, blkid_probe pr,
 
 	if ((sbp->sb_versionnum & 0x0f) == 5) {
 		uint32_t expected, crc;
-		unsigned char *csummed;
+		const unsigned char *csummed;
 
 		if (!(sbp->sb_versionnum & XFS_SB_VERSION_MOREBITSBIT))
 			return 0;
@@ -331,7 +331,7 @@ static int probe_xfs_log(blkid_probe pr,
 {
 	int i;
 	struct xlog_rec_header *rhead;
-	unsigned char *buf;
+	const unsigned char *buf;
 
 	buf = blkid_probe_get_buffer(pr, 0, 256*1024);
 	if (!buf)

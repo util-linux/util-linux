@@ -34,7 +34,7 @@ static const struct dos_subtypes {
 	{ MBR_MINIX_PARTITION, &minix_pt_idinfo }
 };
 
-static inline int is_extended(struct dos_partition *p)
+static inline int is_extended(const struct dos_partition *p)
 {
 	return (p->sys_ind == MBR_DOS_EXTENDED_PARTITION ||
 		p->sys_ind == MBR_W95_EXTENDED_PARTITION ||
@@ -46,7 +46,7 @@ static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
 {
 	blkid_partlist ls = blkid_probe_get_partlist(pr);
 	uint32_t cur_start = ex_start, cur_size = ex_size;
-	unsigned char *data;
+	const unsigned char *data;
 	int ct_nodata = 0;	/* count ext.partitions without data partitions */
 	int i;
 
@@ -57,7 +57,7 @@ static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
 	}
 
 	while (1) {
-		struct dos_partition *p, *p0;
+		const struct dos_partition *p, *p0;
 		uint32_t start = 0, size;
 
 		if (++ct_nodata > 100)
@@ -156,9 +156,9 @@ static inline int is_lvm(blkid_probe pr)
 	return (v && v->data && strcmp((char *) v->data, "LVM2_member") == 0);
 }
 
-static inline int is_empty_mbr(unsigned char *mbr)
+static inline int is_empty_mbr(const unsigned char *mbr)
 {
-	struct dos_partition *p = mbr_get_partition(mbr, 0);
+	const struct dos_partition *p = mbr_get_partition(mbr, 0);
 	int i, nparts = 0;
 
 	for (i = 0; i < 4; i++) {
@@ -177,8 +177,8 @@ static int probe_dos_pt(blkid_probe pr,
 	int ssf;
 	blkid_parttable tab = NULL;
 	blkid_partlist ls;
-	struct dos_partition *p0, *p;
-	unsigned char *data;
+	const struct dos_partition *p0, *p;
+	const unsigned char *data;
 	uint32_t start, size, id;
 	char idstr[UUID_STR_LEN];
 

@@ -56,7 +56,7 @@ struct mac_driver_desc {
 	/* there is more stuff after this that we don't need */
 } __attribute__((packed));
 
-static inline unsigned char *get_mac_block(
+static inline const unsigned char *get_mac_block(
 					blkid_probe pr,
 					uint16_t block_size,
 					uint32_t num)

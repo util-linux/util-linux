@@ -49,7 +49,7 @@ static int probe_vmfs_fs(blkid_probe pr, const struct blkid_idmag *mag)
 static int probe_vmfs_volume(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct vmfs_volume_info *header;
-	unsigned char *lvm_uuid;
+	const unsigned char *lvm_uuid;
 
 	header = blkid_probe_get_sb(pr, mag, struct vmfs_volume_info);
 	if (header == NULL)

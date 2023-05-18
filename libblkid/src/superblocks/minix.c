@@ -74,7 +74,7 @@ static int get_minix_version(const unsigned char *data, int *other_endian)
 static int probe_minix(blkid_probe pr,
 		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
-	unsigned char *ext;
+	const unsigned char *ext;
 	const unsigned char *data;
 	int version = 0, swabme = 0;
 	unsigned long zones, ninodes, imaps, zmaps;

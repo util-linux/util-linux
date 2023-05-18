@@ -80,13 +80,13 @@ struct file_attribute {
 
 static int __probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag, int save_info)
 {
-	struct ntfs_super_block *ns;
-	struct master_file_table_record *mft;
+	const struct ntfs_super_block *ns;
+	const struct master_file_table_record *mft;
 
 	uint32_t sectors_per_cluster, mft_record_size;
 	uint16_t sector_size;
 	uint64_t nr_clusters, off, attr_off;
-	unsigned char *buf_mft;
+	const unsigned char *buf_mft;
 
 	ns = blkid_probe_get_sb(pr, mag, struct ntfs_super_block);
 	if (!ns)

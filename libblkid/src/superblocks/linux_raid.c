@@ -187,14 +187,13 @@ static int raid1_verify_csum(blkid_probe pr, off_t off,
 {
 	size_t csummed_size = sizeof(struct mdp1_super_block)
 		+ le32_to_cpu(mdp1->max_dev) * sizeof(mdp1->dev_roles[0]);
-	unsigned char *csummed = blkid_probe_get_buffer(pr, off, csummed_size);
+	const unsigned char *csummed = blkid_probe_get_buffer(pr, off, csummed_size);
 	if (!csummed)
 		return 1;
 
-	memset(csummed + offsetof(struct mdp1_super_block, sb_csum), 0,
-			sizeof(mdp1->sb_csum));
-
 	uint64_t csum = 0;
+
+	csum -= le32_to_cpu(*(uint32_t *) (csummed + offsetof(struct mdp1_super_block, sb_csum)));
 
 	while (csummed_size >= 4) {
 		csum += le32_to_cpu(*(uint32_t *) csummed);

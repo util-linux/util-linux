@@ -669,7 +669,7 @@ static int hide_buffer(blkid_probe pr, uint64_t off, uint64_t len)
  * Note that @off is offset within probing area, the probing area is defined by
  * pr->off and pr->size.
  */
-unsigned char *blkid_probe_get_buffer(blkid_probe pr, uint64_t off, uint64_t len)
+const unsigned char *blkid_probe_get_buffer(blkid_probe pr, uint64_t off, uint64_t len)
 {
 	struct blkid_bufinfo *bf = NULL;
 	uint64_t real_off = pr->off + off;
@@ -1136,7 +1136,7 @@ int blkid_probe_set_dimension(blkid_probe pr, uint64_t off, uint64_t size)
 	return 0;
 }
 
-unsigned char *blkid_probe_get_sb_buffer(blkid_probe pr, const struct blkid_idmag *mag, size_t size)
+const unsigned char *blkid_probe_get_sb_buffer(blkid_probe pr, const struct blkid_idmag *mag, size_t size)
 {
 	uint64_t hint_offset;
 
@@ -1164,7 +1164,7 @@ int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
 
 	/* try to detect by magic string */
 	while(mag && mag->magic) {
-		unsigned char *buf;
+		const unsigned char *buf;
 		uint64_t kboff;
 		uint64_t hint_offset;
 
@@ -1690,7 +1690,7 @@ done:
 }
 
 /* same sa blkid_probe_get_buffer() but works with 512-sectors */
-unsigned char *blkid_probe_get_sector(blkid_probe pr, unsigned int sector)
+const unsigned char *blkid_probe_get_sector(blkid_probe pr, unsigned int sector)
 {
 	return blkid_probe_get_buffer(pr, ((uint64_t) sector) << 9, 0x200);
 }

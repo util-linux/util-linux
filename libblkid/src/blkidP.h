@@ -412,12 +412,12 @@ extern int blkdid_probe_is_opal_locked(blkid_probe pr)
 			__attribute__((nonnull))
 			__attribute__((warn_unused_result));
 
-extern unsigned char *blkid_probe_get_buffer(blkid_probe pr,
+extern const unsigned char *blkid_probe_get_buffer(blkid_probe pr,
                                 uint64_t off, uint64_t len)
 			__attribute__((nonnull))
 			__attribute__((warn_unused_result));
 
-extern unsigned char *blkid_probe_get_sector(blkid_probe pr, unsigned int sector)
+extern const unsigned char *blkid_probe_get_sector(blkid_probe pr, unsigned int sector)
 			__attribute__((nonnull))
 			__attribute__((warn_unused_result));
 
@@ -434,7 +434,7 @@ extern int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
 			__attribute__((nonnull(1)));
 
 /* returns superblock according to 'struct blkid_idmag' */
-extern unsigned char *blkid_probe_get_sb_buffer(blkid_probe pr, const struct blkid_idmag *mag, size_t size);
+extern const unsigned char *blkid_probe_get_sb_buffer(blkid_probe pr, const struct blkid_idmag *mag, size_t size);
 #define blkid_probe_get_sb(_pr, _mag, type) \
 			((type *) blkid_probe_get_sb_buffer((_pr), _mag, sizeof(type)))
 
