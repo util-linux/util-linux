@@ -184,7 +184,7 @@ static void create_nthreads(process_t *proc, size_t index)
 		}
 
 		LOG(2, (stderr, "%d: started thread [tid=%jd,index=%zu]\n",
-		     proc->pid, (intmax_t) th->tid, th->index));
+		     proc->pid, (intmax_t) (intptr_t) th->tid, th->index));
 		index += nobjects;
 		ncreated++;
 	}
@@ -204,7 +204,7 @@ static void create_nthreads(process_t *proc, size_t index)
 		}
 
 		LOG(2, (stderr, "%d: thread exited [tid=%jd,return=%d]\n",
-		     proc->pid, (intmax_t) th->tid, th->retval));
+		     proc->pid, (intmax_t) (intptr_t) th->tid, th->retval));
 	}
 
 	free(threads);
@@ -260,7 +260,7 @@ static void object_dump(size_t idx, object_t *obj)
 	fprintf(stderr, "  uuid:    <%s>\n", p);
 	fprintf(stderr, "  idx:     %zu\n", obj->idx);
 	fprintf(stderr, "  process: %d\n", (int) obj->pid);
-	fprintf(stderr, "  thread:  %jd\n", (intmax_t) obj->tid);
+	fprintf(stderr, "  thread:  %jd\n", (intmax_t) (intptr_t) obj->tid);
 	fprintf(stderr, "}\n");
 }
 
