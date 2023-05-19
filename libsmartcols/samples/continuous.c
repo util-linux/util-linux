@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
 {
 	struct libscols_table *tb;
 	size_t i;
-	const size_t timecellsz = sizeof(stringify_value(UINT_MAX));
+	const size_t timecellsz = 500;
 	struct timeval last;
 
 	scols_init_debug(0);
