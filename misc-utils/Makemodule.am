@@ -303,7 +303,8 @@ if BUILD_ENOSYS
 misc-utils/enosys.c: syscalls.h
 
 syscalls.h: $(top_srcdir)/tools/all_syscalls
-	$(top_srcdir)/tools/all_syscalls $(CC) $(CFLAGS)
+	@echo '  GEN      $@'
+	@$(top_srcdir)/tools/all_syscalls $(CC) $(CFLAGS)
 
 -include syscalls.h.deps
 CLEANFILES += syscalls.h syscalls.h.deps
