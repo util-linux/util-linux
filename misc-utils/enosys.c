@@ -25,6 +25,7 @@
 #include <linux/seccomp.h>
 #include <linux/audit.h>
 #include <sys/prctl.h>
+#include <sys/syscall.h>
 
 #include "c.h"
 #include "exitcodes.h"
