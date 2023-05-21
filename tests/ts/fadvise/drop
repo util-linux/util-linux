@@ -29,7 +29,7 @@ create_file() {
 }
 
 do_fincore() {
-    "$TS_CMD_FINCORE" "$FILE"
+    "$TS_CMD_FINCORE" -o RES,SIZE,FILE "$FILE"
 }
 
 {
