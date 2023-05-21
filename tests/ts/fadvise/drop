@@ -16,7 +16,7 @@ ts_check_prog "sleep"
 ts_cd "$TS_OUTDIR"
 
 FILE="ddtest"
-BS=4096
+BS=65536
 COUNT=8
 
 FILE_FS="$("$TS_CMD_FINDMNT" -nr -o FSTYPE -T "$PWD")"
