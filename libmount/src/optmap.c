@@ -147,7 +147,7 @@ static const struct libmnt_optmap linux_flags_map[] =
  */
 static const struct libmnt_optmap userspace_opts_map[] =
 {
-   { "defaults", 0, 0 },               /* default options */
+   { "defaults", 0, MNT_NOHLPS },      /* default options */
 
    { "auto",    MNT_MS_NOAUTO, MNT_NOHLPS | MNT_INVERT | MNT_NOMTAB },  /* Can be mounted using -a */
    { "noauto",  MNT_MS_NOAUTO, MNT_NOHLPS | MNT_NOMTAB },  /* Can only be mounted explicitly */
