@@ -33,7 +33,6 @@
 #include "bitops.h"
 #include "audit-arch.h"
 
-#define UL_BPF_NOP (struct sock_filter) BPF_JUMP(BPF_JMP | BPF_JA, 0, 0, 0)
 #define IS_LITTLE_ENDIAN (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
 
 #define syscall_nr (offsetof(struct seccomp_data, nr))
@@ -130,48 +129,46 @@ int main(int argc, char **argv)
 	if (optind >= argc)
 		errtryhelp(EXIT_FAILURE);
 
-#define N_FILTERS (ARRAY_SIZE(syscalls) * 2 + 12)
+	struct sock_filter filter[BPF_MAXINSNS];
+	struct sock_filter *f = filter;
 
-	struct sock_filter filter[N_FILTERS] = {
-		[0]  = BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arch),
-		[1]  = BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, SECCOMP_ARCH_NATIVE, 1, 0),
-		[2]  = BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_TRAP),
+#define INSTR(_instruction)                                        \
+	if (f == &filter[ARRAY_SIZE(filter)])                      \
+		errx(EXIT_FAILURE, _("filter too big")); \
+	*f++ = (struct sock_filter) _instruction
 
-		/* Blocking "execve" normally would also block our own call to
-		 * it and the end of main. To distinguish between our execve
-		 * and the execve to be blocked, compare the environ pointer.
-		 *
-		 * See https://lore.kernel.org/all/CAAnLoWnS74dK9Wq4EQ-uzQ0qCRfSK-dLqh+HCais-5qwDjrVzg@mail.gmail.com/
-		 */
-		[3]  = BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_nr),
-		[4]  = BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, __NR_execve, 0, 5),
-		[5]  = BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg(2) + 4 * !IS_LITTLE_ENDIAN),
-		[6]  = BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, (uint64_t)(uintptr_t) environ, 0, 3),
-		[7]  = BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg(2) + 4 * IS_LITTLE_ENDIAN),
-		[8]  = BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, (uint64_t)(uintptr_t) environ >> 32, 0, 1),
-		[9]  = BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ALLOW),
+	INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arch));
+	INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, SECCOMP_ARCH_NATIVE, 1, 0));
+	INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_TRAP));
 
-		[10] = BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_nr),
+	/* Blocking "execve" normally would also block our own call to
+	 * it and the end of main. To distinguish between our execve
+	 * and the execve to be blocked, compare the environ pointer.
+	 *
+	 * See https://lore.kernel.org/all/CAAnLoWnS74dK9Wq4EQ-uzQ0qCRfSK-dLqh+HCais-5qwDjrVzg@mail.gmail.com/
+	 */
+	INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_nr));
+	INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, __NR_execve, 0, 5));
+	INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg(2) + 4 * !IS_LITTLE_ENDIAN));
+	INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, (uint64_t)(uintptr_t) environ, 0, 3));
+	INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg(2) + 4 * IS_LITTLE_ENDIAN));
+	INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, (uint64_t)(uintptr_t) environ >> 32, 0, 1));
+	INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ALLOW));
 
-		[N_FILTERS - 1] = BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ALLOW),
-	};
-	static_assert(ARRAY_SIZE(filter) <= BPF_MAXINSNS, "bpf filter too big");
+	INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_nr));
 
 	for (i = 0; i < ARRAY_SIZE(syscalls); i++) {
-		struct sock_filter *f = &filter[11 + i * 2];
+		if (!blocked_syscalls[i])
+			continue;
 
-		*f = (struct sock_filter) BPF_JUMP(
-				BPF_JMP | BPF_JEQ | BPF_K,
-				syscalls[i].number,
-				0, 1);
-		*(f + 1) = blocked_syscalls[i]
-			? (struct sock_filter) BPF_STMT(
-					BPF_RET | BPF_K, SECCOMP_RET_ERRNO | ENOSYS)
-			: UL_BPF_NOP;
+		INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, syscalls[i].number, 0, 1));
+		INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ERRNO | ENOSYS));
 	}
 
+	INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ALLOW));
+
 	struct sock_fprog prog = {
-		.len    = ARRAY_SIZE(filter),
+		.len    = f - filter,
 		.filter = filter,
 	};
 
