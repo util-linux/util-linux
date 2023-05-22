@@ -1014,6 +1014,7 @@ exe = executable(
 if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['login-utils/newgrp.1.adoc']
+  bashcompletions += ['newgrp']
 endif
 
 opt = not get_option('build-lslogins').disabled()
