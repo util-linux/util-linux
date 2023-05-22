@@ -133,3 +133,51 @@ jobs:
             .github/workflows/cibuild.sh CONFIGURE MAKE
             # Check
             .github/workflows/cibuild.sh CHECK
+  build-openwrt:
+    name: build (openwrt, ${{ matrix.target }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: ipq40xx
+            subtarget: generic
+            abi: musl_eabi
+          - target: ath79
+            subtarget: generic
+            abi: musl
+          - target: bcm63xx
+            subtarget: generic
+            abi: musl
+          - target: mpc85xx
+            subtarget: p2020
+            abi: musl
+          - target: archs38
+            subtarget: generic
+            abi: glibc
+    env:
+      COMPILER: none
+    steps:
+      - name: Repository checkout
+        uses: actions/checkout@v1
+      - name: Ubuntu setup
+        run: sudo -E .github/workflows/cibuild-setup-ubuntu.sh
+      - name: OpenWrt environment
+        run: |
+          OPENWRT_RELEASE=22.03.5
+          OPENWRT_SDK=openwrt-sdk-$OPENWRT_RELEASE-${{ matrix.target }}-${{ matrix.subtarget }}_gcc-11.2.0_${{ matrix.abi }}.Linux-x86_64
+          echo "COMPILER=$COMPILER" >> $GITHUB_ENV
+          echo "OPENWRT_RELEASE=$OPENWRT_RELEASE" >> $GITHUB_ENV
+          echo "OPENWRT_SDK=$OPENWRT_SDK" >> $GITHUB_ENV
+      - name: Download toolchain
+        run: |
+          curl -o ~/${{ env.OPENWRT_SDK }}.tar.xz -C - https://downloads.cdn.openwrt.org/releases/${{ env.OPENWRT_RELEASE }}/targets/${{ matrix.target }}/${{ matrix.subtarget }}/${{ env.OPENWRT_SDK }}.tar.xz
+          tar xf ~/${{ env.OPENWRT_SDK }}.tar.xz -C ~
+      - name: Configure
+        run: |
+          source .github/workflows/openwrt-sdk-env.sh  ~/${{ env.OPENWRT_SDK }}
+          .github/workflows/cibuild.sh CONFIGURE
+      - name: Make
+        run: |
+          source .github/workflows/openwrt-sdk-env.sh  ~/${{ env.OPENWRT_SDK }}
+          .github/workflows/cibuild.sh MAKE

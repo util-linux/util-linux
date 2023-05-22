@@ -104,6 +104,10 @@ for phase in "${PHASES[@]}"; do
             CXXFLAGS+=(-shared-libasan)
         fi
 
+	if [[ "$HOST_TRIPLET" != "" ]]; then
+		opts+=(--host "$HOST_TRIPLET")
+	fi
+
         git clean -xdf
 
         ./autogen.sh
