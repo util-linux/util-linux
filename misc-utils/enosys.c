@@ -31,54 +31,7 @@
 #include "exitcodes.h"
 #include "nls.h"
 #include "bitops.h"
-
-#if __x86_64__
-#    define SECCOMP_ARCH_NATIVE AUDIT_ARCH_X86_64
-#elif __i386__
-#    define SECCOMP_ARCH_NATIVE AUDIT_ARCH_I386
-#elif __arm__
-#    define SECCOMP_ARCH_NATIVE AUDIT_ARCH_ARM
-#elif __aarch64__
-#    define SECCOMP_ARCH_NATIVE AUDIT_ARCH_AARCH64
-#elif __riscv
-#    if __riscv_xlen == 32
-#        define SECCOMP_ARCH_NATIVE AUDIT_ARCH_RISCV32
-#    elif __riscv_xlen == 64
-#        define SECCOMP_ARCH_NATIVE AUDIT_ARCH_RISCV64
-#    endif
-#elif __s390x__
-# 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_S390X
-#elif __s390__
-# 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_S390
-#elif __PPC64__
-#    if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-# 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_PPC64
-#    else
-# 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_PPC64LE
-#    endif
-#elif __powerpc__
-#    define SECCOMP_ARCH_NATIVE AUDIT_ARCH_PPC
-#elif __mips__
-#    if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-# 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_MIPS
-#    else
-# 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_MIPSEL
-#    endif
-#elif __arc__
-#    if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-# 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_ARCV2BE
-#    else
-# 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_ARCV2
-#    endif
-#elif __sparc__
-#    if __SIZEOF_POINTER__ == 4
-# 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_SPARC
-#    else
-# 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_SPARC64
-#    endif
-#else
-#    error Unknown target architecture
-#endif
+#include "audit-arch.h"
 
 #define UL_BPF_NOP (struct sock_filter) BPF_JUMP(BPF_JMP | BPF_JA, 0, 0, 0)
 #define IS_LITTLE_ENDIAN (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
