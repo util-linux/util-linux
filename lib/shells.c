@@ -53,6 +53,7 @@ extern int is_known_shell(const char *shell_name)
 			break;
 		}
 	}
+	econf_free (keys);
 	econf_free (key_file);	
 #else
 	char *s;
