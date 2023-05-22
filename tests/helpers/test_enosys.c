@@ -69,6 +69,12 @@
 #    else
 # 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_ARCV2
 #    endif
+#elif __sparc__
+#    if __SIZEOF_POINTER__ == 4
+# 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_SPARC
+#    else
+# 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_SPARC64
+#    endif
 #endif
 
 #define syscall_nr (offsetof(struct seccomp_data, nr))
