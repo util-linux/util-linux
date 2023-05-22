@@ -84,14 +84,8 @@ ts_cd "$TS_OUTDIR"
 		   -o ASSOC,TYPE,NAME \
 		   -Q "(PID == $PID0) or (PID == $PID1) or (PID == $PID2) or (PID == $PID3) or (PID == $PID4)"
 
-    kill -CONT "${PID0}"
-    wait "${PID0}"
-
-    kill -CONT "${PID1}"
-    wait "${PID1}"
-
-    kill -CONT "${PID2}"
-    wait "${PID2}"
+    kill -CONT "${PID0}" "${PID1}" "${PID2}" "${PID3}" "${PID4}"
+    wait       "${PID0}" "${PID1}" "${PID2}" "${PID3}" "${PID4}"
 } > "$TS_OUTPUT" 2>&1
 
 ts_finalize
