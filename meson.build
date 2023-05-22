@@ -2403,6 +2403,7 @@ exe = executable(
 if opt
   exes += exe
   manadocs += ['term-utils/write.1.adoc']
+  bashcompletions += ['write']
 endif
 
 # chgrp tty $(DESTDIR)$(usrbin_execdir)/write
