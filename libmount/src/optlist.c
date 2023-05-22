@@ -338,6 +338,7 @@ int mnt_optlist_merge_opts(struct libmnt_optlist *ls)
 
 			/* remove inverted option */
 			else if (opt->ent && x->ent
+			    && opt->map == x->map
 			    && opt->ent->id == x->ent->id
 			    && (opt->ent->mask & MNT_INVERT
 				    || x->ent->mask & MNT_INVERT))
@@ -520,6 +521,8 @@ static int optlist_add_optstr(struct libmnt_optlist *ls, const char *optstr,
 		if (!opt)
 			return -ENOMEM;
 		opt->src = MNT_OPTSRC_STRING;
+		if (where)
+			where = &opt->opts;
 	}
 
 	optlist_cleanup_cache(ls);
@@ -622,6 +625,8 @@ static int optlist_add_flags(struct libmnt_optlist *ls, unsigned long flags,
 		if (!opt)
 			return -ENOMEM;
 		opt->src = MNT_OPTSRC_FLAG;
+		if (where)
+			where = &opt->opts;
 	}
 
 	optlist_cleanup_cache(ls);
