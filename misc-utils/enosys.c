@@ -81,6 +81,16 @@
 #define syscall_arch (offsetof(struct seccomp_data, arch))
 #define syscall_arg(n) (offsetof(struct seccomp_data, args[n]))
 
+static int set_seccomp_filter(const void *prog)
+{
+#if defined(__NR_seccomp) && defined(SECCOMP_SET_MODE_FILTER) && defined(SECCOMP_FILTER_FLAG_SPEC_ALLOW)
+	if (!syscall(__NR_seccomp, SECCOMP_SET_MODE_FILTER, SECCOMP_FILTER_FLAG_SPEC_ALLOW, prog))
+		return 0;
+#endif
+
+	return prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, prog);
+}
+
 struct syscall {
 	const char *const name;
 	long number;
@@ -211,8 +221,8 @@ int main(int argc, char **argv)
 	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0))
 		err_nosys(EXIT_FAILURE, _("Could not run prctl(PR_SET_NO_NEW_PRIVS)"));
 
-	if (prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog))
-		err_nosys(EXIT_FAILURE, _("Could not run prctl(PR_SET_SECCOMP)"));
+	if (set_seccomp_filter(&prog))
+		err_nosys(EXIT_FAILURE, _("Could not seccomp filter"));
 
 	if (execvp(argv[optind], argv + optind))
 		err(EXIT_NOTSUPP, _("Could not exec"));
