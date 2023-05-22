@@ -8,9 +8,9 @@ TS_DESC="options string"
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
-TESTPROG="$TS_HELPER_LIBMOUNT_OPTSTR"
+ts_check_test_command $TS_HELPER_LIBMOUNT_OPTSTR
 
-[ -x $TESTPROG ] || ts_skip "test not compiled"
+TESTPROG="$TS_HELPER_LIBMOUNT_OPTSTR"
 
 ts_init_subtest "append"
 ts_run $TESTPROG --append "aaa,bbb=BBB,context=\"foo,bar,gogo\",ccc" "ddd" &> $TS_OUTPUT
@@ -26,6 +26,10 @@ ts_finalize_subtest
 
 ts_init_subtest "prepend"
 ts_run $TESTPROG --prepend "aaa,bbb=BBB,ccc" "ddd" &> $TS_OUTPUT
+ts_finalize_subtest
+
+ts_init_subtest "prepend-list"
+ts_run $TESTPROG --prepend "aaa,bbb=BBB,ccc" "ddd,eee=EEE,fff" &> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "prepend-value"

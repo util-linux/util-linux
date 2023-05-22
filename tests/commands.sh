@@ -15,6 +15,7 @@ TS_HELPER_LIBFDISK_MKPART_FULLSPEC="${ts_helpersdir}sample-fdisk-mkpart-fullspec
 TS_HELPER_LIBFDISK_SCRIPT_FUZZ="${ts_helpersdir}test_fdisk_script_fuzz"
 TS_HELPER_LIBMOUNT_LOCK="${ts_helpersdir}test_mount_lock"
 TS_HELPER_LIBMOUNT_OPTSTR="${ts_helpersdir}test_mount_optstr"
+TS_HELPER_LIBMOUNT_OPTLIST="${ts_helpersdir}test_mount_optlist"
 TS_HELPER_LIBMOUNT_TABDIFF="${ts_helpersdir}test_mount_tab_diff"
 TS_HELPER_LIBMOUNT_TAB="${ts_helpersdir}test_mount_tab"
 TS_HELPER_LIBMOUNT_UPDATE="${ts_helpersdir}test_mount_tab_update"
