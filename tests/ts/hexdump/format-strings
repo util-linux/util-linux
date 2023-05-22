@@ -43,6 +43,10 @@ ts_init_subtest "1b_octal"
 $TS_CMD_HEXDUMP -b $FILES/ascii.in &> $TS_OUTPUT
 ts_finalize_subtest
 
+ts_init_subtest "1b_hex"
+$TS_CMD_HEXDUMP -X $FILES/ascii.in &> $TS_OUTPUT
+ts_finalize_subtest
+
 ts_init_subtest "1b_char"
 $TS_CMD_HEXDUMP -c $FILES/ascii.in &> $TS_OUTPUT
 ts_finalize_subtest

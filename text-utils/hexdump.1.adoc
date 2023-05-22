@@ -61,6 +61,9 @@ Below, the _length_ and _offset_ arguments may be followed by the multiplicative
 *-b*, *--one-byte-octal*::
 _One-byte octal display_. Display the input offset in hexadecimal, followed by sixteen space-separated, three-column, zero-filled bytes of input data, in octal, per line.
 
+*-X*, *--one-byte-hex*::
+_One-byte hexadecimal display_. Display the input offset in hexadecimal, followed by sixteen space-separated, two-column, zero-filled bytes of input data, in hexadecimal, per line.
+
 *-c*, *--one-byte-char*::
 _One-byte character display_. Display the input offset in hexadecimal, followed by sixteen space-separated, three-column, space-filled characters of input data per line.
 

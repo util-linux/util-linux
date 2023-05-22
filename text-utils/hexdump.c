@@ -66,6 +66,7 @@ parse_args(int argc, char **argv, struct hexdump *hex)
 
 	static const struct option longopts[] = {
 		{"one-byte-octal", no_argument, NULL, 'b'},
+		{"one-byte-hex", no_argument, NULL, 'X'},
 		{"one-byte-char", no_argument, NULL, 'c'},
 		{"canonical", no_argument, NULL, 'C'},
 		{"two-bytes-decimal", no_argument, NULL, 'd'},
@@ -82,11 +83,15 @@ parse_args(int argc, char **argv, struct hexdump *hex)
 		{NULL, no_argument, NULL, 0}
 	};
 
-	while ((ch = getopt_long(argc, argv, "bcCde:f:L::n:os:vxhV", longopts, NULL)) != -1) {
+	while ((ch = getopt_long(argc, argv, "bXcCde:f:L::n:os:vxhV", longopts, NULL)) != -1) {
 		switch (ch) {
 		case 'b':
 			add_fmt(hex_offt, hex);
 			add_fmt("\"%07.7_ax \" 16/1 \"%03o \" \"\\n\"", hex);
+			break;
+		case 'X':
+			add_fmt("\"%07.7_Ax\n\"", hex);
+			add_fmt("\"%07.7_ax \" 16/1 \" %02x \" \"\\n\"", hex);
 			break;
 		case 'c':
 			add_fmt(hex_offt, hex);
@@ -166,6 +171,7 @@ void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -b, --one-byte-octal      one-byte octal display\n"), out);
+	fputs(_(" -X, --one-byte-hex        one-byte hexadecimal display\n"), out);
 	fputs(_(" -c, --one-byte-char       one-byte character display\n"), out);
 	fputs(_(" -C, --canonical           canonical hex+ASCII display\n"), out);
 	fputs(_(" -d, --two-bytes-decimal   two-byte decimal display\n"), out);

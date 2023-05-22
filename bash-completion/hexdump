@@ -28,6 +28,7 @@ _hexdump_module()
 	case $cur in
 		-*)
 			OPTS="	--one-byte-octal
+				--one-byte-hex
 				--one-byte-char
 				--canonical
 				--two-bytes-decimal
