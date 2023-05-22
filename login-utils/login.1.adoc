@@ -148,6 +148,14 @@ _/etc/pam.d/remote_,
 _/etc/hushlogins_,
 _$HOME/.hushlogin_
 
+== CREDENTIALS
+
+*login* supports configuration via systemd credentials (see https://systemd.io/CREDENTIALS/). *login* reads the following systemd credentials:
+
+*login.noauth* (boolean)::
+
+If set, configures *login* to skip login authentication, similarly to the *-f* option.
+
 == BUGS
 
 The undocumented BSD *-r* option is not supported. This may be required by some *rlogind*(8) programs.

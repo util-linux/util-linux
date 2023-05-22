@@ -48,6 +48,7 @@
 #include "ttyutils.h"
 #include "color-names.h"
 #include "env.h"
+#include "path.h"
 
 #include "logindefs.h"
 
@@ -353,6 +354,7 @@ static void reload_agettys(void);
 static void print_issue_file(struct issue *ie, struct options *op, struct termios *tp);
 static void eval_issue_file(struct issue *ie, struct options *op, struct termios *tp);
 static void show_issue(struct options *op);
+static void load_credentials(struct options *op);
 
 
 /* Fake hostname for ut_host specified on command line. */
@@ -412,6 +414,9 @@ int main(int argc, char **argv)
 		debug("\n");
 	}
 #endif				/* DEBUGGING */
+
+	/* Load systemd credentials. */
+	load_credentials(&options);
 
 	/* Parse command-line arguments. */
 	parse_args(argc, argv, &options);
@@ -575,7 +580,6 @@ int main(int argc, char **argv)
 		log_warn(_("%s: can't change process priority: %m"),
 			 options.tty);
 
-	free(options.osrelease);
 #ifdef DEBUGGING
 	if (close_stream(dbf) != 0)
 		log_err("write failed: %s", DEBUG_OUTPUT);
@@ -583,6 +587,10 @@ int main(int argc, char **argv)
 
 	/* Let the login program take care of password validation. */
 	execv(options.login, login_argv);
+
+	free(options.osrelease);
+	free(options.autolog);
+
 	log_err(_("%s: can't exec %s: %m"), options.tty, login_argv[0]);
 }
 
@@ -779,7 +787,10 @@ static void parse_args(int argc, char **argv, struct options *op)
 			op->flags |= F_EIGHTBITS;
 			break;
 		case 'a':
-			op->autolog = optarg;
+			free(op->autolog);
+			op->autolog = strdup(optarg);
+			if (!op->autolog)
+				log_err(_("failed to allocate memory: %m"));
 			break;
 		case 'c':
 			op->flags |= F_KEEPCFLAGS;
@@ -2021,7 +2032,7 @@ static void eval_issue_file(struct issue *ie,
 	/* Fallback @sysconfstaticdir (usually /usr/lib) -- the file is not
 	 * required to read the dir
 	 */
-	issuefile_read(ie, _PATH_SYSCONFSTATICDIR "/" _PATH_ISSUE_FILENAME, op, tp); 
+	issuefile_read(ie, _PATH_SYSCONFSTATICDIR "/" _PATH_ISSUE_FILENAME, op, tp);
 	issuedir_read(ie, _PATH_SYSCONFSTATICDIR "/" _PATH_ISSUE_DIRNAME, op, tp);
 
 done:
@@ -3019,4 +3030,37 @@ static void reload_agettys(void)
 	/* very unusual */
 	errx(EXIT_FAILURE, _("--reload is unsupported on your system"));
 #endif
+}
+
+static void load_credentials(struct options *op) {
+	char *env;
+	DIR *dir;
+	struct dirent *d;
+	struct path_cxt *pc;
+
+	env = safe_getenv("CREDENTIALS_DIRECTORY");
+        if (!env)
+                return;
+
+	pc = ul_new_path("%s", env);
+	if (!pc) {
+		log_warn(_("failed to initialize path context"));
+		return;
+	}
+
+	dir = ul_path_opendir(pc, NULL);
+	if (!dir) {
+		log_warn(_("failed to open credentials directory"));
+		return;
+	}
+
+	while ((d = xreaddir(dir))) {
+		char *str;
+
+		if (strcmp(d->d_name, "agetty.autologin") == 0) {
+			ul_path_read_string(pc, &str, d->d_name);
+			free(op->autolog);
+			op->autolog = str;
+		}
+	}
 }
