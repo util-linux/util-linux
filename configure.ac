@@ -1861,6 +1861,15 @@ AM_CONDITIONAL([BUILD_WAITPID], [test "x$build_waitpid" = xyes])
 
 UL_BUILD_INIT([enosys], [check])
 UL_REQUIRES_LINUX([enosys])
+AS_IF([test "x$build_enosys" = xyes], [
+  AC_MSG_CHECKING([for valid audit arch])
+  AC_COMPILE_IFELSE(
+    [AC_LANG_PROGRAM([[#include "${srcdir}/include/audit-arch.h"]])],
+    [AC_MSG_RESULT([yes])],
+    [AC_MSG_RESULT([no])
+     build_enosys=no
+    ])
+])
 AM_CONDITIONAL([BUILD_ENOSYS], [test "x$build_enosys" = xyes])
 
 UL_BUILD_INIT([getopt], [yes])
