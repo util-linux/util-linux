@@ -100,7 +100,7 @@ struct oracle_asm_disk_label {
 
 static int probe_ocfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	unsigned char *buf;
+	const unsigned char *buf;
 	struct ocfs_volume_header ovh;
 	struct ocfs_volume_label ovl;
 	uint32_t maj, min;

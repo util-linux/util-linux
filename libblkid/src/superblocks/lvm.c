@@ -76,7 +76,7 @@ static int probe_lvm2(blkid_probe pr, const struct blkid_idmag *mag)
 	int sector = mag->kboff << 1;
 	struct lvm2_pv_label_header *label;
 	char uuid[LVM2_ID_LEN + 7];
-	unsigned char *buf;
+	const unsigned char *buf;
 
 	buf = blkid_probe_get_buffer(pr,
 			mag->kboff << 10,

@@ -49,7 +49,7 @@ const char STRATIS_MAGIC[] = "!Stra0tis\x86\xff\x02^\x41rh";
 #define MAGIC_OFFSET_COPY_1 (FIRST_COPY_OFFSET + _MAGIC_OFFSET)
 #define MAGIC_OFFSET_COPY_2 (SECOND_COPY_OFFSET + _MAGIC_OFFSET)
 
-static int stratis_valid_sb(uint8_t *p)
+static int stratis_valid_sb(const uint8_t *p)
 {
 	const struct stratis_sb *stratis = (const struct stratis_sb *)p;
 	uint32_t crc = 0;
@@ -83,7 +83,7 @@ static int probe_stratis(blkid_probe pr,
 		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	const struct stratis_sb *stratis = NULL;
-	uint8_t *buf = blkid_probe_get_buffer(pr, 0, SB_AREA_SIZE);
+	const uint8_t *buf = blkid_probe_get_buffer(pr, 0, SB_AREA_SIZE);
 	unsigned char uuid[STRATIS_UUID_STR_LEN];
 
 	if (!buf)

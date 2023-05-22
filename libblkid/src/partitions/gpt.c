@@ -109,7 +109,7 @@ static inline uint32_t count_crc32(const unsigned char *buf, size_t len,
 	return (ul_crc32_exclude_offset(~0L, buf, len, exclude_off, exclude_len) ^ ~0L);
 }
 
-static inline unsigned char *get_lba_buffer(blkid_probe pr,
+static inline const unsigned char *get_lba_buffer(blkid_probe pr,
 					uint64_t lba, size_t bytes)
 {
 	return blkid_probe_get_buffer(pr,
@@ -161,8 +161,8 @@ static int last_lba(blkid_probe pr, uint64_t *lba)
 static int is_pmbr_valid(blkid_probe pr, int *has)
 {
 	int flags = blkid_partitions_get_flags(pr);
-	unsigned char *data;
-	struct dos_partition *p;
+	const unsigned char *data;
+	const struct dos_partition *p;
 	int i;
 
 	if (has)

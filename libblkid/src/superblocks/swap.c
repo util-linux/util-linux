@@ -91,7 +91,7 @@ static int swap_set_info(blkid_probe pr, const struct blkid_idmag *mag,
 
 static int probe_swap(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	unsigned char *buf;
+	const unsigned char *buf;
 
 	if (!mag)
 		return 1;

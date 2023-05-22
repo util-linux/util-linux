@@ -232,7 +232,7 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 		return probe_iso9660_hsfs(pr, mag);
 
 	for (i = 0, off += ISO_SUPERBLOCK_OFFSET; i < ISO_VD_MAX && (!boot || !pvd || !joliet); i++, off += ISO_SECTOR_SIZE) {
-		unsigned char *desc =
+		const unsigned char *desc =
 			blkid_probe_get_buffer(pr,
 					off,
 					max(sizeof(struct boot_record),

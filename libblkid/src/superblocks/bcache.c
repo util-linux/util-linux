@@ -118,7 +118,7 @@ struct bcachefs_super_block {
 static int bcache_verify_checksum(blkid_probe pr, const struct blkid_idmag *mag,
 		const struct bcache_super_block *bcs)
 {
-	unsigned char *csummed = blkid_probe_get_sb_buffer(pr, mag, BCACHE_SB_CSUMMED_END);
+	const unsigned char *csummed = blkid_probe_get_sb_buffer(pr, mag, BCACHE_SB_CSUMMED_END);
 	uint64_t csum = ul_crc64_we(csummed + BCACHE_SB_CSUMMED_START,
 			BCACHE_SB_CSUMMED_END - BCACHE_SB_CSUMMED_START);
 	return blkid_probe_verify_csum(pr, csum, le64_to_cpu(bcs->csum));
@@ -168,7 +168,7 @@ static void probe_bcachefs_sb_members(blkid_probe pr,
 	blkid_probe_set_fssize(pr, sectors * BCACHEFS_SECTOR_SIZE);
 }
 
-static int is_within_range(void *start, uint64_t size, void *end)
+static int is_within_range(const void *start, uint64_t size, const void *end)
 {
 	ptrdiff_t diff;
 
@@ -180,9 +180,9 @@ static int is_within_range(void *start, uint64_t size, void *end)
 }
 
 static void probe_bcachefs_sb_fields(blkid_probe pr, const struct bcachefs_super_block *bcs,
-				     unsigned char *sb_start, unsigned char *sb_end)
+				     const unsigned char *sb_start, const unsigned char *sb_end)
 {
-	unsigned char *field_addr = sb_start + BCACHEFS_SB_FIELDS_OFF;
+	const unsigned char *field_addr = sb_start + BCACHEFS_SB_FIELDS_OFF;
 
 	while (1) {
 		struct bcachefs_sb_field *field = (struct bcachefs_sb_field *) field_addr;
@@ -212,10 +212,10 @@ static void probe_bcachefs_sb_fields(blkid_probe pr, const struct bcachefs_super
 }
 
 static int bcachefs_validate_checksum(blkid_probe pr, const struct bcachefs_super_block *bcs,
-				      unsigned char *sb, unsigned char *sb_end)
+				      const unsigned char *sb, const unsigned char *sb_end)
 {
 	uint8_t checksum_type = be64_to_cpu(bcs->flags[0]) >> 58;
-	unsigned char *checksummed_data_start = sb + sizeof(bcs->csum);
+	const unsigned char *checksummed_data_start = sb + sizeof(bcs->csum);
 	size_t checksummed_data_size = sb_end - checksummed_data_start;
 
 	switch (checksum_type) {
@@ -242,7 +242,7 @@ static int bcachefs_validate_checksum(blkid_probe pr, const struct bcachefs_supe
 static int probe_bcachefs(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct bcachefs_super_block *bcs;
-	unsigned char *sb, *sb_end;
+	const unsigned char *sb, *sb_end;
 	uint64_t sb_size, blocksize;
 
 	bcs = blkid_probe_get_sb(pr, mag, struct bcachefs_super_block);

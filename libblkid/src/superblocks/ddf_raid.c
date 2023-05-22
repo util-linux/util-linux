@@ -106,7 +106,7 @@ static int probe_ddf(blkid_probe pr,
 
 	if (lba > 0) {
 		/* check primary header */
-		unsigned char *buf;
+		const unsigned char *buf;
 
 		buf = blkid_probe_get_buffer(pr,
 					lba << 9, sizeof(ddf->signature));

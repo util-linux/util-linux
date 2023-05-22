@@ -351,7 +351,7 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 			version = "FAT16";
 
 	} else if (vs->vs_fat32_length) {
-		unsigned char *buf;
+		const unsigned char *buf;
 		uint16_t fsinfo_sect;
 		int maxloop = 100;
 

@@ -19,7 +19,7 @@ struct dos_partition {
 #define MBR_PT_OFFSET		0x1be
 #define MBR_PT_BOOTBITS_SIZE	440
 
-static inline struct dos_partition *mbr_get_partition(unsigned char *mbr, int i)
+static inline struct dos_partition *mbr_get_partition(const unsigned char *mbr, int i)
 {
 	return (struct dos_partition *)
 		(mbr + MBR_PT_OFFSET + (i * sizeof(struct dos_partition)));
@@ -42,7 +42,7 @@ static inline void __dos_store_4le(unsigned char *p, unsigned int val)
 	p[3] = ((val >> 24) & 0xff);
 }
 
-static inline unsigned int dos_partition_get_start(struct dos_partition *p)
+static inline unsigned int dos_partition_get_start(const struct dos_partition *p)
 {
 	return __dos_assemble_4le(&(p->start_sect[0]));
 }
@@ -52,7 +52,7 @@ static inline void dos_partition_set_start(struct dos_partition *p, unsigned int
 	__dos_store_4le(p->start_sect, n);
 }
 
-static inline unsigned int dos_partition_get_size(struct dos_partition *p)
+static inline unsigned int dos_partition_get_size(const struct dos_partition *p)
 {
 	return __dos_assemble_4le(&(p->nr_sects[0]));
 }

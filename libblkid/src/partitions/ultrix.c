@@ -37,8 +37,8 @@ struct ultrix_disklabel {
 static int probe_ultrix_pt(blkid_probe pr,
 		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
-	unsigned char *data;
-	struct ultrix_disklabel *l;
+	const unsigned char *data;
+	const struct ultrix_disklabel *l;
 	blkid_parttable tab = NULL;
 	blkid_partlist ls;
 	int i;
@@ -50,7 +50,7 @@ static int probe_ultrix_pt(blkid_probe pr,
 		goto nothing;
 	}
 
-	l = (struct ultrix_disklabel *) (data + ULTRIX_OFFSET);
+	l = (const struct ultrix_disklabel *) (data + ULTRIX_OFFSET);
 
 	if (l->pt_magic != ULTRIX_MAGIC || l->pt_valid != 1)
 		goto nothing;

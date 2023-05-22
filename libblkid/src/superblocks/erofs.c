@@ -46,7 +46,7 @@ static int erofs_verify_checksum(blkid_probe pr, const struct blkid_idmag *mag,
 {
 	uint32_t expected, csum;
 	size_t csummed_size;
-	unsigned char *csummed;
+	const unsigned char *csummed;
 
 	if (!(le32_to_cpu(sb->feature_compat) & EROFS_FEATURE_SB_CSUM))
 		return 1;
