@@ -2843,6 +2843,7 @@ if not is_disabler(exe)
   bashcompletions += ['fadvise']
 endif
 
+# XXX: HAVE_PIDFD_OPEN
 exe = executable(
   'waitpid',
   waitpid_sources,

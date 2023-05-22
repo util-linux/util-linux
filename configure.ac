@@ -1849,6 +1849,7 @@ AM_CONDITIONAL([BUILD_FADVISE], [test "x$build_fadvise" = xyes])
 
 UL_BUILD_INIT([waitpid], [check])
 UL_REQUIRES_LINUX([waitpid])
+UL_REQUIRES_SYSCALL_CHECK([waitpid], [UL_CHECK_SYSCALL([pidfd_open])], [pidfd_open])
 AM_CONDITIONAL([BUILD_WAITPID], [test "x$build_waitpid" = xyes])
 
 UL_BUILD_INIT([getopt], [yes])
