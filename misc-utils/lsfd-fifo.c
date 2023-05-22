@@ -68,8 +68,8 @@ static bool fifo_fill_column(struct proc *proc __attribute__((__unused__)),
 	case COL_ENDPOINTS: {
 		struct fifo *this = (struct fifo *)file;
 		struct list_head *e;
-		char *estr;
-		list_for_each_backwardly(e, &this->endpoint.ipc->endpoints) {
+		foreach_endpoint(e, this->endpoint) {
+			char *estr;
 			struct fifo *other = list_entry(e, struct fifo, endpoint.endpoints);
 			if (this == other)
 				continue;
@@ -107,6 +107,7 @@ static bool fifo_is_suitable_ipc(struct ipc *ipc, struct file *file)
 static const struct ipc_class *fifo_get_ipc_class(struct file *file __attribute__((__unused__)))
 {
 	static const struct ipc_class fifo_ipc_class = {
+		.size = sizeof(struct fifo_ipc),
 		.get_hash = fifo_get_hash,
 		.is_suitable_ipc = fifo_is_suitable_ipc,
 		.free = NULL,
@@ -120,22 +121,18 @@ static void fifo_initialize_content(struct file *file)
 	struct ipc *ipc;
 	unsigned int hash;
 
-	INIT_LIST_HEAD(&fifo->endpoint.endpoints);
+	init_endpoint(&fifo->endpoint);
 	ipc = get_ipc(file);
 	if (ipc)
 		goto link;
 
-	ipc = xmalloc(sizeof(struct fifo_ipc));
-	ipc->class = fifo_get_ipc_class(file);
-	INIT_LIST_HEAD(&ipc->endpoints);
-	INIT_LIST_HEAD(&ipc->ipcs);
+	ipc = new_ipc(fifo_get_ipc_class(file));
 	((struct fifo_ipc *)ipc)->ino = file->stat.st_ino;
 
 	hash = fifo_get_hash(file);
 	add_ipc(ipc, hash);
  link:
-	fifo->endpoint.ipc = ipc;
-	list_add(&fifo->endpoint.endpoints, &ipc->endpoints);
+	add_endpoint(&fifo->endpoint, ipc);
 }
 
 const struct file_class fifo_class = {

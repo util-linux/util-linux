@@ -46,6 +46,7 @@ enum {
 	COL_DEV,
 	COL_DEVTYPE,
 	COL_ENDPOINTS,
+	COL_EVENTFD_ID,
 	COL_FD,
 	COL_FLAGS,
 	COL_INODE,
@@ -202,13 +203,18 @@ struct ipc_endpoint {
 };
 
 struct ipc_class {
+	size_t size;
 	unsigned int (*get_hash)(struct file *file);
 	bool (*is_suitable_ipc)(struct ipc *ipc, struct file *file);
 	void (*free)(struct ipc *ipc);
 };
 
+struct ipc *new_ipc(const struct ipc_class *class);
 struct ipc *get_ipc(struct file *file);
 void add_ipc(struct ipc *ipc, unsigned int hash);
+void init_endpoint(struct ipc_endpoint *endpoint);
+void add_endpoint(struct ipc_endpoint *endpoint, struct ipc *ipc);
+#define foreach_endpoint(E,ENDPOINT) list_for_each_backwardly(E, &((ENDPOINT).ipc->endpoints))
 
 /*
  * Name managing

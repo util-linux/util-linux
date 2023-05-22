@@ -33,6 +33,7 @@ struct unkn {
 
 struct anon_ops {
 	const char *class;
+	bool (*probe)(const char *);
 	char * (*get_name)(struct unkn *);
 	/* Return true is handled the column. */
 	bool (*fill_column)(struct proc *,
@@ -44,10 +45,11 @@ struct anon_ops {
 	void (*init)(struct unkn *);
 	void (*free)(struct unkn *);
 	int (*handle_fdinfo)(struct unkn *, const char *, const char *);
+	void (*attach_xinfo)(struct unkn *);
+	const struct ipc_class *ipc_class;
 };
 
-static const struct anon_ops anon_generic_ops;
-static const struct anon_ops anon_pidfd_ops;
+static const struct anon_ops *anon_probe(const char *);
 
 static char * anon_get_class(struct unkn *unkn)
 {
@@ -117,6 +119,22 @@ static bool unkn_fill_column(struct proc *proc,
 	return true;
 }
 
+static void unkn_attach_xinfo(struct file *file)
+{
+	struct unkn *unkn = (struct unkn *)file;
+	if (unkn->anon_ops && unkn->anon_ops->attach_xinfo)
+		unkn->anon_ops->attach_xinfo(unkn);
+}
+
+static const struct ipc_class *unkn_get_ipc_class(struct file *file)
+{
+	struct unkn *unkn = (struct unkn *)file;
+
+	if (unkn->anon_ops && unkn->anon_ops->ipc_class)
+		return unkn->anon_ops->ipc_class;
+	return NULL;
+}
+
 static void unkn_init_content(struct file *file)
 {
 	struct unkn *unkn = (struct unkn *)file;
@@ -129,10 +147,7 @@ static void unkn_init_content(struct file *file)
 	    && strncmp(file->name, "anon_inode:", 11) == 0) {
 		const char *rest = file->name + 11;
 
-		if (strncmp(rest, "[pidfd]", 7) == 0)
-			unkn->anon_ops = &anon_pidfd_ops;
-		else
-			unkn->anon_ops = &anon_generic_ops;
+		unkn->anon_ops = anon_probe(rest);
 
 		if (unkn->anon_ops->init)
 			unkn->anon_ops->init(unkn);
@@ -165,6 +180,11 @@ struct anon_pidfd_data {
 	pid_t pid;
 	char *nspid;
 };
+
+static bool anon_pidfd_probe(const char *str)
+{
+	return strncmp(str, "[pidfd]", 7) == 0;
+}
 
 static char *anon_pidfd_get_name(struct unkn *unkn)
 {
@@ -253,11 +273,165 @@ static bool anon_pidfd_fill_column(struct proc *proc  __attribute__((__unused__)
 
 static const struct anon_ops anon_pidfd_ops = {
 	.class = "pidfd",
+	.probe = anon_pidfd_probe,
 	.get_name = anon_pidfd_get_name,
 	.fill_column = anon_pidfd_fill_column,
 	.init = anon_pidfd_init,
 	.free = anon_pidfd_free,
 	.handle_fdinfo = anon_pidfd_handle_fdinfo,
+};
+
+/*
+ * eventfd
+ */
+struct anon_eventfd_data {
+	int id;
+	struct unkn *backptr;
+	struct ipc_endpoint endpoint;
+};
+
+struct eventfd_ipc {
+	struct ipc ipc;
+	int id;
+};
+
+static unsigned int anon_eventfd_get_hash(struct file *file)
+{
+	struct unkn *unkn = (struct unkn *)file;
+	struct anon_eventfd_data *data = (struct anon_eventfd_data *)unkn->anon_data;
+
+	return (unsigned int)data->id;
+}
+
+static bool anon_eventfd_is_suitable_ipc(struct ipc *ipc, struct file *file)
+{
+	struct unkn *unkn = (struct unkn *)file;
+	struct anon_eventfd_data *data = (struct anon_eventfd_data *)unkn->anon_data;
+
+	return ((struct eventfd_ipc *)ipc)->id == data->id;
+}
+
+static const struct ipc_class anon_eventfd_ipc_class = {
+	.size = sizeof(struct eventfd_ipc),
+	.get_hash = anon_eventfd_get_hash,
+	.is_suitable_ipc = anon_eventfd_is_suitable_ipc,
+	.free = NULL,
+};
+
+static bool anon_eventfd_probe(const char *str)
+{
+	return (strncmp(str, "[eventfd]", 9) == 0);
+}
+
+static char *anon_eventfd_get_name(struct unkn *unkn)
+{
+	char *str = NULL;
+	struct anon_eventfd_data *data = (struct anon_eventfd_data *)unkn->anon_data;
+
+	xasprintf(&str, "id=%d", data->id);
+	return str;
+}
+
+static void anon_eventfd_init(struct unkn *unkn)
+{
+	struct anon_eventfd_data *data = xcalloc(1, sizeof(struct anon_eventfd_data));
+	init_endpoint(&data->endpoint);
+	data->backptr = unkn;
+	unkn->anon_data = data;
+}
+
+static void anon_eventfd_free(struct unkn *unkn)
+{
+	free(unkn->anon_data);
+}
+
+static void anon_eventfd_attach_xinfo(struct unkn *unkn)
+{
+	struct anon_eventfd_data *data = (struct anon_eventfd_data *)unkn->anon_data;
+	unsigned int hash;
+	struct ipc *ipc = get_ipc(&unkn->file);
+	if (ipc)
+		goto link;
+
+	ipc = new_ipc(&anon_eventfd_ipc_class);
+	((struct eventfd_ipc *)ipc)->id = data->id;
+
+	hash = anon_eventfd_get_hash(&unkn->file);
+	add_ipc(ipc, hash);
+
+ link:
+	add_endpoint(&data->endpoint, ipc);
+}
+
+static int anon_eventfd_handle_fdinfo(struct unkn *unkn, const char *key, const char *value)
+{
+	if (strcmp(key, "eventfd-id") == 0) {
+		int64_t id;
+
+		int rc = ul_strtos64(value, &id, 10);
+		if (rc < 0)
+			return 0;
+		((struct anon_eventfd_data *)unkn->anon_data)->id = (int)id;
+		return 1;
+	}
+	return 0;
+}
+
+static inline char *anon_eventfd_data_xstrendpoint(struct file *file)
+{
+	char *str = NULL;
+	xasprintf(&str, "%d,%s,%d",
+		  file->proc->pid, file->proc->command, file->association);
+	return str;
+}
+
+static bool anon_eventfd_fill_column(struct proc *proc  __attribute__((__unused__)),
+				     struct unkn *unkn,
+				     struct libscols_line *ln __attribute__((__unused__)),
+				     int column_id,
+				     size_t column_index __attribute__((__unused__)),
+				     char **str)
+{
+	struct anon_eventfd_data *data = (struct anon_eventfd_data *)unkn->anon_data;
+
+	switch(column_id) {
+	case COL_EVENTFD_ID:
+		xasprintf(str, "%d", data->id);
+		return true;
+	case COL_ENDPOINTS: {
+		struct list_head *e;
+		char *estr;
+		foreach_endpoint(e, data->endpoint) {
+			struct anon_eventfd_data *other = list_entry(e,
+								     struct anon_eventfd_data,
+								     endpoint.endpoints);
+			if (data == other)
+				continue;
+			if (*str)
+				xstrputc(str, '\n');
+			estr = anon_eventfd_data_xstrendpoint(&other->backptr->file);
+			xstrappend(str, estr);
+			free(estr);
+		}
+		if (!*str)
+			return false;
+		return true;
+	}
+	default:
+		return false;
+	}
+}
+
+static const struct anon_ops anon_eventfd_ops = {
+	.class = "eventfd",
+	.probe = anon_eventfd_probe,
+	.get_name = anon_eventfd_get_name,
+	.fill_column = anon_eventfd_fill_column,
+	.init = anon_eventfd_init,
+	.free = anon_eventfd_free,
+	.handle_fdinfo = anon_eventfd_handle_fdinfo,
+	.attach_xinfo = anon_eventfd_attach_xinfo,
+	.ipc_class = &anon_eventfd_ipc_class,
 };
 
 /*
@@ -272,6 +446,19 @@ static const struct anon_ops anon_generic_ops = {
 	.handle_fdinfo = NULL,
 };
 
+static const struct anon_ops *anon_ops[] = {
+	&anon_pidfd_ops,
+	&anon_eventfd_ops,
+};
+
+static const struct anon_ops *anon_probe(const char *str)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(anon_ops); i++)
+		if (anon_ops[i]->probe(str))
+			return anon_ops[i];
+	return &anon_generic_ops;
+}
+
 const struct file_class unkn_class = {
 	.super = &file_class,
 	.size = sizeof(struct unkn),
@@ -279,4 +466,6 @@ const struct file_class unkn_class = {
 	.initialize_content = unkn_init_content,
 	.free_content = unkn_content_free,
 	.handle_fdinfo = unkn_handle_fdinfo,
+	.attach_xinfo = unkn_attach_xinfo,
+	.get_ipc_class = unkn_get_ipc_class,
 };

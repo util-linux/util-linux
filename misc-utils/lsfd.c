@@ -147,6 +147,9 @@ static const struct colinfo infos[] = {
 	[COL_ENDPOINTS]        = { "ENDPOINTS",
 				   0,   SCOLS_FL_WRAP,  SCOLS_JSON_STRING,
 				   N_("IPC endpoints information communicated with the fd") },
+	[COL_EVENTFD_ID]       = {"EVENTFD.ID",
+				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
+				   N_("eventfd ID") },
 	[COL_FLAGS]            = { "FLAGS",
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 				   N_("flags specified when opening the file") },
@@ -1059,6 +1062,15 @@ static void finalize_ipc_table(void)
 		list_free(&ipc_table.tables[i], struct ipc, ipcs, free_ipc);
 }
 
+struct ipc *new_ipc(const struct ipc_class *class)
+{
+	struct ipc *ipc = xcalloc(1, class->size);
+	ipc->class = class;
+	INIT_LIST_HEAD(&ipc->endpoints);
+	INIT_LIST_HEAD(&ipc->ipcs);
+	return ipc;
+}
+
 struct ipc *get_ipc(struct file *file)
 {
 	int slot;
@@ -1087,6 +1099,17 @@ void add_ipc(struct ipc *ipc, unsigned int hash)
 {
 	int slot = hash % IPC_TABLE_SIZE;
 	list_add(&ipc->ipcs, &ipc_table.tables[slot]);
+}
+
+void init_endpoint(struct ipc_endpoint *endpoint)
+{
+	INIT_LIST_HEAD(&endpoint->endpoints);
+}
+
+void add_endpoint(struct ipc_endpoint *endpoint, struct ipc *ipc)
+{
+	endpoint->ipc = ipc;
+	list_add(&endpoint->endpoints, &ipc->endpoints);
 }
 
 static void fill_column(struct proc *proc,

@@ -36,6 +36,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/eventfd.h>
 #include <sys/inotify.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
@@ -46,6 +47,7 @@
 #include <sys/types.h>
 #include <sys/un.h>
 #include <sys/user.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 #include "c.h"
@@ -60,6 +62,7 @@
 #define _U_ __attribute__((__unused__))
 
 static int pidfd_open(pid_t pid, unsigned int flags);
+static void do_nothing(int signum _U_);
 
 static void __attribute__((__noreturn__)) usage(FILE *out, int status)
 {
@@ -312,15 +315,24 @@ struct factory {
 #define MAX_N 5
 	int  N;			/* the number of fds this factory makes */
 	int  EX_N;		/* fds made optionally */
+	int  EX_R;		/* the number of extra words printed to stdout. */
 	void *(*make)(const struct factory *, struct fdesc[], int, char **);
 	void (*free)(const struct factory *, void *);
-	void (*report)(const struct factory *, void *, FILE *);
+	void (*report)(const struct factory *, int, void *, FILE *);
 	const struct parameter * params;
 };
 
 static void close_fdesc(int fd, void *data _U_)
 {
 	close(fd);
+}
+
+volatile ssize_t unused_result_ok;
+static void abort_with_child_death_message(int signum _U_)
+{
+	const char msg[] = "the child process exits unexpectedly";
+	unused_result_ok = write(2, msg, sizeof(msg));
+	_exit(EXIT_FAILURE);
 }
 
 static void *open_ro_regular_file(const struct factory *factory, struct fdesc fdescs[],
@@ -1887,6 +1899,119 @@ static void *make_netlink(const struct factory *factory, struct fdesc fdescs[],
 	return NULL;
 }
 
+static void *make_eventfd(const struct factory *factory _U_, struct fdesc fdescs[],
+			  int argc _U_, char ** argv _U_)
+{
+	int fd;
+	pid_t *pid = xcalloc(1, sizeof(*pid));
+
+	if (fdescs[0].fd == fdescs[1].fd)
+		errx(EXIT_FAILURE, "specify three different numbers as file descriptors");
+
+	fd = eventfd(0, 0);
+	if (fd < 0)
+		err(EXIT_FAILURE, "failed in eventfd(2)");
+
+	if (fd != fdescs[0].fd) {
+		if (dup2(fd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(fd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", fd, fdescs[0].fd);
+		}
+		close(fd);
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL
+	};
+
+	if (dup2(fdescs[0].fd, fdescs[1].fd) < 0) {
+		int e = errno;
+		close(fdescs[0].fd);
+		errno = e;
+		err(EXIT_FAILURE, "failed to dup %d -> %d", fdescs[0].fd, fdescs[1].fd);
+	}
+
+	signal(SIGCHLD, abort_with_child_death_message);
+	*pid = fork();
+	if (*pid < -1) {
+		int e = errno;
+		close(fdescs[0].fd);
+		close(fdescs[1].fd);
+		errno = e;
+		err(EXIT_FAILURE, "failed in fork()");
+	} else if (*pid == 0) {
+		uint64_t v = 1;
+
+		free(pid);
+		close(fdescs[0].fd);
+
+		signal(SIGCONT, do_nothing);
+		/* Notify the parent that I'm ready. */
+		if (write(fdescs[1].fd, &v, sizeof(v)) != sizeof(v)) {
+			close(fdescs[1].fd);
+			err(EXIT_FAILURE,
+			    "failed in write() to notify the readiness to the prent");
+		}
+		/* Wait till the parent lets me go. */
+		pause();
+
+		close(fdescs[1].fd);
+		exit(0);
+	} else {
+		uint64_t v;
+
+		/* The child owns fdescs[1]. */
+		close(fdescs[1].fd);
+		fdescs[1].fd = -1;
+
+		/* Wait till the child is ready. */
+		if (read(fdescs[0].fd, &v, sizeof(uint64_t)) != sizeof(v)) {
+			free(pid);
+			close(fdescs[0].fd);
+			err(EXIT_FAILURE,
+			    "failed in read() the readiness notification from the child");
+		}
+		signal(SIGCHLD, SIG_DFL);
+	}
+
+	return pid;
+}
+
+static void report_eventfd(const struct factory *factory _U_,
+			   int nth, void *data, FILE *fp)
+{
+	if (nth == 0) {
+		pid_t *child = data;
+		fprintf(fp, "%d", *child);
+	}
+}
+
+static void free_eventfd(const struct factory * factory _U_, void *data)
+{
+	pid_t child = *(pid_t *)data;
+	int wstatus;
+
+	free(data);
+
+	kill(child, SIGCONT);
+	if (waitpid(child, &wstatus, 0) < 0)
+		err(EXIT_FAILURE, "failed in waitpid()");
+
+	if (WIFEXITED(wstatus)) {
+		int s = WEXITSTATUS(wstatus);
+		if (s != 0)
+			err(EXIT_FAILURE, "the child process got an error: %d", s);
+	} else if (WIFSIGNALED(wstatus)) {
+		int s = WTERMSIG(wstatus);
+		if (WTERMSIG(wstatus) != 0)
+			err(EXIT_FAILURE, "the child process got a signal: %d", s);
+	}
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -2450,6 +2575,20 @@ static const struct factory factories[] = {
 			PARAM_END
 		}
 	},
+	{
+		.name = "eventfd",
+		.desc = "make an eventfd connecting two processes",
+		.priv = false,
+		.N    = 2,
+		.EX_N = 0,
+		.EX_R = 1,
+		.make = make_eventfd,
+		.report = report_eventfd,
+		.free = free_eventfd,
+		.params = (struct parameter []) {
+			PARAM_END
+		}
+	},
 };
 
 static int count_parameters(const struct factory *factory)
@@ -2465,17 +2604,18 @@ static int count_parameters(const struct factory *factory)
 
 static void print_factory(const struct factory *factory)
 {
-	printf("%-20s %4s %5d %6d %s\n",
+	printf("%-20s %4s %5d %7d %6d %s\n",
 	       factory->name,
 	       factory->priv? "yes": "no",
 	       factory->N,
+	       factory->EX_R + 1,
 	       count_parameters(factory),
 	       factory->desc);
 }
 
 static void list_factories(void)
 {
-	printf("%-20s PRIV COUNT NPARAM DESCRIPTION\n", "FACTORY");
+	printf("%-20s PRIV COUNT NRETURN NPARAM DESCRIPTION\n", "FACTORY");
 	for (size_t i = 0; i < ARRAY_SIZE(factories); i++)
 		print_factory(factories + i);
 }
@@ -2645,9 +2785,13 @@ int main(int argc, char **argv)
 
 	if (!quiet) {
 		printf("%d", getpid());
+		if (factory->report) {
+			for (int i = 0; i < factory->EX_R; i++) {
+				putchar(' ');
+				factory->report(factory, i, data, stdout);
+			}
+		}
 		putchar('\n');
-		if (factory->report)
-			factory->report(factory, data, stdout);
 		fflush(stdout);
 	}
 

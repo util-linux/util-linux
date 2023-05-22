@@ -146,19 +146,25 @@ Device type (`blk`, `char`, or `nodev`).
 
 ENDPOINT <``string``>::
 IPC endpoints information communicated with the fd.
++
+*lsfd* collects endpoints within the processes that
+*lsfd* scans; *lsfd* may miss some endpoints
+if you limits the processes with *-p* option.
++
 The format of the column depends on the object associated
 with the fd:
-+
+
 FIFO type:::
 _PID_,_COMMAND_,_ASSOC_[-r][-w]
 +
 The last characters ([-r][-w]) represents the read and/or
 write mode of the endpoint.
 
-+
-*lsfd* collects endpoints within the processes that
-*lsfd* scans; *lsfd* may miss some endpoints
-if you limits the processes with *-p* option.
+eventfd type:::
+_PID_,_COMMAND_,_ASSOC_
+
+EVENTFD.ID <``number``>::
+Eventfd ID.
 
 FD <``number``>::
 File descriptor for the file.
@@ -218,6 +224,9 @@ NAME <``string``>::
 Cooked version of KNAME. It is mostly same as KNAME.
 +
 Some files have special formats and information sources:
++
+eventfd:::
+id=_EVENTFD.ID_
 +
 NETLINK:::
 protocol=_NETLINK.PROTOCOL_[ lport=_NETLINK.LPORT_[ group=_NETLINK.GROUPS_]]
