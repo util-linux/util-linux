@@ -1053,6 +1053,9 @@ if opt and not is_disabler(exe)
                            'vipw',
                            join_paths(usrbin_exec_dir, 'vigr'))
   manadocs += ['login-utils/vipw.8.adoc']
+  meson.add_install_script(meson_make_symlink,
+                           'vipw.8',
+                           join_paths(mandir, 'man8/vigr.8'))
 endif
 
 opt = not get_option('build-runuser').disabled()
