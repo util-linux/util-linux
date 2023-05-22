@@ -21,8 +21,8 @@ extern int is_known_shell(const char *shell_name)
 #if defined (HAVE_LIBECONF) && defined (USE_VENDORDIR)
 	size_t size = 0;
 	econf_err error;
-	char **keys;
-	econf_file *key_file;
+	char **keys = NULL;
+	econf_file *key_file = NULL;
 
 	error = econf_readDirs(&key_file,
 			       _PATH_VENDORDIR,
