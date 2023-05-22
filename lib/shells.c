@@ -43,18 +43,18 @@ extern int is_known_shell(const char *shell_name)
 		syslog(LOG_ALERT,
 		       _("Cannot evaluate entries in shells files: %s"),
 		       econf_errString(error));
-		econf_free (key_file);
+		econf_free(key_file);
 		exit(EXIT_FAILURE);
 	}
 
 	for (size_t i = 0; i < size; i++) {
-		if (strcmp (keys[i], shell_name) == 0) {
+		if (strcmp(keys[i], shell_name) == 0) {
 			ret = 1;
 			break;
 		}
 	}
-	econf_free (keys);
-	econf_free (key_file);	
+	econf_free(keys);
+	econf_free(key_file);
 #else
 	char *s;
 
