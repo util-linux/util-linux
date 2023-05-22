@@ -16,7 +16,7 @@ ts_check_prog "sleep"
 ts_cd "$TS_OUTDIR"
 
 FILE="ddtest"
-BS=4k
+BS=65536
 COUNT=8
 
 FILE_FS="$("$TS_CMD_FINDMNT" -nr -o FSTYPE -T "$PWD")"
@@ -28,37 +28,41 @@ create_file() {
     dd if=/dev/zero of="$FILE" bs=$BS count=$COUNT conv=fsync >& /dev/null
 }
 
+do_fincore() {
+    "$TS_CMD_FINCORE" -o RES,SIZE,FILE "$FILE"
+}
+
 {
     create_file
-    "$TS_CMD_FINCORE" "$FILE"
+    do_fincore
     echo
 
     create_file
     echo "whole file"
     "$TS_CMD_FADVISE" "$FILE"
     echo status: $?
-    "$TS_CMD_FINCORE" "$FILE"
+    do_fincore
     echo
 
     create_file
-    echo "offset: 8192"
-    "$TS_CMD_FADVISE" -o 8192 "$FILE"
+    echo "offset: $(( 2 * $BS ))"
+    "$TS_CMD_FADVISE" -o $(( 2 * $BS )) "$FILE"
     echo status: $?
-    "$TS_CMD_FINCORE" "$FILE"
+    do_fincore
     echo
 
     create_file
-    echo "length: 16384"
-    "$TS_CMD_FADVISE" -l 16384 "$FILE"
+    echo "length: $(( 4 * $BS ))"
+    "$TS_CMD_FADVISE" -l $(( 4 * $BS )) "$FILE"
     echo status: $?
-    "$TS_CMD_FINCORE" "$FILE"
+    do_fincore
     echo
 
     create_file
-    echo "offset: 8192, length: 16384 fd: 42"
-    "$TS_CMD_FADVISE" -o 8192 -l 16384 --fd 42 42<"$FILE"
+    echo "offset: $(( 2 * $BS )), length: $(( 4 * $BS )) fd: 42"
+    "$TS_CMD_FADVISE" -o $(( 2 * $BS )) -l $(( 4 * $BS )) --fd 42 42<"$FILE"
     echo status: $?
-    "$TS_CMD_FINCORE" "$FILE"
+    do_fincore
     echo
 
     rm "$FILE"
