@@ -49,6 +49,7 @@
 #include "color-names.h"
 #include "env.h"
 #include "path.h"
+#include "fileutils.h"
 
 #include "logindefs.h"
 
