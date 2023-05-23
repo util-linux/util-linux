@@ -141,7 +141,7 @@ foreach libmount_test: libmount_tests
     c_args : ['-DTEST_PROGRAM'],
   )
   # the test-setup expects the helpers in the toplevel build-directory
-  link = meson.build_root() / test_name
+  link = meson.project_build_root() / test_name
   run_command('ln', '-srf', exe.full_path(), link,
     check : true)
 endforeach
