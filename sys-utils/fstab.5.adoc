@@ -52,6 +52,8 @@ _/etc/fstab_
 
 The file *fstab* contains descriptive information about the filesystems the system can mount. *fstab* is only read by programs, and not written; it is the duty of the system administrator to properly create and maintain this file. The order of records in *fstab* is important because *fsck*(8), *mount*(8), and *umount*(8) sequentially iterate through *fstab* doing their thing.
 
+The file is not read by *mount*(8) only but often is used by many other tools and daemons, and proper functionality may require additional steps. For example, on systemd-based systems, it's recommended to use 'systemctl daemon-reload' after *fstab* modification.
+
 Each filesystem is described on a separate line. Fields on each line are separated by tabs or spaces. Lines starting with '#' are comments. Blank lines are ignored.
 
 The following is a typical example of an *fstab* entry:
