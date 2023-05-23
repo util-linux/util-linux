@@ -51,6 +51,12 @@
 #    else
 # 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_SPARC64
 #    endif
+#elif __loongarch__
+#    if __SIZEOF_POINTER__ == 4
+# 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_LOONGARCH32
+#    else
+# 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_LOONGARCH64
+#    endif
 #else
 #    error Unknown target architecture
 #endif
