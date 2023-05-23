@@ -510,6 +510,15 @@ static inline int fsopen_is_supported(void)
 	return rc;
 }
 
+static inline int mount_setattr_is_supported(void)
+{
+	int rc;
+
+	errno = 0;
+	rc = mount_setattr(-1, NULL, 0, NULL, 0);
+	return !(rc == -1 && errno == ENOSYS);
+}
+
 /*
  * open_tree() and fsopen()
  */
@@ -675,9 +684,14 @@ static int hook_prepare(struct libmnt_context *cxt,
 	/* call mount_setattr() */
 	if (!rc
 	    && cxt->helper == NULL
-	    && (set != 0 || clr != 0 || (flags & MS_REMOUNT)))
+	    && (set != 0 || clr != 0 || (flags & MS_REMOUNT))) {
+		if (!mount_setattr_is_supported()) {
+			hookset_deinit(cxt, hs);
+			return 1;
+		}
 		rc = mnt_context_append_hook(cxt, hs, MNT_STAGE_MOUNT, NULL,
 					hook_set_vfsflags);
+	}
 
 	/* call move_mount() to attach target */
 	if (!rc
@@ -688,9 +702,14 @@ static int hook_prepare(struct libmnt_context *cxt,
 					hook_attach_target);
 
 	/* set propagation (has to be attached to VFS) */
-	if (!rc && mnt_optlist_get_propagation(ol))
+	if (!rc && mnt_optlist_get_propagation(ol)) {
+		if (!mount_setattr_is_supported()) {
+			hookset_deinit(cxt, hs);
+			return 1;
+		}
 		rc = mnt_context_append_hook(cxt, hs, MNT_STAGE_MOUNT_POST, NULL,
 					hook_set_propagation);
+	}
 
 	DBG(HOOK, ul_debugobj(hs, "prepare mount done [rc=%d]", rc));
 	return rc;
