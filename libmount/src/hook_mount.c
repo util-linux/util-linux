@@ -648,13 +648,8 @@ static int hook_prepare(struct libmnt_context *cxt,
 	/* open_tree() or fsopen() */
 	if (!rc) {
 		rc = init_sysapi(cxt, hs, flags);
-		if (rc && cxt->syscall_status == -ENOSYS) {
-			/* we need to recover from this error, so hook_mount_legacy.c
-			 * can try to continue */
-			reset_syscall_status(cxt);
-			free_hookset_data(cxt, hs);
-			return 1;
-		}
+		if (rc && cxt->syscall_status == -ENOSYS)
+			goto enosys;
 	}
 
 	/* check mutually exclusive operations */
@@ -685,10 +680,9 @@ static int hook_prepare(struct libmnt_context *cxt,
 	if (!rc
 	    && cxt->helper == NULL
 	    && (set != 0 || clr != 0 || (flags & MS_REMOUNT))) {
-		if (!mount_setattr_is_supported()) {
-			hookset_deinit(cxt, hs);
-			return 1;
-		}
+		if (!mount_setattr_is_supported())
+			goto enosys;
+
 		rc = mnt_context_append_hook(cxt, hs, MNT_STAGE_MOUNT, NULL,
 					hook_set_vfsflags);
 	}
@@ -703,16 +697,23 @@ static int hook_prepare(struct libmnt_context *cxt,
 
 	/* set propagation (has to be attached to VFS) */
 	if (!rc && mnt_optlist_get_propagation(ol)) {
-		if (!mount_setattr_is_supported()) {
-			hookset_deinit(cxt, hs);
-			return 1;
-		}
+		if (!mount_setattr_is_supported())
+			goto enosys;
+
 		rc = mnt_context_append_hook(cxt, hs, MNT_STAGE_MOUNT_POST, NULL,
 					hook_set_propagation);
 	}
 
 	DBG(HOOK, ul_debugobj(hs, "prepare mount done [rc=%d]", rc));
 	return rc;
+
+enosys:
+	/* we need to recover from this error, so hook_mount_legacy.c
+	 * can try to continue */
+	DBG(HOOK, ul_debugobj(hs, "failed to init new API"));
+	reset_syscall_status(cxt);
+	hookset_deinit(cxt, hs);
+	return 1;
 }
 
 const struct libmnt_hookset hookset_mount =
