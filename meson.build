@@ -3257,11 +3257,14 @@ exe = executable(
   include_directories : includes)
 exes += exe
 
+mq_libs = []
+mq_libs += cc.find_library('rt', required : true)
 # XXX: LINUX
 exe = executable(
   'test_mkfds',
   'tests/helpers/test_mkfds.c',
-  include_directories : includes)
+  include_directories : includes,
+  dependencies : mq_libs)
 exes += exe
 
 exe = executable(

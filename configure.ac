@@ -729,6 +729,9 @@ AS_IF([test x"$have_dirfd" = xno], [
 
 AM_CONDITIONAL([HAVE_DIRFD], [test "x$have_dirfd" = xyes || test "x$have_ddfd" = xyes])
 
+MQ_LIBS=
+AC_CHECK_LIB([rt], [mq_open], [MQ_LIBS="-lrt"])
+AC_SUBST([MQ_LIBS])
 
 AC_MSG_CHECKING([whether program_invocation_short_name is defined])
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
