@@ -1,6 +1,6 @@
 project('util-linux', 'c',
         version : run_command('tools/git-version-gen', check: true).stdout(),
-        meson_version: '>=0.53.0',
+        meson_version: '>=0.57.0',
         license : 'GPLv2+')
 
 pkgconfig = import('pkgconfig')
@@ -3338,7 +3338,7 @@ configure_file(output : 'meson.conf',
                           '''asan=@0@
 PYTHON=@1@
 '''.format(get_option('b_sanitize')=='address' ? 'yes' : '',
-           python.path())])
+           python.full_path())])
 
 run_sh = find_program('tests/run.sh')
 run_target(
