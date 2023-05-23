@@ -863,7 +863,7 @@ int main(int argc, char **argv)
 			break;
 		case MOUNT_OPT_MAP_GROUPS:
 		case MOUNT_OPT_MAP_USERS:
-			if (optarg && *optarg == '=')
+			if (*optarg == '=')
 				optarg++;
 			if (idmap && (*idmap == '/' || *optarg == '/')) {
 				warnx(_("bad usage"));
