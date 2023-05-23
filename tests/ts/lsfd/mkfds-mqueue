@@ -72,6 +72,8 @@ ENDPOINTS=
 	    echo 'ENDPOINTS[STR]:' $?
 	    echo 'ENDPOINTS:' "$ENDPOINTS"
 	    echo 'lsfd:' "$tmp"
+	    echo 'dump mountinfo:'
+	    cat /proc/self/mountinfo
 	fi
 
 	kill -CONT ${PID0}
