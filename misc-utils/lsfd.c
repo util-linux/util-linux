@@ -742,9 +742,10 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 
 		class = stat2class(&sb);
 		if (sockets_only
-		    /* A nsfs is not a socket but the nsfs can be used to
-		     * collect information from other network namespaces.
-		     * Besed on the information, various columns of sockets.
+		    /* A nsfs file is not a socket but the nsfs file can
+		     * be used as a entry point to collect information from
+		     * other network namespaces. Besed on the information,
+		     * various columns of sockets can be filled.
 		     */
 		    && (class != &sock_class)&& (class != &nsfs_file_class))
 			return NULL;
