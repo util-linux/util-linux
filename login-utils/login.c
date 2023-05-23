@@ -1311,13 +1311,12 @@ static void load_credentials(struct login_context *cxt) {
 	}
 
 	while ((d = xreaddir(dir))) {
-		char *str;
+		char str[32] = { 0 };
 
-		if (strcmp(d->d_name, "login.noauth") == 0) {
-			ul_path_read_string(pc, &str, d->d_name);
-			if (str && strcmp(str, "yes") == 0)
-				cxt->noauth = 1;
-		}
+		if (strcmp(d->d_name, "login.noauth") == 0
+		    && ul_path_read_buffer(pc, str, sizeof(str), d->d_name) > 0
+		    && *str && strcmp(str, "yes") == 0)
+			cxt->noauth = 1;
 	}
 }
 
