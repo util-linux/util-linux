@@ -1,8 +1,9 @@
 project('util-linux', 'c',
         version : run_command('tools/git-version-gen', check: true).stdout(),
-        meson_version: '>=0.53.0',
+        meson_version: '>=0.57.0',
         license : 'GPLv2+')
 
+fs = import('fs')
 pkgconfig = import('pkgconfig')
 
 libblkid_version = '1.1.0'
@@ -2868,17 +2869,19 @@ syscalls_h = custom_target('syscalls.h',
   command : ['bash', '@INPUT@', cc.cmd_array()],
 )
 
-exe = executable(
-  'enosys',
-  'misc-utils/enosys.c', syscalls_h,
-  include_directories : includes,
-  link_with : [lib_common],
-  install_dir : usrbin_exec_dir,
-  install : true)
-if not is_disabler(exe)
-  exes += exe
-  manadocs += ['misc-utils/enosys.1.adoc']
-  bashcompletions += ['enosys']
+if cc.compiles(fs.read('include/audit-arch.h'), name : 'has AUDIT_ARCH_NATIVE')
+  exe = executable(
+    'enosys',
+    'misc-utils/enosys.c', syscalls_h,
+    include_directories : includes,
+    link_with : [lib_common],
+    install_dir : usrbin_exec_dir,
+    install : true)
+  if not is_disabler(exe)
+    exes += exe
+    manadocs += ['misc-utils/enosys.1.adoc']
+    bashcompletions += ['enosys']
+  endif
 endif
 
 ############################################################
@@ -3365,7 +3368,7 @@ configure_file(output : 'meson.conf',
                           '''asan=@0@
 PYTHON=@1@
 '''.format(get_option('b_sanitize')=='address' ? 'yes' : '',
-           python.path())])
+           python.full_path())])
 
 run_sh = find_program('tests/run.sh')
 run_target(

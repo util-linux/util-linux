@@ -1,6 +1,7 @@
 
 dist_noinst_HEADERS += \
 	include/all-io.h \
+	include/audit-arch.h \
 	include/bitops.h \
 	include/blkdev.h \
 	include/buffer.h \
