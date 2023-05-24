@@ -988,6 +988,9 @@ void add_nodev(unsigned long minor, const char *filesystem)
 	struct nodev *nodev = new_nodev(minor, filesystem);
 	unsigned long slot = nodev->minor % NODEV_TABLE_SIZE;
 
+	if (strcmp (filesystem, "mqueue") == 0)
+               fprintf(stderr, "[pid:%d] nodev table add: minor:%lu mqueue\n", getpid(), minor);
+
 	list_add_tail(&nodev->nodevs, &nodev_table.tables[slot]);
 }
 
