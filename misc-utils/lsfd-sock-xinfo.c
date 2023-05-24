@@ -212,8 +212,12 @@ void initialize_sock_xinfos(void)
 		load_sock_xinfo_no_nsswitch(NULL);
 	else {
 		if (fstat(self_netns_fd, &self_netns_sb) == 0) {
+			unsigned long m;
 			struct netns *nsobj = mark_sock_xinfo_loaded(self_netns_sb.st_ino);
 			load_sock_xinfo_no_nsswitch(nsobj);
+
+			m = minor(self_netns_sb.st_dev);
+			add_nodev(m, "nsfs");
 		}
 	}
 

@@ -44,6 +44,7 @@
 #include <sys/prctl.h>
 #include <sys/select.h>
 #include <sys/socket.h>
+#include <sys/shm.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
 #include <sys/un.h>
@@ -2185,6 +2186,44 @@ static void *make_mqueue(const struct factory *factory _U_, struct fdesc fdescs[
 
 	return mqueue_data;
 }
+struct sysvshm_data {
+	void *addr;
+	int id;
+};
+
+static void *make_sysvshm(const struct factory *factory _U_, struct fdesc fdescs[] _U_,
+			  int argc _U_, char ** argv _U_)
+{
+	size_t pagesize = getpagesize();
+	struct sysvshm_data *sysvshm_data;
+	int id = shmget(IPC_PRIVATE, pagesize, IPC_CREAT | 0600);
+	void *start;
+
+	if (id == -1)
+		err(EXIT_FAILURE, "failed to do shmget(.., %zu, ...)",
+		    pagesize);
+
+	start = shmat(id, NULL, SHM_RDONLY);
+	if (start == (void *) -1) {
+		int e = errno;
+		shmctl(id, IPC_RMID, NULL);
+		errno = e;
+		err(EXIT_FAILURE, "failed to do shmat(%d,...)", id);
+	}
+
+	sysvshm_data = xmalloc(sizeof(*sysvshm_data));
+	sysvshm_data->addr = start;
+	sysvshm_data->id = id;
+	return sysvshm_data;
+}
+
+static void free_sysvshm(const struct factory *factory _U_, void *data)
+{
+	struct sysvshm_data *sysvshm_data = data;
+
+	shmdt(sysvshm_data->addr);
+	shmctl(sysvshm_data->id, IPC_RMID, NULL);
+}
 
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
@@ -2782,6 +2821,18 @@ static const struct factory factories[] = {
 			},
 			PARAM_END
 		}
+	},
+	{
+		.name = "sysvshm",
+		.desc = "shared memory mapped with SYSVIPC shmem syscalls",
+		.priv = false,
+		.N = 0,
+		.EX_N = 0,
+		.make = make_sysvshm,
+		.free = free_sysvshm,
+		.params = (struct parameter []) {
+			PARAM_END
+		},
 	},
 };
 

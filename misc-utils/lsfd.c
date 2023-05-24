@@ -742,11 +742,12 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 
 		class = stat2class(&sb);
 		if (sockets_only
-		    /* A nsfs is not a socket but the nsfs can be used to
-		     * collect information from other network namespaces.
-		     * Besed on the information, various columns of sockets.
+		    /* A nsfs file is not a socket but the nsfs file can
+		     * be used as a entry point to collect information from
+		     * other network namespaces. Besed on the information,
+		     * various columns of sockets can be filled.
 		     */
-		    && (class != &sock_class)&& (class != &nsfs_file_class))
+		    && (class != &sock_class) && (class != &nsfs_file_class))
 			return NULL;
 		f = new_file(proc, class);
 		file_set_path(f, &sb, sym, assoc);
@@ -982,6 +983,14 @@ static void free_nodev(struct nodev *nodev)
 	free(nodev);
 }
 
+void add_nodev(unsigned long minor, const char *filesystem)
+{
+	struct nodev *nodev = new_nodev(minor, filesystem);
+	unsigned long slot = nodev->minor % NODEV_TABLE_SIZE;
+
+	list_add_tail(&nodev->nodevs, &nodev_table.tables[slot]);
+}
+
 static void initialize_nodevs(void)
 {
 	int i;
@@ -1022,9 +1031,6 @@ static void add_nodevs(FILE *mnt)
 	while (fgets(line, sizeof(line), mnt)) {
 		unsigned long major, minor;
 		char filesystem[256];
-		struct nodev *nodev;
-		int slot;
-
 
 		/* 23 61 0:22 / /sys rw,nosuid,nodev,noexec,relatime shared:2 - sysfs sysfs rw,seclabel */
 		if(sscanf(line, "%*d %*d %lu:%lu %*s %*s %*s %*[^-] - %s %*[^\n]",
@@ -1039,10 +1045,7 @@ static void add_nodevs(FILE *mnt)
 		if (get_nodev_filesystem(minor))
 			continue;
 
-		nodev = new_nodev(minor, filesystem);
-		slot = minor % NODEV_TABLE_SIZE;
-
-		list_add_tail(&nodev->nodevs, &nodev_table.tables[slot]);
+		add_nodev(minor, filesystem);
 	}
 }
 
