@@ -62,6 +62,9 @@ static int kcmp(pid_t pid1, pid_t pid2, int type,
 #include "lsfd-filter.h"
 #include "lsfd-counter.h"
 
+#include "sysfs.h"
+#include "bitops.h"
+
 /*
  * /proc/$pid/mountinfo entries
  */
@@ -1025,6 +1028,14 @@ const char *get_nodev_filesystem(unsigned long minor)
 	return NULL;
 }
 
+static uint32_t kernel32_to_cpu(enum sysfs_byteorder byteorder, uint32_t v)
+{
+	if (byteorder == SYSFS_BYTEORDER_LITTLE)
+		return le32_to_cpu(v);
+	else
+		return be32_to_cpu(v);
+}
+
 static void add_nodevs(FILE *mnt)
 {
 	/* This can be very long. A line in mountinfo can have more than 3
@@ -1043,6 +1054,8 @@ static void add_nodevs(FILE *mnt)
 				   &major, &minor, filesystem) != 3)
 				continue;
 
+		enum sysfs_byteorder byteorder = sysfs_get_byteorder(NULL);
+		minor = kernel32_to_cpu(byteorder, minor);
 		if (major != 0)
 			continue;
 		if (get_nodev_filesystem(minor))
