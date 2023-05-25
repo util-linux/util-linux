@@ -239,6 +239,10 @@ static int hook_create_mount(struct libmnt_context *cxt,
 	int rc = 0;
 
 	assert(cxt);
+
+	if (mnt_context_helper_executed(cxt))
+		return 0;
+
 	assert(cxt->fs);
 
 	api = get_sysapi(cxt);
@@ -309,6 +313,9 @@ static int hook_reconfigure_mount(struct libmnt_context *cxt,
 
 	assert(cxt);
 
+	if (mnt_context_helper_executed(cxt))
+		return 0;
+
 	api = get_sysapi(cxt);
 	assert(api);
 	assert(api->fd_tree >= 0);
@@ -378,6 +385,9 @@ static int hook_set_vfsflags(struct libmnt_context *cxt,
 	struct libmnt_optlist *ol;
 	uint64_t set = 0, clr = 0;
 	int rc = 0;
+
+	if (mnt_context_helper_executed(cxt))
+		return 0;
 
 	DBG(HOOK, ul_debugobj(hs, "setting VFS flags"));
 
@@ -470,6 +480,9 @@ static int hook_attach_target(struct libmnt_context *cxt,
 	struct libmnt_sysapi *api;
 	const char *target;
 	int rc = 0;
+
+	if (mnt_context_helper_executed(cxt))
+		return 0;
 
 	target = mnt_fs_get_target(cxt->fs);
 	if (!target)
