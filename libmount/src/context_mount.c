@@ -508,6 +508,8 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
+	mnt_context_reset_status(cxt);
+
 	if (try_type) {
 		rc = mnt_context_prepare_helper(cxt, "mount", try_type);
 		if (rc)
