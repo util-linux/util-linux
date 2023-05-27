@@ -47,13 +47,15 @@ enum {
 	COL_DEVTYPE,
 	COL_ENDPOINTS,
 	COL_EVENTFD_ID,
+	COL_EVENTPOLL_TFDS,
 	COL_FD,
 	COL_FLAGS,
-	COL_INODE,
+	COL_FUID,		/* file */
 	COL_INET_LADDR,
 	COL_INET_RADDR,
 	COL_INET6_LADDR,
 	COL_INET6_RADDR,
+	COL_INODE,
 	COL_KNAME,
 	COL_KTHREAD,
 	COL_MAJMIN,
@@ -68,6 +70,7 @@ enum {
 	COL_NLINK,
 	COL_NS_NAME,
 	COL_NS_TYPE,
+	COL_OWNER,		/* file */
 	COL_PACKET_IFACE,
 	COL_PACKET_PROTOCOL,
 	COL_PARTITION,
@@ -104,8 +107,6 @@ enum {
 	COL_UID,		/* process */
 	COL_UNIX_PATH,
 	COL_USER,		/* process */
-	COL_FUID,		/* file */
-	COL_OWNER,		/* file */
 	LSFD_N_COLS		/* This must be at last. */
 };
 

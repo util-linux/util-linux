@@ -435,6 +435,123 @@ static const struct anon_ops anon_eventfd_ops = {
 };
 
 /*
+ * eventpoll
+ */
+struct anon_eventpoll_data {
+	size_t count;
+	int *tfds;
+};
+
+
+static bool anon_eventpoll_probe(const char *str)
+{
+	return strncmp(str, "[eventpoll]", 11) == 0;
+}
+
+static void anon_eventpoll_init(struct unkn *unkn)
+{
+	unkn->anon_data = xcalloc(1, sizeof(struct anon_eventpoll_data));
+}
+
+static void anon_eventpoll_free(struct unkn *unkn)
+{
+	struct anon_eventpoll_data *data = unkn->anon_data;
+	free (data->tfds);
+	free (data);
+}
+
+static int anon_eventpoll_handle_fdinfo(struct unkn *unkn, const char *key, const char *value)
+{
+	struct anon_eventpoll_data *data;
+	if (strcmp(key, "tfd") == 0) {
+		unsigned long tfd;
+		char *end = NULL;
+
+		errno = 0;
+		tfd = strtoul(value, &end, 0);
+		if (errno != 0)
+			return 0; /* ignore -- parse failed */
+
+		data = (struct anon_eventpoll_data *)unkn->anon_data;
+		data->tfds = xreallocarray (data->tfds, ++data->count, sizeof(int));
+		data->tfds[data->count - 1] = (int)tfd;
+		return 1;
+	}
+	return 0;
+}
+
+static int intcmp (const void *a, const void *b)
+{
+	int ai = *(int *)a;
+	int bi = *(int *)b;
+
+	return ai - bi;
+}
+
+static void anon_eventpoll_attach_xinfo(struct unkn *unkn)
+{
+	struct anon_eventpoll_data *data = (struct anon_eventpoll_data *)unkn->anon_data;
+	qsort (data->tfds, data->count, sizeof (data->tfds[0]),
+	       intcmp);
+}
+
+static char *anon_eventpoll_make_tfds_string(struct anon_eventpoll_data *data,
+					     const char *prefix)
+{
+	char *str = prefix? xstrdup(prefix): NULL;
+
+	char buf[256];
+	for (size_t i = 0; i < data->count; i++) {
+		size_t offset = 0;
+
+		if (i > 0) {
+			buf[0] = ',';
+			offset = 1;
+		}
+		snprintf(buf + offset, sizeof(buf) - offset, "%d", data->tfds[i]);
+		xstrappend(&str, buf);
+	}
+	return str;
+}
+
+static char *anon_eventpoll_get_name(struct unkn *unkn)
+{
+	return anon_eventpoll_make_tfds_string ((struct anon_eventpoll_data *)unkn->anon_data,
+						"tfds=");
+}
+
+static bool anon_eventpoll_fill_column(struct proc *proc  __attribute__((__unused__)),
+				       struct unkn *unkn,
+				       struct libscols_line *ln __attribute__((__unused__)),
+				       int column_id,
+				       size_t column_index __attribute__((__unused__)),
+				       char **str)
+{
+	struct anon_eventpoll_data *data = (struct anon_eventpoll_data *)unkn->anon_data;
+
+	switch(column_id) {
+	case COL_EVENTPOLL_TFDS:
+		*str =anon_eventpoll_make_tfds_string (data, NULL);
+		if (*str)
+			return true;
+		break;
+	}
+
+	return false;
+}
+
+static const struct anon_ops anon_eventpoll_ops = {
+	.class = "eventpoll",
+	.probe = anon_eventpoll_probe,
+	.get_name = anon_eventpoll_get_name,
+	.fill_column = anon_eventpoll_fill_column,
+	.init = anon_eventpoll_init,
+	.free = anon_eventpoll_free,
+	.handle_fdinfo = anon_eventpoll_handle_fdinfo,
+	.attach_xinfo = anon_eventpoll_attach_xinfo,
+};
+
+/*
  * generic (fallback implementation)
  */
 static const struct anon_ops anon_generic_ops = {
@@ -449,6 +566,7 @@ static const struct anon_ops anon_generic_ops = {
 static const struct anon_ops *anon_ops[] = {
 	&anon_pidfd_ops,
 	&anon_eventfd_ops,
+	&anon_eventpoll_ops,
 };
 
 static const struct anon_ops *anon_probe(const char *str)

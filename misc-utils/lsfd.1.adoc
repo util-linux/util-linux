@@ -167,6 +167,9 @@ _PID_,_COMMAND_,_ASSOC_
 EVENTFD.ID <``number``>::
 Eventfd ID.
 
+EVENTPOLL.TFDS <``string``>>::
+File descriptors targeted by the eventpoll file.
+
 FD <``number``>::
 File descriptor for the file.
 
@@ -225,6 +228,9 @@ NAME <``string``>::
 Cooked version of KNAME. It is mostly same as KNAME.
 +
 Some files have special formats and information sources:
++
+eventpoll:::
+tfds=_EVENTPOLL.TFDS_
 +
 eventfd:::
 id=_EVENTFD.ID_
