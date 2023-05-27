@@ -37,6 +37,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/epoll.h>
 #include <sys/eventfd.h>
 #include <sys/inotify.h>
 #include <sys/ioctl.h>
@@ -2225,6 +2226,95 @@ static void free_sysvshm(const struct factory *factory _U_, void *data)
 	shmctl(sysvshm_data->id, IPC_RMID, NULL);
 }
 
+static void *make_eventpoll(const struct factory *factory _U_, struct fdesc fdescs[] _U_,
+			    int argc _U_, char ** argv _U_)
+{
+	int efd;
+	struct spec {
+		const char *file;
+		int flag;
+		uint32_t events;
+	} specs [] = {
+		{
+			.file = "DUMMY, DONT'USE THIS"
+		}, {
+			.file = "/dev/random",
+			.flag = O_RDONLY,
+			.events = EPOLLIN,
+		}, {
+			.file = "/dev/random",
+			.flag = O_WRONLY,
+			.events = EPOLLOUT,
+		},
+	};
+
+	efd = epoll_create(1);
+	if (efd < 0)
+		err(EXIT_FAILURE, "failed in epoll_create(2)");
+	if (efd != fdescs[0].fd) {
+		if (dup2(efd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(efd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", efd, fdescs[0].fd);
+		}
+		close(efd);
+		efd = fdescs[0].fd;
+	}
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL
+	};
+
+	for (size_t i = 1; i < ARRAY_SIZE(specs); i++) {
+		int fd = open(specs[i].file, specs[i].flag);
+		if (fd < 0) {
+			int e = errno;
+			close(efd);
+			for (size_t j = i - 1; j > 0; j--)
+				close(fdescs[j].fd);
+			errno = e;
+			err(EXIT_FAILURE, "failed in open(\"%s\",...)",
+			    specs[i].file);
+		}
+		if (fd != fdescs[i].fd) {
+			if (dup2(fd, fdescs[i].fd) < 0) {
+				int e = errno;
+				close(efd);
+				for (size_t j = i - 1; j > 0; j--)
+					close(fdescs[j].fd);
+				close(fd);
+				errno = e;
+				err(EXIT_FAILURE, "failed to dup %d -> %d",
+				    fd, fdescs[i].fd);
+			}
+			close(fd);
+		}
+		fdescs[i] = (struct fdesc) {
+			.fd = fdescs[i].fd,
+			.close = close_fdesc,
+			.data = NULL
+		};
+		if (epoll_ctl(efd, EPOLL_CTL_ADD, fdescs[i].fd,
+			      &(struct epoll_event) {
+				      .events = specs[i].events,
+				      .data = {.ptr = NULL,}
+			      }) < 0) {
+			int e = errno;
+			close(efd);
+			for (size_t j = i; j > 0; j--)
+				close(fdescs[j].fd);
+			errno = e;
+			err (EXIT_FAILURE,
+			     "failed to add fd %d to the eventpoll fd with epoll_ctl",
+			     fdescs[i].fd);
+		}
+	}
+
+	return NULL;
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -2833,6 +2923,17 @@ static const struct factory factories[] = {
 		.params = (struct parameter []) {
 			PARAM_END
 		},
+	},
+	{
+		.name = "eventpoll",
+		.desc = "make eventpoll (epoll) file",
+		.priv = false,
+		.N    = 3,
+		.EX_N = 0,
+		.make = make_eventpoll,
+		.params = (struct parameter []) {
+			PARAM_END
+		}
 	},
 };
 
