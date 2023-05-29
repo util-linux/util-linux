@@ -733,7 +733,7 @@ set_system_clock(const struct hwclock_control *ctl,
 
 	if (!ctl->testing) {
 		const struct timezone tz_utc = { 0 };
-		const struct timezone tz = { minuteswest };
+		const struct timezone tz = { .tz_minuteswest = minuteswest };
 
 		/* If UTC RTC: lock warp_clock and PCIL */
 		if (ctl->universal)

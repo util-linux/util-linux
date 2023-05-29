@@ -36,23 +36,23 @@ struct fdisk_sun_label {
 };
 
 static struct fdisk_parttype sun_parttypes[] = {
-	{SUN_TAG_UNASSIGNED, N_("Unassigned")},
-	{SUN_TAG_BOOT, N_("Boot")},
-	{SUN_TAG_ROOT, N_("SunOS root")},
-	{SUN_TAG_SWAP, N_("SunOS swap")},
-	{SUN_TAG_USR, N_("SunOS usr")},
-	{SUN_TAG_WHOLEDISK, N_("Whole disk")},
-	{SUN_TAG_STAND, N_("SunOS stand")},
-	{SUN_TAG_VAR, N_("SunOS var")},
-	{SUN_TAG_HOME, N_("SunOS home")},
-	{SUN_TAG_ALTSCTR, N_("SunOS alt sectors")},
-	{SUN_TAG_CACHE, N_("SunOS cachefs")},
-	{SUN_TAG_RESERVED, N_("SunOS reserved")},
-	{SUN_TAG_LINUX_SWAP, N_("Linux swap")},
-	{SUN_TAG_LINUX_NATIVE, N_("Linux native")},
-	{SUN_TAG_LINUX_LVM, N_("Linux LVM")},
-	{SUN_TAG_LINUX_RAID, N_("Linux raid autodetect")},
-	{ 0, NULL }
+	{.code = SUN_TAG_UNASSIGNED, N_("Unassigned")},
+	{.code = SUN_TAG_BOOT, N_("Boot")},
+	{.code = SUN_TAG_ROOT, N_("SunOS root")},
+	{.code = SUN_TAG_SWAP, N_("SunOS swap")},
+	{.code = SUN_TAG_USR, N_("SunOS usr")},
+	{.code = SUN_TAG_WHOLEDISK, N_("Whole disk")},
+	{.code = SUN_TAG_STAND, N_("SunOS stand")},
+	{.code = SUN_TAG_VAR, N_("SunOS var")},
+	{.code = SUN_TAG_HOME, N_("SunOS home")},
+	{.code = SUN_TAG_ALTSCTR, N_("SunOS alt sectors")},
+	{.code = SUN_TAG_CACHE, N_("SunOS cachefs")},
+	{.code = SUN_TAG_RESERVED, N_("SunOS reserved")},
+	{.code = SUN_TAG_LINUX_SWAP, N_("Linux swap")},
+	{.code = SUN_TAG_LINUX_NATIVE, N_("Linux native")},
+	{.code = SUN_TAG_LINUX_LVM, N_("Linux LVM")},
+	{.code = SUN_TAG_LINUX_RAID, N_("Linux raid autodetect")},
+	{ 0 }
 };
 
 /* return pointer buffer with on-disk data */

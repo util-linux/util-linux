@@ -195,17 +195,17 @@ struct cfdisk_menu {
 
 /* main menu */
 static struct cfdisk_menuitem main_menuitems[] = {
-	{ 'b', N_("Bootable"), N_("Toggle bootable flag of the current partition") },
-	{ 'd', N_("Delete"), N_("Delete the current partition") },
-	{ 'r', N_("Resize"), N_("Reduce or enlarge the current partition") },
-	{ 'n', N_("New"), N_("Create new partition from free space") },
-	{ 'q', N_("Quit"), N_("Quit program without writing changes") },
-	{ 't', N_("Type"), N_("Change the partition type") },
-	{ 'h', N_("Help"), N_("Print help screen") },
-	{ 's', N_("Sort"), N_("Fix partitions order") },
-	{ 'W', N_("Write"), N_("Write partition table to disk (this might destroy data)") },
-	{ 'u', N_("Dump"), N_("Dump partition table to sfdisk compatible script file") },
-	{ 0, NULL, NULL }
+	{ 'b', N_("Bootable"), N_("Toggle bootable flag of the current partition"), NULL },
+	{ 'd', N_("Delete"), N_("Delete the current partition"), NULL },
+	{ 'r', N_("Resize"), N_("Reduce or enlarge the current partition"), NULL },
+	{ 'n', N_("New"), N_("Create new partition from free space"), NULL },
+	{ 'q', N_("Quit"), N_("Quit program without writing changes"), NULL },
+	{ 't', N_("Type"), N_("Change the partition type"), NULL },
+	{ 'h', N_("Help"), N_("Print help screen"), NULL },
+	{ 's', N_("Sort"), N_("Fix partitions order"), NULL },
+	{ 'W', N_("Write"), N_("Write partition table to disk (this might destroy data)"), NULL },
+	{ 'u', N_("Dump"), N_("Dump partition table to sfdisk compatible script file"), NULL },
+	{ 0 }
 };
 
 /* extra partinfo in name:value pairs */

@@ -126,7 +126,7 @@ static const struct menu menu_generic = {
 
 		MENU_ENT_NEST('r', N_("return from protective/hybrid MBR to GPT"), FDISK_DISKLABEL_DOS, FDISK_DISKLABEL_GPT),
 
-		{ 0, NULL }
+		{ 0 }
 	}
 };
 
@@ -144,7 +144,7 @@ static const struct menu menu_createlabel = {
 		/* backward compatibility -- be sensitive to 'g', but don't
 		 * print it in the expert menu */
 		MENU_XENT_H('g', N_("create an IRIX (SGI) partition table")),
-		{ 0, NULL }
+		{ 0 }
 	}
 };
 
@@ -156,7 +156,7 @@ static const struct menu menu_geo = {
 		MENU_XENT('c', N_("change number of cylinders")),
 		MENU_XENT('h', N_("change number of heads")),
 		MENU_XENT('s', N_("change number of sectors/track")),
-		{ 0, NULL }
+		{ 0 }
 	}
 };
 
@@ -177,7 +177,7 @@ static const struct menu menu_gpt = {
 		MENU_XENT('R', N_("toggle the required partition flag")),
 		MENU_XENT('S', N_("toggle the GUID specific bits")),
 
-		{ 0, NULL }
+		{ 0 }
 	}
 };
 
@@ -194,7 +194,7 @@ static const struct menu menu_sun = {
 		MENU_XENT('i', N_("change interleave factor")),
 		MENU_XENT('o', N_("change rotation speed (rpm)")),
 		MENU_XENT('y', N_("change number of physical cylinders")),
-		{ 0, NULL }
+		{ 0 }
 	}
 };
 
@@ -207,7 +207,7 @@ static const struct menu menu_sgi = {
 		MENU_ENT('b', N_("edit bootfile entry")),
 		MENU_ENT('c', N_("select sgi swap partition")),
 		MENU_ENT('i', N_("create SGI info")),
-		{ 0, NULL }
+		{ 0 }
 	}
 };
 
@@ -226,7 +226,7 @@ static const struct menu menu_dos = {
 
 		MENU_BENT_NEST_H('M', N_("return from protective/hybrid MBR to GPT"), FDISK_DISKLABEL_DOS, FDISK_DISKLABEL_GPT),
 
-		{ 0, NULL }
+		{ 0 }
 	}
 };
 
@@ -239,7 +239,7 @@ static const struct menu menu_bsd = {
 		MENU_ENT('i', N_("install bootstrap")),
 		MENU_ENT('s', N_("show complete disklabel")),
 		MENU_ENT('x', N_("link BSD partition to non-BSD partition")),
-		{ 0, NULL }
+		{ 0 }
 	}
 };
 

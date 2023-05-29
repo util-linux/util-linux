@@ -47,28 +47,28 @@ static const char * const bsd_dktypenames[] = {
 #define BSD_DKMAXTYPES	(ARRAY_SIZE(bsd_dktypenames) - 1)
 
 static struct fdisk_parttype bsd_fstypes[] = {
-        {BSD_FS_UNUSED, "unused"},
-	{BSD_FS_SWAP,   "swap"},
-	{BSD_FS_V6,     "Version 6"},
-	{BSD_FS_V7,     "Version 7"},
-	{BSD_FS_SYSV,   "System V"},
-	{BSD_FS_V71K,   "4.1BSD"},
-	{BSD_FS_V8,     "Eighth Edition"},
-	{BSD_FS_BSDFFS, "4.2BSD"},
+        {.code = BSD_FS_UNUSED, "unused"},
+	{.code = BSD_FS_SWAP,   "swap"},
+	{.code = BSD_FS_V6,     "Version 6"},
+	{.code = BSD_FS_V7,     "Version 7"},
+	{.code = BSD_FS_SYSV,   "System V"},
+	{.code = BSD_FS_V71K,   "4.1BSD"},
+	{.code = BSD_FS_V8,     "Eighth Edition"},
+	{.code = BSD_FS_BSDFFS, "4.2BSD"},
 #ifdef __alpha__
-	{BSD_FS_EXT2,   "ext2"},
+	{.code = BSD_FS_EXT2,   "ext2"},
 #else
-	{BSD_FS_MSDOS,  "MS-DOS"},
+	{.code = BSD_FS_MSDOS,  "MS-DOS"},
 #endif
-	{BSD_FS_BSDLFS, "4.4LFS"},
-	{BSD_FS_OTHER,  "unknown"},
-	{BSD_FS_HPFS,   "HPFS"},
-	{BSD_FS_ISO9660,"ISO-9660"},
-	{BSD_FS_BOOT,   "boot"},
-	{BSD_FS_ADOS,   "ADOS"},
-	{BSD_FS_HFS,    "HFS"},
-	{BSD_FS_ADVFS,	"AdvFS"},
-	{ 0, NULL }
+	{.code = BSD_FS_BSDLFS, "4.4LFS"},
+	{.code = BSD_FS_OTHER,  "unknown"},
+	{.code = BSD_FS_HPFS,   "HPFS"},
+	{.code = BSD_FS_ISO9660,"ISO-9660"},
+	{.code = BSD_FS_BOOT,   "boot"},
+	{.code = BSD_FS_ADOS,   "ADOS"},
+	{.code = BSD_FS_HFS,    "HFS"},
+	{.code = BSD_FS_ADVFS,	"AdvFS"},
+	{ 0 }
 };
 #define BSD_FSMAXTYPES (ARRAY_SIZE(bsd_fstypes)-1)
 

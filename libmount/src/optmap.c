@@ -70,56 +70,56 @@
  */
 static const struct libmnt_optmap linux_flags_map[] =
 {
-   { "ro",       MS_RDONLY },                 /* read-only */
+   { "ro",       MS_RDONLY, 0 },              /* read-only */
    { "rw",       MS_RDONLY, MNT_INVERT },     /* read-write */
    { "exec",     MS_NOEXEC, MNT_INVERT },     /* permit execution of binaries */
-   { "noexec",   MS_NOEXEC },                 /* don't execute binaries */
+   { "noexec",   MS_NOEXEC, 0 },              /* don't execute binaries */
    { "suid",     MS_NOSUID, MNT_INVERT },     /* honor suid executables */
-   { "nosuid",   MS_NOSUID },                 /* don't honor suid executables */
+   { "nosuid",   MS_NOSUID, 0 },              /* don't honor suid executables */
    { "dev",      MS_NODEV, MNT_INVERT },      /* interpret device files  */
-   { "nodev",    MS_NODEV },                  /* don't interpret devices */
+   { "nodev",    MS_NODEV, 0 },               /* don't interpret devices */
 
-   { "sync",     MS_SYNCHRONOUS },            /* synchronous I/O */
+   { "sync",     MS_SYNCHRONOUS, 0 },         /* synchronous I/O */
    { "async",    MS_SYNCHRONOUS, MNT_INVERT },/* asynchronous I/O */
 
-   { "dirsync",  MS_DIRSYNC },                /* synchronous directory modifications */
+   { "dirsync",  MS_DIRSYNC, 0 },             /* synchronous directory modifications */
    { "remount",  MS_REMOUNT, MNT_NOMTAB },    /* alter flags of mounted FS */
-   { "bind",     MS_BIND },                   /* Remount part of the tree elsewhere */
-   { "rbind",    MS_BIND | MS_REC },          /* Idem, plus mounted subtrees */
+   { "bind",     MS_BIND, 0 },                /* Remount part of the tree elsewhere */
+   { "rbind",    MS_BIND | MS_REC, 0 },       /* Idem, plus mounted subtrees */
 #ifdef MS_NOSUB
    { "sub",      MS_NOSUB, MNT_INVERT },      /* allow submounts */
-   { "nosub",    MS_NOSUB },                  /* don't allow submounts */
+   { "nosub",    MS_NOSUB, 0 },               /* don't allow submounts */
 #endif
 #ifdef MS_SILENT
-   { "silent",	 MS_SILENT },                 /* be quiet  */
+   { "silent",	 MS_SILENT, 0 },              /* be quiet  */
    { "loud",     MS_SILENT, MNT_INVERT },     /* print out messages. */
 #endif
 #ifdef MS_MANDLOCK
-   { "mand",     MS_MANDLOCK },               /* Allow mandatory locks on this FS */
+   { "mand",     MS_MANDLOCK, 0 },            /* Allow mandatory locks on this FS */
    { "nomand",   MS_MANDLOCK, MNT_INVERT },   /* Forbid mandatory locks on this FS */
 #endif
 #ifdef MS_NOATIME
    { "atime",    MS_NOATIME, MNT_INVERT },    /* Update access time */
-   { "noatime",	 MS_NOATIME },                /* Do not update access time */
+   { "noatime",	 MS_NOATIME, 0 },             /* Do not update access time */
 #endif
 #ifdef MS_I_VERSION
-   { "iversion", MS_I_VERSION },              /* Update inode I_version time */
+   { "iversion", MS_I_VERSION, 0 },           /* Update inode I_version time */
    { "noiversion", MS_I_VERSION,  MNT_INVERT},/* Don't update inode I_version time */
 #endif
 #ifdef MS_NODIRATIME
    { "diratime", MS_NODIRATIME, MNT_INVERT }, /* Update dir access times */
-   { "nodiratime", MS_NODIRATIME },           /* Do not update dir access times */
+   { "nodiratime", MS_NODIRATIME, 0 },           /* Do not update dir access times */
 #endif
 #ifdef MS_RELATIME
-   { "relatime", MS_RELATIME },               /* Update access times relative to mtime/ctime */
+   { "relatime", MS_RELATIME, 0 },            /* Update access times relative to mtime/ctime */
    { "norelatime", MS_RELATIME, MNT_INVERT }, /* Update access time without regard to mtime/ctime */
 #endif
 #ifdef MS_STRICTATIME
-   { "strictatime", MS_STRICTATIME },         /* Strict atime semantics */
+   { "strictatime", MS_STRICTATIME, 0 },      /* Strict atime semantics */
    { "nostrictatime", MS_STRICTATIME, MNT_INVERT }, /* kernel default atime */
 #endif
 #ifdef MS_LAZYTIME
-   { "lazytime", MS_LAZYTIME },               /* Update {a,m,c}time on the in-memory inode only */
+   { "lazytime", MS_LAZYTIME, 0 },            /* Update {a,m,c}time on the in-memory inode only */
    { "nolazytime", MS_LAZYTIME, MNT_INVERT },
 #endif
 #ifdef MS_PROPAGATION
@@ -134,7 +134,7 @@ static const struct libmnt_optmap linux_flags_map[] =
 #endif
 #ifdef MS_NOSYMFOLLOW
    { "symfollow", MS_NOSYMFOLLOW, MNT_INVERT }, /* Don't follow symlinks */
-   { "nosymfollow", MS_NOSYMFOLLOW },
+   { "nosymfollow", MS_NOSYMFOLLOW, 0 },
 #endif
 #ifdef MS_MOVE
    { "move",	MS_MOVE,	MNT_NOHLPS | MNT_NOMTAB | MNT_NOFSTAB }, /* --move */
@@ -152,7 +152,7 @@ static const struct libmnt_optmap userspace_opts_map[] =
    { "auto",    MNT_MS_NOAUTO, MNT_NOHLPS | MNT_INVERT | MNT_NOMTAB },  /* Can be mounted using -a */
    { "noauto",  MNT_MS_NOAUTO, MNT_NOHLPS | MNT_NOMTAB },  /* Can only be mounted explicitly */
 
-   { "user[=]", MNT_MS_USER },                             /* Allow ordinary user to mount (mtab) */
+   { "user[=]", MNT_MS_USER, 0 },                          /* Allow ordinary user to mount (mtab) */
    { "nouser",  MNT_MS_USER, MNT_INVERT | MNT_NOMTAB },    /* Forbid ordinary user to mount */
 
    { "users",   MNT_MS_USERS, MNT_NOMTAB },                /* Allow ordinary users to mount */
@@ -168,7 +168,7 @@ static const struct libmnt_optmap userspace_opts_map[] =
     * Note that traditional init scripts assume the _netdev option in /etc/mtab to
     * umount network block devices on shutdown.
     */
-   { "_netdev", MNT_MS_NETDEV },                           /* Device requires network */
+   { "_netdev", MNT_MS_NETDEV, 0 },                        /* Device requires network */
 
    { "comment=", MNT_MS_COMMENT, MNT_NOHLPS | MNT_NOMTAB },/* fstab comment only */
 
@@ -182,9 +182,9 @@ static const struct libmnt_optmap userspace_opts_map[] =
 
    { "nofail",  MNT_MS_NOFAIL, MNT_NOMTAB },               /* Do not fail if ENOENT on dev */
 
-   { "uhelper=", MNT_MS_UHELPER },			   /* /sbin/umount.<helper> */
+   { "uhelper=", MNT_MS_UHELPER, 0 },			   /* /sbin/umount.<helper> */
 
-   { "helper=", MNT_MS_HELPER },			   /* /sbin/mount.<helper> */
+   { "helper=", MNT_MS_HELPER, 0 },			   /* /sbin/mount.<helper> */
 
    { "verity.hashdevice=", MNT_MS_HASH_DEVICE, MNT_NOHLPS | MNT_NOMTAB },     /* mount a verity device */
    { "verity.roothash=",   MNT_MS_ROOT_HASH, MNT_NOHLPS | MNT_NOMTAB },		   /* verity device root hash */

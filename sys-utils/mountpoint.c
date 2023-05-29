@@ -139,7 +139,7 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char **argv)
 {
 	int c;
-	struct mountpoint_control ctl = { NULL };
+	struct mountpoint_control ctl = { 0 };
 
 	enum {
 		OPT_NOFOLLOW = CHAR_MAX + 1

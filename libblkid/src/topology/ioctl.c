@@ -31,10 +31,10 @@ static const struct topology_val {
 	int (*set_u64)(blkid_probe, uint64_t);
 
 } topology_vals[] = {
-	{ BLKALIGNOFF, NULL, blkid_topology_set_alignment_offset },
-	{ BLKIOMIN, blkid_topology_set_minimum_io_size },
-	{ BLKIOOPT, blkid_topology_set_optimal_io_size },
-	{ BLKPBSZGET, blkid_topology_set_physical_sector_size },
+	{ BLKALIGNOFF, .set_int = blkid_topology_set_alignment_offset },
+	{ BLKIOMIN, .set_ulong = blkid_topology_set_minimum_io_size },
+	{ BLKIOOPT, .set_ulong = blkid_topology_set_optimal_io_size },
+	{ BLKPBSZGET, .set_ulong = blkid_topology_set_physical_sector_size },
 	{ BLKGETDISKSEQ, .set_u64 = blkid_topology_set_diskseq },
 	/* we read BLKSSZGET in topology.c */
 };

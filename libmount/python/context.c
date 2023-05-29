@@ -1175,43 +1175,17 @@ static PyObject *Context_repr(ContextObjext *self)
 
 PyTypeObject ContextType = {
 	PyVarObject_HEAD_INIT(NULL, 0)
-	"libmount.Context", /*tp_name*/
-	sizeof(ContextObjext), /*tp_basicsize*/
-	0, /*tp_itemsize*/
-	(destructor)Context_dealloc, /*tp_dealloc*/
-	0, /*tp_print*/
-	NULL, /*tp_getattr*/
-	NULL, /*tp_setattr*/
-	NULL, /*tp_compare*/
-	(reprfunc) Context_repr,
-	NULL, /*tp_as_number*/
-	NULL, /*tp_as_sequence*/
-	NULL, /*tp_as_mapping*/
-	NULL, /*tp_hash */
-	NULL, /*tp_call*/
-	NULL, /*tp_str*/
-	NULL, /*tp_getattro*/
-	NULL, /*tp_setattro*/
-	NULL, /*tp_as_buffer*/
-	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
-	Context_HELP, /* tp_doc */
-	NULL, /* tp_traverse */
-	NULL, /* tp_clear */
-	NULL, /* tp_richcompare */
-	0, /* tp_weaklistoffset */
-	NULL, /* tp_iter */
-	NULL, /* tp_iternext */
-	Context_methods, /* tp_methods */
-	Context_members, /* tp_members */
-	Context_getseters, /* tp_getset */
-	NULL, /* tp_base */
-	NULL, /* tp_dict */
-	NULL, /* tp_descr_get */
-	NULL, /* tp_descr_set */
-	0, /* tp_dictoffset */
-	(initproc)Context_init, /* tp_init */
-	NULL, /* tp_alloc */
-	Context_new, /* tp_new */
+	.tp_name = "libmount.Context",
+	.tp_basicsize = sizeof(ContextObjext),
+	.tp_dealloc = (destructor)Context_dealloc,
+	.tp_repr = (reprfunc) Context_repr,
+	.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+	.tp_doc = Context_HELP,
+	.tp_methods = Context_methods,
+	.tp_members = Context_members,
+	.tp_getset = Context_getseters,
+	.tp_init = (initproc)Context_init,
+	.tp_new = Context_new,
 };
 
 void Context_AddModuleObject(PyObject *mod)

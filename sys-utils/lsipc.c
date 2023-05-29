@@ -147,23 +147,23 @@ struct lsipc_coldesc {
 static const struct lsipc_coldesc coldescs[] =
 {
 	/* common */
-	[COL_KEY]	= { "KEY",	N_("Resource key"), N_("Key"), 1},
-	[COL_ID]	= { "ID",	N_("Resource ID"), N_("ID"), 1},
+	[COL_KEY]	= { "KEY",	N_("Resource key"), N_("Key"), 1, 0},
+	[COL_ID]	= { "ID",	N_("Resource ID"), N_("ID"), 1, 0},
 	[COL_OWNER]	= { "OWNER",	N_("Owner's username or UID"), N_("Owner"), 1, SCOLS_FL_RIGHT},
 	[COL_PERMS]	= { "PERMS",	N_("Permissions"), N_("Permissions"), 1, SCOLS_FL_RIGHT},
 	[COL_CUID]	= { "CUID",	N_("Creator UID"), N_("Creator UID"), 1, SCOLS_FL_RIGHT},
-	[COL_CUSER]     = { "CUSER",    N_("Creator user"), N_("Creator user"), 1 },
+	[COL_CUSER]     = { "CUSER",    N_("Creator user"), N_("Creator user"), 1, 0},
 	[COL_CGID]	= { "CGID",	N_("Creator GID"), N_("Creator GID"), 1, SCOLS_FL_RIGHT},
-	[COL_CGROUP]    = { "CGROUP",   N_("Creator group"), N_("Creator group"), 1 },
+	[COL_CGROUP]    = { "CGROUP",   N_("Creator group"), N_("Creator group"), 1, 0},
 	[COL_UID]	= { "UID",	N_("User ID"), N_("UID"), 1, SCOLS_FL_RIGHT},
-	[COL_USER]	= { "USER",	N_("User name"), N_("User name"), 1},
+	[COL_USER]	= { "USER",	N_("User name"), N_("User name"), 1, 0},
 	[COL_GID]	= { "GID",	N_("Group ID"), N_("GID"), 1, SCOLS_FL_RIGHT},
-	[COL_GROUP]	= { "GROUP",	N_("Group name"), N_("Group name"), 1},
+	[COL_GROUP]	= { "GROUP",	N_("Group name"), N_("Group name"), 1, 0},
 	[COL_CTIME]	= { "CTIME",	N_("Time of the last change"), N_("Last change"), 1, SCOLS_FL_RIGHT},
 
 	/* msgq-specific */
 	[COL_USEDBYTES]	= { "USEDBYTES",N_("Bytes used"), N_("Bytes used"), 1, SCOLS_FL_RIGHT},
-	[COL_MSGS]	= { "MSGS",	N_("Number of messages"), N_("Messages"), 1},
+	[COL_MSGS]	= { "MSGS",	N_("Number of messages"), N_("Messages"), 1, 0},
 	[COL_SEND]	= { "SEND",	N_("Time of last msg sent"), N_("Msg sent"), 1, SCOLS_FL_RIGHT},
 	[COL_RECV]	= { "RECV",	N_("Time of last msg received"), N_("Msg received"), 1, SCOLS_FL_RIGHT},
 	[COL_LSPID]	= { "LSPID",	N_("PID of the last msg sender"), N_("Msg sender"), 1, SCOLS_FL_RIGHT},
@@ -184,8 +184,8 @@ static const struct lsipc_coldesc coldescs[] =
 	[COL_OTIME]	= { "OTIME",	N_("Time of the last operation"), N_("Last operation"), 1, SCOLS_FL_RIGHT},
 
 	/* cols for summarized information */
-	[COL_RESOURCE]  = { "RESOURCE", N_("Resource name"), N_("Resource"), 1 },
-	[COL_DESC]      = { "DESCRIPTION",N_("Resource description"), N_("Description"), 1 },
+	[COL_RESOURCE]  = { "RESOURCE", N_("Resource name"), N_("Resource"), 1, 0 },
+	[COL_DESC]      = { "DESCRIPTION",N_("Resource description"), N_("Description"), 1, 0 },
 	[COL_USED]      = { "USED",     N_("Currently used"), N_("Used"), 1, SCOLS_FL_RIGHT },
 	[COL_USEPERC]	= { "USE%",     N_("Currently use percentage"), N_("Use"), 1, SCOLS_FL_RIGHT },
 	[COL_LIMIT]     = { "LIMIT",    N_("System-wide limit"), N_("Limit"), 1, SCOLS_FL_RIGHT },

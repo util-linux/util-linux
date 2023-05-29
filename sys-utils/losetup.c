@@ -65,20 +65,20 @@ struct colinfo {
 	int flags;
 	const char *help;
 
-	int json_type;	/* default is string */
+	int json_type;
 };
 
 static const struct colinfo infos[] = {
 	[COL_AUTOCLR]     = { "AUTOCLEAR",    1, SCOLS_FL_RIGHT, N_("autoclear flag set"), SCOLS_JSON_BOOLEAN},
-	[COL_BACK_FILE]   = { "BACK-FILE",  0.3, SCOLS_FL_NOEXTREMES, N_("device backing file")},
+	[COL_BACK_FILE]   = { "BACK-FILE",  0.3, SCOLS_FL_NOEXTREMES, N_("device backing file"), SCOLS_JSON_STRING},
 	[COL_BACK_INO]    = { "BACK-INO",     4, SCOLS_FL_RIGHT, N_("backing file inode number"), SCOLS_JSON_NUMBER},
-	[COL_BACK_MAJMIN] = { "BACK-MAJ:MIN", 6, 0, N_("backing file major:minor device number")},
-	[COL_NAME]        = { "NAME",      0.25, 0, N_("loop device name")},
+	[COL_BACK_MAJMIN] = { "BACK-MAJ:MIN", 6, 0, N_("backing file major:minor device number"), SCOLS_JSON_STRING},
+	[COL_NAME]        = { "NAME",      0.25, 0, N_("loop device name"), SCOLS_JSON_STRING},
 	[COL_OFFSET]      = { "OFFSET",       5, SCOLS_FL_RIGHT, N_("offset from the beginning"), SCOLS_JSON_NUMBER},
 	[COL_PARTSCAN]    = { "PARTSCAN",     1, SCOLS_FL_RIGHT, N_("partscan flag set"), SCOLS_JSON_BOOLEAN},
 	[COL_RO]          = { "RO",           1, SCOLS_FL_RIGHT, N_("read-only device"), SCOLS_JSON_BOOLEAN},
 	[COL_SIZELIMIT]   = { "SIZELIMIT",    5, SCOLS_FL_RIGHT, N_("size limit of the file in bytes"), SCOLS_JSON_NUMBER},
-	[COL_MAJMIN]      = { "MAJ:MIN",      3, 0, N_("loop device major:minor number")},
+	[COL_MAJMIN]      = { "MAJ:MIN",      3, 0, N_("loop device major:minor number"), SCOLS_JSON_STRING},
 	[COL_DIO]         = { "DIO",          1, SCOLS_FL_RIGHT, N_("access backing file with direct-io"), SCOLS_JSON_BOOLEAN},
 	[COL_LOGSEC]      = { "LOG-SEC",      4, SCOLS_FL_RIGHT, N_("logical sector size in bytes"), SCOLS_JSON_NUMBER},
 };

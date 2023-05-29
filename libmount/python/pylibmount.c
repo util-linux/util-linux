@@ -168,7 +168,7 @@ error_out(PyObject *m __attribute__((unused))) {
 
 static PyMethodDef pylibmount_methods[] = {
     {"error_out", (PyCFunction)error_out, METH_NOARGS, NULL},
-    {NULL, NULL}
+    { 0 }
 };
 
 #if PY_MAJOR_VERSION >= 3

@@ -41,7 +41,7 @@ UL_DEBUG_DEFINE_MASKNAMES(libmount) =
 	{ "btrfs", MNT_DEBUG_BTRFS,	"btrfs specific routines" },
 	{ "verity", MNT_DEBUG_VERITY,	"verity specific routines" },
 
-	{ NULL, 0 }
+	{ 0 }
 };
 
 /**

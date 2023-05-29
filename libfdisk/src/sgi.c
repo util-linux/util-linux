@@ -43,25 +43,25 @@ struct fdisk_sgi_label {
 
 static struct fdisk_parttype sgi_parttypes[] =
 {
-	{SGI_TYPE_VOLHDR,	N_("SGI volhdr")},
-	{SGI_TYPE_TRKREPL,	N_("SGI trkrepl")},
-	{SGI_TYPE_SECREPL,	N_("SGI secrepl")},
-	{SGI_TYPE_SWAP,		N_("SGI raw")},
-	{SGI_TYPE_BSD,		N_("SGI bsd")},
-	{SGI_TYPE_SYSV,		N_("SGI sysv")},
-	{SGI_TYPE_ENTIRE_DISK,	N_("SGI volume")},
-	{SGI_TYPE_EFS,		N_("SGI efs")},
-	{SGI_TYPE_LVOL,		N_("SGI lvol")},
-	{SGI_TYPE_RLVOL,	N_("SGI rlvol")},
-	{SGI_TYPE_XFS,		N_("SGI xfs")},
-	{SGI_TYPE_XFSLOG,	N_("SGI xfslog")},
-	{SGI_TYPE_XLV,		N_("SGI xlv")},
-	{SGI_TYPE_XVM,		N_("SGI xvm")},
-	{MBR_LINUX_SWAP_PARTITION, N_("Linux swap")},
-	{MBR_LINUX_DATA_PARTITION, N_("Linux native")},
-	{MBR_LINUX_LVM_PARTITION, N_("Linux LVM")},
-	{MBR_LINUX_RAID_PARTITION, N_("Linux RAID")},
-	{0, NULL }
+	{.code = SGI_TYPE_VOLHDR,	N_("SGI volhdr")},
+	{.code = SGI_TYPE_TRKREPL,	N_("SGI trkrepl")},
+	{.code = SGI_TYPE_SECREPL,	N_("SGI secrepl")},
+	{.code = SGI_TYPE_SWAP,		N_("SGI raw")},
+	{.code = SGI_TYPE_BSD,		N_("SGI bsd")},
+	{.code = SGI_TYPE_SYSV,		N_("SGI sysv")},
+	{.code = SGI_TYPE_ENTIRE_DISK,	N_("SGI volume")},
+	{.code = SGI_TYPE_EFS,		N_("SGI efs")},
+	{.code = SGI_TYPE_LVOL,		N_("SGI lvol")},
+	{.code = SGI_TYPE_RLVOL,	N_("SGI rlvol")},
+	{.code = SGI_TYPE_XFS,		N_("SGI xfs")},
+	{.code = SGI_TYPE_XFSLOG,	N_("SGI xfslog")},
+	{.code = SGI_TYPE_XLV,		N_("SGI xlv")},
+	{.code = SGI_TYPE_XVM,		N_("SGI xvm")},
+	{.code = MBR_LINUX_SWAP_PARTITION, N_("Linux swap")},
+	{.code = MBR_LINUX_DATA_PARTITION, N_("Linux native")},
+	{.code = MBR_LINUX_LVM_PARTITION, N_("Linux LVM")},
+	{.code = MBR_LINUX_RAID_PARTITION, N_("Linux RAID")},
+	{ 0 }
 };
 
 static unsigned int sgi_get_start_sector(struct fdisk_context *cxt, int i );

@@ -34,11 +34,11 @@ static const struct topology_val {
 	int (*set_u64)(blkid_probe, uint64_t);
 
 } topology_vals[] = {
-	{ "alignment_offset", NULL, blkid_topology_set_alignment_offset },
-	{ "queue/minimum_io_size", blkid_topology_set_minimum_io_size },
-	{ "queue/optimal_io_size", blkid_topology_set_optimal_io_size },
-	{ "queue/physical_block_size", blkid_topology_set_physical_sector_size },
-	{ "queue/dax", blkid_topology_set_dax },
+	{ "alignment_offset", .set_int = blkid_topology_set_alignment_offset },
+	{ "queue/minimum_io_size", .set_ulong = blkid_topology_set_minimum_io_size },
+	{ "queue/optimal_io_size", .set_ulong = blkid_topology_set_optimal_io_size },
+	{ "queue/physical_block_size", .set_ulong = blkid_topology_set_physical_sector_size },
+	{ "queue/dax", .set_ulong = blkid_topology_set_dax },
 	{ "diskseq", .set_u64 = blkid_topology_set_diskseq },
 };
 

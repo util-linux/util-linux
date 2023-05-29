@@ -24,7 +24,7 @@ UL_DEBUG_DEFINE_MASKNAMES(libfdisk) =
 	{ "wipe",       LIBFDISK_DEBUG_WIPE,    "wipe area utils" },
 	{ "item",       LIBFDISK_DEBUG_ITEM,    "disklabel items" },
 	{ "gpt",        LIBFDISK_DEBUG_GPT,     "GPT subsystems" },
-	{ NULL, 0 }
+	{ 0 }
 };
 
 /**
