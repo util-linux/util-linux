@@ -75,6 +75,7 @@ int fdisk_set_wipe_area(struct fdisk_context *cxt,
 			free(wp);
 			return 1;
 		}
+		DBG(WIPE, ul_debug("not requested"));
 		return 0;
 	}
 

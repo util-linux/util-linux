@@ -21,6 +21,7 @@
 #include <assert.h>
 #include <libsmartcols.h>
 #include <sys/ioctl.h>
+#include <rpmatch.h>
 #include <libfdisk.h>
 
 #ifdef HAVE_LIBMOUNT
@@ -2587,11 +2588,17 @@ static int ui_run(struct cfdisk *cf)
 	DBG(UI, ul_debug("start cols=%zu, lines=%zu", ui_cols, ui_lines));
 
 	if (fdisk_get_collision(cf->cxt)) {
-		ui_warnx(_("Device already contains a %s signature; it will be removed by a write command."),
-				fdisk_get_collision(cf->cxt));
-		fdisk_enable_wipe(cf->cxt, 1);
-		ui_hint(_("Press a key to continue."));
-		getch();
+		ui_warnx(_("Device already contains a %s signature."), fdisk_get_collision(cf->cxt));
+		if (fdisk_is_readonly(cf->cxt)) {
+			ui_hint(_("Press a key to continue."));
+			getch();
+		} else {
+			char buf[64] = { 0 };
+			rc = ui_get_string(_("Do you want to remove it? [Y]es/[N]o: "), NULL,
+					buf, sizeof(buf));
+			fdisk_enable_wipe(cf->cxt,
+					rc > 0 && rpmatch(buf) == RPMATCH_YES ? 1 : 0);
+		}
 	}
 
 	if (!fdisk_has_label(cf->cxt) || cf->zero_start) {
