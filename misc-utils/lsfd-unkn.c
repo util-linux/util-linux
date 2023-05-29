@@ -227,8 +227,7 @@ static int anon_pidfd_handle_fdinfo(struct unkn *unkn, const char *key, const ch
 			return 0; /* ignore -- parse failed */
 		((struct anon_pidfd_data *)unkn->anon_data)->pid = (pid_t)pid;
 		return 1;
-	}
-	else if (strcmp(key, "NSpid") == 0) {
+	} else if (strcmp(key, "NSpid") == 0) {
 		((struct anon_pidfd_data *)unkn->anon_data)->nspid = xstrdup(value);
 		return 1;
 
@@ -320,7 +319,7 @@ static const struct ipc_class anon_eventfd_ipc_class = {
 
 static bool anon_eventfd_probe(const char *str)
 {
-	return (strncmp(str, "[eventfd]", 9) == 0);
+	return strncmp(str, "[eventfd]", 9) == 0;
 }
 
 static char *anon_eventfd_get_name(struct unkn *unkn)
@@ -442,7 +441,6 @@ struct anon_eventpoll_data {
 	int *tfds;
 };
 
-
 static bool anon_eventpoll_probe(const char *str)
 {
 	return strncmp(str, "[eventpoll]", 11) == 0;
@@ -456,8 +454,8 @@ static void anon_eventpoll_init(struct unkn *unkn)
 static void anon_eventpoll_free(struct unkn *unkn)
 {
 	struct anon_eventpoll_data *data = unkn->anon_data;
-	free (data->tfds);
-	free (data);
+	free(data->tfds);
+	free(data);
 }
 
 static int anon_eventpoll_handle_fdinfo(struct unkn *unkn, const char *key, const char *value)
@@ -473,14 +471,14 @@ static int anon_eventpoll_handle_fdinfo(struct unkn *unkn, const char *key, cons
 			return 0; /* ignore -- parse failed */
 
 		data = (struct anon_eventpoll_data *)unkn->anon_data;
-		data->tfds = xreallocarray (data->tfds, ++data->count, sizeof(int));
+		data->tfds = xreallocarray(data->tfds, ++data->count, sizeof(int));
 		data->tfds[data->count - 1] = (int)tfd;
 		return 1;
 	}
 	return 0;
 }
 
-static int intcmp (const void *a, const void *b)
+static int intcmp(const void *a, const void *b)
 {
 	int ai = *(int *)a;
 	int bi = *(int *)b;
@@ -491,8 +489,8 @@ static int intcmp (const void *a, const void *b)
 static void anon_eventpoll_attach_xinfo(struct unkn *unkn)
 {
 	struct anon_eventpoll_data *data = (struct anon_eventpoll_data *)unkn->anon_data;
-	qsort (data->tfds, data->count, sizeof (data->tfds[0]),
-	       intcmp);
+	qsort(data->tfds, data->count, sizeof(data->tfds[0]),
+	      intcmp);
 }
 
 static char *anon_eventpoll_make_tfds_string(struct anon_eventpoll_data *data,
@@ -516,8 +514,8 @@ static char *anon_eventpoll_make_tfds_string(struct anon_eventpoll_data *data,
 
 static char *anon_eventpoll_get_name(struct unkn *unkn)
 {
-	return anon_eventpoll_make_tfds_string ((struct anon_eventpoll_data *)unkn->anon_data,
-						"tfds=");
+	return anon_eventpoll_make_tfds_string((struct anon_eventpoll_data *)unkn->anon_data,
+					       "tfds=");
 }
 
 static bool anon_eventpoll_fill_column(struct proc *proc  __attribute__((__unused__)),
@@ -531,7 +529,7 @@ static bool anon_eventpoll_fill_column(struct proc *proc  __attribute__((__unuse
 
 	switch(column_id) {
 	case COL_EVENTPOLL_TFDS:
-		*str =anon_eventpoll_make_tfds_string (data, NULL);
+		*str =anon_eventpoll_make_tfds_string(data, NULL);
 		if (*str)
 			return true;
 		break;
