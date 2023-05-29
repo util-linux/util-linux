@@ -35,7 +35,18 @@ echo "$0 called with \"$*\""
 EOF
 chmod +x $MOUNTER
 
+ts_init_subtest "basic"
+$TS_CMD_MOUNT -t mytest /foo /bar &> $TS_OUTPUT
+ts_finalize_subtest
+
+ts_init_subtest "options"
 $TS_CMD_MOUNT -t mytest -o foo,defaults /foo /bar &> $TS_OUTPUT
+ts_finalize_subtest
+
+ts_init_subtest "multi-types"
+$TS_CMD_MOUNT -t mytest,invalid /foo /bar &> $TS_OUTPUT
+ts_finalize_subtest
+
 rm -f $MOUNTER
 
 ts_finalize
