@@ -270,23 +270,21 @@ static void tcfinal(struct console *con)
 {
 	struct termios *tio = &con->tio;
 	const int fd = con->fd;
+	char *term, *ttyname = NULL;
 
-	if (con->flags & CON_EIO)
-		return;
-	if ((con->flags & CON_SERIAL) == 0) {
-		xsetenv("TERM", "linux", 0);
-		return;
-	}
-	if (con->flags & CON_NOTTY) {
-		xsetenv("TERM", "dumb", 0);
-		return;
+	if (con->tty)
+		ttyname = strncmp(con->tty, "/dev/", 5) == 0 ?
+					con->tty + 5 : con->tty;
+
+	term = get_terminal_default_type(ttyname, con->flags & CON_SERIAL);
+	if (term) {
+		xsetenv("TERM", term, 0);
+		free(term);
 	}
 
-#if defined (__s390__) || defined (__s390x__)
-	xsetenv("TERM", "dumb", 0);
-#else
-	xsetenv("TERM", "vt102", 0);
-#endif
+	if (!(con->flags & CON_SERIAL) || (con->flags & CON_NOTTY))
+		return;
+
 	tio->c_iflag |= (IXON | IXOFF);
 	tio->c_lflag |= (ICANON | ISIG | ECHO|ECHOE|ECHOK|ECHOKE);
 	tio->c_oflag |= OPOST;
