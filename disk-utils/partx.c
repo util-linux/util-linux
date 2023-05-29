@@ -75,14 +75,14 @@ enum {
 
 /* column names */
 struct colinfo {
-	const char	*name;	/* header */
-	double		whint;	/* width hint (N < 1 is in percent of termwidth) */
-	int		flags;	/* SCOLS_FL_* */
-	const char      *help;
+	const char * const	name;	/* header */
+	double			whint;	/* width hint (N < 1 is in percent of termwidth) */
+	int			flags;	/* SCOLS_FL_* */
+	const char		*help;
 };
 
 /* columns descriptions */
-static struct colinfo infos[] = {
+static const struct colinfo infos[] = {
 	[COL_PARTNO]   = { "NR",    0.25, SCOLS_FL_RIGHT, N_("partition number") },
 	[COL_START]    = { "START",   0.30, SCOLS_FL_RIGHT, N_("start of the partition in sectors") },
 	[COL_END]      = { "END",     0.30, SCOLS_FL_RIGHT, N_("end of the partition in sectors") },
@@ -141,7 +141,7 @@ static inline int get_column_id(int num)
 	return columns[num];
 }
 
-static inline struct colinfo *get_column_info(int num)
+static inline const struct colinfo *get_column_info(int num)
 {
 	return &infos[ get_column_id(num) ];
 }
@@ -674,7 +674,7 @@ static int show_parts(blkid_partlist ls, int scols_flags, int lower, int upper)
 	scols_table_enable_noheadings(table, !!(scols_flags & PARTX_NOHEADINGS));
 
 	for (i = 0; (size_t)i < ncolumns; i++) {
-		struct colinfo *col = get_column_info(i);
+		const struct colinfo *col = get_column_info(i);
 
 		if (!scols_table_new_column(table, col->name, col->whint, col->flags)) {
 			warnx(_("failed to allocate output column"));

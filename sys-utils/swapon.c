@@ -77,10 +77,10 @@ enum {
 
 /* column names */
 struct colinfo {
-        const char *name; /* header */
-        double     whint; /* width hint (N < 1 is in percent of termwidth) */
-	int        flags; /* SCOLS_FL_* */
-        const char *help;
+        const char * const	name; /* header */
+        double			whint; /* width hint (N < 1 is in percent of termwidth) */
+	int			flags; /* SCOLS_FL_* */
+        const char		*help;
 };
 
 enum {
@@ -92,7 +92,7 @@ enum {
 	COL_UUID,
 	COL_LABEL
 };
-static struct colinfo infos[] = {
+static const struct colinfo infos[] = {
 	[COL_PATH]     = { "NAME",	0.20, 0, N_("device file or partition path") },
 	[COL_TYPE]     = { "TYPE",	0.20, SCOLS_FL_TRUNC, N_("type of the device")},
 	[COL_SIZE]     = { "SIZE",	0.20, SCOLS_FL_RIGHT, N_("size of the swap area")},
@@ -159,7 +159,7 @@ static inline int get_column_id(const struct swapon_ctl *ctl, int num)
 	return ctl->columns[num];
 }
 
-static inline struct colinfo *get_column_info(const struct swapon_ctl *ctl, unsigned num)
+static inline const struct colinfo *get_column_info(const struct swapon_ctl *ctl, unsigned num)
 {
 	return &infos[get_column_id(ctl, num)];
 }
@@ -299,7 +299,7 @@ static int show_table(struct swapon_ctl *ctl)
 	scols_table_enable_noheadings(table, ctl->no_heading);
 
 	for (i = 0; i < ctl->ncolumns; i++) {
-		struct colinfo *col = get_column_info(ctl, i);
+		const struct colinfo *col = get_column_info(ctl, i);
 
 		if (!scols_table_new_column(table, col->name, col->whint, col->flags))
 			err(EXIT_FAILURE, _("failed to allocate output column"));

@@ -90,7 +90,7 @@ enum {
 
 /* column names */
 struct colinfo {
-	const char	*name;		/* header */
+	const char	* const name;	/* header */
 	double		whint;		/* width hint (N < 1 is in percent of termwidth) */
 	int		flags;		/* libsmartcols flags */
 	const char      *help;		/* column description */

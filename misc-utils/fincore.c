@@ -44,7 +44,7 @@
 
 
 struct colinfo {
-	const char *name;
+	const char * const name;
 	double whint;
 	int flags;
 	const char *help;
@@ -57,7 +57,7 @@ enum {
 	COL_RES
 };
 
-static struct colinfo infos[] = {
+static const struct colinfo infos[] = {
 	[COL_PAGES]  = { "PAGES",    1, SCOLS_FL_RIGHT, N_("file data resident in memory in pages")},
 	[COL_RES]    = { "RES",      5, SCOLS_FL_RIGHT, N_("file data resident in memory in bytes")},
 	[COL_SIZE]   = { "SIZE",     5, SCOLS_FL_RIGHT, N_("size of the file")},
