@@ -78,32 +78,8 @@
 #ifdef __linux__
 #  include <sys/kd.h>
 #  define USE_SYSLOG
-#  ifndef DEFAULT_VCTERM
-#    define DEFAULT_VCTERM "linux"
-#  endif
-#  if defined (__s390__) || defined (__s390x__)
-#    define DEFAULT_TTYS0  "dumb"
-#    define DEFAULT_TTY32  "ibm327x"
-#    define DEFAULT_TTYS1  "vt220"
-#  endif
-#  ifndef DEFAULT_STERM
-#    define DEFAULT_STERM  "vt102"
-#  endif
 #elif defined(__GNU__)
 #  define USE_SYSLOG
-#  ifndef DEFAULT_VCTERM
-#    define DEFAULT_VCTERM "hurd"
-#  endif
-#  ifndef DEFAULT_STERM
-#    define DEFAULT_STERM  "vt102"
-#  endif
-#else
-#  ifndef DEFAULT_VCTERM
-#    define DEFAULT_VCTERM "vt100"
-#  endif
-#  ifndef DEFAULT_STERM
-#    define DEFAULT_STERM  "vt100"
-#  endif
 #endif
 
 #ifdef __FreeBSD_kernel__
@@ -1194,35 +1170,6 @@ static void open_tty(const char *tty, struct termios *tp, struct options *op)
 	if (tcgetattr(STDIN_FILENO, tp) < 0)
 		log_err(_("%s: failed to get terminal attributes: %m"), tty);
 
-#ifdef HAVE_GETTTYNAM
-	if (!op->term) {
-		struct ttyent *ent = getttynam(tty);
-		/* a bit nasty as it's never freed */
-		if (ent && ent->ty_type) {
-			op->term = strdup(ent->ty_type);
-			if (!op->term)
-				log_err(_("failed to allocate memory: %m"));
-		}
-	}
-#endif
-
-#if defined (__s390__) || defined (__s390x__)
-	if (!op->term) {
-	        /*
-		 * Special terminal on first serial line on a S/390(x) which
-		 * is due legacy reasons a block terminal of type 3270 or
-		 * higher.  Whereas the second serial line on a S/390(x) is
-		 * a real character terminal which is compatible with VT220.
-		 */
-		if (strcmp(op->tty, "ttyS0") == 0)		/* linux/drivers/s390/char/con3215.c */
-			op->term = DEFAULT_TTYS0;
-		else if (strncmp(op->tty, "3270/tty", 8) == 0)	/* linux/drivers/s390/char/con3270.c */
-			op->term = DEFAULT_TTY32;
-		else if (strcmp(op->tty, "ttyS1") == 0)		/* linux/drivers/s390/char/sclp_vt220.c */
-			op->term = DEFAULT_TTYS1;
-	}
-#endif
-
 #if defined(__FreeBSD_kernel__)
 	login_tty (0);
 #endif
@@ -1239,15 +1186,15 @@ static void open_tty(const char *tty, struct termios *tp, struct options *op)
 #endif
 	{
 		op->flags |= F_VCONSOLE;
-		if (!op->term)
-			op->term = DEFAULT_VCTERM;
 	} else {
 #ifdef K_RAW
 		op->kbmode = K_RAW;
 #endif
-		if (!op->term)
-			op->term = DEFAULT_STERM;
 	}
+
+	op->term = get_terminal_default_type(op->tty, !(op->flags & F_VCONSOLE));
+	if (!op->term)
+		log_err(_("failed to allocate memory: %m"));
 
 	if (setenv("TERM", op->term, 1) != 0)
 		log_err(_("failed to set the %s environment variable"), "TERM");
