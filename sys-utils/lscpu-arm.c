@@ -210,7 +210,7 @@ static const struct id_part apple_part[] = {
     { 0x035, "Avalanche-M2-Pro" },
     { 0x036, "Sawtooth-A16" },
     { 0x037, "Everest-A16" },
-    { 0x038, "Avalanche-M2-Max" },
+    { 0x038, "Blizzard-M2-Max" },
     { 0x039, "Avalanche-M2-Max" },
     { -1, "unknown" },
 };
