@@ -30,7 +30,7 @@
  *
  */
 
-static const char *bsd_dktypenames[] = {
+static const char * const bsd_dktypenames[] = {
 	"unknown",
 	"SMD",
 	"MSCP",

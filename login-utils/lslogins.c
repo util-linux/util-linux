@@ -64,7 +64,7 @@
  * column description
  */
 struct lslogins_coldesc {
-	const char *name;
+	const char * const name;
 	const char *help;
 	const char *pretty_name;
 

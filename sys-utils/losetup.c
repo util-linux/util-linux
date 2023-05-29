@@ -60,7 +60,7 @@ static int raw;
 static int json;
 
 struct colinfo {
-	const char *name;
+	const char * const name;
 	double whint;
 	int flags;
 	const char *help;
@@ -68,7 +68,7 @@ struct colinfo {
 	int json_type;	/* default is string */
 };
 
-static struct colinfo infos[] = {
+static const struct colinfo infos[] = {
 	[COL_AUTOCLR]     = { "AUTOCLEAR",    1, SCOLS_FL_RIGHT, N_("autoclear flag set"), SCOLS_JSON_BOOLEAN},
 	[COL_BACK_FILE]   = { "BACK-FILE",  0.3, SCOLS_FL_NOEXTREMES, N_("device backing file")},
 	[COL_BACK_INO]    = { "BACK-INO",     4, SCOLS_FL_RIGHT, N_("backing file inode number"), SCOLS_JSON_NUMBER},
@@ -94,7 +94,7 @@ static int get_column_id(int num)
 	return columns[num];
 }
 
-static struct colinfo *get_column_info(int num)
+static const struct colinfo *get_column_info(int num)
 {
 	return &infos[ get_column_id(num) ];
 }
@@ -331,7 +331,7 @@ static int show_table(struct loopdev_cxt *lc,
 		scols_table_set_name(tb, "loopdevices");
 
 	for (i = 0; i < ncolumns; i++) {
-		struct colinfo *ci = get_column_info(i);
+		const struct colinfo *ci = get_column_info(i);
 		struct libscols_column *cl;
 
 		cl = scols_table_new_column(tb, ci->name, ci->whint, ci->flags);

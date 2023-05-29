@@ -136,7 +136,7 @@ struct lsipc_control {
 };
 
 struct lsipc_coldesc {
-	const char *name;
+	const char * const name;
 	const char *help;
 	const char *pretty_name;
 
