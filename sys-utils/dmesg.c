@@ -179,7 +179,13 @@ struct dmesg_control {
 
 	int		kmsg;		/* /dev/kmsg file descriptor */
 	ssize_t		kmsg_first_read;/* initial read() return code */
-	char		kmsg_buf[BUFSIZ];/* buffer to read kmsg data */
+	/*
+	 * the kernel will give EINVAL if we do read() on /proc/kmsg with
+	 * length insufficient for the next message. messages may be up to
+	 * PRINTK_MESSAGE_MAX, which is defined as 2048, so we must be
+	 * able to buffer at least that much in one call
+	 */
+	char		kmsg_buf[2048]; /* buffer to read kmsg data */
 
 	usec_t		since;		/* filter records by time */
 	usec_t		until;		/* filter records by time */
