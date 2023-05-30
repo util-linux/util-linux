@@ -20,11 +20,8 @@ TS_DESC="enosys"
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
-ts_check_test_command "$TS_CMD_ENOSYS"
 ts_check_test_command "$TS_HELPER_ENOSYS"
-
-"$TS_CMD_ENOSYS" true 2> /dev/null
-[ "$?" -eq "$TS_EXIT_NOTSUPP" ] && ts_skip "enosys does not work"
+ts_check_enosys_syscalls fallocate fsopen execve
 
 ts_init_subtest basic
 
