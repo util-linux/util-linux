@@ -1157,3 +1157,9 @@ function ts_is_virt {
 	done
 	return 1
 }
+
+function ts_check_enosys_syscalls {
+	ts_check_test_command "$TS_HELPER_ENOSYS"
+	"$TS_HELPER_ENOSYS" ${@/#/-s } true 2> /dev/null
+	[ $? -ne 0 ] && ts_skip "test_enosys does not work: $*"
+}

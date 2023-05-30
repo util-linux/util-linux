@@ -65,9 +65,15 @@ struct syscall {
 };
 
 const struct syscall syscalls[] = {
+#ifdef __NR_move_mount
 	{ "move_mount", __NR_move_mount },
+#endif
+#ifdef __NR_open_tree
 	{ "open_tree", __NR_open_tree },
+#endif
+#ifdef __NR_fsopen
 	{ "fsopen", __NR_fsopen },
+#endif
 };
 
 int main(int argc, char **argv)
