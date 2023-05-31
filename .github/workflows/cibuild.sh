@@ -108,6 +108,7 @@ for phase in "${PHASES[@]}"; do
 		opts+=(--host "$HOST_TRIPLET")
 	fi
 
+        git config --global --add safe.directory "$PWD"
         git clean -xdf
 
         ./autogen.sh
