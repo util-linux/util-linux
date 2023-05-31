@@ -66,7 +66,7 @@ for C in ro-regular-file pidfd socketpair; do
     wait "${MKFDS_PID}"
     if [ "$C-$?" == "pidfd-$ENOSYS" ]; then
 	ts_skip_subtest "pidfd_open(2) is not available"
-	contiue
+	continue
     fi
     ts_finalize_subtest
 done
