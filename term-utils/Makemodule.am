@@ -126,6 +126,10 @@ write_SOURCES = term-utils/write.c
 write_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 write_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 write_LDADD = $(LDADD) libcommon.la
+if HAVE_SYSTEMD
+write_LDADD += $(SYSTEMD_LIBS)
+write_CFLAGS += $(SYSTEMD_CFLAGS)
+endif
 
 if USE_TTY_GROUP
 if MAKEINSTALL_DO_CHOWN
