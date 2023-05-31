@@ -6,15 +6,13 @@ TS_DESC="fstab-fallback"
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
-ts_check_test_command "$TS_CMD_ENOSYS"
 ts_check_test_command "$TS_CMD_MOUNT"
 ts_check_test_command "$TS_CMD_UMOUNT"
 ts_check_test_command "$TS_CMD_FINDMNT"
 ts_check_test_command "$TS_CMD_LOSETUP"
+ts_check_enosys_syscalls open_tree fsopen mount_setattr
 
 ts_skip_nonroot
-"$TS_CMD_ENOSYS" true 2> /dev/null
-[ "$?" -eq "$TS_EXIT_NOTSUPP" ] && ts_skip "enosys does not work"
 
 test_mount_fallback() {
 	ts_init_subtest "$1"
