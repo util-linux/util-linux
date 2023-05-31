@@ -178,7 +178,7 @@ static const struct bdc bdcms[] =
 		.argval = -1,
 		.help = N_("get disk sequence number")
 	},{
-#ifdef HAVE_LINUX_BLKZONED_H
+#ifdef BLKGETZONESZ
 		IOCTL_ENTRY(BLKGETZONESZ),
 		.name = "--getzonesz",
 		.argtype = ARG_UINT,
