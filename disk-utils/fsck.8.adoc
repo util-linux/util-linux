@@ -20,7 +20,7 @@ fsck - check and repair a Linux filesystem
 
 == DESCRIPTION
 
-*fsck* is used to check and optionally repair one or more Linux filesystems. _filesystem_ can be a device name (e.g., _/dev/hdc1_, _/dev/sdb2_), a mount point (e.g., _/_, _/usr_, _/home_), or an filesystem label or UUID specifier (e.g., UUID=8868abf6-88c5-4a83-98b8-bfc24057f7bd or LABEL=root). Normally, the *fsck* program will try to handle filesystems on different physical disk drives in parallel to reduce the total amount of time needed to check all of them.
+*fsck* is used to check and optionally repair one or more Linux filesystems. _filesystem_ can be a device name (e.g., _/dev/hdc1_, _/dev/sdb2_), a mount point (e.g., _/_, _/usr_, _/home_), or a filesystem label or UUID specifier (e.g., UUID=8868abf6-88c5-4a83-98b8-bfc24057f7bd or LABEL=root). Normally, the *fsck* program will try to handle filesystems on different physical disk drives in parallel to reduce the total amount of time needed to check all of them.
 
 If no filesystems are specified on the command line, and the *-A* option is not specified, *fsck* will default to checking filesystems in _/etc/fstab_ serially. This is equivalent to the *-As* options.
 
