@@ -1852,7 +1852,7 @@ AM_CONDITIONAL([BUILD_FADVISE], [test "x$build_fadvise" = xyes])
 
 AC_ARG_ENABLE([waitpid],
   AS_HELP_STRING([--disable-waitpid], [do not build waitpid]),
-  [], [UL_DEFAULT_ENABLE([waitpidd], [check])]
+  [], [UL_DEFAULT_ENABLE([waitpid], [check])]
 )
 UL_BUILD_INIT([waitpid])
 UL_REQUIRES_LINUX([waitpid])
