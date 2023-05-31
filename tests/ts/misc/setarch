@@ -19,11 +19,11 @@ TS_DESC="setarch"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_SETARCH"
+ts_skip_docker
 
 ARCH=$(uname -m)
 
 ts_init_subtest options
-test -e /.dockerenv && ts_skip "unsupported in docker environment"
 ts_log_both "###### unknown arch"
 $TS_CMD_SETARCH qubit -v echo "success" >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo "exit: $?" >>$TS_OUTPUT

@@ -1164,3 +1164,7 @@ function ts_check_enosys_syscalls {
 	"$TS_CMD_ENOSYS" ${@/#/-s } true 2> /dev/null
 	[ $? -ne 0 ] && ts_skip "test_enosys does not work: $*"
 }
+
+function ts_skip_docker {
+	test -e /.dockerenv && ts_skip "unsupported in docker environment"
+}
