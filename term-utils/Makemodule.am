@@ -58,6 +58,10 @@ endif
 if HAVE_ECONF
 agetty_LDADD += -leconf
 endif
+if HAVE_SYSTEMD
+agetty_LDADD += $(SYSTEMD_LIBS)
+agetty_CFLAGS = $(SYSTEMD_CFLAGS)
+endif
 endif # BUILD_AGETTY
 
 
