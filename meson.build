@@ -311,6 +311,11 @@ lib_systemd = dependency(
   required : get_option('systemd'))
 conf.set('HAVE_LIBSYSTEMD', lib_systemd.found() ? 1 : false)
 
+have = cc.has_function(
+  'sd_session_get_username',
+  dependencies : lib_systemd)
+conf.set('HAVE_DECL_SD_SESSION_GET_USERNAME', have ? 1 : false)
+
 lib_udev = dependency(
   'libudev',
   required : get_option('systemd'))
@@ -2316,7 +2321,7 @@ exe = executable(
   agetty_sources,
   include_directories : includes,
   link_with : [lib_common, logindefs_c],
-  dependencies : BSD ? lib_util : [],
+  dependencies : [BSD ? lib_util : [], lib_systemd],
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
@@ -2362,6 +2367,7 @@ exe = executable(
   wall_sources,
   include_directories : includes,
   link_with : [lib_common],
+  dependencies : [lib_systemd],
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -2380,6 +2386,7 @@ exe = executable(
   write_sources,
   include_directories : includes,
   link_with : [lib_common],
+  dependencies : [lib_systemd],
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)

@@ -98,6 +98,10 @@ dist_noinst_DATA += term-utils/wall.1.adoc
 wall_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 wall_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 wall_LDADD = $(LDADD) libcommon.la
+if HAVE_SYSTEMD
+wall_LDADD += $(SYSTEMD_LIBS)
+wall_CFLAGS += $(SYSTEMD_CFLAGS)
+endif
 if USE_TTY_GROUP
 if MAKEINSTALL_DO_CHOWN
 install-exec-hook-wall::
