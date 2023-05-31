@@ -1,6 +1,8 @@
 # Copyright (C) 2023 Thomas Weißschuh <thomas@t-8ch.de>
 # Extension for asciidoctor to remove unicode dash in first section of manpage
 
+require 'asciidoctor/extensions'
+
 module UnicodeConverter
   BEFORE_NAME_SECTION = 1
   IN_NAME_SECTION = 2
