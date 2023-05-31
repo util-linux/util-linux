@@ -163,17 +163,15 @@ int get_terminal_type(const char **type)
 
 char *get_terminal_default_type(const char *ttyname, int is_serial)
 {
-#ifdef HAVE_GETTTYNAM
 	if (ttyname) {
+#ifdef HAVE_GETTTYNAM
 		struct ttyent *ent = getttynam(ttyname);
 
 		if (ent && ent->ty_type)
 			return strdup(ent->ty_type);
-	}
 #endif
 
 #if defined (__s390__) || defined (__s390x__)
-	if (ttyname) {
 		/*
 		 * Special terminal on first serial line on a S/390(x) which
 		 * is due legacy reasons a block terminal of type 3270 or
@@ -186,8 +184,8 @@ char *get_terminal_default_type(const char *ttyname, int is_serial)
 			return strdup(DEFAULT_TTY32);
 		else if (strcmp(ttyname, "ttyS1") == 0)		/* linux/drivers/s390/char/sclp_vt220.c */
 			return strdup(DEFAULT_TTYS1);
-	}
 #endif
+	}
 
 	return strdup(is_serial ? DEFAULT_STERM : DEFAULT_VCTERM);
 }
