@@ -1,6 +1,8 @@
 # Copyright (C) 2023 Thomas Weißschuh <thomas@t-8ch.de>
 # Extensions for asciidoctor to write dependency files for include directives.
 
+require 'asciidoctor/extensions'
+
 module IncludeTracker
 
   class Preprocessor < Asciidoctor::Extensions::Preprocessor

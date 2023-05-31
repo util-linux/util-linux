@@ -805,16 +805,17 @@ AC_ARG_ENABLE([asciidoc],
 UL_BUILD_INIT([asciidoc])
 UL_REQUIRES_PROGRAM([asciidoc], [ASCIIDOCTOR], [asciidoctor], [man pages])
 AM_CONDITIONAL([ENABLE_ASCIIDOC], [test "x$build_asciidoc" = xyes])
+have_asciidoctor_failure_level=no
 AS_IF([test "x$build_asciidoc" = xyes], [
        AC_MSG_CHECKING([whether ${ASCIIDOCTOR} supports --failure-level])
        AS_IF([${ASCIIDOCTOR} --help | grep failure-level >/dev/null 2>&1 ], [
          AC_MSG_RESULT([yes])
-         AM_CONDITIONAL([HAVE_ASCIIDOCTOR_FAILURE_LEVEL], [true])
+         have_asciidoctor_failure_level=yes
        ], [
          AC_MSG_RESULT([no])
-         AM_CONDITIONAL([HAVE_ASCIIDOCTOR_FAILURE_LEVEL], [false])
        ])
 ])
+AM_CONDITIONAL([HAVE_ASCIIDOCTOR_FAILURE_LEVEL], [test "x$have_asciidoctor_failure_level" = xyes])
 
 have_manpages=no
 AS_IF([test -f "$srcdir/sys-utils/mount.8"], [
