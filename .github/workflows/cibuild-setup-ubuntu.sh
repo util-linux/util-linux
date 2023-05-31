@@ -2,6 +2,8 @@
      
 set -ex
 
+export DEBIAN_FRONTEND=noninteractive
+
 apt-get -y update --fix-missing
 
 # Xenial uses btrfs-tools, but since Focal it's btrfs-progs
