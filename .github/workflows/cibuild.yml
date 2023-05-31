@@ -103,6 +103,31 @@ jobs:
         run: .github/workflows/cibuild.sh CONFIGURE
       - name: Make distcheck
         run: .github/workflows/cibuild.sh DISTCHECK
+  build-compat:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: ubuntu:18.04
+    name: build (compat, ${{ matrix.image }})
+    runs-on: ubuntu-latest
+    env:
+      COMPILER: none
+    container:
+      image: ${{ matrix.image }}
+    steps:
+      - name: Repository checkout
+        uses: actions/checkout@v1
+      - name: Ubuntu setup
+        run: .github/workflows/cibuild-setup-ubuntu.sh
+      - name: Configure
+        run: .github/workflows/cibuild.sh CONFIGURE
+      - name: Code checks
+        run: .github/workflows/cibuild.sh CODECHECK
+      - name: Configure & Make
+        run: .github/workflows/cibuild.sh MAKE
+      - name: Check
+        run: .github/workflows/cibuild.sh CHECK
   build-arch:
     name: build (qemu-user, ${{ matrix.arch }})
     runs-on: ubuntu-latest
