@@ -230,9 +230,12 @@ asciidoc_man_cmd = $(ASCIIDOCTOR) \
 	-a 'package-docdir=$(docdir)' \
 	-a 'VERSION=$(VERSION)' \
 	-a 'ADJTIME_PATH=$(ADJTIME_PATH)' \
-	--failure-level ERROR \
 	--load-path '$(abs_srcdir)/tools' \
 	--require asciidoctor-includetracker
+
+if HAVE_ASCIIDOCTOR_FAILURE_LEVEL
+asciidoc_man_cmd += --failure-level ERROR
+endif
 
 SUFFIXES = .1.adoc .3.adoc .5.adoc .8.adoc .1 .3 .5 .8
 .1.adoc.1 .3.adoc.3 .5.adoc.5 .8.adoc.8:
