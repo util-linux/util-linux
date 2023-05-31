@@ -11,6 +11,7 @@ ts_check_test_command "$TS_CMD_UMOUNT"
 ts_check_test_command "$TS_CMD_FINDMNT"
 
 ts_skip_nonroot
+ts_skip_docker
 
 MY_SOURCE="${TS_MOUNTPOINT}-src"
 

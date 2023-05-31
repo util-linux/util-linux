@@ -27,6 +27,7 @@ ts_check_test_command "$TS_CMD_FINDMNT"
 ts_check_test_command "$TS_CMD_MOUNTPOINT"
 
 ts_skip_nonroot
+ts_skip_docker
 
 function mount_and_check {
 	# last arg must be an existing or to-be-mounted mountpoint
