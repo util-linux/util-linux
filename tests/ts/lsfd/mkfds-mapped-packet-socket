@@ -20,6 +20,7 @@ TS_DESC="mmap'ed AF_PACKET socket"
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 ts_skip_nonroot
+ts_skip_docker
 
 . "$TS_SELF"/lsfd-functions.bash
 

@@ -20,6 +20,7 @@ TS_DESC="SOURCE column (requiring the root privilege)"
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 ts_skip_nonroot
+ts_skip_docker
 
 . "$TS_SELF/lsfd-functions.bash"
 ts_check_test_command "$TS_CMD_LSFD"

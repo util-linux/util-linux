@@ -26,6 +26,7 @@ ts_check_test_command "$TS_CMD_HWCLOCK"
 
 ts_skip_nonroot
 ts_skip_qemu_user
+ts_skip_docker
 
 # RTC interrupts are sometimes broken on GitHub Actions
 if ts_is_virt "microsoft"; then

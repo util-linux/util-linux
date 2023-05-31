@@ -20,6 +20,7 @@ TS_DESC="--inet option"
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 ts_skip_qemu_user
+ts_skip_docker
 
 ts_check_test_command "$TS_CMD_LSFD"
 ts_check_test_command "$TS_HELPER_MKFDS"

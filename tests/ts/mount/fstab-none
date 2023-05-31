@@ -11,6 +11,7 @@ ts_check_test_command "$TS_CMD_UMOUNT"
 ts_check_test_command "$TS_CMD_FINDMNT"
 
 ts_skip_nonroot
+ts_skip_docker
 
 ts_fstab_add "none" "$TS_MOUNTPOINT" "tmpfs" "rw,nosuid,nodev,relatime"
 

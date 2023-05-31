@@ -26,6 +26,7 @@ ts_check_test_command "$TS_CMD_UMOUNT"
 ts_check_test_command "$TS_CMD_FINDMNT"
 
 ts_skip_nonroot
+ts_skip_docker
 
 # Let's use the same mountpoint for all subtests
 MNT=$TS_MOUNTPOINT
