@@ -35,9 +35,12 @@ asciidoc_man_cmd = $(ASCIIDOCTOR) \
 	-a 'package-docdir=$(docdir)' \
 	-a 'VERSION=$(VERSION)' \
 	-a 'ADJTIME_PATH=$(ADJTIME_PATH)' \
-	--failure-level ERROR \
 	--load-path '$(top_srcdir)/tools' \
 	--require asciidoctor-unicodeconverter
+
+if HAVE_ASCIIDOCTOR_FAILURE_LEVEL
+asciidoc_man_cmd += --failure-level ERROR
+endif
 
 gen-mans: gen-trans
 	@set -e; \
