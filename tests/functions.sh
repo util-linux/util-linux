@@ -283,10 +283,10 @@ function ts_init_core_subtest_env {
 	TS_EXPECTED_ERR="$TS_TOPDIR/expected/$TS_NS.err"
 	TS_MOUNTPOINT="$TS_OUTDIR/${TS_TESTNAME}-${TS_SUBNAME}-mnt"
 
-	rm -f $TS_OUTPUT $TS_ERRLOG $TS_VGDUMP $TS_EXIT_CODE
+	rm -f "$TS_OUTPUT" "$TS_ERRLOG" "$TS_VGDUMP" "$TS_EXIT_CODE"
 	[ -d "$TS_OUTDIR" ]  || mkdir -p "$TS_OUTDIR"
 
-	touch $TS_OUTPUT $TS_ERRLOG $TS_EXIT_CODE
+	touch "$TS_OUTPUT" "$TS_ERRLOG" "$TS_EXIT_CODE"
 	[ -n "$TS_VALGRIND_CMD" ] && touch $TS_VGDUMP
 }
 
@@ -530,19 +530,19 @@ function ts_gen_diff_from {
 	local output="$2"
 	local difffile="$3"
 
-	diff -u $expected $output > $difffile
+	diff -u "$expected" "$output" > "$difffile"
 
-	if [ $? -ne 0 ] || [ -s $difffile ]; then
+	if [ $? -ne 0 ] || [ -s "$difffile" ]; then
 		res=1
 		if [ "$TS_SHOWDIFF" == "yes" -a "$TS_KNOWN_FAIL" != "yes" ]; then
 			echo
 			echo "diff-{{{"
-			cat $difffile
+			cat "$difffile"
 			echo "}}}-diff"
 			echo
 		fi
 	else
-		rm -f $difffile;
+		rm -f "$difffile";
 	fi
 
 	return $res
@@ -557,8 +557,8 @@ function ts_gen_diff {
 	[ -f "$TS_EXPECTED" ] || TS_EXPECTED=/dev/null
 
 	# remove libtool lt- prefixes
-	sed --in-place 's/^lt\-\(.*\: \)/\1/g' $TS_OUTPUT
-	sed --in-place 's/^lt\-\(.*\: \)/\1/g' $TS_ERRLOG
+	sed --in-place 's/^lt\-\(.*\: \)/\1/g' "$TS_OUTPUT"
+	sed --in-place 's/^lt\-\(.*\: \)/\1/g' "$TS_ERRLOG"
 
 	[ -d "$TS_DIFFDIR" ] || mkdir -p "$TS_DIFFDIR"
 
@@ -567,10 +567,10 @@ function ts_gen_diff {
 	[ -f "$TS_ERRLOG" ] || TS_ERRLOG=/dev/null
 
 	if [ "$TS_COMPONENT" != "fuzzers" ]; then
-		ts_gen_diff_from $TS_EXPECTED $TS_OUTPUT $TS_DIFF
+		ts_gen_diff_from "$TS_EXPECTED" "$TS_OUTPUT" "$TS_DIFF"
 		status_out=$?
 
-		ts_gen_diff_from $TS_EXPECTED_ERR $TS_ERRLOG $TS_DIFF.err
+		ts_gen_diff_from "$TS_EXPECTED_ERR" "$TS_ERRLOG" "$TS_DIFF.err"
 		status_err=$?
 	else
 		# TS_EXIT_CODE is empty when tests aren't run with ts_run: https://github.com/util-linux/util-linux/issues/1072
@@ -581,8 +581,8 @@ function ts_gen_diff {
 		fi
 
 		if [ $exit_code -ne 0 ]; then
-			ts_gen_diff_from $TS_EXPECTED $TS_OUTPUT $TS_DIFF
-			ts_gen_diff_from $TS_EXPECTED_ERR $TS_ERRLOG $TS_DIFF.err
+			ts_gen_diff_from "$TS_EXPECTED" "$TS_OUTPUT" "$TS_DIFF"
+			ts_gen_diff_from "$TS_EXPECTED_ERR" "$TS_ERRLOG" "$TS_DIFF.err"
 		fi
 	fi
 
