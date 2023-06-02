@@ -167,7 +167,7 @@ _PID_,_COMMAND_,_ASSOC_
 EVENTFD.ID <``number``>::
 Eventfd ID.
 
-EVENTPOLL.TFDS <``string``>>::
+EVENTPOLL.TFDS <``string``>::
 File descriptors targeted by the eventpoll file.
 
 FD <``number``>::
@@ -279,13 +279,13 @@ state=_SOCK.STATE_[ path=_UNIX.PATH_]
 UNIX:::
 state=_SOCK.STATE_[ path=_UNIX.PATH_] type=_SOCK.TYPE_
 
-NETLINK.GROUPS <``number``>>::
+NETLINK.GROUPS <``number``>::
 Netlink multicast groups.
 
-NETLINK.LPORT <``number``>>::
+NETLINK.LPORT <``number``>::
 Netlink local port id.
 
-NETLINK.PROTOCOL <``string``>>::
+NETLINK.PROTOCOL <``string``>::
 Netlink protocol.
 
 NLINK <``number``>::
