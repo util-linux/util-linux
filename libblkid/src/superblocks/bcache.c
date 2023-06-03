@@ -10,6 +10,7 @@
 
 #include <stddef.h>
 #include <stdio.h>
+#include <inttypes.h>
 
 #include "superblocks.h"
 #include "crc32c.h"
@@ -182,6 +183,9 @@ static int probe_bcache (blkid_probe pr, const struct blkid_idmag *mag)
 		return BLKID_PROBE_NONE;
 
 	if (le64_to_cpu(bcs->offset) != BCACHE_SB_OFF / 512)
+		return BLKID_PROBE_NONE;
+
+	if (blkid_probe_sprintf_version(pr, "%"PRIu64, le64_to_cpu(bcs->version)) < 0)
 		return BLKID_PROBE_NONE;
 
 	if (blkid_probe_set_uuid(pr, bcs->uuid) < 0)
