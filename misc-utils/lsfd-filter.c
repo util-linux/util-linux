@@ -32,6 +32,7 @@ enum token_type {
 	TOKEN_NAME,		/* [A-Za-z_][-_:%.A-Za-z0-9]* */
 	TOKEN_STR,		/* "...", '...' */
 	TOKEN_DEC,		/* [1-9][0-9]+, NOTE: negative value has not handled. */
+	TOKEN_FDEC,		/* [1-9][0-9]+\.[0-9]+ */
 	TOKEN_HEX,		/* 0x[0-9a-f]+ not implemented */
 	TOKEN_OCT,		/* 0[1-7]+ not implemented */
 	TOKEN_TRUE,		/* true */
@@ -65,6 +66,7 @@ struct token {
 	union {
 		char *str;
 		unsigned long long num;
+		long double fnum;
 		enum op1_type op1;
 		enum op2_type op2;
 	} val;
@@ -103,6 +105,7 @@ struct parser {
 enum node_type {
 	NODE_STR,
 	NODE_NUM,
+	NODE_FNUM,
 	NODE_BOOL,
 	NODE_RE,
 	NODE_OP1,
@@ -137,6 +140,7 @@ struct node_val {
 	union {
 		char *str;
 		unsigned long long num;
+		long double fnum;
 		bool boolean;
 		regex_t re;
 	} val;
@@ -186,6 +190,7 @@ static void token_free_str(struct token *);
 
 static void token_dump_str(struct token *, FILE *);
 static void token_dump_num(struct token *, FILE *);
+static void token_dump_fnum(struct token *, FILE *);
 static void token_dump_op1(struct token *, FILE *);
 static void token_dump_op2(struct token *, FILE *);
 
@@ -215,6 +220,7 @@ static void node_op2_free(struct node *);
 
 static void node_str_dump (struct node *, struct parameter*, int, FILE *);
 static void node_num_dump (struct node *, struct parameter*, int, FILE *);
+static void node_fnum_dump (struct node *, struct parameter*, int, FILE *);
 static void node_bool_dump(struct node *, struct parameter*, int, FILE *);
 static void node_re_dump  (struct node *, struct parameter*, int, FILE *);
 static void node_op1_dump (struct node *, struct parameter*, int, FILE *);
@@ -240,6 +246,10 @@ static struct token_class token_classes [] = {
 	[TOKEN_DEC] = {
 		.name = "DEC",
 		.dump = token_dump_num,
+	},
+	[TOKEN_FDEC] = {
+		.name = "FDEC",
+		.dump = token_dump_fnum,
 	},
 	[TOKEN_TRUE] = {
 		.name = "true",
@@ -339,6 +349,10 @@ static struct node_class node_classes[] = {
 	[NODE_NUM] = {
 		.name = "NUM",
 		.dump = node_num_dump,
+	},
+	[NODE_FNUM] = {
+		.name = "FNUM",
+		.dump = node_fnum_dump,
 	},
 	[NODE_BOOL] = {
 		.name = "BOOL",
@@ -468,27 +482,45 @@ static void parser_read_name(struct parser *parser, struct token *token)
 static int parser_read_dec(struct parser *parser, struct token *token)
 {
 	int rc = 0;
+	int found_point = 0;
 	while (1) {
 		char c = parser_getc(parser);
 		if (c == '\0')
 			break;
-		if (isdigit((unsigned char)c)) {
+		if (isdigit((unsigned char)c)
+		    || (found_point == 0 && c == '.')) {
 			xstrputc(&token->val.str, c);
+			if (c == '.')
+				found_point++;
 			continue;
 		}
 		parser_ungetc(parser, c);
 		break;
 	}
 
+	char *endptr = NULL;
 	errno = 0;
-	unsigned long long num = strtoull(token->val.str, NULL, 10);
+	unsigned long long num = strtoull(token->val.str, &endptr, 10);
 	rc = errno;
 	if (rc)
 		return rc;
 
-	free(token->val.str);
-	token->val.num = num;
-	return rc;
+	if (endptr && *endptr == '.') {
+		errno = 0;
+		long double fnum = strtold(endptr, NULL);
+		rc = errno;
+		if (rc)
+			return rc;
+		free(token->val.str);
+		token->type = TOKEN_FDEC;
+		token->val.fnum = ((long double)num) + fnum;
+	} else {
+		free(token->val.str);
+		token->type = TOKEN_DEC;
+		token->val.num = num;
+	}
+
+	return 0;
 }
 
 static struct token *parser_read(struct parser *parser)
@@ -639,7 +671,6 @@ static struct token *parser_read(struct parser *parser)
 				t->type = TOKEN_NAME;
 			break;
 		} else if (isdigit((unsigned char)c)) {
-			t->type = TOKEN_DEC;
 			xstrputc(&t->val.str, c);
 			if (parser_read_dec(parser, t) != 0) {
 				snprintf(parser->errmsg, sizeof(parser->errmsg),
@@ -701,6 +732,7 @@ static struct node *dparser_compile1(struct parser *parser, struct node *last)
 		case TOKEN_NAME:
 		case TOKEN_STR:
 		case TOKEN_DEC:
+		case TOKEN_FDEC:
 		case TOKEN_TRUE:
 		case TOKEN_FALSE:
 		case TOKEN_OPEN:
@@ -783,6 +815,11 @@ static struct node *dparser_compile1(struct parser *parser, struct node *last)
 	case TOKEN_DEC:
 		node = node_val_new(NODE_NUM, -1);
 		VAL(node, num) = t->val.num;
+		token_free(t);
+		return node;
+	case TOKEN_FDEC:
+		node = node_val_new(NODE_FNUM, -1);
+		VAL(node, fnum) = t->val.fnum;
 		token_free(t);
 		return node;
 
@@ -925,6 +962,11 @@ static void token_dump_num(struct token *token, FILE *stream)
 	fprintf(stream, "%llu", token->val.num);
 }
 
+static void token_dump_fnum(struct token *token, FILE *stream)
+{
+	fprintf(stream, "%Lf", token->val.fnum);
+}
+
 static void token_dump_op1(struct token *token, FILE *stream)
 {
 	fputs(TOKEN_OP1_CLASS(token)->name, stream);
@@ -1014,6 +1056,14 @@ static void node_num_dump(struct node *node, struct parameter* params, int depth
 		fprintf(stream, ": |%s|\n", scols_column_get_name(params[PINDEX(node)].cl));
 	else
 		fprintf(stream, ": %llu\n", VAL(node,num));
+}
+
+static void node_fnum_dump(struct node *node, struct parameter* params, int depth __attribute__((__unused__)), FILE *stream)
+{
+	if (PINDEX(node) >= 0)
+		fprintf(stream, ": |%s|\n", scols_column_get_name(params[PINDEX(node)].cl));
+	else
+		fprintf(stream, ": %Lf\n", VAL(node,fnum));
 }
 
 static void node_bool_dump(struct node *node, struct parameter* params, int depth __attribute__((__unused__)), FILE *stream)
@@ -1116,8 +1166,13 @@ struct compnum {
 #define OP2_GET_NUM(NODE,DEST) do {					\
 	int pindex = PINDEX(NODE);					\
 	if (pindex < 0) {						\
-		DEST.v = VAL(NODE,num);					\
-		DEST.floating_point_num = false;			\
+		if (NODE->type == NODE_NUM) {				\
+			DEST.v = VAL(NODE,num);				\
+			DEST.floating_point_num = false;		\
+		} else {						\
+			DEST.fv = VAL(NODE,fnum);			\
+			DEST.floating_point_num = true;			\
+		}							\
 	} else {							\
 		struct parameter *p = params + pindex;			\
 		if (!p->has_value) {					\
@@ -1171,7 +1226,7 @@ struct compnum {
 		OP2_GET_STR(left,lv);					\
 		OP2_GET_STR(right,rv);					\
 		return strcmp(lv, rv) OP 0;				\
-	} else if (left->type == NODE_NUM) {				\
+	} else if (left->type == NODE_NUM || left->type == NODE_FNUM) {	\
 		OP2_NUM_CMP_BODY(OP);					\
 	} else {							\
 		return node_apply(left, params, ln) OP node_apply(right, params, ln); \
@@ -1264,6 +1319,9 @@ static bool op2_check_type_eq_or_bool_or_op(struct parser* parser, struct op2_cl
 
 	if (lt == rt)
 		return true;
+	else if ((lt == NODE_NUM && rt == NODE_FNUM)
+		 || (lt == NODE_FNUM && rt == NODE_NUM))
+		return true;
 
 	return op2_check_type_boolean_or_op(parser, op2_class, left, right);
 }
@@ -1271,7 +1329,7 @@ static bool op2_check_type_eq_or_bool_or_op(struct parser* parser, struct op2_cl
 static bool op2_check_type_num(struct parser* parser, struct op2_class *op2_class,
 			       struct node *left, struct node *right)
 {
-	if (left->type != NODE_NUM) {
+	if (left->type != NODE_NUM && left->type != NODE_FNUM) {
 		snprintf(parser->errmsg, sizeof(parser->errmsg),
 			 _("error: unexpected left operand type %s for: %s"),
 			 NODE_CLASS(left)->name,
@@ -1279,7 +1337,7 @@ static bool op2_check_type_num(struct parser* parser, struct op2_class *op2_clas
 		return false;
 	}
 
-	if (right->type != NODE_NUM) {
+	if (right->type != NODE_NUM && right->type != NODE_FNUM) {
 		snprintf(parser->errmsg, sizeof(parser->errmsg),
 			 _("error: unexpected right operand type %s for: %s"),
 			 NODE_CLASS(right)->name,
@@ -1372,6 +1430,7 @@ struct lsfd_filter *lsfd_filter_new(const char *const expr, struct libscols_tabl
 		return filter;
 	}
 	if (node->type == NODE_STR || node->type == NODE_NUM) {
+		/* FNUM like 3.14 is not considered as a bool expression. */
 		node_free(node);
 		snprintf(filter->errmsg, sizeof(filter->errmsg),
 			 _("error: bool expression is expected: %s"), expr);
