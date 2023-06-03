@@ -1118,6 +1118,13 @@ static bool op1_check_type_bool_or_op(struct parser* parser, struct op1_class *o
 	}								\
 } while(0)
 
+#define OP2_NUM_CMP_BODY(OP) do {	\
+	unsigned long long lv, rv;	\
+	OP2_GET_NUM(left,lv);		\
+	OP2_GET_NUM(right,rv);		\
+	return (lv OP rv);		\
+} while(0)
+
 #define OP2_EQ_BODY(OP,ELSEVAL) do {					\
 	if (left->type == NODE_STR) {					\
 		const char *lv, *rv;					\
@@ -1125,21 +1132,12 @@ static bool op1_check_type_bool_or_op(struct parser* parser, struct op1_class *o
 		OP2_GET_STR(right,rv);					\
 		return strcmp(lv, rv) OP 0;				\
 	} else if (left->type == NODE_NUM) {				\
-		unsigned long long lv, rv;				\
-		OP2_GET_NUM(left,lv);					\
-		OP2_GET_NUM(right,rv);					\
-		return lv OP rv;					\
+		OP2_NUM_CMP_BODY(OP);					\
 	} else {							\
 		return node_apply(left, params, ln) OP node_apply(right, params, ln); \
 	}								\
 } while(0)
 
-#define OP2_CMP_BODY(OP) do {		\
-	unsigned long long lv, rv;	\
-	OP2_GET_NUM(left,lv);		\
-	OP2_GET_NUM(right,rv);		\
-	return (lv OP rv);		\
-} while(0)
 static bool op2_eq(struct node *left, struct node *right, struct parameter *params, struct libscols_line *ln)
 {
 	OP2_EQ_BODY(==, false);
@@ -1162,22 +1160,22 @@ static bool op2_or(struct node *left, struct node *right, struct parameter *para
 
 static bool op2_lt(struct node *left, struct node *right, struct parameter *params, struct libscols_line *ln)
 {
-	OP2_CMP_BODY(<);
+	OP2_NUM_CMP_BODY(<);
 }
 
 static bool op2_le(struct node *left, struct node *right, struct parameter *params, struct libscols_line *ln)
 {
-	OP2_CMP_BODY(<=);
+	OP2_NUM_CMP_BODY(<=);
 }
 
 static bool op2_gt(struct node *left, struct node *right, struct parameter *params, struct libscols_line *ln)
 {
-	OP2_CMP_BODY(>);
+	OP2_NUM_CMP_BODY(>);
 }
 
 static bool op2_ge(struct node *left, struct node *right, struct parameter *params, struct libscols_line *ln)
 {
-	OP2_CMP_BODY(>=);
+	OP2_NUM_CMP_BODY(>=);
 }
 
 static bool op2_re_match(struct node *left, struct node *right,
