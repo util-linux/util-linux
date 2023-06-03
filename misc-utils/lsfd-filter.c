@@ -79,9 +79,11 @@ struct token_class {
 struct parameter {
 	struct libscols_column *cl;
 	bool has_value;
+	bool floating_point_num;
 	union {
 		const char *str;
 		unsigned long long num;
+		long double fnum;
 		bool boolean;
 	} val;
 };
@@ -658,6 +660,7 @@ static void parameter_init(struct parameter *param, struct libscols_column *cl)
 {
 	param->cl = cl;
 	param->has_value = false;
+	param->floating_point_num = false;
 }
 
 static struct libscols_column *search_column(struct libscols_table *tb, const char *name)
@@ -1102,27 +1105,64 @@ static bool op1_check_type_bool_or_op(struct parser* parser, struct op1_class *o
 	}								\
 } while(0)
 
+struct compnum {
+	bool floating_point_num;
+	union {
+		unsigned long long v;
+		long double fv;
+	};
+};
+
 #define OP2_GET_NUM(NODE,DEST) do {					\
 	int pindex = PINDEX(NODE);					\
-	if (pindex < 0)							\
-		DEST = VAL(NODE,num);					\
-	else {								\
+	if (pindex < 0) {						\
+		DEST.v = VAL(NODE,num);					\
+		DEST.floating_point_num = false;			\
+	} else {							\
 		struct parameter *p = params + pindex;			\
 		if (!p->has_value) {					\
+			unsigned long long val;				\
+			char *endptr = NULL;				\
 			const char *tmp = scols_line_get_column_data(ln, p->cl); \
 			if (tmp == NULL) return false;			\
-			p->val.num = strtoull(tmp, NULL, 10);		\
+			val = strtoull(tmp, &endptr, 10);		\
+			if (endptr && endptr[0] == '.')	{		\
+				long double fval = strtold(endptr, NULL); \
+				if (fval != 0.0) {			\
+					p->val.fnum = val + fval;	\
+					p->floating_point_num = true;	\
+				} else {				\
+					p->val.num = val;		\
+					p->floating_point_num = false;	\
+				}					\
+			} else {					\
+				p->val.num = val;			\
+				p->floating_point_num = false;		\
+			}						\
 			p->has_value = true;				\
 		}							\
-		DEST = p->val.num;					\
+		if (p->floating_point_num) {				\
+			DEST.fv = p->val.fnum;				\
+			DEST.floating_point_num = true;			\
+		} else {						\
+			DEST.v = p->val.num;				\
+			DEST.floating_point_num = false;		\
+		}							\
 	}								\
 } while(0)
 
-#define OP2_NUM_CMP_BODY(OP) do {	\
-	unsigned long long lv, rv;	\
-	OP2_GET_NUM(left,lv);		\
-	OP2_GET_NUM(right,rv);		\
-	return (lv OP rv);		\
+#define OP2_NUM_CMP_BODY(OP) do {					\
+	struct compnum lv, rv;						\
+	OP2_GET_NUM(left,lv);						\
+	OP2_GET_NUM(right,rv);						\
+	if (lv.floating_point_num && rv.floating_point_num)		\
+		return lv.fv OP rv.fv;					\
+	else if (! (lv.floating_point_num || rv.floating_point_num))	\
+		return lv.v OP rv.v;					\
+	else if (lv.floating_point_num)					\
+		return lv.fv OP ((long double)rv.v);			\
+	else								\
+		return ((long double)lv.v) OP rv.fv;			\
 } while(0)
 
 #define OP2_EQ_BODY(OP,ELSEVAL) do {					\
@@ -1402,8 +1442,10 @@ bool lsfd_filter_apply(struct lsfd_filter *filter, struct libscols_line * ln)
 	if (GOT_ERROR(filter))
 		return false;
 
-	for (i = 0; i < filter->nparams; i++)
+	for (i = 0; i < filter->nparams; i++) {
 		filter->parameters[i].has_value = false;
+		filter->parameters[i].floating_point_num = false;
+	}
 
 	return node_apply(filter->node, filter->parameters, ln);
 }
