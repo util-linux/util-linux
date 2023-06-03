@@ -17,10 +17,11 @@
 #include "xxhash.h"
 
 #define SB_LABEL_SIZE      32
+#define SB_JOURNAL_BUCKETS 256U
 
 /*
- * The bcache_super_block is heavily simplified version of struct cache_sb in kernel.
- * https://github.com/torvalds/linux/blob/master/include/uapi/linux/bcache.h
+ * The bcache_super_block is adapted from struct cache_sb in kernel.
+ * https://github.com/torvalds/linux/blob/master/drivers/md/bcache/bcache_ondisk.h
  */
 struct bcache_super_block {
 	uint64_t		csum;
@@ -28,6 +29,43 @@ struct bcache_super_block {
 	uint64_t		version;
 	uint8_t			magic[16];	/* bcache file system identifier */
 	uint8_t			uuid[16];	/* device identifier */
+	uint8_t			set_info[16];	/* magic or uuid */
+	uint8_t			label[SB_LABEL_SIZE];
+	uint64_t		flags;
+	uint64_t		seq;
+
+	uint64_t		feature_compat;
+	uint64_t		feature_incompat;
+	uint64_t		feature_ro_compat;
+
+	uint64_t		pad[5];
+
+	union {
+	struct {
+		/* Cache devices */
+		uint64_t	nbuckets;	/* device size */
+
+		uint16_t	block_size;	/* sectors */
+		uint16_t	bucket_size;	/* sectors */
+
+		uint16_t	nr_in_set;
+		uint16_t	nr_this_dev;
+	};
+	struct {
+		/* Backing devices */
+		uint64_t	data_offset;
+	};
+	};
+
+	uint32_t		last_mount;
+
+	uint16_t		first_bucket;
+	union {
+		uint16_t	njournal_buckets;
+		uint16_t	keys;
+	};
+	uint64_t		d[SB_JOURNAL_BUCKETS];	/* journal buckets */
+	uint16_t		obso_bucket_size_hi;	/* obsoleted */
 } __attribute__((packed));
 
 struct bcachefs_sb_field {
