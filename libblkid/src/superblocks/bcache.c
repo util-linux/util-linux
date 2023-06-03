@@ -194,6 +194,9 @@ static int probe_bcache (blkid_probe pr, const struct blkid_idmag *mag)
 	if (blkid_probe_set_label(pr, bcs->label, sizeof(bcs->label)) < 0)
 		return BLKID_PROBE_NONE;
 
+	if (blkid_probe_set_block_size(pr, le16_to_cpu(bcs->block_size) * 512))
+		return BLKID_PROBE_NONE;
+
 	blkid_probe_set_wiper(pr, 0, BCACHE_SB_OFF);
 
 	return BLKID_PROBE_OK;
