@@ -140,8 +140,6 @@ struct bcachefs_super_block {
 #define BCACHE_SB_MAGIC_OFF offsetof(struct bcache_super_block, magic)
 /* start of checksummed data within superblock */
 #define BCACHE_SB_CSUMMED_START 8
-/* end of checksummed data within superblock */
-#define BCACHE_SB_CSUMMED_END 208
 /* granularity of offset and length fields within superblock */
 #define BCACHEFS_SECTOR_SIZE   512
 /* maximum superblock size */
@@ -156,9 +154,19 @@ struct bcachefs_super_block {
 static int bcache_verify_checksum(blkid_probe pr, const struct blkid_idmag *mag,
 		const struct bcache_super_block *bcs)
 {
-	unsigned char *csummed = blkid_probe_get_sb_buffer(pr, mag, BCACHE_SB_CSUMMED_END);
-	uint64_t csum = ul_crc64_we(csummed + BCACHE_SB_CSUMMED_START,
-			BCACHE_SB_CSUMMED_END - BCACHE_SB_CSUMMED_START);
+	const unsigned char *csummed;
+	size_t csummed_size;
+	uint64_t csum;
+
+	if (le16_to_cpu(bcs->keys) > ARRAY_SIZE(bcs->d))
+		return 0;
+
+	/* up to the end of bcs->d[] */
+	csummed_size = offsetof(typeof(*bcs), d) +
+		sizeof(bcs->d[0]) * le16_to_cpu(bcs->keys);
+	csummed = blkid_probe_get_sb_buffer(pr, mag, csummed_size);
+	csum = ul_crc64_we(csummed + BCACHE_SB_CSUMMED_START,
+			   csummed_size - BCACHE_SB_CSUMMED_START);
 	return blkid_probe_verify_csum(pr, csum, le64_to_cpu(bcs->csum));
 }
 
