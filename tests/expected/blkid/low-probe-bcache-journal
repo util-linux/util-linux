@@ -1,3 +1,5 @@
+ID_FS_LABEL=journal-cache
+ID_FS_LABEL_ENC=journal-cache
 ID_FS_TYPE=bcache
 ID_FS_USAGE=other
 ID_FS_UUID=fc6ea56f-372e-474e-bc5b-2ddc8430ddd1
