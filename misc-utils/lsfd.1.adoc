@@ -384,13 +384,13 @@ Raw file types returned from *stat*(2): BLK, CHR, DIR, FIFO, LINK, REG, SOCK, or
 TCP.LADDR <``string``>::
 Local L3 (INET.LADDR or INET6.LADDR) address and local TCP port.
 
-TCP.LPORT <``integer``>::
+TCP.LPORT <``number``>::
 Local TCP port.
 
 TCP.RADDR <``string``>::
 Remote L3 (INET.RADDR or INET6.RADDR) address and remote TCP port.
 
-TCP.RPORT <``integer``>::
+TCP.RPORT <``number``>::
 Remote TCP port.
 
 TID <``number``>::
@@ -404,25 +404,25 @@ For UNKN, print the value for AINODECLASS if SOURCE is anon_inodefs.
 UDP.LADDR <``string``>::
 Local IP address and local UDP port.
 
-UDP.LPORT <``integer``>::
+UDP.LPORT <``number``>::
 Local UDP port.
 
 UDP.RADDR <``string``>::
 Remote IP address and remote UDP port.
 
-UDP.RPORT <``integer``>::
+UDP.RPORT <``number``>::
 Remote UDP port.
 
 UDPLITE.LADDR <``string``>::
 Local IP address and local UDPLite port.
 
-UDPLITE.LPORT <``integer``>::
+UDPLITE.LPORT <``number``>::
 Local UDP port.
 
 UDPLITE.RADDR <``string``>::
 Remote IP address and remote UDPLite port.
 
-UDPLITE.RPORT <``integer``>::
+UDPLITE.RPORT <``number``>::
 Remote UDP port.
 
 UID <``number``>::
