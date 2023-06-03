@@ -263,6 +263,9 @@ TCP:::
 TCPv6:::
 state=_SOCK.STATE_[ laddr=_TCP.LADDR_ [ raddr=_TCP.RADDR_]]
 +
+timerfd:::
+clockid=_TIMERFD.CLOCKID_[ remaining=_TIMERFD.REMAINING_ [ interval=_TIMERFD.INTERVAL_]]
++
 UDP:::
 UDPv6:::
 state=_SOCK.STATE_[ laddr=_UDP.LADDR_ [ raddr=_UDP.RADDR_]]
@@ -395,6 +398,15 @@ Remote TCP port.
 
 TID <``number``>::
 Thread ID of the process opening the file.
+
+TIMERFD.CLOCKID <``string``>::
+Clockid.
+
+TIMERFD.INTERVAL <``number``>::
+Interval.
+
+TIMERFD.REMAINING <``number``>::
+Remaining time.
 
 TYPE <``string``>::
 Cooked version of STTYPE. It is same as STTYPE with exceptions.
@@ -628,6 +640,11 @@ List files opened in a QEMU virtual machine: ::
 Hide files associated to kernel threads: ::
 ....
 # lsfd -Q '!KTHREAD'
+....
+
+List timerfd files expired within 0.5 seconds: ::
+....
+# lsfd -Q '(TIMERFD.remaining < 0.5) and (TIMERFD.remaining > 0.0)'
 ....
 
 == COUNTER EXAMPLES
