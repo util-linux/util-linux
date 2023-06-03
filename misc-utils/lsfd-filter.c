@@ -481,6 +481,9 @@ static int parser_read_dec(struct parser *parser, struct token *token)
 	errno = 0;
 	unsigned long long num = strtoull(token->val.str, NULL, 10);
 	rc = errno;
+	if (rc)
+		return rc;
+
 	free(token->val.str);
 	token->val.num = num;
 	return rc;
@@ -636,9 +639,12 @@ static struct token *parser_read(struct parser *parser)
 		} else if (isdigit((unsigned char)c)) {
 			t->type = TOKEN_DEC;
 			xstrputc(&t->val.str, c);
-			if (parser_read_dec(parser, t) != 0)
+			if (parser_read_dec(parser, t) != 0) {
 				snprintf(parser->errmsg, sizeof(parser->errmsg),
-					 _("error: failed to convert input to number"));
+					 _("error: failed to convert input to number: %s"),
+					 t->val.str);
+				free(t->val.str);
+			}
 			break;
 		}
 		snprintf(parser->errmsg, sizeof(parser->errmsg),
