@@ -612,7 +612,10 @@ static struct file *new_file(struct proc *proc, const struct file_class *class)
 {
 	struct file *file;
 
+	assert(class);
 	file = xcalloc(1, class->size);
+	file->class = class;
+
 	file->proc = proc;
 
 	INIT_LIST_HEAD(&file->files);
@@ -639,11 +642,6 @@ static struct file *copy_file(struct file *old)
 
 static void file_set_path(struct file *file, struct stat *sb, const char *name, int association)
 {
-	const struct file_class *class = stat2class(sb);
-
-	assert(class);
-
-	file->class = class;
 	file->association = association;
 	file->name = xstrdup(name);
 	file->stat = *sb;
