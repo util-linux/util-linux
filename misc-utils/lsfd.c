@@ -850,9 +850,6 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 			 */
 			goto try_map_files;
 		f = new_file(proc, stat2class(&sb));
-		if (!f)
-			return;
-
 		file_set_path(f, &sb, path, -assoc);
 	} else {
 		/* As used in tcpdump, AF_PACKET socket can be mmap'ed. */
@@ -866,9 +863,6 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 		if (ul_path_readlink(pc, sym, sizeof(sym), map_file) < 0)
 			return;
 		f = new_file(proc, stat2class(&sb));
-		if (!f)
-			return;
-
 		file_set_path(f, &sb, sym, -assoc);
 	}
 
