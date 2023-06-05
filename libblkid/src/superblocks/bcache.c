@@ -10,6 +10,7 @@
 
 #include <stddef.h>
 #include <stdio.h>
+#include <inttypes.h>
 
 #include "superblocks.h"
 #include "crc32c.h"
@@ -17,10 +18,11 @@
 #include "xxhash.h"
 
 #define SB_LABEL_SIZE      32
+#define SB_JOURNAL_BUCKETS 256U
 
 /*
- * The bcache_super_block is heavily simplified version of struct cache_sb in kernel.
- * https://github.com/torvalds/linux/blob/master/include/uapi/linux/bcache.h
+ * The bcache_super_block is adapted from struct cache_sb in kernel.
+ * https://github.com/torvalds/linux/blob/master/drivers/md/bcache/bcache_ondisk.h
  */
 struct bcache_super_block {
 	uint64_t		csum;
@@ -28,6 +30,43 @@ struct bcache_super_block {
 	uint64_t		version;
 	uint8_t			magic[16];	/* bcache file system identifier */
 	uint8_t			uuid[16];	/* device identifier */
+	uint8_t			set_info[16];	/* magic or uuid */
+	uint8_t			label[SB_LABEL_SIZE];
+	uint64_t		flags;
+	uint64_t		seq;
+
+	uint64_t		feature_compat;
+	uint64_t		feature_incompat;
+	uint64_t		feature_ro_compat;
+
+	uint64_t		pad[5];
+
+	union {
+	struct {
+		/* Cache devices */
+		uint64_t	nbuckets;	/* device size */
+
+		uint16_t	block_size;	/* sectors */
+		uint16_t	bucket_size;	/* sectors */
+
+		uint16_t	nr_in_set;
+		uint16_t	nr_this_dev;
+	};
+	struct {
+		/* Backing devices */
+		uint64_t	data_offset;
+	};
+	};
+
+	uint32_t		last_mount;
+
+	uint16_t		first_bucket;
+	union {
+		uint16_t	njournal_buckets;
+		uint16_t	keys;
+	};
+	uint64_t		d[SB_JOURNAL_BUCKETS];	/* journal buckets */
+	uint16_t		obso_bucket_size_hi;	/* obsoleted */
 } __attribute__((packed));
 
 struct bcachefs_sb_field {
@@ -102,8 +141,6 @@ struct bcachefs_super_block {
 #define BCACHE_SB_MAGIC_OFF offsetof(struct bcache_super_block, magic)
 /* start of checksummed data within superblock */
 #define BCACHE_SB_CSUMMED_START 8
-/* end of checksummed data within superblock */
-#define BCACHE_SB_CSUMMED_END 208
 /* granularity of offset and length fields within superblock */
 #define BCACHEFS_SECTOR_SIZE   512
 /* maximum superblock size */
@@ -118,9 +155,19 @@ struct bcachefs_super_block {
 static int bcache_verify_checksum(blkid_probe pr, const struct blkid_idmag *mag,
 		const struct bcache_super_block *bcs)
 {
-	const unsigned char *csummed = blkid_probe_get_sb_buffer(pr, mag, BCACHE_SB_CSUMMED_END);
-	uint64_t csum = ul_crc64_we(csummed + BCACHE_SB_CSUMMED_START,
-			BCACHE_SB_CSUMMED_END - BCACHE_SB_CSUMMED_START);
+	const unsigned char *csummed;
+	size_t csummed_size;
+	uint64_t csum;
+
+	if (le16_to_cpu(bcs->keys) > ARRAY_SIZE(bcs->d))
+		return 0;
+
+	/* up to the end of bcs->d[] */
+	csummed_size = offsetof(typeof(*bcs), d) +
+		sizeof(bcs->d[0]) * le16_to_cpu(bcs->keys);
+	csummed = blkid_probe_get_sb_buffer(pr, mag, csummed_size);
+	csum = ul_crc64_we(csummed + BCACHE_SB_CSUMMED_START,
+			   csummed_size - BCACHE_SB_CSUMMED_START);
 	return blkid_probe_verify_csum(pr, csum, le64_to_cpu(bcs->csum));
 }
 
@@ -138,7 +185,16 @@ static int probe_bcache (blkid_probe pr, const struct blkid_idmag *mag)
 	if (le64_to_cpu(bcs->offset) != BCACHE_SB_OFF / 512)
 		return BLKID_PROBE_NONE;
 
+	if (blkid_probe_sprintf_version(pr, "%"PRIu64, le64_to_cpu(bcs->version)) < 0)
+		return BLKID_PROBE_NONE;
+
 	if (blkid_probe_set_uuid(pr, bcs->uuid) < 0)
+		return BLKID_PROBE_NONE;
+
+	if (blkid_probe_set_label(pr, bcs->label, sizeof(bcs->label)) < 0)
+		return BLKID_PROBE_NONE;
+
+	if (blkid_probe_set_block_size(pr, le16_to_cpu(bcs->block_size) * 512))
 		return BLKID_PROBE_NONE;
 
 	blkid_probe_set_wiper(pr, 0, BCACHE_SB_OFF);
