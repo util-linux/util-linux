@@ -71,7 +71,7 @@ struct token {
 };
 
 struct token_class {
-	const char *name;
+	const char * const name;
 	void (*free)(struct token *);
 	void (*dump)(struct token *, FILE *);
 };
@@ -112,19 +112,19 @@ struct node {
 };
 
 struct op1_class {
-	const char *name;
+	const char * const name;
 	/* Return true if acceptable. */
 	bool (*is_acceptable)(struct node *, struct parameter *, struct libscols_line *);
 	/* Return true if o.k. */
-	bool (*check_type)(struct parser *, struct op1_class *, struct node *);
+	bool (*check_type)(struct parser *, const struct op1_class *, struct node *);
 };
 
 struct op2_class {
-	const char *name;
+	const char * const name;
 	/* Return true if acceptable. */
 	bool (*is_acceptable)(struct node *, struct node *, struct parameter *, struct libscols_line *);
 	/* Return true if o.k. */
-	bool (*check_type)(struct parser *, struct op2_class *, struct node *, struct node *);
+	bool (*check_type)(struct parser *, const struct op2_class *, struct node *, struct node *);
 };
 
 #define VAL(NODE,FIELD) (((struct node_val *)(NODE))->val.FIELD)
@@ -142,18 +142,18 @@ struct node_val {
 
 struct node_op1 {
 	struct node base;
-	struct op1_class *opclass;
+	const struct op1_class *opclass;
 	struct node *arg;
 };
 
 struct node_op2 {
 	struct node base;
-	struct op2_class *opclass;
+	const struct op2_class *opclass;
 	struct node *args[2];
 };
 
 struct node_class {
-	const char *name;
+	const char * const name;
 	void (*free)(struct node *);
 	void (*dump)(struct node *, struct parameter*, int, FILE *);
 };
@@ -188,7 +188,7 @@ static void token_dump_op1(struct token *, FILE *);
 static void token_dump_op2(struct token *, FILE *);
 
 static bool op1_not(struct node *, struct parameter*, struct libscols_line *);
-static bool op1_check_type_bool_or_op(struct parser *, struct op1_class *, struct node *);
+static bool op1_check_type_bool_or_op(struct parser *, const struct op1_class *, struct node *);
 
 static bool op2_eq (struct node *, struct node *, struct parameter*, struct libscols_line *);
 static bool op2_ne (struct node *, struct node *, struct parameter*, struct libscols_line *);
@@ -201,10 +201,10 @@ static bool op2_ge (struct node *, struct node *, struct parameter*, struct libs
 static bool op2_re_match (struct node *, struct node *, struct parameter*, struct libscols_line *);
 static bool op2_re_unmatch (struct node *, struct node *, struct parameter*, struct libscols_line *);
 
-static bool op2_check_type_eq_or_bool_or_op(struct parser *, struct op2_class *, struct node *, struct node *);
-static bool op2_check_type_boolean_or_op   (struct parser *, struct op2_class *, struct node *, struct node *);
-static bool op2_check_type_num             (struct parser *, struct op2_class *, struct node *, struct node *);
-static bool op2_check_type_re              (struct parser *, struct op2_class *, struct node *, struct node *);
+static bool op2_check_type_eq_or_bool_or_op(struct parser *, const struct op2_class *, struct node *, struct node *);
+static bool op2_check_type_boolean_or_op   (struct parser *, const struct op2_class *, struct node *, struct node *);
+static bool op2_check_type_num             (struct parser *, const struct op2_class *, struct node *, struct node *);
+static bool op2_check_type_re              (struct parser *, const struct op2_class *, struct node *, struct node *);
 
 static void node_str_free(struct node *);
 static void node_re_free (struct node *);
@@ -224,7 +224,7 @@ static struct node *dparser_compile(struct parser *);
  * Data
  */
 #define TOKEN_CLASS(TOKEN) (&token_classes[(TOKEN)->type])
-static struct token_class token_classes [] = {
+static const struct token_class token_classes [] = {
 	[TOKEN_NAME] = {
 		.name = "NAME",
 		.free = token_free_str,
@@ -265,7 +265,7 @@ static struct token_class token_classes [] = {
 };
 
 #define TOKEN_OP1_CLASS(TOKEN) (&(op1_classes[(TOKEN)->val.op1]))
-static struct op1_class op1_classes [] = {
+static const struct op1_class op1_classes [] = {
 	[OP1_NOT] = {
 		.name = "!",
 		.is_acceptable = op1_not,
@@ -274,7 +274,7 @@ static struct op1_class op1_classes [] = {
 };
 
 #define TOKEN_OP2_CLASS(TOKEN) (&(op2_classes[(TOKEN)->val.op2]))
-static struct op2_class op2_classes [] = {
+static const struct op2_class op2_classes [] = {
 	[OP2_EQ] = {
 		.name = "==",
 		.is_acceptable = op2_eq,
@@ -328,7 +328,7 @@ static struct op2_class op2_classes [] = {
 };
 
 #define NODE_CLASS(NODE) (&node_classes[(NODE)->type])
-static struct node_class node_classes[] = {
+static const struct node_class node_classes[] = {
 	[NODE_STR] = {
 		.name = "STR",
 		.free = node_str_free,
@@ -790,7 +790,7 @@ static struct node *dparser_compile1(struct parser *parser, struct node *last)
 
 	case TOKEN_OP1: {
 		struct node *op1_right = dparser_compile1(parser, NULL);
-		struct op1_class *op1_class = TOKEN_OP1_CLASS(t);
+		const struct op1_class *op1_class = TOKEN_OP1_CLASS(t);
 
 		token_free(t);
 
@@ -821,7 +821,7 @@ static struct node *dparser_compile1(struct parser *parser, struct node *last)
 
 	case TOKEN_OP2: {
 		struct node *op2_right = dparser_compile1(parser, NULL);
-		struct op2_class *op2_class = TOKEN_OP2_CLASS(t);
+		const struct op2_class *op2_class = TOKEN_OP2_CLASS(t);
 
 		token_free(t);
 
@@ -1068,7 +1068,7 @@ static bool op1_not(struct node *node, struct parameter* params, struct libscols
 	return !node_apply(node, params, ln);
 }
 
-static bool op1_check_type_bool_or_op(struct parser* parser, struct op1_class *op1_class,
+static bool op1_check_type_bool_or_op(struct parser* parser, const struct op1_class *op1_class,
 				      struct node *node)
 {
 	if (! (node->type == NODE_OP1 || node->type == NODE_OP2 || node->type == NODE_BOOL)) {
@@ -1189,7 +1189,7 @@ static bool op2_re_unmatch(struct node *left, struct node *right,
 	return !op2_re_match(left, right, params, ln);
 }
 
-static bool op2_check_type_boolean_or_op(struct parser* parser, struct op2_class *op2_class,
+static bool op2_check_type_boolean_or_op(struct parser* parser, const struct op2_class *op2_class,
 					 struct node *left, struct node *right)
 {
 	enum node_type lt = left->type, rt = right->type;
@@ -1213,7 +1213,7 @@ static bool op2_check_type_boolean_or_op(struct parser* parser, struct op2_class
 	return true;
 }
 
-static bool op2_check_type_eq_or_bool_or_op(struct parser* parser, struct op2_class *op2_class,
+static bool op2_check_type_eq_or_bool_or_op(struct parser* parser, const struct op2_class *op2_class,
 					    struct node *left, struct node *right)
 {
 	enum node_type lt = left->type, rt = right->type;
@@ -1224,7 +1224,7 @@ static bool op2_check_type_eq_or_bool_or_op(struct parser* parser, struct op2_cl
 	return op2_check_type_boolean_or_op(parser, op2_class, left, right);
 }
 
-static bool op2_check_type_num(struct parser* parser, struct op2_class *op2_class,
+static bool op2_check_type_num(struct parser* parser, const struct op2_class *op2_class,
 			       struct node *left, struct node *right)
 {
 	if (left->type != NODE_NUM) {
@@ -1246,7 +1246,7 @@ static bool op2_check_type_num(struct parser* parser, struct op2_class *op2_clas
 	return true;
 }
 
-static bool op2_check_type_re(struct parser* parser, struct op2_class *op2_class,
+static bool op2_check_type_re(struct parser* parser, const struct op2_class *op2_class,
 			      struct node *left, struct node *right)
 {
 	if (left->type != NODE_STR) {

@@ -87,16 +87,16 @@ static const struct wdflag wdflags[] = {
 
 /* column names */
 struct colinfo {
-	const char *name; /* header */
-	double	   whint; /* width hint (N < 1 is in percent of termwidth) */
-	int	   flags; /* SCOLS_FL_* */
-	const char *help;
+	const char * const	name; /* header */
+	double			whint; /* width hint (N < 1 is in percent of termwidth) */
+	int			flags; /* SCOLS_FL_* */
+	const char		*help;
 };
 
 enum { COL_FLAG, COL_DESC, COL_STATUS, COL_BSTATUS, COL_DEVICE };
 
 /* columns descriptions */
-static struct colinfo infos[] = {
+static const struct colinfo infos[] = {
 	[COL_FLAG]    = { "FLAG",        14,  0, N_("flag name") },
 	[COL_DESC]    = { "DESCRIPTION", 0.1, SCOLS_FL_TRUNC, N_("flag description") },
 	[COL_STATUS]  = { "STATUS",      1,   SCOLS_FL_RIGHT, N_("flag status") },
@@ -188,7 +188,7 @@ static int get_column_id(int num)
 	return columns[num];
 }
 
-static struct colinfo *get_column_info(unsigned num)
+static const struct colinfo *get_column_info(unsigned num)
 {
 	return &infos[ get_column_id(num) ];
 }
@@ -354,7 +354,7 @@ static int show_flags(struct wd_control *ctl, struct wd_device *wd, uint32_t wan
 
 	/* define columns */
 	for (i = 0; i < (size_t) ncolumns; i++) {
-		struct colinfo *col = get_column_info(i);
+		const struct colinfo *col = get_column_info(i);
 
 		if (!scols_table_new_column(table, col->name, col->whint, col->flags)) {
 			warnx(_("failed to allocate output column"));

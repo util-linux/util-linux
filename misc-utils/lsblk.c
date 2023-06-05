@@ -158,7 +158,7 @@ enum {
 
 /* column names */
 struct colinfo {
-	const char	*name;		/* header */
+	const char	* const name;	/* header */
 	double		whint;		/* width hint (N < 1 is in percent of termwidth) */
 	int		flags;		/* SCOLS_FL_* */
 	const char	*help;
@@ -166,7 +166,7 @@ struct colinfo {
 };
 
 /* columns descriptions */
-static struct colinfo infos[] = {
+static const struct colinfo infos[] = {
 	[COL_ALIOFF] = { "ALIGNMENT", 6, SCOLS_FL_RIGHT, N_("alignment offset"), COLTYPE_NUM },
 	[COL_ID] = { "ID", 0.1, SCOLS_FL_NOEXTREMES, N_("udev ID (based on ID-LINK)") },
 	[COL_IDLINK] = { "ID-LINK", 0.1, SCOLS_FL_NOEXTREMES, N_("the shortest udev /dev/disk/by-id link name") },
@@ -324,7 +324,7 @@ static int get_column_id(int num)
 }
 
 /* Returns column description for the column sequential number */
-static struct colinfo *get_column_info(int num)
+static const struct colinfo *get_column_info(int num)
 {
 	return &infos[ get_column_id(num) ];
 }
@@ -2364,7 +2364,7 @@ int main(int argc, char *argv[])
 	}
 
 	for (i = 0; i < ncolumns; i++) {
-		struct colinfo *ci = get_column_info(i);
+		const struct colinfo *ci = get_column_info(i);
 		struct libscols_column *cl;
 		int id = get_column_id(i), fl = ci->flags;
 

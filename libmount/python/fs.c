@@ -832,43 +832,17 @@ static PyObject *Fs_copy_fs(FsObject *self, PyObject *args, PyObject *kwds)
 
 PyTypeObject FsType = {
 	PyVarObject_HEAD_INIT(NULL, 0)
-	"libmount.Fs", /*tp_name*/
-	sizeof(FsObject), /*tp_basicsize*/
-	0, /*tp_itemsize*/
-	(destructor)Fs_destructor, /*tp_dealloc*/
-	0, /*tp_print*/
-	NULL, /*tp_getattr*/
-	NULL, /*tp_setattr*/
-	NULL, /*tp_compare*/
-	(reprfunc)Fs_repr, /*tp_repr*/
-	NULL, /*tp_as_number*/
-	NULL, /*tp_as_sequence*/
-	NULL, /*tp_as_mapping*/
-	NULL, /*tp_hash */
-	NULL, /*tp_call*/
-	NULL, /*tp_str*/
-	NULL, /*tp_getattro*/
-	NULL, /*tp_setattro*/
-	NULL, /*tp_as_buffer*/
-	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
-	Fs_HELP, /* tp_doc */
-	NULL, /* tp_traverse */
-	NULL, /* tp_clear */
-	NULL, /* tp_richcompare */
-	0, /* tp_weaklistoffset */
-	NULL, /* tp_iter */
-	NULL, /* tp_iternext */
-	Fs_methods, /* tp_methods */
-	Fs_members, /* tp_members */
-	Fs_getseters, /* tp_getset */
-	NULL, /* tp_base */
-	NULL, /* tp_dict */
-	NULL, /* tp_descr_get */
-	NULL, /* tp_descr_set */
-	0, /* tp_dictoffset */
-	(initproc)Fs_init, /* tp_init */
-	NULL, /* tp_alloc */
-	Fs_new, /* tp_new */
+	.tp_name = "libmount.Fs",
+	.tp_basicsize = sizeof(FsObject),
+	.tp_dealloc = (destructor)Fs_destructor,
+	.tp_repr = (reprfunc)Fs_repr,
+	.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+	.tp_doc = Fs_HELP,
+	.tp_methods = Fs_methods,
+	.tp_members = Fs_members,
+	.tp_getset = Fs_getseters,
+	.tp_init = (initproc)Fs_init,
+	.tp_new = Fs_new,
 };
 
 void FS_AddModuleObject(PyObject *mod)

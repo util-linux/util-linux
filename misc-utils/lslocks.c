@@ -64,10 +64,10 @@ enum {
 
 /* column names */
 struct colinfo {
-	const char *name; /* header */
-	double	   whint; /* width hint (N < 1 is in percent of termwidth) */
-	int	   flags; /* SCOLS_FL_* */
-	const char *help;
+	const char * const	name; /* header */
+	double			whint; /* width hint (N < 1 is in percent of termwidth) */
+	int			flags; /* SCOLS_FL_* */
+	const char		*help;
 };
 
 /* columns descriptions */
@@ -362,7 +362,7 @@ static inline int get_column_id(int num)
 }
 
 
-static inline struct colinfo *get_column_info(unsigned num)
+static inline const struct colinfo *get_column_info(unsigned num)
 {
 	return &infos[ get_column_id(num) ];
 }
@@ -480,7 +480,7 @@ static int show_locks(struct list_head *locks)
 
 	for (i = 0; i < ncolumns; i++) {
 		struct libscols_column *cl;
-		struct colinfo *col = get_column_info(i);
+		const struct colinfo *col = get_column_info(i);
 
 		cl = scols_table_new_column(table, col->name, col->whint, col->flags);
 		if (!cl)
