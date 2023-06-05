@@ -46,6 +46,7 @@
 #include "mountP.h"
 #include "fileutils.h"	/* statx() fallback */
 #include "mount-api-utils.h"
+#include "linux_version.h"
 
 #include <inttypes.h>
 
@@ -693,6 +694,13 @@ static int hook_prepare(struct libmnt_context *cxt,
 	if (!rc
 	    && cxt->helper == NULL
 	    && (set != 0 || clr != 0 || (flags & MS_REMOUNT))) {
+		/*
+		 * mount_setattr() supported, but not usable for remount
+		 * https://github.com/torvalds/linux/commit/dd8b477f9a3d8edb136207acb3652e1a34a661b7
+		 */
+		if (get_linux_version() < KERNEL_VERSION(5, 14, 0))
+			goto enosys;
+
 		if (!mount_setattr_is_supported())
 			goto enosys;
 
