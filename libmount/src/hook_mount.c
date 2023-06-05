@@ -609,6 +609,43 @@ fake:
 	return 0;
 }
 
+static int force_classic_mount(struct libmnt_context *cxt)
+{
+	const char *env = getenv("LIBMOUNT_FORCE_MOUNT2");
+
+	if (env) {
+		if (strcmp(env, "always") == 0)
+			return 1;
+		if (strcmp(env, "never") == 0)
+			return 0;
+	}
+
+	/* "auto" (default) -- try to be smart */
+
+	/* For external /sbin/mount.<type> helpers we use the new API only for
+	 * propagation setting. In this case, the usability of mount_setattr()
+	 * will be verified later */
+	if (cxt->helper)
+		return 0;
+
+	/*
+	 * The current kernel btrfs driver does not completely implement
+	 * fsconfig() as it does not work with selinux stuff.
+	 *
+	 * Don't use the new mount API in this situation. Let's hope this issue
+	 * is temporary.
+	 */
+	{
+		const char *type = mnt_fs_get_fstype(cxt->fs);
+
+		if (type && strcmp(type, "btrfs") == 0 && cxt->has_selinux_opt)
+			return 1;
+	}
+
+	return 0;
+}
+
+
 /*
  * Analyze library context and register hook to call mount-like syscalls.
  *
@@ -629,20 +666,9 @@ static int hook_prepare(struct libmnt_context *cxt,
 	assert(cxt);
 	assert(hs == &hookset_mount);
 
-	/*
-	 * The current kernel btrfs driver does not completely implement
-	 * fsconfig() as it does not work with selinux stuff.
-	 *
-	 * Don't use the new mount API in this situation. Let's hope this issue
-	 * is temporary.
-	 */
-	{
-		const char *type = mnt_fs_get_fstype(cxt->fs);
-
-		if (type && strcmp(type, "btrfs") == 0 && cxt->has_selinux_opt) {
-			DBG(HOOK, ul_debugobj(hs, "don't use new API (btrfs issue)"));
-			return 0;
-		}
+	if (force_classic_mount(cxt)) {
+		DBG(HOOK, ul_debugobj(hs, "new API disabled"));
+		return 0;
 	}
 
 	DBG(HOOK, ul_debugobj(hs, "prepare mount"));
