@@ -1608,6 +1608,9 @@ The command *mount* does not pass the mount options *unbindable*, *runbindable*,
 
 == ENVIRONMENT
 
+*LIBMOUNT_FORCE_MOUNT2*={always|never|auto}::
+force to use classic mount(2) system call (requires support for new file descriptors based mount API). The default is *auto*; in this case, libmount tries to be smart and use classic mount(2) only for well-known issues. If the new mount API is unavailable, libmount can still use traditional mount(2), although LIBMOUNT_FORCE_MOUNT2 is set to *never*.
+
 *LIBMOUNT_FSTAB*=<path>::
 overrides the default location of the _fstab_ file (ignored for suid)
 
