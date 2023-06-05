@@ -47,6 +47,10 @@ const struct syscall syscalls[] = {
 #ifdef __NR_fsopen
 	{ "fsopen", __NR_fsopen },
 #endif
+#ifdef __NR_mount_setattr
+	{ "mount_setattr", __NR_mount_setattr },
+#endif
+
 };
 
 int main(int argc, char **argv)
