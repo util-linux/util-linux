@@ -259,6 +259,9 @@ state=_SOCK.STATE_[ protocol=_RAW.PROTOCOL_ [ laddr=_INET.LADDR_ [ raddr=_INET.R
 RAWv6:::
 state=_SOCK.STATE_[ protocol=_RAW.PROTOCOL_ [ laddr=_INET6.LADDR_ [ raddr=_INET6.RADDR_]]]
 +
+signalfd:::
+mask=_SIGNALFD.MASK_
++
 TCP:::
 TCPv6:::
 state=_SOCK.STATE_[ laddr=_TCP.LADDR_ [ raddr=_TCP.RADDR_]]
@@ -350,6 +353,9 @@ Protocol number of the raw socket.
 
 RDEV <``string``>::
 Device ID (if special file).
+
+SIGNALFD.MASK <``string``>::
+Masked signals.
 
 SIZE <``number``>::
 File size.
