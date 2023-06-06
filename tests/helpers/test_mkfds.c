@@ -47,10 +47,12 @@
 #include <sys/socket.h>
 #include <sys/shm.h>
 #include <sys/syscall.h>
+#include <sys/timerfd.h>
 #include <sys/types.h>
 #include <sys/un.h>
 #include <sys/user.h>
 #include <sys/wait.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "c.h"
@@ -2315,6 +2317,102 @@ static void *make_eventpoll(const struct factory *factory _U_, struct fdesc fdes
 	return NULL;
 }
 
+static bool decode_clockid(const char *sclockid, clockid_t *clockid)
+{
+	if (sclockid == NULL)
+		return false;
+	if (sclockid[0] == '\0')
+		return false;
+
+	if (strcmp(sclockid, "realtime") == 0)
+		*clockid = CLOCK_REALTIME;
+	else if (strcmp(sclockid, "monotonic") == 0)
+		*clockid = CLOCK_MONOTONIC;
+	else if (strcmp(sclockid, "boottime") == 0)
+		*clockid = CLOCK_BOOTTIME;
+	else if (strcmp(sclockid, "realtime-alarm") == 0)
+		*clockid = CLOCK_REALTIME_ALARM;
+	else if (strcmp(sclockid, "boottime-alarm") == 0)
+		*clockid = CLOCK_BOOTTIME_ALARM;
+	else
+		return false;
+	return true;
+}
+
+static void *make_timerfd(const struct factory *factory, struct fdesc fdescs[],
+			  int argc, char ** argv)
+{
+	int tfd;
+	struct timespec now;
+	struct itimerspec tspec;
+
+	struct arg abstime = decode_arg("abstime", factory->params, argc, argv);
+	bool babstime = ARG_BOOLEAN(abstime);
+
+	struct arg remaining = decode_arg("remaining", factory->params, argc, argv);
+	unsigned int uremaining = ARG_UINTEGER(remaining);
+
+	struct arg interval = decode_arg("interval", factory->params, argc, argv);
+	unsigned int uinterval = ARG_UINTEGER(interval);
+
+	struct arg interval_frac = decode_arg("interval-nanofrac", factory->params, argc, argv);
+	unsigned int uinterval_frac = ARG_UINTEGER(interval_frac);
+
+	struct arg clockid_ = decode_arg("clockid", factory->params, argc, argv);
+	const char *sclockid = ARG_STRING(clockid_);
+	clockid_t clockid;
+
+	if (decode_clockid (sclockid, &clockid) == false)
+		err(EXIT_FAILURE, "unknown clockid: %s", sclockid);
+
+	free_arg(&clockid_);
+	free_arg(&interval_frac);
+	free_arg(&interval);
+	free_arg(&remaining);
+	free_arg(&abstime);
+
+	if (babstime) {
+		int r = clock_gettime(clockid, &now);
+		if (r == -1)
+			err(EXIT_FAILURE, "failed in clock_gettime(2)");
+	}
+
+	tfd = timerfd_create(clockid, 0);
+	if (tfd < 0)
+		err(EXIT_FAILURE, "failed in timerfd_create(2)");
+
+	tspec.it_value.tv_sec = (babstime? now.tv_sec: 0) + uremaining;
+	tspec.it_value.tv_nsec = (babstime? now.tv_nsec: 0);
+
+	tspec.it_interval.tv_sec = uinterval;
+	tspec.it_interval.tv_nsec = uinterval_frac;
+
+	if (timerfd_settime(tfd, babstime? TFD_TIMER_ABSTIME: 0, &tspec, NULL) < 0) {
+		int e = errno;
+		close(tfd);
+		errno = e;
+		err(EXIT_FAILURE, "failed in timerfd_settime(2)");
+	}
+
+	if (tfd != fdescs[0].fd) {
+		if (dup2(tfd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(tfd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", tfd, fdescs[0].fd);
+		}
+		close(tfd);
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL
+	};
+
+	return NULL;
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -2935,6 +3033,48 @@ static const struct factory factories[] = {
 			PARAM_END
 		}
 	},
+	{
+		.name = "timerfd",
+		.desc = "make timerfd",
+		.priv = false,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_timerfd,
+		.params = (struct parameter []) {
+			{
+				.name = "clockid",
+				.type = PTYPE_STRING,
+				.desc = "ID: realtime, monotonic, boottime, realtime-alarm, or boottime-alarm",
+				.defv.string = "realtime",
+			},
+			{
+				.name = "abstime",
+				.type = PTYPE_BOOLEAN,
+				.desc = "use TFD_TIMER_ABSTIME flag",
+				.defv.boolean = false,
+			},
+			{
+				.name = "remaining",
+				.type = PTYPE_UINTEGER,
+				.desc = "remaining seconds for expiration",
+				.defv.uinteger = 99,
+			},
+			{
+				.name = "interval",
+				.type = PTYPE_UINTEGER,
+				.desc = "inteval in seconds",
+				.defv.uinteger = 10,
+			},
+			{
+				.name = "interval-nanofrac",
+				.type = PTYPE_UINTEGER,
+				.desc = "nsec part of inteval",
+				.defv.uinteger = 0,
+			},
+
+			PARAM_END
+		}
+	}
 };
 
 static int count_parameters(const struct factory *factory)

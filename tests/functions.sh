@@ -163,6 +163,29 @@ function ts_skip_nonroot {
 	fi
 }
 
+# Specify the capability needed in your test case like:
+#
+#	ts_skip_capability cap_wake_alarm
+#
+function ts_skip_capability {
+	local self=$$
+	local cap=$1
+
+	# On Fedora, libcap package provides getpcaps command.
+	ts_check_prog "getpcaps"
+
+	local caps=$(getpcaps "$self")
+	if [[ "$caps" == "${self}: =ep" ]]; then
+		return 0
+	fi
+
+	if [[ "$caps" =~ .*${cap}.* ]]; then
+		return 0
+	fi
+
+	ts_skip "no capability: ${cap}"
+}
+
 function ts_skip_qemu_user {
 	if [ "$QEMU_USER" == "1" ]; then
 		ts_skip "running under qemu-user emulation"

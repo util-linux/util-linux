@@ -25,6 +25,9 @@
 
 #include "lsfd.h"
 
+#include <sys/timerfd.h>
+#include <time.h>
+
 struct unkn {
 	struct file file;
 	const struct anon_ops *anon_ops;
@@ -227,8 +230,7 @@ static int anon_pidfd_handle_fdinfo(struct unkn *unkn, const char *key, const ch
 			return 0; /* ignore -- parse failed */
 		((struct anon_pidfd_data *)unkn->anon_data)->pid = (pid_t)pid;
 		return 1;
-	}
-	else if (strcmp(key, "NSpid") == 0) {
+	} else if (strcmp(key, "NSpid") == 0) {
 		((struct anon_pidfd_data *)unkn->anon_data)->nspid = xstrdup(value);
 		return 1;
 
@@ -320,7 +322,7 @@ static const struct ipc_class anon_eventfd_ipc_class = {
 
 static bool anon_eventfd_probe(const char *str)
 {
-	return (strncmp(str, "[eventfd]", 9) == 0);
+	return strncmp(str, "[eventfd]", 9) == 0;
 }
 
 static char *anon_eventfd_get_name(struct unkn *unkn)
@@ -442,7 +444,6 @@ struct anon_eventpoll_data {
 	int *tfds;
 };
 
-
 static bool anon_eventpoll_probe(const char *str)
 {
 	return strncmp(str, "[eventpoll]", 11) == 0;
@@ -456,8 +457,8 @@ static void anon_eventpoll_init(struct unkn *unkn)
 static void anon_eventpoll_free(struct unkn *unkn)
 {
 	struct anon_eventpoll_data *data = unkn->anon_data;
-	free (data->tfds);
-	free (data);
+	free(data->tfds);
+	free(data);
 }
 
 static int anon_eventpoll_handle_fdinfo(struct unkn *unkn, const char *key, const char *value)
@@ -473,14 +474,14 @@ static int anon_eventpoll_handle_fdinfo(struct unkn *unkn, const char *key, cons
 			return 0; /* ignore -- parse failed */
 
 		data = (struct anon_eventpoll_data *)unkn->anon_data;
-		data->tfds = xreallocarray (data->tfds, ++data->count, sizeof(int));
+		data->tfds = xreallocarray(data->tfds, ++data->count, sizeof(int));
 		data->tfds[data->count - 1] = (int)tfd;
 		return 1;
 	}
 	return 0;
 }
 
-static int intcmp (const void *a, const void *b)
+static int intcmp(const void *a, const void *b)
 {
 	int ai = *(int *)a;
 	int bi = *(int *)b;
@@ -491,8 +492,8 @@ static int intcmp (const void *a, const void *b)
 static void anon_eventpoll_attach_xinfo(struct unkn *unkn)
 {
 	struct anon_eventpoll_data *data = (struct anon_eventpoll_data *)unkn->anon_data;
-	qsort (data->tfds, data->count, sizeof (data->tfds[0]),
-	       intcmp);
+	qsort(data->tfds, data->count, sizeof(data->tfds[0]),
+	      intcmp);
 }
 
 static char *anon_eventpoll_make_tfds_string(struct anon_eventpoll_data *data,
@@ -516,8 +517,8 @@ static char *anon_eventpoll_make_tfds_string(struct anon_eventpoll_data *data,
 
 static char *anon_eventpoll_get_name(struct unkn *unkn)
 {
-	return anon_eventpoll_make_tfds_string ((struct anon_eventpoll_data *)unkn->anon_data,
-						"tfds=");
+	return anon_eventpoll_make_tfds_string((struct anon_eventpoll_data *)unkn->anon_data,
+					       "tfds=");
 }
 
 static bool anon_eventpoll_fill_column(struct proc *proc  __attribute__((__unused__)),
@@ -531,7 +532,7 @@ static bool anon_eventpoll_fill_column(struct proc *proc  __attribute__((__unuse
 
 	switch(column_id) {
 	case COL_EVENTPOLL_TFDS:
-		*str =anon_eventpoll_make_tfds_string (data, NULL);
+		*str =anon_eventpoll_make_tfds_string(data, NULL);
 		if (*str)
 			return true;
 		break;
@@ -552,6 +553,169 @@ static const struct anon_ops anon_eventpoll_ops = {
 };
 
 /*
+ * timerfd
+ */
+struct anon_timerfd_data {
+	int clockid;
+	struct itimerspec itimerspec;
+};
+
+static bool anon_timerfd_probe(const char *str)
+{
+	return strncmp(str, "[timerfd]", 9) == 0;
+}
+
+static void anon_timerfd_init(struct unkn *unkn)
+{
+	unkn->anon_data = xcalloc(1, sizeof(struct anon_timerfd_data));
+}
+
+static void anon_timerfd_free(struct unkn *unkn)
+{
+	struct anon_timerfd_data *data = unkn->anon_data;
+	free(data);
+}
+
+static int anon_timerfd_handle_fdinfo(struct unkn *unkn, const char *key, const char *value)
+{
+	struct anon_timerfd_data *data = (struct anon_timerfd_data *)unkn->anon_data;
+
+	if (strcmp(key, "clockid") == 0) {
+		unsigned long clockid;
+		char *end = NULL;
+
+		errno = 0;
+		clockid = strtoul(value, &end, 0);
+		if (errno != 0)
+			return 0; /* ignore -- parse failed */
+		if (*end != '\0')
+			return 0; /* ignore -- garbage remains. */
+
+		data->clockid = clockid;
+		return 1;
+	} else {
+		struct timespec *t;
+		uint64_t tv_sec;
+		uint64_t tv_nsec;
+
+		if (strcmp(key, "it_value") == 0)
+			t = &data->itimerspec.it_value;
+		else if (strcmp(key, "it_interval") == 0)
+			t = &data->itimerspec.it_interval;
+		else
+			return 0;
+
+		if (sscanf(value, "(%"SCNu64", %"SCNu64")",
+			   &tv_sec, &tv_nsec) == 2) {
+			t->tv_sec = (time_t)tv_sec;
+			t->tv_nsec = (long)tv_nsec;
+			return 1;
+		}
+
+		return 0;
+	}
+}
+
+static bool is_zero_timespec(const struct timespec *t)
+{
+	return !t->tv_sec && !t->tv_nsec;
+}
+
+static const char *anon_timerfd_decode_clockid(int clockid)
+{
+	switch (clockid) {
+	case CLOCK_REALTIME:
+		return "realtime";
+	case CLOCK_MONOTONIC:
+		return "monotonic";
+	case CLOCK_BOOTTIME:
+		return "boottime";
+	case CLOCK_REALTIME_ALARM:
+		return "realtime-alarm";
+	case CLOCK_BOOTTIME_ALARM:
+		return "boottime-alarm";
+	default:
+		return "unknown";
+	}
+}
+
+static void anon_timerfd_render_timespec_string(char *buf, size_t size,
+						const char *prefix,
+						const struct timespec *t)
+{
+	snprintf(buf, size, "%s%llu.%09ld",
+		 prefix? prefix: "",
+		 (unsigned long long)t->tv_sec, t->tv_nsec);
+}
+
+static char *anon_timerfd_get_name(struct unkn *unkn)
+{
+	char *str = NULL;
+
+	struct anon_timerfd_data *data = (struct anon_timerfd_data *)unkn->anon_data;
+	const struct timespec *exp;
+	const struct timespec *ival;
+
+	const char *clockid_name;
+	char exp_buf[BUFSIZ] = {'\0'};
+	char ival_buf[BUFSIZ] = {'\0'};
+
+	clockid_name = anon_timerfd_decode_clockid(data->clockid);
+
+	exp = &data->itimerspec.it_value;
+	if (!is_zero_timespec(exp))
+		anon_timerfd_render_timespec_string(exp_buf, sizeof(exp_buf),
+						    " remaining=", exp);
+
+	ival = &data->itimerspec.it_interval;
+	if (!is_zero_timespec(ival))
+		anon_timerfd_render_timespec_string(ival_buf, sizeof(ival_buf),
+						    " interval=", ival);
+
+	xasprintf(&str, "clockid=%s%s%s", clockid_name, exp_buf, ival_buf);
+	return str;
+}
+
+static bool anon_timerfd_fill_column(struct proc *proc  __attribute__((__unused__)),
+				     struct unkn *unkn,
+				     struct libscols_line *ln __attribute__((__unused__)),
+				     int column_id,
+				     size_t column_index __attribute__((__unused__)),
+				     char **str)
+{
+	struct anon_timerfd_data *data = (struct anon_timerfd_data *)unkn->anon_data;
+	char buf[BUFSIZ] = {'\0'};
+
+	switch(column_id) {
+	case COL_TIMERFD_CLOCKID:
+		*str = xstrdup(anon_timerfd_decode_clockid(data->clockid));
+		return true;
+	case COL_TIMERFD_INTERVAL:
+		anon_timerfd_render_timespec_string(buf, sizeof(buf), NULL,
+						    &data->itimerspec.it_interval);
+		*str = xstrdup(buf);
+		return true;
+	case COL_TIMERFD_REMAINING:
+		anon_timerfd_render_timespec_string(buf, sizeof(buf), NULL,
+						    &data->itimerspec.it_value);
+		*str = xstrdup(buf);
+		return true;
+	}
+
+	return false;
+}
+
+static const struct anon_ops anon_timerfd_ops = {
+	.class = "timerfd",
+	.probe = anon_timerfd_probe,
+	.get_name = anon_timerfd_get_name,
+	.fill_column = anon_timerfd_fill_column,
+	.init = anon_timerfd_init,
+	.free = anon_timerfd_free,
+	.handle_fdinfo = anon_timerfd_handle_fdinfo,
+};
+
+/*
  * generic (fallback implementation)
  */
 static const struct anon_ops anon_generic_ops = {
@@ -567,6 +731,7 @@ static const struct anon_ops *anon_ops[] = {
 	&anon_pidfd_ops,
 	&anon_eventfd_ops,
 	&anon_eventpoll_ops,
+	&anon_timerfd_ops,
 };
 
 static const struct anon_ops *anon_probe(const char *str)

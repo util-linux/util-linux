@@ -167,7 +167,7 @@ _PID_,_COMMAND_,_ASSOC_
 EVENTFD.ID <``number``>::
 Eventfd ID.
 
-EVENTPOLL.TFDS <``string``>>::
+EVENTPOLL.TFDS <``string``>::
 File descriptors targeted by the eventpoll file.
 
 FD <``number``>::
@@ -263,6 +263,9 @@ TCP:::
 TCPv6:::
 state=_SOCK.STATE_[ laddr=_TCP.LADDR_ [ raddr=_TCP.RADDR_]]
 +
+timerfd:::
+clockid=_TIMERFD.CLOCKID_[ remaining=_TIMERFD.REMAINING_ [ interval=_TIMERFD.INTERVAL_]]
++
 UDP:::
 UDPv6:::
 state=_SOCK.STATE_[ laddr=_UDP.LADDR_ [ raddr=_UDP.RADDR_]]
@@ -279,13 +282,13 @@ state=_SOCK.STATE_[ path=_UNIX.PATH_]
 UNIX:::
 state=_SOCK.STATE_[ path=_UNIX.PATH_] type=_SOCK.TYPE_
 
-NETLINK.GROUPS <``number``>>::
+NETLINK.GROUPS <``number``>::
 Netlink multicast groups.
 
-NETLINK.LPORT <``number``>>::
+NETLINK.LPORT <``number``>::
 Netlink local port id.
 
-NETLINK.PROTOCOL <``string``>>::
+NETLINK.PROTOCOL <``string``>::
 Netlink protocol.
 
 NLINK <``number``>::
@@ -384,17 +387,26 @@ Raw file types returned from *stat*(2): BLK, CHR, DIR, FIFO, LINK, REG, SOCK, or
 TCP.LADDR <``string``>::
 Local L3 (INET.LADDR or INET6.LADDR) address and local TCP port.
 
-TCP.LPORT <``integer``>::
+TCP.LPORT <``number``>::
 Local TCP port.
 
 TCP.RADDR <``string``>::
 Remote L3 (INET.RADDR or INET6.RADDR) address and remote TCP port.
 
-TCP.RPORT <``integer``>::
+TCP.RPORT <``number``>::
 Remote TCP port.
 
 TID <``number``>::
 Thread ID of the process opening the file.
+
+TIMERFD.CLOCKID <``string``>::
+Clockid.
+
+TIMERFD.INTERVAL <``number``>::
+Interval.
+
+TIMERFD.REMAINING <``number``>::
+Remaining time.
 
 TYPE <``string``>::
 Cooked version of STTYPE. It is same as STTYPE with exceptions.
@@ -404,25 +416,25 @@ For UNKN, print the value for AINODECLASS if SOURCE is anon_inodefs.
 UDP.LADDR <``string``>::
 Local IP address and local UDP port.
 
-UDP.LPORT <``integer``>::
+UDP.LPORT <``number``>::
 Local UDP port.
 
 UDP.RADDR <``string``>::
 Remote IP address and remote UDP port.
 
-UDP.RPORT <``integer``>::
+UDP.RPORT <``number``>::
 Remote UDP port.
 
 UDPLITE.LADDR <``string``>::
 Local IP address and local UDPLite port.
 
-UDPLITE.LPORT <``integer``>::
+UDPLITE.LPORT <``number``>::
 Local UDP port.
 
 UDPLITE.RADDR <``string``>::
 Remote IP address and remote UDPLite port.
 
-UDPLITE.RPORT <``integer``>::
+UDPLITE.RPORT <``number``>::
 Remote UDP port.
 
 UID <``number``>::
@@ -491,7 +503,7 @@ operators.  Use `(` and `)` explicitly for grouping the
 sub-expressions if your expression uses more than two operators.
 
 About `number` typed values, the filter engine supports only
-non-negative integers.
+non-negative integers, and non-negative floating point numbers.
 
 === Semi-formal syntax
 
@@ -516,7 +528,11 @@ CHARS  :: ( [^\] | _\\_ | _\'_ | _\"_ )*
 
 STRLIT :: _'_ CHARS _'_ | _"_ CHARS _"_
 
-NUMLIT :: [1-9][0-9]* | _0_
+NUMLIT :: INTLIT | FNUMLIT
+
+INTLIT :: [1-9][0-9]* | _0_
+
+FNUMLIT :: INTLIT _._ [0-9][0-9]*
 
 BOOLOP2 :: STREXP OP2 STREXP | NUMEXP OP2 NUMEXP | BOOLEXP0 OP2 BOOLEXP0
 
@@ -624,6 +640,11 @@ List files opened in a QEMU virtual machine: ::
 Hide files associated to kernel threads: ::
 ....
 # lsfd -Q '!KTHREAD'
+....
+
+List timerfd files expired within 0.5 seconds: ::
+....
+# lsfd -Q '(TIMERFD.remaining < 0.5) and (TIMERFD.remaining > 0.0)'
 ....
 
 == COUNTER EXAMPLES

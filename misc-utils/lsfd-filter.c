@@ -31,7 +31,8 @@
 enum token_type {
 	TOKEN_NAME,		/* [A-Za-z_][-_:%.A-Za-z0-9]* */
 	TOKEN_STR,		/* "...", '...' */
-	TOKEN_DEC,		/* [1-9][0-9]+, NOTE: negative value is no dealt. */
+	TOKEN_DEC,		/* [1-9][0-9]+, NOTE: negative value has not handled. */
+	TOKEN_FDEC,		/* [1-9][0-9]+\.[0-9]+ */
 	TOKEN_HEX,		/* 0x[0-9a-f]+ not implemented */
 	TOKEN_OCT,		/* 0[1-7]+ not implemented */
 	TOKEN_TRUE,		/* true */
@@ -65,6 +66,7 @@ struct token {
 	union {
 		char *str;
 		unsigned long long num;
+		long double fnum;
 		enum op1_type op1;
 		enum op2_type op2;
 	} val;
@@ -79,9 +81,11 @@ struct token_class {
 struct parameter {
 	struct libscols_column *cl;
 	bool has_value;
+	bool floating_point_num;
 	union {
 		const char *str;
 		unsigned long long num;
+		long double fnum;
 		bool boolean;
 	} val;
 };
@@ -101,6 +105,7 @@ struct parser {
 enum node_type {
 	NODE_STR,
 	NODE_NUM,
+	NODE_FNUM,
 	NODE_BOOL,
 	NODE_RE,
 	NODE_OP1,
@@ -135,6 +140,7 @@ struct node_val {
 	union {
 		char *str;
 		unsigned long long num;
+		long double fnum;
 		bool boolean;
 		regex_t re;
 	} val;
@@ -184,6 +190,7 @@ static void token_free_str(struct token *);
 
 static void token_dump_str(struct token *, FILE *);
 static void token_dump_num(struct token *, FILE *);
+static void token_dump_fnum(struct token *, FILE *);
 static void token_dump_op1(struct token *, FILE *);
 static void token_dump_op2(struct token *, FILE *);
 
@@ -213,6 +220,7 @@ static void node_op2_free(struct node *);
 
 static void node_str_dump (struct node *, struct parameter*, int, FILE *);
 static void node_num_dump (struct node *, struct parameter*, int, FILE *);
+static void node_fnum_dump (struct node *, struct parameter*, int, FILE *);
 static void node_bool_dump(struct node *, struct parameter*, int, FILE *);
 static void node_re_dump  (struct node *, struct parameter*, int, FILE *);
 static void node_op1_dump (struct node *, struct parameter*, int, FILE *);
@@ -238,6 +246,10 @@ static const struct token_class token_classes [] = {
 	[TOKEN_DEC] = {
 		.name = "DEC",
 		.dump = token_dump_num,
+	},
+	[TOKEN_FDEC] = {
+		.name = "FDEC",
+		.dump = token_dump_fnum,
 	},
 	[TOKEN_TRUE] = {
 		.name = "true",
@@ -337,6 +349,10 @@ static const struct node_class node_classes[] = {
 	[NODE_NUM] = {
 		.name = "NUM",
 		.dump = node_num_dump,
+	},
+	[NODE_FNUM] = {
+		.name = "FNUM",
+		.dump = node_fnum_dump,
 	},
 	[NODE_BOOL] = {
 		.name = "BOOL",
@@ -466,24 +482,45 @@ static void parser_read_name(struct parser *parser, struct token *token)
 static int parser_read_dec(struct parser *parser, struct token *token)
 {
 	int rc = 0;
+	int found_point = 0;
 	while (1) {
 		char c = parser_getc(parser);
 		if (c == '\0')
 			break;
-		if (isdigit((unsigned char)c)) {
+		if (isdigit((unsigned char)c)
+		    || (found_point == 0 && c == '.')) {
 			xstrputc(&token->val.str, c);
+			if (c == '.')
+				found_point++;
 			continue;
 		}
 		parser_ungetc(parser, c);
 		break;
 	}
 
+	char *endptr = NULL;
 	errno = 0;
-	unsigned long long num = strtoull(token->val.str, NULL, 10);
+	unsigned long long num = strtoull(token->val.str, &endptr, 10);
 	rc = errno;
-	free(token->val.str);
-	token->val.num = num;
-	return rc;
+	if (rc)
+		return rc;
+
+	if (endptr && *endptr == '.') {
+		errno = 0;
+		long double fnum = strtold(endptr, NULL);
+		rc = errno;
+		if (rc)
+			return rc;
+		free(token->val.str);
+		token->type = TOKEN_FDEC;
+		token->val.fnum = ((long double)num) + fnum;
+	} else {
+		free(token->val.str);
+		token->type = TOKEN_DEC;
+		token->val.num = num;
+	}
+
+	return 0;
 }
 
 static struct token *parser_read(struct parser *parser)
@@ -634,11 +671,13 @@ static struct token *parser_read(struct parser *parser)
 				t->type = TOKEN_NAME;
 			break;
 		} else if (isdigit((unsigned char)c)) {
-			t->type = TOKEN_DEC;
 			xstrputc(&t->val.str, c);
-			if (parser_read_dec(parser, t) != 0)
+			if (parser_read_dec(parser, t) != 0) {
 				snprintf(parser->errmsg, sizeof(parser->errmsg),
-					 _("error: failed to convert input to number"));
+					 _("error: failed to convert input to number: %s"),
+					 t->val.str);
+				free(t->val.str);
+			}
 			break;
 		}
 		snprintf(parser->errmsg, sizeof(parser->errmsg),
@@ -652,6 +691,7 @@ static void parameter_init(struct parameter *param, struct libscols_column *cl)
 {
 	param->cl = cl;
 	param->has_value = false;
+	param->floating_point_num = false;
 }
 
 static struct libscols_column *search_column(struct libscols_table *tb, const char *name)
@@ -692,6 +732,7 @@ static struct node *dparser_compile1(struct parser *parser, struct node *last)
 		case TOKEN_NAME:
 		case TOKEN_STR:
 		case TOKEN_DEC:
+		case TOKEN_FDEC:
 		case TOKEN_TRUE:
 		case TOKEN_FALSE:
 		case TOKEN_OPEN:
@@ -774,6 +815,11 @@ static struct node *dparser_compile1(struct parser *parser, struct node *last)
 	case TOKEN_DEC:
 		node = node_val_new(NODE_NUM, -1);
 		VAL(node, num) = t->val.num;
+		token_free(t);
+		return node;
+	case TOKEN_FDEC:
+		node = node_val_new(NODE_FNUM, -1);
+		VAL(node, fnum) = t->val.fnum;
 		token_free(t);
 		return node;
 
@@ -916,6 +962,11 @@ static void token_dump_num(struct token *token, FILE *stream)
 	fprintf(stream, "%llu", token->val.num);
 }
 
+static void token_dump_fnum(struct token *token, FILE *stream)
+{
+	fprintf(stream, "%Lf", token->val.fnum);
+}
+
 static void token_dump_op1(struct token *token, FILE *stream)
 {
 	fputs(TOKEN_OP1_CLASS(token)->name, stream);
@@ -1007,6 +1058,14 @@ static void node_num_dump(struct node *node, struct parameter* params, int depth
 		fprintf(stream, ": %llu\n", VAL(node,num));
 }
 
+static void node_fnum_dump(struct node *node, struct parameter* params, int depth __attribute__((__unused__)), FILE *stream)
+{
+	if (PINDEX(node) >= 0)
+		fprintf(stream, ": |%s|\n", scols_column_get_name(params[PINDEX(node)].cl));
+	else
+		fprintf(stream, ": %Lf\n", VAL(node,fnum));
+}
+
 static void node_bool_dump(struct node *node, struct parameter* params, int depth __attribute__((__unused__)), FILE *stream)
 {
 	if (PINDEX(node) >= 0)
@@ -1096,20 +1155,69 @@ static bool op1_check_type_bool_or_op(struct parser* parser, const struct op1_cl
 	}								\
 } while(0)
 
+struct compnum {
+	bool floating_point_num;
+	union {
+		unsigned long long v;
+		long double fv;
+	};
+};
+
 #define OP2_GET_NUM(NODE,DEST) do {					\
 	int pindex = PINDEX(NODE);					\
-	if (pindex < 0)							\
-		DEST = VAL(NODE,num);					\
-	else {								\
+	if (pindex < 0) {						\
+		if (NODE->type == NODE_NUM) {				\
+			DEST.v = VAL(NODE,num);				\
+			DEST.floating_point_num = false;		\
+		} else {						\
+			DEST.fv = VAL(NODE,fnum);			\
+			DEST.floating_point_num = true;			\
+		}							\
+	} else {							\
 		struct parameter *p = params + pindex;			\
 		if (!p->has_value) {					\
+			unsigned long long val;				\
+			char *endptr = NULL;				\
 			const char *tmp = scols_line_get_column_data(ln, p->cl); \
 			if (tmp == NULL) return false;			\
-			p->val.num = strtoull(tmp, NULL, 10);		\
+			val = strtoull(tmp, &endptr, 10);		\
+			if (endptr && endptr[0] == '.')	{		\
+				long double fval = strtold(endptr, NULL); \
+				if (fval != 0.0) {			\
+					p->val.fnum = val + fval;	\
+					p->floating_point_num = true;	\
+				} else {				\
+					p->val.num = val;		\
+					p->floating_point_num = false;	\
+				}					\
+			} else {					\
+				p->val.num = val;			\
+				p->floating_point_num = false;		\
+			}						\
 			p->has_value = true;				\
 		}							\
-		DEST = p->val.num;					\
+		if (p->floating_point_num) {				\
+			DEST.fv = p->val.fnum;				\
+			DEST.floating_point_num = true;			\
+		} else {						\
+			DEST.v = p->val.num;				\
+			DEST.floating_point_num = false;		\
+		}							\
 	}								\
+} while(0)
+
+#define OP2_NUM_CMP_BODY(OP) do {					\
+	struct compnum lv, rv;						\
+	OP2_GET_NUM(left,lv);						\
+	OP2_GET_NUM(right,rv);						\
+	if (lv.floating_point_num && rv.floating_point_num)		\
+		return lv.fv OP rv.fv;					\
+	else if (! (lv.floating_point_num || rv.floating_point_num))	\
+		return lv.v OP rv.v;					\
+	else if (lv.floating_point_num)					\
+		return lv.fv OP ((long double)rv.v);			\
+	else								\
+		return ((long double)lv.v) OP rv.fv;			\
 } while(0)
 
 #define OP2_EQ_BODY(OP,ELSEVAL) do {					\
@@ -1118,22 +1226,13 @@ static bool op1_check_type_bool_or_op(struct parser* parser, const struct op1_cl
 		OP2_GET_STR(left,lv);					\
 		OP2_GET_STR(right,rv);					\
 		return strcmp(lv, rv) OP 0;				\
-	} else if (left->type == NODE_NUM) {				\
-		unsigned long long lv, rv;				\
-		OP2_GET_NUM(left,lv);					\
-		OP2_GET_NUM(right,rv);					\
-		return lv OP rv;					\
+	} else if (left->type == NODE_NUM || left->type == NODE_FNUM) {	\
+		OP2_NUM_CMP_BODY(OP);					\
 	} else {							\
 		return node_apply(left, params, ln) OP node_apply(right, params, ln); \
 	}								\
 } while(0)
 
-#define OP2_CMP_BODY(OP) do {		\
-	unsigned long long lv, rv;	\
-	OP2_GET_NUM(left,lv);		\
-	OP2_GET_NUM(right,rv);		\
-	return (lv OP rv);		\
-} while(0)
 static bool op2_eq(struct node *left, struct node *right, struct parameter *params, struct libscols_line *ln)
 {
 	OP2_EQ_BODY(==, false);
@@ -1156,22 +1255,22 @@ static bool op2_or(struct node *left, struct node *right, struct parameter *para
 
 static bool op2_lt(struct node *left, struct node *right, struct parameter *params, struct libscols_line *ln)
 {
-	OP2_CMP_BODY(<);
+	OP2_NUM_CMP_BODY(<);
 }
 
 static bool op2_le(struct node *left, struct node *right, struct parameter *params, struct libscols_line *ln)
 {
-	OP2_CMP_BODY(<=);
+	OP2_NUM_CMP_BODY(<=);
 }
 
 static bool op2_gt(struct node *left, struct node *right, struct parameter *params, struct libscols_line *ln)
 {
-	OP2_CMP_BODY(>);
+	OP2_NUM_CMP_BODY(>);
 }
 
 static bool op2_ge(struct node *left, struct node *right, struct parameter *params, struct libscols_line *ln)
 {
-	OP2_CMP_BODY(>=);
+	OP2_NUM_CMP_BODY(>=);
 }
 
 static bool op2_re_match(struct node *left, struct node *right,
@@ -1220,6 +1319,9 @@ static bool op2_check_type_eq_or_bool_or_op(struct parser* parser, const struct 
 
 	if (lt == rt)
 		return true;
+	else if ((lt == NODE_NUM && rt == NODE_FNUM)
+		 || (lt == NODE_FNUM && rt == NODE_NUM))
+		return true;
 
 	return op2_check_type_boolean_or_op(parser, op2_class, left, right);
 }
@@ -1227,7 +1329,7 @@ static bool op2_check_type_eq_or_bool_or_op(struct parser* parser, const struct 
 static bool op2_check_type_num(struct parser* parser, const struct op2_class *op2_class,
 			       struct node *left, struct node *right)
 {
-	if (left->type != NODE_NUM) {
+	if (left->type != NODE_NUM && left->type != NODE_FNUM) {
 		snprintf(parser->errmsg, sizeof(parser->errmsg),
 			 _("error: unexpected left operand type %s for: %s"),
 			 NODE_CLASS(left)->name,
@@ -1235,7 +1337,7 @@ static bool op2_check_type_num(struct parser* parser, const struct op2_class *op
 		return false;
 	}
 
-	if (right->type != NODE_NUM) {
+	if (right->type != NODE_NUM && right->type != NODE_FNUM) {
 		snprintf(parser->errmsg, sizeof(parser->errmsg),
 			 _("error: unexpected right operand type %s for: %s"),
 			 NODE_CLASS(right)->name,
@@ -1328,6 +1430,7 @@ struct lsfd_filter *lsfd_filter_new(const char *const expr, struct libscols_tabl
 		return filter;
 	}
 	if (node->type == NODE_STR || node->type == NODE_NUM) {
+		/* FNUM like 3.14 is not considered as a bool expression. */
 		node_free(node);
 		snprintf(filter->errmsg, sizeof(filter->errmsg),
 			 _("error: bool expression is expected: %s"), expr);
@@ -1398,8 +1501,10 @@ bool lsfd_filter_apply(struct lsfd_filter *filter, struct libscols_line * ln)
 	if (GOT_ERROR(filter))
 		return false;
 
-	for (i = 0; i < filter->nparams; i++)
+	for (i = 0; i < filter->nparams; i++) {
 		filter->parameters[i].has_value = false;
+		filter->parameters[i].floating_point_num = false;
+	}
 
 	return node_apply(filter->node, filter->parameters, ln);
 }
