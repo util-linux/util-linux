@@ -16,6 +16,7 @@
  */
 
 #include "mountP.h"
+#include <sys/syscall.h>
 
 /* mount(2) flags for additional propagation changes etc. */
 struct hook_data {
@@ -63,7 +64,7 @@ static int hook_propagation(struct libmnt_context *cxt,
 
 	if (mnt_context_is_fake(cxt)) {
 		DBG(CXT, ul_debugobj(cxt, "  FAKE (-f)"));
-		cxt->syscall_status = 0;
+		mnt_context_save_success(cxt);
 		return 0;
 	}
 
@@ -82,10 +83,8 @@ static int hook_propagation(struct libmnt_context *cxt,
 
 	if (rc) {
 		/* Update global syscall status if only this function called */
-		if (mnt_context_propagation_only(cxt)) {
-			cxt->syscall_status = -errno;
-			cxt->syscall_name = "mount";
-		}
+		if (mnt_context_propagation_only(cxt))
+			mnt_context_save_failure(cxt, hs, SYS_mount, errno, 0, NULL);
 
 		DBG(HOOK, ul_debugobj(hs, "  mount(2) failed [errno=%d %m]", errno));
 		rc = -MNT_ERR_APPLYFLAGS;
@@ -158,7 +157,7 @@ static int hook_bindremount(struct libmnt_context *cxt,
 
 	if (mnt_context_is_fake(cxt)) {
 		DBG(CXT, ul_debugobj(cxt, "  FAKE (-f)"));
-		cxt->syscall_status = 0;
+		mnt_context_save_success(cxt);
 		return 0;
 	}
 
@@ -253,20 +252,19 @@ static int hook_mount(struct libmnt_context *cxt,
 
 	if (mnt_context_is_fake(cxt)) {
 		DBG(HOOK, ul_debugobj(hs, " FAKE (-f)"));
-		cxt->syscall_status = 0;
+		mnt_context_save_success(cxt);
 		return 0;
 	}
 
 	if (mount(src, target, type, flags, options)) {
-		cxt->syscall_status = -errno;
-		cxt->syscall_name = "mount";
+		mnt_context_save_failure(cxt, hs, SYS_mount, errno, 0, NULL);
 		DBG(HOOK, ul_debugobj(hs, "  mount(2) failed [errno=%d %m]",
 					-cxt->syscall_status));
 		rc = -cxt->syscall_status;
 		return rc;
 	}
 
-	cxt->syscall_status = 0;
+	mnt_context_save_success(cxt);
 	return rc;
 }
 

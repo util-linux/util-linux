@@ -508,7 +508,7 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
-	mnt_context_reset_status(cxt);
+	mnt_context_reset_failure(cxt);
 
 	if (try_type) {
 		rc = mnt_context_prepare_helper(cxt, "mount", try_type);
@@ -749,6 +749,7 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
 	if (cxt->flags & MNT_FL_PREPARED)
 		return 0;
 
+	/* make sure not nothing executed yet */
 	assert(cxt->helper_exec_status == 1);
 	assert(cxt->syscall_status == 1);
 
@@ -1039,7 +1040,7 @@ again:
 			assert(!(cxt->flags & MNT_FL_FORCED_RDONLY));
 			DBG(CXT, ul_debugobj(cxt, "write-protected source, trying RDONLY."));
 
-			mnt_context_reset_status(cxt);
+			mnt_context_reset_failure(cxt);
 			mnt_context_set_mflags(cxt, mflags | MS_RDONLY);
 			cxt->flags |= MNT_FL_FORCED_RDONLY;
 			goto again;
@@ -1722,8 +1723,7 @@ int mnt_context_get_mount_excode(
 	generic_error:
 		if (buf) {
 			errno = syserr;
-			snprintf(buf, bufsz, _("%s system call failed: %m"),
-					cxt->syscall_name ? : "mount");
+			snprintf(buf, bufsz, _("mount failed: %m"));
 		}
 		break;
 	}

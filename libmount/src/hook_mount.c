@@ -129,7 +129,11 @@ static inline int fsconfig_set_value(
 	else
 		rc = fsconfig(fd, FSCONFIG_SET_FLAG, name, NULL, 0);
 
-	set_syscall_status(cxt, "fsconfig", rc == 0);
+	if (rc)
+		mnt_context_save_failure(cxt, hs,
+				SYS_fsconfig, errno,
+				value ? FSCONFIG_SET_STRING : FSCONFIG_SET_FLAG,
+				name);
 	return rc;
 }
 
@@ -176,6 +180,7 @@ done:
 }
 
 static int open_fs_configuration_context(struct libmnt_context *cxt,
+					 const struct libmnt_hookset *hs,
 					 struct libmnt_sysapi *api,
 					 const char *type)
 {
@@ -187,14 +192,17 @@ static int open_fs_configuration_context(struct libmnt_context *cxt,
 	DBG(HOOK, ul_debug(" fsopen(%s)", type));
 
 	api->fd_fs = fsopen(type, FSOPEN_CLOEXEC);
-	set_syscall_status(cxt, "fsopen", api->fd_fs >= 0);
-	if (api->fd_fs < 0)
+	if (api->fd_fs < 0) {
+		mnt_context_save_failure(cxt, hs, SYS_fsopen, errno, 0, type);
 		return -errno;
+	}
 	api->is_new_fs = 1;
 	return api->fd_fs;
 }
 
-static int open_mount_tree(struct libmnt_context *cxt, const char *path, unsigned long mflg)
+static int open_mount_tree(struct libmnt_context *cxt,
+			   const struct libmnt_hookset *hs,
+			   const char *path, unsigned long mflg)
 {
 	unsigned long oflg = OPEN_TREE_CLOEXEC;
 	int rc = 0, fd = -1;
@@ -226,7 +234,9 @@ static int open_mount_tree(struct libmnt_context *cxt, const char *path, unsigne
 				oflg & OPEN_TREE_CLONE ? " clone" : "",
 				oflg & AT_RECURSIVE ? " recursive" : ""));
 	fd = open_tree(AT_FDCWD, path, oflg);
-	set_syscall_status(cxt, "open_tree", fd >= 0);
+
+	if (fd < 0)
+		mnt_context_save_failure(cxt, hs, SYS_open_tree, errno, 0, path);
 
 	return fd;
 }
@@ -252,7 +262,7 @@ static int hook_create_mount(struct libmnt_context *cxt,
 	if (api->fd_fs < 0) {
 		const char *type = mnt_fs_get_fstype(cxt->fs);
 
-		rc = open_fs_configuration_context(cxt, api, type);
+		rc = open_fs_configuration_context(cxt, hs, api, type);
 		if (rc < 0) {
 			rc = api->fd_fs;
 			goto done;
@@ -266,21 +276,26 @@ static int hook_create_mount(struct libmnt_context *cxt,
 	DBG(HOOK, ul_debugobj(hs, "init FS"));
 
 	rc = fsconfig(api->fd_fs, FSCONFIG_SET_STRING, "source", src, 0);
-	set_syscall_status(cxt, "fsconfig", rc == 0);
+	if (rc)
+		mnt_context_save_failure(cxt, hs, SYS_fsconfig, errno,
+				FSCONFIG_SET_STRING, "source");
 
 	if (!rc)
 		rc = configure_superblock(cxt, hs, api->fd_fs, 0);
 	if (!rc) {
 		DBG(HOOK, ul_debugobj(hs, "create FS"));
 		rc = fsconfig(api->fd_fs, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-		set_syscall_status(cxt, "fsconfig", rc == 0);
+		if (rc)
+			mnt_context_save_failure(cxt, hs, SYS_fsconfig, errno,
+					FSCONFIG_CMD_CREATE, NULL);
 	}
 
 	if (!rc) {
 		api->fd_tree = fsmount(api->fd_fs, FSMOUNT_CLOEXEC, 0);
-		set_syscall_status(cxt, "fsmount", api->fd_tree >= 0);
-		if (api->fd_tree < 0)
+		if (api->fd_tree < 0) {
+			mnt_context_save_failure(cxt, hs, SYS_fsmount, errno, 0, NULL);
 			rc = -errno;
+		}
 	}
 
 	if (rc)
@@ -301,6 +316,9 @@ static int hook_create_mount(struct libmnt_context *cxt,
 	}
 
 done:
+	if (!rc)
+		mnt_context_save_success(cxt);
+
 	DBG(HOOK, ul_debugobj(hs, "create FS done [rc=%d, id=%d]", rc, cxt->fs ? cxt->fs->id : -1));
 	return rc;
 }
@@ -324,17 +342,23 @@ static int hook_reconfigure_mount(struct libmnt_context *cxt,
 	if (api->fd_fs < 0) {
 		api->fd_fs = fspick(api->fd_tree, "", FSPICK_EMPTY_PATH |
 						      FSPICK_NO_AUTOMOUNT);
-		set_syscall_status(cxt, "fspick", api->fd_fs >= 0);
-		if (api->fd_fs < 0)
+		if (api->fd_fs < 0) {
+			mnt_context_save_failure(cxt, hs, SYS_fspick, errno, 0, NULL);
 			return -errno;
+		}
 	}
 
 	rc = configure_superblock(cxt, hs, api->fd_fs, 1);
 	if (!rc) {
 		DBG(HOOK, ul_debugobj(hs, "re-configurate FS"));
 		rc = fsconfig(api->fd_fs, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0);
-		set_syscall_status(cxt, "fsconfig", rc == 0);
+		if (rc)
+			mnt_context_save_failure(cxt, hs, SYS_fsconfig, errno,
+					FSCONFIG_CMD_RECONFIGURE, NULL);
 	}
+
+	if (!rc)
+		mnt_context_save_success(cxt);
 
 	DBG(HOOK, ul_debugobj(hs, "reconf FS done [rc=%d]", rc));
 	return rc;
@@ -355,7 +379,7 @@ static int set_vfsflags(struct libmnt_context *cxt,
 	/* fallback only; necessary when init_sysapi() during preparation
 	 * cannot open the tree -- for example when we call /sbin/mount.<type> */
 	if (api->fd_tree < 0 && mnt_fs_get_target(cxt->fs)) {
-		rc = api->fd_tree = open_mount_tree(cxt, NULL, (unsigned long) -1);
+		rc = api->fd_tree = open_mount_tree(cxt, hs, NULL, (unsigned long) -1);
 		if (rc < 0)
 			return rc;
 		rc = 0;
@@ -371,11 +395,13 @@ static int set_vfsflags(struct libmnt_context *cxt,
 
 	errno = 0;
 	rc = mount_setattr(api->fd_tree, "", callflags, &attr, sizeof(attr));
-	set_syscall_status(cxt, "mount_setattr", rc == 0);
+	if (rc)
+		mnt_context_save_failure(cxt, hs, SYS_mount_setattr, errno, 0, NULL);
+	else
+		mnt_context_save_success(cxt);
 
 	if (rc && errno == EINVAL)
 		return -MNT_ERR_APPLYFLAGS;
-
 	return rc == 0 ? 0 : -errno;
 }
 
@@ -408,6 +434,8 @@ static int hook_set_vfsflags(struct libmnt_context *cxt,
 	if (!rc && (set || clr))
 		rc = set_vfsflags(cxt, hs, set, clr, 1);
 
+	if (!rc)
+		mnt_context_save_success(cxt);
 	return rc;
 }
 
@@ -433,7 +461,7 @@ static int hook_set_propagation(struct libmnt_context *cxt,
 	/* fallback only; necessary when init_sysapi() during preparation
 	 * cannot open the tree -- for example when we call /sbin/mount.<type> */
 	if (api->fd_tree < 0 && mnt_fs_get_target(cxt->fs)) {
-		rc = api->fd_tree = open_mount_tree(cxt, NULL, (unsigned long) -1);
+		rc = api->fd_tree = open_mount_tree(cxt, hs, NULL, (unsigned long) -1);
 		if (rc < 0)
 			goto done;
 		rc = 0;
@@ -463,7 +491,9 @@ static int hook_set_propagation(struct libmnt_context *cxt,
 			(uint64_t) attr.propagation));
 
 		rc = mount_setattr(api->fd_tree, "", flgs, &attr, sizeof(attr));
-		set_syscall_status(cxt, "move_setattr", rc == 0);
+		if (rc)
+			mnt_context_save_failure(cxt, hs, SYS_mount_setattr, errno,
+					attr.propagation, NULL);
 
 		if (rc && errno == EINVAL)
 			return -MNT_ERR_APPLYFLAGS;
@@ -471,6 +501,9 @@ static int hook_set_propagation(struct libmnt_context *cxt,
 			break;
 	}
 done:
+	if (!rc)
+		mnt_context_save_success(cxt);
+
 	return rc == 0 ? 0 : -errno;
 }
 
@@ -505,7 +538,10 @@ static int hook_attach_target(struct libmnt_context *cxt,
 	}
 
 	rc = move_mount(api->fd_tree, "", AT_FDCWD, target, MOVE_MOUNT_F_EMPTY_PATH);
-	set_syscall_status(cxt, "move_mount", rc == 0);
+	if (rc)
+		mnt_context_save_failure(cxt, hs, SYS_move_mount, errno, 0, target);
+	else
+		mnt_context_save_success(cxt);
 
 	return rc == 0 ? 0 : -errno;
 }
@@ -573,7 +609,7 @@ static int init_sysapi(struct libmnt_context *cxt,
 		goto fake;
 
 	if (path) {
-		api->fd_tree = open_mount_tree(cxt, path, flags);
+		api->fd_tree = open_mount_tree(cxt, hs, path, flags);
 		if (api->fd_tree < 0)
 			goto fail;
 
@@ -588,13 +624,13 @@ static int init_sysapi(struct libmnt_context *cxt,
 
 		/* fsopen() to create a superblock */
 		if (cxt->helper == NULL && type && !strchr(type, ','))
-			rc = open_fs_configuration_context(cxt, api, type);
+			rc = open_fs_configuration_context(cxt, hs, api, type);
 
 		/* dummy fsopen() to test if API is available */
 		else if (!fsopen_is_supported()) {
 			errno = ENOSYS;
 			rc = -errno;
-			set_syscall_status(cxt, "fsopen", rc == 0);
+			mnt_context_save_failure(cxt, hs, SYS_fsopen, ENOSYS, 0, NULL);
 		}
 		if (rc < 0)
 			goto fail;
@@ -729,13 +765,14 @@ static int hook_prepare(struct libmnt_context *cxt,
 	return rc;
 
 enosys:
-	/* we need to recover from this error, so hook_mount_legacy.c
+	/* we need to recover from this error (=return 1), so hook_mount_legacy.c
 	 * can try to continue */
 	DBG(HOOK, ul_debugobj(hs, "failed to init new API"));
-	reset_syscall_status(cxt);
+	mnt_context_reset_failure(cxt);
 	hookset_deinit(cxt, hs);
 	return 1;
 }
+
 
 const struct libmnt_hookset hookset_mount =
 {

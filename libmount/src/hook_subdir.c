@@ -16,6 +16,7 @@
  * Please, see the comment in libmount/src/hooks.c to understand how hooks work.
  */
 #include <sched.h>
+#include <sys/syscall.h>
 
 #include "mountP.h"
 #include "fileutils.h"
@@ -164,6 +165,7 @@ static int tmptgt_cleanup(struct hookset_data *hsd)
  */
 static int do_mount_subdir(
 			struct libmnt_context *cxt,
+			const struct libmnt_hookset *hs,
 			struct hookset_data *hsd,
 			const char *root,
 			const char *target)
@@ -189,9 +191,10 @@ static int do_mount_subdir(
 		DBG(HOOK, ul_debug("attach subdir  %s", subdir));
 		fd = open_tree(api->fd_tree, subdir,
 					OPEN_TREE_CLOEXEC | OPEN_TREE_CLONE);
-		set_syscall_status(cxt, "open_tree", fd >= 0);
-		if (fd < 0)
+		if (fd < 0) {
+			mnt_context_save_failure(cxt, hs, SYS_open_tree, errno, 0, subdir);
 			rc = -errno;
+		}
 
 		if (!rc) {
 			/* Note that the original parental namespace could be
@@ -201,9 +204,10 @@ static int do_mount_subdir(
 			setns(hsd->old_ns_fd, CLONE_NEWNS);
 
 			rc = move_mount(fd, "", AT_FDCWD, target, MOVE_MOUNT_F_EMPTY_PATH);
-			set_syscall_status(cxt, "move_mount", rc == 0);
-			if (rc)
+			if (rc) {
+				mnt_context_save_failure(cxt, hs, SYS_move_mount, errno, 0, NULL);
 				rc = -errno;
+			}
 
 			/* And move back to our private namespace to cleanup */
 			setns(hsd->new_ns_fd, CLONE_NEWNS);
@@ -223,19 +227,20 @@ static int do_mount_subdir(
 		/* Classic mount(2) based way */
 		DBG(HOOK, ul_debug("mount subdir %s to %s", src, target));
 		rc = mount(src, target, NULL, MS_BIND, NULL);
-
-		set_syscall_status(cxt, "mount", rc == 0);
-		if (rc)
+		if (rc) {
+			mnt_context_save_failure(cxt, hs, SYS_mount, errno, 0, NULL);
 			rc = -errno;
+		}
 		free(src);
 	}
 
 	if (!rc) {
 		DBG(HOOK, ul_debug("umount old root %s", root));
 		rc = umount(root);
-		set_syscall_status(cxt, "umount", rc == 0);
-		if (rc)
+		if (rc) {
+			mnt_context_save_failure(cxt, hs, SYS_umount2, errno, 0, NULL);
 			rc = -errno;
+		}
 		hsd->tmp_umounted = 1;
 
 	}
@@ -260,7 +265,7 @@ static int hook_mount_post(
 	mnt_fs_set_target(cxt->fs, hsd->org_target);
 
 	/* bind subdir to the real target, umount temporary target */
-	rc = do_mount_subdir(cxt, hsd,
+	rc = do_mount_subdir(cxt, hs, hsd,
 			MNT_PATH_TMPTGT,
 			mnt_fs_get_target(cxt->fs));
 	if (rc)
