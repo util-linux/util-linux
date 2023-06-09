@@ -348,6 +348,9 @@ static const struct colinfo infos[] = {
 	[COL_USER]             = { "USER",
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 				   N_("user of the process") },
+	[COL_XMODE]            = { "XMODE",
+				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
+				   N_("access mode and more (rwx)") },
 };
 
 static const int default_columns[] = {
@@ -355,7 +358,7 @@ static const int default_columns[] = {
 	COL_PID,
 	COL_USER,
 	COL_ASSOC,
-	COL_MODE,
+	COL_XMODE,
 	COL_TYPE,
 	COL_SOURCE,
 	COL_MNT_ID,
@@ -369,7 +372,7 @@ static const int default_threads_columns[] = {
 	COL_TID,
 	COL_USER,
 	COL_ASSOC,
-	COL_MODE,
+	COL_XMODE,
 	COL_TYPE,
 	COL_SOURCE,
 	COL_MNT_ID,

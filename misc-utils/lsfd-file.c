@@ -268,6 +268,18 @@ static bool file_fill_column(struct proc *proc,
 		else
 			xasprintf(&str, "---");
 		break;
+	case COL_XMODE: {
+		char r, w, x;
+		if (does_file_has_fdinfo_alike(file)) {
+			r = file->mode & S_IRUSR? 'r': '-';
+			w = file->mode & S_IWUSR? 'w': '-';
+			x = (is_mapped_file(file)
+			     && file->mode & S_IXUSR)? 'x': '-';
+		} else
+			r = w = x = '-';
+		xasprintf(&str, "%c%c%c", r, w, x);
+		break;
+	}
 	case COL_POS:
 		xasprintf(&str, "%" PRIu64,
 			  (does_file_has_fdinfo_alike(file))? file->pos: 0);

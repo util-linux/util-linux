@@ -464,6 +464,13 @@ Filesystem pathname for UNIX domain socket.
 USER <``string``>::
 User of the process.
 
+XMODE <``string``>::
+Extended version of _MODE_.
+Currently this column shows the same items as _MODE_.
+However, the column may grow; new letters may be added to
+_XMODE_ when *lsfd* supports a new state of file descriptors
+and/or memory mappings.
+
 == FILTER EXPRESSION
 
 *lsfd* evaluates the expression passed to *--filter* option every time
