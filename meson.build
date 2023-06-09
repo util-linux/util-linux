@@ -1013,6 +1013,7 @@ exe = executable(
   include_directories : includes,
   dependencies : [lib_crypt],
   install_dir : usrbin_exec_dir,
+  install_mode : 'rwsr-xr-x',
   install : opt,
   build_by_default : opt)
 if opt and not is_disabler(exe)
