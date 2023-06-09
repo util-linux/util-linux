@@ -47,12 +47,18 @@
 # 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_S390
 #elif __s390x__
 # 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_S390X
+#elif __PPC__
+#        define SECCOMP_ARCH_NATIVE AUDIT_ARCH_PPC
 #elif __PPC64__
 #    if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 # 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_PPC64
 #    else
 # 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_PPC64LE
 #    endif
+#elif __mips__
+#        define SECCOMP_ARCH_NATIVE AUDIT_ARCH_MIPS
+#elif __mips64__
+#        define SECCOMP_ARCH_NATIVE AUDIT_ARCH_MIPS64
 #else
 #    error Unknown target architecture
 #endif
