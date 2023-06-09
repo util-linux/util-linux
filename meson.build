@@ -1638,6 +1638,7 @@ exe2 = executable(
   include_directories : includes,
   link_with : [lib_common,
                lib_mount],
+  install_mode : 'rwsr-xr-x',
   install : opt,
   build_by_default : opt)
 if opt and not is_disabler(exe)
