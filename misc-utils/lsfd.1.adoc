@@ -194,6 +194,15 @@ Remote IP6 address.
 INODE <``number``>::
 Inode number.
 
+INOTIFY.INODES <``string``>::
+Cooked version of INOTIFY.INODES.RAW.
+The format of the element is
+_inode-number_,_source-of-inode_.
+
+INOTIFY.INODES.RAW <``string``>::
+List of monitoring inodes. The format of the element
+is _inode-number_,_device-major_:_device-minor_.
+
 KNAME <``string``>::
 //
 // It seems that the manpage backend of asciidoctor has limitations
@@ -234,6 +243,9 @@ tfds=_EVENTPOLL.TFDS_
 +
 eventfd:::
 id=_EVENTFD.ID_
++
+inotify:::
+iodes=_INOTIFY.INODES_
 +
 NETLINK:::
 protocol=_NETLINK.PROTOCOL_[ lport=_NETLINK.LPORT_[ group=_NETLINK.GROUPS_]]

@@ -810,6 +810,148 @@ static const struct anon_ops anon_signalfd_ops = {
 };
 
 /*
+ * inotify
+ */
+struct anon_inotify_data {
+	struct list_head inodes;
+};
+
+struct anon_inotify_inode {
+	ino_t ino;
+	dev_t sdev;
+	struct list_head inodes;
+};
+
+static bool anon_inotify_probe(const char *str)
+{
+	return strncmp(str, "inotify", 7) == 0;
+}
+
+/* A device number appeared in fdinfo of an inotify file uses the kernel
+ * internal representation. It is different from what we are familiar with;
+ * major(3) and minor(3) don't work with the representation.
+ * See linux/include/linux/kdev_t.h. */
+#define ANON_INOTIFY_MINORBITS	20
+#define ANON_INOTIFY_MINORMASK	((1U << ANON_INOTIFY_MINORBITS) - 1)
+
+#define ANON_INOTIFY_MAJOR(dev)	((unsigned int) ((dev) >> ANON_INOTIFY_MINORBITS))
+#define ANON_INOTIFY_MINOR(dev)	((unsigned int) ((dev) &  ANON_INOTIFY_MINORMASK))
+
+static char *anon_inotify_make_inodes_string(const char *prefix,
+					     enum decode_source_level decode_level,
+					     struct anon_inotify_data *data)
+{
+	char *str = NULL;
+	char buf[BUFSIZ] = {'\0'};
+	bool first_element = true;
+
+	struct list_head *i;
+	list_for_each(i, &data->inodes) {
+		char source[BUFSIZ/2] = {'\0'};
+		struct anon_inotify_inode *inode = list_entry(i,
+							      struct anon_inotify_inode,
+							      inodes);
+
+		decode_source(source, sizeof(source),
+			      ANON_INOTIFY_MAJOR(inode->sdev), ANON_INOTIFY_MINOR(inode->sdev),
+			      decode_level);
+		snprintf(buf, sizeof(buf), "%s%llu@%s", first_element? prefix: ",",
+			 (unsigned long long)inode->ino, source);
+		first_element = false;
+
+		xstrappend(&str, buf);
+	}
+
+	return str;
+}
+
+static char *anon_inotify_get_name(struct unkn *unkn)
+{
+	return anon_inotify_make_inodes_string("inodes=", DECODE_SOURCE_FULL,
+					       (struct anon_inotify_data *)unkn->anon_data);
+}
+
+static void anon_inotify_init(struct unkn *unkn)
+{
+	struct anon_inotify_data *data = xcalloc(1, sizeof(struct anon_inotify_data));
+	INIT_LIST_HEAD (&data->inodes);
+	unkn->anon_data = data;
+}
+
+static void anon_inotify_free(struct unkn *unkn)
+{
+	struct anon_inotify_data *data = unkn->anon_data;
+
+	list_free(&data->inodes, struct anon_inotify_inode, inodes,
+		  free);
+	free(data);
+}
+
+static void add_inode(struct anon_inotify_data *data, ino_t ino, dev_t sdev)
+{
+	struct anon_inotify_inode *inode = xmalloc(sizeof(*inode));
+
+	INIT_LIST_HEAD (&inode->inodes);
+	inode->ino = ino;
+	inode->sdev = sdev;
+
+	list_add_tail(&inode->inodes, &data->inodes);
+}
+
+static int anon_inotify_handle_fdinfo(struct unkn *unkn, const char *key, const char *value)
+{
+	struct anon_inotify_data *data = (struct anon_inotify_data *)unkn->anon_data;
+
+	if (strcmp(key, "inotify wd") == 0) {
+		unsigned long long ino;
+		unsigned long long sdev;
+
+		if (sscanf(value, "%*d ino:%llx sdev:%llx %*s", &ino, &sdev) == 2) {
+			add_inode(data, (ino_t)ino, (dev_t)sdev);
+			return 1;
+		}
+	}
+	return 0;
+}
+
+static bool anon_inotify_fill_column(struct proc *proc  __attribute__((__unused__)),
+				     struct unkn *unkn,
+				     struct libscols_line *ln __attribute__((__unused__)),
+				     int column_id,
+				     size_t column_index __attribute__((__unused__)),
+				     char **str)
+{
+	struct anon_inotify_data *data = (struct anon_inotify_data *)unkn->anon_data;
+
+	switch(column_id) {
+	case COL_INOTIFY_INODES:
+		*str = anon_inotify_make_inodes_string("", DECODE_SOURCE_FULL,
+						       data);
+		if (*str)
+			return true;
+		break;
+	case COL_INOTIFY_INODES_RAW:
+		*str = anon_inotify_make_inodes_string("", DECODE_SOURCE_MAJMIN,
+						       data);
+		if (*str)
+			return true;
+		break;
+	}
+
+	return false;
+}
+
+static const struct anon_ops anon_inotify_ops = {
+	.class = "inotify",
+	.probe = anon_inotify_probe,
+	.get_name = anon_inotify_get_name,
+	.fill_column = anon_inotify_fill_column,
+	.init = anon_inotify_init,
+	.free = anon_inotify_free,
+	.handle_fdinfo = anon_inotify_handle_fdinfo,
+};
+
+/*
  * generic (fallback implementation)
  */
 static const struct anon_ops anon_generic_ops = {
@@ -827,6 +969,7 @@ static const struct anon_ops *anon_ops[] = {
 	&anon_eventpoll_ops,
 	&anon_timerfd_ops,
 	&anon_signalfd_ops,
+	&anon_inotify_ops,
 };
 
 static const struct anon_ops *anon_probe(const char *str)
