@@ -694,21 +694,6 @@ static void parameter_init(struct parameter *param, struct libscols_column *cl)
 	param->floating_point_num = false;
 }
 
-static struct libscols_column *search_column(struct libscols_table *tb, const char *name)
-{
-	size_t len = scols_table_get_ncols(tb);
-	size_t i;
-
-	for (i = 0; i < len; i++) {
-		struct libscols_column *cl = scols_table_get_column(tb, i);
-		const char *n = scols_column_get_name(cl);
-
-		if (n && strcmp(n, name) == 0)
-			return cl;
-	}
-	return NULL;
-}
-
 static struct node *dparser_compile1(struct parser *parser, struct node *last)
 {
 	struct token *t = parser_read(parser);
@@ -770,7 +755,7 @@ static struct node *dparser_compile1(struct parser *parser, struct node *last)
 
 		}
 
-		struct libscols_column *cl = search_column(parser->tb, t->val.str);
+		struct libscols_column *cl = scols_table_get_column_by_name(parser->tb, t->val.str);
 		if (!cl) {
 			cl = parser->add_column_by_id(parser->tb, col_id, parser->data);
 			if (!cl) {
