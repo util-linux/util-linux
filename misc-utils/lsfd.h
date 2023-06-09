@@ -221,6 +221,21 @@ void init_endpoint(struct ipc_endpoint *endpoint);
 void add_endpoint(struct ipc_endpoint *endpoint, struct ipc *ipc);
 #define foreach_endpoint(E,ENDPOINT) list_for_each_backwardly(E, &((ENDPOINT).ipc->endpoints))
 
+enum decode_source_bit {
+	DECODE_SOURCE_MAJMIN_BIT    = 1 << 0,
+	DECODE_SOURCE_PARTITION_BIT = 1 << 1,
+	DECODE_SOURCE_FILESYS_BIT   = 1 << 2,
+};
+
+enum decode_source_level {
+	DECODE_SOURCE_MAJMIN    = DECODE_SOURCE_MAJMIN_BIT,
+	DECODE_SOURCE_PARTITION = DECODE_SOURCE_PARTITION_BIT | DECODE_SOURCE_MAJMIN,
+	DECODE_SOURCE_FILESYS   = DECODE_SOURCE_FILESYS_BIT   | DECODE_SOURCE_PARTITION,
+	DECODE_SOURCE_FULL      = DECODE_SOURCE_FILESYS,
+};
+
+void decode_source(char *buf, size_t bufsize, unsigned int dev_major, unsigned int dev_minor,
+		   enum decode_source_level level);
 /*
  * Name managing
  */
