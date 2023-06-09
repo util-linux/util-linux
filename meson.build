@@ -909,6 +909,7 @@ exe2 = executable(
   link_with : lib_common,
   dependencies : chfn_chsh_deps,
   install_dir : usrbin_exec_dir,
+  install_mode : 'rwsr-xr-x',
   install : opt,
   build_by_default : opt)
 if opt and not is_disabler(exe)
