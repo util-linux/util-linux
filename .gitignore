@@ -62,6 +62,7 @@ mkinstalldirs
 stamp-h
 stamp-h.in
 stamp-h1
+syscalls.h
 tags
 test-suite.log
 tests/run.sh.log
@@ -96,6 +97,7 @@ ylwrap
 /delpart
 /dmesg
 /eject
+/enosys
 /fadvise
 /fallocate
 /fdformat
