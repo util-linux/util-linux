@@ -996,6 +996,7 @@ exe = executable(
                   lib_pam_misc,
                   lib_util,
                   realtime_libs],
+  install_mode : 'rwsr-xr-x',
   install : opt,
   build_by_default : opt)
 if opt and not is_disabler(exe)
