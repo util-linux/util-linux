@@ -2409,6 +2409,7 @@ exe = executable(
   include_directories : includes,
   link_with : [lib_common],
   install_dir : usrbin_exec_dir,
+  install_mode : 'rwxr-sr-x',
   install : opt,
   build_by_default : opt)
 if opt
