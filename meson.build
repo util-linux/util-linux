@@ -1630,6 +1630,7 @@ exe = executable(
                lib_smartcols,
                lib_mount],
   dependencies : lib_selinux,
+  install_mode : 'rwsr-xr-x',
   install : opt,
   build_by_default : opt)
 exe2 = executable(
