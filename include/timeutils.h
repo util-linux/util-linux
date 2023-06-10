@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <inttypes.h>
 #include <sys/time.h>
+#include <stdbool.h>
 
 typedef uint64_t usec_t;
 typedef uint64_t nsec_t;
@@ -109,6 +110,11 @@ static inline struct timeval usec_to_timeval(usec_t t)
 		.tv_usec = t % USEC_PER_SEC,
 	};
 	return r;
+}
+
+static inline bool is_timespecset(const struct timespec *t)
+{
+	return t->tv_sec || t->tv_nsec;
 }
 
 #endif /* UTIL_LINUX_TIME_UTIL_H */

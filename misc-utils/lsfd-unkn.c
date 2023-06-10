@@ -22,6 +22,7 @@
 #include "xalloc.h"
 #include "nls.h"
 #include "libsmartcols.h"
+#include "timeutils.h"
 
 #include "lsfd.h"
 
@@ -616,11 +617,6 @@ static int anon_timerfd_handle_fdinfo(struct unkn *unkn, const char *key, const 
 	}
 }
 
-static bool is_zero_timespec(const struct timespec *t)
-{
-	return !t->tv_sec && !t->tv_nsec;
-}
-
 static const char *anon_timerfd_decode_clockid(int clockid)
 {
 	switch (clockid) {
@@ -663,12 +659,12 @@ static char *anon_timerfd_get_name(struct unkn *unkn)
 	clockid_name = anon_timerfd_decode_clockid(data->clockid);
 
 	exp = &data->itimerspec.it_value;
-	if (!is_zero_timespec(exp))
+	if (is_timespecset(exp))
 		anon_timerfd_render_timespec_string(exp_buf, sizeof(exp_buf),
 						    " remaining=", exp);
 
 	ival = &data->itimerspec.it_interval;
-	if (!is_zero_timespec(ival))
+	if (is_timespecset(ival))
 		anon_timerfd_render_timespec_string(ival_buf, sizeof(ival_buf),
 						    " interval=", ival);
 
