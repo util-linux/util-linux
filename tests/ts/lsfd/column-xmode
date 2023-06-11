@@ -115,4 +115,16 @@ else
     ts_finalize_subtest
 fi
 
+EXPR='(FD == '"$FD"')'
+ts_init_subtest "XMODE-D-bit"
+{
+    coproc MKFDS { "$TS_HELPER_MKFDS" make-regular-file $FD delete=1; }
+    if read -r -u "${MKFDS[0]}" PID; then
+	"${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
+	echo "XMODE(D-bit): " $?
+	kill -CONT "${PID}"
+    fi
+} > "$TS_OUTPUT" 2>&1
+ts_finalize_subtest
+
 ts_finalize

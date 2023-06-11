@@ -235,6 +235,13 @@ Access mode (rwx).
 
 NAME <``string``>::
 Cooked version of KNAME. It is mostly same as KNAME.
+
+____
+Note that `(deleted)` markers are removed from this column.
+Refer to _KNAME_, _DELETED_, or _XMODE_ to know the
+readability of the file from the file system.
+____
+
 +
 Some files have special formats and information sources:
 +
@@ -465,11 +472,21 @@ USER <``string``>::
 User of the process.
 
 XMODE <``string``>::
-Extended version of _MODE_.
-Currently this column shows the same items as _MODE_.
-However, the column may grow; new letters may be added to
-_XMODE_ when *lsfd* supports a new state of file descriptors
+Extended version of _MODE_. This column may grow; new letters may be
+added to _XMODE_ when *lsfd* supports a new state of file descriptors
 and/or memory mappings.
++
+[-r]:::
+opened of mapped for reading. This is also in _MODE_.
++
+[-w]:::
+opened of mapped for writing. This is also in _MODE_.
++
+[-x]:::
+mapped for executing the code. This is also in _MODE_.
++
+[-D]:::
+opened file is deleted from  the file system. See also _DELETED._.
 
 == FILTER EXPRESSION
 
