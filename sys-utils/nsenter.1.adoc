@@ -141,6 +141,9 @@ Do not fork before exec'ing the specified program. By default, when entering a P
 *-Z*, *--follow-context*::
 Set the SELinux security context used for executing a new process according to already running process specified by *--target* PID. (The util-linux has to be compiled with SELinux support otherwise the option is unavailable.)
 
+*-c*, *--join-cgroup*::
+Add the initiated process to the cgroup of the target process.
+
 include::man-common/help-version.adoc[]
 
 == NOTES

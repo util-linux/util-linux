@@ -30,6 +30,7 @@
 #include <sys/wait.h>
 #include <grp.h>
 #include <sys/stat.h>
+#include <sys/statfs.h>
 
 #include <sys/ioctl.h>
 #ifdef HAVE_LINUX_NSFS_H
@@ -54,6 +55,8 @@
 #include "all-io.h"
 #include "env.h"
 #include "caputils.h"
+#include "statfs_magic.h"
+#include "pathnames.h"
 
 static struct namespace_file {
 	int nstype;
@@ -111,6 +114,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -W, --wdns <dir>       set the working directory in namespace\n"), out);
 	fputs(_(" -e, --env              inherit environment variables from target process\n"), out);
 	fputs(_(" -F, --no-fork          do not fork before exec'ing <program>\n"), out);
+	fputs(_(" -c, --join-cgroup      join the cgroup of the target process\n"), out);
 #ifdef HAVE_LIBSELINUX
 	fputs(_(" -Z, --follow-context   set SELinux context according to --target PID\n"), out);
 #endif
@@ -127,6 +131,7 @@ static int root_fd = -1;
 static int wd_fd = -1;
 static int env_fd = -1;
 static int uid_gid_fd = -1;
+static int cgroup_procs_fd = -1;
 
 static void set_parent_user_ns_fd(void)
 {
@@ -200,6 +205,50 @@ static int get_ns_ino(const char *path, ino_t *ino)
 		return -errno;
 	*ino = st.st_ino;
 	return 0;
+}
+
+static void open_cgroup_procs(void)
+{
+	char *buf = NULL, *path = NULL;
+	int cgroup_fd;
+	char fdpath[PATH_MAX];
+
+	open_target_fd(&cgroup_fd, "cgroup", optarg);
+
+	if (read_all_alloc(cgroup_fd, &buf) < 1)
+		err(EXIT_FAILURE, _("failed to get cgroup path"));
+
+	path = strrchr(strtok(buf, "\n"), ':');
+	if (!path)
+		err(EXIT_FAILURE, _("failed to get cgroup path"));
+	path++;
+
+	snprintf(fdpath, sizeof(fdpath), _PATH_SYS_CGROUP "/%s/cgroup.procs", path);
+	if ((cgroup_procs_fd = open(fdpath, O_WRONLY | O_APPEND)) < 0)
+		err(EXIT_FAILURE, _("failed to open cgroup.procs"));
+}
+
+static int is_cgroup2(void)
+{
+	struct statfs fs_stat;
+	int rc;
+
+	rc = statfs(_PATH_SYS_CGROUP, &fs_stat);
+	if (rc)
+		err(EXIT_FAILURE, _("statfs %s failed"), _PATH_SYS_CGROUP);
+	return F_TYPE_EQUAL(fs_stat.f_type, STATFS_CGROUP2_MAGIC);
+}
+
+static void join_into_cgroup(void)
+{
+	pid_t pid;
+	char buf[ sizeof(stringify_value(UINT32_MAX)) ];
+	int len;
+
+	pid = getpid();
+	len = snprintf(buf, sizeof(buf), "%zu", (size_t) pid);
+	if (write_all(cgroup_procs_fd, buf, len))
+		err(EXIT_FAILURE, _("write cgroup.procs failed"));
 }
 
 static int is_usable_namespace(pid_t target, const struct namespace_file *nsfile)
@@ -294,6 +343,7 @@ int main(int argc, char *argv[])
 		{ "wdns", optional_argument, NULL, 'W' },
 		{ "env", no_argument, NULL, 'e' },
 		{ "no-fork", no_argument, NULL, 'F' },
+		{ "join-cgroup", no_argument, NULL, 'c'},
 		{ "preserve-credentials", no_argument, NULL, OPT_PRESERVE_CRED },
 		{ "keep-caps", no_argument, NULL, OPT_KEEPCAPS },
 		{ "user-parent", no_argument, NULL, OPT_USER_PARENT},
@@ -312,7 +362,7 @@ int main(int argc, char *argv[])
 	int c, pass, namespaces = 0, setgroups_nerrs = 0, preserve_cred = 0;
 	bool do_rd = false, do_wd = false, do_uid = false, force_uid = false,
 	     do_gid = false, force_gid = false, do_env = false, do_all = false,
-	     do_user_parent = false;
+	     do_join_cgroup = false, do_user_parent = false;
 	int do_fork = -1; /* unknown yet */
 	char *wdns = NULL;
 	uid_t uid = 0;
@@ -329,7 +379,7 @@ int main(int argc, char *argv[])
 	close_stdout_atexit();
 
 	while ((c =
-		getopt_long(argc, argv, "+ahVt:m::u::i::n::p::C::U::T::S:G:r::w::W::eFZ",
+		getopt_long(argc, argv, "+ahVt:m::u::i::n::p::C::U::T::S:G:r::w::W::ecFZ",
 			    longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -406,6 +456,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'F':
 			do_fork = 0;
+			break;
+		case 'c':
+			do_join_cgroup = true;
 			break;
 		case 'r':
 			if (optarg)
@@ -491,6 +544,11 @@ int main(int argc, char *argv[])
 		open_target_fd(&env_fd, "environ", NULL);
 	if (do_uid || do_gid)
 		open_target_fd(&uid_gid_fd, "", NULL);
+	if (do_join_cgroup) {
+		if (!is_cgroup2())
+			errx(EXIT_FAILURE, _("--join-cgroup is only supported in cgroup v2"));
+		open_cgroup_procs();
+	}
 
 	/*
 	 * Get parent userns from any available ns.
@@ -597,6 +655,10 @@ int main(int argc, char *argv[])
 		env_list_free(envls);
 		close(env_fd);
 	}
+
+	// Join into the target cgroup
+	if (cgroup_procs_fd >= 0)
+		join_into_cgroup();
 
 	if (uid_gid_fd >= 0) {
 		struct stat st;

@@ -53,6 +53,7 @@ _nsenter_module()
 				--wdns=
 				--env
 				--no-fork
+				--join-cgroup
 				--help
 				--version
 			"
