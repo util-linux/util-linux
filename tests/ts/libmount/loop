@@ -139,5 +139,14 @@ udevadm settle
 ts_log "Success"
 ts_finalize_subtest
 
+ts_init_subtest "explicit-rw"
+[ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
+$TS_CMD_MOUNT -o rw "$BACKFILE" "$TS_MOUNTPOINT" >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_FINDMNT -no FS-OPTIONS --mountpoint "$TS_MOUNTPOINT" >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_UMOUNT "$TS_MOUNTPOINT" >> $TS_OUTPUT 2>> $TS_ERRLOG
+udevadm settle
+ts_log "Success"
+ts_finalize_subtest
+
 ts_log "Success"
 ts_finalize

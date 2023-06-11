@@ -462,7 +462,7 @@ static struct libmnt_opt *optlist_new_opt(struct libmnt_optlist *ls,
 		else if (opt->ent->id == MS_BIND)
 			ls->is_bind = 1;
 		else if (opt->ent->id == MS_RDONLY)
-			ls->is_rdonly = 1;
+			ls->is_rdonly = opt->ent->mask & MNT_INVERT ? 0 : 1;
 		else if (opt->ent->id == MS_MOVE)
 			ls->is_move = 1;
 		else if (opt->ent->id == MS_SILENT)
