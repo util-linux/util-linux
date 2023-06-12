@@ -44,6 +44,7 @@
 #include <sys/mman.h>
 #include <sys/prctl.h>
 #include <sys/select.h>
+#include <sys/signalfd.h>
 #include <sys/socket.h>
 #include <sys/shm.h>
 #include <sys/syscall.h>
@@ -2413,6 +2414,44 @@ static void *make_timerfd(const struct factory *factory, struct fdesc fdescs[],
 	return NULL;
 }
 
+static void *make_signalfd(const struct factory *factory _U_, struct fdesc fdescs[],
+			   int argc _U_, char ** argv _U_)
+{
+	sigset_t mask;
+	int numsig = 42;
+
+	if (sigemptyset(&mask) < 0)
+		err(EXIT_FAILURE, "failed in sigemptyset()");
+	if (sigaddset(&mask, SIGFPE) < 0)
+		err(EXIT_FAILURE, "failed in sigaddset(FPE)");
+	if (sigaddset(&mask, SIGUSR1) < 0)
+		err(EXIT_FAILURE, "failed in sigaddset(USR1)");
+	if (sigaddset(&mask, numsig) < 0)
+		err(EXIT_FAILURE, "failed in sigaddset(%d)", numsig);
+
+	int sfd= signalfd(-1, &mask, 0);
+	if (sfd < 0)
+		err(EXIT_FAILURE, "failed in signalfd(2)");
+
+	if (sfd != fdescs[0].fd) {
+		if (dup2(sfd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(sfd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", sfd, fdescs[0].fd);
+		}
+		close(sfd);
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL
+	};
+
+	return NULL;
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -3074,7 +3113,18 @@ static const struct factory factories[] = {
 
 			PARAM_END
 		}
-	}
+	},
+	{
+		.name = "signalfd",
+		.desc = "make signalfd",
+		.priv = false,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_signalfd,
+		.params = (struct parameter []) {
+			PARAM_END
+		}
+	},
 };
 
 static int count_parameters(const struct factory *factory)

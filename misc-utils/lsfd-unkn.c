@@ -22,6 +22,7 @@
 #include "xalloc.h"
 #include "nls.h"
 #include "libsmartcols.h"
+#include "signames.h"
 
 #include "lsfd.h"
 
@@ -716,6 +717,103 @@ static const struct anon_ops anon_timerfd_ops = {
 };
 
 /*
+ * signalfd
+ */
+struct anon_signalfd_data {
+	uint64_t sigmask;
+};
+
+static bool anon_signalfd_probe(const char *str)
+{
+	return strncmp(str, "[signalfd]", 10) == 0;
+}
+
+static void anon_signalfd_init(struct unkn *unkn)
+{
+	unkn->anon_data = xcalloc(1, sizeof(struct anon_signalfd_data));
+}
+
+static void anon_signalfd_free(struct unkn *unkn)
+{
+	struct anon_signalfd_data *data = unkn->anon_data;
+	free(data);
+}
+
+static int anon_signalfd_handle_fdinfo(struct unkn *unkn, const char *key, const char *value)
+{
+	struct anon_signalfd_data *data = (struct anon_signalfd_data *)unkn->anon_data;
+
+	if (strcmp(key, "sigmask") == 0) {
+		if (ul_strtou64(value, &data->sigmask, 16) < 0) {
+			data->sigmask = 0;
+			return 0;
+		}
+	}
+	return 0;
+}
+
+static char *anon_signalfd_make_mask_string(const char* prefix, uint64_t sigmask)
+{
+	char *str = NULL;
+
+	for (size_t i = 0; i < sizeof(sigmask) * 8; i++) {
+		if ((((uint64_t)0x1) << i) & sigmask) {
+			const int signum = i + 1;
+			const char *signame = signum_to_signame(signum);
+
+			if (str)
+				xstrappend(&str, ",");
+			else if (prefix)
+				xstrappend(&str, prefix);
+
+			if (signame) {
+				xstrappend(&str, signame);
+			} else {
+				char buf[BUFSIZ];
+				snprintf(buf, sizeof(buf), "%d", signum);
+				xstrappend(&str, buf);
+			}
+		}
+	}
+
+	return str;
+}
+
+static char *anon_signalfd_get_name(struct unkn *unkn)
+{
+	struct anon_signalfd_data *data = (struct anon_signalfd_data *)unkn->anon_data;
+	return anon_signalfd_make_mask_string("mask=", data->sigmask);
+}
+
+static bool anon_signalfd_fill_column(struct proc *proc  __attribute__((__unused__)),
+				      struct unkn *unkn,
+				      struct libscols_line *ln __attribute__((__unused__)),
+				      int column_id,
+				      size_t column_index __attribute__((__unused__)),
+				      char **str)
+{
+	struct anon_signalfd_data *data = (struct anon_signalfd_data *)unkn->anon_data;
+
+	switch(column_id) {
+	case COL_SIGNALFD_MASK:
+		*str = anon_signalfd_make_mask_string(NULL, data->sigmask);
+		return true;
+	default:
+		return false;
+	}
+}
+
+static const struct anon_ops anon_signalfd_ops = {
+	.class = "signalfd",
+	.probe = anon_signalfd_probe,
+	.get_name = anon_signalfd_get_name,
+	.fill_column = anon_signalfd_fill_column,
+	.init = anon_signalfd_init,
+	.free = anon_signalfd_free,
+	.handle_fdinfo = anon_signalfd_handle_fdinfo,
+};
+
+/*
  * generic (fallback implementation)
  */
 static const struct anon_ops anon_generic_ops = {
@@ -732,6 +830,7 @@ static const struct anon_ops *anon_ops[] = {
 	&anon_eventfd_ops,
 	&anon_eventpoll_ops,
 	&anon_timerfd_ops,
+	&anon_signalfd_ops,
 };
 
 static const struct anon_ops *anon_probe(const char *str)
