@@ -1,7 +1,7 @@
 /*
  * cfdisk.c - Display or manipulate a disk partition table.
  *
- *     Copyright (C) 2014-2015 Karel Zak <kzak@redhat.com>
+ *     Copyright (C) 2014-2023 Karel Zak <kzak@redhat.com>
  *     Copyright (C) 1994 Kevin E. Martin (martin@cs.unc.edu)
  *
  *     The original cfdisk was inspired by the fdisk program
@@ -2257,7 +2257,8 @@ static int ui_help(void)
 		"  ",
 		N_("Command      Meaning"),
 		N_("-------      -------"),
-		N_("  b          Toggle bootable flag of the current partition"),
+		N_("  b          Toggle bootable flag of the current partition;"),
+		N_("               implemented for DOS (MBR) and SGI labels only"),
 		N_("  d          Delete the current partition"),
 		N_("  h          Print this screen"),
 		N_("  n          Create new partition from free space"),
@@ -2281,7 +2282,7 @@ static int ui_help(void)
 		N_("Use lsblk(8) or partx(8) to see more details about the device."),
 		"  ",
 		"  ",
-		"Copyright (C) 2014-2017 Karel Zak <kzak@redhat.com>"
+		"Copyright (C) 2014-2023 Karel Zak <kzak@redhat.com>"
 	};
 
 	erase();
