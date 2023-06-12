@@ -896,6 +896,7 @@ exe = executable(
   link_with : [lib_common, logindefs_c],
   dependencies : chfn_chsh_deps,
   install_dir : usrbin_exec_dir,
+  install_mode : 'rwsr-xr-x',
   install : opt,
   build_by_default : opt)
 
@@ -908,6 +909,7 @@ exe2 = executable(
   link_with : lib_common,
   dependencies : chfn_chsh_deps,
   install_dir : usrbin_exec_dir,
+  install_mode : 'rwsr-xr-x',
   install : opt,
   build_by_default : opt)
 if opt and not is_disabler(exe)
@@ -995,6 +997,7 @@ exe = executable(
                   lib_pam_misc,
                   lib_util,
                   realtime_libs],
+  install_mode : 'rwsr-xr-x',
   install : opt,
   build_by_default : opt)
 if opt and not is_disabler(exe)
@@ -1010,6 +1013,7 @@ exe = executable(
   include_directories : includes,
   dependencies : [lib_crypt],
   install_dir : usrbin_exec_dir,
+  install_mode : 'rwsr-xr-x',
   install : opt,
   build_by_default : opt)
 if opt and not is_disabler(exe)
@@ -1626,6 +1630,7 @@ exe = executable(
                lib_smartcols,
                lib_mount],
   dependencies : lib_selinux,
+  install_mode : 'rwsr-xr-x',
   install : opt,
   build_by_default : opt)
 exe2 = executable(
@@ -1634,6 +1639,7 @@ exe2 = executable(
   include_directories : includes,
   link_with : [lib_common,
                lib_mount],
+  install_mode : 'rwsr-xr-x',
   install : opt,
   build_by_default : opt)
 if opt and not is_disabler(exe)
@@ -2384,6 +2390,7 @@ exe = executable(
   include_directories : includes,
   link_with : [lib_common],
   install_dir : usrbin_exec_dir,
+  install_mode : 'rwxr-sr-x',
   install : opt,
   build_by_default : opt)
 if opt
@@ -2402,6 +2409,7 @@ exe = executable(
   include_directories : includes,
   link_with : [lib_common],
   install_dir : usrbin_exec_dir,
+  install_mode : 'rwxr-sr-x',
   install : opt,
   build_by_default : opt)
 if opt
