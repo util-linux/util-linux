@@ -709,6 +709,9 @@ int main(void) {
 have = cc.compiles(code, name : 'using __progname')
 conf.set('HAVE___PROGNAME', have ? 1 : false)
 
+have = conf.get('HAVE_PTY_H') != false and conf.get('HAVE_SYS_SIGNALFD_H') != false
+conf.set('HAVE_PTY', have ? 1 : false)
+
 have_opal_get_status= cc.has_header_symbol('linux/sed-opal.h', 'IOC_OPAL_GET_STATUS')
 conf.set('HAVE_OPAL_GET_STATUS', have_opal_get_status ? 1 : false)
 
@@ -3018,18 +3021,19 @@ exe = executable(
   link_with : lib_common)
 exes += exe
 
-# XXX: HAVE_PTY
-exe = executable(
-  'test_pty',
-  pty_session_c,
-  monotonic_c,
-  c_args : ['-DTEST_PROGRAM_PTY'],
-  include_directories : dir_include,
-  link_with : [lib_common],
-  dependencies : [lib_m,
-                  realtime_libs,
-                  lib_util])
-exes += exe
+if conf.get('HAVE_PTY') != false
+  exe = executable(
+    'test_pty',
+    pty_session_c,
+    monotonic_c,
+    c_args : ['-DTEST_PROGRAM_PTY'],
+    include_directories : dir_include,
+    link_with : [lib_common],
+    dependencies : [lib_m,
+                    realtime_libs,
+                    lib_util])
+  exes += exe
+endif
 
 # XXX: LINUX
 exe = executable(
