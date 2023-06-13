@@ -53,6 +53,8 @@ struct hwclock_control {
 		set:1,
 		update:1,
 		universal:1,	/* will store hw_clock_is_utc() return value */
+		vl_read:1,
+		vl_clear:1,
 		verbose:1;
 };
 
@@ -87,6 +89,9 @@ extern const struct hwclock_param *get_hwclock_params(void);
 extern int get_param_rtc(const struct hwclock_control *ctl,
 			const char *name, uint64_t *id, uint64_t *value);
 extern int set_param_rtc(const struct hwclock_control *ctl, const char *name);
+
+extern int rtc_vl_read(const struct hwclock_control *ctl);
+extern int rtc_vl_clear(const struct hwclock_control *ctl);
 
 extern void __attribute__((__noreturn__))
 hwclock_exit(const struct hwclock_control *ctl, int status);

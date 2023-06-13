@@ -1180,6 +1180,20 @@ manipulate_rtc_param(const struct hwclock_control *ctl)
 
 	return 1;
 }
+
+static int
+manipulate_rtc_voltage_low(const struct hwclock_control *ctl)
+{
+	if (ctl->vl_read) {
+		if (rtc_vl_read(ctl))
+			return 1;
+	}
+	if (ctl->vl_clear) {
+		if (rtc_vl_clear(ctl))
+			return 1;
+	}
+	return 0;
+}
 #endif
 
 static void out_version(void)
@@ -1215,6 +1229,8 @@ usage(void)
 #ifdef __linux__
 	puts(_("     --param-get <param>         display the RTC parameter"));
 	puts(_("     --param-set <param>=<value> set the RTC parameter"));
+	puts(_("     --vl-read                   read voltage low information"));
+	puts(_("     --vl-clear                  clear voltage low information"));
 #endif
 	puts(_("     --predict                   predict the drifted RTC time according to --date"));
 	fputs(USAGE_OPTIONS, stdout);
@@ -1286,6 +1302,8 @@ int main(int argc, char **argv)
 		OPT_NOADJFILE,
 		OPT_PARAM_GET,
 		OPT_PARAM_SET,
+		OPT_VL_READ,
+		OPT_VL_CLEAR,
 		OPT_PREDICT,
 		OPT_SET,
 		OPT_SETEPOCH,
@@ -1315,6 +1333,8 @@ int main(int argc, char **argv)
 #ifdef __linux__
 		{ "param-get",    required_argument, NULL, OPT_PARAM_GET  },
 		{ "param-set",    required_argument, NULL, OPT_PARAM_SET  },
+		{ "vl-read",      no_argument,       NULL, OPT_VL_READ    },
+		{ "vl-clear",     no_argument,       NULL, OPT_VL_CLEAR   },
 #endif
 		{ "noadjfile",    no_argument,       NULL, OPT_NOADJFILE  },
 		{ "directisa",    no_argument,       NULL, OPT_DIRECTISA  },
@@ -1439,6 +1459,14 @@ int main(int argc, char **argv)
 			ctl.show = 0;
 			ctl.hwaudit_on = 1;
 			break;
+		case OPT_VL_READ:
+			ctl.vl_read = 1;
+			ctl.show = 0;
+			break;
+		case OPT_VL_CLEAR:
+			ctl.vl_clear = 1;
+			ctl.show = 0;
+			break;
 #endif
 		case OPT_NOADJFILE:
 			ctl.noadjfile = 1;
@@ -1536,6 +1564,13 @@ int main(int argc, char **argv)
 #ifdef __linux__
 	if (ctl.param_get_option || ctl.param_set_option) {
 		if (manipulate_rtc_param(&ctl))
+			hwclock_exit(&ctl, EXIT_FAILURE);
+
+		hwclock_exit(&ctl, EXIT_SUCCESS);
+	}
+
+	if (ctl.vl_read || ctl.vl_clear) {
+		if (manipulate_rtc_voltage_low(&ctl))
 			hwclock_exit(&ctl, EXIT_FAILURE);
 
 		hwclock_exit(&ctl, EXIT_SUCCESS);

@@ -518,3 +518,89 @@ done:
 	free(opt);
 	return rc;
 }
+
+#ifndef RTC_VL_DATA_INVALID
+#define RTC_VL_DATA_INVALID     0x1
+#endif
+#ifndef RTC_VL_BACKUP_LOW
+#define RTC_VL_BACKUP_LOW       0x2
+#endif
+#ifndef RTC_VL_BACKUP_EMPTY
+#define RTC_VL_BACKUP_EMPTY     0x4
+#endif
+#ifndef RTC_VL_ACCURACY_LOW
+#define RTC_VL_ACCURACY_LOW     0x8
+#endif
+#ifndef RTC_VL_BACKUP_SWITCH
+#define RTC_VL_BACKUP_SWITCH    0x10
+#endif
+
+int rtc_vl_read(const struct hwclock_control *ctl)
+{
+	unsigned int vl;
+	int rtc_fd;
+	size_t i;
+	static const struct vl_bit {
+		unsigned int bit;
+		const char *desc;
+	} vl_bits[] = {
+		{ RTC_VL_DATA_INVALID,  N_("Voltage too low, RTC data is invalid") },
+		{ RTC_VL_BACKUP_LOW,    N_("Backup voltage is low") },
+		{ RTC_VL_BACKUP_EMPTY,  N_("Backup empty or not present") },
+		{ RTC_VL_ACCURACY_LOW,  N_("Voltage is low, RTC accuracy is reduced") },
+		{ RTC_VL_BACKUP_SWITCH, N_("Backup switchover happened") },
+	};
+
+	rtc_fd = open_rtc(ctl);
+	if (rtc_fd < 0) {
+		warnx(_("cannot open %s"), rtc_dev_name);
+		return 1;
+	}
+
+	if (ioctl(rtc_fd, RTC_VL_READ, &vl) == -1) {
+		warn(_("ioctl(%d, RTC_VL_READ) on %s failed"),
+		     rtc_fd, rtc_dev_name);
+		return 1;
+	}
+
+	if (ctl->verbose) {
+		printf(_("ioctl(%d, RTC_VL_READ) on %s returned 0x%x\n"),
+		       rtc_fd, rtc_dev_name, vl);
+	}
+
+	for (i = 0; i < ARRAY_SIZE(vl_bits); ++i) {
+		const struct vl_bit *vlb = &vl_bits[i];
+
+		if (vl & vlb->bit) {
+			printf("0x%02x - %s\n", vlb->bit, vlb->desc);
+			vl &= ~vlb->bit;
+		}
+	}
+	if (vl)
+		printf("0x%02x - unknown bit(s)\n", vl);
+
+	return 0;
+}
+
+int rtc_vl_clear(const struct hwclock_control *ctl)
+{
+	int rtc_fd;
+
+	rtc_fd = open_rtc(ctl);
+	if (rtc_fd < 0) {
+		warnx(_("cannot open %s"), rtc_dev_name);
+		return 1;
+	}
+
+	if (ioctl(rtc_fd, RTC_VL_CLR) == -1) {
+		warn(_("ioctl(%d, RTC_VL_CLEAR) on %s failed"),
+		     rtc_fd, rtc_dev_name);
+		return 1;
+	}
+
+	if (ctl->verbose)
+		printf(_("ioctl(%d, RTC_VL_CLEAR) on %s succeeded.\n"),
+		       rtc_fd, rtc_dev_name);
+
+	return 0;
+}
