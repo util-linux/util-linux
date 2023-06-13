@@ -19,6 +19,7 @@
 #include <sys/syscall.h>
 
 #include "mountP.h"
+#include "strutils.h"
 #include "fileutils.h"
 #include "mount-api-utils.h"
 
@@ -383,12 +384,41 @@ static int hook_prepare_target(
 	return rc;
 }
 
+static int hookset_mkerrmsg(
+			struct libmnt_context *cxt,
+			const struct libmnt_hookset *hs,
+			char *buf, size_t sz)
+{
+	int er = mnt_context_get_syscall_errno(cxt);
+
+	DBG(HOOK, ul_debugobj(hs, "calling mkerrmsg"));
+
+	switch (cxt->failure_syscall) {
+	case SYS_open_tree:
+		errsnprint(buf, sz, er, _("cannot open sub-directory: %s: %m"), cxt->failure_arg);
+		break;
+	case SYS_move_mount:
+		errsnprint(buf, sz, er, _("cannot attach sub-directory to the mountpoint: %m"));
+		break;
+	case SYS_mount:
+		errsnprint(buf, sz, er, _("cannot bind sub-directory to the mountpoint: %m"));
+		break;
+	case SYS_umount2:
+		errsnprint(buf, sz, er, _("cannot umount fylesystem root: %m"));
+		break;
+	}
+
+	return MNT_EX_FAIL;
+}
+
 const struct libmnt_hookset hookset_subdir =
 {
 	.name = "__subdir",
 
 	.firststage = MNT_STAGE_PREP_TARGET,
 	.firstcall = hook_prepare_target,
+
+	.mkerrmsg = hookset_mkerrmsg,
 
 	.deinit = hookset_deinit
 };
