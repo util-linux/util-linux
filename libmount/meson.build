@@ -117,6 +117,7 @@ libmount_tests = [
   'context',
   'lock',
   'optstr',
+  'optlist',
   'tab',
   'tab_diff',
   'monitor',
