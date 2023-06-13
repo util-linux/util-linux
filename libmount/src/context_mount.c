@@ -1383,6 +1383,15 @@ int mnt_context_get_mount_excode(
 		return MNT_EX_SUCCESS;
 	}
 
+	/*
+	 * Errors from hooks
+	 */
+	if (cxt->failure_hookset && cxt->failure_hookset->mkerrmsg) {
+		rc = cxt->failure_hookset->mkerrmsg(cxt, cxt->failure_hookset, buf, bufsz);
+		if (rc >= 0)
+			return rc;
+	}
+
 	mnt_context_get_mflags(cxt, &mflags);		/* mount(2) flags */
 	mnt_context_get_user_mflags(cxt, &uflags);	/* userspace flags */
 

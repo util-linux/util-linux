@@ -44,6 +44,7 @@
  */
 
 #include "mountP.h"
+#include "strutils.h"
 #include "fileutils.h"	/* statx() fallback */
 #include "mount-api-utils.h"
 #include "linux_version.h"
@@ -773,6 +774,111 @@ enosys:
 	return 1;
 }
 
+/* Use only for syscalls where @arg in mnt_context_save_failure() is set to
+ * path. The target used by the syscall could be different to the target used
+ * by user for mount(8). We do not report mountpoint (target) by default. It's
+ * done by mount(8) for all messages.
+ */
+static inline int is_path_needed(struct libmnt_context *cxt)
+{
+	const char *tgt = mnt_context_get_target(cxt);
+
+	return (tgt && cxt->failure_arg && strcmp(tgt, cxt->failure_arg) != 0);
+}
+
+static int mkerrmsg_fsconfig(struct libmnt_context *cxt, char *buf, size_t sz)
+{
+	const char *src = mnt_context_get_source(cxt);
+	int er = mnt_context_get_syscall_errno(cxt);
+
+	switch(cxt->failure_cmd) {
+	case FSCONFIG_CMD_CREATE:
+		if (er == ENOENT && src && !mnt_is_path(src)) {
+			unsigned long uflags = 0;
+			mnt_context_get_user_mflags(cxt, &uflags);
+
+			if (uflags & MNT_MS_NOFAIL)
+				return MNT_EX_SUCCESS;
+
+			errsnprint(buf, sz, er, _("special device %s does not exist"), src);
+		} else
+			errsnprint(buf, sz, er, _("wrong fs type or bad option: %m"));
+		break;
+	case FSCONFIG_CMD_RECONFIGURE:
+		errsnprint(buf, sz, er, _("cannot reconfigure superblok: %m"));
+		break;
+	default:
+		errsnprint(buf, sz, er, _("cannot set mount option: '%s': %m"),
+				cxt->failure_arg);
+		break;
+	}
+	return MNT_EX_FAIL;
+}
+
+static int hookset_mkerrmsg(
+			struct libmnt_context *cxt,
+			const struct libmnt_hookset *hs,
+			char *buf, size_t sz)
+{
+	int er = mnt_context_get_syscall_errno(cxt);
+
+	DBG(HOOK, ul_debugobj(hs, "calling mkerrmsg"));
+
+	switch (cxt->failure_syscall) {
+	case SYS_fsconfig:
+		return mkerrmsg_fsconfig(cxt, buf, sz);
+
+	case SYS_fsopen:
+		if (er == ENOSYS)
+			errsnprint(buf, sz, er, _("fsopen syscall is unsupported"));
+		else
+			errsnprint(buf, sz, er, _("unknown filesystem type '%s'"),
+					mnt_context_get_fstype(cxt));
+		break;
+	case SYS_open_tree:
+		if (er == ENOSYS)
+			errsnprint(buf, sz, er, _("open_tree syscall is unsupported"));
+		else if (is_path_needed(cxt))
+			errsnprint(buf, sz, er, _("cannot open mount: %s: %m"), cxt->failure_arg);
+		else
+			errsnprint(buf, sz, er, _("cannot open mount: %m"));
+		break;
+	case SYS_move_mount:
+		if (mnt_optlist_is_move(cxt->optlist)) {
+			const char *src = mnt_context_get_source(cxt);
+
+			if (src && mnt_is_shared_tree(cxt, src))
+				errsnprint(buf, sz, er, _("moving a mount residing under a shared mount is unsupported: %m"));
+			else
+				errsnprint(buf, sz, er, _("cannot move filesystem: %m"));
+
+		} else if (is_path_needed(cxt))
+			errsnprint(buf, sz, er, _("cannot attach filesystem to %s: %m"),
+						cxt->failure_arg);
+		else
+			errsnprint(buf, sz, er, _("cannot attach filesystem: %m"));
+		break;
+	case SYS_fsmount:
+		errsnprint(buf, sz, er, _("cannot create mount node: %m"));
+		break;
+	case SYS_fspick:
+		errsnprint(buf, sz, er, _("cannot open filesystem context: %m"));
+		break;
+	case SYS_mount_setattr:
+		if (er == ENOSYS)
+			errsnprint(buf, sz, er, _("mount_setattr syscall is unsupported: %m"));
+		else if (cxt->failure_cmd & MS_PROPAGATION)
+			errsnprint(buf, sz, er, _("cannot set propagation: %m"));
+		else
+			errsnprint(buf, sz, er, _("cannot set VFS attributes: %m"));
+		break;
+	default:
+		return -1;
+	}
+
+	return MNT_EX_FAIL;
+}
+
 
 const struct libmnt_hookset hookset_mount =
 {
@@ -780,6 +886,8 @@ const struct libmnt_hookset hookset_mount =
 
 	.firststage = MNT_STAGE_PREP,
 	.firstcall = hook_prepare,
+
+	.mkerrmsg = hookset_mkerrmsg,
 
 	.deinit = hookset_deinit
 };

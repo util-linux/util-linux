@@ -312,6 +312,8 @@ struct libmnt_hookset {
 	int firststage;
 	int (*firstcall)(struct libmnt_context *, const struct libmnt_hookset *, void *);
 
+	int (*mkerrmsg)(struct libmnt_context *, const struct libmnt_hookset *, char *buf, size_t bufsiz);
+
 	int (*deinit)(struct libmnt_context *, const struct libmnt_hookset *);	/* cleanup function */
 };
 
