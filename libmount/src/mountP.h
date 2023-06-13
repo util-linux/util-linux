@@ -102,6 +102,8 @@ extern int mnt_valid_tagname(const char *tagname);
 extern const char *mnt_statfs_get_fstype(struct statfs *vfs);
 extern int is_file_empty(const char *name);
 
+extern int mnt_is_shared_tree(struct libmnt_context *cxt, const char *dir);
+
 extern int mnt_is_readonly(const char *path)
 			__attribute__((nonnull));
 
