@@ -2860,18 +2860,19 @@ if not is_disabler(exe)
   bashcompletions += ['fadvise']
 endif
 
-# XXX: HAVE_PIDFD_OPEN
-exe = executable(
-  'waitpid',
-  waitpid_sources,
-  include_directories : includes,
-  link_with : [lib_common],
-  install_dir : usrbin_exec_dir,
-  install : true)
-if not is_disabler(exe)
-  exes += exe
-  manadocs += ['misc-utils/waitpid.1.adoc']
-  bashcompletions += ['waitpid']
+if LINUX and conf.get('HAVE_PIDFD_OPEN') != false
+  exe = executable(
+    'waitpid',
+    waitpid_sources,
+    include_directories : includes,
+    link_with : [lib_common],
+    install_dir : usrbin_exec_dir,
+    install : true)
+  if not is_disabler(exe)
+    exes += exe
+    manadocs += ['misc-utils/waitpid.1.adoc']
+    bashcompletions += ['waitpid']
+  endif
 endif
 
 syscalls_h = custom_target('syscalls.h',
