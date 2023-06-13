@@ -204,7 +204,7 @@ static bool file_fill_column(struct proc *proc,
 			int assoc = file->association * -1;
 			if (assoc >= N_ASSOCS)
 				return false; /* INTERNAL ERROR */
-			xasprintf(&str, "%s", assocstr[assoc]);
+			str = xstrdup(assocstr[assoc]);
 		}
 		break;
 	case COL_INODE:
