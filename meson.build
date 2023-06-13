@@ -3001,25 +3001,25 @@ exe = executable(
   include_directories : dir_include)
 exes += exe
 
-# XXX: HAVE_OPENAT && HAVE_DIRFD
-exe = executable(
-  'test_procfs',
-  'lib/procfs.c',
-  c_args : ['-DTEST_PROGRAM_PROCFS'],
-  include_directories : dir_include,
-  link_with : lib_common)
-exes += exe
+if conf.get('HAVE_OPENAT') != false and conf.get('HAVE_DIRFD') != false
+  exe = executable(
+    'test_procfs',
+    'lib/procfs.c',
+    c_args : ['-DTEST_PROGRAM_PROCFS'],
+    include_directories : dir_include,
+    link_with : lib_common)
+  exes += exe
 
-# XXX: HAVE_OPENAT && HAVE_DIRFD
-exe = executable(
-  'test_path',
-  'lib/path.c',
-  'lib/fileutils.c',
-  have_cpu_set_t ? 'lib/cpuset.c' : [],
-  c_args : ['-DTEST_PROGRAM_PATH'],
-  include_directories : dir_include,
-  link_with : lib_common)
-exes += exe
+  exe = executable(
+    'test_path',
+    'lib/path.c',
+    'lib/fileutils.c',
+    have_cpu_set_t ? 'lib/cpuset.c' : [],
+    c_args : ['-DTEST_PROGRAM_PATH'],
+    include_directories : dir_include,
+    link_with : lib_common)
+  exes += exe
+endif
 
 if conf.get('HAVE_PTY') != false
   exe = executable(
@@ -3035,13 +3035,14 @@ if conf.get('HAVE_PTY') != false
   exes += exe
 endif
 
-# XXX: LINUX
-exe = executable(
-  'test_cpuset',
-  'lib/cpuset.c',
-  c_args : ['-DTEST_PROGRAM_CPUSET'],
-  include_directories : dir_include)
-exes += exe
+if LINUX
+  exe = executable(
+    'test_cpuset',
+    'lib/cpuset.c',
+    c_args : ['-DTEST_PROGRAM_CPUSET'],
+    include_directories : dir_include)
+  exes += exe
+endif
 
 exe = executable(
   'test_sysfs',
@@ -3280,13 +3281,15 @@ exes += exe
 
 mq_libs = []
 mq_libs += cc.find_library('rt', required : true)
-# XXX: LINUX
-exe = executable(
-  'test_mkfds',
-  'tests/helpers/test_mkfds.c',
-  include_directories : includes,
-  dependencies : mq_libs)
-exes += exe
+
+if LINUX
+  exe = executable(
+    'test_mkfds',
+    'tests/helpers/test_mkfds.c',
+    include_directories : includes,
+    dependencies : mq_libs)
+  exes += exe
+endif
 
 exe = executable(
   'test_enosys',
@@ -3296,14 +3299,15 @@ exes += exe
 
 ############################################################
 
-# XXX: HAVE_OPENAT
-exe = executable(
-  'sample-scols-tree',
-  'libsmartcols/samples/tree.c',
-  include_directories : includes,
-  link_with : [lib_smartcols, lib_common])
-if not is_disabler(exe)
-  exes += exe
+if conf.get('HAVE_OPENAT') != false
+  exe = executable(
+    'sample-scols-tree',
+    'libsmartcols/samples/tree.c',
+    include_directories : includes,
+    link_with : [lib_smartcols, lib_common])
+  if not is_disabler(exe)
+    exes += exe
+  endif
 endif
 
 exe = executable(
