@@ -1386,6 +1386,35 @@ static int test_get_flg(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
+static int test_split(struct libmnt_test *ts, int argc, char *argv[])
+{
+	struct libmnt_optlist *ol;
+	int rc;
+	struct libmnt_iter itr;
+	struct libmnt_opt *opt;
+	const char *name, *value;
+
+	if (argc != 2)
+		return -EINVAL;
+	rc = mk_optlist(&ol, argv[1]);
+	if (rc)
+		goto done;
+
+	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
+
+	while (mnt_optlist_next_opt(ol, &itr, &opt) == 0) {
+		name = mnt_opt_get_name(opt);
+		value = mnt_opt_get_value(opt);
+
+		printf("%s = %s\n", name, value ?: "(null)");
+	}
+
+done:
+	mnt_unref_optlist(ol);
+	return rc;
+}
+
+
 int main(int argc, char *argv[])
 {
 	struct libmnt_test tss[] = {
@@ -1396,6 +1425,7 @@ int main(int argc, char *argv[])
 		{ "--set-flg",     test_set_flg,     "<list> <flg>  linux|user   set to the list" },
 		{ "--get-str",     test_get_str,     "<list> [linux|user]        all options in string" },
 		{ "--get-flg",     test_get_flg,     "<list>  linux|user         all options by flags" },
+		{ "--split",       test_split,       "<list>                     split options into key-value pairs"},
 
 		{ NULL }
 	};
