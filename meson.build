@@ -709,6 +709,9 @@ int main(void) {
 have = cc.compiles(code, name : 'using __progname')
 conf.set('HAVE___PROGNAME', have ? 1 : false)
 
+have = conf.get('HAVE_PTY_H') != false and conf.get('HAVE_SYS_SIGNALFD_H') != false
+conf.set('HAVE_PTY', have ? 1 : false)
+
 have_opal_get_status= cc.has_header_symbol('linux/sed-opal.h', 'IOC_OPAL_GET_STATUS')
 conf.set('HAVE_OPAL_GET_STATUS', have_opal_get_status ? 1 : false)
 
@@ -2857,18 +2860,19 @@ if not is_disabler(exe)
   bashcompletions += ['fadvise']
 endif
 
-# XXX: HAVE_PIDFD_OPEN
-exe = executable(
-  'waitpid',
-  waitpid_sources,
-  include_directories : includes,
-  link_with : [lib_common],
-  install_dir : usrbin_exec_dir,
-  install : true)
-if not is_disabler(exe)
-  exes += exe
-  manadocs += ['misc-utils/waitpid.1.adoc']
-  bashcompletions += ['waitpid']
+if LINUX and conf.get('HAVE_PIDFD_OPEN') != false
+  exe = executable(
+    'waitpid',
+    waitpid_sources,
+    include_directories : includes,
+    link_with : [lib_common],
+    install_dir : usrbin_exec_dir,
+    install : true)
+  if not is_disabler(exe)
+    exes += exe
+    manadocs += ['misc-utils/waitpid.1.adoc']
+    bashcompletions += ['waitpid']
+  endif
 endif
 
 syscalls_h = custom_target('syscalls.h',
@@ -2998,46 +3002,48 @@ exe = executable(
   include_directories : dir_include)
 exes += exe
 
-# XXX: HAVE_OPENAT && HAVE_DIRFD
-exe = executable(
-  'test_procfs',
-  'lib/procfs.c',
-  c_args : ['-DTEST_PROGRAM_PROCFS'],
-  include_directories : dir_include,
-  link_with : lib_common)
-exes += exe
+if conf.get('HAVE_OPENAT') != false and conf.get('HAVE_DIRFD') != false
+  exe = executable(
+    'test_procfs',
+    'lib/procfs.c',
+    c_args : ['-DTEST_PROGRAM_PROCFS'],
+    include_directories : dir_include,
+    link_with : lib_common)
+  exes += exe
 
-# XXX: HAVE_OPENAT && HAVE_DIRFD
-exe = executable(
-  'test_path',
-  'lib/path.c',
-  'lib/fileutils.c',
-  have_cpu_set_t ? 'lib/cpuset.c' : [],
-  c_args : ['-DTEST_PROGRAM_PATH'],
-  include_directories : dir_include,
-  link_with : lib_common)
-exes += exe
+  exe = executable(
+    'test_path',
+    'lib/path.c',
+    'lib/fileutils.c',
+    have_cpu_set_t ? 'lib/cpuset.c' : [],
+    c_args : ['-DTEST_PROGRAM_PATH'],
+    include_directories : dir_include,
+    link_with : lib_common)
+  exes += exe
+endif
 
-# XXX: HAVE_PTY
-exe = executable(
-  'test_pty',
-  pty_session_c,
-  monotonic_c,
-  c_args : ['-DTEST_PROGRAM_PTY'],
-  include_directories : dir_include,
-  link_with : [lib_common],
-  dependencies : [lib_m,
-                  realtime_libs,
-                  lib_util])
-exes += exe
+if conf.get('HAVE_PTY') != false
+  exe = executable(
+    'test_pty',
+    pty_session_c,
+    monotonic_c,
+    c_args : ['-DTEST_PROGRAM_PTY'],
+    include_directories : dir_include,
+    link_with : [lib_common],
+    dependencies : [lib_m,
+                    realtime_libs,
+                    lib_util])
+  exes += exe
+endif
 
-# XXX: LINUX
-exe = executable(
-  'test_cpuset',
-  'lib/cpuset.c',
-  c_args : ['-DTEST_PROGRAM_CPUSET'],
-  include_directories : dir_include)
-exes += exe
+if LINUX
+  exe = executable(
+    'test_cpuset',
+    'lib/cpuset.c',
+    c_args : ['-DTEST_PROGRAM_CPUSET'],
+    include_directories : dir_include)
+  exes += exe
+endif
 
 exe = executable(
   'test_sysfs',
@@ -3276,13 +3282,15 @@ exes += exe
 
 mq_libs = []
 mq_libs += cc.find_library('rt', required : true)
-# XXX: LINUX
-exe = executable(
-  'test_mkfds',
-  'tests/helpers/test_mkfds.c',
-  include_directories : includes,
-  dependencies : mq_libs)
-exes += exe
+
+if LINUX
+  exe = executable(
+    'test_mkfds',
+    'tests/helpers/test_mkfds.c',
+    include_directories : includes,
+    dependencies : mq_libs)
+  exes += exe
+endif
 
 exe = executable(
   'test_enosys',
@@ -3292,14 +3300,15 @@ exes += exe
 
 ############################################################
 
-# XXX: HAVE_OPENAT
-exe = executable(
-  'sample-scols-tree',
-  'libsmartcols/samples/tree.c',
-  include_directories : includes,
-  link_with : [lib_smartcols, lib_common])
-if not is_disabler(exe)
-  exes += exe
+if conf.get('HAVE_OPENAT') != false
+  exe = executable(
+    'sample-scols-tree',
+    'libsmartcols/samples/tree.c',
+    include_directories : includes,
+    link_with : [lib_smartcols, lib_common])
+  if not is_disabler(exe)
+    exes += exe
+  endif
 endif
 
 exe = executable(
