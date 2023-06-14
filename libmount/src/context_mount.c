@@ -1524,9 +1524,8 @@ int mnt_context_get_mount_excode(
 
 
 	/* generic fallback */
-	if (buf)
-		errsnprint(buf, bufsz, mnt_context_get_syscall_errno(cxt),
-				_("mount failed: %m"));
+	if (buf && cxt->failure_errno)
+		errsnprint(buf, bufsz, cxt->failure_errno, _("mount failed: %m"));
 
 	return MNT_EX_FAIL;
 }
