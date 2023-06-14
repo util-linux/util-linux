@@ -112,6 +112,40 @@ static uint64_t get_map_length(struct file *file)
 	return res;
 }
 
+void decode_source(char *buf, size_t bufsize,
+		  unsigned int dev_major, unsigned int dev_minor,
+		  enum decode_source_level level)
+{
+	if (bufsize == 0)
+		return;
+
+	buf[0] = '\0';
+
+	if (level & DECODE_SOURCE_FILESYS_BIT) {
+		if (dev_major == 0) {
+			const char *filesystem = get_nodev_filesystem(dev_minor);
+			if (filesystem) {
+				xstrncpy(buf, filesystem, bufsize);
+				return;
+			}
+		}
+	}
+
+	if (level & DECODE_SOURCE_PARTITION_BIT) {
+		dev_t dev = makedev(dev_major, dev_minor);
+		const char *partition = get_partition(dev);
+		if (partition) {
+			xstrncpy(buf, partition, bufsize);
+			return;
+		}
+	}
+
+	if (level & DECODE_SOURCE_MAJMIN_BIT)
+		snprintf(buf, bufsize, "%u:%u",
+			 dev_major,
+			 dev_minor);
+}
+
 static bool file_fill_column(struct proc *proc,
 			     struct file *file,
 			     struct libscols_line *ln,
@@ -120,7 +154,7 @@ static bool file_fill_column(struct proc *proc,
 {
 	char *str = NULL;
 	mode_t ftype;
-	const char *partition;
+	char buf[BUFSIZ];
 
 	switch(column_id) {
 	case COL_COMMAND:
@@ -170,33 +204,27 @@ static bool file_fill_column(struct proc *proc,
 			int assoc = file->association * -1;
 			if (assoc >= N_ASSOCS)
 				return false; /* INTERNAL ERROR */
-			xasprintf(&str, "%s", assocstr[assoc]);
+			str = xstrdup(assocstr[assoc]);
 		}
 		break;
 	case COL_INODE:
 		xasprintf(&str, "%llu", (unsigned long long)file->stat.st_ino);
 		break;
 	case COL_SOURCE:
-		if (major(file->stat.st_dev) == 0) {
-			const char *filesystem = get_nodev_filesystem(minor(file->stat.st_dev));
-			if (filesystem) {
-				xasprintf(&str, "%s", filesystem);
-				break;
-			}
-		}
-		/* FALL THROUGH */
+		decode_source(buf, sizeof(buf), major(file->stat.st_dev), minor(file->stat.st_dev),
+			      DECODE_SOURCE_FILESYS);
+		str = xstrdup(buf);
+		break;
 	case COL_PARTITION:
-		partition = get_partition(file->stat.st_dev);
-		if (partition) {
-			str = xstrdup(partition);
-			break;
-		}
-		/* FALL THROUGH */
+		decode_source(buf, sizeof(buf), major(file->stat.st_dev), minor(file->stat.st_dev),
+			      DECODE_SOURCE_PARTITION);
+		str = xstrdup(buf);
+		break;
 	case COL_DEV:
 	case COL_MAJMIN:
-		xasprintf(&str, "%u:%u",
-			  major(file->stat.st_dev),
-			  minor(file->stat.st_dev));
+		decode_source(buf, sizeof(buf), major(file->stat.st_dev), minor(file->stat.st_dev),
+			      DECODE_SOURCE_MAJMIN);
+		str = xstrdup(buf);
 		break;
 	case COL_RDEV:
 		xasprintf(&str, "%u:%u",

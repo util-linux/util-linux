@@ -823,6 +823,20 @@ static void *make_inotify_fd(const struct factory *factory _U_, struct fdesc fde
 	if (fd < 0)
 		err(EXIT_FAILURE, "failed in inotify_init()");
 
+	if (inotify_add_watch(fd, "/", IN_DELETE) < 0) {
+		int e = errno;
+		close(fd);
+		errno = e;
+		err(EXIT_FAILURE, "failed in inotify_add_watch(\"/\")");
+	}
+
+	if (inotify_add_watch(fd, "/etc/fstab", IN_DELETE) < 0) {
+		int e = errno;
+		close(fd);
+		errno = e;
+		err(EXIT_FAILURE, "failed in inotify_add_watch(\"/etc/fstab\")");
+	}
+
 	if (fd != fdescs[0].fd) {
 		if (dup2(fd, fdescs[0].fd) < 0) {
 			int e = errno;
