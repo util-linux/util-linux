@@ -270,3 +270,17 @@ const struct libmnt_optmap *mnt_optmap_get_entry(
 	return NULL;
 }
 
+const char *mnt_optmap_get_entry_name(struct libmnt_optmap const *map, int id)
+{
+	const struct libmnt_optmap *ent;
+
+	if (!map)
+		return NULL;
+
+	for (ent = map; ent && ent->name; ent++) {
+		if (ent->id == id)
+			return ent->name;
+	}
+	return NULL;
+}
+

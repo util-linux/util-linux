@@ -1455,14 +1455,6 @@ int mnt_context_get_mount_excode(
 						_("failed to parse mount options"));
 			}
 			return MNT_EX_USAGE;
-		case -MNT_ERR_LOOPDEV:
-			if (buf)
-				snprintf(buf, bufsz, _("failed to setup loop device for %s"), src);
-			return MNT_EX_FAIL;
-		case -MNT_ERR_LOOPOVERLAP:
-			if (buf)
-				snprintf(buf, bufsz, _("overlapping loop device exists for %s"), src);
-			return MNT_EX_FAIL;
 		case -MNT_ERR_LOCK:
 			if (buf)
 				snprintf(buf, bufsz, _("locking failed"));

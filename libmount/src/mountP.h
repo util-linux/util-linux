@@ -564,6 +564,8 @@ extern const struct libmnt_optmap *mnt_optmap_get_entry(
                              size_t namelen,
 			     const struct libmnt_optmap **mapent);
 
+extern const char *mnt_optmap_get_entry_name(struct libmnt_optmap const *map, int id);
+
 /* optstr.c */
 extern int mnt_optstr_remove_option_at(char **optstr, char *begin, char *end);
 

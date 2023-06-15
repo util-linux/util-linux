@@ -13,6 +13,7 @@
  */
 #include <blkid.h>
 #include <stdbool.h>
+#include <syscall.h>
 
 #include "mountP.h"
 #include "loopdev.h"
@@ -125,6 +126,7 @@ is_mounted_same_loopfile(struct libmnt_context *cxt,
 }
 
 static int setup_loopdev(struct libmnt_context *cxt,
+			 const struct libmnt_hookset *hs,
 			 struct libmnt_optlist *ol, struct hook_data *hd)
 {
 	const char *backing_file, *loopdev = NULL;
@@ -161,7 +163,7 @@ static int setup_loopdev(struct libmnt_context *cxt,
 	if (!rc && (opt = mnt_optlist_get_opt(ol, MNT_MS_OFFSET, cxt->map_userspace))
 	    && mnt_opt_has_value(opt)) {
 		if (strtosize(mnt_opt_get_value(opt), &offset)) {
-			DBG(LOOP, ul_debugobj(cxt, "failed to parse offset="));
+			mnt_context_save_failure(cxt, hs, 0, EINVAL, MNT_MS_OFFSET, NULL); 
 			rc = -MNT_ERR_MOUNTOPT;
 		}
 	}
@@ -172,7 +174,7 @@ static int setup_loopdev(struct libmnt_context *cxt,
 	if (!rc && (opt = mnt_optlist_get_opt(ol, MNT_MS_SIZELIMIT, cxt->map_userspace))
 	    && mnt_opt_has_value(opt)) {
 		if (strtosize(mnt_opt_get_value(opt), &sizelimit)) {
-			DBG(LOOP, ul_debugobj(cxt, "failed to parse sizelimit="));
+			mnt_context_save_failure(cxt, hs, 0, EINVAL, MNT_MS_SIZELIMIT, NULL);
 			rc = -MNT_ERR_MOUNTOPT;
 		}
 	}
@@ -181,7 +183,7 @@ static int setup_loopdev(struct libmnt_context *cxt,
 	 * encryption=
 	 */
 	if (!rc && mnt_optlist_get_opt(ol, MNT_MS_ENCRYPTION, cxt->map_userspace)) {
-		DBG(LOOP, ul_debugobj(cxt, "encryption no longer supported"));
+		mnt_context_save_failure(cxt, hs, 0, EINVAL, MNT_MS_ENCRYPTION, NULL);
 		rc = -MNT_ERR_MOUNTOPT;
 	}
 
@@ -213,6 +215,7 @@ static int setup_loopdev(struct libmnt_context *cxt,
 		case 1:	/* overlap */
 			DBG(LOOP, ul_debugobj(cxt, "overlapping %s detected",
 						loopcxt_get_device(&lc)));
+			mnt_context_save_failure(cxt, hs, 0, MNT_ERR_LOOPOVERLAP, 0, NULL); 
 			rc = -MNT_ERR_LOOPOVERLAP;
 			goto done;
 
@@ -226,6 +229,8 @@ static int setup_loopdev(struct libmnt_context *cxt,
 			/* Open loop device to block device autoclear... */
 			if (loopcxt_get_fd(&lc) < 0) {
 				DBG(LOOP, ul_debugobj(cxt, "failed to get loopdev FD"));
+				mnt_context_save_failure(cxt, hs, 0, SYS_open, errno,
+							loopcxt_get_device(&lc));
 				rc = -errno;
 				goto done;
 			}
@@ -257,12 +262,14 @@ static int setup_loopdev(struct libmnt_context *cxt,
 			    && lc_encrypt_type != LO_CRYPT_NONE) {
 				DBG(LOOP, ul_debugobj(cxt, "encryption no longer supported for device %s",
 					loopcxt_get_device(&lc)));
+				mnt_context_save_failure(cxt, hs, 0, MNT_ERR_LOOPOVERLAP, 0, NULL);
 				rc = -MNT_ERR_LOOPOVERLAP;
 				goto done;
 			}
 			rc = 0;
 			/* loop= used with argument. Conflict will occur. */
 			if (mnt_opt_has_value(loopopt)) {
+				mnt_context_save_failure(cxt, hs, 0, MNT_ERR_LOOPOVERLAP, 0, NULL);
 				rc = -MNT_ERR_LOOPOVERLAP;
 				goto done;
 			} else {
@@ -328,6 +335,7 @@ static int setup_loopdev(struct libmnt_context *cxt,
 
 		if (loopdev || rc != -EBUSY) {
 			DBG(LOOP, ul_debugobj(cxt, "failed to setup device"));
+			mnt_context_save_failure(cxt, hs, 0, MNT_ERR_LOOPDEV, 0, NULL);
 			rc = -MNT_ERR_LOOPDEV;
 			goto done;
 		}
@@ -362,11 +370,17 @@ success:
 		hd->loopdev_fd = loopcxt_get_fd(&lc);
 		if (hd->loopdev_fd < 0) {
 			DBG(LOOP, ul_debugobj(cxt, "failed to get loopdev FD"));
+			mnt_context_save_failure(cxt, hs, 0, MNT_ERR_LOOPDEV, 0, NULL);
 			rc = -errno;
 		} else
 			loopcxt_set_fd(&lc, -1, 0);
 	}
+
 done:
+	/* error fallback */
+	if (rc && !cxt->failure_errno)
+		mnt_context_save_failure(cxt, hs, 0, MNT_ERR_LOOPDEV, 0, NULL);
+
 	loopcxt_deinit(&lc);
 done_no_deinit:
 	return rc;
@@ -506,7 +520,7 @@ static int hook_prepare_loopdev(
 	if (!hd)
 		return -ENOMEM;
 
-	rc = setup_loopdev(cxt, ol, hd);
+	rc = setup_loopdev(cxt, hs, ol, hd);
 	if (!rc)
 		rc = mnt_context_append_hook(cxt, hs,
 				MNT_STAGE_MOUNT_POST,
@@ -518,6 +532,47 @@ static int hook_prepare_loopdev(
 	return rc;
 }
 
+static int hookset_mkerrmsg(
+                        struct libmnt_context *cxt,
+                        const struct libmnt_hookset *hs,
+                        char *buf, size_t sz)
+{
+	int er = cxt->failure_errno;
+
+	DBG(HOOK, ul_debugobj(hs, "calling mkerrmsg"));
+
+	/* parse errors */
+	if (er == EINVAL) {
+		switch (cxt->failure_cmd) {
+		case MNT_MS_OFFSET:
+		case MNT_MS_SIZELIMIT:
+			errsnprint(buf, sz, er, _("failed to parse '%s' option: %m"),
+					mnt_optmap_get_entry_name(cxt->map_userspace,
+								  cxt->failure_cmd));
+			break;
+		case MNT_MS_ENCRYPTION:
+			errsnprint(buf, sz, er, _("'encryption' option is unsupported"));
+			break;
+		}
+
+	} else if (er == MNT_ERR_LOOPOVERLAP) {
+		const char *src = mnt_context_get_source(cxt);
+		errsnprint(buf, sz, 0, _("overlapping loop device exists for %s"), src);
+
+	} else if (er == MNT_ERR_LOOPDEV) {
+		const char *src = mnt_context_get_source(cxt);
+		errsnprint(buf, sz, 0, _("failed to setup loop device for %s"), src);
+
+	} else if (cxt->failure_syscall) {
+		switch (cxt->failure_syscall) {
+		case SYS_open:
+			errsnprint(buf, sz, er, _("cannot open %s: %m"), cxt->failure_arg);
+			break;
+		}
+	}
+
+	return MNT_EX_FAIL;
+}
 
 const struct libmnt_hookset hookset_loopdev =
 {
@@ -525,6 +580,8 @@ const struct libmnt_hookset hookset_loopdev =
 
         .firststage = MNT_STAGE_PREP_SOURCE,
         .firstcall = hook_prepare_loopdev,
+
+	.mkerrmsg = hookset_mkerrmsg,
 
         .deinit = hookset_deinit
 };
