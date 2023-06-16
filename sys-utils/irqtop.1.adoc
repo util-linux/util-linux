@@ -26,7 +26,7 @@ The default output is subject to change. So whenever possible, you should avoid 
 Specify which output columns to print. Use *--help* to get a list of all supported columns. The default list of columns may be extended if list is specified in the format _+list_.
 
 *-c*, *--cpu-stat* _mode_::
-Show per-cpu statistics by specified mode. Available modes are: *auto*, *enable*, *disable*. The default option *auto* detects the width of window, then shows the per-cpu statistics if the width of window is large enouth to show a full line of statistics.
+Show per-cpu statistics by specified mode. Available modes are: *auto*, *enable*, *disable*. The default option *auto* detects the width of window, then shows the per-cpu statistics if the width of window is large enough to show a full line of statistics.
 
 *-C*, *--cpu-list* _list_::
 Specify cpus in list format to show.
