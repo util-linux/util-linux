@@ -2558,7 +2558,8 @@ exe = executable(
   include_directories : includes,
   link_with : [lib_common,
                lib_mount,
-               lib_smartcols],
+               lib_smartcols,
+               lib_smartcols_filter],
   install_dir : usrbin_exec_dir,
   install : true)
 if not is_disabler(exe)

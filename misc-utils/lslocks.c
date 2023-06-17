@@ -46,6 +46,8 @@
 #include "optutils.h"
 #include "procfs.h"
 
+#include "smartcols-filter.h"
+
 /* column IDs */
 enum {
 	COL_SRC = 0,
@@ -59,7 +61,8 @@ enum {
 	COL_START,
 	COL_END,
 	COL_PATH,
-	COL_BLOCKER
+	COL_BLOCKER,
+	LSLOCKS_N_COLS		/* This must be last. */
 };
 
 /* column names */
@@ -375,7 +378,7 @@ static int column_name_to_id(const char *name, size_t namesz)
 			return i;
 	}
 	warnx(_("unknown column: %s"), name);
-	return -1;
+	return SMARTCOLS_FILTER_UNKNOWN_COL_ID;
 }
 
 static inline int get_column_id(int num)
@@ -407,7 +410,7 @@ static pid_t get_blocker(int id, struct list_head *locks)
 	return 0;
 }
 
-static void add_scols_line(struct libscols_table *table, struct lock *l, struct list_head *locks)
+static struct libscols_line *add_scols_line(struct libscols_table *table, struct lock *l, struct list_head *locks)
 {
 	size_t i;
 	struct libscols_line *line;
@@ -484,6 +487,8 @@ static void add_scols_line(struct libscols_table *table, struct lock *l, struct 
 		if (str && scols_line_refer_data(line, i, str))
 			err(EXIT_FAILURE, _("failed to add output data"));
 	}
+
+	return line;
 }
 
 static struct libscols_column *add_column(struct libscols_table *table, const struct colinfo *col)
@@ -492,7 +497,9 @@ static struct libscols_column *add_column(struct libscols_table *table, const st
 	if (!cl)
 		err(EXIT_FAILURE, _("failed to allocate output column"));
 
-	if (json) {
+	{
+		/* Even if --json/-J is not given, the filter engine requires
+		 * a type must be set to the column. */
 		int json_type = -1;
 
 		if (bytes)
@@ -503,6 +510,45 @@ static struct libscols_column *add_column(struct libscols_table *table, const st
 	}
 
 	return cl;
+}
+
+static int column_name_to_id_cb(const char *name, void *data __attribute__((__unused__)))
+{
+	return column_name_to_id(name, strlen(name));
+}
+
+static struct libscols_column *add_column_by_id_cb(struct libscols_table *tb, int colid,
+						   void *data __attribute__((__unused__)))
+{
+	struct libscols_column *cl;
+
+	if (ncolumns >= ARRAY_SIZE(columns))
+		errx(EXIT_FAILURE, _("too many columns are added via filter expression"));
+
+	assert(colid < LSLOCKS_N_COLS);
+
+	cl = add_column(tb, infos + colid);
+	if (!cl)
+		err(EXIT_FAILURE, _("failed to allocate output column"));
+	columns[ncolumns++] = colid;
+
+	return cl;
+}
+
+static struct scols_filter *make_filter(const char *expr, struct libscols_table *table)
+{
+	struct scols_filter *filter;
+	const char *errmsg;
+
+	filter = scols_filter_new(expr, table,
+				  LSLOCKS_N_COLS,
+				  column_name_to_id_cb,
+				  add_column_by_id_cb, NULL);
+	errmsg = scols_filter_get_errmsg(filter);
+	if (errmsg)
+		errx(EXIT_FAILURE, "%s", errmsg);
+
+	return filter;
 }
 
 static struct libscols_table *make_table(void)
@@ -526,7 +572,7 @@ static struct libscols_table *make_table(void)
 	return table;
 }
 
-static int show_locks(struct list_head *locks, struct libscols_table *table)
+static int show_locks(struct list_head *locks, struct libscols_table *table, struct scols_filter *filter)
 {
 	int rc = 0;
 	struct list_head *p, *pnext;
@@ -534,11 +580,14 @@ static int show_locks(struct list_head *locks, struct libscols_table *table)
 	/* prepare data for output */
 	list_for_each(p, locks) {
 		struct lock *l = list_entry(p, struct lock, locks);
+		struct libscols_line *line;
 
 		if (pid && pid != l->pid)
 			continue;
 
-		add_scols_line(table, l, locks);
+		line = add_scols_line(table, l, locks);
+		if (!scols_filter_apply(filter, line))
+			scols_table_remove_line(table, line);
 	}
 
 	/* destroy the list */
@@ -575,6 +624,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -p, --pid <pid>        display only locks held by this process\n"), out);
 	fputs(_(" -r, --raw              use the raw output format\n"), out);
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
+	fputs(_(" -Q, --filter <expr>    apply display filter\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(24));
@@ -618,13 +668,15 @@ int main(int argc, char *argv[])
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+	char  *filter_expr = NULL;
+	struct scols_filter *filter = NULL;
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
 	while ((c = getopt_long(argc, argv,
-				"biJp:o:nruhV", long_opts, NULL)) != -1) {
+				"biJp:o:nruQ:hV", long_opts, NULL)) != -1) {
 
 		err_exclusive_options(c, long_opts, excl, excl_st);
 
@@ -656,6 +708,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'u':
 			disable_columns_truncate();
+			break;
+		case 'Q':
+			filter_expr = optarg;
 			break;
 
 		case 'V':
@@ -689,12 +744,18 @@ int main(int argc, char *argv[])
 	scols_init_debug(0);
 
 	table = make_table();
+
+	if (filter_expr)
+		filter = make_filter(filter_expr, table);
+
 	rc = get_local_locks(&locks);
 
 	if (!rc && !list_empty(&locks))
-		rc = show_locks(&locks, table);
+		rc = show_locks(&locks, table, filter);
 
 	scols_unref_table(table);
+	if (filter)
+		scols_filter_free(filter);
 
 	mnt_unref_table(tab);
 	return rc;

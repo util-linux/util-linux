@@ -77,7 +77,7 @@ if BUILD_LSLOCKS
 usrbin_exec_PROGRAMS += lslocks
 MANPAGES += misc-utils/lslocks.8
 dist_noinst_DATA += misc-utils/lslocks.8.adoc
-lslocks_LDADD = $(LDADD) libcommon.la libmount.la libsmartcols.la
+lslocks_LDADD = $(LDADD) libcommon.la libmount.la libsmartcols.la libsmartcols-filter.la
 lslocks_SOURCES = misc-utils/lslocks.c
 lslocks_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir) -I$(ul_libsmartcols_incdir)
 endif
