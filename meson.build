@@ -484,6 +484,18 @@ have = cc.compiles('''
   name : 'langinfo.h defines _NL_ABALTMON_x constants')
 conf.set('HAVE_LANGINFO_NL_ABALTMON', have ? 1 : false)
 
+have = cc.compiles('''
+   #define _GNU_SOURCE 1
+   #include <langinfo.h>
+   int main(void) {
+        char *str;
+        str = nl_langinfo (_NL_TIME_WEEK_1STDAY);
+        return 0;
+   }
+   ''',
+  name : 'langinfo.h defines _NL_TIME_WEEK_1STDAY constant')
+conf.set('HAVE_DECL__NL_TIME_WEEK_1STDAY', have ? 1 : false)
+
 funcs = '''
         clearenv
         close_range
