@@ -59,8 +59,8 @@ static int kcmp(pid_t pid1, pid_t pid2, int type,
 #include "libsmartcols.h"
 
 #include "lsfd.h"
-#include "lsfd-filter.h"
-#include "lsfd-counter.h"
+#include "smartcols-filter.h"
+#include "smartcols-counter.h"
 
 /*
  * /proc/$pid/mountinfo entries
@@ -469,8 +469,8 @@ struct lsfd_control {
 			show_summary : 1,	/* print summary/counters */
 			sockets_only : 1;	/* display only SOCKETS */
 
-	struct lsfd_filter *filter;
-	struct lsfd_counter **counters;		/* NULL terminated array. */
+	struct scols_filter *filter;
+	struct scols_counter **counters;		/* NULL terminated array. */
 };
 
 static void *proc_tree;			/* for tsearch/tfind */
@@ -500,7 +500,7 @@ static int column_name_to_id(const char *name, size_t namesz)
 	}
 	warnx(_("unknown column: %s"), name);
 
-	return LSFD_FILTER_UNKNOWN_COL_ID;
+	return SMARTCOLS_FILTER_UNKNOWN_COL_ID;
 }
 
 static int column_name_to_id_cb(const char *name, void *data __attribute__((__unused__)))
@@ -1170,14 +1170,14 @@ static void convert(struct list_head *procs, struct lsfd_control *ctl)
 		list_for_each (f, &proc->files) {
 			struct file *file = list_entry(f, struct file, files);
 			struct libscols_line *ln = scols_table_new_line(ctl->tb, NULL);
-			struct lsfd_counter **counter = NULL;
+			struct scols_counter **counter = NULL;
 
 			if (!ln)
 				err(EXIT_FAILURE, _("failed to allocate output line"));
 
 			convert_file(proc, file, ln);
 
-			if (!lsfd_filter_apply(ctl->filter, ln)) {
+			if (!scols_filter_apply(ctl->filter, ln)) {
 				scols_table_remove_line(ctl->tb, ln);
 				continue;
 			}
@@ -1186,7 +1186,7 @@ static void convert(struct list_head *procs, struct lsfd_control *ctl)
 				continue;
 
 			for (counter = ctl->counters; *counter; counter++)
-				lsfd_counter_accumulate(*counter, ln);
+				scols_counter_accumulate(*counter, ln);
 		}
 	}
 }
@@ -1202,11 +1202,11 @@ static void delete(struct list_head *procs, struct lsfd_control *ctl)
 	list_free(procs, struct proc, procs, free_proc);
 
 	scols_unref_table(ctl->tb);
-	lsfd_filter_free(ctl->filter);
+	scols_filter_free(ctl->filter);
 	if (ctl->counters) {
-		struct lsfd_counter **counter;
+		struct scols_counter **counter;
 		for (counter = ctl->counters; *counter; counter++)
-			lsfd_counter_free(*counter);
+			scols_counter_free(*counter);
 		free(ctl->counters);
 	}
 }
@@ -1635,20 +1635,20 @@ static void append_filter_expr(char **a, const char *b, bool and)
 	xstrappend(a, ")");
 }
 
-static struct lsfd_filter *new_filter(const char *expr, bool debug, const char *err_prefix, struct lsfd_control *ctl)
+static struct scols_filter *new_filter(const char *expr, bool debug, const char *err_prefix, struct lsfd_control *ctl)
 {
-	struct lsfd_filter *filter;
+	struct scols_filter *filter;
 	const char *errmsg;
 
-	filter = lsfd_filter_new(expr, ctl->tb,
+	filter = scols_filter_new(expr, ctl->tb,
 				 LSFD_N_COLS,
 				 column_name_to_id_cb,
 				 add_column_by_id_cb, ctl);
-	errmsg = lsfd_filter_get_errmsg(filter);
+	errmsg = scols_filter_get_errmsg(filter);
 	if (errmsg)
 		errx(EXIT_FAILURE, "%s%s", err_prefix, errmsg);
 	if (debug) {
-		lsfd_filter_dump(filter, stdout);
+		scols_filter_dump(filter, stdout);
 		exit(EXIT_SUCCESS);
 	}
 
@@ -1700,24 +1700,24 @@ static void free_counter_spec(struct counter_spec *counter_spec)
 	free(counter_spec);
 }
 
-static struct lsfd_counter *new_counter(const struct counter_spec *spec, struct lsfd_control *ctl)
+static struct scols_counter *new_counter(const struct counter_spec *spec, struct lsfd_control *ctl)
 {
-	struct lsfd_filter *filter;
+	struct scols_filter *filter;
 
 	filter = new_filter(spec->expr, false,
 			    _("failed in making filter for a counter: "),
 			    ctl);
-	return lsfd_counter_new(spec->name, filter);
+	return scols_counter_new(spec->name, filter);
 }
 
-static struct lsfd_counter **new_counters(struct list_head *specs, struct lsfd_control *ctl)
+static struct scols_counter **new_counters(struct list_head *specs, struct lsfd_control *ctl)
 {
-	struct lsfd_counter **counters;
+	struct scols_counter **counters;
 	size_t len = list_count_entries(specs);
 	size_t i = 0;
 	struct list_head *s;
 
-	counters = xcalloc(len + 1, sizeof(struct lsfd_counter *));
+	counters = xcalloc(len + 1, sizeof(struct scols_counter *));
 	list_for_each(s, specs) {
 		struct counter_spec *spec = list_entry(s, struct counter_spec, specs);
 		counters[i++] = new_counter(spec, ctl);
@@ -1727,13 +1727,13 @@ static struct lsfd_counter **new_counters(struct list_head *specs, struct lsfd_c
 	return counters;
 }
 
-static struct lsfd_counter **new_default_counters(struct lsfd_control *ctl)
+static struct scols_counter **new_default_counters(struct lsfd_control *ctl)
 {
-	struct lsfd_counter **counters;
+	struct scols_counter **counters;
 	size_t len = ARRAY_SIZE(default_counter_specs);
 	size_t i;
 
-	counters = xcalloc(len + 1, sizeof(struct lsfd_counter *));
+	counters = xcalloc(len + 1, sizeof(struct scols_counter *));
 	for (i = 0; i < len; i++) {
 		const struct counter_spec *spec = default_counter_specs + i;
 		counters[i] = new_counter(spec, ctl);
@@ -1798,21 +1798,21 @@ static struct libscols_table *new_summary_table(struct lsfd_control *ctl)
 	return tb;
 }
 
-static void fill_summary_line(struct libscols_line *ln, struct lsfd_counter *counter)
+static void fill_summary_line(struct libscols_line *ln, struct scols_counter *counter)
 {
 	char *str = NULL;
 
-	xasprintf(&str, "%"PRIu64, lsfd_counter_value(counter));
+	xasprintf(&str, "%"PRIu64, scols_counter_value(counter));
 	if (!str)
 		err(EXIT_FAILURE, _("failed to add summary data"));
 	if (scols_line_refer_data(ln, 0, str))
 		err(EXIT_FAILURE, _("failed to add summary data"));
 
-	if (scols_line_set_data(ln, 1, lsfd_counter_name(counter)))
+	if (scols_line_set_data(ln, 1, scols_counter_name(counter)))
 		err(EXIT_FAILURE, _("failed to add summary data"));
 }
 
-static void emit_summary(struct lsfd_control *ctl, struct lsfd_counter **counter)
+static void emit_summary(struct lsfd_control *ctl, struct scols_counter **counter)
 {
 	struct libscols_table *tb = new_summary_table(ctl);
 

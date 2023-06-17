@@ -254,10 +254,6 @@ dist_noinst_DATA += misc-utils/lsfd.1.adoc
 lsfd_SOURCES = \
 	misc-utils/lsfd.c \
 	misc-utils/lsfd.h \
-	misc-utils/lsfd-filter.h \
-	misc-utils/lsfd-filter.c \
-	misc-utils/lsfd-counter.h \
-	misc-utils/lsfd-counter.c \
 	misc-utils/lsfd-decode-file-flags.c \
 	misc-utils/lsfd-file.c \
 	misc-utils/lsfd-cdev.c \
@@ -267,7 +263,7 @@ lsfd_SOURCES = \
 	misc-utils/lsfd-sock-xinfo.c \
 	misc-utils/lsfd-unkn.c \
 	misc-utils/lsfd-fifo.c
-lsfd_LDADD = $(LDADD) libsmartcols.la libcommon.la
+lsfd_LDADD = $(LDADD) libsmartcols-filter.la libsmartcols.la libcommon.la
 lsfd_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
 endif
 

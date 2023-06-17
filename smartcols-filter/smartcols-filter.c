@@ -1,5 +1,5 @@
 /*
- * lsfd-filter.c - filtering engine for lsfd
+ * smartcols-filter.c - filtering engine for lsfd
  *
  * Copyright (C) 2021 Red Hat, Inc.
  * Copyright (C) 2021 Masatake YAMATO <yamato@redhat.com>
@@ -8,7 +8,7 @@
  * GNU Lesser General Public License.
  */
 
-#include "lsfd-filter.h"
+#include "smartcols-filter.h"
 
 #include "nls.h"
 #include "strutils.h"
@@ -164,7 +164,7 @@ struct node_class {
 	void (*dump)(struct node *, struct parameter*, int, FILE *);
 };
 
-struct lsfd_filter {
+struct scols_filter {
 	struct libscols_table *table;
 	struct node  *node;
 	struct parameter *parameters;
@@ -747,7 +747,7 @@ static struct node *dparser_compile1(struct parser *parser, struct node *last)
 	switch (t->type) {
 	case TOKEN_NAME: {
 		int col_id = parser->column_name_to_id(t->val.str, parser->data);
-		if (col_id == LSFD_FILTER_UNKNOWN_COL_ID) {
+		if (col_id == SMARTCOLS_FILTER_UNKNOWN_COL_ID) {
 			snprintf(parser->errmsg, sizeof(parser->errmsg),
 				 _("error: no such column: %s"), t->val.str);
 			token_free(t);
@@ -1383,7 +1383,7 @@ static bool op2_check_type_re(struct parser* parser, const struct op2_class *op2
 	return true;
 }
 
-struct lsfd_filter *lsfd_filter_new(const char *const expr, struct libscols_table *tb,
+struct scols_filter *scols_filter_new(const char *const expr, struct libscols_table *tb,
 				      int ncols,
 				      int (*column_name_to_id)(const char *, void *),
 				      struct libscols_column *(*add_column_by_id)(struct libscols_table *, int, void*),
@@ -1392,7 +1392,7 @@ struct lsfd_filter *lsfd_filter_new(const char *const expr, struct libscols_tabl
 	struct parser parser;
 	int i;
 	struct node *node;
-	struct lsfd_filter *filter;
+	struct scols_filter *filter;
 
 	parser_init(&parser, expr, tb, ncols,
 		    column_name_to_id,
@@ -1400,7 +1400,7 @@ struct lsfd_filter *lsfd_filter_new(const char *const expr, struct libscols_tabl
 		    data);
 
 	node = dparser_compile(&parser);
-	filter = xcalloc(1, sizeof(struct lsfd_filter));
+	filter = xcalloc(1, sizeof(struct scols_filter));
 
 	if (GOT_ERROR(&parser)) {
 		xstrncpy(filter->errmsg, parser.errmsg, sizeof(filter->errmsg));
@@ -1438,7 +1438,7 @@ struct lsfd_filter *lsfd_filter_new(const char *const expr, struct libscols_tabl
 	return filter;
 }
 
-const char *lsfd_filter_get_errmsg(struct lsfd_filter *filter)
+const char *scols_filter_get_errmsg(struct scols_filter *filter)
 {
 	if (GOT_ERROR(filter))
 		return filter->errmsg;
@@ -1446,7 +1446,7 @@ const char *lsfd_filter_get_errmsg(struct lsfd_filter *filter)
 	return NULL;
 }
 
-void lsfd_filter_dump(struct lsfd_filter *filter, FILE *stream)
+void scols_filter_dump(struct scols_filter *filter, FILE *stream)
 {
 	if (!filter) {
 		fputs("EMPTY\n", stream);
@@ -1461,7 +1461,7 @@ void lsfd_filter_dump(struct lsfd_filter *filter, FILE *stream)
 	node_dump(filter->node, filter->parameters, 0, stream);
 }
 
-void lsfd_filter_free(struct lsfd_filter *filter)
+void scols_filter_free(struct scols_filter *filter)
 {
 	int i;
 
@@ -1480,7 +1480,7 @@ void lsfd_filter_free(struct lsfd_filter *filter)
 	free(filter);
 }
 
-bool lsfd_filter_apply(struct lsfd_filter *filter, struct libscols_line * ln)
+bool scols_filter_apply(struct scols_filter *filter, struct libscols_line * ln)
 {
 	int i;
 

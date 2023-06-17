@@ -882,6 +882,7 @@ subdir('lib')
 subdir('libblkid')
 subdir('libmount')
 subdir('libsmartcols')
+subdir('smartcols-filter')
 subdir('libuuid')
 subdir('libfdisk')
 subdir('login-utils')
@@ -2587,6 +2588,7 @@ exe = executable(
   lsfd_sources,
   include_directories : includes,
   link_with : [lib_common,
+               lib_smartcols_filter,
                lib_smartcols],
   install_dir : usrbin_exec_dir,
   install : true)

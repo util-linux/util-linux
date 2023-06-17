@@ -1,0 +1,11 @@
+EXTRA_LTLIBRARIES += libsmartcols-filter.la
+libsmartcols_filter_la_CFLAGS = $(AM_CFLAGS)
+libsmartcols_filter_la_SOURCES =
+libsmartcols_filter_la_LIBADD =
+if BUILD_LIBSMARTCOLS
+libsmartcols_filter_la_CFLAGS += -I$(ul_libsmartcols_incdir)
+libsmartcols_filter_la_SOURCES += \
+	smartcols-filter/smartcols-filter.c  \
+	smartcols-filter/smartcols-counter.c
+libsmartcols_filter_la_LIBADD += libsmartcols.la
+endif

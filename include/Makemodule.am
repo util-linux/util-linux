@@ -68,6 +68,8 @@ dist_noinst_HEADERS += \
 	include/shells.h \
 	include/signames.h \
 	include/selinux-utils.h \
+	include/smartcols-counter.h \
+	include/smartcols-filter.h \
 	include/statfs_magic.h \
 	include/strutils.h \
 	include/strv.h \
