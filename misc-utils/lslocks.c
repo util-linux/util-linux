@@ -67,23 +67,49 @@ struct colinfo {
 	const char * const	name; /* header */
 	double			whint; /* width hint (N < 1 is in percent of termwidth) */
 	int			flags; /* SCOLS_FL_* */
+	int			json_type;
+	int			json_type_in_bytes_mode;
 	const char		*help;
 };
 
 /* columns descriptions */
 static struct colinfo infos[] = {
-	[COL_SRC]  = { "COMMAND",15, 0, N_("command of the process holding the lock") },
-	[COL_PID]  = { "PID",     5, SCOLS_FL_RIGHT, N_("PID of the process holding the lock") },
-	[COL_TYPE] = { "TYPE",    5, SCOLS_FL_RIGHT, N_("kind of lock") },
-	[COL_SIZE] = { "SIZE",    4, SCOLS_FL_RIGHT, N_("size of the lock") },
-	[COL_INODE] = { "INODE",  5, SCOLS_FL_RIGHT, N_("inode number") },
-	[COL_MAJMIN] = { "MAJ:MIN", 6, 0, N_("major:minor device number") },
-	[COL_MODE] = { "MODE",    5, 0, N_("lock access mode") },
-	[COL_M]    = { "M",       1, 0, N_("mandatory state of the lock: 0 (none), 1 (set)")},
-	[COL_START] = { "START", 10, SCOLS_FL_RIGHT, N_("relative byte offset of the lock")},
-	[COL_END]  = { "END",    10, SCOLS_FL_RIGHT, N_("ending offset of the lock")},
-	[COL_PATH] = { "PATH",    0, SCOLS_FL_TRUNC, N_("path of the locked file")},
-	[COL_BLOCKER] = { "BLOCKER", 0, SCOLS_FL_RIGHT, N_("PID of the process blocking the lock") }
+	[COL_SRC]  = { "COMMAND",15, 0,
+		       SCOLS_JSON_STRING, -1,
+		       N_("command of the process holding the lock") },
+	[COL_PID]  = { "PID",     5, SCOLS_FL_RIGHT,
+		       SCOLS_JSON_NUMBER, -1,
+		       N_("PID of the process holding the lock") },
+	[COL_TYPE] = { "TYPE",    5, SCOLS_FL_RIGHT,
+		       SCOLS_JSON_STRING, -1,
+		       N_("kind of lock") },
+	[COL_SIZE] = { "SIZE",    4, SCOLS_FL_RIGHT,
+		       SCOLS_JSON_STRING, SCOLS_JSON_NUMBER,
+		       N_("size of the lock") },
+	[COL_INODE] = { "INODE",  5, SCOLS_FL_RIGHT,
+			SCOLS_JSON_NUMBER, -1,
+			N_("inode number") },
+	[COL_MAJMIN] = { "MAJ:MIN", 6, 0,
+			 SCOLS_JSON_STRING, -1,
+			 N_("major:minor device number") },
+	[COL_MODE] = { "MODE",    5, 0,
+		       SCOLS_JSON_STRING, -1,
+		       N_("lock access mode") },
+	[COL_M]    = { "M",       1, 0,
+		       SCOLS_JSON_BOOLEAN, -1,
+		       N_("mandatory state of the lock: 0 (none), 1 (set)")},
+	[COL_START] = { "START", 10, SCOLS_FL_RIGHT,
+			SCOLS_JSON_NUMBER, -1,
+			N_("relative byte offset of the lock")},
+	[COL_END]  = { "END",    10, SCOLS_FL_RIGHT,
+		       SCOLS_JSON_NUMBER, -1,
+		       N_("ending offset of the lock")},
+	[COL_PATH] = { "PATH",    0, SCOLS_FL_TRUNC,
+		       SCOLS_JSON_STRING, -1,
+		       N_("path of the locked file")},
+	[COL_BLOCKER] = { "BLOCKER", 0, SCOLS_FL_RIGHT,
+			  SCOLS_JSON_NUMBER, -1,
+			  N_("PID of the process blocking the lock") }
 };
 
 static int columns[ARRAY_SIZE(infos) * 2];
@@ -488,26 +514,13 @@ static int show_locks(struct list_head *locks)
 
 		if (json) {
 			int id = get_column_id(i);
+			int json_type = -1;
 
-			switch (id) {
-			case COL_SIZE:
-				if (!bytes)
-					break;
-				/* fallthrough */
-			case COL_PID:
-			case COL_START:
-			case COL_END:
-			case COL_BLOCKER:
-			case COL_INODE:
-				scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
-				break;
-			case COL_M:
-				scols_column_set_json_type(cl, SCOLS_JSON_BOOLEAN);
-				break;
-			default:
-				scols_column_set_json_type(cl, SCOLS_JSON_STRING);
-				break;
-			}
+			if (bytes)
+				json_type = infos[id].json_type_in_bytes_mode;
+			if (json_type == -1)
+				json_type = infos[id].json_type;
+			scols_column_set_json_type(cl, json_type);
 		}
 
 	}
