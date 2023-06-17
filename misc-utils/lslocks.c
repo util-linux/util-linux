@@ -486,6 +486,25 @@ static void add_scols_line(struct libscols_table *table, struct lock *l, struct 
 	}
 }
 
+static struct libscols_column *add_column(struct libscols_table *table, const struct colinfo *col)
+{
+	struct libscols_column *cl = scols_table_new_column(table, col->name, col->whint, col->flags);
+	if (!cl)
+		err(EXIT_FAILURE, _("failed to allocate output column"));
+
+	if (json) {
+		int json_type = -1;
+
+		if (bytes)
+			json_type = col->json_type_in_bytes_mode;
+		if (json_type == -1)
+			json_type = col->json_type;
+		scols_column_set_json_type(cl, json_type);
+	}
+
+	return cl;
+}
+
 static struct libscols_table *make_table(void)
 {
 	struct libscols_table *table = scols_new_table();
@@ -500,24 +519,8 @@ static struct libscols_table *make_table(void)
 		scols_table_set_name(table, "locks");
 
 	for (size_t i = 0; i < ncolumns; i++) {
-		struct libscols_column *cl;
 		const struct colinfo *col = get_column_info(i);
-
-		cl = scols_table_new_column(table, col->name, col->whint, col->flags);
-		if (!cl)
-			err(EXIT_FAILURE, _("failed to allocate output column"));
-
-		if (json) {
-			int id = get_column_id(i);
-			int json_type = -1;
-
-			if (bytes)
-				json_type = infos[id].json_type_in_bytes_mode;
-			if (json_type == -1)
-				json_type = infos[id].json_type;
-			scols_column_set_json_type(cl, json_type);
-		}
-
+		(void) add_column(table, col);
 	}
 
 	return table;
