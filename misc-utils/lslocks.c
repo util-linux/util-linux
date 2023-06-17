@@ -486,14 +486,9 @@ static void add_scols_line(struct libscols_table *table, struct lock *l, struct 
 	}
 }
 
-static int show_locks(struct list_head *locks)
+static struct libscols_table *make_table(void)
 {
-	int rc = 0;
-	size_t i;
-	struct list_head *p, *pnext;
-	struct libscols_table *table;
-
-	table = scols_new_table();
+	struct libscols_table *table = scols_new_table();
 	if (!table)
 		err(EXIT_FAILURE, _("failed to allocate output table"));
 
@@ -504,7 +499,7 @@ static int show_locks(struct list_head *locks)
 	if (json)
 		scols_table_set_name(table, "locks");
 
-	for (i = 0; i < ncolumns; i++) {
+	for (size_t i = 0; i < ncolumns; i++) {
 		struct libscols_column *cl;
 		const struct colinfo *col = get_column_info(i);
 
@@ -525,6 +520,14 @@ static int show_locks(struct list_head *locks)
 
 	}
 
+	return table;
+}
+
+static int show_locks(struct list_head *locks, struct libscols_table *table)
+{
+	int rc = 0;
+	struct list_head *p, *pnext;
+
 	/* prepare data for output */
 	list_for_each(p, locks) {
 		struct lock *l = list_entry(p, struct lock, locks);
@@ -542,7 +545,6 @@ static int show_locks(struct list_head *locks)
 	}
 
 	scols_print_table(table);
-	scols_unref_table(table);
 	return rc;
 }
 
@@ -587,6 +589,7 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char *argv[])
 {
 	int c, rc = 0;
+	struct libscols_table *table;
 	struct list_head locks;
 	char *outarg = NULL;
 	enum {
@@ -682,10 +685,13 @@ int main(int argc, char *argv[])
 
 	scols_init_debug(0);
 
+	table = make_table();
 	rc = get_local_locks(&locks);
 
 	if (!rc && !list_empty(&locks))
-		rc = show_locks(&locks);
+		rc = show_locks(&locks, table);
+
+	scols_unref_table(table);
 
 	mnt_unref_table(tab);
 	return rc;
