@@ -499,7 +499,8 @@ static void anon_eventpoll_attach_xinfo(struct unkn *unkn)
 }
 
 static char *anon_eventpoll_make_tfds_string(struct anon_eventpoll_data *data,
-					     const char *prefix)
+					     const char *prefix,
+					     const char sep)
 {
 	char *str = prefix? xstrdup(prefix): NULL;
 
@@ -508,7 +509,7 @@ static char *anon_eventpoll_make_tfds_string(struct anon_eventpoll_data *data,
 		size_t offset = 0;
 
 		if (i > 0) {
-			buf[0] = ',';
+			buf[0] = sep;
 			offset = 1;
 		}
 		snprintf(buf + offset, sizeof(buf) - offset, "%d", data->tfds[i]);
@@ -520,7 +521,7 @@ static char *anon_eventpoll_make_tfds_string(struct anon_eventpoll_data *data,
 static char *anon_eventpoll_get_name(struct unkn *unkn)
 {
 	return anon_eventpoll_make_tfds_string((struct anon_eventpoll_data *)unkn->anon_data,
-					       "tfds=");
+					       "tfds=", ',');
 }
 
 static bool anon_eventpoll_fill_column(struct proc *proc  __attribute__((__unused__)),
@@ -534,7 +535,7 @@ static bool anon_eventpoll_fill_column(struct proc *proc  __attribute__((__unuse
 
 	switch(column_id) {
 	case COL_EVENTPOLL_TFDS:
-		*str =anon_eventpoll_make_tfds_string(data, NULL);
+		*str =anon_eventpoll_make_tfds_string(data, NULL, '\n');
 		if (*str)
 			return true;
 		break;
