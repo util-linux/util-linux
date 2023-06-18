@@ -38,8 +38,8 @@ FSTAB="$(stat -c %i /etc/fstab)"@"$(((FSTAB_DEV >> 8) & 255)):$((FSTAB_DEV & 255
 	EXPR='(PID == '"${PID}"') and (FD == '"$FD"')'
 	INODES_RAW=$(${TS_CMD_LSFD} --raw -n -o INOTIFY.INODES.RAW -Q "${EXPR}")
 	echo "INOTIFY.INODES.RAW": $?
-	if [[ "$INODES_RAW" == "$FSTAB","$ROOT" ]]; then
-	    echo "INOTIFY.INODES.RAW" == "FSTAB","ROOT"
+	if [[ "$INODES_RAW" ==  "${FSTAB}"'\x0a'"${ROOT}" ]]; then
+	    echo "INOTIFY.INODES.RAW" == FSTAB'\x0a'ROOT
 	else
 	    echo "INOTIFY.INODES.RAW": "$INODES_RAW"
 	    echo "FSTAB": "$FSTAB"
