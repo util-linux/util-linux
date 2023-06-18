@@ -71,4 +71,20 @@ for C in ro-regular-file pidfd socketpair; do
     ts_finalize_subtest
 done
 
+C=make-regular-file
+ts_init_subtest deleted-file
+{
+    target=tmp-column-name
+    coproc MKFDS { "$TS_HELPER_MKFDS" $C $FD file=tmp-column-name delete=1; }
+    if read -r -u "${MKFDS[0]}" PID; then
+	${TS_CMD_LSFD} -n -o DELETED,NAME -p "${PID}" -Q "${EXPR}" |
+	    sed -e 's#.*/\([^/]\+\)#\1#'
+	echo "$C: DELETED,NAME: " ${PIPESTATUS[0]}
+
+	kill -CONT "${PID}"
+    fi
+} > "$TS_OUTPUT" 2>&1
+wait "${MKFDS_PID}"
+ts_finalize_subtest
+
 ts_finalize
