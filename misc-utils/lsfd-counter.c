@@ -14,7 +14,7 @@
 
 struct lsfd_counter {
 	char *name;
-	size_t value;
+	uint64_t value;
 	struct lsfd_filter *filter;
 };
 
@@ -50,7 +50,7 @@ const char *lsfd_counter_name(struct lsfd_counter *counter)
 	return counter->name;
 }
 
-size_t lsfd_counter_value(struct lsfd_counter *counter)
+uint64_t lsfd_counter_value(struct lsfd_counter *counter)
 {
 	return counter->value;
 }

@@ -1802,7 +1802,7 @@ static void fill_summary_line(struct libscols_line *ln, struct lsfd_counter *cou
 {
 	char *str = NULL;
 
-	xasprintf(&str, "%llu", (unsigned long long)lsfd_counter_value(counter));
+	xasprintf(&str, "%"PRIu64, lsfd_counter_value(counter));
 	if (!str)
 		err(EXIT_FAILURE, _("failed to add summary data"));
 	if (scols_line_refer_data(ln, 0, str))

@@ -13,6 +13,7 @@
 #include "libsmartcols.h"
 #include "lsfd-filter.h"
 #include <stdbool.h>
+#include <stdint.h>
 
 struct lsfd_counter;
 
@@ -25,6 +26,6 @@ void lsfd_counter_free(struct lsfd_counter *counter);
 bool lsfd_counter_accumulate(struct lsfd_counter *counter, struct libscols_line *ln);
 
 const char *lsfd_counter_name(struct lsfd_counter *counter);
-size_t lsfd_counter_value(struct lsfd_counter *counter);
+uint64_t lsfd_counter_value(struct lsfd_counter *counter);
 
 #endif	/* UTIL_LINUX_LSFD_COUNTER_H */
