@@ -381,6 +381,63 @@ static void *open_ro_regular_file(const struct factory *factory, struct fdesc fd
 	return NULL;
 }
 
+static void unlink_and_close_fdesc(int fd, void *data)
+{
+	char *fname = data;
+
+	unlink(fname);
+	close(fd);
+}
+
+static void *make_w_regular_file(const struct factory *factory, struct fdesc fdescs[],
+				 int argc, char ** argv)
+{
+	int fd;
+
+	struct arg file = decode_arg("file", factory->params, argc, argv);
+	char *fname = xstrdup(ARG_STRING(file));
+
+	struct arg delete = decode_arg("delete", factory->params, argc, argv);
+	bool bDelete = ARG_BOOLEAN(delete);
+
+	free_arg(&delete);
+	free_arg(&file);
+
+	fd = open(fname, O_CREAT|O_EXCL|O_WRONLY, S_IWUSR);
+	if (fd < 0)
+		err(EXIT_FAILURE, "failed to make: %s", fname);
+
+	if (fd != fdescs[0].fd) {
+		if (dup2(fd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(fd);
+			free (fname);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", fd, fdescs[0].fd);
+		}
+		close(fd);
+	}
+
+	if (bDelete) {
+		if (unlink(fname) < 0) {
+			int e = errno;
+			close(fd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to unlink %s", fname);
+		}
+		free(fname);
+		fname = NULL;
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = bDelete? close_fdesc: unlink_and_close_fdesc,
+		.data  = fname,
+	};
+
+	return NULL;
+}
+
 static void *make_pipe(const struct factory *factory, struct fdesc fdescs[],
 		       int argc, char ** argv)
 {
@@ -2487,6 +2544,29 @@ static const struct factory factories[] = {
 				.type = PTYPE_INTEGER,
 				.desc = "seek bytes after open with SEEK_CUR",
 				.defv.integer = 0,
+			},
+			PARAM_END
+		},
+	},
+	{
+		.name = "make-regular-file",
+		.desc = "regular file for writing",
+		.priv = false,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_w_regular_file,
+		.params = (struct parameter []) {
+			{
+				.name = "file",
+				.type = PTYPE_STRING,
+				.desc = "file to be made",
+				.defv.string = "./test_mkfds_make_regular_file",
+			},
+			{
+				.name = "delete",
+				.type = PTYPE_BOOLEAN,
+				.desc = "delete the file just after making it",
+				.defv.boolean = false,
 			},
 			PARAM_END
 		},
