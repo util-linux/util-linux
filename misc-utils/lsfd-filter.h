@@ -19,8 +19,11 @@
 struct lsfd_filter;
 
 /*
+ * lsfd_filter_new:
  * @column_name_to_id: a function converting a column name to its id.
  *
+ * Make a filter object.
+
  * @column_name_to_id should return LSFD_FILTER_UNKNOWN_COL_ID if
  * an unknown column name is given.
  */
