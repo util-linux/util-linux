@@ -47,6 +47,14 @@ ts_init_subtest "multi-types"
 $TS_CMD_MOUNT -t mytest,invalid /foo /bar &> $TS_OUTPUT
 ts_finalize_subtest
 
+ts_init_subtest "user"
+$TS_CMD_MOUNT -t mytest -ouser,abc /foo /bar &> $TS_OUTPUT
+ts_finalize_subtest
+
+ts_init_subtest "username"
+$TS_CMD_MOUNT -t mytest -ouser=name,abc /foo /bar &> $TS_OUTPUT
+ts_finalize_subtest
+
 rm -f $MOUNTER
 
 ts_finalize
