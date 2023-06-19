@@ -177,6 +177,22 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 	if (rc)
 		return rc;
 
+	/*
+	* Ignore user=<name> (if <name> is set). Let's keep it hidden
+	* for normal library operations, but visible for /sbin/mount.<type>
+	* helpers.
+	*/
+	if (user_flags & MNT_MS_USER
+	    && (opt = mnt_optlist_get_opt(ol, MNT_MS_USER, cxt->map_userspace))
+	    && mnt_opt_has_value(opt)) {
+		DBG(CXT, ul_debugobj(cxt, "perms: user=<name> detected, ignore"));
+
+		cxt->flags |= MNT_FL_SAVED_USER;
+
+		mnt_opt_set_external(opt, 1);
+		user_flags &= ~MNT_MS_USER;
+	}
+
 	if (!mnt_context_is_restricted(cxt)) {
 		/*
 		 * superuser mount
@@ -226,22 +242,6 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		{
 			DBG(CXT, ul_debugobj(cxt, "perms: fstab not applied, ignore user mount"));
 			return -EPERM;
-		}
-
-		/*
-		* Ignore user=<name> (if <name> is set). Let's keep it hidden
-		* for normal library operations, but visible for /sbin/mount.<type>
-		* helpers.
-		*/
-		if (user_flags & MNT_MS_USER
-		    && (opt = mnt_optlist_get_opt(ol, MNT_MS_USER, cxt->map_userspace))
-		    && mnt_opt_has_value(opt)) {
-			DBG(CXT, ul_debugobj(cxt, "perms: user=<name> detected, ignore"));
-
-			cxt->flags |= MNT_FL_SAVED_USER;
-
-			mnt_opt_set_external(opt, 1);
-			user_flags &= ~MNT_MS_USER;
 		}
 
 		/*
