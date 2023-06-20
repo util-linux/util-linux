@@ -17,6 +17,11 @@ AM_CPPFLAGS += \
 endif
 endif
 
+if WITH_COVERAGE
+AM_CPPFLAGS += \
+	-include $(top_srcdir)/include/coverage.h
+endif
+
 AM_CFLAGS = -fsigned-char $(WARN_CFLAGS)
 AM_CXXFLAGS = $(AM_CFLAGS)
 AM_LDFLAGS = $(ASAN_LDFLAGS) $(UBSAN_LDFLAGS) $(FUZZING_ENGINE_LDFLAGS) $(COVERAGE_LDFLAGS)
