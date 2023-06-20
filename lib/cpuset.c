@@ -1,4 +1,6 @@
 /*
+ * SPDX-License-Identifier: LGPL-2.1-or-later
+ *
  * Terminology:
  *
  *	cpuset	- (libc) cpu_set_t data structure represents set of CPUs
