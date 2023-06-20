@@ -55,7 +55,7 @@ fstrim_sources = files(
 dmesg_sources = files(
   'dmesg.c',
 ) + \
-  monotonic_c
+  monotonic_c + pager_c
 
 ctrlaltdel_sources = files(
   'ctrlaltdel.c',

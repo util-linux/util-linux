@@ -157,7 +157,9 @@ fdisk_SOURCES = \
 	disk-utils/fdisk.h \
 	disk-utils/fdisk-menu.c \
 	disk-utils/fdisk-list.c \
-	disk-utils/fdisk-list.h
+	disk-utils/fdisk-list.h \
+	include/pager.h \
+	lib/pager.c
 
 fdisk_LDADD = $(LDADD) libcommon.la libfdisk.la \
 	      libsmartcols.la libtcolors.la $(READLINE_LIBS)
