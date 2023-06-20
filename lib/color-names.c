@@ -2,7 +2,7 @@
  * No copyright is claimed.  This code is in the public domain; do with
  * it what you wish.
  *
- * Written by Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2012-2015 Karel Zak <kzak@redhat.com>
  */
 #include "c.h"
 #include "color-names.h"
