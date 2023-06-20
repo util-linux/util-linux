@@ -87,9 +87,7 @@ for phase in "${PHASES[@]}"; do
         )
 
         if [[ "$COVERAGE" == "yes" ]]; then
-            CFLAGS+=(--coverage)
-            CXXFLAGS+=(--coverage)
-            LDFLAGS+=(--coverage)
+            opts+=(--enable-coverage)
         fi
 
         if [[ "$SANITIZE" == "yes" ]]; then
