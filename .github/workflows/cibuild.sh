@@ -162,6 +162,20 @@ for phase in "${PHASES[@]}"; do
             fi
         fi
 
+        if [[ "$COVERAGE" == "yes" ]]; then
+            # Make (almost) everything under current directory readable/writable
+            # for everyone to allow gcov to write the .gcda files even with
+            # dropped privileges
+            find . tests/helpers/ -maxdepth 1 -type d ! -name . ! -name tests \
+                                  -exec setfacl -R -m 'd:g::rwX,d:o::rwX' -m 'g::rwX,o::rwX' '{}' \;
+            # Make sure we can access $PWD as an unpriv user
+            path="$PWD"
+            while [[ "$path" != / ]]; do
+                chmod o+rx "$path"
+                path="$(dirname "$path")"
+            done
+        fi
+
         ./tests/run.sh --show-diff
 
         if [[ "$COVERAGE" == "yes" ]]; then
