@@ -157,7 +157,7 @@ if BUILD_DMESG
 bin_PROGRAMS += dmesg
 MANPAGES += sys-utils/dmesg.1
 dist_noinst_DATA += sys-utils/dmesg.1.adoc
-dmesg_SOURCES = sys-utils/dmesg.c lib/monotonic.c
+dmesg_SOURCES = sys-utils/dmesg.c lib/monotonic.c include/pager.h lib/pager.c
 dmesg_LDADD = $(LDADD) libcommon.la libtcolors.la $(REALTIME_LIBS)
 dmesg_CFLAGS = $(AM_CFLAGS)
 check_PROGRAMS += test_dmesg
