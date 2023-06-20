@@ -1,5 +1,5 @@
 #!/bin/bash
- 
+
 set -ex
 
 PHASES=(${@:-CONFIGURE MAKE INSTALL CHECK DISTCHECK})
@@ -104,9 +104,9 @@ for phase in "${PHASES[@]}"; do
             CXXFLAGS+=(-shared-libasan)
         fi
 
-	if [[ "$HOST_TRIPLET" != "" ]]; then
-		opts+=(--host "$HOST_TRIPLET")
-	fi
+        if [[ "$HOST_TRIPLET" != "" ]]; then
+            opts+=(--host "$HOST_TRIPLET")
+        fi
 
         git config --global --add safe.directory "$PWD"
         git clean -xdf
@@ -128,9 +128,9 @@ for phase in "${PHASES[@]}"; do
         ninja -C build
         ;;
     CODECHECK)
-	make checklibdoc
-	make checkxalloc
-	;;
+        make checklibdoc
+        make checkxalloc
+        ;;
     CHECK)
         if [[ "$SANITIZE" == "yes" ]]; then
             # All the following black magic is to make test/eject/umount work, since
