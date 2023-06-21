@@ -366,6 +366,8 @@ ____
 *sfdisk /dev/sda < sda.dump*
 ____
 
+Note that sfdisk completely restores partition types and partition UUIDs. This could potentially become problematic if you duplicate the same layout to different disks, as it may result in duplicate UUIDs within your system.
+
 === Full binary backup
 
 If you want to do a full binary backup of all sectors where the partition table is stored, then use the *--backup-pt-sectors* command. It writes the sectors to _~/sfdisk-<device>-<offset>.bak_ files. The default name of the backup file can be changed with the *--backup-file* option. The backup files contain only raw data from the _device_. For example:
