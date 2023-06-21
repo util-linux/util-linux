@@ -156,6 +156,8 @@ if [ -z "$top_builddir" ]; then
 	top_builddir="$TS_TOPDIR/.."
 	if [ -e "$top_builddir/build/meson.conf" ]; then
 		top_builddir="$TS_TOPDIR/../build"
+	elif [ -e "$PWD/meson.conf" ]; then
+		top_builddir="$PWD"
 	fi
 fi
 
