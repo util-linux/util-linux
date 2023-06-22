@@ -911,9 +911,29 @@ int mnt_context_set_fs(struct libmnt_context *cxt, struct libmnt_fs *fs)
 	if (!cxt)
 		return -EINVAL;
 
+	if (cxt->fs == fs)
+		return 0;
+
 	DBG(CXT, ul_debugobj(cxt, "setting new FS"));
-	mnt_ref_fs(fs);			/* new */
-	mnt_unref_fs(cxt->fs);		/* old */
+
+	/* new */
+	if (fs) {
+		struct libmnt_optlist *ol = mnt_context_get_optlist(cxt);
+
+		if (!ol)
+			return -ENOMEM;
+
+		mnt_ref_fs(fs);
+
+		mnt_optlist_set_optstr(ol, mnt_fs_get_options(fs), NULL);
+		mnt_fs_follow_optlist(fs, ol);
+	}
+
+	/* old */
+	if (cxt->fs)
+		mnt_fs_follow_optlist(cxt->fs, NULL);
+	mnt_unref_fs(cxt->fs);
+
 	cxt->fs = fs;
 	return 0;
 }
@@ -932,8 +952,17 @@ struct libmnt_fs *mnt_context_get_fs(struct libmnt_context *cxt)
 {
 	if (!cxt)
 		return NULL;
-	if (!cxt->fs)
+	if (!cxt->fs) {
+		struct libmnt_optlist *ol = mnt_context_get_optlist(cxt);
+
+		if (!ol)
+			return NULL;
 		cxt->fs = mnt_new_fs();
+		if (!cxt->fs)
+			return NULL;
+
+		mnt_fs_follow_optlist(cxt->fs, ol);
+	}
 	return cxt->fs;
 }
 
@@ -3314,6 +3343,50 @@ static int test_flags(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
+static int test_cxtsync(struct libmnt_test *ts, int argc, char *argv[])
+{
+	struct libmnt_context *cxt;
+	struct libmnt_fs *fs;
+	unsigned long flags = 0;
+	int rc;
+
+	if (argc != 4)
+		return -EINVAL;
+
+	fs = mnt_new_fs();
+	if (!fs)
+		return -ENOMEM;
+
+	rc = mnt_fs_set_options(fs, argv[1]);
+	if (rc)
+		return rc;
+
+	cxt = mnt_new_context();
+	if (!cxt)
+		return -ENOMEM;
+
+	rc = mnt_context_set_fs(cxt, fs);
+	if (rc)
+		return rc;
+
+	rc = mnt_context_append_options(cxt, argv[2]);
+	if (rc)
+		return rc;
+
+	rc = mnt_fs_append_options(fs, argv[3]);
+	if (rc)
+		return rc;
+
+	mnt_context_get_mflags(cxt, &flags);
+
+	printf("     fs options: %s\n", mnt_fs_get_options(fs));
+	printf("context options: %s\n", mnt_context_get_options(cxt));
+	printf(" context mflags: %08lx\n", flags);
+
+	mnt_free_context(cxt);
+	return 0;
+}
+
 static int test_mountall(struct libmnt_test *ts, int argc, char *argv[])
 {
 	struct libmnt_context *cxt;
@@ -3361,6 +3434,8 @@ static int test_mountall(struct libmnt_test *ts, int argc, char *argv[])
 	return 0;
 }
 
+
+
 int main(int argc, char *argv[])
 {
 	struct libmnt_test tss[] = {
@@ -3368,6 +3443,7 @@ int main(int argc, char *argv[])
 	{ "--umount", test_umount, "[-t <type>] [-f][-l][-r] <src>|<target>" },
 	{ "--mount-all", test_mountall,  "[-O <pattern>] [-t <pattern] mount all filesystems from fstab" },
 	{ "--flags", test_flags,   "[-o <opts>] <spec>" },
+	{ "--cxtsync", test_cxtsync, "<fsopts> <cxtopts> <fsopts>" },
 	{ "--search-helper", test_search_helper, "<fstype>" },
 	{ NULL }};
 
