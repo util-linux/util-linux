@@ -92,6 +92,30 @@ EXPR=
 	    echo "expectation:"
 	    echo "${expected}"
 	fi
+
+	EXPR='(PID == '"${PID}"') and (FD == '"$FD0"')'
+	LSFD_ENDPOINTS_JSON=$(${TS_CMD_LSFD} -J --raw -n -o ASSOC,ENDPOINTS -Q "${EXPR}")
+	echo 'ASSOC,ENDPOINTS (JSON)': $?
+	EXPECTED_LSFD_ENDPOINTS_JSON=$(cat<<EOF
+{
+   "lsfd": [
+      {
+         "assoc": "$FD0",
+         "endpoints": [
+             "$PID,test_mkfds,${FD1}-w", "$PID,test_mkfds,$((FD0 + 2))r-", "$PID,test_mkfds,$((FD1 + 2))-w"
+         ]
+      }
+   ]
+}
+EOF
+	)
+	if [[ "$EXPECTED_LSFD_ENDPOINTS_JSON" == "${LSFD_ENDPOINTS_JSON}" ]]; then
+	    echo EXPECTED_LSFD_ENDPOINTS_JSON == LSFD_ENDPOINTS_JSON
+	else
+	    echo LSFD_ENDPOINTS_JSON: "${LSFD_ENDPOINTS_JSON}"
+	    echo EXPECTED_LSFD_ENDPOINTS_JSON: "${EXPECTED_LSFD_ENDPOINTS_JSON}"
+	fi
+
 	kill -CONT ${PID}
     fi
     wait ${MKFDS_PID}
