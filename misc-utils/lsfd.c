@@ -1604,7 +1604,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		fprintf(out, " %16s  %-10s%s\n", infos[i].name,
 			infos[i].json_type == SCOLS_JSON_STRING?  "<string>":
 			infos[i].json_type == SCOLS_JSON_ARRAY_STRING?  "<string>":
-			infos[i].json_type == SCOLS_JSON_ARRAY_STRING?  "<string>":
+			infos[i].json_type == SCOLS_JSON_ARRAY_NUMBER?  "<string>":
 			infos[i].json_type == SCOLS_JSON_NUMBER?  "<number>":
 			"<boolean>",
 			_(infos[i].help));
