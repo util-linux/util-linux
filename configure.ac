@@ -215,6 +215,17 @@ AC_PROG_CXX
 AM_CONDITIONAL([FUZZING_ENGINE], [test "x$enable_fuzzing_engine" = xyes])
 AM_CONDITIONAL([OSS_FUZZ], [test "x$LIB_FUZZING_ENGINE" != x])
 
+AC_ARG_ENABLE([coverage],
+  AS_HELP_STRING([--enable-coverage], [compile with gcov]),
+  [], [enable_coverage=no]
+)
+AS_IF([test "x$enable_coverage" = xyes], [
+  UL_WARN_ADD([--coverage])
+  COVERAGE_LDFLAGS="--coverage"
+])
+AC_SUBST([COVERAGE_LDFLAGS])
+AM_CONDITIONAL([WITH_COVERAGE], [test "x$enable_coverage" = xyes])
+
 dnl libtool-2
 LT_INIT
 
@@ -2891,7 +2902,8 @@ AC_MSG_RESULT([
         ldflags:                   ${LDFLAGS}
         suid ldflags:              ${SUID_LDFLAGS}
         ASAN enabled:              ${enable_asan}
-	Fuzzing enabled:           ${enable_fuzzing_engine}
+        Fuzzing enabled:           ${enable_fuzzing_engine}
+        Coverage enabled           ${enable_coverage}
 
         cflags:                    ${CFLAGS}
 
