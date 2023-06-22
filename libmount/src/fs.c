@@ -228,10 +228,14 @@ int mnt_fs_follow_optlist(struct libmnt_fs *fs, struct libmnt_optlist *ol)
 
 	if (fs->optlist == ol)
 		return 0;
+	if (fs->optlist)
+		mnt_unref_optlist(fs->optlist);
 
 	fs->opts_age = 0;
 	fs->optlist = ol;
-	mnt_ref_optlist(ol);
+
+	if (ol)
+		mnt_ref_optlist(ol);
 	return 0;
 }
 
@@ -919,7 +923,11 @@ int mnt_fs_set_options(struct libmnt_fs *fs, const char *optstr)
 
 	if (!fs)
 		return -EINVAL;
-	fs->opts_age = 0;
+
+	if (fs->optlist) {
+		fs->opts_age = 0;
+		return mnt_optlist_set_optstr(fs->optlist, optstr, NULL);
+	}
 
 	if (optstr) {
 		int rc = mnt_split_optstr(optstr, &u, &v, &f, 0, 0);
@@ -968,8 +976,10 @@ int mnt_fs_append_options(struct libmnt_fs *fs, const char *optstr)
 		return -EINVAL;
 	if (!optstr)
 		return 0;
-
-	fs->opts_age = 0;
+	if (fs->optlist) {
+		fs->opts_age = 0;
+		return mnt_optlist_append_optstr(fs->optlist, optstr, NULL);
+	}
 
 	rc = mnt_split_optstr(optstr, &u, &v, &f, 0, 0);
 	if (rc)
@@ -1013,7 +1023,10 @@ int mnt_fs_prepend_options(struct libmnt_fs *fs, const char *optstr)
 	if (!optstr)
 		return 0;
 
-	fs->opts_age = 0;
+	if (fs->optlist) {
+		fs->opts_age = 0;
+		return mnt_optlist_prepend_optstr(fs->optlist, optstr, NULL);
+	}
 
 	rc = mnt_split_optstr(optstr, &u, &v, &f, 0, 0);
 	if (rc)
