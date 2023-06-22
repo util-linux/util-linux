@@ -23,6 +23,9 @@ jobs:
 
     runs-on: ubuntu-latest
     if: github.repository == 'util-linux/util-linux'
+    concurrency:
+      group: ${{ github.workflow }}-${{ matrix.sanitizer }}-${{ matrix.architecture }}-${{ github.ref }}
+      cancel-in-progress: true
     strategy:
       fail-fast: false
       matrix:

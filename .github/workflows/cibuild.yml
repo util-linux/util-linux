@@ -20,6 +20,9 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ toJSON(matrix.env) }}-${{ github.ref }}
+      cancel-in-progress: true
     strategy:
       fail-fast: false
       matrix:
@@ -45,13 +48,16 @@ jobs:
         run: sudo -E .github/workflows/cibuild.sh CHECK
       - name: Make install
         run: .github/workflows/cibuild.sh INSTALL
+
   coveralls:
     permissions:
       contents: read # to fetch code (actions/checkout)
       checks: write # to create new checks (coverallsapp/github-action)
-
     runs-on: ubuntu-latest
     if: github.repository == 'util-linux/util-linux'
+    concurrency:
+      group: ${{ github.workflow }}-coveralls-${{ github.ref }}
+      cancel-in-progress: true
     env:
       COMPILER: gcc
       COMPILER_VERSION: 10
@@ -71,9 +77,13 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: ./coverage.info
+
   meson:
     needs: build
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-meson-${{ github.ref }}
+      cancel-in-progress: true
     env:
       COMPILER: gcc
       COMPILER_VERSION: 10
@@ -87,9 +97,13 @@ jobs:
         run: .github/workflows/cibuild.sh MESONCONF
       - name: Meson build
         run: .github/workflows/cibuild.sh MESONBUILD
+
   distcheck:
     needs: build
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-distcheck-${{ github.ref }}
+      cancel-in-progress: true
     env:
       COMPILER: gcc
       COMPILER_VERSION: 10
@@ -104,6 +118,7 @@ jobs:
         run: .github/workflows/cibuild.sh CONFIGURE
       - name: Make distcheck
         run: .github/workflows/cibuild.sh DISTCHECK
+
   build-compat:
     strategy:
       fail-fast: false
@@ -112,6 +127,9 @@ jobs:
           - image: ubuntu:18.04
     name: build (compat, ${{ matrix.image }})
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-build-compat-${{ github.ref }}
+      cancel-in-progress: true
     env:
       COMPILER: none
     container:
@@ -129,9 +147,13 @@ jobs:
         run: .github/workflows/cibuild.sh MAKE
       - name: Check
         run: .github/workflows/cibuild.sh CHECK
+
   build-arch:
     name: build (qemu-user, ${{ matrix.arch }})
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ toJSON(matrix) }}-${{ github.ref }}
+      cancel-in-progress: true
     strategy:
       fail-fast: false
       matrix:
@@ -159,9 +181,13 @@ jobs:
             .github/workflows/cibuild.sh CONFIGURE MAKE
             # Check
             .github/workflows/cibuild.sh CHECK
+
   build-openwrt:
     name: build (openwrt, ${{ matrix.target }})
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ toJSON(matrix) }}-${{ github.ref }}
+      cancel-in-progress: true
     strategy:
       fail-fast: false
       matrix:
