@@ -145,7 +145,7 @@ static const struct colinfo infos[] = {
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 				   N_("device type (blk, char, or nodev)") },
 	[COL_ENDPOINTS]        = { "ENDPOINTS",
-				   0,   SCOLS_FL_WRAP,  SCOLS_JSON_STRING,
+				   0,   SCOLS_FL_WRAP,  SCOLS_JSON_ARRAY_STRING,
 				   N_("IPC endpoints information communicated with the fd") },
 	[COL_FLAGS]            = { "FLAGS",
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
@@ -1561,6 +1561,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %16s  %-10s%s\n", infos[i].name,
 			infos[i].json_type == SCOLS_JSON_STRING?  "<string>":
+			infos[i].json_type == SCOLS_JSON_ARRAY_STRING?  "<string>":
 			infos[i].json_type == SCOLS_JSON_NUMBER?  "<number>":
 			"<boolean>",
 			_(infos[i].help));
