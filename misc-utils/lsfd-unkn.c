@@ -499,7 +499,8 @@ static void anon_eventpoll_attach_xinfo(struct unkn *unkn)
 }
 
 static char *anon_eventpoll_make_tfds_string(struct anon_eventpoll_data *data,
-					     const char *prefix)
+					     const char *prefix,
+					     const char sep)
 {
 	char *str = prefix? xstrdup(prefix): NULL;
 
@@ -508,7 +509,7 @@ static char *anon_eventpoll_make_tfds_string(struct anon_eventpoll_data *data,
 		size_t offset = 0;
 
 		if (i > 0) {
-			buf[0] = ',';
+			buf[0] = sep;
 			offset = 1;
 		}
 		snprintf(buf + offset, sizeof(buf) - offset, "%d", data->tfds[i]);
@@ -520,7 +521,7 @@ static char *anon_eventpoll_make_tfds_string(struct anon_eventpoll_data *data,
 static char *anon_eventpoll_get_name(struct unkn *unkn)
 {
 	return anon_eventpoll_make_tfds_string((struct anon_eventpoll_data *)unkn->anon_data,
-					       "tfds=");
+					       "tfds=", ',');
 }
 
 static bool anon_eventpoll_fill_column(struct proc *proc  __attribute__((__unused__)),
@@ -534,7 +535,7 @@ static bool anon_eventpoll_fill_column(struct proc *proc  __attribute__((__unuse
 
 	switch(column_id) {
 	case COL_EVENTPOLL_TFDS:
-		*str =anon_eventpoll_make_tfds_string(data, NULL);
+		*str =anon_eventpoll_make_tfds_string(data, NULL, '\n');
 		if (*str)
 			return true;
 		break;
@@ -838,6 +839,7 @@ static bool anon_inotify_probe(const char *str)
 #define ANON_INOTIFY_MINOR(dev)	((unsigned int) ((dev) &  ANON_INOTIFY_MINORMASK))
 
 static char *anon_inotify_make_inodes_string(const char *prefix,
+					     const char *sep,
 					     enum decode_source_level decode_level,
 					     struct anon_inotify_data *data)
 {
@@ -855,7 +857,7 @@ static char *anon_inotify_make_inodes_string(const char *prefix,
 		decode_source(source, sizeof(source),
 			      ANON_INOTIFY_MAJOR(inode->sdev), ANON_INOTIFY_MINOR(inode->sdev),
 			      decode_level);
-		snprintf(buf, sizeof(buf), "%s%llu@%s", first_element? prefix: ",",
+		snprintf(buf, sizeof(buf), "%s%llu@%s", first_element? prefix: sep,
 			 (unsigned long long)inode->ino, source);
 		first_element = false;
 
@@ -867,7 +869,7 @@ static char *anon_inotify_make_inodes_string(const char *prefix,
 
 static char *anon_inotify_get_name(struct unkn *unkn)
 {
-	return anon_inotify_make_inodes_string("inodes=", DECODE_SOURCE_FULL,
+	return anon_inotify_make_inodes_string("inodes=", ",", DECODE_SOURCE_FULL,
 					       (struct anon_inotify_data *)unkn->anon_data);
 }
 
@@ -925,13 +927,13 @@ static bool anon_inotify_fill_column(struct proc *proc  __attribute__((__unused_
 
 	switch(column_id) {
 	case COL_INOTIFY_INODES:
-		*str = anon_inotify_make_inodes_string("", DECODE_SOURCE_FULL,
+		*str = anon_inotify_make_inodes_string("", "\n", DECODE_SOURCE_FULL,
 						       data);
 		if (*str)
 			return true;
 		break;
 	case COL_INOTIFY_INODES_RAW:
-		*str = anon_inotify_make_inodes_string("", DECODE_SOURCE_MAJMIN,
+		*str = anon_inotify_make_inodes_string("", "\n", DECODE_SOURCE_MAJMIN,
 						       data);
 		if (*str)
 			return true;

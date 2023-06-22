@@ -245,7 +245,7 @@ eventfd:::
 id=_EVENTFD.ID_
 +
 inotify:::
-iodes=_INOTIFY.INODES_
+inodes=_INOTIFY.INODES_
 +
 NETLINK:::
 protocol=_NETLINK.PROTOCOL_[ lport=_NETLINK.LPORT_[ group=_NETLINK.GROUPS_]]
