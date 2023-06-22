@@ -102,6 +102,8 @@ extern int mnt_valid_tagname(const char *tagname);
 extern const char *mnt_statfs_get_fstype(struct statfs *vfs);
 extern int is_file_empty(const char *name);
 
+extern int mnt_is_shared_tree(struct libmnt_context *cxt, const char *dir);
+
 extern int mnt_is_readonly(const char *path)
 			__attribute__((nonnull));
 
@@ -310,6 +312,8 @@ struct libmnt_hookset {
 	int firststage;
 	int (*firstcall)(struct libmnt_context *, const struct libmnt_hookset *, void *);
 
+	int (*mkerrmsg)(struct libmnt_context *, const struct libmnt_hookset *, char *buf, size_t bufsiz);
+
 	int (*deinit)(struct libmnt_context *, const struct libmnt_hookset *);	/* cleanup function */
 };
 
@@ -430,8 +434,13 @@ struct libmnt_context
 	int	nchildren;	/* number of children */
 	pid_t	pid;		/* 0=parent; PID=child */
 
-	int	syscall_status;	/* 1: not called yet, 0: success, <0: -errno */
-	const char *syscall_name;	/* failed syscall name */
+	int	syscall_status;		/* 1: not called yet, 0: success, <0: -errno */
+
+	long	failure_syscall;	/* syscall number (SYS_*) */
+	int     failure_errno;
+	int	failure_cmd;		/* [optional] sub-command (FSCONFIG_CMD_*, etc) */
+	char	*failure_arg;		/* [optional] argument (path, value name, etc) */
+	const struct libmnt_hookset *failure_hookset;	/* module where action failed */
 
 	struct libmnt_ns	ns_orig;	/* original namespace */
 	struct libmnt_ns	ns_tgt;		/* target namespace */
@@ -479,22 +488,73 @@ struct libmnt_context
 /* Flags usable with MS_BIND|MS_REMOUNT */
 #define MNT_BIND_SETTABLE	(MS_NOSUID|MS_NODEV|MS_NOEXEC|MS_NOATIME|MS_NODIRATIME|MS_RELATIME|MS_RDONLY|MS_NOSYMFOLLOW)
 
-#define set_syscall_status(_cxt, _name, _x) __extension__ ({ \
-		if (!(_x)) { \
-			DBG(CXT, ul_debug("syscall '%s' [%m]", _name)); \
-			(_cxt)->syscall_status = -errno; \
-			(_cxt)->syscall_name = (_name); \
-		} else { \
-			DBG(CXT, ul_debug("syscall '%s' [success]", _name)); \
-			(_cxt)->syscall_status = 0; \
-		} \
-	})
 
-#define reset_syscall_status(_cxt)	__extension__ ({ \
-		DBG(CXT, ul_debug("reset syscall status")); \
-		(_cxt)->syscall_status = 0; \
-		(_cxt)->syscall_name = NULL; \
-	})
+/* restore syscall status */
+static inline void mnt_context_reset_failure(struct libmnt_context *cxt)
+{
+	/* overall status */
+	cxt->syscall_status = 1;	/* means not called yet */
+	cxt->helper_exec_status = 1;	/* means not called yet */
+	cxt->helper_status = 0;
+
+	/* failure details */
+	cxt->failure_syscall = 0;
+	cxt->failure_errno = 0;
+	cxt->failure_cmd = 0;
+
+	free(cxt->failure_arg);
+	cxt->failure_arg = NULL;
+	cxt->failure_hookset = NULL;
+
+	DBG(CXT, ul_debug("failure reset"));
+}
+
+/* save information about mount-related syscall, @hs is optional */
+static inline void __mnt_context_save_failure(
+				struct libmnt_context *cxt,
+				const struct libmnt_hookset *hs,
+				int failure_syscall,
+				int errnum,
+				int failure_cmd,
+				const char *failure_arg,
+				const char *file,
+				int line)
+{
+	if (failure_syscall) {
+		cxt->syscall_status = -errnum;
+		cxt->failure_syscall = failure_syscall;
+	}
+
+	cxt->failure_errno = errnum;
+	cxt->failure_cmd = failure_cmd;
+
+	free(cxt->failure_arg);
+	cxt->failure_arg = NULL;
+
+	if (failure_arg)
+		cxt->failure_arg = strdup(failure_arg);
+
+	cxt->failure_hookset = hs;
+
+	if (errnum) {
+		int errsv = errno;
+		errno = errnum;
+		DBG(CXT, ul_debug("%s: %d: >>> failure [%m]", file, line));
+		errno = errsv;
+	} else
+		DBG(CXT, ul_debug("%s: %d: >>> failure", file, line));
+}
+
+#define mnt_context_save_failure(_cxt, _hs, _sys, _eno, _cmd, _arg) \
+		__mnt_context_save_failure(_cxt, _hs, _sys, _eno, _cmd, \
+					   _arg, __FILE__, __LINE__)
+
+
+static inline void mnt_context_save_success(struct libmnt_context *cxt)
+{
+	mnt_context_reset_failure(cxt);
+	cxt->syscall_status = 0;		/* means syscall called */
+}
 
 /* optmap.c */
 extern const struct libmnt_optmap *mnt_optmap_get_entry(
@@ -503,6 +563,8 @@ extern const struct libmnt_optmap *mnt_optmap_get_entry(
 			     const char *name,
                              size_t namelen,
 			     const struct libmnt_optmap **mapent);
+
+extern const char *mnt_optmap_get_entry_name(struct libmnt_optmap const *map, int id);
 
 /* optstr.c */
 extern int mnt_optstr_remove_option_at(char **optstr, char *begin, char *end);
@@ -620,6 +682,8 @@ extern const char *mnt_context_get_writable_tabpath(struct libmnt_context *cxt);
 extern int mnt_context_get_mountinfo(struct libmnt_context *cxt, struct libmnt_table **tb);
 extern int mnt_context_get_mountinfo_for_target(struct libmnt_context *cxt,
 				    struct libmnt_table **mountinfo, const char *tgt);
+
+extern struct libmnt_fs *mnt_context_get_already_mounted(struct libmnt_context *cxt);
 
 extern int mnt_context_prepare_srcpath(struct libmnt_context *cxt);
 extern int mnt_context_guess_srcpath_fstype(struct libmnt_context *cxt, char **type);

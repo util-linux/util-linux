@@ -165,6 +165,47 @@ int mnt_is_path(const char *target)
 }
 
 /*
+ * Returns 1 if @dir parent is shared
+ */
+int mnt_is_shared_tree(struct libmnt_context *cxt, const char *dir)
+{
+	struct libmnt_table *tb = NULL;
+	struct libmnt_fs *fs;
+	unsigned long mflags = 0;
+	char *mnt = NULL, *p;
+	int rc = 0;
+	struct libmnt_ns *ns_old;
+
+	ns_old = mnt_context_switch_target_ns(cxt);
+	if (!ns_old)
+		return -MNT_ERR_NAMESPACE;
+
+	if (!dir)
+		return 0;
+	if (mnt_context_get_mountinfo(cxt, &tb) || !tb)
+		goto done;
+
+	mnt = strdup(dir);
+	if (!mnt)
+		goto done;
+	p = strrchr(mnt, '/');
+	if (!p)
+		goto done;
+	if (p > mnt)
+		*p = '\0';
+	fs = mnt_table_find_mountpoint(tb, mnt, MNT_ITER_BACKWARD);
+
+	rc = fs && mnt_fs_is_kernel(fs)
+		&& mnt_fs_get_propagation(fs, &mflags) == 0
+		&& (mflags & MS_SHARED);
+done:
+	free(mnt);
+	if (!mnt_context_switch_ns(cxt, ns_old))
+		return -MNT_ERR_NAMESPACE;
+	return rc;
+}
+
+/*
  * Note that the @target has to be an absolute path (so at least "/").  The
  * @filename returns an allocated buffer with the last path component, for example:
  *

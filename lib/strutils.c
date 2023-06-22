@@ -1217,6 +1217,27 @@ int ul_optstr_next(char **optstr, char **name, size_t *namesz,
 	return 1;				/* end of optstr */
 }
 
+int errsnprint(char *buf, size_t bufsz, int errnum, const char *fmt, ...)
+{
+	int errsv, re;
+	va_list ap;
+
+	if (!buf || !bufsz)
+		return 0;
+
+	va_start(ap, fmt);
+
+	errsv = errno;
+	errno = errnum;
+
+	re = vsnprintf(buf, bufsz, fmt, ap);
+
+	va_end(ap);
+	errno = errsv;
+
+	return re;
+}
+
 #ifdef TEST_PROGRAM_STRUTILS
 
 #include "cctype.h"

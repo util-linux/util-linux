@@ -60,7 +60,7 @@ struct libmnt_context *mnt_new_context(void)
 	ruid = getuid();
 	euid = geteuid();
 
-	mnt_context_reset_status(cxt);
+	mnt_context_reset_failure(cxt);
 
 	cxt->ns_orig.fd = -1;
 	cxt->ns_tgt.fd = -1;
@@ -170,7 +170,7 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	cxt->map_linux = mnt_get_builtin_optmap(MNT_LINUX_MAP);
 	cxt->map_userspace = mnt_get_builtin_optmap(MNT_USERSPACE_MAP);
 
-	mnt_context_reset_status(cxt);
+	mnt_context_reset_failure(cxt);
 	mnt_context_deinit_hooksets(cxt);
 
 	if (cxt->table_fltrcb)
@@ -283,7 +283,7 @@ struct libmnt_context *mnt_copy_context(struct libmnt_context *o)
 	n->map_linux = o->map_linux;
 	n->map_userspace = o->map_userspace;
 
-	mnt_context_reset_status(n);
+	mnt_context_reset_failure(n);
 
 	n->table_fltrcb = o->table_fltrcb;
 	n->table_fltrcb_data = o->table_fltrcb_data;
@@ -314,9 +314,7 @@ int mnt_context_reset_status(struct libmnt_context *cxt)
 	if (!cxt)
 		return -EINVAL;
 
-	cxt->syscall_status = 1;		/* means not called yet */
-	cxt->helper_exec_status = 1;
-	cxt->helper_status = 0;
+	mnt_context_reset_failure(cxt);
 	return 0;
 }
 
@@ -2570,6 +2568,8 @@ int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status)
 	if (!cxt)
 		return -EINVAL;
 
+	mnt_context_reset_failure(cxt);
+
 	DBG(CXT, ul_debugobj(cxt, "syscall status set to: %d", status));
 	cxt->syscall_status = status;
 	return 0;
@@ -2589,7 +2589,6 @@ int mnt_context_strerror(struct libmnt_context *cxt __attribute__((__unused__)),
 			 char *buf __attribute__((__unused__)),
 			 size_t bufsiz __attribute__((__unused__)))
 {
-	/* TODO: based on cxt->syscall_errno or cxt->helper_status */
 	return 0;
 }
 
