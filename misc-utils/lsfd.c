@@ -145,13 +145,13 @@ static const struct colinfo infos[] = {
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 				   N_("device type (blk, char, or nodev)") },
 	[COL_ENDPOINTS]        = { "ENDPOINTS",
-				   0,   SCOLS_FL_WRAP,  SCOLS_JSON_STRING,
+				   0,   SCOLS_FL_WRAP,  SCOLS_JSON_ARRAY_STRING,
 				   N_("IPC endpoints information communicated with the fd") },
 	[COL_EVENTFD_ID]       = {"EVENTFD.ID",
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 				   N_("eventfd ID") },
 	[COL_EVENTPOLL_TFDS]   = {"EVENTPOLL.TFDS",
-				   0,   SCOLS_FL_WRAP,  SCOLS_JSON_STRING,
+				   0,   SCOLS_FL_WRAP,  SCOLS_JSON_ARRAY_NUMBER,
 				   N_("file descriptors targeted by the eventpoll file") },
 	[COL_FD]               = { "FD",
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
@@ -178,10 +178,10 @@ static const struct colinfo infos[] = {
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 				   N_("inode number") },
 	[COL_INOTIFY_INODES]   = { "INOTIFY.INODES",
-				   0,   SCOLS_FL_WRAP,  SCOLS_JSON_STRING,
+				   0,   SCOLS_FL_WRAP,  SCOLS_JSON_ARRAY_STRING,
 				   N_("list of monitoring inodes (cooked)") },
 	[COL_INOTIFY_INODES_RAW]={ "INOTIFY.INODES.RAW",
-				   0,   SCOLS_FL_WRAP,  SCOLS_JSON_STRING,
+				   0,   SCOLS_FL_WRAP,  SCOLS_JSON_ARRAY_STRING,
 				   N_("list of monitoring inodes (raw, don't decode devices)") },
 	[COL_KNAME]            = { "KNAME",
 				   0.4, SCOLS_FL_TRUNC, SCOLS_JSON_STRING,
@@ -1603,6 +1603,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %16s  %-10s%s\n", infos[i].name,
 			infos[i].json_type == SCOLS_JSON_STRING?  "<string>":
+			infos[i].json_type == SCOLS_JSON_ARRAY_STRING?  "<string>":
+			infos[i].json_type == SCOLS_JSON_ARRAY_STRING?  "<string>":
 			infos[i].json_type == SCOLS_JSON_NUMBER?  "<number>":
 			"<boolean>",
 			_(infos[i].help));

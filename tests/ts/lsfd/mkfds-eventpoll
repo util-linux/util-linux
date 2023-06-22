@@ -36,6 +36,8 @@ FD2=7
 	EXPR='(FD == '"$FD0"')'
 	${TS_CMD_LSFD} -p "${PID}" -n -o ASSOC,TYPE,NAME,EVENTPOLL.TFDS -Q "${EXPR}"
 	echo 'ASSOC,TYPE,NAME,EVENTPOLL.TFDS': $?
+	${TS_CMD_LSFD} -J -p "${PID}" -n -o ASSOC,TYPE,NAME,EVENTPOLL.TFDS -Q "${EXPR}"
+	echo 'ASSOC,TYPE,NAME,EVENTPOLL.TFDS (JSON)': $?
 	kill -CONT ${PID}
     fi
     wait ${MKFDS_PID}
