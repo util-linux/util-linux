@@ -125,6 +125,7 @@ static const struct dmesg_name level_names[] =
  * shifted code :-)
  */
 #define FAC_BASE(f)	((f) >> 3)
+#define LOG_RAW_FAC_PRI(fac, pri)	LOG_MAKEPRI((fac << 3), (pri))
 
 static const struct dmesg_name facility_names[] =
 {
@@ -968,7 +969,7 @@ static void print_record(struct dmesg_control *ctl,
 	if (ctl->raw) {
 		ctl->indent = snprintf(tsbuf, sizeof(tsbuf),
 				       "<%d>[%5ld.%06ld] ",
-				       LOG_MAKEPRI(rec->facility, rec->level),
+				       LOG_RAW_FAC_PRI(rec->facility, rec->level),
 				       (long) rec->tv.tv_sec,
 				       (long) rec->tv.tv_usec);
 		goto full_output;
@@ -1052,7 +1053,7 @@ full_output:
 			ul_jsonwrt_value_s(&ctl->jfmt, "fac", facility_names[rec->facility].name);
 			ul_jsonwrt_value_s(&ctl->jfmt, "pri", level_names[rec->level].name);
 		} else
-			ul_jsonwrt_value_u64(&ctl->jfmt, "pri", LOG_MAKEPRI(rec->facility, rec->level));
+			ul_jsonwrt_value_u64(&ctl->jfmt, "pri", LOG_RAW_FAC_PRI(rec->facility, rec->level));
 	}
 
 	/* Output the timestamp buffer */
