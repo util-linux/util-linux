@@ -552,7 +552,7 @@ static int create_loop(struct loopdev_cxt *lc,
 		 * loopcxt struct.
 		 */
 		if (!hasdev && (rc = loopcxt_find_unused(lc))) {
-			warnx(_("cannot find an unused loop device"));
+			warnx(_("cannot find an unused loop device or permision denied"));
 			break;
 		}
 		if (flags & LOOPDEV_FL_OFFSET)
@@ -878,7 +878,7 @@ int main(int argc, char **argv)
 			else
 				errno = errsv;
 
-			warn(_("cannot find an unused loop device"));
+			warn(_("cannot find an unused loop device or permission denied"));
 		} else
 			printf("%s\n", loopcxt_get_device(&lc));
 		break;
