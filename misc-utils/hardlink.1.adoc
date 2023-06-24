@@ -42,7 +42,7 @@ are very often different from the beginning.
 
 include::man-common/help-version.adoc[]
 
-*-c* *--content*::
+*-c*, *--content*::
 Consider only file content, not attributes, when determining whether two files are equal. Same as *-pot*.
 
 *-b*, *--io-size* _size_::
