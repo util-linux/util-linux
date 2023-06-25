@@ -255,7 +255,82 @@ static struct cdev_ops cdev_misc_ops = {
 	.fill_column = cdev_misc_fill_column,
 };
 
+/*
+ * tun devcie driver
+ */
+static bool cdev_tun_probe(const struct cdev *cdev)
+{
+	const char *miscdev;
+
+	if ((!cdev->devdrv) || strcmp(cdev->devdrv, "misc"))
+		return false;
+
+	miscdev = get_miscdev(minor(cdev->file.stat.st_rdev));
+	if (miscdev && strcmp(miscdev, "tun") == 0)
+		return true;
+	return false;
+}
+
+static void cdev_tun_free(const struct cdev *cdev)
+{
+	if (cdev->cdev_data)
+		free(cdev->cdev_data);
+}
+
+static char * cdev_tun_get_name(struct cdev *cdev)
+{
+	char *str = NULL;
+
+	if (cdev->cdev_data == NULL)
+		return NULL;
+
+	xasprintf(&str, "iface=%s", (const char *)cdev->cdev_data);
+	return str;
+}
+
+static bool cdev_tun_fill_column(struct proc *proc  __attribute__((__unused__)),
+				 struct cdev *cdev,
+				 struct libscols_line *ln __attribute__((__unused__)),
+				 int column_id,
+				 size_t column_index __attribute__((__unused__)),
+				 char **str)
+{
+	switch(column_id) {
+	case COL_MISCDEV:
+		*str = xstrdup("tun");
+		return true;
+	case COL_SOURCE:
+		*str = xstrdup("misc:tun");
+		return true;
+	case COL_TUN_IFACE:
+		if (cdev->cdev_data) {
+			*str = xstrdup(cdev->cdev_data);
+			return true;
+		}
+	}
+	return false;
+}
+
+static int cdev_tun_handle_fdinfo(struct cdev *cdev, const char *key, const char *val)
+{
+	if (strcmp(key, "iff") == 0 && cdev->cdev_data == NULL) {
+		cdev->cdev_data = xstrdup(val);
+		return 1;
+	}
+	return false;
+}
+
+static struct cdev_ops cdev_tun_ops = {
+	.parent = &cdev_misc_ops,
+	.probe = cdev_tun_probe,
+	.free  = cdev_tun_free,
+	.get_name = cdev_tun_get_name,
+	.fill_column = cdev_tun_fill_column,
+	.handle_fdinfo = cdev_tun_handle_fdinfo,
+};
+
 static const struct cdev_ops *cdev_ops[] = {
+	&cdev_tun_ops,
 	&cdev_misc_ops,
 	&cdev_generic_ops		  /* This must be at the end. */
 };

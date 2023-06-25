@@ -247,6 +247,9 @@ id=_EVENTFD.ID_
 inotify:::
 inodes=_INOTIFY.INODES_
 +
+misc:tun:::
+iface=_TUN.IFACE_
++
 NETLINK:::
 protocol=_NETLINK.PROTOCOL_[ lport=_NETLINK.LPORT_[ group=_NETLINK.GROUPS_]]
 +
@@ -425,6 +428,9 @@ Interval.
 
 TIMERFD.REMAINING <``number``>::
 Remaining time.
+
+TUN.IFACE <``string``>::
+Network intrface behind the tun device.
 
 TYPE <``string``>::
 Cooked version of STTYPE. It is same as STTYPE with exceptions.
