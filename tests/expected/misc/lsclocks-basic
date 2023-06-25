@@ -1,0 +1,10 @@
+ID CLOCK                  NAME
+ 0 CLOCK_REALTIME         realtime
+ 1 CLOCK_MONOTONIC        monotonic
+ 4 CLOCK_MONOTONIC_RAW    monotonic-raw
+ 5 CLOCK_REALTIME_COARSE  realtime-coarse
+ 6 CLOCK_MONOTONIC_COARSE monotonic-coarse
+ 7 CLOCK_BOOTTIME         boottime
+ 8 CLOCK_REALTIME_ALARM   realtime-alarm
+ 9 CLOCK_BOOTTIME_ALARM   boottime-alarm
+11 CLOCK_TAI              tai

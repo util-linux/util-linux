@@ -87,6 +87,7 @@ TS_CMD_LINE=${TS_CMD_LINE-"${ts_commandsdir}line"}
 TS_CMD_LOOK=${TS_CMD_LOOK-"${ts_commandsdir}look"}
 TS_CMD_LOSETUP=${TS_CMD_LOSETUP:-"${ts_commandsdir}losetup"}
 TS_CMD_LSBLK=${TS_CMD_LSBLK-"${ts_commandsdir}lsblk"}
+TS_CMD_LSCLOCKS=${TS_CMD_LSCPU-"${ts_commandsdir}lsclocks"}
 TS_CMD_LSCPU=${TS_CMD_LSCPU-"${ts_commandsdir}lscpu"}
 TS_CMD_LSFD=${TS_CMD_LSFD-"${ts_commandsdir}lsfd"}
 TS_CMD_LSMEM=${TS_CMD_LSMEM-"${ts_commandsdir}lsmem"}

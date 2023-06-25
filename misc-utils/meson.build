@@ -165,3 +165,7 @@ fadvise_sources = files(
 waitpid_sources = files(
   'waitpid.c',
 )
+
+lsclocks_sources = files(
+  'lsclocks.c',
+)

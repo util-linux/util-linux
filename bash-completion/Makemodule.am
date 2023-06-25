@@ -347,5 +347,8 @@ endif
 if BUILD_ENOSYS
 dist_bashcompletion_DATA += bash-completion/enosys
 endif
+if BUILD_LSCLOCKS
+dist_bashcompletion_DATA += bash-completion/lsclocks
+endif
 
 endif # BUILD_BASH_COMPLETION
