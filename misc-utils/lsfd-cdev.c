@@ -36,6 +36,23 @@ struct miscdev {
 struct cdev {
 	struct file file;
 	const char *devdrv;
+	const struct cdev_ops *cdev_ops;
+	void *cdev_data;
+};
+
+struct cdev_ops {
+	const struct cdev_ops *parent;
+	bool (*probe)(const struct cdev *);
+	char * (*get_name)(struct cdev *);
+	bool (*fill_column)(struct proc *,
+			    struct cdev *,
+			    struct libscols_line *,
+			    int,
+			    size_t,
+			    char **);
+	void (*init)(const struct cdev *);
+	void (*free)(const struct cdev *);
+	int (*handle_fdinfo)(struct cdev *, const char *, const char *);
 };
 
 static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
@@ -45,10 +62,18 @@ static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
 			     size_t column_index)
 {
 	struct cdev *cdev = (struct cdev *)file;
+	const struct cdev_ops *ops = cdev->cdev_ops;
 	char *str = NULL;
 	const char *miscdev;
 
 	switch(column_id) {
+	case COL_NAME:
+		if (cdev->cdev_ops->get_name) {
+			str = cdev->cdev_ops->get_name(cdev);
+			if (str)
+				break;
+		}
+		return false;
 	case COL_TYPE:
 		if (scols_line_set_data(ln, column_index, "CHR"))
 			err(EXIT_FAILURE, _("failed to add output data"));
@@ -96,9 +121,17 @@ static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
 			  minor(file->stat.st_rdev));
 		break;
 	default:
+		while (ops) {
+			if (ops->fill_column
+			    && ops->fill_column(proc, cdev, ln,
+						column_id, column_index, &str))
+				goto out;
+			ops = ops->parent;
+		}
 		return false;
 	}
 
+ out:
 	if (!str)
 		err(EXIT_FAILURE, _("failed to add output data"));
 	if (scols_line_refer_data(ln, column_index, str))
@@ -170,9 +203,64 @@ const char *get_miscdev(unsigned long minor)
 	return NULL;
 }
 
+/*
+ * generic (fallback implementation)
+ */
+static bool cdev_generic_probe(const struct cdev *cdev __attribute__((__unused__))) {
+	return true;
+}
+
+static struct cdev_ops cdev_generic_ops = {
+	.probe = cdev_generic_probe,
+};
+
+
+static const struct cdev_ops *cdev_ops[] = {
+	&cdev_generic_ops		  /* This must be at the end. */
+};
+
+static const struct cdev_ops *cdev_probe(const struct cdev *cdev)
+{
+	const struct cdev_ops *r = NULL;
+
+	for (size_t i = 0; i < ARRAY_SIZE(cdev_ops); i++) {
+		if (cdev_ops[i]->probe(cdev)) {
+			r = cdev_ops[i];
+			break;
+		}
+	}
+
+	assert(r);
+	return r;
+}
+
 static void init_cdev_content(struct file *file)
 {
-	((struct cdev *)file)->devdrv = get_chrdrv(major(file->stat.st_rdev));
+	struct cdev *cdev = (struct cdev *)file;
+
+	cdev->devdrv = get_chrdrv(major(file->stat.st_rdev));
+
+	cdev->cdev_data = NULL;
+	cdev->cdev_ops = cdev_probe(cdev);
+	if (cdev->cdev_ops->init)
+		cdev->cdev_ops->init(cdev);
+}
+
+static void free_cdev_content(struct file *file)
+{
+	struct cdev *cdev = (struct cdev *)file;
+
+	if (cdev->cdev_ops->free)
+		cdev->cdev_ops->free(cdev);
+}
+
+static int cdev_handle_fdinfo(struct file *file, const char *key, const char *value)
+{
+	struct cdev *cdev = (struct cdev *)file;
+
+	if (cdev->cdev_ops->handle_fdinfo)
+		return cdev->cdev_ops->handle_fdinfo(cdev, key, value);
+	return 0;		/* Should be handled in parents */
 }
 
 const struct file_class cdev_class = {
@@ -182,5 +270,6 @@ const struct file_class cdev_class = {
 	.finalize_class = cdev_class_finalize,
 	.fill_column = cdev_fill_column,
 	.initialize_content = init_cdev_content,
-	.free_content = NULL,
+	.free_content = free_cdev_content,
+	.handle_fdinfo = cdev_handle_fdinfo,
 };
