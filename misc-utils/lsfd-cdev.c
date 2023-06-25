@@ -64,7 +64,6 @@ static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
 	struct cdev *cdev = (struct cdev *)file;
 	const struct cdev_ops *ops = cdev->cdev_ops;
 	char *str = NULL;
-	const char *miscdev;
 
 	switch(column_id) {
 	case COL_NAME:
@@ -78,17 +77,6 @@ static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
 		if (scols_line_set_data(ln, column_index, "CHR"))
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
-	case COL_MISCDEV:
-		if (cdev->devdrv && strcmp(cdev->devdrv, "misc") == 0) {
-			miscdev = get_miscdev(minor(file->stat.st_rdev));
-			if (miscdev)
-				str = xstrdup(miscdev);
-			else
-				xasprintf(&str, "%u",
-					  minor(file->stat.st_rdev));
-			break;
-		}
-		return true;
 	case COL_DEVTYPE:
 		if (scols_line_set_data(ln, column_index,
 					"char"))
@@ -100,25 +88,6 @@ static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
 		else
 			xasprintf(&str, "%u",
 				  major(file->stat.st_rdev));
-		break;
-	case COL_SOURCE:
-		miscdev = NULL;
-		if (cdev->devdrv && strcmp(cdev->devdrv, "misc") == 0)
-			miscdev = get_miscdev(minor(file->stat.st_rdev));
-		if (cdev->devdrv) {
-			if (miscdev) {
-				xasprintf(&str, "misc:%s", miscdev);
-			} else {
-				xasprintf(&str, "%s:%u", cdev->devdrv,
-					  minor(file->stat.st_rdev));
-			}
-			break;
-		}
-		/* FALL THROUGH */
-	case COL_MAJMIN:
-		xasprintf(&str, "%u:%u",
-			  major(file->stat.st_rdev),
-			  minor(file->stat.st_rdev));
 		break;
 	default:
 		while (ops) {
@@ -210,12 +179,84 @@ static bool cdev_generic_probe(const struct cdev *cdev __attribute__((__unused__
 	return true;
 }
 
+static bool cdev_generic_fill_column(struct proc *proc  __attribute__((__unused__)),
+				     struct cdev *cdev,
+				  struct libscols_line *ln __attribute__((__unused__)),
+				  int column_id,
+				  size_t column_index __attribute__((__unused__)),
+				  char **str)
+{
+	struct file *file = &cdev->file;
+
+	switch(column_id) {
+	case COL_SOURCE:
+		if (cdev->devdrv) {
+			xasprintf(str, "%s:%u", cdev->devdrv,
+				  minor(file->stat.st_rdev));
+			return true;
+		}
+		/* FALL THROUGH */
+	case COL_MAJMIN:
+		xasprintf(str, "%u:%u",
+			  major(file->stat.st_rdev),
+			  minor(file->stat.st_rdev));
+		return true;
+	default:
+		return false;
+	}
+}
+
 static struct cdev_ops cdev_generic_ops = {
 	.probe = cdev_generic_probe,
+	.fill_column = cdev_generic_fill_column,
 };
 
+/*
+ * misc device driver
+ */
+static bool cdev_misc_probe(const struct cdev *cdev) {
+	return cdev->devdrv && strcmp(cdev->devdrv, "misc") == 0;
+}
+
+static bool cdev_misc_fill_column(struct proc *proc  __attribute__((__unused__)),
+				  struct cdev *cdev,
+				  struct libscols_line *ln __attribute__((__unused__)),
+				  int column_id,
+				  size_t column_index __attribute__((__unused__)),
+				  char **str)
+{
+	struct file *file = &cdev->file;
+	const char *miscdev;
+
+	switch(column_id) {
+	case COL_MISCDEV:
+		miscdev = get_miscdev(minor(file->stat.st_rdev));
+		if (miscdev)
+			*str = xstrdup(miscdev);
+		else
+			xasprintf(str, "%u",
+				  minor(file->stat.st_rdev));
+		return true;
+	case COL_SOURCE:
+		miscdev = get_miscdev(minor(file->stat.st_rdev));
+		if (miscdev)
+			xasprintf(str, "misc:%s", miscdev);
+		else
+			xasprintf(str, "misc:%u",
+				  minor(file->stat.st_rdev));
+		return true;
+	}
+	return false;
+}
+
+static struct cdev_ops cdev_misc_ops = {
+	.parent = &cdev_generic_ops,
+	.probe = cdev_misc_probe,
+	.fill_column = cdev_misc_fill_column,
+};
 
 static const struct cdev_ops *cdev_ops[] = {
+	&cdev_misc_ops,
 	&cdev_generic_ops		  /* This must be at the end. */
 };
 
