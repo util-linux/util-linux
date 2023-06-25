@@ -33,14 +33,19 @@ struct miscdev {
 	char *name;
 };
 
+struct cdev {
+	struct file file;
+	const char *devdrv;
+};
+
 static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
-			     struct file *file __attribute__((__unused__)),
+			     struct file *file,
 			     struct libscols_line *ln,
 			     int column_id,
 			     size_t column_index)
 {
+	struct cdev *cdev = (struct cdev *)file;
 	char *str = NULL;
-	const char *devdrv;
 	const char *miscdev;
 
 	switch(column_id) {
@@ -49,8 +54,7 @@ static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
 	case COL_MISCDEV:
-		devdrv = get_chrdrv(major(file->stat.st_rdev));
-		if (devdrv && strcmp(devdrv, "misc") == 0) {
+		if (cdev->devdrv && strcmp(cdev->devdrv, "misc") == 0) {
 			miscdev = get_miscdev(minor(file->stat.st_rdev));
 			if (miscdev)
 				str = xstrdup(miscdev);
@@ -66,23 +70,21 @@ static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
 	case COL_CHRDRV:
-		devdrv = get_chrdrv(major(file->stat.st_rdev));
-		if (devdrv)
-			str = xstrdup(devdrv);
+		if (cdev->devdrv)
+			str = xstrdup(cdev->devdrv);
 		else
 			xasprintf(&str, "%u",
 				  major(file->stat.st_rdev));
 		break;
 	case COL_SOURCE:
-		devdrv = get_chrdrv(major(file->stat.st_rdev));
 		miscdev = NULL;
-		if (devdrv && strcmp(devdrv, "misc") == 0)
+		if (cdev->devdrv && strcmp(cdev->devdrv, "misc") == 0)
 			miscdev = get_miscdev(minor(file->stat.st_rdev));
-		if (devdrv) {
+		if (cdev->devdrv) {
 			if (miscdev) {
 				xasprintf(&str, "misc:%s", miscdev);
 			} else {
-				xasprintf(&str, "%s:%u", devdrv,
+				xasprintf(&str, "%s:%u", cdev->devdrv,
 					  minor(file->stat.st_rdev));
 			}
 			break;
@@ -168,11 +170,17 @@ const char *get_miscdev(unsigned long minor)
 	return NULL;
 }
 
+static void init_cdev_content(struct file *file)
+{
+	((struct cdev *)file)->devdrv = get_chrdrv(major(file->stat.st_rdev));
+}
+
 const struct file_class cdev_class = {
 	.super = &file_class,
-	.size = sizeof(struct file),
+	.size = sizeof(struct cdev),
 	.initialize_class = cdev_class_initialize,
 	.finalize_class = cdev_class_finalize,
 	.fill_column = cdev_fill_column,
+	.initialize_content = init_cdev_content,
 	.free_content = NULL,
 };
