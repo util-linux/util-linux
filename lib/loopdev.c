@@ -580,7 +580,7 @@ static int loopcxt_next_from_sysfs(struct loopdev_cxt *lc)
 /*
  * @lc: context, has to initialized by loopcxt_init_iterator()
  *
- * Returns: 0 on success, -1 on error, 1 at the end of scanning. The details
+ * Returns: 0 on success, < 0 on error, 1 at the end of scanning. The details
  *          about the current loop device are available by
  *          loopcxt_get_{fd,backing_file,device,offset, ...} functions.
  */
@@ -1681,6 +1681,9 @@ char *loopdev_get_backing_file(const char *device)
 	return res;
 }
 
+/*
+ * Returns: TRUE/FALSE
+ */
 int loopdev_has_backing_file(const char *device)
 {
 	char *tmp = loopdev_get_backing_file(device);
@@ -1718,6 +1721,9 @@ int loopdev_is_used(const char *device, const char *filename,
 	return rc;
 }
 
+/*
+ * Returns: 0 = success, < 0 error
+ */
 int loopdev_delete(const char *device)
 {
 	struct loopdev_cxt lc;
