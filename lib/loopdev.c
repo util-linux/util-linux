@@ -580,7 +580,7 @@ static int loopcxt_next_from_sysfs(struct loopdev_cxt *lc)
 /*
  * @lc: context, has to initialized by loopcxt_init_iterator()
  *
- * Returns: 0 on success, -1 on error, 1 at the end of scanning. The details
+ * Returns: 0 on success, < 0 on error, 1 at the end of scanning. The details
  *          about the current loop device are available by
  *          loopcxt_get_{fd,backing_file,device,offset, ...} functions.
  */
@@ -1602,6 +1602,8 @@ done:
  * kernels we have to check all loop devices to found unused one.
  *
  * See kernel commit 770fe30a46a12b6fb6b63fbe1737654d28e8484.
+ *
+ * Returns: 0 = success, < 0 error
  */
 int loopcxt_find_unused(struct loopdev_cxt *lc)
 {
@@ -1617,6 +1619,8 @@ int loopcxt_find_unused(struct loopdev_cxt *lc)
 		ctl = open(_PATH_DEV_LOOPCTL, O_RDWR|O_CLOEXEC);
 		if (ctl >= 0)
 			rc = ioctl(ctl, LOOP_CTL_GET_FREE);
+		else
+			rc = -errno;
 		if (rc >= 0) {
 			char name[16];
 			snprintf(name, sizeof(name), "loop%d", rc);
@@ -1638,6 +1642,8 @@ int loopcxt_find_unused(struct loopdev_cxt *lc)
 		rc = loopcxt_next(lc);
 		loopcxt_deinit_iterator(lc);
 		DBG(CXT, ul_debugobj(lc, "find_unused by scan [rc=%d]", rc));
+		if (rc)
+			return -ENOENT;
 	}
 	return rc;
 }
@@ -1681,6 +1687,9 @@ char *loopdev_get_backing_file(const char *device)
 	return res;
 }
 
+/*
+ * Returns: TRUE/FALSE
+ */
 int loopdev_has_backing_file(const char *device)
 {
 	char *tmp = loopdev_get_backing_file(device);
@@ -1718,6 +1727,9 @@ int loopdev_is_used(const char *device, const char *filename,
 	return rc;
 }
 
+/*
+ * Returns: 0 = success, < 0 error
+ */
 int loopdev_delete(const char *device)
 {
 	struct loopdev_cxt lc;
