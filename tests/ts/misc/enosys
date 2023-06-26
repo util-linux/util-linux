@@ -43,4 +43,16 @@ $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
 
 ts_finalize_subtest
 
+ts_init_subtest ioctl
+
+FALLOCATE_TEST="$TS_HELPER_ENOSYS ioctl"
+
+$FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
+"$TS_CMD_ENOSYS" -s ioctl $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
+"$TS_CMD_ENOSYS" -i FIOCLEX $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
+"$TS_CMD_ENOSYS" -i "$("$TS_CMD_ENOSYS" -m | grep FIOCLEX | awk '{ print $1 }')" $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
+"$TS_CMD_ENOSYS" -s ioctl -i FIOCLEX $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
+
+ts_finalize_subtest
+
 ts_finalize

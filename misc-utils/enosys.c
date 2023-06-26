@@ -26,6 +26,7 @@
 #include <linux/audit.h>
 #include <sys/prctl.h>
 #include <sys/syscall.h>
+#include <sys/ioctl.h>
 
 #include "c.h"
 #include "exitcodes.h"
@@ -64,6 +65,11 @@ static const struct syscall syscalls[] = {
 };
 static_assert(sizeof(syscalls) > 0, "no syscalls found");
 
+static const struct syscall ioctls[] = {
+	{ "FIOCLEX", FIOCLEX },
+};
+static_assert(sizeof(ioctls) > 0, "no ioctls found");
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
@@ -73,6 +79,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -s, --syscall           syscall to block\n"), out);
+	fputs(_(" -i, --ioctl             ioctl to block\n"), out);
 	fputs(_(" -l, --list              list known syscalls\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -94,24 +101,28 @@ int main(int argc, char **argv)
 	size_t i;
 	bool found;
 	static const struct option longopts[] = {
-		{ "syscall", required_argument, NULL, 's' },
-		{ "list",    no_argument,       NULL, 'l' },
-		{ "version", no_argument,       NULL, 'V' },
-		{ "help",    no_argument,       NULL, 'h' },
+		{ "syscall",    required_argument, NULL, 's' },
+		{ "ioctl",      required_argument, NULL, 'i' },
+		{ "list",       no_argument,       NULL, 'l' },
+		{ "list-ioctl", no_argument,       NULL, 'm' },
+		{ "version",    no_argument,       NULL, 'V' },
+		{ "help",       no_argument,       NULL, 'h' },
 		{ 0 }
 	};
 
 	long blocked_number;
 	struct blocked_number *blocked;
+	struct list_head *loop_ctr;
 	struct list_head blocked_syscalls;
 	INIT_LIST_HEAD(&blocked_syscalls);
-	struct list_head *loop_ctr;
+	struct list_head blocked_ioctls;
+	INIT_LIST_HEAD(&blocked_ioctls);
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long (argc, argv, "+Vhs:l", longopts, NULL)) != -1) {
+	while ((c = getopt_long (argc, argv, "+Vhs:i:lm", longopts, NULL)) != -1) {
 		switch (c) {
 		case 's':
 			found = 0;
@@ -131,9 +142,31 @@ int main(int argc, char **argv)
 			list_add(&blocked->head, &blocked_syscalls);
 
 			break;
+		case 'i':
+			found = 0;
+			for (i = 0; i < ARRAY_SIZE(ioctls); i++) {
+				if (strcmp(optarg, ioctls[i].name) == 0) {
+					blocked_number = ioctls[i].number;
+					found = 1;
+					break;
+				}
+			}
+			if (!found)
+				blocked_number = str2num_or_err(
+					optarg, 10, _("Unknown ioctl"), 0, LONG_MAX);
+
+			blocked = xmalloc(sizeof(*blocked));
+			blocked->number = blocked_number;
+			list_add(&blocked->head, &blocked_ioctls);
+
+			break;
 		case 'l':
 			for (i = 0; i < ARRAY_SIZE(syscalls); i++)
 				printf("%5ld %s\n", syscalls[i].number, syscalls[i].name);
+			return EXIT_SUCCESS;
+		case 'm':
+			for (i = 0; i < ARRAY_SIZE(ioctls); i++)
+				printf("%5ld %s\n", ioctls[i].number, ioctls[i].name);
 			return EXIT_SUCCESS;
 		case 'V':
 			print_version(EXIT_SUCCESS);
@@ -180,6 +213,21 @@ int main(int argc, char **argv)
 
 		INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, blocked->number, 0, 1));
 		INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ERRNO | ENOSYS));
+	}
+
+	INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, __NR_ioctl, 1, 0));
+	INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ALLOW));
+
+	INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg(1)));
+
+	list_for_each(loop_ctr, &blocked_ioctls) {
+		blocked = list_entry(loop_ctr, struct blocked_number, head);
+
+		INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg(1) + 4 * !IS_LITTLE_ENDIAN));
+		INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, (uint64_t) blocked->number, 0, 3));
+		INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg(1) + 4 * IS_LITTLE_ENDIAN));
+		INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, (uint64_t) blocked->number >> 32, 0, 1));
+		INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ERRNO | ENOTTY));
 	}
 
 	INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ALLOW));

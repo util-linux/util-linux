@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/ioctl.h>
 
 int main(int argc, char **argv)
 {
@@ -44,6 +45,9 @@ int main(int argc, char **argv)
 		};
 		execve(cmd[0], cmd, NULL);
 		err(EXIT_FAILURE, "exec failed");
+	} else if (strcmp(argv[1], "ioctl") == 0) {
+		r = ioctl(0, FIOCLEX);
+		errx(EXIT_SUCCESS, "ioctl r=%d errno=%s", r, strerror(errno));
 	}
 
 	errx(EXIT_FAILURE, "invalid mode %s", argv[1]);
