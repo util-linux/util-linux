@@ -746,6 +746,10 @@ static struct node *dparser_compile1(struct parser *parser, struct node *last)
 		int ntype;
 		switch (jtype) {
 		case SCOLS_JSON_STRING:
+		case SCOLS_JSON_ARRAY_STRING:
+		case SCOLS_JSON_ARRAY_NUMBER:
+			/* We handles SCOLS_JSON_ARRAY_* as a string
+			 * till we implement operators for arrays. */
 			ntype = NODE_STR;
 			break;
 		case SCOLS_JSON_NUMBER:
