@@ -32,6 +32,9 @@
 #include "nls.h"
 #include "bitops.h"
 #include "audit-arch.h"
+#include "list.h"
+#include "xalloc.h"
+#include "strutils.h"
 
 #define IS_LITTLE_ENDIAN (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
 
@@ -80,6 +83,11 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
+struct blocked_number {
+	struct list_head head;
+	long number;
+};
+
 int main(int argc, char **argv)
 {
 	int c;
@@ -93,7 +101,11 @@ int main(int argc, char **argv)
 		{ 0 }
 	};
 
-	bool blocked_syscalls[ARRAY_SIZE(syscalls)] = {};
+	long blocked_number;
+	struct blocked_number *blocked;
+	struct list_head blocked_syscalls;
+	INIT_LIST_HEAD(&blocked_syscalls);
+	struct list_head *loop_ctr;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -105,13 +117,19 @@ int main(int argc, char **argv)
 			found = 0;
 			for (i = 0; i < ARRAY_SIZE(syscalls); i++) {
 				if (strcmp(optarg, syscalls[i].name) == 0) {
-					blocked_syscalls[i] = true;
+					blocked_number = syscalls[i].number;
 					found = 1;
 					break;
 				}
 			}
 			if (!found)
-				errx(EXIT_FAILURE, _("Unknown syscall '%s'"), optarg);
+				blocked_number = str2num_or_err(
+					optarg, 10, _("Unknown syscall"), 0, LONG_MAX);
+
+			blocked = xmalloc(sizeof(*blocked));
+			blocked->number = blocked_number;
+			list_add(&blocked->head, &blocked_syscalls);
+
 			break;
 		case 'l':
 			for (i = 0; i < ARRAY_SIZE(syscalls); i++)
@@ -157,11 +175,10 @@ int main(int argc, char **argv)
 
 	INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_nr));
 
-	for (i = 0; i < ARRAY_SIZE(syscalls); i++) {
-		if (!blocked_syscalls[i])
-			continue;
+	list_for_each(loop_ctr, &blocked_syscalls) {
+		blocked = list_entry(loop_ctr, struct blocked_number, head);
 
-		INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, syscalls[i].number, 0, 1));
+		INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, blocked->number, 0, 1));
 		INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ERRNO | ENOSYS));
 	}
 
