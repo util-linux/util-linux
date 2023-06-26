@@ -41,9 +41,9 @@ function call_cal {
 	ts_finalize_subtest
 }
 
-call_cal "6 columns" --year --column 6 $MYTIME
-call_cal "5 columns" --year --column 5 $MYTIME
-call_cal "auto columns" --year --column auto $MYTIME
+call_cal "6 columns" --year --columns 6 $MYTIME
+call_cal "5 columns" --year --columns 5 $MYTIME
+call_cal "auto columns" --year --columns auto $MYTIME
 
 ts_finalize
 

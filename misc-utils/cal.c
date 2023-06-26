@@ -320,7 +320,7 @@ int main(int argc, char **argv)
 		{"twelve", no_argument, NULL, 'Y'},
 		{"help", no_argument, NULL, 'h'},
 		{"vertical", no_argument, NULL,'v'},
-		{"column", required_argument, NULL,'c'},
+		{"columns", required_argument, NULL,'c'},
 		{NULL, 0, NULL, 0}
 	};
 
