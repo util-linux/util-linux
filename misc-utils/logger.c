@@ -471,7 +471,7 @@ static void write_output(struct logger_ctl *ctl, const char *const msg)
 		union {
 			struct cmsghdr cmh;
 			char   control[CMSG_SPACE(sizeof(struct ucred))];
-		} cbuf;
+		} cbuf = { .control = { 0 } };
 #endif
 
 		/* 4) add extra \n to make sure message is terminated */
