@@ -914,7 +914,7 @@ int main(int argc, char *argv[])
 
 	if ((force_monotonic || force_boottime) && !(unshare_flags & CLONE_NEWTIME))
 		errx(EXIT_FAILURE, _("options --monotonic and --boottime require "
-			"unsharing of a time namespace (-t)"));
+			"unsharing of a time namespace (-T)"));
 
 	/* clear any inherited settings */
 	signal(SIGCHLD, SIG_DFL);
