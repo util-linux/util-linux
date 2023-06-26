@@ -2525,11 +2525,15 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		if (rc)
 			warn = _("Failed to write disklabel.");
 		else {
+			size_t q_idx = 0;
+
 			if (cf->device_is_used)
 				fdisk_reread_changes(cf->cxt, cf->original_layout);
 			else
 				fdisk_reread_partition_table(cf->cxt);
 			info = _("The partition table has been altered.");
+			if (menu_get_menuitem_by_key(cf, 'q', &q_idx))
+				ui_menu_goto(cf, q_idx);
 		}
 		cf->nwrites++;
 		break;
