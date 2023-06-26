@@ -433,7 +433,8 @@ int main(int argc, char **argv)
 			if (strcmp(optarg, "auto") == 0)
 				cols = COLUMNS_AUTO;
 			else
-				cols = strtosize_or_err(optarg, "foo");
+				cols = strtosize_or_err(optarg,
+						_("failed to parse columns"));
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
