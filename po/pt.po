@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.37-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-05-17 11:52+0200\n"
+"POT-Creation-Date: 2023-06-27 14:09+0200\n"
 "PO-Revision-Date: 2021-05-14 06:27+0100\n"
 "Last-Translator: Pedro Albuquerque <pmra@protonmail.com>\n"
 "Language-Team: Portuguese <translation-team-pt@lists.sourceforge.net>\n"
@@ -58,7 +58,7 @@ msgstr "argumentos insuficientes"
 #: misc-utils/fadvise.c:148 misc-utils/findmnt.c:1227 misc-utils/logger.c:1247
 #: misc-utils/mcookie.c:119 misc-utils/pipesz.c:162 misc-utils/uuidd.c:235
 #: sys-utils/blkdiscard.c:248 sys-utils/blkpr.c:164 sys-utils/blkzone.c:144
-#: sys-utils/dmesg.c:541 sys-utils/eject.c:501 sys-utils/eject.c:696
+#: sys-utils/dmesg.c:547 sys-utils/eject.c:501 sys-utils/eject.c:696
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:116 sys-utils/fstrim.c:106
 #: sys-utils/hwclock.c:241 sys-utils/hwclock.c:912 sys-utils/hwclock-rtc.c:108
 #: sys-utils/hwclock-rtc.c:353 sys-utils/hwclock-rtc.c:389
@@ -222,7 +222,7 @@ msgstr " %-25s obter tamanho em sectores de 512 byte\n"
 #: disk-utils/fsck.minix.c:1336 disk-utils/isosize.c:155
 #: disk-utils/mkfs.bfs.c:191 disk-utils/mkfs.c:110 disk-utils/mkfs.minix.c:827
 #: disk-utils/swaplabel.c:180 misc-utils/wipefs.c:764
-#: sys-utils/blkdiscard.c:237 sys-utils/blkpr.c:303 sys-utils/blkzone.c:495
+#: sys-utils/blkdiscard.c:237 sys-utils/blkpr.c:303 sys-utils/blkzone.c:488
 #: sys-utils/tunelp.c:241 sys-utils/zramctl.c:716 sys-utils/zramctl.c:742
 msgid "no device specified"
 msgstr "sem dispositivo especificado"
@@ -722,7 +722,7 @@ msgstr ""
 "\n"
 
 #: disk-utils/cfdisk.c:2768 disk-utils/fdisk.c:1014 disk-utils/sfdisk.c:2350
-#: misc-utils/cal.c:421 sys-utils/dmesg.c:1499 text-utils/hexdump.c:114
+#: misc-utils/cal.c:421 sys-utils/dmesg.c:1505 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "modo de cor não suportado"
 
@@ -825,7 +825,7 @@ msgstr "argumento inválido - repair"
 #: disk-utils/mkfs.minix.c:835 disk-utils/mkswap.c:374 disk-utils/partx.c:959
 #: login-utils/last.c:697 login-utils/utmpdump.c:145 misc-utils/namei.c:146
 #: misc-utils/rename.c:164 misc-utils/rename.c:229 sys-utils/blkdiscard.c:251
-#: sys-utils/blkzone.c:147 sys-utils/dmesg.c:543 sys-utils/fallocate.c:201
+#: sys-utils/blkzone.c:147 sys-utils/dmesg.c:549 sys-utils/fallocate.c:201
 #: sys-utils/fsfreeze.c:119 sys-utils/fstrim.c:78 sys-utils/nsenter.c:187
 #: sys-utils/swapon.c:530 sys-utils/switch_root.c:93
 #: sys-utils/switch_root.c:134 sys-utils/switch_root.c:139
@@ -1148,12 +1148,12 @@ msgstr "As propriedades do dispositivo (tamanho e geometria do sector) só devem
 #: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122 disk-utils/fsck.cramfs.c:723
 #: disk-utils/mkfs.bfs.c:211 disk-utils/mkfs.cramfs.c:799
 #: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
-#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:525
+#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:526
 #: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:592
 #: misc-utils/whereis.c:603 misc-utils/whereis.c:614 misc-utils/whereis.c:659
 #: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:207
-#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1579
-#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
+#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1585
+#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:925
 #: sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656 sys-utils/mount.c:867
 #: sys-utils/mount.c:875 sys-utils/mount.c:924 sys-utils/mount.c:937
 #: sys-utils/mount.c:1009 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
@@ -1243,7 +1243,7 @@ msgstr "falha ao alocar o iterador"
 
 #: disk-utils/fdisk-list.c:126 disk-utils/fdisk-list.c:247
 #: disk-utils/partx.c:669 login-utils/lslogins.c:1113 misc-utils/fincore.c:357
-#: misc-utils/findmnt.c:1763 misc-utils/lsblk.c:2351 misc-utils/lsfd.c:1970
+#: misc-utils/findmnt.c:1763 misc-utils/lsblk.c:2351 misc-utils/lsfd.c:1971
 #: misc-utils/lslocks.c:472 misc-utils/uuidparse.c:252 misc-utils/wipefs.c:157
 #: sys-utils/losetup.c:325 sys-utils/lscpu.c:604 sys-utils/lscpu.c:759
 #: sys-utils/lscpu.c:970 sys-utils/lsipc.c:354 sys-utils/prlimit.c:311
@@ -2774,7 +2774,7 @@ msgstr ""
 
 #: disk-utils/fsck.minix.c:1429 disk-utils/mkfs.minix.c:854
 #: disk-utils/mkswap.c:737 disk-utils/partx.c:1071 disk-utils/resizepart.c:115
-#: login-utils/utmpdump.c:408 sys-utils/dmesg.c:684 sys-utils/wdctl.c:457
+#: login-utils/utmpdump.c:408 sys-utils/dmesg.c:690 sys-utils/wdctl.c:457
 #: sys-utils/wdctl.c:536 term-utils/setterm.c:908 text-utils/col.c:195
 #: text-utils/pg.c:1255
 msgid "write failed"
@@ -3734,7 +3734,7 @@ msgstr "bandeiras da partição"
 msgid "partition type (a string, a UUID, or hex)"
 msgstr "tipo de partição (uma cadeia, uma UUID, ou hex)"
 
-#: disk-utils/partx.c:114 sys-utils/losetup.c:534 sys-utils/losetup.c:652
+#: disk-utils/partx.c:114 sys-utils/losetup.c:553 sys-utils/losetup.c:669
 msgid "failed to initialize loopcxt"
 msgstr "falha ao inicializar loopcxt"
 
@@ -3753,7 +3753,7 @@ msgstr "A tentar usar \"%s\" para dispositivo de ciclo\n"
 msgid "%s: failed to set backing file"
 msgstr "%s: falha ao definir o ficheiro de segurança"
 
-#: disk-utils/partx.c:131 sys-utils/losetup.c:585
+#: disk-utils/partx.c:131 sys-utils/losetup.c:602
 #, c-format
 msgid "%s: failed to set up loop device"
 msgstr "%s: falha ao configurar o dispositivo de ciclo"
@@ -3862,7 +3862,7 @@ msgstr[0] "#%2d: %9ju-%9ju (%9ju sector, %6ju MB)\n"
 msgstr[1] "#%2d: %9ju-%9ju (%9ju sectores, %6ju MB)\n"
 
 #: disk-utils/partx.c:680 misc-utils/fincore.c:371 misc-utils/findmnt.c:1792
-#: misc-utils/lsblk.c:2395 misc-utils/lsfd.c:532 misc-utils/lsfd.c:1984
+#: misc-utils/lsblk.c:2395 misc-utils/lsfd.c:532 misc-utils/lsfd.c:1985
 #: misc-utils/lslocks.c:487 sys-utils/losetup.c:339 sys-utils/lscpu.c:616
 #: sys-utils/lscpu.c:772 sys-utils/prlimit.c:320 sys-utils/rfkill.c:487
 #: sys-utils/swapon.c:305 sys-utils/wdctl.c:360
@@ -4349,7 +4349,7 @@ msgstr "sem número de partição especificado"
 
 #: disk-utils/sfdisk.c:1159 disk-utils/sfdisk.c:1227 disk-utils/sfdisk.c:1282
 #: disk-utils/sfdisk.c:1338 disk-utils/sfdisk.c:1387 disk-utils/sfdisk.c:1421
-#: sys-utils/losetup.c:784
+#: sys-utils/losetup.c:801
 msgid "unexpected arguments"
 msgstr "argumentos inesperados"
 
@@ -4492,7 +4492,7 @@ msgstr " Exemplo:\n"
 msgid "   , 4G     Creates a 4GiB partition at default start offset.\n"
 msgstr "   , 4G     cria uma partição de 4GB no desvio de início predefinido.\n"
 
-#: disk-utils/sfdisk.c:1546 sys-utils/dmesg.c:1674
+#: disk-utils/sfdisk.c:1546 sys-utils/dmesg.c:1680
 msgid "unsupported command"
 msgstr "comando não suportado"
 
@@ -5008,15 +5008,15 @@ msgstr ""
 msgid "write error"
 msgstr "erro de escrita"
 
-#: include/colors.h:27
+#: include/colors.h:29
 msgid "colors are enabled by default"
 msgstr "as cores estão activas por predefinição"
 
-#: include/colors.h:29
+#: include/colors.h:31
 msgid "colors are disabled by default"
 msgstr "as cores estão inactivas por predefinição"
 
-#: include/env.h:26 lib/pager.c:158 login-utils/login.c:1203
+#: include/env.h:30 lib/pager.c:158 login-utils/login.c:1203
 #: login-utils/login.c:1207 term-utils/agetty.c:1241
 #, c-format
 msgid "failed to set the %s environment variable"
@@ -7886,311 +7886,311 @@ msgstr "impossível obter %s: %s"
 msgid "hush login status: restore original IDs failed"
 msgstr "estado de início hush: falha ao restaurar as IDs originais"
 
-#: libmount/src/context.c:2700
+#: libmount/src/context.c:2729
 #, c-format
 msgid "operation failed: %m"
 msgstr "a operação falhou: %m"
 
-#: libmount/src/context_mount.c:1404
+#: libmount/src/context_mount.c:1412
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "AVISO: falha ao aplicar bandeiras de propagação"
 
-#: libmount/src/context_mount.c:1414
+#: libmount/src/context_mount.c:1422
 #, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "AVISO: fonte protegida contra escrita, montado só de leitura"
 
-#: libmount/src/context_mount.c:1428
+#: libmount/src/context_mount.c:1436
 #, c-format
 msgid "operation permitted for root only"
 msgstr "operação permitida só a root"
 
-#: libmount/src/context_mount.c:1432
+#: libmount/src/context_mount.c:1440
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s já está montado"
 
-#: libmount/src/context_mount.c:1438
+#: libmount/src/context_mount.c:1446
 #, c-format
 msgid "can't find in %s"
 msgstr "impossível encontrar em %s"
 
-#: libmount/src/context_mount.c:1441
+#: libmount/src/context_mount.c:1449
 #, c-format
 msgid "can't find mount point in %s"
 msgstr "impossível encontrar ponto de montagem em %s"
 
-#: libmount/src/context_mount.c:1444
+#: libmount/src/context_mount.c:1452
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "impossível encontrar fonte de montagem %s em %s"
 
-#: libmount/src/context_mount.c:1449
+#: libmount/src/context_mount.c:1457
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr "mais sistemas de ficheiros detectados em %s; use -t <tipo> ou wipefs(8)"
 
-#: libmount/src/context_mount.c:1454
+#: libmount/src/context_mount.c:1462
 #, c-format
 msgid "failed to determine filesystem type"
 msgstr "falha ao determinar o tipo do sistema de ficheiros"
 
-#: libmount/src/context_mount.c:1455
+#: libmount/src/context_mount.c:1463
 #, fuzzy, c-format
 #| msgid "no filesystem type specified"
 msgid "no valid filesystem type specified"
 msgstr "sem tipo de sistema de ficheiros especificado"
 
-#: libmount/src/context_mount.c:1462
+#: libmount/src/context_mount.c:1470
 #, c-format
 msgid "can't find %s"
 msgstr "impossível encontrar %s"
 
-#: libmount/src/context_mount.c:1464
+#: libmount/src/context_mount.c:1472
 #, c-format
 msgid "no mount source specified"
 msgstr "sem fonte de montagem especificada"
 
-#: libmount/src/context_mount.c:1475
+#: libmount/src/context_mount.c:1483
 #, fuzzy, c-format
 #| msgid "failed to parse mount options: %m"
 msgid "failed to parse mount options '%s': %m"
 msgstr "falha ao analisar opções de montagem: %m"
 
-#: libmount/src/context_mount.c:1476
+#: libmount/src/context_mount.c:1484
 #, fuzzy, c-format
 #| msgid "failed to parse mount options: %m"
 msgid "failed to parse mount options '%s'"
 msgstr "falha ao analisar opções de montagem: %m"
 
-#: libmount/src/context_mount.c:1479
+#: libmount/src/context_mount.c:1487
 #, c-format
 msgid "failed to parse mount options: %m"
 msgstr "falha ao analisar opções de montagem: %m"
 
-#: libmount/src/context_mount.c:1480
+#: libmount/src/context_mount.c:1488
 #, c-format
 msgid "failed to parse mount options"
 msgstr "falha ao analisar opções de montagem"
 
-#: libmount/src/context_mount.c:1485
+#: libmount/src/context_mount.c:1493
 #, c-format
 msgid "failed to setup loop device for %s"
 msgstr "falha ao configurar dispositivo de ciclo para %s"
 
-#: libmount/src/context_mount.c:1489
+#: libmount/src/context_mount.c:1497
 #, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "dispositivo de ciclo sobreposto existente para %s"
 
-#: libmount/src/context_mount.c:1493 libmount/src/context_umount.c:1263
+#: libmount/src/context_mount.c:1501 libmount/src/context_umount.c:1263
 #, c-format
 msgid "locking failed"
 msgstr "falha de bloqueio"
 
-#: libmount/src/context_mount.c:1497 libmount/src/context_umount.c:1269
+#: libmount/src/context_mount.c:1505 libmount/src/context_umount.c:1269
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, c-format
 msgid "failed to switch namespace"
 msgstr "falha ao trocar espaço de nome"
 
-#: libmount/src/context_mount.c:1501
+#: libmount/src/context_mount.c:1509
 #, fuzzy, c-format
 #| msgid "%s is already mounted"
 msgid "filesystem already mounted"
 msgstr "%s já está montado"
 
-#: libmount/src/context_mount.c:1504
+#: libmount/src/context_mount.c:1512
 #, c-format
 msgid "mount failed: %m"
 msgstr "falha ao montar: %m"
 
-#: libmount/src/context_mount.c:1514
+#: libmount/src/context_mount.c:1522
 #, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "sistema de ficheiros montado, falha ao actualizar tabela de montagem do espaço do utilizador"
 
-#: libmount/src/context_mount.c:1520
+#: libmount/src/context_mount.c:1528
 #, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "sistema de ficheiros montado, falha ao reverter espaço de nome"
 
-#: libmount/src/context_mount.c:1526
+#: libmount/src/context_mount.c:1534
 #, fuzzy, c-format
 #| msgid "filesystem was mounted, but failed to switch namespace back"
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "sistema de ficheiros montado, falha ao reverter espaço de nome"
 
-#: libmount/src/context_mount.c:1532
+#: libmount/src/context_mount.c:1540
 #, fuzzy, c-format
 #| msgid "filesystem was mounted, but failed to switch namespace back"
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "sistema de ficheiros montado, falha ao reverter espaço de nome"
 
-#: libmount/src/context_mount.c:1538
+#: libmount/src/context_mount.c:1546
 #, fuzzy, c-format
 #| msgid "filesystem was mounted, but failed to switch namespace back"
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "sistema de ficheiros montado, falha ao reverter espaço de nome"
 
-#: libmount/src/context_mount.c:1544
+#: libmount/src/context_mount.c:1552
 #, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "sistema de ficheiros montado, falha em qualquer operação subsequente: %m"
 
-#: libmount/src/context_mount.c:1562 libmount/src/context_mount.c:1607
+#: libmount/src/context_mount.c:1570 libmount/src/context_mount.c:1615
 #, c-format
 msgid "mount point is not a directory"
 msgstr "o ponto de montagem não é uma pasta"
 
-#: libmount/src/context_mount.c:1564 login-utils/newgrp.c:228
+#: libmount/src/context_mount.c:1572 login-utils/newgrp.c:228
 #, c-format
 msgid "permission denied"
 msgstr "permissão negada"
 
-#: libmount/src/context_mount.c:1566
+#: libmount/src/context_mount.c:1574
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "tem de ser super-utilizador para usar o mount"
 
-#: libmount/src/context_mount.c:1573
+#: libmount/src/context_mount.c:1581
 #, c-format
 msgid "mount point is busy"
 msgstr "ponto de montagem ocupado"
 
-#: libmount/src/context_mount.c:1580
+#: libmount/src/context_mount.c:1588
 #, c-format
 msgid "%s already mounted on %s"
 msgstr "%s já está montado em %s"
 
-#: libmount/src/context_mount.c:1584
+#: libmount/src/context_mount.c:1592
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s já está montado em ponto de montagem ocupado"
 
-#: libmount/src/context_mount.c:1589
+#: libmount/src/context_mount.c:1597
 #, c-format
 msgid "mount point does not exist"
 msgstr "ponto de montagem não existente"
 
-#: libmount/src/context_mount.c:1592
+#: libmount/src/context_mount.c:1600
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "ponto de montagem é uma ligação simbólica a nada"
 
-#: libmount/src/context_mount.c:1597
+#: libmount/src/context_mount.c:1605
 #, c-format
 msgid "special device %s does not exist"
 msgstr "dispositivo especial %s não existe"
 
-#: libmount/src/context_mount.c:1600 libmount/src/context_mount.c:1616
-#: libmount/src/context_mount.c:1700 libmount/src/context_mount.c:1723
+#: libmount/src/context_mount.c:1608 libmount/src/context_mount.c:1624
+#: libmount/src/context_mount.c:1708 libmount/src/context_mount.c:1731
 #, c-format
 msgid "mount(2) system call failed: %m"
 msgstr "falha na chamada de sistema mount(2): %m"
 
-#: libmount/src/context_mount.c:1612
+#: libmount/src/context_mount.c:1620
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "dispositivo especial %s não existe (um prefixo de caminho não é pasta)"
 
-#: libmount/src/context_mount.c:1624
+#: libmount/src/context_mount.c:1632
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr "ponto de montagem não montado ou má opção"
 
-#: libmount/src/context_mount.c:1626
+#: libmount/src/context_mount.c:1634
 #, c-format
 msgid "not mount point or bad option"
 msgstr "não é ponto de montagem ou má opção"
 
-#: libmount/src/context_mount.c:1629
+#: libmount/src/context_mount.c:1637
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr "má opção, mover uma montagem residente sob uma montagem partilhada não é suportado"
 
-#: libmount/src/context_mount.c:1633
+#: libmount/src/context_mount.c:1641
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr "má opção; para vários sistemas de ficheiros (e.g. nfs, cifs) poderá precisar do ajudante/sbin/mount.<tipo>"
 
-#: libmount/src/context_mount.c:1637
+#: libmount/src/context_mount.c:1645
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr "tipo de fs errado, má opção, mau super-bloco em %s, página de código ou ajudante em falta, ou outro erro"
 
-#: libmount/src/context_mount.c:1644
+#: libmount/src/context_mount.c:1652
 #, c-format
 msgid "mount table full"
 msgstr "tabela de montagem cheia"
 
-#: libmount/src/context_mount.c:1649
+#: libmount/src/context_mount.c:1657
 #, c-format
 msgid "can't read superblock on %s"
 msgstr "impossível ler super-bloco em %s"
 
-#: libmount/src/context_mount.c:1656
+#: libmount/src/context_mount.c:1664
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "tipo de sistema de ficheiros \"%s\" desconhecido"
 
-#: libmount/src/context_mount.c:1659
+#: libmount/src/context_mount.c:1667
 #, c-format
 msgid "unknown filesystem type"
 msgstr "tipo de sistema de ficheiros desconhecido"
 
-#: libmount/src/context_mount.c:1668
+#: libmount/src/context_mount.c:1676
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s não é um dispositivo de bloco e  stat(2) falha?"
 
-#: libmount/src/context_mount.c:1671
+#: libmount/src/context_mount.c:1679
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr "o kernel não reconhece %s como dispositivo de bloco; talvez \"modprobe driver\" seja necessário"
 
-#: libmount/src/context_mount.c:1674
+#: libmount/src/context_mount.c:1682
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s não é um dispositivo de bloco; tente \"-o loop\""
 
-#: libmount/src/context_mount.c:1676
+#: libmount/src/context_mount.c:1684
 #, c-format
 msgid "%s is not a block device"
 msgstr "%s não é um dispositivo de bloco"
 
-#: libmount/src/context_mount.c:1683
+#: libmount/src/context_mount.c:1691
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s não é um dispositivo de bloco válido"
 
-#: libmount/src/context_mount.c:1691
+#: libmount/src/context_mount.c:1699
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "impossível montar %s só de leitura"
 
-#: libmount/src/context_mount.c:1693
+#: libmount/src/context_mount.c:1701
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s está protegido contra escrita mas foi explicitamente pedido o modo ler-escrever"
 
-#: libmount/src/context_mount.c:1695
+#: libmount/src/context_mount.c:1703
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "impossível montar %s como ler-escrever, está protegido contra escrita"
 
-#: libmount/src/context_mount.c:1697
+#: libmount/src/context_mount.c:1705
 #, c-format
 msgid "bind %s failed"
 msgstr "vínculo de %s falhou"
 
-#: libmount/src/context_mount.c:1708
+#: libmount/src/context_mount.c:1716
 #, c-format
 msgid "no medium found on %s"
 msgstr "nenhum suporte encontrado em %s"
 
-#: libmount/src/context_mount.c:1715
+#: libmount/src/context_mount.c:1723
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "impossível montar; sistema de ficheiros em %s provavelmente corrompido"
@@ -8311,11 +8311,11 @@ msgstr "%s: não é uma partição swap válida"
 msgid "%s: unsupported swap version '%s'"
 msgstr "%s: versão swap \"%s\" não suportada"
 
-#: lib/timeutils.c:513
+#: lib/timeutils.c:507
 msgid "format_iso_time: buffer overflow."
 msgstr "format_iso_time: transporte de buffer."
 
-#: lib/timeutils.c:531 lib/timeutils.c:555
+#: lib/timeutils.c:525 lib/timeutils.c:549
 #, c-format
 msgid "time %<PRId64> is out of range."
 msgstr "hora %<PRId64> fora do intervalo."
@@ -8532,7 +8532,7 @@ msgstr "Consola alterada.\n"
 msgid "Usage: %s <passwordfile> <username>...\n"
 msgstr "Uso: %s <fichsenha> <utilizador>...\n"
 
-#: login-utils/last.c:175 login-utils/lslogins.c:1433 sys-utils/dmesg.c:1342
+#: login-utils/last.c:175 login-utils/lslogins.c:1433 sys-utils/dmesg.c:1348
 #: sys-utils/lsipc.c:283
 #, c-format
 msgid "unknown time format: %s"
@@ -8628,7 +8628,7 @@ msgid "failed to parse number"
 msgstr "falha ao analisar o número"
 
 #: login-utils/last.c:1032 login-utils/last.c:1037 login-utils/last.c:1042
-#: sys-utils/dmesg.c:1560 sys-utils/dmesg.c:1566 sys-utils/rtcwake.c:511
+#: sys-utils/dmesg.c:1566 sys-utils/dmesg.c:1572 sys-utils/rtcwake.c:511
 #, c-format
 msgid "invalid time value \"%s\""
 msgstr "valor de hora \"%s\" inválido"
@@ -9295,7 +9295,7 @@ msgstr "setuid falhou"
 
 #: login-utils/nologin.c:28 misc-utils/lsfd.c:1538 misc-utils/lslocks.c:545
 #: misc-utils/mcookie.c:83 misc-utils/uuidd.c:97 misc-utils/uuidgen.c:26
-#: sys-utils/dmesg.c:276 sys-utils/ipcmk.c:67 sys-utils/irqtop.c:262
+#: sys-utils/dmesg.c:282 sys-utils/ipcmk.c:67 sys-utils/irqtop.c:262
 #: sys-utils/lscpu.c:1177 sys-utils/lsipc.c:292 sys-utils/lsirq.c:57
 #: sys-utils/lsmem.c:519 sys-utils/readprofile.c:106 sys-utils/rtcwake.c:99
 #: term-utils/scriptlive.c:57 term-utils/scriptreplay.c:47
@@ -10022,119 +10022,125 @@ msgstr "argumento de semana inválido"
 msgid "illegal week value: use 1-54"
 msgstr "valor de semana ilegal: use 1-54"
 
-#: misc-utils/cal.c:471
+#: misc-utils/cal.c:437
+#, fuzzy
+#| msgid "failed to parse column"
+msgid "failed to parse columns"
+msgstr "falha ao analisar a coluna"
+
+#: misc-utils/cal.c:472
 #, c-format
 msgid "failed to parse timestamp or unknown month name: %s"
 msgstr "falha ao analisar carimbo ou nome de mês desconhecido: %s"
 
-#: misc-utils/cal.c:480
+#: misc-utils/cal.c:481
 msgid "illegal day value"
 msgstr "valor de dia ilegal"
 
-#: misc-utils/cal.c:482 misc-utils/cal.c:506
+#: misc-utils/cal.c:483 misc-utils/cal.c:507
 #, c-format
 msgid "illegal day value: use 1-%d"
 msgstr "valor de dia ilegal: use 1-%d"
 
-#: misc-utils/cal.c:486 misc-utils/cal.c:494
+#: misc-utils/cal.c:487 misc-utils/cal.c:495
 msgid "illegal month value: use 1-12"
 msgstr "valor de mês ilegal: use 1-12"
 
-#: misc-utils/cal.c:490
+#: misc-utils/cal.c:491
 #, c-format
 msgid "unknown month name: %s"
 msgstr "nome de mês desconhecido: %s"
 
-#: misc-utils/cal.c:497 misc-utils/cal.c:501
+#: misc-utils/cal.c:498 misc-utils/cal.c:502
 msgid "illegal year value"
 msgstr "valor de ano ilegal"
 
-#: misc-utils/cal.c:499
+#: misc-utils/cal.c:500
 msgid "illegal year value: use positive integer"
 msgstr "valor de ano ilegal: use um inteiro positivo"
 
-#: misc-utils/cal.c:535 misc-utils/cal.c:548
+#: misc-utils/cal.c:536 misc-utils/cal.c:549
 #, c-format
 msgid "illegal week value: year %d doesn't have week %d"
 msgstr "valor de semana ilegal: o ano %d não tem a semana %d"
 
-#: misc-utils/cal.c:1270
+#: misc-utils/cal.c:1271
 #, c-format
 msgid " %s [options] [[[day] month] year]\n"
 msgstr " %s [opções] [[[dia] mês] ano]\n"
 
-#: misc-utils/cal.c:1271
+#: misc-utils/cal.c:1272
 #, c-format
 msgid " %s [options] <timestamp|monthname>\n"
 msgstr " %s [opções] <carimbo|nomedemês>\n"
 
-#: misc-utils/cal.c:1274
+#: misc-utils/cal.c:1275
 msgid "Display a calendar, or some part of it.\n"
 msgstr "Mostrar um calendário, ou parte dele.\n"
 
-#: misc-utils/cal.c:1275
+#: misc-utils/cal.c:1276
 msgid "Without any arguments, display the current month.\n"
 msgstr "Sem argumentos, mostra o mês actual.\n"
 
-#: misc-utils/cal.c:1278
+#: misc-utils/cal.c:1279
 msgid " -1, --one             show only a single month (default)\n"
 msgstr " -1, --one             mostrar só um mês (predefinição)\n"
 
-#: misc-utils/cal.c:1279
+#: misc-utils/cal.c:1280
 msgid " -3, --three           show three months spanning the date\n"
 msgstr " -3, --three           mostrar mês anterior, actual e seguinte\n"
 
-#: misc-utils/cal.c:1280
+#: misc-utils/cal.c:1281
 msgid " -n, --months <num>    show num months starting with date's month\n"
 msgstr " -n, --months <nº>     mostrar <nº> meses começando no mês da data actual\n"
 
-#: misc-utils/cal.c:1281
+#: misc-utils/cal.c:1282
 msgid " -S, --span            span the date when displaying multiple months\n"
 msgstr " -S, --span            centrar a data ao mostrar múltiplos meses\n"
 
-#: misc-utils/cal.c:1282
+#: misc-utils/cal.c:1283
 msgid " -s, --sunday          Sunday as first day of week\n"
 msgstr " -s, --sunday          Domingo como primeiro dia da semana\n"
 
-#: misc-utils/cal.c:1283
+#: misc-utils/cal.c:1284
 msgid " -m, --monday          Monday as first day of week\n"
 msgstr " -m, --monday          Segunda como primeiro dia da semana\n"
 
-#: misc-utils/cal.c:1284
+#: misc-utils/cal.c:1285
 msgid " -j, --julian          use day-of-year for all calendars\n"
 msgstr " -j, --julian          usar dia-do-ano para todos os calendários\n"
 
-#: misc-utils/cal.c:1285
+#: misc-utils/cal.c:1286
 msgid "     --reform <val>    Gregorian reform date (1752|gregorian|iso|julian)\n"
 msgstr "     --reform <val>    data de reforma gregoriana (1752|gregorian|iso|julian)\n"
 
-#: misc-utils/cal.c:1286
+#: misc-utils/cal.c:1287
 msgid "     --iso             alias for --reform=iso\n"
 msgstr "     --iso             aliás para --reform=iso\n"
 
-#: misc-utils/cal.c:1287
+#: misc-utils/cal.c:1288
 msgid " -y, --year            show the whole year\n"
 msgstr " -y, --year            mostrar o ano inteiro\n"
 
-#: misc-utils/cal.c:1288
+#: misc-utils/cal.c:1289
 msgid " -Y, --twelve          show the next twelve months\n"
 msgstr " -Y, --twelve          mostrar os doze meses seguintes\n"
 
-#: misc-utils/cal.c:1289
+#: misc-utils/cal.c:1290
 msgid " -w, --week[=<num>]    show US or ISO-8601 week numbers\n"
 msgstr " -w, --week[=<núm>]    mostrar <núm>eros de semana EUA ou ISO-8601\n"
 
-#: misc-utils/cal.c:1290
+#: misc-utils/cal.c:1291
 msgid " -v, --vertical        show day vertically instead of line\n"
 msgstr " -v, --vertical        mostrar o dia na vertical em vez de em linha\n"
 
-#: misc-utils/cal.c:1291
+#: misc-utils/cal.c:1292
 #, fuzzy
 #| msgid " -o, --output <list>  define which output columns to use\n"
 msgid " -c, --columns <width> amount of columns to use\n"
 msgstr " -o, --output <lista> definir as colunas de saída a imprimir\n"
 
-#: misc-utils/cal.c:1293
+#: misc-utils/cal.c:1294
 #, c-format
 msgid "     --color[=<when>]  colorize messages (%s, %s or %s)\n"
 msgstr "     --color[=<quand>] colorir mensagens (%s, %s ou %s)\n"
@@ -10185,7 +10191,7 @@ msgstr ""
 msgid "invalid fd argument"
 msgstr "argumento de velocidade inválido"
 
-#: misc-utils/fadvise.c:131 misc-utils/fincore.c:339 sys-utils/losetup.c:828
+#: misc-utils/fadvise.c:131 misc-utils/fincore.c:339 sys-utils/losetup.c:845
 msgid "no file specified"
 msgstr "sem ficheiro especificado"
 
@@ -11323,7 +11329,7 @@ msgid "%s and %s are mutually exclusive"
 msgstr "%s e %s são mutuamente exclusivas"
 
 #: misc-utils/kill.c:341 misc-utils/kill.c:356 sys-utils/eject.c:210
-#: sys-utils/eject.c:232 sys-utils/losetup.c:730 sys-utils/tunelp.c:164
+#: sys-utils/eject.c:232 sys-utils/losetup.c:747 sys-utils/tunelp.c:164
 #: sys-utils/tunelp.c:171 sys-utils/tunelp.c:178 sys-utils/tunelp.c:185
 #: sys-utils/tunelp.c:192 sys-utils/tunelp.c:198 sys-utils/tunelp.c:202
 #: sys-utils/tunelp.c:209 term-utils/setterm.c:211 term-utils/setterm.c:214
@@ -12602,63 +12608,63 @@ msgstr ""
 msgid "          --summary[=<when>]  print summary information (only, append, or never)\n"
 msgstr "     --summary[=qund] imprimir sumário (never,always ou only)\n"
 
-#: misc-utils/lsfd.c:1621
+#: misc-utils/lsfd.c:1622
 #, c-format
 msgid "too short counter specification: -C/--counter %s"
 msgstr ""
 
-#: misc-utils/lsfd.c:1625 misc-utils/lsfd.c:1631
+#: misc-utils/lsfd.c:1626 misc-utils/lsfd.c:1632
 #, c-format
 msgid "no name for counter: -C/--counter %s"
 msgstr ""
 
-#: misc-utils/lsfd.c:1635
+#: misc-utils/lsfd.c:1636
 #, c-format
 msgid "empty counter expression given: -C/--counter %s"
 msgstr ""
 
-#: misc-utils/lsfd.c:1643
+#: misc-utils/lsfd.c:1644
 #, c-format
 msgid "don't use `{' in the name of a counter: %s"
 msgstr ""
 
-#: misc-utils/lsfd.c:1664
+#: misc-utils/lsfd.c:1665
 msgid "failed in making filter for a counter: "
 msgstr ""
 
-#: misc-utils/lsfd.c:1732
+#: misc-utils/lsfd.c:1733
 #, fuzzy
 #| msgid "failed to allocate output table"
 msgid "failed to allocate summary table"
 msgstr "falha ao alocar tabela de saída"
 
-#: misc-utils/lsfd.c:1742
+#: misc-utils/lsfd.c:1743
 msgid "VALUE"
 msgstr ""
 
-#: misc-utils/lsfd.c:1744 misc-utils/lsfd.c:1750
+#: misc-utils/lsfd.c:1745 misc-utils/lsfd.c:1751
 #, fuzzy
 #| msgid "failed to allocate output column"
 msgid "failed to allocate summary column"
 msgstr "falha ao alocar coluna de saída"
 
-#: misc-utils/lsfd.c:1748
+#: misc-utils/lsfd.c:1749
 msgid "COUNTER"
 msgstr ""
 
-#: misc-utils/lsfd.c:1763 misc-utils/lsfd.c:1765 misc-utils/lsfd.c:1768
+#: misc-utils/lsfd.c:1764 misc-utils/lsfd.c:1766 misc-utils/lsfd.c:1769
 #, fuzzy
 #| msgid "failed to add output data"
 msgid "failed to add summary data"
 msgstr "falha ao adicionar dados de saída"
 
-#: misc-utils/lsfd.c:1905
+#: misc-utils/lsfd.c:1906
 #, fuzzy, c-format
 #| msgid "unknown argument: %s"
 msgid "unknown -i/--inet argument: %s"
 msgstr "argumento desconhecido: %s"
 
-#: misc-utils/lsfd.c:1931 sys-utils/lsmem.c:641
+#: misc-utils/lsfd.c:1932 sys-utils/lsmem.c:641
 msgid "unsupported --summary argument"
 msgstr "argumento --summary não suportado"
 
@@ -12715,68 +12721,68 @@ msgstr "%s coluna desconhecida: %s"
 msgid "error: cannot add a column to table: %s"
 msgstr ""
 
-#: misc-utils/lsfd-filter.c:759
+#: misc-utils/lsfd-filter.c:763
 #, fuzzy, c-format
 #| msgid "internal error: unsupported dialog type %d"
 msgid "error: unsupported column data type: %d, column: %s"
 msgstr "erro interno: tipo de diálogo %d não suportado"
 
-#: misc-utils/lsfd-filter.c:804 misc-utils/lsfd-filter.c:834
+#: misc-utils/lsfd-filter.c:808 misc-utils/lsfd-filter.c:838
 #, c-format
 msgid "error: empty right side expression: %s"
 msgstr ""
 
-#: misc-utils/lsfd-filter.c:874
+#: misc-utils/lsfd-filter.c:878
 #, fuzzy
 #| msgid "could not compile regular expression %s: %s"
 msgid "error: empty filter expression"
 msgstr "impossível compilar a expressão regular %s: %s"
 
-#: misc-utils/lsfd-filter.c:975
+#: misc-utils/lsfd-filter.c:979
 #, fuzzy, c-format
 #| msgid "unexpected end of file on %s"
 msgid "unexpected type in filter application: %s"
 msgstr "fim de ficheiro inesperado em %s"
 
-#: misc-utils/lsfd-filter.c:1076
+#: misc-utils/lsfd-filter.c:1080
 #, fuzzy, c-format
 #| msgid "unexpected end of file on %s"
 msgid "error: unexpected operand type %s for: %s"
 msgstr "fim de ficheiro inesperado em %s"
 
-#: misc-utils/lsfd-filter.c:1199 misc-utils/lsfd-filter.c:1232
-#: misc-utils/lsfd-filter.c:1254
+#: misc-utils/lsfd-filter.c:1203 misc-utils/lsfd-filter.c:1236
+#: misc-utils/lsfd-filter.c:1258
 #, c-format
 msgid "error: unexpected left operand type %s for: %s"
 msgstr ""
 
-#: misc-utils/lsfd-filter.c:1207 misc-utils/lsfd-filter.c:1240
-#: misc-utils/lsfd-filter.c:1262
+#: misc-utils/lsfd-filter.c:1211 misc-utils/lsfd-filter.c:1244
+#: misc-utils/lsfd-filter.c:1266
 #, c-format
 msgid "error: unexpected right operand type %s for: %s"
 msgstr ""
 
-#: misc-utils/lsfd-filter.c:1269
+#: misc-utils/lsfd-filter.c:1273
 #, c-format
 msgid "error: string literal is expected as right operand for: %s"
 msgstr ""
 
-#: misc-utils/lsfd-filter.c:1285
+#: misc-utils/lsfd-filter.c:1289
 #, fuzzy, c-format
 #| msgid "could not compile regular expression %s: %s"
 msgid "error: could not compile regular expression %s: %s"
 msgstr "impossível compilar a expressão regular %s: %s"
 
-#: misc-utils/lsfd-filter.c:1321
+#: misc-utils/lsfd-filter.c:1325
 msgid "error: unbalanced parenthesis: ("
 msgstr ""
 
-#: misc-utils/lsfd-filter.c:1327
+#: misc-utils/lsfd-filter.c:1331
 #, c-format
 msgid "error: garbage at the end of expression: %s"
 msgstr ""
 
-#: misc-utils/lsfd-filter.c:1333
+#: misc-utils/lsfd-filter.c:1337
 #, c-format
 msgid "error: bool expression is expected: %s"
 msgstr ""
@@ -14465,12 +14471,12 @@ msgstr " -v, --verbose       imprimir tamanho e desvio alinhados\n"
 msgid " -z, --zeroout       zero-fill rather than discard\n"
 msgstr " -z, --zeroout       preencher a zeros em vez de descartar\n"
 
-#: sys-utils/blkdiscard.c:162 sys-utils/blkzone.c:378
+#: sys-utils/blkdiscard.c:162 sys-utils/blkzone.c:371
 #, c-format
 msgid "%s: %s ioctl failed"
 msgstr "%s: %s ioctl falhou"
 
-#: sys-utils/blkdiscard.c:208 sys-utils/fstrim.c:546 sys-utils/losetup.c:710
+#: sys-utils/blkdiscard.c:208 sys-utils/fstrim.c:546 sys-utils/losetup.c:727
 #: text-utils/hexdump.c:124
 msgid "failed to parse offset"
 msgstr "falha ao analisar o desvio"
@@ -14479,7 +14485,7 @@ msgstr "falha ao analisar o desvio"
 msgid "failed to parse step"
 msgstr "falha ao analisar o passo"
 
-#: sys-utils/blkdiscard.c:242 sys-utils/blkpr.c:307 sys-utils/blkzone.c:499
+#: sys-utils/blkdiscard.c:242 sys-utils/blkpr.c:307 sys-utils/blkzone.c:492
 #: sys-utils/fallocate.c:382 sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:577
 #: sys-utils/umount.c:619 term-utils/script.c:908
 msgid "unexpected number of arguments"
@@ -14500,7 +14506,7 @@ msgstr "%s: BLKSSZGET ioctl falhou"
 msgid "%s: offset %<PRIu64> is not aligned to sector size %i"
 msgstr "%s: desvio %<PRIu64> não está alinhado ao tamanho do sector %i"
 
-#: sys-utils/blkdiscard.c:267 sys-utils/blkzone.c:356
+#: sys-utils/blkdiscard.c:267 sys-utils/blkzone.c:349
 #, c-format
 msgid "%s: offset is greater than device size"
 msgstr "%s: desvio maior que o tamanho do dispositivo"
@@ -14645,7 +14651,7 @@ msgstr "%s: blkdev_get_sectors ioctl falhou"
 msgid "%s: offset is greater than or equal to device size"
 msgstr "%s: desvio maior ou igual ao tamanho do dispositivo"
 
-#: sys-utils/blkzone.c:246 sys-utils/blkzone.c:346
+#: sys-utils/blkzone.c:246 sys-utils/blkzone.c:339
 #, c-format
 msgid "%s: unable to determine zone size"
 msgstr "%s: impossível determinar tamanho da zona"
@@ -14660,88 +14666,88 @@ msgstr "%s: BLKREPORTZONE ioctl falhou"
 msgid "Found %d zones from 0x%<PRIx64>\n"
 msgstr "Encontradas %d zonas de 0x%<PRIx64>\n"
 
-#: sys-utils/blkzone.c:302
+#: sys-utils/blkzone.c:295
 #, c-format
 msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, cap 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
 msgstr "  início: 0x%09<PRIx64>, tam 0x%06<PRIx64>, cap 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u não-seq:%u, zcond:%2u(%s) [tipo: %u(%s)]\n"
 
-#: sys-utils/blkzone.c:310
+#: sys-utils/blkzone.c:303
 #, fuzzy, c-format
 #| msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, cap 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
 msgid "  start: 0x%09<PRIx64>, len 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"
 msgstr "  início: 0x%09<PRIx64>, tam 0x%06<PRIx64>, cap 0x%06<PRIx64>, wptr 0x%06<PRIx64> reset:%u não-seq:%u, zcond:%2u(%s) [tipo: %u(%s)]\n"
 
-#: sys-utils/blkzone.c:326
+#: sys-utils/blkzone.c:319
 #, c-format
 msgid "0x%09<PRIx64>\n"
 msgstr "0x%09<PRIx64>\n"
 
-#: sys-utils/blkzone.c:351
+#: sys-utils/blkzone.c:344
 #, c-format
 msgid "%s: offset %<PRIu64> is not aligned to zone size %lu"
 msgstr "%s: desvio %<PRIu64> não alinhado ao tamanho da zona %lu"
 
-#: sys-utils/blkzone.c:370
+#: sys-utils/blkzone.c:363
 #, c-format
 msgid "%s: number of sectors %<PRIu64> is not aligned to zone size %lu"
 msgstr "%s: número de sectores %<PRIu64> não alinhado ao tamanho da zona %lu"
 
-#: sys-utils/blkzone.c:381
+#: sys-utils/blkzone.c:374
 #, c-format
 msgid "%s: successful %s of zones in range from %<PRIu64>, to %<PRIu64>"
 msgstr "%s: %s com sucesso de zonas no intervalo entre %<PRIu64> e %<PRIu64>"
 
-#: sys-utils/blkzone.c:396
+#: sys-utils/blkzone.c:389
 #, c-format
 msgid " %s <command> [options] <device>\n"
 msgstr " %s <comando> [opções] <dispositivo>\n"
 
-#: sys-utils/blkzone.c:399
+#: sys-utils/blkzone.c:392
 msgid "Run zone command on the given block device.\n"
 msgstr "Executar comando de zona no dispositivo de bloco indicado.\n"
 
-#: sys-utils/blkzone.c:406
+#: sys-utils/blkzone.c:399
 msgid " -o, --offset <sector>  start sector of zone to act (in 512-byte sectors)\n"
 msgstr " -o, --offset <sector>  sector inicial da zona onde operar (em sectores de 512)\n"
 
-#: sys-utils/blkzone.c:407
+#: sys-utils/blkzone.c:400
 msgid " -l, --length <sectors> maximum sectors to act (in 512-byte sectors)\n"
 msgstr " -l, --length <sects>   máximo de sectores onde operar (em sectores de 512)\n"
 
-#: sys-utils/blkzone.c:408
+#: sys-utils/blkzone.c:401
 msgid " -c, --count <number>   maximum number of zones\n"
 msgstr " -c, --count <núm>      número máximo de zonas\n"
 
-#: sys-utils/blkzone.c:409
+#: sys-utils/blkzone.c:402
 msgid " -f, --force            enforce on block devices used by the system\n"
 msgstr " -f, --force            forçar em dispositivos de bloco usados pelo sistema\n"
 
-#: sys-utils/blkzone.c:410
+#: sys-utils/blkzone.c:403
 msgid " -v, --verbose          display more details\n"
 msgstr " -v, --verbose          mostrar mais detalhes\n"
 
-#: sys-utils/blkzone.c:415
+#: sys-utils/blkzone.c:408
 msgid "<sector> and <sectors>"
 msgstr "<sector> e <sectores>"
 
-#: sys-utils/blkzone.c:453
+#: sys-utils/blkzone.c:446
 #, c-format
 msgid "%s is not valid command name"
 msgstr "%s não é um nome de comando válido"
 
-#: sys-utils/blkzone.c:465
+#: sys-utils/blkzone.c:458
 msgid "failed to parse number of zones"
 msgstr "falha ao analisar número de zonas"
 
-#: sys-utils/blkzone.c:469
+#: sys-utils/blkzone.c:462
 msgid "failed to parse number of sectors"
 msgstr "falha ao analisar número de sectores"
 
-#: sys-utils/blkzone.c:473
+#: sys-utils/blkzone.c:466
 msgid "failed to parse zone offset"
 msgstr "falha ao analisar desvio da zona"
 
-#: sys-utils/blkzone.c:492 sys-utils/setsid.c:92
+#: sys-utils/blkzone.c:485 sys-utils/setsid.c:92
 msgid "no command specified"
 msgstr "sem comando especificado"
 
@@ -15269,118 +15275,118 @@ msgstr "mensagens de segurança/autorização (privado)"
 msgid "FTP daemon"
 msgstr "Daemon FTP"
 
-#: sys-utils/dmesg.c:279
+#: sys-utils/dmesg.c:285
 msgid "Display or control the kernel ring buffer.\n"
 msgstr "Mostrar ou controlar o buffer de anel do kernel.\n"
 
-#: sys-utils/dmesg.c:282
+#: sys-utils/dmesg.c:288
 msgid " -C, --clear                 clear the kernel ring buffer\n"
 msgstr " -C, --clear                 limpar o buffer de anel do kernel\n"
 
-#: sys-utils/dmesg.c:283
+#: sys-utils/dmesg.c:289
 msgid " -c, --read-clear            read and clear all messages\n"
 msgstr " -c, --read-clear            ler e limpar todas as mensagens\n"
 
-#: sys-utils/dmesg.c:284
+#: sys-utils/dmesg.c:290
 msgid " -D, --console-off           disable printing messages to console\n"
 msgstr " -D, --console-off           desactivar a impressão de mensagens para a consola\n"
 
-#: sys-utils/dmesg.c:285
+#: sys-utils/dmesg.c:291
 msgid " -E, --console-on            enable printing messages to console\n"
 msgstr " -E, --console-on            activar a impressão de mensagens para a consola\n"
 
-#: sys-utils/dmesg.c:286
+#: sys-utils/dmesg.c:292
 msgid " -F, --file <file>           use the file instead of the kernel log buffer\n"
 msgstr " -F, --file <ficheiro>       usar o ficheiro em vez do buffer de diário do kernel\n"
 
-#: sys-utils/dmesg.c:287
+#: sys-utils/dmesg.c:293
 msgid " -f, --facility <list>       restrict output to defined facilities\n"
 msgstr " -f, --facility <lista>      restringir a saída a instalações definidas\n"
 
-#: sys-utils/dmesg.c:288
+#: sys-utils/dmesg.c:294
 msgid " -H, --human                 human readable output\n"
 msgstr " -H, --human                 mostrar saída legível\n"
 
-#: sys-utils/dmesg.c:289
+#: sys-utils/dmesg.c:295
 #, fuzzy
 #| msgid " -J, --json             use JSON output format\n"
 msgid " -J, --json                  use JSON output format\n"
 msgstr " -J, --json             usar formato de saída JSON\n"
 
-#: sys-utils/dmesg.c:290
+#: sys-utils/dmesg.c:296
 msgid " -k, --kernel                display kernel messages\n"
 msgstr " -k, --kernel                mostrar as mensagens do kernel\n"
 
-#: sys-utils/dmesg.c:292
+#: sys-utils/dmesg.c:298
 #, c-format
 msgid " -L, --color[=<when>]        colorize messages (%s, %s or %s)\n"
 msgstr " -L, --color[=<quando>]      colorir as mensagens (%s, %s ou %s)\n"
 
-#: sys-utils/dmesg.c:295
+#: sys-utils/dmesg.c:301
 msgid " -l, --level <list>          restrict output to defined levels\n"
 msgstr " -l, --level <lista>         restringir a saída a níveis definidos\n"
 
-#: sys-utils/dmesg.c:296
+#: sys-utils/dmesg.c:302
 msgid " -n, --console-level <level> set level of messages printed to console\n"
 msgstr " -n, --console-level <nível> definir o nível das mensagens imprimidas na consola\n"
 
-#: sys-utils/dmesg.c:297
+#: sys-utils/dmesg.c:303
 msgid " -P, --nopager               do not pipe output into a pager\n"
 msgstr " -P, --nopager               não encaminhar para um paginador\n"
 
-#: sys-utils/dmesg.c:298
+#: sys-utils/dmesg.c:304
 msgid " -p, --force-prefix          force timestamp output on each line of multi-line messages\n"
 msgstr " -p, --force-prefix          forçar data/hora em cada linha de mensagens multi-linha\n"
 
-#: sys-utils/dmesg.c:299
+#: sys-utils/dmesg.c:305
 msgid " -r, --raw                   print the raw message buffer\n"
 msgstr " -r, --raw                   imprimir o buffer de mensagens em bruto\n"
 
-#: sys-utils/dmesg.c:300
+#: sys-utils/dmesg.c:306
 msgid "     --noescape              don't escape unprintable character\n"
 msgstr "     --noescape              não escapar carácter não imprimível\n"
 
-#: sys-utils/dmesg.c:301
+#: sys-utils/dmesg.c:307
 msgid " -S, --syslog                force to use syslog(2) rather than /dev/kmsg\n"
 msgstr " -S, --syslog                forçar o uso de syslog(2) em vez de /dev/kmsg\n"
 
-#: sys-utils/dmesg.c:302
+#: sys-utils/dmesg.c:308
 msgid " -s, --buffer-size <size>    buffer size to query the kernel ring buffer\n"
 msgstr " -s, --buffer-size <tamanho> tamanho de buffer para consultar o buffer de anel do kernel\n"
 
-#: sys-utils/dmesg.c:303
+#: sys-utils/dmesg.c:309
 msgid " -u, --userspace             display userspace messages\n"
 msgstr " -u, --userspace             mostrar mensagens do espaço do utilizador\n"
 
-#: sys-utils/dmesg.c:304
+#: sys-utils/dmesg.c:310
 msgid " -w, --follow                wait for new messages\n"
 msgstr " -w, --follow                esperar por novas mensagens\n"
 
-#: sys-utils/dmesg.c:305
+#: sys-utils/dmesg.c:311
 msgid " -W, --follow-new            wait and print only new messages\n"
 msgstr " -W, --follow-new            esperar e imprimir só novas mensagens\n"
 
-#: sys-utils/dmesg.c:306
+#: sys-utils/dmesg.c:312
 msgid " -x, --decode                decode facility and level to readable string\n"
 msgstr " -x, --decode                descodificar instalação/nível para cadeia legível\n"
 
-#: sys-utils/dmesg.c:307
+#: sys-utils/dmesg.c:313
 msgid " -d, --show-delta            show time delta between printed messages\n"
 msgstr " -d, --show-delta            mostrar diferencial de tempo entre mensagens imprimidas\n"
 
-#: sys-utils/dmesg.c:308
+#: sys-utils/dmesg.c:314
 msgid " -e, --reltime               show local time and time delta in readable format\n"
 msgstr " -e, --reltime               mostrar hora local e diferencial de hora em formato legível\n"
 
-#: sys-utils/dmesg.c:309
+#: sys-utils/dmesg.c:315
 msgid " -T, --ctime                 show human-readable timestamp (may be inaccurate!)\n"
 msgstr " -T, --ctime                 mostrar data/hora em formato legível (pode ser impreciso!)\n"
 
-#: sys-utils/dmesg.c:310
+#: sys-utils/dmesg.c:316
 msgid " -t, --notime                don't show any timestamp with messages\n"
 msgstr " -t, --notime                não mostrar nenhuma data/hora com as mensagens\n"
 
-#: sys-utils/dmesg.c:311
+#: sys-utils/dmesg.c:317
 msgid ""
 "     --time-format <format>  show timestamp using the given format:\n"
 "                               [delta|reltime|ctime|notime|iso]\n"
@@ -15390,19 +15396,19 @@ msgstr ""
 "                               [delta|reltime|ctime|notime|iso]\n"
 "Suspender/Retomar fará as data/hora ctime e iso imprecisas.\n"
 
-#: sys-utils/dmesg.c:314
+#: sys-utils/dmesg.c:320
 msgid "     --since <time>          display the lines since the specified time\n"
 msgstr ""
 "     --since <hora>          mostrar as linhas desde a hora especificada\n"
 "\n"
 
-#: sys-utils/dmesg.c:315
+#: sys-utils/dmesg.c:321
 msgid "     --until <time>          display the lines until the specified time\n"
 msgstr ""
 "     --until <time>          mostrar as linhas até à hora especificada\n"
 "\n"
 
-#: sys-utils/dmesg.c:319
+#: sys-utils/dmesg.c:325
 msgid ""
 "\n"
 "Supported log facilities:\n"
@@ -15410,7 +15416,7 @@ msgstr ""
 "\n"
 "Instalações de diário suportadas:\n"
 
-#: sys-utils/dmesg.c:325
+#: sys-utils/dmesg.c:331
 msgid ""
 "\n"
 "Supported log levels (priorities):\n"
@@ -15418,27 +15424,27 @@ msgstr ""
 "\n"
 "Níveis de diário suportados (prioridades):\n"
 
-#: sys-utils/dmesg.c:379
+#: sys-utils/dmesg.c:385
 #, c-format
 msgid "failed to parse level '%s'"
 msgstr "falha ao analisar nível \"%s\""
 
-#: sys-utils/dmesg.c:381
+#: sys-utils/dmesg.c:387
 #, c-format
 msgid "unknown level '%s'"
 msgstr "nível \"%s\" desconhecido"
 
-#: sys-utils/dmesg.c:417
+#: sys-utils/dmesg.c:423
 #, c-format
 msgid "failed to parse facility '%s'"
 msgstr "falha ao analisar instalação \"%s\""
 
-#: sys-utils/dmesg.c:419
+#: sys-utils/dmesg.c:425
 #, c-format
 msgid "unknown facility '%s'"
 msgstr "instalação \"%s\" desconhecida"
 
-#: sys-utils/dmesg.c:547
+#: sys-utils/dmesg.c:553
 #, c-format
 msgid "cannot mmap: %s"
 msgstr "mmap impossível: %s"
@@ -15447,38 +15453,38 @@ msgstr "mmap impossível: %s"
 #. where %a is abbreviated name of the day, %b is abbreviated month
 #. name and %e is day of the month as a decimal number. Please, set
 #. proper month/day order here
-#: sys-utils/dmesg.c:863
+#: sys-utils/dmesg.c:869
 msgid "%a %b %e %H:%M:%S %Y"
 msgstr ""
 
 #. TRANSLATORS: dmesg uses strftime() fo generate date-time string
 #. where: %b is abbreviated month and %e is day of the month as a
 #. decimal number. Please, set proper month/day order here.
-#: sys-utils/dmesg.c:873
+#: sys-utils/dmesg.c:879
 msgid "%b%e %H:%M"
 msgstr ""
 
-#: sys-utils/dmesg.c:1526
+#: sys-utils/dmesg.c:1532
 msgid "invalid buffer size argument"
 msgstr "argumento de tamanho de buffer inválido"
 
-#: sys-utils/dmesg.c:1612
+#: sys-utils/dmesg.c:1618
 msgid "--show-delta is ignored when used together with iso8601 time format"
 msgstr "--show-delta é ignorado quando usado em conjunto com o formato de hora iso8601"
 
-#: sys-utils/dmesg.c:1636
+#: sys-utils/dmesg.c:1642
 msgid "--raw can be used together with --level or --facility only when reading messages from /dev/kmsg"
 msgstr "--raw só pode ser usado em conjunto com --level ou --facility ao ler mensagens de /dev/kmsg"
 
-#: sys-utils/dmesg.c:1656
+#: sys-utils/dmesg.c:1662
 msgid "read kernel buffer failed"
 msgstr "falha ao ler o buffer do kernel"
 
-#: sys-utils/dmesg.c:1664
+#: sys-utils/dmesg.c:1670
 msgid "clear kernel buffer failed"
 msgstr "falha ao limpar o buffer do kernel"
 
-#: sys-utils/dmesg.c:1680
+#: sys-utils/dmesg.c:1686
 msgid "klogctl failed"
 msgstr "klogctl falhou"
 
@@ -16835,7 +16841,7 @@ msgstr " -p, --mode <mode>        permissão para o recurso (a predefinição é
 msgid "<size>"
 msgstr "<tamanho>"
 
-#: sys-utils/ipcmk.c:114 sys-utils/losetup.c:737 sys-utils/zramctl.c:653
+#: sys-utils/ipcmk.c:114 sys-utils/losetup.c:754 sys-utils/zramctl.c:653
 msgid "failed to parse size"
 msgstr "falha ao analisar o tamanho"
 
@@ -18045,78 +18051,78 @@ msgstr "%s: aviso: o ficheiro é menor que 512 bytes; o dispositivo de ciclo pod
 msgid "%s: Warning: file does not fit into a 512-byte sector; the end of the file will be ignored."
 msgstr "%s: aviso: o ficheiro não cabe num sector de 512 bytes; o final do ficheiro será ignorado."
 
-#: sys-utils/losetup.c:490 sys-utils/losetup.c:542
+#: sys-utils/losetup.c:487
+msgid "cannot find an unused loop device"
+msgstr "impossível encontrar um dispositivo de ciclo não usado"
+
+#: sys-utils/losetup.c:509 sys-utils/losetup.c:561
 #, c-format
 msgid "%s: overlapping loop device exists"
 msgstr "%s: já existe um dispositivo de ciclo sobreposto"
 
-#: sys-utils/losetup.c:501
+#: sys-utils/losetup.c:520
 #, c-format
 msgid "%s: overlapping read-only loop device exists"
 msgstr "%s: já existe um dispositivo de ciclo só de leitura sobreposto"
 
-#: sys-utils/losetup.c:508
+#: sys-utils/losetup.c:527
 #, c-format
 msgid "%s: overlapping encrypted loop device exists"
 msgstr "%s: já existe um dispositivo de ciclo encriptado sobreposto"
 
-#: sys-utils/losetup.c:514
+#: sys-utils/losetup.c:533
 #, c-format
 msgid "%s: failed to re-use loop device"
 msgstr "%s: falha ao reutilizar dispositivo de ciclo"
 
-#: sys-utils/losetup.c:520
+#: sys-utils/losetup.c:539
 msgid "failed to inspect loop devices"
 msgstr "falha ao inspeccionar dispositivos de ciclo"
 
-#: sys-utils/losetup.c:543
+#: sys-utils/losetup.c:562
 #, c-format
 msgid "%s: failed to check for conflicting loop devices"
 msgstr "%s: falha ao procurar dispositivos de ciclo em conflito"
 
-#: sys-utils/losetup.c:555 sys-utils/losetup.c:881
-msgid "cannot find an unused loop device"
-msgstr "impossível encontrar um dispositivo de ciclo não usado"
-
-#: sys-utils/losetup.c:568
+#: sys-utils/losetup.c:585
 #, c-format
 msgid "%s: failed to use backing file"
 msgstr "%s: falha ao usar o ficheiro de segurança"
 
-#: sys-utils/losetup.c:665
+#: sys-utils/losetup.c:682
 msgid "failed to parse logical block size"
 msgstr "falha ao analisar tamanho do bloco lógico"
 
-#: sys-utils/losetup.c:671 sys-utils/losetup.c:681 sys-utils/losetup.c:809
-#: sys-utils/losetup.c:823 sys-utils/losetup.c:861
+#: sys-utils/losetup.c:688 sys-utils/losetup.c:698 sys-utils/losetup.c:826
+#: sys-utils/losetup.c:840 sys-utils/losetup.c:878
 #, c-format
 msgid "%s: failed to use device"
 msgstr "%s: falha ao usar o dispositivo"
 
-#: sys-utils/losetup.c:820
+#: sys-utils/losetup.c:837
 msgid "no loop device specified"
 msgstr "nenhum dispositivo de ciclo especificado"
 
-#: sys-utils/losetup.c:835
+#: sys-utils/losetup.c:852
 #, c-format
 msgid "the options %s are allowed during loop device setup only"
 msgstr "as opções %s só são permitidas durante a configuração do dispositivo de ciclo"
 
-#: sys-utils/losetup.c:840
+#: sys-utils/losetup.c:857
 msgid "the option --offset is not allowed in this context"
 msgstr "a opção --offset não é permitida neste contexto"
 
-#: sys-utils/losetup.c:902
+#: sys-utils/losetup.c:909
 #, c-format
 msgid "%s: set capacity failed"
 msgstr "%s: falha ao definir a capacidade"
 
-#: sys-utils/losetup.c:908
+#: sys-utils/losetup.c:915
 #, c-format
 msgid "%s: set direct io failed"
 msgstr "%s_ falha ao definir e/s directa"
 
-#: sys-utils/losetup.c:914
+#: sys-utils/losetup.c:921
 #, c-format
 msgid "%s: set logical block size failed"
 msgstr "%s: falha ao definir tamanho do bloco"
@@ -21960,7 +21966,9 @@ msgid "failed to parse boottime offset"
 msgstr "falha ao analisar desvio de boottime"
 
 #: sys-utils/unshare.c:916
-msgid "options --monotonic and --boottime require unsharing of a time namespace (-t)"
+#, fuzzy
+#| msgid "options --monotonic and --boottime require unsharing of a time namespace (-t)"
+msgid "options --monotonic and --boottime require unsharing of a time namespace (-T)"
 msgstr "as opoções --monotonic e --boottime requerem a remoção de partilha de um espaço de nome de hora (-t)"
 
 #: sys-utils/unshare.c:930
