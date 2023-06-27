@@ -116,7 +116,7 @@ int main(int argc, char **argv)
 			break;
 		case 'l':
 			for (i = 0; i < ARRAY_SIZE(syscalls); i++)
-				printf("%s\n", syscalls[i].name);
+				printf("%5ld %s\n", syscalls[i].number, syscalls[i].name);
 			return EXIT_SUCCESS;
 		case 'V':
 			print_version(EXIT_SUCCESS);
