@@ -96,6 +96,10 @@ int main(int argc, char **argv)
 
 	bool blocked_syscalls[ARRAY_SIZE(syscalls)] = {};
 
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
 	while ((c = getopt_long (argc, argv, "+Vhs:l", longopts, NULL)) != -1) {
 		switch (c) {
 		case 's':
