@@ -448,7 +448,7 @@ int get_gmtoff(const struct tm *tp)
 #endif
 }
 
-static int format_iso_time(struct tm *tm, suseconds_t usec, int flags, char *buf, size_t bufsz)
+static int format_iso_time(const struct tm *tm, suseconds_t usec, int flags, char *buf, size_t bufsz)
 {
 	char *p = buf;
 	int len;
@@ -509,7 +509,7 @@ static int format_iso_time(struct tm *tm, suseconds_t usec, int flags, char *buf
 }
 
 /* timeval to ISO 8601 */
-int strtimeval_iso(struct timeval *tv, int flags, char *buf, size_t bufsz)
+int strtimeval_iso(const struct timeval *tv, int flags, char *buf, size_t bufsz)
 {
 	struct tm tm;
 	struct tm *rc;
@@ -527,7 +527,7 @@ int strtimeval_iso(struct timeval *tv, int flags, char *buf, size_t bufsz)
 }
 
 /* struct tm to ISO 8601 */
-int strtm_iso(struct tm *tm, int flags, char *buf, size_t bufsz)
+int strtm_iso(const struct tm *tm, int flags, char *buf, size_t bufsz)
 {
 	return format_iso_time(tm, 0, flags, buf, bufsz);
 }
