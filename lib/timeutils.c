@@ -448,8 +448,9 @@ int get_gmtoff(const struct tm *tp)
 #endif
 }
 
-static int format_iso_time(const struct tm *tm, suseconds_t usec, int flags, char *buf, size_t bufsz)
+static int format_iso_time(const struct tm *tm, uint32_t nsec, int flags, char *buf, size_t bufsz)
 {
+	uint32_t usec = nsec / NSEC_PER_USEC;
 	char *p = buf;
 	int len;
 
@@ -479,15 +480,28 @@ static int format_iso_time(const struct tm *tm, suseconds_t usec, int flags, cha
 		p += len;
 	}
 
-	if (flags & ISO_DOTUSEC) {
-		len = snprintf(p, bufsz, ".%06"PRId64, (int64_t) usec);
+	if (flags & ISO_DOTNSEC) {
+		len = snprintf(p, bufsz, ".%09"PRIu32, nsec);
+		if (len < 0 || (size_t) len > bufsz)
+			goto err;
+		bufsz -= len;
+		p += len;
+
+	} else if (flags & ISO_COMMANSEC) {
+		len = snprintf(p, bufsz, ",%09"PRIu32, nsec);
+		if (len < 0 || (size_t) len > bufsz)
+			goto err;
+		bufsz -= len;
+		p += len;
+	} else if (flags & ISO_DOTUSEC) {
+		len = snprintf(p, bufsz, ".%06"PRIu32, usec);
 		if (len < 0 || (size_t) len > bufsz)
 			goto err;
 		bufsz -= len;
 		p += len;
 
 	} else if (flags & ISO_COMMAUSEC) {
-		len = snprintf(p, bufsz, ",%06"PRId64, (int64_t) usec);
+		len = snprintf(p, bufsz, ",%06"PRIu32, usec);
 		if (len < 0 || (size_t) len > bufsz)
 			goto err;
 		bufsz -= len;
@@ -520,7 +534,7 @@ int strtimeval_iso(const struct timeval *tv, int flags, char *buf, size_t bufsz)
 		rc = localtime_r(&tv->tv_sec, &tm);
 
 	if (rc)
-		return format_iso_time(&tm, tv->tv_usec, flags, buf, bufsz);
+		return format_iso_time(&tm, tv->tv_usec * NSEC_PER_USEC, flags, buf, bufsz);
 
 	warnx(_("time %"PRId64" is out of range."), (int64_t)(tv->tv_sec));
 	return -1;
