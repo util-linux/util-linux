@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-man 2.38-rc4\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-05-17 11:52+0200\n"
+"POT-Creation-Date: 2023-06-27 14:09+0200\n"
 "PO-Revision-Date: 2022-03-19 16:33+01:00\n"
 "Last-Translator: Petr Písař <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -543,7 +543,7 @@ msgstr ""
 #: ../disk-utils/mkfs.8.adoc:53 ../disk-utils/mkfs.bfs.8.adoc:57
 #: ../disk-utils/mkfs.cramfs.8.adoc:82 ../disk-utils/mkfs.minix.8.adoc:86
 #: ../disk-utils/mkswap.8.adoc:114 ../disk-utils/partx.8.adoc:135
-#: ../disk-utils/resizepart.8.adoc:42 ../disk-utils/sfdisk.8.adoc:453
+#: ../disk-utils/resizepart.8.adoc:42 ../disk-utils/sfdisk.8.adoc:455
 #: ../disk-utils/swaplabel.8.adoc:48 ../libblkid/libblkid.3.adoc:133
 #: ../libuuid/man/uuid.3.adoc:63 ../libuuid/man/uuid_clear.3.adoc:59
 #: ../libuuid/man/uuid_compare.3.adoc:63 ../libuuid/man/uuid_copy.3.adoc:63
@@ -580,7 +580,7 @@ msgstr ""
 #: ../sys-utils/ipcs.1.adoc:88 ../sys-utils/ldattach.8.adoc:118
 #: ../sys-utils/lscpu.1.adoc:109 ../sys-utils/lsipc.1.adoc:106
 #: ../sys-utils/lsmem.1.adoc:72 ../sys-utils/lsns.8.adoc:90
-#: ../sys-utils/mount.8.adoc:1667 ../sys-utils/mountpoint.1.adoc:65
+#: ../sys-utils/mount.8.adoc:1672 ../sys-utils/mountpoint.1.adoc:65
 #: ../sys-utils/nsenter.1.adoc:144 ../sys-utils/pivot_root.8.adoc:63
 #: ../sys-utils/prlimit.1.adoc:135 ../sys-utils/renice.1.adoc:102
 #: ../sys-utils/rfkill.8.adoc:78 ../sys-utils/rtcwake.8.adoc:130
@@ -588,7 +588,7 @@ msgstr ""
 #: ../sys-utils/setsid.1.adoc:44 ../sys-utils/swapon.8.adoc:167
 #: ../sys-utils/switch_root.8.adoc:47 ../sys-utils/umount.8.adoc:173
 #: ../sys-utils/unshare.1.adoc:261 ../sys-utils/zramctl.8.adoc:100
-#: ../term-utils/mesg.1.adoc:95 ../term-utils/script.1.adoc:161
+#: ../term-utils/mesg.1.adoc:96 ../term-utils/script.1.adoc:161
 #: ../term-utils/scriptlive.1.adoc:75 ../term-utils/scriptreplay.1.adoc:95
 #: ../term-utils/setterm.1.adoc:167 ../term-utils/wall.1.adoc:81
 #: ../term-utils/write.1.adoc:80 ../text-utils/col.1.adoc:123
@@ -1038,7 +1038,7 @@ msgstr ""
 #: ../disk-utils/fdformat.8.adoc:70 ../disk-utils/fdisk.8.adoc:213
 #: ../disk-utils/fsck.8.adoc:154 ../disk-utils/fsck.minix.8.adoc:94
 #: ../disk-utils/mkfs.8.adoc:45 ../disk-utils/partx.8.adoc:128
-#: ../disk-utils/raw.8.adoc:57 ../disk-utils/sfdisk.8.adoc:447
+#: ../disk-utils/raw.8.adoc:57 ../disk-utils/sfdisk.8.adoc:449
 #: ../disk-utils/swaplabel.8.adoc:44 ../libblkid/libblkid.3.adoc:123
 #: ../libuuid/man/uuid.3.adoc:59 ../libuuid/man/uuid_clear.3.adoc:55
 #: ../libuuid/man/uuid_compare.3.adoc:59 ../libuuid/man/uuid_copy.3.adoc:59
@@ -1070,7 +1070,7 @@ msgstr ""
 #: ../sys-utils/ldattach.8.adoc:114 ../sys-utils/losetup.8.adoc:154
 #: ../sys-utils/lscpu.1.adoc:103 ../sys-utils/lsipc.1.adoc:101
 #: ../sys-utils/lsirq.1.adoc:45 ../sys-utils/lsmem.1.adoc:68
-#: ../sys-utils/lsns.8.adoc:86 ../sys-utils/mount.8.adoc:1663
+#: ../sys-utils/lsns.8.adoc:86 ../sys-utils/mount.8.adoc:1668
 #: ../sys-utils/mountpoint.1.adoc:61 ../sys-utils/nsenter.1.adoc:139
 #: ../sys-utils/prlimit.1.adoc:131 ../sys-utils/rfkill.8.adoc:72
 #: ../sys-utils/rtcwake.8.adoc:122 ../sys-utils/setarch.8.adoc:89
@@ -1202,7 +1202,7 @@ msgstr ""
 
 #. type: Labeled list
 #: ../disk-utils/cfdisk.8.adoc:55 ../sys-utils/losetup.8.adoc:89
-#: ../sys-utils/mount.8.adoc:392 ../sys-utils/umount.8.adoc:105
+#: ../sys-utils/mount.8.adoc:394 ../sys-utils/umount.8.adoc:105
 #, fuzzy, no-wrap
 #| msgid "*-h*, *--help*"
 msgid "*-r*, *--read-only*"
@@ -1474,14 +1474,14 @@ msgstr ""
 #: ../disk-utils/cfdisk.8.adoc:119 ../disk-utils/fdisk.8.adoc:193
 #: ../disk-utils/fsck.8.adoc:128 ../disk-utils/mkfs.minix.8.adoc:70
 #: ../disk-utils/mkswap.8.adoc:84 ../disk-utils/partx.8.adoc:101
-#: ../disk-utils/sfdisk.8.adoc:405 ../disk-utils/swaplabel.8.adoc:39
+#: ../disk-utils/sfdisk.8.adoc:407 ../disk-utils/swaplabel.8.adoc:39
 #: ../lib/terminal-colors.d.5.adoc:129 ../login-utils/sulogin.8.adoc:66
 #: ../login-utils/vipw.8.adoc:61 ../misc-utils/blkid.8.adoc:171
 #: ../misc-utils/findfs.8.adoc:58 ../misc-utils/findmnt.8.adoc:188
 #: ../misc-utils/getopt.1.adoc:133 ../misc-utils/look.1.adoc:77
 #: ../misc-utils/lsblk.8.adoc:148 ../misc-utils/whereis.1.adoc:112
 #: ../misc-utils/wipefs.8.adoc:80 ../sys-utils/hwclock.8.adoc:352
-#: ../sys-utils/losetup.8.adoc:128 ../sys-utils/mount.8.adoc:1609
+#: ../sys-utils/losetup.8.adoc:128 ../sys-utils/mount.8.adoc:1611
 #: ../sys-utils/mountpoint.1.adoc:52 ../sys-utils/swapon.8.adoc:123
 #: ../sys-utils/umount.8.adoc:150 ../term-utils/script.1.adoc:127
 #: ../text-utils/column.1.adoc:177 ../text-utils/more.1.adoc:164
@@ -1503,21 +1503,21 @@ msgstr ""
 
 #. type: Labeled list
 #: ../disk-utils/cfdisk.8.adoc:124 ../disk-utils/fdisk.8.adoc:198
-#: ../disk-utils/sfdisk.8.adoc:409
+#: ../disk-utils/sfdisk.8.adoc:411
 #, no-wrap
 msgid "*LIBFDISK_DEBUG*=all"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/cfdisk.8.adoc:126 ../disk-utils/fdisk.8.adoc:200
-#: ../disk-utils/sfdisk.8.adoc:411
+#: ../disk-utils/sfdisk.8.adoc:413
 msgid "enables libfdisk debug output."
 msgstr ""
 
 #. type: Labeled list
 #: ../disk-utils/cfdisk.8.adoc:127 ../disk-utils/fdisk.8.adoc:201
-#: ../disk-utils/sfdisk.8.adoc:411 ../misc-utils/lsblk.8.adoc:153
-#: ../sys-utils/mount.8.adoc:1617 ../sys-utils/swapon.8.adoc:128
+#: ../disk-utils/sfdisk.8.adoc:413 ../misc-utils/lsblk.8.adoc:153
+#: ../sys-utils/mount.8.adoc:1622 ../sys-utils/swapon.8.adoc:128
 #, no-wrap
 msgid "*LIBBLKID_DEBUG*=all"
 msgstr ""
@@ -1525,14 +1525,14 @@ msgstr ""
 #. type: Plain text
 #: ../disk-utils/cfdisk.8.adoc:129 ../disk-utils/fdisk.8.adoc:203
 #: ../disk-utils/fsck.8.adoc:146 ../disk-utils/mkswap.8.adoc:88
-#: ../disk-utils/partx.8.adoc:105 ../disk-utils/sfdisk.8.adoc:413
+#: ../disk-utils/partx.8.adoc:105 ../disk-utils/sfdisk.8.adoc:415
 #: ../disk-utils/swaplabel.8.adoc:43 ../misc-utils/findfs.8.adoc:62
 msgid "enables libblkid debug output."
 msgstr ""
 
 #. type: Labeled list
 #: ../disk-utils/cfdisk.8.adoc:130 ../disk-utils/fdisk.8.adoc:204
-#: ../disk-utils/sfdisk.8.adoc:413 ../misc-utils/findmnt.8.adoc:199
+#: ../disk-utils/sfdisk.8.adoc:415 ../misc-utils/findmnt.8.adoc:199
 #: ../misc-utils/lsblk.8.adoc:159
 #, no-wrap
 msgid "*LIBSMARTCOLS_DEBUG*=all"
@@ -1540,7 +1540,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/cfdisk.8.adoc:132 ../disk-utils/fdisk.8.adoc:206
-#: ../disk-utils/sfdisk.8.adoc:415
+#: ../disk-utils/sfdisk.8.adoc:417
 msgid "enables libsmartcols debug output."
 msgstr ""
 
@@ -1558,7 +1558,7 @@ msgstr ""
 
 #. type: Labeled list
 #: ../disk-utils/cfdisk.8.adoc:136 ../disk-utils/fdisk.8.adoc:210
-#: ../disk-utils/sfdisk.8.adoc:415
+#: ../disk-utils/sfdisk.8.adoc:417
 #, no-wrap
 msgid "*LOCK_BLOCK_DEVICE*=<mode>"
 msgstr ""
@@ -1566,18 +1566,18 @@ msgstr ""
 #. type: Plain text
 #: ../disk-utils/cfdisk.8.adoc:138 ../disk-utils/fdisk.8.adoc:212
 #: ../disk-utils/mkfs.minix.8.adoc:74 ../disk-utils/mkswap.8.adoc:91
-#: ../disk-utils/sfdisk.8.adoc:417 ../misc-utils/wipefs.8.adoc:87
+#: ../disk-utils/sfdisk.8.adoc:419 ../misc-utils/wipefs.8.adoc:87
 msgid ""
 "use exclusive BSD lock. The mode is \"1\" or \"0\". See *--lock* for more "
 "details."
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/cfdisk.8.adoc:142 ../disk-utils/sfdisk.8.adoc:450
+#: ../disk-utils/cfdisk.8.adoc:142 ../disk-utils/sfdisk.8.adoc:452
 #: ../login-utils/nologin.8.adoc:66 ../misc-utils/findmnt.8.adoc:234
 #: ../misc-utils/wipefs.8.adoc:102 ../sys-utils/choom.1.adoc:50
 #: ../sys-utils/dmesg.1.adoc:188 ../sys-utils/lsns.8.adoc:89
-#: ../sys-utils/mount.8.adoc:1666 ../sys-utils/mountpoint.1.adoc:64
+#: ../sys-utils/mount.8.adoc:1671 ../sys-utils/mountpoint.1.adoc:64
 #: ../term-utils/scriptlive.1.adoc:65
 msgid "mailto:kzak@redhat.com[Karel Zak]"
 msgstr ""
@@ -1752,7 +1752,7 @@ msgstr ""
 
 #. type: Title ==
 #: ../disk-utils/fdformat.8.adoc:66 ../disk-utils/mkswap.8.adoc:92
-#: ../disk-utils/raw.8.adoc:47 ../disk-utils/sfdisk.8.adoc:418
+#: ../disk-utils/raw.8.adoc:47 ../disk-utils/sfdisk.8.adoc:420
 #: ../login-utils/last.1.adoc:114 ../login-utils/lslogins.1.adoc:118
 #: ../login-utils/nologin.8.adoc:53 ../login-utils/su.1.adoc:133
 #: ../login-utils/utmpdump.1.adoc:51 ../misc-utils/cal.1.adoc:144
@@ -2456,14 +2456,14 @@ msgid "The logical color names supported by *fdisk* are:"
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:181 ../disk-utils/sfdisk.8.adoc:398
+#: ../disk-utils/fdisk.8.adoc:181 ../disk-utils/sfdisk.8.adoc:400
 #: ../misc-utils/cal.1.adoc:159
 #, no-wrap
 msgid "*header*"
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:183 ../disk-utils/sfdisk.8.adoc:400
+#: ../disk-utils/fdisk.8.adoc:183 ../disk-utils/sfdisk.8.adoc:402
 msgid "The header of the output tables."
 msgstr ""
 
@@ -2479,25 +2479,25 @@ msgid "The help section titles."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:187 ../disk-utils/sfdisk.8.adoc:400
+#: ../disk-utils/fdisk.8.adoc:187 ../disk-utils/sfdisk.8.adoc:402
 #: ../sys-utils/dmesg.1.adoc:175
 #, no-wrap
 msgid "*warn*"
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:189 ../disk-utils/sfdisk.8.adoc:402
+#: ../disk-utils/fdisk.8.adoc:189 ../disk-utils/sfdisk.8.adoc:404
 msgid "The warning messages."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:190 ../disk-utils/sfdisk.8.adoc:402
+#: ../disk-utils/fdisk.8.adoc:190 ../disk-utils/sfdisk.8.adoc:404
 #, no-wrap
 msgid "*welcome*"
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:192 ../disk-utils/sfdisk.8.adoc:404
+#: ../disk-utils/fdisk.8.adoc:192 ../disk-utils/sfdisk.8.adoc:406
 msgid "The welcome message."
 msgstr ""
 
@@ -2562,7 +2562,7 @@ msgstr ""
 #. type: Plain text
 #: ../disk-utils/fsck.8.adoc:24
 #, no-wrap
-msgid "*fsck* is used to check and optionally repair one or more Linux filesystems. _filesystem_ can be a device name (e.g., _/dev/hdc1_, _/dev/sdb2_), a mount point (e.g., _/_, _/usr_, _/home_), or an filesystem label or UUID specifier (e.g., UUID=8868abf6-88c5-4a83-98b8-bfc24057f7bd or LABEL=root). Normally, the *fsck* program will try to handle filesystems on different physical disk drives in parallel to reduce the total amount of time needed to check all of them.\n"
+msgid "*fsck* is used to check and optionally repair one or more Linux filesystems. _filesystem_ can be a device name (e.g., _/dev/hdc1_, _/dev/sdb2_), a mount point (e.g., _/_, _/usr_, _/home_), or a filesystem label or UUID specifier (e.g., UUID=8868abf6-88c5-4a83-98b8-bfc24057f7bd or LABEL=root). Normally, the *fsck* program will try to handle filesystems on different physical disk drives in parallel to reduce the total amount of time needed to check all of them.\n"
 msgstr ""
 
 #. type: Plain text
@@ -2587,7 +2587,7 @@ msgstr ""
 #: ../misc-utils/kill.1.adoc:89 ../misc-utils/rename.1.adoc:68
 #: ../misc-utils/waitpid.1.adoc:44 ../sys-utils/blkdiscard.8.adoc:61
 #: ../sys-utils/chcpu.8.adoc:59 ../sys-utils/chmem.8.adoc:58
-#: ../sys-utils/lsns.8.adoc:79 ../sys-utils/mount.8.adoc:1573
+#: ../sys-utils/lsns.8.adoc:79 ../sys-utils/mount.8.adoc:1575
 #: ../sys-utils/mountpoint.1.adoc:43 ../sys-utils/swapon.8.adoc:98
 #: ../term-utils/mesg.1.adoc:80
 #, no-wrap
@@ -2606,7 +2606,7 @@ msgstr ""
 #: ../misc-utils/kill.1.adoc:91 ../misc-utils/rename.1.adoc:71
 #: ../misc-utils/waitpid.1.adoc:46 ../sys-utils/blkdiscard.8.adoc:64
 #: ../sys-utils/chcpu.8.adoc:62 ../sys-utils/chmem.8.adoc:61
-#: ../sys-utils/lsns.8.adoc:81 ../sys-utils/mount.8.adoc:1576
+#: ../sys-utils/lsns.8.adoc:81 ../sys-utils/mount.8.adoc:1578
 #: ../sys-utils/mountpoint.1.adoc:46 ../term-utils/mesg.1.adoc:82
 #, no-wrap
 msgid "*1*"
@@ -2621,7 +2621,7 @@ msgstr ""
 #: ../disk-utils/fsck.8.adoc:33 ../misc-utils/findfs.8.adoc:55
 #: ../misc-utils/rename.1.adoc:74 ../misc-utils/waitpid.1.adoc:48
 #: ../sys-utils/blkdiscard.8.adoc:67 ../sys-utils/lsns.8.adoc:83
-#: ../sys-utils/mount.8.adoc:874 ../sys-utils/mount.8.adoc:1579
+#: ../sys-utils/mount.8.adoc:876 ../sys-utils/mount.8.adoc:1581
 #: ../sys-utils/swapon.8.adoc:101
 #, no-wrap
 msgid "*2*"
@@ -2635,7 +2635,7 @@ msgstr ""
 #. type: Labeled list
 #: ../disk-utils/fsck.8.adoc:35 ../disk-utils/fsck.cramfs.8.adoc:44
 #: ../disk-utils/fsck.minix.8.adoc:84 ../misc-utils/rename.1.adoc:77
-#: ../sys-utils/mount.8.adoc:1582 ../sys-utils/swapon.8.adoc:104
+#: ../sys-utils/mount.8.adoc:1584 ../sys-utils/swapon.8.adoc:104
 #, no-wrap
 msgid "*4*"
 msgstr ""
@@ -2648,7 +2648,7 @@ msgstr ""
 #. type: Labeled list
 #: ../disk-utils/fsck.8.adoc:37 ../disk-utils/fsck.cramfs.8.adoc:46
 #: ../disk-utils/fsck.minix.8.adoc:88 ../disk-utils/mkfs.cramfs.8.adoc:79
-#: ../sys-utils/mount.8.adoc:1585 ../sys-utils/swapon.8.adoc:107
+#: ../sys-utils/mount.8.adoc:1587 ../sys-utils/swapon.8.adoc:107
 #, no-wrap
 msgid "*8*"
 msgstr ""
@@ -2661,7 +2661,7 @@ msgstr ""
 
 #. type: Labeled list
 #: ../disk-utils/fsck.8.adoc:39 ../disk-utils/fsck.cramfs.8.adoc:48
-#: ../disk-utils/fsck.minix.8.adoc:90 ../sys-utils/mount.8.adoc:1588
+#: ../disk-utils/fsck.minix.8.adoc:90 ../sys-utils/mount.8.adoc:1590
 #: ../sys-utils/swapon.8.adoc:110
 #, no-wrap
 msgid "*16*"
@@ -2675,7 +2675,7 @@ msgstr ""
 
 #. type: Labeled list
 #: ../disk-utils/fsck.8.adoc:41 ../disk-utils/isosize.8.adoc:39
-#: ../sys-utils/mount.8.adoc:1591 ../sys-utils/mountpoint.1.adoc:49
+#: ../sys-utils/mount.8.adoc:1593 ../sys-utils/mountpoint.1.adoc:49
 #: ../sys-utils/swapon.8.adoc:113
 #, no-wrap
 msgid "*32*"
@@ -2775,7 +2775,7 @@ msgstr ""
 
 #. type: Labeled list
 #: ../disk-utils/fsck.8.adoc:66 ../disk-utils/mkfs.cramfs.8.adoc:59
-#: ../misc-utils/whereis.1.adoc:79 ../sys-utils/mount.8.adoc:397
+#: ../misc-utils/whereis.1.adoc:79 ../sys-utils/mount.8.adoc:399
 #: ../text-utils/pg.1.adoc:59
 #, no-wrap
 msgid "*-s*"
@@ -3141,7 +3141,7 @@ msgstr ""
 #: ../misc-utils/mcookie.1.adoc:44 ../sys-utils/adjtime_config.5.adoc:50
 #: ../sys-utils/ctrlaltdel.8.adoc:39 ../sys-utils/fstab.5.adoc:122
 #: ../sys-utils/hwclock.8.adoc:360 ../sys-utils/losetup.8.adoc:133
-#: ../sys-utils/mount.8.adoc:1623 ../sys-utils/readprofile.8.adoc:56
+#: ../sys-utils/mount.8.adoc:1628 ../sys-utils/readprofile.8.adoc:56
 #: ../sys-utils/renice.1.adoc:79 ../sys-utils/rtcwake.8.adoc:114
 #: ../sys-utils/swapon.8.adoc:131 ../sys-utils/tunelp.8.adoc:59
 #: ../sys-utils/umount.8.adoc:158 ../sys-utils/zramctl.8.adoc:76
@@ -3152,7 +3152,7 @@ msgstr "SOUBORY"
 
 #. type: Labeled list
 #: ../disk-utils/fsck.8.adoc:153 ../sys-utils/fstab.5.adoc:50
-#: ../sys-utils/mount.8.adoc:1627 ../sys-utils/swapon.8.adoc:136
+#: ../sys-utils/mount.8.adoc:1632 ../sys-utils/swapon.8.adoc:136
 #: ../sys-utils/umount.8.adoc:163
 #, no-wrap
 msgid "_/etc/fstab_"
@@ -3213,7 +3213,7 @@ msgstr ""
 #: ../sys-utils/blkzone.8.adoc:98 ../sys-utils/chmem.8.adoc:49
 #: ../sys-utils/eject.1.adoc:84 ../sys-utils/fallocate.1.adoc:64
 #: ../sys-utils/hwclock.8.adoc:168 ../sys-utils/losetup.8.adoc:95
-#: ../sys-utils/mount.8.adoc:441 ../sys-utils/readprofile.8.adoc:51
+#: ../sys-utils/mount.8.adoc:443 ../sys-utils/readprofile.8.adoc:51
 #: ../sys-utils/rtcwake.8.adoc:105 ../sys-utils/setarch.8.adoc:42
 #: ../sys-utils/swapon.8.adoc:89 ../sys-utils/umount.8.adoc:111
 #: ../term-utils/mesg.1.adoc:71
@@ -3287,7 +3287,7 @@ msgstr ""
 #: ../sys-utils/eject.1.adoc:93 ../sys-utils/flock.1.adoc:88
 #: ../sys-utils/fstrim.8.adoc:74 ../sys-utils/hwclock.8.adoc:342
 #: ../sys-utils/losetup.8.adoc:120 ../sys-utils/lsipc.1.adoc:86
-#: ../sys-utils/lsns.8.adoc:75 ../sys-utils/mount.8.adoc:1569
+#: ../sys-utils/lsns.8.adoc:75 ../sys-utils/mount.8.adoc:1571
 #: ../sys-utils/mountpoint.1.adoc:39 ../sys-utils/swapon.8.adoc:94
 #: ../sys-utils/switch_root.8.adoc:29 ../sys-utils/zramctl.8.adoc:72
 #: ../term-utils/mesg.1.adoc:76 ../text-utils/hexdump.1.adoc:219
@@ -3302,7 +3302,7 @@ msgstr "NÁVRATOVÁ HODNOTA"
 #: ../misc-utils/lsblk.8.adoc:138 ../misc-utils/waitpid.1.adoc:46
 #: ../sys-utils/blkdiscard.8.adoc:63 ../sys-utils/chcpu.8.adoc:61
 #: ../sys-utils/chmem.8.adoc:60 ../sys-utils/fstrim.8.adoc:78
-#: ../sys-utils/mount.8.adoc:1575 ../sys-utils/swapon.8.adoc:100
+#: ../sys-utils/mount.8.adoc:1577 ../sys-utils/swapon.8.adoc:100
 msgid "success"
 msgstr ""
 
@@ -3623,7 +3623,7 @@ msgstr ""
 #. type: Labeled list
 #: ../disk-utils/isosize.8.adoc:41 ../misc-utils/kill.1.adoc:93
 #: ../misc-utils/rename.1.adoc:80 ../sys-utils/chcpu.8.adoc:65
-#: ../sys-utils/chmem.8.adoc:64 ../sys-utils/mount.8.adoc:1594
+#: ../sys-utils/chmem.8.adoc:64 ../sys-utils/mount.8.adoc:1596
 #: ../sys-utils/swapon.8.adoc:116
 #, no-wrap
 msgid "*64*"
@@ -3724,7 +3724,7 @@ msgstr ""
 #: ../misc-utils/cal.1.adoc:177 ../misc-utils/getopt.1.adoc:141
 #: ../misc-utils/hardlink.1.adoc:138 ../misc-utils/mcookie.1.adoc:50
 #: ../misc-utils/namei.1.adoc:65 ../misc-utils/pipesz.1.adoc:91
-#: ../sys-utils/lscpu.1.adoc:95 ../sys-utils/mount.8.adoc:1649
+#: ../sys-utils/lscpu.1.adoc:95 ../sys-utils/mount.8.adoc:1654
 #: ../sys-utils/readprofile.8.adoc:67 ../term-utils/agetty.8.adoc:322
 #: ../term-utils/script.1.adoc:155 ../term-utils/setterm.1.adoc:163
 #: ../text-utils/colcrt.1.adoc:70 ../text-utils/column.1.adoc:185
@@ -4374,7 +4374,7 @@ msgstr ""
 
 #. type: Labeled list
 #: ../disk-utils/mkswap.8.adoc:52 ../disk-utils/swaplabel.8.adoc:33
-#: ../misc-utils/blkid.8.adoc:74 ../sys-utils/mount.8.adoc:331
+#: ../misc-utils/blkid.8.adoc:74 ../sys-utils/mount.8.adoc:333
 #, fuzzy, no-wrap
 #| msgid "*-s*, **--shell**=__shell__"
 msgid "*-L*, *--label* _label_"
@@ -4861,7 +4861,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/partx.8.adoc:98 ../sys-utils/losetup.8.adoc:97
-#: ../sys-utils/mount.8.adoc:443 ../sys-utils/prlimit.1.adoc:57
+#: ../sys-utils/mount.8.adoc:445 ../sys-utils/prlimit.1.adoc:57
 #: ../sys-utils/umount.8.adoc:113
 msgid "Verbose mode."
 msgstr ""
@@ -5082,7 +5082,7 @@ msgstr ""
 #: ../misc-utils/lsblk.8.adoc:36 ../misc-utils/rename.1.adoc:34
 #: ../misc-utils/wipefs.8.adoc:40 ../sys-utils/ipcs.1.adoc:43
 #: ../sys-utils/losetup.8.adoc:53 ../sys-utils/lscpu.1.adoc:33
-#: ../sys-utils/lsmem.1.adoc:33 ../sys-utils/mount.8.adoc:303
+#: ../sys-utils/lsmem.1.adoc:33 ../sys-utils/mount.8.adoc:305
 #: ../sys-utils/nsenter.1.adoc:53 ../sys-utils/readprofile.8.adoc:27
 #: ../sys-utils/swapon.8.adoc:31 ../sys-utils/umount.8.adoc:54
 #, fuzzy, no-wrap
@@ -6474,14 +6474,22 @@ msgstr ""
 msgid "*sfdisk /dev/sda < sda.dump*\n"
 msgstr ""
 
+#. type: Plain text
+#: ../disk-utils/sfdisk.8.adoc:370
+msgid ""
+"Note that sfdisk completely restores partition types and partition UUIDs. "
+"This could potentially become problematic if you duplicate the same layout "
+"to different disks, as it may result in duplicate UUIDs within your system."
+msgstr ""
+
 #. type: Title ===
-#: ../disk-utils/sfdisk.8.adoc:369
+#: ../disk-utils/sfdisk.8.adoc:371
 #, no-wrap
 msgid "Full binary backup"
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/sfdisk.8.adoc:372
+#: ../disk-utils/sfdisk.8.adoc:374
 msgid ""
 "If you want to do a full binary backup of all sectors where the partition "
 "table is stored, then use the *--backup-pt-sectors* command. It writes the "
@@ -6491,24 +6499,24 @@ msgid ""
 msgstr ""
 
 #. type: delimited block _
-#: ../disk-utils/sfdisk.8.adoc:375
+#: ../disk-utils/sfdisk.8.adoc:377
 #, no-wrap
 msgid "*sfdisk --backup-pt-sectors /dev/sda*\n"
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/sfdisk.8.adoc:378
+#: ../disk-utils/sfdisk.8.adoc:380
 msgid "The GPT header can later be restored by:"
 msgstr ""
 
 #. type: delimited block _
-#: ../disk-utils/sfdisk.8.adoc:381
+#: ../disk-utils/sfdisk.8.adoc:383
 #, no-wrap
 msgid "*dd if=~/sfdisk-sda-0x00000200.bak of=/dev/sda seek=$\\((0x00000200)) bs=1 conv=notrunc*\n"
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/sfdisk.8.adoc:385
+#: ../disk-utils/sfdisk.8.adoc:387
 msgid ""
 "It's also possible to use the *--backup* option to create the same backup "
 "immediately after startup for other *sfdisk* commands. For example, backup "
@@ -6516,41 +6524,41 @@ msgid ""
 msgstr ""
 
 #. type: delimited block _
-#: ../disk-utils/sfdisk.8.adoc:387
+#: ../disk-utils/sfdisk.8.adoc:389
 #, no-wrap
 msgid "*sfdisk --backup --delete /dev/sda*\n"
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/sfdisk.8.adoc:391
+#: ../disk-utils/sfdisk.8.adoc:393
 msgid "The same concept of backup files is used by *wipefs*(8)."
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/sfdisk.8.adoc:393
+#: ../disk-utils/sfdisk.8.adoc:395
 msgid ""
 "Note that *sfdisk* since version 2.26 no longer provides the *-I* option to "
 "restore sectors. *dd*(1) provides all necessary functionality."
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/sfdisk.8.adoc:397
+#: ../disk-utils/sfdisk.8.adoc:399
 msgid "The logical color names supported by *sfdisk* are:"
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/sfdisk.8.adoc:407
+#: ../disk-utils/sfdisk.8.adoc:409
 #, no-wrap
 msgid "*SFDISK_DEBUG*=all"
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/sfdisk.8.adoc:409
+#: ../disk-utils/sfdisk.8.adoc:411
 msgid "enables *sfdisk* debug output."
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/sfdisk.8.adoc:421
+#: ../disk-utils/sfdisk.8.adoc:423
 msgid ""
 "Since version 2.26 *sfdisk* no longer provides the *-R* or *--re-read* "
 "option to force the kernel to reread the partition table. Use *blockdev --"
@@ -6558,7 +6566,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/sfdisk.8.adoc:423
+#: ../disk-utils/sfdisk.8.adoc:425
 msgid ""
 "Since version 2.26 *sfdisk* does not provide the *--DOS*, *--IBM*, *--DOS-"
 "extended*, *--unhide*, *--show-extended*, *--cylinders*, *--heads*, *--"
@@ -6566,7 +6574,7 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: ../disk-utils/sfdisk.8.adoc:424 ../misc-utils/findmnt.8.adoc:205
+#: ../disk-utils/sfdisk.8.adoc:426 ../misc-utils/findmnt.8.adoc:205
 #: ../misc-utils/getopt.1.adoc:128 ../misc-utils/logger.1.adoc:233
 #: ../misc-utils/look.1.adoc:94 ../misc-utils/pipesz.1.adoc:69
 #: ../misc-utils/rename.1.adoc:83 ../misc-utils/uuidgen.1.adoc:58
@@ -6582,24 +6590,24 @@ msgid "EXAMPLES"
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/sfdisk.8.adoc:426
+#: ../disk-utils/sfdisk.8.adoc:428
 #, no-wrap
 msgid "*sfdisk --list --label-nested=mbr /dev/sda*"
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/sfdisk.8.adoc:428
+#: ../disk-utils/sfdisk.8.adoc:430
 msgid "Print protective MBR on device with GPT disk label."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/sfdisk.8.adoc:429
+#: ../disk-utils/sfdisk.8.adoc:431
 #, no-wrap
 msgid "*echo -e ',10M,L\\n,10M,L\\n,+,\\n' | sfdisk /dev/sdc*"
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/sfdisk.8.adoc:431
+#: ../disk-utils/sfdisk.8.adoc:433
 msgid ""
 "Create three Linux partitions, with the default start, the size of the first "
 "two partitions is 10MiB, and the last partition fills all available space on "
@@ -6607,57 +6615,57 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/sfdisk.8.adoc:432
+#: ../disk-utils/sfdisk.8.adoc:434
 #, no-wrap
 msgid "*echo -e 'size=10M, type=L\\n size=10M, type=L\\n size=+\\n' | sfdisk /dev/sdc*"
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/sfdisk.8.adoc:434
+#: ../disk-utils/sfdisk.8.adoc:436
 msgid "The same as the previous example, but in named-fields format."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/sfdisk.8.adoc:435
+#: ../disk-utils/sfdisk.8.adoc:437
 #, no-wrap
 msgid "*echo -e 'type=swap' | sfdisk -N 3 /dev/sdc*"
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/sfdisk.8.adoc:437
+#: ../disk-utils/sfdisk.8.adoc:439
 msgid "Set type of the 3rd partition to 'swap'."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/sfdisk.8.adoc:438
+#: ../disk-utils/sfdisk.8.adoc:440
 #, no-wrap
 msgid "*sfdisk --part-type /dev/sdc 3 swap*"
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/sfdisk.8.adoc:440
+#: ../disk-utils/sfdisk.8.adoc:442
 msgid "The same as the previous example, but without script use."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/sfdisk.8.adoc:441
+#: ../disk-utils/sfdisk.8.adoc:443
 #, no-wrap
 msgid "*sfdisk --delete /dev/sdc 2*"
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/sfdisk.8.adoc:443
+#: ../disk-utils/sfdisk.8.adoc:445
 msgid "Delete 2nd partition."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/sfdisk.8.adoc:444
+#: ../disk-utils/sfdisk.8.adoc:446
 #, no-wrap
 msgid "*echo \"\\+,+\" | sfdisk -N 3 --move-data /dev/sdc*"
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/sfdisk.8.adoc:446
+#: ../disk-utils/sfdisk.8.adoc:448
 msgid ""
 "Enlarge 3rd partition in both directions, move start to use free space "
 "before the partition and enlarge the size to use all free space after to the "
@@ -6665,14 +6673,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/sfdisk.8.adoc:452
+#: ../disk-utils/sfdisk.8.adoc:454
 msgid ""
 "The current *sfdisk* implementation is based on the original *sfdisk* from "
 "Andries E. Brouwer."
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/sfdisk.8.adoc:460
+#: ../disk-utils/sfdisk.8.adoc:462
 #, no-wrap
 msgid ""
 "*fdisk*(8),\n"
@@ -9851,7 +9859,7 @@ msgstr ""
 #: ../login-utils/vipw.8.adoc:68 ../misc-utils/cal.1.adoc:173
 #: ../misc-utils/look.1.adoc:90 ../misc-utils/lsfd.1.adoc:644
 #: ../sys-utils/fstab.5.adoc:133 ../sys-utils/lsipc.1.adoc:97
-#: ../sys-utils/mount.8.adoc:1645 ../sys-utils/renice.1.adoc:92
+#: ../sys-utils/mount.8.adoc:1650 ../sys-utils/renice.1.adoc:92
 #: ../sys-utils/rtcwake.8.adoc:118 ../sys-utils/swapon.8.adoc:163
 #: ../sys-utils/umount.8.adoc:169 ../term-utils/mesg.1.adoc:91
 #: ../term-utils/script.1.adoc:151 ../term-utils/wall.1.adoc:77
@@ -11870,7 +11878,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/blkid.8.adoc:143 ../sys-utils/mount.8.adoc:438
+#: ../misc-utils/blkid.8.adoc:143 ../sys-utils/mount.8.adoc:440
 #, no-wrap
 msgid "*-U*, *--uuid* _uuid_"
 msgstr ""
@@ -12454,7 +12462,7 @@ msgid "Days that fall outside the work-week."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/cal.1.adoc:169 ../sys-utils/mount.8.adoc:282
+#: ../misc-utils/cal.1.adoc:169 ../sys-utils/mount.8.adoc:284
 msgid "For example:"
 msgstr ""
 
@@ -13498,7 +13506,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:190 ../sys-utils/mount.8.adoc:1611
+#: ../misc-utils/findmnt.8.adoc:190 ../sys-utils/mount.8.adoc:1616
 #: ../sys-utils/umount.8.adoc:152
 #, no-wrap
 msgid "*LIBMOUNT_FSTAB*=<path>"
@@ -13522,14 +13530,14 @@ msgstr ""
 
 #. type: Labeled list
 #: ../misc-utils/findmnt.8.adoc:196 ../misc-utils/lsblk.8.adoc:156
-#: ../sys-utils/mount.8.adoc:1614 ../sys-utils/mountpoint.1.adoc:54
+#: ../sys-utils/mount.8.adoc:1619 ../sys-utils/mountpoint.1.adoc:54
 #: ../sys-utils/swapon.8.adoc:125 ../sys-utils/umount.8.adoc:155
 #, no-wrap
 msgid "*LIBMOUNT_DEBUG*=all"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:198 ../sys-utils/mount.8.adoc:1616
+#: ../misc-utils/findmnt.8.adoc:198 ../sys-utils/mount.8.adoc:1621
 msgid "enables libmount debug output"
 msgstr ""
 
@@ -14234,7 +14242,7 @@ msgstr ""
 #: ../misc-utils/hardlink.1.adoc:45
 #, fuzzy, no-wrap
 #| msgid "*-P*, *--pty*"
-msgid "*-c* *--content*"
+msgid "*-c*, *--content*"
 msgstr "*-P*, *--pty*"
 
 #. type: Plain text
@@ -24683,7 +24691,7 @@ msgid "Basic filesystem-independent options are:"
 msgstr "Základní volby nezávislé na souborovém systému jsou:"
 
 #. type: Labeled list
-#: ../sys-utils/fstab.5.adoc:101 ../sys-utils/mount.8.adoc:525
+#: ../sys-utils/fstab.5.adoc:101 ../sys-utils/mount.8.adoc:527
 #, no-wrap
 msgid "*defaults*"
 msgstr "*defaults*"
@@ -24697,7 +24705,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/fstab.5.adoc:103 ../sys-utils/mount.8.adoc:501
+#: ../sys-utils/fstab.5.adoc:103 ../sys-utils/mount.8.adoc:503
 #, no-wrap
 msgid "*noauto*"
 msgstr "*noauto*"
@@ -24708,7 +24716,7 @@ msgid "do not mount when *mount -a* is given (e.g., at boot time)"
 msgstr "nepřipojovat, je-li voláno *mount -a* (například při startu systému)"
 
 #. type: Labeled list
-#: ../sys-utils/fstab.5.adoc:105 ../sys-utils/mount.8.adoc:656
+#: ../sys-utils/fstab.5.adoc:105 ../sys-utils/mount.8.adoc:658
 #, no-wrap
 msgid "*user*"
 msgstr "*user*"
@@ -24719,7 +24727,7 @@ msgid "allow a user to mount"
 msgstr "dovolí připojení běžným uživatelem"
 
 #. type: Labeled list
-#: ../sys-utils/fstab.5.adoc:107 ../sys-utils/mount.8.adoc:613
+#: ../sys-utils/fstab.5.adoc:107 ../sys-utils/mount.8.adoc:615
 #, no-wrap
 msgid "*owner*"
 msgstr "*owner*"
@@ -24741,7 +24749,7 @@ msgid "or *x-<name>* for use by fstab-maintaining programs"
 msgstr "nebo *x-<název>* pro použití programy spravujícími fstab"
 
 #. type: Labeled list
-#: ../sys-utils/fstab.5.adoc:111 ../sys-utils/mount.8.adoc:569
+#: ../sys-utils/fstab.5.adoc:111 ../sys-utils/mount.8.adoc:571
 #, no-wrap
 msgid "*nofail*"
 msgstr "*nofail*"
@@ -27976,7 +27984,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/losetup.8.adoc:130 ../sys-utils/mount.8.adoc:1620
+#: ../sys-utils/losetup.8.adoc:130 ../sys-utils/mount.8.adoc:1625
 #, no-wrap
 msgid "*LOOPDEV_DEBUG*=all"
 msgstr ""
@@ -29301,41 +29309,50 @@ msgid ""
 "special file."
 msgstr ""
 
+#. type: Plain text
+#: ../sys-utils/mount.8.adoc:188
+msgid ""
+"The *user* mount option is accepted if no username is specified. If used in "
+"the format *user=someone*, the option is silently ignored and visible only "
+"for external mount helpers (/sbin/mount.<type>) for compatibility with some "
+"network filesystems."
+msgstr ""
+
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:187
+#: ../sys-utils/mount.8.adoc:189
 #, no-wrap
 msgid "Bind mount operation"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:190
+#: ../sys-utils/mount.8.adoc:192
 msgid "Remount part of the file hierarchy somewhere else. The call is:"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:193 ../sys-utils/mount.8.adoc:231
+#: ../sys-utils/mount.8.adoc:195 ../sys-utils/mount.8.adoc:233
 #, no-wrap
 msgid "*mount --bind* _olddir newdir_\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:196
+#: ../sys-utils/mount.8.adoc:198
 msgid "or by using this _fstab_ entry:"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:199
+#: ../sys-utils/mount.8.adoc:201
 #, no-wrap
 msgid "**/**__olddir__ **/**__newdir__ *none bind*\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:202
+#: ../sys-utils/mount.8.adoc:204
 msgid "After this call the same contents are accessible in two places."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:204
+#: ../sys-utils/mount.8.adoc:206
 msgid ""
 "It is important to understand that \"bind\" does not create any second-class "
 "or special node in the kernel VFS. The \"bind\" is just another operation to "
@@ -29345,7 +29362,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:206
+#: ../sys-utils/mount.8.adoc:208
 msgid ""
 "One can also remount a single file (on a single file). It's also possible to "
 "use a bind mount to create a mountpoint from a regular directory, for "
@@ -29353,13 +29370,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:209
+#: ../sys-utils/mount.8.adoc:211
 #, no-wrap
 msgid "*mount --bind foo foo*\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:212
+#: ../sys-utils/mount.8.adoc:214
 msgid ""
 "The bind mount call attaches only (part of) a single filesystem, not "
 "possible submounts. The entire file hierarchy including submounts can be "
@@ -29367,13 +29384,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:215
+#: ../sys-utils/mount.8.adoc:217
 #, no-wrap
 msgid "*mount --rbind* _olddir newdir_\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:218
+#: ../sys-utils/mount.8.adoc:220
 msgid ""
 "Note that the filesystem mount options maintained by the kernel will remain "
 "the same as those on the original mount point. The userspace mount options "
@@ -29382,20 +29399,20 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:220
+#: ../sys-utils/mount.8.adoc:222
 msgid ""
 "Since util-linux 2.27 *mount* permits changing the mount options by passing "
 "the relevant options along with *--bind*. For example:"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:223
+#: ../sys-utils/mount.8.adoc:225
 #, no-wrap
 msgid "*mount -o bind,ro foo foo*\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:226
+#: ../sys-utils/mount.8.adoc:228
 msgid ""
 "This feature is not supported by the Linux kernel; it is implemented in "
 "userspace by an additional *mount*(2) remounting system call. This solution "
@@ -29403,20 +29420,20 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:228
+#: ../sys-utils/mount.8.adoc:230
 msgid ""
 "The alternative (classic) way to create a read-only bind mount is to use the "
 "remount operation, for example:"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:233
+#: ../sys-utils/mount.8.adoc:235
 #, no-wrap
 msgid "*mount -o remount,bind,ro* _olddir newdir_\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:236
+#: ../sys-utils/mount.8.adoc:238
 msgid ""
 "Note that a read-only bind will create a read-only mountpoint (VFS entry), "
 "but the original filesystem superblock will still be writable, meaning that "
@@ -29424,7 +29441,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:238
+#: ../sys-utils/mount.8.adoc:240
 msgid ""
 "It's also possible to change nosuid, nodev, noexec, noatime, nodiratime, "
 "relatime and nosymfollow VFS entry flags via a \"remount,bind\" operation. "
@@ -29438,7 +29455,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:240
+#: ../sys-utils/mount.8.adoc:242
 msgid ""
 "Since util-linux 2.31, *mount* ignores the *bind* flag from _/etc/fstab_ on "
 "a *remount* operation (if *-o remount* is specified on command line). This "
@@ -29450,24 +29467,24 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:241
+#: ../sys-utils/mount.8.adoc:243
 #, no-wrap
 msgid "The move operation"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:244
+#: ../sys-utils/mount.8.adoc:246
 msgid "Move a *mounted tree* to another place (atomically). The call is:"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:247
+#: ../sys-utils/mount.8.adoc:249
 #, no-wrap
 msgid "*mount --move* _olddir newdir_\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:250
+#: ../sys-utils/mount.8.adoc:252
 msgid ""
 "This will cause the contents which previously appeared under _olddir_ to now "
 "be accessible under _newdir_. The physical location of the files is not "
@@ -29475,7 +29492,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:252
+#: ../sys-utils/mount.8.adoc:254
 msgid ""
 "Note also that moving a mount residing under a shared mount is invalid and "
 "unsupported. Use *findmnt -o TARGET,PROPAGATION* to see the current "
@@ -29483,13 +29500,13 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:253
+#: ../sys-utils/mount.8.adoc:255
 #, no-wrap
 msgid "Shared subtree operations"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:256
+#: ../sys-utils/mount.8.adoc:258
 msgid ""
 "Since Linux 2.6.15 it is possible to mark a mount and its submounts as "
 "shared, private, slave or unbindable. A shared mount provides the ability to "
@@ -29503,12 +29520,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:258
+#: ../sys-utils/mount.8.adoc:260
 msgid "Supported operations are:"
 msgstr ""
 
 #. type: delimited block .
-#: ../sys-utils/mount.8.adoc:264
+#: ../sys-utils/mount.8.adoc:266
 #, no-wrap
 msgid ""
 "mount --make-shared mountpoint\n"
@@ -29518,14 +29535,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:267
+#: ../sys-utils/mount.8.adoc:269
 msgid ""
 "The following commands allow one to recursively change the type of all the "
 "mounts under a given mountpoint."
 msgstr ""
 
 #. type: delimited block .
-#: ../sys-utils/mount.8.adoc:273
+#: ../sys-utils/mount.8.adoc:275
 #, no-wrap
 msgid ""
 "mount --make-rshared mountpoint\n"
@@ -29535,13 +29552,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:276
+#: ../sys-utils/mount.8.adoc:278
 #, no-wrap
 msgid "*mount* *does not read* *fstab*(5) when a *--make-** operation is requested. All necessary information has to be specified on the command line.\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:278
+#: ../sys-utils/mount.8.adoc:280
 msgid ""
 "Note that the Linux kernel does not allow changing multiple propagation "
 "flags with a single *mount*(2) system call, and the flags cannot be mixed "
@@ -29549,7 +29566,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:280
+#: ../sys-utils/mount.8.adoc:282
 msgid ""
 "Since util-linux 2.23 the *mount* command can be used to do more propagation "
 "(topology) changes by one *mount*(8) call and do it also together with other "
@@ -29561,18 +29578,18 @@ msgid ""
 msgstr ""
 
 #. type: delimited block .
-#: ../sys-utils/mount.8.adoc:285
+#: ../sys-utils/mount.8.adoc:287
 #, no-wrap
 msgid "mount --make-private --make-unbindable /dev/sda1 /foo\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:288
+#: ../sys-utils/mount.8.adoc:290
 msgid "is the same as:"
 msgstr ""
 
 #. type: delimited block .
-#: ../sys-utils/mount.8.adoc:293
+#: ../sys-utils/mount.8.adoc:295
 #, no-wrap
 msgid ""
 "mount /dev/sda1 /foo\n"
@@ -29581,13 +29598,13 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: ../sys-utils/mount.8.adoc:295
+#: ../sys-utils/mount.8.adoc:297
 #, no-wrap
 msgid "COMMAND-LINE OPTIONS"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:298
+#: ../sys-utils/mount.8.adoc:300
 msgid ""
 "The full set of mount options used by an invocation of *mount* is determined "
 "by first extracting the mount options for the filesystem from the _fstab_ "
@@ -29596,7 +29613,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:300
+#: ../sys-utils/mount.8.adoc:302
 msgid ""
 "The *mount* command does not pass all command-line options to the **/sbin/"
 "mount.**__suffix__ mount helpers. The interface between *mount* and the "
@@ -29604,12 +29621,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:302
+#: ../sys-utils/mount.8.adoc:304
 msgid "Command-line options available for the *mount* command are:"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:305
+#: ../sys-utils/mount.8.adoc:307
 msgid ""
 "Mount all filesystems (of the given types) mentioned in _fstab_ (except for "
 "those whose line contains the *noauto* keyword). The filesystems are mounted "
@@ -29621,7 +29638,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:307
+#: ../sys-utils/mount.8.adoc:309
 msgid ""
 "The correct functionality depends on _/proc_ (to detect already mounted "
 "filesystems) and on _/sys_ (to evaluate filesystem tags like UUID= or "
@@ -29631,7 +29648,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:309
+#: ../sys-utils/mount.8.adoc:311
 msgid ""
 "The option *--all* is possible to use for remount operation too. In this "
 "case all filters (*-t* and *-O*) are applied to the table of already mounted "
@@ -29639,41 +29656,41 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:311
+#: ../sys-utils/mount.8.adoc:313
 msgid ""
 "Since version 2.35 it is possible to use the command line option *-o* to "
 "alter mount options from _fstab_ (see also *--options-mode*)."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:313
+#: ../sys-utils/mount.8.adoc:315
 msgid ""
 "Note that it is a bad practice to use *mount -a* for _fstab_ checking. The "
 "recommended solution is *findmnt --verify*."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:314
+#: ../sys-utils/mount.8.adoc:316
 #, fuzzy, no-wrap
 #| msgid "*-V*, *--version*"
 msgid "*-B*, *--bind*"
 msgstr "*-V*, *--version*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:316
+#: ../sys-utils/mount.8.adoc:318
 msgid ""
 "Remount a subtree somewhere else (so that its contents are available in both "
 "places). See above, under *Bind mount operation*."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:317 ../sys-utils/umount.8.adoc:60
+#: ../sys-utils/mount.8.adoc:319 ../sys-utils/umount.8.adoc:60
 #, no-wrap
 msgid "*-c*, *--no-canonicalize*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:319
+#: ../sys-utils/mount.8.adoc:321
 msgid ""
 "Don't canonicalize paths. The *mount* command canonicalizes all paths (from "
 "the command line or _fstab_) by default. This option can be used together "
@@ -29683,21 +29700,21 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:321
+#: ../sys-utils/mount.8.adoc:323
 msgid ""
 "Note that *mount* does not pass this option to the **/sbin/mount.**__type__ "
 "helpers."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:322
+#: ../sys-utils/mount.8.adoc:324
 #, fuzzy, no-wrap
 #| msgid "*-f*, *--fast*"
 msgid "*-F*, *--fork*"
 msgstr "*-f*, *--fast*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:324
+#: ../sys-utils/mount.8.adoc:326
 msgid ""
 "(Used in conjunction with *-a*.) Fork off a new incarnation of *mount* for "
 "each device. This will do the mounts on different devices or different NFS "
@@ -29708,14 +29725,14 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:325
+#: ../sys-utils/mount.8.adoc:327
 #, fuzzy, no-wrap
 #| msgid "*-f*, *--fast*"
 msgid "*-f, --fake*"
 msgstr "*-f*, *--fast*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:327
+#: ../sys-utils/mount.8.adoc:329
 msgid ""
 "Causes everything to be done except for the actual system call; if it's not "
 "obvious, this \"fakes\" mounting the filesystem. This option is useful in "
@@ -29727,30 +29744,30 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:328
+#: ../sys-utils/mount.8.adoc:330
 #, no-wrap
 msgid "*-i, --internal-only*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:330
+#: ../sys-utils/mount.8.adoc:332
 msgid "Don't call the **/sbin/mount.**__filesystem__ helper even if it exists."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:333
+#: ../sys-utils/mount.8.adoc:335
 msgid "Mount the partition that has the specified _label_."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:334
+#: ../sys-utils/mount.8.adoc:336
 #, fuzzy, no-wrap
 #| msgid "*-h*, *--help*"
 msgid "*-l*, *--show-labels*"
 msgstr "*-h*, *--help*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:336
+#: ../sys-utils/mount.8.adoc:338
 msgid ""
 "Add the labels in the mount output. *mount* must have permission to read the "
 "disk device (e.g. be set-user-ID root) for this to work. One can set such a "
@@ -29759,28 +29776,28 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:337
+#: ../sys-utils/mount.8.adoc:339
 #, fuzzy, no-wrap
 #| msgid "*-h*, *--help*"
 msgid "*-M*, *--move*"
 msgstr "*-h*, *--help*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:339
+#: ../sys-utils/mount.8.adoc:341
 msgid ""
 "Move a subtree to some other place. See above, the subsection *The move "
 "operation*."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:340
+#: ../sys-utils/mount.8.adoc:342
 #, fuzzy, no-wrap
 #| msgid "*-c*, **--command**=__command__"
 msgid "*-m*, **--mkdir**[=__mode__]"
 msgstr "*-c*, **--command**=__příkaz__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:342
+#: ../sys-utils/mount.8.adoc:344
 msgid ""
 "Allow to make a target directory (mountpoint) if it does not exist yet. "
 "Alias to \"-o X-mount.mkdir[=mode]\", the default mode is 0755. For more "
@@ -29788,27 +29805,27 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:343 ../sys-utils/umount.8.adoc:93
+#: ../sys-utils/mount.8.adoc:345 ../sys-utils/umount.8.adoc:93
 #, fuzzy, no-wrap
 #| msgid "*-P*, *--pty*"
 msgid "*-n*, *--no-mtab*"
 msgstr "*-P*, *--pty*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:345
+#: ../sys-utils/mount.8.adoc:347
 msgid ""
 "Mount without writing in _/etc/mtab_. This is necessary for example when _/"
 "etc_ is on a read-only filesystem."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:346 ../sys-utils/umount.8.adoc:86
+#: ../sys-utils/mount.8.adoc:348 ../sys-utils/umount.8.adoc:86
 #, no-wrap
 msgid "*-N*, *--namespace* _ns_"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:348
+#: ../sys-utils/mount.8.adoc:350
 msgid ""
 "Perform the mount operation in the mount namespace specified by _ns_. _ns_ "
 "is either PID of process running in that namespace or special file "
@@ -29816,24 +29833,24 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:350
+#: ../sys-utils/mount.8.adoc:352
 #, no-wrap
 msgid "*mount* switches to the mount namespace when it reads _/etc/fstab_, writes _/etc/mtab: (or writes to _/run/mount_) and calls *mount*(2), otherwise it runs in the original mount namespace. This means that the target namespace does not have to contain any libraries or other requirements necessary to execute the *mount*(2) call.\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:352 ../sys-utils/umount.8.adoc:92
+#: ../sys-utils/mount.8.adoc:354 ../sys-utils/umount.8.adoc:92
 msgid "See *mount_namespaces*(7) for more information."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:353
+#: ../sys-utils/mount.8.adoc:355
 #, no-wrap
 msgid "*-O*, *--test-opts* _opts_"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:355
+#: ../sys-utils/mount.8.adoc:357
 msgid ""
 "Limit the set of filesystems to which the *-a* option applies. In this "
 "regard it is like the *-t* option except that *-O* is useless without *-a*. "
@@ -29841,65 +29858,65 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:357
+#: ../sys-utils/mount.8.adoc:359
 #, no-wrap
 msgid "*mount -a -O no_netdev*\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:359
+#: ../sys-utils/mount.8.adoc:361
 msgid ""
 "mounts all filesystems except those which have the option _netdev_ specified "
 "in the options field in the _/etc/fstab_ file."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:361
+#: ../sys-utils/mount.8.adoc:363
 msgid ""
 "It is different from *-t* in that each option is matched exactly; a leading "
 "*no* at the beginning of one option does not negate the rest."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:363
+#: ../sys-utils/mount.8.adoc:365
 msgid ""
 "The *-t* and *-O* options are cumulative in effect; that is, the command"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:365
+#: ../sys-utils/mount.8.adoc:367
 #, no-wrap
 msgid "*mount -a -t ext2 -O  _netdev*\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:367
+#: ../sys-utils/mount.8.adoc:369
 msgid ""
 "mounts all ext2 filesystems with the _netdev option, not all filesystems "
 "that are either ext2 or have the _netdev option specified."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:368 ../sys-utils/swapon.8.adoc:58
+#: ../sys-utils/mount.8.adoc:370 ../sys-utils/swapon.8.adoc:58
 #, no-wrap
 msgid "*-o*, *--options* _opts_"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:370
+#: ../sys-utils/mount.8.adoc:372
 msgid ""
 "Use the specified mount options. The _opts_ argument is a comma-separated "
 "list. For example:"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:372
+#: ../sys-utils/mount.8.adoc:374
 #, no-wrap
 msgid "*mount LABEL=mydisk -o noatime,nodev,nosuid*\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:374
+#: ../sys-utils/mount.8.adoc:376
 msgid ""
 "Note that the order of the options matters, as the last option wins if there "
 "are conflicting ones. The options from the command line also overwrite "
@@ -29907,21 +29924,21 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:376
+#: ../sys-utils/mount.8.adoc:378
 msgid ""
 "For more details, see the *FILESYSTEM-INDEPENDENT MOUNT OPTIONS* and "
 "*FILESYSTEM-SPECIFIC MOUNT OPTIONS* sections."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:377
+#: ../sys-utils/mount.8.adoc:379
 #, fuzzy, no-wrap
 #| msgid "*-h*, *--help*"
 msgid "*--onlyonce*"
 msgstr "*-h*, *--help*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:379
+#: ../sys-utils/mount.8.adoc:381
 msgid ""
 "Forces mount command to check if the filesystem is already mounted. This "
 "behavior is the default for *--all*; otherwise, it depends on the kernel "
@@ -29930,13 +29947,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:380
+#: ../sys-utils/mount.8.adoc:382
 #, no-wrap
 msgid "*--options-mode* _mode_"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:382
+#: ../sys-utils/mount.8.adoc:384
 msgid ""
 "Controls how to combine options from _fstab_/_mtab_ with options from the "
 "command line. _mode_ can be one of *ignore*, *append*, *prepend* or "
@@ -29947,13 +29964,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:383
+#: ../sys-utils/mount.8.adoc:385
 #, no-wrap
 msgid "*--options-source* _source_"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:385
+#: ../sys-utils/mount.8.adoc:387
 msgid ""
 "Source of default options. _source_ is a comma-separated list of *fstab*, "
 "*mtab* and *disable*. *disable* disables *fstab* and *mtab* and enables *--"
@@ -29961,27 +29978,27 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:386
+#: ../sys-utils/mount.8.adoc:388
 #, no-wrap
 msgid "*--options-source-force*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:388
+#: ../sys-utils/mount.8.adoc:390
 msgid ""
 "Use options from _fstab_/_mtab_ even if both _device_ and _dir_ are "
 "specified."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:389
+#: ../sys-utils/mount.8.adoc:391
 #, fuzzy, no-wrap
 #| msgid "*-V*, *--version*"
 msgid "*-R*, *--rbind*"
 msgstr "*-V*, *--version*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:391
+#: ../sys-utils/mount.8.adoc:393
 msgid ""
 "Remount a subtree and all possible submounts somewhere else (so that its "
 "contents are available in both places). See above, the subsection *Bind "
@@ -29989,12 +30006,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:394
+#: ../sys-utils/mount.8.adoc:396
 msgid "Mount the filesystem read-only. A synonym is *-o ro*."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:396
+#: ../sys-utils/mount.8.adoc:398
 msgid ""
 "Note that, depending on the filesystem type, state and kernel behavior, the "
 "system may still write to the device. For example, ext3 and ext4 will replay "
@@ -30005,7 +30022,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:399
+#: ../sys-utils/mount.8.adoc:401
 msgid ""
 "Tolerate sloppy mount options rather than failing. This will ignore mount "
 "options not supported by a filesystem type. Not all filesystems support this "
@@ -30013,13 +30030,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:400
+#: ../sys-utils/mount.8.adoc:402
 #, no-wrap
 msgid "*--source* _device_"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:402
+#: ../sys-utils/mount.8.adoc:404
 msgid ""
 "If only one argument for the *mount* command is given, then the argument "
 "might be interpreted as the target (mountpoint) or source (device). This "
@@ -30027,13 +30044,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:403
+#: ../sys-utils/mount.8.adoc:405
 #, no-wrap
 msgid "*--target* _directory_"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:405
+#: ../sys-utils/mount.8.adoc:407
 msgid ""
 "If only one argument for the mount command is given, then the argument might "
 "be interpreted as the target (mountpoint) or source (device). This option "
@@ -30041,13 +30058,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:406
+#: ../sys-utils/mount.8.adoc:408
 #, no-wrap
 msgid "*--target-prefix* _directory_"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:408
+#: ../sys-utils/mount.8.adoc:410
 msgid ""
 "Prepend the specified directory to all mount targets. This option can be "
 "used to follow _fstab_, but mount operations are done in another place, for "
@@ -30055,13 +30072,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:410
+#: ../sys-utils/mount.8.adoc:412
 #, no-wrap
 msgid "*mount --all --target-prefix /chroot -o X-mount.mkdir*\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:412
+#: ../sys-utils/mount.8.adoc:414
 msgid ""
 "mounts all from system _fstab_ to _/chroot_, all missing mountpoint are "
 "created (due to X-mount.mkdir). See also *--fstab* to use an alternative "
@@ -30069,14 +30086,14 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:413 ../sys-utils/swapon.8.adoc:34
+#: ../sys-utils/mount.8.adoc:415 ../sys-utils/swapon.8.adoc:34
 #, fuzzy, no-wrap
 #| msgid "*-f*, *--fast*"
 msgid "*-T*, *--fstab* _path_"
 msgstr "*-f*, *--fast*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:415
+#: ../sys-utils/mount.8.adoc:417
 msgid ""
 "Specifies an alternative _fstab_ file. If _path_ is a directory, then the "
 "files in the directory are sorted by *strverscmp*(3); files that start with "
@@ -30087,7 +30104,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:417
+#: ../sys-utils/mount.8.adoc:419
 msgid ""
 "Note that *mount* does not pass the option *--fstab* to the **/sbin/mount."
 "**__type__ helpers, meaning that the alternative _fstab_ files will be "
@@ -30096,13 +30113,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:418
+#: ../sys-utils/mount.8.adoc:420
 #, no-wrap
 msgid "*-t*, *--types* _fstype_"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:420
+#: ../sys-utils/mount.8.adoc:422
 msgid ""
 "The argument following the *-t* is used to indicate the filesystem type. The "
 "filesystem types which are currently supported depend on the running kernel. "
@@ -30112,7 +30129,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:422
+#: ../sys-utils/mount.8.adoc:424
 #, fuzzy
 #| msgid ""
 #| "*mount*(8) and *umount*(8) support filesystem _subtypes_. The subtype is "
@@ -30132,7 +30149,7 @@ msgstr ""
 
 #. TRANSLATORS: Keep {asterisk} untranslated.
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:424
+#: ../sys-utils/mount.8.adoc:426
 msgid ""
 "If no *-t* option is given, or if the *auto* type is specified, *mount* will "
 "try to guess the desired type. *mount* uses the *libblkid*(3) library for "
@@ -30146,7 +30163,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:427
+#: ../sys-utils/mount.8.adoc:429
 msgid ""
 "The *auto* type may be useful for user-mounted floppies. Creating a file _/"
 "etc/filesystems_ can be useful to change the probe order (e.g., to try vfat "
@@ -30154,7 +30171,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:429
+#: ../sys-utils/mount.8.adoc:431
 msgid ""
 "More than one type may be specified in a comma-separated list, for the *-t* "
 "option as well as in an _/etc/fstab_ entry. The list of filesystem types for "
@@ -30164,25 +30181,25 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:431
+#: ../sys-utils/mount.8.adoc:433
 msgid ""
 "The prefix *no* can be meaningful with the *-a* option. For example, the "
 "command"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:433
+#: ../sys-utils/mount.8.adoc:435
 #, no-wrap
 msgid "*mount -a -t nomsdos,smbfs*\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:435
+#: ../sys-utils/mount.8.adoc:437
 msgid "mounts all filesystems except those of type _msdos_ and _smbfs_."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:437
+#: ../sys-utils/mount.8.adoc:439
 msgid ""
 "For most types all the *mount* program has to do is issue a simple "
 "*mount*(2) system call, and no detailed knowledge of the filesystem type is "
@@ -30197,19 +30214,19 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:440
+#: ../sys-utils/mount.8.adoc:442
 msgid "Mount the partition that has the specified _uuid_."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:444
+#: ../sys-utils/mount.8.adoc:446
 #, fuzzy, no-wrap
 #| msgid "*-*, *-l*, *--login*"
 msgid "*-w*, *--rw*, *--read-write*"
 msgstr "*-*, *-l*, *--login*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:446
+#: ../sys-utils/mount.8.adoc:448
 msgid ""
 "Mount the filesystem read/write. Read-write is the kernel default and the "
 "*mount* default is to try read-only if the previous *mount*(2) syscall with "
@@ -30217,12 +30234,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:448
+#: ../sys-utils/mount.8.adoc:450
 msgid "A synonym is *-o rw*."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:450
+#: ../sys-utils/mount.8.adoc:452
 msgid ""
 "Note that specifying *-w* on the command line forces *mount* to never try "
 "read-only mount on write-protected devices or already mounted read-only "
@@ -30230,20 +30247,20 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: ../sys-utils/mount.8.adoc:453
+#: ../sys-utils/mount.8.adoc:455
 #, no-wrap
 msgid "FILESYSTEM-INDEPENDENT MOUNT OPTIONS"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:456
+#: ../sys-utils/mount.8.adoc:458
 msgid ""
 "Some of these options are only useful when they appear in the _/etc/fstab_ "
 "file."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:458
+#: ../sys-utils/mount.8.adoc:460
 msgid ""
 "Some of these options could be enabled or disabled by default in the system "
 "kernel. To check the current setting see the options in _/proc/mounts_. Note "
@@ -30252,7 +30269,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:460
+#: ../sys-utils/mount.8.adoc:462
 msgid ""
 "The options *nosuid*, *noexec*, *nodiratime*, *relatime*, *noatime*, "
 "*strictatime*, and *nosymfollow* are interpreted only by the abstract VFS "
@@ -30261,18 +30278,18 @@ msgid ""
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:463
+#: ../sys-utils/mount.8.adoc:465
 #, no-wrap
 msgid " findmnt -o TARGET,VFS-OPTIONS,FS-OPTIONS\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:466
+#: ../sys-utils/mount.8.adoc:468
 msgid "to get a complete overview of filesystems and VFS options."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:473
+#: ../sys-utils/mount.8.adoc:475
 msgid ""
 "The read-only setting (*ro* or *rw*) is interpreted by VFS and the "
 "filesystem and depends on how the option is specified on the *mount*(8) "
@@ -30284,7 +30301,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:478
+#: ../sys-utils/mount.8.adoc:480
 msgid ""
 "Since v2.39 libmount can use a new kernel mount interface to set the VFS "
 "options recursive. For backward compatibility, this feature is not enabled "
@@ -30293,13 +30310,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:481
+#: ../sys-utils/mount.8.adoc:483
 #, no-wrap
 msgid " mount -orbind,ro=recursive,noexec=recursive,nosuid /foo /bar\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:486
+#: ../sys-utils/mount.8.adoc:488
 msgid ""
 "recursively binds filesystems from /foo to /bar, /bar, and all submounts "
 "will be read-only and noexec, but only /bar itself will be \"nosuid\". The "
@@ -30308,7 +30325,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:488
+#: ../sys-utils/mount.8.adoc:490
 msgid ""
 "The following options apply to any filesystem that is being mounted (but not "
 "every filesystem actually honors them - e.g., the *sync* option today has an "
@@ -30316,26 +30333,26 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:489
+#: ../sys-utils/mount.8.adoc:491
 #, no-wrap
 msgid "*async*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:491
+#: ../sys-utils/mount.8.adoc:493
 msgid ""
 "All I/O to the filesystem should be done asynchronously. (See also the "
 "*sync* option.)"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:492
+#: ../sys-utils/mount.8.adoc:494
 #, no-wrap
 msgid "*atime*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:494
+#: ../sys-utils/mount.8.adoc:496
 msgid ""
 "Do not use the *noatime* feature, so the inode access time is controlled by "
 "kernel defaults. See also the descriptions of the *relatime* and "
@@ -30343,14 +30360,14 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:495
+#: ../sys-utils/mount.8.adoc:497
 #, fuzzy, no-wrap
 #| msgid "*noauto*"
 msgid "*noatime*"
 msgstr "*noauto*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:497
+#: ../sys-utils/mount.8.adoc:499
 msgid ""
 "Do not update inode access times on this filesystem (e.g. for faster access "
 "on the news spool to speed up news servers). This works for all inode types "
@@ -30358,34 +30375,34 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:498
+#: ../sys-utils/mount.8.adoc:500
 #, fuzzy, no-wrap
 #| msgid "*noauto*"
 msgid "*auto*"
 msgstr "*noauto*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:500
+#: ../sys-utils/mount.8.adoc:502
 #, fuzzy
 #| msgid "Pass _command_ to the shell with the *-c* option."
 msgid "Can be mounted with the *-a* option."
 msgstr "Předá _příkaz_ shellu pomocí přepínače *-c*."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:503
+#: ../sys-utils/mount.8.adoc:505
 msgid ""
 "Can only be mounted explicitly (i.e., the *-a* option will not cause the "
 "filesystem to be mounted)."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:504
+#: ../sys-utils/mount.8.adoc:506
 #, no-wrap
 msgid "**context=**__context__, **fscontext=**__context__, **defcontext=**__context__, and **rootcontext=**__context__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:506
+#: ../sys-utils/mount.8.adoc:508
 msgid ""
 "The *context=* option is useful when mounting filesystems that do not "
 "support extended attributes, such as a floppy or hard disk formatted with "
@@ -30398,14 +30415,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:508
+#: ../sys-utils/mount.8.adoc:510
 msgid ""
 "A commonly used option for removable media is *context=\"system_u:object_r:"
 "removable_t*."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:510
+#: ../sys-utils/mount.8.adoc:512
 msgid ""
 "The *fscontext=* option works for all filesystems, regardless of their xattr "
 "support. The fscontext option sets the overarching filesystem label to a "
@@ -30419,7 +30436,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:512
+#: ../sys-utils/mount.8.adoc:514
 msgid ""
 "You can set the default security context for unlabeled files using "
 "*defcontext=* option. This overrides the value set for unlabeled files in "
@@ -30427,7 +30444,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:514
+#: ../sys-utils/mount.8.adoc:516
 msgid ""
 "The *rootcontext=* option allows you to explicitly label the root inode of a "
 "FS being mounted before that FS or inode becomes visible to userspace. This "
@@ -30437,32 +30454,32 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:516
+#: ../sys-utils/mount.8.adoc:518
 msgid ""
 "Note that the kernel rejects any remount request that includes the context "
 "option, *even* when unchanged from the current context."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:518
+#: ../sys-utils/mount.8.adoc:520
 #, no-wrap
 msgid "*Warning: the* _context_ *value might contain commas*, in which case the value has to be properly quoted, otherwise *mount* will interpret the comma as a separator between mount options. Don't forget that the shell strips off quotes and thus *double quoting is required*. For example:\n"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:521
+#: ../sys-utils/mount.8.adoc:523
 msgid ""
 "mount -t tmpfs none /mnt -o \\ 'context=\"system_u:object_r:tmp_t:s0:c127,"
 "c456\",noexec'"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:524
+#: ../sys-utils/mount.8.adoc:526
 msgid "For more details, see *selinux*(8)."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:527
+#: ../sys-utils/mount.8.adoc:529
 #, fuzzy
 #| msgid "use default options: rw, suid, dev, exec, auto, nouser, and async."
 msgid ""
@@ -30471,68 +30488,68 @@ msgid ""
 msgstr "použije výchozí volby: rw, suid, dev, exec, auto, nouser a async."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:529
+#: ../sys-utils/mount.8.adoc:531
 msgid ""
 "Note that the real set of all default mount options depends on the kernel "
 "and filesystem type. See the beginning of this section for more details."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:530
+#: ../sys-utils/mount.8.adoc:532
 #, no-wrap
 msgid "*dev*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:532
+#: ../sys-utils/mount.8.adoc:534
 msgid "Interpret character or block special devices on the filesystem."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:533
+#: ../sys-utils/mount.8.adoc:535
 #, no-wrap
 msgid "*nodev*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:535
+#: ../sys-utils/mount.8.adoc:537
 msgid "Do not interpret character or block special devices on the filesystem."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:536
+#: ../sys-utils/mount.8.adoc:538
 #, no-wrap
 msgid "*diratime*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:538
+#: ../sys-utils/mount.8.adoc:540
 msgid ""
 "Update directory inode access times on this filesystem. This is the default. "
 "(This option is ignored when *noatime* is set.)"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:539
+#: ../sys-utils/mount.8.adoc:541
 #, no-wrap
 msgid "*nodiratime*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:541
+#: ../sys-utils/mount.8.adoc:543
 msgid ""
 "Do not update directory inode access times on this filesystem. (This option "
 "is implied when *noatime* is set.)"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:542
+#: ../sys-utils/mount.8.adoc:544
 #, no-wrap
 msgid "*dirsync*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:544
+#: ../sys-utils/mount.8.adoc:546
 msgid ""
 "All directory updates within the filesystem should be done synchronously. "
 "This affects the following system calls: *creat*(2), *link*(2), *unlink*(2), "
@@ -30540,36 +30557,36 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:545
+#: ../sys-utils/mount.8.adoc:547
 #, no-wrap
 msgid "*exec*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:547
+#: ../sys-utils/mount.8.adoc:549
 msgid "Permit execution of binaries and other executable files."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:548
+#: ../sys-utils/mount.8.adoc:550
 #, no-wrap
 msgid "*noexec*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:550
+#: ../sys-utils/mount.8.adoc:552
 msgid ""
 "Do not permit direct execution of any binaries on the mounted filesystem."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:551
+#: ../sys-utils/mount.8.adoc:553
 #, no-wrap
 msgid "*group*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:553
+#: ../sys-utils/mount.8.adoc:555
 msgid ""
 "Allow an ordinary user to mount the filesystem if one of that user's groups "
 "matches the group of the device. This option implies the options *nosuid* "
@@ -30578,62 +30595,62 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:554
+#: ../sys-utils/mount.8.adoc:556
 #, fuzzy, no-wrap
 #| msgid "*-V*, *--version*"
 msgid "*iversion*"
 msgstr "*-V*, *--version*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:556
+#: ../sys-utils/mount.8.adoc:558
 msgid ""
 "Every time the inode is modified, the i_version field will be incremented."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:557
+#: ../sys-utils/mount.8.adoc:559
 #, fuzzy, no-wrap
 #| msgid "*-V*, *--version*"
 msgid "*noiversion*"
 msgstr "*-V*, *--version*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:559
+#: ../sys-utils/mount.8.adoc:561
 msgid "Do not increment the i_version inode field."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:560
+#: ../sys-utils/mount.8.adoc:562
 #, no-wrap
 msgid "*mand*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:562
+#: ../sys-utils/mount.8.adoc:564
 msgid ""
 "Allow mandatory locks on this filesystem. See *fcntl*(2). This option was "
 "deprecated in Linux 5.15."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:563
+#: ../sys-utils/mount.8.adoc:565
 #, no-wrap
 msgid "*nomand*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:565
+#: ../sys-utils/mount.8.adoc:567
 msgid "Do not allow mandatory locks on this filesystem."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:566
+#: ../sys-utils/mount.8.adoc:568
 #, no-wrap
 msgid "*_netdev*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:568
+#: ../sys-utils/mount.8.adoc:570
 msgid ""
 "The filesystem resides on a device that requires network access (used to "
 "prevent the system from attempting to mount these filesystems until the "
@@ -30641,20 +30658,20 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:571
+#: ../sys-utils/mount.8.adoc:573
 #, fuzzy
 #| msgid "do not report errors for this device if it does not exist."
 msgid "Do not report errors for this device if it does not exist."
 msgstr "nehlásí chyby k tomuto zařízení, pokud toto zařízení neexistuje."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:572
+#: ../sys-utils/mount.8.adoc:574
 #, no-wrap
 msgid "*relatime*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:574
+#: ../sys-utils/mount.8.adoc:576
 msgid ""
 "Update inode access times relative to modify or change time. Access time is "
 "only updated if the previous access time was earlier than or equal to the "
@@ -30664,7 +30681,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:576
+#: ../sys-utils/mount.8.adoc:578
 msgid ""
 "Since Linux 2.6.30, the kernel defaults to the behavior provided by this "
 "option (unless *noatime* was specified), and the *strictatime* option is "
@@ -30673,25 +30690,25 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:577
+#: ../sys-utils/mount.8.adoc:579
 #, no-wrap
 msgid "*norelatime*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:579
+#: ../sys-utils/mount.8.adoc:581
 msgid ""
 "Do not use the *relatime* feature. See also the *strictatime* mount option."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:580
+#: ../sys-utils/mount.8.adoc:582
 #, no-wrap
 msgid "*strictatime*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:582
+#: ../sys-utils/mount.8.adoc:584
 msgid ""
 "Allows to explicitly request full atime updates. This makes it possible for "
 "the kernel to default to *relatime* or *noatime* but still allow userspace "
@@ -30700,94 +30717,94 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:583
+#: ../sys-utils/mount.8.adoc:585
 #, no-wrap
 msgid "*nostrictatime*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:585
+#: ../sys-utils/mount.8.adoc:587
 msgid "Use the kernel's default behavior for inode access time updates."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:586
+#: ../sys-utils/mount.8.adoc:588
 #, no-wrap
 msgid "*lazytime*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:588
+#: ../sys-utils/mount.8.adoc:590
 msgid ""
 "Only update times (atime, mtime, ctime) on the in-memory version of the file "
 "inode."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:590
+#: ../sys-utils/mount.8.adoc:592
 msgid ""
 "This mount option significantly reduces writes to the inode table for "
 "workloads that perform frequent random writes to preallocated files."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:592
+#: ../sys-utils/mount.8.adoc:594
 msgid "The on-disk timestamps are updated only when:"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:594
+#: ../sys-utils/mount.8.adoc:596
 msgid ""
 "the inode needs to be updated for some change unrelated to file timestamps"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:595
+#: ../sys-utils/mount.8.adoc:597
 msgid "the application employs *fsync*(2), *syncfs*(2), or *sync*(2)"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:596
+#: ../sys-utils/mount.8.adoc:598
 msgid "an undeleted inode is evicted from memory"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:597
+#: ../sys-utils/mount.8.adoc:599
 msgid "more than 24 hours have passed since the inode was written to disk."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:598
+#: ../sys-utils/mount.8.adoc:600
 #, no-wrap
 msgid "*nolazytime*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:600
+#: ../sys-utils/mount.8.adoc:602
 msgid "Do not use the lazytime feature."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:601
+#: ../sys-utils/mount.8.adoc:603
 #, no-wrap
 msgid "*suid*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:603
+#: ../sys-utils/mount.8.adoc:605
 msgid ""
 "Honor set-user-ID and set-group-ID bits or file capabilities when executing "
 "programs from this filesystem."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:604
+#: ../sys-utils/mount.8.adoc:606
 #, no-wrap
 msgid "*nosuid*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:606
+#: ../sys-utils/mount.8.adoc:608
 msgid ""
 "Do not honor set-user-ID and set-group-ID bits or file capabilities when "
 "executing programs from this filesystem. In addition, SELinux domain "
@@ -30796,29 +30813,29 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:607
+#: ../sys-utils/mount.8.adoc:609
 #, no-wrap
 msgid "*silent*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:609
+#: ../sys-utils/mount.8.adoc:611
 msgid "Turn on the silent flag."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:610
+#: ../sys-utils/mount.8.adoc:612
 #, no-wrap
 msgid "*loud*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:612
+#: ../sys-utils/mount.8.adoc:614
 msgid "Turn off the silent flag."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:615
+#: ../sys-utils/mount.8.adoc:617
 msgid ""
 "Allow an ordinary user to mount the filesystem if that user is the owner of "
 "the device. This option implies the options *nosuid* and *nodev* (unless "
@@ -30826,13 +30843,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:616
+#: ../sys-utils/mount.8.adoc:618
 #, no-wrap
 msgid "*remount*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:618
+#: ../sys-utils/mount.8.adoc:620
 msgid ""
 "Attempt to remount an already-mounted filesystem. This is commonly used to "
 "change the mount flags for a filesystem, especially to make a readonly "
@@ -30840,14 +30857,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:620
+#: ../sys-utils/mount.8.adoc:622
 msgid ""
 "The remount operation together with the *bind* flag has special semantics. "
 "See above, the subsection *Bind mount operation*."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:629
+#: ../sys-utils/mount.8.adoc:631
 msgid ""
 "The default kernel behavior for VFS mount flags (nodev,nosuid,noexec,ro) is "
 "to reset all unspecified flags on remount. That's why *mount*(8) tries to "
@@ -30860,7 +30877,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:631
+#: ../sys-utils/mount.8.adoc:633
 msgid ""
 "The remount functionality follows the standard way the *mount* command works "
 "with options from _fstab_. This means that *mount* does not read _fstab_ (or "
@@ -30868,13 +30885,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:633
+#: ../sys-utils/mount.8.adoc:635
 #, no-wrap
 msgid "*mount -o remount,rw /dev/foo /dir*\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:635
+#: ../sys-utils/mount.8.adoc:637
 msgid ""
 "After this call all old mount options are replaced and arbitrary stuff from "
 "_fstab_ (or _mtab_) is ignored, except the *loop=* option which is "
@@ -30882,13 +30899,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:637
+#: ../sys-utils/mount.8.adoc:639
 #, no-wrap
 msgid "*mount -o remount,rw /dir*\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:639
+#: ../sys-utils/mount.8.adoc:641
 msgid ""
 "After this call, *mount* reads _fstab_ and merges these options with the "
 "options from the command line (*-o*). If no mountpoint is found in _fstab_, "
@@ -30896,19 +30913,19 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:642
+#: ../sys-utils/mount.8.adoc:644
 #, no-wrap
 msgid "*mount* allows the use of *--all* to remount all already mounted filesystems which match a specified filter (*-O* and *-t*). For example:\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:644
+#: ../sys-utils/mount.8.adoc:646
 #, no-wrap
 msgid "*mount --all -o remount,ro -t vfat*\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:646
+#: ../sys-utils/mount.8.adoc:648
 msgid ""
 "remounts all already mounted vfat filesystems in read-only mode. Each of the "
 "filesystems is remounted by *mount -o remount,ro* _/dir_ semantic. This "
@@ -30917,35 +30934,35 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:647
+#: ../sys-utils/mount.8.adoc:649
 #, no-wrap
 msgid "*ro*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:649
+#: ../sys-utils/mount.8.adoc:651
 msgid "Mount the filesystem read-only."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:650
+#: ../sys-utils/mount.8.adoc:652
 #, no-wrap
 msgid "*rw*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:652
+#: ../sys-utils/mount.8.adoc:654
 msgid "Mount the filesystem read-write."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:653
+#: ../sys-utils/mount.8.adoc:655
 #, no-wrap
 msgid "*sync*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:655
+#: ../sys-utils/mount.8.adoc:657
 msgid ""
 "All I/O to the filesystem should be done synchronously. In the case of media "
 "with a limited number of write cycles (e.g. some flash drives), *sync* may "
@@ -30953,7 +30970,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:658
+#: ../sys-utils/mount.8.adoc:660
 msgid ""
 "Allow an ordinary user to mount the filesystem. The name of the mounting "
 "user is written to the _mtab_ file (or to the private libmount file in _/run/"
@@ -30964,28 +30981,28 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:659
+#: ../sys-utils/mount.8.adoc:661
 #, fuzzy, no-wrap
 #| msgid "*user*"
 msgid "*nouser*"
 msgstr "*user*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:661
+#: ../sys-utils/mount.8.adoc:663
 msgid ""
 "Forbid an ordinary user to mount the filesystem. This is the default; it "
 "does not imply any other options."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:662
+#: ../sys-utils/mount.8.adoc:664
 #, fuzzy, no-wrap
 #| msgid "*user*"
 msgid "*users*"
 msgstr "*user*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:664
+#: ../sys-utils/mount.8.adoc:666
 msgid ""
 "Allow any user to mount and to unmount the filesystem, even when some other "
 "ordinary user mounted it. This option implies the options *noexec*, "
@@ -30994,13 +31011,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:665
+#: ../sys-utils/mount.8.adoc:667
 #, no-wrap
 msgid "*X-**"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:667
+#: ../sys-utils/mount.8.adoc:669
 msgid ""
 "All options prefixed with \"X-\" are interpreted as comments or as userspace "
 "application-specific options. These options are not stored in user space (e."
@@ -31009,13 +31026,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:668
+#: ../sys-utils/mount.8.adoc:670
 #, no-wrap
 msgid "*x-**"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:670
+#: ../sys-utils/mount.8.adoc:672
 msgid ""
 "The same as *X-** options, but stored permanently in user space. This means "
 "the options are also available for *umount*(8) or other operations. Note "
@@ -31026,7 +31043,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:672
+#: ../sys-utils/mount.8.adoc:674
 msgid ""
 "Note that before util-linux v2.30 the x-* options have not been maintained "
 "by libmount and stored in user space (functionality was the same as for X-* "
@@ -31036,21 +31053,21 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:673
+#: ../sys-utils/mount.8.adoc:675
 #, fuzzy, no-wrap
 #| msgid "*-P*, *--pty*"
 msgid "*X-mount.auto-fstypes*=_list_"
 msgstr "*-P*, *--pty*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:676
+#: ../sys-utils/mount.8.adoc:678
 msgid ""
 "Specifies allowed or forbidden filesystem types for automatic filesystem "
 "detection."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:680
+#: ../sys-utils/mount.8.adoc:682
 msgid ""
 "The _list_ is a comma-separated list of the filesystem names. The automatic "
 "filesystem detection is triggered by the \"auto\" filesystem type or when "
@@ -31058,7 +31075,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:685
+#: ../sys-utils/mount.8.adoc:687
 msgid ""
 "Thy _list_ follows how mount evaluates type patterns (see *-t* for more "
 "details). Only specified filesystem types are allowed, or all specified "
@@ -31066,7 +31083,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:689
+#: ../sys-utils/mount.8.adoc:691
 msgid ""
 "For example, X-mount.auto-fstypes=\"ext4,btrfs\" accepts only ext4 and "
 "btrfs, and X-mount.auto-fstypes=\"novfat,xfs\" accepts all filesystems "
@@ -31074,7 +31091,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:693
+#: ../sys-utils/mount.8.adoc:695
 msgid ""
 "Note that comma is used as a separator between mount options, it means that "
 "auto-fstypes values have to be properly quoted, donât forget that the shell "
@@ -31082,19 +31099,19 @@ msgid ""
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:695
+#: ../sys-utils/mount.8.adoc:697
 msgid ""
 "mount -t auto -o'X-mount.auto-fstypes=\"noext2,ext3\"' /dev/sdc1 /mnt/test"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:697
+#: ../sys-utils/mount.8.adoc:699
 #, no-wrap
 msgid "*X-mount.mkdir*[=_mode_]"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:699
+#: ../sys-utils/mount.8.adoc:701
 msgid ""
 "Allow to make a target directory (mountpoint) if it does not exist yet. The "
 "optional argument _mode_ specifies the filesystem access mode used for "
@@ -31105,13 +31122,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:700
+#: ../sys-utils/mount.8.adoc:702
 #, no-wrap
 msgid "**X-mount.subdir=**__directory__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:702
+#: ../sys-utils/mount.8.adoc:704
 msgid ""
 "Allow mounting sub-directory from a filesystem instead of the root "
 "directory. For now, this feature is implemented by temporary filesystem root "
@@ -31122,7 +31139,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:704
+#: ../sys-utils/mount.8.adoc:706
 msgid ""
 "Note that this feature will not work in session with an unshared private "
 "mount namespace (after *unshare --mount*) on old kernels or with *mount*(8) "
@@ -31131,42 +31148,42 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:706
+#: ../sys-utils/mount.8.adoc:708
 msgid "This feature is EXPERIMENTAL."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:707
+#: ../sys-utils/mount.8.adoc:709
 #, no-wrap
 msgid "*X-mount.owner*=_username_|_UID_, *X-mount.group*=_group_|_GID_"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:709
+#: ../sys-utils/mount.8.adoc:711
 msgid ""
 "Set _mountpoint_'s ownership after mounting. Names resolved in the target "
 "mount namespace, see *-N*."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:710
+#: ../sys-utils/mount.8.adoc:712
 #, no-wrap
 msgid "*X-mount.mode*=_mode_"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:712
+#: ../sys-utils/mount.8.adoc:714
 msgid "Set _mountpoint_'s mode after mounting."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:713
+#: ../sys-utils/mount.8.adoc:715
 #, no-wrap
 msgid "*X-mount.idmap*=__id-type__:__id-mount__:__id-host__:__id-range__ [__id-type__:__id-mount__:__id-host__:__id-range__], *X-mount.idmap*=__file__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:718
+#: ../sys-utils/mount.8.adoc:720
 msgid ""
 "Use this option to create an idmapped mount.  An idmapped mount allows to "
 "change ownership of all files located under a mount according to the ID-"
@@ -31176,12 +31193,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:720
+#: ../sys-utils/mount.8.adoc:722
 msgid "A user can specify the ID-mapping directly."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:728
+#: ../sys-utils/mount.8.adoc:730
 msgid ""
 "The ID-mapping must be specified using the syntax __id-type__:__id-mount__:"
 "__id-host__:__id-range__.  Specifying *u* as the __id-type__ prefix creates "
@@ -31195,7 +31212,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:731
+#: ../sys-utils/mount.8.adoc:733
 msgid ""
 "For example, the ID-mapping *X-mount.idmap=u:1000:0:1 g:1001:1:2 "
 "5000:1000:2* creates an idmapped mount where UID 0 is mapped to UID 1000, "
@@ -31204,7 +31221,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:734
+#: ../sys-utils/mount.8.adoc:736
 msgid ""
 "When an ID-mapping is specified directly a new user namespace will be "
 "allocated with the requested ID-mapping.  The newly created user namespace "
@@ -31212,32 +31229,32 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:735
+#: ../sys-utils/mount.8.adoc:737
 msgid "A user can specify a user namespace file."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:737
+#: ../sys-utils/mount.8.adoc:739
 msgid ""
 "The user namespace will then be attached to the mount and the ID-mapping of "
 "the user namespace will become the ID-mapping of the mount."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:739
+#: ../sys-utils/mount.8.adoc:741
 msgid ""
 "For example, *X-mount.idmap=/proc/PID/ns/user* will attach the user "
 "namespace of the process PID to the mount."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:740
+#: ../sys-utils/mount.8.adoc:742
 #, no-wrap
 msgid "*nosymfollow*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:742
+#: ../sys-utils/mount.8.adoc:744
 msgid ""
 "Do not follow symlinks when resolving paths. Symlinks can still be created, "
 "and *readlink*(1), *readlink*(2), *realpath*(1), and *realpath*(3) all still "
@@ -31245,13 +31262,13 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: ../sys-utils/mount.8.adoc:743
+#: ../sys-utils/mount.8.adoc:745
 #, no-wrap
 msgid "FILESYSTEM-SPECIFIC MOUNT OPTIONS"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:746
+#: ../sys-utils/mount.8.adoc:748
 msgid ""
 "This section lists options that are specific to particular filesystems. "
 "Where possible, you should first consult filesystem-specific manual pages "
@@ -31259,7 +31276,7 @@ msgid ""
 msgstr ""
 
 #. type: Table
-#: ../sys-utils/mount.8.adoc:757
+#: ../sys-utils/mount.8.adoc:759
 #, no-wrap
 msgid ""
 "|*Filesystem(s)* |*Manual page*\n"
@@ -31273,21 +31290,21 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:760
+#: ../sys-utils/mount.8.adoc:762
 msgid ""
 "Note that some of the pages listed above might be available only after you "
 "install the respective userland tools."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:762
+#: ../sys-utils/mount.8.adoc:764
 msgid ""
 "The following options apply only to certain filesystems. We sort them by "
 "filesystem. All options follow the *-o* flag."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:764
+#: ../sys-utils/mount.8.adoc:766
 msgid ""
 "What options are supported depends a bit on the running kernel. Further "
 "information may be available in filesystem-specific files in the kernel "
@@ -31295,33 +31312,33 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:765
+#: ../sys-utils/mount.8.adoc:767
 #, no-wrap
 msgid "Mount options for adfs"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:767 ../sys-utils/mount.8.adoc:775
-#: ../sys-utils/mount.8.adoc:825 ../sys-utils/mount.8.adoc:856
-#: ../sys-utils/mount.8.adoc:983 ../sys-utils/mount.8.adoc:1015
+#: ../sys-utils/mount.8.adoc:769 ../sys-utils/mount.8.adoc:777
+#: ../sys-utils/mount.8.adoc:827 ../sys-utils/mount.8.adoc:858
+#: ../sys-utils/mount.8.adoc:985 ../sys-utils/mount.8.adoc:1017
 #, no-wrap
 msgid "**uid=**__value__ and **gid=**__value__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:769
+#: ../sys-utils/mount.8.adoc:771
 msgid ""
 "Set the owner and group of the files in the filesystem (default: uid=gid=0)."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:770
+#: ../sys-utils/mount.8.adoc:772
 #, no-wrap
 msgid "**ownmask=**__value__ and **othmask=**__value__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:772
+#: ../sys-utils/mount.8.adoc:774
 msgid ""
 "Set the permission mask for ADFS 'owner' permissions and 'other' "
 "permissions, respectively (default: 0700 and 0077, respectively). See also _/"
@@ -31329,13 +31346,13 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:773
+#: ../sys-utils/mount.8.adoc:775
 #, no-wrap
 msgid "Mount options for affs"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:777
+#: ../sys-utils/mount.8.adoc:779
 msgid ""
 "Set the owner and group of the root of the filesystem (default: uid=gid=0, "
 "but with option *uid* or *gid* without specified value, the UID and GID of "
@@ -31343,25 +31360,25 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:778
+#: ../sys-utils/mount.8.adoc:780
 #, no-wrap
 msgid "**setuid=**__value__ and **setgid=**__value__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:780
+#: ../sys-utils/mount.8.adoc:782
 msgid "Set the owner and group of all files."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:781 ../sys-utils/mount.8.adoc:818
-#: ../sys-utils/mount.8.adoc:828 ../sys-utils/mount.8.adoc:1021
+#: ../sys-utils/mount.8.adoc:783 ../sys-utils/mount.8.adoc:820
+#: ../sys-utils/mount.8.adoc:830 ../sys-utils/mount.8.adoc:1023
 #, no-wrap
 msgid "**mode=**__value__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:783
+#: ../sys-utils/mount.8.adoc:785
 msgid ""
 "Set the mode of all files to _value_ & 0777 disregarding the original "
 "permissions. Add search permission to directories that have read permission. "
@@ -31369,25 +31386,25 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:784
+#: ../sys-utils/mount.8.adoc:786
 #, no-wrap
 msgid "*protect*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:786
+#: ../sys-utils/mount.8.adoc:788
 msgid "Do not allow any changes to the protection bits on the filesystem."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:787
+#: ../sys-utils/mount.8.adoc:789
 #, fuzzy, no-wrap
 #| msgid "*user*"
 msgid "*usemp*"
 msgstr "*user*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:789
+#: ../sys-utils/mount.8.adoc:791
 msgid ""
 "Set UID and GID of the root of the filesystem to the UID and GID of the "
 "mount point upon the first sync or umount, and then clear this option. "
@@ -31395,93 +31412,93 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:790
+#: ../sys-utils/mount.8.adoc:792
 #, no-wrap
 msgid "*verbose*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:792
+#: ../sys-utils/mount.8.adoc:794
 msgid "Print an informational message for each successful mount."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:793
+#: ../sys-utils/mount.8.adoc:795
 #, no-wrap
 msgid "**prefix=**__string__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:795
+#: ../sys-utils/mount.8.adoc:797
 msgid "Prefix used before volume name, when following a link."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:796
+#: ../sys-utils/mount.8.adoc:798
 #, no-wrap
 msgid "**volume=**__string__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:798
+#: ../sys-utils/mount.8.adoc:800
 msgid ""
 "Prefix (of length at most 30) used before '/' when following a symbolic link."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:799
+#: ../sys-utils/mount.8.adoc:801
 #, no-wrap
 msgid "**reserved=**__value__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:801
+#: ../sys-utils/mount.8.adoc:803
 msgid "(Default: 2.) Number of unused blocks at the start of the device."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:802
+#: ../sys-utils/mount.8.adoc:804
 #, no-wrap
 msgid "**root=**__value__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:804
+#: ../sys-utils/mount.8.adoc:806
 msgid "Give explicitly the location of the root block."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:805
+#: ../sys-utils/mount.8.adoc:807
 #, no-wrap
 msgid "**bs=**__value__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:807
+#: ../sys-utils/mount.8.adoc:809
 msgid "Give blocksize. Allowed values are 512, 1024, 2048, 4096."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:808
+#: ../sys-utils/mount.8.adoc:810
 #, no-wrap
 msgid "**grpquota**|**noquota**|**quota**|*usrquota*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:810
+#: ../sys-utils/mount.8.adoc:812
 msgid ""
 "These options are accepted but ignored. (However, quota utilities may react "
 "to such strings in _/etc/fstab_.)"
 msgstr ""
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:811
+#: ../sys-utils/mount.8.adoc:813
 #, no-wrap
 msgid "Mount options for debugfs"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:814
+#: ../sys-utils/mount.8.adoc:816
 msgid ""
 "The debugfs filesystem is a pseudo filesystem, traditionally mounted on _/"
 "sys/kernel/debug_. As of kernel version 3.4, debugfs has the following "
@@ -31489,29 +31506,29 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:815 ../sys-utils/mount.8.adoc:966
+#: ../sys-utils/mount.8.adoc:817 ../sys-utils/mount.8.adoc:968
 #, no-wrap
 msgid "**uid=**__n__**, gid=**__n__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:817
+#: ../sys-utils/mount.8.adoc:819
 msgid "Set the owner and group of the mountpoint."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:820
+#: ../sys-utils/mount.8.adoc:822
 msgid "Sets the mode of the mountpoint."
 msgstr ""
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:821
+#: ../sys-utils/mount.8.adoc:823
 #, no-wrap
 msgid "Mount options for devpts"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:824
+#: ../sys-utils/mount.8.adoc:826
 msgid ""
 "The devpts filesystem is a pseudo filesystem, traditionally mounted on _/dev/"
 "pts_. In order to acquire a pseudo terminal, a process opens _/dev/ptmx_; "
@@ -31520,7 +31537,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:827
+#: ../sys-utils/mount.8.adoc:829
 msgid ""
 "This sets the owner or the group of newly created pseudo terminals to the "
 "specified values. When nothing is specified, they will be set to the UID and "
@@ -31530,7 +31547,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:830
+#: ../sys-utils/mount.8.adoc:832
 msgid ""
 "Set the mode of newly created pseudo terminals to the specified value. The "
 "default is 0600. A value of *mode=620* and *gid=5* makes \"mesg y\" the "
@@ -31538,13 +31555,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:831
+#: ../sys-utils/mount.8.adoc:833
 #, no-wrap
 msgid "*newinstance*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:833
+#: ../sys-utils/mount.8.adoc:835
 msgid ""
 "Create a private instance of the devpts filesystem, such that indices of "
 "pseudo terminals allocated in this new instance are independent of indices "
@@ -31552,7 +31569,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:835
+#: ../sys-utils/mount.8.adoc:837
 msgid ""
 "All mounts of devpts without this *newinstance* option share the same set of "
 "pseudo terminal indices (i.e., legacy mode). Each mount of devpts with the "
@@ -31560,7 +31577,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:837
+#: ../sys-utils/mount.8.adoc:839
 msgid ""
 "This option is mainly used to support containers in the Linux kernel. It is "
 "implemented in Linux kernel versions starting with 2.6.29. Further, this "
@@ -31569,7 +31586,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:839
+#: ../sys-utils/mount.8.adoc:841
 msgid ""
 "To use this option effectively, _/dev/ptmx_ must be a symbolic link to _pts/"
 "ptmx_. See _Documentation/filesystems/devpts.txt_ in the Linux kernel source "
@@ -31577,18 +31594,18 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:840
+#: ../sys-utils/mount.8.adoc:842
 #, no-wrap
 msgid "**ptmxmode=**__value__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:842
+#: ../sys-utils/mount.8.adoc:844
 msgid "Set the mode for the new _ptmx_ device node in the devpts filesystem."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:844
+#: ../sys-utils/mount.8.adoc:846
 msgid ""
 "With the support for multiple instances of devpts (see *newinstance* option "
 "above), each instance has a private _ptmx_ node in the root of the devpts "
@@ -31596,7 +31613,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:846
+#: ../sys-utils/mount.8.adoc:848
 msgid ""
 "For compatibility with older versions of the kernel, the default mode of the "
 "new _ptmx_ node is 0000. **ptmxmode=**__value__ specifies a more useful mode "
@@ -31605,7 +31622,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:848
+#: ../sys-utils/mount.8.adoc:850
 msgid ""
 "This option is only implemented in Linux kernel versions starting with "
 "2.6.29. Further, this option is valid only if "
@@ -31613,113 +31630,113 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:849
+#: ../sys-utils/mount.8.adoc:851
 #, no-wrap
 msgid "Mount options for fat"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:852
+#: ../sys-utils/mount.8.adoc:854
 msgid ""
 "(Note: _fat_ is not a separate filesystem, but a common part of the _msdos_, "
 "_umsdos_ and _vfat_ filesystems.)"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:853
+#: ../sys-utils/mount.8.adoc:855
 #, no-wrap
 msgid "*blocksize=*{**512**|**1024**|*2048*}"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:855
+#: ../sys-utils/mount.8.adoc:857
 msgid "Set blocksize (default 512). This option is obsolete."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:858 ../sys-utils/mount.8.adoc:968
-#: ../sys-utils/mount.8.adoc:985
+#: ../sys-utils/mount.8.adoc:860 ../sys-utils/mount.8.adoc:970
+#: ../sys-utils/mount.8.adoc:987
 msgid ""
 "Set the owner and group of all files. (Default: the UID and GID of the "
 "current process.)"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:859 ../sys-utils/mount.8.adoc:986
+#: ../sys-utils/mount.8.adoc:861 ../sys-utils/mount.8.adoc:988
 #, no-wrap
 msgid "**umask=**__value__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:861 ../sys-utils/mount.8.adoc:988
+#: ../sys-utils/mount.8.adoc:863 ../sys-utils/mount.8.adoc:990
 msgid ""
 "Set the umask (the bitmask of the permissions that are *not* present). The "
 "default is the umask of the current process. The value is given in octal."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:862
+#: ../sys-utils/mount.8.adoc:864
 #, no-wrap
 msgid "**dmask=**__value__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:864
+#: ../sys-utils/mount.8.adoc:866
 msgid ""
 "Set the umask applied to directories only. The default is the umask of the "
 "current process. The value is given in octal."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:865
+#: ../sys-utils/mount.8.adoc:867
 #, no-wrap
 msgid "**fmask=**__value__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:867
+#: ../sys-utils/mount.8.adoc:869
 msgid ""
 "Set the umask applied to regular files only. The default is the umask of the "
 "current process. The value is given in octal."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:868
+#: ../sys-utils/mount.8.adoc:870
 #, no-wrap
 msgid "**allow_utime=**__value__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:870
+#: ../sys-utils/mount.8.adoc:872
 msgid "This option controls the permission check of mtime/atime."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:871
+#: ../sys-utils/mount.8.adoc:873
 #, no-wrap
 msgid "*20*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:873
+#: ../sys-utils/mount.8.adoc:875
 msgid ""
 "If current process is in group of file's group ID, you can change timestamp."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:876
+#: ../sys-utils/mount.8.adoc:878
 msgid "Other users can change timestamp."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:878
+#: ../sys-utils/mount.8.adoc:880
 msgid ""
 "The default is set from 'dmask' option. (If the directory is writable, "
 "*utime*(2) is also allowed. I.e. ~dmask & 022)"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:880
+#: ../sys-utils/mount.8.adoc:882
 msgid ""
 "Normally *utime*(2) checks that the current process is owner of the file, or "
 "that it has the *CAP_FOWNER* capability. But FAT filesystems don't have UID/"
@@ -31728,24 +31745,24 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:881
+#: ../sys-utils/mount.8.adoc:883
 #, no-wrap
 msgid "**check=**__value__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:883
+#: ../sys-utils/mount.8.adoc:885
 msgid "Three different levels of pickiness can be chosen:"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:884
+#: ../sys-utils/mount.8.adoc:886
 #, no-wrap
 msgid "*r*[*elaxed*]"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:886
+#: ../sys-utils/mount.8.adoc:888
 msgid ""
 "Upper and lower case are accepted and equivalent, long name parts are "
 "truncated (e.g. _verylongname.foobar_ becomes _verylong.foo_), leading and "
@@ -31753,26 +31770,26 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:887
+#: ../sys-utils/mount.8.adoc:889
 #, no-wrap
 msgid "*n*[*ormal*]"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:889
+#: ../sys-utils/mount.8.adoc:891
 msgid ""
 "Like \"relaxed\", but many special characters (*, ?, <, spaces, etc.) are "
 "rejected. This is the default."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:890
+#: ../sys-utils/mount.8.adoc:892
 #, no-wrap
 msgid "*s*[*trict*]"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:892
+#: ../sys-utils/mount.8.adoc:894
 msgid ""
 "Like \"normal\", but names that contain long parts or special characters "
 "that are sometimes used on Linux but are not accepted by MS-DOS (+, =, etc.) "
@@ -31780,38 +31797,38 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:893
+#: ../sys-utils/mount.8.adoc:895
 #, no-wrap
 msgid "**codepage=**__value__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:895
+#: ../sys-utils/mount.8.adoc:897
 msgid ""
 "Sets the codepage for converting to shortname characters on FAT and VFAT "
 "filesystems. By default, codepage 437 is used."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:896 ../sys-utils/mount.8.adoc:992
-#: ../sys-utils/mount.8.adoc:1030
+#: ../sys-utils/mount.8.adoc:898 ../sys-utils/mount.8.adoc:994
+#: ../sys-utils/mount.8.adoc:1032
 #, no-wrap
 msgid "**conv=**__mode__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:898
+#: ../sys-utils/mount.8.adoc:900
 msgid "This option is obsolete and may fail or be ignored."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:899
+#: ../sys-utils/mount.8.adoc:901
 #, no-wrap
 msgid "**cvf_format=**__module__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:901
+#: ../sys-utils/mount.8.adoc:903
 msgid ""
 "Forces the driver to use the CVF (Compressed Volume File) module "
 "cvf___module__ instead of auto-detection. If the kernel supports *kmod*, the "
@@ -31820,24 +31837,24 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:902
+#: ../sys-utils/mount.8.adoc:904
 #, no-wrap
 msgid "**cvf_option=**__option__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:904
+#: ../sys-utils/mount.8.adoc:906
 msgid "Option passed to the CVF module. This option is obsolete."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:905
+#: ../sys-utils/mount.8.adoc:907
 #, no-wrap
 msgid "*debug*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:907
+#: ../sys-utils/mount.8.adoc:909
 msgid ""
 "Turn on the _debug_ flag. A version string and a list of filesystem "
 "parameters will be printed (these data are also printed if the parameters "
@@ -31845,13 +31862,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:908
+#: ../sys-utils/mount.8.adoc:910
 #, no-wrap
 msgid "*discard*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:910
+#: ../sys-utils/mount.8.adoc:912
 msgid ""
 "If set, causes discard/TRIM commands to be issued to the block device when "
 "blocks are freed. This is useful for SSD devices and sparse/thinly-"
@@ -31859,13 +31876,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:911
+#: ../sys-utils/mount.8.adoc:913
 #, no-wrap
 msgid "*dos1xfloppy*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:913
+#: ../sys-utils/mount.8.adoc:915
 msgid ""
 "If set, use a fallback default BIOS Parameter Block configuration, "
 "determined by backing device size. These static parameters match defaults "
@@ -31874,39 +31891,39 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:914
+#: ../sys-utils/mount.8.adoc:916
 #, no-wrap
 msgid "*errors=*{**panic**|**continue**|*remount-ro*}"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:916
+#: ../sys-utils/mount.8.adoc:918
 msgid ""
 "Specify FAT behavior on critical errors: panic, continue without doing "
 "anything, or remount the partition in read-only mode (default behavior)."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:917
+#: ../sys-utils/mount.8.adoc:919
 #, no-wrap
 msgid "*fat=*{**12**|**16**|*32*}"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:919
+#: ../sys-utils/mount.8.adoc:921
 msgid ""
 "Specify a 12, 16 or 32 bit fat. This overrides the automatic FAT type "
 "detection routine. Use with caution!"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:920 ../sys-utils/mount.8.adoc:1044
+#: ../sys-utils/mount.8.adoc:922 ../sys-utils/mount.8.adoc:1046
 #, no-wrap
 msgid "**iocharset=**__value__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:922
+#: ../sys-utils/mount.8.adoc:924
 msgid ""
 "Character set to use for converting between 8 bit characters and 16 bit "
 "Unicode characters. The default is iso8859-1. Long filenames are stored on "
@@ -31914,43 +31931,43 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:923
+#: ../sys-utils/mount.8.adoc:925
 #, no-wrap
 msgid "*nfs=*{**stale_rw**|*nostale_ro*}"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:925
-msgid "Enable this only if you want to export the FAT filesystem over NFS."
-msgstr ""
-
-#. type: Plain text
 #: ../sys-utils/mount.8.adoc:927
-#, no-wrap
-msgid "*stale_rw*: This option maintains an index (cache) of directory inodes which is used by the nfs-related code to improve look-ups. Full file operations (read/write) over NFS are supported but with cache eviction at NFS server, this could result in spurious *ESTALE* errors.\n"
+msgid "Enable this only if you want to export the FAT filesystem over NFS."
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:929
 #, no-wrap
-msgid "*nostale_ro*: This option bases the inode number and file handle on the on-disk location of a file in the FAT directory entry. This ensures that *ESTALE* will not be returned after a file is evicted from the inode cache. However, it means that operations such as rename, create and unlink could cause file handles that previously pointed at one file to point at a different file, potentially causing data corruption. For this reason, this option also mounts the filesystem readonly.\n"
+msgid "*stale_rw*: This option maintains an index (cache) of directory inodes which is used by the nfs-related code to improve look-ups. Full file operations (read/write) over NFS are supported but with cache eviction at NFS server, this could result in spurious *ESTALE* errors.\n"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:931
+#, no-wrap
+msgid "*nostale_ro*: This option bases the inode number and file handle on the on-disk location of a file in the FAT directory entry. This ensures that *ESTALE* will not be returned after a file is evicted from the inode cache. However, it means that operations such as rename, create and unlink could cause file handles that previously pointed at one file to point at a different file, potentially causing data corruption. For this reason, this option also mounts the filesystem readonly.\n"
+msgstr ""
+
+#. type: Plain text
+#: ../sys-utils/mount.8.adoc:933
 msgid ""
 "To maintain backward compatibility, *-o nfs* is also accepted, defaulting to "
 "*stale_rw*."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:932
+#: ../sys-utils/mount.8.adoc:934
 #, no-wrap
 msgid "*tz=UTC*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:934
+#: ../sys-utils/mount.8.adoc:936
 msgid ""
 "This option disables the conversion of timestamps between local time (as "
 "used by Windows on FAT) and UTC (which Linux uses internally). This is "
@@ -31959,13 +31976,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:935
+#: ../sys-utils/mount.8.adoc:937
 #, no-wrap
 msgid "**time_offset=**__minutes__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:937
+#: ../sys-utils/mount.8.adoc:939
 msgid ""
 "Set offset for conversion of timestamps from local time used by FAT to UTC. "
 "I.e., _minutes_ will be subtracted from each timestamp to convert it to UTC "
@@ -31977,26 +31994,26 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:938 ../sys-utils/mount.8.adoc:978
+#: ../sys-utils/mount.8.adoc:940 ../sys-utils/mount.8.adoc:980
 #, no-wrap
 msgid "*quiet*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:940
+#: ../sys-utils/mount.8.adoc:942
 msgid ""
 "Turn on the _quiet_ flag. Attempts to chown or chmod files do not return "
 "errors, although they fail. Use with caution!"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:941
+#: ../sys-utils/mount.8.adoc:943
 #, no-wrap
 msgid "*rodir*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:943
+#: ../sys-utils/mount.8.adoc:945
 msgid ""
 "FAT has the *ATTR_RO* (read-only) attribute. On Windows, the *ATTR_RO* of "
 "the directory will just be ignored, and is used only by applications as a "
@@ -32004,60 +32021,60 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:945
+#: ../sys-utils/mount.8.adoc:947
 msgid ""
 "If you want to use *ATTR_RO* as read-only flag even for the directory, set "
 "this option."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:946
+#: ../sys-utils/mount.8.adoc:948
 #, no-wrap
 msgid "*showexec*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:948
+#: ../sys-utils/mount.8.adoc:950
 msgid ""
 "If set, the execute permission bits of the file will be allowed only if the "
 "extension part of the name is .EXE, .COM, or .BAT. Not set by default."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:949
+#: ../sys-utils/mount.8.adoc:951
 #, no-wrap
 msgid "*sys_immutable*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:951
+#: ../sys-utils/mount.8.adoc:953
 msgid ""
 "If set, *ATTR_SYS* attribute on FAT is handled as *IMMUTABLE* flag on Linux. "
 "Not set by default."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:952
+#: ../sys-utils/mount.8.adoc:954
 #, no-wrap
 msgid "*flush*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:954
+#: ../sys-utils/mount.8.adoc:956
 msgid ""
 "If set, the filesystem will try to flush to disk more early than normal. Not "
 "set by default."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:955
+#: ../sys-utils/mount.8.adoc:957
 #, fuzzy, no-wrap
 #| msgid "*user*"
 msgid "*usefree*"
 msgstr "*user*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:957
+#: ../sys-utils/mount.8.adoc:959
 msgid ""
 "Use the \"free clusters\" value stored on *FSINFO*. It'll be used to "
 "determine number of free clusters without scanning disk. But it's not used "
@@ -32067,59 +32084,59 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:958
+#: ../sys-utils/mount.8.adoc:960
 #, no-wrap
 msgid "*dots*, *nodots*, *dotsOK=*[**yes**|*no*]"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:960
+#: ../sys-utils/mount.8.adoc:962
 msgid ""
 "Various misguided attempts to force Unix or DOS conventions onto a FAT "
 "filesystem."
 msgstr ""
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:961
+#: ../sys-utils/mount.8.adoc:963
 #, no-wrap
 msgid "Mount options for hfs"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:963
+#: ../sys-utils/mount.8.adoc:965
 #, no-wrap
 msgid "**creator=**__cccc__**, type=**__cccc__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:965
+#: ../sys-utils/mount.8.adoc:967
 msgid ""
 "Set the creator/type values as shown by the MacOS finder used for creating "
 "new files. Default values: '????'."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:969
+#: ../sys-utils/mount.8.adoc:971
 #, no-wrap
 msgid "**dir_umask=**__n__**, file_umask=**__n__**, umask=**__n__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:971
+#: ../sys-utils/mount.8.adoc:973
 msgid ""
 "Set the umask used for all directories, all regular files, or all files and "
 "directories. Defaults to the umask of the current process."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:972
+#: ../sys-utils/mount.8.adoc:974
 #, fuzzy, no-wrap
 #| msgid "**--session-command=**__command__"
 msgid "**session=**__n__"
 msgstr "**--session-command=**__příkaz__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:974
+#: ../sys-utils/mount.8.adoc:976
 msgid ""
 "Select the CDROM session to mount. Defaults to leaving that decision to the "
 "CDROM driver. This option will fail with anything but a CDROM as underlying "
@@ -32127,66 +32144,66 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:975
+#: ../sys-utils/mount.8.adoc:977
 #, no-wrap
 msgid "**part=**__n__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:977
+#: ../sys-utils/mount.8.adoc:979
 msgid ""
 "Select partition number n from the device. Only makes sense for CDROMs. "
 "Defaults to not parsing the partition table at all."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:980
+#: ../sys-utils/mount.8.adoc:982
 msgid "Don't complain about invalid mount options."
 msgstr ""
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:981
+#: ../sys-utils/mount.8.adoc:983
 #, no-wrap
 msgid "Mount options for hpfs"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:989
+#: ../sys-utils/mount.8.adoc:991
 #, no-wrap
 msgid "*case=*{**lower**|*asis*}"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:991
+#: ../sys-utils/mount.8.adoc:993
 msgid ""
 "Convert all files names to lower case, or leave them. (Default: "
 "*case=lower*.)"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:994 ../sys-utils/mount.8.adoc:1032
+#: ../sys-utils/mount.8.adoc:996 ../sys-utils/mount.8.adoc:1034
 msgid "This option is obsolete and may fail or being ignored."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:995
+#: ../sys-utils/mount.8.adoc:997
 #, no-wrap
 msgid "*nocheck*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:997
+#: ../sys-utils/mount.8.adoc:999
 msgid "Do not abort mounting when certain consistency checks fail."
 msgstr ""
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:998
+#: ../sys-utils/mount.8.adoc:1000
 #, no-wrap
 msgid "Mount options for iso9660"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1001
+#: ../sys-utils/mount.8.adoc:1003
 msgid ""
 "ISO 9660 is a standard describing a filesystem structure to be used on CD-"
 "ROMs. (This filesystem type is also seen on some DVDs. See also the _udf_ "
@@ -32194,7 +32211,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1003
+#: ../sys-utils/mount.8.adoc:1005
 msgid ""
 "Normal _iso9660_ filenames appear in an 8.3 format (i.e., DOS-like "
 "restrictions on filename length), and in addition all characters are in "
@@ -32203,7 +32220,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1005
+#: ../sys-utils/mount.8.adoc:1007
 msgid ""
 "Rock Ridge is an extension to iso9660 that provides all of these UNIX-like "
 "features. Basically there are extensions to each directory record that "
@@ -32213,36 +32230,36 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1006
+#: ../sys-utils/mount.8.adoc:1008
 #, no-wrap
 msgid "*norock*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1008
+#: ../sys-utils/mount.8.adoc:1010
 msgid "Disable the use of Rock Ridge extensions, even if available. Cf. *map*."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1009
+#: ../sys-utils/mount.8.adoc:1011
 #, no-wrap
 msgid "*nojoliet*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1011
+#: ../sys-utils/mount.8.adoc:1013
 msgid ""
 "Disable the use of Microsoft Joliet extensions, even if available. Cf. *map*."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1012
+#: ../sys-utils/mount.8.adoc:1014
 #, no-wrap
 msgid "*check=*{*r*[*elaxed*]|*s*[*trict*]}"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1014
+#: ../sys-utils/mount.8.adoc:1016
 msgid ""
 "With *check=relaxed*, a filename is first converted to lower case before "
 "doing the lookup. This is probably only meaningful together with *norock* "
@@ -32250,7 +32267,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1017
+#: ../sys-utils/mount.8.adoc:1019
 msgid ""
 "Give all files in the filesystem the indicated user or group id, possibly "
 "overriding the information found in the Rock Ridge extensions. (Default: "
@@ -32258,13 +32275,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1018
+#: ../sys-utils/mount.8.adoc:1020
 #, no-wrap
 msgid "*map=*{*n*[*ormal*]|*o*[*ff*]|*a*[*corn*]}"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1020
+#: ../sys-utils/mount.8.adoc:1022
 msgid ""
 "For non-Rock Ridge volumes, normal name translation maps upper to lower case "
 "ASCII, drops a trailing ';1', and converts ';' to '.'. With *map=off* no "
@@ -32273,7 +32290,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1023
+#: ../sys-utils/mount.8.adoc:1025
 msgid ""
 "For non-Rock Ridge volumes, give all files the indicated mode. (Default: "
 "read and execute permission for everybody.) Octal mode values require a "
@@ -32281,13 +32298,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1024 ../sys-utils/mount.8.adoc:1339
+#: ../sys-utils/mount.8.adoc:1026 ../sys-utils/mount.8.adoc:1341
 #, no-wrap
 msgid "*unhide*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1026
+#: ../sys-utils/mount.8.adoc:1028
 msgid ""
 "Also show hidden and associated files. (If the ordinary files and the "
 "associated or hidden files have the same filenames, this may make the "
@@ -32295,24 +32312,24 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1027
+#: ../sys-utils/mount.8.adoc:1029
 #, no-wrap
 msgid "*block=*{**512**|**1024**|*2048*}"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1029
+#: ../sys-utils/mount.8.adoc:1031
 msgid "Set the block size to the indicated value. (Default: *block=1024*.)"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1033
+#: ../sys-utils/mount.8.adoc:1035
 #, no-wrap
 msgid "*cruft*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1035
+#: ../sys-utils/mount.8.adoc:1037
 msgid ""
 "If the high byte of the file length contains other garbage, set this mount "
 "option to ignore the high order bits of the file length. This implies that a "
@@ -32320,68 +32337,68 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1036
+#: ../sys-utils/mount.8.adoc:1038
 #, fuzzy, no-wrap
 #| msgid "**--session-command=**__command__"
 msgid "**session=**__x__"
 msgstr "**--session-command=**__příkaz__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1038
+#: ../sys-utils/mount.8.adoc:1040
 msgid "Select number of session on a multisession CD."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1039
+#: ../sys-utils/mount.8.adoc:1041
 #, no-wrap
 msgid "**sbsector=**__xxx__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1041
+#: ../sys-utils/mount.8.adoc:1043
 msgid "Session begins from sector xxx."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1043
+#: ../sys-utils/mount.8.adoc:1045
 msgid ""
 "The following options are the same as for vfat and specifying them only "
 "makes sense when using discs encoded using Microsoft's Joliet extensions."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1046
+#: ../sys-utils/mount.8.adoc:1048
 msgid ""
 "Character set to use for converting 16 bit Unicode characters on CD to 8 bit "
 "characters. The default is iso8859-1."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1047 ../sys-utils/mount.8.adoc:1086
-#: ../sys-utils/mount.8.adoc:1363 ../sys-utils/mount.8.adoc:1461
+#: ../sys-utils/mount.8.adoc:1049 ../sys-utils/mount.8.adoc:1088
+#: ../sys-utils/mount.8.adoc:1365 ../sys-utils/mount.8.adoc:1463
 #, no-wrap
 msgid "*utf8*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1049
+#: ../sys-utils/mount.8.adoc:1051
 msgid "Convert 16 bit Unicode characters on CD to UTF-8."
 msgstr ""
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1050
+#: ../sys-utils/mount.8.adoc:1052
 #, no-wrap
 msgid "Mount options for jfs"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1052 ../sys-utils/mount.8.adoc:1080
+#: ../sys-utils/mount.8.adoc:1054 ../sys-utils/mount.8.adoc:1082
 #, no-wrap
 msgid "**iocharset=**__name__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1054
+#: ../sys-utils/mount.8.adoc:1056
 msgid ""
 "Character set to use for converting from Unicode to ASCII. The default is to "
 "do no conversion. Use *iocharset=utf8* for UTF8 translations. This requires "
@@ -32389,13 +32406,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1055
+#: ../sys-utils/mount.8.adoc:1057
 #, no-wrap
 msgid "**resize=**__value__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1057
+#: ../sys-utils/mount.8.adoc:1059
 msgid ""
 "Resize the volume to _value_ blocks. JFS only supports growing a volume, not "
 "shrinking it. This option is only valid during a remount, when the volume is "
@@ -32404,13 +32421,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1058
+#: ../sys-utils/mount.8.adoc:1060
 #, no-wrap
 msgid "*nointegrity*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1060
+#: ../sys-utils/mount.8.adoc:1062
 msgid ""
 "Do not write to the journal. The primary use of this option is to allow for "
 "higher performance when restoring a volume from backup media. The integrity "
@@ -32418,13 +32435,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1061
+#: ../sys-utils/mount.8.adoc:1063
 #, no-wrap
 msgid "*integrity*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1063
+#: ../sys-utils/mount.8.adoc:1065
 msgid ""
 "Default. Commit metadata changes to the journal. Use this option to remount "
 "a volume where the *nointegrity* option was previously specified in order to "
@@ -32432,13 +32449,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1064
+#: ../sys-utils/mount.8.adoc:1066
 #, no-wrap
 msgid "*errors=*{**continue**|**remount-ro**|*panic*}"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1066
+#: ../sys-utils/mount.8.adoc:1068
 msgid ""
 "Define the behavior when an error is encountered. (Either ignore errors and "
 "just mark the filesystem erroneous and continue, or remount the filesystem "
@@ -32446,24 +32463,24 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1067
+#: ../sys-utils/mount.8.adoc:1069
 #, no-wrap
 msgid "**noquota**|**quota**|**usrquota**|*grpquota*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1069
+#: ../sys-utils/mount.8.adoc:1071
 msgid "These options are accepted but ignored."
 msgstr ""
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1070
+#: ../sys-utils/mount.8.adoc:1072
 #, no-wrap
 msgid "Mount options for msdos"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1073
+#: ../sys-utils/mount.8.adoc:1075
 msgid ""
 "See mount options for fat. If the _msdos_ filesystem detects an "
 "inconsistency, it reports an error and sets the file system read-only. The "
@@ -32471,13 +32488,13 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1074
+#: ../sys-utils/mount.8.adoc:1076
 #, no-wrap
 msgid "Mount options for ncpfs"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1077
+#: ../sys-utils/mount.8.adoc:1079
 msgid ""
 "Just like _nfs_, the _ncpfs_ implementation expects a binary argument (a "
 "_struct ncp_mount_data_) to the *mount*(2) system call. This argument is "
@@ -32486,42 +32503,42 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1078
+#: ../sys-utils/mount.8.adoc:1080
 #, no-wrap
 msgid "Mount options for ntfs"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1082
+#: ../sys-utils/mount.8.adoc:1084
 msgid ""
 "Character set to use when returning file names. Unlike VFAT, NTFS suppresses "
 "names that contain nonconvertible characters. Deprecated."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1083
+#: ../sys-utils/mount.8.adoc:1085
 #, no-wrap
 msgid "**nls=**__name__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1085
+#: ../sys-utils/mount.8.adoc:1087
 msgid "New name for the option earlier called _iocharset_."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1088
+#: ../sys-utils/mount.8.adoc:1090
 msgid "Use UTF-8 for converting file names."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1089
+#: ../sys-utils/mount.8.adoc:1091
 #, no-wrap
 msgid "*uni_xlate=*{**0**|**1**|*2*}"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1091
+#: ../sys-utils/mount.8.adoc:1093
 msgid ""
 "For 0 (or 'no' or 'false'), do not use escape sequences for unknown Unicode "
 "characters. For 1 (or 'yes' or 'true') or 2, use vfat-style 4-byte escape "
@@ -32530,13 +32547,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1092
+#: ../sys-utils/mount.8.adoc:1094
 #, no-wrap
 msgid "*posix=[0|1]*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1094
+#: ../sys-utils/mount.8.adoc:1096
 msgid ""
 "If enabled (posix=1), the filesystem distinguishes between upper and lower "
 "case. The 8.3 alias names are presented as hard links instead of being "
@@ -32544,13 +32561,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1095
+#: ../sys-utils/mount.8.adoc:1097
 #, no-wrap
 msgid "**uid=**__value__, **gid=**__value__ and **umask=**__value__"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1097
+#: ../sys-utils/mount.8.adoc:1099
 msgid ""
 "Set the file permission on the filesystem. The umask value is given in "
 "octal. By default, the files are owned by root and not readable by somebody "
@@ -32558,20 +32575,20 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1098
+#: ../sys-utils/mount.8.adoc:1100
 #, no-wrap
 msgid "Mount options for overlay"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1101
+#: ../sys-utils/mount.8.adoc:1103
 msgid ""
 "Since Linux 3.18 the overlay pseudo filesystem implements a union mount for "
 "other filesystems."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1103
+#: ../sys-utils/mount.8.adoc:1105
 msgid ""
 "An overlay filesystem combines two filesystems - an *upper* filesystem and a "
 "*lower* filesystem. When a name exists in both filesystems, the object in "
@@ -32580,7 +32597,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1105
+#: ../sys-utils/mount.8.adoc:1107
 msgid ""
 "The lower filesystem can be any filesystem supported by Linux and does not "
 "need to be writable. The lower filesystem can even be another overlayfs. The "
@@ -32590,7 +32607,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1107
+#: ../sys-utils/mount.8.adoc:1109
 msgid ""
 "A read-only overlay of two read-only filesystems may use any filesystem "
 "type. The options *lowerdir* and *upperdir* are combined into a merged "
@@ -32598,7 +32615,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block .
-#: ../sys-utils/mount.8.adoc:1112
+#: ../sys-utils/mount.8.adoc:1114
 #, no-wrap
 msgid ""
 "mount -t overlay  overlay  \\\n"
@@ -32606,62 +32623,62 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1115
+#: ../sys-utils/mount.8.adoc:1117
 #, no-wrap
 msgid "**lowerdir=**__directory__"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1117
+#: ../sys-utils/mount.8.adoc:1119
 msgid "Any filesystem, does not need to be on a writable filesystem."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1118
+#: ../sys-utils/mount.8.adoc:1120
 #, no-wrap
 msgid "**upperdir=**__directory__"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1120
+#: ../sys-utils/mount.8.adoc:1122
 msgid "The upperdir is normally on a writable filesystem."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1121
+#: ../sys-utils/mount.8.adoc:1123
 #, no-wrap
 msgid "**workdir=**__directory__"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1123
+#: ../sys-utils/mount.8.adoc:1125
 msgid ""
 "The workdir needs to be an empty directory on the same filesystem as "
 "upperdir."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1124
+#: ../sys-utils/mount.8.adoc:1126
 #, fuzzy, no-wrap
 #| msgid "*user*"
 msgid "*userxattr*"
 msgstr "*user*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1126
+#: ../sys-utils/mount.8.adoc:1128
 msgid ""
 "Use the \"*user.overlay.*\" xattr namespace instead of \"*trusted.overlay."
 "*\". This is useful for unprivileged mounting of overlayfs."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1127
+#: ../sys-utils/mount.8.adoc:1129
 #, no-wrap
 msgid "*redirect_dir=*{**on**|**off**|**follow**|**nofollow**}"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1129
+#: ../sys-utils/mount.8.adoc:1131
 msgid ""
 "If the _redirect_dir_ feature is enabled, then the directory will be copied "
 "up (but not the contents). Then the \"{**trusted**|**user**}.overlay."
@@ -32671,63 +32688,63 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1130 ../sys-utils/rtcwake.8.adoc:84
+#: ../sys-utils/mount.8.adoc:1132 ../sys-utils/rtcwake.8.adoc:84
 #, no-wrap
 msgid "*on*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1132
+#: ../sys-utils/mount.8.adoc:1134
 msgid "Redirects are enabled."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1133 ../sys-utils/rtcwake.8.adoc:78
+#: ../sys-utils/mount.8.adoc:1135 ../sys-utils/rtcwake.8.adoc:78
 #: ../term-utils/setterm.1.adoc:124
 #, no-wrap
 msgid "*off*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1135
+#: ../sys-utils/mount.8.adoc:1137
 msgid ""
 "Redirects are not created and only followed if \"redirect_always_follow\" "
 "feature is enabled in the kernel/module config."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1136
+#: ../sys-utils/mount.8.adoc:1138
 #, no-wrap
 msgid "*follow*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1138
+#: ../sys-utils/mount.8.adoc:1140
 msgid "Redirects are not created, but followed."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1139
+#: ../sys-utils/mount.8.adoc:1141
 #, fuzzy, no-wrap
 #| msgid "*nofail*"
 msgid "*nofollow*"
 msgstr "*nofail*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1141
+#: ../sys-utils/mount.8.adoc:1143
 msgid ""
 "Redirects are not created and not followed (equivalent to "
 "\"redirect_dir=off\" if \"redirect_always_follow\" feature is not enabled)."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1142
+#: ../sys-utils/mount.8.adoc:1144
 #, no-wrap
 msgid "*index=*{**on**|**off**}"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1144
+#: ../sys-utils/mount.8.adoc:1146
 msgid ""
 "Inode index. If this feature is disabled and a file with multiple hard links "
 "is copied up, then this will \"break\" the link. Changes will not be "
@@ -32735,13 +32752,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1145
+#: ../sys-utils/mount.8.adoc:1147
 #, no-wrap
 msgid "*uuid=*{**on**|**off**}"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1147
+#: ../sys-utils/mount.8.adoc:1149
 msgid ""
 "Can be used to replace UUID of the underlying filesystem in file handles "
 "with null, and effectively disable UUID checks. This can be useful in case "
@@ -32751,20 +32768,20 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1148
+#: ../sys-utils/mount.8.adoc:1150
 #, no-wrap
 msgid "*nfs_export=*{**on**|**off**}"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1151
+#: ../sys-utils/mount.8.adoc:1153
 msgid ""
 "When the underlying filesystems supports NFS export and the \"nfs_export\" "
 "feature is enabled, an overlay filesystem may be exported to NFS."
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1158
+#: ../sys-utils/mount.8.adoc:1160
 msgid ""
 "With the \"nfs_export\" feature, on copy_up of any lower object, an index "
 "entry is created under the index directory. The index entry name is the "
@@ -32776,93 +32793,93 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1159
+#: ../sys-utils/mount.8.adoc:1161
 #, no-wrap
 msgid "When encoding a file handle from an overlay filesystem object, the following rules apply"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1162
+#: ../sys-utils/mount.8.adoc:1164
 msgid "For a non-upper object, encode a lower file handle from lower inode"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1163
+#: ../sys-utils/mount.8.adoc:1165
 msgid "For an indexed object, encode a lower file handle from copy_up origin"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1164
+#: ../sys-utils/mount.8.adoc:1166
 msgid ""
 "For a pure-upper object and for an existing non-indexed upper object, encode "
 "an upper file handle from upper inode"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1166
+#: ../sys-utils/mount.8.adoc:1168
 #, no-wrap
 msgid "The encoded overlay file handle includes"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1169
+#: ../sys-utils/mount.8.adoc:1171
 msgid "Header including path type information (e.g. lower/upper)"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1170
+#: ../sys-utils/mount.8.adoc:1172
 msgid "UUID of the underlying filesystem"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1171
+#: ../sys-utils/mount.8.adoc:1173
 msgid "Underlying filesystem encoding of underlying inode"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1173
+#: ../sys-utils/mount.8.adoc:1175
 #, no-wrap
 msgid "This encoding format is identical to the encoding format of file handles that are stored in extended attribute \"{**trusted**|**user**}.overlay.origin\". When decoding an overlay file handle, the following steps are followed"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1176
+#: ../sys-utils/mount.8.adoc:1178
 msgid "Find underlying layer by UUID and path type information."
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1177
+#: ../sys-utils/mount.8.adoc:1179
 msgid "Decode the underlying filesystem file handle to underlying dentry."
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1178
+#: ../sys-utils/mount.8.adoc:1180
 msgid "For a lower file handle, lookup the handle in index directory by name."
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1179
+#: ../sys-utils/mount.8.adoc:1181
 msgid ""
 "If a whiteout is found in index, return **ESTALE**. This represents an "
 "overlay object that was deleted after its file handle was encoded."
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1180
+#: ../sys-utils/mount.8.adoc:1182
 msgid ""
 "For a non-directory, instantiate a disconnected overlay dentry from the "
 "decoded underlying dentry, the path type and index inode, if found."
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1181
+#: ../sys-utils/mount.8.adoc:1183
 msgid ""
 "For a directory, use the connected underlying decoded dentry, path type and "
 "index, to lookup a connected overlay dentry."
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1187
+#: ../sys-utils/mount.8.adoc:1189
 msgid ""
 "Decoding a non-directory file handle may return a disconnected dentry. "
 "copy_up of that disconnected dentry will create an upper index entry with no "
@@ -32870,7 +32887,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1199
+#: ../sys-utils/mount.8.adoc:1201
 msgid ""
 "When overlay filesystem has multiple lower layers, a middle layer directory "
 "may have a \"redirect\" to lower directory. Because middle layer "
@@ -32887,7 +32904,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1201
+#: ../sys-utils/mount.8.adoc:1203
 msgid ""
 "The overlay filesystem does not support non-directory connectable file "
 "handles, so exporting with the _subtree_check_ exportfs configuration will "
@@ -32895,7 +32912,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1203
+#: ../sys-utils/mount.8.adoc:1205
 msgid ""
 "When the NFS export feature is enabled, all directory index entries are "
 "verified on mount time to check that upper file handles are not stale. This "
@@ -32903,20 +32920,20 @@ msgid ""
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1206
+#: ../sys-utils/mount.8.adoc:1208
 msgid ""
 "Note: the mount options __index=off,nfs_export=on__ are conflicting for a "
 "read-write mount and will result in an error."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1208
+#: ../sys-utils/mount.8.adoc:1210
 #, no-wrap
 msgid "*xino=*{**on**|**off**|**auto**}"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1210
+#: ../sys-utils/mount.8.adoc:1212
 msgid ""
 "The \"xino\" feature composes a unique object identifier from the real "
 "object st_ino and an underlying fsid index. The \"xino\" feature uses the "
@@ -32927,20 +32944,20 @@ msgid ""
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1212
+#: ../sys-utils/mount.8.adoc:1214
 msgid ""
 "For a detailed description of the effect of this option please refer to "
 "https://docs.kernel.org/filesystems/overlayfs.html"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1213
+#: ../sys-utils/mount.8.adoc:1215
 #, no-wrap
 msgid "*metacopy=*{**on**|**off**}"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1215
+#: ../sys-utils/mount.8.adoc:1217
 msgid ""
 "When metadata only copy up feature is enabled, overlayfs will only copy up "
 "metadata (as opposed to whole file), when a metadata specific operation like "
@@ -32949,20 +32966,20 @@ msgid ""
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1217
+#: ../sys-utils/mount.8.adoc:1219
 msgid ""
 "In other words, this is delayed data copy up operation and data is copied up "
 "when there is a need to actually modify data."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1218
+#: ../sys-utils/mount.8.adoc:1220
 #, no-wrap
 msgid "*volatile*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1220
+#: ../sys-utils/mount.8.adoc:1222
 msgid ""
 "Volatile mounts are not guaranteed to survive a crash. It is strongly "
 "recommended that volatile mounts are only used if data written to the "
@@ -32970,14 +32987,14 @@ msgid ""
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1222
+#: ../sys-utils/mount.8.adoc:1224
 msgid ""
 "The advantage of mounting with the \"volatile\" option is that all forms of "
 "sync calls to the upper filesystem are omitted."
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1224
+#: ../sys-utils/mount.8.adoc:1226
 msgid ""
 "In order to avoid a giving a false sense of safety, the syncfs (and fsync) "
 "semantics of volatile mounts are slightly different than that of the rest of "
@@ -32989,7 +33006,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1226
+#: ../sys-utils/mount.8.adoc:1228
 msgid ""
 "When overlay is mounted with \"volatile\" option, the directory \"$workdir/"
 "work/incompat/volatile\" is created. During next mount, overlay checks for "
@@ -33001,24 +33018,24 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1227
+#: ../sys-utils/mount.8.adoc:1229
 #, no-wrap
 msgid "Mount options for reiserfs"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1230
+#: ../sys-utils/mount.8.adoc:1232
 msgid "Reiserfs is a journaling filesystem."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1231
+#: ../sys-utils/mount.8.adoc:1233
 #, no-wrap
 msgid "*conv*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1233
+#: ../sys-utils/mount.8.adoc:1235
 msgid ""
 "Instructs version 3.6 reiserfs software to mount a version 3.5 filesystem, "
 "using the 3.6 format for newly created objects. This filesystem will no "
@@ -33026,26 +33043,26 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1234
+#: ../sys-utils/mount.8.adoc:1236
 #, no-wrap
 msgid "*hash=*{**rupasov**|**tea**|**r5**|*detect*}"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1236
+#: ../sys-utils/mount.8.adoc:1238
 msgid ""
 "Choose which hash function reiserfs will use to find files within "
 "directories."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1237
+#: ../sys-utils/mount.8.adoc:1239
 #, no-wrap
 msgid "*rupasov*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1239
+#: ../sys-utils/mount.8.adoc:1241
 msgid ""
 "A hash invented by Yury Yu. Rupasov. It is fast and preserves locality, "
 "mapping lexicographically close file names to close hash values. This option "
@@ -33053,13 +33070,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1240
+#: ../sys-utils/mount.8.adoc:1242
 #, no-wrap
 msgid "*tea*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1242
+#: ../sys-utils/mount.8.adoc:1244
 msgid ""
 "A Davis-Meyer function implemented by Jeremy Fitzhardinge. It uses hash "
 "permuting bits in the name. It gets high randomness and, therefore, low "
@@ -33068,13 +33085,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1243
+#: ../sys-utils/mount.8.adoc:1245
 #, no-wrap
 msgid "*r5*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1245
+#: ../sys-utils/mount.8.adoc:1247
 msgid ""
 "A modified version of the rupasov hash. It is used by default and is the "
 "best choice unless the filesystem has huge directories and unusual file-name "
@@ -33082,13 +33099,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1246
+#: ../sys-utils/mount.8.adoc:1248
 #, no-wrap
 msgid "*detect*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1248
+#: ../sys-utils/mount.8.adoc:1250
 msgid ""
 "Instructs *mount* to detect which hash function is in use by examining the "
 "filesystem being mounted, and to write this information into the reiserfs "
@@ -33097,45 +33114,45 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1249
+#: ../sys-utils/mount.8.adoc:1251
 #, no-wrap
 msgid "*hashed_relocation*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1251 ../sys-utils/mount.8.adoc:1254
+#: ../sys-utils/mount.8.adoc:1253 ../sys-utils/mount.8.adoc:1256
 msgid ""
 "Tunes the block allocator. This may provide performance improvements in some "
 "situations."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1252
+#: ../sys-utils/mount.8.adoc:1254
 #, no-wrap
 msgid "*no_unhashed_relocation*"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1255
+#: ../sys-utils/mount.8.adoc:1257
 #, no-wrap
 msgid "*noborder*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1257
+#: ../sys-utils/mount.8.adoc:1259
 msgid ""
 "Disable the border allocator algorithm invented by Yury Yu. Rupasov. This "
 "may provide performance improvements in some situations."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1258
+#: ../sys-utils/mount.8.adoc:1260
 #, no-wrap
 msgid "*nolog*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1260
+#: ../sys-utils/mount.8.adoc:1262
 msgid ""
 "Disable journaling. This will provide slight performance improvements in "
 "some situations at the cost of losing reiserfs's fast recovery from crashes. "
@@ -33145,14 +33162,14 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1261
+#: ../sys-utils/mount.8.adoc:1263
 #, fuzzy, no-wrap
 #| msgid "*nofail*"
 msgid "*notail*"
 msgstr "*nofail*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1263
+#: ../sys-utils/mount.8.adoc:1265
 msgid ""
 "By default, reiserfs stores small files and 'file tails' directly into its "
 "tree. This confuses some utilities such as *lilo*(8). This option is used to "
@@ -33160,26 +33177,26 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1264
+#: ../sys-utils/mount.8.adoc:1266
 #, no-wrap
 msgid "*replayonly*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1266
+#: ../sys-utils/mount.8.adoc:1268
 msgid ""
 "Replay the transactions which are in the journal, but do not actually mount "
 "the filesystem. Mainly used by _reiserfsck_."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1267
+#: ../sys-utils/mount.8.adoc:1269
 #, no-wrap
 msgid "**resize=**__number__"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1269
+#: ../sys-utils/mount.8.adoc:1271
 msgid ""
 "A remount option which permits online expansion of reiserfs partitions. "
 "Instructs reiserfs to assume that the device has _number_ blocks. This "
@@ -33189,36 +33206,36 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1270
+#: ../sys-utils/mount.8.adoc:1272
 #, fuzzy, no-wrap
 #| msgid "*user*"
 msgid "*user_xattr*"
 msgstr "*user*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1272
+#: ../sys-utils/mount.8.adoc:1274
 msgid "Enable Extended User Attributes. See the *attr*(1) manual page."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1273
+#: ../sys-utils/mount.8.adoc:1275
 #, no-wrap
 msgid "*acl*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1275
+#: ../sys-utils/mount.8.adoc:1277
 msgid "Enable POSIX Access Control Lists. See the *acl*(5) manual page."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1276
+#: ../sys-utils/mount.8.adoc:1278
 #, no-wrap
 msgid "*barrier=none* / *barrier=flush*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1278
+#: ../sys-utils/mount.8.adoc:1280
 msgid ""
 "This disables / enables the use of write barriers in the journaling code. "
 "*barrier=none* disables, *barrier=flush* enables (default). This also "
@@ -33231,85 +33248,85 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1279
+#: ../sys-utils/mount.8.adoc:1281
 #, no-wrap
 msgid "Mount options for ubifs"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1282
+#: ../sys-utils/mount.8.adoc:1284
 msgid ""
 "UBIFS is a flash filesystem which works on top of UBI volumes. Note that "
 "*atime* is not supported and is always turned off."
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1284
+#: ../sys-utils/mount.8.adoc:1286
 msgid "The device name may be specified as"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1286
+#: ../sys-utils/mount.8.adoc:1288
 #, no-wrap
 msgid "*ubiX_Y*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1288
+#: ../sys-utils/mount.8.adoc:1290
 msgid "UBI device number *X*, volume number *Y*"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1288
+#: ../sys-utils/mount.8.adoc:1290
 #, no-wrap
 msgid "*ubiY*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1290
+#: ../sys-utils/mount.8.adoc:1292
 msgid "UBI device number *0*, volume number *Y*"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1290
+#: ../sys-utils/mount.8.adoc:1292
 #, no-wrap
 msgid "*ubiX:NAME*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1292
+#: ../sys-utils/mount.8.adoc:1294
 msgid "UBI device number *X*, volume with name *NAME*"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1292
+#: ../sys-utils/mount.8.adoc:1294
 #, no-wrap
 msgid "*ubi:NAME*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1294
+#: ../sys-utils/mount.8.adoc:1296
 msgid "UBI device number *0*, volume with name *NAME*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1297
+#: ../sys-utils/mount.8.adoc:1299
 msgid "Alternative *!* separator may be used instead of *:*."
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1299
+#: ../sys-utils/mount.8.adoc:1301
 msgid "The following mount options are available:"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1300
+#: ../sys-utils/mount.8.adoc:1302
 #, no-wrap
 msgid "*bulk_read*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1302
+#: ../sys-utils/mount.8.adoc:1304
 msgid ""
 "Enable bulk-read. VFS read-ahead is disabled because it slows down the "
 "filesystem. Bulk-Read is an internal optimization. Some flashes may read "
@@ -33319,35 +33336,35 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1303
+#: ../sys-utils/mount.8.adoc:1305
 #, no-wrap
 msgid "*no_bulk_read*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1305
+#: ../sys-utils/mount.8.adoc:1307
 msgid "Do not bulk-read. This is the default."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1306
+#: ../sys-utils/mount.8.adoc:1308
 #, no-wrap
 msgid "*chk_data_crc*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1308
+#: ../sys-utils/mount.8.adoc:1310
 msgid "Check data CRC-32 checksums. This is the default."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1309
+#: ../sys-utils/mount.8.adoc:1311
 #, no-wrap
 msgid "*no_chk_data_crc*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1311
+#: ../sys-utils/mount.8.adoc:1313
 msgid ""
 "Do not check data CRC-32 checksums. With this option, the filesystem does "
 "not check CRC-32 checksum for data, but it does check it for the internal "
@@ -33356,26 +33373,26 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1312
+#: ../sys-utils/mount.8.adoc:1314
 #, no-wrap
 msgid "*compr=*{**none**|**lzo**|*zlib*}"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1314
+#: ../sys-utils/mount.8.adoc:1316
 msgid ""
 "Select the default compressor which is used when new files are written. It "
 "is still possible to read compressed files if mounted with the *none* option."
 msgstr ""
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1315
+#: ../sys-utils/mount.8.adoc:1317
 #, no-wrap
 msgid "Mount options for udf"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1318
+#: ../sys-utils/mount.8.adoc:1320
 msgid ""
 "UDF is the \"Universal Disk Format\" filesystem defined by OSTA, the Optical "
 "Storage Technology Association, and is often used for DVD-ROM, frequently in "
@@ -33385,13 +33402,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1319
+#: ../sys-utils/mount.8.adoc:1321
 #, no-wrap
 msgid "*uid=*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1321
+#: ../sys-utils/mount.8.adoc:1323
 msgid ""
 "Make all files in the filesystem belong to the given user. uid=forget can be "
 "specified independently of (or usually in addition to) uid=<user> and "
@@ -33402,13 +33419,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1322
+#: ../sys-utils/mount.8.adoc:1324
 #, no-wrap
 msgid "*gid=*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1324
+#: ../sys-utils/mount.8.adoc:1326
 msgid ""
 "Make all files in the filesystem belong to the given group. gid=forget can "
 "be specified independently of (or usually in addition to) gid=<group> and "
@@ -33419,52 +33436,52 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1325
+#: ../sys-utils/mount.8.adoc:1327
 #, no-wrap
 msgid "*umask=*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1327
+#: ../sys-utils/mount.8.adoc:1329
 msgid ""
 "Mask out the given permissions from all inodes read from the filesystem. The "
 "value is given in octal."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1328
+#: ../sys-utils/mount.8.adoc:1330
 #, no-wrap
 msgid "*mode=*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1330
+#: ../sys-utils/mount.8.adoc:1332
 msgid ""
 "If *mode=* is set the permissions of all non-directory inodes read from the "
 "filesystem will be set to the given mode. The value is given in octal."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1331
+#: ../sys-utils/mount.8.adoc:1333
 #, no-wrap
 msgid "*dmode=*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1333
+#: ../sys-utils/mount.8.adoc:1335
 msgid ""
 "If *dmode=* is set the permissions of all directory inodes read from the "
 "filesystem will be set to the given dmode. The value is given in octal."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1334
+#: ../sys-utils/mount.8.adoc:1336
 #, no-wrap
 msgid "*bs=*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1336
+#: ../sys-utils/mount.8.adoc:1338
 msgid ""
 "Set the block size. Default value prior to kernel version 2.6.30 was 2048. "
 "Since 2.6.30 and prior to 4.11 it was logical device block size with "
@@ -33473,225 +33490,225 @@ msgid ""
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1338
+#: ../sys-utils/mount.8.adoc:1340
 msgid ""
 "For other details see the *mkudffs*(8) 2.0+ manpage, see the *COMPATIBILITY* "
 "and *BLOCK SIZE* sections."
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1341
+#: ../sys-utils/mount.8.adoc:1343
 msgid "Show otherwise hidden files."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1342
+#: ../sys-utils/mount.8.adoc:1344
 #, no-wrap
 msgid "*undelete*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1344
+#: ../sys-utils/mount.8.adoc:1346
 msgid "Show deleted files in lists."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1345
+#: ../sys-utils/mount.8.adoc:1347
 #, no-wrap
 msgid "*adinicb*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1347
+#: ../sys-utils/mount.8.adoc:1349
 msgid "Embed data in the inode. (default)"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1348
+#: ../sys-utils/mount.8.adoc:1350
 #, no-wrap
 msgid "*noadinicb*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1350
+#: ../sys-utils/mount.8.adoc:1352
 msgid "Don't embed data in the inode."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1351
+#: ../sys-utils/mount.8.adoc:1353
 #, no-wrap
 msgid "*shortad*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1353
+#: ../sys-utils/mount.8.adoc:1355
 msgid "Use short UDF address descriptors."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1354
+#: ../sys-utils/mount.8.adoc:1356
 #, no-wrap
 msgid "*longad*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1356
+#: ../sys-utils/mount.8.adoc:1358
 msgid "Use long UDF address descriptors. (default)"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1357
+#: ../sys-utils/mount.8.adoc:1359
 #, no-wrap
 msgid "*nostrict*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1359
+#: ../sys-utils/mount.8.adoc:1361
 msgid "Unset strict conformance."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1360
+#: ../sys-utils/mount.8.adoc:1362
 #, no-wrap
 msgid "*iocharset=*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1362
+#: ../sys-utils/mount.8.adoc:1364
 msgid ""
 "Set the NLS character set. This requires kernel compiled with "
 "*CONFIG_UDF_NLS* option."
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1365
+#: ../sys-utils/mount.8.adoc:1367
 msgid "Set the UTF-8 character set."
 msgstr ""
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1366
+#: ../sys-utils/mount.8.adoc:1368
 #, no-wrap
 msgid "Mount options for debugging and disaster recovery"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1368
+#: ../sys-utils/mount.8.adoc:1370
 #, no-wrap
 msgid "*novrs*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1370
+#: ../sys-utils/mount.8.adoc:1372
 msgid "Ignore the Volume Recognition Sequence and attempt to mount anyway."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1371
+#: ../sys-utils/mount.8.adoc:1373
 #, no-wrap
 msgid "*session=*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1373
+#: ../sys-utils/mount.8.adoc:1375
 msgid ""
 "Select the session number for multi-session recorded optical media. "
 "(default= last session)"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1374
+#: ../sys-utils/mount.8.adoc:1376
 #, no-wrap
 msgid "*anchor=*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1376
+#: ../sys-utils/mount.8.adoc:1378
 msgid "Override standard anchor location. (default= 256)"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1377
+#: ../sys-utils/mount.8.adoc:1379
 #, no-wrap
 msgid "*lastblock=*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1379
+#: ../sys-utils/mount.8.adoc:1381
 msgid "Set the last block of the filesystem."
 msgstr ""
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1380
+#: ../sys-utils/mount.8.adoc:1382
 #, no-wrap
 msgid "Unused historical mount options that may be encountered and should be removed"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1382
+#: ../sys-utils/mount.8.adoc:1384
 #, no-wrap
 msgid "*uid=ignore*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1384
+#: ../sys-utils/mount.8.adoc:1386
 msgid "Ignored, use uid=<user> instead."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1385
+#: ../sys-utils/mount.8.adoc:1387
 #, no-wrap
 msgid "*gid=ignore*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1387
+#: ../sys-utils/mount.8.adoc:1389
 msgid "Ignored, use gid=<group> instead."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1388
+#: ../sys-utils/mount.8.adoc:1390
 #, no-wrap
 msgid "*volume=*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1390 ../sys-utils/mount.8.adoc:1393
-#: ../sys-utils/mount.8.adoc:1396 ../sys-utils/mount.8.adoc:1399
+#: ../sys-utils/mount.8.adoc:1392 ../sys-utils/mount.8.adoc:1395
+#: ../sys-utils/mount.8.adoc:1398 ../sys-utils/mount.8.adoc:1401
 msgid "Unimplemented and ignored."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1391
+#: ../sys-utils/mount.8.adoc:1393
 #, no-wrap
 msgid "*partition=*"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1394
+#: ../sys-utils/mount.8.adoc:1396
 #, no-wrap
 msgid "*fileset=*"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1397
+#: ../sys-utils/mount.8.adoc:1399
 #, no-wrap
 msgid "*rootdir=*"
 msgstr ""
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1400
+#: ../sys-utils/mount.8.adoc:1402
 #, no-wrap
 msgid "Mount options for ufs"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1402
+#: ../sys-utils/mount.8.adoc:1404
 #, no-wrap
 msgid "**ufstype=**__value__"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1404
+#: ../sys-utils/mount.8.adoc:1406
 msgid ""
 "UFS is a filesystem widely used in different operating systems. The problem "
 "are differences among implementations. Features of some implementations are "
@@ -33701,190 +33718,190 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1405
+#: ../sys-utils/mount.8.adoc:1407
 #, no-wrap
 msgid "*old*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1407
+#: ../sys-utils/mount.8.adoc:1409
 msgid ""
 "Old format of ufs, this is the default, read only. (Don't forget to give the "
 "*-r* option.)"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1408
+#: ../sys-utils/mount.8.adoc:1410
 #, no-wrap
 msgid "*44bsd*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1410
+#: ../sys-utils/mount.8.adoc:1412
 msgid ""
 "For filesystems created by a BSD-like system (NetBSD, FreeBSD, OpenBSD)."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1411
+#: ../sys-utils/mount.8.adoc:1413
 #, no-wrap
 msgid "*ufs2*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1413
+#: ../sys-utils/mount.8.adoc:1415
 msgid "Used in FreeBSD 5.x supported as read-write."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1414
+#: ../sys-utils/mount.8.adoc:1416
 #, no-wrap
 msgid "*5xbsd*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1416
+#: ../sys-utils/mount.8.adoc:1418
 msgid "Synonym for ufs2."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1417
+#: ../sys-utils/mount.8.adoc:1419
 #, no-wrap
 msgid "*sun*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1419
+#: ../sys-utils/mount.8.adoc:1421
 msgid "For filesystems created by SunOS or Solaris on Sparc."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1420
+#: ../sys-utils/mount.8.adoc:1422
 #, no-wrap
 msgid "*sunx86*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1422
+#: ../sys-utils/mount.8.adoc:1424
 msgid "For filesystems created by Solaris on x86."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1423
+#: ../sys-utils/mount.8.adoc:1425
 #, no-wrap
 msgid "*hp*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1425
+#: ../sys-utils/mount.8.adoc:1427
 msgid "For filesystems created by HP-UX, read-only."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1426
+#: ../sys-utils/mount.8.adoc:1428
 #, no-wrap
 msgid "*nextstep*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1428
+#: ../sys-utils/mount.8.adoc:1430
 msgid ""
 "For filesystems created by NeXTStep (on NeXT station) (currently read only)."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1429
+#: ../sys-utils/mount.8.adoc:1431
 #, no-wrap
 msgid "*nextstep-cd*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1431
+#: ../sys-utils/mount.8.adoc:1433
 msgid "For NextStep CDROMs (block_size == 2048), read-only."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1432
+#: ../sys-utils/mount.8.adoc:1434
 #, no-wrap
 msgid "*openstep*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1434
+#: ../sys-utils/mount.8.adoc:1436
 msgid ""
 "For filesystems created by OpenStep (currently read only). The same "
 "filesystem type is also used by macOS."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1435
+#: ../sys-utils/mount.8.adoc:1437
 #, no-wrap
 msgid "**onerror=**__value__"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1437
+#: ../sys-utils/mount.8.adoc:1439
 msgid "Set behavior on error:"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1438
+#: ../sys-utils/mount.8.adoc:1440
 #, no-wrap
 msgid "*panic*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1440
+#: ../sys-utils/mount.8.adoc:1442
 msgid "If an error is encountered, cause a kernel panic."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1441
+#: ../sys-utils/mount.8.adoc:1443
 #, no-wrap
 msgid "[**lock**|**umount**|*repair*]"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1443
+#: ../sys-utils/mount.8.adoc:1445
 msgid ""
 "These mount options don't do anything at present; when an error is "
 "encountered only a console message is printed."
 msgstr ""
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1444
+#: ../sys-utils/mount.8.adoc:1446
 #, no-wrap
 msgid "Mount options for umsdos"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1447
+#: ../sys-utils/mount.8.adoc:1449
 msgid ""
 "See mount options for msdos. The *dotsOK* option is explicitly killed by "
 "_umsdos_."
 msgstr ""
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1448
+#: ../sys-utils/mount.8.adoc:1450
 #, no-wrap
 msgid "Mount options for vfat"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1451
+#: ../sys-utils/mount.8.adoc:1453
 msgid ""
 "First of all, the mount options for _fat_ are recognized. The *dotsOK* "
 "option is explicitly killed by _vfat_. Furthermore, there are"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1452
+#: ../sys-utils/mount.8.adoc:1454
 #, no-wrap
 msgid "*uni_xlate*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1454
+#: ../sys-utils/mount.8.adoc:1456
 msgid ""
 "Translate unhandled Unicode characters to special escaped sequences. This "
 "lets you backup and restore filenames that are created with any Unicode "
@@ -33895,33 +33912,33 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1455
+#: ../sys-utils/mount.8.adoc:1457
 #, no-wrap
 msgid "*posix*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1457
+#: ../sys-utils/mount.8.adoc:1459
 msgid ""
 "Allow two files with names that only differ in case. This option is obsolete."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1458
+#: ../sys-utils/mount.8.adoc:1460
 #, fuzzy, no-wrap
 #| msgid "*nofail*"
 msgid "*nonumtail*"
 msgstr "*nofail*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1460
+#: ../sys-utils/mount.8.adoc:1462
 msgid ""
 "First try to make a short name without sequence number, before trying "
 "_name~num.ext_."
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1463
+#: ../sys-utils/mount.8.adoc:1465
 msgid ""
 "UTF8 is the filesystem safe 8-bit encoding of Unicode that is used by the "
 "console. It can be enabled for the filesystem with this option or disabled "
@@ -33930,13 +33947,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1464
+#: ../sys-utils/mount.8.adoc:1466
 #, no-wrap
 msgid "**shortname=**__mode__"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1466
+#: ../sys-utils/mount.8.adoc:1468
 msgid ""
 "Defines the behavior for creation and display of filenames which fit into "
 "8.3 characters. If a long name for a file exists, it will always be the "
@@ -33944,110 +33961,110 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1467
+#: ../sys-utils/mount.8.adoc:1469
 #, no-wrap
 msgid "*lower*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1469
+#: ../sys-utils/mount.8.adoc:1471
 msgid ""
 "Force the short name to lower case upon display; store a long name when the "
 "short name is not all upper case."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1470
+#: ../sys-utils/mount.8.adoc:1472
 #, no-wrap
 msgid "*win95*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1472
+#: ../sys-utils/mount.8.adoc:1474
 msgid ""
 "Force the short name to upper case upon display; store a long name when the "
 "short name is not all upper case."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1473
+#: ../sys-utils/mount.8.adoc:1475
 #, no-wrap
 msgid "*winnt*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1475
+#: ../sys-utils/mount.8.adoc:1477
 msgid ""
 "Display the short name as is; store a long name when the short name is not "
 "all lower case or all upper case."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1476
+#: ../sys-utils/mount.8.adoc:1478
 #, no-wrap
 msgid "*mixed*"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1478
+#: ../sys-utils/mount.8.adoc:1480
 msgid ""
 "Display the short name as is; store a long name when the short name is not "
 "all upper case. This mode is the default since Linux 2.6.32."
 msgstr ""
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1479
+#: ../sys-utils/mount.8.adoc:1481
 #, no-wrap
 msgid "Mount options for usbfs"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1481
+#: ../sys-utils/mount.8.adoc:1483
 #, no-wrap
 msgid "**devuid=**__uid__ and **devgid=**__gid__ and **devmode=**__mode__"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1483
+#: ../sys-utils/mount.8.adoc:1485
 msgid ""
 "Set the owner and group and mode of the device files in the usbfs filesystem "
 "(default: uid=gid=0, mode=0644). The mode is given in octal."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1484
+#: ../sys-utils/mount.8.adoc:1486
 #, no-wrap
 msgid "**busuid=**__uid__ and **busgid=**__gid__ and **busmode=**__mode__"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1486
+#: ../sys-utils/mount.8.adoc:1488
 msgid ""
 "Set the owner and group and mode of the bus directories in the usbfs "
 "filesystem (default: uid=gid=0, mode=0555). The mode is given in octal."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1487
+#: ../sys-utils/mount.8.adoc:1489
 #, no-wrap
 msgid "**listuid=**__uid__ and **listgid=**__gid__ and **listmode=**__mode__"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1489
+#: ../sys-utils/mount.8.adoc:1491
 msgid ""
 "Set the owner and group and mode of the file _devices_ (default: uid=gid=0, "
 "mode=0444). The mode is given in octal."
 msgstr ""
 
 #. type: Title ==
-#: ../sys-utils/mount.8.adoc:1490
+#: ../sys-utils/mount.8.adoc:1492
 #, no-wrap
 msgid "DM-VERITY SUPPORT"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1493
+#: ../sys-utils/mount.8.adoc:1495
 msgid ""
 "The device-mapper verity target provides read-only transparent integrity "
 "checking of block devices using kernel crypto API. The *mount* command can "
@@ -34059,65 +34076,65 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1494
+#: ../sys-utils/mount.8.adoc:1496
 #, no-wrap
 msgid "**verity.hashdevice=**__path__"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1496
+#: ../sys-utils/mount.8.adoc:1498
 msgid ""
 "Path to the hash tree device associated with the source volume to pass to dm-"
 "verity."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1497
+#: ../sys-utils/mount.8.adoc:1499
 #, no-wrap
 msgid "**verity.roothash=**__hex__"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1499
+#: ../sys-utils/mount.8.adoc:1501
 msgid ""
 "Hex-encoded hash of the root of _verity.hashdevice_. Mutually exclusive with "
 "_verity.roothashfile._"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1500
+#: ../sys-utils/mount.8.adoc:1502
 #, no-wrap
 msgid "**verity.roothashfile=**__path__"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1502
+#: ../sys-utils/mount.8.adoc:1504
 msgid ""
 "Path to file containing the hex-encoded hash of the root of _verity."
 "hashdevice._ Mutually exclusive with _verity.roothash._"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1503
+#: ../sys-utils/mount.8.adoc:1505
 #, no-wrap
 msgid "**verity.hashoffset=**__offset__"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1505
+#: ../sys-utils/mount.8.adoc:1507
 msgid ""
 "If the hash tree device is embedded in the source volume, _offset_ (default: "
 "0) is used by dm-verity to get to the tree."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1506
+#: ../sys-utils/mount.8.adoc:1508
 #, no-wrap
 msgid "**verity.fecdevice=**__path__"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1508
+#: ../sys-utils/mount.8.adoc:1510
 msgid ""
 "Path to the Forward Error Correction (FEC) device associated with the source "
 "volume to pass to dm-verity. Optional. Requires kernel built with "
@@ -34125,37 +34142,37 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1509
+#: ../sys-utils/mount.8.adoc:1511
 #, no-wrap
 msgid "**verity.fecoffset=**__offset__"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1511
+#: ../sys-utils/mount.8.adoc:1513
 msgid ""
 "If the FEC device is embedded in the source volume, _offset_ (default: 0) is "
 "used by dm-verity to get to the FEC area. Optional."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1512
+#: ../sys-utils/mount.8.adoc:1514
 #, no-wrap
 msgid "**verity.fecroots=**__value__"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1514
+#: ../sys-utils/mount.8.adoc:1516
 msgid "Parity bytes for FEC (default: 2). Optional."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1515
+#: ../sys-utils/mount.8.adoc:1517
 #, no-wrap
 msgid "**verity.roothashsig=**__path__"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1517
+#: ../sys-utils/mount.8.adoc:1519
 msgid ""
 "Path to *pkcs7*(1ssl) signature of root hash hex string. Requires "
 "crypt_activate_by_signed_key() from cryptsetup and kernel built with "
@@ -34164,13 +34181,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1518
+#: ../sys-utils/mount.8.adoc:1520
 #, no-wrap
 msgid "**verity.oncorruption=**__ignore__|__restart__|__panic__"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1520
+#: ../sys-utils/mount.8.adoc:1522
 msgid ""
 "Instruct the kernel to ignore, reboot or panic when corruption is detected. "
 "By default the I/O operation simply fails. Requires Linux 4.1 or newer, and "
@@ -34178,17 +34195,17 @@ msgid ""
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1522
+#: ../sys-utils/mount.8.adoc:1524
 msgid "Supported since util-linux v2.35."
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1524
+#: ../sys-utils/mount.8.adoc:1526
 msgid "For example commands:"
 msgstr ""
 
 #. type: delimited block .
-#: ../sys-utils/mount.8.adoc:1533
+#: ../sys-utils/mount.8.adoc:1535
 #, no-wrap
 msgid ""
 "mksquashfs /etc /tmp/etc.squashfs\n"
@@ -34201,7 +34218,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1536
+#: ../sys-utils/mount.8.adoc:1538
 msgid ""
 "create squashfs image from _/etc_ directory, verity hash device and mount "
 "verified filesystem image to _/mnt_. The kernel will verify that the root "
@@ -34209,33 +34226,33 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: ../sys-utils/mount.8.adoc:1537
+#: ../sys-utils/mount.8.adoc:1539
 #, no-wrap
 msgid "LOOP-DEVICE SUPPORT"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1540
+#: ../sys-utils/mount.8.adoc:1542
 msgid ""
 "One further possible type is a mount via the loop device. For example, the "
 "command"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1543
+#: ../sys-utils/mount.8.adoc:1545
 #, no-wrap
 msgid "*mount /tmp/disk.img /mnt -t vfat -o loop=/dev/loop3*\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1546
+#: ../sys-utils/mount.8.adoc:1548
 msgid ""
 "will set up the loop device _/dev/loop3_ to correspond to the file _/tmp/"
 "disk.img_, and then mount this device on _/mnt_."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1548
+#: ../sys-utils/mount.8.adoc:1550
 msgid ""
 "If no explicit loop device is mentioned (but just an option '**-o loop**' is "
 "given), then *mount* will try to find some unused loop device and use that, "
@@ -34243,13 +34260,13 @@ msgid ""
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1551
+#: ../sys-utils/mount.8.adoc:1553
 #, no-wrap
 msgid "*mount /tmp/disk.img /mnt -o loop*\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1554
+#: ../sys-utils/mount.8.adoc:1556
 msgid ""
 "The *mount* command *automatically* creates a loop device from a regular "
 "file if a filesystem type is not specified or the filesystem is known for "
@@ -34257,19 +34274,19 @@ msgid ""
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1557
+#: ../sys-utils/mount.8.adoc:1559
 #, no-wrap
 msgid "*mount /tmp/disk.img /mnt*\n"
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1559
+#: ../sys-utils/mount.8.adoc:1561
 #, no-wrap
 msgid "*mount -t ext4 /tmp/disk.img /mnt*\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1562
+#: ../sys-utils/mount.8.adoc:1564
 msgid ""
 "This type of mount knows about three options, namely *loop*, *offset* and "
 "*sizelimit*, that are really options to *losetup*(8). (These options can be "
@@ -34277,7 +34294,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1564
+#: ../sys-utils/mount.8.adoc:1566
 msgid ""
 "Since Linux 2.6.25 auto-destruction of loop devices is supported, meaning "
 "that any loop device allocated by *mount* will be freed by *umount* "
@@ -34285,13 +34302,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1566
+#: ../sys-utils/mount.8.adoc:1568
 msgid ""
 "You can also free a loop device by hand, using *losetup -d* or *umount -d*."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1568
+#: ../sys-utils/mount.8.adoc:1570
 msgid ""
 "Since util-linux v2.29, *mount* re-uses the loop device rather than "
 "initializing a new device if the same backing file is already used for some "
@@ -34300,72 +34317,72 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1572
+#: ../sys-utils/mount.8.adoc:1574
 #, no-wrap
 msgid "*mount* has the following exit status values (the bits can be ORed):\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1578
+#: ../sys-utils/mount.8.adoc:1580
 msgid "incorrect invocation or permissions"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1581
+#: ../sys-utils/mount.8.adoc:1583
 msgid "system error (out of memory, cannot fork, no more loop devices)"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1584
+#: ../sys-utils/mount.8.adoc:1586
 msgid "internal *mount* bug"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1587
+#: ../sys-utils/mount.8.adoc:1589
 msgid "user interrupt"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1590
+#: ../sys-utils/mount.8.adoc:1592
 msgid "problems writing or locking _/etc/mtab_"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1593
+#: ../sys-utils/mount.8.adoc:1595
 msgid "mount failure"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1596
+#: ../sys-utils/mount.8.adoc:1598
 msgid "some mount succeeded"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1598
+#: ../sys-utils/mount.8.adoc:1600
 msgid ""
 "The command *mount -a* returns 0 (all succeeded), 32 (all failed), or 64 "
 "(some failed, some succeeded)."
 msgstr ""
 
 #. type: Title ==
-#: ../sys-utils/mount.8.adoc:1599 ../sys-utils/umount.8.adoc:130
+#: ../sys-utils/mount.8.adoc:1601 ../sys-utils/umount.8.adoc:130
 #, no-wrap
 msgid "EXTERNAL HELPERS"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1602
+#: ../sys-utils/mount.8.adoc:1604
 msgid "The syntax of external mount helpers is:"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1604
+#: ../sys-utils/mount.8.adoc:1606
 #, no-wrap
 msgid "**/sbin/mount.**__suffix__ _spec dir_ [*-sfnv*] [*-N* _namespace_] [*-o* _options_] [*-t* __type__**.**_subtype_]\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1606
+#: ../sys-utils/mount.8.adoc:1608
 msgid ""
 "where the _suffix_ is the filesystem type and the *-sfnvoN* options have the "
 "same meaning as the normal mount options. The *-t* option is used for "
@@ -34374,7 +34391,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1608
+#: ../sys-utils/mount.8.adoc:1610
 msgid ""
 "The command *mount* does not pass the mount options *unbindable*, "
 "*runbindable*, *private*, *rprivate*, *slave*, *rslave*, *shared*, "
@@ -34383,106 +34400,122 @@ msgid ""
 "comma-separated list as an argument to the *-o* option."
 msgstr ""
 
-#. type: Plain text
+#. type: Labeled list
 #: ../sys-utils/mount.8.adoc:1613
+#, no-wrap
+msgid "*LIBMOUNT_FORCE_MOUNT2*={always|never|auto}"
+msgstr ""
+
+#. type: Plain text
+#: ../sys-utils/mount.8.adoc:1615
+msgid ""
+"force to use classic mount(2) system call (requires support for new file "
+"descriptors based mount API). The default is *auto*; in this case, libmount "
+"tries to be smart and use classic mount(2) only for well-known issues. If "
+"the new mount API is unavailable, libmount can still use traditional "
+"mount(2), although LIBMOUNT_FORCE_MOUNT2 is set to *never*."
+msgstr ""
+
+#. type: Plain text
+#: ../sys-utils/mount.8.adoc:1618
 msgid "overrides the default location of the _fstab_ file (ignored for suid)"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1619
+#: ../sys-utils/mount.8.adoc:1624
 msgid "enables libblkid debug output"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1622
+#: ../sys-utils/mount.8.adoc:1627
 msgid "enables loop device setup debug output"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1626
+#: ../sys-utils/mount.8.adoc:1631
 msgid ""
 "See also \"*The files /etc/fstab, /etc/mtab and /proc/mounts*\" section "
 "above."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1629
+#: ../sys-utils/mount.8.adoc:1634
 msgid "filesystem table"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1630
+#: ../sys-utils/mount.8.adoc:1635
 #, no-wrap
 msgid "_/run/mount_"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1632
+#: ../sys-utils/mount.8.adoc:1637
 msgid "libmount private runtime directory"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1633 ../sys-utils/umount.8.adoc:160
+#: ../sys-utils/mount.8.adoc:1638 ../sys-utils/umount.8.adoc:160
 #, fuzzy, no-wrap
 #| msgid "_/etc/fstab_"
 msgid "_/etc/mtab_"
 msgstr "_/etc/fstab_"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1635
+#: ../sys-utils/mount.8.adoc:1640
 msgid "table of mounted filesystems or symlink to _/proc/mounts_"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1636
+#: ../sys-utils/mount.8.adoc:1641
 #, fuzzy, no-wrap
 #| msgid "_/etc/fstab_"
 msgid "_/etc/mtab~_"
 msgstr "_/etc/fstab_"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1638
+#: ../sys-utils/mount.8.adoc:1643
 msgid "lock file (unused on systems with _mtab_ symlink)"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1639
+#: ../sys-utils/mount.8.adoc:1644
 #, fuzzy, no-wrap
 #| msgid "_/etc/fstab_"
 msgid "_/etc/mtab.tmp_"
 msgstr "_/etc/fstab_"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1641
+#: ../sys-utils/mount.8.adoc:1646
 msgid "temporary file (unused on systems with _mtab_ symlink)"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1642
+#: ../sys-utils/mount.8.adoc:1647
 #, fuzzy, no-wrap
 #| msgid "_/etc/fstab_"
 msgid "_/etc/filesystems_"
 msgstr "_/etc/fstab_"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1644
+#: ../sys-utils/mount.8.adoc:1649
 msgid "a list of filesystem types to try"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1648
+#: ../sys-utils/mount.8.adoc:1653
 #, fuzzy
 #| msgid "A *write* command appeared in Version 6 AT&T UNIX."
 msgid "A *mount* command existed in Version 5 AT&T UNIX."
 msgstr "Příkaz *write* se objevil v AT&T UNIXu verze 6."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1652
+#: ../sys-utils/mount.8.adoc:1657
 msgid "It is possible for a corrupted filesystem to cause a crash."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1654
+#: ../sys-utils/mount.8.adoc:1659
 msgid ""
 "Some Linux filesystems don't support *-o sync* and *-o dirsync* (the ext2, "
 "ext3, ext4, fat and vfat filesystems _do_ support synchronous updates (a la "
@@ -34490,7 +34523,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1656
+#: ../sys-utils/mount.8.adoc:1661
 msgid ""
 "The *-o remount* may not be able to change mount parameters (all _ext2fs_-"
 "specific parameters, except *sb*, are changeable with a remount, for "
@@ -34498,7 +34531,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1658
+#: ../sys-utils/mount.8.adoc:1663
 msgid ""
 "It is possible that the files _/etc/mtab_ and _/proc/mounts_ don't match on "
 "systems with a regular _mtab_ file. The first file is based only on the "
@@ -34511,7 +34544,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1660
+#: ../sys-utils/mount.8.adoc:1665
 msgid ""
 "Checking files on NFS filesystems referenced by file descriptors (i.e. the "
 "*fcntl* and *ioctl* families of functions) may lead to inconsistent results "
@@ -34520,7 +34553,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1662
+#: ../sys-utils/mount.8.adoc:1667
 msgid ""
 "The *loop* option with the *offset* or *sizelimit* options used may fail "
 "when using older kernels if the *mount* command can't confirm that the size "
@@ -34530,7 +34563,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1688
+#: ../sys-utils/mount.8.adoc:1693
 #, no-wrap
 msgid ""
 "*mount*(2),\n"
@@ -41018,10 +41051,10 @@ msgstr ""
 #. type: Plain text
 #: ../term-utils/mesg.1.adoc:58
 msgid ""
-"The *mesg* utility silently exits with error status 2 if not executed on "
-"terminal. In this case execute *mesg* is pointless. The command line option "
-"*--verbose* forces mesg to print a warning in this situation. This behaviour "
-"has been introduced in version 2.33."
+"The *mesg* utility silently exits with error status 2 if not executed on a "
+"terminal. In this case executing *mesg* is pointless. The command line "
+"option *--verbose* forces *mesg* to print a warning in this situation. This "
+"behaviour has been introduced in version 2.33."
 msgstr ""
 
 #. type: Plain text
@@ -41075,18 +41108,19 @@ msgstr ""
 
 #. type: Plain text
 #: ../term-utils/mesg.1.adoc:90
-msgid "_/dev/[pt]ty[pq]?_"
+msgid "_/dev/[pt]ty*_, _/dev/pts/[0-9]*_"
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/mesg.1.adoc:94
-#, fuzzy
-#| msgid "A *write* command appeared in Version 6 AT&T UNIX."
-msgid "A *mesg* command appeared in Version 6 AT&T UNIX."
-msgstr "Příkaz *write* se objevil v AT&T UNIXu verze 6."
+#: ../term-utils/mesg.1.adoc:95
+#, no-wrap
+msgid ""
+"*mesg* (I) appears in the UNIX Programmer's Manual.\n"
+"It used to invert the current state with no argument before Version 7 AT&T UNIX.\n"
+msgstr ""
 
 #. type: Plain text
-#: ../term-utils/mesg.1.adoc:102
+#: ../term-utils/mesg.1.adoc:103
 #, no-wrap
 msgid ""
 "*login*(1),\n"
@@ -45816,6 +45850,11 @@ msgid ""
 "*setenv*(3),\n"
 "*terminfo*(5)\n"
 msgstr ""
+
+#, fuzzy
+#~| msgid "A *write* command appeared in Version 6 AT&T UNIX."
+#~ msgid "A *mesg* command appeared in Version 6 AT&T UNIX."
+#~ msgstr "Příkaz *write* se objevil v AT&T UNIXu verze 6."
 
 #~ msgid "use default options: rw, suid, dev, exec, auto, nouser, and async."
 #~ msgstr "použije výchozí volby: rw, suid, dev, exec, auto, nouser a async."
