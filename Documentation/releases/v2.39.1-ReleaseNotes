@@ -1,0 +1,117 @@
+util-linux v2.39.1 Release Notes
+================================
+
+The main objective of this maintenance release is to address bugs in libmount and
+resolve the regression that occurred due to the v2.39 rewrite for the new kernel
+mount interface.
+
+The meson build system has also been enhanced.
+
+
+Changes between v2.39 and v2.39.1
+---------------------------------
+
+blkzone:
+   - don't take address of struct blk_zone  [Thomas Weißschuh]
+build-sys:
+   - add --disable-waitpid  [Frantisek Sumsal]
+   - don't call pkg-config --static if unnecessary  [Karel Zak]
+   - fix typo in waitpid check  [Thomas Weißschuh]
+   - only pass --failure-level if supported  [Thomas Weißschuh]
+cal:
+   - fix error message for bad -c argument  [Jakub Wilk]
+   - fix long option name for -c  [Jakub Wilk]
+ci:
+   - prevent prompts during installation  [Thomas Weißschuh]
+dmesg:
+   - make kmsg read() buffer big enough for kernel  [anteater]
+docs:
+   - update AUTHORS file  [Karel Zak]
+enosys:
+   - add support for MIPS, PowerPC and ARC  [Thomas Weißschuh]
+   - add support for loongarch  [Thomas Weißschuh]
+   - add support for sparc  [Thomas Weißschuh]
+   - split audit arch detection into dedicated header  [Thomas Weißschuh]
+hardlink:
+   - (man) add missing comma  [Jakub Wilk]
+lib:
+   - remove pager.c from libcommon  [Karel Zak]
+lib/ include/:
+   - cleanup license headers  [Karel Zak]
+lib/color-names:
+   - fix license header  [Karel Zak]
+lib/loopdev:
+   - consistently return error values from loopcxt_find_unused()  [Thomas Weißschuh]
+   - document function return values  [Thomas Weißschuh]
+lib/strutils:
+   - fix typo  [Jakub Wilk]
+libblkid:
+   - (bcache) also calculate checksum over journal buckets  [Thomas Weißschuh]
+   - (bcache) extend superblock definition  [Thomas Weißschuh]
+   - jfs - avoid undefined shift  [Milan Broz]
+libmount:
+   - (optlist) correctly detect ro status  [Thomas Weißschuh]
+   - always ignore user=<name>  [Karel Zak]
+   - check for availability of mount_setattr  [Thomas Weißschuh]
+   - cleanup enosys returns from mount hoop  [Karel Zak]
+   - don't call hooks after mount.<type> helper  [Karel Zak]
+   - don't call mount.<type> helper with usernames  [Karel Zak]
+   - don't pass option "defaults" to helper  [Thomas Weißschuh]
+   - fix options prepend/insert and merging  [Karel Zak]
+   - fix sync options between context and fs structs  [Karel Zak]
+   - introduce LIBMOUNT_FORCE_MOUNT2={always,never,auto}  [Karel Zak]
+libsmartcols:
+   - (samples)  fix format truncation warning  [Thomas Weißschuh]
+logger:
+   - initialize socket credentials contol union  [Karel Zak]
+losetup:
+   - deduplicate find_unused() logic  [Thomas Weißschuh]
+lsfd:
+   - (filter) weakly support ARRAY_STRING and ARRAY_NUMBER json types  [Masatake YAMATO]
+   - (tests) fix typo  [Thomas Weißschuh]
+   - use ARRAY_STRING for ENDPOINTS column in JSON output mode  [Masatake YAMATO]
+meson:
+   - add conditionalization for test progs  [Zbigniew Jędrzejewski-Szmek]
+   - check for _NL_TIME_WEEK_1STDAY in langinfo.h  [Christian Hesse]
+   - conditionalize waitpid  [Zbigniew Jędrzejewski-Szmek]
+   - implement HAVE_PTY  [Zbigniew Jędrzejewski-Szmek]
+   - include bash-completion for newgrp  [Christian Hesse]
+   - include bash-completion for write  [Christian Hesse]
+   - install chfn setuid  [Christian Hesse]
+   - install chsh setuid  [Christian Hesse]
+   - install mount setuid  [Christian Hesse]
+   - install newgrp setuid  [Christian Hesse]
+   - install su setuid  [Christian Hesse]
+   - install symlink for vigr man page  [Christian Hesse]
+   - install umount setuid  [Christian Hesse]
+   - install wall setgid  [Christian Hesse]
+   - install write setgid  [Christian Hesse]
+   - require 0.57  [Thomas Weißschuh]
+mkfs.minix:
+   - handle 64bit time on 32bit system  [Thomas Weißschuh]
+po:
+   - merge changes  [Karel Zak]
+   - update hr.po (from translationproject.org)  [Božidar Putanec]
+po-man:
+   - add ko.po (from translationproject.org)  [Seong-ho Cho]
+   - add ro.po (from translationproject.org)  [Remus-Gabriel Chelu]
+   - merge changes  [Karel Zak]
+   - update uk.po (from translationproject.org)  [Yuri Chornoivan]
+sfdisk:
+   - add hint about duplicate UUIDs when use dump  [Karel Zak]
+test_enosys:
+   - fix build on old kernels  [Thomas Weißschuh]
+test_uuidd:
+   - make pthread_t formatting more robust  [Thomas Weißschuh]
+tests:
+   - (lsfd) add a case for verifying ENDPOINTS column output in JSON mode  [Masatake YAMATO]
+   - (run.sh) detect builddir from working directory  [Thomas Weißschuh]
+   - backport mount_setattr test  [Karel Zak]
+   - backport special mount script  [Karel Zak]
+   - fix update special mount test output  [Karel Zak]
+tools:
+   - (asciidoctor) explicitly require extensions module  [Thomas Weißschuh]
+unshare:
+   - fix error message for unexpected time offsets  [Thomas Weißschuh]
+waitpid:
+   - only build when pidfd_open is available  [Thomas Weißschuh]
