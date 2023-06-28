@@ -1,3 +1,7 @@
+/* SPDX-License-Identifier: MIT
+ *
+ * This file is licensed under the MIT License.
+ */
 #ifndef UL_CRC64_H
 #define UL_CRC64_H
 
