@@ -108,7 +108,7 @@ static void print_utline(struct utmpx *ut, FILE *out)
 		addr_string = inet_ntop(AF_INET, &(ut->ut_addr_v6), buffer, sizeof(buffer));
 
 	tv.tv_sec = ut->ut_tv.tv_sec;
-	tv.tv_usec = ut->ut_tv.tv_usec;
+	tv.tv_usec = ut->ut_tv.tv_usec < (int32_t) USEC_PER_SEC ? ut->ut_tv.tv_usec : 0;
 
 	if (strtimeval_iso(&tv, ISO_TIMESTAMP_COMMA_GT, time_string,
 			   sizeof(time_string)) != 0)
