@@ -150,8 +150,8 @@ static void set_parent_user_ns_fd(void)
 
 	if (parent_ns < 0)
 		errx(EXIT_FAILURE, _("no namespaces to get parent of"));
-
-	user_nsfile->fd = parent_ns;
+	if (user_nsfile)
+		user_nsfile->fd = parent_ns;
 }
 
 
