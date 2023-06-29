@@ -455,8 +455,10 @@ static int get_range(char *str, rlim_t *soft, rlim_t *hard, int *found)
 		}
 		*found |= PRLIMIT_SOFT | PRLIMIT_HARD;
 
-	} else						/* <value> */
+	} else if (!*end)				/* <value> */
 		*found |= PRLIMIT_SOFT | PRLIMIT_HARD;
+	else
+		return -1;
 
 	return 0;
 }
