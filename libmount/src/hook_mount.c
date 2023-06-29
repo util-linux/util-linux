@@ -470,7 +470,7 @@ static int hook_set_propagation(struct libmnt_context *cxt,
 			(uint64_t) attr.propagation));
 
 		rc = mount_setattr(api->fd_tree, "", flgs, &attr, sizeof(attr));
-		set_syscall_status(cxt, "move_setattr", rc == 0);
+		set_syscall_status(cxt, "mount_setattr", rc == 0);
 
 		if (rc && errno == EINVAL)
 			return -MNT_ERR_APPLYFLAGS;
