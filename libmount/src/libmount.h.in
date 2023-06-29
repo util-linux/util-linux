@@ -188,7 +188,8 @@ enum {
 /**
  * MNT_ERR_APPLYFLAGS:
  *
- * failed to apply MS_PROPAGATION flags
+ * failed to apply MS_PROPAGATION flags, and MOUNT_ATTR_* attributes for
+ * mount_setattr(2)
  */
 #define MNT_ERR_APPLYFLAGS   5005
 /**
