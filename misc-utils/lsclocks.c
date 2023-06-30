@@ -265,15 +265,97 @@ static int64_t get_namespace_offset(const char *name)
 	return ret;
 }
 
+static void add_clock_line(struct libscols_table *tb, const int *columns,
+			   size_t ncolumns, const struct clockinfo *clockinfo)
+{
+	struct timespec resolution, now;
+	char buf[FORMAT_TIMESTAMP_MAX];
+	struct libscols_line *ln;
+	size_t i;
+	int rc;
+
+	ln = scols_table_new_line(tb, NULL);
+	if (!ln)
+		errx(EXIT_FAILURE, _("failed to allocate output line"));
+
+	/* outside the loop to guarantee consistency between COL_TIME and COL_ISO_TIME */
+	rc = clock_gettime(clockinfo->id, &now);
+	if (rc)
+		now.tv_nsec = -1;
+
+	rc = clock_getres(clockinfo->id, &resolution);
+	if (rc)
+		resolution.tv_nsec = -1;
+
+	for (i = 0; i < ncolumns; i++) {
+		switch (columns[i]) {
+			case COL_TYPE:
+				scols_line_set_data(ln, i, clock_type_name(clockinfo->type));
+				break;
+			case COL_ID:
+				scols_line_asprintf(ln, i, "%ju", (uintmax_t) clockinfo->id);
+				break;
+			case COL_CLOCK:
+				scols_line_set_data(ln, i, clockinfo->id_name);
+				break;
+			case COL_NAME:
+				scols_line_set_data(ln, i, clockinfo->name);
+				break;
+			case COL_TIME:
+				if (now.tv_nsec == -1)
+					break;
+
+				scols_line_format_timespec(ln, i, &now);
+				break;
+			case COL_ISO_TIME:
+				if (now.tv_nsec == -1)
+					break;
+
+				rc = strtimespec_iso(&now,
+						ISO_GMTIME | ISO_DATE | ISO_TIME | ISO_T | ISO_DOTNSEC | ISO_TIMEZONE,
+						buf, sizeof(buf));
+				if (rc)
+					errx(EXIT_FAILURE, _("failed to format iso time"));
+				scols_line_set_data(ln, i, buf);
+				break;
+			case COL_RESOL:
+				if (resolution.tv_nsec == -1)
+					break;
+
+				rc = strtimespec_relative(&resolution, buf, sizeof(buf));
+				if (rc)
+					errx(EXIT_FAILURE, _("failed to format relative time"));
+				scols_line_set_data(ln, i, buf);
+				break;
+			case COL_RESOL_RAW:
+				if (resolution.tv_nsec == -1)
+					break;
+				scols_line_format_timespec(ln, i, &resolution);
+				break;
+			case COL_REL_TIME:
+				if (now.tv_nsec == -1)
+					break;
+				rc = strtimespec_relative(&now, buf, sizeof(buf));
+				if (rc)
+					errx(EXIT_FAILURE, _("failed to format relative time"));
+				scols_line_set_data(ln, i, buf);
+				break;
+			case COL_NS_OFFSET:
+				if (clockinfo->ns_offset_name)
+					scols_line_asprintf(ln, i, "%"PRId64,
+							    get_namespace_offset(clockinfo->ns_offset_name));
+				break;
+		}
+	}
+}
+
 int main(int argc, char **argv)
 {
-	size_t i, j;
+	size_t i;
 	int c, rc;
 	const struct colinfo *colinfo;
-	const struct clockinfo *clockinfo;
 
 	struct libscols_table *tb;
-	struct libscols_line *ln;
 	struct libscols_column *col;
 
 	bool noheadings = false, raw = false, json = false;
@@ -282,8 +364,7 @@ int main(int argc, char **argv)
 	size_t ncolumns = 0;
 	clockid_t clock = -1;
 
-	struct timespec resolution, now;
-	char buf[BUFSIZ];
+	struct timespec now;
 
 	enum {
 		OPT_OUTPUT_ALL = CHAR_MAX + 1
@@ -376,83 +457,8 @@ int main(int argc, char **argv)
 		scols_column_set_json_type(col, colinfo->json_type);
 	}
 
-	for (i = 0; i < ARRAY_SIZE(clocks); i++) {
-		clockinfo = &clocks[i];
-
-		ln = scols_table_new_line(tb, NULL);
-		if (!ln)
-			errx(EXIT_FAILURE, _("failed to allocate output line"));
-
-		/* outside the loop to guarantee consistency between COL_TIME and COL_ISO_TIME */
-		rc = clock_gettime(clockinfo->id, &now);
-		if (rc)
-			now.tv_nsec = -1;
-
-		rc = clock_getres(clockinfo->id, &resolution);
-		if (rc)
-			resolution.tv_nsec = -1;
-
-		for (j = 0; j < ncolumns; j++) {
-			switch (columns[j]) {
-				case COL_TYPE:
-					scols_line_set_data(ln, j, clock_type_name(clockinfo->type));
-					break;
-				case COL_ID:
-					scols_line_asprintf(ln, j, "%ju", (uintmax_t) clockinfo->id);
-					break;
-				case COL_CLOCK:
-					scols_line_set_data(ln, j, clockinfo->id_name);
-					break;
-				case COL_NAME:
-					scols_line_set_data(ln, j, clockinfo->name);
-					break;
-				case COL_TIME:
-					if (now.tv_nsec == -1)
-						break;
-
-					scols_line_format_timespec(ln, j, &now);
-					break;
-				case COL_ISO_TIME:
-					if (now.tv_nsec == -1)
-						break;
-
-					rc = strtimespec_iso(&now,
-							ISO_GMTIME | ISO_DATE | ISO_TIME | ISO_T | ISO_DOTNSEC | ISO_TIMEZONE,
-							buf, sizeof(buf));
-					if (rc)
-						errx(EXIT_FAILURE, _("failed to format iso time"));
-					scols_line_set_data(ln, j, buf);
-					break;
-				case COL_RESOL:
-					if (resolution.tv_nsec == -1)
-						break;
-
-					rc = strtimespec_relative(&resolution, buf, sizeof(buf));
-					if (rc)
-						errx(EXIT_FAILURE, _("failed to format relative time"));
-					scols_line_set_data(ln, j, buf);
-					break;
-				case COL_RESOL_RAW:
-					if (resolution.tv_nsec == -1)
-						break;
-					scols_line_format_timespec(ln, j, &resolution);
-					break;
-				case COL_REL_TIME:
-					if (now.tv_nsec == -1)
-						break;
-					rc = strtimespec_relative(&now, buf, sizeof(buf));
-					if (rc)
-						errx(EXIT_FAILURE, _("failed to format relative time"));
-					scols_line_set_data(ln, j, buf);
-					break;
-				case COL_NS_OFFSET:
-					if (clockinfo->ns_offset_name)
-						scols_line_asprintf(ln, j, "%"PRId64,
-								    get_namespace_offset(clockinfo->ns_offset_name));
-					break;
-			}
-		}
-	}
+	for (i = 0; i < ARRAY_SIZE(clocks); i++)
+		add_clock_line(tb, columns, ncolumns, &clocks[i]);
 
 	scols_table_enable_json(tb, json);
 	scols_table_enable_raw(tb, raw);
