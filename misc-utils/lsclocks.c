@@ -32,6 +32,8 @@
 #include "timeutils.h"
 #include "closestream.h"
 #include "xalloc.h"
+#include "pathnames.h"
+#include "all-io.h"
 
 #define CLOCKFD 3
 #define FD_TO_CLOCKID(fd) ((~(clockid_t) (fd) << 3) | CLOCKFD)
@@ -76,15 +78,18 @@ struct clockinfo {
 	clockid_t id;
 	const char * const id_name;
 	const char * const name;
+	const char * const ns_offset_name;
 };
 
 static const struct clockinfo clocks[] = {
 	{ CLOCK_REALTIME,         "CLOCK_REALTIME",         "realtime"         },
-	{ CLOCK_MONOTONIC,        "CLOCK_MONOTONIC",        "monotonic"        },
+	{ CLOCK_MONOTONIC,        "CLOCK_MONOTONIC",        "monotonic",
+	  .ns_offset_name = "monotonic"                                        },
 	{ CLOCK_MONOTONIC_RAW,    "CLOCK_MONOTONIC_RAW",    "monotonic-raw"    },
 	{ CLOCK_REALTIME_COARSE,  "CLOCK_REALTIME_COARSE",  "realtime-coarse"  },
 	{ CLOCK_MONOTONIC_COARSE, "CLOCK_MONOTONIC_COARSE", "monotonic-coarse" },
-	{ CLOCK_BOOTTIME,         "CLOCK_BOOTTIME",         "boottime"         },
+	{ CLOCK_BOOTTIME,         "CLOCK_BOOTTIME",         "boottime",
+	  .ns_offset_name = "boottime"                                         },
 	{ CLOCK_REALTIME_ALARM,   "CLOCK_REALTIME_ALARM",   "realtime-alarm"   },
 	{ CLOCK_BOOTTIME_ALARM,   "CLOCK_BOOTTIME_ALARM",   "boottime-alarm"   },
 	{ CLOCK_TAI,              "CLOCK_TAI",              "tai"              },
@@ -100,6 +105,7 @@ enum {
 	COL_RESOL,
 	COL_RESOL_RAW,
 	COL_REL_TIME,
+	COL_NS_OFFSET,
 };
 
 /* column names */
@@ -121,6 +127,7 @@ static const struct colinfo infos[] = {
 	[COL_RESOL]      = { "RESOL",      1, SCOLS_FL_RIGHT, SCOLS_JSON_STRING, N_("human readable resolution") },
 	[COL_RESOL_RAW]  = { "RESOL_RAW",  1, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER, N_("resolution") },
 	[COL_REL_TIME]   = { "REL_TIME",   1, SCOLS_FL_RIGHT, SCOLS_JSON_STRING, N_("human readable relative time") },
+	[COL_NS_OFFSET]  = { "NS_OFFSET",  1, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER, N_("namespace offset") },
 };
 
 static int column_name_to_id(const char *name, size_t namesz)
@@ -208,6 +215,38 @@ static clockid_t parse_clock(const char *name)
 	}
 
 	errx(EXIT_FAILURE, _("Unknown clock: %s"), name);
+}
+
+static int64_t get_namespace_offset(const char *name)
+{
+	char *tokstr, *buf, *saveptr, *line, *space;
+	uint64_t ret;
+	int fd;
+
+	fd = open(_PATH_PROC_TIMENS_OFF, O_RDONLY);
+	if (fd == -1)
+		err(EXIT_FAILURE, _("Could not open %s"), _PATH_PROC_TIMENS_OFF);
+
+	read_all_alloc(fd, &buf);
+
+	for (tokstr = buf; ; tokstr = NULL) {
+		line = strtok_r(tokstr, "\n", &saveptr);
+		if (!line)
+			continue;
+		line = (char *) startswith(line, name);
+		if (!line || line[0] != ' ')
+			continue;
+
+		line = (char *) skip_blank(line);
+		space = strchr(line, ' ');
+		if (space)
+			*space = '\0';
+		ret = strtos64_or_err(line, _("Invalid offset"));
+		break;
+	}
+
+	free(buf);
+	return ret;
 }
 
 int main(int argc, char **argv)
@@ -385,6 +424,11 @@ int main(int argc, char **argv)
 					if (rc)
 						errx(EXIT_FAILURE, _("failed to format relative time"));
 					scols_line_set_data(ln, j, buf);
+					break;
+				case COL_NS_OFFSET:
+					if (clockinfo->ns_offset_name)
+						scols_line_asprintf(ln, j, "%"PRId64,
+								    get_namespace_offset(clockinfo->ns_offset_name));
 					break;
 			}
 		}

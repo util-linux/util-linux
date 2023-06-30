@@ -72,6 +72,9 @@ Human readable version of *RESOL_RAW*.
 REL_TIME <``string``>::
 *TIME* time formatted as time range.
 
+NS_OFFSET <``number``>::
+Offset of the current namespace to the parent namespace as read from */proc/self/timens_offsets*.
+
 
 == AUTHORS
 

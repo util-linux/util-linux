@@ -108,6 +108,7 @@
 #define _PATH_PROC_SETGROUPS	"/proc/self/setgroups"
 
 #define _PATH_PROC_FDDIR	"/proc/self/fd"
+#define _PATH_PROC_TIMENS_OFF   "/proc/self/timens_offsets"
 
 #define _PATH_PROC_ATTR_CURRENT	"/proc/self/attr/current"
 #define _PATH_PROC_ATTR_EXEC	"/proc/self/attr/exec"
