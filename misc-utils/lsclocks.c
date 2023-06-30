@@ -98,6 +98,7 @@ enum {
 	COL_TIME,
 	COL_ISO_TIME,
 	COL_RESOLUTION,
+	COL_REL_TIME,
 };
 
 /* column names */
@@ -117,6 +118,7 @@ static const struct colinfo infos[] = {
 	[COL_TIME]       = { "TIME",       1, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER, N_("numeric time") },
 	[COL_ISO_TIME]   = { "ISO_TIME",   1, SCOLS_FL_RIGHT, SCOLS_JSON_STRING, N_("human readable ISO time") },
 	[COL_RESOLUTION] = { "RESOLUTION", 1, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER, N_("resolution") },
+	[COL_REL_TIME]   = { "REL_TIME",   1, SCOLS_FL_RIGHT, SCOLS_JSON_STRING, N_("human readable relative time") },
 };
 
 static int column_name_to_id(const char *name, size_t namesz)
@@ -224,7 +226,7 @@ int main(int argc, char **argv)
 	clockid_t clock = -1;
 
 	struct timespec resolution, now;
-	char buf[FORMAT_TIMESTAMP_MAX];
+	char buf[BUFSIZ];
 
 	enum {
 		OPT_OUTPUT_ALL = CHAR_MAX + 1
@@ -360,6 +362,14 @@ int main(int argc, char **argv)
 					rc = clock_getres(clockinfo->id, &resolution);
 					if (!rc)
 						scols_line_format_timespec(ln, j, &resolution);
+					break;
+				case COL_REL_TIME:
+					if (now.tv_nsec == -1)
+						break;
+					rc = strtimespec_relative(&now, buf, sizeof(buf));
+					if (rc)
+						errx(EXIT_FAILURE, _("failed to format relative time"));
+					scols_line_set_data(ln, j, buf);
 					break;
 			}
 		}

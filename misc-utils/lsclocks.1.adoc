@@ -66,6 +66,9 @@ ISO8601 formatted version of *TIME*.
 RESOLUTION <``number``>::
 Clock resolution as returned by *clock_getres()*.
 
+REL_TIME <``string``>::
+*TIME* time formatted as time range.
+
 
 == AUTHORS
 
