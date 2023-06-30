@@ -34,9 +34,24 @@
 #include "xalloc.h"
 #include "pathnames.h"
 #include "all-io.h"
+#include "list.h"
 
 #define CLOCKFD 3
-#define FD_TO_CLOCKID(fd) ((~(clockid_t) (fd) << 3) | CLOCKFD)
+
+static inline clockid_t FD_TO_CLOCKID(int fd)
+{
+	return (~(unsigned int) fd << 3) | CLOCKFD;
+}
+
+static inline int CLOCKID_TO_FD(clockid_t clk)
+{
+	return ~(clk >> 3);
+}
+
+static inline bool CLOCKID_IS_DYNAMIC(clockid_t clk)
+{
+	return CLOCKID_TO_FD(clk) <= 0;
+}
 
 #ifndef CLOCK_REALTIME
 #define CLOCK_REALTIME			0
@@ -76,6 +91,7 @@
 
 enum CLOCK_TYPE {
 	CT_SYS,
+	CT_PTP,
 };
 
 static const char *clock_type_name(enum CLOCK_TYPE type)
@@ -83,6 +99,8 @@ static const char *clock_type_name(enum CLOCK_TYPE type)
 	switch (type) {
 	case CT_SYS:
 		return "sys";
+	case CT_PTP:
+		return "ptp";
 	}
 	errx(EXIT_FAILURE, _("Unknown clock type %d"), type);
 }
@@ -170,15 +188,16 @@ static void __attribute__((__noreturn__)) usage(void)
 	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -J, --json              use JSON output format\n"), out);
-	fputs(_(" -n, --noheadings        don't print headings\n"), out);
-	fputs(_(" -o, --output <list>     output columns\n"), out);
-	fputs(_("     --output-all        output all columns\n"), out);
-	fputs(_(" -r, --raw               use raw output format\n"), out);
-	fputs(_(" -t, --time <clock>      show current time of single clock\n"), out);
+	fputs(_(" -J, --json                 use JSON output format\n"), out);
+	fputs(_(" -n, --noheadings           don't print headings\n"), out);
+	fputs(_(" -o, --output <list>        output columns\n"), out);
+	fputs(_("     --output-all           output all columns\n"), out);
+	fputs(_(" -r, --raw                  use raw output format\n"), out);
+	fputs(_(" -t, --time <clock>         show current time of single clock\n"), out);
+	fputs(_(" -d, --dynamic-clock <path> also display specified dynamic clock\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(25));
+	printf(USAGE_HELP_OPTIONS(29));
 
 	fprintf(out, USAGE_COLUMNS);
 
@@ -293,7 +312,8 @@ static void add_clock_line(struct libscols_table *tb, const int *columns,
 				scols_line_set_data(ln, i, clock_type_name(clockinfo->type));
 				break;
 			case COL_ID:
-				scols_line_asprintf(ln, i, "%ju", (uintmax_t) clockinfo->id);
+				if (CLOCKID_IS_DYNAMIC(clockinfo->id))
+					scols_line_asprintf(ln, i, "%ju", (uintmax_t) clockinfo->id);
 				break;
 			case COL_CLOCK:
 				scols_line_set_data(ln, i, clockinfo->id_name);
@@ -349,6 +369,29 @@ static void add_clock_line(struct libscols_table *tb, const int *columns,
 	}
 }
 
+struct dynamic_clock {
+	struct list_head head;
+	const char * path;
+};
+
+static void add_dynamic_clock_from_path(struct libscols_table *tb,
+					const int *columns, size_t ncolumns,
+					const char *path)
+{
+	int fd = open(path, O_RDONLY);
+	if (fd == -1)
+		err(EXIT_FAILURE, _("Could not open %s"), path);
+
+	struct clockinfo clockinfo = {
+		.type = CT_PTP,
+		.id = FD_TO_CLOCKID(fd),
+		.id_name = path,
+		.name = path,
+	};
+	add_clock_line(tb, columns, ncolumns, &clockinfo);
+	close(fd);
+}
+
 int main(int argc, char **argv)
 {
 	size_t i;
@@ -363,6 +406,9 @@ int main(int argc, char **argv)
 	int columns[ARRAY_SIZE(infos) * 2];
 	size_t ncolumns = 0;
 	clockid_t clock = -1;
+	struct dynamic_clock *dynamic_clock;
+	struct list_head *current_dynamic_clock;
+	struct list_head dynamic_clocks;
 
 	struct timespec now;
 
@@ -370,14 +416,15 @@ int main(int argc, char **argv)
 		OPT_OUTPUT_ALL = CHAR_MAX + 1
 	};
 	static const struct option longopts[] = {
-		{ "noheadings", no_argument,       NULL, 'n' },
-		{ "output",     required_argument, NULL, 'o' },
-		{ "output-all",	no_argument,       NULL, OPT_OUTPUT_ALL },
-		{ "version",    no_argument,       NULL, 'V' },
-		{ "help",	no_argument,       NULL, 'h' },
-		{ "json",       no_argument,       NULL, 'J' },
-		{ "raw",        no_argument,       NULL, 'r' },
-		{ "time",       required_argument, NULL, 't' },
+		{ "noheadings",    no_argument,       NULL, 'n' },
+		{ "output",        required_argument, NULL, 'o' },
+		{ "output-all",	   no_argument,       NULL, OPT_OUTPUT_ALL },
+		{ "version",       no_argument,       NULL, 'V' },
+		{ "help",	   no_argument,       NULL, 'h' },
+		{ "json",          no_argument,       NULL, 'J' },
+		{ "raw",           no_argument,       NULL, 'r' },
+		{ "time",          required_argument, NULL, 't' },
+		{ "dynamic-clock", required_argument, NULL, 'd' },
 		{ 0 }
 	};
 
@@ -386,7 +433,9 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "no:Jrt:Vh", longopts, NULL)) != -1) {
+	INIT_LIST_HEAD(&dynamic_clocks);
+
+	while ((c = getopt_long(argc, argv, "no:Jrt:d:Vh", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'n':
 			noheadings = true;
@@ -406,6 +455,11 @@ int main(int argc, char **argv)
 			break;
 		case 't':
 			clock = parse_clock(optarg);
+			break;
+		case 'd':
+			dynamic_clock = xmalloc(sizeof(*dynamic_clock));
+			dynamic_clock->path = optarg;
+			list_add(&dynamic_clock->head, &dynamic_clocks);
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
@@ -459,6 +513,13 @@ int main(int argc, char **argv)
 
 	for (i = 0; i < ARRAY_SIZE(clocks); i++)
 		add_clock_line(tb, columns, ncolumns, &clocks[i]);
+
+	list_for_each(current_dynamic_clock, &dynamic_clocks) {
+		dynamic_clock = list_entry(current_dynamic_clock, struct dynamic_clock, head);
+		add_dynamic_clock_from_path(tb, columns, ncolumns, dynamic_clock->path);
+	}
+
+	list_free(&dynamic_clocks, struct dynamic_clock, head, free);
 
 	scols_table_enable_json(tb, json);
 	scols_table_enable_raw(tb, raw);

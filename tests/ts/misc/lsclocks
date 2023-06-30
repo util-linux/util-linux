@@ -39,4 +39,14 @@ ts_init_subtest time
 
 ts_finalize_subtest
 
+ts_init_subtest dynamic
+
+if [ -c /dev/ptp0 ] && [ -r /dev/ptp0 ]; then
+	"$TS_CMD_LSCLOCKS" --dynamic-clock /dev/ptp0 --output TYPE,ID,CLOCK,NAME \
+		| tail -1 > "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+	ts_finalize_subtest
+else
+	ts_skip_subtest "/dev/ptp0 not usable"
+fi
+
 ts_finalize
