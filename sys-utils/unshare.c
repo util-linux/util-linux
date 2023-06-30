@@ -212,12 +212,12 @@ static ino_t get_mnt_ino(pid_t pid)
 	return st.st_ino;
 }
 
-static void settime(time_t offset, clockid_t clk_id)
+static void settime(int64_t offset, clockid_t clk_id)
 {
 	char buf[sizeof(stringify_value(ULONG_MAX)) * 3];
 	int fd, len;
 
-	len = snprintf(buf, sizeof(buf), "%d %" PRId64 " 0", clk_id, (int64_t) offset);
+	len = snprintf(buf, sizeof(buf), "%d %" PRId64 " 0", clk_id, offset);
 
 	fd = open("/proc/self/timens_offsets", O_WRONLY);
 	if (fd < 0)
@@ -764,8 +764,8 @@ int main(int argc, char *argv[])
 	uid_t uid = 0, real_euid = geteuid();
 	gid_t gid = 0, real_egid = getegid();
 	int keepcaps = 0;
-	time_t monotonic = 0;
-	time_t boottime = 0;
+	int64_t monotonic = 0;
+	int64_t boottime = 0;
 	int force_monotonic = 0;
 	int force_boottime = 0;
 
@@ -895,11 +895,11 @@ int main(int argc, char *argv[])
 			newdir = optarg;
 			break;
                 case OPT_MONOTONIC:
-			monotonic = strtoul_or_err(optarg, _("failed to parse monotonic offset"));
+			monotonic = strtos64_or_err(optarg, _("failed to parse monotonic offset"));
 			force_monotonic = 1;
 			break;
                 case OPT_BOOTTIME:
-			boottime = strtoul_or_err(optarg, _("failed to parse boottime offset"));
+			boottime = strtos64_or_err(optarg, _("failed to parse boottime offset"));
 			force_boottime = 1;
 			break;
 
