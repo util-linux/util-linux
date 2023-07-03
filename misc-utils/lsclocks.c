@@ -289,11 +289,10 @@ int main(int argc, char **argv)
 
 	if (!ncolumns) {
 		columns[ncolumns++] = COL_ID;
-		columns[ncolumns++] = COL_CLOCK;
 		columns[ncolumns++] = COL_NAME;
 		columns[ncolumns++] = COL_TIME;
-		columns[ncolumns++] = COL_ISO_TIME;
 		columns[ncolumns++] = COL_RESOLUTION;
+		columns[ncolumns++] = COL_ISO_TIME;
 	}
 
 	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
