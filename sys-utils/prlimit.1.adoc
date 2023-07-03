@@ -33,7 +33,7 @@ The _limits_ parameter is composed of a soft and a hard value, separated by a co
 Because of the nature of limits, the soft limit must be lower or equal to the high limit (also called the ceiling). To see all available resource limits, refer to the *RESOURCE OPTIONS* section.
 
 //TRANSLATORS: Keep {colon} untranslated.
-* _soft_{colon}_hard_ Specify both limits.
+* _soft_{colon}__hard__ Specify both limits.
 * _soft_{colon} Specify only the soft limit.
 * {colon}__hard__ Specify only the hard limit.
 * _value_ Specify both limits to the same value.
@@ -43,10 +43,10 @@ Because of the nature of limits, the soft limit must be lower or equal to the hi
 *--noheadings*::
 Do not print a header line.
 
-*-o, --output* _list_::
+*-o*, *--output* _list_::
 Define the output columns to use. If no output arrangement is specified, then a default set is used. Use *--help* to get a list of all supported columns.
 
-*-p, --pid*::
+*-p*, *--pid*::
 Specify the process id; if none is given, the running process will be used.
 
 *--raw*::
@@ -59,52 +59,52 @@ include::man-common/help-version.adoc[]
 
 == RESOURCE OPTIONS
 
-*-c, --core*[=_limits_]::
+*-c*, *--core*[=_limits_]::
 Maximum size of a core file.
 
-*-d, --data*[=_limits_]::
+*-d*, *--data*[=_limits_]::
 Maximum data size.
 
-*-e, --nice*[=_limits_]::
+*-e*, *--nice*[=_limits_]::
 Maximum nice priority allowed to raise.
 
-*-f, --fsize*[=_limits_]::
+*-f*, *--fsize*[=_limits_]::
 Maximum file size.
 
-*-i, --sigpending*[=_limits_]::
+*-i*, *--sigpending*[=_limits_]::
 Maximum number of pending signals.
 
-*-l, --memlock*[=_limits_]::
+*-l*, *--memlock*[=_limits_]::
 Maximum locked-in-memory address space.
 
-*-m, --rss*[=_limits_]::
+*-m*, *--rss*[=_limits_]::
 Maximum Resident Set Size (RSS).
 
-*-n, --nofile*[=_limits_]::
+*-n*, *--nofile*[=_limits_]::
 Maximum number of open files.
 
-*-q, --msgqueue*[=_limits_]::
+*-q*, *--msgqueue*[=_limits_]::
 Maximum number of bytes in POSIX message queues.
 
-*-r, --rtprio*[=_limits_]::
+*-r*, *--rtprio*[=_limits_]::
 Maximum real-time priority.
 
-*-s, --stack*[=_limits_]::
+*-s*, *--stack*[=_limits_]::
 Maximum size of the stack.
 
-*-t, --cpu*[=_limits_]::
+*-t*, *--cpu*[=_limits_]::
 CPU time, in seconds.
 
-*-u, --nproc*[=_limits_]::
+*-u*, *--nproc*[=_limits_]::
 Maximum number of processes.
 
-*-v, --as*[=_limits_]::
+*-v*, *--as*[=_limits_]::
 Address space limit.
 
-*-x, --locks*[=_limits_]::
+*-x*, *--locks*[=_limits_]::
 Maximum number of file locks held.
 
-*-y, --rttime*[=_limits_]::
+*-y*, *--rttime*[=_limits_]::
 Timeout for real-time tasks.
 
 == NOTES
