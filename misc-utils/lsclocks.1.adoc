@@ -63,7 +63,7 @@ Current clock timestamp as returned by *clock_gettime()*.
 ISO_TIME <``string``>::
 ISO8601 formatted version of *TIME*.
 
-RESOLUTION <``number``>::
+RESOL_RAW <``number``>::
 Clock resolution as returned by *clock_getres()*.
 
 REL_TIME <``string``>::

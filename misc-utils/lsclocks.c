@@ -97,7 +97,7 @@ enum {
 	COL_NAME,
 	COL_TIME,
 	COL_ISO_TIME,
-	COL_RESOLUTION,
+	COL_RESOL_RAW,
 	COL_REL_TIME,
 };
 
@@ -117,7 +117,7 @@ static const struct colinfo infos[] = {
 	[COL_NAME]       = { "NAME",       1, 0,              SCOLS_JSON_STRING, N_("readable name") },
 	[COL_TIME]       = { "TIME",       1, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER, N_("numeric time") },
 	[COL_ISO_TIME]   = { "ISO_TIME",   1, SCOLS_FL_RIGHT, SCOLS_JSON_STRING, N_("human readable ISO time") },
-	[COL_RESOLUTION] = { "RESOLUTION", 1, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER, N_("resolution") },
+	[COL_RESOL_RAW]  = { "RESOL_RAW",  1, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER, N_("resolution") },
 	[COL_REL_TIME]   = { "REL_TIME",   1, SCOLS_FL_RIGHT, SCOLS_JSON_STRING, N_("human readable relative time") },
 };
 
@@ -293,7 +293,7 @@ int main(int argc, char **argv)
 		columns[ncolumns++] = COL_ID;
 		columns[ncolumns++] = COL_NAME;
 		columns[ncolumns++] = COL_TIME;
-		columns[ncolumns++] = COL_RESOLUTION;
+		columns[ncolumns++] = COL_RESOL_RAW;
 		columns[ncolumns++] = COL_ISO_TIME;
 	}
 
@@ -358,7 +358,7 @@ int main(int argc, char **argv)
 						errx(EXIT_FAILURE, _("failed to format iso time"));
 					scols_line_set_data(ln, j, buf);
 					break;
-				case COL_RESOLUTION:
+				case COL_RESOL_RAW:
 					rc = clock_getres(clockinfo->id, &resolution);
 					if (!rc)
 						scols_line_format_timespec(ln, j, &resolution);
