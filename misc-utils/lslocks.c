@@ -178,6 +178,10 @@ static char *get_filename_sz(ino_t inode, pid_t lock_pid, size_t *size)
 	memset(path, 0, sizeof(path));
 	memset(sym, 0, sizeof(sym));
 
+	if (lock_pid < 0)
+		/* pid could be -1 for OFD locks */
+		return NULL;
+
 	/*
 	 * We know the pid so we don't have to
 	 * iterate the *entire* filesystem searching
