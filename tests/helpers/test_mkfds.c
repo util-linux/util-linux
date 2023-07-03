@@ -25,6 +25,7 @@
 #include <getopt.h>
 #include <linux/if_ether.h>
 #include <linux/if_packet.h>
+#include <linux/if_tun.h>
 #include <linux/netlink.h>
 #include <linux/sockios.h>  /* SIOCGSKNS */
 #include <mqueue.h>
@@ -2466,6 +2467,62 @@ static void *make_signalfd(const struct factory *factory _U_, struct fdesc fdesc
 	return NULL;
 }
 
+
+/* ref. linux/Documentation/networking/tuntap.rst */
+static void *make_cdev_tun(const struct factory *factory _U_, struct fdesc fdescs[],
+			   int argc _U_, char ** argv _U_)
+{
+	int tfd = open("/dev/net/tun", O_RDWR);
+	struct ifreq ifr;
+
+	if (tfd < 0)
+		err(EXIT_FAILURE, "failed in opening /dev/net/tun");
+
+	memset(&ifr, 0, sizeof(ifr));
+
+	ifr.ifr_flags = IFF_TUN;
+	strcpy(ifr.ifr_name, "mkfds%d");
+
+	if (ioctl(tfd, TUNSETIFF, (void *) &ifr) < 0) {
+		int e = errno;
+		close(tfd);
+		errno = e;
+		err(EXIT_FAILURE, "failed in setting \"lo\" to the tun device");
+	}
+
+	if (tfd != fdescs[0].fd) {
+		if (dup2(tfd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(tfd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", tfd, fdescs[0].fd);
+		}
+		close(tfd);
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL
+	};
+
+	return xstrdup(ifr.ifr_name);
+}
+
+static void report_cdev_tun(const struct factory *factory _U_,
+			    int nth, void *data, FILE *fp)
+{
+	if (nth == 0) {
+		char *devname = data;
+		fprintf(fp, "%s", devname);
+	}
+}
+
+static void free_cdev_tun(const struct factory * factory _U_, void *data)
+{
+	free(data);
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -3135,6 +3192,20 @@ static const struct factory factories[] = {
 		.N    = 1,
 		.EX_N = 0,
 		.make = make_signalfd,
+		.params = (struct parameter []) {
+			PARAM_END
+		}
+	},
+	{
+		.name = "cdev-tun",
+		.desc = "open /dev/net/tun",
+		.priv = true,
+		.N    = 1,
+		.EX_N = 0,
+		.EX_R = 1,
+		.make = make_cdev_tun,
+		.report = report_cdev_tun,
+		.free = free_cdev_tun,
 		.params = (struct parameter []) {
 			PARAM_END
 		}
