@@ -146,6 +146,20 @@ void decode_source(char *buf, size_t bufsize,
 			 dev_minor);
 }
 
+static char *strnrstr(const char *haystack, const char *needle, size_t needle_len)
+{
+	char *last = strstr(haystack, needle);
+	if (last == NULL)
+		return NULL;
+
+	do {
+		char *current = strstr(last + needle_len, needle);
+		if (current == NULL)
+			return last;
+		last = current;
+	} while (1);
+}
+
 static bool file_fill_column(struct proc *proc,
 			     struct file *file,
 			     struct libscols_line *ln,
@@ -162,8 +176,22 @@ static bool file_fill_column(struct proc *proc,
 		    && scols_line_set_data(ln, column_index, proc->command))
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
-	case COL_KNAME:
 	case COL_NAME:
+		if (file->name && file->stat.st_nlink == 0) {
+			char *d = strnrstr(file->name, "(deleted)",
+					   sizeof("(deleted)") - 1);
+			if (d) {
+				int r;
+				*d = '\0';
+				r = scols_line_set_data(ln, column_index, file->name);
+				*d = '(';
+				if (r)
+					err(EXIT_FAILURE, _("failed to add output data"));
+				return true;
+			}
+		}
+		/* FALL THROUGH */
+	case COL_KNAME:
 		if (file->name
 		    && scols_line_set_data(ln, column_index, file->name))
 			err(EXIT_FAILURE, _("failed to add output data"));
@@ -268,6 +296,19 @@ static bool file_fill_column(struct proc *proc,
 		else
 			xasprintf(&str, "---");
 		break;
+	case COL_XMODE: {
+		char r, w, x;
+		char D = file->stat.st_nlink == 0? 'D': '-';
+		if (does_file_has_fdinfo_alike(file)) {
+			r = file->mode & S_IRUSR? 'r': '-';
+			w = file->mode & S_IWUSR? 'w': '-';
+			x = (is_mapped_file(file)
+			     && file->mode & S_IXUSR)? 'x': '-';
+		} else
+			r = w = x = '-';
+		xasprintf(&str, "%c%c%c%c", r, w, x, D);
+		break;
+	}
 	case COL_POS:
 		xasprintf(&str, "%" PRIu64,
 			  (does_file_has_fdinfo_alike(file))? file->pos: 0);

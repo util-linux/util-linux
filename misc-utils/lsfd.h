@@ -114,6 +114,7 @@ enum {
 	COL_UID,		/* process */
 	COL_UNIX_PATH,
 	COL_USER,		/* process */
+	COL_XMODE,
 	LSFD_N_COLS		/* This must be at last. */
 };
 
