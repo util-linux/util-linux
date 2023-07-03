@@ -57,8 +57,10 @@ enum {
 	ISO_TIMEZONE		= (1 << 2),
 	ISO_DOTUSEC		= (1 << 3),
 	ISO_COMMAUSEC		= (1 << 4),
-	ISO_T			= (1 << 5),
-	ISO_GMTIME		= (1 << 6),
+	ISO_DOTNSEC		= (1 << 5),
+	ISO_COMMANSEC		= (1 << 6),
+	ISO_T			= (1 << 7),
+	ISO_GMTIME		= (1 << 8),
 	ISO_TIMESTAMP		= ISO_DATE | ISO_TIME | ISO_TIMEZONE,
 	ISO_TIMESTAMP_T		= ISO_TIMESTAMP | ISO_T,
 	ISO_TIMESTAMP_DOT	= ISO_TIMESTAMP | ISO_DOTUSEC,
@@ -72,9 +74,10 @@ enum {
 #define CTIME_BUFSIZ	26
 #define ISO_BUFSIZ	42
 
-int strtimeval_iso(struct timeval *tv, int flags, char *buf, size_t bufsz);
-int strtm_iso(struct tm *tm, int flags, char *buf, size_t bufsz);
+int strtimeval_iso(const struct timeval *tv, int flags, char *buf, size_t bufsz);
+int strtm_iso(const struct tm *tm, int flags, char *buf, size_t bufsz);
 int strtime_iso(const time_t *t, int flags, char *buf, size_t bufsz);
+int strtimespec_iso(const struct timespec *t, int flags, char *buf, size_t bufsz);
 
 #define UL_SHORTTIME_THISYEAR_HHMM (1 << 1)
 

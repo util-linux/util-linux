@@ -448,8 +448,9 @@ int get_gmtoff(const struct tm *tp)
 #endif
 }
 
-static int format_iso_time(struct tm *tm, suseconds_t usec, int flags, char *buf, size_t bufsz)
+static int format_iso_time(const struct tm *tm, uint32_t nsec, int flags, char *buf, size_t bufsz)
 {
+	uint32_t usec = nsec / NSEC_PER_USEC;
 	char *p = buf;
 	int len;
 
@@ -479,15 +480,28 @@ static int format_iso_time(struct tm *tm, suseconds_t usec, int flags, char *buf
 		p += len;
 	}
 
-	if (flags & ISO_DOTUSEC) {
-		len = snprintf(p, bufsz, ".%06"PRId64, (int64_t) usec);
+	if (flags & ISO_DOTNSEC) {
+		len = snprintf(p, bufsz, ".%09"PRIu32, nsec);
+		if (len < 0 || (size_t) len > bufsz)
+			goto err;
+		bufsz -= len;
+		p += len;
+
+	} else if (flags & ISO_COMMANSEC) {
+		len = snprintf(p, bufsz, ",%09"PRIu32, nsec);
+		if (len < 0 || (size_t) len > bufsz)
+			goto err;
+		bufsz -= len;
+		p += len;
+	} else if (flags & ISO_DOTUSEC) {
+		len = snprintf(p, bufsz, ".%06"PRIu32, usec);
 		if (len < 0 || (size_t) len > bufsz)
 			goto err;
 		bufsz -= len;
 		p += len;
 
 	} else if (flags & ISO_COMMAUSEC) {
-		len = snprintf(p, bufsz, ",%06"PRId64, (int64_t) usec);
+		len = snprintf(p, bufsz, ",%06"PRIu32, usec);
 		if (len < 0 || (size_t) len > bufsz)
 			goto err;
 		bufsz -= len;
@@ -508,26 +522,37 @@ static int format_iso_time(struct tm *tm, suseconds_t usec, int flags, char *buf
 	return -1;
 }
 
-/* timeval to ISO 8601 */
-int strtimeval_iso(struct timeval *tv, int flags, char *buf, size_t bufsz)
+/* timespec to ISO 8601 */
+int strtimespec_iso(const struct timespec *ts, int flags, char *buf, size_t bufsz)
 {
 	struct tm tm;
 	struct tm *rc;
 
 	if (flags & ISO_GMTIME)
-		rc = gmtime_r(&tv->tv_sec, &tm);
+		rc = gmtime_r(&ts->tv_sec, &tm);
 	else
-		rc = localtime_r(&tv->tv_sec, &tm);
+		rc = localtime_r(&ts->tv_sec, &tm);
 
 	if (rc)
-		return format_iso_time(&tm, tv->tv_usec, flags, buf, bufsz);
+		return format_iso_time(&tm, ts->tv_nsec, flags, buf, bufsz);
 
-	warnx(_("time %"PRId64" is out of range."), (int64_t)(tv->tv_sec));
+	warnx(_("time %"PRId64" is out of range."), (int64_t)(ts->tv_sec));
 	return -1;
 }
 
+/* timeval to ISO 8601 */
+int strtimeval_iso(const struct timeval *tv, int flags, char *buf, size_t bufsz)
+{
+	struct timespec ts = {
+		.tv_sec = tv->tv_sec,
+		.tv_nsec = tv->tv_usec * NSEC_PER_USEC,
+	};
+
+	return strtimespec_iso(&ts, flags, buf, bufsz);
+}
+
 /* struct tm to ISO 8601 */
-int strtm_iso(struct tm *tm, int flags, char *buf, size_t bufsz)
+int strtm_iso(const struct tm *tm, int flags, char *buf, size_t bufsz)
 {
 	return format_iso_time(tm, 0, flags, buf, bufsz);
 }

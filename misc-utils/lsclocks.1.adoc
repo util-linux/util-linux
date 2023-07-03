@@ -1,0 +1,81 @@
+//po4a: entry man manual
+= lsclocks(1)
+:doctype: manpage
+:man manual: User Commands
+:man source: util-linux {release-version}
+:page-layout: base
+:command: lsclocks
+
+== NAME
+
+lsclocks - display system clocks
+
+== SYNOPSIS
+
+*lsclocks* [option]
+
+== DESCRIPTION
+
+*lsclocks* is a simple command to display system clocks.
+
+It allows to display information like current time and resolutionof clocks like
+CLOCK_MONOTONIC, CLOCK_REALTIME and CLOCK_BOOTTIME.
+
+== OPTIONS
+
+*-J*, *--json*::
+Use JSON output format.
+
+*-n*, *--noheadings*::
+Don't print headings.
+
+*-o*, *--output* _list_::
+Specify which output columns to print. See the *OUTPUT COLUMNS*
+section for details of available columns.
+
+*-r*, *--raw*::
+Use raw output format.
+
+*-r*, *--time* _clock_
+Show current time of one specific clocks.
+
+include::man-common/help-version.adoc[]
+
+== OUTPUT COLUMNS
+
+Each column has a type. Types are surround by < and >.
+
+ID <``number``>::
+Numeric clock ID.
+
+CLOCK <``string``>::
+Name in the form *CLOCK_*
+
+NAME <``string``>::
+Shorter, easier to read name.
+
+TIME <``number``>::
+Current clock timestamp as returned by *clock_gettime()*.
+
+ISO_TIME <``string``>::
+ISO8601 formatted version of *TIME*.
+
+RESOLUTION <``number``>::
+Clock resolution as returned by *clock_getres()*.
+
+
+== AUTHORS
+
+mailto:thomas@t-8ch.de[Thomas Weißschuh]
+
+== SEE ALSO
+
+*clock_getres*(2) *clock_gettime*(2)
+
+include::man-common/bugreports.adoc[]
+
+include::man-common/footer.adoc[]
+
+ifdef::translation[]
+include::man-common/translation.adoc[]
+endif::[]

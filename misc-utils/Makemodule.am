@@ -316,3 +316,11 @@ enosys_SOURCES = misc-utils/enosys.c
 enosys_LDADD = $(LDADD) libcommon.la
 enosys_CFLAGS = $(AM_CFLAGS)
 endif
+
+if BUILD_LSCLOCKS
+usrbin_exec_PROGRAMS += lsclocks
+MANPAGES += misc-utils/lsclocks.1
+lsclocks_SOURCES = misc-utils/lsclocks.c
+lsclocks_LDADD = $(LDADD) libcommon.la libsmartcols.la
+lsclocks_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
+endif
