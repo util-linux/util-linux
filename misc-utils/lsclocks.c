@@ -97,6 +97,7 @@ enum {
 	COL_NAME,
 	COL_TIME,
 	COL_ISO_TIME,
+	COL_RESOL,
 	COL_RESOL_RAW,
 	COL_REL_TIME,
 };
@@ -117,6 +118,7 @@ static const struct colinfo infos[] = {
 	[COL_NAME]       = { "NAME",       1, 0,              SCOLS_JSON_STRING, N_("readable name") },
 	[COL_TIME]       = { "TIME",       1, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER, N_("numeric time") },
 	[COL_ISO_TIME]   = { "ISO_TIME",   1, SCOLS_FL_RIGHT, SCOLS_JSON_STRING, N_("human readable ISO time") },
+	[COL_RESOL]      = { "RESOL",      1, SCOLS_FL_RIGHT, SCOLS_JSON_STRING, N_("human readable resolution") },
 	[COL_RESOL_RAW]  = { "RESOL_RAW",  1, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER, N_("resolution") },
 	[COL_REL_TIME]   = { "REL_TIME",   1, SCOLS_FL_RIGHT, SCOLS_JSON_STRING, N_("human readable relative time") },
 };
@@ -293,7 +295,7 @@ int main(int argc, char **argv)
 		columns[ncolumns++] = COL_ID;
 		columns[ncolumns++] = COL_NAME;
 		columns[ncolumns++] = COL_TIME;
-		columns[ncolumns++] = COL_RESOL_RAW;
+		columns[ncolumns++] = COL_RESOL;
 		columns[ncolumns++] = COL_ISO_TIME;
 	}
 
@@ -330,6 +332,10 @@ int main(int argc, char **argv)
 		if (rc)
 			now.tv_nsec = -1;
 
+		rc = clock_getres(clockinfo->id, &resolution);
+		if (rc)
+			resolution.tv_nsec = -1;
+
 		for (j = 0; j < ncolumns; j++) {
 			switch (columns[j]) {
 				case COL_ID:
@@ -358,10 +364,19 @@ int main(int argc, char **argv)
 						errx(EXIT_FAILURE, _("failed to format iso time"));
 					scols_line_set_data(ln, j, buf);
 					break;
+				case COL_RESOL:
+					if (resolution.tv_nsec == -1)
+						break;
+
+					rc = strtimespec_relative(&resolution, buf, sizeof(buf));
+					if (rc)
+						errx(EXIT_FAILURE, _("failed to format relative time"));
+					scols_line_set_data(ln, j, buf);
+					break;
 				case COL_RESOL_RAW:
-					rc = clock_getres(clockinfo->id, &resolution);
-					if (!rc)
-						scols_line_format_timespec(ln, j, &resolution);
+					if (resolution.tv_nsec == -1)
+						break;
+					scols_line_format_timespec(ln, j, &resolution);
 					break;
 				case COL_REL_TIME:
 					if (now.tv_nsec == -1)

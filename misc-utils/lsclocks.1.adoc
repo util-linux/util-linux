@@ -66,6 +66,9 @@ ISO8601 formatted version of *TIME*.
 RESOL_RAW <``number``>::
 Clock resolution as returned by *clock_getres()*.
 
+RESOL <``number``>::
+Human readable version of *RESOL_RAW*.
+
 REL_TIME <``string``>::
 *TIME* time formatted as time range.
 
