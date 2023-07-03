@@ -33,6 +33,9 @@ Don't print headings.
 Specify which output columns to print. See the *OUTPUT COLUMNS*
 section for details of available columns.
 
+*--output-all*::
+Output all columns.
+
 *-r*, *--raw*::
 Use raw output format.
 

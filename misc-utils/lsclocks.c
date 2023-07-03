@@ -146,6 +146,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -J, --json              use JSON output format\n"), out);
 	fputs(_(" -n, --noheadings        don't print headings\n"), out);
 	fputs(_(" -o, --output <list>     output columns\n"), out);
+	fputs(_("     --output-all        output all columns\n"), out);
 	fputs(_(" -r, --raw               use raw output format\n"), out);
 	fputs(_(" -t, --time <clock>      show current time of single clock\n"), out);
 
@@ -208,8 +209,7 @@ static clockid_t parse_clock(const char *name)
 int main(int argc, char **argv)
 {
 	size_t i, j;
-	char c;
-	int rc;
+	int c, rc;
 	const struct colinfo *colinfo;
 	const struct clockinfo *clockinfo;
 
@@ -226,9 +226,13 @@ int main(int argc, char **argv)
 	struct timespec resolution, now;
 	char buf[FORMAT_TIMESTAMP_MAX];
 
+	enum {
+		OPT_OUTPUT_ALL = CHAR_MAX + 1
+	};
 	static const struct option longopts[] = {
 		{ "noheadings", no_argument,       NULL, 'n' },
 		{ "output",     required_argument, NULL, 'o' },
+		{ "output-all",	no_argument,       NULL, OPT_OUTPUT_ALL },
 		{ "version",    no_argument,       NULL, 'V' },
 		{ "help",	no_argument,       NULL, 'h' },
 		{ "json",       no_argument,       NULL, 'J' },
@@ -249,6 +253,10 @@ int main(int argc, char **argv)
 			break;
 		case 'o':
 			outarg = optarg;
+			break;
+		case OPT_OUTPUT_ALL:
+			for (ncolumns = 0; ncolumns < ARRAY_SIZE(infos); ncolumns++)
+				columns[ncolumns] = ncolumns;
 			break;
 		case 'J':
 			json = true;
