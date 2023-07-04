@@ -689,7 +689,7 @@ static int run_unittest_timestamp(void)
 
 int main(int argc, char *argv[])
 {
-	struct timeval tv = { 0 };
+	struct timespec ts = { 0 };
 	char buf[ISO_BUFSIZ];
 
 	if (argc < 2) {
@@ -705,25 +705,26 @@ int main(int argc, char *argv[])
 		usec_t usec = 0;
 
 		parse_timestamp(argv[2], &usec);
-		tv.tv_sec = (time_t) (usec / 1000000);
-		tv.tv_usec = usec % 1000000;
+		ts.tv_sec = (time_t) (usec / USEC_PER_SEC);
+		ts.tv_nsec = (usec % USEC_PER_SEC) * NSEC_PER_USEC;
 	} else {
-		tv.tv_sec = strtos64_or_err(argv[1], "failed to parse <time>");
+		ts.tv_sec = strtos64_or_err(argv[1], "failed to parse <time>");
 		if (argc == 3)
-			tv.tv_usec = strtos64_or_err(argv[2], "failed to parse <usec>");
+			ts.tv_nsec = strtos64_or_err(argv[2], "failed to parse <usec>")
+				     * NSEC_PER_USEC;
 	}
 
-	strtimeval_iso(&tv, ISO_DATE, buf, sizeof(buf));
+	strtimespec_iso(&ts, ISO_DATE, buf, sizeof(buf));
 	printf("Date: '%s'\n", buf);
 
-	strtimeval_iso(&tv, ISO_TIME, buf, sizeof(buf));
+	strtimespec_iso(&ts, ISO_TIME, buf, sizeof(buf));
 	printf("Time: '%s'\n", buf);
 
-	strtimeval_iso(&tv, ISO_DATE | ISO_TIME | ISO_COMMAUSEC | ISO_T,
+	strtimespec_iso(&ts, ISO_DATE | ISO_TIME | ISO_COMMAUSEC | ISO_T,
 		       buf, sizeof(buf));
 	printf("Full: '%s'\n", buf);
 
-	strtimeval_iso(&tv, ISO_TIMESTAMP_DOT, buf, sizeof(buf));
+	strtimespec_iso(&ts, ISO_TIMESTAMP_DOT, buf, sizeof(buf));
 	printf("Zone: '%s'\n", buf);
 
 	return EXIT_SUCCESS;
