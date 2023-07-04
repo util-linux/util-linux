@@ -85,7 +85,9 @@ static int start_command(struct child_process *cmd)
 			close(cmd->in);
 		}
 
-		cmd->preexec_cb();
+		if (cmd->preexec_cb)
+			cmd->preexec_cb();
+
 		execvp(cmd->argv[0], (char *const*) cmd->argv);
 		errexec(cmd->argv[0]);
 	}
@@ -140,7 +142,7 @@ static int finish_command(struct child_process *cmd)
 	return wait_or_whine(cmd->pid);
 }
 
-static void pager_preexec(void)
+static void pager_preexec_less(void)
 {
 	/*
 	 * Work around bug in "less" by not starting it until we
@@ -240,7 +242,11 @@ static void __setup_pager(void)
 	pager_argv[2] = pager;
 	pager_process.argv = pager_argv;
 	pager_process.in = -1;
-	pager_process.preexec_cb = pager_preexec;
+
+	if (!strncmp(pager, "less", 4))
+		pager_process.preexec_cb = pager_preexec_less;
+	else
+		pager_process.preexec_cb = NULL;
 
 	if (start_command(&pager_process))
 		return;
