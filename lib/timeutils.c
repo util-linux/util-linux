@@ -687,6 +687,46 @@ static int run_unittest_timestamp(void)
 	return rc;
 }
 
+static int run_unittest_format(void)
+{
+	int rc = EXIT_SUCCESS;
+	const struct timespec ts = {
+		.tv_sec = 1674180427,
+		.tv_nsec = 12345,
+	};
+	char buf[FORMAT_TIMESTAMP_MAX];
+	static const struct testcase {
+		int flags;
+		const char * const expected;
+	} testcases[] = {
+		{ ISO_DATE,               "2023-01-20"                       },
+		{ ISO_TIME,               "02:07:07"                         },
+		{ ISO_TIMEZONE,           "+00:00"                           },
+		{ ISO_TIMESTAMP_T,        "2023-01-20T02:07:07+00:00"        },
+		{ ISO_TIMESTAMP_COMMA_G,  "2023-01-20 02:07:07,000012+00:00" },
+		{ ISO_TIME | ISO_DOTNSEC, "02:07:07.000012345" },
+	};
+
+	setenv("TZ", "GMT", 1);
+	tzset();
+
+	for (size_t i = 0; i < ARRAY_SIZE(testcases); i++) {
+		struct testcase t = testcases[i];
+		int r = strtimespec_iso(&ts, t.flags, buf, sizeof(buf));
+		if (r) {
+			fprintf(stderr, "Could not format '%s'\n", t.expected);
+			rc = EXIT_FAILURE;
+		}
+
+		if (strcmp(buf, t.expected)) {
+			fprintf(stderr, "#%02zu %-20s != %-20s\n", i, buf, t.expected);
+			rc = EXIT_FAILURE;
+		}
+	}
+
+	return rc;
+}
+
 int main(int argc, char *argv[])
 {
 	struct timespec ts = { 0 };
@@ -697,9 +737,10 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	if (strcmp(argv[1], "--unittest-timestamp") == 0) {
+	if (strcmp(argv[1], "--unittest-timestamp") == 0)
 		return run_unittest_timestamp();
-	}
+	else if (strcmp(argv[1], "--unittest-format") == 0)
+		return run_unittest_format();
 
 	if (strcmp(argv[1], "--timestamp") == 0) {
 		usec_t usec = 0;
