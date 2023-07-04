@@ -78,6 +78,7 @@ int strtimeval_iso(const struct timeval *tv, int flags, char *buf, size_t bufsz)
 int strtm_iso(const struct tm *tm, int flags, char *buf, size_t bufsz);
 int strtime_iso(const time_t *t, int flags, char *buf, size_t bufsz);
 int strtimespec_iso(const struct timespec *t, int flags, char *buf, size_t bufsz);
+int strtimespec_relative(const struct timespec *ts, char *buf, size_t bufsz);
 
 #define UL_SHORTTIME_THISYEAR_HHMM (1 << 1)
 
