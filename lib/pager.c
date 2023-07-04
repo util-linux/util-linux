@@ -178,35 +178,45 @@ static void wait_for_pager_signal(int signo)
 static int has_command(const char *cmd)
 {
 	const char *path;
-	char *p, *s;
+	char *b, *c, *p, *s;
 	int rc = 0;
 
 	if (!cmd)
 		goto done;
-	if (*cmd == '/') {
-		rc = access(cmd, X_OK) == 0;
+
+	c = xstrdup(cmd);
+	if (!c)
 		goto done;
+	b = strtok(c, " ");	/* cmd may contain options */
+	if (!b)
+		goto cleanup;
+
+	if (*b == '/') {
+		rc = access(b, X_OK) == 0;
+		goto cleanup;
 	}
 
 	path = getenv("PATH");
 	if (!path)
-		goto done;
+		goto cleanup;
 	p = xstrdup(path);
 	if (!p)
-		goto done;
+		goto cleanup;
 
-	for(s = strtok(p, ":"); s; s = strtok(NULL, ":")) {
+	for (s = strtok(p, ":"); s; s = strtok(NULL, ":")) {
 		int fd = open(s, O_RDONLY|O_CLOEXEC);
 		if (fd < 0)
 			continue;
-		rc = faccessat(fd, cmd, X_OK, 0) == 0;
+		rc = faccessat(fd, b, X_OK, 0) == 0;
 		close(fd);
 		if (rc)
 			break;
 	}
 	free(p);
+cleanup:
+	free(c);
 done:
-	/*fprintf(stderr, "has PAGER %s rc=%d\n", cmd, rc);*/
+	/*fprintf(stderr, "has PAGER '%s': rc=%d\n", cmd, rc);*/
 	return rc;
 }
 
