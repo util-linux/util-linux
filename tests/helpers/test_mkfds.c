@@ -418,6 +418,7 @@ static void *make_w_regular_file(const struct factory *factory, struct fdesc fde
 			err(EXIT_FAILURE, "failed to dup %d -> %d", fd, fdescs[0].fd);
 		}
 		close(fd);
+		fd = fdescs[0].fd;
 	}
 
 	if (bDelete) {
