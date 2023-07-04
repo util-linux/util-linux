@@ -401,6 +401,13 @@ static void *make_w_regular_file(const struct factory *factory, struct fdesc fde
 	struct arg delete = decode_arg("delete", factory->params, argc, argv);
 	bool bDelete = ARG_BOOLEAN(delete);
 
+	struct arg write_bytes = decode_arg("write-bytes", factory->params, argc, argv);
+	int iWrite_bytes = ARG_INTEGER(write_bytes);
+
+	if (iWrite_bytes < 0)
+		err(EXIT_FAILURE, "write-bytes must be a positive number or zero.");
+
+	free_arg(&write_bytes);
 	free_arg(&delete);
 	free_arg(&file);
 
@@ -430,6 +437,17 @@ static void *make_w_regular_file(const struct factory *factory, struct fdesc fde
 		}
 		free(fname);
 		fname = NULL;
+	}
+
+	for (int i = 0; i < iWrite_bytes; i++) {
+		if (write(fd, "z", 1) != 1) {
+			int e = errno;
+			close(fd);
+			if (fname)
+				unlink(fname);
+			errno = e;
+			err(EXIT_FAILURE, "failed to write");
+		}
 	}
 
 	fdescs[0] = (struct fdesc){
@@ -2626,6 +2644,12 @@ static const struct factory factories[] = {
 				.type = PTYPE_BOOLEAN,
 				.desc = "delete the file just after making it",
 				.defv.boolean = false,
+			},
+			{
+				.name = "write-bytes",
+				.type = PTYPE_INTEGER,
+				.desc = "write something (> 0)",
+				.defv.integer = 0,
 			},
 			PARAM_END
 		},
