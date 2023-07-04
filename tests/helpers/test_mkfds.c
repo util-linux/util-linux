@@ -404,14 +404,18 @@ static void *make_w_regular_file(const struct factory *factory, struct fdesc fde
 	struct arg write_bytes = decode_arg("write-bytes", factory->params, argc, argv);
 	int iWrite_bytes = ARG_INTEGER(write_bytes);
 
+	struct arg readable = decode_arg("readable", factory->params, argc, argv);
+	bool bReadable = ARG_BOOLEAN(readable);
+
 	if (iWrite_bytes < 0)
 		err(EXIT_FAILURE, "write-bytes must be a positive number or zero.");
 
+	free_arg(&readable);
 	free_arg(&write_bytes);
 	free_arg(&delete);
 	free_arg(&file);
 
-	fd = open(fname, O_CREAT|O_EXCL|O_WRONLY, S_IWUSR);
+	fd = open(fname, O_CREAT|O_EXCL|(bReadable? O_RDWR: O_WRONLY), S_IWUSR);
 	if (fd < 0)
 		err(EXIT_FAILURE, "failed to make: %s", fname);
 
@@ -2650,6 +2654,12 @@ static const struct factory factories[] = {
 				.type = PTYPE_INTEGER,
 				.desc = "write something (> 0)",
 				.defv.integer = 0,
+			},
+			{
+				.name = "readable",
+				.type = PTYPE_BOOLEAN,
+				.desc = "open the new file readable way",
+				.defv.string = false,
 			},
 			PARAM_END
 		},
