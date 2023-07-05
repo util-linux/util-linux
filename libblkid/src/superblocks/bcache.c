@@ -223,6 +223,7 @@ static void probe_bcachefs_sb_members(blkid_probe pr,
 		sectors += le64_to_cpu(member->nbuckets) * le16_to_cpu(member->bucket_size);
 	}
 	blkid_probe_set_fssize(pr, sectors * BCACHEFS_SECTOR_SIZE);
+	blkid_probe_set_fslastblock(pr, sectors / le16_to_cpu(bcs->block_size));
 }
 
 static int is_within_range(const void *start, uint64_t size, const void *end)
