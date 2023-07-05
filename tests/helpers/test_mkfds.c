@@ -348,6 +348,7 @@ static void *open_ro_regular_file(const struct factory *factory, struct fdesc fd
 {
 	struct arg file = decode_arg("file", factory->params, argc, argv);
 	struct arg offset = decode_arg("offset", factory->params, argc, argv);
+	struct arg lease_r = decode_arg("read-lease", factory->params, argc, argv);
 
 	int fd = open(ARG_STRING(file), O_RDONLY);
 	if (fd < 0)
@@ -363,6 +364,16 @@ static void *open_ro_regular_file(const struct factory *factory, struct fdesc fd
 		}
 	}
 	free_arg(&offset);
+
+	if (ARG_BOOLEAN(lease_r)) {
+		if (fcntl(fd, F_SETLEASE, F_RDLCK) < 0) {
+			int e = errno;
+			close(fd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to take out a read lease");
+		}
+	}
+	free_arg(&lease_r);
 
 	if (fd != fdescs[0].fd) {
 		if (dup2(fd, fdescs[0].fd) < 0) {
@@ -2856,6 +2867,12 @@ static const struct factory factories[] = {
 				.type = PTYPE_INTEGER,
 				.desc = "seek bytes after open with SEEK_CUR",
 				.defv.integer = 0,
+			},
+			{
+				.name = "read-lease",
+				.type = PTYPE_BOOLEAN,
+				.desc = "taking out read lease for the file",
+				.defv.integer = false,
 			},
 			PARAM_END
 		},
