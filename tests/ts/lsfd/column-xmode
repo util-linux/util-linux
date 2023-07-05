@@ -125,6 +125,7 @@ ts_init_subtest "XMODE-D-bit"
 	kill -CONT "${PID}"
     fi
 } > "$TS_OUTPUT" 2>&1
+wait "${MKFDS_PID}"
 ts_finalize_subtest
 
 ts_finalize
