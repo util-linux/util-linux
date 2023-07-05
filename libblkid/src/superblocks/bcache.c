@@ -182,7 +182,7 @@ static int probe_bcache (blkid_probe pr, const struct blkid_idmag *mag)
 	if (!bcache_verify_checksum(pr, mag, bcs))
 		return BLKID_PROBE_NONE;
 
-	if (le64_to_cpu(bcs->offset) != BCACHE_SB_OFF / 512)
+	if (le64_to_cpu(bcs->offset) != BCACHE_SB_OFF / BCACHEFS_SECTOR_SIZE)
 		return BLKID_PROBE_NONE;
 
 	if (blkid_probe_sprintf_version(pr, "%"PRIu64, le64_to_cpu(bcs->version)) < 0)
@@ -194,7 +194,8 @@ static int probe_bcache (blkid_probe pr, const struct blkid_idmag *mag)
 	if (blkid_probe_set_label(pr, bcs->label, sizeof(bcs->label)) < 0)
 		return BLKID_PROBE_NONE;
 
-	if (blkid_probe_set_block_size(pr, le16_to_cpu(bcs->block_size) * 512))
+	if (blkid_probe_set_block_size(pr, le16_to_cpu(bcs->block_size)
+					   * BCACHEFS_SECTOR_SIZE))
 		return BLKID_PROBE_NONE;
 
 	blkid_probe_set_wiper(pr, 0, BCACHE_SB_OFF);
