@@ -299,6 +299,10 @@ static bool file_fill_column(struct proc *proc,
 	case COL_XMODE: {
 		char r, w, x;
 		char D = file->stat.st_nlink == 0? 'D': '-';
+		char L = file->locked.write? 'L'
+			:file->locked.read?  'l'
+			:                    '-';
+
 		if (does_file_has_fdinfo_alike(file)) {
 			r = file->mode & S_IRUSR? 'r': '-';
 			w = file->mode & S_IWUSR? 'w': '-';
@@ -306,7 +310,7 @@ static bool file_fill_column(struct proc *proc,
 			     && file->mode & S_IXUSR)? 'x': '-';
 		} else
 			r = w = x = '-';
-		xasprintf(&str, "%c%c%c%c", r, w, x, D);
+		xasprintf(&str, "%c%c%c%c%c", r, w, x, D, L);
 		break;
 	}
 	case COL_POS:
@@ -344,6 +348,40 @@ static bool file_fill_column(struct proc *proc,
 	return true;
 }
 
+enum lock_mode {
+	LOCK_NONE,
+	READ_LOCK,
+	WRITE_LOCK,
+};
+
+static unsigned int parse_lock_line(const char *line)
+{
+	char mode[6] = {0};
+
+	/* Exapmles of lines:
+	   ----------------------------------------------------
+	   1: FLOCK  ADVISORY  READ 2283292 fd:03:26219728 0 EOF
+	   1: FLOCK  ADVISORY  WRITE 2283321 fd:03:26219728 0 EOF
+	   1: POSIX  ADVISORY  READ 2283190 fd:03:26219728 0 0
+	   1: POSIX  ADVISORY  WRITE 2283225 fd:03:26219728 0 0
+	   1: OFDLCK ADVISORY  READ -1 fd:03:26219728 0 0
+	   1: OFDLCK ADVISORY  WRITE -1 fd:03:26219728 0 0
+	   1: LEASE  ACTIVE    WRITE 2328907 fd:03:26219472 0 EOF
+	   1: LEASE  ACTIVE    READ 2326777 fd:03:26219472 0 EOF
+	   ---------------------------------------------------- */
+
+	if (sscanf(line, "%*d: %*s %*s %5s %*s", mode) != 1)
+		return LOCK_NONE;
+
+	if (strcmp(mode, "READ") == 0)
+		return READ_LOCK;
+
+	if (strcmp(mode, "WRITE") == 0)
+		return WRITE_LOCK;
+
+	return LOCK_NONE;
+}
+
 static int file_handle_fdinfo(struct file *file, const char *key, const char* value)
 {
 	int rc;
@@ -357,6 +395,16 @@ static int file_handle_fdinfo(struct file *file, const char *key, const char* va
 	} else if (strcmp(key, "mnt_id") == 0) {
 		rc = ul_strtou32(value, &file->mnt_id, 10);
 
+	} else if (strcmp(key, "lock") == 0) {
+		switch (parse_lock_line(value)) {
+		case READ_LOCK:
+			file->locked.read = 1;
+			break;
+		case WRITE_LOCK:
+			file->locked.write = 1;
+			break;
+		}
+		rc = 1;
 	} else
 		return 0;	/* ignore -- unknown item */
 
