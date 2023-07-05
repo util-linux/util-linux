@@ -412,6 +412,7 @@ static void *make_w_regular_file(const struct factory *factory, struct fdesc fde
 		if (dup2(fd, fdescs[0].fd) < 0) {
 			int e = errno;
 			close(fd);
+			unlink(fname);
 			free (fname);
 			errno = e;
 			err(EXIT_FAILURE, "failed to dup %d -> %d", fd, fdescs[0].fd);
