@@ -10,6 +10,7 @@
 
 #include <stddef.h>
 #include <stdio.h>
+#include <inttypes.h>
 
 #include "superblocks.h"
 #include "crc32c.h"
@@ -159,6 +160,9 @@ struct bcachefs_super_block {
 #define BCACHEFS_SB_FIELDS_OFF offsetof(struct bcachefs_super_block, _start)
 /* tag value for members field */
 #define BCACHEFS_SB_FIELD_TYPE_MEMBERS 1
+/* version splitting helpers */
+#define BCH_VERSION_MAJOR(_v)           ((uint16_t) ((_v) >> 10))
+#define BCH_VERSION_MINOR(_v)           ((uint16_t) ((_v) & ~(~0U << 10)))
 
 #define BYTES(f) ((((uint64_t) le32_to_cpu((f)->u64s)) * 8))
 
@@ -301,6 +305,7 @@ static int probe_bcachefs(blkid_probe pr, const struct blkid_idmag *mag)
 	struct bcachefs_super_block *bcs;
 	unsigned char *sb, *sb_end;
 	uint64_t sb_size, blocksize;
+	uint16_t version;
 
 	bcs = blkid_probe_get_sb(pr, mag, struct bcachefs_super_block);
 	if (!bcs)
@@ -333,7 +338,10 @@ static int probe_bcachefs(blkid_probe pr, const struct blkid_idmag *mag)
 
 	blkid_probe_set_uuid(pr, bcs->user_uuid);
 	blkid_probe_set_label(pr, bcs->label, sizeof(bcs->label));
-	blkid_probe_sprintf_version(pr, "%d", le16_to_cpu(bcs->version));
+	version = le16_to_cpu(bcs->version);
+	blkid_probe_sprintf_version(pr, "%"PRIu16".%"PRIu16,
+				    BCH_VERSION_MAJOR(version),
+				    BCH_VERSION_MINOR(version));
 	blocksize = le16_to_cpu(bcs->block_size);
 	blkid_probe_set_block_size(pr, blocksize * BCACHEFS_SECTOR_SIZE);
 	blkid_probe_set_fsblocksize(pr, blocksize * BCACHEFS_SECTOR_SIZE);
