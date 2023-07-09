@@ -24,7 +24,13 @@ python.extension_module(
   subdir : 'libmount',
   link_with : lib_mount,
   dependencies : python.dependency(),
-  c_args : [ '-Wno-cast-function-type' ],
+  c_args : [
+    '-Wno-cast-function-type',
+
+    # https://github.com/util-linux/util-linux/issues/2366
+    python.language_version().version_compare('>=3.12') ?
+      [ '-Wno-error=redundant-decls' ] : [],
+  ],
   install : true)
 
 if build_python
