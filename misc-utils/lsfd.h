@@ -171,6 +171,10 @@ struct file {
 
 	unsigned int sys_flags;
 	unsigned int mnt_id;
+
+	struct {
+		uint8_t read:1, write:1;
+	} locked;
 };
 
 #define is_opened_file(_f) ((_f)->association >= 0)

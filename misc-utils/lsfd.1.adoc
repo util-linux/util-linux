@@ -479,7 +479,7 @@ User of the process.
 
 XMODE <``string``>::
 Extended version of _MODE_. This column may grow; new letters may be
-added to _XMODE_ when *lsfd* supports a new state of file descriptors
+appended to _XMODE_ when *lsfd* supports a new state of file descriptors
 and/or memory mappings.
 +
 [-r]:::
@@ -492,7 +492,13 @@ opened of mapped for writing. This is also in _MODE_.
 mapped for executing the code. This is also in _MODE_.
 +
 [-D]:::
-opened file is deleted from  the file system. See also _DELETED._.
+deleted from  the file system. See also _DELETED._.
++
+[-Ll]:::
+locked or leased. _l_ represents a read, a shared lock or a read lease.
+_L_ represents a write or an exclusive lock or a write lease. If both
+read/shared and write/exclusive locks or leases are taken by a file
+descriptor, _L_ is used as the flag.
 
 == FILTER EXPRESSION
 
@@ -737,6 +743,7 @@ mailto:kzak@redhat.com[Karel Zak]
 
 == SEE ALSO
 
+*lslocks*(8)
 *lsof*(8)
 *pidof*(1)
 *proc*(5)

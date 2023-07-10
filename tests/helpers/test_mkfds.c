@@ -22,6 +22,7 @@
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <sys/file.h>
 #include <getopt.h>
 #include <linux/if_ether.h>
 #include <linux/if_packet.h>
@@ -347,6 +348,7 @@ static void *open_ro_regular_file(const struct factory *factory, struct fdesc fd
 {
 	struct arg file = decode_arg("file", factory->params, argc, argv);
 	struct arg offset = decode_arg("offset", factory->params, argc, argv);
+	struct arg lease_r = decode_arg("read-lease", factory->params, argc, argv);
 
 	int fd = open(ARG_STRING(file), O_RDONLY);
 	if (fd < 0)
@@ -362,6 +364,16 @@ static void *open_ro_regular_file(const struct factory *factory, struct fdesc fd
 		}
 	}
 	free_arg(&offset);
+
+	if (ARG_BOOLEAN(lease_r)) {
+		if (fcntl(fd, F_SETLEASE, F_RDLCK) < 0) {
+			int e = errno;
+			close(fd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to take out a read lease");
+		}
+	}
+	free_arg(&lease_r);
 
 	if (fd != fdescs[0].fd) {
 		if (dup2(fd, fdescs[0].fd) < 0) {
@@ -390,6 +402,190 @@ static void unlink_and_close_fdesc(int fd, void *data)
 	close(fd);
 }
 
+typedef void (*lockFn)(int fd, const char *fname);
+
+static void lock_fn_none(int fd _U_, const char *fname _U_)
+{
+	/* Do nothing */
+}
+
+static void lock_fn_flock_sh(int fd, const char *fname)
+{
+	if (flock(fd, LOCK_SH) < 0) {
+		int e = errno;
+		close(fd);
+		if (fname)
+			unlink(fname);
+		errno = e;
+		err(EXIT_FAILURE, "failed to lock");
+	}
+}
+
+static void lock_fn_flock_ex(int fd, const char *fname)
+{
+	if (flock(fd, LOCK_EX) < 0)  {
+		int e = errno;
+		close(fd);
+		if (fname)
+			unlink(fname);
+		errno = e;
+		err(EXIT_FAILURE, "failed to lock");
+	}
+}
+
+static void lock_fn_posix_r_(int fd, const char *fname)
+{
+	struct flock r = {
+		.l_type = F_RDLCK,
+		.l_whence = SEEK_SET,
+		.l_start = 0,
+		.l_len = 1,
+	};
+	if (fcntl(fd, F_SETLK, &r) < 0) {
+		int e = errno;
+		close(fd);
+		if (fname)
+			unlink(fname);
+		errno = e;
+		err(EXIT_FAILURE, "failed to lock");
+	}
+}
+
+static void lock_fn_posix__w(int fd, const char *fname)
+{
+	struct flock w = {
+		.l_type = F_WRLCK,
+		.l_whence = SEEK_SET,
+		.l_start = 0,
+		.l_len = 1,
+	};
+	if (fcntl(fd, F_SETLK, &w) < 0) {
+		int e = errno;
+		close(fd);
+		if (fname)
+			unlink(fname);
+		errno = e;
+		err(EXIT_FAILURE, "failed to lock");
+	}
+}
+
+static void lock_fn_posix_rw(int fd, const char *fname)
+{
+	struct flock r = {
+		.l_type = F_RDLCK,
+		.l_whence = SEEK_SET,
+		.l_start = 0,
+		.l_len = 1,
+	};
+	struct flock w = {
+		.l_type = F_WRLCK,
+		.l_whence = SEEK_SET,
+		.l_start = 2,
+		.l_len = 1,
+	};
+	if (fcntl(fd, F_SETLK, &r) < 0) {
+		int e = errno;
+		close(fd);
+		if (fname)
+			unlink(fname);
+		errno = e;
+		err(EXIT_FAILURE, "failed to lock(read)");
+	}
+	if (fcntl(fd, F_SETLK, &w) < 0) {
+		int e = errno;
+		close(fd);
+		if (fname)
+			unlink(fname);
+		errno = e;
+		err(EXIT_FAILURE, "failed to lock(write)");
+	}
+}
+
+static void lock_fn_ofd_r_(int fd, const char *fname)
+{
+	struct flock r = {
+		.l_type = F_RDLCK,
+		.l_whence = SEEK_SET,
+		.l_start = 0,
+		.l_len = 1,
+		.l_pid = 0,
+	};
+	if (fcntl(fd, F_OFD_SETLK, &r) < 0) {
+		int e = errno;
+		close(fd);
+		if (fname)
+			unlink(fname);
+		errno = e;
+		err(EXIT_FAILURE, "failed to lock");
+	}
+}
+
+static void lock_fn_ofd__w(int fd, const char *fname)
+{
+	struct flock w = {
+		.l_type = F_WRLCK,
+		.l_whence = SEEK_SET,
+		.l_start = 0,
+		.l_len = 1,
+		.l_pid = 0,
+	};
+	if (fcntl(fd, F_OFD_SETLK, &w) < 0) {
+		int e = errno;
+		close(fd);
+		if (fname)
+			unlink(fname);
+		errno = e;
+		err(EXIT_FAILURE, "failed to lock");
+	}
+}
+
+static void lock_fn_ofd_rw(int fd, const char *fname)
+{
+	struct flock r = {
+		.l_type = F_RDLCK,
+		.l_whence = SEEK_SET,
+		.l_start = 0,
+		.l_len = 1,
+		.l_pid = 0,
+	};
+	struct flock w = {
+		.l_type = F_WRLCK,
+		.l_whence = SEEK_SET,
+		.l_start = 2,
+		.l_len = 1,
+		.l_pid = 0,
+	};
+	if (fcntl(fd, F_OFD_SETLK, &r) < 0) {
+		int e = errno;
+		close(fd);
+		if (fname)
+			unlink(fname);
+		errno = e;
+		err(EXIT_FAILURE, "failed to lock(read)");
+	}
+	if (fcntl(fd, F_OFD_SETLK, &w) < 0) {
+		int e = errno;
+		close(fd);
+		if (fname)
+			unlink(fname);
+		errno = e;
+		err(EXIT_FAILURE, "failed to lock(write)");
+	}
+}
+
+static void lock_fn_lease_w(int fd, const char *fname)
+{
+	if (fcntl(fd, F_SETLEASE, F_WRLCK) < 0) {
+		int e = errno;
+		close(fd);
+		if (fname)
+			unlink(fname);
+		errno = e;
+		err(EXIT_FAILURE, "failed to take out a write lease");
+	}
+}
+
+
 static void *make_w_regular_file(const struct factory *factory, struct fdesc fdescs[],
 				 int argc, char ** argv)
 {
@@ -401,10 +597,65 @@ static void *make_w_regular_file(const struct factory *factory, struct fdesc fde
 	struct arg delete = decode_arg("delete", factory->params, argc, argv);
 	bool bDelete = ARG_BOOLEAN(delete);
 
+	struct arg write_bytes = decode_arg("write-bytes", factory->params, argc, argv);
+	int iWrite_bytes = ARG_INTEGER(write_bytes);
+
+	struct arg readable = decode_arg("readable", factory->params, argc, argv);
+	bool bReadable = ARG_BOOLEAN(readable);
+
+	struct arg lock = decode_arg("lock", factory->params, argc, argv);
+	const char *sLock = ARG_STRING(lock);
+	lockFn lock_fn;
+
+	if (iWrite_bytes < 0)
+		errx(EXIT_FAILURE, "write-bytes must be a positive number or zero.");
+
+	if (strcmp(sLock, "none") == 0)
+		lock_fn = lock_fn_none;
+	else if (strcmp(sLock, "flock-sh") == 0)
+		lock_fn = lock_fn_flock_sh;
+	else if (strcmp(sLock, "flock-ex") == 0)
+		lock_fn = lock_fn_flock_ex;
+	else if (strcmp(sLock, "posix-r-") == 0) {
+		bReadable = true;
+		if (iWrite_bytes < 1)
+			iWrite_bytes = 1;
+		lock_fn = lock_fn_posix_r_;
+	} else if (strcmp(sLock, "posix--w") == 0) {
+		if (iWrite_bytes < 1)
+			iWrite_bytes = 1;
+		lock_fn = lock_fn_posix__w;
+	} else if (strcmp(sLock, "posix-rw") == 0) {
+		bReadable = true;
+		if (iWrite_bytes < 3)
+			iWrite_bytes = 3;
+		lock_fn = lock_fn_posix_rw;
+	} else if (strcmp(sLock, "ofd-r-") == 0) {
+		bReadable = true;
+		if (iWrite_bytes < 1)
+			iWrite_bytes = 1;
+		lock_fn = lock_fn_ofd_r_;
+	} else if (strcmp(sLock, "ofd--w") == 0) {
+		if (iWrite_bytes < 1)
+			iWrite_bytes = 1;
+		lock_fn = lock_fn_ofd__w;
+	} else if (strcmp(sLock, "ofd-rw") == 0) {
+		bReadable = true;
+		if (iWrite_bytes < 3)
+			iWrite_bytes = 3;
+		lock_fn = lock_fn_ofd_rw;
+	} else if (strcmp(sLock, "lease-w") == 0)
+		lock_fn = lock_fn_lease_w;
+	else
+		errx(EXIT_FAILURE, "unexpected value for lock parameter: %s", sLock);
+
+	free_arg(&lock);
+	free_arg(&readable);
+	free_arg(&write_bytes);
 	free_arg(&delete);
 	free_arg(&file);
 
-	fd = open(fname, O_CREAT|O_EXCL|O_WRONLY, S_IWUSR);
+	fd = open(fname, O_CREAT|O_EXCL|(bReadable? O_RDWR: O_WRONLY), S_IWUSR);
 	if (fd < 0)
 		err(EXIT_FAILURE, "failed to make: %s", fname);
 
@@ -412,11 +663,13 @@ static void *make_w_regular_file(const struct factory *factory, struct fdesc fde
 		if (dup2(fd, fdescs[0].fd) < 0) {
 			int e = errno;
 			close(fd);
+			unlink(fname);
 			free (fname);
 			errno = e;
 			err(EXIT_FAILURE, "failed to dup %d -> %d", fd, fdescs[0].fd);
 		}
 		close(fd);
+		fd = fdescs[0].fd;
 	}
 
 	if (bDelete) {
@@ -429,6 +682,19 @@ static void *make_w_regular_file(const struct factory *factory, struct fdesc fde
 		free(fname);
 		fname = NULL;
 	}
+
+	for (int i = 0; i < iWrite_bytes; i++) {
+		if (write(fd, "z", 1) != 1) {
+			int e = errno;
+			close(fd);
+			if (fname)
+				unlink(fname);
+			errno = e;
+			err(EXIT_FAILURE, "failed to write");
+		}
+	}
+
+	lock_fn(fd, fname);
 
 	fdescs[0] = (struct fdesc){
 		.fd    = fdescs[0].fd,
@@ -2602,6 +2868,12 @@ static const struct factory factories[] = {
 				.desc = "seek bytes after open with SEEK_CUR",
 				.defv.integer = 0,
 			},
+			{
+				.name = "read-lease",
+				.type = PTYPE_BOOLEAN,
+				.desc = "taking out read lease for the file",
+				.defv.integer = false,
+			},
 			PARAM_END
 		},
 	},
@@ -2624,6 +2896,24 @@ static const struct factory factories[] = {
 				.type = PTYPE_BOOLEAN,
 				.desc = "delete the file just after making it",
 				.defv.boolean = false,
+			},
+			{
+				.name = "write-bytes",
+				.type = PTYPE_INTEGER,
+				.desc = "write something (> 0)",
+				.defv.integer = 0,
+			},
+			{
+				.name = "readable",
+				.type = PTYPE_BOOLEAN,
+				.desc = "open the new file readable way",
+				.defv.string = false,
+			},
+			{
+				.name = "lock",
+				.type = PTYPE_STRING,
+				.desc = "the way for file locking: [none]|flock-sh|flock-ex|posix-r-|posix--w|posix-rw|ofd-r-|ofd--w|ofd-rw|lease-w",
+				.defv.string = "none",
 			},
 			PARAM_END
 		},
