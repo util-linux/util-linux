@@ -97,7 +97,9 @@ enum {
 	COL_NAME,
 	COL_TIME,
 	COL_ISO_TIME,
-	COL_RESOLUTION,
+	COL_RESOL,
+	COL_RESOL_RAW,
+	COL_REL_TIME,
 };
 
 /* column names */
@@ -116,7 +118,9 @@ static const struct colinfo infos[] = {
 	[COL_NAME]       = { "NAME",       1, 0,              SCOLS_JSON_STRING, N_("readable name") },
 	[COL_TIME]       = { "TIME",       1, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER, N_("numeric time") },
 	[COL_ISO_TIME]   = { "ISO_TIME",   1, SCOLS_FL_RIGHT, SCOLS_JSON_STRING, N_("human readable ISO time") },
-	[COL_RESOLUTION] = { "RESOLUTION", 1, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER, N_("resolution") },
+	[COL_RESOL]      = { "RESOL",      1, SCOLS_FL_RIGHT, SCOLS_JSON_STRING, N_("human readable resolution") },
+	[COL_RESOL_RAW]  = { "RESOL_RAW",  1, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER, N_("resolution") },
+	[COL_REL_TIME]   = { "REL_TIME",   1, SCOLS_FL_RIGHT, SCOLS_JSON_STRING, N_("human readable relative time") },
 };
 
 static int column_name_to_id(const char *name, size_t namesz)
@@ -146,6 +150,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -J, --json              use JSON output format\n"), out);
 	fputs(_(" -n, --noheadings        don't print headings\n"), out);
 	fputs(_(" -o, --output <list>     output columns\n"), out);
+	fputs(_("     --output-all        output all columns\n"), out);
 	fputs(_(" -r, --raw               use raw output format\n"), out);
 	fputs(_(" -t, --time <clock>      show current time of single clock\n"), out);
 
@@ -208,8 +213,7 @@ static clockid_t parse_clock(const char *name)
 int main(int argc, char **argv)
 {
 	size_t i, j;
-	char c;
-	int rc;
+	int c, rc;
 	const struct colinfo *colinfo;
 	const struct clockinfo *clockinfo;
 
@@ -224,11 +228,15 @@ int main(int argc, char **argv)
 	clockid_t clock = -1;
 
 	struct timespec resolution, now;
-	char buf[FORMAT_TIMESTAMP_MAX];
+	char buf[BUFSIZ];
 
+	enum {
+		OPT_OUTPUT_ALL = CHAR_MAX + 1
+	};
 	static const struct option longopts[] = {
 		{ "noheadings", no_argument,       NULL, 'n' },
 		{ "output",     required_argument, NULL, 'o' },
+		{ "output-all",	no_argument,       NULL, OPT_OUTPUT_ALL },
 		{ "version",    no_argument,       NULL, 'V' },
 		{ "help",	no_argument,       NULL, 'h' },
 		{ "json",       no_argument,       NULL, 'J' },
@@ -249,6 +257,10 @@ int main(int argc, char **argv)
 			break;
 		case 'o':
 			outarg = optarg;
+			break;
+		case OPT_OUTPUT_ALL:
+			for (ncolumns = 0; ncolumns < ARRAY_SIZE(infos); ncolumns++)
+				columns[ncolumns] = ncolumns;
 			break;
 		case 'J':
 			json = true;
@@ -281,11 +293,10 @@ int main(int argc, char **argv)
 
 	if (!ncolumns) {
 		columns[ncolumns++] = COL_ID;
-		columns[ncolumns++] = COL_CLOCK;
 		columns[ncolumns++] = COL_NAME;
 		columns[ncolumns++] = COL_TIME;
+		columns[ncolumns++] = COL_RESOL;
 		columns[ncolumns++] = COL_ISO_TIME;
-		columns[ncolumns++] = COL_RESOLUTION;
 	}
 
 	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
@@ -321,6 +332,10 @@ int main(int argc, char **argv)
 		if (rc)
 			now.tv_nsec = -1;
 
+		rc = clock_getres(clockinfo->id, &resolution);
+		if (rc)
+			resolution.tv_nsec = -1;
+
 		for (j = 0; j < ncolumns; j++) {
 			switch (columns[j]) {
 				case COL_ID:
@@ -349,10 +364,27 @@ int main(int argc, char **argv)
 						errx(EXIT_FAILURE, _("failed to format iso time"));
 					scols_line_set_data(ln, j, buf);
 					break;
-				case COL_RESOLUTION:
-					rc = clock_getres(clockinfo->id, &resolution);
-					if (!rc)
-						scols_line_format_timespec(ln, j, &resolution);
+				case COL_RESOL:
+					if (resolution.tv_nsec == -1)
+						break;
+
+					rc = strtimespec_relative(&resolution, buf, sizeof(buf));
+					if (rc)
+						errx(EXIT_FAILURE, _("failed to format relative time"));
+					scols_line_set_data(ln, j, buf);
+					break;
+				case COL_RESOL_RAW:
+					if (resolution.tv_nsec == -1)
+						break;
+					scols_line_format_timespec(ln, j, &resolution);
+					break;
+				case COL_REL_TIME:
+					if (now.tv_nsec == -1)
+						break;
+					rc = strtimespec_relative(&now, buf, sizeof(buf));
+					if (rc)
+						errx(EXIT_FAILURE, _("failed to format relative time"));
+					scols_line_set_data(ln, j, buf);
 					break;
 			}
 		}

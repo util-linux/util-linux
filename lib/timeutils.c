@@ -617,6 +617,63 @@ int strtime_short(const time_t *t, struct timeval *now, int flags, char *buf, si
 	return rc <= 0 ? -1 : 0;
 }
 
+int strtimespec_relative(const struct timespec *ts, char *buf, size_t bufsz)
+{
+	time_t secs = ts->tv_sec;
+	size_t i, parts = 0;
+	int rc;
+
+	if (bufsz)
+		buf[0] = '\0';
+
+	static const struct {
+		const char * const suffix;
+		int width;
+		int64_t secs;
+	} table[] = {
+		{ "y", 4, NSEC_PER_YEAR   / NSEC_PER_SEC },
+		{ "d", 3, NSEC_PER_DAY    / NSEC_PER_SEC },
+		{ "h", 2, NSEC_PER_HOUR   / NSEC_PER_SEC },
+		{ "m", 2, NSEC_PER_MINUTE / NSEC_PER_SEC },
+		{ "s", 2, NSEC_PER_SEC    / NSEC_PER_SEC },
+	};
+
+	for (i = 0; i < ARRAY_SIZE(table); i++) {
+		if (secs >= table[i].secs) {
+			rc = snprintf(buf, bufsz,
+				      "%*"PRId64"%s%s",
+				      parts ? table[i].width : 0,
+				      secs / table[i].secs, table[i].suffix,
+				      secs % table[i].secs ? " " : "");
+			if (rc < 0 || (size_t) rc > bufsz)
+				goto err;
+			parts++;
+			buf += rc;
+			bufsz -= rc;
+			secs %= table[i].secs;
+		}
+	}
+
+	if (ts->tv_nsec) {
+		if (ts->tv_nsec % NSEC_PER_MSEC) {
+			rc = snprintf(buf, bufsz, "%*luns",
+				      parts ? 10 : 0, ts->tv_nsec);
+			if (rc < 0 || (size_t) rc > bufsz)
+				goto err;
+		} else {
+			rc = snprintf(buf, bufsz, "%*llums",
+				      parts ? 4 : 0, ts->tv_nsec / NSEC_PER_MSEC);
+			if (rc < 0 || (size_t) rc > bufsz)
+				goto err;
+		}
+	}
+
+	return 0;
+ err:
+	warnx(_("format_reltime: buffer overflow."));
+	return -1;
+}
+
 #ifndef HAVE_TIMEGM
 time_t timegm(struct tm *tm)
 {
@@ -687,9 +744,96 @@ static int run_unittest_timestamp(void)
 	return rc;
 }
 
+static int run_unittest_format(void)
+{
+	int rc = EXIT_SUCCESS;
+	const struct timespec ts = {
+		.tv_sec = 1674180427,
+		.tv_nsec = 12345,
+	};
+	char buf[FORMAT_TIMESTAMP_MAX];
+	static const struct testcase {
+		int flags;
+		const char * const expected;
+	} testcases[] = {
+		{ ISO_DATE,               "2023-01-20"                       },
+		{ ISO_TIME,               "02:07:07"                         },
+		{ ISO_TIMEZONE,           "+00:00"                           },
+		{ ISO_TIMESTAMP_T,        "2023-01-20T02:07:07+00:00"        },
+		{ ISO_TIMESTAMP_COMMA_G,  "2023-01-20 02:07:07,000012+00:00" },
+		{ ISO_TIME | ISO_DOTNSEC, "02:07:07.000012345" },
+	};
+
+	setenv("TZ", "GMT", 1);
+	tzset();
+
+	for (size_t i = 0; i < ARRAY_SIZE(testcases); i++) {
+		struct testcase t = testcases[i];
+		int r = strtimespec_iso(&ts, t.flags, buf, sizeof(buf));
+		if (r) {
+			fprintf(stderr, "Could not format '%s'\n", t.expected);
+			rc = EXIT_FAILURE;
+		}
+
+		if (strcmp(buf, t.expected)) {
+			fprintf(stderr, "#%02zu %-20s != %-20s\n", i, buf, t.expected);
+			rc = EXIT_FAILURE;
+		}
+	}
+
+	return rc;
+}
+
+static int run_unittest_format_relative(void)
+{
+	int rc = EXIT_SUCCESS;
+	char buf[FORMAT_TIMESTAMP_MAX];
+	static const struct testcase {
+		struct timespec ts;
+		const char * const expected;
+	} testcases[] = {
+		{{}, "" },
+		{{         1 },                  "1s" },
+		{{        10 },                 "10s" },
+		{{       100 },              "1m 40s" },
+		{{      1000 },             "16m 40s" },
+		{{     10000 },          "2h 46m 40s" },
+		{{    100000 },      "1d  3h 46m 40s" },
+		{{   1000000 },     "11d 13h 46m 40s" },
+		{{  10000000 },    "115d 17h 46m 40s" },
+		{{ 100000000 }, "3y  61d 15h 46m 40s" },
+		{{        60 },                  "1m" },
+		{{      3600 },                  "1h" },
+
+		{{ 1,       1 }, "1s         1ns" },
+		{{ 0,       1 },            "1ns" },
+		{{ 0, 1000000 },            "1ms" },
+		{{ 0, 1000001 },      "1000001ns" },
+	};
+
+	setenv("TZ", "GMT", 1);
+	tzset();
+
+	for (size_t i = 0; i < ARRAY_SIZE(testcases); i++) {
+		struct testcase t = testcases[i];
+		int r = strtimespec_relative(&t.ts, buf, sizeof(buf));
+		if (r) {
+			fprintf(stderr, "Could not format '%s'\n", t.expected);
+			rc = EXIT_FAILURE;
+		}
+
+		if (strcmp(buf, t.expected)) {
+			fprintf(stderr, "#%02zu '%-20s' != '%-20s'\n", i, buf, t.expected);
+			rc = EXIT_FAILURE;
+		}
+	}
+
+	return rc;
+}
+
 int main(int argc, char *argv[])
 {
-	struct timeval tv = { 0 };
+	struct timespec ts = { 0 };
 	char buf[ISO_BUFSIZ];
 
 	if (argc < 2) {
@@ -697,34 +841,41 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	if (strcmp(argv[1], "--unittest-timestamp") == 0) {
+	if (strcmp(argv[1], "--unittest-timestamp") == 0)
 		return run_unittest_timestamp();
-	}
+	else if (strcmp(argv[1], "--unittest-format") == 0)
+		return run_unittest_format();
+	else if (strcmp(argv[1], "--unittest-format-relative") == 0)
+		return run_unittest_format_relative();
 
 	if (strcmp(argv[1], "--timestamp") == 0) {
 		usec_t usec = 0;
 
 		parse_timestamp(argv[2], &usec);
-		tv.tv_sec = (time_t) (usec / 1000000);
-		tv.tv_usec = usec % 1000000;
+		ts.tv_sec = (time_t) (usec / USEC_PER_SEC);
+		ts.tv_nsec = (usec % USEC_PER_SEC) * NSEC_PER_USEC;
 	} else {
-		tv.tv_sec = strtos64_or_err(argv[1], "failed to parse <time>");
+		ts.tv_sec = strtos64_or_err(argv[1], "failed to parse <time>");
 		if (argc == 3)
-			tv.tv_usec = strtos64_or_err(argv[2], "failed to parse <usec>");
+			ts.tv_nsec = strtos64_or_err(argv[2], "failed to parse <usec>")
+				     * NSEC_PER_USEC;
 	}
 
-	strtimeval_iso(&tv, ISO_DATE, buf, sizeof(buf));
+	strtimespec_iso(&ts, ISO_DATE, buf, sizeof(buf));
 	printf("Date: '%s'\n", buf);
 
-	strtimeval_iso(&tv, ISO_TIME, buf, sizeof(buf));
+	strtimespec_iso(&ts, ISO_TIME, buf, sizeof(buf));
 	printf("Time: '%s'\n", buf);
 
-	strtimeval_iso(&tv, ISO_DATE | ISO_TIME | ISO_COMMAUSEC | ISO_T,
+	strtimespec_iso(&ts, ISO_DATE | ISO_TIME | ISO_COMMAUSEC | ISO_T,
 		       buf, sizeof(buf));
 	printf("Full: '%s'\n", buf);
 
-	strtimeval_iso(&tv, ISO_TIMESTAMP_DOT, buf, sizeof(buf));
+	strtimespec_iso(&ts, ISO_TIMESTAMP_DOT, buf, sizeof(buf));
 	printf("Zone: '%s'\n", buf);
+
+	strtimespec_relative(&ts, buf, sizeof(buf));
+	printf("Rel:  '%s'\n", buf);
 
 	return EXIT_SUCCESS;
 }

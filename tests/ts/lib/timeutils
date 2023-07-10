@@ -16,9 +16,15 @@ ts_init "$*"
 ts_check_test_command "$TS_HELPER_TIMEUTILS"
 
 ts_init_subtest "timestamp"
+"$TS_HELPER_TIMEUTILS" --unittest-timestamp 2> "$TS_ERRLOG" || ts_die "test failed"
+ts_finalize_subtest
 
-"$TS_HELPER_TIMEUTILS" --unittest-timestamp 2> "$TS_ERRLOG"
+ts_init_subtest "format"
+"$TS_HELPER_TIMEUTILS" --unittest-format 2> "$TS_ERRLOG" || ts_die "test failed"
+ts_finalize_subtest
 
+ts_init_subtest "format-relative"
+"$TS_HELPER_TIMEUTILS" --unittest-format-relative 2> "$TS_ERRLOG" || ts_die "test failed"
 ts_finalize_subtest
 
 ts_finalize

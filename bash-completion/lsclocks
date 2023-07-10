@@ -15,6 +15,9 @@ _lsclocks_module()
 		'-o'|'--output')
 			return 0
 			;;
+		'--output-all')
+			return 0
+			;;
 		'-r'|'--raw')
 			return 0
 			;;
@@ -32,6 +35,7 @@ _lsclocks_module()
 			OPTS="--json
 				--noheadings
 				--output
+				--output-all
 				--raw
 				--time
 				--help
