@@ -149,6 +149,7 @@ struct proc {
 	struct list_head procs;
 	struct list_head files;
 	unsigned int kthread: 1;
+	struct list_head eventpolls;
 };
 
 struct proc *get_proc(pid_t pid);
@@ -175,6 +176,7 @@ struct file {
 	struct {
 		uint8_t read:1, write:1;
 	} locked;
+	uint8_t multiplexed;
 };
 
 #define is_opened_file(_f) ((_f)->association >= 0)
@@ -284,5 +286,10 @@ bool is_nsfs_dev(dev_t dev);
  */
 /* 0 is assumed as the major dev for DEV. */
 bool is_mqueue_dev(dev_t dev);
+
+/*
+ * Eventpoll
+ */
+bool is_multiplexed_by_eventpoll(int fd, struct list_head *eventpolls);
 
 #endif /* UTIL_LINUX_LSFD_H */

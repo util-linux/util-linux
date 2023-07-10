@@ -498,6 +498,10 @@ locked or leased. _l_ represents a read, a shared lock or a read lease.
 _L_ represents a write or an exclusive lock or a write lease. If both
 read/shared and write/exclusive locks or leases are taken by a file
 descriptor, _L_ is used as the flag.
++
+[-m]:::
+Multiplexed. If the file descriptor is targeted by a eventpoll file,
+this bit flag is set.
 
 == FILTER EXPRESSION
 
