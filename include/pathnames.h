@@ -226,5 +226,7 @@
 #define _PATH_DEV_RFKILL	"/dev/rfkill"
 #define _PATH_SYS_RFKILL	"/sys/class/rfkill"
 
+/* cgroup path */
+#define _PATH_SYS_CGROUP	"/sys/fs/cgroup"
 
 #endif /* PATHNAMES_H */
