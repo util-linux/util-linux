@@ -246,14 +246,19 @@ static int fincore_name(struct fincore_control *ctl,
 		return -errno;
 	}
 
-	if (S_ISBLK(sb.st_mode) || S_ISREG(sb.st_mode)) {
-		if (blkdev_get_size(fd, size) == 0)
-			rc = fincore_fd(ctl, fd, name, *size, count_incore);
-		else
+	if (S_ISBLK(sb.st_mode)) {
+		rc = blkdev_get_size(fd, size);
+		if (rc)
 			warn(_("failed ioctl to get size: %s"), name);
+	} else if (S_ISREG(sb.st_mode)) {
+		*size = sb.st_size;
 	} else {
 		rc = 1;			/* ignore things like symlinks
 					 * and directories*/
+	}
+
+	if (!rc) {
+		rc = fincore_fd(ctl, fd, name, *size, count_incore);
 	}
 
 	close (fd);
