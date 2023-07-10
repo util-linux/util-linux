@@ -224,8 +224,11 @@ static void open_cgroup_procs(void)
 	path++;
 
 	snprintf(fdpath, sizeof(fdpath), _PATH_SYS_CGROUP "/%s/cgroup.procs", path);
+
 	if ((cgroup_procs_fd = open(fdpath, O_WRONLY | O_APPEND)) < 0)
 		err(EXIT_FAILURE, _("failed to open cgroup.procs"));
+
+	free(buf);
 }
 
 static int is_cgroup2(void)
