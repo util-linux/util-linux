@@ -235,13 +235,6 @@ Access mode (rwx).
 
 NAME <``string``>::
 Cooked version of KNAME. It is mostly same as KNAME.
-
-____
-Note that `(deleted)` markers are removed from this column.
-Refer to _KNAME_, _DELETED_, or _XMODE_ to know the
-readability of the file from the file system.
-____
-
 +
 Some files have special formats and information sources:
 +
@@ -306,6 +299,12 @@ state=_SOCK.STATE_[ path=_UNIX.PATH_]
 +
 UNIX:::
 state=_SOCK.STATE_[ path=_UNIX.PATH_] type=_SOCK.TYPE_
+
+____
+Note that `(deleted)` markers are removed from this column.
+Refer to _KNAME_, _DELETED_, or _XMODE_ to know the
+readability of the file from the file system.
+____
 
 NETLINK.GROUPS <``number``>::
 Netlink multicast groups.
@@ -499,6 +498,10 @@ locked or leased. _l_ represents a read, a shared lock or a read lease.
 _L_ represents a write or an exclusive lock or a write lease. If both
 read/shared and write/exclusive locks or leases are taken by a file
 descriptor, _L_ is used as the flag.
++
+[-m]:::
+Multiplexed. If the file descriptor is targeted by a eventpoll file,
+this bit flag is set.
 
 == FILTER EXPRESSION
 

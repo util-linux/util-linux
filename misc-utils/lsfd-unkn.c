@@ -444,6 +444,7 @@ static const struct anon_ops anon_eventfd_ops = {
 struct anon_eventpoll_data {
 	size_t count;
 	int *tfds;
+	struct list_head siblings;
 };
 
 static bool anon_eventpoll_probe(const char *str)
@@ -453,7 +454,9 @@ static bool anon_eventpoll_probe(const char *str)
 
 static void anon_eventpoll_init(struct unkn *unkn)
 {
-	unkn->anon_data = xcalloc(1, sizeof(struct anon_eventpoll_data));
+	struct anon_eventpoll_data *data = xcalloc(1, sizeof(struct anon_eventpoll_data));
+	INIT_LIST_HEAD(&data->siblings);
+	unkn->anon_data = data;
 }
 
 static void anon_eventpoll_free(struct unkn *unkn)
@@ -496,6 +499,9 @@ static void anon_eventpoll_attach_xinfo(struct unkn *unkn)
 	struct anon_eventpoll_data *data = (struct anon_eventpoll_data *)unkn->anon_data;
 	qsort(data->tfds, data->count, sizeof(data->tfds[0]),
 	      intcmp);
+	if (data->count > 0)
+		list_add_tail(&data->siblings,
+			      &unkn->file.proc->eventpolls);
 }
 
 static char *anon_eventpoll_make_tfds_string(struct anon_eventpoll_data *data,
@@ -554,6 +560,26 @@ static const struct anon_ops anon_eventpoll_ops = {
 	.handle_fdinfo = anon_eventpoll_handle_fdinfo,
 	.attach_xinfo = anon_eventpoll_attach_xinfo,
 };
+
+static int numcomp(const void *a, const void *b)
+{
+	return *(int *)a - *(int *)b;
+}
+
+bool is_multiplexed_by_eventpoll(int fd, struct list_head *eventpolls)
+{
+	struct list_head *t;
+	list_for_each (t, eventpolls) {
+		struct anon_eventpoll_data *data = list_entry(t, struct anon_eventpoll_data, siblings);
+		if (data->count) {
+			if (bsearch(&fd, data->tfds,
+				    data->count, sizeof (data->tfds[0]),
+				    numcomp))
+			    return true;
+		}
+	}
+	return false;
+}
 
 /*
  * timerfd

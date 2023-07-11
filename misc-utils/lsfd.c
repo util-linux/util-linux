@@ -700,6 +700,7 @@ static struct proc *new_process(pid_t pid, struct proc *leader)
 
 	INIT_LIST_HEAD(&proc->files);
 	INIT_LIST_HEAD(&proc->procs);
+	INIT_LIST_HEAD(&proc->eventpolls);
 
 	proc->kthread = 0;
 	return proc;
@@ -1847,6 +1848,23 @@ static void attach_xinfos(struct list_head *procs)
 	}
 }
 
+static void set_multiplexed_flags(struct list_head *procs)
+{
+	struct list_head *p;
+	list_for_each (p, procs) {
+		struct proc *proc = list_entry(p, struct proc, procs);
+		struct list_head *f;
+		list_for_each (f, &proc->files) {
+			struct file *file = list_entry(f, struct file, files);
+			if (is_opened_file(file) && !file->multiplexed) {
+				int fd = file->association;
+				if (is_multiplexed_by_eventpoll(fd, &proc->eventpolls))
+					file->multiplexed = 1;
+			}
+		}
+	}
+}
+
 /* Filter expressions for implementing -i option.
  *
  * To list up the protocol names, use the following command line
@@ -2078,6 +2096,9 @@ int main(int argc, char *argv[])
 	free(pids);
 
 	attach_xinfos(&ctl.procs);
+	if (scols_table_get_column_by_name(ctl.tb, "XMODE"))
+		set_multiplexed_flags(&ctl.procs);
+
 
 	convert(&ctl.procs, &ctl);
 

@@ -302,6 +302,7 @@ static bool file_fill_column(struct proc *proc,
 		char L = file->locked.write? 'L'
 			:file->locked.read?  'l'
 			:                    '-';
+		char m = file->multiplexed? 'm': '-';
 
 		if (does_file_has_fdinfo_alike(file)) {
 			r = file->mode & S_IRUSR? 'r': '-';
@@ -310,7 +311,7 @@ static bool file_fill_column(struct proc *proc,
 			     && file->mode & S_IXUSR)? 'x': '-';
 		} else
 			r = w = x = '-';
-		xasprintf(&str, "%c%c%c%c%c", r, w, x, D, L);
+		xasprintf(&str, "%c%c%c%c%c%c", r, w, x, D, L, m);
 		break;
 	}
 	case COL_POS:
