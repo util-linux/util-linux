@@ -239,7 +239,7 @@ struct dmesg_record {
 		(_r)->tv.tv_usec = 0; \
 	} while (0)
 
-static int read_kmsg(struct dmesg_control *ctl);
+static int process_kmsg(struct dmesg_control *ctl);
 
 static int set_level_color(int log_level, const char *mesg, size_t mesgsz)
 {
@@ -590,9 +590,9 @@ static ssize_t read_syslog_buffer(struct dmesg_control *ctl, char **buf)
 }
 
 /*
- * Top level function to read messages
+ * Top level function to read (and print in case of kmesg) messages
  */
-static ssize_t read_buffer(struct dmesg_control *ctl, char **buf)
+static ssize_t process_buffer(struct dmesg_control *ctl, char **buf)
 {
 	ssize_t n = -1;
 
@@ -610,7 +610,7 @@ static ssize_t read_buffer(struct dmesg_control *ctl, char **buf)
 		/*
 		 * Since kernel 3.5.0
 		 */
-		n = read_kmsg(ctl);
+		n = process_kmsg(ctl);
 		break;
 	default:
 		abort();	/* impossible method -> drop core */
@@ -1198,7 +1198,7 @@ static int init_kmsg(struct dmesg_control *ctl)
 	 * but read() returns -EINVAL :-(((
 	 *
 	 * Let's try to read the first record. The record is later processed in
-	 * read_kmsg().
+	 * process_kmsg().
 	 */
 	ctl->kmsg_first_read = read_kmsg_one(ctl);
 	if (ctl->kmsg_first_read < 0) {
@@ -1306,7 +1306,7 @@ mesg:
  *
  * Returns 0 on success, -1 on error.
  */
-static int read_kmsg(struct dmesg_control *ctl)
+static int process_kmsg(struct dmesg_control *ctl)
 {
 	struct dmesg_record rec;
 	ssize_t sz;
@@ -1646,7 +1646,7 @@ int main(int argc, char *argv[])
 			ctl.force_prefix = 0;
 		if (ctl.pager)
 			pager_redirect();
-		n = read_buffer(&ctl, &buf);
+		n = process_buffer(&ctl, &buf);
 		if (n > 0)
 			print_buffer(&ctl, buf, n);
 		if (!ctl.mmap_buff)
