@@ -1607,7 +1607,7 @@ int main(int argc, char *argv[])
 			ctl.suspended_time = dmesg_get_suspended_time();
 	}
 
-	if (delta)
+	if (delta) {
 		switch (ctl.time_fmt) {
 		case DMESG_TIMEFTM_CTIME:
 			ctl.time_fmt = DMESG_TIMEFTM_CTIME_DELTA;
@@ -1621,15 +1621,13 @@ int main(int argc, char *argv[])
 		default:
 			ctl.time_fmt = DMESG_TIMEFTM_DELTA;
 		}
-
+	}
 
 	if (!ctl.json)
 		ctl.color = colors_init(colormode, "dmesg") ? 1 : 0;
 	if (ctl.follow)
 		nopager = 1;
 	ctl.pager = nopager ? 0 : ctl.pager;
-	if (ctl.pager)
-		pager_redirect();
 
 	switch (ctl.action) {
 	case SYSLOG_ACTION_READ_ALL:
