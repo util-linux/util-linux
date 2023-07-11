@@ -1128,6 +1128,152 @@ static const struct anon_ops anon_bpf_prog_ops = {
 };
 
 /*
+ * bpf-map
+ */
+static const char *bpf_map_type_table[] = {
+	[0] = "unspec",		  /* BPF_MAP_TYPE_UNSPEC */
+	[1] = "hash",		  /* BPF_MAP_TYPE_HASH */
+	[2] = "array",		  /* BPF_MAP_TYPE_ARRAY */
+	[3] = "prog-array",	  /* BPF_MAP_TYPE_PROG_ARRAY */
+	[4] = "perf-event-array", /* BPF_MAP_TYPE_PERF_EVENT_ARRAY */
+	[5] = "percpu-hash",	  /* BPF_MAP_TYPE_PERCPU_HASH */
+	[6] = "percpu-array",	  /* BPF_MAP_TYPE_PERCPU_ARRAY */
+	[7] = "stack-trace",	  /* BPF_MAP_TYPE_STACK_TRACE */
+	[8] = "cgroup-array",	  /* BPF_MAP_TYPE_CGROUP_ARRAY */
+	[9] = "lru-hash",	  /* BPF_MAP_TYPE_LRU_HASH */
+	[10] = "lru-percpu-hash", /* BPF_MAP_TYPE_LRU_PERCPU_HASH */
+	[11] = "lpm-trie",	  /* BPF_MAP_TYPE_LPM_TRIE */
+	[12] = "array-of-maps",	  /* BPF_MAP_TYPE_ARRAY_OF_MAPS */
+	[13] = "hash-of-maps",	  /* BPF_MAP_TYPE_HASH_OF_MAPS */
+	[14] = "devmap",	  /* BPF_MAP_TYPE_DEVMAP */
+	[15] = "sockmap",	  /* BPF_MAP_TYPE_SOCKMAP */
+	[16] = "cpumap",	  /* BPF_MAP_TYPE_CPUMAP */
+	[17] = "xskmap",	  /* BPF_MAP_TYPE_XSKMAP */
+	[18] = "sockhash",	  /* BPF_MAP_TYPE_SOCKHASH */
+	[19] = "cgroup-storage",  /* BPF_MAP_TYPE_CGROUP_STORAGE */
+	[20] = "reuseport-sockarray", /* BPF_MAP_TYPE_REUSEPORT_SOCKARRAY */
+	[21] = "percpu-cgroup-storage", /* BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE */
+	[22] = "queue",			/* BPF_MAP_TYPE_QUEUE */
+	[23] = "stack",			/* BPF_MAP_TYPE_STACK */
+	[24] = "sk-storage",		/* BPF_MAP_TYPE_SK_STORAGE */
+	[25] = "devmap-hash",		/* BPF_MAP_TYPE_DEVMAP_HASH */
+	[26] = "struct-ops",		/* BPF_MAP_TYPE_STRUCT_OPS */
+	[27] = "ringbuf",		/* BPF_MAP_TYPE_RINGBUF */
+	[28] = "inode-storage", /* BPF_MAP_TYPE_INODE_STORAGE */
+	[29] = "task-storage",	/* BPF_MAP_TYPE_TASK_STORAGE */
+	[30] = "bloom-filter",	/* BPF_MAP_TYPE_BLOOM_FILTER */
+	[31] = "user-ringbuf",	/* BPF_MAP_TYPE_USER_RINGBUF */
+	[32] = "cgrp-storage",	/* BPF_MAP_TYPE_CGRP_STORAGE */
+};
+
+struct anon_bpf_map_data {
+	int type;
+	int id;
+};
+
+static bool anon_bpf_map_probe(const char *str)
+{
+	return strncmp(str, "bpf-map", 8) == 0;
+}
+
+static const char *anon_bpf_map_get_map_type_name(int type)
+{
+	if (0 <= type && type < (int)ARRAY_SIZE(bpf_map_type_table))
+		return bpf_map_type_table[type];
+	return NULL;
+}
+
+static bool anon_bpf_map_fill_column(struct proc *proc  __attribute__((__unused__)),
+				     struct unkn *unkn,
+				     struct libscols_line *ln __attribute__((__unused__)),
+				     int column_id,
+				     size_t column_index __attribute__((__unused__)),
+				     char **str)
+{
+	struct anon_bpf_prog_data *data = (struct anon_bpf_prog_data *)unkn->anon_data;
+	const char *t;
+
+	switch(column_id) {
+	case COL_BPF_MAP_ID:
+		xasprintf(str, "%d", data->id);
+		return true;
+	case COL_BPF_MAP_TYPE_RAW:
+		xasprintf(str, "%d", data->type);
+		return true;
+	case COL_BPF_MAP_TYPE:
+		t = anon_bpf_map_get_map_type_name(data->type);
+		if (t)
+			*str = xstrdup(t);
+		else
+			xasprintf(str, "UNKNOWN(%d)", data->type);
+		return true;
+	default:
+		return false;
+	}
+}
+
+static char *anon_bpf_map_get_name(struct unkn *unkn)
+{
+	const char *t;
+	char *str = NULL;
+	struct anon_bpf_map_data *data = (struct anon_bpf_map_data *)unkn->anon_data;
+
+	t = anon_bpf_map_get_map_type_name(data->type);
+	if (t)
+		xasprintf(&str, "id=%d type=%s", data->id, t);
+	else
+		xasprintf(&str, "id=%d type=UNKNOWN(%d)", data->id, data->type);
+	return str;
+}
+
+static void anon_bpf_map_init(struct unkn *unkn)
+{
+	struct anon_bpf_map_data *data = xmalloc(sizeof(*data));
+	data->type = -1;
+	data->id = -1;
+	unkn->anon_data = data;
+}
+
+static void anon_bpf_map_free(struct unkn *unkn)
+{
+	struct anon_bpf_map_data *data = (struct anon_bpf_map_data *)unkn->anon_data;
+	free(data);
+}
+
+static int anon_bpf_map_handle_fdinfo(struct unkn *unkn, const char *key, const char *value)
+{
+	if (strcmp(key, "map_id") == 0) {
+		int32_t t = -1;
+		int rc = ul_strtos32(value, &t, 10);
+		if (rc < 0)
+			return 0; /* ignore -- parse failed */
+		((struct anon_bpf_map_data *)unkn->anon_data)->id = (int)t;
+		return 1;
+	}
+
+	if (strcmp(key, "map_type") == 0) {
+		int32_t t = -1;
+		int rc = ul_strtos32(value, &t, 10);
+		if (rc < 0)
+			return 0; /* ignore -- parse failed */
+		((struct anon_bpf_map_data *)unkn->anon_data)->type = (int)t;
+		return 1;
+	}
+
+	return 0;
+}
+
+static const struct anon_ops anon_bpf_map_ops = {
+	.class = "bpf-map",
+	.probe = anon_bpf_map_probe,
+	.get_name = anon_bpf_map_get_name,
+	.fill_column = anon_bpf_map_fill_column,
+	.init = anon_bpf_map_init,
+	.free = anon_bpf_map_free,
+	.handle_fdinfo = anon_bpf_map_handle_fdinfo,
+};
+
+/*
  * generic (fallback implementation)
  */
 static const struct anon_ops anon_generic_ops = {
@@ -1147,6 +1293,7 @@ static const struct anon_ops *anon_ops[] = {
 	&anon_signalfd_ops,
 	&anon_inotify_ops,
 	&anon_bpf_prog_ops,
+	&anon_bpf_map_ops,
 };
 
 static const struct anon_ops *anon_probe(const char *str)

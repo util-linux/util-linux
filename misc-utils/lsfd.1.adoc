@@ -132,6 +132,15 @@ Association between file and process.
 BLKDRV <``string``>::
 Block device driver name resolved by `/proc/devices`.
 
+BPF-MAP.ID <``number``>::
+Bpf map ID.
+
+BPF-MAP.TYPE <``string``>::
+Decoded name of bpf map type.
+
+BPF-MAP.TYPE.RAW <``number``>::
+Bpf map type (raw).
+
 BPF-PROG.ID <``number``>::
 Bpf program ID.
 
@@ -249,6 +258,9 @@ NAME <``string``>::
 Cooked version of KNAME. It is mostly same as KNAME.
 +
 Some files have special formats and information sources:
++
+bpf-map:::
+id=_BPF-MAP.ID_ type=_BPF-MAP.TYPE_
 +
 bpf-prog:::
 id=_BPF-PROG.ID_ type=_BPF-PROG.TYPE_
