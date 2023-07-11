@@ -2637,8 +2637,14 @@ AS_IF([test "x$with_python" != xno], [
        [AC_MSG_WARN([python interpreter not found, do not build python bindings])],
     [*:yes],
        # check for python development stuff
-       [PKG_CHECK_MODULES([PYTHON], [python-$PYTHON_VERSION],
-			  [have_libpython=yes], [have_libpython=no])]
+       [
+         PKG_CHECK_MODULES([PYTHON], [python-$PYTHON_VERSION], [have_libpython=yes], [have_libpython=no])
+
+         # https://github.com/util-linux/util-linux/issues/2366
+         AX_COMPARE_VERSION([$PYTHON_VERSION], [ge], [3.12], [
+           UL_WARN_ADD([-Wno-error=redundant-decls], [PYTHON_CFLAGS])
+         ])
+       ]
   )
 ])
 
