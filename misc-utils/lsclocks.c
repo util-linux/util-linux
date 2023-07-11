@@ -23,6 +23,7 @@
 #include <time.h>
 #include <inttypes.h>
 #include <getopt.h>
+#include <glob.h>
 
 #include <libsmartcols.h>
 
@@ -194,6 +195,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --output-all           output all columns\n"), out);
 	fputs(_(" -r, --raw                  use raw output format\n"), out);
 	fputs(_(" -t, --time <clock>         show current time of single clock\n"), out);
+	fputs(_(" --no-discover-dynamic      do not try to discover dynamic clocks\n"), out);
 	fputs(_(" -d, --dynamic-clock <path> also display specified dynamic clock\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -376,11 +378,15 @@ struct dynamic_clock {
 
 static void add_dynamic_clock_from_path(struct libscols_table *tb,
 					const int *columns, size_t ncolumns,
-					const char *path)
+					const char *path, bool explicit)
 {
 	int fd = open(path, O_RDONLY);
-	if (fd == -1)
-		err(EXIT_FAILURE, _("Could not open %s"), path);
+	if (fd == -1) {
+		if (explicit)
+			err(EXIT_FAILURE, _("Could not open %s"), path);
+		else
+			return;
+	}
 
 	struct clockinfo clockinfo = {
 		.type = CT_PTP,
@@ -392,6 +398,24 @@ static void add_dynamic_clock_from_path(struct libscols_table *tb,
 	close(fd);
 }
 
+static void add_dynamic_clocks_from_discovery(struct libscols_table *tb,
+					      const int *columns, size_t ncolumns)
+{
+	int rc;
+	size_t i;
+	glob_t state;
+
+	rc = glob("/dev/ptp*", 0, NULL, &state);
+	if (rc)
+		errx(EXIT_FAILURE, _("Could not glob: %d"), rc);
+
+	for (i = 0; i < state.gl_pathc; i++)
+		add_dynamic_clock_from_path(tb, columns, ncolumns,
+					    state.gl_pathv[i], false);
+
+	globfree(&state);
+}
+
 int main(int argc, char **argv)
 {
 	size_t i;
@@ -401,7 +425,7 @@ int main(int argc, char **argv)
 	struct libscols_table *tb;
 	struct libscols_column *col;
 
-	bool noheadings = false, raw = false, json = false;
+	bool noheadings = false, raw = false, json = false, disc_dynamic = true;
 	const char *outarg = NULL;
 	int columns[ARRAY_SIZE(infos) * 2];
 	size_t ncolumns = 0;
@@ -413,18 +437,20 @@ int main(int argc, char **argv)
 	struct timespec now;
 
 	enum {
-		OPT_OUTPUT_ALL = CHAR_MAX + 1
+		OPT_OUTPUT_ALL = CHAR_MAX + 1,
+		OPT_NO_DISC_DYN,
 	};
 	static const struct option longopts[] = {
-		{ "noheadings",    no_argument,       NULL, 'n' },
-		{ "output",        required_argument, NULL, 'o' },
-		{ "output-all",	   no_argument,       NULL, OPT_OUTPUT_ALL },
-		{ "version",       no_argument,       NULL, 'V' },
-		{ "help",	   no_argument,       NULL, 'h' },
-		{ "json",          no_argument,       NULL, 'J' },
-		{ "raw",           no_argument,       NULL, 'r' },
-		{ "time",          required_argument, NULL, 't' },
-		{ "dynamic-clock", required_argument, NULL, 'd' },
+		{ "noheadings",          no_argument,       NULL, 'n' },
+		{ "output",              required_argument, NULL, 'o' },
+		{ "output-all",	         no_argument,       NULL, OPT_OUTPUT_ALL },
+		{ "version",             no_argument,       NULL, 'V' },
+		{ "help",	         no_argument,       NULL, 'h' },
+		{ "json",                no_argument,       NULL, 'J' },
+		{ "raw",                 no_argument,       NULL, 'r' },
+		{ "time",                required_argument, NULL, 't' },
+		{ "no-discover-dynamic", no_argument,       NULL, OPT_NO_DISC_DYN },
+		{ "dynamic-clock",       required_argument, NULL, 'd' },
 		{ 0 }
 	};
 
@@ -460,6 +486,9 @@ int main(int argc, char **argv)
 			dynamic_clock = xmalloc(sizeof(*dynamic_clock));
 			dynamic_clock->path = optarg;
 			list_add(&dynamic_clock->head, &dynamic_clocks);
+			break;
+		case OPT_NO_DISC_DYN:
+			disc_dynamic = false;
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
@@ -514,9 +543,12 @@ int main(int argc, char **argv)
 	for (i = 0; i < ARRAY_SIZE(clocks); i++)
 		add_clock_line(tb, columns, ncolumns, &clocks[i]);
 
+	if (disc_dynamic)
+		add_dynamic_clocks_from_discovery(tb, columns, ncolumns);
+
 	list_for_each(current_dynamic_clock, &dynamic_clocks) {
 		dynamic_clock = list_entry(current_dynamic_clock, struct dynamic_clock, head);
-		add_dynamic_clock_from_path(tb, columns, ncolumns, dynamic_clock->path);
+		add_dynamic_clock_from_path(tb, columns, ncolumns, dynamic_clock->path, true);
 	}
 
 	list_free(&dynamic_clocks, struct dynamic_clock, head, free);

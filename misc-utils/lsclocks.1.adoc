@@ -42,6 +42,9 @@ Use raw output format.
 *-r*, *--time* _clock_
 Show current time of one specific clocks.
 
+*--no-discover-dynamic*
+Do not try to discover dynamic clocks.
+
 *-d*, *--dynamic-clock* _path_
 Also display specified dynamic clock.
 

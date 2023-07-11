@@ -29,7 +29,7 @@ mask_timestamps() {
 
 ts_init_subtest basic
 
-"$TS_CMD_LSCLOCKS" -o TYPE,ID,CLOCK,NAME > "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+"$TS_CMD_LSCLOCKS" --no-discover-dynamic -o TYPE,ID,CLOCK,NAME > "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 
 ts_finalize_subtest
 
@@ -42,7 +42,7 @@ ts_finalize_subtest
 ts_init_subtest dynamic
 
 if [ -c /dev/ptp0 ] && [ -r /dev/ptp0 ]; then
-	"$TS_CMD_LSCLOCKS" --dynamic-clock /dev/ptp0 --output TYPE,ID,CLOCK,NAME \
+	"$TS_CMD_LSCLOCKS" --no-discover-dynamic --dynamic-clock /dev/ptp0 --output TYPE,ID,CLOCK,NAME \
 		| tail -1 > "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 	ts_finalize_subtest
 else
