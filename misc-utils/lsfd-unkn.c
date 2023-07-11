@@ -981,6 +981,156 @@ static const struct anon_ops anon_inotify_ops = {
 };
 
 /*
+ * bpf-prog
+ *
+ * Generally, we use "-" as the word separators in lsfd's output.
+ * However, about bpf*, we use "_" because bpftool uses "_".
+ */
+static const char *bpf_prog_type_table[] = {
+	[0] = "unspec",		   /* BPF_PROG_TYPE_UNSPEC*/
+	[1] = "socket_filter",	   /* BPF_PROG_TYPE_SOCKET_FILTER*/
+	[2] = "kprobe",		   /* BPF_PROG_TYPE_KPROBE*/
+	[3] = "sched_cls",	   /* BPF_PROG_TYPE_SCHED_CLS*/
+	[4] = "sched_act",	   /* BPF_PROG_TYPE_SCHED_ACT*/
+	[5] = "tracepoint",	   /* BPF_PROG_TYPE_TRACEPOINT*/
+	[6] = "xdp",		   /* BPF_PROG_TYPE_XDP*/
+	[7] = "perf_event",	   /* BPF_PROG_TYPE_PERF_EVENT*/
+	[8] = "cgroup_skb",	   /* BPF_PROG_TYPE_CGROUP_SKB*/
+	[9] = "cgroup_sock",	   /* BPF_PROG_TYPE_CGROUP_SOCK*/
+	[10] = "lwt_in",	   /* BPF_PROG_TYPE_LWT_IN*/
+	[11] = "lwt_out",	   /* BPF_PROG_TYPE_LWT_OUT*/
+	[12] = "lwt_xmit",	   /* BPF_PROG_TYPE_LWT_XMIT*/
+	[13] = "sock_ops",	   /* BPF_PROG_TYPE_SOCK_OPS*/
+	[14] = "sk_skb",	   /* BPF_PROG_TYPE_SK_SKB*/
+	[15] = "cgroup_device",	   /* BPF_PROG_TYPE_CGROUP_DEVICE*/
+	[16] = "sk_msg",	   /* BPF_PROG_TYPE_SK_MSG*/
+	[17] = "raw_tracepoint",   /* BPF_PROG_TYPE_RAW_TRACEPOINT*/
+	[18] = "cgroup_sock_addr", /* BPF_PROG_TYPE_CGROUP_SOCK_ADDR*/
+	[19] = "lwt_seg6local",	   /* BPF_PROG_TYPE_LWT_SEG6LOCAL*/
+	[20] = "lirc_mode2",	   /* BPF_PROG_TYPE_LIRC_MODE2*/
+	[21] = "sk_reuseport",	   /* BPF_PROG_TYPE_SK_REUSEPORT*/
+	[22] = "flow_dissector",   /* BPF_PROG_TYPE_FLOW_DISSECTOR*/
+	[23] = "cgroup_sysctl",	   /* BPF_PROG_TYPE_CGROUP_SYSCTL*/
+	[24] = "raw_tracepoint_writable", /* BPF_PROG_TYPE_RAW_TRACEPOINT_WRITABLE*/
+	[25] = "cgroup_sockopt", /* BPF_PROG_TYPE_CGROUP_SOCKOPT*/
+	[26] = "tracing",	 /* BPF_PROG_TYPE_TRACING*/
+	[27] = "struct_ops",	 /* BPF_PROG_TYPE_STRUCT_OPS*/
+	[28] = "ext",		 /* BPF_PROG_TYPE_EXT*/
+	[29] = "lsm",		 /* BPF_PROG_TYPE_LSM*/
+	[30] = "sk_lookup",	 /* BPF_PROG_TYPE_SK_LOOKUP*/
+	[31] = "syscall",	 /* BPF_PROG_TYPE_SYSCALL*/
+};
+
+struct anon_bpf_prog_data {
+	int type;
+	int id;
+};
+
+static bool anon_bpf_prog_probe(const char *str)
+{
+	return strncmp(str, "bpf-prog", 8) == 0;
+}
+
+static const char *anon_bpf_prog_get_prog_type_name(int type)
+{
+	if (0 <= type && type < (int)ARRAY_SIZE(bpf_prog_type_table))
+		return bpf_prog_type_table[type];
+	return NULL;
+}
+
+static bool anon_bpf_prog_fill_column(struct proc *proc  __attribute__((__unused__)),
+				      struct unkn *unkn,
+				      struct libscols_line *ln __attribute__((__unused__)),
+				      int column_id,
+				      size_t column_index __attribute__((__unused__)),
+				     char **str)
+{
+	struct anon_bpf_prog_data *data = (struct anon_bpf_prog_data *)unkn->anon_data;
+	const char *t;
+
+	switch(column_id) {
+	case COL_BPF_PROG_ID:
+		xasprintf(str, "%d", data->id);
+		return true;
+	case COL_BPF_PROG_TYPE_RAW:
+		xasprintf(str, "%d", data->type);
+		return true;
+	case COL_BPF_PROG_TYPE:
+		t = anon_bpf_prog_get_prog_type_name(data->type);
+		if (t)
+			*str = xstrdup(t);
+		else
+			xasprintf(str, "UNKNOWN(%d)", data->type);
+		return true;
+	default:
+		return false;
+	}
+}
+
+static char *anon_bpf_prog_get_name(struct unkn *unkn)
+{
+	const char *t;
+	char *str = NULL;
+	struct anon_bpf_prog_data *data = (struct anon_bpf_prog_data *)unkn->anon_data;
+
+	t = anon_bpf_prog_get_prog_type_name(data->type);
+	if (t)
+		xasprintf(&str, "id=%d type=%s", data->id, t);
+	else
+		xasprintf(&str, "id=%d type=UNKNOWN(%d)", data->id, data->type);
+
+	return str;
+}
+
+
+static void anon_bpf_prog_init(struct unkn *unkn)
+{
+	struct anon_bpf_prog_data *data = xmalloc(sizeof(*data));
+	data->type = -1;
+	data->id = -1;
+	unkn->anon_data = data;
+}
+
+static void anon_bpf_prog_free(struct unkn *unkn)
+{
+	struct anon_bpf_prog_data *data = (struct anon_bpf_prog_data *)unkn->anon_data;
+	free(data);
+}
+
+static int anon_bpf_prog_handle_fdinfo(struct unkn *unkn, const char *key, const char *value)
+{
+	if (strcmp(key, "prog_id") == 0) {
+		int32_t t = -1;
+		int rc = ul_strtos32(value, &t, 10);
+		if (rc < 0)
+			return 0; /* ignore -- parse failed */
+		((struct anon_bpf_prog_data *)unkn->anon_data)->id = (int)t;
+		return 1;
+	}
+
+	if (strcmp(key, "prog_type") == 0) {
+		int32_t t = -1;
+		int rc = ul_strtos32(value, &t, 10);
+		if (rc < 0)
+			return 0; /* ignore -- parse failed */
+		((struct anon_bpf_prog_data *)unkn->anon_data)->type = (int)t;
+		return 1;
+	}
+
+	return 0;
+}
+
+static const struct anon_ops anon_bpf_prog_ops = {
+	.class = "bpf-prog",
+	.probe = anon_bpf_prog_probe,
+	.get_name = anon_bpf_prog_get_name,
+	.fill_column = anon_bpf_prog_fill_column,
+	.init = anon_bpf_prog_init,
+	.free = anon_bpf_prog_free,
+	.handle_fdinfo = anon_bpf_prog_handle_fdinfo,
+};
+
+/*
  * generic (fallback implementation)
  */
 static const struct anon_ops anon_generic_ops = {
@@ -999,6 +1149,7 @@ static const struct anon_ops *anon_ops[] = {
 	&anon_timerfd_ops,
 	&anon_signalfd_ops,
 	&anon_inotify_ops,
+	&anon_bpf_prog_ops,
 };
 
 static const struct anon_ops *anon_probe(const char *str)

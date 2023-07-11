@@ -132,6 +132,15 @@ Association between file and process.
 BLKDRV <``string``>::
 Block device driver name resolved by `/proc/devices`.
 
+BPF-PROG.ID <``number``>::
+Bpf program ID.
+
+BPF-PROG.TYPE <``string``>::
+Decoded name of bpf program type.
+
+BPF-PROG.TYPE.RAW <``number``>::
+Bpf program type (raw).
+
 CHRDRV <``string``>::
 Character device driver name resolved by `/proc/devices`.
 
@@ -240,6 +249,9 @@ NAME <``string``>::
 Cooked version of KNAME. It is mostly same as KNAME.
 +
 Some files have special formats and information sources:
++
+bpf-prog:::
+id=_BPF-PROG.ID_ type=_BPF-PROG.TYPE_
 +
 eventpoll:::
 tfds=_EVENTPOLL.TFDS_
@@ -748,7 +760,7 @@ mailto:yamato@redhat.com[Masatake YAMATO],
 mailto:kzak@redhat.com[Karel Zak]
 
 == SEE ALSO
-
+*bpftool*(8)
 *lslocks*(8)
 *lsof*(8)
 *pidof*(1)
