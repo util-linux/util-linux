@@ -48,6 +48,9 @@ include::man-common/help-version.adoc[]
 
 Each column has a type. Types are surround by < and >.
 
+TYPE <``string``>::
+Clock type.
+
 ID <``number``>::
 Numeric clock ID.
 

@@ -29,7 +29,7 @@ mask_timestamps() {
 
 ts_init_subtest basic
 
-"$TS_CMD_LSCLOCKS" -o ID,CLOCK,NAME > "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+"$TS_CMD_LSCLOCKS" -o TYPE,ID,CLOCK,NAME > "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 
 ts_finalize_subtest
 

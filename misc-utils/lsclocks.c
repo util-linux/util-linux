@@ -74,7 +74,21 @@
 #define CLOCK_TAI			11
 #endif
 
+enum CLOCK_TYPE {
+	CT_SYS,
+};
+
+static const char *clock_type_name(enum CLOCK_TYPE type)
+{
+	switch (type) {
+	case CT_SYS:
+		return "sys";
+	}
+	errx(EXIT_FAILURE, _("Unknown clock type %d"), type);
+}
+
 struct clockinfo {
+	enum CLOCK_TYPE type;
 	clockid_t id;
 	const char * const id_name;
 	const char * const name;
@@ -82,21 +96,22 @@ struct clockinfo {
 };
 
 static const struct clockinfo clocks[] = {
-	{ CLOCK_REALTIME,         "CLOCK_REALTIME",         "realtime"         },
-	{ CLOCK_MONOTONIC,        "CLOCK_MONOTONIC",        "monotonic",
-	  .ns_offset_name = "monotonic"                                        },
-	{ CLOCK_MONOTONIC_RAW,    "CLOCK_MONOTONIC_RAW",    "monotonic-raw"    },
-	{ CLOCK_REALTIME_COARSE,  "CLOCK_REALTIME_COARSE",  "realtime-coarse"  },
-	{ CLOCK_MONOTONIC_COARSE, "CLOCK_MONOTONIC_COARSE", "monotonic-coarse" },
-	{ CLOCK_BOOTTIME,         "CLOCK_BOOTTIME",         "boottime",
-	  .ns_offset_name = "boottime"                                         },
-	{ CLOCK_REALTIME_ALARM,   "CLOCK_REALTIME_ALARM",   "realtime-alarm"   },
-	{ CLOCK_BOOTTIME_ALARM,   "CLOCK_BOOTTIME_ALARM",   "boottime-alarm"   },
-	{ CLOCK_TAI,              "CLOCK_TAI",              "tai"              },
+	{ CT_SYS, CLOCK_REALTIME,         "CLOCK_REALTIME",         "realtime"         },
+	{ CT_SYS, CLOCK_MONOTONIC,        "CLOCK_MONOTONIC",        "monotonic",
+	  .ns_offset_name = "monotonic"						       },
+	{ CT_SYS, CLOCK_MONOTONIC_RAW,    "CLOCK_MONOTONIC_RAW",    "monotonic-raw"    },
+	{ CT_SYS, CLOCK_REALTIME_COARSE,  "CLOCK_REALTIME_COARSE",  "realtime-coarse"  },
+	{ CT_SYS, CLOCK_MONOTONIC_COARSE, "CLOCK_MONOTONIC_COARSE", "monotonic-coarse" },
+	{ CT_SYS, CLOCK_BOOTTIME,         "CLOCK_BOOTTIME",         "boottime",
+	  .ns_offset_name = "boottime"						       },
+	{ CT_SYS, CLOCK_REALTIME_ALARM,   "CLOCK_REALTIME_ALARM",   "realtime-alarm"   },
+	{ CT_SYS, CLOCK_BOOTTIME_ALARM,   "CLOCK_BOOTTIME_ALARM",   "boottime-alarm"   },
+	{ CT_SYS, CLOCK_TAI,              "CLOCK_TAI",              "tai"              },
 };
 
 /* column IDs */
 enum {
+	COL_TYPE,
 	COL_ID,
 	COL_CLOCK,
 	COL_NAME,
@@ -119,6 +134,7 @@ struct colinfo {
 
 /* columns descriptions */
 static const struct colinfo infos[] = {
+	[COL_TYPE]       = { "TYPE",       1, 0,              SCOLS_JSON_STRING, N_("type") },
 	[COL_ID]         = { "ID",         1, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER, N_("numeric id") },
 	[COL_CLOCK]      = { "CLOCK",      1, 0,              SCOLS_JSON_STRING, N_("symbolic name") },
 	[COL_NAME]       = { "NAME",       1, 0,              SCOLS_JSON_STRING, N_("readable name") },
@@ -333,6 +349,7 @@ int main(int argc, char **argv)
 	if (!ncolumns) {
 		columns[ncolumns++] = COL_ID;
 		columns[ncolumns++] = COL_NAME;
+		columns[ncolumns++] = COL_TYPE;
 		columns[ncolumns++] = COL_TIME;
 		columns[ncolumns++] = COL_RESOL;
 		columns[ncolumns++] = COL_ISO_TIME;
@@ -377,6 +394,9 @@ int main(int argc, char **argv)
 
 		for (j = 0; j < ncolumns; j++) {
 			switch (columns[j]) {
+				case COL_TYPE:
+					scols_line_set_data(ln, j, clock_type_name(clockinfo->type));
+					break;
 				case COL_ID:
 					scols_line_asprintf(ln, j, "%ju", (uintmax_t) clockinfo->id);
 					break;
