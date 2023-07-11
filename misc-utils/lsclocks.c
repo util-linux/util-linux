@@ -375,7 +375,7 @@ static void add_clock_line(struct libscols_table *tb, const int *columns,
 	}
 }
 
-struct dynamic_clock {
+struct path_clock {
 	struct list_head head;
 	const char * path;
 };
@@ -463,9 +463,9 @@ int main(int argc, char **argv)
 	int columns[ARRAY_SIZE(infos) * 2];
 	size_t ncolumns = 0;
 	clockid_t clock = -1;
-	struct dynamic_clock *dynamic_clock;
+	struct path_clock *path_clock;
 	struct cpu_clock *cpu_clock;
-	struct list_head *current_dynamic_clock, *current_cpu_clock;
+	struct list_head *current_path_clock, *current_cpu_clock;
 	struct list_head dynamic_clocks, cpu_clocks;
 
 	struct timespec now;
@@ -519,9 +519,9 @@ int main(int argc, char **argv)
 			clock = parse_clock(optarg);
 			break;
 		case 'd':
-			dynamic_clock = xmalloc(sizeof(*dynamic_clock));
-			dynamic_clock->path = optarg;
-			list_add(&dynamic_clock->head, &dynamic_clocks);
+			path_clock = xmalloc(sizeof(*path_clock));
+			path_clock->path = optarg;
+			list_add(&path_clock->head, &dynamic_clocks);
 			break;
 		case OPT_NO_DISC_DYN:
 			disc_dynamic = false;
@@ -589,12 +589,12 @@ int main(int argc, char **argv)
 	if (disc_dynamic)
 		add_dynamic_clocks_from_discovery(tb, columns, ncolumns);
 
-	list_for_each(current_dynamic_clock, &dynamic_clocks) {
-		dynamic_clock = list_entry(current_dynamic_clock, struct dynamic_clock, head);
-		add_dynamic_clock_from_path(tb, columns, ncolumns, dynamic_clock->path, true);
+	list_for_each(current_path_clock, &dynamic_clocks) {
+		path_clock = list_entry(current_path_clock, struct path_clock, head);
+		add_dynamic_clock_from_path(tb, columns, ncolumns, path_clock->path, true);
 	}
 
-	list_free(&dynamic_clocks, struct dynamic_clock, head, free);
+	list_free(&dynamic_clocks, struct path_clock, head, free);
 
 	list_for_each(current_cpu_clock, &cpu_clocks) {
 		cpu_clock = list_entry(current_cpu_clock, struct cpu_clock, head);
