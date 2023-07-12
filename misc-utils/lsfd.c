@@ -1603,7 +1603,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("          --summary[=<when>]  print summary information (only, append, or never)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(30));
+	fprintf(out, USAGE_HELP_OPTIONS(30));
 
 	fprintf(out, USAGE_COLUMNS);
 
@@ -1616,7 +1616,7 @@ static void __attribute__((__noreturn__)) usage(void)
 			"<boolean>",
 			_(infos[i].help));
 
-	printf(USAGE_MAN_TAIL("lsfd(1)"));
+	fprintf(out, USAGE_MAN_TAIL("lsfd(1)"));
 
 	exit(EXIT_SUCCESS);
 }
