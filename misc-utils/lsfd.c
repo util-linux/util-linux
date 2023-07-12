@@ -1592,6 +1592,17 @@ static void __attribute__((__noreturn__)) list_colunms(FILE *out)
 	exit(EXIT_SUCCESS);
 }
 
+static void print_columns(FILE *out, const char *prefix, const int cols[], size_t n_cols)
+{
+	fprintf(out, "%15s: ", prefix);
+	for (size_t i = 0; i < n_cols; i++) {
+		if (i)
+			fputc(',', out);
+		fputs(infos[cols[i]].name, out);
+	}
+	fputc('\n', out);
+}
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
@@ -1617,6 +1628,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -H, --list-columns           list the available columns\n"), out);
 	fprintf(out, USAGE_HELP_OPTIONS(30));
+
+	fputs(USAGE_DEFAULT_COLUMNS, out);
+	print_columns(out, _("Default"), default_columns, ARRAY_SIZE(default_columns));
+	print_columns(out, _("With --threads"), default_threads_columns, ARRAY_SIZE(default_threads_columns));
 
 	fprintf(out, USAGE_MAN_TAIL("lsfd(1)"));
 
