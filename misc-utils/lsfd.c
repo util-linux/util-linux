@@ -1587,20 +1587,19 @@ static void __attribute__((__noreturn__)) usage(void)
 	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -l,      --threads           list in threads level\n"), out);
-	fputs(_(" -J,      --json              use JSON output format\n"), out);
-	fputs(_(" -n,      --noheadings        don't print headings\n"), out);
-	fputs(_(" -o,      --output <list>     output columns\n"), out);
-	fputs(_(" -r,      --raw               use raw output format\n"), out);
-	fputs(_(" -u,      --notruncate        don't truncate text in columns\n"), out);
-	fputs(_(" -p,      --pid  <pid(s)>     collect information only specified processes\n"), out);
-	fputs(_(" -i[4|6], --inet[=4|6]        list only IPv4 and/or IPv6 sockets\n"), out);
-	fputs(_(" -Q,      --filter <expr>     apply display filter\n"), out);
-	fputs(_("          --debug-filter      dump the internal data structure of filter and exit\n"), out);
-	fputs(_(" -C,      --counter <name>:<expr>\n"
-		"                              define custom counter for --summary output\n"), out);
-	fputs(_("          --dump-counters     dump counter definitions\n"), out);
-	fputs(_("          --summary[=<when>]  print summary information (only, append, or never)\n"), out);
+	fputs(_(" -l, --threads                list in threads level\n"), out);
+	fputs(_(" -J, --json                   use JSON output format\n"), out);
+	fputs(_(" -n, --noheadings             don't print headings\n"), out);
+	fputs(_(" -o, --output <list>          output columns\n"), out);
+	fputs(_(" -r, --raw                    use raw output format\n"), out);
+	fputs(_(" -u, --notruncate             don't truncate text in columns\n"), out);
+	fputs(_(" -p, --pid  <pid(s)>          collect information only specified processes\n"), out);
+	fputs(_(" -i[4|6], --inet[=4|=6]       list only IPv4 and/or IPv6 sockets\n"), out);
+	fputs(_(" -Q, --filter <expr>          apply display filter\n"), out);
+	fputs(_("     --debug-filter           dump the internal data structure of filter and exit\n"), out);
+	fputs(_(" -C, --counter <name>:<expr>  define custom counter for --summary output\n"), out);
+	fputs(_("     --dump-counters          dump counter definitions\n"), out);
+	fputs(_("     --summary[=<when>]       print summary information (only, append, or never)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(30));
