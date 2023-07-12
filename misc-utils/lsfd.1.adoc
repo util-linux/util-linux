@@ -70,7 +70,7 @@ and *-p* option, e.g. -p 1, may print the same output but using *-p*
 option is much more efficient because *-p* option works at a much earlier
 stage of processing than the *-Q* option.
 
-*-i*[4|6], *--inet*[=4|6]::
+*-i*[4|6], *--inet*[=4|=6]::
 List only IPv4 sockets and/or IPv6 sockets.
 
 *-Q*, *--filter* _expr_::
