@@ -1578,10 +1578,23 @@ static void collect_processes(struct lsfd_control *ctl, const pid_t pids[], int 
 	ul_unref_path(pc);
 }
 
+static void __attribute__((__noreturn__)) list_colunms(FILE *out)
+{
+	fprintf(out, USAGE_COLUMNS);
+	for (size_t i = 0; i < ARRAY_SIZE(infos); i++)
+		fprintf(out, " %20s  %-10s%s\n", infos[i].name,
+			infos[i].json_type == SCOLS_JSON_STRING?  "<string>":
+			infos[i].json_type == SCOLS_JSON_ARRAY_STRING?  "<string>":
+			infos[i].json_type == SCOLS_JSON_ARRAY_NUMBER?  "<string>":
+			infos[i].json_type == SCOLS_JSON_NUMBER?  "<number>":
+			"<boolean>",
+			_(infos[i].help));
+	exit(EXIT_SUCCESS);
+}
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
-	size_t i;
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
@@ -1602,18 +1615,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --summary[=<when>]       print summary information (only, append, or never)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" -H, --list-columns           list the available columns\n"), out);
 	fprintf(out, USAGE_HELP_OPTIONS(30));
-
-	fprintf(out, USAGE_COLUMNS);
-
-	for (i = 0; i < ARRAY_SIZE(infos); i++)
-		fprintf(out, " %16s  %-10s%s\n", infos[i].name,
-			infos[i].json_type == SCOLS_JSON_STRING?  "<string>":
-			infos[i].json_type == SCOLS_JSON_ARRAY_STRING?  "<string>":
-			infos[i].json_type == SCOLS_JSON_ARRAY_NUMBER?  "<string>":
-			infos[i].json_type == SCOLS_JSON_NUMBER?  "<number>":
-			"<boolean>",
-			_(infos[i].help));
 
 	fprintf(out, USAGE_MAN_TAIL("lsfd(1)"));
 
@@ -1926,6 +1929,7 @@ int main(int argc, char *argv[])
 		{ "summary",    optional_argument, NULL,  OPT_SUMMARY },
 		{ "counter",    required_argument, NULL, 'C' },
 		{ "dump-counters",no_argument, NULL, OPT_DUMP_COUNTERS },
+		{ "list-columns",no_argument, NULL, 'H' },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -1934,7 +1938,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "no:JrVhluQ:p:i::C:s", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "no:JrVhluQ:p:i::C:sH", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'n':
 			ctl.noheadings = 1;
@@ -2006,6 +2010,8 @@ int main(int argc, char *argv[])
 			print_version(EXIT_SUCCESS);
 		case 'h':
 			usage();
+		case 'H':
+			list_colunms(stdout);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}

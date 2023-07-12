@@ -110,6 +110,9 @@ only for *lsfd* developers.
 *--dump-counters*::
 Dump the definition of counters used in *--summary* output.
 
+*-H*, *--list-columns*::
+List available columns that you can specify at *--output* option.
+
 include::man-common/help-version.adoc[]
 
 == OUTPUT COLUMNS
