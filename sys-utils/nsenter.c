@@ -209,8 +209,8 @@ static int get_ns_ino(const char *path, ino_t *ino)
 
 static void open_cgroup_procs(void)
 {
-	char *buf = NULL, *path = NULL;
-	int cgroup_fd;
+	char *buf = NULL, *path = NULL, *p;
+	int cgroup_fd = 0;
 	char fdpath[PATH_MAX];
 
 	open_target_fd(&cgroup_fd, "cgroup", optarg);
@@ -218,7 +218,9 @@ static void open_cgroup_procs(void)
 	if (read_all_alloc(cgroup_fd, &buf) < 1)
 		err(EXIT_FAILURE, _("failed to get cgroup path"));
 
-	path = strrchr(strtok(buf, "\n"), ':');
+	p = strtok(buf, "\n");
+	if (p)
+		path = strrchr(p, ':');
 	if (!path)
 		err(EXIT_FAILURE, _("failed to get cgroup path"));
 	path++;
