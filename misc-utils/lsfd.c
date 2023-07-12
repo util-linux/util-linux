@@ -353,7 +353,7 @@ static const struct colinfo infos[] = {
 				   N_("user of the process") },
 	[COL_XMODE]            = { "XMODE",
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
-				   N_("access mode and more (rwx)") },
+				   N_("extended version of MDOE (rwxD[Ll]m)") },
 };
 
 static const int default_columns[] = {
