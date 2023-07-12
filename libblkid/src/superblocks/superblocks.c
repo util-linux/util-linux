@@ -94,11 +94,6 @@ static int blkid_probe_set_usage(blkid_probe pr, int usage);
  */
 static const struct blkid_idinfo *idinfos[] =
 {
-	/* In case the volume is locked with OPAL we are going to get
-	 * an I/O error when reading past the LUKS header, so try it
-	 * first. */
-	&luks_idinfo,
-
 	/* RAIDs */
 	&linuxraid_idinfo,
 	&ddfraid_idinfo,
@@ -124,6 +119,7 @@ static const struct blkid_idinfo *idinfos[] =
 	&snapcow_idinfo,
 	&verity_hash_idinfo,
 	&integrity_idinfo,
+	&luks_idinfo,
 	&vmfs_volume_idinfo,
 	&ubi_idinfo,
 	&vdo_idinfo,
