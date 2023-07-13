@@ -1814,6 +1814,12 @@ int mnt_context_get_mount_excode(
 		 * mount(2) syscall success, but something else failed
 		 * (probably error in mtab processing).
 		 */
+		if (rc == -MNT_ERR_APPLYFLAGS) {
+			if (buf)
+				snprintf(buf, bufsz, _("filesystem was mounted, but failed to apply flags"));
+			return MNT_EX_USAGE;
+		}
+
 		if (rc == -MNT_ERR_LOCK) {
 			if (buf)
 				snprintf(buf, bufsz, _("filesystem was mounted, but failed to update userspace mount table"));
