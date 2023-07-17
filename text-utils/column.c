@@ -667,6 +667,8 @@ static int read_input(struct column_control *ctl, FILE *fp)
 		}
 	} while (rc == 0);
 
+	free(buf);
+
 	return rc;
 }
 
