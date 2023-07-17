@@ -65,6 +65,13 @@ $TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
 		>> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
+ts_init_subtest "noheaders"
+$TS_CMD_COLUMN  --table $TS_SELF/files/table \
+		--table-noheadings \
+		--table-columns VERYLONG,COLUMN,NAMES \
+		>> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
 ts_init_subtest "truncate"
 $TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
 		--table-columns ID,PARENT,MAJMIN,ROOT,TARGET,VFS-OPTS,PROP,SEP,TYPE,SOURCE,FS-OPTS \
