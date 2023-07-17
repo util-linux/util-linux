@@ -63,7 +63,7 @@ Specify swap options by an __fstab__-compatible comma-separated string. For exam
 The _opts_ string is evaluated last and overrides all other command line options.
 
 *-p*, *--priority* _priority_::
-Specify the priority of the swap device. _priority_ is a value between -1 and 32767. Higher numbers indicate higher priority. See *swapon*(2) for a full description of swap priorities. Add **pri=**__value__ to the option field of _/etc/fstab_ for use with *swapon -a*. When no priority is defined, it defaults to -1.
+Specify the priority of the swap device. _priority_ is a value between 0 and 32767. Higher numbers indicate higher priority. See *swapon*(2) for a full description of swap priorities. Add **pri=**__value__ to the option field of _/etc/fstab_ for use with *swapon -a*. When no priority is defined, Linux kernel defaults to negative numbers.
 
 *-s*, *--summary*::
 Display swap usage summary by device. Equivalent to *cat /proc/swaps*. This output format is DEPRECATED in favour of *--show* that provides better control on output data.
