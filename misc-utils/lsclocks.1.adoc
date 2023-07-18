@@ -42,11 +42,20 @@ Use raw output format.
 *-r*, *--time* _clock_
 Show current time of one specific clocks.
 
+*--no-discover-dynamic*
+Do not try to discover dynamic clocks.
+
+*-d*, *--dynamic-clock* _path_
+Also display specified dynamic clock.
+
 include::man-common/help-version.adoc[]
 
 == OUTPUT COLUMNS
 
 Each column has a type. Types are surround by < and >.
+
+TYPE <``string``>::
+Clock type.
 
 ID <``number``>::
 Numeric clock ID.

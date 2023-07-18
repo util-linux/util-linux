@@ -23,6 +23,7 @@
 #include <time.h>
 #include <inttypes.h>
 #include <getopt.h>
+#include <glob.h>
 
 #include <libsmartcols.h>
 
@@ -34,9 +35,24 @@
 #include "xalloc.h"
 #include "pathnames.h"
 #include "all-io.h"
+#include "list.h"
 
 #define CLOCKFD 3
-#define FD_TO_CLOCKID(fd) ((~(clockid_t) (fd) << 3) | CLOCKFD)
+
+static inline clockid_t FD_TO_CLOCKID(int fd)
+{
+	return (~(unsigned int) fd << 3) | CLOCKFD;
+}
+
+static inline int CLOCKID_TO_FD(clockid_t clk)
+{
+	return ~(clk >> 3);
+}
+
+static inline bool CLOCKID_IS_DYNAMIC(clockid_t clk)
+{
+	return CLOCKID_TO_FD(clk) <= 0;
+}
 
 #ifndef CLOCK_REALTIME
 #define CLOCK_REALTIME			0
@@ -74,7 +90,24 @@
 #define CLOCK_TAI			11
 #endif
 
+enum CLOCK_TYPE {
+	CT_SYS,
+	CT_PTP,
+};
+
+static const char *clock_type_name(enum CLOCK_TYPE type)
+{
+	switch (type) {
+	case CT_SYS:
+		return "sys";
+	case CT_PTP:
+		return "ptp";
+	}
+	errx(EXIT_FAILURE, _("Unknown clock type %d"), type);
+}
+
 struct clockinfo {
+	enum CLOCK_TYPE type;
 	clockid_t id;
 	const char * const id_name;
 	const char * const name;
@@ -82,21 +115,22 @@ struct clockinfo {
 };
 
 static const struct clockinfo clocks[] = {
-	{ CLOCK_REALTIME,         "CLOCK_REALTIME",         "realtime"         },
-	{ CLOCK_MONOTONIC,        "CLOCK_MONOTONIC",        "monotonic",
-	  .ns_offset_name = "monotonic"                                        },
-	{ CLOCK_MONOTONIC_RAW,    "CLOCK_MONOTONIC_RAW",    "monotonic-raw"    },
-	{ CLOCK_REALTIME_COARSE,  "CLOCK_REALTIME_COARSE",  "realtime-coarse"  },
-	{ CLOCK_MONOTONIC_COARSE, "CLOCK_MONOTONIC_COARSE", "monotonic-coarse" },
-	{ CLOCK_BOOTTIME,         "CLOCK_BOOTTIME",         "boottime",
-	  .ns_offset_name = "boottime"                                         },
-	{ CLOCK_REALTIME_ALARM,   "CLOCK_REALTIME_ALARM",   "realtime-alarm"   },
-	{ CLOCK_BOOTTIME_ALARM,   "CLOCK_BOOTTIME_ALARM",   "boottime-alarm"   },
-	{ CLOCK_TAI,              "CLOCK_TAI",              "tai"              },
+	{ CT_SYS, CLOCK_REALTIME,         "CLOCK_REALTIME",         "realtime"         },
+	{ CT_SYS, CLOCK_MONOTONIC,        "CLOCK_MONOTONIC",        "monotonic",
+	  .ns_offset_name = "monotonic"						       },
+	{ CT_SYS, CLOCK_MONOTONIC_RAW,    "CLOCK_MONOTONIC_RAW",    "monotonic-raw"    },
+	{ CT_SYS, CLOCK_REALTIME_COARSE,  "CLOCK_REALTIME_COARSE",  "realtime-coarse"  },
+	{ CT_SYS, CLOCK_MONOTONIC_COARSE, "CLOCK_MONOTONIC_COARSE", "monotonic-coarse" },
+	{ CT_SYS, CLOCK_BOOTTIME,         "CLOCK_BOOTTIME",         "boottime",
+	  .ns_offset_name = "boottime"						       },
+	{ CT_SYS, CLOCK_REALTIME_ALARM,   "CLOCK_REALTIME_ALARM",   "realtime-alarm"   },
+	{ CT_SYS, CLOCK_BOOTTIME_ALARM,   "CLOCK_BOOTTIME_ALARM",   "boottime-alarm"   },
+	{ CT_SYS, CLOCK_TAI,              "CLOCK_TAI",              "tai"              },
 };
 
 /* column IDs */
 enum {
+	COL_TYPE,
 	COL_ID,
 	COL_CLOCK,
 	COL_NAME,
@@ -119,6 +153,7 @@ struct colinfo {
 
 /* columns descriptions */
 static const struct colinfo infos[] = {
+	[COL_TYPE]       = { "TYPE",       1, 0,              SCOLS_JSON_STRING, N_("type") },
 	[COL_ID]         = { "ID",         1, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER, N_("numeric id") },
 	[COL_CLOCK]      = { "CLOCK",      1, 0,              SCOLS_JSON_STRING, N_("symbolic name") },
 	[COL_NAME]       = { "NAME",       1, 0,              SCOLS_JSON_STRING, N_("readable name") },
@@ -154,15 +189,17 @@ static void __attribute__((__noreturn__)) usage(void)
 	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -J, --json              use JSON output format\n"), out);
-	fputs(_(" -n, --noheadings        don't print headings\n"), out);
-	fputs(_(" -o, --output <list>     output columns\n"), out);
-	fputs(_("     --output-all        output all columns\n"), out);
-	fputs(_(" -r, --raw               use raw output format\n"), out);
-	fputs(_(" -t, --time <clock>      show current time of single clock\n"), out);
+	fputs(_(" -J, --json                 use JSON output format\n"), out);
+	fputs(_(" -n, --noheadings           don't print headings\n"), out);
+	fputs(_(" -o, --output <list>        output columns\n"), out);
+	fputs(_("     --output-all           output all columns\n"), out);
+	fputs(_(" -r, --raw                  use raw output format\n"), out);
+	fputs(_(" -t, --time <clock>         show current time of single clock\n"), out);
+	fputs(_(" --no-discover-dynamic      do not try to discover dynamic clocks\n"), out);
+	fputs(_(" -d, --dynamic-clock <path> also display specified dynamic clock\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(25));
+	printf(USAGE_HELP_OPTIONS(29));
 
 	fprintf(out, USAGE_COLUMNS);
 
@@ -249,38 +286,171 @@ static int64_t get_namespace_offset(const char *name)
 	return ret;
 }
 
+static void add_clock_line(struct libscols_table *tb, const int *columns,
+			   size_t ncolumns, const struct clockinfo *clockinfo)
+{
+	struct timespec resolution, now;
+	char buf[FORMAT_TIMESTAMP_MAX];
+	struct libscols_line *ln;
+	size_t i;
+	int rc;
+
+	ln = scols_table_new_line(tb, NULL);
+	if (!ln)
+		errx(EXIT_FAILURE, _("failed to allocate output line"));
+
+	/* outside the loop to guarantee consistency between COL_TIME and COL_ISO_TIME */
+	rc = clock_gettime(clockinfo->id, &now);
+	if (rc)
+		now.tv_nsec = -1;
+
+	rc = clock_getres(clockinfo->id, &resolution);
+	if (rc)
+		resolution.tv_nsec = -1;
+
+	for (i = 0; i < ncolumns; i++) {
+		switch (columns[i]) {
+			case COL_TYPE:
+				scols_line_set_data(ln, i, clock_type_name(clockinfo->type));
+				break;
+			case COL_ID:
+				if (CLOCKID_IS_DYNAMIC(clockinfo->id))
+					scols_line_asprintf(ln, i, "%ju", (uintmax_t) clockinfo->id);
+				break;
+			case COL_CLOCK:
+				scols_line_set_data(ln, i, clockinfo->id_name);
+				break;
+			case COL_NAME:
+				scols_line_set_data(ln, i, clockinfo->name);
+				break;
+			case COL_TIME:
+				if (now.tv_nsec == -1)
+					break;
+
+				scols_line_format_timespec(ln, i, &now);
+				break;
+			case COL_ISO_TIME:
+				if (now.tv_nsec == -1)
+					break;
+
+				rc = strtimespec_iso(&now,
+						ISO_GMTIME | ISO_DATE | ISO_TIME | ISO_T | ISO_DOTNSEC | ISO_TIMEZONE,
+						buf, sizeof(buf));
+				if (rc)
+					errx(EXIT_FAILURE, _("failed to format iso time"));
+				scols_line_set_data(ln, i, buf);
+				break;
+			case COL_RESOL:
+				if (resolution.tv_nsec == -1)
+					break;
+
+				rc = strtimespec_relative(&resolution, buf, sizeof(buf));
+				if (rc)
+					errx(EXIT_FAILURE, _("failed to format relative time"));
+				scols_line_set_data(ln, i, buf);
+				break;
+			case COL_RESOL_RAW:
+				if (resolution.tv_nsec == -1)
+					break;
+				scols_line_format_timespec(ln, i, &resolution);
+				break;
+			case COL_REL_TIME:
+				if (now.tv_nsec == -1)
+					break;
+				rc = strtimespec_relative(&now, buf, sizeof(buf));
+				if (rc)
+					errx(EXIT_FAILURE, _("failed to format relative time"));
+				scols_line_set_data(ln, i, buf);
+				break;
+			case COL_NS_OFFSET:
+				if (clockinfo->ns_offset_name)
+					scols_line_asprintf(ln, i, "%"PRId64,
+							    get_namespace_offset(clockinfo->ns_offset_name));
+				break;
+		}
+	}
+}
+
+struct dynamic_clock {
+	struct list_head head;
+	const char * path;
+};
+
+static void add_dynamic_clock_from_path(struct libscols_table *tb,
+					const int *columns, size_t ncolumns,
+					const char *path, bool explicit)
+{
+	int fd = open(path, O_RDONLY);
+	if (fd == -1) {
+		if (explicit)
+			err(EXIT_FAILURE, _("Could not open %s"), path);
+		else
+			return;
+	}
+
+	struct clockinfo clockinfo = {
+		.type = CT_PTP,
+		.id = FD_TO_CLOCKID(fd),
+		.id_name = path,
+		.name = path,
+	};
+	add_clock_line(tb, columns, ncolumns, &clockinfo);
+	close(fd);
+}
+
+static void add_dynamic_clocks_from_discovery(struct libscols_table *tb,
+					      const int *columns, size_t ncolumns)
+{
+	int rc;
+	size_t i;
+	glob_t state;
+
+	rc = glob("/dev/ptp*", 0, NULL, &state);
+	if (rc)
+		errx(EXIT_FAILURE, _("Could not glob: %d"), rc);
+
+	for (i = 0; i < state.gl_pathc; i++)
+		add_dynamic_clock_from_path(tb, columns, ncolumns,
+					    state.gl_pathv[i], false);
+
+	globfree(&state);
+}
+
 int main(int argc, char **argv)
 {
-	size_t i, j;
+	size_t i;
 	int c, rc;
 	const struct colinfo *colinfo;
-	const struct clockinfo *clockinfo;
 
 	struct libscols_table *tb;
-	struct libscols_line *ln;
 	struct libscols_column *col;
 
-	bool noheadings = false, raw = false, json = false;
+	bool noheadings = false, raw = false, json = false, disc_dynamic = true;
 	const char *outarg = NULL;
 	int columns[ARRAY_SIZE(infos) * 2];
 	size_t ncolumns = 0;
 	clockid_t clock = -1;
+	struct dynamic_clock *dynamic_clock;
+	struct list_head *current_dynamic_clock;
+	struct list_head dynamic_clocks;
 
-	struct timespec resolution, now;
-	char buf[BUFSIZ];
+	struct timespec now;
 
 	enum {
-		OPT_OUTPUT_ALL = CHAR_MAX + 1
+		OPT_OUTPUT_ALL = CHAR_MAX + 1,
+		OPT_NO_DISC_DYN,
 	};
 	static const struct option longopts[] = {
-		{ "noheadings", no_argument,       NULL, 'n' },
-		{ "output",     required_argument, NULL, 'o' },
-		{ "output-all",	no_argument,       NULL, OPT_OUTPUT_ALL },
-		{ "version",    no_argument,       NULL, 'V' },
-		{ "help",	no_argument,       NULL, 'h' },
-		{ "json",       no_argument,       NULL, 'J' },
-		{ "raw",        no_argument,       NULL, 'r' },
-		{ "time",       required_argument, NULL, 't' },
+		{ "noheadings",          no_argument,       NULL, 'n' },
+		{ "output",              required_argument, NULL, 'o' },
+		{ "output-all",	         no_argument,       NULL, OPT_OUTPUT_ALL },
+		{ "version",             no_argument,       NULL, 'V' },
+		{ "help",	         no_argument,       NULL, 'h' },
+		{ "json",                no_argument,       NULL, 'J' },
+		{ "raw",                 no_argument,       NULL, 'r' },
+		{ "time",                required_argument, NULL, 't' },
+		{ "no-discover-dynamic", no_argument,       NULL, OPT_NO_DISC_DYN },
+		{ "dynamic-clock",       required_argument, NULL, 'd' },
 		{ 0 }
 	};
 
@@ -289,7 +459,9 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "no:Jrt:Vh", longopts, NULL)) != -1) {
+	INIT_LIST_HEAD(&dynamic_clocks);
+
+	while ((c = getopt_long(argc, argv, "no:Jrt:d:Vh", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'n':
 			noheadings = true;
@@ -309,6 +481,14 @@ int main(int argc, char **argv)
 			break;
 		case 't':
 			clock = parse_clock(optarg);
+			break;
+		case 'd':
+			dynamic_clock = xmalloc(sizeof(*dynamic_clock));
+			dynamic_clock->path = optarg;
+			list_add(&dynamic_clock->head, &dynamic_clocks);
+			break;
+		case OPT_NO_DISC_DYN:
+			disc_dynamic = false;
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
@@ -333,6 +513,7 @@ int main(int argc, char **argv)
 	if (!ncolumns) {
 		columns[ncolumns++] = COL_ID;
 		columns[ncolumns++] = COL_NAME;
+		columns[ncolumns++] = COL_TYPE;
 		columns[ncolumns++] = COL_TIME;
 		columns[ncolumns++] = COL_RESOL;
 		columns[ncolumns++] = COL_ISO_TIME;
@@ -359,80 +540,18 @@ int main(int argc, char **argv)
 		scols_column_set_json_type(col, colinfo->json_type);
 	}
 
-	for (i = 0; i < ARRAY_SIZE(clocks); i++) {
-		clockinfo = &clocks[i];
+	for (i = 0; i < ARRAY_SIZE(clocks); i++)
+		add_clock_line(tb, columns, ncolumns, &clocks[i]);
 
-		ln = scols_table_new_line(tb, NULL);
-		if (!ln)
-			errx(EXIT_FAILURE, _("failed to allocate output line"));
+	if (disc_dynamic)
+		add_dynamic_clocks_from_discovery(tb, columns, ncolumns);
 
-		/* outside the loop to guarantee consistency between COL_TIME and COL_ISO_TIME */
-		rc = clock_gettime(clockinfo->id, &now);
-		if (rc)
-			now.tv_nsec = -1;
-
-		rc = clock_getres(clockinfo->id, &resolution);
-		if (rc)
-			resolution.tv_nsec = -1;
-
-		for (j = 0; j < ncolumns; j++) {
-			switch (columns[j]) {
-				case COL_ID:
-					scols_line_asprintf(ln, j, "%ju", (uintmax_t) clockinfo->id);
-					break;
-				case COL_CLOCK:
-					scols_line_set_data(ln, j, clockinfo->id_name);
-					break;
-				case COL_NAME:
-					scols_line_set_data(ln, j, clockinfo->name);
-					break;
-				case COL_TIME:
-					if (now.tv_nsec == -1)
-						break;
-
-					scols_line_format_timespec(ln, j, &now);
-					break;
-				case COL_ISO_TIME:
-					if (now.tv_nsec == -1)
-						break;
-
-					rc = strtimespec_iso(&now,
-							ISO_GMTIME | ISO_DATE | ISO_TIME | ISO_T | ISO_DOTNSEC | ISO_TIMEZONE,
-							buf, sizeof(buf));
-					if (rc)
-						errx(EXIT_FAILURE, _("failed to format iso time"));
-					scols_line_set_data(ln, j, buf);
-					break;
-				case COL_RESOL:
-					if (resolution.tv_nsec == -1)
-						break;
-
-					rc = strtimespec_relative(&resolution, buf, sizeof(buf));
-					if (rc)
-						errx(EXIT_FAILURE, _("failed to format relative time"));
-					scols_line_set_data(ln, j, buf);
-					break;
-				case COL_RESOL_RAW:
-					if (resolution.tv_nsec == -1)
-						break;
-					scols_line_format_timespec(ln, j, &resolution);
-					break;
-				case COL_REL_TIME:
-					if (now.tv_nsec == -1)
-						break;
-					rc = strtimespec_relative(&now, buf, sizeof(buf));
-					if (rc)
-						errx(EXIT_FAILURE, _("failed to format relative time"));
-					scols_line_set_data(ln, j, buf);
-					break;
-				case COL_NS_OFFSET:
-					if (clockinfo->ns_offset_name)
-						scols_line_asprintf(ln, j, "%"PRId64,
-								    get_namespace_offset(clockinfo->ns_offset_name));
-					break;
-			}
-		}
+	list_for_each(current_dynamic_clock, &dynamic_clocks) {
+		dynamic_clock = list_entry(current_dynamic_clock, struct dynamic_clock, head);
+		add_dynamic_clock_from_path(tb, columns, ncolumns, dynamic_clock->path, true);
 	}
+
+	list_free(&dynamic_clocks, struct dynamic_clock, head, free);
 
 	scols_table_enable_json(tb, json);
 	scols_table_enable_raw(tb, raw);
