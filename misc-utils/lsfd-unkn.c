@@ -497,11 +497,12 @@ static int intcmp(const void *a, const void *b)
 static void anon_eventpoll_attach_xinfo(struct unkn *unkn)
 {
 	struct anon_eventpoll_data *data = (struct anon_eventpoll_data *)unkn->anon_data;
-	qsort(data->tfds, data->count, sizeof(data->tfds[0]),
-	      intcmp);
-	if (data->count > 0)
+	if (data->count > 0) {
+		qsort(data->tfds, data->count, sizeof(data->tfds[0]),
+		      intcmp);
 		list_add_tail(&data->siblings,
 			      &unkn->file.proc->eventpolls);
+	}
 }
 
 static char *anon_eventpoll_make_tfds_string(struct anon_eventpoll_data *data,

@@ -1,8 +1,8 @@
-        PACKET
+PACKET
 SOCK.PROTONAME: 0
-type=raw protocol=all iface=lo       raw         PACKET           lo             all
+type=raw protocol=all iface=lo raw PACKET lo all
 NAME,SOCK.TYPE,SOCK.PROTONAME,PACKET.IFACE,PACKET.PROTOCOL: 0
-        PACKET
+PACKET
 SOCK.PROTONAME: 0
-type=dgram protocol=all iface=lo     dgram         PACKET           lo             all
+type=dgram protocol=all iface=lo dgram PACKET lo all
 NAME,SOCK.TYPE,SOCK.PROTONAME,PACKET.IFACE,PACKET.PROTOCOL: 0

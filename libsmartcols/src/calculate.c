@@ -175,8 +175,9 @@ static int count_column_width(struct libscols_table *tb,
 	}
 
 	/* set minimal width according to header width */
-	data = scols_cell_get_data(&cl->header);
-	if (data) {
+	if (!scols_table_is_noheadings(tb) &&
+	    (data = scols_cell_get_data(&cl->header))) {
+
 		size_t len = scols_table_is_noencoding(tb) ?
 				mbs_width(data) : mbs_safe_width(data);
 
