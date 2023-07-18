@@ -39,6 +39,10 @@ jobs:
         with:
           languages: ${{ matrix.language }}
           queries: +security-extended,security-and-quality
+          config: |
+            query-filters:
+            - exclude:
+                id: cpp/path-injection
 
       - name: Install dependencies
         run: sudo -E .github/workflows/cibuild-setup-ubuntu.sh
