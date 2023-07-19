@@ -29,7 +29,7 @@
 #include <linux/netlink.h>	/* NETLINK_* */
 #include <linux/un.h>		/* UNIX_PATH_MAX */
 #include <sched.h>		/* for setns(2) */
-#include <search.h>
+#include <search.h>		/* tfind, tsearch */
 #include <stdint.h>
 #include <string.h>
 #include <sys/socket.h>		/* SOCK_* */
