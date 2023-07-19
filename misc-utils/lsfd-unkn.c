@@ -22,10 +22,6 @@
 #include <sys/timerfd.h>
 #include <time.h>
 
-#include "xalloc.h"
-#include "nls.h"
-#include "libsmartcols.h"
-
 #include "signames.h"
 #include "timeutils.h"
 

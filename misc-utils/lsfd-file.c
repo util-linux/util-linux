@@ -34,14 +34,11 @@
 #include <linux/sched.h>
 #include <sys/shm.h>
 
-#include "xalloc.h"
-#include "nls.h"
 #include "buffer.h"
 #include "idcache.h"
 #include "strutils.h"
 
 #include "procfs.h"
-#include "libsmartcols.h"
 
 #include "lsfd.h"
 

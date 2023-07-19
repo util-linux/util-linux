@@ -34,9 +34,6 @@
 #include <string.h>
 #include <sys/socket.h>		/* SOCK_* */
 
-#include "xalloc.h"
-#include "nls.h"
-#include "libsmartcols.h"
 #include "sysfs.h"
 #include "bitops.h"
 

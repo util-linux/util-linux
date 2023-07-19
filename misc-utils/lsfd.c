@@ -46,8 +46,6 @@ static int kcmp(pid_t pid1, pid_t pid2, int type,
 #define PF_KTHREAD		0x00200000	/* I am a kernel thread */
 
 #include "c.h"
-#include "nls.h"
-#include "xalloc.h"
 #include "list.h"
 #include "closestream.h"
 #include "strutils.h"
@@ -55,8 +53,6 @@ static int kcmp(pid_t pid1, pid_t pid2, int type,
 #include "fileutils.h"
 #include "idcache.h"
 #include "pathnames.h"
-
-#include "libsmartcols.h"
 
 #include "lsfd.h"
 #include "lsfd-filter.h"
