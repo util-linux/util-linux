@@ -111,6 +111,7 @@ enum {
 	R_NORMAL,	/* Normal */
 	R_NOW,		/* Still logged in */
 	R_REBOOT,	/* Reboot record. */
+	R_REBOOT_CRASH,	/* Reboot record without matching shutdown */
 	R_PHANTOM,	/* No logout record but session is stale. */
 	R_TIMECHANGE	/* NEW_TIME or OLD_TIME */
 };
@@ -469,6 +470,7 @@ static int list(const struct last_control *ctl, struct utmpx *p, time_t logout_t
 
 	switch(what) {
 		case R_CRASH:
+		case R_REBOOT_CRASH:
 			snprintf(logouttime, sizeof(logouttime), "- crash");
 			break;
 		case R_DOWN:
@@ -786,7 +788,10 @@ static void process_wtmp_file(const struct last_control *ctl,
 			break;
 		case BOOT_TIME:
 			strcpy(ut.ut_line, "system boot");
-			quit = list(ctl, &ut, lastdown, R_REBOOT);
+			if (lastdown > lastboot && lastdown != currentdate)
+				quit = list(ctl, &ut, lastboot, R_REBOOT_CRASH);
+			else
+				quit = list(ctl, &ut, lastdown, R_REBOOT);
 			lastboot = ut.ut_tv.tv_sec;
 			down = 1;
 			break;
