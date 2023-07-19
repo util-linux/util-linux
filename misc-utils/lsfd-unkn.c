@@ -19,16 +19,17 @@
  * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <sys/timerfd.h>
+#include <time.h>
+
 #include "xalloc.h"
 #include "nls.h"
 #include "libsmartcols.h"
+
 #include "signames.h"
 #include "timeutils.h"
 
 #include "lsfd.h"
-
-#include <sys/timerfd.h>
-#include <time.h>
 
 struct unkn {
 	struct file file;
