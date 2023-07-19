@@ -2953,6 +2953,44 @@ static void *make_some_pipes(const struct factory *factory _U_, struct fdesc fde
 	return NULL;
 }
 
+static void *make_bpf_map(const struct factory *factory _U_, struct fdesc fdescs[],
+			  int argc _U_, char ** argv _U_)
+{
+	struct arg map_type_id = decode_arg("map-type-id", factory->params, argc, argv);
+	int imap_type_id = ARG_INTEGER(map_type_id);
+
+	int bfd;
+	union bpf_attr attr = {
+		.map_type = imap_type_id,
+		.key_size = 4,
+		.value_size = 4,
+		.max_entries = 10,
+	};
+
+	bfd = syscall(__NR_bpf, BPF_MAP_CREATE, &attr, sizeof(attr));
+	if (bfd < 0)
+		err((errno == ENOSYS? EXIT_ENOSYS: EXIT_FAILURE),
+		    "failed in bpf(BPF_MAP_CREATE)");
+
+	if (bfd != fdescs[0].fd) {
+		if (dup2(bfd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(bfd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", bfd, fdescs[0].fd);
+		}
+		close(bfd);
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL
+	};
+
+	return NULL;
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -3714,6 +3752,24 @@ static const struct factory factories[] = {
 			PARAM_END
 		}
 	},
+	{
+		.name = "bpf-map",
+		.desc = "make bpf-map",
+		.priv = true,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_bpf_map,
+		.params = (struct parameter []) {
+			{
+				.name = "map-type-id",
+				.type = PTYPE_INTEGER,
+				.desc = "map type by id",
+				.defv.integer = 1,
+			},
+			PARAM_END
+		}
+	},
+
 };
 
 static int count_parameters(const struct factory *factory)
