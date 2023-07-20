@@ -283,9 +283,9 @@ static void add_sock_info(struct sock_xinfo *xinfo)
 		errx(EXIT_FAILURE, _("failed to allocate memory"));
 }
 
-struct sock_xinfo *get_sock_xinfo(ino_t netns_inode)
+struct sock_xinfo *get_sock_xinfo(ino_t inode)
 {
-	struct sock_xinfo **xinfo = tfind(&netns_inode, &xinfo_tree, xinfo_compare);
+	struct sock_xinfo **xinfo = tfind(&inode, &xinfo_tree, xinfo_compare);
 
 	if (xinfo)
 		return *xinfo;

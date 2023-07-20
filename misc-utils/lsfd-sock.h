@@ -67,6 +67,6 @@ struct sock_xinfo_class {
 void initialize_sock_xinfos(void);
 void finalize_sock_xinfos(void);
 
-struct sock_xinfo *get_sock_xinfo(ino_t netns_inode);
+struct sock_xinfo *get_sock_xinfo(ino_t inode);
 
 #endif /* UTIL_LINUX_LSFD_SOCK_H */
