@@ -154,12 +154,19 @@ static int configure_superblock(struct libmnt_context *cxt,
 		const char *name = mnt_opt_get_name(opt);
 		const char *value = mnt_opt_get_value(opt);
 		const struct libmnt_optmap *ent = mnt_opt_get_mapent(opt);
+		const int is_linux = ent && mnt_opt_get_map(opt) == cxt->map_linux;
 
-		if (ent && mnt_opt_get_map(opt) == cxt->map_linux &&
-		    ent->id == MS_RDONLY) {
+		if (is_linux && ent->id == MS_RDONLY) {
+			/* Use ro/rw for superblock (for backward compatibility) */
 			value = NULL;
 			has_rwro = 1;
+
+		} else if (is_linux && ent->mask & MNT_SUPERBLOCK) {
+			/* Use some old MS_* (VFS) flags as superblock flags */
+			;
+
 		} else if (!name || mnt_opt_get_map(opt) || mnt_opt_is_external(opt))
+			/* Ignore VFS flags, userspace and external options */
 			continue;
 
 		rc = fsconfig_set_value(cxt, hs, fd, name, value);

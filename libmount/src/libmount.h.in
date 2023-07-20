@@ -89,6 +89,7 @@ struct libmnt_optmap
 #define MNT_PREFIX	(1 << 3) /* prefix used for some options (e.g. "x-foo") */
 #define MNT_NOHLPS	(1 << 4) /* don't add the option to mount.<type> helpers command line */
 #define MNT_NOFSTAB	(1 << 5) /* not expected in fstab */
+#define MNT_SUPERBLOCK	(1 << 6) /* MS_* for mount(2), otherwise requires fsconfig() */
 
 /**
  * libmnt_fs:

@@ -79,10 +79,10 @@ static const struct libmnt_optmap linux_flags_map[] =
    { "dev",      MS_NODEV, MNT_INVERT },      /* interpret device files  */
    { "nodev",    MS_NODEV },                  /* don't interpret devices */
 
-   { "sync",     MS_SYNCHRONOUS },            /* synchronous I/O */
-   { "async",    MS_SYNCHRONOUS, MNT_INVERT },/* asynchronous I/O */
+   { "sync",     MS_SYNCHRONOUS, MNT_SUPERBLOCK },            /* synchronous I/O */
+   { "async",    MS_SYNCHRONOUS, MNT_INVERT | MNT_SUPERBLOCK },/* asynchronous I/O */
 
-   { "dirsync",  MS_DIRSYNC },                /* synchronous directory modifications */
+   { "dirsync",  MS_DIRSYNC, MNT_SUPERBLOCK },/* synchronous directory modifications */
    { "remount",  MS_REMOUNT, MNT_NOMTAB },    /* alter flags of mounted FS */
    { "bind",     MS_BIND },                   /* Remount part of the tree elsewhere */
    { "rbind",    MS_BIND | MS_REC },          /* Idem, plus mounted subtrees */
@@ -95,8 +95,8 @@ static const struct libmnt_optmap linux_flags_map[] =
    { "loud",     MS_SILENT, MNT_INVERT },     /* print out messages. */
 #endif
 #ifdef MS_MANDLOCK
-   { "mand",     MS_MANDLOCK },               /* Allow mandatory locks on this FS */
-   { "nomand",   MS_MANDLOCK, MNT_INVERT },   /* Forbid mandatory locks on this FS */
+   { "mand",     MS_MANDLOCK, MNT_SUPERBLOCK },               /* Allow mandatory locks on this FS */
+   { "nomand",   MS_MANDLOCK, MNT_INVERT | MNT_SUPERBLOCK},   /* Forbid mandatory locks on this FS */
 #endif
 #ifdef MS_NOATIME
    { "atime",    MS_NOATIME, MNT_INVERT },    /* Update access time */
@@ -119,8 +119,8 @@ static const struct libmnt_optmap linux_flags_map[] =
    { "nostrictatime", MS_STRICTATIME, MNT_INVERT }, /* kernel default atime */
 #endif
 #ifdef MS_LAZYTIME
-   { "lazytime", MS_LAZYTIME },               /* Update {a,m,c}time on the in-memory inode only */
-   { "nolazytime", MS_LAZYTIME, MNT_INVERT },
+   { "lazytime", MS_LAZYTIME, MNT_SUPERBLOCK },               /* Update {a,m,c}time on the in-memory inode only */
+   { "nolazytime", MS_LAZYTIME, MNT_INVERT | MNT_SUPERBLOCK },
 #endif
 #ifdef MS_PROPAGATION
    { "unbindable",  MS_UNBINDABLE,          MNT_NOHLPS | MNT_NOMTAB }, /* Unbindable */
