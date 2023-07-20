@@ -19,6 +19,8 @@
 #include "debug.h"
 #include "buffer.h"
 
+#include <stdbool.h>
+
 #include "libsmartcols.h"
 
 /*
@@ -474,5 +476,86 @@ static inline int has_group_children(struct libscols_line *ln)
 {
 	return ln && ln->group && !list_empty(&ln->group->gr_children);
 }
+
+/*
+ * Filter stuff
+ */
+
+/* node types */
+enum filter_ntype {
+	F_NODE_PARAM,
+	F_NODE_EXPR
+};
+
+/* param types */
+enum filter_ptype {
+	F_PARAM_NUMBER,
+	F_PARAM_FLOAT,
+	F_PARAM_NAME,
+	F_PARAM_STRING,
+	F_PARAM_BOOLEAN
+};
+
+/* expresion types */
+enum filter_etype {
+	F_EXPR_AND,
+	F_EXPR_OR,
+	F_EXPR_NEG,
+
+	F_EXPR_EQ,
+	F_EXPR_NE,
+
+	F_EXPR_LT,
+	F_EXPR_LE,
+	F_EXPR_GT,
+	F_EXPR_GE,
+
+	F_EXPR_REG,
+	F_EXPR_NREG,
+};
+
+struct filter_node {
+	enum filter_ntype type;
+	int refcount;
+};
+
+#define filter_node_get_type(n)	(((struct filter_node *)(n))->type)
+
+struct filter_param {
+	struct filter_node node;
+	enum filter_ptype type;
+
+	union {
+		char *str;
+		unsigned long long num;
+		long double fnum;
+		bool boolean;
+	} val;
+};
+
+struct filter_expr {
+	struct filter_node node;
+	enum filter_etype type;
+
+	struct filter_node *left;
+	struct filter_node *right;
+};
+
+struct libscols_filter {
+	struct filter_node *root;
+	FILE *src;
+};
+
+void filter_unref_node(struct filter_node *n);
+void filter_dump_node(FILE *out, int i, struct filter_node *n);
+
+/* reuiqred by parser */
+struct filter_node *filter_new_param(struct libscols_filter *filter,
+                                 enum filter_ptype type,
+				 void *data);
+struct filter_node *filter_new_expr(struct libscols_filter *filter,
+                                 enum filter_etype type,
+                                 struct filter_node *left,
+                                 struct filter_node *right);
 
 #endif /* _LIBSMARTCOLS_PRIVATE_H */

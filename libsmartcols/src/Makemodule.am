@@ -1,5 +1,4 @@
 
-
 # smartcols.h is generated, so it's stored in builddir!
 smartcolsincdir = $(includedir)/libsmartcols
 nodist_smartcolsinc_HEADERS = libsmartcols/src/libsmartcols.h
@@ -21,7 +20,18 @@ libsmartcols_la_SOURCES= \
 	libsmartcols/src/calculate.c \
 	libsmartcols/src/grouping.c \
 	libsmartcols/src/walk.c \
-	libsmartcols/src/init.c
+	libsmartcols/src/init.c \
+	\
+	libsmartcols/src/filter-nodes.c \
+	libsmartcols/src/filter-parser.y \
+	libsmartcols/src/filter-scanner.l \
+	libsmartcols/src/filter.c
+
+BUILT_SOURCES = libsmartcols/src/filter-scanner.c \
+		libsmartcols/src/filter-scanner.h \
+		libsmartcols/src/filter-parser.h \
+		libsmartcols/src/filter-parser.c
+AM_YFLAGS = -d
 
 libsmartcols_la_LIBADD = $(LDADD) libcommon.la
 
