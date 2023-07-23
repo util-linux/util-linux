@@ -58,6 +58,13 @@ struct syscall {
 	long number;
 };
 
+/* When the alias arrays are empty the compiler emits -Wtype-limits warnings.
+ * Avoid those by going through this function. */
+static inline bool lt(size_t a, size_t b)
+{
+	return a < b;
+}
+
 static const struct syscall syscalls[] = {
 #define UL_SYSCALL(name, nr) { name, nr },
 #include "syscalls.h"
@@ -124,7 +131,7 @@ int main(int argc, char **argv)
 		switch (c) {
 		case 's':
 			found = 0;
-			for (i = 0; i < ARRAY_SIZE(syscalls); i++) {
+			for (i = 0; lt(i, ARRAY_SIZE(syscalls)); i++) {
 				if (strcmp(optarg, syscalls[i].name) == 0) {
 					blocked_number = syscalls[i].number;
 					found = 1;
@@ -142,7 +149,7 @@ int main(int argc, char **argv)
 			break;
 		case 'i':
 			found = 0;
-			for (i = 0; i < ARRAY_SIZE(ioctls); i++) {
+			for (i = 0; lt(i, ARRAY_SIZE(ioctls)); i++) {
 				if (strcmp(optarg, ioctls[i].name) == 0) {
 					blocked_number = ioctls[i].number;
 					found = 1;
@@ -159,11 +166,11 @@ int main(int argc, char **argv)
 
 			break;
 		case 'l':
-			for (i = 0; i < ARRAY_SIZE(syscalls); i++)
+			for (i = 0; lt(i, ARRAY_SIZE(syscalls)); i++)
 				printf("%5ld %s\n", syscalls[i].number, syscalls[i].name);
 			return EXIT_SUCCESS;
 		case 'm':
-			for (i = 0; i < ARRAY_SIZE(ioctls); i++)
+			for (i = 0; lt(i, ARRAY_SIZE(ioctls)); i++)
 				printf("%5ld %s\n", ioctls[i].number, ioctls[i].name);
 			return EXIT_SUCCESS;
 		case 'V':
