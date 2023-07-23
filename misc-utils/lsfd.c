@@ -2290,11 +2290,15 @@ int main(int argc, char *argv[])
 	if (scols_table_get_column_by_name(ctl.tb, "XMODE"))
 		ctl.show_xmode = 1;
 
-	/* collect data */
+	/* collect data
+	 *
+	 * The call initialize_ipc_table() must come before
+	 * initialize_classes.
+	 */
 	initialize_nodevs();
+	initialize_ipc_table();
 	initialize_classes();
 	initialize_devdrvs();
-	initialize_ipc_table();
 
 	collect_processes(&ctl, pids, n_pids);
 	free(pids);
