@@ -63,12 +63,10 @@ static const struct syscall syscalls[] = {
 #include "syscalls.h"
 #undef UL_SYSCALL
 };
-static_assert(sizeof(syscalls) > 0, "no syscalls found");
 
 static const struct syscall ioctls[] = {
 	{ "FIOCLEX", FIOCLEX },
 };
-static_assert(sizeof(ioctls) > 0, "no ioctls found");
 
 static void __attribute__((__noreturn__)) usage(void)
 {
