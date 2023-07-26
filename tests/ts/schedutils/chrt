@@ -93,9 +93,9 @@ fi
 ts_init_subtest "deadline"
 skip_policy SCHED_DEADLINE
 if [ $? == 0 ]; then
-	do_chrt --deadline --sched-period 13000 0
-	do_chrt --deadline --sched-period 13000 --sched-deadline 12000 0
-	do_chrt --deadline --sched-period 13000 --sched-deadline 12000 --sched-runtime 10000 0
+	do_chrt --deadline --sched-period 130000 0
+	do_chrt --deadline --sched-period 130000 --sched-deadline 120000 0
+	do_chrt --deadline --sched-period 130000 --sched-deadline 120000 --sched-runtime 100000 0
 	cleanup_output
 	ts_finalize_subtest
 fi
