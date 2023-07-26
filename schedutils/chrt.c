@@ -485,6 +485,8 @@ int main(int argc, char **argv)
 
 	if (!ctl->pid) {
 		argv += optind + 1;
+		if (strcmp(argv[0], "--") == 0)
+			argv++;
 		execvp(argv[0], argv);
 		errexec(argv[0]);
 	}
