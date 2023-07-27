@@ -32,6 +32,7 @@
 #include <ctype.h>
 #include <search.h>
 #include <poll.h>
+#include <sys/select.h>
 
 #include <sys/uio.h>
 #include <linux/sched.h>
@@ -1486,6 +1487,52 @@ static void mark_poll_fds_as_multiplexed(char *buf,
 	free (local.iov_base);
 }
 
+static void mark_select_fds_as_multiplexed(char *buf,
+					   pid_t pid, struct proc *proc)
+{
+	long nfds;
+	long fds[3];
+
+	struct iovec  local[3];
+	fd_set local_set[3];
+	struct iovec  remote[3];
+	ssize_t n;
+	ssize_t expected_n = 0;
+
+	struct list_head *f;
+
+	if (sscanf(buf, "%lx %lx %lx %lx", &nfds, fds + 0, fds + 1, fds + 2) != 4)
+		return;
+
+	if (nfds == 0)
+		return;
+
+	for (int i = 0; i < 3; i++) {
+		/* If the remote address for the fd_set is 0x0, no set is tehre. */
+		remote[i].iov_len = local[i].iov_len = fds[i]? sizeof(local_set[i]): 0;
+		expected_n += (ssize_t)local[i].iov_len;
+		local[i].iov_base = local_set + i;
+		remote[i].iov_base = (void *)(fds[i]);
+	}
+
+	n = process_vm_readv(pid, local, 3, remote, 3, 0);
+	if (n < 0 || n != expected_n)
+			return;
+
+	list_for_each (f, &proc->files) {
+		struct file *file = list_entry(f, struct file, files);
+		if (is_opened_file(file) && !file->multiplexed) {
+			int fd = file->association;
+			if (nfds <= fd)
+				continue;
+			if ((fds[0] && FD_ISSET(fd, (fd_set *)local[0].iov_base))
+			    || (fds[1] && FD_ISSET(fd, (fd_set *)local[1].iov_base))
+			    || (fds[2] && FD_ISSET(fd, (fd_set *)local[2].iov_base)))
+				file->multiplexed = 1;
+		}
+	}
+}
+
 static void parse_proc_syscall(struct lsfd_control *ctl __attribute__((__unused__)),
 			       struct path_cxt *pc, pid_t pid, struct proc *proc)
 {
@@ -1517,6 +1564,22 @@ static void parse_proc_syscall(struct lsfd_control *ctl __attribute__((__unused_
 #ifdef 	SYS_ppoll_time64
 	case SYS_ppoll_time64:
 		mark_poll_fds_as_multiplexed(ptr, pid, proc);
+		break;
+#endif
+
+#ifdef SYS_select
+	case SYS_select:
+		mark_select_fds_as_multiplexed(ptr, pid, proc);
+		break;
+#endif
+#ifdef SYS_pselect6
+	case SYS_pselect6:
+		mark_select_fds_as_multiplexed(ptr, pid, proc);
+		break;
+#endif
+#ifdef 	SYS_pselect6_time64
+	case SYS_pselect6_time64:
+		mark_select_fds_as_multiplexed(ptr, pid, proc);
 		break;
 #endif
 	}
