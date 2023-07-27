@@ -31,7 +31,9 @@
 #include <getopt.h>
 #include <ctype.h>
 #include <search.h>
+#include <poll.h>
 
+#include <sys/uio.h>
 #include <linux/sched.h>
 #include <sys/syscall.h>
 #include <linux/kcmp.h>
@@ -1434,6 +1436,92 @@ static void walk_threads(struct lsfd_control *ctl, struct path_cxt *pc,
 	}
 }
 
+static int pollfdcmp(const void *a, const void *b)
+{
+	const struct pollfd *apfd = a, *bpfd = b;
+
+	return apfd->fd - bpfd->fd;
+}
+
+static void mark_poll_fds_as_multiplexed(char *buf,
+					 pid_t pid, struct proc *proc)
+{
+	long fds;
+	long nfds;
+
+	struct iovec  local;
+	struct iovec  remote;
+	ssize_t n;
+
+	struct list_head *f;
+
+	if (sscanf(buf, "%lx %lx", &fds, &nfds) != 2)
+		return;
+
+	if (nfds == 0)
+		return;
+
+	local.iov_len = sizeof(struct pollfd) * nfds;
+	local.iov_base = xmalloc(local.iov_len);
+	remote.iov_len = local.iov_len;
+	remote.iov_base = (void *)fds;
+
+	n = process_vm_readv(pid, &local, 1, &remote, 1, 0);
+	if (n < 0 || ((size_t)n) != local.iov_len)
+		goto out;
+
+	qsort(local.iov_base, nfds, sizeof(struct pollfd), pollfdcmp);
+
+	list_for_each (f, &proc->files) {
+		struct file *file = list_entry(f, struct file, files);
+		if (is_opened_file(file) && !file->multiplexed) {
+			int fd = file->association;
+			if (bsearch(&(struct pollfd){.fd = fd,}, local.iov_base,
+				    nfds, sizeof(struct pollfd), pollfdcmp))
+				file->multiplexed = 1;
+		}
+	}
+
+ out:
+	free (local.iov_base);
+}
+
+static void parse_proc_syscall(struct lsfd_control *ctl __attribute__((__unused__)),
+			       struct path_cxt *pc, pid_t pid, struct proc *proc)
+{
+	char buf[BUFSIZ];
+	char *ptr = NULL;
+	long scn;
+
+	if (procfs_process_get_syscall(pc, buf, sizeof(buf)) <= 0)
+		return;
+
+	errno  = 0;
+	scn = strtol(buf, &ptr, 10);
+	if (errno)
+		return;
+	if (scn < 0)
+		return;
+
+	switch (scn) {
+#ifdef 	SYS_poll
+	case SYS_poll:
+		mark_poll_fds_as_multiplexed(ptr, pid, proc);
+		break;
+#endif
+#ifdef 	SYS_ppoll
+	case SYS_ppoll:
+		mark_poll_fds_as_multiplexed(ptr, pid, proc);
+		break;
+#endif
+#ifdef 	SYS_ppoll_time64
+	case SYS_ppoll_time64:
+		mark_poll_fds_as_multiplexed(ptr, pid, proc);
+		break;
+#endif
+	}
+}
+
 static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 			 pid_t pid, struct proc *leader)
 {
@@ -1503,11 +1591,16 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	if (tsearch(proc, &proc_tree, proc_tree_compare) == NULL)
 		errx(EXIT_FAILURE, _("failed to allocate memory"));
 
+	if (ctl->show_xmode)
+		parse_proc_syscall(ctl, pc, pid, proc);
+
 	/* The tasks collecting overwrites @pc by /proc/<task-pid>/. Keep it as
 	 * the last path based operation in read_process()
 	 */
 	if (ctl->threads && leader == NULL)
 		walk_threads(ctl, pc, pid, proc, read_process);
+	else if (ctl->show_xmode)
+		walk_threads(ctl, pc, pid, proc, parse_proc_syscall);
 
 	/* Let's be careful with number of open files */
         ul_path_close_dirfd(pc);
