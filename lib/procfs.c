@@ -169,6 +169,11 @@ ssize_t procfs_process_get_stat(struct path_cxt *pc, char *buf, size_t bufsz)
 	return procfs_process_get_data_for(pc, buf, bufsz, "stat");
 }
 
+ssize_t procfs_process_get_syscall(struct path_cxt *pc, char *buf, size_t bufsz)
+{
+	return procfs_process_get_data_for(pc, buf, bufsz, "syscall");
+}
+
 int procfs_process_get_stat_nth(struct path_cxt *pc, int n, uintmax_t *re)
 {
 	ssize_t rc;

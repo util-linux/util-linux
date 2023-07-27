@@ -32,6 +32,7 @@ extern int procfs_process_get_uid(struct path_cxt *pc, uid_t *uid);
 extern ssize_t procfs_process_get_cmdline(struct path_cxt *pc, char *buf, size_t bufsz);
 extern ssize_t procfs_process_get_cmdname(struct path_cxt *pc, char *buf, size_t bufsz);
 extern ssize_t procfs_process_get_stat(struct path_cxt *pc, char *buf, size_t bufsz);
+extern ssize_t procfs_process_get_syscall(struct path_cxt *pc, char *buf, size_t bufsz);
 
 extern int procfs_process_get_stat_nth(struct path_cxt *pc, int n, uintmax_t *re);
 
