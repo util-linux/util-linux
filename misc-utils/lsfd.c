@@ -1418,6 +1418,21 @@ unsigned long add_name(struct name_manager *nm, const char *name)
 	return e->id;
 }
 
+static void walk_threads(struct lsfd_control *ctl, struct path_cxt *pc,
+			 pid_t pid, struct proc *proc,
+			 void (*cb)(struct lsfd_control *, struct path_cxt *,
+				    pid_t, struct proc *))
+{
+	DIR *sub = NULL;
+	pid_t tid = 0;
+
+	while (procfs_process_next_tid(pc, &sub, &tid) == 0) {
+		if (tid == pid)
+			continue;
+		(*cb)(ctl, pc, tid, proc);
+	}
+}
+
 static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 			 pid_t pid, struct proc *leader)
 {
@@ -1490,16 +1505,8 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	/* The tasks collecting overwrites @pc by /proc/<task-pid>/. Keep it as
 	 * the last path based operation in read_process()
 	 */
-	if (ctl->threads && leader == NULL) {
-		DIR *sub = NULL;
-		pid_t tid = 0;
-
-		while (procfs_process_next_tid(pc, &sub, &tid) == 0) {
-			if (tid == pid)
-				continue;
-			read_process(ctl, pc, tid, proc);
-		}
-	}
+	if (ctl->threads && leader == NULL)
+		walk_threads(ctl, pc, pid, proc, read_process);
 
 	/* Let's be careful with number of open files */
         ul_path_close_dirfd(pc);
