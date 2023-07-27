@@ -478,7 +478,8 @@ struct lsfd_control {
 			threads : 1,
 			show_main : 1,		/* print main table */
 			show_summary : 1,	/* print summary/counters */
-			sockets_only : 1;	/* display only SOCKETS */
+			sockets_only : 1,	/* display only SOCKETS */
+			show_xmode : 1;		/* XMODE column is enabled. */
 
 	struct lsfd_filter *filter;
 	struct lsfd_counter **counters;		/* NULL terminated array. */
@@ -2118,6 +2119,9 @@ int main(int argc, char *argv[])
 	if (n_pids > 0)
 		sort_pids(pids, n_pids);
 
+	if (scols_table_get_column_by_name(ctl.tb, "XMODE"))
+		ctl.show_xmode = 1;
+
 	/* collect data */
 	initialize_nodevs();
 	initialize_classes();
@@ -2128,7 +2132,7 @@ int main(int argc, char *argv[])
 	free(pids);
 
 	attach_xinfos(&ctl.procs);
-	if (scols_table_get_column_by_name(ctl.tb, "XMODE"))
+	if (ctl.show_xmode)
 		set_multiplexed_flags(&ctl.procs);
 
 
