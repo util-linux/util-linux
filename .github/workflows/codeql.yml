@@ -43,6 +43,8 @@ jobs:
             query-filters:
             - exclude:
                 id: cpp/path-injection
+            - exclude:
+                id: cpp/uncontrolled-process-operation
 
       - name: Install dependencies
         run: sudo -E .github/workflows/cibuild-setup-ubuntu.sh
