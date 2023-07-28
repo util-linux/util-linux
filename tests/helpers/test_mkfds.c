@@ -17,6 +17,9 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include "c.h"
+#include "xalloc.h"
+
 #include <arpa/inet.h>
 #include <ctype.h>
 #include <dirent.h>
@@ -58,9 +61,6 @@
 #include <sys/wait.h>
 #include <time.h>
 #include <unistd.h>
-
-#include "c.h"
-#include "xalloc.h"
 
 #define EXIT_ENOSYS 17
 #define EXIT_EPERM  18
