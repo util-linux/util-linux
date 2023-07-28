@@ -1637,7 +1637,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	collect_namespace_files(pc, proc);
 
 	/* If kcmp is not available,
-	 * there is no way to no whether threads share resources.
+	 * there is no way to know whether threads share resources.
 	 * In such cases, we must pay the costs: call collect_mem_files()
 	 * and collect_fd_files().
 	 */
