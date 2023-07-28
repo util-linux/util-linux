@@ -3750,7 +3750,7 @@ static void wait_event(bool monitor_stdin)
 
 	if (pselect(n, &readfds, NULL, NULL, NULL, &sigset) < 0
 	    && errno != EINTR)
-		errx(EXIT_FAILURE, "failed in pselect");
+		err(EXIT_FAILURE, "failed in pselect");
 }
 
 int main(int argc, char **argv)
