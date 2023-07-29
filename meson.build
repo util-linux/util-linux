@@ -808,6 +808,8 @@ endif
 sysvinit = get_option('sysvinit').enabled()
 sysvinitrcdir = sysconfdir + '/init.d'
 
+program_tests = get_option('program-tests')
+
 chfn_chsh_password = get_option('chfn-chsh-password') or lib_user.found()
 conf.set('CHFN_CHSH_PASSWORD', chfn_chsh_password ? 1 : false)
 
@@ -934,7 +936,8 @@ exe = executable(
   'test_islocal',
   test_islocal_sources,
   include_directories : includes,
-  c_args : '-DTEST_PROGRAM')
+  c_args : '-DTEST_PROGRAM',
+  build_by_default : program_tests)
 exes += exe
 
 exe = executable(
@@ -942,7 +945,8 @@ exe = executable(
   test_consoles_sources,
   c_args : ['-DTEST_PROGRAM'],
   include_directories : includes,
-  link_with : lib_common)
+  link_with : lib_common,
+  build_by_default : program_tests)
 exes += exe
 
 opt = not get_option('build-last').disabled()
@@ -1223,7 +1227,7 @@ exe2 = executable(
   dependencies : [lib_tinfo,
                   curses_libs,
 		  lib_magic],
-  build_by_default : opt)
+  build_by_default : opt and program_tests)
 exes += exe
 if opt and not is_disabler(exe)
   exes += [exe, exe2]
@@ -1429,7 +1433,8 @@ exe = executable(
   include_directories : dir_include,
   c_args : '-DTEST_DMESG',
   link_with : [lib_common,
-               lib_tcolors])
+               lib_tcolors],
+  build_by_default : program_tests)
 if not is_disabler(exe)
   exes += exe
 endif
@@ -2075,7 +2080,7 @@ exe2 = executable(
   include_directories : includes,
   c_args : '-DTEST_SCRIPT',
   link_with : [lib_common],
-  build_by_default : opt)
+  build_by_default : opt and program_tests)
 exe3 = executable(
   'fsck.minix',
   fsck_minix_sources,
@@ -2320,7 +2325,8 @@ exe = executable(
   dependencies : [lib_util,
                   lib_utempter,
                   realtime_libs,
-                  math_libs])
+                  math_libs],
+  build_by_default : program_tests)
 exes += exe
 
 exe = executable(
@@ -2500,7 +2506,8 @@ exe = executable(
   include_directories : includes,
   c_args : '-DTEST_LOGGER',
   link_with : [lib_common],
-  dependencies : [lib_systemd])
+  dependencies : [lib_systemd],
+  build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
 endif
@@ -2639,7 +2646,7 @@ exe2 = executable(
   link_with : [lib_common,
                lib_uuid],
   dependencies : thread_libs,
-  build_by_default : opt)
+  build_by_default : opt and program_tests)
 if not is_disabler(exe)
   exes += [exe, exe2]
   manadocs += ['misc-utils/uuidd.8.adoc']
@@ -2716,7 +2723,8 @@ exe = executable(
   'test_blkid_fuzz_sample',
   'libblkid/src/fuzz.c',
   include_directories: includes,
-  link_with: lib_blkid)
+  link_with: lib_blkid,
+  build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
 endif
@@ -2851,7 +2859,8 @@ exe = executable(
   c_args : '-DTEST_CAL',
   link_with : [lib_common,
                lib_tcolors],
-  dependencies : [curses_libs])
+  dependencies : [curses_libs],
+  build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
 endif
@@ -2975,7 +2984,8 @@ exe = executable(
   'lib/ttyutils.c',
   c_args : ['-DTEST_PROGRAM_TTYUTILS'],
   include_directories : dir_include,
-  link_with : lib_common)
+  link_with : lib_common,
+  build_by_default: program_tests)
 exes += exe
 
 exe = executable(
@@ -2983,7 +2993,8 @@ exe = executable(
   'lib/blkdev.c',
   c_args : ['-DTEST_PROGRAM_BLKDEV'],
   include_directories : dir_include,
-  link_with : lib_common)
+  link_with : lib_common,
+  build_by_default: program_tests)
 exes += exe
 
 exe = executable(
@@ -2991,21 +3002,24 @@ exe = executable(
   'lib/ismounted.c',
   c_args : ['-DTEST_PROGRAM_ISMOUNTED'],
   include_directories : dir_include,
-  link_with : lib_common)
+  link_with : lib_common,
+  build_by_default: program_tests)
 exes += exe
 
 exe = executable(
   'test_mangle',
   'lib/mangle.c',
   c_args : ['-DTEST_PROGRAM_MANGLE'],
-  include_directories : dir_include)
+  include_directories : dir_include,
+  build_by_default: program_tests)
 exes += exe
 
 exe = executable(
   'test_strutils',
   'lib/strutils.c',
   c_args : ['-DTEST_PROGRAM_STRUTILS'],
-  include_directories : dir_include)
+  include_directories : dir_include,
+  build_by_default: program_tests)
 exes += exe
 
 exe = executable(
@@ -3014,14 +3028,16 @@ exe = executable(
   'lib/color-names.c',
   c_args : ['-DTEST_PROGRAM_COLORS'],
   include_directories : dir_include,
-  link_with : [lib_common, lib_tcolors])
+  link_with : [lib_common, lib_tcolors],
+  build_by_default: program_tests)
 exes += exe
 
 exe = executable(
   'test_randutils',
   'lib/randutils.c',
   c_args : ['-DTEST_PROGRAM_RANDUTILS'],
-  include_directories : dir_include)
+  include_directories : dir_include,
+  build_by_default: program_tests)
 exes += exe
 
 if conf.get('HAVE_OPENAT') != false and conf.get('HAVE_DIRFD') != false
@@ -3030,7 +3046,8 @@ if conf.get('HAVE_OPENAT') != false and conf.get('HAVE_DIRFD') != false
     'lib/procfs.c',
     c_args : ['-DTEST_PROGRAM_PROCFS'],
     include_directories : dir_include,
-    link_with : lib_common)
+    link_with : lib_common,
+    build_by_default: program_tests)
   exes += exe
 
   exe = executable(
@@ -3040,7 +3057,8 @@ if conf.get('HAVE_OPENAT') != false and conf.get('HAVE_DIRFD') != false
     have_cpu_set_t ? 'lib/cpuset.c' : [],
     c_args : ['-DTEST_PROGRAM_PATH'],
     include_directories : dir_include,
-    link_with : lib_common)
+    link_with : lib_common,
+    build_by_default: program_tests)
   exes += exe
 endif
 
@@ -3054,7 +3072,8 @@ if conf.get('HAVE_PTY') != false
     link_with : [lib_common],
     dependencies : [lib_m,
                     realtime_libs,
-                    lib_util])
+                    lib_util],
+    build_by_default: program_tests)
   exes += exe
 endif
 
@@ -3063,7 +3082,8 @@ if LINUX
     'test_cpuset',
     'lib/cpuset.c',
     c_args : ['-DTEST_PROGRAM_CPUSET'],
-    include_directories : dir_include)
+    include_directories : dir_include,
+    build_by_default: program_tests)
   exes += exe
 endif
 
@@ -3076,35 +3096,40 @@ exe = executable(
   'lib/fileutils.c',
   have_cpu_set_t ? 'lib/cpuset.c' : [],
   c_args : ['-DTEST_PROGRAM_SYSFS'],
-  include_directories : dir_include)
+  include_directories : dir_include,
+  build_by_default: program_tests)
 exes += exe
 
 exe = executable(
   'test_pager',
   'lib/pager.c',
   c_args : ['-DTEST_PROGRAM_PAGER'],
-  include_directories : dir_include)
+  include_directories : dir_include,
+  build_by_default: program_tests)
 exes += exe
 
 exe = executable(
   'test_linux_version',
   'lib/linux_version.c',
   c_args : ['-DTEST_PROGRAM_LINUXVERSION'],
-  include_directories : dir_include)
+  include_directories : dir_include,
+  build_by_default: program_tests)
 exes += exe
 
 exe = executable(
   'test_fileutils',
   'lib/fileutils.c',
   c_args : ['-DTEST_PROGRAM_FILEUTILS'],
-  include_directories : dir_include)
+  include_directories : dir_include,
+  build_by_default: program_tests)
 exes += exe
 
 exe = executable(
   'test_canonicalize',
   'lib/canonicalize.c',
   c_args : ['-DTEST_PROGRAM_CANONICALIZE'],
-  include_directories : dir_include)
+  include_directories : dir_include,
+  build_by_default: program_tests)
 exes += exe
 
 exe = executable(
@@ -3112,7 +3137,8 @@ exe = executable(
   'lib/timeutils.c',
   'lib/strutils.c',
   c_args : ['-DTEST_PROGRAM_TIMEUTILS'],
-  include_directories : dir_include)
+  include_directories : dir_include,
+  build_by_default: program_tests)
 exes += exe
 
 exe = executable(
@@ -3120,7 +3146,8 @@ exe = executable(
   'lib/pwdutils.c',
   c_args : ['-DTEST_PROGRAM'],
   include_directories : dir_include,
-  link_with : lib_common)
+  link_with : lib_common,
+  build_by_default: program_tests)
 exes += exe
 
 exe = executable(
@@ -3128,7 +3155,8 @@ exe = executable(
   'lib/logindefs.c',
   c_args : ['-DTEST_PROGRAM'],
   include_directories : dir_include,
-  link_with : [lib_common, logindefs_c])
+  link_with : [lib_common, logindefs_c],
+  build_by_default: program_tests)
 exes += exe
 
 
@@ -3139,7 +3167,8 @@ exe = executable(
   'libuuid/src/test_uuid.c',
   include_directories : [dir_include, dir_libuuid],
   link_with : lib_uuid,
-  dependencies : socket_libs)
+  dependencies : socket_libs,
+  build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
 endif
@@ -3155,7 +3184,8 @@ exe = executable(
   'libfdisk/src/ask.c',
   c_args : libfdisk_tests_cflags,
   include_directories : lib_fdisk_includes,
-  link_with : libfdisk_tests_ldadd)
+  link_with : libfdisk_tests_ldadd,
+  build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
 endif
@@ -3165,7 +3195,8 @@ exe = executable(
   'libfdisk/src/gpt.c',
   c_args : libfdisk_tests_cflags,
   include_directories : lib_fdisk_includes,
-  link_with : libfdisk_tests_ldadd)
+  link_with : libfdisk_tests_ldadd,
+  build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
 endif
@@ -3175,7 +3206,8 @@ exe = executable(
   'libfdisk/src/utils.c',
   c_args : libfdisk_tests_cflags,
   include_directories : lib_fdisk_includes,
-  link_with : libfdisk_tests_ldadd)
+  link_with : libfdisk_tests_ldadd,
+  build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
 endif
@@ -3185,7 +3217,8 @@ exe = executable(
   'libfdisk/src/script.c',
   c_args : libfdisk_tests_cflags,
   include_directories : lib_fdisk_includes,
-  link_with : libfdisk_tests_ldadd)
+  link_with : libfdisk_tests_ldadd,
+  build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
 endif
@@ -3195,7 +3228,8 @@ exe = executable(
   'libfdisk/src/version.c',
   c_args : libfdisk_tests_cflags,
   include_directories : lib_fdisk_includes,
-  link_with : libfdisk_tests_ldadd)
+  link_with : libfdisk_tests_ldadd,
+  build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
 endif
@@ -3205,7 +3239,8 @@ exe = executable(
   'libfdisk/src/item.c',
   c_args : libfdisk_tests_cflags,
   include_directories : lib_fdisk_includes,
-  link_with : libfdisk_tests_ldadd)
+  link_with : libfdisk_tests_ldadd,
+  build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
 endif
@@ -3239,58 +3274,67 @@ exe = executable(
   'test_mbsencode',
   'tests/helpers/test_mbsencode.c',
   include_directories : includes,
-  link_with : lib_common)
+  link_with : lib_common,
+  build_by_default: program_tests)
 exes += exe
 
 exe = executable(
   'test_byteswap',
   'tests/helpers/test_byteswap.c',
-  include_directories : includes)
+  include_directories : includes,
+  build_by_default: program_tests)
 exes += exe
 
 exe = executable(
   'test_md5',
   'tests/helpers/test_md5.c',
   md5_c,
-  include_directories : includes)
+  include_directories : includes,
+  build_by_default: program_tests)
 exes += exe
 
 exe = executable(
   'test_sha1',
   'tests/helpers/test_sha1.c',
   sha1_c,
-  include_directories : includes)
+  include_directories : includes,
+  build_by_default: program_tests)
 exes += exe
 
 exe = executable(
   'test_pathnames',
   'tests/helpers/test_pathnames.c',
-  include_directories : includes)
+  include_directories : includes,
+  build_by_default: program_tests)
 exes += exe
 
 exe = executable(
   'test_strerror',
   'tests/helpers/test_strerror.c',
-  include_directories : includes)
+  include_directories : includes,
+  build_by_default: program_tests)
 exes += exe
 
 exe = executable(
   'test_sysinfo',
   'tests/helpers/test_sysinfo.c',
-  include_directories : includes)
+  include_directories : includes,
+  build_by_default: program_tests)
 exes += exe
 
 exe = executable(
   'test_sigreceive',
   'tests/helpers/test_sigreceive.c',
   include_directories : includes,
-  link_with : lib_common)
+  link_with : lib_common,
+  build_by_default: program_tests)
 exes += exe
 
 exe = executable(
   'test_tiocsti',
   'tests/helpers/test_tiocsti.c',
-  include_directories : includes)
+  include_directories : includes,
+  build_by_default: program_tests)
 exes += exe
 
 exe = executable(
@@ -3299,7 +3343,8 @@ exe = executable(
   predefined_c,
   unpack_c,
   unparse_c,
-  include_directories : includes)
+  include_directories : includes,
+  build_by_default: program_tests)
 exes += exe
 
 mq_libs = []
@@ -3310,14 +3355,16 @@ if LINUX
     'test_mkfds',
     'tests/helpers/test_mkfds.c',
     include_directories : includes,
-    dependencies : mq_libs)
+    dependencies : mq_libs,
+    build_by_default: program_tests)
   exes += exe
 endif
 
 exe = executable(
   'test_enosys',
   'tests/helpers/test_enosys.c',
-  include_directories : includes)
+  include_directories : includes,
+  build_by_default: program_tests)
 exes += exe
 
 ############################################################
@@ -3327,7 +3374,8 @@ if conf.get('HAVE_OPENAT') != false
     'sample-scols-tree',
     'libsmartcols/samples/tree.c',
     include_directories : includes,
-    link_with : [lib_smartcols, lib_common])
+    link_with : [lib_smartcols, lib_common],
+    build_by_default: program_tests)
   if not is_disabler(exe)
     exes += exe
   endif
