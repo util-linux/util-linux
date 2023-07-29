@@ -331,7 +331,7 @@ struct factory {
 	const char *name;	/* [-a-zA-Z0-9_]+ */
 	const char *desc;
 	bool priv;		/* the root privilege is needed to make fd(s) */
-#define MAX_N 5
+#define MAX_N 13
 	int  N;			/* the number of fds this factory makes */
 	int  EX_N;		/* fds made optionally */
 	int  EX_R;		/* the number of extra words printed to stdout. */
@@ -2908,6 +2908,62 @@ static void *make_bpf_prog(const struct factory *factory _U_, struct fdesc fdesc
 	return NULL;
 }
 
+static void *make_some_pipes(const struct factory *factory _U_, struct fdesc fdescs[],
+			     int argc _U_, char ** argv _U_)
+{
+	/* Reserver fds before making pipes */
+	for (int i = 0; i < factory->N; i++) {
+		close(fdescs[i].fd);
+		if (dup2(0, fdescs[0].fd) < 0)
+			err(EXIT_FAILURE, "failed to reserve fd %d with dup2", fdescs[0].fd);
+	}
+
+	for (int i = 0; i < (factory->N) / 2; i++) {
+		int pd[2];
+		unsigned int mode;
+		int r = 0, w = 1;
+
+		mode = 1 << (i % 3);
+		if (mode == MX_WRITE) {
+			r = 1;
+			w = 0;
+		}
+
+		if (pipe(pd) < 0)
+			err(EXIT_FAILURE, "failed to make pipe");
+
+		if (dup2(pd[0], fdescs[2 * i + r].fd) < 0)
+			err(EXIT_FAILURE, "failed to dup %d -> %d", pd[0], fdescs[2 * i + r].fd);
+		close(pd[0]);
+		fdescs[2 * 1 + r].close = close_fdesc;
+
+		if (dup2(pd[1], fdescs[2 * i + w].fd) < 0)
+			err(EXIT_FAILURE, "failed to dup %d -> %d", pd[1], fdescs[2 * i + 2].fd);
+		close(pd[1]);
+		fdescs[2 * 1 + w].close = close_fdesc;
+
+		fdescs[2 * i].mx_modes |= mode;
+
+		/* Make the pipe for writing full. */
+		if (fdescs[2 * i].mx_modes & MX_WRITE) {
+			int n = fcntl(fdescs[2 * i].fd, F_GETPIPE_SZ);
+			char *buf;
+
+			if (n < 0)
+				err(EXIT_FAILURE, "failed to get PIPE BUFFER SIZE from %d", fdescs[2 * i].fd);
+
+			buf = xmalloc(n);
+			if (write(fdescs[2 * i].fd, buf, n) != n)
+				err(EXIT_FAILURE, "failed to fill the pipe buffer specified with %d",
+				    fdescs[2 * i].fd);
+			free(buf);
+		}
+
+	}
+
+	return NULL;
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -3656,6 +3712,16 @@ static const struct factory factories[] = {
 				.desc = "program type by id",
 				.defv.integer = 1,
 			},
+		}
+	},
+	{
+		.name = "multiplexing",
+		.desc = "making pipes monitored by multiplexers",
+		.priv =  false,
+		.N    = 12,
+		.EX_N = 0,
+		.make = make_some_pipes,
+		.params = (struct parameter []) {
 			PARAM_END
 		}
 	},
