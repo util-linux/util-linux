@@ -85,6 +85,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out, int status)
 	fputs(" -q, --quiet                   don't print pid(s)\n", out);
 	fputs(" -X, --dont-monitor-stdin      don't monitor stdin when pausing\n", out);
 	fputs(" -c, --dont-pause              don't pause after making fd(s)\n", out);
+	fputs(" -w, --wait-with <multiplexer> use MULTIPLEXER for waiting events\n", out);
+	fputs(" -W, --multiplexers            list multiplexers\n", out);
 
 	fputs("\n", out);
 	fputs("Examples:\n", out);
@@ -3734,6 +3736,14 @@ pidfd_open(pid_t pid _U_, unsigned int flags _U_)
 }
 #endif
 
+/*
+ * Multiplexers
+ */
+struct multiplexer {
+	const char *name;
+	void (*fn)(bool);
+};
+
 static void wait_event(bool monitor_stdin)
 {
 	fd_set readfds;
@@ -3753,6 +3763,29 @@ static void wait_event(bool monitor_stdin)
 		err(EXIT_FAILURE, "failed in pselect");
 }
 
+#define DEFAULT_MULTIPLEXER 0
+static struct multiplexer multiplexers [] = {
+	{
+		.name = "default",
+		.fn = wait_event_default,
+	},
+};
+
+static struct multiplexer *lookup_multiplexer(const char *name)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(multiplexers); i++)
+		if (strcmp(name, multiplexers[i].name) == 0)
+			return multiplexers + i;
+	return NULL;
+}
+
+static void list_multiplexers(void)
+{
+	puts("NAME");
+	for (size_t i = 0; i < ARRAY_SIZE(multiplexers); i++)
+		puts(multiplexers[i].name);
+}
+
 int main(int argc, char **argv)
 {
 	int c;
@@ -3763,6 +3796,8 @@ int main(int argc, char **argv)
 	void *data;
 	bool monitor_stdin = true;
 
+	struct multiplexer *wait_event = NULL;
+
 	static const struct option longopts[] = {
 		{ "list",	no_argument, NULL, 'l' },
 		{ "parameters", required_argument, NULL, 'I' },
@@ -3770,11 +3805,13 @@ int main(int argc, char **argv)
 		{ "quiet",	no_argument, NULL, 'q' },
 		{ "dont-monitor-stdin", no_argument, NULL, 'X' },
 		{ "dont-puase", no_argument, NULL, 'c' },
+		{ "wait-with",  required_argument, NULL, 'w' },
+		{ "multiplexers",no_argument,NULL, 'W' },
 		{ "help",	no_argument, NULL, 'h' },
 		{ NULL, 0, NULL, 0 },
 	};
 
-	while ((c = getopt_long(argc, argv, "lhqcI:r:X", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "lhqcI:r:w:WX", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
 			usage(stdout, EXIT_SUCCESS);
@@ -3790,6 +3827,14 @@ int main(int argc, char **argv)
 		case 'c':
 			cont = true;
 			break;
+		case 'w':
+			wait_event = lookup_multiplexer(optarg);
+			if (wait_event == NULL)
+				errx(EXIT_FAILURE, "unknown multiplexer: %s", optarg);
+			break;
+		case 'W':
+			list_multiplexers();
+			exit(EXIT_SUCCESS);
 		case 'r':
 			rename_self(optarg);
 			break;
@@ -3803,6 +3848,11 @@ int main(int argc, char **argv)
 
 	if (optind == argc)
 		errx(EXIT_FAILURE, "no file descriptor specification given");
+
+	if (cont && wait_event)
+		errx(EXIT_FAILURE, "don't specify both -c/--dont-puase and -w/--wait-with options");
+	if (wait_event == NULL)
+		wait_event = multiplexers + DEFAULT_MULTIPLEXER;
 
 	factory = find_factory(argv[optind]);
 	if (!factory)
