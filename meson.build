@@ -41,16 +41,13 @@ conf.set_quoted('PACKAGE_VERSION', meson.project_version())
 package_string = '@0@ @1@'.format(meson.project_name(), meson.project_version())
 conf.set_quoted('PACKAGE_STRING', package_string)
 
-codes = [''' {print $1}  ''',
-         ''' {sub("-.*","",$2); print $2} ''',
-         ''' {sub("-.*","",$3); print $3 ~ /^[0-9]+$/ ? $3 : 0} ''']
 pc_version = []
-foreach code : codes
-  res = run_command('bash', '-c',
-                    '''echo '@0@' | awk -F. '@1@' '''.format(
-                      meson.project_version(), code), check: true)
-  pc_version += res.stdout().strip()
-endforeach
+pc_version = meson.project_version().split('-')[0].split('.')
+
+if pc_version.length() < 3
+    pc_version += '0'
+endif
+
 pc_version = '.'.join(pc_version)
 
 conf.set_quoted('LIBBLKID_VERSION', libblkid_version)
@@ -2890,7 +2887,7 @@ endif
 syscalls_h = custom_target('syscalls.h',
   input : 'tools/all_syscalls',
   output : 'syscalls.h',
-  command : ['bash', '@INPUT@', cc.cmd_array()],
+  command : ['tools/all_syscalls', cc.cmd_array()] 
 )
 
 if cc.compiles(fs.read('include/audit-arch.h'), name : 'has AUDIT_ARCH_NATIVE')
