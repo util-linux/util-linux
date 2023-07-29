@@ -314,9 +314,16 @@ static void free_arg(struct arg *arg)
 	arg->free(arg->v);
 }
 
+enum multiplexing_mode {
+   MX_READ   = 1 << 0,
+   MX_WRITE  = 1 << 1,
+   MX_EXCEPT = 1 << 2,
+};
+
 struct fdesc {
 	int fd;
 	void (*close)(int, void *);
+	unsigned int mx_modes;
 	void *data;
 };
 
@@ -3741,24 +3748,45 @@ pidfd_open(pid_t pid _U_, unsigned int flags _U_)
  */
 struct multiplexer {
 	const char *name;
-	void (*fn)(bool);
+	void (*fn)(bool, struct fdesc *fdescs, size_t n_fdescs);
 };
 
-static void wait_event(bool monitor_stdin)
+static void wait_event_default(bool monitor_stdin, struct fdesc *fdescs, size_t n_fdescs)
 {
 	fd_set readfds;
+	fd_set writefds;
+	fd_set exceptfds;
 	sigset_t sigset;
 	int n = 0;
 
 	FD_ZERO(&readfds);
+	FD_ZERO(&writefds);
+	FD_ZERO(&exceptfds);
+	/* Monitor the standard input only when the process
+	 * is in foreground. */
 	if (monitor_stdin) {
 		n = 1;
 		FD_SET(0, &readfds);
 	}
 
+	for (size_t i = 0; i < n_fdescs; i++) {
+		if (fdescs[i].mx_modes & MX_READ) {
+			n = max(n, fdescs[i].fd + 1);
+			FD_SET(fdescs[i].fd, &readfds);
+		}
+		if (fdescs[i].mx_modes & MX_WRITE) {
+			n = max(n, fdescs[i].fd + 1);
+			FD_SET(fdescs[i].fd, &writefds);
+		}
+		if (fdescs[i].mx_modes & MX_EXCEPT) {
+			n = max(n, fdescs[i].fd + 1);
+			FD_SET(fdescs[i].fd, &exceptfds);
+		}
+	}
+
 	sigemptyset(&sigset);
 
-	if (pselect(n, &readfds, NULL, NULL, NULL, &sigset) < 0
+	if (pselect(n, &readfds, &writefds, &exceptfds, NULL, &sigset) < 0
 	    && errno != EINTR)
 		err(EXIT_FAILURE, "failed in pselect");
 }
@@ -3869,6 +3897,7 @@ int main(int argc, char **argv)
 
 	for (int i = 0; i < MAX_N; i++) {
 		fdescs[i].fd = -1;
+		fdescs[i].mx_modes = 0;
 		fdescs[i].close = NULL;
 	}
 
@@ -3910,7 +3939,8 @@ int main(int argc, char **argv)
 	}
 
 	if (!cont)
-		wait_event(monitor_stdin);
+		wait_event->fn(monitor_stdin,
+			       fdescs, factory->N + factory->EX_N);
 
 	for (int i = 0; i < factory->N + factory->EX_N; i++)
 		if (fdescs[i].fd >= 0 && fdescs[i].close)
