@@ -100,7 +100,7 @@ ttymsg(struct iovec *iov, size_t iovcnt, char *line, int tmout) {
 	 * if not running as root; not an error.
 	 */
 	if ((fd = open(device, O_WRONLY|O_NONBLOCK, 0)) < 0) {
-		if (errno == EBUSY || errno == EACCES)
+		if (errno == EBUSY || errno == EACCES || errno == ENOENT)
 			return NULL;
 
 		len = snprintf(errbuf, sizeof(errbuf), "%s: %m", device);
