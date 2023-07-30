@@ -20,6 +20,7 @@
 #ifndef TEST_MKFDS_H
 #define TEST_MKFDS_H
 
+#include <asm/unistd.h>
 #include <stdbool.h>
 #include <stddef.h>
 
@@ -76,5 +77,9 @@ struct fdesc {
 			err(EXIT_FAILURE, "failed in " SYSCALL);	\
 		free(pfds);						\
 	}
+
+#ifdef __NR_ppoll
+void wait_event_ppoll(bool add_stdin, struct fdesc *fdescs, size_t n_fdescs);
+#endif
 
 #endif	/* TEST_MKFDS_H */
