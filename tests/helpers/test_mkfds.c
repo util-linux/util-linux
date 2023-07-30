@@ -19,6 +19,7 @@
 
 #include "c.h"
 #include "xalloc.h"
+#include "test_mkfds.h"
 
 #include <arpa/inet.h>
 #include <ctype.h>
@@ -37,6 +38,7 @@
 #include <net/if.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
+#include <poll.h>
 #include <sched.h>
 #include <signal.h>
 #include <stdbool.h>
@@ -313,19 +315,6 @@ static void free_arg(struct arg *arg)
 {
 	arg->free(arg->v);
 }
-
-enum multiplexing_mode {
-   MX_READ   = 1 << 0,
-   MX_WRITE  = 1 << 1,
-   MX_EXCEPT = 1 << 2,
-};
-
-struct fdesc {
-	int fd;
-	void (*close)(int, void *);
-	unsigned int mx_modes;
-	void *data;
-};
 
 struct factory {
 	const char *name;	/* [-a-zA-Z0-9_]+ */
@@ -3817,7 +3806,7 @@ struct multiplexer {
 	void (*fn)(bool, struct fdesc *fdescs, size_t n_fdescs);
 };
 
-#if defined(__NR_select)
+#if defined(__NR_select) || defined(__NR_poll)
 static void sighandler_nop(int si _U_)
 {
    /* Do nothing */
@@ -3887,6 +3876,14 @@ DEFUN_WAIT_EVENT_SELECT(select,
 			syscall(__NR_select, n, &readfds, &writefds, &exceptfds, NULL))
 #endif
 
+#ifdef __NR_poll
+static DEFUN_WAIT_EVENT_POLL(poll,
+		      "poll",
+		      ,
+		      signal(SIGCONT,sighandler_nop);,
+		      syscall(__NR_poll, pfds, n, -1))
+#endif
+
 #define DEFAULT_MULTIPLEXER 0
 static struct multiplexer multiplexers [] = {
 	{
@@ -3903,6 +3900,12 @@ static struct multiplexer multiplexers [] = {
 	{
 		.name = "select",
 		.fn = wait_event_select,
+	},
+#endif
+#ifdef __NR_poll
+	{
+		.name = "poll",
+		.fn = wait_event_poll,
 	},
 #endif
 };

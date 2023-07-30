@@ -3384,6 +3384,7 @@ if LINUX
   exe = executable(
     'test_mkfds',
     'tests/helpers/test_mkfds.c',
+    'tests/helpers/test_mkfds.h',
     include_directories : includes,
     dependencies : mq_libs,
     build_by_default: program_tests)
