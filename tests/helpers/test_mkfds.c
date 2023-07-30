@@ -3817,45 +3817,75 @@ struct multiplexer {
 	void (*fn)(bool, struct fdesc *fdescs, size_t n_fdescs);
 };
 
-static void wait_event_default(bool monitor_stdin, struct fdesc *fdescs, size_t n_fdescs)
+#if defined(__NR_select)
+static void sighandler_nop(int si _U_)
 {
-	fd_set readfds;
-	fd_set writefds;
-	fd_set exceptfds;
-	sigset_t sigset;
-	int n = 0;
-
-	FD_ZERO(&readfds);
-	FD_ZERO(&writefds);
-	FD_ZERO(&exceptfds);
-	/* Monitor the standard input only when the process
-	 * is in foreground. */
-	if (monitor_stdin) {
-		n = 1;
-		FD_SET(0, &readfds);
-	}
-
-	for (size_t i = 0; i < n_fdescs; i++) {
-		if (fdescs[i].mx_modes & MX_READ) {
-			n = max(n, fdescs[i].fd + 1);
-			FD_SET(fdescs[i].fd, &readfds);
-		}
-		if (fdescs[i].mx_modes & MX_WRITE) {
-			n = max(n, fdescs[i].fd + 1);
-			FD_SET(fdescs[i].fd, &writefds);
-		}
-		if (fdescs[i].mx_modes & MX_EXCEPT) {
-			n = max(n, fdescs[i].fd + 1);
-			FD_SET(fdescs[i].fd, &exceptfds);
-		}
-	}
-
-	sigemptyset(&sigset);
-
-	if (pselect(n, &readfds, &writefds, &exceptfds, NULL, &sigset) < 0
-	    && errno != EINTR)
-		err(EXIT_FAILURE, "failed in pselect");
+   /* Do nothing */
 }
+#endif
+
+#define DEFUN_WAIT_EVENT_SELECT(NAME,SYSCALL,XDECLS,SETUP_SIG_HANDLER,SYSCALL_INVOCATION) \
+	static void wait_event_##NAME(bool add_stdin, struct fdesc *fdescs, size_t n_fdescs) \
+	{								\
+		fd_set readfds;						\
+		fd_set writefds;					\
+		fd_set exceptfds;					\
+		XDECLS							\
+		int n = 0;						\
+									\
+		FD_ZERO(&readfds);					\
+		FD_ZERO(&writefds);					\
+		FD_ZERO(&exceptfds);					\
+		/* Monitor the standard input only when the process	\
+		 * is in foreground. */					\
+		if (add_stdin) {					\
+			n = 1;						\
+			FD_SET(0, &readfds);				\
+		}							\
+									\
+		for (size_t i = 0; i < n_fdescs; i++) {			\
+			if (fdescs[i].mx_modes & MX_READ) {		\
+				n = max(n, fdescs[i].fd + 1);		\
+				FD_SET(fdescs[i].fd, &readfds);		\
+			}						\
+			if (fdescs[i].mx_modes & MX_WRITE) {		\
+				n = max(n, fdescs[i].fd + 1);		\
+				FD_SET(fdescs[i].fd, &writefds);	\
+			}						\
+			if (fdescs[i].mx_modes & MX_EXCEPT) {		\
+				n = max(n, fdescs[i].fd + 1);		\
+				FD_SET(fdescs[i].fd, &exceptfds);	\
+			}						\
+		}							\
+									\
+		SETUP_SIG_HANDLER					\
+									\
+		if (SYSCALL_INVOCATION < 0				\
+		    && errno != EINTR)					\
+			err(EXIT_FAILURE, "failed in " SYSCALL);	\
+	}
+
+DEFUN_WAIT_EVENT_SELECT(default,
+			"pselect",
+			sigset_t sigset;,
+			sigemptyset(&sigset);,
+			pselect(n, &readfds, &writefds, &exceptfds, NULL, &sigset))
+
+#ifdef __NR_pselect6
+DEFUN_WAIT_EVENT_SELECT(pselect6,
+			"pselect6",
+			sigset_t sigset;,
+			sigemptyset(&sigset);,
+			syscall(__NR_pselect6, n, &readfds, &writefds, &exceptfds, NULL, &sigset))
+#endif
+
+#ifdef __NR_select
+DEFUN_WAIT_EVENT_SELECT(select,
+			"select",
+			,
+			signal(SIGCONT,sighandler_nop);,
+			syscall(__NR_select, n, &readfds, &writefds, &exceptfds, NULL))
+#endif
 
 #define DEFAULT_MULTIPLEXER 0
 static struct multiplexer multiplexers [] = {
@@ -3863,6 +3893,18 @@ static struct multiplexer multiplexers [] = {
 		.name = "default",
 		.fn = wait_event_default,
 	},
+#ifdef __NR_pselect6
+	{
+		.name = "pselect6",
+		.fn = wait_event_pselect6,
+	},
+#endif
+#ifdef __NR_select
+	{
+		.name = "select",
+		.fn = wait_event_select,
+	},
+#endif
 };
 
 static struct multiplexer *lookup_multiplexer(const char *name)
