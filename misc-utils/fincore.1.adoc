@@ -58,6 +58,7 @@ mailto:yamato@redhat.com[Masatake YAMATO]
 *mincore*(2),
 *getpagesize*(2),
 *getconf*(1p)
+*cachestat*(2)
 
 include::man-common/bugreports.adoc[]
 

@@ -548,6 +548,7 @@ AC_CHECK_DECL([SO_PASSCRED],
 	       #include <sys/socket.h>])
 
 AC_CHECK_FUNCS([ \
+	cachestat \
 	clearenv \
 	close_range \
 	eaccess \
