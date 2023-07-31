@@ -47,6 +47,7 @@ Do not try to discover dynamic clocks.
 
 *-d*, *--dynamic-clock* _path_
 Also display specified dynamic clock.
+Can be specified multiple times.
 
 include::man-common/help-version.adoc[]
 
