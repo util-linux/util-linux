@@ -29,9 +29,12 @@
 #include <dirent.h>
 #include <inttypes.h>
 
+#include "libsmartcols.h"
 #include "list.h"
+#include "nls.h"
 #include "path.h"
 #include "strutils.h"
+#include "xalloc.h"
 
 /*
  * column IDs

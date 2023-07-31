@@ -22,10 +22,6 @@
 #include <sys/types.h>
 #include <sys/xattr.h>
 
-#include "xalloc.h"
-#include "nls.h"
-#include "libsmartcols.h"
-
 #include "lsfd.h"
 #include "lsfd-sock.h"
 
