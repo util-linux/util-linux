@@ -119,11 +119,11 @@ check_dd_fs_feat
 INPUT=
 input=
 
+ts_log_both "[ NO EXCITING FILE ]"
 {
     input=no_such_file
     INPUT="${INPUT} ${input}"
 
-    ts_log_both "[ NO EXCITING FILE ]"
     $TS_CMD_FINCORE --output $OUT_COLUMNS --bytes --noheadings $input
     footer "$?"
 } >> $TS_OUTPUT 2>> $TS_ERRLOG
@@ -220,8 +220,8 @@ input=
 		   "oflag=append seek=$hole_count"
 } >> $TS_OUTPUT 2>> $TS_ERRLOG
 
+ts_log_both "[ MULTIPLE FILES ]"
 {
-    ts_log_both "[ MULTIPLE FILES ]"
     $TS_CMD_FINCORE --output $OUT_COLUMNS --bytes $INPUT
     footer "$?"
 } >> $TS_OUTPUT 2>> $TS_ERRLOG
