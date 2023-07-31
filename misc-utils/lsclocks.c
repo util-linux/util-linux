@@ -406,7 +406,9 @@ static void add_dynamic_clocks_from_discovery(struct libscols_table *tb,
 	glob_t state;
 
 	rc = glob("/dev/ptp*", 0, NULL, &state);
-	if (rc)
+	if (rc == GLOB_NOMATCH)
+		return;
+	else if (rc)
 		errx(EXIT_FAILURE, _("Could not glob: %d"), rc);
 
 	for (i = 0; i < state.gl_pathc; i++)
