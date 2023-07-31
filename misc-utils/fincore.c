@@ -31,6 +31,7 @@
 #include "closestream.h"
 #include "xalloc.h"
 #include "strutils.h"
+#include "blkdev.h"
 
 #include "libsmartcols.h"
 
@@ -227,28 +228,38 @@ static int fincore_fd (struct fincore_control *ctl,
  */
 static int fincore_name(struct fincore_control *ctl,
 			const char *name,
-			struct stat *sb,
+			unsigned long long *size,
 			off_t *count_incore)
 {
 	int fd;
 	int rc = 0;
+	struct stat sb;
 
 	if ((fd = open (name, O_RDONLY)) < 0) {
 		warn(_("failed to open: %s"), name);
 		return -errno;
 	}
 
-	if (fstat (fd, sb) < 0) {
+	if (fstat (fd, &sb) < 0) {
 		warn(_("failed to do fstat: %s"), name);
 		close (fd);
 		return -errno;
 	}
 
-	if (S_ISDIR(sb->st_mode))
-		rc = 1;			/* ignore */
+	if (S_ISBLK(sb.st_mode)) {
+		rc = blkdev_get_size(fd, size);
+		if (rc)
+			warn(_("failed ioctl to get size: %s"), name);
+	} else if (S_ISREG(sb.st_mode)) {
+		*size = sb.st_size;
+	} else {
+		rc = 1;			/* ignore things like symlinks
+					 * and directories*/
+	}
 
-	else if (sb->st_size)
-		rc = fincore_fd(ctl, fd, name, sb->st_size, count_incore);
+	if (!rc) {
+		rc = fincore_fd(ctl, fd, name, *size, count_incore);
+	}
 
 	close (fd);
 	return rc;
@@ -391,12 +402,12 @@ int main(int argc, char ** argv)
 
 	for(; optind < argc; optind++) {
 		char *name = argv[optind];
-		struct stat sb;
 		off_t count_incore = 0;
+		unsigned long long size = 0;
 
-		switch (fincore_name(&ctl, name, &sb, &count_incore)) {
+		switch (fincore_name(&ctl, name, &size, &count_incore)) {
 		case 0:
-			add_output_data(&ctl, name, sb.st_size, count_incore);
+			add_output_data(&ctl, name, size, count_incore);
 			break;
 		case 1:
 			break; /* ignore */
