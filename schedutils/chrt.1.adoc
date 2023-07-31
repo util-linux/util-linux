@@ -71,7 +71,7 @@ Set scheduling policy to *SCHED_DEADLINE* (sporadic task model deadline scheduli
 Specifies runtime parameter for *SCHED_DEADLINE* policy (Linux-specific).
 
 *-P*, *--sched-period* _nanoseconds_::
-Specifies period parameter for *SCHED_DEADLINE* policy (Linux-specific).
+Specifies period parameter for *SCHED_DEADLINE* policy (Linux-specific). Note that the kernel's lower limit is 100 milliseconds.
 
 *-D*, *--sched-deadline* _nanoseconds_::
 Specifies deadline parameter for *SCHED_DEADLINE* policy (Linux-specific).
