@@ -24,6 +24,7 @@
 #include <fcntl.h>
 #include <sys/file.h>
 #include <getopt.h>
+#include <linux/bpf.h>
 #include <linux/if_ether.h>
 #include <linux/if_packet.h>
 #include <linux/if_tun.h>
@@ -2846,6 +2847,57 @@ static void free_cdev_tun(const struct factory * factory _U_, void *data)
 	free(data);
 }
 
+static void *make_bpf_prog(const struct factory *factory _U_, struct fdesc fdescs[],
+			   int argc _U_, char ** argv _U_)
+{
+	struct arg prog_type_id = decode_arg("prog-type-id", factory->params, argc, argv);
+	int iprog_type_id = ARG_INTEGER(prog_type_id);
+
+	int bfd;
+	union bpf_attr attr;
+	/* Just doing exit with 0. */
+	struct bpf_insn insns[] = {
+		[0] = {
+			.code  = BPF_ALU64 | BPF_MOV | BPF_K,
+			.dst_reg = BPF_REG_0, .src_reg = 0, .off   = 0, .imm   = 0
+		},
+		[1] = {
+			.code  = BPF_JMP | BPF_EXIT,
+			.dst_reg = 0, .src_reg = 0, .off   = 0, .imm   = 0
+		},
+	};
+
+
+	memset(&attr, 0, sizeof(attr));
+	attr.prog_type = iprog_type_id;
+	attr.insns = (uint64_t)(unsigned long)insns;
+	attr.insn_cnt = ARRAY_SIZE(insns);
+	attr.license = (int64_t)(unsigned long)"GPL";
+
+	bfd = syscall(__NR_bpf, BPF_PROG_LOAD, &attr, sizeof(attr));
+	if (bfd < 0)
+		err((errno == ENOSYS? EXIT_ENOSYS: EXIT_FAILURE),
+		    "failed in bpf(BPF_PROG_LOAD)");
+
+	if (bfd != fdescs[0].fd) {
+		if (dup2(bfd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(bfd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", bfd, fdescs[0].fd);
+		}
+		close(bfd);
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL
+	};
+
+	return NULL;
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -3577,6 +3629,23 @@ static const struct factory factories[] = {
 		.report = report_cdev_tun,
 		.free = free_cdev_tun,
 		.params = (struct parameter []) {
+			PARAM_END
+		}
+	},
+	{
+		.name = "bpf-prog",
+		.desc = "make bpf-prog",
+		.priv = true,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_bpf_prog,
+		.params = (struct parameter []) {
+			{
+				.name = "prog-type-id",
+				.type = PTYPE_INTEGER,
+				.desc = "program type by id",
+				.defv.integer = 1,
+			},
 			PARAM_END
 		}
 	},

@@ -1,0 +1,2 @@
+kprobe 2
+BPF-PROG.TYPE,BPF-PROG.TYPE.RAW: 0
