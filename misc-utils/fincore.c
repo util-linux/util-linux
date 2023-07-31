@@ -278,6 +278,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -b, --bytes           print sizes in bytes rather than in human readable format\n"), out);
 	fputs(_(" -n, --noheadings      don't print headings\n"), out);
 	fputs(_(" -o, --output <list>   output columns\n"), out);
+	fputs(_("     --output-all      output all columns\n"), out);
 	fputs(_(" -r, --raw             use raw output format\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -304,10 +305,14 @@ int main(int argc, char ** argv)
 		.pagesize = getpagesize()
 	};
 
+	enum {
+		OPT_OUTPUT_ALL = CHAR_MAX + 1
+	};
 	static const struct option longopts[] = {
 		{ "bytes",      no_argument, NULL, 'b' },
 		{ "noheadings", no_argument, NULL, 'n' },
 		{ "output",     required_argument, NULL, 'o' },
+		{ "output-all",	no_argument,       NULL, OPT_OUTPUT_ALL },
 		{ "version",    no_argument, NULL, 'V' },
 		{ "help",	no_argument, NULL, 'h' },
 		{ "json",       no_argument, NULL, 'J' },
@@ -330,6 +335,10 @@ int main(int argc, char ** argv)
 			break;
 		case 'o':
 			outarg = optarg;
+			break;
+		case OPT_OUTPUT_ALL:
+			for (ncolumns = 0; ncolumns < ARRAY_SIZE(infos); ncolumns++)
+				columns[ncolumns] = ncolumns;
 			break;
 		case 'J':
 			ctl.json = 1;
