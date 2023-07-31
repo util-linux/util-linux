@@ -21,9 +21,8 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_CHRT"
 ts_skip_nonroot
-
-# TODO: drone.io does not like FIFO and RR (container restriction?)
-TS_KNOWN_FAIL="yes"
+ts_skip_docker
+ts_skip_qemu_user
 
 function do_chrt {
 	$TS_CMD_CHRT $* $TS_CMD_CHRT --pid 0 | sed 's/.* policy: //; s/.* priority: //' >> $TS_OUTPUT 2>> $TS_ERRLOG
@@ -93,9 +92,9 @@ fi
 ts_init_subtest "deadline"
 skip_policy SCHED_DEADLINE
 if [ $? == 0 ]; then
-	do_chrt --deadline --sched-period 13000 0
-	do_chrt --deadline --sched-period 13000 --sched-deadline 12000 0
-	do_chrt --deadline --sched-period 13000 --sched-deadline 12000 --sched-runtime 10000 0
+	do_chrt --deadline --sched-period 130000 0
+	do_chrt --deadline --sched-period 130000 --sched-deadline 120000 0
+	do_chrt --deadline --sched-period 130000 --sched-deadline 120000 --sched-runtime 100000 0
 	cleanup_output
 	ts_finalize_subtest
 fi
