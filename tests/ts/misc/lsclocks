@@ -49,4 +49,10 @@ else
 	ts_skip_subtest "/dev/ptp0 not usable"
 fi
 
+ts_init_subtest cpu
+
+"$TS_CMD_LSCLOCKS" --cpu 1 --output TYPE,ID,NAME | tail -1 > "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+
+ts_finalize_subtest
+
 ts_finalize

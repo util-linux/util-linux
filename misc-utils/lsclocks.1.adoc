@@ -49,6 +49,10 @@ Do not try to discover dynamic clocks.
 Also display specified dynamic clock.
 Can be specified multiple times.
 
+*-c*, *--cpu-clock* _pid_
+Also display CPU clock of specified process.
+Can be specified multiple times.
+
 include::man-common/help-version.adoc[]
 
 == OUTPUT COLUMNS

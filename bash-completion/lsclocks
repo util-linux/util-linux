@@ -31,6 +31,10 @@ _lsclocks_module()
 			COMPREPLY=( $(compgen -o filenames -W "$clocks" -- "$cur") )
 			return 0
 			;;
+		'-c'|'--cpu-clock')
+			_pids
+			return 0
+			;;
 		'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
@@ -44,6 +48,7 @@ _lsclocks_module()
 				--raw
 				--time
 				--dynamic-clock
+				--cpu-clock
 				--help
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )

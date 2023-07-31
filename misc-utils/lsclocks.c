@@ -93,6 +93,7 @@ static inline bool CLOCKID_IS_DYNAMIC(clockid_t clk)
 enum CLOCK_TYPE {
 	CT_SYS,
 	CT_PTP,
+	CT_CPU,
 };
 
 static const char *clock_type_name(enum CLOCK_TYPE type)
@@ -102,6 +103,8 @@ static const char *clock_type_name(enum CLOCK_TYPE type)
 		return "sys";
 	case CT_PTP:
 		return "ptp";
+	case CT_CPU:
+		return "cpu";
 	}
 	errx(EXIT_FAILURE, _("Unknown clock type %d"), type);
 }
@@ -197,6 +200,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -t, --time <clock>         show current time of single clock\n"), out);
 	fputs(_(" --no-discover-dynamic      do not try to discover dynamic clocks\n"), out);
 	fputs(_(" -d, --dynamic-clock <path> also display specified dynamic clock\n"), out);
+	fputs(_(" -c, --cpu-clock <pid>      also display CPU clock of specified process\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(29));
@@ -418,6 +422,33 @@ static void add_dynamic_clocks_from_discovery(struct libscols_table *tb,
 	globfree(&state);
 }
 
+struct cpu_clock {
+	struct list_head head;
+	pid_t pid;
+	char name[sizeof(stringify_value(SINT_MAX(pid_t)))];
+};
+
+static void add_cpu_clock(struct libscols_table *tb,
+			  const int *columns, size_t ncolumns,
+			  pid_t pid, const char *name)
+{
+	int rc;
+	clockid_t clockid;
+
+	rc = clock_getcpuclockid(pid, &clockid);
+	if (rc)
+		errx(EXIT_FAILURE, _("Could not get CPU clock of process %jd: %s"),
+				   (intmax_t) pid, strerror(rc));
+
+	struct clockinfo clockinfo = {
+		.type = CT_CPU,
+		.name = name,
+		.id = clockid,
+	};
+	add_clock_line(tb, columns, ncolumns, &clockinfo);
+}
+
+
 int main(int argc, char **argv)
 {
 	size_t i;
@@ -433,8 +464,9 @@ int main(int argc, char **argv)
 	size_t ncolumns = 0;
 	clockid_t clock = -1;
 	struct dynamic_clock *dynamic_clock;
-	struct list_head *current_dynamic_clock;
-	struct list_head dynamic_clocks;
+	struct cpu_clock *cpu_clock;
+	struct list_head *current_dynamic_clock, *current_cpu_clock;
+	struct list_head dynamic_clocks, cpu_clocks;
 
 	struct timespec now;
 
@@ -453,6 +485,7 @@ int main(int argc, char **argv)
 		{ "time",                required_argument, NULL, 't' },
 		{ "no-discover-dynamic", no_argument,       NULL, OPT_NO_DISC_DYN },
 		{ "dynamic-clock",       required_argument, NULL, 'd' },
+		{ "cpu-clock",           required_argument, NULL, 'c' },
 		{ 0 }
 	};
 
@@ -462,8 +495,9 @@ int main(int argc, char **argv)
 	close_stdout_atexit();
 
 	INIT_LIST_HEAD(&dynamic_clocks);
+	INIT_LIST_HEAD(&cpu_clocks);
 
-	while ((c = getopt_long(argc, argv, "no:Jrt:d:Vh", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "no:Jrt:d:c:Vh", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'n':
 			noheadings = true;
@@ -491,6 +525,13 @@ int main(int argc, char **argv)
 			break;
 		case OPT_NO_DISC_DYN:
 			disc_dynamic = false;
+			break;
+		case 'c':
+			cpu_clock = xmalloc(sizeof(*cpu_clock));
+			cpu_clock->pid = strtopid_or_err(optarg, _("failed to parse pid"));
+			snprintf(cpu_clock->name, sizeof(cpu_clock->name),
+				 "%jd", (intmax_t) cpu_clock->pid);
+			list_add(&cpu_clock->head, &cpu_clocks);
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
@@ -554,6 +595,13 @@ int main(int argc, char **argv)
 	}
 
 	list_free(&dynamic_clocks, struct dynamic_clock, head, free);
+
+	list_for_each(current_cpu_clock, &cpu_clocks) {
+		cpu_clock = list_entry(current_cpu_clock, struct cpu_clock, head);
+		add_cpu_clock(tb, columns, ncolumns, cpu_clock->pid, cpu_clock->name);
+	}
+
+	list_free(&cpu_clocks, struct cpu_clock, head, free);
 
 	scols_table_enable_json(tb, json);
 	scols_table_enable_raw(tb, raw);
