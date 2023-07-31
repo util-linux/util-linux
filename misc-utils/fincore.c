@@ -49,6 +49,7 @@ struct colinfo {
 	double whint;
 	int flags;
 	const char *help;
+	unsigned int pages : 1;
 };
 
 enum {
@@ -59,7 +60,7 @@ enum {
 };
 
 static const struct colinfo infos[] = {
-	[COL_PAGES]  = { "PAGES",    1, SCOLS_FL_RIGHT, N_("file data resident in memory in pages")},
+	[COL_PAGES]  = { "PAGES",    1, SCOLS_FL_RIGHT, N_("file data resident in memory in pages"), 1},
 	[COL_RES]    = { "RES",      5, SCOLS_FL_RIGHT, N_("file data resident in memory in bytes")},
 	[COL_SIZE]   = { "SIZE",     5, SCOLS_FL_RIGHT, N_("size of the file")},
 	[COL_FILE]   = { "FILE",     4, 0, N_("file name")},
@@ -114,6 +115,7 @@ static int add_output_data(struct fincore_control *ctl,
 {
 	size_t i;
 	char *tmp;
+	uint64_t value;
 	struct libscols_line *ln;
 
 	assert(ctl);
@@ -125,26 +127,18 @@ static int add_output_data(struct fincore_control *ctl,
 
 	for (i = 0; i < ncolumns; i++) {
 		int rc = 0;
+		int column_id = get_column_id(i);
+		int format_value = 0;
 
-		switch(get_column_id(i)) {
+		switch(column_id) {
 		case COL_FILE:
 			rc = scols_line_set_data(ln, i, name);
 			break;
 		case COL_PAGES:
-			xasprintf(&tmp, "%jd",  (intmax_t) count_incore);
-			rc = scols_line_refer_data(ln, i, tmp);
-			break;
 		case COL_RES:
-		{
-			uintmax_t res = (uintmax_t) count_incore * ctl->pagesize;
-
-			if (ctl->bytes)
-				xasprintf(&tmp, "%ju", res);
-			else
-				tmp = size_to_human_string(SIZE_SUFFIX_1LETTER, res);
-			rc = scols_line_refer_data(ln, i, tmp);
+			value = count_incore;
+			format_value = 1;
 			break;
-		}
 		case COL_SIZE:
 			if (ctl->bytes)
 				xasprintf(&tmp, "%jd", (intmax_t) file_size);
@@ -154,6 +148,19 @@ static int add_output_data(struct fincore_control *ctl,
 			break;
 		default:
 			return -EINVAL;
+		}
+
+		if (format_value) {
+			if (infos[column_id].pages) {
+				xasprintf(&tmp, "%ju", (uintmax_t) value);
+			} else {
+				value *= ctl->pagesize;
+				if (ctl->bytes)
+					xasprintf(&tmp, "%ju", (uintmax_t) value);
+				else
+					tmp = size_to_human_string(SIZE_SUFFIX_1LETTER, value);
+			}
+			rc = scols_line_refer_data(ln, i, tmp);
 		}
 
 		if (rc)
