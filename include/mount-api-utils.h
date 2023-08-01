@@ -5,7 +5,7 @@
 #ifndef UTIL_LINUX_MOUNT_API_UTILS
 #define UTIL_LINUX_MOUNT_API_UTILS
 
-#ifdef HAVE_MOUNTFD_API
+#if defined(HAVE_MOUNTFD_API) && defined(HAVE_LINUX_MOUNT_H)
 
 #include <sys/syscall.h>
 #include <linux/mount.h>
@@ -203,6 +203,6 @@ static inline int fspick(int dfd, const char *pathname, unsigned int flags)
 }
 #endif
 
-#endif /* HAVE_MOUNTFD_API */
+#endif /* HAVE_MOUNTFD_API && HAVE_LINUX_MOUNT_H */
 #endif /* UTIL_LINUX_MOUNT_API_UTILS */
 
