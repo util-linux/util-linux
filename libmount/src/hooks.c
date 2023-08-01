@@ -46,7 +46,7 @@ static const struct libmnt_hookset *hooksets[] =
 	&hookset_mount,
 #endif
 	&hookset_mount_legacy,
-#ifdef HAVE_MOUNTFD_API
+#if defined(HAVE_MOUNTFD_API) && defined(HAVE_LINUX_MOUNT_H)
 	&hookset_idmap,
 #endif
 	&hookset_owner

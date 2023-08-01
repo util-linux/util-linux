@@ -38,7 +38,7 @@ static const char *lib_features[] = {
 #ifdef USE_LIBMOUNT_SUPPORT_NAMESPACES
 	"namespaces",
 #endif
-#ifdef HAVE_MOUNTFD_API
+#if defined(HAVE_MOUNTFD_API) && defined(HAVE_LINUX_MOUNT_H)
 	"idmapping",
 #endif
 #ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
