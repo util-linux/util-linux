@@ -52,8 +52,8 @@ LPORT=
 
 for lite in 0 1; do
     coproc MKFDS { "$TS_HELPER_MKFDS" udp6 $FDS $FDC \
-				      server-port=34567 \
-				      client-port=23456 \
+				      server-port=56789 \
+				      client-port=45678 \
 				      lite=$lite; }
     if read -r -u "${MKFDS[0]}" PID; then
 	${TS_CMD_LSFD} -n \
@@ -66,8 +66,8 @@ for lite in 0 1; do
     wait "${MKFDS_PID}"
 
     coproc MKFDS { "$TS_HELPER_MKFDS" udp6 $FDS $FDC \
-				      server-port=34567 \
-				      client-port=23456 \
+				      server-port=56789 \
+				      client-port=45678 \
 				      server-do-bind=no \
 				      lite=$lite; }
     if read -r -u "${MKFDS[0]}" PID; then
@@ -91,8 +91,8 @@ for lite in 0 1; do
     wait "${MKFDS_PID}"
 
     coproc MKFDS { "$TS_HELPER_MKFDS" udp6 $FDS $FDC \
-				      server-port=34567 \
-				      client-port=23456 \
+				      server-port=56789 \
+				      client-port=45678 \
 				      client-do-bind=no \
 				      lite=$lite; }
     if read -r -u "${MKFDS[0]}" PID; then
@@ -121,8 +121,8 @@ for lite in 0 1; do
     wait "${MKFDS_PID}"
 
     coproc MKFDS { "$TS_HELPER_MKFDS" udp6 $FDS $FDC \
-				      server-port=34567 \
-				      client-port=23456 \
+				      server-port=56789 \
+				      client-port=45678 \
 				      client-do-connect=no \
 				      lite=$lite; }
     if read -r -u "${MKFDS[0]}" PID; then
