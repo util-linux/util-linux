@@ -94,7 +94,7 @@ static inline int close_range(unsigned int first, unsigned int last, int flags)
 #  define HAVE_CLOSE_RANGE 1
 # endif	/* SYS_close_range */
 
-# if !defined(HAVE_STATX) && defined(SYS_statx) && defined(HAVE_LINUX_STAT_H)
+# if !defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && defined(SYS_statx) && defined(HAVE_LINUX_STAT_H)
 #  include <linux/stat.h>
 static inline int statx(int fd, const char *restrict path, int flags,
 		    unsigned int mask, struct statx *stx)
