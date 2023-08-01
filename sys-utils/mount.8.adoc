@@ -325,7 +325,11 @@ Note that *mount* does not pass this option to the **/sbin/mount.**__type__ help
 (Used in conjunction with *-a*.) Fork off a new incarnation of *mount* for each device. This will do the mounts on different devices or different NFS servers in parallel. This has the advantage that it is faster; also NFS timeouts proceed in parallel. A disadvantage is that the order of the mount operations is undefined. Thus, you cannot use this option if you want to mount both _/usr_ and _/usr/spool_.
 
 *-f, --fake*::
-Causes everything to be done except for the actual system call; if it's not obvious, this "fakes" mounting the filesystem. This option is useful in conjunction with the *-v* flag to determine what the *mount* command is trying to do. It can also be used to add entries for devices that were mounted earlier with the *-n* option. The *-f* option checks for an existing record in _/etc/mtab_ and fails when the record already exists (with a regular non-fake mount, this check is done by the kernel).
+Causes everything to be done except for the mount-related system calls. The --fake option was originally designed to write an entry to /etc/mtab without actually mounting.
++
+The /etc/mtab is no longer maintained in userspace, and starting from version 2.39, the mount operation can be a complex chain of operations with dependencies between the syscalls. The --fake option forces libmount to skip all mount source preparation, mount option analysis, and the actual mounting process.
++
+The difference between fake and non-fake execution is huge. This is the reason why the --fake option has minimal significance for the current mount(8) implementation and it is maintained mostly for backward compatibility.
 
 *-i, --internal-only*::
 Don't call the **/sbin/mount.**__filesystem__ helper even if it exists.

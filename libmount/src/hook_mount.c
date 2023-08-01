@@ -576,9 +576,6 @@ static int init_sysapi(struct libmnt_context *cxt,
 	if (!api)
 		return -ENOMEM;
 
-	if (mnt_context_is_fake(cxt))
-		goto fake;
-
 	if (path) {
 		api->fd_tree = open_mount_tree(cxt, path, flags);
 		if (api->fd_tree < 0)
@@ -611,10 +608,6 @@ static int init_sysapi(struct libmnt_context *cxt,
 fail:
 	DBG(HOOK, ul_debugobj(hs, "init fs/tree failed [errno=%d %m]", errno));
 	return -errno;
-fake:
-	DBG(CXT, ul_debugobj(cxt, " FAKE (-f)"));
-	cxt->syscall_status = 0;
-	return 0;
 }
 
 static int force_classic_mount(struct libmnt_context *cxt)

@@ -61,12 +61,6 @@ static int hook_propagation(struct libmnt_context *cxt,
 				hd->flags,
 				hd->flags & MS_REC ? " (recursive)" : ""));
 
-	if (mnt_context_is_fake(cxt)) {
-		DBG(CXT, ul_debugobj(cxt, "  FAKE (-f)"));
-		cxt->syscall_status = 0;
-		return 0;
-	}
-
 	/*
 	 * hd->flags are propagation flags as set in prepare_propagation()
 	 *
@@ -156,12 +150,6 @@ static int hook_bindremount(struct libmnt_context *cxt,
 				hd->flags,
 				hd->flags & MS_REC ? " (recursive)" : ""));
 
-	if (mnt_context_is_fake(cxt)) {
-		DBG(CXT, ul_debugobj(cxt, "  FAKE (-f)"));
-		cxt->syscall_status = 0;
-		return 0;
-	}
-
 	if (mnt_optlist_is_silent(cxt->optlist))
 		extra |= MS_SILENT;
 
@@ -250,12 +238,6 @@ static int hook_mount(struct libmnt_context *cxt,
 		src, target, type, flags,
 		options ? (cxt->flags & MNT_FL_MOUNTDATA) ? "binary" :
 			  options : "<none>"));
-
-	if (mnt_context_is_fake(cxt)) {
-		DBG(HOOK, ul_debugobj(hs, " FAKE (-f)"));
-		cxt->syscall_status = 0;
-		return 0;
-	}
 
 	if (mount(src, target, type, flags, options)) {
 		cxt->syscall_status = -errno;
