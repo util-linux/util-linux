@@ -38,6 +38,9 @@ include::man-common/in-bytes.adoc[]
 Define output columns. See the *--help* output to get a list of the currently supported columns. The default list of columns may be extended if _list_ is specified in the format _{plus}list_.
 //TRANSLATORS: Keep {plus} untranslated.
 
+*--output-all*::
+Output all available columns.
+
 *-r*, *--raw*::
 Produce output in raw format. All potentially unsafe characters are hex-escaped (\x<code>).
 
@@ -55,6 +58,7 @@ mailto:yamato@redhat.com[Masatake YAMATO]
 *mincore*(2),
 *getpagesize*(2),
 *getconf*(1p)
+*cachestat*(2)
 
 include::man-common/bugreports.adoc[]
 

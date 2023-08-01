@@ -497,6 +497,7 @@ have = cc.compiles('''
 conf.set('HAVE_DECL__NL_TIME_WEEK_1STDAY', have ? 1 : false)
 
 funcs = '''
+        cachestat
         clearenv
         close_range
         __fpurge

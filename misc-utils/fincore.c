@@ -43,26 +43,70 @@
    e.g. 128MB on x86_64. ( = N_PAGES_IN_WINDOW * 4096 ). */
 #define N_PAGES_IN_WINDOW ((size_t)(32 * 1024))
 
+#ifndef HAVE_CACHESTAT
+
+#ifndef SYS_cachestat
+#define SYS_cachestat 451
+#endif
+
+struct cachestat_range {
+	uint64_t off;
+	uint64_t len;
+};
+
+struct cachestat {
+	uint64_t nr_cache;
+	uint64_t nr_dirty;
+	uint64_t nr_writeback;
+	uint64_t nr_evicted;
+	uint64_t nr_recently_evicted;
+};
+
+static inline int cachestat(unsigned int fd,
+			    const struct cachestat_range *cstat_range,
+			    struct cachestat *cstat, unsigned int flags)
+{
+	return syscall(SYS_cachestat, fd, cstat_range, cstat, flags);
+}
+
+#endif // HAVE_CACHESTAT
 
 struct colinfo {
 	const char * const name;
 	double whint;
 	int flags;
 	const char *help;
+	unsigned int pages : 1;
 };
 
 enum {
 	COL_PAGES,
 	COL_SIZE,
 	COL_FILE,
-	COL_RES
+	COL_RES,
+	COL_DIRTY_PAGES,
+	COL_DIRTY,
+	COL_WRITEBACK_PAGES,
+	COL_WRITEBACK,
+	COL_EVICTED_PAGES,
+	COL_EVICTED,
+	COL_RECENTLY_EVICTED_PAGES,
+	COL_RECENTLY_EVICTED,
 };
 
 static const struct colinfo infos[] = {
-	[COL_PAGES]  = { "PAGES",    1, SCOLS_FL_RIGHT, N_("file data resident in memory in pages")},
-	[COL_RES]    = { "RES",      5, SCOLS_FL_RIGHT, N_("file data resident in memory in bytes")},
-	[COL_SIZE]   = { "SIZE",     5, SCOLS_FL_RIGHT, N_("size of the file")},
-	[COL_FILE]   = { "FILE",     4, 0, N_("file name")},
+	[COL_PAGES]                  = { "PAGES",                  1, SCOLS_FL_RIGHT, N_("file data resident in memory in pages"), 1},
+	[COL_RES]                    = { "RES",                    5, SCOLS_FL_RIGHT, N_("file data resident in memory in bytes")},
+	[COL_SIZE]                   = { "SIZE",                   5, SCOLS_FL_RIGHT, N_("size of the file")},
+	[COL_FILE]                   = { "FILE",                   4, 0, N_("file name")},
+	[COL_DIRTY_PAGES]            = { "DIRTY_PAGES",            1, SCOLS_FL_RIGHT, N_("number of dirty pages"), 1},
+	[COL_DIRTY]                  = { "DIRTY",                  5, SCOLS_FL_RIGHT, N_("number of dirty bytes")},
+	[COL_WRITEBACK_PAGES]        = { "WRITEBACK_PAGES",        1, SCOLS_FL_RIGHT, N_("number of pages marked for writeback"), 1},
+	[COL_WRITEBACK]              = { "WRITEBACK",              5, SCOLS_FL_RIGHT, N_("number of bytes marked for writeback")},
+	[COL_EVICTED_PAGES]          = { "EVICTED_PAGES",          1, SCOLS_FL_RIGHT, N_("number of evicted pages"), 1},
+	[COL_EVICTED]                = { "EVICTED",                5, SCOLS_FL_RIGHT, N_("number of evicted bytes")},
+	[COL_RECENTLY_EVICTED_PAGES] = { "RECENTLY_EVICTED_PAGES", 1, SCOLS_FL_RIGHT, N_("number of recently evicted pages"), 1},
+	[COL_RECENTLY_EVICTED]       = { "RECENTLY_EVICTED",       5, SCOLS_FL_RIGHT, N_("number of recently evicted bytes")},
 };
 
 static int columns[ARRAY_SIZE(infos) * 2] = {-1};
@@ -77,6 +121,20 @@ struct fincore_control {
 		     noheadings : 1,
 		     raw : 1,
 		     json : 1;
+
+};
+
+struct fincore_state {
+	const char * const name;
+	long long unsigned int file_size;
+
+	struct cachestat cstat;
+	struct {
+		unsigned int dirty : 1,
+			     writeback : 1,
+			     evicted : 1,
+			     recently_evicted : 1;
+	} cstat_fields;
 };
 
 
@@ -107,13 +165,49 @@ static const struct colinfo *get_column_info(int num)
 	return &infos[ get_column_id(num) ];
 }
 
+static int get_cstat_value(const struct fincore_state *st, int column_id,
+			   uint64_t *value)
+{
+	switch(column_id) {
+	case COL_PAGES:
+	case COL_RES:
+		*value = st->cstat.nr_cache;
+		return 1;
+	case COL_DIRTY_PAGES:
+	case COL_DIRTY:
+		if (!st->cstat_fields.dirty)
+			break;
+		*value = st->cstat.nr_dirty;
+		return 1;
+	case COL_WRITEBACK_PAGES:
+	case COL_WRITEBACK:
+		if (!st->cstat_fields.writeback)
+		*value = st->cstat.nr_writeback;
+		return 1;
+	case COL_EVICTED_PAGES:
+	case COL_EVICTED:
+		if (!st->cstat_fields.evicted)
+			break;
+		*value = st->cstat.nr_evicted;
+		return 1;
+	case COL_RECENTLY_EVICTED_PAGES:
+	case COL_RECENTLY_EVICTED:
+		if (!st->cstat_fields.recently_evicted)
+			break;
+		*value = st->cstat.nr_recently_evicted;
+		return 1;
+	default:
+		assert(0);
+	}
+	return 0;
+}
+
 static int add_output_data(struct fincore_control *ctl,
-			   const char *name,
-			   off_t file_size,
-			   off_t count_incore)
+			   struct fincore_state *st)
 {
 	size_t i;
 	char *tmp;
+	uint64_t value = 0;
 	struct libscols_line *ln;
 
 	assert(ctl);
@@ -125,35 +219,47 @@ static int add_output_data(struct fincore_control *ctl,
 
 	for (i = 0; i < ncolumns; i++) {
 		int rc = 0;
+		int column_id = get_column_id(i);
+		int format_value = 0;
 
-		switch(get_column_id(i)) {
+		switch(column_id) {
 		case COL_FILE:
-			rc = scols_line_set_data(ln, i, name);
+			rc = scols_line_set_data(ln, i, st->name);
 			break;
-		case COL_PAGES:
-			xasprintf(&tmp, "%jd",  (intmax_t) count_incore);
-			rc = scols_line_refer_data(ln, i, tmp);
-			break;
-		case COL_RES:
-		{
-			uintmax_t res = (uintmax_t) count_incore * ctl->pagesize;
-
-			if (ctl->bytes)
-				xasprintf(&tmp, "%ju", res);
-			else
-				tmp = size_to_human_string(SIZE_SUFFIX_1LETTER, res);
-			rc = scols_line_refer_data(ln, i, tmp);
-			break;
-		}
 		case COL_SIZE:
 			if (ctl->bytes)
-				xasprintf(&tmp, "%jd", (intmax_t) file_size);
+				xasprintf(&tmp, "%jd", (intmax_t) st->file_size);
 			else
-				tmp = size_to_human_string(SIZE_SUFFIX_1LETTER, file_size);
+				tmp = size_to_human_string(SIZE_SUFFIX_1LETTER, st->file_size);
 			rc = scols_line_refer_data(ln, i, tmp);
+			break;
+		case COL_PAGES:
+		case COL_RES:
+		case COL_DIRTY_PAGES:
+		case COL_DIRTY:
+		case COL_WRITEBACK_PAGES:
+		case COL_WRITEBACK:
+		case COL_EVICTED:
+		case COL_EVICTED_PAGES:
+		case COL_RECENTLY_EVICTED:
+		case COL_RECENTLY_EVICTED_PAGES:
+			format_value = get_cstat_value(st, column_id, &value);
 			break;
 		default:
 			return -EINVAL;
+		}
+
+		if (format_value) {
+			if (get_column_info(i)->pages) {
+				xasprintf(&tmp, "%ju", (uintmax_t) value);
+			} else {
+				value *= ctl->pagesize;
+				if (ctl->bytes)
+					xasprintf(&tmp, "%ju", (uintmax_t) value);
+				else
+					tmp = size_to_human_string(SIZE_SUFFIX_1LETTER, value);
+			}
+			rc = scols_line_refer_data(ln, i, tmp);
 		}
 
 		if (rc)
@@ -165,14 +271,13 @@ static int add_output_data(struct fincore_control *ctl,
 
 static int do_mincore(struct fincore_control *ctl,
 		      void *window, const size_t len,
-		      const char *name,
-		      off_t *count_incore)
+		      struct fincore_state *st)
 {
 	static unsigned char vec[N_PAGES_IN_WINDOW];
 	int n = (len / ctl->pagesize) + ((len % ctl->pagesize)? 1: 0);
 
 	if (mincore (window, len, vec) < 0) {
-		warn(_("failed to do mincore: %s"), name);
+		warn(_("failed to do mincore: %s"), st->name);
 		return -errno;
 	}
 
@@ -181,39 +286,37 @@ static int do_mincore(struct fincore_control *ctl,
 		if (vec[--n] & 0x1)
 		{
 			vec[n] = 0;
-			(*count_incore)++;
+			st->cstat.nr_cache++;
 		}
 	}
 
 	return 0;
 }
 
-static int fincore_fd (struct fincore_control *ctl,
+static int mincore_fd (struct fincore_control *ctl,
 		       int fd,
-		       const char *name,
-		       off_t file_size,
-		       off_t *count_incore)
+		       struct fincore_state *st)
 {
 	size_t window_size = N_PAGES_IN_WINDOW * ctl->pagesize;
-	off_t file_offset, len;
+	long long unsigned int file_offset, len;
 	int rc = 0;
 
-	for (file_offset = 0; file_offset < file_size; file_offset += len) {
+	for (file_offset = 0; file_offset < st->file_size; file_offset += len) {
 		void  *window = NULL;
 
-		len = file_size - file_offset;
-		if (len >= (off_t) window_size)
+		len = st->file_size - file_offset;
+		if (len >= window_size)
 			len = window_size;
 
 		/* PROT_NONE is enough for Linux, but qemu-user wants PROT_READ */
 		window = mmap(window, len, PROT_READ, MAP_PRIVATE, fd, file_offset);
 		if (window == MAP_FAILED) {
 			rc = -EINVAL;
-			warn(_("failed to do mmap: %s"), name);
+			warn(_("failed to do mmap: %s"), st->name);
 			break;
 		}
 
-		rc = do_mincore(ctl, window, len, name, count_incore);
+		rc = do_mincore(ctl, window, len, st);
 		if (rc)
 			break;
 
@@ -223,43 +326,63 @@ static int fincore_fd (struct fincore_control *ctl,
 	return rc;
 }
 
+static int fincore_fd (struct fincore_control *ctl,
+		       int fd,
+		       struct fincore_state *st)
+{
+	int rc;
+	const struct cachestat_range cstat_range = { 0 };
+
+	rc = cachestat(fd, &cstat_range, &st->cstat, 0);
+	if (!rc) {
+		st->cstat_fields.dirty = 1;
+		st->cstat_fields.writeback = 1;
+		st->cstat_fields.evicted = 1;
+		st->cstat_fields.recently_evicted = 1;
+		return 0;
+	}
+
+	if (errno != ENOSYS)
+		warn(_("failed to do cachestat: %s"), st->name);
+
+	return mincore_fd(ctl, fd, st);
+}
+
 /*
  * Returns: <0 on error, 0 success, 1 ignore.
  */
 static int fincore_name(struct fincore_control *ctl,
-			const char *name,
-			unsigned long long *size,
-			off_t *count_incore)
+			struct fincore_state *st)
 {
 	int fd;
 	int rc = 0;
 	struct stat sb;
 
-	if ((fd = open (name, O_RDONLY)) < 0) {
-		warn(_("failed to open: %s"), name);
+	if ((fd = open (st->name, O_RDONLY)) < 0) {
+		warn(_("failed to open: %s"), st->name);
 		return -errno;
 	}
 
 	if (fstat (fd, &sb) < 0) {
-		warn(_("failed to do fstat: %s"), name);
+		warn(_("failed to do fstat: %s"), st->name);
 		close (fd);
 		return -errno;
 	}
+	st->file_size = sb.st_size;
 
 	if (S_ISBLK(sb.st_mode)) {
-		rc = blkdev_get_size(fd, size);
+		rc = blkdev_get_size(fd, &st->file_size);
 		if (rc)
-			warn(_("failed ioctl to get size: %s"), name);
+			warn(_("failed ioctl to get size: %s"), st->name);
 	} else if (S_ISREG(sb.st_mode)) {
-		*size = sb.st_size;
+		st->file_size = sb.st_size;
 	} else {
 		rc = 1;			/* ignore things like symlinks
 					 * and directories*/
 	}
 
-	if (!rc) {
-		rc = fincore_fd(ctl, fd, name, *size, count_incore);
-	}
+	if (!rc)
+		rc = fincore_fd(ctl, fd, st);
 
 	close (fd);
 	return rc;
@@ -278,6 +401,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -b, --bytes           print sizes in bytes rather than in human readable format\n"), out);
 	fputs(_(" -n, --noheadings      don't print headings\n"), out);
 	fputs(_(" -o, --output <list>   output columns\n"), out);
+	fputs(_("     --output-all      output all columns\n"), out);
 	fputs(_(" -r, --raw             use raw output format\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -304,10 +428,14 @@ int main(int argc, char ** argv)
 		.pagesize = getpagesize()
 	};
 
+	enum {
+		OPT_OUTPUT_ALL = CHAR_MAX + 1
+	};
 	static const struct option longopts[] = {
 		{ "bytes",      no_argument, NULL, 'b' },
 		{ "noheadings", no_argument, NULL, 'n' },
 		{ "output",     required_argument, NULL, 'o' },
+		{ "output-all",	no_argument,       NULL, OPT_OUTPUT_ALL },
 		{ "version",    no_argument, NULL, 'V' },
 		{ "help",	no_argument, NULL, 'h' },
 		{ "json",       no_argument, NULL, 'J' },
@@ -330,6 +458,10 @@ int main(int argc, char ** argv)
 			break;
 		case 'o':
 			outarg = optarg;
+			break;
+		case OPT_OUTPUT_ALL:
+			for (ncolumns = 0; ncolumns < ARRAY_SIZE(infos); ncolumns++)
+				columns[ncolumns] = ncolumns;
 			break;
 		case 'J':
 			ctl.json = 1;
@@ -401,13 +533,13 @@ int main(int argc, char ** argv)
 	}
 
 	for(; optind < argc; optind++) {
-		char *name = argv[optind];
-		off_t count_incore = 0;
-		unsigned long long size = 0;
+		struct fincore_state st = {
+			.name = argv[optind],
+		};
 
-		switch (fincore_name(&ctl, name, &size, &count_incore)) {
+		switch (fincore_name(&ctl, &st)) {
 		case 0:
-			add_output_data(&ctl, name, size, count_incore);
+			add_output_data(&ctl, &st);
 			break;
 		case 1:
 			break; /* ignore */

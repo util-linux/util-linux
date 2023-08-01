@@ -30,6 +30,7 @@ _fincore_module()
 				--bytes
 				--noheadings
 				--output
+				--output-all
 				--raw
 				--help
 				--version
