@@ -7,6 +7,20 @@
 
 #ifdef HAVE_SYS_SYSCALL_H
 # include <sys/syscall.h>
+
+/*
+ * If the kernel headers are too old to provide the syscall numbers, let's
+ * define them ourselves. This can be helpful while cross-compiling.
+ */
+#ifndef __NR_pidfd_send_signal
+#define __NR_pidfd_send_signal 424
+#define SYS_pidfd_send_signal __NR_pidfd_send_signal
+#endif
+#ifndef __NR_pidfd_open
+#define __NR_pidfd_open 434
+#define SYS_pidfd_open __NR_pidfd_open
+#endif
+
 # if defined(SYS_pidfd_send_signal) && defined(SYS_pidfd_open)
 #  ifdef HAVE_SYS_PIDFD_H
 #   include <sys/pidfd.h>
