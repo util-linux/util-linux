@@ -43,17 +43,28 @@ struct iso_volume_descriptor {
 	unsigned char	volume_id[32];
 	unsigned char	unused[8];
 	unsigned char	space_size[8];
-	unsigned char	escape_sequences[8];
-	unsigned char  unused2[32];
+	unsigned char	escape_sequences[32];
+	unsigned char  set_size[4];
+	unsigned char  vol_seq_num[4];
 	unsigned char  logical_block_size[4];
-	unsigned char  unused3[58];
+	unsigned char  path_table_size[8];
+	unsigned char  type_l_path_table[4];
+	unsigned char  opt_type_l_path_table[4];
+	unsigned char  type_m_path_table[4];
+	unsigned char  opt_type_m_path_table[4];
+	unsigned char  root_dir_record[34];
 	unsigned char  volume_set_id[128];
 	unsigned char  publisher_id[128];
 	unsigned char  data_preparer_id[128];
 	unsigned char  application_id[128];
-	unsigned char  unused4[111];
+	unsigned char  copyright_file_id[37];
+	unsigned char  abstract_file_id[37];
+	unsigned char  bibliographic_file_id[37];
 	struct iso9660_date created;
 	struct iso9660_date modified;
+	struct iso9660_date expiration;
+	struct iso9660_date effective;
+	unsigned char  std_version;
 } __attribute__((packed));
 
 /* Boot Record */
