@@ -513,37 +513,33 @@ static void modify_table(struct column_control *ctl)
 
 static int add_line_to_table(struct column_control *ctl, wchar_t *wcs0)
 {
-	wchar_t *wcdata, *sv = NULL, *wcs = wcs0;
-	size_t n = 0, nchars = 0, skip = 0, len;
+	wchar_t *sv = NULL, *wcs = wcs0, *all = NULL;
+	size_t n = 0;
 	struct libscols_line *ln = NULL;
+
 
 	if (!ctl->tab)
 		init_table(ctl);
 
-	len = wcslen(wcs0);
+	if (ctl->maxncols) {
+		all = wcsdup(wcs0);
+		if (!all)
+			err(EXIT_FAILURE, _("failed to allocate input line"));
+	}
 
 	do {
 		char *data;
-
-		if (ctl->maxncols && n + 1 == ctl->maxncols) {
-			if (nchars + skip < len)
-				wcdata = wcs0 + (nchars + skip);
-			else
-				wcdata = NULL;
-		} else {
-			wcdata = local_wcstok(ctl, wcs, &sv);
-
-			/* For the default separator ('greedy' mode) it uses
-			 * strtok() and it skips leading white chars. In this
-			 * case we need to remember size of the ignored white
-			 * chars due to wcdata calculation in maxncols case */
-			if (wcdata && ctl->greedy
-			    && n == 0 && nchars == 0 && wcdata > wcs)
-				skip = wcdata - wcs;
-		}
+		wchar_t *wcdata = local_wcstok(ctl, wcs, &sv);
 
 		if (!wcdata)
 			break;
+
+		if (ctl->maxncols && n + 1 == ctl->maxncols) {
+			/* Use rest of the string as column data */
+			size_t skip = wcdata - wcs0;
+			wcdata = all + skip;
+		}
+
 		if (scols_table_get_ncols(ctl->tab) < n + 1) {
 			if (scols_table_is_json(ctl->tab) && !ctl->hide_unnamed)
 				errx(EXIT_FAILURE, _("line %zu: for JSON the name of the "
@@ -559,8 +555,6 @@ static int add_line_to_table(struct column_control *ctl, wchar_t *wcs0)
 				err(EXIT_FAILURE, _("failed to allocate output line"));
 		}
 
-		nchars += wcslen(wcdata) + 1;
-
 		data = wcs_to_mbs(wcdata);
 		if (!data)
 			err(EXIT_FAILURE, _("failed to allocate output data"));
@@ -572,6 +566,7 @@ static int add_line_to_table(struct column_control *ctl, wchar_t *wcs0)
 			break;
 	} while (1);
 
+	free(all);
 	return 0;
 }
 
