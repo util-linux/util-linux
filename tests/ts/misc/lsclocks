@@ -27,9 +27,11 @@ mask_timestamps() {
 	sed 's/[0-9]\+\.[0-9]\+/X.X/g'
 }
 
+NO_DISCOVER="--no-discover-dynamic --no-discover-rtc"
+
 ts_init_subtest basic
 
-"$TS_CMD_LSCLOCKS" --no-discover-dynamic -o TYPE,ID,CLOCK,NAME > "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+"$TS_CMD_LSCLOCKS" $NO_DISCOVER -o TYPE,ID,CLOCK,NAME > "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 
 ts_finalize_subtest
 
@@ -42,11 +44,21 @@ ts_finalize_subtest
 ts_init_subtest dynamic
 
 if [ -c /dev/ptp0 ] && [ -r /dev/ptp0 ]; then
-	"$TS_CMD_LSCLOCKS" --no-discover-dynamic --dynamic-clock /dev/ptp0 --output TYPE,ID,CLOCK,NAME \
+	"$TS_CMD_LSCLOCKS" $NO_DISCOVER --dynamic-clock /dev/ptp0 --output TYPE,ID,CLOCK,NAME \
 		| tail -1 > "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 	ts_finalize_subtest
 else
 	ts_skip_subtest "/dev/ptp0 not usable"
+fi
+
+ts_init_subtest rtc
+
+if [ -c /dev/rtc0 ] && [ -r /dev/rtc0 ]; then
+	"$TS_CMD_LSCLOCKS" $NO_DISCOVER --rtc /dev/rtc0 --output TYPE,ID,CLOCK,NAME \
+		| tail -1 > "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+	ts_finalize_subtest
+else
+	ts_skip_subtest "/dev/rtc0 not usable"
 fi
 
 ts_init_subtest cpu

@@ -24,8 +24,11 @@
 #include <inttypes.h>
 #include <getopt.h>
 #include <glob.h>
+#include <sys/ioctl.h>
 
 #include <libsmartcols.h>
+
+#include <linux/rtc.h>
 
 #include "c.h"
 #include "nls.h"
@@ -94,6 +97,7 @@ enum CLOCK_TYPE {
 	CT_SYS,
 	CT_PTP,
 	CT_CPU,
+	CT_RTC,
 };
 
 static const char *clock_type_name(enum CLOCK_TYPE type)
@@ -105,6 +109,8 @@ static const char *clock_type_name(enum CLOCK_TYPE type)
 		return "ptp";
 	case CT_CPU:
 		return "cpu";
+	case CT_RTC:
+		return "rtc";
 	}
 	errx(EXIT_FAILURE, _("Unknown clock type %d"), type);
 }
@@ -115,6 +121,7 @@ struct clockinfo {
 	const char * const id_name;
 	const char * const name;
 	const char * const ns_offset_name;
+	bool no_id;
 };
 
 static const struct clockinfo clocks[] = {
@@ -291,9 +298,9 @@ static int64_t get_namespace_offset(const char *name)
 }
 
 static void add_clock_line(struct libscols_table *tb, const int *columns,
-			   size_t ncolumns, const struct clockinfo *clockinfo)
+			   size_t ncolumns, const struct clockinfo *clockinfo,
+			   const struct timespec *now, const struct timespec *resolution)
 {
-	struct timespec resolution, now;
 	char buf[FORMAT_TIMESTAMP_MAX];
 	struct libscols_line *ln;
 	size_t i;
@@ -303,22 +310,13 @@ static void add_clock_line(struct libscols_table *tb, const int *columns,
 	if (!ln)
 		errx(EXIT_FAILURE, _("failed to allocate output line"));
 
-	/* outside the loop to guarantee consistency between COL_TIME and COL_ISO_TIME */
-	rc = clock_gettime(clockinfo->id, &now);
-	if (rc)
-		now.tv_nsec = -1;
-
-	rc = clock_getres(clockinfo->id, &resolution);
-	if (rc)
-		resolution.tv_nsec = -1;
-
 	for (i = 0; i < ncolumns; i++) {
 		switch (columns[i]) {
 			case COL_TYPE:
 				scols_line_set_data(ln, i, clock_type_name(clockinfo->type));
 				break;
 			case COL_ID:
-				if (CLOCKID_IS_DYNAMIC(clockinfo->id))
+				if (!clockinfo->no_id)
 					scols_line_asprintf(ln, i, "%ju", (uintmax_t) clockinfo->id);
 				break;
 			case COL_CLOCK:
@@ -328,16 +326,16 @@ static void add_clock_line(struct libscols_table *tb, const int *columns,
 				scols_line_set_data(ln, i, clockinfo->name);
 				break;
 			case COL_TIME:
-				if (now.tv_nsec == -1)
+				if (now->tv_nsec == -1)
 					break;
 
-				scols_line_format_timespec(ln, i, &now);
+				scols_line_format_timespec(ln, i, now);
 				break;
 			case COL_ISO_TIME:
-				if (now.tv_nsec == -1)
+				if (now->tv_nsec == -1)
 					break;
 
-				rc = strtimespec_iso(&now,
+				rc = strtimespec_iso(now,
 						ISO_GMTIME | ISO_DATE | ISO_TIME | ISO_T | ISO_DOTNSEC | ISO_TIMEZONE,
 						buf, sizeof(buf));
 				if (rc)
@@ -345,23 +343,23 @@ static void add_clock_line(struct libscols_table *tb, const int *columns,
 				scols_line_set_data(ln, i, buf);
 				break;
 			case COL_RESOL:
-				if (resolution.tv_nsec == -1)
+				if (resolution->tv_nsec == -1)
 					break;
 
-				rc = strtimespec_relative(&resolution, buf, sizeof(buf));
+				rc = strtimespec_relative(resolution, buf, sizeof(buf));
 				if (rc)
 					errx(EXIT_FAILURE, _("failed to format relative time"));
 				scols_line_set_data(ln, i, buf);
 				break;
 			case COL_RESOL_RAW:
-				if (resolution.tv_nsec == -1)
+				if (resolution->tv_nsec == -1)
 					break;
-				scols_line_format_timespec(ln, i, &resolution);
+				scols_line_format_timespec(ln, i, resolution);
 				break;
 			case COL_REL_TIME:
-				if (now.tv_nsec == -1)
+				if (now->tv_nsec == -1)
 					break;
-				rc = strtimespec_relative(&now, buf, sizeof(buf));
+				rc = strtimespec_relative(now, buf, sizeof(buf));
 				if (rc)
 					errx(EXIT_FAILURE, _("failed to format relative time"));
 				scols_line_set_data(ln, i, buf);
@@ -375,7 +373,24 @@ static void add_clock_line(struct libscols_table *tb, const int *columns,
 	}
 }
 
-struct dynamic_clock {
+static void add_posix_clock_line(struct libscols_table *tb, const int *columns,
+			         size_t ncolumns, const struct clockinfo *clockinfo)
+{
+	struct timespec resolution, now;
+	int rc;
+
+	rc = clock_gettime(clockinfo->id, &now);
+	if (rc)
+		now.tv_nsec = -1;
+
+	rc = clock_getres(clockinfo->id, &resolution);
+	if (rc)
+		resolution.tv_nsec = -1;
+
+	add_clock_line(tb, columns, ncolumns, clockinfo, &now, &resolution);
+}
+
+struct path_clock {
 	struct list_head head;
 	const char * path;
 };
@@ -394,11 +409,11 @@ static void add_dynamic_clock_from_path(struct libscols_table *tb,
 
 	struct clockinfo clockinfo = {
 		.type = CT_PTP,
-		.id = FD_TO_CLOCKID(fd),
+		.no_id = true,
 		.id_name = path,
 		.name = path,
 	};
-	add_clock_line(tb, columns, ncolumns, &clockinfo);
+	add_posix_clock_line(tb, columns, ncolumns, &clockinfo);
 	close(fd);
 }
 
@@ -417,6 +432,70 @@ static void add_dynamic_clocks_from_discovery(struct libscols_table *tb,
 
 	for (i = 0; i < state.gl_pathc; i++)
 		add_dynamic_clock_from_path(tb, columns, ncolumns,
+					    state.gl_pathv[i], false);
+
+	globfree(&state);
+}
+
+static void add_rtc_clock_from_path(struct libscols_table *tb,
+				    const int *columns, size_t ncolumns,
+				    const char *path, bool explicit)
+{
+	int fd, rc;
+	struct rtc_time rtc_time;
+	struct tm tm = { 0 };
+	struct timespec now = { 0 }, resolution = { .tv_nsec = -1 };
+
+	fd = open(path, O_RDONLY);
+	if (fd == -1) {
+		if (explicit)
+			err(EXIT_FAILURE, _("Could not open %s"), path);
+		else
+			return;
+	}
+
+	rc = ioctl(fd, RTC_RD_TIME, &rtc_time);
+	if (rc)
+		err(EXIT_FAILURE,
+		    _("ioctl(RTC_RD_NAME) to %s to read the time failed"), path);
+
+	tm.tm_sec  = rtc_time.tm_sec;
+	tm.tm_min  = rtc_time.tm_min;
+	tm.tm_hour = rtc_time.tm_hour;
+	tm.tm_mday = rtc_time.tm_mday;
+	tm.tm_mon  = rtc_time.tm_mon;
+	tm.tm_year = rtc_time.tm_year;
+	tm.tm_wday = rtc_time.tm_wday;
+	tm.tm_yday = rtc_time.tm_yday;
+
+	now.tv_sec = mktime(&tm);
+
+	struct clockinfo clockinfo = {
+		.type = CT_RTC,
+		.no_id = true,
+		.id_name = path,
+		.name = path,
+	};
+	add_clock_line(tb, columns, ncolumns, &clockinfo, &now, &resolution);
+
+	close(fd);
+}
+
+static void add_rtc_clocks_from_discovery(struct libscols_table *tb,
+					  const int *columns, size_t ncolumns)
+{
+	int rc;
+	size_t i;
+	glob_t state;
+
+	rc = glob("/dev/rtc*", 0, NULL, &state);
+	if (rc == GLOB_NOMATCH)
+		return;
+	if (rc)
+		errx(EXIT_FAILURE, _("Could not glob: %d"), rc);
+
+	for (i = 0; i < state.gl_pathc; i++)
+		add_rtc_clock_from_path(tb, columns, ncolumns,
 					    state.gl_pathv[i], false);
 
 	globfree(&state);
@@ -443,9 +522,9 @@ static void add_cpu_clock(struct libscols_table *tb,
 	struct clockinfo clockinfo = {
 		.type = CT_CPU,
 		.name = name,
-		.id = clockid,
+		.no_id = true,
 	};
-	add_clock_line(tb, columns, ncolumns, &clockinfo);
+	add_posix_clock_line(tb, columns, ncolumns, &clockinfo);
 }
 
 
@@ -458,21 +537,23 @@ int main(int argc, char **argv)
 	struct libscols_table *tb;
 	struct libscols_column *col;
 
-	bool noheadings = false, raw = false, json = false, disc_dynamic = true;
+	bool noheadings = false, raw = false, json = false,
+	     disc_dynamic = true, disc_rtc = true;
 	const char *outarg = NULL;
 	int columns[ARRAY_SIZE(infos) * 2];
 	size_t ncolumns = 0;
 	clockid_t clock = -1;
-	struct dynamic_clock *dynamic_clock;
+	struct path_clock *path_clock;
 	struct cpu_clock *cpu_clock;
-	struct list_head *current_dynamic_clock, *current_cpu_clock;
-	struct list_head dynamic_clocks, cpu_clocks;
+	struct list_head *current_path_clock, *current_cpu_clock;
+	struct list_head dynamic_clocks, cpu_clocks, rtc_clocks;
 
 	struct timespec now;
 
 	enum {
 		OPT_OUTPUT_ALL = CHAR_MAX + 1,
 		OPT_NO_DISC_DYN,
+		OPT_NO_DISC_RTC,
 	};
 	static const struct option longopts[] = {
 		{ "noheadings",          no_argument,       NULL, 'n' },
@@ -486,6 +567,8 @@ int main(int argc, char **argv)
 		{ "no-discover-dynamic", no_argument,       NULL, OPT_NO_DISC_DYN },
 		{ "dynamic-clock",       required_argument, NULL, 'd' },
 		{ "cpu-clock",           required_argument, NULL, 'c' },
+		{ "no-discover-rtc",     no_argument,       NULL, OPT_NO_DISC_RTC },
+		{ "rtc",                 required_argument, NULL, 'x' },
 		{ 0 }
 	};
 
@@ -496,8 +579,9 @@ int main(int argc, char **argv)
 
 	INIT_LIST_HEAD(&dynamic_clocks);
 	INIT_LIST_HEAD(&cpu_clocks);
+	INIT_LIST_HEAD(&rtc_clocks);
 
-	while ((c = getopt_long(argc, argv, "no:Jrt:d:c:Vh", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "no:Jrt:d:c:x:Vh", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'n':
 			noheadings = true;
@@ -519,9 +603,9 @@ int main(int argc, char **argv)
 			clock = parse_clock(optarg);
 			break;
 		case 'd':
-			dynamic_clock = xmalloc(sizeof(*dynamic_clock));
-			dynamic_clock->path = optarg;
-			list_add(&dynamic_clock->head, &dynamic_clocks);
+			path_clock = xmalloc(sizeof(*path_clock));
+			path_clock->path = optarg;
+			list_add(&path_clock->head, &dynamic_clocks);
 			break;
 		case OPT_NO_DISC_DYN:
 			disc_dynamic = false;
@@ -532,6 +616,14 @@ int main(int argc, char **argv)
 			snprintf(cpu_clock->name, sizeof(cpu_clock->name),
 				 "%jd", (intmax_t) cpu_clock->pid);
 			list_add(&cpu_clock->head, &cpu_clocks);
+			break;
+		case 'x':
+			path_clock = xmalloc(sizeof(*path_clock));
+			path_clock->path = optarg;
+			list_add(&path_clock->head, &rtc_clocks);
+			break;
+		case OPT_NO_DISC_RTC:
+			disc_rtc = false;
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
@@ -584,17 +676,27 @@ int main(int argc, char **argv)
 	}
 
 	for (i = 0; i < ARRAY_SIZE(clocks); i++)
-		add_clock_line(tb, columns, ncolumns, &clocks[i]);
+		add_posix_clock_line(tb, columns, ncolumns, &clocks[i]);
 
 	if (disc_dynamic)
 		add_dynamic_clocks_from_discovery(tb, columns, ncolumns);
 
-	list_for_each(current_dynamic_clock, &dynamic_clocks) {
-		dynamic_clock = list_entry(current_dynamic_clock, struct dynamic_clock, head);
-		add_dynamic_clock_from_path(tb, columns, ncolumns, dynamic_clock->path, true);
+	list_for_each(current_path_clock, &dynamic_clocks) {
+		path_clock = list_entry(current_path_clock, struct path_clock, head);
+		add_dynamic_clock_from_path(tb, columns, ncolumns, path_clock->path, true);
 	}
 
-	list_free(&dynamic_clocks, struct dynamic_clock, head, free);
+	list_free(&dynamic_clocks, struct path_clock, head, free);
+
+	if (disc_rtc)
+		add_rtc_clocks_from_discovery(tb, columns, ncolumns);
+
+	list_for_each(current_path_clock, &rtc_clocks) {
+		path_clock = list_entry(current_path_clock, struct path_clock, head);
+		add_rtc_clock_from_path(tb, columns, ncolumns, path_clock->path, true);
+	}
+
+	list_free(&rtc_clocks, struct path_clock, head, free);
 
 	list_for_each(current_cpu_clock, &cpu_clocks) {
 		cpu_clock = list_entry(current_cpu_clock, struct cpu_clock, head);
