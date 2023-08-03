@@ -541,6 +541,11 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 	if (!rc)
 		rc = mnt_context_call_hooks(cxt, MNT_STAGE_MOUNT);
 
+	if (rc == 0 && mnt_context_is_fake(cxt)) {
+		DBG(CXT, ul_debugobj(cxt, "FAKE (-f) set status=0"));
+		cxt->syscall_status = 0;
+	}
+
 	if (org_type && rc != 0)
 		__mnt_fs_set_fstype_ptr(cxt->fs, org_type);
 	org_type  = NULL;

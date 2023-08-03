@@ -313,7 +313,12 @@ int mnt_context_has_hook(struct libmnt_context *cxt,
 
 static int call_hook(struct libmnt_context *cxt, struct hookset_hook *hook)
 {
-	int rc = hook->func(cxt, hook->hookset, hook->data);
+	int rc = 0;
+
+	if (mnt_context_is_fake(cxt))
+		DBG(CXT, ul_debugobj(cxt, " FAKE call"));
+	else
+		rc = hook->func(cxt, hook->hookset, hook->data);
 
 	hook->executed = 1;
 	if (!rc)
@@ -359,7 +364,10 @@ int mnt_context_call_hooks(struct libmnt_context *cxt, int stage)
 
 		DBG(CXT, ul_debugobj(cxt, "calling %s [first]", hs->name));
 
-		rc = hs->firstcall(cxt, hs, NULL);
+		if (mnt_context_is_fake(cxt))
+			DBG(CXT, ul_debugobj(cxt, " FAKE call"));
+		else
+			rc = hs->firstcall(cxt, hs, NULL);
 		if (!rc)
 			rc = call_depend_hooks(cxt, hs->name, stage);
 		if (rc < 0)
