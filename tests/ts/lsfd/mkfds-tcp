@@ -34,8 +34,8 @@ EXPR='(TYPE == "TCP") and (FD >= 3) and (FD <= 5)'
 
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" tcp $FDS $FDC $FDA \
-				      server-port=34567 \
-				      client-port=23456 ; }
+				      server-port=56789 \
+				      client-port=45678 ; }
     if read -r -u "${MKFDS[0]}" PID; then
 	${TS_CMD_LSFD} -n \
 		       -o ASSOC,TYPE,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,INET.LADDR,INET.RADDR,TCP.LADDR,TCP.LPORT,TCP.RADDR,TCP.RPORT \
