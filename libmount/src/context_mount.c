@@ -1580,10 +1580,13 @@ int mnt_context_get_mount_excode(
 		if (!buf)
 			break;
 		if (geteuid() == 0) {
-			if (mnt_safe_stat(tgt, &st) || !S_ISDIR(st.st_mode))
-				snprintf(buf, bufsz, _("mount point is not a directory"));
-			else
+
+			if (mnt_safe_stat(tgt, &st) == 0
+			    && ((mflags & MS_BIND && S_ISREG(st.st_mode))
+				|| S_ISDIR(st.st_mode)))
 				snprintf(buf, bufsz, _("permission denied"));
+			else
+				snprintf(buf, bufsz, _("mount point is not a directory"));
 		} else
 			snprintf(buf, bufsz, _("must be superuser to use mount"));
 		break;
