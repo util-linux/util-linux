@@ -294,6 +294,7 @@ static int hook_create_mount(struct libmnt_context *cxt,
 		/* cleanup after fail (libmount may only try the FS type) */
 		close_sysapi_fds(api);
 
+#if defined(HAVE_STRUCT_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID)
 	if (!rc && cxt->fs) {
 		struct statx st;
 
@@ -306,6 +307,7 @@ static int hook_create_mount(struct libmnt_context *cxt,
 				fs->id = cxt->fs->id;
 		}
 	}
+#endif
 
 done:
 	DBG(HOOK, ul_debugobj(hs, "create FS done [rc=%d, id=%d]", rc, cxt->fs ? cxt->fs->id : -1));
