@@ -15,11 +15,13 @@ CLEAN_LOCALS += clean-local-tests
 
 TESTS_OPTIONS = --nonroot --show-diff
 TESTS_PARALLEL = --parallel
+TESTS_COMPONENTS =
 TESTS_COMMAND = $(top_srcdir)/tests/run.sh \
 	--srcdir=$(abs_top_srcdir) \
 	--builddir=$(abs_top_builddir) \
 	$(TESTS_PARALLEL) \
-	$(TESTS_OPTIONS)
+	$(TESTS_OPTIONS)  \
+	$(TESTS_COMPONENTS)
 
 check-local-tests: $(check_PROGRAMS)
 	$(AM_V_GEN) $(TESTS_COMMAND)
