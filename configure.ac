@@ -514,7 +514,10 @@ AC_CHECK_MEMBERS([struct termios.c_line],,,
     [[#include <termios.h>]])
 
 AC_CHECK_MEMBERS([struct stat.st_mtim.tv_nsec],,,
-	[#include <sys/stat.h>])
+    [[#include <sys/stat.h>]])
+
+AC_CHECK_MEMBERS([struct statx.stx_mnt_id],,,
+    [[#include <linux/stat.h>]])
 
 AC_CHECK_DECLS([_NL_TIME_WEEK_1STDAY],[],[],[[#include <langinfo.h>]])
 
