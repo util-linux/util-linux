@@ -669,6 +669,7 @@ static int prepare_target(struct libmnt_context *cxt)
 	const char *tgt, *prefix;
 	int rc = 0;
 	struct libmnt_ns *ns_old;
+	struct stat st;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -708,7 +709,10 @@ static int prepare_target(struct libmnt_context *cxt)
 		return -MNT_ERR_NAMESPACE;
 
 	/* canonicalize the path */
-	if (rc == 0) {
+	if (rc == 0 &&
+	    !(cxt->optlist && mnt_optlist_is_bind(cxt->optlist)
+	      && mnt_safe_lstat(tgt, &st) == 0 && S_ISLNK(st.st_mode))) {
+
 		struct libmnt_cache *cache = mnt_context_get_cache(cxt);
 
 		if (cache) {
