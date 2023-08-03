@@ -133,7 +133,8 @@ static int safe_stat(const char *target, struct stat *st, int nofollow)
 			st->st_mode = stx.stx_mode;
 		}
 
-		if (rc == 0 || errno != EOPNOTSUPP)
+		if (rc == 0 ||
+		    (errno != EOPNOTSUPP && errno != ENOSYS && errno != EINVAL))
 			return rc;
 	}
 #endif
