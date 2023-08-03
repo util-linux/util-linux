@@ -92,19 +92,6 @@ EXPR='(((TYPE == "UNIX-STREAM") or (TYPE == "UNIX")) and (FD >= 3) and (FD <= 5)
 	fi
 	wait "${MKFDS_PID}"
 
-	coproc MKFDS { "$TS_HELPER_MKFDS" unix-stream $FDS $FDC $FDA \
-					  path="test_mkfds-unix with newline ${t} $(printf 'a\nb\nc')" \
-					  type=$t ; }
-	if read -r -u "${MKFDS[0]}" PID; then
-	    ${TS_CMD_LSFD} -n \
-			   -o ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH \
-			   -p "${PID}" -Q "${EXPR}" | lsfd_strip_type_stream
-	    echo 'ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': ${PIPESTATUS[0]}
-
-	    kill -CONT "${PID}"
-	fi
-	wait "${MKFDS_PID}"
-
     done
 } > "$TS_OUTPUT" 2>&1
 

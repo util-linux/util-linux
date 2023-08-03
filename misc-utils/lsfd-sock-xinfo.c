@@ -45,17 +45,17 @@
 #include "lsfd.h"
 #include "lsfd-sock.h"
 
-static void load_xinfo_from_proc_icmp(ino_t netns_inode);
-static void load_xinfo_from_proc_icmp6(ino_t netns_inode);
+static void load_xinfo_from_proc_icmp(ino_t netns_inode, enum sysfs_byteorder byteorder);
+static void load_xinfo_from_proc_icmp6(ino_t netns_inode, enum sysfs_byteorder byteorder);
 static void load_xinfo_from_proc_unix(ino_t netns_inode);
-static void load_xinfo_from_proc_raw(ino_t netns_inode);
-static void load_xinfo_from_proc_tcp(ino_t netns_inode);
-static void load_xinfo_from_proc_udp(ino_t netns_inode);
-static void load_xinfo_from_proc_udplite(ino_t netns_inode);
-static void load_xinfo_from_proc_tcp6(ino_t netns_inode);
-static void load_xinfo_from_proc_udp6(ino_t netns_inode);
-static void load_xinfo_from_proc_udplite6(ino_t netns_inode);
-static void load_xinfo_from_proc_raw6(ino_t netns_inode);
+static void load_xinfo_from_proc_raw(ino_t netns_inode, enum sysfs_byteorder byteorder);
+static void load_xinfo_from_proc_tcp(ino_t netns_inode, enum sysfs_byteorder byteorder);
+static void load_xinfo_from_proc_udp(ino_t netns_inode, enum sysfs_byteorder byteorder);
+static void load_xinfo_from_proc_udplite(ino_t netns_inode, enum sysfs_byteorder byteorder);
+static void load_xinfo_from_proc_tcp6(ino_t netns_inode, enum sysfs_byteorder byteorder);
+static void load_xinfo_from_proc_udp6(ino_t netns_inode, enum sysfs_byteorder byteorder);
+static void load_xinfo_from_proc_udplite6(ino_t netns_inode, enum sysfs_byteorder byteorder);
+static void load_xinfo_from_proc_raw6(ino_t netns_inode, enum sysfs_byteorder byteorder);
 static void load_xinfo_from_proc_netlink(ino_t netns_inode);
 static void load_xinfo_from_proc_packet(ino_t netns_inode);
 
@@ -161,18 +161,19 @@ static void load_sock_xinfo_no_nsswitch(struct netns *nsobj)
 {
 	ino_t netns = nsobj? nsobj->inode: 0;
 	int diagsd;
+	enum sysfs_byteorder byteorder = sysfs_get_byteorder(NULL);
 
 	load_xinfo_from_proc_unix(netns);
-	load_xinfo_from_proc_tcp(netns);
-	load_xinfo_from_proc_udp(netns);
-	load_xinfo_from_proc_udplite(netns);
-	load_xinfo_from_proc_raw(netns);
-	load_xinfo_from_proc_tcp6(netns);
-	load_xinfo_from_proc_udp6(netns);
-	load_xinfo_from_proc_udplite6(netns);
-	load_xinfo_from_proc_raw6(netns);
-	load_xinfo_from_proc_icmp(netns);
-	load_xinfo_from_proc_icmp6(netns);
+	load_xinfo_from_proc_tcp(netns, byteorder);
+	load_xinfo_from_proc_udp(netns, byteorder);
+	load_xinfo_from_proc_udplite(netns, byteorder);
+	load_xinfo_from_proc_raw(netns, byteorder);
+	load_xinfo_from_proc_tcp6(netns, byteorder);
+	load_xinfo_from_proc_udp6(netns, byteorder);
+	load_xinfo_from_proc_udplite6(netns, byteorder);
+	load_xinfo_from_proc_raw6(netns, byteorder);
+	load_xinfo_from_proc_icmp(netns, byteorder);
+	load_xinfo_from_proc_icmp6(netns, byteorder);
 	load_xinfo_from_proc_netlink(netns);
 	load_xinfo_from_proc_packet(netns);
 
@@ -950,7 +951,8 @@ static bool L4_verify_initial_line(const char *line)
 
 #define TCP_LINE_LEN 256
 static void load_xinfo_from_proc_inet_L4(ino_t netns_inode, const char *proc_file,
-					 const struct l4_xinfo_class *class)
+					 const struct l4_xinfo_class *class,
+					 enum sysfs_byteorder byteorder)
 {
 	char line[TCP_LINE_LEN];
 	FILE *tcp_fp;
@@ -965,8 +967,6 @@ static void load_xinfo_from_proc_inet_L4(ino_t netns_inode, const char *proc_fil
 		/* Unexpected line */
 		goto out;
 
-	enum sysfs_byteorder byteorder = sysfs_get_byteorder(NULL);
-
 	while (fgets(line, sizeof(line), tcp_fp)) {
 		struct sock_xinfo *sock = class->scan_line(&class->sock, line, netns_inode, byteorder);
 		if (sock)
@@ -977,11 +977,12 @@ static void load_xinfo_from_proc_inet_L4(ino_t netns_inode, const char *proc_fil
 	fclose(tcp_fp);
 }
 
-static void load_xinfo_from_proc_tcp(ino_t netns_inode)
+static void load_xinfo_from_proc_tcp(ino_t netns_inode, enum sysfs_byteorder byteorder)
 {
 	load_xinfo_from_proc_inet_L4(netns_inode,
 				     "/proc/net/tcp",
-				     &tcp_xinfo_class);
+				     &tcp_xinfo_class,
+				     byteorder);
 }
 
 /*
@@ -1052,11 +1053,12 @@ static const struct l4_xinfo_class udp_xinfo_class = {
 	.l3_decorator = {"", ""},
 };
 
-static void load_xinfo_from_proc_udp(ino_t netns_inode)
+static void load_xinfo_from_proc_udp(ino_t netns_inode, enum sysfs_byteorder byteorder)
 {
 	load_xinfo_from_proc_inet_L4(netns_inode,
 				     "/proc/net/udp",
-				     &udp_xinfo_class);
+				     &udp_xinfo_class,
+				     byteorder);
 }
 
 /*
@@ -1090,11 +1092,12 @@ static const struct l4_xinfo_class udplite_xinfo_class = {
 	.l3_decorator = {"", ""},
 };
 
-static void load_xinfo_from_proc_udplite(ino_t netns_inode)
+static void load_xinfo_from_proc_udplite(ino_t netns_inode, enum sysfs_byteorder byteorder)
 {
 	load_xinfo_from_proc_inet_L4(netns_inode,
 				     "/proc/net/udplite",
-				     &udplite_xinfo_class);
+				     &udplite_xinfo_class,
+				     byteorder);
 }
 
 /*
@@ -1219,11 +1222,12 @@ static const struct l4_xinfo_class raw_xinfo_class = {
 	.l3_decorator = {"", ""},
 };
 
-static void load_xinfo_from_proc_raw(ino_t netns_inode)
+static void load_xinfo_from_proc_raw(ino_t netns_inode, enum sysfs_byteorder byteorder)
 {
 	load_xinfo_from_proc_inet_L4(netns_inode,
 				     "/proc/net/raw",
-				     &raw_xinfo_class);
+				     &raw_xinfo_class,
+				     byteorder);
 }
 
 /*
@@ -1277,11 +1281,12 @@ static const struct l4_xinfo_class ping_xinfo_class = {
 	.l3_decorator = {"", ""},
 };
 
-static void load_xinfo_from_proc_icmp(ino_t netns_inode)
+static void load_xinfo_from_proc_icmp(ino_t netns_inode, enum sysfs_byteorder byteorder)
 {
 	load_xinfo_from_proc_inet_L4(netns_inode,
 				     "/proc/net/icmp",
-				     &ping_xinfo_class);
+				     &ping_xinfo_class,
+				     byteorder);
 }
 
 /*
@@ -1372,11 +1377,12 @@ static const struct l4_xinfo_class tcp6_xinfo_class = {
 	.l3_decorator = {"[", "]"},
 };
 
-static void load_xinfo_from_proc_tcp6(ino_t netns_inode)
+static void load_xinfo_from_proc_tcp6(ino_t netns_inode, enum sysfs_byteorder byteorder)
 {
 	load_xinfo_from_proc_inet_L4(netns_inode,
 				     "/proc/net/tcp6",
-				     &tcp6_xinfo_class);
+				     &tcp6_xinfo_class,
+				     byteorder);
 }
 
 /*
@@ -1410,11 +1416,12 @@ static const struct l4_xinfo_class udp6_xinfo_class = {
 	.l3_decorator = {"[", "]"},
 };
 
-static void load_xinfo_from_proc_udp6(ino_t netns_inode)
+static void load_xinfo_from_proc_udp6(ino_t netns_inode, enum sysfs_byteorder byteorder)
 {
 	load_xinfo_from_proc_inet_L4(netns_inode,
 				     "/proc/net/udp6",
-				     &udp6_xinfo_class);
+				     &udp6_xinfo_class,
+				     byteorder);
 }
 
 /*
@@ -1448,11 +1455,12 @@ static const struct l4_xinfo_class udplite6_xinfo_class = {
 	.l3_decorator = {"[", "]"},
 };
 
-static void load_xinfo_from_proc_udplite6(ino_t netns_inode)
+static void load_xinfo_from_proc_udplite6(ino_t netns_inode, enum sysfs_byteorder byteorder)
 {
 	load_xinfo_from_proc_inet_L4(netns_inode,
 				     "/proc/net/udplite6",
-				     &udplite6_xinfo_class);
+				     &udplite6_xinfo_class,
+				     byteorder);
 }
 
 /*
@@ -1539,11 +1547,12 @@ static const struct l4_xinfo_class raw6_xinfo_class = {
 	.l3_decorator = {"[", "]"},
 };
 
-static void load_xinfo_from_proc_raw6(ino_t netns_inode)
+static void load_xinfo_from_proc_raw6(ino_t netns_inode, enum sysfs_byteorder byteorder)
 {
 	load_xinfo_from_proc_inet_L4(netns_inode,
 				     "/proc/net/raw6",
-				     &raw6_xinfo_class);
+				     &raw6_xinfo_class,
+				     byteorder);
 }
 
 /*
@@ -1585,11 +1594,12 @@ static const struct l4_xinfo_class ping6_xinfo_class = {
 	.l3_decorator = {"[", "]"},
 };
 
-static void load_xinfo_from_proc_icmp6(ino_t netns_inode)
+static void load_xinfo_from_proc_icmp6(ino_t netns_inode, enum sysfs_byteorder byteorder)
 {
 	load_xinfo_from_proc_inet_L4(netns_inode,
 				     "/proc/net/icmp6",
-				     &ping6_xinfo_class);
+				     &ping6_xinfo_class,
+				     byteorder);
 }
 
 /*
