@@ -52,6 +52,11 @@ for multiplexer in pselect6 select poll ppoll; do
 	    "${TS_CMD_LSFD}" -n -o ASSOC,XMODE -p "${PID}" -Q '(FD >= 10) && (FD <= 22)'
 	    echo "[$multiplexer] ASSOC,XMODE: $?"
 
+	    # For debugging
+	    if [[ $("${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q '(FD == 10)') != "r----m" ]]; then
+		cat /proc/"${PID}"/syscall
+	    fi
+
 	    echo DONE >&"${MKFDS[1]}"
 	fi
     } > "$TS_OUTPUT" 2>&1
