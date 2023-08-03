@@ -393,11 +393,18 @@ static void send_diag_request(int diagsd, void *req, size_t req_size,
 /*
  * UNIX
  */
+struct unix_ipc {
+	struct ipc ipc;
+	ino_t inode;
+	ino_t ipeer;
+};
+
 struct unix_xinfo {
 	struct sock_xinfo sock;
 	int acceptcon;	/* flags */
 	uint16_t type;
 	uint8_t  st;
+	struct unix_ipc *unix_ipc;
 	char path[
 		  UNIX_PATH_MAX
 		  + 1		/* for @ */
@@ -475,15 +482,76 @@ static bool unix_get_listening(struct sock_xinfo *sock_xinfo,
 	return ux->acceptcon;
 }
 
+static unsigned int unix_get_hash(struct file *file)
+{
+	return (unsigned int)(file->stat.st_ino % UINT_MAX);
+}
+
+static bool unix_is_suitable_ipc(struct ipc *ipc, struct file *file)
+{
+	return ((struct unix_ipc *)ipc)->inode == file->stat.st_ino;
+}
+
+/* For looking up an ipc struct for a sock inode, we need a sock strcuct
+ * for the inode. See the signature o get_ipc().
+ *
+ * However, there is a case that we have no sock strcuct for the inode;
+ * in the context we know only the sock inode.
+ * For the case, unix_make_dumy_sock() provides the way to make a
+ * dummy sock struct for the inode.
+ */
+static void unix_make_dumy_sock(struct sock *original, ino_t ino, struct sock *dummy)
+{
+	*dummy = *original;
+	dummy->file.stat.st_ino = ino;
+}
+
+static struct ipc_class unix_ipc_class = {
+	.size = sizeof(struct unix_ipc),
+	.get_hash = unix_get_hash,
+	.is_suitable_ipc = unix_is_suitable_ipc,
+	.free = NULL,
+};
+
+static struct ipc_class *unix_get_ipc_class(struct sock_xinfo *sock_xinfo __attribute__((__unused__)),
+					    struct sock *sock __attribute__((__unused__)))
+{
+	return &unix_ipc_class;
+}
+
+static inline char *unix_xstrendpoint(struct sock *sock)
+{
+	char *str = NULL;
+	xasprintf(&str, "%d,%s,%d",
+		  sock->file.proc->pid, sock->file.proc->command, sock->file.association);
+	return str;
+}
+
+static struct ipc *unix_get_peer_ipc(struct unix_xinfo *ux,
+				     struct sock *sock)
+{
+	struct unix_ipc *unix_ipc;
+	struct sock dummy_peer_sock;
+
+	unix_ipc = ux->unix_ipc;
+	if (!unix_ipc)
+		return NULL;
+
+	unix_make_dumy_sock(sock, unix_ipc->ipeer, &dummy_peer_sock);
+	return get_ipc(&dummy_peer_sock.file);
+}
+
 static bool unix_fill_column(struct proc *proc __attribute__((__unused__)),
 			     struct sock_xinfo *sock_xinfo,
-			     struct sock *sock __attribute__((__unused__)),
+			     struct sock *sock,
 			     struct libscols_line *ln __attribute__((__unused__)),
 			     int column_id,
 			     size_t column_index __attribute__((__unused__)),
 			     char **str)
 {
 	struct unix_xinfo *ux = (struct unix_xinfo *)sock_xinfo;
+	struct ipc *peer_ipc;
+	struct list_head *e;
 
 	switch (column_id) {
 	case COL_UNIX_PATH:
@@ -491,6 +559,24 @@ static bool unix_fill_column(struct proc *proc __attribute__((__unused__)),
 			*str = xstrdup(ux->path);
 			return true;
 		}
+		break;
+	case COL_ENDPOINTS:
+		peer_ipc = unix_get_peer_ipc(ux, sock);
+		if (!peer_ipc)
+			break;
+
+		list_for_each_backwardly(e, &peer_ipc->endpoints) {
+			struct sock *peer_sock = list_entry(e, struct sock, endpoint.endpoints);
+			char *estr;
+
+			if (*str)
+				xstrputc(str, '\n');
+			estr = unix_xstrendpoint(peer_sock);
+			xstrappend(str, estr);
+			free(estr);
+		}
+		if (*str)
+			return true;
 		break;
 	}
 
@@ -503,6 +589,7 @@ static const struct sock_xinfo_class unix_xinfo_class = {
 	.get_state = unix_get_state,
 	.get_listening = unix_get_listening,
 	.fill_column = unix_fill_column,
+	.get_ipc_class = unix_get_ipc_class,
 	.free = NULL,
 };
 
@@ -588,6 +675,7 @@ static bool handle_diag_unix(ino_t netns __attribute__((__unused__)),
 	size_t rta_len;
 	ino_t inode;
 	struct sock_xinfo *xinfo;
+	struct unix_xinfo *unix_xinfo;
 
 	if (diag->udiag_family != AF_UNIX)
 		return false;
@@ -605,6 +693,7 @@ static bool handle_diag_unix(ino_t netns __attribute__((__unused__)),
 
 	if (xinfo->class != &unix_xinfo_class)
 		return true;
+	unix_xinfo = (struct unix_xinfo *)xinfo;
 
 	rta_len = nlmsg_len - NLMSG_LENGTH(sizeof(*diag));
 	for (struct rtattr *attr = (struct rtattr *)(diag + 1);
@@ -616,6 +705,16 @@ static bool handle_diag_unix(ino_t netns __attribute__((__unused__)),
 		case UNIX_DIAG_NAME:
 			unix_refill_name(xinfo, RTA_DATA(attr), len);
 			break;
+
+		case UNIX_DIAG_PEER:
+			if (len < 4)
+				break;
+
+			unix_xinfo->unix_ipc = (struct unix_ipc *)new_ipc(&unix_ipc_class);
+			unix_xinfo->unix_ipc->inode = inode;
+			unix_xinfo->unix_ipc->ipeer = (ino_t)(*(uint32_t *)RTA_DATA(attr));
+			add_ipc(&unix_xinfo->unix_ipc->ipc, inode % UINT_MAX);
+			break;
 		}
 	}
 	return true;
@@ -626,7 +725,7 @@ static void load_xinfo_from_diag_unix(int diagsd, ino_t netns)
 	struct unix_diag_req udr = {
 		.sdiag_family = AF_UNIX,
 		.udiag_states = -1, /* set the all bits. */
-		.udiag_show = UDIAG_SHOW_NAME,
+		.udiag_show = UDIAG_SHOW_NAME | UDIAG_SHOW_PEER,
 	};
 
 	send_diag_request(diagsd, &udr, sizeof(udr), handle_diag_unix, netns);
