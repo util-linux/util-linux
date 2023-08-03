@@ -637,6 +637,10 @@ have = cc.has_member('struct stat', 'st_mtim.tv_nsec',
                      prefix : '#include <sys/stat.h>')
 conf.set('HAVE_STRUCT_STAT_ST_MTIM_TV_NSEC', have ? 1 : false)
 
+have = cc.has_member('struct statx', 'stx_mnt_id',
+                     prefix : '#include <linux/stat.h>')
+conf.set('HAVE_STRUCT_STATX_STX_MNT_ID', have ? 1 : false)
+
 # replacement for AC_STRUCT_TIMEZONE
 have = cc.has_member('struct tm', 'tm_zone',
                      prefix : '#include <time.h>')
