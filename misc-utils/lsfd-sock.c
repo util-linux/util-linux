@@ -28,7 +28,23 @@
 static void attach_sock_xinfo(struct file *file)
 {
 	struct sock *sock = (struct sock *)file;
+
 	sock->xinfo = get_sock_xinfo(file->stat.st_ino);
+	if (sock->xinfo) {
+		struct ipc *ipc = get_ipc(file);
+		if (ipc)
+			add_endpoint(&sock->endpoint, ipc);
+	}
+}
+
+static const struct ipc_class *sock_get_ipc_class(struct file *file)
+{
+	struct sock *sock = (struct sock *)file;
+
+	if (sock->xinfo && sock->xinfo->class->get_ipc_class)
+		return sock->xinfo->class->get_ipc_class(sock->xinfo, sock);
+
+	return NULL;
 }
 
 static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
@@ -116,13 +132,13 @@ static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
 static void init_sock_content(struct file *file)
 {
 	int fd;
+	struct sock *sock = (struct sock *)file;
 
 	assert(file);
 
 	fd = file->association;
 
 	if (fd >= 0 || fd == -ASSOC_MEM || fd == -ASSOC_SHM) {
-		struct sock *sock = (struct sock *)file;
 		char path[PATH_MAX] = {'\0'};
 		char buf[256];
 		ssize_t len;
@@ -143,6 +159,8 @@ static void init_sock_content(struct file *file)
 			sock->protoname = xstrdup(buf);
 		}
 	}
+
+	init_endpoint(&sock->endpoint);
 }
 
 static void free_sock_content(struct file *file)
@@ -173,4 +191,5 @@ const struct file_class sock_class = {
 	.free_content = free_sock_content,
 	.initialize_class = initialize_sock_class,
 	.finalize_class = finalize_sock_class,
+	.get_ipc_class = sock_get_ipc_class,
 };
