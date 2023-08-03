@@ -40,23 +40,6 @@
 #include "all-io.h"
 #include "list.h"
 
-#define CLOCKFD 3
-
-static inline clockid_t FD_TO_CLOCKID(int fd)
-{
-	return (~(unsigned int) fd << 3) | CLOCKFD;
-}
-
-static inline int CLOCKID_TO_FD(clockid_t clk)
-{
-	return ~(clk >> 3);
-}
-
-static inline bool CLOCKID_IS_DYNAMIC(clockid_t clk)
-{
-	return CLOCKID_TO_FD(clk) <= 0;
-}
-
 #ifndef CLOCK_REALTIME
 #define CLOCK_REALTIME			0
 #endif
