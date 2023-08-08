@@ -62,13 +62,13 @@ static int topology_set_logical_sector_size(blkid_probe pr);
  * Binary interface
  */
 struct blkid_struct_topology {
-	unsigned long	alignment_offset;
-	unsigned long	minimum_io_size;
-	unsigned long	optimal_io_size;
-	unsigned long	logical_sector_size;
-	unsigned long	physical_sector_size;
-	unsigned long   dax;
-	uint64_t	diskseq;
+	unsigned long long	alignment_offset;
+	unsigned long long	minimum_io_size;
+	unsigned long long	optimal_io_size;
+	unsigned long long	logical_sector_size;
+	unsigned long long	physical_sector_size;
+	unsigned long long	dax;
+	unsigned long long	diskseq;
 };
 
 /*
