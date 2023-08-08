@@ -212,6 +212,14 @@ void ul_jsonwrt_value_u64(struct ul_jsonwrt *fmt,
 	ul_jsonwrt_value_close(fmt);
 }
 
+void ul_jsonwrt_value_double(struct ul_jsonwrt *fmt,
+			const char *name, long double data)
+{
+	ul_jsonwrt_value_open(fmt, name);
+	fprintf(fmt->out, "%Lg", data);
+	ul_jsonwrt_value_close(fmt);
+}
+
 void ul_jsonwrt_value_boolean(struct ul_jsonwrt *fmt,
 			const char *name, int data)
 {
