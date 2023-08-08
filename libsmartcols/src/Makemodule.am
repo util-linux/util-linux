@@ -22,16 +22,25 @@ libsmartcols_la_SOURCES= \
 	libsmartcols/src/walk.c \
 	libsmartcols/src/init.c \
 	\
-	libsmartcols/src/filter-nodes.c \
 	libsmartcols/src/filter-parser.y \
 	libsmartcols/src/filter-scanner.l \
+	libsmartcols/src/filter-parser.h \
+	libsmartcols/src/filter-scanner.h \
 	libsmartcols/src/filter.c
 
-BUILT_SOURCES = libsmartcols/src/filter-scanner.c \
-		libsmartcols/src/filter-scanner.h \
-		libsmartcols/src/filter-parser.h \
-		libsmartcols/src/filter-parser.c
-AM_YFLAGS = -d
+BUILT_SOURCES += libsmartcols/src/filter-parser.c \
+		 libsmartcols/src/filter-scanner.c
+
+
+# Scanner and parser header files are maintained in git and generated
+# manually by only if necessary.
+#
+libsmartcols/src/filter-scanner.h: libsmartcols/src/filter-scanner.l
+	$(AM_V_LEX) $(LEX) --header-file=$@ $<
+
+libsmartcols/src/filter-parser.h: libsmartcols/src/filter-parser.y
+	$(AM_V_YACC) $(YACC) --header=$@ $<
+
 
 libsmartcols_la_LIBADD = $(LDADD) libcommon.la
 

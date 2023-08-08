@@ -67,6 +67,13 @@ struct libscols_table;
  */
 struct libscols_column;
 
+/**
+ * libscols_filter:
+ *
+ * A filter - defines the filtering
+ */
+struct libscols_filter;
+
 /* iter.c */
 enum {
 
@@ -358,6 +365,15 @@ extern int scols_table_print_range_to_string(	struct libscols_table *tb,
 int scols_line_link_group(struct libscols_line *ln, struct libscols_line *member, int id);
 int scols_table_group_lines(struct libscols_table *tb, struct libscols_line *ln,
                             struct libscols_line *member, int id);
+
+/* filter.c */
+extern int scols_filter_parse_string(struct libscols_filter *fltr, const char *str);
+extern struct libscols_filter *scols_new_filter(const char *str);
+extern void scols_ref_filter(struct libscols_filter *fltr);
+extern void scols_unref_filter(struct libscols_filter *fltr);
+extern int scols_dump_filter(struct libscols_filter *fltr, FILE *out);
+extern const char *scols_filter_get_errmsg(struct libscols_filter *fltr);
+
 #ifdef __cplusplus
 }
 #endif

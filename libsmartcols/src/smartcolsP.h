@@ -34,6 +34,7 @@
 #define SCOLS_DEBUG_COL		(1 << 5)
 #define SCOLS_DEBUG_BUFF	(1 << 6)
 #define SCOLS_DEBUG_GROUP	(1 << 7)
+#define SCOLS_DEBUG_FLTR	(1 << 8)
 #define SCOLS_DEBUG_ALL		0xFFFF
 
 UL_DEBUG_DECLARE_MASK(libsmartcols);
@@ -542,14 +543,13 @@ struct filter_expr {
 };
 
 struct libscols_filter {
+	int refcount;
+	char *errmsg;
 	struct filter_node *root;
 	FILE *src;
 };
 
-void filter_unref_node(struct filter_node *n);
-void filter_dump_node(FILE *out, int i, struct filter_node *n);
-
-/* reuiqred by parser */
+/* required by parser */
 struct filter_node *filter_new_param(struct libscols_filter *filter,
                                  enum filter_ptype type,
 				 void *data);

@@ -13,10 +13,9 @@ void yyerror(yyscan_t *locp, struct libscols_filter *fltr, char const *msg);
 %lex-param {void *scanner}
 %parse-param {void *scanner}{struct libscols_filter *fltr}
 
-%define parse.trace
 %define parse.error verbose
 
-%header "filter-parser.h"
+/*%header "filter-parser.h"*/
 
 %code requires
 {
@@ -41,10 +40,10 @@ void yyerror(yyscan_t *locp, struct libscols_filter *fltr, char const *msg);
 	struct filter_node	*param;
 	struct filter_node	*expr;
 }
-%token <param_number> param_number
-%token <param_string> param_string
-%token <param_name> param_name
-%token <param_float> param_float
+%token <param_number> T_NUMBER
+%token <param_string> T_STRING
+%token <param_name> T_NAME
+%token <param_float> T_FLOAT
 %type <param> param expr
 
 %token T_OR T_AND T_EQ T_NE T_LT T_LE T_GT T_GE T_REG T_NREG T_TRUE T_FALSE T_NEG
@@ -76,10 +75,10 @@ expr:
 ;
 
 param:
-	param_number	{ $$ = filter_new_param(fltr, F_PARAM_NUMBER, (void *) (&$1)); }
-	| param_float	{ $$ = filter_new_param(fltr, F_PARAM_FLOAT, (void *) (&$1)); }
-	| param_name	{ $$ = filter_new_param(fltr, F_PARAM_NAME, (void *) $1); }
-	| param_string	{ $$ = filter_new_param(fltr, F_PARAM_STRING, (void *) $1); }
+	T_NUMBER	{ $$ = filter_new_param(fltr, F_PARAM_NUMBER, (void *) (&$1)); }
+	| T_FLOAT	{ $$ = filter_new_param(fltr, F_PARAM_FLOAT, (void *) (&$1)); }
+	| T_NAME	{ $$ = filter_new_param(fltr, F_PARAM_NAME, (void *) $1); }
+	| T_STRING	{ $$ = filter_new_param(fltr, F_PARAM_STRING, (void *) $1); }
 	| T_TRUE	{
 		bool x = true;
 		$$ = filter_new_param(fltr, F_PARAM_BOOLEAN, (void *) &x);
@@ -94,7 +93,14 @@ param:
 
 %%
 
-void yyerror (yyscan_t *locp, struct libscols_filter *fltr, char const *msg)
+void yyerror (yyscan_t *locp __attribute__((__unused__)),
+	      struct libscols_filter *fltr,
+	      char const *msg)
 {
-	fprintf(stderr, "--> %s\n", msg);
+	if (msg) {
+		fltr->errmsg = strdup(msg);
+		if (!fltr->errmsg)
+			return;
+	}
+	errno = EINVAL;
 }

@@ -221,4 +221,9 @@ SMARTCOLS_2.40 {
 	scols_cell_get_datasiz;
 	scols_wrapzero_nextchunk;
 	scols_column_get_wrap_data;
+	scols_dump_filter;
+	scols_filter_parse_string;
+	scols_new_filter;
+	scols_unref_filter;
+	scols_filter_get_errmsg;
 } SMARTCOLS_2.39;

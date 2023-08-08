@@ -18,29 +18,6 @@ string	\"[^\"\n]*\"
 ")"		return ')';
 "'"		return '\'';
 
-false|FALSE	return T_FALSE;
-true|TRUE	return T_TRUE;
-
-{int}+\.{int}+ {
-	yylval->param_float = strtold(yytext, NULL);
-	return param_float;
-}
-
-{int}+ {
-	yylval->param_number = (int64_t) strtoumax(yytext, NULL, 10);
-	return param_number;
-}
-
-{id} {
-	yylval->param_name = yytext;
-	return param_name;
-}
-
-{string} {
-	yylval->param_string = yytext;
-	return param_string;
-}
-
 and|AND|"&&"	return T_AND;
 or|OR|"||"	return T_OR;
 "!"|not|NOT	return T_NEG;
@@ -56,3 +33,28 @@ gt|">"		return T_GT;
 
 "=~"		return T_REG;
 "!~"		return T_NREG;
+
+false|FALSE	return T_FALSE;
+true|TRUE	return T_TRUE;
+
+{int}+\.{int}+ {
+	yylval->param_float = strtold(yytext, NULL);
+	return T_FLOAT;
+}
+
+{int}+ {
+	yylval->param_number = (int64_t) strtoumax(yytext, NULL, 10);
+	return T_NUMBER;
+}
+
+{id} {
+	yylval->param_name = yytext;
+	return T_NAME;
+}
+
+{string} {
+	yylval->param_string = yytext;
+	return T_STRING;
+}
+
+
