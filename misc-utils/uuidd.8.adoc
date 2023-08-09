@@ -24,8 +24,12 @@ The *uuidd* daemon is used by the UUID library to generate universally unique id
 
 == OPTIONS
 
-*-C*, *--cont-clock* _opt_arg_::
-Activate continuous clock handling for time based UUIDs. *uuidd* could use all possible clock values, beginning with the daemon's start time. The optional argument can be used to set a value for the max_clock_offset. This gurantees, that a clock value of a UUID will always be within the range of the max_clock_offset. '-C' or '--cont-clock' enables the feature with a default max_clock_offset of 2 hours. '-C<NUM>[hd]' or '--cont-clock=<NUM>[hd]' enables the feature with a max_clock_offset of NUM seconds. In case of an appended h or d, the NUM value is read in hours or days. The minimum value is 60 seconds, the maximum value is 365 days.
+*-C*, *--cont-clock*[=_time_]::
+Activate continuous clock handling for time based UUIDs. *uuidd* could use all possible clock values, beginning with the daemon's start time. The optional argument can be used to set a value for the max_clock_offset. This gurantees, that a clock value of a UUID will always be within the range of the max_clock_offset.
++
+The option '-C' or '--cont-clock' enables the feature with a default max_clock_offset of 2 hours.
++
+The option '-C<NUM>[hd]' or '--cont-clock=<NUM>[hd]' enables the feature with a max_clock_offset of NUM seconds. In case of an appended h or d, the NUM value is read in hours or days. The minimum value is 60 seconds, the maximum value is 365 days.
 
 *-d*, *--debug*::
 Run *uuidd* in debugging mode. This prevents *uuidd* from running as a daemon.
