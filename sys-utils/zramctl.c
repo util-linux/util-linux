@@ -566,6 +566,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(_(" <alg> specify algorithm, supported are:\n"), out);
 	fputs(_("   lzo, lz4, lz4hc, deflate, 842 and zstd\n"), out);
+	fputs(_("   (List may be inaccurate, consult man page.)\n"), out);
 
 	fputs(USAGE_COLUMNS, out);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
