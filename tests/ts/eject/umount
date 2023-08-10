@@ -83,7 +83,7 @@ init_device
 mkfs.ext2 -q -F $TS_DEVICE
 udevadm settle
 mkdir -p $TS_MOUNTPOINT
-$TS_CMD_MOUNT $TS_DEVICE $TS_MOUNTPOINT
+$TS_CMD_MOUNT $TS_DEVICE $TS_MOUNTPOINT &> /dev/null
 udevadm settle
 $TS_CMD_EJECT --force $TS_DEVICE && ts_log "Success"
 deinit_device
@@ -95,8 +95,8 @@ init_device
 init_partitions $TS_DEVICE
 mkdir -p ${TS_MOUNTPOINT}1
 mkdir -p ${TS_MOUNTPOINT}2
-$TS_CMD_MOUNT ${TS_DEVICE}1 ${TS_MOUNTPOINT}1
-$TS_CMD_MOUNT ${TS_DEVICE}2 ${TS_MOUNTPOINT}2
+$TS_CMD_MOUNT ${TS_DEVICE}1 ${TS_MOUNTPOINT}1 &> /dev/null
+$TS_CMD_MOUNT ${TS_DEVICE}2 ${TS_MOUNTPOINT}2 &> /dev/null
 udevadm settle
 $TS_CMD_EJECT --force $TS_DEVICE && ts_log "Success"
 deinit_device
@@ -116,8 +116,8 @@ init_device
 init_partitions $TS_DEVICE
 mkdir -p ${TS_MOUNTPOINT}1
 mkdir -p ${TS_MOUNTPOINT}2
-$TS_CMD_MOUNT ${TS_DEVICE}1 ${TS_MOUNTPOINT}1
-$TS_CMD_MOUNT ${TS_DEVICE}2 ${TS_MOUNTPOINT}2
+$TS_CMD_MOUNT ${TS_DEVICE}1 ${TS_MOUNTPOINT}1 &> /dev/null
+$TS_CMD_MOUNT ${TS_DEVICE}2 ${TS_MOUNTPOINT}2 &> /dev/null
 udevadm settle
 $TS_CMD_EJECT --force ${TS_DEVICE}1 && ts_log "Success"
 deinit_device
