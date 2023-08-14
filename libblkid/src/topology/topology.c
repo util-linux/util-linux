@@ -11,6 +11,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stddef.h>
+#include <inttypes.h>
 
 #include "topology.h"
 
@@ -208,7 +209,7 @@ static void topology_free(blkid_probe pr __attribute__((__unused__)),
 }
 
 static int topology_set_value(blkid_probe pr, const char *name,
-				size_t structoff, unsigned long long data)
+				size_t structoff, unsigned long data)
 {
 	struct blkid_chain *chn = blkid_probe_get_chain(pr);
 
@@ -221,7 +222,24 @@ static int topology_set_value(blkid_probe pr, const char *name,
 		memcpy((char *) chn->data + structoff, &data, sizeof(data));
 		return 0;
 	}
-	return blkid_probe_sprintf_value(pr, name, "%llu", data);
+	return blkid_probe_sprintf_value(pr, name, "%lu", data);
+}
+
+static int topology_set_value64(blkid_probe pr, const char *name,
+				size_t structoff, uint64_t data)
+{
+	struct blkid_chain *chn = blkid_probe_get_chain(pr);
+
+	if (!chn)
+		return -1;
+	if (!data)
+		return 0;	/* ignore zeros */
+
+	if (chn->binary) {
+		memcpy((char *) chn->data + structoff, &data, sizeof(data));
+		return 0;
+	}
+	return blkid_probe_sprintf_value(pr, name, "%"PRIu64, data);
 }
 
 
@@ -315,7 +333,7 @@ int blkid_topology_set_dax(blkid_probe pr, unsigned long val)
 
 int blkid_topology_set_diskseq(blkid_probe pr, uint64_t val)
 {
-	return topology_set_value(pr,
+	return topology_set_value64(pr,
 			"DISKSEQ",
 			offsetof(struct blkid_struct_topology, diskseq),
 			val);
