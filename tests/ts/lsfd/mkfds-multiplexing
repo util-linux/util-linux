@@ -41,14 +41,16 @@ for multiplexer in pselect6 select poll ppoll; do
 
     {
 	coproc MKFDS { "$TS_HELPER_MKFDS" -w "$multiplexer" multiplexing {10..22}; }
-	if read -r -u "${MKFDS[0]}" PID; then
-	    if ! cat /proc/"${PID}"/syscall > /dev/null 2>&1; then
-		kill -CONT "${PID}"
-		wait "${MKFDS_PID}"
-		ts_skip_subtest "cannot open /proc/${PID}/syscall"
-		continue
-	    fi
+    } > "$TS_OUTPUT" 2>&1
 
+    if read -r -u "${MKFDS[0]}" PID; then
+	if ! cat /proc/"${PID}"/syscall > /dev/null 2>&1; then
+	    kill -CONT "${PID}"
+	    wait "${MKFDS_PID}"
+	    ts_skip_subtest "cannot open /proc/${PID}/syscall"
+	    continue
+	fi
+	{
 	    "${TS_CMD_LSFD}" -n -o ASSOC,XMODE -p "${PID}" -Q '(FD >= 10) && (FD <= 22)'
 	    echo "[$multiplexer] ASSOC,XMODE: $?"
 
@@ -58,8 +60,8 @@ for multiplexer in pselect6 select poll ppoll; do
 	    fi
 
 	    echo DONE >&"${MKFDS[1]}"
-	fi
-    } > "$TS_OUTPUT" 2>&1
+	} >> "$TS_OUTPUT" 2>&1
+    fi
 
     wait "${MKFDS_PID}"
     ts_finalize_subtest
