@@ -177,6 +177,10 @@ option('static-programs', type : 'array',
 
 # feature selection and other configuration
 
+option('program-tests',
+       type: 'boolean', value : true,
+       description : 'build test programs')
+
 option('chfn-chsh-password',
        type : 'boolean', value : true,
        description : 'require the user to enter the password in chfn and chsh')
