@@ -1542,13 +1542,12 @@ Supported since util-linux v2.35.
 For example commands:
 
 ....
-mksquashfs /etc /tmp/etc.squashfs
-dd if=/dev/zero of=/tmp/etc.hash bs=1M count=10
-veritysetup format /tmp/etc.squashfs /tmp/etc.hash
-openssl smime -sign -in <hash> -nocerts -inkey private.key \
+mksquashfs /etc /tmp/etc.raw
+veritysetup format /tmp/etc.raw /tmp/etc.verity --root-hash-file=/tmp/etc.roothash
+openssl smime -sign -in /tmp/etc.roothash -nocerts -inkey private.key \
 -signer private.crt -noattr -binary -outform der -out /tmp/etc.roothash.p7s
-mount -o verity.hashdevice=/tmp/etc.hash,verity.roothash=<hash>,\
-verity.roothashsig=/tmp/etc.roothash.p7s /tmp/etc.squashfs /mnt
+mount -o verity.hashdevice=/tmp/etc.verity,verity.roothashfile=/tmp/etc.roothash,\
+verity.roothashsig=/tmp/etc.roothash.p7s /tmp/etc.raw /mnt
 ....
 
 create squashfs image from _/etc_ directory, verity hash device and mount verified filesystem image to _/mnt_. The kernel will verify that the root hash is signed by a key from the kernel keyring if roothashsig is used.
