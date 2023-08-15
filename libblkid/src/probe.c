@@ -688,6 +688,11 @@ const unsigned char *blkid_probe_get_buffer(blkid_probe pr, uint64_t off, uint64
 		return NULL;
 	}
 
+	if (len > 8388608 /* 8 Mib */ ) {
+		DBG(BUFFER, ul_debug("\t  too large read request (ignore)"));
+		return NULL;
+	}
+
 	if (len == 0
 	    || (!S_ISCHR(pr->mode) && (pr->size < off || pr->size < len))
 	    || (!S_ISCHR(pr->mode) && (pr->off + pr->size < real_off + len))) {
