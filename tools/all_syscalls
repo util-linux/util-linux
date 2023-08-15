@@ -1,17 +1,17 @@
 #!/bin/sh
 
+set -e
+
 OUTPUT=syscalls.h
 SYSCALL_INCLUDES="
 #include <sys/syscall.h>
 "
 
-# pipefail is part of modern POSIX
-# shellcheck disable=SC3040
-set -o pipefail
+trap 'rm $OUTPUT $OUTPUT.deps' ERR
 
 echo "$SYSCALL_INCLUDES" \
 	| "$@" -MD -MF "$OUTPUT.deps" -dM -E - \
 	| grep '^#define __NR_' \
 	| sed 's/#define __NR_\([^[:space:]]*\).*/UL_SYSCALL("\1", __NR_\1)/' \
 	| sort \
-	> "$OUTPUT" || { rm $OUTPUT $OUTPUT.deps; return 1; }
+	> "$OUTPUT"
