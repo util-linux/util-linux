@@ -112,7 +112,7 @@ struct loopdev_cxt {
 	char		device[128];	/* device path (e.g. /dev/loop<N>) */
 	char		*filename;	/* backing file for loopcxt_set_... */
 	int		fd;		/* open(/dev/looo<N>) */
-	int		mode;		/* fd mode O_{RDONLY,RDWR} */
+	mode_t		mode;		/* fd mode O_{RDONLY,RDWR} */
 	uint64_t	blocksize;	/* used by loopcxt_setup_device() */
 
 	int		flags;		/* LOOPDEV_FL_* flags */
@@ -132,8 +132,6 @@ struct loopdev_cxt {
  * loopdev_cxt.flags
  */
 enum {
-	LOOPDEV_FL_RDONLY	= (1 << 0),	/* open(/dev/loop) mode; default */
-	LOOPDEV_FL_RDWR		= (1 << 1),	/* necessary for loop setup only */
 	LOOPDEV_FL_OFFSET	= (1 << 4),
 	LOOPDEV_FL_NOSYSFS	= (1 << 5),
 	LOOPDEV_FL_NOIOCTL	= (1 << 6),
@@ -176,7 +174,7 @@ extern const char *loopcxt_get_device(struct loopdev_cxt *lc);
 extern struct loop_info64 *loopcxt_get_info(struct loopdev_cxt *lc);
 
 extern int loopcxt_get_fd(struct loopdev_cxt *lc);
-extern int loopcxt_set_fd(struct loopdev_cxt *lc, int fd, int mode);
+extern int loopcxt_set_fd(struct loopdev_cxt *lc, int fd, mode_t mode);
 
 extern int loopcxt_init_iterator(struct loopdev_cxt *lc, int flags);
 extern int loopcxt_deinit_iterator(struct loopdev_cxt *lc);
