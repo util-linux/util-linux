@@ -84,6 +84,11 @@
 # define ADDR_LIMIT_3GB          0x8000000
 #endif
 
+/* fallback for old glibc-headers 2.17 */
+#ifndef PER_LINUX_FDPIC
+# define PER_LINUX_FDPIC	(PER_LINUX | FDPIC_FUNCPTRS)
+#endif
+
 #define ALL_PERSONALITIES \
     X(PER_LINUX) \
     X(PER_LINUX_32BIT) \
