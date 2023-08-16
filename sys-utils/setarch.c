@@ -271,6 +271,12 @@ static struct arch_domain *init_arch_domains(void)
 		{PER_LINUX,	"arm64",	"aarch64"},
 		{PER_LINUX,	"aarch64",	"aarch64"},
 #endif
+#if defined(__riscv)
+		{PER_LINUX32,	"riscv32",	"riscv32"},
+		{PER_LINUX32,	"rv32",	"riscv32"},
+		{PER_LINUX,	"riscv64",	"riscv64"},
+		{PER_LINUX,	"rv64",	"riscv64"},
+#endif
 		/* place holder, will be filled up at runtime */
 		{-1,		NULL,		NULL},
 		{-1,		NULL,		NULL}
