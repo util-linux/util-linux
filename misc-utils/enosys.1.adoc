@@ -27,8 +27,14 @@ syscalls as would happen when running on old kernels.
 *-s*, *--syscall*::
 Syscall to block. Can be specified multiple times.
 
+*-i*, *--ioctl*::
+Ioctl to block. Can be specified multiple times.
+
 *-l*, *--list*::
 List syscalls known to *enosys*.
+
+*-m*, *--list-ioctl*::
+List ioctls known to *enosys*.
 
 include::man-common/help-version.adoc[]
 

@@ -8,7 +8,13 @@ _waitpid_module()
 		'-s'|'--syscall')
 			return 0
 			;;
+		'-i'|'--ioctl')
+			return 0
+			;;
 		'-l'|'--list')
+			return 0
+			;;
+		'-m'|'--list-ioctl')
 			return 0
 			;;
 		'-h'|'--help'|'-V'|'--version')
@@ -18,7 +24,9 @@ _waitpid_module()
 	case $cur in
 		-*)
 			OPTS="--syscall
+			        --ioctl
 			        --list
+			        --list-ioctl
 				--help
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
