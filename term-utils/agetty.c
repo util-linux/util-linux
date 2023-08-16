@@ -75,6 +75,11 @@
 # endif
 #endif
 
+#ifdef USE_SYSTEMD
+# include <systemd/sd-daemon.h>
+# include <systemd/sd-login.h>
+#endif
+
 #ifdef __linux__
 #  include <sys/kd.h>
 #  define USE_SYSLOG
@@ -2823,12 +2828,23 @@ static void output_special_char(struct issue *ie,
 	case 'U':
 	{
 		int users = 0;
-		struct utmpx *ut;
-		setutxent();
-		while ((ut = getutxent()))
-			if (ut->ut_type == USER_PROCESS)
-				users++;
-		endutxent();
+#ifdef USE_SYSTEMD
+		if (sd_booted() > 0) {
+			users = sd_get_sessions(NULL);
+			if (users < 0)
+				users = 0;
+		} else {
+#endif
+			users = 0;
+			struct utmpx *ut;
+			setutxent();
+			while ((ut = getutxent()))
+				if (ut->ut_type == USER_PROCESS)
+					users++;
+			endutxent();
+#ifdef USE_SYSTEMD
+		}
+#endif
 		if (c == 'U')
 			fprintf(ie->output, P_("%d user", "%d users", users), users);
 		else

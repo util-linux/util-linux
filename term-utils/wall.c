@@ -61,6 +61,11 @@
 #include <sys/types.h>
 #include <grp.h>
 
+#if defined(USE_SYSTEMD) && HAVE_DECL_SD_SESSION_GET_USERNAME == 1
+# include <systemd/sd-login.h>
+# include <systemd/sd-daemon.h>
+#endif
+
 #include "nls.h"
 #include "xalloc.h"
 #include "strutils.h"
@@ -246,6 +251,37 @@ int main(int argc, char **argv)
 
 	iov.iov_base = mbuf;
 	iov.iov_len = mbufsize;
+#if defined(USE_SYSTEMD) && HAVE_DECL_SD_SESSION_GET_USERNAME == 1
+	if (sd_booted() > 0) {
+		char **sessions_list;
+		int sessions;
+
+		sessions = sd_get_sessions(&sessions_list);
+		if (sessions < 0)
+			errx(EXIT_FAILURE, _("error getting sessions: %s"),
+	             		strerror(-sessions));
+
+		for (int i = 0; i < sessions; i++) {
+			char *name, *tty;
+			int r;
+
+			if ((r = sd_session_get_username(sessions_list[i], &name)) < 0)
+				errx(EXIT_FAILURE, _("get user name failed: %s"), strerror (-r));
+
+			if (!(group_buf && !is_gr_member(name, group_buf))) {
+				if (sd_session_get_tty(sessions_list[i], &tty) >= 0) {
+					if ((p = ttymsg(&iov, 1, tty, timeout)) != NULL)
+						warnx("%s", p);
+
+					free(tty);
+				}
+			}
+			free(name);
+			free(sessions_list[i]);
+		}
+		free(sessions_list);
+	} else {
+#endif
 	while((utmpptr = getutxent())) {
 		if (!utmpptr->ut_user[0])
 			continue;
@@ -269,6 +305,9 @@ int main(int argc, char **argv)
 			warnx("%s", p);
 	}
 	endutxent();
+#if defined(USE_SYSTEMD) && HAVE_DECL_SD_SESSION_GET_USERNAME == 1
+	}
+#endif
 	free(mbuf);
 	free_group_workspace(group_buf);
 	exit(EXIT_SUCCESS);
