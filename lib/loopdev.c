@@ -116,7 +116,7 @@ int loopcxt_set_device(struct loopdev_cxt *lc, const char *device)
 		DBG(CXT, ul_debugobj(lc, "closing old open fd"));
 	}
 	lc->fd = -1;
-	lc->mode = 0;
+	lc->mode = O_RDONLY;
 	lc->blocksize = 0;
 	lc->has_info = 0;
 	lc->info_failed = 0;
@@ -164,12 +164,6 @@ int loopcxt_has_device(struct loopdev_cxt *lc)
  *	* LOOPDEV_FL_* flags control loopcxt_* API behavior
  *
  *	* LO_FLAGS_* are kernel flags used for LOOP_{SET,GET}_STAT64 ioctls
- *
- * Note about LOOPDEV_FL_{RDONLY,RDWR} flags. These flags are used for open(2)
- * syscall to open loop device. By default is the device open read-only.
- *
- * The exception is loopcxt_setup_device(), where the device is open read-write
- * if LO_FLAGS_READ_ONLY flags is not set (see loopcxt_set_flags()).
  *
  * Returns: <0 on error, 0 on success.
  */
@@ -285,28 +279,50 @@ static struct path_cxt *loopcxt_get_sysfs(struct loopdev_cxt *lc)
 	return lc->sysfs;
 }
 
-/*
- * @lc: context
- *
- * Returns: file descriptor to the open loop device or <0 on error. The mode
- *          depends on LOOPDEV_FL_{RDWR,RDONLY} context flags. Default is
- *          read-only.
- */
-int loopcxt_get_fd(struct loopdev_cxt *lc)
+static int __loopcxt_get_fd(struct loopdev_cxt *lc, mode_t mode)
 {
+	int old = -1;
+
 	if (!lc || !*lc->device)
 		return -EINVAL;
 
+	/* It's okay to return a FD with read-write permissions if someone
+	 * asked for read-only, but you shouldn't do the opposite.
+	 *
+	 * (O_RDONLY is a widely usable default.)
+	 */
+	if (lc->fd >= 0 && mode == O_RDWR && lc->mode == O_RDONLY) {
+		DBG(CXT, ul_debugobj(lc, "closing already open device (mode mismatch)"));
+		old = lc->fd;
+		lc->fd = -1;
+	}
+
 	if (lc->fd < 0) {
-		lc->mode = lc->flags & LOOPDEV_FL_RDWR ? O_RDWR : O_RDONLY;
+		lc->mode = mode;
 		lc->fd = open(lc->device, lc->mode | O_CLOEXEC);
 		DBG(CXT, ul_debugobj(lc, "open %s [%s]: %m", lc->device,
-				lc->flags & LOOPDEV_FL_RDWR ? "rw" : "ro"));
+				mode == O_RDONLY ? "ro" :
+			        mode == O_RDWR ? "rw" : "??"));
+
+		if (lc->fd < 0 && old >= 0) {
+			/* restore original on error */
+			lc->fd = old;
+			old = -1;
+		}
 	}
+
+	if (old >= 0)
+		close(old);
 	return lc->fd;
 }
 
-int loopcxt_set_fd(struct loopdev_cxt *lc, int fd, int mode)
+/* default is read-only file descriptor, it's enough for all ioctls */
+int loopcxt_get_fd(struct loopdev_cxt *lc)
+{
+	return __loopcxt_get_fd(lc, O_RDONLY);
+}
+
+int loopcxt_set_fd(struct loopdev_cxt *lc, int fd, mode_t mode)
 {
 	if (!lc)
 		return -EINVAL;
@@ -1357,7 +1373,8 @@ static int loopcxt_check_size(struct loopdev_cxt *lc, int file_fd)
  */
 int loopcxt_setup_device(struct loopdev_cxt *lc)
 {
-	int file_fd, dev_fd, mode = O_RDWR, flags = O_CLOEXEC;
+	int file_fd, dev_fd;
+	mode_t flags = O_CLOEXEC, mode = O_RDWR;
 	int rc = -1, cnt = 0;
 	int errsv = 0;
 	int fallback = 0;
@@ -1387,25 +1404,22 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 	}
 	DBG(SETUP, ul_debugobj(lc, "backing file open: OK"));
 
-	if (lc->fd != -1 && lc->mode != mode) {
-		DBG(SETUP, ul_debugobj(lc, "closing already open device (mode mismatch)"));
-		close(lc->fd);
-		lc->fd = -1;
-		lc->mode = 0;
-	}
-
-	if (mode == O_RDONLY) {
-		lc->flags |= LOOPDEV_FL_RDONLY;			/* open() mode */
+	if (mode == O_RDONLY)
 		lc->config.info.lo_flags |= LO_FLAGS_READ_ONLY;	/* kernel loopdev mode */
-	} else {
-		lc->flags |= LOOPDEV_FL_RDWR;			/* open() mode */
+	else
 		lc->config.info.lo_flags &= ~LO_FLAGS_READ_ONLY;
-		lc->flags &= ~LOOPDEV_FL_RDONLY;
-	}
 
 	do {
 		errno = 0;
-		dev_fd = loopcxt_get_fd(lc);
+
+		/* For the ioctls, it's enough to use O_RDONLY, but udevd
+		 * monitor devices by inotify, and udevd needs IN_CLOSE_WRITE
+		 * event to trigger probing of the new device.
+		 *
+		 * The mode used for the device does not have to match the mode
+		 * used for the backing file.
+		 */
+		dev_fd = __loopcxt_get_fd(lc, O_RDWR);
 		if (dev_fd >= 0 || lc->control_ok == 0)
 			break;
 		if (errno != EACCES && errno != ENOENT)
