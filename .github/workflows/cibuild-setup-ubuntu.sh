@@ -40,7 +40,7 @@ PACKAGES_OPTIONAL=(
 if [[ "$QEMU_USER" != "1" ]]; then
 	MODULES_PACKAGE="linux-modules-extra-$(uname -r)"
 	# may not exist anymore
-	if apt-cache show "$MODULES_PACKAGE" >/dev/null 2>&1; then
+	if APT_CACHE_OUTPUT=$(apt-cache show "$MODULES_PACKAGE") && [[ -n "$APT_CACHE_OUTPUT" ]]; then
 		PACKAGES+=("$MODULES_PACKAGE")
 	fi
 fi
