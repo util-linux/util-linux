@@ -251,6 +251,7 @@ int main(int argc, char **argv)
 
 	iov.iov_base = mbuf;
 	iov.iov_len = mbufsize;
+
 #if defined(USE_SYSTEMD) && HAVE_DECL_SD_SESSION_GET_USERNAME == 1
 	if (sd_booted() > 0) {
 		char **sessions_list;
@@ -259,7 +260,7 @@ int main(int argc, char **argv)
 		sessions = sd_get_sessions(&sessions_list);
 		if (sessions < 0)
 			errx(EXIT_FAILURE, _("error getting sessions: %s"),
-	             		strerror(-sessions));
+				strerror(-sessions));
 
 		for (int i = 0; i < sessions; i++) {
 			char *name, *tty;
@@ -280,34 +281,34 @@ int main(int argc, char **argv)
 			free(sessions_list[i]);
 		}
 		free(sessions_list);
-	} else {
+	} else
 #endif
-	while((utmpptr = getutxent())) {
-		if (!utmpptr->ut_user[0])
-			continue;
+	{
+		while ((utmpptr = getutxent())) {
+			if (!utmpptr->ut_user[0])
+				continue;
 #ifdef USER_PROCESS
-		if (utmpptr->ut_type != USER_PROCESS)
-			continue;
+			if (utmpptr->ut_type != USER_PROCESS)
+				continue;
 #endif
-		/* Joey Hess reports that use-sessreg in /etc/X11/wdm/ produces
-		 * ut_line entries like :0, and a write to /dev/:0 fails.
-		 *
-		 * It also seems that some login manager may produce empty ut_line.
-		 */
-		if (!*utmpptr->ut_line || *utmpptr->ut_line == ':')
-			continue;
+			/* Joey Hess reports that use-sessreg in /etc/X11/wdm/ produces
+			 * ut_line entries like :0, and a write to /dev/:0 fails.
+			 *
+			 * It also seems that some login manager may produce empty ut_line.
+			 */
+			if (!*utmpptr->ut_line || *utmpptr->ut_line == ':')
+				continue;
 
-		if (group_buf && !is_gr_member(utmpptr->ut_user, group_buf))
-			continue;
+			if (group_buf && !is_gr_member(utmpptr->ut_user, group_buf))
+				continue;
 
-		mem2strcpy(line, utmpptr->ut_line, sizeof(utmpptr->ut_line), sizeof(line));
-		if ((p = ttymsg(&iov, 1, line, timeout)) != NULL)
-			warnx("%s", p);
+			mem2strcpy(line, utmpptr->ut_line, sizeof(utmpptr->ut_line), sizeof(line));
+			if ((p = ttymsg(&iov, 1, line, timeout)) != NULL)
+				warnx("%s", p);
+		}
+		endutxent();
 	}
-	endutxent();
-#if defined(USE_SYSTEMD) && HAVE_DECL_SD_SESSION_GET_USERNAME == 1
-	}
-#endif
+
 	free(mbuf);
 	free_group_workspace(group_buf);
 	exit(EXIT_SUCCESS);

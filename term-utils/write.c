@@ -266,45 +266,45 @@ static void search_utmp(struct write_control *ctl)
 		for (int i = 0; i < sessions; i++)
 			free(sessions_list[i]);
 		free(sessions_list);
-	} else {
+	} else
 #endif
-	char path[sizeof(u->ut_line) + 6];
+	{
+		char path[sizeof(u->ut_line) + 6];
 
-	utmpxname(_PATH_UTMP);
-	setutxent();
+		utmpxname(_PATH_UTMP);
+		setutxent();
 
-	while ((u = getutxent())) {
-		if (strncmp(ctl->dst_login, u->ut_user, sizeof(u->ut_user)) != 0)
-			continue;
-		num_ttys++;
-		snprintf(path, sizeof(path), "/dev/%s", u->ut_line);
-		if (check_tty(path, &tty_writeable, &tty_atime, 0))
-			/* bad term? skip */
-			continue;
-		if (ctl->src_uid && !tty_writeable)
-			/* skip ttys with msgs off */
-			continue;
-		if (memcmp(u->ut_line, ctl->src_tty_name, strlen(ctl->src_tty_name) + 1) == 0) {
-			user_is_me = 1;
-			/* don't write to yourself */
-			continue;
+		while ((u = getutxent())) {
+			if (strncmp(ctl->dst_login, u->ut_user, sizeof(u->ut_user)) != 0)
+				continue;
+			num_ttys++;
+			snprintf(path, sizeof(path), "/dev/%s", u->ut_line);
+			if (check_tty(path, &tty_writeable, &tty_atime, 0))
+				/* bad term? skip */
+				continue;
+			if (ctl->src_uid && !tty_writeable)
+				/* skip ttys with msgs off */
+				continue;
+			if (memcmp(u->ut_line, ctl->src_tty_name, strlen(ctl->src_tty_name) + 1) == 0) {
+				user_is_me = 1;
+				/* don't write to yourself */
+				continue;
+			}
+			if (u->ut_type != USER_PROCESS)
+				/* it's not a valid entry */
+				continue;
+			valid_ttys++;
+			if (best_atime < tty_atime) {
+				best_atime = tty_atime;
+				free(ctl->dst_tty_path);
+				ctl->dst_tty_path = xstrdup(path);
+				ctl->dst_tty_name = ctl->dst_tty_path + 5;
+			}
 		}
-		if (u->ut_type != USER_PROCESS)
-			/* it's not a valid entry */
-			continue;
-		valid_ttys++;
-		if (best_atime < tty_atime) {
-			best_atime = tty_atime;
-			free(ctl->dst_tty_path);
-			ctl->dst_tty_path = xstrdup(path);
-			ctl->dst_tty_name = ctl->dst_tty_path + 5;
-		}
+
+		endutxent();
 	}
 
-	endutxent();
-#if defined(USE_SYSTEMD) && HAVE_DECL_SD_SESSION_GET_USERNAME == 1
-	}
-#endif
 	if (num_ttys == 0)
 		errx(EXIT_FAILURE, _("%s is not logged in"), ctl->dst_login);
 	if (valid_ttys == 0) {
