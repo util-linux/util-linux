@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.39-rc3\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-06-27 14:09+0200\n"
+"POT-Creation-Date: 2023-08-17 10:46+0200\n"
 "PO-Revision-Date: 2023-04-20 11:25+0900\n"
 "Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
 "Language-Team: Korean <translation-team-ko@googlegroups.com>\n"
@@ -221,7 +221,7 @@ msgstr " %-25s 512 바이트 섹터 단위로 크기 가져옴\n"
 #: disk-utils/mkfs.bfs.c:191 disk-utils/mkfs.c:110 disk-utils/mkfs.minix.c:827
 #: disk-utils/swaplabel.c:180 misc-utils/wipefs.c:764
 #: sys-utils/blkdiscard.c:237 sys-utils/blkpr.c:303 sys-utils/blkzone.c:488
-#: sys-utils/tunelp.c:241 sys-utils/zramctl.c:716 sys-utils/zramctl.c:742
+#: sys-utils/tunelp.c:241 sys-utils/zramctl.c:717 sys-utils/zramctl.c:743
 msgid "no device specified"
 msgstr "지정한 장치가 없습니다"
 
@@ -1252,7 +1252,7 @@ msgstr "출력 테이블 할당 실패"
 #: sys-utils/lsipc.c:486 sys-utils/lsipc.c:567 sys-utils/lsipc.c:669
 #: sys-utils/lsipc.c:761 sys-utils/lsipc.c:925 sys-utils/prlimit.c:240
 #: sys-utils/rfkill.c:389 sys-utils/swapon.c:179 sys-utils/wdctl.c:299
-#: sys-utils/zramctl.c:414 text-utils/column.c:559 text-utils/column.c:584
+#: sys-utils/zramctl.c:414 text-utils/column.c:555 text-utils/column.c:579
 msgid "failed to allocate output line"
 msgstr "출력 행 할당 실패"
 
@@ -1277,7 +1277,7 @@ msgstr "출력 행 할당 실패"
 #: sys-utils/lscpu.c:830 sys-utils/lscpu.c:840 sys-utils/lsipc.c:526
 #: sys-utils/lsipc.c:651 sys-utils/prlimit.c:275 sys-utils/rfkill.c:417
 #: sys-utils/swapon.c:227 sys-utils/wdctl.c:327 sys-utils/zramctl.c:481
-#: text-utils/column.c:568
+#: text-utils/column.c:562
 msgid "failed to add output data"
 msgstr "출력 데이터 추가 실패"
 
@@ -7607,299 +7607,305 @@ msgstr "hush 로그인 상태: 원본 ID 복원 실패"
 msgid "operation failed: %m"
 msgstr "처리 실패: %m"
 
-#: libmount/src/context_mount.c:1412
+#: libmount/src/context_mount.c:1417
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "경고: 전달 플래그 적용 실패"
 
-#: libmount/src/context_mount.c:1422
+#: libmount/src/context_mount.c:1427
 #, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "경고: 원본 쓰기 방지, 읽기 전용으로 마운트함"
 
-#: libmount/src/context_mount.c:1436
+#: libmount/src/context_mount.c:1441
 #, c-format
 msgid "operation permitted for root only"
 msgstr "루트 사용자만 처리를 허용합니다"
 
-#: libmount/src/context_mount.c:1440
+#: libmount/src/context_mount.c:1445
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s을(를) 이미 마운트했습니다"
 
-#: libmount/src/context_mount.c:1446
+#: libmount/src/context_mount.c:1451
 #, c-format
 msgid "can't find in %s"
 msgstr "%s에서 찾을 수 없음"
 
-#: libmount/src/context_mount.c:1449
+#: libmount/src/context_mount.c:1454
 #, c-format
 msgid "can't find mount point in %s"
 msgstr "%s에 마운트 지점이 없습니다"
 
-#: libmount/src/context_mount.c:1452
+#: libmount/src/context_mount.c:1457
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "%2$s에 %1$s 마운트 원본이 없습니다"
 
-#: libmount/src/context_mount.c:1457
+#: libmount/src/context_mount.c:1462
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr "%s에서 더 많은 파일 시스템을 찾았습니다. -t <형식> 또는 wipefs(8)를 사용하십시오"
 
-#: libmount/src/context_mount.c:1462
+#: libmount/src/context_mount.c:1467
 #, c-format
 msgid "failed to determine filesystem type"
 msgstr "파일 시스템 형식 확인 실패"
 
-#: libmount/src/context_mount.c:1463
+#: libmount/src/context_mount.c:1468
 #, c-format
 msgid "no valid filesystem type specified"
 msgstr "적절한 파일 시스템 형식을 지정하지 않았습니다"
 
-#: libmount/src/context_mount.c:1470
+#: libmount/src/context_mount.c:1475
 #, c-format
 msgid "can't find %s"
 msgstr "%s을(를) 찾을 수 없음"
 
-#: libmount/src/context_mount.c:1472
+#: libmount/src/context_mount.c:1477
 #, c-format
 msgid "no mount source specified"
 msgstr "지정한 마운트 원본이 없습니다"
 
-#: libmount/src/context_mount.c:1483
+#: libmount/src/context_mount.c:1488
 #, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr "'%s' 마운트 옵션 해석 실패: %m"
 
-#: libmount/src/context_mount.c:1484
+#: libmount/src/context_mount.c:1489
 #, c-format
 msgid "failed to parse mount options '%s'"
 msgstr "'%s' 마운트 옵션 해석 실패"
 
-#: libmount/src/context_mount.c:1487
+#: libmount/src/context_mount.c:1492
 #, c-format
 msgid "failed to parse mount options: %m"
 msgstr "마운트 옵션 해석 실패: %m"
 
-#: libmount/src/context_mount.c:1488
+#: libmount/src/context_mount.c:1493
 #, c-format
 msgid "failed to parse mount options"
 msgstr "마운트 옵션 해석 실패"
 
-#: libmount/src/context_mount.c:1493
+#: libmount/src/context_mount.c:1498
 #, c-format
 msgid "failed to setup loop device for %s"
 msgstr "%s 루프 장치 설정 실패"
 
-#: libmount/src/context_mount.c:1497
+#: libmount/src/context_mount.c:1502
 #, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "%s에 겹치는 루프 장치가 있습니다"
 
-#: libmount/src/context_mount.c:1501 libmount/src/context_umount.c:1263
+#: libmount/src/context_mount.c:1506 libmount/src/context_umount.c:1263
 #, c-format
 msgid "locking failed"
 msgstr "잠금 실패"
 
-#: libmount/src/context_mount.c:1505 libmount/src/context_umount.c:1269
+#: libmount/src/context_mount.c:1510 libmount/src/context_umount.c:1269
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, c-format
 msgid "failed to switch namespace"
 msgstr "이름 영역 전환 실패"
 
-#: libmount/src/context_mount.c:1509
+#: libmount/src/context_mount.c:1514
 #, c-format
 msgid "filesystem already mounted"
 msgstr "파일 시스템을 이미 마운트했습니다"
 
-#: libmount/src/context_mount.c:1512
+#: libmount/src/context_mount.c:1517
 #, c-format
 msgid "mount failed: %m"
 msgstr "마운트 실패: %m"
 
-#: libmount/src/context_mount.c:1522
+#: libmount/src/context_mount.c:1527
+#, fuzzy, c-format
+#| msgid "filesystem was mounted, but failed to attach idmapping"
+msgid "filesystem was mounted, but failed to apply flags"
+msgstr "파일 시스템을 마운트했지만, ID 대응 연결에 실패했습니다"
+
+#: libmount/src/context_mount.c:1533
 #, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "파일 시스템을 마운트했지만, 사용자 영역 마운트 배치 업데이트에 실패했습니다"
 
-#: libmount/src/context_mount.c:1528
+#: libmount/src/context_mount.c:1539
 #, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "파일 시스템을 마운트했지만, 이름 영역 복귀 전환에 실패했습니다"
 
-#: libmount/src/context_mount.c:1534
+#: libmount/src/context_mount.c:1545
 #, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "파일 시스템을 마운트했지만, 소유자 전환에 실패했습니다: %m"
 
-#: libmount/src/context_mount.c:1540
+#: libmount/src/context_mount.c:1551
 #, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "파일 시스템을 마운트했지만, 권한 변경에 실패했습니다: %m"
 
-#: libmount/src/context_mount.c:1546
+#: libmount/src/context_mount.c:1557
 #, c-format
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "파일 시스템을 마운트했지만, ID 대응 연결에 실패했습니다"
 
-#: libmount/src/context_mount.c:1552
+#: libmount/src/context_mount.c:1563
 #, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "파일 시스템을 마운트했지만, 이후 처리 동작에 실패했습니다: %m"
 
-#: libmount/src/context_mount.c:1570 libmount/src/context_mount.c:1615
-#, c-format
-msgid "mount point is not a directory"
-msgstr "마운트 지점이 디렉터리가 아닙니다"
-
-#: libmount/src/context_mount.c:1572 login-utils/newgrp.c:228
+#: libmount/src/context_mount.c:1584 login-utils/newgrp.c:228
 #, c-format
 msgid "permission denied"
 msgstr "권한 거부"
 
-#: libmount/src/context_mount.c:1574
+#: libmount/src/context_mount.c:1586 libmount/src/context_mount.c:1629
+#, c-format
+msgid "mount point is not a directory"
+msgstr "마운트 지점이 디렉터리가 아닙니다"
+
+#: libmount/src/context_mount.c:1588
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "마운트는 최고 관리자만 가능합니다"
 
-#: libmount/src/context_mount.c:1581
+#: libmount/src/context_mount.c:1595
 #, c-format
 msgid "mount point is busy"
 msgstr "마운트 지점이 사용중입니다"
 
-#: libmount/src/context_mount.c:1588
+#: libmount/src/context_mount.c:1602
 #, c-format
 msgid "%s already mounted on %s"
 msgstr "%s을(를) 이미 %s에 마운트 했습니다"
 
-#: libmount/src/context_mount.c:1592
+#: libmount/src/context_mount.c:1606
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s을(를) 이미 마운트했거나 마운트 지점이 사용중입니다"
 
-#: libmount/src/context_mount.c:1597
+#: libmount/src/context_mount.c:1611
 #, c-format
 msgid "mount point does not exist"
 msgstr "마운트 지점 없음"
 
-#: libmount/src/context_mount.c:1600
+#: libmount/src/context_mount.c:1614
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "마운트 지점이 그 어떤 곳도 가리키지 않는 심볼릭 링크입니다"
 
-#: libmount/src/context_mount.c:1605
+#: libmount/src/context_mount.c:1619
 #, c-format
 msgid "special device %s does not exist"
 msgstr "%s 특수 장치 없음"
 
-#: libmount/src/context_mount.c:1608 libmount/src/context_mount.c:1624
-#: libmount/src/context_mount.c:1708 libmount/src/context_mount.c:1731
+#: libmount/src/context_mount.c:1622 libmount/src/context_mount.c:1638
+#: libmount/src/context_mount.c:1722 libmount/src/context_mount.c:1745
 #, c-format
 msgid "mount(2) system call failed: %m"
 msgstr "mount(2) 시스템 콜 실패: %m"
 
-#: libmount/src/context_mount.c:1620
+#: libmount/src/context_mount.c:1634
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "%s 특수 장치가 없습니다 (경로 접두사가 디렉터리가 아님)"
 
-#: libmount/src/context_mount.c:1632
+#: libmount/src/context_mount.c:1646
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr "마운트 지점을 마운트하지 않았거나 옵션이 잘못되었습니다"
 
-#: libmount/src/context_mount.c:1634
+#: libmount/src/context_mount.c:1648
 #, c-format
 msgid "not mount point or bad option"
 msgstr "마운트 지점이 아니거나 옵션이 잘못되었습니다"
 
-#: libmount/src/context_mount.c:1637
+#: libmount/src/context_mount.c:1651
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr "잘못된 옵션. 공유 마운트의 마운트 위치 이동을 지원하지 않음"
 
-#: libmount/src/context_mount.c:1641
+#: libmount/src/context_mount.c:1655
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr "잘못된 옵션. 여러 파일 시스템(예: nfs, cifs)에 대해 /sbin/mount.<type> 보조 프로그램이 필요합니다."
 
-#: libmount/src/context_mount.c:1645
+#: libmount/src/context_mount.c:1659
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr "잘못된 파일 시스템 형식, 불량 옵션, %s에 불량 수퍼블록, 코드 페이지 또는 보조 프로그램 누락, 또는 기타 오류"
 
-#: libmount/src/context_mount.c:1652
+#: libmount/src/context_mount.c:1666
 #, c-format
 msgid "mount table full"
 msgstr "마운트 배치가 가득찼습니다"
 
-#: libmount/src/context_mount.c:1657
+#: libmount/src/context_mount.c:1671
 #, c-format
 msgid "can't read superblock on %s"
 msgstr "%s의 수퍼블록을 읽을 수 없습니다"
 
-#: libmount/src/context_mount.c:1664
+#: libmount/src/context_mount.c:1678
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "알 수 없는 '%s' 파일 시스템 형식"
 
-#: libmount/src/context_mount.c:1667
+#: libmount/src/context_mount.c:1681
 #, c-format
 msgid "unknown filesystem type"
 msgstr "알 수 없는 파일 시스템 형식"
 
-#: libmount/src/context_mount.c:1676
+#: libmount/src/context_mount.c:1690
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s은(는) 블록 장치가 아닙니다. stat(2)에 실패했습니까?"
 
-#: libmount/src/context_mount.c:1679
+#: libmount/src/context_mount.c:1693
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr "커널에서 %s 장치를 블록 장치로 인식하지 않습니다. 아마도 \"modprobe driver\" 명령 실행이 필요한 것 같습니다"
 
-#: libmount/src/context_mount.c:1682
+#: libmount/src/context_mount.c:1696
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s은(는) 블록 장치가 아닙니다. \"-o loop\"를 입력하십시오"
 
-#: libmount/src/context_mount.c:1684
+#: libmount/src/context_mount.c:1698
 #, c-format
 msgid "%s is not a block device"
 msgstr "%s은(는) 블록 장치가 아닙니다"
 
-#: libmount/src/context_mount.c:1691
+#: libmount/src/context_mount.c:1705
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s은(는) 적절한 블록 장치가 아닙니다"
 
-#: libmount/src/context_mount.c:1699
+#: libmount/src/context_mount.c:1713
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "%s을(를) 읽기 전용으로 마운트할 수 없습니다"
 
-#: libmount/src/context_mount.c:1701
+#: libmount/src/context_mount.c:1715
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s은(는) 쓰기 방지 상태이나, 분명한 읽기-쓰기 모드를 요청했습니다"
 
-#: libmount/src/context_mount.c:1703
+#: libmount/src/context_mount.c:1717
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "%s을(를) 읽기-쓰기로 재마운트할 수 없습니다. 쓰기 방지 상태"
 
-#: libmount/src/context_mount.c:1705
+#: libmount/src/context_mount.c:1719
 #, c-format
 msgid "bind %s failed"
 msgstr "%s 바인딩 실패"
 
-#: libmount/src/context_mount.c:1716
+#: libmount/src/context_mount.c:1730
 #, c-format
 msgid "no medium found on %s"
 msgstr "%s에 미디어가 없습니다"
 
-#: libmount/src/context_mount.c:1723
+#: libmount/src/context_mount.c:1737
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "마운트할 수 없음. %s의 파일 시스템이 깨진 것 같습니다"
@@ -12809,8 +12815,8 @@ msgid "timeout [%d sec]\n"
 msgstr "시간 초과 [%d초]\n"
 
 #: misc-utils/uuidd.c:483 sys-utils/irqtop.c:228 sys-utils/irqtop.c:231
-#: sys-utils/irqtop.c:248 term-utils/setterm.c:920 text-utils/column.c:616
-#: text-utils/column.c:646
+#: sys-utils/irqtop.c:248 term-utils/setterm.c:920 text-utils/column.c:611
+#: text-utils/column.c:641
 msgid "read failed"
 msgstr "읽기 실패"
 
@@ -16119,7 +16125,7 @@ msgstr " -p, --mode <모드>        자원 권한 모드 (기본값: 0644)\n"
 msgid "<size>"
 msgstr "<크기>"
 
-#: sys-utils/ipcmk.c:114 sys-utils/losetup.c:754 sys-utils/zramctl.c:653
+#: sys-utils/ipcmk.c:114 sys-utils/losetup.c:754 sys-utils/zramctl.c:654
 msgid "failed to parse size"
 msgstr "크기 해석 실패"
 
@@ -18845,7 +18851,7 @@ msgstr "%s은(는) 마운트 지점이 아닙니다\n"
 msgid "%s is a mountpoint\n"
 msgstr "%s은(는) 마운트 지점입니다\n"
 
-#: sys-utils/nsenter.c:78 sys-utils/setarch.c:139 sys-utils/unshare.c:643
+#: sys-utils/nsenter.c:78 sys-utils/setarch.c:144 sys-utils/unshare.c:643
 #, c-format
 msgid " %s [options] [<program> [<argument>...]]\n"
 msgstr " %s [<옵션>] [<프로그램> [<인자>...]]\n"
@@ -19733,115 +19739,115 @@ msgstr "RTC 알림 인터럽트 비활성 실패"
 msgid "Switching on %s.\n"
 msgstr "%s(으)로 전환하는 중.\n"
 
-#: sys-utils/setarch.c:137
+#: sys-utils/setarch.c:142
 #, c-format
 msgid " %s [<arch>] [options] [<program> [<argument>...]]\n"
 msgstr " %s [<아키텍처>] [<옵션>] [<프로그램> [<인자>...]]\n"
 
-#: sys-utils/setarch.c:142
+#: sys-utils/setarch.c:147
 msgid "Change the reported architecture and set personality flags.\n"
 msgstr "보고한 아키텍처를 바꾸고 개별 성격 플래그를 설정합니다.\n"
 
-#: sys-utils/setarch.c:145
+#: sys-utils/setarch.c:150
 msgid " -B, --32bit              turns on ADDR_LIMIT_32BIT\n"
 msgstr " -B, --32bit              ADDR_LIMIT_32BIT 활성\n"
 
-#: sys-utils/setarch.c:146
+#: sys-utils/setarch.c:151
 msgid " -F, --fdpic-funcptrs     makes function pointers point to descriptors\n"
 msgstr " -F, --fdpic-funcptrs     함수 포인터가 디스크립터를 가리키도록 함\n"
 
-#: sys-utils/setarch.c:147
+#: sys-utils/setarch.c:152
 msgid " -I, --short-inode        turns on SHORT_INODE\n"
 msgstr " -I, --short-inode        SHORT_INODE 활성\n"
 
-#: sys-utils/setarch.c:148
+#: sys-utils/setarch.c:153
 msgid " -L, --addr-compat-layout changes the way virtual memory is allocated\n"
 msgstr " -L, --addr-compat-layout 가상 메모리 할당 시 방식 변경\n"
 
-#: sys-utils/setarch.c:149
+#: sys-utils/setarch.c:154
 msgid " -R, --addr-no-randomize  disables randomization of the virtual address space\n"
 msgstr " -R, --addr-no-randomize  가상 주소 영역 임의화 비활성\n"
 
-#: sys-utils/setarch.c:150
+#: sys-utils/setarch.c:155
 msgid " -S, --whole-seconds      turns on WHOLE_SECONDS\n"
 msgstr " -S, --whole-seconds      WHOLE_SECONDS 활성\n"
 
-#: sys-utils/setarch.c:151
+#: sys-utils/setarch.c:156
 msgid " -T, --sticky-timeouts    turns on STICKY_TIMEOUTS\n"
 msgstr " -T, --sticky-timeouts    STICKY_TIMEOUTS 활성\n"
 
-#: sys-utils/setarch.c:152
+#: sys-utils/setarch.c:157
 msgid " -X, --read-implies-exec  turns on READ_IMPLIES_EXEC\n"
 msgstr " -X, --read-implies-exec  READ_IMPLIES_EXEC 활성\n"
 
-#: sys-utils/setarch.c:153
+#: sys-utils/setarch.c:158
 msgid " -Z, --mmap-page-zero     turns on MMAP_PAGE_ZERO\n"
 msgstr " -Z, --mmap-page-zero     MMAP_PAGE_ZERO 활성\n"
 
-#: sys-utils/setarch.c:154
+#: sys-utils/setarch.c:159
 msgid " -3, --3gb                limits the used address space to a maximum of 3 GB\n"
 msgstr " -3, --3gb                주소 영역을 3GB 까지만 사용하도록 제한\n"
 
-#: sys-utils/setarch.c:155
+#: sys-utils/setarch.c:160
 msgid "     --4gb                ignored (for backward compatibility only)\n"
 msgstr "     --4gb                무시(하위 호환성 전용)\n"
 
-#: sys-utils/setarch.c:156
+#: sys-utils/setarch.c:161
 msgid "     --uname-2.6          turns on UNAME26\n"
 msgstr "     --uname-2.6          UNAME26 활성\n"
 
-#: sys-utils/setarch.c:157
+#: sys-utils/setarch.c:162
 msgid " -v, --verbose            say what options are being switched on\n"
 msgstr " -v, --verbose            어떤 옵션을 바꾸는지 알려줍니다\n"
 
-#: sys-utils/setarch.c:160
+#: sys-utils/setarch.c:165
 msgid "     --list               list settable architectures, and exit\n"
 msgstr "     --list               설정 가능한 아키텍처를 표시하고 나갑니다\n"
 
-#: sys-utils/setarch.c:161
+#: sys-utils/setarch.c:166
 msgid "     --show[=personality] show current or specific personality and exit\n"
 msgstr "     --show[=<개인화>] 현재 또는 지정 개인화 값에 따라 보여주고 나갑니다\n"
 
-#: sys-utils/setarch.c:341
+#: sys-utils/setarch.c:346
 #, c-format
 msgid "Kernel cannot set architecture to %s"
 msgstr "커널에서 %s 아키텍처로 지정할 수 없습니다"
 
-#: sys-utils/setarch.c:406
+#: sys-utils/setarch.c:411
 msgid "Can not get current kernel personality"
 msgstr "현재 커널 자체 정볼르 가져올 수 없습니다"
 
-#: sys-utils/setarch.c:459
+#: sys-utils/setarch.c:464
 msgid "Not enough arguments"
 msgstr "불충분한 인자"
 
-#: sys-utils/setarch.c:527
+#: sys-utils/setarch.c:532
 msgid "unrecognized option '--list'"
 msgstr "인식할 수 없는 옵션 '--list'"
 
-#: sys-utils/setarch.c:536
+#: sys-utils/setarch.c:541
 msgid "could not parse personality"
 msgstr "자체 속성을 해석할 수 없습니다"
 
-#: sys-utils/setarch.c:540
+#: sys-utils/setarch.c:545
 msgid "unrecognized option '--show'"
 msgstr "인식할 수 없는 옵션 '--show'"
 
-#: sys-utils/setarch.c:554
+#: sys-utils/setarch.c:559
 msgid "no architecture argument or personality flags specified"
 msgstr "지정한 아키텍처 인자 또는 특성 플래그가 없습니다"
 
-#: sys-utils/setarch.c:566
+#: sys-utils/setarch.c:571
 #, c-format
 msgid "%s: Unrecognized architecture"
 msgstr "%s: 인식할 수 없는 아키텍처"
 
-#: sys-utils/setarch.c:584
+#: sys-utils/setarch.c:589
 #, c-format
 msgid "failed to set personality to %s"
 msgstr "%s(으)로의 특성 설정 실패"
 
-#: sys-utils/setarch.c:596
+#: sys-utils/setarch.c:601
 #, c-format
 msgid "Execute command `%s'.\n"
 msgstr "`%s' 명령을 실행합니다.\n"
@@ -21457,42 +21463,46 @@ msgstr " <ALG> 에 알고리즙을 지정합니다. 지원 알고리즘:\n"
 msgid "   lzo, lz4, lz4hc, deflate, 842 and zstd\n"
 msgstr "   lzo, lz4, lz4hc, deflate, 842, zstd\n"
 
-#: sys-utils/zramctl.c:657
+#: sys-utils/zramctl.c:569
+msgid "   (List may be inaccurate, consult man page.)\n"
+msgstr ""
+
+#: sys-utils/zramctl.c:658
 msgid "failed to parse streams"
 msgstr "스트림 해석 실패"
 
-#: sys-utils/zramctl.c:679
+#: sys-utils/zramctl.c:680
 msgid "option --find is mutually exclusive with <device>"
 msgstr "--find 옵션은 <장치> 와 병용할 수 없습니다"
 
-#: sys-utils/zramctl.c:685
+#: sys-utils/zramctl.c:686
 msgid "only one <device> at a time is allowed"
 msgstr "한번에 <장치> 하나만 허용합니다"
 
-#: sys-utils/zramctl.c:688
+#: sys-utils/zramctl.c:689
 msgid "options --algorithm and --streams must be combined with --size"
 msgstr "--algorithm 옵션과 --streams 옵션에는 --size 옵션을 반드시 활용해야합니다"
 
-#: sys-utils/zramctl.c:721 sys-utils/zramctl.c:750
+#: sys-utils/zramctl.c:722 sys-utils/zramctl.c:751
 #, c-format
 msgid "%s: failed to reset"
 msgstr "%s: 초기화 실패"
 
-#: sys-utils/zramctl.c:732 sys-utils/zramctl.c:740
+#: sys-utils/zramctl.c:733 sys-utils/zramctl.c:741
 msgid "no free zram device found"
 msgstr "여분의 zram 장치가 없습니다"
 
-#: sys-utils/zramctl.c:754
+#: sys-utils/zramctl.c:755
 #, c-format
 msgid "%s: failed to set number of streams"
 msgstr "%s: 스트림 수 지정 실패"
 
-#: sys-utils/zramctl.c:758
+#: sys-utils/zramctl.c:759
 #, c-format
 msgid "%s: failed to set algorithm"
 msgstr "%s: 알고리즘 지정 실패"
 
-#: sys-utils/zramctl.c:761
+#: sys-utils/zramctl.c:762
 #, c-format
 msgid "%s: failed to set disksize (%ju bytes)"
 msgstr "%s: 디스크 용량 지정 실패 (%ju 바이트)"
@@ -22590,7 +22600,7 @@ msgstr "-- 이 행은 이미 소거했습니다"
 msgid "bad -l argument"
 msgstr "잘못된 -l 인자"
 
-#: text-utils/colcrt.c:82 text-utils/column.c:748
+#: text-utils/colcrt.c:82 text-utils/column.c:743
 #, c-format
 msgid " %s [options] [<file>...]\n"
 msgstr " %s [<옵션>] [<파일>...]\n"
@@ -22672,142 +22682,148 @@ msgstr "--table-noextreme 목록 해석 실패"
 msgid "failed to parse --table-wrap list"
 msgstr "--table-wrap 목록 해석 실패"
 
-#: text-utils/column.c:549
+#: text-utils/column.c:527
+#, fuzzy
+#| msgid "failed to allocate output line"
+msgid "failed to allocate input line"
+msgstr "출력 행 할당 실패"
+
+#: text-utils/column.c:545
 #, c-format
 msgid "line %zu: for JSON the name of the column %zu is required"
 msgstr "%zu행: JSON용 %zu 내용 항목 이름이 필요합니다"
 
-#: text-utils/column.c:566
+#: text-utils/column.c:560
 msgid "failed to allocate output data"
 msgstr "출력 데이터 할당 실패"
 
-#: text-utils/column.c:751
+#: text-utils/column.c:746
 msgid "Columnate lists.\n"
 msgstr "목록을 내용 항목으로 정리합니다.\n"
 
-#: text-utils/column.c:754
+#: text-utils/column.c:749
 msgid " -t, --table                      create a table\n"
 msgstr " -t, --table                      표를 만듭니다\n"
 
-#: text-utils/column.c:755
+#: text-utils/column.c:750
 msgid " -n, --table-name <name>          table name for JSON output\n"
 msgstr ""
 "-n, --table-name <이름>           JSON 출력의 테이블 이름을 지정합니다\n"
 "                                    머릿글은 출력하지 않습니다\n"
 
-#: text-utils/column.c:756
+#: text-utils/column.c:751
 msgid " -O, --table-order <columns>      specify order of output columns\n"
 msgstr " -O, --table-order <열>           출력 내용 항목의 순서를 지정합니다\n"
 
-#: text-utils/column.c:757
+#: text-utils/column.c:752
 msgid " -C, --table-column <properties>  define column\n"
 msgstr " -C, --table-column <속성>        열 내용을 정의합니다\n"
 
-#: text-utils/column.c:758
+#: text-utils/column.c:753
 msgid " -N, --table-columns <names>      comma separated columns names\n"
 msgstr " -N, --table-columns <다수이름>   쉼표로 구분한 내용 항목 이름\n"
 
-#: text-utils/column.c:759
+#: text-utils/column.c:754
 msgid " -l, --table-columns-limit <num>  maximal number of input columns\n"
 msgstr " -l, --table-columns-limit <숫자> 최대 입력 내용 항목 수\n"
 
-#: text-utils/column.c:760
+#: text-utils/column.c:755
 msgid " -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"
 msgstr " -E, --table-noextreme <열>       열 너비까지 도달하는 열의 긴 텍스트 문자수는 세지 않음\n"
 
-#: text-utils/column.c:761
+#: text-utils/column.c:756
 msgid " -d, --table-noheadings           don't print header\n"
 msgstr " -d, --table-noheadings           머릿글은 출력하지 않습니다\n"
 
-#: text-utils/column.c:762
+#: text-utils/column.c:757
 msgid " -m, --table-maxout               fill all available space\n"
 msgstr " -m, --table-maxout               모든 가용 공간을 채웁니다\n"
 
-#: text-utils/column.c:763
+#: text-utils/column.c:758
 msgid " -e, --table-header-repeat        repeat header for each page\n"
 msgstr " -e, --table-header-repeat        각 페이지에 머릿글 반복\n"
 
-#: text-utils/column.c:764
+#: text-utils/column.c:759
 msgid " -H, --table-hide <columns>       don't print the columns\n"
 msgstr " -H, --table-hide <열>            내용 항목 출력하지 않음\n"
 
-#: text-utils/column.c:765
+#: text-utils/column.c:760
 msgid " -R, --table-right <columns>      right align text in these columns\n"
 msgstr " -R, --table-right <열>           지정한 내용 항목의 텍스트를 오른쪽 정렬\n"
 
-#: text-utils/column.c:766
+#: text-utils/column.c:761
 msgid " -T, --table-truncate <columns>   truncate text in the columns when necessary\n"
 msgstr " -T, --table-truncate <열>        필요할 경우 내용 항목의 텍스트를 자름\n"
 
-#: text-utils/column.c:767
+#: text-utils/column.c:762
 msgid " -W, --table-wrap <columns>       wrap text in the columns when necessary\n"
 msgstr " -W, --table-wrap <열>            필요할 경우 내용 항목의 텍스트를 줄바꿈\n"
 
-#: text-utils/column.c:768
+#: text-utils/column.c:763
 msgid " -L, --keep-empty-lines           don't ignore empty lines\n"
 msgstr " -L, --keep-empty-lines           빈 줄 무시하지 않음\n"
 
-#: text-utils/column.c:769
+#: text-utils/column.c:764
 msgid " -J, --json                       use JSON output format for table\n"
 msgstr " -J, --json                       표에 JSON 출력 형식 사용\n"
 
-#: text-utils/column.c:772
+#: text-utils/column.c:767
 msgid " -r, --tree <column>              column to use tree-like output for the table\n"
 msgstr " -r, --tree <열>                  표의 트리 방식 출력에 활용할 내용 항목\n"
 
-#: text-utils/column.c:773
+#: text-utils/column.c:768
 msgid " -i, --tree-id <column>           line ID to specify child-parent relation\n"
 msgstr " -i, --tree-id <열>               상하위 관계를 지정할 행 ID\n"
 
-#: text-utils/column.c:774
+#: text-utils/column.c:769
 msgid " -p, --tree-parent <column>       parent to specify child-parent relation\n"
 msgstr " -p, --tree-parent <열>           상하위 관계를 지정할 상위 요소\n"
 
-#: text-utils/column.c:777
+#: text-utils/column.c:772
 msgid " -c, --output-width <width>       width of output in number of characters\n"
 msgstr " -c, --output-width <너비>        문자 수 단위 출력 너비\n"
 
-#: text-utils/column.c:778
+#: text-utils/column.c:773
 msgid " -o, --output-separator <string>  columns separator for table output (default is two spaces)\n"
 msgstr " -o, --output-separator <문자열>  표 출력용 내용 항목 구분자 (기본은 공백 문자 2개)\n"
 
-#: text-utils/column.c:779
+#: text-utils/column.c:774
 msgid " -s, --separator <string>         possible table delimiters\n"
 msgstr " -s, --separator <문자열>         가능한 표 구분자\n"
 
-#: text-utils/column.c:780
+#: text-utils/column.c:775
 msgid " -x, --fillrows                   fill rows before columns\n"
 msgstr " -x, --fillrows                   내용 항목 이전에 행 부터 채웁니다\n"
 
-#: text-utils/column.c:861
+#: text-utils/column.c:856
 msgid "invalid columns argument"
 msgstr "잘못된 내용 항목 인자"
 
-#: text-utils/column.c:887
+#: text-utils/column.c:882
 msgid "invalid columns limit argument"
 msgstr "부적절한 내용 항목 제한 인자"
 
-#: text-utils/column.c:889
+#: text-utils/column.c:884
 msgid "columns limit must be greater than zero"
 msgstr "내용 항목 제한은 0보다 커야 합니다"
 
-#: text-utils/column.c:892
+#: text-utils/column.c:887
 msgid "failed to parse column names"
 msgstr "내용 항목 이름 해석 실패"
 
-#: text-utils/column.c:919
+#: text-utils/column.c:914
 msgid "failed to use input separator"
 msgstr "입력 구분자 사용 실패"
 
-#: text-utils/column.c:952
+#: text-utils/column.c:947
 msgid "options --tree-id and --tree-parent are required for tree formatting"
 msgstr "--tree-id 옵션과 --tree-parent 옵션은 트리 구성에 필요합니다"
 
-#: text-utils/column.c:960
+#: text-utils/column.c:955
 msgid "option --table required for all --table-*"
 msgstr "--table 옵션은 모든 --table-* 옵션에 필요합니다"
 
-#: text-utils/column.c:963
+#: text-utils/column.c:958
 msgid "option --table-columns or --table-column required for --json"
 msgstr "--table-columns 또는 --table-column 옵션은 --json 옵션에 필요합니다"
 

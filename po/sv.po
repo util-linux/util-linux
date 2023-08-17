@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.36-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-06-27 14:09+0200\n"
+"POT-Creation-Date: 2023-08-17 10:46+0200\n"
 "PO-Revision-Date: 2021-04-17 18:24+0200\n"
 "Last-Translator: Sebastian Rasmussen <sebras@gmail.com>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -230,7 +230,7 @@ msgstr " %-25s hämta storlek i 512-byte sektorer\n"
 #: disk-utils/mkfs.bfs.c:191 disk-utils/mkfs.c:110 disk-utils/mkfs.minix.c:827
 #: disk-utils/swaplabel.c:180 misc-utils/wipefs.c:764
 #: sys-utils/blkdiscard.c:237 sys-utils/blkpr.c:303 sys-utils/blkzone.c:488
-#: sys-utils/tunelp.c:241 sys-utils/zramctl.c:716 sys-utils/zramctl.c:742
+#: sys-utils/tunelp.c:241 sys-utils/zramctl.c:717 sys-utils/zramctl.c:743
 msgid "no device specified"
 msgstr "ingen enhet angiven"
 
@@ -1282,7 +1282,7 @@ msgstr "misslyckades med att allokera utmatningstabell"
 #: sys-utils/lsipc.c:486 sys-utils/lsipc.c:567 sys-utils/lsipc.c:669
 #: sys-utils/lsipc.c:761 sys-utils/lsipc.c:925 sys-utils/prlimit.c:240
 #: sys-utils/rfkill.c:389 sys-utils/swapon.c:179 sys-utils/wdctl.c:299
-#: sys-utils/zramctl.c:414 text-utils/column.c:559 text-utils/column.c:584
+#: sys-utils/zramctl.c:414 text-utils/column.c:555 text-utils/column.c:579
 msgid "failed to allocate output line"
 msgstr "misslyckades med att allokera utmatningsrad"
 
@@ -1307,7 +1307,7 @@ msgstr "misslyckades med att allokera utmatningsrad"
 #: sys-utils/lscpu.c:830 sys-utils/lscpu.c:840 sys-utils/lsipc.c:526
 #: sys-utils/lsipc.c:651 sys-utils/prlimit.c:275 sys-utils/rfkill.c:417
 #: sys-utils/swapon.c:227 sys-utils/wdctl.c:327 sys-utils/zramctl.c:481
-#: text-utils/column.c:568
+#: text-utils/column.c:562
 msgid "failed to add output data"
 msgstr "misslyckades att lägga till utmatningsdata"
 
@@ -7974,306 +7974,312 @@ msgstr "inloggningsstatus för hush: återställning av original-ID:n misslyckad
 msgid "operation failed: %m"
 msgstr "åtgärd misslyckades: %m"
 
-#: libmount/src/context_mount.c:1412
+#: libmount/src/context_mount.c:1417
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "VARNING: misslyckades med att tillämpa propageringsflaggor"
 
-#: libmount/src/context_mount.c:1422
+#: libmount/src/context_mount.c:1427
 #, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "VARNING: källa skrivskyddad, monterad som endast läsbar"
 
-#: libmount/src/context_mount.c:1436
+#: libmount/src/context_mount.c:1441
 #, c-format
 msgid "operation permitted for root only"
 msgstr "åtgärd endast tillåten för root"
 
-#: libmount/src/context_mount.c:1440
+#: libmount/src/context_mount.c:1445
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s är redan monterad"
 
-#: libmount/src/context_mount.c:1446
+#: libmount/src/context_mount.c:1451
 #, c-format
 msgid "can't find in %s"
 msgstr "kan inte hitta i %s"
 
-#: libmount/src/context_mount.c:1449
+#: libmount/src/context_mount.c:1454
 #, c-format
 msgid "can't find mount point in %s"
 msgstr "kan inte hitta monteringspunkt i %s"
 
-#: libmount/src/context_mount.c:1452
+#: libmount/src/context_mount.c:1457
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "kan inte hitta monteringskälla %s i %s"
 
-#: libmount/src/context_mount.c:1457
+#: libmount/src/context_mount.c:1462
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr "ytterligare filsystemsdetektering för %s; använd -t <typ> eller wipefs(8)"
 
-#: libmount/src/context_mount.c:1462
+#: libmount/src/context_mount.c:1467
 #, c-format
 msgid "failed to determine filesystem type"
 msgstr "misslyckades med att identifiera filsystemstyp"
 
-#: libmount/src/context_mount.c:1463
+#: libmount/src/context_mount.c:1468
 #, fuzzy, c-format
 #| msgid "no filesystem type specified"
 msgid "no valid filesystem type specified"
 msgstr "ingen filsystemstyp angiven"
 
-#: libmount/src/context_mount.c:1470
+#: libmount/src/context_mount.c:1475
 #, c-format
 msgid "can't find %s"
 msgstr "kan inte hitta %s"
 
-#: libmount/src/context_mount.c:1472
+#: libmount/src/context_mount.c:1477
 #, c-format
 msgid "no mount source specified"
 msgstr "ingen monteringspunkt angiven"
 
-#: libmount/src/context_mount.c:1483
+#: libmount/src/context_mount.c:1488
 #, fuzzy, c-format
 #| msgid "failed to parse mount options: %m"
 msgid "failed to parse mount options '%s': %m"
 msgstr "misslyckades med att tolka monteringsflaggor: %m"
 
-#: libmount/src/context_mount.c:1484
+#: libmount/src/context_mount.c:1489
 #, fuzzy, c-format
 #| msgid "failed to parse mount options: %m"
 msgid "failed to parse mount options '%s'"
 msgstr "misslyckades med att tolka monteringsflaggor: %m"
 
-#: libmount/src/context_mount.c:1487
+#: libmount/src/context_mount.c:1492
 #, c-format
 msgid "failed to parse mount options: %m"
 msgstr "misslyckades med att tolka monteringsflaggor: %m"
 
-#: libmount/src/context_mount.c:1488
+#: libmount/src/context_mount.c:1493
 #, c-format
 msgid "failed to parse mount options"
 msgstr "misslyckades med att tolka monteringsflaggor"
 
-#: libmount/src/context_mount.c:1493
+#: libmount/src/context_mount.c:1498
 #, c-format
 msgid "failed to setup loop device for %s"
 msgstr "misslyckades med att ställa in loopenhet för %s"
 
-#: libmount/src/context_mount.c:1497
+#: libmount/src/context_mount.c:1502
 #, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "överlappande loopenhet existerar för %s"
 
-#: libmount/src/context_mount.c:1501 libmount/src/context_umount.c:1263
+#: libmount/src/context_mount.c:1506 libmount/src/context_umount.c:1263
 #, c-format
 msgid "locking failed"
 msgstr "låsning misslyckades"
 
-#: libmount/src/context_mount.c:1505 libmount/src/context_umount.c:1269
+#: libmount/src/context_mount.c:1510 libmount/src/context_umount.c:1269
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, c-format
 msgid "failed to switch namespace"
 msgstr "misslyckades med att växla namnrymd"
 
-#: libmount/src/context_mount.c:1509
+#: libmount/src/context_mount.c:1514
 #, fuzzy, c-format
 #| msgid "%s is already mounted"
 msgid "filesystem already mounted"
 msgstr "%s är redan monterad"
 
-#: libmount/src/context_mount.c:1512
+#: libmount/src/context_mount.c:1517
 #, c-format
 msgid "mount failed: %m"
 msgstr "mount misslyckades: %m"
 
-#: libmount/src/context_mount.c:1522
+#: libmount/src/context_mount.c:1527
+#, fuzzy, c-format
+#| msgid "filesystem was mounted, but failed to switch namespace back"
+msgid "filesystem was mounted, but failed to apply flags"
+msgstr "filsystemet monterades, men misslyckades med att växla tillbaka namnrymden"
+
+#: libmount/src/context_mount.c:1533
 #, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "filsystemet monterades, men misslyckades med att uppdatera monteringstabell i användarrymd"
 
-#: libmount/src/context_mount.c:1528
+#: libmount/src/context_mount.c:1539
 #, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "filsystemet monterades, men misslyckades med att växla tillbaka namnrymden"
 
-#: libmount/src/context_mount.c:1534
+#: libmount/src/context_mount.c:1545
 #, fuzzy, c-format
 #| msgid "filesystem was mounted, but failed to switch namespace back"
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "filsystemet monterades, men misslyckades med att växla tillbaka namnrymden"
 
-#: libmount/src/context_mount.c:1540
+#: libmount/src/context_mount.c:1551
 #, fuzzy, c-format
 #| msgid "filesystem was mounted, but failed to switch namespace back"
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "filsystemet monterades, men misslyckades med att växla tillbaka namnrymden"
 
-#: libmount/src/context_mount.c:1546
+#: libmount/src/context_mount.c:1557
 #, fuzzy, c-format
 #| msgid "filesystem was mounted, but failed to switch namespace back"
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "filsystemet monterades, men misslyckades med att växla tillbaka namnrymden"
 
-#: libmount/src/context_mount.c:1552
+#: libmount/src/context_mount.c:1563
 #, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "filsystemet monterades, men efterföljande åtgärd misslyckades: %m"
 
-#: libmount/src/context_mount.c:1570 libmount/src/context_mount.c:1615
-#, c-format
-msgid "mount point is not a directory"
-msgstr "monteringspunkt är inte en katalog"
-
-#: libmount/src/context_mount.c:1572 login-utils/newgrp.c:228
+#: libmount/src/context_mount.c:1584 login-utils/newgrp.c:228
 #, c-format
 msgid "permission denied"
 msgstr "åtkomst nekas"
 
-#: libmount/src/context_mount.c:1574
+#: libmount/src/context_mount.c:1586 libmount/src/context_mount.c:1629
+#, c-format
+msgid "mount point is not a directory"
+msgstr "monteringspunkt är inte en katalog"
+
+#: libmount/src/context_mount.c:1588
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "måste vara superanvändare för att använda mount"
 
-#: libmount/src/context_mount.c:1581
+#: libmount/src/context_mount.c:1595
 #, c-format
 msgid "mount point is busy"
 msgstr "monteringspunkt är upptagen"
 
-#: libmount/src/context_mount.c:1588
+#: libmount/src/context_mount.c:1602
 #, c-format
 msgid "%s already mounted on %s"
 msgstr "%s är redan monterad på %s"
 
-#: libmount/src/context_mount.c:1592
+#: libmount/src/context_mount.c:1606
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s är redan monterad eller så är monteringspunkten upptagen"
 
-#: libmount/src/context_mount.c:1597
+#: libmount/src/context_mount.c:1611
 #, c-format
 msgid "mount point does not exist"
 msgstr "monteringspunkt finns inte"
 
-#: libmount/src/context_mount.c:1600
+#: libmount/src/context_mount.c:1614
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "monteringspunkt är en symbolisk länk till ingenstans"
 
-#: libmount/src/context_mount.c:1605
+#: libmount/src/context_mount.c:1619
 #, c-format
 msgid "special device %s does not exist"
 msgstr "specialenhet %s finns inte"
 
-#: libmount/src/context_mount.c:1608 libmount/src/context_mount.c:1624
-#: libmount/src/context_mount.c:1708 libmount/src/context_mount.c:1731
+#: libmount/src/context_mount.c:1622 libmount/src/context_mount.c:1638
+#: libmount/src/context_mount.c:1722 libmount/src/context_mount.c:1745
 #, c-format
 msgid "mount(2) system call failed: %m"
 msgstr "mount(2) systemanrop misslyckades: %m"
 
-#: libmount/src/context_mount.c:1620
+#: libmount/src/context_mount.c:1634
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "specialenhet %s finns inte (ett sökvägsprefix är inte en katalog)"
 
-#: libmount/src/context_mount.c:1632
+#: libmount/src/context_mount.c:1646
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr "monteringspunkt inte monterad eller felaktig flagga"
 
-#: libmount/src/context_mount.c:1634
+#: libmount/src/context_mount.c:1648
 #, c-format
 msgid "not mount point or bad option"
 msgstr "inte en monteringspunkt eller felaktig flagga"
 
-#: libmount/src/context_mount.c:1637
+#: libmount/src/context_mount.c:1651
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr "felaktig flagga; att flytta en montering som finns under en delad montering stöds inte"
 
-#: libmount/src/context_mount.c:1641
+#: libmount/src/context_mount.c:1655
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr "felaktig flagga; för flera filsystem (t.ex. nfs, cifs) kan du behöva ett hjälpprogram /sbin/mount.<typ>"
 
-#: libmount/src/context_mount.c:1645
+#: libmount/src/context_mount.c:1659
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr "fel filsystemstyp, felaktig flagga, felaktigt superblock på %s, teckentabell eller hjälpprogram saknas, eller annat fel"
 
-#: libmount/src/context_mount.c:1652
+#: libmount/src/context_mount.c:1666
 #, c-format
 msgid "mount table full"
 msgstr "monteringstabellen full"
 
-#: libmount/src/context_mount.c:1657
+#: libmount/src/context_mount.c:1671
 #, c-format
 msgid "can't read superblock on %s"
 msgstr "kan inte läsa superblock på %s"
 
-#: libmount/src/context_mount.c:1664
+#: libmount/src/context_mount.c:1678
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "okänd filsystemstyp ”%s”"
 
-#: libmount/src/context_mount.c:1667
+#: libmount/src/context_mount.c:1681
 #, c-format
 msgid "unknown filesystem type"
 msgstr "okänd filsystemstyp"
 
-#: libmount/src/context_mount.c:1676
+#: libmount/src/context_mount.c:1690
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s är inte en blockenhet, och stat(2) misslyckas?"
 
-#: libmount/src/context_mount.c:1679
+#: libmount/src/context_mount.c:1693
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr "kärnan känner inte igen %s som en blockenhet; kanske ”modprobe drivrutin” är nödvändigt"
 
-#: libmount/src/context_mount.c:1682
+#: libmount/src/context_mount.c:1696
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s är inte en blockenhet, prova med ”-o loop”"
 
-#: libmount/src/context_mount.c:1684
+#: libmount/src/context_mount.c:1698
 #, c-format
 msgid "%s is not a block device"
 msgstr "%s är inte en blockenhet"
 
-#: libmount/src/context_mount.c:1691
+#: libmount/src/context_mount.c:1705
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s är inte en giltig blockenhet"
 
-#: libmount/src/context_mount.c:1699
+#: libmount/src/context_mount.c:1713
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "kan inte montera %s som endast läsbar"
 
-#: libmount/src/context_mount.c:1701
+#: libmount/src/context_mount.c:1715
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s är skrivskyddad men en explicit skrivbart läge begärdes"
 
-#: libmount/src/context_mount.c:1703
+#: libmount/src/context_mount.c:1717
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "kan inte återmontera %s för läsning/skrivning, den är skrivskyddad"
 
-#: libmount/src/context_mount.c:1705
+#: libmount/src/context_mount.c:1719
 #, c-format
 msgid "bind %s failed"
 msgstr "bind %s misslyckades"
 
-#: libmount/src/context_mount.c:1716
+#: libmount/src/context_mount.c:1730
 #, c-format
 msgid "no medium found on %s"
 msgstr "inget media hittat på %s"
 
-#: libmount/src/context_mount.c:1723
+#: libmount/src/context_mount.c:1737
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "kan inte montera; förmodligen korrupt filsystem på %s"
@@ -13532,8 +13538,8 @@ msgid "timeout [%d sec]\n"
 msgstr "tidsgräns [%d sek]\n"
 
 #: misc-utils/uuidd.c:483 sys-utils/irqtop.c:228 sys-utils/irqtop.c:231
-#: sys-utils/irqtop.c:248 term-utils/setterm.c:920 text-utils/column.c:616
-#: text-utils/column.c:646
+#: sys-utils/irqtop.c:248 term-utils/setterm.c:920 text-utils/column.c:611
+#: text-utils/column.c:641
 msgid "read failed"
 msgstr "läsning misslyckades"
 
@@ -17054,7 +17060,7 @@ msgstr " -p, --mode <läge>        rättigheter för resursen (standard är 0644
 msgid "<size>"
 msgstr "<storlek>"
 
-#: sys-utils/ipcmk.c:114 sys-utils/losetup.c:754 sys-utils/zramctl.c:653
+#: sys-utils/ipcmk.c:114 sys-utils/losetup.c:754 sys-utils/zramctl.c:654
 msgid "failed to parse size"
 msgstr "misslyckades med att tolka storlek"
 
@@ -19915,7 +19921,7 @@ msgstr "%s är inte en monteringspunkt\n"
 msgid "%s is a mountpoint\n"
 msgstr "%s är en monteringspunkt\n"
 
-#: sys-utils/nsenter.c:78 sys-utils/setarch.c:139 sys-utils/unshare.c:643
+#: sys-utils/nsenter.c:78 sys-utils/setarch.c:144 sys-utils/unshare.c:643
 #, c-format
 msgid " %s [options] [<program> [<argument>...]]\n"
 msgstr " %s [flaggor] [<program> [<argument>…]]\n"
@@ -20841,119 +20847,119 @@ msgstr "inaktivering av rtc-alarmavbrott misslyckades"
 msgid "Switching on %s.\n"
 msgstr "Slår på %s.\n"
 
-#: sys-utils/setarch.c:137
+#: sys-utils/setarch.c:142
 #, c-format
 msgid " %s [<arch>] [options] [<program> [<argument>...]]\n"
 msgstr " %s [<ark>] [flaggor] [<program> [<argument>…]]\n"
 
-#: sys-utils/setarch.c:142
+#: sys-utils/setarch.c:147
 msgid "Change the reported architecture and set personality flags.\n"
 msgstr "Ändra rapporterad arkitektur och ställ in personlighetsflaggor.\n"
 
-#: sys-utils/setarch.c:145
+#: sys-utils/setarch.c:150
 msgid " -B, --32bit              turns on ADDR_LIMIT_32BIT\n"
 msgstr " -B, --32bit              slår på ADDR_LIMIT_32BIT\n"
 
-#: sys-utils/setarch.c:146
+#: sys-utils/setarch.c:151
 msgid " -F, --fdpic-funcptrs     makes function pointers point to descriptors\n"
 msgstr " -F, --fdpic-funcptrs     får funktionspekare att peka på deskriptorer\n"
 
-#: sys-utils/setarch.c:147
+#: sys-utils/setarch.c:152
 msgid " -I, --short-inode        turns on SHORT_INODE\n"
 msgstr " -I, --short-inode        slår på SHORT_INODE\n"
 
-#: sys-utils/setarch.c:148
+#: sys-utils/setarch.c:153
 msgid " -L, --addr-compat-layout changes the way virtual memory is allocated\n"
 msgstr " -L, --addr-compat-layout ändrar sättet på vilket virtuellt minne allokeras\n"
 
-#: sys-utils/setarch.c:149
+#: sys-utils/setarch.c:154
 msgid " -R, --addr-no-randomize  disables randomization of the virtual address space\n"
 msgstr " -R, --addr-no-randomize  inaktiverar slumpmässighet i den virtuella adressrymden\n"
 
-#: sys-utils/setarch.c:150
+#: sys-utils/setarch.c:155
 msgid " -S, --whole-seconds      turns on WHOLE_SECONDS\n"
 msgstr " -S, --whole-seconds      slår på WHOLE_SECONDS\n"
 
-#: sys-utils/setarch.c:151
+#: sys-utils/setarch.c:156
 msgid " -T, --sticky-timeouts    turns on STICKY_TIMEOUTS\n"
 msgstr " -T, --sticky-timeouts    slår på STICKY_TIMEOUTS\n"
 
-#: sys-utils/setarch.c:152
+#: sys-utils/setarch.c:157
 msgid " -X, --read-implies-exec  turns on READ_IMPLIES_EXEC\n"
 msgstr " -X, --read-implies-exec  slår på READ_IMPLIES_EXEC\n"
 
-#: sys-utils/setarch.c:153
+#: sys-utils/setarch.c:158
 msgid " -Z, --mmap-page-zero     turns on MMAP_PAGE_ZERO\n"
 msgstr " -Z, --mmap-page-zero     slår på MMAP_PAGE_ZERO\n"
 
-#: sys-utils/setarch.c:154
+#: sys-utils/setarch.c:159
 msgid " -3, --3gb                limits the used address space to a maximum of 3 GB\n"
 msgstr " -3, --3gb                begränsar den använda adressrymden till maximalt 3 GB\n"
 
-#: sys-utils/setarch.c:155
+#: sys-utils/setarch.c:160
 msgid "     --4gb                ignored (for backward compatibility only)\n"
 msgstr "     --4gb                hoppas över (endast för bakåtkompatibilitet)\n"
 
-#: sys-utils/setarch.c:156
+#: sys-utils/setarch.c:161
 msgid "     --uname-2.6          turns on UNAME26\n"
 msgstr "     --uname-2.6          slår på UNAME26\n"
 
-#: sys-utils/setarch.c:157
+#: sys-utils/setarch.c:162
 msgid " -v, --verbose            say what options are being switched on\n"
 msgstr " -v, --verbose            berätta vilka flaggor som slås på\n"
 
-#: sys-utils/setarch.c:160
+#: sys-utils/setarch.c:165
 msgid "     --list               list settable architectures, and exit\n"
 msgstr "     --list               lista inställningsbara arkitekturer och avsluta\n"
 
-#: sys-utils/setarch.c:161
+#: sys-utils/setarch.c:166
 msgid "     --show[=personality] show current or specific personality and exit\n"
 msgstr ""
 
-#: sys-utils/setarch.c:341
+#: sys-utils/setarch.c:346
 #, c-format
 msgid "Kernel cannot set architecture to %s"
 msgstr "Kärna kan inte ställa in arkitektur på %s"
 
-#: sys-utils/setarch.c:406
+#: sys-utils/setarch.c:411
 msgid "Can not get current kernel personality"
 msgstr ""
 
-#: sys-utils/setarch.c:459
+#: sys-utils/setarch.c:464
 msgid "Not enough arguments"
 msgstr "Inte tillräckligt många argument"
 
-#: sys-utils/setarch.c:527
+#: sys-utils/setarch.c:532
 msgid "unrecognized option '--list'"
 msgstr "okänd flagga ”--list”"
 
-#: sys-utils/setarch.c:536
+#: sys-utils/setarch.c:541
 #, fuzzy
 #| msgid "mount ID"
 msgid "could not parse personality"
 msgstr "monterings-ID"
 
-#: sys-utils/setarch.c:540
+#: sys-utils/setarch.c:545
 #, fuzzy
 #| msgid "unrecognized option '--list'"
 msgid "unrecognized option '--show'"
 msgstr "okänd flagga ”--list”"
 
-#: sys-utils/setarch.c:554
+#: sys-utils/setarch.c:559
 msgid "no architecture argument or personality flags specified"
 msgstr "inget arkitekturargument eller personlighetsflaggor angivna"
 
-#: sys-utils/setarch.c:566
+#: sys-utils/setarch.c:571
 #, c-format
 msgid "%s: Unrecognized architecture"
 msgstr "%s: Arkitekturen är okänd"
 
-#: sys-utils/setarch.c:584
+#: sys-utils/setarch.c:589
 #, c-format
 msgid "failed to set personality to %s"
 msgstr "misslyckades med att ställa in personlighet till %s"
 
-#: sys-utils/setarch.c:596
+#: sys-utils/setarch.c:601
 #, c-format
 msgid "Execute command `%s'.\n"
 msgstr "Exekvera kommando ”%s”.\n"
@@ -22626,42 +22632,46 @@ msgstr ""
 msgid "   lzo, lz4, lz4hc, deflate, 842 and zstd\n"
 msgstr ""
 
-#: sys-utils/zramctl.c:657
+#: sys-utils/zramctl.c:569
+msgid "   (List may be inaccurate, consult man page.)\n"
+msgstr ""
+
+#: sys-utils/zramctl.c:658
 msgid "failed to parse streams"
 msgstr "misslyckades med att tolka strömmar"
 
-#: sys-utils/zramctl.c:679
+#: sys-utils/zramctl.c:680
 msgid "option --find is mutually exclusive with <device>"
 msgstr "flaggan --find är ömsesidigt uteslutande med <enhet>"
 
-#: sys-utils/zramctl.c:685
+#: sys-utils/zramctl.c:686
 msgid "only one <device> at a time is allowed"
 msgstr "endast en <enhet> tillåts åt gången"
 
-#: sys-utils/zramctl.c:688
+#: sys-utils/zramctl.c:689
 msgid "options --algorithm and --streams must be combined with --size"
 msgstr "flaggorna --algorithm och --streams måste kombineras med --size"
 
-#: sys-utils/zramctl.c:721 sys-utils/zramctl.c:750
+#: sys-utils/zramctl.c:722 sys-utils/zramctl.c:751
 #, c-format
 msgid "%s: failed to reset"
 msgstr "%s: misslyckades med att återställa"
 
-#: sys-utils/zramctl.c:732 sys-utils/zramctl.c:740
+#: sys-utils/zramctl.c:733 sys-utils/zramctl.c:741
 msgid "no free zram device found"
 msgstr "ingen ledig zram-enhet hittades"
 
-#: sys-utils/zramctl.c:754
+#: sys-utils/zramctl.c:755
 #, c-format
 msgid "%s: failed to set number of streams"
 msgstr "%s: misslyckades med att ställa in antal strömmar"
 
-#: sys-utils/zramctl.c:758
+#: sys-utils/zramctl.c:759
 #, c-format
 msgid "%s: failed to set algorithm"
 msgstr "%s: misslyckades med att ställa in algoritm"
 
-#: sys-utils/zramctl.c:761
+#: sys-utils/zramctl.c:762
 #, c-format
 msgid "%s: failed to set disksize (%ju bytes)"
 msgstr "%s: misslyckades med att ställa diskstorlek (%ju byte)"
@@ -23772,7 +23782,7 @@ msgstr "-- raden redan spolad"
 msgid "bad -l argument"
 msgstr "felaktigt -l-argument"
 
-#: text-utils/colcrt.c:82 text-utils/column.c:748
+#: text-utils/colcrt.c:82 text-utils/column.c:743
 #, c-format
 msgid " %s [options] [<file>...]\n"
 msgstr " %s [flaggor] [<fil>…]\n"
@@ -23854,152 +23864,158 @@ msgstr "misslyckades med att tolka --table-noextreme-lista"
 msgid "failed to parse --table-wrap list"
 msgstr "misslyckades med att tolka --table-wrap-lista"
 
-#: text-utils/column.c:549
+#: text-utils/column.c:527
+#, fuzzy
+#| msgid "failed to allocate output line"
+msgid "failed to allocate input line"
+msgstr "misslyckades med att allokera utmatningsrad"
+
+#: text-utils/column.c:545
 #, c-format
 msgid "line %zu: for JSON the name of the column %zu is required"
 msgstr "rad %zu: för JSON krävs namnat för kolumn %zu"
 
-#: text-utils/column.c:566
+#: text-utils/column.c:560
 msgid "failed to allocate output data"
 msgstr "misslyckades med att allokera utmatningsdata"
 
-#: text-utils/column.c:751
+#: text-utils/column.c:746
 msgid "Columnate lists.\n"
 msgstr "Kolumnlistor.\n"
 
-#: text-utils/column.c:754
+#: text-utils/column.c:749
 msgid " -t, --table                      create a table\n"
 msgstr " -t, --table                      skapa en tabell\n"
 
-#: text-utils/column.c:755
+#: text-utils/column.c:750
 msgid " -n, --table-name <name>          table name for JSON output\n"
 msgstr " -n, --table-name <namn>          tabellnamn för JSON-utmatning\n"
 
-#: text-utils/column.c:756
+#: text-utils/column.c:751
 msgid " -O, --table-order <columns>      specify order of output columns\n"
 msgstr " -O, --table-order <kolumner>     ange ordning för utmatningskolumner\n"
 
-#: text-utils/column.c:757
+#: text-utils/column.c:752
 #, fuzzy
 #| msgid " -H, --table-hide <columns>       don't print the columns\n"
 msgid " -C, --table-column <properties>  define column\n"
 msgstr " -H, --table-hide <kolumner>      skriv inte ut kolumnerna\n"
 
-#: text-utils/column.c:758
+#: text-utils/column.c:753
 msgid " -N, --table-columns <names>      comma separated columns names\n"
 msgstr " -N, --table-columns <namn>       kommaseparerade kolumnnamn\n"
 
-#: text-utils/column.c:759
+#: text-utils/column.c:754
 #, fuzzy
 #| msgid " -c, --count <number>   maximum number of zones\n"
 msgid " -l, --table-columns-limit <num>  maximal number of input columns\n"
 msgstr " -c, --count <antal>    maximalt antal zoner\n"
 
-#: text-utils/column.c:760
+#: text-utils/column.c:755
 msgid " -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"
 msgstr " -E, --table-noextreme <kolumner> räkna inte in lång text från kolumner i kolumnbredd\n"
 
-#: text-utils/column.c:761
+#: text-utils/column.c:756
 msgid " -d, --table-noheadings           don't print header\n"
 msgstr " -d, --table-noheadings           skriv inte ut rubriker\n"
 
-#: text-utils/column.c:762
+#: text-utils/column.c:757
 #, fuzzy
 #| msgid " -a, --all              enter all namespaces\n"
 msgid " -m, --table-maxout               fill all available space\n"
 msgstr " -a, --all              gå in i alla namnrymder\n"
 
-#: text-utils/column.c:763
+#: text-utils/column.c:758
 msgid " -e, --table-header-repeat        repeat header for each page\n"
 msgstr " -e, --table-header-repeat        repetera rubrik för varje sida\n"
 
-#: text-utils/column.c:764
+#: text-utils/column.c:759
 msgid " -H, --table-hide <columns>       don't print the columns\n"
 msgstr " -H, --table-hide <kolumner>      skriv inte ut kolumnerna\n"
 
-#: text-utils/column.c:765
+#: text-utils/column.c:760
 msgid " -R, --table-right <columns>      right align text in these columns\n"
 msgstr " -R, --table-right <kolumner>     högerjustera text i dessa kolumner\n"
 
-#: text-utils/column.c:766
+#: text-utils/column.c:761
 msgid " -T, --table-truncate <columns>   truncate text in the columns when necessary\n"
 msgstr " -T, --table-truncate <kolumner>  trunkera text i kolumnerna när nödvändigt\n"
 
-#: text-utils/column.c:767
+#: text-utils/column.c:762
 msgid " -W, --table-wrap <columns>       wrap text in the columns when necessary\n"
 msgstr " -W, --table-wrap <kolumner>      radbryt text i kolumnerna när nödvändigt\n"
 
-#: text-utils/column.c:768
+#: text-utils/column.c:763
 #, fuzzy
 #| msgid " -L, --table-empty-lines          don't ignore empty lines\n"
 msgid " -L, --keep-empty-lines           don't ignore empty lines\n"
 msgstr " -L, --table-empty-lines          hoppa inte över tomma rader\n"
 
-#: text-utils/column.c:769
+#: text-utils/column.c:764
 msgid " -J, --json                       use JSON output format for table\n"
 msgstr " -J, --json                       använd JSON som utmatningsformat för tabell\n"
 
-#: text-utils/column.c:772
+#: text-utils/column.c:767
 msgid " -r, --tree <column>              column to use tree-like output for the table\n"
 msgstr " -r, --tree <kolumn>              kolumn som ska använda trädlik utmatning för tabellen\n"
 
-#: text-utils/column.c:773
+#: text-utils/column.c:768
 msgid " -i, --tree-id <column>           line ID to specify child-parent relation\n"
 msgstr " -i, --tree-id <kolumn>           rad-ID som anger barn-förälder-relation\n"
 
-#: text-utils/column.c:774
+#: text-utils/column.c:769
 msgid " -p, --tree-parent <column>       parent to specify child-parent relation\n"
 msgstr " -p, --tree-parent <kolumn>       förälder som anger barn-förälder-relation\n"
 
-#: text-utils/column.c:777
+#: text-utils/column.c:772
 msgid " -c, --output-width <width>       width of output in number of characters\n"
 msgstr " -c, --output-width <bredd>       utmatningsbredd i antal tecken\n"
 
-#: text-utils/column.c:778
+#: text-utils/column.c:773
 msgid " -o, --output-separator <string>  columns separator for table output (default is two spaces)\n"
 msgstr " -o, --output-separator <sträng>  kolumnavgränsare för tabellutmatning (standardvärde är två blanksteg)\n"
 
-#: text-utils/column.c:779
+#: text-utils/column.c:774
 msgid " -s, --separator <string>         possible table delimiters\n"
 msgstr " -s, --separator <sträng>         möjliga tabellavgränsare\n"
 
-#: text-utils/column.c:780
+#: text-utils/column.c:775
 msgid " -x, --fillrows                   fill rows before columns\n"
 msgstr " -x, --fillrows                   fyll rader före kolumner\n"
 
-#: text-utils/column.c:861
+#: text-utils/column.c:856
 msgid "invalid columns argument"
 msgstr "ogiltigt kolumnargument"
 
-#: text-utils/column.c:887
+#: text-utils/column.c:882
 #, fuzzy
 #| msgid "invalid columns argument"
 msgid "invalid columns limit argument"
 msgstr "ogiltigt kolumnargument"
 
-#: text-utils/column.c:889
+#: text-utils/column.c:884
 msgid "columns limit must be greater than zero"
 msgstr ""
 
-#: text-utils/column.c:892
+#: text-utils/column.c:887
 msgid "failed to parse column names"
 msgstr "misslyckades med att tolka kolumnnamn"
 
-#: text-utils/column.c:919
+#: text-utils/column.c:914
 #, fuzzy
 #| msgid "failed to allocate iterator"
 msgid "failed to use input separator"
 msgstr "misslyckades med att allokera iterator"
 
-#: text-utils/column.c:952
+#: text-utils/column.c:947
 msgid "options --tree-id and --tree-parent are required for tree formatting"
 msgstr "flaggorna --tree-id och --tree-parent krävs för trädformatering"
 
-#: text-utils/column.c:960
+#: text-utils/column.c:955
 msgid "option --table required for all --table-*"
 msgstr "flaggan --table krävs för alla --table-*"
 
-#: text-utils/column.c:963
+#: text-utils/column.c:958
 #, fuzzy
 #| msgid "option --table-columns required for --json"
 msgid "option --table-columns or --table-column required for --json"

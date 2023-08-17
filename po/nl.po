@@ -33,7 +33,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.29-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-06-27 14:09+0200\n"
+"POT-Creation-Date: 2023-08-17 10:46+0200\n"
 "PO-Revision-Date: 2016-10-30 17:01+0100\n"
 "Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -249,7 +249,7 @@ msgstr "  %-25s grootte in 512-byte sectoren tonen\n"
 #: disk-utils/mkfs.bfs.c:191 disk-utils/mkfs.c:110 disk-utils/mkfs.minix.c:827
 #: disk-utils/swaplabel.c:180 misc-utils/wipefs.c:764
 #: sys-utils/blkdiscard.c:237 sys-utils/blkpr.c:303 sys-utils/blkzone.c:488
-#: sys-utils/tunelp.c:241 sys-utils/zramctl.c:716 sys-utils/zramctl.c:742
+#: sys-utils/tunelp.c:241 sys-utils/zramctl.c:717 sys-utils/zramctl.c:743
 msgid "no device specified"
 msgstr "geen apparaat gegeven"
 
@@ -1317,7 +1317,7 @@ msgstr "reserveren van geheugen voor uitvoertabel is mislukt"
 #: sys-utils/lsipc.c:486 sys-utils/lsipc.c:567 sys-utils/lsipc.c:669
 #: sys-utils/lsipc.c:761 sys-utils/lsipc.c:925 sys-utils/prlimit.c:240
 #: sys-utils/rfkill.c:389 sys-utils/swapon.c:179 sys-utils/wdctl.c:299
-#: sys-utils/zramctl.c:414 text-utils/column.c:559 text-utils/column.c:584
+#: sys-utils/zramctl.c:414 text-utils/column.c:555 text-utils/column.c:579
 msgid "failed to allocate output line"
 msgstr "reserveren van geheugen voor uitvoerregel is mislukt"
 
@@ -1342,7 +1342,7 @@ msgstr "reserveren van geheugen voor uitvoerregel is mislukt"
 #: sys-utils/lscpu.c:830 sys-utils/lscpu.c:840 sys-utils/lsipc.c:526
 #: sys-utils/lsipc.c:651 sys-utils/prlimit.c:275 sys-utils/rfkill.c:417
 #: sys-utils/swapon.c:227 sys-utils/wdctl.c:327 sys-utils/zramctl.c:481
-#: text-utils/column.c:568
+#: text-utils/column.c:562
 #, fuzzy
 msgid "failed to add output data"
 msgstr "toevoegen van gegevens aan uitvoertabel is mislukt"
@@ -8020,262 +8020,267 @@ msgstr "hush login-status: herstellen van originele ID's is mislukt"
 msgid "operation failed: %m"
 msgstr "openen van %s is mislukt"
 
-#: libmount/src/context_mount.c:1412
+#: libmount/src/context_mount.c:1417
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "WAARSCHUWING: toepassen van doorgavevlaggen is mislukt"
 
-#: libmount/src/context_mount.c:1422
+#: libmount/src/context_mount.c:1427
 #, fuzzy, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "%s is schrijfbeveiligd en wordt als alleen-lezen aangekoppeld"
 
-#: libmount/src/context_mount.c:1436
+#: libmount/src/context_mount.c:1441
 #, c-format
 msgid "operation permitted for root only"
 msgstr ""
 
-#: libmount/src/context_mount.c:1440
+#: libmount/src/context_mount.c:1445
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s is al aangekoppeld"
 
-#: libmount/src/context_mount.c:1446
+#: libmount/src/context_mount.c:1451
 #, fuzzy, c-format
 msgid "can't find in %s"
 msgstr "kan %s niet vinden in %s"
 
-#: libmount/src/context_mount.c:1449
+#: libmount/src/context_mount.c:1454
 #, fuzzy, c-format
 msgid "can't find mount point in %s"
 msgstr "kan aankoppelingspunt %s niet vinden in %s"
 
-#: libmount/src/context_mount.c:1452
+#: libmount/src/context_mount.c:1457
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "kan aankoppelingsbron %s niet vinden in %s"
 
-#: libmount/src/context_mount.c:1457
+#: libmount/src/context_mount.c:1462
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr ""
 
-#: libmount/src/context_mount.c:1462
+#: libmount/src/context_mount.c:1467
 #, fuzzy, c-format
 msgid "failed to determine filesystem type"
 msgstr "%s: bepalen van bron is mislukt"
 
-#: libmount/src/context_mount.c:1463
+#: libmount/src/context_mount.c:1468
 #, fuzzy, c-format
 msgid "no valid filesystem type specified"
 msgstr "geen bestandsnaam gegeven"
 
-#: libmount/src/context_mount.c:1470
+#: libmount/src/context_mount.c:1475
 #, c-format
 msgid "can't find %s"
 msgstr "kan %s niet vinden"
 
-#: libmount/src/context_mount.c:1472
+#: libmount/src/context_mount.c:1477
 #, fuzzy, c-format
 msgid "no mount source specified"
 msgstr "geen aankoppelingspunt opgegeven"
 
-#: libmount/src/context_mount.c:1483
+#: libmount/src/context_mount.c:1488
 #, fuzzy, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr "ontleden van aankoppelingsopties is mislukt"
 
-#: libmount/src/context_mount.c:1484
+#: libmount/src/context_mount.c:1489
 #, fuzzy, c-format
 msgid "failed to parse mount options '%s'"
 msgstr "ontleden van aankoppelingsopties is mislukt"
 
-#: libmount/src/context_mount.c:1487
+#: libmount/src/context_mount.c:1492
 #, fuzzy, c-format
 msgid "failed to parse mount options: %m"
 msgstr "ontleden van aankoppelingsopties is mislukt"
 
-#: libmount/src/context_mount.c:1488
+#: libmount/src/context_mount.c:1493
 #, c-format
 msgid "failed to parse mount options"
 msgstr "ontleden van aankoppelingsopties is mislukt"
 
-#: libmount/src/context_mount.c:1493
+#: libmount/src/context_mount.c:1498
 #, fuzzy, c-format
 msgid "failed to setup loop device for %s"
 msgstr "%s: instellen van lus-apparaat is mislukt"
 
-#: libmount/src/context_mount.c:1497
+#: libmount/src/context_mount.c:1502
 #, fuzzy, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "%s: er is een overlappend lus-apparaat"
 
-#: libmount/src/context_mount.c:1501 libmount/src/context_umount.c:1263
+#: libmount/src/context_mount.c:1506 libmount/src/context_umount.c:1263
 #, fuzzy, c-format
 msgid "locking failed"
 msgstr "sluiten van %s is mislukt"
 
-#: libmount/src/context_mount.c:1505 libmount/src/context_umount.c:1269
+#: libmount/src/context_mount.c:1510 libmount/src/context_umount.c:1269
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, fuzzy, c-format
 msgid "failed to switch namespace"
 msgstr "pad naar de naamsruimte"
 
-#: libmount/src/context_mount.c:1509
+#: libmount/src/context_mount.c:1514
 #, fuzzy, c-format
 #| msgid "%s is already mounted"
 msgid "filesystem already mounted"
 msgstr "%s is al aangekoppeld"
 
-#: libmount/src/context_mount.c:1512
+#: libmount/src/context_mount.c:1517
 #, fuzzy, c-format
 msgid "mount failed: %m"
 msgstr "aankoppelen is mislukt"
 
-#: libmount/src/context_mount.c:1522
+#: libmount/src/context_mount.c:1527
+#, fuzzy, c-format
+msgid "filesystem was mounted, but failed to apply flags"
+msgstr "%s: bestandssysteem is afgekoppeld, maar mount(8) is mislukt"
+
+#: libmount/src/context_mount.c:1533
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "%s: bestandssysteem is afgekoppeld, maar mount(8) is mislukt"
 
-#: libmount/src/context_mount.c:1528
+#: libmount/src/context_mount.c:1539
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "%s: bestandssysteem is afgekoppeld, maar mount(8) is mislukt"
 
-#: libmount/src/context_mount.c:1534
+#: libmount/src/context_mount.c:1545
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "%s: bestandssysteem is afgekoppeld, maar mount(8) is mislukt"
 
-#: libmount/src/context_mount.c:1540
+#: libmount/src/context_mount.c:1551
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "%s: bestandssysteem is afgekoppeld, maar mount(8) is mislukt"
 
-#: libmount/src/context_mount.c:1546
+#: libmount/src/context_mount.c:1557
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "%s: bestandssysteem is afgekoppeld, maar mount(8) is mislukt"
 
-#: libmount/src/context_mount.c:1552
+#: libmount/src/context_mount.c:1563
 #, fuzzy, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "%s: bestandssysteem is afgekoppeld, maar mount(8) is mislukt"
 
-#: libmount/src/context_mount.c:1570 libmount/src/context_mount.c:1615
-#, fuzzy, c-format
-msgid "mount point is not a directory"
-msgstr "aankoppelingspunt %s is geen map"
-
-#: libmount/src/context_mount.c:1572 login-utils/newgrp.c:228
+#: libmount/src/context_mount.c:1584 login-utils/newgrp.c:228
 #, c-format
 msgid "permission denied"
 msgstr "toegang geweigerd"
 
-#: libmount/src/context_mount.c:1574
+#: libmount/src/context_mount.c:1586 libmount/src/context_mount.c:1629
+#, fuzzy, c-format
+msgid "mount point is not a directory"
+msgstr "aankoppelingspunt %s is geen map"
+
+#: libmount/src/context_mount.c:1588
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "u moet root zijn om aan te kunnen koppelen"
 
-#: libmount/src/context_mount.c:1581
+#: libmount/src/context_mount.c:1595
 #, fuzzy, c-format
 msgid "mount point is busy"
 msgstr "mount: %s is bezig"
 
-#: libmount/src/context_mount.c:1588
+#: libmount/src/context_mount.c:1602
 #, fuzzy, c-format
 msgid "%s already mounted on %s"
 msgstr "mount: %s is al aangekoppeld op %s\n"
 
-#: libmount/src/context_mount.c:1592
+#: libmount/src/context_mount.c:1606
 #, fuzzy, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s is al aangekoppeld of %s is bezig"
 
-#: libmount/src/context_mount.c:1597
+#: libmount/src/context_mount.c:1611
 #, fuzzy, c-format
 msgid "mount point does not exist"
 msgstr "aankoppelingspunt %s bestaat niet"
 
-#: libmount/src/context_mount.c:1600
+#: libmount/src/context_mount.c:1614
 #, fuzzy, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "aankoppelingspunt %s is een symbolische koppeling die nergens naar wijst"
 
-#: libmount/src/context_mount.c:1605
+#: libmount/src/context_mount.c:1619
 #, c-format
 msgid "special device %s does not exist"
 msgstr "apparaat %s bestaat niet"
 
-#: libmount/src/context_mount.c:1608 libmount/src/context_mount.c:1624
-#: libmount/src/context_mount.c:1708 libmount/src/context_mount.c:1731
+#: libmount/src/context_mount.c:1622 libmount/src/context_mount.c:1638
+#: libmount/src/context_mount.c:1722 libmount/src/context_mount.c:1745
 #, fuzzy, c-format
 msgid "mount(2) system call failed: %m"
 msgstr "mount(2) is mislukt"
 
-#: libmount/src/context_mount.c:1620
+#: libmount/src/context_mount.c:1634
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "apparaat %s bestaat niet  (het pad bevat iets dat geen map is)"
 
-#: libmount/src/context_mount.c:1632
+#: libmount/src/context_mount.c:1646
 #, fuzzy, c-format
 msgid "mount point not mounted or bad option"
 msgstr "mount: %s is nog niet aangekoppeld, of een ongeldige optie"
 
-#: libmount/src/context_mount.c:1634
+#: libmount/src/context_mount.c:1648
 #, fuzzy, c-format
 msgid "not mount point or bad option"
 msgstr "%s is geen aankoppelingspunt of een ongeldige optie"
 
-#: libmount/src/context_mount.c:1637
+#: libmount/src/context_mount.c:1651
 #, fuzzy, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr ""
 "ongeldige optie -- het verplaatsen van een aankoppeling\n"
 "onder een gedeelde aankoppeling wordt niet ondersteund"
 
-#: libmount/src/context_mount.c:1641
+#: libmount/src/context_mount.c:1655
 #, fuzzy, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 "       (voor sommige bestandssystemen (bijvoorbeeld nfs of cifs) kan\n"
 "       een /sbin/mount.<type> hulpprogramma nodig zijn)"
 
-#: libmount/src/context_mount.c:1645
+#: libmount/src/context_mount.c:1659
 #, fuzzy, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr ""
 "onjuiste bestandssysteemsoort, ongeldige optie, ontbrekende codepagina,\n"
 "       ontbrekend hulpprogramma, slecht superblok op %s, of een andere fout"
 
-#: libmount/src/context_mount.c:1652
+#: libmount/src/context_mount.c:1666
 #, c-format
 msgid "mount table full"
 msgstr "aankoppelingstabel is vol"
 
-#: libmount/src/context_mount.c:1657
+#: libmount/src/context_mount.c:1671
 #, fuzzy, c-format
 msgid "can't read superblock on %s"
 msgstr "%s: kan superblok niet lezen"
 
-#: libmount/src/context_mount.c:1664
+#: libmount/src/context_mount.c:1678
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "onbekende bestandssysteemsoort '%s'"
 
-#: libmount/src/context_mount.c:1667
+#: libmount/src/context_mount.c:1681
 #, c-format
 msgid "unknown filesystem type"
 msgstr "onbekende bestandssysteemsoort"
 
-#: libmount/src/context_mount.c:1676
+#: libmount/src/context_mount.c:1690
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s is geen blok-apparaat, en stat(2) is mislukt... heel vreemd"
 
 # FIXME: backtick
-#: libmount/src/context_mount.c:1679
+#: libmount/src/context_mount.c:1693
 #, fuzzy, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr ""
@@ -8283,48 +8288,48 @@ msgstr ""
 "       (misschien is 'modprobe stuurprogramma' nodig?)"
 
 # FIXME: backtick
-#: libmount/src/context_mount.c:1682
+#: libmount/src/context_mount.c:1696
 #, fuzzy, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s is geen blok-apparaat  (misschien '-o loop' proberen?)"
 
-#: libmount/src/context_mount.c:1684
+#: libmount/src/context_mount.c:1698
 #, fuzzy, c-format
 msgid "%s is not a block device"
 msgstr " %s is geen blok-apparaat"
 
-#: libmount/src/context_mount.c:1691
+#: libmount/src/context_mount.c:1705
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s is geen geldig blok-apparaat"
 
-#: libmount/src/context_mount.c:1699
+#: libmount/src/context_mount.c:1713
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "kan %s niet aankoppelen voor alleen-lezen"
 
 # FIXME: backtick
-#: libmount/src/context_mount.c:1701
+#: libmount/src/context_mount.c:1715
 #, fuzzy, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s is schrijfbeveiligd, maar expliciete optie '-w' is gegeven"
 
-#: libmount/src/context_mount.c:1703
+#: libmount/src/context_mount.c:1717
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "kan %s niet heraankoppelen als lezen-en-schrijven, want is schrijfbeveiligd"
 
-#: libmount/src/context_mount.c:1705
+#: libmount/src/context_mount.c:1719
 #, fuzzy, c-format
 msgid "bind %s failed"
 msgstr "'%s' is mislukt"
 
-#: libmount/src/context_mount.c:1716
+#: libmount/src/context_mount.c:1730
 #, c-format
 msgid "no medium found on %s"
 msgstr "geen medium gevonden op %s"
 
-#: libmount/src/context_mount.c:1723
+#: libmount/src/context_mount.c:1737
 #, fuzzy, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "zal niet proberen een bestandssysteem te maken op '%s'"
@@ -13598,8 +13603,8 @@ msgid "timeout [%d sec]\n"
 msgstr "duurde te lang [%d seconden]\n"
 
 #: misc-utils/uuidd.c:483 sys-utils/irqtop.c:228 sys-utils/irqtop.c:231
-#: sys-utils/irqtop.c:248 term-utils/setterm.c:920 text-utils/column.c:616
-#: text-utils/column.c:646
+#: sys-utils/irqtop.c:248 term-utils/setterm.c:920 text-utils/column.c:611
+#: text-utils/column.c:641
 msgid "read failed"
 msgstr "lezen is mislukt"
 
@@ -17135,7 +17140,7 @@ msgstr " -p, --mode <modus>         toegangsrechten voor hulpbron (standaard is 
 msgid "<size>"
 msgstr "grootte"
 
-#: sys-utils/ipcmk.c:114 sys-utils/losetup.c:754 sys-utils/zramctl.c:653
+#: sys-utils/ipcmk.c:114 sys-utils/losetup.c:754 sys-utils/zramctl.c:654
 msgid "failed to parse size"
 msgstr "ontleden van grootte is mislukt"
 
@@ -19986,7 +19991,7 @@ msgstr "%s is geen aankoppelingspunt\n"
 msgid "%s is a mountpoint\n"
 msgstr "%s is een aankoppelingspunt\n"
 
-#: sys-utils/nsenter.c:78 sys-utils/setarch.c:139 sys-utils/unshare.c:643
+#: sys-utils/nsenter.c:78 sys-utils/setarch.c:144 sys-utils/unshare.c:643
 #, c-format
 msgid " %s [options] [<program> [<argument>...]]\n"
 msgstr "  %s [opties] [<programma> [<argument>...]]\n"
@@ -20910,120 +20915,120 @@ msgstr "uitschakelen van hardwareklok-interrupt is mislukt"
 msgid "Switching on %s.\n"
 msgstr "Aanzetten van %s.\n"
 
-#: sys-utils/setarch.c:137
+#: sys-utils/setarch.c:142
 #, fuzzy, c-format
 msgid " %s [<arch>] [options] [<program> [<argument>...]]\n"
 msgstr "  %s <architectuur> [opties] [<programma> [<argument>...]]\n"
 
-#: sys-utils/setarch.c:142
+#: sys-utils/setarch.c:147
 msgid "Change the reported architecture and set personality flags.\n"
 msgstr "Wijzigt de gerapporteerde architectuur en stelt persoonlijkheidsvlaggen in.\n"
 
-#: sys-utils/setarch.c:145
+#: sys-utils/setarch.c:150
 msgid " -B, --32bit              turns on ADDR_LIMIT_32BIT\n"
 msgstr "  -B, --32bit               ADDR_LIMIT_32BIT inschakelen\n"
 
-#: sys-utils/setarch.c:146
+#: sys-utils/setarch.c:151
 msgid " -F, --fdpic-funcptrs     makes function pointers point to descriptors\n"
 msgstr "  -F, --fdpic-funcptrs      functiepointers naar descriptors laten wijzen\n"
 
-#: sys-utils/setarch.c:147
+#: sys-utils/setarch.c:152
 msgid " -I, --short-inode        turns on SHORT_INODE\n"
 msgstr "  -I, --short-inode         SHORT_INODE inschakelen\n"
 
-#: sys-utils/setarch.c:148
+#: sys-utils/setarch.c:153
 msgid " -L, --addr-compat-layout changes the way virtual memory is allocated\n"
 msgstr "  -L, --addr-compat-layout  virtueel geheugen op andere manier toewijzen\n"
 
-#: sys-utils/setarch.c:149
+#: sys-utils/setarch.c:154
 msgid " -R, --addr-no-randomize  disables randomization of the virtual address space\n"
 msgstr "  -R, --addr-no-randomize   virtuele adresruimte niet husselen\n"
 
-#: sys-utils/setarch.c:150
+#: sys-utils/setarch.c:155
 msgid " -S, --whole-seconds      turns on WHOLE_SECONDS\n"
 msgstr "  -S, --whole-seconds       WHOLE_SECONDS inschakelen\n"
 
-#: sys-utils/setarch.c:151
+#: sys-utils/setarch.c:156
 msgid " -T, --sticky-timeouts    turns on STICKY_TIMEOUTS\n"
 msgstr "  -T, --sticky-timeouts     STICKY_TIMEOUTS inschakelen\n"
 
-#: sys-utils/setarch.c:152
+#: sys-utils/setarch.c:157
 msgid " -X, --read-implies-exec  turns on READ_IMPLIES_EXEC\n"
 msgstr "  -X, --read-implies-exec   READ_IMPLIES_EXEC inschakelen\n"
 
-#: sys-utils/setarch.c:153
+#: sys-utils/setarch.c:158
 msgid " -Z, --mmap-page-zero     turns on MMAP_PAGE_ZERO\n"
 msgstr "  -Z, --mmap-page-zero      MMAP_PAGE_ZERO inschakelen\n"
 
-#: sys-utils/setarch.c:154
+#: sys-utils/setarch.c:159
 msgid " -3, --3gb                limits the used address space to a maximum of 3 GB\n"
 msgstr "  -3, --3gb                 gebruikte adresruimte tot 3 GB beperken\n"
 
-#: sys-utils/setarch.c:155
+#: sys-utils/setarch.c:160
 msgid "     --4gb                ignored (for backward compatibility only)\n"
 msgstr "      --4gb                 (genegeerd, slechts herkend voor compatibiliteit)\n"
 
-#: sys-utils/setarch.c:156
+#: sys-utils/setarch.c:161
 msgid "     --uname-2.6          turns on UNAME26\n"
 msgstr "      --uname-2.6           UNAME26 inschakelen\n"
 
-#: sys-utils/setarch.c:157
+#: sys-utils/setarch.c:162
 msgid " -v, --verbose            say what options are being switched on\n"
 msgstr "  -v, --verbose             melden welke opties ingeschakeld worden\n"
 
-#: sys-utils/setarch.c:160
+#: sys-utils/setarch.c:165
 msgid "     --list               list settable architectures, and exit\n"
 msgstr "      --list                instelbare architecturen tonen en stoppen\n"
 
-#: sys-utils/setarch.c:161
+#: sys-utils/setarch.c:166
 msgid "     --show[=personality] show current or specific personality and exit\n"
 msgstr ""
 
-#: sys-utils/setarch.c:341
+#: sys-utils/setarch.c:346
 #, c-format
 msgid "Kernel cannot set architecture to %s"
 msgstr "kernel kan architectuur niet op %s instellen"
 
-#: sys-utils/setarch.c:406
+#: sys-utils/setarch.c:411
 msgid "Can not get current kernel personality"
 msgstr ""
 
-#: sys-utils/setarch.c:459
+#: sys-utils/setarch.c:464
 msgid "Not enough arguments"
 msgstr "Te weinig argumenten"
 
-#: sys-utils/setarch.c:527
+#: sys-utils/setarch.c:532
 msgid "unrecognized option '--list'"
 msgstr "niet-toegestane optie '--list'"
 
-#: sys-utils/setarch.c:536
+#: sys-utils/setarch.c:541
 #, fuzzy
 #| msgid "cannot parse PID"
 msgid "could not parse personality"
 msgstr "ontleden van PID is mislukt"
 
-#: sys-utils/setarch.c:540
+#: sys-utils/setarch.c:545
 #, fuzzy
 #| msgid "unrecognized option '--list'"
 msgid "unrecognized option '--show'"
 msgstr "niet-toegestane optie '--list'"
 
-#: sys-utils/setarch.c:554
+#: sys-utils/setarch.c:559
 #, fuzzy
 msgid "no architecture argument or personality flags specified"
 msgstr "geen architectuur opgegeven"
 
-#: sys-utils/setarch.c:566
+#: sys-utils/setarch.c:571
 #, c-format
 msgid "%s: Unrecognized architecture"
 msgstr "%s: Onbekende architectuur"
 
-#: sys-utils/setarch.c:584
+#: sys-utils/setarch.c:589
 #, c-format
 msgid "failed to set personality to %s"
 msgstr "instellen van persoonlijkheid op %s is mislukt"
 
-#: sys-utils/setarch.c:596
+#: sys-utils/setarch.c:601
 #, c-format
 msgid "Execute command `%s'.\n"
 msgstr "Uitvoering van opdracht '%s'.\n"
@@ -22727,42 +22732,46 @@ msgstr ""
 msgid "   lzo, lz4, lz4hc, deflate, 842 and zstd\n"
 msgstr ""
 
-#: sys-utils/zramctl.c:657
+#: sys-utils/zramctl.c:569
+msgid "   (List may be inaccurate, consult man page.)\n"
+msgstr ""
+
+#: sys-utils/zramctl.c:658
 msgid "failed to parse streams"
 msgstr "ontleden van streamsargument is mislukt"
 
-#: sys-utils/zramctl.c:679
+#: sys-utils/zramctl.c:680
 msgid "option --find is mutually exclusive with <device>"
 msgstr "optie '--find' gaat niet samen met <apparaat>"
 
-#: sys-utils/zramctl.c:685
+#: sys-utils/zramctl.c:686
 msgid "only one <device> at a time is allowed"
 msgstr "er mag slechts één <apparaat> opgegeven worden"
 
-#: sys-utils/zramctl.c:688
+#: sys-utils/zramctl.c:689
 msgid "options --algorithm and --streams must be combined with --size"
 msgstr "opties '--algorithm' en '--streams' moeten vergezeld gaan van '--size'"
 
-#: sys-utils/zramctl.c:721 sys-utils/zramctl.c:750
+#: sys-utils/zramctl.c:722 sys-utils/zramctl.c:751
 #, c-format
 msgid "%s: failed to reset"
 msgstr "%s: resetten is mislukt"
 
-#: sys-utils/zramctl.c:732 sys-utils/zramctl.c:740
+#: sys-utils/zramctl.c:733 sys-utils/zramctl.c:741
 msgid "no free zram device found"
 msgstr "er is geen vrij ZRAM-apparaat gevonden"
 
-#: sys-utils/zramctl.c:754
+#: sys-utils/zramctl.c:755
 #, c-format
 msgid "%s: failed to set number of streams"
 msgstr "%s: instellen van aantal streams is mislukt"
 
-#: sys-utils/zramctl.c:758
+#: sys-utils/zramctl.c:759
 #, c-format
 msgid "%s: failed to set algorithm"
 msgstr "%s: instellen van algoritme is mislukt"
 
-#: sys-utils/zramctl.c:761
+#: sys-utils/zramctl.c:762
 #, c-format
 msgid "%s: failed to set disksize (%ju bytes)"
 msgstr "%s: instellen van schijfgrootte (%ju bytes) is mislukt"
@@ -23924,7 +23933,7 @@ msgstr "-- regel is al doorgesluisd"
 msgid "bad -l argument"
 msgstr "ongeldig argument van '-l'"
 
-#: text-utils/colcrt.c:82 text-utils/column.c:748
+#: text-utils/colcrt.c:82 text-utils/column.c:743
 #, c-format
 msgid " %s [options] [<file>...]\n"
 msgstr "  %s [opties] [<bestand>...]\n"
@@ -24012,165 +24021,171 @@ msgstr "ontleden van wachttijdwaarde is mislukt"
 msgid "failed to parse --table-wrap list"
 msgstr "ontleden van begin is mislukt"
 
-#: text-utils/column.c:549
+#: text-utils/column.c:527
+#, fuzzy
+#| msgid "failed to allocate output line"
+msgid "failed to allocate input line"
+msgstr "reserveren van geheugen voor uitvoerregel is mislukt"
+
+#: text-utils/column.c:545
 #, c-format
 msgid "line %zu: for JSON the name of the column %zu is required"
 msgstr ""
 
-#: text-utils/column.c:566
+#: text-utils/column.c:560
 #, fuzzy
 msgid "failed to allocate output data"
 msgstr "reserveren van geheugen voor uitvoertabel is mislukt"
 
-#: text-utils/column.c:751
+#: text-utils/column.c:746
 msgid "Columnate lists.\n"
 msgstr "Zet de invoer in kolommen.\n"
 
-#: text-utils/column.c:754
+#: text-utils/column.c:749
 #, fuzzy
 msgid " -t, --table                      create a table\n"
 msgstr "  -t, --table                een tabel produceren\n"
 
-#: text-utils/column.c:755
+#: text-utils/column.c:750
 #, fuzzy
 msgid " -n, --table-name <name>          table name for JSON output\n"
 msgstr "  -n, --name=<programmanaam>    fouten rapporteren onder deze naam\n"
 
-#: text-utils/column.c:756
+#: text-utils/column.c:751
 #, fuzzy
 msgid " -O, --table-order <columns>      specify order of output columns\n"
 msgstr "  -x, --sort <kolom>    uitvoer sorteren op deze <kolom>\n"
 
-#: text-utils/column.c:757
+#: text-utils/column.c:752
 #, fuzzy
 msgid " -C, --table-column <properties>  define column\n"
 msgstr "  -n, --noheadings       geen kopregel tonen\n"
 
-#: text-utils/column.c:758
+#: text-utils/column.c:753
 #, fuzzy
 msgid " -N, --table-columns <names>      comma separated columns names\n"
 msgstr "  -o, --options <lijst>     kommagescheiden lijst van wisselgeheugenopties\n"
 
-#: text-utils/column.c:759
+#: text-utils/column.c:754
 #, fuzzy
 msgid " -l, --table-columns-limit <num>  maximal number of input columns\n"
 msgstr "  -t, --streams <getal>    het aantal te gebruiken compressiestreams\n"
 
-#: text-utils/column.c:760
+#: text-utils/column.c:755
 msgid " -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"
 msgstr ""
 
-#: text-utils/column.c:761
+#: text-utils/column.c:756
 #, fuzzy
 msgid " -d, --table-noheadings           don't print header\n"
 msgstr "  -n, --noheadings         geen kopregel tonen\n"
 
-#: text-utils/column.c:762
+#: text-utils/column.c:757
 #, fuzzy
 msgid " -m, --table-maxout               fill all available space\n"
 msgstr "  -a, --all             alle apparaten tonen\n"
 
-#: text-utils/column.c:763
+#: text-utils/column.c:758
 msgid " -e, --table-header-repeat        repeat header for each page\n"
 msgstr ""
 
-#: text-utils/column.c:764
+#: text-utils/column.c:759
 #, fuzzy
 msgid " -H, --table-hide <columns>       don't print the columns\n"
 msgstr "  -n, --noheadings       geen kopregel tonen\n"
 
-#: text-utils/column.c:765
+#: text-utils/column.c:760
 msgid " -R, --table-right <columns>      right align text in these columns\n"
 msgstr ""
 
-#: text-utils/column.c:766
+#: text-utils/column.c:761
 #, fuzzy
 msgid " -T, --table-truncate <columns>   truncate text in the columns when necessary\n"
 msgstr "  -u, --notruncate       tekst in de kolommen niet afkappen\n"
 
-#: text-utils/column.c:767
+#: text-utils/column.c:762
 msgid " -W, --table-wrap <columns>       wrap text in the columns when necessary\n"
 msgstr ""
 
-#: text-utils/column.c:768
+#: text-utils/column.c:763
 #, fuzzy
 msgid " -L, --keep-empty-lines           don't ignore empty lines\n"
 msgstr "  -n, --noheadings         geen kopregel tonen\n"
 
-#: text-utils/column.c:769
+#: text-utils/column.c:764
 #, fuzzy
 msgid " -J, --json                       use JSON output format for table\n"
 msgstr "  -J, --json                uitvoer in JSON-opmaak produceren\n"
 
-#: text-utils/column.c:772
+#: text-utils/column.c:767
 #, fuzzy
 msgid " -r, --tree <column>              column to use tree-like output for the table\n"
 msgstr "  -O, --output <lijst>      te tonen kolommen in de uitvoer van '--list'\n"
 
-#: text-utils/column.c:773
+#: text-utils/column.c:768
 #, fuzzy
 msgid " -i, --tree-id <column>           line ID to specify child-parent relation\n"
 msgstr "  -g, --group <groep>             te gebruiken primaire groep\n"
 
-#: text-utils/column.c:774
+#: text-utils/column.c:769
 msgid " -p, --tree-parent <column>       parent to specify child-parent relation\n"
 msgstr ""
 
-#: text-utils/column.c:777
+#: text-utils/column.c:772
 #, fuzzy
 msgid " -c, --output-width <width>       width of output in number of characters\n"
 msgstr "  -c, --columns <breedte>    breedte van de uitvoer in aantal tekens\n"
 
-#: text-utils/column.c:778
+#: text-utils/column.c:773
 #, fuzzy
 msgid " -o, --output-separator <string>  columns separator for table output (default is two spaces)\n"
 msgstr ""
 "  -o, --output-separator <tekenreeks>    kolomscheider voor tabellenuitvoer;\n"
 "                                           standaard zijn twee spaties\n"
 
-#: text-utils/column.c:779
+#: text-utils/column.c:774
 #, fuzzy
 msgid " -s, --separator <string>         possible table delimiters\n"
 msgstr "  -s, --separator <tekens>   mogelijke scheidingstekens voor tabellen\n"
 
-#: text-utils/column.c:780
+#: text-utils/column.c:775
 #, fuzzy
 msgid " -x, --fillrows                   fill rows before columns\n"
 msgstr "  -x, --fillrows             rijen eerder vullen dan kolommen\n"
 
-#: text-utils/column.c:861
+#: text-utils/column.c:856
 msgid "invalid columns argument"
 msgstr "ongeldig aantal kolommen"
 
-#: text-utils/column.c:887
+#: text-utils/column.c:882
 #, fuzzy
 msgid "invalid columns limit argument"
 msgstr "ongeldig aantal kolommen"
 
-#: text-utils/column.c:889
+#: text-utils/column.c:884
 msgid "columns limit must be greater than zero"
 msgstr ""
 
-#: text-utils/column.c:892
+#: text-utils/column.c:887
 #, fuzzy
 msgid "failed to parse column names"
 msgstr "ontleden van klasse (bij '-c') is mislukt"
 
-#: text-utils/column.c:919
+#: text-utils/column.c:914
 #, fuzzy
 #| msgid "failed to allocate iterator"
 msgid "failed to use input separator"
 msgstr "reserveren van geheugen voor iterator is mislukt"
 
-#: text-utils/column.c:952
+#: text-utils/column.c:947
 msgid "options --tree-id and --tree-parent are required for tree formatting"
 msgstr ""
 
-#: text-utils/column.c:960
+#: text-utils/column.c:955
 msgid "option --table required for all --table-*"
 msgstr ""
 
-#: text-utils/column.c:963
+#: text-utils/column.c:958
 msgid "option --table-columns or --table-column required for --json"
 msgstr ""
 

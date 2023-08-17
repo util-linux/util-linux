@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.17.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-06-27 14:09+0200\n"
+"POT-Creation-Date: 2023-08-17 10:46+0200\n"
 "PO-Revision-Date: 2010-02-18 04:00+0700\n"
 "Last-Translator: Arif E. Nugroho <arif_endro@yahoo.com>\n"
 "Language-Team: Indonesian <translation-team-id@lists.sourceforge.net>\n"
@@ -229,7 +229,7 @@ msgstr "Dapatkan ukuran dalam 512-byte sektor"
 #: disk-utils/mkfs.bfs.c:191 disk-utils/mkfs.c:110 disk-utils/mkfs.minix.c:827
 #: disk-utils/swaplabel.c:180 misc-utils/wipefs.c:764
 #: sys-utils/blkdiscard.c:237 sys-utils/blkpr.c:303 sys-utils/blkzone.c:488
-#: sys-utils/tunelp.c:241 sys-utils/zramctl.c:716 sys-utils/zramctl.c:742
+#: sys-utils/tunelp.c:241 sys-utils/zramctl.c:717 sys-utils/zramctl.c:743
 #, fuzzy
 msgid "no device specified"
 msgstr "mount: perangkat loop dispesifikasikan dua kali"
@@ -1360,7 +1360,7 @@ msgstr "gagal menginisialisasi baris penyangga\n"
 #: sys-utils/lsipc.c:486 sys-utils/lsipc.c:567 sys-utils/lsipc.c:669
 #: sys-utils/lsipc.c:761 sys-utils/lsipc.c:925 sys-utils/prlimit.c:240
 #: sys-utils/rfkill.c:389 sys-utils/swapon.c:179 sys-utils/wdctl.c:299
-#: sys-utils/zramctl.c:414 text-utils/column.c:559 text-utils/column.c:584
+#: sys-utils/zramctl.c:414 text-utils/column.c:555 text-utils/column.c:579
 #, fuzzy
 msgid "failed to allocate output line"
 msgstr "gagal menginisialisasi baris penyangga\n"
@@ -1386,7 +1386,7 @@ msgstr "gagal menginisialisasi baris penyangga\n"
 #: sys-utils/lscpu.c:830 sys-utils/lscpu.c:840 sys-utils/lsipc.c:526
 #: sys-utils/lsipc.c:651 sys-utils/prlimit.c:275 sys-utils/rfkill.c:417
 #: sys-utils/swapon.c:227 sys-utils/wdctl.c:327 sys-utils/zramctl.c:481
-#: text-utils/column.c:568
+#: text-utils/column.c:562
 #, fuzzy
 msgid "failed to add output data"
 msgstr "gagal mengalokasikan outbuffer"
@@ -8257,307 +8257,312 @@ msgstr ""
 msgid "operation failed: %m"
 msgstr "gagal membaca: %s"
 
-#: libmount/src/context_mount.c:1412
+#: libmount/src/context_mount.c:1417
 #, fuzzy, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "gagal mendapatkan pid"
 
-#: libmount/src/context_mount.c:1422
+#: libmount/src/context_mount.c:1427
 #, fuzzy, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "mount: %s%s memiliki proteksi untuk ditulis, memount secara hanya-baca"
 
-#: libmount/src/context_mount.c:1436
+#: libmount/src/context_mount.c:1441
 #, c-format
 msgid "operation permitted for root only"
 msgstr ""
 
-#: libmount/src/context_mount.c:1440
+#: libmount/src/context_mount.c:1445
 #, fuzzy, c-format
 msgid "%s is already mounted"
 msgstr "mount: %s telah dimount di %s\n"
 
-#: libmount/src/context_mount.c:1446
+#: libmount/src/context_mount.c:1451
 #, fuzzy, c-format
 msgid "can't find in %s"
 msgstr "mount: tidak dapat menemukan %s dalam %s"
 
-#: libmount/src/context_mount.c:1449
+#: libmount/src/context_mount.c:1454
 #, fuzzy, c-format
 msgid "can't find mount point in %s"
 msgstr "mount: tidak dapat menemukan %s dalam %s"
 
-#: libmount/src/context_mount.c:1452
+#: libmount/src/context_mount.c:1457
 #, fuzzy, c-format
 msgid "can't find mount source %s in %s"
 msgstr "mount: tidak dapat menemukan %s dalam %s"
 
-#: libmount/src/context_mount.c:1457
+#: libmount/src/context_mount.c:1462
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr ""
 
-#: libmount/src/context_mount.c:1462
+#: libmount/src/context_mount.c:1467
 #, fuzzy, c-format
 msgid "failed to determine filesystem type"
 msgstr "%s: gagal untuk membuka: %s\n"
 
-#: libmount/src/context_mount.c:1463
+#: libmount/src/context_mount.c:1468
 #, fuzzy, c-format
 msgid "no valid filesystem type specified"
 msgstr "nama berkas tidak dispesifikasikan."
 
-#: libmount/src/context_mount.c:1470
+#: libmount/src/context_mount.c:1475
 #, fuzzy, c-format
 msgid "can't find %s"
 msgstr "%s: tidak dapat menlink %s: %s\n"
 
-#: libmount/src/context_mount.c:1472
+#: libmount/src/context_mount.c:1477
 #, fuzzy, c-format
 msgid "no mount source specified"
 msgstr "nama berkas tidak dispesifikasikan."
 
-#: libmount/src/context_mount.c:1483
+#: libmount/src/context_mount.c:1488
 #, fuzzy, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr "gagal mendapatkan pid"
 
-#: libmount/src/context_mount.c:1484
+#: libmount/src/context_mount.c:1489
 #, fuzzy, c-format
 msgid "failed to parse mount options '%s'"
 msgstr "gagal mendapatkan pid"
 
-#: libmount/src/context_mount.c:1487
+#: libmount/src/context_mount.c:1492
 #, fuzzy, c-format
 msgid "failed to parse mount options: %m"
 msgstr "gagal mendapatkan pid"
 
-#: libmount/src/context_mount.c:1488
+#: libmount/src/context_mount.c:1493
 #, fuzzy, c-format
 msgid "failed to parse mount options"
 msgstr "gagal mendapatkan pid"
 
-#: libmount/src/context_mount.c:1493
+#: libmount/src/context_mount.c:1498
 #, fuzzy, c-format
 msgid "failed to setup loop device for %s"
 msgstr "tidak dapat merewind perangkat swap"
 
-#: libmount/src/context_mount.c:1497
+#: libmount/src/context_mount.c:1502
 #, fuzzy, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "%s: %s bukan sebuah perangkat lp.\n"
 
-#: libmount/src/context_mount.c:1501 libmount/src/context_umount.c:1263
+#: libmount/src/context_mount.c:1506 libmount/src/context_umount.c:1263
 #, fuzzy, c-format
 msgid "locking failed"
 msgstr "gagal menjalankan %s"
 
-#: libmount/src/context_mount.c:1505 libmount/src/context_umount.c:1269
+#: libmount/src/context_mount.c:1510 libmount/src/context_umount.c:1269
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, fuzzy, c-format
 msgid "failed to switch namespace"
 msgstr "gagal memperoleh statistik dari path\n"
 
-#: libmount/src/context_mount.c:1509
+#: libmount/src/context_mount.c:1514
 #, fuzzy, c-format
 msgid "filesystem already mounted"
 msgstr "mount: %s telah dimount di %s\n"
 
-#: libmount/src/context_mount.c:1512
+#: libmount/src/context_mount.c:1517
 #, fuzzy, c-format
 msgid "mount failed: %m"
 msgstr "mount gagal"
 
-#: libmount/src/context_mount.c:1522
+#: libmount/src/context_mount.c:1527
+#, fuzzy, c-format
+msgid "filesystem was mounted, but failed to apply flags"
+msgstr "mount: mount gagal"
+
+#: libmount/src/context_mount.c:1533
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "mount: mount gagal"
 
-#: libmount/src/context_mount.c:1528
+#: libmount/src/context_mount.c:1539
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "mount: mount gagal"
 
-#: libmount/src/context_mount.c:1534
+#: libmount/src/context_mount.c:1545
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "mount: mount gagal"
 
-#: libmount/src/context_mount.c:1540
+#: libmount/src/context_mount.c:1551
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "mount: mount gagal"
 
-#: libmount/src/context_mount.c:1546
+#: libmount/src/context_mount.c:1557
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "mount: mount gagal"
 
-#: libmount/src/context_mount.c:1552
+#: libmount/src/context_mount.c:1563
 #, fuzzy, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "mount: mount gagal"
 
-#: libmount/src/context_mount.c:1570 libmount/src/context_mount.c:1615
-#, fuzzy, c-format
-msgid "mount point is not a directory"
-msgstr "mount: titik mount %s bukan berupa sebuah direktori"
-
-#: libmount/src/context_mount.c:1572 login-utils/newgrp.c:228
+#: libmount/src/context_mount.c:1584 login-utils/newgrp.c:228
 #, fuzzy, c-format
 msgid "permission denied"
 msgstr "mount: ijin ditolak"
 
-#: libmount/src/context_mount.c:1574
+#: libmount/src/context_mount.c:1586 libmount/src/context_mount.c:1629
+#, fuzzy, c-format
+msgid "mount point is not a directory"
+msgstr "mount: titik mount %s bukan berupa sebuah direktori"
+
+#: libmount/src/context_mount.c:1588
 #, fuzzy, c-format
 msgid "must be superuser to use mount"
 msgstr "mount: harus menjadi superuser untuk menggunakan mount"
 
-#: libmount/src/context_mount.c:1581
+#: libmount/src/context_mount.c:1595
 #, fuzzy, c-format
 msgid "mount point is busy"
 msgstr "mount: %s sedang sibuk"
 
-#: libmount/src/context_mount.c:1588
+#: libmount/src/context_mount.c:1602
 #, fuzzy, c-format
 msgid "%s already mounted on %s"
 msgstr "mount: %s telah dimount di %s\n"
 
-#: libmount/src/context_mount.c:1592
+#: libmount/src/context_mount.c:1606
 #, fuzzy, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "mount: %s telah dimount atau %s sedang sibuk"
 
-#: libmount/src/context_mount.c:1597
+#: libmount/src/context_mount.c:1611
 #, fuzzy, c-format
 msgid "mount point does not exist"
 msgstr "mount: titik mount %s tidak ada"
 
-#: libmount/src/context_mount.c:1600
+#: libmount/src/context_mount.c:1614
 #, fuzzy, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "mount: titik mount %s berupa symbolic link ke suatu tempat"
 
-#: libmount/src/context_mount.c:1605
+#: libmount/src/context_mount.c:1619
 #, fuzzy, c-format
 msgid "special device %s does not exist"
 msgstr "mount: perangkat spesial %s tidak ada"
 
-#: libmount/src/context_mount.c:1608 libmount/src/context_mount.c:1624
-#: libmount/src/context_mount.c:1708 libmount/src/context_mount.c:1731
+#: libmount/src/context_mount.c:1622 libmount/src/context_mount.c:1638
+#: libmount/src/context_mount.c:1722 libmount/src/context_mount.c:1745
 #, fuzzy, c-format
 msgid "mount(2) system call failed: %m"
 msgstr "mount gagal"
 
-#: libmount/src/context_mount.c:1620
+#: libmount/src/context_mount.c:1634
 #, fuzzy, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr ""
 "mount: perangkat spesial %s tidak ada\n"
 "       (sebuah path prefix bukan berupa sebuah direktori)\n"
 
-#: libmount/src/context_mount.c:1632
+#: libmount/src/context_mount.c:1646
 #, fuzzy, c-format
 msgid "mount point not mounted or bad option"
 msgstr "mount: %s sudah tidak dimount, atau pilihan buruk"
 
-#: libmount/src/context_mount.c:1634
+#: libmount/src/context_mount.c:1648
 #, fuzzy, c-format
 msgid "not mount point or bad option"
 msgstr "mount: %s sudah tidak dimount, atau pilihan buruk"
 
-#: libmount/src/context_mount.c:1637
+#: libmount/src/context_mount.c:1651
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr ""
 
-#: libmount/src/context_mount.c:1641
+#: libmount/src/context_mount.c:1655
 #, fuzzy, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 "       (untuk beberapa filesystem (e.g. nfs, cifs) anda mungkin\n"
 "       membutuhkan aplikasi pembantu /sbin/mount.<tipe>)"
 
-#: libmount/src/context_mount.c:1645
+#: libmount/src/context_mount.c:1659
 #, fuzzy, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr ""
 "mount: tipe fs salah, pilihan buruk, superblock buruk di %s,\n"
 "       hilang codepage atau aplikasi pembantu, atau error lain"
 
-#: libmount/src/context_mount.c:1652
+#: libmount/src/context_mount.c:1666
 #, c-format
 msgid "mount table full"
 msgstr "tabel mount penuh"
 
-#: libmount/src/context_mount.c:1657
+#: libmount/src/context_mount.c:1671
 #, fuzzy, c-format
 msgid "can't read superblock on %s"
 msgstr "mount: %s: tidak dapat membaca superblock"
 
-#: libmount/src/context_mount.c:1664
+#: libmount/src/context_mount.c:1678
 #, fuzzy, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "mount: tipe filesystem tidak diketahui '%s'"
 
-#: libmount/src/context_mount.c:1667
+#: libmount/src/context_mount.c:1681
 #, fuzzy, c-format
 msgid "unknown filesystem type"
 msgstr "mount: tipe filesystem tidak diketahui '%s'"
 
-#: libmount/src/context_mount.c:1676
+#: libmount/src/context_mount.c:1690
 #, fuzzy, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "mount: %s bukan sebuak perangkat block, dan gagal memperoleh statistik?"
 
-#: libmount/src/context_mount.c:1679
+#: libmount/src/context_mount.c:1693
 #, fuzzy, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr ""
 "mount: kernel tidak mengenal %s sebagai sebuah perangkat block\n"
 "       (mungkin `modprobe driver'?)"
 
-#: libmount/src/context_mount.c:1682
+#: libmount/src/context_mount.c:1696
 #, fuzzy, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "mount: %s bukan sebuah perangkat block (mungkin dicoba dengan menggunakan pilihan `-o loop'?"
 
-#: libmount/src/context_mount.c:1684
+#: libmount/src/context_mount.c:1698
 #, fuzzy, c-format
 msgid "%s is not a block device"
 msgstr "%s: bukan sebuah block device\n"
 
-#: libmount/src/context_mount.c:1691
+#: libmount/src/context_mount.c:1705
 #, fuzzy, c-format
 msgid "%s is not a valid block device"
 msgstr "mount: %s bukan sebuah perangkat block yang valid"
 
-#: libmount/src/context_mount.c:1699
+#: libmount/src/context_mount.c:1713
 #, fuzzy, c-format
 msgid "cannot mount %s read-only"
 msgstr "mount: tidak dapat me-mount %s%s hanya-baca"
 
-#: libmount/src/context_mount.c:1701
+#: libmount/src/context_mount.c:1715
 #, fuzzy, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "mount: %s%s memiliki proteksi untuk ditulis tetapi secara eksplisit pilihan `-w' diberikan"
 
-#: libmount/src/context_mount.c:1703
+#: libmount/src/context_mount.c:1717
 #, fuzzy, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "mount: tidak dapat memasang kembali %s%s secara baca-tulis, terproteksi-tulis"
 
-#: libmount/src/context_mount.c:1705
+#: libmount/src/context_mount.c:1719
 #, fuzzy, c-format
 msgid "bind %s failed"
 msgstr "%s gagal.\n"
 
-#: libmount/src/context_mount.c:1716
+#: libmount/src/context_mount.c:1730
 #, fuzzy, c-format
 msgid "no medium found on %s"
 msgstr "mount: tidak ada media ditemukan di %s"
 
-#: libmount/src/context_mount.c:1723
+#: libmount/src/context_mount.c:1737
 #, fuzzy, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "tidak akan mencoba untuk membuat filesystem pada '%s'"
@@ -13895,8 +13900,8 @@ msgid "timeout [%d sec]\n"
 msgstr "Waktu habis untuk Login sesudah %d detik\n"
 
 #: misc-utils/uuidd.c:483 sys-utils/irqtop.c:228 sys-utils/irqtop.c:231
-#: sys-utils/irqtop.c:248 term-utils/setterm.c:920 text-utils/column.c:616
-#: text-utils/column.c:646
+#: sys-utils/irqtop.c:248 term-utils/setterm.c:920 text-utils/column.c:611
+#: text-utils/column.c:641
 #, fuzzy
 msgid "read failed"
 msgstr "gagal membaca: %s"
@@ -17416,7 +17421,7 @@ msgstr ""
 msgid "<size>"
 msgstr ", besar=%9lu"
 
-#: sys-utils/ipcmk.c:114 sys-utils/losetup.c:754 sys-utils/zramctl.c:653
+#: sys-utils/ipcmk.c:114 sys-utils/losetup.c:754 sys-utils/zramctl.c:654
 #, fuzzy
 msgid "failed to parse size"
 msgstr "gagal mendapatkan pid"
@@ -20358,7 +20363,7 @@ msgstr "akar inode bukan sebuah direktori"
 msgid "%s is a mountpoint\n"
 msgstr "%s telah di mount.\t "
 
-#: sys-utils/nsenter.c:78 sys-utils/setarch.c:139 sys-utils/unshare.c:643
+#: sys-utils/nsenter.c:78 sys-utils/setarch.c:144 sys-utils/unshare.c:643
 #, fuzzy, c-format
 msgid " %s [options] [<program> [<argument>...]]\n"
 msgstr "penggunaan: %s [pilihan] <aplikasi> [arg ...]\n"
@@ -21315,121 +21320,121 @@ msgstr "menonaktifkan interupsi alarm rtc"
 msgid "Switching on %s.\n"
 msgstr "Mengaktifkan %s.\n"
 
-#: sys-utils/setarch.c:137
+#: sys-utils/setarch.c:142
 #, fuzzy, c-format
 msgid " %s [<arch>] [options] [<program> [<argument>...]]\n"
 msgstr "penggunaan: %s [pilihan] <aplikasi> [arg ...]\n"
 
-#: sys-utils/setarch.c:142
+#: sys-utils/setarch.c:147
 msgid "Change the reported architecture and set personality flags.\n"
 msgstr ""
 
-#: sys-utils/setarch.c:145
+#: sys-utils/setarch.c:150
 msgid " -B, --32bit              turns on ADDR_LIMIT_32BIT\n"
 msgstr ""
 
-#: sys-utils/setarch.c:146
+#: sys-utils/setarch.c:151
 msgid " -F, --fdpic-funcptrs     makes function pointers point to descriptors\n"
 msgstr ""
 
-#: sys-utils/setarch.c:147
+#: sys-utils/setarch.c:152
 msgid " -I, --short-inode        turns on SHORT_INODE\n"
 msgstr ""
 
-#: sys-utils/setarch.c:148
+#: sys-utils/setarch.c:153
 msgid " -L, --addr-compat-layout changes the way virtual memory is allocated\n"
 msgstr ""
 
-#: sys-utils/setarch.c:149
+#: sys-utils/setarch.c:154
 msgid " -R, --addr-no-randomize  disables randomization of the virtual address space\n"
 msgstr ""
 
-#: sys-utils/setarch.c:150
+#: sys-utils/setarch.c:155
 msgid " -S, --whole-seconds      turns on WHOLE_SECONDS\n"
 msgstr ""
 
-#: sys-utils/setarch.c:151
+#: sys-utils/setarch.c:156
 msgid " -T, --sticky-timeouts    turns on STICKY_TIMEOUTS\n"
 msgstr ""
 
-#: sys-utils/setarch.c:152
+#: sys-utils/setarch.c:157
 msgid " -X, --read-implies-exec  turns on READ_IMPLIES_EXEC\n"
 msgstr ""
 
-#: sys-utils/setarch.c:153
+#: sys-utils/setarch.c:158
 msgid " -Z, --mmap-page-zero     turns on MMAP_PAGE_ZERO\n"
 msgstr ""
 
-#: sys-utils/setarch.c:154
+#: sys-utils/setarch.c:159
 msgid " -3, --3gb                limits the used address space to a maximum of 3 GB\n"
 msgstr ""
 
-#: sys-utils/setarch.c:155
+#: sys-utils/setarch.c:160
 msgid "     --4gb                ignored (for backward compatibility only)\n"
 msgstr ""
 
-#: sys-utils/setarch.c:156
+#: sys-utils/setarch.c:161
 msgid "     --uname-2.6          turns on UNAME26\n"
 msgstr ""
 
-#: sys-utils/setarch.c:157
+#: sys-utils/setarch.c:162
 #, fuzzy
 msgid " -v, --verbose            say what options are being switched on\n"
 msgstr "  -V, --version                Tampilkan informasi versi\n"
 
-#: sys-utils/setarch.c:160
+#: sys-utils/setarch.c:165
 #, fuzzy
 msgid "     --list               list settable architectures, and exit\n"
 msgstr "  -u, --unqote                 Jangan quote output\n"
 
-#: sys-utils/setarch.c:161
+#: sys-utils/setarch.c:166
 msgid "     --show[=personality] show current or specific personality and exit\n"
 msgstr ""
 
-#: sys-utils/setarch.c:341
+#: sys-utils/setarch.c:346
 #, fuzzy, c-format
 msgid "Kernel cannot set architecture to %s"
 msgstr "Tidak dapat memperoleh nilai timeout untuk %s: %s\n"
 
-#: sys-utils/setarch.c:406
+#: sys-utils/setarch.c:411
 msgid "Can not get current kernel personality"
 msgstr ""
 
-#: sys-utils/setarch.c:459
+#: sys-utils/setarch.c:464
 msgid "Not enough arguments"
 msgstr "Argumen tidak cukup"
 
-#: sys-utils/setarch.c:527
+#: sys-utils/setarch.c:532
 #, fuzzy
 msgid "unrecognized option '--list'"
 msgstr "input tidak diketahui: %s\n"
 
-#: sys-utils/setarch.c:536
+#: sys-utils/setarch.c:541
 #, fuzzy
 msgid "could not parse personality"
 msgstr "tidak dapat membuka %s"
 
-#: sys-utils/setarch.c:540
+#: sys-utils/setarch.c:545
 #, fuzzy
 msgid "unrecognized option '--show'"
 msgstr "input tidak diketahui: %s\n"
 
-#: sys-utils/setarch.c:554
+#: sys-utils/setarch.c:559
 #, fuzzy
 msgid "no architecture argument or personality flags specified"
 msgstr "panjang argumen tidak dispesifikasikan"
 
-#: sys-utils/setarch.c:566
+#: sys-utils/setarch.c:571
 #, c-format
 msgid "%s: Unrecognized architecture"
 msgstr "%s: Arsitektur tidak dikenal"
 
-#: sys-utils/setarch.c:584
+#: sys-utils/setarch.c:589
 #, fuzzy, c-format
 msgid "failed to set personality to %s"
 msgstr "Gagal menset personality ke %s"
 
-#: sys-utils/setarch.c:596
+#: sys-utils/setarch.c:601
 #, fuzzy, c-format
 msgid "Execute command `%s'.\n"
 msgstr "Mengisukan perintah date: %s\n"
@@ -23131,44 +23136,48 @@ msgstr ""
 msgid "   lzo, lz4, lz4hc, deflate, 842 and zstd\n"
 msgstr ""
 
-#: sys-utils/zramctl.c:657
+#: sys-utils/zramctl.c:569
+msgid "   (List may be inaccurate, consult man page.)\n"
+msgstr ""
+
+#: sys-utils/zramctl.c:658
 #, fuzzy
 msgid "failed to parse streams"
 msgstr "gagal mendapatkan pid"
 
-#: sys-utils/zramctl.c:679
+#: sys-utils/zramctl.c:680
 #, fuzzy
 msgid "option --find is mutually exclusive with <device>"
 msgstr "--offset dan --all adalah 'mutually exclusive'"
 
-#: sys-utils/zramctl.c:685
+#: sys-utils/zramctl.c:686
 msgid "only one <device> at a time is allowed"
 msgstr ""
 
-#: sys-utils/zramctl.c:688
+#: sys-utils/zramctl.c:689
 msgid "options --algorithm and --streams must be combined with --size"
 msgstr ""
 
-#: sys-utils/zramctl.c:721 sys-utils/zramctl.c:750
+#: sys-utils/zramctl.c:722 sys-utils/zramctl.c:751
 #, fuzzy, c-format
 msgid "%s: failed to reset"
 msgstr "%s: gagal untuk membuka: %s\n"
 
-#: sys-utils/zramctl.c:732 sys-utils/zramctl.c:740
+#: sys-utils/zramctl.c:733 sys-utils/zramctl.c:741
 msgid "no free zram device found"
 msgstr ""
 
-#: sys-utils/zramctl.c:754
+#: sys-utils/zramctl.c:755
 #, fuzzy, c-format
 msgid "%s: failed to set number of streams"
 msgstr "gagal mendapatkan pid"
 
-#: sys-utils/zramctl.c:758
+#: sys-utils/zramctl.c:759
 #, fuzzy, c-format
 msgid "%s: failed to set algorithm"
 msgstr "%s: gagal untuk berpindah ke ofset 0x%jx"
 
-#: sys-utils/zramctl.c:761
+#: sys-utils/zramctl.c:762
 #, fuzzy, c-format
 msgid "%s: failed to set disksize (%ju bytes)"
 msgstr "%s: gagal untuk berpindah ke ofset 0x%jx"
@@ -24346,7 +24355,7 @@ msgstr "-- baris sudah di flush"
 msgid "bad -l argument"
 msgstr "col: argumen %s untuk pilihan -l tidak baik.\n"
 
-#: text-utils/colcrt.c:82 text-utils/column.c:748
+#: text-utils/colcrt.c:82 text-utils/column.c:743
 #, fuzzy, c-format
 msgid " %s [options] [<file>...]\n"
 msgstr "Penggunaan: %s [pilihan] perangkat ...\n"
@@ -24436,161 +24445,166 @@ msgstr "gagal mendapatkan pid"
 msgid "failed to parse --table-wrap list"
 msgstr "gagal mendapatkan pid"
 
-#: text-utils/column.c:549
+#: text-utils/column.c:527
+#, fuzzy
+msgid "failed to allocate input line"
+msgstr "gagal menginisialisasi baris penyangga\n"
+
+#: text-utils/column.c:545
 #, c-format
 msgid "line %zu: for JSON the name of the column %zu is required"
 msgstr ""
 
-#: text-utils/column.c:566
+#: text-utils/column.c:560
 #, fuzzy
 msgid "failed to allocate output data"
 msgstr "gagal menginisialisasi baris penyangga\n"
 
-#: text-utils/column.c:751
+#: text-utils/column.c:746
 msgid "Columnate lists.\n"
 msgstr ""
 
-#: text-utils/column.c:754
+#: text-utils/column.c:749
 #, fuzzy
 msgid " -t, --table                      create a table\n"
 msgstr "  -Q, --quiet-output           Tidak ada output normal\n"
 
-#: text-utils/column.c:755
+#: text-utils/column.c:750
 #, fuzzy
 msgid " -n, --table-name <name>          table name for JSON output\n"
 msgstr "  -n, --name=progname          Nama dimana error tersebut dilaporkan\n"
 
-#: text-utils/column.c:756
+#: text-utils/column.c:751
 #, fuzzy
 msgid " -O, --table-order <columns>      specify order of output columns\n"
 msgstr "  -o, --options=optstring      Pilihan pendek yang dikenal\n"
 
-#: text-utils/column.c:757
+#: text-utils/column.c:752
 #, fuzzy
 msgid " -C, --table-column <properties>  define column\n"
 msgstr "  -u, --unqote                 Jangan quote output\n"
 
-#: text-utils/column.c:758
+#: text-utils/column.c:753
 #, fuzzy
 msgid " -N, --table-columns <names>      comma separated columns names\n"
 msgstr "  -Q, --quiet-output           Tidak ada output normal\n"
 
-#: text-utils/column.c:759
+#: text-utils/column.c:754
 #, fuzzy
 msgid " -l, --table-columns-limit <num>  maximal number of input columns\n"
 msgstr "    -S# [atau --sectors #]: set jumlah dari sectors yang digunakan"
 
-#: text-utils/column.c:760
+#: text-utils/column.c:755
 msgid " -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"
 msgstr ""
 
-#: text-utils/column.c:761
+#: text-utils/column.c:756
 #, fuzzy
 msgid " -d, --table-noheadings           don't print header\n"
 msgstr "  -u, --unqote                 Jangan quote output\n"
 
-#: text-utils/column.c:762
+#: text-utils/column.c:757
 #, fuzzy
 msgid " -m, --table-maxout               fill all available space\n"
 msgstr "  -h, --help                   Ini sedikit petunjuk penggunaan\n"
 
-#: text-utils/column.c:763
+#: text-utils/column.c:758
 msgid " -e, --table-header-repeat        repeat header for each page\n"
 msgstr ""
 
-#: text-utils/column.c:764
+#: text-utils/column.c:759
 #, fuzzy
 msgid " -H, --table-hide <columns>       don't print the columns\n"
 msgstr "  -u, --unqote                 Jangan quote output\n"
 
-#: text-utils/column.c:765
+#: text-utils/column.c:760
 msgid " -R, --table-right <columns>      right align text in these columns\n"
 msgstr ""
 
-#: text-utils/column.c:766
+#: text-utils/column.c:761
 #, fuzzy
 msgid " -T, --table-truncate <columns>   truncate text in the columns when necessary\n"
 msgstr "  -u, --unqote                 Jangan quote output\n"
 
-#: text-utils/column.c:767
+#: text-utils/column.c:762
 msgid " -W, --table-wrap <columns>       wrap text in the columns when necessary\n"
 msgstr ""
 
-#: text-utils/column.c:768
+#: text-utils/column.c:763
 #, fuzzy
 msgid " -L, --keep-empty-lines           don't ignore empty lines\n"
 msgstr "  -u, --unqote                 Jangan quote output\n"
 
-#: text-utils/column.c:769
+#: text-utils/column.c:764
 #, fuzzy
 msgid " -J, --json                       use JSON output format for table\n"
 msgstr "  -V, --version                Tampilkan informasi versi\n"
 
-#: text-utils/column.c:772
+#: text-utils/column.c:767
 #, fuzzy
 msgid " -r, --tree <column>              column to use tree-like output for the table\n"
 msgstr "  -V, --version                Tampilkan informasi versi\n"
 
-#: text-utils/column.c:773
+#: text-utils/column.c:768
 msgid " -i, --tree-id <column>           line ID to specify child-parent relation\n"
 msgstr ""
 
-#: text-utils/column.c:774
+#: text-utils/column.c:769
 #, fuzzy
 msgid " -p, --tree-parent <column>       parent to specify child-parent relation\n"
 msgstr "    -H# [atau --heads #]:  set jumlah dari heads yang digunakan"
 
-#: text-utils/column.c:777
+#: text-utils/column.c:772
 #, fuzzy
 msgid " -c, --output-width <width>       width of output in number of characters\n"
 msgstr "  -o, --options=optstring      Pilihan pendek yang dikenal\n"
 
-#: text-utils/column.c:778
+#: text-utils/column.c:773
 msgid " -o, --output-separator <string>  columns separator for table output (default is two spaces)\n"
 msgstr ""
 
-#: text-utils/column.c:779
+#: text-utils/column.c:774
 msgid " -s, --separator <string>         possible table delimiters\n"
 msgstr ""
 
-#: text-utils/column.c:780
+#: text-utils/column.c:775
 #, fuzzy
 msgid " -x, --fillrows                   fill rows before columns\n"
 msgstr "  -V, --version                Tampilkan informasi versi\n"
 
-#: text-utils/column.c:861
+#: text-utils/column.c:856
 #, fuzzy
 msgid "invalid columns argument"
 msgstr "pilihan tidak valid"
 
-#: text-utils/column.c:887
+#: text-utils/column.c:882
 #, fuzzy
 msgid "invalid columns limit argument"
 msgstr "pilihan tidak valid"
 
-#: text-utils/column.c:889
+#: text-utils/column.c:884
 msgid "columns limit must be greater than zero"
 msgstr ""
 
-#: text-utils/column.c:892
+#: text-utils/column.c:887
 #, fuzzy
 msgid "failed to parse column names"
 msgstr "gagal mendapatkan pid"
 
-#: text-utils/column.c:919
+#: text-utils/column.c:914
 #, fuzzy
 msgid "failed to use input separator"
 msgstr "gagal mengalokasikan outbuffer"
 
-#: text-utils/column.c:952
+#: text-utils/column.c:947
 msgid "options --tree-id and --tree-parent are required for tree formatting"
 msgstr ""
 
-#: text-utils/column.c:960
+#: text-utils/column.c:955
 msgid "option --table required for all --table-*"
 msgstr ""
 
-#: text-utils/column.c:963
+#: text-utils/column.c:958
 msgid "option --table-columns or --table-column required for --json"
 msgstr ""
 
