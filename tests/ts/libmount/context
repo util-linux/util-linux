@@ -116,8 +116,15 @@ $TS_CMD_FINDMNT --kernel --mountpoint $MOUNTPOINT -o VFS-OPTIONS -n >> $TS_OUTPU
 
 ts_run $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
 is_mounted $DEVICE && echo "$DEVICE still mounted" >> $TS_OUTPUT 2>> $TS_ERRLOG
-ts_finalize_subtest
 
+# Test that the atime option works after the migration to use the new kernel mount APIs.
+ts_run $TESTPROG --mount -o atime $DEVICE $MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_FINDMNT --kernel --mountpoint $MOUNTPOINT -o VFS-OPTIONS -n >> $TS_OUTPUT 2>> $TS_ERRLOG
+is_mounted $DEVICE || echo "$DEVICE not mounted" >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_run $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
+is_mounted $DEVICE && echo "$DEVICE still mounted" >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+ts_finalize_subtest
 
 ts_init_subtest "mount-loopdev"
 mkdir -p $MOUNTPOINT &> /dev/null
