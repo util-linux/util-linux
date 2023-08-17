@@ -1,0 +1,56 @@
+util-linux v2.39.2 Release Notes
+================================
+
+Changes between v2.39.1 and v2.39.2
+-----------------------------------
+
+build-sys:
+   - add AX_COMPARE_VERSION  [Thomas Weißschuh]
+chrt:
+   - (man) add note about --sched-period lower limit  [Karel Zak]
+column:
+   - fix -l  [Karel Zak]
+docs:
+   - update AUTHORS file  [Karel Zak]
+github:
+   - check apt-cache in more robust way  [Karel Zak]
+include:
+   - define pidfd syscalls if needed  [Markus Mayer]
+libblkid:
+   - fix topology chain types mismatch  [Karel Zak]
+libmount:
+   - (python)  work around python 3.12 bug  [Thomas Weißschuh]
+   - (utils) fix statx fallback  [Thomas Weißschuh]
+   - check for linux/mount.h  [Markus Mayer]
+   - check for struct statx  [Markus Mayer]
+   - cleanup --fake mode  [Karel Zak]
+   - fix typo  [Debarshi Ray]
+   - handle failure to apply flags as part of a mount operation  [Debarshi Ray]
+   - ifdef statx() call  [Karel Zak]
+   - improve EPERM interpretation  [Karel Zak]
+   - update documentation for MNT_ERR_APPLYFLAGS  [Debarshi Ray]
+   - use mount(2) for remount on Linux < 5.14  [Karel Zak]
+   - use some MS_* flags as superblock flags  [Karel Zak]
+lscpu:
+   - Even more Arm part numbers (early 2023)  [Jeremy Linton]
+meson:
+   - add check for linux/mount.h  [Thomas Weißschuh]
+   - add check for struct statx  [Thomas Weißschuh]
+   - check for HAVE_STRUCT_STATX_STX_MNT_ID  [Karel Zak]
+po:
+   - merge changes  [Karel Zak]
+   - update es.po (from translationproject.org)  [Antonio Ceballos Roa]
+   - update hr.po (from translationproject.org)  [Božidar Putanec]
+   - update ja.po (from translationproject.org)  [Takeshi Hamasaki]
+   - update sr.po (from translationproject.org)  [Мирослав Николић]
+po-man:
+   - merge changes  [Karel Zak]
+   - update sr.po (from translationproject.org)  [Мирослав Николић]
+setarch:
+   - add PER_LINUX_FDPIC fallback  [Karel Zak]
+uuidd:
+   - improve man page for -cont-clock  [Karel Zak]
+wall:
+   - do not error for ttys that do not exist  [Mike Gilbert]
+zramctl:
+   - add hint about supported algorithms  [Karel Zak]
