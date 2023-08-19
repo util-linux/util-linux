@@ -2,7 +2,7 @@
 ////
 uclampset(1) manpage
 
-Copyright (C) 2020-2021 Qais Yousef <qais.yousef@arm.com>
+Copyright (C) 2020-2021 Qais Yousef <qyousef@layalina.io>
 Copyright (C) 2020-2021 Arm Ltd
 
 This is free documentation; you can redistribute it and/or
@@ -121,7 +121,7 @@ Consult your kernel docs for the exact expected behavior on that kernel.
 
 == AUTHORS
 
-mailto:qais.yousef@arm.com[Qais Yousef]
+mailto:qyousef@layalina.io[Qais Yousef]
 
 == SEE ALSO
 

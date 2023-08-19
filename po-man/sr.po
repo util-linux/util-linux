@@ -24017,7 +24017,7 @@ msgstr "Видите *sched*(7) за описивање шеме заказив�
 #
 #
 #. uclampset(1) manpage
-#. Copyright (C) 2020-2021 Qais Yousef <qais.yousef@arm.com>
+#. Copyright (C) 2020-2021 Qais Yousef <qyousef@layalina.io>
 #. Copyright (C) 2020-2021 Arm Ltd
 #. This is free documentation; you can redistribute it and/or
 #. modify it under the terms of the GNU General Public License,
@@ -24259,8 +24259,8 @@ msgstr ""
 
 #. type: Plain text
 #: ../schedutils/uclampset.1.adoc:125
-msgid "mailto:qais.yousef@arm.com[Qais Yousef]"
-msgstr "mailto:qais.yousef@arm.com[Qais Yousef]"
+msgid "mailto:qyousef@layalina.io[Qais Yousef]"
+msgstr "mailto:qyousef@layalina.io[Qais Yousef]"
 
 #. type: Plain text
 #: ../schedutils/uclampset.1.adoc:134
