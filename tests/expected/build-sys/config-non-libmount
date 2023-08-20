@@ -92,6 +92,7 @@ scriptlive:
 scriptreplay:  
 setarch:  
 setpriv:  libcap-ng 
+setpgid:  
 setsid:  
 setterm:  libtinfo 
 su:  libpam libpam_misc 

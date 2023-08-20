@@ -94,6 +94,7 @@ readprofile:
 renice:  
 rtcwake:  
 setarch:  
+setpgid:  
 setsid:  
 switch_root:  
 tunelp:  

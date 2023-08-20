@@ -2077,6 +2077,9 @@ UL_REQUIRES_BUILD([rfkill], [libsmartcols])
 AM_CONDITIONAL([BUILD_RFKILL], [test "x$build_rfkill" = xyes])
 
 
+UL_BUILD_INIT([setpgid], [yes])
+AM_CONDITIONAL([BUILD_SETPGID], [test "x$build_setpgid" = xyes])
+
 UL_BUILD_INIT([setsid], [yes])
 AM_CONDITIONAL([BUILD_SETSID], [test "x$build_setsid" = xyes])
 

@@ -111,6 +111,7 @@ scriptlive:
 scriptreplay:  
 setarch:  
 setpriv:  libcap-ng 
+setpgid:  
 setsid:  
 setterm:  libtinfo 
 sfdisk.static: STATIC
