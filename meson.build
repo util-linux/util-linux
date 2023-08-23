@@ -81,7 +81,7 @@ have_mountfd_api = cc.sizeof('struct mount_attr', prefix : '#include <linux/moun
 conf.set('HAVE_STRUCT_MOUNT_ATTR', have_mountfd_api ? 1 : false)
 conf.set('HAVE_MOUNTFD_API', have_mountfd_api ? 1 : false)
 
-have_struct_statx = cc.sizeof('struct statx', prefix : '#include <linux/stat.h>') > 0
+have_struct_statx = cc.sizeof('struct statx', prefix : '#include <sys/stat.h>') > 0
 conf.set('HAVE_STRUCT_STATX', have_struct_statx ? 1 : false)
 
 build_libmount = not get_option('build-libmount').disabled()
@@ -179,7 +179,6 @@ headers = '''
         linux/nsfs.h
         linux/mount.h
         linux/pr.h
-        linux/stat.h
         linux/securebits.h
         linux/tiocl.h
         linux/version.h
@@ -636,7 +635,7 @@ have = cc.has_member('struct stat', 'st_mtim.tv_nsec',
 conf.set('HAVE_STRUCT_STAT_ST_MTIM_TV_NSEC', have ? 1 : false)
 
 have = cc.has_member('struct statx', 'stx_mnt_id',
-                     prefix : '#include <linux/stat.h>')
+                     prefix : '#include <sys/stat.h>')
 conf.set('HAVE_STRUCT_STATX_STX_MNT_ID', have ? 1 : false)
 
 # replacement for AC_STRUCT_TIMEZONE
