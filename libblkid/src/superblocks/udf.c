@@ -233,6 +233,7 @@ static int probe_udf(blkid_probe pr,
 	size_t i;
 	uint32_t vsd_len;
 	uint16_t udf_rev = 0;
+	int is_udf = 0;
 	int vsd_2048_valid = -1;
 	int have_label = 0;
 	int have_uuid = 0;
@@ -343,6 +344,8 @@ anchor:
 	return 1;
 
 real_blksz:
+	/* At this stage we detected ISO/IEC 13346 or ECMA-167 filesystem recognition sequence, it does not have to be UDF */
+
 	/* Use the actual block size from here on out */
 	bs = pbs[i];
 
@@ -454,11 +457,17 @@ real_blksz:
 					lvid_loc = le32_to_cpu(vd->type.logical.lvid_location);
 				}
 			}
-			if (!udf_rev) {
-				/* UDF-2.60: 2.1.5.3: UDF revision field shall indicate revision of UDF document
-				 * We use maximal value from this field and from LVIDIU fields for ID_FS_VERSION */
-				if (strncmp(vd->type.logical.domain_id, "*OSTA UDF Compliant", sizeof(vd->type.logical.domain_id)) == 0)
-					udf_rev = le16_to_cpu(vd->type.logical.udf_rev);
+			if (!is_udf || !udf_rev) {
+				/* UDF-2.60: 2.2.4.3: This field shall indicate that the contents of
+				 * this logical volume conforms to the domain defined in this document.
+				 * This distinguish UDF from all other ISO/IEC 13346 and ECMA-167 filesystems. */
+				if (strncmp(vd->type.logical.domain_id, "*OSTA UDF Compliant", sizeof(vd->type.logical.domain_id)) == 0) {
+					is_udf = 1;
+					/* UDF-2.60: 2.1.5.3: UDF revision field shall indicate revision of UDF document
+					 * We use maximal value from this field and from LVIDIU fields for ID_FS_VERSION */
+					if (!udf_rev)
+						udf_rev = le16_to_cpu(vd->type.logical.udf_rev);
+				}
 			}
 			if ((!have_logvolid || !have_label) && is_charset_udf(vd->type.logical.desc_charset)) {
 				/* LogicalVolumeIdentifier in UDF 2.01 specification:
@@ -520,8 +529,13 @@ real_blksz:
 								vd->type.imp_use_volume.lvinfo1.c, clen, enc);
 			}
 		}
-		if (have_volid && have_uuid && have_volsetid && have_logvolid && have_label && lvid_len && lvid_loc && have_applicationid && have_publisherid)
+		if (is_udf && have_volid && have_uuid && have_volsetid && have_logvolid && have_label && lvid_len && lvid_loc && have_applicationid && have_publisherid)
 			break;
+	}
+
+	if (!is_udf) {
+		/* We detected some other ISO/IEC 13346 or ECMA-167 filesystem, not UDF */
+		return 1;
 	}
 
 	/* Pick the first logical volume integrity descriptor and read UDF revision */
@@ -584,6 +598,7 @@ const struct blkid_idinfo udf_idinfo =
 	.flags		= BLKID_IDINFO_TOLERANT,
 	.magics		=
 	{
+		/* These magics are generic to all ISO/IEC 13346 and ECMA-167 filesystems, not just UDF */
 		{ .magic = "BEA01", .len = 5, .kboff = 32, .sboff = 1, .hoff = "session_offset" },
 		{ .magic = "BOOT2", .len = 5, .kboff = 32, .sboff = 1, .hoff = "session_offset" },
 		{ .magic = "CD001", .len = 5, .kboff = 32, .sboff = 1, .hoff = "session_offset" },
