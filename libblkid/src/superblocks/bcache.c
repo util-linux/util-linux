@@ -325,7 +325,7 @@ static int probe_bcachefs(blkid_probe pr, const struct blkid_idmag *mag)
 		return BLKID_PROBE_NONE;
 
 	sb_size = BCACHEFS_SB_FIELDS_OFF + BYTES(bcs);
-	if (sb_size > BCACHEFS_SECTOR_SIZE << bcs->layout.sb_max_size_bits)
+	if (sb_size > ((uint64_t) BCACHEFS_SECTOR_SIZE << bcs->layout.sb_max_size_bits))
 		return BLKID_PROBE_NONE;
 
 	if (sb_size > BCACHEFS_SB_MAX_SIZE)
