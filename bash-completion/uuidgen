@@ -13,6 +13,10 @@ _uuidgen_module()
 			COMPREPLY=( $(compgen -W "name" -- "$cur") )
 			return 0
 			;;
+		'-R'|'--repeat')
+			COMPREPLY=( $(compgen -W "number" -- $cur) )
+			return 0
+			;;
 		'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
@@ -25,6 +29,7 @@ _uuidgen_module()
 				--namespace
 				--name
 				--md5
+				--repeat
 				--sha1
 				--hex
 				--help

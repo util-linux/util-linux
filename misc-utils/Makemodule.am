@@ -104,7 +104,7 @@ usrbin_exec_PROGRAMS += uuidgen
 MANPAGES += misc-utils/uuidgen.1
 dist_noinst_DATA += misc-utils/uuidgen.1.adoc
 uuidgen_SOURCES = misc-utils/uuidgen.c
-uuidgen_LDADD = $(LDADD) libuuid.la
+uuidgen_LDADD = $(LDADD) libcommon.la libuuid.la
 uuidgen_CFLAGS = $(AM_CFLAGS) -I$(ul_libuuid_incdir)
 endif
 
