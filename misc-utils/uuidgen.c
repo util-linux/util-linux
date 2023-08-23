@@ -18,6 +18,7 @@
 #include "c.h"
 #include "closestream.h"
 #include "strutils.h"
+#include "optutils.h"
 
 static void __attribute__((__noreturn__)) usage(void)
 {
@@ -106,12 +107,24 @@ main (int argc, char *argv[])
 		{NULL, 0, NULL, 0}
 	};
 
+	static const ul_excl_t excl[] = {
+		{ 'C', 'm', 's' },
+		{ 'N', 'r', 't' },
+		{ 'm', 'r', 's', 't' },
+		{ 'n', 'r', 't' },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
 	while ((c = getopt_long(argc, argv, "C:rtVhn:N:msx", longopts, NULL)) != -1) {
+
+		err_exclusive_options(c, longopts, excl, excl_st);
+
 		switch (c) {
 		case 't':
 			do_type = UUID_TYPE_DCE_TIME;
