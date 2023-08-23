@@ -143,17 +143,17 @@ struct bcachefs_super_block {
 /* magic string len */
 #define BCACHE_SB_MAGIC_LEN (sizeof(BCACHE_SB_MAGIC) - 1)
 /* super block offset */
-#define BCACHE_SB_OFF       0x1000
+#define BCACHE_SB_OFF       0x1000U
 /* supper block offset in kB */
 #define BCACHE_SB_KBOFF     (BCACHE_SB_OFF >> 10)
 /* magic string offset within super block */
 #define BCACHE_SB_MAGIC_OFF offsetof(struct bcache_super_block, magic)
 /* start of checksummed data within superblock */
-#define BCACHE_SB_CSUMMED_START 8
+#define BCACHE_SB_CSUMMED_START 8U
 /* granularity of offset and length fields within superblock */
-#define BCACHEFS_SECTOR_SIZE   512
+#define BCACHEFS_SECTOR_SIZE   512U
 /* maximum superblock size */
-#define BCACHEFS_SB_MAX_SIZE   0x100000
+#define BCACHEFS_SB_MAX_SIZE   0x100000U
 /* fields offset within super block */
 #define BCACHEFS_SB_FIELDS_OFF offsetof(struct bcachefs_super_block, _start)
 /* tag value for members field */
