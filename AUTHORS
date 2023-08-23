@@ -73,7 +73,7 @@ AUTHORS (merged projects & commands):
                        Miquel van Smoorenburg
       switch_root:     Peter Jones <pjones@redhat.com>
                        Jeremy Katz <katzj@redhat.com>
-      uclampse:        Qais Yousef <qais.yousef@arm.com>
+      uclampse:        Qais Yousef <qyousef@layalina.io>
       unshare:         Mikhail Gusarov <dottedmag@dottedmag.net>
       utmpdump:        [merged from sysvinit]
                        Danek Duvall <duvall@alumni.princeton.edu>
@@ -730,7 +730,7 @@ CONTRIBUTORS:
       Portisch <hugo.portisch@yahoo.de>
       Po-Yu Chuang <ratbert@faraday-tech.com>
       Prarit Bhargava <prarit@redhat.com>
-      Qais Yousef <qais.yousef@arm.com>
+      Qais Yousef <qyousef@layalina.io>
       Quentin Rameau <quinq@fifth.space>
       Radka Skvarilova <rskvaril@redhat.com>
       Rafael Aquini <aquini@redhat.com>

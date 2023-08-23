@@ -2,7 +2,7 @@
 ////
 uclampset(1) manpage
 
-Copyright (C) 2020-2021 Qais Yousef <qais.yousef@arm.com>
+Copyright (C) 2020-2021 Qais Yousef <qyousef@layalina.io>
 Copyright (C) 2020-2021 Arm Ltd
 
 This is free documentation; you can redistribute it and/or
@@ -59,6 +59,10 @@ Setting a task's _uclamp_min_ to a none zero value will effectively boost the ta
 By setting a task's _uclamp_max_ below 1024, this will effectively cap the task as when it runs it'll never be able to go above this utilization value.
 
 The full utilization range is: [0:1024]. The special value -1 is used to reset to system's default.
+
+Consult latest kernel documentation for more details:
+
+	https://kernel.org/doc/html/latest/scheduler/sched-util-clamp.html
 
 == OPTIONS
 
@@ -121,7 +125,7 @@ Consult your kernel docs for the exact expected behavior on that kernel.
 
 == AUTHORS
 
-mailto:qais.yousef@arm.com[Qais Yousef]
+mailto:qyousef@layalina.io[Qais Yousef]
 
 == SEE ALSO
 
