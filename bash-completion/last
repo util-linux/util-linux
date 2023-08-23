@@ -36,6 +36,7 @@ _last_module()
 				--nohostname
 				--since
 				--until
+				--tab-separated
 				--present
 				--fullnames
 				--system
