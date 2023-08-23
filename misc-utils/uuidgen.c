@@ -17,6 +17,7 @@
 #include "nls.h"
 #include "c.h"
 #include "closestream.h"
+#include "strutils.h"
 
 static void __attribute__((__noreturn__)) usage(void)
 {
@@ -29,14 +30,15 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Create a new UUID value.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -r, --random        generate random-based uuid\n"), out);
-	fputs(_(" -t, --time          generate time-based uuid\n"), out);
-	fputs(_(" -n, --namespace ns  generate hash-based uuid in this namespace\n"), out);
-	printf(_("                       available namespaces: %s\n"), "@dns @url @oid @x500");
-	fputs(_(" -N, --name name     generate hash-based uuid from this name\n"), out);
-	fputs(_(" -m, --md5           generate md5 hash\n"), out);
-	fputs(_(" -s, --sha1          generate sha1 hash\n"), out);
-	fputs(_(" -x, --hex           interpret name as hex string\n"), out);
+	fputs(_(" -r, --random          generate random-based uuid\n"), out);
+	fputs(_(" -t, --time            generate time-based uuid\n"), out);
+	fputs(_(" -n, --namespace <ns>  generate hash-based uuid in this namespace\n"), out);
+	printf(_("                        available namespaces: %s\n"), "@dns @url @oid @x500");
+	fputs(_(" -N, --name <name>     generate hash-based uuid from this name\n"), out);
+	fputs(_(" -m, --md5             generate md5 hash\n"), out);
+	fputs(_(" -C, --count <num>     generate more uuids in loop\n"), out);
+	fputs(_(" -s, --sha1            generate sha1 hash\n"), out);
+	fputs(_(" -x, --hex             interpret name as hex string\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(21));
 	printf(USAGE_MAN_TAIL("uuidgen(1)"));
@@ -88,6 +90,7 @@ main (int argc, char *argv[])
 	char   *namespace = NULL, *name = NULL;
 	size_t namelen = 0;
 	uuid_t ns, uu;
+	unsigned int count = 1, i;
 
 	static const struct option longopts[] = {
 		{"random", no_argument, NULL, 'r'},
@@ -97,6 +100,7 @@ main (int argc, char *argv[])
 		{"namespace", required_argument, NULL, 'n'},
 		{"name", required_argument, NULL, 'N'},
 		{"md5", no_argument, NULL, 'm'},
+		{"count", required_argument, NULL, 'C'},
 		{"sha1", no_argument, NULL, 's'},
 		{"hex", no_argument, NULL, 'x'},
 		{NULL, 0, NULL, 0}
@@ -107,7 +111,7 @@ main (int argc, char *argv[])
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "rtVhn:N:msx", longopts, NULL)) != -1)
+	while ((c = getopt_long(argc, argv, "C:rtVhn:N:msx", longopts, NULL)) != -1) {
 		switch (c) {
 		case 't':
 			do_type = UUID_TYPE_DCE_TIME;
@@ -124,6 +128,9 @@ main (int argc, char *argv[])
 		case 'm':
 			do_type = UUID_TYPE_DCE_MD5;
 			break;
+		case 'C':
+			count = strtou32_or_err(optarg, _("invalid count argument"));
+			break;
 		case 's':
 			do_type = UUID_TYPE_DCE_SHA1;
 			break;
@@ -138,6 +145,7 @@ main (int argc, char *argv[])
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
+	}
 
 	if (namespace) {
 		if (!name) {
@@ -165,43 +173,45 @@ main (int argc, char *argv[])
 			name = unhex(name, &namelen);
 	}
 
-	switch (do_type) {
-	case UUID_TYPE_DCE_TIME:
-		uuid_generate_time(uu);
-		break;
-	case UUID_TYPE_DCE_RANDOM:
-		uuid_generate_random(uu);
-		break;
-	case UUID_TYPE_DCE_MD5:
-	case UUID_TYPE_DCE_SHA1:
-		if (namespace[0] == '@' && namespace[1] != '\0') {
-			const uuid_t *uuidptr;
+	for (i = 0; i < count; i++) {
+		switch (do_type) {
+		case UUID_TYPE_DCE_TIME:
+			uuid_generate_time(uu);
+			break;
+		case UUID_TYPE_DCE_RANDOM:
+			uuid_generate_random(uu);
+			break;
+		case UUID_TYPE_DCE_MD5:
+		case UUID_TYPE_DCE_SHA1:
+			if (namespace[0] == '@' && namespace[1] != '\0') {
+				const uuid_t *uuidptr;
 
-			uuidptr = uuid_get_template(&namespace[1]);
-			if (uuidptr == NULL) {
-				warnx(_("unknown namespace alias: '%s'"), namespace);
-				errtryhelp(EXIT_FAILURE);
+				uuidptr = uuid_get_template(&namespace[1]);
+				if (uuidptr == NULL) {
+					warnx(_("unknown namespace alias: '%s'"), namespace);
+					errtryhelp(EXIT_FAILURE);
+				}
+				memcpy(ns, *uuidptr, sizeof(ns));
+			} else {
+				if (uuid_parse(namespace, ns) != 0) {
+					warnx(_("invalid uuid for namespace: '%s'"), namespace);
+					errtryhelp(EXIT_FAILURE);
+				}
 			}
-			memcpy(ns, *uuidptr, sizeof(ns));
-		} else {
-			if (uuid_parse(namespace, ns) != 0) {
-				warnx(_("invalid uuid for namespace: '%s'"), namespace);
-				errtryhelp(EXIT_FAILURE);
-			}
+			if (do_type == UUID_TYPE_DCE_MD5)
+				uuid_generate_md5(uu, ns, name, namelen);
+			else
+				uuid_generate_sha1(uu, ns, name, namelen);
+			break;
+		default:
+			uuid_generate(uu);
+			break;
 		}
-		if (do_type == UUID_TYPE_DCE_MD5)
-			uuid_generate_md5(uu, ns, name, namelen);
-		else
-			uuid_generate_sha1(uu, ns, name, namelen);
-		break;
-	default:
-		uuid_generate(uu);
-		break;
+
+		uuid_unparse(uu, str);
+
+		printf("%s\n", str);
 	}
-
-	uuid_unparse(uu, str);
-
-	printf("%s\n", str);
 
 	if (is_hex)
 		free(name);
