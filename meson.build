@@ -2619,7 +2619,8 @@ exe = executable(
   'uuidgen',
   uuidgen_sources,
   include_directories : includes,
-  link_with : [lib_uuid],
+  link_with : [lib_common,
+               lib_uuid],
   install_dir : usrbin_exec_dir,
   install : true)
 if not is_disabler(exe)
