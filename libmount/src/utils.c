@@ -21,6 +21,10 @@
 #include <grp.h>
 #include <blkid.h>
 
+#if defined(AT_STATX_DONT_SYNC) && defined (HAVE_STRUCT_STATX)
+# include <linux/stat.h>
+#endif
+
 #include "strutils.h"
 #include "pathnames.h"
 #include "mountP.h"

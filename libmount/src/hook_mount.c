@@ -50,6 +50,10 @@
 
 #include <inttypes.h>
 
+#if defined(HAVE_STRUCT_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID)
+# include <linux/stat.h>
+#endif
+
 #ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
 
 #define get_sysapi(_cxt) mnt_context_get_sysapi(_cxt)
