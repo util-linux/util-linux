@@ -793,6 +793,7 @@ int main(int argc, char **argv)
 			list = 1;
 			break;
 		case OPT_OUTPUT_ALL:
+			list = 1;
 			for (ncolumns = 0; ncolumns < ARRAY_SIZE(infos); ncolumns++)
 				columns[ncolumns] = ncolumns;
 			break;
