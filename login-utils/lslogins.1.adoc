@@ -95,7 +95,7 @@ Alternate path for wtmp.
 *--lastlog* _path_::
 Alternate path for *lastlog*(8).
 
-*y-*, *--shell*::
+*-y*, *--shell*::
 The column name will be modified to contain only characters allowed for shell variable identifiers. This is usable, for example, with *--export*. Note that this feature has been automatically enabled for *--export* in version 2.37, but due to compatibility issues, now it's necessary to request this behavior by *--shell*.
 
 *-Z*, *--context*::
