@@ -253,7 +253,8 @@ static int set_scols_data(struct loopdev_cxt *lc, struct libscols_line *ln)
 		{
 			dev_t dev = 0;
 			if (loopcxt_get_backing_devno(lc, &dev) == 0 && dev)
-				xasprintf(&np, "%8u:%-3u", major(dev), minor(dev));
+				xasprintf(&np, raw || json ? "%u:%u" : "%8u:%-3u",
+						major(dev), minor(dev));
 			break;
 		}
 		case COL_MAJMIN:
@@ -264,8 +265,8 @@ static int set_scols_data(struct loopdev_cxt *lc, struct libscols_line *ln)
 			    && stat(loopcxt_get_device(lc), &st) == 0
 			    && S_ISBLK(st.st_mode)
 			    && major(st.st_rdev) == LOOPDEV_MAJOR)
-				xasprintf(&np, "%3u:%-3u", major(st.st_rdev),
-						           minor(st.st_rdev));
+				xasprintf(&np, raw || json ? "%u:%u" :"%3u:%-3u",
+						major(st.st_rdev), minor(st.st_rdev));
 			break;
 		}
 		case COL_BACK_INO:
