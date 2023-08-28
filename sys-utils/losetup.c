@@ -45,7 +45,11 @@ enum {
 	COL_BACK_FILE,
 	COL_BACK_INO,
 	COL_BACK_MAJMIN,
+	COL_BACK_MAJ,
+	COL_BACK_MIN,
 	COL_MAJMIN,
+	COL_MAJ,
+	COL_MIN,
 	COL_OFFSET,
 	COL_PARTSCAN,
 	COL_REF,
@@ -74,6 +78,8 @@ static const struct colinfo infos[] = {
 	[COL_BACK_FILE]   = { "BACK-FILE",  0.3, SCOLS_FL_NOEXTREMES, N_("device backing file")},
 	[COL_BACK_INO]    = { "BACK-INO",     4, SCOLS_FL_RIGHT, N_("backing file inode number"), SCOLS_JSON_NUMBER},
 	[COL_BACK_MAJMIN] = { "BACK-MAJ:MIN", 6, 0, N_("backing file major:minor device number")},
+	[COL_BACK_MAJ]    = { "BACK-MAJ",     6, 0, N_("backing file major device number")},
+	[COL_BACK_MIN]    = { "BACK-MIN",     6, 0, N_("backing file minor device number")},
 	[COL_NAME]        = { "NAME",      0.25, 0, N_("loop device name")},
 	[COL_OFFSET]      = { "OFFSET",       5, SCOLS_FL_RIGHT, N_("offset from the beginning"), SCOLS_JSON_NUMBER},
 	[COL_PARTSCAN]    = { "PARTSCAN",     1, SCOLS_FL_RIGHT, N_("partscan flag set"), SCOLS_JSON_BOOLEAN},
@@ -81,6 +87,8 @@ static const struct colinfo infos[] = {
 	[COL_RO]          = { "RO",           1, SCOLS_FL_RIGHT, N_("read-only device"), SCOLS_JSON_BOOLEAN},
 	[COL_SIZELIMIT]   = { "SIZELIMIT",    5, SCOLS_FL_RIGHT, N_("size limit of the file in bytes"), SCOLS_JSON_NUMBER},
 	[COL_MAJMIN]      = { "MAJ:MIN",      3, 0, N_("loop device major:minor number")},
+	[COL_MAJ]         = { "MAJ",          1, SCOLS_FL_RIGHT, N_("loop device major number"), SCOLS_JSON_NUMBER},
+	[COL_MIN]         = { "MIN",          1, SCOLS_FL_RIGHT, N_("loop device minor number"), SCOLS_JSON_NUMBER},
 	[COL_DIO]         = { "DIO",          1, SCOLS_FL_RIGHT, N_("access backing file with direct-io"), SCOLS_JSON_BOOLEAN},
 	[COL_LOGSEC]      = { "LOG-SEC",      4, SCOLS_FL_RIGHT, N_("logical sector size in bytes"), SCOLS_JSON_NUMBER},
 };
@@ -226,9 +234,24 @@ static int delete_all_loops(struct loopdev_cxt *lc)
 	return res;
 }
 
+static dev_t get_device_devno(struct loopdev_cxt *lc, struct stat *st)
+{
+	if (st->st_rdev)
+		return st->st_rdev;
+
+	if (loopcxt_get_device(lc)
+	    && stat(loopcxt_get_device(lc), st) == 0
+	    && S_ISBLK(st->st_mode)
+	    && major(st->st_rdev) == LOOPDEV_MAJOR)
+		return st->st_rdev;
+
+	return 0;
+}
+
 static int set_scols_data(struct loopdev_cxt *lc, struct libscols_line *ln)
 {
 	size_t i;
+	struct stat st = { .st_rdev = 0 };
 
 	for (i = 0; i < ncolumns; i++) {
 		const char *p = NULL;			/* external data */
@@ -259,16 +282,38 @@ static int set_scols_data(struct loopdev_cxt *lc, struct libscols_line *ln)
 						major(dev), minor(dev));
 			break;
 		}
+		case COL_BACK_MAJ:
+		{
+			dev_t dev = 0;
+			if (loopcxt_get_backing_devno(lc, &dev) == 0 && dev)
+				xasprintf(&np, "%u", major(dev));
+			break;
+		}
+		case COL_BACK_MIN:
+		{
+			dev_t dev = 0;
+			if (loopcxt_get_backing_devno(lc, &dev) == 0 && dev)
+				xasprintf(&np, "%u", minor(dev));
+			break;
+		}
 		case COL_MAJMIN:
 		{
-			struct stat st;
-
-			if (loopcxt_get_device(lc)
-			    && stat(loopcxt_get_device(lc), &st) == 0
-			    && S_ISBLK(st.st_mode)
-			    && major(st.st_rdev) == LOOPDEV_MAJOR)
+			dev_t dev = get_device_devno(lc, &st);
+			if (dev)
 				xasprintf(&np, raw || json ? "%u:%u" :"%3u:%-3u",
-						major(st.st_rdev), minor(st.st_rdev));
+						major(dev), minor(dev));
+			break;
+		}
+		case COL_MAJ: {
+			dev_t dev = get_device_devno(lc, &st);
+			if (dev)
+				xasprintf(&np, "%u", major(dev));
+			break;
+		}
+		case COL_MIN: {
+			dev_t dev = get_device_devno(lc, &st);
+			if (dev)
+				xasprintf(&np, "%u", minor(dev));
 			break;
 		}
 		case COL_BACK_INO:
