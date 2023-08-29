@@ -127,10 +127,9 @@ static const char *no_name = "NO NAME    ";
 /*
  * Look for LABEL (name) in the FAT root directory.
  */
-static unsigned char *search_fat_label(blkid_probe pr,
-				uint64_t offset, uint32_t entries)
+static int search_fat_label(blkid_probe pr, uint64_t offset, uint32_t entries, unsigned char out[11])
 {
-	struct vfat_dir_entry *ent, *dir = NULL;
+	const struct vfat_dir_entry *ent, *dir = NULL;
 	uint32_t i;
 
 	DBG(LOWPROBE, ul_debug("\tlook for label in root-dir "
@@ -144,7 +143,7 @@ static unsigned char *search_fat_label(blkid_probe pr,
 					(uint64_t) entries *
 						sizeof(struct vfat_dir_entry));
 		if (!dir)
-			return NULL;
+			return 0;
 	}
 
 	for (i = 0; i < entries; i++) {
@@ -173,12 +172,13 @@ static unsigned char *search_fat_label(blkid_probe pr,
 		if ((ent->attr & (FAT_ATTR_VOLUME_ID | FAT_ATTR_DIR)) ==
 		    FAT_ATTR_VOLUME_ID) {
 			DBG(LOWPROBE, ul_debug("\tfound fs LABEL at entry %d", i));
-			if (ent->name[0] == 0x05)
-				ent->name[0] = 0xE5;
-			return ent->name;
+			memcpy(out, ent->name, 11);
+			if (out[0] == 0x05)
+				out[0] = 0xE5;
+			return 1;
 		}
 	}
-	return NULL;
+	return 0;
 }
 
 static int fat_valid_superblock(blkid_probe pr,
@@ -330,11 +330,8 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 		uint32_t root_start = (reserved + fat_size) * sector_size;
 		uint32_t root_dir_entries = unaligned_le16(&vs->vs_dir_entries);
 
-		vol_label = search_fat_label(pr, root_start, root_dir_entries);
-		if (vol_label) {
-			memcpy(vol_label_buf, vol_label, 11);
+		if (search_fat_label(pr, root_start, root_dir_entries, vol_label_buf))
 			vol_label = vol_label_buf;
-		}
 
 		if (ms->ms_ext_boot_sign == 0x29)
 			boot_label = ms->ms_label;
@@ -373,9 +370,7 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 
 			count = buf_size / sizeof(struct vfat_dir_entry);
 
-			vol_label = search_fat_label(pr, next_off, count);
-			if (vol_label) {
-				memcpy(vol_label_buf, vol_label, 11);
+			if (search_fat_label(pr, next_off, count, vol_label_buf)) {
 				vol_label = vol_label_buf;
 				break;
 			}
