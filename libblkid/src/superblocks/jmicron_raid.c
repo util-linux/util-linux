@@ -51,22 +51,22 @@ struct jm_metadata {
 	uint8_t		filler2[0x20];
 } __attribute__ ((packed));
 
-static int jm_checksum(const struct jm_metadata *jm)
+static int jm_checksum(blkid_probe pr, const struct jm_metadata *jm)
 {
-        size_t count = sizeof(*jm) / sizeof(uint16_t);
-        uint16_t sum = 0;
-        unsigned char *ptr = (unsigned char *) jm;
+	size_t count = sizeof(*jm) / sizeof(uint16_t);
+	uint16_t sum = 0;
+	unsigned char *ptr = (unsigned char *) jm;
 
-        while (count--) {
-                uint16_t val;
+	while (count--) {
+		uint16_t val;
 
-                memcpy(&val, ptr, sizeof(uint16_t));
-                sum += le16_to_cpu(val);
+		memcpy(&val, ptr, sizeof(uint16_t));
+		sum += le16_to_cpu(val);
 
-                ptr += sizeof(uint16_t);
-        }
+		ptr += sizeof(uint16_t);
+	}
 
-        return sum == 0 || sum == 1;
+	return blkid_probe_verify_csum(pr, sum == 0 || sum == 1, 1);
 }
 
 static int probe_jmraid(blkid_probe pr,
@@ -91,7 +91,7 @@ static int probe_jmraid(blkid_probe pr,
 	if (memcmp(jm->signature, JM_SIGNATURE, sizeof(JM_SIGNATURE) - 1) != 0)
 		return 1;
 
-	if (!jm_checksum(jm))
+	if (!jm_checksum(pr, jm))
 		return 1;
 
 	if (jm->mode > 5)
