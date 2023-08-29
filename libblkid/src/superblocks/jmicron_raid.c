@@ -17,8 +17,8 @@
 #include "superblocks.h"
 
 #define JM_SIGNATURE		"JM"
-#define JM_MINOR_VERSION(_x)	((_x)->version & 0xFF)
-#define JM_MAJOR_VERSION(_x)	((_x)->version >> 8)
+#define JM_MINOR_VERSION(_x)	(le16_to_cpu((_x)->version) & 0xFF)
+#define JM_MAJOR_VERSION(_x)	(le16_to_cpu((_x)->version) >> 8)
 #define JM_SPARES		2
 #define JM_MEMBERS		8
 
@@ -51,26 +51,6 @@ struct jm_metadata {
 	uint8_t		filler2[0x20];
 } __attribute__ ((packed));
 
-static void jm_to_cpu(struct jm_metadata *jm)
-{
-	unsigned int i;
-
-	jm->version = le16_to_cpu(jm->version);
-	jm->checksum = le16_to_cpu(jm->checksum);
-	jm->identity = le32_to_cpu(jm->identity);
-	jm->segment.base = le32_to_cpu(jm->segment.base);
-	jm->segment.range = le32_to_cpu(jm->segment.range);
-	jm->segment.range2 = le16_to_cpu(jm->segment.range2);
-
-	jm->attribute = le16_to_cpu(jm->attribute);
-
-	for (i = 0; i < JM_SPARES; i++)
-		jm->spare[i] = le32_to_cpu(jm->spare[i]);
-
-	for (i = 0; i < JM_MEMBERS; i++)
-		jm->member[i] = le32_to_cpu(jm->member[i]);
-}
-
 static int jm_checksum(const struct jm_metadata *jm)
 {
         size_t count = sizeof(*jm) / sizeof(uint16_t);
@@ -93,7 +73,7 @@ static int probe_jmraid(blkid_probe pr,
 		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	uint64_t off;
-	struct jm_metadata *jm;
+	const struct jm_metadata *jm;
 
 	if (pr->size < 0x10000)
 		return 1;
@@ -113,8 +93,6 @@ static int probe_jmraid(blkid_probe pr,
 
 	if (!jm_checksum(jm))
 		return 1;
-
-	jm_to_cpu(jm);
 
 	if (jm->mode > 5)
 		return 1;
