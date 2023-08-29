@@ -553,8 +553,12 @@ static struct blkid_bufinfo *read_buffer(blkid_probe pr, uint64_t real_off, uint
 		return NULL;
 	}
 
-	/* someone trying to overflow some buffers? */
-	if (len > ULONG_MAX - sizeof(struct blkid_bufinfo)) {
+	/* Some probers an amount of data from the device that is controlled by
+	 * the data on the device itself. The probers should apply limits to
+	 * this amount but if they don't impose a general limit.
+	 * Avoids denial-of-service issues. */
+	if (len > (1UL << 23) /* 8 MiB */) {
+		DBG(LOWPROBE, ul_debug("\tread too large: %"PRIu64, len));
 		errno = ENOMEM;
 		return NULL;
 	}
