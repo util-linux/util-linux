@@ -49,18 +49,19 @@ struct zonefs_super {
 
 } __attribute__ ((packed));
 
-static int zonefs_verify_csum(blkid_probe pr, struct zonefs_super *sb)
+static int zonefs_verify_csum(blkid_probe pr, const struct zonefs_super *sb)
 {
 	uint32_t expected = le32_to_cpu(sb->s_crc);
-	sb->s_crc = 0;
-	uint32_t crc = ul_crc32(~0LL, (unsigned char *) sb, sizeof(*sb));
+	uint32_t crc = ul_crc32_exclude_offset(
+			~0LL, (unsigned char *) sb, sizeof(*sb),
+		       offsetof(typeof(*sb), s_crc), sizeof(sb->s_crc));
 	return blkid_probe_verify_csum(pr, crc, expected);
 }
 
 static int probe_zonefs(blkid_probe pr,
 		const struct blkid_idmag *mag  __attribute__((__unused__)))
 {
-	struct zonefs_super *sb;
+	const struct zonefs_super *sb;
 
 	sb = (struct zonefs_super *)
 		blkid_probe_get_buffer(pr, ZONEFS_SB_OFST,
