@@ -44,6 +44,9 @@ static const char *lib_features[] = {
 #ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
 	"fd-based-mount",
 #endif
+#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && defined(AT_STATX_DONT_SYNC)
+	"statx",
+#endif
 #if !defined(NDEBUG)
 	"assert",	/* libc assert.h stuff */
 #endif
