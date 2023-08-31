@@ -44,7 +44,7 @@ echo $? >> "$TS_OUTPUT"
 ts_finalize_subtest
 
 ts_init_subtest exited
-"$TS_CMD_WAITPID" -e 2147483647 >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+"$TS_CMD_WAITPID" -v -e 2147483647 >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 echo $? >> "$TS_ERRLOG"
 ts_finalize_subtest
 
