@@ -86,7 +86,9 @@ int main(int argc, char *argv[])
 {
 	struct libscols_table *tb;
 	struct libscols_filter *fltr = NULL;
+	struct libscols_iter *itr = NULL;
 	int c, i, json = 0, dump = 0;
+	int rc = 0;
 
 	static const struct option longopts[] = {
 		{ "json",   0, NULL, 'J' },
@@ -132,11 +134,34 @@ int main(int argc, char *argv[])
 	scols_table_enable_json(tb, json);
 	setup_columns(tb);
 
+	if (fltr) {
+		const char *name = NULL;
+
+		itr = scols_new_iter(SCOLS_ITER_FORWARD);
+		if (!itr)
+			err(EXIT_FAILURE, "failed to allocate iterator");
+
+		while (scols_filter_next_name(fltr, itr, &name) == 0) {
+			struct libscols_column *col =
+					scols_table_get_column_by_name(tb, name);
+			if (!col) {
+				warnx("unknown column '%s' in filter", name);
+				rc++;
+				continue;
+			}
+			scols_filter_assign_column(fltr, name, col);
+		}
+		if (rc)
+			goto done;
+	}
+
 	for (i = 0; i < 10; i++)
 		add_line(tb, i + 1);
 
 	scols_print_table(tb);
+done:
 	scols_unref_table(tb);
 	scols_unref_filter(fltr);
-	return EXIT_SUCCESS;
+	scols_free_iter(itr);
+	return rc ? EXIT_FAILURE : EXIT_SUCCESS;
 }

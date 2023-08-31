@@ -18,6 +18,7 @@ struct libscols_filter *scols_new_filter(const char *str)
 	if (!fltr)
 		return NULL;
 	fltr->refcount = 1;
+	INIT_LIST_HEAD(&fltr->params);
 
 	if (str && scols_filter_parse_string(fltr, str) != 0) {
 		scols_unref_filter(fltr);
@@ -73,7 +74,7 @@ static struct filter_node *new_node(enum filter_ntype type, size_t sz)
 }
 
 struct filter_node *filter_new_param(
-		struct libscols_filter *fltr __attribute__((__unused__)),
+		struct libscols_filter *fltr,
 		enum filter_ptype type,
 		void *data)
 {
@@ -82,6 +83,7 @@ struct filter_node *filter_new_param(
 					F_NODE_PARAM,
 					sizeof(struct filter_param));
 	n->type = type;
+	INIT_LIST_HEAD(&n->pr_params);
 
 	switch (type) {
 	case F_PARAM_STRING:
@@ -107,6 +109,9 @@ struct filter_node *filter_new_param(
 		n->val.boolean = *((bool *) data) == 0 ? 0 : 1;
 		break;
 	}
+
+	list_add_tail(&n->pr_params, &fltr->params);
+
 	return (struct filter_node *) n;
 }
 
@@ -114,6 +119,9 @@ static void free_param(struct filter_param *n)
 {
 	if (n->type == F_PARAM_NAME || n->type == F_PARAM_STRING)
 		free(n->val.str);
+
+	list_del_init(&n->pr_params);
+	scols_unref_column(n->col);
 	free(n);
 }
 
@@ -260,6 +268,8 @@ static void filter_dump_node(struct ul_jsonwrt *json, struct filter_node *n)
 	}
 }
 
+
+
 extern int yyparse(void *scanner, struct libscols_filter *fltr);
 
 int scols_filter_parse_string(struct libscols_filter *fltr, const char *str)
@@ -303,4 +313,59 @@ int scols_dump_filter(struct libscols_filter *fltr, FILE *out)
 const char *scols_filter_get_errmsg(struct libscols_filter *fltr)
 {
 	return fltr ? fltr->errmsg : NULL;
+}
+
+static int filter_next_param(struct libscols_filter *fltr,
+			struct libscols_iter *itr, struct filter_param **prm)
+{
+	int rc = 1;
+
+	if (!fltr || !itr || !prm)
+		return -EINVAL;
+	*prm = NULL;
+
+	if (!itr->head)
+		SCOLS_ITER_INIT(itr, &fltr->params);
+	if (itr->p != itr->head) {
+		SCOLS_ITER_ITERATE(itr, *prm, struct filter_param, pr_params);
+		rc = 0;
+	}
+
+	return rc;
+}
+
+int scols_filter_next_name(struct libscols_filter *fltr,
+			struct libscols_iter *itr, const char **name)
+{
+	struct filter_param *prm = NULL;
+	int rc = 0;
+
+	*name = NULL;
+
+	do {
+		rc = filter_next_param(fltr, itr, &prm);
+		if (rc == 0 && prm->type == F_PARAM_NAME)
+			*name = prm->val.str;
+	} while (rc == 0 && !*name);
+
+	return rc;
+}
+
+int scols_filter_assign_column(struct libscols_filter *fltr,
+			const char *name, struct libscols_column *col)
+{
+	struct libscols_iter itr;
+	struct filter_param *prm = NULL;
+	int ct = 0;
+
+	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+	while (filter_next_param(fltr, &itr, &prm) == 0) {
+		if (prm->type != F_PARAM_NAME || strcmp(name, prm->val.str) != 0)
+			continue;
+		prm->col = col;
+		scols_ref_column(col);
+		ct++;
+	}
+
+	return ct == 0 ? 1 : 0;
 }

@@ -532,6 +532,9 @@ struct filter_param {
 		long double fnum;
 		bool boolean;
 	} val;
+
+	struct list_head pr_params;
+	struct libscols_column *col;
 };
 
 struct filter_expr {
@@ -547,6 +550,8 @@ struct libscols_filter {
 	char *errmsg;
 	struct filter_node *root;
 	FILE *src;
+
+	struct list_head params;
 };
 
 /* required by parser */
