@@ -299,12 +299,13 @@ static int hook_create_mount(struct libmnt_context *cxt,
 		struct statx st;
 
 		rc = statx(api->fd_tree, "", AT_EMPTY_PATH, STATX_MNT_ID, &st);
-		cxt->fs->id = (int) st.stx_mnt_id;
-
-		if (cxt->update) {
-			struct libmnt_fs *fs = mnt_update_get_fs(cxt->update);
-			if (fs)
-				fs->id = cxt->fs->id;
+		if (rc == 0) {
+			cxt->fs->id = (int) st.stx_mnt_id;
+			if (cxt->update) {
+				struct libmnt_fs *fs = mnt_update_get_fs(cxt->update);
+				if (fs)
+					fs->id = cxt->fs->id;
+			}
 		}
 	}
 #endif
