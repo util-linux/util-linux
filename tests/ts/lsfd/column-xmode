@@ -39,7 +39,7 @@ ts_init_subtest "MODE-r-bit"
     if read -r -u "${MKFDS[0]}" PID; then
 	"${TS_CMD_LSFD}" -n -o MODE -p "${PID}" -Q "${EXPR}"
 	echo "MODE(r-bit): " $?
-	kill -CONT "${PID}"
+	echo DONE >&"${MKFDS[1]}"
     fi
 } > "$TS_OUTPUT" 2>&1
 wait "${MKFDS_PID}"
@@ -51,7 +51,7 @@ ts_init_subtest "XMODE-r-bit"
     if read -r -u "${MKFDS[0]}" PID; then
 	"${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	echo "XMODE(r-bit): " $?
-	kill -CONT "${PID}"
+	echo DONE >&"${MKFDS[1]}"
     fi
 } > "$TS_OUTPUT" 2>&1
 wait "${MKFDS_PID}"
@@ -64,7 +64,7 @@ ts_init_subtest "MODE-w-bit"
     if read -r -u "${MKFDS[0]}" PID; then
 	"${TS_CMD_LSFD}" -n -o MODE -p "${PID}" -Q "${EXPR}"
 	echo "MODE(w-bit): " $?
-	kill -CONT "${PID}"
+	echo DONE >&"${MKFDS[1]}"
     fi
 } > "$TS_OUTPUT" 2>&1
 wait "${MKFDS_PID}"
@@ -76,7 +76,7 @@ ts_init_subtest "XMODE-w-bit"
     if read -r -u "${MKFDS[0]}" PID; then
 	"${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	echo "XMODE(w-bit): " $?
-	kill -CONT "${PID}"
+	echo DONE >&"${MKFDS[1]}"
     fi
 } > "$TS_OUTPUT" 2>&1
 wait "${MKFDS_PID}"
@@ -92,7 +92,7 @@ else
 	if read -r -u "${MKFDS[0]}" PID; then
 	    "${TS_CMD_LSFD}" -n -o MODE -p "${PID}" -Q "${EXPR}"
 	    echo "MODE(x-bit): " $?
-	    kill -CONT "${PID}"
+	    echo DONE >&"${MKFDS[1]}"
 	fi
     } > "$TS_OUTPUT" 2>&1
     wait "${MKFDS_PID}"
@@ -108,7 +108,7 @@ else
 	if read -r -u "${MKFDS[0]}" PID; then
 	    "${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	    echo "XMODE(x-bit): " $?
-	    kill -CONT "${PID}"
+	    echo DONE >&"${MKFDS[1]}"
 	fi
     } > "$TS_OUTPUT" 2>&1
     wait "${MKFDS_PID}"
@@ -122,7 +122,7 @@ ts_init_subtest "XMODE-D-bit"
     if read -r -u "${MKFDS[0]}" PID; then
 	"${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	echo "XMODE(D-bit): " $?
-	kill -CONT "${PID}"
+	echo DONE >&"${MKFDS[1]}"
     fi
 } > "$TS_OUTPUT" 2>&1
 wait "${MKFDS_PID}"
@@ -135,7 +135,7 @@ for m in flock-sh posix-r- ofd-r-; do
 	if read -r -u "${MKFDS[0]}" PID; then
 	    "${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	    echo "XMODE(l-bit): " $?
-	    kill -CONT "${PID}"
+	    echo DONE >&"${MKFDS[1]}"
 	fi
     } > "$TS_OUTPUT" 2>&1
     wait "${MKFDS_PID}"
@@ -150,7 +150,7 @@ touch "$f"
     if read -r -u "${MKFDS[0]}" PID; then
 	"${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	echo "XMODE(l-bit): " $?
-	kill -CONT "${PID}"
+	echo DONE >&"${MKFDS[1]}"
     fi
 } > "$TS_OUTPUT" 2>&1
 wait "${MKFDS_PID}"
@@ -164,7 +164,7 @@ for m in flock-ex posix--w posix-rw  ofd--w ofd-rw lease-w; do
 	if read -r -u "${MKFDS[0]}" PID; then
 	    "${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	    echo "XMODE(L-bit): " $?
-	    kill -CONT "${PID}"
+	    echo DONE >&"${MKFDS[1]}"
 	fi
     } > "$TS_OUTPUT" 2>&1
     wait "${MKFDS_PID}"
@@ -180,7 +180,7 @@ ts_init_subtest "XMODE-m-bit"
     if read -r -u "${MKFDS[0]}" PID; then
 	"${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	echo "XMODE(m-bit): " $?
-	kill -CONT "${PID}"
+	echo DONE >&"${MKFDS[1]}"
     fi
 } > "$TS_OUTPUT" 2>&1
 wait "${MKFDS_PID}"

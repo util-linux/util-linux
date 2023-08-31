@@ -46,7 +46,7 @@ NETLINK_GROUPS=5
 	else
 	    printf "LPORT: FAILED (PID: %d != NETLINK.LPORT: %d)\n" "${PID}" "${NETLINK_LPORT}"
 	fi
-	kill -CONT "${PID}"
+	echo DONE >&"${MKFDS[1]}"
     fi
     wait "${MKFDS_PID}"
 } > "$TS_OUTPUT" 2>&1

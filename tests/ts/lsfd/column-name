@@ -60,7 +60,7 @@ for C in ro-regular-file pidfd socketpair; do
 	    }
 	    echo "$C"':ASSOC,KNAME,NAME': ${PIPESTATUS[0]}
 
-	    kill -CONT "${PID}"
+	    echo DONE >&"${MKFDS[1]}"
 	fi
     } > "$TS_OUTPUT" 2>&1
     wait "${MKFDS_PID}"
@@ -81,7 +81,7 @@ ts_init_subtest deleted-file
 	    sed -e 's#.*/\([^/]\+\)#\1#'
 	echo "$C: DELETED,NAME: " ${PIPESTATUS[0]}
 
-	kill -CONT "${PID}"
+	echo DONE >&"${MKFDS[1]}"
     fi
 } > "$TS_OUTPUT" 2>&1
 wait "${MKFDS_PID}"

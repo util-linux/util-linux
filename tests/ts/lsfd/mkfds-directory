@@ -101,7 +101,7 @@ esac
 	    echo 'stat reports:' "$(stat -c %h /)"
 	fi
 
-	kill -CONT ${PID}
+	echo DONE >&"${MKFDS[1]}"
     fi
     wait ${MKFDS_PID}
 } > $TS_OUTPUT 2>&1

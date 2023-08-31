@@ -50,7 +50,7 @@ ts_init_subtest "realtime-remaining-and-interval"
 	${TS_CMD_LSFD} -p "${PID}" -n -o TIMERFD.INTERVAL -Q "${EXPR}"
 	echo 'TIMERFD.INTERVAL': $?
 
-	kill -CONT "${PID}"
+	echo DONE >&"${MKFDS[1]}"
     fi
     wait "${MKFDS_PID}"
 } > "$TS_OUTPUT" 2>&1
@@ -76,7 +76,7 @@ ts_init_subtest "monotonic-remaining-only"
 	${TS_CMD_LSFD} -p "${PID}" -n -o TIMERFD.INTERVAL -Q "${EXPR}"
 	echo 'TIMERFD.INTERVAL': $?
 
-	kill -CONT "${PID}"
+	echo DONE >&"${MKFDS[1]}"
     fi
     wait "${MKFDS_PID}"
 } > "$TS_OUTPUT" 2>&1
@@ -100,7 +100,7 @@ ts_init_subtest "boottime-interval-only"
 	${TS_CMD_LSFD} -p "${PID}" -n -o TIMERFD.INTERVAL -Q "${EXPR}"
 	echo 'TIMERFD.INTERVAL': $?
 
-	kill -CONT "${PID}"
+	echo DONE >&"${MKFDS[1]}"
     fi
     wait "${MKFDS_PID}"
 } > "$TS_OUTPUT" 2>&1

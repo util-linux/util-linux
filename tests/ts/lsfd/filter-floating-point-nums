@@ -78,7 +78,7 @@ EXPR=
 	${TS_CMD_LSFD} -n -o FD,TIMERFD.INTERVAL -p "$PID" -Q "$EXPR"
 	echo "FD,TIMERFD.INTERVAL: $EXPR": $?
 	
-	kill -CONT "${PID}"
+	echo DONE >&"${MKFDS[1]}"
     fi
     
     wait "${MKFDS_PID}"

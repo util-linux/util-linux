@@ -61,7 +61,7 @@ INO_NS=
 	    echo "NAME_FD: $NAME_FD" == "net:[INO_NS: $INO_NS]": $?
 	fi
 
-	kill -CONT ${PID}
+	echo DONE >&"${MKFDS[1]}"
     fi
     wait "${MKFDS_PID}"
 } > "$TS_OUTPUT" 2>&1

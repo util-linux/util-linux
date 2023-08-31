@@ -38,7 +38,7 @@ ts_init_subtest $C
 	EXPR='(FD == '"$FD"')'
 	${TS_CMD_LSFD} -p "$PID" -n -o DELETED -Q "${EXPR}"
 	echo "$C: DELETED: " $?
-	kill -CONT "${PID}"
+	echo DONE >&"${MKFDS[1]}"
     fi
 } >  "$TS_OUTPUT" 2>&1
 wait "${MKFDS_PID}"
@@ -52,7 +52,7 @@ ts_init_subtest $C
 	EXPR='(FD == '"$FD"')'
 	${TS_CMD_LSFD} -p "$PID" -n -o DELETED -Q "${EXPR}"
 	echo "$C: DELETED: " $?
-	kill -CONT "${PID}"
+	echo DONE >&"${MKFDS[1]}"
     fi
 } >  "$TS_OUTPUT" 2>&1
 wait "${MKFDS_PID}"

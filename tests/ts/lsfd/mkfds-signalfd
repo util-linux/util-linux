@@ -56,7 +56,7 @@ EXPR='(FD == '"$FD"')'
 	${TS_CMD_LSFD} -p "${PID}" -n -o "${COL}" -Q "${EXPR}"
 	echo "${COL}": $?
 
-	kill -CONT "${PID}"
+	echo DONE >&"${MKFDS[1]}"
     fi
     wait "${MKFDS_PID}"
 } > "$TS_OUTPUT" 2>&1
