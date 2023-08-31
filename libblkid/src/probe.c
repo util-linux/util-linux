@@ -90,6 +90,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <ctype.h>
+#include <sys/mman.h>
 #include <sys/types.h>
 #ifdef HAVE_LINUX_CDROM_H
 #include <linux/cdrom.h>
@@ -560,13 +561,20 @@ static struct blkid_bufinfo *read_buffer(blkid_probe pr, uint64_t real_off, uint
 	}
 
 	/* allocate info and space for data by one malloc call */
-	bf = calloc(1, sizeof(struct blkid_bufinfo) + len);
+	bf = calloc(1, sizeof(struct blkid_bufinfo));
 	if (!bf) {
 		errno = ENOMEM;
 		return NULL;
 	}
 
-	bf->data = ((unsigned char *) bf) + sizeof(struct blkid_bufinfo);
+	bf->data = mmap(NULL, len, PROT_READ | PROT_WRITE,
+			MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+	if (bf->data == MAP_FAILED) {
+		free(bf);
+		errno = ENOMEM;
+		return NULL;
+	}
+
 	bf->len = len;
 	bf->off = real_off;
 	INIT_LIST_HEAD(&bf->bufs);
@@ -577,6 +585,7 @@ static struct blkid_bufinfo *read_buffer(blkid_probe pr, uint64_t real_off, uint
 	ret = read(pr->fd, bf->data, len);
 	if (ret != (ssize_t) len) {
 		DBG(LOWPROBE, ul_debug("\tread failed: %m"));
+		munmap(bf->data, bf->len);
 		free(bf);
 
 		/* I/O errors on CDROMs are non-fatal to work with hybrid
@@ -600,6 +609,9 @@ static struct blkid_bufinfo *read_buffer(blkid_probe pr, uint64_t real_off, uint
 
 		return NULL;
 	}
+
+	if (mprotect(bf->data, len, PROT_READ))
+		DBG(LOWPROBE, ul_debug("\tmprotect failed: %m"));
 
 	return bf;
 }
@@ -657,7 +669,9 @@ static int hide_buffer(blkid_probe pr, uint64_t off, uint64_t len)
 
 			DBG(BUFFER, ul_debug("\thiding: off=%"PRIu64" len=%"PRIu64,
 						off, len));
+			mprotect(x->data, x->len, PROT_READ | PROT_WRITE);
 			memset(data, 0, len);
+			mprotect(x->data, x->len, PROT_READ);
 			ct++;
 		}
 	}
@@ -766,6 +780,7 @@ int blkid_probe_reset_buffers(blkid_probe pr)
 
 		DBG(BUFFER, ul_debug(" remove buffer: [off=%"PRIu64", len=%"PRIu64"]",
 		                     bf->off, bf->len));
+		munmap(bf->data, bf->len);
 		free(bf);
 	}
 
