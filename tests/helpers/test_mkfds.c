@@ -83,6 +83,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out, int status)
 	fputs(" -I, --parameters <factory>    list parameters the factory takes\n", out);
 	fputs(" -r, --comm <name>             rename self\n", out);
 	fputs(" -q, --quiet                   don't print pid(s)\n", out);
+	fputs(" -X, --dont-monitor-stdin      don't monitor stdin when pausing\n", out);
 	fputs(" -c, --dont-pause              don't pause after making fd(s)\n", out);
 
 	fputs("\n", out);
@@ -3733,16 +3734,14 @@ pidfd_open(pid_t pid _U_, unsigned int flags _U_)
 }
 #endif
 
-static void wait_event(void)
+static void wait_event(bool monitor_stdin)
 {
 	fd_set readfds;
 	sigset_t sigset;
 	int n = 0;
 
 	FD_ZERO(&readfds);
-	/* Monitor the standard input only when the process
-	 * is in foreground. */
-	if (tcgetpgrp(STDIN_FILENO) == getpgrp()) {
+	if (monitor_stdin) {
 		n = 1;
 		FD_SET(0, &readfds);
 	}
@@ -3762,18 +3761,20 @@ int main(int argc, char **argv)
 	bool quiet = false;
 	bool cont  = false;
 	void *data;
+	bool monitor_stdin = true;
 
 	static const struct option longopts[] = {
 		{ "list",	no_argument, NULL, 'l' },
 		{ "parameters", required_argument, NULL, 'I' },
 		{ "comm",       required_argument, NULL, 'r' },
 		{ "quiet",	no_argument, NULL, 'q' },
+		{ "dont-monitor-stdin", no_argument, NULL, 'X' },
 		{ "dont-puase", no_argument, NULL, 'c' },
 		{ "help",	no_argument, NULL, 'h' },
 		{ NULL, 0, NULL, 0 },
 	};
 
-	while ((c = getopt_long(argc, argv, "lhqcI:r:", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "lhqcI:r:X", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
 			usage(stdout, EXIT_SUCCESS);
@@ -3791,6 +3792,9 @@ int main(int argc, char **argv)
 			break;
 		case 'r':
 			rename_self(optarg);
+			break;
+		case 'X':
+			monitor_stdin = false;
 			break;
 		default:
 			usage(stderr, EXIT_FAILURE);
@@ -3856,7 +3860,7 @@ int main(int argc, char **argv)
 	}
 
 	if (!cont)
-		wait_event();
+		wait_event(monitor_stdin);
 
 	for (int i = 0; i < factory->N + factory->EX_N; i++)
 		if (fdescs[i].fd >= 0 && fdescs[i].close)
