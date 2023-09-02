@@ -35,47 +35,50 @@ EXPR=
 
 	PID_1=$((PID -1))
 	EXPR="(PID > ${PID_1}.9) and (PID < ${PID}.1) and (ASSOC == 'exe')"
-	PID_0=$(${TS_CMD_LSFD} -n -o PID -Q "$EXPR")
+	PID_0=$(${TS_CMD_LSFD} -n -r -o PID -Q "$EXPR")
 	echo "pid in a range:" $?
 
-	[[ "${PID_0}" == "${PID}" ]]
-	echo "coparing pids": $?
+	if [[ "${PID_0}" == "${PID}" ]]; then
+	    echo "coparing pids": $?
+	else
+	    echo "coparing pids": $? "PID_0:${PID_0} == PID:${PID}"
+	fi
 
 	EXPR='(TIMERFD.INTERVAL < 10.000051) and (TIMERFD.INTERVAL > 10)'
-	${TS_CMD_LSFD} -n -o FD,TIMERFD.INTERVAL -p "$PID" -Q "$EXPR"
+	${TS_CMD_LSFD} -n -r -o FD,TIMERFD.INTERVAL -p "$PID" -Q "$EXPR"
 	echo "FD,TIMERFD.INTERVAL: $EXPR": $?
 
 	EXPR='(TIMERFD.INTERVAL <= 10) and (TIMERFD.INTERVAL > 9.99)'
-	${TS_CMD_LSFD} -n -o FD,TIMERFD.INTERVAL -p "$PID" -Q "$EXPR"
+	${TS_CMD_LSFD} -n -r -o FD,TIMERFD.INTERVAL -p "$PID" -Q "$EXPR"
 	echo "FD,TIMERFD.INTERVAL: $EXPR": $?
 
 	EXPR='(TIMERFD.INTERVAL >= 10)'
-	${TS_CMD_LSFD} -n -o FD,TIMERFD.INTERVAL -p "$PID" -Q "$EXPR"
+	${TS_CMD_LSFD} -n -r -o FD,TIMERFD.INTERVAL -p "$PID" -Q "$EXPR"
 	echo "FD,TIMERFD.INTERVAL: $EXPR": $?
 
 	EXPR='(TIMERFD.INTERVAL >= 10.0)'
-	${TS_CMD_LSFD} -n -o FD,TIMERFD.INTERVAL -p "$PID" -Q "$EXPR"
+	${TS_CMD_LSFD} -n -r -o FD,TIMERFD.INTERVAL -p "$PID" -Q "$EXPR"
 	echo "FD,TIMERFD.INTERVAL: $EXPR": $?
 	
 
 	EXPR='(TIMERFD.INTERVAL < 10) and (0 < TIMERFD.INTERVAL)'
-	${TS_CMD_LSFD} -n -o FD,TIMERFD.INTERVAL -p "$PID" -Q "$EXPR"
+	${TS_CMD_LSFD} -n -r -o FD,TIMERFD.INTERVAL -p "$PID" -Q "$EXPR"
 	echo "FD,TIMERFD.INTERVAL: $EXPR": $?
 
 	EXPR='(TIMERFD.INTERVAL < 10) and (0.0 < TIMERFD.INTERVAL)'
-	${TS_CMD_LSFD} -n -o FD,TIMERFD.INTERVAL -p "$PID" -Q "$EXPR"
+	${TS_CMD_LSFD} -n -r -o FD,TIMERFD.INTERVAL -p "$PID" -Q "$EXPR"
 	echo "FD,TIMERFD.INTERVAL: $EXPR": $?	
 
 	EXPR='(TIMERFD.INTERVAL > 11)'
-	${TS_CMD_LSFD} -n -o FD,TIMERFD.INTERVAL -p "$PID" -Q "$EXPR"
+	${TS_CMD_LSFD} -n -r -o FD,TIMERFD.INTERVAL -p "$PID" -Q "$EXPR"
 	echo "FD,TIMERFD.INTERVAL: $EXPR": $?
 
 	EXPR='(TIMERFD.INTERVAL == 10.00005)'
-	${TS_CMD_LSFD} -n -o FD,TIMERFD.INTERVAL -p "$PID" -Q "$EXPR"
+	${TS_CMD_LSFD} -n -r -o FD,TIMERFD.INTERVAL -p "$PID" -Q "$EXPR"
 	echo "FD,TIMERFD.INTERVAL: $EXPR": $?
 	
 	EXPR='(TIMERFD.INTERVAL == 10.000051)'
-	${TS_CMD_LSFD} -n -o FD,TIMERFD.INTERVAL -p "$PID" -Q "$EXPR"
+	${TS_CMD_LSFD} -n -r -o FD,TIMERFD.INTERVAL -p "$PID" -Q "$EXPR"
 	echo "FD,TIMERFD.INTERVAL: $EXPR": $?
 	
 	echo DONE >&"${MKFDS[1]}"
