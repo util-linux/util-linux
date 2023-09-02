@@ -115,10 +115,12 @@ else
     ts_finalize_subtest
 fi
 
+FILE=./test_mkfds_make_regular_file
 EXPR='(FD == '"$FD"')'
 ts_init_subtest "XMODE-D-bit"
 {
-    coproc MKFDS { "$TS_HELPER_MKFDS" make-regular-file $FD delete=1; }
+    rm -f "${FILE}"
+    coproc MKFDS { "$TS_HELPER_MKFDS" make-regular-file $FD file="$FILE" delete=1; }
     if read -r -u "${MKFDS[0]}" PID; then
 	"${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	echo "XMODE(D-bit): " $?
@@ -131,7 +133,8 @@ ts_finalize_subtest
 for m in flock-sh posix-r- ofd-r-; do
     ts_init_subtest "XMODE-l-bit-$m"
     {
-	coproc MKFDS { "$TS_HELPER_MKFDS" make-regular-file $FD lock=$m; }
+	rm -f "${FILE}"
+	coproc MKFDS { "$TS_HELPER_MKFDS" make-regular-file $FD file="$FILE" lock=$m; }
 	if read -r -u "${MKFDS[0]}" PID; then
 	    "${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	    echo "XMODE(l-bit): " $?
@@ -160,7 +163,8 @@ ts_finalize_subtest
 for m in flock-ex posix--w posix-rw  ofd--w ofd-rw lease-w; do
     ts_init_subtest "XMODE-L-bit-$m"
     {
-	coproc MKFDS { "$TS_HELPER_MKFDS" make-regular-file $FD lock=$m; }
+	rm -f "${FILE}"
+	coproc MKFDS { "$TS_HELPER_MKFDS" make-regular-file $FD file="$FILE" lock=$m; }
 	if read -r -u "${MKFDS[0]}" PID; then
 	    "${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	    echo "XMODE(L-bit): " $?
