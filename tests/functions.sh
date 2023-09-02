@@ -174,8 +174,8 @@ function ts_skip_capability {
 	# On Fedora, libcap package provides getpcaps command.
 	ts_check_prog "getpcaps"
 
-	local caps=$(getpcaps "$self")
-	if [[ "$caps" == "${self}: =ep" ]]; then
+	local caps=$(getpcaps "$self" 2>&1)
+	if [[ "$caps" == "${self}: =ep" || "$caps" == 'Capabilities for `'"${self}': =ep" ]]; then
 		return 0
 	fi
 
