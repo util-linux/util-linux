@@ -1,1 +1,3 @@
 libsmartcols.h
+filter-parser.c
+filter-scanner.c
