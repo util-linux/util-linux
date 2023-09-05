@@ -153,18 +153,23 @@ const char *scols_filter_get_errmsg(struct libscols_filter *fltr)
 	return fltr ? fltr->errmsg : NULL;
 }
 
-int scols_filter_next_name(struct libscols_filter *fltr,
-			struct libscols_iter *itr, const char **name)
+int scols_filter_next_holder(struct libscols_filter *fltr,
+			struct libscols_iter *itr,
+			const char **name,
+			int type)
 {
 	struct filter_param *prm = NULL;
 	int rc = 0;
 
 	*name = NULL;
+	if (!type)
+		type = F_HOLDER_COLUMN;	/* default */
 
 	do {
 		rc = filter_next_param(fltr, itr, &prm);
-		if (rc == 0 && prm->holder == F_HOLDER_COLUMN)
+		if (rc == 0 && (int) prm->holder == type) {
 			*name = prm->val.str;
+		}
 	} while (rc == 0 && !*name);
 
 	return rc;

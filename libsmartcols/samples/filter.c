@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
 		if (!itr)
 			err(EXIT_FAILURE, "failed to allocate iterator");
 
-		while (scols_filter_next_name(fltr, itr, &name) == 0) {
+		while (scols_filter_next_holder(fltr, itr, &name, 0) == 0) {
 			struct libscols_column *col =
 					scols_table_get_column_by_name(tb, name);
 			if (!col) {

@@ -226,7 +226,7 @@ SMARTCOLS_2.40 {
 	scols_new_filter;
 	scols_unref_filter;
 	scols_filter_get_errmsg;
-	scols_filter_next_name;
+	scols_filter_next_holder;
 	scols_filter_assign_column;
 	scols_line_apply_filter;
 } SMARTCOLS_2.39;
