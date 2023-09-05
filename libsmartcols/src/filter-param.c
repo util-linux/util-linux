@@ -5,19 +5,9 @@
 
 #include "smartcolsP.h"
 
-struct filter_node *filter_new_param(
-		struct libscols_filter *fltr,
-		enum filter_data type,
-		enum filter_holder holder,
-		void *data)
+static int param_set_data(struct filter_param *n, enum filter_data type, const void *data)
 {
-	char *p;
-	struct filter_param *n = (struct filter_param *) __filter_new_node(
-					F_NODE_PARAM,
-					sizeof(struct filter_param));
-	n->type = type;
-	n->holder = holder;
-	INIT_LIST_HEAD(&n->pr_params);
+	const char *p;
 
 	switch (type) {
 	case F_DATA_STRING:
@@ -25,23 +15,49 @@ struct filter_node *filter_new_param(
 		if (*p == '"') {
 			/* remove quotation marks */
 			size_t len = strlen(p);
+
 			if (*(p + (len - 1)) == '"')
-				*(p + (len - 1)) = '\0';
-			data = p + 1;
-		}
-		/* fallthrough */
+				len -= 2;
+			n->val.str = strndup(p + 1, len);
+		} else
+			n->val.str = strdup((char *) data);
+		if (!n->val.str)
+			return -ENOMEM;
+		n->has_value = 1;
+		break;
 	case F_DATA_NUMBER:
 		n->val.num = *((unsigned long long *) data);
+		n->has_value = 1;
 		break;
 	case F_DATA_FLOAT:
 		n->val.fnum = *((long double *) data);
+		n->has_value = 1;
 		break;
 	case F_DATA_BOOLEAN:
 		n->val.boolean = *((bool *) data) == 0 ? 0 : 1;
+		n->has_value = 1;
 		break;
 	default:
 		break;
 	}
+	return 0;
+}
+
+struct filter_node *filter_new_param(
+		struct libscols_filter *fltr,
+		enum filter_data type,
+		enum filter_holder holder,
+		void *data)
+{
+	struct filter_param *n = (struct filter_param *) __filter_new_node(
+					F_NODE_PARAM,
+					sizeof(struct filter_param));
+	n->type = type;
+	n->holder = holder;
+	INIT_LIST_HEAD(&n->pr_params);
+
+	if (param_set_data(n, type, data) != 0)
+		return NULL;
 
 	switch (holder) {
 	case F_HOLDER_COLUMN:
@@ -70,21 +86,31 @@ void filter_dump_param(struct ul_jsonwrt *json, struct filter_param *n)
 {
 	ul_jsonwrt_object_open(json, "param");
 
-	switch (n->type) {
-	case F_DATA_STRING:
-		ul_jsonwrt_value_s(json, "string", n->val.str);
-		break;
-	case F_DATA_NUMBER:
-		ul_jsonwrt_value_u64(json, "number", n->val.num);
-		break;
-	case F_DATA_FLOAT:
-		ul_jsonwrt_value_double(json, "float", n->val.fnum);
-		break;
-	case F_DATA_BOOLEAN:
-		ul_jsonwrt_value_boolean(json, "bool", n->val.boolean);
-		break;
-	default:
-		break;
+	if (!n->has_value) {
+		ul_jsonwrt_value_boolean(json, "has_value", false);
+		ul_jsonwrt_value_s(json, "type",
+				n->type == F_DATA_STRING ? "string" :
+				n->type == F_DATA_NUMBER ? "number" :
+				n->type == F_DATA_FLOAT  ? "float" :
+				n->type == F_DATA_BOOLEAN ? "bool" :
+				"unknown");
+	} else {
+		switch (n->type) {
+		case F_DATA_STRING:
+			ul_jsonwrt_value_s(json, "string", n->val.str);
+			break;
+		case F_DATA_NUMBER:
+			ul_jsonwrt_value_u64(json, "number", n->val.num);
+			break;
+		case F_DATA_FLOAT:
+			ul_jsonwrt_value_double(json, "float", n->val.fnum);
+			break;
+		case F_DATA_BOOLEAN:
+			ul_jsonwrt_value_boolean(json, "bool", n->val.boolean);
+			break;
+		default:
+			break;
+		}
 	}
 
 	switch (n->holder) {
@@ -105,10 +131,12 @@ int filter_eval_param(struct libscols_filter *fltr  __attribute__((__unused__)),
 {
 	int rc = 0;
 
+	if (!n->has_value) {
+		*status = 0;
+		goto done;
+	}
+
 	switch (n->type) {
-	case F_DATA_NONE:
-		/* probably holder without not-yet defined type */
-		break;
 	case F_DATA_STRING:
 		*status = n->val.str != NULL && *n->val.str != '\0';
 		break;
@@ -125,7 +153,7 @@ int filter_eval_param(struct libscols_filter *fltr  __attribute__((__unused__)),
 		rc = -EINVAL;
 		break;
 	}
-
+done:
 	return rc;
 }
 

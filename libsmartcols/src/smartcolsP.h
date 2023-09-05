@@ -540,6 +540,8 @@ struct filter_param {
 
 	struct list_head pr_params;
 	struct libscols_column *col;
+
+	unsigned int has_value :1;
 };
 
 struct filter_expr {
