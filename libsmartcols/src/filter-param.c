@@ -81,6 +81,37 @@ void filter_dump_param(struct ul_jsonwrt *json, struct filter_param *n)
 	ul_jsonwrt_object_close(json);
 }
 
+int filter_eval_param(struct libscols_filter *fltr  __attribute__((__unused__)),
+		struct filter_param *n,
+		struct libscols_line *ln  __attribute__((__unused__)),
+		int *status)
+{
+	int rc = 0;
+
+	switch (n->type) {
+	case F_PARAM_NAME: /* TODO */
+		break;
+	case F_PARAM_STRING:
+		*status = n->val.str != NULL && *n->val.str != '\0';
+		break;
+	case F_PARAM_NUMBER:
+		*status = n->val.num != 0;
+		break;
+	case F_PARAM_FLOAT:
+		*status = n->val.fnum != 0.0;
+		break;
+	case F_PARAM_BOOLEAN:
+		*status = n->val.boolean != false;
+		break;
+	default:
+		rc = -EINVAL;
+		break;
+	}
+
+	DBG(FLTR, ul_debugobj(fltr, "eval param [rc=%d, status=%d]", rc, *status));
+	return rc;
+}
+
 int filter_next_param(struct libscols_filter *fltr,
 		      struct libscols_iter *itr, struct filter_param **prm)
 {

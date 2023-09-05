@@ -188,3 +188,28 @@ int scols_filter_assign_column(struct libscols_filter *fltr,
 
 	return ct == 0 ? 1 : 0;
 }
+
+int filter_eval_node(struct libscols_filter *fltr, struct filter_node *n,
+			struct libscols_line *ln, int *status)
+{
+	switch (n->type) {
+	case F_NODE_PARAM:
+		return filter_eval_param(fltr, (struct filter_param *) n, ln, status);
+	/* TODO
+	case F_NODE_EXPR:
+		return filter_eval_expr(fltr, (struct filter_expr *) n, ln, status);
+	*/
+	default:
+		break;
+	}
+	return -EINVAL;
+}
+
+int scols_line_apply_filter(struct libscols_line *ln,
+			struct libscols_filter *fltr, int *status)
+{
+	if (!ln || !fltr || !fltr->root)
+		return -EINVAL;
+
+	return filter_eval_node(fltr, fltr->root, ln, status);
+}

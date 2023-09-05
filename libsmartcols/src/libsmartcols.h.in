@@ -374,6 +374,9 @@ extern void scols_unref_filter(struct libscols_filter *fltr);
 extern int scols_dump_filter(struct libscols_filter *fltr, FILE *out);
 extern const char *scols_filter_get_errmsg(struct libscols_filter *fltr);
 
+extern int scols_line_apply_filter(struct libscols_line *ln,
+			struct libscols_filter *fltr, int *status);
+
 extern int scols_filter_next_name(struct libscols_filter *fltr,
                         struct libscols_iter *itr, const char **name);
 extern int scols_filter_assign_column(struct libscols_filter *fltr,

@@ -155,8 +155,18 @@ int main(int argc, char *argv[])
 			goto done;
 	}
 
-	for (i = 0; i < 10; i++)
-		add_line(tb, i + 1);
+	for (i = 0; i < 10; i++) {
+		struct libscols_line *ln = add_line(tb, i + 1);
+		int rc, status = 0;
+
+		if (!fltr)
+			continue;
+		rc = scols_line_apply_filter(ln, fltr, &status);
+		if (rc)
+			goto done;
+		if (status == 0) /* false */
+			scols_table_remove_line(tb, ln);
+	}
 
 	scols_print_table(tb);
 done:

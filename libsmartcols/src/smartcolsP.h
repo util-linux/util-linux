@@ -559,9 +559,13 @@ void filter_ref_node(struct filter_node *n);
 void filter_unref_node(struct filter_node *n);
 
 void filter_dump_node(struct ul_jsonwrt *json, struct filter_node *n);
+int filter_eval_node(struct libscols_filter *fltr, struct filter_node *n,
+			struct libscols_line *ln, int *status);
 
 /* param */
 void filter_dump_param(struct ul_jsonwrt *json, struct filter_param *n);
+int filter_eval_param(struct libscols_filter *fltr, struct filter_param *n,
+			struct libscols_line *ln, int *status);
 void filter_free_param(struct filter_param *n);
 
 int filter_next_param(struct libscols_filter *fltr,
