@@ -554,6 +554,24 @@ struct libscols_filter {
 	struct list_head params;
 };
 
+struct filter_node *__filter_new_node(enum filter_ntype type, size_t sz);
+void filter_ref_node(struct filter_node *n);
+void filter_unref_node(struct filter_node *n);
+
+void filter_dump_node(struct ul_jsonwrt *json, struct filter_node *n);
+
+/* param */
+void filter_dump_param(struct ul_jsonwrt *json, struct filter_param *n);
+void filter_free_param(struct filter_param *n);
+
+int filter_next_param(struct libscols_filter *fltr,
+                        struct libscols_iter *itr, struct filter_param **prm);
+
+/* expr */
+void filter_free_expr(struct filter_expr *n);
+void filter_dump_expr(struct ul_jsonwrt *json, struct filter_expr *n);
+
+
 /* required by parser */
 struct filter_node *filter_new_param(struct libscols_filter *filter,
                                  enum filter_ptype type,

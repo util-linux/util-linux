@@ -26,7 +26,10 @@ libsmartcols_la_SOURCES= \
 	libsmartcols/src/filter-scanner.l \
 	libsmartcols/src/filter-parser.h \
 	libsmartcols/src/filter-scanner.h \
-	libsmartcols/src/filter.c
+	\
+	libsmartcols/src/filter.c \
+	libsmartcols/src/filter-param.c \
+	libsmartcols/src/filter-expr.c
 
 BUILT_SOURCES += libsmartcols/src/filter-parser.c \
 		 libsmartcols/src/filter-scanner.c
