@@ -168,7 +168,7 @@ int scols_filter_next_holder(struct libscols_filter *fltr,
 	do {
 		rc = filter_next_param(fltr, itr, &prm);
 		if (rc == 0 && (int) prm->holder == type) {
-			*name = prm->val.str;
+			*name = prm->holder_name;
 		}
 	} while (rc == 0 && !*name);
 
@@ -184,7 +184,7 @@ int scols_filter_assign_column(struct libscols_filter *fltr,
 
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 	while (filter_next_param(fltr, &itr, &prm) == 0) {
-		if (prm->holder != F_HOLDER_COLUMN || strcmp(name, prm->val.str) != 0)
+		if (prm->holder != F_HOLDER_COLUMN || strcmp(name, prm->holder_name) != 0)
 			continue;
 		prm->col = col;
 		scols_ref_column(col);
@@ -211,8 +211,12 @@ int filter_eval_node(struct libscols_filter *fltr, struct filter_node *n,
 int scols_line_apply_filter(struct libscols_line *ln,
 			struct libscols_filter *fltr, int *status)
 {
+	int rc;
 	if (!ln || !fltr || !fltr->root)
 		return -EINVAL;
 
-	return filter_eval_node(fltr, fltr->root, ln, status);
+	rc = filter_eval_node(fltr, fltr->root, ln, status);
+
+	DBG(FLTR, ul_debugobj(fltr, "filter applid [rc=%d, status=%d]", rc, *status));
+	return rc;
 }

@@ -23,23 +23,22 @@ static int param_set_data(struct filter_param *n, enum filter_data type, const v
 			n->val.str = strdup((char *) data);
 		if (!n->val.str)
 			return -ENOMEM;
-		n->has_value = 1;
 		break;
 	case F_DATA_NUMBER:
 		n->val.num = *((unsigned long long *) data);
-		n->has_value = 1;
 		break;
 	case F_DATA_FLOAT:
 		n->val.fnum = *((long double *) data);
-		n->has_value = 1;
 		break;
 	case F_DATA_BOOLEAN:
 		n->val.boolean = *((bool *) data) == 0 ? 0 : 1;
-		n->has_value = 1;
 		break;
 	default:
-		break;
+		return 0;
 	}
+
+	n->type = type;
+	n->has_value = 1;
 	return 0;
 }
 
@@ -61,7 +60,8 @@ struct filter_node *filter_new_param(
 
 	switch (holder) {
 	case F_HOLDER_COLUMN:
-		n->val.str = strdup((char *) data);
+		n->holder_name = strdup((char *) data);
+		DBG(FLTR, ul_debugobj(fltr, "new %s holder", n->holder_name));
 		break;
 	default:
 		break;
@@ -72,11 +72,21 @@ struct filter_node *filter_new_param(
 	return (struct filter_node *) n;
 }
 
-void filter_free_param(struct filter_param *n)
+static void param_reset_data(struct filter_param *n)
 {
-	if (n->type == F_DATA_STRING || n->holder == F_HOLDER_COLUMN)
+	if (n->type == F_DATA_STRING)
 		free(n->val.str);
 
+	memset(&n->val, 0, sizeof(n->val));
+	n->has_value = 0;
+}
+
+
+void filter_free_param(struct filter_param *n)
+{
+	param_reset_data(n);
+
+	free(n->holder_name);
 	list_del_init(&n->pr_params);
 	scols_unref_column(n->col);
 	free(n);
@@ -115,7 +125,7 @@ void filter_dump_param(struct ul_jsonwrt *json, struct filter_param *n)
 
 	switch (n->holder) {
 	case F_HOLDER_COLUMN:
-		ul_jsonwrt_value_s(json, "column", n->val.str);
+		ul_jsonwrt_value_s(json, "column", n->holder_name);
 		break;
 	default:
 		break;
@@ -124,14 +134,42 @@ void filter_dump_param(struct ul_jsonwrt *json, struct filter_param *n)
 	ul_jsonwrt_object_close(json);
 }
 
-int filter_eval_param(struct libscols_filter *fltr  __attribute__((__unused__)),
+static int fetch_holder_data(struct libscols_filter *fltr,
+			struct filter_param *n, struct libscols_line *ln)
+{
+	const char *data;
+	int rc;
+
+	if (n->holder != F_HOLDER_COLUMN)
+		return 0;
+	if (!n->col) {
+		DBG(FLTR, ul_debugobj(fltr, "no column for %s holder", n->holder_name));
+		return -EINVAL;
+	}
+
+	DBG(FLTR, ul_debugobj(fltr, "fetching %s data", n->holder_name));
+
+	param_reset_data(n);
+
+	data = scols_line_get_column_data(ln, n->col);
+	rc = param_set_data(n, F_DATA_STRING, data);
+
+	return rc;
+}
+
+int filter_eval_param(struct libscols_filter *fltr,
 		struct filter_param *n,
-		struct libscols_line *ln  __attribute__((__unused__)),
+		struct libscols_line *ln,
 		int *status)
 {
 	int rc = 0;
 
-	if (!n->has_value) {
+	DBG(FLTR, ul_debugobj(fltr, "eval param"));
+
+	if (!n->has_value && n->holder)
+		rc = fetch_holder_data(fltr, n, ln);
+
+	if (!n->has_value || rc) {
 		*status = 0;
 		goto done;
 	}
@@ -154,6 +192,8 @@ int filter_eval_param(struct libscols_filter *fltr  __attribute__((__unused__)),
 		break;
 	}
 done:
+	if (rc)
+		DBG(FLTR, ul_debugobj(fltr, "failed eval param [rc=%d]", rc));
 	return rc;
 }
 

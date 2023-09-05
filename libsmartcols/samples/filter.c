@@ -170,6 +170,9 @@ int main(int argc, char *argv[])
 
 	scols_print_table(tb);
 done:
+	if (dump && fltr)
+		scols_dump_filter(fltr, stdout);
+
 	scols_unref_table(tb);
 	scols_unref_filter(fltr);
 	scols_free_iter(itr);
