@@ -86,6 +86,7 @@ void filter_dump_expr(struct ul_jsonwrt *json, struct filter_expr *n)
 	ul_jsonwrt_object_close(json);
 }
 
+
 int filter_eval_expr(struct libscols_filter *fltr, struct filter_expr *n,
 		     struct libscols_line *ln, int *status)
 {

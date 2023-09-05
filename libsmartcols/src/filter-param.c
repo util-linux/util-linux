@@ -7,7 +7,8 @@
 
 struct filter_node *filter_new_param(
 		struct libscols_filter *fltr,
-		enum filter_ptype type,
+		enum filter_data type,
+		enum filter_holder holder,
 		void *data)
 {
 	char *p;
@@ -15,10 +16,11 @@ struct filter_node *filter_new_param(
 					F_NODE_PARAM,
 					sizeof(struct filter_param));
 	n->type = type;
+	n->holder = holder;
 	INIT_LIST_HEAD(&n->pr_params);
 
 	switch (type) {
-	case F_PARAM_STRING:
+	case F_DATA_STRING:
 		p = data;
 		if (*p == '"') {
 			/* remove quotation marks */
@@ -28,17 +30,24 @@ struct filter_node *filter_new_param(
 			data = p + 1;
 		}
 		/* fallthrough */
-	case F_PARAM_NAME:
-		n->val.str = strdup((char *) data);
-		break;
-	case F_PARAM_NUMBER:
+	case F_DATA_NUMBER:
 		n->val.num = *((unsigned long long *) data);
 		break;
-	case F_PARAM_FLOAT:
+	case F_DATA_FLOAT:
 		n->val.fnum = *((long double *) data);
 		break;
-	case F_PARAM_BOOLEAN:
+	case F_DATA_BOOLEAN:
 		n->val.boolean = *((bool *) data) == 0 ? 0 : 1;
+		break;
+	default:
+		break;
+	}
+
+	switch (holder) {
+	case F_HOLDER_COLUMN:
+		n->val.str = strdup((char *) data);
+		break;
+	default:
 		break;
 	}
 
@@ -49,7 +58,7 @@ struct filter_node *filter_new_param(
 
 void filter_free_param(struct filter_param *n)
 {
-	if (n->type == F_PARAM_NAME || n->type == F_PARAM_STRING)
+	if (n->type == F_DATA_STRING || n->holder == F_HOLDER_COLUMN)
 		free(n->val.str);
 
 	list_del_init(&n->pr_params);
@@ -62,22 +71,30 @@ void filter_dump_param(struct ul_jsonwrt *json, struct filter_param *n)
 	ul_jsonwrt_object_open(json, "param");
 
 	switch (n->type) {
-	case F_PARAM_NAME:
-		ul_jsonwrt_value_s(json, "name", n->val.str);
-		break;
-	case F_PARAM_STRING:
+	case F_DATA_STRING:
 		ul_jsonwrt_value_s(json, "string", n->val.str);
 		break;
-	case F_PARAM_NUMBER:
+	case F_DATA_NUMBER:
 		ul_jsonwrt_value_u64(json, "number", n->val.num);
 		break;
-	case F_PARAM_FLOAT:
+	case F_DATA_FLOAT:
 		ul_jsonwrt_value_double(json, "float", n->val.fnum);
 		break;
-	case F_PARAM_BOOLEAN:
+	case F_DATA_BOOLEAN:
 		ul_jsonwrt_value_boolean(json, "bool", n->val.boolean);
 		break;
+	default:
+		break;
 	}
+
+	switch (n->holder) {
+	case F_HOLDER_COLUMN:
+		ul_jsonwrt_value_s(json, "column", n->val.str);
+		break;
+	default:
+		break;
+	}
+
 	ul_jsonwrt_object_close(json);
 }
 
@@ -89,18 +106,19 @@ int filter_eval_param(struct libscols_filter *fltr  __attribute__((__unused__)),
 	int rc = 0;
 
 	switch (n->type) {
-	case F_PARAM_NAME: /* TODO */
+	case F_DATA_NONE:
+		/* probably holder without not-yet defined type */
 		break;
-	case F_PARAM_STRING:
+	case F_DATA_STRING:
 		*status = n->val.str != NULL && *n->val.str != '\0';
 		break;
-	case F_PARAM_NUMBER:
+	case F_DATA_NUMBER:
 		*status = n->val.num != 0;
 		break;
-	case F_PARAM_FLOAT:
+	case F_DATA_FLOAT:
 		*status = n->val.fnum != 0.0;
 		break;
-	case F_PARAM_BOOLEAN:
+	case F_DATA_BOOLEAN:
 		*status = n->val.boolean != false;
 		break;
 	default:

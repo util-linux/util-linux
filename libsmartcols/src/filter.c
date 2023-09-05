@@ -163,7 +163,7 @@ int scols_filter_next_name(struct libscols_filter *fltr,
 
 	do {
 		rc = filter_next_param(fltr, itr, &prm);
-		if (rc == 0 && prm->type == F_PARAM_NAME)
+		if (rc == 0 && prm->holder == F_HOLDER_COLUMN)
 			*name = prm->val.str;
 	} while (rc == 0 && !*name);
 
@@ -179,7 +179,7 @@ int scols_filter_assign_column(struct libscols_filter *fltr,
 
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 	while (filter_next_param(fltr, &itr, &prm) == 0) {
-		if (prm->type != F_PARAM_NAME || strcmp(name, prm->val.str) != 0)
+		if (prm->holder != F_HOLDER_COLUMN || strcmp(name, prm->val.str) != 0)
 			continue;
 		prm->col = col;
 		scols_ref_column(col);

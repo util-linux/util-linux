@@ -482,19 +482,23 @@ static inline int has_group_children(struct libscols_line *ln)
  * Filter stuff
  */
 
+enum filter_data {
+	F_DATA_NONE,
+	F_DATA_STRING,
+	F_DATA_NUMBER,
+	F_DATA_FLOAT,
+	F_DATA_BOOLEAN
+};
+
+enum filter_holder {
+	F_HOLDER_NONE,
+	F_HOLDER_COLUMN		/* column name */
+};
+
 /* node types */
 enum filter_ntype {
 	F_NODE_PARAM,
 	F_NODE_EXPR
-};
-
-/* param types */
-enum filter_ptype {
-	F_PARAM_NUMBER,
-	F_PARAM_FLOAT,
-	F_PARAM_NAME,
-	F_PARAM_STRING,
-	F_PARAM_BOOLEAN
 };
 
 /* expresion types */
@@ -524,7 +528,8 @@ struct filter_node {
 
 struct filter_param {
 	struct filter_node node;
-	enum filter_ptype type;
+	enum filter_data type;
+	enum filter_holder holder;
 
 	union {
 		char *str;
@@ -579,7 +584,8 @@ int filter_eval_expr(struct libscols_filter *fltr, struct filter_expr *n,
 
 /* required by parser */
 struct filter_node *filter_new_param(struct libscols_filter *filter,
-                                 enum filter_ptype type,
+                                 enum filter_data type,
+				 enum filter_holder holder,
 				 void *data);
 struct filter_node *filter_new_expr(struct libscols_filter *filter,
                                  enum filter_etype type,
