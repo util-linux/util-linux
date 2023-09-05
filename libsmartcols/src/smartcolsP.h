@@ -574,7 +574,8 @@ int filter_next_param(struct libscols_filter *fltr,
 /* expr */
 void filter_free_expr(struct filter_expr *n);
 void filter_dump_expr(struct ul_jsonwrt *json, struct filter_expr *n);
-
+int filter_eval_expr(struct libscols_filter *fltr, struct filter_expr *n,
+			struct libscols_line *ln, int *status);
 
 /* required by parser */
 struct filter_node *filter_new_param(struct libscols_filter *filter,

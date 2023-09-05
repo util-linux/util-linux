@@ -108,7 +108,6 @@ int filter_eval_param(struct libscols_filter *fltr  __attribute__((__unused__)),
 		break;
 	}
 
-	DBG(FLTR, ul_debugobj(fltr, "eval param [rc=%d, status=%d]", rc, *status));
 	return rc;
 }
 

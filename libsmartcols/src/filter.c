@@ -195,10 +195,8 @@ int filter_eval_node(struct libscols_filter *fltr, struct filter_node *n,
 	switch (n->type) {
 	case F_NODE_PARAM:
 		return filter_eval_param(fltr, (struct filter_param *) n, ln, status);
-	/* TODO
 	case F_NODE_EXPR:
 		return filter_eval_expr(fltr, (struct filter_expr *) n, ln, status);
-	*/
 	default:
 		break;
 	}

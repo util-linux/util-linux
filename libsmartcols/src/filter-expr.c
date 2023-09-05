@@ -85,3 +85,33 @@ void filter_dump_expr(struct ul_jsonwrt *json, struct filter_expr *n)
 
 	ul_jsonwrt_object_close(json);
 }
+
+int filter_eval_expr(struct libscols_filter *fltr, struct filter_expr *n,
+		     struct libscols_line *ln, int *status)
+{
+	int rc = 0;
+	enum filter_etype oper = n->type;
+
+	/* logical operators */
+	switch (oper) {
+	case F_EXPR_AND:
+		rc = filter_eval_node(fltr, n->left, ln, status);
+		if (rc == 0 && *status)
+			rc = filter_eval_node(fltr, n->right, ln, status);
+		return rc;
+	case F_EXPR_OR:
+		rc = filter_eval_node(fltr, n->left, ln, status);
+		if (rc == 0 && !*status)
+			rc = filter_eval_node(fltr, n->right, ln, status);
+		return rc;
+	case F_EXPR_NEG:
+		rc = filter_eval_node(fltr, n->right, ln, status);
+		if (rc == 0)
+			*status = !*status;
+		return rc;
+	default:
+		break;
+	}
+
+	return rc;
+}
