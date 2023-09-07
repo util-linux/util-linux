@@ -203,3 +203,5 @@ ylwrap
 /wipefs
 /write
 /zramctl
+/lsclocks
+/lastlog2

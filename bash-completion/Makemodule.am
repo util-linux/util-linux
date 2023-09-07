@@ -201,6 +201,9 @@ endif
 if BUILD_UUIDGEN
 dist_bashcompletion_DATA += bash-completion/uuidgen
 endif
+if BUILD_LIBLASTLOG2
+dist_bashcompletion_DATA += bash-completion/lastlog2
+endif
 if BUILD_UUIDPARSE
 dist_bashcompletion_DATA += bash-completion/uuidparse
 endif

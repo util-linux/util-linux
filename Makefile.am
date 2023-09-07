@@ -41,7 +41,7 @@ ul_libblkid_incdir = $(top_builddir)/libblkid/src
 ul_libmount_incdir = $(top_builddir)/libmount/src
 ul_libsmartcols_incdir = $(top_builddir)/libsmartcols/src
 ul_libfdisk_incdir  = $(top_builddir)/libfdisk/src
-
+ul_liblastlog2_incdir  = $(top_srcdir)/liblastlog2/src
 ul_libuuid_incdir  = $(top_srcdir)/libuuid/src
 
 bashcompletiondir = @bashcompletiondir@
@@ -59,6 +59,7 @@ bin_PROGRAMS =
 sbin_PROGRAMS =
 dist_usrbin_exec_SCRIPTS =
 systemdsystemunit_DATA =
+tmpfiles_DATA =
 dist_bashcompletion_DATA =
 check_PROGRAMS =
 dist_check_SCRIPTS =
@@ -103,6 +104,7 @@ include tools/Makemodule.am
 include include/Makemodule.am
 include lib/Makemodule.am
 include libuuid/Makemodule.am
+include liblastlog2/Makemodule.am
 include libblkid/Makemodule.am
 include libmount/Makemodule.am
 include libsmartcols/Makemodule.am
@@ -116,6 +118,7 @@ include sys-utils/Makemodule.am
 include misc-utils/Makemodule.am
 include disk-utils/Makemodule.am
 
+include pam_lastlog2/Makemodule.am
 include bash-completion/Makemodule.am
 include man-common/Makemodule.am
 
@@ -138,6 +141,7 @@ EXTRA_DIST += \
 	po/meson.build \
 	lib/meson.build \
 	libuuid/meson.build \
+	liblastlog2/meson.build \
 	sys-utils/meson.build \
 	libfdisk/meson.build \
 	term-utils/meson.build \
@@ -176,6 +180,7 @@ edit_cmd = sed \
 	 -e 's|@VERSION[@]|$(VERSION)|g' \
 	 -e 's|@ADJTIME_PATH[@]|$(ADJTIME_PATH)|g' \
 	 -e 's|@LIBUUID_VERSION[@]|$(LIBUUID_VERSION)|g' \
+	 -e 's|@LIBLASTLOG2_VERSION[@]|$(LIBLASTLOG2_VERSION)|g' \
 	 -e 's|@LIBMOUNT_VERSION[@]|$(LIBMOUNT_VERSION)|g' \
 	 -e 's|@LIBMOUNT_MAJOR_VERSION[@]|$(LIBMOUNT_MAJOR_VERSION)|g' \
 	 -e 's|@LIBMOUNT_MINOR_VERSION[@]|$(LIBMOUNT_MINOR_VERSION)|g' \
@@ -346,8 +351,8 @@ DISTCHECK_CONFIGURE_FLAGS = \
 	--enable-gtk-doc \
 	--with-python \
 	--with-bashcompletiondir=$$dc_install_base/$(bashcompletiondir) \
-	--with-systemdsystemunitdir=$$dc_install_base/$(systemdsystemunitdir)
-
+	--with-systemdsystemunitdir=$$dc_install_base/$(systemdsystemunitdir) \
+	--with-tmpfilesdir=$$dc_install_base/$(tmpfilesdir)
 
 BUILT_SOURCES += .version
 .version:

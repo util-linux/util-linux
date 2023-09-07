@@ -13,6 +13,7 @@ pkgconfig = import('pkgconfig')
 libblkid_version = '1.1.0'
 libblkid_date = '01-Jun-2021'
 libuuid_version = '1.3.0'
+liblastlog2_version = '1.3.0'
 libmount_version = '1.1.0'
 libsmartcols_version = '1.1.0'
 libfdisk_version = '1.1.0'
@@ -78,6 +79,10 @@ summary('libblkid', build_libblkid ? 'enabled' : 'disabled', section : 'componen
 build_libuuid = not get_option('build-libuuid').disabled()
 conf.set('HAVE_LIBUUID', build_libuuid ? 1 : false)
 summary('libuuid', build_libuuid ? 'enabled' : 'disabled', section : 'components')
+
+build_liblastlog2 = not get_option('build-liblastlog2').disabled()
+conf.set('HAVE_LIBLASTLOG2', build_liblastlog2 ? 1 : false)
+summary('liblastlog2', build_liblastlog2 ? 'enabled' : 'disabled', section : 'components')
 
 have_mountfd_api = cc.sizeof('struct mount_attr', prefix : '#include <linux/mount.h>') > 0
 conf.set('HAVE_STRUCT_MOUNT_ATTR', have_mountfd_api ? 1 : false)
@@ -926,7 +931,9 @@ subdir('libblkid')
 subdir('libmount')
 subdir('libsmartcols')
 subdir('libuuid')
+subdir('liblastlog2')
 subdir('libfdisk')
+subdir('pam_lastlog2')
 subdir('login-utils')
 subdir('sys-utils')
 subdir('disk-utils')
@@ -941,6 +948,7 @@ includes = [dir_include,
             dir_libmount,
             dir_libfdisk,
             dir_libuuid,
+            dir_liblastlog2,
             dir_sys_utils]
 
 exes = []
@@ -2594,6 +2602,28 @@ exe = executable(
 exes += exe
 manadocs += ['misc-utils/mcookie.1.adoc']
 bashcompletions += ['mcookie']
+
+if build_liblastlog2
+  exe = executable(
+    'lastlog2',
+    lastlog2_sources,
+    include_directories : includes,
+    link_with : [lib_common, lib_lastlog2],
+    install_dir : usrbin_exec_dir,
+    install : true)
+  exes += exe
+  manadocs += ['misc-utils/lastlog2.8.adoc']
+  bashcompletions += ['lastlog2']
+  manadocs += ['liblastlog2/man/lastlog2.3.adoc',
+               'liblastlog2/man/ll2_write_entry.3.adoc',
+	       'liblastlog2/man/ll2_read_entry.3.adoc',
+	       'liblastlog2/man/ll2_import_lastlog.3.adoc',
+	       'liblastlog2/man/ll2_read_all.3.adoc',
+	       'liblastlog2/man/ll2_remove_entry.3.adoc',
+	       'liblastlog2/man/ll2_rename_user.3.adoc',
+	       'liblastlog2/man/ll2_update_login_time.3.adoc'
+	       ]
+endif
 
 exe = executable(
   'namei',

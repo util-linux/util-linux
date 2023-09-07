@@ -2,4 +2,6 @@ getopt.1
 uuidd.8
 uuidd.rc
 uuidd.service
+lastlog2-import.service
 uuidd.socket
+lastlog2.conf

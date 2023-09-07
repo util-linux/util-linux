@@ -42,6 +42,13 @@ LIBUUID_LT_MINOR=3
 LIBUUID_LT_MICRO=0
 LIBUUID_VERSION_INFO=`expr $LIBUUID_LT_MAJOR + $LIBUUID_LT_MINOR`:$LIBUUID_LT_MICRO:$LIBUUID_LT_MINOR
 
+dnl liblastlog2 version
+LIBLASTLOG2_VERSION="$PACKAGE_VERSION_MAJOR.$PACKAGE_VERSION_MINOR.$PACKAGE_VERSION_RELEASE"
+LIBLASTLOG2_LT_MAJOR=1
+LIBLASTLOG2_LT_MINOR=3
+LIBLASTLOG2_LT_MICRO=0
+LIBLASTLOG2_VERSION_INFO=`expr $LIBLASTLOG2_LT_MAJOR + $LIBLASTLOG2_LT_MINOR`:$LIBLASTLOG2_LT_MICRO:$LIBLASTLOG2_LT_MINOR
+
 dnl libmount version
 LIBMOUNT_VERSION="$PACKAGE_VERSION_MAJOR.$PACKAGE_VERSION_MINOR.$PACKAGE_VERSION_RELEASE"
 LIBMOUNT_LT_MAJOR=1
@@ -383,6 +390,7 @@ AC_CHECK_HEADERS([ \
 	unistd.h \
 	utmp.h \
 	utmpx.h \
+	sqlite3.h \
 ])
 
 # There is a collision in old kernel-headers. The both files mount.h and fs.h
@@ -505,6 +513,7 @@ have_shadow_h=$ac_cv_header_shadow_h
 have_sys_signalfd_h=$ac_cv_header_sys_signalfd_h
 have_utmpx_h=$ac_cv_header_utmpx_h
 have_mntent_h=$ac_cv_header_mntent_h
+have_sqlite3_h=$ac_cv_header_sqlite3_h
 
 AS_CASE([$linux_os:$have_linux_version_h],
   [yes:no],
@@ -1210,6 +1219,32 @@ AC_ARG_ENABLE([libuuid-force-uuidd],
 AS_IF([test "x$build_libuuid" = xyes], [
   AC_DEFINE(HAVE_LIBUUID, 1, [Define to 1 if you have the -luuid.])
 ])
+
+dnl
+dnl liblastlog2
+dnl
+AC_ARG_ENABLE([liblastlog2],
+  AS_HELP_STRING([--disable-liblastlog2], [do not build liblastlog2 and lastlog2 utilities]),
+  [enable_liblastlog2=no], [enable_liblastlog2=check]
+)
+AC_SUBST([LIBLASTLOG2_VERSION])
+AC_SUBST([LIBLASTLOG2_VERSION_INFO])
+AC_DEFINE_UNQUOTED([LIBLASTLOG2_VERSION], ["$LIBLASTLOG2_VERSION"], [liblastlog2 version string])
+
+have_lastlog2=no
+AS_IF([test "x$enable_liblastlog2" != xno], [
+  AS_CASE([$enable_liblastlog2:$have_sqlite3_h],
+    [yes:no],
+       [AC_MSG_ERROR([lastlog2 selected but sqlite3.h not found])],
+    [check:no],
+       [AC_MSG_WARN([sqlite3.h not found, do not build with lastlog2 support])],
+    [*:yes],
+       [have_lastlog2=yes
+        AC_DEFINE(HAVE_LIBLASTLOG2, 1, [Define to 1 if you have the -llastlog2.])]
+  )
+])
+AM_CONDITIONAL([BUILD_LIBLASTLOG2], [test "x$have_lastlog2" = xyes])
+AM_CONDITIONAL([BUILD_LIBLASTLOG2_TESTS], [test "x$have_lastlog2" = xyes && test "x$enable_static" = xyes])
 
 dnl
 dnl libblkid
@@ -2594,6 +2629,18 @@ AS_IF([test "x$with_systemdsystemunitdir" != "xno"], [
   AC_SUBST([systemdsystemunitdir], [$with_systemdsystemunitdir])
 ])
 
+AC_ARG_WITH([tmpfilesdir],
+  AS_HELP_STRING([--with-tmpfilesdir=DIR], [directory for tmpfiles. See tmpfiles.d(5) for details]),
+  [], [
+  AS_IF([test "x$have_systemd" = xyes], [
+    PKG_CHECK_VAR([with_tmpfilesdir], [systemd], [tmpfilesdir],
+      [],
+      [with_tmpfilesdir=no])
+  ])
+])
+AS_IF([test "x$with_tmpfilesdir" != "xno"], [
+  AC_SUBST([tmpfilesdir], [$with_tmpfilesdir])
+])
 
 AC_ARG_WITH([smack],
   AS_HELP_STRING([--with-smack], [build with SMACK support]),
@@ -2937,8 +2984,10 @@ AC_MSG_RESULT([
         Bash completions:          ${with_bashcompletiondir}
         Systemd support:           ${have_systemd}
         Systemd unitdir:           ${with_systemdsystemunitdir}
+        tmpfilesdir:               ${with_tmpfilesdir}
         libeconf support:          ${have_econf}
         Btrfs support:             ${have_btrfs}
+        lastlog2 support:          ${have_lastlog2}
         Wide-char support:         ${build_widechar}
         libcryptsetup support:     ${have_cryptsetup}
 
