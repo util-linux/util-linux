@@ -579,6 +579,13 @@ void filter_free_param(struct filter_param *n);
 int filter_next_param(struct libscols_filter *fltr,
                         struct libscols_iter *itr, struct filter_param **prm);
 
+int filter_compare_params(struct libscols_filter *fltr,
+                          struct libscols_line *ln,
+                          enum filter_etype oper,
+                          struct filter_param *l,
+                          struct filter_param *r,
+                          int *status);
+
 /* expr */
 void filter_free_expr(struct filter_expr *n);
 void filter_dump_expr(struct ul_jsonwrt *json, struct filter_expr *n);

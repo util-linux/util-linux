@@ -197,6 +197,153 @@ done:
 	return rc;
 }
 
+static int string_opers(enum filter_etype oper, struct filter_param *l,
+			struct filter_param *r, int *status)
+{
+	switch (oper) {
+	case F_EXPR_EQ:
+		*status = strcmp(l->val.str, r->val.str) == 0;
+		break;
+	case F_EXPR_NE:
+		*status = strcmp(l->val.str, r->val.str) != 0;
+		break;
+	case F_EXPR_LE:
+		*status = strcmp(l->val.str, r->val.str) <= 0;
+		break;
+	case F_EXPR_LT:
+		*status = strcmp(l->val.str, r->val.str) < 0;
+		break;
+	case F_EXPR_GE:
+		*status = strcmp(l->val.str, r->val.str) >= 0;
+		break;
+	case F_EXPR_GT:
+		*status = strcmp(l->val.str, r->val.str) > 0;
+		break;
+	default:
+		return -EINVAL;
+	}
+	return 0;
+}
+
+static int number_opers(enum filter_etype oper, struct filter_param *l,
+			     struct filter_param *r, int *status)
+{
+	switch (oper) {
+	case F_EXPR_EQ:
+		*status = l->val.num == r->val.num;
+		break;
+	case F_EXPR_NE:
+		*status = l->val.num != r->val.num;
+		break;
+	case F_EXPR_LE:
+		*status = l->val.num <= r->val.num;
+		break;
+	case F_EXPR_LT:
+		*status = l->val.num < r->val.num;
+		break;
+	case F_EXPR_GE:
+		*status = l->val.num >= r->val.num;
+		break;
+	case F_EXPR_GT:
+		*status = l->val.num > r->val.num;
+		break;
+	default:
+		return -EINVAL;
+	}
+	return 0;
+}
+
+static int float_opers(enum filter_etype oper, struct filter_param *l,
+			     struct filter_param *r, int *status)
+{
+	switch (oper) {
+	case F_EXPR_EQ:
+		*status = l->val.fnum == r->val.fnum;
+		break;
+	case F_EXPR_NE:
+		*status = l->val.fnum != r->val.fnum;
+		break;
+	case F_EXPR_LE:
+		*status = l->val.fnum <= r->val.fnum;
+		break;
+	case F_EXPR_LT:
+		*status = l->val.fnum < r->val.fnum;
+		break;
+	case F_EXPR_GE:
+		*status = l->val.fnum >= r->val.fnum;
+		break;
+	case F_EXPR_GT:
+		*status = l->val.fnum > r->val.fnum;
+		break;
+	default:
+		return -EINVAL;
+	}
+	return 0;
+}
+
+static int bool_opers(enum filter_etype oper, struct filter_param *l,
+			     struct filter_param *r, int *status)
+{
+	switch (oper) {
+	case F_EXPR_EQ:
+		*status = l->val.boolean == r->val.boolean;
+		break;
+	case F_EXPR_NE:
+		*status = l->val.boolean != r->val.boolean;
+		break;
+	case F_EXPR_LE:
+		*status = l->val.boolean <= r->val.boolean;
+		break;
+	case F_EXPR_LT:
+		*status = l->val.boolean < r->val.boolean;
+		break;
+	case F_EXPR_GE:
+		*status = l->val.boolean >= r->val.boolean;
+		break;
+	case F_EXPR_GT:
+		*status = l->val.boolean > r->val.boolean;
+		break;
+	default:
+		return -EINVAL;
+	}
+	return 0;
+}
+
+int filter_compare_params(struct libscols_filter *fltr __attribute__((__unused__)),
+			  struct libscols_line *ln __attribute__((__unused__)),
+			  enum filter_etype oper,
+			  struct filter_param *l,
+			  struct filter_param *r,
+			  int *status)
+{
+	int rc;
+
+	if (!l || !r || l->type != r->type)
+		return -EINVAL;
+
+	*status = 0;
+
+	switch (l->type) {
+	case F_DATA_STRING:
+		rc = string_opers(oper, l, r, status);
+		break;
+	case F_DATA_NUMBER:
+		rc = number_opers(oper, l, r, status);
+		break;
+	case F_DATA_FLOAT:
+		rc = float_opers(oper, l, r, status);
+		break;
+	case F_DATA_BOOLEAN:
+		rc = bool_opers(oper, l, r, status);
+		break;
+	default:
+		rc = -EINVAL;
+		break;
+	}
+
+	return rc;
+}
+
 int filter_next_param(struct libscols_filter *fltr,
 		      struct libscols_iter *itr, struct filter_param **prm)
 {

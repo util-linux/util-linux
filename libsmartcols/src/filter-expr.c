@@ -91,6 +91,7 @@ int filter_eval_expr(struct libscols_filter *fltr, struct filter_expr *n,
 		     struct libscols_line *ln, int *status)
 {
 	int rc = 0;
+	struct filter_param *l = NULL, *r = NULL;
 	enum filter_etype oper = n->type;
 
 	/* logical operators */
@@ -113,6 +114,11 @@ int filter_eval_expr(struct libscols_filter *fltr, struct filter_expr *n,
 	default:
 		break;
 	}
+
+	/* compare data */
+	l = (struct filter_param *) n->left;
+	r = (struct filter_param *) n->right;
+	rc = filter_compare_params(fltr, ln, oper, l, r, status);
 
 	return rc;
 }
