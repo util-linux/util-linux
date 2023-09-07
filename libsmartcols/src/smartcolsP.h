@@ -567,13 +567,13 @@ void filter_ref_node(struct filter_node *n);
 void filter_unref_node(struct filter_node *n);
 
 void filter_dump_node(struct ul_jsonwrt *json, struct filter_node *n);
-int filter_eval_node(struct libscols_filter *fltr, struct filter_node *n,
-			struct libscols_line *ln, int *status);
+int filter_eval_node(struct libscols_filter *fltr, struct libscols_line *ln,
+			struct filter_node *n, int *status);
 
 /* param */
 void filter_dump_param(struct ul_jsonwrt *json, struct filter_param *n);
-int filter_eval_param(struct libscols_filter *fltr, struct filter_param *n,
-			struct libscols_line *ln, int *status);
+int filter_eval_param(struct libscols_filter *fltr, struct libscols_line *ln,
+			struct filter_param *n, int *status);
 void filter_free_param(struct filter_param *n);
 
 int filter_next_param(struct libscols_filter *fltr,
@@ -589,8 +589,8 @@ int filter_compare_params(struct libscols_filter *fltr,
 /* expr */
 void filter_free_expr(struct filter_expr *n);
 void filter_dump_expr(struct ul_jsonwrt *json, struct filter_expr *n);
-int filter_eval_expr(struct libscols_filter *fltr, struct filter_expr *n,
-			struct libscols_line *ln, int *status);
+int filter_eval_expr(struct libscols_filter *fltr, struct libscols_line *ln,
+			struct filter_expr *n, int *status);
 
 /* required by parser */
 struct filter_node *filter_new_param(struct libscols_filter *filter,

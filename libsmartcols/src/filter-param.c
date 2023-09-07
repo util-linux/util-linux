@@ -158,8 +158,8 @@ static int fetch_holder_data(struct libscols_filter *fltr,
 }
 
 int filter_eval_param(struct libscols_filter *fltr,
-		struct filter_param *n,
 		struct libscols_line *ln,
+		struct filter_param *n,
 		int *status)
 {
 	int rc = 0;
