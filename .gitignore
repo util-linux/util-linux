@@ -130,6 +130,7 @@ ylwrap
 /look
 /losetup
 /lsblk
+/lsclocks
 /lscpu
 /lsfd
 /lsipc
