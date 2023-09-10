@@ -156,6 +156,7 @@ blkid_probe blkid_new_probe(void)
 		pr->chains[i].enabled = chains_drvs[i]->dflt_enabled;
 	}
 	INIT_LIST_HEAD(&pr->buffers);
+	INIT_LIST_HEAD(&pr->prunable_buffers);
 	INIT_LIST_HEAD(&pr->values);
 	INIT_LIST_HEAD(&pr->hints);
 	return pr;
@@ -647,6 +648,39 @@ static struct blkid_bufinfo *get_cached_buffer(blkid_probe pr, uint64_t off, uin
 }
 
 /*
+ * Mark smaller buffers that can be satisfied by bf as prunable
+ */
+static void mark_prunable_buffers(blkid_probe pr, const struct blkid_bufinfo *bf)
+{
+	struct list_head *p, *next;
+
+	list_for_each_safe(p, next, &pr->buffers) {
+		struct blkid_bufinfo *x =
+				list_entry(p, struct blkid_bufinfo, bufs);
+
+		if (bf->off <= x->off && bf->off + bf->len >= x->off + x->len) {
+			list_del(&x->bufs);
+			list_add(&x->bufs, &pr->prunable_buffers);
+		}
+	}
+}
+
+/*
+ * Remove buffers that are marked as prunable
+ */
+void blkid_probe_prune_buffers(blkid_probe pr)
+{
+	struct list_head *p, *next;
+
+	list_for_each_safe(p, next, &pr->prunable_buffers) {
+		struct blkid_bufinfo *x =
+				list_entry(p, struct blkid_bufinfo, bufs);
+
+		remove_buffer(x);
+	}
+}
+
+/*
  * Zeroize in-memory data in already read buffer. The next blkid_probe_get_buffer()
  * will return modified buffer. This is usable when you want to call the same probing
  * function more than once and hide previously detected magic strings.
@@ -746,6 +780,7 @@ const unsigned char *blkid_probe_get_buffer(blkid_probe pr, uint64_t off, uint64
 		if (!bf)
 			return NULL;
 
+		mark_prunable_buffers(pr, bf);
 		list_add_tail(&bf->bufs, &pr->buffers);
 	}
 
@@ -774,6 +809,8 @@ int blkid_probe_reset_buffers(blkid_probe pr)
 	uint64_t ct = 0, len = 0;
 
 	pr->flags &= ~BLKID_FL_MODIF_BUFF;
+
+	blkid_probe_prune_buffers(pr);
 
 	if (list_empty(&pr->buffers))
 		return 0;

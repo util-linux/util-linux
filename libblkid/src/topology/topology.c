@@ -146,6 +146,7 @@ blkid_topology blkid_probe_get_topology(blkid_probe pr)
 static int topology_probe(blkid_probe pr, struct blkid_chain *chn)
 {
 	size_t i;
+	int rc;
 
 	if (chn->idx < -1)
 		return -1;
@@ -182,7 +183,9 @@ static int topology_probe(blkid_probe pr, struct blkid_chain *chn)
 
 		if (id->probefunc) {
 			DBG(LOWPROBE, ul_debug("%s: call probefunc()", id->name));
-			if (id->probefunc(pr, NULL) != 0)
+			rc = id->probefunc(pr, NULL);
+			blkid_probe_prune_buffers(pr);
+			if (rc != 0)
 				continue;
 		}
 

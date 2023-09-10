@@ -556,6 +556,7 @@ static int idinfo_probe(blkid_probe pr, const struct blkid_idinfo *id,
 		DBG(LOWPROBE, ul_debug(
 			"%s: ---> call probefunc()", id->name));
 		rc = id->probefunc(pr, mag);
+		blkid_probe_prune_buffers(pr);
 		if (rc < 0) {
 			/* reset after error */
 			reset_partlist(blkid_probe_get_partlist(pr));

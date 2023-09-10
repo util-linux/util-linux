@@ -220,6 +220,7 @@ struct blkid_struct_probe
 	struct blkid_chain	*wipe_chain;	/* superblock, partition, ... */
 
 	struct list_head	buffers;	/* list of buffers */
+	struct list_head	prunable_buffers;	/* list of prunable buffers */
 	struct list_head	hints;
 
 	struct blkid_chain	chains[BLKID_NCHAINS];	/* array of chains */
@@ -432,6 +433,8 @@ extern int blkid_probe_set_dimension(blkid_probe pr,
 extern int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
 			uint64_t *offset, const struct blkid_idmag **res)
 			__attribute__((nonnull(1)));
+
+extern void blkid_probe_prune_buffers(blkid_probe pr);
 
 /* returns superblock according to 'struct blkid_idmag' */
 extern const unsigned char *blkid_probe_get_sb_buffer(blkid_probe pr, const struct blkid_idmag *mag, size_t size);
