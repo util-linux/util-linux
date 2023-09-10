@@ -544,6 +544,16 @@ int __blkid_probe_filter_types(blkid_probe pr, int chain, int flag, char *names[
 	return 0;
 }
 
+static void remove_buffer(struct blkid_bufinfo *bf)
+{
+	list_del(&bf->bufs);
+
+	DBG(BUFFER, ul_debug(" remove buffer: [off=%"PRIu64", len=%"PRIu64"]",
+				bf->off, bf->len));
+	munmap(bf->data, bf->len);
+	free(bf);
+}
+
 static struct blkid_bufinfo *read_buffer(blkid_probe pr, uint64_t real_off, uint64_t len)
 {
 	ssize_t ret;
@@ -585,8 +595,7 @@ static struct blkid_bufinfo *read_buffer(blkid_probe pr, uint64_t real_off, uint
 	ret = read(pr->fd, bf->data, len);
 	if (ret != (ssize_t) len) {
 		DBG(LOWPROBE, ul_debug("\tread failed: %m"));
-		munmap(bf->data, bf->len);
-		free(bf);
+		remove_buffer(bf);
 
 		/* I/O errors on CDROMs are non-fatal to work with hybrid
 		 * audio+data disks */
@@ -776,12 +785,10 @@ int blkid_probe_reset_buffers(blkid_probe pr)
 						struct blkid_bufinfo, bufs);
 		ct++;
 		len += bf->len;
-		list_del(&bf->bufs);
 
 		DBG(BUFFER, ul_debug(" remove buffer: [off=%"PRIu64", len=%"PRIu64"]",
 		                     bf->off, bf->len));
-		munmap(bf->data, bf->len);
-		free(bf);
+		remove_buffer(bf);
 	}
 
 	DBG(LOWPROBE, ul_debug(" buffers summary: %"PRIu64" bytes by %"PRIu64" read() calls",
