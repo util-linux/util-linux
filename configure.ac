@@ -1628,7 +1628,7 @@ AS_IF([test "x$have_futimens" = xyes && test "x$have_inotify_init1" = xyes ], [
 
 
 AC_ARG_ENABLE([plymouth_support],
-  AS_HELP_STRING([--disable-plymouth_support], [do not care about plymouth in sylogin(8) and agetty(8)]),
+  AS_HELP_STRING([--disable-plymouth_support], [do not care about plymouth in sulogin(8) and agetty(8)]),
   [], [enable_plymouth_support=check]
 )
 UL_BUILD_INIT([plymouth_support])
@@ -1638,7 +1638,7 @@ UL_REQUIRES_HAVE([plymouth_support], [sock_nonblock], [SOCK_NONBLOCK flag])
 UL_REQUIRES_HAVE([plymouth_support], [so_passcred], [SO_PASSCRED flag])
 AM_CONDITIONAL([USE_PLYMOUTH_SUPPORT], [test "x$build_plymouth_support" = xyes])
 AS_IF([test "x$build_plymouth_support" = xyes ], [
-    AC_DEFINE([USE_PLYMOUTH_SUPPORT], [1], [Enable plymouth support feature for sulogin and aggety])
+    AC_DEFINE([USE_PLYMOUTH_SUPPORT], [1], [Enable plymouth support feature for sulogin and agetty])
 ])
 
 
