@@ -122,7 +122,7 @@ for i in 0 1; do
 			   -o ASSOC,TYPE,NAME,SOCK.STATE,SOCK.TYPE,${COLNS[$i]}.LADDR,${COLNS[$i]}.RADDR,PING.ID \
 			   -p "${PID}" -Q "${EXPR[$i]}"
 	    echo "ASSOC,TYPE,NAME,SOCK.STATE,SOCK.TYPE,${COLNS[$i]}.LADDR,${COLNS[$i]}.RADDR,PING.ID": $?
-	    kill -CONT "${PID}"
+	    echo DONE >&"${MKFDS[1]}"
 	fi
 	wait "${MKFDS_PID}"
 
@@ -132,7 +132,7 @@ for i in 0 1; do
 			   -o ASSOC,TYPE,NAME,SOCK.STATE,SOCK.TYPE,${COLNS[$i]}.LADDR,${COLNS[$i]}.RADDR,PING.ID \
 			   -p "${PID}" -Q "${EXPR[$i]}"
 	    echo "ASSOC,TYPE,NAME,SOCK.STATE,SOCK.TYPE,${COLNS[$i]}.LADDR,${COLNS[$i]}.RADDR,PING.ID": $?
-	    kill -CONT "${PID}"
+	    echo DONE >&"${MKFDS[1]}"
 	fi
     } > "$TS_OUTPUT" 2>&1
     wait "${MKFDS_PID}"

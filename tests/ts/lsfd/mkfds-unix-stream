@@ -46,7 +46,7 @@ EXPR='(((TYPE == "UNIX-STREAM") or (TYPE == "UNIX")) and (FD >= 3) and (FD <= 5)
 			   -p "${PID}" -Q "${EXPR}" | lsfd_strip_type_stream
 	    echo 'ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': ${PIPESTATUS[0]}
 
-	    kill -CONT "${PID}"
+	    echo DONE >&"${MKFDS[1]}"
 	fi
 	wait "${MKFDS_PID}"
 
@@ -59,7 +59,7 @@ EXPR='(((TYPE == "UNIX-STREAM") or (TYPE == "UNIX")) and (FD >= 3) and (FD <= 5)
 			   -p "${PID}" -Q "${EXPR}" | lsfd_strip_type_stream
 	    echo '(abs) ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': ${PIPESTATUS[0]}
 
-	    kill -CONT "${PID}"
+	    echo DONE >&"${MKFDS[1]}"
 	fi
 	wait "${MKFDS_PID}"
 
@@ -75,7 +75,7 @@ EXPR='(((TYPE == "UNIX-STREAM") or (TYPE == "UNIX")) and (FD >= 3) and (FD <= 5)
 	    echo '(shutdown) ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': ${PIPESTATUS[0]}
 	    # Surprisingly, the socket status doesn't change at all.
 
-	    kill -CONT "${PID}"
+	    echo DONE >&"${MKFDS[1]}"
 	fi
 	wait "${MKFDS_PID}"
 
@@ -88,7 +88,7 @@ EXPR='(((TYPE == "UNIX-STREAM") or (TYPE == "UNIX")) and (FD >= 3) and (FD <= 5)
 			   -p "${PID}" -Q "${EXPR}" | lsfd_strip_type_stream
 	    echo 'ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': ${PIPESTATUS[0]}
 
-	    kill -CONT "${PID}"
+	    echo DONE >&"${MKFDS[1]}"
 	fi
 	wait "${MKFDS_PID}"
 

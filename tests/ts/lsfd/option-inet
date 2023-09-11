@@ -36,13 +36,13 @@ FIFO=./test_mkfds-option-inet.fifo
 	ts_finalize  "failed in creating a fifo"
     fi
 
-    "$TS_HELPER_MKFDS" tcp  3 4 5 server-port=34567 client-port=23456 > "${FIFO}" &
+    "$TS_HELPER_MKFDS" -X tcp  3 4 5 server-port=34567 client-port=23456 > "${FIFO}" &
     if ! read PID0 < "${FIFO}"; then
 	rm "${FIFO}"
 	ts_finalize  "$TS_HELPER_MKFDS tcp...doesn't report its pid"
     fi
 
-    "$TS_HELPER_MKFDS" tcp6 3 4 5 server-port=34567 client-port=23456 > "${FIFO}" &
+    "$TS_HELPER_MKFDS" -X tcp6 3 4 5 server-port=34567 client-port=23456 > "${FIFO}" &
     if ! read PID1  < "${FIFO}"; then
 	kill -CONT "${PID0}"
 	wait       "${PID0}"
@@ -50,7 +50,7 @@ FIFO=./test_mkfds-option-inet.fifo
 	ts_finalize  "$TS_HELPER_MKFDS tcp6...doesn't report its pid"
     fi
 
-    "$TS_HELPER_MKFDS" ro-regular-file 3 file=/etc/passwd > "${FIFO}" &
+    "$TS_HELPER_MKFDS" -X ro-regular-file 3 file=/etc/passwd > "${FIFO}" &
     if ! read PID2  < "${FIFO}"; then
 	kill -CONT "${PID0}" "${PID1}"
 	wait       "${PID0}" "${PID1}"
@@ -58,7 +58,7 @@ FIFO=./test_mkfds-option-inet.fifo
 	ts_finalize  "$TS_HELPER_MKFDS ro-regular-file...doesn't report its pid"
     fi
 
-    "$TS_HELPER_MKFDS" udp 3 4 server-port=34567 client-port=23456 server-do-bind=1 client-do-bind=1 client-do-connect=1 > "${FIFO}" &
+    "$TS_HELPER_MKFDS" -X udp 3 4 server-port=34567 client-port=23456 server-do-bind=1 client-do-bind=1 client-do-connect=1 > "${FIFO}" &
     if ! read PID3  < "${FIFO}"; then
 	kill -CONT "${PID0}" "${PID1}" "${PID2}"
 	wait       "${PID0}" "${PID1}" "${PID2}"
@@ -66,7 +66,7 @@ FIFO=./test_mkfds-option-inet.fifo
 	ts_finalize  "$TS_HELPER_MKFDS udp...doesn't report its pid"
     fi
 
-    "$TS_HELPER_MKFDS" udp6 3 4 lite=1 server-port=34567 client-port=23456 server-do-bind=1 client-do-bind=1 client-do-connect=1 > "${FIFO}" &
+    "$TS_HELPER_MKFDS" -X udp6 3 4 lite=1 server-port=34567 client-port=23456 server-do-bind=1 client-do-bind=1 client-do-connect=1 > "${FIFO}" &
     if ! read PID4  < "${FIFO}"; then
 	kill -CONT "${PID0}" "${PID1}" "${PID2}" "${PID3}"
 	wait       "${PID0}" "${PID1}" "${PID2}" "${PID3}"

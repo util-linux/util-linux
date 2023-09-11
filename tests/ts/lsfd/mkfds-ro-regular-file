@@ -70,7 +70,7 @@ EXPR=
 
 	lsfd_compare_dev "${TS_CMD_LSFD}" $target "${EXPR}"
 
-	kill -CONT ${PID}
+	echo DONE >&"${MKFDS[1]}"
     fi
     wait ${MKFDS_PID}
 } > $TS_OUTPUT 2>&1

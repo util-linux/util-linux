@@ -39,7 +39,7 @@ ts_init_subtest "MODE-r-bit"
     if read -r -u "${MKFDS[0]}" PID; then
 	"${TS_CMD_LSFD}" -n -o MODE -p "${PID}" -Q "${EXPR}"
 	echo "MODE(r-bit): " $?
-	kill -CONT "${PID}"
+	echo DONE >&"${MKFDS[1]}"
     fi
 } > "$TS_OUTPUT" 2>&1
 wait "${MKFDS_PID}"
@@ -51,7 +51,7 @@ ts_init_subtest "XMODE-r-bit"
     if read -r -u "${MKFDS[0]}" PID; then
 	"${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	echo "XMODE(r-bit): " $?
-	kill -CONT "${PID}"
+	echo DONE >&"${MKFDS[1]}"
     fi
 } > "$TS_OUTPUT" 2>&1
 wait "${MKFDS_PID}"
@@ -64,7 +64,7 @@ ts_init_subtest "MODE-w-bit"
     if read -r -u "${MKFDS[0]}" PID; then
 	"${TS_CMD_LSFD}" -n -o MODE -p "${PID}" -Q "${EXPR}"
 	echo "MODE(w-bit): " $?
-	kill -CONT "${PID}"
+	echo DONE >&"${MKFDS[1]}"
     fi
 } > "$TS_OUTPUT" 2>&1
 wait "${MKFDS_PID}"
@@ -76,7 +76,7 @@ ts_init_subtest "XMODE-w-bit"
     if read -r -u "${MKFDS[0]}" PID; then
 	"${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	echo "XMODE(w-bit): " $?
-	kill -CONT "${PID}"
+	echo DONE >&"${MKFDS[1]}"
     fi
 } > "$TS_OUTPUT" 2>&1
 wait "${MKFDS_PID}"
@@ -92,7 +92,7 @@ else
 	if read -r -u "${MKFDS[0]}" PID; then
 	    "${TS_CMD_LSFD}" -n -o MODE -p "${PID}" -Q "${EXPR}"
 	    echo "MODE(x-bit): " $?
-	    kill -CONT "${PID}"
+	    echo DONE >&"${MKFDS[1]}"
 	fi
     } > "$TS_OUTPUT" 2>&1
     wait "${MKFDS_PID}"
@@ -108,21 +108,23 @@ else
 	if read -r -u "${MKFDS[0]}" PID; then
 	    "${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	    echo "XMODE(x-bit): " $?
-	    kill -CONT "${PID}"
+	    echo DONE >&"${MKFDS[1]}"
 	fi
     } > "$TS_OUTPUT" 2>&1
     wait "${MKFDS_PID}"
     ts_finalize_subtest
 fi
 
+FILE=./test_mkfds_make_regular_file
 EXPR='(FD == '"$FD"')'
 ts_init_subtest "XMODE-D-bit"
 {
-    coproc MKFDS { "$TS_HELPER_MKFDS" make-regular-file $FD delete=1; }
+    rm -f "${FILE}"
+    coproc MKFDS { "$TS_HELPER_MKFDS" make-regular-file $FD file="$FILE" delete=1; }
     if read -r -u "${MKFDS[0]}" PID; then
 	"${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	echo "XMODE(D-bit): " $?
-	kill -CONT "${PID}"
+	echo DONE >&"${MKFDS[1]}"
     fi
 } > "$TS_OUTPUT" 2>&1
 wait "${MKFDS_PID}"
@@ -131,11 +133,12 @@ ts_finalize_subtest
 for m in flock-sh posix-r- ofd-r-; do
     ts_init_subtest "XMODE-l-bit-$m"
     {
-	coproc MKFDS { "$TS_HELPER_MKFDS" make-regular-file $FD lock=$m; }
+	rm -f "${FILE}"
+	coproc MKFDS { "$TS_HELPER_MKFDS" make-regular-file $FD file="$FILE" lock=$m; }
 	if read -r -u "${MKFDS[0]}" PID; then
 	    "${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	    echo "XMODE(l-bit): " $?
-	    kill -CONT "${PID}"
+	    echo DONE >&"${MKFDS[1]}"
 	fi
     } > "$TS_OUTPUT" 2>&1
     wait "${MKFDS_PID}"
@@ -150,7 +153,7 @@ touch "$f"
     if read -r -u "${MKFDS[0]}" PID; then
 	"${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	echo "XMODE(l-bit): " $?
-	kill -CONT "${PID}"
+	echo DONE >&"${MKFDS[1]}"
     fi
 } > "$TS_OUTPUT" 2>&1
 wait "${MKFDS_PID}"
@@ -160,11 +163,12 @@ ts_finalize_subtest
 for m in flock-ex posix--w posix-rw  ofd--w ofd-rw lease-w; do
     ts_init_subtest "XMODE-L-bit-$m"
     {
-	coproc MKFDS { "$TS_HELPER_MKFDS" make-regular-file $FD lock=$m; }
+	rm -f "${FILE}"
+	coproc MKFDS { "$TS_HELPER_MKFDS" make-regular-file $FD file="$FILE" lock=$m; }
 	if read -r -u "${MKFDS[0]}" PID; then
 	    "${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	    echo "XMODE(L-bit): " $?
-	    kill -CONT "${PID}"
+	    echo DONE >&"${MKFDS[1]}"
 	fi
     } > "$TS_OUTPUT" 2>&1
     wait "${MKFDS_PID}"
@@ -180,7 +184,7 @@ ts_init_subtest "XMODE-m-bit"
     if read -r -u "${MKFDS[0]}" PID; then
 	"${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	echo "XMODE(m-bit): " $?
-	kill -CONT "${PID}"
+	echo DONE >&"${MKFDS[1]}"
     fi
 } > "$TS_OUTPUT" 2>&1
 wait "${MKFDS_PID}"
