@@ -111,7 +111,7 @@ static int safe_stat(const char *target, struct stat *st, int nofollow)
 
 	memset(st, 0, sizeof(struct stat));
 
-#if defined(AT_STATX_DONT_SYNC) && defined (HAVE_STRUCT_STATX)
+#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && defined(AT_STATX_DONT_SYNC)
 	{
 		int rc;
 		struct statx stx = { 0 };
