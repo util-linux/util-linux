@@ -249,13 +249,18 @@ static int probe_udf(blkid_probe pr,
 
 	/* The block size of a UDF filesystem is that of the underlying
 	 * storage; we check later on for the special case of image files,
-	 * which may have any block size valid for UDF filesystem
-	 *
-	 * Sorts in order of most used block sizes in hopes that the actual
-	 * block size will be found marginally quicker. */
-	uint32_t pbs[] = { 2048, 1024, 4096, 8192, 512, 16384, 32768 };
+	 * which may have any block size valid for UDF filesystem */
+	uint32_t pbs[] = { blkid_probe_get_sectorsize(pr), 512, 1024, 2048, 4096, 8192, 16384, 32768 };
 
 	for (i = 0; i < ARRAY_SIZE(pbs); i++) {
+		/* Do not try with block size same as sector size two times */
+		if (i != 0 && pbs[0] == pbs[i])
+			continue;
+
+		/* Do not try with block size which is not divisor of session offset */
+		if (s_off % pbs[i])
+			continue;
+
 		/* ECMA-167 2/8.4, 2/9.1: Each VSD is either 2048 bytes long or
 		 * its size is same as blocksize (for blocksize > 2048 bytes)
 		 * plus padded with zeros */
