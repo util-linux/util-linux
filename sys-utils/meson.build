@@ -36,6 +36,10 @@ renice_sources = files(
   'renice.c',
 )
 
+setpgid_sources = files(
+  'setpgid.c',
+)
+
 setsid_sources = files(
   'setsid.c',
 )

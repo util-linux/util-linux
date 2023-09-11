@@ -1372,6 +1372,20 @@ if not is_disabler(exe)
 endif
 
 exe = executable(
+  'setpgid',
+  setpgid_sources,
+  include_directories: includes,
+  link_with : [lib_common,
+               lib_smartcols],
+  install_dir : usrbin_exec_dir,
+  install : true)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['sys-utils/setpgid.1.adoc']
+  bashcompletions += ['setpgid']
+endif
+
+exe = executable(
   'setsid',
   setsid_sources,
   include_directories : includes,

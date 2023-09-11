@@ -113,6 +113,13 @@ rfkill_LDADD = $(LDADD) libcommon.la libsmartcols.la
 rfkill_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
 endif
 
+if BUILD_SETPGID
+usrbin_exec_PROGRAMS += setpgid
+MANPAGES += sys-utils/setpgid.1
+dist_noinst_DATA += sys-utils/setpgid.1.adoc
+setpgid_SOURCES = sys-utils/setpgid.c
+endif
+
 if BUILD_SETSID
 usrbin_exec_PROGRAMS += setsid
 MANPAGES += sys-utils/setsid.1

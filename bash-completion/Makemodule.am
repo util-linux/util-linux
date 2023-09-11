@@ -99,6 +99,9 @@ endif
 if BUILD_SCRIPTLIVE
 dist_bashcompletion_DATA += bash-completion/scriptlive
 endif
+if BUILD_SETPGID
+dist_bashcompletion_DATA += bash-completion/setpgid
+endif
 if BUILD_SETSID
 dist_bashcompletion_DATA += bash-completion/setsid
 endif
