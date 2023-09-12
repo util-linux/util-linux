@@ -20,7 +20,7 @@ TS_DESC="timerfd associating alarm"
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
-ts_skip_capability cap_wake_alarm
+ts_skip_capability WAKE_ALARM
 
 ts_check_test_command "$TS_CMD_LSFD"
 ts_check_test_command "$TS_HELPER_MKFDS"
