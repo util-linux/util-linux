@@ -276,6 +276,7 @@ static const struct id_part ft_part[] = {
     { 0x661, "FTC661" },
     { 0x662, "FTC662" },
     { 0x663, "FTC663" },
+    { 0x862, "FTC862" },
     { -1, "unknown" },
 };
 
