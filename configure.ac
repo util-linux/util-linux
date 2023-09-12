@@ -156,6 +156,7 @@ UL_WARN_ADD([-Wunused-but-set-variable])
 UL_WARN_ADD([-Wunused-parameter])
 UL_WARN_ADD([-Wunused-result])
 UL_WARN_ADD([-Wunused-variable])
+UL_WARN_ADD([-Wvla])
 
 AC_ARG_ENABLE([werror],
   AS_HELP_STRING([--enable-werror], [make all compiler warnings into errors]),
