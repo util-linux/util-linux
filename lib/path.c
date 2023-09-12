@@ -1020,41 +1020,55 @@ static int ul_path_cpuparse(struct path_cxt *pc, cpu_set_t **set, int maxcpus, i
 {
 	FILE *f;
 	size_t setsize, len = maxcpus * 7;
-	char buf[len];
+	char *buf;
 	int rc;
 
 	*set = NULL;
 
+	buf = malloc(len);
+	if (!buf)
+		return -ENOMEM;
+
 	f = ul_path_vfopenf(pc, "r" UL_CLOEXECSTR, path, ap);
-	if (!f)
-		return -errno;
+	if (!f) {
+		rc = -errno;
+		goto out;
+	}
 
 	rc = fgets(buf, len, f) == NULL ? -EIO : 0;
 	fclose(f);
 
 	if (rc)
-		return rc;
+		goto out;
 
 	len = strlen(buf);
 	if (buf[len - 1] == '\n')
 		buf[len - 1] = '\0';
 
 	*set = cpuset_alloc(maxcpus, &setsize, NULL);
-	if (!*set)
-		return -ENOMEM;
+	if (!*set) {
+		rc = -EINVAL;
+		goto out;
+	}
 
 	if (islist) {
 		if (cpulist_parse(buf, *set, setsize, 0)) {
-			cpuset_free(*set);
-			return -EINVAL;
+			rc = -EINVAL;
+			goto out;
 		}
 	} else {
 		if (cpumask_parse(buf, *set, setsize)) {
-			cpuset_free(*set);
-			return -EINVAL;
+			rc = -EINVAL;
+			goto out;
 		}
 	}
-	return 0;
+	rc = 0;
+
+out:
+	if (rc)
+		cpuset_free(*set);
+	free(buf);
+	return rc;
 }
 
 int ul_path_readf_cpuset(struct path_cxt *pc, cpu_set_t **set, int maxcpus, const char *path, ...)
