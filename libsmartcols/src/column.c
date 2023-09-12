@@ -764,6 +764,8 @@ int scols_column_set_properties(struct libscols_column *cl, const char *opts)
 				rc = scols_column_set_json_type(cl, SCOLS_JSON_STRING);
 			else if (strncmp(value, "number", valuesz) == 0)
 				rc = scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
+			else if (strncmp(value, "float", valuesz) == 0)
+				rc = scols_column_set_json_type(cl, SCOLS_JSON_FLOAT);
 			else if (strncmp(value, "array-string", valuesz) == 0)
 				rc = scols_column_set_json_type(cl, SCOLS_JSON_ARRAY_STRING);
 			else if (strncmp(value, "array-number", valuesz) == 0)

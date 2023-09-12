@@ -481,6 +481,7 @@ static void print_json_data(struct libscols_table *tb,
 		ul_jsonwrt_value_s(&tb->json, name, data);
 		break;
 	case SCOLS_JSON_NUMBER:
+	case SCOLS_JSON_FLOAT:
 		/* name: 123 */
 		ul_jsonwrt_value_raw(&tb->json, name, data);
 		break;
