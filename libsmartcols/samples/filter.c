@@ -41,7 +41,7 @@ static void setup_columns(struct libscols_table *tb)
 	col = scols_table_new_column(tb, "FLOAT", 0, 0);
 	if (!col)
 		goto fail;
-	scols_column_set_json_type(col, SCOLS_JSON_NUMBER);
+	scols_column_set_json_type(col, SCOLS_JSON_FLOAT);
 
 	col = scols_table_new_column(tb, "STRING", 0, 0);
 	if (!col)

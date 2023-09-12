@@ -35,6 +35,7 @@
 #define SCOLS_DEBUG_BUFF	(1 << 6)
 #define SCOLS_DEBUG_GROUP	(1 << 7)
 #define SCOLS_DEBUG_FLTR	(1 << 8)
+#define SCOLS_DEBUG_FPARAM	(1 << 9)
 #define SCOLS_DEBUG_ALL		0xFFFF
 
 UL_DEBUG_DECLARE_MASK(libsmartcols);
@@ -575,6 +576,7 @@ void filter_dump_param(struct ul_jsonwrt *json, struct filter_param *n);
 int filter_eval_param(struct libscols_filter *fltr, struct libscols_line *ln,
 			struct filter_param *n, int *status);
 void filter_free_param(struct filter_param *n);
+int filter_param_reset_holder(struct filter_param *n);
 
 int filter_next_param(struct libscols_filter *fltr,
                         struct libscols_iter *itr, struct filter_param **prm);
@@ -585,6 +587,16 @@ int filter_compare_params(struct libscols_filter *fltr,
                           struct filter_param *l,
                           struct filter_param *r,
                           int *status);
+int filter_cast_param(struct libscols_filter *fltr,
+                      struct libscols_line *ln,
+                      enum filter_data type,
+                      struct filter_param *n,
+                      struct filter_param **result);
+
+#define is_filter_holder_param(_n) \
+			(filter_node_get_type(_n) == F_NODE_PARAM \
+			 && ((struct filter_param *)(_n))->holder)
+
 
 /* expr */
 void filter_free_expr(struct filter_expr *n);

@@ -86,12 +86,85 @@ void filter_dump_expr(struct ul_jsonwrt *json, struct filter_expr *n)
 	ul_jsonwrt_object_close(json);
 }
 
+static int cast_node(struct libscols_filter *fltr,
+		     struct libscols_line *ln,
+		     enum filter_data type,
+		     struct filter_node *n,
+		     struct filter_param **result)
+{
+	struct filter_node *pr;
+	int status = 0, rc;
+	bool x;
+
+	switch (n->type) {
+	case F_NODE_EXPR:
+		/* convert expression to a boolean param */
+		rc = filter_eval_expr(fltr, ln, (struct filter_expr *) n, &status);
+		if (rc)
+			return rc;
+		x = status != 0 ? true : false;
+		pr = filter_new_param(NULL, F_DATA_BOOLEAN, 0, (void *) &x);
+		if (!pr)
+			return -ENOMEM;
+		rc = filter_cast_param(fltr, ln, type, (struct filter_param *) pr, result);
+		filter_unref_node(pr);
+		break;
+	case F_NODE_PARAM:
+		rc = filter_cast_param(fltr, ln, type, (struct filter_param *) n, result);
+		break;
+	default:
+		return -EINVAL;
+	}
+
+	return rc;
+}
+
+static enum filter_data node_get_datatype(struct filter_node *n)
+{
+	switch (n->type) {
+	case F_NODE_EXPR:
+		return F_DATA_BOOLEAN;
+	case F_NODE_PARAM:
+		return ((struct filter_param *) n)->type;
+	}
+	return F_DATA_NONE;
+}
+
+static enum filter_data guess_expr_datatype(struct filter_expr *n)
+{
+	enum filter_data type;
+	enum filter_data l = node_get_datatype(n->left),
+			 r = node_get_datatype(n->right);
+
+	if (l == r)
+		type = l;
+	else {
+		bool l_holder, r_holder;
+
+		/* for expression like "FOO > 5.5" preffer type defined by a real param
+		 * rather than by holder (FOO) */
+		l_holder = is_filter_holder_param(n->left);
+		r_holder = is_filter_holder_param(n->right);
+
+		if (l_holder && !r_holder)
+			type = r;
+		else if (r_holder && !l_holder)
+			type = l;
+		else
+			type = l;
+	}
+
+	DBG(FPARAM, ul_debugobj(n, " expr datatype: %d", type));
+	return type;
+}
+
 int filter_eval_expr(struct libscols_filter *fltr, struct libscols_line *ln,
 			struct filter_expr *n, int *status)
 {
 	int rc = 0;
 	struct filter_param *l = NULL, *r = NULL;
 	enum filter_etype oper = n->type;
+	enum filter_data type;
 
 	/* logical operators */
 	switch (oper) {
@@ -114,10 +187,16 @@ int filter_eval_expr(struct libscols_filter *fltr, struct libscols_line *ln,
 		break;
 	}
 
-	/* compare data */
-	l = (struct filter_param *) n->left;
-	r = (struct filter_param *) n->right;
-	rc = filter_compare_params(fltr, ln, oper, l, r, status);
+	type = guess_expr_datatype(n);
 
+	/* compare data */
+	rc = cast_node(fltr, ln, type, n->left, &l);
+	if (!rc)
+		rc = cast_node(fltr, ln, type, n->right, &r);
+	if (!rc)
+		rc = filter_compare_params(fltr, ln, oper, l, r, status);
+
+	filter_unref_node((struct filter_node *) l);
+	filter_unref_node((struct filter_node *) r);
 	return rc;
 }

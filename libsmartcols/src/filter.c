@@ -212,11 +212,21 @@ int scols_line_apply_filter(struct libscols_line *ln,
 			struct libscols_filter *fltr, int *status)
 {
 	int rc;
+	struct libscols_iter itr;
+	struct filter_param *prm = NULL;
+
 	if (!ln || !fltr || !fltr->root)
 		return -EINVAL;
 
+	/* reset column data and types stored in the filter */
+	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+	while (filter_next_param(fltr, &itr, &prm) == 0) {
+		if (prm->col)
+			filter_param_reset_holder(prm);
+	}
+
 	rc = filter_eval_node(fltr, ln, fltr->root, status);
 
-	DBG(FLTR, ul_debugobj(fltr, "filter applid [rc=%d, status=%d]", rc, *status));
+	DBG(FLTR, ul_debugobj(fltr, "filter done [rc=%d, status=%d]", rc, *status));
 	return rc;
 }
