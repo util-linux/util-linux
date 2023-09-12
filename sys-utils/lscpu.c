@@ -855,12 +855,14 @@ print_cpuset(struct lscpu_cxt *cxt,
 	     const char *key, cpu_set_t *set)
 {
 	size_t setbuflen = 7 * cxt->maxcpus;
-	char setbuf[setbuflen], *p;
+	char *setbuf, *p;
 
 	assert(set);
 	assert(key);
 	assert(tb);
 	assert(cxt);
+
+	setbuf = xmalloc(setbuflen);
 
 	if (cxt->hex) {
 		p = cpumask_create(setbuf, setbuflen, set, cxt->setsize);
@@ -869,6 +871,8 @@ print_cpuset(struct lscpu_cxt *cxt,
 		p = cpulist_create(setbuf, setbuflen, set, cxt->setsize);
 		add_summary_s(tb, sec, key, p);
 	}
+
+	free(setbuf);
 }
 
 static void
