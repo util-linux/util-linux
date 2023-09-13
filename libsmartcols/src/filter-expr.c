@@ -133,7 +133,7 @@ static enum filter_data node_get_datatype(struct filter_node *n)
 	case F_NODE_EXPR:
 		return F_DATA_BOOLEAN;
 	case F_NODE_PARAM:
-		return ((struct filter_param *) n)->type;
+		return filter_param_get_datatype((struct filter_param *) n);
 	}
 	return F_DATA_NONE;
 }
@@ -151,8 +151,8 @@ static enum filter_data guess_expr_datatype(struct filter_expr *n)
 
 		/* for expression like "FOO > 5.5" preffer type defined by a real param
 		 * rather than by holder (FOO) */
-		l_holder = is_filter_holder_param(n->left);
-		r_holder = is_filter_holder_param(n->right);
+		l_holder = is_filter_holder_node(n->left);
+		r_holder = is_filter_holder_node(n->right);
 
 		if (l_holder && !r_holder)
 			type = r;

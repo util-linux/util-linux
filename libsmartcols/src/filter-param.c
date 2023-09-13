@@ -5,6 +5,25 @@
 
 #include "smartcolsP.h"
 
+struct filter_param {
+	struct filter_node node;
+	enum filter_data type;
+	enum filter_holder holder;
+
+	union {
+		char *str;
+		unsigned long long num;
+		long double fnum;
+		bool boolean;
+	} val;
+
+	struct list_head pr_params;
+	struct libscols_column *col;
+	char *holder_name;
+
+	unsigned int has_value :1;
+};
+
 static int cast_param(enum filter_data type, struct filter_param *n);
 
 static inline const char *datatype2str(enum filter_data type)
@@ -114,6 +133,17 @@ void filter_free_param(struct filter_param *n)
 	free(n);
 }
 
+enum filter_data filter_param_get_datatype(struct filter_param *n)
+{
+	return n ? n->type : F_DATA_NONE;
+}
+
+int is_filter_holder_node(struct filter_node *n)
+{
+	return n && filter_node_get_type(n) == F_NODE_PARAM
+                && ((struct filter_param *)(n))->holder;
+}
+
 void filter_dump_param(struct ul_jsonwrt *json, struct filter_param *n)
 {
 	ul_jsonwrt_object_open(json, "param");
@@ -158,10 +188,8 @@ void filter_dump_param(struct ul_jsonwrt *json, struct filter_param *n)
 
 int filter_param_reset_holder(struct filter_param *n)
 {
-	if (!n->holder)
+	if (!n->holder || !n->col)
 		return 0;
-	if (!n->col)
-		return -EINVAL;
 
 	param_reset_data(n);
 
@@ -617,3 +645,72 @@ int filter_next_param(struct libscols_filter *fltr,
 	return rc;
 }
 
+/**
+ * scols_filter_assign_column:
+ * @fltr: pointer to filter
+ * @itr: iterator
+ * @name: holder name
+ * @col: column
+ *
+ * Assign @col to filter parametr. The parametr is addressed by @itr or by @name.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
+int scols_filter_assign_column(struct libscols_filter *fltr,
+			struct libscols_iter *itr,
+			const char *name, struct libscols_column *col)
+{
+	struct filter_param *n = NULL;
+
+	if (itr && itr->p) {
+		struct list_head *p = IS_ITER_FORWARD(itr) ?
+						itr->p->prev : itr->p->next;
+		n = list_entry(p, struct filter_param, pr_params);
+	} else if (name) {
+		struct libscols_iter xitr;
+		struct filter_param *x = NULL;
+
+		scols_reset_iter(&xitr, SCOLS_ITER_FORWARD);
+		while (filter_next_param(fltr, &xitr, &x) == 0) {
+			if (x->col
+			    || x->holder != F_HOLDER_COLUMN
+			    || strcmp(name, x->holder_name) != 0)
+				continue;
+			n = x;
+			break;
+		}
+	}
+
+	if (n) {
+		if (n->col)
+			scols_unref_column(n->col);
+
+		DBG(FPARAM, ul_debugobj(n, "assing %s to column", name));
+		n->col = col;
+		scols_ref_column(col);
+	}
+
+	return n ? 0 : -EINVAL;
+}
+
+int scols_filter_next_holder(struct libscols_filter *fltr,
+			struct libscols_iter *itr,
+			const char **name,
+			int type)
+{
+	struct filter_param *prm = NULL;
+	int rc = 0;
+
+	*name = NULL;
+	if (!type)
+		type = F_HOLDER_COLUMN;	/* default */
+
+	do {
+		rc = filter_next_param(fltr, itr, &prm);
+		if (rc == 0 && (int) prm->holder == type) {
+			*name = prm->holder_name;
+		}
+	} while (rc == 0 && !*name);
+
+	return rc;
+}

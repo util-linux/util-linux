@@ -527,25 +527,7 @@ struct filter_node {
 
 #define filter_node_get_type(n)	(((struct filter_node *)(n))->type)
 
-struct filter_param {
-	struct filter_node node;
-	enum filter_data type;
-	enum filter_holder holder;
-
-	union {
-		char *str;
-		unsigned long long num;
-		long double fnum;
-		bool boolean;
-	} val;
-
-	struct list_head pr_params;
-	struct libscols_column *col;
-	char *holder_name;
-
-	unsigned int has_value :1;
-};
-
+struct filter_param;
 struct filter_expr;
 
 struct libscols_filter {
@@ -571,6 +553,7 @@ int filter_eval_param(struct libscols_filter *fltr, struct libscols_line *ln,
 			struct filter_param *n, int *status);
 void filter_free_param(struct filter_param *n);
 int filter_param_reset_holder(struct filter_param *n);
+enum filter_data filter_param_get_datatype(struct filter_param *n);
 
 int filter_next_param(struct libscols_filter *fltr,
                         struct libscols_iter *itr, struct filter_param **prm);
@@ -587,10 +570,7 @@ int filter_cast_param(struct libscols_filter *fltr,
                       struct filter_param *n,
                       struct filter_param **result);
 
-#define is_filter_holder_param(_n) \
-			(filter_node_get_type(_n) == F_NODE_PARAM \
-			 && ((struct filter_param *)(_n))->holder)
-
+int is_filter_holder_node(struct filter_node *n);
 
 /* expr */
 void filter_free_expr(struct filter_expr *n);

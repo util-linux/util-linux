@@ -153,76 +153,6 @@ const char *scols_filter_get_errmsg(struct libscols_filter *fltr)
 	return fltr ? fltr->errmsg : NULL;
 }
 
-int scols_filter_next_holder(struct libscols_filter *fltr,
-			struct libscols_iter *itr,
-			const char **name,
-			int type)
-{
-	struct filter_param *prm = NULL;
-	int rc = 0;
-
-	*name = NULL;
-	if (!type)
-		type = F_HOLDER_COLUMN;	/* default */
-
-	do {
-		rc = filter_next_param(fltr, itr, &prm);
-		if (rc == 0 && (int) prm->holder == type) {
-			*name = prm->holder_name;
-		}
-	} while (rc == 0 && !*name);
-
-	return rc;
-}
-
-/**
- * scols_filter_assign_column:
- * @fltr: pointer to filter
- * @itr: iterator
- * @name: holder name
- * @col: column
- *
- * Assign @col to filter parametr. The parametr is addressed by @itr or by @name.
- *
- * Returns: 0, a negative value in case of an error.
- */
-int scols_filter_assign_column(struct libscols_filter *fltr,
-			struct libscols_iter *itr,
-			const char *name, struct libscols_column *col)
-{
-	struct filter_param *n = NULL;
-
-	if (itr && itr->p) {
-		struct list_head *p = IS_ITER_FORWARD(itr) ?
-						itr->p->prev : itr->p->next;
-		n = list_entry(p, struct filter_param, pr_params);
-	} else if (name) {
-		struct libscols_iter xitr;
-		struct filter_param *x = NULL;
-
-		scols_reset_iter(&xitr, SCOLS_ITER_FORWARD);
-		while (filter_next_param(fltr, &xitr, &x) == 0) {
-			if (x->col
-			    || x->holder != F_HOLDER_COLUMN
-			    || strcmp(name, x->holder_name) != 0)
-				continue;
-			n = x;
-			break;
-		}
-	}
-
-	if (n) {
-		if (n->col)
-			scols_unref_column(n->col);
-
-		DBG(FPARAM, ul_debugobj(n, "assing %s to column", name));
-		n->col = col;
-		scols_ref_column(col);
-	}
-
-	return n ? 0 : -EINVAL;
-}
-
 int filter_eval_node(struct libscols_filter *fltr, struct libscols_line *ln,
 			struct filter_node *n, int *status)
 {
@@ -250,8 +180,7 @@ int scols_line_apply_filter(struct libscols_line *ln,
 	/* reset column data and types stored in the filter */
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 	while (filter_next_param(fltr, &itr, &prm) == 0) {
-		if (prm->col)
-			filter_param_reset_holder(prm);
+		filter_param_reset_holder(prm);
 	}
 
 	rc = filter_eval_node(fltr, ln, fltr->root, status);
