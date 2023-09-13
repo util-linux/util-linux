@@ -54,28 +54,33 @@ fail:
 	err(EXIT_FAILURE, "failed to create output columns");
 }
 
-static struct libscols_line *add_line(struct libscols_table *tb, int n)
+static struct libscols_line *add_line(struct libscols_table *tb, int n, int empty)
 {
 	char *data = NULL;
 	struct libscols_line *ln = scols_table_new_line(tb, NULL);
 	if (!ln)
 		err(EXIT_FAILURE, "failed to create output line");
 
-	xasprintf(&data, "#%d", n);
-	if (scols_line_refer_data(ln, COL_NAME, data))
-		goto fail;
-
-	xasprintf(&data, "%d", n);
-	if (scols_line_refer_data(ln, COL_NUM, data))
-		goto fail;
-
-	xasprintf(&data, "%d.%d", n, n);
-	if (scols_line_refer_data(ln, COL_FLOAT, data))
-		goto fail;
-
-	xasprintf(&data, "str%dstr", n);
-	if (scols_line_refer_data(ln, COL_STRING, data))
-		goto fail;
+	if (empty != 1) {
+		xasprintf(&data, "#%d", n);
+		if (scols_line_refer_data(ln, COL_NAME, data))
+			goto fail;
+	}
+	if (empty != 2) {
+		xasprintf(&data, "%d", n);
+		if (scols_line_refer_data(ln, COL_NUM, data))
+			goto fail;
+	}
+	if (empty != 3) {
+		xasprintf(&data, "%d.%d", n, n);
+		if (scols_line_refer_data(ln, COL_FLOAT, data))
+			goto fail;
+	}
+	if (empty != 4) {
+		xasprintf(&data, "str%dstr", n);
+		if (scols_line_refer_data(ln, COL_STRING, data))
+			goto fail;
+	}
 	return ln;
 fail:
 	scols_unref_table(tb);
@@ -156,7 +161,7 @@ int main(int argc, char *argv[])
 	}
 
 	for (i = 0; i < 10; i++) {
-		struct libscols_line *ln = add_line(tb, i + 1);
+		struct libscols_line *ln = add_line(tb, i + 1, i % 4);
 		int rc, status = 0;
 
 		if (!fltr)

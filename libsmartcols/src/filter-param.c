@@ -27,26 +27,26 @@ static int param_set_data(struct filter_param *n, enum filter_data type, const v
 	switch (type) {
 	case F_DATA_STRING:
 		p = data;
-		if (*p == '"') {
+		if (p && *p == '"') {
 			/* remove quotation marks */
 			size_t len = strlen(p);
 
 			if (*(p + (len - 1)) == '"')
 				len -= 2;
 			n->val.str = strndup(p + 1, len);
-		} else
+		} else if (data)
 			n->val.str = strdup((char *) data);
-		if (!n->val.str)
+		if (data && !n->val.str)
 			return -ENOMEM;
 		break;
 	case F_DATA_NUMBER:
-		n->val.num = *((unsigned long long *) data);
+		n->val.num = data ? *((unsigned long long *) data) : 0;
 		break;
 	case F_DATA_FLOAT:
-		n->val.fnum = *((long double *) data);
+		n->val.fnum = data ? *((long double *) data) : 0;
 		break;
 	case F_DATA_BOOLEAN:
-		n->val.boolean = *((bool *) data) == 0 ? 0 : 1;
+		n->val.boolean = data ? (*((bool *) data) == 0 ? 0 : 1) : 0;
 		break;
 	default:
 		return 0;
@@ -193,7 +193,7 @@ static int fetch_holder_data(struct libscols_filter *fltr __attribute__((__unuse
 {
 	const char *data;
 	enum filter_data type = n->type;
-	int rc;
+	int rc = 0;
 
 	if (n->has_value || n->holder != F_HOLDER_COLUMN)
 		return 0;
@@ -251,27 +251,38 @@ done:
 	return rc;
 }
 
+static int xstrcmp(char *a, char *b)
+{
+	if (!a && !b)
+		return 0;
+	if (!a && b)
+		return -1;
+	if (a && !b)
+		return 1;
+	return strcmp(a, b);
+}
+
 static int string_opers(enum filter_etype oper, struct filter_param *l,
 			struct filter_param *r, int *status)
 {
 	switch (oper) {
 	case F_EXPR_EQ:
-		*status = strcmp(l->val.str, r->val.str) == 0;
+		*status = xstrcmp(l->val.str, r->val.str) == 0;
 		break;
 	case F_EXPR_NE:
-		*status = strcmp(l->val.str, r->val.str) != 0;
+		*status = xstrcmp(l->val.str, r->val.str) != 0;
 		break;
 	case F_EXPR_LE:
-		*status = strcmp(l->val.str, r->val.str) <= 0;
+		*status = xstrcmp(l->val.str, r->val.str) <= 0;
 		break;
 	case F_EXPR_LT:
-		*status = strcmp(l->val.str, r->val.str) < 0;
+		*status = xstrcmp(l->val.str, r->val.str) < 0;
 		break;
 	case F_EXPR_GE:
-		*status = strcmp(l->val.str, r->val.str) >= 0;
+		*status = xstrcmp(l->val.str, r->val.str) >= 0;
 		break;
 	case F_EXPR_GT:
-		*status = strcmp(l->val.str, r->val.str) > 0;
+		*status = xstrcmp(l->val.str, r->val.str) > 0;
 		break;
 	default:
 		return -EINVAL;
@@ -412,19 +423,23 @@ static int string_cast(enum filter_data type, struct filter_param *n)
 	switch (type) {
 	case F_DATA_NUMBER:
 	{
-		uint64_t num;
-		int rc = ul_strtou64(str, &num, 10);
-		if (rc)
-			return rc;
+		uint64_t num = 0;
+		if (str) {
+			int rc = ul_strtou64(str, &num, 10);
+			if (rc)
+				return rc;
+		}
 		n->val.num = num;
 		break;
 	}
 	case F_DATA_FLOAT:
 	{
-		long double num;
-		int rc = ul_strtold(str, &num);
-		if (rc)
-			return rc;
+		long double num = 0;
+		if (str) {
+			int rc = ul_strtold(str, &num);
+			if (rc)
+				return rc;
+		}
 		n->val.fnum = num;
 		break;
 	}
@@ -521,8 +536,6 @@ static int cast_param(enum filter_data type, struct filter_param *n)
 	int rc;
 	enum filter_data orgtype = n->type;
 
-	if (!n->has_value)
-		return -EINVAL;
 	if (type == orgtype)
 		return 0;
 
@@ -569,8 +582,6 @@ int filter_cast_param(struct libscols_filter *fltr,
 	rc = fetch_holder_data(fltr, n, ln);
 	if (rc)
 		return rc;
-	if (!n->has_value)
-		return -EINVAL;
 
 	if (type == orgtype) {
 		filter_ref_node((struct filter_node *) n);	/* caller wants to call filter_unref_node() for the result */
