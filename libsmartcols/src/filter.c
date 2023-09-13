@@ -175,23 +175,52 @@ int scols_filter_next_holder(struct libscols_filter *fltr,
 	return rc;
 }
 
+/**
+ * scols_filter_assign_column:
+ * @fltr: pointer to filter
+ * @itr: iterator
+ * @name: holder name
+ * @col: column
+ *
+ * Assign @col to filter parametr. The parametr is addressed by @itr or by @name.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
 int scols_filter_assign_column(struct libscols_filter *fltr,
+			struct libscols_iter *itr,
 			const char *name, struct libscols_column *col)
 {
-	struct libscols_iter itr;
-	struct filter_param *prm = NULL;
-	int ct = 0;
+	struct filter_param *n = NULL;
 
-	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
-	while (filter_next_param(fltr, &itr, &prm) == 0) {
-		if (prm->holder != F_HOLDER_COLUMN || strcmp(name, prm->holder_name) != 0)
-			continue;
-		prm->col = col;
-		scols_ref_column(col);
-		ct++;
+	if (itr && itr->p) {
+		struct list_head *p = IS_ITER_FORWARD(itr) ?
+						itr->p->prev : itr->p->next;
+		n = list_entry(p, struct filter_param, pr_params);
+	} else if (name) {
+		struct libscols_iter xitr;
+		struct filter_param *x = NULL;
+
+		scols_reset_iter(&xitr, SCOLS_ITER_FORWARD);
+		while (filter_next_param(fltr, &xitr, &x) == 0) {
+			if (x->col
+			    || x->holder != F_HOLDER_COLUMN
+			    || strcmp(name, x->holder_name) != 0)
+				continue;
+			n = x;
+			break;
+		}
 	}
 
-	return ct == 0 ? 1 : 0;
+	if (n) {
+		if (n->col)
+			scols_unref_column(n->col);
+
+		DBG(FPARAM, ul_debugobj(n, "assing %s to column", name));
+		n->col = col;
+		scols_ref_column(col);
+	}
+
+	return n ? 0 : -EINVAL;
 }
 
 int filter_eval_node(struct libscols_filter *fltr, struct libscols_line *ln,

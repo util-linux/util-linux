@@ -381,6 +381,7 @@ extern int scols_line_apply_filter(struct libscols_line *ln,
 extern int scols_filter_next_holder(struct libscols_filter *fltr,
                         struct libscols_iter *itr, const char **name, int type);
 extern int scols_filter_assign_column(struct libscols_filter *fltr,
+			struct libscols_iter *itr,
                         const char *name, struct libscols_column *col);
 
 #ifdef __cplusplus

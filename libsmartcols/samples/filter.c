@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
 				rc++;
 				continue;
 			}
-			scols_filter_assign_column(fltr, name, col);
+			scols_filter_assign_column(fltr, itr, name, col);
 		}
 		if (rc)
 			goto done;
