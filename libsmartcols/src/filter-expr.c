@@ -5,6 +5,14 @@
 
 #include "smartcolsP.h"
 
+struct filter_expr {
+	struct filter_node node;
+	enum filter_etype type;
+
+	struct filter_node *left;
+	struct filter_node *right;
+};
+
 struct filter_node *filter_new_expr(
 			struct libscols_filter *fltr __attribute__((__unused__)),
 			enum filter_etype type,

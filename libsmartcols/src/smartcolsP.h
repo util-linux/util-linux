@@ -546,13 +546,7 @@ struct filter_param {
 	unsigned int has_value :1;
 };
 
-struct filter_expr {
-	struct filter_node node;
-	enum filter_etype type;
-
-	struct filter_node *left;
-	struct filter_node *right;
-};
+struct filter_expr;
 
 struct libscols_filter {
 	int refcount;
