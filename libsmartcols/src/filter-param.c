@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <regex.h>
 
 #include "smartcolsP.h"
 
@@ -20,6 +21,7 @@ struct filter_param {
 	struct list_head pr_params;
 	struct libscols_column *col;
 	char *holder_name;
+	regex_t *re;
 
 	unsigned int has_value :1;
 };
@@ -107,6 +109,32 @@ struct filter_node *filter_new_param(
 	return (struct filter_node *) n;
 }
 
+int filter_compile_param(struct libscols_filter *fltr, struct filter_param *n)
+{
+	int rc;
+
+	if (n->re)
+		return 0;
+	if (!n->val.str)
+		return -EINVAL;
+
+	n->re = calloc(1, sizeof(regex_t));
+	if (!n->re)
+		return -ENOMEM;
+
+	rc = regcomp(n->re, n->val.str, REG_NOSUB | REG_EXTENDED);
+	if (rc) {
+		size_t size = regerror(rc, n->re, NULL, 0);
+
+		fltr->errmsg = malloc(size + 1);
+		if (!fltr->errmsg)
+			return -ENOMEM;
+		regerror(rc, n->re, fltr->errmsg, size);
+		return -EINVAL;
+	}
+	return 0;
+}
+
 static struct filter_param *copy_param(struct filter_param *n)
 {
 	return (struct filter_param *) filter_new_param(NULL,
@@ -120,8 +148,12 @@ static void param_reset_data(struct filter_param *n)
 
 	memset(&n->val, 0, sizeof(n->val));
 	n->has_value = 0;
-}
 
+	if (n->re) {
+		regfree(n->re);
+		free(n->re);
+	}
+}
 
 void filter_free_param(struct filter_param *n)
 {
@@ -312,6 +344,16 @@ static int string_opers(enum filter_etype oper, struct filter_param *l,
 	case F_EXPR_GT:
 		*status = xstrcmp(l->val.str, r->val.str) > 0;
 		break;
+	case F_EXPR_REG:
+		if (!r->re)
+			return -EINVAL;
+		*status = regexec(r->re, l->val.str ? : "", 0, NULL, 0) == 0;
+		break;
+	case F_EXPR_NREG:
+		if (!r->re)
+			return -EINVAL;
+		*status = regexec(r->re, l->val.str ? : "", 0, NULL, 0) != 0;
+		break;
 	default:
 		return -EINVAL;
 	}
@@ -405,7 +447,6 @@ static int bool_opers(enum filter_etype oper, struct filter_param *l,
 /* call filter_cast_param() to be sure that param data are ready (fetched from
  * holder, etc.) */
 int filter_compare_params(struct libscols_filter *fltr __attribute__((__unused__)),
-			  struct libscols_line *ln __attribute__((__unused__)),
 			  enum filter_etype oper,
 			  struct filter_param *l,
 			  struct filter_param *r,

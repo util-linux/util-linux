@@ -40,7 +40,6 @@ struct filter_node *filter_new_expr(
 	case F_EXPR_NEG:
 		n->right = right;
 		break;
-
 	}
 	return (struct filter_node *) n;
 }
@@ -202,7 +201,7 @@ int filter_eval_expr(struct libscols_filter *fltr, struct libscols_line *ln,
 	if (!rc)
 		rc = cast_node(fltr, ln, type, n->right, &r);
 	if (!rc)
-		rc = filter_compare_params(fltr, ln, oper, l, r, status);
+		rc = filter_compare_params(fltr, oper, l, r, status);
 
 	filter_unref_node((struct filter_node *) l);
 	filter_unref_node((struct filter_node *) r);

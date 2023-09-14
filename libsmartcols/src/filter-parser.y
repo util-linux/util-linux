@@ -70,8 +70,18 @@ expr:
 	| expr T_LT expr	{ $$ = filter_new_expr(fltr, F_EXPR_LT, $1, $3); }
 	| expr T_GE expr	{ $$ = filter_new_expr(fltr, F_EXPR_GE, $1, $3); }
 	| expr T_GT expr	{ $$ = filter_new_expr(fltr, F_EXPR_GT, $1, $3); }
-	| expr T_REG expr	{ $$ = filter_new_expr(fltr, F_EXPR_REG, $1, $3); }
-	| expr T_NREG expr	{ $$ = filter_new_expr(fltr, F_EXPR_NREG, $1, $3); }
+
+	| expr T_REG expr	{
+		if (filter_compile_param(fltr, (struct filter_param *) $3) != 0)
+			YYERROR;
+		$$ = filter_new_expr(fltr, F_EXPR_REG, $1, $3);
+	}
+
+	| expr T_NREG expr	{
+		if (filter_compile_param(fltr, (struct filter_param *) $3) != 0)
+			YYERROR;
+		$$ = filter_new_expr(fltr, F_EXPR_NREG, $1, $3);
+	}
 ;
 
 param:
@@ -97,7 +107,9 @@ void yyerror (yyscan_t *locp __attribute__((__unused__)),
 	      struct libscols_filter *fltr,
 	      char const *msg)
 {
-	if (msg) {
+	if (msg && fltr) {
+		if (fltr->errmsg)
+			free(fltr->errmsg);
 		fltr->errmsg = strdup(msg);
 		if (!fltr->errmsg)
 			return;

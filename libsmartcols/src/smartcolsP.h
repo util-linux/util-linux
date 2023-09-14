@@ -548,6 +548,7 @@ int filter_eval_node(struct libscols_filter *fltr, struct libscols_line *ln,
 			struct filter_node *n, int *status);
 
 /* param */
+int filter_compile_param(struct libscols_filter *fltr, struct filter_param *n);
 void filter_dump_param(struct ul_jsonwrt *json, struct filter_param *n);
 int filter_eval_param(struct libscols_filter *fltr, struct libscols_line *ln,
 			struct filter_param *n, int *status);
@@ -559,7 +560,6 @@ int filter_next_param(struct libscols_filter *fltr,
                         struct libscols_iter *itr, struct filter_param **prm);
 
 int filter_compare_params(struct libscols_filter *fltr,
-                          struct libscols_line *ln,
                           enum filter_etype oper,
                           struct filter_param *l,
                           struct filter_param *r,
