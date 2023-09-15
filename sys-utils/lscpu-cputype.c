@@ -462,7 +462,9 @@ static int cpuinfo_parse_cache(struct lscpu_cxt *cxt, int keynum, char *data)
 int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 {
 	FILE *fp;
-	char buf[BUFSIZ];
+	/* Used to be BUFSIZ which is small on some platforms e.g, musl,
+	 * therefore hardcode to 4K */
+	char buf[4096];
 	size_t i;
 	struct lscpu_cputype *ct;
 	struct cpuinfo_parser _pr = { .cxt = cxt }, *pr = &_pr;
