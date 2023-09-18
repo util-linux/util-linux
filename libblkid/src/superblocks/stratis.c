@@ -22,7 +22,7 @@
 /* Macro to avoid error in struct declaration. */
 #define STRATIS_UUID_LEN 32
 /* Contains 4 hyphens and trailing null byte. */
-const int STRATIS_UUID_STR_LEN = 37;
+#define STRATIS_UUID_STR_LEN 37
 
 struct stratis_sb {
 	uint32_t crc32;

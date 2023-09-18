@@ -1253,8 +1253,7 @@ static void __attribute__((__format__ (__printf__, 3, 4)))
 		}
 		va_end(argp);
 
-		args = alloca(sizeof(char *) * (argcount + 1));
-		args[argcount] = NULL;
+		args = xcalloc(argcount + 1, sizeof(char *));
 
 		va_start(argp, cmd);
 		arg = va_arg(argp, char *);

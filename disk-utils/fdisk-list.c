@@ -469,21 +469,24 @@ void list_available_columns(FILE *out)
 static int fieldname_to_id(const char *name, size_t namesz)
 {
 	const struct fdisk_field *fl;
-	char buf[namesz + 1];
+	char *buf;
 
 	assert(name);
 	assert(namesz);
 	assert(fields_label);
 
-	memcpy(buf, name, namesz);
-	buf[namesz] = '\0';
+	buf = strndup(name, namesz);
+	if (!buf)
+		return -1;
 
 	fl = fdisk_label_get_field_by_name(fields_label, buf);
 	if (!fl) {
 		warnx(_("%s unknown column: %s"),
 				fdisk_label_get_name(fields_label), buf);
+		free(buf);
 		return -1;
 	}
+	free(buf);
 	return fdisk_field_get_id(fl);
 }
 

@@ -1727,13 +1727,21 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 {
 	size_t i, j;
 	fdisk_sector_t total = 1, n_sectors = cxt->total_sectors;
-	fdisk_sector_t first[cxt->label->nparts_max],
-		       last[cxt->label->nparts_max];
+	fdisk_sector_t *first, *last;
 	struct dos_partition *p;
 	struct fdisk_dos_label *l = self_label(cxt);
 	int nerrors = 0;
 
 	assert(fdisk_is_label(cxt, DOS));
+
+	first = calloc(cxt->label->nparts_max, sizeof(*first));
+	last = calloc(cxt->label->nparts_max, sizeof(*first));
+
+	if (!first || !last) {
+		free(first);
+		free(last);
+		return -ENOMEM;
+	}
 
 	fill_bounds(cxt, first, last);
 	for (i = 0; i < cxt->label->nparts_max; i++) {
@@ -1818,6 +1826,8 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 			P_("%d error detected.", "%d errors detected.", nerrors),
 			nerrors);
 
+	free(first);
+	free(last);
 	return nerrors;
 }
 

@@ -876,6 +876,8 @@ compiler_flags = [
   '-Wunused-parameter',
   '-Wunused-result',
   '-Wunused-variable',
+  '-Wvla',
+  '-Walloca',
 ]
 foreach compiler_flag : compiler_flags
   if cc.has_argument(compiler_flag)
