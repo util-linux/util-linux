@@ -2615,12 +2615,16 @@ if not is_disabler(exe)
   bashcompletions += ['lsblk']
 endif
 
+mq_libs = []
+mq_libs += cc.find_library('rt', required : true)
+
 exe = executable(
   'lsfd',
   lsfd_sources,
   include_directories : includes,
   link_with : [lib_common,
                lib_smartcols],
+  dependencies : mq_libs,
   install_dir : usrbin_exec_dir,
   install : true)
 if not is_disabler(exe)
@@ -3376,9 +3380,6 @@ exe = executable(
   include_directories : includes,
   build_by_default: program_tests)
 exes += exe
-
-mq_libs = []
-mq_libs += cc.find_library('rt', required : true)
 
 if LINUX
   exe = executable(
