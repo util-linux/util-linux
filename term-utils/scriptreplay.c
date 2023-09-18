@@ -134,6 +134,7 @@ setterm(struct termios *backup)
 	tattr = *backup;
 	cfmakeraw(&tattr);
 	tattr.c_lflag |= ISIG;
+	tattr.c_iflag |= IXON;
 	tcsetattr(STDOUT_FILENO, TCSANOW, &tattr);
 	return 1;
 }
