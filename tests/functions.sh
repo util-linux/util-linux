@@ -168,22 +168,11 @@ function ts_skip_nonroot {
 #	ts_skip_capability cap_wake_alarm
 #
 function ts_skip_capability {
-	local self=$$
-	local cap=$1
+	ts_check_prog "$TS_HELPER_CAP"
 
-	# On Fedora, libcap package provides getpcaps command.
-	ts_check_prog "getpcaps"
-
-	local caps=$(getpcaps "$self" 2>&1)
-	if [[ "$caps" == "${self}: =ep" || "$caps" == 'Capabilities for `'"${self}': =ep" ]]; then
-		return 0
+	if ! "$TS_HELPER_CAP" "$1"; then
+		ts_skip "no capability: $1"
 	fi
-
-	if [[ "$caps" =~ .*${cap}.* ]]; then
-		return 0
-	fi
-
-	ts_skip "no capability: ${cap}"
 }
 
 function ts_skip_qemu_user {

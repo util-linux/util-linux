@@ -3301,6 +3301,14 @@ endif
 ############################################################
 
 exe = executable(
+  'test_cap',
+  'tests/helpers/test_cap.c',
+  include_directories : includes,
+  dependencies : [lib_cap_ng],
+  build_by_default: program_tests)
+exes += exe
+
+exe = executable(
   'test_mbsencode',
   'tests/helpers/test_mbsencode.c',
   include_directories : includes,

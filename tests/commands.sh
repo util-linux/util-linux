@@ -4,6 +4,7 @@ TS_TESTUSER=${TS_TESTUSER:-"nobody"}
 # helpers
 TS_HELPER_BYTESWAP="${ts_helpersdir}test_byteswap"
 TS_HELPER_CPUSET="${ts_helpersdir}test_cpuset"
+TS_HELPER_CAP="${ts_helpersdir}test_cap"
 TS_HELPER_DMESG="${ts_helpersdir}test_dmesg"
 TS_HELPER_ENOSYS="${ts_helpersdir}test_enosys"
 TS_HELPER_ISLOCAL="${ts_helpersdir}test_islocal"

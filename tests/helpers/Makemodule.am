@@ -39,3 +39,9 @@ test_mkfds_LDADD = $(LDADD) $(MQ_LIBS)
 check_PROGRAMS += test_enosys
 test_enosys_SOURCES = tests/helpers/test_enosys.c
 endif
+
+if HAVE_CAP_NG
+check_PROGRAMS += test_cap
+test_cap_SOURCES = tests/helpers/test_cap.c
+test_cap_LDADD = -lcap-ng
+endif
