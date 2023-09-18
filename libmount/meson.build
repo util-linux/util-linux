@@ -17,7 +17,6 @@ configure_file(
 lib_mount_sources = '''
   src/mountP.h
   src/cache.c
-  src/hooks.c
   src/fs.c
   src/init.c
   src/iter.c
