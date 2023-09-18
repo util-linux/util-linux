@@ -515,8 +515,12 @@ read/shared and write/exclusive locks or leases are taken by a file
 descriptor, _L_ is used as the flag.
 +
 [-m]:::
-Multiplexed. If the file descriptor is targeted by a eventpoll file,
-this bit flag is set.
+Multiplexed. If the file descriptor is targeted by a eventpoll file
+or classical system calls for multiplexing (select, pselect, poll, and
+ppoll), this bit flag is set. Note that if an invocaiton of the
+classical system calls is interrupted, *lsfd* may fail to mark _m_
+on the file descriptors monitored by the invocaiton.
+See *restart_syscall*(2).
 
 == FILTER EXPRESSION
 

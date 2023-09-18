@@ -31,7 +31,10 @@
 #include <getopt.h>
 #include <ctype.h>
 #include <search.h>
+#include <poll.h>
+#include <sys/select.h>
 
+#include <sys/uio.h>
 #include <linux/sched.h>
 #include <sys/syscall.h>
 #include <linux/kcmp.h>
@@ -478,7 +481,8 @@ struct lsfd_control {
 			threads : 1,
 			show_main : 1,		/* print main table */
 			show_summary : 1,	/* print summary/counters */
-			sockets_only : 1;	/* display only SOCKETS */
+			sockets_only : 1,	/* display only SOCKETS */
+			show_xmode : 1;		/* XMODE column is enabled. */
 
 	struct lsfd_filter *filter;
 	struct lsfd_counter **counters;		/* NULL terminated array. */
@@ -1418,6 +1422,169 @@ unsigned long add_name(struct name_manager *nm, const char *name)
 	return e->id;
 }
 
+static void walk_threads(struct lsfd_control *ctl, struct path_cxt *pc,
+			 pid_t pid, struct proc *proc,
+			 void (*cb)(struct lsfd_control *, struct path_cxt *,
+				    pid_t, struct proc *))
+{
+	DIR *sub = NULL;
+	pid_t tid = 0;
+
+	while (procfs_process_next_tid(pc, &sub, &tid) == 0) {
+		if (tid == pid)
+			continue;
+		(*cb)(ctl, pc, tid, proc);
+	}
+}
+
+static int pollfdcmp(const void *a, const void *b)
+{
+	const struct pollfd *apfd = a, *bpfd = b;
+
+	return apfd->fd - bpfd->fd;
+}
+
+static void mark_poll_fds_as_multiplexed(char *buf,
+					 pid_t pid, struct proc *proc)
+{
+	long fds;
+	long nfds;
+
+	struct iovec  local;
+	struct iovec  remote;
+	ssize_t n;
+
+	struct list_head *f;
+
+	if (sscanf(buf, "%lx %lx", &fds, &nfds) != 2)
+		return;
+
+	if (nfds == 0)
+		return;
+
+	local.iov_len = sizeof(struct pollfd) * nfds;
+	local.iov_base = xmalloc(local.iov_len);
+	remote.iov_len = local.iov_len;
+	remote.iov_base = (void *)fds;
+
+	n = process_vm_readv(pid, &local, 1, &remote, 1, 0);
+	if (n < 0 || ((size_t)n) != local.iov_len)
+		goto out;
+
+	qsort(local.iov_base, nfds, sizeof(struct pollfd), pollfdcmp);
+
+	list_for_each (f, &proc->files) {
+		struct file *file = list_entry(f, struct file, files);
+		if (is_opened_file(file) && !file->multiplexed) {
+			int fd = file->association;
+			if (bsearch(&(struct pollfd){.fd = fd,}, local.iov_base,
+				    nfds, sizeof(struct pollfd), pollfdcmp))
+				file->multiplexed = 1;
+		}
+	}
+
+ out:
+	free (local.iov_base);
+}
+
+static void mark_select_fds_as_multiplexed(char *buf,
+					   pid_t pid, struct proc *proc)
+{
+	long nfds;
+	long fds[3];
+
+	struct iovec  local[3];
+	fd_set local_set[3];
+	struct iovec  remote[3];
+	ssize_t n;
+	ssize_t expected_n = 0;
+
+	struct list_head *f;
+
+	if (sscanf(buf, "%lx %lx %lx %lx", &nfds, fds + 0, fds + 1, fds + 2) != 4)
+		return;
+
+	if (nfds == 0)
+		return;
+
+	for (int i = 0; i < 3; i++) {
+		/* If the remote address for the fd_set is 0x0, no set is tehre. */
+		remote[i].iov_len = local[i].iov_len = fds[i]? sizeof(local_set[i]): 0;
+		expected_n += (ssize_t)local[i].iov_len;
+		local[i].iov_base = local_set + i;
+		remote[i].iov_base = (void *)(fds[i]);
+	}
+
+	n = process_vm_readv(pid, local, 3, remote, 3, 0);
+	if (n < 0 || n != expected_n)
+			return;
+
+	list_for_each (f, &proc->files) {
+		struct file *file = list_entry(f, struct file, files);
+		if (is_opened_file(file) && !file->multiplexed) {
+			int fd = file->association;
+			if (nfds <= fd)
+				continue;
+			if ((fds[0] && FD_ISSET(fd, (fd_set *)local[0].iov_base))
+			    || (fds[1] && FD_ISSET(fd, (fd_set *)local[1].iov_base))
+			    || (fds[2] && FD_ISSET(fd, (fd_set *)local[2].iov_base)))
+				file->multiplexed = 1;
+		}
+	}
+}
+
+static void parse_proc_syscall(struct lsfd_control *ctl __attribute__((__unused__)),
+			       struct path_cxt *pc, pid_t pid, struct proc *proc)
+{
+	char buf[BUFSIZ];
+	char *ptr = NULL;
+	long scn;
+
+	if (procfs_process_get_syscall(pc, buf, sizeof(buf)) <= 0)
+		return;
+
+	errno  = 0;
+	scn = strtol(buf, &ptr, 10);
+	if (errno)
+		return;
+	if (scn < 0)
+		return;
+
+	switch (scn) {
+#ifdef 	SYS_poll
+	case SYS_poll:
+		mark_poll_fds_as_multiplexed(ptr, pid, proc);
+		break;
+#endif
+#ifdef 	SYS_ppoll
+	case SYS_ppoll:
+		mark_poll_fds_as_multiplexed(ptr, pid, proc);
+		break;
+#endif
+#ifdef 	SYS_ppoll_time64
+	case SYS_ppoll_time64:
+		mark_poll_fds_as_multiplexed(ptr, pid, proc);
+		break;
+#endif
+
+#ifdef SYS_select
+	case SYS_select:
+		mark_select_fds_as_multiplexed(ptr, pid, proc);
+		break;
+#endif
+#ifdef SYS_pselect6
+	case SYS_pselect6:
+		mark_select_fds_as_multiplexed(ptr, pid, proc);
+		break;
+#endif
+#ifdef 	SYS_pselect6_time64
+	case SYS_pselect6_time64:
+		mark_select_fds_as_multiplexed(ptr, pid, proc);
+		break;
+#endif
+	}
+}
+
 static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 			 pid_t pid, struct proc *leader)
 {
@@ -1470,7 +1637,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	collect_namespace_files(pc, proc);
 
 	/* If kcmp is not available,
-	 * there is no way to no whether threads share resources.
+	 * there is no way to know whether threads share resources.
 	 * In such cases, we must pay the costs: call collect_mem_files()
 	 * and collect_fd_files().
 	 */
@@ -1487,19 +1654,16 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	if (tsearch(proc, &proc_tree, proc_tree_compare) == NULL)
 		errx(EXIT_FAILURE, _("failed to allocate memory"));
 
+	if (ctl->show_xmode)
+		parse_proc_syscall(ctl, pc, pid, proc);
+
 	/* The tasks collecting overwrites @pc by /proc/<task-pid>/. Keep it as
 	 * the last path based operation in read_process()
 	 */
-	if (ctl->threads && leader == NULL) {
-		DIR *sub = NULL;
-		pid_t tid = 0;
-
-		while (procfs_process_next_tid(pc, &sub, &tid) == 0) {
-			if (tid == pid)
-				continue;
-			read_process(ctl, pc, tid, proc);
-		}
-	}
+	if (ctl->threads && leader == NULL)
+		walk_threads(ctl, pc, pid, proc, read_process);
+	else if (ctl->show_xmode)
+		walk_threads(ctl, pc, pid, proc, parse_proc_syscall);
 
 	/* Let's be careful with number of open files */
         ul_path_close_dirfd(pc);
@@ -2111,6 +2275,9 @@ int main(int argc, char *argv[])
 	if (n_pids > 0)
 		sort_pids(pids, n_pids);
 
+	if (scols_table_get_column_by_name(ctl.tb, "XMODE"))
+		ctl.show_xmode = 1;
+
 	/* collect data */
 	initialize_nodevs();
 	initialize_classes();
@@ -2121,7 +2288,7 @@ int main(int argc, char *argv[])
 	free(pids);
 
 	attach_xinfos(&ctl.procs);
-	if (scols_table_get_column_by_name(ctl.tb, "XMODE"))
+	if (ctl.show_xmode)
 		set_multiplexed_flags(&ctl.procs);
 
 

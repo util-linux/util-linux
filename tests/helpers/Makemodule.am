@@ -33,7 +33,8 @@ test_uuid_namespace_SOURCES = tests/helpers/test_uuid_namespace.c \
 
 if LINUX
 check_PROGRAMS += test_mkfds
-test_mkfds_SOURCES = tests/helpers/test_mkfds.c
+test_mkfds_SOURCES = tests/helpers/test_mkfds.c tests/helpers/test_mkfds.h \
+	tests/helpers/test_mkfds_ppoll.c
 test_mkfds_LDADD = $(LDADD) $(MQ_LIBS)
 
 check_PROGRAMS += test_enosys

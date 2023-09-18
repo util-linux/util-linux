@@ -17,6 +17,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include "c.h"
+#include "xalloc.h"
+#include "test_mkfds.h"
+
 #include <arpa/inet.h>
 #include <ctype.h>
 #include <dirent.h>
@@ -34,6 +38,7 @@
 #include <net/if.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
+#include <poll.h>
 #include <sched.h>
 #include <signal.h>
 #include <stdbool.h>
@@ -59,9 +64,6 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "c.h"
-#include "xalloc.h"
-
 #define EXIT_ENOSYS 17
 #define EXIT_EPERM  18
 #define EXIT_ENOPROTOOPT 19
@@ -85,6 +87,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out, int status)
 	fputs(" -q, --quiet                   don't print pid(s)\n", out);
 	fputs(" -X, --dont-monitor-stdin      don't monitor stdin when pausing\n", out);
 	fputs(" -c, --dont-pause              don't pause after making fd(s)\n", out);
+	fputs(" -w, --wait-with <multiplexer> use MULTIPLEXER for waiting events\n", out);
+	fputs(" -W, --multiplexers            list multiplexers\n", out);
 
 	fputs("\n", out);
 	fputs("Examples:\n", out);
@@ -312,17 +316,11 @@ static void free_arg(struct arg *arg)
 	arg->free(arg->v);
 }
 
-struct fdesc {
-	int fd;
-	void (*close)(int, void *);
-	void *data;
-};
-
 struct factory {
 	const char *name;	/* [-a-zA-Z0-9_]+ */
 	const char *desc;
 	bool priv;		/* the root privilege is needed to make fd(s) */
-#define MAX_N 5
+#define MAX_N 13
 	int  N;			/* the number of fds this factory makes */
 	int  EX_N;		/* fds made optionally */
 	int  EX_R;		/* the number of extra words printed to stdout. */
@@ -2899,6 +2897,62 @@ static void *make_bpf_prog(const struct factory *factory _U_, struct fdesc fdesc
 	return NULL;
 }
 
+static void *make_some_pipes(const struct factory *factory _U_, struct fdesc fdescs[],
+			     int argc _U_, char ** argv _U_)
+{
+	/* Reserver fds before making pipes */
+	for (int i = 0; i < factory->N; i++) {
+		close(fdescs[i].fd);
+		if (dup2(0, fdescs[0].fd) < 0)
+			err(EXIT_FAILURE, "failed to reserve fd %d with dup2", fdescs[0].fd);
+	}
+
+	for (int i = 0; i < (factory->N) / 2; i++) {
+		int pd[2];
+		unsigned int mode;
+		int r = 0, w = 1;
+
+		mode = 1 << (i % 3);
+		if (mode == MX_WRITE) {
+			r = 1;
+			w = 0;
+		}
+
+		if (pipe(pd) < 0)
+			err(EXIT_FAILURE, "failed to make pipe");
+
+		if (dup2(pd[0], fdescs[2 * i + r].fd) < 0)
+			err(EXIT_FAILURE, "failed to dup %d -> %d", pd[0], fdescs[2 * i + r].fd);
+		close(pd[0]);
+		fdescs[2 * 1 + r].close = close_fdesc;
+
+		if (dup2(pd[1], fdescs[2 * i + w].fd) < 0)
+			err(EXIT_FAILURE, "failed to dup %d -> %d", pd[1], fdescs[2 * i + 2].fd);
+		close(pd[1]);
+		fdescs[2 * 1 + w].close = close_fdesc;
+
+		fdescs[2 * i].mx_modes |= mode;
+
+		/* Make the pipe for writing full. */
+		if (fdescs[2 * i].mx_modes & MX_WRITE) {
+			int n = fcntl(fdescs[2 * i].fd, F_GETPIPE_SZ);
+			char *buf;
+
+			if (n < 0)
+				err(EXIT_FAILURE, "failed to get PIPE BUFFER SIZE from %d", fdescs[2 * i].fd);
+
+			buf = xmalloc(n);
+			if (write(fdescs[2 * i].fd, buf, n) != n)
+				err(EXIT_FAILURE, "failed to fill the pipe buffer specified with %d",
+				    fdescs[2 * i].fd);
+			free(buf);
+		}
+
+	}
+
+	return NULL;
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -3647,6 +3701,16 @@ static const struct factory factories[] = {
 				.desc = "program type by id",
 				.defv.integer = 1,
 			},
+		}
+	},
+	{
+		.name = "multiplexing",
+		.desc = "making pipes monitored by multiplexers",
+		.priv =  false,
+		.N    = 12,
+		.EX_N = 0,
+		.make = make_some_pipes,
+		.params = (struct parameter []) {
 			PARAM_END
 		}
 	},
@@ -3734,23 +3798,137 @@ pidfd_open(pid_t pid _U_, unsigned int flags _U_)
 }
 #endif
 
-static void wait_event(bool monitor_stdin)
-{
-	fd_set readfds;
-	sigset_t sigset;
-	int n = 0;
+/*
+ * Multiplexers
+ */
+struct multiplexer {
+	const char *name;
+	void (*fn)(bool, struct fdesc *fdescs, size_t n_fdescs);
+};
 
-	FD_ZERO(&readfds);
-	if (monitor_stdin) {
-		n = 1;
-		FD_SET(0, &readfds);
+#if defined(__NR_select) || defined(__NR_poll)
+static void sighandler_nop(int si _U_)
+{
+   /* Do nothing */
+}
+#endif
+
+#define DEFUN_WAIT_EVENT_SELECT(NAME,SYSCALL,XDECLS,SETUP_SIG_HANDLER,SYSCALL_INVOCATION) \
+	static void wait_event_##NAME(bool add_stdin, struct fdesc *fdescs, size_t n_fdescs) \
+	{								\
+		fd_set readfds;						\
+		fd_set writefds;					\
+		fd_set exceptfds;					\
+		XDECLS							\
+		int n = 0;						\
+									\
+		FD_ZERO(&readfds);					\
+		FD_ZERO(&writefds);					\
+		FD_ZERO(&exceptfds);					\
+		/* Monitor the standard input only when the process	\
+		 * is in foreground. */					\
+		if (add_stdin) {					\
+			n = 1;						\
+			FD_SET(0, &readfds);				\
+		}							\
+									\
+		for (size_t i = 0; i < n_fdescs; i++) {			\
+			if (fdescs[i].mx_modes & MX_READ) {		\
+				n = max(n, fdescs[i].fd + 1);		\
+				FD_SET(fdescs[i].fd, &readfds);		\
+			}						\
+			if (fdescs[i].mx_modes & MX_WRITE) {		\
+				n = max(n, fdescs[i].fd + 1);		\
+				FD_SET(fdescs[i].fd, &writefds);	\
+			}						\
+			if (fdescs[i].mx_modes & MX_EXCEPT) {		\
+				n = max(n, fdescs[i].fd + 1);		\
+				FD_SET(fdescs[i].fd, &exceptfds);	\
+			}						\
+		}							\
+									\
+		SETUP_SIG_HANDLER					\
+									\
+		if (SYSCALL_INVOCATION < 0				\
+		    && errno != EINTR)					\
+			err(EXIT_FAILURE, "failed in " SYSCALL);	\
 	}
 
-	sigemptyset(&sigset);
+DEFUN_WAIT_EVENT_SELECT(default,
+			"pselect",
+			sigset_t sigset;,
+			sigemptyset(&sigset);,
+			pselect(n, &readfds, &writefds, &exceptfds, NULL, &sigset))
 
-	if (pselect(n, &readfds, NULL, NULL, NULL, &sigset) < 0
-	    && errno != EINTR)
-		errx(EXIT_FAILURE, "failed in pselect");
+#ifdef __NR_pselect6
+DEFUN_WAIT_EVENT_SELECT(pselect6,
+			"pselect6",
+			sigset_t sigset;,
+			sigemptyset(&sigset);,
+			syscall(__NR_pselect6, n, &readfds, &writefds, &exceptfds, NULL, &sigset))
+#endif
+
+#ifdef __NR_select
+DEFUN_WAIT_EVENT_SELECT(select,
+			"select",
+			,
+			signal(SIGCONT,sighandler_nop);,
+			syscall(__NR_select, n, &readfds, &writefds, &exceptfds, NULL))
+#endif
+
+#ifdef __NR_poll
+static DEFUN_WAIT_EVENT_POLL(poll,
+		      "poll",
+		      ,
+		      signal(SIGCONT,sighandler_nop);,
+		      syscall(__NR_poll, pfds, n, -1))
+#endif
+
+#define DEFAULT_MULTIPLEXER 0
+static struct multiplexer multiplexers [] = {
+	{
+		.name = "default",
+		.fn = wait_event_default,
+	},
+#ifdef __NR_pselect6
+	{
+		.name = "pselect6",
+		.fn = wait_event_pselect6,
+	},
+#endif
+#ifdef __NR_select
+	{
+		.name = "select",
+		.fn = wait_event_select,
+	},
+#endif
+#ifdef __NR_poll
+	{
+		.name = "poll",
+		.fn = wait_event_poll,
+	},
+#endif
+#ifdef __NR_ppoll
+	{
+		.name = "ppoll",
+		.fn = wait_event_ppoll,
+	},
+#endif
+};
+
+static struct multiplexer *lookup_multiplexer(const char *name)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(multiplexers); i++)
+		if (strcmp(name, multiplexers[i].name) == 0)
+			return multiplexers + i;
+	return NULL;
+}
+
+static void list_multiplexers(void)
+{
+	puts("NAME");
+	for (size_t i = 0; i < ARRAY_SIZE(multiplexers); i++)
+		puts(multiplexers[i].name);
 }
 
 int main(int argc, char **argv)
@@ -3763,6 +3941,8 @@ int main(int argc, char **argv)
 	void *data;
 	bool monitor_stdin = true;
 
+	struct multiplexer *wait_event = NULL;
+
 	static const struct option longopts[] = {
 		{ "list",	no_argument, NULL, 'l' },
 		{ "parameters", required_argument, NULL, 'I' },
@@ -3770,11 +3950,13 @@ int main(int argc, char **argv)
 		{ "quiet",	no_argument, NULL, 'q' },
 		{ "dont-monitor-stdin", no_argument, NULL, 'X' },
 		{ "dont-puase", no_argument, NULL, 'c' },
+		{ "wait-with",  required_argument, NULL, 'w' },
+		{ "multiplexers",no_argument,NULL, 'W' },
 		{ "help",	no_argument, NULL, 'h' },
 		{ NULL, 0, NULL, 0 },
 	};
 
-	while ((c = getopt_long(argc, argv, "lhqcI:r:X", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "lhqcI:r:w:WX", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
 			usage(stdout, EXIT_SUCCESS);
@@ -3790,6 +3972,14 @@ int main(int argc, char **argv)
 		case 'c':
 			cont = true;
 			break;
+		case 'w':
+			wait_event = lookup_multiplexer(optarg);
+			if (wait_event == NULL)
+				errx(EXIT_FAILURE, "unknown multiplexer: %s", optarg);
+			break;
+		case 'W':
+			list_multiplexers();
+			exit(EXIT_SUCCESS);
 		case 'r':
 			rename_self(optarg);
 			break;
@@ -3803,6 +3993,11 @@ int main(int argc, char **argv)
 
 	if (optind == argc)
 		errx(EXIT_FAILURE, "no file descriptor specification given");
+
+	if (cont && wait_event)
+		errx(EXIT_FAILURE, "don't specify both -c/--dont-puase and -w/--wait-with options");
+	if (wait_event == NULL)
+		wait_event = multiplexers + DEFAULT_MULTIPLEXER;
 
 	factory = find_factory(argv[optind]);
 	if (!factory)
@@ -3819,6 +4014,7 @@ int main(int argc, char **argv)
 
 	for (int i = 0; i < MAX_N; i++) {
 		fdescs[i].fd = -1;
+		fdescs[i].mx_modes = 0;
 		fdescs[i].close = NULL;
 	}
 
@@ -3860,7 +4056,8 @@ int main(int argc, char **argv)
 	}
 
 	if (!cont)
-		wait_event(monitor_stdin);
+		wait_event->fn(monitor_stdin,
+			       fdescs, factory->N + factory->EX_N);
 
 	for (int i = 0; i < factory->N + factory->EX_N; i++)
 		if (fdescs[i].fd >= 0 && fdescs[i].close)
