@@ -138,10 +138,6 @@ struct login_context {
 			keep_env:1;	/* login -p */
 };
 
-/*
- * This bounds the time given to login.  Not a define, so it can
- * be patched on machines where it's too small.
- */
 static int child_pid = 0;
 static volatile sig_atomic_t got_sig = 0;
 static char *timeout_msg;
@@ -1301,6 +1297,10 @@ static void initialize(int argc, char **argv, struct login_context *cxt)
 		{NULL, 0, NULL, 0}
 	};
 
+	/*
+	 * This bounds the time given to login.  Not a define, so it can
+	 * be patched on machines where it's too small.
+	 */
 	timeout = (unsigned int)getlogindefs_num("LOGIN_TIMEOUT", LOGIN_TIMEOUT);
 
 	/* TRANSLATORS: The standard value for %u is 60. */
