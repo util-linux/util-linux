@@ -139,7 +139,7 @@ struct login_context {
 			keep_env:1;	/* login -p */
 };
 
-static int child_pid = 0;
+static pid_t child_pid = 0;
 static volatile sig_atomic_t got_sig = 0;
 static char *timeout_msg;
 
