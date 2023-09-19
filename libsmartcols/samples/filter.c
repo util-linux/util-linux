@@ -87,19 +87,59 @@ fail:
 	err(EXIT_FAILURE, "failed to create output line");
 }
 
+static struct libscols_filter *init_filter(struct libscols_table *tb, const char *query, int dump)
+{
+	struct libscols_iter *itr;
+	struct libscols_filter *f = scols_new_filter(NULL);
+	const char *name = NULL;
+	int rc = 0;
+
+	if (!f)
+		err(EXIT_FAILURE, "failed to allocate filter");
+	if (scols_filter_parse_string(f, query) != 0)
+		errx(EXIT_FAILURE, "failed to parse filter: %s",
+				scols_filter_get_errmsg(f));
+
+	itr = scols_new_iter(SCOLS_ITER_FORWARD);
+	if (!itr)
+		err(EXIT_FAILURE, "failed to allocate iterator");
+
+	while (scols_filter_next_holder(f, itr, &name, 0) == 0) {
+		struct libscols_column *col;
+
+		col = scols_table_get_column_by_name(tb, name);
+		if (!col) {
+			warnx("unknown column '%s' in filter", name);
+			rc++;
+			continue;
+		}
+		scols_filter_assign_column(f, itr, name, col);
+	}
+
+	scols_free_iter(itr);
+	if (dump)
+		scols_dump_filter(f, stdout);
+	if (rc) {
+		scols_unref_filter(f);
+		f = NULL;
+	}
+	return f;
+}
+
 int main(int argc, char *argv[])
 {
 	struct libscols_table *tb;
-	struct libscols_filter *fltr = NULL;
-	struct libscols_iter *itr = NULL;
+	struct libscols_filter *fltr = NULL, *hlight = NULL;
 	int c, i, json = 0, dump = 0;
 	int rc = 0;
+	char *f_query = NULL, *h_query = NULL;
 
 	static const struct option longopts[] = {
-		{ "json",   0, NULL, 'J' },
-		{ "dump",   0, NULL, 'D' },
-		{ "filter", 1, NULL, 'Q' },
-		{ "help",   0, NULL, 'h' },
+		{ "json",      0, NULL, 'J' },
+		{ "dump",      0, NULL, 'D' },
+		{ "filter",    1, NULL, 'Q' },
+		{ "highlight", 1, NULL, 'H' },
+		{ "help",      0, NULL, 'h' },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -111,7 +151,7 @@ int main(int argc, char *argv[])
 	if (!tb)
 		err(EXIT_FAILURE, "failed to create output table");
 
-	while((c = getopt_long(argc, argv, "DhJQ:", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "H:DhJQ:", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'h':
 			printf("%s --help | --filter | --dump | --json]\n", program_invocation_short_name);
@@ -123,63 +163,55 @@ int main(int argc, char *argv[])
 			json = 1;
 			break;
 		case 'Q':
-			fltr = scols_new_filter(NULL);
-			if (!fltr)
-				err(EXIT_FAILURE, "failed to allocate filter");
-			if (scols_filter_parse_string(fltr, optarg) != 0)
-				errx(EXIT_FAILURE, "failed to parse filter: %s",
-						scols_filter_get_errmsg(fltr));
+			f_query = optarg;
+			break;
+		case 'H':
+			h_query = optarg;
 			break;
 		}
 	}
 
-	if (dump && fltr)
-		scols_dump_filter(fltr, stdout);
-
 	scols_table_enable_json(tb, json);
 	setup_columns(tb);
 
-	if (fltr) {
-		const char *name = NULL;
-
-		itr = scols_new_iter(SCOLS_ITER_FORWARD);
-		if (!itr)
-			err(EXIT_FAILURE, "failed to allocate iterator");
-
-		while (scols_filter_next_holder(fltr, itr, &name, 0) == 0) {
-			struct libscols_column *col =
-					scols_table_get_column_by_name(tb, name);
-			if (!col) {
-				warnx("unknown column '%s' in filter", name);
-				rc++;
-				continue;
-			}
-			scols_filter_assign_column(fltr, itr, name, col);
-		}
-		if (rc)
+	if (f_query) {
+		fltr = init_filter(tb, f_query, dump);
+		if (!fltr)
 			goto done;
+	}
+	if (h_query) {
+		hlight = init_filter(tb, h_query, dump);
+		if (!hlight)
+			goto done;
+		scols_table_enable_colors(tb, isatty(STDOUT_FILENO));
 	}
 
 	for (i = 0; i < 10; i++) {
 		struct libscols_line *ln = add_line(tb, i + 1, i % 4);
 		int rc, status = 0;
 
-		if (!fltr)
-			continue;
-		rc = scols_line_apply_filter(ln, fltr, &status);
-		if (rc)
-			goto done;
-		if (status == 0) /* false */
-			scols_table_remove_line(tb, ln);
+		if (fltr) {
+			rc = scols_line_apply_filter(ln, fltr, &status);
+			if (rc)
+				goto done;
+			if (status == 0) {
+				scols_table_remove_line(tb, ln);
+				continue;
+			}
+		}
+		if (hlight) {
+			rc = scols_line_apply_filter(ln, hlight, &status);
+			if (rc)
+				goto done;
+			if (status)
+				scols_line_set_color(ln, "red");
+		}
 	}
 
 	scols_print_table(tb);
 done:
-	if (dump && fltr)
-		scols_dump_filter(fltr, stdout);
-
 	scols_unref_table(tb);
 	scols_unref_filter(fltr);
-	scols_free_iter(itr);
+	scols_unref_filter(hlight);
 	return rc ? EXIT_FAILURE : EXIT_SUCCESS;
 }
