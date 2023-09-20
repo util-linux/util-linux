@@ -2616,6 +2616,7 @@ exe = executable(
   link_with : [lib_common,
                lib_blkid,
                lib_mount,
+               lib_tcolors,
                lib_smartcols],
   dependencies : lib_udev,
   install : true)

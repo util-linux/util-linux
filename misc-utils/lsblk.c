@@ -52,6 +52,7 @@
 #include "fileutils.h"
 #include "loopdev.h"
 #include "buffer.h"
+#include "colors.h"
 
 #include "lsblk.h"
 
@@ -1361,6 +1362,15 @@ static void device_to_scols(
 		device_to_scols(child, dev, tab, ln);
 		DBG(DEV, ul_debugobj(dev, "%s <- child done", dev->name));
 	}
+
+	if (lsblk->scols_hlighter) {
+		int status = 0;
+
+		if (scols_line_apply_filter(ln, lsblk->scols_hlighter, &status) == 0
+		    && status)
+			scols_line_set_color(ln, lsblk->hlighter_seq);
+	}
+
 done:
 	/* Let's be careful with number of open files */
 	ul_path_close_dirfd(dev->sysfs);
@@ -2113,6 +2123,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -O, --output-all     output all columns\n"), out);
 	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
 	fputs(_(" -Q, --filter <query> restrict output\n"), out);
+	fputs(_(" -H, --highlight <query> colorize lines maching the query\n"), out);
 	fputs(_(" -S, --scsi           output info about SCSI devices\n"), out);
 	fputs(_(" -N, --nvme           output info about NVMe devices\n"), out);
 	fputs(_(" -v, --virtio         output info about virtio devices\n"), out);
@@ -2166,7 +2177,7 @@ int main(int argc, char *argv[])
 	};
 	struct lsblk_devtree *tr = NULL;
 	int c, status = EXIT_FAILURE;
-	char *outarg = NULL, *f_query = NULL;
+	char *outarg = NULL, *f_query = NULL, *h_query = NULL;
 	size_t i;
 	unsigned int width = 0;
 	int force_tree = 0, has_tree_col = 0;
@@ -2188,6 +2199,7 @@ int main(int argc, char *argv[])
 		{ "output",     required_argument, NULL, 'o' },
 		{ "output-all", no_argument,       NULL, 'O' },
 		{ "filter",     required_argument, NULL, 'Q' },
+		{ "highlight",  required_argument, NULL, 'H' },
 		{ "merge",      no_argument,       NULL, 'M' },
 		{ "perms",      no_argument,       NULL, 'm' },
 		{ "noheadings",	no_argument,       NULL, 'n' },
@@ -2237,7 +2249,7 @@ int main(int argc, char *argv[])
 	lsblk_init_debug();
 
 	while((c = getopt_long(argc, argv,
-				"AabdDzE:e:fhJlNnMmo:OpPQ:iI:rstVvST::w:x:y",
+				"AabdDzE:e:fH:hJlNnMmo:OpPQ:iI:rstVvST::w:x:y",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -2274,6 +2286,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'e':
 			parse_excludes(optarg);
+			break;
+		case 'H':
+			h_query = optarg;
 			break;
 		case 'J':
 			lsblk->flags |= LSBLK_JSON;
@@ -2558,6 +2573,12 @@ int main(int argc, char *argv[])
 	if (f_query)
 		lsblk->scols_filter = init_scols_filter(lsblk->table, f_query);
 
+	if (h_query && colors_init(UL_COLORMODE_AUTO, "lsblk") > 0) {
+		lsblk->hlighter_seq = color_scheme_get_sequence("highlight-line", UL_COLOR_RED);
+		scols_table_enable_colors(lsblk->table, 1);
+		lsblk->scols_hlighter = init_scols_filter(lsblk->table, h_query);
+	}
+
 	tr = lsblk_new_devtree();
 	if (!tr)
 		err(EXIT_FAILURE, _("failed to allocate device tree"));
@@ -2602,6 +2623,7 @@ leave:
 
 	scols_unref_table(lsblk->table);
 	scols_unref_filter(lsblk->scols_filter);
+	scols_unref_filter(lsblk->scols_hlighter);
 
 	lsblk_mnt_deinit();
 	lsblk_properties_deinit();
