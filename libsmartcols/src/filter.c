@@ -188,3 +188,16 @@ int scols_line_apply_filter(struct libscols_line *ln,
 	DBG(FLTR, ul_debugobj(fltr, "filter done [rc=%d, status=%d]", rc, *status));
 	return rc;
 }
+
+int scols_filter_set_filler_cb(struct libscols_filter *fltr,
+				int (*cb)(struct libscols_filter *,
+					  struct libscols_line *, size_t, void *),
+				void *userdata)
+{
+	if (!fltr)
+		return -EINVAL;
+	fltr->filler_cb = cb;
+	fltr->filler_data = userdata;
+
+	return 0;
+}

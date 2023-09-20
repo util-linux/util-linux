@@ -89,6 +89,8 @@ struct libscols_cell {
 	void    *userdata;
 	int	flags;
 	size_t	width;
+
+	unsigned int is_filled : 1;
 };
 
 extern int scols_line_move_cells(struct libscols_line *ln, size_t newn, size_t oldn);
@@ -536,6 +538,9 @@ struct libscols_filter {
 	struct filter_node *root;
 	FILE *src;
 
+	int (*filler_cb)(struct libscols_filter *, struct libscols_line *, size_t, void *);
+	void *filler_data;
+
 	struct list_head params;
 };
 
@@ -546,7 +551,6 @@ void filter_unref_node(struct filter_node *n);
 void filter_dump_node(struct ul_jsonwrt *json, struct filter_node *n);
 int filter_eval_node(struct libscols_filter *fltr, struct libscols_line *ln,
 			struct filter_node *n, int *status);
-
 /* param */
 int filter_compile_param(struct libscols_filter *fltr, struct filter_param *n);
 void filter_dump_param(struct ul_jsonwrt *json, struct filter_param *n);

@@ -263,6 +263,12 @@ static int fetch_holder_data(struct libscols_filter *fltr __attribute__((__unuse
 	}
 	DBG(FPARAM, ul_debugobj(n, "fetching %s data", n->holder_name));
 
+	if (fltr->filler_cb && !scols_line_is_filled(ln, n->col->seqnum)) {
+		rc = fltr->filler_cb(fltr, ln, n->col->seqnum, fltr->filler_data);
+		if (rc)
+			return rc;
+	}
+
 	/* read column data, use it as string */
 	data = scols_line_get_column_data(ln, n->col);
 	rc = param_set_data(n, F_DATA_STRING, data);

@@ -229,4 +229,6 @@ SMARTCOLS_2.40 {
 	scols_filter_next_holder;
 	scols_filter_assign_column;
 	scols_line_apply_filter;
+	scols_filter_set_filler_cb;
+	scols_line_is_filled;
 } SMARTCOLS_2.39;

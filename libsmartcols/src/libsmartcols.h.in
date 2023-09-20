@@ -253,6 +253,7 @@ extern struct libscols_cell *scols_line_get_column_cell(
 		                        struct libscols_column *cl);
 extern int scols_line_set_data(struct libscols_line *ln, size_t n, const char *data);
 extern int scols_line_refer_data(struct libscols_line *ln, size_t n, char *data);
+extern int scols_line_is_filled(struct libscols_line *ln, size_t n);
 extern int scols_line_set_column_data(struct libscols_line *ln, struct libscols_column *cl, const char *data);
 extern const char *scols_line_get_column_data(struct libscols_line *ln, struct libscols_column *cl);
 extern int scols_line_refer_column_data(struct libscols_line *ln, struct libscols_column *cl, char *data);
@@ -383,6 +384,10 @@ extern int scols_filter_next_holder(struct libscols_filter *fltr,
 extern int scols_filter_assign_column(struct libscols_filter *fltr,
 			struct libscols_iter *itr,
                         const char *name, struct libscols_column *col);
+extern int scols_filter_set_filler_cb(struct libscols_filter *fltr,
+                                int (*cb)(struct libscols_filter *,
+                                          struct libscols_line *, size_t, void *),
+                                void *userdata);
 
 #ifdef __cplusplus
 }
