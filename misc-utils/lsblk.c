@@ -242,6 +242,12 @@ static const struct colinfo infos[] = {
 	[COL_ZONE_AMAX] = { "ZONE-AMAX", 10, SCOLS_FL_RIGHT, N_("maximum number of active zones"), COLTYPE_NUM },
 };
 
+/* "userdata" used by callback for libsmartcols filter */
+struct filler_data {
+	struct lsblk_device *dev;
+	struct lsblk_device *parent;
+};
+
 struct lsblk *lsblk;	/* global handler */
 
 /*
@@ -1209,6 +1215,50 @@ static char *device_get_data(
 	return str;
 }
 
+static void device_fill_scols_cell(struct lsblk_device *dev,
+				   struct lsblk_device *parent,
+				   struct libscols_line *ln,
+				   size_t colnum)
+{
+	struct libscols_cell *ce;
+	char *data;
+	size_t datasiz = 0;
+	int rc, id = get_column_id(colnum);
+
+	if (lsblk->sort_id != id)
+		data = device_get_data(dev, parent, id, NULL, &datasiz);
+	else {
+		uint64_t sortdata = (uint64_t) -1;
+
+		data = device_get_data(dev, parent, id, &sortdata, &datasiz);
+		if (data && sortdata != (uint64_t) -1)
+			set_sortdata_u64(ln, colnum, sortdata);
+	}
+
+	if (!data)
+		return;
+	DBG(DEV, ul_debugobj(dev, " refer data[%zu]=\"%s\"", colnum, data));
+	ce = scols_line_get_cell(ln, colnum);
+	if (!ce)
+		return;
+	rc = datasiz ? scols_cell_refer_memory(ce, data, datasiz + 1)
+		     : scols_cell_refer_data(ce, data);
+	if (rc)
+		err(EXIT_FAILURE, _("failed to add output data"));
+}
+
+static int filter_filler_cb(
+		 struct libscols_filter *fltr __attribute__((__unused__)),
+		 struct libscols_line *ln,
+		 size_t colnum,
+		 void *userdata)
+{
+	struct filler_data *fid = (struct filler_data *) userdata;
+
+	device_fill_scols_cell(fid->dev, fid->parent, ln, colnum);
+	return 0;
+}
+
 /*
  * Adds data for all wanted columns about the device to the smartcols table
  */
@@ -1247,6 +1297,36 @@ static void device_to_scols(
 
 	dev->is_printed = 1;
 
+	/* filter lines, smartcols filter can ask for data */
+	if (lsblk->scols_filter) {
+		int status = 0;
+		struct filler_data fid = {
+			.dev = dev,
+			.parent = parent
+		};
+
+		scols_filter_set_filler_cb(lsblk->scols_filter,
+				filter_filler_cb, (void *) &fid);
+
+		if (scols_line_apply_filter(ln, lsblk->scols_filter, &status))
+			err(EXIT_FAILURE, _("failed to apply filter"));
+		if (status == 0) {
+			struct libscols_line *x = scols_line_get_parent(ln);
+
+			if (x)
+				scols_line_remove_child(x, ln);
+			scols_table_remove_line(tab, ln);
+			goto done;
+		}
+	}
+
+	/* read column specific data and set it to smartcols table line */
+	for (i = 0; i < ncolumns; i++) {
+		if (scols_line_is_filled(ln, i))
+			continue;
+		device_fill_scols_cell(dev, parent, ln, i);
+	}
+
 	if (link_group) {
 		struct lsblk_device *p;
 		struct libscols_line *gr = parent_line;
@@ -1268,35 +1348,6 @@ static void device_to_scols(
 		scols_line_link_group(ln, gr, 0);
 	}
 
-	/* read column specific data and set it to smartcols table line */
-	for (i = 0; i < ncolumns; i++) {
-		struct libscols_cell *ce;
-		char *data = NULL;
-		size_t datasiz = 0;
-		int rc, id = get_column_id(i);
-
-		if (lsblk->sort_id != id)
-			data = device_get_data(dev, parent, id, NULL, &datasiz);
-		else {
-			uint64_t sortdata = (uint64_t) -1;
-
-			data = device_get_data(dev, parent, id, &sortdata, &datasiz);
-			if (data && sortdata != (uint64_t) -1)
-				set_sortdata_u64(ln, i, sortdata);
-		}
-
-		if (!data)
-			continue;
-		DBG(DEV, ul_debugobj(dev, " refer data[%zu]=\"%s\"", i, data));
-		ce = scols_line_get_cell(ln, i);
-		if (!ce)
-			continue;
-		rc = datasiz ? scols_cell_refer_memory(ce, data, datasiz + 1)
-			     : scols_cell_refer_data(ce, data);
-		if (rc)
-			err(EXIT_FAILURE, _("failed to add output data"));
-	}
-
 	dev->scols_line = ln;
 
 	if (dev->npartitions == 0)
@@ -1310,7 +1361,7 @@ static void device_to_scols(
 		device_to_scols(child, dev, tab, ln);
 		DBG(DEV, ul_debugobj(dev, "%s <- child done", dev->name));
 	}
-
+done:
 	/* Let's be careful with number of open files */
 	ul_path_close_dirfd(dev->sysfs);
 }
@@ -1997,6 +2048,50 @@ static void devtree_set_dedupkeys(struct lsblk_devtree *tr, int id)
 		device_set_dedupkey(dev, NULL, id);
 }
 
+
+static struct libscols_filter *init_scols_filter(
+			struct libscols_table *tb,
+			const char *query)
+{
+	struct libscols_filter *f;
+	struct libscols_iter *itr;
+	const char *name = NULL;
+
+	f = scols_new_filter(NULL);
+	if (!f)
+		err(EXIT_FAILURE, _("failed to allocate filter"));
+	if (scols_filter_parse_string(f, query) != 0)
+		errx(EXIT_FAILURE, _("failed to parse \"%s\": %s"), query,
+				scols_filter_get_errmsg(f));
+
+	itr = scols_new_iter(SCOLS_ITER_FORWARD);
+	if (!itr)
+		err(EXIT_FAILURE, _("failed to allocate iterator"));
+
+	while (scols_filter_next_holder(f, itr, &name, 0) == 0) {
+		struct libscols_column *col = scols_table_get_column_by_name(tb, name);
+
+		if (!col) {
+			int id = column_name_to_id(name, strlen(name));
+			const struct colinfo *ci = id >= 0 ? &infos[id] : NULL;
+
+			if (!ci)
+				goto fail;
+			add_column(id);
+			col = scols_table_new_column(lsblk->table, ci->name,
+						     ci->whint, SCOLS_FL_HIDDEN);
+			if (!col)
+				err(EXIT_FAILURE,_("failed to allocate output column"));
+		}
+		scols_filter_assign_column(f, itr, name, col);
+	}
+
+	scols_free_iter(itr);
+	return f;
+fail:
+	errx(EXIT_FAILURE, _("failed to initialize filter"));
+}
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
@@ -2017,6 +2112,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -M, --merge          group parents of sub-trees (usable for RAIDs, Multi-path)\n"), out);
 	fputs(_(" -O, --output-all     output all columns\n"), out);
 	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
+	fputs(_(" -Q, --filter <query> restrict output\n"), out);
 	fputs(_(" -S, --scsi           output info about SCSI devices\n"), out);
 	fputs(_(" -N, --nvme           output info about NVMe devices\n"), out);
 	fputs(_(" -v, --virtio         output info about virtio devices\n"), out);
@@ -2070,7 +2166,7 @@ int main(int argc, char *argv[])
 	};
 	struct lsblk_devtree *tr = NULL;
 	int c, status = EXIT_FAILURE;
-	char *outarg = NULL;
+	char *outarg = NULL, *f_query = NULL;
 	size_t i;
 	unsigned int width = 0;
 	int force_tree = 0, has_tree_col = 0;
@@ -2091,6 +2187,7 @@ int main(int argc, char *argv[])
 		{ "json",       no_argument,       NULL, 'J' },
 		{ "output",     required_argument, NULL, 'o' },
 		{ "output-all", no_argument,       NULL, 'O' },
+		{ "filter",     required_argument, NULL, 'Q' },
 		{ "merge",      no_argument,       NULL, 'M' },
 		{ "perms",      no_argument,       NULL, 'm' },
 		{ "noheadings",	no_argument,       NULL, 'n' },
@@ -2140,7 +2237,7 @@ int main(int argc, char *argv[])
 	lsblk_init_debug();
 
 	while((c = getopt_long(argc, argv,
-				"AabdDzE:e:fhJlNnMmo:OpPiI:rstVvST::w:x:y",
+				"AabdDzE:e:fhJlNnMmo:OpPQ:iI:rstVvST::w:x:y",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -2203,6 +2300,10 @@ int main(int argc, char *argv[])
 		case 'P':
 			lsblk->flags |= LSBLK_EXPORT;
 			lsblk->flags &= ~LSBLK_TREE;	/* disable the default */
+			break;
+		case 'Q':
+			f_query = optarg;
+			lsblk->flags &= ~LSBLK_TREE; /* disable the default */
 			break;
 		case 'y':
 			lsblk->flags |= LSBLK_SHELLVAR;
@@ -2454,6 +2555,9 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	if (f_query)
+		lsblk->scols_filter = init_scols_filter(lsblk->table, f_query);
+
 	tr = lsblk_new_devtree();
 	if (!tr)
 		err(EXIT_FAILURE, _("failed to allocate device tree"));
@@ -2497,6 +2601,7 @@ leave:
 		unref_sortdata(lsblk->table);
 
 	scols_unref_table(lsblk->table);
+	scols_unref_filter(lsblk->scols_filter);
 
 	lsblk_mnt_deinit();
 	lsblk_properties_deinit();

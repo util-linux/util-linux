@@ -41,6 +41,7 @@ struct lsblk {
 
 	int dedup_id;
 
+	struct libscols_filter *scols_filter;
 
 	const char *sysroot;
 	int flags;			/* LSBLK_* */
