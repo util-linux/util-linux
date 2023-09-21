@@ -177,9 +177,10 @@ static void __attribute__((__noreturn__))
 	struct termios ti;
 
 	/* reset echo */
-	tcgetattr(0, &ti);
-	ti.c_lflag |= ECHO;
-	tcsetattr(0, TCSANOW, &ti);
+	if (tcgetattr(0, &ti) >= 0) {
+		ti.c_lflag |= ECHO;
+		tcsetattr(0, TCSANOW, &ti);
+	}
 	_exit(EXIT_SUCCESS);	/* %% */
 }
 
@@ -513,8 +514,8 @@ static void chown_tty(struct login_context *cxt)
 static void init_tty(struct login_context *cxt)
 {
 	struct stat st;
-	struct termios tt, ttt;
-	struct winsize ws;
+	struct termios tt, ttt = { 0 };
+	struct winsize ws = { 0 };
 	int fd;
 
 	cxt->tty_mode = (mode_t) getlogindefs_num("TTYPERM", TTY_MODE);
@@ -549,13 +550,18 @@ static void init_tty(struct login_context *cxt)
 
 	/* The TTY size might be reset to 0x0 by the kernel when we close the stdin/stdout/stderr file
 	 * descriptors so let's save the size now so we can reapply it later */
-	memset(&ws, 0, sizeof(struct winsize));
-	if (ioctl(fd, TIOCGWINSZ, &ws) < 0)
+	if (ioctl(fd, TIOCGWINSZ, &ws) < 0) {
 		syslog(LOG_WARNING, _("TIOCGWINSZ ioctl failed: %m"));
+		ws.ws_row = 0;
+		ws.ws_col = 0;
+	}
 
-	tcgetattr(fd, &tt);
-	ttt = tt;
-	ttt.c_cflag &= ~HUPCL;
+	if (tcgetattr(fd, &tt) >= 0) {
+		ttt = tt;
+		ttt.c_cflag &= ~HUPCL;
+	} else {
+		ttt.c_cflag = HUPCL;
+	}
 
 	if ((fchown(fd, 0, 0) || fchmod(fd, cxt->tty_mode)) && errno != EROFS) {
 
@@ -565,7 +571,8 @@ static void init_tty(struct login_context *cxt)
 	}
 
 	/* Kill processes left on this tty */
-	tcsetattr(fd, TCSANOW, &ttt);
+	if ((ttt.c_cflag & HUPCL) == 0)
+		tcsetattr(fd, TCSANOW, &ttt);
 
 	/*
 	 * Let's close file descriptors before vhangup
@@ -583,7 +590,8 @@ static void init_tty(struct login_context *cxt)
 	open_tty(cxt->tty_path);
 
 	/* restore tty modes */
-	tcsetattr(STDIN_FILENO, TCSAFLUSH, &tt);
+	if ((ttt.c_cflag & HUPCL) == 0)
+		tcsetattr(STDIN_FILENO, TCSAFLUSH, &tt);
 
 	/* Restore tty size */
 	if ((ws.ws_row > 0 || ws.ws_col > 0)
