@@ -515,10 +515,12 @@ static void init_tty(struct login_context *cxt)
 	struct stat st;
 	struct termios tt, ttt;
 	struct winsize ws;
+	int fd;
 
 	cxt->tty_mode = (mode_t) getlogindefs_num("TTYPERM", TTY_MODE);
 
 	get_terminal_name(&cxt->tty_path, &cxt->tty_name, &cxt->tty_number);
+	fd = get_terminal_stdfd();
 
 	/*
 	 * In case login is suid it was possible to use a hardlink as stdin
@@ -531,7 +533,7 @@ static void init_tty(struct login_context *cxt)
 	if (!cxt->tty_path || !*cxt->tty_path ||
 	    lstat(cxt->tty_path, &st) != 0 || !S_ISCHR(st.st_mode) ||
 	    (st.st_nlink > 1 && strncmp(cxt->tty_path, "/dev/", 5) != 0) ||
-	    access(cxt->tty_path, R_OK | W_OK) != 0) {
+	    access(cxt->tty_path, R_OK | W_OK) != 0 || fd == -EINVAL) {
 
 		syslog(LOG_ERR, _("FATAL: bad tty"));
 		sleepexit(EXIT_FAILURE);
@@ -548,14 +550,14 @@ static void init_tty(struct login_context *cxt)
 	/* The TTY size might be reset to 0x0 by the kernel when we close the stdin/stdout/stderr file
 	 * descriptors so let's save the size now so we can reapply it later */
 	memset(&ws, 0, sizeof(struct winsize));
-	if (ioctl(STDIN_FILENO, TIOCGWINSZ, &ws) < 0)
+	if (ioctl(fd, TIOCGWINSZ, &ws) < 0)
 		syslog(LOG_WARNING, _("TIOCGWINSZ ioctl failed: %m"));
 
-	tcgetattr(0, &tt);
+	tcgetattr(fd, &tt);
 	ttt = tt;
 	ttt.c_cflag &= ~HUPCL;
 
-	if ((fchown(0, 0, 0) || fchmod(0, cxt->tty_mode)) && errno != EROFS) {
+	if ((fchown(fd, 0, 0) || fchmod(fd, cxt->tty_mode)) && errno != EROFS) {
 
 		syslog(LOG_ERR, _("FATAL: %s: change permissions failed: %m"),
 				cxt->tty_path);
@@ -563,7 +565,7 @@ static void init_tty(struct login_context *cxt)
 	}
 
 	/* Kill processes left on this tty */
-	tcsetattr(0, TCSANOW, &ttt);
+	tcsetattr(fd, TCSANOW, &ttt);
 
 	/*
 	 * Let's close file descriptors before vhangup
@@ -581,7 +583,7 @@ static void init_tty(struct login_context *cxt)
 	open_tty(cxt->tty_path);
 
 	/* restore tty modes */
-	tcsetattr(0, TCSAFLUSH, &tt);
+	tcsetattr(STDIN_FILENO, TCSAFLUSH, &tt);
 
 	/* Restore tty size */
 	if ((ws.ws_row > 0 || ws.ws_col > 0)
