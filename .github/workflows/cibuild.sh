@@ -83,7 +83,6 @@ for phase in "${PHASES[@]}"; do
             --disable-use-tty-group
             --disable-makeinstall-chown
             --enable-all-programs
-            --enable-werror
         )
 
         if [[ "$COVERAGE" == "yes" ]]; then
@@ -94,6 +93,8 @@ for phase in "${PHASES[@]}"; do
             opts+=(--enable-asan --enable-ubsan)
             CFLAGS+=(-fno-omit-frame-pointer)
             CXXFLAGS+=(-fno-omit-frame-pointer)
+        else
+            opts+=(--enable-werror)
         fi
 
         if [[ "$COMPILER" == clang* && "$SANITIZE" == "yes" ]]; then
