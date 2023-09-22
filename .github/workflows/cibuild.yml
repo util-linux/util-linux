@@ -221,7 +221,14 @@ jobs:
           echo "COMPILER=$COMPILER" >> $GITHUB_ENV
           echo "OPENWRT_RELEASE=$OPENWRT_RELEASE" >> $GITHUB_ENV
           echo "OPENWRT_SDK=$OPENWRT_SDK" >> $GITHUB_ENV
+      - name: Cache OpenWRT SDK
+        id: cache-openwrt-sdk
+        uses: actions/cache@v3
+        with:
+          path: ~/${{ env.OPENWRT_SDK }}
+          key: ${{ env.OPENWRT_SDK }}
       - name: Download toolchain
+        if: steps.cache-openwrt-sdk.outputs.cache-hit != 'true'
         run: |
           curl -o ~/${{ env.OPENWRT_SDK }}.tar.xz -C - https://downloads.cdn.openwrt.org/releases/${{ env.OPENWRT_RELEASE }}/targets/${{ matrix.target }}/${{ matrix.subtarget }}/${{ env.OPENWRT_SDK }}.tar.xz
           tar xf ~/${{ env.OPENWRT_SDK }}.tar.xz -C ~
