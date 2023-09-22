@@ -28,7 +28,7 @@ jobs:
       matrix:
         env:
           # gcc-13 has false-positives with ubsan
-          - { COMPILER: "gcc",   COMPILER_VERSION: "11", SANITIZE: "yes"  }
+          - { COMPILER: "gcc",   COMPILER_VERSION: "13", SANITIZE: "yes"  }
           - { COMPILER: "gcc",   COMPILER_VERSION: "13", SANITIZE: "no"   }
           - { COMPILER: "clang", COMPILER_VERSION: "16", SANITIZE: "yes"  }
           - { COMPILER: "clang", COMPILER_VERSION: "16", SANITIZE: "no"   }
