@@ -356,11 +356,11 @@ static void env_argscan(struct more_control *ctl, const char *s)
 	env_argv = xmalloc(sizeof(char *) * size);
 	env_argv[0] = _("MORE environment variable");	/* program name */
 	for (tok = strtok_r(str, delim, &key); tok; tok = strtok_r(NULL, delim, &key)) {
-		env_argv[env_argc++] = tok;
-		if (size < env_argc) {
+		if (size == env_argc) {
 			size *= 2;
 			env_argv = xrealloc(env_argv, sizeof(char *) * size);
 		}
+		env_argv[env_argc++] = tok;
 	}
 
 	argscan(ctl, env_argc, env_argv);
