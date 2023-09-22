@@ -576,4 +576,17 @@ static inline void print_features(const char **features, const char *prefix)
 
 #define SINT_MAX(t) (((t)1 << (sizeof(t) * 8 - 2)) - (t)1 + ((t)1 << (sizeof(t) * 8 - 2)))
 
+#ifndef HAVE_REALLOCARRAY
+static inline void *reallocarray(void *ptr, size_t nmemb, size_t size)
+{
+	size_t s = nmemb * size;
+
+	if (nmemb != 0 && s / nmemb != size) {
+		errno = ENOMEM;
+		return NULL;
+	}
+	return realloc(ptr, s);
+}
+#endif
+
 #endif /* UTIL_LINUX_C_H */

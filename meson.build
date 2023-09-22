@@ -553,6 +553,7 @@ funcs = '''
         posix_fadvise
         prctl
         qsort_r
+        reallocarray
         rpmatch
         scandirat
         setprogname
