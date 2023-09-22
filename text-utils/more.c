@@ -298,7 +298,7 @@ static void argscan(struct more_control *ctl, int as_argc, char **as_argv)
 			}
 		}
 		if (move) {
-			as_argc = remote_entry(as_argv, opt, as_argc);
+			as_argc = remove_entry(as_argv, opt, as_argc);
 			opt--;
 		}
 	}

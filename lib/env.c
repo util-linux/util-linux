@@ -159,7 +159,7 @@ void __sanitize_env(struct ul_env_list **org)
                         if (strncmp(*cur, *bad, strlen(*bad)) == 0) {
 				if (org)
 					*org = env_list_add(*org, *cur);
-                                last = remote_entry(envp, cur - envp, last);
+                                last = remove_entry(envp, cur - envp, last);
                                 cur--;
                                 break;
                         }
@@ -174,7 +174,7 @@ void __sanitize_env(struct ul_env_list **org)
                                 continue;  /* OK */
 			if (org)
 				*org = env_list_add(*org, *cur);
-                        last = remote_entry(envp, cur - envp, last);
+                        last = remove_entry(envp, cur - envp, last);
                         cur--;
                         break;
                 }
