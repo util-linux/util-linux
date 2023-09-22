@@ -165,7 +165,7 @@ static struct replay_log *replay_new_log(struct replay_setup *stp,
 	assert(streams);
 	assert(filename);
 
-	stp->logs = xrealloc(stp->logs, (stp->nlogs + 1) *  sizeof(*log));
+	stp->logs = xreallocarray(stp->logs, stp->nlogs + 1,  sizeof(*log));
 	log = &stp->logs[stp->nlogs];
 	stp->nlogs++;
 

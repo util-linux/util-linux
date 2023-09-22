@@ -60,8 +60,7 @@ static void add_filesystem(struct lsblk_device *dev, struct libmnt_fs *fs)
 	assert(dev);
 	assert(fs);
 
-	dev->fss = xrealloc(dev->fss, (dev->nfss + 1)
-					* sizeof(struct libmnt_fs *));
+	dev->fss = xreallocarray(dev->fss, dev->nfss + 1, sizeof(struct libmnt_fs *));
 	dev->fss[dev->nfss] = fs;
 	dev->nfss++;
 	dev->is_mounted = 1;

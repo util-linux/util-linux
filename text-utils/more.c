@@ -359,7 +359,7 @@ static void env_argscan(struct more_control *ctl, const char *s)
 		env_argv[env_argc++] = tok;
 		if (size < env_argc) {
 			size *= 2;
-			env_argv = xrealloc(env_argv, sizeof(char *) * size);
+			env_argv = xreallocarray(env_argv, size, sizeof(char *));
 		}
 	}
 

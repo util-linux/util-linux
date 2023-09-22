@@ -380,8 +380,8 @@ static int colors_add_scheme(struct ul_color_ctl *cc,
 
 	/* enlarge the array */
 	if (cc->nschemes == cc->schemes_sz) {
-		void *tmp = realloc(cc->schemes, (cc->nschemes + 10)
-					* sizeof(struct ul_color_scheme));
+		void *tmp = reallocarray(cc->schemes, cc->nschemes + 10,
+					 sizeof(struct ul_color_scheme));
 		if (!tmp)
 			goto err;
 		cc->schemes = tmp;

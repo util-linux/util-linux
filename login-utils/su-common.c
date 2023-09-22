@@ -1019,7 +1019,7 @@ static gid_t add_supp_group(const char *name, gid_t **groups, size_t *ngroups)
 
 	DBG(MISC, ul_debug("add %s group [name=%s, GID=%d]", name, gr->gr_name, (int) gr->gr_gid));
 
-	*groups = xrealloc(*groups, sizeof(gid_t) * (*ngroups + 1));
+	*groups = xreallocarray(*groups, *ngroups + 1, sizeof(gid_t));
 	(*groups)[*ngroups] = gr->gr_gid;
 	(*ngroups)++;
 

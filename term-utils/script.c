@@ -260,8 +260,8 @@ static struct script_log *log_associate(struct script_control *ctl,
 	}
 
 	/* add log to the stream */
-	stream->logs = xrealloc(stream->logs,
-			(stream->nlogs + 1) * sizeof(log));
+	stream->logs = xreallocarray(stream->logs,
+			stream->nlogs + 1, sizeof(log));
 	stream->logs[stream->nlogs] = log;
 	stream->nlogs++;
 

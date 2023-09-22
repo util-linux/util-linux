@@ -598,8 +598,8 @@ static void add_mnt_ns(ino_t id)
 		nmax = (nspaces + 16) / 16 * 16;
 	if (nmax <= nspaces + 1) {
 		nmax += 16;
-		mnt_namespaces = xrealloc(mnt_namespaces,
-					sizeof(ino_t) * nmax);
+		mnt_namespaces = xreallocarray(mnt_namespaces,
+					       nmax, sizeof(ino_t));
 	}
 	mnt_namespaces[nspaces++] = id;
 }
@@ -1687,7 +1687,7 @@ static void parse_pids(const char *str, pid_t **pids, int *count)
 		errx(EXIT_FAILURE, _("out of range value for pid specification: %ld"), v);
 
 	(*count)++;
-	*pids = xrealloc(*pids, (*count) * sizeof(**pids));
+	*pids = xreallocarray(*pids, *count, sizeof(**pids));
 	(*pids)[*count - 1] = (pid_t)v;
 
 	while (next && *next != '\0'

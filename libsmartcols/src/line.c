@@ -136,7 +136,7 @@ int scols_line_alloc_cells(struct libscols_line *ln, size_t n)
 
 	DBG(LINE, ul_debugobj(ln, "alloc %zu cells", n));
 
-	ce = realloc(ln->cells, n * sizeof(struct libscols_cell));
+	ce = reallocarray(ln->cells, n, sizeof(struct libscols_cell));
 	if (!ce)
 		return -errno;
 

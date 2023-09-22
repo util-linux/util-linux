@@ -2850,7 +2850,7 @@ static int mnt_context_add_child(struct libmnt_context *cxt, pid_t pid)
 	if (!cxt)
 		return -EINVAL;
 
-	pids = realloc(cxt->children, sizeof(pid_t) * cxt->nchildren + 1);
+	pids = reallocarray(cxt->children, cxt->nchildren + 1, sizeof(pid_t));
 	if (!pids)
 		return -ENOMEM;
 

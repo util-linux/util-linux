@@ -244,11 +244,11 @@ static void flush_line(struct col_ctl *ctl, struct col_line *l)
 		 */
 		if (sorted_size < l->l_lsize) {
 			sorted_size = l->l_lsize;
-			sorted = xrealloc(sorted, sizeof(struct col_char) * sorted_size);
+			sorted = xreallocarray(sorted, sorted_size, sizeof(struct col_char));
 		}
 		if (count_size <= l->l_max_col) {
 			count_size = l->l_max_col + 1;
-			count = xrealloc(count, sizeof(size_t) * count_size);
+			count = xreallocarray(count, count_size, sizeof(size_t));
 		}
 		memset(count, 0, sizeof(size_t) * l->l_max_col + 1);
 		for (i = nchars, c = l->l_line; c && 0 < i; i--, c++)

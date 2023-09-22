@@ -505,7 +505,7 @@ static int parse_utmpx(const char *path, size_t *nrecords, struct utmpx **record
 			break;
 		}
 		if (i == imax)
-			ary = xrealloc(ary, (imax *= 2) * sizeof(struct utmpx));
+			ary = xreallocarray(ary, imax *= 2, sizeof(struct utmpx));
 		ary[i] = *u;
 	}
 
@@ -993,7 +993,7 @@ static int get_ulist(struct lslogins_control *ctl, char *logins, char *groups)
 			(*ar)[i++] = xstrdup(u);
 
 			if (i == *arsiz)
-				*ar = xrealloc(*ar, sizeof(char *) * (*arsiz += 32));
+				*ar = xreallocarray(*ar, *arsiz += 32, sizeof(char *));
 		}
 		ctl->ulist_on = 1;
 	}
@@ -1018,7 +1018,7 @@ static int get_ulist(struct lslogins_control *ctl, char *logins, char *groups)
 				(*ar)[i++] = xstrdup(u);
 
 				if (i == *arsiz)
-					*ar = xrealloc(*ar, sizeof(char *) * (*arsiz += 32));
+					*ar = xreallocarray(*ar, *arsiz += 32, sizeof(char *));
 			}
 		}
 		ctl->ulist_on = 1;

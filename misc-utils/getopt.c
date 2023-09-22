@@ -256,9 +256,9 @@ static void add_longopt(struct getopt_control *ctl, const char *name, int has_ar
 
 	if (ctl->long_options_nr == ctl->long_options_length) {
 		ctl->long_options_length += REALLOC_INCREMENT;
-		ctl->long_options = xrealloc(ctl->long_options,
-					     sizeof(struct option) *
-					     ctl->long_options_length);
+		ctl->long_options = xreallocarray(ctl->long_options,
+						  ctl->long_options_length,
+						  sizeof(struct option));
 	}
 	if (name) {
 		/* Not for init! */
