@@ -90,7 +90,7 @@ static struct ul_env_list *env_list_add(struct ul_env_list *ls0, const char *str
 struct ul_env_list *env_from_fd(int fd)
 {
 	char *buf = NULL, *p;
-	size_t rc = 0;
+	ssize_t rc = 0;
 	struct ul_env_list *ls = NULL;
 
 	if ((rc = read_all_alloc(fd, &buf)) < 1)
