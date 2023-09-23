@@ -161,6 +161,23 @@ static int parse_subseconds(const char *t, usec_t *usec)
 	return 0;
 }
 
+static const char *parse_epoch_seconds(const char *t, struct tm *tm)
+{
+	int64_t s;
+	time_t st;
+	int f, c;
+
+	f = sscanf(t, "%"SCNd64"%n", &s, &c);
+	if (f < 1)
+		return NULL;
+	st = s;
+	if ((int64_t) st < s)
+		return NULL;
+	if (!localtime_r(&st, tm))
+		return NULL;
+	return t + c;
+}
+
 static int parse_timestamp_reference(time_t x, const char *t, usec_t *usec)
 {
 	static const struct {
@@ -254,7 +271,7 @@ static int parse_timestamp_reference(time_t x, const char *t, usec_t *usec)
 
 		goto finish;
 	} else if (t[0] == '@') {
-		k = strptime(t + 1, "%s", &tm);
+		k = parse_epoch_seconds(t + 1, &tm);
 		if (k && *k == 0)
 			goto finish;
 		else if (k && parse_subseconds(k, &ret) == 0)
