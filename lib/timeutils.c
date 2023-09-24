@@ -836,6 +836,7 @@ int main(int argc, char *argv[])
 {
 	struct timespec ts = { 0 };
 	char buf[ISO_BUFSIZ];
+	int r;
 
 	if (argc < 2) {
 		fprintf(stderr, "usage: %s [<time> [<usec>]] | [--timestamp <str>] | [--unittest-timestamp]\n", argv[0]);
@@ -852,7 +853,9 @@ int main(int argc, char *argv[])
 	if (strcmp(argv[1], "--timestamp") == 0) {
 		usec_t usec = 0;
 
-		parse_timestamp(argv[2], &usec);
+		r = parse_timestamp(argv[2], &usec);
+		if (r)
+			errx(EXIT_FAILURE, "Can not parse '%s': %s", argv[2], strerror(-r));
 		ts.tv_sec = (time_t) (usec / USEC_PER_SEC);
 		ts.tv_nsec = (usec % USEC_PER_SEC) * NSEC_PER_USEC;
 	} else {
