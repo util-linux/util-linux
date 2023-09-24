@@ -373,11 +373,13 @@ static int parse_timestamp_reference(time_t x, const char *t, usec_t *usec)
 
 	ret += (usec_t) x * USEC_PER_SEC;
 
+	if (minus > ret)
+		return -ERANGE;
+	if ((ret + plus) < ret)
+		return -ERANGE;
+
 	ret += plus;
-	if (ret > minus)
-		ret -= minus;
-	else
-		ret = 0;
+	ret -= minus;
 
 	*usec = ret;
 
