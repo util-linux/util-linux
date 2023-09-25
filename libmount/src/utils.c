@@ -526,7 +526,7 @@ static int add_filesystem(char ***filesystems, char *name)
 
 	if (n == 0 || !((n + 1) % MYCHUNK)) {
 		size_t items = ((n + 1 + MYCHUNK) / MYCHUNK) * MYCHUNK;
-		char **x = realloc(*filesystems, items * sizeof(char *));
+		char **x = reallocarray(*filesystems, items, sizeof(char *));
 
 		if (!x)
 			goto err;

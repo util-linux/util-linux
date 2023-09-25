@@ -495,7 +495,7 @@ static unsigned int write_directory_structure(struct entry *entry, char *base, u
 			if (entry->child) {
 				if (stack_entries >= stack_size) {
 					stack_size *= 2;
-					entry_stack = xrealloc(entry_stack, stack_size * sizeof(struct entry *));
+					entry_stack = xreallocarray(entry_stack, stack_size, sizeof(struct entry *));
 				}
 				entry_stack[stack_entries] = entry;
 				stack_entries++;

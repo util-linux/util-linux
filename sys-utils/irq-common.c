@@ -328,8 +328,8 @@ static struct irq_stat *get_irqinfo(int softirq, size_t setsize, cpu_set_t *cpus
 
 		if (stat->nr_irq == stat->nr_irq_info) {
 			stat->nr_irq_info *= 2;
-			stat->irq_info = xrealloc(stat->irq_info,
-						  sizeof(*stat->irq_info) * stat->nr_irq_info);
+			stat->irq_info = xreallocarray(stat->irq_info, stat->nr_irq_info,
+						       sizeof(*stat->irq_info));
 		}
 	}
 	fclose(irqfile);

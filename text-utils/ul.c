@@ -141,7 +141,7 @@ static void need_column(struct ul_ctl *ctl, size_t new_max)
 
 	while (new_max >= ctl->buflen) {
 		ctl->buflen *= 2;
-		ctl->buf = xrealloc(ctl->buf, sizeof(struct ul_char) * ctl->buflen);
+		ctl->buf = xreallocarray(ctl->buf, ctl->buflen, sizeof(struct ul_char));
 	}
 }
 

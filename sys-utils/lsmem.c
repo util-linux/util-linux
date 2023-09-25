@@ -477,7 +477,7 @@ static void read_info(struct lsmem *lsmem)
 			continue;
 		}
 		lsmem->nblocks++;
-		lsmem->blocks = xrealloc(lsmem->blocks, lsmem->nblocks * sizeof(blk));
+		lsmem->blocks = xreallocarray(lsmem->blocks, lsmem->nblocks, sizeof(blk));
 		*&lsmem->blocks[lsmem->nblocks - 1] = blk;
 	}
 }

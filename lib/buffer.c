@@ -49,7 +49,7 @@ int ul_buffer_is_empty(struct ul_buffer *buf)
 int ul_buffer_save_pointer(struct ul_buffer *buf, unsigned short ptr_idx)
 {
 	if (ptr_idx >= buf->nptrs) {
-		char **tmp = realloc(buf->ptrs, (ptr_idx + 1) * sizeof(char *));
+		char **tmp = reallocarray(buf->ptrs, ptr_idx + 1, sizeof(char *));
 
 		if (!tmp)
 			return -EINVAL;

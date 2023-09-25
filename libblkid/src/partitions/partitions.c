@@ -436,8 +436,8 @@ static blkid_partition new_partition(blkid_partlist ls, blkid_parttable tab)
 		/* Linux kernel has DISK_MAX_PARTS=256, but it's too much for
 		 * generic Linux machine -- let start with 32 partitions.
 		 */
-		void *tmp = realloc(ls->parts, (ls->nparts_max + 32) *
-					sizeof(struct blkid_struct_partition));
+		void *tmp = reallocarray(ls->parts, ls->nparts_max + 32,
+					 sizeof(struct blkid_struct_partition));
 		if (!tmp)
 			return NULL;
 		ls->parts = tmp;

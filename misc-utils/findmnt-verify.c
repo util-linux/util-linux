@@ -301,7 +301,7 @@ static int add_filesystem(struct verify_context *vfy, const char *name)
 
 	if (vfy->fs_alloc == 0 || vfy->fs_num + 1 <= vfy->fs_alloc) {
 		vfy->fs_alloc = ((vfy->fs_alloc + 1 + MYCHUNK) / MYCHUNK) * MYCHUNK;
-		vfy->fs_ary = xrealloc(vfy->fs_ary, vfy->fs_alloc * sizeof(char *));
+		vfy->fs_ary = xreallocarray(vfy->fs_ary, vfy->fs_alloc, sizeof(char *));
 	}
 
 	vfy->fs_ary[vfy->fs_num] = xstrdup(name);

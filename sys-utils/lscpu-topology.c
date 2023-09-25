@@ -274,8 +274,8 @@ static struct lscpu_cache *add_cache(struct lscpu_cxt *cxt,
 	struct lscpu_cache *ca;
 
 	cxt->ncaches++;
-	cxt->caches = xrealloc(cxt->caches,
-			       cxt->ncaches * sizeof(*cxt->caches));
+	cxt->caches = xreallocarray(cxt->caches,
+				    cxt->ncaches, sizeof(*cxt->caches));
 
 	ca = &cxt->caches[cxt->ncaches - 1];
 	memset(ca, 0 , sizeof(*ca));

@@ -585,7 +585,7 @@ static void add_entry(struct column_control *ctl, size_t *maxents, wchar_t *wcs)
 {
 	if (ctl->nents <= *maxents) {
 		*maxents += 1000;
-		ctl->ents = xrealloc(ctl->ents, *maxents * sizeof(wchar_t *));
+		ctl->ents = xreallocarray(ctl->ents, *maxents, sizeof(wchar_t *));
 	}
 	ctl->ents[ctl->nents] = wcs;
 	ctl->nents++;

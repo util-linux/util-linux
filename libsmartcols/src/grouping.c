@@ -278,7 +278,7 @@ static struct libscols_group **grpset_locate_freespace(struct libscols_table *tb
 	DBG(TAB, ul_debugobj(tb, "   realocate grpset [sz: old=%zu, new=%zu, new_chunks=%d]",
 				tb->grpset_size, tb->grpset_size + wanted, chunks));
 
-	tmp = realloc(tb->grpset, (tb->grpset_size + wanted) * sizeof(struct libscols_group *));
+	tmp = reallocarray(tb->grpset, tb->grpset_size + wanted, sizeof(struct libscols_group *));
 	if (!tmp)
 		return NULL;
 

@@ -182,7 +182,7 @@ int main(int argc, char *argv[])
 				/* So now we double the buffer size */
 				bufsiz *= 2;
 
-				buf = xrealloc(buf, bufsiz * sizeof(wchar_t));
+				buf = xreallocarray(buf, bufsiz, sizeof(wchar_t));
 
 				/* And fill the rest of the buffer */
 				len += read_line(sep, &buf[len], bufsiz/2, fp);

@@ -375,7 +375,7 @@ static int journald_entry(struct logger_ctl *ctl, FILE *fp)
 			vectors *= 2;
 			if (IOV_MAX < vectors)
 				errx(EXIT_FAILURE, _("maximum input lines (%d) exceeded"), IOV_MAX);
-			iovec = xrealloc(iovec, vectors * sizeof(struct iovec));
+			iovec = xreallocarray(iovec, vectors, sizeof(struct iovec));
 		}
 		iovec[lines].iov_base = buf;
 		iovec[lines].iov_len = sz;

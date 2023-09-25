@@ -109,8 +109,8 @@ struct lscpu_cputype *lscpu_cputype_get_default(struct lscpu_cxt *cxt)
 struct lscpu_cputype *lscpu_add_cputype(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
 {
 	DBG(TYPE, ul_debugobj(ct, "add new"));
-	cxt->cputypes = xrealloc(cxt->cputypes, (cxt->ncputypes + 1)
-				* sizeof(struct lscpu_cputype *));
+	cxt->cputypes = xreallocarray(cxt->cputypes, cxt->ncputypes + 1,
+				      sizeof(struct lscpu_cputype *));
 	cxt->cputypes[cxt->ncputypes] = ct;
 	cxt->ncputypes++;
 	lscpu_ref_cputype(ct);
@@ -434,8 +434,8 @@ static int cpuinfo_parse_cache(struct lscpu_cxt *cxt, int keynum, char *data)
 		return 0;
 
 	cxt->necaches++;
-	cxt->ecaches = xrealloc(cxt->ecaches,
-				cxt->necaches * sizeof(struct lscpu_cache));
+	cxt->ecaches = xreallocarray(cxt->ecaches,
+				     cxt->necaches, sizeof(struct lscpu_cache));
 	cache = &cxt->ecaches[cxt->necaches - 1];
 	memset(cache, 0 , sizeof(*cache));
 
