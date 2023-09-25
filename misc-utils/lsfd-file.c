@@ -34,6 +34,10 @@
 #include <linux/sched.h>
 #include <sys/shm.h>
 
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <mqueue.h>		/* mq_open */
+
 #include "buffer.h"
 #include "idcache.h"
 #include "strutils.h"
@@ -460,6 +464,34 @@ static unsigned long get_minor_for_sysvipc(void)
 	return m;
 }
 
+static unsigned long get_minor_for_mqueue(void)
+{
+	mqd_t mq;
+	char mq_name[BUFSIZ];
+	struct mq_attr attr = {
+		.mq_maxmsg = 1,
+		.mq_msgsize = 1,
+	};
+
+	pid_t self = getpid();
+	struct stat sb;
+
+	snprintf(mq_name, sizeof(mq_name), "/.lsfd-mqueue-nodev-test:%d", self);
+	mq = mq_open(mq_name, O_CREAT|O_EXCL | O_RDONLY, S_IRUSR | S_IWUSR, &attr);
+	if (mq < 0)
+		return 0;
+
+	if (fstat((int)mq, &sb) < 0) {
+		mq_close(mq);
+		mq_unlink(mq_name);
+		return 0;
+	}
+
+	mq_close(mq);
+	mq_unlink(mq_name);
+	return minor(sb.st_dev);
+}
+
 static void file_class_initialize(void)
 {
 	unsigned long m;
@@ -474,6 +506,10 @@ static void file_class_initialize(void)
 	m = get_minor_for_sysvipc();
 	if (m)
 		add_nodev(m, "tmpfs");
+
+	m = get_minor_for_mqueue();
+	if (m)
+		add_nodev(m, "mqueue");
 }
 
 static void file_class_finalize(void)
