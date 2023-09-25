@@ -97,7 +97,7 @@ static int __probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag, int save_
 	 */
 	sector_size = le16_to_cpu(ns->bpb.sector_size);
 
-	if (sector_size < 256 || sector_size > 4096)
+	if (sector_size < 256 || sector_size > 4096 || !is_power_of_2(sector_size))
 		return 1;
 
 	switch (ns->bpb.sectors_per_cluster) {
