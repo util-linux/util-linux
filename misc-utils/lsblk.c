@@ -1317,18 +1317,18 @@ static void device_to_scols(
 			if (x)
 				scols_line_remove_child(x, ln);
 			scols_table_remove_line(tab, ln);
-			goto done;
+			ln = NULL;
 		}
 	}
 
 	/* read column specific data and set it to smartcols table line */
-	for (i = 0; i < ncolumns; i++) {
+	for (i = 0; ln && i < ncolumns; i++) {
 		if (scols_line_is_filled(ln, i))
 			continue;
 		device_fill_scols_cell(dev, parent, ln, i);
 	}
 
-	if (link_group) {
+	if (ln && link_group) {
 		struct lsblk_device *p;
 		struct libscols_line *gr = parent_line;
 
@@ -1371,7 +1371,6 @@ static void device_to_scols(
 			scols_line_set_color(ln, lsblk->hlighter_seq);
 	}
 
-done:
 	/* Let's be careful with number of open files */
 	ul_path_close_dirfd(dev->sysfs);
 }
