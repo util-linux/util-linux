@@ -627,7 +627,7 @@ static int print_data(struct libscols_table *tb,
 		return 0;
 
 	case SCOLS_FMT_EXPORT:
-		fputs(name, tb->out);
+		fputs(name ?: "", tb->out);
 		fputc('=', tb->out);
 		fputs_quoted(data, tb->out);
 		if (!is_last)

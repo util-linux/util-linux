@@ -257,7 +257,7 @@ static int my_cfsetspeed(struct termios *ts, int speed)
 static void handler(int s)
 {
 	dbg("got SIG %i -> exiting", s);
-	exit(EXIT_SUCCESS);
+	_exit(EXIT_SUCCESS);
 }
 
 static void gsm0710_set_conf(int tty_fd)

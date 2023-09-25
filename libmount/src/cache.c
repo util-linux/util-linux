@@ -588,6 +588,9 @@ char *mnt_resolve_target(const char *path, struct libmnt_cache *cache)
 {
 	char *p = NULL;
 
+	if (!path)
+		return NULL;
+
 	/*DBG(CACHE, ul_debugobj(cache, "resolving target %s", path));*/
 
 	if (!cache || !cache->mountinfo)

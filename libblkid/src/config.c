@@ -155,6 +155,7 @@ dflt:
 		fclose(f);
 	return conf;
 err:
+	free(conf->cachefile);
 	free(conf);
 	fclose(f);
 	return NULL;

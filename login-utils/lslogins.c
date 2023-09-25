@@ -478,7 +478,7 @@ static struct utmpx *get_last_btmp(struct lslogins_control *ctl, const char *use
 
 static int parse_utmpx(const char *path, size_t *nrecords, struct utmpx **records)
 {
-	size_t i, imax = 0;
+	size_t i, imax = 1;
 	struct utmpx *ary = NULL;
 	struct stat st;
 

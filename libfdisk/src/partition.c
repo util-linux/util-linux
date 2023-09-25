@@ -40,6 +40,8 @@ static void init_partition(struct fdisk_partition *pa)
 struct fdisk_partition *fdisk_new_partition(void)
 {
 	struct fdisk_partition *pa = calloc(1, sizeof(*pa));
+	if (!pa)
+		return NULL;
 
 	pa->refcount = 1;
 	init_partition(pa);
