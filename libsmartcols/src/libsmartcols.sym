@@ -231,4 +231,11 @@ SMARTCOLS_2.40 {
 	scols_line_apply_filter;
 	scols_filter_set_filler_cb;
 	scols_line_is_filled;
+	scols_filter_new_counter;
+	scols_counter_set_name;
+	scols_counter_set_param;
+	scols_counter_set_func;
+	scols_counter_get_result;
+	scols_counter_get_name;
+	scols_filter_next_counter;
 } SMARTCOLS_2.39;

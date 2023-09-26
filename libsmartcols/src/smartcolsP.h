@@ -532,6 +532,18 @@ struct filter_node {
 struct filter_param;
 struct filter_expr;
 
+struct libscols_counter {
+	char *name;
+	struct list_head counters;
+	struct filter_param *param;
+	struct libscols_filter *filter;
+
+	int func;
+	unsigned long long result;
+
+	unsigned int neg : 1;
+};
+
 struct libscols_filter {
 	int refcount;
 	char *errmsg;
@@ -542,6 +554,7 @@ struct libscols_filter {
 	void *filler_data;
 
 	struct list_head params;
+	struct list_head counters;
 };
 
 struct filter_node *__filter_new_node(enum filter_ntype type, size_t sz);
@@ -575,6 +588,10 @@ int filter_cast_param(struct libscols_filter *fltr,
                       struct filter_param **result);
 
 int is_filter_holder_node(struct filter_node *n);
+
+int filter_count_param(struct libscols_filter *fltr,
+                struct libscols_line *ln,
+                struct libscols_counter *ct);
 
 /* expr */
 void filter_free_expr(struct filter_expr *n);

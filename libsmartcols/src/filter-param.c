@@ -317,6 +317,51 @@ done:
 	return rc;
 }
 
+int filter_count_param(struct libscols_filter *fltr,
+		struct libscols_line *ln,
+		struct libscols_counter *ct)
+{
+	unsigned long long num;
+
+
+	if (ct->func == SCOLS_COUNTER_COUNT) {
+		ct->result++;
+		return 0;
+	}
+
+	if (ct->param) {
+		int rc;
+
+		ct->param->type = F_DATA_NUMBER;
+		rc = fetch_holder_data(fltr, ct->param, ln);
+		if (rc)
+			return rc;
+	}
+	if (!ct->param->has_value)
+		return -EINVAL;
+
+	num = ct->param->val.num;
+
+	switch (ct->func) {
+	case SCOLS_COUNTER_MAX:
+		if (num > ct->result)
+			ct->result = num;
+		break;
+	case SCOLS_COUNTER_MIN:
+		if (num < ct->result)
+			ct->result = num;
+		break;
+	case SCOLS_COUNTER_SUM:
+		ct->result += num;
+		break;
+	default:
+		return -EINVAL;
+	}
+
+	DBG(FLTR, ul_debugobj(fltr, "counted '%s' [result: %llu]", ct->name, ct->result));
+	return 0;
+}
+
 static int xstrcmp(char *a, char *b)
 {
 	if (!a && !b)
