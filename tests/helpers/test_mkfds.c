@@ -2406,8 +2406,8 @@ static void free_mqueue(const struct factory * factory _U_, void *data)
 	}
 }
 
-static void *make_mqueue(const struct factory *factory _U_, struct fdesc fdescs[],
-			 int argc _U_, char ** argv _U_)
+static void *make_mqueue(const struct factory *factory, struct fdesc fdescs[],
+			 int argc, char ** argv)
 {
 	struct mqueue_data *mqueue_data;
 	struct arg path = decode_arg("path", factory->params, argc, argv);
@@ -2567,7 +2567,7 @@ static void free_sysvshm(const struct factory *factory _U_, void *data)
 	shmctl(sysvshm_data->id, IPC_RMID, NULL);
 }
 
-static void *make_eventpoll(const struct factory *factory _U_, struct fdesc fdescs[] _U_,
+static void *make_eventpoll(const struct factory *factory _U_, struct fdesc fdescs[],
 			    int argc _U_, char ** argv _U_)
 {
 	int efd;
@@ -2846,8 +2846,8 @@ static void free_cdev_tun(const struct factory * factory _U_, void *data)
 	free(data);
 }
 
-static void *make_bpf_prog(const struct factory *factory _U_, struct fdesc fdescs[],
-			   int argc _U_, char ** argv _U_)
+static void *make_bpf_prog(const struct factory *factory, struct fdesc fdescs[],
+			   int argc, char ** argv)
 {
 	struct arg prog_type_id = decode_arg("prog-type-id", factory->params, argc, argv);
 	int iprog_type_id = ARG_INTEGER(prog_type_id);
@@ -2953,8 +2953,8 @@ static void *make_some_pipes(const struct factory *factory _U_, struct fdesc fde
 	return NULL;
 }
 
-static void *make_bpf_map(const struct factory *factory _U_, struct fdesc fdescs[],
-			  int argc _U_, char ** argv _U_)
+static void *make_bpf_map(const struct factory *factory, struct fdesc fdescs[],
+			  int argc, char ** argv)
 {
 	struct arg map_type_id = decode_arg("map-type-id", factory->params, argc, argv);
 	int imap_type_id = ARG_INTEGER(map_type_id);
