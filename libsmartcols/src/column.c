@@ -280,6 +280,58 @@ const char *scols_column_get_name(struct libscols_column *cl)
 }
 
 /**
+ * scols_shellvar_name:
+ * @name: raw (column) name
+ * @schellvar: returns normalized name
+ *
+ * Converts @name to a name compatible with shell. The buffer is reallocated if
+ * not large enough.
+ *
+ * Returns: 0 in case of conversion, 1 if conversion unnecessary, <0 on error.
+ *
+ * Since: 2.40
+ */
+int scols_shellvar_name(const char *name, char **buf, size_t *bufsz)
+{
+	char *p;
+	const char *s;
+	size_t sz;
+
+	if (!name || !*name || !buf || !bufsz)
+		return -EINVAL;
+
+	/* size to convert "1FOO%" --> "_1FOO_PCT */
+	sz = strlen(name) + 1 + 3;
+	if (sz + 1 > *bufsz) {
+		char *tmp;
+
+		*bufsz = sz + 1;
+		tmp = realloc(*buf, *bufsz);
+		if (!tmp)
+			return -ENOMEM;
+		*buf = tmp;
+	}
+	memset(*buf, 0, *bufsz);
+	p = *buf;
+
+	 /* convert "1FOO" to "_1FOO" */
+	if (!isalpha(*name))
+		*p++ = '_';
+
+	/* replace all "bad" chars with "_" */
+	for (s = name; *s; s++)
+		*p++ = !isalnum(*s) ? '_' : *s;
+
+	if (!*s && *(s - 1) == '%') {
+		*p++ = 'P';
+		*p++ = 'C';
+		*p++ = 'T';
+	}
+
+	return strcmp(name, *buf) == 0;
+}
+
+/**
  * scols_column_get_name_as_shellvar
  * @cl: a pointer to a struct libscols_column instance
  *
@@ -291,32 +343,13 @@ const char *scols_column_get_name(struct libscols_column *cl)
 const char *scols_column_get_name_as_shellvar(struct libscols_column *cl)
 {
 	if (!cl->shellvar) {
-		const char *s, *name = scols_column_get_name(cl);
-		char *p;
-		size_t sz;
+		const char *name = scols_column_get_name(cl);
+		size_t sz = 0;
 
 		if (!name || !*name)
 			return NULL;
-
-		/* "1FOO%" --> "_1FOO_PCT */
-		sz = strlen(name) + 1 + 3;
-		p = cl->shellvar = calloc(1, sz + 1);
-		if (!cl->shellvar)
+		if (scols_shellvar_name(name, &cl->shellvar, &sz) < 0)
 			return NULL;
-
-		 /* convert "1FOO" to "_1FOO" */
-		if (!isalpha(*name))
-			*p++ = '_';
-
-		/* replace all "bad" chars with "_" */
-		for (s = name; *s; s++)
-			*p++ = !isalnum(*s) ? '_' : *s;
-
-		if (!*s && *(s - 1) == '%') {
-			*p++ = 'P';
-			*p++ = 'C';
-			*p++ = 'T';
-		}
 	}
 	return cl->shellvar;
 }

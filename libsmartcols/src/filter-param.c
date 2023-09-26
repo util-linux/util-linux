@@ -782,7 +782,8 @@ int scols_filter_assign_column(struct libscols_filter *fltr,
 		if (n->col)
 			scols_unref_column(n->col);
 
-		DBG(FPARAM, ul_debugobj(n, "assing %s to column", name));
+		DBG(FPARAM, ul_debugobj(n, "assing %s to column %s", name,
+					scols_column_get_name(col)));
 		n->col = col;
 		scols_ref_column(col);
 	}
