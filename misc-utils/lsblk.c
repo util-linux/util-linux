@@ -345,12 +345,30 @@ static int column_name_to_id(const char *name, size_t namesz)
 {
 	size_t i;
 
+	/* name as diplayed for users */
 	for (i = 0; i < ARRAY_SIZE(infos); i++) {
 		const char *cn = infos[i].name;
 
 		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
 			return i;
 	}
+
+	/* name as used in expressions, JSON output etc. */
+	if (strnchr(name, namesz, '_')) {
+		char *buf = NULL;
+		size_t bufsz = 0;
+
+		for (i = 0; i < ARRAY_SIZE(infos); i++) {
+			if (scols_shellvar_name(infos[i].name, &buf, &bufsz) != 0)
+				continue;
+			if (!strncasecmp(name, buf, namesz) && !*(buf + namesz)) {
+				free(buf);
+				return i;
+			}
+		}
+		free(buf);
+	}
+
 	warnx(_("unknown column: %s"), name);
 	return -1;
 }
