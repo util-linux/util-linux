@@ -1299,17 +1299,17 @@ static void device_to_scols(
 	dev->is_printed = 1;
 
 	/* filter lines, smartcols filter can ask for data */
-	if (lsblk->scols_filter) {
+	if (lsblk->filter) {
 		int status = 0;
 		struct filler_data fid = {
 			.dev = dev,
 			.parent = parent
 		};
 
-		scols_filter_set_filler_cb(lsblk->scols_filter,
+		scols_filter_set_filler_cb(lsblk->filter,
 				filter_filler_cb, (void *) &fid);
 
-		if (scols_line_apply_filter(ln, lsblk->scols_filter, &status))
+		if (scols_line_apply_filter(ln, lsblk->filter, &status))
 			err(EXIT_FAILURE, _("failed to apply filter"));
 		if (status == 0) {
 			struct libscols_line *x = scols_line_get_parent(ln);
@@ -1363,10 +1363,10 @@ static void device_to_scols(
 		DBG(DEV, ul_debugobj(dev, "%s <- child done", dev->name));
 	}
 
-	if (lsblk->scols_hlighter) {
+	if (lsblk->hlighter) {
 		int status = 0;
 
-		if (scols_line_apply_filter(ln, lsblk->scols_hlighter, &status) == 0
+		if (scols_line_apply_filter(ln, lsblk->hlighter, &status) == 0
 		    && status)
 			scols_line_set_color(ln, lsblk->hlighter_seq);
 	}
@@ -2057,14 +2057,9 @@ static void devtree_set_dedupkeys(struct lsblk_devtree *tr, int id)
 		device_set_dedupkey(dev, NULL, id);
 }
 
-
-static struct libscols_filter *init_scols_filter(
-			struct libscols_table *tb,
-			const char *query)
+static struct libscols_filter *new_filter(const char *query)
 {
 	struct libscols_filter *f;
-	struct libscols_iter *itr;
-	const char *name = NULL;
 
 	f = scols_new_filter(NULL);
 	if (!f)
@@ -2072,6 +2067,13 @@ static struct libscols_filter *init_scols_filter(
 	if (scols_filter_parse_string(f, query) != 0)
 		errx(EXIT_FAILURE, _("failed to parse \"%s\": %s"), query,
 				scols_filter_get_errmsg(f));
+	return f;
+}
+
+static void init_scols_filter(struct libscols_table *tb, struct libscols_filter *f)
+{
+	struct libscols_iter *itr;
+	const char *name = NULL;
 
 	itr = scols_new_iter(SCOLS_ITER_FORWARD);
 	if (!itr)
@@ -2096,7 +2098,7 @@ static struct libscols_filter *init_scols_filter(
 	}
 
 	scols_free_iter(itr);
-	return f;
+	return;
 fail:
 	errx(EXIT_FAILURE, _("failed to initialize filter"));
 }
@@ -2176,7 +2178,7 @@ int main(int argc, char *argv[])
 	};
 	struct lsblk_devtree *tr = NULL;
 	int c, status = EXIT_FAILURE;
-	char *outarg = NULL, *f_query = NULL, *h_query = NULL;
+	char *outarg = NULL;
 	size_t i;
 	unsigned int width = 0;
 	int force_tree = 0, has_tree_col = 0;
@@ -2287,7 +2289,7 @@ int main(int argc, char *argv[])
 			parse_excludes(optarg);
 			break;
 		case 'H':
-			h_query = optarg;
+			lsblk->hlighter = new_filter(optarg);
 			break;
 		case 'J':
 			lsblk->flags |= LSBLK_JSON;
@@ -2316,7 +2318,7 @@ int main(int argc, char *argv[])
 			lsblk->flags &= ~LSBLK_TREE;	/* disable the default */
 			break;
 		case 'Q':
-			f_query = optarg;
+			lsblk->filter = new_filter(optarg);
 			lsblk->flags &= ~LSBLK_TREE; /* disable the default */
 			break;
 		case 'y':
@@ -2569,13 +2571,13 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (f_query)
-		lsblk->scols_filter = init_scols_filter(lsblk->table, f_query);
+	if (lsblk->filter)
+		init_scols_filter(lsblk->table, lsblk->filter);
 
-	if (h_query && colors_init(UL_COLORMODE_AUTO, "lsblk") > 0) {
+	if (lsblk->hlighter && colors_init(UL_COLORMODE_AUTO, "lsblk") > 0) {
 		lsblk->hlighter_seq = color_scheme_get_sequence("highlight-line", UL_COLOR_RED);
 		scols_table_enable_colors(lsblk->table, 1);
-		lsblk->scols_hlighter = init_scols_filter(lsblk->table, h_query);
+		init_scols_filter(lsblk->table, lsblk->hlighter);
 	}
 
 	tr = lsblk_new_devtree();
@@ -2621,8 +2623,8 @@ leave:
 		unref_sortdata(lsblk->table);
 
 	scols_unref_table(lsblk->table);
-	scols_unref_filter(lsblk->scols_filter);
-	scols_unref_filter(lsblk->scols_hlighter);
+	scols_unref_filter(lsblk->filter);
+	scols_unref_filter(lsblk->hlighter);
 
 	lsblk_mnt_deinit();
 	lsblk_properties_deinit();
