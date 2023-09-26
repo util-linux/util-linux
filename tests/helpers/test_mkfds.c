@@ -3739,6 +3739,7 @@ static const struct factory factories[] = {
 				.desc = "program type by id",
 				.defv.integer = 1,
 			},
+			PARAM_END
 		}
 	},
 	{
