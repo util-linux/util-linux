@@ -1363,13 +1363,18 @@ static void device_to_scols(
 		DBG(DEV, ul_debugobj(dev, "%s <- child done", dev->name));
 	}
 
-	if (lsblk->hlighter) {
+	/* apply highligther */
+	if (ln && lsblk->hlighter) {
 		int status = 0;
 
 		if (scols_line_apply_filter(ln, lsblk->hlighter, &status) == 0
 		    && status)
 			scols_line_set_color(ln, lsblk->hlighter_seq);
 	}
+
+	/* apply counters */
+	for (i = 0; ln && i < lsblk->ncts; i++)
+		scols_line_apply_filter(ln, lsblk->ct_filters[i], NULL);
 
 	/* Let's be careful with number of open files */
 	ul_path_close_dirfd(dev->sysfs);
@@ -2064,10 +2069,101 @@ static struct libscols_filter *new_filter(const char *query)
 	f = scols_new_filter(NULL);
 	if (!f)
 		err(EXIT_FAILURE, _("failed to allocate filter"));
-	if (scols_filter_parse_string(f, query) != 0)
+	if (query && scols_filter_parse_string(f, query) != 0)
 		errx(EXIT_FAILURE, _("failed to parse \"%s\": %s"), query,
 				scols_filter_get_errmsg(f));
 	return f;
+}
+
+static struct libscols_filter *new_counter_filter(const char *query)
+{
+	lsblk->ct_filters = xreallocarray(lsblk->ct_filters, lsblk->ncts + 1,
+					sizeof(struct libscols_filter *));
+
+	lsblk->ct_filters[lsblk->ncts] = new_filter(query);
+	lsblk->ncts++;
+
+	return lsblk->ct_filters[lsblk->ncts - 1];
+}
+
+static void set_counter_properties(const char *str0)
+{
+	struct libscols_filter *fltr = NULL;
+	struct libscols_counter *ct;
+	char *p, *str = xstrdup(str0);
+	char *name = NULL, *param = NULL, *func = NULL;
+
+	for (p = strtok(str, ":"); p != NULL; p = strtok((char *)0, ":")) {
+		if (!name)
+			name = p;
+		else if (!param)
+			param = p;
+		else if (!func)
+			func = p;
+		else
+			errx(EXIT_FAILURE, _("unexpected counter specification: %s"), str0);
+	}
+
+	if (!name)
+		errx(EXIT_FAILURE, _("counter not properly specified"));
+
+	/* use the latest counter filter (--ct-filter) or create empty */
+	if (lsblk->ncts)
+		fltr = lsblk->ct_filters[lsblk->ncts - 1];
+	else
+		fltr = new_counter_filter(NULL);
+
+	ct = scols_filter_new_counter(fltr);
+	if (!ct)
+		err(EXIT_FAILURE, _("failed to allocate counter"));
+
+	scols_counter_set_name(ct, name);
+	if (param)
+		scols_counter_set_param(ct, param);
+	if (func) {
+		int x;
+
+		if (strcmp(func, "max") == 0)
+			x = SCOLS_COUNTER_MAX;
+		else if (strcmp(func, "min") == 0)
+			x = SCOLS_COUNTER_MIN;
+		else if (strcmp(func, "sum") == 0)
+			x = SCOLS_COUNTER_SUM;
+		else if (strcmp(func, "count") == 0)
+			x = SCOLS_COUNTER_COUNT;
+		else
+			errx(EXIT_FAILURE, _("unsupported counter type: %s"), func);
+
+		scols_counter_set_func(ct, x);
+	}
+	free(str);
+}
+
+static void print_counters(void)
+{
+	struct libscols_iter *itr;
+	size_t i;
+
+	fputc('\n', stdout);
+	fputs(_("Summary:\n"), stdout);
+
+	itr = scols_new_iter(SCOLS_ITER_FORWARD);
+	if (!itr)
+		err(EXIT_FAILURE, _("failed to allocate iterator"));
+
+	for (i = 0; i < lsblk->ncts; i++) {
+		struct libscols_filter *fltr = lsblk->ct_filters[i];
+		struct libscols_counter *ct = NULL;
+
+		scols_reset_iter(itr, SCOLS_ITER_FORWARD);
+		while (scols_filter_next_counter(fltr, itr, &ct) == 0) {
+			printf("%16llu %s\n",
+					scols_counter_get_result(ct),
+					scols_counter_get_name(ct));
+		}
+	}
+
+	scols_free_iter(itr);
 }
 
 static void init_scols_filter(struct libscols_table *tb, struct libscols_filter *f)
@@ -2103,6 +2199,7 @@ fail:
 	errx(EXIT_FAILURE, _("failed to initialize filter"));
 }
 
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
@@ -2125,6 +2222,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
 	fputs(_(" -Q, --filter <query> restrict output\n"), out);
 	fputs(_(" -H, --highlight <query> colorize lines maching the query\n"), out);
+	fputs(_("     --ct-filter <query> restrict the next counters\n"), out);
+	fputs(_("     --ct <name>[:<param>[:<function>]] define custom counter\n"), out);
 	fputs(_(" -S, --scsi           output info about SCSI devices\n"), out);
 	fputs(_(" -N, --nvme           output info about NVMe devices\n"), out);
 	fputs(_(" -v, --virtio         output info about virtio devices\n"), out);
@@ -2184,7 +2283,9 @@ int main(int argc, char *argv[])
 	int force_tree = 0, has_tree_col = 0;
 
 	enum {
-		OPT_SYSROOT = CHAR_MAX + 1
+		OPT_SYSROOT = CHAR_MAX + 1,
+		OPT_COUNTER_FILTER,
+		OPT_COUNTER
 	};
 
 	static const struct option longopts[] = {
@@ -2223,6 +2324,8 @@ int main(int argc, char *argv[])
 		{ "tree",       optional_argument, NULL, 'T' },
 		{ "version",    no_argument,       NULL, 'V' },
 		{ "width",	required_argument, NULL, 'w' },
+		{ "ct-filter",  required_argument, NULL, OPT_COUNTER_FILTER },
+		{ "ct",         required_argument, NULL, OPT_COUNTER },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -2248,6 +2351,7 @@ int main(int argc, char *argv[])
 	lsblk = &_ls;
 
 	lsblk_init_debug();
+	scols_init_debug(0);
 
 	while((c = getopt_long(argc, argv,
 				"AabdDzE:e:fH:hJlNnMmo:OpPQ:iI:rstVvST::w:x:y",
@@ -2429,6 +2533,13 @@ int main(int argc, char *argv[])
 			errtryhelp(EXIT_FAILURE);
 			break;
 
+		case OPT_COUNTER_FILTER:
+			new_counter_filter(optarg);
+			break;
+		case OPT_COUNTER:
+			set_counter_properties(optarg);
+			break;
+
 		case 'h':
 			usage();
 		case 'V':
@@ -2483,7 +2594,6 @@ int main(int argc, char *argv[])
 	}
 
 	lsblk_mnt_init();
-	scols_init_debug(0);
 	ul_path_init_debug();
 
 	/*
@@ -2579,6 +2689,8 @@ int main(int argc, char *argv[])
 		scols_table_enable_colors(lsblk->table, 1);
 		init_scols_filter(lsblk->table, lsblk->hlighter);
 	}
+	for (i = 0; i < lsblk->ncts; i++)
+		init_scols_filter(lsblk->table, lsblk->ct_filters[i]);
 
 	tr = lsblk_new_devtree();
 	if (!tr)
@@ -2618,6 +2730,8 @@ int main(int argc, char *argv[])
 
 	scols_print_table(lsblk->table);
 
+	if (lsblk->ncts)
+		print_counters();
 leave:
 	if (lsblk->sort_col)
 		unref_sortdata(lsblk->table);
@@ -2625,6 +2739,10 @@ leave:
 	scols_unref_table(lsblk->table);
 	scols_unref_filter(lsblk->filter);
 	scols_unref_filter(lsblk->hlighter);
+
+	for (i = 0; i < lsblk->ncts; i++)
+		scols_unref_filter(lsblk->ct_filters[i]);
+	free(lsblk->ct_filters);
 
 	lsblk_mnt_deinit();
 	lsblk_properties_deinit();

@@ -45,6 +45,9 @@ struct lsblk {
 	struct libscols_filter *hlighter;
 	const char *hlighter_seq;
 
+	struct libscols_filter **ct_filters;	/* array of counters' filters */
+	size_t ncts;				/* number of ct filters */
+
 	const char *sysroot;
 	int flags;			/* LSBLK_* */
 
