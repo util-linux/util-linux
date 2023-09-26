@@ -2873,7 +2873,7 @@ static void *make_bpf_prog(const struct factory *factory, struct fdesc fdescs[],
 	attr.insn_cnt = ARRAY_SIZE(insns);
 	attr.license = (int64_t)(unsigned long)"GPL";
 
-	bfd = syscall(__NR_bpf, BPF_PROG_LOAD, &attr, sizeof(attr));
+	bfd = syscall(SYS_bpf, BPF_PROG_LOAD, &attr, sizeof(attr));
 	if (bfd < 0)
 		err((errno == ENOSYS? EXIT_ENOSYS: EXIT_FAILURE),
 		    "failed in bpf(BPF_PROG_LOAD)");
@@ -2967,7 +2967,7 @@ static void *make_bpf_map(const struct factory *factory, struct fdesc fdescs[],
 		.max_entries = 10,
 	};
 
-	bfd = syscall(__NR_bpf, BPF_MAP_CREATE, &attr, sizeof(attr));
+	bfd = syscall(SYS_bpf, BPF_MAP_CREATE, &attr, sizeof(attr));
 	if (bfd < 0)
 		err((errno == ENOSYS? EXIT_ENOSYS: EXIT_FAILURE),
 		    "failed in bpf(BPF_MAP_CREATE)");
