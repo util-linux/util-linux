@@ -2184,6 +2184,28 @@ static void print_counters(void)
 	scols_free_iter(itr);
 }
 
+static void set_column_type(const struct colinfo *ci, struct libscols_column *cl, int fl)
+{
+	switch (ci->type) {
+	case COLTYPE_SIZE:
+		if (!lsblk->bytes)
+			break;
+		/* fallthrough */
+	case COLTYPE_NUM:
+		scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
+		break;
+	case COLTYPE_BOOL:
+		scols_column_set_json_type(cl, SCOLS_JSON_BOOLEAN);
+		break;
+	default:
+		if (fl & SCOLS_FL_WRAP)
+			scols_column_set_json_type(cl, SCOLS_JSON_ARRAY_STRING);
+		else
+			scols_column_set_json_type(cl, SCOLS_JSON_STRING);
+		break;
+	}
+}
+
 static void init_scols_filter(struct libscols_table *tb, struct libscols_filter *f)
 {
 	struct libscols_iter *itr;
@@ -2207,6 +2229,8 @@ static void init_scols_filter(struct libscols_table *tb, struct libscols_filter 
 						     ci->whint, SCOLS_FL_HIDDEN);
 			if (!col)
 				err(EXIT_FAILURE,_("failed to allocate output column"));
+
+			set_column_type(ci, col, ci->flags);
 		}
 		scols_filter_assign_column(f, itr, name, col);
 	}
@@ -2677,26 +2701,7 @@ int main(int argc, char *argv[])
 		if (fl & SCOLS_FL_WRAP)
 			scols_column_set_wrapfunc(cl, NULL, scols_wrapzero_nextchunk, NULL);
 
-		if (lsblk->flags & LSBLK_JSON) {
-			switch (ci->type) {
-			case COLTYPE_SIZE:
-				if (!lsblk->bytes)
-					break;
-				/* fallthrough */
-			case COLTYPE_NUM:
-				scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
-				break;
-			case COLTYPE_BOOL:
-				scols_column_set_json_type(cl, SCOLS_JSON_BOOLEAN);
-				break;
-			default:
-				if (fl & SCOLS_FL_WRAP)
-					scols_column_set_json_type(cl, SCOLS_JSON_ARRAY_STRING);
-				else
-					scols_column_set_json_type(cl, SCOLS_JSON_STRING);
-				break;
-			}
-		}
+		set_column_type(ci, cl, fl);
 	}
 
 	if (lsblk->filter)
