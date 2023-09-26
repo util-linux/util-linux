@@ -89,6 +89,16 @@ struct bcachefs_sb_field_members {
 	struct bcachefs_sb_member	members[];
 }  __attribute__((packed));
 
+struct bcachefs_sb_disk_group {
+	uint8_t		label[SB_LABEL_SIZE];
+	uint64_t	flags[2];
+} __attribute__((packed));
+
+struct bcachefs_sb_field_disk_groups {
+	struct bcachefs_sb_field	field;
+	struct bcachefs_sb_disk_group   disk_groups[];
+}  __attribute__((packed));
+
 enum bcachefs_sb_csum_type {
 	BCACHEFS_SB_CSUM_TYPE_NONE = 0,
 	BCACHEFS_SB_CSUM_TYPE_CRC32C = 1,
@@ -160,6 +170,8 @@ struct bcachefs_super_block {
 #define BCACHEFS_SB_FIELDS_OFF offsetof(struct bcachefs_super_block, _start)
 /* tag value for members field */
 #define BCACHEFS_SB_FIELD_TYPE_MEMBERS 1
+/* tag value for disk_groups field */
+#define BCACHEFS_SB_FIELD_TYPE_DISK_GROUPS 5
 /* version splitting helpers */
 #define BCH_VERSION_MAJOR(_v)           ((uint16_t) ((_v) >> 10))
 #define BCH_VERSION_MINOR(_v)           ((uint16_t) ((_v) & ~(~0U << 10)))
@@ -238,6 +250,22 @@ static void probe_bcachefs_sb_members(blkid_probe pr,
 	blkid_probe_set_fssize(pr, sectors * BCACHEFS_SECTOR_SIZE);
 }
 
+static void probe_bcachefs_sb_disk_groups(blkid_probe pr,
+					  const struct bcachefs_super_block *bcs,
+					  const struct bcachefs_sb_field *field,
+					  uint8_t dev_idx)
+{
+	struct bcachefs_sb_field_disk_groups *disk_groups =
+			(struct bcachefs_sb_field_disk_groups *) field;
+
+	if (BYTES(field) != offsetof(typeof(*disk_groups), disk_groups[bcs->nr_devices]))
+		return;
+
+	blkid_probe_set_id_label(pr, "LABEL_SUB",
+				 disk_groups->disk_groups[dev_idx].label,
+				 sizeof(disk_groups->disk_groups[dev_idx].label));
+}
+
 static int is_within_range(const void *start, uint64_t size, const void *end)
 {
 	ptrdiff_t diff;
@@ -276,6 +304,9 @@ static void probe_bcachefs_sb_fields(blkid_probe pr, const struct bcachefs_super
 
 		if (type == BCACHEFS_SB_FIELD_TYPE_MEMBERS)
 			probe_bcachefs_sb_members(pr, bcs, field, bcs->dev_idx);
+
+		if (type == BCACHEFS_SB_FIELD_TYPE_DISK_GROUPS)
+			probe_bcachefs_sb_disk_groups(pr, bcs, field, bcs->dev_idx);
 
 		field_addr += BYTES(field);
 	}
