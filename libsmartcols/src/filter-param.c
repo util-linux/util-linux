@@ -344,11 +344,15 @@ int filter_count_param(struct libscols_filter *fltr,
 
 	switch (ct->func) {
 	case SCOLS_COUNTER_MAX:
-		if (num > ct->result)
+		if (!ct->has_result)
+			ct->result = num;
+		else if (num > ct->result)
 			ct->result = num;
 		break;
 	case SCOLS_COUNTER_MIN:
-		if (num < ct->result)
+		if (!ct->has_result)
+			ct->result = num;
+		else if (num < ct->result)
 			ct->result = num;
 		break;
 	case SCOLS_COUNTER_SUM:
@@ -358,6 +362,7 @@ int filter_count_param(struct libscols_filter *fltr,
 		return -EINVAL;
 	}
 
+	ct->has_result = 1;
 	DBG(FLTR, ul_debugobj(fltr, "counted '%s' [result: %llu]", ct->name, ct->result));
 	return 0;
 }

@@ -541,7 +541,8 @@ struct libscols_counter {
 	int func;
 	unsigned long long result;
 
-	unsigned int neg : 1;
+	unsigned int neg : 1,
+		     has_result : 1;
 };
 
 struct libscols_filter {
