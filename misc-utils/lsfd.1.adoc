@@ -141,6 +141,9 @@ Decoded name of bpf map type.
 BPF-MAP.TYPE.RAW <``number``>::
 Bpf map type (raw).
 
+BPF.NAME <``string``>::
+Bpf object name.
+
 BPF-PROG.ID <``number``>::
 Bpf program ID.
 
@@ -260,10 +263,10 @@ Cooked version of KNAME. It is mostly same as KNAME.
 Some files have special formats and information sources:
 +
 bpf-map:::
-id=_BPF-MAP.ID_ type=_BPF-MAP.TYPE_
+id=_BPF-MAP.ID_ type=_BPF-MAP.TYPE_[ name=_BPF.NAME_]
 +
 bpf-prog:::
-id=_BPF-PROG.ID_ type=_BPF-PROG.TYPE_
+id=_BPF-PROG.ID_ type=_BPF-PROG.TYPE_[ name=_BPF.NAME_]
 +
 eventpoll:::
 tfds=_EVENTPOLL.TFDS_
