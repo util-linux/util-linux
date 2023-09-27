@@ -280,7 +280,7 @@ int scols_counter_set_param(struct libscols_counter *ct, const char *name)
 	}
 	if (name) {
 		ct->param = (struct filter_param *)
-				filter_new_param(ct->filter, F_DATA_NUMBER,
+				filter_new_param(ct->filter, SCOLS_DATA_U64,
 					     F_HOLDER_COLUMN, (void *) name);
 		if (!ct->param)
 			return -ENOMEM;

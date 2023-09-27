@@ -8,7 +8,7 @@
 
 struct filter_param {
 	struct filter_node node;
-	enum filter_data type;
+	int type;
 	enum filter_holder holder;
 
 	union {
@@ -26,27 +26,27 @@ struct filter_param {
 	unsigned int has_value :1;
 };
 
-static int cast_param(enum filter_data type, struct filter_param *n);
+static int cast_param(int type, struct filter_param *n);
 
-static inline const char *datatype2str(enum filter_data type)
+static inline const char *datatype2str(int type)
 {
 	static const char *types[] = {
-		[F_DATA_NONE] = "none",
-		[F_DATA_STRING] = "string",
-		[F_DATA_NUMBER] = "number",
-		[F_DATA_FLOAT] = "float",
-		[F_DATA_BOOLEAN] = "boolean"
+		[SCOLS_DATA_NONE] = "none",
+		[SCOLS_DATA_STRING] = "string",
+		[SCOLS_DATA_U64] = "u64",
+		[SCOLS_DATA_FLOAT] = "float",
+		[SCOLS_DATA_BOOLEAN] = "boolean"
 	};
 	return types[type];
 }
-static int param_set_data(struct filter_param *n, enum filter_data type, const void *data)
+static int param_set_data(struct filter_param *n, int type, const void *data)
 {
 	const char *p;
 
 	/*DBG(FPARAM, ul_debugobj(n, " set %s data", datatype2str(type)));*/
 
 	switch (type) {
-	case F_DATA_STRING:
+	case SCOLS_DATA_STRING:
 		p = data;
 		if (p && *p == '"') {
 			/* remove quotation marks */
@@ -60,13 +60,13 @@ static int param_set_data(struct filter_param *n, enum filter_data type, const v
 		if (data && !n->val.str)
 			return -ENOMEM;
 		break;
-	case F_DATA_NUMBER:
+	case SCOLS_DATA_U64:
 		n->val.num = data ? *((unsigned long long *) data) : 0;
 		break;
-	case F_DATA_FLOAT:
+	case SCOLS_DATA_FLOAT:
 		n->val.fnum = data ? *((long double *) data) : 0;
 		break;
-	case F_DATA_BOOLEAN:
+	case SCOLS_DATA_BOOLEAN:
 		n->val.boolean = data ? (*((bool *) data) == 0 ? 0 : 1) : 0;
 		break;
 	default:
@@ -80,7 +80,7 @@ static int param_set_data(struct filter_param *n, enum filter_data type, const v
 
 struct filter_node *filter_new_param(
 		struct libscols_filter *fltr,
-		enum filter_data type,
+		int type,
 		enum filter_holder holder,
 		void *data)
 {
@@ -143,7 +143,7 @@ static struct filter_param *copy_param(struct filter_param *n)
 
 static void param_reset_data(struct filter_param *n)
 {
-	if (n->type == F_DATA_STRING)
+	if (n->type == SCOLS_DATA_STRING)
 		free(n->val.str);
 
 	memset(&n->val, 0, sizeof(n->val));
@@ -165,9 +165,9 @@ void filter_free_param(struct filter_param *n)
 	free(n);
 }
 
-enum filter_data filter_param_get_datatype(struct filter_param *n)
+int filter_param_get_datatype(struct filter_param *n)
 {
-	return n ? n->type : F_DATA_NONE;
+	return n ? n->type : SCOLS_DATA_NONE;
 }
 
 int is_filter_holder_node(struct filter_node *n)
@@ -182,24 +182,19 @@ void filter_dump_param(struct ul_jsonwrt *json, struct filter_param *n)
 
 	if (!n->has_value) {
 		ul_jsonwrt_value_boolean(json, "has_value", false);
-		ul_jsonwrt_value_s(json, "type",
-				n->type == F_DATA_STRING ? "string" :
-				n->type == F_DATA_NUMBER ? "number" :
-				n->type == F_DATA_FLOAT  ? "float" :
-				n->type == F_DATA_BOOLEAN ? "bool" :
-				"unknown");
+		ul_jsonwrt_value_s(json, "type", datatype2str(n->type));
 	} else {
 		switch (n->type) {
-		case F_DATA_STRING:
+		case SCOLS_DATA_STRING:
 			ul_jsonwrt_value_s(json, "string", n->val.str);
 			break;
-		case F_DATA_NUMBER:
+		case SCOLS_DATA_U64:
 			ul_jsonwrt_value_u64(json, "number", n->val.num);
 			break;
-		case F_DATA_FLOAT:
+		case SCOLS_DATA_FLOAT:
 			ul_jsonwrt_value_double(json, "float", n->val.fnum);
 			break;
-		case F_DATA_BOOLEAN:
+		case SCOLS_DATA_BOOLEAN:
 			ul_jsonwrt_value_boolean(json, "bool", n->val.boolean);
 			break;
 		default:
@@ -225,22 +220,22 @@ int filter_param_reset_holder(struct filter_param *n)
 
 	param_reset_data(n);
 
-	if (n->type != F_DATA_NONE)
+	if (n->type != SCOLS_DATA_NONE)
 		return 0; /* already set */
 
 	switch (n->col->json_type) {
 	case SCOLS_JSON_NUMBER:
-		n->type = F_DATA_NUMBER;
+		n->type = SCOLS_DATA_U64;
 		break;
 	case SCOLS_JSON_BOOLEAN:
-		n->type = F_DATA_BOOLEAN;
+		n->type = SCOLS_DATA_BOOLEAN;
 		break;
 	case SCOLS_JSON_FLOAT:
-		n->type = F_DATA_FLOAT;
+		n->type = SCOLS_DATA_FLOAT;
 		break;
 	case SCOLS_JSON_STRING:
 	default:
-		n->type = F_DATA_STRING;
+		n->type = SCOLS_DATA_STRING;
 		break;
 	}
 
@@ -252,7 +247,7 @@ static int fetch_holder_data(struct libscols_filter *fltr __attribute__((__unuse
 			struct filter_param *n, struct libscols_line *ln)
 {
 	const char *data;
-	enum filter_data type = n->type;
+	int type = n->type;
 	int rc = 0;
 
 	if (n->has_value || n->holder != F_HOLDER_COLUMN)
@@ -271,10 +266,10 @@ static int fetch_holder_data(struct libscols_filter *fltr __attribute__((__unuse
 
 	/* read column data, use it as string */
 	data = scols_line_get_column_data(ln, n->col);
-	rc = param_set_data(n, F_DATA_STRING, data);
+	rc = param_set_data(n, SCOLS_DATA_STRING, data);
 
 	/* cast to the wanted type */
-	if (rc == 0 && type != F_DATA_NONE)
+	if (rc == 0 && type != SCOLS_DATA_NONE)
 		rc = cast_param(type, n);
 	return rc;
 }
@@ -295,16 +290,16 @@ int filter_eval_param(struct libscols_filter *fltr,
 	}
 
 	switch (n->type) {
-	case F_DATA_STRING:
+	case SCOLS_DATA_STRING:
 		*status = n->val.str != NULL && *n->val.str != '\0';
 		break;
-	case F_DATA_NUMBER:
+	case SCOLS_DATA_U64:
 		*status = n->val.num != 0;
 		break;
-	case F_DATA_FLOAT:
+	case SCOLS_DATA_FLOAT:
 		*status = n->val.fnum != 0.0;
 		break;
-	case F_DATA_BOOLEAN:
+	case SCOLS_DATA_BOOLEAN:
 		*status = n->val.boolean != false;
 		break;
 	default:
@@ -332,7 +327,7 @@ int filter_count_param(struct libscols_filter *fltr,
 	if (ct->param) {
 		int rc;
 
-		ct->param->type = F_DATA_NUMBER;
+		ct->param->type = SCOLS_DATA_U64;
 		rc = fetch_holder_data(fltr, ct->param, ln);
 		if (rc)
 			return rc;
@@ -416,7 +411,7 @@ static int string_opers(enum filter_etype oper, struct filter_param *l,
 	return 0;
 }
 
-static int number_opers(enum filter_etype oper, struct filter_param *l,
+static int u64_opers(enum filter_etype oper, struct filter_param *l,
 			     struct filter_param *r, int *status)
 {
 	switch (oper) {
@@ -516,16 +511,16 @@ int filter_compare_params(struct libscols_filter *fltr __attribute__((__unused__
 	*status = 0;
 
 	switch (l->type) {
-	case F_DATA_STRING:
+	case SCOLS_DATA_STRING:
 		rc = string_opers(oper, l, r, status);
 		break;
-	case F_DATA_NUMBER:
-		rc = number_opers(oper, l, r, status);
+	case SCOLS_DATA_U64:
+		rc = u64_opers(oper, l, r, status);
 		break;
-	case F_DATA_FLOAT:
+	case SCOLS_DATA_FLOAT:
 		rc = float_opers(oper, l, r, status);
 		break;
-	case F_DATA_BOOLEAN:
+	case SCOLS_DATA_BOOLEAN:
 		rc = bool_opers(oper, l, r, status);
 		break;
 	default:
@@ -536,17 +531,17 @@ int filter_compare_params(struct libscols_filter *fltr __attribute__((__unused__
 	return rc;
 }
 
-static int string_cast(enum filter_data type, struct filter_param *n)
+static int string_cast(int type, struct filter_param *n)
 {
 	char *str = n->val.str;
 
-	if (type == F_DATA_STRING)
+	if (type == SCOLS_DATA_STRING)
 		return 0;
 
 	n->val.str = NULL;
 
 	switch (type) {
-	case F_DATA_NUMBER:
+	case SCOLS_DATA_U64:
 	{
 		uint64_t num = 0;
 		if (str) {
@@ -557,7 +552,7 @@ static int string_cast(enum filter_data type, struct filter_param *n)
 		n->val.num = num;
 		break;
 	}
-	case F_DATA_FLOAT:
+	case SCOLS_DATA_FLOAT:
 	{
 		long double num = 0;
 		if (str) {
@@ -568,7 +563,7 @@ static int string_cast(enum filter_data type, struct filter_param *n)
 		n->val.fnum = num;
 		break;
 	}
-	case F_DATA_BOOLEAN:
+	case SCOLS_DATA_BOOLEAN:
 	{
 		bool x = (!str || !*str
 			       || strcasecmp(str, "false") == 0
@@ -584,22 +579,22 @@ static int string_cast(enum filter_data type, struct filter_param *n)
 	return 0;
 }
 
-static int number_cast(enum filter_data type, struct filter_param *n)
+static int u64_cast(int type, struct filter_param *n)
 {
 	unsigned long long num = n->val.num;
 
 	switch (type) {
-	case F_DATA_STRING:
+	case SCOLS_DATA_STRING:
 		n->val.str = NULL;
 		if (asprintf(&n->val.str, "%llu", num) <= 0)
 			return -ENOMEM;
 		break;
-	case F_DATA_NUMBER:
+	case SCOLS_DATA_U64:
 		break;
-	case F_DATA_FLOAT:
+	case SCOLS_DATA_FLOAT:
 		n->val.fnum = num;
 		break;
-	case F_DATA_BOOLEAN:
+	case SCOLS_DATA_BOOLEAN:
 		n->val.boolean = num > 0 ? true : false;
 		break;
 	default:
@@ -608,22 +603,22 @@ static int number_cast(enum filter_data type, struct filter_param *n)
 	return 0;
 }
 
-static int float_cast(enum filter_data type, struct filter_param *n)
+static int float_cast(int type, struct filter_param *n)
 {
 	long double fnum = n->val.fnum;
 
 	switch (type) {
-	case F_DATA_STRING:
+	case SCOLS_DATA_STRING:
 		n->val.str = NULL;
 		if (asprintf(&n->val.str, "%Lg", fnum) <= 0)
 			return -ENOMEM;
 		break;
-	case F_DATA_NUMBER:
+	case SCOLS_DATA_U64:
 		n->val.num = fnum;
 		break;
-	case F_DATA_FLOAT:
+	case SCOLS_DATA_FLOAT:
 		break;;
-	case F_DATA_BOOLEAN:
+	case SCOLS_DATA_BOOLEAN:
 		n->val.boolean = fnum > 0.0 ? true : false;
 		break;
 	default:
@@ -632,23 +627,23 @@ static int float_cast(enum filter_data type, struct filter_param *n)
 	return 0;
 }
 
-static int bool_cast(enum filter_data type, struct filter_param *n)
+static int bool_cast(int type, struct filter_param *n)
 {
 	bool x = n->val.boolean;
 
 	switch (type) {
-	case F_DATA_STRING:
+	case SCOLS_DATA_STRING:
 		n->val.str = NULL;
 		if (asprintf(&n->val.str, "%s", x ? "true" : "false") <= 0)
 			return -ENOMEM;
 		break;
-	case F_DATA_NUMBER:
+	case SCOLS_DATA_U64:
 		n->val.num = x ? 1 : 0;
 		break;
-	case F_DATA_FLOAT:
+	case SCOLS_DATA_FLOAT:
 		n->val.fnum = x ? 1.0 : 0.0;
 		break;
-	case F_DATA_BOOLEAN:
+	case SCOLS_DATA_BOOLEAN:
 		break;;
 	default:
 		return -EINVAL;
@@ -656,30 +651,30 @@ static int bool_cast(enum filter_data type, struct filter_param *n)
 	return 0;
 }
 
-static int cast_param(enum filter_data type, struct filter_param *n)
+static int cast_param(int type, struct filter_param *n)
 {
 	int rc;
-	enum filter_data orgtype = n->type;
+	int orgtype = n->type;
 
 	if (type == orgtype)
 		return 0;
 
-	if (orgtype == F_DATA_STRING)
+	if (orgtype == SCOLS_DATA_STRING)
 		DBG(FPARAM, ul_debugobj(n, " casting \"%s\" to %s", n->val.str, datatype2str(type)));
 	else
 		DBG(FPARAM, ul_debugobj(n, " casting %s to %s", datatype2str(orgtype), datatype2str(type)));
 
 	switch (orgtype) {
-	case F_DATA_STRING:
+	case SCOLS_DATA_STRING:
 		rc = string_cast(type, n);
 		break;
-	case F_DATA_NUMBER:
-		rc = number_cast(type, n);
+	case SCOLS_DATA_U64:
+		rc = u64_cast(type, n);
 		break;
-	case F_DATA_FLOAT:
+	case SCOLS_DATA_FLOAT:
 		rc = float_cast(type, n);
 		break;
-	case F_DATA_BOOLEAN:
+	case SCOLS_DATA_BOOLEAN:
 		rc = bool_cast(type, n);
 		break;
 	default:
@@ -697,12 +692,12 @@ static int cast_param(enum filter_data type, struct filter_param *n)
 
 int filter_cast_param(struct libscols_filter *fltr,
 		      struct libscols_line *ln,
-		      enum filter_data type,
+		      int type,
 		      struct filter_param *n,
 		      struct filter_param **result)
 {
 	int rc;
-	enum filter_data orgtype = n->type;
+	int orgtype = n->type;
 
 	rc = fetch_holder_data(fltr, n, ln);
 	if (rc)

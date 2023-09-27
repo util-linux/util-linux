@@ -124,6 +124,17 @@ enum {
 };
 
 /*
+ * Types used by filters and counters
+ */
+enum {
+	SCOLS_DATA_NONE = 0,	/* default */
+	SCOLS_DATA_U64,		/* uint64_t */
+	SCOLS_DATA_BOOLEAN,	/* 0 or 1 */
+	SCOLS_DATA_FLOAT,	/* long double */
+	SCOLS_DATA_STRING
+};
+
+/*
  * Cell flags, see scols_cell_set_flags() before use
  */
 enum {

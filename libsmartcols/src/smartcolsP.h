@@ -484,15 +484,6 @@ static inline int has_group_children(struct libscols_line *ln)
 /*
  * Filter stuff
  */
-
-enum filter_data {
-	F_DATA_NONE,
-	F_DATA_STRING,
-	F_DATA_NUMBER,
-	F_DATA_FLOAT,
-	F_DATA_BOOLEAN
-};
-
 enum filter_holder {
 	F_HOLDER_NONE,
 	F_HOLDER_COLUMN		/* column name */
@@ -572,7 +563,7 @@ int filter_eval_param(struct libscols_filter *fltr, struct libscols_line *ln,
 			struct filter_param *n, int *status);
 void filter_free_param(struct filter_param *n);
 int filter_param_reset_holder(struct filter_param *n);
-enum filter_data filter_param_get_datatype(struct filter_param *n);
+int filter_param_get_datatype(struct filter_param *n);
 
 int filter_next_param(struct libscols_filter *fltr,
                         struct libscols_iter *itr, struct filter_param **prm);
@@ -584,7 +575,7 @@ int filter_compare_params(struct libscols_filter *fltr,
                           int *status);
 int filter_cast_param(struct libscols_filter *fltr,
                       struct libscols_line *ln,
-                      enum filter_data type,
+                      int type,
                       struct filter_param *n,
                       struct filter_param **result);
 
@@ -602,7 +593,7 @@ int filter_eval_expr(struct libscols_filter *fltr, struct libscols_line *ln,
 
 /* required by parser */
 struct filter_node *filter_new_param(struct libscols_filter *filter,
-                                 enum filter_data type,
+                                 int type,
 				 enum filter_holder holder,
 				 void *data);
 struct filter_node *filter_new_expr(struct libscols_filter *filter,

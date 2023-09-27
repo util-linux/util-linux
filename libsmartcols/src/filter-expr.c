@@ -95,7 +95,7 @@ void filter_dump_expr(struct ul_jsonwrt *json, struct filter_expr *n)
 
 static int cast_node(struct libscols_filter *fltr,
 		     struct libscols_line *ln,
-		     enum filter_data type,
+		     int type,
 		     struct filter_node *n,
 		     struct filter_param **result)
 {
@@ -110,7 +110,7 @@ static int cast_node(struct libscols_filter *fltr,
 		if (rc)
 			return rc;
 		x = status != 0 ? true : false;
-		pr = filter_new_param(NULL, F_DATA_BOOLEAN, 0, (void *) &x);
+		pr = filter_new_param(NULL, SCOLS_DATA_BOOLEAN, 0, (void *) &x);
 		if (!pr)
 			return -ENOMEM;
 		rc = filter_cast_param(fltr, ln, type, (struct filter_param *) pr, result);
@@ -126,21 +126,21 @@ static int cast_node(struct libscols_filter *fltr,
 	return rc;
 }
 
-static enum filter_data node_get_datatype(struct filter_node *n)
+static int node_get_datatype(struct filter_node *n)
 {
 	switch (n->type) {
 	case F_NODE_EXPR:
-		return F_DATA_BOOLEAN;
+		return SCOLS_DATA_BOOLEAN;
 	case F_NODE_PARAM:
 		return filter_param_get_datatype((struct filter_param *) n);
 	}
-	return F_DATA_NONE;
+	return SCOLS_DATA_NONE;
 }
 
-static enum filter_data guess_expr_datatype(struct filter_expr *n)
+static int guess_expr_datatype(struct filter_expr *n)
 {
-	enum filter_data type;
-	enum filter_data l = node_get_datatype(n->left),
+	int type;
+	int l = node_get_datatype(n->left),
 			 r = node_get_datatype(n->right);
 
 	if (l == r)
@@ -171,7 +171,7 @@ int filter_eval_expr(struct libscols_filter *fltr, struct libscols_line *ln,
 	int rc = 0;
 	struct filter_param *l = NULL, *r = NULL;
 	enum filter_etype oper = n->type;
-	enum filter_data type;
+	int type;
 
 	/* logical operators */
 	switch (oper) {

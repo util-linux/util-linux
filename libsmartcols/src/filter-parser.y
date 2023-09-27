@@ -85,17 +85,17 @@ expr:
 ;
 
 param:
-	T_NUMBER	{ $$ = filter_new_param(fltr, F_DATA_NUMBER, 0, (void *) (&$1)); }
-	| T_FLOAT	{ $$ = filter_new_param(fltr, F_DATA_FLOAT, 0, (void *) (&$1)); }
-	| T_NAME	{ $$ = filter_new_param(fltr, F_DATA_NONE, F_HOLDER_COLUMN, (void *) $1); }
-	| T_STRING	{ $$ = filter_new_param(fltr, F_DATA_STRING, 0, (void *) $1); }
+	T_NUMBER	{ $$ = filter_new_param(fltr, SCOLS_DATA_U64, 0, (void *) (&$1)); }
+	| T_FLOAT	{ $$ = filter_new_param(fltr, SCOLS_DATA_FLOAT, 0, (void *) (&$1)); }
+	| T_NAME	{ $$ = filter_new_param(fltr, SCOLS_DATA_NONE, F_HOLDER_COLUMN, (void *) $1); }
+	| T_STRING	{ $$ = filter_new_param(fltr, SCOLS_DATA_STRING, 0, (void *) $1); }
 	| T_TRUE	{
 		bool x = true;
-		$$ = filter_new_param(fltr, F_DATA_BOOLEAN, 0, (void *) &x);
+		$$ = filter_new_param(fltr, SCOLS_DATA_BOOLEAN, 0, (void *) &x);
 	}
 	| T_FALSE	{
 		bool x = false;
-		$$ = filter_new_param(fltr, F_DATA_BOOLEAN, 0, (void *) &x);
+		$$ = filter_new_param(fltr, SCOLS_DATA_BOOLEAN, 0, (void *) &x);
 	}
 
 ;
