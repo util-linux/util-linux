@@ -626,7 +626,7 @@ static char *mk_dm_name(const char *name)
 /* stores data to scols cell userdata (invisible and independent on output)
  * to make the original values accessible for sort functions
  */
-static void set_sortdata_u64(struct libscols_line *ln, int col, uint64_t x)
+static void set_rawdata_u64(struct libscols_line *ln, int col, uint64_t x)
 {
 	struct libscols_cell *ce = scols_line_get_cell(ln, col);
 	uint64_t *data;
@@ -654,7 +654,7 @@ static void str2u64(const char *str, uint64_t *data)
 	*data = num;
 }
 
-static void unref_sortdata(struct libscols_table *tb)
+static void unref_rawdata(struct libscols_table *tb)
 {
 	struct libscols_iter *itr;
 	struct libscols_line *ln;
@@ -764,21 +764,21 @@ static uint64_t device_get_discard_granularity(struct lsblk_device *dev)
 }
 
 static void device_read_bytes(struct lsblk_device *dev, char *path, char **str,
-			      uint64_t *sortdata)
+			      uint64_t *rawdata)
 {
 	uint64_t x;
 
 	if (lsblk->bytes) {
 		ul_path_read_string(dev->sysfs, str, path);
-		if (sortdata)
-			str2u64(*str, sortdata);
+		if (rawdata)
+			str2u64(*str, rawdata);
 		return;
 	}
 
 	if (ul_path_read_u64(dev->sysfs, &x, path) == 0) {
 		*str = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
-		if (sortdata)
-			*sortdata = x;
+		if (rawdata)
+			*rawdata = x;
 	}
 }
 
@@ -800,7 +800,7 @@ static void process_mq(struct lsblk_device *dev, char **str)
 }
 
 /*
- * Generates data (string) for column specified by column ID for specified device. If sortdata
+ * Generates data (string) for column specified by column ID for specified device. If rawdata
  * is not NULL then returns number usable to sort the column if the data are available for the
  * column.
  */
@@ -808,7 +808,7 @@ static char *device_get_data(
 		struct lsblk_device *dev,		/* device */
 		struct lsblk_device *parent,		/* device parent as defined in the tree */
 		int id,					/* column ID (COL_*) */
-		uint64_t *sortdata,			/* returns sort data as number */
+		uint64_t *rawdata,			/* returns sort data as number */
 		size_t *datasiz)
 {
 	struct lsblk_devprop *prop = NULL;
@@ -871,8 +871,8 @@ static char *device_get_data(
 			xasprintf(&str, "%u:%u", dev->maj, dev->min);
 		else
 			xasprintf(&str, "%3u:%-3u", dev->maj, dev->min);
-		if (sortdata)
-			*sortdata = makedev(dev->maj, dev->min);
+		if (rawdata)
+			*rawdata = makedev(dev->maj, dev->min);
 		break;
 	case COL_MAJ:
 		xasprintf(&str, "%u", dev->maj);
@@ -1017,8 +1017,8 @@ static char *device_get_data(
 		break;
 	case COL_RA:
 		ul_path_read_string(dev->sysfs, &str, "queue/read_ahead_kb");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	case COL_RO:
 		str = xstrdup(is_readonly_device(dev) ? "1" : "0");
@@ -1071,13 +1071,13 @@ static char *device_get_data(
 			xasprintf(&str, "%ju", dev->size);
 		else
 			str = size_to_human_string(SIZE_SUFFIX_1LETTER, dev->size);
-		if (sortdata)
-			*sortdata = dev->size;
+		if (rawdata)
+			*rawdata = dev->size;
 		break;
 	case COL_START:
 		ul_path_read_string(dev->sysfs, &str, "start");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	case COL_STATE:
 		if (!device_is_partition(dev) && !dev->dm_name)
@@ -1090,36 +1090,36 @@ static char *device_get_data(
 		break;
 	case COL_ALIOFF:
 		ul_path_read_string(dev->sysfs, &str, "alignment_offset");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	case COL_MINIO:
 		ul_path_read_string(dev->sysfs, &str, "queue/minimum_io_size");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	case COL_OPTIO:
 		ul_path_read_string(dev->sysfs, &str, "queue/optimal_io_size");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	case COL_PHYSEC:
 		ul_path_read_string(dev->sysfs, &str, "queue/physical_block_size");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	case COL_LOGSEC:
 		ul_path_read_string(dev->sysfs, &str, "queue/logical_block_size");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	case COL_SCHED:
 		str = get_scheduler(dev);
 		break;
 	case COL_RQ_SIZE:
 		ul_path_read_string(dev->sysfs, &str, "queue/nr_requests");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	case COL_TYPE:
 		str = get_type(dev);
@@ -1146,23 +1146,23 @@ static char *device_get_data(
 			ul_path_read_string(dev->sysfs, &str, "discard_alignment");
 		if (!str)
 			str = xstrdup("0");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	case COL_DGRAN:
 		if (lsblk->bytes) {
 			ul_path_read_string(dev->sysfs, &str, "queue/discard_granularity");
-			if (sortdata)
-				str2u64(str, sortdata);
+			if (rawdata)
+				str2u64(str, rawdata);
 		} else {
 			uint64_t x = device_get_discard_granularity(dev);
 			str = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
-			if (sortdata)
-				*sortdata = x;
+			if (rawdata)
+				*rawdata = x;
 		}
 		break;
 	case COL_DMAX:
-		device_read_bytes(dev, "queue/discard_max_bytes", &str, sortdata);
+		device_read_bytes(dev, "queue/discard_max_bytes", &str, rawdata);
 		break;
 	case COL_DZERO:
 		if (device_get_discard_granularity(dev) > 0)
@@ -1171,7 +1171,7 @@ static char *device_get_data(
 			str = xstrdup("0");
 		break;
 	case COL_WSAME:
-		device_read_bytes(dev, "queue/write_same_max_bytes", &str, sortdata);
+		device_read_bytes(dev, "queue/write_same_max_bytes", &str, rawdata);
 		if (!str)
 			str = xstrdup("0");
 		break;
@@ -1188,35 +1188,35 @@ static char *device_get_data(
 				xasprintf(&str, "%ju", x);
 			else
 				str = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
-			if (sortdata)
-				*sortdata = x;
+			if (rawdata)
+				*rawdata = x;
 		}
 		break;
 	}
 	case COL_ZONE_WGRAN:
-		device_read_bytes(dev, "queue/zone_write_granularity", &str, sortdata);
+		device_read_bytes(dev, "queue/zone_write_granularity", &str, rawdata);
 		break;
 	case COL_ZONE_APP:
-		device_read_bytes(dev, "queue/zone_append_max_bytes", &str, sortdata);
+		device_read_bytes(dev, "queue/zone_append_max_bytes", &str, rawdata);
 		break;
 	case COL_ZONE_NR:
 		ul_path_read_string(dev->sysfs, &str, "queue/nr_zones");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	case COL_ZONE_OMAX:
 		ul_path_read_string(dev->sysfs, &str, "queue/max_open_zones");
 		if (!str)
 			str = xstrdup("0");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	case COL_ZONE_AMAX:
 		ul_path_read_string(dev->sysfs, &str, "queue/max_active_zones");
 		if (!str)
 			str = xstrdup("0");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	case COL_DAX:
 		ul_path_read_string(dev->sysfs, &str, "queue/dax");
@@ -1226,8 +1226,8 @@ static char *device_get_data(
 		break;
 	case COL_DISKSEQ:
 		ul_path_read_string(dev->sysfs, &str, "diskseq");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	};
 
@@ -1247,11 +1247,11 @@ static void device_fill_scols_cell(struct lsblk_device *dev,
 	if (lsblk->sort_id != id)
 		data = device_get_data(dev, parent, id, NULL, &datasiz);
 	else {
-		uint64_t sortdata = (uint64_t) -1;
+		uint64_t rawdata = (uint64_t) -1;
 
-		data = device_get_data(dev, parent, id, &sortdata, &datasiz);
-		if (data && sortdata != (uint64_t) -1)
-			set_sortdata_u64(ln, colnum, sortdata);
+		data = device_get_data(dev, parent, id, &rawdata, &datasiz);
+		if (data && rawdata != (uint64_t) -1)
+			set_rawdata_u64(ln, colnum, rawdata);
 	}
 
 	if (!data)
@@ -2025,7 +2025,7 @@ static void parse_includes(const char *str0)
 }
 
 /*
- * see set_sortdata_u64() and columns initialization in main()
+ * see set_rawdata_u64() and columns initialization in main()
  */
 static int cmp_u64_cells(struct libscols_cell *a,
 			 struct libscols_cell *b,
@@ -2757,7 +2757,7 @@ int main(int argc, char *argv[])
 		print_counters();
 leave:
 	if (lsblk->sort_col)
-		unref_sortdata(lsblk->table);
+		unref_rawdata(lsblk->table);
 
 	scols_unref_table(lsblk->table);
 	scols_unref_filter(lsblk->filter);
