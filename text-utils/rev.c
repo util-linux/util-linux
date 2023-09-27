@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
 	argc -= optind;
 	argv += optind;
 
-	buf = xmalloc(bufsiz * sizeof(wchar_t));
+	buf = xreallocarray(NULL, bufsiz, sizeof(wchar_t));
 
 	do {
 		if (*argv) {

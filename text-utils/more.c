@@ -353,7 +353,7 @@ static void env_argscan(struct more_control *ctl, const char *s)
 	char *str = xstrdup(s);
 	char *key = NULL, *tok;
 
-	env_argv = xmalloc(sizeof(char *) * size);
+	env_argv = xreallocarray(NULL, size, sizeof(char *));
 	env_argv[0] = _("MORE environment variable");	/* program name */
 	for (tok = strtok_r(str, delim, &key); tok; tok = strtok_r(NULL, delim, &key)) {
 		if (size == env_argc) {

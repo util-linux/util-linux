@@ -343,7 +343,7 @@ static int journald_entry(struct logger_ctl *ctl, FILE *fp)
 	int n, lines = 0, vectors = 8, ret = 0, msgline = -1;
 	size_t dummy = 0;
 
-	iovec = xmalloc(vectors * sizeof(struct iovec));
+	iovec = xreallocarray(NULL, vectors, sizeof(struct iovec));
 	while (1) {
 		buf = NULL;
 		sz = getline(&buf, &dummy, fp);
