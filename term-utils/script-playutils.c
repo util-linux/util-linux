@@ -252,6 +252,8 @@ int replay_associate_log(struct replay_setup *stp,
 
 	if (rc == 0)
 		replay_new_log(stp, streams, filename, f);
+	else if (f)
+		fclose(f);
 
 	DBG(LOG, ul_debug("associate log file '%s', streams '%s' [rc=%d]", filename, streams, rc));
 	return rc;
