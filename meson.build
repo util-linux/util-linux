@@ -803,6 +803,8 @@ conf.set('HAVE_TLS', get_option('use-tls') ? 1 : false)
 conf.set('PG_BELL', get_option('pg-bell') ? 1 : false)
 conf.set('USE_COLORS_BY_DEFAULT', get_option('colors-default') ? 1 : false)
 
+is_glibc = cc.has_header_symbol('limits.h', '__GLIBC__')
+
 ############################################################
 
 
@@ -1120,16 +1122,18 @@ endif
 
 ############################################################
 
-exe = executable(
-  'col',
-  col_sources,
-  include_directories : includes,
-  link_with : lib_common,
-  install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['text-utils/col.1.adoc']
-bashcompletions += ['col']
+if is_glibc
+  exe = executable(
+    'col',
+    col_sources,
+    include_directories : includes,
+    link_with : lib_common,
+    install_dir : usrbin_exec_dir,
+    install : true)
+  exes += exe
+  manadocs += ['text-utils/col.1.adoc']
+  bashcompletions += ['col']
+endif
 
 exe = executable(
   'colcrt',
