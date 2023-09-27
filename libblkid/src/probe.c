@@ -1838,7 +1838,7 @@ int blkid_probe_verify_csum_buf(blkid_probe pr, size_t n, const void *csum,
 		/*
 		 * Accept bad checksum if BLKID_SUBLKS_BADCSUM flags is set
 		 */
-		if (chn->driver->id == BLKID_CHAIN_SUBLKS
+		if (chn && chn->driver->id == BLKID_CHAIN_SUBLKS
 		    && (chn->flags & BLKID_SUBLKS_BADCSUM)) {
 			blkid_probe_set_value(pr, "SBBADCSUM", (unsigned char *) "1", 2);
 			goto accept;
