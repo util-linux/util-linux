@@ -34,7 +34,12 @@ struct idcache *new_idcache(void)
 
 void free_idcache(struct idcache *ic)
 {
-	struct identry *ent = ic->ent;
+	struct identry *ent;
+
+	if (!ic)
+		return;
+
+	ent = ic->ent;
 
 	while (ent) {
 		struct identry *next = ent->next;
@@ -50,6 +55,9 @@ static void add_id(struct idcache *ic, char *name, unsigned long int id)
 {
 	struct identry *ent, *x;
 	int w = 0;
+
+	if (!ic)
+		return;
 
 	ent = calloc(1, sizeof(struct identry));
 	if (!ent)
