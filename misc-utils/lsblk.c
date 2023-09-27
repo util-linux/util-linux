@@ -659,16 +659,28 @@ static void unref_rawdata(struct libscols_table *tb)
 	struct libscols_iter *itr;
 	struct libscols_line *ln;
 
-	if (!tb || !lsblk->sort_col)
+	if (!tb || !lsblk->rawdata)
 		return;
+
 	itr = scols_new_iter(SCOLS_ITER_FORWARD);
 	if (!itr)
 		return;
+
 	while (scols_table_next_line(tb, itr, &ln) == 0) {
-		struct libscols_cell *ce = scols_line_get_column_cell(ln,
-								lsblk->sort_col);
-		void *data = scols_cell_get_userdata(ce);
-		free(data);
+		size_t i;
+
+		for (i = 0; i < ncolumns; i++) {
+			struct libscols_column *cl = scols_table_get_column(tb, i);
+			struct libscols_cell *ce;
+			void *data;
+
+			if (cl != lsblk->sort_col && !scols_column_has_datafunc(cl))
+				continue;
+
+			ce = scols_line_get_column_cell(ln, cl);
+			data = scols_cell_get_userdata(ce);
+			free(data);
+		}
 	}
 
 	scols_free_iter(itr);
@@ -1240,19 +1252,19 @@ static void device_fill_scols_cell(struct lsblk_device *dev,
 				   size_t colnum)
 {
 	struct libscols_cell *ce;
+	struct libscols_column *cl = scols_table_get_column(lsblk->table, colnum);
 	char *data;
 	size_t datasiz = 0;
 	int rc, id = get_column_id(colnum);
 
-	if (lsblk->sort_id != id)
-		data = device_get_data(dev, parent, id, NULL, &datasiz);
-	else {
+	if (lsblk->sort_id == id || scols_column_has_datafunc(cl)) {
 		uint64_t rawdata = (uint64_t) -1;
 
 		data = device_get_data(dev, parent, id, &rawdata, &datasiz);
 		if (data && rawdata != (uint64_t) -1)
 			set_rawdata_u64(ln, colnum, rawdata);
-	}
+	} else
+		data = device_get_data(dev, parent, id, NULL, &datasiz);
 
 	if (!data)
 		return;
@@ -2043,6 +2055,13 @@ static int cmp_u64_cells(struct libscols_cell *a,
 	return *adata == *bdata ? 0 : *adata >= *bdata ? 1 : -1;
 }
 
+static void *get_u64_cell(const struct libscols_column *cl __attribute__((__unused__)),
+			  struct libscols_cell *ce,
+			  void *data __attribute__((__unused__)))
+{
+	return scols_cell_get_userdata(ce);
+}
+
 static void device_set_dedupkey(
 			struct lsblk_device *dev,
 			struct lsblk_device *parent,
@@ -2188,22 +2207,29 @@ static void set_column_type(const struct colinfo *ci, struct libscols_column *cl
 {
 	switch (ci->type) {
 	case COLTYPE_SIZE:
+		/* See init_scols_filter(), it may overwrite the type */
 		if (!lsblk->bytes)
 			break;
 		/* fallthrough */
 	case COLTYPE_NUM:
 		scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
-		break;
+		scols_column_set_data_type(cl, SCOLS_DATA_U64);
+		return;
 	case COLTYPE_BOOL:
 		scols_column_set_json_type(cl, SCOLS_JSON_BOOLEAN);
-		break;
+		scols_column_set_data_type(cl, SCOLS_DATA_BOOLEAN);
+		return;
 	default:
-		if (fl & SCOLS_FL_WRAP)
-			scols_column_set_json_type(cl, SCOLS_JSON_ARRAY_STRING);
-		else
-			scols_column_set_json_type(cl, SCOLS_JSON_STRING);
 		break;
 	}
+
+	/* default */
+	if (fl & SCOLS_FL_WRAP)
+		scols_column_set_json_type(cl, SCOLS_JSON_ARRAY_STRING);
+	else
+		scols_column_set_json_type(cl, SCOLS_JSON_STRING);
+
+	scols_column_set_data_type(cl, SCOLS_DATA_STRING);
 }
 
 static void init_scols_filter(struct libscols_table *tb, struct libscols_filter *f)
@@ -2217,13 +2243,13 @@ static void init_scols_filter(struct libscols_table *tb, struct libscols_filter 
 
 	while (scols_filter_next_holder(f, itr, &name, 0) == 0) {
 		struct libscols_column *col = scols_table_get_column_by_name(tb, name);
+		int id = column_name_to_id(name, strlen(name));
+		const struct colinfo *ci = id >= 0 ? &infos[id] : NULL;
+
+		if (!ci)
+			goto fail;
 
 		if (!col) {
-			int id = column_name_to_id(name, strlen(name));
-			const struct colinfo *ci = id >= 0 ? &infos[id] : NULL;
-
-			if (!ci)
-				goto fail;
 			add_column(id);
 			col = scols_table_new_column(lsblk->table, ci->name,
 						     ci->whint, SCOLS_FL_HIDDEN);
@@ -2232,6 +2258,17 @@ static void init_scols_filter(struct libscols_table *tb, struct libscols_filter 
 
 			set_column_type(ci, col, ci->flags);
 		}
+
+		/* For sizes use rawdata (u64) rather than strings from table */
+		if (ci->type == COLTYPE_SIZE
+		    && !lsblk->bytes
+		    && !scols_column_has_datafunc(col)) {
+
+			scols_column_set_data_type(col, SCOLS_DATA_U64);
+			scols_column_set_datafunc(col, get_u64_cell, NULL);
+			lsblk->rawdata = 1;
+		}
+
 		scols_filter_assign_column(f, itr, name, col);
 	}
 
@@ -2691,6 +2728,7 @@ int main(int argc, char *argv[])
 		}
 		if (!lsblk->sort_col && lsblk->sort_id == id) {
 			lsblk->sort_col = cl;
+			lsblk->rawdata = 1;
 			scols_column_set_cmpfunc(cl,
 				ci->type == COLTYPE_NUM     ? cmp_u64_cells :
 				ci->type == COLTYPE_SIZE    ? cmp_u64_cells :
@@ -2756,7 +2794,7 @@ int main(int argc, char *argv[])
 	if (lsblk->ncts)
 		print_counters();
 leave:
-	if (lsblk->sort_col)
+	if (lsblk->rawdata)
 		unref_rawdata(lsblk->table);
 
 	scols_unref_table(lsblk->table);
