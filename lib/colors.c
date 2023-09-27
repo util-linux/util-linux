@@ -357,12 +357,10 @@ static char *colors_get_homedir(char *buf, size_t bufsz)
 
 /*
  * Adds one color sequence to array with color scheme.
- * When returning success (0) this function takes ownership of
- * @seq and @name, which have to be allocated strings.
  */
 static int colors_add_scheme(struct ul_color_ctl *cc,
-			     char *name,
-			     char *seq0)
+			     const char *name,
+			     const char *seq0)
 {
 	struct ul_color_scheme *cs = NULL;
 	char *seq = NULL;
