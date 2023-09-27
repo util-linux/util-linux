@@ -223,20 +223,26 @@ int filter_param_reset_holder(struct filter_param *n)
 	if (n->type != SCOLS_DATA_NONE)
 		return 0; /* already set */
 
-	switch (n->col->json_type) {
-	case SCOLS_JSON_NUMBER:
-		n->type = SCOLS_DATA_U64;
-		break;
-	case SCOLS_JSON_BOOLEAN:
-		n->type = SCOLS_DATA_BOOLEAN;
-		break;
-	case SCOLS_JSON_FLOAT:
-		n->type = SCOLS_DATA_FLOAT;
-		break;
-	case SCOLS_JSON_STRING:
-	default:
-		n->type = SCOLS_DATA_STRING;
-		break;
+	if (n->col->data_type)
+		/* use by application defined type */
+		n->type = n->col->data_type;
+	else {
+		/* use by JSON defined type, default to string if not specified */
+		switch (n->col->json_type) {
+		case SCOLS_JSON_NUMBER:
+			n->type = SCOLS_DATA_U64;
+			break;
+		case SCOLS_JSON_BOOLEAN:
+			n->type = SCOLS_DATA_BOOLEAN;
+			break;
+		case SCOLS_JSON_FLOAT:
+			n->type = SCOLS_DATA_FLOAT;
+			break;
+		case SCOLS_JSON_STRING:
+		default:
+			n->type = SCOLS_DATA_STRING;
+			break;
+		}
 	}
 
 	DBG(FPARAM, ul_debugobj(n, "holder %s type: %s", n->holder_name, datatype2str(n->type)));
@@ -247,26 +253,37 @@ static int fetch_holder_data(struct libscols_filter *fltr __attribute__((__unuse
 			struct filter_param *n, struct libscols_line *ln)
 {
 	const char *data;
+	struct libscols_column *cl = n->col;
 	int type = n->type;
 	int rc = 0;
 
 	if (n->has_value || n->holder != F_HOLDER_COLUMN)
 		return 0;
-	if (!n->col) {
+	if (!cl) {
 		DBG(FPARAM, ul_debugobj(n, "no column for %s holder", n->holder_name));
 		return -EINVAL;
 	}
 	DBG(FPARAM, ul_debugobj(n, "fetching %s data", n->holder_name));
 
-	if (fltr->filler_cb && !scols_line_is_filled(ln, n->col->seqnum)) {
-		rc = fltr->filler_cb(fltr, ln, n->col->seqnum, fltr->filler_data);
+	if (fltr->filler_cb && !scols_line_is_filled(ln, cl->seqnum)) {
+		rc = fltr->filler_cb(fltr, ln, cl->seqnum, fltr->filler_data);
 		if (rc)
 			return rc;
 	}
 
-	/* read column data, use it as string */
-	data = scols_line_get_column_data(ln, n->col);
-	rc = param_set_data(n, SCOLS_DATA_STRING, data);
+	if (cl->datafunc) {
+		struct libscols_cell *ce = scols_line_get_column_cell(ln, cl);
+		void *data = NULL;
+
+		if (ce)
+			data = cl->datafunc(n->col, ce, cl->datafunc_data);
+		if (data)
+			rc = param_set_data(n, cl->data_type, data);
+	} else {
+		/* read column data, use it as string */
+		data = scols_line_get_column_data(ln, n->col);
+		rc = param_set_data(n, SCOLS_DATA_STRING, data);
+	}
 
 	/* cast to the wanted type */
 	if (rc == 0 && type != SCOLS_DATA_NONE)

@@ -239,4 +239,8 @@ SMARTCOLS_2.40 {
 	scols_counter_get_name;
 	scols_filter_next_counter;
 	scols_shellvar_name;
+	scols_column_set_datafunc;
+	scols_column_has_datafunc;
+	scols_column_set_data_type;
+	scols_column_get_data_type;
 } SMARTCOLS_2.39;

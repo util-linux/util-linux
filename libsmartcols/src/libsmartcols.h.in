@@ -217,6 +217,9 @@ extern const char *scols_column_get_safechars(const struct libscols_column *cl);
 extern int scols_column_set_json_type(struct libscols_column *cl, int type);
 extern int scols_column_get_json_type(const struct libscols_column *cl);
 
+extern int scols_column_set_data_type(struct libscols_column *cl, int type);
+extern int scols_column_get_data_type(const struct libscols_column *cl);
+
 extern int scols_column_set_flags(struct libscols_column *cl, int flags);
 extern int scols_column_get_flags(const struct libscols_column *cl);
 extern struct libscols_column *scols_new_column(void);
@@ -248,6 +251,13 @@ extern int scols_column_set_wrapfunc(struct libscols_column *cl,
 			char * (*wrap_nextchunk)(const struct libscols_column *,
 					 char *, void *),
 			void *userdata);
+
+extern int scols_column_set_datafunc(struct libscols_column *cl,
+                        void *(*datafunc)(const struct libscols_column *,
+                                        struct libscols_cell *,
+                                        void *),
+                        void *userdata);
+extern int scols_column_has_datafunc(struct libscols_column *cl);
 
 extern char *scols_wrapnl_nextchunk(const struct libscols_column *cl, char *data, void *userdata);
 extern size_t scols_wrapnl_chunksize(const struct libscols_column *cl, const char *data, void *userdata);

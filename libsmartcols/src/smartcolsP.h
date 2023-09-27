@@ -119,6 +119,7 @@ struct libscols_column {
 	struct libscols_wstat wstat;	/* private __scols_calculate() data */
 
 	int	json_type;	/* SCOLS_JSON_* */
+	int	data_type;	/* SCOLS_DATA_* */
 
 	int	flags;
 	char	*color;		/* default column color */
@@ -139,6 +140,11 @@ struct libscols_column {
 	char	*wrap_cur;
 	char    *wrap_next;
 	struct libscols_cell	*wrap_cell;
+
+	void *(*datafunc)(const struct libscols_column *,
+			struct libscols_cell *,
+			void *);
+	void *datafunc_data;
 
 	struct libscols_cell	header;		/* column name with color etc. */
 	char	*shellvar;			/* raw colum name in shell compatible format */

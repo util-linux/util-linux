@@ -211,6 +211,42 @@ int scols_column_get_json_type(const struct libscols_column *cl)
 
 
 /**
+ * scols_column_set_data_type:
+ * @cl: a pointer to a struct libscols_column instance
+ * @type: SCOLS_DATA_*
+ *
+ * The table always keep data in strings in form that is printed on output, but
+ * for some internal operations (like filters or counters) it needs to convert
+ * the strings to usable data format. This data format is possible to specify,
+ * by this function. If the format is not specified then filter and counters
+ * try to use SCOLS_JSON_* types, if also not define than defaults to string.
+ *
+ * If simple string conversion is not possible then application (which want to
+ * use filters and counters) needs to define data function. See
+ * scols_column_set_datafunc().
+ *
+ * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.40
+ */
+int scols_column_set_data_type(struct libscols_column *cl, int type)
+{
+	return cl->data_type = type;
+}
+
+/**
+ * scols_column_get_data_type:
+ * @cl: a pointer to a struct libscols_column instance
+ *
+ * Returns: The current datatype setting of the column @cl.
+ *
+ * Since: 2.40
+ */
+int scols_column_get_data_type(const struct libscols_column *cl)
+{
+	return cl->data_type;;
+}
+/**
  * scols_column_get_table:
  * @cl: a pointer to a struct libscols_column instance
  *
@@ -393,6 +429,7 @@ const char *scols_column_get_color(const struct libscols_column *cl)
 {
 	return cl->color;
 }
+
 
 /**
  * scols_wrapnl_nextchunk:
@@ -591,6 +628,46 @@ int scols_column_get_wrap_data(const struct libscols_column *cl,
 	return 0;
 }
 
+/* scols_column_set_datafunc:
+ * @cl: a pointer to a struct libscols_column instance
+ * @datafunc: function to return data
+ * @userdata: optional stuff for callbacks
+ *
+ * The internal library operations (like filters) use standard cell data by default.
+ * This callback allows to use the data in another format for internal library purpose.
+ *
+ * The callback needs to return the data as pointer to void, and the datatype
+ * is defined by scols_column_set_data_type().
+ *
+ * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.40
+ */
+int scols_column_set_datafunc(struct libscols_column *cl,
+			void *(*datafunc)(const struct libscols_column *,
+					struct libscols_cell *,
+					void *),
+			void *userdata)
+{
+	if (!cl)
+		return -EINVAL;
+
+	cl->datafunc = datafunc;
+	cl->datafunc_data = userdata;
+	return 0;
+}
+
+/**
+ * @cl: a pointer to a struct libscols_column instance
+ *
+ * Returns: 1 if datafunc defined, or 0
+ *
+ * Since: 2.40
+ */
+int scols_column_has_datafunc(struct libscols_column *cl)
+{
+	return cl && cl->datafunc != NULL ? 1 : 0;
+}
 
 /**
  * scols_column_set_safechars:
