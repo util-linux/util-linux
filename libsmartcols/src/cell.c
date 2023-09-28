@@ -62,6 +62,9 @@ int scols_reset_cell(struct libscols_cell *ce)
  */
 int scols_cell_set_data(struct libscols_cell *ce, const char *data)
 {
+	if (!ce)
+		return -EINVAL;
+
 	return strdup_to_struct_member(ce, data, data);
 }
 
@@ -120,7 +123,7 @@ int scols_cell_set_userdata(struct libscols_cell *ce, void *data)
  */
 void *scols_cell_get_userdata(struct libscols_cell *ce)
 {
-	return ce->userdata;
+	return ce ? ce->userdata : NULL;
 }
 
 /**
@@ -166,6 +169,9 @@ int scols_cmpstr_cells(struct libscols_cell *a,
  */
 int scols_cell_set_color(struct libscols_cell *ce, const char *color)
 {
+	if (!ce)
+		return -EINVAL;
+
 	if (color && !color_is_sequence(color)) {
 		char *seq = color_get_sequence(color);
 		if (!seq)
@@ -185,6 +191,9 @@ int scols_cell_set_color(struct libscols_cell *ce, const char *color)
  */
 const char *scols_cell_get_color(const struct libscols_cell *ce)
 {
+	if (!ce)
+		return NULL;
+
 	return ce->color;
 }
 
@@ -214,7 +223,7 @@ int scols_cell_set_flags(struct libscols_cell *ce, int flags)
  */
 int scols_cell_get_flags(const struct libscols_cell *ce)
 {
-	return ce->flags;
+	return ce ? ce->flags : 0;
 }
 
 /**
@@ -227,9 +236,11 @@ int scols_cell_get_flags(const struct libscols_cell *ce)
  */
 int scols_cell_get_alignment(const struct libscols_cell *ce)
 {
-	if (ce->flags & SCOLS_CELL_FL_RIGHT)
+	int flags = scols_cell_get_flags(ce);
+
+	if (flags & SCOLS_CELL_FL_RIGHT)
 		return SCOLS_CELL_FL_RIGHT;
-	if (ce->flags & SCOLS_CELL_FL_CENTER)
+	if (flags & SCOLS_CELL_FL_CENTER)
 		return SCOLS_CELL_FL_CENTER;
 
 	return SCOLS_CELL_FL_LEFT;	/* default */
@@ -248,6 +259,9 @@ int scols_cell_copy_content(struct libscols_cell *dest,
 			    const struct libscols_cell *src)
 {
 	int rc;
+
+	if (!dest || !src)
+		return -EINVAL;
 
 	rc = scols_cell_set_data(dest, scols_cell_get_data(src));
 	if (!rc)
