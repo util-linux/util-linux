@@ -284,6 +284,32 @@ static inline void xstrputc(char **a, char c)
 	xstrappend(a, b);
 }
 
+static inline
+__attribute__((__format__(printf, 2, 0)))
+int xstrvfappend(char **a, const char *format, va_list ap)
+{
+	int ret = strvfappend(a, format, ap);
+
+	if (ret < 0)
+		err(XALLOC_EXIT_CODE, "cannot allocate string");
+	return ret;
+
+}
+
+static inline
+__attribute__ ((__format__ (__printf__, 2, 3)))
+int xstrfappend(char **a, const char *format, ...)
+{
+	va_list ap;
+	int ret;
+
+	va_start(ap, format);
+	ret = xstrvfappend(a, format, ap);
+	va_end(ap);
+
+	return ret;
+}
+
 /*
  * Net namespace
  */
