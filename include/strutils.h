@@ -394,6 +394,10 @@ extern char *strfconcat(const char *s, const char *format, ...)
 		 __attribute__ ((__format__ (__printf__, 2, 3)));
 
 extern int strappend(char **a, const char *b);
+extern int strfappend(char **a, const char *format, ...)
+		 __attribute__ ((__format__ (__printf__, 2, 3)));
+extern int strvfappend(char **a, const char *format, va_list ap)
+		 __attribute__ ((__format__ (__printf__, 2, 0)));
 
 extern const char *split(const char **state, size_t *l, const char *separator, int quoted);
 
