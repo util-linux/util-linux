@@ -823,8 +823,6 @@ int blkid_probe_reset_buffers(blkid_probe pr)
 		ct++;
 		len += bf->len;
 
-		DBG(BUFFER, ul_debug(" remove buffer: [off=%"PRIu64", len=%"PRIu64"]",
-		                     bf->off, bf->len));
 		remove_buffer(bf);
 	}
 
