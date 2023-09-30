@@ -29,8 +29,6 @@ static int probe_lsiraid(blkid_probe pr,
 	uint64_t off;
 	struct lsi_metadata *lsi;
 
-	if (pr->size < 0x10000)
-		return 1;
 	if (!S_ISREG(pr->mode) && !blkid_probe_is_wholedisk(pr))
 		return 1;
 
@@ -53,6 +51,7 @@ static int probe_lsiraid(blkid_probe pr,
 const struct blkid_idinfo lsiraid_idinfo = {
 	.name		= "lsi_mega_raid_member",
 	.usage		= BLKID_USAGE_RAID,
+	.minsz		= 0x10000,
 	.probefunc	= probe_lsiraid,
 	.magics		= BLKID_NONE_MAGIC
 };
