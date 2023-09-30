@@ -32,8 +32,6 @@ static int probe_iswraid(blkid_probe pr,
 	unsigned int sector_size;
 	struct isw_metadata *isw;
 
-	if (pr->size < 0x10000)
-		return 1;
 	if (!S_ISREG(pr->mode) && !blkid_probe_is_wholedisk(pr))
 		return 1;
 
@@ -60,6 +58,7 @@ static int probe_iswraid(blkid_probe pr,
 const struct blkid_idinfo iswraid_idinfo = {
 	.name		= "isw_raid_member",
 	.usage		= BLKID_USAGE_RAID,
+	.minsz		= 0x10000,
 	.probefunc	= probe_iswraid,
 	.magics		= BLKID_NONE_MAGIC
 };
