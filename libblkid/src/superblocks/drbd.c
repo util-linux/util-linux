@@ -18,18 +18,18 @@
 
 #include "superblocks.h"
 
-/*
- * drbd/linux/drbd.h
- */
-#define DRBD_MAGIC 0x83740267
+enum {
+	DRBD_VERSION_08,
+	DRBD_VERSION_09,
+};
 
 /*
  * user/drbdmeta.c
  * We support v08 and v09
  */
-#define DRBD_MD_MAGIC_08         (DRBD_MAGIC+4)
-#define DRBD_MD_MAGIC_84_UNCLEAN (DRBD_MAGIC+5)
-#define DRBD_MD_MAGIC_09         (DRBD_MAGIC+6)
+#define DRBD_MD_MAGIC_08		"\x83\x74\x02\x6b"
+#define DRBD_MD_MAGIC_84_UNCLEAN	"\x83\x74\x02\x6c"
+#define DRBD_MD_MAGIC_09		"\x83\x74\x02\x6d"
 /* there is no DRBD_MD_MAGIC_09_UNCLEAN */
 
 /*
@@ -124,23 +124,13 @@ struct meta_data_on_disk_9 {
 } __attribute__((packed));
 
 
-static int probe_drbd_84(blkid_probe pr)
+static int probe_drbd_84(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct md_on_disk_08 *md;
-	off_t off;
 
-	off = pr->size - DRBD_MD_OFFSET;
-
-	md = (struct md_on_disk_08 *)
-			blkid_probe_get_buffer(pr,
-					off,
-					sizeof(struct md_on_disk_08));
+	md = blkid_probe_get_sb(pr, mag, struct md_on_disk_08);
 	if (!md)
 		return errno ? -errno : 1;
-
-	if (be32_to_cpu(md->magic) != DRBD_MD_MAGIC_08 &&
-			be32_to_cpu(md->magic) != DRBD_MD_MAGIC_84_UNCLEAN)
-		return 1;
 
 	/*
 	 * DRBD does not have "real" uuids; the following resembles DRBD's
@@ -152,31 +142,16 @@ static int probe_drbd_84(blkid_probe pr)
 
 	blkid_probe_set_version(pr, "v08");
 
-	if (blkid_probe_set_magic(pr,
-				off + offsetof(struct md_on_disk_08, magic),
-				sizeof(md->magic),
-				(unsigned char *) &md->magic))
-		return 1;
-
 	return 0;
 }
 
-static int probe_drbd_90(blkid_probe pr)
+static int probe_drbd_90(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct meta_data_on_disk_9 *md;
-	off_t off;
 
-	off = pr->size - DRBD_MD_OFFSET;
-
-	md = (struct meta_data_on_disk_9 *)
-			blkid_probe_get_buffer(pr,
-					off,
-					sizeof(struct meta_data_on_disk_9));
+	md = blkid_probe_get_sb(pr, mag, struct meta_data_on_disk_9);
 	if (!md)
 		return errno ? -errno : 1;
-
-	if (be32_to_cpu(md->magic) != DRBD_MD_MAGIC_09)
-		return 1;
 
 	/*
 	 * DRBD does not have "real" uuids; the following resembles DRBD's
@@ -188,25 +163,18 @@ static int probe_drbd_90(blkid_probe pr)
 
 	blkid_probe_set_version(pr, "v09");
 
-	if (blkid_probe_set_magic(pr,
-				off + offsetof(struct meta_data_on_disk_9, magic),
-				sizeof(md->magic),
-				(unsigned char *) &md->magic))
-		return 1;
-
 	return 0;
 }
 
-static int probe_drbd(blkid_probe pr,
-		const struct blkid_idmag *mag __attribute__((__unused__)))
+static int probe_drbd(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	int ret;
+	if (mag->hint == DRBD_VERSION_08)
+		return probe_drbd_84(pr, mag);
 
-	ret = probe_drbd_84(pr);
-	if (ret <= 0) /* success or fatal (-errno) */
-		return ret;
+	if (mag->hint == DRBD_VERSION_09)
+		return probe_drbd_90(pr, mag);
 
-	return probe_drbd_90(pr);
+	return 1;
 }
 
 const struct blkid_idinfo drbd_idinfo =
@@ -220,6 +188,29 @@ const struct blkid_idinfo drbd_idinfo =
 	 * keep this as a sufficient lower bound.
 	 */
 	.minsz		= 0x10000,
-	.magics		= BLKID_NONE_MAGIC
+	.magics		= {
+		{
+			.magic = DRBD_MD_MAGIC_08,
+			.len   = sizeof(DRBD_MD_MAGIC_08) - 1,
+			.hint  = DRBD_VERSION_08,
+			.kboff = -(DRBD_MD_OFFSET >> 10),
+			.sboff = offsetof(struct md_on_disk_08, magic),
+		},
+		{
+			.magic = DRBD_MD_MAGIC_84_UNCLEAN,
+			.len   = sizeof(DRBD_MD_MAGIC_84_UNCLEAN) - 1,
+			.hint  = DRBD_VERSION_08,
+			.kboff = -(DRBD_MD_OFFSET >> 10),
+			.sboff = offsetof(struct md_on_disk_08, magic),
+		},
+		{
+			.magic = DRBD_MD_MAGIC_09,
+			.len   = sizeof(DRBD_MD_MAGIC_09) - 1,
+			.hint  = DRBD_VERSION_09,
+			.kboff = -(DRBD_MD_OFFSET >> 10),
+			.sboff = offsetof(struct meta_data_on_disk_9, magic),
+		},
+		{ NULL }
+	}
 };
 
