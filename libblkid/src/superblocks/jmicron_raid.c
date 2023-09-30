@@ -75,8 +75,6 @@ static int probe_jmraid(blkid_probe pr,
 	uint64_t off;
 	const struct jm_metadata *jm;
 
-	if (pr->size < 0x10000)
-		return 1;
 	if (!S_ISREG(pr->mode) && !blkid_probe_is_wholedisk(pr))
 		return 1;
 
@@ -109,6 +107,7 @@ static int probe_jmraid(blkid_probe pr,
 const struct blkid_idinfo jmraid_idinfo = {
 	.name		= "jmicron_raid_member",
 	.usage		= BLKID_USAGE_RAID,
+	.minsz		= 0x10000,
 	.probefunc	= probe_jmraid,
 	.magics		= BLKID_NONE_MAGIC
 };
