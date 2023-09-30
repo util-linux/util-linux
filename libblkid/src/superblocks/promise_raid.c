@@ -33,8 +33,6 @@ static int probe_pdcraid(blkid_probe pr,
 	};
 	uint64_t nsectors;
 
-	if (pr->size < 0x40000)
-		return 1;
 	if (!S_ISREG(pr->mode) && !blkid_probe_is_wholedisk(pr))
 		return 1;
 
@@ -70,6 +68,7 @@ static int probe_pdcraid(blkid_probe pr,
 const struct blkid_idinfo pdcraid_idinfo = {
 	.name		= "promise_fasttrack_raid_member",
 	.usage		= BLKID_USAGE_RAID,
+	.minsz		= 0x40000,
 	.probefunc	= probe_pdcraid,
 	.magics		= BLKID_NONE_MAGIC
 };
