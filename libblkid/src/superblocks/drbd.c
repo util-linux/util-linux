@@ -131,10 +131,6 @@ static int probe_drbd_84(blkid_probe pr)
 
 	off = pr->size - DRBD_MD_OFFSET;
 
-	/* Small devices cannot be drbd (?) */
-	if (pr->size < 0x10000)
-		return 1;
-
 	md = (struct md_on_disk_08 *)
 			blkid_probe_get_buffer(pr,
 					off,
@@ -171,14 +167,6 @@ static int probe_drbd_90(blkid_probe pr)
 	off_t off;
 
 	off = pr->size - DRBD_MD_OFFSET;
-
-	/*
-	 * Smaller ones are certainly not DRBD9 devices.
-	 * Recent utils even refuse to generate larger ones,
-	 * keep this as a sufficient lower bound.
-	 */
-	if (pr->size < 0x10000)
-		return 1;
 
 	md = (struct meta_data_on_disk_9 *)
 			blkid_probe_get_buffer(pr,
@@ -226,6 +214,12 @@ const struct blkid_idinfo drbd_idinfo =
 	.name		= "drbd",
 	.usage		= BLKID_USAGE_RAID,
 	.probefunc	= probe_drbd,
+	/*
+	 * Smaller ones are certainly not DRBD9 devices.
+	 * Recent utils even refuse to generate larger ones,
+	 * keep this as a sufficient lower bound.
+	 */
+	.minsz		= 0x10000,
 	.magics		= BLKID_NONE_MAGIC
 };
 
