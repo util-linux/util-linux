@@ -79,9 +79,6 @@ static int probe_adraid(blkid_probe pr,
 	uint64_t off;
 	struct adaptec_metadata *ad;
 
-	if (pr->size < 0x10000)
-		return BLKID_PROBE_NONE;
-
 	if (!S_ISREG(pr->mode) && !blkid_probe_is_wholedisk(pr))
 		return BLKID_PROBE_NONE;
 
@@ -109,6 +106,7 @@ static int probe_adraid(blkid_probe pr,
 const struct blkid_idinfo adraid_idinfo = {
 	.name		= "adaptec_raid_member",
 	.usage		= BLKID_USAGE_RAID,
+	.minsz		= 0x10000,
 	.probefunc	= probe_adraid,
 	.magics		= BLKID_NONE_MAGIC
 };
