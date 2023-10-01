@@ -1280,21 +1280,19 @@ int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
 			kboff = ((mag->zonenum * pr->zone_size) >> 10) + mag->kboff_inzone;
 
 		if (kboff >= 0)
-			off = hint_offset + ((kboff + (mag->sboff >> 10)) << 10);
+			off = hint_offset + (kboff << 10) + mag->sboff;
 		else
-			off = pr->size - (-kboff << 10);
-		buf = blkid_probe_get_buffer(pr, off, 1024);
+			off = pr->size - (-kboff << 10) + mag->sboff;
+		buf = blkid_probe_get_buffer(pr, off, mag->len);
 
 		if (!buf && errno)
 			return -errno;
 
-		if (buf && !memcmp(mag->magic,
-				buf + (mag->sboff & 0x3ff), mag->len)) {
-
+		if (buf && !memcmp(mag->magic, buf, mag->len)) {
 			DBG(LOWPROBE, ul_debug("\tmagic sboff=%u, kboff=%ld",
 				mag->sboff, kboff));
 			if (offset)
-				*offset = off + (mag->sboff & 0x3ff);
+				*offset = off;
 			if (res)
 				*res = mag;
 			return BLKID_PROBE_OK;
