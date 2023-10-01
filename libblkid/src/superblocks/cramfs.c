@@ -37,12 +37,6 @@ struct cramfs_super
 
 #define CRAMFS_FLAG_FSID_VERSION_2	0x00000001	/* fsid version #2 */
 
-static int cramfs_is_little_endian(const struct blkid_idmag *mag)
-{
-	assert(mag->len == 4);
-	return memcmp(mag->magic, "\x45\x3d\xcd\x28", 4) == 0;
-}
-
 static uint32_t cfs32_to_cpu(int le, uint32_t value)
 {
 	if (le)
@@ -83,7 +77,7 @@ static int probe_cramfs(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!cs)
 		return errno ? -errno : 1;
 
-	int le = cramfs_is_little_endian(mag);
+	int le = mag->hint == BLKID_ENDIANNESS_LITTLE;
 	int v2 = cfs32_to_cpu(le, cs->flags) & CRAMFS_FLAG_FSID_VERSION_2;
 
 	if (v2 && !cramfs_verify_csum(pr, mag, cs, le))
@@ -92,8 +86,7 @@ static int probe_cramfs(blkid_probe pr, const struct blkid_idmag *mag)
 	blkid_probe_set_label(pr, cs->name, sizeof(cs->name));
 	blkid_probe_set_fssize(pr, cfs32_to_cpu(le, cs->size));
 	blkid_probe_sprintf_version(pr, "%d", v2 ? 2 : 1);
-	blkid_probe_set_fsendianness(pr,
-			le ? BLKID_ENDIANNESS_LITTLE : BLKID_ENDIANNESS_BIG);
+	blkid_probe_set_fsendianness(pr, mag->hint);
 	return 0;
 }
 
@@ -104,8 +97,10 @@ const struct blkid_idinfo cramfs_idinfo =
 	.probefunc	= probe_cramfs,
 	.magics		=
 	{
-		{ .magic = "\x45\x3d\xcd\x28", .len = 4 },
-		{ .magic = "\x28\xcd\x3d\x45", .len = 4 },
+		{ .magic = "\x45\x3d\xcd\x28", .len = 4,
+		  .hint = BLKID_ENDIANNESS_LITTLE },
+		{ .magic = "\x28\xcd\x3d\x45", .len = 4,
+		  .hint = BLKID_ENDIANNESS_BIG },
 		{ NULL }
 	}
 };
