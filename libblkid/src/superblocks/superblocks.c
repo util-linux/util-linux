@@ -417,6 +417,7 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 		/* final check by probing function */
 		if (id->probefunc) {
 			DBG(LOWPROBE, ul_debug("\tcall probefunc()"));
+			errno = 0;
 			rc = id->probefunc(pr, mag);
 			blkid_probe_prune_buffers(pr);
 			if (rc != BLKID_PROBE_OK) {
