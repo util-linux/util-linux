@@ -58,8 +58,6 @@ static int kcmp(pid_t pid1, pid_t pid2, int type,
 #include "pathnames.h"
 
 #include "lsfd.h"
-#include "lsfd-filter.h"
-#include "lsfd-counter.h"
 
 /*
  * /proc/$pid/mountinfo entries
@@ -488,6 +486,12 @@ static const struct counter_spec default_counter_specs[] = {
 	}
 };
 
+/* "userdata" used by callback for libsmartcols filter */
+struct filler_data {
+	struct proc *proc;
+	struct file *file;
+};
+
 struct lsfd_control {
 	struct libscols_table *tb;		/* output */
 	struct list_head procs;			/* list of all processes */
@@ -502,8 +506,8 @@ struct lsfd_control {
 			sockets_only : 1,	/* display only SOCKETS */
 			show_xmode : 1;		/* XMODE column is enabled. */
 
-	struct lsfd_filter *filter;
-	struct lsfd_counter **counters;		/* NULL terminated array. */
+	struct libscols_filter *filter;		/* filter */
+	struct libscols_filter **ct_filters;	/* counters (NULL terminated array) */
 };
 
 static void *proc_tree;			/* for tsearch/tfind */
@@ -532,13 +536,7 @@ static int column_name_to_id(const char *name, size_t namesz)
 			return i;
 	}
 	warnx(_("unknown column: %s"), name);
-
-	return LSFD_FILTER_UNKNOWN_COL_ID;
-}
-
-static int column_name_to_id_cb(const char *name, void *data __attribute__((__unused__)))
-{
-	return column_name_to_id(name, strlen(name));
+	return -1;
 }
 
 static int get_column_id(int num)
@@ -575,7 +573,7 @@ static struct libscols_column *add_column(struct libscols_table *tb, const struc
 	return cl;
 }
 
-static struct libscols_column *add_column_by_id_cb(struct libscols_table *tb, int colid, void *data)
+static struct libscols_column *add_column_by_id(struct lsfd_control *ctl, int colid)
 {
 	struct libscols_column *cl;
 
@@ -584,15 +582,13 @@ static struct libscols_column *add_column_by_id_cb(struct libscols_table *tb, in
 
 	assert(colid < LSFD_N_COLS);
 
-	cl = add_column(tb, infos + colid);
+	cl = add_column(ctl->tb, infos + colid);
 	if (!cl)
 		err(EXIT_FAILURE, _("failed to allocate output column"));
 	columns[ncolumns++] = colid;
 
-	if (colid == COL_TID) {
-		struct lsfd_control *ctl = data;
+	if (colid == COL_TID)
 		ctl->threads = 1;
-	}
 
 	return cl;
 }
@@ -1165,6 +1161,7 @@ void add_endpoint(struct ipc_endpoint *endpoint, struct ipc *ipc)
 	list_add(&endpoint->endpoints, &ipc->endpoints);
 }
 
+
 static void fill_column(struct proc *proc,
 			struct file *file,
 			struct libscols_line *ln,
@@ -1182,6 +1179,18 @@ static void fill_column(struct proc *proc,
 	}
 }
 
+static int filter_filler_cb(
+		struct libscols_filter *fltr __attribute__((__unused__)),
+		struct libscols_line *ln,
+		size_t colnum,
+		void *userdata)
+{
+	struct filler_data *fid = (struct filler_data *) userdata;
+
+	fill_column(fid->proc, fid->file, ln, get_column_id(colnum), colnum);
+	return 0;
+}
+
 static void convert_file(struct proc *proc,
 		     struct file *file,
 		     struct libscols_line *ln)
@@ -1189,8 +1198,11 @@ static void convert_file(struct proc *proc,
 {
 	size_t i;
 
-	for (i = 0; i < ncolumns; i++)
+	for (i = 0; i < ncolumns; i++) {
+		if (scols_line_is_filled(ln, i))
+			continue;
 		fill_column(proc, file, ln, get_column_id(i), i);
+	}
 }
 
 static void convert(struct list_head *procs, struct lsfd_control *ctl)
@@ -1204,23 +1216,34 @@ static void convert(struct list_head *procs, struct lsfd_control *ctl)
 		list_for_each (f, &proc->files) {
 			struct file *file = list_entry(f, struct file, files);
 			struct libscols_line *ln = scols_table_new_line(ctl->tb, NULL);
-			struct lsfd_counter **counter = NULL;
+			struct libscols_filter **ct_fltr = NULL;
 
 			if (!ln)
 				err(EXIT_FAILURE, _("failed to allocate output line"));
+			if (ctl->filter) {
+				int status = 0;
+				struct filler_data fid = {
+					.proc = proc,
+					.file = file
+				};
+
+				scols_filter_set_filler_cb(ctl->filter,
+						filter_filler_cb, (void *) &fid);
+				if (scols_line_apply_filter(ln, ctl->filter, &status))
+					err(EXIT_FAILURE, _("failed to apply filter"));
+				if (status == 0) {
+					scols_table_remove_line(ctl->tb, ln);
+					continue;
+				}
+			}
 
 			convert_file(proc, file, ln);
 
-			if (!lsfd_filter_apply(ctl->filter, ln)) {
-				scols_table_remove_line(ctl->tb, ln);
-				continue;
-			}
-
-			if (!ctl->counters)
+			if (!ctl->ct_filters)
 				continue;
 
-			for (counter = ctl->counters; *counter; counter++)
-				lsfd_counter_accumulate(*counter, ln);
+			for (ct_fltr = ctl->ct_filters; *ct_fltr; ct_fltr++)
+				scols_line_apply_filter(ln, *ct_fltr, NULL);
 		}
 	}
 }
@@ -1236,12 +1259,13 @@ static void delete(struct list_head *procs, struct lsfd_control *ctl)
 	list_free(procs, struct proc, procs, free_proc);
 
 	scols_unref_table(ctl->tb);
-	lsfd_filter_free(ctl->filter);
-	if (ctl->counters) {
-		struct lsfd_counter **counter;
-		for (counter = ctl->counters; *counter; counter++)
-			lsfd_counter_free(*counter);
-		free(ctl->counters);
+	scols_unref_filter(ctl->filter);
+
+	if (ctl->ct_filters) {
+		struct libscols_filter **ct_fltr;
+		for (ct_fltr = ctl->ct_filters; *ct_fltr; ct_fltr++)
+			scols_unref_filter(*ct_fltr);
+		free(ctl->ct_filters);
 	}
 }
 
@@ -1846,24 +1870,49 @@ static void append_filter_expr(char **a, const char *b, bool and)
 	xstrappend(a, ")");
 }
 
-static struct lsfd_filter *new_filter(const char *expr, bool debug, const char *err_prefix, struct lsfd_control *ctl)
+static struct libscols_filter *new_filter(const char *expr, bool debug, struct lsfd_control *ctl)
 {
-	struct lsfd_filter *filter;
-	const char *errmsg;
+	struct libscols_filter *f;
+	struct libscols_iter *itr;
+	int nerrs = 0;
+	const char *name = NULL;
 
-	filter = lsfd_filter_new(expr, ctl->tb,
-				 LSFD_N_COLS,
-				 column_name_to_id_cb,
-				 add_column_by_id_cb, ctl);
-	errmsg = lsfd_filter_get_errmsg(filter);
-	if (errmsg)
-		errx(EXIT_FAILURE, "%s%s", err_prefix, errmsg);
-	if (debug) {
-		lsfd_filter_dump(filter, stdout);
-		exit(EXIT_SUCCESS);
+	f = scols_new_filter(NULL);
+	if (!f)
+		err(EXIT_FAILURE, _("failed to allocate filter"));
+	if (expr && scols_filter_parse_string(f, expr) != 0)
+		errx(EXIT_FAILURE, _("failed to parse \"%s\": %s"), expr,
+				scols_filter_get_errmsg(f));
+
+	itr = scols_new_iter(SCOLS_ITER_FORWARD);
+	if (!itr)
+		err(EXIT_FAILURE, _("failed to allocate iterator"));
+
+	while (scols_filter_next_holder(f, itr, &name, 0) == 0) {
+		struct libscols_column *col = scols_table_get_column_by_name(ctl->tb, name);
+
+		if (!col) {
+			int id = column_name_to_id(name, strlen(name));
+			if (id >= 0)
+				col = add_column_by_id(ctl, id);
+			if (!col) {
+				nerrs++;	/* report all unknown columns */
+				continue;
+			}
+		}
+		scols_filter_assign_column(f, itr, name, col);
 	}
 
-	return filter;
+	scols_free_iter(itr);
+
+	if (debug)
+		scols_dump_filter(f, stdout);
+	if (nerrs)
+		exit(EXIT_FAILURE);
+	if (debug)
+		exit(EXIT_SUCCESS);
+
+	return f;
 }
 
 static struct counter_spec *new_counter_spec(const char *spec_str)
@@ -1911,47 +1960,54 @@ static void free_counter_spec(struct counter_spec *counter_spec)
 	free(counter_spec);
 }
 
-static struct lsfd_counter *new_counter(const struct counter_spec *spec, struct lsfd_control *ctl)
+static struct libscols_filter *new_counter(const struct counter_spec *spec, struct lsfd_control *ctl)
 {
-	struct lsfd_filter *filter;
+	struct libscols_filter *f;
+	struct libscols_counter *ct;
 
-	filter = new_filter(spec->expr, false,
-			    _("failed in making filter for a counter: "),
-			    ctl);
-	return lsfd_counter_new(spec->name, filter);
+	f = new_filter(spec->expr, false, ctl);
+
+	ct = scols_filter_new_counter(f);
+	if (!ct)
+		err(EXIT_FAILURE, _("failed to allocate counter"));
+
+	scols_counter_set_name(ct, spec->name);
+	scols_counter_set_func(ct, SCOLS_COUNTER_COUNT);
+
+	return f;
 }
 
-static struct lsfd_counter **new_counters(struct list_head *specs, struct lsfd_control *ctl)
+static struct libscols_filter **new_counters(struct list_head *specs, struct lsfd_control *ctl)
 {
-	struct lsfd_counter **counters;
+	struct libscols_filter **ct_filters;
 	size_t len = list_count_entries(specs);
 	size_t i = 0;
 	struct list_head *s;
 
-	counters = xcalloc(len + 1, sizeof(struct lsfd_counter *));
+	ct_filters = xcalloc(len + 1, sizeof(struct libscols_filter *));
 	list_for_each(s, specs) {
 		struct counter_spec *spec = list_entry(s, struct counter_spec, specs);
-		counters[i++] = new_counter(spec, ctl);
+		ct_filters[i++] = new_counter(spec, ctl);
 	}
-	assert(counters[len] == NULL);
+	assert(ct_filters[len] == NULL);
 
-	return counters;
+	return ct_filters;
 }
 
-static struct lsfd_counter **new_default_counters(struct lsfd_control *ctl)
+static struct libscols_filter **new_default_counters(struct lsfd_control *ctl)
 {
-	struct lsfd_counter **counters;
+	struct libscols_filter **ct_filters;
 	size_t len = ARRAY_SIZE(default_counter_specs);
 	size_t i;
 
-	counters = xcalloc(len + 1, sizeof(struct lsfd_counter *));
+	ct_filters = xcalloc(len + 1, sizeof(struct libscols_filter *));
 	for (i = 0; i < len; i++) {
 		const struct counter_spec *spec = default_counter_specs + i;
-		counters[i] = new_counter(spec, ctl);
+		ct_filters[i] = new_counter(spec, ctl);
 	}
-	assert(counters[len] == NULL);
+	assert(ct_filters[len] == NULL);
 
-	return counters;
+	return ct_filters;
 }
 
 static void dump_default_counter_specs(void)
@@ -2009,28 +2065,35 @@ static struct libscols_table *new_summary_table(struct lsfd_control *ctl)
 	return tb;
 }
 
-static void fill_summary_line(struct libscols_line *ln, struct lsfd_counter *counter)
+static void emit_summary(struct lsfd_control *ctl)
 {
-	char *str = NULL;
-
-	xasprintf(&str, "%llu", (unsigned long long)lsfd_counter_value(counter));
-	if (!str)
-		err(EXIT_FAILURE, _("failed to add summary data"));
-	if (scols_line_refer_data(ln, 0, str))
-		err(EXIT_FAILURE, _("failed to add summary data"));
-
-	if (scols_line_set_data(ln, 1, lsfd_counter_name(counter)))
-		err(EXIT_FAILURE, _("failed to add summary data"));
-}
-
-static void emit_summary(struct lsfd_control *ctl, struct lsfd_counter **counter)
-{
+	struct libscols_iter *itr;
+	struct libscols_filter **ct_fltr;
 	struct libscols_table *tb = new_summary_table(ctl);
 
-	for (; *counter; counter++) {
-		struct libscols_line *ln = scols_table_new_line(tb, NULL);
-		fill_summary_line(ln, *counter);
+	itr = scols_new_iter(SCOLS_ITER_FORWARD);
+
+	for (ct_fltr = ctl->ct_filters; *ct_fltr; ct_fltr++) {
+		struct libscols_counter *ct = NULL;
+
+		scols_reset_iter(itr, SCOLS_ITER_FORWARD);
+		while (scols_filter_next_counter(*ct_fltr, itr, &ct) == 0) {
+			char *str = NULL;
+			struct libscols_line *ln;
+
+			ln = scols_table_new_line(tb, NULL);
+			if (!ln)
+				err(EXIT_FAILURE, _("failed to allocate summary line"));
+
+			xasprintf(&str, "%llu", scols_counter_get_result(ct));
+			if (scols_line_refer_data(ln, 0, str))
+				err(EXIT_FAILURE, _("failed to add summary data"));
+			if (scols_line_set_data(ln, 1, scols_counter_get_name(ct)))
+				err(EXIT_FAILURE, _("failed to add summary data"));
+		}
 	}
+
+	scols_free_iter(itr);
 	scols_print_table(tb);
 
 	scols_unref_table(tb);
@@ -2265,9 +2328,9 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	/* make fitler */
+	/* make filter */
 	if (filter_expr) {
-		ctl.filter = new_filter(filter_expr, debug_filter, "", &ctl);
+		ctl.filter = new_filter(filter_expr, debug_filter, &ctl);
 		free(filter_expr);
 	}
 
@@ -2282,9 +2345,9 @@ int main(int argc, char *argv[])
 	/* make counters */
 	if (ctl.show_summary) {
 		if (list_empty(&counter_specs))
-			ctl.counters = new_default_counters(&ctl);
+			ctl.ct_filters = new_default_counters(&ctl);
 		else {
-			ctl.counters = new_counters(&counter_specs, &ctl);
+			ctl.ct_filters = new_counters(&counter_specs, &ctl);
 			list_free(&counter_specs, struct counter_spec, specs,
 				  free_counter_spec);
 		}
@@ -2320,8 +2383,8 @@ int main(int argc, char *argv[])
 	if (ctl.show_main)
 		emit(&ctl);
 
-	if (ctl.show_summary && ctl.counters)
-		emit_summary(&ctl, ctl.counters);
+	if (ctl.show_summary && ctl.ct_filters)
+		emit_summary(&ctl);
 
 	/* cleanup */
 	delete(&ctl.procs, &ctl);
