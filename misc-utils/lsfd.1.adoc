@@ -188,6 +188,9 @@ write mode of the endpoint.
 eventfd type:::
 _PID_,_COMMAND_,_ASSOC_
 
+UNIX-STREAM:::
+_PID_,_COMMAND_,_ASSOC_
+
 EVENTFD.ID <``number``>::
 Eventfd ID.
 
