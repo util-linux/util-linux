@@ -498,7 +498,7 @@ extern int yylex \
 #undef yyTABLES_NAME
 #endif
 
-#line 61 "libsmartcols/src/filter-scanner.l"
+#line 62 "libsmartcols/src/filter-scanner.l"
 
 #line 503 "libsmartcols/src/filter-scanner.h"
 #undef yyIN_HEADER

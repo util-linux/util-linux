@@ -7,7 +7,8 @@
 id	[a-zA-Z][a-zA-Z_0-9]*
 int	[0-9]+
 blank	[ \t]
-string	\"[^\"\n]*\"
+str_qu	\"[^\"\n]*\"
+str_ap	\'[^\'\n]*\'
 
 %%
 
@@ -52,7 +53,7 @@ true|TRUE	return T_TRUE;
 	return T_NAME;
 }
 
-{string} {
+{str_ap}|{str_qu} {
 	yylval->param_string = yytext;
 	return T_STRING;
 }

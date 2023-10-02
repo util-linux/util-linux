@@ -39,6 +39,16 @@ static inline const char *datatype2str(int type)
 	};
 	return types[type];
 }
+
+static char *rem_quotation(const char *p, int c)
+{
+	size_t len = strlen(p);
+
+	if (*(p + (len - 1)) == c)
+		len -= 2;
+	return strndup(p + 1, len);
+}
+
 static int param_set_data(struct filter_param *n, int type, const void *data)
 {
 	const char *p;
@@ -48,14 +58,9 @@ static int param_set_data(struct filter_param *n, int type, const void *data)
 	switch (type) {
 	case SCOLS_DATA_STRING:
 		p = data;
-		if (p && *p == '"') {
-			/* remove quotation marks */
-			size_t len = strlen(p);
-
-			if (*(p + (len - 1)) == '"')
-				len -= 2;
-			n->val.str = strndup(p + 1, len);
-		} else if (data)
+		if (p && (*p == '"' || *p == '\''))
+			n->val.str = rem_quotation(p, *p);
+		else if (data)
 			n->val.str = strdup((char *) data);
 		if (data && !n->val.str)
 			return -ENOMEM;
