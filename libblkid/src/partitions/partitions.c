@@ -555,6 +555,7 @@ static int idinfo_probe(blkid_probe pr, const struct blkid_idinfo *id,
 	if (id->probefunc) {
 		DBG(LOWPROBE, ul_debug(
 			"%s: ---> call probefunc()", id->name));
+		errno = 0;
 		rc = id->probefunc(pr, mag);
 		if (rc < 0) {
 			/* reset after error */

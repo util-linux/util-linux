@@ -421,6 +421,7 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 		/* final check by probing function */
 		if (id->probefunc) {
 			DBG(LOWPROBE, ul_debug("\tcall probefunc()"));
+			errno = 0;
 			rc = id->probefunc(pr, mag);
 			if (rc != BLKID_PROBE_OK) {
 				blkid_probe_chain_reset_values(pr, chn);
