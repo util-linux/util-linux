@@ -47,7 +47,7 @@ Repositories & Branches
 	  We use this repository for master and stable branches only.
 
 	* Backup repository at github.com:
-	  git clone git://github.com/util-linux/util-linux.git
+	  git clone https://github.com/util-linux/util-linux.git
 
 	  We use this repository to backup kernel.org and for pull requests,
 	  issues tracking and topic branches. The master and stable branches are

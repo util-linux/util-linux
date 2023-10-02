@@ -149,7 +149,7 @@ mail-list archive.  Obviously the pull request content does not get
 indexed, and that is why it is worse.
 
 git format-patch --cover-letter master..textual
-git request-pull upstream/master git://github.com/yourlogin/util-linux.git textual > tempfile
+git request-pull upstream/master https://github.com/yourlogin/util-linux.git textual > tempfile
 
 Take from the 'tempfile' the header:
 
@@ -160,7 +160,7 @@ The following changes since commit 17bf9c1c39b4f35163ec5c443b8bbd5857386ddd:
 
 are available in the git repository at:
 
-  git://github.com/yourlogin/util-linux.git textual
+  https://github.com/yourlogin/util-linux.git textual
 ----------------------------------------------------------------
 
 and copy paste it to 0000-cover-letter.patch file somewhere near 'BLURB
