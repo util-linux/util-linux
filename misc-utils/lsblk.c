@@ -2236,6 +2236,7 @@ static void init_scols_filter(struct libscols_table *tb, struct libscols_filter 
 {
 	struct libscols_iter *itr;
 	const char *name = NULL;
+	int nerrs = 0;
 
 	itr = scols_new_iter(SCOLS_ITER_FORWARD);
 	if (!itr)
@@ -2246,9 +2247,10 @@ static void init_scols_filter(struct libscols_table *tb, struct libscols_filter 
 		int id = column_name_to_id(name, strlen(name));
 		const struct colinfo *ci = id >= 0 ? &infos[id] : NULL;
 
-		if (!ci)
-			goto fail;
-
+		if (!ci) {
+			nerrs++;
+			continue;	/* report all unknown columns */
+		}
 		if (!col) {
 			add_column(id);
 			col = scols_table_new_column(lsblk->table, ci->name,
@@ -2273,8 +2275,10 @@ static void init_scols_filter(struct libscols_table *tb, struct libscols_filter 
 	}
 
 	scols_free_iter(itr);
-	return;
-fail:
+
+	if (!nerrs)
+		return;
+
 	errx(EXIT_FAILURE, _("failed to initialize filter"));
 }
 
