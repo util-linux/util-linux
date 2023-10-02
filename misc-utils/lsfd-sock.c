@@ -55,6 +55,15 @@ static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
 {
 	char *str = NULL;
 	struct sock *sock = (struct sock *)file;
+
+	if (sock->xinfo && sock->xinfo->class
+	    && sock->xinfo->class->fill_column) {
+		if (sock->xinfo->class->fill_column(proc, sock->xinfo, sock, ln,
+						    column_id, column_index,
+						    &str))
+			goto out;
+	}
+
 	switch(column_id) {
 	case COL_TYPE:
 		if (!sock->protoname)
@@ -112,16 +121,10 @@ static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
 			      : "0");
 		break;
 	default:
-		if (sock->xinfo && sock->xinfo->class
-		    && sock->xinfo->class->fill_column) {
-			if (sock->xinfo->class->fill_column(proc, sock->xinfo, sock, ln,
-							    column_id, column_index,
-							    &str))
-				break;
-		}
 		return false;
 	}
 
+ out:
 	if (!str)
 		err(EXIT_FAILURE, _("failed to add output data"));
 	if (scols_line_refer_data(ln, column_index, str))
