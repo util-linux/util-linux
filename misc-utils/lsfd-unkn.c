@@ -19,6 +19,9 @@
  * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <linux/bpf.h>
+#include <stdalign.h>
+#include <sys/syscall.h>
 #include <sys/timerfd.h>
 #include <time.h>
 
@@ -26,6 +29,9 @@
 #include "timeutils.h"
 
 #include "lsfd.h"
+
+#define offsetofend(TYPE, MEMBER)				\
+	(offsetof(TYPE, MEMBER)	+ sizeof_member(TYPE, MEMBER))
 
 struct unkn {
 	struct file file;
@@ -1021,6 +1027,7 @@ static const char *bpf_prog_type_table[] = {
 struct anon_bpf_prog_data {
 	int type;
 	int id;
+	char name[BPF_OBJ_NAME_LEN + 1];
 };
 
 static bool anon_bpf_prog_probe(const char *str)
@@ -1059,6 +1066,9 @@ static bool anon_bpf_prog_fill_column(struct proc *proc  __attribute__((__unused
 		else
 			xasprintf(str, "UNKNOWN(%d)", data->type);
 		return true;
+	case COL_BPF_NAME:
+		*str = xstrdup(data->name);
+		return true;
 	default:
 		return false;
 	}
@@ -1076,6 +1086,9 @@ static char *anon_bpf_prog_get_name(struct unkn *unkn)
 	else
 		xasprintf(&str, "id=%d type=UNKNOWN(%d)", data->id, data->type);
 
+	if (*data->name)
+		xstrfappend(&str, " name=%s", data->name);
+
 	return str;
 }
 
@@ -1085,6 +1098,7 @@ static void anon_bpf_prog_init(struct unkn *unkn)
 	struct anon_bpf_prog_data *data = xmalloc(sizeof(*data));
 	data->type = -1;
 	data->id = -1;
+	data->name[0] = '\0';
 	unkn->anon_data = data;
 }
 
@@ -1092,6 +1106,33 @@ static void anon_bpf_prog_free(struct unkn *unkn)
 {
 	struct anon_bpf_prog_data *data = (struct anon_bpf_prog_data *)unkn->anon_data;
 	free(data);
+}
+
+static void anon_bpf_prog_get_more_info(struct anon_bpf_prog_data *prog_data)
+{
+	union bpf_attr attr = {
+		.prog_id = (int32_t)prog_data->id,
+		.next_id = 0,
+		.open_flags = 0,
+	};
+	struct bpf_prog_info info = { 0 };
+	union bpf_attr info_attr = {
+		.info.info_len = sizeof(info),
+		.info.info = (uint64_t)(uintptr_t)&info,
+	};
+
+	int bpf_fd = syscall(SYS_bpf, BPF_PROG_GET_FD_BY_ID, &attr, sizeof(attr));
+	if (bpf_fd < 0)
+		return;
+
+	info_attr.info.bpf_fd = bpf_fd;
+	if (syscall(SYS_bpf, BPF_OBJ_GET_INFO_BY_FD, &info_attr, offsetofend(union bpf_attr, info)) == 0) {
+		memcpy(prog_data->name,
+		       info.name,
+		       BPF_OBJ_NAME_LEN);
+		prog_data->name[BPF_OBJ_NAME_LEN] = '\0';
+	}
+	close (bpf_fd);
 }
 
 static int anon_bpf_prog_handle_fdinfo(struct unkn *unkn, const char *key, const char *value)
@@ -1102,6 +1143,7 @@ static int anon_bpf_prog_handle_fdinfo(struct unkn *unkn, const char *key, const
 		if (rc < 0)
 			return 0; /* ignore -- parse failed */
 		((struct anon_bpf_prog_data *)unkn->anon_data)->id = (int)t;
+		anon_bpf_prog_get_more_info((struct anon_bpf_prog_data *)unkn->anon_data);
 		return 1;
 	}
 
@@ -1169,6 +1211,7 @@ static const char *bpf_map_type_table[] = {
 struct anon_bpf_map_data {
 	int type;
 	int id;
+	char name[BPF_OBJ_NAME_LEN + 1];
 };
 
 static bool anon_bpf_map_probe(const char *str)
@@ -1207,6 +1250,9 @@ static bool anon_bpf_map_fill_column(struct proc *proc  __attribute__((__unused_
 		else
 			xasprintf(str, "UNKNOWN(%d)", data->type);
 		return true;
+	case COL_BPF_NAME:
+		*str = xstrdup(data->name);
+		return true;
 	default:
 		return false;
 	}
@@ -1223,6 +1269,10 @@ static char *anon_bpf_map_get_name(struct unkn *unkn)
 		xasprintf(&str, "id=%d type=%s", data->id, t);
 	else
 		xasprintf(&str, "id=%d type=UNKNOWN(%d)", data->id, data->type);
+
+	if (*data->name)
+		xstrfappend(&str, " name=%s", data->name);
+
 	return str;
 }
 
@@ -1231,6 +1281,7 @@ static void anon_bpf_map_init(struct unkn *unkn)
 	struct anon_bpf_map_data *data = xmalloc(sizeof(*data));
 	data->type = -1;
 	data->id = -1;
+	data->name[0] = '\0';
 	unkn->anon_data = data;
 }
 
@@ -1238,6 +1289,33 @@ static void anon_bpf_map_free(struct unkn *unkn)
 {
 	struct anon_bpf_map_data *data = (struct anon_bpf_map_data *)unkn->anon_data;
 	free(data);
+}
+
+static void anon_bpf_map_get_more_info(struct anon_bpf_map_data *map_data)
+{
+	union bpf_attr attr = {
+		.map_id = (int32_t)map_data->id,
+		.next_id = 0,
+		.open_flags = 0,
+	};
+	struct bpf_map_info info = { 0 };
+	union bpf_attr info_attr = {
+		.info.info_len = sizeof(info),
+		.info.info = (uint64_t)(uintptr_t)&info,
+	};
+
+	int bpf_fd = syscall(SYS_bpf, BPF_MAP_GET_FD_BY_ID, &attr, sizeof(attr));
+	if (bpf_fd < 0)
+		return;
+
+	info_attr.info.bpf_fd = bpf_fd;
+	if (syscall(SYS_bpf, BPF_OBJ_GET_INFO_BY_FD, &info_attr, offsetofend(union bpf_attr, info)) == 0) {
+		memcpy(map_data->name,
+		       info.name,
+		       BPF_OBJ_NAME_LEN);
+		map_data->name[BPF_OBJ_NAME_LEN] = '\0';
+	}
+	close (bpf_fd);
 }
 
 static int anon_bpf_map_handle_fdinfo(struct unkn *unkn, const char *key, const char *value)
@@ -1248,6 +1326,7 @@ static int anon_bpf_map_handle_fdinfo(struct unkn *unkn, const char *key, const 
 		if (rc < 0)
 			return 0; /* ignore -- parse failed */
 		((struct anon_bpf_map_data *)unkn->anon_data)->id = (int)t;
+		anon_bpf_map_get_more_info((struct anon_bpf_map_data *)unkn->anon_data);
 		return 1;
 	}
 

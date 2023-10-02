@@ -46,6 +46,7 @@ enum {
 	COL_BPF_MAP_ID,
 	COL_BPF_MAP_TYPE,
 	COL_BPF_MAP_TYPE_RAW,
+	COL_BPF_NAME,
 	COL_BPF_PROG_ID,
 	COL_BPF_PROG_TYPE,
 	COL_BPF_PROG_TYPE_RAW,
@@ -282,6 +283,32 @@ static inline void xstrputc(char **a, char c)
 {
 	char b[] = {c, '\0'};
 	xstrappend(a, b);
+}
+
+static inline
+__attribute__((__format__(printf, 2, 0)))
+int xstrvfappend(char **a, const char *format, va_list ap)
+{
+	int ret = strvfappend(a, format, ap);
+
+	if (ret < 0)
+		err(XALLOC_EXIT_CODE, "cannot allocate string");
+	return ret;
+
+}
+
+static inline
+__attribute__ ((__format__ (__printf__, 2, 3)))
+int xstrfappend(char **a, const char *format, ...)
+{
+	va_list ap;
+	int ret;
+
+	va_start(ap, format);
+	ret = xstrvfappend(a, format, ap);
+	va_end(ap);
+
+	return ret;
 }
 
 /*

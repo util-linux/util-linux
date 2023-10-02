@@ -1010,6 +1010,34 @@ int strappend(char **a, const char *b)
 	return 0;
 }
 
+/* the hybrid version of strfconcat and strappend. */
+int strfappend(char **a, const char *format, ...)
+{
+	va_list ap;
+	int res;
+
+	va_start(ap, format);
+	res = strvfappend(a, format, ap);
+	va_end(ap);
+
+	return res;
+}
+
+extern int strvfappend(char **a, const char *format, va_list ap)
+{
+	char *val;
+	int sz;
+	int res;
+
+	sz = vasprintf(&val, format, ap);
+	if (sz < 0)
+		return -errno;
+
+	res = strappend(a, val);
+	free(val);
+	return res;
+}
+
 static size_t strcspn_escaped(const char *s, const char *reject)
 {
         int escaped = 0;

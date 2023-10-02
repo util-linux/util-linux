@@ -30,11 +30,12 @@ ts_cd "$TS_OUTDIR"
 
 PID=
 FD=3
+NAME=mkfds_map
 {
-    coproc MKFDS { "$TS_HELPER_MKFDS" bpf-map "$FD" map-type-id=2; }
+    coproc MKFDS { "$TS_HELPER_MKFDS" bpf-map "$FD" map-type-id=2 name="$NAME"; }
     if read -r -u "${MKFDS[0]}" PID; then
-	"${TS_CMD_LSFD}" -r -n -oBPF-MAP.TYPE,BPF-MAP.TYPE.RAW -p "${PID}" -Q "(FD == $FD)"
-	echo "BPF-MAP.TYPE,BPF-MAP.TYPE.RAW": $?
+	"${TS_CMD_LSFD}" -r -n -oBPF-MAP.TYPE,BPF-MAP.TYPE.RAW,BPF.NAME -p "${PID}" -Q "(FD == $FD)"
+	echo "BPF-MAP.TYPE,BPF-MAP.TYPE.RAW,BPF.NAME": $?
 
 	echo DONE >&"${MKFDS[1]}"
     fi

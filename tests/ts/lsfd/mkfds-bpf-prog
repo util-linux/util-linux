@@ -30,11 +30,12 @@ ts_cd "$TS_OUTDIR"
 
 PID=
 FD=3
+NAME=mkdfs_prog
 {
-    coproc MKFDS { "$TS_HELPER_MKFDS" bpf-prog "$FD" prog-type-id=2; }
+    coproc MKFDS { "$TS_HELPER_MKFDS" bpf-prog "$FD" prog-type-id=2 name="$NAME"; }
     if read -r -u "${MKFDS[0]}" PID; then
-	"${TS_CMD_LSFD}" -r -n -oBPF-PROG.TYPE,BPF-PROG.TYPE.RAW -p "${PID}" -Q "(FD == $FD)"
-	echo "BPF-PROG.TYPE,BPF-PROG.TYPE.RAW": $?
+	"${TS_CMD_LSFD}" -r -n -oBPF-PROG.TYPE,BPF-PROG.TYPE.RAW,BPF.NAME -p "${PID}" -Q "(FD == $FD)"
+	echo "BPF-PROG.TYPE,BPF-PROG.TYPE.RAW,BPF.NAME": $?
 
 	echo DONE >&"${MKFDS[1]}"
     fi
