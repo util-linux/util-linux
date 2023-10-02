@@ -80,7 +80,7 @@ static int probe_lvm2(blkid_probe pr, const struct blkid_idmag *mag)
 
 	buf = blkid_probe_get_buffer(pr,
 			mag->kboff << 10,
-			512 + sizeof(struct lvm2_pv_label_header));
+			512 + LVM2_LABEL_SIZE);
 	if (!buf)
 		return errno ? -errno : 1;
 
