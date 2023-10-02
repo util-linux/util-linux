@@ -189,7 +189,10 @@ eventfd type:::
 _PID_,_COMMAND_,_ASSOC_
 
 UNIX-STREAM:::
-_PID_,_COMMAND_,_ASSOC_
+_PID_,_COMMAND_,_ASSOC_[-r?][-w?]
++
+About the last characters ([-r?][-w?]), see the description
+of _SOCK.SHUTDOWN_.
 
 EVENTFD.ID <``number``>::
 Eventfd ID.
