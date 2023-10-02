@@ -538,8 +538,16 @@ static bool unix_shutdown_chars(struct unix_xinfo *ux, char rw[2])
 static inline char *unix_xstrendpoint(struct sock *sock)
 {
 	char *str = NULL;
-	xasprintf(&str, "%d,%s,%d",
-		  sock->file.proc->pid, sock->file.proc->command, sock->file.association);
+	char shutdown_chars[3] = { 0 };
+
+	if (!unix_shutdown_chars(((struct unix_xinfo *)sock->xinfo), shutdown_chars)) {
+		shutdown_chars[0] = '?';
+		shutdown_chars[1] = '?';
+	}
+	xasprintf(&str, "%d,%s,%d%c%c",
+		  sock->file.proc->pid, sock->file.proc->command, sock->file.association,
+		  shutdown_chars[0], shutdown_chars[1]);
+
 	return str;
 }
 
