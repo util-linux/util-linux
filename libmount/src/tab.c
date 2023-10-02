@@ -1856,6 +1856,7 @@ int __mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_f
 				if (!*p)
 					tgt = tgt_prefix;	/* target is '/' */
 				else {
+					free(tgt_buf);
 					if (asprintf(&tgt_buf, "%s/%s", tgt_prefix, p) <= 0) {
 						rc = -ENOMEM;
 						goto done;
