@@ -29,6 +29,7 @@ static int read_from_device(struct fdisk_context *cxt,
 		return -errno;
 	}
 
+	errno = 0;
 	r = read(cxt->dev_fd, buf, size);
 	if (r < 0 || (size_t)r != size) {
 		if (!errno)
