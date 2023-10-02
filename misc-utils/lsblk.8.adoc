@@ -20,6 +20,8 @@ lsblk - list block devices
 
 By default, the command prints all block devices (except RAM disks) in a tree-like format. The same device can be repeated in the tree if it relates to other devices. The *--merge* option is recommended for more complicated setups to gather groups of devices and describe complex N:M relationships.
 
+The tree-like output (or *children[]* array in the JSON output) is enabled only if NAME column it present in the output or when *--tree* command line option is used. See also *--nodeps* and *--list* to control the tree formatting.
+
 The default output, as well as the default output from options like *--fs* and *--topology*, is subject to change. So whenever possible, you should avoid using default outputs in your scripts. Always explicitly define expected columns by using *--output* _columns-list_ and *--list* in environments where a stable output is required.
 
 Use *lsblk --help* to get a list of all available columns.
@@ -63,7 +65,7 @@ Include devices specified by the comma-separated _list_ of major device numbers.
 Use ASCII characters for tree formatting.
 
 *-J*, *--json*::
-Use JSON output format. It's strongly recommended to use *--output* and also *--tree* if necessary.
+Use JSON output format. It's strongly recommended to use *--output* and also *--tree* if necessary. Note that *children[]* is used only if NAME column or *--tree* is used.
 
 *-l*, *--list*::
 Produce output in the form of a list. The output does not provide information about relationships between devices and since version 2.34 every device is printed only once if *--pairs* or *--raw* not specified (the parsable outputs are maintained in backwardly compatible way).
