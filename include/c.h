@@ -213,6 +213,14 @@
 	(type *)( (char *)__mptr - offsetof(type,member) );})
 #endif
 
+#define read_unaligned_member(p, m) __extension__ ({          \
+	size_t offset = offsetof(__typeof__(* p), m);         \
+	__typeof__(p->m) v;                                   \
+	memcpy(&v, ((unsigned char *)p) + offset, sizeof(v)); \
+	v; })
+
+#define member_ptr(p, m) (((unsigned char *)p) + offsetof(__typeof__(*p), m))
+
 #ifndef HAVE_PROGRAM_INVOCATION_SHORT_NAME
 # ifdef HAVE___PROGNAME
 extern char *__progname;

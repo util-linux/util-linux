@@ -823,8 +823,6 @@ int blkid_probe_reset_buffers(blkid_probe pr)
 		ct++;
 		len += bf->len;
 
-		DBG(BUFFER, ul_debug(" remove buffer: [off=%"PRIu64", len=%"PRIu64"]",
-		                     bf->off, bf->len));
 		remove_buffer(bf);
 	}
 
@@ -1202,12 +1200,18 @@ int blkid_probe_set_dimension(blkid_probe pr, uint64_t off, uint64_t size)
 
 const unsigned char *blkid_probe_get_sb_buffer(blkid_probe pr, const struct blkid_idmag *mag, size_t size)
 {
-	uint64_t hint_offset;
+	uint64_t hint_offset, off;
 
-	if (!mag->hoff || blkid_probe_get_hint(pr, mag->hoff, &hint_offset) < 0)
-		hint_offset = 0;
+	if (mag->kboff >= 0) {
+		if (!mag->hoff || blkid_probe_get_hint(pr, mag->hoff, &hint_offset) < 0)
+			hint_offset = 0;
 
-	return blkid_probe_get_buffer(pr, hint_offset + (mag->kboff << 10), size);
+		off = hint_offset + (mag->kboff << 10);
+	} else {
+		off = pr->size - (-mag->kboff << 10);
+	}
+
+	return blkid_probe_get_buffer(pr, off, size);
 }
 
 /*
@@ -1229,7 +1233,7 @@ int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
 	/* try to detect by magic string */
 	while(mag && mag->magic) {
 		const unsigned char *buf;
-		uint64_t kboff;
+		long kboff;
 		uint64_t hint_offset;
 
 		if (!mag->hoff || blkid_probe_get_hint(pr, mag->hoff, &hint_offset) < 0)
@@ -1246,7 +1250,10 @@ int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
 		else
 			kboff = ((mag->zonenum * pr->zone_size) >> 10) + mag->kboff_inzone;
 
-		off = hint_offset + ((kboff + (mag->sboff >> 10)) << 10);
+		if (kboff >= 0)
+			off = hint_offset + ((kboff + (mag->sboff >> 10)) << 10);
+		else
+			off = pr->size - (-kboff << 10);
 		buf = blkid_probe_get_buffer(pr, off, 1024);
 
 		if (!buf && errno)
@@ -1255,7 +1262,7 @@ int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
 		if (buf && !memcmp(mag->magic,
 				buf + (mag->sboff & 0x3ff), mag->len)) {
 
-			DBG(LOWPROBE, ul_debug("\tmagic sboff=%u, kboff=%" PRIu64,
+			DBG(LOWPROBE, ul_debug("\tmagic sboff=%u, kboff=%ld",
 				mag->sboff, kboff));
 			if (offset)
 				*offset = off + (mag->sboff & 0x3ff);

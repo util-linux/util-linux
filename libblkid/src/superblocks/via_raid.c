@@ -51,8 +51,6 @@ static int probe_viaraid(blkid_probe pr,
 	uint64_t off;
 	struct via_metadata *v;
 
-	if (pr->size < 0x10000)
-		return 1;
 	if (!S_ISREG(pr->mode) && !blkid_probe_is_wholedisk(pr))
 		return 1;
 
@@ -84,6 +82,7 @@ static int probe_viaraid(blkid_probe pr,
 const struct blkid_idinfo viaraid_idinfo = {
 	.name		= "via_raid_member",
 	.usage		= BLKID_USAGE_RAID,
+	.minsz		= 0x10000,
 	.probefunc	= probe_viaraid,
 	.magics		= BLKID_NONE_MAGIC
 };
