@@ -717,7 +717,7 @@ int main(int argc, char **argv)
 	while ((c = getopt_long (argc, argv,
 			    "c:DdgH:hilL:n:ko:O:ps:S:t:u:U:w:Vv", longopts, NULL)) != -1) {
 
-		err_exclusive_options(c, NULL, excl, excl_st);
+		err_exclusive_options(c, longopts, excl, excl_st);
 
 		switch (c) {
 		case 'c':
