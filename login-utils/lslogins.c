@@ -492,7 +492,7 @@ static int parse_utmpx(const char *path, size_t *nrecords, struct utmpx **record
 	 * just fallback only */
 	if (stat(path, &st) == 0 && (size_t) st.st_size >= sizeof(struct utmpx)) {
 		imax = st.st_size / sizeof(struct utmpx);
-		ary = xmalloc(imax * sizeof(struct utmpx));
+		ary = xreallocarray(NULL, imax, sizeof(struct utmpx));
 	}
 
 	for (i = 0; ; i++) {
