@@ -894,6 +894,12 @@ static void *make_socketpair(const struct factory *factory, struct fdesc fdescs[
 	int sd[2];
 	struct arg socktype = decode_arg("socktype", factory->params, argc, argv);
 	int isocktype;
+	struct arg halfclose = decode_arg("halfclose", factory->params, argc, argv);
+	bool bhalfclose;
+
+	bhalfclose = ARG_BOOLEAN(halfclose);
+	free_arg(&halfclose);
+
 	if (strcmp(ARG_STRING(socktype), "STREAM") == 0)
 		isocktype = SOCK_STREAM;
 	else if (strcmp(ARG_STRING(socktype), "DGRAM") == 0)
@@ -908,6 +914,15 @@ static void *make_socketpair(const struct factory *factory, struct fdesc fdescs[
 
 	if (socketpair(AF_UNIX, isocktype, 0, sd) < 0)
 		err(EXIT_FAILURE, "failed to make socket pair");
+
+	if (bhalfclose) {
+		if (shutdown(sd[0], SHUT_RD) < 0)
+			err(EXIT_FAILURE,
+			    "failed to shutdown the read end of the 1st socket");
+		if (shutdown(sd[1], SHUT_WR) < 0)
+			err(EXIT_FAILURE,
+			    "failed to shutdown the write end of the 2nd socket");
+	}
 
 	for (int i = 0; i < 2; i++) {
 		if (sd[i] != fdescs[i].fd) {
@@ -3159,6 +3174,12 @@ static const struct factory factories[] = {
 				.type = PTYPE_STRING,
 				.desc = "STREAM, DGRAM, or SEQPACKET",
 				.defv.string = "STREAM",
+			},
+			{
+				.name = "halfclose",
+				.type = PTYPE_BOOLEAN,
+				.desc = "Shutdown the read end of the 1st socket, the write end of the 2nd socket",
+				.defv.boolean = false,
 			},
 			PARAM_END
 		},
