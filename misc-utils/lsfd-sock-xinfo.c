@@ -404,6 +404,9 @@ struct unix_xinfo {
 	int acceptcon;	/* flags */
 	uint16_t type;
 	uint8_t  st;
+#define is_shutdown_mask_set(mask) ((mask) & (1 << 2))
+#define set_shutdown_mask(mask)    ((mask) |= (1 << 2))
+	uint8_t  shutdown_mask:3;
 	struct unix_ipc *unix_ipc;
 	char path[
 		  UNIX_PATH_MAX
@@ -519,6 +522,19 @@ static struct ipc_class *unix_get_ipc_class(struct sock_xinfo *sock_xinfo __attr
 	return &unix_ipc_class;
 }
 
+static bool unix_shutdown_chars(struct unix_xinfo *ux, char rw[2])
+{
+	uint8_t mask = ux->shutdown_mask;
+
+	if (is_shutdown_mask_set(mask)) {
+		rw[0] = ((mask & (1 << 0))? '-': 'r');
+		rw[1] = ((mask & (1 << 1))? '-': 'w');
+		return true;
+	}
+
+	return false;
+}
+
 static inline char *unix_xstrendpoint(struct sock *sock)
 {
 	char *str = NULL;
@@ -552,6 +568,7 @@ static bool unix_fill_column(struct proc *proc __attribute__((__unused__)),
 	struct unix_xinfo *ux = (struct unix_xinfo *)sock_xinfo;
 	struct ipc *peer_ipc;
 	struct list_head *e;
+	char shutdown_chars[3] = { 0 };
 
 	switch (column_id) {
 	case COL_UNIX_PATH:
@@ -577,6 +594,12 @@ static bool unix_fill_column(struct proc *proc __attribute__((__unused__)),
 		}
 		if (*str)
 			return true;
+		break;
+	case COL_SOCK_SHUTDOWN:
+		if (unix_shutdown_chars(ux, shutdown_chars)) {
+			*str = xstrdup(shutdown_chars);
+			return true;
+		}
 		break;
 	}
 
@@ -706,6 +729,14 @@ static bool handle_diag_unix(ino_t netns __attribute__((__unused__)),
 			unix_refill_name(xinfo, RTA_DATA(attr), len);
 			break;
 
+		case UNIX_DIAG_SHUTDOWN:
+			if (len < 1)
+				break;
+
+			unix_xinfo->shutdown_mask = *(uint8_t *)RTA_DATA(attr);
+			set_shutdown_mask(unix_xinfo->shutdown_mask);
+			break;
+
 		case UNIX_DIAG_PEER:
 			if (len < 4)
 				break;
@@ -725,7 +756,7 @@ static void load_xinfo_from_diag_unix(int diagsd, ino_t netns)
 	struct unix_diag_req udr = {
 		.sdiag_family = AF_UNIX,
 		.udiag_states = -1, /* set the all bits. */
-		.udiag_show = UDIAG_SHOW_NAME | UDIAG_SHOW_PEER,
+		.udiag_show = UDIAG_SHOW_NAME | UDIAG_SHOW_PEER | UNIX_DIAG_SHUTDOWN,
 	};
 
 	send_diag_request(diagsd, &udr, sizeof(udr), handle_diag_unix, netns);

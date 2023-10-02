@@ -120,6 +120,9 @@ static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
 			      ? "1"
 			      : "0");
 		break;
+	case COL_SOCK_SHUTDOWN:
+		str = xstrdup("??");
+		break;
 	default:
 		return false;
 	}
