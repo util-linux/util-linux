@@ -36,11 +36,11 @@ $TS_CMD_MKSWAP $DEVICE > /dev/null 2>> $TS_OUTPUT \
 
 ts_device_has "TYPE" "swap" $DEVICE || ts_die "Cannot find swap on $DEVICE"
 
-$TS_CMD_SWAPON $DEVICE >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_SWAPON $DEVICE >> $TS_OUTPUT 2>> $TS_ERRLOG || ts_die "Swapon failed"
 
 grep -q "^$DEVICE\b" /proc/swaps || ts_die "Cannot find $DEVICE in /proc/swaps"
 
-$TS_CMD_SWAPOFF $DEVICE
+$TS_CMD_SWAPOFF $DEVICE || ts_die "Swapoff failed"
 
 # swapon/mkswap warns if system sets different permissions for loop devices
 sed --in-place '/insecure permissions .*, 0660 suggested/d' $TS_OUTPUT
