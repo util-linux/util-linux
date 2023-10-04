@@ -107,6 +107,10 @@ for phase in "${PHASES[@]}"; do
             opts+=(--host "$HOST_TRIPLET")
         fi
 
+        if [[ "$DYNAMIC_LINKER" != "" ]]; then
+            LDFLAGS+=("-Wl,--dynamic-linker=$DYNAMIC_LINKER")
+        fi
+
         git config --global --add safe.directory "$PWD"
         git clean -xdf
 

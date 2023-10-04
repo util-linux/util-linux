@@ -2160,7 +2160,8 @@ UL_REQUIRES_HAVE([scriptlive], [pty], [openpty function (libutil)])
 AM_CONDITIONAL([BUILD_SCRIPTLIVE], [test "x$build_scriptlive" = xyes])
 
 
-UL_BUILD_INIT([col], [yes])
+UL_BUILD_INIT([col], [check])
+UL_REQUIRES_COMPILE([col], [#include <limits.h>], [__GLIBC__], [building for glibc])
 AM_CONDITIONAL([BUILD_COL], [test "x$build_col" = xyes])
 
 UL_BUILD_INIT([colcrt], [yes])

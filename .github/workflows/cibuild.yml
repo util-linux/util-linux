@@ -204,6 +204,9 @@ jobs:
           - target: mpc85xx
             subtarget: p2020
             abi: musl
+          - target: x86
+            subtarget: generic
+            abi: musl
           - target: archs38
             subtarget: generic
             abi: glibc
@@ -221,6 +224,7 @@ jobs:
           echo "COMPILER=$COMPILER" >> $GITHUB_ENV
           echo "OPENWRT_RELEASE=$OPENWRT_RELEASE" >> $GITHUB_ENV
           echo "OPENWRT_SDK=$OPENWRT_SDK" >> $GITHUB_ENV
+          echo "OPENWRT_TARGET=${{ matrix.target }}" >> $GITHUB_ENV
       - name: Cache OpenWRT SDK
         id: cache-openwrt-sdk
         uses: actions/cache@v3
@@ -240,3 +244,9 @@ jobs:
         run: |
           source .github/workflows/openwrt-sdk-env.sh  ~/${{ env.OPENWRT_SDK }}
           .github/workflows/cibuild.sh MAKE
+      - name: Check
+        run: |
+          source .github/workflows/openwrt-sdk-env.sh  ~/${{ env.OPENWRT_SDK }}
+          if [[ "$OPENWRT_TARGET" = "x86" ]]; then
+              .github/workflows/cibuild.sh CHECK
+          fi
