@@ -42,10 +42,6 @@ lsblk_sources = files(
 lsfd_sources = files (
   'lsfd.c',
   'lsfd.h',
-  'lsfd-filter.h',
-  'lsfd-filter.c',
-  'lsfd-counter.h',
-  'lsfd-counter.c',
   'lsfd-decode-file-flags.c',
   'lsfd-file.c',
   'lsfd-cdev.c',

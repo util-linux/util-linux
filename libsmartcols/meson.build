@@ -11,6 +11,18 @@ configure_file(
   install_dir : join_paths(get_option('includedir'), 'libsmartcols'),
 )
 
+scols_bison = generator(
+  bison,
+  output : ['@BASENAME@.c'],
+  arguments : ['@INPUT@', '--output=@OUTPUT@'])
+scols_parser_c = scols_bison.process('src/filter-parser.y')
+
+scols_flex = generator(
+  flex,
+  output : ['@BASENAME@.c'],
+  arguments : ['--outfile=@OUTPUT@', '@INPUT@'])
+scols_scanner_c = scols_flex.process('src/filter-scanner.l')
+
 lib_smartcols_sources = '''
   src/smartcolsP.h
   src/iter.c
@@ -26,7 +38,12 @@ lib_smartcols_sources = '''
   src/grouping.c
   src/walk.c
   src/init.c
-'''.split()
+  src/filter.c
+  src/filter-param.c
+  src/filter-expr.c
+'''.split() \
+  + scols_parser_c + scols_scanner_c
+
 
 libsmartcols_sym = 'src/libsmartcols.sym'
 libsmartcols_sym_path = '@0@/@1@'.format(meson.current_source_dir(), libsmartcols_sym)

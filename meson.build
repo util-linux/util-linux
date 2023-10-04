@@ -838,14 +838,14 @@ conf.set('ONLY_LISTED_SHELLS', have ? 1 : false)
 have = get_option('use-tty-group')
 conf.set('USE_TTY_GROUP', have ? 1 : false)
 
+bison = find_program('bison')
+flex = find_program('flex')
+
 build_hwclock = not get_option('build-hwclock').disabled()
-bison = find_program('bison', required: build_hwclock)
 bison_gen = generator(
   bison,
   output : ['@BASENAME@.tab.c', '@BASENAME@.tab.h'],
   arguments : ['@INPUT@', '--defines=@OUTPUT1@', '--output=@OUTPUT0@'])
-
-
 
 meson_make_symlink = meson.current_source_dir() + '/tools/meson-make-symlink.sh'
 meson_make_manpage_stub = meson.current_source_dir() + '/tools/meson-make-manpage-stub.sh'
