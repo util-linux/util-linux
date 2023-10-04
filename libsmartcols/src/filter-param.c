@@ -23,7 +23,8 @@ struct filter_param {
 	char *holder_name;
 	regex_t *re;
 
-	unsigned int has_value :1;
+	unsigned int fetched :1,	/* holder requested */
+		     empty : 1;
 };
 
 static int cast_param(int type, struct filter_param *n);
@@ -79,7 +80,7 @@ static int param_set_data(struct filter_param *n, int type, const void *data)
 	}
 
 	n->type = type;
-	n->has_value = 1;
+	n->empty = data == NULL;
 	return 0;
 }
 
@@ -152,7 +153,8 @@ static void param_reset_data(struct filter_param *n)
 		free(n->val.str);
 
 	memset(&n->val, 0, sizeof(n->val));
-	n->has_value = 0;
+	n->fetched = 0;
+	n->empty = 1;
 
 	if (n->re) {
 		regfree(n->re);
@@ -185,8 +187,8 @@ void filter_dump_param(struct ul_jsonwrt *json, struct filter_param *n)
 {
 	ul_jsonwrt_object_open(json, "param");
 
-	if (!n->has_value) {
-		ul_jsonwrt_value_boolean(json, "has_value", false);
+	if (n->empty) {
+		ul_jsonwrt_value_boolean(json, "empty", true);
 		ul_jsonwrt_value_s(json, "type", datatype2str(n->type));
 	} else {
 		switch (n->type) {
@@ -262,7 +264,7 @@ static int fetch_holder_data(struct libscols_filter *fltr __attribute__((__unuse
 	int type = n->type;
 	int rc = 0;
 
-	if (n->has_value || n->holder != F_HOLDER_COLUMN)
+	if (n->fetched || n->holder != F_HOLDER_COLUMN)
 		return 0;
 	if (!cl) {
 		DBG(FPARAM, ul_debugobj(n, "no column for %s holder", n->holder_name));
@@ -275,6 +277,8 @@ static int fetch_holder_data(struct libscols_filter *fltr __attribute__((__unuse
 		if (rc)
 			return rc;
 	}
+
+	n->fetched = 1;
 
 	if (cl->datafunc) {
 		struct libscols_cell *ce = scols_line_get_column_cell(ln, cl);
@@ -306,7 +310,7 @@ int filter_eval_param(struct libscols_filter *fltr,
 	DBG(FLTR, ul_debugobj(fltr, "eval param"));
 
 	rc = fetch_holder_data(fltr, n, ln);
-	if (!n->has_value || rc) {
+	if (n->empty || rc) {
 		*status = 0;
 		goto done;
 	}
@@ -354,7 +358,7 @@ int filter_count_param(struct libscols_filter *fltr,
 		if (rc)
 			return rc;
 	}
-	if (!ct->param->has_value)
+	if (ct->param->empty)
 		return -EINVAL;
 
 	num = ct->param->val.num;
@@ -436,6 +440,11 @@ static int string_opers(enum filter_etype oper, struct filter_param *l,
 static int u64_opers(enum filter_etype oper, struct filter_param *l,
 			     struct filter_param *r, int *status)
 {
+	if (l->empty || r->empty) {
+		*status = 0;
+		return 0;
+	}
+
 	switch (oper) {
 	case F_EXPR_EQ:
 		*status = l->val.num == r->val.num;
@@ -464,6 +473,11 @@ static int u64_opers(enum filter_etype oper, struct filter_param *l,
 static int float_opers(enum filter_etype oper, struct filter_param *l,
 			     struct filter_param *r, int *status)
 {
+	if (l->empty || r->empty) {
+		*status = 0;
+		return 0;
+	}
+
 	switch (oper) {
 	case F_EXPR_EQ:
 		*status = l->val.fnum == r->val.fnum;
@@ -492,6 +506,11 @@ static int float_opers(enum filter_etype oper, struct filter_param *l,
 static int bool_opers(enum filter_etype oper, struct filter_param *l,
 			     struct filter_param *r, int *status)
 {
+	if (l->empty || r->empty) {
+		*status = 0;
+		return 0;
+	}
+
 	switch (oper) {
 	case F_EXPR_EQ:
 		*status = l->val.boolean == r->val.boolean;
