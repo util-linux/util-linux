@@ -183,6 +183,7 @@ static int topology_probe(blkid_probe pr, struct blkid_chain *chn)
 
 		if (id->probefunc) {
 			DBG(LOWPROBE, ul_debug("%s: call probefunc()", id->name));
+			errno = 0;
 			rc = id->probefunc(pr, NULL);
 			blkid_probe_prune_buffers(pr);
 			if (rc != 0)

@@ -184,6 +184,7 @@ blkid_probe blkid_clone_probe(blkid_probe parent)
 	pr->fd = parent->fd;
 	pr->off = parent->off;
 	pr->size = parent->size;
+	pr->io_size = parent->io_size;
 	pr->devno = parent->devno;
 	pr->disk_devno = parent->disk_devno;
 	pr->blkssz = parent->blkssz;
@@ -729,13 +730,21 @@ static int hide_buffer(blkid_probe pr, uint64_t off, uint64_t len)
 const unsigned char *blkid_probe_get_buffer(blkid_probe pr, uint64_t off, uint64_t len)
 {
 	struct blkid_bufinfo *bf = NULL;
-	uint64_t real_off = pr->off + off;
+	uint64_t real_off, bias;
+
+	bias = off % pr->io_size;
+	off -= bias;
+	len += bias;
+	if (len % pr->io_size)
+		len += pr->io_size - (len % pr->io_size);
+
+	real_off = pr->off + off;
 
 	/*
 	DBG(BUFFER, ul_debug("\t>>>> off=%ju, real-off=%ju (probe <%ju..%ju>, len=%ju",
 				off, real_off, pr->off, pr->off + pr->size, len));
 	*/
-	if (pr->size == 0) {
+	if (pr->size == 0 || pr->io_size == 0) {
 		errno = EINVAL;
 		return NULL;
 	}
@@ -788,7 +797,7 @@ const unsigned char *blkid_probe_get_buffer(blkid_probe pr, uint64_t off, uint64
 	assert(bf->off + bf->len >= real_off + len);
 
 	errno = 0;
-	return real_off ? bf->data + (real_off - bf->off) : bf->data;
+	return real_off ? bf->data + (real_off - bf->off + bias) : bf->data + bias;
 }
 
 /**
@@ -953,6 +962,22 @@ failed:
 
 #endif
 
+static uint64_t blkid_get_io_size(int fd)
+{
+	static const int ioctls[] = { BLKIOOPT, BLKIOMIN, BLKBSZGET };
+	unsigned int s;
+	size_t i;
+	int r;
+
+	for (i = 0; i < ARRAY_SIZE(ioctls); i++) {
+		r = ioctl(fd, ioctls[i], &s);
+		if (r == 0 && is_power_of_2(s) && s >= DEFAULT_SECTOR_SIZE)
+			return min(s, 1U << 16);
+	}
+
+	return DEFAULT_SECTOR_SIZE;
+}
+
 /**
  * blkid_probe_set_device:
  * @pr: probe
@@ -996,6 +1021,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	pr->fd = fd;
 	pr->off = (uint64_t) off;
 	pr->size = 0;
+	pr->io_size = DEFAULT_SECTOR_SIZE;
 	pr->devno = 0;
 	pr->disk_devno = 0;
 	pr->mode = 0;
@@ -1159,8 +1185,11 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	}
 # endif
 
-	DBG(LOWPROBE, ul_debug("ready for low-probing, offset=%"PRIu64", size=%"PRIu64", zonesize=%"PRIu64,
-				pr->off, pr->size, pr->zone_size));
+	if (S_ISBLK(sb.st_mode) && !is_floppy && !blkid_probe_is_tiny(pr))
+		pr->io_size = blkid_get_io_size(fd);
+
+	DBG(LOWPROBE, ul_debug("ready for low-probing, offset=%"PRIu64", size=%"PRIu64", zonesize=%"PRIu64", iosize=%"PRIu64,
+				pr->off, pr->size, pr->zone_size, pr->io_size));
 	DBG(LOWPROBE, ul_debug("whole-disk: %s, regfile: %s",
 		blkid_probe_is_wholedisk(pr) ?"YES" : "NO",
 		S_ISREG(pr->mode) ? "YES" : "NO"));
@@ -1251,21 +1280,19 @@ int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
 			kboff = ((mag->zonenum * pr->zone_size) >> 10) + mag->kboff_inzone;
 
 		if (kboff >= 0)
-			off = hint_offset + ((kboff + (mag->sboff >> 10)) << 10);
+			off = hint_offset + (kboff << 10) + mag->sboff;
 		else
-			off = pr->size - (-kboff << 10);
-		buf = blkid_probe_get_buffer(pr, off, 1024);
+			off = pr->size - (-kboff << 10) + mag->sboff;
+		buf = blkid_probe_get_buffer(pr, off, mag->len);
 
 		if (!buf && errno)
 			return -errno;
 
-		if (buf && !memcmp(mag->magic,
-				buf + (mag->sboff & 0x3ff), mag->len)) {
-
+		if (buf && !memcmp(mag->magic, buf, mag->len)) {
 			DBG(LOWPROBE, ul_debug("\tmagic sboff=%u, kboff=%ld",
 				mag->sboff, kboff));
 			if (offset)
-				*offset = off + (mag->sboff & 0x3ff);
+				*offset = off;
 			if (res)
 				*res = mag;
 			return BLKID_PROBE_OK;
