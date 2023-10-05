@@ -671,14 +671,23 @@ static void mark_prunable_buffers(blkid_probe pr, const struct blkid_bufinfo *bf
  */
 void blkid_probe_prune_buffers(blkid_probe pr)
 {
+	uint64_t ct = 0, len = 0;
 	struct list_head *p, *next;
+
+	DBG(LOWPROBE, ul_debug("Pruning probing buffers"));
 
 	list_for_each_safe(p, next, &pr->prunable_buffers) {
 		struct blkid_bufinfo *x =
 				list_entry(p, struct blkid_bufinfo, bufs);
+		ct++;
+		len += x->len;
 
 		remove_buffer(x);
 	}
+
+	if (ct)
+		DBG(LOWPROBE, ul_debug(" *** summary: %8"PRIu64" bytes by %2"PRIu64" read() calls",
+			len, ct));
 }
 
 /*
@@ -731,12 +740,17 @@ const unsigned char *blkid_probe_get_buffer(blkid_probe pr, uint64_t off, uint64
 {
 	struct blkid_bufinfo *bf = NULL;
 	uint64_t real_off, bias;
+	uint64_t io_size = pr->io_size;
 
-	bias = off % pr->io_size;
+	if (pr->hot_area_size
+	    && (off < pr->hot_area_size || off >= (pr->size - pr->hot_area_size)))
+		io_size = pr->hot_io_size;
+
+	bias = off % io_size;
 	off -= bias;
 	len += bias;
-	if (len % pr->io_size)
-		len += pr->io_size - (len % pr->io_size);
+	if (len % io_size)
+		len += io_size - (len % io_size);
 
 	real_off = pr->off + off;
 
@@ -744,7 +758,7 @@ const unsigned char *blkid_probe_get_buffer(blkid_probe pr, uint64_t off, uint64
 	DBG(BUFFER, ul_debug("\t>>>> off=%ju, real-off=%ju (probe <%ju..%ju>, len=%ju",
 				off, real_off, pr->off, pr->off + pr->size, len));
 	*/
-	if (pr->size == 0 || pr->io_size == 0) {
+	if (pr->size == 0 || io_size == 0) {
 		errno = EINVAL;
 		return NULL;
 	}
@@ -835,7 +849,7 @@ int blkid_probe_reset_buffers(blkid_probe pr)
 		remove_buffer(bf);
 	}
 
-	DBG(LOWPROBE, ul_debug(" buffers summary: %"PRIu64" bytes by %"PRIu64" read() calls",
+	DBG(LOWPROBE, ul_debug(" *** summary: %8"PRIu64" bytes by %2"PRIu64" read() calls",
 			len, ct));
 
 	INIT_LIST_HEAD(&pr->buffers);
@@ -1185,11 +1199,28 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	}
 # endif
 
-	if (S_ISBLK(sb.st_mode) && !is_floppy && !blkid_probe_is_tiny(pr))
-		pr->io_size = blkid_get_io_size(fd);
+	if (S_ISBLK(sb.st_mode) && !is_floppy && !blkid_probe_is_tiny(pr)) {
+		char *env;
 
-	DBG(LOWPROBE, ul_debug("ready for low-probing, offset=%"PRIu64", size=%"PRIu64", zonesize=%"PRIu64", iosize=%"PRIu64,
-				pr->off, pr->size, pr->zone_size, pr->io_size));
+		env = getenv("LIBBLKID_IOSIZE");
+		if (!env || ul_strtou64(env, &pr->io_size, 10) != 0)
+			pr->io_size = blkid_get_io_size(fd);
+
+		env = getenv("LIBBLKID_HOT_AREASIZE");
+		if (!env || ul_strtou64(env, &pr->hot_area_size, 10) != 0)
+			pr->hot_area_size = 0;
+
+		env = pr->hot_area_size ? getenv("LIBBLKID_HOT_IOSIZE") : NULL;
+		if (!env || ul_strtou64(env, &pr->hot_io_size, 10) != 0)
+			pr->hot_io_size = pr->io_size;
+
+
+		DBG(LOWPROBE, ul_debug("I/O: size=%"PRIu64", hot=%"PRIu64", hotarea=%"PRIu64,
+					pr->io_size, pr->hot_io_size, pr->hot_area_size));
+	}
+
+	DBG(LOWPROBE, ul_debug("ready for low-probing, offset=%"PRIu64", size=%"PRIu64", zonesize=%"PRIu64,
+				pr->off, pr->size, pr->zone_size));
 	DBG(LOWPROBE, ul_debug("whole-disk: %s, regfile: %s",
 		blkid_probe_is_wholedisk(pr) ?"YES" : "NO",
 		S_ISREG(pr->mode) ? "YES" : "NO"));

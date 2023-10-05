@@ -208,6 +208,9 @@ struct blkid_struct_probe
 	uint64_t		size;		/* end of data on the device */
 	uint64_t		io_size;	/* optimal size of IO */
 
+	uint64_t		hot_area_size;	/* from start/end of the device */
+	uint64_t		hot_io_size;	/* io_size for the hot area */
+
 	dev_t			devno;		/* device number (st.st_rdev) */
 	dev_t			disk_devno;	/* devno of the whole-disk or 0 */
 	unsigned int		blkssz;		/* sector size (BLKSSZGET ioctl) */
