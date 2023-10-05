@@ -89,6 +89,8 @@ static void set_syscall_status_cxt_log(struct libmnt_context *cxt,
 	}
 }
 
+#define set_syscall_status set_syscall_status_cxt_log
+
 /*
  * This hookset uses 'struct libmnt_sysapi' (mountP.h) as hookset data.
  */
