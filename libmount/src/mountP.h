@@ -479,22 +479,24 @@ struct libmnt_context
 /* Flags usable with MS_BIND|MS_REMOUNT */
 #define MNT_BIND_SETTABLE	(MS_NOSUID|MS_NODEV|MS_NOEXEC|MS_NOATIME|MS_NODIRATIME|MS_RELATIME|MS_RDONLY|MS_NOSYMFOLLOW)
 
-#define set_syscall_status(_cxt, _name, _x) __extension__ ({ \
-		if (!(_x)) { \
-			DBG(CXT, ul_debug("syscall '%s' [%m]", _name)); \
-			(_cxt)->syscall_status = -errno; \
-			(_cxt)->syscall_name = (_name); \
-		} else { \
-			DBG(CXT, ul_debug("syscall '%s' [success]", _name)); \
-			(_cxt)->syscall_status = 0; \
-		} \
-	})
+static inline void set_syscall_status(struct libmnt_context *cxt, const char *name, int x)
+{
+	if (!x) {
+		DBG(CXT, ul_debug("syscall '%s' [%m]", name));
+		cxt->syscall_status = -errno;
+		cxt->syscall_name = name;
+	} else {
+		DBG(CXT, ul_debug("syscall '%s' [success]", name));
+		cxt->syscall_status = 0;
+	}
+}
 
-#define reset_syscall_status(_cxt)	__extension__ ({ \
-		DBG(CXT, ul_debug("reset syscall status")); \
-		(_cxt)->syscall_status = 0; \
-		(_cxt)->syscall_name = NULL; \
-	})
+static inline void reset_syscall_status(struct libmnt_context *cxt)
+{
+	DBG(CXT, ul_debug("reset syscall status"));
+	cxt->syscall_status = 0;
+	cxt->syscall_name = NULL;
+}
 
 /* optmap.c */
 extern const struct libmnt_optmap *mnt_optmap_get_entry(
