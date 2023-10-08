@@ -1046,12 +1046,16 @@ static int ul_path_cpuparse(struct path_cxt *pc, cpu_set_t **set, int maxcpus, i
 	if (islist) {
 		if (cpulist_parse(buf, *set, setsize, 0)) {
 			cpuset_free(*set);
-			return -EINVAL;
+			errno = EINVAL;
+			rc = -errno;
+			return rc;
 		}
 	} else {
 		if (cpumask_parse(buf, *set, setsize)) {
 			cpuset_free(*set);
-			return -EINVAL;
+			errno = EINVAL;
+			rc = -errno;
+			return rc;
 		}
 	}
 	return 0;
