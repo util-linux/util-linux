@@ -551,7 +551,7 @@ struct lscpu_virt *lscpu_read_virtualization(struct lscpu_cxt *cxt)
 		if (virt->vendor == VIRT_VENDOR_XEN) {
 			uint32_t features;
 
-			fd = ul_prefix_fopen(cxt->prefix, "r", _PATH_SYS_HYP_FEATURES);
+			fd = ul_path_fopen(cxt->rootfs, "r", _PATH_SYS_HYP_FEATURES);
 
 			if (fd && fscanf(fd, "%x", &features) == 1) {
 				/* Xen PV domain */

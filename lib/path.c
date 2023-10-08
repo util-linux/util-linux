@@ -996,25 +996,6 @@ int ul_path_next_dirent(struct path_cxt *pc, DIR **sub, const char *dirname, str
 	return 1;
 }
 
-/*
- * Like fopen() but, @path is always prefixed by @prefix. This function is
- * useful in case when ul_path_* API is overkill.
- */
-FILE *ul_prefix_fopen(const char *prefix, const char *path, const char *mode)
-{
-	char buf[PATH_MAX];
-
-	if (!path)
-		return NULL;
-	if (!prefix)
-		return fopen(path, mode);
-	if (*path == '/')
-		path++;
-
-	snprintf(buf, sizeof(buf), "%s/%s", prefix, path);
-	return fopen(buf, mode);
-}
-
 #ifdef HAVE_CPU_SET_T
 static int ul_path_cpuparse(struct path_cxt *pc, cpu_set_t **set, int maxcpus, int islist, const char *path, va_list ap)
 {
