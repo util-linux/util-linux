@@ -1292,9 +1292,8 @@ static void __attribute__((__noreturn__)) usage(void)
 }
 
 static void load_credentials(struct login_context *cxt) {
+	char str[32] = { 0 };
 	char *env;
-	DIR *dir;
-	struct dirent *d;
 	struct path_cxt *pc;
 
 	env = safe_getenv("CREDENTIALS_DIRECTORY");
@@ -1307,20 +1306,11 @@ static void load_credentials(struct login_context *cxt) {
 		return;
 	}
 
-	dir = ul_path_opendir(pc, NULL);
-	if (!dir) {
-		syslog(LOG_WARNING, _("failed to open credentials directory"));
-		return;
-	}
+	if (ul_path_read_buffer(pc, str, sizeof(str), "login.noauth") > 0
+	    && *str && strcmp(str, "yes") == 0)
+		cxt->noauth = 1;
 
-	while ((d = xreaddir(dir))) {
-		char str[32] = { 0 };
-
-		if (strcmp(d->d_name, "login.noauth") == 0
-		    && ul_path_read_buffer(pc, str, sizeof(str), d->d_name) > 0
-		    && *str && strcmp(str, "yes") == 0)
-			cxt->noauth = 1;
-	}
+	ul_unref_path(pc);
 }
 
 static void initialize(int argc, char **argv, struct login_context *cxt)
