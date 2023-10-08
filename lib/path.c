@@ -1036,7 +1036,7 @@ static int ul_path_cpuparse(struct path_cxt *pc, cpu_set_t **set, int maxcpus, i
 		return rc;
 
 	len = strlen(buf);
-	if (buf[len - 1] == '\n')
+	if (len > 0 && buf[len - 1] == '\n')
 		buf[len - 1] = '\0';
 
 	*set = cpuset_alloc(maxcpus, &setsize, NULL);
