@@ -64,6 +64,33 @@ static void close_sysapi_fds(struct libmnt_sysapi *api)
 	api->fd_tree = api->fd_fs = -1;
 }
 
+static void debug_fs_fd_messages(int fd)
+{
+	uint8_t buf[BUFSIZ];
+	int rc;
+
+	while ((rc = read(fd, buf, sizeof(buf))) != -1) {
+		if (rc > 0 && buf[rc - 1] == '\n')
+			buf[rc - 1] = '\0';
+		DBG(CXT, ul_debug("message from kernel: %*s", rc, buf));
+	}
+}
+
+static void set_syscall_status_cxt_log(struct libmnt_context *cxt,
+				       const char *name, int x)
+{
+	struct libmnt_sysapi *api;
+
+	set_syscall_status(cxt, name, x);
+
+	if (!x) {
+		api = get_sysapi(cxt);
+		debug_fs_fd_messages(api->fd_fs);
+	}
+}
+
+#define set_syscall_status set_syscall_status_cxt_log
+
 /*
  * This hookset uses 'struct libmnt_sysapi' (mountP.h) as hookset data.
  */
