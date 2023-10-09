@@ -156,6 +156,7 @@ static void param_reset_data(struct filter_param *n)
 	if (n->re) {
 		regfree(n->re);
 		free(n->re);
+		n->re = NULL;
 	}
 }
 
