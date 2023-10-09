@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <regex.h>
 
+#include "rpmatch.h"
 #include "smartcolsP.h"
 
 struct filter_param {
@@ -596,9 +597,10 @@ static int string_cast(int type, struct filter_param *n)
 	}
 	case SCOLS_DATA_BOOLEAN:
 	{
-		bool x = (!str || !*str
-			       || strcasecmp(str, "false") == 0
-			       || strcasecmp(str, "0") == 0) ? false : true;
+		bool x = str && *str
+			     && (strcasecmp(str, "1") == 0
+				 || strcasecmp(str, "true") == 0
+				 || rpmatch(str) == RPMATCH_YES);
 		n->val.boolean = x;
 		break;
 	}
