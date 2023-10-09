@@ -731,7 +731,8 @@ int main(void) {
 have = cc.compiles(code, name : 'using __progname')
 conf.set('HAVE___PROGNAME', have ? 1 : false)
 
-have = conf.get('HAVE_PTY_H') != false and conf.get('HAVE_SYS_SIGNALFD_H') != false
+have = conf.get('HAVE_PTY_H').to_string() == '1' \
+       and conf.get('HAVE_SYS_SIGNALFD_H').to_string() == '1'
 conf.set('HAVE_PTY', have ? 1 : false)
 
 have_opal_get_status= cc.has_header_symbol('linux/sed-opal.h', 'IOC_OPAL_GET_STATUS')
@@ -2918,7 +2919,7 @@ if not is_disabler(exe)
   bashcompletions += ['fadvise']
 endif
 
-if LINUX and conf.get('HAVE_PIDFD_OPEN') != false
+if LINUX and conf.get('HAVE_PIDFD_OPEN').to_string() == '1'
   exe = executable(
     'waitpid',
     waitpid_sources,
@@ -3080,7 +3081,8 @@ exe = executable(
   build_by_default: program_tests)
 exes += exe
 
-if conf.get('HAVE_OPENAT') != false and conf.get('HAVE_DIRFD') != false
+if conf.get('HAVE_OPENAT').to_string() == '1' \
+   and conf.get('HAVE_DIRFD').to_string() == '1'
   exe = executable(
     'test_procfs',
     'lib/procfs.c',
@@ -3102,7 +3104,7 @@ if conf.get('HAVE_OPENAT') != false and conf.get('HAVE_DIRFD') != false
   exes += exe
 endif
 
-if conf.get('HAVE_PTY') != false
+if conf.get('HAVE_PTY').to_string() == '1'
   exe = executable(
     'test_pty',
     pty_session_c,
@@ -3416,7 +3418,7 @@ exes += exe
 
 ############################################################
 
-if conf.get('HAVE_OPENAT') != false
+if conf.get('HAVE_OPENAT').to_string() == '1'
   exe = executable(
     'sample-scols-tree',
     'libsmartcols/samples/tree.c',
