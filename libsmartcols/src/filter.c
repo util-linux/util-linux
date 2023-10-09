@@ -80,10 +80,9 @@ void scols_unref_filter(struct libscols_filter *fltr)
  * functions (e.g. filter_new_param() */
 struct filter_node *__filter_new_node(enum filter_ntype type, size_t sz)
 {
-	void *x = calloc(1, sz);
-	struct filter_node *n = (struct filter_node *) x;
+	struct filter_node *n = calloc(1, sz);
 
-	if (!x)
+	if (!n)
 		return NULL;
 
 	n->type = type;
