@@ -100,13 +100,9 @@ struct filter_node *filter_new_param(
 	if (param_set_data(n, type, data) != 0)
 		return NULL;
 
-	switch (holder) {
-	case F_HOLDER_COLUMN:
+	if (holder == F_HOLDER_COLUMN) {
 		n->holder_name = strdup((char *) data);
 		DBG(FLTR, ul_debugobj(fltr, "new %s holder", n->holder_name));
-		break;
-	default:
-		break;
 	}
 
 	if (fltr)
@@ -209,13 +205,8 @@ void filter_dump_param(struct ul_jsonwrt *json, struct filter_param *n)
 		}
 	}
 
-	switch (n->holder) {
-	case F_HOLDER_COLUMN:
+	if (n->holder == F_HOLDER_COLUMN)
 		ul_jsonwrt_value_s(json, "column", n->holder_name);
-		break;
-	default:
-		break;
-	}
 
 	ul_jsonwrt_object_close(json);
 }
@@ -259,7 +250,7 @@ int filter_param_reset_holder(struct filter_param *n)
 static int fetch_holder_data(struct libscols_filter *fltr __attribute__((__unused__)),
 			struct filter_param *n, struct libscols_line *ln)
 {
-	const char *data;
+	const char *data = NULL;
 	struct libscols_column *cl = n->col;
 	int type = n->type;
 	int rc = 0;
@@ -282,7 +273,6 @@ static int fetch_holder_data(struct libscols_filter *fltr __attribute__((__unuse
 
 	if (cl->datafunc) {
 		struct libscols_cell *ce = scols_line_get_column_cell(ln, cl);
-		void *data = NULL;
 
 		if (ce)
 			data = cl->datafunc(n->col, ce, cl->datafunc_data);
