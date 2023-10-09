@@ -33,6 +33,7 @@ FD0=3
 FD1=4
 EXPR=
 
+ts_init_subtest "DGRAM"
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" socketpair $FD0 $FD1 socktype=DGRAM; }
     if read -u ${MKFDS[0]} PID; then
@@ -42,7 +43,24 @@ EXPR=
 
 	echo DONE >&"${MKFDS[1]}"
     fi
-    wait ${MKFDS_PID}
-} > $TS_OUTPUT 2>&1
+} > "$TS_OUTPUT" 2>&1
+
+wait ${MKFDS_PID}
+ts_finalize_subtest
+
+ts_init_subtest "STREAM"
+{
+    coproc MKFDS { "$TS_HELPER_MKFDS" socketpair $FD0 $FD1 socktype=STREAM; }
+    if read -u ${MKFDS[0]} PID; then
+	EXPR='(PID == '"${PID}"') and ((FD == '"$FD0"') or (FD == '"$FD1"'))'
+	${TS_CMD_LSFD} -n -o ASSOC,MODE,STTYPE,SOURCE,SOCK.PROTONAME -Q "${EXPR}" | sed -e 's/UNIX-STREAM/UNIX/'
+	echo 'ASSOC,MODE,STTYPE,SOURCE,SOCK.PROTONAME': ${PIPESTATUS[0]}
+
+	echo DONE >&"${MKFDS[1]}"
+    fi
+} > "$TS_OUTPUT" 2>&1
+
+wait ${MKFDS_PID}
+ts_finalize_subtest
 
 ts_finalize
