@@ -702,7 +702,7 @@ AS_IF([test x"$have_timer" = xno], [
 
 AC_CHECK_LIB([rtas], [rtas_get_sysparm], [
 	RTAS_LIBS="-lrtas"
-	AC_DEFINE_UNQUOTED([HAVE_LIBRTAS], [1], [Define if librtas exists]), [],
+	AC_DEFINE_UNQUOTED([HAVE_LIBRTAS], [1], [Define if librtas exists])
 ])
 AC_SUBST([RTAS_LIBS])
 
