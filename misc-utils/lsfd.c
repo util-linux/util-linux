@@ -296,12 +296,15 @@ static const struct colinfo infos[] = {
 	[COL_SOCK_PROTONAME]   = { "SOCK.PROTONAME",
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 				   N_("protocol name") },
+	[COL_SOCK_SHUTDOWN]    = { "SOCK.SHUTDOWN",
+				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
+				   N_("shutdown state of socket ([-r?][-w?])") },
 	[COL_SOCK_STATE]       = { "SOCK.STATE",
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
-				   N_("State of socket") },
+				   N_("state of socket") },
 	[COL_SOCK_TYPE]        = { "SOCK.TYPE",
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
-				   N_("Type of socket") },
+				   N_("type of socket") },
 	[COL_SOURCE]           = { "SOURCE",
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 				   N_("file system, partition, or device containing file") },
@@ -2290,11 +2293,15 @@ int main(int argc, char *argv[])
 	if (scols_table_get_column_by_name(ctl.tb, "XMODE"))
 		ctl.show_xmode = 1;
 
-	/* collect data */
+	/* collect data
+	 *
+	 * The call initialize_ipc_table() must come before
+	 * initialize_classes.
+	 */
 	initialize_nodevs();
+	initialize_ipc_table();
 	initialize_classes();
 	initialize_devdrvs();
-	initialize_ipc_table();
 
 	collect_processes(&ctl, pids, n_pids);
 	free(pids);

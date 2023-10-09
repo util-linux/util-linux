@@ -43,6 +43,7 @@ struct sock {
 	struct file file;
 	char *protoname;
 	struct sock_xinfo *xinfo;
+	struct ipc_endpoint endpoint;
 };
 
 struct sock_xinfo_class {
@@ -60,6 +61,7 @@ struct sock_xinfo_class {
 			    int,
 			    size_t,
 			    char **str);
+	struct ipc_class *(*get_ipc_class)(struct sock_xinfo *, struct sock *);
 
 	void (*free)(struct sock_xinfo *);
 };

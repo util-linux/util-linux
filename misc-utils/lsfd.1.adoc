@@ -188,6 +188,12 @@ write mode of the endpoint.
 eventfd type:::
 _PID_,_COMMAND_,_ASSOC_
 
+UNIX-STREAM:::
+_PID_,_COMMAND_,_ASSOC_[-r?][-w?]
++
+About the last characters ([-r?][-w?]), see the description
+of _SOCK.SHUTDOWN_.
+
 EVENTFD.ID <``number``>::
 Eventfd ID.
 
@@ -419,6 +425,19 @@ Inode identifying network namespace where the socket belongs to.
 
 SOCK.PROTONAME <``string``>::
 Protocol name.
+
+SOCK.SHUTDOWN <``string``>::
+Shutdown state of socket.
++
+[-r?]:::
+If the first character is _r_, the receptions are allowed.
+If it is _-_, the receptions are disallowed.
+If it is _?_, the state is unknown.
++
+[-w?]:::
+If the second character is _w_, the transmissions are allowed.
+If it is _-_, the transmissions are disallowed.
+If it is _?_, the state is unknown.
 
 SOCK.STATE <``string``>::
 State of socket.
