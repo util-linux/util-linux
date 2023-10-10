@@ -11,7 +11,7 @@
 void ul_buffer_reset_data(struct ul_buffer *buf)
 {
 	if (buf->begin)
-		buf->begin[0] = '\0';
+		memset(buf->begin, 0, buf->sz);
 	buf->end = buf->begin;
 
 	if (buf->ptrs && buf->nptrs)
@@ -134,12 +134,11 @@ int ul_buffer_append_data(struct ul_buffer *buf, const char *data, size_t sz)
 
 	if (!buf)
 		return -EINVAL;
-	if (!data || !*data)
+	if (!data)
 		return 0;
 
 	if (buf->begin && buf->end)
 		maxsz = buf->sz - (buf->end - buf->begin);
-
 	if (maxsz <= sz + 1) {
 		int rc = ul_buffer_alloc_data(buf, buf->sz + sz + 1);
 		if (rc)
