@@ -229,7 +229,6 @@ static int get_clock(uint32_t *clock_high, uint32_t *clock_low,
 	struct timeval			tv;
 	uint64_t			clock_reg;
 	mode_t				save_umask;
-	int				len;
 	int				ret = 0;
 
 	if (state_fd == -1)
@@ -324,14 +323,10 @@ try_again:
 
 	if (state_fd >= 0) {
 		rewind(state_f);
-		len = fprintf(state_f,
-			      "clock: %04x tv: %016ld %08ld adj: %08d\n",
+		fprintf(state_f,
+			      "clock: %04x tv: %016ld %08ld adj: %08d                   \n",
 			      clock_seq, (long)last.tv_sec, (long)last.tv_usec, adjustment);
 		fflush(state_f);
-		if (ftruncate(state_fd, len) < 0) {
-			fprintf(state_f, "                   \n");
-			fflush(state_f);
-		}
 		rewind(state_f);
 		flock(state_fd, LOCK_UN);
 	}
