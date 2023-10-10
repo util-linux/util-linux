@@ -395,17 +395,13 @@ static int read_hypervisor_powerpc(struct lscpu_cxt *cxt, int *type)
 		   && ul_path_access(cxt->procfs, F_OK, "device-tree/hmc-managed?") == 0
 		   && ul_path_access(cxt->procfs, F_OK, "device-tree/chosen/qemu,graphic-width") != 0) {
 
-		FILE *fd;
+		char buf[256];
 		vendor = VIRT_VENDOR_PHYP;
 		*type = VIRT_TYPE_PARA;
 
-		fd = ul_path_fopen(cxt->procfs, "r", "device-tree/ibm,partition-name");
-		if (fd) {
-			char buf[256];
-			if (fscanf(fd, "%255s", buf) == 1 && !strcmp(buf, "full"))
-				*type = VIRT_TYPE_NONE;
-			fclose(fd);
-		}
+		if (ul_path_scanf(cxt->procfs, "device-tree/ibm,partition-name", "%255s", buf) == 1 &&
+		    !strcmp(buf, "full"))
+			*type = VIRT_TYPE_NONE;
 
 	/* Qemu */
 	} else if (is_devtree_compatible(cxt, "qemu,pseries")) {
@@ -551,9 +547,7 @@ struct lscpu_virt *lscpu_read_virtualization(struct lscpu_cxt *cxt)
 		if (virt->vendor == VIRT_VENDOR_XEN) {
 			uint32_t features;
 
-			fd = ul_path_fopen(cxt->rootfs, "r", _PATH_SYS_HYP_FEATURES);
-
-			if (fd && fscanf(fd, "%x", &features) == 1) {
+			if (ul_path_scanf(cxt->rootfs, _PATH_SYS_HYP_FEATURES, "%x", &features) == 1) {
 				/* Xen PV domain */
 				if (features & XEN_FEATURES_PV_MASK)
 					virt->type = VIRT_TYPE_PARA;
@@ -562,25 +556,18 @@ struct lscpu_virt *lscpu_read_virtualization(struct lscpu_cxt *cxt)
 								== XEN_FEATURES_PVH_MASK)
 					virt->type = VIRT_TYPE_PARA;
 			}
-			if (fd)
-				fclose(fd);
 		}
 	} else if ((virt->vendor = read_hypervisor_powerpc(cxt, &virt->type))) {
 		;
 
 	/* Xen para-virt or dom0 */
 	} else if (ul_path_access(cxt->procfs, F_OK, "xen") == 0) {
+		char xenbuf[256];
 		int dom0 = 0;
 
-		fd = ul_path_fopen(cxt->procfs, "r", "xen/capabilities");
-		if (fd) {
-			char xenbuf[256];
-
-			if (fscanf(fd, "%255s", xenbuf) == 1 &&
-			    !strcmp(xenbuf, "control_d"))
-				dom0 = 1;
-			fclose(fd);
-		}
+		if (ul_path_scanf(cxt->procfs, "xen/capabilities", "%255s", xenbuf) == 1 &&
+		    !strcmp(xenbuf, "control_d"))
+			dom0 = 1;
 		virt->type = dom0 ? VIRT_TYPE_NONE : VIRT_TYPE_PARA;
 		virt->vendor = VIRT_VENDOR_XEN;
 
