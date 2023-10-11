@@ -1414,6 +1414,15 @@ int main(int argc, char *argv[])
 		printf("\"%s\" --> \"%s\"\n", argv[2], ul_strchr_escaped(argv[2], *argv[3]));
 		return EXIT_SUCCESS;
 
+	} else if (argc == 2 && strcmp(argv[1], "--next-string") == 0) {
+		char *buf = "abc\0Y\0\0xyz\0X";
+		char *end = buf + 12;
+		char *p = buf;
+
+		do {
+			printf("str: '%s'\n", p);
+		} while ((p = ul_next_string(p, end)));
+
 	} else {
 		fprintf(stderr, "usage: %1$s --size <number>[suffix]\n"
 				"       %1$s --cmp-paths <path> <path>\n"

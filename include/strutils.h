@@ -388,6 +388,23 @@ static inline void strrem(char *s, int rem)
 	*p = '\0';
 }
 
+/* returns next string after \0 if before @end */
+static inline char *ul_next_string(char *p, char *end)
+{
+	char *last;
+
+	if (!p || !end || p >= end)
+		return NULL;
+
+	for (last = p; p < end; p++) {
+		if (*last == '\0' && p != last)
+			return p;
+		last = p;
+	}
+
+	return NULL;
+}
+
 extern char *strnconcat(const char *s, const char *suffix, size_t b);
 extern char *strconcat(const char *s, const char *suffix);
 extern char *strfconcat(const char *s, const char *format, ...)
