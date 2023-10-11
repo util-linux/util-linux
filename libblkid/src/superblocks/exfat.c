@@ -49,6 +49,8 @@ struct exfat_entry_label {
 #define EXFAT_ENTRY_EOD		0x00
 #define EXFAT_ENTRY_LABEL	0x83
 
+#define EXFAT_MAX_DIR_SIZE	(256 * 1024 * 1024)
+
 static uint64_t block_to_offset(const struct exfat_super_block *sb,
 		uint64_t block)
 {
@@ -91,7 +93,7 @@ static struct exfat_entry_label *find_label(blkid_probe pr,
 	uint32_t cluster = le32_to_cpu(sb->FirstClusterOfRootDirectory);
 	uint64_t offset = cluster_to_offset(sb, cluster);
 	uint8_t *entry;
-	const size_t max_iter = 10000;
+	const size_t max_iter = EXFAT_MAX_DIR_SIZE / EXFAT_ENTRY_SIZE;
 	size_t i = 0;
 
 	for (; i < max_iter; i++) {
