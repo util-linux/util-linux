@@ -242,7 +242,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 int main(int argc, char **argv)
 {
-	char c;
+	int c;
 	char *path;
 	uint64_t key = 0, oldkey = 0;
 	int command = -1, type = -1, flag = 0;
