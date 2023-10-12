@@ -73,7 +73,7 @@ void scols_unref_column(struct libscols_column *cl)
 		scols_reset_cell(&cl->header);
 		free(cl->color);
 		free(cl->safechars);
-		free(cl->pending_data_buf);
+		free(cl->wrap_data);
 		free(cl->shellvar);
 		free(cl);
 	}
@@ -402,6 +402,8 @@ char *scols_wrapnl_nextchunk(const struct libscols_column *cl __attribute__((unu
  * Note that the size has to be based on number of terminal cells rather than
  * bytes to support multu-byte output.
  *
+ * Deprecated since 2.40.
+ *
  * Returns: size of the largest chunk.
  *
  * Since: 2.29
@@ -459,13 +461,16 @@ int scols_column_set_cmpfunc(struct libscols_column *cl,
 /**
  * scols_column_set_wrapfunc:
  * @cl: a pointer to a struct libscols_column instance
- * @wrap_chunksize: function to return size of the largest chink of data
+ * @wrap_chunksize: function to return size of the largest chink of data (deprecated)
  * @wrap_nextchunk: function to return next zero terminated data
  * @userdata: optional stuff for callbacks
  *
  * Extends SCOLS_FL_WRAP and can be used to set custom wrap function. The default
  * is to wrap by column size, but you can create functions to wrap for example
  * after \n or after words, etc.
+ *
+ * Note that since 2.40 the @wrap_chunksize is unnecessary. The library calculates
+ * the size itself.
  *
  * Returns: 0, a negative value in case of an error.
  *
@@ -474,7 +479,7 @@ int scols_column_set_cmpfunc(struct libscols_column *cl,
 int scols_column_set_wrapfunc(struct libscols_column *cl,
 			size_t (*wrap_chunksize)(const struct libscols_column *,
 						 const char *,
-						 void *),
+						 void *) __attribute__((__unused__)),
 			char * (*wrap_nextchunk)(const struct libscols_column *,
 						 char *,
 						 void *),
@@ -484,7 +489,6 @@ int scols_column_set_wrapfunc(struct libscols_column *cl,
 		return -EINVAL;
 
 	cl->wrap_nextchunk = wrap_nextchunk;
-	cl->wrap_chunksize = wrap_chunksize;
 	cl->wrapfunc_data = userdata;
 	return 0;
 }
@@ -639,7 +643,6 @@ int scols_column_is_wrap(const struct libscols_column *cl)
 int scols_column_is_customwrap(const struct libscols_column *cl)
 {
 	return (cl->flags & SCOLS_FL_WRAP)
-		&& cl->wrap_chunksize
 		&& cl->wrap_nextchunk ? 1 : 0;
 }
 
@@ -735,3 +738,122 @@ int scols_column_set_properties(struct libscols_column *cl, const char *opts)
 	return rc;
 }
 
+static void scols_column_reset_wrap(struct libscols_column *cl)
+{
+	if (!cl)
+		return;
+
+	if (cl->wrap_data)
+		memset(cl->wrap_data, 0, cl->wrap_datamax);
+	cl->wrap_cell = NULL;
+	cl->wrap_datasz = 0;
+	cl->wrap_cur = NULL;
+	cl->wrap_next = NULL;
+}
+
+static int scols_column_init_wrap(
+			struct libscols_column *cl,
+			struct libscols_cell *ce)
+{
+	const char *data = scols_cell_get_data(ce);
+
+	if (!cl || !ce)
+		return -EINVAL;
+
+	assert(cl->table->cur_column == cl);
+	assert(cl->table->cur_cell == ce);
+
+	scols_column_reset_wrap(cl);
+
+	cl->wrap_cell = ce;
+	if (data) {
+		void *tmp;
+		cl->wrap_datasz = strlen(data) + 1;	/* TODO: use scols_cell_get_datasiz() */
+
+		if (cl->wrap_datasz > cl->wrap_datamax) {
+			cl->wrap_datamax = cl->wrap_datasz;
+			tmp = realloc(cl->wrap_data, cl->wrap_datamax);
+			if (!tmp)
+				return -ENOMEM;
+			cl->wrap_data = tmp;
+		}
+		memcpy(cl->wrap_data, data, cl->wrap_datasz);
+		cl->wrap_cur = cl->wrap_data;
+		cl->wrap_next = NULL;
+	}
+
+	return 0;
+}
+
+/* Returns the next chunk of cell data in multi-line cells */
+int scols_column_next_wrap(
+			struct libscols_column *cl,
+			struct libscols_cell *ce,
+			char **data)
+{
+	if (!cl || !data || (!cl->wrap_cell && !ce))
+		return -EINVAL;
+
+	*data = NULL;
+
+	if (ce && cl->wrap_cell != ce)
+		scols_column_init_wrap(cl, ce);		/* init */
+	else {
+		cl->wrap_cur = cl->wrap_next;	/* next step */
+		cl->wrap_next = NULL;
+	}
+
+	if (!cl->wrap_cur)
+		return 1;				/* no more data */
+	if (scols_column_is_customwrap(cl))
+		cl->wrap_next = cl->wrap_nextchunk(cl, cl->wrap_cur, cl->wrapfunc_data);
+
+	*data = cl->wrap_cur;
+	return 0;
+}
+
+int scols_column_greatest_wrap(
+			struct libscols_column *cl,
+			struct libscols_cell *ce,
+			char **data)
+{
+	size_t maxsz = 0;
+	char *res = NULL;;
+
+	if (!scols_column_is_customwrap(cl))
+		return scols_column_next_wrap(cl, ce, data);
+
+	while (scols_column_next_wrap(cl, ce, data) == 0) {
+		size_t sz = strlen(*data);
+
+		maxsz = max(maxsz, sz);
+		if (maxsz == sz)
+			res = *data;
+	}
+
+	*data = res;
+	return 0;
+}
+
+/* Set the "next" chunk in multi-line cell to offset specified by @bytes.
+ * Don't use it for columns with custom wrapfunc().
+ */
+int scols_column_move_wrap(struct libscols_column *cl, size_t bytes)
+{
+	size_t x;	/* remaining bytes */
+
+	if (!cl->wrap_cur)
+		return -EINVAL;		/* scols_column_init_wrap() not called */
+
+	x = cl->wrap_datasz - (cl->wrap_cur - cl->wrap_data);
+	if (bytes >= x)
+		cl->wrap_next = NULL;	/* done */
+	else
+		cl->wrap_next = cl->wrap_cur + bytes;
+	return 0;
+}
+
+int scols_column_has_pending_wrap(struct libscols_column *cl)
+{
+	return cl && cl->wrap_next;
+}

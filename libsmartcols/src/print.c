@@ -241,7 +241,7 @@ static int has_pending_data(struct libscols_table *tb)
 	while (scols_table_next_column(tb, &itr, &cl) == 0) {
 		if (scols_column_is_hidden(cl))
 			continue;
-		if (cl->pending_data)
+		if (scols_column_has_pending_wrap(cl))
 			return 1;
 	}
 	return 0;
@@ -423,95 +423,43 @@ static void print_newline_padding(struct libscols_table *tb,
 	fputs_color_line_close(tb);
 }
 
-/*
- * Pending data
- *
- * The first line in the multi-line cells (columns with SCOLS_FL_WRAP flag) is
- * printed as usually and output is truncated to match column width.
- *
- * The rest of the long text is printed on next extra line(s). The extra lines
- * don't exist in the table (not represented by libscols_line). The data for
- * the extra lines are stored in libscols_column->pending_data_buf and the
- * function print_line() adds extra lines until the buffer is not empty in all
- * columns.
- */
-
-/* set data that will be printed by extra lines */
-static int set_pending_data(struct libscols_column *cl, const char *data, size_t sz)
+static int print_pending_data(struct libscols_table *tb, struct ul_buffer *buf)
 {
-	char *p = NULL;
-
-	if (data && *data) {
-		DBG(COL, ul_debugobj(cl, "setting pending data"));
-		assert(sz);
-		p = strdup(data);
-		if (!p)
-			return -ENOMEM;
-	}
-
-	free(cl->pending_data_buf);
-	cl->pending_data_buf = p;
-	cl->pending_data_sz = sz;
-	cl->pending_data = cl->pending_data_buf;
-	return 0;
-}
-
-/* the next extra line has been printed, move pending data cursor */
-static int step_pending_data(struct libscols_column *cl, size_t bytes)
-{
-	DBG(COL, ul_debugobj(cl, "step pending data %zu -= %zu", cl->pending_data_sz, bytes));
-
-	if (bytes >= cl->pending_data_sz)
-		return set_pending_data(cl, NULL, 0);
-
-	cl->pending_data += bytes;
-	cl->pending_data_sz -= bytes;
-	return 0;
-}
-
-/* print next pending data for the column @cl */
-static int print_pending_data(
-		struct libscols_table *tb,
-		struct libscols_column *cl,
-		struct libscols_line *ln,	/* optional */
-		struct libscols_cell *ce)
-{
-	size_t width = cl->width, bytes;
-	size_t len = width, i;
+	struct libscols_line *ln;
+	struct libscols_column *cl;
+	struct libscols_cell *ce;
 	char *data;
-	char *nextchunk = NULL;
+	size_t i, width = 0, len = 0, bytes = 0;
 
-	if (!cl->pending_data)
-		return 0;
+	scols_table_get_cursor(tb, &ln, &cl, &ce);
+
+	width = cl->width;
 	if (!width)
 		return -EINVAL;
 
 	DBG(COL, ul_debugobj(cl, "printing pending data"));
 
-	data = strdup(cl->pending_data);
+	if (scols_table_is_noencoding(tb))
+		data = ul_buffer_get_data(buf, &bytes, &len);
+	else
+		data = ul_buffer_get_safe_data(buf, &bytes, &len, scols_column_get_safechars(cl));
+
 	if (!data)
-		goto err;
+		return 0;
 
-	if (scols_column_is_customwrap(cl)
-	    && (nextchunk = cl->wrap_nextchunk(cl, data, cl->wrapfunc_data))) {
-		bytes = nextchunk - data;
+	/* standard multi-line cell */
+	if (len > width && scols_column_is_wrap(cl)
+	    && !scols_column_is_customwrap(cl)) {
 
-		len = scols_table_is_noencoding(tb) ?
-				mbs_nwidth(data, bytes) :
-				mbs_safe_nwidth(data, bytes, NULL);
-	} else
+		len = width;
 		bytes = mbs_truncate(data, &len);
 
-	if (bytes == (size_t) -1)
-		goto err;
-
-	if (bytes)
-		step_pending_data(cl, bytes);
+		if (bytes != (size_t) -1 && bytes > 0)
+			scols_column_move_wrap(cl, mbs_safe_decode_size(data));
+	}
 
 	fputs_color_cell_open(tb, cl, ln, ce);
-
 	fputs(data, tb->out);
-	free(data);
 
 	/* minout -- don't fill */
 	if (scols_table_is_minout(tb) && is_next_columns_empty(tb, cl, ln)) {
@@ -535,9 +483,6 @@ static int print_pending_data(
 		fputs(colsep(tb), tb->out);
 
 	return 0;
-err:
-	free(data);
-	return -errno;
 }
 
 static void print_json_data(struct libscols_table *tb,
@@ -574,32 +519,30 @@ static void print_json_data(struct libscols_table *tb,
 		if (!scols_column_is_customwrap(cl))
 			ul_jsonwrt_value_s(&tb->json, NULL, data);
 		else do {
-				char *next = cl->wrap_nextchunk(cl, data, cl->wrapfunc_data);
-
-				if (cl->json_type == SCOLS_JSON_ARRAY_STRING)
-					ul_jsonwrt_value_s(&tb->json, NULL, data);
-				else
-					ul_jsonwrt_value_raw(&tb->json, NULL, data);
-				data = next;
-		} while (data);
+			if (cl->json_type == SCOLS_JSON_ARRAY_STRING)
+				ul_jsonwrt_value_s(&tb->json, NULL, data);
+			else
+				ul_jsonwrt_value_raw(&tb->json, NULL, data);
+		} while (scols_column_next_wrap(cl, NULL, &data) == 0);
 
 		ul_jsonwrt_array_close(&tb->json);
 		break;
 	}
 }
 
-static int print_data(struct libscols_table *tb,
-		      struct libscols_column *cl,
-		      struct libscols_line *ln,	/* optional */
-		      struct libscols_cell *ce,	/* optional */
-		      struct ul_buffer *buf)
+static int print_data(struct libscols_table *tb, struct ul_buffer *buf)
 {
+	struct libscols_line *ln;	/* NULL for header line! */
+	struct libscols_column *cl;
+	struct libscols_cell *ce;
 	size_t len = 0, i, width, bytes;
-	char *data, *nextchunk;
+	char *data;
 	const char *name = NULL;
 	int is_last;
 
 	assert(tb);
+
+	scols_table_get_cursor(tb, &ln, &cl, &ce);
 	assert(cl);
 
 	data = ul_buffer_get_data(buf, NULL, NULL);
@@ -614,7 +557,7 @@ static int print_data(struct libscols_table *tb,
 
 	is_last = is_last_column(cl);
 
-	if (is_last && scols_table_is_json(tb) &&
+	if (ln && is_last && scols_table_is_json(tb) &&
 	    scols_table_is_tree(tb) && has_children(ln))
 		/* "children": [] is the real last value */
 		is_last = 0;
@@ -642,7 +585,7 @@ static int print_data(struct libscols_table *tb,
 		break;		/* continue below */
 	}
 
-	/* Encode. Note that 'len' and 'width' are number of cells, not bytes.
+	/* Encode. Note that 'len' and 'width' are number of glyphs not bytes.
 	 */
 	if (scols_table_is_noencoding(tb))
 		data = ul_buffer_get_data(buf, &bytes, &len);
@@ -652,17 +595,6 @@ static int print_data(struct libscols_table *tb,
 	if (!data)
 		data = "";
 	width = cl->width;
-
-	/* custom multi-line cell based */
-	if (*data && scols_column_is_customwrap(cl)
-	    && (nextchunk = cl->wrap_nextchunk(cl, data, cl->wrapfunc_data))) {
-		set_pending_data(cl, nextchunk, bytes - (nextchunk - data));
-		bytes = nextchunk - data;
-
-		len = scols_table_is_noencoding(tb) ?
-				mbs_nwidth(data, bytes) :
-				mbs_safe_nwidth(data, bytes, NULL);
-	}
 
 	if (is_last
 	    && len < width
@@ -679,12 +611,12 @@ static int print_data(struct libscols_table *tb,
 	/* standard multi-line cell */
 	if (len > width && scols_column_is_wrap(cl)
 	    && !scols_column_is_customwrap(cl)) {
-		set_pending_data(cl, data, bytes);
 
 		len = width;
 		bytes = mbs_truncate(data, &len);
-		if (bytes  != (size_t) -1 && bytes > 0)
-			step_pending_data(cl, bytes);
+
+		if (bytes != (size_t) -1 && bytes > 0)
+			scols_column_move_wrap(cl, mbs_safe_decode_size(data));
 	}
 
 	if (bytes == (size_t) -1) {
@@ -701,7 +633,6 @@ static int print_data(struct libscols_table *tb,
 			len = width;
 		}
 		fputs(data, tb->out);
-
 	}
 
 	/* minout -- don't fill */
@@ -732,16 +663,23 @@ static int print_data(struct libscols_table *tb,
 	return 0;
 }
 
-int __cell_to_buffer(struct libscols_table *tb,
-			  struct libscols_line *ln,
-			  struct libscols_column *cl,
-			  struct ul_buffer *buf)
+/*
+ * Copy curret cell data to buffer. The @cal means "calculation" phase.
+ */
+int __cursor_to_buffer(struct libscols_table *tb,
+		     struct ul_buffer *buf,
+		     int cal)
 {
-	const char *data;
+	const char *data = NULL;
 	struct libscols_cell *ce;
+	struct libscols_line *ln;
+	struct libscols_column *cl;
 	int rc = 0;
 
 	assert(tb);
+
+	scols_table_get_cursor(tb, &ln, &cl, &ce);
+
 	assert(ln);
 	assert(cl);
 	assert(buf);
@@ -749,11 +687,22 @@ int __cell_to_buffer(struct libscols_table *tb,
 
 	ul_buffer_reset_data(buf);
 
-	ce = scols_line_get_cell(ln, cl->seqnum);
-	data = ce ? scols_cell_get_data(ce) : NULL;
+	if (ce) {
+		if (scols_column_is_wrap(cl)) {
+			char *x = NULL;
+
+			rc = cal ? scols_column_greatest_wrap(cl, ce, &x) :
+				   scols_column_next_wrap(cl, ce, &x);
+			if (rc < 0)
+				return rc;
+			data = x;
+			rc = 0;
+		} else
+			data = scols_cell_get_data(ce);
+	}
 
 	if (!scols_column_is_tree(cl))
-		return data ? ul_buffer_append_string(buf, data) : 0;
+		goto notree;
 
 	/*
 	 * Group stuff
@@ -775,7 +724,7 @@ int __cell_to_buffer(struct libscols_table *tb,
 
 	if (!rc && (ln->parent || cl->is_groups) && !scols_table_is_json(tb))
 		ul_buffer_save_pointer(buf, SCOLS_BUFPTR_TREEEND);
-
+notree:
 	if (!rc && data)
 		rc = ul_buffer_append_string(buf, data);
 	return rc;
@@ -801,16 +750,18 @@ static int print_line(struct libscols_table *tb,
 
 	/* regular line */
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+
 	while (rc == 0 && scols_table_next_column(tb, &itr, &cl) == 0) {
 		if (scols_column_is_hidden(cl))
 			continue;
-		rc = __cell_to_buffer(tb, ln, cl, buf);
-		if (rc == 0)
-			rc = print_data(tb, cl, ln,
-					scols_line_get_cell(ln, cl->seqnum),
-					buf);
-		if (rc == 0 && cl->pending_data)
+
+		scols_table_set_cursor(tb, ln, cl, scols_line_get_cell(ln, cl->seqnum));
+		rc = __cursor_to_buffer(tb, buf, 0);
+		if (!rc)
+			rc = print_data(tb, buf);
+		if (!rc && scols_column_has_pending_wrap(cl))
 			pending = 1;
+		scols_table_reset_cursor(tb);
 	}
 	fputs_color_line_close(tb);
 
@@ -821,16 +772,23 @@ static int print_line(struct libscols_table *tb,
 		fputs(linesep(tb), tb->out);
 		fputs_color_line_open(tb, ln);
 		tb->termlines_used++;
+
 		scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+
 		while (rc == 0 && scols_table_next_column(tb, &itr, &cl) == 0) {
 			if (scols_column_is_hidden(cl))
 				continue;
-			if (cl->pending_data) {
-				rc = print_pending_data(tb, cl, ln, scols_line_get_cell(ln, cl->seqnum));
-				if (rc == 0 && cl->pending_data)
+
+			scols_table_set_cursor(tb, ln, cl, scols_line_get_cell(ln, cl->seqnum));
+			if (scols_column_has_pending_wrap(cl)) {
+				rc = __cursor_to_buffer(tb, buf, 0);
+				if (!rc)
+					rc = print_pending_data(tb, buf);
+				if (!rc && scols_column_has_pending_wrap(cl))
 					pending = 1;
 			} else
 				print_empty_cell(tb, cl, ln, NULL, ul_buffer_get_bufsiz(buf));
+			scols_table_reset_cursor(tb);
 		}
 		fputs_color_line_close(tb);
 	}
@@ -963,6 +921,7 @@ int __scols_print_header(struct libscols_table *tb, struct ul_buffer *buf)
 			continue;
 
 		ul_buffer_reset_data(buf);
+		scols_table_set_cursor(tb, NULL, cl, &cl->header);
 
 		if (cl->is_groups
 		    && scols_table_is_tree(tb) && scols_column_is_tree(cl)) {
@@ -979,7 +938,8 @@ int __scols_print_header(struct libscols_table *tb, struct ul_buffer *buf)
 						scols_column_get_name_as_shellvar(cl) :
 						scols_column_get_name(cl));
 		if (!rc)
-			rc = print_data(tb, cl, NULL, &cl->header, buf);
+			rc = print_data(tb, buf);
+		scols_table_reset_cursor(tb);
 	}
 
 	if (rc == 0) {

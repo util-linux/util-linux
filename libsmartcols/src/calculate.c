@@ -42,41 +42,38 @@ static int count_cell_width(struct libscols_table *tb,
 		struct libscols_column *cl,
 		struct ul_buffer *buf)
 {
-	size_t len;
-	char *data;
-	int rc;
+	size_t len = 0;
+	int rc = 0;
 	struct libscols_cell *ce;
-	struct libscols_wstat *st;
+	char *data;
 
-	rc = __cell_to_buffer(tb, ln, cl, buf);
+	ce = scols_line_get_cell(ln, cl->seqnum);
+	scols_table_set_cursor(tb, ln, cl, ce);
+
+	rc = __cursor_to_buffer(tb, buf, 1);
 	if (rc)
-		return rc;
-
+		goto done;
 	data = ul_buffer_get_data(buf, NULL, NULL);
 	if (!data)
-		len = 0;
-	else if (scols_column_is_customwrap(cl))
-		len = cl->wrap_chunksize(cl, data, cl->wrapfunc_data);
-	else if (scols_table_is_noencoding(tb))
-		len = mbs_width(data);
-	else
-		len = mbs_safe_width(data);
+		goto done;
+
+	len = scols_table_is_noencoding(tb) ?
+		mbs_width(data) :
+		mbs_safe_width(data);
 
 	if (len == (size_t) -1)		/* ignore broken multibyte strings */
 		len = 0;
-
-	ce = scols_line_get_cell(ln, cl->seqnum);
-	ce->width = len;
-
-	st = &cl->wstat;
-	st->width_max = max(len, st->width_max);
 
 	if (scols_column_is_tree(cl)) {
 		size_t treewidth = ul_buffer_get_safe_pointer_width(buf, SCOLS_BUFPTR_TREEEND);
 		cl->width_treeart = max(cl->width_treeart, treewidth);
 	}
 
-	return 0;
+	ce->width = len;
+	cl->wstat.width_max = max(len, cl->wstat.width_max);
+done:
+	scols_table_reset_cursor(tb);
+	return rc;
 }
 
 static int walk_count_cell_width(struct libscols_table *tb,
