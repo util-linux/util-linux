@@ -1455,10 +1455,13 @@ int main(int argc, char *argv[])
 			columns[ncolumns++] = COL_CPU_NODE;
 			columns[ncolumns++] = COL_CPU_CACHE;
 		}
-		if (outarg && string_add_to_idarray(outarg, columns,
+		if (outarg) {
+			if (string_add_to_idarray(outarg, columns,
 					ARRAY_SIZE(columns),
 					&ncolumns, cpu_column_name_to_id) < 0)
-			return EXIT_FAILURE;
+				return EXIT_FAILURE;
+			cxt->show_compatible = 0;
+		}
 
 		print_cpus_parsable(cxt, columns, ncolumns);
 		break;
