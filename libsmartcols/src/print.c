@@ -232,21 +232,6 @@ static int groups_ascii_art_to_buffer(	struct libscols_table *tb,
 	return 0;
 }
 
-static int has_pending_data(struct libscols_table *tb)
-{
-	struct libscols_column *cl;
-	struct libscols_iter itr;
-
-	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
-	while (scols_table_next_column(tb, &itr, &cl) == 0) {
-		if (scols_column_is_hidden(cl))
-			continue;
-		if (scols_column_has_pending_wrap(cl))
-			return 1;
-	}
-	return 0;
-}
-
 static void fputs_color_reset(struct libscols_table *tb)
 {
 	if (tb->cur_color) {
@@ -349,7 +334,7 @@ static void print_empty_cell(struct libscols_table *tb,
 
 		tree_ascii_art_to_buffer(tb, ln, &art);
 
-		if (!list_empty(&ln->ln_branch) && has_pending_data(tb))
+		if (!list_empty(&ln->ln_branch))
 			ul_buffer_append_string(&art, vertical_symbol(tb));
 
 		if (scols_table_is_noencoding(tb))
