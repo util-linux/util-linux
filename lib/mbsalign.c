@@ -310,9 +310,30 @@ char *mbs_invalid_encode_to_buffer(const char *s, size_t *width, char *buf)
 	return buf;
 }
 
+/*
+ * Guess size
+ */
 size_t mbs_safe_encode_size(size_t bytes)
 {
 	return (bytes * 4) + 1;
+}
+
+/*
+ * Count size of the original string in bytes (count \x?? as one byte)
+ */
+size_t mbs_safe_decode_size(const char *p)
+{
+	size_t bytes = 0;
+
+	while (p && *p) {
+		if (*p == '\\' && *(p + 1) == 'x' &&
+		    isxdigit(*(p + 2)) && isxdigit(*(p + 3)))
+			p += 4;
+		else
+			p++;
+		bytes++;
+	}
+	return bytes;
 }
 
 /*
