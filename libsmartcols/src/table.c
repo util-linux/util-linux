@@ -521,6 +521,50 @@ size_t scols_table_get_nlines(const struct libscols_table *tb)
 	return tb->nlines;
 }
 
+
+int scols_table_set_cursor(struct libscols_table *tb,
+			   struct libscols_line *ln,
+			   struct libscols_column *cl,
+			   struct libscols_cell *ce)
+{
+	if (!tb)
+		return -EINVAL;
+
+	tb->cur_line = ln;
+	tb->cur_column = cl;
+	tb->cur_cell = ce;
+
+	return 0;
+}
+
+/**
+ * scols_table_get_cursor:
+ * @tb: table
+ * @ln: returns current line (optional)
+ * @cl: returns current column (optional)
+ * @ce: returns current cell (optional)
+ *
+ * Returns: 0 on success, negative number in case of error.
+ *
+ * Since: 2.40
+ */
+int scols_table_get_cursor(struct libscols_table *tb,
+			   struct libscols_line **ln,
+			   struct libscols_column **cl,
+			   struct libscols_cell **ce)
+{
+	if (!tb)
+		return -EINVAL;
+
+	if (ln)
+		*ln = tb->cur_line;
+	if (cl)
+		*cl = tb->cur_column;
+	if (ce)
+		*ce = tb->cur_cell;
+	return 0;
+}
+
 /**
  * scols_table_set_stream:
  * @tb: table

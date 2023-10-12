@@ -310,6 +310,12 @@ extern int scols_table_reduce_termwidth(struct libscols_table *tb, size_t reduce
 
 extern int scols_sort_table(struct libscols_table *tb, struct libscols_column *cl);
 extern int scols_sort_table_by_tree(struct libscols_table *tb);
+
+extern int scols_table_get_cursor(struct libscols_table *tb,
+                           struct libscols_line **ln,
+                           struct libscols_column **cl,
+                           struct libscols_cell **ce);
+
 /*
  *
  */

@@ -247,6 +247,10 @@ struct libscols_table {
 
 	const char *cur_color;	/* current active color when printing */
 
+	struct libscols_cell *cur_cell;		/* currently used cell */
+	struct libscols_line *cur_line;		/* currently used line */
+	struct libscols_column *cur_column;	/* currently used column */
+
 	/* flags */
 	unsigned int	ascii		:1,	/* don't use unicode */
 			colors_wanted	:1,	/* enable colors */
@@ -306,6 +310,11 @@ int scols_line_next_group_child(struct libscols_line *ln,
 int scols_table_next_group(struct libscols_table *tb,
                           struct libscols_iter *itr,
                           struct libscols_group **gr);
+int scols_table_set_cursor(struct libscols_table *tb,
+                           struct libscols_line *ln,
+                           struct libscols_column *cl,
+                           struct libscols_cell *ce);
+
 
 /*
  * grouping.c
