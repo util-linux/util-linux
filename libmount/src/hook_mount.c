@@ -85,7 +85,8 @@ static void set_syscall_status_cxt_log(struct libmnt_context *cxt,
 
 	if (!x) {
 		api = get_sysapi(cxt);
-		debug_fs_fd_messages(api->fd_fs);
+		if (api)
+			debug_fs_fd_messages(api->fd_fs);
 	}
 }
 
