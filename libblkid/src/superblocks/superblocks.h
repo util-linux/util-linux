@@ -133,4 +133,16 @@ int blkid_probe_set_fsendianness(blkid_probe pr, enum BLKID_ENDIANNESS endiannes
 extern int blkid_probe_is_bitlocker(blkid_probe pr);
 extern int blkid_probe_is_ntfs(blkid_probe pr);
 
+/*
+ * utility functions
+ */
+static inline int blkid32_to_cpu(enum BLKID_ENDIANNESS e, uint32_t i)
+{
+	if (e == BLKID_ENDIANNESS_LITTLE)
+		return le32_to_cpu(i);
+	else if (e == BLKID_ENDIANNESS_BIG)
+		return be32_to_cpu(i);
+	abort();
+}
+
 #endif /* _BLKID_SUPERBLOCKS_H */
