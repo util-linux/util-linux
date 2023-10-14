@@ -26,22 +26,18 @@ struct vxfs_super_block {
 static int probe_vxfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct vxfs_super_block *vxs;
+	enum BLKID_ENDIANNESS e = mag->hint;
 
 	vxs = blkid_probe_get_sb(pr, mag, struct vxfs_super_block);
 	if (!vxs)
 		return errno ? -errno : 1;
 
-	if (le32_to_cpu(vxs->vs_magic) == 0xa501fcf5) {
-		blkid_probe_sprintf_version(pr, "%u", (unsigned int)le32_to_cpu(vxs->vs_version));
-		blkid_probe_set_fsblocksize(pr, le32_to_cpu(vxs->vs_bsize));
-		blkid_probe_set_block_size(pr, le32_to_cpu(vxs->vs_bsize));
-		blkid_probe_set_fsendianness(pr, BLKID_ENDIANNESS_LITTLE);
-	} else if (be32_to_cpu(vxs->vs_magic) == 0xa501fcf5) {
-		blkid_probe_sprintf_version(pr, "%u", (unsigned int)be32_to_cpu(vxs->vs_version));
-		blkid_probe_set_fsblocksize(pr, be32_to_cpu(vxs->vs_bsize));
-		blkid_probe_set_block_size(pr, be32_to_cpu(vxs->vs_bsize));
-		blkid_probe_set_fsendianness(pr, BLKID_ENDIANNESS_BIG);
-	}
+	blkid_probe_sprintf_version(pr, "%d",
+				    (unsigned int)blkid32_to_cpu(e, vxs->vs_version));
+	blkid_probe_set_fsblocksize(pr, blkid32_to_cpu(e, vxs->vs_bsize));
+	blkid_probe_set_block_size(pr, blkid32_to_cpu(e, vxs->vs_bsize));
+	blkid_probe_set_fsendianness(pr, e);
+
 	return 0;
 }
 
@@ -53,8 +49,10 @@ const struct blkid_idinfo vxfs_idinfo =
 	.probefunc	= probe_vxfs,
 	.magics		=
 	{
-		{ .magic = "\xf5\xfc\x01\xa5", .len = 4, .kboff = 1 },
-		{ .magic = "\xa5\x01\xfc\xf5", .len = 4, .kboff = 8 },
+		{ .magic = "\xf5\xfc\x01\xa5", .len = 4, .kboff = 1,
+		  .hint = BLKID_ENDIANNESS_LITTLE },
+		{ .magic = "\xa5\x01\xfc\xf5", .len = 4, .kboff = 8,
+		  .hint = BLKID_ENDIANNESS_BIG },
 		{ NULL }
 	}
 };
