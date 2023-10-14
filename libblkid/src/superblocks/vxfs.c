@@ -53,8 +53,8 @@ const struct blkid_idinfo vxfs_idinfo =
 	.probefunc	= probe_vxfs,
 	.magics		=
 	{
-		{ .magic = "\365\374\001\245", .len = 4, .kboff = 1 },
-		{ .magic = "\245\001\374\365", .len = 4, .kboff = 8 },
+		{ .magic = "\xf5\xfc\x01\xa5", .len = 4, .kboff = 1 },
+		{ .magic = "\xa5\x01\xfc\xf5", .len = 4, .kboff = 8 },
 		{ NULL }
 	}
 };
