@@ -391,6 +391,37 @@ char *scols_wrapnl_nextchunk(const struct libscols_column *cl __attribute__((unu
 }
 
 /**
+ * scols_wrapzero_nextchunk:
+ * @cl: a pointer to a struct libscols_column instance
+ * @data: string
+ * @userdata: callback private data
+ *
+ * This is built-in function for scols_column_set_wrapfunc(). This function
+ * walk string separated by \0.
+ *
+ * For example for data "AAA\0BBB\0CCC" the next chunk is "BBB".
+ *
+ * Returns: next chunk
+ *
+ * Since: 2.40
+ */
+char *scols_wrapzero_nextchunk(const struct libscols_column *cl,
+			char *data,
+			void *userdata __attribute__((unused)))
+{
+	char *start = NULL;
+	size_t sz = 0;
+
+	if (!data)
+		return NULL;
+	scols_column_get_wrap_data(cl, &start, &sz, NULL, NULL);
+	if (!start || !sz)
+		return NULL;
+	return ul_next_string(data, start + sz);
+}
+
+
+/**
  * scols_wrapnl_chunksize:
  * @cl: a pointer to a struct libscols_column instance
  * @data: string
@@ -472,6 +503,10 @@ int scols_column_set_cmpfunc(struct libscols_column *cl,
  * Note that since 2.40 the @wrap_chunksize is unnecessary. The library calculates
  * the size itself.
  *
+ * The wrap functions do not work directly with cell data, but with buffer used
+ * by library to compose output data. The wrap_nextchunk() function can access
+ * additional details about wrap data by scols_column_get_wrap_data().
+ *
  * Returns: 0, a negative value in case of an error.
  *
  * Since: 2.29
@@ -492,6 +527,35 @@ int scols_column_set_wrapfunc(struct libscols_column *cl,
 	cl->wrapfunc_data = userdata;
 	return 0;
 }
+
+/**
+ * scols_column_get_wrap_data:
+ * @cl: column
+ * @data: return wrap data
+ * @datasiz: return wrap buffer size
+ * @cur: the current pozition in the buffer
+ * @next: the next pozition
+ *
+ * This function returns the current status of wrapping cell data (for multi-line cells).
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
+int scols_column_get_wrap_data(const struct libscols_column *cl,
+		char **data, size_t *datasiz, char **cur, char **next)
+{
+	if (!cl)
+		return -EINVAL;
+	if (data)
+		*data = cl->wrap_data;
+	if (datasiz)
+		*datasiz = cl->wrap_datasz;
+	if (cur)
+		*cur = cl->wrap_cur;
+	if (next)
+		*next = cl->wrap_next;
+	return 0;
+}
+
 
 /**
  * scols_column_set_safechars:
@@ -768,7 +832,7 @@ static int scols_column_init_wrap(
 	cl->wrap_cell = ce;
 	if (data) {
 		void *tmp;
-		cl->wrap_datasz = strlen(data) + 1;	/* TODO: use scols_cell_get_datasiz() */
+		cl->wrap_datasz = scols_cell_get_datasiz(ce);
 
 		if (cl->wrap_datasz > cl->wrap_datamax) {
 			cl->wrap_datamax = cl->wrap_datasz;

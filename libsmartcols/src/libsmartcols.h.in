@@ -216,6 +216,11 @@ extern int scols_column_set_wrapfunc(struct libscols_column *cl,
 extern char *scols_wrapnl_nextchunk(const struct libscols_column *cl, char *data, void *userdata);
 extern size_t scols_wrapnl_chunksize(const struct libscols_column *cl, const char *data, void *userdata);
 
+extern char *scols_wrapzero_nextchunk(const struct libscols_column *cl, char *data, void *userdata);
+
+extern int scols_column_get_wrap_data(const struct libscols_column *cl,
+                char **data, size_t *datasiz, char **cur, char **next);
+
 /* line.c */
 extern struct libscols_line *scols_new_line(void);
 extern void scols_ref_line(struct libscols_line *ln);
