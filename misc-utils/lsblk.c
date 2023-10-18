@@ -779,7 +779,8 @@ static char *device_get_data(
 		struct lsblk_device *dev,		/* device */
 		struct lsblk_device *parent,		/* device parent as defined in the tree */
 		int id,					/* column ID (COL_*) */
-		uint64_t *sortdata)			/* returns sort data as number */
+		uint64_t *sortdata,			/* returns sort data as number */
+		size_t *datasiz)
 {
 	struct lsblk_devprop *prop = NULL;
 	char *str = NULL;
@@ -880,9 +881,9 @@ static char *device_get_data(
 			else
 				ul_buffer_append_string(&buf, mnt_fs_get_target(fs));
 			if (i + 1 < n)
-				ul_buffer_append_data(&buf, "\n", 1);
+				ul_buffer_append_data(&buf, "\0", 1);
 		}
-		str = ul_buffer_get_data(&buf, NULL, NULL);
+		str = ul_buffer_get_data(&buf, datasiz, NULL);
 		break;
 	}
 	case COL_FSROOTS:
@@ -898,9 +899,9 @@ static char *device_get_data(
 				continue;
 			ul_buffer_append_string(&buf, root ? root : "/");
 			if (i + 1 < n)
-				ul_buffer_append_data(&buf, "\n", 1);
+				ul_buffer_append_data(&buf, "\0", 1);
 		}
-		str = ul_buffer_get_data(&buf, NULL, NULL);
+		str = ul_buffer_get_data(&buf, datasiz, NULL);
 		break;
 	}
 	case COL_LABEL:
@@ -1255,20 +1256,30 @@ static void device_to_scols(
 
 	/* read column specific data and set it to smartcols table line */
 	for (i = 0; i < ncolumns; i++) {
-		char *data;
-		int id = get_column_id(i);
+		struct libscols_cell *ce;
+		char *data = NULL;
+		size_t datasiz = 0;
+		int rc, id = get_column_id(i);
 
 		if (lsblk->sort_id != id)
-			data = device_get_data(dev, parent, id, NULL);
+			data = device_get_data(dev, parent, id, NULL, &datasiz);
 		else {
 			uint64_t sortdata = (uint64_t) -1;
 
-			data = device_get_data(dev, parent, id, &sortdata);
+			data = device_get_data(dev, parent, id, &sortdata, &datasiz);
 			if (data && sortdata != (uint64_t) -1)
 				set_sortdata_u64(ln, i, sortdata);
 		}
+
+		if (!data)
+			continue;
 		DBG(DEV, ul_debugobj(dev, " refer data[%zu]=\"%s\"", i, data));
-		if (data && scols_line_refer_data(ln, i, data))
+		ce = scols_line_get_cell(ln, i);
+		if (!ce)
+			continue;
+		rc = datasiz ? scols_cell_refer_memory(ce, data, datasiz + 1)
+			     : scols_cell_refer_data(ce, data);
+		if (rc)
 			err(EXIT_FAILURE, _("failed to add output data"));
 	}
 
@@ -1943,7 +1954,7 @@ static void device_set_dedupkey(
 	struct lsblk_iter itr;
 	struct lsblk_device *child = NULL;
 
-	dev->dedupkey = device_get_data(dev, parent, id, NULL);
+	dev->dedupkey = device_get_data(dev, parent, id, NULL, NULL);
 	if (dev->dedupkey)
 		DBG(DEV, ul_debugobj(dev, "%s: de-duplication key: %s", dev->name, dev->dedupkey));
 
@@ -2404,13 +2415,8 @@ int main(int argc, char *argv[])
 				NULL);
 		}
 		/* multi-line cells (now used for MOUNTPOINTS) */
-		if (fl & SCOLS_FL_WRAP) {
-			scols_column_set_wrapfunc(cl,
-						scols_wrapnl_chunksize,
-						scols_wrapnl_nextchunk,
-						NULL);
-			scols_column_set_safechars(cl, "\n");
-		}
+		if (fl & SCOLS_FL_WRAP)
+			scols_column_set_wrapfunc(cl, NULL, scols_wrapzero_nextchunk, NULL);
 
 		if (lsblk->flags & LSBLK_JSON) {
 			switch (ci->type) {
