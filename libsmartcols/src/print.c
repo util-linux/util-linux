@@ -656,6 +656,7 @@ int __cursor_to_buffer(struct libscols_table *tb,
 		     int cal)
 {
 	const char *data = NULL;
+	size_t datasiz = 0;
 	struct libscols_cell *ce;
 	struct libscols_line *ln;
 	struct libscols_column *cl;
@@ -681,9 +682,13 @@ int __cursor_to_buffer(struct libscols_table *tb,
 			if (rc < 0)
 				return rc;
 			data = x;
+			if (data && *data)
+				datasiz = strlen(data);
 			rc = 0;
-		} else
+		} else {
 			data = scols_cell_get_data(ce);
+			datasiz = scols_cell_get_datasiz(ce);
+		}
 	}
 
 	if (!scols_column_is_tree(cl))
@@ -710,8 +715,9 @@ int __cursor_to_buffer(struct libscols_table *tb,
 	if (!rc && (ln->parent || cl->is_groups) && !scols_table_is_json(tb))
 		ul_buffer_save_pointer(buf, SCOLS_BUFPTR_TREEEND);
 notree:
-	if (!rc && data)
-		rc = ul_buffer_append_string(buf, data);
+	if (!rc && data && datasiz)
+		rc = ul_buffer_append_data(buf, data, datasiz);
+
 	return rc;
 }
 

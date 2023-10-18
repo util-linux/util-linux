@@ -80,6 +80,7 @@ struct libscols_symbols {
  */
 struct libscols_cell {
 	char	*data;
+	size_t	datasiz;
 	char	*color;
 	void    *userdata;
 	int	flags;

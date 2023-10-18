@@ -146,7 +146,11 @@ extern int scols_cell_copy_content(struct libscols_cell *dest,
 				   const struct libscols_cell *src);
 extern int scols_cell_set_data(struct libscols_cell *ce, const char *data);
 extern int scols_cell_refer_data(struct libscols_cell *ce, char *data);
+extern int scols_cell_refer_memory(struct libscols_cell *ce, char *data, size_t datasiz);
+
 extern const char *scols_cell_get_data(const struct libscols_cell *ce);
+extern size_t scols_cell_get_datasiz(struct libscols_cell *ce);
+
 extern int scols_cell_set_color(struct libscols_cell *ce, const char *color);
 extern const char *scols_cell_get_color(const struct libscols_cell *ce);
 
@@ -159,6 +163,7 @@ extern int scols_cell_set_userdata(struct libscols_cell *ce, void *data);
 
 extern int scols_cmpstr_cells(struct libscols_cell *a,
 			      struct libscols_cell *b, void *data);
+
 /* column.c */
 extern int scols_column_is_tree(const struct libscols_column *cl);
 extern int scols_column_is_trunc(const struct libscols_column *cl);

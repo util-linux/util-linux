@@ -217,4 +217,6 @@ SMARTCOLS_2.39 {
 
 SMARTCOLS_2.40 {
 	scols_table_get_cursor;
+	scols_cell_refer_memory;
+	scols_cell_get_datasiz;
 } SMARTCOLS_2.39;
