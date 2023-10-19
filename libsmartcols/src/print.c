@@ -689,7 +689,7 @@ int __cursor_to_buffer(struct libscols_table *tb,
 			data = scols_cell_get_data(ce);
 			datasiz = scols_cell_get_datasiz(ce);
 		}
-		DBG(CELL, ul_debugobj(cl, "cursor data: '%s' [%zu]", data, datasiz));
+		/*DBG(CELL, ul_debugobj(ce, "cursor data: '%s' [%zu]", data, datasiz));*/
 	}
 
 	if (!scols_column_is_tree(cl))
