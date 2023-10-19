@@ -511,7 +511,7 @@ static char *get_vfs_attr(struct libmnt_fs *fs, int sizetype)
 
 /* reads sources from libmount/libblkid
  */
-static char *get_data_col_sources(struct libmnt_fs *fs, int evaluate)
+static char *get_data_col_sources(struct libmnt_fs *fs, int evaluate, size_t *datasiz)
 {
 	const char *tag = NULL, *p = NULL;
 	int i = 0;
@@ -565,14 +565,14 @@ static char *get_data_col_sources(struct libmnt_fs *fs, int evaluate)
 		if (!dev)
 			continue;
 		if (i != 0)
-			ul_buffer_append_data(&buf, "\n", 1);
+			ul_buffer_append_data(&buf, "\0", 1);
 		ul_buffer_append_string(&buf, blkid_dev_devname(dev));
 		i++;
 	}
 	blkid_dev_iterate_end(iter);
 	free(val);
 
-	return ul_buffer_get_data(&buf, NULL, NULL);
+	return ul_buffer_get_data(&buf, datasiz, NULL);
 
 nothing:
 	free(val);
@@ -581,7 +581,7 @@ nothing:
 
 /* reads FS data from libmount
  */
-static char *get_data(struct libmnt_fs *fs, int num)
+static char *get_data(struct libmnt_fs *fs, int num, size_t *datasiz)
 {
 	char *str = NULL;
 	int col_id = get_column_id(num);
@@ -589,7 +589,7 @@ static char *get_data(struct libmnt_fs *fs, int num)
 	switch (col_id) {
 	case COL_SOURCES:
 		/* print all devices with the same tag (LABEL, UUID) */
-		str = get_data_col_sources(fs, flags & FL_EVALUATE);
+		str = get_data_col_sources(fs, flags & FL_EVALUATE, datasiz);
 		if (str)
 			break;
 
@@ -730,7 +730,8 @@ static char *get_data(struct libmnt_fs *fs, int num)
 static char *get_tabdiff_data(struct libmnt_fs *old_fs,
 				    struct libmnt_fs *new_fs,
 				    int change,
-				    int num)
+				    int num,
+				    size_t *datasiz)
 {
 	char *str = NULL;
 
@@ -769,12 +770,28 @@ static char *get_tabdiff_data(struct libmnt_fs *old_fs,
 		break;
 	default:
 		if (new_fs)
-			str = get_data(new_fs, num);
+			str = get_data(new_fs, num, datasiz);
 		else
-			str = get_data(old_fs, num);
+			str = get_data(old_fs, num, datasiz);
 		break;
 	}
 	return str;
+}
+
+static void set_line_data(struct libscols_line *ln, size_t i, char *data, size_t datasiz)
+{
+	int rc;
+	struct libscols_cell *ce;
+
+	ce = scols_line_get_cell(ln, i);
+	if (!ce)
+		return;
+	if (datasiz)
+		rc = scols_cell_refer_memory(ce, data, datasiz);
+	else
+		rc = scols_cell_refer_data(ce, data);
+	if (rc)
+		err(EXIT_FAILURE, _("failed to add output data"));
 }
 
 /* adds one line to the output @tab */
@@ -788,8 +805,11 @@ static struct libscols_line *add_line(struct libscols_table *table, struct libmn
 		err(EXIT_FAILURE, _("failed to allocate output line"));
 
 	for (i = 0; i < ncolumns; i++) {
-		if (scols_line_refer_data(line, i, get_data(fs, i)))
-			err(EXIT_FAILURE, _("failed to add output data"));
+		size_t datasiz = 0;
+		char *data = get_data(fs, i, &datasiz);
+
+		if (data)
+			set_line_data(line, i, data, datasiz);
 	}
 
 	scols_line_set_userdata(line, fs);
@@ -806,9 +826,11 @@ static struct libscols_line *add_tabdiff_line(struct libscols_table *table, stru
 		err(EXIT_FAILURE, _("failed to allocate output line"));
 
 	for (i = 0; i < ncolumns; i++) {
-		if (scols_line_refer_data(line, i,
-				get_tabdiff_data(old_fs, new_fs, change, i)))
-			err(EXIT_FAILURE, _("failed to add output data"));
+		size_t datasiz = 0;
+		char *data = get_tabdiff_data(old_fs, new_fs, change, i, &datasiz);
+
+		if (data)
+			set_line_data(line, i, data, datasiz);
 	}
 
 	return line;
@@ -1793,13 +1815,11 @@ int main(int argc, char *argv[])
 			goto leave;
 		}
 		/* multi-line cells (now used for SOURCES) */
-		if (fl & SCOLS_FL_WRAP) {
+		if (fl & SCOLS_FL_WRAP)
 			scols_column_set_wrapfunc(cl,
-						scols_wrapnl_chunksize,
-						scols_wrapnl_nextchunk,
+						NULL,
+						scols_wrapzero_nextchunk,
 						NULL);
-			scols_column_set_safechars(cl, "\n");
-		}
 		if (flags & FL_JSON) {
 			switch (id) {
 			case COL_SIZE:

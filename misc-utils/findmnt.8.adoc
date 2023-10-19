@@ -105,6 +105,8 @@ Output almost all available columns. The columns that require *--poll* are not i
 
 *-P*, *--pairs*::
 Produce output in the form of key="value" pairs. All potentially unsafe value characters are hex-escaped (\x<code>). See also option *--shell*.
++
+Note that SOURCES column, use multi-line cells. In these cases, the column use an array-like formatting in the output, for example *name=("aaa" "bbb" "ccc")*.
 
 *-p*, *--poll*[_=list_]::
 Monitor changes in the _/proc/self/mountinfo_ file. Supported actions are: mount, umount, remount and move. More than one action may be specified in a comma-separated list. All actions are monitored by default.
@@ -131,6 +133,8 @@ Print recursively all submounts for the selected filesystems. The restrictions d
 
 *-r*, *--raw*::
 Use raw output format. All potentially unsafe characters are hex-escaped (\x<code>).
++
+Note that column SOURCES, use multi-line cells. In these cases, the column may produce more strings on the same line.
 
 *--real*::
 Print only real filesystems.
