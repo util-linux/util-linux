@@ -307,6 +307,7 @@ int scols_line_next_group_child(struct libscols_line *ln,
 /*
  * column.c
  */
+void scols_column_reset_wrap(struct libscols_column *cl);
 int scols_column_next_wrap(     struct libscols_column *cl,
                                 struct libscols_cell *ce,
                                 char **data);

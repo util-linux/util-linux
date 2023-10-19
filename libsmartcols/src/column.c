@@ -802,7 +802,7 @@ int scols_column_set_properties(struct libscols_column *cl, const char *opts)
 	return rc;
 }
 
-static void scols_column_reset_wrap(struct libscols_column *cl)
+void scols_column_reset_wrap(struct libscols_column *cl)
 {
 	if (!cl)
 		return;

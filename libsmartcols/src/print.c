@@ -649,7 +649,7 @@ static int print_data(struct libscols_table *tb, struct ul_buffer *buf)
 }
 
 /*
- * Copy curret cell data to buffer. The @cal means "calculation" phase.
+ * Copy current cell data to buffer. The @cal means "calculation" phase.
  */
 int __cursor_to_buffer(struct libscols_table *tb,
 		     struct ul_buffer *buf,
@@ -689,6 +689,7 @@ int __cursor_to_buffer(struct libscols_table *tb,
 			data = scols_cell_get_data(ce);
 			datasiz = scols_cell_get_datasiz(ce);
 		}
+		DBG(CELL, ul_debugobj(cl, "cursor data: '%s' [%zu]", data, datasiz));
 	}
 
 	if (!scols_column_is_tree(cl))
@@ -718,6 +719,9 @@ notree:
 	if (!rc && data && datasiz)
 		rc = ul_buffer_append_data(buf, data, datasiz);
 
+	/* reset wrapping after greatest chunk calculation */
+	if (cal && scols_column_is_wrap(cl))
+		scols_column_reset_wrap(cl);
 	return rc;
 }
 
@@ -777,6 +781,8 @@ static int print_line(struct libscols_table *tb,
 					rc = print_pending_data(tb, buf);
 				if (!rc && scols_column_has_pending_wrap(cl))
 					pending = 1;
+				if (!rc && !pending)
+					scols_column_reset_wrap(cl);
 			} else
 				print_empty_cell(tb, cl, ln, NULL, ul_buffer_get_bufsiz(buf));
 			scols_table_reset_cursor(tb);
