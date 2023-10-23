@@ -66,6 +66,10 @@ static int param_set_data(struct filter_param *n, int type, const void *data)
 			n->val.str = strdup((char *) data);
 		if (data && !n->val.str)
 			return -ENOMEM;
+		if (data) {
+			rtrim_whitespace((unsigned char *) n->val.str);
+			ltrim_whitespace((unsigned char *) n->val.str);
+		}
 		break;
 	case SCOLS_DATA_U64:
 		n->val.num = data ? *((unsigned long long *) data) : 0;

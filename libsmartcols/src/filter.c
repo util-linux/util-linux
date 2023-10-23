@@ -153,6 +153,8 @@ int scols_filter_parse_string(struct libscols_filter *fltr, const char *str)
 	fclose(fltr->src);
 	fltr->src = NULL;
 
+	ON_DBG(FLTR, scols_dump_filter(fltr, stderr));
+
 	return rc;
 }
 
