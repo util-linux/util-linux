@@ -108,6 +108,8 @@ int scols_cell_refer_data(struct libscols_cell *ce, char *data)
  * with string!
  *
  * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.40
  */
 int scols_cell_refer_memory(struct libscols_cell *ce, char *data, size_t datasiz)
 {
@@ -124,6 +126,8 @@ int scols_cell_refer_memory(struct libscols_cell *ce, char *data, size_t datasiz
  * @ce: a pointer to a struct libscols_cell instance
  *
  * Returns: the current set data size.
+ *
+ * Since: 2.40
  */
 size_t scols_cell_get_datasiz(struct libscols_cell *ce)
 {

@@ -5,9 +5,11 @@ scols_cell_copy_content
 scols_cell_get_alignment
 scols_cell_get_color
 scols_cell_get_data
+scols_cell_get_datasiz
 scols_cell_get_flags
 scols_cell_get_userdata
 scols_cell_refer_data
+scols_cell_refer_memory
 scols_cell_set_color
 scols_cell_set_data
 scols_cell_set_flags
@@ -29,6 +31,7 @@ scols_column_get_safechars
 scols_column_get_table
 scols_column_get_whint
 scols_column_get_width
+scols_column_get_wrap_data
 scols_column_is_customwrap
 scols_column_is_hidden
 scols_column_is_noextremes
@@ -52,6 +55,7 @@ scols_ref_column
 scols_unref_column
 scols_wrapnl_chunksize
 scols_wrapnl_nextchunk
+scols_wrapzero_nextchunk
 </SECTION>
 
 <SECTION>
@@ -146,6 +150,7 @@ scols_table_enable_shellvar
 scols_table_get_column
 scols_table_get_column_by_name
 scols_table_get_column_separator
+scols_table_get_cursor
 scols_table_get_line
 scols_table_get_line_separator
 scols_table_get_name

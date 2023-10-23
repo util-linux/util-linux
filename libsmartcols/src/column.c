@@ -539,6 +539,8 @@ int scols_column_set_wrapfunc(struct libscols_column *cl,
  * This function returns the current status of wrapping cell data (for multi-line cells).
  *
  * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.40
  */
 int scols_column_get_wrap_data(const struct libscols_column *cl,
 		char **data, size_t *datasiz, char **cur, char **next)
