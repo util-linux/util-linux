@@ -141,7 +141,7 @@ static int parse_column_data(FILE *f, struct libscols_table *tb, int col)
 
 	while ((i = getline(&str, &len, f)) != -1) {
 		struct libscols_line *ln;
-		int rc;
+		int rc = 0;
 
 		ln = scols_table_get_line(tb, nlines++);
 		if (!ln)
@@ -162,7 +162,7 @@ static int parse_column_data(FILE *f, struct libscols_table *tb, int col)
 
 			len = unhexmangle_to_buffer(str, buf, len);
 			if (len)
-				scols_cell_refer_memory(ce, buf, len);
+				rc = scols_cell_refer_memory(ce, buf, len);
 		} else
 			rc = scols_line_set_data(ln, col, str);
 		if (rc)
