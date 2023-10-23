@@ -36,6 +36,7 @@ static const struct column_flag flags[] = {
 	{ "hidden",	SCOLS_FL_HIDDEN },
 	{ "wrap",	SCOLS_FL_WRAP },
 	{ "wrapnl",	SCOLS_FL_WRAP },
+	{ "wrapzero",	SCOLS_FL_WRAP },
 	{ "none",	0 }
 };
 
@@ -100,11 +101,16 @@ static struct libscols_column *parse_column(FILE *f)
 				goto fail;
 			if (strcmp(line, "wrapnl") == 0) {
 				scols_column_set_wrapfunc(cl,
-						scols_wrapnl_chunksize,
+						NULL,
 						scols_wrapnl_nextchunk,
 						NULL);
 				scols_column_set_safechars(cl, "\n");
 
+			} else if (strcmp(line, "wrapzero") == 0) {
+				scols_column_set_wrapfunc(cl,
+						NULL,
+						scols_wrapzero_nextchunk,
+						NULL);
 			}
 			break;
 		}
