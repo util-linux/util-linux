@@ -521,7 +521,7 @@ static int print_data(struct libscols_table *tb, struct ul_buffer *buf)
 	struct libscols_column *cl;
 	struct libscols_cell *ce;
 	size_t len = 0, i, width, bytes;
-	char *data;
+	char *data = NULL;
 	const char *name = NULL;
 	int is_last;
 
@@ -530,14 +530,14 @@ static int print_data(struct libscols_table *tb, struct ul_buffer *buf)
 	scols_table_get_cursor(tb, &ln, &cl, &ce);
 	assert(cl);
 
-	data = ul_buffer_get_data(buf, NULL, NULL);
-	if (!data)
-		data = "";
-
 	if (tb->format != SCOLS_FMT_HUMAN) {
 		name = scols_table_is_shellvar(tb) ?
 				scols_column_get_name_as_shellvar(cl) :
 				scols_column_get_name(cl);
+
+		data = ul_buffer_get_data(buf, NULL, NULL);
+		if (!data)
+			data = "";
 	}
 
 	is_last = is_last_column(cl);
@@ -673,25 +673,6 @@ int __cursor_to_buffer(struct libscols_table *tb,
 
 	ul_buffer_reset_data(buf);
 
-	if (ce) {
-		if (scols_column_is_wrap(cl)) {
-			char *x = NULL;
-
-			rc = cal ? scols_column_greatest_wrap(cl, ce, &x) :
-				   scols_column_next_wrap(cl, ce, &x);
-			if (rc < 0)
-				return rc;
-			data = x;
-			if (data && *data)
-				datasiz = strlen(data);
-			rc = 0;
-		} else {
-			data = scols_cell_get_data(ce);
-			datasiz = scols_cell_get_datasiz(ce);
-		}
-		/*DBG(CELL, ul_debugobj(ce, "cursor data: '%s' [%zu]", data, datasiz));*/
-	}
-
 	if (!scols_column_is_tree(cl))
 		goto notree;
 
@@ -716,8 +697,66 @@ int __cursor_to_buffer(struct libscols_table *tb,
 	if (!rc && (ln->parent || cl->is_groups) && !scols_table_is_json(tb))
 		ul_buffer_save_pointer(buf, SCOLS_BUFPTR_TREEEND);
 notree:
-	if (!rc && data && datasiz)
-		rc = ul_buffer_append_data(buf, data, datasiz);
+	if (!rc && ce) {
+		int do_wrap = scols_column_is_wrap(cl);
+
+		/* Disable multi-line cells for "raw" and "export" formats.
+		 * JSON uses data wrapping to generate arrays */
+		if (do_wrap && (tb->format == SCOLS_FMT_RAW ||
+				tb->format == SCOLS_FMT_EXPORT))
+			do_wrap = 0;
+
+		/* Wrapping enabled; append the next chunk if cell data */
+		if (do_wrap) {
+			char *x = NULL;
+
+			rc = cal ? scols_column_greatest_wrap(cl, ce, &x) :
+				   scols_column_next_wrap(cl, ce, &x);
+			if (rc < 0)
+				return rc;
+			data = x;
+			if (data && *data)
+				datasiz = strlen(data);
+			if (data && datasiz)
+				rc = ul_buffer_append_data(buf, data, datasiz);
+
+		/* Wrapping disabled, but data maintained by custom wrapping
+		 * callback. Try to use data as a string, if not possible,
+		 * append all chunks separated by \n (backward compatibility).
+		 * */
+		} else if (scols_column_is_customwrap(cl)) {
+			size_t len;
+			int i = 0;
+			char *x = NULL;
+
+			data = scols_cell_get_data(ce);
+			datasiz = scols_cell_get_datasiz(ce);
+			len = data ? strnlen(data, datasiz) : 0;
+
+			if (len && len + 1 == datasiz)
+				rc = ul_buffer_append_data(buf, data, datasiz);
+
+			else while (scols_column_next_wrap(cl, ce, &x) == 0) {
+				/* non-string data in cell, use a nextchunk callback */
+				if (!x)
+					continue;
+				datasiz = strlen(x);
+				if (i)
+					rc = ul_buffer_append_data(buf, "\n", 1);
+				if (!rc)
+					rc = ul_buffer_append_data(buf, x, datasiz);
+				i++;
+			}
+
+		/* Wrapping disabled; let's use data as a classig string. */
+		} else {
+			data = scols_cell_get_data(ce);
+			datasiz = scols_cell_get_datasiz(ce);
+
+			if (data && datasiz)
+				rc = ul_buffer_append_data(buf, data, datasiz);
+		}
+	}
 
 	/* reset wrapping after greatest chunk calculation */
 	if (cal && scols_column_is_wrap(cl))
