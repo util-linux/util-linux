@@ -77,7 +77,11 @@ Force unknown control sequences to be passed through unchanged. Normally *col* w
 *-x*, *--spaces*::
 Output multiple spaces instead of tabs.
 
-include::man-common/help-version.adoc[]
+*-H*, *--help*::
+Display help text and exit.
+
+*-V*, *--version*::
+Print version and exit.
 
 == CONFORMING TO
 
