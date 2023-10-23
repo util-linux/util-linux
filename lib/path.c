@@ -483,7 +483,7 @@ FILE *ul_path_fopenf(struct path_cxt *pc, const char *mode, const char *path, ..
 }
 
 /*
- * Open directory @path in read-onl mode. If the path is NULL then duplicate FD
+ * Open directory @path in read-only mode. If the path is NULL then duplicate FD
  * to the directory addressed by @pc.
  */
 DIR *ul_path_opendir(struct path_cxt *pc, const char *path)
@@ -517,7 +517,7 @@ DIR *ul_path_opendir(struct path_cxt *pc, const char *path)
 
 
 /*
- * Open directory @path in read-onl mode. If the path is NULL then duplicate FD
+ * Open directory @path in read-only mode. If the path is NULL then duplicate FD
  * to the directory addressed by @pc.
  */
 DIR *ul_path_vopendirf(struct path_cxt *pc, const char *path, va_list ap)
@@ -528,7 +528,7 @@ DIR *ul_path_vopendirf(struct path_cxt *pc, const char *path, va_list ap)
 }
 
 /*
- * Open directory @path in read-onl mode. If the path is NULL then duplicate FD
+ * Open directory @path in read-only mode. If the path is NULL then duplicate FD
  * to the directory addressed by @pc.
  */
 DIR *ul_path_opendirf(struct path_cxt *pc, const char *path, ...)
@@ -644,7 +644,7 @@ int ul_path_read_string(struct path_cxt *pc, char **str, const char *path)
 	if (rc < 0)
 		return rc;
 
-	/* Remove tailing newline (usual in sysfs) */
+	/* Remove trailing newline (usual in sysfs) */
 	if (rc > 0 && *(buf + rc - 1) == '\n')
 		--rc;
 	if (rc == 0)
@@ -678,7 +678,7 @@ int ul_path_read_buffer(struct path_cxt *pc, char *buf, size_t bufsz, const char
 		buf[0] = '\0';
 
 	else if (rc > 0) {
-		/* Remove tailing newline (usual in sysfs) */
+		/* Remove trailing newline (usual in sysfs) */
 		if (*(buf + rc - 1) == '\n')
 			buf[--rc] = '\0';
 		else
@@ -975,7 +975,7 @@ int ul_path_countf_dirents(struct path_cxt *pc, const char *path, ...)
 	return !p ? -errno : ul_path_count_dirents(pc, p);
 }
 
-/* first call (when @sub is NULL) opens the directory, last call closes the diretory */
+/* first call (when @sub is NULL) opens the directory, last call closes the directory */
 int ul_path_next_dirent(struct path_cxt *pc, DIR **sub, const char *dirname, struct dirent **d)
 {
 	if (!pc || !sub || !d)
@@ -994,25 +994,6 @@ int ul_path_next_dirent(struct path_cxt *pc, DIR **sub, const char *dirname, str
 	closedir(*sub);
 	*sub = NULL;
 	return 1;
-}
-
-/*
- * Like fopen() but, @path is always prefixed by @prefix. This function is
- * useful in case when ul_path_* API is overkill.
- */
-FILE *ul_prefix_fopen(const char *prefix, const char *path, const char *mode)
-{
-	char buf[PATH_MAX];
-
-	if (!path)
-		return NULL;
-	if (!prefix)
-		return fopen(path, mode);
-	if (*path == '/')
-		path++;
-
-	snprintf(buf, sizeof(buf), "%s/%s", prefix, path);
-	return fopen(buf, mode);
 }
 
 #ifdef HAVE_CPU_SET_T
@@ -1035,14 +1016,19 @@ static int ul_path_cpuparse(struct path_cxt *pc, cpu_set_t **set, int maxcpus, i
 		goto out;
 	}
 
-	rc = fgets(buf, len, f) == NULL ? -EIO : 0;
+	if (fgets(buf, len, f) == NULL) {
+		errno = EIO;
+		rc = -errno;
+	} else
+		rc = 0;
+
 	fclose(f);
 
 	if (rc)
 		goto out;
 
 	len = strlen(buf);
-	if (buf[len - 1] == '\n')
+	if (len > 0 && buf[len - 1] == '\n')
 		buf[len - 1] = '\0';
 
 	*set = cpuset_alloc(maxcpus, &setsize, NULL);
@@ -1053,12 +1039,14 @@ static int ul_path_cpuparse(struct path_cxt *pc, cpu_set_t **set, int maxcpus, i
 
 	if (islist) {
 		if (cpulist_parse(buf, *set, setsize, 0)) {
-			rc = -EINVAL;
+			errno = EINVAL;
+			rc = -errno;
 			goto out;
 		}
 	} else {
 		if (cpumask_parse(buf, *set, setsize)) {
-			rc = -EINVAL;
+			errno = EINVAL;
+			rc = -errno;
 			goto out;
 		}
 	}
