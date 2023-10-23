@@ -125,7 +125,12 @@ struct wd_device {
 
 	struct watchdog_info ident;
 
-	unsigned int	has_timeout : 1,
+	unsigned int	has_identity : 1,
+			has_fw_version : 1,
+			has_options : 1,
+			has_status : 1,
+			has_bootstatus : 1,
+			has_timeout : 1,
 			has_timeleft : 1,
 			has_pretimeout : 1,
 			has_nowayout : 1,
@@ -549,13 +554,16 @@ static int read_watchdog_from_sysfs(struct wd_device *wd)
 	if (!sys)
 		return 1;
 
-	ul_path_read_buffer(sys, (char *) wd->ident.identity, sizeof(wd->ident.identity), "identity");
-	ul_path_read_u32(sys, &wd->ident.firmware_version, "fw_version");
-	ul_path_scanf(sys, "options", "%x", &wd->ident.options);
-
-	ul_path_scanf(sys, "status", "%x", &wd->status);
-	ul_path_read_u32(sys, &wd->bstatus, "bootstatus");
-
+	if (ul_path_read_buffer(sys, (char *) wd->ident.identity, sizeof(wd->ident.identity), "identity") >= 0)
+		wd->has_identity = 1;
+	if (ul_path_read_u32(sys, &wd->ident.firmware_version, "fw_version") == 0)
+		wd->has_fw_version = 1;
+	if (ul_path_scanf(sys, "options", "%x", &wd->ident.options) == 1)
+		wd->has_options = 1;
+	if (ul_path_scanf(sys, "status", "%x", &wd->status) == 1)
+		wd->has_status = 1;
+	if (ul_path_read_u32(sys, &wd->bstatus, "bootstatus") == 0)
+		wd->has_bootstatus = 1;
 	if (ul_path_read_s32(sys, &wd->nowayout, "nowayout") == 0)
 		wd->has_nowayout = 1;
 	if (ul_path_read_s32(sys, &wd->timeout, "timeout") == 0)
@@ -598,12 +606,32 @@ static int read_governors(struct wd_device *wd)
 	return 0;
 }
 
+static bool should_read_from_device(struct wd_device *wd)
+{
+	if (!wd->has_nowayout)
+		return false;
+
+	if (wd->nowayout)
+		return false;
+
+	return !wd->has_identity ||
+	       !wd->has_fw_version ||
+	       !wd->has_options ||
+	       !wd->has_status ||
+	       !wd->has_bootstatus ||
+	       !wd->has_timeout ||
+	       !wd->has_timeleft;
+	       // pretimeout attribute may be hidden in sysfs
+}
+
 static int read_watchdog(struct wd_device *wd)
 {
-	int rc = read_watchdog_from_device(wd);
+	int rc;
 
-	if (rc == -EBUSY || rc == -EACCES || rc == -EPERM)
-		rc = read_watchdog_from_sysfs(wd);
+	rc = read_watchdog_from_sysfs(wd);
+
+	if (rc && should_read_from_device(wd))
+		rc = read_watchdog_from_device(wd);
 
 	if (rc) {
 		warn(_("cannot read information about %s"), wd->devpath);
