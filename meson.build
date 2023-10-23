@@ -377,6 +377,9 @@ conf.set('HAVE_CRYPT_ACTIVATE_BY_SIGNED_KEY', have ? 1 : false)
 lib_cap_ng = dependency(
   'libcap-ng',
   required : get_option('build-setpriv'))
+if not lib_cap_ng.found()
+  lib_cap_ng = disabler()
+endif
 
 lib_selinux = dependency(
   'libselinux',
@@ -3318,7 +3321,9 @@ exe = executable(
   include_directories : includes,
   dependencies : [lib_cap_ng],
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_mbsencode',
