@@ -861,8 +861,7 @@ static void loginpam_err(pam_handle_t *pamh, int retcode)
 static const char *loginpam_get_prompt(struct login_context *cxt)
 {
 	const char *host;
-	char *prompt, *dflt_prompt = _("login: ");
-	size_t sz;
+	char *prompt = NULL, *dflt_prompt = _("login: ");
 
 	if (cxt->nohost)
 		return dflt_prompt;	/* -H on command line */
@@ -873,9 +872,7 @@ static const char *loginpam_get_prompt(struct login_context *cxt)
 	if (!(host = get_thishost(cxt, NULL)))
 		return dflt_prompt;
 
-	sz = strlen(host) + 1 + strlen(dflt_prompt) + 1;
-	prompt = xmalloc(sz);
-	snprintf(prompt, sz, "%s %s", host, dflt_prompt);
+	xasprintf(&prompt, "%s %s", host, dflt_prompt);
 
 	return prompt;
 }
@@ -1295,9 +1292,8 @@ static void __attribute__((__noreturn__)) usage(void)
 }
 
 static void load_credentials(struct login_context *cxt) {
+	char str[32] = { 0 };
 	char *env;
-	DIR *dir;
-	struct dirent *d;
 	struct path_cxt *pc;
 
 	env = safe_getenv("CREDENTIALS_DIRECTORY");
@@ -1310,20 +1306,11 @@ static void load_credentials(struct login_context *cxt) {
 		return;
 	}
 
-	dir = ul_path_opendir(pc, NULL);
-	if (!dir) {
-		syslog(LOG_WARNING, _("failed to open credentials directory"));
-		return;
-	}
+	if (ul_path_read_buffer(pc, str, sizeof(str), "login.noauth") > 0
+	    && *str && strcmp(str, "yes") == 0)
+		cxt->noauth = 1;
 
-	while ((d = xreaddir(dir))) {
-		char str[32] = { 0 };
-
-		if (strcmp(d->d_name, "login.noauth") == 0
-		    && ul_path_read_buffer(pc, str, sizeof(str), d->d_name) > 0
-		    && *str && strcmp(str, "yes") == 0)
-			cxt->noauth = 1;
-	}
+	ul_unref_path(pc);
 }
 
 static void initialize(int argc, char **argv, struct login_context *cxt)
