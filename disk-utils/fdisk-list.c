@@ -439,7 +439,7 @@ void list_available_columns(FILE *out)
 
 	termwidth = get_terminal_width(80);
 
-	fprintf(out, USAGE_COLUMNS);
+	fputs(USAGE_COLUMNS, out);
 
 	while (fdisk_next_label(cxt, &lb) == 0) {
 		size_t width = 6;	/* label name and separators */
@@ -543,4 +543,3 @@ done:
 		*n = fields_nids;
 	return fields_ids;
 }
-

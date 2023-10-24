@@ -195,7 +195,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_SEPARATOR, out);
 	printf(USAGE_HELP_OPTIONS(29));
 
-	fprintf(out, USAGE_COLUMNS);
+	fputs(USAGE_COLUMNS, out);
 
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %16s  %-10s%s\n", infos[i].name,
