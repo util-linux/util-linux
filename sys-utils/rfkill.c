@@ -643,7 +643,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -r, --raw              use the raw output format\n"), stdout);
 
 	fputs(USAGE_SEPARATOR, stdout);
-	printf(USAGE_HELP_OPTIONS(24));
+	fprintf(stdout, USAGE_HELP_OPTIONS(24));
 
 	fputs(USAGE_COLUMNS, stdout);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)

@@ -272,7 +272,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -s, --sort <column>  specify sort column\n"), stdout);
 	fputs(_(" -S, --softirq        show softirqs instead of interrupts\n"), stdout);
 	fputs(USAGE_SEPARATOR, stdout);
-	printf(USAGE_HELP_OPTIONS(22));
+	fprintf(stdout, USAGE_HELP_OPTIONS(22));
 
 	fputs(_("\nThe following interactive key commands are valid:\n"), stdout);
 	fputs(_("  i      sort by IRQ\n"), stdout);
@@ -284,7 +284,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_COLUMNS, stdout);
 	irq_print_columns(stdout, 0);
 
-	printf(USAGE_MAN_TAIL("irqtop(1)"));
+	fprintf(stdout, USAGE_MAN_TAIL("irqtop(1)"));
 	exit(EXIT_SUCCESS);
 }
 

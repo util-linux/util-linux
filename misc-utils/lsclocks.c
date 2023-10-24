@@ -193,7 +193,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -c, --cpu-clock <pid>      also display CPU clock of specified process\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(29));
+	fprintf(out, USAGE_HELP_OPTIONS(29));
 
 	fputs(USAGE_COLUMNS, out);
 
@@ -206,7 +206,7 @@ static void __attribute__((__noreturn__)) usage(void)
 			"<boolean>",
 			_(infos[i].help));
 
-	printf(USAGE_MAN_TAIL("lslocks(1)"));
+	fprintf(out, USAGE_MAN_TAIL("lslocks(1)"));
 
 	exit(EXIT_SUCCESS);
 }

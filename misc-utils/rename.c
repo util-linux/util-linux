@@ -270,8 +270,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -o, --no-overwrite  don't overwrite existing files\n"), out);
 	fputs(_(" -i, --interactive   prompt before overwrite\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(21));
-	printf(USAGE_MAN_TAIL("rename(1)"));
+	fprintf(out, USAGE_HELP_OPTIONS(21));
+	fprintf(out, USAGE_MAN_TAIL("rename(1)"));
 	exit(EXIT_SUCCESS);
 }
 

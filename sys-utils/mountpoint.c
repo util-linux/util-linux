@@ -130,8 +130,8 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -d, --fs-devno     print maj:min device number of the filesystem\n"
 		" -x, --devno        print maj:min device number of the block device\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(20));
-	printf(USAGE_MAN_TAIL("mountpoint(1)"));
+	fprintf(out, USAGE_HELP_OPTIONS(20));
+	fprintf(out, USAGE_MAN_TAIL("mountpoint(1)"));
 
 	exit(EXIT_SUCCESS);
 }

@@ -2016,14 +2016,14 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -z, --zoned          print zone related information\n"), out);
 	fputs(_("     --sysroot <dir>  use specified directory as system root\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(22));
+	fprintf(out, USAGE_HELP_OPTIONS(22));
 
 	fputs(USAGE_COLUMNS, out);
 
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %12s  %s\n", infos[i].name, _(infos[i].help));
 
-	printf(USAGE_MAN_TAIL("lsblk(8)"));
+	fprintf(out, USAGE_MAN_TAIL("lsblk(8)"));
 
 	exit(EXIT_SUCCESS);
 }

@@ -79,8 +79,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Reverse lines characterwise.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	printf(USAGE_HELP_OPTIONS(16));
-	printf(USAGE_MAN_TAIL("rev(1)"));
+	fprintf(out, USAGE_HELP_OPTIONS(16));
+	fprintf(out, USAGE_MAN_TAIL("rev(1)"));
 
 	exit(EXIT_SUCCESS);
 }
@@ -202,4 +202,3 @@ int main(int argc, char *argv[])
 	free(buf);
 	return rval;
 }
-

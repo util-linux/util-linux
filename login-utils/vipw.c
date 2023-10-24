@@ -304,8 +304,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Edit the password or group file.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	printf(USAGE_HELP_OPTIONS(16));
-	printf(USAGE_MAN_TAIL("vipw(8)"));
+	fprintf(out, USAGE_HELP_OPTIONS(16));
+	fprintf(out, USAGE_MAN_TAIL("vipw(8)"));
 	exit(EXIT_SUCCESS);
 }
 

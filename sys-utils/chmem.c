@@ -348,13 +348,13 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -b, --blocks       use memory blocks\n"), out);
 	fputs(_(" -z, --zone <name>  select memory zone (see below)\n"), out);
 	fputs(_(" -v, --verbose      verbose output\n"), out);
-	printf(USAGE_HELP_OPTIONS(20));
+	fprintf(out, USAGE_HELP_OPTIONS(20));
 
 	fputs(_("\nSupported zones:\n"), out);
 	for (i = 0; i < ARRAY_SIZE(zone_names); i++)
 		fprintf(out, " %s\n", zone_names[i]);
 
-	printf(USAGE_MAN_TAIL("chmem(8)"));
+	fprintf(out, USAGE_MAN_TAIL("chmem(8)"));
 
 	exit(EXIT_SUCCESS);
 }

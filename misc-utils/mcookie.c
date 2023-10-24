@@ -91,12 +91,12 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -v, --verbose         explain what is being done\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(23));
+	fprintf(out, USAGE_HELP_OPTIONS(23));
 
 	fputs(USAGE_ARGUMENTS, out);
-	printf(USAGE_ARG_SIZE(_("<num>")));
+	fprintf(out, USAGE_ARG_SIZE(_("<num>")));
 
-	printf(USAGE_MAN_TAIL("mcookie(1)"));
+	fprintf(out, USAGE_MAN_TAIL("mcookie(1)"));
 
 	exit(EXIT_SUCCESS);
 }

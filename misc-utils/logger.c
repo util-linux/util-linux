@@ -1091,8 +1091,8 @@ static void __attribute__((__noreturn__)) usage(void)
 #endif
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(26));
-	printf(USAGE_MAN_TAIL("logger(1)"));
+	fprintf(out, USAGE_HELP_OPTIONS(26));
+	fprintf(out, USAGE_MAN_TAIL("logger(1)"));
 
 	exit(EXIT_SUCCESS);
 }

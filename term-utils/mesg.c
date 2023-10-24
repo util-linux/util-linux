@@ -82,8 +82,8 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -v, --verbose  explain what is being done\n"), out);
-	printf(USAGE_HELP_OPTIONS(16));
-	printf(USAGE_MAN_TAIL("mesg(1)"));
+	fprintf(out, USAGE_HELP_OPTIONS(16));
+	fprintf(out, USAGE_MAN_TAIL("mesg(1)"));
 
 	exit(EXIT_SUCCESS);
 }

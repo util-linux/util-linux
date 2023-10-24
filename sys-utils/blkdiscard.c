@@ -105,12 +105,12 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -z, --zeroout       zero-fill rather than discard\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(21));
+	fprintf(out, USAGE_HELP_OPTIONS(21));
 
 	fputs(USAGE_ARGUMENTS, out);
-	printf(USAGE_ARG_SIZE(_("<num>")));
+	fprintf(out, USAGE_ARG_SIZE(_("<num>")));
 
-	printf(USAGE_MAN_TAIL("blkdiscard(8)"));
+	fprintf(out, USAGE_MAN_TAIL("blkdiscard(8)"));
 	exit(EXIT_SUCCESS);
 }
 

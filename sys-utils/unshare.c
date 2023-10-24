@@ -683,8 +683,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --boottime <offset>       set clock boottime offset (seconds) in time namespaces\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(27));
-	printf(USAGE_MAN_TAIL("unshare(1)"));
+	fprintf(out, USAGE_HELP_OPTIONS(27));
+	fprintf(out, USAGE_MAN_TAIL("unshare(1)"));
 
 	exit(EXIT_SUCCESS);
 }

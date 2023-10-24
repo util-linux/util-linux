@@ -2737,9 +2737,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -r, --read-only          forced open cfdisk in read-only mode\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(26));
+	fprintf(out, USAGE_HELP_OPTIONS(26));
 
-	printf(USAGE_MAN_TAIL("cfdisk(8)"));
+	fprintf(out, USAGE_MAN_TAIL("cfdisk(8)"));
 	exit(EXIT_SUCCESS);
 }
 

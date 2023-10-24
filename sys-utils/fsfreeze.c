@@ -47,8 +47,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -f, --freeze      freeze the filesystem\n"), out);
 	fputs(_(" -u, --unfreeze    unfreeze the filesystem\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(19));
-	printf(USAGE_MAN_TAIL("fsfreeze(8)"));
+	fprintf(out, USAGE_HELP_OPTIONS(19));
+	fprintf(out, USAGE_MAN_TAIL("fsfreeze(8)"));
 
 	exit(EXIT_SUCCESS);
 }
@@ -147,4 +147,3 @@ done:
 	close(fd);
 	return rc;
 }
-

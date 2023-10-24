@@ -106,8 +106,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -d, --divisor=<number>  divide the amount of bytes by <number>\n"), stdout);
 	fputs(_(" -x, --sectors           show sector count and size\n"), stdout);
 
-	printf(USAGE_HELP_OPTIONS(25));
-	printf(USAGE_MAN_TAIL("isosize(8)"));
+	fprintf(stdout, USAGE_HELP_OPTIONS(25));
+	fprintf(stdout, USAGE_MAN_TAIL("isosize(8)"));
 
 	exit(EXIT_SUCCESS);
 }

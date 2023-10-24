@@ -247,9 +247,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" +/pattern/   start at the line containing pattern\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(16));
+	fprintf(out, USAGE_HELP_OPTIONS(16));
 
-	printf(USAGE_MAN_TAIL("pg(1)"));
+	fprintf(out, USAGE_MAN_TAIL("pg(1)"));
 	exit(0);
 }
 

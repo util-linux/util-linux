@@ -402,12 +402,12 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -f, --force            enforce on block devices used by the system\n"), out);
 	fputs(_(" -v, --verbose          display more details\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(24));
+	fprintf(out, USAGE_HELP_OPTIONS(24));
 
 	fputs(USAGE_ARGUMENTS, out);
-	printf(USAGE_ARG_SIZE(_("<sector> and <sectors>")));
+	fprintf(out, USAGE_ARG_SIZE(_("<sector> and <sectors>")));
 
-	printf(USAGE_MAN_TAIL("blkzone(8)"));
+	fprintf(out, USAGE_MAN_TAIL("blkzone(8)"));
 	exit(EXIT_SUCCESS);
 }
 

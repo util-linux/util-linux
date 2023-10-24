@@ -101,8 +101,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -n, --nobanner          do not print banner, works only for root\n"), out);
 	fputs(_(" -t, --timeout <timeout> write timeout in seconds\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(25));
-	printf(USAGE_MAN_TAIL("wall(1)"));
+	fprintf(out, USAGE_HELP_OPTIONS(25));
+	fprintf(out, USAGE_MAN_TAIL("wall(1)"));
 
 	exit(EXIT_SUCCESS);
 }

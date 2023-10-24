@@ -100,14 +100,14 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(	" -D, --no-part-details      don't print info from partition table\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(28));
+	fprintf(out, USAGE_HELP_OPTIONS(28));
 
 	fputs(USAGE_ARGUMENTS, out);
-	printf(USAGE_ARG_SIZE(_("<size> and <offset>")));
+	fprintf(out, USAGE_ARG_SIZE(_("<size> and <offset>")));
 	fputs(USAGE_ARG_SEPARATOR, out);
 	fputs(_(" <dev> specify device(s) to probe (default: all devices)\n"), out);
 
-	printf(USAGE_MAN_TAIL("blkid(8)"));
+	fprintf(out, USAGE_MAN_TAIL("blkid(8)"));
 	exit(EXIT_SUCCESS);
 }
 

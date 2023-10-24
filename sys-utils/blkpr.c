@@ -223,7 +223,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -t, --type <type>        command type\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(26));
+	fprintf(out, USAGE_HELP_OPTIONS(26));
 
 	fputs(USAGE_ARGUMENTS, out);
 
@@ -236,7 +236,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" <type> is a command type, available types:\n"), out);
 	print_pr_type(out);
 
-	printf(USAGE_MAN_TAIL("blkpr(8)"));
+	fprintf(out, USAGE_MAN_TAIL("blkpr(8)"));
 	exit(EXIT_SUCCESS);
 }
 

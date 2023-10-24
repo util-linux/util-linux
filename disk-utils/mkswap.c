@@ -201,9 +201,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fprintf(out,
 	      _("     --lock[=<mode>]       use exclusive device lock (%s, %s or %s)\n"), "yes", "no", "nonblock");
 
-	printf(USAGE_HELP_OPTIONS(27));
+	fprintf(out, USAGE_HELP_OPTIONS(27));
 
-	printf(USAGE_MAN_TAIL("mkswap(8)"));
+	fprintf(out, USAGE_MAN_TAIL("mkswap(8)"));
 	exit(EXIT_SUCCESS);
 }
 

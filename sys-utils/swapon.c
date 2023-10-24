@@ -825,7 +825,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -v, --verbose            verbose mode\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(26));
+	fprintf(out, USAGE_HELP_OPTIONS(26));
 
 	fputs(_("\nThe <spec> parameter:\n" \
 		" -L <label>             synonym for LABEL=<label>\n"
@@ -846,7 +846,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %-5s  %s\n", infos[i].name, _(infos[i].help));
 
-	printf(USAGE_MAN_TAIL("swapon(8)"));
+	fprintf(out, USAGE_MAN_TAIL("swapon(8)"));
 	exit(EXIT_SUCCESS);
 }
 

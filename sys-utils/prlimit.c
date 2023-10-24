@@ -179,7 +179,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		"     --raw              use the raw output format\n"
 		"     --verbose          verbose output\n"
 		), out);
-	printf(USAGE_HELP_OPTIONS(24));
+	fprintf(out, USAGE_HELP_OPTIONS(24));
 
 	fputs(_("\nResources:\n"), out);
 	fputs(_(" -c, --core             maximum size of core files created\n"
@@ -209,7 +209,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
 
-	printf(USAGE_MAN_TAIL("prlimit(1)"));
+	fprintf(out, USAGE_MAN_TAIL("prlimit(1)"));
 
 	exit(EXIT_SUCCESS);
 }

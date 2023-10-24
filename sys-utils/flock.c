@@ -49,7 +49,7 @@
 static void __attribute__((__noreturn__)) usage(void)
 {
 	fputs(USAGE_HEADER, stdout);
-	printf(
+	fprintf(stdout,
 		_(" %1$s [options] <file>|<directory> <command> [<argument>...]\n"
 		  " %1$s [options] <file>|<directory> -c <command>\n"
 		  " %1$s [options] <file descriptor number>\n"),
@@ -70,8 +70,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(  " -F, --no-fork            execute command without forking\n"), stdout);
 	fputs(_(  "     --verbose            increase verbosity\n"), stdout);
 	fputs(USAGE_SEPARATOR, stdout);
-	printf(USAGE_HELP_OPTIONS(26));
-	printf(USAGE_MAN_TAIL("flock(1)"));
+	fprintf(stdout, USAGE_HELP_OPTIONS(26));
+	fprintf(stdout, USAGE_MAN_TAIL("flock(1)"));
 	exit(EXIT_SUCCESS);
 }
 

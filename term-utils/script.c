@@ -216,8 +216,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -q, --quiet                   be quiet\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(31));
-	printf(USAGE_MAN_TAIL("script(1)"));
+	fprintf(out, USAGE_HELP_OPTIONS(31));
+	fprintf(out, USAGE_MAN_TAIL("script(1)"));
 
 	exit(EXIT_SUCCESS);
 }

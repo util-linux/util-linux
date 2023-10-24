@@ -69,13 +69,13 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -R, --reset-on-fork  set reset-on-fork flag\n"), out);
 	fputs(_(" -v, --verbose        display status information\n"), out);
 
-	printf(USAGE_HELP_OPTIONS(22));
+	fprintf(out, USAGE_HELP_OPTIONS(22));
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Utilization value range is [0:1024]. Use special -1 value to "
 		"reset to system's default.\n"), out);
 
-	printf(USAGE_MAN_TAIL("uclampset(1)"));
+	fprintf(out, USAGE_MAN_TAIL("uclampset(1)"));
 	exit(EXIT_SUCCESS);
 }
 

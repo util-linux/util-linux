@@ -34,15 +34,15 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -r, --random          generate random-based uuid\n"), out);
 	fputs(_(" -t, --time            generate time-based uuid\n"), out);
 	fputs(_(" -n, --namespace <ns>  generate hash-based uuid in this namespace\n"), out);
-	printf(_("                        available namespaces: %s\n"), "@dns @url @oid @x500");
+	fprintf(out, _("                        available namespaces: %s\n"), "@dns @url @oid @x500");
 	fputs(_(" -N, --name <name>     generate hash-based uuid from this name\n"), out);
 	fputs(_(" -m, --md5             generate md5 hash\n"), out);
 	fputs(_(" -C, --count <num>     generate more uuids in loop\n"), out);
 	fputs(_(" -s, --sha1            generate sha1 hash\n"), out);
 	fputs(_(" -x, --hex             interpret name as hex string\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(21));
-	printf(USAGE_MAN_TAIL("uuidgen(1)"));
+	fprintf(out, USAGE_HELP_OPTIONS(21));
+	fprintf(out, USAGE_MAN_TAIL("uuidgen(1)"));
 	exit(EXIT_SUCCESS);
 }
 

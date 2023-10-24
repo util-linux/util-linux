@@ -630,36 +630,36 @@ usage(void)
 	size_t i;
 
 	fputs(USAGE_HEADER, stdout);
-	printf(_(" %s [options] <device>\n"), program_invocation_short_name);
+	fprintf(stdout, _(" %s [options] <device>\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, stdout);
-	puts(_("Wipe signatures from a device."));
+	fputs(_("Wipe signatures from a device."), stdout);
 
 	fputs(USAGE_OPTIONS, stdout);
-	puts(_(" -a, --all           wipe all magic strings (BE CAREFUL!)"));
-	puts(_(" -b, --backup        create a signature backup in $HOME"));
-	puts(_(" -f, --force         force erasure"));
-	puts(_(" -i, --noheadings    don't print headings"));
-	puts(_(" -J, --json          use JSON output format"));
-	puts(_(" -n, --no-act        do everything except the actual write() call"));
-	puts(_(" -o, --offset <num>  offset to erase, in bytes"));
-	puts(_(" -O, --output <list> COLUMNS to display (see below)"));
-	puts(_(" -p, --parsable      print out in parsable instead of printable format"));
-	puts(_(" -q, --quiet         suppress output messages"));
-	puts(_(" -t, --types <list>  limit the set of filesystem, RAIDs or partition tables"));
-	printf(
+	fputs(_(" -a, --all           wipe all magic strings (BE CAREFUL!)"), stdout);
+	fputs(_(" -b, --backup        create a signature backup in $HOME"), stdout);
+	fputs(_(" -f, --force         force erasure"), stdout);
+	fputs(_(" -i, --noheadings    don't print headings"), stdout);
+	fputs(_(" -J, --json          use JSON output format"), stdout);
+	fputs(_(" -n, --no-act        do everything except the actual write() call"), stdout);
+	fputs(_(" -o, --offset <num>  offset to erase, in bytes"), stdout);
+	fputs(_(" -O, --output <list> COLUMNS to display (see below)"), stdout);
+	fputs(_(" -p, --parsable      print out in parsable instead of printable format"), stdout);
+	fputs(_(" -q, --quiet         suppress output messages"), stdout);
+	fputs(_(" -t, --types <list>  limit the set of filesystem, RAIDs or partition tables"), stdout);
+	fprintf(stdout,
 	     _("     --lock[=<mode>] use exclusive device lock (%s, %s or %s)\n"), "yes", "no", "nonblock");
 
-	printf(USAGE_HELP_OPTIONS(21));
+	fprintf(stdout, USAGE_HELP_OPTIONS(21));
 
 	fputs(USAGE_ARGUMENTS, stdout);
-	printf(USAGE_ARG_SIZE(_("<num>")));
+	fprintf(stdout, USAGE_ARG_SIZE(_("<num>")));
 
 	fputs(USAGE_COLUMNS, stdout);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(stdout, " %8s  %s\n", infos[i].name, _(infos[i].help));
 
-	printf(USAGE_MAN_TAIL("wipefs(8)"));
+	fprintf(stdout, USAGE_MAN_TAIL("wipefs(8)"));
 	exit(EXIT_SUCCESS);
 }
 

@@ -148,7 +148,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -v, --verbose          verbose mode\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(24));
+	fprintf(out, USAGE_HELP_OPTIONS(24));
 
 	fputs(_("\nThe <spec> parameter:\n" \
 		" -L <label>             LABEL of device to be used\n" \
@@ -158,7 +158,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		" <device>               name of device to be used\n" \
 		" <file>                 name of file to be used\n"), out);
 
-	printf(USAGE_MAN_TAIL("swapoff(8)"));
+	fprintf(out, USAGE_MAN_TAIL("swapoff(8)"));
 	exit(SWAPOFF_EX_OK);
 }
 

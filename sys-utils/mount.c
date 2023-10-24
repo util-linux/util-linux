@@ -482,7 +482,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	FILE *out = stdout;
 
 	fputs(USAGE_HEADER, out);
-	printf(_(
+	fprintf(out, _(
 		" %1$s [-lhV]\n"
 		" %1$s -a [options]\n"
 		" %1$s [options] [--source] <source> | [--target] <directory>\n"
@@ -529,7 +529,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -N, --namespace <ns>    perform mount in another namespace\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(25));
+	fprintf(out, USAGE_HELP_OPTIONS(25));
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Source:\n"), out);
@@ -558,7 +558,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --make-rprivate         recursively mark a whole subtree as private\n"), out);
 	fputs(_(" --make-runbindable      recursively mark a whole subtree as unbindable\n"), out);
 
-	printf(USAGE_MAN_TAIL("mount(8)"));
+	fprintf(out, USAGE_MAN_TAIL("mount(8)"));
 
 	exit(MNT_EX_SUCCESS);
 }

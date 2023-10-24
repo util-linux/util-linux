@@ -187,12 +187,12 @@ void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -v, --no-squeezing        output identical lines\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(27));
+	fprintf(out, USAGE_HELP_OPTIONS(27));
 
 	fputs(USAGE_ARGUMENTS, out);
-	printf(USAGE_ARG_SIZE(_("<length> and <offset>")));
+	fprintf(out, USAGE_ARG_SIZE(_("<length> and <offset>")));
 
-	printf(USAGE_MAN_TAIL("hexdump(1)"));
+	fprintf(out, USAGE_MAN_TAIL("hexdump(1)"));
 	exit(EXIT_SUCCESS);
 }
 

@@ -563,14 +563,14 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(24));
+	fprintf(out, USAGE_HELP_OPTIONS(24));
 
 	fputs(USAGE_COLUMNS, out);
 
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
 
-	printf(USAGE_MAN_TAIL("lslocks(8)"));
+	fprintf(out, USAGE_MAN_TAIL("lslocks(8)"));
 
 	exit(EXIT_SUCCESS);
 }

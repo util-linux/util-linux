@@ -1256,22 +1256,22 @@ usage(void)
 	puts(_(" -v, --verbose                   display more details"));
 
 	fputs(USAGE_SEPARATOR, stdout);
-	printf(USAGE_HELP_OPTIONS(33));
+	fprintf(stdout, USAGE_HELP_OPTIONS(33));
 
 #ifdef __linux__
 	fputs(USAGE_ARGUMENTS, stdout);
-	puts(_(" <param> is either a numeric RTC parameter value or one of these aliases:"));
+	fputs(_(" <param> is either a numeric RTC parameter value or one of these aliases:"), stdout);
 
 	while (param->name) {
-		printf(_("   - %1$s: %2$s (0x%3$x)\n"), param->name, param->help, param->id);
+		fprintf(stdout, _("   - %1$s: %2$s (0x%3$x)\n"), param->name, param->help, param->id);
 		param++;
 	}
 
-	puts(_("   See Kernel's include/uapi/linux/rtc.h for parameters and values."));
+	fputs(_("   See Kernel's include/uapi/linux/rtc.h for parameters and values."), stdout);
 	fputs(USAGE_ARG_SEPARATOR, stdout);
-	puts(_(" <param> and <value> accept hexadecimal values if prefixed with 0x, otherwise decimal."));
+	fputs(_(" <param> and <value> accept hexadecimal values if prefixed with 0x, otherwise decimal."), stdout);
 #endif
-	printf(USAGE_MAN_TAIL("hwclock(8)"));
+	fprintf(stdout, USAGE_MAN_TAIL("hwclock(8)"));
 	exit(EXIT_SUCCESS);
 }
 

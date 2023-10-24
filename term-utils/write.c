@@ -96,8 +96,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Send a message to another user.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	printf(USAGE_HELP_OPTIONS(16));
-	printf(USAGE_MAN_TAIL("write(1)"));
+	fprintf(out, USAGE_HELP_OPTIONS(16));
+	fprintf(out, USAGE_MAN_TAIL("write(1)"));
 	exit(EXIT_SUCCESS);
 }
 
