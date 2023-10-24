@@ -148,21 +148,22 @@ static int parse_column_data(FILE *f, struct libscols_table *tb, int col)
 			break;
 
 		p = strrchr(str, '\n');
-		if (p) {
+		if (p)
 			*p = '\0';
-			len = p - str;
-		}
 		if (!*str)
 			continue;
 
 		/* convert \x?? to real bytes */
 		if (strstr(str, "\\x")) {
 			struct libscols_cell *ce = scols_line_get_cell(ln, col);
-			char *buf = xcalloc(1, ++len);
+			size_t sz = len + 1;
+			char *buf = xcalloc(1, sz);
 
-			len = unhexmangle_to_buffer(str, buf, len);
-			if (len)
-				rc = scols_cell_refer_memory(ce, buf, len);
+			sz = unhexmangle_to_buffer(str, buf, sz);
+			if (sz)
+				rc = scols_cell_refer_memory(ce, buf, sz);
+			else
+				free(buf);
 		} else
 			rc = scols_line_set_data(ln, col, str);
 		if (rc)
