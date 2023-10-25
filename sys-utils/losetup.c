@@ -143,23 +143,26 @@ static int printf_loopdev(struct loopdev_cxt *lc)
 		 * Probably non-root user (no permissions to
 		 * call LOOP_GET_STATUS ioctls).
 		 */
-		printf("%s: []: (%s)",
-			loopcxt_get_device(lc), fname);
+		printf("%s%s: []: (%s)",
+			loopcxt_get_device(lc),
+			loopcxt_is_lost(lc) ? " (lost)" : "",
+			fname);
 
 		if (loopcxt_get_offset(lc, &x) == 0 && x)
 				printf(_(", offset %ju"), x);
-
 		if (loopcxt_get_sizelimit(lc, &x) == 0 && x)
 				printf(_(", sizelimit %ju"), x);
+
 		goto done;
 	}
 
-	printf("%s: [%04jd]:%ju (%s)",
-		loopcxt_get_device(lc), (intmax_t) dev, (uintmax_t) ino, fname);
+	printf("%s%s: [%04jd]:%ju (%s)",
+		loopcxt_get_device(lc),
+		loopcxt_is_lost(lc) ? " (lost)" : "",
+		(intmax_t) dev, (uintmax_t) ino, fname);
 
 	if (loopcxt_get_offset(lc, &x) == 0 && x)
 			printf(_(", offset %ju"), x);
-
 	if (loopcxt_get_sizelimit(lc, &x) == 0 && x)
 			printf(_(", sizelimit %ju"), x);
 
@@ -210,11 +213,24 @@ static int show_all_loops(struct loopdev_cxt *lc, const char *file,
 	return 0;
 }
 
+static void warn_lost(struct loopdev_cxt *lc)
+{
+	dev_t devno = loopcxt_get_devno(lc);
+
+	if (devno <= 0)
+		return;
+
+	warnx(("device node %s (%u:%u) is lost. You may use mknod(1) to recover it."),
+			loopcxt_get_device(lc), major(devno), minor(devno));
+}
+
 static int delete_loop(struct loopdev_cxt *lc)
 {
-	if (loopcxt_delete_device(lc))
+	if (loopcxt_delete_device(lc)) {
 		warn(_("%s: detach failed"), loopcxt_get_device(lc));
-	else
+		if (loopcxt_is_lost(lc))
+			warn_lost(lc);
+	} else
 		return 0;
 
 	return -1;
@@ -234,24 +250,9 @@ static int delete_all_loops(struct loopdev_cxt *lc)
 	return res;
 }
 
-static dev_t get_device_devno(struct loopdev_cxt *lc, struct stat *st)
-{
-	if (st->st_rdev)
-		return st->st_rdev;
-
-	if (loopcxt_get_device(lc)
-	    && stat(loopcxt_get_device(lc), st) == 0
-	    && S_ISBLK(st->st_mode)
-	    && major(st->st_rdev) == LOOPDEV_MAJOR)
-		return st->st_rdev;
-
-	return 0;
-}
-
 static int set_scols_data(struct loopdev_cxt *lc, struct libscols_line *ln)
 {
 	size_t i;
-	struct stat st = { .st_rdev = 0 };
 
 	for (i = 0; i < ncolumns; i++) {
 		const char *p = NULL;			/* external data */
@@ -262,6 +263,10 @@ static int set_scols_data(struct loopdev_cxt *lc, struct libscols_line *ln)
 		switch(get_column_id(i)) {
 		case COL_NAME:
 			p = loopcxt_get_device(lc);
+			if (loopcxt_is_lost(lc)) {
+				xasprintf(&np, "%s (lost)", p);
+				p = NULL;
+			}
 			break;
 		case COL_BACK_FILE:
 			np = loopcxt_get_backing_file(lc);
@@ -298,20 +303,20 @@ static int set_scols_data(struct loopdev_cxt *lc, struct libscols_line *ln)
 		}
 		case COL_MAJMIN:
 		{
-			dev_t dev = get_device_devno(lc, &st);
+			dev_t dev = loopcxt_get_devno(lc);
 			if (dev)
 				xasprintf(&np, raw || json ? "%u:%u" :"%3u:%-3u",
 						major(dev), minor(dev));
 			break;
 		}
 		case COL_MAJ: {
-			dev_t dev = get_device_devno(lc, &st);
+			dev_t dev = loopcxt_get_devno(lc);
 			if (dev)
 				xasprintf(&np, "%u", major(dev));
 			break;
 		}
 		case COL_MIN: {
-			dev_t dev = get_device_devno(lc, &st);
+			dev_t dev = loopcxt_get_devno(lc);
 			if (dev)
 				xasprintf(&np, "%u", minor(dev));
 			break;
@@ -653,7 +658,7 @@ static int create_loop(struct loopdev_cxt *lc,
 		}
 
 		/* errors */
-		errpre = hasdev && loopcxt_get_fd(lc) < 0 ?
+		errpre = hasdev && lc->fd < 0 ?
 				 loopcxt_get_device(lc) : file;
 		warn(_("%s: failed to set up loop device"), errpre);
 		break;
@@ -741,8 +746,7 @@ int main(int argc, char **argv)
 			break;
 		case 'c':
 			act = A_SET_CAPACITY;
-			if (!is_loopdev(optarg) ||
-			    loopcxt_set_device(&lc, optarg))
+			if (loopcxt_set_device(&lc, optarg))
 				err(EXIT_FAILURE, _("%s: failed to use device"),
 						optarg);
 			break;
@@ -754,8 +758,7 @@ int main(int argc, char **argv)
 			break;
 		case 'd':
 			act = A_DELETE;
-			if (!is_loopdev(optarg) ||
-			    loopcxt_set_device(&lc, optarg))
+			if (loopcxt_set_device(&lc, optarg))
 				err(EXIT_FAILURE, _("%s: failed to use device"),
 						optarg);
 			break;
@@ -883,8 +886,7 @@ int main(int argc, char **argv)
 		else
 			act = A_SHOW_ONE;
 
-		if (!is_loopdev(argv[optind]) ||
-		    loopcxt_set_device(&lc, argv[optind]))
+		if (loopcxt_set_device(&lc, argv[optind]))
 			err(EXIT_FAILURE, _("%s: failed to use device"),
 					argv[optind]);
 		optind++;
@@ -935,8 +937,7 @@ int main(int argc, char **argv)
 	case A_DELETE:
 		res = delete_loop(&lc);
 		while (optind < argc) {
-			if (!is_loopdev(argv[optind]) ||
-			    loopcxt_set_device(&lc, argv[optind]))
+			if (loopcxt_set_device(&lc, argv[optind]))
 				warn(_("%s: failed to use device"),
 						argv[optind]);
 			optind++;
@@ -988,6 +989,12 @@ int main(int argc, char **argv)
 		errtryhelp(EXIT_FAILURE);
 		break;
 	}
+
+	if (res && (act == A_SET_CAPACITY
+		    || act == A_SET_DIRECT_IO
+		    || act == A_SET_BLOCKSIZE)
+	    && loopcxt_is_lost(&lc))
+		warn_lost(&lc);
 
 	loopcxt_deinit(&lc);
 	return res ? EXIT_FAILURE : EXIT_SUCCESS;
