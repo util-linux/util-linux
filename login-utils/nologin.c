@@ -32,9 +32,9 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -c, --command <command>  does nothing (for compatibility with su -c)\n"), out);
-	printf(USAGE_HELP_OPTIONS(26));
+	fprintf(out, USAGE_HELP_OPTIONS(26));
 
-	printf(USAGE_MAN_TAIL("nologin(8)"));
+	fprintf(out, USAGE_MAN_TAIL("nologin(8)"));
 	exit(EXIT_FAILURE);
 }
 

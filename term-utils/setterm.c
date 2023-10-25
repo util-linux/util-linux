@@ -438,10 +438,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --bfreq[=<number>]            bell frequency in Hertz\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf( " --help                        %s\n", USAGE_OPTSTR_HELP);
-	printf( " --version                     %s\n", USAGE_OPTSTR_VERSION);
+	fprintf(out, " --help                        %s\n", USAGE_OPTSTR_HELP);
+	fprintf(out, " --version                     %s\n", USAGE_OPTSTR_VERSION);
 
-	printf(USAGE_MAN_TAIL("setterm(1)"));
+	fprintf(out, USAGE_MAN_TAIL("setterm(1)"));
 	exit(EXIT_SUCCESS);
 }
 

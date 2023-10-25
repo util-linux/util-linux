@@ -66,7 +66,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -i, --id <id>  print details on resource identified by <id>\n"), out);
-	printf(USAGE_HELP_OPTIONS(16));
+	fprintf(out, USAGE_HELP_OPTIONS(16));
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Resource options:\n"), out);
@@ -84,7 +84,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -u, --summary     show status summary\n"), out);
 	fputs(_("     --human       show sizes in human-readable format\n"), out);
 	fputs(_(" -b, --bytes       show sizes in bytes\n"), out);
-	printf(USAGE_MAN_TAIL("ipcs(1)"));
+	fprintf(out, USAGE_MAN_TAIL("ipcs(1)"));
 
 	exit(EXIT_SUCCESS);
 }

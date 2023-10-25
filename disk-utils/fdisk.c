@@ -884,11 +884,11 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -S, --sectors <number>        specify the number of sectors per track\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(31));
+	fprintf(out, USAGE_HELP_OPTIONS(31));
 
 	list_available_columns(out);
 
-	printf(USAGE_MAN_TAIL("fdisk(8)"));
+	fprintf(out, USAGE_MAN_TAIL("fdisk(8)"));
 	exit(EXIT_SUCCESS);
 }
 

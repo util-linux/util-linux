@@ -488,13 +488,13 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --raw                     use raw --list output format\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(31));
+	fprintf(out, USAGE_HELP_OPTIONS(31));
 
 	fputs(USAGE_COLUMNS, out);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %12s  %s\n", infos[i].name, _(infos[i].help));
 
-	printf(USAGE_MAN_TAIL("losetup(8)"));
+	fprintf(out, USAGE_MAN_TAIL("losetup(8)"));
 
 	exit(EXIT_SUCCESS);
 }
@@ -992,4 +992,3 @@ int main(int argc, char **argv)
 	loopcxt_deinit(&lc);
 	return res ? EXIT_FAILURE : EXIT_SUCCESS;
 }
-

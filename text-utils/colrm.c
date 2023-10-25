@@ -65,10 +65,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Filter out the specified columns.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	printf(USAGE_HELP_OPTIONS(16));
+	fprintf(out, USAGE_HELP_OPTIONS(16));
 	fprintf(out, _("%s reads from standard input and writes to standard output\n\n"),
 		       program_invocation_short_name);
-	printf(USAGE_MAN_TAIL("colrm(1)"));
+	fprintf(out, USAGE_MAN_TAIL("colrm(1)"));
 	exit(EXIT_SUCCESS);
 }
 

@@ -320,7 +320,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(26));
+	fprintf(out, USAGE_HELP_OPTIONS(26));
 
 	fprintf(out, _("\nGeneric columns:\n"));
 	for (i = COLDESC_IDX_GEN_FIRST; i <= COLDESC_IDX_GEN_LAST; i++)
@@ -342,7 +342,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	for (i = COLDESC_IDX_SUM_FIRST; i <= COLDESC_IDX_SUM_LAST; i++)
 		fprintf(out, " %14s  %s\n", coldescs[i].name, _(coldescs[i].help));
 
-	printf(USAGE_MAN_TAIL("lsipc(1)"));
+	fprintf(out, USAGE_MAN_TAIL("lsipc(1)"));
 	exit(EXIT_SUCCESS);
 }
 
@@ -1354,4 +1354,3 @@ int main(int argc, char *argv[])
 
 	return EXIT_SUCCESS;
 }
-

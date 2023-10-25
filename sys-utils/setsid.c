@@ -41,9 +41,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -f, --fork     always fork\n"), out);
 	fputs(_(" -w, --wait     wait program to exit, and use the same return\n"), out);
 
-	printf(USAGE_HELP_OPTIONS(16));
+	fprintf(out, USAGE_HELP_OPTIONS(16));
 
-	printf(USAGE_MAN_TAIL("setsid(1)"));
+	fprintf(out, USAGE_MAN_TAIL("setsid(1)"));
 	exit(EXIT_SUCCESS);
 }
 

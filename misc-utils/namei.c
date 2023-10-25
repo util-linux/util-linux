@@ -373,9 +373,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_( " -Z, --context       print any security context of each file \n"), out);
 #endif
 
-	printf(USAGE_HELP_OPTIONS(21));
+	fprintf(out, USAGE_HELP_OPTIONS(21));
 
-	printf(USAGE_MAN_TAIL("namei(1)"));
+	fprintf(out, USAGE_MAN_TAIL("namei(1)"));
 	exit(EXIT_SUCCESS);
 }
 
@@ -488,4 +488,3 @@ main(int argc, char **argv)
 
 	return rc;
 }
-

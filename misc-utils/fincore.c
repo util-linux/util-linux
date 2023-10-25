@@ -405,14 +405,14 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -r, --raw             use raw output format\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(23));
+	fprintf(out, USAGE_HELP_OPTIONS(23));
 
-	fprintf(out, USAGE_COLUMNS);
+	fputs(USAGE_COLUMNS, out);
 
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %22s  %s\n", infos[i].name, _(infos[i].help));
 
-	printf(USAGE_MAN_TAIL("fincore(1)"));
+	fprintf(out, USAGE_MAN_TAIL("fincore(1)"));
 
 	exit(EXIT_SUCCESS);
 }

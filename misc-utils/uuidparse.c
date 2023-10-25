@@ -97,17 +97,17 @@ static void __attribute__((__noreturn__)) usage(void)
 	fprintf(stdout, _(" %s [options] <uuid ...>\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, stdout);
-	puts(_(" -J, --json             use JSON output format"));
-	puts(_(" -n, --noheadings       don't print headings"));
-	puts(_(" -o, --output <list>    COLUMNS to display (see below)"));
-	puts(_(" -r, --raw              use the raw output format"));
-	printf(USAGE_HELP_OPTIONS(24));
+	fputs(_(" -J, --json             use JSON output format"), stdout);
+	fputs(_(" -n, --noheadings       don't print headings"), stdout);
+	fputs(_(" -o, --output <list>    COLUMNS to display (see below)"), stdout);
+	fputs(_(" -r, --raw              use the raw output format"), stdout);
+	fprintf(stdout, USAGE_HELP_OPTIONS(24));
 
 	fputs(USAGE_COLUMNS, stdout);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(stdout, " %8s  %s\n", infos[i].name, _(infos[i].help));
 
-	printf(USAGE_MAN_TAIL("uuidparse(1)"));
+	fprintf(stdout, USAGE_MAN_TAIL("uuidparse(1)"));
 	exit(EXIT_SUCCESS);
 }
 

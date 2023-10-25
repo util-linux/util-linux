@@ -247,7 +247,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -x, --flags-only       print only flags table (same as -I -T)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(24));
+	fprintf(out, USAGE_HELP_OPTIONS(24));
 	fputs(USAGE_SEPARATOR, out);
 
 	if (dflt)
@@ -259,7 +259,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %13s  %s\n", infos[i].name, _(infos[i].help));
 
-	printf(USAGE_MAN_TAIL("wdctl(8)"));
+	fprintf(out, USAGE_MAN_TAIL("wdctl(8)"));
 
 	exit(EXIT_SUCCESS);
 }

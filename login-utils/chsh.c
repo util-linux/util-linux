@@ -77,9 +77,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -l, --list-shells    print list of shells and exit\n"), fp);
 
 	fputs(USAGE_SEPARATOR, fp);
-	printf(USAGE_HELP_OPTIONS(22));
+	fprintf(fp, USAGE_HELP_OPTIONS(22));
 
-	printf(USAGE_MAN_TAIL("chsh(1)"));
+	fprintf(fp, USAGE_MAN_TAIL("chsh(1)"));
 	exit(EXIT_SUCCESS);
 }
 

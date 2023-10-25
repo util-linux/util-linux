@@ -19,8 +19,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Tell the kernel about the existence of a specified partition.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	printf(USAGE_HELP_OPTIONS(16));
-	printf(USAGE_MAN_TAIL("addpart(8)"));
+	fprintf(out, USAGE_HELP_OPTIONS(16));
+	fprintf(out, USAGE_MAN_TAIL("addpart(8)"));
 	exit(EXIT_SUCCESS);
 }
 

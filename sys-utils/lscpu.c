@@ -1198,7 +1198,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --hierarchic[=when] use subsections in summary (auto, never, always)\n"), out);
 	fputs(_("     --output-all        print all available columns for -e, -p or -C\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(25));
+	fprintf(out, USAGE_HELP_OPTIONS(25));
 
 	fputs(_("\nAvailable output columns for -e or -p:\n"), out);
 	for (i = 0; i < ARRAY_SIZE(coldescs_cpu); i++)
@@ -1208,7 +1208,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	for (i = 0; i < ARRAY_SIZE(coldescs_cache); i++)
 		fprintf(out, " %13s  %s\n", coldescs_cache[i].name, _(coldescs_cache[i].help));
 
-	printf(USAGE_MAN_TAIL("lscpu(1)"));
+	fprintf(out, USAGE_MAN_TAIL("lscpu(1)"));
 
 	exit(EXIT_SUCCESS);
 }

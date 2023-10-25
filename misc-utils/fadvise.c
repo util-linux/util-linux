@@ -55,7 +55,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -o, --offset <num>    offset for range operations, in bytes\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(23));
+	fprintf(out, USAGE_HELP_OPTIONS(23));
 
 	fputs(_("\nAvailable values for advice:\n"), out);
 	for (i = 0; i < ARRAY_SIZE(advices); i++) {
@@ -63,7 +63,7 @@ static void __attribute__((__noreturn__)) usage(void)
 			advices[i].name);
 	}
 
-	printf(USAGE_MAN_TAIL("fadvise(1)"));
+	fprintf(out, USAGE_MAN_TAIL("fadvise(1)"));
 
 	exit(EXIT_SUCCESS);
 }

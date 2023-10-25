@@ -2105,12 +2105,12 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -u, --unit S              deprecated, only sector unit is supported\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf( " -h, --help                %s\n", USAGE_OPTSTR_HELP);
-	printf( " -v, --version             %s\n", USAGE_OPTSTR_VERSION);
+	fprintf(out, " -h, --help                %s\n", USAGE_OPTSTR_HELP);
+	fprintf(out, " -v, --version             %s\n", USAGE_OPTSTR_VERSION);
 
 	list_available_columns(out);
 
-	printf(USAGE_MAN_TAIL("sfdisk(8)"));
+	fprintf(out, USAGE_MAN_TAIL("sfdisk(8)"));
 	exit(EXIT_SUCCESS);
 }
 
@@ -2474,4 +2474,3 @@ int main(int argc, char *argv[])
 	DBG(MISC, ul_debug("bye! [rc=%d]", rc));
 	return rc == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }
-

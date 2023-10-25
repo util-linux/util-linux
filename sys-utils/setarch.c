@@ -139,9 +139,9 @@ static void __attribute__((__noreturn__)) usage(int archwrapper)
 {
 	fputs(USAGE_HEADER, stdout);
 	if (!archwrapper)
-		printf(_(" %s [<arch>] [options] [<program> [<argument>...]]\n"), program_invocation_short_name);
+		fprintf(stdout, _(" %s [<arch>] [options] [<program> [<argument>...]]\n"), program_invocation_short_name);
 	else
-		printf(_(" %s [options] [<program> [<argument>...]]\n"), program_invocation_short_name);
+		fprintf(stdout, _(" %s [options] [<program> [<argument>...]]\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, stdout);
 	fputs(_("Change the reported architecture and set personality flags.\n"), stdout);
@@ -167,8 +167,8 @@ static void __attribute__((__noreturn__)) usage(int archwrapper)
 	}
 
 	fputs(USAGE_SEPARATOR, stdout);
-	printf(USAGE_HELP_OPTIONS(26));
-	printf(USAGE_MAN_TAIL("setarch(8)"));
+	fprintf(stdout, USAGE_HELP_OPTIONS(26));
+	fprintf(stdout, USAGE_MAN_TAIL("setarch(8)"));
 
 	exit(EXIT_SUCCESS);
 }

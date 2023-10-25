@@ -322,7 +322,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --until <time>          display the lines until the specified time\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(29));
+	fprintf(out, USAGE_HELP_OPTIONS(29));
 	fputs(_("\nSupported log facilities:\n"), out);
 	for (i = 0; i < ARRAY_SIZE(level_names); i++)
 		fprintf(out, " %7s - %s\n",
@@ -335,7 +335,7 @@ static void __attribute__((__noreturn__)) usage(void)
 			level_names[i].name,
 			_(level_names[i].help));
 
-	printf(USAGE_MAN_TAIL("dmesg(1)"));
+	fprintf(out, USAGE_MAN_TAIL("dmesg(1)"));
 	exit(EXIT_SUCCESS);
 }
 

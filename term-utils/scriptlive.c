@@ -73,9 +73,9 @@ usage(void)
 	fputs(_(" -c, --command <command> run command rather than interactive shell\n"), out);
 	fputs(_(" -d, --divisor <num>     speed up or slow down execution with time divisor\n"), out);
 	fputs(_(" -m, --maxdelay <num>    wait at most this many seconds between updates\n"), out);
-	printf(USAGE_HELP_OPTIONS(25));
+	fprintf(out, USAGE_HELP_OPTIONS(25));
 
-	printf(USAGE_MAN_TAIL("scriptlive(1)"));
+	fprintf(out, USAGE_MAN_TAIL("scriptlive(1)"));
 	exit(EXIT_SUCCESS);
 }
 

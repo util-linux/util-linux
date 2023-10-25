@@ -101,12 +101,12 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -v, --verbose        verbose mode\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(22));
+	fprintf(out, USAGE_HELP_OPTIONS(22));
 
 	fputs(USAGE_ARGUMENTS, out);
-	printf(USAGE_ARG_SIZE(_("<num>")));
+	fprintf(out, USAGE_ARG_SIZE(_("<num>")));
 
-	printf(USAGE_MAN_TAIL("fallocate(1)"));
+	fprintf(out, USAGE_MAN_TAIL("fallocate(1)"));
 
 	exit(EXIT_SUCCESS);
 }

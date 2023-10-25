@@ -164,10 +164,10 @@ static void __attribute__((__noreturn__)) usage(void)
 		out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(29));
+	fprintf(out, USAGE_HELP_OPTIONS(29));
 
 	fputs(_("\nBy default tries -r, -s, -f, and -q in order until success.\n"), out);
-	printf(USAGE_MAN_TAIL("eject(1)"));
+	fprintf(out, USAGE_MAN_TAIL("eject(1)"));
 
 	exit(EXIT_SUCCESS);
 }

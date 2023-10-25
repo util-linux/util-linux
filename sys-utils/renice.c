@@ -78,8 +78,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -g, --pgrp             interpret arguments as process group ID\n"), out);
 	fputs(_(" -u, --user             interpret arguments as username or user ID\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(24));
-	printf(USAGE_MAN_TAIL("renice(1)"));
+	fprintf(out, USAGE_HELP_OPTIONS(24));
+	fprintf(out, USAGE_MAN_TAIL("renice(1)"));
 	exit(EXIT_SUCCESS);
 }
 
@@ -100,7 +100,7 @@ static int donice(const int which, const int who, const int prio, const int rela
 
 	if (getprio(which, who, &oldprio) != 0)
 		return 1;
-	
+
 	newprio = prio; // if not relative, set absolute priority
 
 	if (relative)

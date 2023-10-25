@@ -130,8 +130,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -L, --label <label> specify a new label\n"
 		" -U, --uuid <uuid>   specify a new uuid\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(21));
-	printf(USAGE_MAN_TAIL("swaplabel(8)"));
+	fprintf(out, USAGE_HELP_OPTIONS(21));
+	fprintf(out, USAGE_MAN_TAIL("swaplabel(8)"));
 	exit(EXIT_SUCCESS);
 }
 
@@ -191,4 +191,3 @@ int main(int argc, char *argv[])
 	}
 	return rc ? EXIT_FAILURE : EXIT_SUCCESS;
 }
-

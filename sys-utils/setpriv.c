@@ -147,10 +147,10 @@ static void __attribute__((__noreturn__)) usage(void)
 		"                               HOME, SHELL, USER, LOGNAME and PATH\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	printf(USAGE_HELP_OPTIONS(29));
+	fprintf(out, USAGE_HELP_OPTIONS(29));
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" This tool can be dangerous.  Read the manpage, and be careful.\n"), out);
-	printf(USAGE_MAN_TAIL("setpriv(1)"));
+	fprintf(out, USAGE_MAN_TAIL("setpriv(1)"));
 
 	exit(EXIT_SUCCESS);
 }

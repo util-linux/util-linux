@@ -1764,7 +1764,7 @@ static void collect_processes(struct lsfd_control *ctl, const pid_t pids[], int 
 
 static void __attribute__((__noreturn__)) list_colunms(FILE *out)
 {
-	fprintf(out, USAGE_COLUMNS);
+	fputs(USAGE_COLUMNS, out);
 	for (size_t i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %20s  %-10s%s\n", infos[i].name,
 			infos[i].json_type == SCOLS_JSON_STRING?  "<string>":
