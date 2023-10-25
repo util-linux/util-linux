@@ -355,7 +355,7 @@ static int umount_recursive(struct libmnt_context *cxt, const char *spec)
 	/* it's always real mountpoint, don't assume that the target maybe a device */
 	mnt_context_disable_swapmatch(cxt, 1);
 
-	fs = mnt_table_find_target(tb, spec, MNT_ITER_BACKWARD);
+	fs = mnt_table_find_target(tb, spec, MNT_ITER_FORWARD);
 	if (fs)
 		rc = umount_do_recurse(cxt, tb, fs);
 	else {
