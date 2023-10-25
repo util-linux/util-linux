@@ -1303,7 +1303,7 @@ static void device_to_scols(
 	struct libscols_line *ln;
 	struct lsblk_iter itr;
 	struct lsblk_device *child = NULL;
-	int link_group = 0;
+	int link_group = 0, nocount = 0;
 
 
 	DBG(DEV, ul_debugobj(dev, "add '%s' to scols", dev->name));
@@ -1379,6 +1379,10 @@ static void device_to_scols(
 		scols_line_link_group(ln, gr, 0);
 	}
 
+	/* The same device could be printed more than once, don't use it in counter */
+	if (dev->scols_line)
+		nocount = 1;
+
 	dev->scols_line = ln;
 
 	if (dev->npartitions == 0)
@@ -1403,8 +1407,10 @@ static void device_to_scols(
 	}
 
 	/* apply counters */
-	for (i = 0; ln && i < lsblk->ncts; i++)
-		scols_line_apply_filter(ln, lsblk->ct_filters[i], NULL);
+	if (!nocount) {
+		for (i = 0; ln && i < lsblk->ncts; i++)
+			scols_line_apply_filter(ln, lsblk->ct_filters[i], NULL);
+	}
 
 	/* Let's be careful with number of open files */
 	ul_path_close_dirfd(dev->sysfs);
