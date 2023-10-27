@@ -674,7 +674,7 @@ static void unref_rawdata(struct libscols_table *tb)
 			struct libscols_cell *ce;
 			void *data;
 
-			if (cl != lsblk->sort_col && !scols_column_has_datafunc(cl))
+			if (cl != lsblk->sort_col && !scols_column_has_data_func(cl))
 				continue;
 
 			ce = scols_line_get_column_cell(ln, cl);
@@ -1257,7 +1257,7 @@ static void device_fill_scols_cell(struct lsblk_device *dev,
 	size_t datasiz = 0;
 	int rc, id = get_column_id(colnum);
 
-	if (lsblk->sort_id == id || scols_column_has_datafunc(cl)) {
+	if (lsblk->sort_id == id || scols_column_has_data_func(cl)) {
 		uint64_t rawdata = (uint64_t) -1;
 
 		data = device_get_data(dev, parent, id, &rawdata, &datasiz);
@@ -2270,10 +2270,10 @@ static void init_scols_filter(struct libscols_table *tb, struct libscols_filter 
 		/* For sizes use rawdata (u64) rather than strings from table */
 		if (ci->type == COLTYPE_SIZE
 		    && !lsblk->bytes
-		    && !scols_column_has_datafunc(col)) {
+		    && !scols_column_has_data_func(col)) {
 
 			scols_column_set_data_type(col, SCOLS_DATA_U64);
-			scols_column_set_datafunc(col, get_u64_cell, NULL);
+			scols_column_set_data_func(col, get_u64_cell, NULL);
 			lsblk->rawdata = 1;
 		}
 

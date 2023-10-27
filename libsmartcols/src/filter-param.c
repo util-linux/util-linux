@@ -277,7 +277,7 @@ static int fetch_holder_data(struct libscols_filter *fltr __attribute__((__unuse
 
 	n->fetched = 1;
 
-	if (cl->datafunc) {
+	if (scols_column_has_data_func(cl)) {
 		struct libscols_cell *ce = scols_line_get_column_cell(ln, cl);
 
 		if (ce)

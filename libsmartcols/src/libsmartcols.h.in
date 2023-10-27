@@ -252,12 +252,12 @@ extern int scols_column_set_wrapfunc(struct libscols_column *cl,
 					 char *, void *),
 			void *userdata);
 
-extern int scols_column_set_datafunc(struct libscols_column *cl,
+extern int scols_column_set_data_func(struct libscols_column *cl,
                         void *(*datafunc)(const struct libscols_column *,
                                         struct libscols_cell *,
                                         void *),
                         void *userdata);
-extern int scols_column_has_datafunc(struct libscols_column *cl);
+extern int scols_column_has_data_func(struct libscols_column *cl);
 
 extern char *scols_wrapnl_nextchunk(const struct libscols_column *cl, char *data, void *userdata);
 extern size_t scols_wrapnl_chunksize(const struct libscols_column *cl, const char *data, void *userdata);

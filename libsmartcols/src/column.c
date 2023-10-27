@@ -223,7 +223,7 @@ int scols_column_get_json_type(const struct libscols_column *cl)
  *
  * If a simple string conversion is not possible then application (which want
  * to use filters and counters) needs to define data function to do the
- * conversion. See scols_column_set_datafunc().
+ * conversion. See scols_column_set_data_func().
  *
  * Returns: 0, a negative value in case of an error.
  *
@@ -628,22 +628,25 @@ int scols_column_get_wrap_data(const struct libscols_column *cl,
 	return 0;
 }
 
-/* scols_column_set_datafunc:
+/*
+ * scols_column_set_data_func:
  * @cl: a pointer to a struct libscols_column instance
  * @datafunc: function to return data
  * @userdata: optional stuff for callbacks
  *
- * The internal library operations (like filters) use standard cell data by default.
- * This callback allows to use the data in another format for internal library purpose.
- *
- * The callback needs to return the data as pointer to void, and the datatype
+ * The table always keep data in strings in form that is printed on output, but
+ * for some internal operations (like filters or counters) it needs to convert
+ * the strings to usable data format. If this converion is not possible then
+ * application can define datafunc() callback to provide data for filters and counters.
+
+ * The callback needs to return the data as pointer to void, and the data type
  * is defined by scols_column_set_data_type().
  *
  * Returns: 0, a negative value in case of an error.
  *
  * Since: 2.40
  */
-int scols_column_set_datafunc(struct libscols_column *cl,
+int scols_column_set_data_func(struct libscols_column *cl,
 			void *(*datafunc)(const struct libscols_column *,
 					struct libscols_cell *,
 					void *),
@@ -660,11 +663,13 @@ int scols_column_set_datafunc(struct libscols_column *cl,
 /**
  * @cl: a pointer to a struct libscols_column instance
  *
- * Returns: 1 if datafunc defined, or 0
+ * See scols_column_set_data_func() for more details.
+ *
+ * Returns: 1 if data function defined, or 0
  *
  * Since: 2.40
  */
-int scols_column_has_datafunc(struct libscols_column *cl)
+int scols_column_has_data_func(struct libscols_column *cl)
 {
 	return cl && cl->datafunc != NULL ? 1 : 0;
 }
