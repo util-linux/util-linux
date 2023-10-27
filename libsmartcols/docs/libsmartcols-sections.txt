@@ -22,6 +22,7 @@ scols_reset_cell
 <FILE>column</FILE>
 libscols_column
 scols_column_get_color
+scols_column_get_data_type
 scols_column_get_flags
 scols_column_get_header
 scols_column_get_json_type
@@ -32,6 +33,7 @@ scols_column_get_table
 scols_column_get_whint
 scols_column_get_width
 scols_column_get_wrap_data
+scols_column_has_data_func
 scols_column_is_customwrap
 scols_column_is_hidden
 scols_column_is_noextremes
@@ -42,6 +44,8 @@ scols_column_is_trunc
 scols_column_is_wrap
 scols_column_set_cmpfunc
 scols_column_set_color
+scols_column_set_data_func
+scols_column_set_data_type
 scols_column_set_flags
 scols_column_set_json_type
 scols_column_set_name
@@ -53,6 +57,7 @@ scols_copy_column
 scols_new_column
 scols_ref_column
 scols_unref_column
+scols_shellvar_name
 scols_wrapnl_chunksize
 scols_wrapnl_nextchunk
 scols_wrapzero_nextchunk
@@ -65,6 +70,30 @@ scols_free_iter
 scols_iter_get_direction
 scols_new_iter
 scols_reset_iter
+</SECTION>
+
+<SECTION>
+<FILE>filter</FILE>
+libscols_filter
+libscols_counter
+scols_counter_get_name
+scols_counter_get_result
+scols_counter_set_func
+scols_counter_set_name
+scols_counter_set_param
+scols_dump_filter
+scols_filter_assign_column
+scols_filter_get_errmsg
+scols_filter_new_counter
+scols_filter_next_counter
+scols_filter_next_holder
+scols_filter_parse_string
+scols_filter_set_filler_cb
+scols_line_apply_filter
+scols_line_is_filled
+scols_new_filter
+scols_ref_filter
+scols_unref_filter
 </SECTION>
 
 <SECTION>

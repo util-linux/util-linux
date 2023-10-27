@@ -318,7 +318,8 @@ const char *scols_column_get_name(struct libscols_column *cl)
 /**
  * scols_shellvar_name:
  * @name: raw (column) name
- * @schellvar: returns normalized name
+ * @buf: buffer to returns normalized name
+ * @bufsz: size of the buffer
  *
  * Converts @name to a name compatible with shell. The buffer is reallocated if
  * not large enough.
@@ -661,6 +662,7 @@ int scols_column_set_data_func(struct libscols_column *cl,
 }
 
 /**
+ * scols_column_has_data_func:
  * @cl: a pointer to a struct libscols_column instance
  *
  * See scols_column_set_data_func() for more details.

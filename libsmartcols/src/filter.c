@@ -1,3 +1,20 @@
+/*
+ * filter.c - functions for lines filtering
+ *
+ * Copyright (C) 2023 Karel Zak <kzak@redhat.com>
+ *
+ * This file may be redistributed under the terms of the
+ * GNU Lesser General Public License.
+ */
+
+/**
+ * SECTION: filter
+ * @title: Filters and counters
+ * @short_description: defines lines filter and counter
+ *
+ * An API to define and use filter and counters.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,6 +25,16 @@
 #include "filter-parser.h"
 #include "filter-scanner.h"
 
+/**
+ * scols_new_filter:
+ * @str: filter expression or NULL
+ *
+ * Allocated and optionally parses a new filter.
+ *
+ * Returns: new filter instance or NULL in case of error.
+ *
+ * Since: 2.40
+ */
 struct libscols_filter *scols_new_filter(const char *str)
 {
 	struct libscols_filter *fltr = calloc(1, sizeof(*fltr));
@@ -28,6 +55,14 @@ struct libscols_filter *scols_new_filter(const char *str)
 	return fltr;
 }
 
+/**
+ * scols_ref_filter:
+ * @fltr: filter instance
+ *
+ * Increment filter reference counter.
+ *
+ * Since: 2.40
+ */
 void scols_ref_filter(struct libscols_filter *fltr)
 {
 	if (fltr)
@@ -66,6 +101,15 @@ static void remove_counters(struct libscols_filter *fltr)
 	}
 }
 
+/**
+ * scols_unref_filter:
+ * @fltr: filter instance
+ *
+ * Deincrements reference counter, unallocates the filter for the last
+ * reference.
+ *
+ * Since: 2.40
+ */
 void scols_unref_filter(struct libscols_filter *fltr)
 {
 	if (fltr && --fltr->refcount <= 0) {
@@ -130,6 +174,17 @@ void filter_dump_node(struct ul_jsonwrt *json, struct filter_node *n)
 
 extern int yyparse(void *scanner, struct libscols_filter *fltr);
 
+/**
+ * scols_filter_parse_string:
+ * @fltr: filter instance
+ * @str: string with filter expression
+ *
+ * Parses filter, see scols_filter_get_errmsg() for errors.
+ *
+ * Returns: 0, a negative number in case of an error.
+ *
+ * Since: 2.40
+ */
 int scols_filter_parse_string(struct libscols_filter *fltr, const char *str)
 {
 	yyscan_t sc;
@@ -158,6 +213,18 @@ int scols_filter_parse_string(struct libscols_filter *fltr, const char *str)
 	return rc;
 }
 
+/**
+ * scols_dump_filter:
+ * @fltr: filter instance
+ * @out: output stream
+ *
+ * Dumps internal filter nodes in JSON format. This function is mostly designed
+ * for debugging purpose. The fileds in the output are subject to change.
+ *
+ * Returns: 0, a negative number in case of an error.
+ *
+ * Since: 2.40
+ */
 int scols_dump_filter(struct libscols_filter *fltr, FILE *out)
 {
 	struct ul_jsonwrt json;
@@ -173,6 +240,14 @@ int scols_dump_filter(struct libscols_filter *fltr, FILE *out)
 	return 0;
 }
 
+/**
+ * scols_filter_get_errmsg:
+ * @fltr: filter instance
+ *
+ * Returns: string with parse-error message of NULL (if no error)
+ *
+ * Since: 2.40
+ */
 const char *scols_filter_get_errmsg(struct libscols_filter *fltr)
 {
 	return fltr ? fltr->errmsg : NULL;
@@ -192,6 +267,18 @@ int filter_eval_node(struct libscols_filter *fltr, struct libscols_line *ln,
 	return -EINVAL;
 }
 
+/**
+ * scols_line_apply_filter:
+ * @ln: apply filter to the line
+ * @fltr: filter instance
+ * @status: return 1 or 0 as result of the expression
+ *
+ * Applies filter (and also counters assisiated with the filter).
+ *
+ * Returns: 0, a negative number in case of an error.
+ *
+ * Since: 2.40
+ */
 int scols_line_apply_filter(struct libscols_line *ln,
 			struct libscols_filter *fltr, int *status)
 {
@@ -229,6 +316,41 @@ int scols_line_apply_filter(struct libscols_line *ln,
 	return rc;
 }
 
+/**
+ * scols_filter_set_filler_cb:
+ * @fltr: filter instance
+ * @cb: application defined callback
+ * @userdata: pointer to private callback data
+ *
+ * The application can apply filter for empty lines to avoid filling the table
+ * with unnecessary data (for example if the line will be later removed from
+ * the table due to filter).
+ *
+ * This callback is used by filter to ask application to fill to the line data
+ * which are necessary to evaluate the filter expression. The callback
+ * arguments are filter, column number and userdata.
+ *
+ * <informalexample>
+ *   <programlisting>
+ *      ln = scols_table_new_line(tab, NULL);
+ *
+ *      scols_filter_set_filler_cb(filter, my_filler, NULL);
+ *
+ *	scols_line_apply_filter(line, filter, &status);
+ *	if (status == 0)
+ *		scols_table_remove_line(tab, line);
+ *	else for (i = 0; i < ncolumns; i++) {
+ *		if (scols_line_is_filled(line, i))
+ *			continue;
+ *		my_filler(NULL, ln, i, NULL);
+ *	}
+ *   </programlisting>
+ * </informalexample>
+ *
+ * Returns: 0, a negative number in case of an error.
+ *
+ * Since: 2.40
+ */
 int scols_filter_set_filler_cb(struct libscols_filter *fltr,
 				int (*cb)(struct libscols_filter *,
 					  struct libscols_line *, size_t, void *),
@@ -242,6 +364,16 @@ int scols_filter_set_filler_cb(struct libscols_filter *fltr,
 	return 0;
 }
 
+/**
+ * scols_filter_new_counter:
+ * @fltr: filter instance
+ *
+ * Alocates a new counter instance into the filter.
+ *
+ * Returns: new counter or NULL in case of an error.
+ *
+ * Since: 2.40
+ */
 struct libscols_counter *scols_filter_new_counter(struct libscols_filter *fltr)
 {
 	struct libscols_counter *ct;
@@ -263,6 +395,18 @@ struct libscols_counter *scols_filter_new_counter(struct libscols_filter *fltr)
 	return ct;
 }
 
+/**
+ * scols_counter_set_name:
+ * @ct: counter instance
+ * @name: something for humans
+ *
+ * The name is not use by library, it's just description usable for application
+ * when prints results from countes.
+ *
+ * Returns: 0, a negative number in case of an error.
+ *
+ * Since: 2.40
+ */
 int scols_counter_set_name(struct libscols_counter *ct, const char *name)
 {
 	if (!ct)
@@ -270,6 +414,19 @@ int scols_counter_set_name(struct libscols_counter *ct, const char *name)
 	return strdup_to_struct_member(ct, name, name);
 }
 
+/**
+ * scols_counter_set_param:
+ * @ct: counter instance
+ * @name: holder (column) name
+ *
+ * Assigns a counter to the column. The name is used in the same way as names
+ * in the filter expression. This is usable for counter that calcuate with data
+ * from table cells (e.g. max, sum, etc.)
+ *
+ * Returns: 0, a negative number in case of an error.
+ *
+ * Since: 2.40
+ */
 int scols_counter_set_param(struct libscols_counter *ct, const char *name)
 {
 	if (!ct)
@@ -289,6 +446,17 @@ int scols_counter_set_param(struct libscols_counter *ct, const char *name)
 	return 0;
 }
 
+/**
+ * scols_counter_set_func:
+ * @ct: counter instance
+ * @func: SCOLS_COUNTER_{COUNT,MAX,MIN,SUM}
+ *
+ * Defines function to calculate data.
+ *
+ * Returns: 0, a negative number in case of an error.
+ *
+ * Since: 2.40
+ */
 int scols_counter_set_func(struct libscols_counter *ct, int func)
 {
 	if (!ct || func < 0 || func >= __SCOLS_NCOUNTES)
@@ -298,16 +466,44 @@ int scols_counter_set_func(struct libscols_counter *ct, int func)
 	return 0;
 }
 
+/**
+ * scols_counter_get_result:
+ * @ct: counter instance
+ *
+ * Returns: result from the counter
+ *
+ * Since: 2.40
+ */
 unsigned long long scols_counter_get_result(struct libscols_counter *ct)
 {
 	return ct ? ct->result : 0;
 }
 
+/**
+ * scols_counter_get_name:
+ * @ct: counter instance
+ *
+ * Returns: name of the counter.
+ *
+ * Since: 2.40
+ */
 const char *scols_counter_get_name(struct libscols_counter *ct)
 {
 	return ct ? ct->name : NULL;;
 }
 
+/**
+ * scols_filter_next_counter:
+ * @fltr: filter instance
+ * @itr: a pointer to a struct libscols_iter instance
+ * @ct: returns the next counter
+ *
+ * Finds the next counter and returns a pointer to it via @ct.
+ *
+ * Returns: 0, a negative value in case of an error, and 1 at the end.
+ *
+ * Since: 2.40
+ */
 int scols_filter_next_counter(struct libscols_filter *fltr,
 		      struct libscols_iter *itr, struct libscols_counter **ct)
 {

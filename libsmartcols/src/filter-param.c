@@ -782,9 +782,12 @@ int filter_next_param(struct libscols_filter *fltr,
  * @name: holder name
  * @col: column
  *
- * Assign @col to filter parametr. The parametr is addressed by @itr or by @name.
+ * Assign @col to filter parametr. The parametr is addressed by @itr or by
+ * @name. See scols_filter_next_holder().
  *
  * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.40
  */
 int scols_filter_assign_column(struct libscols_filter *fltr,
 			struct libscols_iter *itr,
@@ -824,6 +827,20 @@ int scols_filter_assign_column(struct libscols_filter *fltr,
 	return n ? 0 : -EINVAL;
 }
 
+/**
+ * scols_filter_next_holder:
+ * @fltr: filter instance
+ * @itr: a pointer to a struct libscols_iter instance
+ * @name: returns the next column name
+ * @type: 0 (not implemented yet)
+ *
+ * Finds the next holder used in the expression and and returns a name via
+ * @name. The currently supported holder type is only column name.
+ *
+ * Returns: 0, a negative value in case of an error, and 1 at the end.
+ *
+ * Since: 2.40
+ */
 int scols_filter_next_holder(struct libscols_filter *fltr,
 			struct libscols_iter *itr,
 			const char **name,
