@@ -221,9 +221,9 @@ int scols_column_get_json_type(const struct libscols_column *cl)
  * by this function. If the format is not specified then filter and counters
  * try to use SCOLS_JSON_* types, if also not define than defaults to string.
  *
- * If simple string conversion is not possible then application (which want to
- * use filters and counters) needs to define data function. See
- * scols_column_set_datafunc().
+ * If a simple string conversion is not possible then application (which want
+ * to use filters and counters) needs to define data function to do the
+ * conversion. See scols_column_set_datafunc().
  *
  * Returns: 0, a negative value in case of an error.
  *
@@ -244,7 +244,7 @@ int scols_column_set_data_type(struct libscols_column *cl, int type)
  */
 int scols_column_get_data_type(const struct libscols_column *cl)
 {
-	return cl->data_type;;
+	return cl->data_type;
 }
 /**
  * scols_column_get_table:

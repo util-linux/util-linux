@@ -227,9 +227,9 @@ int filter_param_reset_holder(struct filter_param *n)
 	if (n->type != SCOLS_DATA_NONE)
 		return 0; /* already set */
 
-	if (n->col->data_type)
+	if (scols_column_get_data_type(n->col))
 		/* use by application defined type */
-		n->type = n->col->data_type;
+		n->type = scols_column_get_data_type(n->col);
 	else {
 		/* use by JSON defined type, default to string if not specified */
 		switch (n->col->json_type) {
@@ -283,7 +283,7 @@ static int fetch_holder_data(struct libscols_filter *fltr __attribute__((__unuse
 		if (ce)
 			data = cl->datafunc(n->col, ce, cl->datafunc_data);
 		if (data)
-			rc = param_set_data(n, cl->data_type, data);
+			rc = param_set_data(n, scols_column_get_data_type(cl), data);
 	} else {
 		/* read column data, use it as string */
 		data = scols_line_get_column_data(ln, n->col);
