@@ -654,7 +654,25 @@ static void str2u64(const char *str, uint64_t *data)
 	*data = num;
 }
 
-static void unref_rawdata(struct libscols_table *tb)
+static void unref_line_rawdata(struct libscols_line *ln, struct libscols_table *tb)
+{
+	size_t i;
+
+	for (i = 0; i < ncolumns; i++) {
+		struct libscols_column *cl = scols_table_get_column(tb, i);
+		struct libscols_cell *ce;
+		void *data;
+
+		if (cl != lsblk->sort_col && !scols_column_has_data_func(cl))
+			continue;
+
+		ce = scols_line_get_column_cell(ln, cl);
+		data = scols_cell_get_userdata(ce);
+		free(data);
+	}
+}
+
+static void unref_table_rawdata(struct libscols_table *tb)
 {
 	struct libscols_iter *itr;
 	struct libscols_line *ln;
@@ -665,23 +683,8 @@ static void unref_rawdata(struct libscols_table *tb)
 	itr = scols_new_iter(SCOLS_ITER_FORWARD);
 	if (!itr)
 		return;
-
-	while (scols_table_next_line(tb, itr, &ln) == 0) {
-		size_t i;
-
-		for (i = 0; i < ncolumns; i++) {
-			struct libscols_column *cl = scols_table_get_column(tb, i);
-			struct libscols_cell *ce;
-			void *data;
-
-			if (cl != lsblk->sort_col && !scols_column_has_data_func(cl))
-				continue;
-
-			ce = scols_line_get_column_cell(ln, cl);
-			data = scols_cell_get_userdata(ce);
-			free(data);
-		}
-	}
+	while (scols_table_next_line(tb, itr, &ln) == 0)
+		unref_line_rawdata(ln, tb);
 
 	scols_free_iter(itr);
 }
@@ -1346,6 +1349,7 @@ static void device_to_scols(
 
 			if (x)
 				scols_line_remove_child(x, ln);
+			unref_line_rawdata(ln, tab);
 			scols_table_remove_line(tab, ln);
 			ln = NULL;
 		}
@@ -2805,7 +2809,7 @@ int main(int argc, char *argv[])
 		print_counters();
 leave:
 	if (lsblk->rawdata)
-		unref_rawdata(lsblk->table);
+		unref_table_rawdata(lsblk->table);
 
 	scols_unref_table(lsblk->table);
 	scols_unref_filter(lsblk->filter);
