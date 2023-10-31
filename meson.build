@@ -2466,7 +2466,7 @@ exe = executable(
   link_with : [lib_common],
   dependencies : [lib_systemd],
   install_dir : usrbin_exec_dir,
-  install_mode : 'rwxr-sr-x',
+  install_mode : [ 'rwxr-sr-x', 'root', 'tty' ],
   install : opt,
   build_by_default : opt)
 if opt
