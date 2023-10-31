@@ -2323,9 +2323,9 @@ int main(int argc, char *argv[])
 	/* cleanup */
 	delete(&ctl.procs, &ctl);
 
-	finalize_ipc_table();
 	finalize_devdrvs();
 	finalize_classes();
+	finalize_ipc_table();
 	finalize_nodevs();
 
 	return 0;
