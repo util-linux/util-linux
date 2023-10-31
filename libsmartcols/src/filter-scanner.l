@@ -4,7 +4,7 @@
 
 %option reentrant bison-bridge noyywrap noinput nounput
 
-id	[a-zA-Z][a-zA-Z_.0-9]*
+id	[a-zA-Z][a-zA-Z_.%:\-0-9]*
 int	[0-9]+
 blank	[ \t]
 str_qu	\"[^\"\n]*\"
