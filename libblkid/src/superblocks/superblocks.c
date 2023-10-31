@@ -626,7 +626,7 @@ int blkid_probe_set_fsblocksize(blkid_probe pr, uint32_t block_size)
 			block_size);
 }
 
-int blkid_probe_set_fsendianness(blkid_probe pr, enum BLKID_ENDIANNESS endianness)
+int blkid_probe_set_fsendianness(blkid_probe pr, enum blkid_endianness endianness)
 {
 	struct blkid_chain *chn = blkid_probe_get_chain(pr);
 	const char *value;
