@@ -57,7 +57,9 @@ struct cdev_ops {
 			    char **);
 	void (*init)(const struct cdev *);
 	void (*free)(const struct cdev *);
+	void (*attach_xinfo)(struct cdev *);
 	int (*handle_fdinfo)(struct cdev *, const char *, const char *);
+	const struct ipc_class * (*get_ipc_class)(struct cdev *);
 };
 
 static bool cdev_fill_column(struct proc *proc __attribute__((__unused__)),
@@ -575,6 +577,14 @@ static void free_cdev_content(struct file *file)
 		cdev->cdev_ops->free(cdev);
 }
 
+static void cdev_attach_xinfo(struct file *file)
+{
+	struct cdev *cdev = (struct cdev *)file;
+
+	if (cdev->cdev_ops->attach_xinfo)
+		cdev->cdev_ops->attach_xinfo(cdev);
+}
+
 static int cdev_handle_fdinfo(struct file *file, const char *key, const char *value)
 {
 	struct cdev *cdev = (struct cdev *)file;
@@ -582,6 +592,15 @@ static int cdev_handle_fdinfo(struct file *file, const char *key, const char *va
 	if (cdev->cdev_ops->handle_fdinfo)
 		return cdev->cdev_ops->handle_fdinfo(cdev, key, value);
 	return 0;		/* Should be handled in parents */
+}
+
+static const struct ipc_class *cdev_get_ipc_class(struct file *file)
+{
+	struct cdev *cdev = (struct cdev *)file;
+
+	if (cdev->cdev_ops->get_ipc_class)
+		return cdev->cdev_ops->get_ipc_class(cdev);
+	return NULL;
 }
 
 const struct file_class cdev_class = {
@@ -592,5 +611,7 @@ const struct file_class cdev_class = {
 	.fill_column = cdev_fill_column,
 	.initialize_content = init_cdev_content,
 	.free_content = free_cdev_content,
+	.attach_xinfo = cdev_attach_xinfo,
 	.handle_fdinfo = cdev_handle_fdinfo,
+	.get_ipc_class = cdev_get_ipc_class,
 };
