@@ -22,10 +22,18 @@
 #include "lsfd.h"
 
 static struct list_head miscdevs;
+static struct list_head ttydrvs;
 
 struct miscdev {
 	struct list_head miscdevs;
 	unsigned long minor;
+	char *name;
+};
+
+struct ttydrv {
+	struct list_head ttydrvs;
+	unsigned long major;
+	unsigned long minor_start, minor_end;
 	char *name;
 };
 
@@ -38,7 +46,7 @@ struct cdev {
 
 struct cdev_ops {
 	const struct cdev_ops *parent;
-	bool (*probe)(const struct cdev *);
+	bool (*probe)(struct cdev *);
 	char * (*get_name)(struct cdev *);
 	bool (*fill_column)(struct proc *,
 			    struct cdev *,
@@ -139,22 +147,97 @@ static void read_misc(struct list_head *miscdevs_list, FILE *misc_fp)
 	}
 }
 
+#define TTY_DRIVERS_LINE_LEN0 1023
+#define TTY_DRIVERS_LINE_LEN  (TTY_DRIVERS_LINE_LEN0 + 1)
+static struct ttydrv *new_ttydrv(unsigned int major,
+				 unsigned int minor_start, unsigned int minor_end,
+				 const char *name)
+{
+	struct ttydrv *ttydrv = xmalloc(sizeof(*ttydrv));
+
+	INIT_LIST_HEAD(&ttydrv->ttydrvs);
+
+	ttydrv->major = major;
+	ttydrv->minor_start = minor_start;
+	ttydrv->minor_end = minor_end;
+	ttydrv->name = xstrdup(name);
+
+	return ttydrv;
+}
+
+static void free_ttydrv(struct ttydrv *ttydrv)
+{
+	free(ttydrv->name);
+	free(ttydrv);
+}
+
+static struct ttydrv *read_ttydrv(const char *line)
+{
+	const char *p;
+	char name[TTY_DRIVERS_LINE_LEN];
+	unsigned long major;
+	unsigned long minor_range[2];
+
+	p = strchr(line, ' ');
+	if (p == NULL)
+		return NULL;
+
+	p = strstr(p, "/dev/");
+	if (p == NULL)
+		return NULL;
+	p += (sizeof("/dev/") - 1); /* Ignore the last null byte. */
+
+	if (sscanf(p, "%" stringify_value(TTY_DRIVERS_LINE_LEN0) "[^ ]", name) != 1)
+		return NULL;
+
+	p += strlen (name);
+	if (sscanf(p, " %lu %lu-%lu ", &major,
+		   minor_range, minor_range + 1) != 3) {
+		if (sscanf(p, " %lu %lu ", &major, minor_range) == 2)
+			minor_range[1] = minor_range[0];
+		else
+			return NULL;
+	}
+
+	return new_ttydrv(major, minor_range[0], minor_range[1], name);
+}
+
+static void read_tty_drivers(struct list_head *ttydrvs_list, FILE *ttydrvs_fp)
+{
+	char line[TTY_DRIVERS_LINE_LEN];
+
+	while (fgets(line, sizeof(line), ttydrvs_fp)) {
+		struct ttydrv *ttydrv = read_ttydrv(line);
+		if (ttydrv)
+			list_add_tail(&ttydrv->ttydrvs, ttydrvs_list);
+	}
+}
+
 static void cdev_class_initialize(void)
 {
 	FILE *misc_fp;
+	FILE *ttydrvs_fp;
 
 	INIT_LIST_HEAD(&miscdevs);
+	INIT_LIST_HEAD(&ttydrvs);
 
 	misc_fp = fopen("/proc/misc", "r");
 	if (misc_fp) {
 		read_misc(&miscdevs, misc_fp);
 		fclose(misc_fp);
 	}
+
+	ttydrvs_fp = fopen("/proc/tty/drivers", "r");
+	if (ttydrvs_fp) {
+		read_tty_drivers(&ttydrvs, ttydrvs_fp);
+		fclose(ttydrvs_fp);
+	}
 }
 
 static void cdev_class_finalize(void)
 {
 	list_free(&miscdevs, struct miscdev, miscdevs, free_miscdev);
+	list_free(&ttydrvs,  struct ttydrv,  ttydrvs,  free_ttydrv);
 }
 
 const char *get_miscdev(unsigned long minor)
@@ -168,10 +251,27 @@ const char *get_miscdev(unsigned long minor)
 	return NULL;
 }
 
+static const struct ttydrv *get_ttydrv(unsigned long major,
+				       unsigned long minor)
+{
+	struct list_head *c;
+
+	list_for_each(c, &ttydrvs) {
+		struct ttydrv *ttydrv = list_entry(c, struct ttydrv, ttydrvs);
+		if (ttydrv->major == major
+		    && ttydrv->minor_start <= minor
+		    && minor <= ttydrv->minor_end)
+			return ttydrv;
+	}
+
+	return NULL;
+}
+
+
 /*
  * generic (fallback implementation)
  */
-static bool cdev_generic_probe(const struct cdev *cdev __attribute__((__unused__))) {
+static bool cdev_generic_probe(struct cdev *cdev __attribute__((__unused__))) {
 	return true;
 }
 
@@ -210,7 +310,7 @@ static struct cdev_ops cdev_generic_ops = {
 /*
  * misc device driver
  */
-static bool cdev_misc_probe(const struct cdev *cdev) {
+static bool cdev_misc_probe(struct cdev *cdev) {
 	return cdev->devdrv && strcmp(cdev->devdrv, "misc") == 0;
 }
 
@@ -254,7 +354,7 @@ static struct cdev_ops cdev_misc_ops = {
 /*
  * tun devcie driver
  */
-static bool cdev_tun_probe(const struct cdev *cdev)
+static bool cdev_tun_probe(struct cdev *cdev)
 {
 	const char *miscdev;
 
@@ -325,13 +425,72 @@ static struct cdev_ops cdev_tun_ops = {
 	.handle_fdinfo = cdev_tun_handle_fdinfo,
 };
 
+/*
+ * tty devices
+ */
+struct ttydata {
+	const struct ttydrv *drv;
+};
+
+static bool cdev_tty_probe(struct cdev *cdev) {
+	const struct ttydrv *ttydrv = get_ttydrv(major(cdev->file.stat.st_rdev),
+						 minor(cdev->file.stat.st_rdev));
+	struct ttydata *data;
+
+	if (!ttydrv)
+		return false;
+
+	data = xmalloc(sizeof(struct ttydata));
+	data->drv = ttydrv;
+	cdev->cdev_data = data;
+
+	return true;
+}
+
+static void cdev_tty_free(const struct cdev *cdev)
+{
+	if (cdev->cdev_data)
+		free(cdev->cdev_data);
+}
+
+static bool cdev_tty_fill_column(struct proc *proc  __attribute__((__unused__)),
+				 struct cdev *cdev,
+				 struct libscols_line *ln __attribute__((__unused__)),
+				 int column_id,
+				 size_t column_index __attribute__((__unused__)),
+				 char **str)
+{
+	struct file *file = &cdev->file;
+	struct ttydata *data = cdev->cdev_data;
+
+	switch(column_id) {
+	case COL_SOURCE:
+		if (data->drv->minor_start == data->drv->minor_end)
+			*str = xstrdup(data->drv->name);
+		else
+			xasprintf(str, "%s:%u", data->drv->name,
+				  minor(file->stat.st_rdev));
+		return true;
+	default:
+		return false;
+	}
+}
+
+static struct cdev_ops cdev_tty_ops = {
+	.parent = &cdev_generic_ops,
+	.probe = cdev_tty_probe,
+	.free = cdev_tty_free,
+	.fill_column = cdev_tty_fill_column,
+};
+
 static const struct cdev_ops *cdev_ops[] = {
 	&cdev_tun_ops,
 	&cdev_misc_ops,
+	&cdev_tty_ops,
 	&cdev_generic_ops		  /* This must be at the end. */
 };
 
-static const struct cdev_ops *cdev_probe(const struct cdev *cdev)
+static const struct cdev_ops *cdev_probe(struct cdev *cdev)
 {
 	const struct cdev_ops *r = NULL;
 
