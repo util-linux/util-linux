@@ -1,4 +1,6 @@
 /*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ *
  * mkcramfs - make a cramfs file system
  *
  * Copyright (C) 1999-2002 Transmeta Corporation

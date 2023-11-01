@@ -1,4 +1,6 @@
 /*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ *
  * swaplabel.c - Print or change the label / UUID of a swap partition
  *
  * Copyright (C) 2010 Jason Borden <jborden@bluehost.com>

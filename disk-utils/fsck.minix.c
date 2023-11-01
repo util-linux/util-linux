@@ -1,11 +1,17 @@
 /*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
  * fsck.minix.c - a file system consistency checker for Linux.
  *
  * (C) 1991, 1992 Linus Torvalds. This file may be redistributed
  * as per the GNU copyleft.
- */
-
-/*
+ *
+ *
  * 09.11.91  -  made the first rudimentary functions
  *
  * 10.11.91  -  updated, does checking, no repairs yet.

@@ -1,5 +1,13 @@
 /*
- * isosize.c - Andries Brouwer, 000608
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Copyright (C) 2000 Andries Brouwer
+ * Copyright (C) 2023 Karel Zak <kzak@redhat.com>
  *
  * use header info to find size of iso9660 file system
  * output a number - useful in scripts
@@ -16,7 +24,6 @@
  *     - add "-d <num>" option and use long long to fix things > 2 GB
  *  Version 2.02 2000/10/11
  *     - error messages on IO failures [D. Gilbert]
- *
  */
 #include <stdio.h>
 #include <stdlib.h>
