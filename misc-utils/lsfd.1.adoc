@@ -180,6 +180,7 @@ with the fd:
 
 FIFO type:::
 mqueue type:::
+ptmx and pts sources:::
 _PID_,_COMMAND_,_ASSOC_[-r][-w]
 +
 The last characters ([-r][-w]) represents the read and/or

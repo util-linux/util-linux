@@ -35,7 +35,8 @@ struct ttydrv {
 	unsigned long major;
 	unsigned long minor_start, minor_end;
 	char *name;
-	bool is_ptmx;
+	unsigned int is_ptmx: 1;
+	unsigned int is_pts: 1;
 };
 
 struct cdev {
@@ -164,9 +165,12 @@ static struct ttydrv *new_ttydrv(unsigned int major,
 	ttydrv->minor_start = minor_start;
 	ttydrv->minor_end = minor_end;
 	ttydrv->name = xstrdup(name);
-	ttydrv->is_ptmx = false;
+	ttydrv->is_ptmx = 0;
 	if (strcmp(name, "ptmx") == 0)
-		ttydrv->is_ptmx = true;
+		ttydrv->is_ptmx = 1;
+	ttydrv->is_pts = 0;
+	if (strcmp(name, "pts") == 0)
+		ttydrv->is_pts = 1;
 
 	return ttydrv;
 }
@@ -175,6 +179,11 @@ static void free_ttydrv(struct ttydrv *ttydrv)
 {
 	free(ttydrv->name);
 	free(ttydrv);
+}
+
+static bool is_pty(const struct ttydrv *ttydrv)
+{
+	return ttydrv->is_ptmx || ttydrv->is_pts;
 }
 
 static struct ttydrv *read_ttydrv(const char *line)
@@ -435,9 +444,11 @@ static struct cdev_ops cdev_tun_ops = {
  * tty devices
  */
 struct ttydata {
+	struct cdev *cdev;
 	const struct ttydrv *drv;
 #define NO_TTY_INDEX -1
 	int tty_index;		/* used only in ptmx devices */
+	struct ipc_endpoint endpoint;
 };
 
 static bool cdev_tty_probe(struct cdev *cdev) {
@@ -449,6 +460,7 @@ static bool cdev_tty_probe(struct cdev *cdev) {
 		return false;
 
 	data = xmalloc(sizeof(struct ttydata));
+	data->cdev = cdev;
 	data->drv = ttydrv;
 	data->tty_index = NO_TTY_INDEX;
 	cdev->cdev_data = data;
@@ -477,6 +489,16 @@ static char * cdev_tty_get_name(struct cdev *cdev)
 	return str;
 }
 
+static inline char *cdev_tty_xstrendpoint(struct file *file)
+{
+	char *str = NULL;
+	xasprintf(&str, "%d,%s,%d%c%c",
+		  file->proc->pid, file->proc->command, file->association,
+		  (file->mode & S_IRUSR)? 'r': '-',
+		  (file->mode & S_IWUSR)? 'w': '-');
+	return str;
+}
+
 static bool cdev_tty_fill_column(struct proc *proc  __attribute__((__unused__)),
 				 struct cdev *cdev,
 				 struct libscols_line *ln __attribute__((__unused__)),
@@ -499,6 +521,30 @@ static bool cdev_tty_fill_column(struct proc *proc  __attribute__((__unused__)),
 		if (data->drv->is_ptmx) {
 			xasprintf(str, "%d", data->tty_index);
 			return true;
+		}
+		return false;
+	case COL_ENDPOINTS:
+		if (is_pty(data->drv)) {
+			struct ttydata *this = data;
+			struct list_head *e;
+			foreach_endpoint(e, data->endpoint) {
+				char *estr;
+				struct ttydata *other = list_entry(e, struct ttydata, endpoint.endpoints);
+				if (this == other)
+					continue;
+
+				if ((this->drv->is_ptmx && !other->drv->is_pts)
+				    || (this->drv->is_pts && !other->drv->is_ptmx))
+					continue;
+
+				if (*str)
+					xstrputc(str, '\n');
+				estr = cdev_tty_xstrendpoint(&other->cdev->file);
+				xstrappend(str, estr);
+				free(estr);
+			}
+			if (*str)
+				return true;
 		}
 		return false;
 	default:
@@ -526,13 +572,81 @@ static int cdev_tty_handle_fdinfo(struct cdev *cdev, const char *key, const char
 	return 0;
 }
 
+struct cdev_pty_ipc {
+	struct ipc ipc;
+	int tty_index;
+};
+
+static unsigned int cdev_pty_get_hash(struct file *file)
+{
+	struct cdev *cdev = (struct cdev *)file;
+	struct ttydata *data = cdev->cdev_data;
+
+	return data->drv->is_ptmx?
+		(unsigned int)data->tty_index:
+		(unsigned int)minor(file->stat.st_rdev);
+}
+
+static bool cdev_pty_is_suitable_ipc(struct ipc *ipc, struct file *file)
+{
+	struct cdev *cdev = (struct cdev *)file;
+	struct ttydata *data = cdev->cdev_data;
+	struct cdev_pty_ipc *cdev_pty_ipc = (struct cdev_pty_ipc *)ipc;
+
+	return (data->drv->is_ptmx)?
+		cdev_pty_ipc->tty_index == (int)data->tty_index:
+		cdev_pty_ipc->tty_index == (int)minor(file->stat.st_rdev);
+}
+
+static const struct ipc_class *cdev_tty_get_ipc_class(struct cdev *cdev)
+{
+	static const struct ipc_class cdev_pty_ipc_class = {
+		.size = sizeof(struct cdev_pty_ipc),
+		.get_hash = cdev_pty_get_hash,
+		.is_suitable_ipc = cdev_pty_is_suitable_ipc,
+	};
+
+	struct ttydata *data = cdev->cdev_data;
+
+	if (is_pty(data->drv))
+		return &cdev_pty_ipc_class;
+
+	return NULL;
+}
+
+static void cdev_tty_attach_xinfo(struct cdev *cdev)
+{
+	struct ttydata *data = cdev->cdev_data;
+	struct ipc *ipc;
+	unsigned int hash;
+
+
+	if (! is_pty(data->drv))
+		return;
+
+	init_endpoint(&data->endpoint);
+	ipc = get_ipc(&cdev->file);
+	if (ipc)
+		goto link;
+
+	ipc = new_ipc(cdev_tty_get_ipc_class(cdev));
+	hash = cdev_pty_get_hash(&cdev->file);
+	((struct cdev_pty_ipc *)ipc)->tty_index = (int)hash;
+
+	add_ipc(ipc, hash);
+ link:
+	add_endpoint(&data->endpoint, ipc);
+}
+
 static struct cdev_ops cdev_tty_ops = {
 	.parent = &cdev_generic_ops,
 	.probe = cdev_tty_probe,
 	.free = cdev_tty_free,
 	.get_name = cdev_tty_get_name,
 	.fill_column = cdev_tty_fill_column,
+	.attach_xinfo  = cdev_tty_attach_xinfo,
 	.handle_fdinfo = cdev_tty_handle_fdinfo,
+	.get_ipc_class = cdev_tty_get_ipc_class,
 };
 
 static const struct cdev_ops *cdev_ops[] = {
