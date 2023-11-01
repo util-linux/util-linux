@@ -35,6 +35,7 @@ struct ttydrv {
 	unsigned long major;
 	unsigned long minor_start, minor_end;
 	char *name;
+	bool is_ptmx;
 };
 
 struct cdev {
@@ -161,6 +162,9 @@ static struct ttydrv *new_ttydrv(unsigned int major,
 	ttydrv->minor_start = minor_start;
 	ttydrv->minor_end = minor_end;
 	ttydrv->name = xstrdup(name);
+	ttydrv->is_ptmx = false;
+	if (strcmp(name, "ptmx") == 0)
+		ttydrv->is_ptmx = true;
 
 	return ttydrv;
 }
@@ -430,6 +434,8 @@ static struct cdev_ops cdev_tun_ops = {
  */
 struct ttydata {
 	const struct ttydrv *drv;
+#define NO_TTY_INDEX -1
+	int tty_index;		/* used only in ptmx devices */
 };
 
 static bool cdev_tty_probe(struct cdev *cdev) {
@@ -442,6 +448,7 @@ static bool cdev_tty_probe(struct cdev *cdev) {
 
 	data = xmalloc(sizeof(struct ttydata));
 	data->drv = ttydrv;
+	data->tty_index = NO_TTY_INDEX;
 	cdev->cdev_data = data;
 
 	return true;
@@ -451,6 +458,21 @@ static void cdev_tty_free(const struct cdev *cdev)
 {
 	if (cdev->cdev_data)
 		free(cdev->cdev_data);
+}
+
+static char * cdev_tty_get_name(struct cdev *cdev)
+{
+	struct ttydata *data = cdev->cdev_data;
+	char *str = NULL;
+
+	if (!data->drv->is_ptmx)
+		return NULL;
+
+	if (data->tty_index == NO_TTY_INDEX)
+		str = xstrdup("tty-index=");
+	else
+		xasprintf(&str, "tty-index=%d", data->tty_index);
+	return str;
 }
 
 static bool cdev_tty_fill_column(struct proc *proc  __attribute__((__unused__)),
@@ -471,16 +493,44 @@ static bool cdev_tty_fill_column(struct proc *proc  __attribute__((__unused__)),
 			xasprintf(str, "%s:%u", data->drv->name,
 				  minor(file->stat.st_rdev));
 		return true;
+	case COL_PTMX_TTY_INDEX:
+		if (data->drv->is_ptmx) {
+			xasprintf(str, "%d", data->tty_index);
+			return true;
+		}
+		return false;
 	default:
 		return false;
 	}
+}
+
+static int cdev_tty_handle_fdinfo(struct cdev *cdev, const char *key, const char *val)
+{
+	struct ttydata *data = cdev->cdev_data;
+
+	if (!data->drv->is_ptmx)
+		return 0;
+
+	if (strcmp(key, "tty-index") == 0) {
+		errno = 0;
+		data->tty_index = (int)strtol(val, NULL, 10);
+		if (errno) {
+			data->tty_index = NO_TTY_INDEX;
+			return 0;
+		}
+		return 1;
+	}
+
+	return 0;
 }
 
 static struct cdev_ops cdev_tty_ops = {
 	.parent = &cdev_generic_ops,
 	.probe = cdev_tty_probe,
 	.free = cdev_tty_free,
+	.get_name = cdev_tty_get_name,
 	.fill_column = cdev_tty_fill_column,
+	.handle_fdinfo = cdev_tty_handle_fdinfo,
 };
 
 static const struct cdev_ops *cdev_ops[] = {

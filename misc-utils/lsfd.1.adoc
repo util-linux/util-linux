@@ -304,6 +304,12 @@ state=_SOCK.STATE_[ id=_PING.ID_][ laddr=_INET.LADDR_ [ raddr=_INET.RADDR_]]
 PINGv6:::
 state=_SOCK.STATE_[ id=_PING.ID_][ laddr=_INET6.LADDR_ [ raddr=_INET6.RADDR_]]
 +
+ptmx:::
+tty-index=_PTMX.TTY-INDEX_
++
+*lsfd* extracts _PTMX.TTY-INDEX_ from
+``/proc/``_pid_``/fdinfo/``_fd_.
++
 RAW:::
 state=_SOCK.STATE_[ protocol=_RAW.PROTOCOL_ [ laddr=_INET.LADDR_ [ raddr=_INET.RADDR_]]]
 +
@@ -483,6 +489,9 @@ Interval.
 
 TIMERFD.REMAINING <``number``>::
 Remaining time.
+
+PTMX.TTY-INDEX <``number``>::
+TTY index of the counterpart.
 
 TUN.IFACE <``string``>::
 Network intrface behind the tun device.
