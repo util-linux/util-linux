@@ -1,10 +1,17 @@
 /*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
  * mkfs		A simple generic frontend for the mkfs program
  *		under Linux.  See the manual page for details.
  *
- * Authors:	David Engel, <david@ods.com>
- *		Fred N. van Kempen, <waltje@uWalt.NL.Mugnet.ORG>
- *		Ron Sommeling, <sommel@sci.kun.nl>
+ * Copyright (C) David Engel, <david@ods.com>
+ * Copyright (C) Fred N. van Kempen, <waltje@uWalt.NL.Mugnet.ORG>
+ * Copyright (C) Ron Sommeling, <sommel@sci.kun.nl>
  *
  * Mon Jul  1 18:52:58 1996: janl@math.uio.no (Nicolai Langfeldt):
  *	Incorporated fix by Jonathan Kamens <jik@annex-1-slip-jik.cam.ov.com>

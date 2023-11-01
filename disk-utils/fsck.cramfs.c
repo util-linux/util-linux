@@ -1,4 +1,6 @@
 /*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ *
  * cramfsck - check a cramfs file system
  *
  * Copyright (C) 2000-2002 Transmeta Corporation

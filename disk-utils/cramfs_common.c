@@ -1,4 +1,6 @@
 /*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ *
  * cramfs_common - cramfs common code
  *
  * Copyright (c) 2008 Roy Peled, the.roy.peled  -at-  gmail.com

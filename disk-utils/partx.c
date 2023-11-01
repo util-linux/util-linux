@@ -1,4 +1,12 @@
 /*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ *
  * partx: tell the kernel about your disk's partitions
  * [This is not an fdisk - adding and removing partitions
  * is not a change of the disk, but just telling the kernel
@@ -10,7 +18,6 @@
  *      Rewritten to use libblkid for util-linux
  *      based on ideas from Karel Zak <kzak@redhat.com>
  */
-
 #include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>

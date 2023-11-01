@@ -1,4 +1,12 @@
 /*
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
  * fsck --- A generic, parallelizing front-end for the fsck program.
  * It will automatically try to run fsck programs in parallel if the
  * devices are on separate spindles.  It is based on the same ideas as
@@ -20,11 +28,7 @@
  *	         2001, 2002, 2003, 2004, 2005 by  Theodore Ts'o.
  *
  * Copyright (C) 2009-2014 Karel Zak <kzak@redhat.com>
- *
- * This file may be redistributed under the terms of the GNU Public
- * License.
  */
-
 #define _XOPEN_SOURCE 600 /* for inclusion of sa_handler in Solaris */
 
 #include <sys/types.h>
