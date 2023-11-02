@@ -1870,6 +1870,8 @@ static void append_filter_expr(char **a, const char *b, bool and)
 		xstrappend(a, "or(");
 	xstrappend(a, b);
 	xstrappend(a, ")");
+
+	free(tmp);
 }
 
 static struct libscols_filter *new_filter(const char *expr, bool debug, struct lsfd_control *ctl)
