@@ -62,7 +62,7 @@ extern int yydebug;
     YYUNDEF = 257,                 /* "invalid token"  */
     T_NUMBER = 258,                /* T_NUMBER  */
     T_STRING = 259,                /* T_STRING  */
-    T_NAME = 260,                  /* T_NAME  */
+    T_HOLDER = 260,                /* T_HOLDER  */
     T_FLOAT = 261,                 /* T_FLOAT  */
     T_OR = 262,                    /* T_OR  */
     T_AND = 263,                   /* T_AND  */
@@ -87,7 +87,7 @@ extern int yydebug;
 #define YYUNDEF 257
 #define T_NUMBER 258
 #define T_STRING 259
-#define T_NAME 260
+#define T_HOLDER 260
 #define T_FLOAT 261
 #define T_OR 262
 #define T_AND 263

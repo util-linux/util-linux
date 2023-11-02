@@ -42,7 +42,7 @@ void yyerror(yyscan_t *locp, struct libscols_filter *fltr, char const *msg);
 }
 %token <param_number> T_NUMBER
 %token <param_string> T_STRING
-%token <param_name> T_NAME
+%token <param_name> T_HOLDER
 %token <param_float> T_FLOAT
 %type <param> param expr
 
@@ -87,7 +87,7 @@ expr:
 param:
 	T_NUMBER	{ $$ = filter_new_param(fltr, SCOLS_DATA_U64, 0, (void *) (&$1)); }
 	| T_FLOAT	{ $$ = filter_new_param(fltr, SCOLS_DATA_FLOAT, 0, (void *) (&$1)); }
-	| T_NAME	{ $$ = filter_new_param(fltr, SCOLS_DATA_NONE, F_HOLDER_COLUMN, (void *) $1); }
+	| T_HOLDER	{ $$ = filter_new_param(fltr, SCOLS_DATA_NONE, F_HOLDER_COLUMN, (void *) $1); }
 	| T_STRING	{ $$ = filter_new_param(fltr, SCOLS_DATA_STRING, 0, (void *) $1); }
 	| T_TRUE	{
 		bool x = true;
@@ -108,9 +108,18 @@ void yyerror (yyscan_t *locp __attribute__((__unused__)),
 	      char const *msg)
 {
 	if (msg && fltr) {
+		char *p;
+
 		if (fltr->errmsg)
 			free(fltr->errmsg);
 		fltr->errmsg = strdup(msg);
+
+		p = strstr(fltr->errmsg, "T_");
+		if (p) {
+			size_t sz = strlen(fltr->errmsg);
+			memmove(p, p + 2, sz - 1 - (p - fltr->errmsg));
+		}
+
 		if (!fltr->errmsg)
 			return;
 	}

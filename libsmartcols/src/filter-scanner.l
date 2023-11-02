@@ -50,7 +50,7 @@ true|TRUE	return T_TRUE;
 
 {id} {
 	yylval->param_name = yytext;
-	return T_NAME;
+	return T_HOLDER;
 }
 
 {str_ap}|{str_qu} {
