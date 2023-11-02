@@ -331,10 +331,10 @@ static const struct colinfo infos[] = {
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 				   N_("clockid") },
 	[COL_TIMERFD_INTERVAL] = { "TIMERFD.INTERVAL",
-				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
+				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_FLOAT,
 				   N_("interval") },
 	[COL_TIMERFD_REMAINING]= { "TIMERFD.REMAINING",
-				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
+				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_FLOAT,
 				   N_("remaining time") },
 	[COL_TUN_IFACE]        = { "TUN.IFACE",
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
@@ -1796,10 +1796,11 @@ static void __attribute__((__noreturn__)) list_colunms(FILE *out)
 	fputs(USAGE_COLUMNS, out);
 	for (size_t i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %20s  %-10s%s\n", infos[i].name,
-			infos[i].json_type == SCOLS_JSON_STRING?  "<string>":
-			infos[i].json_type == SCOLS_JSON_ARRAY_STRING?  "<string>":
-			infos[i].json_type == SCOLS_JSON_ARRAY_NUMBER?  "<string>":
-			infos[i].json_type == SCOLS_JSON_NUMBER?  "<number>":
+			infos[i].json_type == SCOLS_JSON_STRING ?  "<string>":
+			infos[i].json_type == SCOLS_JSON_ARRAY_STRING ?  "<string>":
+			infos[i].json_type == SCOLS_JSON_ARRAY_NUMBER ?  "<string>":
+			infos[i].json_type == SCOLS_JSON_NUMBER ?  "<integer>":
+			infos[i].json_type == SCOLS_JSON_FLOAT ?  "<float>":
 			"<boolean>",
 			_(infos[i].help));
 	exit(EXIT_SUCCESS);
