@@ -116,6 +116,8 @@ int loopcxt_set_device(struct loopdev_cxt *lc, const char *device)
 		DBG(CXT, ul_debugobj(lc, "closing old open fd"));
 	}
 	lc->fd = -1;
+	lc->is_lost = 0;
+	lc->devno = 0;
 	lc->mode = O_RDONLY;
 	lc->blocksize = 0;
 	lc->has_info = 0;
@@ -151,6 +153,28 @@ int loopcxt_set_device(struct loopdev_cxt *lc, const char *device)
 int loopcxt_has_device(struct loopdev_cxt *lc)
 {
 	return lc && *lc->device;
+}
+
+dev_t loopcxt_get_devno(struct loopdev_cxt *lc)
+{
+	if (!lc || !loopcxt_has_device(lc))
+		return 0;
+	if (!lc->devno)
+		lc->devno = sysfs_devname_to_devno(lc->device);
+	return lc->devno;
+}
+
+int loopcxt_is_lost(struct loopdev_cxt *lc)
+{
+	if (!lc || !loopcxt_has_device(lc))
+		return 0;
+	if (lc->is_lost)
+		return 1;
+
+	lc->is_lost = access(lc->device, F_OK) != 0
+			&& loopcxt_get_devno(lc) != 0;
+
+	return lc->is_lost;
 }
 
 /*
@@ -265,7 +289,7 @@ static struct path_cxt *loopcxt_get_sysfs(struct loopdev_cxt *lc)
 		return NULL;
 
 	if (!lc->sysfs) {
-		dev_t devno = sysfs_devname_to_devno(lc->device);
+		dev_t devno = loopcxt_get_devno(lc);
 		if (!devno) {
 			DBG(CXT, ul_debugobj(lc, "sysfs: failed devname to devno"));
 			return NULL;
@@ -415,13 +439,6 @@ static int loopiter_set_device(struct loopdev_cxt *lc, const char *device)
 	if (!(lc->iter.flags & LOOPITER_FL_USED) &&
 	    !(lc->iter.flags & LOOPITER_FL_FREE))
 		return 0;	/* caller does not care about device status */
-
-	if (!is_loopdev(lc->device)) {
-		DBG(ITER, ul_debugobj(&lc->iter, "%s does not exist", lc->device));
-		return -errno;
-	}
-
-	DBG(ITER, ul_debugobj(&lc->iter, "%s exist", lc->device));
 
 	used = loopcxt_get_offset(lc, NULL) == 0;
 
@@ -876,7 +893,7 @@ int loopcxt_get_sizelimit(struct loopdev_cxt *lc, uint64_t *size)
 
 /*
  * @lc: context
- * @devno: returns encryption type
+ * @type: returns encryption type
  *
  * Cryptoloop is DEPRECATED!
  *
@@ -901,7 +918,6 @@ int loopcxt_get_encrypt_type(struct loopdev_cxt *lc, uint32_t *type)
 
 /*
  * @lc: context
- * @devno: returns crypt name
  *
  * Cryptoloop is DEPRECATED!
  *

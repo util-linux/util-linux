@@ -112,6 +112,7 @@ struct loopdev_cxt {
 	char		device[128];	/* device path (e.g. /dev/loop<N>) */
 	char		*filename;	/* backing file for loopcxt_set_... */
 	int		fd;		/* open(/dev/looo<N>) */
+	dev_t		devno;		/* loop device devno from /sys */
 	mode_t		mode;		/* fd mode O_{RDONLY,RDWR} */
 	uint64_t	blocksize;	/* used by loopcxt_setup_device() */
 
@@ -120,6 +121,7 @@ struct loopdev_cxt {
 	unsigned int	extra_check:1;	/* unusual stuff for iterator */
 	unsigned int	info_failed:1;	/* LOOP_GET_STATUS ioctl failed */
 	unsigned int    control_ok:1;	/* /dev/loop-control success */
+	unsigned int	is_lost:1;	/* device in /sys, but missing in /dev */
 
 	struct path_cxt		*sysfs; /* pointer to /sys/dev/block/<maj:min>/ */
 	struct loop_config	config;	/* for GET/SET ioctl */
@@ -149,7 +151,9 @@ extern int is_loopdev(const char *device);
 extern int loopdev_is_autoclear(const char *device);
 
 extern char *loopdev_get_backing_file(const char *device);
+extern dev_t loopcxt_get_devno(struct loopdev_cxt *lc);
 extern int loopdev_has_backing_file(const char *device);
+extern int loopcxt_is_lost(struct loopdev_cxt *lc);
 extern int loopdev_is_used(const char *device, const char *filename,
 			   uint64_t offset, uint64_t sizelimit, int flags);
 extern char *loopdev_find_by_backing_file(const char *filename,
