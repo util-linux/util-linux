@@ -40,7 +40,7 @@ static void swap_set_info_swap1(blkid_probe pr,
 		const struct blkid_idmag *mag,
 		const struct swap_header_v1_2 *hdr)
 {
-	enum BLKID_ENDIANNESS endianness = le32_to_cpu(hdr->version) == 1 ?
+	enum blkid_endianness endianness = le32_to_cpu(hdr->version) == 1 ?
 		BLKID_ENDIANNESS_LITTLE : BLKID_ENDIANNESS_BIG;
 	blkid_probe_set_fsendianness(pr, endianness);
 
