@@ -141,7 +141,7 @@ static int guess_expr_datatype(struct filter_expr *n)
 {
 	int type;
 	int l = node_get_datatype(n->left),
-			 r = node_get_datatype(n->right);
+	    r = node_get_datatype(n->right);
 
 	if (l == r)
 		type = l;
@@ -159,6 +159,11 @@ static int guess_expr_datatype(struct filter_expr *n)
 			type = l;
 		else
 			type = l;
+
+		/* Always prefer float before number */
+		if (type == SCOLS_DATA_U64
+		    && (r == SCOLS_DATA_FLOAT || l == SCOLS_DATA_FLOAT))
+			type = SCOLS_DATA_FLOAT;
 	}
 
 	DBG(FPARAM, ul_debugobj(n, " expr datatype: %d", type));
