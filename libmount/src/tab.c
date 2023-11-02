@@ -650,8 +650,8 @@ int mnt_table_get_root_fs(struct libmnt_table *tb, struct libmnt_fs **root)
  * @parent: parental FS
  * @chld: NULL or returns the next child filesystem
  *
- * Note that filesystems are returned in the order of mounting (according to
- * IDs in /proc/self/mountinfo).
+ * Since version 2.40, the filesystems are returned in the order specified by
+ * @itr. In the old versions the derection is always MNT_ITER_FORWARD.
  *
  * Returns: 0 on success, negative number in case of error or 1 at the end of list.
  */
@@ -660,6 +660,7 @@ int mnt_table_next_child_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
 {
 	struct libmnt_fs *fs, *chfs = NULL;
 	int parent_id, lastchld_id = 0, chld_id = 0;
+	int direction = mnt_iter_get_direction(itr);
 
 	if (!tb || !itr || !parent || !is_mountinfo(tb))
 		return -EINVAL;
@@ -675,7 +676,7 @@ int mnt_table_next_child_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
 		lastchld_id = mnt_fs_get_id(fs);
 	}
 
-	mnt_reset_iter(itr, MNT_ITER_FORWARD);
+	mnt_reset_iter(itr, direction);
 	while (mnt_table_next_fs(tb, itr, &fs) == 0) {
 		int id;
 
@@ -689,10 +690,20 @@ int mnt_table_next_child_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
 		if (id == parent_id)
 			continue;
 
-		if ((!lastchld_id || id > lastchld_id) &&
-		    (!chfs || id < chld_id)) {
-			chfs = fs;
-			chld_id = id;
+		if (direction == MNT_ITER_FORWARD) {
+			/* return in the order of mounting */
+			if ((!lastchld_id || id > lastchld_id) &&
+			    (!chfs || id < chld_id)) {
+				chfs = fs;
+				chld_id = id;
+			}
+		} else {
+			/* return last child first */
+			if ((!lastchld_id || id < lastchld_id) &&
+			    (!chfs || id > chld_id)) {
+				chfs = fs;
+				chld_id = id;
+			}
 		}
 	}
 
