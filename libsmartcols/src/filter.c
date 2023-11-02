@@ -195,7 +195,7 @@ int scols_filter_parse_string(struct libscols_filter *fltr, const char *str)
 	if (!str || !*str)
 		return 0;	/* empty filter is not error */
 
-	fltr->src = fmemopen((void *) str, strlen(str) + 1, "r");
+	fltr->src = fmemopen((void *) str, strlen(str), "r");
 	if (!fltr->src)
 		return -errno;
 
