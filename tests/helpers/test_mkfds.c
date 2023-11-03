@@ -3020,6 +3020,99 @@ static void *make_bpf_map(const struct factory *factory, struct fdesc fdescs[],
 	return NULL;
 }
 
+static void *make_pty(const struct factory *factory _U_, struct fdesc fdescs[],
+		      int argc _U_, char ** argv _U_)
+{
+	int index, *indexp;
+	char *pts;
+	int pts_fd;
+	int ptmx_fd = posix_openpt(O_RDWR);
+	if (ptmx_fd < 0)
+		err(EXIT_FAILURE, "failed in opening /dev/ptmx");
+
+	if (unlockpt(ptmx_fd) < 0) {
+		int e = errno;
+		close(ptmx_fd);
+		errno = e;
+		err(EXIT_FAILURE, "failed in unlockpt()");
+	}
+
+	if (ioctl(ptmx_fd, TIOCGPTN, &index) < 0) {
+		int e = errno;
+		close(ptmx_fd);
+		errno = e;
+		err(EXIT_FAILURE, "failed in ioctl(TIOCGPTN)");
+	}
+
+	pts = ptsname(ptmx_fd);
+	if (pts == NULL) {
+		int e = errno;
+		close(ptmx_fd);
+		errno = e;
+		err(EXIT_FAILURE, "failed in ptsname()");
+	}
+
+	if (ptmx_fd != fdescs[0].fd) {
+		if (dup2(ptmx_fd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(ptmx_fd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", ptmx_fd, fdescs[0].fd);
+		}
+		close(ptmx_fd);
+		ptmx_fd = fdescs[0].fd;
+	}
+
+	pts_fd = open(pts, O_RDONLY);
+	if (pts_fd < 0) {
+		int e = errno;
+		close(ptmx_fd);
+		errno = e;
+		err(EXIT_FAILURE, "failed in opening %s", pts);
+	}
+
+	if (pts_fd != fdescs[1].fd) {
+		if (dup2(pts_fd, fdescs[1].fd) < 0) {
+			int e = errno;
+			close(pts_fd);
+			close(ptmx_fd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", pts_fd, fdescs[1].fd);
+		}
+		close(pts_fd);
+		pts_fd = fdescs[1].fd;
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL
+	};
+	fdescs[1] = (struct fdesc){
+		.fd    = fdescs[1].fd,
+		.close = close_fdesc,
+		.data  = NULL
+	};
+
+	indexp = xmalloc(sizeof(index));
+	*indexp = index;
+	return indexp;
+}
+
+static void report_pty(const struct factory *factory _U_,
+		       int nth, void *data, FILE *fp)
+{
+	if (nth == 0) {
+		int *index = data;
+		fprintf(fp, "%d", *index);
+	}
+}
+
+static void free_pty(const struct factory * factory _U_, void *data)
+{
+	free(data);
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -3817,7 +3910,20 @@ static const struct factory factories[] = {
 			PARAM_END
 		}
 	},
-
+	{
+		.name = "pty",
+		.desc = "make a pair of ptmx and pts",
+		.priv = false,
+		.N = 2,
+		.EX_N = 0,
+		.EX_R = 1,
+		.make = make_pty,
+		.report = report_pty,
+		.free = free_pty,
+		.params = (struct parameter []) {
+			PARAM_END
+		}
+	},
 };
 
 static int count_parameters(const struct factory *factory)
