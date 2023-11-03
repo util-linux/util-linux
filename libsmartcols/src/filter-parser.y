@@ -1,4 +1,11 @@
 %{
+#ifdef __clang__
+/* clang detects yynerrs as unused.
+ * Will be fixed in future versions of bison.
+ */
+#pragma clang diagnostic ignored "-Wunused-but-set-variable"
+#endif
+
 #include <stdio.h>
 #include "smartcolsP.h"
 
