@@ -79,6 +79,12 @@ The type of lock; can be FLOCK (created with *flock*(2)), POSIX (created with *f
 SIZE::
 Size of the locked file.
 
+INODE::
+The inode number.
+
+MAJ:MIN::
+The major:minor device number.
+
 MODE::
 The lock's access permissions (read, write). If the process is blocked and waiting for the lock, then the mode is postfixed with an '*' (asterisk).
 
