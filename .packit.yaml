@@ -24,7 +24,7 @@ actions:
     # Drop all patches, since they're already included in the tarball
     - "sed -ri '/^Patch[0-9]+:/d' .packit_rpm/util-linux.spec"
     # Install additional dependencies we need for the build/tests
-    - "sed -i '/^### Dependencies/aBuildRequires: autoconf automake bc bison iproute libtool procps-ng socat' .packit_rpm/util-linux.spec"
+    - "sed -i '/^### Dependencies/aBuildRequires: autoconf automake bc bison flex iproute libtool procps-ng socat' .packit_rpm/util-linux.spec"
     # We need to call autogen, since we use a custom tarball
     - "sed -i '/^unset LINGUAS/a./autogen.sh' .packit_rpm/util-linux.spec"
     # Enable tests after build
