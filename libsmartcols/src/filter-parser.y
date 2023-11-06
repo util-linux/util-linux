@@ -7,12 +7,13 @@
 #endif
 
 #include <stdio.h>
-#include "smartcolsP.h"
 
+#include "smartcolsP.h"
 #include "filter-parser.h"
 #include "filter-scanner.h"
 
 void yyerror(yyscan_t *locp, struct libscols_filter *fltr, char const *msg);
+
 %}
 
 %define api.pure full
@@ -22,11 +23,8 @@ void yyerror(yyscan_t *locp, struct libscols_filter *fltr, char const *msg);
 
 %define parse.error verbose
 
-/*%header "filter-parser.h"*/
-
 %code requires
 {
-	#include "smartcolsP.h"
 }
 
 /* Elegant way, but not compatible with biron -y (autotools):

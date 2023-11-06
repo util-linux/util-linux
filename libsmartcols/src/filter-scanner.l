@@ -1,4 +1,5 @@
 %{
+#include "smartcolsP.h"
 #include "filter-parser.h"	/* define tokens (T_*) */
 %}
 

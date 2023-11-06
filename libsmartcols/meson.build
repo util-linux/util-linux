@@ -13,14 +13,14 @@ configure_file(
 
 scols_bison = generator(
   bison,
-  output : ['@BASENAME@.c'],
-  arguments : ['@INPUT@', '--output=@OUTPUT@'])
+  output : ['@BASENAME@.c', '@BASENAME@.h'],
+  arguments : ['@INPUT@', '--output=@OUTPUT0@', '--header=@OUTPUT1@'])
 scols_parser_c = scols_bison.process('src/filter-parser.y')
 
 scols_flex = generator(
   flex,
-  output : ['@BASENAME@.c'],
-  arguments : ['--outfile=@OUTPUT@', '@INPUT@'])
+  output : ['@BASENAME@.c', '@BASENAME@.h'],
+  arguments : ['--outfile=@OUTPUT0@', '--header=@OUTPUT1@', '@INPUT@'])
 scols_scanner_c = scols_flex.process('src/filter-scanner.l')
 
 lib_smartcols_sources = '''

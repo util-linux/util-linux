@@ -170,10 +170,6 @@ void filter_dump_node(struct ul_jsonwrt *json, struct filter_node *n)
 	}
 }
 
-
-
-extern int yyparse(void *scanner, struct libscols_filter *fltr);
-
 /**
  * scols_filter_parse_string:
  * @fltr: filter instance
