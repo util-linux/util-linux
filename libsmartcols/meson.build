@@ -20,7 +20,7 @@ scols_parser_c = scols_bison.process('src/filter-parser.y')
 scols_flex = generator(
   flex,
   output : ['@BASENAME@.c', '@BASENAME@.h'],
-  arguments : ['--outfile=@OUTPUT0@', '--header=@OUTPUT1@', '@INPUT@'])
+  arguments : ['--outfile=@OUTPUT0@', '--header-file=@OUTPUT1@', '@INPUT@'])
 scols_scanner_c = scols_flex.process('src/filter-scanner.l')
 
 lib_smartcols_sources = '''
