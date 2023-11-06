@@ -660,7 +660,7 @@ int mnt_table_next_child_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
 {
 	struct libmnt_fs *fs, *chfs = NULL;
 	int parent_id, lastchld_id = 0, chld_id = 0;
-	int direction = mnt_iter_get_direction(itr);
+	int direction;
 
 	if (!tb || !itr || !parent || !is_mountinfo(tb))
 		return -EINVAL;
@@ -668,6 +668,7 @@ int mnt_table_next_child_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
 	DBG(TAB, ul_debugobj(tb, "lookup next child of '%s'",
 				mnt_fs_get_target(parent)));
 	parent_id = mnt_fs_get_id(parent);
+	direction = mnt_iter_get_direction(itr);
 
 	/* get ID of the previously returned child */
 	if (itr->head && itr->p != itr->head) {
