@@ -950,7 +950,8 @@ int main(int argc, char **argv)
 	case A_FIND_FREE:
 		res = find_unused(&lc);
 		if (!res)
-			printf("%s\n", loopcxt_get_device(&lc));
+			printf("%s%s\n", loopcxt_get_device(&lc),
+				loopcxt_is_lost(&lc) ? " (lost)" : "");
 		break;
 	case A_SHOW:
 		if (list)
@@ -991,6 +992,7 @@ int main(int argc, char **argv)
 	}
 
 	if (res && (act == A_SET_CAPACITY
+		    || act == A_CREATE
 		    || act == A_SET_DIRECT_IO
 		    || act == A_SET_BLOCKSIZE)
 	    && loopcxt_is_lost(&lc))
