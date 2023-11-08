@@ -31,7 +31,7 @@ le|LE|"<="	return T_LE;
 lt|LT|"<"	return T_LT;
 
 ge|GE|">="	return T_GE;
-gt|GT">"	return T_GT;
+gt|GT|">"	return T_GT;
 
 "=~"		return T_REG;
 "!~"		return T_NREG;
