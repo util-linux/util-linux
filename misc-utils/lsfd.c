@@ -275,6 +275,9 @@ static const struct colinfo infos[] = {
 	[COL_POS]              = { "POS",
 				   5,   SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 				   N_("file position") },
+	[COL_PTMX_TTY_INDEX]   = { "PTMX.TTY-INDEX",
+				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
+				   N_("tty index of the counterpart") },
 	[COL_RAW_PROTOCOL]     = { "RAW.PROTOCOL",
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 				   N_("protocol number of the raw socket") },
@@ -2323,9 +2326,9 @@ int main(int argc, char *argv[])
 	/* cleanup */
 	delete(&ctl.procs, &ctl);
 
-	finalize_ipc_table();
 	finalize_devdrvs();
 	finalize_classes();
+	finalize_ipc_table();
 	finalize_nodevs();
 
 	return 0;
