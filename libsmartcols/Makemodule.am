@@ -12,4 +12,7 @@ pkgconfig_DATA += libsmartcols/smartcols.pc
 PATHFILES      += libsmartcols/smartcols.pc
 EXTRA_DIST     += libsmartcols/COPYING
 
+MANPAGES += libsmartcols/scols-filter.5
+dist_noinst_DATA += libsmartcols/scols-filter.5.adoc
+
 endif # BUILD_LIBSMARTCOLS
