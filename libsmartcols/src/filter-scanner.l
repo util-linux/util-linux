@@ -24,14 +24,14 @@ and|AND|"&&"	return T_AND;
 or|OR|"||"	return T_OR;
 "!"|not|NOT	return T_NEG;
 
-eq|"=="		return T_EQ;
-ne|"!="		return T_NE;
+eq|EQ|"=="	return T_EQ;
+ne|NE|"!="	return T_NE;
 
-le|"<="		return T_LE;
-lt|"<"		return T_LT;
+le|LE|"<="	return T_LE;
+lt|LT|"<"	return T_LT;
 
-ge|">="		return T_GE;
-gt|">"		return T_GT;
+ge|GE|">="	return T_GE;
+gt|GT">"	return T_GT;
 
 "=~"		return T_REG;
 "!~"		return T_NREG;
