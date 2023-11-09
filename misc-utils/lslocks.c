@@ -239,99 +239,105 @@ static ino_t get_dev_inode(char *str, dev_t *dev)
 	return inum;
 }
 
-static int get_local_locks(struct list_head *locks)
+static struct lock *get_local_lock(char *buf)
 {
 	int i;
-	FILE *fp;
-	char buf[PATH_MAX], *tok = NULL;
+	char *tok = NULL;
 	size_t sz;
-	struct lock *l;
+	struct lock *l = xcalloc(1, sizeof(*l));
+	INIT_LIST_HEAD(&l->locks);
+
+	for (tok = strtok(buf, " "), i = 0; tok;
+	     tok = strtok(NULL, " "), i++) {
+
+		/*
+		 * /proc/locks has *exactly* 8 "blocks" of text
+		 * separated by ' ' - check <kernel>/fs/locks.c
+		 */
+		switch (i) {
+		case 0: /* ID: */
+			tok[strlen(tok) - 1] = '\0';
+			l->id = strtos32_or_err(tok, _("failed to parse ID"));
+			break;
+		case 1: /* posix, flock, etc */
+			if (strcmp(tok, "->") == 0) {	/* optional field */
+				l->blocked = 1;
+				i--;
+			} else
+				l->type = xstrdup(tok);
+			break;
+
+		case 2: /* is this a mandatory lock? other values are advisory or noinode */
+			l->mandatory = *tok == 'M' ? 1 : 0;
+			break;
+		case 3: /* lock mode */
+			l->mode = xstrdup(tok);
+			break;
+
+		case 4: /* PID */
+			/*
+			 * If user passed a pid we filter it later when adding
+			 * to the list, no need to worry now. OFD locks use -1 PID.
+			 */
+			l->pid = strtos32_or_err(tok, _("failed to parse pid"));
+			if (l->pid > 0) {
+				l->cmdname = pid_get_cmdname(l->pid);
+				if (!l->cmdname)
+					l->cmdname = xstrdup(_("(unknown)"));
+			} else
+				l->cmdname = xstrdup(_("(undefined)"));
+			break;
+
+		case 5: /* device major:minor and inode number */
+			l->inode = get_dev_inode(tok, &l->dev);
+			break;
+
+		case 6: /* start */
+			l->start = !strcmp(tok, "EOF") ? 0 :
+			strtou64_or_err(tok, _("failed to parse start"));
+			break;
+
+		case 7: /* end */
+			/* replace '\n' character */
+			tok[strlen(tok)-1] = '\0';
+			l->end = !strcmp(tok, "EOF") ? 0 :
+				strtou64_or_err(tok, _("failed to parse end"));
+			break;
+		default:
+			break;
+		}
+	}
+
+	l->path = get_filename_sz(l->inode, l->pid, &sz);
+
+	/* no permissions -- ignore */
+	if (!l->path && no_inaccessible) {
+		rem_lock(l);
+		return NULL;
+	}
+
+	if (!l->path) {
+		/* probably no permission to peek into l->pid's path */
+		l->path = get_fallback_filename(l->dev);
+		l->size = 0;
+	} else
+		l->size = sz;
+
+	return l;
+}
+
+static int get_local_locks(struct list_head *locks)
+{
+	FILE *fp;
+	char buf[PATH_MAX];
 
 	if (!(fp = fopen(_PATH_PROC_LOCKS, "r")))
 		return -1;
 
 	while (fgets(buf, sizeof(buf), fp)) {
-
-		l = xcalloc(1, sizeof(*l));
-		INIT_LIST_HEAD(&l->locks);
-
-		for (tok = strtok(buf, " "), i = 0; tok;
-		     tok = strtok(NULL, " "), i++) {
-
-			/*
-			 * /proc/locks has *exactly* 8 "blocks" of text
-			 * separated by ' ' - check <kernel>/fs/locks.c
-			 */
-			switch (i) {
-			case 0: /* ID: */
-				tok[strlen(tok) - 1] = '\0';
-				l->id = strtos32_or_err(tok, _("failed to parse ID"));
-				break;
-			case 1: /* posix, flock, etc */
-				if (strcmp(tok, "->") == 0) {	/* optional field */
-					l->blocked = 1;
-					i--;
-				} else
-					l->type = xstrdup(tok);
-				break;
-
-			case 2: /* is this a mandatory lock? other values are advisory or noinode */
-				l->mandatory = *tok == 'M' ? 1 : 0;
-				break;
-			case 3: /* lock mode */
-				l->mode = xstrdup(tok);
-				break;
-
-			case 4: /* PID */
-				/*
-				 * If user passed a pid we filter it later when adding
-				 * to the list, no need to worry now. OFD locks use -1 PID.
-				 */
-				l->pid = strtos32_or_err(tok, _("failed to parse pid"));
-				if (l->pid > 0) {
-					l->cmdname = pid_get_cmdname(l->pid);
-					if (!l->cmdname)
-						l->cmdname = xstrdup(_("(unknown)"));
-				} else
-					l->cmdname = xstrdup(_("(undefined)"));
-				break;
-
-			case 5: /* device major:minor and inode number */
-				l->inode = get_dev_inode(tok, &l->dev);
-				break;
-
-			case 6: /* start */
-				l->start = !strcmp(tok, "EOF") ? 0 :
-					   strtou64_or_err(tok, _("failed to parse start"));
-				break;
-
-			case 7: /* end */
-				/* replace '\n' character */
-				tok[strlen(tok)-1] = '\0';
-				l->end = !strcmp(tok, "EOF") ? 0 :
-					 strtou64_or_err(tok, _("failed to parse end"));
-				break;
-			default:
-				break;
-			}
-		}
-
-		l->path = get_filename_sz(l->inode, l->pid, &sz);
-
-		/* no permissions -- ignore */
-		if (!l->path && no_inaccessible) {
-			rem_lock(l);
-			continue;
-		}
-
-		if (!l->path) {
-			/* probably no permission to peek into l->pid's path */
-			l->path = get_fallback_filename(l->dev);
-			l->size = 0;
-		} else
-			l->size = sz;
-
-		list_add(&l->locks, locks);
+		struct lock *l = get_local_lock(buf);
+		if (l)
+			list_add(&l->locks, locks);
 	}
 
 	fclose(fp);
