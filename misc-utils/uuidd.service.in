@@ -4,7 +4,7 @@ Documentation=man:uuidd(8)
 Requires=uuidd.socket
 
 [Service]
-ExecStart=@usrsbin_execdir@/uuidd --socket-activation --cont-clock
+ExecStart=@usrsbin_execdir@/uuidd --socket-activation --cont-clock --timeout 60
 Restart=no
 User=uuidd
 Group=uuidd
