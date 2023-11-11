@@ -91,6 +91,7 @@ TS_CMD_LSBLK=${TS_CMD_LSBLK-"${ts_commandsdir}lsblk"}
 TS_CMD_LSCLOCKS=${TS_CMD_LSCPU-"${ts_commandsdir}lsclocks"}
 TS_CMD_LSCPU=${TS_CMD_LSCPU-"${ts_commandsdir}lscpu"}
 TS_CMD_LSFD=${TS_CMD_LSFD-"${ts_commandsdir}lsfd"}
+TS_CMD_LSLOCKS=${TS_CMD_LSLOCKS-"${ts_commandsdir}lslocks"}
 TS_CMD_LSMEM=${TS_CMD_LSMEM-"${ts_commandsdir}lsmem"}
 TS_CMD_LSNS=${TS_CMD_LSNS-"${ts_commandsdir}lsns"}
 TS_CMD_MCOOKIE=${TS_CMD_MCOOKIE-"${ts_commandsdir}mcookie"}
