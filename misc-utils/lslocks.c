@@ -239,7 +239,7 @@ static ino_t get_dev_inode(char *str, dev_t *dev)
 	return inum;
 }
 
-static struct lock *get_local_lock(char *buf)
+static struct lock *get_lock(char *buf)
 {
 	int i;
 	char *tok = NULL;
@@ -326,7 +326,7 @@ static struct lock *get_local_lock(char *buf)
 	return l;
 }
 
-static int get_local_locks(struct list_head *locks)
+static int get_proc_locks(struct list_head *locks)
 {
 	FILE *fp;
 	char buf[PATH_MAX];
@@ -335,7 +335,7 @@ static int get_local_locks(struct list_head *locks)
 		return -1;
 
 	while (fgets(buf, sizeof(buf), fp)) {
-		struct lock *l = get_local_lock(buf);
+		struct lock *l = get_lock(buf);
 		if (l)
 			list_add(&l->locks, locks);
 	}
@@ -582,7 +582,7 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char *argv[])
 {
 	int c, rc = 0;
-	struct list_head locks;
+	struct list_head proc_locks;
 	char *outarg = NULL;
 	enum {
 		OPT_OUTPUT_ALL = CHAR_MAX + 1
@@ -658,7 +658,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	INIT_LIST_HEAD(&locks);
+	INIT_LIST_HEAD(&proc_locks);
 
 	if (!ncolumns) {
 		/* default columns */
@@ -679,10 +679,10 @@ int main(int argc, char *argv[])
 
 	scols_init_debug(0);
 
-	rc = get_local_locks(&locks);
+	rc = get_proc_locks(&proc_locks);
 
-	if (!rc && !list_empty(&locks))
-		rc = show_locks(&locks, target_pid);
+	if (!rc && !list_empty(&proc_locks))
+		rc = show_locks(&proc_locks, target_pid);
 
 	mnt_unref_table(tab);
 	return rc;
