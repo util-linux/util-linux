@@ -74,7 +74,7 @@ PID::
 The process ID of the process which holds the lock or -1 for OFDLCK.
 
 TYPE::
-The type of lock; can be FLOCK (created with *flock*(2)), POSIX (created with *fcntl*(2) and *lockf*(3)) or OFDLCK (created with *fcntl*(2)).
+The type of lock; can be LEASE (created with *fcntl*(2)), FLOCK (created with *flock*(2)), POSIX (created with *fcntl*(2) and *lockf*(3)) or OFDLCK (created with *fcntl*(2)).
 
 SIZE::
 Size of the locked file.
