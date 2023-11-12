@@ -37,9 +37,9 @@ METHODS=(
     posix-r-
     posix--w
     posix-rw
-#   ofd-r-
-#   ofd--w
-#   ofd-rw    
+    ofd-r-
+    ofd--w
+    ofd-rw
     lease-w
 )
 
