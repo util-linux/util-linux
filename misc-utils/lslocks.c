@@ -89,8 +89,6 @@ static struct colinfo infos[] = {
 static int columns[ARRAY_SIZE(infos) * 2];
 static size_t ncolumns;
 
-static pid_t pid = 0;
-
 static struct libmnt_table *tab;		/* /proc/self/mountinfo */
 
 /* basic output flags */
@@ -464,7 +462,7 @@ static void add_scols_line(struct libscols_table *table, struct lock *l, struct 
 	}
 }
 
-static int show_locks(struct list_head *locks)
+static int show_locks(struct list_head *locks, pid_t target_pid)
 {
 	int rc = 0;
 	size_t i;
@@ -520,7 +518,7 @@ static int show_locks(struct list_head *locks)
 	list_for_each(p, locks) {
 		struct lock *l = list_entry(p, struct lock, locks);
 
-		if (pid && pid != l->pid)
+		if (target_pid && target_pid != l->pid)
 			continue;
 
 		add_scols_line(table, l, locks);
@@ -603,6 +601,8 @@ int main(int argc, char *argv[])
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+	pid_t target_pid = 0;
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -624,7 +624,7 @@ int main(int argc, char *argv[])
 			json = 1;
 			break;
 		case 'p':
-			pid = strtos32_or_err(optarg, _("invalid PID argument"));
+			target_pid = strtos32_or_err(optarg, _("invalid PID argument"));
 			break;
 		case 'o':
 			outarg = optarg;
@@ -676,7 +676,7 @@ int main(int argc, char *argv[])
 	rc = get_local_locks(&locks);
 
 	if (!rc && !list_empty(&locks))
-		rc = show_locks(&locks);
+		rc = show_locks(&locks, target_pid);
 
 	mnt_unref_table(tab);
 	return rc;
