@@ -468,11 +468,22 @@ static void add_scols_line(struct libscols_table *table, struct lock *l, struct 
 	}
 }
 
+static void rem_locks(struct list_head *locks)
+{
+	struct list_head *p, *pnext;
+
+	/* destroy the list */
+	list_for_each_safe(p, pnext, locks) {
+		struct lock *l = list_entry(p, struct lock, locks);
+		rem_lock(l);
+	}
+}
+
 static int show_locks(struct list_head *locks, pid_t target_pid)
 {
 	int rc = 0;
 	size_t i;
-	struct list_head *p, *pnext;
+	struct list_head *p;
 	struct libscols_table *table;
 
 	table = scols_new_table();
@@ -528,12 +539,6 @@ static int show_locks(struct list_head *locks, pid_t target_pid)
 			continue;
 
 		add_scols_line(table, l, locks);
-	}
-
-	/* destroy the list */
-	list_for_each_safe(p, pnext, locks) {
-		struct lock *l = list_entry(p, struct lock, locks);
-		rem_lock(l);
 	}
 
 	scols_print_table(table);
@@ -683,6 +688,8 @@ int main(int argc, char *argv[])
 
 	if (!rc && !list_empty(&proc_locks))
 		rc = show_locks(&proc_locks, target_pid);
+
+	rem_locks(&proc_locks);
 
 	mnt_unref_table(tab);
 	return rc;
