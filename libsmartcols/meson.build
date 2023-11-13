@@ -14,7 +14,7 @@ configure_file(
 scols_bison = generator(
   bison,
   output : ['@BASENAME@.c', '@BASENAME@.h'],
-  arguments : ['@INPUT@', '--output=@OUTPUT0@', '--header=@OUTPUT1@'])
+  arguments : ['@INPUT@', '--output=@OUTPUT0@', '--defines=@OUTPUT1@'])
 scols_parser_c = scols_bison.process('src/filter-parser.y')
 
 scols_flex = generator(
