@@ -31,6 +31,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <stdbool.h>
 
 #include <libmount.h>
 #include <libsmartcols.h>
@@ -88,8 +89,6 @@ static struct colinfo infos[] = {
 
 static int columns[ARRAY_SIZE(infos) * 2];
 static size_t ncolumns;
-
-static pid_t pid = 0;
 
 static struct libmnt_table *tab;		/* /proc/self/mountinfo */
 
@@ -241,99 +240,242 @@ static ino_t get_dev_inode(char *str, dev_t *dev)
 	return inum;
 }
 
-static int get_local_locks(struct list_head *locks)
+struct override_info {
+	pid_t pid;
+	const char *cmdname;
+};
+
+static void patch_lock(struct lock *l, struct list_head *fallback)
+{
+	struct list_head *p;
+
+	list_for_each(p, fallback) {
+		struct lock *m = list_entry(p, struct lock, locks);
+		if (l->start == m->start &&
+		    l->end == m->end &&
+		    l->inode == m->inode &&
+		    l->dev == m->dev &&
+		    l->mandatory == m->mandatory &&
+		    l->blocked == m->blocked &&
+		    strcmp(l->type, m->type) == 0 &&
+		    strcmp(l->mode, m->mode) == 0) {
+			/* size and id can be ignored. */
+			l->pid = m->pid;
+			l->cmdname = xstrdup(m->cmdname);
+			break;
+		}
+	}
+}
+
+static struct lock *get_lock(char *buf, struct override_info *oinfo, struct list_head *fallback)
 {
 	int i;
-	FILE *fp;
-	char buf[PATH_MAX], *tok = NULL;
+	char *tok = NULL;
 	size_t sz;
-	struct lock *l;
+	struct lock *l = xcalloc(1, sizeof(*l));
+	INIT_LIST_HEAD(&l->locks);
+
+	bool cmdname_unknown = false;
+
+	for (tok = strtok(buf, " "), i = 0; tok;
+	     tok = strtok(NULL, " "), i++) {
+
+		/*
+		 * /proc/locks has *exactly* 8 "blocks" of text
+		 * separated by ' ' - check <kernel>/fs/locks.c
+		 */
+		switch (i) {
+		case 0: /* ID: */
+			if (oinfo)
+				l->id = -1;
+			else {
+				tok[strlen(tok) - 1] = '\0';
+				l->id = strtos32_or_err(tok, _("failed to parse ID"));
+			}
+			break;
+		case 1: /* posix, flock, etc */
+			if (strcmp(tok, "->") == 0) {	/* optional field */
+				l->blocked = 1;
+				i--;
+			} else
+				l->type = xstrdup(tok);
+			break;
+
+		case 2: /* is this a mandatory lock? other values are advisory or noinode */
+			l->mandatory = *tok == 'M' ? 1 : 0;
+			break;
+		case 3: /* lock mode */
+			l->mode = xstrdup(tok);
+			break;
+
+		case 4: /* PID */
+			/*
+			 * If user passed a pid we filter it later when adding
+			 * to the list, no need to worry now. OFD locks use -1 PID.
+			 */
+			if (oinfo) {
+				l->pid = oinfo->pid;
+				l->cmdname = xstrdup(oinfo->cmdname);
+			} else {
+				l->pid = strtos32_or_err(tok, _("failed to parse pid"));
+				if (l->pid > 0) {
+					l->cmdname = pid_get_cmdname(l->pid);
+					if (!l->cmdname) {
+						l->cmdname = NULL;
+						cmdname_unknown = true;
+					}
+				} else
+					l->cmdname = NULL;
+			}
+			break;
+
+		case 5: /* device major:minor and inode number */
+			l->inode = get_dev_inode(tok, &l->dev);
+			break;
+
+		case 6: /* start */
+			l->start = !strcmp(tok, "EOF") ? 0 :
+			strtou64_or_err(tok, _("failed to parse start"));
+			break;
+
+		case 7: /* end */
+			/* replace '\n' character */
+			tok[strlen(tok)-1] = '\0';
+			l->end = !strcmp(tok, "EOF") ? 0 :
+				strtou64_or_err(tok, _("failed to parse end"));
+			break;
+		default:
+			break;
+		}
+	}
+
+	if ((!l->blocked) && fallback && !l->cmdname)
+		patch_lock(l, fallback);
+	if (!l->cmdname) {
+		if (cmdname_unknown)
+			l->cmdname = xstrdup(_("(unknown)"));
+		else
+			l->cmdname = xstrdup(_("(undefined)"));
+	}
+	l->path = get_filename_sz(l->inode, l->pid, &sz);
+
+	/* no permissions -- ignore */
+	if (!l->path && no_inaccessible) {
+		rem_lock(l);
+		return NULL;
+	}
+
+	if (!l->path) {
+		/* probably no permission to peek into l->pid's path */
+		l->path = get_fallback_filename(l->dev);
+		l->size = 0;
+	} else
+		l->size = sz;
+
+	return l;
+}
+
+static int get_pid_lock(struct list_head *locks, FILE *fp,
+			pid_t pid, const char *cmdname)
+{
+	char buf[PATH_MAX];
+	struct override_info oinfo = {
+		.pid = pid,
+		.cmdname = cmdname,
+	};
+
+	while (fgets(buf, sizeof(buf), fp)) {
+		struct lock *l;
+		if (strncmp(buf, "lock:\t", 6))
+			continue;
+		l = get_lock(buf + 6, &oinfo, NULL);
+		if (l)
+			list_add(&l->locks, locks);
+		/* no break here.
+		   Multiple recode locks can be taken via one fd. */
+	}
+
+	return 0;
+}
+
+static int get_pid_locks(struct list_head *locks, struct path_cxt *pc,
+			 pid_t pid, const char *cmdname)
+{
+	DIR *sub = NULL;
+	struct dirent *d = NULL;
+	int rc = 0;
+
+	while (ul_path_next_dirent(pc, &sub, "fdinfo", &d) == 0) {
+		uint64_t num;
+		FILE *fdinfo;
+
+		if (ul_strtou64(d->d_name, &num, 10) != 0)	/* only numbers */
+			continue;
+
+		fdinfo = ul_path_fopenf(pc, "r", "fdinfo/%ju", num);
+		if (fdinfo == NULL)
+			continue;
+
+		get_pid_lock(locks, fdinfo, pid, cmdname);
+		fclose(fdinfo);
+	}
+
+	return rc;
+}
+
+static int get_pids_locks(struct list_head *locks)
+{
+	DIR *dir;
+	struct dirent *d;
+	struct path_cxt *pc = NULL;
+	int rc = 0;
+
+	pc = ul_new_path(NULL);
+	if (!pc)
+		err(EXIT_FAILURE, _("failed to alloc procfs handler"));
+
+	dir = opendir(_PATH_PROC);
+	if (!dir)
+		err(EXIT_FAILURE, _("failed to open /proc"));
+
+	while ((d = readdir(dir))) {
+		pid_t pid;
+		char buf[BUFSIZ];
+		const char *cmdname = NULL;
+
+		if (procfs_dirent_get_pid(d, &pid) != 0)
+			continue;
+
+		if (procfs_process_init_path(pc, pid) != 0) {
+			rc = -1;
+			break;
+		}
+
+		if (procfs_process_get_cmdname(pc, buf, sizeof(buf)) <= 0)
+			continue;
+		cmdname = buf;
+
+		get_pid_locks(locks, pc, pid, cmdname);
+	}
+
+	closedir(dir);
+	ul_unref_path(pc);
+
+	return rc;
+}
+
+static int get_proc_locks(struct list_head *locks, struct list_head *fallback)
+{
+	FILE *fp;
+	char buf[PATH_MAX];
 
 	if (!(fp = fopen(_PATH_PROC_LOCKS, "r")))
 		return -1;
 
 	while (fgets(buf, sizeof(buf), fp)) {
-
-		l = xcalloc(1, sizeof(*l));
-		INIT_LIST_HEAD(&l->locks);
-
-		for (tok = strtok(buf, " "), i = 0; tok;
-		     tok = strtok(NULL, " "), i++) {
-
-			/*
-			 * /proc/locks has *exactly* 8 "blocks" of text
-			 * separated by ' ' - check <kernel>/fs/locks.c
-			 */
-			switch (i) {
-			case 0: /* ID: */
-				tok[strlen(tok) - 1] = '\0';
-				l->id = strtos32_or_err(tok, _("failed to parse ID"));
-				break;
-			case 1: /* posix, flock, etc */
-				if (strcmp(tok, "->") == 0) {	/* optional field */
-					l->blocked = 1;
-					i--;
-				} else
-					l->type = xstrdup(tok);
-				break;
-
-			case 2: /* is this a mandatory lock? other values are advisory or noinode */
-				l->mandatory = *tok == 'M' ? 1 : 0;
-				break;
-			case 3: /* lock mode */
-				l->mode = xstrdup(tok);
-				break;
-
-			case 4: /* PID */
-				/*
-				 * If user passed a pid we filter it later when adding
-				 * to the list, no need to worry now. OFD locks use -1 PID.
-				 */
-				l->pid = strtos32_or_err(tok, _("failed to parse pid"));
-				if (l->pid > 0) {
-					l->cmdname = pid_get_cmdname(l->pid);
-					if (!l->cmdname)
-						l->cmdname = xstrdup(_("(unknown)"));
-				} else
-					l->cmdname = xstrdup(_("(undefined)"));
-				break;
-
-			case 5: /* device major:minor and inode number */
-				l->inode = get_dev_inode(tok, &l->dev);
-				break;
-
-			case 6: /* start */
-				l->start = !strcmp(tok, "EOF") ? 0 :
-					   strtou64_or_err(tok, _("failed to parse start"));
-				break;
-
-			case 7: /* end */
-				/* replace '\n' character */
-				tok[strlen(tok)-1] = '\0';
-				l->end = !strcmp(tok, "EOF") ? 0 :
-					 strtou64_or_err(tok, _("failed to parse end"));
-				break;
-			default:
-				break;
-			}
-		}
-
-		l->path = get_filename_sz(l->inode, l->pid, &sz);
-
-		/* no permissions -- ignore */
-		if (!l->path && no_inaccessible) {
-			rem_lock(l);
-			continue;
-		}
-
-		if (!l->path) {
-			/* probably no permission to peek into l->pid's path */
-			l->path = get_fallback_filename(l->dev);
-			l->size = 0;
-		} else
-			l->size = sz;
-
-		list_add(&l->locks, locks);
+		struct lock *l = get_lock(buf, NULL, fallback);
+		if (l)
+			list_add(&l->locks, locks);
 	}
 
 	fclose(fp);
@@ -464,11 +606,22 @@ static void add_scols_line(struct libscols_table *table, struct lock *l, struct 
 	}
 }
 
-static int show_locks(struct list_head *locks)
+static void rem_locks(struct list_head *locks)
+{
+	struct list_head *p, *pnext;
+
+	/* destroy the list */
+	list_for_each_safe(p, pnext, locks) {
+		struct lock *l = list_entry(p, struct lock, locks);
+		rem_lock(l);
+	}
+}
+
+static int show_locks(struct list_head *locks, pid_t target_pid)
 {
 	int rc = 0;
 	size_t i;
-	struct list_head *p, *pnext;
+	struct list_head *p;
 	struct libscols_table *table;
 
 	table = scols_new_table();
@@ -520,16 +673,10 @@ static int show_locks(struct list_head *locks)
 	list_for_each(p, locks) {
 		struct lock *l = list_entry(p, struct lock, locks);
 
-		if (pid && pid != l->pid)
+		if (target_pid && target_pid != l->pid)
 			continue;
 
 		add_scols_line(table, l, locks);
-	}
-
-	/* destroy the list */
-	list_for_each_safe(p, pnext, locks) {
-		struct lock *l = list_entry(p, struct lock, locks);
-		rem_lock(l);
 	}
 
 	scols_print_table(table);
@@ -578,7 +725,7 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char *argv[])
 {
 	int c, rc = 0;
-	struct list_head locks;
+	struct list_head proc_locks, pid_locks;
 	char *outarg = NULL;
 	enum {
 		OPT_OUTPUT_ALL = CHAR_MAX + 1
@@ -603,6 +750,8 @@ int main(int argc, char *argv[])
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+	pid_t target_pid = 0;
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -624,7 +773,7 @@ int main(int argc, char *argv[])
 			json = 1;
 			break;
 		case 'p':
-			pid = strtos32_or_err(optarg, _("invalid PID argument"));
+			target_pid = strtos32_or_err(optarg, _("invalid PID argument"));
 			break;
 		case 'o':
 			outarg = optarg;
@@ -652,7 +801,8 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	INIT_LIST_HEAD(&locks);
+	INIT_LIST_HEAD(&proc_locks);
+	INIT_LIST_HEAD(&pid_locks);
 
 	if (!ncolumns) {
 		/* default columns */
@@ -673,10 +823,18 @@ int main(int argc, char *argv[])
 
 	scols_init_debug(0);
 
-	rc = get_local_locks(&locks);
+	/* get_pids_locks() get locks related information from "lock:" fields
+	 * of /proc/$pid/fdinfo/$fd as fallback information.
+	 * get_proc_locks() used the fallback information if /proc/locks
+	 * doesn't provides enough information or provides staled information. */
+	get_pids_locks(&pid_locks);
+	rc = get_proc_locks(&proc_locks, &pid_locks);
 
-	if (!rc && !list_empty(&locks))
-		rc = show_locks(&locks);
+	if (!rc && !list_empty(&proc_locks))
+		rc = show_locks(&proc_locks, target_pid);
+
+	rem_locks(&pid_locks);
+	rem_locks(&proc_locks);
 
 	mnt_unref_table(tab);
 	return rc;

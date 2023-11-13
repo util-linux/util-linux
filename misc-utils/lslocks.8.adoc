@@ -29,8 +29,6 @@ lslocks - list local system locks
 
 *lslocks* lists information about all the currently held file locks in a Linux system.
 
-Note that lslocks also lists OFD (Open File Description) locks, these locks are not associated with any process (PID is -1). OFD locks are associated with the open file description on which they are acquired. This lock type is available since Linux 3.15, see *fcntl*(2) for more details.
-
 == OPTIONS
 
 *-b*, *--bytes*::
@@ -71,10 +69,10 @@ COMMAND::
 The command name of the process holding the lock.
 
 PID::
-The process ID of the process which holds the lock or -1 for OFDLCK.
+The process ID of the process.
 
 TYPE::
-The type of lock; can be FLOCK (created with *flock*(2)), POSIX (created with *fcntl*(2) and *lockf*(3)) or OFDLCK (created with *fcntl*(2)).
+The type of lock; can be LEASE (created with *fcntl*(2)), FLOCK (created with *flock*(2)), POSIX (created with *fcntl*(2) and *lockf*(3)) or OFDLCK (created with *fcntl*(2)).
 
 SIZE::
 Size of the locked file.
@@ -106,6 +104,13 @@ The PID of the process which blocks the lock.
 == NOTES
 
 The *lslocks* command is meant to replace the *lslk*(8) command, originally written by mailto:abe@purdue.edu[Victor A. Abell] and unmaintained since 2001.
+
+"The process holding the lock" for leases, FLOCK locks, and
+OFD locks is a fake-concept.  They are associated with the open file
+description on which they are acquired.  With *fork*(2) and/or
+*cmsg*(3), multiple processes can share an open file description. So
+the holder process of a lease (or a lock) is not uniquely determined.
+*lslocks* shows the one of the holder processes in COMMAND and PID columns.
 
 == AUTHORS
 
