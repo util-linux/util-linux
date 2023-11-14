@@ -82,7 +82,7 @@ ts_init_subtest "XMODE-w-bit"
 wait "${MKFDS_PID}"
 ts_finalize_subtest
 
-EXPR='(ASSOC == "mem") and (INODE == '"$INO"') and (MODE != "r--") and (MODE != "rw-")'
+EXPR='(ASSOC == "mem") and (INODE == '"$INO"') and (MODE != "r--") and (MODE != "rw-") and (MODE != "rwx")'
 ts_init_subtest "MODE-x-bit"
 if [ "$QEMU_USER" == "1" ]; then
     ts_skip_subtest "running under qemu-user emulation"
