@@ -88,6 +88,8 @@ enum {
 	COL_LABEL,
 	COL_LOGSEC,
 	COL_MAJMIN,
+	COL_MAJ,
+	COL_MIN,
 	COL_MINIO,
 	COL_MODE,
 	COL_MODEL,
@@ -190,6 +192,8 @@ static const struct colinfo infos[] = {
 	[COL_LABEL] = { "LABEL", 0.1, 0, N_("filesystem LABEL") },
 	[COL_LOGSEC] = { "LOG-SEC", 7, SCOLS_FL_RIGHT, N_("logical sector size"), COLTYPE_NUM },
 	[COL_MAJMIN] = { "MAJ:MIN", 6, 0, N_("major:minor device number"), COLTYPE_SORTNUM },
+	[COL_MAJ] = { "MAJ", 3, 0, N_("major device number"), COLTYPE_SORTNUM },
+	[COL_MIN] = { "MIN", 3, 0, N_("minor device number"), COLTYPE_SORTNUM },
 	[COL_MINIO] = { "MIN-IO", 6, SCOLS_FL_RIGHT, N_("minimum I/O size"), COLTYPE_NUM },
 	[COL_MODEL] = { "MODEL", 0.1, SCOLS_FL_TRUNC, N_("device identifier") },
 	[COL_MODE] = { "MODE", 10, 0, N_("device node permissions") },
@@ -844,6 +848,16 @@ static char *device_get_data(
 			xasprintf(&str, "%3u:%-3u", dev->maj, dev->min);
 		if (sortdata)
 			*sortdata = makedev(dev->maj, dev->min);
+		break;
+	case COL_MAJ:
+		xasprintf(&str, "%u", dev->maj);
+		if (sortdata)
+			*sortdata = dev->maj;
+		break;
+	case COL_MIN:
+		xasprintf(&str, "%u", dev->min);
+		if (sortdata)
+			*sortdata = dev->min;
 		break;
 	case COL_FSTYPE:
 		prop = lsblk_device_get_properties(dev);
