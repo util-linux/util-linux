@@ -540,6 +540,9 @@ extern int fdisk_reorder_partitions(struct fdisk_context *cxt);
 
 extern int fdisk_partition_has_wipe(struct fdisk_context *cxt, struct fdisk_partition *pa);
 
+extern int fdisk_partition_get_max_size(struct fdisk_context *cxt, size_t n,
+					fdisk_sector_t *maxsz);
+
 
 /* table.c */
 extern struct fdisk_table *fdisk_new_table(void);

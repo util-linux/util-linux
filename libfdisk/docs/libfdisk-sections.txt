@@ -182,6 +182,7 @@ fdisk_partition_get_size
 fdisk_partition_get_start
 fdisk_partition_get_type
 fdisk_partition_get_uuid
+fdisk_partition_get_max_size
 fdisk_partition_has_end
 fdisk_partition_has_partno
 fdisk_partition_has_size

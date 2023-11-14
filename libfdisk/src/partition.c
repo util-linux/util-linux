@@ -1625,3 +1625,55 @@ int fdisk_is_partition_used(struct fdisk_context *cxt, size_t n)
 	return cxt->label->op->part_is_used(cxt, n);
 }
 
+
+/**
+ * fdisk_partition_max_size:
+ * @cxt: context
+ * @n: partition number (0 is the first partition)
+ * @maxsz: returns maximum size of partition
+ *
+ * Find maximum size the partition can be resized to.
+ * Takes into account free space between this partition and the next one.
+ *
+ * Returns: 0 on success, <0 on error.
+ */
+int fdisk_partition_get_max_size(struct fdisk_context *cxt, size_t n,
+				 fdisk_sector_t *maxsz)
+{
+	struct fdisk_partition *cur = NULL;
+	struct fdisk_table *tb = NULL;
+	int rc;
+
+	rc = fdisk_get_partitions(cxt, &tb);
+	if (rc)
+		goto out;
+
+	rc = fdisk_get_freespaces(cxt, &tb);
+	if (rc)
+		goto out;
+
+	rc = fdisk_table_sort_partitions(tb, fdisk_partition_cmp_start);
+	if (rc)
+		goto out;
+
+	cur = fdisk_table_get_partition_by_partno(tb, n);
+	if (!cur)
+		goto einval;
+
+	if (!fdisk_partition_has_start(cur))
+		goto einval;
+
+	if (resize_get_last_possible(tb, cur,
+				     fdisk_partition_get_start(cur), maxsz))
+		goto einval;
+
+out:
+	fdisk_unref_partition(cur);
+	fdisk_unref_table(tb);
+
+	return rc;
+
+einval:
+	rc = -EINVAL;
+	goto out;
+}
