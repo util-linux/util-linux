@@ -107,6 +107,7 @@ if test -f "$TS_EXPECTED.$PAGE_SIZE"; then
 	OUT_COLUMNS="PAGES,SIZE,FILE"
 else
 	TS_EXPECTED+=".nosize"
+	TS_EXPECTED_ERR+=".nosize"
 	OUT_COLUMNS="PAGES,FILE"
 fi
 
