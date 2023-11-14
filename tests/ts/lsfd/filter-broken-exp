@@ -31,4 +31,7 @@ ts_cd "$TS_OUTDIR"
     $TS_CMD_LSFD -Q 'NOSUCHCOLUMN'
 } > $TS_OUTPUT 2>&1
 
+sed -i -e 's/syntax error.*/<bison syntax error message removed>/g' \
+	$TS_OUTPUT $TS_ERRLOG
+
 ts_finalize
