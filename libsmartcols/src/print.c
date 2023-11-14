@@ -712,9 +712,11 @@ notree:
 
 			rc = cal ? scols_column_greatest_wrap(cl, ce, &x) :
 				   scols_column_next_wrap(cl, ce, &x);
+			/* rc: error: <0; nodata: 1; success: 0 */
 			if (rc < 0)
-				return rc;
+				goto done;
 			data = x;
+			rc = 0;
 			if (data && *data)
 				datasiz = strlen(data);
 			if (data && datasiz)
@@ -761,6 +763,9 @@ notree:
 	/* reset wrapping after greatest chunk calculation */
 	if (cal && scols_column_is_wrap(cl))
 		scols_column_reset_wrap(cl);
+
+done:
+	DBG(COL, ul_debugobj(cl, "__cursor_to_buffer rc=%d", rc));
 	return rc;
 }
 
