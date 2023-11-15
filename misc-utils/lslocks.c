@@ -32,6 +32,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <stdbool.h>
+#include <search.h>
 
 #include <libmount.h>
 #include <libsmartcols.h>
@@ -116,6 +117,52 @@ struct lock {
 	uint64_t size;
 	int id;
 };
+
+struct lock_tnode {
+	dev_t dev;
+	ino_t inode;
+
+	struct list_head chain;
+};
+
+static int lock_tnode_compare(const void *a, const void *b)
+{
+	struct lock_tnode *anode = ((struct lock_tnode *)a);
+	struct lock_tnode *bnode = ((struct lock_tnode *)b);
+
+	if (anode->dev > bnode->dev)
+		return 1;
+	else if (anode->dev < bnode->dev)
+		return -1;
+
+	if (anode->inode > bnode->inode)
+		return 1;
+	else if (anode->inode < bnode->inode)
+		return -1;
+
+	return 0;
+}
+
+static void add_to_tree(void *troot, struct lock *l)
+{
+	struct lock_tnode tmp = { .dev = l->dev, .inode = l->inode, };
+	struct lock_tnode **head = tfind(&tmp, troot, lock_tnode_compare);
+	struct lock_tnode *new_head;
+
+	if (head) {
+		list_add(&l->locks, &(*head)->chain);
+		return;
+	}
+
+	new_head = xmalloc(sizeof(*l));
+	new_head->dev = l->dev;
+	new_head->inode = l->inode;
+	INIT_LIST_HEAD(&new_head->chain);
+	if (tsearch(new_head, troot, lock_tnode_compare) == NULL)
+		errx(EXIT_FAILURE, _("failed to allocate memory"));
+
+	list_add(&l->locks, &new_head->chain);
+}
 
 static void rem_lock(struct lock *lock)
 {
@@ -245,11 +292,16 @@ struct override_info {
 	const char *cmdname;
 };
 
-static void patch_lock(struct lock *l, struct list_head *fallback)
+static void patch_lock(struct lock *l, void *fallback)
 {
+	struct lock_tnode tmp = { .dev = l->dev, .inode = l->inode, };
+	struct lock_tnode **head = tfind(&tmp, fallback, lock_tnode_compare);
 	struct list_head *p;
 
-	list_for_each(p, fallback) {
+	if (!head)
+		return;
+
+	list_for_each(p, &(*head)->chain) {
 		struct lock *m = list_entry(p, struct lock, locks);
 		if (l->start == m->start &&
 		    l->end == m->end &&
@@ -272,7 +324,7 @@ static void add_to_list(void *locks, struct lock *l)
 	list_add(&l->locks, locks);
 }
 
-static struct lock *get_lock(char *buf, struct override_info *oinfo, struct list_head *fallback)
+static struct lock *get_lock(char *buf, struct override_info *oinfo, void *fallback)
 {
 	int i;
 	char *tok = NULL;
@@ -469,7 +521,7 @@ static int get_pids_locks(void *locks, void (*add_lock)(void *, struct lock *))
 	return rc;
 }
 
-static int get_proc_locks(void *locks, void (*add_lock)(void *, struct lock *), struct list_head *fallback)
+static int get_proc_locks(void *locks, void (*add_lock)(void *, struct lock *), void *fallback)
 {
 	FILE *fp;
 	char buf[PATH_MAX];
@@ -622,6 +674,14 @@ static void rem_locks(struct list_head *locks)
 	}
 }
 
+static void rem_tnode(void *node)
+{
+	struct lock_tnode *tnode = node;
+
+	rem_locks(&tnode->chain);
+	free(node);
+}
+
 static int show_locks(struct list_head *locks, pid_t target_pid)
 {
 	int rc = 0;
@@ -730,7 +790,8 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char *argv[])
 {
 	int c, rc = 0;
-	struct list_head proc_locks, pid_locks;
+	struct list_head proc_locks;
+	void *pid_locks = NULL;
 	char *outarg = NULL;
 	enum {
 		OPT_OUTPUT_ALL = CHAR_MAX + 1
@@ -807,7 +868,6 @@ int main(int argc, char *argv[])
 	}
 
 	INIT_LIST_HEAD(&proc_locks);
-	INIT_LIST_HEAD(&pid_locks);
 
 	if (!ncolumns) {
 		/* default columns */
@@ -832,13 +892,13 @@ int main(int argc, char *argv[])
 	 * of /proc/$pid/fdinfo/$fd as fallback information.
 	 * get_proc_locks() used the fallback information if /proc/locks
 	 * doesn't provides enough information or provides staled information. */
-	get_pids_locks(&pid_locks, add_to_list);
+	get_pids_locks(&pid_locks, add_to_tree);
 	rc = get_proc_locks(&proc_locks, add_to_list, &pid_locks);
 
 	if (!rc && !list_empty(&proc_locks))
 		rc = show_locks(&proc_locks, target_pid);
 
-	rem_locks(&pid_locks);
+	tdestroy(pid_locks, rem_tnode);
 	rem_locks(&proc_locks);
 
 	mnt_unref_table(tab);
