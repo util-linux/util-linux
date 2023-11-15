@@ -657,6 +657,7 @@ static void add_scols_line(struct libscols_table *table, struct lock *l, struct 
 						get_blocker(l->id, locks) : 0;
 			if (bl)
 				xasprintf(&str, "%d", (int) bl);
+			break;
 		}
 		default:
 			break;
