@@ -267,6 +267,11 @@ static void patch_lock(struct lock *l, struct list_head *fallback)
 	}
 }
 
+static void add_to_list(void *locks, struct lock *l)
+{
+	list_add(&l->locks, locks);
+}
+
 static struct lock *get_lock(char *buf, struct override_info *oinfo, struct list_head *fallback)
 {
 	int i;
@@ -375,7 +380,7 @@ static struct lock *get_lock(char *buf, struct override_info *oinfo, struct list
 	return l;
 }
 
-static int get_pid_lock(struct list_head *locks, FILE *fp,
+static int get_pid_lock(void *locks, void (*add_lock)(void *, struct lock *), FILE *fp,
 			pid_t pid, const char *cmdname)
 {
 	char buf[PATH_MAX];
@@ -390,7 +395,7 @@ static int get_pid_lock(struct list_head *locks, FILE *fp,
 			continue;
 		l = get_lock(buf + 6, &oinfo, NULL);
 		if (l)
-			list_add(&l->locks, locks);
+			add_lock(locks, l);
 		/* no break here.
 		   Multiple recode locks can be taken via one fd. */
 	}
@@ -398,7 +403,7 @@ static int get_pid_lock(struct list_head *locks, FILE *fp,
 	return 0;
 }
 
-static int get_pid_locks(struct list_head *locks, struct path_cxt *pc,
+static int get_pid_locks(void *locks, void (*add_lock)(void *, struct lock *), struct path_cxt *pc,
 			 pid_t pid, const char *cmdname)
 {
 	DIR *sub = NULL;
@@ -416,14 +421,14 @@ static int get_pid_locks(struct list_head *locks, struct path_cxt *pc,
 		if (fdinfo == NULL)
 			continue;
 
-		get_pid_lock(locks, fdinfo, pid, cmdname);
+		get_pid_lock(locks, add_lock, fdinfo, pid, cmdname);
 		fclose(fdinfo);
 	}
 
 	return rc;
 }
 
-static int get_pids_locks(struct list_head *locks)
+static int get_pids_locks(void *locks, void (*add_lock)(void *, struct lock *))
 {
 	DIR *dir;
 	struct dirent *d;
@@ -455,7 +460,7 @@ static int get_pids_locks(struct list_head *locks)
 			continue;
 		cmdname = buf;
 
-		get_pid_locks(locks, pc, pid, cmdname);
+		get_pid_locks(locks, add_lock, pc, pid, cmdname);
 	}
 
 	closedir(dir);
@@ -464,7 +469,7 @@ static int get_pids_locks(struct list_head *locks)
 	return rc;
 }
 
-static int get_proc_locks(struct list_head *locks, struct list_head *fallback)
+static int get_proc_locks(void *locks, void (*add_lock)(void *, struct lock *), struct list_head *fallback)
 {
 	FILE *fp;
 	char buf[PATH_MAX];
@@ -475,7 +480,7 @@ static int get_proc_locks(struct list_head *locks, struct list_head *fallback)
 	while (fgets(buf, sizeof(buf), fp)) {
 		struct lock *l = get_lock(buf, NULL, fallback);
 		if (l)
-			list_add(&l->locks, locks);
+			add_lock(locks, l);
 	}
 
 	fclose(fp);
@@ -827,8 +832,8 @@ int main(int argc, char *argv[])
 	 * of /proc/$pid/fdinfo/$fd as fallback information.
 	 * get_proc_locks() used the fallback information if /proc/locks
 	 * doesn't provides enough information or provides staled information. */
-	get_pids_locks(&pid_locks);
-	rc = get_proc_locks(&proc_locks, &pid_locks);
+	get_pids_locks(&pid_locks, add_to_list);
+	rc = get_proc_locks(&proc_locks, add_to_list, &pid_locks);
 
 	if (!rc && !list_empty(&proc_locks))
 		rc = show_locks(&proc_locks, target_pid);
