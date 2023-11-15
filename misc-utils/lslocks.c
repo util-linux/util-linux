@@ -115,6 +115,7 @@ struct lock {
 	unsigned int mandatory :1,
 		     blocked   :1;
 	uint64_t size;
+	int fd;
 	int id;
 };
 
@@ -154,7 +155,7 @@ static void add_to_tree(void *troot, struct lock *l)
 		return;
 	}
 
-	new_head = xmalloc(sizeof(*l));
+	new_head = xmalloc(sizeof(*new_head));
 	new_head->dev = l->dev;
 	new_head->inode = l->inode;
 	INIT_LIST_HEAD(&new_head->chain);
@@ -331,6 +332,7 @@ static struct lock *get_lock(char *buf, struct override_info *oinfo, void *fallb
 	size_t sz;
 	struct lock *l = xcalloc(1, sizeof(*l));
 	INIT_LIST_HEAD(&l->locks);
+	l->fd = -1;
 
 	bool cmdname_unknown = false;
 
@@ -433,7 +435,7 @@ static struct lock *get_lock(char *buf, struct override_info *oinfo, void *fallb
 }
 
 static int get_pid_lock(void *locks, void (*add_lock)(void *, struct lock *), FILE *fp,
-			pid_t pid, const char *cmdname)
+			pid_t pid, const char *cmdname, int fd)
 {
 	char buf[PATH_MAX];
 	struct override_info oinfo = {
@@ -446,8 +448,10 @@ static int get_pid_lock(void *locks, void (*add_lock)(void *, struct lock *), FI
 		if (strncmp(buf, "lock:\t", 6))
 			continue;
 		l = get_lock(buf + 6, &oinfo, NULL);
-		if (l)
+		if (l) {
 			add_lock(locks, l);
+			l->fd = fd;
+		}
 		/* no break here.
 		   Multiple recode locks can be taken via one fd. */
 	}
@@ -473,7 +477,7 @@ static int get_pid_locks(void *locks, void (*add_lock)(void *, struct lock *), s
 		if (fdinfo == NULL)
 			continue;
 
-		get_pid_lock(locks, add_lock, fdinfo, pid, cmdname);
+		get_pid_lock(locks, add_lock, fdinfo, pid, cmdname, (int)num);
 		fclose(fdinfo);
 	}
 
