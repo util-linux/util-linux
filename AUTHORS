@@ -18,6 +18,7 @@ AUTHORS (merged projects & commands):
       blkpr:           zhenwei pi <pizhenwei@bytedance.com>
       blkzone:         Shaun Tancheff <shaun@tancheff.com>
                        Damien Le Moal <damien.lemoal@wdc.com>
+      enosys:          Thomas Weißschuh <thomas@t-8ch.de>
       fallocate:       Eric Sandeen <sandeen@redhat.com>
                        Karel Zak <kzak@redhat.com>
                        Matěj Cepl <mcepl@redhat.com>
@@ -42,6 +43,7 @@ AUTHORS (merged projects & commands):
       libmount:        Karel Zak <kzak@redhat.com>
       libuuid:         Theodore Ts'o <tytso@mit.edu>
       lscpu:           Cai Qian <qcai@redhat.com>
+      lsclocks:        Thomas Weißschuh <thomas@t-8ch.de>
       lsblk:           Milan Broz <gmazyland@gmail.com>
                        Karel Zak <kzak@redhat.com>
       lsfd:            Masatake YAMATO <yamato@redhat.com>
@@ -78,6 +80,7 @@ AUTHORS (merged projects & commands):
       utmpdump:        [merged from sysvinit]
                        Danek Duvall <duvall@alumni.princeton.edu>
                        Miquel van Smoorenburg <miquels@cistron.nl>
+      waitpid:         Thomas Weißschuh <thomas@t-8ch.de>
       wipefs:          Karel Zak <kzak@redhat.com>
       swaplabel:       Jason Borden <jborden@bluehost.com>
                        Karel Zak <kzak@redhat.com>
