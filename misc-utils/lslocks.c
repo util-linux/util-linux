@@ -293,6 +293,18 @@ struct override_info {
 	const char *cmdname;
 };
 
+static bool is_co_holder(struct lock *l, struct lock *m)
+{
+	return (l->start == m->start &&
+		l->end == m->end &&
+		l->inode == m->inode &&
+		l->dev == m->dev &&
+		l->mandatory == m->mandatory &&
+		l->blocked == m->blocked &&
+		strcmp(l->type, m->type) == 0 &&
+		strcmp(l->mode, m->mode) == 0);
+}
+
 static void patch_lock(struct lock *l, void *fallback)
 {
 	struct lock_tnode tmp = { .dev = l->dev, .inode = l->inode, };
@@ -304,14 +316,7 @@ static void patch_lock(struct lock *l, void *fallback)
 
 	list_for_each(p, &(*head)->chain) {
 		struct lock *m = list_entry(p, struct lock, locks);
-		if (l->start == m->start &&
-		    l->end == m->end &&
-		    l->inode == m->inode &&
-		    l->dev == m->dev &&
-		    l->mandatory == m->mandatory &&
-		    l->blocked == m->blocked &&
-		    strcmp(l->type, m->type) == 0 &&
-		    strcmp(l->mode, m->mode) == 0) {
+		if (is_co_holder(l, m)) {
 			/* size and id can be ignored. */
 			l->pid = m->pid;
 			l->cmdname = xstrdup(m->cmdname);
