@@ -636,6 +636,101 @@ void toggle_dos_compatibility_flag(struct fdisk_context *cxt)
 		fdisk_reset_alignment(cxt);	/* reset the current label */
 }
 
+static int strtosize_sectors(const char *str, unsigned long sector_size,
+			     uintmax_t *res)
+{
+	size_t len = strlen(str);
+	int insec = 0;
+	int rc;
+
+	if (!len)
+		return 0;
+
+	if (str[len - 1] == 'S' || str[len - 1] == 's') {
+		insec = 1;
+		str = strndup(str, len - 1); /* strip trailing 's' */
+		if (!str)
+			return -errno;
+	}
+
+	rc = strtosize(str, res);
+	if (rc)
+		return rc;
+
+	if (insec) {
+		*res *= sector_size;
+		free((void *)str);
+	}
+
+	return 0;
+}
+
+void resize_partition(struct fdisk_context *cxt)
+{
+	struct fdisk_partition *pa = NULL, *npa = NULL, *next = NULL;
+	char *query = NULL, *response = NULL, *default_size;
+	struct fdisk_table *tb = NULL;
+	uint64_t max_size, size, secs;
+	size_t i;
+	int rc;
+
+	assert(cxt);
+
+	rc = fdisk_ask_partnum(cxt, &i, FALSE);
+	if (rc)
+		goto err;
+
+	rc = fdisk_partition_get_max_size(cxt, i, &max_size);
+	if (rc)
+		goto err;
+
+	max_size *= fdisk_get_sector_size(cxt);
+
+	default_size = size_to_human_string(0, max_size);
+	xasprintf(&query, _("New <size>{K,M,G,T,P} in bytes or <size>S in sectors (default %s)"),
+		  default_size);
+	free(default_size);
+
+	rc = fdisk_ask_string(cxt, query, &response);
+	if (rc)
+		goto err;
+
+	size = max_size;
+	rc = strtosize_sectors(response, fdisk_get_sector_size(cxt), &size);
+	if (rc || size > max_size) {
+		fdisk_warnx(cxt, _("Invalid size"));
+		goto err;
+	}
+
+	npa = fdisk_new_partition();
+	if (!npa)
+		goto err;
+
+	secs = size / fdisk_get_sector_size(cxt);
+	fdisk_partition_size_explicit(npa, 1);
+	fdisk_partition_set_size(npa, secs);
+
+	rc = fdisk_set_partition(cxt, i, npa);
+	if (rc)
+		goto err;
+
+	fdisk_info(cxt, _("Partition %zu has been resized."), i + 1);
+
+out:
+	free(query);
+	free(response);
+	fdisk_unref_partition(next);
+	fdisk_unref_partition(pa);
+	fdisk_unref_partition(npa);
+	fdisk_unref_table(tb);
+	return;
+
+err:
+	fdisk_warnx(cxt, _("Could not resize partition %zu: %s"),
+		    i + 1, strerror(-rc));
+	goto out;
+}
+
 void change_partition_type(struct fdisk_context *cxt)
 {
 	size_t i;
