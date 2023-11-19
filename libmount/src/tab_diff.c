@@ -309,13 +309,17 @@ done:
 
 #ifdef TEST_PROGRAM
 
-static int test_diff(struct libmnt_test *ts, int argc, char *argv[])
+static int test_diff(struct libmnt_test *ts __attribute__((unused)),
+		     int argc, char *argv[])
 {
 	struct libmnt_table *tb_old, *tb_new;
 	struct libmnt_tabdiff *diff;
 	struct libmnt_iter *itr;
 	struct libmnt_fs *old, *new;
 	int rc = -1, change;
+
+	if (argc != 3)
+		return -1;
 
 	tb_old = mnt_new_table_from_file(argv[1]);
 	tb_new = mnt_new_table_from_file(argv[2]);

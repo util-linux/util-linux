@@ -970,7 +970,8 @@ done:
 	return rc;
 }
 
-static int test_add(struct libmnt_test *ts, int argc, char *argv[])
+static int test_add(struct libmnt_test *ts __attribute__((unused)),
+		    int argc, char *argv[])
 {
 	struct libmnt_fs *fs = mnt_new_fs();
 	int rc;
@@ -987,14 +988,16 @@ static int test_add(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-static int test_remove(struct libmnt_test *ts, int argc, char *argv[])
+static int test_remove(struct libmnt_test *ts __attribute__((unused)),
+		       int argc, char *argv[])
 {
 	if (argc < 2)
 		return -1;
 	return update(argv[1], NULL, 0);
 }
 
-static int test_move(struct libmnt_test *ts, int argc, char *argv[])
+static int test_move(struct libmnt_test *ts __attribute__((unused)),
+		     int argc, char *argv[])
 {
 	struct libmnt_fs *fs = mnt_new_fs();
 	int rc;
@@ -1010,7 +1013,8 @@ static int test_move(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-static int test_remount(struct libmnt_test *ts, int argc, char *argv[])
+static int test_remount(struct libmnt_test *ts __attribute__((unused)),
+			int argc, char *argv[])
 {
 	struct libmnt_fs *fs = mnt_new_fs();
 	int rc;
@@ -1025,7 +1029,8 @@ static int test_remount(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-static int test_replace(struct libmnt_test *ts, int argc, char *argv[])
+static int test_replace(struct libmnt_test *ts __attribute__((unused)),
+			int argc, char *argv[])
 {
 	struct libmnt_fs *fs = mnt_new_fs();
 	struct libmnt_table *tb = mnt_new_table();

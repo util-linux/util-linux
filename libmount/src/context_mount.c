@@ -1751,7 +1751,8 @@ int mnt_context_get_mount_excode(
 
 #ifdef TEST_PROGRAM
 
-static int test_perms(struct libmnt_test *ts, int argc, char *argv[])
+static int test_perms(struct libmnt_test *ts __attribute__((unused)),
+		      int argc, char *argv[])
 {
 	struct libmnt_context *cxt;
 	struct libmnt_optlist *ls;
@@ -1794,7 +1795,8 @@ static int test_perms(struct libmnt_test *ts, int argc, char *argv[])
 	return 0;
 }
 
-static int test_fixopts(struct libmnt_test *ts, int argc, char *argv[])
+static int test_fixopts(struct libmnt_test *ts __attribute__((unused)),
+			int argc, char *argv[])
 {
 	struct libmnt_context *cxt;
 	struct libmnt_optlist *ls;

@@ -65,7 +65,7 @@ fail:
 	err(EXIT_FAILURE, "failed to create output line");
 }
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	struct libscols_table *tb;
 	size_t i;

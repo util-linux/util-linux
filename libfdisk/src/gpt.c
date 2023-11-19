@@ -3322,8 +3322,12 @@ void fdisk_gpt_enable_minimize(struct fdisk_label *lb, int enable)
 }
 
 #ifdef TEST_PROGRAM
-static int test_getattr(struct fdisk_test *ts, int argc, char *argv[])
+static int test_getattr(struct fdisk_test *ts __attribute__((unused)),
+			int argc, char *argv[])
 {
+	if (argc != 3)
+		return -1;
+
 	const char *disk = argv[1];
 	size_t part = strtoul(argv[2], NULL, 0) - 1;
 	struct fdisk_context *cxt;
@@ -3344,8 +3348,12 @@ static int test_getattr(struct fdisk_test *ts, int argc, char *argv[])
 	return 0;
 }
 
-static int test_setattr(struct fdisk_test *ts, int argc, char *argv[])
+static int test_setattr(struct fdisk_test *ts __attribute__((unused)),
+			int argc, char *argv[])
 {
+	if (argc != 4)
+		return -1;
+
 	const char *disk = argv[1];
 	size_t part = strtoul(argv[2], NULL, 0) - 1;
 	uint64_t atters = strtoull(argv[3], NULL, 0);

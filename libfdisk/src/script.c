@@ -1669,8 +1669,12 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 #endif
 
 #ifdef TEST_PROGRAM
-static int test_dump(struct fdisk_test *ts, int argc, char *argv[])
+static int test_dump(struct fdisk_test *ts __attribute__((unused)),
+		     int argc, char *argv[])
 {
+	if (argc != 2)
+		return -1;
+
 	char *devname = argv[1];
 	struct fdisk_context *cxt;
 	struct fdisk_script *dp;
@@ -1688,8 +1692,12 @@ static int test_dump(struct fdisk_test *ts, int argc, char *argv[])
 	return 0;
 }
 
-static int test_read(struct fdisk_test *ts, int argc, char *argv[])
+static int test_read(struct fdisk_test *ts __attribute__((unused)),
+		     int argc, char *argv[])
 {
+	if (argc != 2)
+		return -1;
+
 	char *filename = argv[1];
 	struct fdisk_script *dp;
 	struct fdisk_context *cxt;
@@ -1711,8 +1719,12 @@ static int test_read(struct fdisk_test *ts, int argc, char *argv[])
 	return 0;
 }
 
-static int test_stdin(struct fdisk_test *ts, int argc, char *argv[])
+static int test_stdin(struct fdisk_test *ts __attribute__((unused)),
+		      int argc, char *argv[] __attribute__((unused)))
 {
+	if (argc != 1)
+		return -1;
+
 	char buf[BUFSIZ] = { '\0' };
 	struct fdisk_script *dp;
 	struct fdisk_context *cxt;
@@ -1746,8 +1758,12 @@ static int test_stdin(struct fdisk_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-static int test_apply(struct fdisk_test *ts, int argc, char *argv[])
+static int test_apply(struct fdisk_test *ts __attribute__((unused)),
+		      int argc, char *argv[])
 {
+	if (argc != 3)
+		return -1;
+
 	char *devname = argv[1], *scriptname = argv[2];
 	struct fdisk_context *cxt;
 	struct fdisk_script *dp;
@@ -1788,8 +1804,12 @@ done:
 	return 0;
 }
 
-static int test_tokens(struct fdisk_test *ts, int argc, char *argv[])
+static int test_tokens(struct fdisk_test *ts __attribute__((unused)),
+		       int argc, char *argv[])
 {
+	if (argc != 2)
+		return -1;
+
 	char *p, *str = argc == 2 ? strdup(argv[1]) : NULL;
 	int i;
 

@@ -295,7 +295,8 @@ static void __attribute__((__noreturn__)) sig_handler(int sig)
 	errx(EXIT_FAILURE, "\n%d: catch signal: %s\n", getpid(), strsignal(sig));
 }
 
-static int test_lock(struct libmnt_test *ts, int argc, char *argv[])
+static int test_lock(struct libmnt_test *ts __attribute__((unused)),
+		     int argc, char *argv[])
 {
 	time_t synctime = 0;
 	unsigned int usecs;

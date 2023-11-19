@@ -91,7 +91,9 @@ int fdisk_get_library_features(const char ***features)
 }
 
 #ifdef TEST_PROGRAM
-static int test_version(struct fdisk_test *ts, int argc, char *argv[])
+static int test_version(struct fdisk_test *ts __attribute__((unused)),
+			int argc __attribute__((unused)),
+			char *argv[] __attribute__((unused)))
 {
 	const char *ver;
 	const char **features;

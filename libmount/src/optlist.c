@@ -1241,7 +1241,8 @@ static inline unsigned long str2flg(const char *str)
 	return (unsigned long) strtox64_or_err(str, "connt convert string to flags");
 }
 
-static int test_append_str(struct libmnt_test *ts, int argc, char *argv[])
+static int test_append_str(struct libmnt_test *ts __attribute__((unused)),
+			   int argc, char *argv[])
 {
 	struct libmnt_optlist *ol;
 	int rc;
@@ -1257,7 +1258,8 @@ static int test_append_str(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-static int test_prepend_str(struct libmnt_test *ts, int argc, char *argv[])
+static int test_prepend_str(struct libmnt_test *ts __attribute__((unused)),
+			    int argc, char *argv[])
 {
 	struct libmnt_optlist *ol;
 	int rc;
@@ -1273,7 +1275,8 @@ static int test_prepend_str(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-static int test_set_str(struct libmnt_test *ts, int argc, char *argv[])
+static int test_set_str(struct libmnt_test *ts __attribute__((unused)),
+			int argc, char *argv[])
 {
 	struct libmnt_optlist *ol;
 	int rc;
@@ -1289,7 +1292,8 @@ static int test_set_str(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-static int test_append_flg(struct libmnt_test *ts, int argc, char *argv[])
+static int test_append_flg(struct libmnt_test *ts __attribute__((unused)),
+			   int argc, char *argv[])
 {
 	struct libmnt_optlist *ol;
 	int rc;
@@ -1305,7 +1309,8 @@ static int test_append_flg(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-static int test_set_flg(struct libmnt_test *ts, int argc, char *argv[])
+static int test_set_flg(struct libmnt_test *ts __attribute__((unused)),
+			int argc, char *argv[])
 {
 	struct libmnt_optlist *ol;
 	int rc;
@@ -1321,7 +1326,8 @@ static int test_set_flg(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-static int test_get_str(struct libmnt_test *ts, int argc, char *argv[])
+static int test_get_str(struct libmnt_test *ts __attribute__((unused)),
+			int argc, char *argv[])
 {
 	struct libmnt_optlist *ol;
 	const struct libmnt_optmap *map;
@@ -1380,7 +1386,8 @@ done:
 	return rc;
 }
 
-static int test_get_flg(struct libmnt_test *ts, int argc, char *argv[])
+static int test_get_flg(struct libmnt_test *ts __attribute__((unused)),
+			int argc, char *argv[])
 {
 	struct libmnt_optlist *ol;
 	unsigned long flags = 0;
@@ -1397,7 +1404,8 @@ static int test_get_flg(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-static int test_split(struct libmnt_test *ts, int argc, char *argv[])
+static int test_split(struct libmnt_test *ts __attribute__((unused)),
+		      int argc, char *argv[])
 {
 	struct libmnt_optlist *ol;
 	int rc;

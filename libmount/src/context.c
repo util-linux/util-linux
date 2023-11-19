@@ -3166,7 +3166,8 @@ struct libmnt_ns *mnt_context_switch_target_ns(struct libmnt_context *cxt)
 
 #ifdef TEST_PROGRAM
 
-static int test_search_helper(struct libmnt_test *ts, int argc, char *argv[])
+static int test_search_helper(struct libmnt_test *ts __attribute__((unused)),
+			      int argc, char *argv[])
 {
 	struct libmnt_context *cxt;
 	const char *type;
@@ -3200,7 +3201,8 @@ static void lock_fallback(void)
 		mnt_unlock_file(lock);
 }
 
-static int test_mount(struct libmnt_test *ts, int argc, char *argv[])
+static int test_mount(struct libmnt_test *ts __attribute__((unused)),
+		      int argc, char *argv[])
 {
 	int idx = 1, rc = 0;
 	struct libmnt_context *cxt;
@@ -3250,7 +3252,8 @@ static int test_mount(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-static int test_umount(struct libmnt_test *ts, int argc, char *argv[])
+static int test_umount(struct libmnt_test *ts __attribute__((unused)),
+		       int argc, char *argv[])
 {
 	int idx = 1, rc = 0;
 	struct libmnt_context *cxt;
@@ -3305,7 +3308,8 @@ err:
 	return rc;
 }
 
-static int test_flags(struct libmnt_test *ts, int argc, char *argv[])
+static int test_flags(struct libmnt_test *ts __attribute__((unused)),
+		      int argc, char *argv[])
 {
 	int idx = 1, rc = 0;
 	struct libmnt_context *cxt;
@@ -3343,7 +3347,8 @@ static int test_flags(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-static int test_cxtsync(struct libmnt_test *ts, int argc, char *argv[])
+static int test_cxtsync(struct libmnt_test *ts __attribute__((unused)),
+			int argc, char *argv[])
 {
 	struct libmnt_context *cxt;
 	struct libmnt_fs *fs;
@@ -3387,7 +3392,8 @@ static int test_cxtsync(struct libmnt_test *ts, int argc, char *argv[])
 	return 0;
 }
 
-static int test_mountall(struct libmnt_test *ts, int argc, char *argv[])
+static int test_mountall(struct libmnt_test *ts __attribute__((unused)),
+			 int argc, char *argv[])
 {
 	struct libmnt_context *cxt;
 	struct libmnt_iter *itr;
