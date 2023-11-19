@@ -124,7 +124,8 @@ static void load_ifaces_from_getifaddrs(struct netns *nsobj)
 
 static const char *get_iface_name(ino_t netns, unsigned int iface_index)
 {
-	struct netns **nsobj = tfind(&netns, &netns_tree, netns_compare);
+	struct netns key = { .inode = netns };
+	struct netns **nsobj = tfind(&key, &netns_tree, netns_compare);
 	if (!nsobj)
 		return NULL;
 
@@ -138,7 +139,8 @@ static const char *get_iface_name(ino_t netns, unsigned int iface_index)
 
 static bool is_sock_xinfo_loaded(ino_t netns)
 {
-	return tfind(&netns, &netns_tree, netns_compare)? true: false;
+	struct netns key = { .inode = netns };
+	return tfind(&key, &netns_tree, netns_compare)? true: false;
 }
 
 static struct netns *mark_sock_xinfo_loaded(ino_t ino)
@@ -281,7 +283,8 @@ static void add_sock_info(struct sock_xinfo *xinfo)
 
 struct sock_xinfo *get_sock_xinfo(ino_t netns_inode)
 {
-	struct sock_xinfo **xinfo = tfind(&netns_inode, &xinfo_tree, xinfo_compare);
+	struct sock_xinfo key = { .inode = netns_inode };
+	struct sock_xinfo **xinfo = tfind(&key, &xinfo_tree, xinfo_compare);
 
 	if (xinfo)
 		return *xinfo;
