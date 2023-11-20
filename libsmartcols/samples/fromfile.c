@@ -19,118 +19,26 @@
 #include "xalloc.h"
 #include "optutils.h"
 #include "mangle.h"
+#include "path.h"
 
 #include "libsmartcols.h"
 
-struct column_flag {
-	const char *name;
-	int mask;
-};
-
-static const struct column_flag flags[] = {
-	{ "trunc",	SCOLS_FL_TRUNC },
-	{ "tree",	SCOLS_FL_TREE },
-	{ "right",	SCOLS_FL_RIGHT },
-	{ "strictwidth",SCOLS_FL_STRICTWIDTH },
-	{ "noextremes", SCOLS_FL_NOEXTREMES },
-	{ "hidden",	SCOLS_FL_HIDDEN },
-	{ "wrap",	SCOLS_FL_WRAP },
-	{ "wrapnl",	SCOLS_FL_WRAP },
-	{ "wrapzero",	SCOLS_FL_WRAP },
-	{ "none",	0 }
-};
-
-static long name_to_flag(const char *name, size_t namesz)
+static struct libscols_column *parse_column(const char *path)
 {
-	size_t i;
+	char buf[BUFSIZ];
+	struct libscols_column *cl;
 
-	for (i = 0; i < ARRAY_SIZE(flags); i++) {
-		const char *cn = flags[i].name;
+	if (ul_path_read_buffer(NULL, buf, sizeof(buf), path) < 0)
+		err(EXIT_FAILURE, "failed to read column: %s", path);
 
-		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
-			return flags[i].mask;
-	}
-	warnx("unknown flag: %s", name);
-	return -1;
-}
+	cl = scols_new_column();
+	if (!cl)
+		err(EXIT_FAILURE, "failed to allocate column");
 
-static int parse_column_flags(char *str)
-{
-	unsigned long num_flags = 0;
+	if (scols_column_set_properties(cl, buf) != 0)
+		err(EXIT_FAILURE, "failed to set column properties");
 
-	if (string_to_bitmask(str, &num_flags, name_to_flag))
-		err(EXIT_FAILURE, "failed to parse column flags");
-
-	return num_flags;
-}
-
-static struct libscols_column *parse_column(FILE *f)
-{
-	size_t len = 0;
-	char *line = NULL;
-	int nlines = 0;
-
-	struct libscols_column *cl = NULL;
-
-	while (getline(&line, &len, f) != -1) {
-
-		char *p = strrchr(line, '\n');
-		if (p)
-			*p = '\0';
-
-		switch (nlines) {
-		case 0: /* NAME */
-			cl = scols_new_column();
-			if (!cl)
-				goto fail;
-			if (scols_column_set_name(cl, line) != 0)
-				goto fail;
-			break;
-
-		case 1: /* WIDTH-HINT */
-		{
-			double whint = strtod_or_err(line, "failed to parse column whint");
-			if (scols_column_set_whint(cl, whint))
-				goto fail;
-			break;
-		}
-		case 2: /* FLAGS */
-		{
-			int num_flags = parse_column_flags(line);
-			if (scols_column_set_flags(cl, num_flags))
-				goto fail;
-			if (strcmp(line, "wrapnl") == 0) {
-				scols_column_set_wrapfunc(cl,
-						NULL,
-						scols_wrapnl_nextchunk,
-						NULL);
-				scols_column_set_safechars(cl, "\n");
-
-			} else if (strcmp(line, "wrapzero") == 0) {
-				scols_column_set_wrapfunc(cl,
-						NULL,
-						scols_wrapzero_nextchunk,
-						NULL);
-			}
-			break;
-		}
-		case 3: /* COLOR */
-			if (scols_column_set_color(cl, line))
-				goto fail;
-			break;
-		default:
-			break;
-		}
-
-		nlines++;
-	}
-
-	free(line);
 	return cl;
-fail:
-	free(line);
-	scols_unref_column(cl);
-	return NULL;
 }
 
 static int parse_column_data(FILE *f, struct libscols_table *tb, int col)
@@ -360,16 +268,11 @@ int main(int argc, char *argv[])
 		switch(c) {
 		case 'c': /* add column from file */
 		{
-			struct libscols_column *cl;
-			FILE *f = fopen(optarg, "r");
+			struct libscols_column *cl = parse_column(optarg);
 
-			if (!f)
-				err(EXIT_FAILURE, "%s: open failed", optarg);
-			cl = parse_column(f);
 			if (cl && scols_table_add_column(tb, cl))
 				err(EXIT_FAILURE, "%s: failed to add column", optarg);
 			scols_unref_column(cl);
-			fclose(f);
 			break;
 		}
 		case 'd':
