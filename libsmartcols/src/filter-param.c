@@ -144,8 +144,25 @@ int filter_compile_param(struct libscols_filter *fltr, struct filter_param *n)
 
 static struct filter_param *copy_param(struct filter_param *n)
 {
-	return (struct filter_param *) filter_new_param(NULL,
-				n->type, F_HOLDER_NONE, (void *) &n->val);
+	void *data = NULL;
+
+	switch (n->type) {
+	case SCOLS_DATA_STRING:
+		data = n->val.str;
+		break;
+	case SCOLS_DATA_U64:
+		data = &n->val.num;
+		break;
+	case SCOLS_DATA_FLOAT:
+		data = &n->val.fnum;
+		break;
+	case SCOLS_DATA_BOOLEAN:
+		data = &n->val.boolean;
+		break;
+	}
+
+	DBG(FPARAM, ul_debugobj(n, "copying"));
+	return (struct filter_param *) filter_new_param(NULL, n->type, F_HOLDER_NONE, data);
 }
 
 static void param_reset_data(struct filter_param *n)
@@ -270,6 +287,7 @@ static int fetch_holder_data(struct libscols_filter *fltr __attribute__((__unuse
 	DBG(FPARAM, ul_debugobj(n, "fetching %s data", n->holder_name));
 
 	if (fltr->filler_cb && !scols_line_is_filled(ln, cl->seqnum)) {
+		DBG(FPARAM, ul_debugobj(n, "  by callback"));
 		rc = fltr->filler_cb(fltr, ln, cl->seqnum, fltr->filler_data);
 		if (rc)
 			return rc;
@@ -280,12 +298,13 @@ static int fetch_holder_data(struct libscols_filter *fltr __attribute__((__unuse
 	if (scols_column_has_data_func(cl)) {
 		struct libscols_cell *ce = scols_line_get_column_cell(ln, cl);
 
+		DBG(FPARAM, ul_debugobj(n, " using datafunc()"));
 		if (ce)
 			data = cl->datafunc(n->col, ce, cl->datafunc_data);
 		if (data)
 			rc = param_set_data(n, scols_column_get_data_type(cl), data);
 	} else {
-		/* read column data, use it as string */
+		DBG(FPARAM, ul_debugobj(n, " using as string"));
 		data = scols_line_get_column_data(ln, n->col);
 		rc = param_set_data(n, SCOLS_DATA_STRING, data);
 	}
@@ -737,6 +756,7 @@ int filter_cast_param(struct libscols_filter *fltr,
 	int rc;
 	int orgtype = n->type;
 
+	DBG(FPARAM, ul_debugobj(n, "casting param to %s", datatype2str(type)));
 	rc = fetch_holder_data(fltr, n, ln);
 	if (rc)
 		return rc;
