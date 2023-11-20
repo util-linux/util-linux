@@ -867,7 +867,7 @@ int scols_column_set_properties(struct libscols_column *cl, const char *opts)
 			flags |= SCOLS_FL_STRICTWIDTH;
 
 		else if (strncmp(name, "noextremes", namesz) == 0)
-			flags |= SCOLS_FL_STRICTWIDTH;
+			flags |= SCOLS_FL_NOEXTREMES;
 
 		else if (strncmp(name, "hidden", namesz) == 0)
 			flags |= SCOLS_FL_HIDDEN;
@@ -875,7 +875,22 @@ int scols_column_set_properties(struct libscols_column *cl, const char *opts)
 		else if (strncmp(name, "wrap", namesz) == 0)
 			flags |= SCOLS_FL_WRAP;
 
-		else if (value && strncmp(name, "json", namesz) == 0) {
+		else if (strncmp(name, "wrapnl", namesz) == 0) {
+			flags |= SCOLS_FL_WRAP;
+			scols_column_set_wrapfunc(cl,
+					NULL,
+					scols_wrapnl_nextchunk,
+					NULL);
+			scols_column_set_safechars(cl, "\n");
+
+		} else if (strncmp(name, "wrapzero", namesz) == 0) {
+			flags |= SCOLS_FL_WRAP;
+			scols_column_set_wrapfunc(cl,
+					NULL,
+					scols_wrapzero_nextchunk,
+					NULL);
+
+		} else if (value && strncmp(name, "json", namesz) == 0) {
 
 			if (strncmp(value, "string", valuesz) == 0)
 				rc = scols_column_set_json_type(cl, SCOLS_JSON_STRING);
@@ -894,9 +909,8 @@ int scols_column_set_properties(struct libscols_column *cl, const char *opts)
 
 			char *end = NULL;
 			double x = strtod(value, &end);
-			if (errno || str == end)
+			if (errno || value == end)
 				return -EINVAL;
-
 			rc = scols_column_set_whint(cl, x);
 
 		} else if (value && strncmp(name, "color", namesz) == 0) {
