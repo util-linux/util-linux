@@ -320,3 +320,7 @@ FDISK_2.36 {
 FDISK_2.38 {
 	fdisk_dos_fix_chs;
 } FDISK_2.36;
+
+FDISK_2.40 {
+	fdisk_partition_get_max_size;
+} FDISK_2.38;

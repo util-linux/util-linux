@@ -2458,18 +2458,17 @@ static int main_menu_action(struct cfdisk *cf, int key)
 	}
 	case 'r': /* resize */
 	{
-		struct fdisk_partition *npa, *next;
 		uint64_t size, max_size, secs;
+		struct fdisk_partition *npa;
 
 		if (fdisk_partition_is_freespace(pa) || !fdisk_partition_has_start(pa))
 			return -EINVAL;
 
-		size = fdisk_partition_get_size(pa);
-
-		/* is the next freespace? */
-		next = fdisk_table_get_partition(cf->table, cf->lines_idx + 1);
-		if (next && fdisk_partition_is_freespace(next))
-			size += fdisk_partition_get_size(next);
+		rc = fdisk_partition_get_max_size(cf->cxt,
+						  fdisk_partition_get_partno(pa),
+						  &size);
+		if (rc)
+			return rc;
 
 		size *= fdisk_get_sector_size(cf->cxt);
 		max_size = size;

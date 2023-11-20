@@ -1108,7 +1108,7 @@ static int parse_size_value(struct fdisk_script *dp, struct fdisk_partition *pa,
 done:
 	DBG(SCRIPT, ul_debugobj(dp, "  size parse result: rc=%d, move=%s, size=%ju, default=%s",
 				rc, pa->resize == FDISK_RESIZE_REDUCE ? "reduce" :
-				    pa->resize == FDISK_RESIZE_ENLARGE ? "enlage" : "none",
+				    pa->resize == FDISK_RESIZE_ENLARGE ? "enlarge" : "none",
 				    pa->size,
 				    pa->end_follow_default ? "on" : "off"));
 	return rc;
