@@ -1,7 +1,6 @@
 
 check_PROGRAMS += \
 	sample-scols-colors \
-	sample-scols-filter \
 	sample-scols-title \
 	sample-scols-wrap \
 	sample-scols-continuous \
@@ -24,10 +23,6 @@ endif
 sample_scols_colors_SOURCES = libsmartcols/samples/colors.c
 sample_scols_colors_LDADD = $(sample_scols_ldadd) libcommon.la
 sample_scols_colors_CFLAGS = $(sample_scols_cflags)
-
-sample_scols_filter_SOURCES = libsmartcols/samples/filter.c
-sample_scols_filter_LDADD = $(sample_scols_ldadd) libcommon.la
-sample_scols_filter_CFLAGS = $(sample_scols_cflags)
 
 sample_scols_title_SOURCES = libsmartcols/samples/title.c
 sample_scols_title_LDADD = $(sample_scols_ldadd) libcommon.la
