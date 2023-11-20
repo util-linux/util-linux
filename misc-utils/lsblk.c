@@ -891,13 +891,13 @@ static char *device_get_data(
 		break;
 	case COL_MAJ:
 		xasprintf(&str, "%u", dev->maj);
-		if (sortdata)
-			*sortdata = dev->maj;
+		if (rawdata)
+			*rawdata = dev->maj;
 		break;
 	case COL_MIN:
 		xasprintf(&str, "%u", dev->min);
-		if (sortdata)
-			*sortdata = dev->min;
+		if (rawdata)
+			*rawdata = dev->min;
 		break;
 	case COL_FSTYPE:
 		prop = lsblk_device_get_properties(dev);
