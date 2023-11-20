@@ -156,7 +156,7 @@ static struct libscols_filter *init_filter(
 		scols_dump_filter(f, stdout);
 	if (rc) {
 		scols_unref_filter(f);
-		err(EXIT_FAILURE, "failed to initialize filter");
+		errx(EXIT_FAILURE, "failed to initialize filter");
 	}
 
 	return f;
