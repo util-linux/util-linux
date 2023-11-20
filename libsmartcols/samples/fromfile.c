@@ -212,6 +212,81 @@ static void compose_tree(struct libscols_table *tb, int parent_col, int id_col)
 	scols_free_iter(itr);
 }
 
+static struct libscols_filter *init_filter(
+			struct libscols_table *tb,
+			const char *query, int dump)
+{
+	struct libscols_iter *itr;
+	struct libscols_filter *f = scols_new_filter(NULL);
+	const char *name = NULL;
+	int rc = 0;
+
+	if (!f)
+		err(EXIT_FAILURE, "failed to allocate filter");
+	if (scols_filter_parse_string(f, query) != 0)
+		errx(EXIT_FAILURE, "failed to parse filter: %s",
+				scols_filter_get_errmsg(f));
+
+	itr = scols_new_iter(SCOLS_ITER_FORWARD);
+	if (!itr)
+		err(EXIT_FAILURE, "failed to allocate iterator");
+
+	while (scols_filter_next_holder(f, itr, &name, 0) == 0) {
+		struct libscols_column *col;
+
+		col = scols_table_get_column_by_name(tb, name);
+		if (!col) {
+			warnx("unknown column '%s' in filter", name);
+			rc++;
+			continue;
+		}
+		scols_filter_assign_column(f, itr, name, col);
+	}
+
+	scols_free_iter(itr);
+	if (dump && f)
+		scols_dump_filter(f, stdout);
+	if (rc) {
+		scols_unref_filter(f);
+		err(EXIT_FAILURE, "failed to initialize filter");
+	}
+
+	return f;
+}
+
+/* Note: This is a simple (naive) way to use the filter, employed here for
+ * testing functionality.
+ *
+ * A more effective approach to using the filter is demonstrated in lsblk.c,
+ * where data manipulation is divided into two steps. The initial step prepares
+ * only the data necessary for evaluating the filter, and the remaining data is
+ * gathered later, only if necessary.
+ */
+static void apply_filter(struct libscols_table *tb, struct libscols_filter *fltr)
+{
+	struct libscols_iter *itr = scols_new_iter(SCOLS_ITER_FORWARD);
+	struct libscols_line *ln;
+
+	if (!itr)
+		err(EXIT_FAILURE, "failed to allocate iterator");
+
+	while (scols_table_next_line(tb, itr, &ln) == 0) {
+		int status = 0;
+
+		if (scols_line_apply_filter(ln, fltr, &status) != 0)
+			err(EXIT_FAILURE, "failed to apply filter");
+		if (status == 0) {
+			struct libscols_line *x = scols_line_get_parent(ln);
+
+			if (x)
+				scols_line_remove_child(x, ln);
+			scols_table_remove_line(tb, ln);
+			ln = NULL;
+		}
+	}
+
+	scols_free_iter(itr);
+}
 
 static void __attribute__((__noreturn__)) usage(void)
 {
@@ -230,6 +305,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(" -w, --width <num>              hardcode terminal width\n", out);
 	fputs(" -p, --tree-parent-column <n>   parent column\n", out);
 	fputs(" -i, --tree-id-column <n>       id column\n", out);
+	fputs(" -Q, --filter <expr>            filter\n", out);
 	fputs(" -h, --help                     this help\n", out);
 	fputs("\n", out);
 
@@ -241,6 +317,9 @@ int main(int argc, char *argv[])
 	struct libscols_table *tb;
 	int c, n, nlines = 0;
 	int parent_col = -1, id_col = -1;
+	int fltr_dump = 0;
+	const char *fltr_str = NULL;
+	struct libscols_filter *fltr = NULL;
 
 	static const struct option longopts[] = {
 		{ "maxout", 0, NULL, 'm' },
@@ -254,6 +333,8 @@ int main(int argc, char *argv[])
 		{ "raw",    0, NULL, 'r' },
 		{ "export", 0, NULL, 'E' },
 		{ "colsep",  1, NULL, 'C' },
+		{ "filter", 1, NULL, 'Q' },
+		{ "filter-dump", 0, NULL, 'd' },
 		{ "help",   0, NULL, 'h' },
 		{ NULL, 0, NULL, 0 },
 	};
@@ -272,7 +353,7 @@ int main(int argc, char *argv[])
 	if (!tb)
 		err(EXIT_FAILURE, "failed to create output table");
 
-	while((c = getopt_long(argc, argv, "hCc:Ei:JMmn:p:rw:", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "hCc:dEi:JMmn:p:Q:rw:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -291,6 +372,9 @@ int main(int argc, char *argv[])
 			fclose(f);
 			break;
 		}
+		case 'd':
+			fltr_dump = 1;
+			break;
 		case 'p':
 			parent_col = strtou32_or_err(optarg, "failed to parse tree PARENT column");
 			break;
@@ -319,6 +403,9 @@ int main(int argc, char *argv[])
 		case 'n':
 			nlines = strtou32_or_err(optarg, "failed to parse number of lines");
 			break;
+		case 'Q':
+			fltr_str = optarg;
+			break;
 		case 'w':
 			scols_table_set_termforce(tb, SCOLS_TERMFORCE_ALWAYS);
 			scols_table_set_termwidth(tb, strtou32_or_err(optarg, "failed to parse terminal width"));
@@ -342,6 +429,9 @@ int main(int argc, char *argv[])
 		scols_unref_line(ln);
 	}
 
+	if (fltr_str)
+		fltr = init_filter(tb, fltr_str, fltr_dump);
+
 	n = 0;
 
 	while (optind < argc) {
@@ -360,7 +450,12 @@ int main(int argc, char *argv[])
 
 	scols_table_enable_colors(tb, isatty(STDOUT_FILENO));
 
+	if (fltr)
+		apply_filter(tb, fltr);
+
 	scols_print_table(tb);
+
+	scols_unref_filter(fltr);
 	scols_unref_table(tb);
 	return EXIT_SUCCESS;
 }
