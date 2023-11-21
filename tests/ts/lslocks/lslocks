@@ -29,6 +29,7 @@ ts_cd "$TS_OUTDIR"
 FILE0=util-linux-lslocks-target-file
 FILE=${FILE0}--$$
 FD=17
+DFD=18
 COLS=COMMAND,TYPE,SIZE,MODE,START,END
 OPTS="--raw --noheadings"
 METHODS=(
@@ -43,6 +44,17 @@ METHODS=(
     lease-w
 )
 
+OFD_METHODS=(
+    flock-sh
+    flock-ex
+    ofd-r-
+    ofd--w
+    ofd-rw
+    lease-w
+)
+
+DFD=18
+COLS_WITH_HOLDERS=COMMAND,TYPE,SIZE,MODE,START,END,HOLDERS
 run_lslocks()
 {
     local m=$1
@@ -62,8 +74,31 @@ run_lslocks()
     wait "${MKFDS_PID}"
 }
 
+run_lslocks_with_co_holders()
+{
+    local m=$1
+
+    {
+	rm -f "${FILE}"
+	coproc MKFDS { "$TS_HELPER_MKFDS" make-regular-file $FD file="$FILE" lock=$m dupfd=$DFD; }
+	if read -r -u "${MKFDS[0]}" PID; then
+	    "$TS_CMD_LSLOCKS" ${OPTS} --pid "${PID}" -o "${COLS_WITH_HOLDERS}" | sed -e "s/${PID},/1,/g"
+	    echo "# $m + ${COLS_WITH_HOLDERS} + ${OPTS}": ${PIPESTATUS[0]}
+	    echo DONE >&"${MKFDS[1]}"
+	fi
+    } > "$TS_OUTPUT" 2>&1
+
+    wait "${MKFDS_PID}"
+}
+
 for m in "${METHODS[@]}"; do
     ts_init_subtest "$m"
-    run_lslocks "$m"  
+    run_lslocks "$m"
+    ts_finalize_subtest
+done
+
+for m in "${OFD_METHODS[@]}"; do
+    ts_init_subtest "$m+HOLDERS"
+    run_lslocks_with_co_holders "$m"
     ts_finalize_subtest
 done
