@@ -402,18 +402,19 @@ static void unlink_and_close_fdesc(int fd, void *data)
 	close(fd);
 }
 
-typedef void (*lockFn)(int fd, const char *fname);
+typedef void (*lockFn)(int fd, const char *fname, int dupfd);
 
-static void lock_fn_none(int fd _U_, const char *fname _U_)
+static void lock_fn_none(int fd _U_, const char *fname _U_, int dupfd _U_)
 {
 	/* Do nothing */
 }
 
-static void lock_fn_flock_sh(int fd, const char *fname)
+static void lock_fn_flock_sh(int fd, const char *fname, int dupfd)
 {
 	if (flock(fd, LOCK_SH) < 0) {
 		int e = errno;
 		close(fd);
+		close(dupfd);
 		if (fname)
 			unlink(fname);
 		errno = e;
@@ -421,11 +422,12 @@ static void lock_fn_flock_sh(int fd, const char *fname)
 	}
 }
 
-static void lock_fn_flock_ex(int fd, const char *fname)
+static void lock_fn_flock_ex(int fd, const char *fname, int dupfd)
 {
 	if (flock(fd, LOCK_EX) < 0)  {
 		int e = errno;
 		close(fd);
+		close(dupfd);
 		if (fname)
 			unlink(fname);
 		errno = e;
@@ -433,7 +435,7 @@ static void lock_fn_flock_ex(int fd, const char *fname)
 	}
 }
 
-static void lock_fn_posix_r_(int fd, const char *fname)
+static void lock_fn_posix_r_(int fd, const char *fname, int dupfd)
 {
 	struct flock r = {
 		.l_type = F_RDLCK,
@@ -444,6 +446,7 @@ static void lock_fn_posix_r_(int fd, const char *fname)
 	if (fcntl(fd, F_SETLK, &r) < 0) {
 		int e = errno;
 		close(fd);
+		close(dupfd);
 		if (fname)
 			unlink(fname);
 		errno = e;
@@ -451,7 +454,7 @@ static void lock_fn_posix_r_(int fd, const char *fname)
 	}
 }
 
-static void lock_fn_posix__w(int fd, const char *fname)
+static void lock_fn_posix__w(int fd, const char *fname, int dupfd)
 {
 	struct flock w = {
 		.l_type = F_WRLCK,
@@ -462,6 +465,7 @@ static void lock_fn_posix__w(int fd, const char *fname)
 	if (fcntl(fd, F_SETLK, &w) < 0) {
 		int e = errno;
 		close(fd);
+		close(dupfd);
 		if (fname)
 			unlink(fname);
 		errno = e;
@@ -469,7 +473,7 @@ static void lock_fn_posix__w(int fd, const char *fname)
 	}
 }
 
-static void lock_fn_posix_rw(int fd, const char *fname)
+static void lock_fn_posix_rw(int fd, const char *fname, int dupfd)
 {
 	struct flock r = {
 		.l_type = F_RDLCK,
@@ -486,6 +490,7 @@ static void lock_fn_posix_rw(int fd, const char *fname)
 	if (fcntl(fd, F_SETLK, &r) < 0) {
 		int e = errno;
 		close(fd);
+		close(dupfd);
 		if (fname)
 			unlink(fname);
 		errno = e;
@@ -494,6 +499,7 @@ static void lock_fn_posix_rw(int fd, const char *fname)
 	if (fcntl(fd, F_SETLK, &w) < 0) {
 		int e = errno;
 		close(fd);
+		close(dupfd);
 		if (fname)
 			unlink(fname);
 		errno = e;
@@ -501,7 +507,7 @@ static void lock_fn_posix_rw(int fd, const char *fname)
 	}
 }
 
-static void lock_fn_ofd_r_(int fd, const char *fname)
+static void lock_fn_ofd_r_(int fd, const char *fname, int dupfd)
 {
 	struct flock r = {
 		.l_type = F_RDLCK,
@@ -513,6 +519,7 @@ static void lock_fn_ofd_r_(int fd, const char *fname)
 	if (fcntl(fd, F_OFD_SETLK, &r) < 0) {
 		int e = errno;
 		close(fd);
+		close(dupfd);
 		if (fname)
 			unlink(fname);
 		errno = e;
@@ -520,7 +527,7 @@ static void lock_fn_ofd_r_(int fd, const char *fname)
 	}
 }
 
-static void lock_fn_ofd__w(int fd, const char *fname)
+static void lock_fn_ofd__w(int fd, const char *fname, int dupfd)
 {
 	struct flock w = {
 		.l_type = F_WRLCK,
@@ -532,6 +539,7 @@ static void lock_fn_ofd__w(int fd, const char *fname)
 	if (fcntl(fd, F_OFD_SETLK, &w) < 0) {
 		int e = errno;
 		close(fd);
+		close(dupfd);
 		if (fname)
 			unlink(fname);
 		errno = e;
@@ -539,7 +547,7 @@ static void lock_fn_ofd__w(int fd, const char *fname)
 	}
 }
 
-static void lock_fn_ofd_rw(int fd, const char *fname)
+static void lock_fn_ofd_rw(int fd, const char *fname, int dupfd)
 {
 	struct flock r = {
 		.l_type = F_RDLCK,
@@ -558,6 +566,7 @@ static void lock_fn_ofd_rw(int fd, const char *fname)
 	if (fcntl(fd, F_OFD_SETLK, &r) < 0) {
 		int e = errno;
 		close(fd);
+		close(dupfd);
 		if (fname)
 			unlink(fname);
 		errno = e;
@@ -566,6 +575,7 @@ static void lock_fn_ofd_rw(int fd, const char *fname)
 	if (fcntl(fd, F_OFD_SETLK, &w) < 0) {
 		int e = errno;
 		close(fd);
+		close(dupfd);
 		if (fname)
 			unlink(fname);
 		errno = e;
@@ -573,11 +583,12 @@ static void lock_fn_ofd_rw(int fd, const char *fname)
 	}
 }
 
-static void lock_fn_lease_w(int fd, const char *fname)
+static void lock_fn_lease_w(int fd, const char *fname, int dupfd)
 {
 	if (fcntl(fd, F_SETLEASE, F_WRLCK) < 0) {
 		int e = errno;
 		close(fd);
+		close(dupfd);
 		if (fname)
 			unlink(fname);
 		errno = e;
@@ -606,6 +617,11 @@ static void *make_w_regular_file(const struct factory *factory, struct fdesc fde
 	struct arg lock = decode_arg("lock", factory->params, argc, argv);
 	const char *sLock = ARG_STRING(lock);
 	lockFn lock_fn;
+
+	struct arg dupfd = decode_arg("dupfd", factory->params, argc, argv);
+	int iDupfd = ARG_INTEGER(dupfd);
+
+	void *data = NULL;
 
 	if (iWrite_bytes < 0)
 		errx(EXIT_FAILURE, "write-bytes must be a positive number or zero.");
@@ -649,6 +665,7 @@ static void *make_w_regular_file(const struct factory *factory, struct fdesc fde
 	else
 		errx(EXIT_FAILURE, "unexpected value for lock parameter: %s", sLock);
 
+	free_arg(&dupfd);
 	free_arg(&lock);
 	free_arg(&readable);
 	free_arg(&write_bytes);
@@ -694,7 +711,20 @@ static void *make_w_regular_file(const struct factory *factory, struct fdesc fde
 		}
 	}
 
-	lock_fn(fd, fname);
+	if (iDupfd >= 0) {
+		if (dup2(fd, iDupfd) < 0) {
+			int e = errno;
+			close(fd);
+			if (fname)
+				unlink(fname);
+			errno = e;
+			err(EXIT_FAILURE, "failed in dup2");
+		}
+		data = xmalloc(sizeof (iDupfd));
+		*((int *)data) = iDupfd;
+	}
+
+	lock_fn(fd, fname, iDupfd);
 
 	fdescs[0] = (struct fdesc){
 		.fd    = fdescs[0].fd,
@@ -702,7 +732,16 @@ static void *make_w_regular_file(const struct factory *factory, struct fdesc fde
 		.data  = fname,
 	};
 
-	return NULL;
+	return data;
+}
+
+static void free_after_closing_duplicated_fd(const struct factory * factory _U_, void *data)
+{
+	if (data) {
+		int *fdp = data;
+		close(*fdp);
+		free (data);
+	}
 }
 
 static void *make_pipe(const struct factory *factory, struct fdesc fdescs[],
@@ -3151,6 +3190,7 @@ static const struct factory factories[] = {
 		.N    = 1,
 		.EX_N = 0,
 		.make = make_w_regular_file,
+		.free = free_after_closing_duplicated_fd,
 		.params = (struct parameter []) {
 			{
 				.name = "file",
@@ -3181,6 +3221,12 @@ static const struct factory factories[] = {
 				.type = PTYPE_STRING,
 				.desc = "the way for file locking: [none]|flock-sh|flock-ex|posix-r-|posix--w|posix-rw|ofd-r-|ofd--w|ofd-rw|lease-w",
 				.defv.string = "none",
+			},
+			{
+				.name = "dupfd",
+				.type = PTYPE_INTEGER,
+				.desc = "the number for the fd duplicated from the original fd",
+				.defv.integer = -1,
 			},
 			PARAM_END
 		},
