@@ -151,7 +151,7 @@ static void add_to_tree(void *troot, struct lock *l)
 	struct lock_tnode *new_head;
 
 	if (head) {
-		list_add(&l->locks, &(*head)->chain);
+		list_add_tail(&l->locks, &(*head)->chain);
 		return;
 	}
 
@@ -162,7 +162,7 @@ static void add_to_tree(void *troot, struct lock *l)
 	if (tsearch(new_head, troot, lock_tnode_compare) == NULL)
 		errx(EXIT_FAILURE, _("failed to allocate memory"));
 
-	list_add(&l->locks, &new_head->chain);
+	list_add_tail(&l->locks, &new_head->chain);
 }
 
 static void rem_lock(struct lock *lock)
