@@ -61,7 +61,8 @@ enum {
 	COL_START,
 	COL_END,
 	COL_PATH,
-	COL_BLOCKER
+	COL_BLOCKER,
+	COL_HOLDERS,
 };
 
 /* column names */
@@ -85,7 +86,8 @@ static struct colinfo infos[] = {
 	[COL_START] = { "START", 10, SCOLS_FL_RIGHT, N_("relative byte offset of the lock")},
 	[COL_END]  = { "END",    10, SCOLS_FL_RIGHT, N_("ending offset of the lock")},
 	[COL_PATH] = { "PATH",    0, SCOLS_FL_TRUNC, N_("path of the locked file")},
-	[COL_BLOCKER] = { "BLOCKER", 0, SCOLS_FL_RIGHT, N_("PID of the process blocking the lock") }
+	[COL_BLOCKER] = { "BLOCKER", 0, SCOLS_FL_RIGHT, N_("PID of the process blocking the lock") },
+	[COL_HOLDERS] = { "HOLDERS", 0, SCOLS_FL_WRAP, N_("HOLDERS of the lock") },
 };
 
 static int columns[ARRAY_SIZE(infos) * 2];
@@ -293,7 +295,7 @@ struct override_info {
 	const char *cmdname;
 };
 
-static bool is_co_holder(struct lock *l, struct lock *m)
+static bool is_holder(struct lock *l, struct lock *m)
 {
 	return (l->start == m->start &&
 		l->end == m->end &&
@@ -316,7 +318,7 @@ static void patch_lock(struct lock *l, void *fallback)
 
 	list_for_each(p, &(*head)->chain) {
 		struct lock *m = list_entry(p, struct lock, locks);
-		if (is_co_holder(l, m)) {
+		if (is_holder(l, m)) {
 			/* size and id can be ignored. */
 			l->pid = m->pid;
 			l->cmdname = xstrdup(m->cmdname);
@@ -593,7 +595,13 @@ static pid_t get_blocker(int id, struct list_head *locks)
 	return 0;
 }
 
-static void add_scols_line(struct libscols_table *table, struct lock *l, struct list_head *locks)
+static void xstrcoholder(char **str, struct lock *l)
+{
+	xstrfappend(str, "%d,%s,%d",
+		    l->pid, l->cmdname, l->fd);
+}
+
+static void add_scols_line(struct libscols_table *table, struct lock *l, struct list_head *locks, void *pid_locks)
 {
 	size_t i;
 	struct libscols_line *line;
@@ -664,6 +672,27 @@ static void add_scols_line(struct libscols_table *table, struct lock *l, struct 
 				xasprintf(&str, "%d", (int) bl);
 			break;
 		}
+		case COL_HOLDERS:
+		{
+			struct lock_tnode tmp = { .dev = l->dev, .inode = l->inode, };
+			struct lock_tnode **head = tfind(&tmp, pid_locks, lock_tnode_compare);
+			struct list_head *p;
+
+			if (!head)
+				break;
+
+			list_for_each(p, &(*head)->chain) {
+				struct lock *m = list_entry(p, struct lock, locks);
+
+				if (!is_holder(l, m))
+					continue;
+
+				if (str)
+					xstrputc(&str, '\n');
+				xstrcoholder(&str, m);
+			}
+			break;
+		}
 		default:
 			break;
 		}
@@ -692,7 +721,7 @@ static void rem_tnode(void *node)
 	free(node);
 }
 
-static int show_locks(struct list_head *locks, pid_t target_pid)
+static int show_locks(struct list_head *locks, pid_t target_pid, void *pid_locks)
 {
 	int rc = 0;
 	size_t i;
@@ -718,6 +747,14 @@ static int show_locks(struct list_head *locks, pid_t target_pid)
 		if (!cl)
 			err(EXIT_FAILURE, _("failed to allocate output column"));
 
+		if (col->flags & SCOLS_FL_WRAP) {
+			scols_column_set_wrapfunc(cl,
+						  scols_wrapnl_chunksize,
+						  scols_wrapnl_nextchunk,
+						  NULL);
+			scols_column_set_safechars(cl, "\n");
+		}
+
 		if (json) {
 			int id = get_column_id(i);
 
@@ -736,6 +773,9 @@ static int show_locks(struct list_head *locks, pid_t target_pid)
 			case COL_M:
 				scols_column_set_json_type(cl, SCOLS_JSON_BOOLEAN);
 				break;
+			case COL_HOLDERS:
+				scols_column_set_json_type(cl, SCOLS_JSON_ARRAY_STRING);
+				break;
 			default:
 				scols_column_set_json_type(cl, SCOLS_JSON_STRING);
 				break;
@@ -751,7 +791,7 @@ static int show_locks(struct list_head *locks, pid_t target_pid)
 		if (target_pid && target_pid != l->pid)
 			continue;
 
-		add_scols_line(table, l, locks);
+		add_scols_line(table, l, locks, pid_locks);
 	}
 
 	scols_print_table(table);
@@ -906,7 +946,7 @@ int main(int argc, char *argv[])
 	rc = get_proc_locks(&proc_locks, add_to_list, &pid_locks);
 
 	if (!rc && !list_empty(&proc_locks))
-		rc = show_locks(&proc_locks, target_pid);
+		rc = show_locks(&proc_locks, target_pid, &pid_locks);
 
 	tdestroy(pid_locks, rem_tnode);
 	rem_locks(&proc_locks);

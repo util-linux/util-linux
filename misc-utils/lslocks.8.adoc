@@ -101,6 +101,11 @@ Full path of the lock. If none is found, or there are no permissions to read the
 BLOCKER::
 The PID of the process which blocks the lock.
 
+HOLDERS::
+The holder(s) of the lock.  The format of the holder is _PID_,_COMMAND_,_FD_.
+If a lock is an open file description-oriented lock, there can be more than one holder for the lock.
+See the NOTES below.
+
 == NOTES
 
 The *lslocks* command is meant to replace the *lslk*(8) command, originally written by mailto:abe@purdue.edu[Victor A. Abell] and unmaintained since 2001.
