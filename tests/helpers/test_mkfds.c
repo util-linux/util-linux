@@ -3139,7 +3139,7 @@ static const struct factory factories[] = {
 				.name = "read-lease",
 				.type = PTYPE_BOOLEAN,
 				.desc = "taking out read lease for the file",
-				.defv.integer = false,
+				.defv.boolean = false,
 			},
 			PARAM_END
 		},
