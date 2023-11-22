@@ -369,18 +369,29 @@ static inline int cmp_name(const struct irq_info *a,
 	return strcoll(a->name, b->name);
 }
 
+static inline int cmp_ulong_descending(unsigned long a,
+		      unsigned long b)
+{
+	if (a == b)
+		return 0;
+	if (a < b)
+		return 1;
+	else
+		return -1;
+}
+
 static inline int cmp_total(const struct irq_info *a,
 		      const struct irq_info *b)
 {
-	return a->total < b->total;
+	int cmp = cmp_ulong_descending(a->total, b->total);
+	return cmp ? cmp : cmp_name(a, b);
 }
 
 static inline int cmp_delta(const struct irq_info *a,
 		      const struct irq_info *b)
 {
-	if (a->delta != b->delta)
-		return a->delta < b->delta;
-	return cmp_name(a, b);
+	int cmp = cmp_ulong_descending(a->delta, b->delta);
+	return cmp ? cmp : cmp_name(a, b);
 }
 
 static inline int cmp_interrupts(const struct irq_info *a,
