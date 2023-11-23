@@ -75,7 +75,7 @@ List only IPv4 sockets and/or IPv6 sockets.
 
 *-Q*, *--filter* _expr_::
 Print only the files matching the condition represented by the _expr_.
-See also *FILTER EXAMPLES*.
+See also *scols-filter*(5) and *FILTER EXAMPLES*.
 
 *-C*, *--counter* __label__:__filter_expr__::
 Define a custom counter used in *--summary* output. *lsfd* makes a
@@ -84,7 +84,7 @@ matching _filter_expr_, and stores the counted number to the
 counter named _label_. *lsfd* applies filters defined with *--filter*
 options before counting; files excluded by the filters are not counted.
 +
-See *FILTER EXPRESSION* about _filter_expr_.
+See *scols-filter*(5) about _filter_expr_.
 _label_ should not include `{` nor `:`. You can define multiple
 counters by specifying this option multiple times.
 +
@@ -566,110 +566,6 @@ classical system calls is interrupted, *lsfd* may fail to mark _m_
 on the file descriptors monitored by the invocaiton.
 See *restart_syscall*(2).
 
-== FILTER EXPRESSION
-
-*lsfd* evaluates the expression passed to *--filter* option every time
-before printing a file line. *lsfd* prints the line only if the result
-of evaluation is `true`.
-
-An expression consists of column names, literals and, operators like:
-`DELETED`, `(PID == 1)`, `(NAME == "/etc/passwd")`, `(PID == 1) && DELETED`.
-`DELETED`, `PID`, and `NAME` are column names in the example.
-`1` and "/etc/passwd" are literals.
-`==` and `&&` are operators.
-
-Before evaluation, *lsfd* substitutes column names in the given
-expression with actual column values in the line. There are three
-different data types: `boolean`, `string`, and `number`.  For columns
-with a `boolean` type, the value can be stand-alone.  For `string` and
-`number` values, the value must be an operand of an operator, for
-example, `(PID == 1)`. See *OUTPUT COLUMNS* about the types of
-columns.
-
-Literal is for representing a value directly. See BOOLLIT, STRLIT, and
-NUMLIT. Different data types have different literal syntax.
-
-An operator works with one or two operand(s). An operator has an
-expectation about the data type(s) of its operands. Giving an
-unexpected data type to an operator causes a syntax error.
-
-Operators taking two operands are `and`, `or`, `eq`, `ne`, `le`, `lt`, `ge`, `gt`, `=~`, `!~`.
-Alphabetically named operators have C-language
-flavored aliases: `&&`, `||`, `==`, `!=`, `<`, `<=`, `>=`, and `>`.
-
-`!` is the only operator that takes one operand.
-
-`eq`, `ne`, and their aliases expect operands have the same data type.
-Applying these operators return a `boolean`.
-
-`and`, `or`, `not` and their aliases expect operands have `boolean` data
-type. Applying these operators return a `boolean`.
-
-`lt`, `le`, `gt`, `ge`, and their aliases expect operands have
-`number` data types. Applying these operators return a `boolean`.
-
-`=~` is for regular expression matching; if a string at the right side
-matches a regular expression at the left side, the result is true.
-The right side operand must be a string literal. See STRLIT about the
-syntax.
-
-`!~` is a short-hand version of `not (STR =~ PAT)`; it inverts the
-result of `=~`.
-
-=== Limitations
-
-The current implementation does not define precedences within
-operators.  Use `(` and `)` explicitly for grouping the
-sub-expressions if your expression uses more than two operators.
-
-About `number` typed values, the filter engine supports only
-non-negative integers, and non-negative floating point numbers.
-
-=== Semi-formal syntax
-
-//TRANSLATORS: In the following messages, translate only the <``variables``>.
-EXPR :: BOOLEXP
-
-BOOLEXP0 :: COLUMN <``boolean``> | BOOLLIT | _(_ BOOLEXP _)_
-
-BOOLEXP :: BOOLEXP0 | BOOLOP1 | BOOLOP2 | BOOLOP2BL | BOOLOP2CMP | BOOLOP2REG
-
-COLUMN :: [\_A-Za-z][-_:A-Za-z0-9]*
-
-BOOLOP1 :: _!_ BOOLEXP0 | _not_ BOOLEXP0
-
-STREXP :: COLUMN <``string``> | STRLIT
-
-NUMEXP :: COLUMN <``number``> | NUMLIT
-
-BOOLLIT :: _true_ | _false_
-
-CHARS  :: ( [^\] | _\\_ | _\'_ | _\"_ )*
-
-STRLIT :: _'_ CHARS _'_ | _"_ CHARS _"_
-
-NUMLIT :: INTLIT | FNUMLIT
-
-INTLIT :: [1-9][0-9]* | _0_
-
-FNUMLIT :: INTLIT _._ [0-9][0-9]*
-
-BOOLOP2 :: STREXP OP2 STREXP | NUMEXP OP2 NUMEXP | BOOLEXP0 OP2 BOOLEXP0
-
-OP2   :: _==_ | _eq_ | _!=_ | _ne_
-
-BOOLOP2BL :: BOOLEXP0 OP2BL BOOLEXP0
-
-OP2BL ::  _&&_ | _and_ |  _||_ | _or_
-
-BOOLOP2CMP :: NUMEXP OP2CMP NUMEXP
-
-OP2CMP :: _<_ | _lt_ | _\<=_ | _le_ | _>_ | _gt_ | _>=_ | _ge_
-
-BOOLOP2REG :: STREXP OP2REG STRLIT
-
-OP2REG :: _=~_ | _!~_
-
 == FILTER EXAMPLES
 
 *lsfd* has few options for filtering. In most of cases, what you should
@@ -814,6 +710,7 @@ mailto:kzak@redhat.com[Karel Zak]
 *lsof*(8)
 *pidof*(1)
 *proc*(5)
+*scols-filter*(5)
 *socket*(2)
 *ss*(8)
 *stat*(2)
