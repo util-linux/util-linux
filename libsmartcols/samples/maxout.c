@@ -19,7 +19,7 @@
 
 enum { COL_LEFT, COL_FOO, COL_RIGHT };
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	struct libscols_table *tb;
 	int rc = -1, nlines = 3;

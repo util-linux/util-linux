@@ -1925,7 +1925,8 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 #ifdef TEST_PROGRAM
 #include "pathnames.h"
 
-static int parser_errcb(struct libmnt_table *tb, const char *filename, int line)
+static int parser_errcb(struct libmnt_table *tb __attribute__((unused)),
+			const char *filename, int line)
 {
 	fprintf(stderr, "%s:%d: parse error\n", filename, line);
 
@@ -1954,11 +1955,15 @@ err:
 	return NULL;
 }
 
-static int test_copy_fs(struct libmnt_test *ts, int argc, char *argv[])
+static int test_copy_fs(struct libmnt_test *ts __attribute__((unused)),
+			int argc, char *argv[])
 {
 	struct libmnt_table *tb;
 	struct libmnt_fs *fs;
 	int rc = -1;
+
+	if (argc != 2)
+		return -1;
 
 	tb = create_table(argv[1], FALSE);
 	if (!tb)
@@ -1984,7 +1989,8 @@ done:
 	return rc;
 }
 
-static int test_parse(struct libmnt_test *ts, int argc, char *argv[])
+static int test_parse(struct libmnt_test *ts __attribute__((unused)),
+		      int argc, char *argv[])
 {
 	struct libmnt_table *tb = NULL;
 	struct libmnt_iter *itr = NULL;
@@ -2020,7 +2026,8 @@ done:
 	return rc;
 }
 
-static int test_find_idx(struct libmnt_test *ts, int argc, char *argv[])
+static int test_find_idx(struct libmnt_test *ts __attribute__((unused)),
+			 int argc, char *argv[])
 {
 	struct libmnt_table *tb;
 	struct libmnt_fs *fs = NULL;
@@ -2065,7 +2072,8 @@ done:
 	return rc;
 }
 
-static int test_find(struct libmnt_test *ts, int argc, char *argv[], int dr)
+static int test_find(struct libmnt_test *ts __attribute__((unused)),
+		     int argc, char *argv[], int dr)
 {
 	struct libmnt_table *tb;
 	struct libmnt_fs *fs = NULL;
@@ -2107,22 +2115,28 @@ done:
 	return rc;
 }
 
-static int test_find_bw(struct libmnt_test *ts, int argc, char *argv[])
+static int test_find_bw(struct libmnt_test *ts __attribute__((unused)),
+			int argc, char *argv[])
 {
 	return test_find(ts, argc, argv, MNT_ITER_BACKWARD);
 }
 
-static int test_find_fw(struct libmnt_test *ts, int argc, char *argv[])
+static int test_find_fw(struct libmnt_test *ts __attribute__((unused)),
+			int argc, char *argv[])
 {
 	return test_find(ts, argc, argv, MNT_ITER_FORWARD);
 }
 
-static int test_find_pair(struct libmnt_test *ts, int argc, char *argv[])
+static int test_find_pair(struct libmnt_test *ts __attribute__((unused)),
+			  int argc, char *argv[])
 {
 	struct libmnt_table *tb;
 	struct libmnt_fs *fs;
 	struct libmnt_cache *mpc = NULL;
 	int rc = -1;
+
+	if (argc != 4)
+		return -1;
 
 	tb = create_table(argv[1], FALSE);
 	if (!tb)
@@ -2144,12 +2158,16 @@ done:
 	return rc;
 }
 
-static int test_find_mountpoint(struct libmnt_test *ts, int argc, char *argv[])
+static int test_find_mountpoint(struct libmnt_test *ts __attribute__((unused)),
+				int argc, char *argv[])
 {
 	struct libmnt_table *tb;
 	struct libmnt_fs *fs;
 	struct libmnt_cache *mpc = NULL;
 	int rc = -1;
+
+	if (argc != 2)
+		return -1;
 
 	tb = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
 	if (!tb)
@@ -2171,12 +2189,16 @@ done:
 	return rc;
 }
 
-static int test_is_mounted(struct libmnt_test *ts, int argc, char *argv[])
+static int test_is_mounted(struct libmnt_test *ts __attribute__((unused)),
+			   int argc, char *argv[])
 {
 	struct libmnt_table *tb = NULL, *fstab = NULL;
 	struct libmnt_fs *fs;
 	struct libmnt_iter *itr = NULL;
 	struct libmnt_cache *mpc = NULL;
+
+	if (argc != 2)
+		return -1;
 
 	tb = mnt_new_table_from_file("/proc/self/mountinfo");
 	if (!tb) {
@@ -2227,7 +2249,8 @@ static int test_uniq_cmp(struct libmnt_table *tb __attribute__((__unused__)),
 	return mnt_fs_streq_target(a, mnt_fs_get_target(b)) ? 0 : 1;
 }
 
-static int test_uniq(struct libmnt_test *ts, int argc, char *argv[])
+static int test_uniq(struct libmnt_test *ts __attribute__((unused)),
+		     int argc, char *argv[])
 {
 	struct libmnt_table *tb;
 	int rc = -1;

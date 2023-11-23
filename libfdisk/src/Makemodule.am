@@ -67,7 +67,7 @@ check_PROGRAMS += \
 	test_fdisk_version \
 	test_fdisk_item
 
-libfdisk_tests_cflags  = -DTEST_PROGRAM $(libfdisk_la_CFLAGS) $(NO_UNUSED_WARN_CFLAGS)
+libfdisk_tests_cflags  = -DTEST_PROGRAM $(libfdisk_la_CFLAGS)
 libfdisk_tests_ldflags = libuuid.la -static
 libfdisk_tests_ldadd   = libfdisk.la $(LDADD)
 
@@ -102,7 +102,7 @@ check_PROGRAMS += test_fdisk_script_fuzz
 nodist_EXTRA_test_fdisk_script_fuzz_SOURCES = dummy.cxx
 
 test_fdisk_script_fuzz_SOURCES = libfdisk/src/script.c
-test_fdisk_script_fuzz_CFLAGS = -DFUZZ_TARGET $(libfdisk_la_CFLAGS) $(NO_UNUSED_WARN_CFLAGS)
+test_fdisk_script_fuzz_CFLAGS = -DFUZZ_TARGET $(libfdisk_la_CFLAGS)
 test_fdisk_script_fuzz_LDFLAGS = $(libfdisk_tests_ldflags) -lpthread
 test_fdisk_script_fuzz_LDADD = $(libfdisk_tests_ldadd) $(LIB_FUZZING_ENGINE)
 endif

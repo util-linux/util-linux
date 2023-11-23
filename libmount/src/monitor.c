@@ -870,7 +870,8 @@ err:
 /*
  * create a monitor and add the monitor fd to epoll
  */
-static int __test_epoll(struct libmnt_test *ts, int argc, char *argv[], int cleanup)
+static int __test_epoll(struct libmnt_test *ts __attribute__((unused)),
+			int argc, char *argv[], int cleanup)
 {
 	int fd, efd = -1, rc = -1;
 	struct epoll_event ev;
@@ -947,7 +948,8 @@ static int test_epoll_cleanup(struct libmnt_test *ts, int argc, char *argv[])
 /*
  * create a monitor and wait for a change
  */
-static int test_wait(struct libmnt_test *ts, int argc, char *argv[])
+static int test_wait(struct libmnt_test *ts __attribute__((unused)),
+		     int argc, char *argv[])
 {
 	const char *filename;
 	struct libmnt_monitor *mn = create_test_monitor(argc, argv);

@@ -178,9 +178,6 @@ AC_SUBST([BSD_WARN_CFLAGS])
 UL_WARN_ADD([-Wno-cast-function-type], [PYTHON_WARN_CFLAGS])
 AC_SUBST([PYTHON_WARN_CFLAGS])
 
-UL_WARN_ADD([-Wno-unused-parameter], [NO_UNUSED_WARN_CFLAGS])
-AC_SUBST([NO_UNUSED_WARN_CFLAGS])
-
 
 AC_ARG_ENABLE([asan],
   AS_HELP_STRING([--enable-asan], [compile with Address Sanitizer]),

@@ -101,7 +101,7 @@ check_PROGRAMS += test_mount_context test_mount_context_mount
 check_PROGRAMS += test_mount_monitor
 endif
 
-libmount_tests_cflags  = -DTEST_PROGRAM $(libmount_la_CFLAGS) $(NO_UNUSED_WARN_CFLAGS)
+libmount_tests_cflags  = -DTEST_PROGRAM $(libmount_la_CFLAGS)
 libmount_tests_ldflags = -static
 libmount_tests_ldadd   = libmount.la libblkid.la $(LDADD) $(REALTIME_LIBS)
 

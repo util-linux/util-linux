@@ -3220,8 +3220,7 @@ endif
 
 ############################################################
 
-libfdisk_tests_cflags = ['-DTEST_PROGRAM',
-                         '-Wno-unused']
+libfdisk_tests_cflags = ['-DTEST_PROGRAM']
 libfdisk_tests_ldadd = [lib_fdisk_static, lib_uuid, lib_blkid]
 
 exe = executable(
@@ -3290,13 +3289,11 @@ if not is_disabler(exe)
   exes += exe
 endif
 
-sample_fdisk_cflags = ['-Wno-unused']
 sample_fdisk_ldadd = [lib_common, lib_fdisk]
 
 exe = executable(
   'sample-fdisk-mkpart',
   'libfdisk/samples/mkpart.c',
-  c_args : sample_fdisk_cflags,
   include_directories : lib_fdisk_includes,
   link_with : sample_fdisk_ldadd)
 if not is_disabler(exe)
@@ -3306,7 +3303,6 @@ endif
 exe = executable(
   'sample-fdisk-mkpart-fullspec',
   'libfdisk/samples/mkpart-fullspec.c',
-  c_args : sample_fdisk_cflags,
   include_directories : lib_fdisk_includes,
   link_with : sample_fdisk_ldadd)
 if not is_disabler(exe)

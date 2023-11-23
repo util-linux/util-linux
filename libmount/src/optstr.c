@@ -910,7 +910,8 @@ int mnt_match_options(const char *optstr, const char *pattern)
 }
 
 #ifdef TEST_PROGRAM
-static int test_append(struct libmnt_test *ts, int argc, char *argv[])
+static int test_append(struct libmnt_test *ts __attribute__((unused)),
+		       int argc, char *argv[])
 {
 	const char *value = NULL, *name;
 	char *optstr;
@@ -933,7 +934,8 @@ static int test_append(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-static int test_prepend(struct libmnt_test *ts, int argc, char *argv[])
+static int test_prepend(struct libmnt_test *ts __attribute__((unused)),
+			int argc, char *argv[])
 {
 	const char *value = NULL, *name;
 	char *optstr;
@@ -956,7 +958,8 @@ static int test_prepend(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-static int test_split(struct libmnt_test *ts, int argc, char *argv[])
+static int test_split(struct libmnt_test *ts __attribute__((unused)),
+		      int argc, char *argv[])
 {
 	char *optstr, *user = NULL, *fs = NULL, *vfs = NULL;
 	int rc;
@@ -982,7 +985,8 @@ static int test_split(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-static int test_flags(struct libmnt_test *ts, int argc, char *argv[])
+static int test_flags(struct libmnt_test *ts __attribute__((unused)),
+		      int argc, char *argv[])
 {
 	char *optstr;
 	int rc;
@@ -1010,7 +1014,8 @@ static int test_flags(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-static int test_apply(struct libmnt_test *ts, int argc, char *argv[])
+static int test_apply(struct libmnt_test *ts __attribute__((unused)),
+		      int argc, char *argv[])
 {
 	char *optstr;
 	int rc, map;
@@ -1042,7 +1047,8 @@ static int test_apply(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-static int test_set(struct libmnt_test *ts, int argc, char *argv[])
+static int test_set(struct libmnt_test *ts __attribute__((unused)),
+		    int argc, char *argv[])
 {
 	const char *value = NULL, *name;
 	char *optstr;
@@ -1065,7 +1071,8 @@ static int test_set(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-static int test_get(struct libmnt_test *ts, int argc, char *argv[])
+static int test_get(struct libmnt_test *ts __attribute__((unused)),
+		    int argc, char *argv[])
 {
 	char *optstr;
 	const char *name;
@@ -1094,7 +1101,8 @@ static int test_get(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-static int test_remove(struct libmnt_test *ts, int argc, char *argv[])
+static int test_remove(struct libmnt_test *ts __attribute__((unused)),
+		       int argc, char *argv[])
 {
 	const char *name;
 	char *optstr;
@@ -1114,7 +1122,8 @@ static int test_remove(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-static int test_dedup(struct libmnt_test *ts, int argc, char *argv[])
+static int test_dedup(struct libmnt_test *ts __attribute__((unused)),
+		      int argc, char *argv[])
 {
 	const char *name;
 	char *optstr;
@@ -1134,7 +1143,8 @@ static int test_dedup(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-static int test_match(struct libmnt_test *ts, int argc, char *argv[])
+static int test_match(struct libmnt_test *ts __attribute__((unused)),
+		      int argc, char *argv[])
 {
 	char *optstr, *pattern;
 

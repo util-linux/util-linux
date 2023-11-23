@@ -27,7 +27,7 @@
 
 static int ask_callback(struct fdisk_context *cxt __attribute__((__unused__)),
 			struct fdisk_ask *ask,
-			void *data)
+			void *data __attribute__((unused)))
 {
 	switch(fdisk_ask_get_type(ask)) {
 	case FDISK_ASKTYPE_INFO:
