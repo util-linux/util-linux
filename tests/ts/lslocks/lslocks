@@ -33,7 +33,7 @@ COLS=COMMAND,TYPE,SIZE,MODE,START,END
 OPTS="--raw --noheadings"
 METHODS=(
     flock-sh
-    flock-ex    
+    flock-ex
     posix-r-
     posix--w
     posix-rw
