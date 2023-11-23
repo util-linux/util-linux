@@ -574,7 +574,7 @@ static void add_single_map_range(struct map_range **chain, unsigned int outer,
 }
 
 /**
- * map_ids() - Create a new uid/gid map
+ * map_ids_external() - Create a new uid/gid map using setuid helper
  * @idmapper: Either newuidmap or newgidmap
  * @ppid: Pid to set the map for
  * @chain: A linked list of ID range mappings
@@ -585,7 +585,7 @@ static void add_single_map_range(struct map_range **chain, unsigned int outer,
  * This function always exec()s or errors out and does not return.
  */
 static void __attribute__((__noreturn__))
-map_ids(const char *idmapper, int ppid, struct map_range *chain)
+map_ids_external(const char *idmapper, int ppid, struct map_range *chain)
 {
 	unsigned int i = 0, length = 3;
 	char **argv;
@@ -605,6 +605,41 @@ map_ids(const char *idmapper, int ppid, struct map_range *chain)
 	argv[i] = NULL;
 	execvp(idmapper, argv);
 	errexec(idmapper);
+}
+
+/**
+ * map_ids_internal() - Create a new uid/gid map using root privilege
+ * @type: Either uid_map or gid_map
+ * @ppid: Pid to set the map for
+ * @chain: A linked list of ID range mappings
+ *
+ * This creates a new uid/gid map for @ppid using a privileged write to
+ * /proc/@ppid/@type to set a mapping for each of the ranges in @chain.
+ */
+static void map_ids_internal(const char *type, int ppid, struct map_range *chain)
+{
+	int count, fd;
+	unsigned int length = 0;
+	char buffer[4096], *path;
+
+	xasprintf(&path, "/proc/%u/%s", ppid, type);
+	for (struct map_range *map = chain; map; map = map->next) {
+		count = snprintf(buffer + length, sizeof(buffer) - length,
+				 "%u %u %u\n",
+				 map->inner, map->outer, map->count);
+		if (count < 0 || count + length > sizeof(buffer))
+			errx(EXIT_FAILURE,
+				_("%s too large for kernel 4k limit"), path);
+		length += count;
+	}
+
+	fd = open(path, O_WRONLY | O_CLOEXEC | O_NOCTTY);
+	if (fd < 0)
+		err(EXIT_FAILURE, _("failed to open %s"), path);
+	if (write_all(fd, buffer, length) < 0)
+		err(EXIT_FAILURE, _("failed to write %s"), path);
+	close(fd);
+	free(path);
 }
 
 /**
@@ -637,6 +672,14 @@ static pid_t map_ids_from_child(int *fd, uid_t mapuser,
 	if (groupmap)
 		add_single_map_range(&groupmap, getegid(), mapgroup);
 
+	if (geteuid() == 0) {
+		if (usermap)
+			map_ids_internal("uid_map", ppid, usermap);
+		if (groupmap)
+			map_ids_internal("gid_map", ppid, groupmap);
+		exit(EXIT_SUCCESS);
+	}
+
 	/* Avoid forking more than we need to */
 	if (usermap && groupmap) {
 		pid = fork();
@@ -647,9 +690,9 @@ static pid_t map_ids_from_child(int *fd, uid_t mapuser,
 	}
 
 	if (!pid && usermap)
-		map_ids("newuidmap", ppid, usermap);
+		map_ids_external("newuidmap", ppid, usermap);
 	if (groupmap)
-		map_ids("newgidmap", ppid, groupmap);
+		map_ids_external("newgidmap", ppid, groupmap);
 	exit(EXIT_SUCCESS);
 }
 
