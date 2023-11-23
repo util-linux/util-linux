@@ -3482,15 +3482,6 @@ if not is_disabler(exe)
 endif
 
 exe = executable(
-  'sample-scols-filter',
-  'libsmartcols/samples/filter.c',
-  include_directories : includes,
-  link_with : [lib_smartcols, lib_common])
-if not is_disabler(exe)
-  exes += exe
-endif
-
-exe = executable(
   'sample-scols-grouping-simple',
   'libsmartcols/samples/grouping-simple.c',
   include_directories : includes,
