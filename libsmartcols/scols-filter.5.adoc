@@ -82,8 +82,8 @@ types are integer, float, string and boolean.
 An operator works with one or two operand(s). An operator has an expectation
 about the data type(s) of its operands. Giving an unexpected data type to an
 operator causes a syntax error. The library can cast between data types, the
-preffered is always the type as specified by `param` and in case of expression with
-number and float the prefered is the float.
+prefferred is always the type as specified by `param` and in case of expression with
+number and float the preferred is the float.
 
 Operators taking two operands are `and`, `or`, `eq`, `ne`, `le`, `lt`, `ge`, `gt`, `=~`, `!~`.
 Alphabetically named operators have C-language
