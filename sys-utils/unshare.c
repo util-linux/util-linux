@@ -480,6 +480,39 @@ static struct map_range read_subid_range(char *filename, uid_t uid)
 }
 
 /**
+ * read_kernel_map() - Read all available IDs from the kernel
+ * @chain: destination list to receive pass-through ID mappings
+ * @filename: either /proc/self/uid_map or /proc/self/gid_map
+ *
+ * This is used by --map-users=all and --map-groups=all to construct
+ * pass-through mappings for all IDs available in the parent namespace.
+ */
+static void read_kernel_map(struct map_range **chain, char *filename)
+{
+	char *line = NULL;
+	size_t size = 0;
+	FILE *idmap;
+
+	idmap = fopen(filename, "r");
+	if (!idmap)
+		err(EXIT_FAILURE, _("could not open '%s'"), filename);
+
+	while (getline(&line, &size, idmap) != -1) {
+		unsigned int start, count;
+		if (sscanf(line, " %u %*u %u", &start, &count) < 2)
+			continue;
+		insert_map_range(chain, (struct map_range) {
+			.inner = start,
+			.outer = start,
+			.count = count
+		});
+	}
+
+	fclose(idmap);
+	free(line);
+}
+
+/**
  * add_single_map_range() - Add a single-ID map into a list without overlap
  * @chain: A linked list of ID range mappings
  * @outer: ID outside the namespace for a single map.
@@ -907,6 +940,8 @@ int main(int argc, char *argv[])
 			if (!strcmp(optarg, "auto"))
 				insert_map_range(&usermap,
 					read_subid_range(_PATH_SUBUID, real_euid));
+			else if (!strcmp(optarg, "all"))
+				read_kernel_map(&usermap, _PATH_PROC_UIDMAP);
 			else
 				insert_map_range(&usermap, get_map_range(optarg));
 			break;
@@ -915,6 +950,8 @@ int main(int argc, char *argv[])
 			if (!strcmp(optarg, "auto"))
 				insert_map_range(&groupmap,
 					read_subid_range(_PATH_SUBGID, real_euid));
+			else if (!strcmp(optarg, "all"))
+				read_kernel_map(&groupmap, _PATH_PROC_GIDMAP);
 			else
 				insert_map_range(&groupmap, get_map_range(optarg));
 			break;
