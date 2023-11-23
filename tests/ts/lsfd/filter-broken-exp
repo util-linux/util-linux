@@ -25,12 +25,13 @@ ts_check_test_command "$TS_CMD_LSFD"
 ts_cd "$TS_OUTDIR"
 
 {
-    $TS_CMD_LSFD -Q ''
     $TS_CMD_LSFD -Q '('
     $TS_CMD_LSFD -Q ')'
     $TS_CMD_LSFD -Q '(FD == 1)garbage'
-    $TS_CMD_LSFD -Q 'FD' 
     $TS_CMD_LSFD -Q 'NOSUCHCOLUMN'
 } > $TS_OUTPUT 2>&1
+
+sed -i -e 's/syntax error.*/<bison syntax error message removed>/g' \
+	$TS_OUTPUT $TS_ERRLOG
 
 ts_finalize

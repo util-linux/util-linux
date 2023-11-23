@@ -28,6 +28,8 @@ UL_DEBUG_DEFINE_MASKNAMES(libsmartcols) =
 	{ "group", SCOLS_DEBUG_GROUP,	"lines grouping utils" },
 	{ "line", SCOLS_DEBUG_LINE,	"table line utils" },
 	{ "tab", SCOLS_DEBUG_TAB,	"table utils" },
+	{ "filter", SCOLS_DEBUG_FLTR,	"lines filter" },
+	{ "fparam", SCOLS_DEBUG_FPARAM, "filter params" },
 	{ NULL, 0, NULL }
 };
 

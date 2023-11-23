@@ -1,3 +1,1 @@
-NUM
-0
-right
+name=NUM,right,type=number,json=number

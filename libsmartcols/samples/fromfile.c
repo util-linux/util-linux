@@ -19,118 +19,26 @@
 #include "xalloc.h"
 #include "optutils.h"
 #include "mangle.h"
+#include "path.h"
 
 #include "libsmartcols.h"
 
-struct column_flag {
-	const char *name;
-	int mask;
-};
-
-static const struct column_flag flags[] = {
-	{ "trunc",	SCOLS_FL_TRUNC },
-	{ "tree",	SCOLS_FL_TREE },
-	{ "right",	SCOLS_FL_RIGHT },
-	{ "strictwidth",SCOLS_FL_STRICTWIDTH },
-	{ "noextremes", SCOLS_FL_NOEXTREMES },
-	{ "hidden",	SCOLS_FL_HIDDEN },
-	{ "wrap",	SCOLS_FL_WRAP },
-	{ "wrapnl",	SCOLS_FL_WRAP },
-	{ "wrapzero",	SCOLS_FL_WRAP },
-	{ "none",	0 }
-};
-
-static long name_to_flag(const char *name, size_t namesz)
+static struct libscols_column *parse_column(const char *path)
 {
-	size_t i;
+	char buf[BUFSIZ];
+	struct libscols_column *cl;
 
-	for (i = 0; i < ARRAY_SIZE(flags); i++) {
-		const char *cn = flags[i].name;
+	if (ul_path_read_buffer(NULL, buf, sizeof(buf), path) < 0)
+		err(EXIT_FAILURE, "failed to read column: %s", path);
 
-		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
-			return flags[i].mask;
-	}
-	warnx("unknown flag: %s", name);
-	return -1;
-}
+	cl = scols_new_column();
+	if (!cl)
+		err(EXIT_FAILURE, "failed to allocate column");
 
-static int parse_column_flags(char *str)
-{
-	unsigned long num_flags = 0;
+	if (scols_column_set_properties(cl, buf) != 0)
+		err(EXIT_FAILURE, "failed to set column properties");
 
-	if (string_to_bitmask(str, &num_flags, name_to_flag))
-		err(EXIT_FAILURE, "failed to parse column flags");
-
-	return num_flags;
-}
-
-static struct libscols_column *parse_column(FILE *f)
-{
-	size_t len = 0;
-	char *line = NULL;
-	int nlines = 0;
-
-	struct libscols_column *cl = NULL;
-
-	while (getline(&line, &len, f) != -1) {
-
-		char *p = strrchr(line, '\n');
-		if (p)
-			*p = '\0';
-
-		switch (nlines) {
-		case 0: /* NAME */
-			cl = scols_new_column();
-			if (!cl)
-				goto fail;
-			if (scols_column_set_name(cl, line) != 0)
-				goto fail;
-			break;
-
-		case 1: /* WIDTH-HINT */
-		{
-			double whint = strtod_or_err(line, "failed to parse column whint");
-			if (scols_column_set_whint(cl, whint))
-				goto fail;
-			break;
-		}
-		case 2: /* FLAGS */
-		{
-			int num_flags = parse_column_flags(line);
-			if (scols_column_set_flags(cl, num_flags))
-				goto fail;
-			if (strcmp(line, "wrapnl") == 0) {
-				scols_column_set_wrapfunc(cl,
-						NULL,
-						scols_wrapnl_nextchunk,
-						NULL);
-				scols_column_set_safechars(cl, "\n");
-
-			} else if (strcmp(line, "wrapzero") == 0) {
-				scols_column_set_wrapfunc(cl,
-						NULL,
-						scols_wrapzero_nextchunk,
-						NULL);
-			}
-			break;
-		}
-		case 3: /* COLOR */
-			if (scols_column_set_color(cl, line))
-				goto fail;
-			break;
-		default:
-			break;
-		}
-
-		nlines++;
-	}
-
-	free(line);
 	return cl;
-fail:
-	free(line);
-	scols_unref_column(cl);
-	return NULL;
 }
 
 static int parse_column_data(FILE *f, struct libscols_table *tb, int col)
@@ -212,6 +120,81 @@ static void compose_tree(struct libscols_table *tb, int parent_col, int id_col)
 	scols_free_iter(itr);
 }
 
+static struct libscols_filter *init_filter(
+			struct libscols_table *tb,
+			const char *query, int dump)
+{
+	struct libscols_iter *itr;
+	struct libscols_filter *f = scols_new_filter(NULL);
+	const char *name = NULL;
+	int rc = 0;
+
+	if (!f)
+		err(EXIT_FAILURE, "failed to allocate filter");
+	if (scols_filter_parse_string(f, query) != 0)
+		errx(EXIT_FAILURE, "failed to parse filter: %s",
+				scols_filter_get_errmsg(f));
+
+	itr = scols_new_iter(SCOLS_ITER_FORWARD);
+	if (!itr)
+		err(EXIT_FAILURE, "failed to allocate iterator");
+
+	while (scols_filter_next_holder(f, itr, &name, 0) == 0) {
+		struct libscols_column *col;
+
+		col = scols_table_get_column_by_name(tb, name);
+		if (!col) {
+			warnx("unknown column '%s' in filter", name);
+			rc++;
+			continue;
+		}
+		scols_filter_assign_column(f, itr, name, col);
+	}
+
+	scols_free_iter(itr);
+	if (dump && f)
+		scols_dump_filter(f, stdout);
+	if (rc) {
+		scols_unref_filter(f);
+		errx(EXIT_FAILURE, "failed to initialize filter");
+	}
+
+	return f;
+}
+
+/* Note: This is a simple (naive) way to use the filter, employed here for
+ * testing functionality.
+ *
+ * A more effective approach to using the filter is demonstrated in lsblk.c,
+ * where data manipulation is divided into two steps. The initial step prepares
+ * only the data necessary for evaluating the filter, and the remaining data is
+ * gathered later, only if necessary.
+ */
+static void apply_filter(struct libscols_table *tb, struct libscols_filter *fltr)
+{
+	struct libscols_iter *itr = scols_new_iter(SCOLS_ITER_FORWARD);
+	struct libscols_line *ln;
+
+	if (!itr)
+		err(EXIT_FAILURE, "failed to allocate iterator");
+
+	while (scols_table_next_line(tb, itr, &ln) == 0) {
+		int status = 0;
+
+		if (scols_line_apply_filter(ln, fltr, &status) != 0)
+			err(EXIT_FAILURE, "failed to apply filter");
+		if (status == 0) {
+			struct libscols_line *x = scols_line_get_parent(ln);
+
+			if (x)
+				scols_line_remove_child(x, ln);
+			scols_table_remove_line(tb, ln);
+			ln = NULL;
+		}
+	}
+
+	scols_free_iter(itr);
+}
 
 static void __attribute__((__noreturn__)) usage(void)
 {
@@ -230,6 +213,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(" -w, --width <num>              hardcode terminal width\n", out);
 	fputs(" -p, --tree-parent-column <n>   parent column\n", out);
 	fputs(" -i, --tree-id-column <n>       id column\n", out);
+	fputs(" -Q, --filter <expr>            filter\n", out);
 	fputs(" -h, --help                     this help\n", out);
 	fputs("\n", out);
 
@@ -241,6 +225,9 @@ int main(int argc, char *argv[])
 	struct libscols_table *tb;
 	int c, n, nlines = 0;
 	int parent_col = -1, id_col = -1;
+	int fltr_dump = 0;
+	const char *fltr_str = NULL;
+	struct libscols_filter *fltr = NULL;
 
 	static const struct option longopts[] = {
 		{ "maxout", 0, NULL, 'm' },
@@ -254,6 +241,8 @@ int main(int argc, char *argv[])
 		{ "raw",    0, NULL, 'r' },
 		{ "export", 0, NULL, 'E' },
 		{ "colsep",  1, NULL, 'C' },
+		{ "filter", 1, NULL, 'Q' },
+		{ "filter-dump", 0, NULL, 'd' },
 		{ "help",   0, NULL, 'h' },
 		{ NULL, 0, NULL, 0 },
 	};
@@ -272,25 +261,23 @@ int main(int argc, char *argv[])
 	if (!tb)
 		err(EXIT_FAILURE, "failed to create output table");
 
-	while((c = getopt_long(argc, argv, "hCc:Ei:JMmn:p:rw:", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "hCc:dEi:JMmn:p:Q:rw:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
 		switch(c) {
 		case 'c': /* add column from file */
 		{
-			struct libscols_column *cl;
-			FILE *f = fopen(optarg, "r");
+			struct libscols_column *cl = parse_column(optarg);
 
-			if (!f)
-				err(EXIT_FAILURE, "%s: open failed", optarg);
-			cl = parse_column(f);
 			if (cl && scols_table_add_column(tb, cl))
 				err(EXIT_FAILURE, "%s: failed to add column", optarg);
 			scols_unref_column(cl);
-			fclose(f);
 			break;
 		}
+		case 'd':
+			fltr_dump = 1;
+			break;
 		case 'p':
 			parent_col = strtou32_or_err(optarg, "failed to parse tree PARENT column");
 			break;
@@ -319,6 +306,9 @@ int main(int argc, char *argv[])
 		case 'n':
 			nlines = strtou32_or_err(optarg, "failed to parse number of lines");
 			break;
+		case 'Q':
+			fltr_str = optarg;
+			break;
 		case 'w':
 			scols_table_set_termforce(tb, SCOLS_TERMFORCE_ALWAYS);
 			scols_table_set_termwidth(tb, strtou32_or_err(optarg, "failed to parse terminal width"));
@@ -342,6 +332,9 @@ int main(int argc, char *argv[])
 		scols_unref_line(ln);
 	}
 
+	if (fltr_str)
+		fltr = init_filter(tb, fltr_str, fltr_dump);
+
 	n = 0;
 
 	while (optind < argc) {
@@ -360,7 +353,12 @@ int main(int argc, char *argv[])
 
 	scols_table_enable_colors(tb, isatty(STDOUT_FILENO));
 
+	if (fltr)
+		apply_filter(tb, fltr);
+
 	scols_print_table(tb);
+
+	scols_unref_filter(fltr);
 	scols_unref_table(tb);
 	return EXIT_SUCCESS;
 }

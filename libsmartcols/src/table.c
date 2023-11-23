@@ -676,6 +676,15 @@ struct libscols_column *scols_table_get_column_by_name(
 		if (cn && strcmp(cn, name) == 0)
 			return cl;
 	}
+
+	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+	while (scols_table_next_column(tb, &itr, &cl) == 0) {
+		const char *cn = scols_column_get_name_as_shellvar(cl);
+
+		if (cn && strcmp(cn, name) == 0)
+			return cl;
+	}
+
 	return NULL;
 }
 

@@ -30,6 +30,8 @@ PACKAGES=(
 	dmsetup
 	python3-dev
 	gawk
+	bison
+	flex
 )
 
 PACKAGES_OPTIONAL=(

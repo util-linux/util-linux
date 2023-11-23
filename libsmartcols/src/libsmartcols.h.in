@@ -67,6 +67,29 @@ struct libscols_table;
  */
 struct libscols_column;
 
+/**
+ * libscols_filter:
+ *
+ * A filter - defines the filtering
+ */
+struct libscols_filter;
+
+/**
+ * libscols_counter:
+ *
+ * A filter counter
+ */
+struct libscols_counter;
+
+enum {
+	SCOLS_COUNTER_COUNT = 0,
+	SCOLS_COUNTER_MAX,
+	SCOLS_COUNTER_MIN,
+	SCOLS_COUNTER_SUM,
+
+	__SCOLS_NCOUNTES
+};
+
 /* iter.c */
 enum {
 
@@ -97,6 +120,18 @@ enum {
 	SCOLS_JSON_ARRAY_STRING = 3,        /* e.g. for multi-line (SCOLS_FL_WRAP) cells */
 	SCOLS_JSON_ARRAY_NUMBER	= 4,
 	SCOLS_JSON_BOOLEAN_OPTIONAL = 5,
+	SCOLS_JSON_FLOAT     = 6
+};
+
+/*
+ * Types used by filters and counters
+ */
+enum {
+	SCOLS_DATA_NONE = 0,	/* default */
+	SCOLS_DATA_U64,		/* uint64_t */
+	SCOLS_DATA_BOOLEAN,	/* 0 or 1 */
+	SCOLS_DATA_FLOAT,	/* long double */
+	SCOLS_DATA_STRING
 };
 
 /*
@@ -182,6 +217,9 @@ extern const char *scols_column_get_safechars(const struct libscols_column *cl);
 extern int scols_column_set_json_type(struct libscols_column *cl, int type);
 extern int scols_column_get_json_type(const struct libscols_column *cl);
 
+extern int scols_column_set_data_type(struct libscols_column *cl, int type);
+extern int scols_column_get_data_type(const struct libscols_column *cl);
+
 extern int scols_column_set_flags(struct libscols_column *cl, int flags);
 extern int scols_column_get_flags(const struct libscols_column *cl);
 extern struct libscols_column *scols_new_column(void);
@@ -198,6 +236,7 @@ extern struct libscols_table *scols_column_get_table(const struct libscols_colum
 extern int scols_column_set_name(struct libscols_column *cl, const char *name);
 extern const char *scols_column_get_name(struct libscols_column *cl);
 extern const char *scols_column_get_name_as_shellvar(struct libscols_column *cl);
+extern int scols_shellvar_name(const char *name, char **buf, size_t *bufsz);
 
 extern int scols_column_set_properties(struct libscols_column *cl, const char *opts);
 
@@ -212,6 +251,13 @@ extern int scols_column_set_wrapfunc(struct libscols_column *cl,
 			char * (*wrap_nextchunk)(const struct libscols_column *,
 					 char *, void *),
 			void *userdata);
+
+extern int scols_column_set_data_func(struct libscols_column *cl,
+                        void *(*datafunc)(const struct libscols_column *,
+                                        struct libscols_cell *,
+                                        void *),
+                        void *userdata);
+extern int scols_column_has_data_func(struct libscols_column *cl);
 
 extern char *scols_wrapnl_nextchunk(const struct libscols_column *cl, char *data, void *userdata);
 extern size_t scols_wrapnl_chunksize(const struct libscols_column *cl, const char *data, void *userdata);
@@ -245,6 +291,7 @@ extern struct libscols_cell *scols_line_get_column_cell(
 		                        struct libscols_column *cl);
 extern int scols_line_set_data(struct libscols_line *ln, size_t n, const char *data);
 extern int scols_line_refer_data(struct libscols_line *ln, size_t n, char *data);
+extern int scols_line_is_filled(struct libscols_line *ln, size_t n);
 extern int scols_line_set_column_data(struct libscols_line *ln, struct libscols_column *cl, const char *data);
 extern const char *scols_line_get_column_data(struct libscols_line *ln, struct libscols_column *cl);
 extern int scols_line_refer_column_data(struct libscols_line *ln, struct libscols_column *cl, char *data);
@@ -358,6 +405,38 @@ extern int scols_table_print_range_to_string(	struct libscols_table *tb,
 int scols_line_link_group(struct libscols_line *ln, struct libscols_line *member, int id);
 int scols_table_group_lines(struct libscols_table *tb, struct libscols_line *ln,
                             struct libscols_line *member, int id);
+
+/* filter.c */
+extern int scols_filter_parse_string(struct libscols_filter *fltr, const char *str);
+extern struct libscols_filter *scols_new_filter(const char *str);
+extern void scols_ref_filter(struct libscols_filter *fltr);
+extern void scols_unref_filter(struct libscols_filter *fltr);
+extern int scols_dump_filter(struct libscols_filter *fltr, FILE *out);
+extern const char *scols_filter_get_errmsg(struct libscols_filter *fltr);
+
+extern int scols_line_apply_filter(struct libscols_line *ln,
+			struct libscols_filter *fltr, int *status);
+
+extern int scols_filter_next_holder(struct libscols_filter *fltr,
+                        struct libscols_iter *itr, const char **name, int type);
+extern int scols_filter_assign_column(struct libscols_filter *fltr,
+			struct libscols_iter *itr,
+                        const char *name, struct libscols_column *col);
+extern int scols_filter_set_filler_cb(struct libscols_filter *fltr,
+                                int (*cb)(struct libscols_filter *,
+                                          struct libscols_line *, size_t, void *),
+                                void *userdata);
+
+extern struct libscols_counter *scols_filter_new_counter(struct libscols_filter *fltr);
+extern int scols_counter_set_name(struct libscols_counter *ct, const char *name);
+extern int scols_counter_set_param(struct libscols_counter *ct, const char *name);
+extern int scols_counter_set_func(struct libscols_counter *ct, int func);
+
+extern unsigned long long scols_counter_get_result(struct libscols_counter *ct);
+extern const char *scols_counter_get_name(struct libscols_counter *ct);
+extern int scols_filter_next_counter(struct libscols_filter *fltr,
+                      struct libscols_iter *itr, struct libscols_counter **ct);
+
 #ifdef __cplusplus
 }
 #endif

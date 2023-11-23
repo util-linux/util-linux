@@ -41,6 +41,12 @@ struct lsblk {
 
 	int dedup_id;
 
+	struct libscols_filter *filter;
+	struct libscols_filter *hlighter;
+	const char *hlighter_seq;
+
+	struct libscols_filter **ct_filters;	/* array of counters' filters */
+	size_t ncts;				/* number of ct filters */
 
 	const char *sysroot;
 	int flags;			/* LSBLK_* */
@@ -55,6 +61,7 @@ struct lsblk {
 	unsigned int virtio:1;		/* print virtio device only */
 	unsigned int paths:1;		/* print devnames with "/dev" prefix */
 	unsigned int sort_hidden:1;	/* sort column not between output columns */
+	unsigned int rawdata : 1;	/* has rawdata in cell userdata */
 	unsigned int dedup_hidden :1;	/* deduplication column not between output columns */
 	unsigned int force_tree_order:1;/* sort lines by parent->tree relation */
 	unsigned int noempty:1;		/* hide empty devices */

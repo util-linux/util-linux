@@ -63,6 +63,8 @@ dist_bashcompletion_DATA =
 check_PROGRAMS =
 dist_check_SCRIPTS =
 
+BUILT_SOURCES =
+
 PATHFILES =
 ADOCFILES_COMMON =
 MANPAGES =
@@ -347,7 +349,7 @@ DISTCHECK_CONFIGURE_FLAGS = \
 	--with-systemdsystemunitdir=$$dc_install_base/$(systemdsystemunitdir)
 
 
-BUILT_SOURCES = .version
+BUILT_SOURCES += .version
 .version:
 	echo $(VERSION) > $@-t && mv $@-t $@
 

@@ -52,6 +52,7 @@
 #include "fileutils.h"
 #include "loopdev.h"
 #include "buffer.h"
+#include "colors.h"
 
 #include "lsblk.h"
 
@@ -242,6 +243,12 @@ static const struct colinfo infos[] = {
 	[COL_ZONE_AMAX] = { "ZONE-AMAX", 10, SCOLS_FL_RIGHT, N_("maximum number of active zones"), COLTYPE_NUM },
 };
 
+/* "userdata" used by callback for libsmartcols filter */
+struct filler_data {
+	struct lsblk_device *dev;
+	struct lsblk_device *parent;
+};
+
 struct lsblk *lsblk;	/* global handler */
 
 /*
@@ -338,12 +345,30 @@ static int column_name_to_id(const char *name, size_t namesz)
 {
 	size_t i;
 
+	/* name as diplayed for users */
 	for (i = 0; i < ARRAY_SIZE(infos); i++) {
 		const char *cn = infos[i].name;
 
 		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
 			return i;
 	}
+
+	/* name as used in expressions, JSON output etc. */
+	if (strnchr(name, namesz, '_')) {
+		char *buf = NULL;
+		size_t bufsz = 0;
+
+		for (i = 0; i < ARRAY_SIZE(infos); i++) {
+			if (scols_shellvar_name(infos[i].name, &buf, &bufsz) != 0)
+				continue;
+			if (!strncasecmp(name, buf, namesz) && !*(buf + namesz)) {
+				free(buf);
+				return i;
+			}
+		}
+		free(buf);
+	}
+
 	warnx(_("unknown column: %s"), name);
 	return -1;
 }
@@ -601,7 +626,7 @@ static char *mk_dm_name(const char *name)
 /* stores data to scols cell userdata (invisible and independent on output)
  * to make the original values accessible for sort functions
  */
-static void set_sortdata_u64(struct libscols_line *ln, int col, uint64_t x)
+static void set_rawdata_u64(struct libscols_line *ln, int col, uint64_t x)
 {
 	struct libscols_cell *ce = scols_line_get_cell(ln, col);
 	uint64_t *data;
@@ -629,22 +654,37 @@ static void str2u64(const char *str, uint64_t *data)
 	*data = num;
 }
 
-static void unref_sortdata(struct libscols_table *tb)
+static void unref_line_rawdata(struct libscols_line *ln, struct libscols_table *tb)
+{
+	size_t i;
+
+	for (i = 0; i < ncolumns; i++) {
+		struct libscols_column *cl = scols_table_get_column(tb, i);
+		struct libscols_cell *ce;
+		void *data;
+
+		if (cl != lsblk->sort_col && !scols_column_has_data_func(cl))
+			continue;
+
+		ce = scols_line_get_column_cell(ln, cl);
+		data = scols_cell_get_userdata(ce);
+		free(data);
+	}
+}
+
+static void unref_table_rawdata(struct libscols_table *tb)
 {
 	struct libscols_iter *itr;
 	struct libscols_line *ln;
 
-	if (!tb || !lsblk->sort_col)
+	if (!tb || !lsblk->rawdata)
 		return;
+
 	itr = scols_new_iter(SCOLS_ITER_FORWARD);
 	if (!itr)
 		return;
-	while (scols_table_next_line(tb, itr, &ln) == 0) {
-		struct libscols_cell *ce = scols_line_get_column_cell(ln,
-								lsblk->sort_col);
-		void *data = scols_cell_get_userdata(ce);
-		free(data);
-	}
+	while (scols_table_next_line(tb, itr, &ln) == 0)
+		unref_line_rawdata(ln, tb);
 
 	scols_free_iter(itr);
 }
@@ -739,21 +779,21 @@ static uint64_t device_get_discard_granularity(struct lsblk_device *dev)
 }
 
 static void device_read_bytes(struct lsblk_device *dev, char *path, char **str,
-			      uint64_t *sortdata)
+			      uint64_t *rawdata)
 {
 	uint64_t x;
 
 	if (lsblk->bytes) {
 		ul_path_read_string(dev->sysfs, str, path);
-		if (sortdata)
-			str2u64(*str, sortdata);
+		if (rawdata)
+			str2u64(*str, rawdata);
 		return;
 	}
 
 	if (ul_path_read_u64(dev->sysfs, &x, path) == 0) {
 		*str = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
-		if (sortdata)
-			*sortdata = x;
+		if (rawdata)
+			*rawdata = x;
 	}
 }
 
@@ -775,7 +815,7 @@ static void process_mq(struct lsblk_device *dev, char **str)
 }
 
 /*
- * Generates data (string) for column specified by column ID for specified device. If sortdata
+ * Generates data (string) for column specified by column ID for specified device. If rawdata
  * is not NULL then returns number usable to sort the column if the data are available for the
  * column.
  */
@@ -783,7 +823,7 @@ static char *device_get_data(
 		struct lsblk_device *dev,		/* device */
 		struct lsblk_device *parent,		/* device parent as defined in the tree */
 		int id,					/* column ID (COL_*) */
-		uint64_t *sortdata,			/* returns sort data as number */
+		uint64_t *rawdata,			/* returns sort data as number */
 		size_t *datasiz)
 {
 	struct lsblk_devprop *prop = NULL;
@@ -846,18 +886,18 @@ static char *device_get_data(
 			xasprintf(&str, "%u:%u", dev->maj, dev->min);
 		else
 			xasprintf(&str, "%3u:%-3u", dev->maj, dev->min);
-		if (sortdata)
-			*sortdata = makedev(dev->maj, dev->min);
+		if (rawdata)
+			*rawdata = makedev(dev->maj, dev->min);
 		break;
 	case COL_MAJ:
 		xasprintf(&str, "%u", dev->maj);
-		if (sortdata)
-			*sortdata = dev->maj;
+		if (rawdata)
+			*rawdata = dev->maj;
 		break;
 	case COL_MIN:
 		xasprintf(&str, "%u", dev->min);
-		if (sortdata)
-			*sortdata = dev->min;
+		if (rawdata)
+			*rawdata = dev->min;
 		break;
 	case COL_FSTYPE:
 		prop = lsblk_device_get_properties(dev);
@@ -992,8 +1032,8 @@ static char *device_get_data(
 		break;
 	case COL_RA:
 		ul_path_read_string(dev->sysfs, &str, "queue/read_ahead_kb");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	case COL_RO:
 		str = xstrdup(is_readonly_device(dev) ? "1" : "0");
@@ -1046,13 +1086,13 @@ static char *device_get_data(
 			xasprintf(&str, "%ju", dev->size);
 		else
 			str = size_to_human_string(SIZE_SUFFIX_1LETTER, dev->size);
-		if (sortdata)
-			*sortdata = dev->size;
+		if (rawdata)
+			*rawdata = dev->size;
 		break;
 	case COL_START:
 		ul_path_read_string(dev->sysfs, &str, "start");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	case COL_STATE:
 		if (!device_is_partition(dev) && !dev->dm_name)
@@ -1065,36 +1105,36 @@ static char *device_get_data(
 		break;
 	case COL_ALIOFF:
 		ul_path_read_string(dev->sysfs, &str, "alignment_offset");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	case COL_MINIO:
 		ul_path_read_string(dev->sysfs, &str, "queue/minimum_io_size");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	case COL_OPTIO:
 		ul_path_read_string(dev->sysfs, &str, "queue/optimal_io_size");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	case COL_PHYSEC:
 		ul_path_read_string(dev->sysfs, &str, "queue/physical_block_size");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	case COL_LOGSEC:
 		ul_path_read_string(dev->sysfs, &str, "queue/logical_block_size");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	case COL_SCHED:
 		str = get_scheduler(dev);
 		break;
 	case COL_RQ_SIZE:
 		ul_path_read_string(dev->sysfs, &str, "queue/nr_requests");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	case COL_TYPE:
 		str = get_type(dev);
@@ -1121,23 +1161,23 @@ static char *device_get_data(
 			ul_path_read_string(dev->sysfs, &str, "discard_alignment");
 		if (!str)
 			str = xstrdup("0");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	case COL_DGRAN:
 		if (lsblk->bytes) {
 			ul_path_read_string(dev->sysfs, &str, "queue/discard_granularity");
-			if (sortdata)
-				str2u64(str, sortdata);
+			if (rawdata)
+				str2u64(str, rawdata);
 		} else {
 			uint64_t x = device_get_discard_granularity(dev);
 			str = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
-			if (sortdata)
-				*sortdata = x;
+			if (rawdata)
+				*rawdata = x;
 		}
 		break;
 	case COL_DMAX:
-		device_read_bytes(dev, "queue/discard_max_bytes", &str, sortdata);
+		device_read_bytes(dev, "queue/discard_max_bytes", &str, rawdata);
 		break;
 	case COL_DZERO:
 		if (device_get_discard_granularity(dev) > 0)
@@ -1146,7 +1186,7 @@ static char *device_get_data(
 			str = xstrdup("0");
 		break;
 	case COL_WSAME:
-		device_read_bytes(dev, "queue/write_same_max_bytes", &str, sortdata);
+		device_read_bytes(dev, "queue/write_same_max_bytes", &str, rawdata);
 		if (!str)
 			str = xstrdup("0");
 		break;
@@ -1163,35 +1203,35 @@ static char *device_get_data(
 				xasprintf(&str, "%ju", x);
 			else
 				str = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
-			if (sortdata)
-				*sortdata = x;
+			if (rawdata)
+				*rawdata = x;
 		}
 		break;
 	}
 	case COL_ZONE_WGRAN:
-		device_read_bytes(dev, "queue/zone_write_granularity", &str, sortdata);
+		device_read_bytes(dev, "queue/zone_write_granularity", &str, rawdata);
 		break;
 	case COL_ZONE_APP:
-		device_read_bytes(dev, "queue/zone_append_max_bytes", &str, sortdata);
+		device_read_bytes(dev, "queue/zone_append_max_bytes", &str, rawdata);
 		break;
 	case COL_ZONE_NR:
 		ul_path_read_string(dev->sysfs, &str, "queue/nr_zones");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	case COL_ZONE_OMAX:
 		ul_path_read_string(dev->sysfs, &str, "queue/max_open_zones");
 		if (!str)
 			str = xstrdup("0");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	case COL_ZONE_AMAX:
 		ul_path_read_string(dev->sysfs, &str, "queue/max_active_zones");
 		if (!str)
 			str = xstrdup("0");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	case COL_DAX:
 		ul_path_read_string(dev->sysfs, &str, "queue/dax");
@@ -1201,12 +1241,56 @@ static char *device_get_data(
 		break;
 	case COL_DISKSEQ:
 		ul_path_read_string(dev->sysfs, &str, "diskseq");
-		if (sortdata)
-			str2u64(str, sortdata);
+		if (rawdata)
+			str2u64(str, rawdata);
 		break;
 	};
 
 	return str;
+}
+
+static void device_fill_scols_cell(struct lsblk_device *dev,
+				   struct lsblk_device *parent,
+				   struct libscols_line *ln,
+				   size_t colnum)
+{
+	struct libscols_cell *ce;
+	struct libscols_column *cl = scols_table_get_column(lsblk->table, colnum);
+	char *data;
+	size_t datasiz = 0;
+	int rc, id = get_column_id(colnum);
+
+	if (lsblk->sort_id == id || scols_column_has_data_func(cl)) {
+		uint64_t rawdata = (uint64_t) -1;
+
+		data = device_get_data(dev, parent, id, &rawdata, &datasiz);
+		if (data && rawdata != (uint64_t) -1)
+			set_rawdata_u64(ln, colnum, rawdata);
+	} else
+		data = device_get_data(dev, parent, id, NULL, &datasiz);
+
+	if (!data)
+		return;
+	DBG(DEV, ul_debugobj(dev, " refer data[%zu]=\"%s\"", colnum, data));
+	ce = scols_line_get_cell(ln, colnum);
+	if (!ce)
+		return;
+	rc = datasiz ? scols_cell_refer_memory(ce, data, datasiz + 1)
+		     : scols_cell_refer_data(ce, data);
+	if (rc)
+		err(EXIT_FAILURE, _("failed to add output data"));
+}
+
+static int filter_filler_cb(
+		 struct libscols_filter *fltr __attribute__((__unused__)),
+		 struct libscols_line *ln,
+		 size_t colnum,
+		 void *userdata)
+{
+	struct filler_data *fid = (struct filler_data *) userdata;
+
+	device_fill_scols_cell(fid->dev, fid->parent, ln, colnum);
+	return 0;
 }
 
 /*
@@ -1222,7 +1306,7 @@ static void device_to_scols(
 	struct libscols_line *ln;
 	struct lsblk_iter itr;
 	struct lsblk_device *child = NULL;
-	int link_group = 0;
+	int link_group = 0, nocount = 0;
 
 
 	DBG(DEV, ul_debugobj(dev, "add '%s' to scols", dev->name));
@@ -1247,7 +1331,38 @@ static void device_to_scols(
 
 	dev->is_printed = 1;
 
-	if (link_group) {
+	/* filter lines, smartcols filter can ask for data */
+	if (lsblk->filter) {
+		int status = 0;
+		struct filler_data fid = {
+			.dev = dev,
+			.parent = parent
+		};
+
+		scols_filter_set_filler_cb(lsblk->filter,
+				filter_filler_cb, (void *) &fid);
+
+		if (scols_line_apply_filter(ln, lsblk->filter, &status))
+			err(EXIT_FAILURE, _("failed to apply filter"));
+		if (status == 0) {
+			struct libscols_line *x = scols_line_get_parent(ln);
+
+			if (x)
+				scols_line_remove_child(x, ln);
+			unref_line_rawdata(ln, tab);
+			scols_table_remove_line(tab, ln);
+			ln = NULL;
+		}
+	}
+
+	/* read column specific data and set it to smartcols table line */
+	for (i = 0; ln && i < ncolumns; i++) {
+		if (scols_line_is_filled(ln, i))
+			continue;
+		device_fill_scols_cell(dev, parent, ln, i);
+	}
+
+	if (ln && link_group) {
 		struct lsblk_device *p;
 		struct libscols_line *gr = parent_line;
 
@@ -1268,34 +1383,9 @@ static void device_to_scols(
 		scols_line_link_group(ln, gr, 0);
 	}
 
-	/* read column specific data and set it to smartcols table line */
-	for (i = 0; i < ncolumns; i++) {
-		struct libscols_cell *ce;
-		char *data = NULL;
-		size_t datasiz = 0;
-		int rc, id = get_column_id(i);
-
-		if (lsblk->sort_id != id)
-			data = device_get_data(dev, parent, id, NULL, &datasiz);
-		else {
-			uint64_t sortdata = (uint64_t) -1;
-
-			data = device_get_data(dev, parent, id, &sortdata, &datasiz);
-			if (data && sortdata != (uint64_t) -1)
-				set_sortdata_u64(ln, i, sortdata);
-		}
-
-		if (!data)
-			continue;
-		DBG(DEV, ul_debugobj(dev, " refer data[%zu]=\"%s\"", i, data));
-		ce = scols_line_get_cell(ln, i);
-		if (!ce)
-			continue;
-		rc = datasiz ? scols_cell_refer_memory(ce, data, datasiz + 1)
-			     : scols_cell_refer_data(ce, data);
-		if (rc)
-			err(EXIT_FAILURE, _("failed to add output data"));
-	}
+	/* The same device could be printed more than once, don't use it in counter */
+	if (dev->scols_line)
+		nocount = 1;
 
 	dev->scols_line = ln;
 
@@ -1309,6 +1399,21 @@ static void device_to_scols(
 		DBG(DEV, ul_debugobj(dev, "%s -> continue to child", dev->name));
 		device_to_scols(child, dev, tab, ln);
 		DBG(DEV, ul_debugobj(dev, "%s <- child done", dev->name));
+	}
+
+	/* apply highligther */
+	if (ln && lsblk->hlighter) {
+		int status = 0;
+
+		if (scols_line_apply_filter(ln, lsblk->hlighter, &status) == 0
+		    && status)
+			scols_line_set_color(ln, lsblk->hlighter_seq);
+	}
+
+	/* apply counters */
+	if (!nocount) {
+		for (i = 0; ln && i < lsblk->ncts; i++)
+			scols_line_apply_filter(ln, lsblk->ct_filters[i], NULL);
 	}
 
 	/* Let's be careful with number of open files */
@@ -1942,7 +2047,7 @@ static void parse_includes(const char *str0)
 }
 
 /*
- * see set_sortdata_u64() and columns initialization in main()
+ * see set_rawdata_u64() and columns initialization in main()
  */
 static int cmp_u64_cells(struct libscols_cell *a,
 			 struct libscols_cell *b,
@@ -1958,6 +2063,13 @@ static int cmp_u64_cells(struct libscols_cell *a,
 	if (bdata == NULL)
 		return 1;
 	return *adata == *bdata ? 0 : *adata >= *bdata ? 1 : -1;
+}
+
+static void *get_u64_cell(const struct libscols_column *cl __attribute__((__unused__)),
+			  struct libscols_cell *ce,
+			  void *data __attribute__((__unused__)))
+{
+	return scols_cell_get_userdata(ce);
 }
 
 static void device_set_dedupkey(
@@ -1997,6 +2109,190 @@ static void devtree_set_dedupkeys(struct lsblk_devtree *tr, int id)
 		device_set_dedupkey(dev, NULL, id);
 }
 
+static struct libscols_filter *new_filter(const char *query)
+{
+	struct libscols_filter *f;
+
+	f = scols_new_filter(NULL);
+	if (!f)
+		err(EXIT_FAILURE, _("failed to allocate filter"));
+	if (query && scols_filter_parse_string(f, query) != 0)
+		errx(EXIT_FAILURE, _("failed to parse \"%s\": %s"), query,
+				scols_filter_get_errmsg(f));
+	return f;
+}
+
+static struct libscols_filter *new_counter_filter(const char *query)
+{
+	lsblk->ct_filters = xreallocarray(lsblk->ct_filters, lsblk->ncts + 1,
+					sizeof(struct libscols_filter *));
+
+	lsblk->ct_filters[lsblk->ncts] = new_filter(query);
+	lsblk->ncts++;
+
+	return lsblk->ct_filters[lsblk->ncts - 1];
+}
+
+static void set_counter_properties(const char *str0)
+{
+	struct libscols_filter *fltr = NULL;
+	struct libscols_counter *ct;
+	char *p, *str = xstrdup(str0);
+	char *name = NULL, *param = NULL, *func = NULL;
+
+	for (p = strtok(str, ":"); p != NULL; p = strtok((char *)0, ":")) {
+		if (!name)
+			name = p;
+		else if (!param)
+			param = p;
+		else if (!func)
+			func = p;
+		else
+			errx(EXIT_FAILURE, _("unexpected counter specification: %s"), str0);
+	}
+
+	if (!name)
+		errx(EXIT_FAILURE, _("counter not properly specified"));
+
+	/* use the latest counter filter (--ct-filter) or create empty */
+	if (lsblk->ncts)
+		fltr = lsblk->ct_filters[lsblk->ncts - 1];
+	else
+		fltr = new_counter_filter(NULL);
+
+	ct = scols_filter_new_counter(fltr);
+	if (!ct)
+		err(EXIT_FAILURE, _("failed to allocate counter"));
+
+	scols_counter_set_name(ct, name);
+	if (param)
+		scols_counter_set_param(ct, param);
+	if (func) {
+		int x;
+
+		if (strcmp(func, "max") == 0)
+			x = SCOLS_COUNTER_MAX;
+		else if (strcmp(func, "min") == 0)
+			x = SCOLS_COUNTER_MIN;
+		else if (strcmp(func, "sum") == 0)
+			x = SCOLS_COUNTER_SUM;
+		else if (strcmp(func, "count") == 0)
+			x = SCOLS_COUNTER_COUNT;
+		else
+			errx(EXIT_FAILURE, _("unsupported counter type: %s"), func);
+
+		scols_counter_set_func(ct, x);
+	}
+	free(str);
+}
+
+static void print_counters(void)
+{
+	struct libscols_iter *itr;
+	size_t i;
+
+	fputc('\n', stdout);
+	fputs(_("Summary:\n"), stdout);
+
+	itr = scols_new_iter(SCOLS_ITER_FORWARD);
+	if (!itr)
+		err(EXIT_FAILURE, _("failed to allocate iterator"));
+
+	for (i = 0; i < lsblk->ncts; i++) {
+		struct libscols_filter *fltr = lsblk->ct_filters[i];
+		struct libscols_counter *ct = NULL;
+
+		scols_reset_iter(itr, SCOLS_ITER_FORWARD);
+		while (scols_filter_next_counter(fltr, itr, &ct) == 0) {
+			printf("%16llu %s\n",
+					scols_counter_get_result(ct),
+					scols_counter_get_name(ct));
+		}
+	}
+
+	scols_free_iter(itr);
+}
+
+static void set_column_type(const struct colinfo *ci, struct libscols_column *cl, int fl)
+{
+	switch (ci->type) {
+	case COLTYPE_SIZE:
+		/* See init_scols_filter(), it may overwrite the type */
+		if (!lsblk->bytes)
+			break;
+		/* fallthrough */
+	case COLTYPE_NUM:
+		scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
+		scols_column_set_data_type(cl, SCOLS_DATA_U64);
+		return;
+	case COLTYPE_BOOL:
+		scols_column_set_json_type(cl, SCOLS_JSON_BOOLEAN);
+		scols_column_set_data_type(cl, SCOLS_DATA_BOOLEAN);
+		return;
+	default:
+		break;
+	}
+
+	/* default */
+	if (fl & SCOLS_FL_WRAP)
+		scols_column_set_json_type(cl, SCOLS_JSON_ARRAY_STRING);
+	else
+		scols_column_set_json_type(cl, SCOLS_JSON_STRING);
+
+	scols_column_set_data_type(cl, SCOLS_DATA_STRING);
+}
+
+static void init_scols_filter(struct libscols_table *tb, struct libscols_filter *f)
+{
+	struct libscols_iter *itr;
+	const char *name = NULL;
+	int nerrs = 0;
+
+	itr = scols_new_iter(SCOLS_ITER_FORWARD);
+	if (!itr)
+		err(EXIT_FAILURE, _("failed to allocate iterator"));
+
+	while (scols_filter_next_holder(f, itr, &name, 0) == 0) {
+		struct libscols_column *col = scols_table_get_column_by_name(tb, name);
+		int id = column_name_to_id(name, strlen(name));
+		const struct colinfo *ci = id >= 0 ? &infos[id] : NULL;
+
+		if (!ci) {
+			nerrs++;
+			continue;	/* report all unknown columns */
+		}
+		if (!col) {
+			add_column(id);
+			col = scols_table_new_column(lsblk->table, ci->name,
+						     ci->whint, SCOLS_FL_HIDDEN);
+			if (!col)
+				err(EXIT_FAILURE,_("failed to allocate output column"));
+
+			set_column_type(ci, col, ci->flags);
+		}
+
+		/* For sizes use rawdata (u64) rather than strings from table */
+		if (ci->type == COLTYPE_SIZE
+		    && !lsblk->bytes
+		    && !scols_column_has_data_func(col)) {
+
+			scols_column_set_data_type(col, SCOLS_DATA_U64);
+			scols_column_set_data_func(col, get_u64_cell, NULL);
+			lsblk->rawdata = 1;
+		}
+
+		scols_filter_assign_column(f, itr, name, col);
+	}
+
+	scols_free_iter(itr);
+
+	if (!nerrs)
+		return;
+
+	errx(EXIT_FAILURE, _("failed to initialize filter"));
+}
+
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
@@ -2017,6 +2313,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -M, --merge          group parents of sub-trees (usable for RAIDs, Multi-path)\n"), out);
 	fputs(_(" -O, --output-all     output all columns\n"), out);
 	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
+	fputs(_(" -Q, --filter <query> restrict output\n"), out);
+	fputs(_(" -H, --highlight <query> colorize lines maching the query\n"), out);
+	fputs(_("     --ct-filter <query> restrict the next counters\n"), out);
+	fputs(_("     --ct <name>[:<param>[:<function>]] define custom counter\n"), out);
 	fputs(_(" -S, --scsi           output info about SCSI devices\n"), out);
 	fputs(_(" -N, --nvme           output info about NVMe devices\n"), out);
 	fputs(_(" -v, --virtio         output info about virtio devices\n"), out);
@@ -2076,7 +2376,9 @@ int main(int argc, char *argv[])
 	int force_tree = 0, has_tree_col = 0;
 
 	enum {
-		OPT_SYSROOT = CHAR_MAX + 1
+		OPT_SYSROOT = CHAR_MAX + 1,
+		OPT_COUNTER_FILTER,
+		OPT_COUNTER
 	};
 
 	static const struct option longopts[] = {
@@ -2091,6 +2393,8 @@ int main(int argc, char *argv[])
 		{ "json",       no_argument,       NULL, 'J' },
 		{ "output",     required_argument, NULL, 'o' },
 		{ "output-all", no_argument,       NULL, 'O' },
+		{ "filter",     required_argument, NULL, 'Q' },
+		{ "highlight",  required_argument, NULL, 'H' },
 		{ "merge",      no_argument,       NULL, 'M' },
 		{ "perms",      no_argument,       NULL, 'm' },
 		{ "noheadings",	no_argument,       NULL, 'n' },
@@ -2113,6 +2417,8 @@ int main(int argc, char *argv[])
 		{ "tree",       optional_argument, NULL, 'T' },
 		{ "version",    no_argument,       NULL, 'V' },
 		{ "width",	required_argument, NULL, 'w' },
+		{ "ct-filter",  required_argument, NULL, OPT_COUNTER_FILTER },
+		{ "ct",         required_argument, NULL, OPT_COUNTER },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -2138,9 +2444,10 @@ int main(int argc, char *argv[])
 	lsblk = &_ls;
 
 	lsblk_init_debug();
+	scols_init_debug(0);
 
 	while((c = getopt_long(argc, argv,
-				"AabdDzE:e:fhJlNnMmo:OpPiI:rstVvST::w:x:y",
+				"AabdDzE:e:fH:hJlNnMmo:OpPQ:iI:rstVvST::w:x:y",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -2178,6 +2485,9 @@ int main(int argc, char *argv[])
 		case 'e':
 			parse_excludes(optarg);
 			break;
+		case 'H':
+			lsblk->hlighter = new_filter(optarg);
+			break;
 		case 'J':
 			lsblk->flags |= LSBLK_JSON;
 			break;
@@ -2203,6 +2513,10 @@ int main(int argc, char *argv[])
 		case 'P':
 			lsblk->flags |= LSBLK_EXPORT;
 			lsblk->flags &= ~LSBLK_TREE;	/* disable the default */
+			break;
+		case 'Q':
+			lsblk->filter = new_filter(optarg);
+			lsblk->flags &= ~LSBLK_TREE; /* disable the default */
 			break;
 		case 'y':
 			lsblk->flags |= LSBLK_SHELLVAR;
@@ -2312,6 +2626,13 @@ int main(int argc, char *argv[])
 			errtryhelp(EXIT_FAILURE);
 			break;
 
+		case OPT_COUNTER_FILTER:
+			new_counter_filter(optarg);
+			break;
+		case OPT_COUNTER:
+			set_counter_properties(optarg);
+			break;
+
 		case 'h':
 			usage();
 		case 'V':
@@ -2366,7 +2687,6 @@ int main(int argc, char *argv[])
 	}
 
 	lsblk_mnt_init();
-	scols_init_debug(0);
 	ul_path_init_debug();
 
 	/*
@@ -2422,6 +2742,7 @@ int main(int argc, char *argv[])
 		}
 		if (!lsblk->sort_col && lsblk->sort_id == id) {
 			lsblk->sort_col = cl;
+			lsblk->rawdata = 1;
 			scols_column_set_cmpfunc(cl,
 				ci->type == COLTYPE_NUM     ? cmp_u64_cells :
 				ci->type == COLTYPE_SIZE    ? cmp_u64_cells :
@@ -2432,27 +2753,19 @@ int main(int argc, char *argv[])
 		if (fl & SCOLS_FL_WRAP)
 			scols_column_set_wrapfunc(cl, NULL, scols_wrapzero_nextchunk, NULL);
 
-		if (lsblk->flags & LSBLK_JSON) {
-			switch (ci->type) {
-			case COLTYPE_SIZE:
-				if (!lsblk->bytes)
-					break;
-				/* fallthrough */
-			case COLTYPE_NUM:
-				scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
-				break;
-			case COLTYPE_BOOL:
-				scols_column_set_json_type(cl, SCOLS_JSON_BOOLEAN);
-				break;
-			default:
-				if (fl & SCOLS_FL_WRAP)
-					scols_column_set_json_type(cl, SCOLS_JSON_ARRAY_STRING);
-				else
-					scols_column_set_json_type(cl, SCOLS_JSON_STRING);
-				break;
-			}
-		}
+		set_column_type(ci, cl, fl);
 	}
+
+	if (lsblk->filter)
+		init_scols_filter(lsblk->table, lsblk->filter);
+
+	if (lsblk->hlighter && colors_init(UL_COLORMODE_AUTO, "lsblk") > 0) {
+		lsblk->hlighter_seq = color_scheme_get_sequence("highlight-line", UL_COLOR_RED);
+		scols_table_enable_colors(lsblk->table, 1);
+		init_scols_filter(lsblk->table, lsblk->hlighter);
+	}
+	for (i = 0; i < lsblk->ncts; i++)
+		init_scols_filter(lsblk->table, lsblk->ct_filters[i]);
 
 	tr = lsblk_new_devtree();
 	if (!tr)
@@ -2492,11 +2805,19 @@ int main(int argc, char *argv[])
 
 	scols_print_table(lsblk->table);
 
+	if (lsblk->ncts)
+		print_counters();
 leave:
-	if (lsblk->sort_col)
-		unref_sortdata(lsblk->table);
+	if (lsblk->rawdata)
+		unref_table_rawdata(lsblk->table);
 
 	scols_unref_table(lsblk->table);
+	scols_unref_filter(lsblk->filter);
+	scols_unref_filter(lsblk->hlighter);
+
+	for (i = 0; i < lsblk->ncts; i++)
+		scols_unref_filter(lsblk->ct_filters[i]);
+	free(lsblk->ct_filters);
 
 	lsblk_mnt_deinit();
 	lsblk_properties_deinit();

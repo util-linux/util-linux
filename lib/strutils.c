@@ -456,21 +456,28 @@ err:
 	errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
 }
 
-long double strtold_or_err(const char *str, const char *errmesg)
+int ul_strtold(const char *str, long double *num)
 {
-	double num;
 	char *end = NULL;
 
 	errno = 0;
 	if (str == NULL || *str == '\0')
-		goto err;
-	num = strtold(str, &end);
+		return -(errno = EINVAL);
+	*num = strtold(str, &end);
 
-	if (errno || str == end || (end && *end))
-		goto err;
+	if (errno != 0)
+		return -errno;
+	if (str == end || (end && *end))
+		return -(errno = EINVAL);
+	return 0;
+}
 
-	return num;
-err:
+long double strtold_or_err(const char *str, const char *errmesg)
+{
+	long double num = 0;
+
+	if (ul_strtold(str, &num) == 0)
+		return num;
 	if (errno == ERANGE)
 		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
 

@@ -211,6 +211,42 @@ int scols_column_get_json_type(const struct libscols_column *cl)
 
 
 /**
+ * scols_column_set_data_type:
+ * @cl: a pointer to a struct libscols_column instance
+ * @type: SCOLS_DATA_*
+ *
+ * The table always keep data in strings in form that is printed on output, but
+ * for some internal operations (like filters or counters) it needs to convert
+ * the strings to usable data format. This data format is possible to specify,
+ * by this function. If the format is not specified then filter and counters
+ * try to use SCOLS_JSON_* types, if also not define than defaults to string.
+ *
+ * If a simple string conversion is not possible then application (which want
+ * to use filters and counters) needs to define data function to do the
+ * conversion. See scols_column_set_data_func().
+ *
+ * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.40
+ */
+int scols_column_set_data_type(struct libscols_column *cl, int type)
+{
+	return cl->data_type = type;
+}
+
+/**
+ * scols_column_get_data_type:
+ * @cl: a pointer to a struct libscols_column instance
+ *
+ * Returns: The current datatype setting of the column @cl.
+ *
+ * Since: 2.40
+ */
+int scols_column_get_data_type(const struct libscols_column *cl)
+{
+	return cl->data_type;
+}
+/**
  * scols_column_get_table:
  * @cl: a pointer to a struct libscols_column instance
  *
@@ -280,6 +316,59 @@ const char *scols_column_get_name(struct libscols_column *cl)
 }
 
 /**
+ * scols_shellvar_name:
+ * @name: raw (column) name
+ * @buf: buffer to returns normalized name
+ * @bufsz: size of the buffer
+ *
+ * Converts @name to a name compatible with shell. The buffer is reallocated if
+ * not large enough.
+ *
+ * Returns: 0 in case of conversion, 1 if conversion unnecessary, <0 on error.
+ *
+ * Since: 2.40
+ */
+int scols_shellvar_name(const char *name, char **buf, size_t *bufsz)
+{
+	char *p;
+	const char *s;
+	size_t sz;
+
+	if (!name || !*name || !buf || !bufsz)
+		return -EINVAL;
+
+	/* size to convert "1FOO%" --> "_1FOO_PCT */
+	sz = strlen(name) + 1 + 3;
+	if (sz + 1 > *bufsz) {
+		char *tmp;
+
+		*bufsz = sz + 1;
+		tmp = realloc(*buf, *bufsz);
+		if (!tmp)
+			return -ENOMEM;
+		*buf = tmp;
+	}
+	memset(*buf, 0, *bufsz);
+	p = *buf;
+
+	 /* convert "1FOO" to "_1FOO" */
+	if (!isalpha(*name))
+		*p++ = '_';
+
+	/* replace all "bad" chars with "_" */
+	for (s = name; *s; s++)
+		*p++ = !isalnum(*s) ? '_' : *s;
+
+	if (!*s && *(s - 1) == '%') {
+		*p++ = 'P';
+		*p++ = 'C';
+		*p++ = 'T';
+	}
+
+	return strcmp(name, *buf) == 0;
+}
+
+/**
  * scols_column_get_name_as_shellvar
  * @cl: a pointer to a struct libscols_column instance
  *
@@ -291,32 +380,13 @@ const char *scols_column_get_name(struct libscols_column *cl)
 const char *scols_column_get_name_as_shellvar(struct libscols_column *cl)
 {
 	if (!cl->shellvar) {
-		const char *s, *name = scols_column_get_name(cl);
-		char *p;
-		size_t sz;
+		const char *name = scols_column_get_name(cl);
+		size_t sz = 0;
 
 		if (!name || !*name)
 			return NULL;
-
-		/* "1FOO%" --> "_1FOO_PCT */
-		sz = strlen(name) + 1 + 3;
-		p = cl->shellvar = calloc(1, sz + 1);
-		if (!cl->shellvar)
+		if (scols_shellvar_name(name, &cl->shellvar, &sz) < 0)
 			return NULL;
-
-		 /* convert "1FOO" to "_1FOO" */
-		if (!isalpha(*name))
-			*p++ = '_';
-
-		/* replace all "bad" chars with "_" */
-		for (s = name; *s; s++)
-			*p++ = !isalnum(*s) ? '_' : *s;
-
-		if (!*s && *(s - 1) == '%') {
-			*p++ = 'P';
-			*p++ = 'C';
-			*p++ = 'T';
-		}
 	}
 	return cl->shellvar;
 }
@@ -360,6 +430,7 @@ const char *scols_column_get_color(const struct libscols_column *cl)
 {
 	return cl->color;
 }
+
 
 /**
  * scols_wrapnl_nextchunk:
@@ -558,6 +629,52 @@ int scols_column_get_wrap_data(const struct libscols_column *cl,
 	return 0;
 }
 
+/*
+ * scols_column_set_data_func:
+ * @cl: a pointer to a struct libscols_column instance
+ * @datafunc: function to return data
+ * @userdata: optional stuff for callbacks
+ *
+ * The table always keep data in strings in form that is printed on output, but
+ * for some internal operations (like filters or counters) it needs to convert
+ * the strings to usable data format. If this converion is not possible then
+ * application can define datafunc() callback to provide data for filters and counters.
+
+ * The callback needs to return the data as pointer to void, and the data type
+ * is defined by scols_column_set_data_type().
+ *
+ * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.40
+ */
+int scols_column_set_data_func(struct libscols_column *cl,
+			void *(*datafunc)(const struct libscols_column *,
+					struct libscols_cell *,
+					void *),
+			void *userdata)
+{
+	if (!cl)
+		return -EINVAL;
+
+	cl->datafunc = datafunc;
+	cl->datafunc_data = userdata;
+	return 0;
+}
+
+/**
+ * scols_column_has_data_func:
+ * @cl: a pointer to a struct libscols_column instance
+ *
+ * See scols_column_set_data_func() for more details.
+ *
+ * Returns: 1 if data function defined, or 0
+ *
+ * Since: 2.40
+ */
+int scols_column_has_data_func(struct libscols_column *cl)
+{
+	return cl && cl->datafunc != NULL ? 1 : 0;
+}
 
 /**
  * scols_column_set_safechars:
@@ -750,7 +867,7 @@ int scols_column_set_properties(struct libscols_column *cl, const char *opts)
 			flags |= SCOLS_FL_STRICTWIDTH;
 
 		else if (strncmp(name, "noextremes", namesz) == 0)
-			flags |= SCOLS_FL_STRICTWIDTH;
+			flags |= SCOLS_FL_NOEXTREMES;
 
 		else if (strncmp(name, "hidden", namesz) == 0)
 			flags |= SCOLS_FL_HIDDEN;
@@ -758,12 +875,29 @@ int scols_column_set_properties(struct libscols_column *cl, const char *opts)
 		else if (strncmp(name, "wrap", namesz) == 0)
 			flags |= SCOLS_FL_WRAP;
 
-		else if (value && strncmp(name, "json", namesz) == 0) {
+		else if (strncmp(name, "wrapnl", namesz) == 0) {
+			flags |= SCOLS_FL_WRAP;
+			scols_column_set_wrapfunc(cl,
+					NULL,
+					scols_wrapnl_nextchunk,
+					NULL);
+			scols_column_set_safechars(cl, "\n");
+
+		} else if (strncmp(name, "wrapzero", namesz) == 0) {
+			flags |= SCOLS_FL_WRAP;
+			scols_column_set_wrapfunc(cl,
+					NULL,
+					scols_wrapzero_nextchunk,
+					NULL);
+
+		} else if (value && strncmp(name, "json", namesz) == 0) {
 
 			if (strncmp(value, "string", valuesz) == 0)
 				rc = scols_column_set_json_type(cl, SCOLS_JSON_STRING);
 			else if (strncmp(value, "number", valuesz) == 0)
 				rc = scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
+			else if (strncmp(value, "float", valuesz) == 0)
+				rc = scols_column_set_json_type(cl, SCOLS_JSON_FLOAT);
 			else if (strncmp(value, "array-string", valuesz) == 0)
 				rc = scols_column_set_json_type(cl, SCOLS_JSON_ARRAY_STRING);
 			else if (strncmp(value, "array-number", valuesz) == 0)
@@ -775,9 +909,8 @@ int scols_column_set_properties(struct libscols_column *cl, const char *opts)
 
 			char *end = NULL;
 			double x = strtod(value, &end);
-			if (errno || str == end)
+			if (errno || value == end)
 				return -EINVAL;
-
 			rc = scols_column_set_whint(cl, x);
 
 		} else if (value && strncmp(name, "color", namesz) == 0) {

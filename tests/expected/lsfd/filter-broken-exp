@@ -1,7 +1,4 @@
-lsfd: error: empty filter expression
-lsfd: error: empty filter expression
-lsfd: error: unbalanced parenthesis: )
-lsfd: error: unexpected token: garbage after OP2
-lsfd: error: bool expression is expected: FD
+lsfd: failed to parse "(": <bison syntax error message removed>
+lsfd: failed to parse ")": <bison syntax error message removed>
+lsfd: failed to parse "(FD == 1)garbage": <bison syntax error message removed>
 lsfd: unknown column: NOSUCHCOLUMN
-lsfd: error: no such column: NOSUCHCOLUMN
