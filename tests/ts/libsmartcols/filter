@@ -47,8 +47,7 @@ FILTERS["and-or"]='(NUM >= 3 && NUM <= 100) || NUM == 0'
 
 FILTERS["as-string"]='NUM == "100"'
 
-names=$(echo $(printf '%s\n' "${!FILTERS[@]}" | sort))
-for name in $names; do
+printf '%s\n' "${!FILTERS[@]}" | sort | while read name; do
 	ts_init_subtest "$prefix-$name"
 	echo "expr: ${FILTERS[$name]}" >> $TS_OUTPUT
 	echo >> $TS_OUTPUT
@@ -95,8 +94,7 @@ FILTERS["le2"]='NUM <= 100.5'
 FILTERS["as-string"]='NUM == "100"'
 FILTERS["as-string2"]='NUM == "100.5"'
 
-names=$(echo $(printf '%s\n' "${!FILTERS[@]}" | sort))
-for name in $names; do
+printf '%s\n' "${!FILTERS[@]}" | sort | while read name; do
 	ts_init_subtest "$prefix-$name"
 	echo "expr: ${FILTERS[$name]}" >> $TS_OUTPUT
 	echo >> $TS_OUTPUT
@@ -135,8 +133,7 @@ FILTERS["ne2"]='BOOL != true'
 FILTERS["as-string"]='BOOL == "0"'
 FILTERS["as-string2"]='BOOL == "1"'
 
-names=$(echo $(printf '%s\n' "${!FILTERS[@]}" | sort))
-for name in $names; do
+printf '%s\n' "${!FILTERS[@]}" | sort | while read name; do
 	ts_init_subtest "$prefix-$name"
 	echo "expr: ${FILTERS[$name]}" >> $TS_OUTPUT
 	echo >> $TS_OUTPUT
@@ -171,8 +168,7 @@ FILTERS["le"]='NAME <= "bbb"'
 FILTERS["reg"]='NAME =~ "aaa.*"'
 FILTERS["nreg"]='NAME !~ "aaa.*"'
 
-names=$(echo $(printf '%s\n' "${!FILTERS[@]}" | sort))
-for name in $names; do
+printf '%s\n' "${!FILTERS[@]}" | sort | while read name; do
 	ts_init_subtest "$prefix-$name"
 	echo "expr: ${FILTERS[$name]}" >> $TS_OUTPUT
 	echo >> $TS_OUTPUT
@@ -201,8 +197,7 @@ FILTERS["bad-column"]='XXX == 100'
 FILTERS["bad-number"]='NUM == 1y0'
 FILTERS["bad-float"]='NUM == 100 . 5'
 
-names=$(echo $(printf '%s\n' "${!FILTERS[@]}" | sort))
-for name in $names; do
+printf '%s\n' "${!FILTERS[@]}" | sort | while read name; do
 	ts_init_subtest "$prefix-$name"
 	echo "expr: ${FILTERS[$name]}" >> $TS_OUTPUT
 	echo >> $TS_OUTPUT
