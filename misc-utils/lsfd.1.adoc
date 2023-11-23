@@ -33,7 +33,7 @@ default outputs in your scripts. Always explicitly define expected columns by us
 *--output* _columns-list_ in environments where a stable output is required.
 
 *lsfd* uses Libsmartcols for output formatting and filtering. See the description of *--output*
-option for customizing the output format, and *--filter* option for filtering. Use *lsfd --help*
+option for customizing the output format, and *--filter* option for filtering. Use *lsfd --list-columns*
 to get a list of all available columns.
 
 == OPTIONS
