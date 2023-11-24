@@ -22,7 +22,11 @@ struct filter_node *filter_new_expr(
 	struct filter_expr *n = (struct filter_expr *) __filter_new_node(
 					F_NODE_EXPR, sizeof(struct filter_expr));
 
+	if (!n)
+		return NULL;
+
 	n->type = type;
+
 	switch (type) {
 	case F_EXPR_AND:
 	case F_EXPR_OR:
@@ -41,6 +45,7 @@ struct filter_node *filter_new_expr(
 		n->right = right;
 		break;
 	}
+
 	return (struct filter_node *) n;
 }
 

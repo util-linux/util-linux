@@ -98,12 +98,17 @@ struct filter_node *filter_new_param(
 	struct filter_param *n = (struct filter_param *) __filter_new_node(
 					F_NODE_PARAM,
 					sizeof(struct filter_param));
+	if (!n)
+		return NULL;
+
 	n->type = type;
 	n->holder = holder;
 	INIT_LIST_HEAD(&n->pr_params);
 
-	if (param_set_data(n, type, data) != 0)
+	if (param_set_data(n, type, data) != 0) {
+		filter_free_param(n);
 		return NULL;
+	}
 
 	if (holder == F_HOLDER_COLUMN) {
 		n->holder_name = strdup((char *) data);
@@ -357,8 +362,7 @@ int filter_count_param(struct libscols_filter *fltr,
 		struct libscols_line *ln,
 		struct libscols_counter *ct)
 {
-	unsigned long long num;
-
+	unsigned long long num = 0;
 
 	if (ct->func == SCOLS_COUNTER_COUNT) {
 		ct->result++;
@@ -372,11 +376,12 @@ int filter_count_param(struct libscols_filter *fltr,
 		rc = fetch_holder_data(fltr, ct->param, ln);
 		if (rc)
 			return rc;
-	}
-	if (ct->param->empty)
-		return -EINVAL;
 
-	num = ct->param->val.num;
+		if (ct->param->empty)
+			return -EINVAL;
+
+		num = ct->param->val.num;
+	}
 
 	switch (ct->func) {
 	case SCOLS_COUNTER_MAX:

@@ -117,16 +117,16 @@ void yyerror (yyscan_t *locp __attribute__((__unused__)),
 
 		if (fltr->errmsg)
 			free(fltr->errmsg);
+
 		fltr->errmsg = strdup(msg);
+		if (!fltr->errmsg)
+			return;
 
 		p = strstr(fltr->errmsg, "T_");
 		if (p) {
 			size_t sz = strlen(fltr->errmsg);
 			memmove(p, p + 2, sz - 1 - (p - fltr->errmsg));
 		}
-
-		if (!fltr->errmsg)
-			return;
 	}
 	errno = EINVAL;
 }
