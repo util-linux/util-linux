@@ -32,6 +32,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <stdbool.h>
+#include <search.h>
 
 #include <libmount.h>
 #include <libsmartcols.h>
@@ -60,7 +61,8 @@ enum {
 	COL_START,
 	COL_END,
 	COL_PATH,
-	COL_BLOCKER
+	COL_BLOCKER,
+	COL_HOLDERS,
 };
 
 /* column names */
@@ -84,7 +86,8 @@ static struct colinfo infos[] = {
 	[COL_START] = { "START", 10, SCOLS_FL_RIGHT, N_("relative byte offset of the lock")},
 	[COL_END]  = { "END",    10, SCOLS_FL_RIGHT, N_("ending offset of the lock")},
 	[COL_PATH] = { "PATH",    0, SCOLS_FL_TRUNC, N_("path of the locked file")},
-	[COL_BLOCKER] = { "BLOCKER", 0, SCOLS_FL_RIGHT, N_("PID of the process blocking the lock") }
+	[COL_BLOCKER] = { "BLOCKER", 0, SCOLS_FL_RIGHT, N_("PID of the process blocking the lock") },
+	[COL_HOLDERS] = { "HOLDERS", 0, SCOLS_FL_WRAP, N_("HOLDERS of the lock") },
 };
 
 static int columns[ARRAY_SIZE(infos) * 2];
@@ -114,8 +117,55 @@ struct lock {
 	unsigned int mandatory :1,
 		     blocked   :1;
 	uint64_t size;
+	int fd;
 	int id;
 };
+
+struct lock_tnode {
+	dev_t dev;
+	ino_t inode;
+
+	struct list_head chain;
+};
+
+static int lock_tnode_compare(const void *a, const void *b)
+{
+	struct lock_tnode *anode = ((struct lock_tnode *)a);
+	struct lock_tnode *bnode = ((struct lock_tnode *)b);
+
+	if (anode->dev > bnode->dev)
+		return 1;
+	else if (anode->dev < bnode->dev)
+		return -1;
+
+	if (anode->inode > bnode->inode)
+		return 1;
+	else if (anode->inode < bnode->inode)
+		return -1;
+
+	return 0;
+}
+
+static void add_to_tree(void *troot, struct lock *l)
+{
+	struct lock_tnode tmp = { .dev = l->dev, .inode = l->inode, };
+	struct lock_tnode **head = tfind(&tmp, troot, lock_tnode_compare);
+	struct lock_tnode *new_head;
+
+	if (head) {
+		list_add_tail(&l->locks, &(*head)->chain);
+		return;
+	}
+
+	new_head = xmalloc(sizeof(*new_head));
+	new_head->dev = l->dev;
+	new_head->inode = l->inode;
+	INIT_LIST_HEAD(&new_head->chain);
+	if (tsearch(new_head, troot, lock_tnode_compare) == NULL)
+		errx(EXIT_FAILURE, _("failed to allocate memory"));
+
+	list_add_tail(&l->locks, &new_head->chain);
+}
 
 static void rem_lock(struct lock *lock)
 {
@@ -245,20 +295,30 @@ struct override_info {
 	const char *cmdname;
 };
 
-static void patch_lock(struct lock *l, struct list_head *fallback)
+static bool is_holder(struct lock *l, struct lock *m)
 {
+	return (l->start == m->start &&
+		l->end == m->end &&
+		l->inode == m->inode &&
+		l->dev == m->dev &&
+		l->mandatory == m->mandatory &&
+		l->blocked == m->blocked &&
+		strcmp(l->type, m->type) == 0 &&
+		strcmp(l->mode, m->mode) == 0);
+}
+
+static void patch_lock(struct lock *l, void *fallback)
+{
+	struct lock_tnode tmp = { .dev = l->dev, .inode = l->inode, };
+	struct lock_tnode **head = tfind(&tmp, fallback, lock_tnode_compare);
 	struct list_head *p;
 
-	list_for_each(p, fallback) {
+	if (!head)
+		return;
+
+	list_for_each(p, &(*head)->chain) {
 		struct lock *m = list_entry(p, struct lock, locks);
-		if (l->start == m->start &&
-		    l->end == m->end &&
-		    l->inode == m->inode &&
-		    l->dev == m->dev &&
-		    l->mandatory == m->mandatory &&
-		    l->blocked == m->blocked &&
-		    strcmp(l->type, m->type) == 0 &&
-		    strcmp(l->mode, m->mode) == 0) {
+		if (is_holder(l, m)) {
 			/* size and id can be ignored. */
 			l->pid = m->pid;
 			l->cmdname = xstrdup(m->cmdname);
@@ -267,13 +327,19 @@ static void patch_lock(struct lock *l, struct list_head *fallback)
 	}
 }
 
-static struct lock *get_lock(char *buf, struct override_info *oinfo, struct list_head *fallback)
+static void add_to_list(void *locks, struct lock *l)
+{
+	list_add(&l->locks, locks);
+}
+
+static struct lock *get_lock(char *buf, struct override_info *oinfo, void *fallback)
 {
 	int i;
 	char *tok = NULL;
 	size_t sz;
 	struct lock *l = xcalloc(1, sizeof(*l));
 	INIT_LIST_HEAD(&l->locks);
+	l->fd = -1;
 
 	bool cmdname_unknown = false;
 
@@ -375,8 +441,8 @@ static struct lock *get_lock(char *buf, struct override_info *oinfo, struct list
 	return l;
 }
 
-static int get_pid_lock(struct list_head *locks, FILE *fp,
-			pid_t pid, const char *cmdname)
+static int get_pid_lock(void *locks, void (*add_lock)(void *, struct lock *), FILE *fp,
+			pid_t pid, const char *cmdname, int fd)
 {
 	char buf[PATH_MAX];
 	struct override_info oinfo = {
@@ -389,8 +455,10 @@ static int get_pid_lock(struct list_head *locks, FILE *fp,
 		if (strncmp(buf, "lock:\t", 6))
 			continue;
 		l = get_lock(buf + 6, &oinfo, NULL);
-		if (l)
-			list_add(&l->locks, locks);
+		if (l) {
+			add_lock(locks, l);
+			l->fd = fd;
+		}
 		/* no break here.
 		   Multiple recode locks can be taken via one fd. */
 	}
@@ -398,7 +466,7 @@ static int get_pid_lock(struct list_head *locks, FILE *fp,
 	return 0;
 }
 
-static int get_pid_locks(struct list_head *locks, struct path_cxt *pc,
+static int get_pid_locks(void *locks, void (*add_lock)(void *, struct lock *), struct path_cxt *pc,
 			 pid_t pid, const char *cmdname)
 {
 	DIR *sub = NULL;
@@ -416,14 +484,14 @@ static int get_pid_locks(struct list_head *locks, struct path_cxt *pc,
 		if (fdinfo == NULL)
 			continue;
 
-		get_pid_lock(locks, fdinfo, pid, cmdname);
+		get_pid_lock(locks, add_lock, fdinfo, pid, cmdname, (int)num);
 		fclose(fdinfo);
 	}
 
 	return rc;
 }
 
-static int get_pids_locks(struct list_head *locks)
+static int get_pids_locks(void *locks, void (*add_lock)(void *, struct lock *))
 {
 	DIR *dir;
 	struct dirent *d;
@@ -455,7 +523,7 @@ static int get_pids_locks(struct list_head *locks)
 			continue;
 		cmdname = buf;
 
-		get_pid_locks(locks, pc, pid, cmdname);
+		get_pid_locks(locks, add_lock, pc, pid, cmdname);
 	}
 
 	closedir(dir);
@@ -464,7 +532,7 @@ static int get_pids_locks(struct list_head *locks)
 	return rc;
 }
 
-static int get_proc_locks(struct list_head *locks, struct list_head *fallback)
+static int get_proc_locks(void *locks, void (*add_lock)(void *, struct lock *), void *fallback)
 {
 	FILE *fp;
 	char buf[PATH_MAX];
@@ -475,7 +543,7 @@ static int get_proc_locks(struct list_head *locks, struct list_head *fallback)
 	while (fgets(buf, sizeof(buf), fp)) {
 		struct lock *l = get_lock(buf, NULL, fallback);
 		if (l)
-			list_add(&l->locks, locks);
+			add_lock(locks, l);
 	}
 
 	fclose(fp);
@@ -527,7 +595,13 @@ static pid_t get_blocker(int id, struct list_head *locks)
 	return 0;
 }
 
-static void add_scols_line(struct libscols_table *table, struct lock *l, struct list_head *locks)
+static void xstrcoholder(char **str, struct lock *l)
+{
+	xstrfappend(str, "%d,%s,%d",
+		    l->pid, l->cmdname, l->fd);
+}
+
+static void add_scols_line(struct libscols_table *table, struct lock *l, struct list_head *locks, void *pid_locks)
 {
 	size_t i;
 	struct libscols_line *line;
@@ -596,6 +670,28 @@ static void add_scols_line(struct libscols_table *table, struct lock *l, struct 
 						get_blocker(l->id, locks) : 0;
 			if (bl)
 				xasprintf(&str, "%d", (int) bl);
+			break;
+		}
+		case COL_HOLDERS:
+		{
+			struct lock_tnode tmp = { .dev = l->dev, .inode = l->inode, };
+			struct lock_tnode **head = tfind(&tmp, pid_locks, lock_tnode_compare);
+			struct list_head *p;
+
+			if (!head)
+				break;
+
+			list_for_each(p, &(*head)->chain) {
+				struct lock *m = list_entry(p, struct lock, locks);
+
+				if (!is_holder(l, m))
+					continue;
+
+				if (str)
+					xstrputc(&str, '\n');
+				xstrcoholder(&str, m);
+			}
+			break;
 		}
 		default:
 			break;
@@ -617,7 +713,15 @@ static void rem_locks(struct list_head *locks)
 	}
 }
 
-static int show_locks(struct list_head *locks, pid_t target_pid)
+static void rem_tnode(void *node)
+{
+	struct lock_tnode *tnode = node;
+
+	rem_locks(&tnode->chain);
+	free(node);
+}
+
+static int show_locks(struct list_head *locks, pid_t target_pid, void *pid_locks)
 {
 	int rc = 0;
 	size_t i;
@@ -643,6 +747,14 @@ static int show_locks(struct list_head *locks, pid_t target_pid)
 		if (!cl)
 			err(EXIT_FAILURE, _("failed to allocate output column"));
 
+		if (col->flags & SCOLS_FL_WRAP) {
+			scols_column_set_wrapfunc(cl,
+						  scols_wrapnl_chunksize,
+						  scols_wrapnl_nextchunk,
+						  NULL);
+			scols_column_set_safechars(cl, "\n");
+		}
+
 		if (json) {
 			int id = get_column_id(i);
 
@@ -661,6 +773,9 @@ static int show_locks(struct list_head *locks, pid_t target_pid)
 			case COL_M:
 				scols_column_set_json_type(cl, SCOLS_JSON_BOOLEAN);
 				break;
+			case COL_HOLDERS:
+				scols_column_set_json_type(cl, SCOLS_JSON_ARRAY_STRING);
+				break;
 			default:
 				scols_column_set_json_type(cl, SCOLS_JSON_STRING);
 				break;
@@ -676,7 +791,7 @@ static int show_locks(struct list_head *locks, pid_t target_pid)
 		if (target_pid && target_pid != l->pid)
 			continue;
 
-		add_scols_line(table, l, locks);
+		add_scols_line(table, l, locks, pid_locks);
 	}
 
 	scols_print_table(table);
@@ -725,7 +840,8 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char *argv[])
 {
 	int c, rc = 0;
-	struct list_head proc_locks, pid_locks;
+	struct list_head proc_locks;
+	void *pid_locks = NULL;
 	char *outarg = NULL;
 	enum {
 		OPT_OUTPUT_ALL = CHAR_MAX + 1
@@ -802,7 +918,6 @@ int main(int argc, char *argv[])
 	}
 
 	INIT_LIST_HEAD(&proc_locks);
-	INIT_LIST_HEAD(&pid_locks);
 
 	if (!ncolumns) {
 		/* default columns */
@@ -827,13 +942,13 @@ int main(int argc, char *argv[])
 	 * of /proc/$pid/fdinfo/$fd as fallback information.
 	 * get_proc_locks() used the fallback information if /proc/locks
 	 * doesn't provides enough information or provides staled information. */
-	get_pids_locks(&pid_locks);
-	rc = get_proc_locks(&proc_locks, &pid_locks);
+	get_pids_locks(&pid_locks, add_to_tree);
+	rc = get_proc_locks(&proc_locks, add_to_list, &pid_locks);
 
 	if (!rc && !list_empty(&proc_locks))
-		rc = show_locks(&proc_locks, target_pid);
+		rc = show_locks(&proc_locks, target_pid, &pid_locks);
 
-	rem_locks(&pid_locks);
+	tdestroy(pid_locks, rem_tnode);
 	rem_locks(&proc_locks);
 
 	mnt_unref_table(tab);
