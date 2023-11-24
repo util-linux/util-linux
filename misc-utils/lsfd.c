@@ -51,6 +51,7 @@ static int kcmp(pid_t pid1, pid_t pid2, int type,
 #include "c.h"
 #include "list.h"
 #include "closestream.h"
+#include "column-list-table.h"
 #include "strutils.h"
 #include "procfs.h"
 #include "fileutils.h"
@@ -1792,18 +1793,21 @@ static void collect_processes(struct lsfd_control *ctl, const pid_t pids[], int 
 	ul_unref_path(pc);
 }
 
-static void __attribute__((__noreturn__)) list_colunms(FILE *out)
+static void __attribute__((__noreturn__)) list_colunms(const char *table_name,
+						       FILE *out,
+						       int raw,
+						       int json)
 {
-	fputs(USAGE_COLUMNS, out);
+	struct libscols_table *col_tb = xcolumn_list_table_new(table_name, out, raw, json);
+
 	for (size_t i = 0; i < ARRAY_SIZE(infos); i++)
-		fprintf(out, " %20s  %-10s%s\n", infos[i].name,
-			infos[i].json_type == SCOLS_JSON_STRING ?  "<string>":
-			infos[i].json_type == SCOLS_JSON_ARRAY_STRING ?  "<string>":
-			infos[i].json_type == SCOLS_JSON_ARRAY_NUMBER ?  "<string>":
-			infos[i].json_type == SCOLS_JSON_NUMBER ?  "<integer>":
-			infos[i].json_type == SCOLS_JSON_FLOAT ?  "<float>":
-			"<boolean>",
-			_(infos[i].help));
+		xcolumn_list_table_append_line(col_tb, infos[i].name,
+					       infos[i].json_type, "<boolean>",
+					       _(infos[i].help));
+
+	scols_print_table(col_tb);
+	scols_unref_table(col_tb);
+
 	exit(EXIT_SUCCESS);
 }
 
@@ -2282,7 +2286,7 @@ int main(int argc, char *argv[])
 		case 'h':
 			usage();
 		case 'H':
-			list_colunms(stdout);
+			list_colunms("lsfd-columns", stdout, ctl.raw, ctl.json);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
