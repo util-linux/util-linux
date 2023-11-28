@@ -45,6 +45,7 @@
 
 #include "mountP.h"
 #include "fileutils.h"	/* statx() fallback */
+#include "strutils.h"
 #include "mount-api-utils.h"
 #include "linux_version.h"
 
@@ -149,12 +150,23 @@ static inline int fsconfig_set_value(
 			const char *name, const char *value)
 {
 	int rc;
+	char *p = NULL;
 
-	DBG(HOOK, ul_debugobj(hs, "  fsconfig(name=%s,value=%s)", name,
+	if (value && strstr(value, "\\,")) {
+		p = strdup(value);
+		if (!p)
+			return -EINVAL;
+
+		strrem(p, '\\');
+		value = p;
+	}
+
+	DBG(HOOK, ul_debugobj(hs, "  fsconfig(name=\"%s\" value=\"%s\")", name,
 				value ? : ""));
-	if (value)
+	if (value) {
 		rc = fsconfig(fd, FSCONFIG_SET_STRING, name, value, 0);
-	else
+		free(p);
+	} else
 		rc = fsconfig(fd, FSCONFIG_SET_FLAG, name, NULL, 0);
 
 	set_syscall_status(cxt, "fsconfig", rc == 0);
