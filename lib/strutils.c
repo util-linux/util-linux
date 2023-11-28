@@ -1190,7 +1190,7 @@ int ul_optstr_next(char **optstr, char **name, size_t *namesz,
 			continue;		/* still in quoted block */
 		if (!sep && p > start && *p == '=')
 			sep = p;		/* name and value separator */
-		if (*p == ',')
+		if (*p == ',' && (p == optstr0 || *(p - 1) != '\\'))
 			stop = p;		/* terminate the option item */
 		else if (*(p + 1) == '\0')
 			stop = p + 1;		/* end of optstr */
