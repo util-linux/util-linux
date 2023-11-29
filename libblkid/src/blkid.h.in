@@ -458,6 +458,8 @@ extern int blkid_probe_has_value(blkid_probe pr, const char *name)
 			__ul_attribute__((nonnull));
 extern int blkid_do_wipe(blkid_probe pr, int dryrun)
 			__ul_attribute__((nonnull));
+extern int blkid_wipe_all(blkid_probe pr)
+			__ul_attribute__((nonnull));
 extern int blkid_probe_step_back(blkid_probe pr)
 			__ul_attribute__((nonnull));
 

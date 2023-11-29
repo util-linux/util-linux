@@ -187,3 +187,7 @@ BLKID_2_37 {
 BLKID_2_39 {
 	blkid_topology_get_diskseq;
 } BLKID_2_37;
+
+BLKID_2_40 {
+    blkid_wipe_all;
+} BLKID_2_39;
