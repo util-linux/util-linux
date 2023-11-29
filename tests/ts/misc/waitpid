@@ -24,7 +24,7 @@ ts_check_test_command "$TS_CMD_WAITPID"
 
 ts_init_subtest normal
 
-(sleep 0.2; echo 1 >> "$TS_OUTPUT") &
+(sleep 0.5; echo 1 >> "$TS_OUTPUT") &
 BG1="$!"
 
 (sleep 0.1; echo 2 >> "$TS_OUTPUT") &
