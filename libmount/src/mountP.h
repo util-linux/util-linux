@@ -508,6 +508,7 @@ extern const struct libmnt_optmap *mnt_optmap_get_entry(
 
 /* optstr.c */
 extern int mnt_optstr_remove_option_at(char **optstr, char *begin, char *end);
+extern int mnt_optstr_get_missing(const char *optstr, const char *wanted, char **missing);
 
 extern int mnt_buffer_append_option(struct ul_buffer *buf,
                         const char *name, size_t namesz,
