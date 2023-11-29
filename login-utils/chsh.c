@@ -84,18 +84,6 @@ static void __attribute__((__noreturn__)) usage(void)
 }
 
 /*
- *  print_shells () -- /etc/shells is outputted to stdout.
- */
-static void print_shells(void)
-{
-	char *s;
-
-	while ((s = getusershell()))
-		printf("%s\n", s);
-	endusershell();
-}
-
-/*
  *  parse_argv () --
  *	parse the command line arguments, and fill in "pinfo" with any
  *	information from the command line.
@@ -120,7 +108,7 @@ static void parse_argv(int argc, char **argv, struct sinfo *pinfo)
 		case 'h':
 			usage();
 		case 'l':
-			print_shells();
+			print_shells(stdout, "%s\n");
 			exit(EXIT_SUCCESS);
 		case 's':
 			pinfo->shell = optarg;
