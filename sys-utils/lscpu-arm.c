@@ -272,10 +272,12 @@ static const struct id_part ampere_part[] = {
 };
 
 static const struct id_part ft_part[] = {
+    { 0x303, "FTC310" },
     { 0x660, "FTC660" },
     { 0x661, "FTC661" },
     { 0x662, "FTC662" },
     { 0x663, "FTC663" },
+    { 0x664, "FTC664" },
     { 0x862, "FTC862" },
     { -1, "unknown" },
 };
