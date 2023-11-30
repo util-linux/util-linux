@@ -1,6 +1,6 @@
 project('util-linux', 'c',
         version : run_command('tools/git-version-gen', check: true).stdout(),
-        meson_version: '>=0.57.0',
+        meson_version: '>=0.60.0',
         license : 'GPLv2+')
 
 fs = import('fs')
