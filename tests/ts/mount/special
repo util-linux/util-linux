@@ -56,8 +56,8 @@ ts_init_subtest "username"
 $TS_CMD_MOUNT -t mytest -ouser=name,abc /foo /bar &> $TS_OUTPUT
 ts_finalize_subtest
 
-ts_init_subtest "missing-options"
 
+ts_init_subtest "missing-options"
 cat > $MOUNTER <<EOF
 #!/bin/bash
 # This util-linux regression test component
@@ -65,14 +65,21 @@ cat > $MOUNTER <<EOF
 #
 $TS_CMD_MOUNT -t tmpfs -i "\$1" "\$2" -o x-foo=123
 EOF
+chmod +x $MOUNTER
 
 mountpoint="$TS_OUTDIR/mnt"
 mkdir -p "$mountpoint"
 export LIBMOUNT_UTAB=$TS_OUTDIR/utab
+rm -f $LIBMOUNT_UTAB
+> $LIBMOUNT_UTAB
+
 $TS_CMD_MOUNT -t mytest -o x-bar=BAR /foo "$mountpoint" &> $TS_OUTPUT
+udevadm settle
+
 cat "$LIBMOUNT_UTAB" \
 	| grep "$mountpoint" \
 	| sed -e "s|$mountpoint|/mountpoint|g" \
+	      -e 's/ID=[[:digit:]]* //g' \
 	&> $TS_OUTPUT
 $TS_CMD_UMOUNT "$mountpoint"
 unset LIBMOUNT_UTAB
