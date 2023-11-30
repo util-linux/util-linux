@@ -1,7 +1,11 @@
 project('util-linux', 'c',
         version : run_command('tools/git-version-gen', check: true).stdout(),
         meson_version: '>=0.60.0',
-        license : 'GPLv2+')
+        license : 'GPLv2+',
+        default_options : [
+          'c_std=c99',
+          'cpp_std=c++11',
+        ])
 
 fs = import('fs')
 pkgconfig = import('pkgconfig')
