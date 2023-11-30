@@ -721,6 +721,28 @@ static void rem_tnode(void *node)
 	free(node);
 }
 
+static int get_json_type_for_column(int column_id, int representing_in_bytes)
+{
+	switch (column_id) {
+	case COL_SIZE:
+		if (!representing_in_bytes)
+			return SCOLS_JSON_STRING;
+		/* fallthrough */
+	case COL_PID:
+	case COL_START:
+	case COL_END:
+	case COL_BLOCKER:
+	case COL_INODE:
+		return SCOLS_JSON_NUMBER;
+	case COL_M:
+		return SCOLS_JSON_BOOLEAN;
+	case COL_HOLDERS:
+		return SCOLS_JSON_ARRAY_STRING;
+	default:
+		return SCOLS_JSON_STRING;
+	}
+}
+
 static int show_locks(struct list_head *locks, pid_t target_pid, void *pid_locks)
 {
 	int rc = 0;
@@ -757,31 +779,8 @@ static int show_locks(struct list_head *locks, pid_t target_pid, void *pid_locks
 
 		if (json) {
 			int id = get_column_id(i);
-
-			switch (id) {
-			case COL_SIZE:
-				if (!bytes) {
-					scols_column_set_json_type(cl, SCOLS_JSON_STRING);
-					break;
-				}
-				/* fallthrough */
-			case COL_PID:
-			case COL_START:
-			case COL_END:
-			case COL_BLOCKER:
-			case COL_INODE:
-				scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
-				break;
-			case COL_M:
-				scols_column_set_json_type(cl, SCOLS_JSON_BOOLEAN);
-				break;
-			case COL_HOLDERS:
-				scols_column_set_json_type(cl, SCOLS_JSON_ARRAY_STRING);
-				break;
-			default:
-				scols_column_set_json_type(cl, SCOLS_JSON_STRING);
-				break;
-			}
+			int json_type = get_json_type_for_column(id, bytes);
+			scols_column_set_json_type(cl, json_type);
 		}
 
 	}
