@@ -760,8 +760,10 @@ static int show_locks(struct list_head *locks, pid_t target_pid, void *pid_locks
 
 			switch (id) {
 			case COL_SIZE:
-				if (!bytes)
+				if (!bytes) {
+					scols_column_set_json_type(cl, SCOLS_JSON_STRING);
 					break;
+				}
 				/* fallthrough */
 			case COL_PID:
 			case COL_START:
