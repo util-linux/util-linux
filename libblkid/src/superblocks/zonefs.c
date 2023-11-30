@@ -54,7 +54,7 @@ static int zonefs_verify_csum(blkid_probe pr, const struct zonefs_super *sb)
 	uint32_t expected = le32_to_cpu(sb->s_crc);
 	uint32_t crc = ul_crc32_exclude_offset(
 			~0LL, (unsigned char *) sb, sizeof(*sb),
-		       offsetof(typeof(*sb), s_crc), sizeof(sb->s_crc));
+		       offsetof(__typeof__(*sb), s_crc), sizeof(sb->s_crc));
 	return blkid_probe_verify_csum(pr, crc, expected);
 }
 
