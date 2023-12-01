@@ -14,7 +14,7 @@
  * when built with --coverage/-Db_coverage=true)
  */
 void __gcov_dump(void);
-void _exit(int);
+__attribute__((noreturn)) void _exit(int);
 
 __attribute__((noreturn)) static inline void _coverage__exit(int status) {
         __gcov_dump();
