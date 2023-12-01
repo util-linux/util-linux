@@ -150,22 +150,29 @@ static inline int fsconfig_set_value(
 			const char *name, const char *value)
 {
 	int rc;
-	char *p = NULL;
+	char *s = NULL;
 
+	/* "\," is a way to use comma in values, let's remove \ escape */
 	if (value && strstr(value, "\\,")) {
-		p = strdup(value);
-		if (!p)
-			return -EINVAL;
+		char *x, *p;
 
-		strrem(p, '\\');
-		value = p;
+		s = strdup(value);
+		if (!s)
+			return -EINVAL;
+		for (x = p = s; *x; p++, x++) {
+			if (*x == '\\' && *(x + 1) == ',')
+				x++;
+			*p = *x;
+		}
+		*p = '\0';
+		value = s;
 	}
 
 	DBG(HOOK, ul_debugobj(hs, "  fsconfig(name=\"%s\" value=\"%s\")", name,
 				value ? : ""));
 	if (value) {
 		rc = fsconfig(fd, FSCONFIG_SET_STRING, name, value, 0);
-		free(p);
+		free(s);
 	} else
 		rc = fsconfig(fd, FSCONFIG_SET_FLAG, name, NULL, 0);
 
