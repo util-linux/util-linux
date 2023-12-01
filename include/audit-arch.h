@@ -65,6 +65,8 @@
 #    else
 #	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_PARISC64
 #    endif
+#elif __alpha__
+#    define SECCOMP_ARCH_NATIVE AUDIT_ARCH_ALPHA
 #else
 #    error Unknown target architecture
 #endif
