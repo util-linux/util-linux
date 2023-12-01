@@ -156,7 +156,9 @@ int blkdev_lock(int fd, const char *devname, const char *lockmode);
 #ifdef HAVE_LINUX_BLKZONED_H
 struct blk_zone_report *blkdev_get_zonereport(int fd, uint64_t sector, uint32_t nzones);
 #else
-static inline struct blk_zone_report *blkdev_get_zonereport(int fd, uint64_t sector, uint32_t nzones)
+static inline struct blk_zone_report *blkdev_get_zonereport(int fd __attribute__((unused)),
+							    uint64_t sector __attribute__((unused)),
+							    uint32_t nzones __attribute__((unused)))
 {
 	return NULL;
 }
