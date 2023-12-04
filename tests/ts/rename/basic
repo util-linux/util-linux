@@ -72,4 +72,8 @@ touch rename_all_empty
 $TS_CMD_RENAME -v -a '' _ rename_all_empty >> $TS_OUTPUT 2>> $TS_ERRLOG
 rm -f _r_e_n_a_m_e___a_l_l___e_m_p_t_y_
 
+mkdir rename_dir
+$TS_CMD_RENAME -v dir new_dir rename_dir/ >> $TS_OUTPUT 2>> $TS_ERRLOG
+rmdir rename_new_dir
+
 ts_finalize
