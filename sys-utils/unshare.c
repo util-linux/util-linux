@@ -994,8 +994,10 @@ int main(int argc, char *argv[])
 
 			int termsig = WTERMSIG(status);
 
-			if (signal(termsig, SIG_DFL) == SIG_ERR ||
-				sigemptyset(&sigset) != 0 ||
+			if (termsig != SIGKILL && signal(termsig, SIG_DFL) == SIG_ERR)
+				err(EXIT_FAILURE,
+					_("signal handler reset failed"));
+			if (sigemptyset(&sigset) != 0 ||
 				sigaddset(&sigset, termsig) != 0 ||
 				sigprocmask(SIG_UNBLOCK, &sigset, NULL) != 0)
 				err(EXIT_FAILURE,
