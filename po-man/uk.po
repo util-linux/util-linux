@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-man 2.39-rc3\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-08-17 10:46+0200\n"
+"POT-Creation-Date: 2023-12-04 12:26+0100\n"
 "PO-Revision-Date: 2023-05-22 15:13+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
@@ -131,7 +131,7 @@ msgstr "*-h*, *--help*"
 #: ../man-common/help-version.adoc:3 ../disk-utils/fsck.8.adoc:114
 #: ../disk-utils/sfdisk.8.adoc:224 ../login-utils/chfn.1.adoc:51
 #: ../sys-utils/blkpr.8.adoc:47 ../sys-utils/rfkill.8.adoc:48
-#: ../sys-utils/setsid.1.adoc:39
+#: ../sys-utils/setsid.1.adoc:39 ../text-utils/col.1.adoc:82
 msgid "Display help text and exit."
 msgstr "Вивести текст довідки і завершити роботу."
 
@@ -139,12 +139,13 @@ msgstr "Вивести текст довідки і завершити робо�
 #: ../man-common/help-version.adoc:4 ../disk-utils/fdisk.8.adoc:100
 #: ../login-utils/chfn.1.adoc:52 ../login-utils/chsh.1.adoc:43
 #: ../sys-utils/blkpr.8.adoc:42 ../sys-utils/setsid.1.adoc:34
+#: ../text-utils/col.1.adoc:83
 #, no-wrap
 msgid "*-V*, *--version*"
 msgstr "*-V*, *--version*"
 
 #. type: Plain text
-#: ../man-common/help-version.adoc:5
+#: ../man-common/help-version.adoc:5 ../text-utils/col.1.adoc:85
 msgid "Print version and exit."
 msgstr "Вивести дані щодо версії і завершити роботу."
 
@@ -584,7 +585,7 @@ msgstr "Довжина розділу (у 512-байтових секторах)
 #: ../term-utils/mesg.1.adoc:96 ../term-utils/script.1.adoc:161
 #: ../term-utils/scriptlive.1.adoc:75 ../term-utils/scriptreplay.1.adoc:95
 #: ../term-utils/setterm.1.adoc:167 ../term-utils/wall.1.adoc:81
-#: ../term-utils/write.1.adoc:80 ../text-utils/col.1.adoc:123
+#: ../term-utils/write.1.adoc:80 ../text-utils/col.1.adoc:127
 #: ../text-utils/colcrt.1.adoc:92 ../text-utils/colrm.1.adoc:67
 #: ../text-utils/column.1.adoc:234 ../text-utils/line.1.adoc:22
 #: ../text-utils/more.1.adoc:198 ../text-utils/pg.1.adoc:142
@@ -1894,7 +1895,7 @@ msgstr "Пропустити верифікацію, яка, зазвичай, �
 #: ../sys-utils/setpriv.1.adoc:94 ../sys-utils/swapon.8.adoc:139
 #: ../sys-utils/switch_root.8.adoc:33 ../sys-utils/tunelp.8.adoc:64
 #: ../sys-utils/unshare.1.adoc:146 ../term-utils/script.1.adoc:134
-#: ../term-utils/wall.1.adoc:73 ../text-utils/col.1.adoc:86
+#: ../term-utils/wall.1.adoc:73 ../text-utils/col.1.adoc:90
 #: ../text-utils/pg.1.adoc:136
 #, no-wrap
 msgid "NOTES"
@@ -8680,7 +8681,7 @@ msgstr ""
 #: ../libuuid/man/uuid.3.adoc:55 ../libuuid/man/uuid_generate.3.adoc:76
 #: ../libuuid/man/uuid_parse.3.adoc:62 ../libuuid/man/uuid_unparse.3.adoc:59
 #: ../misc-utils/logger.1.adoc:229 ../misc-utils/uuidgen.1.adoc:54
-#: ../sys-utils/ipcs.1.adoc:76 ../text-utils/col.1.adoc:82
+#: ../sys-utils/ipcs.1.adoc:76 ../text-utils/col.1.adoc:86
 #: ../text-utils/hexdump.1.adoc:223
 #, no-wrap
 msgid "CONFORMING TO"
@@ -11235,10 +11236,11 @@ msgid "Alternate path for *lastlog*(8)."
 msgstr "Змінити шлях для *lastlog*(8)."
 
 #. type: Labeled list
-#: ../login-utils/lslogins.1.adoc:98
+#: ../login-utils/lslogins.1.adoc:98 ../misc-utils/findmnt.8.adoc:177
+#: ../misc-utils/lsblk.8.adoc:125 ../sys-utils/lsipc.1.adoc:83
 #, no-wrap
-msgid "*y-*, *--shell*"
-msgstr "*y-*, *--shell*"
+msgid "*-y*, *--shell*"
+msgstr "*-y*, *--shell*"
 
 #. type: Plain text
 #: ../login-utils/lslogins.1.adoc:100 ../sys-utils/lsipc.1.adoc:85
@@ -11376,7 +11378,7 @@ msgstr ""
 #: ../sys-utils/rtcwake.8.adoc:118 ../sys-utils/swapon.8.adoc:163
 #: ../sys-utils/umount.8.adoc:169 ../term-utils/mesg.1.adoc:91
 #: ../term-utils/script.1.adoc:151 ../term-utils/wall.1.adoc:77
-#: ../term-utils/write.1.adoc:76 ../text-utils/col.1.adoc:119
+#: ../term-utils/write.1.adoc:76 ../text-utils/col.1.adoc:123
 #: ../text-utils/colcrt.1.adoc:66 ../text-utils/colrm.1.adoc:63
 #: ../text-utils/column.1.adoc:181 ../text-utils/more.1.adoc:186
 #: ../text-utils/ul.1.adoc:72
@@ -15307,13 +15309,6 @@ msgstr ""
 "списку типових параметрів монтування віртуальних файлових систем у ядрі, "
 "які, зазвичай, не потрапляють до списку."
 
-#. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:177 ../misc-utils/lsblk.8.adoc:125
-#: ../sys-utils/lsipc.1.adoc:83
-#, no-wrap
-msgid "*-y*, *--shell*"
-msgstr "*-y*, *--shell*"
-
 #. type: Plain text
 #: ../misc-utils/findmnt.8.adoc:179
 msgid ""
@@ -18899,8 +18894,9 @@ msgstr ""
 
 #. type: Labeled list
 #: ../misc-utils/lsfd.1.adoc:73
-#, no-wrap
-msgid "*-i*[4|6], *--inet*[=4|6]"
+#, fuzzy, no-wrap
+#| msgid "*-i*[4|6], *--inet*[=4|6]"
+msgid "*-i*[4|6], *--inet*[=4|=6]"
 msgstr "*-i*[4|6], *--inet*[=4|6]"
 
 #. type: Plain text
@@ -49176,168 +49172,174 @@ msgstr "*-x*, *--spaces*"
 msgid "Output multiple spaces instead of tabs."
 msgstr "Виводити послідовність пробілів замість табуляцій."
 
+#. type: Labeled list
+#: ../text-utils/col.1.adoc:80
+#, no-wrap
+msgid "*-H*, *--help*"
+msgstr "*-H*, *--help*"
+
 #. type: Plain text
-#: ../text-utils/col.1.adoc:85
+#: ../text-utils/col.1.adoc:89
 msgid ""
 "The *col* utility conforms to the Single UNIX Specification, Version 2. The "
 "*-l* option is an extension to the standard."
 msgstr ""
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:89
+#: ../text-utils/col.1.adoc:93
 msgid ""
 "The control sequences for carriage motion that *col* understands and their "
 "decimal values are listed in the following table:"
 msgstr ""
 
 #. type: Labeled list
-#: ../text-utils/col.1.adoc:90
+#: ../text-utils/col.1.adoc:94
 #, no-wrap
 msgid "*ESC-7*"
 msgstr "*ESC-7*"
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:92
+#: ../text-utils/col.1.adoc:96
 msgid "reverse line feed (escape then 7)"
 msgstr "зворотна подача рядків (escape, потім 7)"
 
 #. type: Labeled list
-#: ../text-utils/col.1.adoc:92
+#: ../text-utils/col.1.adoc:96
 #, no-wrap
 msgid "*ESC-8*"
 msgstr "*ESC-8*"
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:94
+#: ../text-utils/col.1.adoc:98
 msgid "half reverse line feed (escape then 8)"
 msgstr "напів зворотна подача рядків (escape, потім 8)"
 
 #. type: Labeled list
-#: ../text-utils/col.1.adoc:94
+#: ../text-utils/col.1.adoc:98
 #, no-wrap
 msgid "*ESC-9*"
 msgstr "*ESC-9*"
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:96
+#: ../text-utils/col.1.adoc:100
 msgid "half forward line feed (escape then 9)"
 msgstr "напів подача рядків вперед (escape, потім 9)"
 
 #. type: Labeled list
-#: ../text-utils/col.1.adoc:96
+#: ../text-utils/col.1.adoc:100
 #, no-wrap
 msgid "*backspace*"
 msgstr "*витирання символу ліворуч*"
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:98
+#: ../text-utils/col.1.adoc:102
 msgid "moves back one column (8); ignored in the first column"
 msgstr ""
 "пересуває на одну позиції назад (8); буде проігноровано у першій позиції"
 
 #. type: Labeled list
-#: ../text-utils/col.1.adoc:98
+#: ../text-utils/col.1.adoc:102
 #, no-wrap
 msgid "*newline*"
 msgstr "*новий рядок*"
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:100
+#: ../text-utils/col.1.adoc:104
 msgid "forward line feed (10); also does carriage return"
 msgstr "подача рядка вперед (10); також виконує повернення каретки"
 
 #. type: Labeled list
-#: ../text-utils/col.1.adoc:100
+#: ../text-utils/col.1.adoc:104
 #, no-wrap
 msgid "*carriage return*"
 msgstr "*повернення каретки*"
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:102
+#: ../text-utils/col.1.adoc:106
 msgid "(13)"
 msgstr "(13)"
 
 #. type: Labeled list
-#: ../text-utils/col.1.adoc:102
+#: ../text-utils/col.1.adoc:106
 #, no-wrap
 msgid "*shift in*"
 msgstr ""
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:104
+#: ../text-utils/col.1.adoc:108
 msgid "shift to normal character set (15)"
 msgstr "пересунутися до звичайного набору символів (15)"
 
 #. type: Labeled list
-#: ../text-utils/col.1.adoc:104
+#: ../text-utils/col.1.adoc:108
 #, no-wrap
 msgid "*shift out*"
 msgstr ""
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:106
+#: ../text-utils/col.1.adoc:110
 msgid "shift to alternate character set (14)"
 msgstr "пересунутися до альтернативного набору символів (14)"
 
 #. type: Labeled list
-#: ../text-utils/col.1.adoc:106
+#: ../text-utils/col.1.adoc:110
 #, no-wrap
 msgid "*space*"
 msgstr "*пробіл*"
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:108
+#: ../text-utils/col.1.adoc:112
 msgid "moves forward one column (32)"
 msgstr "пересуває вперед на одну позицію (32)"
 
 #. type: Labeled list
-#: ../text-utils/col.1.adoc:108
+#: ../text-utils/col.1.adoc:112
 #, no-wrap
 msgid "*tab*"
 msgstr "*табуляція*"
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:110
+#: ../text-utils/col.1.adoc:114
 msgid "moves forward to next tab stop (9)"
 msgstr "пересуває вперед до наступної позиції табуляції (9)"
 
 #. type: Labeled list
-#: ../text-utils/col.1.adoc:110
+#: ../text-utils/col.1.adoc:114
 #, no-wrap
 msgid "*vertical tab*"
 msgstr "*вертикальна табуляція*"
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:112
+#: ../text-utils/col.1.adoc:116
 msgid "reverse line feed (11)"
 msgstr "зворотна подача рядка (11)"
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:114
+#: ../text-utils/col.1.adoc:118
 msgid "All unrecognized control characters and escape sequences are discarded."
 msgstr ""
 "Усі нерозпізнані символи керування та керівні послідовності буде відкинуто."
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:116
+#: ../text-utils/col.1.adoc:120
 #, no-wrap
 msgid "*col* keeps track of the character set as characters are read and makes sure the character set is correct when they are output.\n"
 msgstr ""
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:118
+#: ../text-utils/col.1.adoc:122
 msgid ""
 "If the input attempts to back up to the last flushed line, *col* will "
 "display a warning message."
 msgstr ""
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:122
+#: ../text-utils/col.1.adoc:126
 msgid "A *col* command appeared in Version 6 AT&T UNIX."
 msgstr "Команда *col* з'явилася у AT&T UNIX версії 6."
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:128
+#: ../text-utils/col.1.adoc:132
 #, no-wrap
 msgid ""
 "*expand*(1),\n"
@@ -52343,6 +52345,10 @@ msgstr ""
 "*setenv*(3),\n"
 "*terminfo*(5)\n"
 
+#, no-wrap
+#~ msgid "*y-*, *--shell*"
+#~ msgstr "*y-*, *--shell*"
+
 #~ msgid ""
 #~ "Causes everything to be done except for the actual system call; if it's "
 #~ "not obvious, this \"fakes\" mounting the filesystem. This option is "
@@ -52541,6 +52547,3 @@ msgstr ""
 
 #~ msgid "*-V, --version*"
 #~ msgstr "*-V, --version*"
-
-#~ msgid "*-H*, *--help*"
-#~ msgstr "*-H*, *--help*"

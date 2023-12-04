@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-man 2.37-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-08-17 10:46+0200\n"
+"POT-Creation-Date: 2023-12-04 12:26+0100\n"
 "PO-Revision-Date: 2021-09-11 20:10+0200\n"
 "Last-Translator: Antonio Ceballos Roa <aceballos@gmail.com>\n"
 "Language-Team: Spanish <es@tp.org.es>\n"
@@ -141,7 +141,7 @@ msgstr "*-h*, *--help*"
 #: ../man-common/help-version.adoc:3 ../disk-utils/fsck.8.adoc:114
 #: ../disk-utils/sfdisk.8.adoc:224 ../login-utils/chfn.1.adoc:51
 #: ../sys-utils/blkpr.8.adoc:47 ../sys-utils/rfkill.8.adoc:48
-#: ../sys-utils/setsid.1.adoc:39
+#: ../sys-utils/setsid.1.adoc:39 ../text-utils/col.1.adoc:82
 msgid "Display help text and exit."
 msgstr "Mostrar texto de ayuda y finalizar."
 
@@ -149,12 +149,13 @@ msgstr "Mostrar texto de ayuda y finalizar."
 #: ../man-common/help-version.adoc:4 ../disk-utils/fdisk.8.adoc:100
 #: ../login-utils/chfn.1.adoc:52 ../login-utils/chsh.1.adoc:43
 #: ../sys-utils/blkpr.8.adoc:42 ../sys-utils/setsid.1.adoc:34
+#: ../text-utils/col.1.adoc:83
 #, no-wrap
 msgid "*-V*, *--version*"
 msgstr "*-V*, *--version*"
 
 #. type: Plain text
-#: ../man-common/help-version.adoc:5
+#: ../man-common/help-version.adoc:5 ../text-utils/col.1.adoc:85
 #, fuzzy
 #| msgid "Display version information and exit."
 msgid "Print version and exit."
@@ -594,7 +595,7 @@ msgstr "La longitud de la partición (en sectores de 512 bytes)."
 #: ../term-utils/mesg.1.adoc:96 ../term-utils/script.1.adoc:161
 #: ../term-utils/scriptlive.1.adoc:75 ../term-utils/scriptreplay.1.adoc:95
 #: ../term-utils/setterm.1.adoc:167 ../term-utils/wall.1.adoc:81
-#: ../term-utils/write.1.adoc:80 ../text-utils/col.1.adoc:123
+#: ../term-utils/write.1.adoc:80 ../text-utils/col.1.adoc:127
 #: ../text-utils/colcrt.1.adoc:92 ../text-utils/colrm.1.adoc:67
 #: ../text-utils/column.1.adoc:234 ../text-utils/line.1.adoc:22
 #: ../text-utils/more.1.adoc:198 ../text-utils/pg.1.adoc:142
@@ -1790,7 +1791,7 @@ msgstr "Salta la verificación que normalmente se realiza tras dar el formato."
 #: ../sys-utils/setpriv.1.adoc:94 ../sys-utils/swapon.8.adoc:139
 #: ../sys-utils/switch_root.8.adoc:33 ../sys-utils/tunelp.8.adoc:64
 #: ../sys-utils/unshare.1.adoc:146 ../term-utils/script.1.adoc:134
-#: ../term-utils/wall.1.adoc:73 ../text-utils/col.1.adoc:86
+#: ../term-utils/wall.1.adoc:73 ../text-utils/col.1.adoc:90
 #: ../text-utils/pg.1.adoc:136
 #, no-wrap
 msgid "NOTES"
@@ -7906,7 +7907,7 @@ msgstr ""
 #: ../libuuid/man/uuid.3.adoc:55 ../libuuid/man/uuid_generate.3.adoc:76
 #: ../libuuid/man/uuid_parse.3.adoc:62 ../libuuid/man/uuid_unparse.3.adoc:59
 #: ../misc-utils/logger.1.adoc:229 ../misc-utils/uuidgen.1.adoc:54
-#: ../sys-utils/ipcs.1.adoc:76 ../text-utils/col.1.adoc:82
+#: ../sys-utils/ipcs.1.adoc:76 ../text-utils/col.1.adoc:86
 #: ../text-utils/hexdump.1.adoc:223
 #, no-wrap
 msgid "CONFORMING TO"
@@ -10243,10 +10244,11 @@ msgid "Alternate path for *lastlog*(8)."
 msgstr ""
 
 #. type: Labeled list
-#: ../login-utils/lslogins.1.adoc:98
+#: ../login-utils/lslogins.1.adoc:98 ../misc-utils/findmnt.8.adoc:177
+#: ../misc-utils/lsblk.8.adoc:125 ../sys-utils/lsipc.1.adoc:83
 #, fuzzy, no-wrap
 #| msgid "*-h*, *--help*"
-msgid "*y-*, *--shell*"
+msgid "*-y*, *--shell*"
 msgstr "*-h*, *--help*"
 
 #. type: Plain text
@@ -10381,7 +10383,7 @@ msgstr ""
 #: ../sys-utils/rtcwake.8.adoc:118 ../sys-utils/swapon.8.adoc:163
 #: ../sys-utils/umount.8.adoc:169 ../term-utils/mesg.1.adoc:91
 #: ../term-utils/script.1.adoc:151 ../term-utils/wall.1.adoc:77
-#: ../term-utils/write.1.adoc:76 ../text-utils/col.1.adoc:119
+#: ../term-utils/write.1.adoc:76 ../text-utils/col.1.adoc:123
 #: ../text-utils/colcrt.1.adoc:66 ../text-utils/colrm.1.adoc:63
 #: ../text-utils/column.1.adoc:181 ../text-utils/more.1.adoc:186
 #: ../text-utils/ul.1.adoc:72
@@ -13837,14 +13839,6 @@ msgid ""
 "kernel mount options which are normally not listed."
 msgstr ""
 
-#. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:177 ../misc-utils/lsblk.8.adoc:125
-#: ../sys-utils/lsipc.1.adoc:83
-#, fuzzy, no-wrap
-#| msgid "*-h*, *--help*"
-msgid "*-y*, *--shell*"
-msgstr "*-h*, *--help*"
-
 #. type: Plain text
 #: ../misc-utils/findmnt.8.adoc:179
 msgid ""
@@ -17026,7 +17020,7 @@ msgstr ""
 #: ../misc-utils/lsfd.1.adoc:73
 #, fuzzy, no-wrap
 #| msgid "*-i*, *--invert*"
-msgid "*-i*[4|6], *--inet*[=4|6]"
+msgid "*-i*[4|6], *--inet*[=4|=6]"
 msgstr "*-i*, *--invert*"
 
 #. type: Plain text
@@ -44797,166 +44791,172 @@ msgstr "*-x*, *--spaces*"
 msgid "Output multiple spaces instead of tabs."
 msgstr ""
 
+#. type: Labeled list
+#: ../text-utils/col.1.adoc:80
+#, no-wrap
+msgid "*-H*, *--help*"
+msgstr "*-H*, *--help*"
+
 #. type: Plain text
-#: ../text-utils/col.1.adoc:85
+#: ../text-utils/col.1.adoc:89
 msgid ""
 "The *col* utility conforms to the Single UNIX Specification, Version 2. The "
 "*-l* option is an extension to the standard."
 msgstr ""
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:89
+#: ../text-utils/col.1.adoc:93
 msgid ""
 "The control sequences for carriage motion that *col* understands and their "
 "decimal values are listed in the following table:"
 msgstr ""
 
 #. type: Labeled list
-#: ../text-utils/col.1.adoc:90
+#: ../text-utils/col.1.adoc:94
 #, no-wrap
 msgid "*ESC-7*"
 msgstr "*ESC-7*"
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:92
+#: ../text-utils/col.1.adoc:96
 msgid "reverse line feed (escape then 7)"
 msgstr ""
 
 #. type: Labeled list
-#: ../text-utils/col.1.adoc:92
+#: ../text-utils/col.1.adoc:96
 #, no-wrap
 msgid "*ESC-8*"
 msgstr "*ESC-8*"
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:94
+#: ../text-utils/col.1.adoc:98
 msgid "half reverse line feed (escape then 8)"
 msgstr ""
 
 #. type: Labeled list
-#: ../text-utils/col.1.adoc:94
+#: ../text-utils/col.1.adoc:98
 #, no-wrap
 msgid "*ESC-9*"
 msgstr "*ESC-9*"
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:96
+#: ../text-utils/col.1.adoc:100
 msgid "half forward line feed (escape then 9)"
 msgstr ""
 
 #. type: Labeled list
-#: ../text-utils/col.1.adoc:96
+#: ../text-utils/col.1.adoc:100
 #, no-wrap
 msgid "*backspace*"
 msgstr ""
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:98
+#: ../text-utils/col.1.adoc:102
 msgid "moves back one column (8); ignored in the first column"
 msgstr ""
 
 #. type: Labeled list
-#: ../text-utils/col.1.adoc:98
+#: ../text-utils/col.1.adoc:102
 #, no-wrap
 msgid "*newline*"
 msgstr ""
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:100
+#: ../text-utils/col.1.adoc:104
 msgid "forward line feed (10); also does carriage return"
 msgstr ""
 
 #. type: Labeled list
-#: ../text-utils/col.1.adoc:100
+#: ../text-utils/col.1.adoc:104
 #, no-wrap
 msgid "*carriage return*"
 msgstr ""
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:102
+#: ../text-utils/col.1.adoc:106
 msgid "(13)"
 msgstr "(13)"
 
 #. type: Labeled list
-#: ../text-utils/col.1.adoc:102
+#: ../text-utils/col.1.adoc:106
 #, no-wrap
 msgid "*shift in*"
 msgstr ""
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:104
+#: ../text-utils/col.1.adoc:108
 msgid "shift to normal character set (15)"
 msgstr ""
 
 #. type: Labeled list
-#: ../text-utils/col.1.adoc:104
+#: ../text-utils/col.1.adoc:108
 #, no-wrap
 msgid "*shift out*"
 msgstr ""
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:106
+#: ../text-utils/col.1.adoc:110
 msgid "shift to alternate character set (14)"
 msgstr ""
 
 #. type: Labeled list
-#: ../text-utils/col.1.adoc:106
+#: ../text-utils/col.1.adoc:110
 #, no-wrap
 msgid "*space*"
 msgstr ""
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:108
+#: ../text-utils/col.1.adoc:112
 msgid "moves forward one column (32)"
 msgstr ""
 
 #. type: Labeled list
-#: ../text-utils/col.1.adoc:108
+#: ../text-utils/col.1.adoc:112
 #, no-wrap
 msgid "*tab*"
 msgstr ""
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:110
+#: ../text-utils/col.1.adoc:114
 msgid "moves forward to next tab stop (9)"
 msgstr ""
 
 #. type: Labeled list
-#: ../text-utils/col.1.adoc:110
+#: ../text-utils/col.1.adoc:114
 #, no-wrap
 msgid "*vertical tab*"
 msgstr ""
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:112
+#: ../text-utils/col.1.adoc:116
 msgid "reverse line feed (11)"
 msgstr ""
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:114
+#: ../text-utils/col.1.adoc:118
 msgid "All unrecognized control characters and escape sequences are discarded."
 msgstr ""
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:116
+#: ../text-utils/col.1.adoc:120
 #, no-wrap
 msgid "*col* keeps track of the character set as characters are read and makes sure the character set is correct when they are output.\n"
 msgstr ""
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:118
+#: ../text-utils/col.1.adoc:122
 msgid ""
 "If the input attempts to back up to the last flushed line, *col* will "
 "display a warning message."
 msgstr ""
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:122
+#: ../text-utils/col.1.adoc:126
 msgid "A *col* command appeared in Version 6 AT&T UNIX."
 msgstr "Una orden *col* apareció en la Versión 6 del UNIX de AT&T."
 
 #. type: Plain text
-#: ../text-utils/col.1.adoc:128
+#: ../text-utils/col.1.adoc:132
 #, no-wrap
 msgid ""
 "*expand*(1),\n"
@@ -47893,6 +47893,11 @@ msgstr ""
 "*setenv*(3),\n"
 "*terminfo*(5)\n"
 
+#, fuzzy, no-wrap
+#~| msgid "*-h*, *--help*"
+#~ msgid "*y-*, *--shell*"
+#~ msgstr "*-h*, *--help*"
+
 #, fuzzy
 #~| msgid ""
 #~| "Causes everything to be done except for the actual system call; if it's "
@@ -48120,10 +48125,6 @@ msgstr ""
 
 #~ msgid "Displays a help text and exits."
 #~ msgstr "Mostrar texto de ayuda y finalizar."
-
-#, no-wrap
-#~ msgid "*-H*, *--help*"
-#~ msgstr "*-H*, *--help*"
 
 #~ msgid "AGETTY"
 #~ msgstr "AGETTY"
