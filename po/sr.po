@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.39-rc3\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-08-17 10:46+0200\n"
+"POT-Creation-Date: 2023-12-04 13:21+0100\n"
 "PO-Revision-Date: 2023-07-05 06:34+0200\n"
 "Last-Translator: Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
 "Language-Team: Serbian <(nothing)>\n"
@@ -18,17 +18,17 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
 
-#: disk-utils/addpart.c:15
+#: disk-utils/addpart.c:25
 #, c-format
 msgid " %s <disk device> <partition number> <start> <length>\n"
 msgstr " %s <диск уређај> <број партиције> <почетак> <дужина>\n"
 
-#: disk-utils/addpart.c:19
+#: disk-utils/addpart.c:29
 msgid "Tell the kernel about the existence of a specified partition.\n"
 msgstr "Говори кернелу о постојању наведене партиције.\n"
 
-#: disk-utils/addpart.c:52 disk-utils/blockdev.c:251 disk-utils/delpart.c:52
-#: disk-utils/mkfs.bfs.c:134 disk-utils/resizepart.c:96 misc-utils/kill.c:323
+#: disk-utils/addpart.c:62 disk-utils/blockdev.c:259 disk-utils/delpart.c:62
+#: disk-utils/mkfs.bfs.c:142 disk-utils/resizepart.c:106 misc-utils/kill.c:323
 #: misc-utils/kill.c:384 misc-utils/rename.c:348 misc-utils/whereis.c:539
 #: sys-utils/flock.c:177 sys-utils/ipcrm.c:161 sys-utils/ldattach.c:368
 #: sys-utils/renice.c:175 sys-utils/switch_root.c:261 sys-utils/tunelp.c:152
@@ -38,18 +38,18 @@ msgid "not enough arguments"
 msgstr "нема довољно аргумената"
 
 #. TRANSLATORS: '%s' refers to a file
-#: disk-utils/addpart.c:57 disk-utils/blockdev.c:300 disk-utils/blockdev.c:444
-#: disk-utils/blockdev.c:471 disk-utils/cfdisk.c:2820 disk-utils/delpart.c:58
-#: disk-utils/fdformat.c:229 disk-utils/fdisk.c:810 disk-utils/fdisk.c:1141
-#: disk-utils/fdisk-list.c:327 disk-utils/fdisk-list.c:368
-#: disk-utils/fdisk-list.c:391 disk-utils/fsck.c:1473
-#: disk-utils/fsck.cramfs.c:158 disk-utils/fsck.cramfs.c:542
-#: disk-utils/isosize.c:53 disk-utils/mkfs.bfs.c:202
-#: disk-utils/mkfs.cramfs.c:175 disk-utils/mkfs.cramfs.c:664
-#: disk-utils/mkfs.cramfs.c:812 disk-utils/mkfs.minix.c:838
-#: disk-utils/mkswap.c:347 disk-utils/mkswap.c:377 disk-utils/partx.c:1022
-#: disk-utils/resizepart.c:104 disk-utils/sfdisk.c:381 disk-utils/sfdisk.c:502
-#: disk-utils/sfdisk.c:814 disk-utils/sfdisk.c:1118 disk-utils/swaplabel.c:65
+#: disk-utils/addpart.c:67 disk-utils/blockdev.c:308 disk-utils/blockdev.c:452
+#: disk-utils/blockdev.c:479 disk-utils/cfdisk.c:2822 disk-utils/delpart.c:68
+#: disk-utils/fdformat.c:238 disk-utils/fdisk.c:812 disk-utils/fdisk.c:1143
+#: disk-utils/fdisk-list.c:337 disk-utils/fdisk-list.c:378
+#: disk-utils/fdisk-list.c:401 disk-utils/fsck.c:1477
+#: disk-utils/fsck.cramfs.c:160 disk-utils/fsck.cramfs.c:544
+#: disk-utils/isosize.c:60 disk-utils/mkfs.bfs.c:210
+#: disk-utils/mkfs.cramfs.c:177 disk-utils/mkfs.cramfs.c:666
+#: disk-utils/mkfs.cramfs.c:814 disk-utils/mkfs.minix.c:842
+#: disk-utils/mkswap.c:354 disk-utils/mkswap.c:384 disk-utils/partx.c:1029
+#: disk-utils/resizepart.c:114 disk-utils/sfdisk.c:381 disk-utils/sfdisk.c:502
+#: disk-utils/sfdisk.c:814 disk-utils/sfdisk.c:1118 disk-utils/swaplabel.c:67
 #: libfdisk/src/bsd.c:642 login-utils/islocal.c:86 login-utils/last.c:683
 #: login-utils/sulogin.c:497 login-utils/sulogin.c:534
 #: login-utils/utmpdump.c:142 login-utils/utmpdump.c:367
@@ -63,7 +63,7 @@ msgstr "нема довољно аргумената"
 #: sys-utils/hwclock-rtc.c:353 sys-utils/hwclock-rtc.c:389
 #: sys-utils/hwclock-rtc.c:449 sys-utils/hwclock-rtc.c:502
 #: sys-utils/irq-common.c:263 sys-utils/ldattach.c:392
-#: sys-utils/lscpu-cputype.c:477 sys-utils/lsmem.c:671 sys-utils/nsenter.c:139
+#: sys-utils/lscpu-cputype.c:479 sys-utils/lsmem.c:671 sys-utils/nsenter.c:139
 #: sys-utils/rfkill.c:195 sys-utils/rtcwake.c:137 sys-utils/rtcwake.c:292
 #: sys-utils/setpriv.c:256 sys-utils/setpriv.c:622 sys-utils/setpriv.c:645
 #: sys-utils/swapon.c:382 sys-utils/swapon.c:525 sys-utils/switch_root.c:174
@@ -79,107 +79,107 @@ msgstr "нема довољно аргумената"
 msgid "cannot open %s"
 msgstr "не могу да отворим „%s“"
 
-#: disk-utils/addpart.c:60 disk-utils/delpart.c:61 disk-utils/resizepart.c:101
+#: disk-utils/addpart.c:70 disk-utils/delpart.c:71 disk-utils/resizepart.c:111
 msgid "invalid partition number argument"
 msgstr "неисправан аргумент броја партиције"
 
-#: disk-utils/addpart.c:61
+#: disk-utils/addpart.c:71
 msgid "invalid start argument"
 msgstr "неисправан аргумент почетка"
 
-#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111 misc-utils/fadvise.c:115
+#: disk-utils/addpart.c:72 disk-utils/resizepart.c:121 misc-utils/fadvise.c:115
 msgid "invalid length argument"
 msgstr "неисправан аргумент дужине"
 
-#: disk-utils/addpart.c:63
+#: disk-utils/addpart.c:73
 msgid "failed to add partition"
 msgstr "нисам успео да додам партицију"
 
-#: disk-utils/blockdev.c:64
+#: disk-utils/blockdev.c:72
 msgid "set read-only"
 msgstr "поставља само за читање"
 
-#: disk-utils/blockdev.c:71
+#: disk-utils/blockdev.c:79
 msgid "set read-write"
 msgstr "поставља за читање-писање"
 
-#: disk-utils/blockdev.c:77
+#: disk-utils/blockdev.c:85
 msgid "get read-only"
 msgstr "добавља само за читање"
 
-#: disk-utils/blockdev.c:83
+#: disk-utils/blockdev.c:91
 msgid "get discard zeroes support status"
 msgstr "добавља стање подршке одбацивања нула"
 
-#: disk-utils/blockdev.c:89
+#: disk-utils/blockdev.c:97
 msgid "get logical block (sector) size"
 msgstr "добавља величину логичког блока (сектора)"
 
-#: disk-utils/blockdev.c:95
+#: disk-utils/blockdev.c:103
 msgid "get physical block (sector) size"
 msgstr "добавља величину физичког блока (сектора)"
 
-#: disk-utils/blockdev.c:101
+#: disk-utils/blockdev.c:109
 msgid "get minimum I/O size"
 msgstr "добавља најмању У/И величину"
 
-#: disk-utils/blockdev.c:107
+#: disk-utils/blockdev.c:115
 msgid "get optimal I/O size"
 msgstr "добавља најбољу У/И величину"
 
-#: disk-utils/blockdev.c:113
+#: disk-utils/blockdev.c:121
 msgid "get alignment offset in bytes"
 msgstr "добавља померај поравнања у бајтовима"
 
-#: disk-utils/blockdev.c:119
+#: disk-utils/blockdev.c:127
 msgid "get max sectors per request"
 msgstr "добавља највише сектора по захтеву"
 
-#: disk-utils/blockdev.c:125
+#: disk-utils/blockdev.c:133
 msgid "get blocksize"
 msgstr "добавља величину блока"
 
-#: disk-utils/blockdev.c:132
+#: disk-utils/blockdev.c:140
 msgid "set blocksize on file descriptor opening the block device"
 msgstr "поставља величину блока на описнику датотеке који отвара блок уређај"
 
-#: disk-utils/blockdev.c:138
+#: disk-utils/blockdev.c:146
 msgid "get 32-bit sector count (deprecated, use --getsz)"
 msgstr "добавља 32-битну укупност сектора (застарело, користите „--getsz“)"
 
-#: disk-utils/blockdev.c:144
+#: disk-utils/blockdev.c:152
 msgid "get size in bytes"
 msgstr "добавља величину у бајтовима"
 
-#: disk-utils/blockdev.c:151
+#: disk-utils/blockdev.c:159
 msgid "set readahead"
 msgstr "поставља читање главе"
 
-#: disk-utils/blockdev.c:157
+#: disk-utils/blockdev.c:165
 msgid "get readahead"
 msgstr "добавља читање главе"
 
-#: disk-utils/blockdev.c:164
+#: disk-utils/blockdev.c:172
 msgid "set filesystem readahead"
 msgstr "поставља читање главе система датотека"
 
-#: disk-utils/blockdev.c:170
+#: disk-utils/blockdev.c:178
 msgid "get filesystem readahead"
 msgstr "добавља читање главе система датотека"
 
-#: disk-utils/blockdev.c:176
+#: disk-utils/blockdev.c:184
 msgid "get disk sequence number"
 msgstr "добавља број секвенце диска"
 
-#: disk-utils/blockdev.c:180
+#: disk-utils/blockdev.c:188
 msgid "flush buffers"
 msgstr "испира међумеморије"
 
-#: disk-utils/blockdev.c:184
+#: disk-utils/blockdev.c:192
 msgid "reread partition table"
 msgstr "поново чита табелу партиција"
 
-#: disk-utils/blockdev.c:194
+#: disk-utils/blockdev.c:202
 #, c-format
 msgid ""
 " %1$s [-v|-q] commands devices\n"
@@ -190,575 +190,575 @@ msgstr ""
 " %1$s --report [уређаји]\n"
 " %1$s -h|-V\n"
 
-#: disk-utils/blockdev.c:200
+#: disk-utils/blockdev.c:208
 msgid "Call block device ioctls from the command line."
 msgstr "Позовите „ioctls“ блок уређаја са линије наредби."
 
-#: disk-utils/blockdev.c:203
+#: disk-utils/blockdev.c:211
 msgid " -q             quiet mode"
 msgstr " -q             бива нечујан"
 
-#: disk-utils/blockdev.c:204
+#: disk-utils/blockdev.c:212
 msgid " -v             verbose mode"
 msgstr " -v             бива опширан"
 
-#: disk-utils/blockdev.c:205
+#: disk-utils/blockdev.c:213
 msgid "     --report   print report for specified (or all) devices"
 msgstr "     --report   исписује извештај за наведени (или све) уређаје"
 
-#: disk-utils/blockdev.c:210
+#: disk-utils/blockdev.c:218
 msgid "Available commands:"
 msgstr "Доступне наредбе:"
 
-#: disk-utils/blockdev.c:211
+#: disk-utils/blockdev.c:219
 #, c-format
 msgid " %-25s get size in 512-byte sectors\n"
 msgstr " %-25s дбавља величину у 512-битним секторима\n"
 
-#: disk-utils/blockdev.c:293 disk-utils/fdformat.c:219
-#: disk-utils/fsck.minix.c:1336 disk-utils/isosize.c:155
-#: disk-utils/mkfs.bfs.c:191 disk-utils/mkfs.c:110 disk-utils/mkfs.minix.c:827
-#: disk-utils/swaplabel.c:180 misc-utils/wipefs.c:764
+#: disk-utils/blockdev.c:301 disk-utils/fdformat.c:228
+#: disk-utils/fsck.minix.c:1342 disk-utils/isosize.c:162
+#: disk-utils/mkfs.bfs.c:199 disk-utils/mkfs.c:117 disk-utils/mkfs.minix.c:831
+#: disk-utils/swaplabel.c:182 misc-utils/wipefs.c:764
 #: sys-utils/blkdiscard.c:237 sys-utils/blkpr.c:303 sys-utils/blkzone.c:488
 #: sys-utils/tunelp.c:241 sys-utils/zramctl.c:717 sys-utils/zramctl.c:743
 msgid "no device specified"
 msgstr "није наведен уређај"
 
-#: disk-utils/blockdev.c:335
+#: disk-utils/blockdev.c:343
 msgid "could not get device size"
 msgstr "не могу да добавим величину уређаја"
 
-#: disk-utils/blockdev.c:341
+#: disk-utils/blockdev.c:349
 #, c-format
 msgid "Unknown command: %s"
 msgstr "Непозната наредба: %s"
 
-#: disk-utils/blockdev.c:357
+#: disk-utils/blockdev.c:365
 #, c-format
 msgid "%s requires an argument"
 msgstr "„%s“ захтева аргумент"
 
-#: disk-utils/blockdev.c:361
+#: disk-utils/blockdev.c:369
 msgid "failed to parse command argument"
 msgstr "нисам успео да обрадим аргумент наредбе"
 
-#: disk-utils/blockdev.c:392 disk-utils/blockdev.c:504
+#: disk-utils/blockdev.c:400 disk-utils/blockdev.c:512
 #, c-format
 msgid "ioctl error on %s"
 msgstr "„ioctl“ грешка над „%s“"
 
-#: disk-utils/blockdev.c:394
+#: disk-utils/blockdev.c:402
 #, c-format
 msgid "%s failed.\n"
 msgstr "„%s“ није успело.\n"
 
-#: disk-utils/blockdev.c:401
+#: disk-utils/blockdev.c:409
 #, c-format
 msgid "%s succeeded.\n"
 msgstr "„%s“ је успело.\n"
 
 #. TRANSLATORS: Start sector not available. Max. 15 letters.
-#: disk-utils/blockdev.c:488
+#: disk-utils/blockdev.c:496
 msgid "N/A"
 msgstr "Н/Д"
 
-#: disk-utils/blockdev.c:512
+#: disk-utils/blockdev.c:520
 #, c-format
 msgid "RO    RA   SSZ   BSZ        StartSec            Size   Device\n"
 msgstr "RO    RA   SSZ   BSZ        ПочетСек            Велч   Уређај\n"
 
-#: disk-utils/cfdisk.c:198
+#: disk-utils/cfdisk.c:200
 msgid "Bootable"
 msgstr "Подизна"
 
-#: disk-utils/cfdisk.c:198
+#: disk-utils/cfdisk.c:200
 msgid "Toggle bootable flag of the current partition"
 msgstr "Поставља заставицу подизања за текућу партицију"
 
-#: disk-utils/cfdisk.c:199
+#: disk-utils/cfdisk.c:201
 msgid "Delete"
 msgstr "Обриши"
 
-#: disk-utils/cfdisk.c:199
+#: disk-utils/cfdisk.c:201
 msgid "Delete the current partition"
 msgstr "Брише текућу партицију"
 
-#: disk-utils/cfdisk.c:200
+#: disk-utils/cfdisk.c:202
 msgid "Resize"
 msgstr "Промени величину"
 
-#: disk-utils/cfdisk.c:200
+#: disk-utils/cfdisk.c:202
 msgid "Reduce or enlarge the current partition"
 msgstr "Смањује или повећава текућу партицију"
 
-#: disk-utils/cfdisk.c:201
+#: disk-utils/cfdisk.c:203
 msgid "New"
 msgstr "Ново"
 
-#: disk-utils/cfdisk.c:201
+#: disk-utils/cfdisk.c:203
 msgid "Create new partition from free space"
 msgstr "Прави нову партицију из слободног простора"
 
-#: disk-utils/cfdisk.c:202
+#: disk-utils/cfdisk.c:204
 msgid "Quit"
 msgstr "Изађи"
 
-#: disk-utils/cfdisk.c:202
+#: disk-utils/cfdisk.c:204
 msgid "Quit program without writing changes"
 msgstr "Излази из програма без записивања измена"
 
-#: disk-utils/cfdisk.c:203 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1031
+#: disk-utils/cfdisk.c:205 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1031
 #: libfdisk/src/dos.c:2809 libfdisk/src/gpt.c:3248 libfdisk/src/sgi.c:1165
 #: libfdisk/src/sun.c:1136
 msgid "Type"
 msgstr "Врста"
 
-#: disk-utils/cfdisk.c:203
+#: disk-utils/cfdisk.c:205
 msgid "Change the partition type"
 msgstr "Мења врсту партиције"
 
-#: disk-utils/cfdisk.c:204
+#: disk-utils/cfdisk.c:206
 msgid "Help"
 msgstr "Помоћ"
 
-#: disk-utils/cfdisk.c:204
+#: disk-utils/cfdisk.c:206
 msgid "Print help screen"
 msgstr "Исписује екран помоћи"
 
-#: disk-utils/cfdisk.c:205
+#: disk-utils/cfdisk.c:207
 msgid "Sort"
 msgstr "Поређај"
 
-#: disk-utils/cfdisk.c:205
+#: disk-utils/cfdisk.c:207
 msgid "Fix partitions order"
 msgstr "Поправља редослед партиција"
 
-#: disk-utils/cfdisk.c:206
+#: disk-utils/cfdisk.c:208
 msgid "Write"
 msgstr "Запиши"
 
-#: disk-utils/cfdisk.c:206
+#: disk-utils/cfdisk.c:208
 msgid "Write partition table to disk (this might destroy data)"
 msgstr "Записује партициону табелу на диск (ово може уништити податке)"
 
-#: disk-utils/cfdisk.c:207
+#: disk-utils/cfdisk.c:209
 msgid "Dump"
 msgstr "Испиши"
 
-#: disk-utils/cfdisk.c:207
+#: disk-utils/cfdisk.c:209
 msgid "Dump partition table to sfdisk compatible script file"
 msgstr "Исписује партициону табелу у датотеку скрипте сагласну са „sfdisk“-ом"
 
-#: disk-utils/cfdisk.c:652 disk-utils/fdisk.c:465
+#: disk-utils/cfdisk.c:654 disk-utils/fdisk.c:467
 #, c-format
 msgid "internal error: unsupported dialog type %d"
 msgstr "унутрашња грешка: неподржана врста прозорчета %d"
 
-#: disk-utils/cfdisk.c:1318
+#: disk-utils/cfdisk.c:1320
 #, c-format
 msgid "%s (mounted)"
 msgstr "%s (прикачена)"
 
-#: disk-utils/cfdisk.c:1366
+#: disk-utils/cfdisk.c:1368
 msgid "Partition name:"
 msgstr "Назив партиције:"
 
-#: disk-utils/cfdisk.c:1373
+#: disk-utils/cfdisk.c:1375
 msgid "Partition UUID:"
 msgstr "УУИБ партиције:"
 
-#: disk-utils/cfdisk.c:1392
+#: disk-utils/cfdisk.c:1394
 msgid "Partition type:"
 msgstr "Врста партиције:"
 
-#: disk-utils/cfdisk.c:1399
+#: disk-utils/cfdisk.c:1401
 msgid "Attributes:"
 msgstr "Атрибути:"
 
-#: disk-utils/cfdisk.c:1423
+#: disk-utils/cfdisk.c:1425
 msgid "Filesystem UUID:"
 msgstr "УУИБ система датотека:"
 
-#: disk-utils/cfdisk.c:1430
+#: disk-utils/cfdisk.c:1432
 msgid "Filesystem LABEL:"
 msgstr "НАТПИС система датотека:"
 
-#: disk-utils/cfdisk.c:1436
+#: disk-utils/cfdisk.c:1438
 msgid "Filesystem:"
 msgstr "Систем датотека:"
 
-#: disk-utils/cfdisk.c:1441
+#: disk-utils/cfdisk.c:1443
 msgid "Mountpoint:"
 msgstr "Тачка качења:"
 
-#: disk-utils/cfdisk.c:1785
+#: disk-utils/cfdisk.c:1787
 #, c-format
 msgid "Disk: %s"
 msgstr "Диск: %s"
 
-#: disk-utils/cfdisk.c:1787
+#: disk-utils/cfdisk.c:1789
 #, c-format
 msgid "Size: %s, %<PRIu64> bytes, %ju sectors"
 msgstr "Величина: %s, бајтова – %<PRIu64>, сектора – %ju"
 
-#: disk-utils/cfdisk.c:1790
+#: disk-utils/cfdisk.c:1792
 #, c-format
 msgid "Label: %s, identifier: %s"
 msgstr "Натпис: %s, одредник: %s"
 
-#: disk-utils/cfdisk.c:1793
+#: disk-utils/cfdisk.c:1795
 #, c-format
 msgid "Label: %s"
 msgstr "Натпис: %s"
 
-#: disk-utils/cfdisk.c:1944
+#: disk-utils/cfdisk.c:1946
 msgid "May be followed by M for MiB, G for GiB, T for TiB, or S for sectors."
 msgstr "После тога може да стоји M за MiB, G за GiB, T за TiB, или S за секторе."
 
-#: disk-utils/cfdisk.c:1950
+#: disk-utils/cfdisk.c:1952
 msgid "Please, specify size."
 msgstr "Наведите величину."
 
-#: disk-utils/cfdisk.c:1972
+#: disk-utils/cfdisk.c:1974
 #, c-format
 msgid "Minimum size is %<PRIu64> bytes."
 msgstr "Најмања величина је %<PRIu64>."
 
-#: disk-utils/cfdisk.c:1981
+#: disk-utils/cfdisk.c:1983
 #, c-format
 msgid "Maximum size is %<PRIu64> bytes."
 msgstr "Највећа величина је %<PRIu64>."
 
-#: disk-utils/cfdisk.c:1988
+#: disk-utils/cfdisk.c:1990
 msgid "Failed to parse size."
 msgstr "Нисам успео да обрадим величину."
 
-#: disk-utils/cfdisk.c:2046
+#: disk-utils/cfdisk.c:2048
 msgid "Select partition type"
 msgstr "Изаберите врсту партиције"
 
-#: disk-utils/cfdisk.c:2096 disk-utils/cfdisk.c:2126
+#: disk-utils/cfdisk.c:2098 disk-utils/cfdisk.c:2128
 msgid "Enter script file name: "
 msgstr "Унесите назив датотеке скрипте: "
 
-#: disk-utils/cfdisk.c:2097
+#: disk-utils/cfdisk.c:2099
 msgid "The script file will be applied to in-memory partition table."
 msgstr "Датотека скрипте ће бити примењена на партиционој табели у-меморији."
 
-#: disk-utils/cfdisk.c:2106 disk-utils/cfdisk.c:2148
-#: disk-utils/fdisk-menu.c:484 disk-utils/fdisk-menu.c:528
+#: disk-utils/cfdisk.c:2108 disk-utils/cfdisk.c:2150
+#: disk-utils/fdisk-menu.c:493 disk-utils/fdisk-menu.c:537
 #, c-format
 msgid "Cannot open %s"
 msgstr "Не могу да отворим „%s“"
 
-#: disk-utils/cfdisk.c:2108 disk-utils/fdisk-menu.c:486
+#: disk-utils/cfdisk.c:2110 disk-utils/fdisk-menu.c:495
 #, c-format
 msgid "Failed to parse script file %s"
 msgstr "Нисам успео да обрадим датотеку скрипте „%s“"
 
-#: disk-utils/cfdisk.c:2110 disk-utils/fdisk-menu.c:488
+#: disk-utils/cfdisk.c:2112 disk-utils/fdisk-menu.c:497
 #, c-format
 msgid "Failed to apply script %s"
 msgstr "Нисам успео да применим скрипту „%s“"
 
-#: disk-utils/cfdisk.c:2127
+#: disk-utils/cfdisk.c:2129
 msgid "The current in-memory partition table will be dumped to the file."
 msgstr "Текућа партициона табела у-меморији биће исписана у датотеку."
 
-#: disk-utils/cfdisk.c:2135 disk-utils/fdisk-menu.c:516
+#: disk-utils/cfdisk.c:2137 disk-utils/fdisk-menu.c:525
 msgid "Failed to allocate script handler"
 msgstr "Нисам успео да доделим руковаоца скриптом"
 
-#: disk-utils/cfdisk.c:2141
+#: disk-utils/cfdisk.c:2143
 msgid "Failed to read disk layout into script."
 msgstr "Нисам успео да прочитам распоред диска у скрипту."
 
-#: disk-utils/cfdisk.c:2155
+#: disk-utils/cfdisk.c:2157
 msgid "Disk layout successfully dumped."
 msgstr "Распоред диска је успешно исписан."
 
-#: disk-utils/cfdisk.c:2158 disk-utils/fdisk-menu.c:534
+#: disk-utils/cfdisk.c:2160 disk-utils/fdisk-menu.c:543
 #, c-format
 msgid "Failed to write script %s"
 msgstr "Нисам успео да запишем скрипту „%s“"
 
-#: disk-utils/cfdisk.c:2194
+#: disk-utils/cfdisk.c:2196
 msgid "Select label type"
 msgstr "Изаберите врсту натписа"
 
-#: disk-utils/cfdisk.c:2197 disk-utils/fdisk.c:1162 disk-utils/fdisk-menu.c:492
+#: disk-utils/cfdisk.c:2199 disk-utils/fdisk.c:1164 disk-utils/fdisk-menu.c:501
 msgid "Device does not contain a recognized partition table."
 msgstr "Уређај не садржи препознатљиву партициону табелу."
 
-#: disk-utils/cfdisk.c:2205
+#: disk-utils/cfdisk.c:2207
 msgid "Select a type to create a new label, press 'L' to load script file, 'Q' quits."
 msgstr "Изаберите врсту да направите нови натпис, притисните „L“ да учитате датотеку скрипте, „Q“ излази."
 
-#: disk-utils/cfdisk.c:2254
+#: disk-utils/cfdisk.c:2256
 msgid "This is cfdisk, a curses-based disk partitioning program."
 msgstr "Ово је „cfdisk“, програм за партиционисање дискова заснован на кјурзису."
 
-#: disk-utils/cfdisk.c:2255
+#: disk-utils/cfdisk.c:2257
 msgid "It lets you create, delete, and modify partitions on a block device."
 msgstr "Омогућава вам да стварате, бришете и мењате партиције на блок уређају."
 
-#: disk-utils/cfdisk.c:2257
+#: disk-utils/cfdisk.c:2259
 msgid "Command      Meaning"
 msgstr "Наредба         Значење"
 
-#: disk-utils/cfdisk.c:2258
+#: disk-utils/cfdisk.c:2260
 msgid "-------      -------"
 msgstr "-------         -------"
 
-#: disk-utils/cfdisk.c:2259
+#: disk-utils/cfdisk.c:2261
 msgid "  b          Toggle bootable flag of the current partition"
 msgstr "  b             Поставља заставицу подизања за текућу партицију"
 
-#: disk-utils/cfdisk.c:2260
+#: disk-utils/cfdisk.c:2262
 msgid "  d          Delete the current partition"
 msgstr "  d             Брише текућу партицију"
 
-#: disk-utils/cfdisk.c:2261
+#: disk-utils/cfdisk.c:2263
 msgid "  h          Print this screen"
 msgstr "  h             Приказује овај екран помоћи"
 
-#: disk-utils/cfdisk.c:2262
+#: disk-utils/cfdisk.c:2264
 msgid "  n          Create new partition from free space"
 msgstr "  n             Прави нову партицију из слободног простора"
 
-#: disk-utils/cfdisk.c:2263
+#: disk-utils/cfdisk.c:2265
 msgid "  q          Quit program without writing partition table"
 msgstr "  q             Затвара програм без записивања партиционе табеле"
 
-#: disk-utils/cfdisk.c:2264
+#: disk-utils/cfdisk.c:2266
 msgid "  r          Reduce or enlarge the current partition"
 msgstr "  r             Смањује или повећава текућу партицију"
 
-#: disk-utils/cfdisk.c:2265
+#: disk-utils/cfdisk.c:2267
 msgid "  s          Fix partitions order (only when in disarray)"
 msgstr "  s             Поправља поредак партиција (само када нису у низу)"
 
-#: disk-utils/cfdisk.c:2266
+#: disk-utils/cfdisk.c:2268
 msgid "  t          Change the partition type"
 msgstr "  t             Мења врсту партиције"
 
-#: disk-utils/cfdisk.c:2267
+#: disk-utils/cfdisk.c:2269
 msgid "  u          Dump disk layout to sfdisk compatible script file"
 msgstr "  u             Исписује распоред диска у „sfdisk“ сагласну датотеку скрипте"
 
-#: disk-utils/cfdisk.c:2268
+#: disk-utils/cfdisk.c:2270
 msgid "  W          Write partition table to disk (you must enter uppercase W);"
 msgstr "  W             Записује партициону табелу на диск (морате уписати велико W);"
 
-#: disk-utils/cfdisk.c:2269
+#: disk-utils/cfdisk.c:2271
 msgid "               since this might destroy data on the disk, you must either"
 msgstr "                како ово може уништити податке на диску, морате или да"
 
-#: disk-utils/cfdisk.c:2270
+#: disk-utils/cfdisk.c:2272
 msgid "               confirm or deny the write by entering 'yes' or 'no'"
 msgstr "                потврдите или да одбијете записивање тако што ћете уписати „yes“ или „no“"
 
-#: disk-utils/cfdisk.c:2271
+#: disk-utils/cfdisk.c:2273
 msgid "  x          Display/hide extra information about a partition"
 msgstr "  x             Приказује/скрива додатне информације о партицији"
 
-#: disk-utils/cfdisk.c:2272
+#: disk-utils/cfdisk.c:2274
 msgid "Up Arrow     Move cursor to the previous partition"
 msgstr "Стрелица горе   Помера курзор на претходну партицију"
 
-#: disk-utils/cfdisk.c:2273
+#: disk-utils/cfdisk.c:2275
 msgid "Down Arrow   Move cursor to the next partition"
 msgstr "Стрелица доле   Помера курзор на следећу партицију"
 
-#: disk-utils/cfdisk.c:2274
+#: disk-utils/cfdisk.c:2276
 msgid "Left Arrow   Move cursor to the previous menu item"
 msgstr "Стрелица лево   Помера курзор на претходну ставку изборника"
 
-#: disk-utils/cfdisk.c:2275
+#: disk-utils/cfdisk.c:2277
 msgid "Right Arrow  Move cursor to the next menu item"
 msgstr "Стрелица десно  Помера курзор на следећу ставку изборника"
 
-#: disk-utils/cfdisk.c:2277
+#: disk-utils/cfdisk.c:2279
 msgid "Note: All of the commands can be entered with either upper or lower"
 msgstr "Напомена: Све наредбе се могу уписати или великим или малим словима"
 
-#: disk-utils/cfdisk.c:2278
+#: disk-utils/cfdisk.c:2280
 msgid "case letters (except for Write)."
 msgstr "разликовање величине слова (осим за писање)."
 
-#: disk-utils/cfdisk.c:2280
+#: disk-utils/cfdisk.c:2282
 msgid "Use lsblk(8) or partx(8) to see more details about the device."
 msgstr "Користите „lsblk(8)“ или „partx(8)“ да видите више детаља о уређају."
 
-#: disk-utils/cfdisk.c:2290 disk-utils/cfdisk.c:2593
+#: disk-utils/cfdisk.c:2292 disk-utils/cfdisk.c:2595
 msgid "Press a key to continue."
 msgstr "Притисните неки тастер да наставите."
 
-#: disk-utils/cfdisk.c:2376
+#: disk-utils/cfdisk.c:2378
 msgid "Could not toggle the flag."
 msgstr "Не могу да променим заставицу."
 
-#: disk-utils/cfdisk.c:2386
+#: disk-utils/cfdisk.c:2388
 #, c-format
 msgid "Could not delete partition %zu."
 msgstr "Не могу да обришем партицију %zu."
 
-#: disk-utils/cfdisk.c:2388 disk-utils/fdisk-menu.c:661
+#: disk-utils/cfdisk.c:2390 disk-utils/fdisk-menu.c:670
 #, c-format
 msgid "Partition %zu has been deleted."
 msgstr "Партиција %zu је обрисана."
 
-#: disk-utils/cfdisk.c:2409
+#: disk-utils/cfdisk.c:2411
 msgid "Partition size: "
 msgstr "Величина партиције: "
 
-#: disk-utils/cfdisk.c:2450
+#: disk-utils/cfdisk.c:2452
 #, c-format
 msgid "Changed type of partition %zu."
 msgstr "Промењена је врста партиције %zu."
 
-#: disk-utils/cfdisk.c:2452
+#: disk-utils/cfdisk.c:2454
 #, c-format
 msgid "The type of partition %zu is unchanged."
 msgstr "Врста партиције %zu је непромењена."
 
-#: disk-utils/cfdisk.c:2473
+#: disk-utils/cfdisk.c:2475
 msgid "New size: "
 msgstr "Нова величина: "
 
-#: disk-utils/cfdisk.c:2488
+#: disk-utils/cfdisk.c:2490
 #, c-format
 msgid "Partition %zu resized."
 msgstr "Промењена је величина партиције %zu."
 
-#: disk-utils/cfdisk.c:2506 disk-utils/fdisk.c:1138 disk-utils/fdisk-menu.c:595
+#: disk-utils/cfdisk.c:2508 disk-utils/fdisk.c:1140 disk-utils/fdisk-menu.c:604
 msgid "Device is open in read-only mode."
 msgstr "Уређај је отворен у режиму само за читање."
 
-#: disk-utils/cfdisk.c:2511
+#: disk-utils/cfdisk.c:2513
 msgid "Are you sure you want to write the partition table to disk? "
 msgstr "Да ли сигурно желите да запишете партициону табелу на диск? "
 
-#: disk-utils/cfdisk.c:2513
+#: disk-utils/cfdisk.c:2515
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr "Упишите „yes“ (да) или „no“ (не), или притисните ESC да изађете из овог прозорчета."
 
-#: disk-utils/cfdisk.c:2518 login-utils/lslogins.c:219 sys-utils/lscpu.c:339
+#: disk-utils/cfdisk.c:2520 login-utils/lslogins.c:219 sys-utils/lscpu.c:339
 #: sys-utils/lsmem.c:266
 msgid "yes"
 msgstr "да"
 
-#: disk-utils/cfdisk.c:2519
+#: disk-utils/cfdisk.c:2521
 msgid "Did not write partition table to disk."
 msgstr "Нисам записао партициону табелу на диск."
 
-#: disk-utils/cfdisk.c:2524
+#: disk-utils/cfdisk.c:2526
 msgid "Failed to write disklabel."
 msgstr "Нисам успео да запишем натпис диска."
 
-#: disk-utils/cfdisk.c:2530 disk-utils/fdisk-menu.c:602
+#: disk-utils/cfdisk.c:2532 disk-utils/fdisk-menu.c:611
 msgid "The partition table has been altered."
 msgstr "Партициона табела је измењена."
 
-#: disk-utils/cfdisk.c:2553 disk-utils/cfdisk.c:2628
+#: disk-utils/cfdisk.c:2555 disk-utils/cfdisk.c:2630
 msgid "Note that partition table entries are not in disk order now."
 msgstr "Знајте да уноси партиционе табеле нису сада у поретку диска."
 
-#: disk-utils/cfdisk.c:2590
+#: disk-utils/cfdisk.c:2592
 #, c-format
 msgid "Device already contains a %s signature; it will be removed by a write command."
 msgstr "Уређај већ садржи потпис „%s“; биће уклоњен наредбом писања."
 
-#: disk-utils/cfdisk.c:2602
+#: disk-utils/cfdisk.c:2604
 msgid "failed to create a new disklabel"
 msgstr "нисам успео да створим нови натпис диска"
 
-#: disk-utils/cfdisk.c:2611
+#: disk-utils/cfdisk.c:2613
 msgid "failed to read partitions"
 msgstr "нисам успео да прочитам партицију"
 
-#: disk-utils/cfdisk.c:2624
+#: disk-utils/cfdisk.c:2626
 msgid "Device is open in read-only mode. Changes will remain in memory only."
 msgstr "Уређај је отворен у режиму само за читање. Измене ће остати само у меморији."
 
-#: disk-utils/cfdisk.c:2626
+#: disk-utils/cfdisk.c:2628
 msgid "Device is currently in use, repartitioning is probably a bad idea."
 msgstr "Уређај је тренутно у употреби, поновно партиционисање је вероватно лоша замисао."
 
-#: disk-utils/cfdisk.c:2712
+#: disk-utils/cfdisk.c:2714
 #, c-format
 msgid " %1$s [options] <disk>\n"
 msgstr " %1$s [опције] <disk>\n"
 
-#: disk-utils/cfdisk.c:2715 disk-utils/fdisk.c:855 disk-utils/sfdisk.c:2044
+#: disk-utils/cfdisk.c:2717 disk-utils/fdisk.c:857 disk-utils/sfdisk.c:2044
 msgid "Display or manipulate a disk partition table.\n"
 msgstr "Прикажите или управљајте партиционом табелом диска.\n"
 
-#: disk-utils/cfdisk.c:2719
+#: disk-utils/cfdisk.c:2721
 #, c-format
 msgid " -L, --color[=<when>]     colorize output (%s, %s or %s)\n"
 msgstr " -L, --color[=<када>]     обојава излаз (%s, %s или %s)\n"
 
-#: disk-utils/cfdisk.c:2722
+#: disk-utils/cfdisk.c:2724
 msgid " -z, --zero               start with zeroed partition table\n"
 msgstr " -z, --zero               почиње нулираном партиционом табелом\n"
 
-#: disk-utils/cfdisk.c:2724
+#: disk-utils/cfdisk.c:2726
 #, c-format
 msgid "     --lock[=<mode>]      use exclusive device lock (%s, %s or %s)\n"
 msgstr "     --lock[=<режим>]     користи искључиво закључавање уређаја (%s, %s или %s)\n"
 
-#: disk-utils/cfdisk.c:2725
+#: disk-utils/cfdisk.c:2727
 msgid " -r, --read-only          forced open cfdisk in read-only mode\n"
 msgstr " -r, --read-only          присилно отварање „cfdisk“ у режиму само за читање\n"
 
-#: disk-utils/cfdisk.c:2768 disk-utils/fdisk.c:1014 disk-utils/sfdisk.c:2350
+#: disk-utils/cfdisk.c:2770 disk-utils/fdisk.c:1016 disk-utils/sfdisk.c:2350
 #: misc-utils/cal.c:421 sys-utils/dmesg.c:1505 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "неподржан режим боје"
 
-#: disk-utils/cfdisk.c:2798 disk-utils/fdisk.c:949 disk-utils/sfdisk.c:232
+#: disk-utils/cfdisk.c:2800 disk-utils/fdisk.c:951 disk-utils/sfdisk.c:232
 msgid "failed to allocate libfdisk context"
 msgstr "нисам успео да доделим „libfdisk“ контекст"
 
-#: disk-utils/delpart.c:15
+#: disk-utils/delpart.c:25
 #, c-format
 msgid " %s <disk device> <partition number>\n"
 msgstr " %s <уређај диска> <број партиције>\n"
 
-#: disk-utils/delpart.c:19
+#: disk-utils/delpart.c:29
 msgid "Tell the kernel to forget about a specified partition.\n"
 msgstr "Говори кернелу да заборави наведену партицију.\n"
 
-#: disk-utils/delpart.c:62
+#: disk-utils/delpart.c:72
 msgid "failed to remove partition"
 msgstr "нисам успео да уклоним партицију"
 
-#: disk-utils/fdformat.c:54
+#: disk-utils/fdformat.c:63
 #, c-format
 msgid "Formatting ... "
 msgstr "Форматирам ... "
 
-#: disk-utils/fdformat.c:69 disk-utils/fdformat.c:139
+#: disk-utils/fdformat.c:78 disk-utils/fdformat.c:148
 #, c-format
 msgid "done\n"
 msgstr "готово\n"
 
-#: disk-utils/fdformat.c:81
+#: disk-utils/fdformat.c:90
 #, c-format
 msgid "Verifying ... "
 msgstr "Проверавам ... "
 
-#: disk-utils/fdformat.c:109
+#: disk-utils/fdformat.c:118
 msgid "Read: "
 msgstr "Читам: "
 
-#: disk-utils/fdformat.c:111
+#: disk-utils/fdformat.c:120
 #, c-format
 msgid "Problem reading track/head %u/%u, expected %d, read %d\n"
 msgstr "Проблем читања стазе/главе %u/%u, очекивах %d, прочитах %d\n"
 
-#: disk-utils/fdformat.c:128
+#: disk-utils/fdformat.c:137
 #, c-format
 msgid ""
 "bad data in track/head %u/%u\n"
@@ -767,26 +767,26 @@ msgstr ""
 "лоши подаци у стази/глави %u/%u\n"
 "Настављам ... "
 
-#: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:633 sys-utils/blkdiscard.c:92
+#: disk-utils/fdformat.c:155 disk-utils/fsck.minix.c:189
+#: disk-utils/swaplabel.c:125 misc-utils/wipefs.c:633 sys-utils/blkdiscard.c:92
 #: sys-utils/blkpr.c:213 sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [опције] <уређај>\n"
 
-#: disk-utils/fdformat.c:150
+#: disk-utils/fdformat.c:159
 msgid "Do a low-level formatting of a floppy disk.\n"
 msgstr "Одрадите форматирање ниског нивоа флопи дискете.\n"
 
-#: disk-utils/fdformat.c:153
+#: disk-utils/fdformat.c:162
 msgid " -f, --from <N>    start at the track N (default 0)\n"
 msgstr " -f, --from <N>    почиње на стази N (основно 0)\n"
 
-#: disk-utils/fdformat.c:154
+#: disk-utils/fdformat.c:163
 msgid " -t, --to <N>      stop at the track N\n"
 msgstr " -t, --to <N>      стаје на стази N\n"
 
-#: disk-utils/fdformat.c:155
+#: disk-utils/fdformat.c:164
 msgid ""
 " -r, --repair <N>  try to repair tracks failed during\n"
 "                     the verification (max N retries)\n"
@@ -794,26 +794,26 @@ msgstr ""
 " -r, --repair <N>  покушава да поправи стазе неуспеле за време\n"
 "                     провере (највише N покушаја)\n"
 
-#: disk-utils/fdformat.c:157
+#: disk-utils/fdformat.c:166
 msgid " -n, --no-verify   disable the verification after the format\n"
 msgstr " -n, --no-verify   искључује проверу након форматирања\n"
 
-#: disk-utils/fdformat.c:195
+#: disk-utils/fdformat.c:204
 msgid "invalid argument - from"
 msgstr "неисправан аргумент – from"
 
-#: disk-utils/fdformat.c:199
+#: disk-utils/fdformat.c:208
 msgid "invalid argument - to"
 msgstr "неисправан аргумент – to"
 
-#: disk-utils/fdformat.c:202
+#: disk-utils/fdformat.c:211
 msgid "invalid argument - repair"
 msgstr "неисправан аргумент – repair"
 
-#: disk-utils/fdformat.c:223 disk-utils/fsck.cramfs.c:162
-#: disk-utils/mkfs.bfs.c:198 disk-utils/mkfs.cramfs.c:341
-#: disk-utils/mkfs.cramfs.c:763 disk-utils/mkfs.cramfs.c:809
-#: disk-utils/mkfs.minix.c:835 disk-utils/mkswap.c:374 disk-utils/partx.c:959
+#: disk-utils/fdformat.c:232 disk-utils/fsck.cramfs.c:164
+#: disk-utils/mkfs.bfs.c:206 disk-utils/mkfs.cramfs.c:343
+#: disk-utils/mkfs.cramfs.c:765 disk-utils/mkfs.cramfs.c:811
+#: disk-utils/mkfs.minix.c:839 disk-utils/mkswap.c:381 disk-utils/partx.c:966
 #: login-utils/last.c:697 login-utils/utmpdump.c:145 misc-utils/namei.c:146
 #: misc-utils/rename.c:164 misc-utils/rename.c:229 sys-utils/blkdiscard.c:251
 #: sys-utils/blkzone.c:147 sys-utils/dmesg.c:549 sys-utils/fallocate.c:201
@@ -826,117 +826,117 @@ msgstr "неисправан аргумент – repair"
 msgid "stat of %s failed"
 msgstr "добављање података за „%s“ није успело"
 
-#: disk-utils/fdformat.c:226 disk-utils/partx.c:1019 misc-utils/lsblk.c:1663
+#: disk-utils/fdformat.c:235 disk-utils/partx.c:1026 misc-utils/lsblk.c:1663
 #: sys-utils/blkdiscard.c:253 sys-utils/blkzone.c:149
 #: sys-utils/mountpoint.c:109
 #, c-format
 msgid "%s: not a block device"
 msgstr "%s: није блок уређај"
 
-#: disk-utils/fdformat.c:231
+#: disk-utils/fdformat.c:240
 msgid "could not determine current format type"
 msgstr "не могу да одредим текућу врсту форматирања"
 
-#: disk-utils/fdformat.c:233
+#: disk-utils/fdformat.c:242
 #, c-format
 msgid "%s-sided, %d tracks, %d sec/track. Total capacity %d kB.\n"
 msgstr "%s-страно, стаза – %d, сектора/стаза – %d. Укупан капацитет %d kB.\n"
 
-#: disk-utils/fdformat.c:234
+#: disk-utils/fdformat.c:243
 msgid "Double"
 msgstr "Две"
 
-#: disk-utils/fdformat.c:234
+#: disk-utils/fdformat.c:243
 msgid "Single"
 msgstr "Један"
 
-#: disk-utils/fdformat.c:241
+#: disk-utils/fdformat.c:250
 msgid "user defined start track exceeds the medium specific maximum"
 msgstr "стаза почетка коју је одредио корисник превазилази максимум одређеног медијума"
 
-#: disk-utils/fdformat.c:243
+#: disk-utils/fdformat.c:252
 msgid "user defined end track exceeds the medium specific maximum"
 msgstr "стаза краја коју је одредио корисник превазилази максимум одређеног медијума"
 
-#: disk-utils/fdformat.c:245
+#: disk-utils/fdformat.c:254
 msgid "user defined start track exceeds the user defined end track"
 msgstr "стаза почетка коју је одредио корисник превазилази крајњу стазу коју је одредио корисник"
 
-#: disk-utils/fdformat.c:253 misc-utils/logger.c:1050
+#: disk-utils/fdformat.c:262 misc-utils/logger.c:1050
 msgid "close failed"
 msgstr "није успело затварање"
 
-#: disk-utils/fdisk.c:206
+#: disk-utils/fdisk.c:208
 #, c-format
 msgid "Select (default %c): "
 msgstr "Бирам (основно је %c): "
 
-#: disk-utils/fdisk.c:211
+#: disk-utils/fdisk.c:213
 #, c-format
 msgid "Using default response %c."
 msgstr "Користим основни одговор „%c“."
 
-#: disk-utils/fdisk.c:224 disk-utils/fdisk.c:298 disk-utils/fdisk.c:375
+#: disk-utils/fdisk.c:226 disk-utils/fdisk.c:300 disk-utils/fdisk.c:377
 #: libfdisk/src/dos.c:1465 libfdisk/src/gpt.c:2574
 msgid "Value out of range."
 msgstr "Вредност је ван опсега."
 
-#: disk-utils/fdisk.c:253
+#: disk-utils/fdisk.c:255
 #, c-format
 msgid "%s (%s, default %c): "
 msgstr "%s (%s, основно је %c): "
 
-#: disk-utils/fdisk.c:256 disk-utils/fdisk.c:323
+#: disk-utils/fdisk.c:258 disk-utils/fdisk.c:325
 #, c-format
 msgid "%s (%s, default %<PRIu64>): "
 msgstr "%s (%s, основно је %<PRIu64>): "
 
-#: disk-utils/fdisk.c:261
+#: disk-utils/fdisk.c:263
 #, c-format
 msgid "%s (%c-%c, default %c): "
 msgstr "%s (%c-%c, основно је %c): "
 
-#: disk-utils/fdisk.c:265 disk-utils/fdisk.c:327
+#: disk-utils/fdisk.c:267 disk-utils/fdisk.c:329
 #, c-format
 msgid "%s (%<PRIu64>-%<PRIu64>, default %<PRIu64>): "
 msgstr "%s (%<PRIu64>-%<PRIu64>, основно је %<PRIu64>): "
 
-#: disk-utils/fdisk.c:268
+#: disk-utils/fdisk.c:270
 #, c-format
 msgid "%s (%c-%c): "
 msgstr "%s (%c-%c): "
 
-#: disk-utils/fdisk.c:271 disk-utils/fdisk.c:330
+#: disk-utils/fdisk.c:273 disk-utils/fdisk.c:332
 #, c-format
 msgid "%s (%<PRIu64>-%<PRIu64>): "
 msgstr "%s (%<PRIu64>-%<PRIu64>): "
 
-#: disk-utils/fdisk.c:442 disk-utils/sfdisk.c:206
+#: disk-utils/fdisk.c:444 disk-utils/sfdisk.c:206
 msgid " [Y]es/[N]o: "
 msgstr " [Y]да/[N]не: "
 
-#: disk-utils/fdisk.c:486
+#: disk-utils/fdisk.c:488
 msgid "Hex code or alias (type L to list all): "
 msgstr "Хекс код или алијас (упишите L за читав списак): "
 
-#: disk-utils/fdisk.c:487
+#: disk-utils/fdisk.c:489
 msgid "Partition type or alias (type L to list all): "
 msgstr "Врста партиције или алијас (упишите L за читав списак): "
 
-#: disk-utils/fdisk.c:490
+#: disk-utils/fdisk.c:492
 msgid "Hex code (type L to list all codes): "
 msgstr "Хекс код (упишите L за списак свих кодова): "
 
-#: disk-utils/fdisk.c:491
+#: disk-utils/fdisk.c:493
 msgid "Partition type (type L to list all types): "
 msgstr "Врста партиције (упишите L за списак свих врста): "
 
-#: disk-utils/fdisk.c:511
+#: disk-utils/fdisk.c:513
 #, c-format
 msgid "Failed to parse '%s' partition type."
 msgstr "Нисам успео да обрадим „%s“ врсту партиције."
 
-#: disk-utils/fdisk.c:602
+#: disk-utils/fdisk.c:604
 msgid ""
 "\n"
 "Aliases:\n"
@@ -944,34 +944,34 @@ msgstr ""
 "\n"
 "Алијаси:\n"
 
-#: disk-utils/fdisk.c:628
+#: disk-utils/fdisk.c:630
 msgid "DOS Compatibility flag is set (DEPRECATED!)"
 msgstr "Заставица ДОС сагласности је постављена (ЗАСТАРЕЛО!)"
 
-#: disk-utils/fdisk.c:629
+#: disk-utils/fdisk.c:631
 msgid "DOS Compatibility flag is not set"
 msgstr "Заставица ДОС сагласности није постављена"
 
-#: disk-utils/fdisk.c:651 disk-utils/fdisk.c:689
+#: disk-utils/fdisk.c:653 disk-utils/fdisk.c:691
 #, c-format
 msgid "Partition %zu does not exist yet!"
 msgstr "Партиција %zu још увек не постоји!"
 
-#: disk-utils/fdisk.c:656 disk-utils/fdisk.c:667 libfdisk/src/ask.c:1032
+#: disk-utils/fdisk.c:658 disk-utils/fdisk.c:669 libfdisk/src/ask.c:1032
 msgid "Unknown"
 msgstr "Непознато"
 
-#: disk-utils/fdisk.c:666
+#: disk-utils/fdisk.c:668
 #, c-format
 msgid "Changed type of partition '%s' to '%s'."
 msgstr "Измењена је врста партиције „%s“ у „%s“."
 
-#: disk-utils/fdisk.c:670
+#: disk-utils/fdisk.c:672
 #, c-format
 msgid "Type of partition %zu is unchanged: %s."
 msgstr "Врста партиције %zu је непромењена: %s."
 
-#: disk-utils/fdisk.c:766
+#: disk-utils/fdisk.c:768
 #, c-format
 msgid ""
 "\n"
@@ -980,35 +980,35 @@ msgstr ""
 "\n"
 "%s: померај = %<PRIu64>, величина = %zu бајта."
 
-#: disk-utils/fdisk.c:772
+#: disk-utils/fdisk.c:774
 msgid "cannot seek"
 msgstr "не могу да премотам"
 
-#: disk-utils/fdisk.c:777
+#: disk-utils/fdisk.c:779
 msgid "cannot read"
 msgstr "не могу да читам"
 
-#: disk-utils/fdisk.c:788 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:1050
+#: disk-utils/fdisk.c:790 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:1050
 #: libfdisk/src/gpt.c:2494
 msgid "First sector"
 msgstr "Први сектор"
 
-#: disk-utils/fdisk.c:814
+#: disk-utils/fdisk.c:816
 #, c-format
 msgid "BLKGETSIZE ioctl failed on %s"
 msgstr "„BLKGETSIZE ioctl“ није успело на %s"
 
-#: disk-utils/fdisk.c:832
+#: disk-utils/fdisk.c:834
 #, c-format
 msgid "The device contains '%s' signature and it will be removed by a write command. See fdisk(8) man page and --wipe option for more details."
 msgstr "Уређај садржи „%s“ потпис који ће бити уклоњен наредбом писања. Видите „fdisk(8)“ страницу упутства и опцију „--wipe“ за више појединости."
 
-#: disk-utils/fdisk.c:837
+#: disk-utils/fdisk.c:839
 #, c-format
 msgid "The device contains '%s' signature and it may remain on the device. It is recommended to wipe the device with wipefs(8) or fdisk --wipe, in order to avoid possible collisions."
 msgstr "Уређај садржи „%s“ потпис и може остати на уређају. Препоручује се да обришете уређај са „wipefs(8)“ или „fdisk --wipe“, да бисте избегли могуће сукобе."
 
-#: disk-utils/fdisk.c:850
+#: disk-utils/fdisk.c:852
 #, c-format
 msgid ""
 " %1$s [options] <disk>         change partition table\n"
@@ -1017,100 +1017,100 @@ msgstr ""
 " %1$s [опције] <диск>           мења партициону табелу\n"
 " %1$s [опције] -l [<диск>...]   исписује партициону табелу\n"
 
-#: disk-utils/fdisk.c:858
+#: disk-utils/fdisk.c:860
 msgid " -b, --sector-size <size>      physical and logical sector size\n"
 msgstr " -b, --sector-size <влчн>       физичка и логичка величина сектора\n"
 
-#: disk-utils/fdisk.c:859
+#: disk-utils/fdisk.c:861
 msgid " -B, --protect-boot            don't erase bootbits when creating a new label\n"
 msgstr " -B, --protect-boot             не брише битове подизања приликом стварања новог натписа\n"
 
-#: disk-utils/fdisk.c:860
+#: disk-utils/fdisk.c:862
 msgid " -c, --compatibility[=<mode>]  mode is 'dos' or 'nondos' (default)\n"
 msgstr " -c, --compatibility[=<режим>]  режим је „dos“ или „nondos“ (основно)\n"
 
-#: disk-utils/fdisk.c:862
+#: disk-utils/fdisk.c:864
 #, c-format
 msgid " -L, --color[=<when>]          colorize output (%s, %s or %s)\n"
 msgstr " -L, --color[=<када>]           обојава излаз (%s, %s или %s)\n"
 
-#: disk-utils/fdisk.c:865
+#: disk-utils/fdisk.c:867
 msgid " -l, --list                    display partitions and exit\n"
 msgstr " -l, --list                     приказује партиције и излази\n"
 
-#: disk-utils/fdisk.c:866
+#: disk-utils/fdisk.c:868
 msgid " -x, --list-details            like --list but with more details\n"
 msgstr " -x, --list-details             као „--list“ али са више појединости\n"
 
-#: disk-utils/fdisk.c:868
+#: disk-utils/fdisk.c:870
 msgid " -n, --noauto-pt               don't create default partition table on empty devices\n"
 msgstr " -n, --noauto-pt                не ствара основну партициону табелу на празним уређајима\n"
 
-#: disk-utils/fdisk.c:869
+#: disk-utils/fdisk.c:871
 msgid " -o, --output <list>           output columns\n"
 msgstr " -o, --output <списак>          исписује колоне\n"
 
-#: disk-utils/fdisk.c:870
+#: disk-utils/fdisk.c:872
 msgid " -t, --type <type>             recognize specified partition table type only\n"
 msgstr " -t, --type <врста>             препознаје само врсту наведене партиционе табеле\n"
 
-#: disk-utils/fdisk.c:871
+#: disk-utils/fdisk.c:873
 msgid " -u, --units[=<unit>]          display units: 'cylinders' or 'sectors' (default)\n"
 msgstr " -u, --units[=<јединица>]       приказује јединице: „cylinders“ или „sectors“ (основно)\n"
 
-#: disk-utils/fdisk.c:872
+#: disk-utils/fdisk.c:874
 msgid " -s, --getsz                   display device size in 512-byte sectors [DEPRECATED]\n"
 msgstr " -s, --getsz                    приказује величину уређаја 512-бајтних сектора [ЗАСТАРЕЛО]\n"
 
-#: disk-utils/fdisk.c:873
+#: disk-utils/fdisk.c:875
 msgid "     --bytes                   print SIZE in bytes rather than in human readable format\n"
 msgstr "     --bytes                    исписује ВЕЛИЧИНУ у бајтовима уместо у људима читљивом запису\n"
 
-#: disk-utils/fdisk.c:875
+#: disk-utils/fdisk.c:877
 #, c-format
 msgid "     --lock[=<mode>]           use exclusive device lock (%s, %s or %s)\n"
 msgstr "     --lock[=<режим>]           користи искључиво закључавање уређаја (%s, %s или %s)\n"
 
-#: disk-utils/fdisk.c:877
+#: disk-utils/fdisk.c:879
 #, c-format
 msgid " -w, --wipe <mode>             wipe signatures (%s, %s or %s)\n"
 msgstr " -w, --wipe <режим>             брише потписе (%s, %s или %s)\n"
 
-#: disk-utils/fdisk.c:879 disk-utils/sfdisk.c:2099
+#: disk-utils/fdisk.c:881 disk-utils/sfdisk.c:2099
 #, c-format
 msgid " -W, --wipe-partitions <mode>  wipe signatures from new partitions (%s, %s or %s)\n"
 msgstr " -W, --wipe-partitions <режим>  брише потписе са нових партиција (%s, %s или %s)\n"
 
-#: disk-utils/fdisk.c:882
+#: disk-utils/fdisk.c:884
 msgid " -C, --cylinders <number>      specify the number of cylinders\n"
 msgstr " -C, --cylinders <број>         наводи број цилиндара\n"
 
-#: disk-utils/fdisk.c:883
+#: disk-utils/fdisk.c:885
 msgid " -H, --heads <number>          specify the number of heads\n"
 msgstr " -H, --heads <број>             наводи број глава\n"
 
-#: disk-utils/fdisk.c:884
+#: disk-utils/fdisk.c:886
 msgid " -S, --sectors <number>        specify the number of sectors per track\n"
 msgstr " -S, --sectors <број>           наводи број сектора по стази\n"
 
-#: disk-utils/fdisk.c:959 disk-utils/fdisk.c:961 disk-utils/partx.c:882
+#: disk-utils/fdisk.c:961 disk-utils/fdisk.c:963 disk-utils/partx.c:889
 msgid "invalid sector size argument"
 msgstr "неисправан аргумент величине сектора"
 
-#: disk-utils/fdisk.c:971
+#: disk-utils/fdisk.c:973
 msgid "invalid cylinders argument"
 msgstr "неисправан аргумент цилиндара"
 
-#: disk-utils/fdisk.c:983
+#: disk-utils/fdisk.c:985
 msgid "not found DOS label driver"
 msgstr "нисам нашао управљача натписа ДОС-а"
 
-#: disk-utils/fdisk.c:989
+#: disk-utils/fdisk.c:991
 #, c-format
 msgid "unknown compatibility mode '%s'"
 msgstr "непознат режим сагласности „%s“"
 
-#: disk-utils/fdisk.c:996
+#: disk-utils/fdisk.c:998
 msgid "invalid heads argument"
 msgstr "неисправан аргумент глава"
 
@@ -1120,25 +1120,25 @@ msgstr "неисправан аргумент глава"
 # For consistent translation, here is the English text:
 #  msgstr "this function call has the wrong number or type of arguments"
 # Please translate the English msgstr, not the msgid.
-#: disk-utils/fdisk.c:1002
+#: disk-utils/fdisk.c:1004
 msgid "invalid sectors argument"
 msgstr "неисправан аргумент сектора"
 
-#: disk-utils/fdisk.c:1034
+#: disk-utils/fdisk.c:1036
 #, c-format
 msgid "unsupported disklabel: %s"
 msgstr "неподржан натпис диска: %s"
 
-#: disk-utils/fdisk.c:1042
+#: disk-utils/fdisk.c:1044
 msgid "unsupported unit"
 msgstr "неподржана јединица"
 
-#: disk-utils/fdisk.c:1050 disk-utils/fdisk.c:1055 disk-utils/sfdisk.c:2311
+#: disk-utils/fdisk.c:1052 disk-utils/fdisk.c:1057 disk-utils/sfdisk.c:2311
 #: disk-utils/sfdisk.c:2316
 msgid "unsupported wipe mode"
 msgstr "неподржан режим брисања"
 
-#: disk-utils/fdisk.c:1076
+#: disk-utils/fdisk.c:1078
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Својства уређаја (величина сектора и геометрија) треба да се користе само са једним наведеним уређајем."
 
@@ -1151,30 +1151,30 @@ msgstr "Својства уређаја (величина сектора и ге
 #  "this change is in the '$state' state, it must be in the 'being developed' "
 #  "state to undo develop begin"
 # Please translate the English msgstr, not the msgid.
-#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122 disk-utils/fsck.cramfs.c:723
-#: disk-utils/mkfs.bfs.c:211 disk-utils/mkfs.cramfs.c:799
-#: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
+#: disk-utils/fdisk.c:1109 disk-utils/fdisk.c:1124 disk-utils/fsck.cramfs.c:725
+#: disk-utils/mkfs.bfs.c:219 disk-utils/mkfs.cramfs.c:801
+#: disk-utils/partx.c:982 disk-utils/raw.c:136 disk-utils/raw.c:149
 #: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:526
 #: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:592
 #: misc-utils/whereis.c:603 misc-utils/whereis.c:614 misc-utils/whereis.c:659
 #: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:207
 #: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1585
-#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:925
+#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:926
 #: sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656 sys-utils/mount.c:867
 #: sys-utils/mount.c:875 sys-utils/mount.c:924 sys-utils/mount.c:937
 #: sys-utils/mount.c:1009 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
 #: sys-utils/swapoff.c:258 sys-utils/swapon.c:1011 sys-utils/switch_root.c:270
-#: sys-utils/umount.c:629 term-utils/setterm.c:1197 text-utils/col.c:584
+#: sys-utils/umount.c:629 term-utils/setterm.c:1200 text-utils/col.c:584
 #: text-utils/more.c:2096
 msgid "bad usage"
 msgstr "лоше коришћење"
 
-#: disk-utils/fdisk.c:1128
+#: disk-utils/fdisk.c:1130
 #, c-format
 msgid "Welcome to fdisk (%s)."
 msgstr "Добро дошли у „fdisk“ (%s)."
 
-#: disk-utils/fdisk.c:1130 disk-utils/sfdisk.c:1808
+#: disk-utils/fdisk.c:1132 disk-utils/sfdisk.c:1808
 msgid ""
 "Changes will remain in memory only, until you decide to write them.\n"
 "Be careful before using the write command.\n"
@@ -1182,7 +1182,7 @@ msgstr ""
 "Измене ће остати само у меморији, све док не одлучите да их запишете.\n"
 "Будите пажљиви са коришћењем наредбе писања.\n"
 
-#: disk-utils/fdisk.c:1145
+#: disk-utils/fdisk.c:1147
 msgid ""
 "This disk is currently in use - repartitioning is probably a bad idea.\n"
 "It's recommended to umount all file systems, and swapoff all swap\n"
@@ -1192,76 +1192,76 @@ msgstr ""
 "Препоручује се да откачите све системе датотека и очистите све разменске\n"
 "партиције на овом диску.\n"
 
-#: disk-utils/fdisk.c:1168
+#: disk-utils/fdisk.c:1170
 msgid "A hybrid GPT was detected. You have to sync the hybrid MBR manually (expert command 'M')."
 msgstr "Откривена је хибридна ГПТ. Морате ручно да усагласите хибридни МБР (наредба за стручњаке „M“)."
 
-#: disk-utils/fdisk-list.c:43
+#: disk-utils/fdisk-list.c:53
 #, c-format
 msgid "Disklabel type: %s"
 msgstr "Врста натписа диска: %s"
 
-#: disk-utils/fdisk-list.c:47
+#: disk-utils/fdisk-list.c:57
 #, c-format
 msgid "Disk identifier: %s"
 msgstr "Одредник диска: %s"
 
-#: disk-utils/fdisk-list.c:61
+#: disk-utils/fdisk-list.c:71
 #, c-format
 msgid "Disk %s: %s, %ju bytes, %ju sectors"
 msgstr "Диска „%s“: %s, %ju бајта, %ju сектора"
 
-#: disk-utils/fdisk-list.c:68
+#: disk-utils/fdisk-list.c:78
 #, c-format
 msgid "Disk model: %s"
 msgstr "Модел диска: %s"
 
-#: disk-utils/fdisk-list.c:71
+#: disk-utils/fdisk-list.c:81
 #, c-format
 msgid "Geometry: %d heads, %ju sectors/track, %ju cylinders"
 msgstr "Геометрија: глава – %d, сектора/стаза – %ju, цилиндара – %ju"
 
-#: disk-utils/fdisk-list.c:76 disk-utils/fdisk-list.c:299
+#: disk-utils/fdisk-list.c:86 disk-utils/fdisk-list.c:309
 #, c-format
 msgid "Units: %s of %d * %ld = %ld bytes"
 msgstr "Јединице: %s од %d * %ld = %ld бајта"
 
-#: disk-utils/fdisk-list.c:82 disk-utils/fdisk-list.c:305
+#: disk-utils/fdisk-list.c:92 disk-utils/fdisk-list.c:315
 #, c-format
 msgid "Sector size (logical/physical): %lu bytes / %lu bytes"
 msgstr "Величина сектора (логички/физички): %lu бајта / %lu бајта"
 
-#: disk-utils/fdisk-list.c:85
+#: disk-utils/fdisk-list.c:95
 #, c-format
 msgid "I/O size (minimum/optimal): %lu bytes / %lu bytes"
 msgstr "У/И величина (најмања/оптимална): %lu бајта / %lu бајта"
 
-#: disk-utils/fdisk-list.c:89
+#: disk-utils/fdisk-list.c:99
 #, c-format
 msgid "Alignment offset: %lu bytes"
 msgstr "Померај поравнања: %lu бајта"
 
-#: disk-utils/fdisk-list.c:120 disk-utils/fdisk-list.c:241
-#: disk-utils/fsck.c:1260
+#: disk-utils/fdisk-list.c:130 disk-utils/fdisk-list.c:251
+#: disk-utils/fsck.c:1264
 msgid "failed to allocate iterator"
 msgstr "нисам успео да доделим приступника"
 
-#: disk-utils/fdisk-list.c:126 disk-utils/fdisk-list.c:247
-#: disk-utils/partx.c:669 login-utils/lslogins.c:1113 misc-utils/fincore.c:357
-#: misc-utils/findmnt.c:1763 misc-utils/lsblk.c:2351 misc-utils/lsfd.c:1971
+#: disk-utils/fdisk-list.c:136 disk-utils/fdisk-list.c:257
+#: disk-utils/partx.c:676 login-utils/lslogins.c:1113 misc-utils/fincore.c:357
+#: misc-utils/findmnt.c:1763 misc-utils/lsblk.c:2351 misc-utils/lsfd.c:1974
 #: misc-utils/lslocks.c:472 misc-utils/uuidparse.c:252 misc-utils/wipefs.c:157
-#: sys-utils/losetup.c:325 sys-utils/lscpu.c:604 sys-utils/lscpu.c:759
+#: sys-utils/losetup.c:326 sys-utils/lscpu.c:604 sys-utils/lscpu.c:759
 #: sys-utils/lscpu.c:970 sys-utils/lsipc.c:354 sys-utils/prlimit.c:311
 #: sys-utils/rfkill.c:474 sys-utils/swapon.c:296 sys-utils/wdctl.c:349
 #: sys-utils/zramctl.c:496 text-utils/column.c:217
 msgid "failed to allocate output table"
 msgstr "нисам успео да доделим излазну табелу"
 
-#: disk-utils/fdisk-list.c:167 disk-utils/fdisk-list.c:271
-#: disk-utils/partx.c:583 login-utils/lslogins.c:1173 misc-utils/fincore.c:123
+#: disk-utils/fdisk-list.c:177 disk-utils/fdisk-list.c:281
+#: disk-utils/partx.c:590 login-utils/lslogins.c:1173 misc-utils/fincore.c:123
 #: misc-utils/findmnt.c:788 misc-utils/findmnt.c:806 misc-utils/lsblk.c:1231
-#: misc-utils/lsfd.c:1134 misc-utils/lslocks.c:400 misc-utils/uuidparse.c:154
-#: misc-utils/wipefs.c:202 sys-utils/losetup.c:348 sys-utils/losetup.c:377
+#: misc-utils/lsfd.c:1135 misc-utils/lslocks.c:400 misc-utils/uuidparse.c:154
+#: misc-utils/wipefs.c:202 sys-utils/losetup.c:349 sys-utils/losetup.c:378
 #: sys-utils/lscpu.c:518 sys-utils/lscpu.c:794 sys-utils/lscpu.c:826
 #: sys-utils/lsipc.c:486 sys-utils/lsipc.c:567 sys-utils/lsipc.c:669
 #: sys-utils/lsipc.c:761 sys-utils/lsipc.c:925 sys-utils/prlimit.c:240
@@ -1270,8 +1270,8 @@ msgstr "нисам успео да доделим излазну табелу"
 msgid "failed to allocate output line"
 msgstr "нисам успео да доделим излазни ред"
 
-#: disk-utils/fdisk-list.c:177 disk-utils/fdisk-list.c:278
-#: disk-utils/partx.c:646 login-utils/lslogins.c:1277 misc-utils/fincore.c:159
+#: disk-utils/fdisk-list.c:187 disk-utils/fdisk-list.c:288
+#: disk-utils/partx.c:653 login-utils/lslogins.c:1277 misc-utils/fincore.c:159
 #: misc-utils/findmnt.c:792 misc-utils/findmnt.c:811 misc-utils/lsblk.c:1272
 #: misc-utils/lsfd-bdev.c:48 misc-utils/lsfd-bdev.c:61
 #: misc-utils/lsfd-bdev.c:87 misc-utils/lsfd-bdev.c:89
@@ -1287,7 +1287,7 @@ msgstr "нисам успео да доделим излазни ред"
 #: misc-utils/lsfd-sock.c:114 misc-utils/lsfd-sock.c:116
 #: misc-utils/lsfd-unkn.c:114 misc-utils/lsfd-unkn.c:116
 #: misc-utils/lslocks.c:459 misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242
-#: sys-utils/losetup.c:305 sys-utils/lscpu.c:586 sys-utils/lscpu.c:801
+#: sys-utils/losetup.c:306 sys-utils/lscpu.c:586 sys-utils/lscpu.c:801
 #: sys-utils/lscpu.c:830 sys-utils/lscpu.c:840 sys-utils/lsipc.c:526
 #: sys-utils/lsipc.c:651 sys-utils/prlimit.c:275 sys-utils/rfkill.c:417
 #: sys-utils/swapon.c:227 sys-utils/wdctl.c:327 sys-utils/zramctl.c:481
@@ -1295,135 +1295,135 @@ msgstr "нисам успео да доделим излазни ред"
 msgid "failed to add output data"
 msgstr "нисам успео да додам излазне податке"
 
-#: disk-utils/fdisk-list.c:197
+#: disk-utils/fdisk-list.c:207
 #, c-format
 msgid "Partition %zu does not start on physical sector boundary."
 msgstr "Партиција %zu не почиње на граници физичког сектора."
 
-#: disk-utils/fdisk-list.c:205
+#: disk-utils/fdisk-list.c:215
 #, c-format
 msgid "Filesystem/RAID signature on partition %zu will be wiped."
 msgstr "Потпис система датотека/РАИД-а на патицији %zu биће обрисан."
 
-#: disk-utils/fdisk-list.c:214
+#: disk-utils/fdisk-list.c:224
 msgid "Partition table entries are not in disk order."
 msgstr "Уноси партиционе табеле нису у поретку диска."
 
-#: disk-utils/fdisk-list.c:233 libfdisk/src/bsd.c:1026 libfdisk/src/dos.c:2803
+#: disk-utils/fdisk-list.c:243 libfdisk/src/bsd.c:1026 libfdisk/src/dos.c:2803
 #: libfdisk/src/gpt.c:3244 libfdisk/src/sgi.c:1159 libfdisk/src/sun.c:1130
 msgid "Start"
 msgstr "Почетак"
 
-#: disk-utils/fdisk-list.c:233 libfdisk/src/bsd.c:1027 libfdisk/src/dos.c:2804
+#: disk-utils/fdisk-list.c:243 libfdisk/src/bsd.c:1027 libfdisk/src/dos.c:2804
 #: libfdisk/src/gpt.c:3245 libfdisk/src/sgi.c:1160 libfdisk/src/sun.c:1131
 msgid "End"
 msgstr "Крај"
 
-#: disk-utils/fdisk-list.c:233 libfdisk/src/bsd.c:1028 libfdisk/src/dos.c:2805
+#: disk-utils/fdisk-list.c:243 libfdisk/src/bsd.c:1028 libfdisk/src/dos.c:2805
 #: libfdisk/src/gpt.c:3246 libfdisk/src/sgi.c:1161 libfdisk/src/sun.c:1132
 msgid "Sectors"
 msgstr "Одељака"
 
-#: disk-utils/fdisk-list.c:233 libfdisk/src/bsd.c:1030 libfdisk/src/dos.c:2807
+#: disk-utils/fdisk-list.c:243 libfdisk/src/bsd.c:1030 libfdisk/src/dos.c:2807
 #: libfdisk/src/gpt.c:3247 libfdisk/src/sgi.c:1163 libfdisk/src/sun.c:1134
 msgid "Size"
 msgstr "Величина"
 
-#: disk-utils/fdisk-list.c:293
+#: disk-utils/fdisk-list.c:303
 #, c-format
 msgid "Unpartitioned space %s: %s, %ju bytes, %ju sectors"
 msgstr "Непартиционисани простор %s: %s, бајтова – %ju, сектора – %ju"
 
-#: disk-utils/fdisk-list.c:483
+#: disk-utils/fdisk-list.c:493
 #, c-format
 msgid "%s unknown column: %s"
 msgstr "%s непозната колона: %s"
 
-#: disk-utils/fdisk-menu.c:96
+#: disk-utils/fdisk-menu.c:105
 msgid "Generic"
 msgstr "Опште"
 
-#: disk-utils/fdisk-menu.c:97
+#: disk-utils/fdisk-menu.c:106
 msgid "delete a partition"
 msgstr "брише партицију"
 
-#: disk-utils/fdisk-menu.c:98
+#: disk-utils/fdisk-menu.c:107
 msgid "list free unpartitioned space"
 msgstr "исписује слободан непартиционисани простор"
 
-#: disk-utils/fdisk-menu.c:99
+#: disk-utils/fdisk-menu.c:108
 msgid "list known partition types"
 msgstr "исписује познате врсте партиције"
 
-#: disk-utils/fdisk-menu.c:100
+#: disk-utils/fdisk-menu.c:109
 msgid "add a new partition"
 msgstr "додаје нову партицију"
 
-#: disk-utils/fdisk-menu.c:101
+#: disk-utils/fdisk-menu.c:110
 msgid "print the partition table"
 msgstr "исписује партициону табелу"
 
-#: disk-utils/fdisk-menu.c:102
+#: disk-utils/fdisk-menu.c:111
 msgid "change a partition type"
 msgstr "мења врсту партиције"
 
-#: disk-utils/fdisk-menu.c:103
+#: disk-utils/fdisk-menu.c:112
 msgid "verify the partition table"
 msgstr "проверава партициону табелу"
 
-#: disk-utils/fdisk-menu.c:104
+#: disk-utils/fdisk-menu.c:113
 msgid "print information about a partition"
 msgstr "исписује информације о партицији"
 
-#: disk-utils/fdisk-menu.c:106
+#: disk-utils/fdisk-menu.c:115
 msgid "print the raw data of the first sector from the device"
 msgstr "исписује сирове податке првог сектора са уређаја"
 
-#: disk-utils/fdisk-menu.c:107
+#: disk-utils/fdisk-menu.c:116
 msgid "print the raw data of the disklabel from the device"
 msgstr "исписује сирове податке натписа диска са уређаја"
 
-#: disk-utils/fdisk-menu.c:108
+#: disk-utils/fdisk-menu.c:117
 msgid "fix partitions order"
 msgstr "поправља редослед партиција"
 
-#: disk-utils/fdisk-menu.c:110
+#: disk-utils/fdisk-menu.c:119
 msgid "Misc"
 msgstr "Разно"
 
-#: disk-utils/fdisk-menu.c:111
+#: disk-utils/fdisk-menu.c:120
 msgid "print this menu"
 msgstr "исписује овај изборник"
 
-#: disk-utils/fdisk-menu.c:112
+#: disk-utils/fdisk-menu.c:121
 msgid "change display/entry units"
 msgstr "мења јединице приказа/уноса"
 
-#: disk-utils/fdisk-menu.c:113
+#: disk-utils/fdisk-menu.c:122
 msgid "extra functionality (experts only)"
 msgstr "додатна функционалност (само за стручњаке)"
 
-#: disk-utils/fdisk-menu.c:115
+#: disk-utils/fdisk-menu.c:124
 msgid "Script"
 msgstr "Скрипта"
 
-#: disk-utils/fdisk-menu.c:116
+#: disk-utils/fdisk-menu.c:125
 msgid "load disk layout from sfdisk script file"
 msgstr "учитава распоред диска из „sfdisk“ датотеке скрипте"
 
-#: disk-utils/fdisk-menu.c:117
+#: disk-utils/fdisk-menu.c:126
 msgid "dump disk layout to sfdisk script file"
 msgstr "уписује распоред диска у „sfdisk“ датотеку скрипте"
 
-#: disk-utils/fdisk-menu.c:119
+#: disk-utils/fdisk-menu.c:128
 msgid "Save & Exit"
 msgstr "Сачувај и изађи"
 
-#: disk-utils/fdisk-menu.c:120
+#: disk-utils/fdisk-menu.c:129
 msgid "write table to disk and exit"
 msgstr "записује табелу на диск и излази"
 
-#: disk-utils/fdisk-menu.c:121
+#: disk-utils/fdisk-menu.c:130
 msgid "write table to disk"
 msgstr "записује табелу на диск"
 
@@ -1439,51 +1439,51 @@ msgstr "записује табелу на диск"
 #  "there ${plural $number are is} $number outstanding ${plural $number changes "
 #  "change}; you may not use this command if there are any outstanding changes"
 # Please translate the English msgstr, not the msgid.
-#: disk-utils/fdisk-menu.c:122
+#: disk-utils/fdisk-menu.c:131
 msgid "quit without saving changes"
 msgstr "излази без чувања измена"
 
-#: disk-utils/fdisk-menu.c:123
+#: disk-utils/fdisk-menu.c:132
 msgid "return to main menu"
 msgstr "враћа се на главни изборник"
 
-#: disk-utils/fdisk-menu.c:125
+#: disk-utils/fdisk-menu.c:134
 msgid "return from BSD to DOS (MBR)"
 msgstr "враћа се са БСД-а на ДОС (ГЗП)"
 
-#: disk-utils/fdisk-menu.c:127 disk-utils/fdisk-menu.c:227
+#: disk-utils/fdisk-menu.c:136 disk-utils/fdisk-menu.c:236
 msgid "return from protective/hybrid MBR to GPT"
 msgstr "враћа из заштитничког/хибридног ГЗП у ГПТ"
 
-#: disk-utils/fdisk-menu.c:138
+#: disk-utils/fdisk-menu.c:147
 msgid "Create a new label"
 msgstr "Направите нови натпис"
 
-#: disk-utils/fdisk-menu.c:139
+#: disk-utils/fdisk-menu.c:148
 msgid "create a new empty GPT partition table"
 msgstr "прави нову празну ГПТ партициону табелу"
 
-#: disk-utils/fdisk-menu.c:140
+#: disk-utils/fdisk-menu.c:149
 msgid "create a new empty SGI (IRIX) partition table"
 msgstr "прави нову празну „SGI“ (IRIX) партициону табелу"
 
-#: disk-utils/fdisk-menu.c:141
+#: disk-utils/fdisk-menu.c:150
 msgid "create a new empty MBR (DOS) partition table"
 msgstr "прави нову празну ГЗП (ДОС) партициону табелу"
 
-#: disk-utils/fdisk-menu.c:142
+#: disk-utils/fdisk-menu.c:151
 msgid "create a new empty Sun partition table"
 msgstr "прави нову празну Сун партициону табелу"
 
-#: disk-utils/fdisk-menu.c:146
+#: disk-utils/fdisk-menu.c:155
 msgid "create an IRIX (SGI) partition table"
 msgstr "прави „IRIX“ (SGI) партициону табелу"
 
-#: disk-utils/fdisk-menu.c:155
+#: disk-utils/fdisk-menu.c:164
 msgid "Geometry (for the current label)"
 msgstr "Геометрија (за текући натпис)"
 
-#: disk-utils/fdisk-menu.c:156
+#: disk-utils/fdisk-menu.c:165
 msgid "change number of cylinders"
 msgstr "мења број цилиндара"
 
@@ -1499,7 +1499,7 @@ msgstr "мења број цилиндара"
 #  "change number $number has already been used, please choose another; or do "
 #  "not specify one if you want one to be allocated automatically"
 # Please translate the English msgstr, not the msgid.
-#: disk-utils/fdisk-menu.c:157
+#: disk-utils/fdisk-menu.c:166
 msgid "change number of heads"
 msgstr "мења број глава"
 
@@ -1512,23 +1512,23 @@ msgstr "мења број глава"
 # For consistent translation, here is the English text:
 #  msgstr "change $number out of range, it must be a small positive number"
 # Please translate the English msgstr, not the msgid.
-#: disk-utils/fdisk-menu.c:158
+#: disk-utils/fdisk-menu.c:167
 msgid "change number of sectors/track"
 msgstr "мења број сектора/стаза"
 
-#: disk-utils/fdisk-menu.c:167 include/pt-mbr-partnames.h:102
+#: disk-utils/fdisk-menu.c:176 include/pt-mbr-partnames.h:102
 msgid "GPT"
 msgstr "ГПТ"
 
-#: disk-utils/fdisk-menu.c:168
+#: disk-utils/fdisk-menu.c:177
 msgid "change disk GUID"
 msgstr "мења ГУИБ диска"
 
-#: disk-utils/fdisk-menu.c:169
+#: disk-utils/fdisk-menu.c:178
 msgid "change partition name"
 msgstr "мења назив партиције"
 
-#: disk-utils/fdisk-menu.c:170
+#: disk-utils/fdisk-menu.c:179
 msgid "change partition UUID"
 msgstr "мења УУИБ партиције"
 
@@ -1542,39 +1542,39 @@ msgstr "мења УУИБ партиције"
 #  "This change has been cancelled because the change set is already present in "
 #  "the repository."
 # Please translate the English msgstr, not the msgid.
-#: disk-utils/fdisk-menu.c:171
+#: disk-utils/fdisk-menu.c:180
 msgid "change table length"
 msgstr "мења дужину табеле"
 
-#: disk-utils/fdisk-menu.c:172
+#: disk-utils/fdisk-menu.c:181
 msgid "enter protective/hybrid MBR"
 msgstr "уноси заштитнички/хибридни ГЗП"
 
-#: disk-utils/fdisk-menu.c:175
+#: disk-utils/fdisk-menu.c:184
 msgid "toggle the legacy BIOS bootable flag"
 msgstr "окида подизну заставицу старог БИОС-а"
 
-#: disk-utils/fdisk-menu.c:176
+#: disk-utils/fdisk-menu.c:185
 msgid "toggle the no block IO protocol flag"
 msgstr "окида заставицу протокола УИ не блока"
 
-#: disk-utils/fdisk-menu.c:177
+#: disk-utils/fdisk-menu.c:186
 msgid "toggle the required partition flag"
 msgstr "окида захтевану заставицу партиције"
 
-#: disk-utils/fdisk-menu.c:178
+#: disk-utils/fdisk-menu.c:187
 msgid "toggle the GUID specific bits"
 msgstr "окида одређене битове ГУИБ-а"
 
-#: disk-utils/fdisk-menu.c:188
+#: disk-utils/fdisk-menu.c:197
 msgid "Sun"
 msgstr "Sun"
 
-#: disk-utils/fdisk-menu.c:189
+#: disk-utils/fdisk-menu.c:198
 msgid "toggle the read-only flag"
 msgstr "окида заставицу само за читање"
 
-#: disk-utils/fdisk-menu.c:190
+#: disk-utils/fdisk-menu.c:199
 msgid "toggle the mountable flag"
 msgstr "окида заставицу прикачивости"
 
@@ -1587,7 +1587,7 @@ msgstr "окида заставицу прикачивости"
 # For consistent translation, here is the English text:
 #  msgstr "change $number out of range, it must be a small positive number"
 # Please translate the English msgstr, not the msgid.
-#: disk-utils/fdisk-menu.c:192
+#: disk-utils/fdisk-menu.c:201
 msgid "change number of alternate cylinders"
 msgstr "мења број заменских цилиндара"
 
@@ -1600,15 +1600,15 @@ msgstr "мења број заменских цилиндара"
 # For consistent translation, here is the English text:
 #  msgstr "change $number out of range, it must be a small positive number"
 # Please translate the English msgstr, not the msgid.
-#: disk-utils/fdisk-menu.c:193
+#: disk-utils/fdisk-menu.c:202
 msgid "change number of extra sectors per cylinder"
 msgstr "мења број додатних сектора по цилиндру"
 
-#: disk-utils/fdisk-menu.c:194
+#: disk-utils/fdisk-menu.c:203
 msgid "change interleave factor"
 msgstr "мења чиниоца преплетања"
 
-#: disk-utils/fdisk-menu.c:195
+#: disk-utils/fdisk-menu.c:204
 msgid "change rotation speed (rpm)"
 msgstr "мења брзину окретања (р/м)"
 
@@ -1621,67 +1621,67 @@ msgstr "мења брзину окретања (р/м)"
 # For consistent translation, here is the English text:
 #  msgstr "change $number out of range, it must be a small positive number"
 # Please translate the English msgstr, not the msgid.
-#: disk-utils/fdisk-menu.c:196
+#: disk-utils/fdisk-menu.c:205
 msgid "change number of physical cylinders"
 msgstr "мења број физичких цилиндара"
 
-#: disk-utils/fdisk-menu.c:205
+#: disk-utils/fdisk-menu.c:214
 msgid "SGI"
 msgstr "СГИ"
 
-#: disk-utils/fdisk-menu.c:206
+#: disk-utils/fdisk-menu.c:215
 msgid "select bootable partition"
 msgstr "бира подизну партицију"
 
-#: disk-utils/fdisk-menu.c:207
+#: disk-utils/fdisk-menu.c:216
 msgid "edit bootfile entry"
 msgstr "уређује унос датотеке подизања"
 
-#: disk-utils/fdisk-menu.c:208
+#: disk-utils/fdisk-menu.c:217
 msgid "select sgi swap partition"
 msgstr "бира сги партицију помоћне меморије"
 
-#: disk-utils/fdisk-menu.c:209
+#: disk-utils/fdisk-menu.c:218
 msgid "create SGI info"
 msgstr "ствара СГИ информације"
 
-#: disk-utils/fdisk-menu.c:218
+#: disk-utils/fdisk-menu.c:227
 msgid "DOS (MBR)"
 msgstr "ДОС (ГЗП)"
 
-#: disk-utils/fdisk-menu.c:219
+#: disk-utils/fdisk-menu.c:228
 msgid "toggle a bootable flag"
 msgstr "окида заставицу подизања"
 
-#: disk-utils/fdisk-menu.c:220
+#: disk-utils/fdisk-menu.c:229
 msgid "edit nested BSD disklabel"
 msgstr "уређује угнеждени БСД натпис дикса"
 
-#: disk-utils/fdisk-menu.c:221
+#: disk-utils/fdisk-menu.c:230
 msgid "toggle the dos compatibility flag"
 msgstr "окида заставицу дос сагласности"
 
-#: disk-utils/fdisk-menu.c:223
+#: disk-utils/fdisk-menu.c:232
 msgid "move beginning of data in a partition"
 msgstr "премешта почетак података у партицији"
 
-#: disk-utils/fdisk-menu.c:224
+#: disk-utils/fdisk-menu.c:233
 msgid "fix partitions C/H/S values"
 msgstr "поправља Ц/Г/С вредности партиција"
 
-#: disk-utils/fdisk-menu.c:225
+#: disk-utils/fdisk-menu.c:234
 msgid "change the disk identifier"
 msgstr "мења одредника диска"
 
-#: disk-utils/fdisk-menu.c:237
+#: disk-utils/fdisk-menu.c:246
 msgid "BSD"
 msgstr "БСД"
 
-#: disk-utils/fdisk-menu.c:238
+#: disk-utils/fdisk-menu.c:247
 msgid "edit drive data"
 msgstr "уређује податке уређаја"
 
-#: disk-utils/fdisk-menu.c:239
+#: disk-utils/fdisk-menu.c:248
 msgid "install bootstrap"
 msgstr "инсталира самоподизника"
 
@@ -1694,15 +1694,15 @@ msgstr "инсталира самоподизника"
 # For consistent translation, here is the English text:
 #  msgstr "ownership changed from user \"$original\" to user \"$target\""
 # Please translate the English msgstr, not the msgid.
-#: disk-utils/fdisk-menu.c:240
+#: disk-utils/fdisk-menu.c:249
 msgid "show complete disklabel"
 msgstr "приказује читав натпис диска"
 
-#: disk-utils/fdisk-menu.c:241
+#: disk-utils/fdisk-menu.c:250
 msgid "link BSD partition to non-BSD partition"
 msgstr "свезује БСД партицију на не-БСД партицију"
 
-#: disk-utils/fdisk-menu.c:373
+#: disk-utils/fdisk-menu.c:382
 #, c-format
 msgid ""
 "\n"
@@ -1711,7 +1711,7 @@ msgstr ""
 "\n"
 "Помоћ (наредбе за стручњаке):\n"
 
-#: disk-utils/fdisk-menu.c:375 disk-utils/sfdisk.c:1472
+#: disk-utils/fdisk-menu.c:384 disk-utils/sfdisk.c:1472
 #, c-format
 msgid ""
 "\n"
@@ -1720,20 +1720,20 @@ msgstr ""
 "\n"
 "Помоћ:\n"
 
-#: disk-utils/fdisk-menu.c:395
+#: disk-utils/fdisk-menu.c:404
 #, c-format
 msgid "You're editing nested '%s' partition table, primary partition table is '%s'."
 msgstr "Уређујете угнеждену „%s“ партициону табелу, главна партициона табела је „%s“."
 
-#: disk-utils/fdisk-menu.c:425
+#: disk-utils/fdisk-menu.c:434
 msgid "Expert command (m for help): "
 msgstr "Наредба стручњака (m за помоћ): "
 
-#: disk-utils/fdisk-menu.c:427
+#: disk-utils/fdisk-menu.c:436
 msgid "Command (m for help): "
 msgstr "Наредба (m за помоћ): "
 
-#: disk-utils/fdisk-menu.c:439
+#: disk-utils/fdisk-menu.c:448
 msgid ""
 "\n"
 "All unwritten changes will be lost, do you really want to quit? (y/n)"
@@ -1741,123 +1741,123 @@ msgstr ""
 "\n"
 "Све неуписане измене биће изгубљене, да ли заиста желите да изађете? (y/n)"
 
-#: disk-utils/fdisk-menu.c:452
+#: disk-utils/fdisk-menu.c:461
 #, c-format
 msgid "%c: unknown command"
 msgstr "%c: непозната наредба"
 
-#: disk-utils/fdisk-menu.c:477 disk-utils/fdisk-menu.c:510
+#: disk-utils/fdisk-menu.c:486 disk-utils/fdisk-menu.c:519
 msgid "Enter script file name"
 msgstr "Унесите назив датотеке скрипте"
 
-#: disk-utils/fdisk-menu.c:489
+#: disk-utils/fdisk-menu.c:498
 msgid "Resetting fdisk!"
 msgstr "Поново постављам fdisk!"
 
-#: disk-utils/fdisk-menu.c:496
+#: disk-utils/fdisk-menu.c:505
 msgid "Script successfully applied."
 msgstr "Скрипта је успешно примењена."
 
-#: disk-utils/fdisk-menu.c:522
+#: disk-utils/fdisk-menu.c:531
 msgid "Failed to transform disk layout into script"
 msgstr "Нисам успео да преобразим распоред диска у скрипту"
 
-#: disk-utils/fdisk-menu.c:536
+#: disk-utils/fdisk-menu.c:545
 msgid "Script successfully saved."
 msgstr "Скрипта је успешно сачувана."
 
-#: disk-utils/fdisk-menu.c:559 disk-utils/sfdisk.c:1698
+#: disk-utils/fdisk-menu.c:568 disk-utils/sfdisk.c:1698
 #, c-format
 msgid "Partition #%zu contains a %s signature."
 msgstr "Партиција #%zu садржи „%s“ потпис."
 
-#: disk-utils/fdisk-menu.c:562 disk-utils/sfdisk.c:1701
+#: disk-utils/fdisk-menu.c:571 disk-utils/sfdisk.c:1701
 msgid "Do you want to remove the signature?"
 msgstr "Да ли желите да уклоните потпис?"
 
-#: disk-utils/fdisk-menu.c:567 disk-utils/sfdisk.c:1706
+#: disk-utils/fdisk-menu.c:576 disk-utils/sfdisk.c:1706
 msgid "The signature will be removed by a write command."
 msgstr "Потпис ће бити уклоњен наредбом писања."
 
-#: disk-utils/fdisk-menu.c:600
+#: disk-utils/fdisk-menu.c:609
 msgid "failed to write disklabel"
 msgstr "нисам успео да запишем натпис диска"
 
-#: disk-utils/fdisk-menu.c:659
+#: disk-utils/fdisk-menu.c:668
 #, c-format
 msgid "Could not delete partition %zu"
 msgstr "Не могу да обришем партицију %zu"
 
-#: disk-utils/fdisk-menu.c:688
+#: disk-utils/fdisk-menu.c:697
 msgid "Changing display/entry units to cylinders (DEPRECATED!)."
 msgstr "Мења јединице приказа/уноса на цилиндре (ЗАСТАРЕЛО!)."
 
-#: disk-utils/fdisk-menu.c:690
+#: disk-utils/fdisk-menu.c:699
 msgid "Changing display/entry units to sectors."
 msgstr "Мења јединице приказа/уноса на секторе."
 
-#: disk-utils/fdisk-menu.c:700 disk-utils/fdisk-menu.c:871
+#: disk-utils/fdisk-menu.c:709 disk-utils/fdisk-menu.c:880
 msgid "Leaving nested disklabel."
 msgstr "Оставља угнеждени натпис диска."
 
-#: disk-utils/fdisk-menu.c:737
+#: disk-utils/fdisk-menu.c:746
 msgid "New maximum entries"
 msgstr "Нови максимум уноса"
 
-#: disk-utils/fdisk-menu.c:748
+#: disk-utils/fdisk-menu.c:757
 msgid "Entering protective/hybrid MBR disklabel."
 msgstr "Уносим заштитнички/хибридни ГЗП натпис диска."
 
-#: disk-utils/fdisk-menu.c:764
+#: disk-utils/fdisk-menu.c:773
 msgid "New UUID (in 8-4-4-4-12 format)"
 msgstr "Нови УУИБ (у 8-4-4-4-12 формату)"
 
-#: disk-utils/fdisk-menu.c:779
+#: disk-utils/fdisk-menu.c:788
 msgid "New name"
 msgstr "Нови назив"
 
-#: disk-utils/fdisk-menu.c:842
+#: disk-utils/fdisk-menu.c:851
 msgid "Entering nested BSD disklabel."
 msgstr "Уносим угнеждени БСД натпис дикса."
 
-#: disk-utils/fdisk-menu.c:878
+#: disk-utils/fdisk-menu.c:887
 msgid "C/H/S values fixed."
 msgstr "Ц/Г/С вредности су исправљене."
 
-#: disk-utils/fdisk-menu.c:880
+#: disk-utils/fdisk-menu.c:889
 msgid "Nothing to do. C/H/S values are correct already."
 msgstr "Немам шта да радим. Ц/Г/С вредности су већ исправне."
 
-#: disk-utils/fdisk-menu.c:1047
+#: disk-utils/fdisk-menu.c:1056
 msgid "Number of cylinders"
 msgstr "Број цилиндара"
 
-#: disk-utils/fdisk-menu.c:1054
+#: disk-utils/fdisk-menu.c:1063
 msgid "Number of heads"
 msgstr "Број глава"
 
-#: disk-utils/fdisk-menu.c:1060
+#: disk-utils/fdisk-menu.c:1069
 msgid "Number of sectors"
 msgstr "Број сектора"
 
-#: disk-utils/fdisk-menu.c:1111
+#: disk-utils/fdisk-menu.c:1120
 #, c-format
 msgid "Failed to create '%s' disk label"
 msgstr "Нисам успео да направим „%s“ натпис диска"
 
-#: disk-utils/fsck.c:214
+#: disk-utils/fsck.c:218
 #, c-format
 msgid "%s is mounted\n"
 msgstr "„%s“ је прикачена\n"
 
-#: disk-utils/fsck.c:216
+#: disk-utils/fsck.c:220
 #, c-format
 msgid "%s is not mounted\n"
 msgstr "„%s“ није прикачена\n"
 
-#: disk-utils/fsck.c:330 disk-utils/fsck.cramfs.c:179
-#: disk-utils/fsck.cramfs.c:186 disk-utils/fsck.cramfs.c:242
-#: disk-utils/fsck.cramfs.c:263 disk-utils/sfdisk.c:308 libfdisk/src/bsd.c:647
+#: disk-utils/fsck.c:334 disk-utils/fsck.cramfs.c:181
+#: disk-utils/fsck.cramfs.c:188 disk-utils/fsck.cramfs.c:244
+#: disk-utils/fsck.cramfs.c:265 disk-utils/sfdisk.c:308 libfdisk/src/bsd.c:647
 #: login-utils/last.c:215 login-utils/last.c:252 login-utils/sulogin.c:721
 #: misc-utils/hardlink.c:840 schedutils/uclampset.c:111
 #: sys-utils/ctrlaltdel.c:44 sys-utils/irq-common.c:269 sys-utils/rfkill.c:216
@@ -1867,98 +1867,98 @@ msgstr "„%s“ није прикачена\n"
 msgid "cannot read %s"
 msgstr "не могу да прочитам „%s“"
 
-#: disk-utils/fsck.c:332 login-utils/utmpdump.c:288
+#: disk-utils/fsck.c:336 login-utils/utmpdump.c:288
 #, c-format
 msgid "parse error: %s"
 msgstr "грешка обраде: %s"
 
-#: disk-utils/fsck.c:359
+#: disk-utils/fsck.c:363
 #, c-format
 msgid "cannot create directory %s"
 msgstr "не могу да направим директоријум „%s“"
 
-#: disk-utils/fsck.c:372
+#: disk-utils/fsck.c:376
 #, c-format
 msgid "Locking disk by %s ... "
 msgstr "Закључавам диск помоћу „%s“ ... "
 
-#: disk-utils/fsck.c:383
+#: disk-utils/fsck.c:387
 #, c-format
 msgid "(waiting) "
 msgstr "(чекам) "
 
 #. TRANSLATORS: These are followups to "Locking disk...".
-#: disk-utils/fsck.c:393
+#: disk-utils/fsck.c:397
 msgid "succeeded"
 msgstr "је успешно"
 
-#: disk-utils/fsck.c:393
+#: disk-utils/fsck.c:397
 msgid "failed"
 msgstr "није успело"
 
-#: disk-utils/fsck.c:410
+#: disk-utils/fsck.c:414
 #, c-format
 msgid "Unlocking %s.\n"
 msgstr "Откључавам „%s“.\n"
 
-#: disk-utils/fsck.c:441
+#: disk-utils/fsck.c:445
 #, c-format
 msgid "failed to setup description for %s"
 msgstr "нисам успео да подесим опис за „%s“"
 
-#: disk-utils/fsck.c:471 misc-utils/findmnt.c:897 misc-utils/lsblk-mnt.c:15
+#: disk-utils/fsck.c:475 misc-utils/findmnt.c:897 misc-utils/lsblk-mnt.c:15
 #: sys-utils/mount.c:100 sys-utils/swapon-common.c:19 sys-utils/umount.c:52
 #, c-format
 msgid "%s: parse error at line %d -- ignored"
 msgstr "%s: грешка обраде у реду %d – занемарено"
 
-#: disk-utils/fsck.c:503 disk-utils/fsck.c:505
+#: disk-utils/fsck.c:507 disk-utils/fsck.c:509
 #, c-format
 msgid "%s: failed to parse fstab"
 msgstr "%s: нисам успео да обрадим „fstab“"
 
-#: disk-utils/fsck.c:690 login-utils/login.c:1119 login-utils/sulogin.c:1112
+#: disk-utils/fsck.c:694 login-utils/login.c:1115 login-utils/sulogin.c:1112
 #: login-utils/vipw.c:200 sys-utils/flock.c:351 sys-utils/nsenter.c:207
 #: sys-utils/swapon.c:332 sys-utils/unshare.c:298 sys-utils/unshare.c:626
 #: sys-utils/unshare.c:962
 msgid "fork failed"
 msgstr "исцепљење процеса није успело"
 
-#: disk-utils/fsck.c:697
+#: disk-utils/fsck.c:701
 #, c-format
 msgid "%s: execute failed"
 msgstr "%s: извршење није успело"
 
-#: disk-utils/fsck.c:787
+#: disk-utils/fsck.c:791
 msgid "wait: no more child process?!?"
 msgstr "тренутак: нема више проистеклих процеса?!?"
 
-#: disk-utils/fsck.c:790 sys-utils/flock.c:369 sys-utils/swapon.c:359
+#: disk-utils/fsck.c:794 sys-utils/flock.c:369 sys-utils/swapon.c:359
 #: sys-utils/unshare.c:248 sys-utils/unshare.c:986
 msgid "waitpid failed"
 msgstr "„waitpid“ није успело"
 
-#: disk-utils/fsck.c:808
+#: disk-utils/fsck.c:812
 #, c-format
 msgid "Warning... %s for device %s exited with signal %d."
 msgstr "Упозорење... „%s“ за уређај „%s“ је завршио сигналом %d."
 
-#: disk-utils/fsck.c:814
+#: disk-utils/fsck.c:818
 #, c-format
 msgid "%s %s: status is %x, should never happen."
 msgstr "%s %s: стање је „%x“, ово не би требало никада да се деси."
 
-#: disk-utils/fsck.c:860
+#: disk-utils/fsck.c:864
 #, c-format
 msgid "Finished with %s (exit status %d)\n"
 msgstr "Заврших са „%s“ (стање излаза %d)\n"
 
-#: disk-utils/fsck.c:941
+#: disk-utils/fsck.c:945
 #, c-format
 msgid "error %d (%s) while executing fsck.%s for %s"
 msgstr "грешка %d (%s) приликом извршавања „fsck.%s“ за „%s“"
 
-#: disk-utils/fsck.c:1007
+#: disk-utils/fsck.c:1011
 msgid ""
 "Either all or none of the filesystem types passed to -t must be prefixed\n"
 "with 'no' or '!'."
@@ -1966,78 +1966,78 @@ msgstr ""
 "Или све или ниједна врста система датотека прослеђена опцији „-t“ мора имати префикс\n"
 "„no“ или „!“."
 
-#: disk-utils/fsck.c:1123
+#: disk-utils/fsck.c:1127
 #, c-format
 msgid "%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass number"
 msgstr "%s: прескачем лош ред у датотеци „/etc/fstab“: свезујем качење са не-нултим бројем пролаза „fsck“-а"
 
-#: disk-utils/fsck.c:1135
+#: disk-utils/fsck.c:1139
 #, c-format
 msgid "%s: skipping nonexistent device\n"
 msgstr "%s: прескачем непостојећу датотеку\n"
 
-#: disk-utils/fsck.c:1140
+#: disk-utils/fsck.c:1144
 #, c-format
 msgid "%s: nonexistent device (\"nofail\" fstab option may be used to skip this device)\n"
 msgstr "%s: непостојећи уређај („nofail“ опција фстаб-а се може употребити за прескакање овог уређаја)\n"
 
-#: disk-utils/fsck.c:1157
+#: disk-utils/fsck.c:1161
 #, c-format
 msgid "%s: skipping unknown filesystem type\n"
 msgstr "%s: прескачем непознату врсту датотека\n"
 
-#: disk-utils/fsck.c:1171
+#: disk-utils/fsck.c:1175
 #, c-format
 msgid "cannot check %s: fsck.%s not found"
 msgstr "не могу да проверим „%s“: нисам нашао „fsck.%s“"
 
-#: disk-utils/fsck.c:1275
+#: disk-utils/fsck.c:1279
 msgid "Checking all file systems.\n"
 msgstr "Проверавам све системе датотека.\n"
 
-#: disk-utils/fsck.c:1366
+#: disk-utils/fsck.c:1370
 #, c-format
 msgid "--waiting-- (pass %d)\n"
 msgstr "—чекам— (%d. корак)\n"
 
-#: disk-utils/fsck.c:1392
+#: disk-utils/fsck.c:1396
 #, c-format
 msgid " %s [options] -- [fs-options] [<filesystem> ...]\n"
 msgstr " %s [опције] -- [фс-опције] [<систем_датотека> ...]\n"
 
-#: disk-utils/fsck.c:1396
+#: disk-utils/fsck.c:1400
 msgid "Check and repair a Linux filesystem.\n"
 msgstr "Проверите и поправите систем датотека Линукса.\n"
 
-#: disk-utils/fsck.c:1399
+#: disk-utils/fsck.c:1403
 msgid " -A         check all filesystems\n"
 msgstr " -A         проверава све системе датотека\n"
 
-#: disk-utils/fsck.c:1400
+#: disk-utils/fsck.c:1404
 msgid " -C [<fd>]  display progress bar; file descriptor is for GUIs\n"
 msgstr " -C [<од>]  приказује траку напредовања; описник датотеке је за графичка сучеља\n"
 
-#: disk-utils/fsck.c:1401
+#: disk-utils/fsck.c:1405
 msgid " -l         lock the device to guarantee exclusive access\n"
 msgstr " -l         закључава уређај да обезбеди искључиви приступ\n"
 
-#: disk-utils/fsck.c:1402
+#: disk-utils/fsck.c:1406
 msgid " -M         do not check mounted filesystems\n"
 msgstr " -M         не проверава прикачене системе датотека\n"
 
-#: disk-utils/fsck.c:1403
+#: disk-utils/fsck.c:1407
 msgid " -N         do not execute, just show what would be done\n"
 msgstr " -N         не извршава, само приказује шта ће бити урађено\n"
 
-#: disk-utils/fsck.c:1404
+#: disk-utils/fsck.c:1408
 msgid " -P         check filesystems in parallel, including root\n"
 msgstr " -P         проверава системе датотека у паралели, укључујући и корени\n"
 
-#: disk-utils/fsck.c:1405
+#: disk-utils/fsck.c:1409
 msgid " -R         skip root filesystem; useful only with '-A'\n"
 msgstr " -R         прескаче корени систем датотека; корисно само са опцијом „-A“\n"
 
-#: disk-utils/fsck.c:1406
+#: disk-utils/fsck.c:1410
 msgid ""
 " -r [<fd>]  report statistics for each device checked;\n"
 "            file descriptor is for GUIs\n"
@@ -2045,15 +2045,15 @@ msgstr ""
 " -r [<од>]  приказује статистику за сваки проверени уређај;\n"
 "            описник датотека је за графичка сучеља\n"
 
-#: disk-utils/fsck.c:1408
+#: disk-utils/fsck.c:1412
 msgid " -s         serialize the checking operations\n"
 msgstr " -s         серијализује радње провере\n"
 
-#: disk-utils/fsck.c:1409
+#: disk-utils/fsck.c:1413
 msgid " -T         do not show the title on startup\n"
 msgstr " -T         не приказује наслов при покретању\n"
 
-#: disk-utils/fsck.c:1410
+#: disk-utils/fsck.c:1414
 msgid ""
 " -t <type>  specify filesystem types to be checked;\n"
 "            <type> is allowed to be a comma-separated list\n"
@@ -2061,245 +2061,245 @@ msgstr ""
 " -t <врста> наводи врсте система датотека за проверу;\n"
 "            допуштено је да <врста> буде зарезом раздвојен списак\n"
 
-#: disk-utils/fsck.c:1412
+#: disk-utils/fsck.c:1416
 msgid " -V         explain what is being done\n"
 msgstr " -V         објашњава шта је урађено\n"
 
-#: disk-utils/fsck.c:1418
+#: disk-utils/fsck.c:1422
 msgid "See the specific fsck.* commands for available fs-options."
 msgstr "Видите нарочите „fsck.*“ наредбе за доступним опцијама система датотека."
 
-#: disk-utils/fsck.c:1463
+#: disk-utils/fsck.c:1467
 msgid "too many devices"
 msgstr "превише уређаја"
 
-#: disk-utils/fsck.c:1475
+#: disk-utils/fsck.c:1479
 msgid "Is /proc mounted?"
 msgstr "Да ли је „/proc“ прикачен?"
 
-#: disk-utils/fsck.c:1483
+#: disk-utils/fsck.c:1487
 #, c-format
 msgid "must be root to scan for matching filesystems: %s"
 msgstr "морате бити администратор да потражите одговарајуће системе датотека: %s"
 
-#: disk-utils/fsck.c:1487
+#: disk-utils/fsck.c:1491
 #, c-format
 msgid "couldn't find matching filesystem: %s"
 msgstr "не могу да нађем одговарајући систем датотека: %s"
 
-#: disk-utils/fsck.c:1495 disk-utils/fsck.c:1592 misc-utils/kill.c:286
+#: disk-utils/fsck.c:1499 disk-utils/fsck.c:1596 misc-utils/kill.c:286
 #: sys-utils/eject.c:281
 msgid "too many arguments"
 msgstr "превише аргумената"
 
-#: disk-utils/fsck.c:1550 disk-utils/fsck.c:1553
+#: disk-utils/fsck.c:1554 disk-utils/fsck.c:1557
 msgid "invalid argument of -r"
 msgstr "неисправан аргумент за „-r“"
 
-#: disk-utils/fsck.c:1565
+#: disk-utils/fsck.c:1569
 #, c-format
 msgid "option '%s' may be specified only once"
 msgstr "опција „%s“ се може навести само једном"
 
-#: disk-utils/fsck.c:1572 misc-utils/kill.c:336 misc-utils/kill.c:352
+#: disk-utils/fsck.c:1576 misc-utils/kill.c:336 misc-utils/kill.c:352
 #, c-format
 msgid "option '%s' requires an argument"
 msgstr "опција „%s“ захтева аргумент"
 
-#: disk-utils/fsck.c:1603
+#: disk-utils/fsck.c:1607
 #, c-format
 msgid "invalid argument of -r: %d"
 msgstr "неисправан аргумент за „-r“: %d"
 
-#: disk-utils/fsck.c:1658
+#: disk-utils/fsck.c:1662
 msgid "the -l option can be used with one device only -- ignore"
 msgstr "опција „-l“ се може користити само са једним уређајем – занемарујем"
 
-#: disk-utils/fsck.cramfs.c:117
+#: disk-utils/fsck.cramfs.c:119
 #, c-format
 msgid " %s [options] <file>\n"
 msgstr " %s [опције] <датотека>\n"
 
-#: disk-utils/fsck.cramfs.c:120
+#: disk-utils/fsck.cramfs.c:122
 msgid "Check and repair a compressed ROM filesystem.\n"
 msgstr "Проверите и поправите запаковане РОМ системе датотека.\n"
 
-#: disk-utils/fsck.cramfs.c:123
+#: disk-utils/fsck.cramfs.c:125
 msgid " -a                       for compatibility only, ignored\n"
 msgstr " -a                       само зарад сагласности, занемарено\n"
 
-#: disk-utils/fsck.cramfs.c:124
+#: disk-utils/fsck.cramfs.c:126
 msgid " -v, --verbose            be more verbose\n"
 msgstr " -v, --verbose            бива опширнији\n"
 
-#: disk-utils/fsck.cramfs.c:125
+#: disk-utils/fsck.cramfs.c:127
 msgid " -y                       for compatibility only, ignored\n"
 msgstr " -y                       само зарад сагласности, занемарено\n"
 
-#: disk-utils/fsck.cramfs.c:126
+#: disk-utils/fsck.cramfs.c:128
 msgid " -b, --blocksize <size>   use this blocksize, defaults to page size\n"
 msgstr " -b, --blocksize <влчн>   користи ову величину блока, подразумева величину странице\n"
 
-#: disk-utils/fsck.cramfs.c:127
+#: disk-utils/fsck.cramfs.c:129
 msgid "     --extract[=<dir>]    test uncompression, optionally extract into <dir>\n"
 msgstr "     --extract[=<дир>]    проверава распакивање, изборно распакује у <директоријум>\n"
 
-#: disk-utils/fsck.cramfs.c:167
+#: disk-utils/fsck.cramfs.c:169
 #, c-format
 msgid "ioctl failed: unable to determine device size: %s"
 msgstr "„ioctl“ није успело: не могу да одредим величину уређаја: %s"
 
-#: disk-utils/fsck.cramfs.c:172
+#: disk-utils/fsck.cramfs.c:174
 #, c-format
 msgid "not a block device or file: %s"
 msgstr "није блок уређај или датотека: %s"
 
-#: disk-utils/fsck.cramfs.c:175 disk-utils/fsck.cramfs.c:211
+#: disk-utils/fsck.cramfs.c:177 disk-utils/fsck.cramfs.c:213
 msgid "file length too short"
 msgstr "дужина датотеке је прекратка"
 
-#: disk-utils/fsck.cramfs.c:184 disk-utils/fsck.cramfs.c:239
-#: disk-utils/fsck.cramfs.c:259 libfdisk/src/bsd.c:719 libfdisk/src/bsd.c:901
+#: disk-utils/fsck.cramfs.c:186 disk-utils/fsck.cramfs.c:241
+#: disk-utils/fsck.cramfs.c:261 libfdisk/src/bsd.c:719 libfdisk/src/bsd.c:901
 #: login-utils/last.c:210 login-utils/last.c:244 sys-utils/fallocate.c:206
 #, c-format
 msgid "seek on %s failed"
 msgstr "„seek“ на „%s“ није успело"
 
-#: disk-utils/fsck.cramfs.c:190 disk-utils/fsck.cramfs.c:192
+#: disk-utils/fsck.cramfs.c:192 disk-utils/fsck.cramfs.c:194
 msgid "superblock magic not found"
 msgstr "нисам нашао магију суперблока"
 
-#: disk-utils/fsck.cramfs.c:195
+#: disk-utils/fsck.cramfs.c:197
 #, c-format
 msgid "cramfs endianness is %s\n"
 msgstr "„cramfs“ крајњост је %s\n"
 
-#: disk-utils/fsck.cramfs.c:196
+#: disk-utils/fsck.cramfs.c:198
 msgid "big"
 msgstr "велика"
 
-#: disk-utils/fsck.cramfs.c:196
+#: disk-utils/fsck.cramfs.c:198
 msgid "little"
 msgstr "мала"
 
-#: disk-utils/fsck.cramfs.c:200
+#: disk-utils/fsck.cramfs.c:202
 msgid "unsupported filesystem features"
 msgstr "неподржане функције система датотека"
 
-#: disk-utils/fsck.cramfs.c:204
+#: disk-utils/fsck.cramfs.c:206
 #, c-format
 msgid "superblock size (%d) too small"
 msgstr "величина суперблока (%d) је премала"
 
-#: disk-utils/fsck.cramfs.c:209
+#: disk-utils/fsck.cramfs.c:211
 msgid "zero file count"
 msgstr "нулта укупност датотеке"
 
-#: disk-utils/fsck.cramfs.c:213
+#: disk-utils/fsck.cramfs.c:215
 msgid "file extends past end of filesystem"
 msgstr "датотека се простире изван краја система датотека"
 
-#: disk-utils/fsck.cramfs.c:215
+#: disk-utils/fsck.cramfs.c:217
 msgid "old cramfs format"
 msgstr "стари „cramfs“ формат"
 
-#: disk-utils/fsck.cramfs.c:224
+#: disk-utils/fsck.cramfs.c:226
 msgid "unable to test CRC: old cramfs format"
 msgstr "не могу да тестирам ЦРЦ: стари „cramfs“ формат"
 
-#: disk-utils/fsck.cramfs.c:244
+#: disk-utils/fsck.cramfs.c:246
 #, c-format
 msgid "failed to read %<PRIu32> bytes from file %s"
 msgstr "нисам успео да прочитам %<PRIu32> бајта из датотеке „%s“"
 
-#: disk-utils/fsck.cramfs.c:282
+#: disk-utils/fsck.cramfs.c:284
 msgid "crc error"
 msgstr "„crc“ грешка"
 
-#: disk-utils/fsck.cramfs.c:312 disk-utils/fsck.minix.c:558
+#: disk-utils/fsck.cramfs.c:314 disk-utils/fsck.minix.c:564
 msgid "seek failed"
 msgstr "„seek“ није успело"
 
-#: disk-utils/fsck.cramfs.c:316
+#: disk-utils/fsck.cramfs.c:318
 msgid "read romfs failed"
 msgstr "читање „romfs“ није успело"
 
-#: disk-utils/fsck.cramfs.c:348
+#: disk-utils/fsck.cramfs.c:350
 msgid "root inode is not directory"
 msgstr "и-чвор корена није директоријум"
 
-#: disk-utils/fsck.cramfs.c:352
+#: disk-utils/fsck.cramfs.c:354
 #, c-format
 msgid "bad root offset (%lu)"
 msgstr "лош померај корена (%lu)"
 
-#: disk-utils/fsck.cramfs.c:370
+#: disk-utils/fsck.cramfs.c:372
 msgid "data block too large"
 msgstr "блок података је превелик"
 
-#: disk-utils/fsck.cramfs.c:374
+#: disk-utils/fsck.cramfs.c:376
 #, c-format
 msgid "decompression error: %s"
 msgstr "грешка распакивања: %s"
 
-#: disk-utils/fsck.cramfs.c:400
+#: disk-utils/fsck.cramfs.c:402
 #, c-format
 msgid "  hole at %lu (%zu)\n"
 msgstr "  рупа на %lu (%zu)\n"
 
-#: disk-utils/fsck.cramfs.c:407 disk-utils/fsck.cramfs.c:582
+#: disk-utils/fsck.cramfs.c:409 disk-utils/fsck.cramfs.c:584
 #, c-format
 msgid "  uncompressing block at %lu to %lu (%lu)\n"
 msgstr "  распакујем блоков од %lu до %lu (%lu)\n"
 
-#: disk-utils/fsck.cramfs.c:414
+#: disk-utils/fsck.cramfs.c:416
 #, c-format
 msgid "non-block (%ld) bytes"
 msgstr "не-блок (%ld) бајта"
 
-#: disk-utils/fsck.cramfs.c:418
+#: disk-utils/fsck.cramfs.c:420
 #, c-format
 msgid "non-size (%ld vs %ld) bytes"
 msgstr "не-величина (%ld нспрам %ld) бајта"
 
-#: disk-utils/fsck.cramfs.c:423 disk-utils/fsck.cramfs.c:548
-#: disk-utils/swaplabel.c:109 misc-utils/uuidd.c:407 sys-utils/fallocate.c:440
+#: disk-utils/fsck.cramfs.c:425 disk-utils/fsck.cramfs.c:550
+#: disk-utils/swaplabel.c:111 misc-utils/uuidd.c:407 sys-utils/fallocate.c:440
 #: sys-utils/rfkill.c:565 sys-utils/setpriv.c:628 sys-utils/setpriv.c:651
 #: sys-utils/swapon.c:400 term-utils/script.c:322 term-utils/ttymsg.c:175
 #, c-format
 msgid "write failed: %s"
 msgstr "писање није успело: %s"
 
-#: disk-utils/fsck.cramfs.c:433
+#: disk-utils/fsck.cramfs.c:435
 #, c-format
 msgid "lchown failed: %s"
 msgstr "„lchown“ није успело: %s"
 
-#: disk-utils/fsck.cramfs.c:437
+#: disk-utils/fsck.cramfs.c:439
 #, c-format
 msgid "chmod failed: %s"
 msgstr "„chmod“ није успело: %s"
 
-#: disk-utils/fsck.cramfs.c:442
+#: disk-utils/fsck.cramfs.c:444
 #, c-format
 msgid "utimes failed: %s"
 msgstr "„utimes“ није успело: %s"
 
-#: disk-utils/fsck.cramfs.c:471
+#: disk-utils/fsck.cramfs.c:473
 #, c-format
 msgid "directory inode has zero offset and non-zero size: %s"
 msgstr "и-чвор директоријума има нулти померај и не-нулту величину: %s"
 
-#: disk-utils/fsck.cramfs.c:486
+#: disk-utils/fsck.cramfs.c:488
 #, c-format
 msgid "mkdir failed: %s"
 msgstr "„mkdir“ није успело: %s"
 
-#: disk-utils/fsck.cramfs.c:502
+#: disk-utils/fsck.cramfs.c:504
 msgid "illegal filename"
 msgstr "неисправан назив датотеке"
 
-#: disk-utils/fsck.cramfs.c:504
+#: disk-utils/fsck.cramfs.c:506
 msgid "dangerous filename"
 msgstr "опасан назив датотеке"
 
@@ -2316,185 +2316,185 @@ msgstr "опасан назив датотеке"
 # For consistent translation, here is the English text:
 #  msgstr "$filename: found $number fatal error${plural $number s}"
 # Please translate the English msgstr, not the msgid.
-#: disk-utils/fsck.cramfs.c:508
+#: disk-utils/fsck.cramfs.c:510
 msgid "filename length is zero"
 msgstr "дужина назива датотеке је нула"
 
-#: disk-utils/fsck.cramfs.c:510
+#: disk-utils/fsck.cramfs.c:512
 msgid "bad filename length"
 msgstr "лоша дужина назива датотеке"
 
-#: disk-utils/fsck.cramfs.c:516
+#: disk-utils/fsck.cramfs.c:518
 msgid "bad inode offset"
 msgstr "лош померај и-чвора"
 
-#: disk-utils/fsck.cramfs.c:531
+#: disk-utils/fsck.cramfs.c:533
 msgid "file inode has zero offset and non-zero size"
 msgstr "и-чвор датотеке има нулти померај и не-нулту величину"
 
-#: disk-utils/fsck.cramfs.c:534
+#: disk-utils/fsck.cramfs.c:536
 msgid "file inode has zero size and non-zero offset"
 msgstr "и-чвор датотеке има нулту величину и не-нулти померај"
 
-#: disk-utils/fsck.cramfs.c:563
+#: disk-utils/fsck.cramfs.c:565
 msgid "symbolic link has zero offset"
 msgstr "симболичка веза има нулти померај"
 
-#: disk-utils/fsck.cramfs.c:565
+#: disk-utils/fsck.cramfs.c:567
 msgid "symbolic link has zero size"
 msgstr "симболичка веза има нулту величину"
 
-#: disk-utils/fsck.cramfs.c:574
+#: disk-utils/fsck.cramfs.c:576
 #, c-format
 msgid "size error in symlink: %s"
 msgstr "грешка величине у симболичкој вези: %s"
 
-#: disk-utils/fsck.cramfs.c:588
+#: disk-utils/fsck.cramfs.c:590
 #, c-format
 msgid "symlink failed: %s"
 msgstr "„symlink“ није успело: %s"
 
-#: disk-utils/fsck.cramfs.c:601
+#: disk-utils/fsck.cramfs.c:603
 #, c-format
 msgid "special file has non-zero offset: %s"
 msgstr "специјална датотека има не-нулти померај: %s"
 
-#: disk-utils/fsck.cramfs.c:611
+#: disk-utils/fsck.cramfs.c:613
 #, c-format
 msgid "fifo has non-zero size: %s"
 msgstr "пупи има има не-нулту величину: %s"
 
-#: disk-utils/fsck.cramfs.c:617
+#: disk-utils/fsck.cramfs.c:619
 #, c-format
 msgid "socket has non-zero size: %s"
 msgstr "прикључница има има не-нулту величину: %s"
 
-#: disk-utils/fsck.cramfs.c:620
+#: disk-utils/fsck.cramfs.c:622
 #, c-format
 msgid "bogus mode: %s (%o)"
 msgstr "лажни режим: %s (%o)"
 
-#: disk-utils/fsck.cramfs.c:629
+#: disk-utils/fsck.cramfs.c:631
 #, c-format
 msgid "mknod failed: %s"
 msgstr "„mknod“ није успело: %s"
 
-#: disk-utils/fsck.cramfs.c:661
+#: disk-utils/fsck.cramfs.c:663
 #, c-format
 msgid "directory data start (%lu) < sizeof(struct cramfs_super) + start (%zu)"
 msgstr "почетак података директоријума (%lu) < sizeof(struct cramfs_super) + start (%zu)"
 
-#: disk-utils/fsck.cramfs.c:665
+#: disk-utils/fsck.cramfs.c:667
 #, c-format
 msgid "directory data end (%lu) != file data start (%lu)"
 msgstr "крај података директоријума (%lu) != са почетком података датотеке (%lu)"
 
-#: disk-utils/fsck.cramfs.c:669
+#: disk-utils/fsck.cramfs.c:671
 msgid "invalid file data offset"
 msgstr "неисправан померај података датотеке"
 
-#: disk-utils/fsck.cramfs.c:716 disk-utils/mkfs.cramfs.c:741
+#: disk-utils/fsck.cramfs.c:718 disk-utils/mkfs.cramfs.c:743
 msgid "invalid blocksize argument"
 msgstr "неисправан аргумент величине блока"
 
-#: disk-utils/fsck.cramfs.c:750
+#: disk-utils/fsck.cramfs.c:752
 #, c-format
 msgid "%s: OK\n"
 msgstr "%s: У РЕДУ\n"
 
-#: disk-utils/fsck.minix.c:185
+#: disk-utils/fsck.minix.c:191
 msgid "Check the consistency of a Minix filesystem.\n"
 msgstr "Проверите доследност Миникс система датотека.\n"
 
-#: disk-utils/fsck.minix.c:187
+#: disk-utils/fsck.minix.c:193
 msgid " -l, --list       list all filenames\n"
 msgstr " -l, --list       исписује све системе датотека\n"
 
-#: disk-utils/fsck.minix.c:188
+#: disk-utils/fsck.minix.c:194
 msgid " -a, --auto       automatic repair\n"
 msgstr " -a, --auto       сам поправља\n"
 
-#: disk-utils/fsck.minix.c:189
+#: disk-utils/fsck.minix.c:195
 msgid " -r, --repair     interactive repair\n"
 msgstr " -r, --repair     међудејствена поправка\n"
 
-#: disk-utils/fsck.minix.c:190
+#: disk-utils/fsck.minix.c:196
 msgid " -v, --verbose    be verbose\n"
 msgstr " -v, --verbose    бива опширан\n"
 
-#: disk-utils/fsck.minix.c:191
+#: disk-utils/fsck.minix.c:197
 msgid " -s, --super      output super-block information\n"
 msgstr " -s, --super      исписује информације суперблока\n"
 
-#: disk-utils/fsck.minix.c:192
+#: disk-utils/fsck.minix.c:198
 msgid " -m, --uncleared  activate mode not cleared warnings\n"
 msgstr " -m, --uncleared  неочишћена упозорења режима активирања\n"
 
-#: disk-utils/fsck.minix.c:193
+#: disk-utils/fsck.minix.c:199
 msgid " -f, --force      force check\n"
 msgstr " -f, --force      приморава проверу\n"
 
 #. TRANSLATORS: these yes no questions uses rpmatch(), and should be
 #. * translated.
-#: disk-utils/fsck.minix.c:252
+#: disk-utils/fsck.minix.c:258
 #, c-format
 msgid "%s (y/n)? "
 msgstr "%s (д/н)? "
 
-#: disk-utils/fsck.minix.c:252
+#: disk-utils/fsck.minix.c:258
 #, c-format
 msgid "%s (n/y)? "
 msgstr "%s (н/д)? "
 
-#: disk-utils/fsck.minix.c:269
+#: disk-utils/fsck.minix.c:275
 #, c-format
 msgid "y\n"
 msgstr "д\n"
 
-#: disk-utils/fsck.minix.c:271
+#: disk-utils/fsck.minix.c:277
 #, c-format
 msgid "n\n"
 msgstr "н\n"
 
-#: disk-utils/fsck.minix.c:287
+#: disk-utils/fsck.minix.c:293
 #, c-format
 msgid "%s is mounted.\t "
 msgstr "„%s“ је прикачена.\t "
 
-#: disk-utils/fsck.minix.c:289
+#: disk-utils/fsck.minix.c:295
 msgid "Do you really want to continue"
 msgstr "Да ли стварно желите да наставите"
 
-#: disk-utils/fsck.minix.c:293
+#: disk-utils/fsck.minix.c:299
 #, c-format
 msgid "check aborted.\n"
 msgstr "провера је прекинута.\n"
 
-#: disk-utils/fsck.minix.c:318 disk-utils/fsck.minix.c:339
+#: disk-utils/fsck.minix.c:324 disk-utils/fsck.minix.c:345
 #, c-format
 msgid "Zone nr < FIRSTZONE in file `%s'."
 msgstr "Бр. зоне < ПРВЕ_ЗОНЕ у датотеци „%s“."
 
-#: disk-utils/fsck.minix.c:321 disk-utils/fsck.minix.c:342
+#: disk-utils/fsck.minix.c:327 disk-utils/fsck.minix.c:348
 #, c-format
 msgid "Zone nr >= ZONES in file `%s'."
 msgstr "Бр. зоне >= ЗОНАМА у датотеци „%s“."
 
-#: disk-utils/fsck.minix.c:325 disk-utils/fsck.minix.c:346
+#: disk-utils/fsck.minix.c:331 disk-utils/fsck.minix.c:352
 msgid "Remove block"
 msgstr "Уклањам блок"
 
-#: disk-utils/fsck.minix.c:362
+#: disk-utils/fsck.minix.c:368
 #, c-format
 msgid "Read error: unable to seek to block in file '%s'\n"
 msgstr "Грешка читања: не могу да пређем на блок у датотеци „%s“\n"
 
-#: disk-utils/fsck.minix.c:368
+#: disk-utils/fsck.minix.c:374
 #, c-format
 msgid "Read error: bad block in file '%s'\n"
 msgstr "Грешка читања: лош блок у датотеци „%s“\n"
 
-#: disk-utils/fsck.minix.c:380
+#: disk-utils/fsck.minix.c:386
 #, c-format
 msgid ""
 "Internal error: trying to write bad block\n"
@@ -2503,140 +2503,140 @@ msgstr ""
 "Унутрашња грешка: покушавам да пишем лош блок\n"
 "Захтев за писањем је занемарен\n"
 
-#: disk-utils/fsck.minix.c:386
+#: disk-utils/fsck.minix.c:392
 msgid "seek failed in write_block"
 msgstr "премотавање није успело у писању_блока"
 
-#: disk-utils/fsck.minix.c:389
+#: disk-utils/fsck.minix.c:395
 #, c-format
 msgid "Write error: bad block in file '%s'\n"
 msgstr "Грешка писања: лош блок у датотеци „%s“\n"
 
-#: disk-utils/fsck.minix.c:423
+#: disk-utils/fsck.minix.c:429
 #, c-format
 msgid "Warning: block out of range\n"
 msgstr "Упозорење: блок је ван опсега\n"
 
-#: disk-utils/fsck.minix.c:510
+#: disk-utils/fsck.minix.c:516
 msgid "seek failed in write_super_block"
 msgstr "премотавање није успело у писању_супер_блока"
 
-#: disk-utils/fsck.minix.c:512
+#: disk-utils/fsck.minix.c:518
 msgid "unable to write super-block"
 msgstr "не могу да пишем супер-блок"
 
-#: disk-utils/fsck.minix.c:524
+#: disk-utils/fsck.minix.c:530
 msgid "Unable to write inode map"
 msgstr "Не могу да пишем мапу и-чвора"
 
-#: disk-utils/fsck.minix.c:527
+#: disk-utils/fsck.minix.c:533
 msgid "Unable to write zone map"
 msgstr "Не могу да пишем мапу зоне"
 
-#: disk-utils/fsck.minix.c:530
+#: disk-utils/fsck.minix.c:536
 msgid "Unable to write inodes"
 msgstr "Не могу да пишем и-чворове"
 
-#: disk-utils/fsck.minix.c:562
+#: disk-utils/fsck.minix.c:568
 msgid "unable to alloc buffer for superblock"
 msgstr "не могу да доделим међумеморију за суперблок"
 
-#: disk-utils/fsck.minix.c:565
+#: disk-utils/fsck.minix.c:571
 msgid "unable to read super block"
 msgstr "не могу да читам супер-блок"
 
-#: disk-utils/fsck.minix.c:587
+#: disk-utils/fsck.minix.c:593
 msgid "bad magic number in super-block"
 msgstr "лош магични број у суперблоку"
 
-#: disk-utils/fsck.minix.c:589
+#: disk-utils/fsck.minix.c:595
 msgid "Only 1k blocks/zones supported"
 msgstr "Само 1k блокова/зона је подржан"
 
-#: disk-utils/fsck.minix.c:591
+#: disk-utils/fsck.minix.c:597
 msgid "bad s_ninodes field in super-block"
 msgstr "лоше поље „s_ninodes“ у суперблоку"
 
-#: disk-utils/fsck.minix.c:593
+#: disk-utils/fsck.minix.c:599
 msgid "bad s_imap_blocks field in super-block"
 msgstr "лоше поље „s_imap_bloks“ у суперблоку"
 
-#: disk-utils/fsck.minix.c:595
+#: disk-utils/fsck.minix.c:601
 msgid "bad s_firstdatazone field in super-block"
 msgstr "лоше поље „s_firstdatazone“ у суперблоку"
 
-#: disk-utils/fsck.minix.c:598
+#: disk-utils/fsck.minix.c:604
 msgid "bad s_zmap_blocks field in super-block"
 msgstr "лоше поље „s_zmap_bloks“ у суперблоку"
 
-#: disk-utils/fsck.minix.c:614
+#: disk-utils/fsck.minix.c:620
 msgid "Unable to allocate buffer for inode map"
 msgstr "Не могу да доделим међумеморију за мапу и-чвора"
 
-#: disk-utils/fsck.minix.c:617
+#: disk-utils/fsck.minix.c:623
 msgid "Unable to allocate buffer for zone map"
 msgstr "Не могу да доделим међумеморију за мапу зоне"
 
-#: disk-utils/fsck.minix.c:620
+#: disk-utils/fsck.minix.c:626
 msgid "Unable to allocate buffer for inodes"
 msgstr "Не могу да доделим међумеморију за мапу и-чворова"
 
-#: disk-utils/fsck.minix.c:623
+#: disk-utils/fsck.minix.c:629
 msgid "Unable to allocate buffer for inode count"
 msgstr "Не могу да доделим међумеморију за број и-чвора"
 
-#: disk-utils/fsck.minix.c:626
+#: disk-utils/fsck.minix.c:632
 msgid "Unable to allocate buffer for zone count"
 msgstr "Не могу да доделим међумеморију за број зоне"
 
-#: disk-utils/fsck.minix.c:630
+#: disk-utils/fsck.minix.c:636
 msgid "Unable to read inode map"
 msgstr "Не могу да читам мапу и-чвора"
 
-#: disk-utils/fsck.minix.c:634
+#: disk-utils/fsck.minix.c:640
 msgid "Unable to read zone map"
 msgstr "Не могу да читам мапу зоне"
 
-#: disk-utils/fsck.minix.c:638
+#: disk-utils/fsck.minix.c:644
 msgid "Unable to read inodes"
 msgstr "Не могу да читам и-чворове"
 
-#: disk-utils/fsck.minix.c:640
+#: disk-utils/fsck.minix.c:646
 #, c-format
 msgid "Warning: Firstzone != Norm_firstzone\n"
 msgstr "Упозорење: Прва зона != Norm_firstzone\n"
 
-#: disk-utils/fsck.minix.c:645
+#: disk-utils/fsck.minix.c:651
 #, c-format
 msgid "%ld inodes\n"
 msgstr "%ld и-чвора\n"
 
-#: disk-utils/fsck.minix.c:646
+#: disk-utils/fsck.minix.c:652
 #, c-format
 msgid "%ld blocks\n"
 msgstr "%ld блока\n"
 
-#: disk-utils/fsck.minix.c:647 disk-utils/mkfs.minix.c:571
+#: disk-utils/fsck.minix.c:653 disk-utils/mkfs.minix.c:575
 #, c-format
 msgid "Firstdatazone=%jd (%jd)\n"
 msgstr "Прва_зона_података=%jd (%jd)\n"
 
-#: disk-utils/fsck.minix.c:649
+#: disk-utils/fsck.minix.c:655
 #, c-format
 msgid "Zonesize=%d\n"
 msgstr "Величина_зоне=%d\n"
 
-#: disk-utils/fsck.minix.c:650
+#: disk-utils/fsck.minix.c:656
 #, c-format
 msgid "Maxsize=%zu\n"
 msgstr "Највећа_величина=%zu\n"
 
-#: disk-utils/fsck.minix.c:652
+#: disk-utils/fsck.minix.c:658
 #, c-format
 msgid "Filesystem state=%d\n"
 msgstr "Стање система датотека=%d\n"
 
-#: disk-utils/fsck.minix.c:653
+#: disk-utils/fsck.minix.c:659
 #, c-format
 msgid ""
 "namelen=%zd\n"
@@ -2645,168 +2645,168 @@ msgstr ""
 "дужина_назива=%zd\n"
 "\n"
 
-#: disk-utils/fsck.minix.c:668 disk-utils/fsck.minix.c:718
+#: disk-utils/fsck.minix.c:674 disk-utils/fsck.minix.c:724
 #, c-format
 msgid "Inode %d marked unused, but used for file '%s'\n"
 msgstr "И-чвор %d је означен да се не користи, али се користи за датотеку „%s“\n"
 
-#: disk-utils/fsck.minix.c:671 disk-utils/fsck.minix.c:721
+#: disk-utils/fsck.minix.c:677 disk-utils/fsck.minix.c:727
 msgid "Mark in use"
 msgstr "Означи да се користи"
 
-#: disk-utils/fsck.minix.c:693 disk-utils/fsck.minix.c:741
+#: disk-utils/fsck.minix.c:699 disk-utils/fsck.minix.c:747
 #, c-format
 msgid "The file `%s' has mode %05o\n"
 msgstr "Датотека „%s“ има режим %05o\n"
 
-#: disk-utils/fsck.minix.c:700 disk-utils/fsck.minix.c:747
+#: disk-utils/fsck.minix.c:706 disk-utils/fsck.minix.c:753
 #, c-format
 msgid "Warning: inode count too big.\n"
 msgstr "Упозорење: укупност и-чвора је превелика.\n"
 
-#: disk-utils/fsck.minix.c:759 disk-utils/fsck.minix.c:767
+#: disk-utils/fsck.minix.c:765 disk-utils/fsck.minix.c:773
 msgid "root inode isn't a directory"
 msgstr "и-чвор корена није директоријум"
 
-#: disk-utils/fsck.minix.c:779 disk-utils/fsck.minix.c:810
+#: disk-utils/fsck.minix.c:785 disk-utils/fsck.minix.c:816
 #, c-format
 msgid "Block has been used before. Now in file `%s'."
 msgstr "Блок је коришћен раније. Сада је у датотеци „%s“."
 
-#: disk-utils/fsck.minix.c:781 disk-utils/fsck.minix.c:812
-#: disk-utils/fsck.minix.c:1145 disk-utils/fsck.minix.c:1154
-#: disk-utils/fsck.minix.c:1201 disk-utils/fsck.minix.c:1210
+#: disk-utils/fsck.minix.c:787 disk-utils/fsck.minix.c:818
+#: disk-utils/fsck.minix.c:1151 disk-utils/fsck.minix.c:1160
+#: disk-utils/fsck.minix.c:1207 disk-utils/fsck.minix.c:1216
 msgid "Clear"
 msgstr "Очисти"
 
-#: disk-utils/fsck.minix.c:791 disk-utils/fsck.minix.c:822
+#: disk-utils/fsck.minix.c:797 disk-utils/fsck.minix.c:828
 #, c-format
 msgid "Block %d in file `%s' is marked not in use."
 msgstr "Блок %d у датотеци „%s“ је означен да се не користи."
 
 #
 # File: util/faxinfo.c++, line: 416
-#: disk-utils/fsck.minix.c:793 disk-utils/fsck.minix.c:824
+#: disk-utils/fsck.minix.c:799 disk-utils/fsck.minix.c:830
 msgid "Correct"
 msgstr "Исправи"
 
-#: disk-utils/fsck.minix.c:963 disk-utils/fsck.minix.c:1036
+#: disk-utils/fsck.minix.c:969 disk-utils/fsck.minix.c:1042
 #, c-format
 msgid "The directory '%s' contains a bad inode number for file '%.*s'."
 msgstr "Директоријум „%s“ садржи лош број и-чвора за датотеку „%.*s“."
 
-#: disk-utils/fsck.minix.c:965 disk-utils/fsck.minix.c:1038
+#: disk-utils/fsck.minix.c:971 disk-utils/fsck.minix.c:1044
 msgid " Remove"
 msgstr " Уклони"
 
-#: disk-utils/fsck.minix.c:981 disk-utils/fsck.minix.c:1054
+#: disk-utils/fsck.minix.c:987 disk-utils/fsck.minix.c:1060
 #, c-format
 msgid "%s: bad directory: '.' isn't first\n"
 msgstr "%s: лош директоријум: „.“ није први\n"
 
-#: disk-utils/fsck.minix.c:990 disk-utils/fsck.minix.c:1063
+#: disk-utils/fsck.minix.c:996 disk-utils/fsck.minix.c:1069
 #, c-format
 msgid "%s: bad directory: '..' isn't second\n"
 msgstr "%s: лош директоријум: „..“ није први\n"
 
-#: disk-utils/fsck.minix.c:1096 disk-utils/fsck.minix.c:1119
+#: disk-utils/fsck.minix.c:1102 disk-utils/fsck.minix.c:1125
 msgid "internal error"
 msgstr "унутрашња грешка"
 
-#: disk-utils/fsck.minix.c:1099 disk-utils/fsck.minix.c:1122
+#: disk-utils/fsck.minix.c:1105 disk-utils/fsck.minix.c:1128
 #, c-format
 msgid "%s: bad directory: size < 32"
 msgstr "%s: лош директоријум: величина < 32"
 
-#: disk-utils/fsck.minix.c:1105
+#: disk-utils/fsck.minix.c:1111
 #, c-format
 msgid "%s: bad directory: invalid i_zone, use --repair to fix\n"
 msgstr "%s: лош директоријум: неисправна и_зона, користите „--repair“ да поправите\n"
 
-#: disk-utils/fsck.minix.c:1134
+#: disk-utils/fsck.minix.c:1140
 msgid "seek failed in bad_zone"
 msgstr "премотавање није успело у лошој_зони"
 
-#: disk-utils/fsck.minix.c:1144 disk-utils/fsck.minix.c:1200
+#: disk-utils/fsck.minix.c:1150 disk-utils/fsck.minix.c:1206
 #, c-format
 msgid "Inode %lu mode not cleared."
 msgstr "Режим и-чвора %lu није очишћен."
 
-#: disk-utils/fsck.minix.c:1153 disk-utils/fsck.minix.c:1209
+#: disk-utils/fsck.minix.c:1159 disk-utils/fsck.minix.c:1215
 #, c-format
 msgid "Inode %lu not used, marked used in the bitmap."
 msgstr "И-чвор %lu није коришћен, означен да јесте у битмапи."
 
-#: disk-utils/fsck.minix.c:1159 disk-utils/fsck.minix.c:1215
+#: disk-utils/fsck.minix.c:1165 disk-utils/fsck.minix.c:1221
 #, c-format
 msgid "Inode %lu used, marked unused in the bitmap."
 msgstr "И-чвор %lu је коришћен, означен да није у битмапи."
 
-#: disk-utils/fsck.minix.c:1160 disk-utils/fsck.minix.c:1216
+#: disk-utils/fsck.minix.c:1166 disk-utils/fsck.minix.c:1222
 msgid "Set"
 msgstr "Постави"
 
-#: disk-utils/fsck.minix.c:1164 disk-utils/fsck.minix.c:1220
+#: disk-utils/fsck.minix.c:1170 disk-utils/fsck.minix.c:1226
 #, c-format
 msgid "Inode %lu (mode = %07o), i_nlinks=%d, counted=%d."
 msgstr "И-чвор %lu (режим = %07o), и_нвеза=%d, избројано=%d."
 
-#: disk-utils/fsck.minix.c:1167 disk-utils/fsck.minix.c:1223
+#: disk-utils/fsck.minix.c:1173 disk-utils/fsck.minix.c:1229
 msgid "Set i_nlinks to count"
 msgstr "Поставља и_нвезе на избројано"
 
-#: disk-utils/fsck.minix.c:1179 disk-utils/fsck.minix.c:1235
+#: disk-utils/fsck.minix.c:1185 disk-utils/fsck.minix.c:1241
 #, c-format
 msgid "Zone %lu: marked in use, no file uses it."
 msgstr "Зона %lu: означена да се користи, ниједна датотека је не користи."
 
-#: disk-utils/fsck.minix.c:1181 disk-utils/fsck.minix.c:1237
+#: disk-utils/fsck.minix.c:1187 disk-utils/fsck.minix.c:1243
 msgid "Unmark"
 msgstr "Одзначи"
 
-#: disk-utils/fsck.minix.c:1186 disk-utils/fsck.minix.c:1242
+#: disk-utils/fsck.minix.c:1192 disk-utils/fsck.minix.c:1248
 #, c-format
 msgid "Zone %lu: in use, counted=%d\n"
 msgstr "Зона %lu: користи се, избројано=%d\n"
 
-#: disk-utils/fsck.minix.c:1189 disk-utils/fsck.minix.c:1245
+#: disk-utils/fsck.minix.c:1195 disk-utils/fsck.minix.c:1251
 #, c-format
 msgid "Zone %lu: not in use, counted=%d\n"
 msgstr "Зона %lu: не користи се, избројано=%d\n"
 
-#: disk-utils/fsck.minix.c:1295
+#: disk-utils/fsck.minix.c:1301
 msgid "bad inode size"
 msgstr "лоша величина и-чвора"
 
-#: disk-utils/fsck.minix.c:1297
+#: disk-utils/fsck.minix.c:1303
 msgid "bad v2 inode size"
 msgstr "лоша величина в2 и-чвора"
 
-#: disk-utils/fsck.minix.c:1341
+#: disk-utils/fsck.minix.c:1347
 msgid "need terminal for interactive repairs"
 msgstr "потребан је терминал за међудејствене поправке"
 
-#: disk-utils/fsck.minix.c:1345
+#: disk-utils/fsck.minix.c:1351
 #, c-format
 msgid "cannot open %s: %s"
 msgstr "не могу да отворим „%s“: %s"
 
-#: disk-utils/fsck.minix.c:1356
+#: disk-utils/fsck.minix.c:1362
 #, c-format
 msgid "%s is clean, no check.\n"
 msgstr "„%s“ је чиста, не проверавам.\n"
 
-#: disk-utils/fsck.minix.c:1361
+#: disk-utils/fsck.minix.c:1367
 #, c-format
 msgid "Forcing filesystem check on %s.\n"
 msgstr "Присиљавам проверу система датотека на „%s“.\n"
 
-#: disk-utils/fsck.minix.c:1363
+#: disk-utils/fsck.minix.c:1369
 #, c-format
 msgid "Filesystem on %s is dirty, needs checking.\n"
 msgstr "Систем датотека на „%s“ је штрокав, потребна је провера.\n"
 
-#: disk-utils/fsck.minix.c:1395
+#: disk-utils/fsck.minix.c:1401
 #, c-format
 msgid ""
 "\n"
@@ -2815,12 +2815,12 @@ msgstr ""
 "\n"
 "%6ld и-чвора је коришћено (%ld%%)\n"
 
-#: disk-utils/fsck.minix.c:1401
+#: disk-utils/fsck.minix.c:1407
 #, c-format
 msgid "%6ld zones used (%ld%%)\n"
 msgstr "%6ld зона је коришћено (%ld%%)\n"
 
-#: disk-utils/fsck.minix.c:1403
+#: disk-utils/fsck.minix.c:1409
 #, c-format
 msgid ""
 "\n"
@@ -2843,7 +2843,7 @@ msgstr ""
 "------\n"
 "%6d датотека\n"
 
-#: disk-utils/fsck.minix.c:1417
+#: disk-utils/fsck.minix.c:1423
 #, c-format
 msgid ""
 "----------------------------\n"
@@ -2854,60 +2854,60 @@ msgstr ""
 "СИСТЕМ ДАТОТЕКА ЈЕ ИЗМЕЊЕН\n"
 "----------------------------\n"
 
-#: disk-utils/fsck.minix.c:1429 disk-utils/mkfs.minix.c:854
-#: disk-utils/mkswap.c:737 disk-utils/partx.c:1071 disk-utils/resizepart.c:115
+#: disk-utils/fsck.minix.c:1435 disk-utils/mkfs.minix.c:858
+#: disk-utils/mkswap.c:744 disk-utils/partx.c:1078 disk-utils/resizepart.c:125
 #: login-utils/utmpdump.c:408 sys-utils/dmesg.c:690 sys-utils/wdctl.c:457
-#: sys-utils/wdctl.c:536 term-utils/setterm.c:908 text-utils/col.c:195
+#: sys-utils/wdctl.c:536 term-utils/setterm.c:911 text-utils/col.c:195
 #: text-utils/pg.c:1255
 msgid "write failed"
 msgstr "писање није успело"
 
-#: disk-utils/isosize.c:57
+#: disk-utils/isosize.c:64
 #, c-format
 msgid "%s: might not be an ISO filesystem"
 msgstr "%s: не може бити ИСО систем датотека"
 
-#: disk-utils/isosize.c:62 disk-utils/isosize.c:64
+#: disk-utils/isosize.c:69 disk-utils/isosize.c:71
 #, c-format
 msgid "read error on %s"
 msgstr "грешка читања на „%s“"
 
-#: disk-utils/isosize.c:75
+#: disk-utils/isosize.c:82
 #, c-format
 msgid "sector count: %d, sector size: %d\n"
 msgstr "број сектора: %d, величина сектора: %d\n"
 
-#: disk-utils/isosize.c:99
+#: disk-utils/isosize.c:106
 #, c-format
 msgid " %s [options] <iso9660_image_file> ...\n"
 msgstr " %s [опције] <iso9660_датотека_слике> ...\n"
 
-#: disk-utils/isosize.c:103
+#: disk-utils/isosize.c:110
 msgid "Show the length of an ISO-9660 filesystem.\n"
 msgstr "Приказује дужину ИСО-9660 система датотека.\n"
 
-#: disk-utils/isosize.c:106
+#: disk-utils/isosize.c:113
 msgid " -d, --divisor=<number>  divide the amount of bytes by <number>\n"
 msgstr " -d, --divisor=<број>    дели количину бајтова <бројем>\n"
 
-#: disk-utils/isosize.c:107
+#: disk-utils/isosize.c:114
 msgid " -x, --sectors           show sector count and size\n"
 msgstr " -x, --sectors           приказује укупност и величину сектора\n"
 
-#: disk-utils/isosize.c:138
+#: disk-utils/isosize.c:145
 msgid "invalid divisor argument"
 msgstr "неисправан аргумент делиоца"
 
-#: disk-utils/mkfs.bfs.c:75
+#: disk-utils/mkfs.bfs.c:83
 #, c-format
 msgid "Usage: %s [options] device [block-count]\n"
 msgstr "Употреба: %s [опције] уређај [укупнст-блокова]\n"
 
-#: disk-utils/mkfs.bfs.c:79
+#: disk-utils/mkfs.bfs.c:87
 msgid "Make an SCO bfs filesystem.\n"
 msgstr "Прави „SCO bfs“ систем датотека.\n"
 
-#: disk-utils/mkfs.bfs.c:81
+#: disk-utils/mkfs.bfs.c:89
 #, c-format
 msgid ""
 "\n"
@@ -2930,28 +2930,28 @@ msgstr ""
 " -l                   ова оција је неприметно занемарена\n"
 " --lock[=<режим>]     користи искључиво закључавање уређаја („yes“, „no“ или „nonblock“)\n"
 
-#: disk-utils/mkfs.bfs.c:146
+#: disk-utils/mkfs.bfs.c:154
 msgid "invalid number of inodes"
 msgstr "неисправан број и-чворова"
 
-#: disk-utils/mkfs.bfs.c:152
+#: disk-utils/mkfs.bfs.c:160
 msgid "volume name too long"
 msgstr "назив волумена је предуг"
 
-#: disk-utils/mkfs.bfs.c:159
+#: disk-utils/mkfs.bfs.c:167
 msgid "fsname name too long"
 msgstr "назив система датотека је предуг"
 
-#: disk-utils/mkfs.bfs.c:209
+#: disk-utils/mkfs.bfs.c:217
 msgid "invalid block-count"
 msgstr "неисправна укупност блока"
 
-#: disk-utils/mkfs.bfs.c:217
+#: disk-utils/mkfs.bfs.c:225
 #, c-format
 msgid "cannot get size of %s"
 msgstr "не могу да добавим величину за „%s“"
 
-#: disk-utils/mkfs.bfs.c:222
+#: disk-utils/mkfs.bfs.c:230
 #, c-format
 msgid "blocks argument too large, max is %llu"
 msgstr "аргумент блокова је превелик, највише је %llu"
@@ -2963,114 +2963,114 @@ msgstr "аргумент блокова је превелик, највише ј
 # For consistent translation, here is the English text:
 #  msgstr "too many version information names specified"
 # Please translate the English msgstr, not the msgid.
-#: disk-utils/mkfs.bfs.c:237
+#: disk-utils/mkfs.bfs.c:245
 msgid "too many inodes - max is 512"
 msgstr "превише и-чворова – највише је 512"
 
-#: disk-utils/mkfs.bfs.c:247
+#: disk-utils/mkfs.bfs.c:255
 #, c-format
 msgid "not enough space, need at least %llu blocks"
 msgstr "нема довољно простора, потребно је барем %llu блока"
 
-#: disk-utils/mkfs.bfs.c:259
+#: disk-utils/mkfs.bfs.c:267
 #, c-format
 msgid "Device: %s\n"
 msgstr "Уређај: %s\n"
 
-#: disk-utils/mkfs.bfs.c:260
+#: disk-utils/mkfs.bfs.c:268
 #, c-format
 msgid "Volume: <%-6s>\n"
 msgstr "Волумен: <%-6s>\n"
 
-#: disk-utils/mkfs.bfs.c:261
+#: disk-utils/mkfs.bfs.c:269
 #, c-format
 msgid "FSname: <%-6s>\n"
 msgstr "СД_назив: <%-6s>\n"
 
-#: disk-utils/mkfs.bfs.c:262
+#: disk-utils/mkfs.bfs.c:270
 #, c-format
 msgid "BlockSize: %d\n"
 msgstr "Величина блока: %d\n"
 
-#: disk-utils/mkfs.bfs.c:264
+#: disk-utils/mkfs.bfs.c:272
 #, c-format
 msgid "Inodes: %ld (in 1 block)\n"
 msgstr "И-чворова: %ld (у 1 блоку)\n"
 
-#: disk-utils/mkfs.bfs.c:267
+#: disk-utils/mkfs.bfs.c:275
 #, c-format
 msgid "Inodes: %ld (in %llu blocks)\n"
 msgstr "И-чворова: %ld (у %llu блока)\n"
 
-#: disk-utils/mkfs.bfs.c:269
+#: disk-utils/mkfs.bfs.c:277
 #, c-format
 msgid "Blocks: %llu\n"
 msgstr "Блокова: %llu\n"
 
-#: disk-utils/mkfs.bfs.c:270
+#: disk-utils/mkfs.bfs.c:278
 #, c-format
 msgid "Inode end: %d, Data end: %d\n"
 msgstr "Крај и-чвора: %d, крај података: %d\n"
 
-#: disk-utils/mkfs.bfs.c:275
+#: disk-utils/mkfs.bfs.c:283
 msgid "error writing superblock"
 msgstr "грешка писања суперблока"
 
-#: disk-utils/mkfs.bfs.c:296
+#: disk-utils/mkfs.bfs.c:304
 msgid "error writing root inode"
 msgstr "грешка писања и-чвора корена"
 
-#: disk-utils/mkfs.bfs.c:301
+#: disk-utils/mkfs.bfs.c:309
 msgid "error writing inode"
 msgstr "грешка писања и-чвора"
 
-#: disk-utils/mkfs.bfs.c:304
+#: disk-utils/mkfs.bfs.c:312
 msgid "seek error"
 msgstr "грешка премотавања"
 
-#: disk-utils/mkfs.bfs.c:310
+#: disk-utils/mkfs.bfs.c:318
 msgid "error writing . entry"
 msgstr "грешка писања уноса „.“"
 
-#: disk-utils/mkfs.bfs.c:314
+#: disk-utils/mkfs.bfs.c:322
 msgid "error writing .. entry"
 msgstr "грешка писања уноса „..“"
 
-#: disk-utils/mkfs.bfs.c:317
+#: disk-utils/mkfs.bfs.c:325
 #, c-format
 msgid "error closing %s"
 msgstr "грешка затварања „%s“"
 
-#: disk-utils/mkfs.c:45
+#: disk-utils/mkfs.c:52
 #, c-format
 msgid " %s [options] [-t <type>] [fs-options] <device> [<size>]\n"
 msgstr " %s [опције] [-t <врста>] [опције-сд] <уређај> [<величина>]\n"
 
-#: disk-utils/mkfs.c:49
+#: disk-utils/mkfs.c:56
 msgid "Make a Linux filesystem.\n"
 msgstr "Прави Линукс систем датотека.\n"
 
-#: disk-utils/mkfs.c:52
+#: disk-utils/mkfs.c:59
 #, c-format
 msgid " -t, --type=<type>  filesystem type; when unspecified, ext2 is used\n"
 msgstr " -t, --type=<врста>  врста система датотека; када није наведено, користи се „ext2“\n"
 
-#: disk-utils/mkfs.c:53
+#: disk-utils/mkfs.c:60
 #, c-format
 msgid "     fs-options     parameters for the real filesystem builder\n"
 msgstr "     опције-сд       параметри за стварног градитеља система датотека\n"
 
-#: disk-utils/mkfs.c:54
+#: disk-utils/mkfs.c:61
 #, c-format
 msgid "     <device>       path to the device to be used\n"
 msgstr "     <уређај>        путања до уређаја који ће се користити\n"
 
-#: disk-utils/mkfs.c:55
+#: disk-utils/mkfs.c:62
 #, c-format
 msgid "     <size>         number of blocks to be used on the device\n"
 msgstr "     <величина>      број блокова који ће се користити на уређају\n"
 
-#: disk-utils/mkfs.c:56
+#: disk-utils/mkfs.c:63
 #, c-format
 msgid ""
 " -V, --verbose      explain what is being done;\n"
@@ -3079,158 +3079,158 @@ msgstr ""
 " -V, --verbose       објашњава шта је урађено;\n"
 "                       навођењем опције „-V“ више од једном довешће до сувог рада\n"
 
-#: disk-utils/mkfs.c:133 include/c.h:310 login-utils/su-common.c:1292
+#: disk-utils/mkfs.c:140 include/c.h:310 login-utils/su-common.c:1292
 #: login-utils/sulogin.c:864 login-utils/sulogin.c:868 sys-utils/flock.c:123
 #: sys-utils/rtcwake.c:623
 #, c-format
 msgid "failed to execute %s"
 msgstr "нисам успео да извршим „%s“"
 
-#: disk-utils/mkfs.cramfs.c:129
+#: disk-utils/mkfs.cramfs.c:131
 #, c-format
 msgid " %s [-h] [-v] [-b blksize] [-e edition] [-N endian] [-i file] [-n name] dirname outfile\n"
 msgstr " %s [-h] [-v] [-b блк_влчна] [-e издање] [-N крајњост] [-i дттка] [-n назив] директоријум изл_дттка\n"
 
-#: disk-utils/mkfs.cramfs.c:132
+#: disk-utils/mkfs.cramfs.c:134
 msgid "Make compressed ROM file system."
 msgstr "Направите сажети ROM систем датотека."
 
-#: disk-utils/mkfs.cramfs.c:134
+#: disk-utils/mkfs.cramfs.c:136
 msgid " -v             be verbose"
 msgstr " -v               бива опширан"
 
-#: disk-utils/mkfs.cramfs.c:135
+#: disk-utils/mkfs.cramfs.c:137
 msgid " -E             make all warnings errors (non-zero exit status)"
 msgstr " -E               чини сва упозорења грешкама (не-нулто стање излаза)"
 
-#: disk-utils/mkfs.cramfs.c:136
+#: disk-utils/mkfs.cramfs.c:138
 msgid " -b blksize     use this blocksize, must equal page size"
 msgstr " -b блк_влчна     користи ову величину блока, мора да буде иста величини странице"
 
-#: disk-utils/mkfs.cramfs.c:137
+#: disk-utils/mkfs.cramfs.c:139
 msgid " -e edition     set edition number (part of fsid)"
 msgstr " -e издање        поставља број издања (део „fsid“-а)"
 
-#: disk-utils/mkfs.cramfs.c:138
+#: disk-utils/mkfs.cramfs.c:140
 #, c-format
 msgid " -N endian      set cramfs endianness (%s|%s|%s), default %s\n"
 msgstr " -N крајњост      поставља крајњост „cramfs“-а (%s|%s|%s), основна је %s\n"
 
-#: disk-utils/mkfs.cramfs.c:139
+#: disk-utils/mkfs.cramfs.c:141
 msgid " -i file        insert a file image into the filesystem"
 msgstr " -i дттка         умеће слику датотеке у систем датотека"
 
-#: disk-utils/mkfs.cramfs.c:140
+#: disk-utils/mkfs.cramfs.c:142
 msgid " -n name        set name of cramfs filesystem"
 msgstr " -n назив         поставља назив „cramfs“ система датотека"
 
-#: disk-utils/mkfs.cramfs.c:141
+#: disk-utils/mkfs.cramfs.c:143
 #, c-format
 msgid " -p             pad by %d bytes for boot code\n"
 msgstr " -p               попуњава са %d бајта за код подизања\n"
 
-#: disk-utils/mkfs.cramfs.c:142
+#: disk-utils/mkfs.cramfs.c:144
 msgid " -s             sort directory entries (old option, ignored)"
 msgstr " -s               ређа уносе директоријума (стара опција, занемарена)"
 
-#: disk-utils/mkfs.cramfs.c:143
+#: disk-utils/mkfs.cramfs.c:145
 msgid " -z             make explicit holes"
 msgstr " -z               прави изричите рупе"
 
-#: disk-utils/mkfs.cramfs.c:144
+#: disk-utils/mkfs.cramfs.c:146
 msgid " -l[=<mode>]    use exclusive device lock (yes, no or nonblock)"
 msgstr " -lock[=<режим>]     користи искључиво закључавање уређаја („yes“, „no“ или „nonblock“)"
 
-#: disk-utils/mkfs.cramfs.c:145
+#: disk-utils/mkfs.cramfs.c:147
 msgid " dirname        root of the filesystem to be compressed"
 msgstr " dirname          корен система датотека за сажимање"
 
-#: disk-utils/mkfs.cramfs.c:146
+#: disk-utils/mkfs.cramfs.c:148
 msgid " outfile        output file"
 msgstr " изл_дттка        излазна датотека"
 
-#: disk-utils/mkfs.cramfs.c:166
+#: disk-utils/mkfs.cramfs.c:168
 #, c-format
 msgid "readlink failed: %s"
 msgstr "„readlink“ није успело: %s"
 
-#: disk-utils/mkfs.cramfs.c:311
+#: disk-utils/mkfs.cramfs.c:313
 #, c-format
 msgid "could not read directory %s"
 msgstr "не могу да читам директоријум „%s“"
 
-#: disk-utils/mkfs.cramfs.c:446
+#: disk-utils/mkfs.cramfs.c:448
 msgid "filesystem too big.  Exiting."
 msgstr "систем датотека је превелик.  Одлазим."
 
-#: disk-utils/mkfs.cramfs.c:605
+#: disk-utils/mkfs.cramfs.c:607
 #, c-format
 msgid "AIEEE: block \"compressed\" to > 2*blocklength (%ld)\n"
 msgstr "AIEEE: блок „сажет“ на > 2*дужине_блока (%ld)\n"
 
-#: disk-utils/mkfs.cramfs.c:624
+#: disk-utils/mkfs.cramfs.c:626
 #, c-format
 msgid "%6.2f%% (%+ld bytes)\t%s\n"
 msgstr "%6.2f%% (%+ld бајта)\t%s\n"
 
-#: disk-utils/mkfs.cramfs.c:669
+#: disk-utils/mkfs.cramfs.c:671
 #, c-format
 msgid "cannot close file %s"
 msgstr "не могу да затворим датотеку „%s“"
 
-#: disk-utils/mkfs.cramfs.c:747
+#: disk-utils/mkfs.cramfs.c:749
 msgid "invalid edition number argument"
 msgstr "неисправан аргумент броја издања"
 
-#: disk-utils/mkfs.cramfs.c:757
+#: disk-utils/mkfs.cramfs.c:759
 msgid "invalid endianness given; must be 'big', 'little', or 'host'"
 msgstr "неисправна крајњост је дата; мора бити „big“, „little“, или „host“"
 
-#: disk-utils/mkfs.cramfs.c:833
+#: disk-utils/mkfs.cramfs.c:835
 #, c-format
 msgid "warning: guestimate of required size (upper bound) is %lldMB, but maximum image size is %uMB.  We might die prematurely."
 msgstr "упозорење: „guestimate“ захтеване величине (горња граница) је %lld MB, али највећа величина слике је %u MB.  Можемо умрети прерано (и шта ћете онда сами да радите???)."
 
-#: disk-utils/mkfs.cramfs.c:857
+#: disk-utils/mkfs.cramfs.c:859
 msgid "ROM image map"
 msgstr "Мапа РОМ слике"
 
-#: disk-utils/mkfs.cramfs.c:869
+#: disk-utils/mkfs.cramfs.c:871
 #, c-format
 msgid "Including: %s\n"
 msgstr "Укључујем: %s\n"
 
-#: disk-utils/mkfs.cramfs.c:875
+#: disk-utils/mkfs.cramfs.c:877
 #, c-format
 msgid "Directory data: %zd bytes\n"
 msgstr "Подаци директоријума: %zd бајта\n"
 
-#: disk-utils/mkfs.cramfs.c:883
+#: disk-utils/mkfs.cramfs.c:885
 #, c-format
 msgid "Everything: %zd kilobytes\n"
 msgstr "Све: %zd килобајта\n"
 
-#: disk-utils/mkfs.cramfs.c:888
+#: disk-utils/mkfs.cramfs.c:890
 #, c-format
 msgid "Super block: %zd bytes\n"
 msgstr "Супер блок: %zd бајта\n"
 
-#: disk-utils/mkfs.cramfs.c:895
+#: disk-utils/mkfs.cramfs.c:897
 #, c-format
 msgid "CRC: %x\n"
 msgstr "CRC: %x\n"
 
-#: disk-utils/mkfs.cramfs.c:900
+#: disk-utils/mkfs.cramfs.c:902
 #, c-format
 msgid "not enough space allocated for ROM image (%lld allocated, %zu used)"
 msgstr "није додељено довољно простора за РОМ слику (додељено је %lld, коришћено је %zu)"
 
-#: disk-utils/mkfs.cramfs.c:906
+#: disk-utils/mkfs.cramfs.c:908
 #, c-format
 msgid "ROM image write failed (%zd %zd)"
 msgstr "Писање РОМ слике није успело (%zd %zd)"
 
-#: disk-utils/mkfs.cramfs.c:909
+#: disk-utils/mkfs.cramfs.c:911
 msgid "ROM image"
 msgstr "РОМ слика"
 
@@ -3248,31 +3248,31 @@ msgstr "РОМ слика"
 #  "source for this file has been used; you may need to resolve conflicts "
 #  "manually"
 # Please translate the English msgstr, not the msgid.
-#: disk-utils/mkfs.cramfs.c:918
+#: disk-utils/mkfs.cramfs.c:920
 #, c-format
 msgid "warning: filenames truncated to %u bytes."
 msgstr "упозорење: називи датотека су скраћени на %u бајта."
 
-#: disk-utils/mkfs.cramfs.c:920
+#: disk-utils/mkfs.cramfs.c:922
 msgid "warning: files were skipped due to errors."
 msgstr "упозорење: датотеке су прескочене због грешака."
 
-#: disk-utils/mkfs.cramfs.c:922
+#: disk-utils/mkfs.cramfs.c:924
 #, c-format
 msgid "warning: file sizes truncated to %luMB (minus 1 byte)."
 msgstr "упозорење: величине датотека су скраћене на %luMB (минус 1 бајт)."
 
-#: disk-utils/mkfs.cramfs.c:926
+#: disk-utils/mkfs.cramfs.c:928
 #, c-format
 msgid "warning: uids truncated to %u bits.  (This may be a security concern.)"
 msgstr "упозорење: уиб-ови су скраћени на %u бита.  (Ово може бити проблем безбедности.)"
 
-#: disk-utils/mkfs.cramfs.c:929
+#: disk-utils/mkfs.cramfs.c:931
 #, c-format
 msgid "warning: gids truncated to %u bits.  (This may be a security concern.)"
 msgstr "упозорење: гиб-ови су скраћени на %u бита.  (Ово може бити проблем безбедности.)"
 
-#: disk-utils/mkfs.cramfs.c:932
+#: disk-utils/mkfs.cramfs.c:934
 #, c-format
 msgid ""
 "WARNING: device numbers truncated to %u bits.  This almost certainly means\n"
@@ -3281,101 +3281,101 @@ msgstr ""
 "УПОЗОРЕЊЕ: бројеви уређаја су скраћени на %u бита.  Ово сасвим сигурно значи\n"
 "да ће неке датотеке уређаја бити погрешне."
 
-#: disk-utils/mkfs.minix.c:139
+#: disk-utils/mkfs.minix.c:143
 #, c-format
 msgid " %s [options] /dev/name [blocks]\n"
 msgstr " %s [опције] /dev/name [блокова]\n"
 
-#: disk-utils/mkfs.minix.c:141
+#: disk-utils/mkfs.minix.c:145
 msgid " -1                      use Minix version 1\n"
 msgstr " -1                       користи Миникс издање 1\n"
 
-#: disk-utils/mkfs.minix.c:142
+#: disk-utils/mkfs.minix.c:146
 msgid " -2, -v                  use Minix version 2\n"
 msgstr " -2, -v                   користи Миникс издање 2\n"
 
-#: disk-utils/mkfs.minix.c:143
+#: disk-utils/mkfs.minix.c:147
 msgid " -3                      use Minix version 3\n"
 msgstr " -3                       користи Миникс издање 3\n"
 
-#: disk-utils/mkfs.minix.c:144
+#: disk-utils/mkfs.minix.c:148
 msgid " -n, --namelength <num>  maximum length of filenames\n"
 msgstr " -n, --namelength <бр.>   највећа дужина назива датотека\n"
 
-#: disk-utils/mkfs.minix.c:145
+#: disk-utils/mkfs.minix.c:149
 msgid " -i, --inodes <num>      number of inodes for the filesystem\n"
 msgstr " -i, --inodes <бр.>       број и-чворова за систем датотека\n"
 
-#: disk-utils/mkfs.minix.c:146
+#: disk-utils/mkfs.minix.c:150
 msgid " -c, --check             check the device for bad blocks\n"
 msgstr " -c, --check              проверава уређај за лошим блоковима\n"
 
-#: disk-utils/mkfs.minix.c:147
+#: disk-utils/mkfs.minix.c:151
 msgid " -l, --badblocks <file>  list of bad blocks from file\n"
 msgstr " -l, --badblocks <дттка>  списак лоших блокова из датотеке\n"
 
-#: disk-utils/mkfs.minix.c:149
+#: disk-utils/mkfs.minix.c:153
 #, c-format
 msgid "     --lock[=<mode>]     use exclusive device lock (%s, %s or %s)\n"
 msgstr "     --lock[=<режим>]     користи искључиво закључавање уређаја (%s, %s или %s)\n"
 
-#: disk-utils/mkfs.minix.c:192
+#: disk-utils/mkfs.minix.c:196
 #, c-format
 msgid "%s: seek to boot block failed  in write_tables"
 msgstr "%s: премотавање до подизног блока није успело у писању_табела"
 
-#: disk-utils/mkfs.minix.c:195
+#: disk-utils/mkfs.minix.c:199
 #, c-format
 msgid "%s: unable to clear boot sector"
 msgstr "%s: не могу да очистим подизни сектор"
 
-#: disk-utils/mkfs.minix.c:197
+#: disk-utils/mkfs.minix.c:201
 #, c-format
 msgid "%s: seek failed in write_tables"
 msgstr "%s: премотавање није успело у писању_табела"
 
-#: disk-utils/mkfs.minix.c:200
+#: disk-utils/mkfs.minix.c:204
 #, c-format
 msgid "%s: unable to write super-block"
 msgstr "%s: не могу да пишем супер-блок"
 
-#: disk-utils/mkfs.minix.c:203
+#: disk-utils/mkfs.minix.c:207
 #, c-format
 msgid "%s: unable to write inode map"
 msgstr "%s: не могу да пишем мапу и-чвора"
 
-#: disk-utils/mkfs.minix.c:206
+#: disk-utils/mkfs.minix.c:210
 #, c-format
 msgid "%s: unable to write zone map"
 msgstr "%s: не могу да пишем мапу зоне"
 
-#: disk-utils/mkfs.minix.c:209
+#: disk-utils/mkfs.minix.c:213
 #, c-format
 msgid "%s: unable to write inodes"
 msgstr "%s: не могу да пишем и-чворове"
 
-#: disk-utils/mkfs.minix.c:214
+#: disk-utils/mkfs.minix.c:218
 #, c-format
 msgid "%s: seek failed in write_block"
 msgstr "%s: премотавање није успело у писању_блока"
 
-#: disk-utils/mkfs.minix.c:217
+#: disk-utils/mkfs.minix.c:221
 #, c-format
 msgid "%s: write failed in write_block"
 msgstr "%s: писање није успело у писању_блока"
 
-#: disk-utils/mkfs.minix.c:226 disk-utils/mkfs.minix.c:301
-#: disk-utils/mkfs.minix.c:350
+#: disk-utils/mkfs.minix.c:230 disk-utils/mkfs.minix.c:305
+#: disk-utils/mkfs.minix.c:354
 #, c-format
 msgid "%s: too many bad blocks"
 msgstr "%s: превише лоших блокова"
 
-#: disk-utils/mkfs.minix.c:234
+#: disk-utils/mkfs.minix.c:238
 #, c-format
 msgid "%s: not enough good blocks"
 msgstr "%s: нема довољно добрих блокова"
 
-#: disk-utils/mkfs.minix.c:549
+#: disk-utils/mkfs.minix.c:553
 #, c-format
 msgid ""
 "First data block at %jd, which is too far (max %d).\n"
@@ -3384,7 +3384,7 @@ msgstr ""
 "Први блок податтака је на %jd, што је предалеко (највише %d).\n"
 "Покушајте да наведете мање и-чворова опцијом --inodes <бр.>"
 
-#: disk-utils/mkfs.minix.c:569
+#: disk-utils/mkfs.minix.c:573
 #, c-format
 msgid "%lu inode\n"
 msgid_plural "%lu inodes\n"
@@ -3392,7 +3392,7 @@ msgstr[0] "%lu и-чвор\n"
 msgstr[1] "%lu и-чвора\n"
 msgstr[2] "%lu и-чворова\n"
 
-#: disk-utils/mkfs.minix.c:570
+#: disk-utils/mkfs.minix.c:574
 #, c-format
 msgid "%lu block\n"
 msgid_plural "%lu blocks\n"
@@ -3400,12 +3400,12 @@ msgstr[0] "%lu блок\n"
 msgstr[1] "%lu блока\n"
 msgstr[2] "%lu блокова\n"
 
-#: disk-utils/mkfs.minix.c:573
+#: disk-utils/mkfs.minix.c:577
 #, c-format
 msgid "Zonesize=%zu\n"
 msgstr "Величина_зоне=%zu\n"
 
-#: disk-utils/mkfs.minix.c:574
+#: disk-utils/mkfs.minix.c:578
 #, c-format
 msgid ""
 "Maxsize=%zu\n"
@@ -3414,27 +3414,27 @@ msgstr ""
 "Највећа_величина=%zu\n"
 "\n"
 
-#: disk-utils/mkfs.minix.c:587
+#: disk-utils/mkfs.minix.c:591
 #, c-format
 msgid "%s: seek failed during testing of blocks"
 msgstr "%s: премотавање није успело за време тестирања блокова"
 
-#: disk-utils/mkfs.minix.c:594
+#: disk-utils/mkfs.minix.c:598
 #, c-format
 msgid "Weird values in do_check: probably bugs\n"
 msgstr "Чудна вредност у „do_check“: вероватно грешка\n"
 
-#: disk-utils/mkfs.minix.c:627
+#: disk-utils/mkfs.minix.c:631
 #, c-format
 msgid "%s: seek failed in check_blocks"
 msgstr "%s: премотавање није успело у провери_блокова"
 
-#: disk-utils/mkfs.minix.c:637
+#: disk-utils/mkfs.minix.c:641
 #, c-format
 msgid "%s: bad blocks before data-area: cannot make fs"
 msgstr "%s: лоши блокови пре области података: не могу да направим систем датотека"
 
-#: disk-utils/mkfs.minix.c:644 disk-utils/mkfs.minix.c:668
+#: disk-utils/mkfs.minix.c:648 disk-utils/mkfs.minix.c:672
 #, c-format
 msgid "%d bad block\n"
 msgid_plural "%d bad blocks\n"
@@ -3442,157 +3442,157 @@ msgstr[0] "%d лош блок\n"
 msgstr[1] "%d лоша блока\n"
 msgstr[2] "%d лоших блокова\n"
 
-#: disk-utils/mkfs.minix.c:653
+#: disk-utils/mkfs.minix.c:657
 #, c-format
 msgid "%s: can't open file of bad blocks"
 msgstr "%s: не могу да отворим датотеку лоших блокова"
 
-#: disk-utils/mkfs.minix.c:658
+#: disk-utils/mkfs.minix.c:662
 #, c-format
 msgid "badblock number input error on line %d\n"
 msgstr "грешка уноса броја лошег блока у реду %d\n"
 
-#: disk-utils/mkfs.minix.c:659
+#: disk-utils/mkfs.minix.c:663
 #, c-format
 msgid "%s: cannot read badblocks file"
 msgstr "%s: не могу да читам датотеку лоших блокова"
 
-#: disk-utils/mkfs.minix.c:699
+#: disk-utils/mkfs.minix.c:703
 #, c-format
 msgid "block size smaller than physical sector size of %s"
 msgstr "величина блока је мања од величине физичког сектора за „%s“"
 
-#: disk-utils/mkfs.minix.c:702 disk-utils/mkswap.c:349
+#: disk-utils/mkfs.minix.c:706 disk-utils/mkswap.c:356
 #, c-format
 msgid "cannot determine size of %s"
 msgstr "не могу да одредим величину за „%s“"
 
-#: disk-utils/mkfs.minix.c:710
+#: disk-utils/mkfs.minix.c:714
 #, c-format
 msgid "%s: requested blocks (%llu) exceeds available (%llu) blocks\n"
 msgstr "%s: захтевани блокови (%llu) превазилазе доступне (%llu) блокове\n"
 
-#: disk-utils/mkfs.minix.c:713
+#: disk-utils/mkfs.minix.c:717
 #, c-format
 msgid "%s: number of blocks too small"
 msgstr "%s: број блокова је премали"
 
-#: disk-utils/mkfs.minix.c:728 disk-utils/mkfs.minix.c:734
+#: disk-utils/mkfs.minix.c:732 disk-utils/mkfs.minix.c:738
 #, c-format
 msgid "unsupported name length: %d"
 msgstr "неподржана дужина назива: %d"
 
-#: disk-utils/mkfs.minix.c:737
+#: disk-utils/mkfs.minix.c:741
 #, c-format
 msgid "unsupported minix file system version: %d"
 msgstr "неподржано издање миникс система датотека: %d"
 
-#: disk-utils/mkfs.minix.c:778
+#: disk-utils/mkfs.minix.c:782
 msgid "-v is ambiguous, use '-2' instead"
 msgstr "„-v“ је нејасно, користите -2"
 
-#: disk-utils/mkfs.minix.c:789
+#: disk-utils/mkfs.minix.c:793
 msgid "failed to parse maximum length of filenames"
 msgstr "нисам успео да обрадим највећу дужину назива датотека"
 
-#: disk-utils/mkfs.minix.c:793
+#: disk-utils/mkfs.minix.c:797
 msgid "failed to parse number of inodes"
 msgstr "нисам успео да обрадим број и-чворова"
 
-#: disk-utils/mkfs.minix.c:824
+#: disk-utils/mkfs.minix.c:828
 msgid "failed to parse number of blocks"
 msgstr "нисам успео да обрадим број блокова"
 
-#: disk-utils/mkfs.minix.c:832
+#: disk-utils/mkfs.minix.c:836
 #, c-format
 msgid "%s is mounted; will not make a filesystem here!"
 msgstr "„%s“ је прикачен; нећу направити систем датотека овде!"
 
-#: disk-utils/mkswap.c:111
+#: disk-utils/mkswap.c:118
 #, c-format
 msgid "Bad user-specified page size %u"
 msgstr "Лоша величина странице коју је навео корисник - %u"
 
-#: disk-utils/mkswap.c:114
+#: disk-utils/mkswap.c:121
 #, c-format
 msgid "Using user-specified page size %d, instead of the system value %d"
 msgstr "Користим величину странице коју је навео корисник %d, уместо системске вредности %d"
 
-#: disk-utils/mkswap.c:156
+#: disk-utils/mkswap.c:163
 msgid "Label was truncated."
 msgstr "Натпис је скраћен."
 
-#: disk-utils/mkswap.c:164
+#: disk-utils/mkswap.c:171
 #, c-format
 msgid "no label, "
 msgstr "нема натписа, "
 
-#: disk-utils/mkswap.c:172
+#: disk-utils/mkswap.c:179
 #, c-format
 msgid "no uuid\n"
 msgstr "нема ууиб-а\n"
 
-#: disk-utils/mkswap.c:181
+#: disk-utils/mkswap.c:188
 #, c-format
 msgid " %s [options] device [size]\n"
 msgstr " %s [опције] уређај [величина]\n"
 
-#: disk-utils/mkswap.c:184
+#: disk-utils/mkswap.c:191
 msgid "Set up a Linux swap area.\n"
 msgstr "Поставите област Линуксове разменске меморије.\n"
 
-#: disk-utils/mkswap.c:187
+#: disk-utils/mkswap.c:194
 msgid " -c, --check               check bad blocks before creating the swap area\n"
 msgstr " -c, --check              проверава уређај за лошим блоковима пре стварања разменске меморије\n"
 
-#: disk-utils/mkswap.c:188
+#: disk-utils/mkswap.c:195
 msgid " -f, --force               allow swap size area be larger than device\n"
 msgstr " -f, --force              омогућава да величина разменске меморије буде већа од уређаја\n"
 
-#: disk-utils/mkswap.c:189
+#: disk-utils/mkswap.c:196
 msgid " -q, --quiet               suppress output and warning messages\n"
 msgstr " -q, --quiet                          потискује поруке излаза и упозорења\n"
 
-#: disk-utils/mkswap.c:190
+#: disk-utils/mkswap.c:197
 msgid " -p, --pagesize SIZE       specify page size in bytes\n"
 msgstr " -p, --pagesize ВЕЛИЧИНА  одређује величину странице у бајтовима\n"
 
-#: disk-utils/mkswap.c:191
+#: disk-utils/mkswap.c:198
 msgid " -L, --label LABEL         specify label\n"
 msgstr " -L, --label НАТПИС       наводи натпис\n"
 
-#: disk-utils/mkswap.c:192
+#: disk-utils/mkswap.c:199
 msgid " -v, --swapversion NUM     specify swap-space version number\n"
 msgstr " -v, --swapversion БР.    наводи број издања разменске меморије\n"
 
-#: disk-utils/mkswap.c:193
+#: disk-utils/mkswap.c:200
 msgid " -U, --uuid UUID           specify the uuid to use\n"
 msgstr " -U, --uuid УУИБ          наводи ууиб за коришћење\n"
 
-#: disk-utils/mkswap.c:195
+#: disk-utils/mkswap.c:202
 #, c-format
 msgid " -e, --endianness=<value>  specify the endianness to use (%s, %s or %s)\n"
 msgstr " -e, --endianness=<вредност>  наводи крајност за коришћење (%s, %s или %s)\n"
 
-#: disk-utils/mkswap.c:197
+#: disk-utils/mkswap.c:204
 msgid "     --verbose             verbose output\n"
 msgstr "     --verbose            опширан излаз\n"
 
-#: disk-utils/mkswap.c:200 disk-utils/sfdisk.c:2088
+#: disk-utils/mkswap.c:207 disk-utils/sfdisk.c:2088
 #, c-format
 msgid "     --lock[=<mode>]       use exclusive device lock (%s, %s or %s)\n"
 msgstr "     --lock[=<режим>]     користи искључиво закључавање уређаја (%s, %s или %s)\n"
 
-#: disk-utils/mkswap.c:214
+#: disk-utils/mkswap.c:221
 #, c-format
 msgid "too many bad pages: %lu"
 msgstr "превише лоших страница: %lu"
 
-#: disk-utils/mkswap.c:235
+#: disk-utils/mkswap.c:242
 msgid "seek failed in check_blocks"
 msgstr "премотавање није успело у провери_блокова"
 
-#: disk-utils/mkswap.c:245
+#: disk-utils/mkswap.c:252
 #, c-format
 msgid "%lu bad page\n"
 msgid_plural "%lu bad pages\n"
@@ -3600,7 +3600,7 @@ msgstr[0] "%lu лоша страница\n"
 msgstr[1] "%lu лоше странице\n"
 msgstr[2] "%lu лоших страница\n"
 
-#: disk-utils/mkswap.c:257
+#: disk-utils/mkswap.c:264
 #, c-format
 msgid ""
 "mkswap: %s contains holes or other unsupported extents.\n"
@@ -3609,114 +3609,114 @@ msgstr ""
 "mkswap: „%s“ садржи рупе или друга неподржана проширења.\n"
 "        Ову датотеку разменске меморије би могло језгро да одбаци при активирању разменске меморије!\n"
 
-#: disk-utils/mkswap.c:265
+#: disk-utils/mkswap.c:272
 #, c-format
 msgid "        Use --verbose for more details.\n"
 msgstr "        Користите „--verbose“ за више појединости.\n"
 
-#: disk-utils/mkswap.c:306 disk-utils/mkswap.c:331
+#: disk-utils/mkswap.c:313 disk-utils/mkswap.c:338
 #, c-format
 msgid "hole detected at offset %ju"
 msgstr "рупа је откривена на померају %ju"
 
-#: disk-utils/mkswap.c:314
+#: disk-utils/mkswap.c:321
 #, c-format
 msgid "data inline extent at offset %ju"
 msgstr "унутарње подручје података на померају %ju"
 
-#: disk-utils/mkswap.c:317
+#: disk-utils/mkswap.c:324
 #, c-format
 msgid "shared extent at offset %ju"
 msgstr "дељено подручје на померају %ju"
 
-#: disk-utils/mkswap.c:320
+#: disk-utils/mkswap.c:327
 #, c-format
 msgid "unallocated extent at offset %ju"
 msgstr "недодељено подручје на померају %ju"
 
-#: disk-utils/mkswap.c:361
+#: disk-utils/mkswap.c:368
 msgid "unable to alloc new libblkid probe"
 msgstr "не могу да доделим нову „libblkid“ пробу"
 
-#: disk-utils/mkswap.c:363
+#: disk-utils/mkswap.c:370
 msgid "unable to assign device to libblkid probe"
 msgstr "не могу да доделим уређај „libblkid“ проби"
 
-#: disk-utils/mkswap.c:385
+#: disk-utils/mkswap.c:392
 #, c-format
 msgid "warning: checking bad blocks from swap file is not supported: %s"
 msgstr "упозорење: провера лоших блокова из датотеке разменске меморије није подржана: %s"
 
-#: disk-utils/mkswap.c:400 disk-utils/mkswap.c:425 disk-utils/mkswap.c:473
+#: disk-utils/mkswap.c:407 disk-utils/mkswap.c:432 disk-utils/mkswap.c:480
 msgid "unable to rewind swap-device"
 msgstr "не могу да премотам уназад уређај разменске меморије"
 
-#: disk-utils/mkswap.c:428
+#: disk-utils/mkswap.c:435
 msgid "unable to erase bootbits sectors"
 msgstr "не могу да обришем секторе подизних битова"
 
-#: disk-utils/mkswap.c:445
+#: disk-utils/mkswap.c:452
 #, c-format
 msgid "%s: warning: wiping old %s signature."
 msgstr "%s: упозорење: бришем стари „%s“ потпис."
 
-#: disk-utils/mkswap.c:450
+#: disk-utils/mkswap.c:457
 #, c-format
 msgid "%s: warning: don't erase bootbits sectors"
 msgstr "%s: упозорење: не бришем секторе подизних битова"
 
-#: disk-utils/mkswap.c:453
+#: disk-utils/mkswap.c:460
 #, c-format
 msgid "        (%s partition table detected). "
 msgstr "        (открио сам „%s“ партициону табелу). "
 
-#: disk-utils/mkswap.c:455
+#: disk-utils/mkswap.c:462
 #, c-format
 msgid "        (compiled without libblkid). "
 msgstr "        (преведено без „libblkid“-а). "
 
-#: disk-utils/mkswap.c:456
+#: disk-utils/mkswap.c:463
 #, c-format
 msgid "Use -f to force.\n"
 msgstr "Користите „-f“ да присилите.\n"
 
-#: disk-utils/mkswap.c:478
+#: disk-utils/mkswap.c:485
 #, c-format
 msgid "%s: unable to write signature page"
 msgstr "%s: не могу да пишем страницу потписа"
 
-#: disk-utils/mkswap.c:536
+#: disk-utils/mkswap.c:543
 msgid "parsing page size failed"
 msgstr "обрада величине странице није успела"
 
-#: disk-utils/mkswap.c:545
+#: disk-utils/mkswap.c:552
 msgid "parsing version number failed"
 msgstr "обрада броја издања није успела"
 
-#: disk-utils/mkswap.c:548
+#: disk-utils/mkswap.c:555
 #, c-format
 msgid "swapspace version %d is not supported"
 msgstr "издање разменског простора %d није подржано"
 
-#: disk-utils/mkswap.c:554
+#: disk-utils/mkswap.c:561
 #, c-format
 msgid "warning: ignoring -U (UUIDs are unsupported by %s)"
 msgstr "упозорење: занемарујем „-U“ („%s“ не подржава УУИБ-ове)"
 
-#: disk-utils/mkswap.c:567
+#: disk-utils/mkswap.c:574
 #, c-format
 msgid "invalid endianness %s is not supported"
 msgstr "неисправна крајност „%s“ није подржана"
 
-#: disk-utils/mkswap.c:596
+#: disk-utils/mkswap.c:603
 msgid "only one device argument is currently supported"
 msgstr "тренутно је подржан само један аргумент уређаја"
 
-#: disk-utils/mkswap.c:609
+#: disk-utils/mkswap.c:616
 msgid "error: parsing UUID failed"
 msgstr "грешка: обрада УУИБ-а није успела"
 
-#: disk-utils/mkswap.c:618
+#: disk-utils/mkswap.c:625
 msgid "error: Nowhere to set up swap on?"
 msgstr "грешка: Нигде да поставим укључену разменску?"
 
@@ -3726,138 +3726,138 @@ msgstr "грешка: Нигде да поставим укључену разм
 # For consistent translation, here is the English text:
 #  msgstr "this function call has the wrong number or type of arguments"
 # Please translate the English msgstr, not the msgid.
-#: disk-utils/mkswap.c:624
+#: disk-utils/mkswap.c:631
 msgid "invalid block count argument"
 msgstr "неисправан аргумент укупности блока"
 
-#: disk-utils/mkswap.c:633
+#: disk-utils/mkswap.c:640
 #, c-format
 msgid "error: size %llu KiB is larger than device size %<PRIu64> KiB"
 msgstr "грешка: величина %llu KiB је већа од величине уређаја %<PRIu64> KiB"
 
-#: disk-utils/mkswap.c:639
+#: disk-utils/mkswap.c:646
 #, c-format
 msgid "error: swap area needs to be at least %ld KiB"
 msgstr "грешка: разменска област треба бити барем %ld KiB"
 
-#: disk-utils/mkswap.c:645
+#: disk-utils/mkswap.c:652
 #, c-format
 msgid "warning: truncating swap area to %llu KiB"
 msgstr "упозорење: скраћујем разменску област на %llu KiB"
 
-#: disk-utils/mkswap.c:650
+#: disk-utils/mkswap.c:657
 #, c-format
 msgid "error: %s is mounted; will not make swapspace"
 msgstr "грешка: „%s“ је прикачена; нећу направити разменски простор"
 
-#: disk-utils/mkswap.c:657
+#: disk-utils/mkswap.c:664
 #, c-format
 msgid "%s: insecure permissions %04o, fix with: chmod %04o %s"
 msgstr "%s: небезбедна овлашћења %04o, поправите са: chmod %04o %s"
 
-#: disk-utils/mkswap.c:662
+#: disk-utils/mkswap.c:669
 #, c-format
 msgid "%s: insecure file owner %d, fix with: chown 0:0 %s"
 msgstr "%s: небезбедан власник датотеке %d, поправите са: chown 0:0 %s"
 
-#: disk-utils/mkswap.c:681
+#: disk-utils/mkswap.c:688
 msgid "Unable to set up swap-space: unreadable"
 msgstr "Не могу да поставим разменски простор: нечитљиво"
 
-#: disk-utils/mkswap.c:687
+#: disk-utils/mkswap.c:694
 #, c-format
 msgid "Setting up swapspace version %d, size = %s (%<PRIu64> bytes)\n"
 msgstr "Постављам издање разменског простора %d, величина = %s (%<PRIu64> бајта)\n"
 
-#: disk-utils/mkswap.c:707
+#: disk-utils/mkswap.c:714
 #, c-format
 msgid "%s: unable to obtain selinux file label"
 msgstr "%s: не могу да добијем натпис селинукс датотеке"
 
-#: disk-utils/mkswap.c:712
+#: disk-utils/mkswap.c:719
 #, c-format
 msgid "%s: unable to obtain default selinux file label"
 msgstr "%s: не могу да добијем основни натпис селинукс датотеке"
 
-#: disk-utils/mkswap.c:716
+#: disk-utils/mkswap.c:723
 msgid "unable to create new selinux context"
 msgstr "не могу да направим нови селинукс контекст"
 
-#: disk-utils/mkswap.c:718
+#: disk-utils/mkswap.c:725
 msgid "couldn't compute selinux context"
 msgstr "не могу да израчунам селинукс контекст"
 
-#: disk-utils/mkswap.c:724
+#: disk-utils/mkswap.c:731
 #, c-format
 msgid "unable to relabel %s to %s"
 msgstr "не могу поново да поставим натпис „%s“ на „%s“"
 
-#: disk-utils/partx.c:86
+#: disk-utils/partx.c:93
 msgid "partition number"
 msgstr "број партиције"
 
-#: disk-utils/partx.c:87
+#: disk-utils/partx.c:94
 msgid "start of the partition in sectors"
 msgstr "почетак партиције у секторима"
 
-#: disk-utils/partx.c:88
+#: disk-utils/partx.c:95
 msgid "end of the partition in sectors"
 msgstr "крај партиције у секторима"
 
-#: disk-utils/partx.c:89
+#: disk-utils/partx.c:96
 msgid "number of sectors"
 msgstr "број сектора"
 
-#: disk-utils/partx.c:90
+#: disk-utils/partx.c:97
 msgid "human readable size"
 msgstr "људима читљива величина"
 
-#: disk-utils/partx.c:91
+#: disk-utils/partx.c:98
 msgid "partition name"
 msgstr "назив партиције"
 
-#: disk-utils/partx.c:92 misc-utils/findmnt.c:118 misc-utils/lsblk.c:205
+#: disk-utils/partx.c:99 misc-utils/findmnt.c:118 misc-utils/lsblk.c:205
 msgid "partition UUID"
 msgstr "УУИБ партиције"
 
-#: disk-utils/partx.c:93
+#: disk-utils/partx.c:100
 msgid "partition table type (dos, gpt, ...)"
 msgstr "врста партиционе табеле (dos, gpt, ...)"
 
-#: disk-utils/partx.c:94 misc-utils/lsblk.c:200
+#: disk-utils/partx.c:101 misc-utils/lsblk.c:200
 msgid "partition flags"
 msgstr "заставице партиције"
 
-#: disk-utils/partx.c:95
+#: disk-utils/partx.c:102
 msgid "partition type (a string, a UUID, or hex)"
 msgstr "врста партиције (ниска, УУИБ или хексадецимално)"
 
-#: disk-utils/partx.c:114 sys-utils/losetup.c:553 sys-utils/losetup.c:669
+#: disk-utils/partx.c:121 sys-utils/losetup.c:554 sys-utils/losetup.c:670
 msgid "failed to initialize loopcxt"
 msgstr "нисам успео да покренем „loopcxt“"
 
-#: disk-utils/partx.c:118
+#: disk-utils/partx.c:125
 #, c-format
 msgid "%s: failed to find unused loop device"
 msgstr "%s: нисам успео да нађем некоришћени уређај петље"
 
-#: disk-utils/partx.c:122
+#: disk-utils/partx.c:129
 #, c-format
 msgid "Trying to use '%s' for the loop device\n"
 msgstr "Покушавам да користим „%s“ за уређај петље\n"
 
-#: disk-utils/partx.c:126
+#: disk-utils/partx.c:133
 #, c-format
 msgid "%s: failed to set backing file"
 msgstr "%s: нисам успео да поставим датотеку резерве"
 
-#: disk-utils/partx.c:131 sys-utils/losetup.c:602
+#: disk-utils/partx.c:138 sys-utils/losetup.c:603
 #, c-format
 msgid "%s: failed to set up loop device"
 msgstr "%s: нисам успео да поставим уређај петље"
 
-#: disk-utils/partx.c:161 login-utils/lslogins.c:322 misc-utils/fincore.c:92
-#: misc-utils/findmnt.c:383 misc-utils/lsblk.c:343 misc-utils/lsfd.c:477
+#: disk-utils/partx.c:168 login-utils/lslogins.c:322 misc-utils/fincore.c:92
+#: misc-utils/findmnt.c:383 misc-utils/lsblk.c:343 misc-utils/lsfd.c:478
 #: misc-utils/lslocks.c:351 misc-utils/uuidparse.c:125 misc-utils/wipefs.c:132
 #: sys-utils/irq-common.c:103 sys-utils/losetup.c:112 sys-utils/lscpu.c:200
 #: sys-utils/lscpu.c:215 sys-utils/lsipc.c:233 sys-utils/lsmem.c:178
@@ -3867,92 +3867,92 @@ msgstr "%s: нисам успео да поставим уређај петље"
 msgid "unknown column: %s"
 msgstr "непозната колона: %s"
 
-#: disk-utils/partx.c:209
+#: disk-utils/partx.c:216
 #, c-format
 msgid "%s: failed to get partition number"
 msgstr "%s: нисам успео да добавим број партиције"
 
-#: disk-utils/partx.c:287 disk-utils/partx.c:325 disk-utils/partx.c:479
+#: disk-utils/partx.c:294 disk-utils/partx.c:332 disk-utils/partx.c:486
 #, c-format
 msgid "specified range <%d:%d> does not make sense"
 msgstr "наведени опсег <%d:%d> нема смисла"
 
-#: disk-utils/partx.c:291
+#: disk-utils/partx.c:298
 #, c-format
 msgid "range recount: max partno=%d, lower=%d, upper=%d\n"
 msgstr "пребројавање опсега: најв. партбр=%d, доњи=%d, горњи=%d\n"
 
-#: disk-utils/partx.c:298
+#: disk-utils/partx.c:305
 #, c-format
 msgid "%s: error deleting partition %d"
 msgstr "%s: грешка брисања партиције %d"
 
-#: disk-utils/partx.c:300
+#: disk-utils/partx.c:307
 #, c-format
 msgid "%s: error deleting partitions %d-%d"
 msgstr "%s: грешка брисања партиција %d-%d"
 
-#: disk-utils/partx.c:333
+#: disk-utils/partx.c:340
 #, c-format
 msgid "%s: partition #%d removed\n"
 msgstr "%s: партиција #%d је уклоњена\n"
 
-#: disk-utils/partx.c:339
+#: disk-utils/partx.c:346
 #, c-format
 msgid "%s: partition #%d doesn't exist\n"
 msgstr "%s: партиција #%d не постоји\n"
 
-#: disk-utils/partx.c:344
+#: disk-utils/partx.c:351
 #, c-format
 msgid "%s: deleting partition #%d failed"
 msgstr "%s: брисање партиције #%d није успело"
 
-#: disk-utils/partx.c:364
+#: disk-utils/partx.c:371
 #, c-format
 msgid "%s: error adding partition %d"
 msgstr "%s: грешка додавања партиције %d"
 
-#: disk-utils/partx.c:366
+#: disk-utils/partx.c:373
 #, c-format
 msgid "%s: error adding partitions %d-%d"
 msgstr "%s: грешка додавања партиција %d-%d"
 
-#: disk-utils/partx.c:407 disk-utils/partx.c:515
+#: disk-utils/partx.c:414 disk-utils/partx.c:522
 #, c-format
 msgid "%s: partition #%d added\n"
 msgstr "%s: партиција #%d је додата\n"
 
-#: disk-utils/partx.c:412
+#: disk-utils/partx.c:419
 #, c-format
 msgid "%s: adding partition #%d failed"
 msgstr "%s: додавање партиције #%d није успело"
 
-#: disk-utils/partx.c:447
+#: disk-utils/partx.c:454
 #, c-format
 msgid "%s: error updating partition %d"
 msgstr "%s: грешка освежавања партиције %d"
 
-#: disk-utils/partx.c:449
+#: disk-utils/partx.c:456
 #, c-format
 msgid "%s: error updating partitions %d-%d"
 msgstr "%s: грешка освежавања партиција %d-%d"
 
-#: disk-utils/partx.c:488
+#: disk-utils/partx.c:495
 #, c-format
 msgid "%s: no partition #%d"
 msgstr "%s: нема партиције #%d"
 
-#: disk-utils/partx.c:509
+#: disk-utils/partx.c:516
 #, c-format
 msgid "%s: partition #%d resized\n"
 msgstr "%s: промењена је величина партиције #%d\n"
 
-#: disk-utils/partx.c:523
+#: disk-utils/partx.c:530
 #, c-format
 msgid "%s: updating partition #%d failed"
 msgstr "%s: освежавање партиције #%d није успело"
 
-#: disk-utils/partx.c:564
+#: disk-utils/partx.c:571
 #, c-format
 msgid "#%2d: %9ju-%9ju (%9ju sector, %6ju MB)\n"
 msgid_plural "#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n"
@@ -3960,56 +3960,56 @@ msgstr[0] "#%2d: %9ju-%9ju (%9ju сектор, %6ju MB)\n"
 msgstr[1] "#%2d: %9ju-%9ju (%9ju сектора, %6ju MB)\n"
 msgstr[2] "#%2d: %9ju-%9ju (%9ju сектора, %6ju MB)\n"
 
-#: disk-utils/partx.c:680 misc-utils/fincore.c:371 misc-utils/findmnt.c:1792
-#: misc-utils/lsblk.c:2395 misc-utils/lsfd.c:532 misc-utils/lsfd.c:1985
-#: misc-utils/lslocks.c:487 sys-utils/losetup.c:339 sys-utils/lscpu.c:616
+#: disk-utils/partx.c:687 misc-utils/fincore.c:371 misc-utils/findmnt.c:1792
+#: misc-utils/lsblk.c:2395 misc-utils/lsfd.c:533 misc-utils/lsfd.c:1988
+#: misc-utils/lslocks.c:487 sys-utils/losetup.c:340 sys-utils/lscpu.c:616
 #: sys-utils/lscpu.c:772 sys-utils/prlimit.c:320 sys-utils/rfkill.c:487
 #: sys-utils/swapon.c:305 sys-utils/wdctl.c:360
 msgid "failed to allocate output column"
 msgstr "нисам успео да доделим излазну колону"
 
-#: disk-utils/partx.c:724
+#: disk-utils/partx.c:731
 #, c-format
 msgid "failed to initialize blkid filter for '%s'"
 msgstr "нисам успео да покренем „blkid“ филтер за „%s“"
 
-#: disk-utils/partx.c:732
+#: disk-utils/partx.c:739
 #, c-format
 msgid "%s: failed to read partition table"
 msgstr "%s: нисам успео да прочитам партициону табелу"
 
-#: disk-utils/partx.c:738
+#: disk-utils/partx.c:745
 #, c-format
 msgid "%s: partition table type '%s' detected\n"
 msgstr "%s: откривена је партициона табела врсте „%s“\n"
 
-#: disk-utils/partx.c:742
+#: disk-utils/partx.c:749
 #, c-format
 msgid "%s: partition table with no partitions"
 msgstr "%s: партициона табела без партиција"
 
-#: disk-utils/partx.c:755
+#: disk-utils/partx.c:762
 #, c-format
 msgid " %s [-a|-d|-s|-u] [--nr <n:m> | <partition>] <disk>\n"
 msgstr " %s [-a|-d|-s|-u] [--nr <n:m> | <партиција>] <диск>\n"
 
-#: disk-utils/partx.c:759
+#: disk-utils/partx.c:766
 msgid "Tell the kernel about the presence and numbering of partitions.\n"
 msgstr "Говори кернелу о постојању и броју партиција.\n"
 
-#: disk-utils/partx.c:762
+#: disk-utils/partx.c:769
 msgid " -a, --add            add specified partitions or all of them\n"
 msgstr " -a, --add                додаје наведене партиције или све\n"
 
-#: disk-utils/partx.c:763
+#: disk-utils/partx.c:770
 msgid " -d, --delete         delete specified partitions or all of them\n"
 msgstr " -d, --delete             брише наведене партиције или све\n"
 
-#: disk-utils/partx.c:764
+#: disk-utils/partx.c:771
 msgid " -u, --update         update specified partitions or all of them\n"
 msgstr " -u, --update             освежава наведене партиције или све\n"
 
-#: disk-utils/partx.c:765
+#: disk-utils/partx.c:772
 msgid ""
 " -s, --show           list partitions\n"
 "\n"
@@ -4017,79 +4017,79 @@ msgstr ""
 " -s, --show               исписује партиције\n"
 "\n"
 
-#: disk-utils/partx.c:766 misc-utils/lsblk.c:2000 sys-utils/lsmem.c:528
+#: disk-utils/partx.c:773 misc-utils/lsblk.c:2000 sys-utils/lsmem.c:528
 msgid " -b, --bytes          print SIZE in bytes rather than in human readable format\n"
 msgstr " -b, --bytes              исписује ВЕЛИЧИНУ у бајтовима уместо у људима читљивом запису\n"
 
-#: disk-utils/partx.c:767
+#: disk-utils/partx.c:774
 msgid " -g, --noheadings     don't print headings for --show\n"
 msgstr " -g, --noheadings         не исписује заглавља за „--show“\n"
 
-#: disk-utils/partx.c:768
+#: disk-utils/partx.c:775
 msgid " -n, --nr <n:m>       specify the range of partitions (e.g. --nr 2:4)\n"
 msgstr " -n, --nr <n:m>           наводи опсег партиција (нпр. --nr 2:4)\n"
 
-#: disk-utils/partx.c:769 sys-utils/irqtop.c:271 sys-utils/lsirq.c:66
+#: disk-utils/partx.c:776 sys-utils/irqtop.c:271 sys-utils/lsirq.c:66
 msgid " -o, --output <list>  define which output columns to use\n"
 msgstr " -o, --output <списак>    дефинише колоне излаза за коришћење\n"
 
-#: disk-utils/partx.c:770 sys-utils/lsmem.c:531
+#: disk-utils/partx.c:777 sys-utils/lsmem.c:531
 msgid "     --output-all     output all columns\n"
 msgstr "     --output-all         исписује све колоне\n"
 
-#: disk-utils/partx.c:771 misc-utils/lsblk.c:1994 sys-utils/lsirq.c:64
+#: disk-utils/partx.c:778 misc-utils/lsblk.c:1994 sys-utils/lsirq.c:64
 #: sys-utils/lsmem.c:526
 msgid " -P, --pairs          use key=\"value\" output format\n"
 msgstr " -P, --pairs              користи „key=\"value\"“ излазни формат\n"
 
-#: disk-utils/partx.c:772 misc-utils/lsblk.c:2010 sys-utils/lsmem.c:532
+#: disk-utils/partx.c:779 misc-utils/lsblk.c:2010 sys-utils/lsmem.c:532
 msgid " -r, --raw            use raw output format\n"
 msgstr " -r, --raw                користи сирови излазни формат\n"
 
-#: disk-utils/partx.c:773
+#: disk-utils/partx.c:780
 msgid " -S, --sector-size <num>  overwrite sector size\n"
 msgstr " -S, --sector-size <бр.>  преписује величину сектора\n"
 
-#: disk-utils/partx.c:774
+#: disk-utils/partx.c:781
 msgid " -t, --type <type>    specify the partition type\n"
 msgstr " -t, --type <врста>       наводи врсту партиције\n"
 
-#: disk-utils/partx.c:775
+#: disk-utils/partx.c:782
 msgid "     --list-types     list supported partition types and exit\n"
 msgstr "     --list-types         исписује подржане врсте партиција и излази\n"
 
-#: disk-utils/partx.c:776 sys-utils/fallocate.c:101
+#: disk-utils/partx.c:783 sys-utils/fallocate.c:101
 msgid " -v, --verbose        verbose mode\n"
 msgstr " -v, --verbose            режим опширности\n"
 
-#: disk-utils/partx.c:861
+#: disk-utils/partx.c:868
 msgid "failed to parse --nr <M-N> range"
 msgstr "нисам успео да обрадим „--nr <M-N>“ опсег"
 
-#: disk-utils/partx.c:950
+#: disk-utils/partx.c:957
 msgid "partition and disk name do not match"
 msgstr "називи партиције и диска се не поклапају"
 
-#: disk-utils/partx.c:979
+#: disk-utils/partx.c:986
 msgid "--nr and <partition> are mutually exclusive"
 msgstr "„--nr“ и „<партиција>“ се узајамно искључују"
 
-#: disk-utils/partx.c:998
+#: disk-utils/partx.c:1005
 #, c-format
 msgid "partition: %s, disk: %s, lower: %d, upper: %d\n"
 msgstr "партиција: %s, диск: %s, горња: %d, доња: %d\n"
 
-#: disk-utils/partx.c:1010
+#: disk-utils/partx.c:1017
 #, c-format
 msgid "%s: cannot delete partitions"
 msgstr "%s: не могу да обришем партиције"
 
-#: disk-utils/partx.c:1013
+#: disk-utils/partx.c:1020
 #, c-format
 msgid "%s: partitioned loop devices unsupported"
 msgstr "%s: партиционисани урђаји петље нису подржани"
 
-#: disk-utils/partx.c:1031
+#: disk-utils/partx.c:1038
 #, c-format
 msgid "%s: failed to initialize blkid prober"
 msgstr "%s: нисам успео да покренем „blkid“ пробача"
@@ -4172,21 +4172,21 @@ msgstr "%sraw%d:  свезује за главни %d, споредни %d\n"
 msgid "Error setting raw device"
 msgstr "Грешка постављања сировог уређаја"
 
-#: disk-utils/resizepart.c:20
+#: disk-utils/resizepart.c:30
 #, c-format
 msgid " %s <disk device> <partition number> <length>\n"
 msgstr " %s <диск уређај> <број партиције> <дужина>\n"
 
-#: disk-utils/resizepart.c:24
+#: disk-utils/resizepart.c:34
 msgid "Tell the kernel about the new size of a partition.\n"
 msgstr "Говори кернелу о новој величини партиције.\n"
 
-#: disk-utils/resizepart.c:107
+#: disk-utils/resizepart.c:117
 #, c-format
 msgid "%s: failed to get start of the partition number %s"
 msgstr "%s: нисам успео да добавим почетак броја партиције %s"
 
-#: disk-utils/resizepart.c:112
+#: disk-utils/resizepart.c:122
 msgid "failed to resize partition"
 msgstr "нисам успео да променим величину партиције"
 
@@ -4452,7 +4452,7 @@ msgstr "није наведен број партиције"
 
 #: disk-utils/sfdisk.c:1159 disk-utils/sfdisk.c:1227 disk-utils/sfdisk.c:1282
 #: disk-utils/sfdisk.c:1338 disk-utils/sfdisk.c:1387 disk-utils/sfdisk.c:1421
-#: sys-utils/losetup.c:801
+#: sys-utils/losetup.c:802
 msgid "unexpected arguments"
 msgstr "неочекивани аргументи"
 
@@ -4962,41 +4962,41 @@ msgstr "неподржана јединица „%c“"
 msgid "--movedata requires -N"
 msgstr "„--movedata“ захтева „-N“"
 
-#: disk-utils/swaplabel.c:74
+#: disk-utils/swaplabel.c:76
 #, c-format
 msgid "failed to parse UUID: %s"
 msgstr "нисам успео да обрадим УУИБ: %s"
 
-#: disk-utils/swaplabel.c:78
+#: disk-utils/swaplabel.c:80
 #, c-format
 msgid "%s: failed to seek to swap UUID"
 msgstr "%s: нисам успео да премотам до УУИБ-а разменске"
 
-#: disk-utils/swaplabel.c:82
+#: disk-utils/swaplabel.c:84
 #, c-format
 msgid "%s: failed to write UUID"
 msgstr "%s: нисам успео да пишем УУИБ"
 
-#: disk-utils/swaplabel.c:93
+#: disk-utils/swaplabel.c:95
 #, c-format
 msgid "%s: failed to seek to swap label "
 msgstr "%s: нисам успео да премотам до натписа разменске "
 
-#: disk-utils/swaplabel.c:100
+#: disk-utils/swaplabel.c:102
 #, c-format
 msgid "label is too long. Truncating it to '%s'"
 msgstr "натпис је предуг. Скраћујем га на „%s“"
 
-#: disk-utils/swaplabel.c:103
+#: disk-utils/swaplabel.c:105
 #, c-format
 msgid "%s: failed to write label"
 msgstr "%s: нисам успео да пишем натпис"
 
-#: disk-utils/swaplabel.c:127
+#: disk-utils/swaplabel.c:129
 msgid "Display or change the label or UUID of a swap area.\n"
 msgstr "Прикажите или измените натпис или УУИБ разменске области.\n"
 
-#: disk-utils/swaplabel.c:130
+#: disk-utils/swaplabel.c:132
 msgid ""
 " -L, --label <label> specify a new label\n"
 " -U, --uuid <uuid>   specify a new uuid\n"
@@ -5004,7 +5004,7 @@ msgstr ""
 " -L, --label <натпис> наводи нови натпис\n"
 " -U, --uuid <ууиб>    наводи нови ууиб\n"
 
-#: disk-utils/swaplabel.c:171
+#: disk-utils/swaplabel.c:173
 msgid "ignore -U (UUIDs are unsupported)"
 msgstr "занемарујем „-U“ (УУИБ-ови су неподржани)"
 
@@ -5114,8 +5114,8 @@ msgstr "боје су укључене по основи"
 msgid "colors are disabled by default"
 msgstr "боје су искључене по основи"
 
-#: include/env.h:30 lib/pager.c:158 login-utils/login.c:1203
-#: login-utils/login.c:1207 term-utils/agetty.c:1241
+#: include/env.h:30 lib/pager.c:158 login-utils/login.c:1199
+#: login-utils/login.c:1203 term-utils/agetty.c:1241
 #, c-format
 msgid "failed to set the %s environment variable"
 msgstr "нисам успео да подесим „%s“ променљиву окружења"
@@ -5949,6 +5949,44 @@ msgstr "Haiku BFS"
 #: include/pt-gpt-partnames.h:276
 msgid "Marvell Armada 3700 Boot partition"
 msgstr "Marvell Armada 3700 подизна партиција"
+
+#: include/pt-gpt-partnames.h:280
+msgid "DragonFlyBSD Label32"
+msgstr ""
+
+#: include/pt-gpt-partnames.h:281
+msgid "DragonFlyBSD Swap"
+msgstr ""
+
+#: include/pt-gpt-partnames.h:282
+msgid "DragonFlyBSD UFS1"
+msgstr ""
+
+#: include/pt-gpt-partnames.h:283
+#, fuzzy
+#| msgid "FreeBSD Vinum"
+msgid "DragonFlyBSD Vinum"
+msgstr "FreeBSD Vinum"
+
+#: include/pt-gpt-partnames.h:284
+msgid "DragonFlyBSD CCD"
+msgstr ""
+
+#: include/pt-gpt-partnames.h:285
+msgid "DragonFlyBSD Label64"
+msgstr ""
+
+#: include/pt-gpt-partnames.h:286
+msgid "DragonFlyBSD Legacy"
+msgstr ""
+
+#: include/pt-gpt-partnames.h:287
+msgid "DragonFlyBSD HAMMER"
+msgstr ""
+
+#: include/pt-gpt-partnames.h:288
+msgid "DragonFlyBSD HAMMER2"
+msgstr ""
 
 #: include/pt-mbr-partnames.h:5
 msgid "Empty"
@@ -7296,11 +7334,11 @@ msgstr "Немам шта да радим. Поредак је већ испра
 msgid "Failed to fix partitions order."
 msgstr "Нисам успео да поправим поредак партиција."
 
-#: libfdisk/src/partition.c:879
+#: libfdisk/src/partition.c:881
 msgid "Free space"
 msgstr "Слободан простор"
 
-#: libfdisk/src/partition.c:1373
+#: libfdisk/src/partition.c:1375
 #, c-format
 msgid "Failed to resize partition #%zu."
 msgstr "Нисам успео да променим величину партиције #%zu."
@@ -8573,119 +8611,119 @@ msgstr "промена атрибута корисника није успела
 msgid "user attribute not changed: %s"
 msgstr "атрибути корисника нису измењени: %s"
 
-#: login-utils/login.c:417
+#: login-utils/login.c:413
 #, c-format
 msgid "You have new mail.\n"
 msgstr "Имате нову пошту.\n"
 
-#: login-utils/login.c:419
+#: login-utils/login.c:415
 #, c-format
 msgid "You have mail.\n"
 msgstr "Имате пошту.\n"
 
-#: login-utils/login.c:442
+#: login-utils/login.c:438
 #, c-format
 msgid "FATAL: can't reopen tty: %m"
 msgstr "КОБНО: не могу поново да отворим конзолу: %m"
 
-#: login-utils/login.c:448
+#: login-utils/login.c:444
 #, c-format
 msgid "FATAL: %s is not a terminal"
 msgstr "КОБНО: „%s“ није терминал"
 
-#: login-utils/login.c:467
+#: login-utils/login.c:463
 #, c-format
 msgid "chown (%s, %u, %u) failed: %m"
 msgstr "„chown“ (%s, %u, %u) није успело: %m"
 
-#: login-utils/login.c:472
+#: login-utils/login.c:468
 #, c-format
 msgid "chmod (%s, %u) failed: %m"
 msgstr "„chmod“ (%s, %u) није успело: %m"
 
-#: login-utils/login.c:535
+#: login-utils/login.c:531
 msgid "FATAL: bad tty"
 msgstr "КОБНО: лоша конзола"
 
-#: login-utils/login.c:551
+#: login-utils/login.c:547
 #, c-format
 msgid "TIOCGWINSZ ioctl failed: %m"
 msgstr "TIOCSCTTY „ioctl“ није успело: %m"
 
-#: login-utils/login.c:559
+#: login-utils/login.c:555
 #, c-format
 msgid "FATAL: %s: change permissions failed: %m"
 msgstr "КОБНО: %s: промена овлашћења није успела: %m"
 
-#: login-utils/login.c:588
+#: login-utils/login.c:584
 #, c-format
 msgid "TIOCSWINSZ ioctl failed: %m"
 msgstr "TIOCSWINSZ „ioctl“ није успело: %m"
 
-#: login-utils/login.c:694
+#: login-utils/login.c:690
 #, c-format
 msgid "Last login: %.*s "
 msgstr "Последња пријава: %.*s "
 
-#: login-utils/login.c:698
+#: login-utils/login.c:694
 #, c-format
 msgid "from %s\n"
 msgstr "из „%s“\n"
 
-#: login-utils/login.c:701
+#: login-utils/login.c:697
 #, c-format
 msgid "on %s\n"
 msgstr "на „%s“\n"
 
-#: login-utils/login.c:717
+#: login-utils/login.c:713
 msgid "write lastlog failed"
 msgstr "писање последњег пријављивања није успело"
 
-#: login-utils/login.c:808
+#: login-utils/login.c:804
 #, c-format
 msgid "DIALUP AT %s BY %s"
 msgstr "МОДЕМ_ВЕЗА НА „%s“ ОД „%s“"
 
-#: login-utils/login.c:813
+#: login-utils/login.c:809
 #, c-format
 msgid "ROOT LOGIN ON %s FROM %s"
 msgstr "ПРИЈАВА АДМИНА НА „%s“ ИЗ „%s“"
 
-#: login-utils/login.c:816
+#: login-utils/login.c:812
 #, c-format
 msgid "ROOT LOGIN ON %s"
 msgstr "ПРИЈАВА АДМИНА НА „%s“"
 
-#: login-utils/login.c:819
+#: login-utils/login.c:815
 #, c-format
 msgid "LOGIN ON %s BY %s FROM %s"
 msgstr "ПРИЈАВУ НА „%s“ ОБАВИО „%s“ ИЗ „%s“"
 
-#: login-utils/login.c:822
+#: login-utils/login.c:818
 #, c-format
 msgid "LOGIN ON %s BY %s"
 msgstr "ПРИЈАВУ НА „%s“ ОБАВИО „%s“"
 
-#: login-utils/login.c:857
+#: login-utils/login.c:853
 msgid "login: "
 msgstr "пријава: "
 
-#: login-utils/login.c:893
+#: login-utils/login.c:889
 #, c-format
 msgid "PAM failure, aborting: %s"
 msgstr "Неуспех ПАМ-а, прекидам: %s"
 
-#: login-utils/login.c:894
+#: login-utils/login.c:890
 #, c-format
 msgid "Couldn't initialize PAM: %s"
 msgstr "Не могу да покренем ПАМ: %s"
 
-#: login-utils/login.c:967
+#: login-utils/login.c:963
 #, c-format
 msgid "FAILED LOGIN %u FROM %s FOR %s, %s"
 msgstr "НЕУСПЕЛА ПРИЈАВА %u ИЗ %s ЗА %s, %s"
 
-#: login-utils/login.c:977 login-utils/sulogin.c:1101
+#: login-utils/login.c:973 login-utils/sulogin.c:1101
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -8694,7 +8732,7 @@ msgstr ""
 "Пријава није исправна\n"
 "\n"
 
-#: login-utils/login.c:979
+#: login-utils/login.c:975
 #, c-format
 msgid ""
 "Password incorrect\n"
@@ -8703,17 +8741,17 @@ msgstr ""
 "Лозинка није исправна\n"
 "\n"
 
-#: login-utils/login.c:993
+#: login-utils/login.c:989
 #, c-format
 msgid "TOO MANY LOGIN TRIES (%u) FROM %s FOR %s, %s"
 msgstr "ПРЕВИШЕ ПОКУШАЈА ПРИЈАВЕ (%u) ИЗ %s ЗА %s, %s"
 
-#: login-utils/login.c:999
+#: login-utils/login.c:995
 #, c-format
 msgid "FAILED LOGIN SESSION FROM %s FOR %s, %s"
 msgstr "НЕУСПЕЛА СЕСИЈА ПРИЈАВЕ ИЗ %s ЗА %s, %s"
 
-#: login-utils/login.c:1007
+#: login-utils/login.c:1003
 #, c-format
 msgid ""
 "\n"
@@ -8722,7 +8760,7 @@ msgstr ""
 "\n"
 "Пријава није исправна\n"
 
-#: login-utils/login.c:1034 login-utils/login.c:1421 login-utils/login.c:1447
+#: login-utils/login.c:1030 login-utils/login.c:1421 login-utils/login.c:1447
 msgid ""
 "\n"
 "Session setup problem, abort."
@@ -8730,37 +8768,37 @@ msgstr ""
 "\n"
 "Проблем поставке сесије, прекидам."
 
-#: login-utils/login.c:1035
+#: login-utils/login.c:1031
 msgid "NULL user name. Abort."
 msgstr "НИШТАВНО име корисника. Прекидам."
 
-#: login-utils/login.c:1173
+#: login-utils/login.c:1169
 #, c-format
 msgid "TIOCSCTTY failed: %m"
 msgstr "„TIOCSCTTY“ није успело: %m"
 
-#: login-utils/login.c:1275
+#: login-utils/login.c:1271
 #, c-format
 msgid " %s [-p] [-h <host>] [-H] [[-f] <username>]\n"
 msgstr " %s [-p] [-h <домаћин>] [-H] [[-f] <корисник>]\n"
 
-#: login-utils/login.c:1277
+#: login-utils/login.c:1273
 msgid "Begin a session on the system.\n"
 msgstr "Започните сесију на систему.\n"
 
-#: login-utils/login.c:1280
+#: login-utils/login.c:1276
 msgid " -p             do not destroy the environment"
 msgstr " -p             не уништава окружење"
 
-#: login-utils/login.c:1281
+#: login-utils/login.c:1277
 msgid " -f             skip a login authentication"
 msgstr " -f             прескаче потврђивање идентитета пријаве"
 
-#: login-utils/login.c:1282
+#: login-utils/login.c:1278
 msgid " -h <host>      hostname to be used for utmp logging"
 msgstr " -h <домаћин>   назив домаћина који ће се користити за „utmp“ пријављивање"
 
-#: login-utils/login.c:1283
+#: login-utils/login.c:1279
 msgid " -H             suppress hostname in the login prompt"
 msgstr " -H             потискује назив домаћина у упиту пријаве"
 
@@ -9238,7 +9276,7 @@ msgstr "нема такве групе"
 msgid "setuid failed"
 msgstr "„setuid“ није успело"
 
-#: login-utils/nologin.c:28 misc-utils/lsfd.c:1538 misc-utils/lslocks.c:545
+#: login-utils/nologin.c:28 misc-utils/lsfd.c:1539 misc-utils/lslocks.c:545
 #: misc-utils/mcookie.c:83 misc-utils/uuidd.c:97 misc-utils/uuidgen.c:26
 #: sys-utils/dmesg.c:282 sys-utils/ipcmk.c:67 sys-utils/irqtop.c:262
 #: sys-utils/lscpu.c:1177 sys-utils/lsipc.c:292 sys-utils/lsirq.c:57
@@ -10133,7 +10171,7 @@ msgstr "неисправан аргумент описника датотеке"
 # For consistent translation, here is the English text:
 #  msgstr "no size specified"
 # Please translate the English msgstr, not the msgid.
-#: misc-utils/fadvise.c:131 misc-utils/fincore.c:339 sys-utils/losetup.c:845
+#: misc-utils/fadvise.c:131 misc-utils/fincore.c:339 sys-utils/losetup.c:846
 msgid "no file specified"
 msgstr "није наведен ниједна датотека"
 
@@ -11232,7 +11270,7 @@ msgid "%s and %s are mutually exclusive"
 msgstr "%s и %s се међусобно искључују"
 
 #: misc-utils/kill.c:341 misc-utils/kill.c:356 sys-utils/eject.c:210
-#: sys-utils/eject.c:232 sys-utils/losetup.c:747 sys-utils/tunelp.c:164
+#: sys-utils/eject.c:232 sys-utils/losetup.c:748 sys-utils/tunelp.c:164
 #: sys-utils/tunelp.c:171 sys-utils/tunelp.c:178 sys-utils/tunelp.c:185
 #: sys-utils/tunelp.c:192 sys-utils/tunelp.c:198 sys-utils/tunelp.c:202
 #: sys-utils/tunelp.c:209 term-utils/setterm.c:211 term-utils/setterm.c:214
@@ -12276,87 +12314,87 @@ msgstr "блок уређаји"
 msgid "unknown types"
 msgstr "непознате врсте"
 
-#: misc-utils/lsfd.c:526
+#: misc-utils/lsfd.c:527
 msgid "too many columns are added via filter expression"
 msgstr "превише колона је додато путем израза филтера"
 
-#: misc-utils/lsfd.c:1323
+#: misc-utils/lsfd.c:1324
 msgid "failed to allocate an idcache"
 msgstr "нисам успео да доделим ид-оставу"
 
-#: misc-utils/lsfd.c:1378 misc-utils/lslocks.c:292
+#: misc-utils/lsfd.c:1379 misc-utils/lslocks.c:292
 msgid "(unknown)"
 msgstr "(непознато)"
 
-#: misc-utils/lsfd.c:1434 misc-utils/lsfd-filter.c:374
-#: misc-utils/lsfd-sock-xinfo.c:152 misc-utils/lsfd-sock-xinfo.c:279
+#: misc-utils/lsfd.c:1435 misc-utils/lsfd-filter.c:374
+#: misc-utils/lsfd-sock-xinfo.c:154 misc-utils/lsfd-sock-xinfo.c:281
 msgid "failed to allocate memory"
 msgstr "нисам успео да доделим меморију"
 
-#: misc-utils/lsfd.c:1465
+#: misc-utils/lsfd.c:1466
 #, c-format
 msgid "unexpected value for pid specification: %s"
 msgstr "неочекивана вредност за пид спецификацију: %s"
 
-#: misc-utils/lsfd.c:1467
+#: misc-utils/lsfd.c:1468
 #, c-format
 msgid "garbage at the end of pid specification: %s"
 msgstr "ђубре на крају пид спецификације: %s"
 
-#: misc-utils/lsfd.c:1469
+#: misc-utils/lsfd.c:1470
 #, c-format
 msgid "out of range value for pid specification: %ld"
 msgstr "вредност ван опсега за пид спецификацију: %ld"
 
-#: misc-utils/lsfd.c:1513
+#: misc-utils/lsfd.c:1514
 msgid "failed to alloc procfs handler"
 msgstr "нисам успео да доделим „procfs“ руковаоца"
 
-#: misc-utils/lsfd.c:1517
+#: misc-utils/lsfd.c:1518
 msgid "failed to open /proc"
 msgstr "нисам успео да отворим „/proc“"
 
-#: misc-utils/lsfd.c:1541
+#: misc-utils/lsfd.c:1542
 msgid " -l,      --threads           list in threads level\n"
 msgstr " -l,      --threads         списак у нитима нивоа\n"
 
-#: misc-utils/lsfd.c:1542
+#: misc-utils/lsfd.c:1543
 msgid " -J,      --json              use JSON output format\n"
 msgstr " -J,      --json               користи ЈСОН формат излаза\n"
 
-#: misc-utils/lsfd.c:1543
+#: misc-utils/lsfd.c:1544
 msgid " -n,      --noheadings        don't print headings\n"
 msgstr " -n,      --noheadings          не исписује заглавља\n"
 
-#: misc-utils/lsfd.c:1544
+#: misc-utils/lsfd.c:1545
 msgid " -o,      --output <list>     output columns\n"
 msgstr " -o,      --output <списак>       исписује колоне\n"
 
-#: misc-utils/lsfd.c:1545
+#: misc-utils/lsfd.c:1546
 msgid " -r,      --raw               use raw output format\n"
 msgstr " -r,      --raw                користи сирови излазни формат\n"
 
-#: misc-utils/lsfd.c:1546
+#: misc-utils/lsfd.c:1547
 msgid " -u,      --notruncate        don't truncate text in columns\n"
 msgstr " -u,      --notruncate         не скраћује текст у колонама\n"
 
-#: misc-utils/lsfd.c:1547
+#: misc-utils/lsfd.c:1548
 msgid " -p,      --pid  <pid(s)>     collect information only specified processes\n"
 msgstr " -p,      --pid  <пид(и)>   прикупља информације само наведених процеса\n"
 
-#: misc-utils/lsfd.c:1548
+#: misc-utils/lsfd.c:1549
 msgid " -i[4|6], --inet[=4|6]        list only IPv4 and/or IPv6 sockets\n"
 msgstr " -i[4|6], --inet[=4|6]        исписује само IPv4 и/или IPv6 прикључнице\n"
 
-#: misc-utils/lsfd.c:1549
+#: misc-utils/lsfd.c:1550
 msgid " -Q,      --filter <expr>     apply display filter\n"
 msgstr " -Q,      --filter <изрз>   примењује филтер приказа\n"
 
-#: misc-utils/lsfd.c:1550
+#: misc-utils/lsfd.c:1551
 msgid "          --debug-filter      dump the internal data structure of filter and exit\n"
 msgstr "         --debug-filter    исписује структуру унутрашњих података филтера и излази\n"
 
-#: misc-utils/lsfd.c:1551
+#: misc-utils/lsfd.c:1552
 msgid ""
 " -C,      --counter <name>:<expr>\n"
 "                              define custom counter for --summary output\n"
@@ -12364,64 +12402,64 @@ msgstr ""
 " -C,      --counter <назив>:<израз>\n"
 "                       дефинише произвољни бројач за „--summary“ излаз\n"
 
-#: misc-utils/lsfd.c:1553
+#: misc-utils/lsfd.c:1554
 msgid "          --dump-counters     dump counter definitions\n"
 msgstr "          --dump-counters     исписује дефиниције бројача\n"
 
-#: misc-utils/lsfd.c:1554
+#: misc-utils/lsfd.c:1555
 msgid "          --summary[=<when>]  print summary information (only, append, or never)\n"
 msgstr "          --summary[=када]  исписује информације сажетка („only“, „append“ или „never“)\n"
 
-#: misc-utils/lsfd.c:1622
+#: misc-utils/lsfd.c:1625
 #, c-format
 msgid "too short counter specification: -C/--counter %s"
 msgstr "превише кратка спецификација бројача: -C/--counter %s"
 
-#: misc-utils/lsfd.c:1626 misc-utils/lsfd.c:1632
+#: misc-utils/lsfd.c:1629 misc-utils/lsfd.c:1635
 #, c-format
 msgid "no name for counter: -C/--counter %s"
 msgstr "нема назива за бројач: -C/--counter %s"
 
-#: misc-utils/lsfd.c:1636
+#: misc-utils/lsfd.c:1639
 #, c-format
 msgid "empty counter expression given: -C/--counter %s"
 msgstr "дат је празан израз бројача: -C/--counter %s"
 
-#: misc-utils/lsfd.c:1644
+#: misc-utils/lsfd.c:1647
 #, c-format
 msgid "don't use `{' in the name of a counter: %s"
 msgstr "не користи { у називу бројача: %s"
 
-#: misc-utils/lsfd.c:1665
+#: misc-utils/lsfd.c:1668
 msgid "failed in making filter for a counter: "
 msgstr "нисам успео да направим филтер за бројач: "
 
-#: misc-utils/lsfd.c:1733
+#: misc-utils/lsfd.c:1736
 msgid "failed to allocate summary table"
 msgstr "нисам успео да доделим табелу сажетка"
 
-#: misc-utils/lsfd.c:1743
+#: misc-utils/lsfd.c:1746
 msgid "VALUE"
 msgstr "ВРЕДНОСТ"
 
-#: misc-utils/lsfd.c:1745 misc-utils/lsfd.c:1751
+#: misc-utils/lsfd.c:1748 misc-utils/lsfd.c:1754
 msgid "failed to allocate summary column"
 msgstr "нисам успео да доделим колону сажетка"
 
-#: misc-utils/lsfd.c:1749
+#: misc-utils/lsfd.c:1752
 msgid "COUNTER"
 msgstr "БРОЈАЧ"
 
-#: misc-utils/lsfd.c:1764 misc-utils/lsfd.c:1766 misc-utils/lsfd.c:1769
+#: misc-utils/lsfd.c:1767 misc-utils/lsfd.c:1769 misc-utils/lsfd.c:1772
 msgid "failed to add summary data"
 msgstr "нисам успео да додам податке сажетка"
 
-#: misc-utils/lsfd.c:1906
+#: misc-utils/lsfd.c:1909
 #, c-format
 msgid "unknown -i/--inet argument: %s"
 msgstr "непознат „-i/--inet“ аргумент: %s"
 
-#: misc-utils/lsfd.c:1932 sys-utils/lsmem.c:641
+#: misc-utils/lsfd.c:1935 sys-utils/lsmem.c:641
 msgid "unsupported --summary argument"
 msgstr "неподржан аргумент „--summary“"
 
@@ -12539,7 +12577,7 @@ msgstr "грешка: логички израз је очекиван: %s"
 msgid "failed to allocate memory for string"
 msgstr "нисам успео да доделим меморију за ниску"
 
-#: misc-utils/lsfd-sock-xinfo.c:228
+#: misc-utils/lsfd-sock-xinfo.c:230
 msgid "failed to alloc path context for /var/run/netns"
 msgstr "нисам успео да доделим контекст путање за „/var/run/netns“"
 
@@ -13090,7 +13128,7 @@ msgid "timeout [%d sec]\n"
 msgstr "истекло је време [%d сек.]\n"
 
 #: misc-utils/uuidd.c:483 sys-utils/irqtop.c:228 sys-utils/irqtop.c:231
-#: sys-utils/irqtop.c:248 term-utils/setterm.c:920 text-utils/column.c:611
+#: sys-utils/irqtop.c:248 term-utils/setterm.c:923 text-utils/column.c:611
 #: text-utils/column.c:641
 msgid "read failed"
 msgstr "читање није успело"
@@ -14154,7 +14192,7 @@ msgstr " -z, --zeroout        попуњава нулом уместо да од
 msgid "%s: %s ioctl failed"
 msgstr "%s: „%s ioctl“ није успело"
 
-#: sys-utils/blkdiscard.c:208 sys-utils/fstrim.c:546 sys-utils/losetup.c:727
+#: sys-utils/blkdiscard.c:208 sys-utils/fstrim.c:546 sys-utils/losetup.c:728
 #: text-utils/hexdump.c:124
 msgid "failed to parse offset"
 msgstr "нисам успео да обрадим померај"
@@ -14739,7 +14777,7 @@ msgstr ""
 "\n"
 "Подржане зоне:\n"
 
-#: sys-utils/chmem.c:394 sys-utils/lscpu-cputype.c:889 sys-utils/lsmem.c:667
+#: sys-utils/chmem.c:394 sys-utils/lscpu-cputype.c:891 sys-utils/lsmem.c:667
 #, c-format
 msgid "failed to initialize %s handler"
 msgstr "нисам успео да покренем „%s“ руковаоца"
@@ -16438,7 +16476,7 @@ msgstr " -p, --mode <режим>      овлашћење за извориште
 msgid "<size>"
 msgstr "<величина>"
 
-#: sys-utils/ipcmk.c:114 sys-utils/losetup.c:754 sys-utils/zramctl.c:654
+#: sys-utils/ipcmk.c:114 sys-utils/losetup.c:755 sys-utils/zramctl.c:654
 msgid "failed to parse size"
 msgstr "нисам успео да обрадим величину"
 
@@ -17544,7 +17582,7 @@ msgstr ", шифровање %s (врста %u)"
 msgid "%s: detach failed"
 msgstr "%s: откачињање није успело"
 
-#: sys-utils/losetup.c:401
+#: sys-utils/losetup.c:402
 #, c-format
 msgid ""
 " %1$s [options] [<loopdev>]\n"
@@ -17553,176 +17591,176 @@ msgstr ""
 " %1$s [опције] [<уређај_петље>]\n"
 " %1$s [опције] -f | <уређај_петље> <датотека>\n"
 
-#: sys-utils/losetup.c:406
+#: sys-utils/losetup.c:407
 msgid "Set up and control loop devices.\n"
 msgstr "Поставите и контролишите уређаје петље.\n"
 
-#: sys-utils/losetup.c:410
+#: sys-utils/losetup.c:411
 msgid " -a, --all                     list all used devices\n"
 msgstr " -a, --all                          исписује све коришћене уређаје\n"
 
-#: sys-utils/losetup.c:411
+#: sys-utils/losetup.c:412
 msgid " -d, --detach <loopdev>...     detach one or more devices\n"
 msgstr " -d, --detach <уређај_петље>...     откачиње један или више уређаја\n"
 
-#: sys-utils/losetup.c:412
+#: sys-utils/losetup.c:413
 msgid " -D, --detach-all              detach all used devices\n"
 msgstr " -D, --detach-all                   откачиње све коришћене уређаје\n"
 
-#: sys-utils/losetup.c:413
+#: sys-utils/losetup.c:414
 msgid " -f, --find                    find first unused device\n"
 msgstr " -f, --find                         налази први некоришћени уређај\n"
 
-#: sys-utils/losetup.c:414
+#: sys-utils/losetup.c:415
 msgid " -c, --set-capacity <loopdev>  resize the device\n"
 msgstr " -c, --set-capacity <уређај_петље>  мења величину уређаја\n"
 
-#: sys-utils/losetup.c:415
+#: sys-utils/losetup.c:416
 msgid " -j, --associated <file>       list all devices associated with <file>\n"
 msgstr " -j, --associated <дттка>           исписује све уређаје придружене <датотеци>\n"
 
-#: sys-utils/losetup.c:416
+#: sys-utils/losetup.c:417
 msgid " -L, --nooverlap               avoid possible conflict between devices\n"
 msgstr " -L, --nooverlap                    избегава могући сукоб између уређаја\n"
 
-#: sys-utils/losetup.c:420
+#: sys-utils/losetup.c:421
 msgid " -o, --offset <num>            start at offset <num> into file\n"
 msgstr " -o, --offset <број>                почиње на померају <број> у датотеци\n"
 
-#: sys-utils/losetup.c:421
+#: sys-utils/losetup.c:422
 msgid "     --sizelimit <num>         device is limited to <num> bytes of the file\n"
 msgstr "     --sizelimit <број>             уређај је ограничен на <број> бајтова датотеке\n"
 
-#: sys-utils/losetup.c:422
+#: sys-utils/losetup.c:423
 msgid " -b, --sector-size <num>       set the logical sector size to <num>\n"
 msgstr " -b, --sector-size <број>           поставља величину логичког сектора на <број>\n"
 
-#: sys-utils/losetup.c:423
+#: sys-utils/losetup.c:424
 msgid " -P, --partscan                create a partitioned loop device\n"
 msgstr " -P, --partscan                     ствара партиционисани уређај петље\n"
 
-#: sys-utils/losetup.c:424
+#: sys-utils/losetup.c:425
 msgid " -r, --read-only               set up a read-only loop device\n"
 msgstr " -r, --read-only                    поставља уређај петље само за читање\n"
 
-#: sys-utils/losetup.c:425
+#: sys-utils/losetup.c:426
 msgid "     --direct-io[=<on|off>]    open backing file with O_DIRECT\n"
 msgstr "     --direct-io[=<укљ|искљ>]       отвара датотеку резерве са „O_DIRECT“\n"
 
-#: sys-utils/losetup.c:426
+#: sys-utils/losetup.c:427
 msgid "     --show                    print device name after setup (with -f)\n"
 msgstr "     --show                         исписује назив уређаја након постављања (са -f)\n"
 
-#: sys-utils/losetup.c:427
+#: sys-utils/losetup.c:428
 msgid " -v, --verbose                 verbose mode\n"
 msgstr " -v, --verbose                      режим опширности\n"
 
-#: sys-utils/losetup.c:431
+#: sys-utils/losetup.c:432
 msgid " -J, --json                    use JSON --list output format\n"
 msgstr " -J, --json                         користи ЈСОН „--list“ формат излаза\n"
 
-#: sys-utils/losetup.c:432
+#: sys-utils/losetup.c:433
 msgid " -l, --list                    list info about all or specified (default)\n"
 msgstr " -l, --list                         исписује информације о свим или наведеним (основно)\n"
 
-#: sys-utils/losetup.c:433
+#: sys-utils/losetup.c:434
 msgid " -n, --noheadings              don't print headings for --list output\n"
 msgstr " -n, --noheadings                   не исписује заглавља за „--list“\n"
 
-#: sys-utils/losetup.c:434
+#: sys-utils/losetup.c:435
 msgid " -O, --output <cols>           specify columns to output for --list\n"
 msgstr " -O, --output <кол>                 наводи колоне за испис за „--list“\n"
 
-#: sys-utils/losetup.c:435
+#: sys-utils/losetup.c:436
 msgid "     --output-all              output all columns\n"
 msgstr "     --output-all                   исписује све колоне\n"
 
-#: sys-utils/losetup.c:436
+#: sys-utils/losetup.c:437
 msgid "     --raw                     use raw --list output format\n"
 msgstr "     --raw                          користи сирови „--list“ формат излаза\n"
 
-#: sys-utils/losetup.c:464
+#: sys-utils/losetup.c:465
 #, c-format
 msgid "%s: Warning: file is smaller than 512 bytes; the loop device may be useless or invisible for system tools."
 msgstr "%s: Упозорење: датотека је мања од 512 бајта; уређај петље може бити безкористан или невидљив за алате система."
 
-#: sys-utils/losetup.c:468
+#: sys-utils/losetup.c:469
 #, c-format
 msgid "%s: Warning: file does not fit into a 512-byte sector; the end of the file will be ignored."
 msgstr "%s: Упозорење: датотека не стаје у сектор од 512 бајта; крај датотеке биће занемарен."
 
-#: sys-utils/losetup.c:487
+#: sys-utils/losetup.c:488
 msgid "cannot find an unused loop device"
 msgstr "не могу да нађем некоришћени уређај петље"
 
-#: sys-utils/losetup.c:509 sys-utils/losetup.c:561
+#: sys-utils/losetup.c:510 sys-utils/losetup.c:562
 #, c-format
 msgid "%s: overlapping loop device exists"
 msgstr "%s: преклапајући уређај петље постоји"
 
-#: sys-utils/losetup.c:520
+#: sys-utils/losetup.c:521
 #, c-format
 msgid "%s: overlapping read-only loop device exists"
 msgstr "%s: преклапајући уређај петље само за читање постоји"
 
-#: sys-utils/losetup.c:527
+#: sys-utils/losetup.c:528
 #, c-format
 msgid "%s: overlapping encrypted loop device exists"
 msgstr "%s: преклапајући шифровани уређај петље постоји"
 
-#: sys-utils/losetup.c:533
+#: sys-utils/losetup.c:534
 #, c-format
 msgid "%s: failed to re-use loop device"
 msgstr "%s: нисам успео поново да користим уређај петље"
 
-#: sys-utils/losetup.c:539
+#: sys-utils/losetup.c:540
 msgid "failed to inspect loop devices"
 msgstr "нисам успео да испитам уређаје петље"
 
-#: sys-utils/losetup.c:562
+#: sys-utils/losetup.c:563
 #, c-format
 msgid "%s: failed to check for conflicting loop devices"
 msgstr "%s: нисам успео да проверу за сукобним уређајима петље"
 
-#: sys-utils/losetup.c:585
+#: sys-utils/losetup.c:586
 #, c-format
 msgid "%s: failed to use backing file"
 msgstr "%s: нисам успео да користим датотеку резерве"
 
-#: sys-utils/losetup.c:682
+#: sys-utils/losetup.c:683
 msgid "failed to parse logical block size"
 msgstr "нисам успео да обрадим величину логичког блока"
 
-#: sys-utils/losetup.c:688 sys-utils/losetup.c:698 sys-utils/losetup.c:826
-#: sys-utils/losetup.c:840 sys-utils/losetup.c:878
+#: sys-utils/losetup.c:689 sys-utils/losetup.c:699 sys-utils/losetup.c:827
+#: sys-utils/losetup.c:841 sys-utils/losetup.c:879
 #, c-format
 msgid "%s: failed to use device"
 msgstr "%s: нисам успео да користим уређај"
 
-#: sys-utils/losetup.c:837
+#: sys-utils/losetup.c:838
 msgid "no loop device specified"
 msgstr "није наведен уређај петље"
 
-#: sys-utils/losetup.c:852
+#: sys-utils/losetup.c:853
 #, c-format
 msgid "the options %s are allowed during loop device setup only"
 msgstr "опције „%s“ су дозвољене само за време постављања уређаја петље"
 
-#: sys-utils/losetup.c:857
+#: sys-utils/losetup.c:858
 msgid "the option --offset is not allowed in this context"
 msgstr "опција „--offset“ није допуштена у овом контексту"
 
-#: sys-utils/losetup.c:909
+#: sys-utils/losetup.c:910
 #, c-format
 msgid "%s: set capacity failed"
 msgstr "%s: постављање капацитета није успело"
 
-#: sys-utils/losetup.c:915
+#: sys-utils/losetup.c:916
 #, c-format
 msgid "%s: set direct io failed"
 msgstr "%s: постављање директног уи није успело"
 
-#: sys-utils/losetup.c:921
+#: sys-utils/losetup.c:922
 #, c-format
 msgid "%s: set logical block size failed"
 msgstr "%s: постављање величине логичког блока није успело"
@@ -18239,16 +18277,16 @@ msgstr "неподржан аргумент „--flat“"
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr "%s: опције „--all“, „--online“ и „--offline“ се могу користити само са опцијама „--extended“ или „--parse“.\n"
 
-#: sys-utils/lscpu-cputype.c:604
+#: sys-utils/lscpu-cputype.c:606
 msgid "error: uname failed"
 msgstr "грешка: „uname“ није успело"
 
-#: sys-utils/lscpu-cputype.c:711
+#: sys-utils/lscpu-cputype.c:713
 #, c-format
 msgid "failed to determine number of CPUs: %s"
 msgstr "нисам успео да одредим број процесора: %s"
 
-#: sys-utils/lscpu-cputype.c:914
+#: sys-utils/lscpu-cputype.c:916
 msgid "Failed to extract the node number"
 msgstr "Нисам успео да извучем број чвора"
 
@@ -22926,45 +22964,51 @@ msgstr "не могу да отворим резултирајућу датот�
 msgid "terminal %s does not support %s"
 msgstr "терминал „%s“ не подржава „%s“"
 
-#: term-utils/setterm.c:878
+#: term-utils/setterm.c:851
+#, fuzzy
+#| msgid "ioctl failed"
+msgid "fcntl failed"
+msgstr "„ioctl“ није успело"
+
+#: term-utils/setterm.c:881
 msgid "select failed"
 msgstr "избор није успео"
 
-#: term-utils/setterm.c:904
+#: term-utils/setterm.c:907
 msgid "stdin does not refer to a terminal"
 msgstr "стандардни улаз не упућује на терминал"
 
-#: term-utils/setterm.c:932
+#: term-utils/setterm.c:935
 #, c-format
 msgid "invalid cursor position: %s"
 msgstr "неисправан положај курзора: %s"
 
-#: term-utils/setterm.c:954
+#: term-utils/setterm.c:957
 msgid "reset failed"
 msgstr "поновно постављање није успело"
 
-#: term-utils/setterm.c:1118
+#: term-utils/setterm.c:1121
 msgid "cannot (un)set powersave mode"
 msgstr "не могу да (рас)подесим режим уштеде енергије"
 
-#: term-utils/setterm.c:1137 term-utils/setterm.c:1146
+#: term-utils/setterm.c:1140 term-utils/setterm.c:1149
 msgid "klogctl error"
 msgstr "„klogctl“ грешка"
 
-#: term-utils/setterm.c:1167
+#: term-utils/setterm.c:1170
 msgid "$TERM is not defined."
 msgstr "„$TERM“ није одређено."
 
-#: term-utils/setterm.c:1174
+#: term-utils/setterm.c:1177
 msgid "terminfo database cannot be found"
 msgstr "не могу да нађем базу података терминала"
 
-#: term-utils/setterm.c:1176
+#: term-utils/setterm.c:1179
 #, c-format
 msgid "%s: unknown terminal type"
 msgstr "%s: непозната врста терминала"
 
-#: term-utils/setterm.c:1178
+#: term-utils/setterm.c:1181
 msgid "terminal is hardcopy"
 msgstr "терминал је фотокопија"
 
