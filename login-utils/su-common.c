@@ -26,6 +26,7 @@
 #include <sys/types.h>
 #include <pwd.h>
 #include <grp.h>
+#include <libgen.h>
 #include <security/pam_appl.h>
 #ifdef HAVE_SECURITY_PAM_MISC_H
 # include <security/pam_misc.h>
@@ -840,17 +841,20 @@ static void run_shell(
 				su->simulate_login ? " login" : "",
 				su->fast_startup ? " fast-start" : ""));
 
+  char* tmp = xstrdup(shell);
 	if (su->simulate_login) {
 		char *arg0;
 		char *shell_basename;
 
-		shell_basename = basename(shell);
+		shell_basename = basename(tmp);
 		arg0 = xmalloc(strlen(shell_basename) + 2);
 		arg0[0] = '-';
 		strcpy(arg0 + 1, shell_basename);
 		args[0] = arg0;
-	} else
-		args[0] = basename(shell);
+	} else {
+    args[0] = basename(tmp);
+  }
+  free(tmp);
 
 	if (su->fast_startup)
 		args[argno++] = "-f";
