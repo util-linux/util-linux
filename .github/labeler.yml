@@ -1,0 +1,2 @@
+STABLE:
+ - base-branch: 'stable/.*'
