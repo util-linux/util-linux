@@ -3,6 +3,7 @@ project('util-linux', 'c',
         meson_version: '>=0.57.0',
         license : 'GPLv2+')
 
+fs = import('fs')
 pkgconfig = import('pkgconfig')
 
 libblkid_version = '1.1.0'
@@ -3285,11 +3286,13 @@ if LINUX
   exes += exe
 endif
 
-exe = executable(
-  'test_enosys',
-  'tests/helpers/test_enosys.c',
-  include_directories : includes)
-exes += exe
+if cc.compiles(fs.read('include/audit-arch.h'), name : 'has AUDIT_ARCH_NATIVE')
+  exe = executable(
+    'test_enosys',
+    'tests/helpers/test_enosys.c',
+    include_directories : includes)
+  exes += exe
+endif
 
 ############################################################
 
