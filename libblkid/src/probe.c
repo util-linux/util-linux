@@ -962,6 +962,7 @@ failed:
 
 #endif
 
+#ifdef BLKIOOPT
 static uint64_t blkid_get_io_size(int fd)
 {
 	static const int ioctls[] = { BLKIOOPT, BLKIOMIN, BLKBSZGET };
@@ -977,6 +978,7 @@ static uint64_t blkid_get_io_size(int fd)
 
 	return DEFAULT_SECTOR_SIZE;
 }
+#endif
 
 /**
  * blkid_probe_set_device:
@@ -1185,8 +1187,10 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	}
 # endif
 
+#ifdef BLKIOOPT
 	if (S_ISBLK(sb.st_mode) && !is_floppy && !blkid_probe_is_tiny(pr))
 		pr->io_size = blkid_get_io_size(fd);
+#endif
 
 	DBG(LOWPROBE, ul_debug("ready for low-probing, offset=%"PRIu64", size=%"PRIu64", zonesize=%"PRIu64", iosize=%"PRIu64,
 				pr->off, pr->size, pr->zone_size, pr->io_size));
