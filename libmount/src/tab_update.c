@@ -35,7 +35,9 @@ struct libmnt_update {
 	struct libmnt_fs *fs;
 	char		*filename;
 	unsigned long	mountflags;
-	int		ready;
+
+	unsigned int	ready : 1,
+			missing_options : 1;
 
 	struct libmnt_table *mountinfo;
 };
@@ -173,7 +175,7 @@ int mnt_update_set_fs(struct libmnt_update *upd, unsigned long mountflags,
 
 	mnt_unref_fs(upd->fs);
 	free(upd->target);
-	upd->ready = FALSE;
+	upd->ready = 0;
 	upd->fs = NULL;
 	upd->target = NULL;
 	upd->mountflags = 0;
@@ -206,7 +208,7 @@ int mnt_update_set_fs(struct libmnt_update *upd, unsigned long mountflags,
 	}
 
 	DBG(UPDATE, ul_debugobj(upd, "ready"));
-	upd->ready = TRUE;
+	upd->ready = 1;
 	return 0;
 }
 
@@ -786,6 +788,7 @@ done:
 	return rc;
 }
 
+/* replaces option in the table entry by new options from @udp */
 static int update_modify_options(struct libmnt_update *upd, struct libmnt_lock *lc)
 {
 	struct libmnt_table *tb = NULL;
@@ -824,6 +827,58 @@ static int update_modify_options(struct libmnt_update *upd, struct libmnt_lock *
 
 	mnt_unref_table(tb);
 	return rc;
+}
+
+/* add user options missing in the table entry by new options from @udp */
+static int update_add_options(struct libmnt_update *upd, struct libmnt_lock *lc)
+{
+	struct libmnt_table *tb = NULL;
+	int rc = 0;
+	struct libmnt_fs *fs;
+
+	assert(upd);
+	assert(upd->fs);
+
+	if (!upd->fs->user_optstr)
+		return 0;
+
+	DBG(UPDATE, ul_debugobj(upd, "%s: add options", upd->filename));
+
+	fs = upd->fs;
+
+	if (lc)
+		rc = mnt_lock_file(lc);
+	if (rc)
+		return -MNT_ERR_LOCK;
+
+	tb = __mnt_new_table_from_file(upd->filename, MNT_FMT_UTAB, 1);
+	if (tb) {
+		struct libmnt_fs *cur = mnt_table_find_target(tb,
+					mnt_fs_get_target(fs),
+					MNT_ITER_BACKWARD);
+		if (cur) {
+			char *u = NULL;
+
+			rc = mnt_optstr_get_missing(cur->user_optstr, upd->fs->user_optstr, &u);
+			if (!rc && u) {
+				DBG(UPDATE, ul_debugobj(upd, " add missing: %s", u));
+				rc = mnt_optstr_append_option(&cur->user_optstr, u, NULL);
+			}
+			if (!rc && u)
+				rc = update_table(upd, tb);
+
+			if (rc == 1)	/* nothing is missing */
+				rc = 0;
+		} else
+			rc = add_file_entry(tb, upd);	/* not found, add new */
+	}
+
+	if (lc)
+		mnt_unlock_file(lc);
+
+	mnt_unref_table(tb);
+	return rc;
+
 }
 
 /**
@@ -866,10 +921,12 @@ int mnt_update_table(struct libmnt_update *upd, struct libmnt_lock *lc)
 		rc = update_modify_target(upd, lc);	/* move */
 	else if (upd->mountflags & MS_REMOUNT)
 		rc = update_modify_options(upd, lc);	/* remount */
+	else if (upd->fs && upd->missing_options)
+		rc = update_add_options(upd, lc);	/* mount by externel helper */
 	else if (upd->fs)
-		rc = update_add_entry(upd, lc);	/* mount */
+		rc = update_add_entry(upd, lc);		/* mount */
 
-	upd->ready = FALSE;
+	upd->ready = 1;
 	DBG(UPDATE, ul_debugobj(upd, "%s: update tab: done [rc=%d]",
 				upd->filename, rc));
 	if (lc != lc0)
@@ -909,16 +966,26 @@ int mnt_update_already_done(struct libmnt_update *upd, struct libmnt_lock *lc)
 
 	if (upd->fs) {
 		/* mount */
+		struct libmnt_fs *fs;
 		const char *tgt = mnt_fs_get_target(upd->fs);
 		const char *src = mnt_fs_get_bindsrc(upd->fs) ?
 					mnt_fs_get_bindsrc(upd->fs) :
 					mnt_fs_get_source(upd->fs);
 
-		if (mnt_table_find_pair(tb, src, tgt, MNT_ITER_BACKWARD)) {
+		fs = mnt_table_find_pair(tb, src, tgt, MNT_ITER_BACKWARD);
+		if (fs) {
 			DBG(UPDATE, ul_debugobj(upd, "%s: found %s %s",
 						upd->filename, src, tgt));
+
+			/* Check if utab entry (probably writen by /sbin/mount.<type>
+			 * helper) contains all options expected by this update */
+			if (mnt_optstr_get_missing(fs->user_optstr, upd->fs->user_optstr, NULL) == 0) {
+				upd->missing_options = 1;
+				DBG(UPDATE, ul_debugobj(upd, " missing options detected"));
+			}
+		} else
 			rc = 1;
-		}
+
 	} else if (upd->target) {
 		/* umount */
 		if (!mnt_table_find_target(tb, upd->target, MNT_ITER_BACKWARD)) {
