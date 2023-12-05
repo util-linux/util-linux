@@ -364,6 +364,7 @@ static gid_t get_group(const char *s, const char *err)
  * @outer: First ID mapped on the outside of the namespace
  * @inner: First ID mapped on the inside of the namespace
  * @count: Length of the inside and outside ranges
+ * @next: Next range of IDs in the chain
  *
  * A range of uids/gids to map using new[gu]idmap.
  */
@@ -371,9 +372,16 @@ struct map_range {
 	unsigned int outer;
 	unsigned int inner;
 	unsigned int count;
+	struct map_range *next;
 };
 
-#define UID_BUFSIZ  sizeof(stringify_value(ULONG_MAX))
+static void insert_map_range(struct map_range **chain, struct map_range map)
+{
+	struct map_range *tail = *chain;
+	*chain = xmalloc(sizeof(**chain));
+	memcpy(*chain, &map, sizeof(**chain));
+	(*chain)->next = tail;
+}
 
 /**
  * get_map_range() - Parse a mapping range from a string
@@ -382,20 +390,20 @@ struct map_range {
  * Parse a string of the form inner:outer:count or outer,inner,count into
  * a new mapping range.
  *
- * Return: A new &struct map_range
+ * Return: A struct map_range
  */
-static struct map_range *get_map_range(const char *s)
+static struct map_range get_map_range(const char *s)
 {
 	int end;
-	struct map_range *ret;
+	struct map_range ret;
 
-	ret = xmalloc(sizeof(*ret));
+	ret.next = NULL;
 
-	if (sscanf(s, "%u:%u:%u%n", &ret->inner, &ret->outer, &ret->count,
+	if (sscanf(s, "%u:%u:%u%n", &ret.inner, &ret.outer, &ret.count,
 		   &end) >= 3 && !s[end])
 		return ret; /* inner:outer:count */
 
-	if (sscanf(s, "%u,%u,%u%n", &ret->outer, &ret->inner, &ret->count,
+	if (sscanf(s, "%u,%u,%u%n", &ret.outer, &ret.inner, &ret.count,
 		   &end) >= 3 && !s[end])
 		return ret; /* outer,inner,count */
 
@@ -410,16 +418,16 @@ static struct map_range *get_map_range(const char *s)
  *
  * This finds the first subid range matching @uid in @filename.
  */
-static struct map_range *read_subid_range(char *filename, uid_t uid)
+static struct map_range read_subid_range(char *filename, uid_t uid)
 {
 	char *line = NULL, *pwbuf;
 	FILE *idmap;
 	size_t n = 0;
 	struct passwd *pw;
-	struct map_range *map;
+	struct map_range map;
 
-	map = xmalloc(sizeof(*map));
-	map->inner = -1;
+	map.inner = -1;
+	map.next = NULL;
 
 	pw = xgetpwuid(uid, &pwbuf);
 	if (!pw)
@@ -452,13 +460,13 @@ static struct map_range *read_subid_range(char *filename, uid_t uid)
 		if (!rest)
 			continue;
 		*rest = '\0';
-		map->outer = strtoul_or_err(s, _("failed to parse subid map"));
+		map.outer = strtoul_or_err(s, _("failed to parse subid map"));
 
 		s = rest + 1;
 		rest = strchr(s, '\n');
 		if (rest)
 			*rest = '\0';
-		map->count = strtoul_or_err(s, _("failed to parse subid map"));
+		map.count = strtoul_or_err(s, _("failed to parse subid map"));
 
 		fclose(idmap);
 		free(pw);
@@ -472,126 +480,199 @@ static struct map_range *read_subid_range(char *filename, uid_t uid)
 }
 
 /**
- * map_ids() - Create a new uid/gid map
+ * read_kernel_map() - Read all available IDs from the kernel
+ * @chain: destination list to receive pass-through ID mappings
+ * @filename: either /proc/self/uid_map or /proc/self/gid_map
+ *
+ * This is used by --map-users=all and --map-groups=all to construct
+ * pass-through mappings for all IDs available in the parent namespace.
+ */
+static void read_kernel_map(struct map_range **chain, char *filename)
+{
+	char *line = NULL;
+	size_t size = 0;
+	FILE *idmap;
+
+	idmap = fopen(filename, "r");
+	if (!idmap)
+		err(EXIT_FAILURE, _("could not open '%s'"), filename);
+
+	while (getline(&line, &size, idmap) != -1) {
+		unsigned int start, count;
+		if (sscanf(line, " %u %*u %u", &start, &count) < 2)
+			continue;
+		insert_map_range(chain, (struct map_range) {
+			.inner = start,
+			.outer = start,
+			.count = count
+		});
+	}
+
+	fclose(idmap);
+	free(line);
+}
+
+/**
+ * add_single_map_range() - Add a single-ID map into a list without overlap
+ * @chain: A linked list of ID range mappings
+ * @outer: ID outside the namespace for a single map.
+ * @inner: ID inside the namespace for a single map, or -1 for no map.
+ *
+ * Prepend a mapping to @chain for the single ID @outer to the single ID
+ * @inner. The tricky bit is that we cannot let existing mappings overlap it.
+ * We accomplish this by removing a "hole" from each existing range @map, if
+ * @outer or @inner overlap it. This may result in one less than @map->count
+ * IDs being mapped from @map. The unmapped IDs are always the topmost IDs
+ * of the mapping (either in the parent or the child namespace).
+ *
+ * Most of the time, this function will be called with a single mapping range
+ * @map, @map->outer as some large ID, @map->inner as 0, and @map->count as a
+ * large number (at least 1000, but less than @map->outer). Typically, there
+ * will be no conflict with @outer. However, @inner may split the mapping for
+ * e.g. --map-current-user.
+ */
+
+static void add_single_map_range(struct map_range **chain, unsigned int outer,
+				 unsigned int inner)
+{
+	struct map_range *map = *chain;
+
+	if (inner + 1 == 0)
+		outer = (unsigned int) -1;
+	*chain = NULL;
+
+	while (map) {
+		struct map_range lo, mid, hi, *next = map->next;
+		unsigned int inner_offset, outer_offset;
+
+		/*
+		 * Start inner IDs from zero for an auto mapping; otherwise, if
+		 * the single mapping exists and overlaps the range, remove an ID
+		 */
+		if (map->inner + 1 == 0)
+			map->inner = 0;
+		else if (inner + 1 != 0 &&
+		         ((outer >= map->outer && outer <= map->outer + map->count) ||
+			  (inner >= map->inner && inner <= map->inner + map->count)))
+			map->count--;
+
+		/* Determine where the splits between lo, mid, and hi will be */
+		outer_offset = min(outer > map->outer ? outer - map->outer : 0,
+				   map->count);
+		inner_offset = min(inner > map->inner ? inner - map->inner : 0,
+				   map->count);
+
+		/*
+		 * In the worst case, we need three mappings:
+		 * From the bottom of map to either inner or outer
+		 */
+		lo.outer = map->outer;
+		lo.inner = map->inner;
+		lo.count = min(inner_offset, outer_offset);
+
+		/* From the lower of inner or outer to the higher */
+		mid.outer = lo.outer + lo.count;
+		mid.outer += mid.outer == outer;
+		mid.inner = lo.inner + lo.count;
+		mid.inner += mid.inner == inner;
+		mid.count = abs_diff(outer_offset, inner_offset);
+
+		/* And from the higher of inner or outer to the end of the map */
+		hi.outer = mid.outer + mid.count;
+		hi.outer += hi.outer == outer;
+		hi.inner = mid.inner + mid.count;
+		hi.inner += hi.inner == inner;
+		hi.count = map->count - lo.count - mid.count;
+
+		/* Insert non-empty mappings into the output chain */
+		if (hi.count)
+			insert_map_range(chain, hi);
+		if (mid.count)
+			insert_map_range(chain, mid);
+		if (lo.count)
+			insert_map_range(chain, lo);
+
+		free(map);
+		map = next;
+	}
+
+	if (inner + 1 != 0) {
+		/* Insert single ID mapping as the first entry in the chain */
+		insert_map_range(chain, (struct map_range) {
+			.inner = inner,
+			.outer = outer,
+			.count = 1
+		});
+	}
+}
+
+/**
+ * map_ids_external() - Create a new uid/gid map using setuid helper
  * @idmapper: Either newuidmap or newgidmap
  * @ppid: Pid to set the map for
- * @outer: ID outside the namespace for a single map.
- * @inner: ID inside the namespace for a single map. May be -1 to only use @map.
- * @map: A range of IDs to map
+ * @chain: A linked list of ID range mappings
  *
- * This creates a new uid/gid map for @ppid using @idmapper. The ID @outer in
- * the parent (our) namespace is mapped to the ID @inner in the child (@ppid's)
- * namespace. In addition, the range of IDs beginning at @map->outer is mapped
- * to the range of IDs beginning at @map->inner. The tricky bit is that we
- * cannot let these mappings overlap. We accomplish this by removing a "hole"
- * from @map, if @outer or @inner overlap it. This may result in one less than
- * @map->count IDs being mapped from @map. The unmapped IDs are always the
- * topmost IDs of the mapping (either in the parent or the child namespace).
- *
- * Most of the time, this function will be called with @map->outer as some
- * large ID, @map->inner as 0, and @map->count as a large number (at least
- * 1000, but less than @map->outer). Typically, there will be no conflict with
- * @outer. However, @inner may split the mapping for e.g. --map-current-user.
+ * This creates a new uid/gid map for @ppid using @idmapper to set the
+ * mapping for each of the ranges in @chain.
  *
  * This function always exec()s or errors out and does not return.
  */
 static void __attribute__((__noreturn__))
-map_ids(const char *idmapper, int ppid, unsigned int outer, unsigned int inner,
-	struct map_range *map)
+map_ids_external(const char *idmapper, int ppid, struct map_range *chain)
 {
-	/* idmapper + pid + 4 * map + NULL */
-	char *argv[15];
-	/* argv - idmapper - "1" - NULL */
-	char args[12][UID_BUFSIZ];
-	int i = 0, j = 0;
-	struct map_range lo, mid, hi;
-	unsigned int inner_offset, outer_offset;
+	unsigned int i = 0, length = 3;
+	char **argv;
 
-	/* Some helper macros to reduce bookkeeping */
-#define push_str(s) do { \
-	argv[i++] = s; \
-} while (0)
-#define push_ul(x) do { \
-	snprintf(args[j], sizeof(args[j]), "%u", x); \
-	push_str(args[j++]); \
-} while (0)
+	for (struct map_range *map = chain; map; map = map->next)
+		length += 3;
+	argv = xcalloc(length, sizeof(*argv));
+	argv[i++] = xstrdup(idmapper);
+	xasprintf(&argv[i++], "%u", ppid);
 
-	push_str(xstrdup(idmapper));
-	push_ul(ppid);
-	if ((int)inner == -1) {
-		/*
-		 * If we don't have a "single" mapping, then we can just use map
-		 * directly, starting inner IDs from zero for an auto mapping
-		 */
-		push_ul(map->inner + 1 ? map->inner : 0);
-		push_ul(map->outer);
-		push_ul(map->count);
-		push_str(NULL);
-
-		execvp(idmapper, argv);
-		errexec(idmapper);
+	for (struct map_range *map = chain; map; map = map->next) {
+		xasprintf(&argv[i++], "%u", map->inner);
+		xasprintf(&argv[i++], "%u", map->outer);
+		xasprintf(&argv[i++], "%u", map->count);
 	}
 
-	/*
-	 * Start inner IDs from zero for an auto mapping; otherwise, if the two
-	 * fixed mappings overlap, remove an ID from map
-	 */
-	if (map->inner + 1 == 0)
-		map->inner = 0;
-	else if ((outer >= map->outer && outer <= map->outer + map->count) ||
-		 (inner >= map->inner && inner <= map->inner + map->count))
-		map->count--;
-
-	/* Determine where the splits between lo, mid, and hi will be */
-	outer_offset = min(outer > map->outer ? outer - map->outer : 0,
-			   map->count);
-	inner_offset = min(inner > map->inner ? inner - map->inner : 0,
-			   map->count);
-
-	/*
-	 * In the worst case, we need three mappings:
-	 * From the bottom of map to either inner or outer
-	 */
-	lo.outer = map->outer;
-	lo.inner = map->inner;
-	lo.count = min(inner_offset, outer_offset);
-
-	/* From the lower of inner or outer to the higher */
-	mid.outer = lo.outer + lo.count;
-	mid.outer += mid.outer == outer;
-	mid.inner = lo.inner + lo.count;
-	mid.inner += mid.inner == inner;
-	mid.count = abs_diff(outer_offset, inner_offset);
-
-	/* And from the higher of inner or outer to the end of the map */
-	hi.outer = mid.outer + mid.count;
-	hi.outer += hi.outer == outer;
-	hi.inner = mid.inner + mid.count;
-	hi.inner += hi.inner == inner;
-	hi.count = map->count - lo.count - mid.count;
-
-	push_ul(inner);
-	push_ul(outer);
-	push_str("1");
-	/* new[gu]idmap doesn't like zero-length mappings, so skip them */
-	if (lo.count) {
-		push_ul(lo.inner);
-		push_ul(lo.outer);
-		push_ul(lo.count);
-	}
-	if (mid.count) {
-		push_ul(mid.inner);
-		push_ul(mid.outer);
-		push_ul(mid.count);
-	}
-	if (hi.count) {
-		push_ul(hi.inner);
-		push_ul(hi.outer);
-		push_ul(hi.count);
-	}
-	push_str(NULL);
+	argv[i] = NULL;
 	execvp(idmapper, argv);
 	errexec(idmapper);
+}
+
+/**
+ * map_ids_internal() - Create a new uid/gid map using root privilege
+ * @type: Either uid_map or gid_map
+ * @ppid: Pid to set the map for
+ * @chain: A linked list of ID range mappings
+ *
+ * This creates a new uid/gid map for @ppid using a privileged write to
+ * /proc/@ppid/@type to set a mapping for each of the ranges in @chain.
+ */
+static void map_ids_internal(const char *type, int ppid, struct map_range *chain)
+{
+	int count, fd;
+	unsigned int length = 0;
+	char buffer[4096], *path;
+
+	xasprintf(&path, "/proc/%u/%s", ppid, type);
+	for (struct map_range *map = chain; map; map = map->next) {
+		count = snprintf(buffer + length, sizeof(buffer) - length,
+				 "%u %u %u\n",
+				 map->inner, map->outer, map->count);
+		if (count < 0 || count + length > sizeof(buffer))
+			errx(EXIT_FAILURE,
+				_("%s too large for kernel 4k limit"), path);
+		length += count;
+	}
+
+	fd = open(path, O_WRONLY | O_CLOEXEC | O_NOCTTY);
+	if (fd < 0)
+		err(EXIT_FAILURE, _("failed to open %s"), path);
+	if (write_all(fd, buffer, length) < 0)
+		err(EXIT_FAILURE, _("failed to write %s"), path);
+	close(fd);
+	free(path);
 }
 
 /**
@@ -619,6 +700,19 @@ static pid_t map_ids_from_child(int *fd, uid_t mapuser,
 	if (child)
 		return child;
 
+	if (usermap)
+		add_single_map_range(&usermap, geteuid(), mapuser);
+	if (groupmap)
+		add_single_map_range(&groupmap, getegid(), mapgroup);
+
+	if (geteuid() == 0) {
+		if (usermap)
+			map_ids_internal("uid_map", ppid, usermap);
+		if (groupmap)
+			map_ids_internal("gid_map", ppid, groupmap);
+		exit(EXIT_SUCCESS);
+	}
+
 	/* Avoid forking more than we need to */
 	if (usermap && groupmap) {
 		pid = fork();
@@ -629,9 +723,9 @@ static pid_t map_ids_from_child(int *fd, uid_t mapuser,
 	}
 
 	if (!pid && usermap)
-		map_ids("newuidmap", ppid, geteuid(), mapuser, usermap);
+		map_ids_external("newuidmap", ppid, usermap);
 	if (groupmap)
-		map_ids("newgidmap", ppid, getegid(), mapgroup, groupmap);
+		map_ids_external("newgidmap", ppid, groupmap);
 	exit(EXIT_SUCCESS);
 }
 
@@ -844,21 +938,27 @@ int main(int argc, char *argv[])
 		case OPT_MAPUSERS:
 			unshare_flags |= CLONE_NEWUSER;
 			if (!strcmp(optarg, "auto"))
-				usermap = read_subid_range(_PATH_SUBUID, real_euid);
+				insert_map_range(&usermap,
+					read_subid_range(_PATH_SUBUID, real_euid));
+			else if (!strcmp(optarg, "all"))
+				read_kernel_map(&usermap, _PATH_PROC_UIDMAP);
 			else
-				usermap = get_map_range(optarg);
+				insert_map_range(&usermap, get_map_range(optarg));
 			break;
 		case OPT_MAPGROUPS:
 			unshare_flags |= CLONE_NEWUSER;
 			if (!strcmp(optarg, "auto"))
-				groupmap = read_subid_range(_PATH_SUBGID, real_euid);
+				insert_map_range(&groupmap,
+					read_subid_range(_PATH_SUBGID, real_euid));
+			else if (!strcmp(optarg, "all"))
+				read_kernel_map(&groupmap, _PATH_PROC_GIDMAP);
 			else
-				groupmap = get_map_range(optarg);
+				insert_map_range(&groupmap, get_map_range(optarg));
 			break;
 		case OPT_MAPAUTO:
 			unshare_flags |= CLONE_NEWUSER;
-			usermap = read_subid_range(_PATH_SUBUID, real_euid);
-			groupmap = read_subid_range(_PATH_SUBGID, real_euid);
+			insert_map_range(&usermap, read_subid_range(_PATH_SUBUID, real_euid));
+			insert_map_range(&groupmap, read_subid_range(_PATH_SUBGID, real_euid));
 			break;
 		case OPT_SETGROUPS:
 			setgrpcmd = setgroups_str2id(optarg);
