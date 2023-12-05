@@ -73,6 +73,7 @@ BLKID_PROBE_AMBIGUOUS
 <FILE>lowprobe-tags</FILE>
 blkid_do_fullprobe
 blkid_do_wipe
+blkid_wipe_all
 blkid_do_probe
 blkid_do_safeprobe
 <SUBSECTION>

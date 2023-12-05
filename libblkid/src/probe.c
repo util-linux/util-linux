@@ -1482,6 +1482,8 @@ static inline int is_conventional(blkid_probe pr __attribute__((__unused__)),
  * See also blkid_probe_step_back() if you cannot use this built-in wipe
  * function, but you want to use libblkid probing as a source for wiping.
  *
+ * See also blkid_wipe_all() which works the same as the example above.
+ *
  * Returns: 0 on success, and -1 in case of error.
  */
 int blkid_do_wipe(blkid_probe pr, int dryrun)
@@ -1577,6 +1579,46 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 		/* wipe in memory only */
 		blkid_probe_hide_range(pr, magoff, len);
 		return blkid_probe_step_back(pr);
+	}
+
+	return BLKID_PROBE_OK;
+}
+
+/**
+ * blkid_wipe_all:
+ * @pr: prober
+ *
+ * This function erases all detectable signatures from &pr.
+ * The @pr has to be open in O_RDWR mode. All other necessary configurations
+ * will be enabled automatically.
+ *
+ *  <example>
+ *  <title>wipe all filesystems or raids from the device</title>
+ *   <programlisting>
+ *      fd = open(devname, O_RDWR|O_CLOEXEC);
+ *      blkid_probe_set_device(pr, fd, 0, 0);
+ *
+ *      blkid_wipe_all(pr);
+ *  </programlisting>
+ * </example>
+ *
+ * Returns: 0 on success, and -1 in case of error.
+ */
+int blkid_wipe_all(blkid_probe pr)
+{
+	DBG(LOWPROBE, ul_debug("wiping all signatures"));
+
+	blkid_probe_enable_superblocks(pr, 1);
+	blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_MAGIC |
+			BLKID_SUBLKS_BADCSUM);
+
+	blkid_probe_enable_partitions(pr, 1);
+	blkid_probe_set_partitions_flags(pr, BLKID_PARTS_MAGIC |
+			BLKID_PARTS_FORCE_GPT);
+
+	while (blkid_do_probe(pr) == 0) {
+		DBG(LOWPROBE, ul_debug("wiping one signature"));
+		blkid_do_wipe(pr, 0);
 	}
 
 	return BLKID_PROBE_OK;
