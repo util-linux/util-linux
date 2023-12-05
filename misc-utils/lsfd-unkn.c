@@ -20,7 +20,6 @@
  */
 
 #include <linux/bpf.h>
-#include <stdalign.h>
 #include <sys/syscall.h>
 #include <sys/timerfd.h>
 #include <time.h>

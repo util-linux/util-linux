@@ -606,6 +606,7 @@ AC_CHECK_FUNCS([ \
 	posix_fadvise \
 	prctl \
 	qsort_r \
+	reallocarray \
 	rpmatch \
 	scandirat \
 	sched_setattr \

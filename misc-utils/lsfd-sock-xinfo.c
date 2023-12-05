@@ -34,7 +34,6 @@
 				   struct unix_diag_req */
 #include <sched.h>		/* for setns(2) */
 #include <search.h>		/* tfind, tsearch */
-#include <stdalign.h>		/* alignas */
 #include <stdint.h>
 #include <string.h>
 #include <sys/socket.h>		/* SOCK_* */
@@ -360,7 +359,7 @@ static void send_diag_request(int diagsd, void *req, size_t req_size,
 		.msg_iov = iovecs,
 	};
 
-	alignas(void *) uint8_t buf[8192];
+	__attribute__((aligned(sizeof(void *)))) uint8_t buf[8192];
 
 	if (sendmsg(diagsd, &mhd, 0) < 0)
 		return;
