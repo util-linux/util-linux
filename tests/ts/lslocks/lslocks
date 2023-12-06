@@ -102,3 +102,5 @@ for m in "${OFD_METHODS[@]}"; do
     run_lslocks_with_co_holders "$m"
     ts_finalize_subtest
 done
+
+ts_finalize
