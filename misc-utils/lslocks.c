@@ -819,27 +819,22 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -J, --json             use JSON output format\n"), out);
 	fputs(_(" -i, --noinaccessible   ignore locks without read permissions\n"), out);
 	fputs(_(" -n, --noheadings       don't print headings\n"), out);
-	fputs(_(" -o, --output <list>    define which output columns to use\n"), out);
+	fputs(_(" -o, --output <list>    output columns (see --list-columns)\n"), out);
 	fputs(_("     --output-all       output all columns\n"), out);
 	fputs(_(" -p, --pid <pid>        display only locks held by this process\n"), out);
 	fputs(_(" -r, --raw              use the raw output format\n"), out);
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
-	fputs(_(" -H, --list-columns     list the available columns\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" -H, --list-columns     list the available columns\n"), out);
 	fprintf(out, USAGE_HELP_OPTIONS(24));
-
-	fputs(USAGE_COLUMNS, out);
-
 	fprintf(out, USAGE_MAN_TAIL("lslocks(8)"));
 
 	exit(EXIT_SUCCESS);
 }
 
 static void __attribute__((__noreturn__)) list_colunms(const char *table_name,
-						       FILE *out,
-						       int raw,
-						       int json)
+						       FILE *out)
 {
 	struct libscols_table *col_tb = xcolumn_list_table_new(table_name, out, raw, json);
 
@@ -849,8 +844,7 @@ static void __attribute__((__noreturn__)) list_colunms(const char *table_name,
 			xcolumn_list_table_append_line(col_tb, infos[i].name,
 						       json_type, NULL,
 						       _(infos[i].help));
-		}
-		else
+		} else
 			xcolumn_list_table_append_line(col_tb, infos[i].name,
 						       -1, "<string|number>",
 						       _(infos[i].help));
@@ -864,7 +858,7 @@ static void __attribute__((__noreturn__)) list_colunms(const char *table_name,
 
 int main(int argc, char *argv[])
 {
-	int c, rc = 0;
+	int c, rc = 0, collist = 0;
 	struct list_head proc_locks;
 	void *pid_locks = NULL;
 	char *outarg = NULL;
@@ -934,16 +928,20 @@ int main(int argc, char *argv[])
 			disable_columns_truncate();
 			break;
 
+		case 'H':
+			collist = 1;
+			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
-		case 'H':
-			list_colunms("lslocks-columns", stdout, raw, json);
 		case 'h':
 			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
+
+	if (collist)
+		list_colunms("lslocks-columns", stdout);	/* print end exit */
 
 	INIT_LIST_HEAD(&proc_locks);
 
