@@ -47,6 +47,7 @@
 #include "closestream.h"
 #include "optutils.h"
 #include "procfs.h"
+#include "column-list-table.h"
 
 /* column IDs */
 enum {
@@ -78,7 +79,7 @@ static struct colinfo infos[] = {
 	[COL_SRC]  = { "COMMAND",15, 0, N_("command of the process holding the lock") },
 	[COL_PID]  = { "PID",     5, SCOLS_FL_RIGHT, N_("PID of the process holding the lock") },
 	[COL_TYPE] = { "TYPE",    5, SCOLS_FL_RIGHT, N_("kind of lock") },
-	[COL_SIZE] = { "SIZE",    4, SCOLS_FL_RIGHT, N_("size of the lock") },
+	[COL_SIZE] = { "SIZE",    4, SCOLS_FL_RIGHT, N_("size of the lock. Use <number> if -b/--bytes is given.") },
 	[COL_INODE] = { "INODE",  5, SCOLS_FL_RIGHT, N_("inode number") },
 	[COL_MAJMIN] = { "MAJ:MIN", 6, 0, N_("major:minor device number") },
 	[COL_MODE] = { "MODE",    5, 0, N_("lock access mode") },
@@ -721,6 +722,28 @@ static void rem_tnode(void *node)
 	free(node);
 }
 
+static int get_json_type_for_column(int column_id, int representing_in_bytes)
+{
+	switch (column_id) {
+	case COL_SIZE:
+		if (!representing_in_bytes)
+			return SCOLS_JSON_STRING;
+		/* fallthrough */
+	case COL_PID:
+	case COL_START:
+	case COL_END:
+	case COL_BLOCKER:
+	case COL_INODE:
+		return SCOLS_JSON_NUMBER;
+	case COL_M:
+		return SCOLS_JSON_BOOLEAN;
+	case COL_HOLDERS:
+		return SCOLS_JSON_ARRAY_STRING;
+	default:
+		return SCOLS_JSON_STRING;
+	}
+}
+
 static int show_locks(struct list_head *locks, pid_t target_pid, void *pid_locks)
 {
 	int rc = 0;
@@ -757,29 +780,8 @@ static int show_locks(struct list_head *locks, pid_t target_pid, void *pid_locks
 
 		if (json) {
 			int id = get_column_id(i);
-
-			switch (id) {
-			case COL_SIZE:
-				if (!bytes)
-					break;
-				/* fallthrough */
-			case COL_PID:
-			case COL_START:
-			case COL_END:
-			case COL_BLOCKER:
-			case COL_INODE:
-				scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
-				break;
-			case COL_M:
-				scols_column_set_json_type(cl, SCOLS_JSON_BOOLEAN);
-				break;
-			case COL_HOLDERS:
-				scols_column_set_json_type(cl, SCOLS_JSON_ARRAY_STRING);
-				break;
-			default:
-				scols_column_set_json_type(cl, SCOLS_JSON_STRING);
-				break;
-			}
+			int json_type = get_json_type_for_column(id, bytes);
+			scols_column_set_json_type(cl, json_type);
 		}
 
 	}
@@ -803,7 +805,6 @@ static int show_locks(struct list_head *locks, pid_t target_pid, void *pid_locks
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
-	size_t i;
 
 	fputs(USAGE_HEADER, out);
 
@@ -823,16 +824,40 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -p, --pid <pid>        display only locks held by this process\n"), out);
 	fputs(_(" -r, --raw              use the raw output format\n"), out);
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
+	fputs(_(" -H, --list-columns     list the available columns\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(24));
 
 	fputs(USAGE_COLUMNS, out);
 
-	for (i = 0; i < ARRAY_SIZE(infos); i++)
-		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
-
 	fprintf(out, USAGE_MAN_TAIL("lslocks(8)"));
+
+	exit(EXIT_SUCCESS);
+}
+
+static void __attribute__((__noreturn__)) list_colunms(const char *table_name,
+						       FILE *out,
+						       int raw,
+						       int json)
+{
+	struct libscols_table *col_tb = xcolumn_list_table_new(table_name, out, raw, json);
+
+	for (size_t i = 0; i < ARRAY_SIZE(infos); i++) {
+		if (i != COL_SIZE) {
+			int json_type = get_json_type_for_column(i, bytes);
+			xcolumn_list_table_append_line(col_tb, infos[i].name,
+						       json_type, NULL,
+						       _(infos[i].help));
+		}
+		else
+			xcolumn_list_table_append_line(col_tb, infos[i].name,
+						       -1, "<string|number>",
+						       _(infos[i].help));
+	}
+
+	scols_print_table(col_tb);
+	scols_unref_table(col_tb);
 
 	exit(EXIT_SUCCESS);
 }
@@ -858,6 +883,7 @@ int main(int argc, char *argv[])
 		{ "noheadings", no_argument,       NULL, 'n' },
 		{ "raw",        no_argument,       NULL, 'r' },
 		{ "noinaccessible", no_argument, NULL, 'i' },
+		{ "list-columns", no_argument,     NULL, 'H' },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -874,7 +900,7 @@ int main(int argc, char *argv[])
 	close_stdout_atexit();
 
 	while ((c = getopt_long(argc, argv,
-				"biJp:o:nruhV", long_opts, NULL)) != -1) {
+				"biJp:o:nruhVH", long_opts, NULL)) != -1) {
 
 		err_exclusive_options(c, long_opts, excl, excl_st);
 
@@ -910,6 +936,8 @@ int main(int argc, char *argv[])
 
 		case 'V':
 			print_version(EXIT_SUCCESS);
+		case 'H':
+			list_colunms("lslocks-columns", stdout, raw, json);
 		case 'h':
 			usage();
 		default:
