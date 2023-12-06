@@ -1833,7 +1833,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -l, --threads                list in threads level\n"), out);
 	fputs(_(" -J, --json                   use JSON output format\n"), out);
 	fputs(_(" -n, --noheadings             don't print headings\n"), out);
-	fputs(_(" -o, --output <list>          output columns\n"), out);
+	fputs(_(" -o, --output <list>          output columns (see --list-columns)\n"), out);
 	fputs(_(" -r, --raw                    use raw output format\n"), out);
 	fputs(_(" -u, --notruncate             don't truncate text in columns\n"), out);
 	fputs(_(" -p, --pid  <pid(s)>          collect information only specified processes\n"), out);
@@ -2167,7 +2167,7 @@ static const char *inet46_subexpr = INET_SUBEXP_BEGIN
 
 int main(int argc, char *argv[])
 {
-	int c;
+	int c, collist = 0;
 	size_t i;
 	char *outarg = NULL;
 	char  *filter_expr = NULL;
@@ -2286,11 +2286,16 @@ int main(int argc, char *argv[])
 		case 'h':
 			usage();
 		case 'H':
-			list_colunms("lsfd-columns", stdout, ctl.raw, ctl.json);
+			collist = 1;
+			break;
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
+
+	if (collist)
+		list_colunms("lsfd-columns", stdout, ctl.raw, ctl.json); /* print and exit */
+
 	if (argv[optind])
 		errtryhelp(EXIT_FAILURE);
 
