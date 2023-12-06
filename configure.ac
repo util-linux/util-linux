@@ -611,6 +611,7 @@ AC_CHECK_FUNCS([ \
 	prctl \
 	qsort_r \
 	reallocarray \
+	renameat2 \
 	rpmatch \
 	scandirat \
 	sched_setattr \
@@ -661,6 +662,12 @@ AS_IF([test "x$ul_cv_syscall_setns" = xno], [
 UL_CHECK_SYSCALL([pidfd_open])
 UL_CHECK_SYSCALL([pidfd_send_signal])
 UL_CHECK_SYSCALL([close_range])
+
+have_renameat2_syscall="yes"
+UL_CHECK_SYSCALL([renameat2])
+AS_IF([test "x$ul_cv_syscall_renameat2" = xno], [
+   have_renameat2_syscall="no"
+])
 
 UL_CHECK_SYSCALL([fsconfig])
 UL_CHECK_SYSCALL([fsmount])
@@ -2109,6 +2116,11 @@ dnl reboot() with multiple arguments is yet only found in glibc versions
 dnl earlier than 2.x.
 UL_REQUIRES_HAVE([ctrlaltdel], [reboot], [reboot function])
 AM_CONDITIONAL([BUILD_CTRLALTDEL], [test "x$build_ctrlaltdel" = xyes])
+
+enable_exch=$have_renameat2_syscall
+UL_BUILD_INIT([exch])
+UL_REQUIRES_LINUX([exch])
+AM_CONDITIONAL([BUILD_EXCH], [test "x$build_exch" = xyes])
 
 UL_BUILD_INIT([fincore], [check])
 UL_REQUIRES_LINUX([fincore])

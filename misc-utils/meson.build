@@ -136,6 +136,10 @@ install_data(
   install_dir : docdir,
   install_mode: 'rwxr-xr-x')
 
+exch_sources = files(
+  'exch.c',
+)
+
 fincore_sources = files(
   'fincore.c',
 )
