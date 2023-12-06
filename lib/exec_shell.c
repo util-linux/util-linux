@@ -32,20 +32,14 @@
 
 void __attribute__((__noreturn__)) exec_shell(void)
 {
-	const char *shell = getenv("SHELL");
-	char *shellc;
+	char *shell;
 	const char *shell_basename;
-	char *arg0;
 
+	shell = getenv("SHELL");
 	if (!shell)
 		shell = DEFAULT_SHELL;
 
-	shellc = xstrdup(shell);
-	shell_basename = basename(shellc);
-	arg0 = xmalloc(strlen(shell_basename) + 2);
-	arg0[0] = '-';
-	strcpy(arg0 + 1, shell_basename);
-
-	execl(shell, arg0, (char *)NULL);
+	shell_basename = basename(shell);
+	execl(shell, shell_basename, (char *)NULL);
 	errexec(shell);
 }
