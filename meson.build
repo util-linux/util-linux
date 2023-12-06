@@ -558,6 +558,7 @@ funcs = '''
         prctl
         qsort_r
         reallocarray
+        renameat2
         rpmatch
         scandirat
         setprogname
@@ -2975,6 +2976,21 @@ if not is_disabler(exe)
   exes += exe
   manadocs += ['misc-utils/lsclocks.1.adoc']
   bashcompletions += ['lsclocks']
+endif
+
+if conf.get('HAVE_RENAMEAT2').to_string() == '1'
+exe = executable(
+  'exch',
+  exch_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : true)
+if not is_disabler(exe)
+  exes += exe
+  manadocs += ['misc-utils/exch.1.adoc']
+  bashcompletions += ['exch']
+endif
 endif
 
 ############################################################

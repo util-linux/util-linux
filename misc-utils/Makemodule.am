@@ -230,6 +230,15 @@ dist_getoptexample_DATA = \
 	misc-utils/getopt-example.tcsh
 endif
 
+if BUILD_EXCH
+usrbin_exec_PROGRAMS += exch
+MANPAGES += misc-utils/exch.1
+dist_noinst_DATA += misc-utils/exch.1.adoc
+exch_SOURCES = misc-utils/exch.c
+exch_LDADD = $(LDADD) libcommon.la
+exch_CFLAGS = $(AM_CFLAGS)
+endif
+
 if BUILD_FINCORE
 usrbin_exec_PROGRAMS += fincore
 MANPAGES += misc-utils/fincore.1

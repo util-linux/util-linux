@@ -64,6 +64,7 @@ TS_CMD_COL=${TS_CMD_COL:-"${ts_commandsdir}col"}
 TS_CMD_COLUMN=${TS_CMD_COLUMN:-"${ts_commandsdir}column"}
 TS_CMD_ENOSYS=${TS_CMD_ENOSYS-"${ts_commandsdir}enosys"}
 TS_CMD_EJECT=${TS_CMD_EJECT-"${ts_commandsdir}eject"}
+TS_CMD_EXCH=${TS_CMD_EXCH-"${ts_commandsdir}exch"}
 TS_CMD_FALLOCATE=${TS_CMD_FALLOCATE-"${ts_commandsdir}fallocate"}
 TS_CMD_FDISK=${TS_CMD_FDISK-"${ts_commandsdir}fdisk"}
 TS_CMD_FLOCK=${TS_CMD_FLOCK-"${ts_commandsdir}flock"}
