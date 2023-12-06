@@ -48,6 +48,7 @@
 #include "optutils.h"
 #include "mangle.h"
 #include "buffer.h"
+#include "column-list-table.h"
 
 #include "findmnt.h"
 
@@ -101,7 +102,7 @@ struct colinfo {
 /* columns descriptions (don't use const, this is writable) */
 static struct colinfo infos[] = {
 	[COL_ACTION]       = { "ACTION",         10, SCOLS_FL_STRICTWIDTH, N_("action detected by --poll") },
-	[COL_AVAIL]        = { "AVAIL",           5, SCOLS_FL_RIGHT, N_("filesystem size available") },
+	[COL_AVAIL]        = { "AVAIL",           5, SCOLS_FL_RIGHT, N_("filesystem size available, use <number> if --bytes is given") },
 	[COL_FREQ]         = { "FREQ",            1, SCOLS_FL_RIGHT, N_("dump(8) period in days [fstab only]") },
 	[COL_FSROOT]       = { "FSROOT",       0.25, SCOLS_FL_NOEXTREMES, N_("filesystem root") },
 	[COL_FSTYPE]       = { "FSTYPE",       0.10, SCOLS_FL_TRUNC, N_("filesystem type") },
@@ -118,12 +119,12 @@ static struct colinfo infos[] = {
 	[COL_PARTUUID]     = { "PARTUUID",       36, 0, N_("partition UUID") },
 	[COL_PASSNO]       = { "PASSNO",          1, SCOLS_FL_RIGHT, N_("pass number on parallel fsck(8) [fstab only]") },
 	[COL_PROPAGATION]  = { "PROPAGATION",  0.10, 0, N_("VFS propagation flags") },
-	[COL_SIZE]         = { "SIZE",            5, SCOLS_FL_RIGHT, N_("filesystem size") },
+	[COL_SIZE]         = { "SIZE",            5, SCOLS_FL_RIGHT, N_("filesystem size, use <number> if --bytes is given") },
 	[COL_SOURCES]      = { "SOURCES",      0.25, SCOLS_FL_WRAP, N_("all possible source devices") },
 	[COL_SOURCE]       = { "SOURCE",       0.25, SCOLS_FL_NOEXTREMES, N_("source device") },
 	[COL_TARGET]       = { "TARGET",       0.30, SCOLS_FL_TREE| SCOLS_FL_NOEXTREMES, N_("mountpoint") },
 	[COL_TID]          = { "TID",             4, SCOLS_FL_RIGHT, N_("task ID") },
-	[COL_USED]         = { "USED",            5, SCOLS_FL_RIGHT, N_("filesystem size used") },
+	[COL_USED]         = { "USED",            5, SCOLS_FL_RIGHT, N_("filesystem size used, use <number> if --bytes is given") },
 	[COL_USEPERC]      = { "USE%",            3, SCOLS_FL_RIGHT, N_("filesystem use percentage") },
 	[COL_UUID]         = { "UUID",           36, 0, N_("filesystem UUID") },
 	[COL_VFS_OPTIONS]  = { "VFS-OPTIONS",  0.20, SCOLS_FL_TRUNC, N_("VFS specific mount options") }
@@ -1332,10 +1333,36 @@ static int uniq_fs_target_cmp(
 	return !mnt_fs_match_target(a, mnt_fs_get_target(b), cache);
 }
 
+static int get_column_json_type(int id, int scols_flags, int *multi)
+{
+	switch (id) {
+	case COL_SIZE:
+	case COL_AVAIL:
+	case COL_USED:
+		if (multi)
+			*multi = 1;
+		if (!(flags & FL_BYTES))
+			break;
+		/* fallthrough */
+	case COL_ID:
+	case COL_PARENT:
+	case COL_FREQ:
+	case COL_PASSNO:
+	case COL_TID:
+		return SCOLS_JSON_NUMBER;
+
+	default:
+		if (scols_flags & SCOLS_FL_WRAP)
+			return SCOLS_JSON_ARRAY_STRING;
+		break;
+	}
+
+	return SCOLS_JSON_STRING;	/* default */
+}
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
-	size_t i;
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(
@@ -1376,7 +1403,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -N, --task <tid>       use alternative namespace (/proc/<tid>/mountinfo file)\n"), out);
 	fputs(_(" -n, --noheadings       don't print column headings\n"), out);
 	fputs(_(" -O, --options <list>   limit the set of filesystems by mount options\n"), out);
-	fputs(_(" -o, --output <list>    the output columns to be shown\n"), out);
+	fputs(_(" -o, --output <list>    output columns (see --list-columns)\n"), out);
 	fputs(_("     --output-all       output all available columns\n"), out);
 	fputs(_(" -P, --pairs            use key=\"value\" output format\n"), out);
 	fputs(_("     --pseudo           print only pseudo-filesystems\n"), out);
@@ -1401,23 +1428,45 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --vfs-all          print all VFS options\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" -H, --list-columns     list the available columns\n"), out);
 	fprintf(out, USAGE_HELP_OPTIONS(24));
-
-	fputs(USAGE_COLUMNS, out);
-	for (i = 0; i < ARRAY_SIZE(infos); i++)
-		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
 
 	fprintf(out, USAGE_MAN_TAIL("findmnt(8)"));
 
 	exit(EXIT_SUCCESS);
 }
 
+static void __attribute__((__noreturn__)) list_colunms(void)
+{
+	size_t i;
+	struct libscols_table *tb = xcolumn_list_table_new("findmnt-columns", stdout,
+						flags & FL_RAW,
+						flags & FL_JSON);
+
+	for (i = 0; i < ARRAY_SIZE(infos); i++) {
+		const struct colinfo *ci = &infos[i];
+		int multi = 0;
+		int json = get_column_json_type(i, ci->flags, &multi);
+
+		xcolumn_list_table_append_line(tb, ci->name,
+			multi ? -1 : json,
+			multi ? "<string|number>" : NULL,
+		       _(ci->help));
+	}
+
+	scols_print_table(tb);
+	scols_unref_table(tb);
+
+	exit(EXIT_SUCCESS);
+}
+
+
 int main(int argc, char *argv[])
 {
 	struct libmnt_table *tb = NULL;
 	char **tabfiles = NULL;
 	int direction = MNT_ITER_FORWARD;
-	int verify = 0;
+	int verify = 0, collist = 0;
 	int c, rc = -1, timeout = -1;
 	int ntabfiles = 0, tabtype = 0;
 	char *outarg = NULL;
@@ -1480,6 +1529,7 @@ int main(int argc, char *argv[])
 		{ "pseudo",	    no_argument,       NULL, FINDMNT_OPT_PSEUDO	 },
 		{ "vfs-all",	    no_argument,       NULL, FINDMNT_OPT_VFS_ALL },
 		{ "shadowed",       no_argument,       NULL, FINDMNT_OPT_SHADOWED },
+		{ "list-columns",   no_argument,       NULL, 'H' },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -1506,7 +1556,7 @@ int main(int argc, char *argv[])
 	flags |= FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
-				"AabCcDd:ehiJfF:o:O:p::PklmM:nN:rst:uvRS:T:Uw:Vxy",
+				"AabCcDd:ehiJfF:o:O:p::PklmM:nN:rst:uvRS:T:Uw:VxyH",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1664,6 +1714,10 @@ int main(int argc, char *argv[])
 		case FINDMNT_OPT_SHADOWED:
 			flags |= FL_SHADOWED;
 			break;
+
+		case 'H':
+			collist = 1;
+			break;
 		case 'h':
 			usage();
 		case 'V':
@@ -1672,6 +1726,9 @@ int main(int argc, char *argv[])
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
+
+	if (collist)
+		list_colunms();		/* print end exit */
 
 	if (!ncolumns && (flags & FL_DF)) {
 		add_column(columns, ncolumns++, COL_SOURCE);
@@ -1820,29 +1877,8 @@ int main(int argc, char *argv[])
 						NULL,
 						scols_wrapzero_nextchunk,
 						NULL);
-		if (flags & FL_JSON) {
-			switch (id) {
-			case COL_SIZE:
-			case COL_AVAIL:
-			case COL_USED:
-				if (!(flags & FL_BYTES))
-					break;
-				/* fallthrough */
-			case COL_ID:
-			case COL_PARENT:
-			case COL_FREQ:
-			case COL_PASSNO:
-			case COL_TID:
-				scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
-				break;
-			default:
-				if (fl & SCOLS_FL_WRAP)
-					scols_column_set_json_type(cl, SCOLS_JSON_ARRAY_STRING);
-				else
-					scols_column_set_json_type(cl, SCOLS_JSON_STRING);
-				break;
-			}
-		}
+		if (flags & FL_JSON)
+	                scols_column_set_json_type(cl, get_column_json_type(id, fl, NULL));
 	}
 
 	/*

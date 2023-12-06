@@ -66,6 +66,9 @@ Search in an alternative file. If used with *--fstab*, *--mtab* or *--kernel*, t
 *-f*, *--first-only*::
 Print the first matching filesystem only.
 
+*-H*, *--list-columns*::
+List the available columns, use with *--json* or *--raw* to get output in machine-readable format.
+
 *-i*, *--invert*::
 Invert the sense of matching.
 
