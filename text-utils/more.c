@@ -1392,6 +1392,11 @@ static int more_poll(struct more_control *ctl, int timeout)
 			abort();
 		}
 	}
+
+	/* Check for POLLERR or POLLHUP in revents */
+	if (pfd[1].revents & (POLLHUP | POLLERR))
+		more_exit(ctl);
+
 	if (pfd[1].revents == 0)
 		return 1;
 	return 0;
