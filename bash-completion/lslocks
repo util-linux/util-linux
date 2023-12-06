@@ -40,6 +40,7 @@ _lslocks_module()
 		--pid
 		--raw
 		--notruncate
+		--list-columns
 		--help
 		--version
 	"

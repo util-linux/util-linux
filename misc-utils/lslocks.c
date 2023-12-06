@@ -79,7 +79,7 @@ static struct colinfo infos[] = {
 	[COL_SRC]  = { "COMMAND",15, 0, N_("command of the process holding the lock") },
 	[COL_PID]  = { "PID",     5, SCOLS_FL_RIGHT, N_("PID of the process holding the lock") },
 	[COL_TYPE] = { "TYPE",    5, SCOLS_FL_RIGHT, N_("kind of lock") },
-	[COL_SIZE] = { "SIZE",    4, SCOLS_FL_RIGHT, N_("size of the lock. Use <number> if -b/--bytes is given.") },
+	[COL_SIZE] = { "SIZE",    4, SCOLS_FL_RIGHT, N_("size of the lock, use <number> if --bytes is given") },
 	[COL_INODE] = { "INODE",  5, SCOLS_FL_RIGHT, N_("inode number") },
 	[COL_MAJMIN] = { "MAJ:MIN", 6, 0, N_("major:minor device number") },
 	[COL_MODE] = { "MODE",    5, 0, N_("lock access mode") },
@@ -833,10 +833,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static void __attribute__((__noreturn__)) list_colunms(const char *table_name,
-						       FILE *out)
+static void __attribute__((__noreturn__)) list_colunms(void)
 {
-	struct libscols_table *col_tb = xcolumn_list_table_new(table_name, out, raw, json);
+	struct libscols_table *col_tb = xcolumn_list_table_new(
+					"lslocks-columns", stdout, raw, json);
 
 	for (size_t i = 0; i < ARRAY_SIZE(infos); i++) {
 		if (i != COL_SIZE) {
@@ -941,7 +941,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (collist)
-		list_colunms("lslocks-columns", stdout);	/* print end exit */
+		list_colunms();	/* print end exit */
 
 	INIT_LIST_HEAD(&proc_locks);
 
