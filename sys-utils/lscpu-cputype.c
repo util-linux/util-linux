@@ -643,11 +643,11 @@ struct lscpu_arch *lscpu_read_architecture(struct lscpu_cxt *cxt)
 
 		snprintf(buf, sizeof(buf), " %s ", ct->flags);
 		if (strstr(buf, " lm "))
-			ar->bit32 = 1, ar->bit64 = 1;			/* x86_64 */
+			ar->bit32 = ar->bit64 = 1;			/* x86_64 */
 		if (strstr(buf, " zarch "))
-			ar->bit32 = 1, ar->bit64 = 1;			/* s390x */
+			ar->bit32 = ar->bit64 = 1;			/* s390x */
 		if (strstr(buf, " sun4v ") || strstr(buf, " sun4u "))
-			ar->bit32 = 1, ar->bit64 = 1;			/* sparc64 */
+			ar->bit32 = ar->bit64 = 1;			/* sparc64 */
 	}
 
 	if (ct && ct->isa) {
