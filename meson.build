@@ -176,6 +176,7 @@ headers = '''
 	linux/fiemap.h
 	linux/gsmmux.h
         linux/if_alg.h
+        linux/landlock.h
         linux/kcmp.h
         linux/net_namespace.h
         linux/nsfs.h
@@ -539,6 +540,9 @@ funcs = '''
         getsgnam
         inotify_init
         jrand48
+        landlock_create_ruleset
+        landlock_add_rule
+        landlock_restrict_self
         lchown
         lgetxattr
         llistxattr

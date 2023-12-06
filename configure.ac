@@ -325,6 +325,7 @@ AC_CHECK_HEADERS([ \
 	linux/falloc.h \
 	linux/fd.h \
 	linux/fiemap.h \
+	linux/landlock.h \
 	linux/kcmp.h \
 	linux/net_namespace.h \
 	linux/nsfs.h \
@@ -588,6 +589,9 @@ AC_CHECK_FUNCS([ \
 	getttynam \
 	inotify_init \
 	jrand48 \
+	landlock_create_ruleset \
+	landlock_add_rule \
+	landlock_restrict_self \
 	lchown \
 	lgetxattr \
 	llistxattr \
@@ -646,6 +650,7 @@ AC_CHECK_FUNCS([reboot], [have_reboot=yes],[have_reboot=no])
 AC_CHECK_FUNCS([updwtmpx updwtmpx], [have_gnu_utmpx=yes], [have_gnu_utmpx=no])
 
 AM_CONDITIONAL([HAVE_OPENAT], [test "x$have_openat" = xyes])
+AM_CONDITIONAL([HAVE_LINUX_LANDLOCK_H], [test "x$ac_cv_header_linux_landlock_h" = xyes])
 
 have_setns_syscall="yes"
 UL_CHECK_SYSCALL([setns])

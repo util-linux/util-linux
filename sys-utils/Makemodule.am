@@ -581,5 +581,9 @@ MANPAGES += sys-utils/setpriv.1
 dist_noinst_DATA += sys-utils/setpriv.1.adoc
 setpriv_SOURCES = sys-utils/setpriv.c \
 		  lib/caputils.c
+dist_noinst_HEADERS += sys-utils/setpriv-landlock.h
+if HAVE_LINUX_LANDLOCK_H
+setpriv_SOURCES += sys-utils/setpriv-landlock.c
+endif
 setpriv_LDADD = $(LDADD) -lcap-ng libcommon.la
 endif

@@ -84,6 +84,32 @@ Request a particular SELinux transition (using a transition on exec, not dyntran
 *--apparmor-profile* _profile_::
 Request a particular AppArmor profile (using a transition on exec). This will fail and cause *setpriv* to abort if AppArmor is not in use, and the transition may be ignored or cause *execve*(2) to fail at AppArmor's whim.
 
+*--landlock-access* _access_::
+Enable landlock restrictions for a specific set of system accesses.
+To allow specific subgroups of accesses use *--landlock-rule*.
++
+Block all filesystem access:
++
+*setpriv --landlock-access fs*
++
+Block all file deletions and directory creations:
++
+*setpriv --landlock-access fs:remove-file,make-dir*
++
+For a complete set of supported access categories use *setpriv --help*.
+
+*--landlock-rule* _rule_::
+
+Allow one specific access from the categories blocked by *--landlock-access*.
++
+The syntax is as follows:
++
+*--landlock-rule $ruletype:$access:$rulearg*
++
+For example grant file read access to everything under */boot*:
++
+*--landlock-rule path-beneath:read-file:/boot*
+
 *--reset-env*::
 Clears all the environment variables except *TERM*; initializes the environment variables *HOME*, *SHELL*, *USER*, *LOGNAME* according to the user's passwd entry; sets *PATH* to _/usr/local/bin:/bin:/usr/bin_ for a regular user and to _/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin_ for root.
 +
@@ -117,6 +143,7 @@ mailto:luto@amacapital.net[Andy Lutomirski]
 *su*(1),
 *prctl*(2),
 *capabilities*(7)
+*landlock*(7)
 
 include::man-common/bugreports.adoc[]
 

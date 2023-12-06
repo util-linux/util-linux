@@ -41,6 +41,7 @@
 #include "pathnames.h"
 #include "signames.h"
 #include "env.h"
+#include "setpriv-landlock.h"
 
 #ifndef PR_SET_NO_NEW_PRIVS
 # define PR_SET_NO_NEW_PRIVS 38
@@ -110,6 +111,7 @@ struct privctx {
 	/* LSMs */
 	const char *selinux_label;
 	const char *apparmor_profile;
+	struct setpriv_landlock_opts landlock;
 };
 
 static void __attribute__((__noreturn__)) usage(void)
@@ -143,6 +145,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	        "                             set or clear parent death signal\n"), out);
 	fputs(_(" --selinux-label <label>     set SELinux label\n"), out);
 	fputs(_(" --apparmor-profile <pr>     set AppArmor profile\n"), out);
+	fputs(_(" --landlock-access <access>  add Landlock access\n"), out);
+	fputs(_(" --landlock-rule <rule>      add Landlock rule\n"), out);
 	fputs(_(" --reset-env                 clear all environment and initialize\n"
 		"                               HOME, SHELL, USER, LOGNAME and PATH\n"), out);
 
@@ -151,6 +155,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" This tool can be dangerous.  Read the manpage, and be careful.\n"), out);
 	fprintf(out, USAGE_MAN_TAIL("setpriv(1)"));
+
+	usage_setpriv(out);
 
 	exit(EXIT_SUCCESS);
 }
@@ -651,7 +657,6 @@ static void do_apparmor_profile(const char *label)
 		    _("write failed: %s"), _PATH_PROC_ATTR_EXEC);
 }
 
-
 static void do_reset_environ(struct passwd *pw)
 {
 	char *term = getenv("TERM");
@@ -754,6 +759,8 @@ int main(int argc, char **argv)
 		PDEATHSIG,
 		SELINUX_LABEL,
 		APPARMOR_PROFILE,
+		LANDLOCK_ACCESS,
+		LANDLOCK_RULE,
 		RESET_ENV
 	};
 
@@ -779,6 +786,8 @@ int main(int argc, char **argv)
 		{ "pdeathsig",        required_argument, NULL, PDEATHSIG,       },
 		{ "selinux-label",    required_argument, NULL, SELINUX_LABEL    },
 		{ "apparmor-profile", required_argument, NULL, APPARMOR_PROFILE },
+		{ "landlock-access",  required_argument, NULL, LANDLOCK_ACCESS  },
+		{ "landlock-rule",    required_argument, NULL, LANDLOCK_RULE    },
 		{ "help",             no_argument,       NULL, 'h'              },
 		{ "reset-env",        no_argument,       NULL, RESET_ENV,       },
 		{ "version",          no_argument,       NULL, 'V'              },
@@ -805,6 +814,7 @@ int main(int argc, char **argv)
 	close_stdout_atexit();
 
 	memset(&opts, 0, sizeof(opts));
+	init_landlock_opts(&opts.landlock);
 
 	while ((c = getopt_long(argc, argv, "+dhV", longopts, NULL)) != -1) {
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -933,6 +943,12 @@ int main(int argc, char **argv)
 				     _("duplicate --apparmor-profile option"));
 			opts.apparmor_profile = optarg;
 			break;
+		case LANDLOCK_ACCESS:
+			parse_landlock_access(&opts.landlock, optarg);
+			break;
+		case LANDLOCK_RULE:
+			parse_landlock_rule(&opts.landlock, optarg);
+			break;
 		case RESET_ENV:
 			opts.reset_env = 1;
 			break;
@@ -1055,6 +1071,8 @@ int main(int argc, char **argv)
 	/* Clear or set parent death signal */
 	if (opts.pdeathsig && prctl(PR_SET_PDEATHSIG, opts.pdeathsig < 0 ? 0 : opts.pdeathsig) != 0)
 		err(SETPRIV_EXIT_PRIVERR, _("set parent death signal failed"));
+
+	do_landlock(&opts.landlock);
 
 	execvp(argv[optind], argv + optind);
 	errexec(argv[optind]);
