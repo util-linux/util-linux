@@ -131,6 +131,7 @@ _findmnt_module()
 				--tree
 				--real
 				--pseudo
+				--list-columns
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
