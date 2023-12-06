@@ -53,6 +53,7 @@
 #include "loopdev.h"
 #include "buffer.h"
 #include "colors.h"
+#include "column-list-table.h"
 
 #include "lsblk.h"
 
@@ -175,15 +176,15 @@ static const struct colinfo infos[] = {
 	[COL_IDLINK] = { "ID-LINK", 0.1, SCOLS_FL_NOEXTREMES, N_("the shortest udev /dev/disk/by-id link name") },
 	[COL_DALIGN] = { "DISC-ALN", 6, SCOLS_FL_RIGHT, N_("discard alignment offset"), COLTYPE_NUM },
 	[COL_DAX] = { "DAX", 1, SCOLS_FL_RIGHT, N_("dax-capable device"), COLTYPE_BOOL },
-	[COL_DGRAN] = { "DISC-GRAN", 6, SCOLS_FL_RIGHT, N_("discard granularity"), COLTYPE_SIZE },
+	[COL_DGRAN] = { "DISC-GRAN", 6, SCOLS_FL_RIGHT, N_("discard granularity, use <number> if --bytes is given"), COLTYPE_SIZE },
 	[COL_DISKSEQ] = { "DISK-SEQ", 1, SCOLS_FL_RIGHT, N_("disk sequence number"), COLTYPE_NUM },
-	[COL_DMAX] = { "DISC-MAX", 6, SCOLS_FL_RIGHT, N_("discard max bytes"), COLTYPE_SIZE },
+	[COL_DMAX] = { "DISC-MAX", 6, SCOLS_FL_RIGHT, N_("discard max bytes, use <number> if --bytes is given"), COLTYPE_SIZE },
 	[COL_DZERO] = { "DISC-ZERO", 1, SCOLS_FL_RIGHT, N_("discard zeroes data"), COLTYPE_BOOL },
-	[COL_FSAVAIL] = { "FSAVAIL", 5, SCOLS_FL_RIGHT, N_("filesystem size available"), COLTYPE_SIZE },
+	[COL_FSAVAIL] = { "FSAVAIL", 5, SCOLS_FL_RIGHT, N_("filesystem size available, use <number> if --bytes is given"), COLTYPE_SIZE },
 	[COL_FSROOTS] = { "FSROOTS", 0.1, SCOLS_FL_WRAP, N_("mounted filesystem roots") },
-	[COL_FSSIZE] = { "FSSIZE", 5, SCOLS_FL_RIGHT, N_("filesystem size"), COLTYPE_SIZE },
+	[COL_FSSIZE] = { "FSSIZE", 5, SCOLS_FL_RIGHT, N_("filesystem size, use <number> if --bytes is given"), COLTYPE_SIZE },
 	[COL_FSTYPE] = { "FSTYPE", 0.1, SCOLS_FL_TRUNC, N_("filesystem type") },
-	[COL_FSUSED] = { "FSUSED", 5, SCOLS_FL_RIGHT, N_("filesystem size used"), COLTYPE_SIZE },
+	[COL_FSUSED] = { "FSUSED", 5, SCOLS_FL_RIGHT, N_("filesystem size used, use <number> if --bytes is given"), COLTYPE_SIZE },
 	[COL_FSUSEPERC] = { "FSUSE%", 3, SCOLS_FL_RIGHT, N_("filesystem use percentage") },
 	[COL_FSVERSION] = { "FSVER", 0.1, SCOLS_FL_TRUNC, N_("filesystem version") },
 	[COL_GROUP] = { "GROUP", 0.1, SCOLS_FL_TRUNC, N_("group name") },
@@ -222,7 +223,7 @@ static const struct colinfo infos[] = {
 	[COL_RQ_SIZE]= { "RQ-SIZE", 5, SCOLS_FL_RIGHT, N_("request queue size"), COLTYPE_NUM },
 	[COL_SCHED] = { "SCHED", 0.1, 0, N_("I/O scheduler name") },
 	[COL_SERIAL] = { "SERIAL", 0.1, SCOLS_FL_TRUNC, N_("disk serial number") },
-	[COL_SIZE] = { "SIZE", 5, SCOLS_FL_RIGHT, N_("size of the device"), COLTYPE_SIZE },
+	[COL_SIZE] = { "SIZE", 5, SCOLS_FL_RIGHT, N_("size of the device, use <number> if --bytes is given"), COLTYPE_SIZE },
 	[COL_START] = { "START", 5, SCOLS_FL_RIGHT, N_("partition start offset (in 512-byte sectors)"), COLTYPE_NUM },
 	[COL_STATE] = { "STATE", 7, SCOLS_FL_TRUNC, N_("state of the device") },
 	[COL_SUBSYS] = { "SUBSYSTEMS", 0.1, SCOLS_FL_NOEXTREMES, N_("de-duplicated chain of subsystems") },
@@ -232,12 +233,12 @@ static const struct colinfo infos[] = {
 	[COL_TYPE] = { "TYPE", 4, 0, N_("device type") },
 	[COL_UUID] = { "UUID", 36,  0, N_("filesystem UUID") },
 	[COL_VENDOR] = { "VENDOR", 0.1, SCOLS_FL_TRUNC, N_("device vendor") },
-	[COL_WSAME] = { "WSAME", 6, SCOLS_FL_RIGHT, N_("write same max bytes"), COLTYPE_SIZE },
+	[COL_WSAME] = { "WSAME", 6, SCOLS_FL_RIGHT, N_("write same max bytes, use <number> if --bytes is given"), COLTYPE_SIZE },
 	[COL_WWN] = { "WWN", 18, 0, N_("unique storage identifier") },
 	[COL_ZONED] = { "ZONED", 0.3, 0, N_("zone model") },
-	[COL_ZONE_SZ] = { "ZONE-SZ", 9, SCOLS_FL_RIGHT, N_("zone size"), COLTYPE_SIZE },
-	[COL_ZONE_WGRAN] = { "ZONE-WGRAN", 10, SCOLS_FL_RIGHT, N_("zone write granularity"), COLTYPE_SIZE },
-	[COL_ZONE_APP] = { "ZONE-APP", 11, SCOLS_FL_RIGHT, N_("zone append max bytes"), COLTYPE_SIZE },
+	[COL_ZONE_SZ] = { "ZONE-SZ", 9, SCOLS_FL_RIGHT, N_("zone size, use <number> if --bytes is given"), COLTYPE_SIZE },
+	[COL_ZONE_WGRAN] = { "ZONE-WGRAN", 10, SCOLS_FL_RIGHT, N_("zone write granularity, use <number> if --bytes is given"), COLTYPE_SIZE },
+	[COL_ZONE_APP] = { "ZONE-APP", 11, SCOLS_FL_RIGHT, N_("zone append max bytes, use <number> if --bytes is given"), COLTYPE_SIZE },
 	[COL_ZONE_NR] = { "ZONE-NR", 8, SCOLS_FL_RIGHT, N_("number of zones"), COLTYPE_NUM },
 	[COL_ZONE_OMAX] = { "ZONE-OMAX", 10, SCOLS_FL_RIGHT, N_("maximum number of open zones"), COLTYPE_NUM },
 	[COL_ZONE_AMAX] = { "ZONE-AMAX", 10, SCOLS_FL_RIGHT, N_("maximum number of active zones"), COLTYPE_NUM },
@@ -2296,7 +2297,6 @@ static void init_scols_filter(struct libscols_table *tb, struct libscols_filter 
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
-	size_t i;
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [<device> ...]\n"), program_invocation_short_name);
@@ -2314,7 +2314,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -O, --output-all     output all columns\n"), out);
 	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
 	fputs(_(" -Q, --filter <query> restrict output\n"), out);
-	fputs(_(" -H, --highlight <query> colorize lines maching the query\n"), out);
+	fputs(_("     --highlight <query> colorize lines maching the query\n"), out);
 	fputs(_("     --ct-filter <query> restrict the next counters\n"), out);
 	fputs(_("     --ct <name>[:<param>[:<function>]] define custom counter\n"), out);
 	fputs(_(" -S, --scsi           output info about SCSI devices\n"), out);
@@ -2330,7 +2330,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -l, --list           use list format output\n"), out);
 	fputs(_(" -m, --perms          output info about permissions\n"), out);
 	fputs(_(" -n, --noheadings     don't print headings\n"), out);
-	fputs(_(" -o, --output <list>  output columns\n"), out);
+	fputs(_(" -o, --output <list>  output columns (see --list-columns)\n"), out);
 	fputs(_(" -p, --paths          print complete device path\n"), out);
 	fputs(_(" -r, --raw            use raw output format\n"), out);
 	fputs(_(" -s, --inverse        inverse dependencies\n"), out);
@@ -2340,15 +2340,40 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -y, --shell          use column names to be usable as shell variable identifiers\n"), out);
 	fputs(_(" -z, --zoned          print zone related information\n"), out);
 	fputs(_("     --sysroot <dir>  use specified directory as system root\n"), out);
+
 	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" -H, --list-columns   list the available columns\n"), out);
 	fprintf(out, USAGE_HELP_OPTIONS(22));
 
-	fputs(USAGE_COLUMNS, out);
-
-	for (i = 0; i < ARRAY_SIZE(infos); i++)
-		fprintf(out, " %12s  %s\n", infos[i].name, _(infos[i].help));
-
 	fprintf(out, USAGE_MAN_TAIL("lsblk(8)"));
+
+	exit(EXIT_SUCCESS);
+}
+
+
+static void __attribute__((__noreturn__)) list_colunms(void)
+{
+	size_t i;
+	struct libscols_table *tb = xcolumn_list_table_new("lsblk-columns", stdout,
+						lsblk->flags & LSBLK_RAW,
+						lsblk->flags & LSBLK_JSON);
+
+	for (i = 0; i < ARRAY_SIZE(infos); i++) {
+		const struct colinfo *ci = &infos[i];
+
+		xcolumn_list_table_append_line(tb, ci->name,
+			ci->type == COLTYPE_SIZE ? -1 :
+			ci->type == COLTYPE_NUM  ? SCOLS_JSON_NUMBER :
+			ci->type == COLTYPE_BOOL ? SCOLS_JSON_BOOLEAN :
+			ci->flags & SCOLS_FL_WRAP ? SCOLS_JSON_ARRAY_STRING :
+				SCOLS_JSON_STRING,
+			ci->type == COLTYPE_SIZE ? "<string|number>" : NULL,
+		       _(ci->help));
+	}
+
+
+	scols_print_table(tb);
+	scols_unref_table(tb);
 
 	exit(EXIT_SUCCESS);
 }
@@ -2369,7 +2394,7 @@ int main(int argc, char *argv[])
 		.tree_id = COL_NAME
 	};
 	struct lsblk_devtree *tr = NULL;
-	int c, status = EXIT_FAILURE;
+	int c, status = EXIT_FAILURE, collist = 0;
 	char *outarg = NULL;
 	size_t i;
 	unsigned int width = 0;
@@ -2378,7 +2403,8 @@ int main(int argc, char *argv[])
 	enum {
 		OPT_SYSROOT = CHAR_MAX + 1,
 		OPT_COUNTER_FILTER,
-		OPT_COUNTER
+		OPT_COUNTER,
+		OPT_HIGHLIGHT,
 	};
 
 	static const struct option longopts[] = {
@@ -2394,7 +2420,7 @@ int main(int argc, char *argv[])
 		{ "output",     required_argument, NULL, 'o' },
 		{ "output-all", no_argument,       NULL, 'O' },
 		{ "filter",     required_argument, NULL, 'Q' },
-		{ "highlight",  required_argument, NULL, 'H' },
+		{ "highlight",  required_argument, NULL, OPT_HIGHLIGHT },
 		{ "merge",      no_argument,       NULL, 'M' },
 		{ "perms",      no_argument,       NULL, 'm' },
 		{ "noheadings",	no_argument,       NULL, 'n' },
@@ -2419,6 +2445,7 @@ int main(int argc, char *argv[])
 		{ "width",	required_argument, NULL, 'w' },
 		{ "ct-filter",  required_argument, NULL, OPT_COUNTER_FILTER },
 		{ "ct",         required_argument, NULL, OPT_COUNTER },
+		{ "list-columns", no_argument,     NULL, 'H' },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -2447,7 +2474,7 @@ int main(int argc, char *argv[])
 	scols_init_debug(0);
 
 	while((c = getopt_long(argc, argv,
-				"AabdDzE:e:fH:hJlNnMmo:OpPQ:iI:rstVvST::w:x:y",
+				"AabdDzE:e:fHhJlNnMmo:OpPQ:iI:rstVvST::w:x:y",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -2484,9 +2511,6 @@ int main(int argc, char *argv[])
 			break;
 		case 'e':
 			parse_excludes(optarg);
-			break;
-		case 'H':
-			lsblk->hlighter = new_filter(optarg);
 			break;
 		case 'J':
 			lsblk->flags |= LSBLK_JSON;
@@ -2632,7 +2656,13 @@ int main(int argc, char *argv[])
 		case OPT_COUNTER:
 			set_counter_properties(optarg);
 			break;
+		case OPT_HIGHLIGHT:
+			lsblk->hlighter = new_filter(optarg);
+			break;
 
+		case 'H':
+			collist = 1;
+			break;
 		case 'h':
 			usage();
 		case 'V':
@@ -2641,6 +2671,9 @@ int main(int argc, char *argv[])
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
+
+	if (collist)
+		list_colunms();        /* print end exit */
 
 	if (force_tree)
 		lsblk->flags |= LSBLK_TREE;
