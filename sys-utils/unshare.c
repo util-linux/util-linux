@@ -395,9 +395,7 @@ static void insert_map_range(struct map_range **chain, struct map_range map)
 static struct map_range get_map_range(const char *s)
 {
 	int end;
-	struct map_range ret;
-
-	ret.next = NULL;
+	struct map_range ret = { .next = NULL };
 
 	if (sscanf(s, "%u:%u:%u%n", &ret.inner, &ret.outer, &ret.count,
 		   &end) >= 3 && !s[end])
@@ -424,10 +422,7 @@ static struct map_range read_subid_range(char *filename, uid_t uid)
 	FILE *idmap;
 	size_t n = 0;
 	struct passwd *pw;
-	struct map_range map;
-
-	map.inner = -1;
-	map.next = NULL;
+	struct map_range map = { .inner = -1, .next = NULL };
 
 	pw = xgetpwuid(uid, &pwbuf);
 	if (!pw)
@@ -542,7 +537,8 @@ static void add_single_map_range(struct map_range **chain, unsigned int outer,
 	*chain = NULL;
 
 	while (map) {
-		struct map_range lo, mid, hi, *next = map->next;
+		struct map_range lo = { 0 }, mid = { 0 }, hi = { 0 },
+				 *next = map->next;
 		unsigned int inner_offset, outer_offset;
 
 		/*
