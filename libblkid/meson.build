@@ -140,7 +140,7 @@ lib_blkid = both_libraries(
   version : libblkid_version,
   link_args : ['-Wl,--version-script=@0@'.format(libblkid_sym_path)],
   link_with : lib_common,
-  dependencies : build_libblkid ? [] : disabler(),
+  dependencies : build_libblkid ? [lib_econf] : disabler(),
   install : build_libblkid)
 blkid_dep = declare_dependency(link_with: lib_blkid, include_directories: '.')
 

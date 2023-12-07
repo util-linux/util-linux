@@ -118,6 +118,9 @@ libblkid_la_SOURCES += \
 endif
 
 libblkid_la_LIBADD = libcommon.la
+if HAVE_ECONF
+libblkid_la_LIBADD += -leconf
+endif
 
 EXTRA_libblkid_la_DEPENDENCIES = \
 	libblkid/src/libblkid.sym
