@@ -51,4 +51,4 @@ _last_module()
 	COMPREPLY=( $(compgen -u -- $cur) )
 	return 0
 }
-complete -F _last_module last
+complete -F _last_module last lastb
