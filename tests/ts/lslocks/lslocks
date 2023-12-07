@@ -65,6 +65,7 @@ run_lslocks()
     {
 	rm -f "${FILE}"
 	coproc MKFDS { "$TS_HELPER_MKFDS" make-regular-file $FD file="$FILE" lock=$m; }
+	sleep 1
 	if read -r -u "${MKFDS[0]}" PID; then
 	    "$TS_CMD_LSLOCKS" ${OPTS} --pid "${PID}" -o "${COLS}" | tee debug-$m
 	    echo "# $m + ${COLS} + ${OPTS}": ${PIPESTATUS[0]}
@@ -142,6 +143,7 @@ run_lslocks_with_co_holders()
     {
 	rm -f "${FILE}"
 	coproc MKFDS { "$TS_HELPER_MKFDS" make-regular-file $FD file="$FILE" lock=$m dupfd=$DFD; }
+	sleep 1
 	if read -r -u "${MKFDS[0]}" PID; then
 	    "$TS_CMD_LSLOCKS" ${OPTS} --pid "${PID}" -o "${COLS_WITH_HOLDERS}" | sed -e "s/${PID},/1,/g" | tee debug-$m
 	    echo "# $m + ${COLS_WITH_HOLDERS} + ${OPTS}": ${PIPESTATUS[0]}
