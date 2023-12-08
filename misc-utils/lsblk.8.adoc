@@ -41,6 +41,9 @@ Disable all built-in filters and list all empty devices and RAM disk devices too
 *-b*, *--bytes*::
 include::man-common/in-bytes.adoc[]
 
+*-H*, *--list-columns*::
+List the available columns, use with *--json* or *--raw* to get output in machine-readable format.
+
 *-D*, *--discard*::
 Print information about the discarding capabilities (TRIM, UNMAP) for each device.
 
@@ -86,7 +89,7 @@ Output info about virtio devices only.
 Do not print a header line.
 
 *-o*, *--output* _list_::
-Specify which output columns to print. Use *--help* to get a list of all supported columns. The columns may affect tree-like output. The default is to use tree for the column 'NAME' (see also *--tree*).
+Specify which output columns to print. Use *--list-columns* to get a list of all supported columns. The columns may affect tree-like output. The default is to use tree for the column 'NAME' (see also *--tree*).
 +
 The default list of columns may be extended if _list_ is specified in the format _+list_ (e.g., *lsblk -o +UUID*).
 
