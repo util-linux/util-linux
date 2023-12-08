@@ -1519,7 +1519,7 @@ int main(int argc, char **argv)
 	}
 
 	if (argc -= optind) {
-		warnx(_("%d too many arguments given"), argc);
+		warnx(_("too many arguments"));
 		errtryhelp(EXIT_FAILURE);
 	}
 
