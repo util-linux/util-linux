@@ -1118,7 +1118,7 @@ full_output:
 			color_disable();
 	} else {
 		if (ctl->json)
-			ul_jsonwrt_value_s(&ctl->jfmt, "msg", line);
+			ul_jsonwrt_value_s_sized(&ctl->jfmt, "msg", line, mesg_size);
 		else
 			safe_fwrite(ctl, line, mesg_size, ctl->indent, stdout);
 	}
