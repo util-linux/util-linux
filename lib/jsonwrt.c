@@ -26,12 +26,12 @@
  *	}
  * }
  */
-static void fputs_quoted_case_json(const char *data, FILE *out, int dir)
+static void fputs_quoted_case_json(const char *data, FILE *out, int dir, size_t size)
 {
 	const char *p;
 
 	fputc('"', out);
-	for (p = data; p && *p; p++) {
+	for (p = data; p && *p && (!size || p < data + size); p++) {
 
 		const unsigned int c = (unsigned int) *p;
 
@@ -98,9 +98,9 @@ static void fputs_quoted_case_json(const char *data, FILE *out, int dir)
 	fputc('"', out);
 }
 
-#define fputs_quoted_json(_d, _o)       fputs_quoted_case_json(_d, _o, 0)
-#define fputs_quoted_json_upper(_d, _o) fputs_quoted_case_json(_d, _o, 1)
-#define fputs_quoted_json_lower(_d, _o) fputs_quoted_case_json(_d, _o, -1)
+#define fputs_quoted_json(_d, _o)       fputs_quoted_case_json(_d, _o, 0, 0)
+#define fputs_quoted_json_upper(_d, _o) fputs_quoted_case_json(_d, _o, 1, 0)
+#define fputs_quoted_json_lower(_d, _o) fputs_quoted_case_json(_d, _o, -1, 0)
 
 void ul_jsonwrt_init(struct ul_jsonwrt *fmt, FILE *out, int indent)
 {
@@ -199,6 +199,17 @@ void ul_jsonwrt_value_s(struct ul_jsonwrt *fmt,
 	ul_jsonwrt_value_open(fmt, name);
 	if (data && *data)
 		fputs_quoted_json(data, fmt->out);
+	else
+		fputs("null", fmt->out);
+	ul_jsonwrt_value_close(fmt);
+}
+
+void ul_jsonwrt_value_s_sized(struct ul_jsonwrt *fmt,
+			      const char *name, const char *data, size_t size)
+{
+	ul_jsonwrt_value_open(fmt, name);
+	if (data && *data)
+		fputs_quoted_case_json(data, fmt->out, 0, size);
 	else
 		fputs("null", fmt->out);
 	ul_jsonwrt_value_close(fmt);

@@ -41,6 +41,8 @@ void ul_jsonwrt_value_raw(struct ul_jsonwrt *fmt,
 			const char *name, const char *data);
 void ul_jsonwrt_value_s(struct ul_jsonwrt *fmt,
 			const char *name, const char *data);
+void ul_jsonwrt_value_s_sized(struct ul_jsonwrt *fmt,
+			      const char *name, const char *data, size_t size);
 void ul_jsonwrt_value_u64(struct ul_jsonwrt *fmt,
 			const char *name, uint64_t data);
 void ul_jsonwrt_value_boolean(struct ul_jsonwrt *fmt,
