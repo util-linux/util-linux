@@ -1641,9 +1641,8 @@ int main(int argc, char *argv[])
 			    errx(EXIT_FAILURE, _("--raw can be used together with --level or "
 				 "--facility only when reading messages from /dev/kmsg"));
 
-		/* only kmsg supports multi-line messages */
 		if (ctl.force_prefix && ctl.method != DMESG_METHOD_KMSG)
-			ctl.force_prefix = 0;
+			errx(EXIT_FAILURE, _("only kmsg supports multi-line messages"));
 		if (ctl.pager)
 			pager_redirect();
 		n = process_buffer(&ctl, &buf);
