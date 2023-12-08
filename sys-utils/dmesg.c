@@ -125,7 +125,7 @@ static const struct dmesg_name level_names[] =
  * shifted code :-)
  */
 #define FAC_BASE(f)	((f) >> 3)
-#define LOG_RAW_FAC_PRI(fac, pri)	LOG_MAKEPRI((fac << 3), (pri))
+#define LOG_RAW_FAC_PRI(fac, pri)	((fac << 3) | pri)
 
 static const struct dmesg_name facility_names[] =
 {
