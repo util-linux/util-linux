@@ -141,6 +141,18 @@ static const struct dmesg_name facility_names[] =
 	[FAC_BASE(LOG_CRON)]     = { "cron",     N_("clock daemon") },
 	[FAC_BASE(LOG_AUTHPRIV)] = { "authpriv", N_("security/authorization messages (private)") },
 	[FAC_BASE(LOG_FTP)]      = { "ftp",      N_("FTP daemon") },
+	[FAC_BASE(LOG_FTP) + 1]  = { "res0",     N_("reserved 0") },
+	[FAC_BASE(LOG_FTP) + 2]  = { "res1",     N_("reserved 1") },
+	[FAC_BASE(LOG_FTP) + 3]  = { "res2",     N_("reserved 2") },
+	[FAC_BASE(LOG_FTP) + 4]  = { "res3",     N_("reserved 3") },
+	[FAC_BASE(LOG_LOCAL0)]   = { "local0",   N_("local use 0") },
+	[FAC_BASE(LOG_LOCAL1)]   = { "local1",   N_("local use 1") },
+	[FAC_BASE(LOG_LOCAL2)]   = { "local2",   N_("local use 2") },
+	[FAC_BASE(LOG_LOCAL3)]   = { "local3",   N_("local use 3") },
+	[FAC_BASE(LOG_LOCAL4)]   = { "local4",   N_("local use 4") },
+	[FAC_BASE(LOG_LOCAL5)]   = { "local5",   N_("local use 5") },
+	[FAC_BASE(LOG_LOCAL6)]   = { "local6",   N_("local use 6") },
+	[FAC_BASE(LOG_LOCAL7)]   = { "local7",   N_("local use 7") },
 };
 
 /* supported methods to read message buffer
