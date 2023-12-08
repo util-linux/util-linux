@@ -324,7 +324,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(29));
 	fputs(_("\nSupported log facilities:\n"), out);
-	for (i = 0; i < ARRAY_SIZE(level_names); i++)
+	for (i = 0; i < ARRAY_SIZE(facility_names); i++)
 		fprintf(out, " %7s - %s\n",
 			facility_names[i].name,
 			_(facility_names[i].help));
