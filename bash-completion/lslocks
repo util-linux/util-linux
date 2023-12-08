@@ -31,7 +31,7 @@ _lslocks_module()
 			return 0
 			;;
 	esac
-	OPTS="
+	OPTS="--bytes
 		--json
 		--noinaccessible
 		--noheadings
