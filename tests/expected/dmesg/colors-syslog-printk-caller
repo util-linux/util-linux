@@ -1,0 +1,105 @@
+kern  :emerg : [32m[    0.000000] [0m[    T0] example[0]
+kern  :alert : [32m[    1.000000] [0m[7m[31m[    T1] example[1][0m
+kern  :crit  : [32m[    8.000000] [0m[1m[31m[    T2] example[2][0m
+kern  :err   : [32m[   27.000000] [0m[31m[    T3] example[3][0m
+kern  :warn  : [32m[   64.000000] [0m[1m[    T4] example[4][0m
+kern  :notice: [32m[  125.000000] [0m[    T5] example[5]
+kern  :info  : [32m[  216.000000] [0m[    T6] example[6]
+kern  :debug : [32m[  343.000000] [0m[    T7] example[7]
+user  :emerg : [32m[  512.000000] [0m[    T8] example[8]
+user  :alert : [32m[  729.000000] [0m[7m[31m[    T9] example[9][0m
+user  :crit  : [32m[ 1000.000000] [0m[1m[31m[   T10] example[10][0m
+user  :err   : [32m[ 1331.000000] [0m[31m[   T11] example[11][0m
+user  :warn  : [32m[ 1728.000000] [0m[1m[   T12] example[12][0m
+user  :notice: [32m[ 2197.000000] [0m[   T13] example[13]
+user  :info  : [32m[ 2744.000000] [0m[   T14] example[14]
+user  :debug : [32m[ 3375.000000] [0m[   T15] example[15]
+mail  :emerg : [32m[ 4096.000000] [0m[   T16] example[16]
+mail  :alert : [32m[ 4913.000000] [0m[7m[31m[   T17] example[17][0m
+mail  :crit  : [32m[ 5832.000000] [0m[1m[31m[   T18] example[18][0m
+mail  :err   : [32m[ 6859.000000] [0m[31m[   T19] example[19][0m
+mail  :warn  : [32m[ 8000.000000] [0m[1m[   T20] example[20][0m
+mail  :notice: [32m[ 9261.000000] [0m[   T21] example[21]
+mail  :info  : [32m[10648.000000] [0m[   T22] example[22]
+mail  :debug : [32m[12167.000000] [0m[   T23] example[23]
+daemon:emerg : [32m[13824.000000] [0m[   T24] example[24]
+daemon:alert : [32m[15625.000000] [0m[7m[31m[   T25] example[25][0m
+daemon:crit  : [32m[17576.000000] [0m[1m[31m[   T26] example[26][0m
+daemon:err   : [32m[19683.000000] [0m[31m[   T27] example[27][0m
+daemon:warn  : [32m[21952.000000] [0m[1m[   T28] example[28][0m
+daemon:notice: [32m[24389.000000] [0m[   T29] example[29]
+daemon:info  : [32m[27000.000000] [0m[   T10] example[30]
+daemon:debug : [32m[29791.000000] [0m[   T31] example[31]
+auth  :emerg : [32m[32768.000000] [0m[   T32] example[32]
+auth  :alert : [32m[35937.000000] [0m[7m[31m[   T33] example[33][0m
+auth  :crit  : [32m[39304.000000] [0m[1m[31m[   T34] example[34][0m
+auth  :err   : [32m[42875.000000] [0m[31m[   T35] example[35][0m
+auth  :warn  : [32m[46656.000000] [0m[1m[   T36] example[36][0m
+auth  :notice: [32m[50653.000000] [0m[   T37] example[37]
+auth  :info  : [32m[54872.000000] [0m[   T38] example[38]
+auth  :debug : [32m[59319.000000] [0m[   T39] example[39]
+syslog:emerg : [32m[64000.000000] [0m[   T40] example[40]
+syslog:alert : [32m[68921.000000] [0m[7m[31m[   T41] example[41][0m
+syslog:crit  : [32m[74088.000000] [0m[1m[31m[   T42] example[42][0m
+syslog:err   : [32m[79507.000000] [0m[31m[   T43] example[43][0m
+syslog:warn  : [32m[85184.000000] [0m[1m[   T44] example[44][0m
+syslog:notice: [32m[91125.000000] [0m[   T45] example[45]
+syslog:info  : [32m[97336.000000] [0m[   T46] example[46]
+syslog:debug : [32m[103823.000000] [0m[   T47] example[47]
+lpr   :emerg : [32m[110592.000000] [0m[   T48] example[48]
+lpr   :alert : [32m[117649.000000] [0m[7m[31m[   T49] example[49][0m
+lpr   :crit  : [32m[125000.000000] [0m[1m[31m[   T50] example[50][0m
+lpr   :err   : [32m[132651.000000] [0m[31m[   T51] example[51][0m
+lpr   :warn  : [32m[140608.000000] [0m[1m[   T52] example[52][0m
+lpr   :notice: [32m[148877.000000] [0m[   T53] example[53]
+lpr   :info  : [32m[157464.000000] [0m[   T54] example[54]
+lpr   :debug : [32m[166375.000000] [0m[   T55] example[55]
+news  :emerg : [32m[175616.000000] [0m[   T56] example[56]
+news  :alert : [32m[185193.000000] [0m[7m[31m[   T57] example[57][0m
+news  :crit  : [32m[195112.000000] [0m[1m[31m[   T58] example[58][0m
+news  :err   : [32m[205379.000000] [0m[31m[   T59] example[59][0m
+news  :warn  : [32m[216000.000000] [0m[1m[   T60] example[60][0m
+news  :notice: [32m[226981.000000] [0m[   T61] example[61]
+news  :info  : [32m[238328.000000] [0m[   T62] example[62]
+news  :debug : [32m[250047.000000] [0m[   T63] example[63]
+uucp  :emerg : [32m[262144.000000] [0m[   T64] example[64]
+uucp  :alert : [32m[274625.000000] [0m[7m[31m[   T65] example[65][0m
+uucp  :crit  : [32m[287496.000000] [0m[1m[31m[   T66] example[66][0m
+uucp  :err   : [32m[300763.000000] [0m[31m[   T67] example[67][0m
+uucp  :warn  : [32m[314432.000000] [0m[1m[   T68] example[68][0m
+uucp  :notice: [32m[328509.000000] [0m[   T69] example[69]
+uucp  :info  : [32m[343000.000000] [0m[   T70] example[70]
+uucp  :debug : [32m[357911.000000] [0m[   T71] example[71]
+cron  :emerg : [32m[373248.000000] [0m[   T72] example[72]
+cron  :alert : [32m[389017.000000] [0m[7m[31m[   T73] example[73][0m
+cron  :crit  : [32m[405224.000000] [0m[1m[31m[   T74] example[74][0m
+cron  :err   : [32m[421875.000000] [0m[31m[   T75] example[75][0m
+cron  :warn  : [32m[438976.000000] [0m[1m[   T76] example[76][0m
+cron  :notice: [32m[456533.000000] [0m[   T77] example[77]
+cron  :info  : [32m[474552.000000] [0m[   T78] example[78]
+cron  :debug : [32m[493039.000000] [0m[   T79] example[79]
+authpriv:emerg : [32m[512000.000000] [0m[   T80] example[80]
+authpriv:alert : [32m[531441.000000] [0m[7m[31m[   T81] example[81][0m
+authpriv:crit  : [32m[551368.000000] [0m[1m[31m[   T82] example[82][0m
+authpriv:err   : [32m[571787.000000] [0m[31m[   T83] example[83][0m
+authpriv:warn  : [32m[592704.000000] [0m[1m[   T84] example[84][0m
+authpriv:notice: [32m[614125.000000] [0m[   T85] example[85]
+authpriv:info  : [32m[636056.000000] [0m[   T86] example[86]
+authpriv:debug : [32m[658503.000000] [0m[   T87] example[87]
+ftp   :emerg : [32m[681472.000000] [0m[   T88] example[88]
+ftp   :alert : [32m[704969.000000] [0m[7m[31m[   T89] example[89][0m
+ftp   :crit  : [32m[729000.000000] [0m[1m[31m[   T90] example[90][0m
+ftp   :err   : [32m[753571.000000] [0m[31m[   T91] example[91][0m
+ftp   :warn  : [32m[778688.000000] [0m[1m[   T92] example[92][0m
+ftp   :notice: [32m[804357.000000] [0m[   T93] example[93]
+ftp   :info  : [32m[830584.000000] [0m[   T94] example[94]
+ftp   :debug : [32m[857375.000000] [0m[   T95] example[95]
+res0  :emerg : [32m[884736.000000] [0m[   T96] example[96]
+res0  :alert : [32m[912673.000000] [0m[7m[31m[   T97] example[97][0m
+res0  :crit  : [32m[941192.000000] [0m[1m[31m[   T98] example[98][0m
+res0  :err   : [32m[970299.000000] [0m[31m[   T99] example[99][0m
+res0  :warn  : [32m[1000000.000000] [0m[1m[  T100] example[100][0m
+res0  :notice: [32m[1030301.000000] [0m[  T101] example[101]
+res0  :info  : [32m[1061208.000000] [0m[  T102] example[102]
+res0  :debug : [32m[1092727.000000] [0m[  T103] example[103]
+res1  :emerg : [32m[1124864.000000] [0m[  T104] example[104]
