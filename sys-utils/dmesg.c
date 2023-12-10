@@ -523,8 +523,8 @@ static const char *parse_kmsg_timestamp(const char *str0, struct timeval *tv)
 	usec = strtoumax(str, &end, 10);
 
 	if (!errno && end && (*end == ';' || *end == ',')) {
-		tv->tv_usec = usec % 1000000;
-		tv->tv_sec = usec / 1000000;
+		tv->tv_usec = usec % USEC_PER_SEC;
+		tv->tv_sec = usec / USEC_PER_SEC;
 	} else
 		return str0;
 
@@ -534,7 +534,7 @@ static const char *parse_kmsg_timestamp(const char *str0, struct timeval *tv)
 
 static double time_diff(struct timeval *a, struct timeval *b)
 {
-	return (a->tv_sec - b->tv_sec) + (a->tv_usec - b->tv_usec) / 1E6;
+	return (a->tv_sec - b->tv_sec) + (a->tv_usec - b->tv_usec) / USEC_PER_SEC;
 }
 
 static int get_syslog_buffer_size(void)
