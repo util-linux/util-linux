@@ -1,0 +1,93 @@
+{
+   "dmesg": [
+      {
+         "pri": 5,
+         "time":     0.000000,
+         "msg": "Linux version 6.6.4-arch1-1 (linux@archlinux) (gcc (GCC) 13.2.1 20230801, GNU ld (GNU Binutils) 2.41.0) #1 SMP PREEMPT_DYNAMIC Mon, 04 Dec 2023 00:29:19 +0000"
+      },{
+         "pri": 6,
+         "time":     0.000000,
+         "msg": "Command line: initrd=\\ucode.img initrd=\\initramfs-linux.img rw cryptdevice=/dev/nvme0n1p3:system:discard root=/dev/mapper/system"
+      },{
+         "pri": 6,
+         "time":     0.000000,
+         "msg": "BIOS-provided physical RAM map:"
+      },{
+         "pri": 6,
+         "time":     0.000000,
+         "msg": "BIOS-e820: [mem 0x0000000000000000-0x000000000009efff] usable"
+      },{
+         "pri": 6,
+         "time":     0.000000,
+         "msg": "BIOS-e820: [mem 0x000000000009f000-0x00000000000bffff] reserved"
+      },{
+         "pri": 6,
+         "time":     0.000000,
+         "msg": "BIOS-e820: [mem 0x0000000000100000-0x0000000009afffff] usable"
+      },{
+         "pri": 6,
+         "time":     0.000000,
+         "msg": "BIOS-e820: [mem 0x0000000009b00000-0x0000000009dfffff] reserved"
+      },{
+         "pri": 6,
+         "time":     0.000000,
+         "msg": "BIOS-e820: [mem 0x0000000009e00000-0x0000000009efffff] usable"
+      },{
+         "pri": 6,
+         "time":     0.000000,
+         "msg": "BIOS-e820: [mem 0x0000000009f00000-0x0000000009f3bfff] ACPI NVS"
+      },{
+         "pri": 6,
+         "time":     0.000000,
+         "msg": "BIOS-e820: [mem 0x0000000009f3c000-0x000000004235ffff] usable"
+      },{
+         "pri": 6,
+         "time":     0.000000,
+         "msg": "BIOS-e820: [mem 0x0000000042360000-0x000000004455ffff] reserved"
+      },{
+         "pri": 6,
+         "time":     0.367657,
+         "msg": "ACPI: \\_SB_.PCI0.GP19.NHI1.PWRS: New power resource"
+      },{
+         "pri": 6,
+         "time":     0.368615,
+         "msg": "ACPI: \\_SB_.PCI0.GP19.XHC4.PWRS: New power resource"
+      },{
+         "pri": 6,
+         "time":     0.376316,
+         "msg": "ACPI: \\_SB_.PRWL: New power resource"
+      },{
+         "pri": 6,
+         "time":     0.376343,
+         "msg": "ACPI: \\_SB_.PRWB: New power resource"
+      },{
+         "pri": 6,
+         "time":     0.377373,
+         "msg": "ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])"
+      },{
+         "pri": 6,
+         "time":     0.377378,
+         "msg": "acpi PNP0A08:00: _OSC: OS supports [ExtendedConfig ASPM ClockPM Segments MSI EDR HPX-Type3]"
+      },{
+         "pri": 6,
+         "time":     0.377569,
+         "msg": "acpi PNP0A08:00: _OSC: platform does not support [SHPCHotplug AER]"
+      },{
+         "pri": 6,
+         "time":     0.377933,
+         "msg": "acpi PNP0A08:00: _OSC: OS now controls [PCIeHotplug PME PCIeCapability LTR DPC]"
+      },{
+         "pri": 6,
+         "time":     0.378458,
+         "msg": "PCI host bridge to bus 0000:00"
+      },{
+         "pri": 6,
+         "time":     0.378459,
+         "msg": "pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]"
+      },{
+         "pri": 6,
+         "time":     0.378461,
+         "msg": "pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]"
+      }
+   ]
+}

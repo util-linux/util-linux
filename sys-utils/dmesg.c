@@ -245,6 +245,7 @@ struct dmesg_record {
 	} while (0)
 
 static int process_kmsg(struct dmesg_control *ctl);
+static int process_kmsg_file(struct dmesg_control *ctl, char **buf);
 
 static int set_level_color(int log_level, const char *mesg, size_t mesgsz)
 {
@@ -296,6 +297,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -D, --console-off           disable printing messages to console\n"), out);
 	fputs(_(" -E, --console-on            enable printing messages to console\n"), out);
 	fputs(_(" -F, --file <file>           use the file instead of the kernel log buffer\n"), out);
+	fputs(_(" -K, --kmsg-file <file>      use the file in kmsg format\n"), out);
 	fputs(_(" -f, --facility <list>       restrict output to defined facilities\n"), out);
 	fputs(_(" -H, --human                 human readable output\n"), out);
 	fputs(_(" -J, --json                  use JSON output format\n"), out);
@@ -612,10 +614,13 @@ static ssize_t process_buffer(struct dmesg_control *ctl, char **buf)
 		n = read_syslog_buffer(ctl, buf);
 		break;
 	case DMESG_METHOD_KMSG:
-		/*
-		 * Since kernel 3.5.0
-		 */
-		n = process_kmsg(ctl);
+		if (ctl->filename)
+			n = process_kmsg_file(ctl, buf);
+		else
+			/*
+			 * Since kernel 3.5.0
+			 */
+			n = process_kmsg(ctl);
 		break;
 	default:
 		abort();	/* impossible method -> drop core */
@@ -1339,6 +1344,40 @@ static int process_kmsg(struct dmesg_control *ctl)
 	return 0;
 }
 
+static int process_kmsg_file(struct dmesg_control *ctl, char **buf)
+{
+	char str[sizeof(ctl->kmsg_buf)];
+	struct dmesg_record rec;
+	ssize_t sz;
+	size_t len;
+
+	if (ctl->method != DMESG_METHOD_KMSG || !ctl->filename)
+		return -1;
+
+	sz = mmap_file_buffer(ctl, buf);
+	if (sz == -1)
+		return -1;
+
+	while (sz > 0) {
+		len = strnlen(ctl->mmap_buff, sz);
+		if (len > sizeof(str))
+			errx(EXIT_FAILURE, _("record too large"));
+
+		memcpy(str, ctl->mmap_buff, len);
+
+		if (parse_kmsg_record(ctl, &rec, str, len) == 0)
+			print_record(ctl, &rec);
+
+		if (len < (size_t)sz)
+			len++;
+
+		sz -= len;
+		ctl->mmap_buff += len;
+	}
+
+	return 0;
+}
+
 static int which_time_format(const char *s)
 {
 	if (!strcmp(s, "notime"))
@@ -1420,6 +1459,7 @@ int main(int argc, char *argv[])
 		{ "help",          no_argument,	      NULL, 'h' },
 		{ "json",          no_argument,       NULL, 'J' },
 		{ "kernel",        no_argument,       NULL, 'k' },
+		{ "kmsg-file",     required_argument, NULL, 'K' },
 		{ "level",         required_argument, NULL, 'l' },
 		{ "since",	   required_argument, NULL, OPT_SINCE },
 		{ "syslog",        no_argument,       NULL, 'S' },
@@ -1441,6 +1481,7 @@ int main(int argc, char *argv[])
 
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
 		{ 'C','D','E','c','n','r' },	/* clear,off,on,read-clear,level,raw*/
+		{ 'F','K' },			/* file, kmsg-file */
 		{ 'H','r' },			/* human, raw */
 		{ 'L','r' },			/* color, raw */
 		{ 'S','w' },			/* syslog,follow */
@@ -1458,7 +1499,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "CcDdEeF:f:HhJkL::l:n:iPprSs:TtuVWwx",
+	while ((c = getopt_long(argc, argv, "CcDdEeF:f:HhJK:kL::l:n:iPprSs:TtuVWwx",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1485,6 +1526,10 @@ int main(int argc, char *argv[])
 		case 'F':
 			ctl.filename = optarg;
 			ctl.method = DMESG_METHOD_MMAP;
+			break;
+		case 'K':
+			ctl.filename = optarg;
+			ctl.method = DMESG_METHOD_KMSG;
 			break;
 		case 'f':
 			ctl.fltr_fac = 1;
@@ -1637,7 +1682,7 @@ int main(int argc, char *argv[])
 	switch (ctl.action) {
 	case SYSLOG_ACTION_READ_ALL:
 	case SYSLOG_ACTION_READ_CLEAR:
-		if (ctl.method == DMESG_METHOD_KMSG && init_kmsg(&ctl) != 0)
+		if (ctl.method == DMESG_METHOD_KMSG && !ctl.filename && init_kmsg(&ctl) != 0)
 			ctl.method = DMESG_METHOD_SYSLOG;
 
 		if (ctl.raw
