@@ -1,14 +1,19 @@
 /*
- * krishna balasubramanian 1993
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Copyright (C) 1993 rishna balasubramanian
  *
  * 1999-02-22 Arkadiusz Miśkiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  *
  * 1999-04-02 frank zago
  * - can now remove several id's in the same call
- *
  */
-
 #include <errno.h>
 #include <getopt.h>
 #include <stdio.h>

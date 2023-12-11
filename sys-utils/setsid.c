@@ -1,7 +1,10 @@
 /*
+ * No copyright is claimed.  This code is in the public domain; do with
+ * it what you wish.
+ *
+ * Written by Rick Sladkey <jrs@world.std.com>
+ *
  * setsid.c -- execute a command in a new session
- * Rick Sladkey <jrs@world.std.com>
- * In the public domain.
  *
  * 1999-02-22 Arkadiusz Miśkiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
@@ -12,7 +15,6 @@
  * 2008-08-20 Daniel Kahn Gillmor <dkg@fifthhorseman.net>
  * - if forked, wait on child process and emit its return code.
  */
-
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,8 +1,12 @@
-// SPDX-License-Identifier: GPL-2.0
 /*
+ * SPDX-License-Identifier: GPL-2.0
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License.
+ *
  * Copyright (C) 2020 FUJITSU LIMITED.  All rights reserved.
  */
-
 #include "lscpu.h"
 
 void to_dmi_header(struct lscpu_dmi_header *h, uint8_t *data)

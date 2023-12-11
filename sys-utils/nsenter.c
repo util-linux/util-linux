@@ -1,22 +1,14 @@
 /*
- * nsenter(1) - command-line interface for setns(2)
- *
- * Copyright (C) 2012-2013 Eric Biederman <ebiederm@xmission.com>
+ * SPDX-License-Identifier: GPL-2.0
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
  * Free Software Foundation; version 2.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
+ * Copyright (C) 2012-2023 Eric Biederman <ebiederm@xmission.com>
  *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * nsenter(1) - command-line interface for setns(2)
  */
-
 #include <dirent.h>
 #include <errno.h>
 #include <getopt.h>

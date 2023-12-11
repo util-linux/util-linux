@@ -1,9 +1,9 @@
 /*
- * setpgid.c -- execute a command in a new process group
- * Daan De Meyer <daan.j.demeyer@gmail.com>
- * In the public domain.
+ * No copyright is claimed.  This code is in the public domain; do with
+ * it what you wish.
+ *
+ * Written by Daan De Meyer <daan.j.demeyer@gmail.com>
  */
-
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>

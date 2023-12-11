@@ -1,4 +1,14 @@
 /*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Copyright (C) 2007 Bernhard Walle <bwalle@suse.de>
+ * Copyright (C) 2007-2023 Karel Zak <kzak@redhat.com>
+ *
  * rtcwake -- enter a system sleep state until specified wakeup time.
  *
  * This uses cross-platform Linux interfaces to enter a system sleep state,
@@ -18,7 +28,6 @@
  * RTC uses a local timezone instead (maybe you dual-boot MS-Windows).
  * That flag should not be needed on systems with adjtime support.
  */
-
 #include <errno.h>
 #include <fcntl.h>
 #include <getopt.h>

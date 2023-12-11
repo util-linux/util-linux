@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: GPL-2.1-or-later
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * Copyright (C) 2012 Sami Kerola <kerolasa@iki.fi>
+ * Copyright (C) 2012-2023 Karel Zak <kzak@redhat.com>
+ */
 #ifndef UTIL_LINUX_H_IRQ_COMMON
 #define UTIL_LINUX_H_IRQ_COMMON
 

@@ -1,4 +1,6 @@
 /*
+ * SPDX-License-Identifier: ISC
+ *
  * /dev/rfkill userspace tool
  *
  * Copyright 2009 Johannes Berg <johannes@sipsolutions.net>
@@ -19,7 +21,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
 #include <ctype.h>
 #include <getopt.h>
 #include <libsmartcols.h>

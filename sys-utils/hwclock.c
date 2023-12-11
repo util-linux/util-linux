@@ -1,15 +1,22 @@
 /*
  * SPDX-License-Identifier: GPL-2.0-or-later
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ *
  * Since 7a3000f7ba548cf7d74ac77cc63fe8de228a669e (v2.30) hwclock is linked
  * with parse_date.y from gnullib. This gnulib code is distributed with GPLv3.
  * Use --disable-hwclock-gplv3 to exclude this code.
  *
+ * Copyright (C) 1992 Charles Hedrick, hedrick@cs.rutgers.edu
+ *                    Rob Hooft <hooft@chem.ruu.nl>
+ *                    Harald Koenig <koenig@nova.tat.physik.uni-tuebingen.de>
+ *                    Alan Modra <alan@spri.levels.unisa.edu.au>
  *
- * clock.c was written by Charles Hedrick, hedrick@cs.rutgers.edu, Apr 1992
- * Modified for clock adjustments - Rob Hooft <hooft@chem.ruu.nl>, Nov 1992
- * Improvements by Harald Koenig <koenig@nova.tat.physik.uni-tuebingen.de>
- * and Alan Modra <alan@spri.levels.unisa.edu.au>.
+ * Copyright (C) 2007-2023 Karel Zak <kzak@redhat.com>
  *
  * Major rewrite by Bryan Henderson <bryanh@giraffe-data.com>, 96.09.19.
  * The new program is called hwclock. New features:

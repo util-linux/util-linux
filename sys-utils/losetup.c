@@ -1,6 +1,14 @@
 /*
- * Copyright (C) 2011 Karel Zak <kzak@redhat.com>
- * Originally from Ted's losetup.c
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Original implementation from Ted Ts'o; losetup was part of mount.
+ *
+ * Copyright (C) 2011-2023 Karel Zak <kzak@redhat.com>
  *
  * losetup.c - setup and control loop devices
  */
