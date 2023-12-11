@@ -40,6 +40,7 @@
 #define UUID MYUUID
 #endif
 
+#include <errno.h>
 #include <stdio.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -53,7 +54,15 @@
 
 #include "uuidP.h"
 
-time_t uuid_time(const uuid_t uu, struct timeval *ret_tv)
+#undef uuid_time
+
+/* prototype to make compiler happy */
+time_t __uuid_time(const uuid_t uu, struct timeval *ret_tv);
+
+
+/* this function could be 32bit time_t and 32bit timeval or 64bit,
+   depending on compiler flags and architecture. */
+time_t __uuid_time(const uuid_t uu, struct timeval *ret_tv)
 {
 	struct timeval		tv;
 	struct uuid		uuid;
@@ -74,6 +83,54 @@ time_t uuid_time(const uuid_t uu, struct timeval *ret_tv)
 
 	return tv.tv_sec;
 }
+#if defined(__USE_TIME_BITS64) && defined(__GLIBC__)
+extern time_t uuid_time64(const uuid_t uu, struct timeval *ret_tv) __attribute__((weak, alias("__uuid_time")));
+#else
+extern time_t uuid_time(const uuid_t uu, struct timeval *ret_tv) __attribute__((weak, alias("__uuid_time")));
+#endif
+     
+#if defined(__USE_TIME_BITS64) && defined(__GLIBC__)
+struct timeval32
+{
+	int32_t tv_sec;
+	int32_t tv_usec;
+};
+
+/* prototype to make compiler happy */
+int32_t __uuid_time32(const uuid_t uu, struct timeval32 *ret_tv);
+
+/* Check whether time fits in 32bit time_t.  */
+static inline int
+in_time32_t_range(time_t t)
+{
+	int32_t		s;
+ 
+	s = t;
+
+	return s == t;
+}
+
+int32_t __uuid_time32(const uuid_t uu, struct timeval32 *ret_tv)
+{
+	struct timeval		tv;
+	time_t ret_time = __uuid_time(uu, &tv);
+
+	if (! in_time32_t_range(ret_time)) {
+		ret_tv->tv_sec = -1;
+		ret_tv->tv_usec = -1;
+	        errno = EOVERFLOW;
+		return -1;
+	}
+
+	if (ret_tv) {
+		ret_tv->tv_sec = tv.tv_sec;
+		ret_tv->tv_usec = tv.tv_usec;
+	}
+
+	return tv.tv_sec;
+}
+extern int32_t uuid_time(const uuid_t uu, struct timeval32 *ret_tv) __attribute__((weak, alias("__uuid_time32")));
+#endif
 
 int uuid_type(const uuid_t uu)
 {

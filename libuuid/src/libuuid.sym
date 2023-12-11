@@ -52,6 +52,15 @@ global:
 	uuid_parse_range;
 } UUID_2.31;
 
+/*
+ * version(s) since util-linux.2.40
+ */
+UUID_2.40 {
+global:
+        uuid_time64; /* only on 32bit architectures with 64bit time_t */
+} UUID_2.36;
+
+
 
 /*
  * __uuid_* this is not part of the official API, this is

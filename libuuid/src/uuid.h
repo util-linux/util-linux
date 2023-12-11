@@ -109,6 +109,9 @@ extern void uuid_unparse_lower(const uuid_t uu, char *out);
 extern void uuid_unparse_upper(const uuid_t uu, char *out);
 
 /* uuid_time.c */
+#if defined(__USE_TIME_BITS64) && defined(__GLIBC__)
+# define uuid_time uuid_time64
+#endif
 extern time_t uuid_time(const uuid_t uu, struct timeval *ret_tv);
 extern int uuid_type(const uuid_t uu);
 extern int uuid_variant(const uuid_t uu);
