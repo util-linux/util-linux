@@ -29,7 +29,7 @@ _fadvise_module()
 		  --length
 		  --offset
 		  --help
-		  --versione'
+		  --version'
 	    COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 	    return 0
 	;;
