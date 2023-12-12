@@ -347,8 +347,11 @@ static void do_commands(int fd, char **argv, int d)
 
 		if (!strcmp(argv[i], "--getsz")) {
 			res = blkdev_get_sectors(fd, &llu);
-			if (res == 0)
+			if (res == 0) {
+				if (verbose)
+					printf(_("get size in 512-byte sectors: "));
 				printf("%lld\n", llu);
+			}
 			else
 				errx(EXIT_FAILURE,
 				     _("could not get device size"));
