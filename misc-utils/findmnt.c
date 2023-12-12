@@ -1295,8 +1295,6 @@ static int poll_table(struct libmnt_table *tb, const char *tabfile,
 
 		if (count) {
 			rc = scols_table_print_range(table, NULL, NULL);
-			if (rc == 0)
-				fputc('\n', scols_table_get_stream(table));
 			fflush(stdout);
 			if (rc)
 				goto done;
