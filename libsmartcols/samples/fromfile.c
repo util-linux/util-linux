@@ -131,9 +131,11 @@ static struct libscols_filter *init_filter(
 
 	if (!f)
 		err(EXIT_FAILURE, "failed to allocate filter");
-	if (scols_filter_parse_string(f, query) != 0)
-		errx(EXIT_FAILURE, "failed to parse filter: %s",
-				scols_filter_get_errmsg(f));
+	if (scols_filter_parse_string(f, query) != 0) {
+		warnx("failed to parse filter: %s", scols_filter_get_errmsg(f));
+		scols_unref_filter(f);
+		return NULL;
+	}
 
 	itr = scols_new_iter(SCOLS_ITER_FORWARD);
 	if (!itr)
@@ -223,7 +225,7 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char *argv[])
 {
 	struct libscols_table *tb;
-	int c, n, nlines = 0;
+	int c, n, nlines = 0, rc;
 	int parent_col = -1, id_col = -1;
 	int fltr_dump = 0;
 	const char *fltr_str = NULL;
@@ -332,8 +334,13 @@ int main(int argc, char *argv[])
 		scols_unref_line(ln);
 	}
 
-	if (fltr_str)
+	if (fltr_str) {
 		fltr = init_filter(tb, fltr_str, fltr_dump);
+		if (!fltr) {
+			rc = EXIT_FAILURE;
+			goto done;
+		}
+	}
 
 	n = 0;
 
@@ -357,8 +364,9 @@ int main(int argc, char *argv[])
 		apply_filter(tb, fltr);
 
 	scols_print_table(tb);
-
+	rc = EXIT_SUCCESS;
+done:
 	scols_unref_filter(fltr);
 	scols_unref_table(tb);
-	return EXIT_SUCCESS;
+	return rc;
 }
