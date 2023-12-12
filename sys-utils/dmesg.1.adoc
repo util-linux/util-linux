@@ -57,7 +57,7 @@ Enable printing messages to the console.
 Display the local time and the delta in human-readable format. Be aware that conversion to the local time could be inaccurate (see *-T* for more details).
 
 *-F*, *--file* _file_::
-Read the syslog messages from the given _file_. Note that *-F* does not support messages in kmsg format. The old syslog format is supported only.
+Read the syslog messages from the given _file_. Note that *-F* does not support messages in kmsg format. See *-K* instead.
 
 *-f*, *--facility* _list_::
 Restrict output to the given (comma-separated) _list_ of facilities. For example:
@@ -71,6 +71,9 @@ Enable human-readable output. See also *--color*, *--reltime* and *--nopager*.
 
 *-J*, *--json*::
 Use JSON output format. The time output format is in "sec.usec" format only, log priority level is not decoded by default (use *--decode* to split into facility and priority), the other options to control the output format or time format are silently ignored.
+
+*-K*, *--kmsg-file* _file_::
+Read the /dev/kmsg messages from the given _file_. Different record as expected to be separated by a NULL byte.
 
 *-k*, *--kernel*::
 Print kernel messages.
