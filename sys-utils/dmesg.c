@@ -176,10 +176,12 @@ enum {
 	DMESG_TIMEFTM_RELTIME,		/* [relative] */
 	DMESG_TIMEFTM_TIME,		/* [time] */
 	DMESG_TIMEFTM_TIME_DELTA,	/* [time <delta>] */
-	DMESG_TIMEFTM_ISO8601		/* 2013-06-13T22:11:00,123456+0100 */
+	DMESG_TIMEFTM_ISO8601,		/* 2013-06-13T22:11:00,123456+0100 */
+
+	__DMESG_TIMEFTM_COUNT
 };
-#define TOTAL_DMESG_TIMESTAMP_FORMATS_SUPPORTED 8
-#define DEFAULT_TIMESTAMP_FORMAT DMESG_TIMEFTM_TIME
+
+#define DMESG_TIMEFTM_DEFAULT	DMESG_TIMEFTM_TIME
 
 struct dmesg_control {
 	/* bit arrays -- see include/bitops.h */
@@ -218,7 +220,7 @@ struct dmesg_control {
 	char		*mmap_buff;
 	size_t		pagesize;
 	size_t		ntime_fmts;
-	unsigned int	time_fmts[2 * TOTAL_DMESG_TIMESTAMP_FORMATS_SUPPORTED];	/* time format */
+	unsigned int	time_fmts[2 * __DMESG_TIMEFTM_COUNT];	/* time format */
 
 	struct ul_jsonwrt jfmt;		/* -J formatting */
 
@@ -363,8 +365,8 @@ static void __attribute__((__noreturn__)) usage(void)
 static void reset_time_fmts(struct dmesg_control *ctl)
 {
 	memset(ctl->time_fmts, 0,
-		TOTAL_DMESG_TIMESTAMP_FORMATS_SUPPORTED * sizeof(*(ctl->time_fmts)));
-	ctl->time_fmts[0] = DEFAULT_TIMESTAMP_FORMAT;
+		__DMESG_TIMEFTM_COUNT * sizeof(*(ctl->time_fmts)));
+	ctl->time_fmts[0] = DMESG_TIMEFTM_DEFAULT;
 }
 
 static int is_time_fmt_set(struct dmesg_control *ctl, unsigned int time_format)
@@ -372,11 +374,12 @@ static int is_time_fmt_set(struct dmesg_control *ctl, unsigned int time_format)
 	size_t i;
 
 	if (ctl->ntime_fmts == 0)
-		return time_format == DEFAULT_TIMESTAMP_FORMAT;
+		return time_format == DMESG_TIMEFTM_DEFAULT;
 
-	for (i = 0; i < ctl->ntime_fmts; i++)
+	for (i = 0; i < ctl->ntime_fmts; i++) {
 		if (ctl->time_fmts[i] == time_format)
 			return 1;
+	}
 	return 0;
 }
 
@@ -385,7 +388,7 @@ static void include_time_fmt(struct dmesg_control *ctl, unsigned int time_format
 	if (ctl->ntime_fmts > 0 && is_time_fmt_set(ctl, time_format))
 		return;
 
-	if (ctl->ntime_fmts < TOTAL_DMESG_TIMESTAMP_FORMATS_SUPPORTED)
+	if (ctl->ntime_fmts < __DMESG_TIMEFTM_COUNT)
 		ctl->time_fmts[ctl->ntime_fmts++] = time_format;
 }
 
@@ -1009,12 +1012,12 @@ static void print_record(struct dmesg_control *ctl,
 	char buf[128];
 	char fpbuf[32] = "\0";
 	char tsbuf[64] = "\0";
-	char full_tsbuf[64*TOTAL_DMESG_TIMESTAMP_FORMATS_SUPPORTED] = "\0";
+	char full_tsbuf[64 * __DMESG_TIMEFTM_COUNT] = "\0";
 	size_t mesg_size = rec->mesg_size;
 	int timebreak = 0;
 	char *mesg_copy = NULL;
 	const char *line = NULL;
-	double delta = record_count_delta(ctl, rec);
+	double delta = 0;
 	size_t format_iter = 0;
 
 	if (!accept_record(ctl, rec))
@@ -1025,6 +1028,8 @@ static void print_record(struct dmesg_control *ctl,
 			putchar('\n');
 		return;
 	}
+
+	delta = record_count_delta(ctl, rec);
 
 	if (ctl->json) {
 		if (!ul_jsonwrt_is_ready(&ctl->jfmt)) {
@@ -1055,8 +1060,9 @@ static void print_record(struct dmesg_control *ctl,
 			 level_names[rec->level].name);
 
 	/* Store the timestamp in a buffer */
-	for (format_iter = 0; format_iter < (ctl->ntime_fmts > 0 ? ctl->ntime_fmts : 1);
-		 format_iter++) {
+	for (format_iter = 0;
+	     format_iter < (ctl->ntime_fmts > 0 ? ctl->ntime_fmts : 1);
+	     format_iter++) {
 		switch (ctl->time_fmts[format_iter]) {
 			struct tm cur;
 		case DMESG_TIMEFTM_NONE:
@@ -1507,7 +1513,6 @@ int main(int argc, char *argv[])
 		.ntime_fmts = 0,
 		.indent = 0,
 	};
-	ctl.time_fmts[0] = DEFAULT_TIMESTAMP_FORMAT;
 	int colormode = UL_COLORMODE_UNDEF;
 	enum {
 		OPT_TIME_FORMAT = CHAR_MAX + 1,
@@ -1571,6 +1576,8 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	close_stdout_atexit();
+
+	ctl.time_fmts[0] = DMESG_TIMEFTM_DEFAULT;
 
 	while ((c = getopt_long(argc, argv, "CcDdEeF:f:HhJK:kL::l:n:iPprSs:TtuVWwx",
 				longopts, NULL)) != -1) {
