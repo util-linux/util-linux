@@ -154,12 +154,6 @@ void ul_jsonwrt_open(struct ul_jsonwrt *fmt, const char *name, int type)
 
 void ul_jsonwrt_close(struct ul_jsonwrt *fmt, int type)
 {
-	if (fmt->indent == 1) {
-		fputs("\n}\n", fmt->out);
-		fmt->indent--;
-		fmt->after_close = 1;
-		return;
-	}
 	assert(fmt->indent > 0);
 
 	switch (type) {
@@ -168,6 +162,8 @@ void ul_jsonwrt_close(struct ul_jsonwrt *fmt, int type)
 		fputc('\n', fmt->out);
 		ul_jsonwrt_indent(fmt);
 		fputs("}", fmt->out);
+		if (fmt->indent == 0)
+			fputs("\n", fmt->out);
 		break;
 	case UL_JSON_ARRAY:
 		fmt->indent--;
