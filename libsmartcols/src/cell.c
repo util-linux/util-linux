@@ -69,7 +69,7 @@ int scols_cell_set_data(struct libscols_cell *ce, const char *data)
 
 	ce->is_filled = 1;
 	rc = strdup_to_struct_member(ce, data, data);
-	ce->datasiz = ce->data ? strlen(ce->data) + 1: 0;
+	ce->datasiz = ce->data && *ce->data ? strlen(ce->data) + 1: 0;
 	return rc;
 }
 
@@ -91,7 +91,7 @@ int scols_cell_refer_data(struct libscols_cell *ce, char *data)
 		return -EINVAL;
 	free(ce->data);
 	ce->data = data;
-	ce->datasiz = ce->data ? strlen(ce->data) + 1: 0;
+	ce->datasiz = ce->data && *ce->data ? strlen(ce->data) + 1: 0;
 	ce->is_filled = 1;
 	return 0;
 }
