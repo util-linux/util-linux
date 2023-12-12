@@ -94,12 +94,13 @@ ftp   :warn  : [32m[778688.000000] [0m[1mexample[92][0m
 ftp   :notice: [32m[804357.000000] [0mexample[93]
 ftp   :info  : [32m[830584.000000] [0mexample[94]
 ftp   :debug : [32m[857375.000000] [0mexample[95]
-[32m[884736.000000] [0mexample[96]
-[32m[912673.000000] [0m[7m[31mexample[97][0m
-[32m[941192.000000] [0m[1m[31mexample[98][0m
-[32m[970299.000000] [0m[31mexample[99][0m
-[32m[1000000.000000] [0m[1mexample[100][0m
-[32m[1030301.000000] [0mexample[101]
-[32m[1061208.000000] [0mexample[102]
-[32m[1092727.000000] [0mexample[103]
-[32m[1124864.000000] [0mexample[104]
+res0  :emerg : [32m[884736.000000] [0mexample[96]
+res0  :alert : [32m[912673.000000] [0m[7m[31mexample[97][0m
+res0  :crit  : [32m[941192.000000] [0m[1m[31mexample[98][0m
+res0  :err   : [32m[970299.000000] [0m[31mexample[99][0m
+res0  :warn  : [32m[1000000.000000] [0m[1mexample[100][0m
+res0  :notice: [32m[1030301.000000] [0mexample[101]
+res0  :info  : [32m[1061208.000000] [0mexample[102]
+res0  :debug : [32m[1092727.000000] [0mexample[103]
+res1  :emerg : [32m[1124864.000000] [0mexample[104]
+local2:info  : [32m[4557523.000000] [0mexample[105]

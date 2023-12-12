@@ -130,7 +130,7 @@ static const struct dmesg_name level_names[] =
  * shifted code :-)
  */
 #define FAC_BASE(f)	((f) >> 3)
-#define LOG_RAW_FAC_PRI(fac, pri)	LOG_MAKEPRI((fac << 3), (pri))
+#define LOG_RAW_FAC_PRI(fac, pri)	((fac << 3) | pri)
 
 static const struct dmesg_name facility_names[] =
 {
@@ -146,6 +146,18 @@ static const struct dmesg_name facility_names[] =
 	[FAC_BASE(LOG_CRON)]     = { "cron",     N_("clock daemon") },
 	[FAC_BASE(LOG_AUTHPRIV)] = { "authpriv", N_("security/authorization messages (private)") },
 	[FAC_BASE(LOG_FTP)]      = { "ftp",      N_("FTP daemon") },
+	[FAC_BASE(LOG_FTP) + 1]  = { "res0",     N_("reserved 0") },
+	[FAC_BASE(LOG_FTP) + 2]  = { "res1",     N_("reserved 1") },
+	[FAC_BASE(LOG_FTP) + 3]  = { "res2",     N_("reserved 2") },
+	[FAC_BASE(LOG_FTP) + 4]  = { "res3",     N_("reserved 3") },
+	[FAC_BASE(LOG_LOCAL0)]   = { "local0",   N_("local use 0") },
+	[FAC_BASE(LOG_LOCAL1)]   = { "local1",   N_("local use 1") },
+	[FAC_BASE(LOG_LOCAL2)]   = { "local2",   N_("local use 2") },
+	[FAC_BASE(LOG_LOCAL3)]   = { "local3",   N_("local use 3") },
+	[FAC_BASE(LOG_LOCAL4)]   = { "local4",   N_("local use 4") },
+	[FAC_BASE(LOG_LOCAL5)]   = { "local5",   N_("local use 5") },
+	[FAC_BASE(LOG_LOCAL6)]   = { "local6",   N_("local use 6") },
+	[FAC_BASE(LOG_LOCAL7)]   = { "local7",   N_("local use 7") },
 };
 
 /* supported methods to read message buffer
@@ -329,7 +341,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(29));
 	fputs(_("\nSupported log facilities:\n"), out);
-	for (i = 0; i < ARRAY_SIZE(level_names); i++)
+	for (i = 0; i < ARRAY_SIZE(facility_names); i++)
 		fprintf(out, " %7s - %s\n",
 			facility_names[i].name,
 			_(facility_names[i].help));
@@ -516,8 +528,8 @@ static const char *parse_kmsg_timestamp(const char *str0, struct timeval *tv)
 	usec = strtoumax(str, &end, 10);
 
 	if (!errno && end && (*end == ';' || *end == ',')) {
-		tv->tv_usec = usec % 1000000;
-		tv->tv_sec = usec / 1000000;
+		tv->tv_usec = usec % USEC_PER_SEC;
+		tv->tv_sec = usec / USEC_PER_SEC;
 	} else
 		return str0;
 
@@ -527,7 +539,7 @@ static const char *parse_kmsg_timestamp(const char *str0, struct timeval *tv)
 
 static double time_diff(struct timeval *a, struct timeval *b)
 {
-	return (a->tv_sec - b->tv_sec) + (a->tv_usec - b->tv_usec) / 1E6;
+	return (a->tv_sec - b->tv_sec) + (a->tv_usec - b->tv_usec) / USEC_PER_SEC;
 }
 
 static int get_syslog_buffer_size(void)
@@ -1123,7 +1135,7 @@ full_output:
 			color_disable();
 	} else {
 		if (ctl->json)
-			ul_jsonwrt_value_s(&ctl->jfmt, "msg", line);
+			ul_jsonwrt_value_s_sized(&ctl->jfmt, "msg", line, mesg_size);
 		else
 			safe_fwrite(ctl, line, mesg_size, ctl->indent, stdout);
 	}
@@ -1646,9 +1658,8 @@ int main(int argc, char *argv[])
 			    errx(EXIT_FAILURE, _("--raw can be used together with --level or "
 				 "--facility only when reading messages from /dev/kmsg"));
 
-		/* only kmsg supports multi-line messages */
 		if (ctl.force_prefix && ctl.method != DMESG_METHOD_KMSG)
-			ctl.force_prefix = 0;
+			errx(EXIT_FAILURE, _("only kmsg supports multi-line messages"));
 		if (ctl.pager)
 			pager_redirect();
 		n = process_buffer(&ctl, &buf);
