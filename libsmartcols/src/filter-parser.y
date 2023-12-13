@@ -55,6 +55,15 @@ void yyerror(yyscan_t *locp, struct libscols_filter *fltr, char const *msg);
 %left T_OR T_AND
 %left T_EQ T_NE T_LT T_LE T_GT T_GE T_REG T_NREG T_TRUE T_FALSE T_NEG
 
+
+%destructor {
+		/* This destruct is called on error. The root node will be deallocated
+		 * by filter_unref_node().
+		 */
+		if (fltr->root != $$)
+			filter_unref_node($$);
+	} <param>
+
 %%
 
 %start filter;
