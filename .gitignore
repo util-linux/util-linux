@@ -172,6 +172,7 @@ ylwrap
 /scriptlive
 /scriptreplay
 /setarch
+/setpgid
 /setpriv
 /setsid
 /setterm
