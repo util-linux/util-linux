@@ -9,11 +9,10 @@
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
- * fixme-command-name - purpose of it
- *
  * Copyright (c) 20nn  Example Commercial, Inc
  * Written by Your Name <you@example.com>
  *
+ * fixme-command-name - purpose of it
  */
 #include <getopt.h>
 #include <stdio.h>
