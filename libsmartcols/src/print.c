@@ -751,10 +751,13 @@ notree:
 				i++;
 			}
 
-		/* Wrapping disabled; let's use data as a classig string. */
+		/* Wrapping disabled; let's use data as a classic string. */
 		} else {
 			data = scols_cell_get_data(ce);
 			datasiz = scols_cell_get_datasiz(ce);
+
+			if (data && *data && !datasiz)
+				datasiz = strlen(data);		/* cell content may be updated */
 
 			if (data && datasiz)
 				rc = ul_buffer_append_data(buf, data, datasiz);

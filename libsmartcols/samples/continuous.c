@@ -85,7 +85,7 @@ int main(void)
 		struct libscols_line *line;
 		struct timeval now;
 		int done = 0;
-		char *timecell = xmalloc( timecellsz );
+		char *timecell = xcalloc(1, timecellsz );
 
 		line = add_line(tb, i);
 
