@@ -26,7 +26,7 @@
 # define RENAME_EXCHANGE (1 << 1)
 #endif
 
-#if !defined(HAVE_RENAMEAT2) && defined(SYS_renamea2)
+#if !defined(HAVE_RENAMEAT2) && defined(SYS_renameat2)
 static inline int renameat2(int olddirfd, const char *oldpath,
 			    int newdirfd, const char *newpath, unsigned int flags)
 {
