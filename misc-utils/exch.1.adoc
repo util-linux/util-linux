@@ -8,7 +8,7 @@
 
 == NAME
 
-exch - a command line interface for RENAME_EXCHANGE of renameat2(2)
+exch - atomically exchanges paths between two files
 
 == SYNOPSIS
 

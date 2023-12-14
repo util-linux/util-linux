@@ -1,24 +1,16 @@
 /*
- * exch(1) - a command line interface for RENAME_EXCHANGE of renameat2(2).
- *
- * Copyright (C) 2023 Red Hat, Inc. All rights reserved.
- * Written by Masatake YAMATO <yamato@redhat.com>
+ * SPDX-License-Identifier: GPL-2.0-or-later
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it would be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * Copyright (C) 2023 Red Hat, Inc. All rights reserved.
+ * Written by Masatake YAMATO <yamato@redhat.com>
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * exch(1) - a command line interface for RENAME_EXCHANGE of renameat2(2).
  */
-
 #include "c.h"
 #include "nls.h"
 
@@ -26,20 +18,20 @@
 #include <getopt.h>
 
 #ifndef HAVE_RENAMEAT2
-
-#include <sys/syscall.h>
-#include <unistd.h>
-
-#ifndef RENAME_EXCHANGE
-#define RENAME_EXCHANGE (1 << 1)
+# include <sys/syscall.h>
+# include <unistd.h>
 #endif
 
+#ifndef RENAME_EXCHANGE
+# define RENAME_EXCHANGE (1 << 1)
+#endif
+
+#if !defined(HAVE_RENAMEAT2) && defined(SYS_renamea2)
 static inline int renameat2(int olddirfd, const char *oldpath,
 			    int newdirfd, const char *newpath, unsigned int flags)
 {
 	return syscall (SYS_renameat2, olddirfd, oldpath, newdirfd, newpath, flags);
 }
-
 #endif
 
 static void __attribute__((__noreturn__)) usage(void)
@@ -48,6 +40,8 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] oldpath newpath\n"), program_invocation_short_name);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Atomically exchanges paths between two files.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
 	fprintf(out, USAGE_HELP_OPTIONS(30));
