@@ -58,7 +58,7 @@ void yyerror(yyscan_t *locp, struct libscols_filter *fltr, char const *msg);
 
 %destructor {
 		/* This destruct is called on error. The root node will be deallocated
-		 * by filter_unref_node().
+		 * by scols_unref_filter().
 		 */
 		if (fltr->root != $$)
 			filter_unref_node($$);
