@@ -3335,6 +3335,15 @@ if not is_disabler(exe)
 endif
 
 exe = executable(
+  'sample-scols-continuous-json',
+  'libsmartcols/samples/continuous-json.c',
+  include_directories : includes,
+  link_with : [lib_smartcols, lib_common])
+if not is_disabler(exe)
+  exes += exe
+endif
+
+exe = executable(
   'sample-scols-maxout',
   'libsmartcols/samples/maxout.c',
   include_directories : includes,
