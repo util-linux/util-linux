@@ -206,7 +206,7 @@ static void __attribute__((__noreturn__)) usage(void)
 			"<boolean>",
 			_(infos[i].help));
 
-	fprintf(out, USAGE_MAN_TAIL("lslocks(1)"));
+	fprintf(out, USAGE_MAN_TAIL("lsclocks(1)"));
 
 	exit(EXIT_SUCCESS);
 }
