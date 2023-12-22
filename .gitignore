@@ -98,6 +98,7 @@ ylwrap
 /dmesg
 /eject
 /enosys
+/exch
 /fadvise
 /fallocate
 /fdformat
