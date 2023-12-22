@@ -120,6 +120,13 @@ for phase in "${PHASES[@]}"; do
     MAKE)
         make -j"$(nproc)"
         make -j"$(nproc)" check-programs
+
+        untracked_files="$(git ls-files --others --exclude-standard)"
+        if [ -n "$untracked_files" ]; then
+                echo "Untracked files"
+                echo "$untracked_files"
+                exit 1
+        fi
         ;;
     INSTALL)
         make install DESTDIR=/tmp/dest
