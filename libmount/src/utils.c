@@ -1364,7 +1364,7 @@ static int test_filesystems(struct libmnt_test *ts __attribute__((unused)),
 		return -1;
 
 	rc = mnt_get_filesystems(&filesystems, argc == 2 ? argv[1] : NULL);
-	if (!rc) {
+	if (!rc && filesystems) {
 		char **p;
 		for (p = filesystems; *p; p++)
 			printf("%s\n", *p);
