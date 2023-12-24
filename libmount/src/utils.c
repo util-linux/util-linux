@@ -1134,7 +1134,7 @@ char *mnt_get_kernel_cmdline_option(const char *name)
 	int val = 0;
 	char *p, *res = NULL, *mem = NULL;
 	char buf[BUFSIZ];	/* see kernel include/asm-generic/setup.h: COMMAND_LINE_SIZE */
-	const char *path = _PATH_PROC_CMDLINE;
+	const char *path;
 
 	if (!name || !name[0])
 		return NULL;
@@ -1143,6 +1143,8 @@ char *mnt_get_kernel_cmdline_option(const char *name)
 	path = getenv("LIBMOUNT_KERNEL_CMDLINE");
 	if (!path)
 		path = _PATH_PROC_CMDLINE;
+#else
+	path = _PATH_PROC_CMDLINE;
 #endif
 	f = fopen(path, "r" UL_CLOEXECSTR);
 	if (!f)
