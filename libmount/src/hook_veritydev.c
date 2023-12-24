@@ -554,15 +554,10 @@ static int setup_veritydev(	struct libmnt_context *cxt,
 	}
 
 	if (!rc) {
-		hsd->devname = calloc(strlen(mapper_device)
-					+ sizeof(_PATH_DEV_MAPPER) + 2, sizeof(char));
-		if (!hsd->devname)
+		if (asprintf(&hsd->devname, _PATH_DEV_MAPPER "/%s", mapper_device) == -1)
 			rc = -ENOMEM;
-		else {
-			strcat(hsd->devname, _PATH_DEV_MAPPER "/");
-			strcat(hsd->devname, mapper_device);
+		else
 			rc = mnt_fs_set_source(cxt->fs, hsd->devname);
-		}
 	}
 
 done:
