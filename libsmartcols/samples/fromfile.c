@@ -44,7 +44,7 @@ static struct libscols_column *parse_column(const char *path)
 static int parse_column_data(FILE *f, struct libscols_table *tb, int col)
 {
 	size_t len = 0, nlines = 0;
-	int i;
+	ssize_t i;
 	char *str = NULL, *p;
 
 	while ((i = getline(&str, &len, f)) != -1) {
@@ -64,7 +64,7 @@ static int parse_column_data(FILE *f, struct libscols_table *tb, int col)
 		/* convert \x?? to real bytes */
 		if (strstr(str, "\\x")) {
 			struct libscols_cell *ce = scols_line_get_cell(ln, col);
-			size_t sz = len + 1;
+			size_t sz = i + 1;
 			char *buf = xcalloc(1, sz);
 
 			sz = unhexmangle_to_buffer(str, buf, sz);
