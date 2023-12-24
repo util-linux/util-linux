@@ -42,9 +42,7 @@ void __attribute__((__noreturn__)) exec_shell(void)
 
 	shellc = xstrdup(shell);
 	shell_basename = basename(shellc);
-	arg0 = xmalloc(strlen(shell_basename) + 2);
-	arg0[0] = '-';
-	strcpy(arg0 + 1, shell_basename);
+	xasprintf(&arg0, "-%s", shell_basename);
 
 	execl(shell, arg0, (char *)NULL);
 	errexec(shell);
