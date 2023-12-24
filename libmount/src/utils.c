@@ -1360,11 +1360,10 @@ static int test_filesystems(struct libmnt_test *ts __attribute__((unused)),
 	char **filesystems = NULL;
 	int rc;
 
-	if (argc != 2)
+	if (argc != 1 && argc != 2)
 		return -1;
 
-
-	rc = mnt_get_filesystems(&filesystems, argc ? argv[1] : NULL);
+	rc = mnt_get_filesystems(&filesystems, argc == 2 ? argv[1] : NULL);
 	if (!rc) {
 		char **p;
 		for (p = filesystems; *p; p++)
