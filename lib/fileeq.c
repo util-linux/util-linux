@@ -79,9 +79,9 @@ enum {
 };
 
 struct ul_fileeq_method {
-	int id;
 	const char *name;	/* name used by applications */
 	const char *kname;	/* name used by kernel crypto */
+	int id;
 	short digsiz;
 };
 
