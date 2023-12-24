@@ -23,9 +23,20 @@ ts_check_test_command "$TS_HELPER_DMESG"
 export TZ="GMT"
 export DMESG_TEST_BOOTIME="1234567890.123456"
 
+ts_init_subtest "multiple"
 $TS_HELPER_DMESG --time-format raw --time-format ctime --time-format iso -F $TS_SELF/input >> $TS_OUTPUT 2>/dev/null
+ts_finalize_subtest
+
+ts_init_subtest "delta"
 $TS_HELPER_DMESG --time-format iso --time-format delta -F $TS_SELF/input >> $TS_OUTPUT 2>/dev/null
+ts_finalize_subtest
+
+ts_init_subtest "delta-ctime"
 $TS_HELPER_DMESG --time-format reltime --time-format delta --time-format ctime -F $TS_SELF/input >> $TS_OUTPUT 2>/dev/null
+ts_finalize_subtest
+
+ts_init_subtest "delta-raw"
 $TS_HELPER_DMESG --time-format raw --time-format ctime --time-format delta -F $TS_SELF/input >> $TS_OUTPUT 2>/dev/null
+ts_finalize_subtest
 
 ts_finalize
