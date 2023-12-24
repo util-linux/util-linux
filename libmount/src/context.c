@@ -3411,10 +3411,8 @@ static int test_mountall(struct libmnt_test *ts __attribute__((unused)),
 			mnt_context_set_options_pattern(cxt, argv[idx + 1]);
 			idx += 2;
 		}
-		if (argv[idx] && !strcmp(argv[idx], "-t")) {
+		if (argv[idx] && !strcmp(argv[idx], "-t"))
 			mnt_context_set_fstype_pattern(cxt, argv[idx + 1]);
-			idx += 2;
-		}
 	}
 
 	while (mnt_context_next_mount(cxt, itr, &fs, &mntrc, &ignored) == 0) {
