@@ -248,7 +248,7 @@ static int unix_socket(struct logger_ctl *ctl, const char *path, int *socket_typ
 		errx(EXIT_FAILURE, _("openlog %s: pathname too long"), path);
 
 	s_addr.sun_family = AF_UNIX;
-	strcpy(s_addr.sun_path, path);
+	strncpy(s_addr.sun_path, path, sizeof(s_addr.sun_path));
 
 	for (i = 2; i; i--) {
 		int st = -1;
