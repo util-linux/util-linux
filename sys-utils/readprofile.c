@@ -81,14 +81,10 @@ static char *boot_uname_r_str(void)
 {
 	struct utsname uname_info;
 	char *s;
-	size_t len;
 
 	if (uname(&uname_info))
 		return "";
-	len = strlen(BOOT_SYSTEM_MAP) + strlen(uname_info.release) + 1;
-	s = xmalloc(len);
-	strcpy(s, BOOT_SYSTEM_MAP);
-	strcat(s, uname_info.release);
+	xasprintf(&s, "%s%s", BOOT_SYSTEM_MAP, uname_info.release);
 	return s;
 }
 
