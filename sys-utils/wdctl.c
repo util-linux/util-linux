@@ -406,7 +406,7 @@ static int set_watchdog(struct wd_control *ctl, struct wd_device *wd)
 	assert(wd->devpath);
 	assert(ctl);
 
-	if (!ctl->set_timeout && !ctl->set_timeout)
+	if (!ctl->set_timeout && !ctl->set_pretimeout)
 		goto sysfs_only;
 
 	sigemptyset(&oldsigs);
