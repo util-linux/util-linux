@@ -344,14 +344,15 @@ static int probe_bcachefs(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct bcachefs_super_block *bcs;
 	const unsigned char *sb, *sb_end;
-	uint64_t sb_size, blocksize;
+	uint64_t sb_size, blocksize, offset_sectors;
 	uint16_t version;
 
 	bcs = blkid_probe_get_sb(pr, mag, struct bcachefs_super_block);
 	if (!bcs)
 		return errno ? -errno : BLKID_PROBE_NONE;
 
-	if (le64_to_cpu(bcs->offset) != BCACHE_SB_OFF / BCACHEFS_SECTOR_SIZE)
+	offset_sectors = blkid_probe_get_idmag_off(pr, mag) / BCACHEFS_SECTOR_SIZE;
+	if (le64_to_cpu(bcs->offset) != offset_sectors)
 		return BLKID_PROBE_NONE;
 
 	if (bcs->nr_devices == 0 || bcs->dev_idx >= bcs->nr_devices)
