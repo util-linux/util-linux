@@ -430,6 +430,12 @@ const struct blkid_idinfo bcachefs_idinfo =
 			.kboff = BCACHE_SB_KBOFF,
 			.sboff = BCACHE_SB_MAGIC_OFF,
 		},
+		{
+			.magic = BCACHEFS_SB_MAGIC,
+			.len   = BCACHE_SB_MAGIC_LEN,
+			.kboff = 1 << 11,
+			.sboff = BCACHE_SB_MAGIC_OFF,
+		},
 		{ NULL }
 	}
 };
