@@ -443,6 +443,9 @@ extern const unsigned char *blkid_probe_get_sb_buffer(blkid_probe pr, const stru
 #define blkid_probe_get_sb(_pr, _mag, type) \
 			((type *) blkid_probe_get_sb_buffer((_pr), _mag, sizeof(type)))
 
+extern uint64_t blkid_probe_get_idmag_off(blkid_probe pr, const struct blkid_idmag *mag)
+			__attribute__((nonnull));
+
 extern blkid_partlist blkid_probe_get_partlist(blkid_probe pr)
 			__attribute__((nonnull))
 			__attribute__((warn_unused_result));

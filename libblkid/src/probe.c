@@ -1247,6 +1247,14 @@ const unsigned char *blkid_probe_get_sb_buffer(blkid_probe pr, const struct blki
 	return blkid_probe_get_buffer(pr, off, size);
 }
 
+uint64_t blkid_probe_get_idmag_off(blkid_probe pr, const struct blkid_idmag *mag)
+{
+	if (mag->kboff >= 0)
+		return mag->kboff << 10;
+	else
+		return pr->size - (-mag->kboff << 10);
+}
+
 /*
  * Check for matching magic value.
  * Returns BLKID_PROBE_OK if found, BLKID_PROBE_NONE if not found
