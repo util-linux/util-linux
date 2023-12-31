@@ -59,7 +59,7 @@ int main(int argc, char **argv)
 	static const struct option longopts[] = {
 		{ "version",    no_argument, NULL, 'V' },
 		{ "help",	no_argument, NULL, 'h' },
-		{ 0 }
+		{ NULL }
 	};
 
 	setlocale(LC_ALL, "");
