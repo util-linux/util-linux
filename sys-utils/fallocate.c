@@ -290,7 +290,9 @@ int main(int argc, char **argv)
 	int	fd;
 	int	mode = 0;
 	int	dig = 0;
-	int posix = 0;
+#ifdef HAVE_POSIX_FALLOCATE
+	int	posix = 0;
+#endif
 	loff_t	length = -2LL;
 	loff_t	offset = 0;
 
