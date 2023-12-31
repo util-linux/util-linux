@@ -451,7 +451,7 @@ static void write_output(struct logger_ctl *ctl, const char *const msg)
 	if (!ctl->noact && !is_connected(ctl))
 		logger_reopen(ctl);
 
-	/* 1) octen count */
+	/* 1) octet count */
 	if (ctl->octet_count) {
 		size_t len = xasprintf(&octet, "%zu ", strlen(ctl->hdr) + strlen(msg));
 		iovec_add_string(iov, iovlen, octet, len);
