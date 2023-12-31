@@ -40,8 +40,8 @@ Note that by default *wipefs* does not erase nested partition tables on non-whol
 *-a*, *--all*::
 Erase all available signatures. The set of erased signatures can be restricted with the *-t* option.
 
-*-b*, *--backup*::
-Create a signature backup to the file _$HOME/wipefs-<devname>-<offset>.bak_. For more details see the *EXAMPLE* section.
+*-b*, *--backup*[=_dir_]::
+Create a signature backup to the file _wipefs-<devname>-<offset>.bak_ in _$HOME_ or the directory specified as the optional argument. For more details see the *EXAMPLE* section.
 
 *-f*, *--force*::
 Force erasure, even if the filesystem is mounted. This is required in order to erase a partition-table signature on a block device.

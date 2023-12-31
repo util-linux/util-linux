@@ -5,6 +5,10 @@ _wipefs_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
+		'-b'|'--backup')
+			COMPREPLY=( $(compgen -o dirnames -- ${cur:-"/"}) )
+			return 0
+			;;
 		'-O'|'--output')
 			local prefix realcur OUTPUT_ALL OUTPUT
 			realcur="${cur##*,}"

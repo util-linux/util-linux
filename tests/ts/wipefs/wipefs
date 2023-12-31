@@ -10,17 +10,19 @@ ts_check_test_command "$TS_CMD_WIPEFS"
 ts_check_test_command "$TS_CMD_MKMINIX"
 
 img="$(ts_image_init 50)"
+backups="$TS_OUTDIR/backups"
 
 "$TS_CMD_MKMINIX" "$img" &>/dev/null
 
 # remove old backups
-rm -rf $HOME/wipefs-$(basename ${img})-*.bak
+rm -rf "$backups"
+mkdir -p "$backups"
 
 #remove the magic byte, back it up
-$TS_CMD_WIPEFS --all --backup ${img} &>/dev/null || ts_die "wipefs failed"
+$TS_CMD_WIPEFS --all --backup="${backups}" ${img} &>/dev/null || ts_die "wipefs failed"
 
 #there should be just one magic string/backup file in this case
-INFILE=$(ls $HOME/wipefs-$(basename ${img})-*.bak)
+INFILE=$(ls $backups/wipefs-$(basename ${img})-*.bak)
 OFFT=$(echo $INFILE | sed 's/^.*-\(.*\).bak$/\1/')
 dd if=$INFILE of=$img bs=1 conv=notrunc seek=$(($OFFT)) &>/dev/null
 
