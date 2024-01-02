@@ -30,7 +30,6 @@ int strv_consume_prepend(char ***l, char *value);
 char **strv_remove(char **l, const char *s);
 
 char **strv_new(const char *x, ...);
-char **strv_new_ap(const char *x, va_list ap);
 
 static inline const char* STRV_IFNOTNULL(const char *x) {
         return x ? x : (const char *) -1;

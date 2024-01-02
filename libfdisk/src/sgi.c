@@ -123,10 +123,12 @@ static struct sgi_info *sgi_new_info(void)
 	info->b3 = cpu_to_be16(1);
 
 	/* You may want to replace this string !!!!!!! */
-	strcpy((char *) info->scsi_string, "IBM OEM 0662S12         3 30");
-	strcpy((char *) info->serial, "0000");
+	strncpy((char *) info->scsi_string, "IBM OEM 0662S12         3 30",
+		sizeof(info->scsi_string));
+	strncpy((char *) info->serial, "0000", sizeof(info->serial));
 	info->check1816 = cpu_to_be16(18 * 256 + 16);
-	strcpy((char *) info->installer, "Sfx version 5.3, Oct 18, 1994");
+	strncpy((char *) info->installer, "Sfx version 5.3, Oct 18, 1994",
+		sizeof(info->installer));
 
 	return info;
 }
@@ -1009,7 +1011,8 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 
 	/* sizeof(sgilabel->boot_file) = 16 > 6 */
 	memset(sgilabel->boot_file, 0, 16);
-	strcpy((char *) sgilabel->boot_file, "/unix");
+	strncpy((char *) sgilabel->boot_file, "/unix",
+		sizeof(sgilabel->boot_file));
 
 	sgilabel->devparam.skew			= (0);
 	sgilabel->devparam.gap1			= (0);

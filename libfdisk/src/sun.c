@@ -383,6 +383,10 @@ static void fetch_sun(struct fdisk_context *cxt,
 			lens[i] = 0;
 		}
 	}
+	for (i = cxt->label->nparts_max; i < SUN_MAXPARTITIONS; i++) {
+		starts[i] = 0;
+		lens[i] = 0;
+	}
 }
 
 /* non-Linux qsort_r(3) has usually differently ordered arguments */

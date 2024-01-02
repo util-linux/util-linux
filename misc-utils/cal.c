@@ -692,9 +692,9 @@ static void headers_init(struct cal_control *ctl)
 	for (i = 0; i < DAYS_IN_WEEK; i++) {
 		size_t space_left;
 
-		if (i)
-			strcat(cur_dh++, " ");
 		space_left = sizeof(day_headings) - (cur_dh - day_headings);
+		if (i && space_left)
+			strncat(cur_dh++, " ", space_left--);
 
 		if (space_left <= (ctl->day_width - 1))
 			break;

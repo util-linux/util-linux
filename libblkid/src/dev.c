@@ -155,15 +155,13 @@ int blkid_dev_set_search(blkid_dev_iterate iter,
 	if (!iter || iter->magic != DEV_ITERATE_MAGIC || !search_type ||
 	    !search_value)
 		return -1;
-	new_type = malloc(strlen(search_type)+1);
-	new_value = malloc(strlen(search_value)+1);
+	new_type = strdup(search_type);
+	new_value = strdup(search_value);
 	if (!new_type || !new_value) {
 		free(new_type);
 		free(new_value);
 		return -1;
 	}
-	strcpy(new_type, search_type);
-	strcpy(new_value, search_value);
 	free(iter->search_type);
 	free(iter->search_value);
 	iter->search_type = new_type;

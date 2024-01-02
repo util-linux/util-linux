@@ -618,9 +618,9 @@ static void prompt(long long pageno)
 		if ((p = strstr(pstring, "%d")) == NULL) {
 			mesg(pstring);
 		} else {
-			strcpy(b, pstring);
-			sprintf(b + (p - pstring), "%lld", pageno);
-			strcat(b, p + 2);
+			snprintf(b, sizeof(b),
+				"%.*s%lld%s", (int) (p - pstring), pstring,
+				pageno, p + 2);
 			mesg(b);
 		}
 	}

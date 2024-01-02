@@ -74,7 +74,7 @@ unsigned strv_length(char * const *l) {
         return n;
 }
 
-char **strv_new_ap(const char *x, va_list ap) {
+static char **strv_new_ap(const char *x, va_list ap) {
         const char *s;
         char **a;
         unsigned n = 0, i = 0;

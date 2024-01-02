@@ -260,7 +260,7 @@ int main(int argc, char **argv)
 			++n_opt_pipe;
 			break;
 		case 'n':
-			fd = strtos32_or_err(optarg, _("invalid fd argument"));
+			(void) strtos32_or_err(optarg, _("invalid fd argument"));
 			++n_opt_pipe;
 			break;
 		case 'o':

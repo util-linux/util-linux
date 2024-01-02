@@ -427,9 +427,7 @@ isint:				cs[3] = '\0';
 			 */
 			savech = *p2;
 			p1[0] = '\0';
-			pr->fmt = xmalloc(strlen(fmtp) + strlen(cs) + 1);
-			strcpy(pr->fmt, fmtp);
-			strcat(pr->fmt, cs);
+			xasprintf(&pr->fmt, "%s%s", fmtp, cs);
 			*p2 = savech;
 			pr->cchar = pr->fmt + (p1 - fmtp);
 			fmtp = p2;
