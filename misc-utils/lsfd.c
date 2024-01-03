@@ -1140,10 +1140,10 @@ static void add_nodevs(FILE *mnt)
 		char filesystem[256];
 
 		/* 23 61 0:22 / /sys rw,nosuid,nodev,noexec,relatime shared:2 - sysfs sysfs rw,seclabel */
-		if(sscanf(line, "%*d %*d %lu:%lu %*s %*s %*s %*[^-] - %s %*[^\n]",
+		if(sscanf(line, "%*d %*d %lu:%lu %*s %*s %*s %*[^-] - %255s %*[^\n]",
 			  &major, &minor, filesystem) != 3)
 			/* 1600 1458 0:55 / / rw,nodev,relatime - overlay overlay rw,context="s... */
-			if (sscanf(line, "%*d %*d %lu:%lu %*s %*s %*s - %s %*[^\n]",
+			if (sscanf(line, "%*d %*d %lu:%lu %*s %*s %*s - %255s %*[^\n]",
 				   &major, &minor, filesystem) != 3)
 				continue;
 
