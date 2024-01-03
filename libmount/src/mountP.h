@@ -620,6 +620,8 @@ extern struct libmnt_context *mnt_copy_context(struct libmnt_context *o);
 extern int mnt_context_utab_writable(struct libmnt_context *cxt);
 extern const char *mnt_context_get_writable_tabpath(struct libmnt_context *cxt);
 
+extern int mnt_context_within_helper(struct libmnt_context *cxt);
+
 extern int mnt_context_get_mountinfo(struct libmnt_context *cxt, struct libmnt_table **tb);
 extern int mnt_context_get_mountinfo_for_target(struct libmnt_context *cxt,
 				    struct libmnt_table **mountinfo, const char *tgt);

@@ -2737,7 +2737,6 @@ int mnt_context_get_excode(
 	return rc;
 }
 
-
 /**
  * mnt_context_init_helper
  * @cxt: mount context
@@ -2771,6 +2770,14 @@ int mnt_context_init_helper(struct libmnt_context *cxt, int action,
 
 	DBG(CXT, ul_debugobj(cxt, "initialized for [u]mount.<type> helper [rc=%d]", rc));
 	return rc;
+}
+
+/*
+ * libmount used in /sbin/[u]mount.<type> helper
+ */
+int mnt_context_within_helper(struct libmnt_context *cxt)
+{
+	return cxt && (cxt->flags & MNT_FL_HELPER);
 }
 
 /**
