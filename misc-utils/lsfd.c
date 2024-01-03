@@ -1129,7 +1129,7 @@ const char *get_nodev_filesystem(unsigned long minor)
 	return NULL;
 }
 
-static void add_nodevs(FILE *mnt)
+static void read_mountinfo(FILE *mnt)
 {
 	/* This can be very long. A line in mountinfo can have more than 3
 	 * paths. */
@@ -1738,7 +1738,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	if (proc->ns_mnt == 0 || !has_mnt_ns(proc->ns_mnt)) {
 		FILE *mnt = ul_path_fopen(pc, "r", "mountinfo");
 		if (mnt) {
-			add_nodevs(mnt);
+			read_mountinfo(mnt);
 			if (proc->ns_mnt)
 				add_mnt_ns(proc->ns_mnt);
 			fclose(mnt);
