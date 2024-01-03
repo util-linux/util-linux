@@ -2209,7 +2209,7 @@ int mnt_context_update_tabs(struct libmnt_context *cxt)
 
 		if (mnt_update_already_done(cxt->update, cxt->lock)) {
 			DBG(CXT, ul_debugobj(cxt, "don't update: error evaluate or already updated"));
-			goto end;
+			goto emit;
 		}
 	} else if (cxt->helper) {
 		DBG(CXT, ul_debugobj(cxt, "don't update: external helper"));
@@ -2225,7 +2225,9 @@ int mnt_context_update_tabs(struct libmnt_context *cxt)
 	}
 
 	rc = mnt_update_table(cxt->update, cxt->lock);
-
+emit:
+	if (rc == 0 && !mnt_context_within_helper(cxt))
+		mnt_update_emit_event(cxt->update);
 end:
 	if (!mnt_context_switch_ns(cxt, ns_old))
 		return -MNT_ERR_NAMESPACE;

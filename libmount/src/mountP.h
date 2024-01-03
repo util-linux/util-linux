@@ -663,6 +663,7 @@ extern int mnt_context_apply_fs(struct libmnt_context *cxt, struct libmnt_fs *fs
 extern struct libmnt_optlist *mnt_context_get_optlist(struct libmnt_context *cxt);
 
 /* tab_update.c */
+extern int mnt_update_emit_event(struct libmnt_update *upd);
 extern int mnt_update_set_filename(struct libmnt_update *upd, const char *filename);
 extern int mnt_update_already_done(struct libmnt_update *upd,
 				   struct libmnt_lock *lc);
