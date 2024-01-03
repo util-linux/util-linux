@@ -624,7 +624,7 @@ set_hardware_clock_exact(const struct hwclock_control *ctl,
 	}
 
 	newhwtime = sethwtime
-		    + ceil(time_diff(nowsystime, refsystime)
+		    + round(time_diff(nowsystime, refsystime)
 			    - delay /* don't count this */);
 	if (ctl->verbose)
 		printf(_("%"PRId64".%06"PRId64" is close enough to %"PRId64".%06"PRId64" (%.6f < %.6f)\n"
