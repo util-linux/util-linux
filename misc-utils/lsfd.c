@@ -1042,12 +1042,26 @@ static void collect_fs_files(struct path_cxt *pc, struct proc *proc,
 			       sockets_only);
 }
 
-static void collect_namespace_files(struct path_cxt *pc, struct proc *proc)
+static void collect_namespace_files_tophalf(struct path_cxt *pc, struct proc *proc)
 {
 	enum association assocs[] = {
 		ASSOC_NS_CGROUP,
 		ASSOC_NS_IPC,
 		ASSOC_NS_MNT,
+	};
+	const char *names[] = {
+		[ASSOC_NS_CGROUP] = "ns/cgroup",
+		[ASSOC_NS_IPC]    = "ns/ipc",
+		[ASSOC_NS_MNT]    = "ns/mnt",
+	};
+	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs),
+			       /* Namespace information is alwasys needed. */
+			       false);
+}
+
+static void collect_namespace_files_bottomhalf(struct path_cxt *pc, struct proc *proc)
+{
+	enum association assocs[] = {
 		ASSOC_NS_NET,
 		ASSOC_NS_PID,
 		ASSOC_NS_PID4C,
@@ -1057,9 +1071,6 @@ static void collect_namespace_files(struct path_cxt *pc, struct proc *proc)
 		ASSOC_NS_UTS,
 	};
 	const char *names[] = {
-		[ASSOC_NS_CGROUP] = "ns/cgroup",
-		[ASSOC_NS_IPC]    = "ns/ipc",
-		[ASSOC_NS_MNT]    = "ns/mnt",
 		[ASSOC_NS_NET]    = "ns/net",
 		[ASSOC_NS_PID]    = "ns/pid",
 		[ASSOC_NS_PID4C]  = "ns/pid_for_children",
@@ -1735,6 +1746,28 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	    || kcmp(proc->leader->pid, proc->pid, KCMP_FS, 0, 0) != 0)
 		collect_fs_files(pc, proc, ctl->sockets_only);
 
+	/* Reading /proc/$pid/mountinfo is expensive.
+	 * mnt_namespaces is a table for avoiding reading mountinfo files
+	 * for an identical mnt namespace.
+	 *
+	 * After reading a mountinfo file for a mnt namespace, we store $mnt_id
+	 * identifying the mnt namespace to mnt_namespaces.
+	 *
+	 * Before reading a mountinfo, we look up the mnt_namespaces with $mnt_id
+	 * as a key. If we find the key, we can skip the reading.
+	 *
+	 * To utilize mnt_namespaces, we need $mnt_id.
+	 * So we read /proc/$pid/ns/mnt here. However, we should not read
+	 * /proc/$pid/ns/net here. When reading /proc/$pid/ns/net, we need
+	 * the information about backing device of "nsfs" file system.
+	 * The information is available in a mountinfo file.
+	 */
+
+	/* 1/3. read /proc/$pid/ns/mnt */
+	if (proc->ns_mnt == 0)
+		collect_namespace_files_tophalf(pc, proc);
+
+	/* 2/3. read /proc/$pid/mountinfo */
 	if (proc->ns_mnt == 0 || !has_mnt_ns(proc->ns_mnt)) {
 		FILE *mnt = ul_path_fopen(pc, "r", "mountinfo");
 		if (mnt) {
@@ -1745,7 +1778,8 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 		}
 	}
 
-	collect_namespace_files(pc, proc);
+	/* 3/3. read /proc/$pid/ns/{the other than mnt} */
+	collect_namespace_files_bottomhalf(pc, proc);
 
 	/* If kcmp is not available,
 	 * there is no way to know whether threads share resources.
