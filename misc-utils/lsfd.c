@@ -892,7 +892,7 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 			"-%"SCNx64		/* end */
 			" %4[^ ]"		/* mode */
 			" %"SCNx64		/* offset */
-		        " %lx:%lx"		/* maj:min */
+			" %lx:%lx"		/* maj:min */
 			" %"SCNu64,		/* inode */
 
 			&start, &end, modestr, &offset,
@@ -1621,17 +1621,17 @@ static void parse_proc_syscall(struct lsfd_control *ctl __attribute__((__unused_
 		return;
 
 	switch (scn) {
-#ifdef 	SYS_poll
+#ifdef SYS_poll
 	case SYS_poll:
 		mark_poll_fds_as_multiplexed(ptr, pid, proc);
 		break;
 #endif
-#ifdef 	SYS_ppoll
+#ifdef SYS_ppoll
 	case SYS_ppoll:
 		mark_poll_fds_as_multiplexed(ptr, pid, proc);
 		break;
 #endif
-#ifdef 	SYS_ppoll_time64
+#ifdef SYS_ppoll_time64
 	case SYS_ppoll_time64:
 		mark_poll_fds_as_multiplexed(ptr, pid, proc);
 		break;
@@ -1647,7 +1647,7 @@ static void parse_proc_syscall(struct lsfd_control *ctl __attribute__((__unused_
 		mark_select_fds_as_multiplexed(ptr, pid, proc);
 		break;
 #endif
-#ifdef 	SYS_pselect6_time64
+#ifdef SYS_pselect6_time64
 	case SYS_pselect6_time64:
 		mark_select_fds_as_multiplexed(ptr, pid, proc);
 		break;
@@ -1741,7 +1741,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 
  out:
 	/* Let's be careful with number of open files */
-        ul_path_close_dirfd(pc);
+	ul_path_close_dirfd(pc);
 }
 
 static void parse_pids(const char *str, pid_t **pids, int *count)
