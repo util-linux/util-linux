@@ -176,9 +176,12 @@ enum {
 	DMESG_TIMEFTM_RELTIME,		/* [relative] */
 	DMESG_TIMEFTM_TIME,		/* [time] */
 	DMESG_TIMEFTM_TIME_DELTA,	/* [time <delta>] */
-	DMESG_TIMEFTM_ISO8601		/* 2013-06-13T22:11:00,123456+0100 */
+	DMESG_TIMEFTM_ISO8601,		/* 2013-06-13T22:11:00,123456+0100 */
+
+	__DMESG_TIMEFTM_COUNT
 };
-#define is_timefmt(c, f) ((c)->time_fmt == (DMESG_TIMEFTM_ ##f))
+
+#define DMESG_TIMEFTM_DEFAULT	DMESG_TIMEFTM_TIME
 
 struct dmesg_control {
 	/* bit arrays -- see include/bitops.h */
@@ -216,7 +219,8 @@ struct dmesg_control {
 	char		*filename;
 	char		*mmap_buff;
 	size_t		pagesize;
-	unsigned int	time_fmt;	/* time format */
+	size_t		ntime_fmts;
+	unsigned int	time_fmts[2 * __DMESG_TIMEFTM_COUNT];	/* time format */
 
 	struct ul_jsonwrt jfmt;		/* -J formatting */
 
@@ -335,7 +339,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -T, --ctime                 show human-readable timestamp (may be inaccurate!)\n"), out);
 	fputs(_(" -t, --notime                don't show any timestamp with messages\n"), out);
 	fputs(_("     --time-format <format>  show timestamp using the given format:\n"
-		"                               [delta|reltime|ctime|notime|iso]\n"
+		"                               [delta|reltime|ctime|notime|iso|raw]\n"
 		"Suspending/resume will make ctime and iso timestamps inaccurate.\n"), out);
 	fputs(_("     --since <time>          display the lines since the specified time\n"), out);
 	fputs(_("     --until <time>          display the lines until the specified time\n"), out);
@@ -356,6 +360,54 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fprintf(out, USAGE_MAN_TAIL("dmesg(1)"));
 	exit(EXIT_SUCCESS);
+}
+
+static void reset_time_fmts(struct dmesg_control *ctl)
+{
+	memset(ctl->time_fmts, 0,
+		__DMESG_TIMEFTM_COUNT * sizeof(*(ctl->time_fmts)));
+	ctl->time_fmts[0] = DMESG_TIMEFTM_DEFAULT;
+}
+
+static int is_time_fmt_set(struct dmesg_control *ctl, unsigned int time_format)
+{
+	size_t i;
+
+	if (ctl->ntime_fmts == 0)
+		return time_format == DMESG_TIMEFTM_DEFAULT;
+
+	for (i = 0; i < ctl->ntime_fmts; i++) {
+		if (ctl->time_fmts[i] == time_format)
+			return 1;
+	}
+	return 0;
+}
+
+static void include_time_fmt(struct dmesg_control *ctl, unsigned int time_format)
+{
+	if (ctl->ntime_fmts > 0 && is_time_fmt_set(ctl, time_format))
+		return;
+
+	if (ctl->ntime_fmts < __DMESG_TIMEFTM_COUNT)
+		ctl->time_fmts[ctl->ntime_fmts++] = time_format;
+}
+
+static void exclude_time_fmt(struct dmesg_control *ctl, unsigned int time_format)
+{
+	size_t idx = 0;
+
+	while (idx < ctl->ntime_fmts && ctl->time_fmts[idx] != time_format)
+		idx++;
+
+	if (idx < ctl->ntime_fmts && ctl->time_fmts[idx] == time_format) {
+		while (idx + 1 < ctl->ntime_fmts) {
+			ctl->time_fmts[idx] = ctl->time_fmts[idx+1];
+			idx++;
+		}
+		ctl->ntime_fmts--;
+		if (ctl->ntime_fmts == 0)
+			reset_time_fmts(ctl);
+	}
 }
 
 /*
@@ -537,7 +589,6 @@ static const char *parse_kmsg_timestamp(const char *str0, struct timeval *tv)
 
 	return end + 1;	/* skip separator */
 }
-
 
 static double time_diff(struct timeval *a, struct timeval *b)
 {
@@ -786,7 +837,7 @@ static int get_next_syslog_record(struct dmesg_control *ctl,
 		if (*begin == '[' && (*(begin + 1) == ' ' ||
 				      isdigit(*(begin + 1)))) {
 
-			if (!is_timefmt(ctl, NONE))
+			if (!is_time_fmt_set(ctl, DMESG_TIMEFTM_NONE))
 				begin = parse_syslog_timestamp(begin + 1, &rec->tv);
 			else
 				begin = skip_item(begin, end, "]");
@@ -961,10 +1012,13 @@ static void print_record(struct dmesg_control *ctl,
 	char buf[128];
 	char fpbuf[32] = "\0";
 	char tsbuf[64] = "\0";
+	char full_tsbuf[64 * __DMESG_TIMEFTM_COUNT] = "\0";
 	size_t mesg_size = rec->mesg_size;
 	int timebreak = 0;
 	char *mesg_copy = NULL;
 	const char *line = NULL;
+	double delta = 0;
+	size_t format_iter = 0;
 
 	if (!accept_record(ctl, rec))
 		return;
@@ -974,6 +1028,8 @@ static void print_record(struct dmesg_control *ctl,
 			putchar('\n');
 		return;
 	}
+
+	delta = record_count_delta(ctl, rec);
 
 	if (ctl->json) {
 		if (!ul_jsonwrt_is_ready(&ctl->jfmt)) {
@@ -989,7 +1045,7 @@ static void print_record(struct dmesg_control *ctl,
 	 * backward compatibility with syslog(2) buffers only
 	 */
 	if (ctl->raw) {
-		ctl->indent = snprintf(tsbuf, sizeof(tsbuf),
+		ctl->indent = snprintf(full_tsbuf, sizeof(full_tsbuf),
 				       "<%d>[%5ld.%06ld] ",
 				       LOG_RAW_FAC_PRI(rec->facility, rec->level),
 				       (long) rec->tv.tv_sec,
@@ -1004,64 +1060,72 @@ static void print_record(struct dmesg_control *ctl,
 			 level_names[rec->level].name);
 
 	/* Store the timestamp in a buffer */
-	switch (ctl->time_fmt) {
-		double delta;
-		struct tm cur;
-	case DMESG_TIMEFTM_NONE:
-		ctl->indent = 0;
-		break;
-	case DMESG_TIMEFTM_CTIME:
-		ctl->indent = snprintf(tsbuf, sizeof(tsbuf), "[%s] ",
-				      record_ctime(ctl, rec, buf, sizeof(buf)));
-		break;
-	case DMESG_TIMEFTM_CTIME_DELTA:
-		ctl->indent = snprintf(tsbuf, sizeof(tsbuf), "[%s <%12.06f>] ",
-				      record_ctime(ctl, rec, buf, sizeof(buf)),
-				      record_count_delta(ctl, rec));
-		break;
-	case DMESG_TIMEFTM_DELTA:
-		ctl->indent = snprintf(tsbuf, sizeof(tsbuf), "[<%12.06f>] ",
-				      record_count_delta(ctl, rec));
-		break;
-	case DMESG_TIMEFTM_RELTIME:
-		record_localtime(ctl, rec, &cur);
-		delta = record_count_delta(ctl, rec);
-		if (cur.tm_min != ctl->lasttm.tm_min ||
-		    cur.tm_hour != ctl->lasttm.tm_hour ||
-		    cur.tm_yday != ctl->lasttm.tm_yday) {
-			timebreak = 1;
+	for (format_iter = 0;
+	     format_iter < (ctl->ntime_fmts > 0 ? ctl->ntime_fmts : 1);
+	     format_iter++) {
+		switch (ctl->time_fmts[format_iter]) {
+			struct tm cur;
+		case DMESG_TIMEFTM_NONE:
+			ctl->indent = 0;
+			break;
+		case DMESG_TIMEFTM_CTIME:
 			ctl->indent = snprintf(tsbuf, sizeof(tsbuf), "[%s] ",
-					      short_ctime(&cur, buf,
-							  sizeof(buf)));
-		} else {
-			if (delta < 10)
-				ctl->indent = snprintf(tsbuf, sizeof(tsbuf),
-						"[  %+8.06f] ",  delta);
-			else
-				ctl->indent = snprintf(tsbuf, sizeof(tsbuf),
-						"[ %+9.06f] ", delta);
+						record_ctime(ctl, rec, buf, sizeof(buf)));
+			break;
+		case DMESG_TIMEFTM_CTIME_DELTA:
+			ctl->indent = snprintf(tsbuf, sizeof(tsbuf), "[%s <%12.06f>] ",
+						record_ctime(ctl, rec, buf, sizeof(buf)),
+						delta);
+			break;
+		case DMESG_TIMEFTM_DELTA:
+			ctl->indent = snprintf(tsbuf, sizeof(tsbuf), "[<%12.06f>] ",
+						delta);
+			break;
+		case DMESG_TIMEFTM_RELTIME:
+			record_localtime(ctl, rec, &cur);
+			if (cur.tm_min != ctl->lasttm.tm_min ||
+				cur.tm_hour != ctl->lasttm.tm_hour ||
+				cur.tm_yday != ctl->lasttm.tm_yday) {
+				timebreak = 1;
+				ctl->indent = snprintf(tsbuf, sizeof(tsbuf), "[%s] ",
+							short_ctime(&cur, buf,
+								sizeof(buf)));
+			} else {
+				if (delta < 10)
+					ctl->indent = snprintf(tsbuf, sizeof(tsbuf),
+							"[  %+8.06f] ",  delta);
+				else
+					ctl->indent = snprintf(tsbuf, sizeof(tsbuf),
+							"[ %+9.06f] ", delta);
+			}
+			ctl->lasttm = cur;
+			break;
+		case DMESG_TIMEFTM_TIME:
+			ctl->indent = snprintf(tsbuf, sizeof(tsbuf),
+						ctl->json ? "%5ld.%06ld" : "[%5ld.%06ld] ",
+						(long)rec->tv.tv_sec,
+						(long)rec->tv.tv_usec);
+			break;
+		case DMESG_TIMEFTM_TIME_DELTA:
+			ctl->indent = snprintf(tsbuf, sizeof(tsbuf), "[%5ld.%06ld <%12.06f>] ",
+						(long)rec->tv.tv_sec,
+						(long)rec->tv.tv_usec,
+						delta);
+			break;
+		case DMESG_TIMEFTM_ISO8601:
+			ctl->indent = snprintf(tsbuf, sizeof(tsbuf), "%s ",
+						iso_8601_time(ctl, rec, buf,
+								sizeof(buf)));
+			break;
+		default:
+			abort();
 		}
-		ctl->lasttm = cur;
-		break;
-	case DMESG_TIMEFTM_TIME:
-		ctl->indent = snprintf(tsbuf, sizeof(tsbuf),
-				      ctl->json ? "%5ld.%06ld" : "[%5ld.%06ld] ",
-				      (long)rec->tv.tv_sec,
-				      (long)rec->tv.tv_usec);
-		break;
-	case DMESG_TIMEFTM_TIME_DELTA:
-		ctl->indent = snprintf(tsbuf, sizeof(tsbuf), "[%5ld.%06ld <%12.06f>] ",
-				      (long)rec->tv.tv_sec,
-				      (long)rec->tv.tv_usec,
-				      record_count_delta(ctl, rec));
-		break;
-	case DMESG_TIMEFTM_ISO8601:
-		ctl->indent = snprintf(tsbuf, sizeof(tsbuf), "%s ",
-				      iso_8601_time(ctl, rec, buf,
-						    sizeof(buf)));
-		break;
-	default:
-		abort();
+
+		if (is_time_fmt_set(ctl, DMESG_TIMEFTM_NONE))
+			break;
+		else if (*tsbuf)
+			strcat(full_tsbuf, tsbuf);
+
 	}
 
 	ctl->indent += strlen(fpbuf);
@@ -1079,23 +1143,23 @@ full_output:
 	}
 
 	/* Output the timestamp buffer */
-	if (*tsbuf) {
+	if (*full_tsbuf) {
 		/* Colorize the timestamp */
 		if (ctl->color)
 			dmesg_enable_color(timebreak ? DMESG_COLOR_TIMEBREAK :
 						       DMESG_COLOR_TIME);
-		if (ctl->time_fmt != DMESG_TIMEFTM_RELTIME) {
+		if (!is_time_fmt_set(ctl, DMESG_TIMEFTM_RELTIME)) {
 			if (ctl->json)
-				ul_jsonwrt_value_raw(&ctl->jfmt, "time", tsbuf);
+				ul_jsonwrt_value_raw(&ctl->jfmt, "time", full_tsbuf);
 			else
-				fputs(tsbuf, stdout);
+				fputs(full_tsbuf, stdout);
 		} else {
 			/*
 			 * For relative timestamping, the first line's
 			 * timestamp is the offset and all other lines will
 			 * report an offset of 0.000000.
 			 */
-			fputs(!line ? tsbuf : "[  +0.000000] ", stdout);
+			fputs(!line ? full_tsbuf : "[  +0.000000] ", stdout);
 		}
 		if (ctl->color)
 			color_disable();
@@ -1276,7 +1340,7 @@ static int parse_kmsg_record(struct dmesg_control *ctl,
 		goto mesg;
 
 	/* C) timestamp */
-	if (is_timefmt(ctl, NONE))
+	if (is_time_fmt_set(ctl, DMESG_TIMEFTM_NONE))
 		p = skip_item(p, end, ",;");
 	else
 		p = parse_kmsg_timestamp(p, &rec->tv);
@@ -1402,6 +1466,8 @@ static int which_time_format(const char *s)
 		return DMESG_TIMEFTM_RELTIME;
 	if (!strcmp(s, "iso"))
 		return DMESG_TIMEFTM_ISO8601;
+	if (!strcmp(s, "raw"))
+		return DMESG_TIMEFTM_TIME;
 	errx(EXIT_FAILURE, _("unknown time format: %s"), s);
 }
 
@@ -1444,7 +1510,7 @@ int main(int argc, char *argv[])
 		.action = SYSLOG_ACTION_READ_ALL,
 		.method = DMESG_METHOD_KMSG,
 		.kmsg = -1,
-		.time_fmt = DMESG_TIMEFTM_TIME,
+		.ntime_fmts = 0,
 		.indent = 0,
 	};
 	int colormode = UL_COLORMODE_UNDEF;
@@ -1511,6 +1577,8 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
+	ctl.time_fmts[0] = DMESG_TIMEFTM_DEFAULT;
+
 	while ((c = getopt_long(argc, argv, "CcDdEeF:f:HhJK:kL::l:n:iPprSs:TtuVWwx",
 				longopts, NULL)) != -1) {
 
@@ -1533,7 +1601,7 @@ int main(int argc, char *argv[])
 			ctl.action = SYSLOG_ACTION_CONSOLE_ON;
 			break;
 		case 'e':
-			ctl.time_fmt = DMESG_TIMEFTM_RELTIME;
+			include_time_fmt(&ctl, DMESG_TIMEFTM_RELTIME);
 			break;
 		case 'F':
 			ctl.filename = optarg;
@@ -1550,7 +1618,7 @@ int main(int argc, char *argv[])
 				return EXIT_FAILURE;
 			break;
 		case 'H':
-			ctl.time_fmt = DMESG_TIMEFTM_RELTIME;
+			include_time_fmt(&ctl, DMESG_TIMEFTM_RELTIME);
 			colormode = UL_COLORMODE_AUTO;
 			ctl.pager = 1;
 			break;
@@ -1597,10 +1665,11 @@ int main(int argc, char *argv[])
 				ctl.bufsize = 4096;
 			break;
 		case 'T':
-			ctl.time_fmt = DMESG_TIMEFTM_CTIME;
+			include_time_fmt(&ctl, DMESG_TIMEFTM_CTIME);
 			break;
 		case 't':
-			ctl.time_fmt = DMESG_TIMEFTM_NONE;
+			reset_time_fmts(&ctl);
+			include_time_fmt(&ctl, DMESG_TIMEFTM_NONE);
 			break;
 		case 'u':
 			ctl.fltr_fac = 1;
@@ -1618,7 +1687,7 @@ int main(int argc, char *argv[])
 			ctl.decode = 1;
 			break;
 		case OPT_TIME_FORMAT:
-			ctl.time_fmt = which_time_format(optarg);
+			include_time_fmt(&ctl, which_time_format(optarg));
 			break;
 		case OPT_NOESC:
 			ctl.noesc = 1;
@@ -1650,7 +1719,8 @@ int main(int argc, char *argv[])
 	}
 
 	if (ctl.json) {
-		ctl.time_fmt = DMESG_TIMEFTM_TIME;
+		reset_time_fmts(&ctl);
+		ctl.ntime_fmts = 0;
 		delta = 0;
 		ctl.force_prefix = 0;
 		ctl.raw = 0;
@@ -1658,30 +1728,40 @@ int main(int argc, char *argv[])
 		nopager = 1;
 	}
 
-	if ((is_timefmt(&ctl, RELTIME) ||
-	     is_timefmt(&ctl, CTIME)   ||
-	     is_timefmt(&ctl, ISO8601)) ||
+	if ((is_time_fmt_set(&ctl, DMESG_TIMEFTM_RELTIME) ||
+	     is_time_fmt_set(&ctl, DMESG_TIMEFTM_CTIME)   ||
+	     is_time_fmt_set(&ctl, DMESG_TIMEFTM_ISO8601)) ||
 	     ctl.since ||
 	     ctl.until) {
 		if (dmesg_get_boot_time(&ctl.boot_time) != 0)
-			ctl.time_fmt = DMESG_TIMEFTM_NONE;
+			include_time_fmt(&ctl, DMESG_TIMEFTM_NONE);
 		else
 			ctl.suspended_time = dmesg_get_suspended_time();
 	}
 
-	if (delta) {
-		switch (ctl.time_fmt) {
-		case DMESG_TIMEFTM_CTIME:
-			ctl.time_fmt = DMESG_TIMEFTM_CTIME_DELTA;
-			break;
-		case DMESG_TIMEFTM_TIME:
-			ctl.time_fmt = DMESG_TIMEFTM_TIME_DELTA;
-			break;
-		case DMESG_TIMEFTM_ISO8601:
-			warnx(_("--show-delta is ignored when used together with iso8601 time format"));
-			break;
-		default:
-			ctl.time_fmt = DMESG_TIMEFTM_DELTA;
+	if (delta || is_time_fmt_set(&ctl, DMESG_TIMEFTM_DELTA)) {
+		if (is_time_fmt_set(&ctl, DMESG_TIMEFTM_TIME)) {
+			if (ctl.ntime_fmts == 0) {
+				ctl.time_fmts[ctl.ntime_fmts++] = DMESG_TIMEFTM_TIME_DELTA;
+			} else {
+				exclude_time_fmt(&ctl, DMESG_TIMEFTM_DELTA);
+				for (n = 0; (size_t) n < ctl.ntime_fmts; n++) {
+					if (ctl.time_fmts[n] == DMESG_TIMEFTM_TIME) {
+						ctl.time_fmts[n] = DMESG_TIMEFTM_TIME_DELTA;
+						break;
+					}
+				}
+			}
+		} else if (is_time_fmt_set(&ctl, DMESG_TIMEFTM_CTIME)) {
+			exclude_time_fmt(&ctl, DMESG_TIMEFTM_DELTA);
+			for (n = 0; (size_t) n < ctl.ntime_fmts; n++) {
+				if (ctl.time_fmts[n] == DMESG_TIMEFTM_CTIME) {
+					ctl.time_fmts[n] = DMESG_TIMEFTM_CTIME_DELTA;
+					break;
+				}
+			}
+		} else {
+			include_time_fmt(&ctl, DMESG_TIMEFTM_DELTA);
 		}
 	}
 

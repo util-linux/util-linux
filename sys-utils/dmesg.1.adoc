@@ -136,9 +136,13 @@ Display record until the specified time. Supported is the subsecond granularity.
 Do not print kernel's timestamps.
 
 *--time-format* _format_::
-Print timestamps using the given _format_, which can be *ctime*, *reltime*, *delta* or *iso*. The first three formats are aliases of the time-format-specific options. The *iso* format is a *dmesg* implementation of the ISO-8601 timestamp format. The purpose of this format is to make the comparing of timestamps between two systems, and any other parsing, easy. The definition of the *iso* timestamp is: YYYY-MM-DD<T>HH:MM:SS,<microseconds><-+><timezone offset from UTC>.
+Print timestamps using the given _format_, which can be *ctime*, *reltime*, *delta*, *iso* or *raw*. The first three formats are aliases of the time-format-specific options. The *raw* format uses the default timestamp format showing seconds since boot. The *iso* format is a *dmesg* implementation of the ISO-8601 timestamp format. The purpose of this format is to make the comparing of timestamps between two systems, and any other parsing, easy. The definition of the *iso* timestamp is: YYYY-MM-DD<T>HH:MM:SS,<microseconds><-+><timezone offset from UTC>.
 +
 The *iso* format has the same issue as *ctime*: the time may be inaccurate when a system is suspended and resumed.
++
+*--time-format* may be used multiple times with different values for _format_ to output each specified format.
++
+The *delta* always follows *ctime* or *raw* if specified together.
 
 *-u*, *--userspace*::
 Print userspace messages.
