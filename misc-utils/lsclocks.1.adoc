@@ -18,7 +18,7 @@ lsclocks - display system clocks
 
 *lsclocks* is a simple command to display system clocks.
 
-It allows to display information like current time and resolutionof clocks like
+It allows to display information like current time and resolution of clocks like
 CLOCK_MONOTONIC, CLOCK_REALTIME and CLOCK_BOOTTIME.
 
 == OPTIONS
@@ -40,7 +40,7 @@ Output all columns.
 Use raw output format.
 
 *-r*, *--time* _clock_::
-Show current time of one specific clocks.
+Show current time of one specific clock.
 
 *--no-discover-dynamic*::
 Do not try to discover dynamic clocks.
@@ -85,7 +85,7 @@ ISO_TIME <``string``>::
 ISO8601 formatted version of *TIME*.
 
 RESOL_RAW <``number``>::
-Clock resolution as returned by *clock_getres()*.
+Clock resolution as returned by *clock_getres*(2).
 
 RESOL <``number``>::
 Human readable version of *RESOL_RAW*.
