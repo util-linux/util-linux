@@ -13,7 +13,9 @@
  */
 #include <stdio.h>
 #include <getopt.h>
+#include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/klog.h>
 #include <sys/syslog.h>
 #include <sys/time.h>
@@ -41,6 +43,7 @@
 #include "mangle.h"
 #include "pager.h"
 #include "jsonwrt.h"
+#include "pathnames.h"
 
 /* Close the log.  Currently a NOP. */
 #define SYSLOG_ACTION_CLOSE          0
@@ -64,6 +67,12 @@
 #define SYSLOG_ACTION_SIZE_UNREAD    9
 /* Return size of the log buffer */
 #define SYSLOG_ACTION_SIZE_BUFFER   10
+
+#define PID_CHARS_MAX sizeof(stringify_value(LONG_MAX))
+#define PID_CHARS_DEFAULT sizeof(stringify_value(INT_MAX))
+#define SYSLOG_DEFAULT_CALLER_ID_CHARS sizeof(stringify_value(SHRT_MAX))-1
+#define DMESG_CALLER_PREFIX "caller="
+#define DMESG_CALLER_PREFIXSZ (sizeof(DMESG_CALLER_PREFIX)-1)
 
 /*
  * Color scheme
@@ -237,6 +246,7 @@ struct dmesg_control {
 			force_prefix:1;	/* force timestamp and decode prefix
 					   on each line */
 	int		indent;		/* due to timestamps if newline */
+	size_t          caller_id_size;   /* PRINTK_CALLERID max field size */
 };
 
 struct dmesg_record {
@@ -246,6 +256,7 @@ struct dmesg_record {
 	int		level;
 	int		facility;
 	struct timeval  tv;
+	char		caller_id[PID_CHARS_MAX];
 
 	const char	*next;		/* buffer with next unparsed record */
 	size_t		next_size;	/* size of the next buffer */
@@ -258,6 +269,7 @@ struct dmesg_record {
 		(_r)->level = -1; \
 		(_r)->tv.tv_sec = 0; \
 		(_r)->tv.tv_usec = 0; \
+		(_r)->caller_id[0] = 0; \
 	} while (0)
 
 static int process_kmsg(struct dmesg_control *ctl);
@@ -603,6 +615,45 @@ static int get_syslog_buffer_size(void)
 }
 
 /*
+ * Get the number of characters needed to hold the maximum number
+ * of tasks this system supports. This size of string could hold
+ * a thread id large enough for the highest thread id.
+ * This is needed to determine the number of characters reserved for
+ * the PRINTK_CALLER field if it has been configured in the Linux Kernel.
+ *
+ * The number of digits sets the max value since the value can't exceed
+ * a value of that size. The /proc field defined by _PATH_PROC_PIDMAX
+ * holds the maximum number of PID values that may be ussed by the system,
+ * so 0 to that value minus one.
+ *
+ * For determining the size of the PRINTK_CALLER field, we make the safe
+ * assumption that the number of threads >= number of cpus. This because
+ * the PRINTK_CALLER field can hold either a thread id or a CPU id value.
+ *
+ * If we can't access the pid max kernel proc entry we assign a default
+ * field size of 5 characters as that is what the old syslog interface
+ * uses as the reserved field size. This is justified because 32-bit Linux
+ * systems are limited to PID values between (0-32767).
+ *
+ */
+static size_t max_threads_id_size(void)
+{
+	char taskmax[PID_CHARS_MAX] = {'\0'};
+	ssize_t rdsize;
+	int fd;
+
+	fd = open(_PATH_PROC_PIDMAX, O_RDONLY);
+	if (fd == -1)
+		return PID_CHARS_DEFAULT;
+
+	rdsize = read(fd, taskmax, sizeof(taskmax));
+	if (rdsize == -1)
+		return PID_CHARS_DEFAULT;
+
+	return strnlen(taskmax, sizeof(taskmax));
+}
+
+/*
  * Reads messages from regular file by mmap
  */
 static ssize_t mmap_file_buffer(struct dmesg_control *ctl, char **buf)
@@ -675,6 +726,8 @@ static ssize_t process_buffer(struct dmesg_control *ctl, char **buf)
 			ctl->bufsize = get_syslog_buffer_size();
 
 		n = read_syslog_buffer(ctl, buf);
+		/* Set number of PID characters for caller_id spacing */
+		ctl->caller_id_size = SYSLOG_DEFAULT_CALLER_ID_CHARS;
 		break;
 	case DMESG_METHOD_KMSG:
 		if (ctl->filename)
@@ -780,6 +833,39 @@ static const char *skip_item(const char *begin, const char *end, const char *sep
 }
 
 /*
+ * Checks to see if the caller (caller id) field is present in the kmsg record.
+ * This is true if the PRINTK_CALLER config option has been set in the kernel.
+ *
+ * If the caller_id is found in the kmsg buffer then return the id and id type
+ * to the caller in dmesg caller_id. Returns string pointer to next value.
+ *
+ */
+static const char *parse_callerid(const char *p_str, const char *end,
+				  struct dmesg_record *p_drec)
+{
+	const char *p_after;
+	const char *p_next;
+	size_t cid_size;
+	char *p_scn;
+	char *p_cid;
+
+	/* Check for PRINTK_CALLER prefix, must be before msg text */
+	p_cid = strstr(p_str, DMESG_CALLER_PREFIX);
+	p_scn = strchr(p_str, ';');
+	if (p_cid != NULL && p_drec != NULL && p_scn != NULL && p_cid < p_scn) {
+		p_next = p_cid + DMESG_CALLER_PREFIXSZ;
+		p_after = skip_item(p_next, end, ",;");
+		cid_size = p_after - p_next;
+		if (cid_size < sizeof(p_drec->caller_id))
+			xstrncpy(p_drec->caller_id, p_next, cid_size);
+		else
+			return p_str;
+		return p_after;
+	}
+	return p_str;
+}
+
+/*
  * Parses one record from syslog(2) buffer
  */
 static int get_next_syslog_record(struct dmesg_control *ctl,
@@ -846,8 +932,22 @@ static int get_next_syslog_record(struct dmesg_control *ctl,
 				begin++;
 		}
 
-		rec->mesg = begin;
-		rec->mesg_size = end - begin;
+		if (*begin == '[' && (*(begin + 1) == ' ' ||
+			(*(begin + 1) == 'T' || *(begin + 1) == 'C'))) {
+			const char *start = begin + 1;
+			size_t id_size;
+
+			start = start + strspn(start, " ");
+			begin = skip_item(begin, end, "]");
+			id_size = begin - start;
+			if (id_size < sizeof(rec->caller_id))
+				xstrncpy(rec->caller_id, start, id_size);
+			rec->mesg = begin + 1;
+			rec->mesg_size = end - begin - 1;
+		} else {
+			rec->mesg = begin;
+			rec->mesg_size = end - begin;
+		}
 
 		/* Don't count \n from the last message to the message size */
 		if (*end != '\n' && *(end - 1) == '\n')
@@ -1165,6 +1265,19 @@ full_output:
 			color_disable();
 	}
 
+	if (*rec->caller_id) {
+		if (ctl->json) {
+			ul_jsonwrt_value_s(&ctl->jfmt, "caller", rec->caller_id);
+		} else {
+			char cidbuf[PID_CHARS_MAX+3] = {'\0'};
+
+			sprintf(cidbuf, "[%*s] ",
+				(char)ctl->caller_id_size, rec->caller_id);
+			ctl->indent += strnlen(cidbuf, sizeof(cidbuf));
+			fputs(cidbuf, stdout);
+		}
+	}
+
 	/*
 	 * A kernel message may contain several lines of output, separated
 	 * by '\n'.  If the timestamp and decode outputs are forced then each
@@ -1348,7 +1461,10 @@ static int parse_kmsg_record(struct dmesg_control *ctl,
 		goto mesg;
 
 	/* D) optional fields (ignore) */
-	p = skip_item(p, end, ";");
+	p = skip_item(p, end, ",;");
+
+	/* Include optional PRINTK_CALLER field if it is present */
+	p = parse_callerid(p, end, rec);
 
 mesg:
 	/* E) message text */
@@ -1399,6 +1515,9 @@ static int process_kmsg(struct dmesg_control *ctl)
 
 	if (ctl->method != DMESG_METHOD_KMSG || ctl->kmsg < 0)
 		return -1;
+
+	/* Determine number of PID characters for caller_id spacing */
+	ctl->caller_id_size = max_threads_id_size();
 
 	/*
 	 * The very first read() call is done in kmsg_init() where we test
@@ -1512,6 +1631,7 @@ int main(int argc, char *argv[])
 		.kmsg = -1,
 		.ntime_fmts = 0,
 		.indent = 0,
+		.caller_id_size = 0,
 	};
 	int colormode = UL_COLORMODE_UNDEF;
 	enum {
@@ -1606,10 +1726,12 @@ int main(int argc, char *argv[])
 		case 'F':
 			ctl.filename = optarg;
 			ctl.method = DMESG_METHOD_MMAP;
+			ctl.caller_id_size = SYSLOG_DEFAULT_CALLER_ID_CHARS;
 			break;
 		case 'K':
 			ctl.filename = optarg;
 			ctl.method = DMESG_METHOD_KMSG;
+			ctl.caller_id_size = max_threads_id_size();
 			break;
 		case 'f':
 			ctl.fltr_fac = 1;
