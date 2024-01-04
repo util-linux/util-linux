@@ -157,7 +157,7 @@ struct proc {
 	struct proc * leader;
 	char *command;
 	uid_t uid;
-	ino_t ns_mnt;
+	struct mnt_namespace *ns_mnt;
 	struct list_head procs;
 	struct list_head files;
 	unsigned int kthread: 1;

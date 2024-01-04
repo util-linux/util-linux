@@ -100,9 +100,12 @@ struct nodev_table {
 static struct nodev_table nodev_table;
 
 struct mnt_namespace {
+	bool read_mountinfo;
 	ino_t id;
 };
 
+static struct mnt_namespace *find_mnt_ns(ino_t id);
+static struct mnt_namespace *add_mnt_ns(ino_t id);
 static void *mnt_namespaces;	/* for tsearch/tfind */
 
 struct name_manager {
@@ -847,9 +850,11 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 	if (f->is_error)
 		return f;
 
-	if (is_association(f, NS_MNT))
-		proc->ns_mnt = f->stat.st_ino;
-	else if (is_association(f, NS_NET))
+	if (is_association(f, NS_MNT)) {
+		proc->ns_mnt = find_mnt_ns(f->stat.st_ino);
+		if (proc->ns_mnt == NULL)
+			proc->ns_mnt = add_mnt_ns(f->stat.st_ino);
+	} else if (is_association(f, NS_NET))
 		load_sock_xinfo(pc, name, f->stat.st_ino);
 
 	else if (assoc >= 0) {
@@ -1067,6 +1072,7 @@ static struct mnt_namespace *new_mnt_ns(ino_t id)
 	struct mnt_namespace *mnt_ns = xmalloc(sizeof(*mnt_ns));
 
 	mnt_ns->id = id;
+	mnt_ns->read_mountinfo = false;
 
 	return mnt_ns;
 }
@@ -1788,22 +1794,27 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	 * The information is available in a mountinfo file.
 	 */
 
-	/* 1/3. read /proc/$pid/ns/mnt */
-	if (proc->ns_mnt == 0)
+	/* 1/3. Read /proc/$pid/ns/mnt */
+	if (proc->ns_mnt == NULL)
 		collect_namespace_files_tophalf(pc, proc);
 
-	/* 2/3. read /proc/$pid/mountinfo */
-	if (proc->ns_mnt == 0 || !find_mnt_ns(proc->ns_mnt)) {
+	/* 2/3. read /proc/$pid/mountinfo unless we have read it already.
+	 * The backing device for "nsfs" is solved here.
+	 */
+	if (proc->ns_mnt == NULL || !proc->ns_mnt->read_mountinfo) {
 		FILE *mnt = ul_path_fopen(pc, "r", "mountinfo");
 		if (mnt) {
 			read_mountinfo(mnt);
 			if (proc->ns_mnt)
-				add_mnt_ns(proc->ns_mnt);
+				proc->ns_mnt->read_mountinfo = true;
 			fclose(mnt);
 		}
 	}
 
-	/* 3/3. read /proc/$pid/ns/{the other than mnt} */
+	/* 3/3. read /proc/$pid/ns/{the other namespaces including net}
+	 * When reading the information about the net namespace,
+	 * backing device for "nsfs" must be solved.
+	 */
 	collect_namespace_files_bottomhalf(pc, proc);
 
 	/* If kcmp is not available,
