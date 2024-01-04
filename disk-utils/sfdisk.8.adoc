@@ -366,7 +366,7 @@ ____
 *sfdisk /dev/sda < sda.dump*
 ____
 
-Note that sfdisk completely restores partition types and partition UUIDs. This could potentially become problematic if you duplicate the same layout to different disks, as it may result in duplicate UUIDs within your system.
+Note that *sfdisk* completely restores partition types and partition UUIDs. This could potentially become problematic if you duplicate the same layout to different disks, as it may result in duplicate UUIDs within your system.
 
 === Full binary backup
 
