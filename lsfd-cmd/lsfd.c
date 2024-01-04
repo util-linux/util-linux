@@ -2689,6 +2689,12 @@ int main(int argc, char *argv[])
 	if (scols_table_get_column_by_name(ctl.tb, "XMODE"))
 		ctl.show_xmode = 1;
 
+	/* Minimize the output related to lsfd itself. */
+# ifdef HAVE_CLOSE_RANGE
+	if (close_range(STDERR_FILENO + 1, ~0U, 0) < 0)
+# endif
+		ul_close_all_fds(STDERR_FILENO + 1, ~0U);
+
 	/* collect data
 	 *
 	 * The call initialize_ipc_table() must come before
