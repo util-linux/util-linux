@@ -1171,6 +1171,17 @@ const char *get_nodev_filesystem(unsigned long minor)
 	return NULL;
 }
 
+static void process_mountinfo_entry(unsigned long major, unsigned long minor,
+				     const char *filesystem)
+{
+	if (major != 0)
+		return;
+	if (get_nodev_filesystem(minor))
+		return;
+
+	add_nodev(minor, filesystem);
+}
+
 static void read_mountinfo(FILE *mnt)
 {
 	/* This can be very long. A line in mountinfo can have more than 3
@@ -1189,12 +1200,7 @@ static void read_mountinfo(FILE *mnt)
 				   &major, &minor, filesystem) != 3)
 				continue;
 
-		if (major != 0)
-			continue;
-		if (get_nodev_filesystem(minor))
-			continue;
-
-		add_nodev(minor, filesystem);
+		process_mountinfo_entry(major, minor, filesystem);
 	}
 }
 
