@@ -326,6 +326,7 @@ endif
 if BUILD_LSCLOCKS
 usrbin_exec_PROGRAMS += lsclocks
 MANPAGES += misc-utils/lsclocks.1
+dist_noinst_DATA += misc-utils/lsclocks.1.adoc
 lsclocks_SOURCES = misc-utils/lsclocks.c
 lsclocks_LDADD = $(LDADD) libcommon.la libsmartcols.la
 lsclocks_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
