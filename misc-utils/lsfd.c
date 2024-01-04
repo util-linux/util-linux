@@ -99,6 +99,12 @@ struct nodev_table {
 };
 static struct nodev_table nodev_table;
 
+struct mnt_namespace {
+	ino_t id;
+};
+
+static void *mnt_namespaces;	/* for tsearch/tfind */
+
 struct name_manager {
 	struct idcache *cache;
 	unsigned long next_id;
@@ -435,9 +441,6 @@ static const int default_threads_columns[] = {
 static int columns[ARRAY_SIZE(infos) * 2] = {-1};
 static size_t ncolumns;
 
-static ino_t *mnt_namespaces;
-static size_t nspaces;
-
 struct counter_spec {
 	struct list_head specs;
 	const char *name;
@@ -619,31 +622,6 @@ static struct libscols_column *add_column_by_id(struct lsfd_control *ctl,
 		ctl->threads = 1;
 
 	return cl;
-}
-
-static int has_mnt_ns(ino_t id)
-{
-	size_t i;
-
-	for (i = 0; i < nspaces; i++) {
-		if (mnt_namespaces[i] == id)
-			return 1;
-	}
-	return 0;
-}
-
-static void add_mnt_ns(ino_t id)
-{
-	size_t nmax = 0;
-
-	if (nspaces)
-		nmax = (nspaces + 16) / 16 * 16;
-	if (nmax <= nspaces + 1) {
-		nmax += 16;
-		mnt_namespaces = xreallocarray(mnt_namespaces,
-					       nmax, sizeof(ino_t));
-	}
-	mnt_namespaces[nspaces++] = id;
 }
 
 static const struct file_class *stat2class(struct stat *sb)
@@ -1084,6 +1062,53 @@ static void collect_namespace_files_bottomhalf(struct path_cxt *pc, struct proc 
 			       false);
 }
 
+static struct mnt_namespace *new_mnt_ns(ino_t id)
+{
+	struct mnt_namespace *mnt_ns = xmalloc(sizeof(*mnt_ns));
+
+	mnt_ns->id = id;
+
+	return mnt_ns;
+}
+
+static void free_mnt_ns(void *mnt_ns)
+{
+	free(mnt_ns);
+}
+
+static int compare_mnt_ns(const void *a, const void *b)
+{
+	ino_t A = (((struct mnt_namespace *)a)->id);
+	ino_t B = (((struct mnt_namespace *)b)->id);
+
+	if (A < B)
+		return -1;
+	else if (A == B)
+		return 0;
+	else
+		return 1;
+}
+
+static struct mnt_namespace *find_mnt_ns(ino_t id)
+{
+	struct mnt_namespace key = { .id = id };
+
+	struct mnt_namespace **mnt_ns = tfind(&key, &mnt_namespaces, compare_mnt_ns);
+	if (mnt_ns)
+		return *mnt_ns;
+	return NULL;
+}
+
+static struct mnt_namespace *add_mnt_ns(ino_t id)
+{
+
+	struct mnt_namespace *mnt_ns = new_mnt_ns(id);
+	if (tsearch(mnt_ns, &mnt_namespaces, compare_mnt_ns) == NULL)
+		errx(EXIT_FAILURE, _("failed to allocate memory"));
+
+	return mnt_ns;
+}
+
 static struct nodev *new_nodev(unsigned long minor, const char *filesystem)
 {
 	struct nodev *nodev = xcalloc(1, sizeof(*nodev));
@@ -1124,7 +1149,7 @@ static void finalize_nodevs(void)
 	for (i = 0; i < NODEV_TABLE_SIZE; i++)
 		list_free(&nodev_table.tables[i], struct nodev, nodevs, free_nodev);
 
-	free(mnt_namespaces);
+	tdestroy(mnt_namespaces, free_mnt_ns);
 }
 
 const char *get_nodev_filesystem(unsigned long minor)
@@ -1768,7 +1793,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 		collect_namespace_files_tophalf(pc, proc);
 
 	/* 2/3. read /proc/$pid/mountinfo */
-	if (proc->ns_mnt == 0 || !has_mnt_ns(proc->ns_mnt)) {
+	if (proc->ns_mnt == 0 || !find_mnt_ns(proc->ns_mnt)) {
 		FILE *mnt = ul_path_fopen(pc, "r", "mountinfo");
 		if (mnt) {
 			read_mountinfo(mnt);
