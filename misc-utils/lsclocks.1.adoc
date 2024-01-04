@@ -39,24 +39,24 @@ Output all columns.
 *-r*, *--raw*::
 Use raw output format.
 
-*-r*, *--time* _clock_
+*-r*, *--time* _clock_::
 Show current time of one specific clocks.
 
-*--no-discover-dynamic*
+*--no-discover-dynamic*::
 Do not try to discover dynamic clocks.
 
-*-d*, *--dynamic-clock* _path_
+*-d*, *--dynamic-clock* _path_::
 Also display specified dynamic clock.
 Can be specified multiple times.
 
-*--no-discover-rtc*
+*--no-discover-rtc*::
 Do not try to discover RTCs.
 
-*-x*, *--rtc* _path_
+*-x*, *--rtc* _path_::
 Also display specified RTC.
 Can be specified multiple times.
 
-*-c*, *--cpu-clock* _pid_
+*-c*, *--cpu-clock* _pid_::
 Also display CPU clock of specified process.
 Can be specified multiple times.
 
