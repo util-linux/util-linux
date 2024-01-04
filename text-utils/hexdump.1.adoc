@@ -46,6 +46,8 @@ SUCH DAMAGE.
 
 hexdump - display file contents in hexadecimal, decimal, octal, or ascii
 
+== SYNOPSIS
+
 *hexdump* _options file_ ...
 
 *hd* _options file_ ...
