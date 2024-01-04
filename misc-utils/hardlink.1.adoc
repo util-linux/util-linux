@@ -55,7 +55,7 @@ way and I/O operation is done in the kernel. The size may be altered on the fly
 to fit a number of cached content checksums.
 
 *-d*, *--respect-dir*::
-Only try to link files with the same directory name. The top-level directory (as specified on the hardlink command line) is ignored. For example, *hardlink --respect-dir /foo /bar* will link _/foo/some/file_ with _/bar/some/file_, but not _/bar/other/file_. If combined with *--respect-name*, then entire paths (except the top-level directory) are compared.
+Only try to link files with the same directory name. The top-level directory (as specified on the *hardlink* command line) is ignored. For example, *hardlink --respect-dir /foo /bar* will link _/foo/some/file_ with _/bar/some/file_, but not _/bar/other/file_. If combined with *--respect-name*, then entire paths (except the top-level directory) are compared.
 
 *-f*, *--respect-name*::
 Only try to link files with the same (base)name. It's strongly recommended to use long options rather than *-f* which is interpreted in a different way by other *hardlink* implementations.
