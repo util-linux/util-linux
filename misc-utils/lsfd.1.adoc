@@ -495,7 +495,7 @@ PTMX.TTY-INDEX <``number``>::
 TTY index of the counterpart.
 
 TUN.IFACE <``string``>::
-Network intrface behind the tun device.
+Network interface behind the tun device.
 
 TYPE <``string``>::
 Cooked version of STTYPE. It is same as STTYPE with exceptions.
@@ -550,7 +550,7 @@ opened of mapped for writing. This is also in _MODE_.
 mapped for executing the code. This is also in _MODE_.
 +
 [-D]:::
-deleted from  the file system. See also _DELETED._.
+deleted from  the file system. See also _DELETED_.
 +
 [-Ll]:::
 locked or leased. _l_ represents a read, a shared lock or a read lease.
@@ -561,9 +561,9 @@ descriptor, _L_ is used as the flag.
 [-m]:::
 Multiplexed. If the file descriptor is targeted by a eventpoll file
 or classical system calls for multiplexing (select, pselect, poll, and
-ppoll), this bit flag is set. Note that if an invocaiton of the
+ppoll), this bit flag is set. Note that if an invocation of the
 classical system calls is interrupted, *lsfd* may fail to mark _m_
-on the file descriptors monitored by the invocaiton.
+on the file descriptors monitored by the invocation.
 See *restart_syscall*(2).
 
 == FILTER EXAMPLES
