@@ -1,0 +1,35 @@
+[    1.000000] line zero
+[    2.000000] line one
+[    4.000000] line two
+[    7.000000] line three
+[   11.000000] line four
+kern  :notice: [    1.000000] line zero
+user  :crit  : [    2.000000] line one
+mail  :warn  : [    4.000000] line two
+daemon:info  : [    7.000000] line three
+syslog:emerg : [   11.000000] line four
+[<    0.000000>] line zero
+[<    1.000000>] line one
+[<    2.000000>] line two
+[<    3.000000>] line three
+[<    4.000000>] line four
+line zero
+line one
+line two
+line three
+line four
+[Feb13 23:31] line zero
+[  +1.000000] line one
+[  +2.000000] line two
+[  +3.000000] line three
+[  +4.000000] line four
+[Fri Feb 13 23:31:31 2009] line zero
+[Fri Feb 13 23:31:32 2009] line one
+[Fri Feb 13 23:31:34 2009] line two
+[Fri Feb 13 23:31:37 2009] line three
+[Fri Feb 13 23:31:41 2009] line four
+2009-02-13T23:31:31,123456+00:00 line zero
+2009-02-13T23:31:32,123456+00:00 line one
+2009-02-13T23:31:34,123456+00:00 line two
+2009-02-13T23:31:37,123456+00:00 line three
+2009-02-13T23:31:41,123456+00:00 line four
