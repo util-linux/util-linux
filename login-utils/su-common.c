@@ -902,6 +902,7 @@ static void usage_common(void)
 	fputs(_(" -f, --fast                      pass -f to the shell (for csh or tcsh)\n"), stdout);
 	fputs(_(" -s, --shell <shell>             run <shell> if /etc/shells allows it\n"), stdout);
 	fputs(_(" -P, --pty                       create a new pseudo-terminal\n"), stdout);
+	fputs(_(" -T, --no-pty                    do not create a new pseudo-terminal (bad security!)\n"), stdout);
 
 	fputs(USAGE_SEPARATOR, stdout);
 	printf(USAGE_HELP_OPTIONS(33));
@@ -1057,6 +1058,7 @@ int su_main(int argc, char **argv, int mode)
 		{"login", no_argument, NULL, 'l'},
 		{"preserve-environment", no_argument, NULL, 'p'},
 		{"pty", no_argument, NULL, 'P'},
+		{"no-pty", no_argument, NULL, 'T'},
 		{"shell", required_argument, NULL, 's'},
 		{"group", required_argument, NULL, 'g'},
 		{"supp-group", required_argument, NULL, 'G'},
@@ -1082,7 +1084,7 @@ int su_main(int argc, char **argv, int mode)
 	su->conv.appdata_ptr = (void *) su;
 
 	while ((optc =
-		getopt_long(argc, argv, "c:fg:G:lmpPs:u:hVw:", longopts,
+		getopt_long(argc, argv, "c:fg:G:lmpPTs:u:hVw:", longopts,
 			    NULL)) != -1) {
 
 		err_exclusive_options(optc, longopts, excl, excl_st);
@@ -1130,6 +1132,10 @@ int su_main(int argc, char **argv, int mode)
 #else
 			errx(EXIT_FAILURE, _("--pty is not supported for your system"));
 #endif
+			break;
+
+		case 'T':
+			su->force_pty = 0;
 			break;
 
 		case 's':

@@ -73,6 +73,10 @@ If the target user has a restricted shell (i.e., not listed in _/etc/shells_), t
 **--session-command=**__command__::
 Same as *-c*, but do not create a new session. (Discouraged.)
 
+*-T*, *--no-pty**::
+Do not create a pseudo-terminal, opposite of *--pty* and *-P*.
+Note that running without a pseudo-terminal opens the security risk of privilege escalation through TIOCSTI/TIOCLINUX ioctl command injection.
+
 *-w*, *--whitelist-environment*=_list_::
 Don't reset the environment variables specified in the comma-separated _list_ when clearing the environment for *--login*. The whitelist is ignored for the environment variables *HOME*, *SHELL*, *USER*, *LOGNAME*, and *PATH*.
 
