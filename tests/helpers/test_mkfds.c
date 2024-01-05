@@ -1197,23 +1197,30 @@ static void *make_pidfd(const struct factory *factory, struct fdesc fdescs[],
 static void *make_inotify_fd(const struct factory *factory _U_, struct fdesc fdescs[],
 			     int argc _U_, char ** argv _U_)
 {
+	struct arg dir = decode_arg("dir", factory->params, argc, argv);
+	const char *sdir = ARG_STRING(dir);
+	struct arg file = decode_arg("file", factory->params, argc, argv);
+	const char *sfile = ARG_STRING(file);
+
 	int fd = inotify_init();
 	if (fd < 0)
 		err(EXIT_FAILURE, "failed in inotify_init()");
 
-	if (inotify_add_watch(fd, "/", IN_DELETE) < 0) {
+	if (inotify_add_watch(fd, sdir, IN_DELETE) < 0) {
 		int e = errno;
 		close(fd);
 		errno = e;
-		err(EXIT_FAILURE, "failed in inotify_add_watch(\"/\")");
+		err(EXIT_FAILURE, "failed in inotify_add_watch(\"%s\")", sdir);
 	}
+	free_arg(&dir);
 
-	if (inotify_add_watch(fd, "/etc/fstab", IN_DELETE) < 0) {
+	if (inotify_add_watch(fd, sfile, IN_DELETE) < 0) {
 		int e = errno;
 		close(fd);
 		errno = e;
-		err(EXIT_FAILURE, "failed in inotify_add_watch(\"/etc/fstab\")");
+		err(EXIT_FAILURE, "failed in inotify_add_watch(\"%s\")", sfile);
 	}
+	free_arg(&file);
 
 	if (fd != fdescs[0].fd) {
 		if (dup2(fd, fdescs[0].fd) < 0) {
@@ -3405,6 +3412,18 @@ static const struct factory factories[] = {
 		.EX_N = 0,
 		.make = make_inotify_fd,
 		.params = (struct parameter []) {
+			{
+				.name = "dir",
+				.type = PTYPE_STRING,
+				.desc = "the directory that the inotify monitors",
+				.defv.string = "/",
+			},
+			{
+				.name = "file",
+				.type = PTYPE_STRING,
+				.desc = "the file that the inotify monitors",
+				.defv.string = "/etc/fstab",
+			},
 			PARAM_END
 		},
 	},
