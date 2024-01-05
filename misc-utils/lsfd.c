@@ -851,9 +851,9 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 		return f;
 
 	if (is_association(f, NS_MNT)) {
-		proc->ns_mnt = find_mnt_ns(f->stat.st_ino);
-		if (proc->ns_mnt == NULL)
-			proc->ns_mnt = add_mnt_ns(f->stat.st_ino);
+		proc->mnt_ns = find_mnt_ns(f->stat.st_ino);
+		if (proc->mnt_ns == NULL)
+			proc->mnt_ns = add_mnt_ns(f->stat.st_ino);
 	} else if (is_association(f, NS_NET))
 		load_sock_xinfo(pc, name, f->stat.st_ino);
 
@@ -1801,18 +1801,18 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	 */
 
 	/* 1/3. Read /proc/$pid/ns/mnt */
-	if (proc->ns_mnt == NULL)
+	if (proc->mnt_ns == NULL)
 		collect_namespace_files_tophalf(pc, proc);
 
 	/* 2/3. read /proc/$pid/mountinfo unless we have read it already.
 	 * The backing device for "nsfs" is solved here.
 	 */
-	if (proc->ns_mnt == NULL || !proc->ns_mnt->read_mountinfo) {
+	if (proc->mnt_ns == NULL || !proc->mnt_ns->read_mountinfo) {
 		FILE *mountinfo = ul_path_fopen(pc, "r", "mountinfo");
 		if (mountinfo) {
 			read_mountinfo(mountinfo);
-			if (proc->ns_mnt)
-				proc->ns_mnt->read_mountinfo = true;
+			if (proc->mnt_ns)
+				proc->mnt_ns->read_mountinfo = true;
 			fclose(mountinfo);
 		}
 	}
