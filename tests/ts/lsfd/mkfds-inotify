@@ -21,6 +21,7 @@ TS_DESC="inotify"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_LSFD"
+ts_check_test_command "$TS_CMD_FINDMNT"
 ts_check_prog "stat"
 ts_check_prog "sed"
 
@@ -28,10 +29,8 @@ ts_cd "$TS_OUTDIR"
 
 PID=
 FD=3
-ROOT_DEV=$(stat -c %d /)
-ROOT="$(stat -c %i /)"@"$(((ROOT_DEV >> 8) & 255)):$((ROOT_DEV & 255))"
-FSTAB_DEV=$(stat -c %d /etc/fstab)
-FSTAB="$(stat -c %i /etc/fstab)"@"$(((FSTAB_DEV >> 8) & 255)):$((FSTAB_DEV & 255))"
+ROOT="$(stat -c %i /)"@"$($TS_CMD_FINDMNT --raw --noheadings -oMAJ:MIN --target /)"
+FSTAB="$(stat -c %i /etc/fstab)"@"$($TS_CMD_FINDMNT --raw --noheadings -oMAJ:MIN --target /etc/fstab)"
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" inotify $FD; }
     if read -u ${MKFDS[0]} PID; then
