@@ -1182,13 +1182,13 @@ static void process_mountinfo_entry(unsigned long major, unsigned long minor,
 	add_nodev(minor, filesystem);
 }
 
-static void read_mountinfo(FILE *mnt)
+static void read_mountinfo(FILE *mountinfo)
 {
 	/* This can be very long. A line in mountinfo can have more than 3
 	 * paths. */
 	char line[PATH_MAX * 3 + 256];
 
-	while (fgets(line, sizeof(line), mnt)) {
+	while (fgets(line, sizeof(line), mountinfo)) {
 		unsigned long major, minor;
 		char filesystem[256];
 
@@ -1808,12 +1808,12 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	 * The backing device for "nsfs" is solved here.
 	 */
 	if (proc->ns_mnt == NULL || !proc->ns_mnt->read_mountinfo) {
-		FILE *mnt = ul_path_fopen(pc, "r", "mountinfo");
-		if (mnt) {
-			read_mountinfo(mnt);
+		FILE *mountinfo = ul_path_fopen(pc, "r", "mountinfo");
+		if (mountinfo) {
+			read_mountinfo(mountinfo);
 			if (proc->ns_mnt)
 				proc->ns_mnt->read_mountinfo = true;
-			fclose(mnt);
+			fclose(mountinfo);
 		}
 	}
 
