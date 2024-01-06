@@ -60,6 +60,19 @@ for PAGESIZE in 4096 8192; do
 		cmp "$origimg" "$outimg" >> "$TS_ERRLOG" 2>&1
 
 		ts_finalize_subtest
+
+		ts_init_subtest "$name-file"
+
+		rm -f "$outimg"
+
+		"$TS_CMD_MKSWAP" -q -L label -U "$UUID" -e "$ENDIANNESS" -p "$PAGESIZE" -F -s $(( PAGESIZE * 10 )) "$outimg" \
+			>> "$TS_OUTPUT" 2>/dev/null \
+			|| ts_log "mkswap failed"
+		xz -dc "$TS_SELF/${BYTE_ORDER}-${PAGESIZE}.img.xz" > "$origimg"
+
+		cmp "$origimg" "$outimg" >> "$TS_ERRLOG" 2>&1
+
+		ts_finalize_subtest
 	done
 done
 
