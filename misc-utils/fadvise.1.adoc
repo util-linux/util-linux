@@ -18,7 +18,7 @@ fadvise - utility to use the posix_fadvise system call
 
 == DESCRIPTION
 
-*fadvise* is a simple command wrapping posix_fadvise system call
+*fadvise* is a simple command wrapping *posix_fadvise*(2) system call
 that is for predeclaring an access pattern for file data.
 
 == OPTIONS
