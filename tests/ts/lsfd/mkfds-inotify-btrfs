@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2023 Masatake YAMATO <yamato@redhat.com>
+# Copyright (C) 2024 Masatake YAMATO <yamato@redhat.com>
 #
 # This file is part of util-linux.
 #
@@ -15,24 +15,43 @@
 # GNU General Public License for more details.
 #
 TS_TOPDIR="${0%/*}/../.."
-TS_DESC="inotify"
+TS_DESC="inotify on btrfs"
 
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
+ts_skip_nonroot
 
 ts_check_test_command "$TS_CMD_LSFD"
 ts_check_test_command "$TS_CMD_FINDMNT"
 ts_check_prog "stat"
 ts_check_prog "sed"
+ts_check_prog "mkfs.btrfs"
+ts_check_prog "dd"
 
 ts_cd "$TS_OUTDIR"
 
+IMG=img.btrfs
+MNTPNT=mntpnt
+mkdir -p $MNTPNT
+dd if=/dev/zero of=$IMG bs=114294784 count=1 status=none
+if ! mkfs.btrfs -q $IMG; then
+    ts_skip "failed to make a btrfs image: $IMG"
+fi
+if ! mount $IMG $MNTPNT; then
+    ts_skip "failed to mount a btrfs image, $IMG to $MNTPNT"
+fi
+trap "umount $MNTPNT; rm -f $IMG" EXIT
+
+if ! touch $MNTPNT/fstab; then
+    ts_skip "failed to touch a file on a btrfs filesystem: $MNTPNT/fstab"
+fi
+
 PID=
 FD=3
-ROOT="$(stat -c %i /)"@"$($TS_CMD_FINDMNT --raw --noheadings -oMAJ:MIN --target /)"
-FSTAB="$(stat -c %i /etc/fstab)"@"$($TS_CMD_FINDMNT --raw --noheadings -oMAJ:MIN --target /etc/fstab)"
+ROOT="$(stat -c %i $MNTPNT)"@"$($TS_CMD_FINDMNT --raw --noheadings -oMAJ:MIN --target $MNTPNT)"
+FSTAB="$(stat -c %i $MNTPNT/fstab)"@"$($TS_CMD_FINDMNT --raw --noheadings -oMAJ:MIN --target $MNTPNT/fstab)"
 {
-    coproc MKFDS { "$TS_HELPER_MKFDS" inotify $FD; }
+    coproc MKFDS { "$TS_HELPER_MKFDS" inotify $FD dir=$MNTPNT file=$MNTPNT/fstab; }
     if read -u ${MKFDS[0]} PID; then
 	EXPR='(PID == '"${PID}"') and (FD == '"$FD"')'
 	INODES_RAW=$(${TS_CMD_LSFD} --raw -n -o INOTIFY.INODES.RAW -Q "${EXPR}")
