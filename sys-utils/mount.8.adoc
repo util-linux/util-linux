@@ -329,11 +329,11 @@ Note that *mount* does not pass this option to the **/sbin/mount.**__type__ help
 (Used in conjunction with *-a*.) Fork off a new incarnation of *mount* for each device. This will do the mounts on different devices or different NFS servers in parallel. This has the advantage that it is faster; also NFS timeouts proceed in parallel. A disadvantage is that the order of the mount operations is undefined. Thus, you cannot use this option if you want to mount both _/usr_ and _/usr/spool_.
 
 *-f, --fake*::
-Causes everything to be done except for the mount-related system calls. The --fake option was originally designed to write an entry to /etc/mtab without actually mounting.
+Causes everything to be done except for the mount-related system calls. The *--fake* option was originally designed to write an entry to _/etc/mtab_ without actually mounting.
 +
-The /etc/mtab is no longer maintained in userspace, and starting from version 2.39, the mount operation can be a complex chain of operations with dependencies between the syscalls. The --fake option forces libmount to skip all mount source preparation, mount option analysis, and the actual mounting process.
+The _/etc/mtab_ is no longer maintained in userspace, and starting from version 2.39, the mount operation can be a complex chain of operations with dependencies between the syscalls. The *--fake* option forces libmount to skip all mount source preparation, mount option analysis, and the actual mounting process.
 +
-The difference between fake and non-fake execution is huge. This is the reason why the --fake option has minimal significance for the current mount(8) implementation and it is maintained mostly for backward compatibility.
+The difference between fake and non-fake execution is huge. This is the reason why the *--fake* option has minimal significance for the current *mount*(8) implementation and it is maintained mostly for backward compatibility.
 
 *-i, --internal-only*::
 Don't call the **/sbin/mount.**__filesystem__ helper even if it exists.
@@ -391,7 +391,7 @@ Note that the order of the options matters, as the last option wins if there are
 For more details, see the *FILESYSTEM-INDEPENDENT MOUNT OPTIONS* and *FILESYSTEM-SPECIFIC MOUNT OPTIONS* sections.
 
 *--onlyonce*::
-Forces mount command to check if the filesystem is already mounted. This behavior is the default for *--all*; otherwise, it depends on the kernel filesystem driver. Some filesystems may be mounted more than once on the same mount point (e.g. tmpfs).
+Forces *mount* command to check if the filesystem is already mounted. This behavior is the default for *--all*; otherwise, it depends on the kernel filesystem driver. Some filesystems may be mounted more than once on the same mount point (e.g. tmpfs).
 
 *--options-mode* _mode_::
 Controls how to combine options from _fstab_/_mtab_ with options from the command line. _mode_ can be one of *ignore*, *append*, *prepend* or *replace*. For example, *append* means that options from _fstab_ are appended to options from the command line. The default value is *prepend* -- it means command line options are evaluated after _fstab_ options. Note that the last option wins if there are conflicting ones.
@@ -697,7 +697,7 @@ The _list_ is a comma-separated list of the filesystem names. The
 automatic filesystem detection is triggered by the "auto" filesystem type or
 when the filesystem type is not specified.
 +
-Thy _list_ follows how mount
+The _list_ follows how mount
 evaluates type patterns (see *-t* for more details). Only specified filesystem
 types are allowed, or all specified types are forbidden if the list is prefixed
 by "no". 
@@ -1627,7 +1627,7 @@ The command *mount* does not pass the mount options *unbindable*, *runbindable*,
 == ENVIRONMENT
 
 *LIBMOUNT_FORCE_MOUNT2*={always|never|auto}::
-force to use classic mount(2) system call (requires support for new file descriptors based mount API). The default is *auto*; in this case, libmount tries to be smart and use classic mount(2) only for well-known issues. If the new mount API is unavailable, libmount can still use traditional mount(2), although LIBMOUNT_FORCE_MOUNT2 is set to *never*.
+force to use classic *mount*(2) system call (requires support for new file descriptors based mount API). The default is *auto*; in this case, libmount tries to be smart and use classic *mount*(2) only for well-known issues. If the new mount API is unavailable, libmount can still use traditional *mount*(2), although LIBMOUNT_FORCE_MOUNT2 is set to *never*.
 
 *LIBMOUNT_FSTAB*=<path>::
 overrides the default location of the _fstab_ file (ignored for suid)
