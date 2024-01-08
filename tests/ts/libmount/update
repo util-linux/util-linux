@@ -7,7 +7,6 @@ TS_DESC="tab update"
 
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
-ts_skip_nonroot
 
 TESTPROG="$TS_HELPER_LIBMOUNT_UPDATE"
 

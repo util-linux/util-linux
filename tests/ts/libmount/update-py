@@ -8,7 +8,6 @@ TS_DESC="tab update-py"
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 ts_init_py libmount
-ts_skip_nonroot
 
 if [ "$TS_ENABLE_ASAN" == "yes" -o "$TS_ENABLE_UBSAN" == "yes" ]; then
 	TS_KNOWN_FAIL="yes"
