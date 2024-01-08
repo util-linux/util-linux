@@ -1013,7 +1013,7 @@ int mnt_update_emit_event(struct libmnt_update *upd)
 		return -EINVAL;
 
 	if (asprintf(&filename, "%s.event", upd->filename) <= 0)
-		return -errno;
+		return -ENOMEM;
 
 	fd = open(filename, O_WRONLY|O_CREAT|O_CLOEXEC,
 			    S_IWUSR|S_IRUSR|S_IRGRP|S_IROTH);

@@ -229,7 +229,7 @@ static int userspace_add_watch(struct monitor_entry *me, int *final, int *fd)
 	 * libmount uses utab.event file to monitor and control utab updates
 	 */
 	if (asprintf(&filename, "%s.event", me->path) <= 0) {
-		rc = -errno;
+		rc = -ENOMEM;
 		goto done;
 	}
 
