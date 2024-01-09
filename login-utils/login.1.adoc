@@ -32,7 +32,7 @@ The environment variable *$TERM* will be preserved, if it exists, else it will b
 
 The environment variables defined by PAM are always preserved.
 
-Then the user's shell is started. If no shell is specified for the user in _/etc/passwd_, then _/bin/sh_ is used. If there is no home directory specified in _/etc/passwd_, then _/_ is used, followed by _.hushlogin_ check as described below.
+Then the user's shell is started. If no shell is specified for the user in _/etc/passwd_, then _/bin/sh_ is used. If the specified shell contains a space, it is treated as a shell script. If there is no home directory specified in _/etc/passwd_, then _/_ is used, followed by _.hushlogin_ check as described below.
 
 If the file _.hushlogin_ exists, then a "quiet" login is performed. This disables the checking of mail and the printing of the last login time and message of the day. Otherwise, if _/var/log/lastlog_ exists, the last login time is printed, and the current login is recorded.
 
