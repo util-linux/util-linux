@@ -991,7 +991,8 @@ static int is_reflink(struct file *xa, struct file *xb)
 		if (ioctl(bf, FS_IOC_FIEMAP, (unsigned long) bmap) < 0)
 			goto done;
 
-		if (amap->fm_mapped_extents != bmap->fm_mapped_extents)
+		if (amap->fm_mapped_extents == 0 ||
+		    amap->fm_mapped_extents != bmap->fm_mapped_extents)
 			goto done;
 
 		for (i = 0; i < amap->fm_mapped_extents; i++) {
