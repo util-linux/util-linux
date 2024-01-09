@@ -530,8 +530,8 @@ static void warn_size(const char *filename, uint64_t size, uint64_t offset, int 
 			"may be useless or invisible for system tools."),
 			filename);
 	else if (size % 512)
-		warnx(_("%s: Warning: file does not fit into a 512-byte sector; "
-		        "the end of the file will be ignored."),
+		warnx(_("%s: Warning: file does not end on a 512-byte sector boundary; "
+			"the remaining end of the file will be ignored."),
 			filename);
 }
 
