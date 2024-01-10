@@ -217,6 +217,10 @@ static int probe_hfsplus(blkid_probe pr, const struct blkid_idmag *mag)
 			return 1;
 
 		alloc_block_size = be32_to_cpu(sbd->al_blk_size);
+		if (alloc_block_size < HFSPLUS_SECTOR_SIZE ||
+		    alloc_block_size % HFSPLUS_SECTOR_SIZE)
+		    return 1;
+
 		alloc_first_block = be16_to_cpu(sbd->al_bl_st);
 		embed_first_block = be16_to_cpu(sbd->embed_startblock);
 		off = (alloc_first_block * 512) +
@@ -238,17 +242,23 @@ static int probe_hfsplus(blkid_probe pr, const struct blkid_idmag *mag)
 	    (memcmp(hfsplus->signature, "HX", 2) != 0))
 		return 1;
 
-	hfs_set_uuid(pr, hfsplus->finder_info.id, sizeof(hfsplus->finder_info.id));
-
+	/* Verify blocksize is initialized */
 	blocksize = be32_to_cpu(hfsplus->blocksize);
-	if (blocksize < HFSPLUS_SECTOR_SIZE)
+	if (blocksize < HFSPLUS_SECTOR_SIZE || !is_power_of_2(blocksize))
 		return 1;
+
+	/* Save extends (hfsplus buffer may be later overwritten) */
+	memcpy(extents, hfsplus->cat_file.extents, sizeof(extents));
+
+	/* Make sure start_block is properly initialized */
+	cat_block = be32_to_cpu(extents[0].start_block);
+	if (off + ((uint64_t) cat_block * blocksize) > pr->size)
+		return 1;
+
+	hfs_set_uuid(pr, hfsplus->finder_info.id, sizeof(hfsplus->finder_info.id));
 
 	blkid_probe_set_fsblocksize(pr, blocksize);
 	blkid_probe_set_block_size(pr, blocksize);
-
-	memcpy(extents, hfsplus->cat_file.extents, sizeof(extents));
-	cat_block = be32_to_cpu(extents[0].start_block);
 
 	buf = blkid_probe_get_buffer(pr,
 			off + ((uint64_t) cat_block * blocksize), 0x2000);
