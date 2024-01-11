@@ -159,12 +159,13 @@ static const struct fdisk_parttype gpt_parttypes[] =
 
 static const struct fdisk_shortcut gpt_parttype_cuts[] =
 {
-	{ .shortcut = "L", .alias = "linux", .data = "0FC63DAF-8483-4772-8E79-3D69D8477DE4" }, /* Linux */
-	{ .shortcut = "S", .alias = "swap",  .data = "0657FD6D-A4AB-43C4-84E5-0933C84B4F4F" }, /* Swap */
-	{ .shortcut = "H", .alias = "home",  .data = "933AC7E1-2EB4-4F13-B844-0E14E2AEF915" }, /* Home */
-	{ .shortcut = "U", .alias = "uefi",  .data = "C12A7328-F81F-11D2-BA4B-00A0C93EC93B" }, /* UEFI system */
-	{ .shortcut = "R", .alias = "raid",  .data = "A19D880F-05FC-4D3B-A006-743F0F84911E" }, /* Linux RAID */
-	{ .shortcut = "V", .alias = "lvm",   .data = "E6D6D379-F507-44C2-A23C-238F2A3DF928" }  /* LVM */
+	{ .shortcut = "L", .alias = "linux",    .data = "0FC63DAF-8483-4772-8E79-3D69D8477DE4" }, /* Linux */
+	{ .shortcut = "S", .alias = "swap",     .data = "0657FD6D-A4AB-43C4-84E5-0933C84B4F4F" }, /* Swap */
+	{ .shortcut = "H", .alias = "home",     .data = "933AC7E1-2EB4-4F13-B844-0E14E2AEF915" }, /* Home */
+	{ .shortcut = "U", .alias = "uefi",     .data = "C12A7328-F81F-11D2-BA4B-00A0C93EC93B" }, /* UEFI system */
+	{ .shortcut = "R", .alias = "raid",     .data = "A19D880F-05FC-4D3B-A006-743F0F84911E" }, /* Linux RAID */
+	{ .shortcut = "V", .alias = "lvm",      .data = "E6D6D379-F507-44C2-A23C-238F2A3DF928" }, /* LVM */
+	{ .shortcut = "X", .alias = "xbootldr", .data = "BC13C2FF-59E6-4262-A352-B275FD6F7172" }, /* Linux extended boot */
 };
 
 #define alignment_required(_x)  ((_x)->grain != (_x)->sector_size)
