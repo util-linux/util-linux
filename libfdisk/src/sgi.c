@@ -41,7 +41,7 @@ struct fdisk_sgi_label {
 	} freelist[SGI_MAXPARTITIONS + 1];
 };
 
-static struct fdisk_parttype sgi_parttypes[] =
+static const struct fdisk_parttype sgi_parttypes[] =
 {
 	{SGI_TYPE_VOLHDR,	N_("SGI volhdr")},
 	{SGI_TYPE_TRKREPL,	N_("SGI trkrepl")},

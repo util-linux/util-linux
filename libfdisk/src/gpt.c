@@ -152,7 +152,7 @@ struct gpt_legacy_mbr {
 		.name = (_n),    \
 	}
 
-static struct fdisk_parttype gpt_parttypes[] =
+static const struct fdisk_parttype gpt_parttypes[] =
 {
 	#include "pt-gpt-partnames.h"
 };

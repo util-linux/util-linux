@@ -67,7 +67,7 @@ struct fdisk_dos_label {
 /*
  * Partition types
  */
-static struct fdisk_parttype dos_parttypes[] = {
+static const struct fdisk_parttype dos_parttypes[] = {
 	#include "pt-mbr-partnames.h"
 };
 

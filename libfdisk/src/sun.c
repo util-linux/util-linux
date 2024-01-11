@@ -35,7 +35,7 @@ struct fdisk_sun_label {
 	struct sun_disklabel   *header;		/* on-disk data (pointer to cxt->firstsector) */
 };
 
-static struct fdisk_parttype sun_parttypes[] = {
+static const struct fdisk_parttype sun_parttypes[] = {
 	{SUN_TAG_UNASSIGNED, N_("Unassigned")},
 	{SUN_TAG_BOOT, N_("Boot")},
 	{SUN_TAG_ROOT, N_("SunOS root")},

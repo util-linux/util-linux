@@ -46,7 +46,7 @@ static const char * const bsd_dktypenames[] = {
 };
 #define BSD_DKMAXTYPES	(ARRAY_SIZE(bsd_dktypenames) - 1)
 
-static struct fdisk_parttype bsd_fstypes[] = {
+static const struct fdisk_parttype bsd_fstypes[] = {
         {BSD_FS_UNUSED, "unused"},
 	{BSD_FS_SWAP,   "swap"},
 	{BSD_FS_V6,     "Version 6"},
