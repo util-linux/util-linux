@@ -1420,6 +1420,7 @@ int main(int argc, char **argv)
 		.conv = { openpam_ttyconv, NULL } /* OpenPAM conversation function */
 #endif
 	};
+	bool script;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -1544,7 +1545,9 @@ int main(int argc, char **argv)
 	}
 
 	/* if the shell field has a space: treat it like a shell script */
-	if (strchr(pwd->pw_shell, ' ')) {
+	script = strchr(pwd->pw_shell, ' ') != NULL;
+
+	if (script) {
 		char *buff;
 
 		xasprintf(&buff, "exec %s", pwd->pw_shell);
@@ -1553,14 +1556,13 @@ int main(int argc, char **argv)
 		child_argv[child_argc++] = "-c";
 		child_argv[child_argc++] = buff;
 	} else {
-		char tbuf[PATH_MAX + 2], *p;
+		char *buff, *p;
 
-		tbuf[0] = '-';
-		xstrncpy(tbuf + 1, ((p = strrchr(pwd->pw_shell, '/')) ?
-				    p + 1 : pwd->pw_shell), sizeof(tbuf) - 1);
-
+		xasprintf(&buff, "-%.*s", PATH_MAX,
+			  ((p = strrchr(pwd->pw_shell, '/')) ?
+			  p + 1 : pwd->pw_shell));
 		child_argv[child_argc++] = pwd->pw_shell;
-		child_argv[child_argc++] = xstrdup(tbuf);
+		child_argv[child_argc++] = buff;
 	}
 
 	child_argv[child_argc++] = NULL;
@@ -1570,7 +1572,7 @@ int main(int argc, char **argv)
 
 	execvp(child_argv[0], child_argv + 1);
 
-	if (!strcmp(child_argv[0], "/bin/sh"))
+	if (script)
 		warn(_("couldn't exec shell script"));
 	else
 		warn(_("no shell"));
