@@ -2313,10 +2313,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -M, --merge          group parents of sub-trees (usable for RAIDs, Multi-path)\n"), out);
 	fputs(_(" -O, --output-all     output all columns\n"), out);
 	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
-	fputs(_(" -Q, --filter <query> restrict output\n"), out);
-	fputs(_("     --highlight <query> colorize lines maching the query\n"), out);
-	fputs(_("     --ct-filter <query> restrict the next counters\n"), out);
-	fputs(_("     --ct <name>[:<param>[:<function>]] define custom counter\n"), out);
+	fputs(_(" -Q, --filter <expr>  print only lines maching the expression\n"), out);
+	fputs(_("     --highlight <expr> colorize lines maching the expression\n"), out);
+	fputs(_("     --ct-filter <expr> restrict the next counter\n"), out);
+	fputs(_("     --ct <name>[:<param>[:<func>]] define a custom counter\n"), out);
 	fputs(_(" -S, --scsi           output info about SCSI devices\n"), out);
 	fputs(_(" -N, --nvme           output info about NVMe devices\n"), out);
 	fputs(_(" -v, --virtio         output info about virtio devices\n"), out);

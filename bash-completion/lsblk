@@ -62,6 +62,10 @@ _lsblk_module()
 				--discard
 				--exclude
 				--fs
+				--filter
+				--highlight
+				--ct
+				--ct-filter
 				--help
 				--include
 				--json

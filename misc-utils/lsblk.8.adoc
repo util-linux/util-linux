@@ -24,7 +24,7 @@ The tree-like output (or *children[]* array in the JSON output) is enabled only 
 
 The default output, as well as the default output from options like *--fs* and *--topology*, is subject to change. So whenever possible, you should avoid using default outputs in your scripts. Always explicitly define expected columns by using *--output* _columns-list_ and *--list* in environments where a stable output is required.
 
-Use *lsblk --help* to get a list of all available columns.
+Use *lsblk --list-columns* to get a list of all available columns.
 
 Note that *lsblk* might be executed in time when *udev* does not have all information about recently added or modified devices yet. In this case it is recommended to use *udevadm settle* before *lsblk* to synchronize with udev.
 
@@ -101,6 +101,50 @@ Produce output in the form of key="value" pairs. The output lines are still orde
 
 *-p*, *--paths*::
 Print full device paths.
+
+*-Q*, *--filter* _expr_::
+Print only the devices that meet the conditions specified by the expr. The
+filter is assessed prior to lsblk collecting data for all output columns. Only
+the necessary data for the lazy evaluation of the expression is retrieved from
+the system. This approach can enhance performance when compared to
+post-filtering, as commonly done by tools such as grep(1).
++
+This feature is EXPERIMENTAL. See also *scols-filter*(5). For example
+exclude sda  and sdb, but print everything else ('!~' is a negative regular
+expression matching operator):
+____
+ lsblk --filter 'NAME !~ "sd[ab]"'
+____
+
+*--highlight* _expr_::
+Colorize lines matching the expression.
+This feature is EXPERIMENTAL. See also *scols-filter*(5).
+
+*--ct* _name_ [: _param_ [: _function_ ]]::
+Define a custom counter. The counters are printed after the standard output.
+The _name_ is the custom name of the counter, the optional _param_ is the name of the column
+to be used for the counter, and the optional _function_ specifies
+the aggregation function, supported functions are: count, min, max, or sum. The
+default is count.
++
+If the _param_ is not specified, then the counter counts the number of lines. This
+feature is EXPERIMENTAL. See also *--ct-filter*.
++
+For example, *--ct MyCounter:SIZE:sum* will count the summary for SIZE from all lines;
+and to count the number of SATA disks, it is possible to use:
+____
+
+ lsblk --ct-filter 'TYPE=="disk" && TRAN=="sata"' --ct "Number of SATA devices"
+____
+
+
+*--ct-filter* _expr_::
+Define a restriction for the next counter. This feature is EXPERIMENTAL. See also *--ct*
+and *scols-filter*(5). For example, aggregate sizes by device type:
+____
+ lsblk --ct-filter 'TYPE=="part"' --ct Partitions:SIZE:sum \
+       --ct-filter 'TYPE=="disk"' --ct WholeDisks:SIZE:sum
+____
 
 *-r*, *--raw*::
 Produce output in raw format. The output lines are still ordered by dependencies. All potentially unsafe characters are hex-escaped (\x<code>) in the NAME, KNAME, LABEL, PARTLABEL and MOUNTPOINT columns.
@@ -180,9 +224,10 @@ mailto:kzak@redhat.com[Karel Zak]
 
 == SEE ALSO
 
-*ls*(1),
 *blkid*(8),
 *findmnt*(8)
+*ls*(1),
+*scols-filter*(5)
 
 include::man-common/bugreports.adoc[]
 
