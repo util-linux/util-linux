@@ -16,7 +16,9 @@ mkswap - set up a Linux swap area
 
 == SYNOPSIS
 
-*mkswap* [options] _device_ [_size_]
+*mkswap* [options] _device_ [_blocks_]
+
+*mkswap* [options] --size _size_ --file _file_
 
 == DESCRIPTION
 
@@ -24,7 +26,7 @@ mkswap - set up a Linux swap area
 
 The _device_ argument will usually be a disk partition (something like _/dev/sdb7_) but can also be a file. The Linux kernel does not look at partition IDs, but many installation scripts will assume that partitions of hex type 82 (LINUX_SWAP) are meant to be swap partitions. (*Warning: Solaris also uses this type. Be careful not to kill your Solaris partitions.*)
 
-The _size_ parameter is superfluous but retained for backwards compatibility. (It specifies the desired size of the swap area in 1024-byte blocks. *mkswap* will use the entire partition or file if it is omitted. Specifying it is unwise - a typo may destroy your disk.)
+The _blocks_ parameter is superfluous but retained for backwards compatibility. (It specifies the desired size of the swap area in 1024-byte blocks. *mkswap* will use the entire partition or file if it is omitted. Specifying it is unwise - a typo may destroy your disk.)
 
 After creating the swap area, you need the *swapon*(8) command to start using it. Usually swap areas are listed in _/etc/fstab_ so that they can be taken into use at boot time by a *swapon -a* command in some boot script.
 
@@ -40,6 +42,9 @@ However, *mkswap* refuses to erase the first block on a device with a disk label
 
 *-c*, *--check*::
 Check the device (if it is a block device) for bad blocks before creating the swap area. If any bad blocks are found, the count is printed.
+
+*-F*, *--file*::
+Create a swap file with the appropriate file permissions and populated blocks on disk.
 
 *-f*, *--force*::
 Go ahead even if the command is stupid. This allows the creation of a swap area larger than the file or partition it resides on.
@@ -75,6 +80,9 @@ Specify the _ENDIANNESS_ to use, valid arguments are *native*, *little* or *big*
 
 *-o*, *--offset* _offset_::
 Specify the _offset_ to write the swap area to.
+
+*-s*, *--size* _size_::
+Specify the size of the created swap file in bytes and may be followed by a multiplicative suffix: KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB"). If the file exists and is larger than _size_, it will be truncated to this size. This option only makes sense when used with *--file*.
 
 *-v*, *--swapversion 1*::
 Specify the swap-space version. (This option is currently pointless, as the old *-v 0* option has become obsolete and now only *-v 1* is supported. The kernel has not supported v0 swap-space format since 2.5.22 (June 2002). The new version v1 is supported since 2.1.117 (August 1998).)

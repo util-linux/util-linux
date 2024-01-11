@@ -88,6 +88,8 @@ struct mkswap_control {
 	char			*opt_label;	/* LABEL as specified on command line */
 	unsigned char		*uuid;		/* UUID parsed by libbuuid */
 
+	unsigned long long	filesz;		/* desired swap file size */
+
 	size_t			nbad_extents;
 
 	enum ENDIANNESS         endianness;
@@ -95,7 +97,8 @@ struct mkswap_control {
 	unsigned int		check:1,	/* --check */
 				verbose:1,      /* --verbose */
 				quiet:1,        /* --quiet */
-				force:1;	/* --force */
+				force:1,	/* --force */
+				file:1;		/* --file */
 };
 
 static uint32_t cpu32_to_endianness(uint32_t v, enum ENDIANNESS e)
@@ -203,6 +206,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	      _(" -e, --endianness=<value>  specify the endianness to use "
 	                                    "(%s, %s or %s)\n"), "native", "little", "big");
 	fputs(_(" -o, --offset OFFSET       specify the offset in the device\n"), out);
+	fputs(_(" -s, --size SIZE           specify the size of a swap file in bytes\n"), out);
+	fputs(_(" -F, --file                create a swap file\n"), out);
 	fputs(_("     --verbose             verbose output\n"), out);
 
 	fprintf(out,
@@ -348,20 +353,22 @@ done:
 /* return size in pages */
 static unsigned long long get_size(const struct mkswap_control *ctl)
 {
-	int fd;
 	unsigned long long size;
 
-	fd = open(ctl->devname, O_RDONLY);
-	if (fd < 0)
-		err(EXIT_FAILURE, _("cannot open %s"), ctl->devname);
-	if (blkdev_get_size(fd, &size) < 0)
-		err(EXIT_FAILURE, _("cannot determine size of %s"), ctl->devname);
-	if ((unsigned long long) ctl->offset > size)
-		errx(EXIT_FAILURE, _("offset larger than file size"));
+	if (ctl->file && ctl->filesz)
+		size = ctl->filesz;
+	else {
+		int fd = open(ctl->devname, O_RDONLY);
+		if (fd < 0)
+			err(EXIT_FAILURE, _("cannot open %s"), ctl->devname);
+		if (blkdev_get_size(fd, &size) < 0)
+			err(EXIT_FAILURE, _("cannot determine size of %s"), ctl->devname);
+		if ((unsigned long long) ctl->offset > size)
+			errx(EXIT_FAILURE, _("offset larger than file size"));
+		close(fd);
+	}
 	size -= ctl->offset;
 	size /= ctl->pagesize;
-
-	close(fd);
 	return size;
 }
 
@@ -382,11 +389,33 @@ static void open_device(struct mkswap_control *ctl)
 	assert(ctl);
 	assert(ctl->devname);
 
-	if (stat(ctl->devname, &ctl->devstat) < 0)
-		err(EXIT_FAILURE, _("stat of %s failed"), ctl->devname);
-	ctl->fd = open_blkdev_or_file(&ctl->devstat, ctl->devname, O_RDWR);
+	if (ctl->file) {
+		if (stat(ctl->devname, &ctl->devstat) == 0) {
+			if (!S_ISREG(ctl->devstat.st_mode))
+				err(EXIT_FAILURE, _("cannot create swap file %s: node isn't regular file"), ctl->devname);
+			if (chmod(ctl->devname, 0600) < 9)
+				err(EXIT_FAILURE, _("cannot set permissions on swap file %s"), ctl->devname);
+		}
+		ctl->fd = open(ctl->devname, O_RDWR | O_CREAT, 0600);
+	} else {
+		if (stat(ctl->devname, &ctl->devstat) < 0)
+			err(EXIT_FAILURE, _("stat of %s failed"), ctl->devname);
+		ctl->fd = open_blkdev_or_file(&ctl->devstat, ctl->devname, O_RDWR);
+	}
 	if (ctl->fd < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), ctl->devname);
+	if (ctl->file && ctl->filesz) {
+		if (ftruncate(ctl->fd, ctl->filesz) < 0)
+			err(EXIT_FAILURE, _("couldn't allocate swap file %s"), ctl->devname);
+#ifdef HAVE_POSIX_FALLOCATE
+		errno = posix_fallocate(ctl->fd, 0, ctl->filesz);
+		if (errno)
+			err(EXIT_FAILURE, _("couldn't allocate swap file %s"), ctl->devname);
+#elif defined(HAVE_FALLOCATE)
+		if (fallocate(ctl->fd, 0, 0, ctl->filesz) < 0)
+			err(EXIT_FAILURE, _("couldn't allocate swap file %s"), ctl->devname);
+#endif
+	}
 
 	if (blkdev_lock(ctl->fd, ctl->devname, ctl->lockmode) != 0)
 		exit(EXIT_FAILURE);
@@ -520,6 +549,8 @@ int main(int argc, char **argv)
 		{ "uuid",        required_argument, NULL, 'U' },
 		{ "endianness",  required_argument, NULL, 'e' },
 		{ "offset",      required_argument, NULL, 'o' },
+		{ "size",        required_argument, NULL, 's' },
+		{ "file",        no_argument,       NULL, 'F' },
 		{ "version",     no_argument,       NULL, 'V' },
 		{ "help",        no_argument,       NULL, 'h' },
 		{ "lock",        optional_argument, NULL, OPT_LOCK },
@@ -538,7 +569,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while((c = getopt_long(argc, argv, "cfp:qL:v:U:e:o:Vh", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "cfp:qL:v:U:e:o:s:FVh", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -587,6 +618,12 @@ int main(int argc, char **argv)
 		case 'o':
 			ctl.offset = str2unum_or_err(optarg,
 					10, _("Invalid offset"), SINT_MAX(off_t));
+			break;
+		case 's':
+			ctl.filesz = strtosize_or_err(optarg, _("Invalid size"));
+			break;
+		case 'F':
+			ctl.file = 1;
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
