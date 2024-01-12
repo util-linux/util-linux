@@ -215,7 +215,7 @@
 
 #define read_unaligned_member(p, m) __extension__ ({          \
 	size_t offset = offsetof(__typeof__(* p), m);         \
-	__typeof__(p->m) v;                                   \
+	__typeof__(p->m + 0) v;                               \
 	memcpy(&v, ((unsigned char *)p) + offset, sizeof(v)); \
 	v; })
 
