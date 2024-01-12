@@ -405,7 +405,7 @@ static int get_clock_cont(uint32_t *clock_high,
 
 		if (st.st_size) {
 			rewind(state_f);
-			if (fscanf(state_f, "cont: %lu\n", &last_clock_reg) != 1)
+			if (fscanf(state_f, "cont: %"SCNu64"\n", &last_clock_reg) != 1)
 				goto error;
 		} else
 			last_clock_reg = clock_reg;
@@ -431,7 +431,7 @@ static int get_clock_cont(uint32_t *clock_high,
 		int l;
 
 		rewind(state_f);
-		l = fprintf(state_f, "cont: %020lu                   \n", cl);
+		l = fprintf(state_f, "cont: %020"PRIu64"                   \n", cl);
 		if (l < 30 || fflush(state_f))
 			goto error;
 		saved_clock_reg = cl;
