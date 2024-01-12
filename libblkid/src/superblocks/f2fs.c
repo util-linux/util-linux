@@ -85,7 +85,7 @@ static int f2fs_validate_checksum(blkid_probe pr, size_t sb_off,
 
 static int probe_f2fs(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct f2fs_super_block *sb;
+	const struct f2fs_super_block *sb;
 	uint16_t vermaj, vermin;
 
 	sb = blkid_probe_get_sb(pr, mag, struct f2fs_super_block);

@@ -50,7 +50,7 @@ static int romfs_verify_csum(blkid_probe pr, const struct blkid_idmag *mag,
 
 static int probe_romfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct romfs_super_block *ros;
+	const struct romfs_super_block *ros;
 
 	ros = blkid_probe_get_sb(pr, mag, struct romfs_super_block);
 	if (!ros)

@@ -111,7 +111,7 @@ struct xfs_super_block {
 #define XFS_SB_VERSION2_CRCBIT		0x00000100
 
 
-static void sb_from_disk(struct xfs_super_block *from,
+static void sb_from_disk(const struct xfs_super_block *from,
 			 struct xfs_super_block *to)
 {
 
@@ -170,7 +170,7 @@ static void sb_from_disk(struct xfs_super_block *from,
 	to->sb_rrmapino = be64_to_cpu(from->sb_rrmapino);
 }
 
-static int xfs_verify_sb(struct xfs_super_block *ondisk, blkid_probe pr,
+static int xfs_verify_sb(const struct xfs_super_block *ondisk, blkid_probe pr,
 		const struct blkid_idmag *mag)
 {
 	struct xfs_super_block sb, *sbp = &sb;
@@ -230,7 +230,7 @@ static int xfs_verify_sb(struct xfs_super_block *ondisk, blkid_probe pr,
 	return 1;
 }
 
-static uint64_t xfs_fssize(struct xfs_super_block *xs)
+static uint64_t xfs_fssize(const struct xfs_super_block *xs)
 {
 	uint32_t lsize = xs->sb_logstart ? xs->sb_logblocks : 0;
 	uint64_t avail_blocks = be64_to_cpu(xs->sb_dblocks) - be32_to_cpu(lsize);
@@ -241,7 +241,7 @@ static uint64_t xfs_fssize(struct xfs_super_block *xs)
 
 static int probe_xfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct xfs_super_block *xs;
+	const struct xfs_super_block *xs;
 
 	xs = blkid_probe_get_sb(pr, mag, struct xfs_super_block);
 	if (!xs)

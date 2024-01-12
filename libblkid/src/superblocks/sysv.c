@@ -76,7 +76,7 @@ struct sysv_super_block
 
 static int probe_xenix(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct xenix_super_block *sb;
+	const struct xenix_super_block *sb;
 
 	sb = blkid_probe_get_sb(pr, mag, struct xenix_super_block);
 	if (!sb)

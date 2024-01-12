@@ -67,7 +67,7 @@ struct netware_super_block {
 
 static int probe_netware(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct netware_super_block *nw;
+	const struct netware_super_block *nw;
 
 	nw = blkid_probe_get_sb(pr, mag, struct netware_super_block);
 	if (!nw)

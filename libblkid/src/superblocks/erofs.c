@@ -67,7 +67,7 @@ static int erofs_verify_checksum(blkid_probe pr, const struct blkid_idmag *mag,
 
 static int probe_erofs(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct erofs_super_block *sb;
+	const struct erofs_super_block *sb;
 
 	sb = blkid_probe_get_sb(pr, mag, struct erofs_super_block);
 	if (!sb)

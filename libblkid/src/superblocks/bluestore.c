@@ -31,7 +31,7 @@ struct bluestore_phdr {
 
 static int probe_bluestore(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct bluestore_phdr *header;
+	const struct bluestore_phdr *header;
 
 	header = blkid_probe_get_sb(pr, mag, struct bluestore_phdr);
 	if (header == NULL)

@@ -191,7 +191,7 @@ extern int blkid_probe_is_exfat(blkid_probe pr);
  */
 int blkid_probe_is_exfat(blkid_probe pr)
 {
-	struct exfat_super_block *sb;
+	const struct exfat_super_block *sb;
 	const struct blkid_idmag *mag = NULL;
 	int rc;
 
@@ -213,7 +213,7 @@ int blkid_probe_is_exfat(blkid_probe pr)
 
 static int probe_exfat(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct exfat_super_block *sb;
+	const struct exfat_super_block *sb;
 	struct exfat_entry_label *label;
 
 	sb = blkid_probe_get_sb(pr, mag, struct exfat_super_block);

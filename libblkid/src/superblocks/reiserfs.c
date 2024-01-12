@@ -41,7 +41,7 @@ struct reiser4_super_block {
 
 static int probe_reiser(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct reiserfs_super_block *rs;
+	const struct reiserfs_super_block *rs;
 	unsigned int blocksize;
 
 	rs = blkid_probe_get_sb(pr, mag, struct reiserfs_super_block);
@@ -82,7 +82,7 @@ static int probe_reiser(blkid_probe pr, const struct blkid_idmag *mag)
 
 static int probe_reiser4(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct reiser4_super_block *rs4;
+	const struct reiser4_super_block *rs4;
 	unsigned int blocksize;
 
 	rs4 = blkid_probe_get_sb(pr, mag, struct reiser4_super_block);

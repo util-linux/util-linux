@@ -142,7 +142,7 @@ static int probe_ocfs(blkid_probe pr, const struct blkid_idmag *mag)
 
 static int probe_ocfs2(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct ocfs2_super_block *osb;
+	const struct ocfs2_super_block *osb;
 
 	osb = blkid_probe_get_sb(pr, mag, struct ocfs2_super_block);
 	if (!osb)
@@ -165,7 +165,7 @@ static int probe_ocfs2(blkid_probe pr, const struct blkid_idmag *mag)
 
 static int probe_oracleasm(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct oracle_asm_disk_label *dl;
+	const struct oracle_asm_disk_label *dl;
 
 	dl = blkid_probe_get_sb(pr, mag, struct oracle_asm_disk_label);
 	if (!dl)

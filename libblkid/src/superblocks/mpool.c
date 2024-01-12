@@ -26,7 +26,7 @@ struct omf_sb_descriptor {
 
 static int probe_mpool(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct omf_sb_descriptor *osd;
+	const struct omf_sb_descriptor *osd;
 	uint32_t sb_crc;
 
 	osd = blkid_probe_get_sb(pr, mag, struct omf_sb_descriptor);

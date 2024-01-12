@@ -126,7 +126,7 @@ struct meta_data_on_disk_9 {
 
 static int probe_drbd_84(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct md_on_disk_08 *md;
+	const struct md_on_disk_08 *md;
 
 	md = blkid_probe_get_sb(pr, mag, struct md_on_disk_08);
 	if (!md)
@@ -147,7 +147,7 @@ static int probe_drbd_84(blkid_probe pr, const struct blkid_idmag *mag)
 
 static int probe_drbd_90(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct meta_data_on_disk_9 *md;
+	const struct meta_data_on_disk_9 *md;
 
 	md = blkid_probe_get_sb(pr, mag, struct meta_data_on_disk_9);
 	if (!md)

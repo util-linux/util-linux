@@ -441,7 +441,7 @@ extern void blkid_probe_prune_buffers(blkid_probe pr);
 /* returns superblock according to 'struct blkid_idmag' */
 extern const unsigned char *blkid_probe_get_sb_buffer(blkid_probe pr, const struct blkid_idmag *mag, size_t size);
 #define blkid_probe_get_sb(_pr, _mag, type) \
-			((type *) blkid_probe_get_sb_buffer((_pr), _mag, sizeof(type)))
+			((const type *) blkid_probe_get_sb_buffer((_pr), _mag, sizeof(type)))
 
 extern uint64_t blkid_probe_get_idmag_off(blkid_probe pr, const struct blkid_idmag *mag)
 			__attribute__((nonnull));

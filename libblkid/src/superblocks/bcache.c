@@ -199,7 +199,7 @@ static int bcache_verify_checksum(blkid_probe pr, const struct blkid_idmag *mag,
 
 static int probe_bcache (blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct bcache_super_block *bcs;
+	const struct bcache_super_block *bcs;
 
 	bcs = blkid_probe_get_sb(pr, mag, struct bcache_super_block);
 	if (!bcs)
@@ -342,7 +342,7 @@ static int bcachefs_validate_checksum(blkid_probe pr, const struct bcachefs_supe
 
 static int probe_bcachefs(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct bcachefs_super_block *bcs;
+	const struct bcachefs_super_block *bcs;
 	const unsigned char *sb, *sb_end;
 	uint64_t sb_size, blocksize, offset_sectors;
 	uint16_t version;

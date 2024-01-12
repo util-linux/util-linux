@@ -85,7 +85,7 @@ struct exfs_super_block {
 			 (s)->sb_agblocks + EXFS_MIN_AG_BLOCKS)
 
 
-static void sb_from_disk(struct exfs_super_block *from,
+static void sb_from_disk(const struct exfs_super_block *from,
 			 struct exfs_super_block *to)
 {
 
@@ -121,7 +121,7 @@ static void sb_from_disk(struct exfs_super_block *from,
 	to->sb_frextents = be64_to_cpu(from->sb_frextents);
 }
 
-static int exfs_verify_sb(struct exfs_super_block *ondisk)
+static int exfs_verify_sb(const struct exfs_super_block *ondisk)
 {
 	struct exfs_super_block sb, *sbp = &sb;
 
@@ -158,7 +158,7 @@ static int exfs_verify_sb(struct exfs_super_block *ondisk)
 
 static int probe_exfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct exfs_super_block *xs;
+	const struct exfs_super_block *xs;
 
 	xs = blkid_probe_get_sb(pr, mag, struct exfs_super_block);
 	if (!xs)

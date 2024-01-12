@@ -105,7 +105,7 @@ static int ubifs_verify_csum(blkid_probe pr, const struct ubifs_sb_node *sb)
 
 static int probe_ubifs(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct ubifs_sb_node *sb;
+	const struct ubifs_sb_node *sb;
 
 	sb = blkid_probe_get_sb(pr, mag, struct ubifs_sb_node);
 	if (!sb)
