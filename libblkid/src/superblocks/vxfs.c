@@ -25,7 +25,7 @@ struct vxfs_super_block {
 
 static int probe_vxfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct vxfs_super_block *vxs;
+	const struct vxfs_super_block *vxs;
 	enum blkid_endianness e = mag->hint;
 
 	vxs = blkid_probe_get_sb(pr, mag, struct vxfs_super_block);

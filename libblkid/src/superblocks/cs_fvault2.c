@@ -65,7 +65,7 @@ static int cs_fvault2_verify_csum(blkid_probe pr, const struct cs_fvault2_sb *sb
 
 static int probe_cs_fvault2(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct cs_fvault2_sb *sb;
+	const struct cs_fvault2_sb *sb;
 
 	sb = blkid_probe_get_sb(pr, mag, struct cs_fvault2_sb);
 	if (!sb)

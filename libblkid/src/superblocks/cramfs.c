@@ -46,7 +46,7 @@ static uint32_t cfs32_to_cpu(int le, uint32_t value)
 }
 
 static int cramfs_verify_csum(blkid_probe pr, const struct blkid_idmag *mag,
-		struct cramfs_super *cs, int le)
+		const struct cramfs_super *cs, int le)
 {
 	uint32_t crc, expected, csummed_size;
 	const unsigned char *csummed;
@@ -71,7 +71,7 @@ static int cramfs_verify_csum(blkid_probe pr, const struct blkid_idmag *mag,
 
 static int probe_cramfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct cramfs_super *cs;
+	const struct cramfs_super *cs;
 
 	cs = blkid_probe_get_sb(pr, mag, struct cramfs_super);
 	if (!cs)

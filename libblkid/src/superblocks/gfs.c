@@ -59,7 +59,7 @@ struct gfs2_sb {
 
 static int probe_gfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct gfs2_sb *sbd;
+	const struct gfs2_sb *sbd;
 
 	sbd = blkid_probe_get_sb(pr, mag, struct gfs2_sb);
 	if (!sbd)
@@ -91,7 +91,7 @@ static inline int gfs2_multiformat_is_valid(uint32_t multi)
 
 static int probe_gfs2(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct gfs2_sb *sbd;
+	const struct gfs2_sb *sbd;
 
 	sbd = blkid_probe_get_sb(pr, mag, struct gfs2_sb);
 	if (!sbd)

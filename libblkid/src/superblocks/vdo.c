@@ -25,7 +25,7 @@ struct vdo_super_block {
 
 static int probe_vdo(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct vdo_super_block *vsb;
+	const struct vdo_super_block *vsb;
 
 	vsb = blkid_probe_get_sb(pr, mag, struct vdo_super_block);
 	if (!vsb)

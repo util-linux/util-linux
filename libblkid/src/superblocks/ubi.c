@@ -35,7 +35,7 @@ static int ubi_verify_csum(blkid_probe pr, const struct ubi_ec_hdr *hdr)
 
 static int probe_ubi(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct ubi_ec_hdr *hdr;
+	const struct ubi_ec_hdr *hdr;
 
 	hdr = blkid_probe_get_sb(pr, mag, struct ubi_ec_hdr);
 	if (!hdr)

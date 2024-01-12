@@ -36,7 +36,7 @@ struct jfs_super_block {
 
 static int probe_jfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct jfs_super_block *js;
+	const struct jfs_super_block *js;
 
 	js = blkid_probe_get_sb(pr, mag, struct jfs_super_block);
 	if (!js)

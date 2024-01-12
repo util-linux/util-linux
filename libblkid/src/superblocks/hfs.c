@@ -154,7 +154,7 @@ static int hfs_set_uuid(blkid_probe pr, unsigned char const *hfs_info, size_t le
 
 static int probe_hfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct hfs_mdb	*hfs;
+	const struct hfs_mdb	*hfs;
 	int size;
 
 	hfs = blkid_probe_get_sb(pr, mag, struct hfs_mdb);

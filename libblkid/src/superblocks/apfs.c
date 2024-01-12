@@ -39,7 +39,7 @@ struct apfs_super_block {
 
 static int probe_apfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct apfs_super_block *sb;
+	const struct apfs_super_block *sb;
 
 	sb = blkid_probe_get_sb(pr, mag, struct apfs_super_block);
 	if (!sb)

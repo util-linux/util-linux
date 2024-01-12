@@ -183,8 +183,8 @@ static int search_fat_label(blkid_probe pr, uint64_t offset, uint32_t entries, u
 
 static int fat_valid_superblock(blkid_probe pr,
 			const struct blkid_idmag *mag,
-			struct msdos_super_block *ms,
-			struct vfat_super_block *vs,
+			const struct msdos_super_block *ms,
+			const struct vfat_super_block *vs,
 			uint32_t *cluster_count, uint32_t *fat_size,
 			uint32_t *sect_count)
 {
@@ -276,8 +276,8 @@ extern int blkid_probe_is_vfat(blkid_probe pr);
  */
 int blkid_probe_is_vfat(blkid_probe pr)
 {
-	struct vfat_super_block *vs;
-	struct msdos_super_block *ms;
+	const struct vfat_super_block *vs;
+	const struct msdos_super_block *ms;
 	const struct blkid_idmag *mag = NULL;
 	int rc;
 
@@ -301,11 +301,12 @@ int blkid_probe_is_vfat(blkid_probe pr)
  * Sievers's volume_id library */
 static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct vfat_super_block *vs;
-	struct msdos_super_block *ms;
+	const struct vfat_super_block *vs;
+	const struct msdos_super_block *ms;
 	const unsigned char *vol_label = NULL;
 	const unsigned char *boot_label = NULL;
-	unsigned char *vol_serno = NULL, vol_label_buf[11];
+	const unsigned char *vol_serno = NULL;
+	unsigned char vol_label_buf[11];
 	uint16_t sector_size = 0, reserved;
 	uint32_t cluster_count, fat_size, sect_count;
 	const char *version = NULL;
