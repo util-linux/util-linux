@@ -773,7 +773,7 @@ int fdisk_deassign_device(struct fdisk_context *cxt, int nosync)
 					cxt->dev_path);
 			return -errno;
 		}
-		if (!nosync) {
+		if (S_ISBLK(cxt->dev_st.st_mode) && !nosync) {
 			fdisk_info(cxt, _("Syncing disks."));
 			sync();
 		}
