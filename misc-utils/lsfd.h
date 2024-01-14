@@ -185,10 +185,9 @@ struct file {
 	unsigned int sys_flags;
 	unsigned int mnt_id;
 
-	struct {
-		uint8_t read:1, write:1;
-	} locked;
-	uint8_t multiplexed;
+	uint8_t locked_read:1,
+		locked_write:1,
+		multiplexed:1;
 };
 
 #define is_opened_file(_f) ((_f)->association >= 0)

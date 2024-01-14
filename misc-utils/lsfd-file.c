@@ -300,8 +300,8 @@ static bool file_fill_column(struct proc *proc,
 	case COL_XMODE: {
 		char r, w, x;
 		char D = file->stat.st_nlink == 0? 'D': '-';
-		char L = file->locked.write? 'L'
-			:file->locked.read?  'l'
+		char L = file->locked_write? 'L'
+			:file->locked_read?  'l'
 			:                    '-';
 		char m = file->multiplexed? 'm': '-';
 
@@ -400,10 +400,10 @@ static int file_handle_fdinfo(struct file *file, const char *key, const char* va
 	} else if (strcmp(key, "lock") == 0) {
 		switch (parse_lock_line(value)) {
 		case READ_LOCK:
-			file->locked.read = 1;
+			file->locked_read = 1;
 			break;
 		case WRITE_LOCK:
-			file->locked.write = 1;
+			file->locked_write = 1;
 			break;
 		}
 		rc = 1;
