@@ -1304,6 +1304,7 @@ static void initialize_class(const struct file_class *class)
 
 static void initialize_classes(void)
 {
+	initialize_class(&abst_class);
 	initialize_class(&file_class);
 	initialize_class(&cdev_class);
 	initialize_class(&bdev_class);

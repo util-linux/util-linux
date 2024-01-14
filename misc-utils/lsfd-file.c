@@ -46,9 +46,21 @@
 
 #include "lsfd.h"
 
-static struct idcache *username_cache;
-
 static size_t pagesize;
+
+
+/*
+ * Abstract file class
+ *
+ * This class is for filling columns that don't need "sb" member, the
+ * result of stat(2).
+ */
+#define does_file_has_fdinfo_alike(file)	\
+	((file)->association >= 0		\
+	 || (file)->association == -ASSOC_SHM	\
+	 || (file)->association == -ASSOC_MEM)
+
+static struct idcache *username_cache;
 
 static const char *assocstr[N_ASSOCS] = {
 	[ASSOC_CWD]       = "cwd",
@@ -70,6 +82,152 @@ static const char *assocstr[N_ASSOCS] = {
 	[ASSOC_SHM]       = "shm",
 };
 
+extern void lsfd_decode_file_flags(struct ul_buffer *buf, int flags);
+static void file_fill_flags_buf(struct ul_buffer *buf, int flags)
+{
+	lsfd_decode_file_flags(buf, flags);
+}
+
+static uint64_t get_map_length(struct file *file)
+{
+	uint64_t res = 0;
+
+	if (is_association(file, SHM) || is_association(file, MEM))
+		res = (file->map_end - file->map_start) / pagesize;
+
+	return res;
+}
+
+static void abst_class_initialize(void)
+{
+	username_cache = new_idcache();
+	if (!username_cache)
+		err(EXIT_FAILURE, _("failed to allocate UID cache"));
+}
+
+static void abst_class_finalize(void)
+{
+	free_idcache(username_cache);
+}
+
+static bool abst_fill_column(struct proc *proc,
+			     struct file *file,
+			     struct libscols_line *ln,
+			     int column_id,
+			     size_t column_index)
+{
+	char *str = NULL;
+
+	switch(column_id) {
+	case COL_COMMAND:
+		if (proc->command
+		    && scols_line_set_data(ln, column_index, proc->command))
+			err(EXIT_FAILURE, _("failed to add output data"));
+		return true;
+	case COL_NAME:
+	case COL_KNAME:
+		if (file->name
+		    && scols_line_set_data(ln, column_index, file->name))
+			err(EXIT_FAILURE, _("failed to add output data"));
+		return true;
+	case COL_USER:
+		add_uid(username_cache, (int)proc->uid);
+		if (scols_line_set_data(ln, column_index,
+					get_id(username_cache,
+					       (int)proc->uid)->name))
+			err(EXIT_FAILURE, _("failed to add output data"));
+		return true;
+	case COL_DEVTYPE:
+		if (scols_line_set_data(ln, column_index,
+					"nodev"))
+			err(EXIT_FAILURE, _("failed to add output data"));
+		return true;
+	case COL_FD:
+		if (!is_opened_file(file))
+			return false;
+		/* FALL THROUGH */
+	case COL_ASSOC:
+		if (is_opened_file(file))
+			xasprintf(&str, "%d", file->association);
+		else {
+			int assoc = file->association * -1;
+			if (assoc >= N_ASSOCS)
+				return false; /* INTERNAL ERROR */
+			str = xstrdup(assocstr[assoc]);
+		}
+		break;
+	case COL_PID:
+		xasprintf(&str, "%d", (int)proc->leader->pid);
+		break;
+	case COL_TID:
+		xasprintf(&str, "%d", (int)proc->pid);
+		break;
+	case COL_UID:
+		xasprintf(&str, "%d", (int)proc->uid);
+		break;
+	case COL_KTHREAD:
+		xasprintf(&str, "%u", proc->kthread);
+		break;
+	case COL_MODE:
+		xasprintf(&str, "???");
+		break;
+	case COL_XMODE: {
+		char r, w, x;
+		char D = '?';
+		char L = file->locked_write? 'L'
+			:file->locked_read?  'l'
+			:                    '-';
+		char m = file->multiplexed? 'm': '-';
+		r = w = x = '?';
+		xasprintf(&str, "%c%c%c%c%c%c", r, w, x, D, L, m);
+		break;
+	}
+	case COL_POS:
+		xasprintf(&str, "%" PRIu64,
+			  (does_file_has_fdinfo_alike(file))? file->pos: 0);
+		break;
+	case COL_FLAGS: {
+		struct ul_buffer buf = UL_INIT_BUFFER;
+
+		if (!is_opened_file(file))
+			return true;
+
+		if (file->sys_flags == 0)
+			return true;
+
+		file_fill_flags_buf(&buf, file->sys_flags);
+		if (ul_buffer_is_empty(&buf))
+			return true;
+		str = ul_buffer_get_data(&buf, NULL, NULL);
+		break;
+	}
+	case COL_MAPLEN:
+		if (!is_mapped_file(file))
+			return true;
+		xasprintf(&str, "%ju", (uintmax_t)get_map_length(file));
+		break;
+	default:
+		return false;
+	}
+
+	if (!str)
+		err(EXIT_FAILURE, _("failed to add output data"));
+	if (scols_line_refer_data(ln, column_index, str))
+		err(EXIT_FAILURE, _("failed to add output data"));
+	return true;
+}
+
+const struct file_class abst_class = {
+	.super = NULL,
+	.size = sizeof(struct file),
+	.initialize_class = abst_class_initialize,
+	.finalize_class = abst_class_finalize,
+	.fill_column = abst_fill_column,
+};
+
+/*
+ * Concrete file class
+ */
 static const char *strftype(mode_t ftype)
 {
 	switch (ftype) {
@@ -90,27 +248,6 @@ static const char *strftype(mode_t ftype)
 	default:
 		return "UNKN";
 	}
-}
-
-extern void lsfd_decode_file_flags(struct ul_buffer *buf, int flags);
-static void file_fill_flags_buf(struct ul_buffer *buf, int flags)
-{
-	lsfd_decode_file_flags(buf, flags);
-}
-
-#define does_file_has_fdinfo_alike(file)	\
-	((file)->association >= 0		\
-	 || (file)->association == -ASSOC_SHM	\
-	 || (file)->association == -ASSOC_MEM)
-
-static uint64_t get_map_length(struct file *file)
-{
-	uint64_t res = 0;
-
-	if (is_association(file, SHM) || is_association(file, MEM))
-		res = (file->map_end - file->map_start) / pagesize;
-
-	return res;
 }
 
 void decode_source(char *buf, size_t bufsize,
@@ -161,7 +298,7 @@ static char *strnrstr(const char *haystack, const char *needle, size_t needle_le
 	} while (1);
 }
 
-static bool file_fill_column(struct proc *proc,
+static bool file_fill_column(struct proc *proc __attribute__((__unused__)),
 			     struct file *file,
 			     struct libscols_line *ln,
 			     int column_id,
@@ -172,11 +309,6 @@ static bool file_fill_column(struct proc *proc,
 	char buf[BUFSIZ];
 
 	switch(column_id) {
-	case COL_COMMAND:
-		if (proc->command
-		    && scols_line_set_data(ln, column_index, proc->command))
-			err(EXIT_FAILURE, _("failed to add output data"));
-		return true;
 	case COL_NAME:
 		if (file->name && file->stat.st_nlink == 0) {
 			char *d = strnrstr(file->name, "(deleted)",
@@ -203,39 +335,6 @@ static bool file_fill_column(struct proc *proc,
 		if (scols_line_set_data(ln, column_index, strftype(ftype)))
 			err(EXIT_FAILURE, _("failed to add output data"));
 		return true;
-	case COL_USER:
-		add_uid(username_cache, (int)proc->uid);
-		if (scols_line_set_data(ln, column_index,
-					get_id(username_cache,
-					       (int)proc->uid)->name))
-			err(EXIT_FAILURE, _("failed to add output data"));
-		return true;
-	case COL_OWNER:
-		add_uid(username_cache, (int)file->stat.st_uid);
-		if (scols_line_set_data(ln, column_index,
-					get_id(username_cache,
-					       (int)file->stat.st_uid)->name))
-			err(EXIT_FAILURE, _("failed to add output data"));
-		return true;
-	case COL_DEVTYPE:
-		if (scols_line_set_data(ln, column_index,
-					"nodev"))
-			err(EXIT_FAILURE, _("failed to add output data"));
-		return true;
-	case COL_FD:
-		if (!is_opened_file(file))
-			return false;
-		/* FALL THROUGH */
-	case COL_ASSOC:
-		if (is_opened_file(file))
-			xasprintf(&str, "%d", file->association);
-		else {
-			int assoc = file->association * -1;
-			if (assoc >= N_ASSOCS)
-				return false; /* INTERNAL ERROR */
-			str = xstrdup(assocstr[assoc]);
-		}
-		break;
 	case COL_INODE:
 		xasprintf(&str, "%llu", (unsigned long long)file->stat.st_ino);
 		break;
@@ -260,15 +359,6 @@ static bool file_fill_column(struct proc *proc,
 			  major(file->stat.st_rdev),
 			  minor(file->stat.st_rdev));
 		break;
-	case COL_PID:
-		xasprintf(&str, "%d", (int)proc->leader->pid);
-		break;
-	case COL_TID:
-		xasprintf(&str, "%d", (int)proc->pid);
-		break;
-	case COL_UID:
-		xasprintf(&str, "%d", (int)proc->uid);
-		break;
 	case COL_FUID:
 		xasprintf(&str, "%d", (int)file->stat.st_uid);
 		break;
@@ -280,9 +370,6 @@ static bool file_fill_column(struct proc *proc,
 		break;
 	case COL_DELETED:
 		xasprintf(&str, "%d", file->stat.st_nlink == 0);
-		break;
-	case COL_KTHREAD:
-		xasprintf(&str, "%u", proc->kthread);
 		break;
 	case COL_MNT_ID:
 		xasprintf(&str, "%d", is_opened_file(file)? file->mnt_id: 0);
@@ -315,30 +402,6 @@ static bool file_fill_column(struct proc *proc,
 		xasprintf(&str, "%c%c%c%c%c%c", r, w, x, D, L, m);
 		break;
 	}
-	case COL_POS:
-		xasprintf(&str, "%" PRIu64,
-			  (does_file_has_fdinfo_alike(file))? file->pos: 0);
-		break;
-	case COL_FLAGS: {
-		struct ul_buffer buf = UL_INIT_BUFFER;
-
-		if (!is_opened_file(file))
-			return true;
-
-		if (file->sys_flags == 0)
-			return true;
-
-		file_fill_flags_buf(&buf, file->sys_flags);
-		if (ul_buffer_is_empty(&buf))
-			return true;
-		str = ul_buffer_get_data(&buf, NULL, NULL);
-		break;
-	}
-	case COL_MAPLEN:
-		if (!is_mapped_file(file))
-			return true;
-		xasprintf(&str, "%ju", (uintmax_t)get_map_length(file));
-		break;
 	default:
 		return false;
 	}
@@ -499,10 +562,6 @@ static void file_class_initialize(void)
 	if (!pagesize)
 		pagesize = getpagesize();
 
-	username_cache = new_idcache();
-	if (!username_cache)
-		err(EXIT_FAILURE, _("failed to allocate UID cache"));
-
 	m = get_minor_for_sysvipc();
 	if (m)
 		add_nodev(m, "tmpfs");
@@ -512,16 +571,11 @@ static void file_class_initialize(void)
 		add_nodev(m, "mqueue");
 }
 
-static void file_class_finalize(void)
-{
-	free_idcache(username_cache);
-}
-
 const struct file_class file_class = {
-	.super = NULL,
+	.super = &abst_class,
 	.size = sizeof(struct file),
 	.initialize_class = file_class_initialize,
-	.finalize_class = file_class_finalize,
+	.finalize_class = NULL,
 	.fill_column = file_fill_column,
 	.handle_fdinfo = file_handle_fdinfo,
 	.free_content = file_free_content,
