@@ -699,7 +699,7 @@ static struct file *new_file(struct proc *proc, const struct file_class *class)
 	return file;
 }
 
-static struct file *copy_file(struct file *old)
+static struct file *copy_file(struct file *old, int new_association)
 {
 	struct file *file = xcalloc(1, old->class->size);
 
@@ -708,7 +708,7 @@ static struct file *copy_file(struct file *old)
 	list_add_tail(&file->files, &old->proc->files);
 
 	file->class = old->class;
-	file->association = old->association;
+	file->association = new_association;
 	file->name = xstrdup(old->name);
 	file->stat = old->stat;
 
@@ -808,10 +808,9 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 	 * path is the same to save stat() call.
 	 */
 	prev = list_last_entry(&proc->files, struct file, files);
-	if (prev && prev->name && strcmp(prev->name, sym) == 0) {
-		f = copy_file(prev);
-		f->association = assoc;
-	} else {
+	if (prev && prev->name && strcmp(prev->name, sym) == 0)
+		f = copy_file(prev, assoc);
+	else {
 		const struct file_class *class;
 
 		if (ul_path_stat(pc, &sb, 0, name) < 0)
@@ -913,10 +912,9 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 	 */
 	prev = list_last_entry(&proc->files, struct file, files);
 
-	if (prev && prev->stat.st_dev == devno && prev->stat.st_ino == ino) {
-		f = copy_file(prev);
-		f->association = -assoc;
-	} else if ((path = strchr(buf, '/'))) {
+	if (prev && prev->stat.st_dev == devno && prev->stat.st_ino == ino)
+		f = copy_file(prev, -assoc);
+	else if ((path = strchr(buf, '/'))) {
 		rtrim_whitespace((unsigned char *) path);
 		if (stat(path, &sb) < 0)
 			/* If a file is mapped but deleted from the file system,
