@@ -683,7 +683,8 @@ static const struct file_class *stat2class(struct stat *sb)
 	return &unkn_class;
 }
 
-static struct file *new_file(struct proc *proc, const struct file_class *class)
+static struct file *new_file(struct proc *proc, const struct file_class *class,
+			     struct stat *sb, const char *name, int association)
 {
 	struct file *file;
 
@@ -695,6 +696,10 @@ static struct file *new_file(struct proc *proc, const struct file_class *class)
 
 	INIT_LIST_HEAD(&file->files);
 	list_add_tail(&file->files, &proc->files);
+
+	file->association = association;
+	file->name = xstrdup(name);
+	file->stat = *sb;
 
 	return file;
 }
@@ -713,13 +718,6 @@ static struct file *copy_file(struct file *old, int new_association)
 	file->stat = old->stat;
 
 	return file;
-}
-
-static void file_set_path(struct file *file, struct stat *sb, const char *name, int association)
-{
-	file->association = association;
-	file->name = xstrdup(name);
-	file->stat = *sb;
 }
 
 static void file_init_content(struct file *file)
@@ -825,8 +823,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 		     */
 		    && (class != &sock_class) && (class != &nsfs_file_class))
 			return NULL;
-		f = new_file(proc, class);
-		file_set_path(f, &sb, sym, assoc);
+		f = new_file(proc, class, &sb, sym, assoc);
 	}
 
 	file_init_content(f);
@@ -921,8 +918,7 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 			 * "stat by the file name" may not work. In that case,
 			 */
 			goto try_map_files;
-		f = new_file(proc, stat2class(&sb));
-		file_set_path(f, &sb, path, -assoc);
+		f = new_file(proc, stat2class(&sb), &sb, path, -assoc);
 	} else {
 		/* As used in tcpdump, AF_PACKET socket can be mmap'ed. */
 		char map_file[sizeof("map_files/0000000000000000-ffffffffffffffff")];
@@ -934,8 +930,7 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 			return;
 		if (ul_path_readlink(pc, sym, sizeof(sym), map_file) < 0)
 			return;
-		f = new_file(proc, stat2class(&sb));
-		file_set_path(f, &sb, sym, -assoc);
+		f = new_file(proc, stat2class(&sb), &sb, sym, -assoc);
 	}
 
 	if (modestr[0] == 'r')
