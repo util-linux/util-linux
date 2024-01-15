@@ -226,6 +226,104 @@ const struct file_class abst_class = {
 };
 
 /*
+ * Error classes
+ */
+
+/* get_errno_name() --- the private replacement of strerrorname_np(3).
+ * Some platforms don't have strerrorname_np.
+ *
+ * Mainly copied from misc-utils/enosys.c.
+ */
+struct errno_s {
+	const char *const name;
+	long number;
+};
+
+static const struct errno_s errnos[] = {
+#define UL_ERRNO(name, nr) { name, nr },
+#include "errnos.h"
+#undef UL_ERRNO
+};
+
+static const char *get_errno_name(int ern)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(errnos); i ++) {
+		if (errnos[i].number == ern)
+			return errnos[i].name;
+	}
+	return NULL;
+}
+
+static bool error_fill_column(struct proc *proc __attribute__((__unused__)),
+			      struct file *file __attribute__((__unused__)),
+			      struct libscols_line *ln,
+			      int column_id,
+			      size_t column_index)
+{
+	char *str = NULL;
+	const char *ename;
+
+	switch(column_id) {
+	case COL_TYPE:
+		if (scols_line_set_data(ln, column_index, "ERROR"))
+			err(EXIT_FAILURE, _("failed to add output data"));
+		return true;
+	case COL_SOURCE:
+		ename = get_errno_name(file->error.number);
+		if (ename)
+			xasprintf(&str, "%s:%s",
+				  file->error.syscall, ename);
+		else
+			xasprintf(&str, "%s:unknown(%d)",
+				  file->error.syscall, file->error.number);
+		if (scols_line_refer_data(ln, column_index, str))
+			err(EXIT_FAILURE, _("failed to add output data"));
+		return true;
+	default:
+		return false;
+	}
+}
+
+static const struct file_class error_class = {
+	.super = &abst_class,
+	.size = sizeof(struct file),
+	.fill_column = error_fill_column,
+};
+
+static void init_error_content(struct file *file)
+{
+	file->is_error = 1;
+}
+
+static bool readlink_error_fill_column(struct proc *proc __attribute__((__unused__)),
+				       struct file *file __attribute__((__unused__)),
+				       struct libscols_line *ln __attribute__((__unused__)),
+				       int column_id,
+				       size_t column_index __attribute__((__unused__)))
+{
+	switch(column_id) {
+	case COL_NAME:
+	case COL_KNAME:
+		return true;
+	default:
+		return false;
+	}
+}
+
+const struct file_class readlink_error_class = {
+	.super = &error_class,
+	.size = sizeof(struct file),
+	.initialize_content = init_error_content,
+	.fill_column = readlink_error_fill_column,
+};
+
+const struct file_class stat_error_class = {
+	.super = &error_class,
+	.size = sizeof(struct file),
+	.initialize_content = init_error_content,
+};
+
+/*
  * Concrete file class
  */
 static const char *strftype(mode_t ftype)

@@ -174,7 +174,13 @@ struct file {
 	const struct file_class *class;
 	int association;
 	char *name;
-	struct stat stat;
+	union {
+		struct stat stat;
+		struct {
+			int number;
+			const char *syscall;
+		} error;
+	};
 	mode_t mode;
 	struct proc *proc;
 
@@ -187,7 +193,8 @@ struct file {
 
 	uint8_t locked_read:1,
 		locked_write:1,
-		multiplexed:1;
+		multiplexed:1,
+		is_error:1;
 };
 
 #define is_opened_file(_f) ((_f)->association >= 0)
@@ -211,7 +218,8 @@ struct file_class {
 	const struct ipc_class *(*get_ipc_class)(struct file *file);
 };
 
-extern const struct file_class abst_class, file_class, cdev_class, bdev_class, sock_class, unkn_class, fifo_class,
+extern const struct file_class abst_class, readlink_error_class, stat_error_class,
+	file_class, cdev_class, bdev_class, sock_class, unkn_class, fifo_class,
 	nsfs_file_class, mqueue_file_class;
 
 /*

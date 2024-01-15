@@ -463,6 +463,8 @@ socket system call:
 
 SOURCE <``string``>::
 File system, partition, or device containing the file.
+For the association having ERROR as the value for _TYPE_ coulumn, *lsfd*
+fills this column with _syscall_:_errno_.
 
 STTYPE <``string``>::
 Raw file types returned from *stat*(2): BLK, CHR, DIR, FIFO, LINK, REG, SOCK, or UNKN.
@@ -501,6 +503,9 @@ TYPE <``string``>::
 Cooked version of _STTYPE_. It is same as _STTYPE_ with exceptions.
 For _SOCK_, print the value for _SOCK.PROTONAME_.
 For _UNKN_, print the value for _AINODECLASS_ if _SOURCE_ is `anon_inodefs`.
++
+If *lsfd* gets an error when calling a syscall to know about a target
+file descriptor, *lsfd* fills this column for it with ERROR.
 
 UDP.LADDR <``string``>::
 Local IP address and local UDP port.

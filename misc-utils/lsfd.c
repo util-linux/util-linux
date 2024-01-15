@@ -704,6 +704,46 @@ static struct file *new_file(struct proc *proc, const struct file_class *class,
 	return file;
 }
 
+static struct file *new_readlink_error_file(struct proc *proc, int error_no, int association)
+{
+	struct file *file;
+
+	file = xcalloc(1, readlink_error_class.size);
+	file->class = &readlink_error_class;
+
+	file->proc = proc;
+
+	INIT_LIST_HEAD(&file->files);
+	list_add_tail(&file->files, &proc->files);
+
+	file->error.syscall = "readlink";
+	file->error.number = error_no;
+	file->association = association;
+	file->name = NULL;
+
+	return file;
+}
+
+static struct file *new_stat_error_file(struct proc *proc, const char *name, int error_no, int association)
+{
+	struct file *file;
+
+	file = xcalloc(1, stat_error_class.size);
+	file->class = &stat_error_class;
+
+	file->proc = proc;
+
+	INIT_LIST_HEAD(&file->files);
+	list_add_tail(&file->files, &proc->files);
+
+	file->error.syscall = "stat";
+	file->error.number = error_no;
+	file->association = association;
+	file->name = xstrdup(name);
+
+	return file;
+}
+
 static struct file *copy_file(struct file *old, int new_association)
 {
 	struct file *file = xcalloc(1, old->class->size);
@@ -799,22 +839,20 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 	struct file *f, *prev;
 
 	if (ul_path_readlink(pc, sym, sizeof(sym), name) < 0)
-		return NULL;
-
+		f = new_readlink_error_file(proc, errno, assoc);
 	/* The /proc/#/{fd,ns} often contains the same file (e.g. /dev/tty)
 	 * more than once. Let's try to reuse the previous file if the real
 	 * path is the same to save stat() call.
 	 */
-	prev = list_last_entry(&proc->files, struct file, files);
-	if (prev && prev->name && strcmp(prev->name, sym) == 0)
+	else if ((prev = list_last_entry(&proc->files, struct file, files))
+		 && (!prev->is_error)
+		 && prev->name && strcmp(prev->name, sym) == 0)
 		f = copy_file(prev, assoc);
+	else if (ul_path_stat(pc, &sb, 0, name) < 0)
+		f = new_stat_error_file(proc, sym, errno, assoc);
 	else {
-		const struct file_class *class;
+		const struct file_class *class = stat2class(&sb);
 
-		if (ul_path_stat(pc, &sb, 0, name) < 0)
-			return NULL;
-
-		class = stat2class(&sb);
 		if (sockets_only
 		    /* A nsfs file is not a socket but the nsfs file can
 		     * be used as a entry point to collect information from
@@ -827,6 +865,9 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 	}
 
 	file_init_content(f);
+
+	if (f->is_error)
+		return f;
 
 	if (is_association(f, NS_MNT))
 		proc->ns_mnt = f->stat.st_ino;
@@ -909,7 +950,8 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 	 */
 	prev = list_last_entry(&proc->files, struct file, files);
 
-	if (prev && prev->stat.st_dev == devno && prev->stat.st_ino == ino)
+	if (prev && (!prev->is_error)
+	    && prev->stat.st_dev == devno && prev->stat.st_ino == ino)
 		f = copy_file(prev, -assoc);
 	else if ((path = strchr(buf, '/'))) {
 		rtrim_whitespace((unsigned char *) path);
@@ -927,10 +969,11 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 	try_map_files:
 		snprintf(map_file, sizeof(map_file), "map_files/%"PRIx64"-%"PRIx64, start, end);
 		if (ul_path_readlink(pc, sym, sizeof(sym), map_file) < 0)
-			return;
-		if (ul_path_stat(pc, &sb, 0, map_file) < 0)
-			return;
-		f = new_file(proc, stat2class(&sb), &sb, sym, -assoc);
+			f = new_readlink_error_file(proc, errno, -assoc);
+		else if (ul_path_stat(pc, &sb, 0, map_file) < 0)
+			f = new_stat_error_file(proc, sym, errno, -assoc);
+		else
+			f = new_file(proc, stat2class(&sb), &sb, sym, -assoc);
 	}
 
 	if (modestr[0] == 'r')
