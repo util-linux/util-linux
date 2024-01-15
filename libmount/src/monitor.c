@@ -226,18 +226,16 @@ static int userspace_add_watch(struct monitor_entry *me, int *final, int *fd)
 	assert(me->path);
 
 	/*
-	 * libmount uses rename(2) to atomically update utab, monitor
-	 * rename changes is too tricky. It seems better to monitor utab
-	 * lockfile close.
+	 * libmount uses utab.event file to monitor and control utab updates
 	 */
-	if (asprintf(&filename, "%s.lock", me->path) <= 0) {
-		rc = -errno;
+	if (asprintf(&filename, "%s.event", me->path) <= 0) {
+		rc = -ENOMEM;
 		goto done;
 	}
 
-	/* try lock file if already exists */
+	/* try event file if already exists */
 	errno = 0;
-	wd = inotify_add_watch(me->fd, filename, IN_CLOSE_NOWRITE);
+	wd = inotify_add_watch(me->fd, filename, IN_CLOSE_WRITE);
 	if (wd >= 0) {
 		DBG(MONITOR, ul_debug(" added inotify watch for %s [fd=%d]", filename, wd));
 		rc = 0;
@@ -256,7 +254,7 @@ static int userspace_add_watch(struct monitor_entry *me, int *final, int *fd)
 		if (!*filename)
 			break;
 
-		/* try directory where is the lock file */
+		/* try directory where is the event file */
 		errno = 0;
 		wd = inotify_add_watch(me->fd, filename, IN_CREATE|IN_ISDIR);
 		if (wd >= 0) {
@@ -339,10 +337,10 @@ static int userspace_event_verify(struct libmnt_monitor *mn,
 			e = (const struct inotify_event *) p;
 			DBG(MONITOR, ul_debugobj(mn, " inotify event 0x%x [%s]\n", e->mask, e->len ? e->name : ""));
 
-			if (e->mask & IN_CLOSE_NOWRITE)
+			if (e->mask & IN_CLOSE_WRITE)
 				status = 1;
 			else {
-				/* event on lock file */
+				/* add watch for the event file */
 				userspace_add_watch(me, &status, &fd);
 
 				if (fd != e->wd) {

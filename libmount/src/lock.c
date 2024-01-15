@@ -146,7 +146,7 @@ static int lock_simplelock(struct libmnt_lock *ml)
 	const char *lfile;
 	int rc;
 	struct stat sb;
-	const mode_t lock_mask = S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH;
+	const mode_t lock_mask = S_IRUSR|S_IWUSR;
 
 	assert(ml);
 
@@ -161,8 +161,7 @@ static int lock_simplelock(struct libmnt_lock *ml)
 		sigprocmask(SIG_BLOCK, &sigs, &ml->oldsigmask);
 	}
 
-	ml->lockfile_fd = open(lfile, O_RDONLY|O_CREAT|O_CLOEXEC,
-				      S_IWUSR|S_IRUSR|S_IRGRP|S_IROTH);
+	ml->lockfile_fd = open(lfile, O_RDONLY|O_CREAT|O_CLOEXEC, lock_mask);
 	if (ml->lockfile_fd < 0) {
 		rc = -errno;
 		goto err;

@@ -620,6 +620,8 @@ extern struct libmnt_context *mnt_copy_context(struct libmnt_context *o);
 extern int mnt_context_utab_writable(struct libmnt_context *cxt);
 extern const char *mnt_context_get_writable_tabpath(struct libmnt_context *cxt);
 
+extern int mnt_context_within_helper(struct libmnt_context *cxt);
+
 extern int mnt_context_get_mountinfo(struct libmnt_context *cxt, struct libmnt_table **tb);
 extern int mnt_context_get_mountinfo_for_target(struct libmnt_context *cxt,
 				    struct libmnt_table **mountinfo, const char *tgt);
@@ -661,6 +663,7 @@ extern int mnt_context_apply_fs(struct libmnt_context *cxt, struct libmnt_fs *fs
 extern struct libmnt_optlist *mnt_context_get_optlist(struct libmnt_context *cxt);
 
 /* tab_update.c */
+extern int mnt_update_emit_event(struct libmnt_update *upd);
 extern int mnt_update_set_filename(struct libmnt_update *upd, const char *filename);
 extern int mnt_update_already_done(struct libmnt_update *upd,
 				   struct libmnt_lock *lc);

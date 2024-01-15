@@ -1032,7 +1032,7 @@ int mnt_open_uniq_filename(const char *filename, char **name)
 
 	rc = asprintf(&n, "%s.XXXXXX", filename);
 	if (rc <= 0)
-		return -errno;
+		return -ENOMEM;
 
 	/* This is for very old glibc and for compatibility with Posix, which says
 	 * nothing about mkstemp() mode. All sane glibc use secure mode (0600).
