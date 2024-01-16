@@ -201,6 +201,8 @@ option('pg-bell',
        description : 'should pg ring the bell on invalid keys?')
 option('colors-default', type: 'boolean', value: true,
        description: 'Enables colorized output from utils by default')
+option('allow-32bit-time', type: 'boolean', value: false,
+       description: 'Allow 32bit time_t type')
 
 option('fs-search-path',
        type : 'string',

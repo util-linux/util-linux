@@ -681,6 +681,19 @@ int main(void) {
 have = cc.compiles(code, name : 'using tzname[]')
 conf.set('HAVE_TZNAME', have ? 1 : false)
 
+have = cc.sizeof('time_t', prefix : '#include <time.h>')
+if have < 8
+  add_global_arguments('-D_TIME_BITS=64', language : 'c')
+  have = cc.sizeof('time_t', args : '-D_TIME_BITS=64', prefix : '#include <time.h>')
+  if have < 8
+    if get_option('allow-32bit-time')
+      warning('Could not make time_t 64bits wide')
+    else
+      error('Could not make time_t 64bits wide')
+    endif
+  endif
+endif
+
 socket_libs = []
 if not cc.has_function('socket')
   socket_libs += cc.find_library('socket', required : true)

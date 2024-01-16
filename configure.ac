@@ -280,6 +280,8 @@ UL_SET_ARCH([HPPA], [hppa*|parisc*])
 AC_SYS_LARGEFILE
 AC_HEADER_ASSERT
 AC_STRUCT_TIMEZONE
+UL_YEAR2038_INIT
+AC_SYS_YEAR2038_RECOMMENDED
 
 dnl Don't forget to maintain alternatively allowed versions in autogen.sh!
 AM_GNU_GETTEXT_VERSION([0.18.3])
