@@ -21,4 +21,3 @@ Device             Start   End Sectors Size Type
 <removed>2 12288 18431    6144   3M Linux filesystem
 
 The partition table has been altered.
-Syncing disks.

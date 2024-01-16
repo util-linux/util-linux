@@ -8,7 +8,6 @@ Command (m for help): Partition number (2-8, default 2): First cylinder (128-325
 Created a new partition <removed>.
 
 Command (m for help): The partition table has been altered.
-Syncing disks.
 
 a87e80830aa13d2d68b766962f052750 sunlabel.img
 Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
