@@ -135,7 +135,7 @@ static struct group_workspace *init_group_workspace(const char *group)
 
 	buf->requested_group = get_group_gid(group);
 	buf->ngroups = sysconf(_SC_NGROUPS_MAX) + 1;  /* room for the primary gid */
-	buf->groups = xcalloc(sizeof(*buf->groups), buf->ngroups);
+	buf->groups = xcalloc(buf->ngroups, sizeof(*buf->groups));
 
 	return buf;
 }
