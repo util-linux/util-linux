@@ -730,13 +730,18 @@ static int hide_buffer(blkid_probe pr, uint64_t off, uint64_t len)
 const unsigned char *blkid_probe_get_buffer(blkid_probe pr, uint64_t off, uint64_t len)
 {
 	struct blkid_bufinfo *bf = NULL;
-	uint64_t real_off, bias;
+	uint64_t real_off, bias, len_align;
 
 	bias = off % pr->io_size;
 	off -= bias;
 	len += bias;
-	if (len % pr->io_size)
-		len += pr->io_size - (len % pr->io_size);
+
+	if (len % pr->io_size) {
+		len_align = pr->io_size - (len % pr->io_size);
+
+		if (pr->off + off + len + len_align <= pr->size)
+			len += len_align;
+	}
 
 	real_off = pr->off + off;
 

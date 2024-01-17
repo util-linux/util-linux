@@ -70,9 +70,8 @@ struct md_on_disk_08 {
 	uint32_t bm_bytes_per_bit;
 	uint32_t reserved_u32[4];
 
-	/* Unnecessary for libblkid **
-	 * char reserved[8 * 512 - (8*(UI_SIZE+3)+4*11)];
-	 */
+	unsigned char padding_start[0];
+	unsigned char padding_end[0] __attribute__((aligned(4096)));
 };
 
 /*
@@ -118,11 +117,20 @@ struct meta_data_on_disk_9 {
 	struct peer_dev_md_on_disk_9 peers[DRBD_PEERS_MAX];
 	uint64_t history_uuids[HISTORY_UUIDS];
 
-	/* Unnecessary for libblkid **
-	 * char padding[0] __attribute__((aligned(4096)));
-	 */
+	unsigned char padding_start[0];
+	unsigned char padding_end[0] __attribute__((aligned(4096)));
 } __attribute__((packed));
 
+
+static int is_zero_padded(const unsigned char *padding_start,
+			  const unsigned char *padding_end)
+{
+	for (; padding_start < padding_end; padding_start++) {
+		if (*padding_start != 0)
+			return 0;
+	}
+	return 1;
+}
 
 static int probe_drbd_84(blkid_probe pr, const struct blkid_idmag *mag)
 {
@@ -131,6 +139,10 @@ static int probe_drbd_84(blkid_probe pr, const struct blkid_idmag *mag)
 	md = blkid_probe_get_sb(pr, mag, struct md_on_disk_08);
 	if (!md)
 		return errno ? -errno : 1;
+
+	if (!is_zero_padded(member_ptr(md, padding_start),
+			    member_ptr(md, padding_end)))
+		return 1;
 
 	/*
 	 * DRBD does not have "real" uuids; the following resembles DRBD's
@@ -152,6 +164,10 @@ static int probe_drbd_90(blkid_probe pr, const struct blkid_idmag *mag)
 	md = blkid_probe_get_sb(pr, mag, struct meta_data_on_disk_9);
 	if (!md)
 		return errno ? -errno : 1;
+
+	if (!is_zero_padded(member_ptr(md, padding_start),
+			    member_ptr(md, padding_end)))
+		return 1;
 
 	/*
 	 * DRBD does not have "real" uuids; the following resembles DRBD's
