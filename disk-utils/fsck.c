@@ -594,7 +594,7 @@ static int progress_active(void)
  */
 static void print_stats(struct fsck_instance *inst)
 {
-	struct timeval delta;
+	struct timeval delta = { 0 };
 
 	if (!inst || !report_stats || noexecute)
 		return;

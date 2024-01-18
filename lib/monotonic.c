@@ -18,10 +18,10 @@
 int get_boot_time(struct timeval *boot_time)
 {
 #ifdef CLOCK_BOOTTIME
-	struct timespec hires_uptime;
-	struct timeval lores_uptime;
+	struct timespec hires_uptime = { 0 };
+	struct timeval lores_uptime = { 0 };
 #endif
-	struct timeval now;
+	struct timeval now = { 0 };
 #ifdef HAVE_SYSINFO
 	struct sysinfo info;
 #endif
