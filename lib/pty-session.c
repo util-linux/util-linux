@@ -641,7 +641,7 @@ int ul_pty_proxy_master(struct ul_pty *pty)
 
 		/* note, callback usually updates @next_callback_time */
 		if (timerisset(&pty->next_callback_time)) {
-			struct timeval now;
+			struct timeval now = { 0 };;
 
 			DBG(IO, ul_debugobj(pty, " callback requested"));
 			gettime_monotonic(&now);
@@ -654,7 +654,7 @@ int ul_pty_proxy_master(struct ul_pty *pty)
 
 		/* set timeout */
 		if (timerisset(&pty->next_callback_time)) {
-			struct timeval now, rest;
+			struct timeval now = { 0 }, rest = { 0 };
 
 			gettime_monotonic(&now);
 			timersub(&pty->next_callback_time, &now, &rest);
