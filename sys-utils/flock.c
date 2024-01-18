@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
 	int no_fork = 0;
 	int status;
 	int verbose = 0;
-	struct timeval time_start, time_done;
+	struct timeval time_start = { 0 }, time_done = { 0 };
 	/*
 	 * The default exit code for lock conflict or timeout
 	 * is specified in man flock.1
@@ -327,7 +327,7 @@ int main(int argc, char *argv[])
 	if (have_timeout)
 		cancel_timer(&timer);
 	if (verbose) {
-		struct timeval delta;
+		struct timeval delta = { 0 };
 
 		gettime_monotonic(&time_done);
 		timersub(&time_done, &time_start, &delta);
