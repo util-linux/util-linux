@@ -118,7 +118,7 @@ static void count_column_deviation(struct libscols_table *tb, struct libscols_co
 	}
 
 	if (n)
-		st->width_avg = sum / n;
+		st->width_avg = (double) sum / (double) n;
 
 	/* count deviation */
 	if (n > 1) {
@@ -133,7 +133,7 @@ static void count_column_deviation(struct libscols_table *tb, struct libscols_co
 			st->width_sqr_sum += diff * diff;	/* aka pow(x, 2) */
 		}
 
-		variance = st->width_sqr_sum / (n - 1);
+		variance = st->width_sqr_sum / (double) (n - 1);
 		st->width_deviation = sqrtroot(variance);
 	}
 
@@ -240,8 +240,8 @@ static int cmp_deviation(struct list_head *a, struct list_head *b,
 	struct libscols_column *ca = list_entry(a, struct libscols_column, cl_columns);
 	struct libscols_column *cb = list_entry(b, struct libscols_column, cl_columns);
 
-	double xa = ca->wstat.width_avg + (3*ca->wstat.width_deviation);
-	double xb = cb->wstat.width_avg + (3*cb->wstat.width_deviation);
+	double xa = ca->wstat.width_avg + (3.0 * ca->wstat.width_deviation);
+	double xb = cb->wstat.width_avg + (3.0 * cb->wstat.width_deviation);
 
 	return cmp_numbers(xa, xb);
 }
@@ -280,9 +280,15 @@ static void reduce_to_68(struct libscols_column *cl, size_t wanted)
 	if (st->width_deviation < 1.0)
 		return;
 
-	new = st->width_avg + st->width_deviation;
+	new = (size_t) (st->width_avg + st->width_deviation);
+
 	if (new < st->width_min)
 		new = st->width_min;
+	else if (new > st->width_max)
+		new = st->width_max;
+
+	if (new >= cl->width)
+		return;
 
 	if (cl->width - new > wanted)
 		cl->width -= wanted;
