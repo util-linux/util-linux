@@ -25,6 +25,7 @@ ts_skip_docker
 . "$TS_SELF/lsfd-functions.bash"
 ts_check_test_command "$TS_CMD_LSFD"
 ts_check_test_command "$TS_HELPER_MKFDS"
+lsfd_check_mkfds_factory netns
 
 ts_cd "$TS_OUTDIR"
 

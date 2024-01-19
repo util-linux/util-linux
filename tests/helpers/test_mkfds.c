@@ -2226,6 +2226,7 @@ static void *make_ping6(const struct factory *factory, struct fdesc fdescs[],
 				(struct sockaddr *)&in6);
 }
 
+#ifdef SIOCGSKNS
 static void *make_netns(const struct factory *factory _U_, struct fdesc fdescs[],
 			int argc _U_, char ** argv _U_)
 {
@@ -2256,6 +2257,7 @@ static void *make_netns(const struct factory *factory _U_, struct fdesc fdescs[]
 
 	return NULL;
 }
+#endif	/* SIOCGSKNS */
 
 static void *make_netlink(const struct factory *factory, struct fdesc fdescs[],
 			  int argc, char ** argv)
@@ -3757,6 +3759,7 @@ static const struct factory factories[] = {
 			PARAM_END
 		}
 	},
+#ifdef SIOCGSKNS
 	{
 		.name = "netns",
 		.desc = "open a file specifying a netns",
@@ -3768,6 +3771,7 @@ static const struct factory factories[] = {
 			PARAM_END
 		}
 	},
+#endif
 	{
 		.name = "netlink",
 		.desc = "AF_NETLINK sockets",
