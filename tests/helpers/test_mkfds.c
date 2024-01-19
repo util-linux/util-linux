@@ -508,6 +508,7 @@ static void lock_fn_posix_rw(int fd, const char *fname, int dupfd)
 	}
 }
 
+#ifdef F_OFD_SETLK
 static void lock_fn_ofd_r_(int fd, const char *fname, int dupfd)
 {
 	struct flock r = {
@@ -583,6 +584,7 @@ static void lock_fn_ofd_rw(int fd, const char *fname, int dupfd)
 		err(EXIT_FAILURE, "failed to lock(write)");
 	}
 }
+#endif	/* F_OFD_SETLK */
 
 static void lock_fn_lease_w(int fd, const char *fname, int dupfd)
 {
@@ -647,6 +649,7 @@ static void *make_w_regular_file(const struct factory *factory, struct fdesc fde
 		if (iWrite_bytes < 3)
 			iWrite_bytes = 3;
 		lock_fn = lock_fn_posix_rw;
+#ifdef F_OFD_SETLK
 	} else if (strcmp(sLock, "ofd-r-") == 0) {
 		bReadable = true;
 		if (iWrite_bytes < 1)
@@ -661,6 +664,12 @@ static void *make_w_regular_file(const struct factory *factory, struct fdesc fde
 		if (iWrite_bytes < 3)
 			iWrite_bytes = 3;
 		lock_fn = lock_fn_ofd_rw;
+#else
+	} else if (strcmp(sLock, "ofd-r-") == 0
+	      || strcmp(sLock, "ofd--w") == 0
+	      || strcmp(sLock, "ofd-rw") == 0) {
+		errx(EXIT_ENOSYS, "no availability for ofd lock");
+#endif	/* F_OFD_SETLK */
 	} else if (strcmp(sLock, "lease-w") == 0)
 		lock_fn = lock_fn_lease_w;
 	else

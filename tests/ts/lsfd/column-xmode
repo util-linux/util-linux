@@ -19,6 +19,7 @@ TS_DESC="MODE and XMODE columns"
 
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
+. "$TS_SELF/lsfd-functions.bash"
 
 ts_check_test_command "$TS_CMD_LSFD"
 ts_check_test_command "$TS_HELPER_MKFDS"
@@ -142,6 +143,10 @@ for m in flock-sh posix-r- ofd-r-; do
 	fi
     } > "$TS_OUTPUT" 2>&1
     wait "${MKFDS_PID}"
+    if [ "$?" == "$TS_EXIT_NOTSUPP" ]; then
+	ts_skip_subtest	"$m lock is not available"
+	continue
+    fi
     ts_finalize_subtest
 done
 
@@ -172,6 +177,10 @@ for m in flock-ex posix--w posix-rw  ofd--w ofd-rw lease-w; do
 	fi
     } > "$TS_OUTPUT" 2>&1
     wait "${MKFDS_PID}"
+    if [ "$?" == "$TS_EXIT_NOTSUPP" ]; then
+	ts_skip_subtest	"$m lock is not available"
+	continue
+    fi
     ts_finalize_subtest
 done
 
