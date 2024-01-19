@@ -645,16 +645,16 @@ static void log_audit(struct login_context *cxt, int status)
 	if (!pwd && cxt->username)
 		pwd = getpwnam(cxt->username);
 
-	audit_log_acct_message(audit_fd,
-			       AUDIT_USER_LOGIN,
-			       NULL,
-			       "login",
-			       cxt->username ? cxt->username : "(unknown)",
-			       pwd ? pwd->pw_uid : (unsigned int)-1,
-			       cxt->hostname,
-			       NULL,
-			       cxt->tty_name,
-			       status);
+	ignore_result( audit_log_acct_message(audit_fd,
+					      AUDIT_USER_LOGIN,
+					      NULL,
+					      "login",
+					      cxt->username ? cxt->username : "(unknown)",
+					      pwd ? pwd->pw_uid : (unsigned int)-1,
+					      cxt->hostname,
+					      NULL,
+					      cxt->tty_name,
+					      status) );
 
 	close(audit_fd);
 }
