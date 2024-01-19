@@ -68,10 +68,6 @@ static int set_cad(const char *arg)
 {
 	unsigned int cmd;
 
-	if (geteuid()) {
-		warnx(_("You must be root to set the Ctrl-Alt-Del behavior"));
-		return EXIT_FAILURE;
-	}
 	if (!strcmp("hard", arg))
 		cmd = LINUX_REBOOT_CMD_CAD_ON;
 	else if (!strcmp("soft", arg))
