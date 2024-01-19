@@ -302,6 +302,8 @@ libmnt_lock
 mnt_free_lock
 mnt_lock_file
 mnt_new_lock
+mnt_ref_lock
+mnt_unref_lock
 mnt_unlock_file
 mnt_lock_block_signals
 </SECTION>

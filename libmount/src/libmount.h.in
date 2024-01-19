@@ -444,6 +444,8 @@ extern const struct libmnt_optmap *mnt_get_builtin_optmap(int id);
 /* lock.c */
 extern struct libmnt_lock *mnt_new_lock(const char *datafile, pid_t id)
 			__ul_attribute__((warn_unused_result));
+extern void mnt_ref_lock(struct libmnt_lock *ml);
+extern void mnt_unref_lock(struct libmnt_lock *ml);
 extern void mnt_free_lock(struct libmnt_lock *ml);
 
 extern void mnt_unlock_file(struct libmnt_lock *ml);

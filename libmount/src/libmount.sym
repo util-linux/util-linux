@@ -375,3 +375,8 @@ MOUNT_2_39 {
 	mnt_table_enable_noautofs;
 	mnt_table_is_noautofs;
 } MOUNT_2_38;
+
+MOUNT_2_40 {
+	mnt_ref_lock;
+	mnt_unref_lock;
+} MOUNT_2_39;

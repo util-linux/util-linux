@@ -107,7 +107,7 @@ void mnt_free_context(struct libmnt_context *cxt)
 	mnt_unref_optlist(cxt->optlist_saved);
 	mnt_unref_optlist(cxt->optlist);
 
-	mnt_free_lock(cxt->lock);
+	mnt_unref_lock(cxt->lock);
 	mnt_free_update(cxt->update);
 
 	mnt_context_set_target_ns(cxt, NULL);
