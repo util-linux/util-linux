@@ -1623,10 +1623,14 @@ hwclock_exit(const struct hwclock_control *ctl
 	     , int status)
 {
 #ifdef HAVE_LIBAUDIT
+	int ret;
+
 	if (ctl->hwaudit_on && !ctl->testing) {
-		audit_log_user_message(hwaudit_fd, AUDIT_USYS_CONFIG,
-				       "op=change-system-time", NULL, NULL, NULL,
-				       status == EXIT_SUCCESS ? 1  : 0);
+		ret = audit_log_user_message(hwaudit_fd, AUDIT_USYS_CONFIG,
+					     "op=change-system-time", NULL, NULL, NULL,
+					     status == EXIT_SUCCESS ? 1  : 0);
+		if (ret == -1)
+			warn(_("could not send audit message"));
 	}
 	close(hwaudit_fd);
 #endif
