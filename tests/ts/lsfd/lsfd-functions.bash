@@ -82,3 +82,13 @@ lsfd_make_state_connected()
     # to that on newer kernels.
     sed -e 's/state=unconnected/state=connected/'
 }
+
+function lsfd_check_mkfds_factory
+{
+	local FACTORY=$1
+
+	ts_check_test_command "$TS_HELPER_MKFDS"
+	if ! "$TS_HELPER_MKFDS" --is-available "$FACTORY"; then
+		ts_skip "test_mkfds has no factory for $FACTORY"
+	fi
+}
