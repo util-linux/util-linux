@@ -574,25 +574,25 @@ static void init_nsfs_file_content(struct file *file)
 	int ns_fd;
 	int ns_type;
 
-	if (is_association (file, NS_CGROUP))
+	if (is_association(file, NS_CGROUP))
 		nsfs_file->clone_type = CLONE_NEWCGROUP;
-	else if (is_association (file, NS_IPC))
+	else if (is_association(file, NS_IPC))
 		nsfs_file->clone_type = CLONE_NEWIPC;
-	else if (is_association (file, NS_MNT))
+	else if (is_association(file, NS_MNT))
 		nsfs_file->clone_type = CLONE_NEWNS;
-	else if (is_association (file, NS_NET))
+	else if (is_association(file, NS_NET))
 		nsfs_file->clone_type = CLONE_NEWNET;
-	else if (is_association (file, NS_PID)
-		 || is_association (file, NS_PID4C))
+	else if (is_association(file, NS_PID)
+		 || is_association(file, NS_PID4C))
 		nsfs_file->clone_type = CLONE_NEWPID;
 #ifdef CLONE_NEWTIME
-	else if (is_association (file, NS_TIME)
-		 || is_association (file, NS_TIME4C))
+	else if (is_association(file, NS_TIME)
+		 || is_association(file, NS_TIME4C))
 		nsfs_file->clone_type = CLONE_NEWTIME;
 #endif
-	else if (is_association (file, NS_USER))
+	else if (is_association(file, NS_USER))
 		nsfs_file->clone_type = CLONE_NEWUSER;
-	else if (is_association (file, NS_UTS))
+	else if (is_association(file, NS_UTS))
 		nsfs_file->clone_type = CLONE_NEWUTS;
 
 	if (nsfs_file->clone_type != -1)

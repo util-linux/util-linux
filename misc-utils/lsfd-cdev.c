@@ -205,7 +205,7 @@ static struct ttydrv *read_ttydrv(const char *line)
 	if (sscanf(p, "%" stringify_value(TTY_DRIVERS_LINE_LEN0) "[^ ]", name) != 1)
 		return NULL;
 
-	p += strlen (name);
+	p += strlen(name);
 	if (sscanf(p, " %lu %lu-%lu ", &major,
 		   minor_range, minor_range + 1) != 3) {
 		if (sscanf(p, " %lu %lu ", &major, minor_range) == 2)

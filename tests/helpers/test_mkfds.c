@@ -306,7 +306,7 @@ static struct arg decode_arg(const char *pname,
 				v = NULL;
 		}
 	}
-	arg.v = ptype_classes [p->type].read (v, &p->defv);
+	arg.v = ptype_classes [p->type].read(v, &p->defv);
 	arg.free = ptype_classes [p->type].free;
 	return arg;
 }
@@ -681,7 +681,7 @@ static void *make_w_regular_file(const struct factory *factory, struct fdesc fde
 			int e = errno;
 			close(fd);
 			unlink(fname);
-			free (fname);
+			free(fname);
 			errno = e;
 			err(EXIT_FAILURE, "failed to dup %d -> %d", fd, fdescs[0].fd);
 		}
@@ -720,7 +720,7 @@ static void *make_w_regular_file(const struct factory *factory, struct fdesc fde
 			errno = e;
 			err(EXIT_FAILURE, "failed in dup2");
 		}
-		data = xmalloc(sizeof (iDupfd));
+		data = xmalloc(sizeof(iDupfd));
 		*((int *)data) = iDupfd;
 	}
 
@@ -740,7 +740,7 @@ static void free_after_closing_duplicated_fd(const struct factory * factory _U_,
 	if (data) {
 		int *fdp = data;
 		close(*fdp);
-		free (data);
+		free(data);
 	}
 }
 
@@ -1131,7 +1131,7 @@ static void *make_mmapped_packet_socket(const struct factory *factory, struct fd
 		    "failed to specify a buffer spec to a packet socket");
 	}
 
-	munmap_data = xmalloc(sizeof (*munmap_data));
+	munmap_data = xmalloc(sizeof(*munmap_data));
 	munmap_data->len = (size_t) req.tp_block_size * req.tp_block_nr;
 	munmap_data->ptr = mmap(NULL, munmap_data->len, PROT_WRITE, MAP_SHARED, sd, 0);
 	if (munmap_data->ptr == MAP_FAILED) {
@@ -2708,9 +2708,9 @@ static void *make_eventpoll(const struct factory *factory _U_, struct fdesc fdes
 			for (size_t j = i; j > 0; j--)
 				close(fdescs[j].fd);
 			errno = e;
-			err (EXIT_FAILURE,
-			     "failed to add fd %d to the eventpoll fd with epoll_ctl",
-			     fdescs[i].fd);
+			err(EXIT_FAILURE,
+			    "failed to add fd %d to the eventpoll fd with epoll_ctl",
+			    fdescs[i].fd);
 		}
 	}
 
@@ -4339,7 +4339,7 @@ int main(int argc, char **argv)
 			fdescs[i].close(fdescs[i].fd, fdescs[i].data);
 
 	if (factory->free)
-		factory->free (factory, data);
+		factory->free(factory, data);
 
 	exit(EXIT_SUCCESS);
 }
