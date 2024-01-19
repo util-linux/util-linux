@@ -2207,7 +2207,7 @@ int mnt_context_update_tabs(struct libmnt_context *cxt)
 	    && mnt_context_get_helper_status(cxt) == 0
 	    && mnt_context_utab_writable(cxt)) {
 
-		if (mnt_update_already_done(cxt->update, cxt->lock)) {
+		if (mnt_update_already_done(cxt->update)) {
 			DBG(CXT, ul_debugobj(cxt, "don't update: error evaluate or already updated"));
 			goto emit;
 		}
