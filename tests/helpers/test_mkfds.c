@@ -81,6 +81,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out, int status)
 	fprintf(out, " %s [options] FACTORY FD... [PARAM=VAL...]\n", program_invocation_short_name);
 
 	fputs("\nOptions:\n", out);
+	fputs(" -a, --is-available <factory>  exit 0 if the factory is available\n", out);
 	fputs(" -l, --list                    list available file descriptor factories and exit\n", out);
 	fputs(" -I, --parameters <factory>    list parameters the factory takes\n", out);
 	fputs(" -r, --comm <name>             rename self\n", out);
@@ -4202,6 +4203,15 @@ static void list_multiplexers(void)
 		puts(multiplexers[i].name);
 }
 
+static bool is_available(const char *factory)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(factories); i++)
+		if (strcmp(factories[i].name, factory) == 0)
+			return true;
+
+	return false;
+}
+
 int main(int argc, char **argv)
 {
 	int c;
@@ -4215,6 +4225,7 @@ int main(int argc, char **argv)
 	struct multiplexer *wait_event = NULL;
 
 	static const struct option longopts[] = {
+		{ "is-available",required_argument,NULL, 'a' },
 		{ "list",	no_argument, NULL, 'l' },
 		{ "parameters", required_argument, NULL, 'I' },
 		{ "comm",       required_argument, NULL, 'r' },
@@ -4227,10 +4238,12 @@ int main(int argc, char **argv)
 		{ NULL, 0, NULL, 0 },
 	};
 
-	while ((c = getopt_long(argc, argv, "lhqcI:r:w:WX", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "a:lhqcI:r:w:WX", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
 			usage(stdout, EXIT_SUCCESS);
+		case 'a':
+			exit(is_available(optarg)? 0: 1);
 		case 'l':
 			list_factories();
 			exit(EXIT_SUCCESS);
