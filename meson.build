@@ -3572,6 +3572,15 @@ if not is_disabler(exe)
   exes += exe
 endif
 
+exe = executable(
+  'test_boilerplate',
+  'Documentation/boilerplate.c',
+   include_directories : includes,
+   build_by_default: program_tests)
+if not is_disabler(exe)
+  exes += exe
+endif
+
 ############################################################
 
 # Let the test runner know whether we're running under asan and export

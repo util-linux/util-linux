@@ -122,6 +122,7 @@ include pam_lastlog2/Makemodule.am
 include bash-completion/Makemodule.am
 include man-common/Makemodule.am
 
+include Documentation/Makemodule.am
 include tests/Makemodule.am
 
 # Meson files
