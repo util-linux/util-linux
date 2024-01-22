@@ -144,8 +144,8 @@ static void xfallocate(int fd, int mode, off_t offset, off_t length)
 #ifdef HAVE_POSIX_FALLOCATE
 static void xposix_fallocate(int fd, off_t offset, off_t length)
 {
-	int error = posix_fallocate(fd, offset, length);
-	if (error < 0) {
+	errno = posix_fallocate(fd, offset, length);
+	if (errno != 0) {
 		err(EXIT_FAILURE, _("fallocate failed"));
 	}
 }
