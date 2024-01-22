@@ -20,6 +20,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <errno.h>
 #include <unistd.h>
 #include <getopt.h>
@@ -61,6 +62,10 @@ enum {
 	COL_FSTYPE,
 	COL_FS_OPTIONS,
 	COL_ID,
+	COL_INO_AVAIL,
+	COL_INO_TOTAL,
+	COL_INO_USED,
+	COL_INO_USEPERC,
 	COL_LABEL,
 	COL_MAJMIN,
 	COL_OLD_OPTIONS,
@@ -108,6 +113,10 @@ static struct colinfo infos[] = {
 	[COL_FSTYPE]       = { "FSTYPE",       0.10, SCOLS_FL_TRUNC, N_("filesystem type") },
 	[COL_FS_OPTIONS]   = { "FS-OPTIONS",   0.10, SCOLS_FL_TRUNC, N_("FS specific mount options") },
 	[COL_ID]           = { "ID",              2, SCOLS_FL_RIGHT, N_("mount ID") },
+	[COL_INO_AVAIL]    = { "INO.AVAIL",       5, SCOLS_FL_RIGHT, N_("number of available inodes") },
+	[COL_INO_TOTAL]    = { "INO.TOTAL",       5, SCOLS_FL_RIGHT, N_("total number of inodes") },
+	[COL_INO_USED]     = { "INO.USED",        5, SCOLS_FL_RIGHT, N_("number of used inodes") },
+	[COL_INO_USEPERC]  = { "INO.USE%",        3, SCOLS_FL_RIGHT, N_("percentage of INO.USED divided by INO.TOTAL") },
 	[COL_LABEL]        = { "LABEL",        0.10, 0, N_("filesystem label") },
 	[COL_MAJMIN]       = { "MAJ:MIN",         6, 0, N_("major:minor device number") },
 	[COL_OLD_OPTIONS]  = { "OLD-OPTIONS",  0.10, SCOLS_FL_TRUNC, N_("old mount options saved by --poll") },
@@ -476,6 +485,7 @@ static char *get_vfs_attr(struct libmnt_fs *fs, int sizetype)
 	struct statvfs buf;
 	uint64_t vfs_attr = 0;
 	char *sizestr;
+	bool no_bytes = false;
 
 	if (statvfs(mnt_fs_get_target(fs), &buf) != 0)
 		return NULL;
@@ -498,11 +508,38 @@ static char *get_vfs_attr(struct libmnt_fs *fs, int sizetype)
 				(double)(buf.f_blocks - buf.f_bfree) /
 				buf.f_blocks * 100);
 		return sizestr;
+	case COL_INO_AVAIL:
+		/* Quoted from startvfs(3):
+		 *
+		 *   Under Linux, f_favail is always the same as
+		 *   f_ffree, and there's no way for a filesystem to
+		 *   report otherwise.  This is not an issue, since no
+		 *   filesystems with an inode root reservation exist.
+		 */
+		no_bytes = true;
+		vfs_attr = buf.f_ffree;
+		break;
+	case COL_INO_TOTAL:
+		no_bytes = true;
+		vfs_attr = buf.f_files;
+		break;
+	case COL_INO_USED:
+		no_bytes = true;
+		vfs_attr = buf.f_files - buf.f_ffree;
+		break;
+	case COL_INO_USEPERC:
+		if (buf.f_files == 0)
+			return xstrdup("-");
+
+		xasprintf(&sizestr, "%.0f%%",
+				(double)(buf.f_files - buf.f_ffree) /
+				buf.f_files * 100);
+		return sizestr;
 	}
 
 	if (!vfs_attr)
 		sizestr = xstrdup("0");
-	else if (flags & FL_BYTES)
+	else if ((flags & FL_BYTES) || no_bytes)
 		xasprintf(&sizestr, "%ju", vfs_attr);
 	else
 		sizestr = size_to_human_string(SIZE_SUFFIX_1LETTER, vfs_attr);
@@ -673,6 +710,10 @@ static char *get_data(struct libmnt_fs *fs, int num, size_t *datasiz)
 	case COL_AVAIL:
 	case COL_USED:
 	case COL_USEPERC:
+	case COL_INO_TOTAL:
+	case COL_INO_AVAIL:
+	case COL_INO_USED:
+	case COL_INO_USEPERC:
 		str = get_vfs_attr(fs, col_id);
 		break;
 	case COL_FSROOT:
