@@ -699,6 +699,8 @@ extern int mnt_monitor_enable_kernel(struct libmnt_monitor *mn, int enable);
 extern int mnt_monitor_enable_userspace(struct libmnt_monitor *mn,
 				int enable, const char *filename);
 
+extern int mnt_monitor_veil_kernel(struct libmnt_monitor *mn, int enable);
+
 extern int mnt_monitor_get_fd(struct libmnt_monitor *mn);
 extern int mnt_monitor_close_fd(struct libmnt_monitor *mn);
 extern int mnt_monitor_wait(struct libmnt_monitor *mn, int timeout);

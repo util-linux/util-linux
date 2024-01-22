@@ -379,4 +379,5 @@ MOUNT_2_39 {
 MOUNT_2_40 {
 	mnt_ref_lock;
 	mnt_unref_lock;
+	mnt_monitor_veil_kernel;
 } MOUNT_2_39;
