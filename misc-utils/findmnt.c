@@ -1436,6 +1436,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	        "                          to device names\n"), out);
 	fputs(_(" -F, --tab-file <path>  alternative file for -s, -m or -k options\n"), out);
 	fputs(_(" -f, --first-only       print the first found filesystem only\n"), out);
+	fputs(_(" -I, --dfi              imitate the output of df(1) with -i option\n"), out);
 	fputs(_(" -i, --invert           invert the sense of matching\n"), out);
 	fputs(_(" -J, --json             use JSON output format\n"), out);
 	fputs(_(" -l, --list             use list format output\n"), out);
@@ -1531,6 +1532,7 @@ int main(int argc, char *argv[])
 		{ "canonicalize",   no_argument,       NULL, 'c'		 },
 		{ "direction",	    required_argument, NULL, 'd'		 },
 		{ "df",		    no_argument,       NULL, 'D'		 },
+		{ "dfi",	    no_argument,       NULL, 'I'		 },
 		{ "evaluate",	    no_argument,       NULL, 'e'		 },
 		{ "first-only",	    no_argument,       NULL, 'f'		 },
 		{ "fstab",	    no_argument,       NULL, 's'		 },
@@ -1595,7 +1597,7 @@ int main(int argc, char *argv[])
 	flags |= FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
-				"AabCcDd:ehiJfF:o:O:p::PklmM:nN:rst:uvRS:T:Uw:VxyH",
+				"AabCcDd:ehIiJfF:o:O:p::PklmM:nN:rst:uvRS:T:Uw:VxyH",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1631,6 +1633,10 @@ int main(int argc, char *argv[])
 			break;
 		case 'e':
 			flags |= FL_EVALUATE;
+			break;
+		case 'I':
+			flags &= ~FL_TREE;
+			flags |= FL_DF_INODES;
 			break;
 		case 'i':
 			flags |= FL_INVERT;
@@ -1769,7 +1775,16 @@ int main(int argc, char *argv[])
 	if (collist)
 		list_colunms();		/* print end exit */
 
-	if (!ncolumns && (flags & FL_DF)) {
+	if (!ncolumns && (flags & FL_DF_INODES)) {
+		add_column(columns, ncolumns++, COL_SOURCE);
+		add_column(columns, ncolumns++, COL_FSTYPE);
+		add_column(columns, ncolumns++, COL_INO_TOTAL);
+		add_column(columns, ncolumns++, COL_INO_USED);
+		add_column(columns, ncolumns++, COL_INO_AVAIL);
+		add_column(columns, ncolumns++, COL_INO_USEPERC);
+		add_column(columns, ncolumns++, COL_TARGET);
+	}
+	else if (!ncolumns && (flags & FL_DF)) {
 		add_column(columns, ncolumns++, COL_SOURCE);
 		add_column(columns, ncolumns++, COL_FSTYPE);
 		add_column(columns, ncolumns++, COL_SIZE);
