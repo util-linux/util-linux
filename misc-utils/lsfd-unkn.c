@@ -576,7 +576,7 @@ bool is_multiplexed_by_eventpoll(int fd, struct list_head *eventpolls)
 		struct anon_eventpoll_data *data = list_entry(t, struct anon_eventpoll_data, siblings);
 		if (data->count) {
 			if (bsearch(&fd, data->tfds,
-				    data->count, sizeof (data->tfds[0]),
+				    data->count, sizeof(data->tfds[0]),
 				    numcomp))
 			    return true;
 		}
@@ -1131,7 +1131,7 @@ static void anon_bpf_prog_get_more_info(struct anon_bpf_prog_data *prog_data)
 		       BPF_OBJ_NAME_LEN);
 		prog_data->name[BPF_OBJ_NAME_LEN] = '\0';
 	}
-	close (bpf_fd);
+	close(bpf_fd);
 }
 
 static int anon_bpf_prog_handle_fdinfo(struct unkn *unkn, const char *key, const char *value)
@@ -1314,7 +1314,7 @@ static void anon_bpf_map_get_more_info(struct anon_bpf_map_data *map_data)
 		       BPF_OBJ_NAME_LEN);
 		map_data->name[BPF_OBJ_NAME_LEN] = '\0';
 	}
-	close (bpf_fd);
+	close(bpf_fd);
 }
 
 static int anon_bpf_map_handle_fdinfo(struct unkn *unkn, const char *key, const char *value)

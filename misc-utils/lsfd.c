@@ -1530,7 +1530,7 @@ static void mark_poll_fds_as_multiplexed(char *buf,
 	}
 
  out:
-	free (local.iov_base);
+	free(local.iov_base);
 }
 
 static void mark_select_fds_as_multiplexed(char *buf,
