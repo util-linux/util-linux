@@ -65,7 +65,7 @@ INO_NS=
     fi
     wait "${MKFDS_PID}"
 } > "$TS_OUTPUT" 2>&1
-if [ "$?" == "$ENOSYS" ]; then
+if [ "$?" == "$TS_EXIT_NOTSUPP" ]; then
     ts_skip "ioctl(fd, SIOCGSKNS) is not available"
 fi
 

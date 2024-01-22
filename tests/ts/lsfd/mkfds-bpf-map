@@ -42,7 +42,7 @@ NAME=mkfds_map
     wait "${MKFDS_PID}"
 } > "$TS_OUTPUT" 2>&1
 
-if [ "$?" == "$ENOSYS" ]; then
+if [ "$?" == "$TS_EXIT_NOTSUPP" ]; then
     ts_skip "bpf(2) is not available"
 fi
 

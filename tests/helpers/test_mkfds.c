@@ -20,6 +20,7 @@
 #include "c.h"
 #include "xalloc.h"
 #include "test_mkfds.h"
+#include "exitcodes.h"
 
 #include <arpa/inet.h>
 #include <ctype.h>
@@ -64,7 +65,6 @@
 #include <time.h>
 #include <unistd.h>
 
-#define EXIT_ENOSYS 17
 #define EXIT_EPERM  18
 #define EXIT_ENOPROTOOPT 19
 #define EXIT_EPROTONOSUPPORT 20
@@ -1171,8 +1171,7 @@ static void *make_pidfd(const struct factory *factory, struct fdesc fdescs[],
 
 	int fd = pidfd_open(pid, 0);
 	if (fd < 0)
-		err((errno == ENOSYS? EXIT_ENOSYS: EXIT_FAILURE),
-		    "failed in pidfd_open(%d)", (int)pid);
+		err_nosys(EXIT_FAILURE, "failed in pidfd_open(%d)", (int)pid);
 	free_arg(&target_pid);
 
 	if (fd != fdescs[0].fd) {
@@ -2235,8 +2234,7 @@ static void *make_netns(const struct factory *factory _U_, struct fdesc fdescs[]
 
 	int ns = ioctl(sd, SIOCGSKNS);
 	if (ns < 0)
-		err((errno == ENOSYS? EXIT_ENOSYS: EXIT_FAILURE),
-		    "failed in ioctl(SIOCGSKNS)");
+		err_nosys(EXIT_FAILURE, "failed in ioctl(SIOCGSKNS)");
 	close(sd);
 
 	if (ns != fdescs[0].fd) {
@@ -2942,8 +2940,7 @@ static void *make_bpf_prog(const struct factory *factory, struct fdesc fdescs[],
 
 	bfd = syscall(SYS_bpf, BPF_PROG_LOAD, &attr, sizeof(attr));
 	if (bfd < 0)
-		err((errno == ENOSYS? EXIT_ENOSYS: EXIT_FAILURE),
-		    "failed in bpf(BPF_PROG_LOAD)");
+		err_nosys(EXIT_FAILURE, "failed in bpf(BPF_PROG_LOAD)");
 
 	if (bfd != fdescs[0].fd) {
 		if (dup2(bfd, fdescs[0].fd) < 0) {
@@ -3044,8 +3041,7 @@ static void *make_bpf_map(const struct factory *factory, struct fdesc fdescs[],
 
 	bfd = syscall(SYS_bpf, BPF_MAP_CREATE, &attr, sizeof(attr));
 	if (bfd < 0)
-		err((errno == ENOSYS? EXIT_ENOSYS: EXIT_FAILURE),
-		    "failed in bpf(BPF_MAP_CREATE)");
+		err_nosys(EXIT_FAILURE, "failed in bpf(BPF_MAP_CREATE)");
 
 	if (bfd != fdescs[0].fd) {
 		if (dup2(bfd, fdescs[0].fd) < 0) {
