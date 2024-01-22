@@ -36,6 +36,9 @@ struct libmnt_update {
 	char		*filename;
 	unsigned long	mountflags;
 
+	int		act_fd;
+	char		*act_filename;
+
 	unsigned int	ready : 1,
 			missing_options : 1;
 
@@ -59,6 +62,7 @@ struct libmnt_update *mnt_new_update(void)
 	if (!upd)
 		return NULL;
 
+	upd->act_fd = -1;
 	DBG(UPDATE, ul_debugobj(upd, "allocate"));
 	return upd;
 }
@@ -79,8 +83,11 @@ void mnt_free_update(struct libmnt_update *upd)
 	mnt_unref_lock(upd->lock);
 	mnt_unref_fs(upd->fs);
 	mnt_unref_table(upd->mountinfo);
+	if (upd->act_fd >= 0)
+		close(upd->act_fd);
 	free(upd->target);
 	free(upd->filename);
+	free(upd->act_filename);
 	free(upd);
 }
 
@@ -1006,12 +1013,114 @@ int mnt_update_emit_event(struct libmnt_update *upd)
 	if (asprintf(&filename, "%s.event", upd->filename) <= 0)
 		return -ENOMEM;
 
+	DBG(UPDATE, ul_debugobj(upd, "emitting utab event"));
+
 	fd = open(filename, O_WRONLY|O_CREAT|O_CLOEXEC,
 			    S_IWUSR|S_IRUSR|S_IRGRP|S_IROTH);
 	free(filename);
 	if (fd < 0)
 		return -errno;
 	close(fd);
+	return 0;
+}
+
+/*
+ * Let's use /run/mount/utab.act file to report to libmount monitor that
+ * libmount is working with utab. In this case, the monitor can ignore all
+ * events from kernel until entire mount (with all steps) is done.
+ *
+ * For example mount NFS with x-* options, means
+ * - create utab.act and mark it as used (by LOCK_SH)
+ * - exec /sbin/mount.nfs
+ *   - call mount(2) (kernel event on /proc/self/mounts)
+ *   - utab update (NFS stuff)
+ * - utab update (add x-* userspace options)
+ * - unlink utab.act (if not use anyone else)
+ * - release event by /run/mount/utab.event
+ *
+ * Note, this is used only when utab is in the game (x-* options).
+ */
+int mnt_update_start(struct libmnt_update *upd)
+{
+	int rc = 0;
+	mode_t oldmask;
+
+	if (!upd || !upd->filename)
+		return -EINVAL;
+
+	if (!upd->act_filename &&
+	    asprintf(&upd->act_filename, "%s.act", upd->filename) <= 0)
+		return -ENOMEM;
+
+	/* Use exclusive lock to avoid some other proces will remove the the
+	 * file before it's marked as used by LOCK_SH (below) */
+	rc = update_init_lock(upd, NULL);
+	if (rc)
+		return rc;
+
+	rc = mnt_lock_file(upd->lock);
+	if (rc)
+		return -MNT_ERR_LOCK;
+
+	DBG(UPDATE, ul_debugobj(upd, "creating act file"));
+
+	oldmask = umask(S_IRGRP|S_IWGRP|S_IXGRP|S_IROTH|S_IWOTH|S_IXOTH);
+	upd->act_fd = open(upd->act_filename, O_WRONLY|O_CREAT|O_CLOEXEC, S_IRUSR|S_IWUSR);
+	umask(oldmask);
+
+	if (upd->act_fd < 0) {
+		rc = -errno;
+		goto fail;
+	}
+
+	/* mark the file as used */
+	rc = flock(upd->act_fd, LOCK_SH);
+	if (rc) {
+		rc = -errno;
+		goto fail;
+	}
+
+	mnt_unlock_file(upd->lock);
+	return 0;
+fail:
+	DBG(UPDATE, ul_debugobj(upd, "act file failed [rc=%d]", rc));
+	mnt_unlock_file(upd->lock);
+	unlink(upd->act_filename);
+	close(upd->act_fd);
+	upd->act_fd = -1;
+	return rc;
+}
+
+int mnt_update_end(struct libmnt_update *upd)
+{
+	int rc;
+
+	if (!upd || upd->act_fd < 0)
+		return -EINVAL;
+
+	DBG(UPDATE, ul_debugobj(upd, "removing act file"));
+
+	/* make sure nobody else will use the file */
+	rc = mnt_lock_file(upd->lock);
+	if (rc)
+		return -MNT_ERR_LOCK;
+
+	/* mark the file as unused */
+	flock(upd->act_fd, LOCK_UN);
+	errno = 0;
+
+	/* check if nobody else need the file (if yes, then the file is under LOCK_SH) )*/
+	if (flock(upd->act_fd, LOCK_EX | LOCK_NB) != 0) {
+		if (errno == EWOULDBLOCK)
+			DBG(UPDATE, ul_debugobj(upd, "act file used, no unlink"));
+	} else {
+		DBG(UPDATE, ul_debugobj(upd, "unlinking act file"));
+		unlink(upd->act_filename);
+	}
+
+	mnt_unlock_file(upd->lock);
+	close(upd->act_fd);
+	upd->act_fd = -1;
 	return 0;
 }
 
