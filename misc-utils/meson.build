@@ -12,6 +12,11 @@ look_sources = files(
   'look.c',
 )
 
+lastlog2_sources = files(
+  'lastlog2.c',
+) + \
+  strutils_c
+
 mcookie_sources = files(
   'mcookie.c',
 ) + \
@@ -70,6 +75,26 @@ uuidd_sources = files(
 test_uuidd_sources = files(
   'test_uuidd.c',
 )
+
+if build_liblastlog2 and systemd.found()
+  lastlog2_service = configure_file(
+    input : 'lastlog2-import.service.in',
+    output : 'lastlog2-import.service',
+    configuration : conf)
+  install_data(
+    lastlog2_service,
+    install_dir : systemdsystemunitdir)
+endif
+
+if build_liblastlog2
+  lastlog2_tmpfiles = configure_file(
+    input : 'lastlog2.conf.in',
+    output : 'lastlog2.conf',
+    configuration : conf)
+  install_data(
+    lastlog2_tmpfiles,
+    install_dir : '/usr/lib/tmpfiles.d')
+endif
 
 if build_uuidd and systemd.found()
   uuidd_service = configure_file(

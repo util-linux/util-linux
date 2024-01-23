@@ -37,6 +37,8 @@ option('build-libblkid', type : 'feature',
        description : 'build libblkid and many related utilities')
 option('build-libuuid', type : 'feature',
        description : 'build libuuid and uuid utilities')
+option('build-liblastlog2', type : 'feature',
+       description : 'build liblastlog2 and lastlog2 utilities')
 option('build-libmount', type : 'feature',
        description : 'build libmount')
 option('build-libsmartcols', type : 'feature',
@@ -214,3 +216,9 @@ option('fs-search-path-extra',
 option('vendordir',
        type: 'string',
        description : 'directory for distribution provided econf files')
+
+option('pamlibdir', type : 'string',
+       description : 'directory for PAM modules')
+option('lastlog-compat-symlink', type : 'boolean',
+       value : 'false',
+       description : 'create lastlog compat symlink')

@@ -42,6 +42,7 @@ AUTHORS (merged projects & commands):
                        Theodore Ts'o <tytso@mit.edu>
       libmount:        Karel Zak <kzak@redhat.com>
       libuuid:         Theodore Ts'o <tytso@mit.edu>
+      liblastlog2:     Thorsten Kukuk <kukuk@suse.com>
       lscpu:           Cai Qian <qcai@redhat.com>
       lsclocks:        Thomas Weißschuh <thomas@t-8ch.de>
       lsblk:           Milan Broz <gmazyland@gmail.com>

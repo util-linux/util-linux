@@ -100,6 +100,20 @@ lsblk_LDADD += -ludev
 endif
 endif # BUILD_LSBLK
 
+if BUILD_LIBLASTLOG2
+usrbin_exec_PROGRAMS += lastlog2
+MANPAGES += misc-utils/lastlog2.8
+dist_noinst_DATA += misc-utils/lastlog2.8.adoc
+lastlog2_SOURCES = misc-utils/lastlog2.c lib/strutils.c
+lastlog2_LDADD = $(LDADD) liblastlog2.la -lsqlite3
+lastlog2_CFLAGS = $(AM_CFLAGS) -I$(ul_liblastlog2_incdir)
+systemdsystemunit_DATA += \
+	misc-utils/lastlog2-import.service
+tmpfiles_DATA += misc-utils/lastlog2.conf
+endif
+PATHFILES += misc-utils/lastlog2-import.service \
+             misc-utils/lastlog2.conf
+
 if BUILD_UUIDGEN
 usrbin_exec_PROGRAMS += uuidgen
 MANPAGES += misc-utils/uuidgen.1

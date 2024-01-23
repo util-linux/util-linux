@@ -1,0 +1,8 @@
+if BUILD_LIBLASTLOG2
+
+include pam_lastlog2/man/Makemodule.am
+include pam_lastlog2/src/Makemodule.am
+
+EXTRA_DIST     += pam_lastlog2/COPYING
+
+endif # BUILD_LIBLASTLOG2
