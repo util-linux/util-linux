@@ -24,6 +24,12 @@ enum {
 };
 
 /*
+ * drbd/drbd_int.h
+ */
+#define BM_BLOCK_SHIFT	12			 /* 4k per bit */
+#define BM_BLOCK_SIZE	 (1<<BM_BLOCK_SHIFT)
+
+/*
  * user/drbdmeta.c
  * We support v08 and v09
  */
@@ -140,6 +146,9 @@ static int probe_drbd_84(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!md)
 		return errno ? -errno : 1;
 
+	if (be32_to_cpu(read_unaligned_member(md, bm_bytes_per_bit)) != BM_BLOCK_SIZE)
+		return 1;
+
 	if (!is_zero_padded(member_ptr(md, padding_start),
 			    member_ptr(md, padding_end)))
 		return 1;
@@ -164,6 +173,9 @@ static int probe_drbd_90(blkid_probe pr, const struct blkid_idmag *mag)
 	md = blkid_probe_get_sb(pr, mag, struct meta_data_on_disk_9);
 	if (!md)
 		return errno ? -errno : 1;
+
+	if (be32_to_cpu(read_unaligned_member(md, bm_bytes_per_bit)) != BM_BLOCK_SIZE)
+		return 1;
 
 	if (!is_zero_padded(member_ptr(md, padding_start),
 			    member_ptr(md, padding_end)))
