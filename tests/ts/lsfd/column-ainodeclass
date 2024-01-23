@@ -42,7 +42,7 @@ for C in pidfd inotify; do
 	fi
 	wait "${MKFDS_PID}"
     } > "$TS_OUTPUT" 2>&1
-    if [ "$C-$?" == "pidfd-$ENOSYS" ]; then
+    if [ "$C-$?" == "pidfd-$TS_EXIT_NOTSUPP" ]; then
 	ts_skip_subtest "pidfd_open(2) is not available"
 	continue
     fi

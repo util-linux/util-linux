@@ -16,7 +16,6 @@
 #
 
 # The exit-status used in a test target.
-readonly ENOSYS=17
 readonly EPERM=18
 readonly ENOPROTOOPT=19
 readonly EPROTONOSUPPORT=20
@@ -82,4 +81,14 @@ lsfd_make_state_connected()
     # This rewriting adjusts the output of lsfd running on older kernels
     # to that on newer kernels.
     sed -e 's/state=unconnected/state=connected/'
+}
+
+function lsfd_check_mkfds_factory
+{
+	local FACTORY=$1
+
+	ts_check_test_command "$TS_HELPER_MKFDS"
+	if ! "$TS_HELPER_MKFDS" --is-available "$FACTORY"; then
+		ts_skip "test_mkfds has no factory for $FACTORY"
+	fi
 }

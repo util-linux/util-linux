@@ -1805,7 +1805,6 @@ AC_ARG_ENABLE([lsfd],
 UL_BUILD_INIT([lsfd])
 UL_REQUIRES_LINUX([lsfd])
 UL_REQUIRES_BUILD([lsfd], [libsmartcols])
-UL_REQUIRES_HAVE([lsfd], [linux_kcmp_h], [linux/kcmp.h header file])
 AM_CONDITIONAL([BUILD_LSFD], [test "x$build_lsfd" = xyes])
 
 AC_ARG_ENABLE([lslogins],

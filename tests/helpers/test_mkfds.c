@@ -20,6 +20,7 @@
 #include "c.h"
 #include "xalloc.h"
 #include "test_mkfds.h"
+#include "exitcodes.h"
 
 #include <arpa/inet.h>
 #include <ctype.h>
@@ -64,7 +65,6 @@
 #include <time.h>
 #include <unistd.h>
 
-#define EXIT_ENOSYS 17
 #define EXIT_EPERM  18
 #define EXIT_ENOPROTOOPT 19
 #define EXIT_EPROTONOSUPPORT 20
@@ -81,6 +81,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out, int status)
 	fprintf(out, " %s [options] FACTORY FD... [PARAM=VAL...]\n", program_invocation_short_name);
 
 	fputs("\nOptions:\n", out);
+	fputs(" -a, --is-available <factory>  exit 0 if the factory is available\n", out);
 	fputs(" -l, --list                    list available file descriptor factories and exit\n", out);
 	fputs(" -I, --parameters <factory>    list parameters the factory takes\n", out);
 	fputs(" -r, --comm <name>             rename self\n", out);
@@ -507,6 +508,7 @@ static void lock_fn_posix_rw(int fd, const char *fname, int dupfd)
 	}
 }
 
+#ifdef F_OFD_SETLK
 static void lock_fn_ofd_r_(int fd, const char *fname, int dupfd)
 {
 	struct flock r = {
@@ -582,6 +584,7 @@ static void lock_fn_ofd_rw(int fd, const char *fname, int dupfd)
 		err(EXIT_FAILURE, "failed to lock(write)");
 	}
 }
+#endif	/* F_OFD_SETLK */
 
 static void lock_fn_lease_w(int fd, const char *fname, int dupfd)
 {
@@ -646,6 +649,7 @@ static void *make_w_regular_file(const struct factory *factory, struct fdesc fde
 		if (iWrite_bytes < 3)
 			iWrite_bytes = 3;
 		lock_fn = lock_fn_posix_rw;
+#ifdef F_OFD_SETLK
 	} else if (strcmp(sLock, "ofd-r-") == 0) {
 		bReadable = true;
 		if (iWrite_bytes < 1)
@@ -660,6 +664,12 @@ static void *make_w_regular_file(const struct factory *factory, struct fdesc fde
 		if (iWrite_bytes < 3)
 			iWrite_bytes = 3;
 		lock_fn = lock_fn_ofd_rw;
+#else
+	} else if (strcmp(sLock, "ofd-r-") == 0
+	      || strcmp(sLock, "ofd--w") == 0
+	      || strcmp(sLock, "ofd-rw") == 0) {
+		errx(EXIT_ENOSYS, "no availability for ofd lock");
+#endif	/* F_OFD_SETLK */
 	} else if (strcmp(sLock, "lease-w") == 0)
 		lock_fn = lock_fn_lease_w;
 	else
@@ -1171,8 +1181,7 @@ static void *make_pidfd(const struct factory *factory, struct fdesc fdescs[],
 
 	int fd = pidfd_open(pid, 0);
 	if (fd < 0)
-		err((errno == ENOSYS? EXIT_ENOSYS: EXIT_FAILURE),
-		    "failed in pidfd_open(%d)", (int)pid);
+		err_nosys(EXIT_FAILURE, "failed in pidfd_open(%d)", (int)pid);
 	free_arg(&target_pid);
 
 	if (fd != fdescs[0].fd) {
@@ -2226,6 +2235,7 @@ static void *make_ping6(const struct factory *factory, struct fdesc fdescs[],
 				(struct sockaddr *)&in6);
 }
 
+#ifdef SIOCGSKNS
 static void *make_netns(const struct factory *factory _U_, struct fdesc fdescs[],
 			int argc _U_, char ** argv _U_)
 {
@@ -2235,8 +2245,7 @@ static void *make_netns(const struct factory *factory _U_, struct fdesc fdescs[]
 
 	int ns = ioctl(sd, SIOCGSKNS);
 	if (ns < 0)
-		err((errno == ENOSYS? EXIT_ENOSYS: EXIT_FAILURE),
-		    "failed in ioctl(SIOCGSKNS)");
+		err_nosys(EXIT_FAILURE, "failed in ioctl(SIOCGSKNS)");
 	close(sd);
 
 	if (ns != fdescs[0].fd) {
@@ -2257,6 +2266,7 @@ static void *make_netns(const struct factory *factory _U_, struct fdesc fdescs[]
 
 	return NULL;
 }
+#endif	/* SIOCGSKNS */
 
 static void *make_netlink(const struct factory *factory, struct fdesc fdescs[],
 			  int argc, char ** argv)
@@ -2942,8 +2952,7 @@ static void *make_bpf_prog(const struct factory *factory, struct fdesc fdescs[],
 
 	bfd = syscall(SYS_bpf, BPF_PROG_LOAD, &attr, sizeof(attr));
 	if (bfd < 0)
-		err((errno == ENOSYS? EXIT_ENOSYS: EXIT_FAILURE),
-		    "failed in bpf(BPF_PROG_LOAD)");
+		err_nosys(EXIT_FAILURE, "failed in bpf(BPF_PROG_LOAD)");
 
 	if (bfd != fdescs[0].fd) {
 		if (dup2(bfd, fdescs[0].fd) < 0) {
@@ -3044,8 +3053,7 @@ static void *make_bpf_map(const struct factory *factory, struct fdesc fdescs[],
 
 	bfd = syscall(SYS_bpf, BPF_MAP_CREATE, &attr, sizeof(attr));
 	if (bfd < 0)
-		err((errno == ENOSYS? EXIT_ENOSYS: EXIT_FAILURE),
-		    "failed in bpf(BPF_MAP_CREATE)");
+		err_nosys(EXIT_FAILURE, "failed in bpf(BPF_MAP_CREATE)");
 
 	if (bfd != fdescs[0].fd) {
 		if (dup2(bfd, fdescs[0].fd) < 0) {
@@ -3760,6 +3768,7 @@ static const struct factory factories[] = {
 			PARAM_END
 		}
 	},
+#ifdef SIOCGSKNS
 	{
 		.name = "netns",
 		.desc = "open a file specifying a netns",
@@ -3771,6 +3780,7 @@ static const struct factory factories[] = {
 			PARAM_END
 		}
 	},
+#endif
 	{
 		.name = "netlink",
 		.desc = "AF_NETLINK sockets",
@@ -4206,6 +4216,15 @@ static void list_multiplexers(void)
 		puts(multiplexers[i].name);
 }
 
+static bool is_available(const char *factory)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(factories); i++)
+		if (strcmp(factories[i].name, factory) == 0)
+			return true;
+
+	return false;
+}
+
 int main(int argc, char **argv)
 {
 	int c;
@@ -4219,6 +4238,7 @@ int main(int argc, char **argv)
 	struct multiplexer *wait_event = NULL;
 
 	static const struct option longopts[] = {
+		{ "is-available",required_argument,NULL, 'a' },
 		{ "list",	no_argument, NULL, 'l' },
 		{ "parameters", required_argument, NULL, 'I' },
 		{ "comm",       required_argument, NULL, 'r' },
@@ -4231,10 +4251,12 @@ int main(int argc, char **argv)
 		{ NULL, 0, NULL, 0 },
 	};
 
-	while ((c = getopt_long(argc, argv, "lhqcI:r:w:WX", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "a:lhqcI:r:w:WX", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
 			usage(stdout, EXIT_SUCCESS);
+		case 'a':
+			exit(is_available(optarg)? 0: 1);
 		case 'l':
 			list_factories();
 			exit(EXIT_SUCCESS);
