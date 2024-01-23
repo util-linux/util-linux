@@ -106,6 +106,7 @@ _findmnt_module()
 				--ascii
 				--canonicalize
 				--df
+				--dfi
 				--direction
 				--evaluate
 				--tab-file
