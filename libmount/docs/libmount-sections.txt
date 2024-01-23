@@ -302,6 +302,8 @@ libmnt_lock
 mnt_free_lock
 mnt_lock_file
 mnt_new_lock
+mnt_ref_lock
+mnt_unref_lock
 mnt_unlock_file
 mnt_lock_block_signals
 </SECTION>
@@ -454,5 +456,6 @@ mnt_monitor_get_fd
 mnt_monitor_close_fd
 mnt_monitor_next_change
 mnt_monitor_event_cleanup
+mnt_monitor_veil_kernel
 mnt_monitor_wait
 </SECTION>

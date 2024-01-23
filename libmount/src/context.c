@@ -107,7 +107,7 @@ void mnt_free_context(struct libmnt_context *cxt)
 	mnt_unref_optlist(cxt->optlist_saved);
 	mnt_unref_optlist(cxt->optlist);
 
-	mnt_free_lock(cxt->lock);
+	mnt_unref_lock(cxt->lock);
 	mnt_free_update(cxt->update);
 
 	mnt_context_set_target_ns(cxt, NULL);
@@ -2179,6 +2179,10 @@ int mnt_context_prepare_update(struct libmnt_context *cxt)
 		rc = mnt_update_set_fs(cxt->update, flags,
 					NULL, cxt->fs);
 
+	if (mnt_update_is_ready(cxt->update)) {
+		DBG(CXT, ul_debugobj(cxt, "update is ready"));
+		mnt_update_start(cxt->update);
+	}
 	return rc < 0 ? rc : 0;
 }
 
@@ -2207,7 +2211,7 @@ int mnt_context_update_tabs(struct libmnt_context *cxt)
 	    && mnt_context_get_helper_status(cxt) == 0
 	    && mnt_context_utab_writable(cxt)) {
 
-		if (mnt_update_already_done(cxt->update, cxt->lock)) {
+		if (mnt_update_already_done(cxt->update)) {
 			DBG(CXT, ul_debugobj(cxt, "don't update: error evaluate or already updated"));
 			goto emit;
 		}
@@ -2228,7 +2232,10 @@ int mnt_context_update_tabs(struct libmnt_context *cxt)
 emit:
 	if (rc == 0 && !mnt_context_within_helper(cxt))
 		mnt_update_emit_event(cxt->update);
+
 end:
+	mnt_update_end(cxt->update);
+
 	if (!mnt_context_switch_ns(cxt, ns_old))
 		return -MNT_ERR_NAMESPACE;
 	return rc;

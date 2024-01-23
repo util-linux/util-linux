@@ -444,6 +444,8 @@ extern const struct libmnt_optmap *mnt_get_builtin_optmap(int id);
 /* lock.c */
 extern struct libmnt_lock *mnt_new_lock(const char *datafile, pid_t id)
 			__ul_attribute__((warn_unused_result));
+extern void mnt_ref_lock(struct libmnt_lock *ml);
+extern void mnt_unref_lock(struct libmnt_lock *ml);
 extern void mnt_free_lock(struct libmnt_lock *ml);
 
 extern void mnt_unlock_file(struct libmnt_lock *ml);
@@ -696,6 +698,8 @@ extern void mnt_unref_monitor(struct libmnt_monitor *mn);
 extern int mnt_monitor_enable_kernel(struct libmnt_monitor *mn, int enable);
 extern int mnt_monitor_enable_userspace(struct libmnt_monitor *mn,
 				int enable, const char *filename);
+
+extern int mnt_monitor_veil_kernel(struct libmnt_monitor *mn, int enable);
 
 extern int mnt_monitor_get_fd(struct libmnt_monitor *mn);
 extern int mnt_monitor_close_fd(struct libmnt_monitor *mn);
