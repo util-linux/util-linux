@@ -997,7 +997,7 @@ static void collect_execve_file(struct path_cxt *pc, struct proc *proc,
 static void collect_fs_files(struct path_cxt *pc, struct proc *proc,
 			     bool sockets_only)
 {
-	enum association assocs[] = { ASSOC_EXE, ASSOC_CWD, ASSOC_ROOT };
+	enum association assocs[] = { ASSOC_CWD, ASSOC_ROOT };
 	const char *names[] = {
 		[ASSOC_CWD]  = "cwd",
 		[ASSOC_ROOT] = "root",
