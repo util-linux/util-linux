@@ -1909,6 +1909,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -C, --counter <name>:<expr>  define custom counter for --summary output\n"), out);
 	fputs(_("     --dump-counters          dump counter definitions\n"), out);
 	fputs(_("     --summary[=<when>]       print summary information (only, append, or never)\n"), out);
+	fputs(_("     --_drop-privilege        (testing purpose) do setuid(1) just after starting\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -H, --list-columns           list the available columns\n"), out);
@@ -2253,6 +2254,7 @@ int main(int argc, char *argv[])
 		OPT_DEBUG_FILTER = CHAR_MAX + 1,
 		OPT_SUMMARY,
 		OPT_DUMP_COUNTERS,
+		OPT_DROP_PRIVILEGE,
 	};
 	static const struct option longopts[] = {
 		{ "noheadings", no_argument, NULL, 'n' },
@@ -2271,6 +2273,7 @@ int main(int argc, char *argv[])
 		{ "counter",    required_argument, NULL, 'C' },
 		{ "dump-counters",no_argument, NULL, OPT_DUMP_COUNTERS },
 		{ "list-columns",no_argument, NULL, 'H' },
+		{ "_drop-privilege",no_argument,NULL,OPT_DROP_PRIVILEGE },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -2346,6 +2349,10 @@ int main(int argc, char *argv[])
 			break;
 		case OPT_DUMP_COUNTERS:
 			dump_counters = true;
+			break;
+		case OPT_DROP_PRIVILEGE:
+			if (setuid(1) == -1)
+				err(EXIT_FAILURE, _("failed to drop privilege"));
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
