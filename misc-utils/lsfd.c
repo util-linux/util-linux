@@ -741,7 +741,7 @@ static void free_file(struct file *file)
 }
 
 
-static struct proc *new_process(pid_t pid, struct proc *leader)
+static struct proc *new_proc(pid_t pid, struct proc *leader)
 {
 	struct proc *proc = xcalloc(1, sizeof(*proc));
 
@@ -1664,7 +1664,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	if (procfs_process_init_path(pc, pid) != 0)
 		return;
 
-	proc = new_process(pid, leader);
+	proc = new_proc(pid, leader);
 	proc->command = procfs_process_get_cmdname(pc, buf, sizeof(buf)) > 0 ?
 			xstrdup(buf) : xstrdup(_("(unknown)"));
 	procfs_process_get_uid(pc, &proc->uid);
