@@ -67,10 +67,10 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_SEPARATOR, stdout);
 	/* TRANSLATORS: 'command' refers to a program argument */
-	fputs(_("Set or examine pipe buffer sizes and optionally execute command."), stdout);
+	fputsln(_("Set or examine pipe buffer sizes and optionally execute command."), stdout);
 
 	fputs(USAGE_OPTIONS, stdout);
-	fputs(_(" -g, --get          examine pipe buffers"), stdout);
+	fputsln(_(" -g, --get          examine pipe buffers"), stdout);
 	/* TRANSLATORS: '%s' refers to a system file */
 	fprintf(stdout,
 	     _(" -s, --set <size>   set pipe buffer sizes\n"
@@ -78,16 +78,16 @@ static void __attribute__((__noreturn__)) usage(void)
 		PIPESZ_DEFAULT_SIZE_FILE);
 
 	fputs(USAGE_SEPARATOR, stdout);
-	fputs(_(" -f, --file <path>  act on a file"), stdout);
-	fputs(_(" -n, --fd <num>     act on a file descriptor"), stdout);
-	fputs(_(" -i, --stdin        act on standard input"), stdout);
-	fputs(_(" -o, --stdout       act on standard output"), stdout);
-	fputs(_(" -e, --stderr       act on standard error"), stdout);
+	fputsln(_(" -f, --file <path>  act on a file"), stdout);
+	fputsln(_(" -n, --fd <num>     act on a file descriptor"), stdout);
+	fputsln(_(" -i, --stdin        act on standard input"), stdout);
+	fputsln(_(" -o, --stdout       act on standard output"), stdout);
+	fputsln(_(" -e, --stderr       act on standard error"), stdout);
 
 	fputs(USAGE_SEPARATOR, stdout);
-	fputs(_(" -c, --check        do not continue after an error"), stdout);
-	fputs(_(" -q, --quiet        do not warn of non-fatal errors"), stdout);
-	fputs(_(" -v, --verbose      provide detailed output"), stdout);
+	fputsln(_(" -c, --check        do not continue after an error"), stdout);
+	fputsln(_(" -q, --quiet        do not warn of non-fatal errors"), stdout);
+	fputsln(_(" -v, --verbose      provide detailed output"), stdout);
 
 	fputs(USAGE_SEPARATOR, stdout);
 	fprintf(stdout, USAGE_HELP_OPTIONS(20));

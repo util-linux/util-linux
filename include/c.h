@@ -510,6 +510,12 @@ static inline void print_features(const char **features, const char *prefix)
 		exit(eval); \
 })
 
+static inline int fputsln(const char *s, FILE *stream) {
+	if (fputs(s, stream) == EOF)
+		return EOF;
+	return fputc('\n', stdout);
+}
+
 /*
  * seek stuff
  */

@@ -216,17 +216,17 @@ static void __attribute__((__noreturn__)) usage(void)
 		), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, stdout);
-	fputs(  _("Call block device ioctls from the command line."), stdout);
+	fputsln(  _("Call block device ioctls from the command line."), stdout);
 
 	fputs(USAGE_OPTIONS, stdout);
-	fputs(  _(" -q             quiet mode"), stdout);
-	fputs(  _(" -v             verbose mode"), stdout);
-	fputs(  _("     --report   print report for specified (or all) devices"), stdout);
+	fputsln(  _(" -q             quiet mode"), stdout);
+	fputsln(  _(" -v             verbose mode"), stdout);
+	fputsln(  _("     --report   print report for specified (or all) devices"), stdout);
 	fputs(USAGE_SEPARATOR, stdout);
 	fprintf(stdout, USAGE_HELP_OPTIONS(16));
 
 	fputs(USAGE_SEPARATOR, stdout);
-	fputs(_("Available commands:"), stdout);
+	fputsln(  _("Available commands:"), stdout);
 	fprintf(stdout, _(" %-25s get size in 512-byte sectors\n"), "--getsz");
 	for (i = 0; i < ARRAY_SIZE(bdcms); i++) {
 		if (bdcms[i].argname)

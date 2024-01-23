@@ -1267,16 +1267,16 @@ usage(void)
 
 #ifdef __linux__
 	fputs(USAGE_ARGUMENTS, stdout);
-	fputs(_(" <param> is either a numeric RTC parameter value or one of these aliases:"), stdout);
+	fputsln(_(" <param> is either a numeric RTC parameter value or one of these aliases:"), stdout);
 
 	while (param->name) {
 		fprintf(stdout, _("   - %1$s: %2$s (0x%3$x)\n"), param->name, param->help, param->id);
 		param++;
 	}
 
-	fputs(_("   See Kernel's include/uapi/linux/rtc.h for parameters and values."), stdout);
+	fputsln(_("   See Kernel's include/uapi/linux/rtc.h for parameters and values."), stdout);
 	fputs(USAGE_ARG_SEPARATOR, stdout);
-	fputs(_(" <param> and <value> accept hexadecimal values if prefixed with 0x, otherwise decimal."), stdout);
+	fputsln(_(" <param> and <value> accept hexadecimal values if prefixed with 0x, otherwise decimal."), stdout);
 #endif
 	fprintf(stdout, USAGE_MAN_TAIL("hwclock(8)"));
 	exit(EXIT_SUCCESS);

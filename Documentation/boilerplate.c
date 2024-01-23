@@ -33,20 +33,20 @@ static void __attribute__((__noreturn__)) usage(void)
 	fprintf(stdout, _(" %s [options] file...\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, stdout);
-	fputs(_("Short program description."), stdout);
+	fputsln(_("Short program description."), stdout);
 
 	fputs(USAGE_OPTIONS, stdout);
-	fputs(_(" -n, --no-argument       option does not use argument"), stdout);
-	fputs(_("     --optional[=<arg>]  option argument is optional"), stdout);
-	fputs(_(" -r, --required <arg>    option requires an argument"), stdout);
-	fputs(_(" -z                      no long option"), stdout);
-	fputs(_("     --xyzzy             a long option only"), stdout);
-	fputs(_(" -e, --extremely-long-long-option\n"
-		"                         use next line for description when needed"), stdout);
-	fputs(_(" -l, --long-explanation  an example of very verbose, and chatty option\n"
-		"                           description on two, or multiple lines, where the\n"
-		"                           consecutive lines are intended by two spaces"), stdout);
-	fputs(_(" -f, --foobar            next option description resets indent"), stdout);
+	fputsln(_(" -n, --no-argument       option does not use argument"), stdout);
+	fputsln(_("     --optional[=<arg>]  option argument is optional"), stdout);
+	fputsln(_(" -r, --required <arg>    option requires an argument"), stdout);
+	fputsln(_(" -z                      no long option"), stdout);
+	fputsln(_("     --xyzzy             a long option only"), stdout);
+	fputsln(_(" -e, --extremely-long-long-option\n"
+	       "                         use next line for description when needed"), stdout);
+	fputsln(_(" -l, --long-explanation  an example of very verbose, and chatty option\n"
+	       "                           description on two, or multiple lines, where the\n"
+	       "                           consecutive lines are intended by two spaces"), stdout);
+	fputsln(_(" -f, --foobar            next option description resets indent"), stdout);
 	fputs(USAGE_SEPARATOR, stdout);
 	fprintf(stdout, USAGE_HELP_OPTIONS(25)); /* char offset to align option descriptions */
 	fprintf(stdout, USAGE_MAN_TAIL("fixme-command-name(1)"));
