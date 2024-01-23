@@ -27,9 +27,9 @@ wipefs - wipe a signature from a device
 
 When used without any options, *wipefs* lists all visible filesystems and the offsets of their basic signatures. The default output is subject to change. So whenever possible, you should avoid using default outputs in your scripts. Always explicitly define expected columns by using *--output* _columns-list_ in environments where a stable output is required.
 
-*wipefs* calls the *BLKRRPART* ioctl when it has erased a partition-table signature to inform the kernel about the change. The ioctl is called as the last step and when all specified signatures from all specified devices are already erased. This feature can be used to wipe content on partitions devices as well as partition table on a disk device, for example by *wipefs -a /dev/sdc1 /dev/sdc2 /dev/sdc*.
+*wipefs* calls the *BLKRRPART* ioctl when it has erased a partition-table signature to inform the kernel about the change. The ioctl is called as the last step and when all specified signatures from all specified devices are already erased. This feature can be used to wipe content on partition devices as well as a partition table on a disk device, for example by *wipefs -a /dev/sdc1 /dev/sdc2 /dev/sdc*.
 
-Note that some filesystems and some partition tables store more magic strings on the device (e.g., FAT, ZFS, GPT). The *wipefs* command (since v2.31) lists all the offset where a magic strings have been detected.
+Note that some filesystems and some partition tables store more magic strings on the device (e.g., FAT, ZFS, GPT). The *wipefs* command (since v2.31) lists all the offsets where magic strings have been detected.
 
 When option *-a* is used, all magic strings that are visible for *libblkid*(3) are erased. In this case the *wipefs* scans the device again after each modification (erase) until no magic string is found.
 
