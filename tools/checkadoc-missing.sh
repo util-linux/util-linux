@@ -46,7 +46,7 @@ remove_repeats()
 cd $(git rev-parse --show-toplevel)
 
 for I in $(
-	find . -type f -name '*[[:alpha:]].[1-8].adoc' |grep -v "autom4te.cache\|\.libs/\|\.git"
+	find . -type f -name '*[[:alnum:]].[1-8].adoc' |grep -v "autom4te.cache\|\.libs/\|\.git"
 ); do
 	ADOCS_FILE=${I##*/}
 	ADOCS_LIST[${ADOCS_FILE%%.[0-9].adoc}]=1
