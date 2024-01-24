@@ -226,6 +226,7 @@ show_lastlogin (pam_handle_t *pamh, int ctrl, const char *user)
 		{
 			/* DB file not found --> it is OK */
 			ll2_unref_context(context);
+			free(error);
 			return PAM_SUCCESS;
 		}
 		if (error) {

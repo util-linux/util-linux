@@ -533,22 +533,21 @@ ll2_import_lastlog(struct ll2_context *context, const char *lastlog_file,
 
 	ll_fp = fopen(lastlog_file, "r");
 	if (ll_fp == NULL) {
-		if (error)
-			if (asprintf(error, "Failed to open '%s': %s",
+		if (error && asprintf(error, "Failed to open '%s': %s",
 				     lastlog_file, strerror(errno)) < 0)
-				return -ENOMEM;
+			return -ENOMEM;
 
 		return -1;
 	}
 
 
-	if (fstat (fileno(ll_fp), &statll) != 0) {
-		if (error)
-			if (asprintf(error, "Cannot get size of '%s': %s",
-				     lastlog_file, strerror(errno)) < 0)
-				return -ENOMEM;
+	if (fstat(fileno(ll_fp), &statll) != 0) {
+		retval = -1;
+		if (error && asprintf(error, "Cannot get size of '%s': %s",
+					lastlog_file, strerror(errno)) < 0)
+			retval = -ENOMEM;
 
-		return -1;
+		goto done;
 	}
 
 	setpwent();
@@ -589,6 +588,8 @@ ll2_import_lastlog(struct ll2_context *context, const char *lastlog_file,
 out_import_lastlog:
 	endpwent();
 	sqlite3_close(db);
+done:
+	fclose(ll_fp);
 
 	return retval;
 }
