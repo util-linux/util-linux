@@ -1086,7 +1086,8 @@ fail:
 	DBG(UPDATE, ul_debugobj(upd, "act file failed [rc=%d]", rc));
 	mnt_unlock_file(upd->lock);
 	unlink(upd->act_filename);
-	close(upd->act_fd);
+	if (upd->act_fd >= 0)
+		close(upd->act_fd);
 	upd->act_fd = -1;
 	return rc;
 }
