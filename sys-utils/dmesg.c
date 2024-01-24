@@ -647,6 +647,8 @@ static size_t max_threads_id_size(void)
 		return PID_CHARS_DEFAULT;
 
 	rdsize = read(fd, taskmax, sizeof(taskmax));
+	close(fd);
+
 	if (rdsize == -1)
 		return PID_CHARS_DEFAULT;
 
