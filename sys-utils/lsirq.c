@@ -50,7 +50,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	printf(_(" %s [options]\n"), program_invocation_short_name);
 	fputs(USAGE_SEPARATOR, stdout);
 
-	fputs(_("Utility to display kernel interrupt information."), stdout);
+	fputsln(_("Utility to display kernel interrupt information."), stdout);
 
 	fputs(USAGE_OPTIONS, stdout);
 	fputs(_(" -J, --json           use JSON output format\n"), stdout);

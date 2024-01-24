@@ -630,20 +630,20 @@ usage(void)
 	fprintf(stdout, _(" %s [options] <device>\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, stdout);
-	fputs(_("Wipe signatures from a device."), stdout);
+	fputsln(_("Wipe signatures from a device."), stdout);
 
 	fputs(USAGE_OPTIONS, stdout);
-	fputs(_(" -a, --all            wipe all magic strings (BE CAREFUL!)"), stdout);
-	fputs(_(" -b, --backup[=<dir>] create a signature backup in <dir> or $HOME"), stdout);
-	fputs(_(" -f, --force          force erasure"), stdout);
-	fputs(_(" -i, --noheadings     don't print headings"), stdout);
-	fputs(_(" -J, --json           use JSON output format"), stdout);
-	fputs(_(" -n, --no-act         do everything except the actual write() call"), stdout);
-	fputs(_(" -o, --offset <num>   offset to erase, in bytes"), stdout);
-	fputs(_(" -O, --output <list>  COLUMNS to display (see below)"), stdout);
-	fputs(_(" -p, --parsable       print out in parsable instead of printable format"), stdout);
-	fputs(_(" -q, --quiet          suppress output messages"), stdout);
-	fputs(_(" -t, --types <list>   limit the set of filesystem, RAIDs or partition tables"), stdout);
+	fputsln(_(" -a, --all            wipe all magic strings (BE CAREFUL!)"), stdout);
+	fputsln(_(" -b, --backup[=<dir>] create a signature backup in <dir> or $HOME"), stdout);
+	fputsln(_(" -f, --force          force erasure"), stdout);
+	fputsln(_(" -i, --noheadings     don't print headings"), stdout);
+	fputsln(_(" -J, --json           use JSON output format"), stdout);
+	fputsln(_(" -n, --no-act         do everything except the actual write() call"), stdout);
+	fputsln(_(" -o, --offset <num>   offset to erase, in bytes"), stdout);
+	fputsln(_(" -O, --output <list>  COLUMNS to display (see below)"), stdout);
+	fputsln(_(" -p, --parsable       print out in parsable instead of printable format"), stdout);
+	fputsln(_(" -q, --quiet          suppress output messages"), stdout);
+	fputsln(_(" -t, --types <list>   limit the set of filesystem, RAIDs or partition tables"), stdout);
 	fprintf(stdout,
 	     _("     --lock[=<mode>] use exclusive device lock (%s, %s or %s)\n"), "yes", "no", "nonblock");
 
