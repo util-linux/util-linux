@@ -122,7 +122,6 @@
 #  define ISSUE_SUPPORT
 #  if defined(HAVE_SCANDIRAT) && defined(HAVE_OPENAT)
 #    include <dirent.h>
-#    include "fileutils.h"
 #    define ISSUEDIR_SUPPORT
 #    define ISSUEDIR_EXT	".issue"
 #    define ISSUEDIR_EXTSIZ	(sizeof(ISSUEDIR_EXT) - 1)
