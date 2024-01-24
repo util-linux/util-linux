@@ -1687,6 +1687,10 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 			proc->kthread = !!(flags & PF_KTHREAD);
 		free(pat);
 	}
+	if (proc->kthread && !ctl->threads) {
+		free_proc(proc);
+		goto out;
+	}
 
 	collect_execve_file(pc, proc, ctl->sockets_only);
 
@@ -1735,6 +1739,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	else if (ctl->show_xmode)
 		walk_threads(ctl, pc, pid, proc, parse_proc_syscall);
 
+ out:
 	/* Let's be careful with number of open files */
         ul_path_close_dirfd(pc);
 }
