@@ -7,7 +7,7 @@
 # Makoto Kato <makoto.kt@gmail.com>, 2009-2010.
 # Takeshi Hamasaki <hmatrjp@users.sourceforge.jp>, 2011, 2013.
 # victory <victory.deb@gmail.com>, 2013.
-# Takeshi Hamasaki <hmatrjp@users.sourceforge.jp>, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022.
+# Takeshi Hamasaki <hmatrjp@users.sourceforge.jp>, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023.
 #
 # (Additional History)
 #  Once util-linux-ng was forked from util-linux,
@@ -15,10 +15,10 @@
 #  Work in 2013 is by courtesy of Yasuhiko Kamata <belphegor@belbel.or.jp>.
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.38-rc4\n"
+"Project-Id-Version: util-linux 2.39-rc3\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-05-17 11:52+0200\n"
-"PO-Revision-Date: 2022-04-14 01:12+0900\n"
+"POT-Creation-Date: 2023-04-19 10:22+0200\n"
+"PO-Revision-Date: 2023-06-30 22:59+0900\n"
 "Last-Translator: Takeshi Hamasaki <hmatrjp@users.sourceforge.jp>\n"
 "Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
 "Language: ja\n"
@@ -100,7 +100,8 @@ msgstr "パーティション番号の引数が間違っています"
 msgid "invalid start argument"
 msgstr "開始位置の引数が間違っています"
 
-#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111 misc-utils/fadvise.c:115
+#: disk-utils/addpart.c:62 disk-utils/resizepart.c:111
+#: misc-utils/fadvise.c:115
 msgid "invalid length argument"
 msgstr "長さの引数が間違っています"
 
@@ -181,10 +182,8 @@ msgid "get filesystem readahead"
 msgstr "ファイルシステム readahead 値を取得"
 
 #: disk-utils/blockdev.c:176
-#, fuzzy
-#| msgid "disk serial number"
 msgid "get disk sequence number"
-msgstr "ディスクのシリアル番号"
+msgstr "ディスクのシーケンス番号を取得"
 
 #: disk-utils/blockdev.c:180
 msgid "flush buffers"
@@ -502,7 +501,8 @@ msgstr "スクリプトファイル %s への書き込みに失敗しました"
 msgid "Select label type"
 msgstr "ラベルのタイプを選択"
 
-#: disk-utils/cfdisk.c:2197 disk-utils/fdisk.c:1162 disk-utils/fdisk-menu.c:492
+#: disk-utils/cfdisk.c:2197 disk-utils/fdisk.c:1162
+#: disk-utils/fdisk-menu.c:492
 msgid "Device does not contain a recognized partition table."
 msgstr "デバイスには認識可能なパーティション情報が含まれていません。"
 
@@ -647,7 +647,8 @@ msgstr "新しいサイズ: "
 msgid "Partition %zu resized."
 msgstr "パーティション %zu のサイズを変更しました。"
 
-#: disk-utils/cfdisk.c:2506 disk-utils/fdisk.c:1138 disk-utils/fdisk-menu.c:595
+#: disk-utils/cfdisk.c:2506 disk-utils/fdisk.c:1138
+#: disk-utils/fdisk-menu.c:595
 msgid "Device is open in read-only mode."
 msgstr "デバイスは読み込み専用でオープンされています。"
 
@@ -729,7 +730,7 @@ msgid " -r, --read-only          forced open cfdisk in read-only mode\n"
 msgstr " -r, --read-only          cfdisk を強制的に読み込み専用で開きます\n"
 
 #: disk-utils/cfdisk.c:2768 disk-utils/fdisk.c:1014 disk-utils/sfdisk.c:2350
-#: misc-utils/cal.c:421 sys-utils/dmesg.c:1499 text-utils/hexdump.c:114
+#: misc-utils/cal.c:421 sys-utils/dmesg.c:1499 text-utils/hexdump.c:121
 msgid "unsupported color mode"
 msgstr "未対応の色モードです"
 
@@ -784,8 +785,8 @@ msgstr ""
 "続けます ... "
 
 #: disk-utils/fdformat.c:146 disk-utils/fsck.minix.c:183
-#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:633 sys-utils/blkdiscard.c:92
-#: sys-utils/blkpr.c:213 sys-utils/tunelp.c:95
+#: disk-utils/swaplabel.c:123 misc-utils/wipefs.c:633
+#: sys-utils/blkdiscard.c:92 sys-utils/blkpr.c:213 sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [オプション] <デバイス>\n"
@@ -1152,21 +1153,21 @@ msgstr "未対応の消去モードです"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "デバイスのプロパティ (セクタサイズ及びジオメトリ) はただ 1 つのデバイスだけに対して使うべきです。"
 
-#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122 disk-utils/fsck.cramfs.c:723
-#: disk-utils/mkfs.bfs.c:211 disk-utils/mkfs.cramfs.c:799
-#: disk-utils/partx.c:975 disk-utils/raw.c:136 disk-utils/raw.c:149
-#: disk-utils/raw.c:161 disk-utils/raw.c:202 misc-utils/cal.c:525
-#: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:592
-#: misc-utils/whereis.c:603 misc-utils/whereis.c:614 misc-utils/whereis.c:659
-#: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:207
-#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1579
-#: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:918
-#: sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656 sys-utils/mount.c:867
-#: sys-utils/mount.c:875 sys-utils/mount.c:924 sys-utils/mount.c:937
-#: sys-utils/mount.c:1009 sys-utils/mountpoint.c:191 sys-utils/pivot_root.c:71
-#: sys-utils/swapoff.c:258 sys-utils/swapon.c:1011 sys-utils/switch_root.c:270
-#: sys-utils/umount.c:629 term-utils/setterm.c:1197 text-utils/col.c:584
-#: text-utils/more.c:2096
+#: disk-utils/fdisk.c:1107 disk-utils/fdisk.c:1122
+#: disk-utils/fsck.cramfs.c:723 disk-utils/mkfs.bfs.c:211
+#: disk-utils/mkfs.cramfs.c:799 disk-utils/partx.c:975 disk-utils/raw.c:136
+#: disk-utils/raw.c:149 disk-utils/raw.c:161 disk-utils/raw.c:202
+#: misc-utils/cal.c:525 misc-utils/findfs.c:58 misc-utils/look.c:147
+#: misc-utils/whereis.c:592 misc-utils/whereis.c:603 misc-utils/whereis.c:614
+#: misc-utils/whereis.c:659 schedutils/chrt.c:442 schedutils/ionice.c:264
+#: schedutils/taskset.c:207 sys-utils/chcpu.c:355 sys-utils/chmem.c:429
+#: sys-utils/dmesg.c:1579 sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321
+#: sys-utils/losetup.c:918 sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656
+#: sys-utils/mount.c:867 sys-utils/mount.c:875 sys-utils/mount.c:924
+#: sys-utils/mount.c:937 sys-utils/mount.c:1009 sys-utils/mountpoint.c:191
+#: sys-utils/pivot_root.c:71 sys-utils/swapoff.c:258 sys-utils/swapon.c:1011
+#: sys-utils/switch_root.c:270 sys-utils/umount.c:629
+#: term-utils/setterm.c:1197 text-utils/col.c:584 text-utils/more.c:2096
 msgid "bad usage"
 msgstr "指定が間違っています"
 
@@ -1439,10 +1440,8 @@ msgid "return to main menu"
 msgstr "メインメニューに戻ります"
 
 #: disk-utils/fdisk-menu.c:125
-#, fuzzy
-#| msgid "return from BSD to DOS"
 msgid "return from BSD to DOS (MBR)"
-msgstr "BSD から DOS に戻ります"
+msgstr "BSD から DOS (MBR) に戻ります"
 
 #: disk-utils/fdisk-menu.c:127 disk-utils/fdisk-menu.c:227
 msgid "return from protective/hybrid MBR to GPT"
@@ -1461,10 +1460,8 @@ msgid "create a new empty SGI (IRIX) partition table"
 msgstr "新しい (何もない) SGI (IRIX) パーティションテーブルを作成します"
 
 #: disk-utils/fdisk-menu.c:141
-#, fuzzy
-#| msgid "create a new empty DOS partition table"
 msgid "create a new empty MBR (DOS) partition table"
-msgstr "新しい (何もない) DOS パーティションテーブルを作成します"
+msgstr "新しい (何もない) DOS (MBR) パーティションテーブルを作成します"
 
 #: disk-utils/fdisk-menu.c:142
 msgid "create a new empty Sun partition table"
@@ -1662,16 +1659,12 @@ msgid "Command (m for help): "
 msgstr "コマンド (m でヘルプ): "
 
 #: disk-utils/fdisk-menu.c:439
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "All unwritten changes will be lost, do you really want to quit? "
 msgid ""
 "\n"
 "All unwritten changes will be lost, do you really want to quit? (y/n)"
 msgstr ""
 "\n"
-"書き込まれていない変更は失われます、本当に終了しますか? "
+"書き込まれていない変更は失われます、本当に終了しますか? (y/n)"
 
 #: disk-utils/fdisk-menu.c:452
 #, c-format
@@ -2041,7 +2034,7 @@ msgstr "オプション '%s' には引数が必要です"
 msgid "invalid argument of -r: %d"
 msgstr "-r の引数が正しくありません: %d"
 
-#: disk-utils/fsck.c:1658
+#: disk-utils/fsck.c:1648
 msgid "the -l option can be used with one device only -- ignore"
 msgstr "-l オプションは 1 つのデバイスのみを指定した場合にのみ有効です -- エラーを無視しています"
 
@@ -2203,18 +2196,17 @@ msgstr "書き込みに失敗しました: %s"
 #: disk-utils/fsck.cramfs.c:433
 #, c-format
 msgid "lchown failed: %s"
-msgstr "lchown に失敗しました: %s"
+msgstr "lchown が失敗しました: %s"
 
 #: disk-utils/fsck.cramfs.c:437
-#, fuzzy, c-format
-#| msgid "mknod failed: %s"
+#, c-format
 msgid "chmod failed: %s"
-msgstr "mknod に失敗しました: %s"
+msgstr "chmod が失敗しました: %s"
 
 #: disk-utils/fsck.cramfs.c:442
 #, c-format
 msgid "utimes failed: %s"
-msgstr "utimes に失敗しました: %s"
+msgstr "utimes が失敗しました: %s"
 
 #: disk-utils/fsck.cramfs.c:471
 #, c-format
@@ -2227,16 +2219,12 @@ msgid "mkdir failed: %s"
 msgstr "mkdirが失敗しました: %s"
 
 #: disk-utils/fsck.cramfs.c:502
-#, fuzzy
-#| msgid "illegal year value"
 msgid "illegal filename"
-msgstr "年の値が間違っています"
+msgstr "不正なファイル名"
 
 #: disk-utils/fsck.cramfs.c:504
-#, fuzzy
-#| msgid "Enter script file name"
 msgid "dangerous filename"
-msgstr "スクリプトファイル名を入力してください"
+msgstr "危険なファイル名"
 
 #: disk-utils/fsck.cramfs.c:508
 msgid "filename length is zero"
@@ -2828,16 +2816,7 @@ msgid "Make an SCO bfs filesystem.\n"
 msgstr "SCO bfs ファイルシステムを作成します。\n"
 
 #: disk-utils/mkfs.bfs.c:81
-#, fuzzy, c-format
-#| msgid ""
-#| "\n"
-#| "Options:\n"
-#| " -N, --inodes=NUM    specify desired number of inodes\n"
-#| " -V, --vname=NAME    specify volume name\n"
-#| " -F, --fname=NAME    specify file system name\n"
-#| " -v, --verbose       explain what is being done\n"
-#| " -c                  this option is silently ignored\n"
-#| " -l                  this option is silently ignored\n"
+#, c-format
 msgid ""
 "\n"
 "Options:\n"
@@ -2857,6 +2836,7 @@ msgstr ""
 " -v, --verbose       何が行われるのかを詳しく表示します\n"
 " -c                  このオプションは無視されます\n"
 " -l                  このオプションは無視されます\n"
+" --lock[=<mode>]     排他デバイスロックを使用する (yes, no または nonblock)\n"
 
 #: disk-utils/mkfs.bfs.c:146
 msgid "invalid number of inodes"
@@ -3000,7 +2980,7 @@ msgstr ""
 " -V, --verbose      何が行われるのかを詳しく表示します;\n"
 "                      2 つ以上 -V を指定すると、実際には何も行わないようになります。\n"
 
-#: disk-utils/mkfs.c:133 include/c.h:310 login-utils/su-common.c:1292
+#: disk-utils/mkfs.c:133 include/c.h:310 login-utils/su-common.c:1290
 #: login-utils/sulogin.c:864 login-utils/sulogin.c:868 sys-utils/flock.c:123
 #: sys-utils/rtcwake.c:623
 #, c-format
@@ -3059,10 +3039,8 @@ msgid " -z             make explicit holes"
 msgstr "-z         明示的なホールを指定します"
 
 #: disk-utils/mkfs.cramfs.c:144
-#, fuzzy
-#| msgid "     --lock[=<mode>]     use exclusive device lock (%s, %s or %s)\n"
 msgid " -l[=<mode>]    use exclusive device lock (yes, no or nonblock)"
-msgstr "     --lock[=<モード>]      排他的デバイスロックを使用します(%s, %s, %s のどれか)\n"
+msgstr " -l[=<モード>]      排他的デバイスロックを使用します(yes, no, nonblock のどれか)"
 
 #: disk-utils/mkfs.cramfs.c:145
 msgid " dirname        root of the filesystem to be compressed"
@@ -6634,7 +6612,7 @@ msgstr "ディスクラベルを %s に書き込みました。(%s ディスク�
 msgid "Disklabel written to %s."
 msgstr "ディスクラベルを %s に書き込みました。"
 
-#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:777
+#: libfdisk/src/bsd.c:920 libfdisk/src/context.c:776
 msgid "Syncing disks."
 msgstr "ディスクを同期しています。"
 
@@ -6663,58 +6641,58 @@ msgstr "Bsize"
 msgid "Cpg"
 msgstr "Cpg"
 
-#: libfdisk/src/context.c:767
+#: libfdisk/src/context.c:766
 #, c-format
 msgid "%s: fsync device failed"
 msgstr "%s: デバイスの fsync に失敗しました"
 
-#: libfdisk/src/context.c:772 misc-utils/wipefs.c:619
+#: libfdisk/src/context.c:771 misc-utils/wipefs.c:619
 #, c-format
 msgid "%s: close device failed"
 msgstr "%s: デバイスのクローズに失敗しました"
 
-#: libfdisk/src/context.c:855
+#: libfdisk/src/context.c:854
 msgid "Calling ioctl() to re-read partition table."
 msgstr "ioctl() を呼び出してパーティション情報を再読み込みします。"
 
-#: libfdisk/src/context.c:863
+#: libfdisk/src/context.c:862
 msgid "Re-reading the partition table failed."
 msgstr "パーティション情報の再読み込みに失敗しました。"
 
-#: libfdisk/src/context.c:865
+#: libfdisk/src/context.c:864
 msgid "The kernel still uses the old table. The new table will be used at the next reboot or after you run partprobe(8) or partx(8)."
 msgstr "カーネルは古い情報を使用しています。新しい情報を利用するには、システムを再起動するか、もしくは partprobe(8) または partx(8) を実行してください。"
 
-#: libfdisk/src/context.c:955
+#: libfdisk/src/context.c:954
 #, c-format
 msgid "Failed to remove partition %zu from system"
 msgstr "パーティション %zu の削除に失敗しました"
 
-#: libfdisk/src/context.c:964
+#: libfdisk/src/context.c:963
 #, c-format
 msgid "Failed to update system information about partition %zu"
 msgstr "システム内のパーティション %zu の情報更新に失敗しました"
 
-#: libfdisk/src/context.c:984
+#: libfdisk/src/context.c:983
 #, c-format
 msgid "Failed to add partition %zu to system"
 msgstr "パーティション %zu をシステムに追加できませんでした"
 
-#: libfdisk/src/context.c:990
+#: libfdisk/src/context.c:989
 msgid "The kernel still uses the old partitions. The new table will be used at the next reboot. "
 msgstr "カーネルは古い情報を使用しています。新しい情報はシステムを再起動した後に利用されます。"
 
-#: libfdisk/src/context.c:1194
+#: libfdisk/src/context.c:1193
 msgid "cylinder"
 msgid_plural "cylinders"
 msgstr[0] "シリンダ"
 
-#: libfdisk/src/context.c:1195
+#: libfdisk/src/context.c:1194
 msgid "sector"
 msgid_plural "sectors"
 msgstr[0] "セクタ"
 
-#: libfdisk/src/context.c:1551
+#: libfdisk/src/context.c:1550
 msgid "Incomplete geometry setting."
 msgstr "ジオメトリ設定が不完全です。"
 
@@ -7396,11 +7374,11 @@ msgstr "すべきことは何もありません。既に正常な順序になっ
 msgid "Failed to fix partitions order."
 msgstr "パーティションの順序を修正できませんでした。"
 
-#: libfdisk/src/partition.c:879
+#: libfdisk/src/partition.c:871
 msgid "Free space"
 msgstr "空き領域"
 
-#: libfdisk/src/partition.c:1373
+#: libfdisk/src/partition.c:1365
 #, c-format
 msgid "Failed to resize partition #%zu."
 msgstr "パーティション #%zu のサイズ変更に失敗しました。"
@@ -9339,78 +9317,78 @@ msgstr "（コアをダンプしました）"
 msgid "change owner or mode for pseudo-terminal failed"
 msgstr "疑似端末の所有者またはモードの変更に失敗しました"
 
-#: login-utils/su-common.c:377
+#: login-utils/su-common.c:375
 msgid "failed to modify environment"
 msgstr "環境変数の変更に失敗しました"
 
-#: login-utils/su-common.c:413
+#: login-utils/su-common.c:411
 msgid "may not be used by non-root users"
 msgstr "root 以外のユーザが使用することはできません"
 
-#: login-utils/su-common.c:437
+#: login-utils/su-common.c:435
 msgid "authentication failed"
 msgstr "認証に失敗しました"
 
-#: login-utils/su-common.c:450
+#: login-utils/su-common.c:448
 #, c-format
 msgid "cannot open session: %s"
 msgstr "セッションを開くことができません: %s"
 
-#: login-utils/su-common.c:469
+#: login-utils/su-common.c:467
 msgid "cannot block signals"
 msgstr "シグナルをブロックできません"
 
-#: login-utils/su-common.c:486
+#: login-utils/su-common.c:484
 msgid "cannot initialize signal mask for session"
 msgstr "セッションのシグナルマスクを初期化できません"
 
-#: login-utils/su-common.c:494
+#: login-utils/su-common.c:492
 msgid "cannot initialize signal mask"
 msgstr "シグナルマスクを初期化できません"
 
-#: login-utils/su-common.c:504
+#: login-utils/su-common.c:502
 msgid "cannot set signal handler for session"
 msgstr "セッションのシグナルハンドラを設定できません"
 
-#: login-utils/su-common.c:512 misc-utils/uuidd.c:439
+#: login-utils/su-common.c:510 misc-utils/uuidd.c:439
 #: sys-utils/lscpu-virt.c:489
 msgid "cannot set signal handler"
 msgstr "シグナルハンドラを設定できません"
 
-#: login-utils/su-common.c:520
+#: login-utils/su-common.c:518
 msgid "cannot set signal mask"
 msgstr "シグナルマスクを設定できません"
 
-#: login-utils/su-common.c:547 term-utils/script.c:961
+#: login-utils/su-common.c:545 term-utils/script.c:961
 #: term-utils/scriptlive.c:296
 msgid "failed to create pseudo-terminal"
 msgstr "疑似端末の作成に失敗しました"
 
-#: login-utils/su-common.c:549 term-utils/script.c:968
+#: login-utils/su-common.c:547 term-utils/script.c:968
 #: term-utils/scriptlive.c:298
 #, fuzzy
 #| msgid "failed to initialize %s handler"
 msgid "failed to initialize signals handler"
 msgstr "%s ハンドラの準備に失敗しました"
 
-#: login-utils/su-common.c:564
+#: login-utils/su-common.c:562
 #, fuzzy
 #| msgid "cannot set signal handler"
 msgid "cannot set child signal handler"
 msgstr "シグナルハンドラを設定できません"
 
-#: login-utils/su-common.c:574 term-utils/script.c:977
+#: login-utils/su-common.c:572 term-utils/script.c:977
 #: term-utils/scriptlive.c:305
 msgid "cannot create child process"
 msgstr "子プロセスを作成できません"
 
-#: login-utils/su-common.c:593 sys-utils/nsenter.c:510
+#: login-utils/su-common.c:591 sys-utils/nsenter.c:510
 #: sys-utils/switch_root.c:189
 #, c-format
 msgid "cannot change directory to %s"
 msgstr "ディレクトリを %s に変更できません"
 
-#: login-utils/su-common.c:619 term-utils/scriptlive.c:354
+#: login-utils/su-common.c:617 term-utils/scriptlive.c:354
 #, c-format
 msgid ""
 "\n"
@@ -9419,62 +9397,62 @@ msgstr ""
 "\n"
 "セッションが終了しました, シェルを停止しています..."
 
-#: login-utils/su-common.c:630
+#: login-utils/su-common.c:628
 #, c-format
 msgid " ...killed.\n"
 msgstr " ...停止しました。\n"
 
-#: login-utils/su-common.c:727
+#: login-utils/su-common.c:725
 msgid "failed to set the PATH environment variable"
 msgstr "PATH 環境変数の設定に失敗しました"
 
-#: login-utils/su-common.c:804
+#: login-utils/su-common.c:802
 msgid "cannot set groups"
 msgstr "グループを設定できません"
 
-#: login-utils/su-common.c:810
+#: login-utils/su-common.c:808
 #, fuzzy, c-format
 #| msgid "failed to parse level '%s'"
 msgid "failed to establish user credentials: %s"
 msgstr "ターゲットユーザーの PAM 資格情報による認証を試みる"
 
-#: login-utils/su-common.c:820
+#: login-utils/su-common.c:818
 msgid "cannot set group id"
 msgstr "グループ ID を設定できません"
 
-#: login-utils/su-common.c:822
+#: login-utils/su-common.c:820
 msgid "cannot set user id"
 msgstr "ユーザ ID を設定できません"
 
-#: login-utils/su-common.c:886
+#: login-utils/su-common.c:884
 msgid " -m, -p, --preserve-environment      do not reset environment variables\n"
 msgstr " -m, -p, --preserve-environment      環境変数をリセットしません\n"
 
-#: login-utils/su-common.c:887
+#: login-utils/su-common.c:885
 msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
 msgstr ""
 " -w, --whitelist-environment <list>  指定した変数をリセットしません\n"
 "\n"
 
-#: login-utils/su-common.c:890
+#: login-utils/su-common.c:888
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr " -g, --group <グループ>          プライマリグループを指定します\n"
 
-#: login-utils/su-common.c:891
+#: login-utils/su-common.c:889
 msgid " -G, --supp-group <group>        specify a supplemental group\n"
 msgstr " -G, --supp-group <グループ>            補助グループを指定します\n"
 
-#: login-utils/su-common.c:894
+#: login-utils/su-common.c:892
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr "  -h, --help                     このちょっとした使い方を表示する\n"
 
-#: login-utils/su-common.c:895
+#: login-utils/su-common.c:893
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr ""
 " -c, --command <コマンド>        -c を利用して単一のコマンドを\n"
 "                                    シェルに渡します\n"
 
-#: login-utils/su-common.c:896
+#: login-utils/su-common.c:894
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
@@ -9482,23 +9460,23 @@ msgstr ""
 " --session-command <コマンド>    -c を利用して単一のコマンドをシェルに渡し、\n"
 "                                    新しいセッションの作成は行いません\n"
 
-#: login-utils/su-common.c:898
+#: login-utils/su-common.c:896
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr ""
 " -f, --fast                      シェルに -f を渡します\n"
 "                                   (csh や tcsh 向けの機能)\n"
 
-#: login-utils/su-common.c:899
+#: login-utils/su-common.c:897
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr ""
 " -s, --shell <シェル>            /etc/shells で許可していれば、\n"
 "                                   <シェル>を起動します\n"
 
-#: login-utils/su-common.c:900
+#: login-utils/su-common.c:898
 msgid " -P, --pty                       create a new pseudo-terminal\n"
 msgstr " -P, --pty                       新しい疑似端末を作成します\n"
 
-#: login-utils/su-common.c:910
+#: login-utils/su-common.c:908
 #, c-format
 msgid ""
 " %1$s [options] -u <user> [[--] <command>]\n"
@@ -9507,7 +9485,7 @@ msgstr ""
 " %1$s [オプション] -u <ユーザー> [[--] <コマンド>]\n"
 " %1$s [オプション] [-] [<ユーザー> [<引数>...]]\n"
 
-#: login-utils/su-common.c:915
+#: login-utils/su-common.c:913
 msgid ""
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
 "not given, fall back to su(1)-compatible semantics and execute standard shell.\n"
@@ -9517,16 +9495,16 @@ msgstr ""
 "-u を指定しない場合、従来の su(1) と互換性のある動作となり、標準シェルが起動\n"
 "されます。なお、-c, -f, -l, -s のオプションは -u と排他関係にあります。\n"
 
-#: login-utils/su-common.c:920
+#: login-utils/su-common.c:918
 msgid " -u, --user <user>               username\n"
 msgstr " -u, --user <ユーザー>             ユーザー名\n"
 
-#: login-utils/su-common.c:931
+#: login-utils/su-common.c:929
 #, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr " %s [オプション] [-] [<ユーザ> [<引数>...]]\n"
 
-#: login-utils/su-common.c:935
+#: login-utils/su-common.c:933
 msgid ""
 "Change the effective user ID and group ID to that of <user>.\n"
 "A mere - implies -l.  If <user> is not given, root is assumed.\n"
@@ -9535,52 +9513,52 @@ msgstr ""
 "なお、 - は -l の意味を含みます。<ユーザ>を指定しない場合は root であるものと\n"
 "みなされます。\n"
 
-#: login-utils/su-common.c:1012
+#: login-utils/su-common.c:1010
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
 msgstr[0] "%d 個以上の補助グループを指定することはできません"
 
-#: login-utils/su-common.c:1018
+#: login-utils/su-common.c:1016
 #, c-format
 msgid "group %s does not exist"
 msgstr "グループ %s が存在しません"
 
-#: login-utils/su-common.c:1127
+#: login-utils/su-common.c:1125
 msgid "--pty is not supported for your system"
 msgstr "--pty はあなたのシステムではサポートされていません"
 
-#: login-utils/su-common.c:1161
+#: login-utils/su-common.c:1159
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr "--preserve-environment を無視します。--login と排他的なためです。"
 
-#: login-utils/su-common.c:1175
+#: login-utils/su-common.c:1173
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr "オプション --{shell,fast,command,session-command,login} と --user のオプションは、同時に使用することができません"
 
-#: login-utils/su-common.c:1178
+#: login-utils/su-common.c:1176
 msgid "no command was specified"
 msgstr "コマンドが指定されていません"
 
-#: login-utils/su-common.c:1190
+#: login-utils/su-common.c:1188
 msgid "only root can specify alternative groups"
 msgstr "補助グループを指定できるのは root だけです"
 
-#: login-utils/su-common.c:1201
+#: login-utils/su-common.c:1199
 #, c-format
 msgid "user %s does not exist or the user entry does not contain all the required fields"
 msgstr "ユーザー %s が存在しないかユーザーのエントリーが必要な情報を含んでいません"
 
-#: login-utils/su-common.c:1236
+#: login-utils/su-common.c:1234
 #, c-format
 msgid "using restricted shell %s"
 msgstr "制限シェル %s を使用しています"
 
-#: login-utils/su-common.c:1257
+#: login-utils/su-common.c:1255
 msgid "failed to allocate pty handler"
 msgstr "pty ハンドラの割り当てに失敗しました"
 
-#: login-utils/su-common.c:1283
+#: login-utils/su-common.c:1281
 #, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "警告: ディレクトリを %s に変更できません"
@@ -10242,9 +10220,9 @@ msgstr "正しくないファイル記述子"
 
 #: misc-utils/fadvise.c:156
 #, fuzzy, c-format
-#| msgid "failed to read pipe"
+#| msgid "failed to parse %s"
 msgid "failed to advise: %s"
-msgstr "パイプの読み込みに失敗しました"
+msgstr "%s の処理に失敗しました"
 
 #: misc-utils/fincore.c:61
 msgid "file data resident in memory in pages"
@@ -13117,7 +13095,7 @@ msgid "closing %s failed"
 msgstr "%s を閉じる際にエラーが発生しました"
 
 #: misc-utils/mcookie.c:168 sys-utils/blkdiscard.c:204 sys-utils/fstrim.c:542
-#: text-utils/hexdump.c:117
+#: text-utils/hexdump.c:124
 msgid "failed to parse length"
 msgstr "長さの解釈に失敗しました"
 
@@ -15229,7 +15207,7 @@ msgid "%s: %s ioctl failed"
 msgstr "%s: FITRIM ioctl に失敗しました"
 
 #: sys-utils/blkdiscard.c:208 sys-utils/fstrim.c:546 sys-utils/losetup.c:710
-#: text-utils/hexdump.c:124
+#: text-utils/hexdump.c:131
 msgid "failed to parse offset"
 msgstr "開始位置の解釈に失敗しました"
 
@@ -26034,15 +26012,12 @@ msgstr "terminfo の読み込み中にトラブルが発生しました"
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr "端末 `%s' は不明な端末です。 `dumb' として処理します"
 
-#, c-format
 #~ msgid "chown failed: %s"
 #~ msgstr "chown に失敗しました: %s"
 
-#, c-format
 #~ msgid "waitpid failed (%s)"
 #~ msgstr "waitpid に失敗しました (%s)"
 
-#, c-format
 #~ msgid "Interrupted %s"
 #~ msgstr "%s に割り込みが入りました"
 
@@ -26058,19 +26033,15 @@ msgstr "端末 `%s' は不明な端末です。 `dumb' として処理します"
 #~ " -h, --help             このヘルプを表示して終了します\n"
 #~ " -V, --version          バージョン情報を表示して終了します\n"
 
-#, c-format
 #~ msgid "%s: BLKZEROOUT ioctl failed"
 #~ msgstr "%s: BLKZEROOUT ioctl に失敗しました"
 
-#, c-format
 #~ msgid "%s: BLKSECDISCARD ioctl failed"
 #~ msgstr "%s: BLKSECDISCARD ioctl に失敗しました"
 
-#, c-format
 #~ msgid "%s: BLKDISCARD ioctl failed"
 #~ msgstr "%s: BLKDISCARD ioctl に失敗しました"
 
-#, c-format
 #~ msgid ""
 #~ " -a, --all               mount all filesystems mentioned in fstab\n"
 #~ " -c, --no-canonicalize   don't canonicalize paths\n"
@@ -26085,7 +26056,6 @@ msgstr "端末 `%s' は不明な端末です。 `dumb' として処理します"
 #~ " -F, --fork              各デバイスのマウント処理を fork して行います (-a と併用します)\n"
 #~ " -T, --fstab <path>      /etc/fstab の代替となるファイルを指定します\n"
 
-#, c-format
 #~ msgid ""
 #~ " -o, --options <list>    comma-separated list of mount options\n"
 #~ " -O, --test-opts <list>  limit the set of filesystems (use with -a)\n"
@@ -26097,7 +26067,7 @@ msgstr "端末 `%s' は不明な端末です。 `dumb' として処理します"
 #~ " -r, --read-only         ファイルシステムを読み込み専用でマウントします (-o ro と同じ動作です)\n"
 #~ " -t, --types <リスト>    ファイルシステムの種類を指定します\n"
 
-#, fuzzy, c-format
+#, fuzzy
 #~| msgid ""
 #~| "\n"
 #~| "Source:\n"
@@ -26127,7 +26097,6 @@ msgstr "端末 `%s' は不明な端末です。 `dumb' として処理します"
 #~ " PARTLABEL=<ラベル>      パーティションのラベルで識別します\n"
 #~ " PARTUUID=<uuid>         パーティションの UUID で識別します\n"
 
-#, c-format
 #~ msgid ""
 #~ " <device>                specifies device by path\n"
 #~ " <directory>             mountpoint for bind mounts (see --bind/rbind)\n"
@@ -26137,7 +26106,6 @@ msgstr "端末 `%s' は不明な端末です。 `dumb' として処理します"
 #~ " <ディレクトリ>          バインドマウント用のマウントポイントを指定します (--bind/rbind を参照)\n"
 #~ " <ファイル>              ループバックマウント用のファイルを指定します\n"
 
-#, c-format
 #~ msgid ""
 #~ "\n"
 #~ "Operations:\n"
@@ -26151,7 +26119,6 @@ msgstr "端末 `%s' は不明な端末です。 `dumb' として処理します"
 #~ " -M, --move              サブツリーを別の場所に移動します\n"
 #~ " -R, --rbind             サブツリーとすべてのサブマウントを別の場所にマウントします\n"
 
-#, c-format
 #~ msgid ""
 #~ " --make-shared           mark a subtree as shared\n"
 #~ " --make-slave            mark a subtree as slave\n"
@@ -26163,7 +26130,6 @@ msgstr "端末 `%s' は不明な端末です。 `dumb' として処理します"
 #~ " --make-private          サブツリーをプライベートとしてマークします\n"
 #~ " --make-unbindable       サブツリーをバインド不可能としてマークします\n"
 
-#, c-format
 #~ msgid ""
 #~ " --make-rshared          recursively mark a whole subtree as shared\n"
 #~ " --make-rslave           recursively mark a whole subtree as slave\n"
@@ -26212,6 +26178,9 @@ msgstr "端末 `%s' は不明な端末です。 `dumb' として処理します"
 
 #~ msgid "pipe failed"
 #~ msgstr "pipe が失敗しました"
+
+#~ msgid "failed to read pipe"
+#~ msgstr "パイプの読み込みに失敗しました"
 
 #~ msgid ""
 #~ "\n"
