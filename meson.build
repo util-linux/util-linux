@@ -1103,6 +1103,7 @@ exe = executable(
   include_directories : includes,
   link_with : [lib_common,
                lib_smartcols,
+	       lib_lastlog2,
                logindefs_c],
   dependencies : [lib_selinux,
                   lib_systemd],
