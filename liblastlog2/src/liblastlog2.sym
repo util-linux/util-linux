@@ -1,4 +1,4 @@
-LIBLASTLOG2_2.0 {
+LIBLASTLOG2_2_40 {
   global:
         ll2_new_context;
         ll2_unref_context;
