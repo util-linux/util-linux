@@ -232,7 +232,7 @@ _inode-number_,_source-of-inode_.
 
 INOTIFY.INODES.RAW <``string``>::
 List of monitoring inodes. The format of the element
-is _inode-number_,_device-major_:_device-minor_.
+is _inode-number_``,``_device-major_``:``_device-minor_.
 
 KNAME <``string``>::
 //
@@ -468,13 +468,13 @@ STTYPE <``string``>::
 Raw file types returned from *stat*(2): BLK, CHR, DIR, FIFO, LINK, REG, SOCK, or UNKN.
 
 TCP.LADDR <``string``>::
-Local L3 (INET.LADDR or INET6.LADDR) address and local TCP port.
+Local L3 (_INET.LADDR_ or _INET6.LADDR_) address and local TCP port.
 
 TCP.LPORT <``number``>::
 Local TCP port.
 
 TCP.RADDR <``string``>::
-Remote L3 (INET.RADDR or INET6.RADDR) address and remote TCP port.
+Remote L3 (_INET.RADDR_ or _INET6.RADDR_) address and remote TCP port.
 
 TCP.RPORT <``number``>::
 Remote TCP port.
@@ -498,9 +498,9 @@ TUN.IFACE <``string``>::
 Network interface behind the tun device.
 
 TYPE <``string``>::
-Cooked version of STTYPE. It is same as STTYPE with exceptions.
-For SOCK, print the value for SOCK.PROTONAME.
-For UNKN, print the value for AINODECLASS if SOURCE is anon_inodefs.
+Cooked version of _STTYPE_. It is same as _STTYPE_ with exceptions.
+For _SOCK_, print the value for _SOCK.PROTONAME_.
+For _UNKN_, print the value for _AINODECLASS_ if _SOURCE_ is `anon_inodefs`.
 
 UDP.LADDR <``string``>::
 Local IP address and local UDP port.
