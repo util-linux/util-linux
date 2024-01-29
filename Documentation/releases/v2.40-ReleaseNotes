@@ -19,7 +19,7 @@ libsmartcols:
     for output, reducing resource usage and improving performance. Currently,
     this feature is employed in lsfd and lsblk. Example:
 
-	lsblk --filter 'NAME !~ "sd[ab]"'q
+	lsblk --filter 'NAME !~ "sd[ab]"'
 
     The library now supports counters (based on filters). For instance:
 
