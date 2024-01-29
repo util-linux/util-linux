@@ -1,5 +1,5 @@
 # includes
-lastlog2incdir = $(includedir)
+lastlog2incdir = $(includedir)/liblastlog2
 lastlog2inc_HEADERS = liblastlog2/src/lastlog2.h
 
 usrlib_exec_LTLIBRARIES += liblastlog2.la
@@ -11,18 +11,22 @@ liblastlog2_la_SOURCES = \
 EXTRA_liblastlog2_la_DEPENDENCIES = \
 	liblastlog2/src/liblastlog2.sym
 
+liblastlog2_la_LIBADD = $(SQLITE3_LIBS)
+
 liblastlog2_la_CFLAGS = \
 	$(AM_CFLAGS) \
 	 $(SOLIB_CFLAGS) \
 	 -I$(ul_liblastlog2_incdir) \
-	 -Iliblastlog2/src
+	 -I$(top_srcdir)/liblastlog2/src
 
 liblastlog2_la_LDFLAGS = $(SOLIB_LDFLAGS)
 if HAVE_VSCRIPT
-liblastlog2_la_LDFLAGS += liblastlog2_la_LDFLAGS += $(VSCRIPT_LDFLAGS),$(top_srcdir)/liblastlog2/src/liblastlog2.sym
+liblastlog2_la_LDFLAGS += $(VSCRIPT_LDFLAGS),$(top_srcdir)/liblastlog2/src/liblastlog2.sym
 endif
-liblastlog2_la_LDFLAGS += -lsqlite3
 liblastlog2_la_LDFLAGS += -version-info $(LIBLASTLOG2_VERSION_INFO)
+
+EXTRA_DIST += liblastlog2/src/liblastlog2.sym
+
 
 if BUILD_LIBLASTLOG2_TESTS
 check_PROGRAMS += \
@@ -35,9 +39,8 @@ check_PROGRAMS += \
 	test_lastlog2_y2038_sqlite3_time
 
 lastlog2_tests_cflags  = -DTEST_PROGRAM $(liblastlog2_la_CFLAGS)
-lastlog2_tests_ldflags =
-lastlog2_tests_ldadd   = $(LDADD) liblastlog2.la
-lastlog2_tests_ldflags += -static -lsqlite3
+lastlog2_tests_ldflags = -static
+lastlog2_tests_ldadd   = $(LDADD) liblastlog2.la $(SOLIB_LDFLAGS) $(SQLITE3_LIBS)
 
 test_lastlog2_dlopen_SOURCES = liblastlog2/src/tests/tst_dlopen.c
 test_lastlog2_dlopen_CFLAGS = $(lastlog2_tests_cflags)
@@ -76,9 +79,6 @@ test_lastlog2_y2038_sqlite3_time_LDADD = $(lastlog2_tests_ldadd)
 
 endif #BUILD_LIBLIBLASTLOG2_TESTS
 
-
-
-EXTRA_DIST += liblastlog2/src/liblastlog2.sym
 
 # move lib from $(usrlib_execdir) to $(libdir) if needed
 install-exec-hook-liblastlog2:

@@ -353,6 +353,7 @@ AC_CHECK_HEADERS([ \
 	paths.h \
 	pty.h \
 	security/pam_appl.h \
+	security/pam_modules.h \
 	shadow.h \
 	stdint.h \
 	stdio_ext.h \
@@ -390,7 +391,6 @@ AC_CHECK_HEADERS([ \
 	unistd.h \
 	utmp.h \
 	utmpx.h \
-	sqlite3.h \
 ])
 
 # There is a collision in old kernel-headers. The both files mount.h and fs.h
@@ -509,11 +509,11 @@ have_pty_h=$ac_cv_header_pty_h
 have_security_openpam_h=$ac_cv_header_security_openpam_h
 have_security_pam_appl_h=$ac_cv_header_security_pam_appl_h
 have_security_pam_misc_h=$ac_cv_header_security_pam_misc_h
+have_security_pam_modules_h=$ac_cv_header_security_pam_modules_h
 have_shadow_h=$ac_cv_header_shadow_h
 have_sys_signalfd_h=$ac_cv_header_sys_signalfd_h
 have_utmpx_h=$ac_cv_header_utmpx_h
 have_mntent_h=$ac_cv_header_mntent_h
-have_sqlite3_h=$ac_cv_header_sqlite3_h
 
 AS_CASE([$linux_os:$have_linux_version_h],
   [yes:no],
@@ -1225,26 +1225,33 @@ dnl liblastlog2
 dnl
 AC_ARG_ENABLE([liblastlog2],
   AS_HELP_STRING([--disable-liblastlog2], [do not build liblastlog2 and lastlog2 utilities]),
-  [enable_liblastlog2=no], [enable_liblastlog2=check]
+  [], [UL_DEFAULT_ENABLE([liblastlog2], [yes])]
 )
+UL_BUILD_INIT([liblastlog2])
+
+have_sqlite3=no
+AS_IF([test "x$build_liblastlog2" = xyes], [
+  PKG_CHECK_MODULES([SQLITE3], [sqlite3], [have_sqlite3=yes], [have_sqlite3=no])
+])
+UL_REQUIRES_HAVE([liblastlog2], [sqlite3], [sqlite3 library])
+AC_SUBST([SQLITE3_LIBS])
+
 AC_SUBST([LIBLASTLOG2_VERSION])
 AC_SUBST([LIBLASTLOG2_VERSION_INFO])
 AC_DEFINE_UNQUOTED([LIBLASTLOG2_VERSION], ["$LIBLASTLOG2_VERSION"], [liblastlog2 version string])
+AM_CONDITIONAL([BUILD_LIBLASTLOG2], [test "x$build_liblastlog2" = xyes])
+AM_CONDITIONAL([BUILD_LIBLASTLOG2_TESTS], [test "x$build_liblastlog2" = xyes && test "x$enable_static" = xyes])
 
-have_lastlog2=no
-AS_IF([test "x$enable_liblastlog2" != xno], [
-  AS_CASE([$enable_liblastlog2:$have_sqlite3_h],
-    [yes:no],
-       [AC_MSG_ERROR([lastlog2 selected but sqlite3.h not found])],
-    [check:no],
-       [AC_MSG_WARN([sqlite3.h not found, do not build with lastlog2 support])],
-    [*:yes],
-       [have_lastlog2=yes
-        AC_DEFINE(HAVE_LIBLASTLOG2, 1, [Define to 1 if you have the -llastlog2.])]
-  )
-])
-AM_CONDITIONAL([BUILD_LIBLASTLOG2], [test "x$have_lastlog2" = xyes])
-AM_CONDITIONAL([BUILD_LIBLASTLOG2_TESTS], [test "x$have_lastlog2" = xyes && test "x$enable_static" = xyes])
+
+AC_ARG_ENABLE([pam_lastlog2],
+  AS_HELP_STRING([--disable-pam-lastlog2], [do not build PAM lastlog2 module]),
+  [], [UL_DEFAULT_ENABLE([pam_lastlog2], [check])]
+)
+UL_BUILD_INIT([pam_lastlog2])
+UL_REQUIRES_BUILD([pam_lastlog2], [liblastlog2])
+UL_REQUIRES_HAVE([pam_lastlog2], [security_pam_modules_h], [pam_modules.h header file])
+AM_CONDITIONAL([BUILD_PAM_LASTLOG2], [test "x$build_pam_lastlog2" = xyes])
+
 
 dnl
 dnl libblkid
@@ -2986,7 +2993,7 @@ AC_MSG_RESULT([
         tmpfilesdir:               ${with_tmpfilesdir}
         libeconf support:          ${have_econf}
         Btrfs support:             ${have_btrfs}
-        lastlog2 support:          ${have_lastlog2}
+        lastlog2 support:          ${build_liblastlog2}
         Wide-char support:         ${build_widechar}
         libcryptsetup support:     ${have_cryptsetup}
 
