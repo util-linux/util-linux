@@ -17,12 +17,13 @@ if [ $? -eq 0 ]; then
     if [ $? -ne 0 ]; then
 	ts_die "Cannot find test-tty for user root in lastlog2.db"
     fi
-    $TS_CMD_LSLOGINS -L --lastlog2="${0%/*}/lastlog2.db" root |grep "test-host" >>/dev/null
+    $TS_CMD_LSLOGINS -L --lastlog2="${0%/*}/lastlog2.db" root |grep "test-host" >/dev/null
     if [ $? -ne 0 ]; then
 	ts_die "Cannot find test-host for user root in lastlog2.db"
     fi
-    $TS_CMD_LSLOGINS -L --lastlog2="${0%/*}/lastlog2.db" root |grep "Jan29/16:45" >>/dev/null
+    $TS_CMD_LSLOGINS -L --lastlog2="${0%/*}/lastlog2.db" root |grep "Jan29/16:45" >/dev/null
     if [ $? -ne 0 ]; then
+	echo `$TS_CMD_LSLOGINS -L --lastlog2="${0%/*}/lastlog2.db" root` >> $TS_OUTPUT
 	ts_die "Cannot find correct last login Jan29/16:45 for user root in lastlog2.db"
     fi    
 fi
