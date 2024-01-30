@@ -126,6 +126,7 @@ TS_CMD_SETSID=${TS_CMD_SETSID-"${ts_commandsdir}setsid"}
 TS_CMD_SWAPLABEL=${TS_CMD_SWAPLABEL:-"${ts_commandsdir}swaplabel"}
 TS_CMD_SWAPOFF=${TS_CMD_SWAPOFF:-"${ts_commandsdir}swapoff"}
 TS_CMD_SWAPON=${TS_CMD_SWAPON:-"${ts_commandsdir}swapon"}
+TS_CMD_LSLOGINS=${TS_CMD_LSLOGINS:-"${ts_commandsdir}lslogins"}
 TS_CMD_UL=${TS_CMD_UL-"${ts_commandsdir}ul"}
 TS_CMD_UMOUNT=${TS_CMD_UMOUNT:-"${ts_commandsdir}umount"}
 TS_CMD_UNSHARE=${TS_CMD_UNSHARE:-"${ts_commandsdir}unshare"}
