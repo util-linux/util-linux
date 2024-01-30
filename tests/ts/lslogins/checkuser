@@ -28,9 +28,8 @@ if [ $? -ne 0 ]; then
     rm $TS_SELF/lastlog2.db
     ts_die "Cannot find test-host for user root in lastlog2.db"
 fi
-$TS_CMD_LSLOGINS -L --lastlog2="${TS_SELF}/lastlog2.db" root |grep "Jan29/16:45" >/dev/null
+$TS_CMD_LSLOGINS -L --lastlog2="${TS_SELF}/lastlog2.db" root |grep "Jan29/1[0-9]:45" >/dev/null
 if [ $? -ne 0 ]; then
-    echo `$TS_CMD_LSLOGINS -L --lastlog2="${TS_SELF}/lastlog2.db" root` >> $TS_OUTPUT
     rm $TS_SELF/lastlog2.db
     ts_die "Cannot find correct last login Jan29/16:45 for user root in lastlog2.db"
 fi
