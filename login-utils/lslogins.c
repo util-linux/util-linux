@@ -1738,7 +1738,15 @@ int main(int argc, char *argv[])
 			ctl->time_mode = parse_time_mode(optarg);
 			break;
 		case 'V':
-			print_version(EXIT_SUCCESS);
+		{
+			static const char *features[] = {
+#ifdef HAVE_LIBLASTLOG2
+				"lastlog2",
+#endif
+				NULL
+			};
+			print_version_with_features(EXIT_SUCCESS, features);
+		}
 		case 'Z':
 		{
 #ifdef HAVE_LIBSELINUX
