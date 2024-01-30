@@ -10,23 +10,31 @@ ts_check_test_command "$TS_CMD_LSLOGINS"
 #
 # lslogin
 #
-$TS_CMD_LSLOGINS --help|grep "\--lastlog2" >/dev/null
-if [ $? -eq 0 ]; then
-    # tests for lastlog2 environment
-    $TS_CMD_LSLOGINS -L --lastlog2="${0%/*}/lastlog2.db" root |grep "test-tty" >/dev/null
-    if [ $? -ne 0 ]; then
-	ts_die "Cannot find test-tty for user root in lastlog2.db"
-    fi
-    $TS_CMD_LSLOGINS -L --lastlog2="${0%/*}/lastlog2.db" root |grep "test-host" >/dev/null
-    if [ $? -ne 0 ]; then
-	ts_die "Cannot find test-host for user root in lastlog2.db"
-    fi
-    $TS_CMD_LSLOGINS -L --lastlog2="${0%/*}/lastlog2.db" root |grep "Jan29/16:45" >/dev/null
-    if [ $? -ne 0 ]; then
-	echo `$TS_CMD_LSLOGINS -L --lastlog2="${0%/*}/lastlog2.db" root` >> $TS_OUTPUT
-	ts_die "Cannot find correct last login Jan29/16:45 for user root in lastlog2.db"
-    fi    
+$TS_CMD_LSLOGINS --version|grep "lastlog2" >/dev/null
+if [ $? -ne 0 ]; then
+    ts_skip "lastlog2 not supported"
 fi
 
+sqlite3 $TS_SELF/lastlog2.db < $TS_SELF/create_db.sql
+
+# tests for lastlog2 environment
+$TS_CMD_LSLOGINS -L --lastlog2="${TS_SELF}/lastlog2.db" root |grep "test-tty" >/dev/null
+if [ $? -ne 0 ]; then
+    rm $TS_SELF/lastlog2.db
+    ts_die "Cannot find test-tty for user root in lastlog2.db"
+fi
+$TS_CMD_LSLOGINS -L --lastlog2="${TS_SELF}/lastlog2.db" root |grep "test-host" >/dev/null
+if [ $? -ne 0 ]; then
+    rm $TS_SELF/lastlog2.db
+    ts_die "Cannot find test-host for user root in lastlog2.db"
+fi
+$TS_CMD_LSLOGINS -L --lastlog2="${TS_SELF}/lastlog2.db" root |grep "Jan29/16:45" >/dev/null
+if [ $? -ne 0 ]; then
+    echo `$TS_CMD_LSLOGINS -L --lastlog2="${TS_SELF}/lastlog2.db" root` >> $TS_OUTPUT
+    rm $TS_SELF/lastlog2.db
+    ts_die "Cannot find correct last login Jan29/16:45 for user root in lastlog2.db"
+fi
+
+rm $TS_SELF/lastlog2.db
 ts_finalize
 
