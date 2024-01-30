@@ -535,7 +535,7 @@ fail:
 #ifdef HAVE_LIBLASTLOG2
 static int get_lastlog2(struct lslogins_control *ctl, const char *user, void *dst, int what)
 {
-	struct ll2_context *context = ll2_new_context(ctl->lastlog2_path); /* LL2_DEFAULT_DATABASE is default path */
+	struct ll2_context *context = ll2_new_context(ctl->lastlog2_path);
 
 	switch (what) {
 	case LASTLOG_TIME: {
@@ -548,7 +548,7 @@ static int get_lastlog2(struct lslogins_control *ctl, const char *user, void *ds
 		}
 		*t = res_time;
 		break;
-		}
+	}
 	case LASTLOG_LINE: {
 		char *res_tty = NULL;
 
@@ -561,7 +561,7 @@ static int get_lastlog2(struct lslogins_control *ctl, const char *user, void *ds
 			free (res_tty);
 		}
 		break;
-		}
+	}
 	case LASTLOG_HOST: {
 		char *res_host = NULL;
 
@@ -571,10 +571,10 @@ static int get_lastlog2(struct lslogins_control *ctl, const char *user, void *ds
 		}
 		if (res_host) {
 			mem2strcpy(dst, res_host, strlen(res_host), strlen(res_host) + 1);
-			free (res_host);
+			free(res_host);
 		}
 		break;
-		}
+	}
 	default:
 		abort();
 	}
@@ -594,7 +594,7 @@ static void get_lastlog(struct lslogins_control *ctl, uid_t uid,
 	struct lastlog ll;
 
 #ifdef HAVE_LIBLASTLOG2
-	if (get_lastlog2(ctl, user, dst, LASTLOG_TIME) >= 0)
+	if (get_lastlog2(ctl, user, dst, what) >= 0)
 		return;
 #endif
 	if (ctl->lastlogin_fd < 0 ||
@@ -878,7 +878,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 						sizeof(user_wtmp->ut_line),
 						sizeof(user_wtmp->ut_line) + 1);;
 			}  else
-			        get_lastlog(ctl, user->uid, user->login, user->last_tty, LASTLOG_LINE);
+				get_lastlog(ctl, user->uid, user->login, user->last_tty, LASTLOG_LINE);
 			break;
 		case COL_LAST_HOSTNAME:
 			user->last_hostname = xcalloc(1, sizeof(user_wtmp->ut_host) + 1);
@@ -887,7 +887,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 						sizeof(user_wtmp->ut_host),
 						sizeof(user_wtmp->ut_host) + 1);;
 			}  else
-			        get_lastlog(ctl, user->uid, user->login, user->last_hostname, LASTLOG_HOST);
+				get_lastlog(ctl, user->uid, user->login, user->last_hostname, LASTLOG_HOST);
 			break;
 		case COL_FAILED_LOGIN:
 			if (user_btmp) {

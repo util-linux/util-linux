@@ -251,7 +251,7 @@ lslogins_LDADD += -leconf
 endif
 if BUILD_LIBLASTLOG2
 lslogins_CFLAGS += -I$(ul_liblastlog2_incdir)
-lslogins_LDADD += -llastlog2
+lslogins_LDADD += liblastlog2.la
 endif
 endif # BUILD_LSLOGINS
 

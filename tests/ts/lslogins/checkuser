@@ -1,0 +1,31 @@
+#!/bin/bash
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="read logins"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+ts_check_test_command "$TS_CMD_LSLOGINS"
+
+#
+# lslogin
+#
+$TS_CMD_LSLOGINS --help|grep "\--lastlog2" >/dev/null
+if [ $? -eq 0 ]; then
+    # tests for lastlog2 environment
+    $TS_CMD_LSLOGINS -L --lastlog2="${0%/*}/lastlog2.db" root |grep "test-tty" >/dev/null
+    if [ $? -ne 0 ]; then
+	ts_die "Cannot find test-tty for user root in lastlog2.db"
+    fi
+    $TS_CMD_LSLOGINS -L --lastlog2="${0%/*}/lastlog2.db" root |grep "test-host" >>/dev/null
+    if [ $? -ne 0 ]; then
+	ts_die "Cannot find test-host for user root in lastlog2.db"
+    fi
+    $TS_CMD_LSLOGINS -L --lastlog2="${0%/*}/lastlog2.db" root |grep "Jan29/16:45" >>/dev/null
+    if [ $? -ne 0 ]; then
+	ts_die "Cannot find correct last login Jan29/16:45 for user root in lastlog2.db"
+    fi    
+fi
+
+ts_finalize
+
