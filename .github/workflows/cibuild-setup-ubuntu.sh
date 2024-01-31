@@ -32,6 +32,7 @@ PACKAGES=(
 	gawk
 	bison
 	flex
+	sqlite3
 	libsqlite3-dev
 )
 
