@@ -46,6 +46,9 @@ libsmartcols:
 * A new command, lsclocks, is introduced to display system clocks (realtime,
   monotonic, boottime, etc.).
 
+* A new small command, enosys, is introduced to make syscalls fail with ENOSYS.
+  The command is based on prctl( SECCOMP_MODE_FILTER ).
+
 * login(1) now supports systemd service credentials. 'login.noauth' is now
   supported.
 
