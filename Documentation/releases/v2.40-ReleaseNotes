@@ -47,7 +47,10 @@ libsmartcols:
   monotonic, boottime, etc.).
 
 * A new small command, enosys, is introduced to make syscalls fail with ENOSYS.
-  The command is based on prctl( SECCOMP_MODE_FILTER ).
+  The command is based on prctl( SECCOMP_MODE_FILTER ) syscall.
+
+* A new command, exch, is introduced to atomically exchanges paths between
+  two files. The command is based on renameat2( RENAME_EXCHANGE ) syscall.
 
 * login(1) now supports systemd service credentials. 'login.noauth' is now
   supported.
