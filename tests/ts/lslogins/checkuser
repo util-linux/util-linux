@@ -18,7 +18,7 @@ fi
 sqlite3 $TS_SELF/lastlog2.db < $TS_SELF/create_db.sql
 
 # tests for lastlog2 environment
-TZ=US/Pacific "$TS_CMD_LSLOGINS" --lastlog-file=/dev/null --lastlog2-file="${TS_SELF}/lastlog2.db" --wtmp-file=/dev/null --btmp-file=/dev/null --output USER,LAST-LOGIN,LAST-TTY,LAST-HOSTNAME root > "$TS_OUTPUT"
+TZ=US/Pacific "$TS_CMD_LSLOGINS" --lastlog-file=/dev/null --lastlog2-file="${TS_SELF}/lastlog2.db" --wtmp-file=/dev/null --btmp-file=/dev/null --output USER,LAST-LOGIN,LAST-TTY,LAST-HOSTNAME --logins=root > "$TS_OUTPUT"
 
 rm $TS_SELF/lastlog2.db
 ts_finalize

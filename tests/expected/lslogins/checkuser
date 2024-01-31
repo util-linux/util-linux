@@ -1,7 +1,2 @@
-Username:                           root                                
-Last login:                         Jan29/07:45                         
-Last terminal:                      test-tty                            
-Last hostname:                      test-host                           
-
-Last logs:
-
+USER  LAST-LOGIN LAST-TTY LAST-HOSTNAME
+root Jan30/02:45 test-tty test-host
