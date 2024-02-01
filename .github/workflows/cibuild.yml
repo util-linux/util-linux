@@ -86,7 +86,7 @@ jobs:
       cancel-in-progress: true
     env:
       COMPILER: gcc
-      COMPILER_VERSION: 10
+      COMPILER_VERSION: 13
       SANITIZE: no
     steps:
       - name: Repository checkout
@@ -106,7 +106,7 @@ jobs:
       cancel-in-progress: true
     env:
       COMPILER: gcc
-      COMPILER_VERSION: 10
+      COMPILER_VERSION: 13
       SANITIZE: no
       TRANSLATE_MANPAGES: yes
     steps:
@@ -170,7 +170,7 @@ jobs:
           distro: ubuntu_latest
           run: |
             export COMPILER=gcc
-            export COMPILER_VERSION=10
+            export COMPILER_VERSION=13
             export SANITIZE=no
             export QEMU_USER=1
 
