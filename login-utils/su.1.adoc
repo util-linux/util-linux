@@ -46,8 +46,15 @@ Specify the primary group. This option is available to the root user only.
 Specify a supplementary group. This option is available to the root user only. The first specified supplementary group is also used as a primary group if the option *--group* is not specified.
 
 *-*, *-l*, *--login*::
-Start the shell as a login shell with an environment similar to a real login:
-
+Start the shell as a login shell with an environment similar to a real login.
++
+Note that on systemd-based systems, a new session may be defined as a real
+entry point to the system. However, *su* does not create a real session (by
+PAM) from this point of view. You need to use tools like *systemd-run* or
+*machinectl* to initiate a complete, real session.
++
+*su* does:
++
 * clears all the environment variables except *TERM* and variables specified by *--whitelist-environment*
 * initializes the environment variables *HOME*, *SHELL*, *USER*, *LOGNAME*, and *PATH*
 * changes to the target user's home directory
