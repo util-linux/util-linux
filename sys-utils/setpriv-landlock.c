@@ -166,6 +166,9 @@ void do_landlock(const struct setpriv_landlock_opts *opts)
 	struct list_head *entry;
 	int fd, ret;
 
+	if (!opts->access_fs)
+		return;
+
 	const struct landlock_ruleset_attr ruleset_attr = {
 		.handled_access_fs = opts->access_fs,
 	};
