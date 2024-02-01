@@ -69,14 +69,14 @@ Create a pseudo-terminal for the session. The independent terminal provides bett
 This feature is mostly designed for interactive sessions. If the standard input is not a terminal, but for example a pipe (e.g., *echo "date" | su --pty*), then the *ECHO* flag for the pseudo-terminal is disabled to avoid messy output.
 
 *-s*, **--shell**=__shell__::
-Run the specified _shell_ instead of the default. The shell to run is selected according to the following rules, in order:
-
+Run the specified _shell_ instead of the default. If the target user has a restricted shell (i.e., not listed in _/etc/shells_), the *--shell* option and the *SHELL* environment variables are ignored unless the calling user is root.
++
+The shell to run is selected according to the following rules, in order:
++
 * the shell specified with *--shell*
 * the shell specified in the environment variable *SHELL*, if the *--preserve-environment* option is used
 * the shell listed in the passwd entry of the target user
 * /bin/sh
-
-If the target user has a restricted shell (i.e., not listed in _/etc/shells_), the *--shell* option and the *SHELL* environment variables are ignored unless the calling user is root.
 
 **--session-command=**__command__::
 Same as *-c*, but do not create a new session. (Discouraged.)
