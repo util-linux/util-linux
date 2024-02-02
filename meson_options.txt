@@ -222,3 +222,6 @@ option('pamlibdir', type : 'string',
 option('lastlog-compat-symlink', type : 'boolean',
        value : 'false',
        description : 'create lastlog compat symlink')
+option('login-lastlogin', type : 'boolean',
+       value : 'false',
+       description : 'program login writes lastlog entries')

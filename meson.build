@@ -84,6 +84,10 @@ build_liblastlog2 = not get_option('build-liblastlog2').disabled()
 conf.set('HAVE_LIBLASTLOG2', build_liblastlog2 ? 1 : false)
 summary('liblastlog2', build_liblastlog2 ? 'enabled' : 'disabled', section : 'components')
 
+login_lastlogin = get_option('login-lastlogin')
+conf.set('USE_LOGIN_LASTLOG', login_lastlogin ? 1 : false)
+summary('login-lastlogin', login_lastlogin ? 'enabled' : 'disabled', section : 'components')
+
 have_mountfd_api = cc.sizeof('struct mount_attr', prefix : '#include <linux/mount.h>') > 0
 conf.set('HAVE_STRUCT_MOUNT_ATTR', have_mountfd_api ? 1 : false)
 conf.set('HAVE_MOUNTFD_API', have_mountfd_api ? 1 : false)

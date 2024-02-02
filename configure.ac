@@ -2403,6 +2403,16 @@ AS_IF([test "x$enable_login_stat_mail" = xyes], [
   AC_DEFINE([LOGIN_STAT_MAIL], [1], [Should login stat() the mailbox?])
 ])
 
+AC_ARG_ENABLE([login-lastlog],
+  AS_HELP_STRING([--enable-login-lastlog], [program login writes lastlog entries]),
+  [], [enable_login_lastlogin=no]
+)
+
+AS_IF([test "x$enable_login_lastlogin" != xno], [
+  AC_DEFINE([USE_LOGIN_LASTLOG],
+	    [1],
+	    [Define if program login writes lastlog entries])
+])
 
 AC_ARG_ENABLE([nologin],
   AS_HELP_STRING([--disable-nologin], [do not build nologin]),
