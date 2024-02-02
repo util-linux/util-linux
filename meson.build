@@ -783,6 +783,7 @@ have_sock_nonblock = cc.has_header_symbol(
   required : build_plymouth_support.enabled())
 have_so_passcred = cc.has_header_symbol(
   'sys/socket.h', 'SO_PASSCRED',
+  args : ['-D_GNU_SOURCE'],
   prefix : '#include <sys/types.h>',
   required : build_plymouth_support.enabled())
 
