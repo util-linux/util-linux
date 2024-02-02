@@ -10,31 +10,31 @@ lib_lastlog2_sources = '''
 liblastlog2_sym = 'src/liblastlog2.sym'
 liblastlog2_sym_path = '@0@/@1@'.format(meson.current_source_dir(), liblastlog2_sym)
 
-lib_lastlog2 = both_libraries(
-  'lastlog2',
-  lib_lastlog2_sources,
-  include_directories : [dir_include],
-  link_args : ['-Wl,--version-script=@0@'.format(liblastlog2_sym_path)],
-  link_depends : liblastlog2_sym,
-  dependencies : [lib_sqlite3],
-  install : build_liblastlog2,
-  version : liblastlog2_version,
-)
-
-lastlog2_dep = declare_dependency(link_with: lib_lastlog2, include_directories: dir_liblastlog2)
-
-lastlog2_tests = [
-  'dlopen',
-  'pam_lastlog2_output',
-  'remove_entry',
-  'rename_user',
-  'write_read_user',
-  'y2038_ll2_read_all',
-  'y2038_sqlite3_time',
-]
-libdl = cc.find_library('dl')
-
 if build_liblastlog2
+  lib_lastlog2 = both_libraries(
+    'lastlog2',
+    lib_lastlog2_sources,
+    include_directories : [dir_include],
+    link_args : ['-Wl,--version-script=@0@'.format(liblastlog2_sym_path)],
+    link_depends : liblastlog2_sym,
+    dependencies : [lib_sqlite3],
+    install : build_liblastlog2,
+    version : liblastlog2_version,
+  )
+
+  lastlog2_dep = declare_dependency(link_with: lib_lastlog2, include_directories: dir_liblastlog2)
+
+  lastlog2_tests = [
+    'dlopen',
+    'pam_lastlog2_output',
+    'remove_entry',
+    'rename_user',
+    'write_read_user',
+    'y2038_ll2_read_all',
+    'y2038_sqlite3_time',
+  ]
+  libdl = cc.find_library('dl')
+
   pkg.generate(
     lib_lastlog2,
     description : 'library to manage last login data',
