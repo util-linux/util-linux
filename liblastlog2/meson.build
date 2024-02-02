@@ -7,8 +7,6 @@ lib_lastlog2_sources = '''
   src/lastlog2.c
 '''.split()  
 
-libsqlite3 = cc.find_library('sqlite3')
-
 liblastlog2_sym = 'src/liblastlog2.sym'
 liblastlog2_sym_path = '@0@/@1@'.format(meson.current_source_dir(), liblastlog2_sym)
 
@@ -18,7 +16,7 @@ lib_lastlog2 = both_libraries(
   include_directories : [dir_include],
   link_args : ['-Wl,--version-script=@0@'.format(liblastlog2_sym_path)],
   link_depends : liblastlog2_sym,
-  dependencies : [libsqlite3],
+  dependencies : [lib_sqlite3],
   install : build_liblastlog2,
   version : liblastlog2_version,
 )
