@@ -16,6 +16,8 @@ _waitpid_module()
 			;;
 		'-m'|'--list-ioctl')
 			return 0
+		'-d'|'--dump')
+			return 0
 			;;
 		'-h'|'--help'|'-V'|'--version')
 			return 0
@@ -27,6 +29,7 @@ _waitpid_module()
 			        --ioctl
 			        --list
 			        --list-ioctl
+			        --dump
 				--help
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
