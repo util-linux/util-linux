@@ -1,3 +1,9 @@
+build_pam_lastlog2 = not get_option('build-pam-lastlog2') \
+    .require(build_liblastlog2) \
+    .require(conf.get('HAVE_SECURITY_PAM_MODULES_H').to_string() == '1') \
+    .disabled()
+summary('pam_lastlog2', build_pam_lastlog2 ? 'enabled' : 'disabled', section : 'components')
+
 cc = meson.get_compiler('c')
 pkg = import('pkgconfig')
 lib_pam_lastlog2_sources = '''
@@ -9,7 +15,7 @@ if pamlibdir == ''
         pamlibdir = get_option('libdir') / 'security'
 endif
 
-if build_liblastlog2
+if build_pam_lastlog2
   pam_lastlog2_sym = 'src/pam_lastlog2.sym'
   pam_lastlog2_sym_path = '@0@/@1@'.format(meson.current_source_dir(), pam_lastlog2_sym)
 

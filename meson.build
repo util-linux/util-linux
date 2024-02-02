@@ -197,6 +197,7 @@ headers = '''
         security/openpam.h
         security/pam_appl.h
         security/pam_misc.h
+        security/pam_modules.h
         sys/disk.h
         sys/disklabel.h
         sys/endian.h

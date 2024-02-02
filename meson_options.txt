@@ -39,6 +39,8 @@ option('build-libuuid', type : 'feature',
        description : 'build libuuid and uuid utilities')
 option('build-liblastlog2', type : 'feature',
        description : 'build liblastlog2 and lastlog2 utilities')
+option('build-pam-lastlog2', type : 'feature',
+       description : 'build PAM lastlog2 module')
 option('build-libmount', type : 'feature',
        description : 'build libmount')
 option('build-libsmartcols', type : 'feature',
