@@ -17,6 +17,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdio.h>
+#include <signal.h>
 
 #include "lscpu.h"
 
@@ -454,6 +455,7 @@ void vmware_bdoor(uint32_t *eax, uint32_t *ebx, uint32_t *ecx, uint32_t *edx)
 }
 
 static jmp_buf segv_handler_env;
+static sigset_t oset;
 
 static void
 segv_handler(__attribute__((__unused__)) int sig,
@@ -467,6 +469,7 @@ static int is_vmware_platform(void)
 {
 	uint32_t eax, ebx, ecx, edx;
 	struct sigaction act, oact;
+	sigset_t set;
 
 	/*
 	 * FIXME: Not reliable for non-root users. Note it works as expected if
@@ -485,8 +488,16 @@ static int is_vmware_platform(void)
 	 * the signal. All this magic is needed because lscpu
 	 * isn't supposed to require root privileges.
 	 */
-	if (sigsetjmp(segv_handler_env, 1))
+	if (sigsetjmp(segv_handler_env, 1)) {
+		if (sigprocmask(SIG_SETMASK, &oset, NULL))
+			err(EXIT_FAILURE, _("cannot restore signal mask"));
 		return 0;
+	}
+
+	sigemptyset(&set);
+	sigaddset(&set, SIGSEGV);
+	if (sigprocmask(SIG_UNBLOCK, &set, &oset))
+		err(EXIT_FAILURE, _("cannot unblock signal"));
 
 	memset(&act, 0, sizeof(act));
 	act.sa_sigaction = segv_handler;
@@ -499,6 +510,9 @@ static int is_vmware_platform(void)
 
 	if (sigaction(SIGSEGV, &oact, NULL))
 		err(EXIT_FAILURE, _("cannot restore signal handler"));
+
+	if (sigprocmask(SIG_SETMASK, &oset, NULL))
+		err(EXIT_FAILURE, _("cannot restore signal mask"));
 
 	return eax != (uint32_t)-1 && ebx == VMWARE_BDOOR_MAGIC;
 }
