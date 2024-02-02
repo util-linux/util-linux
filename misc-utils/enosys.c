@@ -21,8 +21,6 @@
 #include <getopt.h>
 
 #include <linux/unistd.h>
-#include <linux/filter.h>
-#include <linux/seccomp.h>
 #include <linux/audit.h>
 #include <sys/prctl.h>
 #include <sys/syscall.h>
@@ -36,6 +34,7 @@
 #include "list.h"
 #include "xalloc.h"
 #include "strutils.h"
+#include "seccomp.h"
 
 #define IS_LITTLE_ENDIAN (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
 
@@ -44,16 +43,6 @@
 #define _syscall_arg(n) (offsetof(struct seccomp_data, args[n]))
 #define syscall_arg_lower32(n) (_syscall_arg(n) + 4 * !IS_LITTLE_ENDIAN)
 #define syscall_arg_upper32(n) (_syscall_arg(n) + 4 * IS_LITTLE_ENDIAN)
-
-static int set_seccomp_filter(const void *prog)
-{
-#if defined(__NR_seccomp) && defined(SECCOMP_SET_MODE_FILTER) && defined(SECCOMP_FILTER_FLAG_SPEC_ALLOW)
-	if (!syscall(__NR_seccomp, SECCOMP_SET_MODE_FILTER, SECCOMP_FILTER_FLAG_SPEC_ALLOW, prog))
-		return 0;
-#endif
-
-	return prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, prog);
-}
 
 struct syscall {
 	const char *const name;
@@ -258,7 +247,7 @@ int main(int argc, char **argv)
 	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0))
 		err_nosys(EXIT_FAILURE, _("Could not run prctl(PR_SET_NO_NEW_PRIVS)"));
 
-	if (set_seccomp_filter(&prog))
+	if (ul_set_seccomp_filter_spec_allow(&prog))
 		err_nosys(EXIT_FAILURE, _("Could not seccomp filter"));
 
 	if (execvp(argv[optind], argv + optind))
