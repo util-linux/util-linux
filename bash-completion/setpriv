@@ -97,6 +97,10 @@ _setpriv_module()
 			COMPREPLY=( $(compgen -W "rule" -- $cur) )
 			return 0
 			;;
+		'--seccomp-filter')
+			COMPREPLY=( $(compgen -f -- $cur) )
+			return 0
+			;;
 		'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
@@ -124,6 +128,7 @@ _setpriv_module()
 				--apparmor-profile
 				--landlock-access
 				--landlock-rule
+				--seccomp-filter
 				--help
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
