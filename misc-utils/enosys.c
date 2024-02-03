@@ -222,17 +222,19 @@ int main(int argc, char **argv)
 		INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ERRNO | ENOSYS));
 	}
 
-	INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, __NR_ioctl, 1, 0));
-	INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ALLOW));
+	if (!list_empty(&blocked_ioctls)) {
+		INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, __NR_ioctl, 1, 0));
+		INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ALLOW));
 
-	list_for_each(loop_ctr, &blocked_ioctls) {
-		blocked = list_entry(loop_ctr, struct blocked_number, head);
+		list_for_each(loop_ctr, &blocked_ioctls) {
+			blocked = list_entry(loop_ctr, struct blocked_number, head);
 
-		INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg_lower32(1)));
-		INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, (uint64_t) blocked->number, 0, 3));
-		INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg_upper32(1)));
-		INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, (uint64_t) blocked->number >> 32, 0, 1));
-		INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ERRNO | ENOTTY));
+			INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg_lower32(1)));
+			INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, (uint64_t) blocked->number, 0, 3));
+			INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg_upper32(1)));
+			INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, (uint64_t) blocked->number >> 32, 0, 1));
+			INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ERRNO | ENOTTY));
+		}
 	}
 
 	INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ALLOW));
