@@ -91,13 +91,43 @@ static void __attribute__((__noreturn__)) usage(void)
 struct blocked_number {
 	struct list_head head;
 	long number;
+	int ret;
 };
+
+static struct blocked_number *parse_block(const char *s, int ret, const struct syscall syscalls[], size_t nsyscalls)
+{
+	struct blocked_number *blocked;
+	long blocked_number;
+	bool found;
+	size_t i;
+
+	found = 0;
+	for (i = 0; i < nsyscalls; i++) {
+		if (strcmp(s, syscalls[i].name) == 0) {
+			blocked_number = syscalls[i].number;
+			found = 1;
+			break;
+		}
+	}
+	if (!found)
+		blocked_number = str2num_or_err(
+				s, 10, _("Unknown syscall"), 0, LONG_MAX);
+
+	blocked = xmalloc(sizeof(*blocked));
+	blocked->number = blocked_number;
+	blocked->ret = ret;
+
+	if (name != s)
+		free((char *)name);
+
+	return blocked;
+}
 
 int main(int argc, char **argv)
 {
 	int c;
 	size_t i;
-	bool found, dump = false;
+	bool dump = false;
 	static const struct option longopts[] = {
 		{ "syscall",    required_argument, NULL, 's' },
 		{ "ioctl",      required_argument, NULL, 'i' },
@@ -109,7 +139,6 @@ int main(int argc, char **argv)
 		{ 0 }
 	};
 
-	long blocked_number;
 	struct blocked_number *blocked;
 	struct list_head *loop_ctr;
 	struct list_head blocked_syscalls;
@@ -125,40 +154,14 @@ int main(int argc, char **argv)
 	while ((c = getopt_long (argc, argv, "+Vhs:i:lmd", longopts, NULL)) != -1) {
 		switch (c) {
 		case 's':
-			found = 0;
-			for (i = 0; lt(i, ARRAY_SIZE(syscalls)); i++) {
-				if (strcmp(optarg, syscalls[i].name) == 0) {
-					blocked_number = syscalls[i].number;
-					found = 1;
-					break;
-				}
-			}
-			if (!found)
-				blocked_number = str2num_or_err(
-					optarg, 10, _("Unknown syscall"), 0, LONG_MAX);
-
-			blocked = xmalloc(sizeof(*blocked));
-			blocked->number = blocked_number;
+			blocked = parse_block(optarg, ENOSYS, syscalls, ARRAY_SIZE(syscalls));
 			list_add(&blocked->head, &blocked_syscalls);
-			if (blocked_number == __NR_execve)
+			if (blocked->number == __NR_execve)
 				blocking_execve = true;
 
 			break;
 		case 'i':
-			found = 0;
-			for (i = 0; lt(i, ARRAY_SIZE(ioctls)); i++) {
-				if (strcmp(optarg, ioctls[i].name) == 0) {
-					blocked_number = ioctls[i].number;
-					found = 1;
-					break;
-				}
-			}
-			if (!found)
-				blocked_number = str2num_or_err(
-					optarg, 10, _("Unknown ioctl"), 0, LONG_MAX);
-
-			blocked = xmalloc(sizeof(*blocked));
-			blocked->number = blocked_number;
+			blocked = parse_block(optarg, ENOTTY, ioctls, ARRAY_SIZE(ioctls));
 			list_add(&blocked->head, &blocked_ioctls);
 
 			break;
@@ -219,7 +222,7 @@ int main(int argc, char **argv)
 		blocked = list_entry(loop_ctr, struct blocked_number, head);
 
 		INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, blocked->number, 0, 1));
-		INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ERRNO | ENOSYS));
+		INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ERRNO | blocked->ret));
 	}
 
 	if (!list_empty(&blocked_ioctls)) {
@@ -233,7 +236,7 @@ int main(int argc, char **argv)
 			INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, (uint64_t) blocked->number, 0, 3));
 			INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg_upper32(1)));
 			INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, (uint64_t) blocked->number >> 32, 0, 1));
-			INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ERRNO | ENOTTY));
+			INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ERRNO | blocked->ret));
 		}
 	}
 
