@@ -223,8 +223,6 @@ int main(int argc, char **argv)
 	INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, __NR_ioctl, 1, 0));
 	INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ALLOW));
 
-	INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg(1)));
-
 	list_for_each(loop_ctr, &blocked_ioctls) {
 		blocked = list_entry(loop_ctr, struct blocked_number, head);
 
