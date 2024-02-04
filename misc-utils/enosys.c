@@ -41,7 +41,9 @@
 
 #define syscall_nr (offsetof(struct seccomp_data, nr))
 #define syscall_arch (offsetof(struct seccomp_data, arch))
-#define syscall_arg(n) (offsetof(struct seccomp_data, args[n]))
+#define _syscall_arg(n) (offsetof(struct seccomp_data, args[n]))
+#define syscall_arg_lower32(n) (_syscall_arg(n) + 4 * !IS_LITTLE_ENDIAN)
+#define syscall_arg_upper32(n) (_syscall_arg(n) + 4 * IS_LITTLE_ENDIAN)
 
 static int set_seccomp_filter(const void *prog)
 {
@@ -205,9 +207,9 @@ int main(int argc, char **argv)
 	 */
 	INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_nr));
 	INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, __NR_execve, 0, 5));
-	INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg(2) + 4 * !IS_LITTLE_ENDIAN));
+	INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg_lower32(2)));
 	INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, (uint64_t)(uintptr_t) environ, 0, 3));
-	INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg(2) + 4 * IS_LITTLE_ENDIAN));
+	INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg_upper32(2)));
 	INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, (uint64_t)(uintptr_t) environ >> 32, 0, 1));
 	INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ALLOW));
 
@@ -226,9 +228,9 @@ int main(int argc, char **argv)
 	list_for_each(loop_ctr, &blocked_ioctls) {
 		blocked = list_entry(loop_ctr, struct blocked_number, head);
 
-		INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg(1) + 4 * !IS_LITTLE_ENDIAN));
+		INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg_lower32(1)));
 		INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, (uint64_t) blocked->number, 0, 3));
-		INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg(1) + 4 * IS_LITTLE_ENDIAN));
+		INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg_upper32(1)));
 		INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, (uint64_t) blocked->number >> 32, 0, 1));
 		INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ERRNO | ENOTTY));
 	}
