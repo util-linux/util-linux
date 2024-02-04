@@ -160,6 +160,7 @@ jobs:
         include:
           - arch: s390x
           - arch: riscv64
+          - arch: armv7
     steps:
       - name: Repository checkout
         uses: actions/checkout@v1
