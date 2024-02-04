@@ -63,6 +63,12 @@ static const struct syscall syscalls[] = {
 #undef UL_SYSCALL
 };
 
+static const struct syscall errnos[] = {
+#define UL_ERRNO(name, nr) { name, nr },
+#include "errnos.h"
+#undef UL_ERRNO
+};
+
 static const struct syscall ioctls[] = {
 	{ "FIOCLEX", FIOCLEX },
 };
@@ -94,24 +100,46 @@ struct blocked_number {
 	int ret;
 };
 
-static struct blocked_number *parse_block(const char *s, int ret, const struct syscall syscalls[], size_t nsyscalls)
+static struct blocked_number *parse_block(const char *s, int ret, const struct syscall entities[], size_t n_entities)
 {
 	struct blocked_number *blocked;
+	const char *name, *error_name;
 	long blocked_number;
+	char *colon;
 	bool found;
 	size_t i;
 
+	colon = strchr(s, ':');
+	if (colon) {
+		name = xstrndup(s, colon - s);
+		error_name = colon + 1;
+
+		found = 0;
+		for (i = 0; i < ARRAY_SIZE(errnos); i++) {
+			if (strcmp(error_name, errnos[i].name) == 0) {
+				ret = errnos[i].number;
+				found = 1;
+				break;
+			}
+		}
+		if (!found)
+			ret = str2num_or_err(
+					colon + 1, 10, _("Unknown errno"), 0, INT_MAX);
+	} else {
+		name = s;
+	}
+
 	found = 0;
-	for (i = 0; i < nsyscalls; i++) {
-		if (strcmp(s, syscalls[i].name) == 0) {
-			blocked_number = syscalls[i].number;
+	for (i = 0; i < n_entities; i++) {
+		if (strcmp(name, entities[i].name) == 0) {
+			blocked_number = entities[i].number;
 			found = 1;
 			break;
 		}
 	}
 	if (!found)
 		blocked_number = str2num_or_err(
-				s, 10, _("Unknown syscall"), 0, LONG_MAX);
+				name, 10, _("Unknown syscall"), 0, LONG_MAX);
 
 	blocked = xmalloc(sizeof(*blocked));
 	blocked->number = blocked_number;

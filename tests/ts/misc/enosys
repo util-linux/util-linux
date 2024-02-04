@@ -31,6 +31,8 @@ $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
 "$TS_CMD_ENOSYS" -s fallocate $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
 "$TS_CMD_ENOSYS" -s fsopen -s fallocate $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
 "$TS_CMD_ENOSYS" -s fallocate -s fsopen $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
+"$TS_CMD_ENOSYS" -s fallocate:12 $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
+"$TS_CMD_ENOSYS" -s fallocate:ENOMEM $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
 
 ts_finalize_subtest
 
@@ -52,6 +54,8 @@ $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
 "$TS_CMD_ENOSYS" -i FIOCLEX $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
 "$TS_CMD_ENOSYS" -i "$("$TS_CMD_ENOSYS" -m | grep FIOCLEX | awk '{ print $1 }')" $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
 "$TS_CMD_ENOSYS" -s ioctl -i FIOCLEX $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
+"$TS_CMD_ENOSYS" -i FIOCLEX:12 $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
+"$TS_CMD_ENOSYS" -i FIOCLEX:ENOMEM $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
 
 ts_finalize_subtest
 
