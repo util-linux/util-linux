@@ -121,6 +121,7 @@ int main(int argc, char **argv)
 	struct blocked_number *blocked;
 	struct list_head *loop_ctr;
 	struct list_head blocked_syscalls;
+	bool blocking_execve = false;
 	INIT_LIST_HEAD(&blocked_syscalls);
 	struct list_head blocked_ioctls;
 	INIT_LIST_HEAD(&blocked_ioctls);
@@ -147,6 +148,8 @@ int main(int argc, char **argv)
 			blocked = xmalloc(sizeof(*blocked));
 			blocked->number = blocked_number;
 			list_add(&blocked->head, &blocked_syscalls);
+			if (blocked_number == __NR_execve)
+				blocking_execve = true;
 
 			break;
 		case 'i':
@@ -205,13 +208,15 @@ int main(int argc, char **argv)
 	 *
 	 * See https://lore.kernel.org/all/CAAnLoWnS74dK9Wq4EQ-uzQ0qCRfSK-dLqh+HCais-5qwDjrVzg@mail.gmail.com/
 	 */
-	INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_nr));
-	INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, __NR_execve, 0, 5));
-	INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg_lower32(2)));
-	INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, (uint64_t)(uintptr_t) environ, 0, 3));
-	INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg_upper32(2)));
-	INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, (uint64_t)(uintptr_t) environ >> 32, 0, 1));
-	INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ALLOW));
+	if (blocking_execve) {
+		INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_nr));
+		INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, __NR_execve, 0, 5));
+		INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg_lower32(2)));
+		INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, (uint64_t)(uintptr_t) environ, 0, 3));
+		INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_arg_upper32(2)));
+		INSTR(BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, (uint64_t)(uintptr_t) environ >> 32, 0, 1));
+		INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ALLOW));
+	}
 
 	INSTR(BPF_STMT(BPF_LD | BPF_W | BPF_ABS, syscall_nr));
 
