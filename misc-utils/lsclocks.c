@@ -506,6 +506,7 @@ static void add_cpu_clock(struct libscols_table *tb,
 		.type = CT_CPU,
 		.name = name,
 		.no_id = true,
+		.id = clockid,
 	};
 	add_posix_clock_line(tb, columns, ncolumns, &clockinfo);
 }
