@@ -25,10 +25,12 @@ syscalls as would happen when running on old kernels.
 == OPTIONS
 
 *-s*, *--syscall*::
-Syscall to block. Can be specified multiple times.
+Syscall to block with *ENOSYS*. Can be specified multiple times.
+An alternative error number or name can be specified with a colon.
 
 *-i*, *--ioctl*::
-Ioctl to block. Can be specified multiple times.
+Ioctl to block with *ENOTTY*. Can be specified multiple times.
+An alternative error number or name can be specified with a colon.
 
 *-l*, *--list*::
 List syscalls known to *enosys*.
@@ -37,6 +39,26 @@ List syscalls known to *enosys*.
 List ioctls known to *enosys*.
 
 include::man-common/help-version.adoc[]
+
+== EXAMPLES
+
+ # fail syscall "fallocate" with ENOSYS
+ enosys -s fallocate ...
+
+ # fail syscall "fallocate" with ENOMEM
+ enosys -s fallocate:ENOMEM ...
+
+ # fail syscall "fallocate" with value 12/ENOMEM
+ enosys -s fallocate:12 ...
+
+ # fail ioctl FIOCLEX with ENOTTY
+ enosys -i FIOCLEX ...
+
+ # fail ioctl FIOCLEX with ENOMEM
+ enosys -i FIOCLEX:ENOMEM ...
+
+ # fail ioctl FIOCLEX with value 12/ENOMEM
+ enosys -i FIOCLEX:12 ...
 
 == EXIT STATUS
 

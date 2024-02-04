@@ -3018,7 +3018,7 @@ syscalls_h = custom_target('syscalls.h',
 if cc.compiles(fs.read('include/audit-arch.h'), name : 'has AUDIT_ARCH_NATIVE')
   exe = executable(
     'enosys',
-    'misc-utils/enosys.c', syscalls_h,
+    'misc-utils/enosys.c', syscalls_h, errnos_h,
     include_directories : includes,
     link_with : [lib_common],
     install_dir : usrbin_exec_dir,
