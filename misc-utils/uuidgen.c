@@ -40,6 +40,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -m, --md5             generate md5 hash\n"), out);
 	fputs(_(" -C, --count <num>     generate more uuids in loop\n"), out);
 	fputs(_(" -s, --sha1            generate sha1 hash\n"), out);
+	fputs(_(" -6, --time-v6         generate time-based v6 uuid\n"), out);
+	fputs(_(" -7, --time-v7         generate time-based v7 uuid\n"), out);
 	fputs(_(" -x, --hex             interpret name as hex string\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(21));
@@ -104,14 +106,16 @@ main (int argc, char *argv[])
 		{"md5", no_argument, NULL, 'm'},
 		{"count", required_argument, NULL, 'C'},
 		{"sha1", no_argument, NULL, 's'},
+		{"time-v6", no_argument, NULL, '6'},
+		{"time-v7", no_argument, NULL, '7'},
 		{"hex", no_argument, NULL, 'x'},
 		{NULL, 0, NULL, 0}
 	};
 
 	static const ul_excl_t excl[] = {
+		{ '6', '7', 'm', 'r', 's', 't' },
 		{ 'C', 'm', 's' },
 		{ 'N', 'r', 't' },
-		{ 'm', 'r', 's', 't' },
 		{ 'n', 'r', 't' },
 		{ 0 }
 	};
@@ -122,7 +126,7 @@ main (int argc, char *argv[])
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "C:rtVhn:N:msx", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "C:rtVhn:N:msx67", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -150,6 +154,12 @@ main (int argc, char *argv[])
 			break;
 		case 'x':
 			is_hex = 1;
+			break;
+		case '6':
+			do_type = UUID_TYPE_DCE_TIME_V6;
+			break;
+		case '7':
+			do_type = UUID_TYPE_DCE_TIME_V7;
 			break;
 
 		case 'h':
@@ -191,6 +201,12 @@ main (int argc, char *argv[])
 		switch (do_type) {
 		case UUID_TYPE_DCE_TIME:
 			uuid_generate_time(uu);
+			break;
+		case UUID_TYPE_DCE_TIME_V6:
+			uuid_generate_time_v6(uu);
+			break;
+		case UUID_TYPE_DCE_TIME_V7:
+			uuid_generate_time_v7(uu);
 			break;
 		case UUID_TYPE_DCE_RANDOM:
 			uuid_generate_random(uu);

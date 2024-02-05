@@ -37,8 +37,12 @@ test_flag() {
 
 test_flag -r
 test_flag -t
+test_flag -6
+test_flag -7
 test_flag --random
 test_flag --time
+test_flag --time-v6
+test_flag --time-v7
 
 rm -f "$OUTPUT_FILE"
 
