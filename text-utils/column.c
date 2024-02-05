@@ -104,21 +104,89 @@ struct column_control {
 		     tab_noheadings :1;
 };
 
+typedef enum {
+	ANSI_CHR = 'A',
+	ANSI_ESC = '\x1b',
+	ANSI_SGR = '[',
+	ANSI_OSC = ']',
+	ANSI_APC = '_',
+	ANSI_BSL = '\\'
+} ansi_csi_sgr;
+
+static size_t ansi_esc_width(ansi_csi_sgr *state, size_t *found, const wchar_t *str) {
+	switch (*state) {
+	case ANSI_CHR:
+		// Begins Ansi escape sequence with ESC ( written as \x5b \033 or ^[ )
+		if (*str == '\x1b')
+			*state = ANSI_ESC;
+		return 0;
+	case ANSI_ESC:
+		// Ansi Fe escape sequences allows the range \x40 to \x5f
+		switch (*str) {
+		case '[':
+			*state = ANSI_SGR;
+			break;
+		case ']':
+			*state = ANSI_OSC;
+			break;
+		case '_':
+		case 'P':
+		case '^':
+			*state = ANSI_APC;
+			break;
+		default:
+			*state = ANSI_CHR;
+			return 0;
+		}
+		*found = 1;
+		return 0;
+	case ANSI_SGR:
+		// Fe allows the range \x30-\x3f but SGR only uses: 0-9 ';' ':'
+		*found += 1;
+		if (*str >= '0' && *str <= '?')
+			return 0;
+		// Fe Ends on the range \x40-\x7e but SGR ends on 'm'
+		if (*str <= '@' && *str >= '~')
+			*found = 0;
+		break;
+	case ANSI_APC:
+	case ANSI_OSC:
+		*found += 1;
+		if (*str == '\x9c' || *str == '\x7') // Ends on ST or BEL
+			break;
+		else if (*str == '\x1b') // Ends on ESC BACKSLASH
+			*state = ANSI_BSL;
+		return 0;
+	case ANSI_BSL:
+		if (*str == '\x5c')
+			break;
+		*found = 0;
+		return 0;
+	}
+	size_t res = *found;
+	*state = ANSI_CHR;
+	*found = 0;
+	return res;
+}
+
 static size_t width(const wchar_t *str)
 {
-	size_t width = 0;
+	size_t count = 0;
+	size_t found = 0;
+	ansi_csi_sgr state = ANSI_CHR;
 
 	for (; *str != '\0'; str++) {
 #ifdef HAVE_WIDECHAR
 		int x = wcwidth(*str);	/* don't use wcswidth(), need to ignore non-printable */
 		if (x > 0)
-			width += x;
+			count += x;
 #else
 		if (isprint(*str))
-			width++;
+			count++;
 #endif
+		count -= ansi_esc_width(&state, &found, str);
 	}
-	return width;
+	return count;
 }
 
 static wchar_t *mbs_to_wcs(const char *s)
