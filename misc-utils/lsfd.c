@@ -683,7 +683,8 @@ static const struct file_class *stat2class(struct stat *sb)
 	return &unkn_class;
 }
 
-static struct file *new_file(struct proc *proc, const struct file_class *class)
+static struct file *new_file(struct proc *proc, const struct file_class *class,
+			     struct stat *sb, const char *name, int association)
 {
 	struct file *file;
 
@@ -696,10 +697,54 @@ static struct file *new_file(struct proc *proc, const struct file_class *class)
 	INIT_LIST_HEAD(&file->files);
 	list_add_tail(&file->files, &proc->files);
 
+	file->association = association;
+	file->name = xstrdup(name);
+	file->stat = *sb;
+
 	return file;
 }
 
-static struct file *copy_file(struct file *old)
+static struct file *new_readlink_error_file(struct proc *proc, int error_no, int association)
+{
+	struct file *file;
+
+	file = xcalloc(1, readlink_error_class.size);
+	file->class = &readlink_error_class;
+
+	file->proc = proc;
+
+	INIT_LIST_HEAD(&file->files);
+	list_add_tail(&file->files, &proc->files);
+
+	file->error.syscall = "readlink";
+	file->error.number = error_no;
+	file->association = association;
+	file->name = NULL;
+
+	return file;
+}
+
+static struct file *new_stat_error_file(struct proc *proc, const char *name, int error_no, int association)
+{
+	struct file *file;
+
+	file = xcalloc(1, stat_error_class.size);
+	file->class = &stat_error_class;
+
+	file->proc = proc;
+
+	INIT_LIST_HEAD(&file->files);
+	list_add_tail(&file->files, &proc->files);
+
+	file->error.syscall = "stat";
+	file->error.number = error_no;
+	file->association = association;
+	file->name = xstrdup(name);
+
+	return file;
+}
+
+static struct file *copy_file(struct file *old, int new_association)
 {
 	struct file *file = xcalloc(1, old->class->size);
 
@@ -708,18 +753,11 @@ static struct file *copy_file(struct file *old)
 	list_add_tail(&file->files, &old->proc->files);
 
 	file->class = old->class;
-	file->association = old->association;
+	file->association = new_association;
 	file->name = xstrdup(old->name);
 	file->stat = old->stat;
 
 	return file;
-}
-
-static void file_set_path(struct file *file, struct stat *sb, const char *name, int association)
-{
-	file->association = association;
-	file->name = xstrdup(name);
-	file->stat = *sb;
 }
 
 static void file_init_content(struct file *file)
@@ -801,23 +839,20 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 	struct file *f, *prev;
 
 	if (ul_path_readlink(pc, sym, sizeof(sym), name) < 0)
-		return NULL;
-
+		f = new_readlink_error_file(proc, errno, assoc);
 	/* The /proc/#/{fd,ns} often contains the same file (e.g. /dev/tty)
 	 * more than once. Let's try to reuse the previous file if the real
 	 * path is the same to save stat() call.
 	 */
-	prev = list_last_entry(&proc->files, struct file, files);
-	if (prev && prev->name && strcmp(prev->name, sym) == 0) {
-		f = copy_file(prev);
-		f->association = assoc;
-	} else {
-		const struct file_class *class;
+	else if ((prev = list_last_entry(&proc->files, struct file, files))
+		 && (!prev->is_error)
+		 && prev->name && strcmp(prev->name, sym) == 0)
+		f = copy_file(prev, assoc);
+	else if (ul_path_stat(pc, &sb, 0, name) < 0)
+		f = new_stat_error_file(proc, sym, errno, assoc);
+	else {
+		const struct file_class *class = stat2class(&sb);
 
-		if (ul_path_stat(pc, &sb, 0, name) < 0)
-			return NULL;
-
-		class = stat2class(&sb);
 		if (sockets_only
 		    /* A nsfs file is not a socket but the nsfs file can
 		     * be used as a entry point to collect information from
@@ -826,11 +861,13 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 		     */
 		    && (class != &sock_class) && (class != &nsfs_file_class))
 			return NULL;
-		f = new_file(proc, class);
-		file_set_path(f, &sb, sym, assoc);
+		f = new_file(proc, class, &sb, sym, assoc);
 	}
 
 	file_init_content(f);
+
+	if (f->is_error)
+		return f;
 
 	if (is_association(f, NS_MNT))
 		proc->ns_mnt = f->stat.st_ino;
@@ -913,18 +950,17 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 	 */
 	prev = list_last_entry(&proc->files, struct file, files);
 
-	if (prev && prev->stat.st_dev == devno && prev->stat.st_ino == ino) {
-		f = copy_file(prev);
-		f->association = -assoc;
-	} else if ((path = strchr(buf, '/'))) {
+	if (prev && (!prev->is_error)
+	    && prev->stat.st_dev == devno && prev->stat.st_ino == ino)
+		f = copy_file(prev, -assoc);
+	else if ((path = strchr(buf, '/'))) {
 		rtrim_whitespace((unsigned char *) path);
 		if (stat(path, &sb) < 0)
 			/* If a file is mapped but deleted from the file system,
 			 * "stat by the file name" may not work. In that case,
 			 */
 			goto try_map_files;
-		f = new_file(proc, stat2class(&sb));
-		file_set_path(f, &sb, path, -assoc);
+		f = new_file(proc, stat2class(&sb), &sb, path, -assoc);
 	} else {
 		/* As used in tcpdump, AF_PACKET socket can be mmap'ed. */
 		char map_file[sizeof("map_files/0000000000000000-ffffffffffffffff")];
@@ -932,12 +968,12 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 
 	try_map_files:
 		snprintf(map_file, sizeof(map_file), "map_files/%"PRIx64"-%"PRIx64, start, end);
-		if (ul_path_stat(pc, &sb, 0, map_file) < 0)
-			return;
 		if (ul_path_readlink(pc, sym, sizeof(sym), map_file) < 0)
-			return;
-		f = new_file(proc, stat2class(&sb));
-		file_set_path(f, &sb, sym, -assoc);
+			f = new_readlink_error_file(proc, errno, -assoc);
+		else if (ul_path_stat(pc, &sb, 0, map_file) < 0)
+			f = new_stat_error_file(proc, sym, errno, -assoc);
+		else
+			f = new_file(proc, stat2class(&sb), &sb, sym, -assoc);
 	}
 
 	if (modestr[0] == 'r')
@@ -1311,6 +1347,7 @@ static void initialize_class(const struct file_class *class)
 
 static void initialize_classes(void)
 {
+	initialize_class(&abst_class);
 	initialize_class(&file_class);
 	initialize_class(&cdev_class);
 	initialize_class(&bdev_class);
@@ -1872,6 +1909,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -C, --counter <name>:<expr>  define custom counter for --summary output\n"), out);
 	fputs(_("     --dump-counters          dump counter definitions\n"), out);
 	fputs(_("     --summary[=<when>]       print summary information (only, append, or never)\n"), out);
+	fputs(_("     --_drop-privilege        (testing purpose) do setuid(1) just after starting\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -H, --list-columns           list the available columns\n"), out);
@@ -2216,6 +2254,7 @@ int main(int argc, char *argv[])
 		OPT_DEBUG_FILTER = CHAR_MAX + 1,
 		OPT_SUMMARY,
 		OPT_DUMP_COUNTERS,
+		OPT_DROP_PRIVILEGE,
 	};
 	static const struct option longopts[] = {
 		{ "noheadings", no_argument, NULL, 'n' },
@@ -2234,6 +2273,7 @@ int main(int argc, char *argv[])
 		{ "counter",    required_argument, NULL, 'C' },
 		{ "dump-counters",no_argument, NULL, OPT_DUMP_COUNTERS },
 		{ "list-columns",no_argument, NULL, 'H' },
+		{ "_drop-privilege",no_argument,NULL,OPT_DROP_PRIVILEGE },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -2309,6 +2349,10 @@ int main(int argc, char *argv[])
 			break;
 		case OPT_DUMP_COUNTERS:
 			dump_counters = true;
+			break;
+		case OPT_DROP_PRIVILEGE:
+			if (setuid(1) == -1)
+				err(EXIT_FAILURE, _("failed to drop privilege"));
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);

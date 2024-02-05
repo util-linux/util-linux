@@ -46,6 +46,7 @@ config/test-driver
 configure
 cscope.out
 depcomp
+errnos.h
 GPATH
 GRTAGS
 GTAGS

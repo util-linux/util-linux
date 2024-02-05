@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Derrived from all_syscalls.
+
+set -e
+
+OUTPUT=errnos.h
+ERRNO_INCLUDES="
+#include <sys/errno.h>
+"
+
+trap 'rm $OUTPUT $OUTPUT.deps' ERR
+
+"$@" -MD -MF "$OUTPUT.deps" <<< "$ERRNO_INCLUDES" -dM -E - \
+	| gawk 'match($0, /^#[ \t]*define[ \t]*E([^ ]+)/, res) { print "UL_ERRNO(\"E" res[1] "\", E" res[1] ")" }' \
+	| sort \
+	> "$OUTPUT"

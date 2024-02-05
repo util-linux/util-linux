@@ -56,6 +56,7 @@
 #include <sys/signalfd.h>
 #include <sys/socket.h>
 #include <sys/shm.h>
+#include <sys/stat.h>
 #include <sys/syscall.h>
 #include <sys/timerfd.h>
 #include <sys/types.h>
@@ -3167,6 +3168,51 @@ static void free_pty(const struct factory * factory _U_, void *data)
 	free(data);
 }
 
+struct mmap_data {
+	char *addr;
+	size_t len;
+};
+
+static void *make_mmap(const struct factory *factory, struct fdesc fdescs[] _U_,
+		       int argc, char ** argv)
+{
+	struct arg file = decode_arg("file", factory->params, argc, argv);
+	const char *sfile = ARG_STRING(file);
+
+	int fd = open(sfile, O_RDONLY);
+	if (fd < 0)
+		err(EXIT_FAILURE, "failed in opening %s", sfile);
+	free_arg(&file);
+
+	struct stat sb;
+	if (fstat(fd, &sb) < 0) {
+		int e = errno;
+		close(fd);
+		errno = e;
+		err(EXIT_FAILURE, "failed in fstat()");
+	}
+	char *addr = mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+	if (addr == MAP_FAILED) {
+		int e = errno;
+		close(fd);
+		errno = e;
+		err(EXIT_FAILURE, "failed in mmap()");
+	}
+	close(fd);
+
+	struct mmap_data *data = xmalloc(sizeof(*data));
+	data->addr = addr;
+	data->len = sb.st_size;
+
+	return data;
+}
+
+static void free_mmap(const struct factory * factory _U_, void *data)
+{
+	munmap(((struct mmap_data *)data)->addr,
+	       ((struct mmap_data *)data)->len);
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -3998,6 +4044,24 @@ static const struct factory factories[] = {
 		.params = (struct parameter []) {
 			PARAM_END
 		}
+	},
+	{
+		.name = "mmap",
+		.desc = "do mmap the given file",
+		.priv = false,
+		.N    = 0,
+		.EX_N = 0,
+		.make = make_mmap,
+		.free = free_mmap,
+		.params = (struct parameter []) {
+			{
+				.name = "file",
+				.type = PTYPE_STRING,
+				.desc = "file to be opened",
+				.defv.string = "/etc/passwd",
+			},
+			PARAM_END
+		},
 	},
 };
 

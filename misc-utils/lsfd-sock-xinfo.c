@@ -502,10 +502,10 @@ static bool unix_is_suitable_ipc(struct ipc *ipc, struct file *file)
  *
  * However, there is a case that we have no sock strcuct for the inode;
  * in the context we know only the sock inode.
- * For the case, unix_make_dumy_sock() provides the way to make a
+ * For the case, unix_make_dummy_sock() provides the way to make a
  * dummy sock struct for the inode.
  */
-static void unix_make_dumy_sock(struct sock *original, ino_t ino, struct sock *dummy)
+static void unix_make_dummy_sock(struct sock *original, ino_t ino, struct sock *dummy)
 {
 	*dummy = *original;
 	dummy->file.stat.st_ino = ino;
@@ -563,7 +563,7 @@ static struct ipc *unix_get_peer_ipc(struct unix_xinfo *ux,
 	if (!unix_ipc)
 		return NULL;
 
-	unix_make_dumy_sock(sock, unix_ipc->ipeer, &dummy_peer_sock);
+	unix_make_dummy_sock(sock, unix_ipc->ipeer, &dummy_peer_sock);
 	return get_ipc(&dummy_peer_sock.file);
 }
 

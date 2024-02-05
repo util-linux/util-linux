@@ -2683,12 +2683,18 @@ if not is_disabler(exe)
   bashcompletions += ['lsblk']
 endif
 
+errnos_h = custom_target('errnos.h',
+  input : 'tools/all_errnos',
+  output : 'errnos.h',
+  command : ['tools/all_errnos', cc.cmd_array()]
+)
+
 mq_libs = []
 mq_libs += cc.find_library('rt', required : true)
 
 exe = executable(
   'lsfd',
-  lsfd_sources,
+  lsfd_sources, errnos_h,
   include_directories : includes,
   link_with : [lib_common,
                lib_smartcols],

@@ -272,6 +272,16 @@ hardlink_CFLAGS = $(AM_CFLAGS)
 endif
 
 if BUILD_LSFD
+
+misc-utils/lsfd-file.c: errnos.h
+
+errnos.h: $(top_srcdir)/tools/all_errnos
+	@echo '  GEN      $@'
+	@$(top_srcdir)/tools/all_errnos $(CC) $(CFLAGS)
+
+-include errnos.h.deps
+CLEANFILES += errnos.h errnos.h.deps
+
 bin_PROGRAMS += lsfd
 MANPAGES += misc-utils/lsfd.1
 dist_noinst_DATA += misc-utils/lsfd.1.adoc
