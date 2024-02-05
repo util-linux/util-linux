@@ -113,6 +113,13 @@ typedef enum {
 	ANSI_BSL = '\\'
 } ansi_esc_states;
 
+/**
+ * Count how many characters are non-printable due to ANSI X3.41 escape codes.
+ *
+ * It detects and count only Fe Escape sequences. These sequences contains characters
+ * that normally are printable, but due to being part of a escape sequence are ignored
+ * when displayed in console terminals.
+ */
 static inline size_t ansi_esc_width(ansi_esc_states *state, size_t *found, const wchar_t *str)
 {
 	switch (*state) {
