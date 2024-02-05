@@ -116,13 +116,13 @@ The "last sector" dialog accepts partition size specified by number of sectors o
 //TRANSLATORS: Keep {plus} untranslated.
 If the size is prefixed by '{plus}' then it is interpreted as relative to the partition first sector. If the size is prefixed by '-' then it is interpreted as relative to the high limit (last available sector for the partition).
 
-In the case the size is specified in bytes than the number may be followed by the multiplicative suffixes KiB=1024, MiB=1024*1024, and so on for GiB, TiB, PiB, EiB, ZiB and YiB. The "iB" is optional, e.g., "K" has the same meaning as "KiB".
+In the case the size is specified in bytes, then the number may be followed by the multiplicative suffixes KiB (1024 bytes), MiB (1024*1024 bytes), and so on for GiB, TiB, PiB, EiB, ZiB and YiB. The "iB" is optional, e.g., "K" has the same meaning as "KiB".
 
 
 //TRANSLATORS: Keep {plus} untranslated.
 The relative sizes are always aligned according to device I/O limits. The {plus}/-<size>{K,B,M,G,...} notation is recommended.
 
-For backward compatibility *fdisk* also accepts the suffixes KB=1000, MB=1000*1000, and so on for GB, TB, PB, EB, ZB and YB. These 10^N suffixes are deprecated.
+For backward compatibility *fdisk* also accepts the suffixes KB (1000 bytes), MB (1000*1000 bytes), and so on for GB, TB, PB, EB, ZB and YB. These 10^N suffixes are deprecated.
 
 == SCRIPT FILES
 
