@@ -504,6 +504,7 @@ static void add_cpu_clock(struct libscols_table *tb,
 
 	struct clockinfo clockinfo = {
 		.type = CT_CPU,
+		.id = clockid,
 		.name = name,
 		.no_id = true,
 	};
