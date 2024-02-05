@@ -197,6 +197,7 @@ headers = '''
         security/openpam.h
         security/pam_appl.h
         security/pam_misc.h
+        security/pam_modules.h
         sys/disk.h
         sys/disklabel.h
         sys/endian.h
@@ -413,6 +414,8 @@ lib_audit = dependency(
 conf.set('HAVE_LIBAUDIT', lib_audit.found() ? 1 : false)
 
 conf.set('HAVE_SMACK', not get_option('smack').disabled())
+
+lib_sqlite3 = dependency('sqlite3', required : get_option('build-liblastlog2'))
 
 foreach header : headers
   have = cc.has_header(header)
