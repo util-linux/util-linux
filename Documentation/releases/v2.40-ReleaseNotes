@@ -52,6 +52,8 @@ libsmartcols:
 * A new command, exch, is introduced to atomically exchanges paths between
   two files. The command is based on renameat2( RENAME_EXCHANGE ) syscall.
 
+* A new command, setpgid, is introduced to run a program in a new process group.
+
 * login(1) now supports systemd service credentials. 'login.noauth' is now
   supported.
 
