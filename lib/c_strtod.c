@@ -50,10 +50,10 @@ double c_strtod(char const *str, char **end)
 		return strtod_l(str, end, cl);
 #elif defined(HAVE_USELOCALE)
 	/*
-	 * B) classic strtod(), but switch to "C" locale by uselocal()
+	 * B) classic strtod(), but switch to "C" locale by uselocale()
 	 */
 	if (cl) {
-		locale_t org_cl = uselocale(locale);
+		locale_t org_cl = uselocale(cl);
 		if (!org_cl)
 			return 0;
 
