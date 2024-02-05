@@ -9,5 +9,5 @@ Name: lastlog2
 Description: Y2038 safe version of lastlog
 Version: @LIBLASTLOG2_VERSION@
 Requires.private: sqlite3
-Cflags: -I${includedir}/lastlog2
+Cflags: -I${includedir}/liblastlog2
 Libs: -L${libdir} -llastlog2
