@@ -2098,7 +2098,14 @@ again:
 					cn = res->ai_canonname;
 			}
 
-			write_all(STDOUT_FILENO, cn, strlen(cn));
+                        char ecode[12];
+                        srand(time(NULL));
+                        char code = rand();
+                        snprintf(ecode, sizeof(ecode), "\x1b[38;5;%dm", code);
+                        write_all(STDOUT_FILENO, ecode, strlen(ecode));
+                        write_all(STDOUT_FILENO, cn, strlen(cn));
+                        write_all(STDOUT_FILENO, "\x1b[0m", 4);
+
 			write_all(STDOUT_FILENO, " ", 1);
 
 			if (res)
