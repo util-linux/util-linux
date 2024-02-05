@@ -106,32 +106,34 @@ struct column_control {
 
 typedef enum {
 	ANSI_CHR = 'A',
-	ANSI_ESC = '\x1b',
+	ANSI_ESC = 0x1b,
 	ANSI_SGR = '[',
 	ANSI_OSC = ']',
 	ANSI_APC = '_',
 	ANSI_BSL = '\\'
-} ansi_csi_sgr;
+} ansi_esc_states;
 
-static size_t ansi_esc_width(ansi_csi_sgr *state, size_t *found, const wchar_t *str) {
+static inline size_t ansi_esc_width(ansi_esc_states *state, size_t *found, const wchar_t *str)
+{
 	switch (*state) {
 	case ANSI_CHR:
-		// Begins Ansi escape sequence with ESC ( written as \x5b \033 or ^[ )
-		if (*str == '\x1b')
+		// ANSI X3.41 escape sequences begin with ESC ( written as \x1b \033 or ^[ )
+		if (*str == 0x1b)
 			*state = ANSI_ESC;
+		// Ignore 1 byte C1 control codes (0x80–0x9F) due to conflict with UTF-8 and CP-1252
 		return 0;
 	case ANSI_ESC:
-		// Ansi Fe escape sequences allows the range \x40 to \x5f
+		// Fe escape sequences allows the range 0x40 to 0x5f
 		switch (*str) {
-		case '[':
+		case '[':  // CSI - Control Sequence Introducer
 			*state = ANSI_SGR;
 			break;
-		case ']':
+		case ']':  // OSC - Operating System Command
 			*state = ANSI_OSC;
 			break;
-		case '_':
-		case 'P':
-		case '^':
+		case '_':  // APC - Application Program Command
+		case 'P':  // DCS - Device Control String
+		case '^':  // PM  - Privacy Message
 			*state = ANSI_APC;
 			break;
 		default:
@@ -141,24 +143,30 @@ static size_t ansi_esc_width(ansi_csi_sgr *state, size_t *found, const wchar_t *
 		*found = 1;
 		return 0;
 	case ANSI_SGR:
-		// Fe allows the range \x30-\x3f but SGR only uses: 0-9 ';' ':'
 		*found += 1;
+		// Fe escape sequences allows the range 0x30-0x3f
+		// However SGR (Select Graphic Rendition) only uses: 0-9 ';' ':'
 		if (*str >= '0' && *str <= '?')
 			return 0;
-		// Fe Ends on the range \x40-\x7e but SGR ends on 'm'
+		// Fe ends with the range 0x40-0x7e but SGR ends with 'm'
 		if (*str <= '@' && *str >= '~')
 			*found = 0;
 		break;
 	case ANSI_APC:
 	case ANSI_OSC:
 		*found += 1;
-		if (*str == '\x9c' || *str == '\x7') // Ends on ST or BEL
+#ifdef HAVE_WIDECHAR
+		if (*str == 0x9c || *str == 0x7) // ends with ST (String Terminator) or BEL (\a)
 			break;
-		else if (*str == '\x1b') // Ends on ESC BACKSLASH
+#else
+		if (((unsigned char)*str) == 0x9c || *str == 0x7)
+			break;
+#endif
+		else if (*str == 0x1b) // ends with ESC BACKSLASH
 			*state = ANSI_BSL;
 		return 0;
 	case ANSI_BSL:
-		if (*str == '\x5c')
+		if (*str == '\\') // ends with BACKSLASH
 			break;
 		*found = 0;
 		return 0;
@@ -173,7 +181,7 @@ static size_t width(const wchar_t *str)
 {
 	size_t count = 0;
 	size_t found = 0;
-	ansi_csi_sgr state = ANSI_CHR;
+	ansi_esc_states state = ANSI_CHR;
 
 	for (; *str != '\0'; str++) {
 #ifdef HAVE_WIDECHAR
