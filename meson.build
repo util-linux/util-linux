@@ -2221,6 +2221,7 @@ exe = executable(
 if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['disk-utils/fdformat.8.adoc']
+  bashcompletions += ['fdformat']
 endif
 
 exe = executable(
