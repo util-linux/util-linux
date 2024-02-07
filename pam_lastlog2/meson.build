@@ -21,7 +21,7 @@ if build_pam_lastlog2
 
   libpam = cc.find_library('pam')
 
-  pam_lastlog2 = both_libraries(
+  pam_lastlog2 = shared_module(
     'pam_lastlog2',
     lib_pam_lastlog2_sources,
     name_prefix : '',
@@ -31,14 +31,6 @@ if build_pam_lastlog2
     dependencies : [libpam, lastlog2_dep],
     install : build_liblastlog2,
     install_dir : pamlibdir,
-    version : liblastlog2_version,
   )
   manadocs += ['pam_lastlog2/man/pam_lastlog2.8.adoc']
-
-  pkg.generate(
-    pam_lastlog2,
-    description : 'pam library to manage last login data with lastlog2',
-    subdirs : 'lastlog2',
-    version : pc_version
-  )
 endif  
