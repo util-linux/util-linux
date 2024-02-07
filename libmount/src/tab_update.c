@@ -894,7 +894,7 @@ static int update_init_lock(struct libmnt_update *upd, struct libmnt_lock *lc)
 		upd->lock = mnt_new_lock(upd->filename, 0);
 		if (!upd->lock)
 			return -ENOMEM;
-		mnt_lock_block_signals(lc, TRUE);
+		mnt_lock_block_signals(upd->lock, TRUE);
 	}
 
 	return 0;
