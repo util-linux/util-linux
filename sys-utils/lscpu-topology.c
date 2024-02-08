@@ -574,6 +574,9 @@ static int read_mhz(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 	if (ul_path_readf_s32(sys, &mhz, "cpu%d/cpufreq/scaling_cur_freq", num) == 0)
 		cpu->mhz_cur_freq = (float) mhz / 1000;
 
+	if (cpu->mhz_cur_freq > cpu->mhz_max_freq)
+		cpu->mhz_cur_freq = cpu->mhz_max_freq;
+
 	if (cpu->type && (cpu->mhz_min_freq || cpu->mhz_max_freq))
 		cpu->type->has_freq = 1;
 
