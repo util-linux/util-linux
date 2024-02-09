@@ -131,8 +131,8 @@ int blkdev_is_cdrom(int fd);
 /* get device's geometry - legacy */
 int blkdev_get_geometry(int fd, unsigned int *h, unsigned int *s);
 
-/* SCSI device types.  Copied almost as-is from kernel header.
- * http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/include/scsi/scsi.h */
+/* SCSI device types.  Copied almost as-is from kernel header
+ * (include/scsi/scsi_proto.h). */
 #define SCSI_TYPE_DISK			0x00
 #define SCSI_TYPE_TAPE			0x01
 #define SCSI_TYPE_PRINTER		0x02
