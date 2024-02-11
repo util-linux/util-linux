@@ -173,6 +173,7 @@ static void wait_for_pager(void)
 
 static void wait_for_pager_signal(int signo)
 {
+	UL_PROTECT_ERRNO;
 	wait_for_pager();
 	raise(signo);
 }
