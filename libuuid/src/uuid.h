@@ -59,6 +59,9 @@ typedef unsigned char uuid_t[16];
 #define UUID_TYPE_DCE_MD5    3
 #define UUID_TYPE_DCE_RANDOM 4
 #define UUID_TYPE_DCE_SHA1   5
+#define UUID_TYPE_DCE_TIME_V6    6
+#define UUID_TYPE_DCE_TIME_V7    7
+#define UUID_TYPE_DCE_VENDOR     8
 
 #define UUID_TYPE_SHIFT      4
 #define UUID_TYPE_MASK     0xf
@@ -92,6 +95,8 @@ extern void uuid_generate(uuid_t out);
 extern void uuid_generate_random(uuid_t out);
 extern void uuid_generate_time(uuid_t out);
 extern int uuid_generate_time_safe(uuid_t out);
+extern void uuid_generate_time_v6(uuid_t out);
+extern void uuid_generate_time_v7(uuid_t out);
 
 extern void uuid_generate_md5(uuid_t out, const uuid_t ns, const char *name, size_t len);
 extern void uuid_generate_sha1(uuid_t out, const uuid_t ns, const char *name, size_t len);
