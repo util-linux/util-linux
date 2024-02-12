@@ -364,7 +364,8 @@ lib_cryptsetup = dependency(
   required : get_option('cryptsetup'))
 conf.set('HAVE_CRYPTSETUP', lib_cryptsetup.found() ? 1 : false)
 
-if not get_option('cryptsetup').disabled() and get_option('cryptsetup-dlopen').enabled()
+cryptsetup_dlopen = not get_option('cryptsetup').disabled() and get_option('cryptsetup-dlopen').enabled()
+if cryptsetup_dlopen
   if meson.version().version_compare('>= 0.62.0')
     lib_dl = dependency('dl')
   else
@@ -2098,7 +2099,7 @@ exe = executable(
   dependencies: [lib_selinux],
   install_dir : sbindir,
   install : true)
-if opt and not is_disabler(exe)
+if not is_disabler(exe)
   exes += exe
   manadocs += ['disk-utils/mkswap.8.adoc']
   bashcompletions += ['mkswap']
@@ -2113,7 +2114,7 @@ exe = executable(
                lib_uuid],
   install_dir : sbindir,
   install : true)
-if opt and not is_disabler(exe)
+if not is_disabler(exe)
   exes += exe
   manadocs += ['disk-utils/swaplabel.8.adoc']
   bashcompletions += ['swaplabel']
@@ -2221,6 +2222,7 @@ exe = executable(
 if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['disk-utils/fdformat.8.adoc']
+  bashcompletions += ['fdformat']
 endif
 
 exe = executable(

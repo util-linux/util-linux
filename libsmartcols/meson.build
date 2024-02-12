@@ -72,3 +72,5 @@ if build_libsmartcols
     meson.override_dependency('smartcols', smartcols_dep)
   endif
 endif
+
+manadocs += ['libsmartcols/scols-filter.5.adoc']

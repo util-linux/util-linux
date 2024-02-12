@@ -83,7 +83,7 @@ lib_mount_static = static_library(
 
 lib__mount_deps = [
   lib_selinux,
-  get_option('cryptsetup-dlopen').enabled() ? lib_dl : lib_cryptsetup,
+  cryptsetup_dlopen ? lib_dl : lib_cryptsetup,
   realtime_libs
 ]
 lib_mount = library(
