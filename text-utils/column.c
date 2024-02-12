@@ -104,21 +104,104 @@ struct column_control {
 		     tab_noheadings :1;
 };
 
+typedef enum {
+	ANSI_CHR = 'A',
+	ANSI_ESC = 0x1b,
+	ANSI_SGR = '[',
+	ANSI_OSC = ']',
+	ANSI_APC = '_',
+	ANSI_BSL = '\\'
+} ansi_esc_states;
+
+/**
+ * Count how many characters are non-printable due to ANSI X3.41 escape codes.
+ *
+ * It detects and count only Fe Escape sequences. These sequences contains characters
+ * that normally are printable, but due to being part of a escape sequence are ignored
+ * when displayed in console terminals.
+ */
+static inline size_t ansi_esc_width(ansi_esc_states *state, size_t *found, const wchar_t *str)
+{
+	switch (*state) {
+	case ANSI_CHR:
+		// ANSI X3.41 escape sequences begin with ESC ( written as \x1b \033 or ^[ )
+		if (*str == 0x1b)
+			*state = ANSI_ESC;
+		// Ignore 1 byte C1 control codes (0x80–0x9F) due to conflict with UTF-8 and CP-1252
+		return 0;
+	case ANSI_ESC:
+		// Fe escape sequences allows the range 0x40 to 0x5f
+		switch (*str) {
+		case '[':  // CSI - Control Sequence Introducer
+			*state = ANSI_SGR;
+			break;
+		case ']':  // OSC - Operating System Command
+			*state = ANSI_OSC;
+			break;
+		case '_':  // APC - Application Program Command
+		case 'P':  // DCS - Device Control String
+		case '^':  // PM  - Privacy Message
+			*state = ANSI_APC;
+			break;
+		default:
+			*state = ANSI_CHR;
+			return 0;
+		}
+		*found = 1;
+		return 0;
+	case ANSI_SGR:
+		*found += 1;
+		// Fe escape sequences allows the range 0x30-0x3f
+		// However SGR (Select Graphic Rendition) only uses: 0-9 ';' ':'
+		if (*str >= '0' && *str <= '?')
+			return 0;
+		// Fe ends with the range 0x40-0x7e but SGR ends with 'm'
+		if (*str <= '@' && *str >= '~')
+			*found = 0;
+		break;
+	case ANSI_APC:
+	case ANSI_OSC:
+		*found += 1;
+#ifdef HAVE_WIDECHAR
+		if (*str == 0x9c || *str == 0x7) // ends with ST (String Terminator) or BEL (\a)
+			break;
+#else
+		if (((unsigned char)*str) == 0x9c || *str == 0x7)
+			break;
+#endif
+		else if (*str == 0x1b) // ends with ESC BACKSLASH
+			*state = ANSI_BSL;
+		return 0;
+	case ANSI_BSL:
+		if (*str == '\\') // ends with BACKSLASH
+			break;
+		*found = 0;
+		return 0;
+	}
+	size_t res = *found;
+	*state = ANSI_CHR;
+	*found = 0;
+	return res;
+}
+
 static size_t width(const wchar_t *str)
 {
-	size_t width = 0;
+	size_t count = 0;
+	size_t found = 0;
+	ansi_esc_states state = ANSI_CHR;
 
 	for (; *str != '\0'; str++) {
 #ifdef HAVE_WIDECHAR
 		int x = wcwidth(*str);	/* don't use wcswidth(), need to ignore non-printable */
 		if (x > 0)
-			width += x;
+			count += x;
 #else
 		if (isprint(*str))
-			width++;
+			count++;
 #endif
+		count -= ansi_esc_width(&state, &found, str);
 	}
-	return width;
+	return count;
 }
 
 static wchar_t *mbs_to_wcs(const char *s)
