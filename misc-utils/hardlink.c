@@ -1378,6 +1378,7 @@ static void to_be_called_atexit(void)
 */
 static void sighandler(int i)
 {
+	UL_PROTECT_ERRNO;
 	if (last_signal != SIGINT)
 		last_signal = i;
 	if (i == SIGINT)

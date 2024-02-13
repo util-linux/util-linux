@@ -595,4 +595,13 @@ static inline void *reallocarray(void *ptr, size_t nmemb, size_t size)
 }
 #endif
 
+static inline void ul_reset_errno(int *saved_errno) {
+        if (*saved_errno < 0)
+                return;
+
+        errno = *saved_errno;
+}
+
+#define UL_PROTECT_ERRNO __attribute__((__cleanup__(ul_reset_errno))) \
+                         __attribute__((__unused__)) int __ul_saved_errno = errno
 #endif /* UTIL_LINUX_C_H */

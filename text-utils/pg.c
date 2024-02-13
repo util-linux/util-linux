@@ -371,6 +371,7 @@ static void skip(int direction)
 /* Signal handler while reading from input file. */
 static void sighandler(int signum)
 {
+	UL_PROTECT_ERRNO;
 	if (canjump && (signum == SIGINT || signum == SIGQUIT))
 		longjmp(jmpenv, signum);
 	tcsetattr(STDOUT_FILENO, TCSADRAIN, &otio);
