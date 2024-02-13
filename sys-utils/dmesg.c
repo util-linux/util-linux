@@ -1122,8 +1122,12 @@ static void print_record(struct dmesg_control *ctl,
 	double delta = 0;
 	size_t format_iter = 0;
 
-	if (!accept_record(ctl, rec))
+	if (!accept_record(ctl, rec)) {
+		/* remember time of the rejected record to not affect delta for
+		 * the following records */
+		ctl->lasttime = rec->tv;
 		return;
+	}
 
 	if (!rec->mesg_size) {
 		if (!ctl->json)
