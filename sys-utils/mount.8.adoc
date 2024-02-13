@@ -240,8 +240,6 @@ It's also possible to change nosuid, nodev, noexec, noatime, nodiratime, relatim
 
 Since util-linux 2.31, *mount* ignores the *bind* flag from _/etc/fstab_ on a *remount* operation (if *-o remount* is specified on command line). This is necessary to fully control mount options on remount by command line. In previous versions the bind flag has been always applied and it was impossible to re-define mount options without interaction with the bind semantic. This *mount* behavior does not affect situations when "remount,bind" is specified in the _/etc/fstab_ file.
 
-Since util-linux 2.40, *mount* does not canonicalize the mountpoint path on bind operation if the target is a symlink. This feature is usable (only) with the new kernel mount API where *bind mount over symlinks* is supported.
-
 === The move operation
 
 Move a *mounted tree* to another place (atomically). The call is:
@@ -319,9 +317,7 @@ Note that it is a bad practice to use *mount -a* for _fstab_ checking. The recom
 Remount a subtree somewhere else (so that its contents are available in both places). See above, under *Bind mount operation*.
 
 *-c*, *--no-canonicalize*::
-Don't canonicalize paths. The *mount* command canonicalizes all paths (from the command line or _fstab_) by default. The option is designed for mount helpers which call *mount -i*. It is strongly recommended to not use this command-line option for normal mount operations.
-+
-Since util-linux 2.40, mount does not canonicalize the mountpoint path on bind operation if the target is a symlink (see "*Bind mount operation*" section for more details).
+Don't canonicalize paths. The *mount* command canonicalizes all paths (from the command line or _fstab_) by default. This option can be used together with the *-f* flag for already canonicalized absolute paths. The option is designed for mount helpers which call *mount -i*. It is strongly recommended to not use this command-line option for normal mount operations.
 +
 Note that *mount* does not pass this option to the **/sbin/mount.**__type__ helpers.
 
