@@ -662,6 +662,7 @@ static void log_audit(struct login_context *cxt, int status)
 # define log_audit(cxt, status)
 #endif				/* HAVE_LIBAUDIT */
 
+#ifdef USE_LOGIN_LASTLOG
 static void log_lastlog(struct login_context *cxt)
 {
 	struct sigaction sa, oldsa_xfsz;
@@ -728,6 +729,9 @@ done:
 
 	sigaction(SIGXFSZ, &oldsa_xfsz, NULL);		/* restore original setting */
 }
+#else
+# define log_lastlog(cxt)
+#endif 	/* USE_LOGIN_LASTLOG */
 
 /*
  * Update wtmp and utmp logs.
