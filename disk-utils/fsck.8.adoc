@@ -151,6 +151,11 @@ enables libmount debug output.
 
 _/etc/fstab_
 
+== NOTES
+During boot, *systemd* does not invoke *fsck -A*. Instead, it schedules the activation
+of mounts individually, taking into account dependencies on backing devices, networking,
+and other factors. Consequently, *fsck* is called individually for each device.
+
 == AUTHORS
 
 mailto:tytso@mit.edu>[Theodore Ts'o],
