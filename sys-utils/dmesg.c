@@ -604,7 +604,7 @@ static const char *parse_kmsg_timestamp(const char *str0, struct timeval *tv)
 
 static double time_diff(struct timeval *a, struct timeval *b)
 {
-	return (a->tv_sec - b->tv_sec) + (a->tv_usec - b->tv_usec) / USEC_PER_SEC;
+	return (a->tv_sec - b->tv_sec) + (a->tv_usec - b->tv_usec) / (double) USEC_PER_SEC;
 }
 
 static int get_syslog_buffer_size(void)
@@ -1122,8 +1122,12 @@ static void print_record(struct dmesg_control *ctl,
 	double delta = 0;
 	size_t format_iter = 0;
 
-	if (!accept_record(ctl, rec))
+	if (!accept_record(ctl, rec)) {
+		/* remember time of the rejected record to not affect delta for
+		 * the following records */
+		ctl->lasttime = rec->tv;
 		return;
+	}
 
 	if (!rec->mesg_size) {
 		if (!ctl->json)
