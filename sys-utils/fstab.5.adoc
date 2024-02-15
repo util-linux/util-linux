@@ -132,6 +132,8 @@ The proper way to read records from *fstab* is to use the routines *getmntent*(3
 
 The keyword *ignore* as a filesystem type (3rd field) is no longer supported by the pure libmount based mount utility (since util-linux v2.22).
 
+This document describes handling of *fstab* by *util-linux* and *libmount*. For *systemd*, read *systemd* documentation. There are slight differences.
+
 == HISTORY
 
 The ancestor of this *fstab* file format appeared in 4.0BSD.
