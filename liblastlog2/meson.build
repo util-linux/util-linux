@@ -43,6 +43,8 @@ if build_liblastlog2
   )
   meson.override_dependency('lastlog2', lastlog2_dep)
 
+  install_headers('src/lastlog2.h', subdir : 'liblastlog2')
+
   foreach lastlog2_test: lastlog2_tests
     test_name = 'test_lastlog2_' + lastlog2_test
     exe = executable(
