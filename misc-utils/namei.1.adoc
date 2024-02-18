@@ -70,7 +70,7 @@ To be discovered.
 
 The original *namei* program was written by mailto:rogers@amadeus.wr.tek.com[Roger Southwick].
 
-The program was rewritten by Karel Zak mailto:kzak@redhat.com[Karel Zak].
+The program was rewritten by mailto:kzak@redhat.com[Karel Zak].
 
 == SEE ALSO
 
