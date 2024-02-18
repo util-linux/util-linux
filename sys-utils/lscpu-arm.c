@@ -273,6 +273,11 @@ static const struct id_part ft_part[] = {
     { -1, "unknown" },
 };
 
+static const struct id_part ms_part[] = {
+    { 0xd49, "Azure-Cobalt-100" },
+    { -1, "unknown" },
+};
+
 static const struct id_part unknown_part[] = {
     { -1, "unknown" },
 };
@@ -300,6 +305,7 @@ static const struct hw_impl hw_implementer[] = {
     { 0x61, apple_part,   "Apple" },
     { 0x66, faraday_part, "Faraday" },
     { 0x69, intel_part,   "Intel" },
+    { 0x6d, ms_part,      "Microsoft" },
     { 0x70, ft_part,      "Phytium" },
     { 0xc0, ampere_part,  "Ampere" },
     { -1,   unknown_part, "unknown" },
