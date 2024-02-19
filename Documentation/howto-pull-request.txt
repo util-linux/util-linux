@@ -28,17 +28,15 @@ git push yourgit
 Branches
 --------
 
-1. Use the name of the subsystem, such as blkid, libmount, misc-utils,
-that is the common thing for changes in the change set.
+1. The name of your branch isn't crucial, but if you intend to contribute
+regularly, it's beneficial to establish a naming convention that works well for
+you. For instance, consider prefixing your branch name with the subsystem's
+name, such as blkid, libmount, etc.
 
-2. If the changes do not have anything in common use some random name,
-such as YYYY-MM-DD of the first patch in the branch.  Name of the branch
-does not really matter that much, with one exception.
+2. Avoid using the 'master' branch for your contributions. The 'master' branch
+should be reserved for staying synchronized with the upstream repository.
 
-3. Do not use 'master' branch to your contributions.  The 'master' branch
-is needed to stay up to date with upstream.
-
-4. When done push your branch to your remote git server.
+3. Once you've completed your work, push your branch to your remote Git server.
 
 git checkout master
 git branch textual
@@ -130,13 +128,12 @@ git push -f yourgit textual:textual
 
 4. You have two ways how to send your pull request:
 
-4.1 Github pull request
+4.1 Github pull request (recommended)
 
-This is recommended way for your small and trivial changes, or for
-work-in-progress projects (rewrites, new commands, etc.). All you
-need is to press "pull request" button on GitHub.
+This is recommended way for your changes. All you need is to press "pull
+request" button on GitHub.
 
-4.2. Send your work to the mailing list
+4.2. Send your work to the mailing list (optional)
 
 Assuming the changes look good send them to mail list.  Yes, the all
 of them!  Sending pull request with github is not visible for project
