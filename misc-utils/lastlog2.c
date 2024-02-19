@@ -90,7 +90,8 @@ print_entry(const char *user, int64_t ll_time,
 	}
 	printf("%-16s %-8.8s %*s %s%*s%s\n", user, tty ? tty : "",
 	       -maxIPv6Addrlen, rhost ? rhost : "", datep,
-	       sflg?31-(int)strlen(datep):0, " ", sflg?(pam_service?pam_service:""):"");
+	       sflg?31-(int)strlen(datep):0, (sflg&&pam_service)?" ":"",
+	       sflg?(pam_service?pam_service:""):"");
 
 	if (error)
 		printf("\nError: %s\n", error);
