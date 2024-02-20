@@ -140,7 +140,7 @@ check_user(const char *name)
 int
 main(int argc, char **argv)
 {
-	struct option const longopts[] = {
+	static const struct option longopts[] = {
 		{"before",   required_argument, NULL, 'b'},
 		{"clear",    no_argument,       NULL, 'C'},
 		{"database", required_argument, NULL, 'd'},
