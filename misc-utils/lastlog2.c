@@ -41,16 +41,15 @@
 
 static char *lastlog2_path = LL2_DEFAULT_DATABASE;
 
-static int bflg = 0;
-static time_t b_days = 0;
-static int tflg = 0;
-static time_t t_days = 0;
-static int sflg = 0;
+static int bflg;
+static time_t b_days;
+static int tflg;
+static time_t t_days;
+static int sflg;
 
-static int
-print_entry(const char *user, int64_t ll_time,
-	    const char *tty, const char *rhost,
-	    const char *pam_service, const char *error)
+static int print_entry(const char *user, int64_t ll_time,
+		const char *tty, const char *rhost,
+		const char *pam_service, const char *error)
 {
 	static int once = 0;
 	char *datep;
@@ -75,7 +74,7 @@ print_entry(const char *user, int64_t ll_time,
 	if (tm == NULL)
 		datep = "(unknown)";
 	else {
-		strftime (datetime, sizeof(datetime), "%a %b %e %H:%M:%S %z %Y", tm);
+		strftime(datetime, sizeof(datetime), "%a %b %e %H:%M:%S %z %Y", tm);
 		datep = datetime;
 	}
 
@@ -101,8 +100,7 @@ print_entry(const char *user, int64_t ll_time,
 	return 0;
 }
 
-static void
-usage(void)
+static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *output = stdout;
 
@@ -129,16 +127,14 @@ usage(void)
 
 /* Check if an user exists on the system.
    If yes, return 0, else return -1. */
-static int
-check_user(const char *name)
+static int check_user(const char *name)
 {
 	if (getpwnam(name) == NULL)
 		return -1;
 	return 0;
 }
 
-int
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
 	static const struct option longopts[] = {
 		{"before",   required_argument, NULL, 'b'},
