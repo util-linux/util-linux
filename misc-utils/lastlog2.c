@@ -223,47 +223,38 @@ main(int argc, char **argv)
 		}
 	}
 
-	if ((Cflg + Sflg + iflg) > 1) {
+	if ((Cflg + Sflg + iflg) > 1)
 		errx(EXIT_FAILURE, _("Option -C, -i and -S cannot be used together"));
-	}
 
 	db_context = ll2_new_context(lastlog2_path);
 	if (!db_context)
-		errx(EXIT_FAILURE, _("Couldn't initialize lastlog2 environment."));
+		errx(EXIT_FAILURE, _("Couldn't initialize lastlog2 environment"));
 
 	if (iflg) {
 		/* Importing entries */
 		if (ll2_import_lastlog(db_context, lastlog_file, &error) != 0) {
-			ll2_unref_context(db_context);
-			if (error) {
-				errx(EXIT_FAILURE, "%s", error);
-			}
-			else
-				errx(EXIT_FAILURE, _("Couldn't import entries from '%s'"), lastlog_file);
+			warnx(_("Couldn't import entries from '%s'"), lastlog_file);
+			goto err;
 		}
-		ll2_unref_context(db_context);
-		exit(EXIT_SUCCESS);
+		goto done;
 	}
 
 	if (Cflg || Sflg || rflg) {
 		/* udpating, inserting and removing entries */
 		if (!uflg || strlen(user) == 0) {
-			ll2_unref_context(db_context);
-			errx(EXIT_FAILURE, _("Options -C, -r and -S require option -u to specify the user"));
+			warnx(_("Options -C, -r and -S require option -u to specify the user"));
+			goto err;
 		}
 
 		if ((Cflg || Sflg) && check_user(user) != 0) {
-			ll2_unref_context(db_context);
-			errx(EXIT_FAILURE, _("User '%s' does not exist."), user);
+			warnx(_("User '%s' does not exist."), user);
+			goto err;
 		}
 
 		if (Cflg) {
 			if (ll2_remove_entry(db_context, user, &error) != 0) {
-				ll2_unref_context(db_context);
-				if (error)
-					errx(EXIT_FAILURE, "%s", error);
-				else
-					errx(EXIT_FAILURE, _("Couldn't remove entry for '%s'"), user);
+				warnx(_("Couldn't remove entry for '%s'"), user);
+				goto err;
 			}
 		}
 
@@ -271,33 +262,24 @@ main(int argc, char **argv)
 			time_t ll_time = 0;
 
 			if (time(&ll_time) == -1) {
-				ll2_unref_context(db_context);
-				errx(EXIT_FAILURE, _("Could not determine current time: %s"),
-				     strerror(errno));
+				warn(_("Could not determine current time"));
+				goto err;
 			}
 
 			if (ll2_update_login_time(db_context, user, ll_time, &error) != 0) {
-				ll2_unref_context(db_context);
-				if (error)
-					errx(EXIT_FAILURE, "%s", error);
-				else
-					errx(EXIT_FAILURE, _("Couldn't update login time for '%s'"), user);
+				warnx(_("Couldn't update login time for '%s'"), user);
+				goto err;
 			}
-
 		}
 
 		if (rflg) {
 			if (ll2_rename_user(db_context, user, newname, &error) != 0) {
-				ll2_unref_context(db_context);
-				if (error)
-					errx(EXIT_FAILURE, "%s", error);
-				else
-					errx(EXIT_FAILURE, _("Couldn't rename entry '%s' to '%s'"), user, newname);
+				warnx(_("Couldn't rename entry '%s' to '%s'"), user, newname);
+				goto err;
 			}
 		}
 
-		ll2_unref_context(db_context);
-		exit(EXIT_SUCCESS);
+		goto done;
 	}
 
 	if (user) {
@@ -308,8 +290,8 @@ main(int argc, char **argv)
 		char *service = NULL;
 
 		if (check_user(user) != 0) {
-			ll2_unref_context(db_context);
-			errx(EXIT_FAILURE, _("User '%s' does not exist."), user);
+			warnx(_("User '%s' does not exist."), user);
+			goto err;
 		}
 
 		/* We ignore errors, if the user is not in the database he did never login */
@@ -317,20 +299,21 @@ main(int argc, char **argv)
 			       &service, NULL);
 
 		print_entry(user, ll_time, tty, rhost, service, NULL);
-
-		ll2_unref_context(db_context);
-		exit(EXIT_SUCCESS);
+		goto done;
 	}
 
 	/* print all information */
 	if (ll2_read_all(db_context, print_entry, &error) != 0) {
-		ll2_unref_context(db_context);
-		if (error)
-			errx(EXIT_FAILURE, "%s", error);
-		else
-			errx(EXIT_FAILURE, _("Couldn't read entries for all users"));
+		warnx(_("Couldn't read entries for all users"));
+		goto err;
 	}
 
+done:
 	ll2_unref_context(db_context);
 	exit(EXIT_SUCCESS);
+err:
+	ll2_unref_context(db_context);
+	if (error)
+		errx(EXIT_FAILURE, "%s", error);
+	exit(EXIT_FAILURE);
 }
