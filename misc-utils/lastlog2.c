@@ -125,14 +125,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-/* Check if an user exists on the system.
-   If yes, return 0, else return -1. */
-static int check_user(const char *name)
-{
-	if (getpwnam(name) == NULL)
-		return -1;
-	return 0;
-}
+/* Check if an user exists on the system */
+#define has_user(_x)	(getpwnam(_x) != NULL)
 
 int main(int argc, char **argv)
 {
@@ -242,7 +236,7 @@ int main(int argc, char **argv)
 			goto err;
 		}
 
-		if ((Cflg || Sflg) && check_user(user) != 0) {
+		if ((Cflg || Sflg) && !has_user(user)) {
 			warnx(_("User '%s' does not exist."), user);
 			goto err;
 		}
@@ -285,7 +279,7 @@ int main(int argc, char **argv)
 		char *rhost = NULL;
 		char *service = NULL;
 
-		if (check_user(user) != 0) {
+		if (!has_user(user)) {
 			warnx(_("User '%s' does not exist."), user);
 			goto err;
 		}
