@@ -185,10 +185,17 @@ read_entry(sqlite3 *db, const char *user,
 					goto out_read_entry;
 				}
 		}
-	} else {
+	} else if (step == SQLITE_DONE) {
+		retval = -ENOENT;
+	} else if (step == SQLITE_BUSY) {
 		retval = -1;
 		if (error)
-			if (asprintf(error, "User '%s' not found (%d)", user, step) < 0)
+			if ((*error = strdup ("Database busy")) == NULL)
+				retval = -ENOMEM;
+	} else if (step == SQLITE_ERROR) {
+		retval = -1;
+		if (error)
+			if (asprintf (error, "Error stepping through database: %s", sqlite3_errmsg (db)) < 0)
 				retval = -ENOMEM;
 	}
 
@@ -298,11 +305,17 @@ write_entry(sqlite3 *db, const char *user,
 
 	if (step != SQLITE_DONE) {
 		retval = -1;
-		if (error)
-			if (asprintf(error, "Delete statement did not return SQLITE_DONE: %d",
-				     step) < 0)
-				retval = -ENOMEM;
-		goto out_ll2_read_entry;
+		if (error) {
+			if (step == SQLITE_ERROR) {
+				if (asprintf (error, "Delete statement failed: %s",
+					      sqlite3_errmsg (db)) < 0)
+					retval = -ENOMEM;
+			} else {
+				if (asprintf (error, "Delete statement did not return SQLITE_DONE: %d",
+					      step) < 0)
+					retval = -ENOMEM;
+			}
+		}
 	}
 out_ll2_read_entry:
 	if (res)
@@ -448,10 +461,17 @@ remove_entry(sqlite3 *db, const char *user, char **error)
 
 	if (step != SQLITE_DONE) {
 		retval = -1;
-		if (error)
-			if (asprintf(error, "Delete statement did not return SQLITE_DONE: %d",
-				     step) < 0)
-				retval = -ENOMEM;
+		if (error) {
+			if (step == SQLITE_ERROR) {
+				if (asprintf (error, "Delete statement failed: %s",
+					      sqlite3_errmsg (db)) < 0)
+					retval = -ENOMEM;
+			} else {
+				if (asprintf (error, "Delete statement did not return SQLITE_DONE: %d",
+					      step) < 0)
+					retval = -ENOMEM;
+			}
+		}
 	}
 out_remove_entry:
 	if (res)
