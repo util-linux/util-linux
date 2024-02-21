@@ -1,4 +1,8 @@
-//po4a: entry man manual
+//
+// No copyright is claimed.  This code is in the public domain; do with
+// it what you wish.
+//
+// po4a: entry man manual
 // Original author unknown.  This man page is in the public domain.
 // Modified Sat Oct  9 17:46:48 1993 by faith@cs.unc.edu
 = newgrp(1)

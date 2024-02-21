@@ -1,4 +1,7 @@
 /*
+ * No copyright is claimed.  This code is in the public domain; do with
+ * it what you wish.
+ *
  * public domain sha256 crypt implementation
  *
  * original sha crypt design: http://people.redhat.com/drepper/SHA-crypt.txt

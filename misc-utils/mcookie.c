@@ -1,4 +1,8 @@
-/* mcookie.c -- Generates random numbers for xauth
+/*
+ * No copyright is claimed.  This code is in the public domain; do with
+ * it what you wish.
+ *
+ * mcookie.c -- Generates random numbers for xauth
  * Created: Fri Feb  3 10:42:48 1995 by faith@cs.unc.edu
  * Revised: Fri Mar 19 07:48:01 1999 by faith@acm.org
  * Public Domain 1995, 1999 Rickard E. Faith (faith@acm.org)

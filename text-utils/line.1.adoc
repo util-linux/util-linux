@@ -1,4 +1,8 @@
-//po4a: entry man manual
+//
+// No copyright is claimed.  This code is in the public domain; do with
+// it what you wish.
+//
+// po4a: entry man manual
 // This page is in the public domain
 = line(1)
 :doctype: manpage

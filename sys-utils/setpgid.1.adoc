@@ -1,3 +1,7 @@
+//
+// No copyright is claimed.  This code is in the public domain; do with
+// it what you wish.
+//
 //po4a: entry man manual
 // Daan De Meyer <daan.j.demeyer@gmail.com>
 // In the public domain.
