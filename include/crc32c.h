@@ -1,6 +1,6 @@
 /*
- * No copyright is claimed. This code is in the public domain; do with it what
- * you wish.
+ * No copyright is claimed. This code is in the public domain; do with
+ * it what you wish.
  */
 #ifndef UL_CRC32C_H
 #define UL_CRC32C_H

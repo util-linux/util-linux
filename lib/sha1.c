@@ -1,4 +1,7 @@
 /*
+ * No copyright is claimed.  This code is in the public domain; do with
+ * it what you wish.
+ *
  * SHA-1 in C by Steve Reid <steve@edmweb.com>
  * 100% Public Domain
  *

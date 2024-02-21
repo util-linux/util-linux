@@ -1,12 +1,11 @@
 /*
+ * No copyright is claimed.  This code is in the public domain; do with
+ * it what you wish.
+ *
  * line - read one line
  *
  * Gunnar Ritter, Freiburg i. Br., Germany, December 2000.
  *
- * Public Domain.
- */
-
-/*
  * This command is deprecated.  The utility is in maintenance mode,
  * meaning we keep them in source tree for backward compatibility
  * only.  Do not waste time making this command better, unless the
