@@ -21,8 +21,6 @@
 #include <getopt.h>
 
 #include <linux/unistd.h>
-#include <linux/filter.h>
-#include <linux/seccomp.h>
 #include <linux/audit.h>
 #include <sys/prctl.h>
 #include <sys/syscall.h>
@@ -36,6 +34,8 @@
 #include "list.h"
 #include "xalloc.h"
 #include "strutils.h"
+#include "seccomp.h"
+#include "all-io.h"
 
 #define IS_LITTLE_ENDIAN (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
 
@@ -44,16 +44,6 @@
 #define _syscall_arg(n) (offsetof(struct seccomp_data, args[n]))
 #define syscall_arg_lower32(n) (_syscall_arg(n) + 4 * !IS_LITTLE_ENDIAN)
 #define syscall_arg_upper32(n) (_syscall_arg(n) + 4 * IS_LITTLE_ENDIAN)
-
-static int set_seccomp_filter(const void *prog)
-{
-#if defined(__NR_seccomp) && defined(SECCOMP_SET_MODE_FILTER) && defined(SECCOMP_FILTER_FLAG_SPEC_ALLOW)
-	if (!syscall(__NR_seccomp, SECCOMP_SET_MODE_FILTER, SECCOMP_FILTER_FLAG_SPEC_ALLOW, prog))
-		return 0;
-#endif
-
-	return prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, prog);
-}
 
 struct syscall {
 	const char *const name;
@@ -88,6 +78,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -s, --syscall           syscall to block\n"), out);
 	fputs(_(" -i, --ioctl             ioctl to block\n"), out);
 	fputs(_(" -l, --list              list known syscalls\n"), out);
+	fputs(_(" -d, --dump              dump seccomp bytecode\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(25));
@@ -106,12 +97,13 @@ int main(int argc, char **argv)
 {
 	int c;
 	size_t i;
-	bool found;
+	bool found, dump = false;
 	static const struct option longopts[] = {
 		{ "syscall",    required_argument, NULL, 's' },
 		{ "ioctl",      required_argument, NULL, 'i' },
 		{ "list",       no_argument,       NULL, 'l' },
 		{ "list-ioctl", no_argument,       NULL, 'm' },
+		{ "dump",       no_argument,       NULL, 'd' },
 		{ "version",    no_argument,       NULL, 'V' },
 		{ "help",       no_argument,       NULL, 'h' },
 		{ 0 }
@@ -130,7 +122,7 @@ int main(int argc, char **argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long (argc, argv, "+Vhs:i:lm", longopts, NULL)) != -1) {
+	while ((c = getopt_long (argc, argv, "+Vhs:i:lmd", longopts, NULL)) != -1) {
 		switch (c) {
 		case 's':
 			found = 0;
@@ -178,6 +170,9 @@ int main(int argc, char **argv)
 			for (i = 0; lt(i, ARRAY_SIZE(ioctls)); i++)
 				printf("%5ld %s\n", ioctls[i].number, ioctls[i].name);
 			return EXIT_SUCCESS;
+		case 'd':
+			dump = true;
+			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
 		case 'h':
@@ -187,7 +182,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (optind >= argc)
+	if (!dump && optind >= argc)
 		errtryhelp(EXIT_FAILURE);
 
 	struct sock_filter filter[BPF_MAXINSNS];
@@ -244,6 +239,12 @@ int main(int argc, char **argv)
 
 	INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ALLOW));
 
+	if (dump) {
+		if (write_all(STDOUT_FILENO, filter, (f - filter) * sizeof(filter[0])))
+			err(EXIT_FAILURE, _("Could not dump seccomp filter"));
+		return EXIT_SUCCESS;
+	}
+
 	struct sock_fprog prog = {
 		.len    = f - filter,
 		.filter = filter,
@@ -258,7 +259,7 @@ int main(int argc, char **argv)
 	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0))
 		err_nosys(EXIT_FAILURE, _("Could not run prctl(PR_SET_NO_NEW_PRIVS)"));
 
-	if (set_seccomp_filter(&prog))
+	if (ul_set_seccomp_filter_spec_allow(&prog))
 		err_nosys(EXIT_FAILURE, _("Could not seccomp filter"));
 
 	if (execvp(argv[optind], argv + optind))

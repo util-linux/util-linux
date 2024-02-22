@@ -110,6 +110,12 @@ For example grant file read access to everything under */boot*:
 +
 *--landlock-rule path-beneath:read-file:/boot*
 
+*--seccomp-filter* _file_::
+
+Load raw BPF seccomp filter code from a file.
++
+Filters can for example be created with *enosys*.
+
 *--reset-env*::
 Clears all the environment variables except *TERM*; initializes the environment variables *HOME*, *SHELL*, *USER*, *LOGNAME* according to the user's passwd entry; sets *PATH* to _/usr/local/bin:/bin:/usr/bin_ for a regular user and to _/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin_ for root.
 +

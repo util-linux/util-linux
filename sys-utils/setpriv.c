@@ -31,6 +31,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "all-io.h"
 #include "c.h"
 #include "caputils.h"
 #include "closestream.h"
@@ -42,6 +43,7 @@
 #include "signames.h"
 #include "env.h"
 #include "setpriv-landlock.h"
+#include "seccomp.h"
 
 #ifndef PR_SET_NO_NEW_PRIVS
 # define PR_SET_NO_NEW_PRIVS 38
@@ -112,6 +114,7 @@ struct privctx {
 	const char *selinux_label;
 	const char *apparmor_profile;
 	struct setpriv_landlock_opts landlock;
+	const char *seccomp_filter;
 };
 
 static void __attribute__((__noreturn__)) usage(void)
@@ -147,6 +150,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --apparmor-profile <pr>     set AppArmor profile\n"), out);
 	fputs(_(" --landlock-access <access>  add Landlock access\n"), out);
 	fputs(_(" --landlock-rule <rule>      add Landlock rule\n"), out);
+	fputs(_(" --seccomp-filter <file>     load seccomp filter from file\n"), out);
 	fputs(_(" --reset-env                 clear all environment and initialize\n"
 		"                               HOME, SHELL, USER, LOGNAME and PATH\n"), out);
 
@@ -657,6 +661,46 @@ static void do_apparmor_profile(const char *label)
 		    _("write failed: %s"), _PATH_PROC_ATTR_EXEC);
 }
 
+static void do_seccomp_filter(const char *file)
+{
+	int fd;
+	ssize_t s;
+	char *filter;
+	struct sock_fprog prog = {};
+
+	fd = open(file, O_RDONLY);
+	if (fd == -1)
+		err(SETPRIV_EXIT_PRIVERR,
+		    _("cannot open %s"), file);
+
+	s = read_all_alloc(fd, &filter);
+	if (s < 0)
+		err(SETPRIV_EXIT_PRIVERR,
+		    _("cannot read %s"), file);
+
+	if (s % sizeof(*prog.filter))
+		errx(SETPRIV_EXIT_PRIVERR, _("invalid filter"));
+
+	prog.len = s / sizeof(*prog.filter);
+	prog.filter = (void *)filter;
+
+	/* *SET* below will return EINVAL when either the filter is invalid or
+	 * seccomp is not supported. To distinguish those cases do a *GET* here
+	 */
+	if (prctl(PR_GET_SECCOMP) == -1 && errno == EINVAL)
+		err(SETPRIV_EXIT_PRIVERR, _("Seccomp non-functional"));
+
+	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0))
+		err(SETPRIV_EXIT_PRIVERR, _("Could not run prctl(PR_SET_NO_NEW_PRIVS)"));
+
+	if (ul_set_seccomp_filter_spec_allow(&prog))
+		err(SETPRIV_EXIT_PRIVERR, _("Could not load seccomp filter"));
+
+	free(filter);
+	close(fd);
+
+}
+
 static void do_reset_environ(struct passwd *pw)
 {
 	char *term = getenv("TERM");
@@ -761,6 +805,7 @@ int main(int argc, char **argv)
 		APPARMOR_PROFILE,
 		LANDLOCK_ACCESS,
 		LANDLOCK_RULE,
+		SECCOMP_FILTER,
 		RESET_ENV
 	};
 
@@ -788,6 +833,7 @@ int main(int argc, char **argv)
 		{ "apparmor-profile", required_argument, NULL, APPARMOR_PROFILE },
 		{ "landlock-access",  required_argument, NULL, LANDLOCK_ACCESS  },
 		{ "landlock-rule",    required_argument, NULL, LANDLOCK_RULE    },
+		{ "seccomp-filter",   required_argument, NULL, SECCOMP_FILTER   },
 		{ "help",             no_argument,       NULL, 'h'              },
 		{ "reset-env",        no_argument,       NULL, RESET_ENV,       },
 		{ "version",          no_argument,       NULL, 'V'              },
@@ -949,6 +995,12 @@ int main(int argc, char **argv)
 		case LANDLOCK_RULE:
 			parse_landlock_rule(&opts.landlock, optarg);
 			break;
+		case SECCOMP_FILTER:
+			if (opts.seccomp_filter)
+				errx(EXIT_FAILURE,
+				     _("duplicate --secccomp-filter option"));
+			opts.seccomp_filter = optarg;
+			break;
 		case RESET_ENV:
 			opts.reset_env = 1;
 			break;
@@ -1014,6 +1066,8 @@ int main(int argc, char **argv)
 		do_selinux_label(opts.selinux_label);
 	if (opts.apparmor_profile)
 		do_apparmor_profile(opts.apparmor_profile);
+	if (opts.seccomp_filter)
+		do_seccomp_filter(opts.seccomp_filter);
 
 	if (prctl(PR_SET_KEEPCAPS, 1, 0, 0, 0) == -1)
 		err(EXIT_FAILURE, _("keep process capabilities failed"));

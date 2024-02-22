@@ -36,6 +36,11 @@ List syscalls known to *enosys*.
 *-m*, *--list-ioctl*::
 List ioctls known to *enosys*.
 
+*-d*, *--dump*::
+Dump seccomp bytecode filter to standard output.
++
+The dump can for example be used by *setpriv --seccomp-filter*.
+
 include::man-common/help-version.adoc[]
 
 == EXIT STATUS
