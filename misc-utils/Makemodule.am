@@ -150,6 +150,7 @@ uuidd_SOURCES = misc-utils/uuidd.c lib/monotonic.c lib/timer.c
 if HAVE_SYSTEMD
 uuidd_LDADD += $(SYSTEMD_LIBS) $(SYSTEMD_DAEMON_LIBS)
 uuidd_CFLAGS += $(SYSTEMD_CFLAGS) $(SYSTEMD_DAEMON_CFLAGS)
+tmpfiles_DATA += misc-utils/uuidd-tmpfiles.conf
 systemdsystemunit_DATA += \
 	misc-utils/uuidd.service \
 	misc-utils/uuidd.socket
@@ -164,7 +165,8 @@ endif # BUILD_UUIDD
 PATHFILES += \
 	misc-utils/uuidd.rc \
 	misc-utils/uuidd.service \
-	misc-utils/uuidd.socket
+	misc-utils/uuidd.socket \
+	misc-utils/uuidd-tmpfiles.conf
 
 if BUILD_BLKID
 sbin_PROGRAMS += blkid
