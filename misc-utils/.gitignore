@@ -3,3 +3,4 @@ uuidd.8
 uuidd.rc
 uuidd.service
 uuidd.socket
+uuidd-tmpfiles.conf
