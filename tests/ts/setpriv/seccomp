@@ -28,7 +28,7 @@ ts_check_enosys_syscalls fallocate
 FALLOCATE_TEST="$TS_HELPER_ENOSYS fallocate"
 
 $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
-"$TS_CMD_ENOSYS" -s fallocate --dump > "$TS_OUTDIR"/fallocate.seccomp
+"$TS_CMD_ENOSYS" -s fallocate --dump="$TS_OUTDIR"/fallocate.seccomp
 "$TS_CMD_SETPRIV" --seccomp-filter "$TS_OUTDIR"/fallocate.seccomp $FALLOCATE_TEST > /dev/null 2>> "$TS_OUTPUT"
 
 ts_finalize
