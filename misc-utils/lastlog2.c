@@ -41,16 +41,15 @@
 
 static char *lastlog2_path = LL2_DEFAULT_DATABASE;
 
-static int bflg = 0;
-static time_t b_days = 0;
-static int tflg = 0;
-static time_t t_days = 0;
-static int sflg = 0;
+static int bflg;
+static time_t b_days;
+static int tflg;
+static time_t t_days;
+static int sflg;
 
-static int
-print_entry(const char *user, int64_t ll_time,
-	    const char *tty, const char *rhost,
-	    const char *pam_service, const char *error)
+static int print_entry(const char *user, int64_t ll_time,
+		const char *tty, const char *rhost,
+		const char *pam_service, const char *error)
 {
 	static int once = 0;
 	char *datep;
@@ -71,11 +70,11 @@ print_entry(const char *user, int64_t ll_time,
         /* this is necessary if you compile this on architectures with
            a 32bit time_t type. */
         time_t t_time = ll_time;
-        tm = localtime_r (&t_time, &tm_buf);
+        tm = localtime_r(&t_time, &tm_buf);
 	if (tm == NULL)
 		datep = "(unknown)";
 	else {
-		strftime (datetime, sizeof(datetime), "%a %b %e %H:%M:%S %z %Y", tm);
+		strftime(datetime, sizeof(datetime), "%a %b %e %H:%M:%S %z %Y", tm);
 		datep = datetime;
 	}
 
@@ -84,14 +83,16 @@ print_entry(const char *user, int64_t ll_time,
 
 	if (!once) {
 		printf("Username         Port     From%*s Latest%*s%s\n",
-		       maxIPv6Addrlen-4, " ",
-		       sflg?(int)strlen(datep)-5:0, " ", sflg?"Service":"");
+		       maxIPv6Addrlen - 4, " ",
+		       sflg ? (int) strlen(datep) -5 : 0,
+		       " ", sflg ? "Service" : "");
 		once = 1;
 	}
 	printf("%-16s %-8.8s %*s %s%*s%s\n", user, tty ? tty : "",
 	       -maxIPv6Addrlen, rhost ? rhost : "", datep,
-	       sflg?31-(int)strlen(datep):0, (sflg&&pam_service)?" ":"",
-	       sflg?(pam_service?pam_service:""):"");
+	       sflg ? 31 - (int) strlen(datep) : 0,
+	       (sflg && pam_service) ? " " : "",
+	       sflg ? (pam_service ? pam_service : "") : "");
 
 	if (error)
 		printf("\nError: %s\n", error);
@@ -99,8 +100,7 @@ print_entry(const char *user, int64_t ll_time,
 	return 0;
 }
 
-static void
-usage(void)
+static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *output = stdout;
 
@@ -125,20 +125,12 @@ usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-/* Check if an user exists on the system.
-   If yes, return 0, else return -1. */
-static int
-check_user(const char *name)
-{
-	if (getpwnam(name) == NULL)
-		return -1;
-	return 0;
-}
+/* Check if an user exists on the system */
+#define has_user(_x)	(getpwnam(_x) != NULL)
 
-int
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
-	struct option const longopts[] = {
+	static const struct option longopts[] = {
 		{"before",   required_argument, NULL, 'b'},
 		{"clear",    no_argument,       NULL, 'C'},
 		{"database", required_argument, NULL, 'd'},
@@ -172,7 +164,7 @@ main(int argc, char **argv)
 				unsigned long days;
 				errno = 0;
 				days = strtoul_or_err(optarg, _("Cannot parse days"));
-				b_days = (time_t) days * (24L*3600L) /* seconds/DAY */;
+				b_days = (time_t) days * (24L * 3600L) /* seconds/DAY */;
 				bflg = 1;
 			}
 			break;
@@ -205,7 +197,7 @@ main(int argc, char **argv)
 				unsigned long days;
 				errno = 0;
 				days = strtoul_or_err(optarg, _("Cannot parse days"));
-				t_days = (time_t) days * (24L*3600L) /* seconds/DAY */;
+				t_days = (time_t) days * (24L * 3600L) /* seconds/DAY */;
 				tflg = 1;
 			}
 			break;
@@ -221,48 +213,38 @@ main(int argc, char **argv)
 		}
 	}
 
-	if ((Cflg + Sflg + iflg) > 1) {
-		errx(EXIT_FAILURE, _("Option -C, -i and -S cannot be used together\n"));
-	}
+	if ((Cflg + Sflg + iflg) > 1)
+		errx(EXIT_FAILURE, _("Option -C, -i and -S cannot be used together"));
 
 	db_context = ll2_new_context(lastlog2_path);
 	if (!db_context)
-		errx(EXIT_FAILURE, _("Couldn't initialize lastlog2 environment.\n"));
+		errx(EXIT_FAILURE, _("Couldn't initialize lastlog2 environment"));
 
 	if (iflg) {
 		/* Importing entries */
 		if (ll2_import_lastlog(db_context, lastlog_file, &error) != 0) {
-			ll2_unref_context(db_context);
-			if (error) {
-				errx(EXIT_FAILURE, "%s\n", error);
-			}
-			else
-				errx(EXIT_FAILURE, _("Couldn't import entries from '%s'\n"), lastlog_file);
+			warnx(_("Couldn't import entries from '%s'"), lastlog_file);
+			goto err;
 		}
-		ll2_unref_context(db_context);
-		exit(EXIT_SUCCESS);
+		goto done;
 	}
 
 	if (Cflg || Sflg || rflg) {
 		/* udpating, inserting and removing entries */
 		if (!uflg || strlen(user) == 0) {
-			ll2_unref_context(db_context);
-			errx(EXIT_FAILURE, _("Options -C, -r and -S require option -u to specify the user\n"));
+			warnx(_("Options -C, -r and -S require option -u to specify the user"));
+			goto err;
 		}
 
-		if ((Cflg || Sflg) && check_user(user) != 0) {
-			ll2_unref_context(db_context);
-			errx(EXIT_FAILURE, _("User '%s' does not exist.\n"), user);
+		if ((Cflg || Sflg) && !has_user(user)) {
+			warnx(_("User '%s' does not exist."), user);
+			goto err;
 		}
 
 		if (Cflg) {
 			if (ll2_remove_entry(db_context, user, &error) != 0) {
-				ll2_unref_context(db_context);
-				if (error) {
-					errx(EXIT_FAILURE, "%s\n", error);
-				}
-				else
-					errx(EXIT_FAILURE, _("Couldn't remove entry for '%s'\n"), user);
+				warnx(_("Couldn't remove entry for '%s'"), user);
+				goto err;
 			}
 		}
 
@@ -270,35 +252,24 @@ main(int argc, char **argv)
 			time_t ll_time = 0;
 
 			if (time(&ll_time) == -1) {
-				ll2_unref_context(db_context);
-				errx(EXIT_FAILURE, _("Could not determine current time: %s"),
-				     strerror(errno));
+				warn(_("Could not determine current time"));
+				goto err;
 			}
 
 			if (ll2_update_login_time(db_context, user, ll_time, &error) != 0) {
-				ll2_unref_context(db_context);
-				if (error) {
-					errx(EXIT_FAILURE, "%s\n", error);
-				}
-				else
-					errx(EXIT_FAILURE, _("Couldn't update login time for '%s'\n"), user);
+				warnx(_("Couldn't update login time for '%s'"), user);
+				goto err;
 			}
-
 		}
 
 		if (rflg) {
 			if (ll2_rename_user(db_context, user, newname, &error) != 0) {
-				ll2_unref_context(db_context);
-				if (error) {
-					errx(EXIT_FAILURE, "%s\n", error);
-				}
-				else
-					errx(EXIT_FAILURE, _("Couldn't rename entry '%s' to '%s'\n"), user, newname);
+				warnx(_("Couldn't rename entry '%s' to '%s'"), user, newname);
+				goto err;
 			}
 		}
 
-		ll2_unref_context(db_context);
-		exit(EXIT_SUCCESS);
+		goto done;
 	}
 
 	if (user) {
@@ -308,9 +279,9 @@ main(int argc, char **argv)
 		char *rhost = NULL;
 		char *service = NULL;
 
-		if (check_user(user) != 0) {
-			ll2_unref_context(db_context);
-			errx(EXIT_FAILURE, _("User '%s' does not exist.\n"), user);
+		if (!has_user(user)) {
+			warnx(_("User '%s' does not exist."), user);
+			goto err;
 		}
 
 		/* We ignore errors, if the user is not in the database he did never login */
@@ -318,21 +289,21 @@ main(int argc, char **argv)
 			       &service, NULL);
 
 		print_entry(user, ll_time, tty, rhost, service, NULL);
-
-		ll2_unref_context(db_context);
-		exit(EXIT_SUCCESS);
+		goto done;
 	}
 
 	/* print all information */
 	if (ll2_read_all(db_context, print_entry, &error) != 0) {
-		ll2_unref_context(db_context);
-		if (error) {
-			errx(EXIT_FAILURE, "%s\n", error);
-		}
-		else
-			errx(EXIT_FAILURE, _("Couldn't read entries for all users\n"));
+		warnx(_("Couldn't read entries for all users"));
+		goto err;
 	}
 
+done:
 	ll2_unref_context(db_context);
 	exit(EXIT_SUCCESS);
+err:
+	ll2_unref_context(db_context);
+	if (error)
+		errx(EXIT_FAILURE, "%s", error);
+	exit(EXIT_FAILURE);
 }
