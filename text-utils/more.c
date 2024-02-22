@@ -198,6 +198,7 @@ struct more_control {
 	magic_t magic;			/* libmagic database entries */
 #endif
 	unsigned int
+		ignore_stdin:1,		/* POLLHUP; peer closed pipe */
 		bad_stdout:1,		/* true if overwriting does not turn off standout */
 		catch_suspend:1,	/* we should catch the SIGTSTP signal */
 		clear_line_ends:1,	/* do not scroll, paint each screen from the top */
@@ -1351,55 +1352,92 @@ static void read_line(struct more_control *ctl)
 	*p = '\0';
 }
 
+/* returns: 0 timeout or nothing; <0 error, >0 success */
 static int more_poll(struct more_control *ctl, int timeout)
 {
-	struct pollfd pfd[2];
+	enum {
+		POLLFD_SIGNAL = 0,
+		POLLFD_STDIN,
+		POLLFD_STDERR,
+	};
+	struct pollfd pfd[] = {
+		[POLLFD_SIGNAL] = { .fd = ctl->sigfd,    .events = POLLIN | POLLERR | POLLHUP },
+		[POLLFD_STDIN]  = { .fd = STDIN_FILENO,  .events = POLLIN | POLLERR | POLLHUP },
+		[POLLFD_STDERR] = { .fd = STDERR_FILENO, .events = POLLIN | POLLERR | POLLHUP }
+	};
+	int has_data = 0;
 
-	pfd[0].fd = ctl->sigfd;
-	pfd[0].events = POLLIN | POLLERR | POLLHUP;
-	pfd[1].fd = STDIN_FILENO;
-	pfd[1].events = POLLIN;
+	while (!has_data) {
+		int rc;
 
-	if (poll(pfd, 2, timeout) < 0) {
-		if (errno == EAGAIN)
-			return 1;
-		more_error(ctl, _("poll failed"));
-		return 1;
-	}
-	if (pfd[0].revents != 0) {
-		struct signalfd_siginfo info;
-		ssize_t sz;
+		if (ctl->ignore_stdin)
+			pfd[POLLFD_STDIN].fd = -1;	/* probably closed, ignore */
 
-		sz = read(pfd[0].fd, &info, sizeof(info));
-		assert(sz == sizeof(info));
-		switch (info.ssi_signo) {
-		case SIGINT:
-			more_exit(ctl);
-			break;
-		case SIGQUIT:
-			sigquit_handler(ctl);
-			break;
-		case SIGTSTP:
-			sigtstp_handler(ctl);
-			break;
-		case SIGCONT:
-			sigcont_handler(ctl);
-			break;
-		case SIGWINCH:
-			sigwinch_handler(ctl);
-			break;
-		default:
-			abort();
+		rc = poll(pfd, ARRAY_SIZE(pfd), timeout);
+
+		/* error */
+		if (rc < 0) {
+			if (errno == EAGAIN)
+				continue;
+
+			more_error(ctl, _("poll failed"));
+			return rc;
 		}
+
+		/* timeout */
+		if (rc == 0)
+			return 0;
+
+		/* event on signal FD */
+		if (pfd[POLLFD_SIGNAL].revents) {
+			struct signalfd_siginfo info;
+			ssize_t sz;
+
+			sz = read(pfd[POLLFD_SIGNAL].fd, &info, sizeof(info));
+			assert(sz == sizeof(info));
+			switch (info.ssi_signo) {
+			case SIGINT:
+				more_exit(ctl);
+				break;
+			case SIGQUIT:
+				sigquit_handler(ctl);
+				break;
+			case SIGTSTP:
+				sigtstp_handler(ctl);
+				break;
+			case SIGCONT:
+				sigcont_handler(ctl);
+				break;
+			case SIGWINCH:
+				sigwinch_handler(ctl);
+				break;
+			default:
+				abort();
+			}
+		}
+
+		/* event on stdin */
+		if (pfd[POLLFD_STDIN].revents) {
+			/* Check for POLLERR and POLLHUP in stdin revents */
+			if ((pfd[POLLFD_STDIN].revents & POLLERR) &&
+			    (pfd[POLLFD_STDIN].revents & POLLHUP))
+				more_exit(ctl);
+
+			/* poll() return POLLHUP event after pipe close() and POLLNVAL
+			 * means that fd is already closed. */
+			if ((pfd[POLLFD_STDIN].revents & POLLHUP) ||
+			    (pfd[POLLFD_STDIN].revents & POLLNVAL))
+				ctl->ignore_stdin = 1;
+			else
+				has_data++;
+		}
+
+		/* event on stderr (we reads user commands from stderr!) */
+		if (pfd[POLLFD_STDERR].revents)
+			has_data++;
 	}
 
-	/* Check for POLLERR and POLLHUP in stdin revents */
-	if ((pfd[1].revents & POLLERR) && (pfd[1].revents & POLLHUP))
-		more_exit(ctl);
-
-	if (pfd[1].revents == 0)
-		return 1;
-	return 0;
+	return has_data;
 }
 
 /* Search for nth occurrence of regular expression contained in buf in
@@ -1467,7 +1505,7 @@ static void search(struct more_control *ctl, char buf[], int n)
 			}
 			break;
 		}
-		more_poll(ctl, 1);
+		more_poll(ctl, 0);
 	}
 	/* Move ctrl+c signal handling back to more_key_command(). */
 	signal(SIGINT, SIG_DFL);
@@ -1631,7 +1669,7 @@ static int more_key_command(struct more_control *ctl, char *filename)
 		ctl->report_errors = 0;
 	ctl->search_called = 0;
 	for (;;) {
-		if (more_poll(ctl, -1) != 0)
+		if (more_poll(ctl, -1) <= 0)
 			continue;
 		cmd = read_command(ctl);
 		if (cmd.key == more_kc_unknown_command)
