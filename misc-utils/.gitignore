@@ -2,6 +2,7 @@ getopt.1
 uuidd.8
 uuidd.rc
 uuidd.service
-lastlog2-import.service
 uuidd.socket
+uuidd-tmpfiles.conf
+lastlog2-import.service
 lastlog2.conf

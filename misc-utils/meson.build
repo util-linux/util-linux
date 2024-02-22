@@ -97,6 +97,14 @@ if build_liblastlog2
 endif
 
 if build_uuidd and systemd.found()
+  uuidd_tmpfiles = configure_file(
+    input : 'uuidd-tmpfiles.conf.in',
+    output : 'uuidd-tmpfiles.conf',
+    configuration : conf)
+  install_data(
+    uuidd_tmpfiles,
+    install_dir : '/usr/lib/tmpfiles.d')
+
   uuidd_service = configure_file(
     input : 'uuidd.service.in',
     output : 'uuidd.service',
