@@ -351,7 +351,10 @@ static int time_formatter(int fmt, char *dst, size_t dlen, time_t *when)
 	{
 		char buf[CTIME_BUFSIZ];
 
-		ctime_r(when, buf);
+		if (!ctime_r(when, buf)) {
+			ret = -1;
+			break;
+		}
 		snprintf(dst, dlen, "%s", buf);
 		ret = rtrim_whitespace((unsigned char *) dst);
 		break;
