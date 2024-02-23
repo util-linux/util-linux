@@ -462,7 +462,9 @@ conf.set10('HAVE_STRSIGNAL_DECL', have)
 have = cc.sizeof('union semun', prefix : '#include <sys/sem.h>') > 0
 conf.set('HAVE_UNION_SEMUN', have ? 1 : false)
 
-have = cc.has_type('loff_t', prefix : '#include <sys/types.h>')
+have = cc.has_type('loff_t',
+                   args : '-D_GNU_SOURCE',
+                   prefix : '#include <sys/types.h>')
 conf.set('HAVE_LOFF_T', have ? 1 : false)
 
 have = cc.compiles('''
@@ -646,6 +648,7 @@ have_ddfd = cc.has_member('DIR', 'dd_fd',
 conf.set('HAVE_DECL_DDFD', have_ddfd ? 1 : false)
 
 have = cc.has_member('struct tm', 'tm_gmtoff',
+                     args : '-D_GNU_SOURCE',
                      prefix : '''
                      #include <time.h>
                      #include <unistd.h>
@@ -662,6 +665,7 @@ have = cc.has_member('struct termios', 'c_line',
 conf.set('HAVE_STRUCT_TERMIOS_C_LINE', have ? 1 : false)
 
 have = cc.has_member('struct stat', 'st_mtim.tv_nsec',
+                     args : '-D_GNU_SOURCE',
                      prefix : '#include <sys/stat.h>')
 conf.set('HAVE_STRUCT_STAT_ST_MTIM_TV_NSEC', have ? 1 : false)
 
@@ -671,6 +675,7 @@ conf.set('HAVE_STRUCT_STATX_STX_MNT_ID', have ? 1 : false)
 
 # replacement for AC_STRUCT_TIMEZONE
 have = cc.has_member('struct tm', 'tm_zone',
+                     args : '-D_GNU_SOURCE',
                      prefix : '#include <time.h>')
 conf.set('HAVE_STRUCT_TM_TM_ZONE', have ? 1 : false)
 
