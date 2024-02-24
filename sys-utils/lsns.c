@@ -218,6 +218,7 @@ struct lsns {
 		     no_headings: 1,
 		     no_wrap    : 1;
 
+	dev_t nsfs_dev;
 
 	struct libmnt_table *tab;
 	struct libscols_filter *filter;
@@ -501,6 +502,33 @@ static int get_netnsid(struct path_cxt *pc __attribute__((__unused__)),
 }
 #endif /* HAVE_LINUX_NET_NAMESPACE_H */
 
+static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, ino_t ino);
+
+static void read_open_ns_inos(struct lsns *ls, struct path_cxt *pc)
+{
+	DIR *sub = NULL;
+	struct dirent *d = NULL;
+	char path[sizeof("fd/") + sizeof(stringify_value(UINT64_MAX))];
+
+	while (ul_path_next_dirent(pc, &sub, "fd", &d) == 0) {
+		uint64_t num;
+		struct stat st;
+
+		if (ul_strtou64(d->d_name, &num, 10) != 0)	/* only numbers */
+			continue;
+
+		snprintf(path, sizeof(path), "fd/%ju", (uintmax_t) num);
+		ul_path_stat(pc, &st, 0, path);
+		if (st.st_dev == ls->nsfs_dev) {
+			int fd = ul_path_open(pc, O_RDONLY, path);
+			if (fd >= 0) {
+				add_namespace_for_nsfd(ls, fd, st.st_ino);
+				close(fd);
+			}
+		}
+	}
+}
+
 static int read_process(struct lsns *ls, struct path_cxt *pc)
 {
 	struct lsns_process *p = NULL;
@@ -539,6 +567,8 @@ static int read_process(struct lsns *ls, struct path_cxt *pc)
 
 	DBG(PROC, ul_debugobj(p, "new pid=%d", p->pid));
 	list_add_tail(&p->processes, &ls->processes);
+
+	read_open_ns_inos(ls, pc);
 done:
 	if (rc)
 		free(p);
@@ -1421,6 +1451,16 @@ static void __attribute__((__noreturn__)) list_colunms(bool raw, bool json)
    exit(EXIT_SUCCESS);
 }
 
+static dev_t read_nsfs_dev(void)
+{
+	struct stat st;
+
+	if (stat("/proc/self/ns/user", &st) < 0)
+		err(EXIT_FAILURE, _("failed to do stat /proc/self/ns/user"));
+
+	return st.st_dev;
+}
+
 int main(int argc, char *argv[])
 {
 	struct lsns ls;
@@ -1606,6 +1646,8 @@ int main(int argc, char *argv[])
 	ls.tab = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
 	if (!ls.tab)
 		err(MNT_EX_FAIL, _("failed to parse %s"), _PATH_PROC_MOUNTINFO);
+
+	ls.nsfs_dev = read_nsfs_dev();
 
 	r = read_processes(&ls);
 	if (!r)
