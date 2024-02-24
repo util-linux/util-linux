@@ -48,8 +48,12 @@ fi
 
 PID=
 FD=3
-ROOT="$(stat -c %i $MNTPNT)"@"$($TS_CMD_FINDMNT --raw --noheadings -oMAJ:MIN --target $MNTPNT)"
-FSTAB="$(stat -c %i $MNTPNT/fstab)"@"$($TS_CMD_FINDMNT --raw --noheadings -oMAJ:MIN --target $MNTPNT/fstab)"
+ROOTI="$(stat -c %i $MNTPNT)"
+ROOTD="$($TS_CMD_FINDMNT --raw --noheadings -oMAJ:MIN --target $MNTPNT)"
+ROOT="${ROOTI}"@"${ROOTD}"
+FSTABI="$(stat -c %i $MNTPNT/fstab)"
+FSTABD="$($TS_CMD_FINDMNT --raw --noheadings -oMAJ:MIN --target $MNTPNT/fstab)"
+FSTAB="${FSTABI}"@"${FSTABD}"
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" inotify $FD dir=$MNTPNT file=$MNTPNT/fstab; }
     if read -u ${MKFDS[0]} PID; then
@@ -81,6 +85,16 @@ EOF
 	    echo "INOTIFY.INODES.RAW" == EXPECTED_JSON
 	else
 	    echo "INOTIFY.INODES.RAW": "$INODES_RAW_JSON"
+	fi
+
+	INODES_COOKED=$(${TS_CMD_LSFD} --raw -n -o INOTIFY.INODES -Q "${EXPR}")
+	echo "INOTIFY.INODES": $?
+	if [[ "$INODES_COOKED" ==  "${FSTABI}@btrfs"'\x0a'"${ROOTI}@btrfs" ]]; then
+	    echo "INOTIFY.INODES" == FSTABI@btrfs'\x0a'ROOTI@btrfs
+	else
+	    echo "INOTIFY.INODES": "$INODES_COOKED"
+	    echo "FSTABI": "$FSTABI"
+	    echo "ROOTI": "$ROOTI"
 	fi
 
 	echo DONE >&"${MKFDS[1]}"
