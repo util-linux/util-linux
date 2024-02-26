@@ -939,13 +939,17 @@ static int get_next_syslog_record(struct dmesg_control *ctl,
 			const char *start = begin + 1;
 			size_t id_size;
 
-			start = start + strspn(start, " ");
+			while (start < end && *start == ' ')
+				start++;
+
 			begin = skip_item(begin, end, "]");
 			id_size = begin - start;
+
 			if (id_size < sizeof(rec->caller_id))
 				xstrncpy(rec->caller_id, start, id_size);
-			rec->mesg = begin + 1;
-			rec->mesg_size = end - begin - 1;
+
+			rec->mesg = begin < end ? begin + 1 : NULL;
+			rec->mesg_size = begin < end ? end - begin - 1 : 0;
 		} else {
 			rec->mesg = begin;
 			rec->mesg_size = end - begin;
