@@ -314,6 +314,8 @@ int mnt_context_reset_status(struct libmnt_context *cxt)
 	if (!cxt)
 		return -EINVAL;
 
+	reset_syscall_status(cxt);
+
 	cxt->syscall_status = 1;		/* means not called yet */
 	cxt->helper_exec_status = 1;
 	cxt->helper_status = 0;
