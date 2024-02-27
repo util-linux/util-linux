@@ -250,6 +250,8 @@ void display(struct hexdump *hex)
 	struct list_head *p, *q, *r;
 
 	while ((bp = get(hex)) != NULL) {
+		ssize_t rem = hex->blocksize;
+
 		fs = &hex->fshead; savebp = bp; saveaddress = address;
 
 		list_for_each(p, fs) {
@@ -263,7 +265,7 @@ void display(struct hexdump *hex)
 
 				cnt = fu->reps;
 
-				while (cnt) {
+				while (cnt && rem >= 0) {
 					list_for_each(r, &fu->prlist) {
 						pr = list_entry(r, struct hexdump_pr, prlist);
 
@@ -280,12 +282,18 @@ void display(struct hexdump *hex)
 							print(pr, bp);
 
 						address += pr->bcnt;
+
+						rem -= pr->bcnt;
+						if (rem < 0)
+							break;
+
 						bp += pr->bcnt;
 					}
 					--cnt;
 				}
 			}
 			bp = savebp;
+			rem = hex->blocksize;
 			address = saveaddress;
 		}
 	}
