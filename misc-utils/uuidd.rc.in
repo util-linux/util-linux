@@ -17,8 +17,9 @@ PATH=/bin:/usr/bin:/sbin:/usr/sbin
 DAEMON=/usr/sbin/uuidd
 UUIDD_USER=uuidd
 UUIDD_GROUP=uuidd
-UUIDD_DIR=@runstatedir@/uuidd
-PIDFILE=$UUIDD_DIR/uuidd.pid
+UUIDD_RUNSTATEDIR=@runstatedir@/uuidd
+UUIDD_LOCALSTATEDIR=@localstatedir@/lib/libuuid
+PIDFILE=$UUIDD_RUNSTATEDIR/uuidd.pid
 
 test -x $DAEMON || exit 0
 
@@ -27,9 +28,13 @@ test -x $DAEMON || exit 0
 case "$1" in
   start)
 	log_daemon_msg "Starting uuid generator" "uuidd"
-	if ! test -d $UUIDD_DIR; then
-		mkdir -p $UUIDD_DIR
-		chown -R $UUIDD_USER:$UUIDD_GROUP $UUIDD_DIR
+	if ! test -d $UUIDD_RUNSTATEDIR; then
+		mkdir -p $UUIDD_RUNSTATEDIR
+		chown -R $UUIDD_USER:$UUIDD_GROUP $UUIDD_RUNSTATEDIR
+	fi
+	if ! test -d $UUIDD_LOCALSTATEDIR; then
+		mkdir -p $UUIDD_LOCALSTATEDIR
+		chown -R $UUIDD_USER:$UUIDD_GROUP $UUIDD_LOCALSTATEDIR
 	fi
 	start_daemon -p $PIDFILE $DAEMON
 	log_end_msg $?
