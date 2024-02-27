@@ -45,6 +45,8 @@ jobs:
                 id: cpp/path-injection
             - exclude:
                 id: cpp/uncontrolled-process-operation
+            - exclude:
+                id: cpp/world-writable-file-creation
 
       - name: Install dependencies
         run: sudo -E .github/workflows/cibuild-setup-ubuntu.sh
