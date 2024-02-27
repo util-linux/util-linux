@@ -116,10 +116,10 @@ lastlog2_LDADD = $(LDADD) liblastlog2.la -lsqlite3
 lastlog2_CFLAGS = $(AM_CFLAGS) -I$(ul_liblastlog2_incdir)
 systemdsystemunit_DATA += \
 	misc-utils/lastlog2-import.service
-tmpfiles_DATA += misc-utils/lastlog2.conf
+tmpfiles_DATA += misc-utils/lastlog2-tmpfiles.conf
 endif
 PATHFILES += misc-utils/lastlog2-import.service \
-             misc-utils/lastlog2.conf
+             misc-utils/lastlog2-tmpfiles.conf
 
 if BUILD_UUIDGEN
 usrbin_exec_PROGRAMS += uuidgen

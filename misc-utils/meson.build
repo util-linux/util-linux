@@ -78,8 +78,8 @@ test_uuidd_sources = files(
 
 if build_liblastlog2 and systemd.found()
   lastlog2_tmpfiles = configure_file(
-    input : 'lastlog2.conf.in',
-    output : 'lastlog2.conf',
+    input : 'lastlog2-tmpfiles.conf.in',
+    output : 'lastlog2-tmpfiles.conf',
     configuration : conf)
   install_data(
     lastlog2_tmpfiles,

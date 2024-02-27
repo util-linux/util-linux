@@ -5,4 +5,4 @@ uuidd.service
 uuidd.socket
 uuidd-tmpfiles.conf
 lastlog2-import.service
-lastlog2.conf
+lastlog2-tmpfiles.conf
