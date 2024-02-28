@@ -432,6 +432,7 @@ struct libmnt_context
 
 	int	syscall_status;	/* 1: not called yet, 0: success, <0: -errno */
 	const char *syscall_name;	/* failed syscall name */
+	char	*syscall_errmsg;	/* message from kernel */
 
 	struct libmnt_ns	ns_orig;	/* original namespace */
 	struct libmnt_ns	ns_tgt;		/* target namespace */
@@ -496,6 +497,9 @@ static inline void reset_syscall_status(struct libmnt_context *cxt)
 	DBG(CXT, ul_debug("reset syscall status"));
 	cxt->syscall_status = 0;
 	cxt->syscall_name = NULL;
+
+	free(cxt->syscall_errmsg);
+	cxt->syscall_errmsg = NULL;
 }
 
 /* optmap.c */
