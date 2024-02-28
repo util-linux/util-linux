@@ -3,6 +3,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-DLOCALEDIR=\"$(localedir)\" \
 	-D_PATH_RUNSTATEDIR=\"${runstatedir}\" \
+	-D_PATH_LOCALSTATEDIR=\"${localstatedir}\" \
 	-D_PATH_SYSCONFSTATICDIR=\"${sysconfstaticdir}\"
 
 if USE_VENDORDIR
@@ -175,6 +176,7 @@ edit_cmd = sed \
 	 -e 's|@docdir[@]|$(docdir)|g' \
 	 -e 's|@includedir[@]|$(includedir)|g' \
 	 -e 's|@runstatedir[@]|$(runstatedir)|g' \
+	 -e 's|@localstatedir[@]|$(localstatedir)|g' \
 	 -e 's|@usrlib_execdir[@]|$(usrlib_execdir)|g' \
 	 -e 's|@usrbin_execdir[@]|$(usrbin_execdir)|g' \
 	 -e 's|@usrsbin_execdir[@]|$(usrsbin_execdir)|g' \

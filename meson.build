@@ -28,6 +28,7 @@ sysconfstaticdir = join_paths(prefixdir, 'lib')
 docdir = join_paths(prefixdir, get_option('datadir'), 'doc', 'util-linux')
 mandir = join_paths(prefixdir, get_option('mandir'))
 runstatedir = '/run'
+localstatedir = '/var'
 execprefixdir = prefixdir
 sysconfdir = join_paths(prefixdir, get_option('sysconfdir'))
 usrbin_exec_dir = join_paths(execprefixdir, bindir)
@@ -61,12 +62,14 @@ conf.set_quoted('LIBBLKID_DATE', libblkid_date)
 conf.set('bindir', bindir)
 conf.set('sbindir', sbindir)
 conf.set('runstatedir', runstatedir)
+conf.set('localstatedir', localstatedir)
 conf.set('sysconfdir', sysconfdir)
 conf.set('usrbin_execdir', usrbin_exec_dir)
 conf.set('usrsbin_execdir', usrsbin_exec_dir)
 conf.set('docdir', docdir)
 conf.set_quoted('_PATH_SYSCONFSTATICDIR', sysconfstaticdir)
 conf.set_quoted('_PATH_RUNSTATEDIR', runstatedir)
+conf.set_quoted('_PATH_LOCALSTATEDIR', localstatedir)
 conf.set_quoted('CONFIG_ADJTIME_PATH', '/etc/adjtime')
 conf.set_quoted('ADJTIME_PATH', '/etc/adjtime') # yes, both are used :(
 
