@@ -39,8 +39,8 @@
 
 #include "uuid.h"
 
-#define LIBUUID_CLOCK_FILE	"/var/lib/libuuid/clock.txt"
-#define LIBUUID_CLOCK_CONT_FILE	"/var/lib/libuuid/clock-cont.txt"
+#define LIBUUID_CLOCK_FILE	_PATH_LOCALSTATEDIR "/lib/libuuid/clock.txt"
+#define LIBUUID_CLOCK_CONT_FILE	_PATH_LOCALSTATEDIR "/lib/libuuid/clock-cont.txt"
 
 /*
  * Offset between 15-Oct-1582 and 1-Jan-70

@@ -92,6 +92,8 @@ AS_CASE([$prefix],
 
   ]
 )
+AC_SUBST([localstatedir])
+
 
 # default for old versions without $runstatedir
 AS_IF([test x"$runstatedir" = x], [runstatedir='${localstatedir}/run'])
@@ -101,7 +103,6 @@ AS_CASE([$localstatedir:$runstatedir],
  [NONE:'${localstatedir}/run' | /var:'${localstatedir}/run' | NONE:'/run' ],
    [runstatedir=/run; AC_MSG_NOTICE([  --runstatedir defaults to /run])]
 )
-
 AC_SUBST([runstatedir])
 
 
