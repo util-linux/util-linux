@@ -222,5 +222,5 @@ option('vendordir',
 option('pamlibdir', type : 'string',
        description : 'directory for PAM modules')
 option('lastlog-compat-symlink', type : 'boolean',
-       value : 'false',
+       value : false,
        description : 'create lastlog compat symlink')
