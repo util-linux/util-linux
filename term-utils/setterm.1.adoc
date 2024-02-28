@@ -156,6 +156,10 @@ Turns underline mode on or off.
 
 include::man-common/help-version.adoc[]
 
+== WARNING
+
+Use of *setterm* in combination with stdout redirection can have unexpected results, as some options operate on stdin. To prevent problems, always redirect both stdin and stdout to the same device.
+
 == COMPATIBILITY
 
 Since version 2.25 *setterm* has support for long options with two hyphens, for example *--help*, beside the historical long options with a single hyphen, for example *-help*. In scripts it is better to use the backward-compatible single hyphen rather than the double hyphen. Currently there are no plans nor good reasons to discontinue single-hyphen compatibility.
