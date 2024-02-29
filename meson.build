@@ -10,6 +10,8 @@ project('util-linux', 'c',
 fs = import('fs')
 pkgconfig = import('pkgconfig')
 
+# soname versions; This never change because we use symbols versioing. There is also
+# API version (LIB*_VERSION macros) and it follow package version.
 libblkid_version = '1.1.0'
 libblkid_date = '01-Jun-2021'
 libuuid_version = '1.3.0'
@@ -56,7 +58,7 @@ endif
 
 pc_version = '.'.join(pc_version)
 
-conf.set_quoted('LIBBLKID_VERSION', libblkid_version)
+conf.set_quoted('LIBBLKID_VERSION', pc_version)
 conf.set_quoted('LIBBLKID_DATE', libblkid_date)
 
 conf.set('bindir', bindir)
