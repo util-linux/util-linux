@@ -80,6 +80,7 @@ audit-arch:
 autotools:
    - add missing dist_noinst_DATA  [Karel Zak]
    - check for flex in autogen.sh  [Karel Zak]
+   - cleanup lastlog2 stuff  [Karel Zak]
    - fix AC_DEFINE_UNQUOTED() use  [Karel Zak]
    - fix AC_PROG_LEX use  [Karel Zak]
    - fix librtas check  [Karel Zak]
@@ -94,6 +95,7 @@ bash-completion:
    - update for mkswap  [Karel Zak]
 blkdev.h:
    - avoid some unused argument warnings  [Thomas Weißschuh]
+   - update location of SCSI device types  [Christoph Anton Mitterer]
 blkid:
    - fix call to err_exclusive_options  [Thomas Weißschuh]
 blkpr:
@@ -119,9 +121,11 @@ build-sys:
    - fix po-man clean  [Karel Zak]
    - fix typo in waitpid check  [Thomas Weißschuh]
    - improve checkadoc  [Karel Zak]
+   - introduce localstatedir  [Karel Zak]
    - only build col on glibc  [Thomas Weißschuh]
    - only pass --failure-level if supported  [Thomas Weißschuh]
    - rearrange gitignore in alphabetical order  [Enze Li]
+   - release++ (v2.40-rc1)  [Karel Zak]
    - try to always use 64bit time support on glibc  [Thomas Weißschuh]
 buildsys:
    - warn on usage of VLAs  [Thomas Weißschuh]
@@ -154,6 +158,7 @@ ci:
    - cache openwrt sdk  [Thomas Weißschuh]
    - cancel running jobs on push  [Frantisek Sumsal]
    - collect coverage on _exit() as well  [Frantisek Sumsal]
+   - consistently use gcc 13 during CI  [Thomas Weißschuh]
    - disable cpp/path-injection rule  [Thomas Weißschuh]
    - don't combine -Werror and -fsanitize  [Thomas Weißschuh]
    - enable -Werror for meson  [Thomas Weißschuh]
@@ -182,8 +187,11 @@ dmesg:
    - add support for reserved and local facilities  [Thomas Weißschuh]
    - cleanup function names  [Karel Zak]
    - correctly print all supported facility names  [Thomas Weißschuh]
+   - don't affect delta by --since  [Karel Zak]
    - error out instead of silently ignoring force_prefix  [Thomas Weißschuh]
    - fix FD leak  [Karel Zak]
+   - fix delta calculation  [Karel Zak]
+   - fix wrong size calculation  [Karel Zak]
    - make kmsg read() buffer big enough for kernel  [anteater]
    - man and coding style changes  [Karel Zak]
    - only write one message to json  [Thomas Weißschuh]
@@ -192,16 +200,29 @@ dmesg:
    - support reading kmsg format from file  [Thomas Weißschuh]
    - use symbolic defines for second conversions  [Thomas Weißschuh]
 docs:
+   - add BSD-2-Clause  [Karel Zak]
    - add SPDX to boilerplate.c  [Karel Zak]
+   - add enosys to ReleaseNotes  [Karel Zak]
+   - add exch to ReleaseNotes  [Karel Zak]
+   - add hints about systemd  [Karel Zak]
+   - add setpgid do ReleaseNotes  [Karel Zak]
+   - cleanup public domain license texts  [Karel Zak]
+   - fix a typo  [Masatake YAMATO]
+   - improve howto-pull-request  [Karel Zak]
    - move Copyright in boilerplate.c  [Karel Zak]
+   - move GPL-2.0 license text to Docimentation directory  [Karel Zak]
+   - remove duplicated author name in namei.1.adoc  [Emanuele Torre]
    - update AUTHORS file  [Karel Zak]
+   - update v2.40-ReleaseNotes  [Karel Zak]
    - use HTTPS for GitHub clone URLs  [Jakub Wilk]
+   - use proper XSPD identifier for GPL-2.0  [Karel Zak]
 eject:
    - (tests) don't write mount hint to terminal  [Karel Zak]
 enosys:
    - add --list  [Thomas Weißschuh]
    - add bash completion  [Thomas Weißschuh]
    - add common arguments  [Thomas Weißschuh]
+   - add helpers for 64 bit integer loading  [Thomas Weißschuh]
    - add manpage  [Thomas Weißschuh]
    - add support for MIPS, PowerPC and ARC  [Thomas Weißschuh]
    - add support for ioctl blocking  [Thomas Weißschuh]
@@ -213,6 +234,7 @@ enosys:
    - build BPF dynamically  [Thomas Weißschuh]
    - don't require end-of-options marker  [Thomas Weißschuh]
    - don't validate that numbers are found from headers  [Thomas Weißschuh]
+   - drop unnessecary load of ioctl number  [Thomas Weißschuh]
    - enable locale handling  [Thomas Weißschuh]
    - find syscalls at build time  [Thomas Weißschuh]
    - fix build on hppa  [John David Anglin]
@@ -224,6 +246,8 @@ enosys:
    - mark variable static  [Thomas Weißschuh]
    - move from tests/helpers/test_enosys.c  [Thomas Weißschuh]
    - only build if AUDIT_ARCH_NATIVE is defined  [Thomas Weißschuh]
+   - optimize bytecode when execve is not blocked  [Thomas Weißschuh]
+   - optimize bytecode when no ioctls are blocked  [Thomas Weißschuh]
    - properly block execve syscall  [Thomas Weißschuh]
    - provide a nicer build message for syscalls.h generation  [Thomas Weißschuh]
    - remove long jumps from BPF  [Thomas Weißschuh]
@@ -251,6 +275,7 @@ fadvise:
 fallocate:
    - fix the way to evaluate values returned from posix_fallocate  [Masatake YAMATO]
 fdisk:
+   - (man) fix typo, improve readability  [Karel Zak]
    - add support for partition resizing  [Thomas Weißschuh]
    - guard posix variable  [Thomas Weißschuh]
    - remove usage of VLA  [Thomas Weißschuh]
@@ -292,6 +317,7 @@ hexdump:
    - Add missing section header in man page  [Mario Blättermann]
    - add '--one-byte-hex' format option  [Tomasz Wojdat]
    - add new format-strings test case  [Tomasz Wojdat]
+   - check blocksize when display data  [Karel Zak]
    - use xasprintf to build string  [Thomas Weißschuh]
 hwclock:
    - Improve set error in the face of jitter  [Eric Badger]
@@ -324,6 +350,16 @@ last:
    - Add -T option for tab-separated output  [Trag Date]
 last(1):
    - Document -T option for tab-separated output  [Trag Date]
+lastlog:
+   - cleanup function definitions  [Karel Zak]
+   - improve errors printing  [Karel Zak]
+lastlog2:
+   - Don't print space if Service column is not printed  [Miika Alikirri]
+   - Fix various issues with meson  [Fabian Vogt]
+   - convert check_user() to boolean-like macro  [Karel Zak]
+   - improve coding style  [Karel Zak]
+   - make longopts[] static-const  [Karel Zak]
+   - rename tmpfiles  [Christian Hesse]
 ldattach:
    - don't call exit() from signal handler  [Thomas Weißschuh]
 ldfd:
@@ -334,12 +370,17 @@ lib/ include/:
    - cleanup licence headers  [Karel Zak]
 lib/buffer:
    - make buffer usable for non-string data  [Karel Zak]
+lib/c_strtod:
+   - fix uselocale() fallback if strtod_l() is not available  [Alan Coopersmith]
 lib/caputils:
    - fix integer handling issues [coverity scan]  [Karel Zak]
 lib/color-names:
    - fix licence header  [Karel Zak]
 lib/colors:
    - correct documentation of colors_add_scheme()  [Thomas Weißschuh]
+lib/cpuset:
+   - exit early from cpulist_parse  [Thomas Weißschuh]
+   - make max variable const  [Thomas Weißschuh]
 lib/env:
    - avoid underflow of read_all_alloc() return value  [Thomas Weißschuh]
    - fix function name remote_entry -> remove_entry  [Thomas Weißschuh]
@@ -436,6 +477,7 @@ libblkid:
    - (vxfs) simplify prober  [Thomas Weißschuh]
    - (vxfs) use hex escape for magic  [Thomas Weißschuh]
    - (zonefs) avoid modifying shared buffer  [Thomas Weißschuh]
+   - Check offset in LUKS2 header  [Milan Broz]
    - add remove_buffer helper  [Thomas Weißschuh]
    - avoid aligning out of probing area  [Thomas Weißschuh]
    - avoid memory leak of cachefile path  [Thomas Weißschuh]
@@ -470,6 +512,7 @@ libfdisk:
    - use new blkid_wipe_all helper  [Thomas Weißschuh]
 liblastlog2:
    - fix leaks  [Karel Zak]
+   - fix pkg-config inclidedir  [Karel Zak]
 libmount:
    - (context) avoid dead store  [Thomas Weißschuh]
    - (optlist) correctly detect ro status  [Thomas Weißschuh]
@@ -501,8 +544,9 @@ libmount:
    - don't assume errno after failed asprintf()  [Karel Zak]
    - don't call hooks after mount.<type> helper  [Karel Zak]
    - don't call mount.<type> helper with usernames  [Karel Zak]
-   - don't canonicalize symlinks for bind operation  [Karel Zak]
+   - don't hold write fd to mounted device  [Jan Kara]
    - don't pass option "defaults" to helper  [Thomas Weißschuh]
+   - fix copy & past bug in lock initialization  [Karel Zak]
    - fix fsconfig value unescaping  [Karel Zak]
    - fix options prepend/insert and merging  [Karel Zak]
    - fix possible NULL dereference [coverity scan]  [Karel Zak]
@@ -524,6 +568,7 @@ libmount:
    - reduce utab.lock permissions  [Karel Zak]
    - report all kernel messages for fd-based mount API  [Thomas Weißschuh]
    - report failed syscall name  [Karel Zak]
+   - report kernel message from new API  [Karel Zak]
    - report statx in features list  [Karel Zak]
    - test utab options after helper call  [Thomas Weißschuh]
    - update documentation for MNT_ERR_APPLYFLAGS  [Debarshi Ray]
@@ -695,19 +740,23 @@ lsclocks:
    - rename column RESOLUTION to RESOL_RAW  [Thomas Weißschuh]
    - split out data function  [Thomas Weißschuh]
    - trim default columns  [Thomas Weißschuh]
+   - use clock id from clock_getcpuclockid in add_cpu_clock  [Alan Coopersmith]
 lscpu:
    - Even more Arm part numbers (early 2023)  [Jeremy Linton]
    - Use 4K buffer size instead of BUFSIZ  [Khem Raj]
    - add procfs-sysfs dump from VisionFive 2  [Jan Engelhardt]
    - cure empty output of lscpu -b/-p  [Jan Engelhardt]
    - fix caches separator for --parse=<list>  [Karel Zak]
+   - remove redundant include  [Karel Zak]
    - remove usage of VLA  [Thomas Weißschuh]
 lscpu-cputype.c:
    - assign value to multiple variables (ar->bit32 and ar->bit64) clang with -Wcomma will emit an warning of "misuse of comma operator". Since the value that will be assigned, is the same for both (bit32 and bit64), just assigning directly to both variables seems reasonable.  [rilysh]
 lsdf:
+   - (man page) revise text decoration  [Masatake YAMATO]
    - make the code for filling SOURCE, PARTITION, and MAJMIN reusable  [Masatake YAMATO]
 lsfd:
    - (comment) fix a typo  [Masatake YAMATO]
+   - (cosmetic) normalize whitespaces  [Masatake YAMATO]
    - (filter) accept floating point numbers in expressions  [Masatake YAMATO]
    - (filter) improve error message  [Masatake YAMATO]
    - (filter) reduce duplicated code in macro definitions  [Masatake YAMATO]
@@ -727,6 +776,8 @@ lsfd:
    - (refactor) make the code for traversing threads reusable  [Masatake YAMATO]
    - (refactor) make the way to handle character devices extensible  [Masatake YAMATO]
    - (refactor) move miscdev specific code to cdev_misc_ops  [Masatake YAMATO]
+   - (refactor) rename a function, s/new_process/new_proc/g  [Masatake YAMATO]
+   - (refactor) rename add_nodevs to read_mountinfo  [Masatake YAMATO]
    - (refactor) unify the invocations of  sysfs_get_byteorder()  [Masatake YAMATO]
    - (test) add a case for testing a unix socket including newline characters in its path name  [Masatake YAMATO]
    - (tests) don't run mqueue test on byteorder mismatch  [Thomas Weißschuh]
@@ -771,6 +822,7 @@ lsfd:
    - delete redundant parentheses surrounding return value  [Masatake YAMATO]
    - don't capitalize the help strings for the columns  [Masatake YAMATO]
    - don't check the value returned from new_file()  [Masatake YAMATO]
+   - don't list kernel threads unless --threads is given  [Masatake YAMATO]
    - fill ENDPOINTS column for eventfd  [Masatake YAMATO]
    - fill ENDPOINTS column for pty devices  [Masatake YAMATO]
    - fill ENDPOINTS column of POSIX Mqueue  [Masatake YAMATO]
@@ -790,6 +842,7 @@ lsfd:
    - keep filter-only columns hidden  [Karel Zak]
    - make the order of calling finalize_* and initialize_* consistent  [Masatake YAMATO]
    - make the sock_xinfo layer be able to prepare an ipc_class for a given socket  [Masatake YAMATO]
+   - make the way to read /proc/$pid/mountinfo robust  [Masatake YAMATO]
    - mark XMODE.m on fds monitored by poll(2) and ppoll(2)  [Masatake YAMATO]
    - mark XMODE.m on fds monitored by select(2) and pselect6(2)  [Masatake YAMATO]
    - move a local variable to a narrower scope  [Masatake YAMATO]
@@ -797,6 +850,7 @@ lsfd:
    - print the detail of the timer associated with a timerfd  [Masatake YAMATO]
    - print the masks specified in signalfds  [Masatake YAMATO]
    - re-fill unix socket paths with sockdiag netlink interface  [Masatake YAMATO]
+   - read /proc/$pid/ns/mnt earlier  [Masatake YAMATO]
    - rearrange the aligment of the help messages  [Masatake YAMATO]
    - show default columns in the help message  [Masatake YAMATO]
    - switch to c99-conformant alignment specification  [Thomas Weißschuh]
@@ -841,6 +895,7 @@ lslocks:
    - add a missing "break;" in a switch/case statement  [Masatake YAMATO]
    - cleanup --list-columns  [Karel Zak]
    - don't attempt to open /proc/-1/fd/  [Jakub Wilk]
+   - fix buffer overflow  [Karel Zak]
    - improve --list-columns  [Karel Zak]
    - refactor the code reading /proc/locks  [Masatake YAMATO]
    - rename functions for future extension  [Masatake YAMATO]
@@ -854,23 +909,32 @@ m4:
 man:
    - Add enosys and lsclocks to po4a.cfg  [Mario Blättermann]
 meson:
+   - Only build libmount python module if python was found  [Fabian Vogt]
    - add check for linux/mount.h  [Thomas Weißschuh]
    - add check for struct statx  [Thomas Weißschuh]
    - add conditionalization for test progs  [Zbigniew Jędrzejewski-Szmek]
+   - add forgotten files to lists  [Zbigniew Jędrzejewski-Szmek]
    - add missing scols sample  [Karel Zak]
+   - avoid future-deprecated feature  [Karel Zak]
    - avoid int operation with non-int  [Thomas Weißschuh]
    - build test_mount_optlist  [Thomas Weißschuh]
    - bump required version to 0.60.0  [Thomas Weißschuh]
    - check for HAVE_STRUCT_STATX_STX_MNT_ID  [Karel Zak]
    - check for _NL_TIME_WEEK_1STDAY in langinfo.h  [Christian Hesse]
    - conditionalize waitpid  [Zbigniew Jędrzejewski-Szmek]
+   - create dedicated config for pam_lastlog2  [Thomas Weißschuh]
+   - define _GNU_SOURCE when checking for SO_PASSCRED  [Thomas Weißschuh]
    - don't try to build test_ca without libcap-ng  [Thomas Weißschuh]
+   - fix LIBBLKID_VERSION definition  [Karel Zak]
    - fix copy & past error  [Karel Zak]
+   - fix disablement check  [Zbigniew Jędrzejewski-Szmek]
+   - fix mismatch with handling of lib_dl dependency  [Zbigniew Jędrzejewski-Szmek]
    - implement HAVE_PTY  [Zbigniew Jędrzejewski-Szmek]
    - include bash-completion for newgrp  [Christian Hesse]
    - include bash-completion for write  [Christian Hesse]
    - install chfn setuid  [Christian Hesse]
    - install chsh setuid  [Christian Hesse]
+   - install lastlog2.h library header file  [Karel Zak]
    - install mount setuid  [Christian Hesse]
    - install newgrp setuid  [Christian Hesse]
    - install su setuid  [Christian Hesse]
@@ -880,12 +944,16 @@ meson:
    - install wall setgid  [Christian Hesse]
    - install write executable with group 'tty'  [Christian Hesse]
    - install write setgid  [Christian Hesse]
+   - only build liblastlog when enabled  [Thomas Weißschuh]
    - properly handle gettext non-existence  [Thomas Weißschuh]
    - remove scols filter sample  [Karel Zak]
    - require 0.57  [Thomas Weißschuh]
+   - run compiler checks with -D_GNU_SOURCE when necessary  [Thomas Weißschuh]
    - run tests if with option program-tests  [sewn]
    - try to always use 64bit time support on glibc  [Thomas Weißschuh]
    - update  for libsmartcols filter  [Karel Zak]
+   - use a dependency object for liblastlog2  [Thomas Weißschuh]
+   - use a dependency object for sqlite3  [Thomas Weißschuh]
    - use bison --defines=HEADER  [Karel Zak]
    - use meson features instead of bash  [sewn]
 misc:
@@ -901,6 +969,7 @@ more:
    - avoid out-of-bound access  [Thomas Weißschuh]
    - exit if POLLERR and POLLHUP on stdin is received  [Goldwyn Rodrigues]
    - exit if POLLHUP or POLLERR on stdin is received  [Goldwyn Rodrigues]
+   - fix poll() use  [Karel Zak]
    - remove usage of alloca()  [Thomas Weißschuh]
 mount:
    - (tests) don't create /dev/nul  [Thomas Weißschuh]
@@ -959,8 +1028,10 @@ setarch:
    - add riscv64/riscv32 support  [Michal Biesek]
 setpriv:
    - add landlock support  [Thomas Weißschuh]
+   - apply landlock without configuration  [Thomas Weißschuh]
    - fix group argument completion  [Thomas Weißschuh]
 setterm:
+   - Document behavior of redirection  [Stanislav Brabec]
    - avoid restoring flags from uninitialized memory  [Chris Hofstaedtler]
 sfdisk:
    - Fix markup in man page  [Mario Blättermann]
@@ -969,6 +1040,9 @@ sha1:
    - properly wipe variables  [Thomas Weißschuh]
 strv:
    - make strv_new_api static  [Thomas Weißschuh]
+su:
+   - (man) add hint about sessions  [Karel Zak]
+   - (man) improve formatting  [Karel Zak]
 sulogin:
    - relabel terminal according to SELinux policy  [Christian Göttsche]
    - use get_terminal_default_type()  [Karel Zak]
@@ -979,6 +1053,7 @@ sys-utils:
    - cleanup license lines, add SPDX  [Karel Zak]
    - fix SELinux context example in mount.8  [Todd Zullinger]
 sys-utils/lscpu:
+   - Unblock SIGSEGV before vmware_bdoor  [WanBingjiang]
    - Use ul_path_scanf where possible  [Tobias Stoeckmann]
 term-utils:
    - fix indentation  [Karel Zak]
@@ -1094,6 +1169,7 @@ tests:
    - make mount/special more robust  [Karel Zak]
    - make ts_skip_capability accepts the output of older version of getpcaps  [Masatake YAMATO]
    - skip broken tests on docker  [Thomas Weißschuh]
+   - update dmesg deltas  [Karel Zak]
    - update lsfd broken filter test  [Karel Zak]
    - use array keys in more robust way  [Karel Zak]
    - use scols_column_set_properties() in 'fromfile' sample  [Karel Zak]
@@ -1102,6 +1178,9 @@ tests,autotools:
 timeutils:
    - add an inline funciton, is_timespecset()  [Masatake YAMATO]
    - add strtimespec_relative  [Thomas Weißschuh]
+tmpfiles:
+   - add and install for uuidd, generate /run/uuidd & /var/lib/libuuid  [Christian Hesse]
+   - depend on systemd...  [Christian Hesse]
 tools:
    - (asciidoctor) explicitly require extensions module  [Thomas Weißschuh]
 tools/all_syscalls:
@@ -1135,6 +1214,8 @@ uuidd:
    - add cont_clock persistence  [Michael Trapp]
    - enable cont-clock in service file  [Karel Zak]
    - improve man page for -cont-clock  [Karel Zak]
+uuidd.rc:
+   - create localstatedir in init script  [Christian Hesse]
 uuidgen:
    - add option --count  [Karel Zak]
    - mark some options mutually exclusive  [Karel Zak]
