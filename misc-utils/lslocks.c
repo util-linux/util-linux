@@ -48,6 +48,7 @@
 #include "optutils.h"
 #include "procfs.h"
 #include "column-list-table.h"
+#include "fileutils.h"
 
 /* column IDs */
 enum {
@@ -220,13 +221,12 @@ static char *get_filename_sz(ino_t inode, pid_t lock_pid, size_t *size)
 	struct stat sb;
 	struct dirent *dp;
 	DIR *dirp;
-	size_t len;
+	size_t sz;
 	int fd;
-	char path[PATH_MAX], sym[PATH_MAX], *ret = NULL;
+	char path[PATH_MAX] = { 0 },
+	     sym[PATH_MAX] = { 0 }, *ret = NULL;
 
 	*size = 0;
-	memset(path, 0, sizeof(path));
-	memset(sym, 0, sizeof(sym));
 
 	if (lock_pid < 0)
 		/* pid could be -1 for OFD locks */
@@ -241,16 +241,14 @@ static char *get_filename_sz(ino_t inode, pid_t lock_pid, size_t *size)
 	if (!(dirp = opendir(path)))
 		return NULL;
 
-	if ((len = strlen(path)) >= (sizeof(path) - 2))
+	if ((sz = strlen(path)) >= (sizeof(path) - 2))
 		goto out;
 
 	if ((fd = dirfd(dirp)) < 0 )
 		goto out;
 
-	while ((dp = readdir(dirp))) {
-		if (!strcmp(dp->d_name, ".") ||
-		    !strcmp(dp->d_name, ".."))
-			continue;
+	while ((dp = xreaddir(dirp))) {
+		ssize_t len;
 
 		errno = 0;
 
