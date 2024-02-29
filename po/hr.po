@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.39-rc3\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2024-01-24 10:55+0100\n"
+"POT-Creation-Date: 2024-02-29 21:01+0100\n"
 "PO-Revision-Date: 2023-05-01 11:06-0700\n"
 "Last-Translator: Božidar Putanec <bozidarp@yahoo.com>\n"
 "Language-Team: Croatian <lokalizacija@linux.hr>\n"
@@ -61,7 +61,7 @@ msgstr "nema dovoljno argumenata"
 #: login-utils/utmpdump.c:142 login-utils/utmpdump.c:367
 #: login-utils/utmpdump.c:391 login-utils/vipw.c:257 login-utils/vipw.c:275
 #: misc-utils/fadvise.c:148 misc-utils/findmnt.c:1291 misc-utils/logger.c:1247
-#: misc-utils/mcookie.c:119 misc-utils/pipesz.c:162 misc-utils/uuidd.c:235
+#: misc-utils/mcookie.c:123 misc-utils/pipesz.c:162 misc-utils/uuidd.c:235
 #: sys-utils/blkdiscard.c:248 sys-utils/blkpr.c:164 sys-utils/blkzone.c:144
 #: sys-utils/dmesg.c:671 sys-utils/eject.c:501 sys-utils/eject.c:696
 #: sys-utils/fallocate.c:407 sys-utils/fsfreeze.c:116 sys-utils/fstrim.c:106
@@ -80,7 +80,7 @@ msgstr "nema dovoljno argumenata"
 #: term-utils/scriptlive.c:259 term-utils/scriptlive.c:262
 #: term-utils/scriptreplay.c:282 term-utils/scriptreplay.c:285
 #: term-utils/scriptreplay.c:288 term-utils/scriptreplay.c:291
-#: term-utils/wall.c:393 text-utils/colcrt.c:284 text-utils/more.c:459
+#: term-utils/wall.c:393 text-utils/colcrt.c:284 text-utils/more.c:460
 #: text-utils/rev.c:165 text-utils/ul.c:637
 #, c-format
 msgid "cannot open %s"
@@ -750,7 +750,7 @@ msgid " -r, --read-only          forced open cfdisk in read-only mode\n"
 msgstr " -r, --read-only          otvori cfdisk samo samo-za-čitanje\n"
 
 #: disk-utils/cfdisk.c:2781 disk-utils/fdisk.c:1111 disk-utils/sfdisk.c:2350
-#: misc-utils/cal.c:421 sys-utils/dmesg.c:1760 text-utils/hexdump.c:119
+#: misc-utils/cal.c:421 sys-utils/dmesg.c:1768 text-utils/hexdump.c:119
 msgid "unsupported color mode"
 msgstr "nepodržani način bojenja"
 
@@ -858,7 +858,7 @@ msgstr "nevaljani argument - repair"
 #: sys-utils/swapon.c:543 sys-utils/switch_root.c:93
 #: sys-utils/switch_root.c:134 sys-utils/switch_root.c:139
 #: sys-utils/unshare.c:211 term-utils/mesg.c:144 term-utils/mesg.c:156
-#: text-utils/more.c:463
+#: text-utils/more.c:464
 #, c-format
 msgid "stat of %s failed"
 msgstr "stat() od %s nije uspio"
@@ -1216,14 +1216,14 @@ msgstr ""
 #: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:592
 #: misc-utils/whereis.c:603 misc-utils/whereis.c:614 misc-utils/whereis.c:659
 #: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:207
-#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1841
+#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1849
 #: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:318 sys-utils/losetup.c:997
 #: sys-utils/lscpu.c:1346 sys-utils/lsmem.c:649 sys-utils/mount.c:861
 #: sys-utils/mount.c:887 sys-utils/mount.c:895 sys-utils/mount.c:947
 #: sys-utils/mount.c:960 sys-utils/mount.c:1032 sys-utils/mountpoint.c:182
 #: sys-utils/pivot_root.c:66 sys-utils/swapoff.c:271 sys-utils/swapon.c:1024
 #: sys-utils/switch_root.c:270 sys-utils/umount.c:629 term-utils/setterm.c:1200
-#: text-utils/col.c:584 text-utils/more.c:2100
+#: text-utils/col.c:584 text-utils/more.c:2138
 msgid "bad usage"
 msgstr "loša uporaba"
 
@@ -1303,15 +1303,15 @@ msgstr "Odmak poravnanja: %lu bajta"
 
 #: disk-utils/fdisk-list.c:130 disk-utils/fdisk-list.c:251
 #: disk-utils/fsck.c:1264 misc-utils/lsblk.c:2200 misc-utils/lsblk.c:2254
-#: misc-utils/lsfd.c:1923
+#: misc-utils/lsfd.c:1962
 msgid "failed to allocate iterator"
 msgstr "nije uspjelo rezervirati memoriju za iterator"
 
 #: disk-utils/fdisk-list.c:136 disk-utils/fdisk-list.c:257
 #: disk-utils/partx.c:676 include/column-list-table.h:45
 #: login-utils/lslogins.c:1113 misc-utils/fincore.c:500
-#: misc-utils/findmnt.c:1896 misc-utils/lsblk.c:2729 misc-utils/lsclocks.c:648
-#: misc-utils/lsfd.c:2347 misc-utils/lslocks.c:756 misc-utils/uuidparse.c:252
+#: misc-utils/findmnt.c:1896 misc-utils/lsblk.c:2729 misc-utils/lsclocks.c:649
+#: misc-utils/lsfd.c:2386 misc-utils/lslocks.c:754 misc-utils/uuidparse.c:252
 #: misc-utils/wipefs.c:157 sys-utils/losetup.c:389 sys-utils/lscpu.c:596
 #: sys-utils/lscpu.c:751 sys-utils/lscpu.c:966 sys-utils/lsipc.c:354
 #: sys-utils/prlimit.c:303 sys-utils/rfkill.c:475 sys-utils/swapon.c:309
@@ -1323,7 +1323,7 @@ msgstr "nije uspjelo rezervirati memoriju za izlaznu tablicu"
 #: disk-utils/partx.c:590 include/column-list-table.h:72
 #: login-utils/lslogins.c:1173 misc-utils/fincore.c:218
 #: misc-utils/findmnt.c:847 misc-utils/findmnt.c:868 misc-utils/lsblk.c:1331
-#: misc-utils/lsclocks.c:294 misc-utils/lsfd.c:1250 misc-utils/lslocks.c:621
+#: misc-utils/lsclocks.c:294 misc-utils/lsfd.c:1261 misc-utils/lslocks.c:619
 #: misc-utils/uuidparse.c:154 misc-utils/wipefs.c:202 sys-utils/losetup.c:412
 #: sys-utils/losetup.c:441 sys-utils/lscpu.c:510 sys-utils/lscpu.c:786
 #: sys-utils/lscpu.c:818 sys-utils/lsipc.c:486 sys-utils/lsipc.c:567
@@ -1353,7 +1353,7 @@ msgstr "nije uspjelo rezervirati memoriju za izlazni redak"
 #: misc-utils/lsfd-file.c:731 misc-utils/lsfd-sock.c:75
 #: misc-utils/lsfd-sock.c:132 misc-utils/lsfd-sock.c:134
 #: misc-utils/lsfd-unkn.c:123 misc-utils/lsfd-unkn.c:125
-#: misc-utils/lslocks.c:702 misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242
+#: misc-utils/lslocks.c:700 misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242
 #: sys-utils/losetup.c:369 sys-utils/lscpu.c:578 sys-utils/lscpu.c:793
 #: sys-utils/lscpu.c:822 sys-utils/lscpu.c:832 sys-utils/lsipc.c:526
 #: sys-utils/lsipc.c:651 sys-utils/prlimit.c:267 sys-utils/rfkill.c:418
@@ -3899,7 +3899,7 @@ msgstr "%s: nije uspjelo postaviti loop-uređaj"
 
 #: disk-utils/partx.c:168 login-utils/lslogins.c:322 misc-utils/fincore.c:151
 #: misc-utils/findmnt.c:393 misc-utils/lsblk.c:373 misc-utils/lsclocks.c:171
-#: misc-utils/lsfd.c:564 misc-utils/lslocks.c:566 misc-utils/uuidparse.c:125
+#: misc-utils/lsfd.c:564 misc-utils/lslocks.c:564 misc-utils/uuidparse.c:125
 #: misc-utils/wipefs.c:132 sys-utils/irq-common.c:95 sys-utils/losetup.c:130
 #: sys-utils/lscpu.c:192 sys-utils/lscpu.c:207 sys-utils/lsipc.c:233
 #: sys-utils/lsmem.c:171 sys-utils/lsns.c:261 sys-utils/prlimit.c:283
@@ -4004,8 +4004,8 @@ msgstr[2] "#%2d: %9ju-%9ju (%9ju sektora, %6ju MB)\n"
 
 #: disk-utils/partx.c:687 include/column-list-table.h:62
 #: misc-utils/fincore.c:514 misc-utils/findmnt.c:1925 misc-utils/lsblk.c:2270
-#: misc-utils/lsblk.c:2773 misc-utils/lsclocks.c:656 misc-utils/lsfd.c:615
-#: misc-utils/lsfd.c:2361 misc-utils/lslocks.c:771 sys-utils/losetup.c:403
+#: misc-utils/lsblk.c:2773 misc-utils/lsclocks.c:657 misc-utils/lsfd.c:615
+#: misc-utils/lsfd.c:2400 misc-utils/lslocks.c:769 sys-utils/losetup.c:403
 #: sys-utils/lscpu.c:608 sys-utils/lscpu.c:764 sys-utils/prlimit.c:312
 #: sys-utils/rfkill.c:488 sys-utils/swapon.c:318 sys-utils/wdctl.c:365
 msgid "failed to allocate output column"
@@ -4631,7 +4631,7 @@ msgstr " Primjer:\n"
 msgid "   , 4G     Creates a 4GiB partition at default start offset.\n"
 msgstr "   , 4G     Kreira 4GiB particiju zadanom početnom odmaku.\n"
 
-#: disk-utils/sfdisk.c:1546 sys-utils/dmesg.c:1944
+#: disk-utils/sfdisk.c:1546 sys-utils/dmesg.c:1952
 msgid "unsupported command"
 msgstr "nepodržana naredba"
 
@@ -7970,315 +7970,321 @@ msgstr "nije (bilo) moguće dobiti %s: %s"
 msgid "hush login status: restore original IDs failed"
 msgstr "tihi prijavni status: nije uspjelo vratiti originalni ID"
 
-#: libmount/src/context.c:2738
+#: libmount/src/context.c:2740
 #, c-format
 msgid "operation failed: %m"
 msgstr "operacija nije uspjela: %m"
 
-#: libmount/src/context_mount.c:1421
+#: libmount/src/context_mount.c:1417
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "UPOZORENJE: nije uspjelo primijeniti propagacijske flagove"
 
-#: libmount/src/context_mount.c:1431
+#: libmount/src/context_mount.c:1427
 #, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "UPOZORENJE: uređaj je zaštićen od pisanja; montiramo ga samo-za-čitanje"
 
-#: libmount/src/context_mount.c:1445
+#: libmount/src/context_mount.c:1441
 #, c-format
 msgid "operation permitted for root only"
 msgstr "samo root može koristiti ovu operaciju"
 
-#: libmount/src/context_mount.c:1449
+#: libmount/src/context_mount.c:1445
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s je već montiran"
 
-#: libmount/src/context_mount.c:1455
+#: libmount/src/context_mount.c:1451
 #, c-format
 msgid "can't find in %s"
 msgstr "nije moguće naći u %s"
 
-#: libmount/src/context_mount.c:1458
+#: libmount/src/context_mount.c:1454
 #, c-format
 msgid "can't find mount point in %s"
 msgstr "nije moguće naći točku montiranja u %s"
 
-#: libmount/src/context_mount.c:1461
+#: libmount/src/context_mount.c:1457
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "nije moguće naći izvor montiranja %s u %s"
 
-#: libmount/src/context_mount.c:1466
+#: libmount/src/context_mount.c:1462
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr "na %s je pronađeno nekoliko datotečnih sustava; rabite -t <tip> ili wipefs(8)"
 
-#: libmount/src/context_mount.c:1471
+#: libmount/src/context_mount.c:1467
 #, c-format
 msgid "failed to determine filesystem type"
 msgstr "nije uspjelo odrediti tip datotečnog sustava"
 
-#: libmount/src/context_mount.c:1472
+#: libmount/src/context_mount.c:1468
 #, c-format
 msgid "no valid filesystem type specified"
 msgstr "nijedan valjani datotečni sustav nije specificiran"
 
-#: libmount/src/context_mount.c:1479
+#: libmount/src/context_mount.c:1475
 #, c-format
 msgid "can't find %s"
 msgstr "nije moguće naći %s"
 
-#: libmount/src/context_mount.c:1481
+#: libmount/src/context_mount.c:1477
 #, c-format
 msgid "no mount source specified"
 msgstr "ni jedan izvor montiranja nije specificiran"
 
-#: libmount/src/context_mount.c:1492
+#: libmount/src/context_mount.c:1488
 #, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr "nije uspjelo raščlaniti opcije „%s“ za montiranje: %m"
 
-#: libmount/src/context_mount.c:1493
+#: libmount/src/context_mount.c:1489
 #, c-format
 msgid "failed to parse mount options '%s'"
 msgstr "nije uspjelo raščlaniti opcije „%s“ za montiranje"
 
-#: libmount/src/context_mount.c:1496
+#: libmount/src/context_mount.c:1492
 #, c-format
 msgid "failed to parse mount options: %m"
 msgstr "nije uspjelo raščlaniti opcije za montiranje: %m"
 
-#: libmount/src/context_mount.c:1497
+#: libmount/src/context_mount.c:1493
 #, c-format
 msgid "failed to parse mount options"
 msgstr "nije uspjelo raščlaniti opcije za montiranje"
 
-#: libmount/src/context_mount.c:1502
+#: libmount/src/context_mount.c:1498
 #, c-format
 msgid "failed to setup loop device for %s"
 msgstr "nije uspjelo postaviti loop uređaj za %s"
 
-#: libmount/src/context_mount.c:1506
+#: libmount/src/context_mount.c:1502
 #, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "za %s postoji preklapajući loop-uređaj"
 
-#: libmount/src/context_mount.c:1510 libmount/src/context_umount.c:1263
+#: libmount/src/context_mount.c:1506 libmount/src/context_umount.c:1263
 #, c-format
 msgid "locking failed"
 msgstr "zaključavanje nije uspjelo"
 
-#: libmount/src/context_mount.c:1514 libmount/src/context_umount.c:1269
+#: libmount/src/context_mount.c:1510 libmount/src/context_umount.c:1269
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, c-format
 msgid "failed to switch namespace"
 msgstr "nije uspjelo zamijeniti imenski prostor"
 
-#: libmount/src/context_mount.c:1518
+#: libmount/src/context_mount.c:1514
 #, c-format
 msgid "filesystem already mounted"
 msgstr "datotečni sustav je već montiran"
 
-#: libmount/src/context_mount.c:1521
+#: libmount/src/context_mount.c:1517
 #, c-format
 msgid "mount failed: %m"
 msgstr "montiranje nije uspjelo: %m"
 
-#: libmount/src/context_mount.c:1531
+#: libmount/src/context_mount.c:1527
 #, fuzzy, c-format
 #| msgid "filesystem was mounted, but failed to attach idmapping"
 msgid "filesystem was mounted, but failed to apply flags"
 msgstr "datotečni sustav je montiran, ali nije uspjelo prikvačiti idmapping"
 
-#: libmount/src/context_mount.c:1537
+#: libmount/src/context_mount.c:1533
 #, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr ""
 "datotečni sustav je montiran, ali ažurirati tablicu montiranja u korisničkom\n"
 "prostoru nije uspjelo"
 
-#: libmount/src/context_mount.c:1543
+#: libmount/src/context_mount.c:1539
 #, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "datotečni sustav je montiran, ali povratak u imenski prostor nije uspio"
 
-#: libmount/src/context_mount.c:1549
+#: libmount/src/context_mount.c:1545
 #, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "datotečni sustav je montiran, ali promjena vlasništva nije uspjela: %m"
 
-#: libmount/src/context_mount.c:1555
+#: libmount/src/context_mount.c:1551
 #, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "datotečni sustav je montiran, ali promjena moda nije uspjela: %m"
 
-#: libmount/src/context_mount.c:1561
+#: libmount/src/context_mount.c:1557
 #, c-format
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "datotečni sustav je montiran, ali nije uspjelo prikvačiti idmapping"
 
-#: libmount/src/context_mount.c:1567
+#: libmount/src/context_mount.c:1563
 #, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "datotečni sustav je montiran, ali sljedeća operacija nije uspjela: %m"
 
-#: libmount/src/context_mount.c:1587 login-utils/newgrp.c:228
+#: libmount/src/context_mount.c:1575
+#, fuzzy, c-format
+#| msgid "mount(2) system call failed: %m"
+msgid "%s system call failed: %s"
+msgstr "sustavski poziv mount(2) nije uspio: %m"
+
+#: libmount/src/context_mount.c:1590 login-utils/newgrp.c:228
 #, c-format
 msgid "permission denied"
 msgstr "pristup je odbijen"
 
-#: libmount/src/context_mount.c:1589 libmount/src/context_mount.c:1630
+#: libmount/src/context_mount.c:1592 libmount/src/context_mount.c:1633
 #, c-format
 msgid "mount point is not a directory"
 msgstr "točka montiranja nije direktorij"
 
-#: libmount/src/context_mount.c:1591
+#: libmount/src/context_mount.c:1594
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "za koristiti mount morate biti superuser (root)"
 
-#: libmount/src/context_mount.c:1598
+#: libmount/src/context_mount.c:1601
 #, c-format
 msgid "mount point is busy"
 msgstr "točka montiranja je zauzeta"
 
-#: libmount/src/context_mount.c:1605
+#: libmount/src/context_mount.c:1608
 #, c-format
 msgid "%s already mounted on %s"
 msgstr "%s je već montiran na %s"
 
-#: libmount/src/context_mount.c:1609
+#: libmount/src/context_mount.c:1612
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s je već montiran ili je točka montiranja zauzeta"
 
-#: libmount/src/context_mount.c:1614
+#: libmount/src/context_mount.c:1617
 #, c-format
 msgid "mount point does not exist"
 msgstr "točka montiranja ne postoji"
 
-#: libmount/src/context_mount.c:1617
+#: libmount/src/context_mount.c:1620
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "točka montiranja je simbolička poveznica u „nikuda“"
 
-#: libmount/src/context_mount.c:1622
+#: libmount/src/context_mount.c:1625
 #, c-format
 msgid "special device %s does not exist"
 msgstr "specijalni uređaj %s ne postoji"
 
-#: libmount/src/context_mount.c:1635
+#: libmount/src/context_mount.c:1638
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "specijalni uređaj %s ne postoji (prefiks staze nije direktorij)"
 
-#: libmount/src/context_mount.c:1645
+#: libmount/src/context_mount.c:1648
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr "točka montiranja nije montirana ili je dana loša opcija"
 
-#: libmount/src/context_mount.c:1647
+#: libmount/src/context_mount.c:1650
 #, c-format
 msgid "not mount point or bad option"
 msgstr "nije točka montiranja ili je opcija loša"
 
-#: libmount/src/context_mount.c:1650
+#: libmount/src/context_mount.c:1653
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr "loša opcija; nije podržano premještanje montiranja ispod dijeljenog montiranja"
 
-#: libmount/src/context_mount.c:1654
+#: libmount/src/context_mount.c:1657
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 "loša opcija; za nekoliko datotečnih sustava (npr. nfs, cifs) možda će vam\n"
 "zatrebati pomoćni program /sbin/mount.<tip>"
 
-#: libmount/src/context_mount.c:1658
+#: libmount/src/context_mount.c:1661
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr ""
 "krivi datotečni sustav / loša opcija / oštećeni superblok na %s,\n"
 "manjka codepage ili pomoćni program ili neka druga greška"
 
-#: libmount/src/context_mount.c:1665
+#: libmount/src/context_mount.c:1668
 #, c-format
 msgid "mount table full"
 msgstr "tablica montiranja je popunjena"
 
-#: libmount/src/context_mount.c:1670
+#: libmount/src/context_mount.c:1673
 #, c-format
 msgid "can't read superblock on %s"
 msgstr "nije moguće pročitati superblok na %s"
 
-#: libmount/src/context_mount.c:1677
+#: libmount/src/context_mount.c:1680
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "nepoznati tip datotečnog sustava „%s“"
 
-#: libmount/src/context_mount.c:1680
+#: libmount/src/context_mount.c:1683
 #, c-format
 msgid "unknown filesystem type"
 msgstr "nepoznati tip datotečnog sustava"
 
-#: libmount/src/context_mount.c:1689
+#: libmount/src/context_mount.c:1692
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s nije blok-uređaj, a poziv stat(2) nije uspješan?"
 
-#: libmount/src/context_mount.c:1692
+#: libmount/src/context_mount.c:1695
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr "jezgra (kernel) ne prepoznaje %s kao blok-uređaj; možda je potrebno izvršiti „modprobe driver“"
 
-#: libmount/src/context_mount.c:1695
+#: libmount/src/context_mount.c:1698
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s nije blok-uređaj; probajte s „-o loop“"
 
-#: libmount/src/context_mount.c:1697
+#: libmount/src/context_mount.c:1700
 #, c-format
 msgid "%s is not a block device"
 msgstr "%s: nije blok-uređaj"
 
-#: libmount/src/context_mount.c:1704
+#: libmount/src/context_mount.c:1707
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s nije valjani blok-uređaj"
 
-#: libmount/src/context_mount.c:1712
+#: libmount/src/context_mount.c:1715
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "nije moguće montirati %s samo-za-čitanje"
 
-#: libmount/src/context_mount.c:1714
+#: libmount/src/context_mount.c:1717
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s je zaštićen od pisanja, a eksplicitno je zatražen način za čitanje i pisanje"
 
-#: libmount/src/context_mount.c:1716
+#: libmount/src/context_mount.c:1719
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "nije moguće remontirati %s za čitanje i pisanje jer je zaštićen od pisanja"
 
-#: libmount/src/context_mount.c:1718
+#: libmount/src/context_mount.c:1721
 #, c-format
 msgid "bind %s failed"
 msgstr "vezanje %s nije uspjelo"
 
-#: libmount/src/context_mount.c:1727
+#: libmount/src/context_mount.c:1730
 #, c-format
 msgid "no medium found on %s"
 msgstr "ni jedan medij nije nađen na %s"
 
-#: libmount/src/context_mount.c:1734
+#: libmount/src/context_mount.c:1737
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "nije moguće montirati; datotečni sustav na %s je vjerojatno oštećen"
 
-#: libmount/src/context_mount.c:1743
+#: libmount/src/context_mount.c:1746
 #, fuzzy, c-format
 #| msgid "mount(2) system call failed: %m"
 msgid "%s system call failed: %m"
@@ -8632,7 +8638,7 @@ msgstr "Ljuska je promijenjena.\n"
 msgid "Usage: %s <passwordfile> <username>...\n"
 msgstr "Uporaba: %s <datoteka_s_lozinkama> <ime_korisnika>...\n"
 
-#: login-utils/last.c:177 login-utils/lslogins.c:1433 sys-utils/dmesg.c:1592
+#: login-utils/last.c:177 login-utils/lslogins.c:1433 sys-utils/dmesg.c:1600
 #: sys-utils/lsipc.c:283
 #, c-format
 msgid "unknown time format: %s"
@@ -8727,12 +8733,12 @@ msgstr ""
 
 #: login-utils/last.c:1020 term-utils/scriptlive.c:85
 #: term-utils/scriptlive.c:89 term-utils/scriptreplay.c:80
-#: term-utils/scriptreplay.c:84 text-utils/more.c:285 text-utils/more.c:291
+#: term-utils/scriptreplay.c:84 text-utils/more.c:286 text-utils/more.c:292
 msgid "failed to parse number"
 msgstr "nije uspjelo razabrati broj"
 
 #: login-utils/last.c:1041 login-utils/last.c:1046 login-utils/last.c:1051
-#: sys-utils/dmesg.c:1822 sys-utils/dmesg.c:1828 sys-utils/rtcwake.c:520
+#: sys-utils/dmesg.c:1830 sys-utils/dmesg.c:1836 sys-utils/rtcwake.c:520
 #, c-format
 msgid "invalid time value \"%s\""
 msgstr "nevaljana vrijednost za vrijeme „%s“"
@@ -9401,14 +9407,14 @@ msgstr "nema takve grupe"
 msgid "setuid failed"
 msgstr "setuid() nije uspjela"
 
-#: login-utils/nologin.c:28 misc-utils/lastlog2.c:107 misc-utils/lsclocks.c:182
-#: misc-utils/lsfd.c:1854 misc-utils/lslocks.c:812 misc-utils/mcookie.c:83
+#: login-utils/nologin.c:28 misc-utils/lastlog2.c:108 misc-utils/lsclocks.c:182
+#: misc-utils/lsfd.c:1893 misc-utils/lslocks.c:810 misc-utils/mcookie.c:87
 #: misc-utils/uuidd.c:97 misc-utils/uuidgen.c:28 sys-utils/dmesg.c:317
 #: sys-utils/ipcmk.c:67 sys-utils/irqtop.c:255 sys-utils/lscpu.c:1173
 #: sys-utils/lsipc.c:292 sys-utils/lsirq.c:50 sys-utils/lsmem.c:512
 #: sys-utils/readprofile.c:95 sys-utils/rtcwake.c:108
 #: term-utils/scriptlive.c:57 term-utils/scriptreplay.c:47
-#: term-utils/setterm.c:381 text-utils/line.c:31
+#: term-utils/setterm.c:381 text-utils/line.c:30
 #, c-format
 msgid " %s [options]\n"
 msgstr " %s [opcije]\n"
@@ -9468,7 +9474,7 @@ msgid "cannot set signal handler for session"
 msgstr "nije moguće postaviti rukovatelja signala za sjednicu"
 
 #: login-utils/su-common.c:513 misc-utils/uuidd.c:439
-#: sys-utils/lscpu-virt.c:496
+#: sys-utils/lscpu-virt.c:506
 msgid "cannot set signal handler"
 msgstr "nije moguće postaviti rukovatelja signala"
 
@@ -10311,63 +10317,63 @@ msgstr " -c, --columns <broj>  upotrebi <broj> stupaca\n"
 msgid "     --color[=<when>]  colorize messages (%s, %s or %s)\n"
 msgstr "     --color[=<kȁd>]   oboji poruke (%s, %s or %s)\n"
 
-#: misc-utils/enosys.c:83
+#: misc-utils/enosys.c:85
 #, fuzzy, c-format
 #| msgid " %s [options] [--set <size>] [--] [command]\n"
 msgid " %s [options] -- <command>\n"
 msgstr " %s [opcije] [--set <veličina>] [--] [naredba]\n"
 
-#: misc-utils/enosys.c:86
+#: misc-utils/enosys.c:88
 #, fuzzy
 #| msgid " -a, --all            list each individual memory block\n"
 msgid " -s, --syscall           syscall to block\n"
 msgstr " -a, --all            izlista svaki individualni memorijski blok\n"
 
-#: misc-utils/enosys.c:87
+#: misc-utils/enosys.c:89
 #, fuzzy
 #| msgid " -u, --unlock             remove a lock\n"
 msgid " -i, --ioctl             ioctl to block\n"
 msgstr " -u, --unlock             ukloni bravu\n"
 
-#: misc-utils/enosys.c:88
+#: misc-utils/enosys.c:90
 #, fuzzy
 #| msgid " -l, --list             use list format output\n"
 msgid " -l, --list              list known syscalls\n"
 msgstr " -l, --list             izlaz u formatu popisa\n"
 
-#: misc-utils/enosys.c:143
+#: misc-utils/enosys.c:146
 #, fuzzy
 #| msgid "unknown types"
 msgid "Unknown syscall"
 msgstr "nepoznatog tipa"
 
-#: misc-utils/enosys.c:161
+#: misc-utils/enosys.c:166
 #, fuzzy
 #| msgid "Unknown"
 msgid "Unknown ioctl"
 msgstr "Nepoznato"
 
-#: misc-utils/enosys.c:193
+#: misc-utils/enosys.c:198
 #, fuzzy
 #| msgid "filesystem too big.  Exiting."
 msgid "filter too big"
 msgstr "datotečni sustav je prevelik. Izlazim."
 
-#: misc-utils/enosys.c:249
+#: misc-utils/enosys.c:256
 msgid "Seccomp non-functional"
 msgstr ""
 
-#: misc-utils/enosys.c:252
+#: misc-utils/enosys.c:259
 msgid "Could not run prctl(PR_SET_NO_NEW_PRIVS)"
 msgstr ""
 
-#: misc-utils/enosys.c:255
+#: misc-utils/enosys.c:262
 #, fuzzy
 #| msgid "could not set timer"
 msgid "Could not seccomp filter"
 msgstr "nije moguće postaviti tajmer"
 
-#: misc-utils/enosys.c:258
+#: misc-utils/enosys.c:265
 #, fuzzy
 #| msgid "could not set timer"
 msgid "Could not exec"
@@ -10637,7 +10643,7 @@ msgstr ""
 msgid "filesystem label"
 msgstr "oznaka datotečnog sustava"
 
-#: misc-utils/findmnt.c:121 misc-utils/lsblk.c:196 misc-utils/lslocks.c:84
+#: misc-utils/findmnt.c:121 misc-utils/lsblk.c:196 misc-utils/lslocks.c:85
 msgid "major:minor device number"
 msgstr "glavni (major):sporedni (minor) broj uređaja"
 
@@ -10858,7 +10864,7 @@ msgstr " -D, --df               imitira izlaz df(1)\n"
 msgid " -i, --invert           invert the sense of matching\n"
 msgstr " -i, --invert           invertira kriterij podudaranja (u traženju)\n"
 
-#: misc-utils/findmnt.c:1441 misc-utils/lslocks.c:819 sys-utils/lsns.c:1284
+#: misc-utils/findmnt.c:1441 misc-utils/lslocks.c:817 sys-utils/lsns.c:1284
 #: sys-utils/rfkill.c:640
 msgid " -J, --json             use JSON output format\n"
 msgstr " -J, --json             koristi izlaz u JSON formatu\n"
@@ -10881,7 +10887,7 @@ msgstr " -n, --noheadings       ne ispisuje imena stupaca\n"
 msgid " -O, --options <list>   limit the set of filesystems by mount options\n"
 msgstr " -O, --options <popis>  datotečne sustave ograniči s opcijama montiranja\n"
 
-#: misc-utils/findmnt.c:1446 misc-utils/lslocks.c:822
+#: misc-utils/findmnt.c:1446 misc-utils/lslocks.c:820
 #, fuzzy
 #| msgid " -o, --output <list>    the output columns to be shown\n"
 msgid " -o, --output <list>    output columns (see --list-columns)\n"
@@ -10947,7 +10953,7 @@ msgstr " -t, --types <popis>    datotečne sustave ograniči na popisane tipove\
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
 msgstr " -U, --uniq             zanemari datotečne sustave s već postojećim ciljem\n"
 
-#: misc-utils/findmnt.c:1461 misc-utils/lslocks.c:826 sys-utils/lsns.c:1292
+#: misc-utils/findmnt.c:1461 misc-utils/lslocks.c:824 sys-utils/lsns.c:1292
 msgid " -u, --notruncate       don't truncate text in columns\n"
 msgstr " -u, --notruncate       ne krati tekst u stupcima\n"
 
@@ -10973,7 +10979,7 @@ msgstr "     --verbose          ispisuje više detalja\n"
 msgid "     --vfs-all          print all VFS options\n"
 msgstr "     --vfs-all          ispiše sve VFS opcije\n"
 
-#: misc-utils/findmnt.c:1471 misc-utils/lslocks.c:829
+#: misc-utils/findmnt.c:1471 misc-utils/lslocks.c:827
 #, fuzzy
 #| msgid "     --list-modes         list available modes\n"
 msgid " -H, --list-columns     list the available columns\n"
@@ -11653,7 +11659,7 @@ msgstr "%s i %s se ne mogu zajedno koristiti"
 #: term-utils/setterm.c:571 term-utils/setterm.c:576 term-utils/setterm.c:600
 #: term-utils/setterm.c:605 term-utils/setterm.c:610 term-utils/setterm.c:615
 #: term-utils/setterm.c:620 term-utils/setterm.c:625 term-utils/setterm.c:634
-#: term-utils/setterm.c:669 text-utils/more.c:329
+#: term-utils/setterm.c:669 text-utils/more.c:330
 msgid "argument error"
 msgstr "greška u argumentu"
 
@@ -11696,106 +11702,109 @@ msgstr "ne signalizira PID %d, nema rukovatelja imenskog prostora za signal %d\n
 msgid "cannot find process \"%s\""
 msgstr "nije moguće naći proces „%s“"
 
-#: misc-utils/lastlog2.c:110
+#: misc-utils/lastlog2.c:111
 msgid " -b, --before DAYS       Print only records older than DAYS\n"
 msgstr ""
 
-#: misc-utils/lastlog2.c:111
+#: misc-utils/lastlog2.c:112
 #, fuzzy
 #| msgid " -C, --clear                 clear the kernel ring buffer\n"
 msgid " -C, --clear             Clear record of a user (requires -u)\n"
 msgstr " -C, --clear                 izbriše poruke iz cikličnog međuspremnika jezgre\n"
 
-#: misc-utils/lastlog2.c:112
+#: misc-utils/lastlog2.c:113
 msgid " -d, --database FILE     Use FILE as lastlog2 database\n"
 msgstr ""
 
-#: misc-utils/lastlog2.c:113
+#: misc-utils/lastlog2.c:114
 msgid " -i, --import FILE       Import data from old lastlog file\n"
 msgstr ""
 
-#: misc-utils/lastlog2.c:114
+#: misc-utils/lastlog2.c:115
 msgid " -r, --rename NEWNAME    Rename existing user to NEWNAME (requires -u)\n"
 msgstr ""
 
-#: misc-utils/lastlog2.c:115
+#: misc-utils/lastlog2.c:116
 #, fuzzy
 #| msgid " -u, --userspace             display userspace messages\n"
 msgid " -s, --service           Display PAM service\n"
 msgstr " -u, --userspace             prikaže poruke iz imenskog prostora korisnika\n"
 
-#: misc-utils/lastlog2.c:116
+#: misc-utils/lastlog2.c:117
 #, fuzzy
 #| msgid " -r, --reset               reset all the counters (root only)\n"
 msgid " -S, --set               ySet lastlog record to current time (requires -u)\n"
 msgstr " -r, --reset               resetira sve brojače (to može samo root)\n"
 
-#: misc-utils/lastlog2.c:117
+#: misc-utils/lastlog2.c:118
 msgid " -t, --time DAYS         Print only lastlog records more recent than DAYS\n"
 msgstr ""
 
-#: misc-utils/lastlog2.c:118
+#: misc-utils/lastlog2.c:119
 msgid " -u, --user LOGIN        Print lastlog record of the specified LOGIN\n"
 msgstr ""
 
-#: misc-utils/lastlog2.c:173 misc-utils/lastlog2.c:206
+#: misc-utils/lastlog2.c:166 misc-utils/lastlog2.c:199
 #, fuzzy
 #| msgid "cannot parse %s"
 msgid "Cannot parse days"
 msgstr "nije moguće raščlaniti %s"
 
-#: misc-utils/lastlog2.c:224
-msgid "Option -C, -i and -S cannot be used together\n"
+#: misc-utils/lastlog2.c:217
+msgid "Option -C, -i and -S cannot be used together"
 msgstr ""
 
-#: misc-utils/lastlog2.c:229
+#: misc-utils/lastlog2.c:221
 #, fuzzy
 #| msgid "Couldn't initialize PAM: %s"
-msgid "Couldn't initialize lastlog2 environment.\n"
+msgid "Couldn't initialize lastlog2 environment"
 msgstr "Nije (bilo) moguće inicijalizirati PAM: %s"
 
-#: misc-utils/lastlog2.c:239
-#, c-format
-msgid "Couldn't import entries from '%s'\n"
-msgstr ""
-
-#: misc-utils/lastlog2.c:249
-msgid "Options -C, -r and -S require option -u to specify the user\n"
-msgstr ""
-
-#: misc-utils/lastlog2.c:254 misc-utils/lastlog2.c:312
-#, fuzzy, c-format
-#| msgid "user %s does not exist"
-msgid "User '%s' does not exist.\n"
-msgstr "korisnik %s ne postoji"
-
-#: misc-utils/lastlog2.c:264
+#: misc-utils/lastlog2.c:226
 #, fuzzy, c-format
 #| msgid "could not open '%s'"
-msgid "Couldn't remove entry for '%s'\n"
+msgid "Couldn't import entries from '%s'"
 msgstr "nije (bilo) moguće otvoriti '%s'"
 
-#: misc-utils/lastlog2.c:273
+#: misc-utils/lastlog2.c:235
+msgid "Options -C, -r and -S require option -u to specify the user"
+msgstr ""
+
+#: misc-utils/lastlog2.c:240 misc-utils/lastlog2.c:283
 #, fuzzy, c-format
+#| msgid "user %s does not exist"
+msgid "User '%s' does not exist."
+msgstr "korisnik %s ne postoji"
+
+#: misc-utils/lastlog2.c:246
+#, fuzzy, c-format
+#| msgid "could not open '%s'"
+msgid "Couldn't remove entry for '%s'"
+msgstr "nije (bilo) moguće otvoriti '%s'"
+
+#: misc-utils/lastlog2.c:255
+#, fuzzy
 #| msgid "could not determine current format type"
-msgid "Could not determine current time: %s"
+msgid "Could not determine current time"
 msgstr "nije moguće odrediti trenutni tip formata"
 
-#: misc-utils/lastlog2.c:283
+#: misc-utils/lastlog2.c:260
 #, fuzzy, c-format
 #| msgid "unsupported logging format: '%s'"
-msgid "Couldn't update login time for '%s'\n"
+msgid "Couldn't update login time for '%s'"
 msgstr "nepodržani format dnevnika: „%s“"
 
-#: misc-utils/lastlog2.c:295
+#: misc-utils/lastlog2.c:267
 #, fuzzy, c-format
 #| msgid "cannot rename %s to %s"
-msgid "Couldn't rename entry '%s' to '%s'\n"
+msgid "Couldn't rename entry '%s' to '%s'"
 msgstr "nije moguće preimenovati %s u %s"
 
-#: misc-utils/lastlog2.c:332
-msgid "Couldn't read entries for all users\n"
-msgstr ""
+#: misc-utils/lastlog2.c:297
+#, fuzzy
+#| msgid "could not open '%s'"
+msgid "Couldn't read entries for all users"
+msgstr "nije (bilo) moguće otvoriti '%s'"
 
 #: misc-utils/logger.c:230
 #, c-format
@@ -12291,7 +12300,7 @@ msgstr "maksimalni broj otvorenih zona"
 msgid "maximum number of active zones"
 msgstr "maksimalni broj aktivnih zona"
 
-#: misc-utils/lsblk.c:1347 misc-utils/lsfd.c:1261
+#: misc-utils/lsblk.c:1347 misc-utils/lsfd.c:1272
 #, fuzzy
 #| msgid "Failed to apply script %s"
 msgid "failed to apply filter"
@@ -12337,13 +12346,13 @@ msgstr "popisano je previše isključenih uređaja (ograničenje je %d uređaja)
 msgid "the list of included devices is too large (limit is %d devices)"
 msgstr "popis uključenih uređaja je predug (ograničenje je %d uređaja)"
 
-#: misc-utils/lsblk.c:2119 misc-utils/lsfd.c:1916
+#: misc-utils/lsblk.c:2119 misc-utils/lsfd.c:1955
 #, fuzzy
 #| msgid "failed to allocate iterator"
 msgid "failed to allocate filter"
 msgstr "nije uspjelo rezervirati memoriju za iterator"
 
-#: misc-utils/lsblk.c:2121 misc-utils/lsfd.c:1918
+#: misc-utils/lsblk.c:2121 misc-utils/lsfd.c:1957
 #, fuzzy, c-format
 #| msgid "failed to parse %s"
 msgid "failed to parse \"%s\": %s"
@@ -12361,7 +12370,7 @@ msgstr "neočekivana vrijednost za PID specifikaciju: %s"
 msgid "counter not properly specified"
 msgstr "ni jedan izvor montiranja nije specificiran"
 
-#: misc-utils/lsblk.c:2166 misc-utils/lsfd.c:2006
+#: misc-utils/lsblk.c:2166 misc-utils/lsfd.c:2045
 #, fuzzy
 #| msgid "failed to allocate iterator"
 msgid "failed to allocate counter"
@@ -12704,12 +12713,12 @@ msgstr "ioctl(RTC_RD_NAME) na %s nije uspio pročitati vrijeme"
 msgid "Could not get CPU clock of process %jd: %s"
 msgstr ""
 
-#: misc-utils/lsclocks.c:598 misc-utils/lslocks.c:387 misc-utils/uuidd.c:791
+#: misc-utils/lsclocks.c:599 misc-utils/lslocks.c:385 misc-utils/uuidd.c:791
 #: misc-utils/waitpid.c:54 sys-utils/nsenter.c:390
 msgid "failed to parse pid"
 msgstr "nije uspjelo razabrati PID"
 
-#: misc-utils/lsclocks.c:626
+#: misc-utils/lsclocks.c:627
 #, fuzzy
 #| msgid "failed to get lock"
 msgid "failed to get time"
@@ -12829,7 +12838,7 @@ msgstr "lokalna IPv6 adresa"
 msgid "remote IPv6 address"
 msgstr "udaljena IPv6 adresa"
 
-#: misc-utils/lsfd.c:222 misc-utils/lslocks.c:83
+#: misc-utils/lsfd.c:222 misc-utils/lslocks.c:84
 msgid "inode number"
 msgstr "broj inodea"
 
@@ -13159,103 +13168,103 @@ msgstr "nepoznatog tipa"
 msgid "too many columns are added via filter expression"
 msgstr "dodano je previše stupaca s filter-izrazom"
 
-#: misc-utils/lsfd.c:1451
+#: misc-utils/lsfd.c:1462
 msgid "failed to allocate an idcache"
 msgstr "nije uspjelo rezervirati memoriju za idcache"
 
-#: misc-utils/lsfd.c:1669 misc-utils/lslocks.c:423
+#: misc-utils/lsfd.c:1680 misc-utils/lslocks.c:421
 msgid "(unknown)"
 msgstr "(nepoznato)"
 
-#: misc-utils/lsfd.c:1725 misc-utils/lsfd-sock-xinfo.c:157
-#: misc-utils/lsfd-sock-xinfo.c:296 misc-utils/lslocks.c:166
+#: misc-utils/lsfd.c:1763 misc-utils/lsfd-sock-xinfo.c:157
+#: misc-utils/lsfd-sock-xinfo.c:296 misc-utils/lslocks.c:167
 msgid "failed to allocate memory"
 msgstr "nije uspjelo rezervirati memoriju"
 
-#: misc-utils/lsfd.c:1753
+#: misc-utils/lsfd.c:1792
 #, c-format
 msgid "unexpected value for pid specification: %s"
 msgstr "neočekivana vrijednost za PID specifikaciju: %s"
 
-#: misc-utils/lsfd.c:1755
+#: misc-utils/lsfd.c:1794
 #, c-format
 msgid "garbage at the end of pid specification: %s"
 msgstr "smeće na kraju PID specifikacije: %s"
 
-#: misc-utils/lsfd.c:1757
+#: misc-utils/lsfd.c:1796
 #, c-format
 msgid "out of range value for pid specification: %ld"
 msgstr "vrijednost za PID specifikaciju je izvan raspona: %ld"
 
-#: misc-utils/lsfd.c:1801 misc-utils/lslocks.c:504
+#: misc-utils/lsfd.c:1840 misc-utils/lslocks.c:502
 msgid "failed to alloc procfs handler"
 msgstr "nije uspjelo rezervirati memoriju za procfs rukovatelja"
 
-#: misc-utils/lsfd.c:1805 misc-utils/lslocks.c:508
+#: misc-utils/lsfd.c:1844 misc-utils/lslocks.c:506
 msgid "failed to open /proc"
 msgstr "nije uspjelo otvoriti /proc"
 
-#: misc-utils/lsfd.c:1857
+#: misc-utils/lsfd.c:1896
 #, fuzzy
 #| msgid " -l,      --threads           list in threads level\n"
 msgid " -l, --threads                list in threads level\n"
 msgstr " -l, --threads         popis na razini dretvi\n"
 
-#: misc-utils/lsfd.c:1858
+#: misc-utils/lsfd.c:1897
 #, fuzzy
 #| msgid " -J, --json                  use JSON output format\n"
 msgid " -J, --json                   use JSON output format\n"
 msgstr " -J, --json                  izlaz ispiše u JSON formatu\n"
 
-#: misc-utils/lsfd.c:1859
+#: misc-utils/lsfd.c:1898
 #, fuzzy
 #| msgid " -n, --noheadings          don't print headings\n"
 msgid " -n, --noheadings             don't print headings\n"
 msgstr " -n, --noheadings          ne ispisuj naslove\n"
 
-#: misc-utils/lsfd.c:1860
+#: misc-utils/lsfd.c:1899
 #, fuzzy
 #| msgid " -o, --output <list>           output columns\n"
 msgid " -o, --output <list>          output columns (see --list-columns)\n"
 msgstr " -o, --output <lista>          izlazni stupci\n"
 
-#: misc-utils/lsfd.c:1861
+#: misc-utils/lsfd.c:1900
 #, fuzzy
 #| msgid " -r, --raw              use raw output format\n"
 msgid " -r, --raw                    use raw output format\n"
 msgstr " -r, --raw              ispis u sirovom formatu\n"
 
-#: misc-utils/lsfd.c:1862
+#: misc-utils/lsfd.c:1901
 #, fuzzy
 #| msgid " -u, --notruncate       don't truncate text in columns\n"
 msgid " -u, --notruncate             don't truncate text in columns\n"
 msgstr " -u, --notruncate       ne krati tekst u stupcima\n"
 
-#: misc-utils/lsfd.c:1863
+#: misc-utils/lsfd.c:1902
 #, fuzzy
 #| msgid " -p,      --pid  <pid(s)>     collect information only specified processes\n"
 msgid " -p, --pid  <pid(s)>          collect information only specified processes\n"
 msgstr " -p, --pid  <pid(s)>   skuplja podatke samo za specificirane procese\n"
 
-#: misc-utils/lsfd.c:1864
+#: misc-utils/lsfd.c:1903
 #, fuzzy
 #| msgid " -i[4|6], --inet[=4|6]        list only IPv4 and/or IPv6 sockets\n"
 msgid " -i[4|6], --inet[=4|=6]       list only IPv4 and/or IPv6 sockets\n"
 msgstr " -i[4|6], --inet[=4|6]  ispiše samo IPv4 i/ili IPv6 utičnice\n"
 
-#: misc-utils/lsfd.c:1865
+#: misc-utils/lsfd.c:1904
 #, fuzzy
 #| msgid " -Q,      --filter <expr>     apply display filter\n"
 msgid " -Q, --filter <expr>          apply display filter\n"
 msgstr " -Q, --filter <izraz>  primjeni filter na prikaz\n"
 
-#: misc-utils/lsfd.c:1866
+#: misc-utils/lsfd.c:1905
 #, fuzzy
 #| msgid "          --debug-filter      dump the internal data structure of filter and exit\n"
 msgid "     --debug-filter           dump the internal data structure of filter and exit\n"
 msgstr "     --debug-filter    istovari internu strukturu podataka filtra i iziđe\n"
 
-#: misc-utils/lsfd.c:1867
+#: misc-utils/lsfd.c:1906
 #, fuzzy
 #| msgid ""
 #| " -C,      --counter <name>:<expr>\n"
@@ -13263,84 +13272,84 @@ msgstr "     --debug-filter    istovari internu strukturu podataka filtra i izi�
 msgid " -C, --counter <name>:<expr>  define custom counter for --summary output\n"
 msgstr " -C, --counter <ime>:<izraz>  definira atipični brojač za --summary izlaz\n"
 
-#: misc-utils/lsfd.c:1868
+#: misc-utils/lsfd.c:1907
 #, fuzzy
 #| msgid "          --dump-counters     dump counter definitions\n"
 msgid "     --dump-counters          dump counter definitions\n"
 msgstr "     --dump-counters   istovari definicije brojila\n"
 
-#: misc-utils/lsfd.c:1869
+#: misc-utils/lsfd.c:1908
 #, fuzzy
 #| msgid "          --summary[=<when>]  print summary information (only, append, or never)\n"
 msgid "     --summary[=<when>]       print summary information (only, append, or never)\n"
 msgstr "     --summary[=kàko]  ispiše sažete informacije (only, append, ili never)\n"
 
-#: misc-utils/lsfd.c:1872
+#: misc-utils/lsfd.c:1911
 #, fuzzy
 #| msgid "     --list-modes         list available modes\n"
 msgid " -H, --list-columns           list the available columns\n"
 msgstr "     --list-modes         izlista dostupne načine (modove)\n"
 
-#: misc-utils/lsfd.c:1876
+#: misc-utils/lsfd.c:1915
 msgid "Default"
 msgstr ""
 
-#: misc-utils/lsfd.c:1877
+#: misc-utils/lsfd.c:1916
 msgid "With --threads"
 msgstr ""
 
-#: misc-utils/lsfd.c:1959
+#: misc-utils/lsfd.c:1998
 #, c-format
 msgid "too short counter specification: -C/--counter %s"
 msgstr "prekratka specifikacija za brojilo: -C/--counter %s"
 
-#: misc-utils/lsfd.c:1963 misc-utils/lsfd.c:1969
+#: misc-utils/lsfd.c:2002 misc-utils/lsfd.c:2008
 #, c-format
 msgid "no name for counter: -C/--counter %s"
 msgstr "nema imena za brojilo: -C/--counter %s"
 
-#: misc-utils/lsfd.c:1973
+#: misc-utils/lsfd.c:2012
 #, c-format
 msgid "empty counter expression given: -C/--counter %s"
 msgstr "naveden je prazni izraz za counter: -C/--counter %s"
 
-#: misc-utils/lsfd.c:1981
+#: misc-utils/lsfd.c:2020
 #, c-format
 msgid "don't use `{' in the name of a counter: %s"
 msgstr "nemojte koristiti „{“ u imenu brojila: %s"
 
-#: misc-utils/lsfd.c:2077
+#: misc-utils/lsfd.c:2116
 msgid "failed to allocate summary table"
 msgstr "nije uspjelo rezervirati memoriju za tablicu sažetka"
 
-#: misc-utils/lsfd.c:2087
+#: misc-utils/lsfd.c:2126
 msgid "VALUE"
 msgstr "VRIJEDNOST"
 
-#: misc-utils/lsfd.c:2089 misc-utils/lsfd.c:2095
+#: misc-utils/lsfd.c:2128 misc-utils/lsfd.c:2134
 msgid "failed to allocate summary column"
 msgstr "nije uspjelo rezervirati memoriju za stupac sažetka"
 
-#: misc-utils/lsfd.c:2093
+#: misc-utils/lsfd.c:2132
 msgid "COUNTER"
 msgstr "BROJILO"
 
-#: misc-utils/lsfd.c:2120
+#: misc-utils/lsfd.c:2159
 #, fuzzy
 #| msgid "failed to allocate summary table"
 msgid "failed to allocate summary line"
 msgstr "nije uspjelo rezervirati memoriju za tablicu sažetka"
 
-#: misc-utils/lsfd.c:2124 misc-utils/lsfd.c:2126
+#: misc-utils/lsfd.c:2163 misc-utils/lsfd.c:2165
 msgid "failed to add summary data"
 msgstr "nije uspjelo dodati sažete podatke"
 
-#: misc-utils/lsfd.c:2275
+#: misc-utils/lsfd.c:2314
 #, c-format
 msgid "unknown -i/--inet argument: %s"
 msgstr "nepoznati -i/--inet argument: %s"
 
-#: misc-utils/lsfd.c:2301 sys-utils/lsmem.c:634
+#: misc-utils/lsfd.c:2340 sys-utils/lsmem.c:634
 msgid "unsupported --summary argument"
 msgstr "nepodržani argument za --summary"
 
@@ -13352,129 +13361,129 @@ msgstr "nije uspjelo rezervirati memoriju za UID međumemoriju"
 msgid "failed to alloc path context for /var/run/netns"
 msgstr "nije uspjelo dodijeliti kontekst staze za /var/run/netns"
 
-#: misc-utils/lslocks.c:79
+#: misc-utils/lslocks.c:80
 msgid "command of the process holding the lock"
 msgstr "naredba procesa koji drži bravu (lock)"
 
-#: misc-utils/lslocks.c:80
+#: misc-utils/lslocks.c:81
 msgid "PID of the process holding the lock"
 msgstr "PID procesa koji drži bravu (lock)"
 
-#: misc-utils/lslocks.c:81
+#: misc-utils/lslocks.c:82
 msgid "kind of lock"
 msgstr "tip brave (lock)"
 
-#: misc-utils/lslocks.c:82
+#: misc-utils/lslocks.c:83
 msgid "size of the lock, use <number> if --bytes is given"
 msgstr ""
 
-#: misc-utils/lslocks.c:85
+#: misc-utils/lslocks.c:86
 msgid "lock access mode"
 msgstr "način (mȏd) pristupa bravi"
 
-#: misc-utils/lslocks.c:86
+#: misc-utils/lslocks.c:87
 msgid "mandatory state of the lock: 0 (none), 1 (set)"
 msgstr "obvezno stanje brave: 0 (nema je), 1 (postavljena)"
 
-#: misc-utils/lslocks.c:87
+#: misc-utils/lslocks.c:88
 msgid "relative byte offset of the lock"
 msgstr "relativni odmak brave (lock)"
 
-#: misc-utils/lslocks.c:88
+#: misc-utils/lslocks.c:89
 msgid "ending offset of the lock"
 msgstr "krajnji odmak brave (lock)"
 
-#: misc-utils/lslocks.c:89
+#: misc-utils/lslocks.c:90
 msgid "path of the locked file"
 msgstr "staza (path) do zaključane datoteke"
 
-#: misc-utils/lslocks.c:90
+#: misc-utils/lslocks.c:91
 msgid "PID of the process blocking the lock"
 msgstr "PID procesa koji blokira bravu (lock)"
 
-#: misc-utils/lslocks.c:91
+#: misc-utils/lslocks.c:92
 #, fuzzy
 #| msgid "size of the lock"
 msgid "HOLDERS of the lock"
 msgstr "veličina brave"
 
-#: misc-utils/lslocks.c:288
+#: misc-utils/lslocks.c:286
 #, c-format
 msgid "failed to parse '%s'"
 msgstr "nije uspjelo raščlaniti '%s'"
 
-#: misc-utils/lslocks.c:360
+#: misc-utils/lslocks.c:358
 msgid "failed to parse ID"
 msgstr "nije uspjelo razabrati ID"
 
-#: misc-utils/lslocks.c:405
+#: misc-utils/lslocks.c:403
 msgid "failed to parse start"
 msgstr "nije uspjelo raščlaniti početak"
 
-#: misc-utils/lslocks.c:412
+#: misc-utils/lslocks.c:410
 msgid "failed to parse end"
 msgstr "nije uspjelo raščlaniti kraj"
 
-#: misc-utils/lslocks.c:425
+#: misc-utils/lslocks.c:423
 msgid "(undefined)"
 msgstr "(nedefinirano)"
 
-#: misc-utils/lslocks.c:815
+#: misc-utils/lslocks.c:813
 msgid "List local system locks.\n"
 msgstr "Izlista brave (locks) lokalnog sustava.\n"
 
-#: misc-utils/lslocks.c:818
+#: misc-utils/lslocks.c:816
 msgid " -b, --bytes            print SIZE in bytes rather than in human readable format\n"
 msgstr " -b, --bytes            veličine u bajtovima umjesto u čitljivom obliku\n"
 
-#: misc-utils/lslocks.c:820
+#: misc-utils/lslocks.c:818
 msgid " -i, --noinaccessible   ignore locks without read permissions\n"
 msgstr " -i, --noinaccessible   zanemari brave bez prava na čitanje\n"
 
-#: misc-utils/lslocks.c:821 sys-utils/lsns.c:1286 sys-utils/rfkill.c:641
+#: misc-utils/lslocks.c:819 sys-utils/lsns.c:1286 sys-utils/rfkill.c:641
 msgid " -n, --noheadings       don't print headings\n"
 msgstr " -n, --noheadings       ne ispisuj naslove\n"
 
-#: misc-utils/lslocks.c:823 sys-utils/lsns.c:1288 sys-utils/rfkill.c:643
+#: misc-utils/lslocks.c:821 sys-utils/lsns.c:1288 sys-utils/rfkill.c:643
 msgid "     --output-all       output all columns\n"
 msgstr "     --output-all       ispiše sve stupce\n"
 
-#: misc-utils/lslocks.c:824
+#: misc-utils/lslocks.c:822
 msgid " -p, --pid <pid>        display only locks held by this process\n"
 msgstr " -p, --pid <PID>        prikaže samo brave tog procesa\n"
 
-#: misc-utils/lslocks.c:825 sys-utils/lsns.c:1291 sys-utils/rfkill.c:644
+#: misc-utils/lslocks.c:823 sys-utils/lsns.c:1291 sys-utils/rfkill.c:644
 msgid " -r, --raw              use the raw output format\n"
 msgstr " -r, --raw              koristi sirovi format za izlaz\n"
 
-#: misc-utils/lslocks.c:912 schedutils/chrt.c:413 schedutils/ionice.c:179
+#: misc-utils/lslocks.c:910 schedutils/chrt.c:413 schedutils/ionice.c:179
 #: schedutils/taskset.c:190 schedutils/uclampset.c:249 sys-utils/choom.c:102
 #: sys-utils/lsns.c:1381 sys-utils/prlimit.c:598
 msgid "invalid PID argument"
 msgstr "nevaljani argument PID-a"
 
-#: misc-utils/mcookie.c:86
+#: misc-utils/mcookie.c:90
 msgid "Generate magic cookies for xauth.\n"
 msgstr "Generira magične kolačiće (cookies) za xauth.\n"
 
-#: misc-utils/mcookie.c:89
+#: misc-utils/mcookie.c:93
 msgid " -f, --file <file>     use file as a cookie seed\n"
 msgstr " -f, --file <datoteka>  koristi datoteku kao sjeme za kolačić\n"
 
-#: misc-utils/mcookie.c:90
+#: misc-utils/mcookie.c:94
 msgid " -m, --max-size <num>  limit how much is read from seed files\n"
 msgstr " -m, --max-size <broj>  ograniči čitanje (na broj bajta) iz sjemenskih datoteka\n"
 
-#: misc-utils/mcookie.c:91
+#: misc-utils/mcookie.c:95
 msgid " -v, --verbose         explain what is being done\n"
 msgstr " -v, --verbose          objašnjava što radi\n"
 
-#: misc-utils/mcookie.c:97 misc-utils/wipefs.c:653 sys-utils/blkdiscard.c:111
+#: misc-utils/mcookie.c:101 misc-utils/wipefs.c:653 sys-utils/blkdiscard.c:111
 #: sys-utils/fallocate.c:107 sys-utils/fstrim.c:475
 msgid "<num>"
 msgstr "<broj>"
 
-#: misc-utils/mcookie.c:124
+#: misc-utils/mcookie.c:128
 #, c-format
 msgid "Got %zu byte from %s\n"
 msgid_plural "Got %zu bytes from %s\n"
@@ -13482,21 +13491,21 @@ msgstr[0] "%zu bajt primljen od %s\n"
 msgstr[1] "%zu bajta primljeno od %s\n"
 msgstr[2] "%zu bajtova primljeno od %s\n"
 
-#: misc-utils/mcookie.c:129
+#: misc-utils/mcookie.c:133
 #, c-format
 msgid "closing %s failed"
 msgstr "zatvaranje %s nije uspjelo"
 
-#: misc-utils/mcookie.c:168 sys-utils/blkdiscard.c:204 sys-utils/fstrim.c:542
+#: misc-utils/mcookie.c:172 sys-utils/blkdiscard.c:204 sys-utils/fstrim.c:542
 #: text-utils/hexdump.c:122
 msgid "failed to parse length"
 msgstr "nije uspjelo razabrati dužinu"
 
-#: misc-utils/mcookie.c:181
+#: misc-utils/mcookie.c:185
 msgid "--max-size ignored when used without --file"
 msgstr "opcija --max-size je zanemarena kad se koristi bez opcije --file"
 
-#: misc-utils/mcookie.c:190
+#: misc-utils/mcookie.c:194
 #, c-format
 msgid "Got %d byte from %s\n"
 msgid_plural "Got %d bytes from %s\n"
@@ -13881,7 +13890,7 @@ msgstr "nije primljen datotečni deskriptor; provjerite status systemctl od uuid
 msgid "too many file descriptors received, check uuidd.socket"
 msgstr "primljeno je previše datotečnih deskriptora; provjerite uuidd.socket"
 
-#: misc-utils/uuidd.c:452 text-utils/more.c:1366
+#: misc-utils/uuidd.c:452 text-utils/more.c:1383
 msgid "poll failed"
 msgstr "poll() nije uspjela"
 
@@ -16045,46 +16054,46 @@ msgstr "nije moguće datoteku %s u cijelosti pohraniti u memoriju (mmap nije mog
 #. where %a is abbreviated name of the day, %b is abbreviated month
 #. name and %e is day of the month as a decimal number. Please, set
 #. proper month/day order here
-#: sys-utils/dmesg.c:1045
+#: sys-utils/dmesg.c:1049
 msgid "%a %b %e %H:%M:%S %Y"
 msgstr "%a %e %b %H:%M:%S %Y"
 
 #. TRANSLATORS: dmesg uses strftime() fo generate date-time string
 #. where: %b is abbreviated month and %e is day of the month as a
 #. decimal number. Please, set proper month/day order here.
-#: sys-utils/dmesg.c:1055
+#: sys-utils/dmesg.c:1059
 msgid "%b%e %H:%M"
 msgstr "%e%b %H:%M"
 
-#: sys-utils/dmesg.c:1561
+#: sys-utils/dmesg.c:1569
 #, fuzzy
 #| msgid "data block too large"
 msgid "record too large"
 msgstr "podatkovni blok je prevelik"
 
-#: sys-utils/dmesg.c:1787
+#: sys-utils/dmesg.c:1795
 msgid "invalid buffer size argument"
 msgstr "nevaljani argument za veličinu međuspremnika"
 
-#: sys-utils/dmesg.c:1907
+#: sys-utils/dmesg.c:1915
 msgid "--raw can be used together with --level or --facility only when reading messages from /dev/kmsg"
 msgstr ""
 "--raw se može koristiti zajedno s --level ili --facility\n"
 "samo za čitanje poruka iz /dev/kmsg"
 
-#: sys-utils/dmesg.c:1911
+#: sys-utils/dmesg.c:1919
 msgid "only kmsg supports multi-line messages"
 msgstr ""
 
-#: sys-utils/dmesg.c:1926
+#: sys-utils/dmesg.c:1934
 msgid "read kernel buffer failed"
 msgstr "čitanje iz jezgrinog (kernel) međuspremnika nije uspjelo"
 
-#: sys-utils/dmesg.c:1934
+#: sys-utils/dmesg.c:1942
 msgid "clear kernel buffer failed"
 msgstr "čišćenje spremnika kernela nije uspjelo"
 
-#: sys-utils/dmesg.c:1950
+#: sys-utils/dmesg.c:1958
 msgid "klogctl failed"
 msgstr "klogctl() nije uspjela"
 
@@ -16249,7 +16258,7 @@ msgid "%s: unmounting"
 msgstr "%s: demontira se"
 
 #: sys-utils/eject.c:662 sys-utils/mount.c:51 sys-utils/umount.c:122
-#: text-utils/more.c:1270
+#: text-utils/more.c:1271
 msgid "drop permissions failed"
 msgstr "nije uspjelo ukloniti prava pristupa"
 
@@ -19270,7 +19279,19 @@ msgstr "nije uspjelo odrediti broj CPU-a: %s"
 msgid "Failed to extract the node number"
 msgstr "Nije uspjelo doznati broj čvora"
 
-#: sys-utils/lscpu-virt.c:501
+#: sys-utils/lscpu-virt.c:492 sys-utils/lscpu-virt.c:514
+#, fuzzy
+#| msgid "cannot set signal mask"
+msgid "cannot restore signal mask"
+msgstr "nije moguće postaviti signalnu masku"
+
+#: sys-utils/lscpu-virt.c:499
+#, fuzzy
+#| msgid "cannot block signals"
+msgid "cannot unblock signal"
+msgstr "nije moguće blokirati signale"
+
+#: sys-utils/lscpu-virt.c:511
 msgid "cannot restore signal handler"
 msgstr "nije moguće uspostaviti rukovatelja signala"
 
@@ -21833,29 +21854,29 @@ msgstr "nevaljani argument: %s"
 msgid "could not open file for landlock: %s"
 msgstr "nije moguće otvoriti PID %u"
 
-#: sys-utils/setpriv-landlock.c:175
+#: sys-utils/setpriv-landlock.c:178
 #, fuzzy
 #| msgid "fallocate failed"
 msgid "landlock_create_ruleset failed"
 msgstr "fallocate() nije uspjela"
 
-#: sys-utils/setpriv-landlock.c:184
+#: sys-utils/setpriv-landlock.c:187
 #, fuzzy
 #| msgid "fallocate failed"
 msgid "adding landlock rule failed"
 msgstr "fallocate() nije uspjela"
 
-#: sys-utils/setpriv-landlock.c:188
+#: sys-utils/setpriv-landlock.c:191
 #, fuzzy
 #| msgid "disallow granting new privileges failed"
 msgid "disallow granting new privileges for landlock failed"
 msgstr "nije uspjelo zabraniti davanje novih privilegija"
 
-#: sys-utils/setpriv-landlock.c:191
+#: sys-utils/setpriv-landlock.c:194
 msgid "landlock_restrict_self faild"
 msgstr ""
 
-#: sys-utils/setpriv-landlock.c:199
+#: sys-utils/setpriv-landlock.c:202
 #, fuzzy, c-format
 #| msgid "lock access mode"
 msgid "Landlock accesses:\n"
@@ -24477,7 +24498,7 @@ msgstr "opcija --table je obvezna za sve opcije tipa --table-*"
 msgid "option --table-columns or --table-column required for --json"
 msgstr "opcija --table-columns ili --table-column je obvezna za opciju --json"
 
-#: text-utils/hexdump.c:167 text-utils/more.c:237
+#: text-utils/hexdump.c:167 text-utils/more.c:238
 #, c-format
 msgid " %s [options] <file>...\n"
 msgstr " %s [opcije] <datoteka>...\n"
@@ -24546,7 +24567,7 @@ msgstr " -v, --no-squeezing        ispisuje identične ulazne retke (ne istiskuj
 msgid "<length> and <offset>"
 msgstr "<length> i <offset>"
 
-#: text-utils/hexdump-display.c:366
+#: text-utils/hexdump-display.c:374
 msgid "all input file arguments failed"
 msgstr "svi argumenti ulazne datoteke su pogrešni"
 
@@ -24574,71 +24595,71 @@ msgstr "nepravilni znak konverzije %%%s"
 msgid "byte count with multiple conversion characters"
 msgstr "broj bajtova s višestrukim znakovima konverzije"
 
-#: text-utils/line.c:34
+#: text-utils/line.c:33
 msgid "Read one line.\n"
 msgstr "Pročita jedan redak.\n"
 
-#: text-utils/more.c:240
+#: text-utils/more.c:241
 msgid "Display the contents of a file in a terminal."
 msgstr "Pokaže sadržaj datoteke na terminalu."
 
-#: text-utils/more.c:243
+#: text-utils/more.c:244
 msgid " -d, --silent          display help instead of ringing bell"
 msgstr " -d, --silent          prikaže pomoć (u zadnjem retku) umjesto da oglasi zvonce"
 
-#: text-utils/more.c:244
+#: text-utils/more.c:245
 msgid " -f, --logical         count logical rather than screen lines"
 msgstr " -f, --logical         broji logičke retke umjesto redaka na konzoli"
 
-#: text-utils/more.c:245
+#: text-utils/more.c:246
 msgid " -l, --no-pause        suppress pause after form feed"
 msgstr " -l, --no-pause        bez pauziranja nakon znaka za „form feed“"
 
-#: text-utils/more.c:246
+#: text-utils/more.c:247
 msgid " -c, --print-over      do not scroll, display text and clean line ends"
 msgstr " -c, --print-over      ne rola (scroll); pokaže tekst, očisti završetke redaka"
 
-#: text-utils/more.c:247
+#: text-utils/more.c:248
 msgid " -p, --clean-print     do not scroll, clean screen and display text"
 msgstr " -p, --clean-print     ne rola (scroll); počisti konzolu i prikaže tekst"
 
-#: text-utils/more.c:248
+#: text-utils/more.c:249
 msgid " -e, --exit-on-eof     exit on end-of-file"
 msgstr " -e, --exit-on-eof     završi (iziđe) na kraju datoteke"
 
-#: text-utils/more.c:249
+#: text-utils/more.c:250
 msgid " -s, --squeeze         squeeze multiple blank lines into one"
 msgstr " -s, --squeeze         spoji uzastopne prazne retke u jedan redak"
 
-#: text-utils/more.c:250
+#: text-utils/more.c:251
 msgid " -u, --plain           suppress underlining and bold"
 msgstr " -u, --plain           prikrije podcrtavanje i podebljavanje teksta"
 
-#: text-utils/more.c:251
+#: text-utils/more.c:252
 msgid " -n, --lines <number>  the number of lines per screenful"
 msgstr " -n, --lines <broj>    broj redaka po konzoli"
 
-#: text-utils/more.c:252
+#: text-utils/more.c:253
 msgid " -<number>             same as --lines"
 msgstr " -<broj>               isto kao i --lines"
 
-#: text-utils/more.c:253
+#: text-utils/more.c:254
 msgid " +<number>             display file beginning from line number"
 msgstr " +<broj>               pokaže datoteku počevši od retka broj"
 
-#: text-utils/more.c:254
+#: text-utils/more.c:255
 msgid " +/<pattern>           display file beginning from pattern match"
 msgstr " +/<uzorak>            pokaže datoteku od počevši od nađenog uzorka"
 
-#: text-utils/more.c:357
+#: text-utils/more.c:358
 msgid "MORE environment variable"
 msgstr "varijabla okružja MORE"
 
-#: text-utils/more.c:410
+#: text-utils/more.c:411
 msgid "magic failed"
 msgstr "magic nije uspjela"
 
-#: text-utils/more.c:414 text-utils/more.c:433
+#: text-utils/more.c:415 text-utils/more.c:434
 #, c-format
 msgid ""
 "\n"
@@ -24649,7 +24670,7 @@ msgstr ""
 "******** %s: nije tekstna datoteka ********\n"
 "\n"
 
-#: text-utils/more.c:467
+#: text-utils/more.c:468
 #, c-format
 msgid ""
 "\n"
@@ -24660,27 +24681,27 @@ msgstr ""
 "*** %s: je direktorij ***\n"
 "\n"
 
-#: text-utils/more.c:729
+#: text-utils/more.c:730
 #, c-format
 msgid "--More--"
 msgstr "--More--Dalje--"
 
-#: text-utils/more.c:731
+#: text-utils/more.c:732
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(Sljedeća datoteka: %s)"
 
-#: text-utils/more.c:736 text-utils/more.c:742
+#: text-utils/more.c:737 text-utils/more.c:743
 #, c-format
 msgid "(END)"
 msgstr "(KRAJ)"
 
-#: text-utils/more.c:747
+#: text-utils/more.c:748
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Pritisnite razmaknicu da nastavite, „q“ za izlaz iz programa.]"
 
-#: text-utils/more.c:949
+#: text-utils/more.c:950
 msgid ""
 "\n"
 "...Skipping "
@@ -24688,40 +24709,40 @@ msgstr ""
 "\n"
 "...Preskačemo: "
 
-#: text-utils/more.c:953
+#: text-utils/more.c:954
 msgid "...Skipping to file "
 msgstr "...preskačemo na datoteku "
 
-#: text-utils/more.c:955
+#: text-utils/more.c:956
 msgid "...Skipping back to file "
 msgstr "...skačemo unatrag na datoteku "
 
-#: text-utils/more.c:1117
+#: text-utils/more.c:1118
 msgid "Line too long"
 msgstr "Redak je predug"
 
-#: text-utils/more.c:1160
+#: text-utils/more.c:1161
 msgid "No previous command to substitute for"
 msgstr "Nema prethodne naredbe"
 
-#: text-utils/more.c:1189
+#: text-utils/more.c:1190
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr "[Za izlaz koristite q ili Q]"
 
-#: text-utils/more.c:1274
+#: text-utils/more.c:1275
 msgid "exec failed\n"
 msgstr "exec() nije uspio\n"
 
-#: text-utils/more.c:1284
+#: text-utils/more.c:1285
 msgid "can't fork\n"
 msgstr "nije moguće započeti novi proces\n"
 
-#: text-utils/more.c:1445
+#: text-utils/more.c:1483
 msgid "...skipping\n"
 msgstr "...preskačemo\n"
 
-#: text-utils/more.c:1482
+#: text-utils/more.c:1520
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -24729,11 +24750,11 @@ msgstr ""
 "\n"
 "Uzorak nije pronađen\n"
 
-#: text-utils/more.c:1486 text-utils/pg.c:1032 text-utils/pg.c:1180
+#: text-utils/more.c:1524 text-utils/pg.c:1032 text-utils/pg.c:1180
 msgid "Pattern not found"
 msgstr "Uzorak nije pronađen"
 
-#: text-utils/more.c:1504
+#: text-utils/more.c:1542
 msgid ""
 "Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
 "Star (*) indicates argument becomes new default.\n"
@@ -24742,7 +24763,7 @@ msgstr ""
 "Zadana vrijednost je u uglatim zagradama.\n"
 "Zvjezdica (*) označava da „k“ postaje nova zadana vrijednost te naredbe.\n"
 
-#: text-utils/more.c:1510
+#: text-utils/more.c:1548
 #, c-format
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
@@ -24785,7 +24806,7 @@ msgstr ""
 ":f                      Pokaže ime datoteke i broj retka\n"
 ".                       Ponovi posljednju naredbu\n"
 
-#: text-utils/more.c:1576
+#: text-utils/more.c:1614
 #, c-format
 msgid "...back %d page"
 msgid_plural "...back %d pages"
@@ -24793,7 +24814,7 @@ msgstr[0] "...natrag za %d stranicu"
 msgstr[1] "...natrag za %d stranice"
 msgstr[2] "...natrag za %d stranica"
 
-#: text-utils/more.c:1600
+#: text-utils/more.c:1638
 #, c-format
 msgid "...skipping %d line"
 msgid_plural "...skipping %d lines"
@@ -24801,7 +24822,7 @@ msgstr[0] "...preskačemo %d redak"
 msgstr[1] "...preskačemo %d retka"
 msgstr[2] "...preskačemo %d redaka"
 
-#: text-utils/more.c:1700
+#: text-utils/more.c:1738
 msgid ""
 "\n"
 "***Back***\n"
@@ -24811,21 +24832,21 @@ msgstr ""
 "***Natrag***\n"
 "\n"
 
-#: text-utils/more.c:1719
+#: text-utils/more.c:1757
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "\"%s\" redak %d"
 
-#: text-utils/more.c:1722
+#: text-utils/more.c:1760
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[Nije datoteka] redak %d"
 
-#: text-utils/more.c:1728
+#: text-utils/more.c:1766
 msgid "No previous regular expression"
 msgstr "Nema prethodnog regularnog izraza"
 
-#: text-utils/more.c:1797
+#: text-utils/more.c:1835
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[Pritisnite „h“ za upute.]"

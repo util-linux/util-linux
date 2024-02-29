@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.27-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2024-01-24 10:55+0100\n"
+"POT-Creation-Date: 2024-02-29 21:01+0100\n"
 "PO-Revision-Date: 2015-12-29 22:55+0300\n"
 "Last-Translator: Evgeniy Yakushev <yen81@mail.ru>\n"
 "Language-Team: Russian <gnu@d07.ru>\n"
@@ -56,7 +56,7 @@ msgstr "недостаточно аргументов"
 #: login-utils/utmpdump.c:142 login-utils/utmpdump.c:367
 #: login-utils/utmpdump.c:391 login-utils/vipw.c:257 login-utils/vipw.c:275
 #: misc-utils/fadvise.c:148 misc-utils/findmnt.c:1291 misc-utils/logger.c:1247
-#: misc-utils/mcookie.c:119 misc-utils/pipesz.c:162 misc-utils/uuidd.c:235
+#: misc-utils/mcookie.c:123 misc-utils/pipesz.c:162 misc-utils/uuidd.c:235
 #: sys-utils/blkdiscard.c:248 sys-utils/blkpr.c:164 sys-utils/blkzone.c:144
 #: sys-utils/dmesg.c:671 sys-utils/eject.c:501 sys-utils/eject.c:696
 #: sys-utils/fallocate.c:407 sys-utils/fsfreeze.c:116 sys-utils/fstrim.c:106
@@ -75,7 +75,7 @@ msgstr "недостаточно аргументов"
 #: term-utils/scriptlive.c:259 term-utils/scriptlive.c:262
 #: term-utils/scriptreplay.c:282 term-utils/scriptreplay.c:285
 #: term-utils/scriptreplay.c:288 term-utils/scriptreplay.c:291
-#: term-utils/wall.c:393 text-utils/colcrt.c:284 text-utils/more.c:459
+#: term-utils/wall.c:393 text-utils/colcrt.c:284 text-utils/more.c:460
 #: text-utils/rev.c:165 text-utils/ul.c:637
 #, c-format
 msgid "cannot open %s"
@@ -751,7 +751,7 @@ msgid " -r, --read-only          forced open cfdisk in read-only mode\n"
 msgstr " -r, --raw                отобразить в формате сырых данных\n"
 
 #: disk-utils/cfdisk.c:2781 disk-utils/fdisk.c:1111 disk-utils/sfdisk.c:2350
-#: misc-utils/cal.c:421 sys-utils/dmesg.c:1760 text-utils/hexdump.c:119
+#: misc-utils/cal.c:421 sys-utils/dmesg.c:1768 text-utils/hexdump.c:119
 msgid "unsupported color mode"
 msgstr "неподдерживаемый цветовой режим"
 
@@ -860,7 +860,7 @@ msgstr "недопустимый аргумент - repair"
 #: sys-utils/swapon.c:543 sys-utils/switch_root.c:93
 #: sys-utils/switch_root.c:134 sys-utils/switch_root.c:139
 #: sys-utils/unshare.c:211 term-utils/mesg.c:144 term-utils/mesg.c:156
-#: text-utils/more.c:463
+#: text-utils/more.c:464
 #, c-format
 msgid "stat of %s failed"
 msgstr "выполение команды stat для %s завершилось неудачно"
@@ -1211,14 +1211,14 @@ msgstr "Параметры устройства (размера сектора �
 #: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:592
 #: misc-utils/whereis.c:603 misc-utils/whereis.c:614 misc-utils/whereis.c:659
 #: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:207
-#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1841
+#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1849
 #: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:318 sys-utils/losetup.c:997
 #: sys-utils/lscpu.c:1346 sys-utils/lsmem.c:649 sys-utils/mount.c:861
 #: sys-utils/mount.c:887 sys-utils/mount.c:895 sys-utils/mount.c:947
 #: sys-utils/mount.c:960 sys-utils/mount.c:1032 sys-utils/mountpoint.c:182
 #: sys-utils/pivot_root.c:66 sys-utils/swapoff.c:271 sys-utils/swapon.c:1024
 #: sys-utils/switch_root.c:270 sys-utils/umount.c:629 term-utils/setterm.c:1200
-#: text-utils/col.c:584 text-utils/more.c:2100
+#: text-utils/col.c:584 text-utils/more.c:2138
 #, fuzzy
 msgid "bad usage"
 msgstr "%lu плохая страница\n"
@@ -1303,7 +1303,7 @@ msgstr "Смещение выравнивания: %lu байт"
 
 #: disk-utils/fdisk-list.c:130 disk-utils/fdisk-list.c:251
 #: disk-utils/fsck.c:1264 misc-utils/lsblk.c:2200 misc-utils/lsblk.c:2254
-#: misc-utils/lsfd.c:1923
+#: misc-utils/lsfd.c:1962
 #, fuzzy
 msgid "failed to allocate iterator"
 msgstr "Невозможно выделить буфер.\n"
@@ -1311,8 +1311,8 @@ msgstr "Невозможно выделить буфер.\n"
 #: disk-utils/fdisk-list.c:136 disk-utils/fdisk-list.c:257
 #: disk-utils/partx.c:676 include/column-list-table.h:45
 #: login-utils/lslogins.c:1113 misc-utils/fincore.c:500
-#: misc-utils/findmnt.c:1896 misc-utils/lsblk.c:2729 misc-utils/lsclocks.c:648
-#: misc-utils/lsfd.c:2347 misc-utils/lslocks.c:756 misc-utils/uuidparse.c:252
+#: misc-utils/findmnt.c:1896 misc-utils/lsblk.c:2729 misc-utils/lsclocks.c:649
+#: misc-utils/lsfd.c:2386 misc-utils/lslocks.c:754 misc-utils/uuidparse.c:252
 #: misc-utils/wipefs.c:157 sys-utils/losetup.c:389 sys-utils/lscpu.c:596
 #: sys-utils/lscpu.c:751 sys-utils/lscpu.c:966 sys-utils/lsipc.c:354
 #: sys-utils/prlimit.c:303 sys-utils/rfkill.c:475 sys-utils/swapon.c:309
@@ -1325,7 +1325,7 @@ msgstr "Невозможно выделить буфер.\n"
 #: disk-utils/partx.c:590 include/column-list-table.h:72
 #: login-utils/lslogins.c:1173 misc-utils/fincore.c:218
 #: misc-utils/findmnt.c:847 misc-utils/findmnt.c:868 misc-utils/lsblk.c:1331
-#: misc-utils/lsclocks.c:294 misc-utils/lsfd.c:1250 misc-utils/lslocks.c:621
+#: misc-utils/lsclocks.c:294 misc-utils/lsfd.c:1261 misc-utils/lslocks.c:619
 #: misc-utils/uuidparse.c:154 misc-utils/wipefs.c:202 sys-utils/losetup.c:412
 #: sys-utils/losetup.c:441 sys-utils/lscpu.c:510 sys-utils/lscpu.c:786
 #: sys-utils/lscpu.c:818 sys-utils/lsipc.c:486 sys-utils/lsipc.c:567
@@ -1356,7 +1356,7 @@ msgstr "Невозможно выделить буфер.\n"
 #: misc-utils/lsfd-file.c:731 misc-utils/lsfd-sock.c:75
 #: misc-utils/lsfd-sock.c:132 misc-utils/lsfd-sock.c:134
 #: misc-utils/lsfd-unkn.c:123 misc-utils/lsfd-unkn.c:125
-#: misc-utils/lslocks.c:702 misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242
+#: misc-utils/lslocks.c:700 misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242
 #: sys-utils/losetup.c:369 sys-utils/lscpu.c:578 sys-utils/lscpu.c:793
 #: sys-utils/lscpu.c:822 sys-utils/lscpu.c:832 sys-utils/lsipc.c:526
 #: sys-utils/lsipc.c:651 sys-utils/prlimit.c:267 sys-utils/rfkill.c:418
@@ -3890,7 +3890,7 @@ msgstr "%s: не удалось настроить устройство обра
 
 #: disk-utils/partx.c:168 login-utils/lslogins.c:322 misc-utils/fincore.c:151
 #: misc-utils/findmnt.c:393 misc-utils/lsblk.c:373 misc-utils/lsclocks.c:171
-#: misc-utils/lsfd.c:564 misc-utils/lslocks.c:566 misc-utils/uuidparse.c:125
+#: misc-utils/lsfd.c:564 misc-utils/lslocks.c:564 misc-utils/uuidparse.c:125
 #: misc-utils/wipefs.c:132 sys-utils/irq-common.c:95 sys-utils/losetup.c:130
 #: sys-utils/lscpu.c:192 sys-utils/lscpu.c:207 sys-utils/lsipc.c:233
 #: sys-utils/lsmem.c:171 sys-utils/lsns.c:261 sys-utils/prlimit.c:283
@@ -3995,8 +3995,8 @@ msgstr[2] "#%2d: %9ju-%9ju (%9ju секторов, %6ju МБ)\n"
 
 #: disk-utils/partx.c:687 include/column-list-table.h:62
 #: misc-utils/fincore.c:514 misc-utils/findmnt.c:1925 misc-utils/lsblk.c:2270
-#: misc-utils/lsblk.c:2773 misc-utils/lsclocks.c:656 misc-utils/lsfd.c:615
-#: misc-utils/lsfd.c:2361 misc-utils/lslocks.c:771 sys-utils/losetup.c:403
+#: misc-utils/lsblk.c:2773 misc-utils/lsclocks.c:657 misc-utils/lsfd.c:615
+#: misc-utils/lsfd.c:2400 misc-utils/lslocks.c:769 sys-utils/losetup.c:403
 #: sys-utils/lscpu.c:608 sys-utils/lscpu.c:764 sys-utils/prlimit.c:312
 #: sys-utils/rfkill.c:488 sys-utils/swapon.c:318 sys-utils/wdctl.c:365
 #, fuzzy
@@ -4642,7 +4642,7 @@ msgstr " Пример:\n"
 msgid "   , 4G     Creates a 4GiB partition at default start offset.\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1546 sys-utils/dmesg.c:1944
+#: disk-utils/sfdisk.c:1546 sys-utils/dmesg.c:1952
 msgid "unsupported command"
 msgstr "неподдерживаемая команда"
 
@@ -8137,314 +8137,319 @@ msgstr "не удалось прочитать: %s"
 msgid "hush login status: restore original IDs failed"
 msgstr ""
 
-#: libmount/src/context.c:2738
+#: libmount/src/context.c:2740
 #, fuzzy, c-format
 msgid "operation failed: %m"
 msgstr "запуск readlink завершился неудачно: %s"
 
-#: libmount/src/context_mount.c:1421
+#: libmount/src/context_mount.c:1417
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr ""
 
-#: libmount/src/context_mount.c:1431
+#: libmount/src/context_mount.c:1427
 #, fuzzy, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "mount: %s%s защищен от записи, монтируется только для чтения"
 
-#: libmount/src/context_mount.c:1445
+#: libmount/src/context_mount.c:1441
 #, c-format
 msgid "operation permitted for root only"
 msgstr ""
 
-#: libmount/src/context_mount.c:1449
+#: libmount/src/context_mount.c:1445
 #, fuzzy, c-format
 msgid "%s is already mounted"
 msgstr "mount: proc уже примонтирован"
 
-#: libmount/src/context_mount.c:1455
+#: libmount/src/context_mount.c:1451
 #, fuzzy, c-format
 msgid "can't find in %s"
 msgstr "mount: невозможно найти %s в %s"
 
-#: libmount/src/context_mount.c:1458
+#: libmount/src/context_mount.c:1454
 #, fuzzy, c-format
 msgid "can't find mount point in %s"
 msgstr "mount: невозможно найти %s в %s или %s"
 
-#: libmount/src/context_mount.c:1461
+#: libmount/src/context_mount.c:1457
 #, fuzzy, c-format
 msgid "can't find mount source %s in %s"
 msgstr "shutdown: Невозможно размонтировать %s: %s\n"
 
-#: libmount/src/context_mount.c:1466
+#: libmount/src/context_mount.c:1462
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr ""
 
-#: libmount/src/context_mount.c:1471
+#: libmount/src/context_mount.c:1467
 #, fuzzy, c-format
 msgid "failed to determine filesystem type"
 msgstr "mount: неизвестный тип файловой системы '%s'"
 
-#: libmount/src/context_mount.c:1472
+#: libmount/src/context_mount.c:1468
 #, fuzzy, c-format
 msgid "no valid filesystem type specified"
 msgstr "не задано имя файла"
 
-#: libmount/src/context_mount.c:1479
+#: libmount/src/context_mount.c:1475
 #, fuzzy, c-format
 msgid "can't find %s"
 msgstr "%s: невозможно прочитать %s.\n"
 
-#: libmount/src/context_mount.c:1481
+#: libmount/src/context_mount.c:1477
 #, fuzzy, c-format
 msgid "no mount source specified"
 msgstr "не указаны точки монтирования"
 
-#: libmount/src/context_mount.c:1492
+#: libmount/src/context_mount.c:1488
 #, fuzzy, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr "%s: невозможно открыть : %s\n"
 
-#: libmount/src/context_mount.c:1493
+#: libmount/src/context_mount.c:1489
 #, fuzzy, c-format
 msgid "failed to parse mount options '%s'"
 msgstr "%s: невозможно открыть : %s\n"
 
-#: libmount/src/context_mount.c:1496
+#: libmount/src/context_mount.c:1492
 #, fuzzy, c-format
 msgid "failed to parse mount options: %m"
 msgstr "%s: невозможно открыть : %s\n"
 
-#: libmount/src/context_mount.c:1497
+#: libmount/src/context_mount.c:1493
 #, fuzzy, c-format
 msgid "failed to parse mount options"
 msgstr "%s: невозможно открыть : %s\n"
 
-#: libmount/src/context_mount.c:1502
+#: libmount/src/context_mount.c:1498
 #, fuzzy, c-format
 msgid "failed to setup loop device for %s"
 msgstr "mount: установка устройства обратной связи завершилась неудачей\n"
 
-#: libmount/src/context_mount.c:1506
+#: libmount/src/context_mount.c:1502
 #, fuzzy, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "%s не lp-устройство"
 
-#: libmount/src/context_mount.c:1510 libmount/src/context_umount.c:1263
+#: libmount/src/context_mount.c:1506 libmount/src/context_umount.c:1263
 #, fuzzy, c-format
 msgid "locking failed"
 msgstr "не удалось закрыть %s"
 
-#: libmount/src/context_mount.c:1514 libmount/src/context_umount.c:1269
+#: libmount/src/context_mount.c:1510 libmount/src/context_umount.c:1269
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, fuzzy, c-format
 msgid "failed to switch namespace"
 msgstr "состояние устройства"
 
-#: libmount/src/context_mount.c:1518
+#: libmount/src/context_mount.c:1514
 #, fuzzy, c-format
 msgid "filesystem already mounted"
 msgstr "mount: proc уже примонтирован"
 
-#: libmount/src/context_mount.c:1521
+#: libmount/src/context_mount.c:1517
 #, fuzzy, c-format
 msgid "mount failed: %m"
 msgstr "mount завершился неудачей"
 
-#: libmount/src/context_mount.c:1531
+#: libmount/src/context_mount.c:1527
 #, c-format
 msgid "filesystem was mounted, but failed to apply flags"
 msgstr ""
 
-#: libmount/src/context_mount.c:1537
+#: libmount/src/context_mount.c:1533
 #, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr ""
 
-#: libmount/src/context_mount.c:1543
+#: libmount/src/context_mount.c:1539
 #, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr ""
 
-#: libmount/src/context_mount.c:1549
+#: libmount/src/context_mount.c:1545
 #, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr ""
 
-#: libmount/src/context_mount.c:1555
+#: libmount/src/context_mount.c:1551
 #, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr ""
 
-#: libmount/src/context_mount.c:1561
+#: libmount/src/context_mount.c:1557
 #, c-format
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr ""
 
-#: libmount/src/context_mount.c:1567
+#: libmount/src/context_mount.c:1563
 #, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr ""
 
-#: libmount/src/context_mount.c:1587 login-utils/newgrp.c:228
+#: libmount/src/context_mount.c:1575
+#, fuzzy, c-format
+msgid "%s system call failed: %s"
+msgstr "mount завершился неудачей"
+
+#: libmount/src/context_mount.c:1590 login-utils/newgrp.c:228
 #, c-format
 msgid "permission denied"
 msgstr "доступ запрещен"
 
-#: libmount/src/context_mount.c:1589 libmount/src/context_mount.c:1630
+#: libmount/src/context_mount.c:1592 libmount/src/context_mount.c:1633
 #, fuzzy, c-format
 msgid "mount point is not a directory"
 msgstr "mount: точка монтирования %s не является каталогом"
 
-#: libmount/src/context_mount.c:1591
+#: libmount/src/context_mount.c:1594
 #, fuzzy, c-format
 msgid "must be superuser to use mount"
 msgstr "mount: необходимо иметь права суперпользователя для использования mount"
 
-#: libmount/src/context_mount.c:1598
+#: libmount/src/context_mount.c:1601
 #, fuzzy, c-format
 msgid "mount point is busy"
 msgstr "точка монтирования"
 
-#: libmount/src/context_mount.c:1605
+#: libmount/src/context_mount.c:1608
 #, fuzzy, c-format
 msgid "%s already mounted on %s"
 msgstr "mount: %s уже примонтирован или %s занят"
 
-#: libmount/src/context_mount.c:1609
+#: libmount/src/context_mount.c:1612
 #, fuzzy, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "mount: %s уже примонтирован или %s занят"
 
-#: libmount/src/context_mount.c:1614
+#: libmount/src/context_mount.c:1617
 #, fuzzy, c-format
 msgid "mount point does not exist"
 msgstr "mount: точка монтирования %s не существует"
 
-#: libmount/src/context_mount.c:1617
+#: libmount/src/context_mount.c:1620
 #, fuzzy, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "mount: точка монтирования %s является символической ссылкой в никуда"
 
-#: libmount/src/context_mount.c:1622
+#: libmount/src/context_mount.c:1625
 #, fuzzy, c-format
 msgid "special device %s does not exist"
 msgstr "mount: специальное устройство %s не существует"
 
-#: libmount/src/context_mount.c:1635
+#: libmount/src/context_mount.c:1638
 #, fuzzy, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr ""
 "mount: специальное устройство %s не существует\n"
 "       (префикс пути не является каталогом)\n"
 
-#: libmount/src/context_mount.c:1645
+#: libmount/src/context_mount.c:1648
 #, fuzzy, c-format
 msgid "mount point not mounted or bad option"
 msgstr "mount: %s уже не примонтирован или неверная опция"
 
-#: libmount/src/context_mount.c:1647
+#: libmount/src/context_mount.c:1650
 #, fuzzy, c-format
 msgid "not mount point or bad option"
 msgstr "mount: %s уже не примонтирован или неверная опция"
 
-#: libmount/src/context_mount.c:1650
+#: libmount/src/context_mount.c:1653
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr ""
 
-#: libmount/src/context_mount.c:1654
+#: libmount/src/context_mount.c:1657
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 
-#: libmount/src/context_mount.c:1658
+#: libmount/src/context_mount.c:1661
 #, fuzzy, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr ""
 "mount: неверный тип ФС, неверная опция, неверный суперблок\n"
 "       на %s, отсутствует кодовая страница или другая ошибка"
 
-#: libmount/src/context_mount.c:1665
+#: libmount/src/context_mount.c:1668
 #, c-format
 msgid "mount table full"
 msgstr "таблица монтирования заполнена"
 
-#: libmount/src/context_mount.c:1670
+#: libmount/src/context_mount.c:1673
 #, fuzzy, c-format
 msgid "can't read superblock on %s"
 msgstr "mount: %s: невозможно прочитать суперблок"
 
-#: libmount/src/context_mount.c:1677
+#: libmount/src/context_mount.c:1680
 #, fuzzy, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "mount: неизвестный тип файловой системы '%s'"
 
-#: libmount/src/context_mount.c:1680
+#: libmount/src/context_mount.c:1683
 #, fuzzy, c-format
 msgid "unknown filesystem type"
 msgstr "mount: неизвестный тип файловой системы '%s'"
 
-#: libmount/src/context_mount.c:1689
+#: libmount/src/context_mount.c:1692
 #, fuzzy, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "mount: %s не является блочным устройством, а определение состояния невозможно?"
 
-#: libmount/src/context_mount.c:1692
+#: libmount/src/context_mount.c:1695
 #, fuzzy, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr ""
 "mount: ядро не распознает %s как блочное устройство\n"
 "       (может быть `insmod driver'?)"
 
-#: libmount/src/context_mount.c:1695
+#: libmount/src/context_mount.c:1698
 #, fuzzy, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "mount: %s не является блочным устройством (может попробовать `-o loop'?)"
 
-#: libmount/src/context_mount.c:1697
+#: libmount/src/context_mount.c:1700
 #, fuzzy, c-format
 msgid "%s is not a block device"
 msgstr "mount: %s не является блочным устройством"
 
-#: libmount/src/context_mount.c:1704
+#: libmount/src/context_mount.c:1707
 #, fuzzy, c-format
 msgid "%s is not a valid block device"
 msgstr "mount: %s не является верным блочным устройством"
 
-#: libmount/src/context_mount.c:1712
+#: libmount/src/context_mount.c:1715
 #, fuzzy, c-format
 msgid "cannot mount %s read-only"
 msgstr "mount: невозможно примонтировать %s%s только для чтения"
 
-#: libmount/src/context_mount.c:1714
+#: libmount/src/context_mount.c:1717
 #, fuzzy, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "mount: %s%s защищен от записи, но явно указан флаг `-w'"
 
-#: libmount/src/context_mount.c:1716
+#: libmount/src/context_mount.c:1719
 #, fuzzy, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "mount: невозможно примонтировать %s%s только для чтения"
 
-#: libmount/src/context_mount.c:1718
+#: libmount/src/context_mount.c:1721
 #, fuzzy, c-format
 msgid "bind %s failed"
 msgstr "поиск завершился неудачей"
 
-#: libmount/src/context_mount.c:1727
+#: libmount/src/context_mount.c:1730
 #, fuzzy, c-format
 msgid "no medium found on %s"
 msgstr "mount: %s уже примонтирован на %s\n"
 
-#: libmount/src/context_mount.c:1734
+#: libmount/src/context_mount.c:1737
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr ""
 
-#: libmount/src/context_mount.c:1743
+#: libmount/src/context_mount.c:1746
 #, fuzzy, c-format
 msgid "%s system call failed: %m"
 msgstr "mount завершился неудачей"
@@ -8792,7 +8797,7 @@ msgstr "Шелл изменён.\n"
 msgid "Usage: %s <passwordfile> <username>...\n"
 msgstr "%s: файл паролей занят.\n"
 
-#: login-utils/last.c:177 login-utils/lslogins.c:1433 sys-utils/dmesg.c:1592
+#: login-utils/last.c:177 login-utils/lslogins.c:1433 sys-utils/dmesg.c:1600
 #: sys-utils/lsipc.c:283
 #, c-format
 msgid "unknown time format: %s"
@@ -8885,12 +8890,12 @@ msgstr ""
 
 #: login-utils/last.c:1020 term-utils/scriptlive.c:85
 #: term-utils/scriptlive.c:89 term-utils/scriptreplay.c:80
-#: term-utils/scriptreplay.c:84 text-utils/more.c:285 text-utils/more.c:291
+#: term-utils/scriptreplay.c:84 text-utils/more.c:286 text-utils/more.c:292
 msgid "failed to parse number"
 msgstr "не удалось разобрать номер"
 
 #: login-utils/last.c:1041 login-utils/last.c:1046 login-utils/last.c:1051
-#: sys-utils/dmesg.c:1822 sys-utils/dmesg.c:1828 sys-utils/rtcwake.c:520
+#: sys-utils/dmesg.c:1830 sys-utils/dmesg.c:1836 sys-utils/rtcwake.c:520
 #, c-format
 msgid "invalid time value \"%s\""
 msgstr "неверное значение времени: '%s'"
@@ -9572,14 +9577,14 @@ msgstr "нет такой группы."
 msgid "setuid failed"
 msgstr "setuid() завершился неудачей"
 
-#: login-utils/nologin.c:28 misc-utils/lastlog2.c:107 misc-utils/lsclocks.c:182
-#: misc-utils/lsfd.c:1854 misc-utils/lslocks.c:812 misc-utils/mcookie.c:83
+#: login-utils/nologin.c:28 misc-utils/lastlog2.c:108 misc-utils/lsclocks.c:182
+#: misc-utils/lsfd.c:1893 misc-utils/lslocks.c:810 misc-utils/mcookie.c:87
 #: misc-utils/uuidd.c:97 misc-utils/uuidgen.c:28 sys-utils/dmesg.c:317
 #: sys-utils/ipcmk.c:67 sys-utils/irqtop.c:255 sys-utils/lscpu.c:1173
 #: sys-utils/lsipc.c:292 sys-utils/lsirq.c:50 sys-utils/lsmem.c:512
 #: sys-utils/readprofile.c:95 sys-utils/rtcwake.c:108
 #: term-utils/scriptlive.c:57 term-utils/scriptreplay.c:47
-#: term-utils/setterm.c:381 text-utils/line.c:31
+#: term-utils/setterm.c:381 text-utils/line.c:30
 #, c-format
 msgid " %s [options]\n"
 msgstr " %s [параметры]\n"
@@ -9643,7 +9648,7 @@ msgid "cannot set signal handler for session"
 msgstr "Невозможно установить обработчик сигнала"
 
 #: login-utils/su-common.c:513 misc-utils/uuidd.c:439
-#: sys-utils/lscpu-virt.c:496
+#: sys-utils/lscpu-virt.c:506
 msgid "cannot set signal handler"
 msgstr "Невозможно установить обработчик сигнала"
 
@@ -10492,58 +10497,58 @@ msgstr " -o, --output <list>  выбрать выводимые столбцы\n
 msgid "     --color[=<when>]  colorize messages (%s, %s or %s)\n"
 msgstr " -L, --color[=<when>]     вывод сообщений разными цветами (значения: auto=автоматически, always=всегда, never=никогда)\n"
 
-#: misc-utils/enosys.c:83
+#: misc-utils/enosys.c:85
 #, fuzzy, c-format
 msgid " %s [options] -- <command>\n"
 msgstr "использование: namei [-mx] путевое_имя [путевое_имя ...]\n"
 
-#: misc-utils/enosys.c:86
+#: misc-utils/enosys.c:88
 #, fuzzy
 msgid " -s, --syscall           syscall to block\n"
 msgstr " -a, --all            показать все устройства\n"
 
-#: misc-utils/enosys.c:87
+#: misc-utils/enosys.c:89
 #, fuzzy
 msgid " -i, --ioctl             ioctl to block\n"
 msgstr "              параметры\n"
 
-#: misc-utils/enosys.c:88
+#: misc-utils/enosys.c:90
 #, fuzzy
 msgid " -l, --list              list known syscalls\n"
 msgstr "  -Q, --quiet-output           Без обычных выходных данных\n"
 
-#: misc-utils/enosys.c:143
+#: misc-utils/enosys.c:146
 #, fuzzy
 #| msgid "unknown user %s"
 msgid "Unknown syscall"
 msgstr "неизвестный пользователь %s"
 
-#: misc-utils/enosys.c:161
+#: misc-utils/enosys.c:166
 #, fuzzy
 #| msgid "Unknown"
 msgid "Unknown ioctl"
 msgstr "Неизвестный"
 
-#: misc-utils/enosys.c:193
+#: misc-utils/enosys.c:198
 #, fuzzy
 #| msgid "filesystem too big.  Exiting."
 msgid "filter too big"
 msgstr "файловая система слишком велика.  Завершение работы."
 
-#: misc-utils/enosys.c:249
+#: misc-utils/enosys.c:256
 msgid "Seccomp non-functional"
 msgstr ""
 
-#: misc-utils/enosys.c:252
+#: misc-utils/enosys.c:259
 msgid "Could not run prctl(PR_SET_NO_NEW_PRIVS)"
 msgstr ""
 
-#: misc-utils/enosys.c:255
+#: misc-utils/enosys.c:262
 #, fuzzy
 msgid "Could not seccomp filter"
 msgstr "невозможно открыть %s"
 
-#: misc-utils/enosys.c:258
+#: misc-utils/enosys.c:265
 #, fuzzy
 msgid "Could not exec"
 msgstr "невозможно открыть %s"
@@ -10835,7 +10840,7 @@ msgstr ""
 msgid "filesystem label"
 msgstr "метка файловой системы"
 
-#: misc-utils/findmnt.c:121 misc-utils/lsblk.c:196 misc-utils/lslocks.c:84
+#: misc-utils/findmnt.c:121 misc-utils/lsblk.c:196 misc-utils/lslocks.c:85
 msgid "major:minor device number"
 msgstr ""
 
@@ -11055,7 +11060,7 @@ msgstr "  -u, --unqote                 Не заключать в кавычки
 msgid " -i, --invert           invert the sense of matching\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1441 misc-utils/lslocks.c:819 sys-utils/lsns.c:1284
+#: misc-utils/findmnt.c:1441 misc-utils/lslocks.c:817 sys-utils/lsns.c:1284
 #: sys-utils/rfkill.c:640
 #, fuzzy
 msgid " -J, --json             use JSON output format\n"
@@ -11078,7 +11083,7 @@ msgstr ""
 msgid " -O, --options <list>   limit the set of filesystems by mount options\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1446 misc-utils/lslocks.c:822
+#: misc-utils/findmnt.c:1446 misc-utils/lslocks.c:820
 #, fuzzy
 #| msgid " -o, --output <list>    the output columns to be shown\n"
 msgid " -o, --output <list>    output columns (see --list-columns)\n"
@@ -11148,7 +11153,7 @@ msgstr "   l   список типов известных файловых си�
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1461 misc-utils/lslocks.c:826 sys-utils/lsns.c:1292
+#: misc-utils/findmnt.c:1461 misc-utils/lslocks.c:824 sys-utils/lsns.c:1292
 msgid " -u, --notruncate       don't truncate text in columns\n"
 msgstr ""
 
@@ -11175,7 +11180,7 @@ msgstr "  -V, --version                Вывод информации о вер
 msgid "     --vfs-all          print all VFS options\n"
 msgstr " -a, --all            показать все устройства\n"
 
-#: misc-utils/findmnt.c:1471 misc-utils/lslocks.c:829
+#: misc-utils/findmnt.c:1471 misc-utils/lslocks.c:827
 #, fuzzy
 msgid " -H, --list-columns     list the available columns\n"
 msgstr "  -u, --unqote                 Не заключать в кавычки выходные данные\n"
@@ -11878,7 +11883,7 @@ msgstr "%s и %s являются взаимно исключающими"
 #: term-utils/setterm.c:571 term-utils/setterm.c:576 term-utils/setterm.c:600
 #: term-utils/setterm.c:605 term-utils/setterm.c:610 term-utils/setterm.c:615
 #: term-utils/setterm.c:620 term-utils/setterm.c:625 term-utils/setterm.c:634
-#: term-utils/setterm.c:669 text-utils/more.c:329
+#: term-utils/setterm.c:669 text-utils/more.c:330
 msgid "argument error"
 msgstr "ошибка аргумента"
 
@@ -11922,100 +11927,103 @@ msgstr ""
 msgid "cannot find process \"%s\""
 msgstr "невозможно найти процесс \"%s\""
 
-#: misc-utils/lastlog2.c:110
+#: misc-utils/lastlog2.c:111
 msgid " -b, --before DAYS       Print only records older than DAYS\n"
 msgstr ""
 
-#: misc-utils/lastlog2.c:111
+#: misc-utils/lastlog2.c:112
 #, fuzzy
 msgid " -C, --clear             Clear record of a user (requires -u)\n"
 msgstr "  -q, --quiet                  Отключение отчета об ошибках getopt(3)\n"
 
-#: misc-utils/lastlog2.c:112
+#: misc-utils/lastlog2.c:113
 msgid " -d, --database FILE     Use FILE as lastlog2 database\n"
 msgstr ""
 
-#: misc-utils/lastlog2.c:113
+#: misc-utils/lastlog2.c:114
 msgid " -i, --import FILE       Import data from old lastlog file\n"
 msgstr ""
 
-#: misc-utils/lastlog2.c:114
+#: misc-utils/lastlog2.c:115
 msgid " -r, --rename NEWNAME    Rename existing user to NEWNAME (requires -u)\n"
 msgstr ""
 
-#: misc-utils/lastlog2.c:115
+#: misc-utils/lastlog2.c:116
 #, fuzzy
 msgid " -s, --service           Display PAM service\n"
 msgstr "  -h, --help                   Это небольшое руководство по использованию\n"
 
-#: misc-utils/lastlog2.c:116
+#: misc-utils/lastlog2.c:117
 #, fuzzy
 msgid " -S, --set               ySet lastlog record to current time (requires -u)\n"
 msgstr "  -T, --test                   Проверка версии getopt(1)\n"
 
-#: misc-utils/lastlog2.c:117
+#: misc-utils/lastlog2.c:118
 msgid " -t, --time DAYS         Print only lastlog records more recent than DAYS\n"
 msgstr ""
 
-#: misc-utils/lastlog2.c:118
+#: misc-utils/lastlog2.c:119
 msgid " -u, --user LOGIN        Print lastlog record of the specified LOGIN\n"
 msgstr ""
 
-#: misc-utils/lastlog2.c:173 misc-utils/lastlog2.c:206
+#: misc-utils/lastlog2.c:166 misc-utils/lastlog2.c:199
 #, fuzzy
 msgid "Cannot parse days"
 msgstr "невозможно открыть %s"
 
-#: misc-utils/lastlog2.c:224
-msgid "Option -C, -i and -S cannot be used together\n"
+#: misc-utils/lastlog2.c:217
+msgid "Option -C, -i and -S cannot be used together"
 msgstr ""
 
-#: misc-utils/lastlog2.c:229
+#: misc-utils/lastlog2.c:221
 #, fuzzy
 #| msgid "Couldn't initialize PAM: %s"
-msgid "Couldn't initialize lastlog2 environment.\n"
+msgid "Couldn't initialize lastlog2 environment"
 msgstr "Невозможно инициализировать PAM: %s"
 
-#: misc-utils/lastlog2.c:239
-#, c-format
-msgid "Couldn't import entries from '%s'\n"
-msgstr ""
-
-#: misc-utils/lastlog2.c:249
-msgid "Options -C, -r and -S require option -u to specify the user\n"
-msgstr ""
-
-#: misc-utils/lastlog2.c:254 misc-utils/lastlog2.c:312
-#, fuzzy, c-format
-#| msgid "user %s does not exist"
-msgid "User '%s' does not exist.\n"
-msgstr "пользователь %s не существует"
-
-#: misc-utils/lastlog2.c:264
+#: misc-utils/lastlog2.c:226
 #, fuzzy, c-format
 #| msgid "could not read: %s"
-msgid "Couldn't remove entry for '%s'\n"
+msgid "Couldn't import entries from '%s'"
 msgstr "не удалось прочитать: %s"
 
-#: misc-utils/lastlog2.c:273
+#: misc-utils/lastlog2.c:235
+msgid "Options -C, -r and -S require option -u to specify the user"
+msgstr ""
+
+#: misc-utils/lastlog2.c:240 misc-utils/lastlog2.c:283
 #, fuzzy, c-format
+#| msgid "user %s does not exist"
+msgid "User '%s' does not exist."
+msgstr "пользователь %s не существует"
+
+#: misc-utils/lastlog2.c:246
+#, fuzzy, c-format
+#| msgid "could not read: %s"
+msgid "Couldn't remove entry for '%s'"
+msgstr "не удалось прочитать: %s"
+
+#: misc-utils/lastlog2.c:255
+#, fuzzy
 #| msgid "could not determine current format type"
-msgid "Could not determine current time: %s"
+msgid "Could not determine current time"
 msgstr "невозможно определить текущий тип формата"
 
-#: misc-utils/lastlog2.c:283
+#: misc-utils/lastlog2.c:260
 #, fuzzy, c-format
-msgid "Couldn't update login time for '%s'\n"
+msgid "Couldn't update login time for '%s'"
 msgstr "Введите тип файловой системы:"
 
-#: misc-utils/lastlog2.c:295
+#: misc-utils/lastlog2.c:267
 #, fuzzy, c-format
-msgid "Couldn't rename entry '%s' to '%s'\n"
+msgid "Couldn't rename entry '%s' to '%s'"
 msgstr "невозможно открыть %s: %s"
 
-#: misc-utils/lastlog2.c:332
-msgid "Couldn't read entries for all users\n"
-msgstr ""
+#: misc-utils/lastlog2.c:297
+#, fuzzy
+#| msgid "could not read: %s"
+msgid "Couldn't read entries for all users"
+msgstr "не удалось прочитать: %s"
 
 #: misc-utils/logger.c:230
 #, c-format
@@ -12541,7 +12549,7 @@ msgstr "максимальное количество открытых файл�
 msgid "maximum number of active zones"
 msgstr "максимальное количество процессов"
 
-#: misc-utils/lsblk.c:1347 misc-utils/lsfd.c:1261
+#: misc-utils/lsblk.c:1347 misc-utils/lsfd.c:1272
 #, fuzzy
 #| msgid "Failed to apply script %s"
 msgid "failed to apply filter"
@@ -12589,12 +12597,12 @@ msgstr "список исключенных устройств слишком в
 msgid "the list of included devices is too large (limit is %d devices)"
 msgstr "список включенных устройств слишком велик (предел - %d устройств)"
 
-#: misc-utils/lsblk.c:2119 misc-utils/lsfd.c:1916
+#: misc-utils/lsblk.c:2119 misc-utils/lsfd.c:1955
 #, fuzzy
 msgid "failed to allocate filter"
 msgstr "Невозможно выделить буфер.\n"
 
-#: misc-utils/lsblk.c:2121 misc-utils/lsfd.c:1918
+#: misc-utils/lsblk.c:2121 misc-utils/lsfd.c:1957
 #, fuzzy, c-format
 msgid "failed to parse \"%s\": %s"
 msgstr "%s: невозможно открыть : %s\n"
@@ -12609,7 +12617,7 @@ msgstr "непредвиденные аргументы"
 msgid "counter not properly specified"
 msgstr "не указаны точки монтирования"
 
-#: misc-utils/lsblk.c:2166 misc-utils/lsfd.c:2006
+#: misc-utils/lsblk.c:2166 misc-utils/lsfd.c:2045
 #, fuzzy
 msgid "failed to allocate counter"
 msgstr "Невозможно выделить буфер.\n"
@@ -12930,12 +12938,12 @@ msgstr "ioctl() %s при чтении времени завершился не�
 msgid "Could not get CPU clock of process %jd: %s"
 msgstr ""
 
-#: misc-utils/lsclocks.c:598 misc-utils/lslocks.c:387 misc-utils/uuidd.c:791
+#: misc-utils/lsclocks.c:599 misc-utils/lslocks.c:385 misc-utils/uuidd.c:791
 #: misc-utils/waitpid.c:54 sys-utils/nsenter.c:390
 msgid "failed to parse pid"
 msgstr "не удалось определить идентификатор процесса"
 
-#: misc-utils/lsclocks.c:626
+#: misc-utils/lsclocks.c:627
 #, fuzzy
 msgid "failed to get time"
 msgstr "не удалось задать данные"
@@ -13059,7 +13067,7 @@ msgstr ""
 msgid "remote IPv6 address"
 msgstr ""
 
-#: misc-utils/lsfd.c:222 misc-utils/lslocks.c:83
+#: misc-utils/lsfd.c:222 misc-utils/lslocks.c:84
 #, fuzzy
 #| msgid "logical core number"
 msgid "inode number"
@@ -13437,179 +13445,179 @@ msgstr "неизвестный пользователь %s"
 msgid "too many columns are added via filter expression"
 msgstr ""
 
-#: misc-utils/lsfd.c:1451
+#: misc-utils/lsfd.c:1462
 #, fuzzy
 msgid "failed to allocate an idcache"
 msgstr "не удалось определить заголовок GPT"
 
-#: misc-utils/lsfd.c:1669 misc-utils/lslocks.c:423
+#: misc-utils/lsfd.c:1680 misc-utils/lslocks.c:421
 msgid "(unknown)"
 msgstr "(неизвестно)"
 
-#: misc-utils/lsfd.c:1725 misc-utils/lsfd-sock-xinfo.c:157
-#: misc-utils/lsfd-sock-xinfo.c:296 misc-utils/lslocks.c:166
+#: misc-utils/lsfd.c:1763 misc-utils/lsfd-sock-xinfo.c:157
+#: misc-utils/lsfd-sock-xinfo.c:296 misc-utils/lslocks.c:167
 #, fuzzy
 msgid "failed to allocate memory"
 msgstr "Невозможно выделить буфер.\n"
 
-#: misc-utils/lsfd.c:1753
+#: misc-utils/lsfd.c:1792
 #, fuzzy, c-format
 msgid "unexpected value for pid specification: %s"
 msgstr "непредвиденные аргументы"
 
-#: misc-utils/lsfd.c:1755
+#: misc-utils/lsfd.c:1794
 #, c-format
 msgid "garbage at the end of pid specification: %s"
 msgstr ""
 
-#: misc-utils/lsfd.c:1757
+#: misc-utils/lsfd.c:1796
 #, c-format
 msgid "out of range value for pid specification: %ld"
 msgstr ""
 
-#: misc-utils/lsfd.c:1801 misc-utils/lslocks.c:504
+#: misc-utils/lsfd.c:1840 misc-utils/lslocks.c:502
 #, fuzzy
 msgid "failed to alloc procfs handler"
 msgstr "не удалось назначить обработчик сценария"
 
-#: misc-utils/lsfd.c:1805 misc-utils/lslocks.c:508
+#: misc-utils/lsfd.c:1844 misc-utils/lslocks.c:506
 #, fuzzy
 msgid "failed to open /proc"
 msgstr "%s: невозможно открыть : %s\n"
 
-#: misc-utils/lsfd.c:1857
+#: misc-utils/lsfd.c:1896
 #, fuzzy
 msgid " -l, --threads                list in threads level\n"
 msgstr "  -u, --unqote                 Не заключать в кавычки выходные данные\n"
 
-#: misc-utils/lsfd.c:1858
+#: misc-utils/lsfd.c:1897
 #, fuzzy
 msgid " -J, --json                   use JSON output format\n"
 msgstr "  -V, --version                Вывод информации о версии\n"
 
-#: misc-utils/lsfd.c:1859
+#: misc-utils/lsfd.c:1898
 #, fuzzy
 msgid " -n, --noheadings             don't print headings\n"
 msgstr "  -u, --unqote                 Не заключать в кавычки выходные данные\n"
 
-#: misc-utils/lsfd.c:1860
+#: misc-utils/lsfd.c:1899
 #, fuzzy
 #| msgid " -o, --output <list>           output columns\n"
 msgid " -o, --output <list>          output columns (see --list-columns)\n"
 msgstr " -o, --output <список>         поля вывода\n"
 
-#: misc-utils/lsfd.c:1861
+#: misc-utils/lsfd.c:1900
 #, fuzzy
 msgid " -r, --raw                    use raw output format\n"
 msgstr "  -V, --version                Вывод информации о версии\n"
 
-#: misc-utils/lsfd.c:1862
+#: misc-utils/lsfd.c:1901
 #, fuzzy
 msgid " -u, --notruncate             don't truncate text in columns\n"
 msgstr "  -u, --unqote                 Не заключать в кавычки выходные данные\n"
 
-#: misc-utils/lsfd.c:1863
+#: misc-utils/lsfd.c:1902
 #, fuzzy
 msgid " -p, --pid  <pid(s)>          collect information only specified processes\n"
 msgstr "  -Q, --quiet-output           Без обычных выходных данных\n"
 
-#: misc-utils/lsfd.c:1864
+#: misc-utils/lsfd.c:1903
 msgid " -i[4|6], --inet[=4|=6]       list only IPv4 and/or IPv6 sockets\n"
 msgstr ""
 
-#: misc-utils/lsfd.c:1865
+#: misc-utils/lsfd.c:1904
 #, fuzzy
 #| msgid " -i, --noissue              do not display issue file\n"
 msgid " -Q, --filter <expr>          apply display filter\n"
 msgstr " -i, --noissue              не показывать файл issue\n"
 
-#: misc-utils/lsfd.c:1866
+#: misc-utils/lsfd.c:1905
 #, fuzzy
 msgid "     --debug-filter           dump the internal data structure of filter and exit\n"
 msgstr " -i, --noissue              не показывать файл issue\n"
 
-#: misc-utils/lsfd.c:1867
+#: misc-utils/lsfd.c:1906
 #, fuzzy
 msgid " -C, --counter <name>:<expr>  define custom counter for --summary output\n"
 msgstr "  rdev -o N ...                   использование смещения байтов N"
 
-#: misc-utils/lsfd.c:1868
+#: misc-utils/lsfd.c:1907
 #, fuzzy
 #| msgid "     --nohints              do not print hints\n"
 msgid "     --dump-counters          dump counter definitions\n"
 msgstr "     --nohints              не показывать советы\n"
 
-#: misc-utils/lsfd.c:1869
+#: misc-utils/lsfd.c:1908
 msgid "     --summary[=<when>]       print summary information (only, append, or never)\n"
 msgstr ""
 
-#: misc-utils/lsfd.c:1872
+#: misc-utils/lsfd.c:1911
 #, fuzzy
 msgid " -H, --list-columns           list the available columns\n"
 msgstr "  -u, --unqote                 Не заключать в кавычки выходные данные\n"
 
-#: misc-utils/lsfd.c:1876
+#: misc-utils/lsfd.c:1915
 msgid "Default"
 msgstr ""
 
-#: misc-utils/lsfd.c:1877
+#: misc-utils/lsfd.c:1916
 msgid "With --threads"
 msgstr ""
 
-#: misc-utils/lsfd.c:1959
+#: misc-utils/lsfd.c:1998
 #, c-format
 msgid "too short counter specification: -C/--counter %s"
 msgstr ""
 
-#: misc-utils/lsfd.c:1963 misc-utils/lsfd.c:1969
+#: misc-utils/lsfd.c:2002 misc-utils/lsfd.c:2008
 #, c-format
 msgid "no name for counter: -C/--counter %s"
 msgstr ""
 
-#: misc-utils/lsfd.c:1973
+#: misc-utils/lsfd.c:2012
 #, c-format
 msgid "empty counter expression given: -C/--counter %s"
 msgstr ""
 
-#: misc-utils/lsfd.c:1981
+#: misc-utils/lsfd.c:2020
 #, c-format
 msgid "don't use `{' in the name of a counter: %s"
 msgstr ""
 
-#: misc-utils/lsfd.c:2077
+#: misc-utils/lsfd.c:2116
 #, fuzzy
 msgid "failed to allocate summary table"
 msgstr "Невозможно выделить буфер.\n"
 
-#: misc-utils/lsfd.c:2087
+#: misc-utils/lsfd.c:2126
 msgid "VALUE"
 msgstr ""
 
-#: misc-utils/lsfd.c:2089 misc-utils/lsfd.c:2095
+#: misc-utils/lsfd.c:2128 misc-utils/lsfd.c:2134
 #, fuzzy
 msgid "failed to allocate summary column"
 msgstr "Невозможно выделить буфер.\n"
 
-#: misc-utils/lsfd.c:2093
+#: misc-utils/lsfd.c:2132
 msgid "COUNTER"
 msgstr ""
 
-#: misc-utils/lsfd.c:2120
+#: misc-utils/lsfd.c:2159
 #, fuzzy
 msgid "failed to allocate summary line"
 msgstr "Невозможно выделить буфер.\n"
 
-#: misc-utils/lsfd.c:2124 misc-utils/lsfd.c:2126
+#: misc-utils/lsfd.c:2163 misc-utils/lsfd.c:2165
 #, fuzzy
 msgid "failed to add summary data"
 msgstr "не удалось добавить данные в таблицу вывода"
 
-#: misc-utils/lsfd.c:2275
+#: misc-utils/lsfd.c:2314
 #, fuzzy, c-format
 msgid "unknown -i/--inet argument: %s"
 msgstr "%s: неизвестный аргумент: %s\n"
 
-#: misc-utils/lsfd.c:2301 sys-utils/lsmem.c:634
+#: misc-utils/lsfd.c:2340 sys-utils/lsmem.c:634
 #, fuzzy
 msgid "unsupported --summary argument"
 msgstr "%s: неизвестный аргумент: %s\n"
@@ -13624,133 +13632,133 @@ msgstr "не удалось определить заголовок GPT"
 msgid "failed to alloc path context for /var/run/netns"
 msgstr "Невозможно выделить буфер.\n"
 
-#: misc-utils/lslocks.c:79
+#: misc-utils/lslocks.c:80
 msgid "command of the process holding the lock"
 msgstr ""
 
-#: misc-utils/lslocks.c:80
+#: misc-utils/lslocks.c:81
 msgid "PID of the process holding the lock"
 msgstr ""
 
-#: misc-utils/lslocks.c:81
+#: misc-utils/lslocks.c:82
 #, fuzzy
 msgid "kind of lock"
 msgstr "не удалось задать данные"
 
-#: misc-utils/lslocks.c:82
+#: misc-utils/lslocks.c:83
 msgid "size of the lock, use <number> if --bytes is given"
 msgstr ""
 
-#: misc-utils/lslocks.c:85
+#: misc-utils/lslocks.c:86
 msgid "lock access mode"
 msgstr ""
 
-#: misc-utils/lslocks.c:86
+#: misc-utils/lslocks.c:87
 msgid "mandatory state of the lock: 0 (none), 1 (set)"
 msgstr ""
 
-#: misc-utils/lslocks.c:87
+#: misc-utils/lslocks.c:88
 msgid "relative byte offset of the lock"
 msgstr ""
 
-#: misc-utils/lslocks.c:88
+#: misc-utils/lslocks.c:89
 msgid "ending offset of the lock"
 msgstr ""
 
-#: misc-utils/lslocks.c:89
+#: misc-utils/lslocks.c:90
 msgid "path of the locked file"
 msgstr "путь к заблокированному файлу"
 
-#: misc-utils/lslocks.c:90
+#: misc-utils/lslocks.c:91
 msgid "PID of the process blocking the lock"
 msgstr "идентификатор процесса, блокирующего доступ"
 
-#: misc-utils/lslocks.c:91
+#: misc-utils/lslocks.c:92
 msgid "HOLDERS of the lock"
 msgstr ""
 
-#: misc-utils/lslocks.c:288
+#: misc-utils/lslocks.c:286
 #, fuzzy, c-format
 msgid "failed to parse '%s'"
 msgstr "%s: невозможно открыть : %s\n"
 
-#: misc-utils/lslocks.c:360
+#: misc-utils/lslocks.c:358
 msgid "failed to parse ID"
 msgstr "не удалось определить идентификатор"
 
-#: misc-utils/lslocks.c:405
+#: misc-utils/lslocks.c:403
 msgid "failed to parse start"
 msgstr "не удалось определить начало"
 
-#: misc-utils/lslocks.c:412
+#: misc-utils/lslocks.c:410
 msgid "failed to parse end"
 msgstr "не удалось определить конец"
 
-#: misc-utils/lslocks.c:425
+#: misc-utils/lslocks.c:423
 msgid "(undefined)"
 msgstr ""
 
-#: misc-utils/lslocks.c:815
+#: misc-utils/lslocks.c:813
 #, fuzzy
 msgid "List local system locks.\n"
 msgstr "Невозможно установить системные часы.\n"
 
-#: misc-utils/lslocks.c:818
+#: misc-utils/lslocks.c:816
 #, fuzzy
 msgid " -b, --bytes            print SIZE in bytes rather than in human readable format\n"
 msgstr "  -u, --unqote                 Не заключать в кавычки выходные данные\n"
 
-#: misc-utils/lslocks.c:820
+#: misc-utils/lslocks.c:818
 msgid " -i, --noinaccessible   ignore locks without read permissions\n"
 msgstr ""
 
-#: misc-utils/lslocks.c:821 sys-utils/lsns.c:1286 sys-utils/rfkill.c:641
+#: misc-utils/lslocks.c:819 sys-utils/lsns.c:1286 sys-utils/rfkill.c:641
 #, fuzzy
 msgid " -n, --noheadings       don't print headings\n"
 msgstr "  -u, --unqote                 Не заключать в кавычки выходные данные\n"
 
-#: misc-utils/lslocks.c:823 sys-utils/lsns.c:1288 sys-utils/rfkill.c:643
+#: misc-utils/lslocks.c:821 sys-utils/lsns.c:1288 sys-utils/rfkill.c:643
 #, fuzzy
 msgid "     --output-all       output all columns\n"
 msgstr " -O, --output-all     выводить все столбцы\n"
 
-#: misc-utils/lslocks.c:824
+#: misc-utils/lslocks.c:822
 msgid " -p, --pid <pid>        display only locks held by this process\n"
 msgstr ""
 
-#: misc-utils/lslocks.c:825 sys-utils/lsns.c:1291 sys-utils/rfkill.c:644
+#: misc-utils/lslocks.c:823 sys-utils/lsns.c:1291 sys-utils/rfkill.c:644
 #, fuzzy
 msgid " -r, --raw              use the raw output format\n"
 msgstr "  -V, --version                Вывод информации о версии\n"
 
-#: misc-utils/lslocks.c:912 schedutils/chrt.c:413 schedutils/ionice.c:179
+#: misc-utils/lslocks.c:910 schedutils/chrt.c:413 schedutils/ionice.c:179
 #: schedutils/taskset.c:190 schedutils/uclampset.c:249 sys-utils/choom.c:102
 #: sys-utils/lsns.c:1381 sys-utils/prlimit.c:598
 msgid "invalid PID argument"
 msgstr "недопустимый аргумент PID"
 
-#: misc-utils/mcookie.c:86
+#: misc-utils/mcookie.c:90
 msgid "Generate magic cookies for xauth.\n"
 msgstr ""
 
-#: misc-utils/mcookie.c:89
+#: misc-utils/mcookie.c:93
 msgid " -f, --file <file>     use file as a cookie seed\n"
 msgstr ""
 
-#: misc-utils/mcookie.c:90
+#: misc-utils/mcookie.c:94
 msgid " -m, --max-size <num>  limit how much is read from seed files\n"
 msgstr ""
 
-#: misc-utils/mcookie.c:91
+#: misc-utils/mcookie.c:95
 msgid " -v, --verbose         explain what is being done\n"
 msgstr " -v, --verbose         разъяснение выполняемых действий\n"
 
-#: misc-utils/mcookie.c:97 misc-utils/wipefs.c:653 sys-utils/blkdiscard.c:111
+#: misc-utils/mcookie.c:101 misc-utils/wipefs.c:653 sys-utils/blkdiscard.c:111
 #: sys-utils/fallocate.c:107 sys-utils/fstrim.c:475
 msgid "<num>"
 msgstr ""
 
-#: misc-utils/mcookie.c:124
+#: misc-utils/mcookie.c:128
 #, c-format
 msgid "Got %zu byte from %s\n"
 msgid_plural "Got %zu bytes from %s\n"
@@ -13758,21 +13766,21 @@ msgstr[0] "Получен %zu байт из %s\n"
 msgstr[1] "Получено %zu байта из %s\n"
 msgstr[2] "Получено %zu байт из %s\n"
 
-#: misc-utils/mcookie.c:129
+#: misc-utils/mcookie.c:133
 #, c-format
 msgid "closing %s failed"
 msgstr "не удалось закрыть %s"
 
-#: misc-utils/mcookie.c:168 sys-utils/blkdiscard.c:204 sys-utils/fstrim.c:542
+#: misc-utils/mcookie.c:172 sys-utils/blkdiscard.c:204 sys-utils/fstrim.c:542
 #: text-utils/hexdump.c:122
 msgid "failed to parse length"
 msgstr "не удалось определить длину"
 
-#: misc-utils/mcookie.c:181
+#: misc-utils/mcookie.c:185
 msgid "--max-size ignored when used without --file"
 msgstr ""
 
-#: misc-utils/mcookie.c:190
+#: misc-utils/mcookie.c:194
 #, c-format
 msgid "Got %d byte from %s\n"
 msgid_plural "Got %d bytes from %s\n"
@@ -14195,7 +14203,7 @@ msgstr ""
 msgid "too many file descriptors received, check uuidd.socket"
 msgstr ""
 
-#: misc-utils/uuidd.c:452 text-utils/more.c:1366
+#: misc-utils/uuidd.c:452 text-utils/more.c:1383
 #, fuzzy
 msgid "poll failed"
 msgstr "ошибка poll()"
@@ -16407,45 +16415,45 @@ msgstr "невозможно открыть %s"
 #. where %a is abbreviated name of the day, %b is abbreviated month
 #. name and %e is day of the month as a decimal number. Please, set
 #. proper month/day order here
-#: sys-utils/dmesg.c:1045
+#: sys-utils/dmesg.c:1049
 msgid "%a %b %e %H:%M:%S %Y"
 msgstr ""
 
 #. TRANSLATORS: dmesg uses strftime() fo generate date-time string
 #. where: %b is abbreviated month and %e is day of the month as a
 #. decimal number. Please, set proper month/day order here.
-#: sys-utils/dmesg.c:1055
+#: sys-utils/dmesg.c:1059
 msgid "%b%e %H:%M"
 msgstr ""
 
-#: sys-utils/dmesg.c:1561
+#: sys-utils/dmesg.c:1569
 #, fuzzy
 #| msgid "data block too large"
 msgid "record too large"
 msgstr "блок данный слишком большой"
 
-#: sys-utils/dmesg.c:1787
+#: sys-utils/dmesg.c:1795
 msgid "invalid buffer size argument"
 msgstr ""
 
-#: sys-utils/dmesg.c:1907
+#: sys-utils/dmesg.c:1915
 msgid "--raw can be used together with --level or --facility only when reading messages from /dev/kmsg"
 msgstr ""
 
-#: sys-utils/dmesg.c:1911
+#: sys-utils/dmesg.c:1919
 msgid "only kmsg supports multi-line messages"
 msgstr ""
 
-#: sys-utils/dmesg.c:1926
+#: sys-utils/dmesg.c:1934
 msgid "read kernel buffer failed"
 msgstr "чтение буфера ядра завершилось неудачно"
 
-#: sys-utils/dmesg.c:1934
+#: sys-utils/dmesg.c:1942
 #, fuzzy
 msgid "clear kernel buffer failed"
 msgstr "чтение буфера ядра завершилось неудачно"
 
-#: sys-utils/dmesg.c:1950
+#: sys-utils/dmesg.c:1958
 #, fuzzy
 msgid "klogctl failed"
 msgstr "fsync завершился неудачей"
@@ -16596,7 +16604,7 @@ msgid "%s: unmounting"
 msgstr "%s: размонтируется"
 
 #: sys-utils/eject.c:662 sys-utils/mount.c:51 sys-utils/umount.c:122
-#: text-utils/more.c:1270
+#: text-utils/more.c:1271
 #, fuzzy
 msgid "drop permissions failed"
 msgstr "доступ запрещен"
@@ -19722,7 +19730,18 @@ msgstr "%s: предупреждение - невозможно определи
 msgid "Failed to extract the node number"
 msgstr "Невозможно выделить буфер.\n"
 
-#: sys-utils/lscpu-virt.c:501
+#: sys-utils/lscpu-virt.c:492 sys-utils/lscpu-virt.c:514
+#, fuzzy
+msgid "cannot restore signal mask"
+msgstr "Невозможно установить обработчик сигнала"
+
+#: sys-utils/lscpu-virt.c:499
+#, fuzzy
+#| msgid "cannot block signals"
+msgid "cannot unblock signal"
+msgstr "не могу заблокировать сигналы"
+
+#: sys-utils/lscpu-virt.c:511
 #, fuzzy
 msgid "cannot restore signal handler"
 msgstr "Невозможно установить обработчик сигнала"
@@ -22410,25 +22429,25 @@ msgstr "неверный id: %s\n"
 msgid "could not open file for landlock: %s"
 msgstr "не удалось прочитать: %s"
 
-#: sys-utils/setpriv-landlock.c:175
+#: sys-utils/setpriv-landlock.c:178
 #, fuzzy
 msgid "landlock_create_ruleset failed"
 msgstr "malloc завершился неудачей"
 
-#: sys-utils/setpriv-landlock.c:184
+#: sys-utils/setpriv-landlock.c:187
 #, fuzzy
 msgid "adding landlock rule failed"
 msgstr "malloc завершился неудачей"
 
-#: sys-utils/setpriv-landlock.c:188
+#: sys-utils/setpriv-landlock.c:191
 msgid "disallow granting new privileges for landlock failed"
 msgstr ""
 
-#: sys-utils/setpriv-landlock.c:191
+#: sys-utils/setpriv-landlock.c:194
 msgid "landlock_restrict_self faild"
 msgstr ""
 
-#: sys-utils/setpriv-landlock.c:199
+#: sys-utils/setpriv-landlock.c:202
 #, fuzzy, c-format
 msgid "Landlock accesses:\n"
 msgstr "невозможно открыть %s"
@@ -25111,7 +25130,7 @@ msgstr ""
 msgid "option --table-columns or --table-column required for --json"
 msgstr ""
 
-#: text-utils/hexdump.c:167 text-utils/more.c:237
+#: text-utils/hexdump.c:167 text-utils/more.c:238
 #, fuzzy, c-format
 msgid " %s [options] <file>...\n"
 msgstr "Использование: %s [опции] устройство...\n"
@@ -25176,7 +25195,7 @@ msgstr ""
 msgid "<length> and <offset>"
 msgstr ""
 
-#: text-utils/hexdump-display.c:366
+#: text-utils/hexdump-display.c:374
 #, fuzzy
 msgid "all input file arguments failed"
 msgstr "нехватка памяти"
@@ -25206,80 +25225,80 @@ msgstr "hexdump: неверный символ преобразования %%%s
 msgid "byte count with multiple conversion characters"
 msgstr "hexdump: число байт с многочисленными символами преобразования.\n"
 
-#: text-utils/line.c:34
+#: text-utils/line.c:33
 msgid "Read one line.\n"
 msgstr ""
 
-#: text-utils/more.c:240
+#: text-utils/more.c:241
 msgid "Display the contents of a file in a terminal."
 msgstr ""
 
-#: text-utils/more.c:243
+#: text-utils/more.c:244
 #, fuzzy
 msgid " -d, --silent          display help instead of ringing bell"
 msgstr "  -h, --help         показать эту справку и выйти\n"
 
-#: text-utils/more.c:244
+#: text-utils/more.c:245
 #, fuzzy
 msgid " -f, --logical         count logical rather than screen lines"
 msgstr "              параметры\n"
 
-#: text-utils/more.c:245
+#: text-utils/more.c:246
 #, fuzzy
 msgid " -l, --no-pause        suppress pause after form feed"
 msgstr "    -q  [или --quiet]:      подавление предупреждающих сообщений"
 
-#: text-utils/more.c:246
+#: text-utils/more.c:247
 msgid " -c, --print-over      do not scroll, display text and clean line ends"
 msgstr ""
 
-#: text-utils/more.c:247
+#: text-utils/more.c:248
 msgid " -p, --clean-print     do not scroll, clean screen and display text"
 msgstr ""
 
-#: text-utils/more.c:248
+#: text-utils/more.c:249
 msgid " -e, --exit-on-eof     exit on end-of-file"
 msgstr ""
 
-#: text-utils/more.c:249
+#: text-utils/more.c:250
 msgid " -s, --squeeze         squeeze multiple blank lines into one"
 msgstr ""
 
-#: text-utils/more.c:250
+#: text-utils/more.c:251
 #, fuzzy
 msgid " -u, --plain           suppress underlining and bold"
 msgstr "  -h, --help                   Это небольшое руководство по использованию\n"
 
-#: text-utils/more.c:251
+#: text-utils/more.c:252
 #, fuzzy
 msgid " -n, --lines <number>  the number of lines per screenful"
 msgstr "Введите количество цилиндров:"
 
-#: text-utils/more.c:252
+#: text-utils/more.c:253
 #, fuzzy
 msgid " -<number>             same as --lines"
 msgstr "  -h, --help                   Это небольшое руководство по использованию\n"
 
-#: text-utils/more.c:253
+#: text-utils/more.c:254
 #, fuzzy
 msgid " +<number>             display file beginning from line number"
 msgstr "  -h, --help                   Это небольшое руководство по использованию\n"
 
-#: text-utils/more.c:254
+#: text-utils/more.c:255
 msgid " +/<pattern>           display file beginning from pattern match"
 msgstr ""
 
-#: text-utils/more.c:357
+#: text-utils/more.c:358
 #, fuzzy
 msgid "MORE environment variable"
 msgstr "Ошибка записи раздела на %s\n"
 
-#: text-utils/more.c:410
+#: text-utils/more.c:411
 #, fuzzy
 msgid "magic failed"
 msgstr "выполение mkdir завершилось неудачей: %s"
 
-#: text-utils/more.c:414 text-utils/more.c:433
+#: text-utils/more.c:415 text-utils/more.c:434
 #, c-format
 msgid ""
 "\n"
@@ -25290,7 +25309,7 @@ msgstr ""
 "******** %s: Не текстовый файл ********\n"
 "\n"
 
-#: text-utils/more.c:467
+#: text-utils/more.c:468
 #, c-format
 msgid ""
 "\n"
@@ -25301,27 +25320,27 @@ msgstr ""
 "*** %s: каталог ***\n"
 "\n"
 
-#: text-utils/more.c:729
+#: text-utils/more.c:730
 #, c-format
 msgid "--More--"
 msgstr "--Далее--"
 
-#: text-utils/more.c:731
+#: text-utils/more.c:732
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(Следующий файл: %s)"
 
-#: text-utils/more.c:736 text-utils/more.c:742
+#: text-utils/more.c:737 text-utils/more.c:743
 #, c-format
 msgid "(END)"
 msgstr ""
 
-#: text-utils/more.c:747
+#: text-utils/more.c:748
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Нажмите пробел для продолжения, 'q' для выхода.]"
 
-#: text-utils/more.c:949
+#: text-utils/more.c:950
 msgid ""
 "\n"
 "...Skipping "
@@ -25329,40 +25348,40 @@ msgstr ""
 "\n"
 "...Пропускается "
 
-#: text-utils/more.c:953
+#: text-utils/more.c:954
 msgid "...Skipping to file "
 msgstr "...Пропускается до файла "
 
-#: text-utils/more.c:955
+#: text-utils/more.c:956
 msgid "...Skipping back to file "
 msgstr "...Пропускается обратно до файла "
 
-#: text-utils/more.c:1117
+#: text-utils/more.c:1118
 msgid "Line too long"
 msgstr "Строка слишком длинная"
 
-#: text-utils/more.c:1160
+#: text-utils/more.c:1161
 msgid "No previous command to substitute for"
 msgstr "Нет предыдущей команды для замены"
 
-#: text-utils/more.c:1189
+#: text-utils/more.c:1190
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr "[Используйте q или or Q для выхода]"
 
-#: text-utils/more.c:1274
+#: text-utils/more.c:1275
 msgid "exec failed\n"
 msgstr "выполнение завершилось неудачей\n"
 
-#: text-utils/more.c:1284
+#: text-utils/more.c:1285
 msgid "can't fork\n"
 msgstr "невозможно создать дочерний процесс\n"
 
-#: text-utils/more.c:1445
+#: text-utils/more.c:1483
 msgid "...skipping\n"
 msgstr "...пропускается\n"
 
-#: text-utils/more.c:1482
+#: text-utils/more.c:1520
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -25370,11 +25389,11 @@ msgstr ""
 "\n"
 "Шаблон не найден\n"
 
-#: text-utils/more.c:1486 text-utils/pg.c:1032 text-utils/pg.c:1180
+#: text-utils/more.c:1524 text-utils/pg.c:1032 text-utils/pg.c:1180
 msgid "Pattern not found"
 msgstr "Шаблон не найден"
 
-#: text-utils/more.c:1504
+#: text-utils/more.c:1542
 #, fuzzy
 msgid ""
 "Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
@@ -25384,7 +25403,7 @@ msgstr ""
 "Большинству команд опционально предшествует числовой аргумент k. Значения по умолчанию в кавычках.\n"
 "Звездочка (*) означает, что аргумент становится новым значением по умолчанию.\n"
 
-#: text-utils/more.c:1510
+#: text-utils/more.c:1548
 #, fuzzy, c-format
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
@@ -25427,7 +25446,7 @@ msgstr ""
 ":f                      Отображение имени текущего файла и номера строки\n"
 ".                       Повторение предыдущей команды\n"
 
-#: text-utils/more.c:1576
+#: text-utils/more.c:1614
 #, c-format
 msgid "...back %d page"
 msgid_plural "...back %d pages"
@@ -25435,7 +25454,7 @@ msgstr[0] "...назад на %d страницу"
 msgstr[1] "...назад на %d страницы"
 msgstr[2] "...назад на %d страниц"
 
-#: text-utils/more.c:1600
+#: text-utils/more.c:1638
 #, c-format
 msgid "...skipping %d line"
 msgid_plural "...skipping %d lines"
@@ -25443,7 +25462,7 @@ msgstr[0] "...пропускается %d строка"
 msgstr[1] "...пропускаются %d строки"
 msgstr[2] "...пропускаются %d строк"
 
-#: text-utils/more.c:1700
+#: text-utils/more.c:1738
 msgid ""
 "\n"
 "***Back***\n"
@@ -25453,21 +25472,21 @@ msgstr ""
 "***Назад***\n"
 "\n"
 
-#: text-utils/more.c:1719
+#: text-utils/more.c:1757
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "\"%s\" строка %d"
 
-#: text-utils/more.c:1722
+#: text-utils/more.c:1760
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[Не файл] строка %d"
 
-#: text-utils/more.c:1728
+#: text-utils/more.c:1766
 msgid "No previous regular expression"
 msgstr "Нет предыдущего регулярного выражения"
 
-#: text-utils/more.c:1797
+#: text-utils/more.c:1835
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[Нажмите 'h' для получения инструкций.]"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.23.1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2024-01-24 10:55+0100\n"
+"POT-Creation-Date: 2024-02-29 21:01+0100\n"
 "PO-Revision-Date: 2013-06-07 23:29+0800\n"
 "Last-Translator: Wei-Lun Chao <bluebat@member.fsf.org>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -55,7 +55,7 @@ msgstr "不足引數"
 #: login-utils/utmpdump.c:142 login-utils/utmpdump.c:367
 #: login-utils/utmpdump.c:391 login-utils/vipw.c:257 login-utils/vipw.c:275
 #: misc-utils/fadvise.c:148 misc-utils/findmnt.c:1291 misc-utils/logger.c:1247
-#: misc-utils/mcookie.c:119 misc-utils/pipesz.c:162 misc-utils/uuidd.c:235
+#: misc-utils/mcookie.c:123 misc-utils/pipesz.c:162 misc-utils/uuidd.c:235
 #: sys-utils/blkdiscard.c:248 sys-utils/blkpr.c:164 sys-utils/blkzone.c:144
 #: sys-utils/dmesg.c:671 sys-utils/eject.c:501 sys-utils/eject.c:696
 #: sys-utils/fallocate.c:407 sys-utils/fsfreeze.c:116 sys-utils/fstrim.c:106
@@ -74,7 +74,7 @@ msgstr "不足引數"
 #: term-utils/scriptlive.c:259 term-utils/scriptlive.c:262
 #: term-utils/scriptreplay.c:282 term-utils/scriptreplay.c:285
 #: term-utils/scriptreplay.c:288 term-utils/scriptreplay.c:291
-#: term-utils/wall.c:393 text-utils/colcrt.c:284 text-utils/more.c:459
+#: term-utils/wall.c:393 text-utils/colcrt.c:284 text-utils/more.c:460
 #: text-utils/rev.c:165 text-utils/ul.c:637
 #, c-format
 msgid "cannot open %s"
@@ -797,7 +797,7 @@ msgid " -r, --read-only          forced open cfdisk in read-only mode\n"
 msgstr " -s  --shared             提取共享的鎖定\n"
 
 #: disk-utils/cfdisk.c:2781 disk-utils/fdisk.c:1111 disk-utils/sfdisk.c:2350
-#: misc-utils/cal.c:421 sys-utils/dmesg.c:1760 text-utils/hexdump.c:119
+#: misc-utils/cal.c:421 sys-utils/dmesg.c:1768 text-utils/hexdump.c:119
 #, fuzzy
 msgid "unsupported color mode"
 msgstr "不受支援的命令"
@@ -911,7 +911,7 @@ msgstr "無效的引數：%s"
 #: sys-utils/swapon.c:543 sys-utils/switch_root.c:93
 #: sys-utils/switch_root.c:134 sys-utils/switch_root.c:139
 #: sys-utils/unshare.c:211 term-utils/mesg.c:144 term-utils/mesg.c:156
-#: text-utils/more.c:463
+#: text-utils/more.c:464
 #, fuzzy, c-format
 msgid "stat of %s failed"
 msgstr "stat 失敗"
@@ -1279,14 +1279,14 @@ msgstr "警告：-b (設定磁區大小) 選項應該與一個指定裝置共同
 #: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:592
 #: misc-utils/whereis.c:603 misc-utils/whereis.c:614 misc-utils/whereis.c:659
 #: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:207
-#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1841
+#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1849
 #: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:318 sys-utils/losetup.c:997
 #: sys-utils/lscpu.c:1346 sys-utils/lsmem.c:649 sys-utils/mount.c:861
 #: sys-utils/mount.c:887 sys-utils/mount.c:895 sys-utils/mount.c:947
 #: sys-utils/mount.c:960 sys-utils/mount.c:1032 sys-utils/mountpoint.c:182
 #: sys-utils/pivot_root.c:66 sys-utils/swapoff.c:271 sys-utils/swapon.c:1024
 #: sys-utils/switch_root.c:270 sys-utils/umount.c:629 term-utils/setterm.c:1200
-#: text-utils/col.c:584 text-utils/more.c:2100
+#: text-utils/col.c:584 text-utils/more.c:2138
 #, fuzzy
 msgid "bad usage"
 msgstr "不當的值"
@@ -1373,7 +1373,7 @@ msgstr "對齊偏移值：%lu 位元組\n"
 
 #: disk-utils/fdisk-list.c:130 disk-utils/fdisk-list.c:251
 #: disk-utils/fsck.c:1264 misc-utils/lsblk.c:2200 misc-utils/lsblk.c:2254
-#: misc-utils/lsfd.c:1923
+#: misc-utils/lsfd.c:1962
 #, fuzzy
 msgid "failed to allocate iterator"
 msgstr "配置迭代器時失敗"
@@ -1381,8 +1381,8 @@ msgstr "配置迭代器時失敗"
 #: disk-utils/fdisk-list.c:136 disk-utils/fdisk-list.c:257
 #: disk-utils/partx.c:676 include/column-list-table.h:45
 #: login-utils/lslogins.c:1113 misc-utils/fincore.c:500
-#: misc-utils/findmnt.c:1896 misc-utils/lsblk.c:2729 misc-utils/lsclocks.c:648
-#: misc-utils/lsfd.c:2347 misc-utils/lslocks.c:756 misc-utils/uuidparse.c:252
+#: misc-utils/findmnt.c:1896 misc-utils/lsblk.c:2729 misc-utils/lsclocks.c:649
+#: misc-utils/lsfd.c:2386 misc-utils/lslocks.c:754 misc-utils/uuidparse.c:252
 #: misc-utils/wipefs.c:157 sys-utils/losetup.c:389 sys-utils/lscpu.c:596
 #: sys-utils/lscpu.c:751 sys-utils/lscpu.c:966 sys-utils/lsipc.c:354
 #: sys-utils/prlimit.c:303 sys-utils/rfkill.c:475 sys-utils/swapon.c:309
@@ -1395,7 +1395,7 @@ msgstr "初始化輸出表格時失敗"
 #: disk-utils/partx.c:590 include/column-list-table.h:72
 #: login-utils/lslogins.c:1173 misc-utils/fincore.c:218
 #: misc-utils/findmnt.c:847 misc-utils/findmnt.c:868 misc-utils/lsblk.c:1331
-#: misc-utils/lsclocks.c:294 misc-utils/lsfd.c:1250 misc-utils/lslocks.c:621
+#: misc-utils/lsclocks.c:294 misc-utils/lsfd.c:1261 misc-utils/lslocks.c:619
 #: misc-utils/uuidparse.c:154 misc-utils/wipefs.c:202 sys-utils/losetup.c:412
 #: sys-utils/losetup.c:441 sys-utils/lscpu.c:510 sys-utils/lscpu.c:786
 #: sys-utils/lscpu.c:818 sys-utils/lsipc.c:486 sys-utils/lsipc.c:567
@@ -1426,7 +1426,7 @@ msgstr "callocate cpu 集合時失敗"
 #: misc-utils/lsfd-file.c:731 misc-utils/lsfd-sock.c:75
 #: misc-utils/lsfd-sock.c:132 misc-utils/lsfd-sock.c:134
 #: misc-utils/lsfd-unkn.c:123 misc-utils/lsfd-unkn.c:125
-#: misc-utils/lslocks.c:702 misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242
+#: misc-utils/lslocks.c:700 misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242
 #: sys-utils/losetup.c:369 sys-utils/lscpu.c:578 sys-utils/lscpu.c:793
 #: sys-utils/lscpu.c:822 sys-utils/lscpu.c:832 sys-utils/lsipc.c:526
 #: sys-utils/lsipc.c:651 sys-utils/prlimit.c:267 sys-utils/rfkill.c:418
@@ -4072,7 +4072,7 @@ msgstr "%s：無法設定迴圈裝置"
 
 #: disk-utils/partx.c:168 login-utils/lslogins.c:322 misc-utils/fincore.c:151
 #: misc-utils/findmnt.c:393 misc-utils/lsblk.c:373 misc-utils/lsclocks.c:171
-#: misc-utils/lsfd.c:564 misc-utils/lslocks.c:566 misc-utils/uuidparse.c:125
+#: misc-utils/lsfd.c:564 misc-utils/lslocks.c:564 misc-utils/uuidparse.c:125
 #: misc-utils/wipefs.c:132 sys-utils/irq-common.c:95 sys-utils/losetup.c:130
 #: sys-utils/lscpu.c:192 sys-utils/lscpu.c:207 sys-utils/lsipc.c:233
 #: sys-utils/lsmem.c:171 sys-utils/lsns.c:261 sys-utils/prlimit.c:283
@@ -4175,8 +4175,8 @@ msgstr[0] "#%2d：%9 ju-%9 ju (%9 ju 磁區，%6 ju MB)\n"
 
 #: disk-utils/partx.c:687 include/column-list-table.h:62
 #: misc-utils/fincore.c:514 misc-utils/findmnt.c:1925 misc-utils/lsblk.c:2270
-#: misc-utils/lsblk.c:2773 misc-utils/lsclocks.c:656 misc-utils/lsfd.c:615
-#: misc-utils/lsfd.c:2361 misc-utils/lslocks.c:771 sys-utils/losetup.c:403
+#: misc-utils/lsblk.c:2773 misc-utils/lsclocks.c:657 misc-utils/lsfd.c:615
+#: misc-utils/lsfd.c:2400 misc-utils/lslocks.c:769 sys-utils/losetup.c:403
 #: sys-utils/lscpu.c:608 sys-utils/lscpu.c:764 sys-utils/prlimit.c:312
 #: sys-utils/rfkill.c:488 sys-utils/swapon.c:318 sys-utils/wdctl.c:365
 #, fuzzy
@@ -4845,7 +4845,7 @@ msgstr ""
 msgid "   , 4G     Creates a 4GiB partition at default start offset.\n"
 msgstr "  n          由剩餘空間中新增一塊分割區"
 
-#: disk-utils/sfdisk.c:1546 sys-utils/dmesg.c:1944
+#: disk-utils/sfdisk.c:1546 sys-utils/dmesg.c:1952
 #, fuzzy
 msgid "unsupported command"
 msgstr "不受支援的命令"
@@ -8442,314 +8442,319 @@ msgstr "無法開啟 %s：%s\n"
 msgid "hush login status: restore original IDs failed"
 msgstr ""
 
-#: libmount/src/context.c:2738
+#: libmount/src/context.c:2740
 #, fuzzy, c-format
 msgid "operation failed: %m"
 msgstr "開啟失敗：%s"
 
-#: libmount/src/context_mount.c:1421
+#: libmount/src/context_mount.c:1417
 #, fuzzy, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "附加選項時失敗"
 
-#: libmount/src/context_mount.c:1431
+#: libmount/src/context_mount.c:1427
 #, fuzzy, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "%s 被防止寫入的，掛載唯讀"
 
-#: libmount/src/context_mount.c:1445
+#: libmount/src/context_mount.c:1441
 #, c-format
 msgid "operation permitted for root only"
 msgstr ""
 
-#: libmount/src/context_mount.c:1449
+#: libmount/src/context_mount.c:1445
 #, fuzzy, c-format
 msgid "%s is already mounted"
 msgstr "%s 已經掛載"
 
-#: libmount/src/context_mount.c:1455
+#: libmount/src/context_mount.c:1451
 #, fuzzy, c-format
 msgid "can't find in %s"
 msgstr "找不到 %s 在中 %s"
 
-#: libmount/src/context_mount.c:1458
+#: libmount/src/context_mount.c:1454
 #, fuzzy, c-format
 msgid "can't find mount point in %s"
 msgstr "找不到 mountpoint %s 在中 %s"
 
-#: libmount/src/context_mount.c:1461
+#: libmount/src/context_mount.c:1457
 #, fuzzy, c-format
 msgid "can't find mount source %s in %s"
 msgstr "找不到掛載來源 %s 在中 %s"
 
-#: libmount/src/context_mount.c:1466
+#: libmount/src/context_mount.c:1462
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr ""
 
-#: libmount/src/context_mount.c:1471
+#: libmount/src/context_mount.c:1467
 #, fuzzy, c-format
 msgid "failed to determine filesystem type"
 msgstr "%s：無法讀取速度"
 
-#: libmount/src/context_mount.c:1472
+#: libmount/src/context_mount.c:1468
 #, fuzzy, c-format
 msgid "no valid filesystem type specified"
 msgstr "未指定任何檔名"
 
-#: libmount/src/context_mount.c:1479
+#: libmount/src/context_mount.c:1475
 #, fuzzy, c-format
 msgid "can't find %s"
 msgstr "找不到 %s"
 
-#: libmount/src/context_mount.c:1481
+#: libmount/src/context_mount.c:1477
 #, fuzzy, c-format
 msgid "no mount source specified"
 msgstr "沒有 mountpoint 指定的。"
 
-#: libmount/src/context_mount.c:1492
+#: libmount/src/context_mount.c:1488
 #, fuzzy, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr "剖析掛載選項時失敗"
 
-#: libmount/src/context_mount.c:1493
+#: libmount/src/context_mount.c:1489
 #, fuzzy, c-format
 msgid "failed to parse mount options '%s'"
 msgstr "剖析掛載選項時失敗"
 
-#: libmount/src/context_mount.c:1496
+#: libmount/src/context_mount.c:1492
 #, fuzzy, c-format
 msgid "failed to parse mount options: %m"
 msgstr "剖析掛載選項時失敗"
 
-#: libmount/src/context_mount.c:1497
+#: libmount/src/context_mount.c:1493
 #, fuzzy, c-format
 msgid "failed to parse mount options"
 msgstr "剖析掛載選項時失敗"
 
-#: libmount/src/context_mount.c:1502
+#: libmount/src/context_mount.c:1498
 #, fuzzy, c-format
 msgid "failed to setup loop device for %s"
 msgstr "%s：無法設定迴圈裝置"
 
-#: libmount/src/context_mount.c:1506
+#: libmount/src/context_mount.c:1502
 #, fuzzy, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "%s 不是 lp 裝置"
 
-#: libmount/src/context_mount.c:1510 libmount/src/context_umount.c:1263
+#: libmount/src/context_mount.c:1506 libmount/src/context_umount.c:1263
 #, fuzzy, c-format
 msgid "locking failed"
 msgstr "關閉 %s 失敗"
 
-#: libmount/src/context_mount.c:1514 libmount/src/context_umount.c:1269
+#: libmount/src/context_mount.c:1510 libmount/src/context_umount.c:1269
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, fuzzy, c-format
 msgid "failed to switch namespace"
 msgstr "狀態的裝置"
 
-#: libmount/src/context_mount.c:1518
+#: libmount/src/context_mount.c:1514
 #, fuzzy, c-format
 msgid "filesystem already mounted"
 msgstr "%s 已經掛載"
 
-#: libmount/src/context_mount.c:1521
+#: libmount/src/context_mount.c:1517
 #, fuzzy, c-format
 msgid "mount failed: %m"
 msgstr "掛載失敗"
 
-#: libmount/src/context_mount.c:1531
+#: libmount/src/context_mount.c:1527
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to apply flags"
 msgstr "%s：檔案系統 umounted，但是掛載 (8) 失敗"
 
-#: libmount/src/context_mount.c:1537
+#: libmount/src/context_mount.c:1533
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "%s：檔案系統 umounted，但是掛載 (8) 失敗"
 
-#: libmount/src/context_mount.c:1543
+#: libmount/src/context_mount.c:1539
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "%s：檔案系統 umounted，但是掛載 (8) 失敗"
 
-#: libmount/src/context_mount.c:1549
+#: libmount/src/context_mount.c:1545
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "%s：檔案系統 umounted，但是掛載 (8) 失敗"
 
-#: libmount/src/context_mount.c:1555
+#: libmount/src/context_mount.c:1551
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "%s：檔案系統 umounted，但是掛載 (8) 失敗"
 
-#: libmount/src/context_mount.c:1561
+#: libmount/src/context_mount.c:1557
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "%s：檔案系統 umounted，但是掛載 (8) 失敗"
 
-#: libmount/src/context_mount.c:1567
+#: libmount/src/context_mount.c:1563
 #, fuzzy, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "%s：檔案系統 umounted，但是掛載 (8) 失敗"
 
-#: libmount/src/context_mount.c:1587 login-utils/newgrp.c:228
+#: libmount/src/context_mount.c:1575
+#, fuzzy, c-format
+msgid "%s system call failed: %s"
+msgstr "掛載 (2) 失敗"
+
+#: libmount/src/context_mount.c:1590 login-utils/newgrp.c:228
 #, fuzzy, c-format
 msgid "permission denied"
 msgstr "權限被拒"
 
-#: libmount/src/context_mount.c:1589 libmount/src/context_mount.c:1630
+#: libmount/src/context_mount.c:1592 libmount/src/context_mount.c:1633
 #, fuzzy, c-format
 msgid "mount point is not a directory"
 msgstr "掛載點 %s 並非目錄"
 
-#: libmount/src/context_mount.c:1591
+#: libmount/src/context_mount.c:1594
 #, fuzzy, c-format
 msgid "must be superuser to use mount"
 msgstr "必須是系統管理者以使用掛載"
 
-#: libmount/src/context_mount.c:1598
+#: libmount/src/context_mount.c:1601
 #, fuzzy, c-format
 msgid "mount point is busy"
 msgstr "mount：%s 忙碌中"
 
-#: libmount/src/context_mount.c:1605
+#: libmount/src/context_mount.c:1608
 #, fuzzy, c-format
 msgid "%s already mounted on %s"
 msgstr "mount：%s 已經掛載到 %s\n"
 
-#: libmount/src/context_mount.c:1609
+#: libmount/src/context_mount.c:1612
 #, fuzzy, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s 已經掛載的或 %s 忙碌"
 
-#: libmount/src/context_mount.c:1614
+#: libmount/src/context_mount.c:1617
 #, fuzzy, c-format
 msgid "mount point does not exist"
 msgstr "掛載點 %s 不存在"
 
-#: libmount/src/context_mount.c:1617
+#: libmount/src/context_mount.c:1620
 #, fuzzy, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "掛載點 %s 是符號連結到 nowhere"
 
-#: libmount/src/context_mount.c:1622
+#: libmount/src/context_mount.c:1625
 #, fuzzy, c-format
 msgid "special device %s does not exist"
 msgstr "特殊裝置 %s 不存在"
 
-#: libmount/src/context_mount.c:1635
+#: libmount/src/context_mount.c:1638
 #, fuzzy, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "特殊裝置 %s 不存在 (a 路徑前綴並非目錄)"
 
-#: libmount/src/context_mount.c:1645
+#: libmount/src/context_mount.c:1648
 #, fuzzy, c-format
 msgid "mount point not mounted or bad option"
 msgstr "掛載：%s 無法掛載的或不當的選項"
 
-#: libmount/src/context_mount.c:1647
+#: libmount/src/context_mount.c:1650
 #, fuzzy, c-format
 msgid "not mount point or bad option"
 msgstr "%s 不是 mountpoint 或不當的選項"
 
-#: libmount/src/context_mount.c:1650
+#: libmount/src/context_mount.c:1653
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr ""
 
-#: libmount/src/context_mount.c:1654
+#: libmount/src/context_mount.c:1657
 #, fuzzy, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 "       (對於許多檔案系統 (例如 nfs，cifs) 您也許\n"
 "       需要 /sbin/mount.<type> 輔助程式)"
 
-#: libmount/src/context_mount.c:1658
+#: libmount/src/context_mount.c:1661
 #, fuzzy, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr ""
 "錯誤的 fs 型態，不當的選項，不當的超區塊於 %s，\n"
 "       缺少的編碼頁或輔助程式程式，或其他錯誤"
 
-#: libmount/src/context_mount.c:1665
+#: libmount/src/context_mount.c:1668
 #, c-format
 msgid "mount table full"
 msgstr "掛載表已滿"
 
-#: libmount/src/context_mount.c:1670
+#: libmount/src/context_mount.c:1673
 #, fuzzy, c-format
 msgid "can't read superblock on %s"
 msgstr "%s：無法讀取超區塊"
 
-#: libmount/src/context_mount.c:1677
+#: libmount/src/context_mount.c:1680
 #, fuzzy, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "不明檔案系統型態『%s』"
 
-#: libmount/src/context_mount.c:1680
+#: libmount/src/context_mount.c:1683
 #, fuzzy, c-format
 msgid "unknown filesystem type"
 msgstr "不明檔案系統型態『%s』"
 
-#: libmount/src/context_mount.c:1689
+#: libmount/src/context_mount.c:1692
 #, fuzzy, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s 並非區塊裝置，而stat (2) 失敗？"
 
-#: libmount/src/context_mount.c:1692
+#: libmount/src/context_mount.c:1695
 #, fuzzy, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr ""
 "內核不識別 %s 做為區塊裝置\n"
 "       (也許『modprobe 驅動程式』?)"
 
-#: libmount/src/context_mount.c:1695
+#: libmount/src/context_mount.c:1698
 #, fuzzy, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s 並非區塊裝置 (也許嘗試『-o 迴圈』?)"
 
-#: libmount/src/context_mount.c:1697
+#: libmount/src/context_mount.c:1700
 #, fuzzy, c-format
 msgid "%s is not a block device"
 msgstr " %s 並非區塊裝置"
 
-#: libmount/src/context_mount.c:1704
+#: libmount/src/context_mount.c:1707
 #, fuzzy, c-format
 msgid "%s is not a valid block device"
 msgstr "%s 並非有效區塊裝置"
 
-#: libmount/src/context_mount.c:1712
+#: libmount/src/context_mount.c:1715
 #, fuzzy, c-format
 msgid "cannot mount %s read-only"
 msgstr "無法掛載 %s 唯讀"
 
-#: libmount/src/context_mount.c:1714
+#: libmount/src/context_mount.c:1717
 #, fuzzy, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s 被防止寫入的但是明確的『-w』旗標給定的"
 
-#: libmount/src/context_mount.c:1716
+#: libmount/src/context_mount.c:1719
 #, fuzzy, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "無法 remount %s 可讀可寫，被防止寫入的"
 
-#: libmount/src/context_mount.c:1718
+#: libmount/src/context_mount.c:1721
 #, fuzzy, c-format
 msgid "bind %s failed"
 msgstr "%s 失敗。\n"
 
-#: libmount/src/context_mount.c:1727
+#: libmount/src/context_mount.c:1730
 #, fuzzy, c-format
 msgid "no medium found on %s"
 msgstr "找不到任何中於 %s"
 
-#: libmount/src/context_mount.c:1734
+#: libmount/src/context_mount.c:1737
 #, fuzzy, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "將不會試著於「%s」製作檔案系統"
 
-#: libmount/src/context_mount.c:1743
+#: libmount/src/context_mount.c:1746
 #, fuzzy, c-format
 msgid "%s system call failed: %m"
 msgstr "掛載 (2) 失敗"
@@ -9115,7 +9120,7 @@ msgstr "shell 已變更。\n"
 msgid "Usage: %s <passwordfile> <username>...\n"
 msgstr "用法：%s [選項] [檔案...]\n"
 
-#: login-utils/last.c:177 login-utils/lslogins.c:1433 sys-utils/dmesg.c:1592
+#: login-utils/last.c:177 login-utils/lslogins.c:1433 sys-utils/dmesg.c:1600
 #: sys-utils/lsipc.c:283
 #, fuzzy, c-format
 msgid "unknown time format: %s"
@@ -9213,13 +9218,13 @@ msgstr ""
 
 #: login-utils/last.c:1020 term-utils/scriptlive.c:85
 #: term-utils/scriptlive.c:89 term-utils/scriptreplay.c:80
-#: term-utils/scriptreplay.c:84 text-utils/more.c:285 text-utils/more.c:291
+#: term-utils/scriptreplay.c:84 text-utils/more.c:286 text-utils/more.c:292
 #, fuzzy
 msgid "failed to parse number"
 msgstr "剖析列號的時失敗"
 
 #: login-utils/last.c:1041 login-utils/last.c:1046 login-utils/last.c:1051
-#: sys-utils/dmesg.c:1822 sys-utils/dmesg.c:1828 sys-utils/rtcwake.c:520
+#: sys-utils/dmesg.c:1830 sys-utils/dmesg.c:1836 sys-utils/rtcwake.c:520
 #, fuzzy, c-format
 msgid "invalid time value \"%s\""
 msgstr "無效的逾時引數"
@@ -9954,14 +9959,14 @@ msgstr "沒有此類群組"
 msgid "setuid failed"
 msgstr "setuid 失敗"
 
-#: login-utils/nologin.c:28 misc-utils/lastlog2.c:107 misc-utils/lsclocks.c:182
-#: misc-utils/lsfd.c:1854 misc-utils/lslocks.c:812 misc-utils/mcookie.c:83
+#: login-utils/nologin.c:28 misc-utils/lastlog2.c:108 misc-utils/lsclocks.c:182
+#: misc-utils/lsfd.c:1893 misc-utils/lslocks.c:810 misc-utils/mcookie.c:87
 #: misc-utils/uuidd.c:97 misc-utils/uuidgen.c:28 sys-utils/dmesg.c:317
 #: sys-utils/ipcmk.c:67 sys-utils/irqtop.c:255 sys-utils/lscpu.c:1173
 #: sys-utils/lsipc.c:292 sys-utils/lsirq.c:50 sys-utils/lsmem.c:512
 #: sys-utils/readprofile.c:95 sys-utils/rtcwake.c:108
 #: term-utils/scriptlive.c:57 term-utils/scriptreplay.c:47
-#: term-utils/setterm.c:381 text-utils/line.c:31
+#: term-utils/setterm.c:381 text-utils/line.c:30
 #, fuzzy, c-format
 msgid " %s [options]\n"
 msgstr " %s [選項]\n"
@@ -10027,7 +10032,7 @@ msgid "cannot set signal handler for session"
 msgstr "無法設定信號處理程式"
 
 #: login-utils/su-common.c:513 misc-utils/uuidd.c:439
-#: sys-utils/lscpu-virt.c:496
+#: sys-utils/lscpu-virt.c:506
 #, fuzzy
 msgid "cannot set signal handler"
 msgstr "無法設定信號處理程式"
@@ -10906,57 +10911,57 @@ msgstr " -o, --options <optstring>    短選項為辨識的\n"
 msgid "     --color[=<when>]  colorize messages (%s, %s or %s)\n"
 msgstr " -Q, --queue              建立訊息佇列\n"
 
-#: misc-utils/enosys.c:83
+#: misc-utils/enosys.c:85
 #, fuzzy, c-format
 msgid " %s [options] -- <command>\n"
 msgstr " %s [選項] <user> [<ttyname>]\n"
 
-#: misc-utils/enosys.c:86
+#: misc-utils/enosys.c:88
 #, fuzzy
 msgid " -s, --syscall           syscall to block\n"
 msgstr " -a, --all      查詢所有原始裝置\n"
 
-#: misc-utils/enosys.c:87
+#: misc-utils/enosys.c:89
 #, fuzzy
 msgid " -i, --ioctl             ioctl to block\n"
 msgstr " -u  --unlock             移除鎖定\n"
 
-#: misc-utils/enosys.c:88
+#: misc-utils/enosys.c:90
 #, fuzzy
 msgid " -l, --list              list known syscalls\n"
 msgstr " -Q, --quiet-output           沒有一般輸出\n"
 
-#: misc-utils/enosys.c:143
+#: misc-utils/enosys.c:146
 #, fuzzy
 msgid "Unknown syscall"
 msgstr "不明使用者 %s"
 
-#: misc-utils/enosys.c:161
+#: misc-utils/enosys.c:166
 #, fuzzy
 #| msgid "Unknown"
 msgid "Unknown ioctl"
 msgstr "未知"
 
-#: misc-utils/enosys.c:193
+#: misc-utils/enosys.c:198
 #, fuzzy
 #| msgid "number too big\n"
 msgid "filter too big"
 msgstr "數字太大\n"
 
-#: misc-utils/enosys.c:249
+#: misc-utils/enosys.c:256
 msgid "Seccomp non-functional"
 msgstr ""
 
-#: misc-utils/enosys.c:252
+#: misc-utils/enosys.c:259
 msgid "Could not run prctl(PR_SET_NO_NEW_PRIVS)"
 msgstr ""
 
-#: misc-utils/enosys.c:255
+#: misc-utils/enosys.c:262
 #, fuzzy
 msgid "Could not seccomp filter"
 msgstr "無法設定群組識別號"
 
-#: misc-utils/enosys.c:258
+#: misc-utils/enosys.c:265
 #, fuzzy
 msgid "Could not exec"
 msgstr "無法設定群組識別號"
@@ -11233,7 +11238,7 @@ msgstr ""
 msgid "filesystem label"
 msgstr "檔案系統標貼"
 
-#: misc-utils/findmnt.c:121 misc-utils/lsblk.c:196 misc-utils/lslocks.c:84
+#: misc-utils/findmnt.c:121 misc-utils/lsblk.c:196 misc-utils/lslocks.c:85
 #, fuzzy
 msgid "major:minor device number"
 msgstr "主要的：次級裝置數字"
@@ -11499,7 +11504,7 @@ msgstr " -u, --unquote                不引言輸出\n"
 msgid " -i, --invert           invert the sense of matching\n"
 msgstr " -v, --verbose             列印詳細的資料\n"
 
-#: misc-utils/findmnt.c:1441 misc-utils/lslocks.c:819 sys-utils/lsns.c:1284
+#: misc-utils/findmnt.c:1441 misc-utils/lslocks.c:817 sys-utils/lsns.c:1284
 #: sys-utils/rfkill.c:640
 #, fuzzy
 msgid " -J, --json             use JSON output format\n"
@@ -11523,7 +11528,7 @@ msgstr " -d, --debug             列印詳細的訊息到標準勘誤\n"
 msgid " -O, --options <list>   limit the set of filesystems by mount options\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1446 misc-utils/lslocks.c:822
+#: misc-utils/findmnt.c:1446 misc-utils/lslocks.c:820
 #, fuzzy
 msgid " -o, --output <list>    output columns (see --list-columns)\n"
 msgstr " -o, --options <optstring>    短選項為辨識的\n"
@@ -11594,7 +11599,7 @@ msgstr "   l   列出已知檔案系統類型"
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
 msgstr " -i, --info                列印只有資訊關於取樣步驟\n"
 
-#: misc-utils/findmnt.c:1461 misc-utils/lslocks.c:826 sys-utils/lsns.c:1292
+#: misc-utils/findmnt.c:1461 misc-utils/lslocks.c:824 sys-utils/lsns.c:1292
 #, fuzzy
 msgid " -u, --notruncate       don't truncate text in columns\n"
 msgstr " -n, --noparity          設定同位到無\n"
@@ -11623,7 +11628,7 @@ msgstr " -v, --verbose             列印詳細的資料\n"
 msgid "     --vfs-all          print all VFS options\n"
 msgstr " -a, --all      查詢所有原始裝置\n"
 
-#: misc-utils/findmnt.c:1471 misc-utils/lslocks.c:829
+#: misc-utils/findmnt.c:1471 misc-utils/lslocks.c:827
 #, fuzzy
 msgid " -H, --list-columns     list the available columns\n"
 msgstr " -d, --debug             列印詳細的訊息到標準勘誤\n"
@@ -12329,7 +12334,7 @@ msgstr "彼此互斥。"
 #: term-utils/setterm.c:571 term-utils/setterm.c:576 term-utils/setterm.c:600
 #: term-utils/setterm.c:605 term-utils/setterm.c:610 term-utils/setterm.c:615
 #: term-utils/setterm.c:620 term-utils/setterm.c:625 term-utils/setterm.c:634
-#: term-utils/setterm.c:669 text-utils/more.c:329
+#: term-utils/setterm.c:669 text-utils/more.c:330
 #, fuzzy
 msgid "argument error"
 msgstr "引數錯誤。"
@@ -12374,99 +12379,100 @@ msgstr ""
 msgid "cannot find process \"%s\""
 msgstr "%s：找不到行程「%s」\n"
 
-#: misc-utils/lastlog2.c:110
+#: misc-utils/lastlog2.c:111
 msgid " -b, --before DAYS       Print only records older than DAYS\n"
 msgstr ""
 
-#: misc-utils/lastlog2.c:111
+#: misc-utils/lastlog2.c:112
 #, fuzzy
 msgid " -C, --clear             Clear record of a user (requires -u)\n"
 msgstr " -Q, --queue              建立訊息佇列\n"
 
-#: misc-utils/lastlog2.c:112
+#: misc-utils/lastlog2.c:113
 msgid " -d, --database FILE     Use FILE as lastlog2 database\n"
 msgstr ""
 
-#: misc-utils/lastlog2.c:113
+#: misc-utils/lastlog2.c:114
 msgid " -i, --import FILE       Import data from old lastlog file\n"
 msgstr ""
 
-#: misc-utils/lastlog2.c:114
+#: misc-utils/lastlog2.c:115
 msgid " -r, --rename NEWNAME    Rename existing user to NEWNAME (requires -u)\n"
 msgstr ""
 
-#: misc-utils/lastlog2.c:115
+#: misc-utils/lastlog2.c:116
 #, fuzzy
 msgid " -s, --service           Display PAM service\n"
 msgstr " -Q, --queue              建立訊息佇列\n"
 
-#: misc-utils/lastlog2.c:116
+#: misc-utils/lastlog2.c:117
 #, fuzzy
 msgid " -S, --set               ySet lastlog record to current time (requires -u)\n"
 msgstr " -r, --reset               重置所有計數器 (只限 root)\n"
 
-#: misc-utils/lastlog2.c:117
+#: misc-utils/lastlog2.c:118
 msgid " -t, --time DAYS         Print only lastlog records more recent than DAYS\n"
 msgstr ""
 
-#: misc-utils/lastlog2.c:118
+#: misc-utils/lastlog2.c:119
 msgid " -u, --user LOGIN        Print lastlog record of the specified LOGIN\n"
 msgstr ""
 
-#: misc-utils/lastlog2.c:173 misc-utils/lastlog2.c:206
+#: misc-utils/lastlog2.c:166 misc-utils/lastlog2.c:199
 #, fuzzy
 msgid "Cannot parse days"
 msgstr "無法開啟 %s"
 
-#: misc-utils/lastlog2.c:224
-msgid "Option -C, -i and -S cannot be used together\n"
+#: misc-utils/lastlog2.c:217
+msgid "Option -C, -i and -S cannot be used together"
 msgstr ""
 
-#: misc-utils/lastlog2.c:229
+#: misc-utils/lastlog2.c:221
 #, fuzzy
 #| msgid "Couldn't initialize PAM: %s"
-msgid "Couldn't initialize lastlog2 environment.\n"
+msgid "Couldn't initialize lastlog2 environment"
 msgstr "無法初始化 PAM：%s"
 
-#: misc-utils/lastlog2.c:239
-#, c-format
-msgid "Couldn't import entries from '%s'\n"
-msgstr ""
-
-#: misc-utils/lastlog2.c:249
-msgid "Options -C, -r and -S require option -u to specify the user\n"
-msgstr ""
-
-#: misc-utils/lastlog2.c:254 misc-utils/lastlog2.c:312
-#, fuzzy, c-format
-msgid "User '%s' does not exist.\n"
-msgstr "使用者 %s 不存在"
-
-#: misc-utils/lastlog2.c:264
+#: misc-utils/lastlog2.c:226
 #, fuzzy, c-format
 #| msgid "Could not open %s\n"
-msgid "Couldn't remove entry for '%s'\n"
+msgid "Couldn't import entries from '%s'"
 msgstr "無法開啟 %s\n"
 
-#: misc-utils/lastlog2.c:273
+#: misc-utils/lastlog2.c:235
+msgid "Options -C, -r and -S require option -u to specify the user"
+msgstr ""
+
+#: misc-utils/lastlog2.c:240 misc-utils/lastlog2.c:283
 #, fuzzy, c-format
-msgid "Could not determine current time: %s"
+msgid "User '%s' does not exist."
+msgstr "使用者 %s 不存在"
+
+#: misc-utils/lastlog2.c:246
+#, fuzzy, c-format
+#| msgid "Could not open %s\n"
+msgid "Couldn't remove entry for '%s'"
+msgstr "無法開啟 %s\n"
+
+#: misc-utils/lastlog2.c:255
+#, fuzzy
+msgid "Could not determine current time"
 msgstr "無法決定目前的格式類型"
 
-#: misc-utils/lastlog2.c:283
+#: misc-utils/lastlog2.c:260
 #, fuzzy, c-format
-msgid "Couldn't update login time for '%s'\n"
+msgid "Couldn't update login time for '%s'"
 msgstr "不受支援的引數：%s"
 
-#: misc-utils/lastlog2.c:295
+#: misc-utils/lastlog2.c:267
 #, fuzzy, c-format
 #| msgid "mount: translated %s '%s' to '%s'\n"
-msgid "Couldn't rename entry '%s' to '%s'\n"
+msgid "Couldn't rename entry '%s' to '%s'"
 msgstr "mount：已翻譯 %s「%s」為「%s」\n"
 
-#: misc-utils/lastlog2.c:332
+#: misc-utils/lastlog2.c:297
 #, fuzzy
-msgid "Couldn't read entries for all users\n"
+msgid "Couldn't read entries for all users"
 msgstr "無法開啟 /dev/tty1 或 /dev/vc/1"
 
 #: misc-utils/logger.c:230
@@ -13023,7 +13029,7 @@ msgstr "最大開啟檔案數量"
 msgid "maximum number of active zones"
 msgstr "最大行程數量"
 
-#: misc-utils/lsblk.c:1347 misc-utils/lsfd.c:1261
+#: misc-utils/lsblk.c:1347 misc-utils/lsfd.c:1272
 #, fuzzy
 msgid "failed to apply filter"
 msgstr "讀取 typescript 檔案 %s 時失敗"
@@ -13071,12 +13077,12 @@ msgstr "排除的裝置清單的太大 (限制是 %d 裝置)"
 msgid "the list of included devices is too large (limit is %d devices)"
 msgstr "包含的裝置清單的太大 (限制是 %d 裝置)"
 
-#: misc-utils/lsblk.c:2119 misc-utils/lsfd.c:1916
+#: misc-utils/lsblk.c:2119 misc-utils/lsfd.c:1955
 #, fuzzy
 msgid "failed to allocate filter"
 msgstr "配置迭代器時失敗"
 
-#: misc-utils/lsblk.c:2121 misc-utils/lsfd.c:1918
+#: misc-utils/lsblk.c:2121 misc-utils/lsfd.c:1957
 #, fuzzy, c-format
 msgid "failed to parse \"%s\": %s"
 msgstr "剖析 %s 時失敗"
@@ -13091,7 +13097,7 @@ msgstr "未預期的檔案結束於 %s"
 msgid "counter not properly specified"
 msgstr "沒有 mountpoint 指定的。"
 
-#: misc-utils/lsblk.c:2166 misc-utils/lsfd.c:2006
+#: misc-utils/lsblk.c:2166 misc-utils/lsfd.c:2045
 #, fuzzy
 msgid "failed to allocate counter"
 msgstr "配置迭代器時失敗"
@@ -13422,12 +13428,12 @@ msgstr "ioctl (%s) 到 %s 到讀取時間失敗"
 msgid "Could not get CPU clock of process %jd: %s"
 msgstr ""
 
-#: misc-utils/lsclocks.c:598 misc-utils/lslocks.c:387 misc-utils/uuidd.c:791
+#: misc-utils/lsclocks.c:599 misc-utils/lslocks.c:385 misc-utils/uuidd.c:791
 #: misc-utils/waitpid.c:54 sys-utils/nsenter.c:390
 msgid "failed to parse pid"
 msgstr "剖析 pid 時失敗"
 
-#: misc-utils/lsclocks.c:626
+#: misc-utils/lsclocks.c:627
 #, fuzzy
 msgid "failed to get time"
 msgstr "設定路徑時失敗"
@@ -13545,7 +13551,7 @@ msgstr ""
 msgid "remote IPv6 address"
 msgstr ""
 
-#: misc-utils/lsfd.c:222 misc-utils/lslocks.c:83
+#: misc-utils/lsfd.c:222 misc-utils/lslocks.c:84
 #, fuzzy
 msgid "inode number"
 msgstr "邏輯的 NUMA 節點數字"
@@ -13910,178 +13916,178 @@ msgstr "不明使用者 %s"
 msgid "too many columns are added via filter expression"
 msgstr ""
 
-#: misc-utils/lsfd.c:1451
+#: misc-utils/lsfd.c:1462
 #, fuzzy
 msgid "failed to allocate an idcache"
 msgstr "配置迭代器時失敗"
 
-#: misc-utils/lsfd.c:1669 misc-utils/lslocks.c:423
+#: misc-utils/lsfd.c:1680 misc-utils/lslocks.c:421
 #, fuzzy
 msgid "(unknown)"
 msgstr "(不明)"
 
-#: misc-utils/lsfd.c:1725 misc-utils/lsfd-sock-xinfo.c:157
-#: misc-utils/lsfd-sock-xinfo.c:296 misc-utils/lslocks.c:166
+#: misc-utils/lsfd.c:1763 misc-utils/lsfd-sock-xinfo.c:157
+#: misc-utils/lsfd-sock-xinfo.c:296 misc-utils/lslocks.c:167
 #, fuzzy
 msgid "failed to allocate memory"
 msgstr "配置記憶體時失敗：%m"
 
-#: misc-utils/lsfd.c:1753
+#: misc-utils/lsfd.c:1792
 #, fuzzy, c-format
 msgid "unexpected value for pid specification: %s"
 msgstr "未預期的檔案結束於 %s"
 
-#: misc-utils/lsfd.c:1755
+#: misc-utils/lsfd.c:1794
 #, c-format
 msgid "garbage at the end of pid specification: %s"
 msgstr ""
 
-#: misc-utils/lsfd.c:1757
+#: misc-utils/lsfd.c:1796
 #, c-format
 msgid "out of range value for pid specification: %ld"
 msgstr ""
 
-#: misc-utils/lsfd.c:1801 misc-utils/lslocks.c:504
+#: misc-utils/lsfd.c:1840 misc-utils/lslocks.c:502
 #, fuzzy
 msgid "failed to alloc procfs handler"
 msgstr "配置迭代器時失敗"
 
-#: misc-utils/lsfd.c:1805 misc-utils/lslocks.c:508
+#: misc-utils/lsfd.c:1844 misc-utils/lslocks.c:506
 #, fuzzy
 msgid "failed to open /proc"
 msgstr "%s：開啟失敗：%s\n"
 
-#: misc-utils/lsfd.c:1857
+#: misc-utils/lsfd.c:1896
 #, fuzzy
 msgid " -l, --threads                list in threads level\n"
 msgstr " -f           不分割長列\n"
 
-#: misc-utils/lsfd.c:1858
+#: misc-utils/lsfd.c:1897
 #, fuzzy
 msgid " -J, --json                   use JSON output format\n"
 msgstr " -V, --version                輸出版本資訊\n"
 
-#: misc-utils/lsfd.c:1859
+#: misc-utils/lsfd.c:1898
 #, fuzzy
 msgid " -n, --noheadings             don't print headings\n"
 msgstr " -f           不分割長列\n"
 
-#: misc-utils/lsfd.c:1860
+#: misc-utils/lsfd.c:1899
 #, fuzzy
 msgid " -o, --output <list>          output columns (see --list-columns)\n"
 msgstr " -o, --options <optstring>    短選項為辨識的\n"
 
-#: misc-utils/lsfd.c:1861
+#: misc-utils/lsfd.c:1900
 #, fuzzy
 msgid " -r, --raw                    use raw output format\n"
 msgstr " -V, --version                輸出版本資訊\n"
 
-#: misc-utils/lsfd.c:1862
+#: misc-utils/lsfd.c:1901
 #, fuzzy
 msgid " -u, --notruncate             don't truncate text in columns\n"
 msgstr " -n, --noparity          設定同位到無\n"
 
-#: misc-utils/lsfd.c:1863
+#: misc-utils/lsfd.c:1902
 #, fuzzy
 msgid " -p, --pid  <pid(s)>          collect information only specified processes\n"
 msgstr " -o, --options <optstring>    短選項為辨識的\n"
 
-#: misc-utils/lsfd.c:1864
+#: misc-utils/lsfd.c:1903
 msgid " -i[4|6], --inet[=4|=6]       list only IPv4 and/or IPv6 sockets\n"
 msgstr ""
 
-#: misc-utils/lsfd.c:1865
+#: misc-utils/lsfd.c:1904
 #, fuzzy
 msgid " -Q, --filter <expr>          apply display filter\n"
 msgstr " -q, --stats                        顯示統計關於 tty\n"
 
-#: misc-utils/lsfd.c:1866
+#: misc-utils/lsfd.c:1905
 #, fuzzy
 msgid "     --debug-filter           dump the internal data structure of filter and exit\n"
 msgstr " -q, --stats                        顯示統計關於 tty\n"
 
-#: misc-utils/lsfd.c:1867
+#: misc-utils/lsfd.c:1906
 #, fuzzy
 msgid " -C, --counter <name>:<expr>  define custom counter for --summary output\n"
 msgstr " -q, --stats                        顯示統計關於 tty\n"
 
-#: misc-utils/lsfd.c:1868
+#: misc-utils/lsfd.c:1907
 #, fuzzy
 msgid "     --dump-counters          dump counter definitions\n"
 msgstr " -s, --counters            列印個別計數器在之內函式\n"
 
-#: misc-utils/lsfd.c:1869
+#: misc-utils/lsfd.c:1908
 msgid "     --summary[=<when>]       print summary information (only, append, or never)\n"
 msgstr ""
 
-#: misc-utils/lsfd.c:1872
+#: misc-utils/lsfd.c:1911
 #, fuzzy
 msgid " -H, --list-columns           list the available columns\n"
 msgstr " -d, --debug             列印詳細的訊息到標準勘誤\n"
 
-#: misc-utils/lsfd.c:1876
+#: misc-utils/lsfd.c:1915
 #, fuzzy
 msgid "Default"
 msgstr "  [ -default ]\n"
 
-#: misc-utils/lsfd.c:1877
+#: misc-utils/lsfd.c:1916
 msgid "With --threads"
 msgstr ""
 
-#: misc-utils/lsfd.c:1959
+#: misc-utils/lsfd.c:1998
 #, c-format
 msgid "too short counter specification: -C/--counter %s"
 msgstr ""
 
-#: misc-utils/lsfd.c:1963 misc-utils/lsfd.c:1969
+#: misc-utils/lsfd.c:2002 misc-utils/lsfd.c:2008
 #, c-format
 msgid "no name for counter: -C/--counter %s"
 msgstr ""
 
-#: misc-utils/lsfd.c:1973
+#: misc-utils/lsfd.c:2012
 #, c-format
 msgid "empty counter expression given: -C/--counter %s"
 msgstr ""
 
-#: misc-utils/lsfd.c:1981
+#: misc-utils/lsfd.c:2020
 #, c-format
 msgid "don't use `{' in the name of a counter: %s"
 msgstr ""
 
-#: misc-utils/lsfd.c:2077
+#: misc-utils/lsfd.c:2116
 #, fuzzy
 msgid "failed to allocate summary table"
 msgstr "初始化輸出表格時失敗"
 
-#: misc-utils/lsfd.c:2087
+#: misc-utils/lsfd.c:2126
 msgid "VALUE"
 msgstr ""
 
-#: misc-utils/lsfd.c:2089 misc-utils/lsfd.c:2095
+#: misc-utils/lsfd.c:2128 misc-utils/lsfd.c:2134
 #, fuzzy
 msgid "failed to allocate summary column"
 msgstr "callocate cpu 集合時失敗"
 
-#: misc-utils/lsfd.c:2093
+#: misc-utils/lsfd.c:2132
 msgid "COUNTER"
 msgstr ""
 
-#: misc-utils/lsfd.c:2120
+#: misc-utils/lsfd.c:2159
 #, fuzzy
 msgid "failed to allocate summary line"
 msgstr "初始化輸出表格時失敗"
 
-#: misc-utils/lsfd.c:2124 misc-utils/lsfd.c:2126
+#: misc-utils/lsfd.c:2163 misc-utils/lsfd.c:2165
 #, fuzzy
 msgid "failed to add summary data"
 msgstr "加入輸出列時失敗"
 
-#: misc-utils/lsfd.c:2275
+#: misc-utils/lsfd.c:2314
 #, fuzzy, c-format
 msgid "unknown -i/--inet argument: %s"
 msgstr "不明引數：%s"
 
-#: misc-utils/lsfd.c:2301 sys-utils/lsmem.c:634
+#: misc-utils/lsfd.c:2340 sys-utils/lsmem.c:634
 #, fuzzy
 msgid "unsupported --summary argument"
 msgstr "不受支援的引數：%s"
@@ -14096,169 +14102,169 @@ msgstr "配置迭代器時失敗"
 msgid "failed to alloc path context for /var/run/netns"
 msgstr "callocate cpu 集合時失敗"
 
-#: misc-utils/lslocks.c:79
+#: misc-utils/lslocks.c:80
 #, fuzzy
 msgid "command of the process holding the lock"
 msgstr "命令的處理保有鎖定"
 
-#: misc-utils/lslocks.c:80
+#: misc-utils/lslocks.c:81
 #, fuzzy
 msgid "PID of the process holding the lock"
 msgstr "PID 的處理保有鎖定"
 
-#: misc-utils/lslocks.c:81
+#: misc-utils/lslocks.c:82
 #, fuzzy
 msgid "kind of lock"
 msgstr "大小的鎖定"
 
-#: misc-utils/lslocks.c:82
+#: misc-utils/lslocks.c:83
 msgid "size of the lock, use <number> if --bytes is given"
 msgstr ""
 
-#: misc-utils/lslocks.c:85
+#: misc-utils/lslocks.c:86
 #, fuzzy
 msgid "lock access mode"
 msgstr "鎖定存取模式"
 
-#: misc-utils/lslocks.c:86
+#: misc-utils/lslocks.c:87
 #, fuzzy
 msgid "mandatory state of the lock: 0 (none), 1 (set)"
 msgstr "必要狀態的鎖定：0 (無)，1 (設定)"
 
-#: misc-utils/lslocks.c:87
+#: misc-utils/lslocks.c:88
 #, fuzzy
 msgid "relative byte offset of the lock"
 msgstr "相對的位元組偏移的鎖定"
 
-#: misc-utils/lslocks.c:88
+#: misc-utils/lslocks.c:89
 #, fuzzy
 msgid "ending offset of the lock"
 msgstr "結束部分偏移的鎖定"
 
-#: misc-utils/lslocks.c:89
+#: misc-utils/lslocks.c:90
 #, fuzzy
 msgid "path of the locked file"
 msgstr "路徑的鎖定的檔案"
 
-#: misc-utils/lslocks.c:90
+#: misc-utils/lslocks.c:91
 #, fuzzy
 msgid "PID of the process blocking the lock"
 msgstr "PID 的處理保有鎖定"
 
-#: misc-utils/lslocks.c:91
+#: misc-utils/lslocks.c:92
 #, fuzzy
 msgid "HOLDERS of the lock"
 msgstr "大小的鎖定"
 
-#: misc-utils/lslocks.c:288
+#: misc-utils/lslocks.c:286
 #, fuzzy, c-format
 msgid "failed to parse '%s'"
 msgstr "剖析 %s 時失敗"
 
-#: misc-utils/lslocks.c:360
+#: misc-utils/lslocks.c:358
 #, fuzzy
 msgid "failed to parse ID"
 msgstr "剖析 %s 時失敗"
 
-#: misc-utils/lslocks.c:405
+#: misc-utils/lslocks.c:403
 #, fuzzy
 msgid "failed to parse start"
 msgstr "剖析開始時失敗"
 
-#: misc-utils/lslocks.c:412
+#: misc-utils/lslocks.c:410
 #, fuzzy
 msgid "failed to parse end"
 msgstr "剖析結束時失敗"
 
-#: misc-utils/lslocks.c:425
+#: misc-utils/lslocks.c:423
 msgid "(undefined)"
 msgstr ""
 
-#: misc-utils/lslocks.c:815
+#: misc-utils/lslocks.c:813
 #, fuzzy
 msgid "List local system locks.\n"
 msgstr "無法設定系統時鐘。\n"
 
-#: misc-utils/lslocks.c:818
+#: misc-utils/lslocks.c:816
 #, fuzzy
 msgid " -b, --bytes            print SIZE in bytes rather than in human readable format\n"
 msgstr " -d, --debug             列印詳細的訊息到標準勘誤\n"
 
-#: misc-utils/lslocks.c:820
+#: misc-utils/lslocks.c:818
 msgid " -i, --noinaccessible   ignore locks without read permissions\n"
 msgstr ""
 
-#: misc-utils/lslocks.c:821 sys-utils/lsns.c:1286 sys-utils/rfkill.c:641
+#: misc-utils/lslocks.c:819 sys-utils/lsns.c:1286 sys-utils/rfkill.c:641
 #, fuzzy
 msgid " -n, --noheadings       don't print headings\n"
 msgstr " -f           不分割長列\n"
 
-#: misc-utils/lslocks.c:823 sys-utils/lsns.c:1288 sys-utils/rfkill.c:643
+#: misc-utils/lslocks.c:821 sys-utils/lsns.c:1288 sys-utils/rfkill.c:643
 #, fuzzy
 msgid "     --output-all       output all columns\n"
 msgstr " -o, --options <optstring>    短選項為辨識的\n"
 
-#: misc-utils/lslocks.c:824
+#: misc-utils/lslocks.c:822
 msgid " -p, --pid <pid>        display only locks held by this process\n"
 msgstr ""
 
-#: misc-utils/lslocks.c:825 sys-utils/lsns.c:1291 sys-utils/rfkill.c:644
+#: misc-utils/lslocks.c:823 sys-utils/lsns.c:1291 sys-utils/rfkill.c:644
 #, fuzzy
 msgid " -r, --raw              use the raw output format\n"
 msgstr " -V, --version                輸出版本資訊\n"
 
-#: misc-utils/lslocks.c:912 schedutils/chrt.c:413 schedutils/ionice.c:179
+#: misc-utils/lslocks.c:910 schedutils/chrt.c:413 schedutils/ionice.c:179
 #: schedutils/taskset.c:190 schedutils/uclampset.c:249 sys-utils/choom.c:102
 #: sys-utils/lsns.c:1381 sys-utils/prlimit.c:598
 #, fuzzy
 msgid "invalid PID argument"
 msgstr "無效的 PID 引數"
 
-#: misc-utils/mcookie.c:86
+#: misc-utils/mcookie.c:90
 msgid "Generate magic cookies for xauth.\n"
 msgstr ""
 
-#: misc-utils/mcookie.c:89
+#: misc-utils/mcookie.c:93
 #, fuzzy
 msgid " -f, --file <file>     use file as a cookie seed\n"
 msgstr " -h, --help     顯示這份說明然後離開\n"
 
-#: misc-utils/mcookie.c:90
+#: misc-utils/mcookie.c:94
 msgid " -m, --max-size <num>  limit how much is read from seed files\n"
 msgstr ""
 
-#: misc-utils/mcookie.c:91
+#: misc-utils/mcookie.c:95
 #, fuzzy
 msgid " -v, --verbose         explain what is being done\n"
 msgstr " -v, --verbose              解釋什麼正在是已完成\n"
 
-#: misc-utils/mcookie.c:97 misc-utils/wipefs.c:653 sys-utils/blkdiscard.c:111
+#: misc-utils/mcookie.c:101 misc-utils/wipefs.c:653 sys-utils/blkdiscard.c:111
 #: sys-utils/fallocate.c:107 sys-utils/fstrim.c:475
 msgid "<num>"
 msgstr ""
 
-#: misc-utils/mcookie.c:124
+#: misc-utils/mcookie.c:128
 #, fuzzy, c-format
 msgid "Got %zu byte from %s\n"
 msgid_plural "Got %zu bytes from %s\n"
 msgstr[0] "從 %2$s 取得 %1$d 位元組\n"
 
-#: misc-utils/mcookie.c:129
+#: misc-utils/mcookie.c:133
 #, fuzzy, c-format
 msgid "closing %s failed"
 msgstr "關閉 %s 失敗"
 
-#: misc-utils/mcookie.c:168 sys-utils/blkdiscard.c:204 sys-utils/fstrim.c:542
+#: misc-utils/mcookie.c:172 sys-utils/blkdiscard.c:204 sys-utils/fstrim.c:542
 #: text-utils/hexdump.c:122
 #, fuzzy
 msgid "failed to parse length"
 msgstr "剖析長度時失敗"
 
-#: misc-utils/mcookie.c:181
+#: misc-utils/mcookie.c:185
 msgid "--max-size ignored when used without --file"
 msgstr ""
 
-#: misc-utils/mcookie.c:190
+#: misc-utils/mcookie.c:194
 #, fuzzy, c-format
 msgid "Got %d byte from %s\n"
 msgid_plural "Got %d bytes from %s\n"
@@ -14689,7 +14695,7 @@ msgstr ""
 msgid "too many file descriptors received, check uuidd.socket"
 msgstr "沒有或太多檔案描述符號接收。\n"
 
-#: misc-utils/uuidd.c:452 text-utils/more.c:1366
+#: misc-utils/uuidd.c:452 text-utils/more.c:1383
 #, fuzzy
 msgid "poll failed"
 msgstr "意見調查() 失敗"
@@ -16976,48 +16982,48 @@ msgstr "無法 mmap：%s"
 #. where %a is abbreviated name of the day, %b is abbreviated month
 #. name and %e is day of the month as a decimal number. Please, set
 #. proper month/day order here
-#: sys-utils/dmesg.c:1045
+#: sys-utils/dmesg.c:1049
 msgid "%a %b %e %H:%M:%S %Y"
 msgstr ""
 
 #. TRANSLATORS: dmesg uses strftime() fo generate date-time string
 #. where: %b is abbreviated month and %e is day of the month as a
 #. decimal number. Please, set proper month/day order here.
-#: sys-utils/dmesg.c:1055
+#: sys-utils/dmesg.c:1059
 msgid "%b%e %H:%M"
 msgstr ""
 
-#: sys-utils/dmesg.c:1561
+#: sys-utils/dmesg.c:1569
 #, fuzzy
 #| msgid "data block too large"
 msgid "record too large"
 msgstr "資料區塊太大"
 
-#: sys-utils/dmesg.c:1787
+#: sys-utils/dmesg.c:1795
 #, fuzzy
 msgid "invalid buffer size argument"
 msgstr "無效的緩衝區大小引數"
 
-#: sys-utils/dmesg.c:1907
+#: sys-utils/dmesg.c:1915
 #, fuzzy
 msgid "--raw can be used together with --level or --facility only when reading messages from /dev/kmsg"
 msgstr "--raw 無法使用的一起與等級、機能、解碼、delta，ctime 或 notime 選項"
 
-#: sys-utils/dmesg.c:1911
+#: sys-utils/dmesg.c:1919
 msgid "only kmsg supports multi-line messages"
 msgstr ""
 
-#: sys-utils/dmesg.c:1926
+#: sys-utils/dmesg.c:1934
 #, fuzzy
 msgid "read kernel buffer failed"
 msgstr "讀取內核緩衝區失敗"
 
-#: sys-utils/dmesg.c:1934
+#: sys-utils/dmesg.c:1942
 #, fuzzy
 msgid "clear kernel buffer failed"
 msgstr "讀取內核緩衝區失敗"
 
-#: sys-utils/dmesg.c:1950
+#: sys-utils/dmesg.c:1958
 #, fuzzy
 msgid "klogctl failed"
 msgstr "klogctl 失敗"
@@ -17207,7 +17213,7 @@ msgid "%s: unmounting"
 msgstr "%s：卸載"
 
 #: sys-utils/eject.c:662 sys-utils/mount.c:51 sys-utils/umount.c:122
-#: text-utils/more.c:1270
+#: text-utils/more.c:1271
 #, fuzzy
 msgid "drop permissions failed"
 msgstr "權限被拒"
@@ -20432,7 +20438,17 @@ msgstr "剖析列號的時失敗"
 msgid "Failed to extract the node number"
 msgstr "%s：無法提取分割區編號"
 
-#: sys-utils/lscpu-virt.c:501
+#: sys-utils/lscpu-virt.c:492 sys-utils/lscpu-virt.c:514
+#, fuzzy
+msgid "cannot restore signal mask"
+msgstr "無法設定信號處理程式"
+
+#: sys-utils/lscpu-virt.c:499
+#, fuzzy
+msgid "cannot unblock signal"
+msgstr "無法區塊信號"
+
+#: sys-utils/lscpu-virt.c:511
 #, fuzzy
 msgid "cannot restore signal handler"
 msgstr "無法設定信號處理程式"
@@ -23214,25 +23230,25 @@ msgstr "無效的引數：%s"
 msgid "could not open file for landlock: %s"
 msgstr "無法開啟 %s\n"
 
-#: sys-utils/setpriv-landlock.c:175
+#: sys-utils/setpriv-landlock.c:178
 #, fuzzy
 msgid "landlock_create_ruleset failed"
 msgstr "%s：fallocate 失敗"
 
-#: sys-utils/setpriv-landlock.c:184
+#: sys-utils/setpriv-landlock.c:187
 #, fuzzy
 msgid "adding landlock rule failed"
 msgstr "%s：fallocate 失敗"
 
-#: sys-utils/setpriv-landlock.c:188
+#: sys-utils/setpriv-landlock.c:191
 msgid "disallow granting new privileges for landlock failed"
 msgstr ""
 
-#: sys-utils/setpriv-landlock.c:191
+#: sys-utils/setpriv-landlock.c:194
 msgid "landlock_restrict_self faild"
 msgstr ""
 
-#: sys-utils/setpriv-landlock.c:199
+#: sys-utils/setpriv-landlock.c:202
 #, fuzzy, c-format
 msgid "Landlock accesses:\n"
 msgstr "鎖定存取模式"
@@ -26044,7 +26060,7 @@ msgstr ""
 msgid "option --table-columns or --table-column required for --json"
 msgstr ""
 
-#: text-utils/hexdump.c:167 text-utils/more.c:237
+#: text-utils/hexdump.c:167 text-utils/more.c:238
 #, fuzzy, c-format
 msgid " %s [options] <file>...\n"
 msgstr " %s [選項] [<file>]\n"
@@ -26110,7 +26126,7 @@ msgstr " -u  --unlock             移除鎖定\n"
 msgid "<length> and <offset>"
 msgstr ""
 
-#: text-utils/hexdump-display.c:366
+#: text-utils/hexdump-display.c:374
 #, fuzzy
 msgid "all input file arguments failed"
 msgstr "所有輸入檔案引數失敗"
@@ -26140,83 +26156,83 @@ msgstr "不當的轉換字元 %%%s"
 msgid "byte count with multiple conversion characters"
 msgstr "位元組計數與多重轉換字元"
 
-#: text-utils/line.c:34
+#: text-utils/line.c:33
 msgid "Read one line.\n"
 msgstr ""
 
-#: text-utils/more.c:240
+#: text-utils/more.c:241
 msgid "Display the contents of a file in a terminal."
 msgstr ""
 
-#: text-utils/more.c:243
+#: text-utils/more.c:244
 #, fuzzy
 msgid " -d, --silent          display help instead of ringing bell"
 msgstr " -h           顯示這份說明然後離開\n"
 
-#: text-utils/more.c:244
+#: text-utils/more.c:245
 #, fuzzy
 msgid " -f, --logical         count logical rather than screen lines"
 msgstr " -f           不分割長列\n"
 
-#: text-utils/more.c:245
+#: text-utils/more.c:246
 #, fuzzy
 msgid " -l, --no-pause        suppress pause after form feed"
 msgstr " -e           不暫停於結束的檔案\n"
 
-#: text-utils/more.c:246
+#: text-utils/more.c:247
 #, fuzzy
 msgid " -c, --print-over      do not scroll, display text and clean line ends"
 msgstr " -f           不分割長列\n"
 
-#: text-utils/more.c:247
+#: text-utils/more.c:248
 #, fuzzy
 msgid " -p, --clean-print     do not scroll, clean screen and display text"
 msgstr " -c           清空螢幕之前顯示\n"
 
-#: text-utils/more.c:248
+#: text-utils/more.c:249
 msgid " -e, --exit-on-eof     exit on end-of-file"
 msgstr ""
 
-#: text-utils/more.c:249
+#: text-utils/more.c:250
 #, fuzzy
 msgid " -s, --squeeze         squeeze multiple blank lines into one"
 msgstr " -v, --verbose              解釋什麼正在是已完成\n"
 
-#: text-utils/more.c:250
+#: text-utils/more.c:251
 #, fuzzy
 msgid " -u, --plain           suppress underlining and bold"
 msgstr " -i, --irq <num>              指定並列埠 irq\n"
 
-#: text-utils/more.c:251
+#: text-utils/more.c:252
 #, fuzzy
 msgid " -n, --lines <number>  the number of lines per screenful"
 msgstr " -number      列各頁面\n"
 
-#: text-utils/more.c:252
+#: text-utils/more.c:253
 #, fuzzy
 msgid " -<number>             same as --lines"
 msgstr " -v, --verbose            是更多詳細的\n"
 
-#: text-utils/more.c:253
+#: text-utils/more.c:254
 #, fuzzy
 msgid " +<number>             display file beginning from line number"
 msgstr " -v, --verbose            是更多詳細的\n"
 
-#: text-utils/more.c:254
+#: text-utils/more.c:255
 msgid " +/<pattern>           display file beginning from pattern match"
 msgstr ""
 
-#: text-utils/more.c:357
+#: text-utils/more.c:358
 #, fuzzy
 msgid "MORE environment variable"
 msgstr "設定 %s 資源限制時失敗"
 
-#: text-utils/more.c:410
+#: text-utils/more.c:411
 #, fuzzy
 msgid "magic failed"
 msgstr "mkdir 失敗：%s"
 
-#: text-utils/more.c:414 text-utils/more.c:433
+#: text-utils/more.c:415 text-utils/more.c:434
 #, c-format
 msgid ""
 "\n"
@@ -26227,7 +26243,7 @@ msgstr ""
 "******** %s: 不是文字檔 ********\n"
 "\n"
 
-#: text-utils/more.c:467
+#: text-utils/more.c:468
 #, c-format
 msgid ""
 "\n"
@@ -26238,27 +26254,27 @@ msgstr ""
 "*** %s: 目錄 ***\n"
 "\n"
 
-#: text-utils/more.c:729
+#: text-utils/more.c:730
 #, c-format
 msgid "--More--"
 msgstr "--更多--"
 
-#: text-utils/more.c:731
+#: text-utils/more.c:732
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(下一個檔案：%s)"
 
-#: text-utils/more.c:736 text-utils/more.c:742
+#: text-utils/more.c:737 text-utils/more.c:743
 #, c-format
 msgid "(END)"
 msgstr ""
 
-#: text-utils/more.c:747
+#: text-utils/more.c:748
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[按下空格以繼續，「q」表示離開。]"
 
-#: text-utils/more.c:949
+#: text-utils/more.c:950
 msgid ""
 "\n"
 "...Skipping "
@@ -26266,40 +26282,40 @@ msgstr ""
 "\n"
 "...跳過 "
 
-#: text-utils/more.c:953
+#: text-utils/more.c:954
 msgid "...Skipping to file "
 msgstr "…跳到檔案 "
 
-#: text-utils/more.c:955
+#: text-utils/more.c:956
 msgid "...Skipping back to file "
 msgstr "…跳回檔案 "
 
-#: text-utils/more.c:1117
+#: text-utils/more.c:1118
 msgid "Line too long"
 msgstr "列太長"
 
-#: text-utils/more.c:1160
+#: text-utils/more.c:1161
 msgid "No previous command to substitute for"
 msgstr "沒有前一個命令可用於替代"
 
-#: text-utils/more.c:1189
+#: text-utils/more.c:1190
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr "[使用 q 或 Q 以離開]"
 
-#: text-utils/more.c:1274
+#: text-utils/more.c:1275
 msgid "exec failed\n"
 msgstr "執行時失敗\n"
 
-#: text-utils/more.c:1284
+#: text-utils/more.c:1285
 msgid "can't fork\n"
 msgstr "無法衍生執行\n"
 
-#: text-utils/more.c:1445
+#: text-utils/more.c:1483
 msgid "...skipping\n"
 msgstr "…跳過\n"
 
-#: text-utils/more.c:1482
+#: text-utils/more.c:1520
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -26307,11 +26323,11 @@ msgstr ""
 "\n"
 "找不到相符的式樣\n"
 
-#: text-utils/more.c:1486 text-utils/pg.c:1032 text-utils/pg.c:1180
+#: text-utils/more.c:1524 text-utils/pg.c:1032 text-utils/pg.c:1180
 msgid "Pattern not found"
 msgstr "找不到相符的式樣"
 
-#: text-utils/more.c:1504
+#: text-utils/more.c:1542
 #, fuzzy
 msgid ""
 "Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
@@ -26321,7 +26337,7 @@ msgstr ""
 "大部分命令可選用前導的整數引數 k。預設值位於中括號內。\n"
 "星號 (*) 用來指定引數成為新的預設值。\n"
 
-#: text-utils/more.c:1510
+#: text-utils/more.c:1548
 #, fuzzy, c-format
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
@@ -26364,19 +26380,19 @@ msgstr ""
 ":f                      顯示目前檔案名稱和列號\n"
 ".                       重複前一個命令\n"
 
-#: text-utils/more.c:1576
+#: text-utils/more.c:1614
 #, fuzzy, c-format
 msgid "...back %d page"
 msgid_plural "...back %d pages"
 msgstr[0] "…倒退 %d 頁"
 
-#: text-utils/more.c:1600
+#: text-utils/more.c:1638
 #, fuzzy, c-format
 msgid "...skipping %d line"
 msgid_plural "...skipping %d lines"
 msgstr[0] "…跳過 %d 列"
 
-#: text-utils/more.c:1700
+#: text-utils/more.c:1738
 msgid ""
 "\n"
 "***Back***\n"
@@ -26386,22 +26402,22 @@ msgstr ""
 "***倒退***\n"
 "\n"
 
-#: text-utils/more.c:1719
+#: text-utils/more.c:1757
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "「%s」第 %d 列"
 
-#: text-utils/more.c:1722
+#: text-utils/more.c:1760
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[非檔案] 第 %d 列"
 
-#: text-utils/more.c:1728
+#: text-utils/more.c:1766
 #, fuzzy
 msgid "No previous regular expression"
 msgstr "沒有前一個正規表示式"
 
-#: text-utils/more.c:1797
+#: text-utils/more.c:1835
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[按下「h」列出指令。]"
