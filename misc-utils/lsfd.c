@@ -99,6 +99,26 @@ struct nodev_table {
 };
 static struct nodev_table nodev_table;
 
+struct mnt_namespace {
+	bool read_mountinfo;
+	ino_t id;
+	struct list_head cooked_bdevs;
+};
+
+static struct mnt_namespace *find_mnt_ns(ino_t id);
+static struct mnt_namespace *add_mnt_ns(ino_t id);
+static void *mnt_namespaces;	/* for tsearch/tfind */
+
+struct cooked_bdev {
+	struct list_head cooked_bdevs;
+	dev_t cooked;
+	dev_t raw;
+	char *filesystem;
+};
+
+static ino_t self_mntns_id;
+static int self_mntns_fd = -1;
+
 struct name_manager {
 	struct idcache *cache;
 	unsigned long next_id;
@@ -435,9 +455,6 @@ static const int default_threads_columns[] = {
 static int columns[ARRAY_SIZE(infos) * 2] = {-1};
 static size_t ncolumns;
 
-static ino_t *mnt_namespaces;
-static size_t nspaces;
-
 struct counter_spec {
 	struct list_head specs;
 	const char *name;
@@ -619,31 +636,6 @@ static struct libscols_column *add_column_by_id(struct lsfd_control *ctl,
 		ctl->threads = 1;
 
 	return cl;
-}
-
-static int has_mnt_ns(ino_t id)
-{
-	size_t i;
-
-	for (i = 0; i < nspaces; i++) {
-		if (mnt_namespaces[i] == id)
-			return 1;
-	}
-	return 0;
-}
-
-static void add_mnt_ns(ino_t id)
-{
-	size_t nmax = 0;
-
-	if (nspaces)
-		nmax = (nspaces + 16) / 16 * 16;
-	if (nmax <= nspaces + 1) {
-		nmax += 16;
-		mnt_namespaces = xreallocarray(mnt_namespaces,
-					       nmax, sizeof(ino_t));
-	}
-	mnt_namespaces[nspaces++] = id;
 }
 
 static const struct file_class *stat2class(struct stat *sb)
@@ -869,9 +861,11 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 	if (f->is_error)
 		return f;
 
-	if (is_association(f, NS_MNT))
-		proc->ns_mnt = f->stat.st_ino;
-	else if (is_association(f, NS_NET))
+	if (is_association(f, NS_MNT)) {
+		proc->mnt_ns = find_mnt_ns(f->stat.st_ino);
+		if (proc->mnt_ns == NULL)
+			proc->mnt_ns = add_mnt_ns(f->stat.st_ino);
+	} else if (is_association(f, NS_NET))
 		load_sock_xinfo(pc, name, f->stat.st_ino);
 
 	else if (assoc >= 0) {
@@ -929,7 +923,7 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 			"-%"SCNx64		/* end */
 			" %4[^ ]"		/* mode */
 			" %"SCNx64		/* offset */
-		        " %lx:%lx"		/* maj:min */
+			" %lx:%lx"		/* maj:min */
 			" %"SCNu64,		/* inode */
 
 			&start, &end, modestr, &offset,
@@ -1042,12 +1036,26 @@ static void collect_fs_files(struct path_cxt *pc, struct proc *proc,
 			       sockets_only);
 }
 
-static void collect_namespace_files(struct path_cxt *pc, struct proc *proc)
+static void collect_namespace_files_tophalf(struct path_cxt *pc, struct proc *proc)
 {
 	enum association assocs[] = {
 		ASSOC_NS_CGROUP,
 		ASSOC_NS_IPC,
 		ASSOC_NS_MNT,
+	};
+	const char *names[] = {
+		[ASSOC_NS_CGROUP] = "ns/cgroup",
+		[ASSOC_NS_IPC]    = "ns/ipc",
+		[ASSOC_NS_MNT]    = "ns/mnt",
+	};
+	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs),
+			       /* Namespace information is alwasys needed. */
+			       false);
+}
+
+static void collect_namespace_files_bottomhalf(struct path_cxt *pc, struct proc *proc)
+{
+	enum association assocs[] = {
 		ASSOC_NS_NET,
 		ASSOC_NS_PID,
 		ASSOC_NS_PID4C,
@@ -1057,9 +1065,6 @@ static void collect_namespace_files(struct path_cxt *pc, struct proc *proc)
 		ASSOC_NS_UTS,
 	};
 	const char *names[] = {
-		[ASSOC_NS_CGROUP] = "ns/cgroup",
-		[ASSOC_NS_IPC]    = "ns/ipc",
-		[ASSOC_NS_MNT]    = "ns/mnt",
 		[ASSOC_NS_NET]    = "ns/net",
 		[ASSOC_NS_PID]    = "ns/pid",
 		[ASSOC_NS_PID4C]  = "ns/pid_for_children",
@@ -1071,6 +1076,131 @@ static void collect_namespace_files(struct path_cxt *pc, struct proc *proc)
 	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs),
 			       /* Namespace information is alwasys needed. */
 			       false);
+}
+
+static void reset_cooked_bdev(struct cooked_bdev *bdev, dev_t raw, const char *filesystem)
+{
+	bdev->raw = raw;
+	free(bdev->filesystem);
+	bdev->filesystem = xstrdup(filesystem);
+}
+
+static struct cooked_bdev *new_cooked_bdev(dev_t cooked, dev_t raw, const char *filesystem)
+{
+	struct cooked_bdev *bdev = xmalloc(sizeof(*bdev));
+
+	INIT_LIST_HEAD(&bdev->cooked_bdevs);
+	bdev->cooked = cooked;
+	bdev->raw = raw;
+	if (major(cooked) == 0) {
+		bdev->filesystem = NULL;
+		xasprintf(&bdev->filesystem, "%s:%lu",
+			  filesystem, (unsigned long)minor(cooked));
+	} else
+		bdev->filesystem = xstrdup(filesystem);
+
+	return bdev;
+}
+
+static void free_cooked_bdev(struct cooked_bdev* bdev)
+{
+	if (bdev->filesystem)
+		free(bdev->filesystem);
+	free(bdev);
+}
+
+static void add_cooked_bdev(struct mnt_namespace *mnt_ns, dev_t cooked, dev_t raw, const char *filesystem)
+{
+	struct cooked_bdev *bdev;
+
+	struct list_head *n;
+	list_for_each (n, &mnt_ns->cooked_bdevs) {
+		bdev = list_entry(n, struct cooked_bdev, cooked_bdevs);
+		if (bdev->cooked == cooked) {
+			reset_cooked_bdev (bdev, raw, filesystem);
+			return;
+		}
+	}
+
+	bdev = new_cooked_bdev(cooked, raw, filesystem);
+	list_add_tail(&bdev->cooked_bdevs, &mnt_ns->cooked_bdevs);
+}
+
+static void dedup_cooked_bdevs(struct mnt_namespace *mnt_ns)
+{
+	struct list_head *n, *nnext;
+
+	list_for_each_safe(n, nnext, &mnt_ns->cooked_bdevs) {
+		struct cooked_bdev *bdev = list_entry(n, struct cooked_bdev,
+						      cooked_bdevs);
+		if (bdev->cooked == bdev->raw) {
+			list_del(n);
+			free_cooked_bdev(bdev);
+		}
+	}
+
+#if 0
+	list_for_each(n, &mnt_ns->cooked_bdevs) {
+		struct cooked_bdev *bdev = list_entry(n, struct cooked_bdev,
+						      cooked_bdevs);
+		fprintf(stderr, "mntns: %lu (major: %u, minor: %u) => (major: %u, minor: %u)\n",
+			mnt_ns->id,
+			major(bdev->cooked), minor(bdev->cooked),
+			major(bdev->raw), minor(bdev->raw));
+	}
+#endif
+}
+
+static struct mnt_namespace *new_mnt_ns(ino_t id)
+{
+	struct mnt_namespace *mnt_ns = xmalloc(sizeof(*mnt_ns));
+
+	mnt_ns->id = id;
+	mnt_ns->read_mountinfo = false;
+	INIT_LIST_HEAD(&mnt_ns->cooked_bdevs);
+
+	return mnt_ns;
+}
+
+static void free_mnt_ns(void *mnt_ns)
+{
+	list_free(&((struct mnt_namespace *)mnt_ns)->cooked_bdevs,
+		  struct cooked_bdev, cooked_bdevs, free_cooked_bdev);
+
+	free(mnt_ns);
+}
+
+static int compare_mnt_ns(const void *a, const void *b)
+{
+	ino_t A = (((struct mnt_namespace *)a)->id);
+	ino_t B = (((struct mnt_namespace *)b)->id);
+
+	if (A < B)
+		return -1;
+	else if (A == B)
+		return 0;
+	else
+		return 1;
+}
+
+static struct mnt_namespace *find_mnt_ns(ino_t id)
+{
+	struct mnt_namespace key = { .id = id };
+
+	struct mnt_namespace **mnt_ns = tfind(&key, &mnt_namespaces, compare_mnt_ns);
+	if (mnt_ns)
+		return *mnt_ns;
+	return NULL;
+}
+
+static struct mnt_namespace *add_mnt_ns(ino_t id)
+{
+
+	struct mnt_namespace *mnt_ns = new_mnt_ns(id);
+	if (tsearch(mnt_ns, &mnt_namespaces, compare_mnt_ns) == NULL)
+		errx(EXIT_FAILURE, _("failed to allocate memory"));
+
+	return mnt_ns;
 }
 
 static struct nodev *new_nodev(unsigned long minor, const char *filesystem)
@@ -1101,19 +1231,28 @@ void add_nodev(unsigned long minor, const char *filesystem)
 static void initialize_nodevs(void)
 {
 	int i;
+	struct stat sb;
 
 	for (i = 0; i < NODEV_TABLE_SIZE; i++)
 		INIT_LIST_HEAD(&nodev_table.tables[i]);
+
+	if (stat("/proc/self/ns/mnt", &sb) == 0) {
+		self_mntns_id = sb.st_ino;
+		self_mntns_fd = open("/proc/self/ns/mnt", O_RDONLY);
+	}
 }
 
 static void finalize_nodevs(void)
 {
 	int i;
 
+	if (self_mntns_fd >= 0)
+		close(self_mntns_fd);
+
 	for (i = 0; i < NODEV_TABLE_SIZE; i++)
 		list_free(&nodev_table.tables[i], struct nodev, nodevs, free_nodev);
 
-	free(mnt_namespaces);
+	tdestroy(mnt_namespaces, free_mnt_ns);
 }
 
 const char *get_nodev_filesystem(unsigned long minor)
@@ -1129,31 +1268,88 @@ const char *get_nodev_filesystem(unsigned long minor)
 	return NULL;
 }
 
-static void add_nodevs(FILE *mnt)
+static void add_nodevs_from_cooked_bdevs(struct mnt_namespace *mnt_ns)
+{
+	struct list_head *n;
+	list_for_each(n, &mnt_ns->cooked_bdevs) {
+		struct cooked_bdev *bdev = list_entry(n, struct cooked_bdev,
+						      cooked_bdevs);
+		if (major(bdev->cooked) == 0
+		    && get_nodev_filesystem(minor(bdev->cooked)) == NULL)
+			add_nodev(minor(bdev->cooked), bdev->filesystem);
+	}
+}
+
+static void process_mountinfo_entry(unsigned long major, unsigned long minor,
+				    const char *filesystem,
+				    const char *mntpoint_filename,
+				    struct mnt_namespace *mnt_ns)
+{
+	if (mnt_ns != NULL) {
+		struct stat sb;
+		if (stat(mntpoint_filename, &sb) == 0)
+			add_cooked_bdev(mnt_ns, sb.st_dev, makedev(major, minor), filesystem);
+	}
+
+	if (major != 0)
+		return;
+	if (get_nodev_filesystem(minor))
+		return;
+
+	add_nodev(minor, filesystem);
+}
+
+static void read_mountinfo(FILE *mountinfo, struct mnt_namespace *mnt_ns)
 {
 	/* This can be very long. A line in mountinfo can have more than 3
 	 * paths. */
 	char line[PATH_MAX * 3 + 256];
 
-	while (fgets(line, sizeof(line), mnt)) {
+	while (fgets(line, sizeof(line), mountinfo)) {
 		unsigned long major, minor;
 		char filesystem[256];
+		int mntpoint_offset, mntpoint_end_offset;
+		int scan_offset;
 
-		/* 23 61 0:22 / /sys rw,nosuid,nodev,noexec,relatime shared:2 - sysfs sysfs rw,seclabel */
-		if(sscanf(line, "%*d %*d %lu:%lu %*s %*s %*s %*[^-] - %s %*[^\n]",
-			  &major, &minor, filesystem) != 3)
-			/* 1600 1458 0:55 / / rw,nodev,relatime - overlay overlay rw,context="s... */
-			if (sscanf(line, "%*d %*d %lu:%lu %*s %*s %*s - %s %*[^\n]",
-				   &major, &minor, filesystem) != 3)
+		if(sscanf(line, "%*d %*d %lu:%lu %*s %n%*s%n %*s %n", &major, &minor,
+			  &mntpoint_offset, &mntpoint_end_offset, &scan_offset) != 2)
+			continue;
+
+		/* 23 61 0:22 / /sys rw,nosuid,nodev,noexec,relatime shared:2 - sysfs sysfs rw,seclabel
+		 * --------------------------------------------------^
+		 */
+		if(sscanf(line + scan_offset, "%*[^-] - %255s %*[^\n]",
+			  filesystem) != 1)
+			/* 1600 1458 0:55 / / rw,nodev,relatime - overlay overlay rw,context="s...
+			 * -------------------------------------^
+			 */
+			if (sscanf(line + scan_offset, "- %255s %*[^\n]",
+				   filesystem) != 1)
 				continue;
 
-		if (major != 0)
-			continue;
-		if (get_nodev_filesystem(minor))
-			continue;
-
-		add_nodev(minor, filesystem);
+		line[mntpoint_end_offset] = '\0';
+		process_mountinfo_entry(major, minor, filesystem,
+					line + mntpoint_offset, mnt_ns);
 	}
+
+	if (mnt_ns) {
+		dedup_cooked_bdevs(mnt_ns);
+		add_nodevs_from_cooked_bdevs(mnt_ns);
+	}
+}
+
+static void read_mountinfo_in_mntns(FILE *mountinfo, struct mnt_namespace *mnt_ns,
+				    int mntns_fd)
+{
+	if (mntns_fd >= 0 && setns(mntns_fd, CLONE_NEWNS) < 0) {
+		mntns_fd = -1;
+		mnt_ns = NULL;
+	}
+
+	read_mountinfo(mountinfo, mnt_ns);
+
+	if (mntns_fd >= 0)
+		setns(self_mntns_fd, CLONE_NEWNS);
 }
 
 static void initialize_ipc_table(void)
@@ -1658,17 +1854,17 @@ static void parse_proc_syscall(struct lsfd_control *ctl __attribute__((__unused_
 		return;
 
 	switch (scn) {
-#ifdef 	SYS_poll
+#ifdef SYS_poll
 	case SYS_poll:
 		mark_poll_fds_as_multiplexed(ptr, pid, proc);
 		break;
 #endif
-#ifdef 	SYS_ppoll
+#ifdef SYS_ppoll
 	case SYS_ppoll:
 		mark_poll_fds_as_multiplexed(ptr, pid, proc);
 		break;
 #endif
-#ifdef 	SYS_ppoll_time64
+#ifdef SYS_ppoll_time64
 	case SYS_ppoll_time64:
 		mark_poll_fds_as_multiplexed(ptr, pid, proc);
 		break;
@@ -1684,7 +1880,7 @@ static void parse_proc_syscall(struct lsfd_control *ctl __attribute__((__unused_
 		mark_select_fds_as_multiplexed(ptr, pid, proc);
 		break;
 #endif
-#ifdef 	SYS_pselect6_time64
+#ifdef SYS_pselect6_time64
 	case SYS_pselect6_time64:
 		mark_select_fds_as_multiplexed(ptr, pid, proc);
 		break;
@@ -1735,17 +1931,50 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	    || kcmp(proc->leader->pid, proc->pid, KCMP_FS, 0, 0) != 0)
 		collect_fs_files(pc, proc, ctl->sockets_only);
 
-	if (proc->ns_mnt == 0 || !has_mnt_ns(proc->ns_mnt)) {
-		FILE *mnt = ul_path_fopen(pc, "r", "mountinfo");
-		if (mnt) {
-			add_nodevs(mnt);
-			if (proc->ns_mnt)
-				add_mnt_ns(proc->ns_mnt);
-			fclose(mnt);
+	/* Reading /proc/$pid/mountinfo is expensive.
+	 * mnt_namespaces is a table for avoiding reading mountinfo files
+	 * for an identical mnt namespace.
+	 *
+	 * After reading a mountinfo file for a mnt namespace, we store $mnt_id
+	 * identifying the mnt namespace to mnt_namespaces.
+	 *
+	 * Before reading a mountinfo, we look up the mnt_namespaces with $mnt_id
+	 * as a key. If we find the key, we can skip the reading.
+	 *
+	 * To utilize mnt_namespaces, we need $mnt_id.
+	 * So we read /proc/$pid/ns/mnt here. However, we should not read
+	 * /proc/$pid/ns/net here. When reading /proc/$pid/ns/net, we need
+	 * the information about backing device of "nsfs" file system.
+	 * The information is available in a mountinfo file.
+	 */
+
+	/* 1/3. Read /proc/$pid/ns/mnt */
+	if (proc->mnt_ns == NULL)
+		collect_namespace_files_tophalf(pc, proc);
+
+	/* 2/3. read /proc/$pid/mountinfo unless we have read it already.
+	 * The backing device for "nsfs" is solved here.
+	 */
+	if (proc->mnt_ns == NULL || !proc->mnt_ns->read_mountinfo) {
+		FILE *mountinfo = ul_path_fopen(pc, "r", "mountinfo");
+		if (mountinfo) {
+			int mntns_fd = -1;
+			if (proc->mnt_ns && (self_mntns_id != proc->mnt_ns->id))
+				mntns_fd = ul_path_open(pc, O_RDONLY, "ns/mnt");
+			read_mountinfo_in_mntns(mountinfo, proc->mnt_ns, mntns_fd);
+			if (mntns_fd >= 0)
+				close(mntns_fd);
+			if (proc->mnt_ns)
+				proc->mnt_ns->read_mountinfo = true;
+			fclose(mountinfo);
 		}
 	}
 
-	collect_namespace_files(pc, proc);
+	/* 3/3. read /proc/$pid/ns/{the other namespaces including net}
+	 * When reading the information about the net namespace,
+	 * backing device for "nsfs" must be solved.
+	 */
+	collect_namespace_files_bottomhalf(pc, proc);
 
 	/* If kcmp is not available,
 	 * there is no way to know whether threads share resources.
@@ -1778,7 +2007,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 
  out:
 	/* Let's be careful with number of open files */
-        ul_path_close_dirfd(pc);
+	ul_path_close_dirfd(pc);
 }
 
 static void parse_pids(const char *str, pid_t **pids, int *count)
