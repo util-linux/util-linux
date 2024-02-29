@@ -27,7 +27,6 @@
 
 #ifdef INCLUDE_VMWARE_BDOOR
 # include <stdint.h>
-# include <signal.h>
 # include <strings.h>
 # include <setjmp.h>
 # ifdef HAVE_SYS_IO_H
