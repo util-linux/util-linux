@@ -44,26 +44,28 @@ Repositories & Branches
 	* Primary repository is on kernel.org:
           git clone git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git
 
-	  We use this repository for master and stable branches only.
-
 	* Backup repository at github.com:
 	  git clone https://github.com/util-linux/util-linux.git
 
-	  We use this repository to backup kernel.org and for pull requests,
-	  issues tracking and topic branches. The master and stable branches are
-	  always pushed to the both repositories in the same time.
+	  We use this repository to backup kernel.org and for PULL REQUESTS,
+	  issues tracking. The master and stable branches are always pushed to
+	  the both repositories in the same time.
 
 	  It's recommended to use github.com for development.
 
 	* Branches:
 
-	  master   - development for the next release
-	  stable/* - stable maintenance releases
+	  master      - continuos development 
+	  stable/vX.Y - stable releases
 
-	  Github only:
-
-	  next	   - optionally used when master branch is frozen due to -rcN releases
-	  topic/*  - long time development
+	  Since version 2.40, the "master" branch remains continuously open and is 
+	  never subjected to feature freezes. The stabilization process for
+	  the upcoming release is exclusively conducted within the "stable/" branche.
+	  Upon branching from "master" to "stable/vX.Y," a new tag vX.Y+1-devel
+	  is generated to serve as placeholder for git-based versioning (refer to
+	  tools/git-version-gen). Subsequently, changes specific to the new release
+	  (such as po/ updates) are selectively cherry-picked from "stable/vX.Y" to
+	  "master" after the final release.
 
 Patching Process
 
