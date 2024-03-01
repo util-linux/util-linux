@@ -55,12 +55,12 @@ Repositories & Branches
 
 	* Branches:
 
-	  master      - continuos development 
+	  master      - continuous development
 	  stable/vX.Y - stable releases
 
 	  Since version 2.40, the "master" branch remains continuously open and is 
 	  never subjected to feature freezes. The stabilization process for
-	  the upcoming release is exclusively conducted within the "stable/" branche.
+	  the upcoming release is exclusively conducted within the "stable/" branches.
 	  Upon branching from "master" to "stable/vX.Y," a new tag vX.Y+1-devel
 	  is generated to serve as placeholder for git-based versioning (refer to
 	  tools/git-version-gen). Subsequently, changes specific to the new release
