@@ -55,6 +55,16 @@ Display only the namespaces without processes (aka persistent namespaces), creat
 *-p*, *--task* _PID_::
 Display only the namespaces held by the process with this _PID_.
 
+*-Q*, *--filter* _expr_::
+Print only the namespaces that meet the conditions specified by the expr.
++
+This feature is EXPERIMENTAL. See also *scols-filter*(5). For example
+exclude root as username, but print every namespaces more than one process
+belongs to:
+____
+ lsns --filter 'USER != "root" and NPROCS > 1'
+____
+
 *-r*, *--raw*::
 Use the raw output format.
 
@@ -95,6 +105,7 @@ mailto:kzak@redhat.com[Karel Zak]
 *namespaces*(7),
 *ioctl_ns*(2),
 *ip-netns*(8)
+*scols-filter*(5)
 
 include::man-common/bugreports.adoc[]
 
