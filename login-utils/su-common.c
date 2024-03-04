@@ -835,13 +835,14 @@ static void run_shell(
 	size_t n_args = 1 + su->fast_startup + 2 * ! !command + n_additional_args + 1;
 	const char **args = xcalloc(n_args, sizeof *args);
 	size_t argno = 1;
+	char *tmp;
 
 	DBG(MISC, ul_debug("starting shell [shell=%s, command=\"%s\"%s%s]",
 				shell, command,
 				su->simulate_login ? " login" : "",
 				su->fast_startup ? " fast-start" : ""));
+	tmp = xstrdup(shell);
 
-  char* tmp = xstrdup(shell);
 	if (su->simulate_login) {
 		char *arg0;
 		char *shell_basename;
@@ -851,10 +852,8 @@ static void run_shell(
 		arg0[0] = '-';
 		strcpy(arg0 + 1, shell_basename);
 		args[0] = arg0;
-	} else {
-    args[0] = basename(tmp);
-  }
-  free(tmp);
+	} else
+		args[0] = basename(tmp);
 
 	if (su->fast_startup)
 		args[argno++] = "-f";
