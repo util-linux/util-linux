@@ -76,7 +76,7 @@ test_uuidd_sources = files(
   'test_uuidd.c',
 )
 
-if build_liblastlog2 and systemd.found()
+if build_liblastlog2
   lastlog2_tmpfiles = configure_file(
     input : 'lastlog2-tmpfiles.conf.in',
     output : 'lastlog2-tmpfiles.conf',
@@ -84,7 +84,9 @@ if build_liblastlog2 and systemd.found()
   install_data(
     lastlog2_tmpfiles,
     install_dir : '/usr/lib/tmpfiles.d')
+endif
 
+if build_liblastlog2 and systemd.found()
   lastlog2_service = configure_file(
     input : 'lastlog2-import.service.in',
     output : 'lastlog2-import.service',
@@ -94,7 +96,7 @@ if build_liblastlog2 and systemd.found()
     install_dir : systemdsystemunitdir)
 endif
 
-if build_uuidd and systemd.found()
+if build_uuidd
   uuidd_tmpfiles = configure_file(
     input : 'uuidd-tmpfiles.conf.in',
     output : 'uuidd-tmpfiles.conf',
@@ -102,7 +104,9 @@ if build_uuidd and systemd.found()
   install_data(
     uuidd_tmpfiles,
     install_dir : '/usr/lib/tmpfiles.d')
+endif
 
+if build_uuidd and systemd.found()
   uuidd_service = configure_file(
     input : 'uuidd.service.in',
     output : 'uuidd.service',
