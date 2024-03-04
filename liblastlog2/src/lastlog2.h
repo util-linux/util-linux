@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-#define LL2_DEFAULT_DATABASE "/var/lib/lastlog/lastlog2.db"
+#define LL2_DEFAULT_DATABASE _PATH_LOCALSTATEDIR "/lib/lastlog/lastlog2.db"
 
 #include <stdint.h>
 

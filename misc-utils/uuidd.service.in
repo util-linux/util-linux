@@ -16,7 +16,7 @@ ProtectKernelTunables=yes
 ProtectKernelModules=yes
 ProtectControlGroups=yes
 MemoryDenyWriteExecute=yes
-ReadWritePaths=/var/lib/libuuid/
+ReadWritePaths=@localstatedir@/lib/libuuid/
 SystemCallFilter=@default @file-system @basic-io @system-service @signal @io-event @network-io
 
 [Install]
