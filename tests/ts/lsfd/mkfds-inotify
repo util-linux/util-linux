@@ -29,20 +29,22 @@ ts_cd "$TS_OUTDIR"
 
 PID=
 FD=3
-ROOT="$(stat -c %i /)"@"$($TS_CMD_FINDMNT --raw --noheadings -oMAJ:MIN --target /)"
-FSTAB="$(stat -c %i /etc/fstab)"@"$($TS_CMD_FINDMNT --raw --noheadings -oMAJ:MIN --target /etc/fstab)"
+dir=/proc
+file=/proc/cmdline
+PROC="$(stat -c %i $dir)"@"$($TS_CMD_FINDMNT --raw --noheadings -oMAJ:MIN --target $dir)"
+CMDLINE="$(stat -c %i $file)"@"$($TS_CMD_FINDMNT --raw --noheadings -oMAJ:MIN --target $file)"
 {
-    coproc MKFDS { "$TS_HELPER_MKFDS" inotify $FD; }
+    coproc MKFDS { "$TS_HELPER_MKFDS" inotify $FD dir=$dir file=$file ; }
     if read -u ${MKFDS[0]} PID; then
 	EXPR='(PID == '"${PID}"') and (FD == '"$FD"')'
 	INODES_RAW=$(${TS_CMD_LSFD} --raw -n -o INOTIFY.INODES.RAW -Q "${EXPR}")
 	echo "INOTIFY.INODES.RAW": $?
-	if [[ "$INODES_RAW" ==  "${FSTAB}"'\x0a'"${ROOT}" ]]; then
-	    echo "INOTIFY.INODES.RAW" == FSTAB'\x0a'ROOT
+	if [[ "$INODES_RAW" ==  "${CMDLINE}"'\x0a'"${PROC}" ]]; then
+	    echo "INOTIFY.INODES.RAW" == CMDLINE'\x0a'PROC
 	else
 	    echo "INOTIFY.INODES.RAW": "$INODES_RAW"
-	    echo "FSTAB": "$FSTAB"
-	    echo "ROOT": "$ROOT"
+	    echo "CMDLINE": "$CMDLINE"
+	    echo "PROC": "$PROC"
 	fi
 	INODES_RAW_JSON=$(${TS_CMD_LSFD} -J --raw -n -o INOTIFY.INODES.RAW -Q "${EXPR}")
 	echo "INOTIFY.INODES.RAW (JSON)": $?
@@ -51,7 +53,7 @@ FSTAB="$(stat -c %i /etc/fstab)"@"$($TS_CMD_FINDMNT --raw --noheadings -oMAJ:MIN
    "lsfd": [
       {
          "inotify.inodes.raw": [
-             "$FSTAB", "$ROOT"
+             "$CMDLINE", "$PROC"
          ]
       }
    ]
