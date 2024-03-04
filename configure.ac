@@ -2500,9 +2500,9 @@ UL_REQUIRES_HAVE([setterm], [ncursesw, ncurses], [ncursesw or ncurses library])
 AM_CONDITIONAL([BUILD_SETTERM], [test "x$build_setterm" = xyes])
 
 # build_schedutils= is just configure-only variable to control
-# ionice, taskset and chrt
+# ionice, taskset, coreset, uclampset and chrt
 AC_ARG_ENABLE([schedutils],
-  AS_HELP_STRING([--disable-schedutils], [do not build chrt, ionice, taskset]),
+  AS_HELP_STRING([--disable-schedutils], [do not build chrt, ionice, taskset, uclampset, coreset]),
   [], [UL_DEFAULT_ENABLE([schedutils], [check])]
 )
 
@@ -2564,6 +2564,11 @@ UL_REQUIRES_SYSCALL_CHECK([uclampset],
 	[UL_CHECK_SYSCALL([sched_setattr])], [sched_setattr])
 AM_CONDITIONAL([BUILD_UCLAMPSET], [test "x$build_uclampset" = xyes])
 
+UL_ENABLE_ALIAS([coreset], [schedutils])
+UL_BUILD_INIT([coreset])
+UL_REQUIRES_SYSCALL_CHECK([coreset],
+	[UL_CHECK_SYSCALL([prctl])], [prct])
+AM_CONDITIONAL([BUILD_CORESET], [test "x$build_coreset" = xyes])
 
 AC_ARG_ENABLE([wall],
   AS_HELP_STRING([--disable-wall], [do not build wall]),
