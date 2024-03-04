@@ -2519,7 +2519,7 @@ static void dolog(int priority
 	 * automatically prepended to the message. If we write directly to
 	 * /dev/console, we must prepend the process name ourselves.
 	 */
-	openlog(program_invocation_short_name, LOG_PID, LOG_AUTHPRIV);
+	openlog("agetty", LOG_PID, LOG_AUTHPRIV);
 	vsyslog(priority, fmt, ap);
 	closelog();
 #else

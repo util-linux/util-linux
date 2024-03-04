@@ -290,7 +290,7 @@ static void log_syslog(struct su_context *su, bool successful)
 {
 	DBG(LOG, ul_debug("syslog logging"));
 
-	openlog(program_invocation_short_name, LOG_PID, LOG_AUTH);
+	openlog(su->runuser ? "runuser" : "su", LOG_PID, LOG_AUTH);
 	syslog(LOG_NOTICE, "%s(to %s) %s on %s",
 	       successful ? "" :
 	       su->runuser ? "FAILED RUNUSER " : "FAILED SU ",
