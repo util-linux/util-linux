@@ -254,8 +254,8 @@ static int find_cmd(char *s)
 
 static void do_commands(int fd, char **argv, int d);
 static void report_header(void);
-static void report_device(char *device, int quiet);
-static void report_all_devices(void);
+static int report_device(char *device, int quiet);
+static int report_all_devices(void);
 
 int main(int argc, char **argv)
 {
@@ -279,14 +279,15 @@ int main(int argc, char **argv)
 
 	/* --report not together with other commands */
 	if (!strcmp(argv[1], "--report")) {
+		int rc = 0;
 		report_header();
 		if (argc > 2) {
 			for (d = 2; d < argc; d++)
-				report_device(argv[d], 0);
+				rc += report_device(argv[d], 0);
 		} else {
-			report_all_devices();
+			rc = report_all_devices();
 		}
-		return EXIT_SUCCESS;
+		return rc ? EXIT_FAILURE : EXIT_SUCCESS;
 	}
 
 	/* do each of the commands on each of the devices */
@@ -453,13 +454,14 @@ static void do_commands(int fd, char **argv, int d)
 	}
 }
 
-static void report_all_devices(void)
+static int report_all_devices(void)
 {
 	FILE *procpt;
 	char line[200];
 	char ptname[200 + 1];
 	char device[210];
 	int ma, mi, sz;
+	int rc = 0;
 
 	procpt = fopen(_PATH_PROC_PARTITIONS, "r");
 	if (!procpt)
@@ -471,16 +473,18 @@ static void report_all_devices(void)
 			continue;
 
 		snprintf(device, sizeof(device), "/dev/%s", ptname);
-		report_device(device, 1);
+		rc += report_device(device, 1);
 	}
 
 	fclose(procpt);
+	return rc;
 }
 
-static void report_device(char *device, int quiet)
+static int report_device(char *device, int quiet)
 {
 	int fd;
 	int ro, ssz, bsz;
+	int rc = 0;
 	long ra;
 	unsigned long long bytes;
 	uint64_t start = 0;
@@ -491,7 +495,7 @@ static void report_device(char *device, int quiet)
 	if (fd < 0) {
 		if (!quiet)
 			warn(_("cannot open %s"), device);
-		return;
+		return 1;
 	}
 
 	ro = ssz = bsz = 0;
@@ -524,9 +528,11 @@ static void report_device(char *device, int quiet)
 	} else {
 		if (!quiet)
 			warnx(_("ioctl error on %s"), device);
+		rc = 1;
 	}
 
 	close(fd);
+	return rc;
 }
 
 static void report_header(void)

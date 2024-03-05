@@ -97,7 +97,7 @@ Print logical sector size in bytes - usually 512.
 Get size in 512-byte sectors.
 
 *--rereadpt*::
-Reread partition table
+Reread partition table.
 
 *--setbsz* _bytes_::
 Set blocksize. Note that the block size is specific to the current file descriptor opening the block device, so the change of block size only persists for as long as *blockdev* has the device open, and is lost once *blockdev* exits.
