@@ -35,7 +35,7 @@ ts_device_init
 	"$TS_LODEV" \
 	>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 
-blkid "$TS_LODEV" \
+"$TS_CMD_BLKID" "$TS_LODEV" \
 	| sed -e "s|$TS_LODEV|DEVICE|" \
 	>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 
