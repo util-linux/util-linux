@@ -1,0 +1,8 @@
+{
+   "label": "tés\"'\n t",
+   "fssize": "4096",
+   "version": "2",
+   "endianness": "LITTLE",
+   "type": "cramfs",
+   "usage": "filesystem"
+}

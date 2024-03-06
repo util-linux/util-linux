@@ -33,7 +33,7 @@ _blkid() {
 	"$TS_CMD_BLKID" --cache-file "$TS_OUTDIR"/blkid.cache "$@" "$outimg" | sed -e "s#$TS_OUTDIR/##"
 }
 
-for format in value udev export full device; do
+for format in value udev export full device json; do
 	ts_init_subtest "$format-probe"
 	_blkid --probe --output "$format" >> "$TS_OUTPUT"
 	ts_finalize_subtest
