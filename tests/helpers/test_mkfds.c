@@ -3999,7 +3999,7 @@ static const struct factory factories[] = {
 	},
 	{
 		.name = "multiplexing",
-		.desc = "making pipes monitored by multiplexers",
+		.desc = "make pipes monitored by multiplexers",
 		.priv =  false,
 		.N    = 12,
 		.EX_N = 0,
