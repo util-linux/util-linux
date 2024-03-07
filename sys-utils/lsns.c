@@ -22,9 +22,9 @@
 #include <wchar.h>
 #include <libsmartcols.h>
 #include <libmount.h>
+# include <stdbool.h>
 
 #ifdef HAVE_LINUX_NET_NAMESPACE_H
-# include <stdbool.h>
 # include <sys/socket.h>
 # include <linux/netlink.h>
 # include <linux/rtnetlink.h>
@@ -50,6 +50,7 @@
 #include "namespace.h"
 #include "idcache.h"
 #include "fileutils.h"
+#include "column-list-table.h"
 
 #include "debug.h"
 
@@ -1392,7 +1393,6 @@ static struct libscols_filter *new_filter(const char *query)
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
-	size_t i;
 
 	fputs(USAGE_HEADER, out);
 
@@ -1417,17 +1417,27 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -T, --tree[=<rel>]     use tree format (parent, owner, or process)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" -H, --list-columns     list the available columns\n"), out);
 	fprintf(out, USAGE_HELP_OPTIONS(24));
-
-	fputs(USAGE_COLUMNS, out);
-	for (i = 0; i < ARRAY_SIZE(infos); i++)
-		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
-
 	fprintf(out, USAGE_MAN_TAIL("lsns(8)"));
 
 	exit(EXIT_SUCCESS);
 }
 
+static void __attribute__((__noreturn__)) list_colunms(bool raw, bool json)
+{
+   struct libscols_table *col_tb = xcolumn_list_table_new("lsns-columns", stdout, raw, json);
+
+   for (size_t i = 0; i < ARRAY_SIZE(infos); i++)
+           xcolumn_list_table_append_line(col_tb, infos[i].name,
+					  infos[i].json_type, NULL,
+					  _(infos[i].help));
+
+   scols_print_table(col_tb);
+   scols_unref_table(col_tb);
+
+   exit(EXIT_SUCCESS);
+}
 
 int main(int argc, char *argv[])
 {
@@ -1454,6 +1464,7 @@ int main(int argc, char *argv[])
 		{ "raw",        no_argument,       NULL, 'r' },
 		{ "type",       required_argument, NULL, 't' },
 		{ "tree",       optional_argument, NULL, 'T' },
+		{ "list-columns", no_argument,     NULL, 'H' },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -1479,7 +1490,7 @@ int main(int argc, char *argv[])
 	INIT_LIST_HEAD(&netnsids_cache);
 
 	while ((c = getopt_long(argc, argv,
-				"JlPp:o:nruhVt:T::WQ:", long_opts, NULL)) != -1) {
+				"JlPp:o:nruhVt:T::WQ:H", long_opts, NULL)) != -1) {
 
 		err_exclusive_options(c, long_opts, excl, excl_st);
 
@@ -1542,6 +1553,8 @@ int main(int argc, char *argv[])
 		case 'Q':
 			ls.filter = new_filter(optarg);
 			break;
+		case 'H':
+			list_colunms(ls.raw, ls.json);
 
 		case 'h':
 			usage();
