@@ -1292,7 +1292,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
 	fputs(_(" -W, --nowrap           don't use multi-line representation\n"), out);
 	fputs(_(" -t, --type <name>      namespace type (mnt, net, ipc, user, pid, uts, cgroup, time)\n"), out);
-	fputs(_(" -T, --tree <rel>       use tree format (parent, owner, or process)\n"), out);
+	fputs(_(" -T, --tree[=<rel>]     use tree format (parent, owner, or process)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(24));
