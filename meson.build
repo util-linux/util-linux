@@ -2388,6 +2388,49 @@ if opt
 		    'disk-utils/partx.8.adoc']
   bashcompletions += ['addpart', 'delpart', 'resizepart', 'partx']
 endif
+opt = opt and 'partx' in static_programs
+exe = executable(
+  'addpart.static',
+  addpart_sources,
+  include_directories : includes,
+  link_args : ['--static'],
+  link_with : [lib_common],
+  install_dir : usrsbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+exe2 = executable(
+  'delpart.static',
+  delpart_sources,
+  include_directories : includes,
+  link_args : ['--static'],
+  link_with : [lib_common],
+  install_dir : usrsbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+exe3 = executable(
+  'resizepart.static',
+  resizepart_sources,
+  include_directories : includes,
+  link_args : ['--static'],
+  link_with : [lib_common],
+  install_dir : usrsbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+exe4 = executable(
+  'partx.static',
+  partx_sources,
+  include_directories : includes,
+  link_args : ['--static'],
+  link_with : [lib_common,
+               lib_blkid.get_static_lib(),
+               lib_smartcols.get_static_lib()],
+  install_dir : usrsbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+
+if opt
+  exes += [exe, exe2, exe3, exe4]
+endif
 
 ############################################################
 
