@@ -178,6 +178,11 @@ void ul_jsonwrt_close(struct ul_jsonwrt *fmt, int type)
 	fmt->after_close = 1;
 }
 
+void ul_jsonwrt_flush(struct ul_jsonwrt *fmt)
+{
+	fflush(fmt->out);
+}
+
 void ul_jsonwrt_value_raw(struct ul_jsonwrt *fmt,
 			const char *name, const char *data)
 {

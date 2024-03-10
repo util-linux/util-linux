@@ -23,6 +23,7 @@ int ul_jsonwrt_is_ready(struct ul_jsonwrt *fmt);
 void ul_jsonwrt_indent(struct ul_jsonwrt *fmt);
 void ul_jsonwrt_open(struct ul_jsonwrt *fmt, const char *name, int type);
 void ul_jsonwrt_close(struct ul_jsonwrt *fmt, int type);
+void ul_jsonwrt_flush(struct ul_jsonwrt *fmt);
 
 #define ul_jsonwrt_root_open(_f)	ul_jsonwrt_open(_f, NULL, UL_JSON_OBJECT)
 #define ul_jsonwrt_root_close(_f)	ul_jsonwrt_close(_f, UL_JSON_OBJECT)
