@@ -1344,10 +1344,13 @@ full_output:
 
 done:
 	free(mesg_copy);
-	if (ctl->json)
+	if (ctl->json) {
 		ul_jsonwrt_object_close(&ctl->jfmt);
-	else
+		if (ctl->follow)
+			ul_jsonwrt_flush(&ctl->jfmt);
+	} else {
 		putchar('\n');
+	}
 }
 
 /*
