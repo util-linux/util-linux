@@ -241,6 +241,7 @@ int ul_pty_signals_setup(struct ul_pty *pty)
 	sigaddset(&ourset, SIGCHLD);
 	sigaddset(&ourset, SIGWINCH);
 	sigaddset(&ourset, SIGALRM);
+	sigaddset(&ourset, SIGHUP);
 	sigaddset(&ourset, SIGTERM);
 	sigaddset(&ourset, SIGINT);
 	sigaddset(&ourset, SIGQUIT);
@@ -584,6 +585,8 @@ static int handle_signal(struct ul_pty *pty, int fd)
 							&info, (void *) &pty->win);
 		}
 		break;
+	case SIGHUP:
+		/* fallthrough */
 	case SIGTERM:
 		/* fallthrough */
 	case SIGINT:
