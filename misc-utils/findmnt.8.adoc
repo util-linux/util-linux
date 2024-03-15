@@ -48,9 +48,6 @@ Do not canonicalize paths at all. This option affects the comparing of paths and
 *-c*, *--canonicalize*::
 Canonicalize all printed paths.
 
-*--deleted*::
-Print filesystems where target (mountpoint) is marked as deleted by kernel.
-
 *-D*, *--df*::
 Imitate the output of *df*(1). This option is equivalent to *-o SOURCE,FSTYPE,SIZE,USED,AVAIL,USE%,TARGET* but excludes all pseudo filesystems. Use *--all* to print all filesystems. See also *-I*, *--dfi* options.
 
