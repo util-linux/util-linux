@@ -19,7 +19,7 @@
 readonly EPERM=18
 readonly ENOPROTOOPT=19
 readonly EPROTONOSUPPORT=20
-readonly EACCESS=21
+readonly EACCES=21
 
 function lsfd_wait_for_pausing {
 	ts_check_prog "sleep"
