@@ -20,6 +20,7 @@ readonly EPERM=18
 readonly ENOPROTOOPT=19
 readonly EPROTONOSUPPORT=20
 readonly EACCES=21
+readonly ENOENT=22
 
 function lsfd_wait_for_pausing {
 	ts_check_prog "sleep"
@@ -91,4 +92,30 @@ function lsfd_check_mkfds_factory
 	if ! "$TS_HELPER_MKFDS" --is-available "$FACTORY"; then
 		ts_skip "test_mkfds has no factory for $FACTORY"
 	fi
+}
+
+function lsfd_check_sockdiag
+{
+	local family=$1
+
+	ts_check_test_command "$TS_HELPER_MKFDS"
+
+	local msg
+	local err
+
+	msg=$("$TS_HELPER_MKFDS" -c sockdiag 9 family=$family 2>&1)
+	err=$?
+
+	case $err in
+	    0)
+		return;;
+	    $EPROTONOSUPPORT)
+		ts_skip "NETLINK_SOCK_DIAG protocol is not supported in socket(2)";;
+	    $EACCES)
+		ts_skip "sending a msg via a sockdiag netlink socket is not permitted";;
+	    $ENOENT)
+		ts_skip "sockdiag netlink socket is not available";;
+	    *)
+		ts_failed "failed to create a sockdiag netlink socket $family ($err): $msg";;
+	esac
 }
