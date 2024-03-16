@@ -68,7 +68,7 @@
 #define EXIT_EPERM  18
 #define EXIT_ENOPROTOOPT 19
 #define EXIT_EPROTONOSUPPORT 20
-#define EXIT_EACCESS 21
+#define EXIT_EACCES 21
 
 #define _U_ __attribute__((__unused__))
 
@@ -2096,7 +2096,7 @@ static void *make_ping_common(const struct factory *factory, struct fdesc fdescs
 
 	sd = socket(family, SOCK_DGRAM, protocol);
 	if (sd < 0)
-		err((errno == EACCES? EXIT_EACCESS: EXIT_FAILURE),
+		err((errno == EACCES? EXIT_EACCES: EXIT_FAILURE),
 		    "failed to make an icmp socket");
 
 	if (sd != fdescs[0].fd) {
@@ -2116,7 +2116,7 @@ static void *make_ping_common(const struct factory *factory, struct fdesc fdescs
 			int e = errno;
 			close(sd);
 			errno = e;
-			err((errno == EACCES? EXIT_EACCESS: EXIT_FAILURE),
+			err((errno == EACCES? EXIT_EACCES: EXIT_FAILURE),
 			    "failed in bind(2)");
 		}
 	}
