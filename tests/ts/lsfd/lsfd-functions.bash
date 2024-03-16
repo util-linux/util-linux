@@ -58,7 +58,7 @@ function lsfd_compare_dev {
     fi
 }
 
-lsfd_strip_type_stream()
+function lsfd_strip_type_stream
 {
     # lsfd changes the output of NAME column for a unix stream socket
     # whether the kernel reports it is a "UNIX-STREAM" socket or a
@@ -67,7 +67,7 @@ lsfd_strip_type_stream()
     sed -e 's/ type=stream//'
 }
 
-lsfd_make_state_connected()
+function lsfd_make_state_connected
 {
     # Newer kernels report the states of unix dgram sockets created by
     # sockerpair(2) are "connected" via /proc/net/unix though Older
