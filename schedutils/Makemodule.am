@@ -32,8 +32,8 @@ endif
 
 if BUILD_CORESET
 usrbin_exec_PROGRAMS += coreset
-MANPAGES += schedutils/coreset.1
-dist_noinst_DATA += schedutils/coreset.1.adoc
+#MANPAGES += schedutils/coreset.1
+#dist_noinst_DATA += schedutils/coreset.1.adoc
 coreset_SOURCES = schedutils/coreset.c
 coreset_LDADD = $(LDADD) libcommon.la
 endif
