@@ -26,9 +26,10 @@
 #include <stddef.h>
 #include <sys/prctl.h>
 
-#include "strutils.h"
 #include "c.h"
 #include "closestream.h"
+#include "optutils.h"
+#include "strutils.h"
 
 // These are in prctl.h on systems new enough. My dev system isn't
 // should check for this in .configure step and not build
@@ -128,7 +129,7 @@ static void __attribute__((__noreturn__)) err_cookie(pid_t pid, int set)
 {
 	char *msg;
 
-	if(set == CORE_COPY)
+	if (set == CORE_COPY)
 		msg = _("failed to copy pid %d's core scheduling cookie");
 	else
 		msg = set ? _("failed to set pid %d's core scheduling cookie") :
@@ -142,9 +143,9 @@ static unsigned long get_cookie(struct coreset *cs)
 	unsigned long cookie;
 	pid_t pid = (cs->cmd == CORE_COPY ? 0: cs->pid); /* with copy we want to report current's cookie */
 
-	if (prctl(PR_SCHED_CORE, PR_SCHED_CORE_GET, pid, PR_SCHED_CORE_SCOPE_THREAD, &cookie) < 0 ) {
+	if (prctl(PR_SCHED_CORE, PR_SCHED_CORE_GET, pid, PR_SCHED_CORE_SCOPE_THREAD, &cookie) < 0 )
 		err_cookie(pid ? pid : getpid(), FALSE);
-	}
+
 	return cookie;
 }
 
@@ -189,13 +190,18 @@ int main(int argc, char **argv)
 	static const struct option longopts[] = {
 		{ "copy",	0, NULL, 'c' },
 		{ "new",	0, NULL, 'n' },
-		{ "pid",	0, NULL, 'p' },
-		{ "scope",	0, NULL, 's' },
+		{ "pid",	1, NULL, 'p' },
+		{ "scope",	1, NULL, 's' },
 		{ "to",	        0, NULL, 't' },
 		{ "help",	0, NULL, 'h' },
 		{ "version",	0, NULL, 'V' },
 		{ NULL,		0, NULL,  0  }
 	};
+	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */
+                { 'c','n','t'},
+                { 0 }
+        };
+        int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -205,6 +211,7 @@ int main(int argc, char **argv)
 	memset(&cs, 0, sizeof(cs));
 
 	while ((c = getopt_long(argc, argv, "+cnp:s:thV", longopts, NULL)) != -1) {
+                err_exclusive_options(c, longopts, excl, excl_st);
 		switch (c) {
 		case 'c':
 			copy = 1;
@@ -213,7 +220,7 @@ int main(int argc, char **argv)
 		        create = 1;
 			break;
 		case 'p':
-			pid = strtos32_or_err(optarg, _("invalid PID argument"));
+			pid = strtopid_or_err(optarg, _("invalid PID argument"));
 			break;
 		case 's':
 			cs.scope = strtos32_or_err(optarg, _("invalid scope argument"));
@@ -234,18 +241,6 @@ int main(int argc, char **argv)
 	// push and no command is okay. copy and push require pid
 	if (((!pid || copy) && argc - optind < 1) || ((copy || push) && !pid)) {
 		warnx(_("bad usage"));
-		errtryhelp(EXIT_FAILURE);
-	}
-
-	/* these are mutually exclusive */
-	if (copy + create + push > 1) {
-		warnx(_("bad usage"));
-		errtryhelp(EXIT_FAILURE);
-	}
-
-	/* negative PID is never valid */
-	if (pid < 0) {
-		warnx(_("invalid pid"));
 		errtryhelp(EXIT_FAILURE);
 	}
 
