@@ -37,6 +37,8 @@ Enable the specified CPUs. Enabling a CPU means that the kernel sets it online. 
 
 *-g*, *--deconfigure* _cpu-list_::
 Deconfigure the specified CPUs. Deconfiguring a CPU means that the hypervisor removes the CPU from the virtual hardware on which the Linux instance runs and returns it to the CPU pool. A CPU must be offline, see *-d*, before it can be deconfigured.
++
+*chcpu -g* is not supported on IBM z/VM, CPUs are always in a configured.
 
 *-p*, *--dispatch* _mode_::
 Set the CPU dispatching _mode_ (polarization). This option has an effect only if your hardware architecture and hypervisor support CPU polarization. Available _modes_ are:
