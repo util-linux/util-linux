@@ -551,10 +551,10 @@ int mnt_context_enable_onlyonce(struct libmnt_context *cxt, int enable)
 }
 
 /**
- * mnt_context_is_lazy:
+ * mnt_context_is_onlyonce:
  * @cxt: mount context
  *
- * Returns: 1 if lazy umount is enabled or 0
+ * Returns: 1 if only-once mount is enabled or 0
  */
 int mnt_context_is_onlyonce(struct libmnt_context *cxt)
 {
