@@ -990,18 +990,16 @@ static void print_summary(struct lscpu_cxt *cxt)
 	/* Section: architecture */
 	sec = add_summary_s(tb, NULL, _("Architecture:"), cxt->arch->name);
 	if (cxt->arch->bit32 || cxt->arch->bit64) {
-		char buf[32], *p = buf;
+		const char *p;
 
-		if (cxt->arch->bit32) {
-			strcpy(p, "32-bit, ");
-			p += 8;
-		}
-		if (cxt->arch->bit64) {
-			strcpy(p, "64-bit, ");
-			p += 8;
-		}
-		*(p - 2) = '\0';
-		add_summary_s(tb, sec, _("CPU op-mode(s):"), buf);
+		if (cxt->arch->bit32 && cxt->arch->bit64)
+			p = "32-bit, 64-bit";
+		else if (cxt->arch->bit32)
+			p = "32-bit";
+		else
+			p = "64-bit";
+
+		add_summary_s(tb, sec, _("CPU op-mode(s):"), p);
 	}
 	if (ct && ct->addrsz)
 		add_summary_s(tb, sec, _("Address sizes:"), ct->addrsz);
