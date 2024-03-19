@@ -82,6 +82,9 @@ else
     fatal "Unknown compiler: $COMPILER"
 fi
 
+# ASAN can crash with the new default of =32
+sysctl --write vm.mmap_rnd_bits=28
+
 
 apt-get -y update --fix-missing
 apt-get -y build-dep util-linux
