@@ -156,11 +156,15 @@ void ul_SHA1Transform(uint32_t state[5], const unsigned char buffer[64])
 	state[3] += d;
 	state[4] += e;
 	/* Wipe variables */
+#ifdef HAVE_EXPLICIT_BZERO
 	explicit_bzero(&a, sizeof(a));
 	explicit_bzero(&b, sizeof(b));
 	explicit_bzero(&c, sizeof(c));
 	explicit_bzero(&d, sizeof(d));
 	explicit_bzero(&e, sizeof(e));
+#else
+	a = b = c = d = e = 0;
+#endif
 #ifdef UL_SHA1HANDSOFF
 	memset(block, '\0', sizeof(block));
 #endif
