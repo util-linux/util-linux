@@ -181,6 +181,9 @@ static int configure_superblock(struct libmnt_context *cxt,
 			/* Ignore VFS flags, userspace and external options */
 			continue;
 
+		if (!value && mnt_opt_is_sepnodata(opt))
+			value = "";	/* force use the value as string */
+
 		rc = fsconfig_set_value(cxt, hs, fd, name, value);
 		if (rc != 0)
 			goto done;

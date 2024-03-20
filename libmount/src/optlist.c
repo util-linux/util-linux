@@ -46,6 +46,7 @@ struct libmnt_opt {
 
 	unsigned int external : 1,	/* visible for external helpers only */
 		     recursive : 1,	/* recursive flag */
+		     sepnodata : 1,	/* value separator, but without data ("name=") */
 		     is_linux : 1,	/* defined in ls->linux_map (VFS attr) */
 		     quoted : 1;	/* name="value" */
 };
@@ -438,6 +439,10 @@ static struct libmnt_opt *optlist_new_opt(struct libmnt_optlist *ls,
 		opt->value = strndup(value, valsz);
 		if (!opt->value)
 			goto fail;
+
+	} else if (value) {
+		/* separator specified, but empty value ("name=") */
+		opt->sepnodata = 1;
 	}
 	if (namesz) {
 		opt->name = strndup(name, namesz);
@@ -957,7 +962,8 @@ int mnt_optlist_strdup_optstr(struct libmnt_optlist *ls, char **optstr,
 			continue;
 		rc = mnt_buffer_append_option(&buf,
 					opt->name, strlen(opt->name),
-					opt->value,
+					opt->value ? opt->value :
+						     opt->sepnodata ? "" : NULL,
 					opt->value ? strlen(opt->value) : 0,
 					opt->quoted);
 		if (rc)
@@ -1043,6 +1049,7 @@ struct libmnt_optlist *mnt_copy_optlist(struct libmnt_optlist *ls)
 			no->src = opt->src;
 			no->external = opt->external;
 			no->quoted = opt->quoted;
+			no->sepnodata = opt->sepnodata;
 		}
 	}
 
@@ -1182,6 +1189,11 @@ int mnt_opt_set_external(struct libmnt_opt *opt, int enable)
 int mnt_opt_is_external(struct libmnt_opt *opt)
 {
 	return opt && opt->external ? 1 : 0;
+}
+
+int mnt_opt_is_sepnodata(struct libmnt_opt *opt)
+{
+	return opt->sepnodata;
 }
 
 

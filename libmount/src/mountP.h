@@ -601,6 +601,7 @@ extern int mnt_opt_set_value(struct libmnt_opt *opt, const char *str);
 extern int mnt_opt_set_u64value(struct libmnt_opt *opt, uint64_t num);
 extern int mnt_opt_set_quoted_value(struct libmnt_opt *opt, const char *str);
 extern int mnt_opt_is_external(struct libmnt_opt *opt);
+extern int mnt_opt_is_sepnodata(struct libmnt_opt *opt);
 
 /* fs.c */
 extern int mnt_fs_follow_optlist(struct libmnt_fs *fs, struct libmnt_optlist *ol);
