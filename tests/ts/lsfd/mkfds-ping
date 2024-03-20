@@ -90,7 +90,7 @@ ERRMSG=
 for i in 0 1; do
     ERRMSG=$("$TS_HELPER_MKFDS"  -c -q "${FACTORY[$i]}" 3 id=$ID 2>&1)
     ERR="$?"
-    if [[ "$ERR" == "$EACCESS" ]]; then
+    if [[ "$ERR" == "$EACCES" ]]; then
 	case "$ERRMSG" in
 	    *bind*)
 		MSG="making ${TYPE[$i]} socket with specifying id is not allowed (blocked by SELinux?)"

@@ -34,6 +34,8 @@
 #include <linux/if_packet.h>
 #include <linux/if_tun.h>
 #include <linux/netlink.h>
+#include <linux/sock_diag.h>
+# include <linux/unix_diag.h> /* for UNIX domain sockets */
 #include <linux/sockios.h>  /* SIOCGSKNS */
 #include <mqueue.h>
 #include <net/if.h>
@@ -68,7 +70,8 @@
 #define EXIT_EPERM  18
 #define EXIT_ENOPROTOOPT 19
 #define EXIT_EPROTONOSUPPORT 20
-#define EXIT_EACCESS 21
+#define EXIT_EACCES 21
+#define EXIT_ENOENT 22
 
 #define _U_ __attribute__((__unused__))
 
@@ -2096,7 +2099,7 @@ static void *make_ping_common(const struct factory *factory, struct fdesc fdescs
 
 	sd = socket(family, SOCK_DGRAM, protocol);
 	if (sd < 0)
-		err((errno == EACCES? EXIT_EACCESS: EXIT_FAILURE),
+		err((errno == EACCES? EXIT_EACCES: EXIT_FAILURE),
 		    "failed to make an icmp socket");
 
 	if (sd != fdescs[0].fd) {
@@ -2116,7 +2119,7 @@ static void *make_ping_common(const struct factory *factory, struct fdesc fdescs
 			int e = errno;
 			close(sd);
 			errno = e;
-			err((errno == EACCES? EXIT_EACCESS: EXIT_FAILURE),
+			err((errno == EACCES? EXIT_EACCES: EXIT_FAILURE),
 			    "failed in bind(2)");
 		}
 	}
@@ -3167,6 +3170,99 @@ static void free_pty(const struct factory * factory _U_, void *data)
 	free(data);
 }
 
+static int send_diag_request(int diagsd, void *req, size_t req_size)
+{
+	struct sockaddr_nl nladdr = {
+		.nl_family = AF_NETLINK,
+	};
+
+	struct nlmsghdr nlh = {
+		.nlmsg_len = sizeof(nlh) + req_size,
+		.nlmsg_type = SOCK_DIAG_BY_FAMILY,
+		.nlmsg_flags = NLM_F_REQUEST | NLM_F_DUMP,
+	};
+
+	struct iovec iovecs[] = {
+		{ &nlh, sizeof(nlh) },
+		{ req, req_size },
+	};
+
+	const struct msghdr mhd = {
+		.msg_namelen = sizeof(nladdr),
+		.msg_name = &nladdr,
+		.msg_iovlen = ARRAY_SIZE(iovecs),
+		.msg_iov = iovecs,
+	};
+
+	if (sendmsg(diagsd, &mhd, 0) < 0)
+		return errno;
+
+	return 0;
+}
+
+static void *make_sockdiag(const struct factory *factory, struct fdesc fdescs[],
+			   int argc, char ** argv)
+{
+	struct arg family = decode_arg("family", factory->params, argc, argv);
+	const char *sfamily = ARG_STRING(family);
+	int ifamily;
+
+	if (strcmp(sfamily, "unix") == 0)
+		ifamily = AF_UNIX;
+	else
+		errx(EXIT_FAILURE, "unknown/unsupported family: %s", sfamily);
+	free_arg(&family);
+
+	int diagsd = socket(AF_NETLINK, SOCK_DGRAM, NETLINK_SOCK_DIAG);
+	if (diagsd < 0)
+		err(errno == EPROTONOSUPPORT? EXIT_EPROTONOSUPPORT: EXIT_FAILURE,
+		    "failed in sendmsg()");
+
+	void *req = NULL;
+	size_t reqlen = 0;
+
+	struct unix_diag_req udr;
+	if (ifamily == AF_UNIX) {
+		udr = (struct unix_diag_req) {
+			.sdiag_family = AF_UNIX,
+			.udiag_states = -1, /* set the all bits. */
+			.udiag_show = UDIAG_SHOW_NAME | UDIAG_SHOW_PEER | UNIX_DIAG_SHUTDOWN,
+		};
+		req = &udr;
+		reqlen = sizeof(udr);
+	}
+
+	int e = send_diag_request(diagsd, req, reqlen);
+	if (e) {
+		close (diagsd);
+		errno = e;
+		if (errno == EACCES)
+			err(EXIT_EACCES, "failed in sendmsg()");
+		if (errno == ENOENT)
+			err(EXIT_ENOENT, "failed in sendmsg()");
+		err(EXIT_FAILURE, "failed in sendmsg()");
+	}
+
+
+	if (diagsd != fdescs[0].fd) {
+		if (dup2(diagsd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(diagsd);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", diagsd, fdescs[0].fd);
+		}
+		close(diagsd);
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL
+	};
+
+	return NULL;
+}
+
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
 	{
@@ -3996,6 +4092,24 @@ static const struct factory factories[] = {
 		.report = report_pty,
 		.free = free_pty,
 		.params = (struct parameter []) {
+			PARAM_END
+		}
+	},
+	{
+		.name = "sockdiag",
+		.desc = "make a sockdiag netlink socket",
+		.priv = false,
+		.N = 1,
+		.EX_N = 0,
+		.make = make_sockdiag,
+		.params = (struct parameter []) {
+			{
+				.name = "family",
+				.type = PTYPE_STRING,
+				/* TODO: inet, inet6 */
+				.desc = "name of a protocol family ([unix])",
+				.defv.string = "unix",
+			},
 			PARAM_END
 		}
 	},
