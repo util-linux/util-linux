@@ -253,7 +253,8 @@ struct lscpu_cache *lscpu_cpu_get_cache(struct lscpu_cxt *cxt,
 	for (i = 0; i < cxt->ncaches; i++) {
 		struct lscpu_cache *ca = &cxt->caches[i];
 
-		if (strcmp(ca->name, name) == 0 &&
+		if (ca->sharedmap &&
+		    strcmp(ca->name, name) == 0 &&
 		    CPU_ISSET_S(cpu->logical_id, cxt->setsize, ca->sharedmap))
 			return ca;
 	}
