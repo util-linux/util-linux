@@ -1556,26 +1556,30 @@ exes += exe
 manadocs += ['sys-utils/blkdiscard.8.adoc']
 bashcompletions += ['blkdiscard']
 
-exe = executable(
-  'blkzone',
-  blkzone_sources,
-  include_directories : includes,
-  link_with : [lib_common],
-  install_dir : sbindir,
-  install : true)
-exes += exe
-manadocs += ['sys-utils/blkzone.8.adoc']
-bashcompletions += ['blkzone']
+if cc.has_header('linux/blkzoned.h')
+  exe = executable(
+    'blkzone',
+    blkzone_sources,
+    include_directories : includes,
+    link_with : [lib_common],
+    install_dir : sbindir,
+    install : true)
+  exes += exe
+  manadocs += ['sys-utils/blkzone.8.adoc']
+  bashcompletions += ['blkzone']
+endif
 
-exe = executable(
-  'blkpr',
-  blkpr_sources,
-  include_directories : includes,
-  link_with : [lib_common],
-  install_dir : sbindir,
-  install : true)
-exes += exe
-manadocs += ['sys-utils/blkpr.8.adoc']
+if cc.has_header('linux/pr.h')
+  exe = executable(
+    'blkpr',
+    blkpr_sources,
+    include_directories : includes,
+    link_with : [lib_common],
+    install_dir : sbindir,
+    install : true)
+  exes += exe
+  manadocs += ['sys-utils/blkpr.8.adoc']
+endif
 
 exe = executable(
   'ldattach',
