@@ -429,7 +429,7 @@ static int resolve_rtc_param_alias(const char *alias, __u64 *value)
 /* kernel uapi __u64 can be defined differently than uint64_t */
 static int strtoku64(const char *str, __u64 *num, int base)
 {
-	return ul_strtou64(str, (uint64_t *) &num, base);
+	return ul_strtou64(str, (uint64_t *) num, base);
 }
 
 /*
