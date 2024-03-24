@@ -173,8 +173,6 @@ int main(int argc, char *argv[])
 		line = 0;
 		while (!feof(fp)) {
 			len = read_line(sep, buf, bufsiz, fp);
-			if (len == 0)
-				continue;
 
 			/* This is my hack from setpwnam.c -janl */
 			while (len == bufsiz && !feof(fp)) {
@@ -187,13 +185,17 @@ int main(int argc, char *argv[])
 				/* And fill the rest of the buffer */
 				len += read_line(sep, &buf[len], bufsiz/2, fp);
 			}
+			if (ferror(fp)) {
+				warn("%s: %ju", filename, line);
+				rval = EXIT_FAILURE;
+				break;
+			}
+			if (len == 0)
+				continue;
+
 			reverse_str(buf, buf[len - 1] == sep ? len - 1 : len);
 			write_line(buf, len, stdout);
 			line++;
-		}
-		if (ferror(fp)) {
-			warn("%s: %ju", filename, line);
-			rval = EXIT_FAILURE;
 		}
 		if (fp != stdin)
 			fclose(fp);
