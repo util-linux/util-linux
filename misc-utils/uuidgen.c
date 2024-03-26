@@ -19,6 +19,7 @@
 #include "closestream.h"
 #include "strutils.h"
 #include "optutils.h"
+#include "xalloc.h"
 
 static void __attribute__((__noreturn__)) usage(void)
 {
@@ -57,7 +58,7 @@ badstring:
 		errtryhelp(EXIT_FAILURE);
 	}
 
-	value2 = malloc(*valuelen / 2 + 1);
+	value2 = xmalloc(*valuelen / 2 + 1);
 
 	for (x = n = 0; n < *valuelen; n++) {
 		c = value[n];
