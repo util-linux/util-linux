@@ -1962,6 +1962,7 @@ AM_CONDITIONAL([BUILD_ENOSYS], [test "x$build_enosys" = xyes])
 
 UL_BUILD_INIT([lsclocks], [check])
 UL_REQUIRES_LINUX([lsclocks])
+UL_REQUIRES_BUILD([lsclocks], [libsmartcols])
 AM_CONDITIONAL([BUILD_LSCLOCKS], [test "x$build_lsclocks" = xyes])
 
 UL_BUILD_INIT([getopt], [yes])
