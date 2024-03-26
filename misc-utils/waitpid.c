@@ -236,7 +236,7 @@ int main(int argc, char **argv)
 
 	if (count && count > n_pids)
 		errx(EXIT_FAILURE,
-		     _("can't want for %zu of %zu PIDs"), count, n_pids);
+		     _("can't wait for %zu of %zu PIDs"), count, n_pids);
 
 	pid_t *pids = parse_pids(argc - pid_idx, argv + pid_idx);
 

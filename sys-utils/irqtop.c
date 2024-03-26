@@ -177,7 +177,7 @@ static int event_loop(struct irqtop_ctl *ctl, struct irq_output *out)
 	efd = epoll_create1(0);
 
 	if ((tfd = timerfd_create(CLOCK_MONOTONIC, 0)) < 0)
-		err(EXIT_FAILURE, _("cannot not create timerfd"));
+		err(EXIT_FAILURE, _("cannot create timerfd"));
 	if (timerfd_settime(tfd, 0, &ctl->timer, NULL) != 0)
 		err(EXIT_FAILURE, _("cannot set timerfd"));
 
@@ -197,7 +197,7 @@ static int event_loop(struct irqtop_ctl *ctl, struct irq_output *out)
 	sigaddset(&sigmask, SIGQUIT);
 
 	if ((sfd = signalfd(-1, &sigmask, SFD_CLOEXEC)) < 0)
-		err(EXIT_FAILURE, _("cannot not create signalfd"));
+		err(EXIT_FAILURE, _("cannot create signalfd"));
 
 	ev.events = EPOLLIN;
 	ev.data.fd = sfd;

@@ -89,7 +89,7 @@ static struct colinfo infos[] = {
 	[COL_END]  = { "END",    10, SCOLS_FL_RIGHT, N_("ending offset of the lock")},
 	[COL_PATH] = { "PATH",    0, SCOLS_FL_TRUNC, N_("path of the locked file")},
 	[COL_BLOCKER] = { "BLOCKER", 0, SCOLS_FL_RIGHT, N_("PID of the process blocking the lock") },
-	[COL_HOLDERS] = { "HOLDERS", 0, SCOLS_FL_WRAP, N_("HOLDERS of the lock") },
+	[COL_HOLDERS] = { "HOLDERS", 0, SCOLS_FL_WRAP, N_("holders of the lock") },
 };
 
 static int columns[ARRAY_SIZE(infos) * 2];

@@ -1458,7 +1458,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --notruncate         don't truncate output\n"), out);
 	fputs(_(" -o, --output[=<list>]    define the columns to output\n"), out);
 	fputs(_("     --output-all         output all columns\n"), out);
-	fputs(_(" -p, --pwd                display information related to login by password.\n"), out);
+	fputs(_(" -p, --pwd                display information related to login by password\n"), out);
 	fputs(_(" -r, --raw                display in raw mode\n"), out);
 	fputs(_(" -s, --system-accs        display system accounts\n"), out);
 	fputs(_("     --time-format=<type> display dates in short, full or iso format\n"), out);

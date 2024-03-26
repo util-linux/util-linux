@@ -132,7 +132,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --bounding-set <caps>       set capability bounding set\n"), out);
 	fputs(_(" --ruid <uid|user>           set real uid\n"), out);
 	fputs(_(" --euid <uid|user>           set effective uid\n"), out);
-	fputs(_(" --rgid <gid|user>           set real gid\n"), out);
+	fputs(_(" --rgid <gid|group>          set real gid\n"), out);
 	fputs(_(" --egid <gid|group>          set effective gid\n"), out);
 	fputs(_(" --reuid <uid|user>          set real and effective uid\n"), out);
 	fputs(_(" --regid <gid|group>         set real and effective gid\n"), out);
