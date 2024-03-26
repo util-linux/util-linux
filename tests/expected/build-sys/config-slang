@@ -10,13 +10,16 @@ findmnt:  libblkid libmount libsmartcols libudev
 fsck:  libblkid libmount 
 fstrim:  libmount 
 irqtop:  libslang libsmartcols 
+lastlog2:  liblastlog2 
 libblkid.so.1.1.0:  
 libfdisk.so.1.1.0:  libblkid libuuid 
+liblastlog2.so.2.0.0:  libsqlite3 
 libmount.so.1.1.0:  libblkid 
 libsmartcols.so.1.1.0:  
 libuuid.so.1.3.0:  
 losetup:  libsmartcols 
-lsblk:  libblkid libmount libsmartcols libudev 
+lsblk:  libblkid libmount libsmartcols libtinfo libudev 
+lsclocks:  libsmartcols 
 lscpu:  libsmartcols 
 lsfd:  libsmartcols 
 lsipc:  libsmartcols 
@@ -28,6 +31,7 @@ lsns:  libmount libsmartcols
 mkswap:  libblkid libuuid 
 mount:  libmount 
 mountpoint:  libmount 
+pam_lastlog2.so:  
 partx:  libblkid libsmartcols 
 prlimit:  libsmartcols 
 pylibmount.so:  libblkid libmount 
@@ -44,7 +48,7 @@ wdctl:  libsmartcols
 wipefs:  libblkid libsmartcols 
 zramctl:  libsmartcols 
 addpart:  
-agetty:  
+agetty:  libsystemd 
 blkpr:  
 blkzone:  
 blockdev:  
@@ -61,6 +65,8 @@ colrm:
 ctrlaltdel:  
 delpart:  
 dmesg:  libtinfo 
+enosys:  
+exch:  
 fadvise:  
 fallocate:  
 flock:  
@@ -105,8 +111,8 @@ script:
 scriptlive:  
 scriptreplay:  
 setarch:  
-setpriv:  libcap-ng 
 setpgid:  
+setpriv:  libcap-ng 
 setsid:  
 setterm:  libtinfo 
 su:  libpam libpam_misc 
@@ -118,5 +124,5 @@ ul:  libtinfo
 unshare:  
 utmpdump:  
 waitpid:  
-wall:  
+wall:  libsystemd 
 whereis:  

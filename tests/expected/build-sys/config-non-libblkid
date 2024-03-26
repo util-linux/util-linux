@@ -3,10 +3,13 @@ column:  libsmartcols
 fdisk:  libfdisk libreadline libsmartcols libtinfo 
 fincore:  libsmartcols 
 irqtop:  libncursesw libsmartcols libtinfo 
+lastlog2:  liblastlog2 
 libfdisk.so.1.1.0:  libuuid 
+liblastlog2.so.2.0.0:  libsqlite3 
 libsmartcols.so.1.1.0:  
 libuuid.so.1.3.0:  
 losetup:  libsmartcols 
+lsclocks:  libsmartcols 
 lscpu:  libsmartcols 
 lsfd:  libsmartcols 
 lsipc:  libsmartcols 
@@ -14,6 +17,7 @@ lsirq:  libsmartcols
 lslogins:  libsmartcols libsystemd 
 lsmem:  libsmartcols 
 mkswap:  libuuid 
+pam_lastlog2.so:  
 prlimit:  libsmartcols 
 rfkill:  libsmartcols 
 sfdisk:  libfdisk libreadline libsmartcols libtinfo 
@@ -22,7 +26,7 @@ uuidgen:  libuuid
 uuidparse:  libsmartcols libuuid 
 wdctl:  libsmartcols 
 zramctl:  libsmartcols 
-agetty:  
+agetty:  libsystemd 
 blkdiscard:  
 blkpr:  
 blkzone:  
@@ -39,6 +43,8 @@ colcrt:
 colrm:  
 ctrlaltdel:  
 dmesg:  libtinfo 
+enosys:  
+exch:  
 fadvise:  
 fallocate:  
 flock:  
@@ -82,8 +88,8 @@ script:
 scriptlive:  
 scriptreplay:  
 setarch:  
-setpriv:  libcap-ng 
 setpgid:  
+setpriv:  libcap-ng 
 setsid:  
 setterm:  libtinfo 
 su:  libpam libpam_misc 
@@ -95,5 +101,5 @@ ul:  libtinfo
 unshare:  
 utmpdump:  
 waitpid:  
-wall:  
+wall:  libsystemd 
 whereis:  

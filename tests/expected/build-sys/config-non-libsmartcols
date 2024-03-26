@@ -1,22 +1,25 @@
 blkdiscard:  libblkid 
 blkid:  libblkid 
-eject:  libmount 
+eject:  libblkid libmount 
 findfs:  libblkid 
 fsck:  libblkid libmount 
-fstrim:  libmount 
+fstrim:  libblkid libmount 
+lastlog2:  liblastlog2 libsqlite3 
 libblkid.so.1.1.0:  
 libfdisk.so.1.1.0:  libblkid libuuid 
+liblastlog2.so.2.0.0:  libsqlite3 
 libmount.so.1.1.0:  libblkid 
 libuuid.so.1.3.0:  
 mkswap:  libblkid libuuid 
-mount:  libmount 
-mountpoint:  libmount 
+mount:  libblkid libmount 
+mountpoint:  libblkid libmount 
+pam_lastlog2.so:  
 pylibmount.so:  libblkid libmount 
 swaplabel:  libblkid libuuid 
-umount:  libmount 
+umount:  libblkid libmount 
 uuidd:  libsystemd libuuid 
 uuidgen:  libuuid 
-agetty:  
+agetty:  libsystemd 
 blkpr:  
 blkzone:  
 blockdev:  
@@ -32,6 +35,8 @@ colcrt:
 colrm:  
 ctrlaltdel:  
 dmesg:  libtinfo 
+enosys:  
+exch:  
 fadvise:  
 fallocate:  
 flock:  
@@ -75,8 +80,8 @@ script:
 scriptlive:  
 scriptreplay:  
 setarch:  
-setpriv:  libcap-ng 
 setpgid:  
+setpriv:  libcap-ng 
 setsid:  
 setterm:  libtinfo 
 su:  libpam libpam_misc 
@@ -88,5 +93,5 @@ ul:  libtinfo
 unshare:  
 utmpdump:  
 waitpid:  
-wall:  
+wall:  libsystemd 
 whereis:  
