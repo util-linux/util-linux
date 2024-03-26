@@ -108,15 +108,15 @@ static void __attribute__((__noreturn__)) usage(void)
 	fprintf(output, _(" %s [options]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, output);
-	fputs(_(" -b, --before DAYS       Print only records older than DAYS\n"), output);
-	fputs(_(" -C, --clear             Clear record of a user (requires -u)\n"), output);
-	fputs(_(" -d, --database FILE     Use FILE as lastlog2 database\n"), output);
-	fputs(_(" -i, --import FILE       Import data from old lastlog file\n"), output);
-	fputs(_(" -r, --rename NEWNAME    Rename existing user to NEWNAME (requires -u)\n"), output);
-	fputs(_(" -s, --service           Display PAM service\n"), output);
-	fputs(_(" -S, --set               Set lastlog record to current time (requires -u)\n"), output);
-	fputs(_(" -t, --time DAYS         Print only lastlog records more recent than DAYS\n"), output);
-	fputs(_(" -u, --user LOGIN        Print lastlog record of the specified LOGIN\n"), output);
+	fputs(_(" -b, --before DAYS       print only records older than DAYS\n"), output);
+	fputs(_(" -C, --clear             clear record of a user (requires -u)\n"), output);
+	fputs(_(" -d, --database FILE     use FILE as lastlog2 database\n"), output);
+	fputs(_(" -i, --import FILE       import data from old lastlog file\n"), output);
+	fputs(_(" -r, --rename NEWNAME    rename existing user to NEWNAME (requires -u)\n"), output);
+	fputs(_(" -s, --service           display PAM service\n"), output);
+	fputs(_(" -S, --set               set lastlog record to current time (requires -u)\n"), output);
+	fputs(_(" -t, --time DAYS         print only lastlog records more recent than DAYS\n"), output);
+	fputs(_(" -u, --user LOGIN        print lastlog record of the specified LOGIN\n"), output);
 
 	fputs(USAGE_SEPARATOR, output);
 	fprintf(output, USAGE_HELP_OPTIONS(25));
