@@ -717,16 +717,18 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 
 static void do_sem_global(struct lsipc_control *ctl, struct libscols_table *tb)
 {
-	struct sem_data *semds, *semdsp;
+	struct sem_data *semds;
 	struct ipc_limits lim;
 	int nsems = 0, nsets = 0;
 
 	ipc_sem_get_limits(&lim);
 
 	if (ipc_sem_get_info(-1, &semds) > 0) {
-		for (semdsp = semds; semdsp->next != NULL; semdsp = semdsp->next) {
+		struct sem_data *p;
+
+		for (p = semds; p->next != NULL; p = p->next) {
 			++nsets;
-			nsems += semds->sem_nsems;
+			nsems += p->sem_nsems;
 		}
 		ipc_sem_free_info(semds);
 	}
