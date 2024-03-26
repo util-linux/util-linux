@@ -114,7 +114,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -i, --import FILE       Import data from old lastlog file\n"), output);
 	fputs(_(" -r, --rename NEWNAME    Rename existing user to NEWNAME (requires -u)\n"), output);
 	fputs(_(" -s, --service           Display PAM service\n"), output);
-	fputs(_(" -S, --set               ySet lastlog record to current time (requires -u)\n"), output);
+	fputs(_(" -S, --set               Set lastlog record to current time (requires -u)\n"), output);
 	fputs(_(" -t, --time DAYS         Print only lastlog records more recent than DAYS\n"), output);
 	fputs(_(" -u, --user LOGIN        Print lastlog record of the specified LOGIN\n"), output);
 
