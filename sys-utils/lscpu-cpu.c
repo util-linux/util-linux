@@ -20,7 +20,7 @@ struct lscpu_cpu *lscpu_new_cpu(int id)
 	cpu->coreid = -1;
 	cpu->socketid = -1;
 	cpu->bookid = -1;
-	cpu->bookid = -1;
+	cpu->drawerid = -1;
 	cpu->address = -1;
 	cpu->configured = -1;
 
