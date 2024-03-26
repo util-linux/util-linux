@@ -626,9 +626,6 @@ static int get_line(struct more_control *ctl, int *length)
 			*p++ = 'L';
 			column += 2;
 			ctl->is_paused = 1;
-		} else if (c == EOF) {
-			*length = p - ctl->line_buf;
-			return column;
 		} else {
 #ifdef HAVE_WIDECHAR
 			if (ctl->fold_long_lines && MB_CUR_MAX > 1) {
