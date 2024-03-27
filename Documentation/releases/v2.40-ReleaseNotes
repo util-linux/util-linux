@@ -58,6 +58,19 @@ libsmartcols:
   supported.
 
 
+Security issues
+---------------
+
+This release fixes CVE-2024-28085. The wall command does not filter escape
+sequences from command line arguments. The vulnerable code was introduced in
+commit cdd3cc7fa4 (2013). Every version since has been vulnerable.
+
+This allows unprivileged users to put arbitrary text on other users terminals,
+if mesg is set to y and *wall is setgid*. Not all distros are affected (e.g.
+CentOS, RHEL, Fedora are not; Ubuntu and Debian wall is both setgid and mesg is
+set to y by default).
+
+
 Changes between v2.39 and v2.40
 -------------------------------
 
@@ -78,6 +91,7 @@ agetty:
 audit-arch:
    - add support for alpha  [Thomas Weißschuh]
 autotools:
+   - add dependence on libsmartcols for lsclocks  [Karel Zak]
    - add missing dist_noinst_DATA  [Karel Zak]
    - check for flex in autogen.sh  [Karel Zak]
    - cleanup lastlog2 stuff  [Karel Zak]
@@ -122,10 +136,12 @@ build-sys:
    - fix typo in waitpid check  [Thomas Weißschuh]
    - improve checkadoc  [Karel Zak]
    - introduce localstatedir  [Karel Zak]
+   - make sure everywhere is localstatedir  [Karel Zak]
    - only build col on glibc  [Thomas Weißschuh]
    - only pass --failure-level if supported  [Thomas Weißschuh]
    - rearrange gitignore in alphabetical order  [Enze Li]
    - release++ (v2.40-rc1)  [Karel Zak]
+   - release++ (v2.40-rc2)  [Karel Zak]
    - try to always use 64bit time support on glibc  [Thomas Weißschuh]
 buildsys:
    - warn on usage of VLAs  [Thomas Weißschuh]
@@ -141,6 +157,8 @@ cfdisk:
    - ask y/n before wipe  [Karel Zak]
    - fix menu behavior after writing changes  [Karel Zak]
    - properly handle out-of-order partitions during resize  [Thomas Weißschuh]
+chcpu(8):
+   - document limitations of -g  [Stanislav Brabec]
 chrt:
    - (man) add note about --sched-period lower limit  [Karel Zak]
    - (tests) don't mark tests as known failed  [Thomas Weißschuh]
@@ -167,6 +185,7 @@ ci:
    - mark source directory as safe  [Thomas Weißschuh]
    - packit  add flex  [Karel Zak]
    - prevent prompts during installation  [Thomas Weißschuh]
+   - reduce aslr level to avoid issues with ASAN  [Thomas Weißschuh]
    - run full testsuite under musl libc  [Thomas Weißschuh]
    - tweak build dir's ACL when collecting coverage  [Frantisek Sumsal]
    - use clang 16  [Thomas Weißschuh]
@@ -205,9 +224,11 @@ docs:
    - add enosys to ReleaseNotes  [Karel Zak]
    - add exch to ReleaseNotes  [Karel Zak]
    - add hints about systemd  [Karel Zak]
+   - add note about stable branches  [Karel Zak]
    - add setpgid do ReleaseNotes  [Karel Zak]
    - cleanup public domain license texts  [Karel Zak]
    - fix a typo  [Masatake YAMATO]
+   - fix typos  [Jakub Wilk]
    - improve howto-pull-request  [Karel Zak]
    - move Copyright in boilerplate.c  [Karel Zak]
    - move GPL-2.0 license text to Docimentation directory  [Karel Zak]
@@ -293,6 +314,7 @@ findmnt:
    - add --list-columns  [Karel Zak]
    - add -I, --dfi options for imitating the output of df -i  [Masatake YAMATO]
    - add inode-related columns for implementing "df -i" like output  [Masatake YAMATO]
+   - remove deleted option from manual  [Chris Hofstaedtler]
    - use zero to separate lines in multi-line cells  [Karel Zak]
 flock:
    - initialize timevals [-Werror=maybe-uninitialized]  [Karel Zak]
@@ -348,6 +370,7 @@ jsonwrt:
    - add ul_jsonwrt_value_s_sized  [Thomas Weißschuh]
 last:
    - Add -T option for tab-separated output  [Trag Date]
+   - avoid out of bounds array access  [biubiuzy]
 last(1):
    - Document -T option for tab-separated output  [Trag Date]
 lastlog:
@@ -406,7 +429,10 @@ lib/path:
    - remove usage of VLA  [Thomas Weißschuh]
    - set errno in case of error  [Tobias Stoeckmann]
 lib/pty-session:
+   - Don't ignore SIGHUP.  [Kuniyuki Iwashima]
    - initialize timevals [-Werror=maybe-uninitialized]  [Karel Zak]
+lib/sha1:
+   - fix for old glibc  [Karel Zak]
 lib/shells:
    - Plug econf memory leak  [Tobias Stoeckmann]
    - initialize free-able variables  [Karel Zak]
@@ -525,6 +551,7 @@ libmount:
    - (utils) avoid dead store  [Thomas Weißschuh]
    - (utils) fix statx fallback  [Thomas Weißschuh]
    - (veritydev) use asprintf to build string  [Thomas Weißschuh]
+   - Fix export of mnt_context_is_lazy and mnt_context_is_onlyonce  [Matt Turner]
    - Fix regression when mounting with atime  [Filipe Manana]
    - accept '\' as escape for options separator  [Karel Zak]
    - add helper to log mount messages as emitted by kernel  [Thomas Weißschuh]
@@ -545,6 +572,7 @@ libmount:
    - don't call hooks after mount.<type> helper  [Karel Zak]
    - don't call mount.<type> helper with usernames  [Karel Zak]
    - don't hold write fd to mounted device  [Jan Kara]
+   - don't initialize variable twice (#2714)  [Thorsten Kukuk]
    - don't pass option "defaults" to helper  [Thomas Weißschuh]
    - fix copy & past bug in lock initialization  [Karel Zak]
    - fix fsconfig value unescaping  [Karel Zak]
@@ -564,6 +592,7 @@ libmount:
    - introduce /run/mount/utab.event  [Karel Zak]
    - introduce LIBMOUNT_FORCE_MOUNT2={always,never,auto}  [Karel Zak]
    - introduce reference counting for libmnt_lock  [Karel Zak]
+   - make sure "option=" is used as string  [Karel Zak]
    - make.stx_mnt_id use more robust  [Karel Zak]
    - reduce utab.lock permissions  [Karel Zak]
    - report all kernel messages for fd-based mount API  [Thomas Weißschuh]
@@ -746,9 +775,12 @@ lscpu:
    - Use 4K buffer size instead of BUFSIZ  [Khem Raj]
    - add procfs-sysfs dump from VisionFive 2  [Jan Engelhardt]
    - cure empty output of lscpu -b/-p  [Jan Engelhardt]
+   - don't use NULL sharedmap  [Karel Zak]
    - fix caches separator for --parse=<list>  [Karel Zak]
+   - initialize all variables (#2714)  [Thorsten Kukuk]
    - remove redundant include  [Karel Zak]
    - remove usage of VLA  [Thomas Weißschuh]
+   - restructure op-mode printing  [Thomas Weißschuh]
 lscpu-cputype.c:
    - assign value to multiple variables (ar->bit32 and ar->bit64) clang with -Wcomma will emit an warning of "misuse of comma operator". Since the value that will be assigned, is the same for both (bit32 and bit64), just assigning directly to both variables seems reasonable.  [rilysh]
 lsdf:
@@ -877,6 +909,8 @@ lsfd.1.adoc:
    - revise type names for columns  [Masatake YAMATO]
    - update for signalfds  [Masatake YAMATO]
    - write about timerfd  [Masatake YAMATO]
+lsipc:
+   - fix semaphore USED counter  [Karel Zak]
 lslocks:
    - (fix) set JSON type for COL_SIZE even when --bytes is specified  [Masatake YAMATO]
    - (man) add missing fields  [Masatake YAMATO]
@@ -909,6 +943,7 @@ m4:
 man:
    - Add enosys and lsclocks to po4a.cfg  [Mario Blättermann]
 meson:
+   - Only build blkzone and blkpr if the required linux header exists  [Jordan Williams]
    - Only build libmount python module if python was found  [Fabian Vogt]
    - add check for linux/mount.h  [Thomas Weißschuh]
    - add check for struct statx  [Thomas Weißschuh]
@@ -970,6 +1005,7 @@ more:
    - exit if POLLERR and POLLHUP on stdin is received  [Goldwyn Rodrigues]
    - exit if POLLHUP or POLLERR on stdin is received  [Goldwyn Rodrigues]
    - fix poll() use  [Karel Zak]
+   - remove second check for EOF (#2714)  [Thorsten Kukuk]
    - remove usage of alloca()  [Thomas Weißschuh]
 mount:
    - (tests) don't create /dev/nul  [Thomas Weißschuh]
@@ -992,18 +1028,26 @@ pipesz:
 po:
    - add ro.po (from translationproject.org)  [Remus-Gabriel Chelu]
    - merge changes  [Karel Zak]
+   - update cs.po (from translationproject.org)  [Petr Písař]
    - update de.po (from translationproject.org)  [Hermann Beckers]
+   - update de.po (from translationproject.org)  [Mario Blättermann]
    - update es.po (from translationproject.org)  [Antonio Ceballos Roa]
+   - update fr.po (from translationproject.org)  [Frédéric Marchal]
    - update hr.po (from translationproject.org)  [Božidar Putanec]
    - update ja.po (from translationproject.org)  [Takeshi Hamasaki]
+   - update ko.po (from translationproject.org)  [Seong-ho Cho]
+   - update pl.po (from translationproject.org)  [Jakub Bogusz]
+   - update ro.po (from translationproject.org)  [Remus-Gabriel Chelu]
    - update sr.po (from translationproject.org)  [Мирослав Николић]
    - update tr.po (from translationproject.org)  [Emir SARI]
+   - update uk.po (from translationproject.org)  [Yuri Chornoivan]
 po-man:
    - add ko.po (from translationproject.org)  [Seong-ho Cho]
    - add ro.po (from translationproject.org)  [Remus-Gabriel Chelu]
    - merge changes  [Karel Zak]
    - update de.po (from translationproject.org)  [Mario Blättermann]
    - update fr.po (from translationproject.org)  [Frédéric Marchal]
+   - update ro.po (from translationproject.org)  [Remus-Gabriel Chelu]
    - update sr.po (from translationproject.org)  [Мирослав Николић]
    - update uk.po (from translationproject.org)  [Yuri Chornoivan]
 prlimit:
@@ -1015,6 +1059,8 @@ readprofile:
    - use xasprintf to build string  [Thomas Weißschuh]
 rename:
    - properly handle directories with trailing slash  [Thomas Weißschuh]
+rev:
+   - Check for wchar conversion errors  [Tim Hallmann]
 runuser.1.adoc:
    - Move -m|-p|--preserve-environment in order  [Sebastian Pipping]
 runuser|su:
@@ -1043,6 +1089,9 @@ strv:
 su:
    - (man) add hint about sessions  [Karel Zak]
    - (man) improve formatting  [Karel Zak]
+   - fix use after free in run_shell  [Tanish Yadav]
+su, agetty:
+   - don't use program_invocation_short_name for openlog()  [Karel Zak]
 sulogin:
    - relabel terminal according to SELinux policy  [Christian Göttsche]
    - use get_terminal_default_type()  [Karel Zak]
@@ -1052,6 +1101,7 @@ swapon:
 sys-utils:
    - cleanup license lines, add SPDX  [Karel Zak]
    - fix SELinux context example in mount.8  [Todd Zullinger]
+   - hwclock-rtc  fix pointer usage  [Karthikeyan Krishnasamy]
 sys-utils/lscpu:
    - Unblock SIGSEGV before vmware_bdoor  [WanBingjiang]
    - Use ul_path_scanf where possible  [Tobias Stoeckmann]
@@ -1089,6 +1139,7 @@ tests:
    - (lsfd  filter-floating-point-nums) use --raw output to make the case more robust  [Masatake YAMATO]
    - (lsfd  mkfds-*) alter the L4 ports for avoiding the conflict with option-inet test case  [Masatake YAMATO]
    - (lsfd  mkfds-bpf-map) chmod a+x  [Masatake YAMATO]
+   - (lsfd  mkfds-inotify) consider environments not having / as a mount point  [Masatake YAMATO]
    - (lsfd  mkfds-inotify) use findmnt(1) instead of stat(1) to get bdev numbers  [Masatake YAMATO]
    - (lsfd  mkfds-socketpair) make a case for testing DGRAM a subtest and add a subtest for STREAM  [Masatake YAMATO]
    - (lsfd  mkfds-unix-dgram) don't depend on the number of whitespaces in the output  [Masatake YAMATO]
@@ -1113,8 +1164,11 @@ tests:
    - (lsfd) don't run the unix-stream testcase including newlines in the path on qemu-user  [Masatake YAMATO]
    - (lsfd) extend the cases for testing BPF.NAME column  [Masatake YAMATO]
    - (lsfd) extend the mkfds-socketpair case to test ENDPOINTS with SOCK.SHUTDOWN info  [Masatake YAMATO]
+   - (lsfd) fix typoes in an error name  [Masatake YAMATO]
    - (lsfd) show the entry for mqueue in /proc/self/mountinfo  [Masatake YAMATO]
    - (lsfd) skip mkfds-netns if SIOCGSKNS is not defined  [Masatake YAMATO]
+   - (lsfd) skip some cases if NETLINK_SOCK_DIAG for AF_UNIX is not available  [Masatake YAMATO]
+   - (lsfd-functions.bash,cosmetic) unify the style to define functions  [Masatake YAMATO]
    - (lsfd/filter) add a case for comparing floating point numbers  [Masatake YAMATO]
    - (lslcoks) insert a sleep between taking a lock and running lslocks  [Masatake YAMATO]
    - (lslocks) add cases testing HOLDERS column  [Masatake YAMATO]
@@ -1136,6 +1190,7 @@ tests:
    - (test_mkfds  mkfds-multiplexing) dump /proc/$pid/syscall for debugging  [Masatake YAMATO]
    - (test_mkfds  mkfds-multiplexing) make the output of ts_skip_subtest visible  [Masatake YAMATO]
    - (test_mkfds  pty) add a new factory  [Masatake YAMATO]
+   - (test_mkfds  sockdiag) new factory  [Masatake YAMATO]
    - (test_mkfds  socketpair) add "halfclose" parameter  [Masatake YAMATO]
    - (test_mkfds  {bpf-prog,bpf-map}) fix memory leaks  [Masatake YAMATO]
    - (test_mkfds) add --is-available option  [Masatake YAMATO]
@@ -1169,6 +1224,7 @@ tests:
    - make mount/special more robust  [Karel Zak]
    - make ts_skip_capability accepts the output of older version of getpcaps  [Masatake YAMATO]
    - skip broken tests on docker  [Thomas Weißschuh]
+   - update build tests  [Karel Zak]
    - update dmesg deltas  [Karel Zak]
    - update lsfd broken filter test  [Karel Zak]
    - use array keys in more robust way  [Karel Zak]
@@ -1219,6 +1275,7 @@ uuidd.rc:
 uuidgen:
    - add option --count  [Karel Zak]
    - mark some options mutually exclusive  [Karel Zak]
+   - use xmalloc instead of malloc (#2714)  [Thorsten Kukuk]
 verity:
    - modernize example in manpage  [Luca Boccassi]
    - use <roothash>-verity as the device mapper name instead of libmnt_<image>  [Luca Boccassi]
@@ -1228,6 +1285,7 @@ waitpid:
 wall:
    - do not error for ttys that do not exist  [Mike Gilbert]
    - fix calloc cal [-Werror=calloc-transposed-args]  [Karel Zak]
+   - fix escape sequence Injection [CVE-2024-28085]  [Karel Zak]
    - query logind for list of users with tty (#2088)  [Thorsten Kukuk]
 wdctl:
    - properyl test timeout conditions  [Thomas Weißschuh]
