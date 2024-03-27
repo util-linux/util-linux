@@ -299,4 +299,9 @@ bool is_mqueue_dev(dev_t dev);
  */
 bool is_multiplexed_by_eventpoll(int fd, struct list_head *eventpolls);
 
+/*
+ * Pidfs
+ */
+bool is_pidfs_dev(dev_t dev);
+
 #endif /* UTIL_LINUX_LSFD_H */
