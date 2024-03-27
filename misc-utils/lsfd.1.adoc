@@ -90,7 +90,7 @@ counters by specifying this option multiple times.
 +
 See also *COUNTER EXAMPLES*.
 
-*--summary*[=_when_]::
+*--summary*[**=**__when__]::
 This option controls summary lines output. The optional argument _when_
 can be *only*, *append* or *never*. If the _when_ argument is omitted,
 it defaults to *only*.

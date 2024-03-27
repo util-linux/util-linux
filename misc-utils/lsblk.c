@@ -2264,7 +2264,7 @@ static void init_scols_filter(struct libscols_table *tb, struct libscols_filter 
 		}
 		if (!col) {
 			add_column(id);
-			col = scols_table_new_column(lsblk->table, ci->name,
+			col = scols_table_new_column(tb, ci->name,
 						     ci->whint, SCOLS_FL_HIDDEN);
 			if (!col)
 				err(EXIT_FAILURE,_("failed to allocate output column"));

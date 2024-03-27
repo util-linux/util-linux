@@ -22,9 +22,9 @@
 #include <wchar.h>
 #include <libsmartcols.h>
 #include <libmount.h>
+# include <stdbool.h>
 
 #ifdef HAVE_LINUX_NET_NAMESPACE_H
-# include <stdbool.h>
 # include <sys/socket.h>
 # include <linux/netlink.h>
 # include <linux/rtnetlink.h>
@@ -50,6 +50,7 @@
 #include "namespace.h"
 #include "idcache.h"
 #include "fileutils.h"
+#include "column-list-table.h"
 
 #include "debug.h"
 
@@ -59,6 +60,7 @@ UL_DEBUG_DEFINE_MASKNAMES(lsns) = UL_DEBUG_EMPTY_MASKNAMES;
 #define LSNS_DEBUG_INIT		(1 << 1)
 #define LSNS_DEBUG_PROC		(1 << 2)
 #define LSNS_DEBUG_NS		(1 << 3)
+#define LSNS_DEBUG_FILTER	(1 << 4)
 #define LSNS_DEBUG_ALL		0xFFFF
 
 #define LSNS_NETNS_UNUSABLE -2
@@ -218,12 +220,20 @@ struct lsns {
 
 
 	struct libmnt_table *tab;
+	struct libscols_filter *filter;
 };
 
 struct netnsid_cache {
 	ino_t ino;
 	int   id;
 	struct list_head netnsids;
+};
+
+/* "userdata" used by callback for libsmartcols filter */
+struct filler_data {
+	struct lsns *ls;
+	struct lsns_namespace *ns;
+	struct lsns_process *proc;
 };
 
 static struct list_head netnsids_cache;
@@ -1012,6 +1022,87 @@ static int nsfs_xasputs(char **str,
 
 	return 1;
 }
+
+static void fill_column(struct lsns *ls,
+			struct lsns_namespace *ns,
+			struct lsns_process *proc,
+			struct libscols_line *line,
+			size_t column_index)
+{
+	char *str = NULL;
+
+	switch (get_column_id(column_index)) {
+	case COL_NS:
+		xasprintf(&str, "%ju", (uintmax_t)ns->id);
+		break;
+	case COL_PID:
+		if (proc)
+			xasprintf(&str, "%d", (int) proc->pid);
+		break;
+	case COL_PPID:
+		if (proc)
+			xasprintf(&str, "%d", (int) proc->ppid);
+		break;
+	case COL_TYPE:
+		xasprintf(&str, "%s", ns_names[ns->type]);
+		break;
+	case COL_NPROCS:
+		xasprintf(&str, "%d", ns->nprocs);
+		break;
+	case COL_COMMAND:
+		if (!proc)
+			break;
+		str = pid_get_cmdline(proc->pid);
+		if (!str)
+			str = pid_get_cmdname(proc->pid);
+		break;
+	case COL_PATH:
+		if (!proc)
+			break;
+		xasprintf(&str, "/proc/%d/ns/%s", (int) proc->pid, ns_names[ns->type]);
+		break;
+	case COL_UID:
+		xasprintf(&str, "%d", proc? (int) proc->uid: (int) ns->uid_fallback);
+		break;
+	case COL_USER:
+		xasprintf(&str, "%s", get_id(uid_cache, proc? proc->uid: ns->uid_fallback)->name);
+		break;
+	case COL_NETNSID:
+		if (!proc)
+			break;
+		if (ns->type == LSNS_ID_NET)
+			netnsid_xasputs(&str, proc->netnsid);
+		break;
+	case COL_NSFS:
+		nsfs_xasputs(&str, ns, ls->tab, ls->no_wrap ? ',' : '\n');
+		break;
+	case COL_PNS:
+		xasprintf(&str, "%ju", (uintmax_t)ns->related_id[RELA_PARENT]);
+		break;
+	case COL_ONS:
+		xasprintf(&str, "%ju", (uintmax_t)ns->related_id[RELA_OWNER]);
+		break;
+	default:
+		break;
+	}
+
+	if (str && scols_line_refer_data(line, column_index, str) != 0)
+		err_oom();
+}
+
+
+static int filter_filler_cb(
+		 struct libscols_filter *filter __attribute__((__unused__)),
+		 struct libscols_line *line,
+		 size_t column_index,
+		 void *userdata)
+{
+	struct filler_data *fid = (struct filler_data *) userdata;
+
+	fill_column(fid->ls, fid->ns, fid->proc, line, column_index);
+	return 0;
+}
+
 static void add_scols_line(struct lsns *ls, struct libscols_table *table,
 			   struct lsns_namespace *ns, struct lsns_process *proc)
 {
@@ -1031,66 +1122,34 @@ static void add_scols_line(struct lsns *ls, struct libscols_table *table,
 		return;
 	}
 
-	for (i = 0; i < ncolumns; i++) {
-		char *str = NULL;
+	if (ls->filter) {
+		int status = 0;
+		struct filler_data fid = {
+			.ls = ls,
+			.ns = ns,
+			.proc = proc,
+		};
 
-		switch (get_column_id(i)) {
-		case COL_NS:
-			xasprintf(&str, "%ju", (uintmax_t)ns->id);
-			break;
-		case COL_PID:
-			if (proc)
-				xasprintf(&str, "%d", (int) proc->pid);
-			break;
-		case COL_PPID:
-			if (proc)
-				xasprintf(&str, "%d", (int) proc->ppid);
-			break;
-		case COL_TYPE:
-			xasprintf(&str, "%s", ns_names[ns->type]);
-			break;
-		case COL_NPROCS:
-			xasprintf(&str, "%d", ns->nprocs);
-			break;
-		case COL_COMMAND:
-			if (!proc)
-				break;
-			str = pid_get_cmdline(proc->pid);
-			if (!str)
-				str = pid_get_cmdname(proc->pid);
-			break;
-		case COL_PATH:
-			if (!proc)
-				break;
-			xasprintf(&str, "/proc/%d/ns/%s", (int) proc->pid, ns_names[ns->type]);
-			break;
-		case COL_UID:
-			xasprintf(&str, "%d", proc? (int) proc->uid: (int) ns->uid_fallback);
-			break;
-		case COL_USER:
-			xasprintf(&str, "%s", get_id(uid_cache, proc? proc->uid: ns->uid_fallback)->name);
-			break;
-		case COL_NETNSID:
-			if (!proc)
-				break;
-			if (ns->type == LSNS_ID_NET)
-				netnsid_xasputs(&str, proc->netnsid);
-			break;
-		case COL_NSFS:
-			nsfs_xasputs(&str, ns, ls->tab, ls->no_wrap ? ',' : '\n');
-			break;
-		case COL_PNS:
-			xasprintf(&str, "%ju", (uintmax_t)ns->related_id[RELA_PARENT]);
-			break;
-		case COL_ONS:
-			xasprintf(&str, "%ju", (uintmax_t)ns->related_id[RELA_OWNER]);
-			break;
-		default:
-			break;
+		scols_filter_set_filler_cb(ls->filter,
+				filter_filler_cb, (void *) &fid);
+
+		if (scols_line_apply_filter(line, ls->filter, &status))
+			err(EXIT_FAILURE, _("failed to apply filter"));
+		if (status == 0) {
+			struct libscols_line *x = scols_line_get_parent(line);
+
+			if (x)
+				scols_line_remove_child(x, line);
+
+			scols_table_remove_line(table, line);
+			return;
 		}
+	}
 
-		if (str && scols_line_refer_data(line, i, str) != 0)
-			err_oom();
+	for (i = 0; i < ncolumns; i++) {
+		if (scols_line_is_filled(line, i))
+			continue;
+		fill_column(ls, ns, proc, line, i);
 	}
 
 	if (ls->tree == LSNS_TREE_OWNER || ls->tree == LSNS_TREE_PARENT)
@@ -1139,7 +1198,7 @@ static struct libscols_table *init_scols_table(struct lsns *ls)
 			warnx(_("failed to initialize output column"));
 			goto err;
 		}
-		if (ls->json)
+		if (ls->json || ls->filter)
 			scols_column_set_json_type(cl, col->json_type);
 
 		if (!ls->no_wrap && get_column_id(i) == COL_NSFS) {
@@ -1179,6 +1238,55 @@ static void show_namespace(struct lsns *ls, struct libscols_table *tab,
 	add_scols_line(ls, tab, ns, proc);
 }
 
+static inline void add_column(int id)
+{
+	if (ncolumns >= ARRAY_SIZE(columns))
+		errx(EXIT_FAILURE, _("too many columns specified, "
+				     "the limit is %zu columns"),
+				ARRAY_SIZE(columns) - 1);
+	columns[ ncolumns++ ] =  id;
+}
+
+static void init_scols_filter(struct libscols_table *tb, struct libscols_filter *f)
+{
+	struct libscols_iter *itr;
+	const char *name = NULL;
+	int nerrs = 0;
+
+	itr = scols_new_iter(SCOLS_ITER_FORWARD);
+	if (!itr)
+		err(EXIT_FAILURE, _("failed to allocate iterator"));
+
+	while (scols_filter_next_holder(f, itr, &name, 0) == 0) {
+		struct libscols_column *col = scols_table_get_column_by_name(tb, name);
+		int id = column_name_to_id(name, strlen(name));
+		const struct colinfo *ci = id >= 0 ? &infos[id] : NULL;
+
+		if (!ci) {
+			nerrs++;
+			continue;	/* report all unknown columns */
+		}
+		if (!col) {
+			add_column(id);
+			col = scols_table_new_column(tb, ci->name,
+						     ci->whint, SCOLS_FL_HIDDEN);
+			if (!col)
+				err(EXIT_FAILURE,_("failed to allocate output column"));
+
+			scols_column_set_json_type(col, ci->json_type);
+		}
+
+		scols_filter_assign_column(f, itr, name, col);
+	}
+
+	scols_free_iter(itr);
+
+	if (!nerrs)
+		return;
+
+	errx(EXIT_FAILURE, _("failed to initialize filter"));
+}
+
 static int show_namespaces(struct lsns *ls)
 {
 	struct libscols_table *tab;
@@ -1188,6 +1296,8 @@ static int show_namespaces(struct lsns *ls)
 	tab = init_scols_table(ls);
 	if (!tab)
 		return -ENOMEM;
+
+	init_scols_filter(tab, ls->filter);
 
 	list_for_each(p, &ls->namespaces) {
 		struct lsns_namespace *ns = list_entry(p, struct lsns_namespace, namespaces);
@@ -1267,10 +1377,22 @@ static void free_all(struct lsns *ls)
 	list_free(&ls->namespaces, struct lsns_namespace, namespaces, free_lsns_namespace);
 }
 
+static struct libscols_filter *new_filter(const char *query)
+{
+	struct libscols_filter *f;
+
+	f = scols_new_filter(NULL);
+	if (!f)
+		err(EXIT_FAILURE, _("failed to allocate filter"));
+	if (query && scols_filter_parse_string(f, query) != 0)
+		errx(EXIT_FAILURE, _("failed to parse \"%s\": %s"), query,
+				scols_filter_get_errmsg(f));
+	return f;
+}
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
-	size_t i;
 
 	fputs(USAGE_HEADER, out);
 
@@ -1292,20 +1414,30 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
 	fputs(_(" -W, --nowrap           don't use multi-line representation\n"), out);
 	fputs(_(" -t, --type <name>      namespace type (mnt, net, ipc, user, pid, uts, cgroup, time)\n"), out);
-	fputs(_(" -T, --tree <rel>       use tree format (parent, owner, or process)\n"), out);
+	fputs(_(" -T, --tree[=<rel>]     use tree format (parent, owner, or process)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" -H, --list-columns     list the available columns\n"), out);
 	fprintf(out, USAGE_HELP_OPTIONS(24));
-
-	fputs(USAGE_COLUMNS, out);
-	for (i = 0; i < ARRAY_SIZE(infos); i++)
-		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
-
 	fprintf(out, USAGE_MAN_TAIL("lsns(8)"));
 
 	exit(EXIT_SUCCESS);
 }
 
+static void __attribute__((__noreturn__)) list_colunms(bool raw, bool json)
+{
+   struct libscols_table *col_tb = xcolumn_list_table_new("lsns-columns", stdout, raw, json);
+
+   for (size_t i = 0; i < ARRAY_SIZE(infos); i++)
+           xcolumn_list_table_append_line(col_tb, infos[i].name,
+					  infos[i].json_type, NULL,
+					  _(infos[i].help));
+
+   scols_print_table(col_tb);
+   scols_unref_table(col_tb);
+
+   exit(EXIT_SUCCESS);
+}
 
 int main(int argc, char *argv[])
 {
@@ -1323,6 +1455,7 @@ int main(int argc, char *argv[])
 		{ "output",     required_argument, NULL, 'o' },
 		{ "output-all", no_argument,       NULL, OPT_OUTPUT_ALL },
 		{ "persistent", no_argument,       NULL, 'P' },
+		{ "filter",     required_argument, NULL, 'Q' },
 		{ "notruncate", no_argument,       NULL, 'u' },
 		{ "version",    no_argument,       NULL, 'V' },
 		{ "noheadings", no_argument,       NULL, 'n' },
@@ -1331,6 +1464,7 @@ int main(int argc, char *argv[])
 		{ "raw",        no_argument,       NULL, 'r' },
 		{ "type",       required_argument, NULL, 't' },
 		{ "tree",       optional_argument, NULL, 'T' },
+		{ "list-columns", no_argument,     NULL, 'H' },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -1356,7 +1490,7 @@ int main(int argc, char *argv[])
 	INIT_LIST_HEAD(&netnsids_cache);
 
 	while ((c = getopt_long(argc, argv,
-				"JlPp:o:nruhVt:T::W", long_opts, NULL)) != -1) {
+				"JlPp:o:nruhVt:T::WQ:H", long_opts, NULL)) != -1) {
 
 		err_exclusive_options(c, long_opts, excl, excl_st);
 
@@ -1416,6 +1550,11 @@ int main(int argc, char *argv[])
 					errx(EXIT_FAILURE, _("unknown tree type: %s"), optarg);
 			}
 			break;
+		case 'Q':
+			ls.filter = new_filter(optarg);
+			break;
+		case 'H':
+			list_colunms(ls.raw, ls.json);
 
 		case 'h':
 			usage();
@@ -1500,6 +1639,7 @@ int main(int argc, char *argv[])
 			r = show_namespaces(&ls);
 	}
 
+	scols_unref_filter(ls.filter);
 	mnt_free_table(ls.tab);
 	if (netlink_fd >= 0)
 		close(netlink_fd);

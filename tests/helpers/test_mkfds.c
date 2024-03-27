@@ -3207,6 +3207,99 @@ static void *make_mmap(const struct factory *factory, struct fdesc fdescs[] _U_,
 	return data;
 }
 
+/* Do as unshare --map-root-user. */
+static void map_root_user(uid_t uid, uid_t gid)
+{
+	char buf[BUFSIZ];
+	int n;
+	int mapfd;
+	int r;
+
+	n = snprintf(buf, sizeof(buf), "0 %d 1", uid);
+	mapfd = open("/proc/self/uid_map", O_WRONLY);
+	if (mapfd < 0)
+		err(EXIT_FAILURE,
+		    "failed to open /proc/self/uid_map");
+	r = write (mapfd, buf, n);
+	if (r < 0)
+		err(EXIT_FAILURE,
+		    "failed to write to /proc/self/uid_map");
+	if (r != n)
+		errx(EXIT_FAILURE,
+		     "failed to write to /proc/self/uid_map");
+	close(mapfd);
+
+	mapfd = open("/proc/self/setgroups", O_WRONLY);
+	if (mapfd < 0)
+		err(EXIT_FAILURE,
+		    "failed to open /proc/self/setgroups");
+	r = write (mapfd, "deny", 4);
+	if (r < 0)
+		err(EXIT_FAILURE,
+		    "failed to write to /proc/self/setgroups");
+	if (r != 4)
+		errx(EXIT_FAILURE,
+		     "failed to write to /proc/self/setgroups");
+	close(mapfd);
+
+	n = snprintf(buf, sizeof(buf), "0 %d 1", gid);
+	mapfd = open("/proc/self/gid_map", O_WRONLY);
+	if (mapfd < 0)
+		err(EXIT_FAILURE,
+		    "failed to open /proc/self/gid_map");
+	r = write (mapfd, buf, n);
+	if (r < 0)
+		err(EXIT_FAILURE,
+		    "failed to write to /proc/self/gid_map");
+	if (r != n)
+		errx(EXIT_FAILURE,
+		     "failed to write to /proc/self/gid_map");
+	close(mapfd);
+}
+
+static void *make_userns(const struct factory *factory _U_, struct fdesc fdescs[],
+			 int argc _U_, char ** argv _U_)
+{
+	uid_t uid = geteuid();
+	uid_t gid = getegid();
+
+	if (unshare(CLONE_NEWUSER) < 0)
+		err((errno == EPERM? EXIT_EPERM: EXIT_FAILURE),
+		    "failed in the 1st unshare(2)");
+
+	map_root_user(uid, gid);
+
+	int userns = open("/proc/self/ns/user", O_RDONLY);
+	if (userns < 0)
+		err(EXIT_FAILURE, "failed to open /proc/self/ns/user for the new user ns");
+
+	if (unshare(CLONE_NEWUSER) < 0) {
+		int e = errno;
+		close(userns);
+		errno = e;
+		err((errno == EPERM? EXIT_EPERM: EXIT_FAILURE),
+		    "failed in the 2nd unshare(2)");
+	}
+
+	if (userns != fdescs[0].fd) {
+		if (dup2(userns, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(userns);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", userns, fdescs[0].fd);
+		}
+		close(userns);
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL
+	};
+
+	return NULL;
+}
+
 static void free_mmap(const struct factory * factory _U_, void *data)
 {
 	munmap(((struct mmap_data *)data)->addr,
@@ -3999,7 +4092,7 @@ static const struct factory factories[] = {
 	},
 	{
 		.name = "multiplexing",
-		.desc = "making pipes monitored by multiplexers",
+		.desc = "make pipes monitored by multiplexers",
 		.priv =  false,
 		.N    = 12,
 		.EX_N = 0,
@@ -4062,6 +4155,17 @@ static const struct factory factories[] = {
 			},
 			PARAM_END
 		},
+	},
+	{
+		.name = "userns",
+		.desc = "open a user namespae",
+		.priv = false,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_userns,
+		.params = (struct parameter []) {
+			PARAM_END
+		}
 	},
 };
 
