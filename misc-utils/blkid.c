@@ -25,6 +25,7 @@
 #define OUTPUT_PRETTY_LIST	(1 << 3)		/* deprecated */
 #define OUTPUT_UDEV_LIST	(1 << 4)		/* deprecated */
 #define OUTPUT_EXPORT_LIST	(1 << 5)
+#define OUTPUT_JSON		(1 << 6)
 
 #define BLKID_EXIT_NOTFOUND	2	/* token or device not found */
 #define BLKID_EXIT_OTHER	4	/* bad usage or other error */
@@ -47,12 +48,14 @@
 #include "xalloc.h"
 
 #include "sysfs.h"
+#include "jsonwrt.h"
 
 struct blkid_control {
 	int output;
 	uintmax_t offset;
 	uintmax_t size;
 	char *show[128];
+	struct ul_jsonwrt *json_fmt;
 	unsigned int
 		eval:1,
 		gc:1,
@@ -81,7 +84,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(	" -d, --no-encoding          don't encode non-printing characters\n"), out);
 	fputs(_(	" -g, --garbage-collect      garbage collect the blkid cache\n"), out);
 	fputs(_(	" -o, --output <format>      output format; can be one of:\n"
-			"                              value, device, export or full; (default: full)\n"), out);
+			"                              value, device, export, json or full; (default: full)\n"), out);
 	fputs(_(	" -k, --list-filesystems     list all known filesystems/RAIDs and exit\n"), out);
 	fputs(_(	" -s, --match-tag <tag>      show specified tag(s) (default show all tags)\n"), out);
 	fputs(_(	" -t, --match-token <token>  find device with a specific token (NAME=value pair)\n"), out);
@@ -333,6 +336,9 @@ static void print_value(const struct blkid_control *ctl, int num,
 		safe_print(ctl, value, valsz, " \\\"'$`<>");
 		fputs("\n", stdout);
 
+	} else if (ctl->output & OUTPUT_JSON) {
+		ul_jsonwrt_value_s_sized(ctl->json_fmt, name, value, valsz);
+
 	} else {
 		if (num == 1 && devname)
 			printf("%s:", devname);
@@ -366,6 +372,11 @@ static void print_tags(const struct blkid_control *ctl, blkid_dev dev)
 		return;
 	}
 
+	if (ctl->output == OUTPUT_JSON) {
+		ul_jsonwrt_init(ctl->json_fmt, stdout, 0);
+		ul_jsonwrt_open(ctl->json_fmt, NULL, UL_JSON_OBJECT);
+	}
+
 	iter = blkid_tag_iterate_begin(dev);
 	while (blkid_tag_next(iter, &type, &value) == 0) {
 		if (ctl->show[0] && !has_item(ctl, type))
@@ -380,9 +391,13 @@ static void print_tags(const struct blkid_control *ctl, blkid_dev dev)
 	}
 	blkid_tag_iterate_end(iter);
 
+	if (ctl->output == OUTPUT_JSON)
+		ul_jsonwrt_close(ctl->json_fmt, UL_JSON_OBJECT);
+
 	if (num > 1) {
 		if (!(ctl->output & (OUTPUT_VALUE_ONLY | OUTPUT_UDEV_LIST |
-						OUTPUT_EXPORT_LIST)))
+						OUTPUT_EXPORT_LIST |
+						OUTPUT_JSON)))
 			printf("\n");
 		first = 0;
 	}
@@ -539,6 +554,11 @@ static int lowprobe_device(blkid_probe pr, const char *devname,
 		/* add extra line between output from devices */
 		fputc('\n', stdout);
 
+	if (ctl->output == OUTPUT_JSON) {
+		ul_jsonwrt_init(ctl->json_fmt, stdout, 0);
+		ul_jsonwrt_open(ctl->json_fmt, NULL, UL_JSON_OBJECT);
+	}
+
 	if (nvals && (ctl->output & OUTPUT_DEVICE_ONLY)) {
 		printf("%s\n", devname);
 		goto done;
@@ -557,8 +577,12 @@ static int lowprobe_device(blkid_probe pr, const char *devname,
 		first = 0;
 
 	if (nvals >= 1 && !(ctl->output & (OUTPUT_VALUE_ONLY |
-					OUTPUT_UDEV_LIST | OUTPUT_EXPORT_LIST)))
+					OUTPUT_UDEV_LIST | OUTPUT_EXPORT_LIST |
+					OUTPUT_JSON)))
 		printf("\n");
+
+	if (ctl->output == OUTPUT_JSON)
+		ul_jsonwrt_close(ctl->json_fmt, UL_JSON_OBJECT);
 done:
 	if (rc == -2) {
 		if (ctl->output & OUTPUT_UDEV_LIST)
@@ -664,7 +688,11 @@ static void free_types_list(char *list[])
 
 int main(int argc, char **argv)
 {
-	struct blkid_control ctl = { .output = OUTPUT_FULL, 0 };
+	struct ul_jsonwrt json_fmt;
+	struct blkid_control ctl = {
+		.output = OUTPUT_FULL,
+		.json_fmt = &json_fmt,
+	};
 	blkid_cache cache = NULL;
 	char **devices = NULL;
 	char *search_type = NULL, *search_value = NULL;
@@ -777,6 +805,8 @@ int main(int argc, char **argv)
 				ctl.output = OUTPUT_UDEV_LIST;
 			else if (!strcmp(optarg, "export"))
 				ctl.output = OUTPUT_EXPORT_LIST;
+			else if (!strcmp(optarg, "json"))
+				ctl.output = OUTPUT_JSON;
 			else if (!strcmp(optarg, "full"))
 				ctl.output = 0;
 			else

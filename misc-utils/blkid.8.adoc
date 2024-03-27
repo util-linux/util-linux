@@ -111,6 +111,8 @@ This output format is *DEPRECATED*.
 print key=value pairs for easy import into the environment; this output format is automatically enabled when I/O Limits (*--info* option) are requested.
 +
 The non-printing characters are encoded by ^ and M- notation and all potentially unsafe characters are escaped.
+*json*;;
+Print the tags entries in JSON objects.
 
 *-O*, *--offset* _offset_::
 Probe at the given _offset_ (only useful with *--probe*). This option can be used together with the *--info* option.

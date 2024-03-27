@@ -13,7 +13,7 @@ _blkid_module()
 			return 0
 			;;
 		'-o'|'--output')
-			COMPREPLY=( $(compgen -W "value device export full" -- $cur) )
+			COMPREPLY=( $(compgen -W "value device export full json" -- $cur) )
 			return 0
 			;;
 		'-s'|'--match-tag')
