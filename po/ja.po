@@ -7,7 +7,7 @@
 # Makoto Kato <makoto.kt@gmail.com>, 2009-2010.
 # Takeshi Hamasaki <hmatrjp@users.sourceforge.jp>, 2011, 2013.
 # victory <victory.deb@gmail.com>, 2013.
-# Takeshi Hamasaki <hmatrjp@users.sourceforge.jp>, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023.
+# Takeshi Hamasaki <hmatrjp@users.sourceforge.jp>, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024.
 #
 # (Additional History)
 #  Once util-linux-ng was forked from util-linux,
@@ -15,19 +15,19 @@
 #  Work in 2013 is by courtesy of Yasuhiko Kamata <belphegor@belbel.or.jp>.
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.39-rc3\n"
+"Project-Id-Version: util-linux 2.40-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2024-02-29 21:01+0100\n"
-"PO-Revision-Date: 2023-06-30 22:59+0900\n"
+"POT-Creation-Date: 2024-02-29 21:44+0100\n"
+"PO-Revision-Date: 2024-03-05 23:29+0900\n"
 "Last-Translator: Takeshi Hamasaki <hmatrjp@users.sourceforge.jp>\n"
 "Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Bugs: Report translation errors to the Language-Team address.\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.4.2\n"
+"X-Bugs: Report translation errors to the Language-Team address.\n"
+"X-Generator: Poedit 3.2.2\n"
 "X-Poedit-Basepath: util-linux-2.36-rc2\n"
 "X-Poedit-SearchPath-0: .\n"
 
@@ -186,10 +186,8 @@ msgid "get disk sequence number"
 msgstr "ディスクのシーケンス番号を取得"
 
 #: disk-utils/blockdev.c:194
-#, fuzzy
-#| msgid "min seg size"
 msgid "get zone size"
-msgstr "最小セグメントサイズ"
+msgstr "ゾーンのサイズを取得"
 
 #: disk-utils/blockdev.c:199
 msgid "flush buffers"
@@ -3513,22 +3511,16 @@ msgid " -e, --endianness=<value>  specify the endianness to use (%s, %s or %s)\n
 msgstr ""
 
 #: disk-utils/mkswap.c:208
-#, fuzzy
-#| msgid " -p, --pagesize SIZE       specify page size in bytes\n"
 msgid " -o, --offset OFFSET       specify the offset in the device\n"
-msgstr " -p, --pagesize SIZE       ページサイズを指定します (バイト単位)\n"
+msgstr " -o, --offset OFFSET       デバイス内のオフセットを指定します\n"
 
 #: disk-utils/mkswap.c:209
-#, fuzzy
-#| msgid " -p, --pagesize SIZE       specify page size in bytes\n"
 msgid " -s, --size SIZE           specify the size of a swap file in bytes\n"
-msgstr " -p, --pagesize SIZE       ページサイズを指定します (バイト単位)\n"
+msgstr " -s, --size SIZE           スワップファイルのサイズを指定します (バイト単位)\n"
 
 #: disk-utils/mkswap.c:210
-#, fuzzy
-#| msgid " -t, --table                      create a table\n"
 msgid " -F, --file                create a swap file\n"
-msgstr " -t, --table                      表を作成します\n"
+msgstr " -F, --file                スワップファイルを作成します\n"
 
 #: disk-utils/mkswap.c:211
 msgid "     --verbose             verbose output\n"
@@ -3587,10 +3579,8 @@ msgid "unallocated extent at offset %ju"
 msgstr ", オフセット %ju"
 
 #: disk-utils/mkswap.c:367
-#, fuzzy
-#| msgid "%s: offset is greater than device size"
 msgid "offset larger than file size"
-msgstr "%s: オフセットがデバイスサイズよりも大きいです"
+msgstr "オフセットがファイルサイズよりも大きいです"
 
 #: disk-utils/mkswap.c:380
 msgid "unable to alloc new libblkid probe"
@@ -3603,13 +3593,12 @@ msgstr "libblkid プローブをデバイスに割り当てることができま
 #: disk-utils/mkswap.c:395
 #, c-format
 msgid "cannot create swap file %s: node isn't regular file"
-msgstr ""
+msgstr "スワップファイル %s を作成できません: ノードは通常ファイルではありません"
 
 #: disk-utils/mkswap.c:397
-#, fuzzy, c-format
-#| msgid "cannot open partition sector save file (%s)"
+#, c-format
 msgid "cannot set permissions on swap file %s"
-msgstr "パーティションセクタ保存ファイル (%s) を開くことができません"
+msgstr "スワップファイル %s のパーミッションを設定できません"
 
 #: disk-utils/mkswap.c:409 disk-utils/mkswap.c:413 disk-utils/mkswap.c:416
 #, fuzzy, c-format
@@ -3685,10 +3674,8 @@ msgid "invalid endianness %s is not supported"
 msgstr "スワップ領域バージョン %d は未対応です"
 
 #: disk-utils/mkswap.c:620 misc-utils/lsclocks.c:275
-#, fuzzy
-#| msgid "invalid block-count"
 msgid "Invalid offset"
-msgstr "ブロックカウントが正しくありません"
+msgstr "オフセットが正しくありません"
 
 #: disk-utils/mkswap.c:654
 msgid "only one device argument is currently supported"
@@ -4266,22 +4253,19 @@ msgid "Leaving."
 msgstr "中止します。"
 
 #: disk-utils/sfdisk.c:554
-#, fuzzy, c-format
-#| msgid "cannot read at offset: %zu; continue"
+#, c-format
 msgid "cannot read at offset: %ju; continue"
-msgstr "オフセット: %zu で読み込み不可; 継続します"
+msgstr "オフセット: %ju で読み込み不可; 継続します"
 
 #: disk-utils/sfdisk.c:565
-#, fuzzy, c-format
-#| msgid "cannot write at offset: %zu; continue"
+#, c-format
 msgid "cannot write at offset: %ju; continue"
-msgstr "オフセット: %zu で書き込み不可; 継続します"
+msgstr "オフセット: %ju で書き込み不可; 継続します"
 
 #: disk-utils/sfdisk.c:571
-#, fuzzy, c-format
-#| msgid "cannot read at offset: %zu; continue"
+#, c-format
 msgid "cannot fsync at offset: %ju; continue"
-msgstr "オフセット: %zu で読み込み不可; 継続します"
+msgstr "オフセット: %ju で fsync 不可; 継続します"
 
 #: disk-utils/sfdisk.c:595
 #, c-format
@@ -4704,16 +4688,13 @@ msgid "Ignoring partition."
 msgstr "パーティションを無視します。"
 
 #: disk-utils/sfdisk.c:1934
-#, fuzzy
-#| msgid "Failed to apply script headers, disk label not created."
 msgid "Failed to apply script headers, disk label not created"
-msgstr "スクリプトヘッダーの適用に失敗し、ディスクラベルは作成されませんでした。"
+msgstr "スクリプトヘッダーの適用に失敗し、ディスクラベルは作成されませんでした"
 
 #: disk-utils/sfdisk.c:1955
-#, fuzzy, c-format
-#| msgid "Failed to add #%d partition"
+#, c-format
 msgid "Failed to add #%zu partition"
-msgstr "#%d パーティションを追加できませんでした"
+msgstr "#%zu パーティションを追加できませんでした"
 
 #: disk-utils/sfdisk.c:1978
 msgid "Script header accepted."
@@ -4765,10 +4746,8 @@ msgid " -J, --json <dev>                  dump partition table in JSON format\n"
 msgstr " -J, --json <dev>                  パーティションテーブルを出力します (JSON形式で)\n"
 
 #: disk-utils/sfdisk.c:2050
-#, fuzzy
-#| msgid " -b, --backup              backup partition table sectors (see -O)\n"
 msgid " -B, --backup-pt-sectors <dev>     binary partition table backup (see -b and -O)\n"
-msgstr " -b, --backup              パーティションテーブルセクターをバックアップします (-O も参照)\n"
+msgstr " -B, --backup-pt-sectors <dev>     バイナリ形式でパーティションテーブルをバックアップします (-b と -O も参照)\n"
 
 #: disk-utils/sfdisk.c:2051
 msgid " -g, --show-geometry [<dev> ...]   list geometry of all or specified devices\n"
@@ -5030,12 +5009,12 @@ msgstr ""
 "コマンド:\n"
 
 #: include/c.h:461
-#, fuzzy
-#| msgid "bad arguments"
 msgid ""
 "\n"
 "Arguments:\n"
-msgstr "引数がありません"
+msgstr ""
+"\n"
+"引数:\n"
 
 #: include/c.h:462
 msgid ""
@@ -5071,6 +5050,8 @@ msgid ""
 " %s arguments may be followed by the suffixes for\n"
 "   GiB, TiB, PiB, EiB, ZiB, and YiB (the \"iB\" is optional)\n"
 msgstr ""
+" %s 引数の後には単位を表すための\n"
+"   GiB, TiB, PiB, EiB, ZiB, YiB を加えることができます (\"iB\" はなくても同じ)\n"
 
 #: include/c.h:480
 #, c-format
@@ -5082,7 +5063,7 @@ msgstr ""
 "詳しくは %s をお読みください。\n"
 
 #: include/c.h:482
-#, c-format
+#, fuzzy, c-format
 msgid "%s from %s\n"
 msgstr "%s from %s\n"
 
@@ -5213,16 +5194,12 @@ msgid "Linux root (x86-64)"
 msgstr "Linux root (x86-64)"
 
 #: include/pt-gpt-partnames.h:53
-#, fuzzy
-#| msgid "Linux root (ARM)"
 msgid "Linux root (Alpha)"
-msgstr "Linux root (ARM)"
+msgstr "Linux root (Alpha)"
 
 #: include/pt-gpt-partnames.h:54
-#, fuzzy
-#| msgid "Linux root (ARM)"
 msgid "Linux root (ARC)"
-msgstr "Linux root (ARM)"
+msgstr "Linux root (ARC)"
 
 #: include/pt-gpt-partnames.h:55
 msgid "Linux root (ARM)"
@@ -5237,76 +5214,52 @@ msgid "Linux root (IA-64)"
 msgstr "Linux root (IA-64)"
 
 #: include/pt-gpt-partnames.h:58
-#, fuzzy
-#| msgid "Linux root (IA-64)"
 msgid "Linux root (LoongArch-64)"
-msgstr "Linux root (IA-64)"
+msgstr "Linux root (LoongArch-64)"
 
 #: include/pt-gpt-partnames.h:59
-#, fuzzy
-#| msgid "Linux root (IA-64)"
 msgid "Linux root (MIPS-32 LE)"
-msgstr "Linux root (IA-64)"
+msgstr "Linux root (MIPS-32 LE)"
 
 #: include/pt-gpt-partnames.h:60
-#, fuzzy
-#| msgid "Linux root (IA-64)"
 msgid "Linux root (MIPS-64 LE)"
-msgstr "Linux root (IA-64)"
+msgstr "Linux root (MIPS-64 LE)"
 
 #: include/pt-gpt-partnames.h:61
-#, fuzzy
-#| msgid "Linux root (ARM)"
 msgid "Linux root (HPPA/PARISC)"
-msgstr "Linux root (ARM)"
+msgstr "Linux root (HPPA/PARISC)"
 
 #: include/pt-gpt-partnames.h:62
-#, fuzzy
-#| msgid "Linux root (x86)"
 msgid "Linux root (PPC)"
-msgstr "Linux root (x86)"
+msgstr "Linux root (PPC)"
 
 #: include/pt-gpt-partnames.h:63
-#, fuzzy
-#| msgid "Linux root (IA-64)"
 msgid "Linux root (PPC64)"
-msgstr "Linux root (IA-64)"
+msgstr "Linux root (PPC64)"
 
 #: include/pt-gpt-partnames.h:64
-#, fuzzy
-#| msgid "Linux root (IA-64)"
 msgid "Linux root (PPC64LE)"
-msgstr "Linux root (IA-64)"
+msgstr "Linux root (PPC64LE)"
 
 #: include/pt-gpt-partnames.h:65
-#, fuzzy
-#| msgid "Linux root (IA-64)"
 msgid "Linux root (RISC-V-32)"
-msgstr "Linux root (IA-64)"
+msgstr "Linux root (RISC-V-32)"
 
 #: include/pt-gpt-partnames.h:66
-#, fuzzy
-#| msgid "Linux root (IA-64)"
 msgid "Linux root (RISC-V-64)"
-msgstr "Linux root (IA-64)"
+msgstr "Linux root (RISC-V-64)"
 
 #: include/pt-gpt-partnames.h:67
-#, fuzzy
-#| msgid "Linux root (x86)"
 msgid "Linux root (S390)"
-msgstr "Linux root (x86)"
+msgstr "Linux root (S390)"
 
 #: include/pt-gpt-partnames.h:68
-#, fuzzy
-#| msgid "Linux root (x86)"
 msgid "Linux root (S390X)"
-msgstr "Linux root (x86)"
+msgstr "Linux root (S390X)"
 
 #: include/pt-gpt-partnames.h:69
-#, fuzzy
-#| msgid "Linux root (IA-64)"
 msgid "Linux root (TILE-Gx)"
-msgstr "Linux root (IA-64)"
+msgstr "Linux root (TILE-Gx)"
 
 #: include/pt-gpt-partnames.h:70
 msgid "Linux reserved"
@@ -5342,16 +5295,12 @@ msgid "Linux /usr (x86-64)"
 msgstr "Linux /usr (x86-64)"
 
 #: include/pt-gpt-partnames.h:78
-#, fuzzy
-#| msgid "Linux /usr (ARM)"
 msgid "Linux /usr (Alpha)"
-msgstr "Linux /usr (ARM)"
+msgstr "Linux /usr (Alpha)"
 
 #: include/pt-gpt-partnames.h:79
-#, fuzzy
-#| msgid "Linux /usr (ARM)"
 msgid "Linux /usr (ARC)"
-msgstr "Linux /usr (ARM)"
+msgstr "Linux /usr (ARC)"
 
 #: include/pt-gpt-partnames.h:80
 msgid "Linux /usr (ARM)"
@@ -5366,76 +5315,52 @@ msgid "Linux /usr (IA-64)"
 msgstr "Linux /usr (IA-64)"
 
 #: include/pt-gpt-partnames.h:83
-#, fuzzy
-#| msgid "Linux /usr (IA-64)"
 msgid "Linux /usr (LoongArch-64)"
-msgstr "Linux /usr (IA-64)"
+msgstr "Linux /usr (LoongArch-64)"
 
 #: include/pt-gpt-partnames.h:84
-#, fuzzy
-#| msgid "Linux /usr (IA-64)"
 msgid "Linux /usr (MIPS-32 LE)"
-msgstr "Linux /usr (IA-64)"
+msgstr "Linux /usr (MIPS-32 LE)"
 
 #: include/pt-gpt-partnames.h:85
-#, fuzzy
-#| msgid "Linux /usr (IA-64)"
 msgid "Linux /usr (MIPS-64 LE)"
-msgstr "Linux /usr (IA-64)"
+msgstr "Linux /usr (MIPS-64 LE)"
 
 #: include/pt-gpt-partnames.h:86
-#, fuzzy
-#| msgid "Linux /usr (ARM)"
 msgid "Linux /usr (HPPA/PARISC)"
-msgstr "Linux /usr (ARM)"
+msgstr "Linux /usr (HPPA/PARISC)"
 
 #: include/pt-gpt-partnames.h:87
-#, fuzzy
-#| msgid "Linux /usr (x86)"
 msgid "Linux /usr (PPC)"
-msgstr "Linux /usr (x86)"
+msgstr "Linux /usr (PPC)"
 
 #: include/pt-gpt-partnames.h:88
-#, fuzzy
-#| msgid "Linux /usr (IA-64)"
 msgid "Linux /usr (PPC64)"
-msgstr "Linux /usr (IA-64)"
+msgstr "Linux /usr (PPC64)"
 
 #: include/pt-gpt-partnames.h:89
-#, fuzzy
-#| msgid "Linux /usr (IA-64)"
 msgid "Linux /usr (PPC64LE)"
-msgstr "Linux /usr (IA-64)"
+msgstr "Linux /usr (PPC64LE)"
 
 #: include/pt-gpt-partnames.h:90
-#, fuzzy
-#| msgid "Linux /usr (IA-64)"
 msgid "Linux /usr (RISC-V-32)"
-msgstr "Linux /usr (IA-64)"
+msgstr "Linux /usr (RISC-V-32)"
 
 #: include/pt-gpt-partnames.h:91
-#, fuzzy
-#| msgid "Linux /usr (IA-64)"
 msgid "Linux /usr (RISC-V-64)"
-msgstr "Linux /usr (IA-64)"
+msgstr "Linux /usr (RISC-V-64)"
 
 #: include/pt-gpt-partnames.h:92
-#, fuzzy
-#| msgid "Linux /usr (x86)"
 msgid "Linux /usr (S390)"
-msgstr "Linux /usr (x86)"
+msgstr "Linux /usr (S390)"
 
 #: include/pt-gpt-partnames.h:93
-#, fuzzy
-#| msgid "Linux /usr (x86)"
 msgid "Linux /usr (S390X)"
-msgstr "Linux /usr (x86)"
+msgstr "Linux /usr (S390X)"
 
 #: include/pt-gpt-partnames.h:94
-#, fuzzy
-#| msgid "Linux /usr (IA-64)"
 msgid "Linux /usr (TILE-Gx)"
-msgstr "Linux /usr (IA-64)"
+msgstr "Linux /usr (TILE-Gx)"
 
 #: include/pt-gpt-partnames.h:95
 msgid "Linux root verity (x86)"
@@ -5446,16 +5371,12 @@ msgid "Linux root verity (x86-64)"
 msgstr "Linux root verity (x86-64)"
 
 #: include/pt-gpt-partnames.h:97
-#, fuzzy
-#| msgid "Linux root verity (ARM)"
 msgid "Linux root verity (Alpha)"
-msgstr "Linux root verity (ARM)"
+msgstr "Linux root verity (Alpha)"
 
 #: include/pt-gpt-partnames.h:98
-#, fuzzy
-#| msgid "Linux root verity (ARM)"
 msgid "Linux root verity (ARC)"
-msgstr "Linux root verity (ARM)"
+msgstr "Linux root verity (ARC)"
 
 #: include/pt-gpt-partnames.h:99
 msgid "Linux root verity (ARM)"
@@ -5470,76 +5391,52 @@ msgid "Linux root verity (IA-64)"
 msgstr "Linux root verity (IA-64)"
 
 #: include/pt-gpt-partnames.h:102
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity (LoongArch-64)"
-msgstr "Linux root verity (IA-64)"
+msgstr "Linux root verity (LoongArch-64)"
 
 #: include/pt-gpt-partnames.h:103
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity (MIPS-32 LE)"
-msgstr "Linux root verity (IA-64)"
+msgstr "Linux root verity (MIPS-32 LE)"
 
 #: include/pt-gpt-partnames.h:104
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity (MIPS-64 LE)"
-msgstr "Linux root verity (IA-64)"
+msgstr "Linux root verity (MIPS-64 LE)"
 
 #: include/pt-gpt-partnames.h:105
-#, fuzzy
-#| msgid "Linux root verity (ARM)"
 msgid "Linux root verity (HPPA/PARISC)"
-msgstr "Linux root verity (ARM)"
+msgstr "Linux root verity (HPPA/PARISC)"
 
 #: include/pt-gpt-partnames.h:106
-#, fuzzy
-#| msgid "Linux root verity (x86)"
 msgid "Linux root verity (PPC)"
-msgstr "Linux root verity (x86)"
+msgstr "Linux root verity (PPC)"
 
 #: include/pt-gpt-partnames.h:107
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity (PPC64)"
-msgstr "Linux root verity (IA-64)"
+msgstr "Linux root verity (PPC64)"
 
 #: include/pt-gpt-partnames.h:108
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity (PPC64LE)"
-msgstr "Linux root verity (IA-64)"
+msgstr "Linux root verity (PPC64LE)"
 
 #: include/pt-gpt-partnames.h:109
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity (RISC-V-32)"
-msgstr "Linux root verity (IA-64)"
+msgstr "Linux root verity (RISC-V-32)"
 
 #: include/pt-gpt-partnames.h:110
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity (RISC-V-64)"
-msgstr "Linux root verity (IA-64)"
+msgstr "Linux root verity (RISC-V-64)"
 
 #: include/pt-gpt-partnames.h:111
-#, fuzzy
-#| msgid "Linux root verity (x86)"
 msgid "Linux root verity (S390)"
-msgstr "Linux root verity (x86)"
+msgstr "Linux root verity (S390)"
 
 #: include/pt-gpt-partnames.h:112
-#, fuzzy
-#| msgid "Linux root verity (x86)"
 msgid "Linux root verity (S390X)"
-msgstr "Linux root verity (x86)"
+msgstr "Linux root verity (S390X)"
 
 #: include/pt-gpt-partnames.h:113
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity (TILE-Gx)"
-msgstr "Linux root verity (IA-64)"
+msgstr "Linux root verity (TILE-Gx)"
 
 #: include/pt-gpt-partnames.h:114
 msgid "Linux /usr verity (x86)"
@@ -5550,16 +5447,12 @@ msgid "Linux /usr verity (x86-64)"
 msgstr "Linux /usr verity (x86-64)"
 
 #: include/pt-gpt-partnames.h:116
-#, fuzzy
-#| msgid "Linux /usr verity (ARM)"
 msgid "Linux /usr verity (Alpha)"
-msgstr "Linux /usr verity (ARM)"
+msgstr "Linux /usr verity (Alpha)"
 
 #: include/pt-gpt-partnames.h:117
-#, fuzzy
-#| msgid "Linux /usr verity (ARM)"
 msgid "Linux /usr verity (ARC)"
-msgstr "Linux /usr verity (ARM)"
+msgstr "Linux /usr verity (ARC)"
 
 #: include/pt-gpt-partnames.h:118
 msgid "Linux /usr verity (ARM)"
@@ -5574,304 +5467,204 @@ msgid "Linux /usr verity (IA-64)"
 msgstr "Linux /usr verity (IA-64)"
 
 #: include/pt-gpt-partnames.h:121
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity (LoongArch-64)"
-msgstr "Linux /usr verity (IA-64)"
+msgstr "Linux /usr verity (LoongArch-64)"
 
 #: include/pt-gpt-partnames.h:122
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity (MIPS-32 LE)"
-msgstr "Linux /usr verity (IA-64)"
+msgstr "Linux /usr verity (MIPS-32 LE)"
 
 #: include/pt-gpt-partnames.h:123
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity (MIPS-64 LE)"
-msgstr "Linux /usr verity (IA-64)"
+msgstr "Linux /usr verity (MIPS-64 LE)"
 
 #: include/pt-gpt-partnames.h:124
-#, fuzzy
-#| msgid "Linux /usr verity (ARM)"
 msgid "Linux /usr verity (HPPA/PARISC)"
-msgstr "Linux /usr verity (ARM)"
+msgstr "Linux /usr verity (HPPA/PARISC)"
 
 #: include/pt-gpt-partnames.h:125
-#, fuzzy
-#| msgid "Linux /usr verity (x86)"
 msgid "Linux /usr verity (PPC)"
-msgstr "Linux /usr verity (x86)"
+msgstr "Linux /usr verity (PPC)"
 
 #: include/pt-gpt-partnames.h:126
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity (PPC64)"
-msgstr "Linux /usr verity (IA-64)"
+msgstr "Linux /usr verity (PPC64)"
 
 #: include/pt-gpt-partnames.h:127
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity (PPC64LE)"
-msgstr "Linux /usr verity (IA-64)"
+msgstr "Linux /usr verity (PPC64LE)"
 
 #: include/pt-gpt-partnames.h:128
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity (RISC-V-32)"
-msgstr "Linux /usr verity (IA-64)"
+msgstr "Linux /usr verity (RISC-V-32)"
 
 #: include/pt-gpt-partnames.h:129
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity (RISC-V-64)"
-msgstr "Linux /usr verity (IA-64)"
+msgstr "Linux /usr verity (RISC-V-64)"
 
 #: include/pt-gpt-partnames.h:130
-#, fuzzy
-#| msgid "Linux /usr verity (x86)"
 msgid "Linux /usr verity (S390)"
-msgstr "Linux /usr verity (x86)"
+msgstr "Linux /usr verity (S390)"
 
 #: include/pt-gpt-partnames.h:131
-#, fuzzy
-#| msgid "Linux /usr verity (x86)"
 msgid "Linux /usr verity (S390X)"
-msgstr "Linux /usr verity (x86)"
+msgstr "Linux /usr verity (S390X)"
 
 #: include/pt-gpt-partnames.h:132
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity (TILE-Gx)"
-msgstr "Linux /usr verity (IA-64)"
+msgstr "Linux /usr verity (TILE-Gx)"
 
 #: include/pt-gpt-partnames.h:133
-#, fuzzy
-#| msgid "Linux root verity (x86)"
 msgid "Linux root verity sign. (x86)"
-msgstr "Linux root verity (x86)"
+msgstr "Linux root verity 署名 (x86)"
 
 #: include/pt-gpt-partnames.h:134
-#, fuzzy
-#| msgid "Linux root verity (x86-64)"
 msgid "Linux root verity sign. (x86-64)"
-msgstr "Linux root verity (x86-64)"
+msgstr "Linux root verity 署名 (x86-64)"
 
 #: include/pt-gpt-partnames.h:135
-#, fuzzy
-#| msgid "Linux root verity (ARM)"
 msgid "Linux root verity sign. (Alpha)"
-msgstr "Linux root verity (ARM)"
+msgstr "Linux root verity 署名 (Alpha)"
 
 #: include/pt-gpt-partnames.h:136
-#, fuzzy
-#| msgid "Linux root verity (ARM)"
 msgid "Linux root verity sign. (ARC)"
-msgstr "Linux root verity (ARM)"
+msgstr "Linux root verity 署名 (ARC)"
 
 #: include/pt-gpt-partnames.h:137
-#, fuzzy
-#| msgid "Linux root verity (ARM)"
 msgid "Linux root verity sign. (ARM)"
-msgstr "Linux root verity (ARM)"
+msgstr "Linux root verity 署名 (ARM)"
 
 #: include/pt-gpt-partnames.h:138
-#, fuzzy
-#| msgid "Linux root verity (ARM-64)"
 msgid "Linux root verity sign. (ARM-64)"
-msgstr "Linux root verity (ARM-64)"
+msgstr "Linux root verity 署名 (ARM-64)"
 
 #: include/pt-gpt-partnames.h:139
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (IA-64)"
-msgstr "Linux root verity (IA-64)"
+msgstr "Linux root verity 署名 (IA-64)"
 
 #: include/pt-gpt-partnames.h:140
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (LoongArch-64)"
-msgstr "Linux root verity (IA-64)"
+msgstr "Linux root verity 署名 (LoongArch-64)"
 
 #: include/pt-gpt-partnames.h:141
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (MIPS-32 LE)"
-msgstr "Linux root verity (IA-64)"
+msgstr "Linux root verity 署名 (MIPS-32 LE)"
 
 #: include/pt-gpt-partnames.h:142
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (MIPS-64 LE)"
-msgstr "Linux root verity (IA-64)"
+msgstr "Linux root verity 署名 (MIPS-64 LE)"
 
 #: include/pt-gpt-partnames.h:143
-#, fuzzy
-#| msgid "Linux root verity (ARM)"
 msgid "Linux root verity sign. (HPPA/PARISC)"
-msgstr "Linux root verity (ARM)"
+msgstr "Linux root verity 署名 (HPPA/PARISC)"
 
 #: include/pt-gpt-partnames.h:144
-#, fuzzy
-#| msgid "Linux root verity (x86)"
 msgid "Linux root verity sign. (PPC)"
-msgstr "Linux root verity (x86)"
+msgstr "Linux root verity 署名 (PPC)"
 
 #: include/pt-gpt-partnames.h:145
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (PPC64)"
-msgstr "Linux root verity (IA-64)"
+msgstr "Linux root verity 署名 (PPC64)"
 
 #: include/pt-gpt-partnames.h:146
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (PPC64LE)"
-msgstr "Linux root verity (IA-64)"
+msgstr "Linux root verity 署名 (PPC64LE)"
 
 #: include/pt-gpt-partnames.h:147
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (RISC-V-32)"
-msgstr "Linux root verity (IA-64)"
+msgstr "Linux root verity 署名 (RISC-V-32)"
 
 #: include/pt-gpt-partnames.h:148
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (RISC-V-64)"
-msgstr "Linux root verity (IA-64)"
+msgstr "Linux root verity 署名 (RISC-V-64)"
 
 #: include/pt-gpt-partnames.h:149
-#, fuzzy
-#| msgid "Linux root verity (x86)"
 msgid "Linux root verity sign. (S390)"
-msgstr "Linux root verity (x86)"
+msgstr "Linux root verity 署名 (S390)"
 
 #: include/pt-gpt-partnames.h:150
-#, fuzzy
-#| msgid "Linux root verity (x86)"
 msgid "Linux root verity sign. (S390X)"
-msgstr "Linux root verity (x86)"
+msgstr "Linux root verity 署名 (S390X)"
 
 #: include/pt-gpt-partnames.h:151
-#, fuzzy
-#| msgid "Linux root verity (IA-64)"
 msgid "Linux root verity sign. (TILE-Gx)"
-msgstr "Linux root verity (IA-64)"
+msgstr "Linux root verity 署名 (TILE-Gx)"
 
 #: include/pt-gpt-partnames.h:152
-#, fuzzy
-#| msgid "Linux /usr verity (x86)"
 msgid "Linux /usr verity sign. (x86)"
-msgstr "Linux /usr verity (x86)"
+msgstr "Linux /usr verity 署名 (x86)"
 
 #: include/pt-gpt-partnames.h:153
-#, fuzzy
-#| msgid "Linux /usr verity (x86-64)"
 msgid "Linux /usr verity sign. (x86-64)"
-msgstr "Linux /usr verity (x86-64)"
+msgstr "Linux /usr verity 署名 (x86-64)"
 
 #: include/pt-gpt-partnames.h:154
-#, fuzzy
-#| msgid "Linux /usr verity (ARM)"
 msgid "Linux /usr verity sign. (Alpha)"
-msgstr "Linux /usr verity (ARM)"
+msgstr "Linux /usr verity 署名 (Alpha)"
 
 #: include/pt-gpt-partnames.h:155
-#, fuzzy
-#| msgid "Linux /usr verity (ARM)"
 msgid "Linux /usr verity sign. (ARC)"
-msgstr "Linux /usr verity (ARM)"
+msgstr "Linux /usr verity 署名 (ARC)"
 
 #: include/pt-gpt-partnames.h:156
-#, fuzzy
-#| msgid "Linux /usr verity (ARM)"
 msgid "Linux /usr verity sign. (ARM)"
-msgstr "Linux /usr verity (ARM)"
+msgstr "Linux /usr verity 署名 (ARM)"
 
 #: include/pt-gpt-partnames.h:157
-#, fuzzy
-#| msgid "Linux /usr verity (ARM-64)"
 msgid "Linux /usr verity sign. (ARM-64)"
-msgstr "Linux /usr verity (ARM-64)"
+msgstr "Linux /usr verity 署名 (ARM-64)"
 
 #: include/pt-gpt-partnames.h:158
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (IA-64)"
-msgstr "Linux /usr verity (IA-64)"
+msgstr "Linux /usr verity 署名 (IA-64)"
 
 #: include/pt-gpt-partnames.h:159
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (LoongArch-64)"
-msgstr "Linux /usr verity (IA-64)"
+msgstr "Linux /usr verity 署名 (LoongArch-64)"
 
 #: include/pt-gpt-partnames.h:160
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (MIPS-32 LE)"
-msgstr "Linux /usr verity (IA-64)"
+msgstr "Linux /usr verity 署名 (MIPS-32 LE)"
 
 #: include/pt-gpt-partnames.h:161
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (MIPS-64 LE)"
-msgstr "Linux /usr verity (IA-64)"
+msgstr "Linux /usr verity 署名 (MIPS-64 LE)"
 
 #: include/pt-gpt-partnames.h:162
-#, fuzzy
-#| msgid "Linux /usr verity (ARM)"
 msgid "Linux /usr verity sign. (HPPA/PARISC)"
-msgstr "Linux /usr verity (ARM)"
+msgstr "Linux /usr verity 署名 (HPPA/PARISC)"
 
 #: include/pt-gpt-partnames.h:163
-#, fuzzy
-#| msgid "Linux /usr verity (x86)"
 msgid "Linux /usr verity sign. (PPC)"
-msgstr "Linux /usr verity (x86)"
+msgstr "Linux /usr verity 署名 (PPC)"
 
 #: include/pt-gpt-partnames.h:164
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (PPC64)"
-msgstr "Linux /usr verity (IA-64)"
+msgstr "Linux /usr verity 署名 (PPC64)"
 
 #: include/pt-gpt-partnames.h:165
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (PPC64LE)"
-msgstr "Linux /usr verity (IA-64)"
+msgstr "Linux /usr verity 署名 (PPC64LE)"
 
 #: include/pt-gpt-partnames.h:166
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (RISC-V-32)"
-msgstr "Linux /usr verity (IA-64)"
+msgstr "Linux /usr verity 署名 (RISC-V-32)"
 
 #: include/pt-gpt-partnames.h:167
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (RISC-V-64)"
-msgstr "Linux /usr verity (IA-64)"
+msgstr "Linux /usr verity 署名 (RISC-V-64)"
 
 #: include/pt-gpt-partnames.h:168
-#, fuzzy
-#| msgid "Linux /usr verity (x86)"
 msgid "Linux /usr verity sign. (S390)"
-msgstr "Linux /usr verity (x86)"
+msgstr "Linux /usr verity 署名 (S390)"
 
 #: include/pt-gpt-partnames.h:169
-#, fuzzy
-#| msgid "Linux /usr verity (x86)"
 msgid "Linux /usr verity sign. (S390X)"
-msgstr "Linux /usr verity (x86)"
+msgstr "Linux /usr verity 署名 (S390X)"
 
 #: include/pt-gpt-partnames.h:170
-#, fuzzy
-#| msgid "Linux /usr verity (IA-64)"
 msgid "Linux /usr verity sign. (TILE-Gx)"
-msgstr "Linux /usr verity (IA-64)"
+msgstr "Linux /usr verity 署名 (TILE-Gx)"
 
 #: include/pt-gpt-partnames.h:176 include/pt-mbr-partnames.h:99
 msgid "Linux extended boot"
@@ -5942,16 +5735,12 @@ msgid "Apple Core storage"
 msgstr "Apple コアストレージ"
 
 #: include/pt-gpt-partnames.h:199
-#, fuzzy
-#| msgid "Apple boot"
 msgid "Apple Silicon boot"
-msgstr "Apple 起動"
+msgstr "Apple Silicon 起動"
 
 #: include/pt-gpt-partnames.h:200
-#, fuzzy
-#| msgid "Apple TV recovery"
 msgid "Apple Silicon recovery"
-msgstr "Apple TV リカバリ"
+msgstr "Apple Silicon リカバリ"
 
 #: include/pt-gpt-partnames.h:203 include/pt-mbr-partnames.h:81
 msgid "Solaris boot"
@@ -6042,16 +5831,12 @@ msgid "ChromeOS reserved"
 msgstr "ChromeOS 予約領域"
 
 #: include/pt-gpt-partnames.h:235
-#, fuzzy
-#| msgid "ChromeOS reserved"
 msgid "ChromeOS firmware"
-msgstr "ChromeOS 予約領域"
+msgstr "ChromeOS ファームウェア"
 
 #: include/pt-gpt-partnames.h:236
-#, fuzzy
-#| msgid "ChromeOS kernel"
 msgid "ChromeOS miniOS"
-msgstr "ChromeOS カーネル"
+msgstr "ChromeOS miniOS"
 
 #: include/pt-gpt-partnames.h:237
 #, fuzzy
@@ -6957,10 +6742,9 @@ msgid "omitting empty partition (%zu)"
 msgstr "空のパーティション (%zu) を無視します"
 
 #: libfdisk/src/dos.c:711
-#, fuzzy, c-format
-#| msgid "Created a new DOS disklabel with disk identifier 0x%08x."
+#, c-format
 msgid "Created a new DOS (MBR) disklabel with disk identifier 0x%08x."
-msgstr "新しい DOS ディスクラベルを作成しました。識別子は 0x%08x です。"
+msgstr "新しい DOS (MBR) ディスクラベルを作成しました。識別子は 0x%08x です。"
 
 #: libfdisk/src/dos.c:734
 msgid "Enter the new disk identifier"
@@ -7002,10 +6786,9 @@ msgid "No free sectors available."
 msgstr "利用可能な空きセクタがありません。"
 
 #: libfdisk/src/dos.c:1342
-#, fuzzy, c-format
-#| msgid "Sector %llu is already allocated."
+#, c-format
 msgid "Sector %ju is already allocated."
-msgstr "セクタ %llu は既に割り当て済みです。"
+msgstr "セクタ %ju は既に割り当て済みです。"
 
 #: libfdisk/src/dos.c:1562
 #, c-format
@@ -7023,16 +6806,14 @@ msgid "Partition %zu: head %d greater than maximum %d"
 msgstr "パーティション %zu: ヘッド %d は最大値 %d よりも大きい値になっています"
 
 #: libfdisk/src/dos.c:1603
-#, fuzzy, c-format
-#| msgid "Partition %zu: sector %d greater than maximum %llu"
+#, c-format
 msgid "Partition %zu: sector %d greater than maximum %ju"
-msgstr "パーティション %zu: セクタ %d は最大値 %llu よりも大きい値になっています"
+msgstr "パーティション %zu: セクタ %d は最大値 %ju よりも大きい値になっています"
 
 #: libfdisk/src/dos.c:1609
-#, fuzzy, c-format
-#| msgid "Partition %zu: cylinder %d greater than maximum %llu"
+#, c-format
 msgid "Partition %zu: cylinder %d greater than maximum %ju"
-msgstr "パーティション %zu: シリンダ %d は最大値 %llu よりも大きい値になっています"
+msgstr "パーティション %zu: シリンダ %d は最大値 %ju よりも大きい値になっています"
 
 #: libfdisk/src/dos.c:1616
 #, fuzzy, c-format
@@ -7080,10 +6861,9 @@ msgid "No errors detected."
 msgstr "エラーは検出されませんでした。"
 
 #: libfdisk/src/dos.c:1819
-#, fuzzy, c-format
-#| msgid "Total allocated sectors %llu greater than the maximum %llu."
+#, c-format
 msgid "Total allocated sectors %ju greater than the maximum %ju."
-msgstr "割り当て済みセクタの合計値 %llu が、最大値 %llu よりも大きい値になっています。"
+msgstr "割り当て済みセクタの合計値 %ju が、最大値 %ju よりも大きい値になっています。"
 
 #: libfdisk/src/dos.c:1822
 #, fuzzy, c-format
@@ -7269,16 +7049,12 @@ msgid "GPT Backup Header"
 msgstr "GPT バックアップ ヘッダ"
 
 #: libfdisk/src/gpt.c:1299
-#, fuzzy
-#| msgid "First LBA"
 msgid "First usable LBA"
-msgstr "先頭の LBA"
+msgstr "先頭の使用可能な LBA"
 
 #: libfdisk/src/gpt.c:1304
-#, fuzzy
-#| msgid "Last LBA"
 msgid "Last usable LBA"
-msgstr "最後の LBA"
+msgstr "最後の使用可能な LBA"
 
 #. TRANSLATORS: The LBA (Logical Block Address) of the backup GPT header.
 #: libfdisk/src/gpt.c:1310
@@ -7287,17 +7063,13 @@ msgstr "代替 LBA"
 
 #. TRANSLATORS: The start of the array of partition entries.
 #: libfdisk/src/gpt.c:1316
-#, fuzzy
-#| msgid "Partition entries LBA"
 msgid "Partition entries starting LBA"
-msgstr "パーティションエントリー LBA"
+msgstr "パーティションエントリーが始まる LBA"
 
 #. TRANSLATORS: The end of the array of partition entries.
 #: libfdisk/src/gpt.c:1322
-#, fuzzy
-#| msgid "Partition entries LBA"
 msgid "Partition entries ending LBA"
-msgstr "パーティションエントリー LBA"
+msgstr "パーティションエントリーが終わる LBA"
 
 #: libfdisk/src/gpt.c:1329
 msgid "Allocated partition entries"
@@ -7435,10 +7207,8 @@ msgid "All partitions are already in use."
 msgstr "すべてのパーティションが使用済みです。"
 
 #: libfdisk/src/gpt.c:2466
-#, fuzzy
-#| msgid "No free sectors available."
 msgid "No enough free sectors available."
-msgstr "利用可能な空きセクタがありません。"
+msgstr "十分な空きセクタがありません。"
 
 #: libfdisk/src/gpt.c:2480 libfdisk/src/gpt.c:2507
 #, c-format
@@ -7466,10 +7236,9 @@ msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr "新しい GPT ディスクラベル (GUID: %s) を作成しました。"
 
 #: libfdisk/src/gpt.c:2737
-#, fuzzy, c-format
-#| msgid "The maximal number of partitions is %d (default is %d)."
+#, c-format
 msgid "The maximal number of partitions is %zu (default is %zu)."
-msgstr "パーティションの最大数は %d です（%d が既定値）。"
+msgstr "パーティションの最大数は %zu です（%zu が既定値）。"
 
 #: libfdisk/src/gpt.c:2759
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
@@ -7512,10 +7281,9 @@ msgid "Cannot allocate memory!"
 msgstr "メモリの割り当てに失敗しました!"
 
 #: libfdisk/src/gpt.c:2918
-#, fuzzy, c-format
-#| msgid "Partition table length changed from %<PRIu32> to %<PRIu64>."
+#, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu32>."
-msgstr "パーティションテーブルの長さを %<PRIu32> から %<PRIu64> に変更しました。"
+msgstr "パーティションテーブルの長さを %<PRIu32> から %<PRIu32> に変更しました。"
 
 #: libfdisk/src/gpt.c:3028
 #, c-format
@@ -7807,10 +7575,9 @@ msgid "Last %s or +%s or +size{K,M,G,T,P}"
 msgstr "終端 %s, +%s または +size{K,M,G,T,P}"
 
 #: libfdisk/src/sgi.c:991 libfdisk/src/sun.c:248
-#, fuzzy, c-format
-#| msgid "BLKGETSIZE ioctl failed on %s. Using geometry cylinder value of %llu. This value may be truncated for devices > 33.8 GB."
+#, c-format
 msgid "BLKGETSIZE ioctl failed on %s. Using geometry cylinder value of %ju. This value may be truncated for devices > 33.8 GB."
-msgstr "BLKGETSIZE ioctl が %s で失敗しました。ジオメトリのシリンダ値を、%llu とみなします。この設定により、 33.8 GB より大きなデバイスが切り捨てられることになるかもしれません。"
+msgstr "BLKGETSIZE ioctl が %s で失敗しました。ジオメトリのシリンダ値を、%ju とみなします。33.8 GB より大きなデバイスでは切り詰められた値かもしれません。"
 
 #: libfdisk/src/sgi.c:1059
 msgid "Created a new SGI disklabel."
@@ -7873,16 +7640,14 @@ msgid "SunOS reserved"
 msgstr "SunOS 予約"
 
 #: libfdisk/src/sun.c:86
-#, fuzzy, c-format
-#| msgid "%#zu: start cylinder overflows Sun label limits"
+#, c-format
 msgid "#%zu: start cylinder overflows Sun label limits"
-msgstr "%#zu: 開始シリンダーが Sun ラベルの限界を超えました\t"
+msgstr "#%zu: 開始シリンダーが Sun ラベルの限界を超えました"
 
 #: libfdisk/src/sun.c:89
-#, fuzzy, c-format
-#| msgid "%#zu: number of sectors overflow Sun label limits"
+#, c-format
 msgid "#%zu: number of sectors overflow Sun label limits"
-msgstr "%#zu: セクター数が Sun ラベルの限界を超えました"
+msgstr "#%zu: セクター数が Sun ラベルの限界を超えました"
 
 #: libfdisk/src/sun.c:136
 msgid "Detected sun disklabel with wrong checksum. Probably you'll have to set all the values, e.g. heads, sectors, cylinders and partitions or force a fresh label (s command in main menu)"
@@ -8102,10 +7867,9 @@ msgid "failed to determine filesystem type"
 msgstr "ファイルシステムの判別に失敗しました"
 
 #: libmount/src/context_mount.c:1468
-#, fuzzy, c-format
-#| msgid "no filesystem type specified"
+#, c-format
 msgid "no valid filesystem type specified"
-msgstr "ファイルシステムタイプが指定されていません"
+msgstr "有効なファイルシステムタイプが指定されていません"
 
 #: libmount/src/context_mount.c:1475
 #, c-format
@@ -8118,16 +7882,14 @@ msgid "no mount source specified"
 msgstr "マウント対象が指定されていません"
 
 #: libmount/src/context_mount.c:1488
-#, fuzzy, c-format
-#| msgid "failed to parse mount options: %m"
+#, c-format
 msgid "failed to parse mount options '%s': %m"
-msgstr "マウントオプションの解釈に失敗しました: %m"
+msgstr "マウントオプションの解釈に失敗しました '%s': %m"
 
 #: libmount/src/context_mount.c:1489
-#, fuzzy, c-format
-#| msgid "failed to parse mount options: %m"
+#, c-format
 msgid "failed to parse mount options '%s'"
-msgstr "マウントオプションの解釈に失敗しました: %m"
+msgstr "マウントオプションの解釈に失敗しました '%s'"
 
 #: libmount/src/context_mount.c:1492
 #, c-format
@@ -8161,10 +7923,9 @@ msgid "failed to switch namespace"
 msgstr "名前空間を切り替えられません"
 
 #: libmount/src/context_mount.c:1514
-#, fuzzy, c-format
-#| msgid "%s is already mounted"
+#, c-format
 msgid "filesystem already mounted"
-msgstr "%s はマウント済みです"
+msgstr "ファイルシステムはマウント済みです"
 
 #: libmount/src/context_mount.c:1517
 #, c-format
@@ -8172,10 +7933,9 @@ msgid "mount failed: %m"
 msgstr "マウントに失敗しました: %m"
 
 #: libmount/src/context_mount.c:1527
-#, fuzzy, c-format
-#| msgid "filesystem was mounted, but failed to switch namespace back"
+#, c-format
 msgid "filesystem was mounted, but failed to apply flags"
-msgstr "ファイルシステムをマウントしましたが、名前空間を元に戻せませんでした"
+msgstr "ファイルシステムをマウントしましたが、フラグを適用できませんでした"
 
 #: libmount/src/context_mount.c:1533
 #, c-format
@@ -8188,16 +7948,14 @@ msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "ファイルシステムをマウントしましたが、名前空間を元に戻せませんでした"
 
 #: libmount/src/context_mount.c:1545
-#, fuzzy, c-format
-#| msgid "filesystem was mounted, but failed to switch namespace back"
+#, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
-msgstr "ファイルシステムをマウントしましたが、名前空間を元に戻せませんでした"
+msgstr "ファイルシステムをマウントしましたが、所有者を変更できませんでした: %m"
 
 #: libmount/src/context_mount.c:1551
-#, fuzzy, c-format
-#| msgid "filesystem was mounted, but failed to switch namespace back"
+#, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
-msgstr "ファイルシステムをマウントしましたが、名前空間を元に戻せませんでした"
+msgstr "ファイルシステムをマウントしましたが、モードを変更できませんでした: %m"
 
 #: libmount/src/context_mount.c:1557
 #, fuzzy, c-format
@@ -8211,10 +7969,9 @@ msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "ファイルシステムをマウントしましたが、続く操作が失敗しました: %m"
 
 #: libmount/src/context_mount.c:1575
-#, fuzzy, c-format
-#| msgid "mount(2) system call failed: %m"
+#, c-format
 msgid "%s system call failed: %s"
-msgstr "mount(2) システムコールが失敗しました: %m"
+msgstr "%s システムコールが失敗しました: %s"
 
 #: libmount/src/context_mount.c:1590 login-utils/newgrp.c:228
 #, c-format
@@ -8367,10 +8124,9 @@ msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "マウントできません; おそらく %s のファイルシステムが壊れています"
 
 #: libmount/src/context_mount.c:1746
-#, fuzzy, c-format
-#| msgid "mount(2) system call failed: %m"
+#, c-format
 msgid "%s system call failed: %m"
-msgstr "mount(2) システムコールが失敗しました: %m"
+msgstr "%s システムコールが失敗しました: %m"
 
 #: libmount/src/context_umount.c:1257 libmount/src/context_umount.c:1311
 #, c-format
@@ -8498,10 +8254,8 @@ msgid "time %<PRId64> is out of range."
 msgstr "time %<PRId64> は範囲外の値です。"
 
 #: lib/timeutils.c:692
-#, fuzzy
-#| msgid "format_iso_time: buffer overflow."
 msgid "format_reltime: buffer overflow."
-msgstr "format_iso_time: バッファーオーバーフロー。"
+msgstr "format_reltime: バッファーオーバーフロー。"
 
 #: login-utils/chfn.c:91 login-utils/chsh.c:70 login-utils/lslogins.c:1442
 #, c-format
@@ -8874,10 +8628,9 @@ msgid "FATAL: bad tty"
 msgstr "致命的エラー: 不正な tty です"
 
 #: login-utils/login.c:550
-#, fuzzy, c-format
-#| msgid "TIOCSCTTY failed: %m"
+#, c-format
 msgid "TIOCGWINSZ ioctl failed: %m"
-msgstr "TIOCSCTTY に失敗しました: %m"
+msgstr "TIOCGWINSZ ioctl に失敗しました: %m"
 
 #: login-utils/login.c:564
 #, c-format
@@ -8885,10 +8638,9 @@ msgid "FATAL: %s: change permissions failed: %m"
 msgstr "致命的エラー: %s: パーミッションの変更に失敗しました: %m"
 
 #: login-utils/login.c:595
-#, fuzzy, c-format
-#| msgid "TIOCSCTTY failed: %m"
+#, c-format
 msgid "TIOCSWINSZ ioctl failed: %m"
-msgstr "TIOCSCTTY に失敗しました: %m"
+msgstr "TIOCSWINSZ ioctl に失敗しました: %m"
 
 #: login-utils/login.c:701
 #, c-format
@@ -8963,14 +8715,13 @@ msgstr ""
 "\n"
 
 #: login-utils/login.c:983
-#, fuzzy, c-format
-#| msgid ""
-#| "Login incorrect\n"
-#| "\n"
+#, c-format
 msgid ""
 "Password incorrect\n"
 "\n"
-msgstr "パスワードが間違っています"
+msgstr ""
+"パスワードが間違っています\n"
+"\n"
 
 #: login-utils/login.c:997
 #, c-format
@@ -9103,16 +8854,12 @@ msgid "user ID"
 msgstr "ユーザ ID"
 
 #: login-utils/lslogins.c:229
-#, fuzzy
-#| msgid "password not required"
 msgid "password not defined"
-msgstr "パスワードは不要です"
+msgstr "パスワードが設定されていません"
 
 #: login-utils/lslogins.c:229
-#, fuzzy
-#| msgid "Password not required"
 msgid "Password not required (empty)"
-msgstr "パスワードは不要です"
+msgstr "パスワードは不要です（空です）"
 
 #: login-utils/lslogins.c:230
 msgid "login by password disabled"
@@ -9597,10 +9344,8 @@ msgstr "疑似端末の作成に失敗しました"
 
 #: login-utils/su-common.c:550 term-utils/script.c:968
 #: term-utils/scriptlive.c:298
-#, fuzzy
-#| msgid "failed to initialize %s handler"
 msgid "failed to initialize signals handler"
-msgstr "%s ハンドラの準備に失敗しました"
+msgstr "シグナルハンドラの初期化に失敗しました"
 
 #: login-utils/su-common.c:565
 #, fuzzy
@@ -10445,10 +10190,9 @@ msgid "     --color[=<when>]  colorize messages (%s, %s or %s)\n"
 msgstr "     --color[=<いつ>]  メッセージを色づけします (%s, %s or %s のどれか)\n"
 
 #: misc-utils/enosys.c:85
-#, fuzzy, c-format
-#| msgid " %s [options] -u <user> <command>\n"
+#, c-format
 msgid " %s [options] -- <command>\n"
-msgstr " %s [オプション] -u <ユーザ> <コマンド>\n"
+msgstr " %s [オプション] -- <コマンド>\n"
 
 #: misc-utils/enosys.c:88
 #, fuzzy
@@ -10517,10 +10261,8 @@ msgid "Atomically exchanges paths between two files.\n"
 msgstr ""
 
 #: misc-utils/exch.c:81
-#, fuzzy
-#| msgid "too many arguments"
 msgid "too few arguments"
-msgstr "引数が多すぎます"
+msgstr "引数が少なすぎます"
 
 #: misc-utils/exch.c:91
 #, fuzzy, c-format
@@ -10761,22 +10503,16 @@ msgid "mount ID"
 msgstr "マウント ID"
 
 #: misc-utils/findmnt.c:116
-#, fuzzy
-#| msgid "Number of alternate cylinders"
 msgid "number of available inodes"
-msgstr "代替シリンダ数"
+msgstr "使用可能な inode 数"
 
 #: misc-utils/findmnt.c:117
-#, fuzzy
-#| msgid "invalid number of inodes"
 msgid "total number of inodes"
-msgstr "inode 数の数値が正しくありません"
+msgstr "inode の総数"
 
 #: misc-utils/findmnt.c:118
-#, fuzzy
-#| msgid "number of sectors"
 msgid "number of used inodes"
-msgstr "セクタ数"
+msgstr "使用中の inode 数"
 
 #: misc-utils/findmnt.c:119
 msgid "percentage of INO.USED divided by INO.TOTAL"
@@ -11037,10 +10773,8 @@ msgid " -O, --options <list>   limit the set of filesystems by mount options\n"
 msgstr " -O, --options <list>   マウントオプションでファイルシステムの出力を制限します\n"
 
 #: misc-utils/findmnt.c:1446 misc-utils/lslocks.c:820
-#, fuzzy
-#| msgid " -o, --output <list>    the output columns to be shown\n"
 msgid " -o, --output <list>    output columns (see --list-columns)\n"
-msgstr " -o, --output <list>    指定した列のみを表示します\n"
+msgstr " -o, --output <list>    出力する列 (--list-columns を参照)\n"
 
 #: misc-utils/findmnt.c:1447
 msgid "     --output-all       output all available columns\n"
@@ -11208,9 +10942,8 @@ msgid "target is not a directory"
 msgstr "ターゲットがディレクトリではありません"
 
 #: misc-utils/findmnt-verify.c:161
-#, fuzzy
 msgid "target exists"
-msgstr "# ターゲットではありません:"
+msgstr "ターゲットが存在します"
 
 #: misc-utils/findmnt-verify.c:176
 #, c-format
@@ -11304,10 +11037,8 @@ msgid "%s seems unsupported by the current kernel"
 msgstr "%s の対応はこのカーネルに含まれていません"
 
 #: misc-utils/findmnt-verify.c:452
-#, fuzzy
-#| msgid "unknown"
 msgid "reason unknown"
-msgstr "不明"
+msgstr "理由不明"
 
 #: misc-utils/findmnt-verify.c:455 misc-utils/findmnt-verify.c:457
 #, fuzzy, c-format
@@ -11361,9 +11092,9 @@ msgid_plural ", %d warnings"
 msgstr[0] ", %d 警告"
 
 #: misc-utils/findmnt-verify.c:579
-#, fuzzy, c-format
+#, c-format
 msgid "Success, no errors or warnings detected\n"
-msgstr "エラーが %d 個検出されました。"
+msgstr "成功、エラーも警告も検出されませんでした\n"
 
 #: misc-utils/getopt.c:315
 msgid "empty long option after -l or --long argument"
@@ -11439,10 +11170,8 @@ msgid "could not compile regular expression %s: %s"
 msgstr "無効な正規表現です: %s"
 
 #: misc-utils/hardlink.c:391
-#, fuzzy
-#| msgid "Model:"
 msgid "Mode:"
-msgstr "モード"
+msgstr "モード:"
 
 #: misc-utils/hardlink.c:392
 #, fuzzy
@@ -11999,9 +11728,9 @@ msgstr "PAM の準備ができませんでした: %s"
 
 #: misc-utils/lastlog2.c:226
 #, fuzzy, c-format
-#| msgid "Couldn't read %s"
+#| msgid "Couldn't initialize PAM: %s"
 msgid "Couldn't import entries from '%s'"
-msgstr "ディレクトリ %s を読み込むことができませんでした"
+msgstr "PAM の準備ができませんでした: %s"
 
 #: misc-utils/lastlog2.c:235
 msgid "Options -C, -r and -S require option -u to specify the user"
