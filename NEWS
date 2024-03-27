@@ -1,8 +1,12 @@
-util-linux 2.40: Feb 29 2024
+util-linux 2.40: Mar 27 2024
+* see Documentation/releases/v2.40-ReleaseNotes or the complete changelog at
+  https://www.kernel.org/pub/linux/utils/util-linux/v2.40/v2.40-ChangeLog
+
+util-linux 2.40-rc2: Feb 29 2024
 * see Documentation/releases/v2.40-ReleaseNotes or the complete changelog at
   https://www.kernel.org/pub/linux/utils/util-linux/v2.40/v2.40-rc2-ChangeLog
 
-util-linux 2.40: Jan 24 2024
+util-linux 2.40-rc1: Jan 24 2024
 * see Documentation/releases/v2.40-ReleaseNotes or the complete changelog at
   https://www.kernel.org/pub/linux/utils/util-linux/v2.40/v2.40-rc1-ChangeLog
 
