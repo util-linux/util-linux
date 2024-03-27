@@ -1,6 +1,8 @@
 %{
 #include "smartcolsP.h"
 #include "filter-parser.h"	/* define tokens (T_*) */
+#include <string.h>
+static unsigned long long exapnd_prefix(char c, unsigned int x);
 %}
 
 %option reentrant bison-bridge noyywrap noinput nounput
@@ -44,6 +46,24 @@ true|TRUE	return T_TRUE;
 	return T_FLOAT;
 }
 
+{int}+[KMGT]i {
+	size_t len = strlen(yytext);
+	char c = yytext[len - 1 - 1];
+	yytext[len - 1 - 1] = '\0';
+	yylval->param_number = (int64_t) strtoumax(yytext, NULL, 10);
+	yylval->param_number *= exapnd_prefix(c, 1024);
+	return T_NUMBER;
+}
+
+{int}+[kMGT] {
+	size_t len = strlen(yytext);
+	char c = yytext[len - 1];
+	yytext[len - 1] = '\0';
+	yylval->param_number = (int64_t) strtoumax(yytext, NULL, 10);
+	yylval->param_number *= exapnd_prefix(c, 1000);
+	return T_NUMBER;
+}
+
 {int}+ {
 	yylval->param_number = (int64_t) strtoumax(yytext, NULL, 10);
 	return T_NUMBER;
@@ -59,4 +79,21 @@ true|TRUE	return T_TRUE;
 	return T_STRING;
 }
 
+%%
 
+static unsigned long long exapnd_prefix(char c, unsigned int x)
+{
+    unsigned long long r = 1;
+    switch (c) {
+    case 'T':
+	r *= x; /* fall through */
+    case 'G':
+	r *= x; /* fall through */
+    case 'M':
+	r *= x; /* fall through */
+    case 'K':
+    case 'k':
+	r *= x; /* fall through */
+    }
+    return r;
+}
