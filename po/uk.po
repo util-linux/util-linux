@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.40-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2024-02-29 21:44+0100\n"
+"POT-Creation-Date: 2024-03-27 12:11+0100\n"
 "PO-Revision-Date: 2024-03-01 23:33+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
@@ -52,7 +52,7 @@ msgstr "недостатньо аргументів"
 #: disk-utils/mkswap.c:363 disk-utils/mkswap.c:406 disk-utils/partx.c:1029
 #: disk-utils/resizepart.c:114 disk-utils/sfdisk.c:381 disk-utils/sfdisk.c:502
 #: disk-utils/sfdisk.c:814 disk-utils/sfdisk.c:1118 disk-utils/swaplabel.c:67
-#: libfdisk/src/bsd.c:642 login-utils/islocal.c:86 login-utils/last.c:687
+#: libfdisk/src/bsd.c:642 login-utils/islocal.c:86 login-utils/last.c:690
 #: login-utils/sulogin.c:574 login-utils/sulogin.c:611
 #: login-utils/utmpdump.c:142 login-utils/utmpdump.c:367
 #: login-utils/utmpdump.c:391 login-utils/vipw.c:257 login-utils/vipw.c:275
@@ -834,7 +834,7 @@ msgstr "некоректний аргумент - repair"
 #: disk-utils/mkfs.bfs.c:206 disk-utils/mkfs.cramfs.c:343
 #: disk-utils/mkfs.cramfs.c:765 disk-utils/mkfs.cramfs.c:811
 #: disk-utils/mkfs.minix.c:839 disk-utils/mkswap.c:402 disk-utils/partx.c:966
-#: login-utils/last.c:701 login-utils/utmpdump.c:145 misc-utils/namei.c:146
+#: login-utils/last.c:704 login-utils/utmpdump.c:145 misc-utils/namei.c:146
 #: misc-utils/rename.c:160 misc-utils/rename.c:225 sys-utils/blkdiscard.c:251
 #: sys-utils/blkzone.c:147 sys-utils/dmesg.c:673 sys-utils/fallocate.c:201
 #: sys-utils/fsfreeze.c:119 sys-utils/fstrim.c:78 sys-utils/nsenter.c:271
@@ -1184,12 +1184,12 @@ msgstr "Властивості пристрою (розмір сектора т�
 #: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:207
 #: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1849
 #: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:318 sys-utils/losetup.c:997
-#: sys-utils/lscpu.c:1346 sys-utils/lsmem.c:649 sys-utils/mount.c:861
+#: sys-utils/lscpu.c:1344 sys-utils/lsmem.c:649 sys-utils/mount.c:861
 #: sys-utils/mount.c:887 sys-utils/mount.c:895 sys-utils/mount.c:947
 #: sys-utils/mount.c:960 sys-utils/mount.c:1032 sys-utils/mountpoint.c:182
 #: sys-utils/pivot_root.c:66 sys-utils/swapoff.c:271 sys-utils/swapon.c:1024
 #: sys-utils/switch_root.c:270 sys-utils/umount.c:629 term-utils/setterm.c:1200
-#: text-utils/col.c:584 text-utils/more.c:2138
+#: text-utils/col.c:584 text-utils/more.c:2135
 msgid "bad usage"
 msgstr "помилкове використання"
 
@@ -1291,7 +1291,7 @@ msgstr "не вдалося розташувати у пам'яті таблиц
 #: misc-utils/uuidparse.c:154 misc-utils/wipefs.c:202 sys-utils/losetup.c:412
 #: sys-utils/losetup.c:441 sys-utils/lscpu.c:510 sys-utils/lscpu.c:786
 #: sys-utils/lscpu.c:818 sys-utils/lsipc.c:486 sys-utils/lsipc.c:567
-#: sys-utils/lsipc.c:669 sys-utils/lsipc.c:761 sys-utils/lsipc.c:925
+#: sys-utils/lsipc.c:669 sys-utils/lsipc.c:763 sys-utils/lsipc.c:927
 #: sys-utils/prlimit.c:232 sys-utils/rfkill.c:390 sys-utils/swapon.c:192
 #: sys-utils/wdctl.c:304 sys-utils/zramctl.c:414 text-utils/column.c:555
 #: text-utils/column.c:579
@@ -3013,7 +3013,7 @@ msgstr ""
 " -V, --verbose      вивести дані щодо дій, які виконуються;\n"
 "                      визначення декількох -V призводить до тестового запуску\n"
 
-#: disk-utils/mkfs.c:140 include/c.h:321 login-utils/su-common.c:1302
+#: disk-utils/mkfs.c:140 include/c.h:321 login-utils/su-common.c:1301
 #: login-utils/sulogin.c:940 login-utils/sulogin.c:944 sys-utils/flock.c:123
 #: sys-utils/rtcwake.c:632
 #, c-format
@@ -8452,77 +8452,77 @@ msgstr "Користування: %s <файл_паролів> <користув
 msgid "unknown time format: %s"
 msgstr "невідомий формат запису часу: %s"
 
-#: login-utils/last.c:441 login-utils/last.c:452 login-utils/last.c:908
+#: login-utils/last.c:444 login-utils/last.c:455 login-utils/last.c:911
 msgid "preallocation size exceeded"
 msgstr "перевищено розмір області попереднього розміщення"
 
-#: login-utils/last.c:571
+#: login-utils/last.c:574
 #, c-format
 msgid " %s [options] [<username>...] [<tty>...]\n"
 msgstr " %s [параметри] [<користувач>...] [<tty>...]\n"
 
-#: login-utils/last.c:574
+#: login-utils/last.c:577
 msgid "Show a listing of last logged in users.\n"
 msgstr "Показати список користувачів, які входили до системи останніми.\n"
 
-#: login-utils/last.c:577
+#: login-utils/last.c:580
 msgid " -<number>            how many lines to show\n"
 msgstr " -<кількість>         кількість рядків, які слід показати\n"
 
-#: login-utils/last.c:578
+#: login-utils/last.c:581
 msgid " -a, --hostlast       display hostnames in the last column\n"
 msgstr " -a, --hostlast       показати назви вузлів у останньому стовпчику\n"
 
-#: login-utils/last.c:579
+#: login-utils/last.c:582
 msgid " -d, --dns            translate the IP number back into a hostname\n"
 msgstr " -d, --dns            визначити за значенням IP назву вузла\n"
 
-#: login-utils/last.c:581
+#: login-utils/last.c:584
 #, c-format
 msgid " -f, --file <file>    use a specific file instead of %s\n"
 msgstr " -f, --file <файл>    використовувати вказаний файл замість %s\n"
 
-#: login-utils/last.c:582
+#: login-utils/last.c:585
 msgid " -F, --fulltimes      print full login and logout times and dates\n"
 msgstr " -F, --fulltimes      виводити час і дату входу і виходу повністю\n"
 
-#: login-utils/last.c:583
+#: login-utils/last.c:586
 msgid " -i, --ip             display IP numbers in numbers-and-dots notation\n"
 msgstr " -i, --ip             показувати IP-адреси у форматі чисел з точками\n"
 
-#: login-utils/last.c:584
+#: login-utils/last.c:587
 msgid " -n, --limit <number> how many lines to show\n"
 msgstr " -n, --limit <кількість> кількість рядків, які слід показувати\n"
 
-#: login-utils/last.c:585
+#: login-utils/last.c:588
 msgid " -R, --nohostname     don't display the hostname field\n"
 msgstr " -R, --nohostname     не показувати поля назви вузла\n"
 
-#: login-utils/last.c:586
+#: login-utils/last.c:589
 msgid " -s, --since <time>   display the lines since the specified time\n"
 msgstr " -s, --since <час>    показати рядки, які було записано після вказаного моменту часу\n"
 
-#: login-utils/last.c:587
+#: login-utils/last.c:590
 msgid " -t, --until <time>   display the lines until the specified time\n"
 msgstr " -t, --until <час>    показувати рядки, які було записано до вказаного моменту часу\n"
 
-#: login-utils/last.c:588
+#: login-utils/last.c:591
 msgid " -T, --tab-separated\tuse tabs as delimiters\n"
 msgstr " -T, --tab-separated\tвикористовувати табуляції як роздільники\n"
 
-#: login-utils/last.c:589
+#: login-utils/last.c:592
 msgid " -p, --present <time> display who were present at the specified time\n"
 msgstr " -p, --present <час>  показати, хто працював у системі у вказаний час\n"
 
-#: login-utils/last.c:590
+#: login-utils/last.c:593
 msgid " -w, --fullnames      display full user and domain names\n"
 msgstr " -w, --fullnames      показувати назви записів користувачів і домени повністю\n"
 
-#: login-utils/last.c:591
+#: login-utils/last.c:594
 msgid " -x, --system         display system shutdown entries and run level changes\n"
 msgstr " -x, --system         показати записи завершення роботи системи та зміни рівня запуску\n"
 
-#: login-utils/last.c:592
+#: login-utils/last.c:595
 msgid ""
 "     --time-format <format>  show timestamps in the specified <format>:\n"
 "                               notime|short|full|iso\n"
@@ -8530,7 +8530,7 @@ msgstr ""
 "     --time-format <формат>  показувати часові позначки у вказаному форматі:\n"
 "                               notime|short|full|iso\n"
 
-#: login-utils/last.c:909
+#: login-utils/last.c:912
 #, c-format
 msgid ""
 "\n"
@@ -8539,13 +8539,13 @@ msgstr ""
 "\n"
 "%s розпочинає %s\n"
 
-#: login-utils/last.c:1020 term-utils/scriptlive.c:85
+#: login-utils/last.c:1023 term-utils/scriptlive.c:85
 #: term-utils/scriptlive.c:89 term-utils/scriptreplay.c:80
 #: term-utils/scriptreplay.c:84 text-utils/more.c:286 text-utils/more.c:292
 msgid "failed to parse number"
 msgstr "не вдалося обробити число"
 
-#: login-utils/last.c:1041 login-utils/last.c:1046 login-utils/last.c:1051
+#: login-utils/last.c:1044 login-utils/last.c:1049 login-utils/last.c:1054
 #: sys-utils/dmesg.c:1830 sys-utils/dmesg.c:1836 sys-utils/rtcwake.c:520
 #, c-format
 msgid "invalid time value \"%s\""
@@ -9211,8 +9211,8 @@ msgstr "помилка setuid"
 
 #: login-utils/nologin.c:28 misc-utils/lastlog2.c:108 misc-utils/lsclocks.c:182
 #: misc-utils/lsfd.c:1893 misc-utils/lslocks.c:810 misc-utils/mcookie.c:87
-#: misc-utils/uuidd.c:97 misc-utils/uuidgen.c:28 sys-utils/dmesg.c:317
-#: sys-utils/ipcmk.c:67 sys-utils/irqtop.c:255 sys-utils/lscpu.c:1173
+#: misc-utils/uuidd.c:97 misc-utils/uuidgen.c:29 sys-utils/dmesg.c:317
+#: sys-utils/ipcmk.c:67 sys-utils/irqtop.c:255 sys-utils/lscpu.c:1171
 #: sys-utils/lsipc.c:292 sys-utils/lsirq.c:50 sys-utils/lsmem.c:512
 #: sys-utils/readprofile.c:95 sys-utils/rtcwake.c:108
 #: term-utils/scriptlive.c:57 term-utils/scriptreplay.c:47
@@ -9344,31 +9344,31 @@ msgstr "не вдалося встановити груповий id"
 msgid "cannot set user id"
 msgstr "не вдалося встановити id користувача"
 
-#: login-utils/su-common.c:890
+#: login-utils/su-common.c:889
 msgid " -m, -p, --preserve-environment      do not reset environment variables\n"
 msgstr " -m, -p, --preserve-environment     не скидати змінні середовища\n"
 
-#: login-utils/su-common.c:891
+#: login-utils/su-common.c:890
 msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
 msgstr " -w, --whitelist-environment <список> не скидати вказані змінні\n"
 
-#: login-utils/su-common.c:894
+#: login-utils/su-common.c:893
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr " -g, --group <група>             вказати основу групу\n"
 
-#: login-utils/su-common.c:895
+#: login-utils/su-common.c:894
 msgid " -G, --supp-group <group>        specify a supplemental group\n"
 msgstr " -G, --supp-group <група>        вказати допоміжну групу\n"
 
-#: login-utils/su-common.c:898
+#: login-utils/su-common.c:897
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr " -, -l, --login                  перетворити оболонку на оболонку входу до системи\n"
 
-#: login-utils/su-common.c:899
+#: login-utils/su-common.c:898
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr " -c  --command <команда>         передати оболонці одну команду за допомогою -c\n"
 
-#: login-utils/su-common.c:900
+#: login-utils/su-common.c:899
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
@@ -9376,23 +9376,23 @@ msgstr ""
 " --session-command <команда>     передати оболонці одну команду за допомогою -c\n"
 "                                   і не створювати нового сеансу.\n"
 
-#: login-utils/su-common.c:902
+#: login-utils/su-common.c:901
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr " -f, --fast                      передати оболонці -f (для csh або tcsh)\n"
 
-#: login-utils/su-common.c:903
+#: login-utils/su-common.c:902
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr " -s, --shell <оболонка>          запустити оболонку, якщо це дозволено у /etc/shells\n"
 
-#: login-utils/su-common.c:904
+#: login-utils/su-common.c:903
 msgid " -P, --pty                       create a new pseudo-terminal\n"
 msgstr " -P, --pty                       створити псевдотермінал\n"
 
-#: login-utils/su-common.c:905
+#: login-utils/su-common.c:904
 msgid " -T, --no-pty                    do not create a new pseudo-terminal (bad security!)\n"
 msgstr " -T, --no-pty                    не створювати псевдотермінал (зашкодить захисту!)\n"
 
-#: login-utils/su-common.c:915
+#: login-utils/su-common.c:914
 #, c-format
 msgid ""
 " %1$s [options] -u <user> [[--] <command>]\n"
@@ -9401,7 +9401,7 @@ msgstr ""
 " %1$s [параметри] -u <користувач> [[--] <команда>]\n"
 " %1$s [параметри] [-] [<користувач> [<аргумент>...]]\n"
 
-#: login-utils/su-common.c:920
+#: login-utils/su-common.c:919
 msgid ""
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
 "not given, fall back to su(1)-compatible semantics and execute standard shell.\n"
@@ -9411,16 +9411,16 @@ msgstr ""
 "не вказано -u, команда виконується у режимі семантики su(1) із запуском стандартної командної оболонки.\n"
 "Параметри -l, -c, -f і -s не можна використовувати разом з -u.\n"
 
-#: login-utils/su-common.c:925
+#: login-utils/su-common.c:924
 msgid " -u, --user <user>               username\n"
 msgstr " -u, --user <користувач>        ім'я користувача\n"
 
-#: login-utils/su-common.c:936
+#: login-utils/su-common.c:935
 #, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr " %s [параметри] [-] [<користувач> [<аргумент>...]]\n"
 
-#: login-utils/su-common.c:940
+#: login-utils/su-common.c:939
 msgid ""
 "Change the effective user ID and group ID to that of <user>.\n"
 "A mere - implies -l.  If <user> is not given, root is assumed.\n"
@@ -9429,7 +9429,7 @@ msgstr ""
 "Просто знак мінус означає -l. Якщо <користувач> не вказано,\n"
 "використовується root.\n"
 
-#: login-utils/su-common.c:1017
+#: login-utils/su-common.c:1016
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
@@ -9438,46 +9438,46 @@ msgstr[1] "не можна визначати більше за %d допомі�
 msgstr[2] "не можна визначати більше за %d допоміжних груп"
 msgstr[3] "не можна визначати більше за одну допоміжну групу"
 
-#: login-utils/su-common.c:1023
+#: login-utils/su-common.c:1022
 #, c-format
 msgid "group %s does not exist"
 msgstr "групи з назвою «%s» не існує"
 
-#: login-utils/su-common.c:1133
+#: login-utils/su-common.c:1132
 msgid "--pty is not supported for your system"
 msgstr "підтримки --pty у цій системі не передбачено"
 
-#: login-utils/su-common.c:1171
+#: login-utils/su-common.c:1170
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr "ігноруємо --preserve-environment, його не можна використовувати разом з --login"
 
-#: login-utils/su-common.c:1185
+#: login-utils/su-common.c:1184
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr "параметри --{shell,fast,command,session-command,login} і --user не можна використовувати разом"
 
-#: login-utils/su-common.c:1188
+#: login-utils/su-common.c:1187
 msgid "no command was specified"
 msgstr "не вказано команди"
 
-#: login-utils/su-common.c:1200
+#: login-utils/su-common.c:1199
 msgid "only root can specify alternative groups"
 msgstr "альтернативні групи може визначати лише root"
 
-#: login-utils/su-common.c:1211
+#: login-utils/su-common.c:1210
 #, c-format
 msgid "user %s does not exist or the user entry does not contain all the required fields"
 msgstr "користувача %s не існує або запис користувача не містить усіх обов'язкових полів"
 
-#: login-utils/su-common.c:1246
+#: login-utils/su-common.c:1245
 #, c-format
 msgid "using restricted shell %s"
 msgstr "використовується обмежена оболонка %s"
 
-#: login-utils/su-common.c:1267
+#: login-utils/su-common.c:1266
 msgid "failed to allocate pty handler"
 msgstr "не вдалося отримати пам'ять для обробника pty"
 
-#: login-utils/su-common.c:1293
+#: login-utils/su-common.c:1292
 #, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "попередження: не вдалося змінити каталог на %s"
@@ -13453,7 +13453,7 @@ msgstr "не отримано дескрипторів файлів, перев�
 msgid "too many file descriptors received, check uuidd.socket"
 msgstr "отримано занадто багато файлових дескрипторів, перевірте значення uuidd.socket"
 
-#: misc-utils/uuidd.c:452 text-utils/more.c:1383
+#: misc-utils/uuidd.c:452 text-utils/more.c:1380
 msgid "poll failed"
 msgstr "помилка poll"
 
@@ -13583,77 +13583,77 @@ msgstr "не вдалося припинити роботу uuidd, запуще�
 msgid "Killed uuidd running at pid %d.\n"
 msgstr "Припинено роботу uuidd з pid %d.\n"
 
-#: misc-utils/uuidgen.c:31
+#: misc-utils/uuidgen.c:32
 msgid "Create a new UUID value.\n"
 msgstr "Створити значення UUID.\n"
 
-#: misc-utils/uuidgen.c:34
+#: misc-utils/uuidgen.c:35
 msgid " -r, --random          generate random-based uuid\n"
 msgstr " -r, --random          створити uuid на псевдовипадковій основі\n"
 
-#: misc-utils/uuidgen.c:35
+#: misc-utils/uuidgen.c:36
 msgid " -t, --time            generate time-based uuid\n"
 msgstr " -t, --time            створити uuid на основі даних щодо часу\n"
 
-#: misc-utils/uuidgen.c:36
+#: misc-utils/uuidgen.c:37
 msgid " -n, --namespace <ns>  generate hash-based uuid in this namespace\n"
 msgstr " -n, --namespace <нс>  створити заснований на хеші uuid у цьому просторі назв\n"
 
-#: misc-utils/uuidgen.c:37
+#: misc-utils/uuidgen.c:38
 #, c-format
 msgid "                        available namespaces: %s\n"
 msgstr "                        доступні простори назв: %s\n"
 
-#: misc-utils/uuidgen.c:38
+#: misc-utils/uuidgen.c:39
 msgid " -N, --name <name>     generate hash-based uuid from this name\n"
 msgstr " -N, --name <назва>    створити заснований на хеші uuid для цієї назви\n"
 
-#: misc-utils/uuidgen.c:39
+#: misc-utils/uuidgen.c:40
 msgid " -m, --md5             generate md5 hash\n"
 msgstr " -m, --md5             створити хеш-суму md5\n"
 
-#: misc-utils/uuidgen.c:40
+#: misc-utils/uuidgen.c:41
 msgid " -C, --count <num>     generate more uuids in loop\n"
 msgstr " -C, --count <кількість> циклічно створити додаткові uuid\n"
 
-#: misc-utils/uuidgen.c:41
+#: misc-utils/uuidgen.c:42
 msgid " -s, --sha1            generate sha1 hash\n"
 msgstr " -s, --sha1            створити хеш-суму sha1\n"
 
-#: misc-utils/uuidgen.c:42
+#: misc-utils/uuidgen.c:43
 msgid " -x, --hex             interpret name as hex string\n"
 msgstr " -x, --hex             вважати ім'я шістнадцятковим рядком\n"
 
-#: misc-utils/uuidgen.c:56
+#: misc-utils/uuidgen.c:57
 msgid "not a valid hex string"
 msgstr "не є коректним шістнадцятковим рядком"
 
-#: misc-utils/uuidgen.c:145
+#: misc-utils/uuidgen.c:146
 msgid "invalid count argument"
 msgstr "некоректний аргумент кількості"
 
-#: misc-utils/uuidgen.c:165
+#: misc-utils/uuidgen.c:166
 msgid "--namespace requires --name argument"
 msgstr "--namespace потребує аргументу --name"
 
-#: misc-utils/uuidgen.c:169
+#: misc-utils/uuidgen.c:170
 msgid "--namespace requires --md5 or --sha1"
 msgstr "--namespace потребує параметра --md5 або --sha1"
 
-#: misc-utils/uuidgen.c:174
+#: misc-utils/uuidgen.c:175
 msgid "--name requires --namespace argument"
 msgstr "--name потребує аргументу --namespace"
 
-#: misc-utils/uuidgen.c:178
+#: misc-utils/uuidgen.c:179
 msgid "--md5 or --sha1 requires --namespace argument"
 msgstr "--md5 або --sha1 потребує аргументу --namespace"
 
-#: misc-utils/uuidgen.c:204
+#: misc-utils/uuidgen.c:205
 #, c-format
 msgid "unknown namespace alias: '%s'"
 msgstr "невідома альтернативна назва простору назв: «%s»"
 
-#: misc-utils/uuidgen.c:210
+#: misc-utils/uuidgen.c:211
 #, c-format
 msgid "invalid uuid for namespace: '%s'"
 msgstr "некоректний uuid для простору назв: «%s»"
@@ -15721,7 +15721,7 @@ msgid "%s: unmounting"
 msgstr "%s: демонтування"
 
 #: sys-utils/eject.c:662 sys-utils/mount.c:51 sys-utils/umount.c:122
-#: text-utils/more.c:1271
+#: text-utils/more.c:1268
 msgid "drop permissions failed"
 msgstr "не вдалося скинути права доступу"
 
@@ -17284,11 +17284,11 @@ msgstr "стан"
 msgid "Not set"
 msgstr "Не встан."
 
-#: sys-utils/ipcs.c:368 sys-utils/lsipc.c:1012 sys-utils/lsipc.c:1018
+#: sys-utils/ipcs.c:368 sys-utils/lsipc.c:1014 sys-utils/lsipc.c:1020
 msgid "dest"
 msgstr "зруйн"
 
-#: sys-utils/ipcs.c:369 sys-utils/lsipc.c:1013 sys-utils/lsipc.c:1026
+#: sys-utils/ipcs.c:369 sys-utils/lsipc.c:1015 sys-utils/lsipc.c:1028
 msgid "locked"
 msgstr "блоковано"
 
@@ -17483,7 +17483,7 @@ msgid "messages"
 msgstr "повідомлень"
 
 #: sys-utils/ipcs.c:603 sys-utils/ipcs.c:633 sys-utils/ipcs.c:666
-#: sys-utils/lsipc.c:559 sys-utils/lsipc.c:751 sys-utils/lsipc.c:914
+#: sys-utils/lsipc.c:559 sys-utils/lsipc.c:753 sys-utils/lsipc.c:916
 #, c-format
 msgid "id %d not found"
 msgstr "ідентифікатор %d не знайдено"
@@ -18473,85 +18473,85 @@ msgstr "Прапорці:"
 msgid "Architecture:"
 msgstr "Архітектура:"
 
-#: sys-utils/lscpu.c:1004
+#: sys-utils/lscpu.c:1002
 msgid "CPU op-mode(s):"
 msgstr "Режими ЦП:"
 
-#: sys-utils/lscpu.c:1007
+#: sys-utils/lscpu.c:1005
 msgid "Address sizes:"
 msgstr "Розміри адрес:"
 
-#: sys-utils/lscpu.c:1010 sys-utils/lscpu.c:1012
+#: sys-utils/lscpu.c:1008 sys-utils/lscpu.c:1010
 msgid "Byte Order:"
 msgstr "Порядок байтів:"
 
-#: sys-utils/lscpu.c:1015
+#: sys-utils/lscpu.c:1013
 msgid "CPU(s):"
 msgstr "Процесори:"
 
-#: sys-utils/lscpu.c:1019
+#: sys-utils/lscpu.c:1017
 msgid "On-line CPU(s) mask:"
 msgstr "Маска робочих ЦП:"
 
-#: sys-utils/lscpu.c:1020
+#: sys-utils/lscpu.c:1018
 msgid "On-line CPU(s) list:"
 msgstr "Список робочих ЦП:"
 
-#: sys-utils/lscpu.c:1032
+#: sys-utils/lscpu.c:1030
 msgid "failed to callocate cpu set"
 msgstr "не вдалося виконати callocate для набору процесорів"
 
-#: sys-utils/lscpu.c:1041
+#: sys-utils/lscpu.c:1039
 msgid "Off-line CPU(s) mask:"
 msgstr "Маска вимкнених ЦП:"
 
-#: sys-utils/lscpu.c:1042
+#: sys-utils/lscpu.c:1040
 msgid "Off-line CPU(s) list:"
 msgstr "Список вимкнених ЦП:"
 
-#: sys-utils/lscpu.c:1049
+#: sys-utils/lscpu.c:1047
 msgid "Vendor ID:"
 msgstr "Ідентифікатор виробника:"
 
-#: sys-utils/lscpu.c:1051
+#: sys-utils/lscpu.c:1049
 msgid "BIOS Vendor ID:"
 msgstr "Ідентифікатор виробника BIOS:"
 
-#: sys-utils/lscpu.c:1059
+#: sys-utils/lscpu.c:1057
 msgid "Virtualization features:"
 msgstr "Можливості віртуалізації:"
 
-#: sys-utils/lscpu.c:1061 sys-utils/lscpu.c:1063
+#: sys-utils/lscpu.c:1059 sys-utils/lscpu.c:1061
 msgid "Virtualization:"
 msgstr "Віртуалізація:"
 
-#: sys-utils/lscpu.c:1066
+#: sys-utils/lscpu.c:1064
 msgid "Hypervisor:"
 msgstr "Гіпервізор:"
 
-#: sys-utils/lscpu.c:1068
+#: sys-utils/lscpu.c:1066
 msgid "Hypervisor vendor:"
 msgstr "Виробник гіпервізора:"
 
-#: sys-utils/lscpu.c:1069
+#: sys-utils/lscpu.c:1067
 msgid "Virtualization type:"
 msgstr "Тип віртуалізації:"
 
-#: sys-utils/lscpu.c:1092
+#: sys-utils/lscpu.c:1090
 msgid "Caches (sum of all):"
 msgstr "Кеші (сума усіх):"
 
-#: sys-utils/lscpu.c:1096 sys-utils/lscpu.c:1126 sys-utils/lscpu.c:1158
+#: sys-utils/lscpu.c:1094 sys-utils/lscpu.c:1124 sys-utils/lscpu.c:1156
 #, c-format
 msgid "%s:"
 msgstr "%s:"
 
-#: sys-utils/lscpu.c:1096 sys-utils/lscpu.c:1126
+#: sys-utils/lscpu.c:1094 sys-utils/lscpu.c:1124
 #, c-format
 msgid "%s cache:"
 msgstr "Кеш %s:"
 
-#: sys-utils/lscpu.c:1099
+#: sys-utils/lscpu.c:1097
 #, c-format
 msgid "%<PRIu64> (%d instance)"
 msgid_plural "%<PRIu64> (%d instances)"
@@ -18560,7 +18560,7 @@ msgstr[1] "%<PRIu64> (%d екземпляри)"
 msgstr[2] "%<PRIu64> (%d екземплярів)"
 msgstr[3] "%<PRIu64> (%d екземпляр)"
 
-#: sys-utils/lscpu.c:1108
+#: sys-utils/lscpu.c:1106
 #, c-format
 msgid "%s (%d instance)"
 msgid_plural "%s (%d instances)"
@@ -18569,89 +18569,89 @@ msgstr[1] "%s (%d екземпляри)"
 msgstr[2] "%s (%d екземплярів)"
 msgstr[3] "%s (%d екземпляр)"
 
-#: sys-utils/lscpu.c:1123
+#: sys-utils/lscpu.c:1121
 msgid "Caches:"
 msgstr "Кеші:"
 
-#: sys-utils/lscpu.c:1142
+#: sys-utils/lscpu.c:1140
 msgid "NUMA:"
 msgstr "NUMA:"
 
-#: sys-utils/lscpu.c:1144
+#: sys-utils/lscpu.c:1142
 msgid "NUMA node(s):"
 msgstr "Вузли NUMA:"
 
-#: sys-utils/lscpu.c:1146
+#: sys-utils/lscpu.c:1144
 #, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr "Процесори вузла%d NUMA:"
 
-#: sys-utils/lscpu.c:1154
+#: sys-utils/lscpu.c:1152
 msgid "Vulnerabilities:"
 msgstr "Вразливості:"
 
-#: sys-utils/lscpu.c:1158
+#: sys-utils/lscpu.c:1156
 #, c-format
 msgid "Vulnerability %s:"
 msgstr "Вразливість %s:"
 
-#: sys-utils/lscpu.c:1176
+#: sys-utils/lscpu.c:1174
 msgid "Display information about the CPU architecture.\n"
 msgstr "Показати дані щодо архітектури процесора.\n"
 
-#: sys-utils/lscpu.c:1179
+#: sys-utils/lscpu.c:1177
 msgid " -a, --all               print both online and offline CPUs (default for -e)\n"
 msgstr " -a, --all                 вивести список робочих і вимкнених ЦП (типово для -e)\n"
 
-#: sys-utils/lscpu.c:1180
+#: sys-utils/lscpu.c:1178
 msgid " -b, --online            print online CPUs only (default for -p)\n"
 msgstr " -b, --online              вивести список лише робочих ЦП (типово для -p)\n"
 
-#: sys-utils/lscpu.c:1181
+#: sys-utils/lscpu.c:1179
 msgid " -B, --bytes             print sizes in bytes rather than in human readable format\n"
 msgstr " -B, --bytes             вивести розмір у байтах, а не у зручному для читання форматі\n"
 
-#: sys-utils/lscpu.c:1182
+#: sys-utils/lscpu.c:1180
 msgid " -C, --caches[=<list>]   info about caches in extended readable format\n"
 msgstr " -C, --caches[=<список>] вивести дані щодо кешів у розширеному зручному для читання форматі\n"
 
-#: sys-utils/lscpu.c:1183
+#: sys-utils/lscpu.c:1181
 msgid " -c, --offline           print offline CPUs only\n"
 msgstr " -c, --offline             вивести список лише вимкнених процесорів\n"
 
-#: sys-utils/lscpu.c:1184
+#: sys-utils/lscpu.c:1182
 msgid " -J, --json              use JSON for default or extended format\n"
 msgstr " -J, --json             використати типовий або розширений формат JSON\n"
 
-#: sys-utils/lscpu.c:1185
+#: sys-utils/lscpu.c:1183
 msgid " -e, --extended[=<list>] print out an extended readable format\n"
 msgstr " -e, --extended[=<список>] вивести дані у розширеному придатному для читання форматі\n"
 
-#: sys-utils/lscpu.c:1186
+#: sys-utils/lscpu.c:1184
 msgid " -p, --parse[=<list>]    print out a parsable format\n"
 msgstr " -p, --parse[=<список>]    вивести дані у придатному до обробки форматі\n"
 
-#: sys-utils/lscpu.c:1187
+#: sys-utils/lscpu.c:1185
 msgid " -s, --sysroot <dir>     use specified directory as system root\n"
 msgstr " -s, --sysroot <каталог>   використати вказаний каталог як кореневий у системі\n"
 
-#: sys-utils/lscpu.c:1188
+#: sys-utils/lscpu.c:1186
 msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
 msgstr " -x, --hex                 вивести шістнадцяткові маски замість списків процесорів\n"
 
-#: sys-utils/lscpu.c:1189
+#: sys-utils/lscpu.c:1187
 msgid " -y, --physical          print physical instead of logical IDs\n"
 msgstr " -y, --physical          вивести фізичні, а не логічні ідентифікатори\n"
 
-#: sys-utils/lscpu.c:1190
+#: sys-utils/lscpu.c:1188
 msgid "     --hierarchic[=when] use subsections in summary (auto, never, always)\n"
 msgstr "     --hierarchic[=умова] використовувати підрозділи у резюме (auto (авто), never (ніколи), always (завжди))\n"
 
-#: sys-utils/lscpu.c:1191
+#: sys-utils/lscpu.c:1189
 msgid "     --output-all        print all available columns for -e, -p or -C\n"
 msgstr "     --output-all        виводити усі доступні стовпчики для -e, -p та -C\n"
 
-#: sys-utils/lscpu.c:1195
+#: sys-utils/lscpu.c:1193
 msgid ""
 "\n"
 "Available output columns for -e or -p:\n"
@@ -18659,7 +18659,7 @@ msgstr ""
 "\n"
 "Доступні для виведення стовпчики для -e або -p:\n"
 
-#: sys-utils/lscpu.c:1199
+#: sys-utils/lscpu.c:1197
 msgid ""
 "\n"
 "Available output columns for -C:\n"
@@ -18667,11 +18667,11 @@ msgstr ""
 "\n"
 "Доступні для виведення стовпчики для -C:\n"
 
-#: sys-utils/lscpu.c:1315
+#: sys-utils/lscpu.c:1313
 msgid "unsupported --flat argument"
 msgstr "непідтримуваний аргумент --flat"
 
-#: sys-utils/lscpu.c:1339
+#: sys-utils/lscpu.c:1337
 #, c-format
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr "%s: параметри --all, --online і --offline можна використовувати лише разом з параметром --extended або --parse.\n"
@@ -19016,71 +19016,71 @@ msgstr ""
 "Елементи:\n"
 "\n"
 
-#: sys-utils/lsipc.c:709 sys-utils/lsipc.c:873 sys-utils/lsipc.c:1072
+#: sys-utils/lsipc.c:709 sys-utils/lsipc.c:875 sys-utils/lsipc.c:1074
 msgid "failed to set data"
 msgstr "не вдалося записати дані"
 
-#: sys-utils/lsipc.c:734
+#: sys-utils/lsipc.c:736
 msgid "Number of semaphore identifiers"
 msgstr "Кількість ідентифікаторів семафорів"
 
-#: sys-utils/lsipc.c:735
+#: sys-utils/lsipc.c:737
 msgid "Total number of semaphores"
 msgstr "Загальна кількість семафорів"
 
-#: sys-utils/lsipc.c:736
+#: sys-utils/lsipc.c:738
 msgid "Max semaphores per semaphore set."
 msgstr "Максимальна кількість семафорів у наборі семафорів."
 
-#: sys-utils/lsipc.c:737
+#: sys-utils/lsipc.c:739
 msgid "Max number of operations per semop(2)"
 msgstr "Максимальна кількість дій у одному semop(2)"
 
-#: sys-utils/lsipc.c:738
+#: sys-utils/lsipc.c:740
 msgid "Semaphore max value"
 msgstr "Максимальне значення семафора"
 
-#: sys-utils/lsipc.c:898
+#: sys-utils/lsipc.c:900
 msgid "Number of message queues"
 msgstr "Кількість черг повідомлень"
 
-#: sys-utils/lsipc.c:899
+#: sys-utils/lsipc.c:901
 msgid "Max size of message (bytes)"
 msgstr "Максимальний розмір повідомлення (у байтах)"
 
-#: sys-utils/lsipc.c:900
+#: sys-utils/lsipc.c:902
 msgid "Default max size of queue (bytes)"
 msgstr "Типовий максимальний розмір черги (у байтах)"
 
-#: sys-utils/lsipc.c:1014 sys-utils/lsipc.c:1033
+#: sys-utils/lsipc.c:1016 sys-utils/lsipc.c:1035
 msgid "hugetlb"
 msgstr "hugetlb"
 
-#: sys-utils/lsipc.c:1015 sys-utils/lsipc.c:1040
+#: sys-utils/lsipc.c:1017 sys-utils/lsipc.c:1042
 msgid "noreserve"
 msgstr "noreserve"
 
-#: sys-utils/lsipc.c:1097
+#: sys-utils/lsipc.c:1099
 msgid "Shared memory segments"
 msgstr "Сегменти спільної пам'яті"
 
-#: sys-utils/lsipc.c:1098
+#: sys-utils/lsipc.c:1100
 msgid "Shared memory pages"
 msgstr "Сторінки спільної пам'яті"
 
-#: sys-utils/lsipc.c:1099
+#: sys-utils/lsipc.c:1101
 msgid "Max size of shared memory segment (bytes)"
 msgstr "Максимальний розмір сегмента спільної пам'яті (у байтах)"
 
-#: sys-utils/lsipc.c:1100
+#: sys-utils/lsipc.c:1102
 msgid "Min size of shared memory segment (bytes)"
 msgstr "Мінімальний розмір сегмента спільної пам'яті (у байтах)"
 
-#: sys-utils/lsipc.c:1171
+#: sys-utils/lsipc.c:1173
 msgid "failed to parse IPC identifier"
 msgstr "не вдалося обробити ідентифікатор IPC"
 
-#: sys-utils/lsipc.c:1268
+#: sys-utils/lsipc.c:1270
 msgid "--global is mutually exclusive with --creator, --id and --time"
 msgstr "--global не можна використовувати разом із --creator, --id та --time"
 
@@ -23981,27 +23981,27 @@ msgstr ""
 "*** %s: каталог ***\n"
 "\n"
 
-#: text-utils/more.c:730
+#: text-utils/more.c:727
 #, c-format
 msgid "--More--"
 msgstr "--Далі--"
 
-#: text-utils/more.c:732
+#: text-utils/more.c:729
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(Наступний файл: %s)"
 
-#: text-utils/more.c:737 text-utils/more.c:743
+#: text-utils/more.c:734 text-utils/more.c:740
 #, c-format
 msgid "(END)"
 msgstr "(КІНЕЦЬ)"
 
-#: text-utils/more.c:748
+#: text-utils/more.c:745
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Натисніть пробіл, щоб продовжити, або 'q', щоб вийти.]"
 
-#: text-utils/more.c:950
+#: text-utils/more.c:947
 msgid ""
 "\n"
 "...Skipping "
@@ -24009,40 +24009,40 @@ msgstr ""
 "\n"
 "...Перехід "
 
-#: text-utils/more.c:954
+#: text-utils/more.c:951
 msgid "...Skipping to file "
 msgstr "...Перехід до файла"
 
-#: text-utils/more.c:956
+#: text-utils/more.c:953
 msgid "...Skipping back to file "
 msgstr "...Перехід назад до файла"
 
-#: text-utils/more.c:1118
+#: text-utils/more.c:1115
 msgid "Line too long"
 msgstr "Рядок надто довгий"
 
-#: text-utils/more.c:1161
+#: text-utils/more.c:1158
 msgid "No previous command to substitute for"
 msgstr "Немає попередньої команди для заміни"
 
-#: text-utils/more.c:1190
+#: text-utils/more.c:1187
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr "[Використовуйте q чи Q щоб вийти]"
 
-#: text-utils/more.c:1275
+#: text-utils/more.c:1272
 msgid "exec failed\n"
 msgstr "помилка запуску\n"
 
-#: text-utils/more.c:1285
+#: text-utils/more.c:1282
 msgid "can't fork\n"
 msgstr "не вдалося створити процес\n"
 
-#: text-utils/more.c:1483
+#: text-utils/more.c:1480
 msgid "...skipping\n"
 msgstr "...перехід\n"
 
-#: text-utils/more.c:1520
+#: text-utils/more.c:1517
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -24050,11 +24050,11 @@ msgstr ""
 "\n"
 "Шаблон не знайдено\n"
 
-#: text-utils/more.c:1524 text-utils/pg.c:1032 text-utils/pg.c:1180
+#: text-utils/more.c:1521 text-utils/pg.c:1032 text-utils/pg.c:1180
 msgid "Pattern not found"
 msgstr "Шаблон не знайдено"
 
-#: text-utils/more.c:1542
+#: text-utils/more.c:1539
 msgid ""
 "Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
 "Star (*) indicates argument becomes new default.\n"
@@ -24062,7 +24062,7 @@ msgstr ""
 "Більшість команд можуть мати необов'язковий числовий параметр k.  Типові значення у кутових дужках.\n"
 "Зірочка (*) означає, що параметр стає новим типовим значенням.\n"
 
-#: text-utils/more.c:1548
+#: text-utils/more.c:1545
 #, c-format
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
@@ -24105,7 +24105,7 @@ msgstr ""
 ":f                      Відобразити назву поточного файла та номер рядка\n"
 ".                       Повторити попередню команду\n"
 
-#: text-utils/more.c:1614
+#: text-utils/more.c:1611
 #, c-format
 msgid "...back %d page"
 msgid_plural "...back %d pages"
@@ -24114,7 +24114,7 @@ msgstr[1] "...назад на %d сторінки"
 msgstr[2] "...назад на %d сторінок"
 msgstr[3] "...назад на %d сторінку"
 
-#: text-utils/more.c:1638
+#: text-utils/more.c:1635
 #, c-format
 msgid "...skipping %d line"
 msgid_plural "...skipping %d lines"
@@ -24123,7 +24123,7 @@ msgstr[1] "...пропускаємо %d рядки"
 msgstr[2] "...пропускаємо %d рядків"
 msgstr[3] "...пропускаємо %d рядок"
 
-#: text-utils/more.c:1738
+#: text-utils/more.c:1735
 msgid ""
 "\n"
 "***Back***\n"
@@ -24133,21 +24133,21 @@ msgstr ""
 "***Назад***\n"
 "\n"
 
-#: text-utils/more.c:1757
+#: text-utils/more.c:1754
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "\"%s\" рядок %d"
 
-#: text-utils/more.c:1760
+#: text-utils/more.c:1757
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[Не файл] рядок %d"
 
-#: text-utils/more.c:1766
+#: text-utils/more.c:1763
 msgid "No previous regular expression"
 msgstr "Відсутній попередній регулярний вираз"
 
-#: text-utils/more.c:1835
+#: text-utils/more.c:1832
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[Натисніть 'h' щоб переглянути довідку.]"
