@@ -140,10 +140,6 @@ static int setup_loopdev(struct libmnt_context *cxt,
 
 	DBG(LOOP, ul_debugobj(cxt, "trying to setup device for %s", backing_file));
 
-	ol = mnt_context_get_optlist(cxt);
-	if (!ol)
-		return -ENOMEM;
-
 	if (mnt_optlist_is_rdonly(ol)) {
 		DBG(LOOP, ul_debugobj(cxt, "enabling READ-ONLY flag"));
 		lo_flags |= LO_FLAGS_READ_ONLY;
