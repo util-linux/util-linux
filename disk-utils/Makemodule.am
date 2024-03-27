@@ -253,4 +253,24 @@ partx_SOURCES = disk-utils/partx.c
 partx_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir) -I$(ul_libsmartcols_incdir)
 partx_LDADD = $(LDADD) libblkid.la libcommon.la libsmartcols.la
 
+if HAVE_STATIC_PARTX
+usrsbin_exec_PROGRAMS += partx.static addpart.static delpart.static resizepart.static
+
+addpart_static_SOURCES = $(addpart_SOURCES)
+addpart_static_LDADD = $(addpart_LDADD)
+addpart_static_LDFLAGS = -all-static
+
+delpart_static_SOURCES = $(delpart_SOURCES)
+delpart_static_LDADD = $(delpart_LDADD)
+delpart_static_LDFLAGS = -all-static
+
+resizepart_static_SOURCES = $(resizepart_SOURCES)
+resizepart_static_LDADD = $(resizepart_LDADD)
+resizepart_static_LDFLAGS = -all-static
+
+partx_static_SOURCES = $(partx_SOURCES)
+partx_static_CFLAGS = $(partx_CFLAGS)
+partx_static_LDADD = $(partx_LDADD)
+partx_static_LDFLAGS = -all-static
+endif
 endif # BUILD_PARTX

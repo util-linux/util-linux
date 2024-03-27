@@ -804,7 +804,7 @@ AC_CHECK_DECL([IOC_OPAL_GET_STATUS],
 	      [#include <linux/sed-opal.h>])
 
 dnl Static compilation
-m4_define([UL_STATIC_PROGRAMS], [blkid, fdisk, losetup, mount, nsenter, sfdisk, umount, unshare])
+m4_define([UL_STATIC_PROGRAMS], [blkid, fdisk, losetup, mount, nsenter, partx, sfdisk, umount, unshare])
 
 AC_ARG_ENABLE([static-programs],
   [AS_HELP_STRING([--enable-static-programs=LIST],

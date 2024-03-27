@@ -176,7 +176,7 @@ option('build-pylibmount', type : 'feature',
 
 option('static-programs', type : 'array',
        value : [],
-       choices : ['losetup', 'mount', 'umount', 'fdisk', 'sfdisk', 'blkid', 'nsenter', 'unshare'],
+       choices : ['losetup', 'mount', 'umount', 'fdisk', 'sfdisk', 'blkid', 'nsenter', 'unshare', 'partx'],
        description : 'list of programs to also build with static linking')
 
 # feature selection and other configuration
