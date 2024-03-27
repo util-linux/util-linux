@@ -142,6 +142,8 @@ static const struct ipc_class *unkn_get_ipc_class(struct file *file)
 	return NULL;
 }
 
+static const struct anon_ops anon_pidfd_ops;
+
 static void unkn_init_content(struct file *file)
 {
 	struct unkn *unkn = (struct unkn *)file;
@@ -155,10 +157,11 @@ static void unkn_init_content(struct file *file)
 		const char *rest = file->name + 11;
 
 		unkn->anon_ops = anon_probe(rest);
+	} else if (is_pidfs_dev(file->stat.st_dev))
+		unkn->anon_ops = &anon_pidfd_ops;
 
-		if (unkn->anon_ops->init)
-			unkn->anon_ops->init(unkn);
-	}
+	if (unkn->anon_ops && unkn->anon_ops->init)
+		unkn->anon_ops->init(unkn);
 }
 
 static void unkn_content_free(struct file *file)
@@ -1382,6 +1385,27 @@ static const struct anon_ops *anon_probe(const char *str)
 	return &anon_generic_ops;
 }
 
+static bool has_pidfs = false;
+static dev_t pidfs_dev;
+
+static void unkn_init_class(void)
+{
+#ifdef __NR_pidfd_open
+	int fd = syscall(__NR_pidfd_open, getpid(), 0);
+	struct stat sb;
+
+	if (fd < 0)
+		return;
+
+	if (fstat(fd, &sb) == 0 && (sb.st_mode & S_IFMT) == S_IFREG) {
+		has_pidfs = true;
+		pidfs_dev = sb.st_dev;
+	}
+
+	close(fd);
+#endif
+}
+
 const struct file_class unkn_class = {
 	.super = &file_class,
 	.size = sizeof(struct unkn),
@@ -1391,4 +1415,10 @@ const struct file_class unkn_class = {
 	.handle_fdinfo = unkn_handle_fdinfo,
 	.attach_xinfo = unkn_attach_xinfo,
 	.get_ipc_class = unkn_get_ipc_class,
+	.initialize_class = unkn_init_class,
 };
+
+bool is_pidfs_dev(dev_t dev)
+{
+	return has_pidfs && dev == pidfs_dev;
+}
