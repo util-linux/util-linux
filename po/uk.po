@@ -3,13 +3,13 @@
 # This file is put in the public domain.
 #
 # Maxim V. Dziumanenko <mvd@mylinux.com.ua>, 2004-2006.
-# Yuri Chornoivan <yurchor@ukr.net>, 2012-2023.
+# Yuri Chornoivan <yurchor@ukr.net>, 2012-2023, 2024.
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.39-rc3\n"
+"Project-Id-Version: util-linux 2.40-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2024-02-29 21:01+0100\n"
-"PO-Revision-Date: 2023-04-19 19:52+0300\n"
+"POT-Creation-Date: 2024-02-29 21:44+0100\n"
+"PO-Revision-Date: 2024-03-01 23:33+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
-"X-Generator: Lokalize 20.12.0\n"
+"X-Generator: Lokalize 23.04.1\n"
 "Plural-Forms: nplurals=4; plural=n==1 ? 3 : n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
 #: disk-utils/addpart.c:25
@@ -175,10 +175,8 @@ msgid "get disk sequence number"
 msgstr "отримати номер у послідовності дисків"
 
 #: disk-utils/blockdev.c:194
-#, fuzzy
-#| msgid "zone size"
 msgid "get zone size"
-msgstr "розмір зони"
+msgstr "отримати розмір зони"
 
 #: disk-utils/blockdev.c:199
 msgid "flush buffers"
@@ -234,10 +232,9 @@ msgid "no device specified"
 msgstr "не вказано жодного пристрою"
 
 #: disk-utils/blockdev.c:352
-#, fuzzy, c-format
-#| msgid " %-25s get size in 512-byte sectors\n"
+#, c-format
 msgid "get size in 512-byte sectors: "
-msgstr " %-25s отримати розмір у 512-байтових секторах\n"
+msgstr "отримати розмір у 512-байтових секторах: "
 
 #: disk-utils/blockdev.c:357
 msgid "could not get device size"
@@ -526,14 +523,12 @@ msgid "-------      -------"
 msgstr "-------      -----------"
 
 #: disk-utils/cfdisk.c:2262
-#, fuzzy
-#| msgid "  b          Toggle bootable flag of the current partition"
 msgid "  b          Toggle bootable flag of the current partition;"
-msgstr "  b          Перемкнути ознаку завантаження поточного розділу"
+msgstr "  b          Перемкнути ознаку завантаження поточного розділу;"
 
 #: disk-utils/cfdisk.c:2263
 msgid "               implemented for DOS (MBR) and SGI labels only"
-msgstr ""
+msgstr "               реалізовано лише для міток DOS (MBR) і SGI"
 
 #: disk-utils/cfdisk.c:2264
 msgid "  d          Delete the current partition"
@@ -686,16 +681,13 @@ msgid "Note that partition table entries are not in disk order now."
 msgstr "Зауважте, що тепер ви бачите записи таблиці розділів не у тому порядку, як на диску."
 
 #: disk-utils/cfdisk.c:2597
-#, fuzzy, c-format
-#| msgid "Partition #%zu contains a %s signature."
+#, c-format
 msgid "Device already contains a %s signature."
-msgstr "Розділ %zu містить підпис %s."
+msgstr "На пристрої вже міститься підпис %s."
 
 #: disk-utils/cfdisk.c:2603
-#, fuzzy
-#| msgid "Do you want to remove the signature?"
 msgid "Do you want to remove it? [Y]es/[N]o: "
-msgstr "Хочете вилучити підпис?"
+msgstr "Хочете вилучити його? [Y]Так/[N]Ні: "
 
 #: disk-utils/cfdisk.c:2615
 msgid "failed to create a new disklabel"
@@ -983,25 +975,21 @@ msgstr "Прапорець сумісності з DOS не встановлен
 #: disk-utils/fdisk.c:690
 #, c-format
 msgid "New <size>{K,M,G,T,P} in bytes or <size>S in sectors (default %s)"
-msgstr ""
+msgstr "Новий <size>{K,M,G,T,P} у байтах або <size>S у секторах (типовий %s)"
 
 #: disk-utils/fdisk.c:701 disk-utils/mkswap.c:623
-#, fuzzy
-#| msgid "invalid id"
 msgid "Invalid size"
-msgstr "неправильний ідентифікатор"
+msgstr "Некоректний розмір"
 
 #: disk-utils/fdisk.c:717
-#, fuzzy, c-format
-#| msgid "Partition %zu has been deleted."
+#, c-format
 msgid "Partition %zu has been resized."
-msgstr "Розділ %zu вилучено."
+msgstr "Розмір розділу %zu було змінено."
 
 #: disk-utils/fdisk.c:729
-#, fuzzy, c-format
-#| msgid "Could not create partition %zu"
+#, c-format
 msgid "Could not resize partition %zu: %s"
-msgstr "Не вдалося створити розділ %zu"
+msgstr "Не вдалося змінити розмір розділу %zu: %s"
 
 #: disk-utils/fdisk.c:748 disk-utils/fdisk.c:786
 #, c-format
@@ -1419,10 +1407,8 @@ msgid "print information about a partition"
 msgstr "вивести дані щодо розділу"
 
 #: disk-utils/fdisk-menu.c:114
-#, fuzzy
-#| msgid "delete a partition"
 msgid "resize a partition"
-msgstr "вилучити розділ"
+msgstr "змінити розміри розділу"
 
 #: disk-utils/fdisk-menu.c:116
 msgid "print the raw data of the first sector from the device"
@@ -2759,7 +2745,7 @@ msgstr "Примусова перевірка файлової системи н
 #: disk-utils/fsck.minix.c:1369
 #, c-format
 msgid "Filesystem on %s is dirty, needs checking.\n"
-msgstr "Файлова система на %s пошкоджена, потрібна перевірка.\n"
+msgstr "Файлова система на %s є неготовою, потрібна перевірка.\n"
 
 #: disk-utils/fsck.minix.c:1401
 #, c-format
@@ -3512,22 +3498,16 @@ msgid " -e, --endianness=<value>  specify the endianness to use (%s, %s or %s)\n
 msgstr " -e, --endianness=<значення>  вказати порядок байтів, яким слід скористатися (%s, %s або %s)\n"
 
 #: disk-utils/mkswap.c:208
-#, fuzzy
-#| msgid " -p, --pagesize SIZE       specify page size in bytes\n"
 msgid " -o, --offset OFFSET       specify the offset in the device\n"
-msgstr " -p, --pagesize РОЗМІР     вказати розмір сторінки у байтах\n"
+msgstr " -o, --offset ЗСУВ         вказати зсув на пристрої\n"
 
 #: disk-utils/mkswap.c:209
-#, fuzzy
-#| msgid " -p, --pagesize SIZE       specify page size in bytes\n"
 msgid " -s, --size SIZE           specify the size of a swap file in bytes\n"
-msgstr " -p, --pagesize РОЗМІР     вказати розмір сторінки у байтах\n"
+msgstr " -s, --size РОЗМІР         вказати розмір файла резервної пам'яті у байтах\n"
 
 #: disk-utils/mkswap.c:210
-#, fuzzy
-#| msgid " -t, --table                      create a table\n"
 msgid " -F, --file                create a swap file\n"
-msgstr " -t, --table                      створити таблицю\n"
+msgstr " -F, --file                створити файл резервної пам'яті\n"
 
 #: disk-utils/mkswap.c:211
 msgid "     --verbose             verbose output\n"
@@ -3591,10 +3571,8 @@ msgid "unallocated extent at offset %ju"
 msgstr "нерозподілене розширення з відступом %ju"
 
 #: disk-utils/mkswap.c:367
-#, fuzzy
-#| msgid "%s: offset is greater than device size"
 msgid "offset larger than file size"
-msgstr "%s: зсув виходить за межі розміру пристрою"
+msgstr "зсув перевищує розмір файла"
 
 #: disk-utils/mkswap.c:380
 msgid "unable to alloc new libblkid probe"
@@ -3607,19 +3585,17 @@ msgstr "не вдалося призначити пристрій до зонд�
 #: disk-utils/mkswap.c:395
 #, c-format
 msgid "cannot create swap file %s: node isn't regular file"
-msgstr ""
+msgstr "не вдалося створити файл резервної пам'яті %s: вузол не є звичайним файлом"
 
 #: disk-utils/mkswap.c:397
-#, fuzzy, c-format
-#| msgid "cannot determine size of %s"
+#, c-format
 msgid "cannot set permissions on swap file %s"
-msgstr "не вдалося визначити розмір %s"
+msgstr "не вдалося встановити права доступу на файл резервної пам'яті %s"
 
 #: disk-utils/mkswap.c:409 disk-utils/mkswap.c:413 disk-utils/mkswap.c:416
-#, fuzzy, c-format
-#| msgid "could not truncate file: %s"
+#, c-format
 msgid "couldn't allocate swap file %s"
-msgstr "не вдалося обрізати файл %s"
+msgstr "не вдалося розмістити файл резервної пам'яті %s"
 
 #: disk-utils/mkswap.c:426
 #, c-format
@@ -3688,10 +3664,8 @@ msgid "invalid endianness %s is not supported"
 msgstr "некоректно вказаний порядок байтів %s, підтримки якого не передбачено"
 
 #: disk-utils/mkswap.c:620 misc-utils/lsclocks.c:275
-#, fuzzy
-#| msgid "Invalid count"
 msgid "Invalid offset"
-msgstr "Некоректна кількість"
+msgstr "Некоректний зсув"
 
 #: disk-utils/mkswap.c:654
 msgid "only one device argument is currently supported"
@@ -5037,16 +5011,12 @@ msgstr ""
 "Доступні для виведення стовпчики:\n"
 
 #: include/c.h:463
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "Generic columns:\n"
 msgid ""
 "\n"
 "Default columns:\n"
 msgstr ""
 "\n"
-"Загальні стовпчики:\n"
+"Типові стовпчики:\n"
 
 #: include/c.h:466
 msgid "display this help"
@@ -5842,22 +5812,16 @@ msgid "ChromeOS reserved"
 msgstr "ChromeOS, зарезервований"
 
 #: include/pt-gpt-partnames.h:235
-#, fuzzy
-#| msgid "ChromeOS reserved"
 msgid "ChromeOS firmware"
-msgstr "ChromeOS, зарезервований"
+msgstr "Мікропрограма ChromeOS"
 
 #: include/pt-gpt-partnames.h:236
-#, fuzzy
-#| msgid "ChromeOS kernel"
 msgid "ChromeOS miniOS"
-msgstr "Ядро ChromeOS"
+msgstr "ChromeOS miniOS"
 
 #: include/pt-gpt-partnames.h:237
-#, fuzzy
-#| msgid "ChromeOS kernel"
 msgid "ChromeOS hibernate"
-msgstr "Ядро ChromeOS"
+msgstr "Присипляння ChromeOS"
 
 #: include/pt-gpt-partnames.h:240
 msgid "MidnightBSD data"
@@ -5957,47 +5921,43 @@ msgstr "Розділ завантаження Marvell Armada 3700"
 
 #: include/pt-gpt-partnames.h:283
 msgid "DragonFlyBSD Label32"
-msgstr ""
+msgstr "DragonFlyBSD Label32"
 
 #: include/pt-gpt-partnames.h:284
 msgid "DragonFlyBSD Swap"
-msgstr ""
+msgstr "DragonFlyBSD Swap"
 
 #: include/pt-gpt-partnames.h:285
 msgid "DragonFlyBSD UFS1"
-msgstr ""
+msgstr "DragonFlyBSD UFS1"
 
 #: include/pt-gpt-partnames.h:286
-#, fuzzy
-#| msgid "FreeBSD Vinum"
 msgid "DragonFlyBSD Vinum"
-msgstr "FreeBSD, Vinum"
+msgstr "DragonFlyBSD Vinum"
 
 #: include/pt-gpt-partnames.h:287
 msgid "DragonFlyBSD CCD"
-msgstr ""
+msgstr "DragonFlyBSD CCD"
 
 #: include/pt-gpt-partnames.h:288
 msgid "DragonFlyBSD Label64"
-msgstr ""
+msgstr "DragonFlyBSD Label64"
 
 #: include/pt-gpt-partnames.h:289
 msgid "DragonFlyBSD Legacy"
-msgstr ""
+msgstr "Застарілий DragonFlyBSD"
 
 #: include/pt-gpt-partnames.h:290
 msgid "DragonFlyBSD HAMMER"
-msgstr ""
+msgstr "DragonFlyBSD HAMMER"
 
 #: include/pt-gpt-partnames.h:291
 msgid "DragonFlyBSD HAMMER2"
-msgstr ""
+msgstr "DragonFlyBSD HAMMER2"
 
 #: include/pt-gpt-partnames.h:294
-#, fuzzy
-#| msgid "Windows recovery environment"
 msgid "U-Boot environment"
-msgstr "Середовище відновлення Windows"
+msgstr "Середовище U-Boot"
 
 #: include/pt-mbr-partnames.h:5
 msgid "Empty"
@@ -7952,10 +7912,9 @@ msgid "mount failed: %m"
 msgstr "помилка монтування: %m"
 
 #: libmount/src/context_mount.c:1527
-#, fuzzy, c-format
-#| msgid "filesystem was mounted, but failed to attach idmapping"
+#, c-format
 msgid "filesystem was mounted, but failed to apply flags"
-msgstr "файлову систему змонтовано, але не вдалося долучити прив'язку ідентифікаторів"
+msgstr "файлову систему змонтовано, але не вдалося застосувати прапорці"
 
 #: libmount/src/context_mount.c:1533
 #, c-format
@@ -7988,10 +7947,9 @@ msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "файлову систему змонтовано, але усі наступні дії виконати не вдалося: %m"
 
 #: libmount/src/context_mount.c:1575
-#, fuzzy, c-format
-#| msgid "mount(2) system call failed: %m"
+#, c-format
 msgid "%s system call failed: %s"
-msgstr "помилка системного виклику mount(2): %m"
+msgstr "помилка системного виклику %s: %s"
 
 #: libmount/src/context_mount.c:1590 login-utils/newgrp.c:228
 #, c-format
@@ -8144,10 +8102,9 @@ msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "не вдалося змонтувати; ймовірно, файлову систему на %s пошкоджено"
 
 #: libmount/src/context_mount.c:1746
-#, fuzzy, c-format
-#| msgid "mount(2) system call failed: %m"
+#, c-format
 msgid "%s system call failed: %m"
-msgstr "помилка системного виклику mount(2): %m"
+msgstr "помилка системного виклику %s: %m"
 
 #: libmount/src/context_umount.c:1257 libmount/src/context_umount.c:1311
 #, c-format
@@ -8274,10 +8231,8 @@ msgid "time %<PRId64> is out of range."
 msgstr "час %<PRId64> поза допустимим діапазоном."
 
 #: lib/timeutils.c:692
-#, fuzzy
-#| msgid "format_iso_time: buffer overflow."
 msgid "format_reltime: buffer overflow."
-msgstr "format_iso_time: переповнення буфера."
+msgstr "format_reltime: переповнення буфера."
 
 #: login-utils/chfn.c:91 login-utils/chsh.c:70 login-utils/lslogins.c:1442
 #, c-format
@@ -8553,7 +8508,7 @@ msgstr " -t, --until <час>    показувати рядки, які бул�
 
 #: login-utils/last.c:588
 msgid " -T, --tab-separated\tuse tabs as delimiters\n"
-msgstr ""
+msgstr " -T, --tab-separated\tвикористовувати табуляції як роздільники\n"
 
 #: login-utils/last.c:589
 msgid " -p, --present <time> display who were present at the specified time\n"
@@ -8806,10 +8761,8 @@ msgid " -H             suppress hostname in the login prompt"
 msgstr " -H             придушити показ назви у запиті щодо входу"
 
 #: login-utils/login.c:1305 term-utils/agetty.c:3010
-#, fuzzy
-#| msgid "failed to initialize loopcxt"
 msgid "failed to initialize path context"
-msgstr "не вдалося ініціалізувати loopcxt"
+msgstr "не вдалося ініціалізувати контекст шляху"
 
 #. TRANSLATORS: The standard value for %u is 60.
 #: login-utils/login.c:1337
@@ -9436,10 +9389,8 @@ msgid " -P, --pty                       create a new pseudo-terminal\n"
 msgstr " -P, --pty                       створити псевдотермінал\n"
 
 #: login-utils/su-common.c:905
-#, fuzzy
-#| msgid " -P, --pty                       create a new pseudo-terminal\n"
 msgid " -T, --no-pty                    do not create a new pseudo-terminal (bad security!)\n"
-msgstr " -P, --pty                       створити псевдотермінал\n"
+msgstr " -T, --no-pty                    не створювати псевдотермінал (зашкодить захисту!)\n"
 
 #: login-utils/su-common.c:915
 #, c-format
@@ -9532,34 +9483,25 @@ msgid "warning: cannot change directory to %s"
 msgstr "попередження: не вдалося змінити каталог на %s"
 
 #: login-utils/sulogin.c:131
-#, fuzzy
-#| msgid "failed to execute %s"
 msgid "failed to compute seuser"
-msgstr "не вдалося виконати %s"
+msgstr "не вдалося обчислити seuser"
 
 #: login-utils/sulogin.c:136
-#, fuzzy
-#| msgid "couldn't compute selinux context"
 msgid "failed to compute default context"
-msgstr "не вдалося визначити контекст selinux"
+msgstr "не вдалося обчислити типовий контекст"
 
 #: login-utils/sulogin.c:156
-#, fuzzy, c-format
-#| msgid "failed to set the controlling terminal"
+#, c-format
 msgid "failed to get context of terminal %s"
-msgstr "не вдалося встановити керівний термінал"
+msgstr "не вдалося отримати контекст термінала %s"
 
 #: login-utils/sulogin.c:162
-#, fuzzy
-#| msgid "This account is currently not available.\n"
 msgid "security class chr_file not available"
-msgstr "Цей обліковий запис наразі є недоступним.\n"
+msgstr "клас захисту chr_file є недоступним"
 
 #: login-utils/sulogin.c:169
-#, fuzzy
-#| msgid "failed to create pseudo-terminal"
 msgid "failed to compute relabel context of terminal"
-msgstr "не вдалося створити псевдотермінал"
+msgstr "не вдалося обчислити контекст зміни мітки термінала"
 
 #: login-utils/sulogin.c:252 login-utils/sulogin.c:255
 #, c-format
@@ -9630,22 +9572,19 @@ msgid "change directory to system root failed"
 msgstr "спроба зміни каталогу на кореневий каталог системи зазнала невдачі"
 
 #: login-utils/sulogin.c:927
-#, fuzzy, c-format
-#| msgid "failed to connect to %s port %s"
+#, c-format
 msgid "failed to set context to %s for terminal %s"
-msgstr "не вдалося встановити з'єднання з %s, порт %s"
+msgstr "не вдалося встановити контекст до %s для термінала %s"
 
 #: login-utils/sulogin.c:932
-#, fuzzy, c-format
-#| msgid "failed to set exec context to '%s'"
+#, c-format
 msgid "failed to set exec context to %s"
 msgstr "не вдалося встановити контекст виконання у значення %s"
 
 #: login-utils/sulogin.c:963
-#, fuzzy, c-format
-#| msgid "failed to connect to %s port %s"
+#, c-format
 msgid "failed to reset context to %s for terminal %s"
-msgstr "не вдалося встановити з'єднання з %s, порт %s"
+msgstr "не вдалося скинути контекст до %s для термінала %s"
 
 #: login-utils/sulogin.c:976
 #, c-format
@@ -10036,10 +9975,8 @@ msgid "illegal week value: use 1-54"
 msgstr "помилкове значення тижня: мало бути від 1 до 54"
 
 #: misc-utils/cal.c:437
-#, fuzzy
-#| msgid "failed to parse column"
 msgid "failed to parse columns"
-msgstr "не вдалося обробити стовпчик"
+msgstr "не вдалося обробити стовпчики"
 
 #: misc-utils/cal.c:472
 #, c-format
@@ -10157,88 +10094,67 @@ msgid "     --color[=<when>]  colorize messages (%s, %s or %s)\n"
 msgstr "     --color[=<умова>]  розфарбовування виведених даних (%s, %s або %s)\n"
 
 #: misc-utils/enosys.c:85
-#, fuzzy, c-format
-#| msgid " %s [options] [--set <size>] [--] [command]\n"
+#, c-format
 msgid " %s [options] -- <command>\n"
-msgstr " %s [параметри] [--set <розмір>] [--] [команда]\n"
+msgstr " %s [параметри] -- <команда>\n"
 
 #: misc-utils/enosys.c:88
-#, fuzzy
-#| msgid " -a, --all            list each individual memory block\n"
 msgid " -s, --syscall           syscall to block\n"
-msgstr " -a, --all            показати список окремих блоків пам'яті\n"
+msgstr " -s, --syscall           системний виклик для блокування\n"
 
 #: misc-utils/enosys.c:89
-#, fuzzy
-#| msgid " -u, --unlock             remove a lock\n"
 msgid " -i, --ioctl             ioctl to block\n"
-msgstr " -u, --unlock             вилучити блокування\n"
+msgstr " -i, --ioctl             ioctl для блокування\n"
 
 #: misc-utils/enosys.c:90
-#, fuzzy
-#| msgid " -l, --list             use list format output\n"
 msgid " -l, --list              list known syscalls\n"
-msgstr " -l, --list             використатися для виведення формат списку\n"
+msgstr " -l, --list              список відомий системних викликів\n"
 
 #: misc-utils/enosys.c:146
-#, fuzzy
-#| msgid "unknown types"
 msgid "Unknown syscall"
-msgstr "невідомі типи"
+msgstr "Невідомий syscall"
 
 #: misc-utils/enosys.c:166
-#, fuzzy
-#| msgid "Unknown"
 msgid "Unknown ioctl"
-msgstr "Невідомий"
+msgstr "Невідомий ioctl"
 
 #: misc-utils/enosys.c:198
-#, fuzzy
-#| msgid "filesystem too big.  Exiting."
 msgid "filter too big"
-msgstr "файлова система надто велика. Завершення."
+msgstr "фільтр є надто великим"
 
 #: misc-utils/enosys.c:256
 msgid "Seccomp non-functional"
-msgstr ""
+msgstr "Seccomp не є працездатним"
 
 #: misc-utils/enosys.c:259
 msgid "Could not run prctl(PR_SET_NO_NEW_PRIVS)"
-msgstr ""
+msgstr "Не вдалося запустити prctl(PR_SET_NO_NEW_PRIVS)"
 
 #: misc-utils/enosys.c:262
-#, fuzzy
-#| msgid "could not set timer"
 msgid "Could not seccomp filter"
-msgstr "не вдалося встановити таймер"
+msgstr "Не вдалося виконати фільтрування seccomp"
 
 #: misc-utils/enosys.c:265
-#, fuzzy
-#| msgid "could not set timer"
 msgid "Could not exec"
-msgstr "не вдалося встановити таймер"
+msgstr "Не вдалося виконати"
 
 #: misc-utils/exch.c:42
-#, fuzzy, c-format
-#| msgid " %s [options] <pathname>...\n"
+#, c-format
 msgid " %s [options] oldpath newpath\n"
-msgstr " %s [параметри] <шлях>...\n"
+msgstr " %s [параметри] старий_шлях новий_шлях\n"
 
 #: misc-utils/exch.c:44
 msgid "Atomically exchanges paths between two files.\n"
-msgstr ""
+msgstr "Атомарний обмін шляхами між двома файлами.\n"
 
 #: misc-utils/exch.c:81
-#, fuzzy
-#| msgid "too many arguments"
 msgid "too few arguments"
-msgstr "забагато аргументів"
+msgstr "надто мало аргументів"
 
 #: misc-utils/exch.c:91
-#, fuzzy, c-format
-#| msgid "failed to change directory to %s"
+#, c-format
 msgid "failed to exchange \"%s\" and \"%s\""
-msgstr "не вдалося змінити каталог на %s"
+msgstr "не вдалося обміняти «%s» і «%s»"
 
 #: misc-utils/fadvise.c:49
 #, c-format
@@ -10308,48 +10224,36 @@ msgid "file name"
 msgstr "назва файла"
 
 #: misc-utils/fincore.c:102
-#, fuzzy
-#| msgid "number of zones"
 msgid "number of dirty pages"
-msgstr "кількість зон"
+msgstr "кількість неготових сторінок"
 
 #: misc-utils/fincore.c:103
-#, fuzzy
-#| msgid "number of zones"
 msgid "number of dirty bytes"
-msgstr "кількість зон"
+msgstr "кількість неготових байтів"
 
 #: misc-utils/fincore.c:104
 msgid "number of pages marked for writeback"
-msgstr ""
+msgstr "кількість сторінок, які позначено для зворотного запису"
 
 #: misc-utils/fincore.c:105
 msgid "number of bytes marked for writeback"
-msgstr ""
+msgstr "кількість байтів, які позначено для зворотного запису"
 
 #: misc-utils/fincore.c:106
-#, fuzzy
-#| msgid "number of sectors"
 msgid "number of evicted pages"
-msgstr "кількість секторів"
+msgstr "кількість відселених сторінок"
 
 #: misc-utils/fincore.c:107
-#, fuzzy
-#| msgid "number of sectors"
 msgid "number of evicted bytes"
-msgstr "кількість секторів"
+msgstr "кількість відселених байтів"
 
 #: misc-utils/fincore.c:108
-#, fuzzy
-#| msgid "number of days required between changes"
 msgid "number of recently evicted pages"
-msgstr "вимога щодо кількість днів між змінами"
+msgstr "кількість нещодавно відселених сторінок"
 
 #: misc-utils/fincore.c:109
-#, fuzzy
-#| msgid "number of objects migrated by compaction"
 msgid "number of recently evicted bytes"
-msgstr "кількість об'єктів, перенесених під час ущільнення"
+msgstr "кількість нещодавно відселених байтів"
 
 #: misc-utils/fincore.c:280
 #, c-format
@@ -10362,10 +10266,9 @@ msgid "failed to do mmap: %s"
 msgstr "не вдалося виконати mmap: %s"
 
 #: misc-utils/fincore.c:346
-#, fuzzy, c-format
-#| msgid "failed to do fstat: %s"
+#, c-format
 msgid "failed to do cachestat: %s"
-msgstr "не вдалося виконати fstat: %s"
+msgstr "не вдалося виконати cachestat: %s"
 
 #: misc-utils/fincore.c:362
 #, c-format
@@ -10378,10 +10281,9 @@ msgid "failed to do fstat: %s"
 msgstr "не вдалося виконати fstat: %s"
 
 #: misc-utils/fincore.c:376
-#, fuzzy, c-format
-#| msgid "failed to advise: %s"
+#, c-format
 msgid "failed ioctl to get size: %s"
-msgstr "не вдалося порадити: %s"
+msgstr "не вдалося виконати ioctl для отримання розміру: %s"
 
 #: misc-utils/fincore.c:397
 #, c-format
@@ -10405,10 +10307,8 @@ msgid " -o, --output <list>   output columns\n"
 msgstr " -o, --output <список> стовпчики виведених даних\n"
 
 #: misc-utils/fincore.c:404
-#, fuzzy
-#| msgid "     --output-all       output all columns\n"
 msgid "     --output-all      output all columns\n"
-msgstr "     --output-all       вивести усі стовпчики\n"
+msgstr "     --output-all      вивести усі стовпчики\n"
 
 #: misc-utils/fincore.c:405
 msgid " -r, --raw             use raw output format\n"
@@ -10434,7 +10334,7 @@ msgstr "дія, виявлена --poll"
 
 #: misc-utils/findmnt.c:110
 msgid "filesystem size available, use <number> if --bytes is given"
-msgstr ""
+msgstr "доступний розмір файлової системи, скористайтеся <number>, якщо задано --bytes"
 
 #: misc-utils/findmnt.c:111
 msgid "dump(8) period in days [fstab only]"
@@ -10457,26 +10357,20 @@ msgid "mount ID"
 msgstr "ідентифікатор монтування"
 
 #: misc-utils/findmnt.c:116
-#, fuzzy
-#| msgid "Number of alternate cylinders"
 msgid "number of available inodes"
-msgstr "Кількість запасних циліндрів"
+msgstr "кількість доступних inode"
 
 #: misc-utils/findmnt.c:117
-#, fuzzy
-#| msgid "invalid number of inodes"
 msgid "total number of inodes"
-msgstr "некоректна кількість inode"
+msgstr "загальна кількість inode"
 
 #: misc-utils/findmnt.c:118
-#, fuzzy
-#| msgid "number of sectors"
 msgid "number of used inodes"
-msgstr "кількість секторів"
+msgstr "кількість використаних inode"
 
 #: misc-utils/findmnt.c:119
 msgid "percentage of INO.USED divided by INO.TOTAL"
-msgstr ""
+msgstr "частка INO.USED при діленні на INO.TOTAL"
 
 #: misc-utils/findmnt.c:120
 msgid "filesystem label"
@@ -10520,7 +10414,7 @@ msgstr "Прапорці розширення VFS"
 
 #: misc-utils/findmnt.c:131 misc-utils/lsblk.c:185
 msgid "filesystem size, use <number> if --bytes is given"
-msgstr ""
+msgstr "розмір файлової системи, скористайтеся <number>, якщо задано --bytes"
 
 #: misc-utils/findmnt.c:132
 msgid "all possible source devices"
@@ -10540,7 +10434,7 @@ msgstr "ідентифікатор завдання"
 
 #: misc-utils/findmnt.c:136 misc-utils/lsblk.c:187
 msgid "filesystem size used, use <number> if --bytes is given"
-msgstr ""
+msgstr "використаний розмір файлової системи, скористайтеся <number>, якщо задано --bytes"
 
 #: misc-utils/findmnt.c:137 misc-utils/lsblk.c:188
 msgid "filesystem use percentage"
@@ -10695,10 +10589,8 @@ msgid " -f, --first-only       print the first found filesystem only\n"
 msgstr " -f, --first-only       вивести лише першу зі знайдених файлових систем\n"
 
 #: misc-utils/findmnt.c:1439
-#, fuzzy
-#| msgid " -D, --df               imitate the output of df(1)\n"
 msgid " -I, --dfi              imitate the output of df(1) with -i option\n"
-msgstr " -D, --df               імітувати вивід df(1)\n"
+msgstr " -I, --dfi              імітувати виведення df(1) з параметром -i\n"
 
 #: misc-utils/findmnt.c:1440
 msgid " -i, --invert           invert the sense of matching\n"
@@ -10726,10 +10618,8 @@ msgid " -O, --options <list>   limit the set of filesystems by mount options\n"
 msgstr " -O, --options <список> обмежити набір файлових систем за параметрами монтування\n"
 
 #: misc-utils/findmnt.c:1446 misc-utils/lslocks.c:820
-#, fuzzy
-#| msgid " -o, --output <list>    the output columns to be shown\n"
 msgid " -o, --output <list>    output columns (see --list-columns)\n"
-msgstr " -o, --output <список>  стовпчики виведення, які буде показано\n"
+msgstr " -o, --output <список>  стовпчики виведення (див. --list-columns)\n"
 
 #: misc-utils/findmnt.c:1447
 msgid "     --output-all       output all available columns\n"
@@ -10812,10 +10702,8 @@ msgid "     --vfs-all          print all VFS options\n"
 msgstr "     --vfs-all          вивести усі параметри VFS\n"
 
 #: misc-utils/findmnt.c:1471 misc-utils/lslocks.c:827
-#, fuzzy
-#| msgid "     --list-modes         list available modes\n"
 msgid " -H, --list-columns     list the available columns\n"
-msgstr "     --list-modes         вивести список доступних режимів\n"
+msgstr " -H, --list-columns     список доступних стовпчиків\n"
 
 #: misc-utils/findmnt.c:1632
 #, c-format
@@ -11529,107 +11417,88 @@ msgstr "не вдалося знайти процес «%s»"
 
 #: misc-utils/lastlog2.c:111
 msgid " -b, --before DAYS       Print only records older than DAYS\n"
-msgstr ""
+msgstr " -b, --before ДНІ        Вивести лише записи, вік яких перевищує вказану кількість днів\n"
 
 #: misc-utils/lastlog2.c:112
-#, fuzzy
-#| msgid " -C, --clear                 clear the kernel ring buffer\n"
 msgid " -C, --clear             Clear record of a user (requires -u)\n"
-msgstr " -C, --clear                 спорожнити кільцевий буфер ядра\n"
+msgstr " -C, --clear             Спорожнити запис користувача (потребує -u)\n"
 
 #: misc-utils/lastlog2.c:113
 msgid " -d, --database FILE     Use FILE as lastlog2 database\n"
-msgstr ""
+msgstr " -d, --database ФАЙЛ     Використати ФАЙЛ як базу даних lastlog2\n"
 
 #: misc-utils/lastlog2.c:114
 msgid " -i, --import FILE       Import data from old lastlog file\n"
-msgstr ""
+msgstr " -i, --import ФАЙЛ       Імпортувати дані зі старого файла lastlog\n"
 
 #: misc-utils/lastlog2.c:115
 msgid " -r, --rename NEWNAME    Rename existing user to NEWNAME (requires -u)\n"
-msgstr ""
+msgstr " -r, --rename НОВА_НАЗВА Перейменувати наявного користувача на НОВА_НАЗВА (потребує -u)\n"
 
 #: misc-utils/lastlog2.c:116
-#, fuzzy
-#| msgid " -u, --userspace             display userspace messages\n"
 msgid " -s, --service           Display PAM service\n"
-msgstr " -u, --userspace             виводити повідомлення з простору користувача\n"
+msgstr " -s, --service           Вивести службу PAM\n"
 
 #: misc-utils/lastlog2.c:117
-#, fuzzy
-#| msgid " -r, --reset               reset all the counters (root only)\n"
 msgid " -S, --set               ySet lastlog record to current time (requires -u)\n"
-msgstr " -r, --reset               занулити всі лічильники (лише для root)\n"
+msgstr " -S, --set               Встановити для запису lastlog поточний момент часу (потребує -u)\n"
 
 #: misc-utils/lastlog2.c:118
 msgid " -t, --time DAYS         Print only lastlog records more recent than DAYS\n"
-msgstr ""
+msgstr " -t, --time ДНІ         Вивести лише записи lastlog, вік яких не перевищує кількість ДНІв\n"
 
 #: misc-utils/lastlog2.c:119
 msgid " -u, --user LOGIN        Print lastlog record of the specified LOGIN\n"
-msgstr ""
+msgstr " -u, --user ЗАПИС       Вивести запис lastlog для вказаного облікового ЗАПИСУ\n"
 
 #: misc-utils/lastlog2.c:166 misc-utils/lastlog2.c:199
-#, fuzzy
-#| msgid "cannot parse %s"
 msgid "Cannot parse days"
-msgstr "не вдалося обробити %s"
+msgstr "Не вдалося обробити кількість днів"
 
 #: misc-utils/lastlog2.c:217
 msgid "Option -C, -i and -S cannot be used together"
-msgstr ""
+msgstr "Параметри -C, -i і -S не можна використовувати одночасно"
 
 #: misc-utils/lastlog2.c:221
-#, fuzzy
-#| msgid "Couldn't initialize PAM: %s"
 msgid "Couldn't initialize lastlog2 environment"
-msgstr "Не вдалося ініціалізувати PAM: %s"
+msgstr "Не вдалося ініціалізувати середовище lastlog2"
 
 #: misc-utils/lastlog2.c:226
-#, fuzzy, c-format
-#| msgid "could not open '%s'"
+#, c-format
 msgid "Couldn't import entries from '%s'"
-msgstr "не вдалося відкрити «%s»"
+msgstr "Не вдалося імпортувати записи з «%s»"
 
 #: misc-utils/lastlog2.c:235
 msgid "Options -C, -r and -S require option -u to specify the user"
-msgstr ""
+msgstr "Параметри -C, -r і -S потребують параметра -u для визначення користувача"
 
 #: misc-utils/lastlog2.c:240 misc-utils/lastlog2.c:283
-#, fuzzy, c-format
-#| msgid "user %s does not exist"
+#, c-format
 msgid "User '%s' does not exist."
-msgstr "користувача %s не існує"
+msgstr "Запису користувача «%s» не існує."
 
 #: misc-utils/lastlog2.c:246
-#, fuzzy, c-format
-#| msgid "could not open '%s'"
+#, c-format
 msgid "Couldn't remove entry for '%s'"
-msgstr "не вдалося відкрити «%s»"
+msgstr "Не вдалося вилучити запис «%s»"
 
 #: misc-utils/lastlog2.c:255
-#, fuzzy
-#| msgid "could not determine current format type"
 msgid "Could not determine current time"
-msgstr "не вдалося визначити поточний тип формату"
+msgstr "Не вдалося визначити поточний час"
 
 #: misc-utils/lastlog2.c:260
-#, fuzzy, c-format
-#| msgid "unsupported logging format: '%s'"
+#, c-format
 msgid "Couldn't update login time for '%s'"
-msgstr "непідтримуваний формат журналювання: «%s»"
+msgstr "Не вдалося оновити час входу до системи для «%s»"
 
 #: misc-utils/lastlog2.c:267
-#, fuzzy, c-format
-#| msgid "cannot rename %s to %s"
+#, c-format
 msgid "Couldn't rename entry '%s' to '%s'"
-msgstr "не вдалося перейменувати %s на %s"
+msgstr "Не вдалося перейменувати запис «%s» на «%s»"
 
 #: misc-utils/lastlog2.c:297
-#, fuzzy
-#| msgid "could not open '%s'"
 msgid "Couldn't read entries for all users"
-msgstr "не вдалося відкрити «%s»"
+msgstr "Не вдалося прочитати записи для усіх користувачів"
 
 #: misc-utils/logger.c:230
 #, c-format
@@ -11895,7 +11764,7 @@ msgstr "пристрій з можливістю dax"
 
 #: misc-utils/lsblk.c:179
 msgid "discard granularity, use <number> if --bytes is given"
-msgstr ""
+msgstr "деталізація відкидання, скористайтеся <number>, якщо задано --bytes"
 
 #: misc-utils/lsblk.c:180
 msgid "disk sequence number"
@@ -11903,7 +11772,7 @@ msgstr "номер у послідовності дисків"
 
 #: misc-utils/lsblk.c:181
 msgid "discard max bytes, use <number> if --bytes is given"
-msgstr ""
+msgstr "макс. к-ть відкинутих даних, скористайтеся <number>, якщо задано --bytes"
 
 #: misc-utils/lsblk.c:182
 msgid "discard zeroes data"
@@ -11911,7 +11780,7 @@ msgstr "відкинути нульові дані"
 
 #: misc-utils/lsblk.c:183
 msgid "filesystem size available for unprivileged users, use <number> if --bytes is given"
-msgstr ""
+msgstr "доступний розмір файлової системи для непривілейованих користувачів, скористайтеся <number>, якщо задано --bytes"
 
 #: misc-utils/lsblk.c:184
 msgid "mounted filesystem roots"
@@ -11946,16 +11815,12 @@ msgid "logical sector size"
 msgstr "розмір логічного сектора"
 
 #: misc-utils/lsblk.c:197
-#, fuzzy
-#| msgid "major:minor device number"
 msgid "major device number"
-msgstr "номер пристрою основний:додатковий"
+msgstr "номер основного пристрою"
 
 #: misc-utils/lsblk.c:198
-#, fuzzy
-#| msgid "major:minor device number"
 msgid "minor device number"
-msgstr "номер пристрою основний:додатковий"
+msgstr "номер додаткового пристрою"
 
 #: misc-utils/lsblk.c:199
 msgid "minimum I/O size"
@@ -12055,13 +11920,11 @@ msgstr "серійний номер диска"
 
 #: misc-utils/lsblk.c:226
 msgid "size of the device, use <number> if --bytes is given"
-msgstr ""
+msgstr "розмір пристрою, скористайтеся <number>, якщо задано --bytes"
 
 #: misc-utils/lsblk.c:227
-#, fuzzy
-#| msgid "partition start offset"
 msgid "partition start offset (in 512-byte sectors)"
-msgstr "початковий зсув розділу"
+msgstr "зсув початку розділу (у 512-байтових секторах)"
 
 #: misc-utils/lsblk.c:228
 msgid "state of the device"
@@ -12093,7 +11956,7 @@ msgstr "виробник пристрою"
 
 #: misc-utils/lsblk.c:236
 msgid "write same max bytes, use <number> if --bytes is given"
-msgstr ""
+msgstr "макс. к-ть записаних однакових байтів, скористайтеся <number>, якщо задано --bytes"
 
 #: misc-utils/lsblk.c:237
 msgid "unique storage identifier"
@@ -12105,15 +11968,15 @@ msgstr "модель зони"
 
 #: misc-utils/lsblk.c:239
 msgid "zone size, use <number> if --bytes is given"
-msgstr ""
+msgstr "розмір зони, скористайтеся <number>, якщо задано --bytes"
 
 #: misc-utils/lsblk.c:240
 msgid "zone write granularity, use <number> if --bytes is given"
-msgstr ""
+msgstr "деталізація запису зони, скористайтеся <number>, якщо задано --bytes"
 
 #: misc-utils/lsblk.c:241
 msgid "zone append max bytes, use <number> if --bytes is given"
-msgstr ""
+msgstr "макс. к-ть байтів дописування зони, скористайтеся <number>, якщо задано --bytes"
 
 #: misc-utils/lsblk.c:242
 msgid "number of zones"
@@ -12128,10 +11991,8 @@ msgid "maximum number of active zones"
 msgstr "максимальна кількість активних зон"
 
 #: misc-utils/lsblk.c:1347 misc-utils/lsfd.c:1272
-#, fuzzy
-#| msgid "Failed to apply script %s"
 msgid "failed to apply filter"
-msgstr "Не вдалося застосувати скрипт %s"
+msgstr "не вдалося застосувати фільтр"
 
 #: misc-utils/lsblk.c:1564
 msgid "failed to allocate device"
@@ -12174,50 +12035,39 @@ msgid "the list of included devices is too large (limit is %d devices)"
 msgstr "список включених пристроїв є занадто довгим (обмежено %d пристроями)"
 
 #: misc-utils/lsblk.c:2119 misc-utils/lsfd.c:1955
-#, fuzzy
-#| msgid "failed to allocate iterator"
 msgid "failed to allocate filter"
-msgstr "не вдалося розподілити ітератор"
+msgstr "не вдалося розмістити фільтр"
 
 #: misc-utils/lsblk.c:2121 misc-utils/lsfd.c:1957
-#, fuzzy, c-format
-#| msgid "failed to parse %s"
+#, c-format
 msgid "failed to parse \"%s\": %s"
-msgstr "не вдалося обробити %s"
+msgstr "не вдалося обробити «%s»: %s"
 
 #: misc-utils/lsblk.c:2152
-#, fuzzy, c-format
-#| msgid "unexpected value for pid specification: %s"
+#, c-format
 msgid "unexpected counter specification: %s"
-msgstr "неочікуване значення для специфікації pid: %s"
+msgstr "неочікувана специфікація лічильника: %s"
 
 #: misc-utils/lsblk.c:2156
-#, fuzzy
-#| msgid "no mount source specified"
 msgid "counter not properly specified"
-msgstr "не вказано джерела монтування"
+msgstr "лічильник визначено неправильно"
 
 #: misc-utils/lsblk.c:2166 misc-utils/lsfd.c:2045
-#, fuzzy
-#| msgid "failed to allocate iterator"
 msgid "failed to allocate counter"
-msgstr "не вдалося розподілити ітератор"
+msgstr "не вдалося розмістити лічильник"
 
 #: misc-utils/lsblk.c:2183
-#, fuzzy, c-format
-#| msgid "unsupported source tag: %s"
+#, c-format
 msgid "unsupported counter type: %s"
-msgstr "непідтримувана мітка джерела: %s"
+msgstr "непідтримуваний тип лічильника: %s"
 
 #: misc-utils/lsblk.c:2196
 msgid "Summary:\n"
-msgstr ""
+msgstr "Резюме:\n"
 
 #: misc-utils/lsblk.c:2293
-#, fuzzy
-#| msgid "failed to initialize loopcxt"
 msgid "failed to initialize filter"
-msgstr "не вдалося ініціалізувати loopcxt"
+msgstr "не вдалося ініціалізувати фільтр"
 
 #: misc-utils/lsblk.c:2302 sys-utils/wdctl.c:230
 #, c-format
@@ -12257,22 +12107,20 @@ msgid " -O, --output-all     output all columns\n"
 msgstr " -O, --output-all     вивести усі стовпчики\n"
 
 #: misc-utils/lsblk.c:2316
-#, fuzzy
-#| msgid " -Q,      --filter <expr>     apply display filter\n"
 msgid " -Q, --filter <expr>  print only lines maching the expression\n"
-msgstr " -Q, --filter <вираз>         застосувати фільтрування виведення\n"
+msgstr " -Q, --filter <вираз> вивести лише рядки, які відповідають взірцю\n"
 
 #: misc-utils/lsblk.c:2317
 msgid "     --highlight <expr> colorize lines maching the expression\n"
-msgstr ""
+msgstr "     --highlight <вираз> розфарбувати рядки, що відповідають виразу\n"
 
 #: misc-utils/lsblk.c:2318
 msgid "     --ct-filter <expr> restrict the next counter\n"
-msgstr ""
+msgstr "     --ct-filter <вираз> обмежити лічильник наступних\n"
 
 #: misc-utils/lsblk.c:2319
 msgid "     --ct <name>[:<param>[:<func>]] define a custom counter\n"
-msgstr ""
+msgstr "     --ct <назва>[:<параметр>[:<функція>]] визначити нетиповий лічильник\n"
 
 #: misc-utils/lsblk.c:2320
 msgid " -S, --scsi           output info about SCSI devices\n"
@@ -12323,10 +12171,8 @@ msgid " -n, --noheadings     don't print headings\n"
 msgstr " -n, --noheadings       не виводити заголовки\n"
 
 #: misc-utils/lsblk.c:2333
-#, fuzzy
-#| msgid " -o, --output <list>  output columns\n"
 msgid " -o, --output <list>  output columns (see --list-columns)\n"
-msgstr " -o, --output <список>  стовпчики виведених даних\n"
+msgstr " -o, --output <список> стовпчики виведення (див. --list-columns)\n"
 
 #: misc-utils/lsblk.c:2334
 msgid " -p, --paths          print complete device path\n"
@@ -12361,10 +12207,8 @@ msgid "     --sysroot <dir>  use specified directory as system root\n"
 msgstr "     --sysroot <каталог> використати вказаний каталог як кореневий у системі\n"
 
 #: misc-utils/lsblk.c:2345
-#, fuzzy
-#| msgid "     --list-modes         list available modes\n"
 msgid " -H, --list-columns   list the available columns\n"
-msgstr "     --list-modes         вивести список доступних режимів\n"
+msgstr " -H, --list-columns   вивести список доступних стовпчиків\n"
 
 #: misc-utils/lsblk.c:2384
 #, c-format
@@ -12380,149 +12224,109 @@ msgid "failed to allocate device tree"
 msgstr "не вдалося розмістити у пам'яті ієрархію пристроїв"
 
 #: misc-utils/lsclocks.c:98
-#, fuzzy, c-format
-#| msgid "unknown type"
+#, c-format
 msgid "Unknown clock type %d"
-msgstr "невідомий тип"
+msgstr "Невідомий тип годинника %d"
 
 #: misc-utils/lsclocks.c:149
-#, fuzzy
-#| msgid "type name"
 msgid "type"
-msgstr "назва типу"
+msgstr "тип"
 
 #: misc-utils/lsclocks.c:150
 msgid "numeric id"
-msgstr ""
+msgstr "числовий ідентифікатор"
 
 #: misc-utils/lsclocks.c:151
-#, fuzzy
-#| msgid "Resource name"
 msgid "symbolic name"
-msgstr "Назва ресурсу"
+msgstr "символічна назва"
 
 #: misc-utils/lsclocks.c:152
-#, fuzzy
-#| msgid "file name"
 msgid "readable name"
-msgstr "назва файла"
+msgstr "зручна назва"
 
 #: misc-utils/lsclocks.c:153
-#, fuzzy
-#| msgid "Detach time"
 msgid "numeric time"
-msgstr "Час від'єднання"
+msgstr "числовий час"
 
 #: misc-utils/lsclocks.c:154
-#, fuzzy
-#| msgid "human readable size"
 msgid "human readable ISO time"
-msgstr "зручний для читання розмір"
+msgstr "зручний до читання час ISO"
 
 #: misc-utils/lsclocks.c:155
-#, fuzzy
-#| msgid "human readable size"
 msgid "human readable resolution"
-msgstr "зручний для читання розмір"
+msgstr "зручна для читання роздільність"
 
 #: misc-utils/lsclocks.c:156
-#, fuzzy
-#| msgid "resource description"
 msgid "resolution"
-msgstr "опис ресурсу"
+msgstr "роздільність"
 
 #: misc-utils/lsclocks.c:157
-#, fuzzy
-#| msgid "human readable size"
 msgid "human readable relative time"
-msgstr "зручний для читання розмір"
+msgstr "зручний для читання відносний час"
 
 #: misc-utils/lsclocks.c:158
-#, fuzzy
-#| msgid "failed to parse offset"
 msgid "namespace offset"
-msgstr "не вдалося обробити зсув"
+msgstr "зсув простору назв"
 
 #: misc-utils/lsclocks.c:185
-#, fuzzy
-#| msgid " -J, --json                  use JSON output format\n"
 msgid " -J, --json                 use JSON output format\n"
-msgstr " -J, --json                  використати формат виведення JSON\n"
+msgstr " -J, --json                 використати формат виведення JSON\n"
 
 #: misc-utils/lsclocks.c:186
-#, fuzzy
-#| msgid " -n, --noheadings          don't print headings\n"
 msgid " -n, --noheadings           don't print headings\n"
-msgstr " -n, --noheadings          не виводити заголовки\n"
+msgstr " -n, --noheadings           не виводити заголовки\n"
 
 #: misc-utils/lsclocks.c:187
-#, fuzzy
-#| msgid " -o, --output <list>       output columns\n"
 msgid " -o, --output <list>        output columns\n"
-msgstr " -o, --output <список>     стовпчики виведених даних\n"
+msgstr " -o, --output <список>      стовпчики виведених даних\n"
 
 #: misc-utils/lsclocks.c:188
-#, fuzzy
-#| msgid "     --output-all          output all columns\n"
 msgid "     --output-all           output all columns\n"
-msgstr "     --output-all          вивести усі стовпчики\n"
+msgstr "     --output-all           вивести усі стовпчики\n"
 
 #: misc-utils/lsclocks.c:189
-#, fuzzy
-#| msgid " -r, --raw              use raw output format\n"
 msgid " -r, --raw                  use raw output format\n"
-msgstr " -r, --raw              використовувати формат виведення без обробки\n"
+msgstr " -r, --raw                  використовувати формат виведення без обробки\n"
 
 #: misc-utils/lsclocks.c:190
-#, fuzzy
-#| msgid " -t, --time <ms>              driver wait time in milliseconds\n"
 msgid " -t, --time <clock>         show current time of single clock\n"
-msgstr " -t, --time <мс>              час очікування драйвера у мілісекундах\n"
+msgstr " -t, --time <годинник>      вивести поточний час окремого годинника\n"
 
 #: misc-utils/lsclocks.c:191
 msgid " --no-discover-dynamic      do not try to discover dynamic clocks\n"
-msgstr ""
+msgstr " --no-discover-dynamic      не намагатися виявити динамічні годинники\n"
 
 #: misc-utils/lsclocks.c:192
 msgid " -d, --dynamic-clock <path> also display specified dynamic clock\n"
-msgstr ""
+msgstr " -d, --dynamic-clock <шлях> також показати вказаний динамічний годинник\n"
 
 #: misc-utils/lsclocks.c:193
-#, fuzzy
-#| msgid " -p, --pid <pid>        display only locks held by this process\n"
 msgid " -c, --cpu-clock <pid>      also display CPU clock of specified process\n"
-msgstr " -p, --pid <pid>...     вивести лише блокування, які утримуються вказаним процесом\n"
+msgstr " -c, --cpu-clock <pid>      також вивести годинник процесора вказаного процесу\n"
 
 #: misc-utils/lsclocks.c:248
-#, fuzzy, c-format
-#| msgid "Unknown command: %s"
+#, c-format
 msgid "Unknown clock: %s"
-msgstr "Невідома команда: %s"
+msgstr "Невідомий годинник: %s"
 
 #: misc-utils/lsclocks.c:259 misc-utils/lsclocks.c:388
 #: misc-utils/lsclocks.c:435
-#, fuzzy, c-format
-#| msgid "could not open '%s'"
+#, c-format
 msgid "Could not open %s"
-msgstr "не вдалося відкрити «%s»"
+msgstr "Не вдалось відкрити %s"
 
 #: misc-utils/lsclocks.c:325
-#, fuzzy
-#| msgid "failed to parse --timeout"
 msgid "failed to format iso time"
-msgstr "не вдалося обробити --timeout"
+msgstr "не вдалося форматувати час iso"
 
 #: misc-utils/lsclocks.c:334 misc-utils/lsclocks.c:347
-#, fuzzy
-#| msgid "failed to create reload file: %s: %m"
 msgid "failed to format relative time"
-msgstr "не вдалося створити файл перезавантаження: %s: %m"
+msgstr "не вдалося форматувати відносний час"
 
 #: misc-utils/lsclocks.c:414 misc-utils/lsclocks.c:478
-#, fuzzy, c-format
-#| msgid "could not read: %s"
+#, c-format
 msgid "Could not glob: %d"
-msgstr "не вдалося прочитати: %s"
+msgstr "Не вдалося створити загальний вираз: %d"
 
 #: misc-utils/lsclocks.c:443 sys-utils/hwclock-rtc.c:145
 #, c-format
@@ -12532,7 +12336,7 @@ msgstr "спроба виконання ioctl(RTC_RD_NAME) до %s для чит
 #: misc-utils/lsclocks.c:502
 #, c-format
 msgid "Could not get CPU clock of process %jd: %s"
-msgstr ""
+msgstr "Не вдалося отримати годинник процесора процесу %jd: %s"
 
 #: misc-utils/lsclocks.c:599 misc-utils/lslocks.c:385 misc-utils/uuidd.c:791
 #: misc-utils/waitpid.c:54 sys-utils/nsenter.c:390
@@ -12540,10 +12344,8 @@ msgid "failed to parse pid"
 msgstr "не вдалося обробити pid"
 
 #: misc-utils/lsclocks.c:627
-#, fuzzy
-#| msgid "failed to get lock"
 msgid "failed to get time"
-msgstr "не вдалося заблокувати"
+msgstr "не вдалося отримати час"
 
 #: misc-utils/lsfd.c:147
 msgid "class of anonymous inode"
@@ -12559,41 +12361,31 @@ msgstr "назва драйвера блокового пристрою, виз�
 
 #: misc-utils/lsfd.c:156
 msgid "bpf map id associated with the fd"
-msgstr ""
+msgstr "Ідентифікатор карти bpf, який пов'язано із дескриптором файла"
 
 #: misc-utils/lsfd.c:159
-#, fuzzy
-#| msgid "file type (cooked)"
 msgid "bpf map type (decoded)"
-msgstr "тип файла (приготований)"
+msgstr "тип карти bpf (декодований)"
 
 #: misc-utils/lsfd.c:162
-#, fuzzy
-#| msgid "file type (raw)"
 msgid "bpf map type (raw)"
-msgstr "тип файла (без обробки)"
+msgstr "тип карти bpf (raw)"
 
 #: misc-utils/lsfd.c:165
 msgid "bpf object name"
-msgstr ""
+msgstr "Назва об'єкта bpf"
 
 #: misc-utils/lsfd.c:168
-#, fuzzy
-#| msgid "L3 protocol associated with the packet socket"
 msgid "bpf program id associated with the fd"
-msgstr "протокол L3, який пов'язано із сокетом пакета"
+msgstr "ідентифікатор програми bpf, який пов'язано із дескриптором файла"
 
 #: misc-utils/lsfd.c:171
-#, fuzzy
-#| msgid "No program specified"
 msgid "bpf program type (decoded)"
-msgstr "Не вказано програму"
+msgstr "тип програми bpf (декодований)"
 
 #: misc-utils/lsfd.c:174
-#, fuzzy
-#| msgid "file type (raw)"
 msgid "bpf program type (raw)"
-msgstr "тип файла (без обробки)"
+msgstr "тип програми bpf (без обробки)"
 
 #: misc-utils/lsfd.c:177
 msgid "character device driver name resolved by /proc/devices"
@@ -12620,16 +12412,12 @@ msgid "IPC endpoints information communicated with the fd"
 msgstr "дані щодо кінцевих точок IPC, що обмінювалися даними з дескриптором файла"
 
 #: misc-utils/lsfd.c:195
-#, fuzzy
-#| msgid "eventfd failed"
 msgid "eventfd ID"
-msgstr "помилка eventfd"
+msgstr "ідентифікатор eventfd"
 
 #: misc-utils/lsfd.c:198
-#, fuzzy
-#| msgid "file descriptor for the file"
 msgid "file descriptors targeted by the eventpoll file"
-msgstr "дескриптор файла"
+msgstr "дескриптори файлів, які є призначенням файла eventpoll"
 
 #: misc-utils/lsfd.c:201
 msgid "file descriptor for the file"
@@ -12665,11 +12453,11 @@ msgstr "номер inode"
 
 #: misc-utils/lsfd.c:225
 msgid "list of monitoring inodes (cooked)"
-msgstr ""
+msgstr "список inode зі спостереженням (оброблений)"
 
 #: misc-utils/lsfd.c:228
 msgid "list of monitoring inodes (raw, don't decode devices)"
-msgstr ""
+msgstr "список inode зі спостереженням (необроблений, не декодувати пристрої)"
 
 #: misc-utils/lsfd.c:231
 msgid "name of the file (raw)"
@@ -12768,10 +12556,8 @@ msgid "file position"
 msgstr "позиція файла"
 
 #: misc-utils/lsfd.c:303
-#, fuzzy
-#| msgid "type of the namespace"
 msgid "tty index of the counterpart"
-msgstr "тип простору назв"
+msgstr "індекс tty дубліката"
 
 #: misc-utils/lsfd.c:306
 msgid "protocol number of the raw socket"
@@ -12782,10 +12568,8 @@ msgid "device ID (if special file)"
 msgstr "ідентифікатор пристрою (якщо особливий файл)"
 
 #: misc-utils/lsfd.c:312
-#, fuzzy
-#| msgid "signals"
 msgid "masked signals"
-msgstr "сигнали"
+msgstr "масковані сигнали"
 
 #: misc-utils/lsfd.c:315
 msgid "file size"
@@ -12805,19 +12589,15 @@ msgstr "назва протоколу"
 
 #: misc-utils/lsfd.c:327
 msgid "shutdown state of socket ([-r?][-w?])"
-msgstr ""
+msgstr "стан вимикання сокета ([-r?][-w?])"
 
 #: misc-utils/lsfd.c:330
-#, fuzzy
-#| msgid "State of socket"
 msgid "state of socket"
-msgstr "Стан сокета"
+msgstr "стан сокета"
 
 #: misc-utils/lsfd.c:333
-#, fuzzy
-#| msgid "Type of socket"
 msgid "type of socket"
-msgstr "Тип сокета"
+msgstr "тип сокета"
 
 #: misc-utils/lsfd.c:336
 msgid "file system, partition, or device containing file"
@@ -12848,26 +12628,20 @@ msgid "thread ID of the process opening the file"
 msgstr "ідентифікатор потоку процесу, який утримує блокування"
 
 #: misc-utils/lsfd.c:357
-#, fuzzy
-#| msgid "locked"
 msgid "clockid"
-msgstr "блоковано"
+msgstr "clockid"
 
 #: misc-utils/lsfd.c:360
-#, fuzzy
-#| msgid "interleave"
 msgid "interval"
-msgstr "чергування"
+msgstr "проміжок"
 
 #: misc-utils/lsfd.c:363
-#, fuzzy
-#| msgid "Minimum change time"
 msgid "remaining time"
-msgstr "Мінімальний час зміни"
+msgstr "час, що залишився:"
 
 #: misc-utils/lsfd.c:366
 msgid "network interface behind the tun device"
-msgstr ""
+msgstr "інтерфейс мережі в основі пристрою тунелювання"
 
 #: misc-utils/lsfd.c:369
 msgid "file type (cooked)"
@@ -12919,7 +12693,7 @@ msgstr "користувач процесу"
 
 #: misc-utils/lsfd.c:405
 msgid "extended version of MDOE (rwxD[Ll]m)"
-msgstr ""
+msgstr "розширена версія РЕЖИМу (rwxD[Ll]m)"
 
 #: misc-utils/lsfd.c:449 sys-utils/prlimit.c:79
 msgid "processes"
@@ -13026,100 +12800,68 @@ msgid "failed to open /proc"
 msgstr "не вдалося відкрити /proc"
 
 #: misc-utils/lsfd.c:1896
-#, fuzzy
-#| msgid " -l,      --threads           list in threads level\n"
 msgid " -l, --threads                list in threads level\n"
-msgstr " -l, --threads                вивести список на рівні потоків обробки\n"
+msgstr " -l, --threads               вивести список на рівні потоків обробки\n"
 
 #: misc-utils/lsfd.c:1897
-#, fuzzy
-#| msgid " -J, --json                  use JSON output format\n"
 msgid " -J, --json                   use JSON output format\n"
 msgstr " -J, --json                  використати формат виведення JSON\n"
 
 #: misc-utils/lsfd.c:1898
-#, fuzzy
-#| msgid " -n, --noheadings          don't print headings\n"
 msgid " -n, --noheadings             don't print headings\n"
-msgstr " -n, --noheadings          не виводити заголовки\n"
+msgstr " -n, --noheadings             не виводити заголовки\n"
 
 #: misc-utils/lsfd.c:1899
-#, fuzzy
-#| msgid " -o, --output <list>           output columns\n"
 msgid " -o, --output <list>          output columns (see --list-columns)\n"
-msgstr " -o, --output <список>         стовпчики виведених даних\n"
+msgstr " -o, --output <список>        стовпчики виведення (див. --list-columns)\n"
 
 #: misc-utils/lsfd.c:1900
-#, fuzzy
-#| msgid " -r, --raw              use raw output format\n"
 msgid " -r, --raw                    use raw output format\n"
-msgstr " -r, --raw              використовувати формат виведення без обробки\n"
+msgstr " -r, --raw                    використовувати формат виведення без обробки\n"
 
 #: misc-utils/lsfd.c:1901
-#, fuzzy
-#| msgid " -u, --notruncate       don't truncate text in columns\n"
 msgid " -u, --notruncate             don't truncate text in columns\n"
-msgstr " -u, --notruncate       не обрізати текст у стовпчиках\n"
+msgstr " -u, --notruncate            не обрізати текст у стовпчиках\n"
 
 #: misc-utils/lsfd.c:1902
-#, fuzzy
-#| msgid " -p,      --pid  <pid(s)>     collect information only specified processes\n"
 msgid " -p, --pid  <pid(s)>          collect information only specified processes\n"
 msgstr " -p, --pid  <pid>             зібрати відомості лише щодо вказаних процесів\n"
 
 #: misc-utils/lsfd.c:1903
-#, fuzzy
-#| msgid " -i[4|6], --inet[=4|6]        list only IPv4 and/or IPv6 sockets\n"
 msgid " -i[4|6], --inet[=4|=6]       list only IPv4 and/or IPv6 sockets\n"
-msgstr " -i[4|6], --inet[=4|6]        вивести список лише сокетів IPv4 і/або IPv6\n"
+msgstr " -i[4|6], --inet[=4|=6]       вивести список лише сокетів IPv4 і/або IPv6\n"
 
 #: misc-utils/lsfd.c:1904
-#, fuzzy
-#| msgid " -Q,      --filter <expr>     apply display filter\n"
 msgid " -Q, --filter <expr>          apply display filter\n"
 msgstr " -Q, --filter <вираз>         застосувати фільтрування виведення\n"
 
 #: misc-utils/lsfd.c:1905
-#, fuzzy
-#| msgid "          --debug-filter      dump the internal data structure of filter and exit\n"
 msgid "     --debug-filter           dump the internal data structure of filter and exit\n"
-msgstr "          --debug-filter     створити дамп структури внутрішніх даних фільтра і вийти\n"
+msgstr "    --debug-filter           створити дамп структури внутрішніх даних фільтра і вийти\n"
 
 #: misc-utils/lsfd.c:1906
-#, fuzzy
-#| msgid ""
-#| " -C,      --counter <name>:<expr>\n"
-#| "                              define custom counter for --summary output\n"
 msgid " -C, --counter <name>:<expr>  define custom counter for --summary output\n"
-msgstr ""
-" -C, --counter <назва>:<вираз>\n"
-"                              визначити нетиповий лічильник для виведення --summary\n"
+msgstr " -C, --counter <назва>:<вираз> визначити нетиповий лічильник для виведення --summary\n"
 
 #: misc-utils/lsfd.c:1907
-#, fuzzy
-#| msgid "          --dump-counters     dump counter definitions\n"
 msgid "     --dump-counters          dump counter definitions\n"
-msgstr "     --dump-counters          створити дамп визначень лічильників\n"
+msgstr "     --dump-counters         створити дамп визначень лічильників\n"
 
 #: misc-utils/lsfd.c:1908
-#, fuzzy
-#| msgid "          --summary[=<when>]  print summary information (only, append, or never)\n"
 msgid "     --summary[=<when>]       print summary information (only, append, or never)\n"
-msgstr "          --summary[=<умова>]  вивести дані резюме (only - лише, append - дописати або never - ніколи)\n"
+msgstr "      --summary[=<умова>]     вивести дані резюме (only - лише, append - дописати або never - ніколи)\n"
 
 #: misc-utils/lsfd.c:1911
-#, fuzzy
-#| msgid "     --list-modes         list available modes\n"
 msgid " -H, --list-columns           list the available columns\n"
-msgstr "     --list-modes         вивести список доступних режимів\n"
+msgstr " -H, --list-columns           вивести список доступних стовпчиків\n"
 
 #: misc-utils/lsfd.c:1915
 msgid "Default"
-msgstr ""
+msgstr "Типовий"
 
 #: misc-utils/lsfd.c:1916
 msgid "With --threads"
-msgstr ""
+msgstr "З --threads"
 
 #: misc-utils/lsfd.c:1998
 #, c-format
@@ -13158,10 +12900,8 @@ msgid "COUNTER"
 msgstr "ЛІЧИЛЬНИК"
 
 #: misc-utils/lsfd.c:2159
-#, fuzzy
-#| msgid "failed to allocate summary table"
 msgid "failed to allocate summary line"
-msgstr "не вдалося розмістити у пам'яті таблицю-резюме"
+msgstr "не вдалося розмістити у пам'яті рядок резюме"
 
 #: misc-utils/lsfd.c:2163 misc-utils/lsfd.c:2165
 msgid "failed to add summary data"
@@ -13198,7 +12938,7 @@ msgstr "тип блокування"
 
 #: misc-utils/lslocks.c:83
 msgid "size of the lock, use <number> if --bytes is given"
-msgstr ""
+msgstr "розмір блокування, скористайтеся <number>, якщо задано --bytes"
 
 #: misc-utils/lslocks.c:86
 msgid "lock access mode"
@@ -13225,10 +12965,8 @@ msgid "PID of the process blocking the lock"
 msgstr "PID процесу, який утримує блокування"
 
 #: misc-utils/lslocks.c:92
-#, fuzzy
-#| msgid "size of the lock"
 msgid "HOLDERS of the lock"
-msgstr "розмір блокування"
+msgstr "УТРИМУВАЧІ блокування"
 
 #: misc-utils/lslocks.c:286
 #, c-format
@@ -13850,68 +13588,49 @@ msgid "Create a new UUID value.\n"
 msgstr "Створити значення UUID.\n"
 
 #: misc-utils/uuidgen.c:34
-#, fuzzy
-#| msgid " -r, --random        generate random-based uuid\n"
 msgid " -r, --random          generate random-based uuid\n"
-msgstr " -r, --random        створити uuid на псевдовипадковій основі\n"
+msgstr " -r, --random          створити uuid на псевдовипадковій основі\n"
 
 #: misc-utils/uuidgen.c:35
-#, fuzzy
-#| msgid " -t, --time          generate time-based uuid\n"
 msgid " -t, --time            generate time-based uuid\n"
-msgstr " -t, --time          створити uuid на основі даних щодо часу\n"
+msgstr " -t, --time            створити uuid на основі даних щодо часу\n"
 
 #: misc-utils/uuidgen.c:36
-#, fuzzy
-#| msgid " -n, --namespace ns  generate hash-based uuid in this namespace\n"
 msgid " -n, --namespace <ns>  generate hash-based uuid in this namespace\n"
-msgstr " -n, --namespace пн  створити заснований на хеші uuid у цьому просторі назв\n"
+msgstr " -n, --namespace <нс>  створити заснований на хеші uuid у цьому просторі назв\n"
 
 #: misc-utils/uuidgen.c:37
-#, fuzzy, c-format
-#| msgid "                       available namespaces: %s\n"
+#, c-format
 msgid "                        available namespaces: %s\n"
-msgstr "                       доступні простори назв: %s\n"
+msgstr "                        доступні простори назв: %s\n"
 
 #: misc-utils/uuidgen.c:38
-#, fuzzy
-#| msgid " -N, --name name     generate hash-based uuid from this name\n"
 msgid " -N, --name <name>     generate hash-based uuid from this name\n"
-msgstr " -N, --name ім'я     створити заснований на хеші uuid для цього імені\n"
+msgstr " -N, --name <назва>    створити заснований на хеші uuid для цієї назви\n"
 
 #: misc-utils/uuidgen.c:39
-#, fuzzy
-#| msgid " -m, --md5           generate md5 hash\n"
 msgid " -m, --md5             generate md5 hash\n"
-msgstr " -m, --md5           створити хеш-суму md5\n"
+msgstr " -m, --md5             створити хеш-суму md5\n"
 
 #: misc-utils/uuidgen.c:40
-#, fuzzy
-#| msgid " -n, --uuids <num>       request number of uuids\n"
 msgid " -C, --count <num>     generate more uuids in loop\n"
-msgstr " -n, --uuids <число>     надіслати запит щодо вказаної кількості uuid\n"
+msgstr " -C, --count <кількість> циклічно створити додаткові uuid\n"
 
 #: misc-utils/uuidgen.c:41
-#, fuzzy
-#| msgid " -s, --sha1          generate sha1 hash\n"
 msgid " -s, --sha1            generate sha1 hash\n"
-msgstr " -s, --sha1          створити хеш-суму sha1\n"
+msgstr " -s, --sha1            створити хеш-суму sha1\n"
 
 #: misc-utils/uuidgen.c:42
-#, fuzzy
-#| msgid " -x, --hex           interpret name as hex string\n"
 msgid " -x, --hex             interpret name as hex string\n"
-msgstr " -x, --hex           вважати ім'я шістнадцятковим рядком\n"
+msgstr " -x, --hex             вважати ім'я шістнадцятковим рядком\n"
 
 #: misc-utils/uuidgen.c:56
 msgid "not a valid hex string"
 msgstr "не є коректним шістнадцятковим рядком"
 
 #: misc-utils/uuidgen.c:145
-#, fuzzy
-#| msgid "invalid columns argument"
 msgid "invalid count argument"
-msgstr "некоректний аргумент стовпчиків"
+msgstr "некоректний аргумент кількості"
 
 #: misc-utils/uuidgen.c:165
 msgid "--namespace requires --name argument"
@@ -14227,68 +13946,46 @@ msgid "Wipe signatures from a device."
 msgstr "Витерти підпис з пристрою."
 
 #: misc-utils/wipefs.c:636
-#, fuzzy
-#| msgid " -a, --all           wipe all magic strings (BE CAREFUL!)"
 msgid " -a, --all            wipe all magic strings (BE CAREFUL!)"
-msgstr " -a, --all           витерти усі магічні рядки (ОБЕРЕЖНО!)"
+msgstr " -a, --all            витерти усі магічні рядки (ОБЕРЕЖНО!)"
 
 #: misc-utils/wipefs.c:637
-#, fuzzy
-#| msgid " -b, --backup        create a signature backup in $HOME"
 msgid " -b, --backup[=<dir>] create a signature backup in <dir> or $HOME"
-msgstr " -b, --backup        створити резервну копію підпису у $HOME"
+msgstr " -b, --backup[=<кат>] створити резервну копію підпису у каталозі <кат> або $HOME"
 
 #: misc-utils/wipefs.c:638
-#, fuzzy
-#| msgid " -f, --force         force erasure"
 msgid " -f, --force          force erasure"
-msgstr " -f, --force         примусове витирання"
+msgstr " -f, --force          примусове витирання"
 
 #: misc-utils/wipefs.c:639
-#, fuzzy
-#| msgid " -i, --noheadings    don't print headings"
 msgid " -i, --noheadings     don't print headings"
-msgstr " -i, --noheadings    не виводити заголовків"
+msgstr " -i, --noheadings     не виводити заголовків"
 
 #: misc-utils/wipefs.c:640
-#, fuzzy
-#| msgid " -J, --json           use JSON output format\n"
 msgid " -J, --json           use JSON output format"
-msgstr " -J, --json           використати формат виведення JSON\n"
+msgstr " -J, --json           використати формат виведення JSON"
 
 #: misc-utils/wipefs.c:641
-#, fuzzy
-#| msgid " -n, --no-act        do everything except the actual write() call"
 msgid " -n, --no-act         do everything except the actual write() call"
-msgstr " -n, --no-act        виконати усі дії, окрім виклику write()"
+msgstr " -n, --no-act         виконати усі дії, окрім виклику write()"
 
 #: misc-utils/wipefs.c:642
-#, fuzzy
-#| msgid " -o, --offset <num>  offset to erase, in bytes"
 msgid " -o, --offset <num>   offset to erase, in bytes"
 msgstr " -o, --offset <число> відступ для витирання у байтах"
 
 #: misc-utils/wipefs.c:643
-#, fuzzy
-#| msgid " -O, --output <list> COLUMNS to display (see below)"
 msgid " -O, --output <list>  COLUMNS to display (see below)"
 msgstr " -O, --output <список> стовпчики виведення, які буде показано (див. нижче)"
 
 #: misc-utils/wipefs.c:644
-#, fuzzy
-#| msgid " -p, --parsable      print out in parsable instead of printable format"
 msgid " -p, --parsable       print out in parsable instead of printable format"
-msgstr " -p, --parsable      вивести дані у придатному для обробки, а не у придатному для друку форматі"
+msgstr " -p, --parsable       вивести дані у придатному для обробки, а не у придатному для друку форматі"
 
 #: misc-utils/wipefs.c:645
-#, fuzzy
-#| msgid " -q, --quiet         suppress output messages"
 msgid " -q, --quiet          suppress output messages"
-msgstr " -q, --quiet         придушити виведення повідомлень"
+msgstr " -q, --quiet          придушити виведення повідомлень"
 
 #: misc-utils/wipefs.c:646
-#, fuzzy
-#| msgid " -t, --types <list>  limit the set of filesystem, RAIDs or partition tables"
 msgid " -t, --types <list>   limit the set of filesystem, RAIDs or partition tables"
 msgstr " -t, --types <список> обмежити набір файлових систем, RAID або таблиць розділів"
 
@@ -15601,76 +15298,52 @@ msgid "FTP daemon"
 msgstr "фонова служба FTP"
 
 #: sys-utils/dmesg.c:158
-#, fuzzy
-#| msgid "noreserve"
 msgid "reserved 0"
-msgstr "noreserve"
+msgstr "зарезервовано 0"
 
 #: sys-utils/dmesg.c:159
-#, fuzzy
-#| msgid "noreserve"
 msgid "reserved 1"
-msgstr "noreserve"
+msgstr "зарезервовано 1"
 
 #: sys-utils/dmesg.c:160
-#, fuzzy
-#| msgid "noreserve"
 msgid "reserved 2"
-msgstr "noreserve"
+msgstr "зарезервовано 2"
 
 #: sys-utils/dmesg.c:161
-#, fuzzy
-#| msgid "noreserve"
 msgid "reserved 3"
-msgstr "noreserve"
+msgstr "зарезервовано 3"
 
 #: sys-utils/dmesg.c:162
-#, fuzzy
-#| msgid "local"
 msgid "local use 0"
-msgstr "локальний"
+msgstr "локальне використання 0"
 
 #: sys-utils/dmesg.c:163
-#, fuzzy
-#| msgid "local"
 msgid "local use 1"
-msgstr "локальний"
+msgstr "локальне використання 1"
 
 #: sys-utils/dmesg.c:164
-#, fuzzy
-#| msgid "local"
 msgid "local use 2"
-msgstr "локальний"
+msgstr "локальне використання 2"
 
 #: sys-utils/dmesg.c:165
-#, fuzzy
-#| msgid "local"
 msgid "local use 3"
-msgstr "локальний"
+msgstr "локальне використання 3"
 
 #: sys-utils/dmesg.c:166
-#, fuzzy
-#| msgid "local"
 msgid "local use 4"
-msgstr "локальний"
+msgstr "локальне використання 4"
 
 #: sys-utils/dmesg.c:167
-#, fuzzy
-#| msgid "local"
 msgid "local use 5"
-msgstr "локальний"
+msgstr "локальне використання 5"
 
 #: sys-utils/dmesg.c:168
-#, fuzzy
-#| msgid "local"
 msgid "local use 6"
-msgstr "локальний"
+msgstr "локальне використання 6"
 
 #: sys-utils/dmesg.c:169
-#, fuzzy
-#| msgid "local"
 msgid "local use 7"
-msgstr "локальний"
+msgstr "локальне використання 7"
 
 #: sys-utils/dmesg.c:320
 msgid "Display or control the kernel ring buffer.\n"
@@ -15697,10 +15370,8 @@ msgid " -F, --file <file>           use the file instead of the kernel log buffe
 msgstr " -F, --file <файл>           використовувати файл замість буфера журналу ядра\n"
 
 #: sys-utils/dmesg.c:328
-#, fuzzy
-#| msgid " -F, --file <file>           use the file instead of the kernel log buffer\n"
 msgid " -K, --kmsg-file <file>      use the file in kmsg format\n"
-msgstr " -F, --file <файл>           використовувати файл замість буфера журналу ядра\n"
+msgstr " -K, --kmsg-file <файл>      використати файл у форматі kmsg\n"
 
 #: sys-utils/dmesg.c:329
 msgid " -f, --facility <list>       restrict output to defined facilities\n"
@@ -15788,18 +15459,13 @@ msgid " -t, --notime                don't show any timestamp with messages\n"
 msgstr " -t, --notime                не виводити часових позначок разом із повідомленнями\n"
 
 #: sys-utils/dmesg.c:353
-#, fuzzy
-#| msgid ""
-#| "     --time-format <format>  show timestamp using the given format:\n"
-#| "                               [delta|reltime|ctime|notime|iso]\n"
-#| "Suspending/resume will make ctime and iso timestamps inaccurate.\n"
 msgid ""
 "     --time-format <format>  show timestamp using the given format:\n"
 "                               [delta|reltime|ctime|notime|iso|raw]\n"
 "Suspending/resume will make ctime and iso timestamps inaccurate.\n"
 msgstr ""
 "     --time-format <формат>  показувати часові позначки у вказаному форматі:\n"
-"                               [delta|reltime|ctime|notime|iso]\n"
+"                               [delta|reltime|ctime|notime|iso|raw]\n"
 "Присипляння та відновлення роботи системи робить часові позначки ctime та iso неточними.\n"
 
 #: sys-utils/dmesg.c:356
@@ -15867,10 +15533,8 @@ msgid "%b%e %H:%M"
 msgstr "%e%b %H:%M"
 
 #: sys-utils/dmesg.c:1569
-#, fuzzy
-#| msgid "data block too large"
 msgid "record too large"
-msgstr "блок даних є надто великим"
+msgstr "запис надто великий"
 
 #: sys-utils/dmesg.c:1795
 msgid "invalid buffer size argument"
@@ -15882,7 +15546,7 @@ msgstr "--raw можна використовувати разом з --level а
 
 #: sys-utils/dmesg.c:1919
 msgid "only kmsg supports multi-line messages"
-msgstr ""
+msgstr "підтримку багаторядкових повідомлень передбачено лише у kmsg"
 
 #: sys-utils/dmesg.c:1934
 msgid "read kernel buffer failed"
@@ -16906,16 +16570,12 @@ msgid "     --param-set <param>=<value> set the RTC parameter"
 msgstr "     --param-set <парам>=<знач>  встановити параметр годинника реального часу"
 
 #: sys-utils/hwclock.c:1239
-#, fuzzy
-#| msgid "     --raw                 use raw status output format\n"
 msgid "     --vl-read                   read voltage low information"
-msgstr "     --raw                 використовувати формат виведення стану без обробки\n"
+msgstr "     --vl-read                   читати дані щодо низької напруги"
 
 #: sys-utils/hwclock.c:1240
-#, fuzzy
-#| msgid " -C, --clear                 clear the kernel ring buffer\n"
 msgid "     --vl-clear                  clear voltage low information"
-msgstr " -C, --clear                 спорожнити кільцевий буфер ядра\n"
+msgstr "     --vl-clear                  вилучити відомості щодо низької напруги"
 
 #: sys-utils/hwclock.c:1242
 msgid "     --predict                   predict the drifted RTC time according to --date"
@@ -17025,10 +16685,8 @@ msgid "Test mode: nothing was changed."
 msgstr "Режим перевірки: нічого не змінено."
 
 #: sys-utils/hwclock.c:1633
-#, fuzzy
-#| msgid "could not set timer"
 msgid "could not send audit message"
-msgstr "не вдалося встановити таймер"
+msgstr "не вдалося надіслати повідомлення ревізування"
 
 #: sys-utils/hwclock-cmos.c:366
 msgid "ISA port access is not implemented"
@@ -17165,49 +16823,43 @@ msgstr "успішне виконання ioctl(%d, RTC_PARAM_SET, param) щод
 
 #: sys-utils/hwclock-rtc.c:552
 msgid "Voltage too low, RTC data is invalid"
-msgstr ""
+msgstr "Напруга є надто низькою, дані RTC є некоректними"
 
 #: sys-utils/hwclock-rtc.c:553
 msgid "Backup voltage is low"
-msgstr ""
+msgstr "Напруга резервного копіювання є низькою"
 
 #: sys-utils/hwclock-rtc.c:554
 msgid "Backup empty or not present"
-msgstr ""
+msgstr "Резервна копія порожня або її немає"
 
 #: sys-utils/hwclock-rtc.c:555
 msgid "Voltage is low, RTC accuracy is reduced"
-msgstr ""
+msgstr "Низька напруга, точність RTC знижено"
 
 #: sys-utils/hwclock-rtc.c:556
-#, fuzzy
-#| msgid "backup switch mode"
 msgid "Backup switchover happened"
-msgstr "режим перемикача резервного копіювання"
+msgstr "Сталося перемикання резервного копіювання"
 
 #: sys-utils/hwclock-rtc.c:566
-#, fuzzy, c-format
-#| msgid "ioctl(%d, RTC_EPOCH_READ, epoch_p) to %s failed"
+#, c-format
 msgid "ioctl(%d, RTC_VL_READ) on %s failed"
-msgstr "Помилка під час встановлення ioctl(%d, RTC_EPOCH_READ, epoch_p) у %s"
+msgstr "помилка ioctl(%d, RTC_VL_READ) для %s"
 
 #: sys-utils/hwclock-rtc.c:572
-#, fuzzy, c-format
-#| msgid "ioctl(%d, RTC_EPOCH_READ, epoch_p) to %s succeeded.\n"
+#, c-format
 msgid "ioctl(%d, RTC_VL_READ) on %s returned 0x%x\n"
-msgstr "Успішно встановлено ioctl(%d, RTC_EPOCH_READ, epoch_p) у %s.\n"
+msgstr "ioctl(%d, RTC_VL_READ) для %s повернуто 0x%x\n"
 
 #: sys-utils/hwclock-rtc.c:601
-#, fuzzy, c-format
-#| msgid "ioctl(%d, RTC_UIE_ON, 0) to %s failed"
+#, c-format
 msgid "ioctl(%d, RTC_VL_CLEAR) on %s failed"
-msgstr "Помилка під час встановлення ioctl(%d, RTC_UIE_ON, 0) у %s"
+msgstr "помилка ioctl(%d, RTC_VL_CLEAR) для %s"
 
 #: sys-utils/hwclock-rtc.c:607
-#, fuzzy, c-format
-#| msgid "ioctl(%d, RTC_EPOCH_SET, %lu) to %s succeeded.\n"
+#, c-format
 msgid "ioctl(%d, RTC_VL_CLEAR) on %s succeeded.\n"
-msgstr "Успішно встановлено ioctl(%d, RTC_EPOCH_SET, %lu) у %s.\n"
+msgstr "успішно виконано ioctl(%d, RTC_VL_CLEAR) для %s.\n"
 
 #: sys-utils/ipcmk.c:70
 msgid "Create various IPC resources.\n"
@@ -18268,16 +17920,12 @@ msgid "backing file major:minor device number"
 msgstr "номер пристрою основний:додатковий для резервного файла"
 
 #: sys-utils/losetup.c:89
-#, fuzzy
-#| msgid "backing file major:minor device number"
 msgid "backing file major device number"
-msgstr "номер пристрою основний:додатковий для резервного файла"
+msgstr "номер основного пристрою для резервного файла"
 
 #: sys-utils/losetup.c:90
-#, fuzzy
-#| msgid "backing file major:minor device number"
 msgid "backing file minor device number"
-msgstr "номер пристрою основний:додатковий для резервного файла"
+msgstr "номер додаткового пристрою для резервного файла"
 
 #: sys-utils/losetup.c:91
 msgid "loop device name"
@@ -18292,10 +17940,8 @@ msgid "partscan flag set"
 msgstr "встановлено прапорець partscan"
 
 #: sys-utils/losetup.c:94
-#, fuzzy
-#| msgid "loop device name"
 msgid "loop device reference string"
-msgstr "назва петльового пристрою (loop)"
+msgstr "рядок посилання на петльовий пристрій"
 
 #: sys-utils/losetup.c:96
 msgid "size limit of the file in bytes"
@@ -18306,16 +17952,12 @@ msgid "loop device major:minor number"
 msgstr "номер пристрою основний:додатковий для петльового пристрою"
 
 #: sys-utils/losetup.c:98
-#, fuzzy
-#| msgid "loop device major:minor number"
 msgid "loop device major number"
-msgstr "номер пристрою основний:додатковий для петльового пристрою"
+msgstr "номер основного пристрою для петльового пристрою"
 
 #: sys-utils/losetup.c:99
-#, fuzzy
-#| msgid "loop device major:minor number"
 msgid "loop device minor number"
-msgstr "номер пристрою основний:додатковий для петльового пристрою"
+msgstr "номер додаткового пристрою для петльового пристрою"
 
 #: sys-utils/losetup.c:100
 msgid "access backing file with direct-io"
@@ -18412,7 +18054,7 @@ msgstr "     --direct-io[=<on|off>]    відкрити файл резервн�
 
 #: sys-utils/losetup.c:490
 msgid "     --loop-ref <string>       loop device reference\n"
-msgstr ""
+msgstr "     --loop-ref <рядок>       посилання на петльовий пристрій\n"
 
 #: sys-utils/losetup.c:491
 msgid "     --show                    print device name after setup (with -f)\n"
@@ -18452,10 +18094,9 @@ msgid "%s: Warning: file is smaller than 512 bytes; the loop device may be usele
 msgstr "%s: попередження: розмір файла є меншим за 512 байтів, петльовий пристрій може виявитися непридатним або невидимим для інструментів системи."
 
 #: sys-utils/losetup.c:533
-#, fuzzy, c-format
-#| msgid "%s: Warning: file does not fit into a 512-byte sector; the end of the file will be ignored."
+#, c-format
 msgid "%s: Warning: file does not end on a 512-byte sector boundary; the remaining end of the file will be ignored."
-msgstr "%s: попередження: файл не вкладається у 512-байтовий сектор, отже кінець файла буде проігноровано."
+msgstr "%s: попередження: файл не завершується на межі 512-байтового сектора, отже решту файла буде проігноровано."
 
 #: sys-utils/losetup.c:552
 msgid "cannot find an unused loop device"
@@ -18491,10 +18132,8 @@ msgid "%s: failed to check for conflicting loop devices"
 msgstr "%s: не вдалося виконати перевірку щодо конфліктів між петльовими пристроями"
 
 #: sys-utils/losetup.c:650
-#, fuzzy
-#| msgid "cannot set line discipline"
 msgid "cannot set loop reference string"
-msgstr "не вдалося встановити правила обробки рядків"
+msgstr "не вдалося встановити рядок посилання на петльовий пристрій"
 
 #: sys-utils/losetup.c:654
 #, c-format
@@ -19051,16 +18690,12 @@ msgid "Failed to extract the node number"
 msgstr "Не вдалося видобути номер вузла"
 
 #: sys-utils/lscpu-virt.c:492 sys-utils/lscpu-virt.c:514
-#, fuzzy
-#| msgid "cannot set signal mask"
 msgid "cannot restore signal mask"
-msgstr "не вдалося встановити маску сигналів"
+msgstr "не вдалося відновити маску сигналів"
 
 #: sys-utils/lscpu-virt.c:499
-#, fuzzy
-#| msgid "cannot block signals"
 msgid "cannot unblock signal"
-msgstr "не вдалося заблокувати сигнали"
+msgstr "не вдалося розблокувати сигнал"
 
 #: sys-utils/lscpu-virt.c:511
 msgid "cannot restore signal handler"
@@ -19803,40 +19438,28 @@ msgid " -l, --show-labels       show also filesystem labels\n"
 msgstr " -l, --show-labels       вивести також мітки файлових систем\n"
 
 #: sys-utils/mount.c:496
-#, fuzzy
-#| msgid ""
-#| " --map-groups=<innergid>:<outergid>:<count>\n"
-#| "                           map count groups from outergid to innergid (implies --user)\n"
 msgid ""
 "     --map-groups <inner>:<outer>:<count>\n"
 "                         add the specified GID map to an ID-mapped mount\n"
 msgstr ""
-" --map-users=<внутр_ідент_гр>:<зовн_ідент_гр>:<кількість>\n"
-"                           пов'язати кількість груп від зовн_ідент_гр до внутр_ідент_гр (додає --user)\n"
+"     --map-groups <внутрішній>:<зовнішній>:<кількість>\n"
+"                         додати вказану прив'язку GID до монтування із прив'язкою за ідентифікаторами\n"
 
 #: sys-utils/mount.c:498
-#, fuzzy
-#| msgid ""
-#| " --map-users=<inneruid>:<outeruid>:<count>\n"
-#| "                           map count users from outeruid to inneruid (implies --user)\n"
 msgid ""
 "     --map-users <inner>:<outer>:<count>\n"
 "                         add the specified UID map to an ID-mapped mount\n"
 msgstr ""
-" --map-users=<внутр_ідентифікатор>:<зовн_ідентифікатор>:<кількість>\n"
-"                           пов'язати кількість користувачів від зовн_ідентифікатор до внутр_ідентифікатор (додає --user)\n"
+"     --map-users <внутрішній>:<зовнішній>:<кількість>\n"
+"                         додати вказану прив'язку UID до монтування із прив'язкою за ідентифікаторами\n"
 
 #: sys-utils/mount.c:500
-#, fuzzy
-#| msgid ""
-#| "     --target-prefix <path>\n"
-#| "                         specifies path used for all mountpoints\n"
 msgid ""
 "     --map-users /proc/<pid>/ns/user\n"
 "                         specify the user namespace for an ID-mapped mount\n"
 msgstr ""
-"     --target-prefix <шлях>\n"
-"                         вказати шлях, який слід використати для усіх точок монтування\n"
+"     --map-users /proc/<pid>/ns/user\n"
+"                         вказати простір назв користувача для монтування із прив'язкою за ідентифікатором\n"
 
 #: sys-utils/mount.c:502
 msgid " -m, --mkdir[=<mode>]    alias to '-o X-mount.mkdir[=<mode>]'\n"
@@ -20108,10 +19731,8 @@ msgid " -U, --user[=<file>]    enter user namespace\n"
 msgstr " -U, --user[=<файл>]    ввести простір назв користувача\n"
 
 #: sys-utils/nsenter.c:98
-#, fuzzy
-#| msgid " -U, --user[=<file>]    enter user namespace\n"
 msgid "     --user-parent      enter parent user namespace\n"
-msgstr " -U, --user[=<файл>]    ввести простір назв користувача\n"
+msgstr "     --user-parent      ввести батьківський простір назв користувачів\n"
 
 #: sys-utils/nsenter.c:99
 msgid " -T, --time[=<file>]    enter time namespace\n"
@@ -20130,10 +19751,8 @@ msgid "     --preserve-credentials do not touch uids or gids\n"
 msgstr "     --preserve-credentials не торкатися uid або gid\n"
 
 #: sys-utils/nsenter.c:103
-#, fuzzy
-#| msgid " --keep-caps               retain capabilities granted in user namespaces\n"
 msgid "     --keep-caps        retain capabilities granted in user namespaces\n"
-msgstr " --keep-caps               зберегти можливості, які надано просторами назв користувача\n"
+msgstr "     --keep-caps        зберегти можливості, які надано просторами назв користувача\n"
 
 #: sys-utils/nsenter.c:104
 msgid " -r, --root[=<dir>]     set the root directory\n"
@@ -20156,26 +19775,21 @@ msgid " -F, --no-fork          do not fork before exec'ing <program>\n"
 msgstr " -F, --no-fork          не виконувати розгалуження до виконання програми <програма>\n"
 
 #: sys-utils/nsenter.c:109
-#, fuzzy
-#| msgid " -s, --symlink       act on the target of symlinks\n"
 msgid " -c, --join-cgroup      join the cgroup of the target process\n"
-msgstr " -s, --symlink       виконати дію над призначеннями символічних посилань\n"
+msgstr " -c, --join-cgroup      долучитися до cgroup процесу призначення\n"
 
 #: sys-utils/nsenter.c:111
 msgid " -Z, --follow-context   set SELinux context according to --target PID\n"
 msgstr " -Z, --follow-context   встановити контекст SELinux відповідно до PID --target\n"
 
 #: sys-utils/nsenter.c:143
-#, fuzzy, c-format
-#| msgid "failed to set target namespace to %s"
+#, c-format
 msgid "failed to open parent ns of %s"
-msgstr "не вдалося встановити для простору назв призначення значення %s"
+msgstr "не вдалося відкрити батьківський простір назв %s"
 
 #: sys-utils/nsenter.c:149
-#, fuzzy
-#| msgid "unknown namespace type: %s"
 msgid "no namespaces to get parent of"
-msgstr "невідомий тип простору назв: %s"
+msgstr "немає просторів назв для отримання батьківського"
 
 #: sys-utils/nsenter.c:166
 #, c-format
@@ -20183,28 +19797,21 @@ msgid "neither filename nor target pid supplied for %s"
 msgstr "не вказано ні назви файла ні pid призначення для %s"
 
 #: sys-utils/nsenter.c:211 sys-utils/nsenter.c:217
-#, fuzzy
-#| msgid "failed to set options pattern"
 msgid "failed to get cgroup path"
-msgstr "не вдалося встановити шаблон параметрів"
+msgstr "не вдалося отримати шлях до cgroup"
 
 #: sys-utils/nsenter.c:223
-#, fuzzy
-#| msgid "failed to open /proc"
 msgid "failed to open cgroup.procs"
-msgstr "не вдалося відкрити /proc"
+msgstr "не вдалося відкрити cgroup.procs"
 
 #: sys-utils/nsenter.c:235
-#, fuzzy, c-format
-#| msgid "stat of %s failed"
+#, c-format
 msgid "statfs %s failed"
-msgstr "не вдалося отримати статистичні дані %s"
+msgstr "помилка statfs %s"
 
 #: sys-utils/nsenter.c:248
-#, fuzzy
-#| msgid "initgroups failed"
 msgid "write cgroup.procs failed"
-msgstr "помилка initgroups"
+msgstr "не вдалося записати cgroup.procs"
 
 #: sys-utils/nsenter.c:444 sys-utils/unshare.c:918 sys-utils/unshare.c:980
 msgid "failed to parse uid"
@@ -20234,7 +19841,7 @@ msgstr "не вказано PID призначення для --all"
 
 #: sys-utils/nsenter.c:546
 msgid "--join-cgroup is only supported in cgroup v2"
-msgstr ""
+msgstr "підтримку --join-cgroup передбачено лише у cgroup v2"
 
 #: sys-utils/nsenter.c:593
 #, c-format
@@ -21125,40 +20732,28 @@ msgid " %s [options] <program> [arguments ...]\n"
 msgstr " %s [параметри] <програма> [аргументи ...]\n"
 
 #: sys-utils/setpgid.c:24
-#, fuzzy
-#| msgid "Run a program in a new session.\n"
 msgid "Run a program in a new process group.\n"
-msgstr "Запустити програму у новому сеансі.\n"
+msgstr "Запустити програму у новій групі процесів.\n"
 
 #: sys-utils/setpgid.c:27
-#, fuzzy
-#| msgid " -f, --force      force check\n"
 msgid " -f, --foregound     Make a foreground process group\n"
-msgstr " -f, --force      примусова перевірка\n"
+msgstr " -f, --foreground    Створити групу основного процесу\n"
 
 #: sys-utils/setpgid.c:71
-#, fuzzy
-#| msgid "setgid failed"
 msgid "setpgid failed"
-msgstr "помилка setgid"
+msgstr "помилка setpgid"
 
 #: sys-utils/setpgid.c:77
-#, fuzzy
-#| msgid "sigfillset failed"
 msgid "sigemptyset failed"
-msgstr "помилка sigfillset"
+msgstr "помилка sigemptyset"
 
 #: sys-utils/setpgid.c:79
-#, fuzzy
-#| msgid "sigfillset failed"
 msgid "sigaddset failed"
-msgstr "помилка sigfillset"
+msgstr "помилка sigaddset"
 
 #: sys-utils/setpgid.c:83
-#, fuzzy
-#| msgid "tcsetattr failed"
 msgid "tcsetpgrp failed"
-msgstr "помилка tcsetattr"
+msgstr "помилка tcsetpgrp"
 
 #: sys-utils/setpriv.c:121
 #, c-format
@@ -21251,11 +20846,11 @@ msgstr " --apparmor-profile <пр>     встановити вказаний п�
 
 #: sys-utils/setpriv.c:148
 msgid " --landlock-access <access>  add Landlock access\n"
-msgstr ""
+msgstr " --landlock-access <доступ>  додати доступ Landlock\n"
 
 #: sys-utils/setpriv.c:149
 msgid " --landlock-rule <rule>      add Landlock rule\n"
-msgstr ""
+msgstr " --landlock-rule <правило>   додати правило Landlock\n"
 
 #: sys-utils/setpriv.c:150
 msgid ""
@@ -21598,56 +21193,44 @@ msgid "set parent death signal failed"
 msgstr "не вдалося встановити батьківський сигнал смерті"
 
 #: sys-utils/setpriv-landlock.c:106
-#, fuzzy, c-format
-#| msgid "could not read: %s"
+#, c-format
 msgid "could not parse landlock fs access: %s"
-msgstr "не вдалося прочитати: %s"
+msgstr "не вдалося обробити доступ до файлової системи landlock: %s"
 
 #: sys-utils/setpriv-landlock.c:137 sys-utils/setpriv-landlock.c:140
-#, fuzzy, c-format
-#| msgid "invalid argument: %s"
+#, c-format
 msgid "invalid landlock rule: %s"
-msgstr "помилковий аргумент: %s"
+msgstr "некоректне правило landlock: %s"
 
 #: sys-utils/setpriv-landlock.c:151
-#, fuzzy, c-format
-#| msgid "could not open pid %u"
+#, c-format
 msgid "could not open file for landlock: %s"
-msgstr "не вдалося відкрити pid %u"
+msgstr "не вдалося відкрити файл для landlock: %s"
 
 #: sys-utils/setpriv-landlock.c:178
-#, fuzzy
-#| msgid "fallocate failed"
 msgid "landlock_create_ruleset failed"
-msgstr "помилка fallocate"
+msgstr "помилка landlock_create_ruleset"
 
 #: sys-utils/setpriv-landlock.c:187
-#, fuzzy
-#| msgid "fallocate failed"
 msgid "adding landlock rule failed"
-msgstr "помилка fallocate"
+msgstr "не вдалося додати правило landlock"
 
 #: sys-utils/setpriv-landlock.c:191
-#, fuzzy
-#| msgid "disallow granting new privileges failed"
 msgid "disallow granting new privileges for landlock failed"
-msgstr "не вдалося заборонити надання нових прав доступу"
+msgstr "не вдалося заборонити надання нових прав доступу для landlock"
 
 #: sys-utils/setpriv-landlock.c:194
 msgid "landlock_restrict_self faild"
-msgstr ""
+msgstr "Помилка landlock_restrict_self"
 
 #: sys-utils/setpriv-landlock.c:202
-#, fuzzy, c-format
-#| msgid "lock access mode"
+#, c-format
 msgid "Landlock accesses:\n"
-msgstr "режим доступу до блокування"
+msgstr "Доступи landlock:\n"
 
 #: sys-utils/setpriv-landlock.h:44
-#, fuzzy
-#| msgid "unsupported command"
 msgid "no support for landlock"
-msgstr "непідтримувана команда"
+msgstr "немає підтримки landlock"
 
 #: sys-utils/setsid.c:39
 msgid "Run a program in a new session.\n"
@@ -22299,19 +21882,17 @@ msgstr "немає відповідного рядку користувача «
 #: sys-utils/unshare.c:661
 #, c-format
 msgid "%s too large for kernel 4k limit"
-msgstr ""
+msgstr "%s надто великий для обмеження у 4кБ з боку ядра"
 
 #: sys-utils/unshare.c:667
-#, fuzzy, c-format
-#| msgid "failed to open: %s"
+#, c-format
 msgid "failed to open %s"
-msgstr "не вдалося відкрити: %s"
+msgstr "не вдалося відкрити %s"
 
 #: sys-utils/unshare.c:669
-#, fuzzy, c-format
-#| msgid "failed to parse %s"
+#, c-format
 msgid "failed to write %s"
-msgstr "не вдалося обробити %s"
+msgstr "не вдалося записати %s"
 
 #: sys-utils/unshare.c:737
 msgid "Run a program with some namespaces unshared from the parent.\n"
@@ -22450,10 +22031,8 @@ msgid "failed to parse boottime offset"
 msgstr "не вдалося обробити зсув часу завантаження"
 
 #: sys-utils/unshare.c:1012
-#, fuzzy
-#| msgid "options --monotonic and --boottime require unsharing of a time namespace (-t)"
 msgid "options --monotonic and --boottime require unsharing of a time namespace (-T)"
-msgstr "використання параметрів --monotonic і --boottime потребує скасування спільного використання часового простору назв (-t)"
+msgstr "використання параметрів --monotonic і --boottime потребує скасування спільного використання часового простору назв (-T)"
 
 #: sys-utils/unshare.c:1026
 msgid "unshare failed"
@@ -22472,10 +22051,8 @@ msgid "sigprocmask restore failed"
 msgstr "помилка sigprocmask restore"
 
 #: sys-utils/unshare.c:1095
-#, fuzzy
-#| msgid "sigfillset failed"
 msgid "signal handler reset failed"
-msgstr "помилка sigfillset"
+msgstr "не вдалося відновити початковий стан обробника сигналів"
 
 #: sys-utils/unshare.c:1100
 msgid "sigprocmask unblock failed"
@@ -22848,7 +22425,7 @@ msgstr "   lzo, lz4, lz4hc, deflate, 842 і zstd\n"
 
 #: sys-utils/zramctl.c:569
 msgid "   (List may be inaccurate, consult man page.)\n"
-msgstr ""
+msgstr "   (Список може бути неточним, зверніться до сторінки man.)\n"
 
 #: sys-utils/zramctl.c:658
 msgid "failed to parse streams"
@@ -23240,10 +22817,8 @@ msgid "--reload is unsupported on your system"
 msgstr "Підтримки --reload у вашій системі не передбачено"
 
 #: term-utils/agetty.c:3016
-#, fuzzy
-#| msgid "failed to open directory"
 msgid "failed to open credentials directory"
-msgstr "не вдалося відкрити каталог"
+msgstr "не вдалося відкрити каталог реєстраційних даних"
 
 #: term-utils/mesg.c:78
 #, c-format
@@ -23759,10 +23334,8 @@ msgid "terminal %s does not support %s"
 msgstr "у терміналі %s не передбачено підтримки %s"
 
 #: term-utils/setterm.c:851
-#, fuzzy
-#| msgid "ioctl failed"
 msgid "fcntl failed"
-msgstr "помилка ioctl"
+msgstr "помилка fcntl"
 
 #: term-utils/setterm.c:881
 msgid "select failed"
@@ -23880,16 +23453,14 @@ msgid "invalid timeout argument: %s"
 msgstr "некоректний аргумент часу очікування: %s"
 
 #: term-utils/wall.c:262 term-utils/write.c:144 term-utils/write.c:215
-#, fuzzy, c-format
-#| msgid "error: empty right side expression: %s"
+#, c-format
 msgid "error getting sessions: %s"
-msgstr "помилка: порожній вираз правої частини: %s"
+msgstr "помилка під час отримання сеансів: %s"
 
 #: term-utils/wall.c:270 term-utils/write.c:153 term-utils/write.c:223
-#, fuzzy, c-format
-#| msgid "utimes failed: %s"
+#, c-format
 msgid "get user name failed: %s"
-msgstr "помилка utimes: %s"
+msgstr "не вдалося отримати ім'я користувача: %s"
 
 #: term-utils/wall.c:333
 msgid "cannot get passwd uid"
@@ -24091,10 +23662,8 @@ msgid "failed to parse --table-wrap list"
 msgstr "не вдалося обробити список --table-wrap"
 
 #: text-utils/column.c:527
-#, fuzzy
-#| msgid "failed to allocate output line"
 msgid "failed to allocate input line"
-msgstr "не вдалося розташувати у пам'яті рядок виведення"
+msgstr "не вдалося розмістити у пам'яті рядок вхідних даних"
 
 #: text-utils/column.c:545
 #, c-format
@@ -24244,13 +23813,11 @@ msgstr "Показати вміст файла у форматі шістнад�
 
 #: text-utils/hexdump.c:173
 msgid " -b, --one-byte-octal      one-byte octal display\n"
-msgstr " -b, --one-byte-octal      показу у однобайтовому вісімковому форматі\n"
+msgstr " -b, --one-byte-octal      показ в однобайтовому вісімковому форматі\n"
 
 #: text-utils/hexdump.c:174
-#, fuzzy
-#| msgid " -x, --two-bytes-hex       two-byte hexadecimal display\n"
 msgid " -X, --one-byte-hex        one-byte hexadecimal display\n"
-msgstr " -x, --two-bytes-hex       показ у двобайтовому шістнадцятковому форматі\n"
+msgstr " -X, --one-byte-hex        показ в однобайтовому шістнадцятковому форматі\n"
 
 #: text-utils/hexdump.c:175
 msgid " -c, --one-byte-char       one-byte character display\n"
