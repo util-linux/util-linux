@@ -64,10 +64,17 @@ for C in ro-regular-file pidfd socketpair; do
 	fi
     } > "$TS_OUTPUT" 2>&1
     wait "${MKFDS_PID}"
+
     if [ "$C-$?" == "pidfd-$TS_EXIT_NOTSUPP" ]; then
 	ts_skip_subtest "pidfd_open(2) is not available"
 	continue
     fi
+
+    case $C in
+    pidfd)
+	sed -i -E 's/(pidfd|anon_inode):\[[a-zA-Z]+\]/[KNAME]/' "$TS_OUTPUT"
+    esac
+
     ts_finalize_subtest
 done
 

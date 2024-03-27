@@ -44,8 +44,12 @@ EXPR="(PID != ${TARGET}) and (FD == 3) and (PIDFD.PID == ${TARGET})"
     fi
     wait ${MKFDS_PID}
 } > $TS_OUTPUT 2>&1
+
 if [ "$?" == "$TS_EXIT_NOTSUPP" ]; then
     ts_skip "pidfd_open(2) is not available"
 fi
+
+sed -i -E -e 's/UNKN|REG/[STTYPE]/' -e 's/pidfs|anon_inodefs/[SOURCE]/' \
+    $TS_OUTPUT
 
 ts_finalize
