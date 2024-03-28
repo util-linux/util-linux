@@ -46,7 +46,7 @@ uuid_compare - compare whether two UUIDs are the same
 
 *#include <uuid.h>*
 
-*int uuid_compare(uuid_t __uu1__, uuid_t __uu2__)*
+*int uuid_compare(const uuid_t __uu1__, const uuid_t __uu2__)*
 
 == DESCRIPTION
 

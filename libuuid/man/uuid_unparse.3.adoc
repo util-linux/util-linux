@@ -46,9 +46,9 @@ uuid_unparse - convert a UUID from binary representation to a string
 
 *#include <uuid.h>*
 
-*void uuid_unparse(uuid_t __uu__, char *__out__);* +
-*void uuid_unparse_upper(uuid_t __uu__, char *__out__);* +
-*void uuid_unparse_lower(uuid_t __uu__, char *__out__);*
+*void uuid_unparse(const uuid_t __uu__, char *__out__);* +
+*void uuid_unparse_upper(const uuid_t __uu__, char *__out__);* +
+*void uuid_unparse_lower(const uuid_t __uu__, char *__out__);*
 
 == DESCRIPTION
 

@@ -46,8 +46,8 @@ uuid_parse - convert an input UUID string into binary representation
 
 *#include <uuid.h>*
 
-*int uuid_parse(char *__in__, uuid_t __uu__);* +
-*int uuid_parse_range(char *__in_start__, char *__in_end__, uuid_t __uu__);*
+*int uuid_parse(const char *__in__, uuid_t __uu__);* +
+*int uuid_parse_range(const char *__in_start__, const char *__in_end__, uuid_t __uu__);*
 
 == DESCRIPTION
 
