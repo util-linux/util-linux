@@ -60,6 +60,15 @@ global:
         uuid_time64; /* only on 32bit architectures with 64bit time_t */
 } UUID_2.36;
 
+/*
+ * version(s) since util-linux.2.41
+ */
+UUID_2.41 {
+global:
+	uuid_generate_time_v6;
+	uuid_generate_time_v7;
+} UUID_2.40;
+
 
 
 /*

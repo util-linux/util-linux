@@ -89,6 +89,7 @@
 #include "c.h"
 #include "md5.h"
 #include "sha1.h"
+#include "timeutils.h"
 
 #ifdef HAVE_TLS
 #define THREAD_LOCAL static __thread
@@ -659,6 +660,44 @@ void uuid_generate_time(uuid_t out)
 int uuid_generate_time_safe(uuid_t out)
 {
 	return uuid_generate_time_generic(out);
+}
+
+void uuid_generate_time_v6(uuid_t out)
+{
+	struct uuid uu = {};
+	uint64_t clock_reg;
+
+	clock_reg = get_clock_counter();
+
+	uu.time_low = clock_reg >> 28;
+	uu.time_mid = clock_reg >> 12;
+	uu.time_hi_and_version = (clock_reg & 0x0FFF) | (6 << 12);
+
+	ul_random_get_bytes(&uu.clock_seq, 8);
+	uu.clock_seq = (uu.clock_seq & 0x3FFF) | 0x8000;
+
+	uuid_pack(&uu, out);
+}
+
+// FIXME variable additional information
+void uuid_generate_time_v7(uuid_t out)
+{
+	struct timeval tv;
+	struct uuid uu;
+	uint64_t ms;
+
+	gettimeofday(&tv, NULL);
+
+	ms = tv.tv_sec * MSEC_PER_SEC + tv.tv_usec / USEC_PER_MSEC;
+
+	uu.time_low = ms >> 16;
+	uu.time_mid = ms;
+
+	ul_random_get_bytes(&uu.time_hi_and_version, 10);
+	uu.time_hi_and_version = (uu.time_hi_and_version & 0x0FFF) | (7 << 12);
+	uu.clock_seq = (uu.clock_seq & 0x3FFF) | 0x8000;
+
+	uuid_pack(&uu, out);
 }
 
 

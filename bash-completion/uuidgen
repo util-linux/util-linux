@@ -31,6 +31,8 @@ _uuidgen_module()
 				--md5
 				--count
 				--sha1
+				--time-v6
+				--time-v7
 				--hex
 				--help
 				--version
