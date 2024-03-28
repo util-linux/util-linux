@@ -28,6 +28,8 @@ ts_check_test_command "$TS_HELPER_MKFDS"
 
 ts_cd "$TS_OUTDIR"
 
+lsfd_check_sockdiag "unix"
+
 PID=
 FDS=3
 FDC=4
