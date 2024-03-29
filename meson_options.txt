@@ -101,6 +101,8 @@ option('build-cal', type : 'feature',
        description : 'build cal')
 option('build-logger', type : 'feature',
        description : 'build logger')
+option('build-lsfd', type : 'feature',
+       description : 'build lsfd')
 option('build-switch_root', type : 'feature',
        description : 'switch_root')
 option('build-pivot_root', type : 'feature',
