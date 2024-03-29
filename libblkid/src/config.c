@@ -168,6 +168,7 @@ struct blkid_config *blkid_read_config(const char *filename)
 				       "/etc", "blkid", "conf", "= \t", "#");
 	}
 
+	char *line = NULL;
 	if (error) {
 		if (error == ECONF_NOFILE) {
 			if (filename)
@@ -209,7 +210,6 @@ struct blkid_config *blkid_read_config(const char *filename)
 		}
 	}
 
-	char *line = NULL;
 	if ((error = econf_getStringValue(file, NULL, "EVALUATE", &line))) {
 		conf->nevals = 0;
 		if (error != ECONF_NOKEY) {
