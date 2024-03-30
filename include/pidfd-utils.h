@@ -7,6 +7,7 @@
 
 #ifdef HAVE_SYS_SYSCALL_H
 # include <sys/syscall.h>
+# include <unistd.h>
 
 /*
  * If the kernel headers are too old to provide the syscall numbers, let's
