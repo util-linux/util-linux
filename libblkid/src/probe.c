@@ -1976,11 +1976,11 @@ static void blkid_probe_log_csum_mismatch(blkid_probe pr, size_t n, const void *
 		sprintf(&expected_hex[i], "%02X", ((const unsigned char *) expected)[i / 2]);
 	}
 
-	ul_debug(
+	DBG(LOWPROBE, ul_debug(
 		"incorrect checksum for type %s,"
 		" got %*s, expected %*s",
 		blkid_probe_get_probername(pr),
-		hex_size, csum_hex, hex_size, expected_hex);
+		hex_size, csum_hex, hex_size, expected_hex));
 }
 
 
