@@ -68,6 +68,7 @@ extern const struct blkid_idinfo snapcow_idinfo;
 extern const struct blkid_idinfo verity_hash_idinfo;
 extern const struct blkid_idinfo integrity_idinfo;
 extern const struct blkid_idinfo luks_idinfo;
+extern const struct blkid_idinfo luks_opal_idinfo;
 extern const struct blkid_idinfo highpoint37x_idinfo;
 extern const struct blkid_idinfo highpoint45x_idinfo;
 extern const struct blkid_idinfo squashfs_idinfo;

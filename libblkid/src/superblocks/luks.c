@@ -139,10 +139,26 @@ static int probe_luks(blkid_probe pr, const struct blkid_idmag *mag __attribute_
 	return BLKID_PROBE_NONE;
 }
 
+static int probe_luks_opal(blkid_probe pr, const struct blkid_idmag *mag)
+{
+	if (!blkdid_probe_is_opal_locked(pr))
+		return BLKID_PROBE_NONE;
+
+	return probe_luks(pr, mag);
+}
+
 const struct blkid_idinfo luks_idinfo =
 {
 	.name		= "crypto_LUKS",
 	.usage		= BLKID_USAGE_CRYPTO,
 	.probefunc	= probe_luks,
 	.magics		= BLKID_NONE_MAGIC
+};
+
+const struct blkid_idinfo luks_opal_idinfo =
+{
+	.name		= "crypto_LUKS",
+	.usage		= BLKID_USAGE_CRYPTO,
+	.probefunc	= probe_luks_opal,
+	.magics		= BLKID_NONE_MAGIC,
 };
