@@ -241,6 +241,7 @@ struct blkid_struct_probe
 #define BLKID_FL_NOSCAN_DEV	(1 << 4)	/* do not scan this device */
 #define BLKID_FL_MODIF_BUFF	(1 << 5)	/* cached buffers has been modified */
 #define BLKID_FL_OPAL_LOCKED	(1 << 6)	/* OPAL device is locked (I/O errors) */
+#define BLKID_FL_OPAL_CHECKED	(1 << 7)	/* OPAL lock checked */
 
 /* private per-probing flags */
 #define BLKID_PROBE_FL_IGNORE_PT (1 << 1)	/* ignore partition table */
