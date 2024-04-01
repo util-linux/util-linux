@@ -153,6 +153,8 @@ struct blkid_config *blkid_read_config(const char *filename)
 #else /* !HAVE_LIBECONF */
 
 	static econf_file *file = NULL;
+	char *line = NULL;
+	bool uevent = false;
 	econf_err error;
 
 	if (filename) {
@@ -187,7 +189,6 @@ struct blkid_config *blkid_read_config(const char *filename)
 		}
 	}
 
-	bool uevent = false;
 	if ((error = econf_getBoolValue(file, NULL, "SEND_UEVENT", &uevent))) {
 		if (error != ECONF_NOKEY) {
 			DBG(CONFIG, ul_debug("couldn't fetch SEND_UEVENT corrently: %s", econf_errString(error)));
@@ -209,7 +210,6 @@ struct blkid_config *blkid_read_config(const char *filename)
 		}
 	}
 
-	char *line = NULL;
 	if ((error = econf_getStringValue(file, NULL, "EVALUATE", &line))) {
 		conf->nevals = 0;
 		if (error != ECONF_NOKEY) {
@@ -219,7 +219,7 @@ struct blkid_config *blkid_read_config(const char *filename)
 			DBG(CONFIG, ul_debug("key CACHE_FILE not found, using built-in default "));
 		}
 	} else {
-		if (*line && parse_evaluate(conf, line) == -1)
+		if (line && *line && parse_evaluate(conf, line) == -1)
 			goto err;
 	}
 
@@ -238,8 +238,8 @@ dflt:
 	if (f)
 		fclose(f);
 #else
-	econf_free (file);
-	free (line);
+	econf_free(file);
+	free(line);
 #endif
 	return conf;
 err:
@@ -248,8 +248,8 @@ err:
 #ifndef HAVE_LIBECONF
 	fclose(f);
 #else
-	econf_free (file);
-	free (line);
+	econf_free(file);
+	free(line);
 #endif
 	return NULL;
 }
