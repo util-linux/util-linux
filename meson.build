@@ -728,10 +728,10 @@ if not cc.has_function('socket')
   endif
 endif
 
+lib_rt = cc.find_library('rt', required : false)
 realtime_libs = []
 have = cc.has_function('clock_gettime')
 if not have
-  lib_rt = cc.find_library('rt', required : false)
   if lib_rt.found()
     realtime_libs += lib_rt
     have = cc.has_function('clock_gettime',
@@ -744,7 +744,6 @@ thread_libs = dependency('threads')
 
 have = cc.has_function('timer_create')
 if not have
-  lib_rt = cc.find_library('rt', required : false)
   if lib_rt.found()
     realtime_libs = [lib_rt]
     have = cc.has_function('timer_create',
@@ -2717,9 +2716,7 @@ errnos_h = custom_target('errnos.h',
   command : ['tools/all_errnos', cc.cmd_array(), get_option('c_args')],
 )
 
-lib_rt = cc.find_library('rt', required : get_option('build-lsfd'))
-
-opt = not get_option('build-lsfd').disabled()
+opt = not get_option('build-lsfd').require(lib_rt.found()).disabled()
 exe = executable(
   'lsfd',
   lsfd_sources, errnos_h,
