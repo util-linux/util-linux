@@ -2708,7 +2708,7 @@ endif
 errnos_h = custom_target('errnos.h',
   input : 'tools/all_errnos',
   output : 'errnos.h',
-  command : ['tools/all_errnos', cc.cmd_array()]
+  command : ['tools/all_errnos', cc.cmd_array(), get_option('c_args')],
 )
 
 mq_libs = []
@@ -3026,7 +3026,7 @@ endif
 syscalls_h = custom_target('syscalls.h',
   input : 'tools/all_syscalls',
   output : 'syscalls.h',
-  command : ['tools/all_syscalls', cc.cmd_array()] 
+  command : ['tools/all_syscalls', cc.cmd_array(), get_option('c_args')],
 )
 
 if cc.compiles(fs.read('include/audit-arch.h'), name : 'has AUDIT_ARCH_NATIVE')
