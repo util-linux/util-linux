@@ -1,4 +1,6 @@
-/*   Copyright 2003-2005 H. Peter Anvin - All Rights Reserved
+/*   SPDX-License-Identifier: MIT
+ *
+ *   Copyright 2003-2005 H. Peter Anvin - All Rights Reserved
  *
  *   Permission is hereby granted, free of charge, to any person
  *   obtaining a copy of this software and associated documentation
