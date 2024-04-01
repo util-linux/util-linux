@@ -46,7 +46,7 @@ uuid_time - extract the time at which the UUID was created
 
 *#include <uuid.h>*
 
-*time_t uuid_time(uuid_t __uu__, struct timeval *__ret_tv__)*
+*time_t uuid_time(const uuid_t __uu__, struct timeval *__ret_tv__)*
 
 == DESCRIPTION
 
