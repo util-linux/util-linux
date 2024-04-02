@@ -569,7 +569,6 @@ funcs = '''
         llistxattr
         llseek
         newlocale
-        mempcpy
         mkostemp
         move_mount
         mount_setattr
@@ -633,6 +632,9 @@ foreach func: funcs
   # redefined macros from Python.h, which uses this convention.
   conf.set('HAVE_' + func.to_upper(), have ? 1 : false)
 endforeach
+
+have_mempcpy = cc.has_function('mempcpy', prefix: '#include <string.h>', args: '-D_GNU_SOURCE')
+conf.set('HAVE_MEMPCPY', have_mempcpy ? 1 : false)
 
 have = conf.get('HAVE_FUTIMENS') in [1] and conf.get('HAVE_INOTIFY_INIT1') in [1]
 conf.set('AGETTY_RELOAD', have ? 1 : false)
