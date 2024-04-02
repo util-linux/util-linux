@@ -350,7 +350,10 @@ lib_udev = dependency(
   required : get_option('systemd'))
 conf.set('HAVE_LIBUDEV', lib_udev.found() ? 1 : false)
 
-lib_crypt = cc.find_library('crypt')
+lib_crypt = cc.find_library('crypt', required : get_option('build-newgrp'))
+if not lib_crypt.found()
+  lib_crypt = cc.find_library('crypt', required : get_option('build-sulogin'))
+endif
 
 lib_pam = cc.find_library('pam', required : get_option('build-login'))
 if not lib_pam.found()
