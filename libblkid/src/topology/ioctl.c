@@ -24,6 +24,7 @@
 static const struct topology_val {
 
 	long  ioc;
+	size_t kernel_size;
 
 	/* functions to set probing result */
 	int (*set_ulong)(blkid_probe, unsigned long);
@@ -31,11 +32,16 @@ static const struct topology_val {
 	int (*set_u64)(blkid_probe, uint64_t);
 
 } topology_vals[] = {
-	{ BLKALIGNOFF, NULL, blkid_topology_set_alignment_offset },
-	{ BLKIOMIN, blkid_topology_set_minimum_io_size },
-	{ BLKIOOPT, blkid_topology_set_optimal_io_size },
-	{ BLKPBSZGET, blkid_topology_set_physical_sector_size },
-	{ BLKGETDISKSEQ, .set_u64 = blkid_topology_set_diskseq },
+	{ BLKALIGNOFF, sizeof(int),
+	  .set_int = blkid_topology_set_alignment_offset },
+	{ BLKIOMIN, sizeof(int),
+	  .set_ulong = blkid_topology_set_minimum_io_size },
+	{ BLKIOOPT, sizeof(int),
+	  .set_ulong = blkid_topology_set_optimal_io_size },
+	{ BLKPBSZGET, sizeof(int),
+	  .set_ulong = blkid_topology_set_physical_sector_size },
+	{ BLKGETDISKSEQ, sizeof(uint64_t),
+	  .set_u64 = blkid_topology_set_diskseq },
 	/* we read BLKSSZGET in topology.c */
 };
 
@@ -48,18 +54,21 @@ static int probe_ioctl_tp(blkid_probe pr,
 		const struct topology_val *val = &topology_vals[i];
 		int rc = 1;
 		union {
-			unsigned long ul;
-			int i;
+			int s32;
 			uint64_t u64;
-		} data;
+		} data = { 0 };
 
 		if (ioctl(pr->fd, val->ioc, &data) == -1)
 			goto nothing;
 
+		/* Convert from kernel to libblkid type */
+		if (val->kernel_size == 4)
+			data.u64 = data.s32;
+
 		if (val->set_int)
-			rc = val->set_int(pr, data.i);
+			rc = val->set_int(pr, data.u64);
 		else if (val->set_ulong)
-			rc = val->set_ulong(pr, data.ul);
+			rc = val->set_ulong(pr, data.u64);
 		else
 			rc = val->set_u64(pr, data.u64);
 
