@@ -2293,6 +2293,7 @@ static void *make_netlink(const struct factory *factory, struct fdesc fdescs[],
 			err(EXIT_FAILURE, "failed to dup %d -> %d", sd, fdescs[0].fd);
 		}
 		close(sd);
+		sd = fdescs[0].fd;
 	}
 
 	struct sockaddr_nl nl;
