@@ -228,7 +228,7 @@ struct file_class {
 };
 
 extern const struct file_class file_class, cdev_class, bdev_class, sock_class, unkn_class, fifo_class,
-	nsfs_file_class, mqueue_file_class;
+	nsfs_file_class, mqueue_file_class, pidfs_file_class;
 
 /*
  * IPC
@@ -306,5 +306,10 @@ bool is_mqueue_dev(dev_t dev);
  * Eventpoll
  */
 bool is_multiplexed_by_eventpoll(int fd, struct list_head *eventpolls);
+
+/*
+ * Pidfs
+ */
+bool is_pidfs_dev(dev_t dev);
 
 #endif /* UTIL_LINUX_LSFD_H */

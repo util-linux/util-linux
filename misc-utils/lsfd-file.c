@@ -45,6 +45,8 @@
 #include "procfs.h"
 
 #include "lsfd.h"
+#include "lsfd-pidfd.h"
+#include "pidfd-utils.h"
 
 static struct idcache *username_cache;
 
@@ -492,6 +494,22 @@ static unsigned long get_minor_for_mqueue(void)
 	return minor(sb.st_dev);
 }
 
+static unsigned long get_minor_for_pidfs(void)
+{
+	int fd = pidfd_open(getpid(), 0);
+	struct stat sb;
+	unsigned long ret = 0;
+
+	if (fd < 0)
+		return 0;
+
+	if (fstat(fd, &sb) == 0 && (sb.st_mode & S_IFMT) == S_IFREG)
+		ret = minor(sb.st_dev);
+
+	close(fd);
+	return ret;
+}
+
 static void file_class_initialize(void)
 {
 	unsigned long m;
@@ -510,6 +528,10 @@ static void file_class_initialize(void)
 	m = get_minor_for_mqueue();
 	if (m)
 		add_nodev(m, "mqueue");
+
+	m = get_minor_for_pidfs();
+	if (m)
+		add_nodev(m, "pidfs");
 }
 
 static void file_class_finalize(void)
@@ -783,3 +805,77 @@ const struct file_class mqueue_file_class = {
 	.fill_column = mqueue_file_fill_column,
 	.get_ipc_class = mqueue_file_get_ipc_class,
 };
+
+struct pidfs_file {
+	struct file file;
+	struct pidfd_data data;
+};
+
+static void init_pidfs_file_content(struct file *file)
+{
+	struct pidfs_file *pidfs_file = (struct pidfs_file *)file;
+
+	memset(&pidfs_file->data, 0, sizeof(pidfs_file->data));
+}
+
+static int pidfs_file_handle_fdinfo(struct file *file, const char *key, const char *value)
+{
+	struct pidfs_file *pidfs_file = (struct pidfs_file *)file;
+
+	return pidfd_handle_fdinfo(&pidfs_file->data, key, value);
+}
+
+static void pidfs_file_free_content(struct file *file)
+{
+	struct pidfs_file *pidfs_file = (struct pidfs_file *)file;
+
+	pidfd_free(&pidfs_file->data);
+}
+
+static bool pidfs_file_fill_column(struct proc *proc __attribute__((__unused__)),
+				   struct file *file,
+				   struct libscols_line *ln,
+				   int column_id,
+				   size_t column_index)
+{
+	struct pidfs_file *pidfs_file = (struct pidfs_file *)file;
+	char *buf = NULL;
+
+	switch(column_id) {
+	case COL_TYPE:
+		if (scols_line_set_data(ln, column_index, "pidfd"))
+			err(EXIT_FAILURE, _("failed to add output data"));
+		return true;
+	case COL_NAME:
+		buf = pidfd_get_name(&pidfs_file->data);
+		break;
+	default:
+		if (!pidfd_fill_column(&pidfs_file->data, column_id, &buf))
+			return false;
+	}
+
+	if (buf &&
+	    scols_line_refer_data(ln, column_index, buf))
+		err(EXIT_FAILURE, _("failed to add output data"));
+
+	return true;
+}
+
+const struct file_class pidfs_file_class = {
+	.super = &file_class,
+	.size = sizeof(struct pidfs_file),
+	.initialize_content = init_pidfs_file_content,
+	.handle_fdinfo = pidfs_file_handle_fdinfo,
+	.fill_column = pidfs_file_fill_column,
+	.free_content = pidfs_file_free_content,
+};
+
+bool is_pidfs_dev(dev_t dev)
+{
+	const char *fs = get_nodev_filesystem(minor(dev));
+
+	if (fs && (strcmp (fs, "pidfs") == 0))
+		return true;
+
+	return false;
+}

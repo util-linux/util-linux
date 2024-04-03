@@ -683,6 +683,9 @@ static const struct file_class *stat2class(struct stat *sb)
 		if (is_mqueue_dev(dev))
 			return &mqueue_file_class;
 
+		if (is_pidfs_dev(dev))
+			return &pidfs_file_class;
+
 		return &file_class;
 	default:
 		break;
