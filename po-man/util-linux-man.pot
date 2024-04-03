@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-12-04 13:21+0100\n"
+"POT-Creation-Date: 2024-04-03 14:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -81,11 +81,10 @@ msgstr ""
 #.  TRANSLATORS: Keep *{configfile}* untranslated, it will be replaced with the name of the configuration file.
 #. type: Plain text
 #: ../man-common/footer-config.adoc:4
-#, no-wrap
 msgid ""
 "*{configfile}* is part of the util-linux package which can be downloaded "
 "from https://www.kernel.org/pub/linux/utils/util-linux/[Linux Kernel "
-"Archive].\n"
+"Archive]."
 msgstr ""
 
 #.  TRANSLATORS: Keep *{lib}* and {firstversion} untranslated, will be replaced with the library name and the version of util-linux where the library appeared for the first time.
@@ -212,7 +211,6 @@ msgstr ""
 #: ../sys-utils/tunelp.8.adoc:4 ../sys-utils/umount.8.adoc:29
 #: ../sys-utils/wdctl.8.adoc:4 ../sys-utils/zramctl.8.adoc:4
 #: ../term-utils/agetty.8.adoc:4
-#, no-wrap
 msgid "System Administration"
 msgstr ""
 
@@ -367,8 +365,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/addpart.8.adoc:22
-#, no-wrap
-msgid "*addpart* _device partition start length_\n"
+msgid "*addpart* _device partition start length_"
 msgstr ""
 
 #. type: Title ==
@@ -446,11 +443,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/addpart.8.adoc:26
-#, no-wrap
 msgid ""
 "*addpart* tells the Linux kernel about the existence of the specified "
 "partition. The command is a simple wrapper around the \"add partition\" "
-"ioctl.\n"
+"ioctl."
 msgstr ""
 
 #. type: Plain text
@@ -577,13 +573,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/addpart.8.adoc:52
-#, no-wrap
-msgid ""
-"*delpart*(8),\n"
-"*fdisk*(8),\n"
-"*parted*(8),\n"
-"*partprobe*(8),\n"
-"*partx*(8)\n"
+msgid "*delpart*(8), *fdisk*(8), *parted*(8), *partprobe*(8), *partx*(8)"
 msgstr ""
 
 #. Copyright 1998 Andries E. Brouwer (aeb@cwi.nl)
@@ -603,20 +593,17 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/blockdev.8.adoc:22
-#, no-wrap
-msgid "*blockdev* [*-q*] [*-v*] _command_ [_command_...] _device_ [_device_...]\n"
+msgid "*blockdev* [*-q*] [*-v*] _command_ [_command_...] _device_ [_device_...]"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/blockdev.8.adoc:24
-#, no-wrap
-msgid "*blockdev* *--report* [_device_...]\n"
+msgid "*blockdev* *--report* [_device_...]"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/blockdev.8.adoc:26
-#, no-wrap
-msgid "*blockdev* *-h*|*-V*\n"
+msgid "*blockdev* *-h*|*-V*"
 msgstr ""
 
 #. type: Plain text
@@ -1047,8 +1034,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/blockdev.8.adoc:117
-#, no-wrap
-msgid "*blockdev* was written by Andries E. Brouwer and rewritten by Karel Zak.\n"
+msgid "*blockdev* was written by Andries E. Brouwer and rewritten by Karel Zak."
 msgstr ""
 
 #. cfdisk.8 -- man page for cfdisk
@@ -1076,16 +1062,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/cfdisk.8.adoc:30
-#, no-wrap
-msgid "*cfdisk* [options] [_device_]\n"
+msgid "*cfdisk* [options] [_device_]"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/cfdisk.8.adoc:34
-#, no-wrap
 msgid ""
 "*cfdisk* is a curses-based program for partitioning any block device. The "
-"default device is _/dev/sda_.\n"
+"default device is _/dev/sda_."
 msgstr ""
 
 #. type: Plain text
@@ -1291,10 +1275,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/cfdisk.8.adoc:86
-#, no-wrap
 msgid ""
 "*Note that reducing the size of a partition might destroy data on that "
-"partition.*\n"
+"partition.*"
 msgstr ""
 
 #. type: Labeled list
@@ -1425,8 +1408,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/cfdisk.8.adoc:118
-#, no-wrap
-msgid "*cfdisk* does not support color customization with a color-scheme file.\n"
+msgid "*cfdisk* does not support color customization with a color-scheme file."
 msgstr ""
 
 #. type: Title ==
@@ -1550,13 +1532,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/cfdisk.8.adoc:152
-#, no-wrap
-msgid ""
-"*fdisk*(8),\n"
-"*parted*(8),\n"
-"*partprobe*(8),\n"
-"*partx*(8),\n"
-"*sfdisk*(8)\n"
+msgid "*fdisk*(8), *parted*(8), *partprobe*(8), *partx*(8), *sfdisk*(8)"
 msgstr ""
 
 #. delpart.8 -- man page for delpart
@@ -1576,28 +1552,20 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/delpart.8.adoc:22
-#, no-wrap
-msgid "*delpart* _device partition_\n"
+msgid "*delpart* _device partition_"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/delpart.8.adoc:26
-#, no-wrap
 msgid ""
 "*delpart* asks the Linux kernel to forget about the specified _partition_ (a "
 "number) on the specified _device_. The command is a simple wrapper around "
-"the \"del partition\" ioctl.\n"
+"the \"del partition\" ioctl."
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/delpart.8.adoc:40
-#, no-wrap
-msgid ""
-"*addpart*(8),\n"
-"*fdisk*(8),\n"
-"*parted*(8),\n"
-"*partprobe*(8),\n"
-"*partx*(8)\n"
+msgid "*addpart*(8), *fdisk*(8), *parted*(8), *partprobe*(8), *partx*(8)"
 msgstr ""
 
 #. Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
@@ -1615,17 +1583,15 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fdformat.8.adoc:20
-#, no-wrap
-msgid "*fdformat* [options] _device_\n"
+msgid "*fdformat* [options] _device_"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fdformat.8.adoc:24
-#, no-wrap
 msgid ""
 "*fdformat* does a low-level format on a floppy disk. _device_ is usually one "
 "of the following (for floppy devices the major = 2, and the minor is shown "
-"for informational purposes only):\n"
+"for informational purposes only):"
 msgstr ""
 
 #. type: delimited block .
@@ -1750,13 +1716,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fdformat.8.adoc:81
-#, no-wrap
-msgid ""
-"*fd*(4),\n"
-"*emkfs*(8),\n"
-"*mkfs*(8),\n"
-"*setfdprm*(8),\n"
-"*ufiformat*(8)\n"
+msgid "*fd*(4), *emkfs*(8), *mkfs*(8), *setfdprm*(8), *ufiformat*(8)"
 msgstr ""
 
 #. Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
@@ -1777,23 +1737,20 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fdisk.8.adoc:24
-#, no-wrap
-msgid "*fdisk* [options] _device_\n"
+msgid "*fdisk* [options] _device_"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fdisk.8.adoc:26
-#, no-wrap
-msgid "*fdisk* *-l* [_device_...]\n"
+msgid "*fdisk* *-l* [_device_...]"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fdisk.8.adoc:30
-#, no-wrap
 msgid ""
 "*fdisk* is a dialog-driven program for creation and manipulation of "
 "partition tables. It understands GPT, MBR, Sun, SGI and BSD partition "
-"tables.\n"
+"tables."
 msgstr ""
 
 #. type: Plain text
@@ -2186,11 +2143,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fdisk.8.adoc:130
-#, no-wrap
 msgid ""
 "*fdisk* allows reading (by 'I' command) *sfdisk*(8) compatible script "
 "files. The script is applied to in-memory partition table, and then it is "
-"possible to modify the partition table before you write it to the device.\n"
+"possible to modify the partition table before you write it to the device."
 msgstr ""
 
 #. type: Plain text
@@ -2279,10 +2235,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fdisk.8.adoc:151
-#, no-wrap
 msgid ""
 "*Please, read the DOS-mode section if you want DOS-compatible partitions.* "
-"*fdisk* does not care about cylinder boundaries by default.\n"
+"*fdisk* does not care about cylinder boundaries by default."
 msgstr ""
 
 #. type: Labeled list
@@ -2337,12 +2292,11 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fdisk.8.adoc:163
-#, no-wrap
 msgid ""
 "*Note that all this is deprecated. You don't have to care about things like* "
 "*geometry and cylinders on modern operating systems. If you really want* "
 "*DOS-compatible partitioning then you have to enable DOS mode and cylinder* "
-"*units by using the '-c=dos -u=cylinders' fdisk command-line options.*\n"
+"*units by using the '-c=dos -u=cylinders' fdisk command-line options.*"
 msgstr ""
 
 #. type: Plain text
@@ -2371,13 +2325,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fdisk.8.adoc:169
-#, no-wrap
 msgid ""
 "*fdisk* usually obtains the disk geometry automatically. This is not "
 "necessarily the physical disk geometry (indeed, modern disks do not really "
 "have anything like a physical geometry, certainly not something that can be "
 "described in the simplistic Cylinders/Heads/Sectors form), but it is the "
-"disk geometry that MS-DOS uses for the partition table.\n"
+"disk geometry that MS-DOS uses for the partition table."
 msgstr ""
 
 #. type: Plain text
@@ -2501,12 +2454,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fdisk.8.adoc:226
-#, no-wrap
-msgid ""
-"*cfdisk*(8),\n"
-"*mkfs*(8),\n"
-"*partx*(8),\n"
-"*sfdisk*(8)\n"
+msgid "*cfdisk*(8), *mkfs*(8), *partx*(8), *sfdisk*(8)"
 msgstr ""
 
 #. Copyright 1993, 1994, 1995 by Theodore Ts'o.  All Rights Reserved.
@@ -2524,15 +2472,13 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fsck.8.adoc:20
-#, no-wrap
 msgid ""
 "*fsck* [*-lsAVRTMNP*] [*-r* [_fd_]] [*-C* [_fd_]] [*-t* _fstype_] "
-"[_filesystem_...] [*--*] [_fs-specific-options_]\n"
+"[_filesystem_...] [*--*] [_fs-specific-options_]"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fsck.8.adoc:24
-#, no-wrap
 msgid ""
 "*fsck* is used to check and optionally repair one or more Linux "
 "filesystems. _filesystem_ can be a device name (e.g., _/dev/hdc1_, "
@@ -2540,7 +2486,7 @@ msgid ""
 "label or UUID specifier (e.g., UUID=8868abf6-88c5-4a83-98b8-bfc24057f7bd or "
 "LABEL=root). Normally, the *fsck* program will try to handle filesystems on "
 "different physical disk drives in parallel to reduce the total amount of "
-"time needed to check all of them.\n"
+"time needed to check all of them."
 msgstr ""
 
 #. type: Plain text
@@ -2731,10 +2677,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fsck.8.adoc:61
-#, no-wrap
-msgid ""
-"*/dev/sda1: status 0, rss 92828, real 4.002804, user 2.677592, sys "
-"0.86186*\n"
+msgid "*/dev/sda1: status 0, rss 92828, real 4.002804, user 2.677592, sys 0.86186*"
 msgstr ""
 
 #. type: Plain text
@@ -2747,8 +2690,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fsck.8.adoc:65
-#, no-wrap
-msgid "*/dev/sda1 0 92828 4.002804 2.677592 0.86186*\n"
+msgid "*/dev/sda1 0 92828 4.002804 2.677592 0.86186*"
 msgstr ""
 
 #. type: Labeled list
@@ -2857,11 +2799,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fsck.8.adoc:86
-#, no-wrap
 msgid ""
 "*fsck* does not check stacked devices (RAIDs, dm-crypt, ...) in parallel "
 "with any other device. See below for *FSCK_FORCE_ALL_PARALLEL* setting. The "
-"_/sys_ filesystem is used to determine dependencies between devices.\n"
+"_/sys_ filesystem is used to determine dependencies between devices."
 msgstr ""
 
 #. type: Plain text
@@ -2879,7 +2820,6 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fsck.8.adoc:90
-#, no-wrap
 msgid ""
 "*fsck* normally does not check whether the device actually exists before "
 "calling a filesystem specific checker. Therefore non-existing devices may "
@@ -2887,7 +2827,7 @@ msgid ""
 "filesystem specific checker returns a fatal error. The _/etc/fstab_ mount "
 "option *nofail* may be used to have *fsck* skip non-existing devices. *fsck* "
 "also skips non-existing devices that have the special filesystem type "
-"*auto*.\n"
+"*auto*."
 msgstr ""
 
 #. type: Labeled list
@@ -3005,10 +2945,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fsck.8.adoc:121
-#, no-wrap
 msgid ""
 "*Options which are not understood by fsck are passed to the "
-"filesystem-specific checker!*\n"
+"filesystem-specific checker!*"
 msgstr ""
 
 #. type: Plain text
@@ -3154,19 +3093,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fsck.8.adoc:172
-#, no-wrap
 msgid ""
-"*fstab*(5),\n"
-"*mkfs*(8),\n"
-"*fsck.ext2*(8) or *fsck.ext3*(8) or *e2fsck*(8),\n"
-"*fsck.cramfs*(8),\n"
-"*fsck.jfs*(8),\n"
-"*fsck.nfs*(8),\n"
-"*fsck.minix*(8),\n"
-"*fsck.msdos*(8),\n"
-"*fsck.vfat*(8),\n"
-"*fsck.xfs*(8),\n"
-"*reiserfsck*(8)\n"
+"*fstab*(5), *mkfs*(8), *fsck.ext2*(8) or *fsck.ext3*(8) or *e2fsck*(8), "
+"*fsck.cramfs*(8), *fsck.jfs*(8), *fsck.nfs*(8), *fsck.minix*(8), "
+"*fsck.msdos*(8), *fsck.vfat*(8), *fsck.xfs*(8), *reiserfsck*(8)"
 msgstr ""
 
 #. type: Title =
@@ -3182,14 +3112,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fsck.cramfs.8.adoc:16
-#, no-wrap
-msgid "*fsck.cramfs* [options] _file_\n"
+msgid "*fsck.cramfs* [options] _file_"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fsck.cramfs.8.adoc:20
-#, no-wrap
-msgid "*fsck.cramfs* is used to check the cramfs file system.\n"
+msgid "*fsck.cramfs* is used to check the cramfs file system."
 msgstr ""
 
 #. type: Labeled list
@@ -3311,10 +3239,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fsck.cramfs.8.adoc:55
-#, no-wrap
-msgid ""
-"*mount*(8),\n"
-"*mkfs.cramfs*(8)\n"
+msgid "*mount*(8), *mkfs.cramfs*(8)"
 msgstr ""
 
 #. Copyright 1992, 1993, 1994 Rickard E. Faith (faith@cs.unc.edu)
@@ -3332,14 +3257,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fsck.minix.8.adoc:20
-#, no-wrap
-msgid "*fsck.minix* [options] _device_\n"
+msgid "*fsck.minix* [options] _device_"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fsck.minix.8.adoc:24
-#, no-wrap
-msgid "*fsck.minix* performs a consistency check for the Linux MINIX filesystem.\n"
+msgid "*fsck.minix* performs a consistency check for the Linux MINIX filesystem."
 msgstr ""
 
 #. type: Plain text
@@ -3382,15 +3305,13 @@ msgstr ""
 
 #. type: delimited block _
 #: ../disk-utils/fsck.minix.8.adoc:44
-#, no-wrap
 msgid ""
 "*fsck.minix* should *not* be used on a mounted filesystem. Using "
 "*fsck.minix* on a mounted filesystem is very dangerous, due to the "
 "possibility that deleted files are still in use, and can seriously damage a "
 "perfectly good filesystem! If you absolutely have to run *fsck.minix* on a "
 "mounted filesystem, such as the root filesystem, make sure nothing is "
-"writing to the disk, and that no files are \"zombies\" waiting for "
-"deletion.\n"
+"writing to the disk, and that no files are \"zombies\" waiting for deletion."
 msgstr ""
 
 #. type: delimited block _
@@ -3526,14 +3447,9 @@ msgstr ""
 
 #. type: delimited block _
 #: ../disk-utils/fsck.minix.8.adoc:106
-#, no-wrap
 msgid ""
-"*fsck*(8),\n"
-"*fsck.ext2*(8),\n"
-"*mkfs*(8),\n"
-"*mkfs.ext2*(8),\n"
-"*mkfs.minix*(8),\n"
-"*reboot*(8)\n"
+"*fsck*(8), *fsck.ext2*(8), *mkfs*(8), *mkfs.ext2*(8), *mkfs.minix*(8), "
+"*reboot*(8)"
 msgstr ""
 
 #. type: Title =
@@ -3549,8 +3465,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/isosize.8.adoc:16
-#, no-wrap
-msgid "*isosize* [options] _iso9660_image_file_\n"
+msgid "*isosize* [options] _iso9660_image_file_"
 msgstr ""
 
 #. type: Plain text
@@ -3637,27 +3552,24 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/mkfs.8.adoc:16
-#, no-wrap
-msgid "*mkfs* [options] [*-t* _type_] [_fs-options_] _device_ [_size_]\n"
+msgid "*mkfs* [options] [*-t* _type_] [_fs-options_] _device_ [_size_]"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/mkfs.8.adoc:20
-#, no-wrap
 msgid ""
 "*This mkfs frontend is deprecated in favour of filesystem specific "
-"mkfs.<type> utils.*\n"
+"mkfs.<type> utils.*"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/mkfs.8.adoc:22
-#, no-wrap
 msgid ""
 "*mkfs* is used to build a Linux filesystem on a device, usually a hard disk "
 "partition. The _device_ argument is either the device name (e.g., "
 "_/dev/hda1_, _/dev/sdb2_), or a regular file that shall contain the "
 "filesystem. The _size_ argument is the number of blocks to be used for the "
-"filesystem.\n"
+"filesystem."
 msgstr ""
 
 #. type: Plain text
@@ -3754,21 +3666,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/mkfs.8.adoc:68
-#, no-wrap
 msgid ""
-"*fs*(5),\n"
-"*badblocks*(8),\n"
-"*fsck*(8),\n"
-"*mkdosfs*(8),\n"
-"*mke2fs*(8),\n"
-"*mkfs.bfs*(8),\n"
-"*mkfs.ext2*(8),\n"
-"*mkfs.ext3*(8),\n"
-"*mkfs.ext4*(8),\n"
-"*mkfs.minix*(8),\n"
-"*mkfs.msdos*(8),\n"
-"*mkfs.vfat*(8),\n"
-"*mkfs.xfs*(8)\n"
+"*fs*(5), *badblocks*(8), *fsck*(8), *mkdosfs*(8), *mke2fs*(8), "
+"*mkfs.bfs*(8), *mkfs.ext2*(8), *mkfs.ext3*(8), *mkfs.ext4*(8), "
+"*mkfs.minix*(8), *mkfs.msdos*(8), *mkfs.vfat*(8), *mkfs.xfs*(8)"
 msgstr ""
 
 #. Copyright 1999 Andries E. Brouwer (aeb@cwi.nl)
@@ -3786,16 +3687,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/mkfs.bfs.8.adoc:20
-#, no-wrap
-msgid "*mkfs.bfs* [options] _device_ [_block-count_]\n"
+msgid "*mkfs.bfs* [options] _device_ [_block-count_]"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/mkfs.bfs.8.adoc:24
-#, no-wrap
 msgid ""
 "*mkfs.bfs* creates an SCO bfs filesystem on a block device (usually a disk "
-"partition or a file accessed via the loop device).\n"
+"partition or a file accessed via the loop device)."
 msgstr ""
 
 #. type: Plain text
@@ -3866,8 +3765,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/mkfs.bfs.8.adoc:60
-#, no-wrap
-msgid "*mkfs*(8)\n"
+msgid "*mkfs*(8)"
 msgstr ""
 
 #. type: Title =
@@ -3883,8 +3781,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/mkfs.cramfs.8.adoc:16
-#, no-wrap
-msgid "*mkfs.cramfs* [options] _directory file_\n"
+msgid "*mkfs.cramfs* [options] _directory file_"
 msgstr ""
 
 #. type: Plain text
@@ -4050,10 +3947,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/mkfs.cramfs.8.adoc:86
-#, no-wrap
-msgid ""
-"*fsck.cramfs*(8),\n"
-"*mount*(8)\n"
+msgid "*fsck.cramfs*(8), *mount*(8)"
 msgstr ""
 
 #. Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
@@ -4074,16 +3968,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/mkfs.minix.8.adoc:23
-#, no-wrap
-msgid "*mkfs.minix* [options] _device_ [_size-in-blocks_]\n"
+msgid "*mkfs.minix* [options] _device_ [_size-in-blocks_]"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/mkfs.minix.8.adoc:27
-#, no-wrap
 msgid ""
 "*mkfs.minix* creates a Linux MINIX filesystem on a device (usually a disk "
-"partition).\n"
+"partition)."
 msgstr ""
 
 #. type: Plain text
@@ -4241,11 +4133,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/mkfs.minix.8.adoc:91
-#, no-wrap
-msgid ""
-"*fsck*(8),\n"
-"*mkfs*(8),\n"
-"*reboot*(8)\n"
+msgid "*fsck*(8), *mkfs*(8), *reboot*(8)"
 msgstr ""
 
 #. Copyright 1998 Andries E. Brouwer (aeb@cwi.nl)
@@ -4263,14 +4151,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/mkswap.8.adoc:20
-#, no-wrap
-msgid "*mkswap* [options] _device_ [_size_]\n"
+msgid "*mkswap* [options] _device_ [_size_]"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/mkswap.8.adoc:24
-#, no-wrap
-msgid "*mkswap* sets up a Linux swap area on a device or in a file.\n"
+msgid "*mkswap* sets up a Linux swap area on a device or in a file."
 msgstr ""
 
 #. type: Plain text
@@ -4310,10 +4196,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/mkswap.8.adoc:36
-#, no-wrap
 msgid ""
 "*mkswap*, like many others mkfs-like utils, *erases the first partition "
-"block to make any previous filesystem invisible.*\n"
+"block to make any previous filesystem invisible.*"
 msgstr ""
 
 #. type: Plain text
@@ -4508,8 +4393,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/mkswap.8.adoc:101
-#, no-wrap
-msgid "*mkswap* refuses areas smaller than 10 pages.\n"
+msgid "*mkswap* refuses areas smaller than 10 pages."
 msgstr ""
 
 #. type: Plain text
@@ -4546,10 +4430,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/mkswap.8.adoc:118
-#, no-wrap
-msgid ""
-"*fdisk*(8),\n"
-"*swapon*(8)\n"
+msgid "*fdisk*(8), *swapon*(8)"
 msgstr ""
 
 #. partx.8 -- man page for partx
@@ -4572,16 +4453,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/partx.8.adoc:23
-#, no-wrap
 msgid ""
 "*partx* [*-a*|*-d*|*-P*|*-r*|*-s*|*-u*] [*-t* _type_] [*-n* _M_:_N_] [-] "
-"_disk_\n"
+"_disk_"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/partx.8.adoc:25
-#, no-wrap
-msgid "*partx* [*-a*|*-d*|*-P*|*-r*|*-s*|*-u*] [*-t* _type_] _partition_ [_disk_]\n"
+msgid "*partx* [*-a*|*-d*|*-P*|*-r*|*-s*|*-u*] [*-t* _type_] _partition_ [_disk_]"
 msgstr ""
 
 #. type: Plain text
@@ -4612,11 +4491,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/partx.8.adoc:39
-#, no-wrap
 msgid ""
 "*partx is not an fdisk program* - adding and removing partitions does not "
 "change the disk, it just tells the kernel about the presence and numbering "
-"of on-disk partitions.\n"
+"of on-disk partitions."
 msgstr ""
 
 #. type: Labeled list
@@ -4953,13 +4831,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/partx.8.adoc:142
-#, no-wrap
-msgid ""
-"*addpart*(8),\n"
-"*delpart*(8),\n"
-"*fdisk*(8),\n"
-"*parted*(8),\n"
-"*partprobe*(8)\n"
+msgid "*addpart*(8), *delpart*(8), *fdisk*(8), *parted*(8), *partprobe*(8)"
 msgstr ""
 
 #. type: Title =
@@ -4975,48 +4847,42 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/raw.8.adoc:16
-#, no-wrap
-msgid "*raw* _/dev/raw/raw<N>_ _<major>_ _<minor>_\n"
+msgid "*raw* _/dev/raw/raw<N>_ _<major>_ _<minor>_"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/raw.8.adoc:18
-#, no-wrap
-msgid "*raw* _/dev/raw/raw<N>_ _/dev/<blockdev>_\n"
+msgid "*raw* _/dev/raw/raw<N>_ _/dev/<blockdev>_"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/raw.8.adoc:20
-#, no-wrap
-msgid "*raw* *-q* _/dev/raw/raw<N>_\n"
+msgid "*raw* *-q* _/dev/raw/raw<N>_"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/raw.8.adoc:22
-#, no-wrap
-msgid "*raw* *-qa*\n"
+msgid "*raw* *-qa*"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/raw.8.adoc:26
-#, no-wrap
 msgid ""
 "*raw* is used to bind a Linux raw character device to a block device. Any "
 "block device may be used: at the time of binding, the device driver does not "
 "even have to be accessible (it may be loaded on demand as a kernel module "
-"later).\n"
+"later)."
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/raw.8.adoc:28
-#, no-wrap
 msgid ""
 "*raw* is used in two modes: it either sets raw device bindings, or it "
 "queries existing bindings. When setting a raw device, _/dev/raw/raw<N>_ is "
 "the device name of an existing raw device node in the filesystem. The block "
 "device to which it is to be bound can be specified either in terms of its "
 "_major_ and _minor_ device numbers, or as a path name _/dev/<blockdev>_ to "
-"an existing block device file.\n"
+"an existing block device file."
 msgstr ""
 
 #. type: Plain text
@@ -5133,17 +4999,15 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/resizepart.8.adoc:22
-#, no-wrap
-msgid "*resizepart* _device partition length_\n"
+msgid "*resizepart* _device partition length_"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/resizepart.8.adoc:26
-#, no-wrap
 msgid ""
 "*resizepart* tells the Linux kernel about the new size of the specified "
 "partition. The command is a simple wrapper around the \"resize partition\" "
-"ioctl.\n"
+"ioctl."
 msgstr ""
 
 #. type: Plain text
@@ -5153,14 +5017,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/resizepart.8.adoc:50
-#, no-wrap
 msgid ""
-"*addpart*(8),\n"
-"*delpart*(8),\n"
-"*fdisk*(8),\n"
-"*parted*(8),\n"
-"*partprobe*(8),\n"
-"*partx*(8)\n"
+"*addpart*(8), *delpart*(8), *fdisk*(8), *parted*(8), *partprobe*(8), "
+"*partx*(8)"
 msgstr ""
 
 #. sfdisk.8 -- man page for sfdisk
@@ -5187,23 +5046,20 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/sfdisk.8.adoc:31
-#, no-wrap
-msgid "*sfdisk* [options] _device_ [*-N* _partition-number_]\n"
+msgid "*sfdisk* [options] _device_ [*-N* _partition-number_]"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/sfdisk.8.adoc:33
-#, no-wrap
-msgid "*sfdisk* [options] _command_\n"
+msgid "*sfdisk* [options] _command_"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/sfdisk.8.adoc:37
-#, no-wrap
 msgid ""
 "*sfdisk* is a script-oriented tool for partitioning any block device. It "
 "runs in interactive mode if executed on a terminal (stdin refers to a "
-"terminal).\n"
+"terminal)."
 msgstr ""
 
 #. type: Plain text
@@ -5217,23 +5073,21 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/sfdisk.8.adoc:41
-#, no-wrap
 msgid ""
 "*sfdisk* protects the first disk sector when create a new disk label. The "
 "option *--wipe always* disables this protection. Note that *fdisk*(8) and "
-"*cfdisk*(8) completely erase this area by default.\n"
+"*cfdisk*(8) completely erase this area by default."
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/sfdisk.8.adoc:43
-#, no-wrap
 msgid ""
 "*sfdisk* (since version 2.26) *aligns the start and end of partitions* to "
 "block-device I/O limits when relative sizes are specified, when the default "
 "values are used or when multiplicative suffixes (e.g., MiB) are used for "
 "sizes. It is possible that partition size will be optimized (reduced or "
 "enlarged) due to alignment if the start offset is specified exactly in "
-"sectors and partition size relative or by multiplicative suffixes.\n"
+"sectors and partition size relative or by multiplicative suffixes."
 msgstr ""
 
 #. type: Plain text
@@ -5250,23 +5104,21 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/sfdisk.8.adoc:47
-#, no-wrap
 msgid ""
 "*sfdisk* does not create the standard system partitions for SGI and SUN disk "
 "labels like *fdisk*(8) does. It is necessary to explicitly create all "
-"partitions including whole-disk system partitions.\n"
+"partitions including whole-disk system partitions."
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/sfdisk.8.adoc:49
-#, no-wrap
 msgid ""
 "*sfdisk* uses *BLKRRPART* (reread partition table) ioctl to make sure that "
 "the device is not used by system or other tools (see also "
 "*--no-reread*). It's possible that this feature or another *sfdisk* activity "
 "races with *systemd-udevd*(8). The recommended way how to avoid possible "
 "collisions is to use *--lock* option. The exclusive lock will cause "
-"*systemd-udevd* to skip the event handling on the device.\n"
+"*systemd-udevd* to skip the event handling on the device."
 msgstr ""
 
 #. type: Plain text
@@ -5826,20 +5678,17 @@ msgstr ""
 
 #. type: delimited block _
 #: ../disk-utils/sfdisk.8.adoc:186
-#, no-wrap
-msgid "*echo '+100M,' | sfdisk --move-data /dev/sdc -N 1*\n"
+msgid "*echo '+100M,' | sfdisk --move-data /dev/sdc -N 1*"
 msgstr ""
 
 #. type: delimited block _
 #: ../disk-utils/sfdisk.8.adoc:188
-#, no-wrap
-msgid "*echo '2048,' | sfdisk /dev/sdc --append*\n"
+msgid "*echo '2048,' | sfdisk /dev/sdc --append*"
 msgstr ""
 
 #. type: delimited block _
 #: ../disk-utils/sfdisk.8.adoc:190
-#, no-wrap
-msgid "*sfdisk /dev/sdc --reorder*\n"
+msgid "*sfdisk /dev/sdc --reorder*"
 msgstr ""
 
 #. type: Labeled list
@@ -5953,8 +5802,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/sfdisk.8.adoc:228
-#, no-wrap
-msgid "*sfdisk* supports two input formats and generic header lines.\n"
+msgid "*sfdisk* supports two input formats and generic header lines."
 msgstr ""
 
 #. type: Title ===
@@ -5972,8 +5820,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/sfdisk.8.adoc:234
-#, no-wrap
-msgid "*<name>: <value>*\n"
+msgid "*<name>: <value>*"
 msgstr ""
 
 #. type: Plain text
@@ -6421,18 +6268,16 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/sfdisk.8.adoc:345
-#, no-wrap
 msgid ""
 "*sfdisk* does not create partition table without partitions by default. The "
 "lines with partitions are expected in the script by default. The empty "
 "partition table has to be explicitly requested by \"label: <name>\" script "
-"header line without any partitions lines. For example:\n"
+"header line without any partitions lines. For example:"
 msgstr ""
 
 #. type: delimited block _
 #: ../disk-utils/sfdisk.8.adoc:348
-#, no-wrap
-msgid "*echo 'label: gpt' | sfdisk /dev/sdb*\n"
+msgid "*echo 'label: gpt' | sfdisk /dev/sdb*"
 msgstr ""
 
 #. type: Plain text
@@ -6471,8 +6316,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../disk-utils/sfdisk.8.adoc:362
-#, no-wrap
-msgid "*sfdisk --dump /dev/sda > sda.dump*\n"
+msgid "*sfdisk --dump /dev/sda > sda.dump*"
 msgstr ""
 
 #. type: Plain text
@@ -6482,8 +6326,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../disk-utils/sfdisk.8.adoc:367
-#, no-wrap
-msgid "*sfdisk /dev/sda < sda.dump*\n"
+msgid "*sfdisk /dev/sda < sda.dump*"
 msgstr ""
 
 #. type: Plain text
@@ -6513,8 +6356,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../disk-utils/sfdisk.8.adoc:377
-#, no-wrap
-msgid "*sfdisk --backup-pt-sectors /dev/sda*\n"
+msgid "*sfdisk --backup-pt-sectors /dev/sda*"
 msgstr ""
 
 #. type: Plain text
@@ -6524,10 +6366,9 @@ msgstr ""
 
 #. type: delimited block _
 #: ../disk-utils/sfdisk.8.adoc:383
-#, no-wrap
 msgid ""
 "*dd if=~/sfdisk-sda-0x00000200.bak of=/dev/sda seek=$\\((0x00000200)) bs=1 "
-"conv=notrunc*\n"
+"conv=notrunc*"
 msgstr ""
 
 #. type: Plain text
@@ -6540,8 +6381,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../disk-utils/sfdisk.8.adoc:389
-#, no-wrap
-msgid "*sfdisk --backup --delete /dev/sda*\n"
+msgid "*sfdisk --backup --delete /dev/sda*"
 msgstr ""
 
 #. type: Plain text
@@ -6698,13 +6538,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/sfdisk.8.adoc:462
-#, no-wrap
-msgid ""
-"*fdisk*(8),\n"
-"*cfdisk*(8),\n"
-"*parted*(8),\n"
-"*partprobe*(8),\n"
-"*partx*(8)\n"
+msgid "*fdisk*(8), *cfdisk*(8), *parted*(8), *partprobe*(8), *partx*(8)"
 msgstr ""
 
 #. Copyright 2010 Jason Borden <jborden@bluehost.com>
@@ -6722,16 +6556,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/swaplabel.8.adoc:20
-#, no-wrap
-msgid "*swaplabel* [*-L* _label_] [*-U* _UUID_] _device_\n"
+msgid "*swaplabel* [*-L* _label_] [*-U* _UUID_] _device_"
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/swaplabel.8.adoc:24
-#, no-wrap
 msgid ""
 "*swaplabel* will display or change the label or UUID of a swap partition "
-"located on _device_ (or regular file).\n"
+"located on _device_ (or regular file)."
 msgstr ""
 
 #. type: Plain text
@@ -6767,19 +6599,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/swaplabel.8.adoc:47
-#, no-wrap
 msgid ""
 "*swaplabel* was written by mailto:jborden@bluehost.com[Jason Borden] and "
-"mailto:kzak@redhat.com[Karel Zak].\n"
+"mailto:kzak@redhat.com[Karel Zak]."
 msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/swaplabel.8.adoc:53
-#, no-wrap
-msgid ""
-"*uuidgen*(1),\n"
-"*mkswap*(8),\n"
-"*swapon*(8)\n"
+msgid "*uuidgen*(1), *mkswap*(8), *swapon*(8)"
 msgstr ""
 
 #. terminal-colors.d.5 --
@@ -6894,8 +6721,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../lib/terminal-colors.d.5.adoc:54
-#, no-wrap
-msgid "*name color-sequence*\n"
+msgid "*name color-sequence*"
 msgstr ""
 
 #. type: Plain text
@@ -7015,8 +6841,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../lib/terminal-colors.d.5.adoc:123
-#, no-wrap
-msgid "*echo 'alert 37;41' >> /etc/terminal-colors.d/dmesg.scheme*\n"
+msgid "*echo 'alert 37;41' >> /etc/terminal-colors.d/dmesg.scheme*"
 msgstr ""
 
 #. type: Title ===
@@ -7066,8 +6891,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../lib/terminal-colors.d.5.adoc:148 ../lib/terminal-colors.d.5.adoc:160
-#, no-wrap
-msgid "*touch /etc/terminal-colors.d/disable*\n"
+msgid "*touch /etc/terminal-colors.d/disable*"
 msgstr ""
 
 #. type: delimited block _
@@ -7077,8 +6901,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../lib/terminal-colors.d.5.adoc:154
-#, no-wrap
-msgid "*touch /etc/terminal-colors.d/@vt100.disable*\n"
+msgid "*touch /etc/terminal-colors.d/@vt100.disable*"
 msgstr ""
 
 #. type: delimited block _
@@ -7088,8 +6911,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../lib/terminal-colors.d.5.adoc:162
-#, no-wrap
-msgid "*touch /etc/terminal-colors.d/dmesg.enable*\n"
+msgid "*touch /etc/terminal-colors.d/dmesg.enable*"
 msgstr ""
 
 #. type: Title ==
@@ -7123,7 +6945,6 @@ msgstr ""
 #: ../libuuid/man/uuid_copy.3.adoc:35 ../libuuid/man/uuid_generate.3.adoc:37
 #: ../libuuid/man/uuid_is_null.3.adoc:35 ../libuuid/man/uuid_parse.3.adoc:35
 #: ../libuuid/man/uuid_time.3.adoc:35 ../libuuid/man/uuid_unparse.3.adoc:35
-#, no-wrap
 msgid "Programmer's Manual"
 msgstr ""
 
@@ -7134,14 +6955,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../libblkid/libblkid.3.adoc:23
-#, no-wrap
-msgid "*#include <blkid.h>*\n"
+msgid "*#include <blkid.h>*"
 msgstr ""
 
 #. type: Plain text
 #: ../libblkid/libblkid.3.adoc:25
-#, no-wrap
-msgid "*cc* _file.c_ *-lblkid*\n"
+msgid "*cc* _file.c_ *-lblkid*"
 msgstr ""
 
 #. type: Plain text
@@ -7428,11 +7247,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../libblkid/libblkid.3.adoc:126
-#, no-wrap
 msgid ""
 "*libblkid* was written by Andreas Dilger for the ext2 filesystem utilities, "
 "with input from Ted Ts'o. The library was subsequently heavily modified by "
-"Ted Ts'o.\n"
+"Ted Ts'o."
 msgstr ""
 
 #. type: Plain text
@@ -7448,18 +7266,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../libblkid/libblkid.3.adoc:132
-#, no-wrap
 msgid ""
 "*libblkid* is available under the terms of the GNU Library General Public "
-"License (LGPL), version 2 (or at your discretion any later version).\n"
+"License (LGPL), version 2 (or at your discretion any later version)."
 msgstr ""
 
 #. type: Plain text
 #: ../libblkid/libblkid.3.adoc:137 ../misc-utils/wipefs.8.adoc:107
-#, no-wrap
-msgid ""
-"*blkid*(8),\n"
-"*findfs*(8)\n"
+msgid "*blkid*(8), *findfs*(8)"
 msgstr ""
 
 #. Copyright 1999 Andreas Dilger (adilger@enel.ucalgary.ca)
@@ -7508,8 +7322,7 @@ msgstr ""
 #: ../libuuid/man/uuid_generate.3.adoc:50 ../libuuid/man/uuid_is_null.3.adoc:48
 #: ../libuuid/man/uuid_parse.3.adoc:48 ../libuuid/man/uuid_time.3.adoc:48
 #: ../libuuid/man/uuid_unparse.3.adoc:48
-#, no-wrap
-msgid "*#include <uuid.h>*\n"
+msgid "*#include <uuid.h>*"
 msgstr ""
 
 #. type: Plain text
@@ -7559,16 +7372,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../libuuid/man/uuid.3.adoc:73
-#, no-wrap
 msgid ""
-"*uuid_clear*(3),\n"
-"*uuid_compare*(3),\n"
-"*uuid_copy*(3),\n"
-"*uuid_generate*(3),\n"
-"*uuid_is_null*(3),\n"
-"*uuid_parse*(3),\n"
-"*uuid_time*(3),\n"
-"*uuid_unparse*(3)\n"
+"*uuid_clear*(3), *uuid_compare*(3), *uuid_copy*(3), *uuid_generate*(3), "
+"*uuid_is_null*(3), *uuid_parse*(3), *uuid_time*(3), *uuid_unparse*(3)"
 msgstr ""
 
 #. Copyright 1999 Andreas Dilger (adilger@enel.ucalgary.ca)
@@ -7613,8 +7419,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../libuuid/man/uuid_clear.3.adoc:50
-#, no-wrap
-msgid "*void uuid_clear(uuid_t __uu__);*\n"
+msgid "*void uuid_clear(uuid_t __uu__);*"
 msgstr ""
 
 #. type: Plain text
@@ -7626,15 +7431,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../libuuid/man/uuid_clear.3.adoc:68
-#, no-wrap
 msgid ""
-"*uuid*(3),\n"
-"*uuid_compare*(3),\n"
-"*uuid_copy*(3),\n"
-"*uuid_generate*(3),\n"
-"*uuid_is_null*(3),\n"
-"*uuid_parse*(3),\n"
-"*uuid_unparse*(3)\n"
+"*uuid*(3), *uuid_compare*(3), *uuid_copy*(3), *uuid_generate*(3), "
+"*uuid_is_null*(3), *uuid_parse*(3), *uuid_unparse*(3)"
 msgstr ""
 
 #. Copyright 1999 Andreas Dilger (adilger@enel.ucalgary.ca)
@@ -7679,8 +7478,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../libuuid/man/uuid_compare.3.adoc:50
-#, no-wrap
-msgid "*int uuid_compare(uuid_t __uu1__, uuid_t __uu2__)*\n"
+msgid "*int uuid_compare(uuid_t __uu1__, uuid_t __uu2__)*"
 msgstr ""
 
 #. type: Plain text
@@ -7708,15 +7506,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../libuuid/man/uuid_compare.3.adoc:72
-#, no-wrap
 msgid ""
-"*uuid*(3),\n"
-"*uuid_clear*(3),\n"
-"*uuid_copy*(3),\n"
-"*uuid_generate*(3),\n"
-"*uuid_is_null*(3),\n"
-"*uuid_parse*(3),\n"
-"*uuid_unparse*(3)\n"
+"*uuid*(3), *uuid_clear*(3), *uuid_copy*(3), *uuid_generate*(3), "
+"*uuid_is_null*(3), *uuid_parse*(3), *uuid_unparse*(3)"
 msgstr ""
 
 #. Copyright 1999 Andreas Dilger (adilger@enel.ucalgary.ca)
@@ -7761,8 +7553,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../libuuid/man/uuid_copy.3.adoc:50
-#, no-wrap
-msgid "*void uuid_copy(uuid_t __dst__, uuid_t __src__);*\n"
+msgid "*void uuid_copy(uuid_t __dst__, uuid_t __src__);*"
 msgstr ""
 
 #. type: Plain text
@@ -7777,15 +7568,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../libuuid/man/uuid_copy.3.adoc:72
-#, no-wrap
 msgid ""
-"*uuid*(3),\n"
-"*uuid_clear*(3),\n"
-"*uuid_compare*(3),\n"
-"*uuid_generate*(3),\n"
-"*uuid_is_null*(3),\n"
-"*uuid_parse*(3),\n"
-"*uuid_unparse*(3)\n"
+"*uuid*(3), *uuid_clear*(3), *uuid_compare*(3), *uuid_generate*(3), "
+"*uuid_is_null*(3), *uuid_parse*(3), *uuid_unparse*(3)"
 msgstr ""
 
 #. Copyright 1999 Andreas Dilger (adilger@enel.ucalgary.ca)
@@ -7836,14 +7621,14 @@ msgstr ""
 #: ../libuuid/man/uuid_generate.3.adoc:57
 #, no-wrap
 msgid ""
-"*void uuid_generate(uuid_t __out__);* +\n"
-"*void uuid_generate_random(uuid_t __out__);* +\n"
-"*void uuid_generate_time(uuid_t __out__);* +\n"
-"*int uuid_generate_time_safe(uuid_t __out__);* +\n"
+"*void uuid_generate(uuid_t __out__);*\n"
+"*void uuid_generate_random(uuid_t __out__);*\n"
+"*void uuid_generate_time(uuid_t __out__);*\n"
+"*int uuid_generate_time_safe(uuid_t __out__);*\n"
 "*void uuid_generate_md5(uuid_t __out__, const uuid_t __ns__, const char "
-"__*name__, size_t __len__);* +\n"
-"*void uuid_generate_sha1(uuid_t __out__, const uuid_t __ns__, const char "
 "__*name__, size_t __len__);*\n"
+"*void uuid_generate_sha1(uuid_t __out__, const uuid_t __ns__, const char "
+"__*name__, size_t __len__);*"
 msgstr ""
 
 #. type: Plain text
@@ -7925,18 +7710,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../libuuid/man/uuid_generate.3.adoc:96
-#, no-wrap
 msgid ""
-"*uuidgen*(1),\n"
-"*uuid*(3),\n"
-"*uuid_clear*(3),\n"
-"*uuid_compare*(3),\n"
-"*uuid_copy*(3),\n"
-"*uuid_is_null*(3),\n"
-"*uuid_parse*(3),\n"
-"*uuid_time*(3),\n"
-"*uuid_unparse*(3),\n"
-"*uuidd*(8)\n"
+"*uuidgen*(1), *uuid*(3), *uuid_clear*(3), *uuid_compare*(3), *uuid_copy*(3), "
+"*uuid_is_null*(3), *uuid_parse*(3), *uuid_time*(3), *uuid_unparse*(3), "
+"*uuidd*(8)"
 msgstr ""
 
 #. Copyright 1999 Andreas Dilger (adilger@enel.ucalgary.ca)
@@ -7981,8 +7758,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../libuuid/man/uuid_is_null.3.adoc:50
-#, no-wrap
-msgid "*int uuid_is_null(uuid_t __uu__);*\n"
+msgid "*int uuid_is_null(uuid_t __uu__);*"
 msgstr ""
 
 #. type: Plain text
@@ -7995,16 +7771,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../libuuid/man/uuid_is_null.3.adoc:69
-#, no-wrap
 msgid ""
-"*uuid*(3),\n"
-"*uuid_clear*(3),\n"
-"*uuid_compare*(3),\n"
-"*uuid_copy*(3),\n"
-"*uuid_generate*(3),\n"
-"*uuid_time*(3),\n"
-"*uuid_parse*(3),\n"
-"*uuid_unparse*(3)\n"
+"*uuid*(3), *uuid_clear*(3), *uuid_compare*(3), *uuid_copy*(3), "
+"*uuid_generate*(3), *uuid_time*(3), *uuid_parse*(3), *uuid_unparse*(3)"
 msgstr ""
 
 #. Copyright 1999 Andreas Dilger (adilger@enel.ucalgary.ca)
@@ -8051,9 +7820,8 @@ msgstr ""
 #: ../libuuid/man/uuid_parse.3.adoc:51
 #, no-wrap
 msgid ""
-"*int uuid_parse(char *__in__, uuid_t __uu__);* +\n"
-"*int uuid_parse_range(char *__in_start__, char *__in_end__, uuid_t "
-"__uu__);*\n"
+"*int uuid_parse(char *__in__, uuid_t __uu__);*\n"
+"*int uuid_parse_range(char *__in_start__, char *__in_end__, uuid_t __uu__);*"
 msgstr ""
 
 #. type: Plain text
@@ -8089,16 +7857,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../libuuid/man/uuid_parse.3.adoc:80
-#, no-wrap
 msgid ""
-"*uuid*(3),\n"
-"*uuid_clear*(3),\n"
-"*uuid_compare*(3),\n"
-"*uuid_copy*(3),\n"
-"*uuid_generate*(3),\n"
-"*uuid_is_null*(3),\n"
-"*uuid_time*(3),\n"
-"*uuid_unparse*(3)\n"
+"*uuid*(3), *uuid_clear*(3), *uuid_compare*(3), *uuid_copy*(3), "
+"*uuid_generate*(3), *uuid_is_null*(3), *uuid_time*(3), *uuid_unparse*(3)"
 msgstr ""
 
 #. Copyright 1999 Andreas Dilger (adilger@enel.ucalgary.ca)
@@ -8143,8 +7904,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../libuuid/man/uuid_time.3.adoc:50
-#, no-wrap
-msgid "*time_t uuid_time(uuid_t __uu__, struct timeval *__ret_tv__)*\n"
+msgid "*time_t uuid_time(uuid_t __uu__, struct timeval *__ret_tv__)*"
 msgstr ""
 
 #. type: Plain text
@@ -8169,16 +7929,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../libuuid/man/uuid_time.3.adoc:73
-#, no-wrap
 msgid ""
-"*uuid*(3),\n"
-"*uuid_clear*(3),\n"
-"*uuid_compare*(3),\n"
-"*uuid_copy*(3),\n"
-"*uuid_generate*(3),\n"
-"*uuid_is_null*(3),\n"
-"*uuid_parse*(3),\n"
-"*uuid_unparse*(3)\n"
+"*uuid*(3), *uuid_clear*(3), *uuid_compare*(3), *uuid_copy*(3), "
+"*uuid_generate*(3), *uuid_is_null*(3), *uuid_parse*(3), *uuid_unparse*(3)"
 msgstr ""
 
 #. Copyright 1999 Andreas Dilger (adilger@enel.ucalgary.ca)
@@ -8225,9 +7978,9 @@ msgstr ""
 #: ../libuuid/man/uuid_unparse.3.adoc:52
 #, no-wrap
 msgid ""
-"*void uuid_unparse(uuid_t __uu__, char *__out__);* +\n"
-"*void uuid_unparse_upper(uuid_t __uu__, char *__out__);* +\n"
-"*void uuid_unparse_lower(uuid_t __uu__, char *__out__);*\n"
+"*void uuid_unparse(uuid_t __uu__, char *__out__);*\n"
+"*void uuid_unparse_upper(uuid_t __uu__, char *__out__);*\n"
+"*void uuid_unparse_lower(uuid_t __uu__, char *__out__);*"
 msgstr ""
 
 #. type: Plain text
@@ -8255,16 +8008,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../libuuid/man/uuid_unparse.3.adoc:77
-#, no-wrap
 msgid ""
-"*uuid*(3),\n"
-"*uuid_clear*(3),\n"
-"*uuid_compare*(3),\n"
-"*uuid_copy*(3),\n"
-"*uuid_generate*(3),\n"
-"*uuid_time*(3),\n"
-"*uuid_is_null*(3),\n"
-"*uuid_parse*(3)\n"
+"*uuid*(3), *uuid_clear*(3), *uuid_compare*(3), *uuid_copy*(3), "
+"*uuid_generate*(3), *uuid_time*(3), *uuid_is_null*(3), *uuid_parse*(3)"
 msgstr ""
 
 #. chfn.1 -- change your finger information
@@ -8314,7 +8060,6 @@ msgstr ""
 #: ../text-utils/line.1.adoc:5 ../text-utils/more.1.adoc:41
 #: ../text-utils/pg.1.adoc:5 ../text-utils/rev.1.adoc:38
 #: ../text-utils/ul.1.adoc:38
-#, no-wrap
 msgid "User Commands"
 msgstr ""
 
@@ -8325,21 +8070,19 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/chfn.1.adoc:24
-#, no-wrap
 msgid ""
 "*chfn* [*-f* _full-name_] [*-o* _office_] [*-p* _office-phone_] [*-h* "
-"_home-phone_] [*-u*] [*-V*] [_username_]\n"
+"_home-phone_] [*-u*] [*-V*] [_username_]"
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/chfn.1.adoc:28
-#, no-wrap
 msgid ""
 "*chfn* is used to change your finger information. This information is stored "
 "in the _/etc/passwd_ file, and is displayed by the *finger* program. The "
 "Linux *finger* command will display four pieces of information that can be "
 "changed by *chfn*: your real name, your work room and phone, and your home "
-"phone.\n"
+"phone."
 msgstr ""
 
 #. type: Plain text
@@ -8360,11 +8103,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/chfn.1.adoc:34
-#, no-wrap
 msgid ""
 "*chfn* supports non-local entries (kerberos, LDAP, etc.) if linked with "
 "libuser, otherwise use *ypchfn*(1), *lchfn*(1) or any other implementation "
-"for non-local entries.\n"
+"for non-local entries."
 msgstr ""
 
 #. type: Labeled list
@@ -8433,12 +8175,11 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/chfn.1.adoc:61
-#, no-wrap
 msgid ""
 "*chfn* reads the _/etc/login.defs_ configuration file (see "
 "*login.defs*(5)). Note that the configuration file could be distributed with "
 "another package (e.g., shadow-utils). The following configuration items are "
-"relevant for *chfn*:\n"
+"relevant for *chfn*:"
 msgstr ""
 
 #. type: Labeled list
@@ -8490,12 +8231,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/chfn.1.adoc:86
-#, no-wrap
-msgid ""
-"*chsh*(1),\n"
-"*finger*(1),\n"
-"*login.defs*(5),\n"
-"*passwd*(5)\n"
+msgid "*chsh*(1), *finger*(1), *login.defs*(5), *passwd*(5)"
 msgstr ""
 
 #. chsh.1 -- change your login shell
@@ -8517,25 +8253,22 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/chsh.1.adoc:24
-#, no-wrap
-msgid "*chsh* [*-s* _shell_] [*-l*] [*-h*] [*-V*] [_username_]\n"
+msgid "*chsh* [*-s* _shell_] [*-l*] [*-h*] [*-V*] [_username_]"
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/chsh.1.adoc:28
-#, no-wrap
 msgid ""
 "*chsh* is used to change your login shell. If a shell is not given on the "
-"command line, *chsh* prompts for one.\n"
+"command line, *chsh* prompts for one."
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/chsh.1.adoc:30
-#, no-wrap
 msgid ""
 "*chsh* supports non-local entries (kerberos, LDAP, etc.) if linked with "
 "libuser, otherwise use *ypchsh*(1), *lchsh*(1) or any other implementation "
-"for non-local entries.\n"
+"for non-local entries."
 msgstr ""
 
 #. type: Labeled list
@@ -8575,8 +8308,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/chsh.1.adoc:52
-#, no-wrap
-msgid "*chsh* will accept the full pathname of any executable file on the system.\n"
+msgid "*chsh* will accept the full pathname of any executable file on the system."
 msgstr ""
 
 #. type: Plain text
@@ -8589,12 +8321,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/chsh.1.adoc:69
-#, no-wrap
-msgid ""
-"*login*(1),\n"
-"*login.defs*(5),\n"
-"*passwd*(5),\n"
-"*shells*(5)\n"
+msgid "*login*(1), *login.defs*(5), *passwd*(5), *shells*(5)"
 msgstr ""
 
 #. Copyright (C) 1998-2004 Miquel van Smoorenburg.
@@ -8625,26 +8352,23 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/last.1.adoc:33
-#, no-wrap
-msgid "*last* [options] [_username_...] [_tty_...]\n"
+msgid "*last* [options] [_username_...] [_tty_...]"
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/last.1.adoc:35
-#, no-wrap
-msgid "*lastb* [options] [_username_...] [_tty_...]\n"
+msgid "*lastb* [options] [_username_...] [_tty_...]"
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/last.1.adoc:39
-#, no-wrap
 msgid ""
 "*last* searches back through the _/var/log/wtmp_ file (or the file "
 "designated by the *-f* option) and displays a list of all users logged in "
 "(and out) since that file was created. One or more _usernames_ and/or _ttys_ "
 "can be given, in which case *last* will show only the entries matching those "
 "arguments. Names of _ttys_ can be abbreviated, thus *last 0* is the same as "
-"*last tty0*.\n"
+"*last tty0*."
 msgstr ""
 
 #. type: Plain text
@@ -8666,10 +8390,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/last.1.adoc:45
-#, no-wrap
 msgid ""
 "*lastb* is the same as *last*, except that by default it shows a log of the "
-"_/var/log/btmp_ file, which contains all the bad login attempts.\n"
+"_/var/log/btmp_ file, which contains all the bad login attempts."
 msgstr ""
 
 #. type: Labeled list
@@ -8901,12 +8624,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/last.1.adoc:132
-#, no-wrap
-msgid ""
-"*login*(1),\n"
-"*wtmp*(5),\n"
-"*init*(8),\n"
-"*shutdown*(8)\n"
+msgid "*login*(1), *wtmp*(5), *init*(8), *shutdown*(8)"
 msgstr ""
 
 #. Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
@@ -8924,16 +8642,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/login.1.adoc:20
-#, no-wrap
-msgid "*login* [*-p*] [*-h* _host_] [*-H*] [*-f* _username_|_username_]\n"
+msgid "*login* [*-p*] [*-h* _host_] [*-H*] [*-f* _username_|_username_]"
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/login.1.adoc:24
-#, no-wrap
 msgid ""
 "*login* is used when signing onto a system. If no argument is given, *login* "
-"prompts for the username.\n"
+"prompts for the username."
 msgstr ""
 
 #. type: Plain text
@@ -9058,12 +8774,11 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/login.1.adoc:60
-#, no-wrap
 msgid ""
 "*login* reads the _/etc/login.defs_ configuration file (see "
 "*login.defs*(5)). Note that the configuration file could be distributed with "
 "another package (usually shadow-utils). The following configuration items "
-"are relevant for *login*:\n"
+"are relevant for *login*:"
 msgstr ""
 
 #. type: Labeled list
@@ -9380,17 +9095,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/login.1.adoc:172
-#, no-wrap
 msgid ""
-"*mail*(1),\n"
-"*passwd*(1),\n"
-"*passwd*(5),\n"
-"*utmp*(5),\n"
-"*environ*(7),\n"
-"*getty*(8),\n"
-"*init*(8),\n"
-"*lastlog*(8),\n"
-"*shutdown*(8)\n"
+"*mail*(1), *passwd*(1), *passwd*(5), *utmp*(5), *environ*(7), *getty*(8), "
+"*init*(8), *lastlog*(8), *shutdown*(8)"
 msgstr ""
 
 #.  Copyright 2014 Ondrej Oprala (ondrej.oprala@gmail.com)
@@ -9408,10 +9115,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/lslogins.1.adoc:18
-#, no-wrap
 msgid ""
 "*lslogins* [options] [*-s*|*-u*[=_UID_]] [*-g* _groups_] [*-l* _logins_] "
-"[_username_]\n"
+"[_username_]"
 msgstr ""
 
 #. type: Plain text
@@ -9851,12 +9557,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/lslogins.1.adoc:150
-#, no-wrap
-msgid ""
-"*group*(5),\n"
-"*passwd*(5),\n"
-"*shadow*(5),\n"
-"*utmp*(5)\n"
+msgid "*group*(5), *passwd*(5), *shadow*(5), *utmp*(5)"
 msgstr ""
 
 #.  Original author unknown.  This man page is in the public domain.
@@ -9874,18 +9575,16 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/newgrp.1.adoc:18
-#, no-wrap
-msgid "*newgrp* [_group_]\n"
+msgid "*newgrp* [_group_]"
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/newgrp.1.adoc:22
-#, no-wrap
 msgid ""
 "*newgrp* changes the group identification of its caller, analogously to "
 "*login*(1). The same person remains logged in, and the current directory is "
 "unchanged, but calculations of access permissions to files are performed "
-"with respect to the new group ID.\n"
+"with respect to the new group ID."
 msgstr ""
 
 #. type: Plain text
@@ -9907,10 +9606,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/newgrp.1.adoc:42
-#, no-wrap
-msgid ""
-"*login*(1),\n"
-"*group*(5)\n"
+msgid "*login*(1), *group*(5)"
 msgstr ""
 
 #. type: Title =
@@ -9926,17 +9622,15 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/nologin.8.adoc:16
-#, no-wrap
-msgid "*nologin* [*-V*] [*-h*]\n"
+msgid "*nologin* [*-V*] [*-h*]"
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/nologin.8.adoc:20
-#, no-wrap
 msgid ""
 "*nologin* displays a message that an account is not available and exits "
 "non-zero. It is intended as a replacement shell field to deny login access "
-"to an account.\n"
+"to an account."
 msgstr ""
 
 #. type: Plain text
@@ -9951,70 +9645,62 @@ msgstr ""
 msgid "The exit status returned by *nologin* is always 1."
 msgstr ""
 
-#. type: Plain text
-#: ../login-utils/nologin.8.adoc:28
+#. type: Labeled list
+#: ../login-utils/nologin.8.adoc:28 ../sys-utils/blkpr.8.adoc:25
+#: ../sys-utils/flock.1.adoc:56 ../term-utils/script.1.adoc:69
 #, no-wrap
-msgid "*-c*, *--command* _command_\n"
+msgid "*-c*, *--command* _command_"
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/nologin.8.adoc:30
-#, no-wrap
-msgid "*--init-file*\n"
+msgid "*--init-file*"
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/nologin.8.adoc:32
-#, no-wrap
-msgid "*-i* *--interactive*\n"
+msgid "*-i* *--interactive*"
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/nologin.8.adoc:34
-#, no-wrap
-msgid "*--init-file* _file_\n"
+msgid "*--init-file* _file_"
 msgstr ""
 
-#. type: Plain text
-#: ../login-utils/nologin.8.adoc:36
+#. type: Labeled list
+#: ../login-utils/nologin.8.adoc:36 ../misc-utils/rename.1.adoc:43
 #, no-wrap
-msgid "*-i*, *--interactive*\n"
+msgid "*-i*, *--interactive*"
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/nologin.8.adoc:38
-#, no-wrap
-msgid "*-l*, *--login*\n"
+msgid "*-l*, *--login*"
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/nologin.8.adoc:40
-#, no-wrap
-msgid "*--noprofile*\n"
+msgid "*--noprofile*"
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/nologin.8.adoc:42
-#, no-wrap
-msgid "*--norc*\n"
+msgid "*--norc*"
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/nologin.8.adoc:44
-#, no-wrap
-msgid "*--posix*\n"
+msgid "*--posix*"
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/nologin.8.adoc:46
-#, no-wrap
-msgid "*--rcfile* _file_\n"
+msgid "*--rcfile* _file_"
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/nologin.8.adoc:48
-#, no-wrap
-msgid "*-r*, *--restricted*\n"
+msgid "*-r*, *--restricted*"
 msgstr ""
 
 #. type: Plain text
@@ -10024,21 +9710,19 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/nologin.8.adoc:56
-#, no-wrap
 msgid ""
 "*nologin* is a per-account way to disable login (usually used for system "
 "accounts like http or ftp). *nologin* uses _/etc/nologin.txt_ as an optional "
 "source for a non-default message, the login access is always refused "
-"independently of the file.\n"
+"independently of the file."
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/nologin.8.adoc:58
-#, no-wrap
 msgid ""
 "*pam_nologin*(8) PAM module usually prevents all non-root users from logging "
 "into the system. *pam_nologin*(8) functionality is controlled by "
-"_/var/run/nologin_ or the _/etc/nologin_ file.\n"
+"_/var/run/nologin_ or the _/etc/nologin_ file."
 msgstr ""
 
 #. type: Plain text
@@ -10048,11 +9732,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/nologin.8.adoc:72
-#, no-wrap
-msgid ""
-"*login*(1),\n"
-"*passwd*(5),\n"
-"*pam_nologin*(8)\n"
+msgid "*login*(1), *passwd*(5), *pam_nologin*(8)"
 msgstr ""
 
 #. type: Title =
@@ -10068,19 +9748,16 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/runuser.1.adoc:16
-#, no-wrap
-msgid "*runuser* [options] *-u* _user_ [[--] _command_ [_argument_...]]\n"
+msgid "*runuser* [options] *-u* _user_ [[--] _command_ [_argument_...]]"
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/runuser.1.adoc:18
-#, no-wrap
-msgid "*runuser* [options] [*-*] [_user_ [_argument_...]]\n"
+msgid "*runuser* [options] [*-*] [_user_ [_argument_...]]"
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/runuser.1.adoc:22
-#, no-wrap
 msgid ""
 "*runuser* can be used to run commands with a substitute user and group "
 "ID. If the option *-u* is not given, *runuser* falls back to *su*-compatible "
@@ -10088,7 +9765,7 @@ msgid ""
 "*runuser* and *su* is that *runuser* does not ask for a password (because it "
 "may be executed by the root user only) and it uses a different PAM "
 "configuration. The command *runuser* does not have to be installed with "
-"set-user-ID permissions.\n"
+"set-user-ID permissions."
 msgstr ""
 
 #. type: Plain text
@@ -10333,11 +10010,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/runuser.1.adoc:84
-#, no-wrap
 msgid ""
 "*runuser* reads the _/etc/default/runuser_ and _/etc/login.defs_ "
 "configuration files. The following configuration items are relevant for "
-"*runuser*:\n"
+"*runuser*:"
 msgstr ""
 
 #. type: Plain text
@@ -10379,11 +10055,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/runuser.1.adoc:100
-#, no-wrap
 msgid ""
 "*runuser* normally returns the exit status of the command it executed. If "
 "the command was killed by a signal, *runuser* returns the number of the "
-"signal plus 128.\n"
+"signal plus 128."
 msgstr ""
 
 #. type: Plain text
@@ -10472,13 +10147,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/runuser.1.adoc:136
-#, no-wrap
-msgid ""
-"*setpriv*(1),\n"
-"*su*(1),\n"
-"*login.defs*(5),\n"
-"*shells*(5),\n"
-"*pam*(8)\n"
+msgid "*setpriv*(1), *su*(1), *login.defs*(5), *shells*(5), *pam*(8)"
 msgstr ""
 
 #. type: Title =
@@ -10494,14 +10163,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/su.1.adoc:17
-#, no-wrap
-msgid "*su* [options] [*-*] [_user_ [_argument_...]]\n"
+msgid "*su* [options] [*-*] [_user_ [_argument_...]]"
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/su.1.adoc:21
-#, no-wrap
-msgid "*su* allows commands to be run with a substitute user and group ID.\n"
+msgid "*su* allows commands to be run with a substitute user and group ID."
 msgstr ""
 
 #. type: Plain text
@@ -10532,13 +10199,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/su.1.adoc:29
-#, no-wrap
 msgid ""
 "*su* is mostly designed for unprivileged users, the recommended solution for "
 "privileged users (e.g., scripts executed by root) is to use non-set-user-ID "
 "command *runuser*(1) that does not require authentication and provides "
 "separate PAM configuration. If the PAM session is not required at all then "
-"the recommended solution is to use command *setpriv*(1).\n"
+"the recommended solution is to use command *setpriv*(1)."
 msgstr ""
 
 #. type: Plain text
@@ -10660,10 +10326,9 @@ msgstr ""
 #. TRANSLATORS: Keep {colon} untranslated
 #. type: Plain text
 #: ../login-utils/su.1.adoc:90
-#, no-wrap
 msgid ""
 "*su* reads the _/etc/default/su_ and _/etc/login.defs_ configuration "
-"files. The following configuration items are relevant for *su*{colon}\n"
+"files. The following configuration items are relevant for *su*{colon}"
 msgstr ""
 
 #. type: Plain text
@@ -10689,11 +10354,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/su.1.adoc:109
-#, no-wrap
 msgid ""
 "*su* normally returns the exit status of the command it executed. If the "
 "command was killed by a signal, *su* returns the number of the signal plus "
-"128.\n"
+"128."
 msgstr ""
 
 #. type: Plain text
@@ -10750,13 +10414,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/su.1.adoc:152
-#, no-wrap
-msgid ""
-"*setpriv*(1),\n"
-"*login.defs*(5),\n"
-"*shells*(5),\n"
-"*pam*(8),\n"
-"*runuser*(1)\n"
+msgid "*setpriv*(1), *login.defs*(5), *shells*(5), *pam*(8), *runuser*(1)"
 msgstr ""
 
 #. Copyright (C) 1998-2006 Miquel van Smoorenburg.
@@ -10788,14 +10446,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/sulogin.8.adoc:35
-#, no-wrap
-msgid "*sulogin* [options] [_tty_]\n"
+msgid "*sulogin* [options] [_tty_]"
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/sulogin.8.adoc:39
-#, no-wrap
-msgid "*sulogin* is invoked by *init* when the system goes into single-user mode.\n"
+msgid "*sulogin* is invoked by *init* when the system goes into single-user mode."
 msgstr ""
 
 #. type: Plain text
@@ -10819,11 +10475,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/sulogin.8.adoc:47
-#, no-wrap
 msgid ""
 "*sulogin* will be connected to the current terminal, or to the optional "
 "_tty_ device that can be specified on the command line (typically "
-"_/dev/console_).\n"
+"_/dev/console_)."
 msgstr ""
 
 #. type: Plain text
@@ -10885,20 +10540,18 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/sulogin.8.adoc:69
-#, no-wrap
 msgid ""
 "*sulogin* looks for the environment variable *SUSHELL* or *sushell* to "
 "determine what shell to start. If the environment variable is not set, it "
 "will try to execute root's shell from _/etc/passwd_. If that fails, it will "
-"fall back to _/bin/sh_.\n"
+"fall back to _/bin/sh_."
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/sulogin.8.adoc:73
-#, no-wrap
 msgid ""
 "*sulogin* was written by Miquel van Smoorenburg for sysvinit and later "
-"ported to util-linux by Dave Reisner and Karel Zak.\n"
+"ported to util-linux by Dave Reisner and Karel Zak."
 msgstr ""
 
 #. Copyright (C) 2010 Michael Krapp
@@ -10929,17 +10582,15 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/utmpdump.1.adoc:33
-#, no-wrap
-msgid "*utmpdump* [options] _filename_\n"
+msgid "*utmpdump* [options] _filename_"
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/utmpdump.1.adoc:37
-#, no-wrap
 msgid ""
 "*utmpdump* is a simple program to dump UTMP and WTMP files in raw format, so "
 "they can be examined. *utmpdump* reads from stdin unless a _filename_ is "
-"passed.\n"
+"passed."
 msgstr ""
 
 #. type: Labeled list
@@ -10977,17 +10628,15 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/utmpdump.1.adoc:54
-#, no-wrap
 msgid ""
 "*utmpdump* can be useful in cases of corrupted utmp or wtmp entries. It can "
 "dump out utmp/wtmp to an ASCII file, which can then be edited to remove "
-"bogus entries, and reintegrated using:\n"
+"bogus entries, and reintegrated using:"
 msgstr ""
 
 #. type: delimited block _
 #: ../login-utils/utmpdump.1.adoc:57
-#, no-wrap
-msgid "*utmpdump -r < ascii_file > wtmp*\n"
+msgid "*utmpdump -r < ascii_file > wtmp*"
 msgstr ""
 
 #. type: Plain text
@@ -11027,12 +10676,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/utmpdump.1.adoc:81
-#, no-wrap
-msgid ""
-"*last*(1),\n"
-"*w*(1),\n"
-"*who*(1),\n"
-"*utmp*(5)\n"
+msgid "*last*(1), *w*(1), *who*(1), *utmp*(5)"
 msgstr ""
 
 #. Copyright (c) 1983, 1991 The Regents of the University of California.
@@ -11080,26 +10724,23 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/vipw.8.adoc:50
-#, no-wrap
-msgid "*vipw* [options]\n"
+msgid "*vipw* [options]"
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/vipw.8.adoc:52
-#, no-wrap
-msgid "*vigr* [options]\n"
+msgid "*vigr* [options]"
 msgstr ""
 
 #. type: Plain text
 #: ../login-utils/vipw.8.adoc:56
-#, no-wrap
 msgid ""
 "*vipw* edits the password file after setting the appropriate locks, and does "
 "any necessary processing after the password file is unlocked. If the "
 "password file is already locked for editing by another user, *vipw* will ask "
 "you to try again later. The default editor for *vipw* and *vigr* is "
 "*vi*(1). *vigr* edits the group file in the same manner as *vipw* does the "
-"passwd file.\n"
+"passwd file."
 msgstr ""
 
 #. type: Plain text
@@ -11131,12 +10772,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/vipw.8.adoc:78
-#, no-wrap
-msgid ""
-"*vi*(1),\n"
-"*passwd*(1),\n"
-"*flock*(2),\n"
-"*passwd*(5)\n"
+msgid "*vi*(1), *passwd*(1), *flock*(2), *passwd*(5)"
 msgstr ""
 
 #. type: Plain text
@@ -11162,32 +10798,28 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/blkid.8.adoc:19
-#, no-wrap
-msgid "*blkid* *--label* _label_ | *--uuid* _uuid_\n"
+msgid "*blkid* *--label* _label_ | *--uuid* _uuid_"
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/blkid.8.adoc:21
-#, no-wrap
 msgid ""
 "*blkid* [*--no-encoding* *--garbage-collect* *--list-one* *--cache-file* "
 "_file_] [*--output* _format_] [*--match-tag* _tag_] [*--match-token* "
-"_NAME=value_] [_device_...]\n"
+"_NAME=value_] [_device_...]"
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/blkid.8.adoc:23
-#, no-wrap
 msgid ""
 "*blkid* *--probe* [*--offset* _offset_] [*--output* _format_] [*--size* "
 "_size_] [*--match-tag* _tag_] [*--match-types* _list_] [*--usages* _list_] "
-"[*--no-part-details*] _device_...\n"
+"[*--no-part-details*] _device_..."
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/blkid.8.adoc:25
-#, no-wrap
-msgid "*blkid* *--info* [*--output format*] [*--match-tag* _tag_] _device_...\n"
+msgid "*blkid* *--info* [*--output format*] [*--match-tag* _tag_] _device_..."
 msgstr ""
 
 #. type: Plain text
@@ -11202,22 +10834,20 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/blkid.8.adoc:31
-#, no-wrap
 msgid ""
 "*It is recommended to use* *lsblk*(8) *command to get information about "
 "block devices, or lsblk --fs to get an overview of filesystems, or* "
-"*findmnt*(8) *to search in already mounted filesystems.*\n"
+"*findmnt*(8) *to search in already mounted filesystems.*"
 msgstr ""
 
 #. type: delimited block _
 #: ../misc-utils/blkid.8.adoc:34
-#, no-wrap
 msgid ""
 "*lsblk*(8) provides more information, better control on output formatting, "
 "easy to use in scripts and it does not require root permissions to get "
 "actual information. *blkid* reads information directly from devices and for "
 "non-root users it returns cached unverified information. *blkid* is mostly "
-"designed for system services and to test *libblkid*(3) functionality.\n"
+"designed for system services and to test *libblkid*(3) functionality."
 msgstr ""
 
 #. type: Plain text
@@ -11231,11 +10861,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/blkid.8.adoc:39
-#, no-wrap
 msgid ""
 "*blkid* has two main forms of operation: either searching for a device with "
 "a specific NAME=value pair, or displaying NAME=value pairs for one or more "
-"specified devices.\n"
+"specified devices."
 msgstr ""
 
 #. type: Plain text
@@ -11415,8 +11044,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/blkid.8.adoc:83
-#, no-wrap
-msgid "*blkid --probe --match-types vfat,ext3,ext4 /dev/sda1*\n"
+msgid "*blkid --probe --match-types vfat,ext3,ext4 /dev/sda1*"
 msgstr ""
 
 #. type: Plain text
@@ -11426,8 +11054,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/blkid.8.adoc:87
-#, no-wrap
-msgid "*blkid --probe --match-types nominix /dev/sda1*\n"
+msgid "*blkid --probe --match-types nominix /dev/sda1*"
 msgstr ""
 
 #. type: Plain text
@@ -11649,8 +11276,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/blkid.8.adoc:136
-#, no-wrap
-msgid "*blkid --probe --usages filesystem,other /dev/sda1*\n"
+msgid "*blkid --probe --usages filesystem,other /dev/sda1*"
 msgstr ""
 
 #. type: Plain text
@@ -11660,8 +11286,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/blkid.8.adoc:140
-#, no-wrap
-msgid "*blkid --probe --usages noraid /dev/sda1*\n"
+msgid "*blkid --probe --usages noraid /dev/sda1*"
 msgstr ""
 
 #. type: Plain text
@@ -11773,20 +11398,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/blkid.8.adoc:178
-#, no-wrap
 msgid ""
 "*blkid* was written by Andreas Dilger for libblkid and improved by Theodore "
-"Ts'o and Karel Zak.\n"
+"Ts'o and Karel Zak."
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/blkid.8.adoc:185
-#, no-wrap
-msgid ""
-"*libblkid*(3),\n"
-"*findfs*(8),\n"
-"*lsblk*(8),\n"
-"*wipefs*(8)\n"
+msgid "*libblkid*(3), *findfs*(8), *lsblk*(8), *wipefs*(8)"
 msgstr ""
 
 #. Copyright (c) 1989, 1990, 1993
@@ -11837,22 +11456,19 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/cal.1.adoc:54
-#, no-wrap
-msgid "*cal* [options] [[[_day_] _month_] _year_]\n"
+msgid "*cal* [options] [[[_day_] _month_] _year_]"
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/cal.1.adoc:56
-#, no-wrap
-msgid "*cal* [options] [_timestamp_|_monthname_]\n"
+msgid "*cal* [options] [_timestamp_|_monthname_]"
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/cal.1.adoc:60
-#, no-wrap
 msgid ""
 "*cal* displays a simple calendar. If no arguments are specified, the current "
-"month is displayed.\n"
+"month is displayed."
 msgstr ""
 
 #. type: Plain text
@@ -12283,8 +11899,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/cal.1.adoc:186
-#, no-wrap
-msgid "*terminal-colors.d*(5)\n"
+msgid "*terminal-colors.d*(5)"
 msgstr ""
 
 #. type: Title =
@@ -12300,24 +11915,21 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/fadvise.1.adoc:16
-#, no-wrap
-msgid "*fadvise* [*-a* _advice_] [*-o* _offset_] [*-l* _length_] _filename_\n"
+msgid "*fadvise* [*-a* _advice_] [*-o* _offset_] [*-l* _length_] _filename_"
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/fadvise.1.adoc:18
-#, no-wrap
 msgid ""
 "*fadvise* [*-a* _advice_] [*-o* _offset_] [*-l* _length_] -d "
-"_file-descriptor_\n"
+"_file-descriptor_"
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/fadvise.1.adoc:23
-#, no-wrap
 msgid ""
-"*fadvise* is a simple command wrapping posix_fadvise system call\n"
-"that is for predeclaring an access pattern for file data.\n"
+"*fadvise* is a simple command wrapping posix_fadvise system call that is for "
+"predeclaring an access pattern for file data."
 msgstr ""
 
 #. type: Labeled list
@@ -12377,8 +11989,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/fadvise.1.adoc:47
-#, no-wrap
-msgid "*fadvise* has the following exit status values:\n"
+msgid "*fadvise* has the following exit status values:"
 msgstr ""
 
 #. type: Plain text
@@ -12393,8 +12004,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/fadvise.1.adoc:60
-#, no-wrap
-msgid "*posix_fadvise*(2)\n"
+msgid "*posix_fadvise*(2)"
 msgstr ""
 
 #. Copyright 2017 Red Hat, Inc.
@@ -12413,18 +12023,16 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/fincore.1.adoc:22
-#, no-wrap
-msgid "*fincore* [options] _file_...\n"
+msgid "*fincore* [options] _file_..."
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/fincore.1.adoc:26
-#, no-wrap
 msgid ""
 "*fincore* counts pages of file contents being resident in memory (in core), "
 "and reports the numbers. If an error occurs during counting, then an error "
 "message is printed to the stderr and *fincore* continues processing the rest "
-"of files listed in a command line.\n"
+"of files listed in a command line."
 msgstr ""
 
 #. type: Plain text
@@ -12493,11 +12101,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/fincore.1.adoc:58
-#, no-wrap
-msgid ""
-"*mincore*(2),\n"
-"*getpagesize*(2),\n"
-"*getconf*(1p)\n"
+msgid "*mincore*(2), *getpagesize*(2), *getconf*(1p)"
 msgstr ""
 
 #.  Copyright 1993, 1994, 1995 by Theodore Ts'o.  All Rights Reserved.
@@ -12515,17 +12119,15 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/findfs.8.adoc:18
-#, no-wrap
-msgid "*findfs* *NAME*=_value_\n"
+msgid "*findfs* *NAME*=_value_"
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/findfs.8.adoc:22
-#, no-wrap
 msgid ""
 "*findfs* will search the block devices in the system looking for a "
 "filesystem or partition with specified tag. The currently supported tags "
-"are:\n"
+"are:"
 msgstr ""
 
 #. type: Labeled list
@@ -12592,20 +12194,17 @@ msgstr ""
 
 #. type: delimited block _
 #: ../misc-utils/findfs.8.adoc:41
-#, no-wrap
-msgid "*lsblk --fs*\n"
+msgid "*lsblk --fs*"
 msgstr ""
 
 #. type: delimited block _
 #: ../misc-utils/findfs.8.adoc:43
-#, no-wrap
-msgid "*partx --show <disk>*\n"
+msgid "*partx --show <disk>*"
 msgstr ""
 
 #. type: delimited block _
 #: ../misc-utils/findfs.8.adoc:45
-#, no-wrap
-msgid "*blkid*\n"
+msgid "*blkid*"
 msgstr ""
 
 #. type: Plain text
@@ -12620,20 +12219,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/findfs.8.adoc:66
-#, no-wrap
 msgid ""
 "*findfs* was originally written by mailto:tytso@mit.edu[Theodore Ts'o] and "
-"re-written for the util-linux package by mailto:kzak@redhat.com[Karel "
-"Zak].\n"
+"re-written for the util-linux package by mailto:kzak@redhat.com[Karel Zak]."
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/findfs.8.adoc:72
-#, no-wrap
-msgid ""
-"*blkid*(8),\n"
-"*lsblk*(8),\n"
-"*partx*(8)\n"
+msgid "*blkid*(8), *lsblk*(8), *partx*(8)"
 msgstr ""
 
 #. type: Title =
@@ -12649,32 +12242,28 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/findmnt.8.adoc:17
-#, no-wrap
-msgid "*findmnt* [options]\n"
+msgid "*findmnt* [options]"
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/findmnt.8.adoc:19
-#, no-wrap
-msgid "*findmnt* [options] _device_|_mountpoint_\n"
+msgid "*findmnt* [options] _device_|_mountpoint_"
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/findmnt.8.adoc:21
-#, no-wrap
 msgid ""
 "*findmnt* [options] [*--source*] _device_ [*--target* _path_|*--mountpoint* "
-"_mountpoint_]\n"
+"_mountpoint_]"
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/findmnt.8.adoc:25
-#, no-wrap
 msgid ""
 "*findmnt* will list all mounted filesystems or search for a filesystem. The "
 "*findmnt* command is able to search in _/etc/fstab_, _/etc/mtab_ or "
 "_/proc/self/mountinfo_. If _device_ or _mountpoint_ is not given, all "
-"filesystems are shown.\n"
+"filesystems are shown."
 msgstr ""
 
 #. type: Plain text
@@ -13401,10 +12990,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/findmnt.8.adoc:239
-#, no-wrap
-msgid ""
-"*fstab*(5),\n"
-"*mount*(8)\n"
+msgid "*fstab*(5), *mount*(8)"
 msgstr ""
 
 #. type: Title =
@@ -13420,31 +13006,27 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/getopt.1.adoc:17
-#, no-wrap
-msgid "*getopt* _optstring_ _parameters_\n"
+msgid "*getopt* _optstring_ _parameters_"
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/getopt.1.adoc:19
-#, no-wrap
-msgid "*getopt* [options] [*--*] _optstring_ _parameters_\n"
+msgid "*getopt* [options] [*--*] _optstring_ _parameters_"
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/getopt.1.adoc:21
-#, no-wrap
 msgid ""
 "*getopt* [options] *-o*|*--options* _optstring_ [options] [*--*] "
-"_parameters_\n"
+"_parameters_"
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/getopt.1.adoc:25
-#, no-wrap
 msgid ""
 "*getopt* is used to break up (_parse_) options in command lines for easy "
 "parsing by shell procedures, and to check for valid options. It uses the GNU "
-"*getopt*(3) routines to do this.\n"
+"*getopt*(3) routines to do this."
 msgstr ""
 
 #. type: Plain text
@@ -13864,12 +13446,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/getopt.1.adoc:127
-#, no-wrap
 msgid ""
 "*getopt* returns error code *0* for successful parsing, *1* if *getopt*(3) "
 "returns errors, *2* if it does not understand its own parameters, *3* if an "
-"internal error occurs like out-of-memory, and *4* if it is called with "
-"*-T*.\n"
+"internal error occurs like out-of-memory, and *4* if it is called with *-T*."
 msgstr ""
 
 #.  TRANSLATORS: Don't translate _{package-docdir}_.
@@ -13910,12 +13490,11 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/getopt.1.adoc:144
-#, no-wrap
 msgid ""
 "*getopt*(3) can parse long options with optional arguments that are given an "
 "empty optional argument (but cannot do this for short options). This "
 "*getopt*(1) treats optional arguments that are empty as if they were not "
-"present.\n"
+"present."
 msgstr ""
 
 #. type: Plain text
@@ -13939,11 +13518,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/getopt.1.adoc:156
-#, no-wrap
-msgid ""
-"*bash*(1),\n"
-"*tcsh*(1),\n"
-"*getopt*(3)\n"
+msgid "*bash*(1), *tcsh*(1), *getopt*(3)"
 msgstr ""
 
 #. SPDX-License-Identifier: MIT
@@ -13963,31 +13538,26 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/hardlink.1.adoc:22
-#, no-wrap
-msgid "*hardlink* [options] [_directory_|_file_]...\n"
+msgid "*hardlink* [options] [_directory_|_file_]..."
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/hardlink.1.adoc:27
-#, no-wrap
 msgid ""
-"*hardlink* is a tool that replaces copies of a file with either hardlinks\n"
-"or copy-on-write clones, thus saving space.\n"
+"*hardlink* is a tool that replaces copies of a file with either hardlinks or "
+"copy-on-write clones, thus saving space."
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/hardlink.1.adoc:35
-#, no-wrap
 msgid ""
-"*hardlink* first creates a binary tree of file sizes and then compares\n"
-"the content of files that have the same size. There are two basic content\n"
-"comparison methods. The *memcmp* method directly reads data blocks from\n"
+"*hardlink* first creates a binary tree of file sizes and then compares the "
+"content of files that have the same size. There are two basic content "
+"comparison methods. The *memcmp* method directly reads data blocks from "
 "files and compares them. The other method is based on checksums (like "
-"SHA256);\n"
-"in this case for each data block a checksum is calculated by the Linux "
-"kernel\n"
-"crypto API, and this checksum is stored in userspace and used for file\n"
-"comparisons.\n"
+"SHA256); in this case for each data block a checksum is calculated by the "
+"Linux kernel crypto API, and this checksum is stored in userspace and used "
+"for file comparisons."
 msgstr ""
 
 #. type: Plain text
@@ -14303,10 +13873,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/hardlink.1.adoc:137
-#, no-wrap
 msgid ""
 "*hardlink* takes one or more directories which will be searched for files to "
-"be linked.\n"
+"be linked."
 msgstr ""
 
 #. type: Plain text
@@ -14319,7 +13888,6 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/hardlink.1.adoc:143
-#, no-wrap
 msgid ""
 "*hardlink* assumes that the trees it operates on do not change during "
 "operation. If a tree does change, the result is undefined and potentially "
@@ -14327,7 +13895,7 @@ msgid ""
 "*hardlink* may start reading from the device. If a component of a path is "
 "replaced by a symbolic link or file permissions change, security may be "
 "compromised. Do not run *hardlink* on a changing tree or on a tree "
-"controlled by another user.\n"
+"controlled by another user."
 msgstr ""
 
 #. type: Plain text
@@ -14355,16 +13923,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/kill.1.adoc:21
-#, no-wrap
 msgid ""
-"*kill*  [**-**_signal_|*-s* _signal_|*-p*]  [*-q* _value_] [*-a*] "
-"[*--timeout* _milliseconds_ _signal_] [*--*] _pid_|_name_...\n"
+"*kill* [**-**_signal_|*-s* _signal_|*-p*] [*-q* _value_] [*-a*] [*--timeout* "
+"_milliseconds_ _signal_] [*--*] _pid_|_name_..."
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/kill.1.adoc:23
-#, no-wrap
-msgid "*kill* *-l* [_number_] | *-L*\n"
+msgid "*kill* *-l* [_number_] | *-L*"
 msgstr ""
 
 #. type: Plain text
@@ -14613,8 +14179,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/kill.1.adoc:88
-#, no-wrap
-msgid "*kill* has the following exit status values:\n"
+msgid "*kill* has the following exit status values:"
 msgstr ""
 
 #. type: Plain text
@@ -14665,14 +14230,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/kill.1.adoc:117
-#, no-wrap
-msgid ""
-"*bash*(1),\n"
-"*tcsh*(1),\n"
-"*sigaction*(2),\n"
-"*kill*(2),\n"
-"*sigqueue*(3),\n"
-"*signal*(7)\n"
+msgid "*bash*(1), *tcsh*(1), *sigaction*(2), *kill*(2), *sigqueue*(3), *signal*(7)"
 msgstr ""
 
 #. Copyright (c) 1983, 1990, 1993
@@ -14720,14 +14278,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/logger.1.adoc:50
-#, no-wrap
-msgid "*logger* [options] _message_\n"
+msgid "*logger* [options] _message_"
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/logger.1.adoc:54
-#, no-wrap
-msgid "*logger* makes entries in the system log.\n"
+msgid "*logger* makes entries in the system log."
 msgstr ""
 
 #. type: Plain text
@@ -15071,13 +14627,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/logger.1.adoc:142
-#, no-wrap
 msgid ""
 "*logger* currently generates the *timeQuality* standardized element "
 "only. RFC 5424 also describes the elements *origin* (with parameters *ip*, "
 "*enterpriseId*, *software* and *swVersion*) and *meta* (with parameters "
 "*sequenceId*, *sysUpTime* and *language*). These element IDs may be "
-"specified without the **@**__digits__ suffix.\n"
+"specified without the **@**__digits__ suffix."
 msgstr ""
 
 #. type: Labeled list
@@ -15114,12 +14669,11 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/logger.1.adoc:157
-#, no-wrap
 msgid ""
 "*<13>1 2015-10-01T14:07:59.168662+02:00 ws kzak - - [timeQuality "
 "tzKnown=\"1\" isSynced=\"1\" syncAccuracy=\"218616\"][zoo@123 "
 "tiger=\"hungry\" zebra=\"running\"][manager@123 onMeeting=\"yes\"] this is "
-"message*\n"
+"message*"
 msgstr ""
 
 #. type: Plain text
@@ -15246,19 +14800,19 @@ msgstr ""
 #: ../misc-utils/logger.1.adoc:197
 #, no-wrap
 msgid ""
-"*auth* +\n"
-"*authpriv* for security information of a sensitive nature +\n"
-"*cron* +\n"
+"*auth*\n"
+"*authpriv* for security information of a sensitive nature\n"
+"*cron* +"
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/logger.1.adoc:201
 #, no-wrap
 msgid ""
-"*daemon* +\n"
-"*ftp* +\n"
+"*daemon*\n"
+"*ftp*\n"
 "*kern* cannot be generated from userspace process, automatically converted "
-"to *user* +\n"
+"to *user* +"
 msgstr ""
 
 #. type: Plain text
@@ -15286,17 +14840,17 @@ msgstr ""
 #: ../misc-utils/logger.1.adoc:226
 #, no-wrap
 msgid ""
-"*emerg* +\n"
-"*alert* +\n"
-"*crit* +\n"
-"*err* +\n"
-"*warning* +\n"
-"*notice* +\n"
-"*info* +\n"
-"*debug* +\n"
-"*panic* deprecated synonym for *emerg* +\n"
-"*error* deprecated synonym for *err* +\n"
-"*warn* deprecated synonym for *warning* +\n"
+"*emerg*\n"
+"*alert*\n"
+"*crit*\n"
+"*err*\n"
+"*warning*\n"
+"*notice*\n"
+"*info*\n"
+"*debug*\n"
+"*panic* deprecated synonym for *emerg*\n"
+"*error* deprecated synonym for *err*\n"
+"*warn* deprecated synonym for *warning* +"
 msgstr ""
 
 #. type: Plain text
@@ -15339,11 +14893,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/logger.1.adoc:251
-#, no-wrap
-msgid ""
-"*journalctl*(1),\n"
-"*syslog*(3),\n"
-"*systemd.journal-fields*(7)\n"
+msgid "*journalctl*(1), *syslog*(3), *systemd.journal-fields*(7)"
 msgstr ""
 
 #. Copyright (c) 1990, 1993
@@ -15391,8 +14941,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/look.1.adoc:50
-#, no-wrap
-msgid "*look* [options] _string_ [_file_]\n"
+msgid "*look* [options] _string_ [_file_]"
 msgstr ""
 
 #. type: Plain text
@@ -15522,10 +15071,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/look.1.adoc:105
-#, no-wrap
-msgid ""
-"*grep*(1),\n"
-"*sort*(1)\n"
+msgid "*grep*(1), *sort*(1)"
 msgstr ""
 
 #. type: Title =
@@ -15541,19 +15087,17 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/lsblk.8.adoc:16
-#, no-wrap
-msgid "*lsblk* [options] [_device_...]\n"
+msgid "*lsblk* [options] [_device_...]"
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/lsblk.8.adoc:20
-#, no-wrap
 msgid ""
 "*lsblk* lists information about all available or the specified block "
 "devices. The *lsblk* command reads the *sysfs* filesystem and *udev db* to "
 "gather information. If the udev db is not available or *lsblk* is compiled "
 "without udev support, then it tries to read LABELs, UUIDs and filesystem "
-"types from the block device. In this case root permissions are necessary.\n"
+"types from the block device. In this case root permissions are necessary."
 msgstr ""
 
 #. type: Plain text
@@ -16029,11 +15573,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/lsblk.8.adoc:181
-#, no-wrap
-msgid ""
-"*ls*(1),\n"
-"*blkid*(8),\n"
-"*findmnt*(8)\n"
+msgid "*ls*(1), *blkid*(8), *findmnt*(8)"
 msgstr ""
 
 #. Copyright 2021 Red Hat, Inc.
@@ -16052,31 +15592,26 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/lsfd.1.adoc:22
-#, no-wrap
-msgid "*lsfd* [option]\n"
+msgid "*lsfd* [option]"
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/lsfd.1.adoc:30
-#, no-wrap
 msgid ""
 "*lsfd* is intended to be a modern replacement for *lsof*(8) on Linux "
-"systems.\n"
-"Unlike *lsof*, *lsfd* is specialized to Linux kernel; it supports Linux\n"
-"specific features like namespaces with simpler code. *lsfd* is not a\n"
-"drop-in replacement for *lsof*; they are different in the command line\n"
-"interface and output formats.\n"
+"systems.  Unlike *lsof*, *lsfd* is specialized to Linux kernel; it supports "
+"Linux specific features like namespaces with simpler code. *lsfd* is not a "
+"drop-in replacement for *lsof*; they are different in the command line "
+"interface and output formats."
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/lsfd.1.adoc:38
-#, no-wrap
 msgid ""
 "*lsfd* uses Libsmartcols for output formatting and filtering. See the "
-"description of *--output*\n"
-"option for customizing the output format, and *--filter* option for "
-"filtering. Use *lsfd --help*\n"
-"to get a list of all available columns.\n"
+"description of *--output* option for customizing the output format, and "
+"*--filter* option for filtering. Use *lsfd --help* to get a list of all "
+"available columns."
 msgstr ""
 
 #. type: Labeled list
@@ -16390,11 +15925,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/lsfd.1.adoc:162
-#, no-wrap
 msgid ""
-"*lsfd* collects endpoints within the processes that\n"
-"*lsfd* scans; *lsfd* may miss some endpoints\n"
-"if you limits the processes with *-p* option.\n"
+"*lsfd* collects endpoints within the processes that *lsfd* scans; *lsfd* may "
+"miss some endpoints if you limits the processes with *-p* option."
 msgstr ""
 
 #. type: Labeled list
@@ -16623,10 +16156,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/lsfd.1.adoc:233
-#, no-wrap
 msgid ""
-"*lsfd* extracts _TARGET-PID_ and _TARGET-NSPIDS_ from\n"
-"``/proc/``_pid_``/fdinfo/``_fd_.\n"
+"*lsfd* extracts _TARGET-PID_ and _TARGET-NSPIDS_ from "
+"``/proc/``_pid_``/fdinfo/``_fd_."
 msgstr ""
 
 #. type: Labeled list
@@ -16715,10 +16247,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/lsfd.1.adoc:255
-#, no-wrap
-msgid ""
-"*lsfd* hides ``raddr=`` if _UDP.RADDR_ is ``0.0.0.0`` and _UDP.RPORT_ is "
-"0.\n"
+msgid "*lsfd* hides ``raddr=`` if _UDP.RADDR_ is ``0.0.0.0`` and _UDP.RPORT_ is 0."
 msgstr ""
 
 #. type: Labeled list
@@ -17295,11 +16824,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/lsfd.1.adoc:426
-#, no-wrap
 msgid ""
-"*lsfd* evaluates the expression passed to *--filter* option every time\n"
-"before printing a file line. *lsfd* prints the line only if the result\n"
-"of evaluation is `true`.\n"
+"*lsfd* evaluates the expression passed to *--filter* option every time "
+"before printing a file line. *lsfd* prints the line only if the result of "
+"evaluation is `true`."
 msgstr ""
 
 #. type: Plain text
@@ -17631,11 +17159,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/lsfd.1.adoc:526
-#, no-wrap
 msgid ""
-"*lsfd* has few options for filtering. In most of cases, what you should\n"
-"know is *-Q* (or *--filter*) option.  Combined with *-o* (or\n"
-"*--output*) option, you can customize the output as you want.\n"
+"*lsfd* has few options for filtering. In most of cases, what you should know "
+"is *-Q* (or *--filter*) option.  Combined with *-o* (or *--output*) option, "
+"you can customize the output as you want."
 msgstr ""
 
 #. TRANSLATORS: In the following messages, don't forget to add whitespace at the end!
@@ -17896,13 +17423,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/lsfd.1.adoc:660
-#, no-wrap
-msgid ""
-"*lsof*(8)\n"
-"*pidof*(1)\n"
-"*proc*(5)\n"
-"*socket*(2)\n"
-"*stat*(2)\n"
+msgid "*lsof*(8)  *pidof*(1)  *proc*(5)  *socket*(2)  *stat*(2)"
 msgstr ""
 
 #. Man page for the lslocks command.
@@ -17924,16 +17445,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/lslocks.8.adoc:27
-#, no-wrap
-msgid "*lslocks* [options]\n"
+msgid "*lslocks* [options]"
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/lslocks.8.adoc:31
-#, no-wrap
 msgid ""
 "*lslocks* lists information about all the currently held file locks in a "
-"Linux system.\n"
+"Linux system."
 msgstr ""
 
 #. type: Plain text
@@ -18122,11 +17641,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/lslocks.8.adoc:113
-#, no-wrap
-msgid ""
-"*flock*(1),\n"
-"*fcntl*(2),\n"
-"*lockf*(3)\n"
+msgid "*flock*(1), *fcntl*(2), *lockf*(3)"
 msgstr ""
 
 #.  mcookie.1 --
@@ -18144,22 +17659,19 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/mcookie.1.adoc:18
-#, no-wrap
-msgid "*mcookie* [options]\n"
+msgid "*mcookie* [options]"
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/mcookie.1.adoc:22
-#, no-wrap
 msgid ""
 "*mcookie* generates a 128-bit random hexadecimal number for use with the X "
-"authority system. Typical usage:\n"
+"authority system. Typical usage:"
 msgstr ""
 
 #. type: delimited block _
 #: ../misc-utils/mcookie.1.adoc:25
-#, no-wrap
-msgid "*xauth add :0 . `mcookie`*\n"
+msgid "*xauth add :0 . `mcookie`*"
 msgstr ""
 
 #. type: Plain text
@@ -18225,12 +17737,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/mcookie.1.adoc:60
-#, no-wrap
-msgid ""
-"*md5sum*(1),\n"
-"*X*(7),\n"
-"*xauth*(1),\n"
-"*rand*(3)\n"
+msgid "*md5sum*(1), *X*(7), *xauth*(1), *rand*(3)"
 msgstr ""
 
 #. type: Title =
@@ -18246,19 +17753,17 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/namei.1.adoc:16
-#, no-wrap
-msgid "*namei* [options] _pathname_...\n"
+msgid "*namei* [options] _pathname_..."
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/namei.1.adoc:20
-#, no-wrap
 msgid ""
 "*namei* interprets its arguments as pathnames to any type of Unix file "
 "(symlinks, files, directories, and so forth). *namei* then follows each "
 "pathname until an endpoint is found (a file, a directory, a device node, "
 "etc). If it finds a symbolic link, it shows the link, and starts following "
-"it, indenting the output to show the context.\n"
+"it, indenting the output to show the context."
 msgstr ""
 
 #. type: Plain text
@@ -18292,10 +17797,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/namei.1.adoc:38
-#, no-wrap
 msgid ""
 "*namei* prints an informative message when the maximum number of symbolic "
-"links this system can have has been exceeded.\n"
+"links this system can have has been exceeded."
 msgstr ""
 
 #. type: Labeled list
@@ -18387,11 +17891,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/namei.1.adoc:80
-#, no-wrap
-msgid ""
-"*ls*(1),\n"
-"*stat*(1),\n"
-"*symlink*(7)\n"
+msgid "*ls*(1), *stat*(1), *symlink*(7)"
 msgstr ""
 
 #. type: Title =
@@ -18407,14 +17907,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/pipesz.1.adoc:16
-#, no-wrap
-msgid "*pipesz* [options] [--set _size_] [--] [_command_ [argument] ...]\n"
+msgid "*pipesz* [options] [--set _size_] [--] [_command_ [argument] ...]"
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/pipesz.1.adoc:18
-#, no-wrap
-msgid "*pipesz* [options] --get\n"
+msgid "*pipesz* [options] --get"
 msgstr ""
 
 #. type: Plain text
@@ -18478,7 +17976,6 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/pipesz.1.adoc:34
-#, no-wrap
 msgid ""
 "*pipesz* supports specifying multiple short options consecutively, in the "
 "usual *getopt*(3) fashion. The first non-option argument is interpreted as "
@@ -18486,7 +17983,7 @@ msgid ""
 "arguments to *pipesz*. In shell scripts, it is good practice to use '--' "
 "when parameter expansion is involved. *pipesz* itself does not read from "
 "standard input and does not write to standard output unless *--get*, "
-"*--help*, or *--version* are specified.\n"
+"*--help*, or *--version* are specified."
 msgstr ""
 
 #. type: Labeled list
@@ -18703,8 +18200,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/pipesz.1.adoc:102
-#, no-wrap
-msgid "*pipe*(7)\n"
+msgid "*pipe*(7)"
 msgstr ""
 
 #.  Written by Andries E. Brouwer (aeb@cwi.nl)
@@ -18722,16 +18218,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/rename.1.adoc:18
-#, no-wrap
-msgid "*rename* [options] _expression replacement file_...\n"
+msgid "*rename* [options] _expression replacement file_..."
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/rename.1.adoc:22
-#, no-wrap
 msgid ""
 "*rename* will rename the specified files by replacing the first occurrence "
-"of _expression_ in their name by _replacement_.\n"
+"of _expression_ in their name by _replacement_."
 msgstr ""
 
 #. type: Labeled list
@@ -18782,12 +18276,6 @@ msgstr ""
 msgid ""
 "Do not overwrite existing files. When *--symlink* is active, do not "
 "overwrite symlinks pointing to existing targets."
-msgstr ""
-
-#. type: Labeled list
-#: ../misc-utils/rename.1.adoc:43
-#, no-wrap
-msgid "*-i*, *--interactive*"
 msgstr ""
 
 #. type: Plain text
@@ -18924,8 +18412,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/rename.1.adoc:109
-#, no-wrap
-msgid "*mv*(1)\n"
+msgid "*mv*(1)"
 msgstr ""
 
 #. Copyright 2007 by Theodore Ts'o.  All Rights Reserved.
@@ -18943,8 +18430,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/uuidd.8.adoc:20
-#, no-wrap
-msgid "*uuidd* [options]\n"
+msgid "*uuidd* [options]"
 msgstr ""
 
 #. type: Plain text
@@ -19157,10 +18643,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/uuidd.8.adoc:92
-#, no-wrap
-msgid ""
-"*uuid*(3),\n"
-"*uuidgen*(1)\n"
+msgid "*uuid*(3), *uuidgen*(1)"
 msgstr ""
 
 #. Copyright 1999 Andreas Dilger (adilger@enel.ucalgary.ca)
@@ -19178,8 +18661,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/uuidgen.1.adoc:20
-#, no-wrap
-msgid "*uuidgen* [options]\n"
+msgid "*uuidgen* [options]"
 msgstr ""
 
 #. type: Plain text
@@ -19302,17 +18784,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/uuidgen.1.adoc:65
-#, no-wrap
-msgid "*uuidgen* was written by Andreas Dilger for *libuuid*(3).\n"
+msgid "*uuidgen* was written by Andreas Dilger for *libuuid*(3)."
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/uuidgen.1.adoc:71
-#, no-wrap
 msgid ""
-"*uuidparse*(1),\n"
-"*libuuid*(3),\n"
-"link:https://tools.ietf.org/html/rfc4122[RFC 4122]\n"
+"*uuidparse*(1), *libuuid*(3), link:https://tools.ietf.org/html/rfc4122[RFC "
+"4122]"
 msgstr ""
 
 #.  Copyright (c) 2017 Sami Kerola
@@ -19330,8 +18809,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/uuidparse.1.adoc:18
-#, no-wrap
-msgid "*uuidparse* [options] _uuid_\n"
+msgid "*uuidparse* [options] _uuid_"
 msgstr ""
 
 #. type: Plain text
@@ -19390,11 +18868,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/uuidparse.1.adoc:73
-#, no-wrap
-msgid ""
-"*uuidgen*(1),\n"
-"*libuuid*(3),\n"
-"https://tools.ietf.org/html/rfc4122[RFC 4122]\n"
+msgid "*uuidgen*(1), *libuuid*(3), https://tools.ietf.org/html/rfc4122[RFC 4122]"
 msgstr ""
 
 #. type: Title =
@@ -19410,14 +18884,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/waitpid.1.adoc:16
-#, no-wrap
-msgid "*waitpid* [-v] [*--timeout*|*-t* _seconds_] pid...\n"
+msgid "*waitpid* [-v] [*--timeout*|*-t* _seconds_] pid..."
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/waitpid.1.adoc:20
-#, no-wrap
-msgid "*waitpid* is a simple command to wait for arbitrary non-child processes.\n"
+msgid "*waitpid* is a simple command to wait for arbitrary non-child processes."
 msgstr ""
 
 #. type: Plain text
@@ -19461,8 +18933,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/waitpid.1.adoc:43
-#, no-wrap
-msgid "*waitpid* has the following exit status values:\n"
+msgid "*waitpid* has the following exit status values:"
 msgstr ""
 
 #. type: Plain text
@@ -19477,13 +18948,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/waitpid.1.adoc:56
-msgid "mailto:thomas@t-8ch.de[Thomas WeiÃschuh]"
+msgid "mailto:thomas@t-8ch.de[Thomas Weißschuh]"
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/waitpid.1.adoc:60
-#, no-wrap
-msgid "*waitpid*(2) *wait*(1P)\n"
+msgid "*waitpid*(2) *wait*(1P)"
 msgstr ""
 
 #. Copyright (c) 1980, 1990 The Regents of the University of California.
@@ -19531,20 +19001,18 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/whereis.1.adoc:50
-#, no-wrap
-msgid "*whereis* [options] [*-BMS* _directory_... *-f*] _name_...\n"
+msgid "*whereis* [options] [*-BMS* _directory_... *-f*] _name_..."
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/whereis.1.adoc:54
-#, no-wrap
 msgid ""
 "*whereis* locates the binary, source and manual files for the specified "
 "command names. The supplied names are *first stripped of leading pathname "
 "components*. Prefixes of *s.* resulting from use of source code control are "
 "also dealt with. *whereis* then attempts to locate the desired program in "
 "the standard Linux places, and in the places specified by *$PATH* and "
-"*$MANPATH*.\n"
+"*$MANPATH*."
 msgstr ""
 
 #. type: Plain text
@@ -19557,8 +19025,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../misc-utils/whereis.1.adoc:59
-#, no-wrap
-msgid "*whereis -bm ls tr -m gcc*\n"
+msgid "*whereis -bm ls tr -m gcc*"
 msgstr ""
 
 #. type: Plain text
@@ -19577,8 +19044,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../misc-utils/whereis.1.adoc:67
-#, no-wrap
-msgid "*whereis -m ls -M /usr/share/man/man1 -f cal*\n"
+msgid "*whereis -m ls -M /usr/share/man/man1 -f cal*"
 msgstr ""
 
 #. type: Plain text
@@ -19695,9 +19161,9 @@ msgstr ""
 msgid ""
 "Interpret the next names as a *glob(7)* patterns. *whereis* always compares "
 "only filenames (aka basename) and never complete path. Using directory names "
-"in the pattern has no effect. Donât forget that the shell interprets the "
-"pattern when specified on the command line without quotes. Itâs necessary "
-"to use quotes for the _name_, for example:"
+"in the pattern has no effect. Don’t forget that the shell interprets the "
+"pattern when specified on the command line without quotes. It’s necessary to "
+"use quotes for the _name_, for example:"
 msgstr ""
 
 #. type: delimited block _
@@ -19739,8 +19205,8 @@ msgstr ""
 #: ../misc-utils/whereis.1.adoc:123
 #, no-wrap
 msgid ""
-"*cd /usr/bin* +\n"
-"*whereis -u -ms -M /usr/man/man1 -S /usr/src -f **\n"
+"*cd /usr/bin*\n"
+"*whereis -u -ms -M /usr/man/man1 -S /usr/src -f **"
 msgstr ""
 
 #.  Copyright 2009 by Karel Zak.  All Rights Reserved.
@@ -19758,30 +19224,26 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/wipefs.8.adoc:18
-#, no-wrap
-msgid "*wipefs* [options] _device_...\n"
+msgid "*wipefs* [options] _device_..."
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/wipefs.8.adoc:20
-#, no-wrap
-msgid "*wipefs* [*--backup*] *-o* _offset device_...\n"
+msgid "*wipefs* [*--backup*] *-o* _offset device_..."
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/wipefs.8.adoc:22
-#, no-wrap
-msgid "*wipefs* [*--backup*] *-a* _device_...\n"
+msgid "*wipefs* [*--backup*] *-a* _device_..."
 msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/wipefs.8.adoc:27
-#, no-wrap
 msgid ""
 "*wipefs* can erase filesystem, raid or partition-table signatures (magic "
 "strings) from the specified _device_ to make the signatures invisible for "
 "libblkid. *wipefs* does not erase the filesystem itself nor any other data "
-"from the device.\n"
+"from the device."
 msgstr ""
 
 #. type: Plain text
@@ -19796,14 +19258,13 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/wipefs.8.adoc:31
-#, no-wrap
 msgid ""
 "*wipefs* calls the *BLKRRPART* ioctl when it has erased a partition-table "
 "signature to inform the kernel about the change. The ioctl is called as the "
 "last step and when all specified signatures from all specified devices are "
 "already erased. This feature can be used to wipe content on partitions "
 "devices as well as partition table on a disk device, for example by *wipefs "
-"-a /dev/sdc1 /dev/sdc2 /dev/sdc*.\n"
+"-a /dev/sdc1 /dev/sdc2 /dev/sdc*."
 msgstr ""
 
 #. type: Plain text
@@ -20004,22 +19465,19 @@ msgstr ""
 
 #. type: Plain text
 #: ../schedutils/chrt.1.adoc:41
-#, no-wrap
-msgid "*chrt* [options] _priority command argument_ ...\n"
+msgid "*chrt* [options] _priority command argument_ ..."
 msgstr ""
 
 #. type: Plain text
 #: ../schedutils/chrt.1.adoc:43
-#, no-wrap
-msgid "*chrt* [options] *-p* [_priority_] _PID_\n"
+msgid "*chrt* [options] *-p* [_priority_] _PID_"
 msgstr ""
 
 #. type: Plain text
 #: ../schedutils/chrt.1.adoc:47
-#, no-wrap
 msgid ""
 "*chrt* sets or retrieves the real-time scheduling attributes of an existing "
-"_PID_, or runs _command_ with the given attributes.\n"
+"_PID_, or runs _command_ with the given attributes."
 msgstr ""
 
 #. type: Title ==
@@ -20242,8 +19700,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../schedutils/chrt.1.adoc:112
-#, no-wrap
-msgid "*chrt* _priority_ _command_ [_arguments_]\n"
+msgid "*chrt* _priority_ _command_ [_arguments_]"
 msgstr ""
 
 #. TRANSLATORS: Keep {colon} untranslated
@@ -20255,8 +19712,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../schedutils/chrt.1.adoc:117
-#, no-wrap
-msgid "*chrt -p* _PID_\n"
+msgid "*chrt -p* _PID_"
 msgstr ""
 
 #. TRANSLATORS: Keep {colon} untranslated.
@@ -20268,8 +19724,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../schedutils/chrt.1.adoc:122
-#, no-wrap
-msgid "*chrt -r -p* _priority PID_\n"
+msgid "*chrt -r -p* _priority PID_"
 msgstr ""
 
 #. type: Labeled list
@@ -20282,8 +19737,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../schedutils/chrt.1.adoc:126
-#, no-wrap
-msgid "*chrt -r -p 30* _PID_\n"
+msgid "*chrt -r -p 30* _PID_"
 msgstr ""
 
 #. type: Labeled list
@@ -20294,8 +19748,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../schedutils/chrt.1.adoc:130
-#, no-wrap
-msgid "*chrt -o -p 0* _PID_\n"
+msgid "*chrt -o -p 0* _PID_"
 msgstr ""
 
 #. type: Plain text
@@ -20339,12 +19792,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../schedutils/chrt.1.adoc:154 ../schedutils/uclampset.1.adoc:132
-#, no-wrap
-msgid ""
-"*nice*(1),\n"
-"*renice*(1),\n"
-"*taskset*(1),\n"
-"*sched*(7)\n"
+msgid "*nice*(1), *renice*(1), *taskset*(1), *sched*(7)"
 msgstr ""
 
 #. type: Plain text
@@ -20367,26 +19815,22 @@ msgstr ""
 
 #. type: Plain text
 #: ../schedutils/ionice.1.adoc:17
-#, no-wrap
-msgid "*ionice* [*-c* _class_] [*-n* _level_] [*-t*] *-p* _PID_\n"
+msgid "*ionice* [*-c* _class_] [*-n* _level_] [*-t*] *-p* _PID_"
 msgstr ""
 
 #. type: Plain text
 #: ../schedutils/ionice.1.adoc:19
-#, no-wrap
-msgid "*ionice* [*-c* _class_] [*-n* _level_] [*-t*] *-P* _PGID_\n"
+msgid "*ionice* [*-c* _class_] [*-n* _level_] [*-t*] *-P* _PGID_"
 msgstr ""
 
 #. type: Plain text
 #: ../schedutils/ionice.1.adoc:21
-#, no-wrap
-msgid "*ionice* [*-c* _class_] [*-n* _level_] [*-t*] *-u* _UID_\n"
+msgid "*ionice* [*-c* _class_] [*-n* _level_] [*-t*] *-u* _UID_"
 msgstr ""
 
 #. type: Plain text
 #: ../schedutils/ionice.1.adoc:23
-#, no-wrap
-msgid "*ionice* [*-c* _class_] [*-n* _level_] [*-t*] _command_ [argument] ...\n"
+msgid "*ionice* [*-c* _class_] [*-n* _level_] [*-t*] _command_ [argument] ..."
 msgstr ""
 
 #. type: Plain text
@@ -20603,8 +20047,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../schedutils/ionice.1.adoc:94
-#, no-wrap
-msgid "*ioprio_set*(2)\n"
+msgid "*ioprio_set*(2)"
 msgstr ""
 
 #. taskset(1) manpage
@@ -20640,19 +20083,16 @@ msgstr ""
 
 #. type: Plain text
 #: ../schedutils/taskset.1.adoc:40
-#, no-wrap
-msgid "*taskset* [options] _mask command_ [_argument_...]\n"
+msgid "*taskset* [options] _mask command_ [_argument_...]"
 msgstr ""
 
 #. type: Plain text
 #: ../schedutils/taskset.1.adoc:42
-#, no-wrap
-msgid "*taskset* [options] *-p* [_mask_] _pid_\n"
+msgid "*taskset* [options] *-p* [_mask_] _pid_"
 msgstr ""
 
 #. type: Plain text
 #: ../schedutils/taskset.1.adoc:46
-#, no-wrap
 msgid ""
 "The *taskset* command is used to set or retrieve the CPU affinity of a "
 "running process given its _pid_, or to launch a new _command_ with a given "
@@ -20662,8 +20102,8 @@ msgid ""
 "the Linux scheduler also supports natural CPU affinity: the scheduler "
 "attempts to keep processes on the same CPU as long as practical for "
 "performance reasons. Therefore, forcing a specific CPU affinity is useful "
-"only in certain applications.   The affinity of some processes like kernel "
-"per-CPU threads cannot be set.\n"
+"only in certain applications.  The affinity of some processes like kernel "
+"per-CPU threads cannot be set."
 msgstr ""
 
 #. type: Plain text
@@ -20791,8 +20231,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../schedutils/taskset.1.adoc:87
-#, no-wrap
-msgid "*taskset* _mask_ _command_ [_arguments_]\n"
+msgid "*taskset* _mask_ _command_ [_arguments_]"
 msgstr ""
 
 #. TRANSLATORS: Keep {colon} untranslated.
@@ -20804,8 +20243,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../schedutils/taskset.1.adoc:91
-#, no-wrap
-msgid "*taskset -p* _pid_\n"
+msgid "*taskset -p* _pid_"
 msgstr ""
 
 #. TRANSLATORS: Keep {colon} untranslated.
@@ -20817,8 +20255,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../schedutils/taskset.1.adoc:95
-#, no-wrap
-msgid "*taskset -p* _mask pid_\n"
+msgid "*taskset -p* _mask pid_"
 msgstr ""
 
 #. TRANSLATORS: Keep {colon} untranslated.
@@ -20832,8 +20269,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../schedutils/taskset.1.adoc:99
-#, no-wrap
-msgid "*taskset -pc* _cpu-list pid_\n"
+msgid "*taskset -pc* _cpu-list pid_"
 msgstr ""
 
 #. TRANSLATORS: Keep {colon} untranslated.
@@ -20845,8 +20281,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../schedutils/taskset.1.adoc:103
-#, no-wrap
-msgid "*taskset --cpu-list* _cpu-list command_\n"
+msgid "*taskset --cpu-list* _cpu-list command_"
 msgstr ""
 
 #. type: Plain text
@@ -20860,15 +20295,13 @@ msgstr ""
 
 #. type: Plain text
 #: ../schedutils/taskset.1.adoc:111
-#, no-wrap
 msgid ""
 "*taskset* returns 0 in its affinity-getting mode as long as the provided PID "
-"exists.\n"
+"exists."
 msgstr ""
 
 #. type: Plain text
 #: ../schedutils/taskset.1.adoc:113
-#, no-wrap
 msgid ""
 "*taskset* returns 0 in its affinity-setting mode as long as the underlying "
 "*sched_setaffinity*(2) system call does.  The success of the command does "
@@ -20876,24 +20309,24 @@ msgid ""
 "indicated CPU(s), but only that the thread will not migrate to a CPU outside "
 "the new affinity mask.  For example, the affinity of the kernel thread "
 "kswapd can be set, but the thread may not immediately migrate and is not "
-"guaranteed to ever do so:\n"
+"guaranteed to ever do so:"
 msgstr ""
 
 #. type: Plain text
 #: ../schedutils/taskset.1.adoc:125
 #, no-wrap
 msgid ""
-"$ ps ax -o comm,psr,pid | grep kswapd +\n"
-"kswapd0           4      82 +\n"
-"$ sudo taskset -p 1 82 +\n"
-"pid 82's current affinity mask: 1 +\n"
-"pid 82's new affinity mask: 1 +\n"
-"$ echo $? +\n"
-"0 +\n"
-"$ ps ax -o comm,psr,pid | grep kswapd +\n"
-"kswapd0           4      82 +\n"
-"$ taskset -p 82 +\n"
-"pid 82's current affinity mask: 1 +\n"
+"$ ps ax -o comm,psr,pid | grep kswapd\n"
+"kswapd0           4      82\n"
+"$ sudo taskset -p 1 82\n"
+"pid 82's current affinity mask: 1\n"
+"pid 82's new affinity mask: 1\n"
+"$ echo $?\n"
+"0\n"
+"$ ps ax -o comm,psr,pid | grep kswapd\n"
+"kswapd0           4      82\n"
+"$ taskset -p 82\n"
+"pid 82's current affinity mask: 1 +"
 msgstr ""
 
 #. type: Plain text
@@ -20907,13 +20340,13 @@ msgstr ""
 #: ../schedutils/taskset.1.adoc:135
 #, no-wrap
 msgid ""
-"$ ps ax -o comm,psr,pid | grep ksoftirqd/0 +\n"
-"ksoftirqd/0       0      14 +\n"
-"$ sudo taskset -p 1 14 +\n"
-"pid 14's current affinity mask: 1 +\n"
-"taskset: failed to set pid 14's affinity: Invalid argument +\n"
-"$ echo $? +\n"
-"1 +\n"
+"$ ps ax -o comm,psr,pid | grep ksoftirqd/0\n"
+"ksoftirqd/0       0      14\n"
+"$ sudo taskset -p 1 14\n"
+"pid 14's current affinity mask: 1\n"
+"taskset: failed to set pid 14's affinity: Invalid argument\n"
+"$ echo $?\n"
+"1 +"
 msgstr ""
 
 #. type: Plain text
@@ -20940,13 +20373,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../schedutils/taskset.1.adoc:152
-#, no-wrap
 msgid ""
-"*chrt*(1),\n"
-"*nice*(1),\n"
-"*renice*(1),\n"
-"*sched_getaffinity*(2),\n"
-"*sched_setaffinity*(2)\n"
+"*chrt*(1), *nice*(1), *renice*(1), *sched_getaffinity*(2), "
+"*sched_setaffinity*(2)"
 msgstr ""
 
 #. type: Plain text
@@ -20991,24 +20420,21 @@ msgstr ""
 
 #. type: Plain text
 #: ../schedutils/uclampset.1.adoc:42
-#, no-wrap
 msgid ""
 "*uclampset* [options] [*-m* _uclamp_min_] [*-M* _uclamp_max] _command "
-"argument_\n"
+"argument_"
 msgstr ""
 
 #. type: Plain text
 #: ../schedutils/uclampset.1.adoc:44
-#, no-wrap
-msgid "*uclampset* [options] [*-m* _uclamp_min_] [*-M* _uclamp_max_] *-p* _PID_\n"
+msgid "*uclampset* [options] [*-m* _uclamp_min_] [*-M* _uclamp_max_] *-p* _PID_"
 msgstr ""
 
 #. type: Plain text
 #: ../schedutils/uclampset.1.adoc:48
-#, no-wrap
 msgid ""
 "*uclampset* sets or retrieves the utilization clamping attributes of an "
-"existing _PID_, or runs _command_ with the given attributes.\n"
+"existing _PID_, or runs _command_ with the given attributes."
 msgstr ""
 
 #. type: Plain text
@@ -21101,8 +20527,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../schedutils/uclampset.1.adoc:93
-#, no-wrap
-msgid "*uclampset* _[-m uclamp_min]_ _[-M uclamp_max]_ _command_ [_arguments_]\n"
+msgid "*uclampset* _[-m uclamp_min]_ _[-M uclamp_max]_ _command_ [_arguments_]"
 msgstr ""
 
 #. TRANSLATORS: Keep {colon} untranslated.
@@ -21116,14 +20541,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../schedutils/uclampset.1.adoc:97
-#, no-wrap
-msgid "*uclampset -p* _PID_\n"
+msgid "*uclampset -p* _PID_"
 msgstr ""
 
 #. type: Plain text
 #: ../schedutils/uclampset.1.adoc:101
-#, no-wrap
-msgid "*uclampset -p* _PID_ _[-m uclamp_min]_ _[-M uclamp_max]_\n"
+msgid "*uclampset -p* _PID_ _[-m uclamp_min]_ _[-M uclamp_max]_"
 msgstr ""
 
 #. TRANSLATORS: Keep {colon} untranslated.
@@ -21135,8 +20558,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../schedutils/uclampset.1.adoc:105
-#, no-wrap
-msgid "*uclampset -s* _[-m uclamp_min]_ _[-M uclamp_max]_\n"
+msgid "*uclampset -s* _[-m uclamp_min]_ _[-M uclamp_max]_"
 msgstr ""
 
 #. type: Plain text
@@ -21157,8 +20579,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../schedutils/uclampset.1.adoc:117
-#, no-wrap
-msgid "*uclampset -s* `-m 512` `-M 700`\n"
+msgid "*uclampset -s* `-m 512` `-M 700`"
 msgstr ""
 
 #. type: Plain text
@@ -21325,10 +20746,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/adjtime_config.5.adoc:58
-#, no-wrap
-msgid ""
-"*hwclock*(8),\n"
-"*rtcwake*(8)\n"
+msgid "*hwclock*(8), *rtcwake*(8)"
 msgstr ""
 
 #. type: Title =
@@ -21344,17 +20762,15 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/blkdiscard.8.adoc:16
-#, no-wrap
-msgid "*blkdiscard* [options] [*-o* _offset_] [*-l* _length_] _device_\n"
+msgid "*blkdiscard* [options] [*-o* _offset_] [*-l* _length_] _device_"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/blkdiscard.8.adoc:20
-#, no-wrap
 msgid ""
 "*blkdiscard* is used to discard device sectors. This is useful for "
 "solid-state drivers (SSDs) and thinly-provisioned storage. Unlike "
-"*fstrim*(8), this command is used directly on the block device.\n"
+"*fstrim*(8), this command is used directly on the block device."
 msgstr ""
 
 #. type: Plain text
@@ -21372,8 +20788,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/blkdiscard.8.adoc:26
-#, no-wrap
-msgid "*WARNING: All data in the discarded region on the device will be lost!*\n"
+msgid "*WARNING: All data in the discarded region on the device will be lost!*"
 msgstr ""
 
 #. type: Plain text
@@ -21463,8 +20878,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/blkdiscard.8.adoc:60
-#, no-wrap
-msgid "*blkdiscard* has the following exit status values:\n"
+msgid "*blkdiscard* has the following exit status values:"
 msgstr ""
 
 #. type: Plain text
@@ -21484,8 +20898,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/blkdiscard.8.adoc:78
-#, no-wrap
-msgid "*fstrim*(8)\n"
+msgid "*fstrim*(8)"
 msgstr ""
 
 #. type: Title =
@@ -21501,17 +20914,15 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/blkzone.8.adoc:16
-#, no-wrap
-msgid "*blkzone* _command_ [options] _device_\n"
+msgid "*blkzone* _command_ [options] _device_"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/blkzone.8.adoc:20
-#, no-wrap
 msgid ""
 "*blkzone* is used to run zone command on device that support the Zoned Block "
 "Commands (ZBC) or Zoned-device ATA Commands (ZAC). The zones to operate on "
-"can be specified using the offset, count and length options.\n"
+"can be specified using the offset, count and length options."
 msgstr ""
 
 #. type: Title ===
@@ -21723,8 +21134,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/blkzone.8.adoc:111
-#, no-wrap
-msgid "*sg_rep_zones*(8)\n"
+msgid "*sg_rep_zones*(8)"
 msgstr ""
 
 #. type: Title =
@@ -21740,23 +21150,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/blkpr.8.adoc:16
-#, no-wrap
-msgid "*blkpr* [options] _device_\n"
+msgid "*blkpr* [options] _device_"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/blkpr.8.adoc:20
-#, no-wrap
 msgid ""
 "*blkpr* is used to run persistent reservations command on device that "
-"supports Persistent Reservations feature.\n"
-msgstr ""
-
-#. type: Labeled list
-#: ../sys-utils/blkpr.8.adoc:25 ../sys-utils/flock.1.adoc:56
-#: ../term-utils/script.1.adoc:69
-#, no-wrap
-msgid "*-c*, *--command* _command_"
+"supports Persistent Reservations feature."
 msgstr ""
 
 #. type: Plain text
@@ -21814,8 +21215,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/blkpr.8.adoc:55
-#, no-wrap
-msgid "*sg_persist*(8)\n"
+msgid "*sg_persist*(8)"
 msgstr ""
 
 #. type: Plain text
@@ -21839,30 +21239,26 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/chcpu.8.adoc:16
-#, no-wrap
-msgid "*chcpu* *-c*|*-d*|*-e*|*-g* _cpu-list_\n"
+msgid "*chcpu* *-c*|*-d*|*-e*|*-g* _cpu-list_"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/chcpu.8.adoc:18
-#, no-wrap
-msgid "*chcpu* *-p* _mode_\n"
+msgid "*chcpu* *-p* _mode_"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/chcpu.8.adoc:20
-#, no-wrap
-msgid "*chcpu* *-r*|*-h*|*-V*\n"
+msgid "*chcpu* *-r*|*-h*|*-V*"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/chcpu.8.adoc:24
-#, no-wrap
 msgid ""
 "*chcpu* can modify the state of CPUs. It can enable or disable CPUs, scan "
 "for new CPUs, change the CPU dispatching _mode_ of the underlying "
 "hypervisor, and request CPUs from the hypervisor (configure) or return CPUs "
-"to the hypervisor (deconfigure).\n"
+"to the hypervisor (deconfigure)."
 msgstr ""
 
 #. type: Plain text
@@ -21981,8 +21377,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/chcpu.8.adoc:58
-#, no-wrap
-msgid "*chcpu* has the following exit status values:\n"
+msgid "*chcpu* has the following exit status values:"
 msgstr ""
 
 #. type: Plain text
@@ -22002,8 +21397,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/chcpu.8.adoc:79
-#, no-wrap
-msgid "*lscpu*(1)\n"
+msgid "*lscpu*(1)"
 msgstr ""
 
 #. type: Title =
@@ -22019,10 +21413,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/chmem.8.adoc:16
-#, no-wrap
 msgid ""
 "*chmem* [*-h] [*-V*] [*-v*] [*-e*|*-d*] [_SIZE_|_RANGE_ *-b* _BLOCKRANGE_] "
-"[*-z* _ZONE_]\n"
+"[*-z* _ZONE_]"
 msgstr ""
 
 #. type: Plain text
@@ -22158,8 +21551,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/chmem.8.adoc:57
-#, no-wrap
-msgid "*chmem* has the following exit status values:\n"
+msgid "*chmem* has the following exit status values:"
 msgstr ""
 
 #. type: Labeled list
@@ -22210,8 +21602,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/chmem.8.adoc:84
-#, no-wrap
-msgid "*lsmem*(1)\n"
+msgid "*lsmem*(1)"
 msgstr ""
 
 #. type: Title =
@@ -22227,20 +21618,17 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/choom.1.adoc:14
-#, no-wrap
-msgid "*choom* *-p* _PID_\n"
+msgid "*choom* *-p* _PID_"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/choom.1.adoc:16
-#, no-wrap
-msgid "*choom* *-p* _PID_ *-n* _number_\n"
+msgid "*choom* *-p* _PID_ *-n* _number_"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/choom.1.adoc:18
-#, no-wrap
-msgid "*choom* *-n* _number_ [--] _command_ [_argument_ ...]\n"
+msgid "*choom* *-n* _number_ [--] _command_ [_argument_ ...]"
 msgstr ""
 
 #. type: Plain text
@@ -22326,8 +21714,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/choom.1.adoc:54
-#, no-wrap
-msgid "*proc*(5)\n"
+msgid "*proc*(5)"
 msgstr ""
 
 #. Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
@@ -22345,8 +21732,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/ctrlaltdel.8.adoc:20
-#, no-wrap
-msgid "*ctrlaltdel* *hard*|*soft*\n"
+msgid "*ctrlaltdel* *hard*|*soft*"
 msgstr ""
 
 #. type: Plain text
@@ -22410,10 +21796,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/ctrlaltdel.8.adoc:51
-#, no-wrap
-msgid ""
-"*init*(8),\n"
-"*systemd*(1)\n"
+msgid "*init*(8), *systemd*(1)"
 msgstr ""
 
 #. Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
@@ -22431,44 +21814,37 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/dmesg.1.adoc:20
-#, no-wrap
-msgid "*dmesg* [options]\n"
+msgid "*dmesg* [options]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/dmesg.1.adoc:22
-#, no-wrap
-msgid "*dmesg* *--clear*\n"
+msgid "*dmesg* *--clear*"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/dmesg.1.adoc:24
-#, no-wrap
-msgid "*dmesg* *--read-clear* [options]\n"
+msgid "*dmesg* *--read-clear* [options]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/dmesg.1.adoc:26
-#, no-wrap
-msgid "*dmesg* *--console-level* _level_\n"
+msgid "*dmesg* *--console-level* _level_"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/dmesg.1.adoc:28
-#, no-wrap
-msgid "*dmesg* *--console-on*\n"
+msgid "*dmesg* *--console-on*"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/dmesg.1.adoc:30
-#, no-wrap
-msgid "*dmesg* *--console-off*\n"
+msgid "*dmesg* *--console-off*"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/dmesg.1.adoc:34
-#, no-wrap
-msgid "*dmesg* is used to examine or control the kernel ring buffer.\n"
+msgid "*dmesg* is used to examine or control the kernel ring buffer."
 msgstr ""
 
 #. type: Plain text
@@ -22583,8 +21959,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/dmesg.1.adoc:66
-#, no-wrap
-msgid "*dmesg --facility=daemon*\n"
+msgid "*dmesg --facility=daemon*"
 msgstr ""
 
 #. type: Plain text
@@ -22645,8 +22020,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/dmesg.1.adoc:85
-#, no-wrap
-msgid "*dmesg --level=err,warn*\n"
+msgid "*dmesg --level=err,warn*"
 msgstr ""
 
 #. type: Plain text
@@ -22665,8 +22039,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/dmesg.1.adoc:91
-#, no-wrap
-msgid "*dmesg --level=err+*\n"
+msgid "*dmesg --level=err+*"
 msgstr ""
 
 #. type: Plain text
@@ -22805,12 +22178,11 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/dmesg.1.adoc:125
-#, no-wrap
 msgid ""
 "*Be aware that the timestamp could be inaccurate!* The *time* source used "
 "for the logs is *not updated after* system *SUSPEND*/*RESUME*. Timestamps "
 "are adjusted according to current delta between boottime and monotonic "
-"clocks, this works only for messages printed after last resume.\n"
+"clocks, this works only for messages printed after last resume."
 msgstr ""
 
 #. type: Labeled list
@@ -23004,27 +22376,21 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/dmesg.1.adoc:184
-#, no-wrap
 msgid ""
 "*dmesg* can fail reporting permission denied error. This is usually caused "
-"by *dmesg_restrict* kernel setting, please see *syslog*(2) for more "
-"details.\n"
+"by *dmesg_restrict* kernel setting, please see *syslog*(2) for more details."
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/dmesg.1.adoc:190
-#, no-wrap
 msgid ""
 "*dmesg* was originally written by mailto:tytso@athena.mit.edu[Theodore "
-"Ts'o].\n"
+"Ts'o]."
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/dmesg.1.adoc:195
-#, no-wrap
-msgid ""
-"*terminal-colors.d*(5),\n"
-"*syslogd*(8)\n"
+msgid "*terminal-colors.d*(5), *syslogd*(8)"
 msgstr ""
 
 #. Copyright (C) 1994-2005 Jeff Tranter (tranter@pobox.com)
@@ -23046,18 +22412,16 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/eject.1.adoc:22
-#, no-wrap
-msgid "*eject* [options] _device_|_mountpoint_\n"
+msgid "*eject* [options] _device_|_mountpoint_"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/eject.1.adoc:26
-#, no-wrap
 msgid ""
 "*eject* allows removable media (typically a CD-ROM, floppy disk, tape, JAZ, "
 "ZIP or USB disk) to be ejected under software control. The command can also "
 "control some multi-disc CD-ROM changers, the auto-eject feature supported by "
-"some devices, and close the disc tray of some CD-ROM drives.\n"
+"some devices, and close the disc tray of some CD-ROM drives."
 msgstr ""
 
 #. type: Plain text
@@ -23333,7 +22697,6 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/eject.1.adoc:100
-#, no-wrap
 msgid ""
 "*eject* only works with devices that support one or more of the four methods "
 "of ejecting. This includes most CD-ROM drives (IDE, SCSI, and proprietary), "
@@ -23341,7 +22704,7 @@ msgid ""
 "versions), and LS120 removable floppies. Users have also reported success "
 "with floppy drives on Sun SPARC and Apple Macintosh systems. If *eject* does "
 "not work, it is most likely a limitation of the kernel driver for the device "
-"and not the *eject* program itself.\n"
+"and not the *eject* program itself."
 msgstr ""
 
 #. type: Plain text
@@ -23354,11 +22717,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/eject.1.adoc:104
-#, no-wrap
 msgid ""
 "*eject* may not always be able to determine if the device is mounted (e.g., "
 "if it has several names). If the device name is a symbolic link, *eject* "
-"will follow the link and use the device that it points to.\n"
+"will follow the link and use the device that it points to."
 msgstr ""
 
 #. type: Plain text
@@ -23403,12 +22765,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/eject.1.adoc:123
-#, no-wrap
-msgid ""
-"*findmnt*(8),\n"
-"*lsblk*(8),\n"
-"*mount*(8),\n"
-"*umount*(8)\n"
+msgid "*findmnt*(8), *lsblk*(8), *mount*(8), *umount*(8)"
 msgstr ""
 
 #. type: Title =
@@ -23424,34 +22781,27 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/fallocate.1.adoc:16
-#, no-wrap
-msgid ""
-"*fallocate* [*-c*|*-p*|*-z*] [*-o* _offset_] *-l* _length_ [*-n*] "
-"_filename_\n"
+msgid "*fallocate* [*-c*|*-p*|*-z*] [*-o* _offset_] *-l* _length_ [*-n*] _filename_"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/fallocate.1.adoc:18
-#, no-wrap
-msgid "*fallocate* *-d* [*-o* _offset_] [*-l* _length_] _filename_\n"
+msgid "*fallocate* *-d* [*-o* _offset_] [*-l* _length_] _filename_"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/fallocate.1.adoc:20
-#, no-wrap
-msgid "*fallocate* *-x* [*-o* _offset_] *-l* _length filename_\n"
+msgid "*fallocate* *-x* [*-o* _offset_] *-l* _length filename_"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/fallocate.1.adoc:24
-#, no-wrap
 msgid ""
 "*fallocate* is used to manipulate the allocated disk space for a file, "
 "either to deallocate or preallocate it. For filesystems which support the "
 "*fallocate*(2) system call, preallocation is done quickly by allocating "
 "blocks and marking them as uninitialized, requiring no IO to the data "
-"blocks. This is much faster than creating a file by filling it with "
-"zeroes.\n"
+"blocks. This is much faster than creating a file by filling it with zeroes."
 msgstr ""
 
 #. type: Plain text
@@ -23657,11 +23007,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/fallocate.1.adoc:91
-#, no-wrap
-msgid ""
-"*truncate*(1),\n"
-"*fallocate*(2),\n"
-"*posix_fallocate*(3)\n"
+msgid "*truncate*(1), *fallocate*(2), *posix_fallocate*(3)"
 msgstr ""
 
 #. Copyright 2003-2006 H. Peter Anvin - All Rights Reserved
@@ -23699,20 +23045,17 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/flock.1.adoc:41
-#, no-wrap
-msgid "*flock* [options] _file_|_directory_ _command_ [_arguments_]\n"
+msgid "*flock* [options] _file_|_directory_ _command_ [_arguments_]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/flock.1.adoc:43
-#, no-wrap
-msgid "*flock* [options] _file_|_directory_ *-c* _command_\n"
+msgid "*flock* [options] _file_|_directory_ *-c* _command_"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/flock.1.adoc:45
-#, no-wrap
-msgid "*flock* [options] _number_\n"
+msgid "*flock* [options] _number_"
 msgstr ""
 
 #. type: Plain text
@@ -23872,8 +23215,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/flock.1.adoc:97
-#, no-wrap
-msgid "*flock* does not detect deadlock. See *flock*(2) for details.\n"
+msgid "*flock* does not detect deadlock. See *flock*(2) for details."
 msgstr ""
 
 #. type: Plain text
@@ -23998,8 +23340,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/flock.1.adoc:134
-#, no-wrap
-msgid "*flock*(2)\n"
+msgid "*flock*(2)"
 msgstr ""
 
 #. type: Title =
@@ -24015,32 +23356,28 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/fsfreeze.8.adoc:16
-#, no-wrap
-msgid "*fsfreeze* *--freeze*|*--unfreeze* _mountpoint_\n"
+msgid "*fsfreeze* *--freeze*|*--unfreeze* _mountpoint_"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/fsfreeze.8.adoc:20
-#, no-wrap
-msgid "*fsfreeze* suspends or resumes access to a filesystem.\n"
+msgid "*fsfreeze* suspends or resumes access to a filesystem."
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/fsfreeze.8.adoc:22
-#, no-wrap
 msgid ""
 "*fsfreeze* halts any new access to the filesystem and creates a stable image "
 "on disk. *fsfreeze* is intended to be used with hardware RAID devices that "
-"support the creation of snapshots.\n"
+"support the creation of snapshots."
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/fsfreeze.8.adoc:24
-#, no-wrap
 msgid ""
 "*fsfreeze* is unnecessary for *device-mapper* devices. The device-mapper "
 "(and LVM) automatically freezes a filesystem on the device when a snapshot "
-"creation is requested. For more details see the *dmsetup*(8) man page.\n"
+"creation is requested. For more details see the *dmsetup*(8) man page."
 msgstr ""
 
 #. type: Plain text
@@ -24129,8 +23466,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/fsfreeze.8.adoc:56 ../sys-utils/mountpoint.1.adoc:68
-#, no-wrap
-msgid "*mount*(8)\n"
+msgid "*mount*(8)"
 msgstr ""
 
 #. Copyright (c) 1980, 1989, 1991 The Regents of the University of California.
@@ -24310,12 +23646,11 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/fstab.5.adoc:90
-#, no-wrap
 msgid ""
 "*mount*(8) and *umount*(8) support filesystem _subtypes_. The subtype is "
 "defined by '.subtype' suffix. For example 'fuse.sshfs'. It's recommended to "
 "use subtype notation rather than add any prefix to the first fstab field "
-"(for example 'sshfs#example.com' is deprecated).\n"
+"(for example 'sshfs#example.com' is deprecated)."
 msgstr ""
 
 #. type: Title ===
@@ -24477,13 +23812,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/fstab.5.adoc:144
-#, no-wrap
-msgid ""
-"*getmntent*(3),\n"
-"*fs*(5),\n"
-"*findmnt*(8),\n"
-"*mount*(8),\n"
-"*swapon*(8)\n"
+msgid "*getmntent*(3), *fs*(5), *findmnt*(8), *mount*(8), *swapon*(8)"
 msgstr ""
 
 #. type: Title =
@@ -24499,19 +23828,17 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/fstrim.8.adoc:16
-#, no-wrap
 msgid ""
 "*fstrim* [*-Aav*] [*-o* _offset_] [*-l* _length_] [*-m* _minimum-size_] "
-"[_mountpoint_]\n"
+"[_mountpoint_]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/fstrim.8.adoc:20
-#, no-wrap
 msgid ""
 "*fstrim* is used on a mounted filesystem to discard (or \"trim\") blocks "
 "which are not in use by the filesystem. This is useful for solid-state "
-"drives (SSDs) and thinly-provisioned storage.\n"
+"drives (SSDs) and thinly-provisioned storage."
 msgstr ""
 
 #. type: Plain text
@@ -24641,8 +23968,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/fstrim.8.adoc:50
-#, no-wrap
-msgid "*--listed-in /etc/fstab:/proc/self/mountinfo*.\n"
+msgid "*--listed-in /etc/fstab:/proc/self/mountinfo*."
 msgstr ""
 
 #. type: Plain text
@@ -24699,14 +24025,13 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/fstrim.8.adoc:68
-#, no-wrap
 msgid ""
 "*fstrim* will report the same potential discard bytes each time, but only "
 "sectors which had been written to between the discards would actually be "
 "discarded by the storage device. Further, the kernel block layer reserves "
 "the right to adjust the discard ranges to fit raid stripe geometry, non-trim "
 "capable devices in a LVM setup, etc. These reductions would not be reflected "
-"in fstrim_range.len (the *--length* option).\n"
+"in fstrim_range.len (the *--length* option)."
 msgstr ""
 
 #. type: Labeled list
@@ -24740,10 +24065,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/fstrim.8.adoc:95
-#, no-wrap
-msgid ""
-"*blkdiscard*(8),\n"
-"*mount*(8)\n"
+msgid "*blkdiscard*(8), *mount*(8)"
 msgstr ""
 
 #. hwclock.8 -- man page for util-linux' hwclock
@@ -24764,20 +24086,18 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/hwclock.8.adoc:24
-#, no-wrap
-msgid "*hwclock* [_function_] [_option_...]\n"
+msgid "*hwclock* [_function_] [_option_...]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/hwclock.8.adoc:28
-#, no-wrap
 msgid ""
 "*hwclock* is an administration tool for the time clocks. It can: display the "
 "Hardware Clock time; set the Hardware Clock to a specified time; set the "
 "Hardware Clock from the System Clock; set the System Clock from the Hardware "
 "Clock; compensate for Hardware Clock drift; correct the System Clock "
 "timescale; set the kernel's timezone, NTP timescale, and epoch (Alpha only); "
-"and predict future Hardware Clock values based on its drift rate.\n"
+"and predict future Hardware Clock values based on its drift rate."
 msgstr ""
 
 #. type: Plain text
@@ -24847,8 +24167,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/hwclock.8.adoc:46
-#, no-wrap
-msgid "**hwclock --setepoch --epoch=1952**\n"
+msgid "**hwclock --setepoch --epoch=1952**"
 msgstr ""
 
 #. type: Plain text
@@ -25147,14 +24466,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/hwclock.8.adoc:115
-#, no-wrap
-msgid "*hwclock --set --date='16:45'*\n"
+msgid "*hwclock --set --date='16:45'*"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/hwclock.8.adoc:117
-#, no-wrap
-msgid "*hwclock --predict --date='2525-08-14 07:11:05'*\n"
+msgid "*hwclock --predict --date='2525-08-14 07:11:05'*"
 msgstr ""
 
 #. type: Plain text
@@ -25423,11 +24740,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/hwclock.8.adoc:178
-#, no-wrap
 msgid ""
 "*The Hardware Clock:* This clock is an independent hardware device, with its "
 "own power domain (battery, capacitor, etc), that operates when the machine "
-"is powered off, or even unplugged.\n"
+"is powered off, or even unplugged."
 msgstr ""
 
 #. type: Plain text
@@ -25460,15 +24776,13 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/hwclock.8.adoc:186
-#, no-wrap
 msgid ""
 "*The System Clock:* This clock is part of the Linux kernel and is driven by "
 "a timer interrupt. (On an ISA machine, the timer interrupt is part of the "
 "ISA standard.) It has meaning only while Linux is running on the "
 "machine. The System Time is the number of seconds since 00:00:00 January 1, "
 "1970 UTC (or more succinctly, the number of seconds since 1969 UTC). The "
-"System Time is not an integer, though. It has virtually infinite "
-"precision.\n"
+"System Time is not an integer, though. It has virtually infinite precision."
 msgstr ""
 
 #. type: Plain text
@@ -25512,10 +24826,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/hwclock.8.adoc:194
-#, no-wrap
 msgid ""
 "*hwclock* sets the kernel's timezone to the value indicated by *TZ* or "
-"_/etc/localtime_ with the *--hctosys* or *--systz* functions.\n"
+"_/etc/localtime_ with the *--hctosys* or *--systz* functions."
 msgstr ""
 
 #. type: Plain text
@@ -25537,14 +24850,13 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/hwclock.8.adoc:200
-#, no-wrap
 msgid ""
 "*hwclock* uses many different ways to get and set Hardware Clock values. The "
 "most normal way is to do I/O to the rtc device special file, which is "
 "presumed to be driven by the rtc device driver. Also, Linux systems using "
 "the rtc framework with udev, are capable of supporting multiple Hardware "
 "Clocks. This may bring about the need to override the default rtc device by "
-"specifying one with the *--rtc* option.\n"
+"specifying one with the *--rtc* option."
 msgstr ""
 
 #. type: Plain text
@@ -25641,7 +24953,6 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/hwclock.8.adoc:220
-#, no-wrap
 msgid ""
 "*hwclock --hctosys* also uses the adjtime file data to compensate the value "
 "read from the Hardware Clock before using it to set the System Clock. It "
@@ -25649,7 +24960,7 @@ msgid ""
 "sub-second drift values immediately. It does not change the Hardware Clock "
 "time nor the adjtime file. This may eliminate the need to use *--adjust*, "
 "unless something else on the system needs the Hardware Clock to be "
-"compensated.\n"
+"compensated."
 msgstr ""
 
 #. type: Title ===
@@ -25769,8 +25080,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/hwclock.8.adoc:248
-#, no-wrap
-msgid "*hwclock --adjust* should not be used with NTP '11 minute mode'.\n"
+msgid "*hwclock --adjust* should not be used with NTP '11 minute mode'."
 msgstr ""
 
 #. type: Title ===
@@ -25938,14 +25248,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/hwclock.8.adoc:289
-#, no-wrap
-msgid "*Steps to calculate cold drift:*\n"
+msgid "*Steps to calculate cold drift:*"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/hwclock.8.adoc:292
-#, no-wrap
-msgid "*Ensure that NTP daemon will not be launched at startup.*\n"
+msgid "*Ensure that NTP daemon will not be launched at startup.*"
 msgstr ""
 
 #. type: Plain text
@@ -26251,15 +25559,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/hwclock.8.adoc:382
-#, no-wrap
 msgid ""
-"*date*(1),\n"
-"*adjtime_config*(5),\n"
-"*adjtimex*(8),\n"
-"*gettimeofday*(2),\n"
-"*settimeofday*(2),\n"
-"*crontab*(1p),\n"
-"*tzset*(3)\n"
+"*date*(1), *adjtime_config*(5), *adjtimex*(8), *gettimeofday*(2), "
+"*settimeofday*(2), *crontab*(1p), *tzset*(3)"
 msgstr ""
 
 #. type: Plain text
@@ -26285,16 +25587,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/ipcmk.1.adoc:20
-#, no-wrap
-msgid "*ipcmk* [options]\n"
+msgid "*ipcmk* [options]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/ipcmk.1.adoc:24
-#, no-wrap
 msgid ""
 "*ipcmk* allows you to create System V inter-process communication (IPC) "
-"objects: shared memory segments, message queues, and semaphore arrays.\n"
+"objects: shared memory segments, message queues, and semaphore arrays."
 msgstr ""
 
 #. type: Plain text
@@ -26363,11 +25663,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/ipcmk.1.adoc:54
-#, no-wrap
-msgid ""
-"*ipcrm*(1),\n"
-"*ipcs*(1),\n"
-"*sysvipc*(7)\n"
+msgid "*ipcrm*(1), *ipcs*(1), *sysvipc*(7)"
 msgstr ""
 
 #. Copyright 2002 Andre C. Mazzone (linuxdev@karagee.com)
@@ -26385,23 +25681,20 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/ipcrm.1.adoc:21
-#, no-wrap
-msgid "*ipcrm* [options]\n"
+msgid "*ipcrm* [options]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/ipcrm.1.adoc:23
-#, no-wrap
-msgid "*ipcrm* [*shm*|*msg*|*sem*] _ID_ ...\n"
+msgid "*ipcrm* [*shm*|*msg*|*sem*] _ID_ ..."
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/ipcrm.1.adoc:27
-#, no-wrap
 msgid ""
 "*ipcrm* removes System V inter-process communication (IPC) objects and "
 "associated data structures from the system. In order to delete such objects, "
-"you must be superuser, or the creator or owner of the object.\n"
+"you must be superuser, or the creator or owner of the object."
 msgstr ""
 
 #. type: Plain text
@@ -26546,19 +25839,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/ipcrm.1.adoc:81
-#, no-wrap
 msgid ""
-"*ipcmk*(1),\n"
-"*ipcs*(1),\n"
-"*msgctl*(2),\n"
-"*msgget*(2),\n"
-"*semctl*(2),\n"
-"*semget*(2),\n"
-"*shmctl*(2),\n"
-"*shmdt*(2),\n"
-"*shmget*(2),\n"
-"*ftok*(3),\n"
-"*sysvipc*(7)\n"
+"*ipcmk*(1), *ipcs*(1), *msgctl*(2), *msgget*(2), *semctl*(2), *semget*(2), "
+"*shmctl*(2), *shmdt*(2), *shmget*(2), *ftok*(3), *sysvipc*(7)"
 msgstr ""
 
 #. Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
@@ -26576,17 +25859,15 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/ipcs.1.adoc:20
-#, no-wrap
-msgid "*ipcs* [options]\n"
+msgid "*ipcs* [options]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/ipcs.1.adoc:24
-#, no-wrap
 msgid ""
 "*ipcs* shows information on System V inter-process communication "
 "facilities. By default it shows information about all three resources: "
-"shared memory segments, message queues, and semaphore arrays.\n"
+"shared memory segments, message queues, and semaphore arrays."
 msgstr ""
 
 #. type: Labeled list
@@ -26758,18 +26039,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/ipcs.1.adoc:100 ../sys-utils/lsipc.1.adoc:118
-#, no-wrap
 msgid ""
-"*ipcmk*(1),\n"
-"*ipcrm*(1),\n"
-"*msgrcv*(2),\n"
-"*msgsnd*(2),\n"
-"*semget*(2),\n"
-"*semop*(2),\n"
-"*shmat*(2),\n"
-"*shmdt*(2),\n"
-"*shmget*(2),\n"
-"*sysvipc*(7)\n"
+"*ipcmk*(1), *ipcrm*(1), *msgrcv*(2), *msgsnd*(2), *semget*(2), *semop*(2), "
+"*shmat*(2), *shmdt*(2), *shmget*(2), *sysvipc*(7)"
 msgstr ""
 
 #. type: Title =
@@ -26785,8 +26057,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/irqtop.1.adoc:16
-#, no-wrap
-msgid "*irqtop* [options]\n"
+msgid "*irqtop* [options]"
 msgstr ""
 
 #. type: Plain text
@@ -26936,8 +26207,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/ldattach.8.adoc:20
-#, no-wrap
-msgid "*ldattach* [*-1278denoVh*] [*-i* _iflag_] [*-s* _speed_] _ldisc device_\n"
+msgid "*ldattach* [*-1278denoVh*] [*-i* _iflag_] [*-s* _speed_] _ldisc device_"
 msgstr ""
 
 #. type: Plain text
@@ -27273,10 +26543,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/ldattach.8.adoc:122
-#, no-wrap
-msgid ""
-"*inputattach*(1),\n"
-"*ttys*(4)\n"
+msgid "*inputattach*(1), *ttys*(4)"
 msgstr ""
 
 #. type: Title =
@@ -27297,20 +26564,17 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/losetup.8.adoc:18
-#, no-wrap
-msgid "*losetup* [_loopdev_]\n"
+msgid "*losetup* [_loopdev_]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/losetup.8.adoc:20
-#, no-wrap
-msgid "*losetup* *-l* [*-a*]\n"
+msgid "*losetup* *-l* [*-a*]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/losetup.8.adoc:22
-#, no-wrap
-msgid "*losetup* *-j* _file_ [*-o* _offset_]\n"
+msgid "*losetup* *-j* _file_ [*-o* _offset_]"
 msgstr ""
 
 #. type: Plain text
@@ -27320,8 +26584,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/losetup.8.adoc:26
-#, no-wrap
-msgid "*losetup* *-d* _loopdev_ ...\n"
+msgid "*losetup* *-d* _loopdev_ ..."
 msgstr ""
 
 #. type: Plain text
@@ -27331,8 +26594,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/losetup.8.adoc:30
-#, no-wrap
-msgid "*losetup* *-D*\n"
+msgid "*losetup* *-D*"
 msgstr ""
 
 #. type: Plain text
@@ -27342,10 +26604,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/losetup.8.adoc:34
-#, no-wrap
 msgid ""
 "*losetup* [*-o* _offset_] [*--sizelimit* _size_] [*--sector-size* _size_] "
-"[*-Pr*] [*--show*] *-f*|_loopdev file_\n"
+"[*-Pr*] [*--show*] *-f*|_loopdev file_"
 msgstr ""
 
 #. type: Plain text
@@ -27355,19 +26616,17 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/losetup.8.adoc:38
-#, no-wrap
-msgid "*losetup* *-c* _loopdev_\n"
+msgid "*losetup* *-c* _loopdev_"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/losetup.8.adoc:42
-#, no-wrap
 msgid ""
 "*losetup* is used to associate loop devices with regular files or block "
 "devices, to detach loop devices, and to query the status of a loop "
 "device. If only the _loopdev_ argument is given, the status of the "
 "corresponding loop device is shown. If no option is given, all loop devices "
-"are shown.\n"
+"are shown."
 msgstr ""
 
 #. type: Plain text
@@ -27627,20 +26886,18 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/losetup.8.adoc:119
-#, no-wrap
 msgid ""
 "*Cryptoloop is no longer supported in favor of dm-crypt.* For more details "
-"see *cryptsetup*(8).\n"
+"see *cryptsetup*(8)."
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/losetup.8.adoc:123
-#, no-wrap
 msgid ""
 "*losetup* returns 0 on success, nonzero on failure. When *losetup* displays "
 "the status of a loop device, it returns 1 if the device is not configured "
 "and 2 if an error occurred which prevented determining the status of the "
-"device.\n"
+"device."
 msgstr ""
 
 #. type: Plain text
@@ -27718,13 +26975,11 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/lscpu.1.adoc:16
-#, no-wrap
-msgid "*lscpu* [options]\n"
+msgid "*lscpu* [options]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/lscpu.1.adoc:20
-#, no-wrap
 msgid ""
 "*lscpu* gathers CPU architecture information from _sysfs_, _/proc/cpuinfo_ "
 "and any applicable architecture-specific libraries (e.g. *librtas* on "
@@ -27732,7 +26987,7 @@ msgid ""
 "readability by humans. The information includes, for example, the number of "
 "CPUs, threads, cores, sockets, and Non-Uniform Memory Access (NUMA) "
 "nodes. There is also information about the CPU caches and cache sharing, "
-"family, model, bogoMIPS, byte order, and stepping.\n"
+"family, model, bogoMIPS, byte order, and stepping."
 msgstr ""
 
 #. type: Plain text
@@ -28028,8 +27283,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/lscpu.1.adoc:112
-#, no-wrap
-msgid "*chcpu*(8)\n"
+msgid "*chcpu*(8)"
 msgstr ""
 
 #. type: Title =
@@ -28045,16 +27299,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/lsipc.1.adoc:16
-#, no-wrap
-msgid "*lsipc* [options]\n"
+msgid "*lsipc* [options]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/lsipc.1.adoc:20
-#, no-wrap
 msgid ""
 "*lsipc* shows information on the System V inter-process communication "
-"facilities for which the calling process has read access.\n"
+"facilities for which the calling process has read access."
 msgstr ""
 
 #. type: Plain text
@@ -28135,8 +27387,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/lsirq.1.adoc:16
-#, no-wrap
-msgid "*lsirq* [options]\n"
+msgid "*lsirq* [options]"
 msgstr ""
 
 #. type: Plain text
@@ -28171,8 +27422,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/lsmem.1.adoc:16
-#, no-wrap
-msgid "*lsmem* [options]\n"
+msgid "*lsmem* [options]"
 msgstr ""
 
 #. type: Plain text
@@ -28283,17 +27533,15 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/lsmem.1.adoc:71
-#, no-wrap
 msgid ""
 "*lsmem* was originally written by Gerald Schaefer for s390-tools in "
 "Perl. The C version for util-linux was written by Clemens von Mann, Heiko "
-"Carstens and Karel Zak.\n"
+"Carstens and Karel Zak."
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/lsmem.1.adoc:75
-#, no-wrap
-msgid "*chmem*(8)\n"
+msgid "*chmem*(8)"
 msgstr ""
 
 #. Man page for the lsns command.
@@ -28312,17 +27560,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/lsns.8.adoc:21
-#, no-wrap
-msgid "*lsns* [options] _namespace_\n"
+msgid "*lsns* [options] _namespace_"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/lsns.8.adoc:25
-#, no-wrap
 msgid ""
 "*lsns* lists information about all the currently accessible namespaces or "
-"about the given _namespace_. The _namespace_ identifier is an inode "
-"number.\n"
+"about the given _namespace_. The _namespace_ identifier is an inode number."
 msgstr ""
 
 #. type: Plain text
@@ -28448,14 +27693,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/lsns.8.adoc:98
-#, no-wrap
 msgid ""
-"*nsenter*(1),\n"
-"*unshare*(1),\n"
-"*clone*(2),\n"
-"*namespaces*(7),\n"
-"*ioctl_ns*(2),\n"
-"*ip-netns*(8)\n"
+"*nsenter*(1), *unshare*(1), *clone*(2), *namespaces*(7), *ioctl_ns*(2), "
+"*ip-netns*(8)"
 msgstr ""
 
 #. Copyright (c) 1996-2004 Andries Brouwer
@@ -28499,47 +27739,40 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:47
-#, no-wrap
-msgid "*mount* [*-h*|*-V*]\n"
+msgid "*mount* [*-h*|*-V*]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:49
-#, no-wrap
-msgid "*mount* [*-l*] [*-t* _fstype_]\n"
+msgid "*mount* [*-l*] [*-t* _fstype_]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:51
-#, no-wrap
-msgid "*mount* *-a* [*-fFnrsvw*] [*-t* _fstype_] [*-O* _optlist_]\n"
+msgid "*mount* *-a* [*-fFnrsvw*] [*-t* _fstype_] [*-O* _optlist_]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:53
-#, no-wrap
-msgid "*mount* [*-fnrsvw*] [*-o* _options_] _device_|_mountpoint_\n"
+msgid "*mount* [*-fnrsvw*] [*-o* _options_] _device_|_mountpoint_"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:55
-#, no-wrap
-msgid "*mount* [*-fnrsvw*] [*-t* _fstype_] [*-o* _options_] _device mountpoint_\n"
+msgid "*mount* [*-fnrsvw*] [*-t* _fstype_] [*-o* _options_] _device mountpoint_"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:57
-#, no-wrap
-msgid "*mount* *--bind*|*--rbind*|*--move* _olddir newdir_\n"
+msgid "*mount* *--bind*|*--rbind*|*--move* _olddir newdir_"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:59
-#, no-wrap
 msgid ""
 "*mount* "
 "*--make-*[*shared*|*slave*|*private*|*unbindable*|*rshared*|*rslave*|*rprivate*|*runbindable*] "
-"_mountpoint_\n"
+"_mountpoint_"
 msgstr ""
 
 #. type: Plain text
@@ -28560,8 +27793,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../sys-utils/mount.8.adoc:68
-#, no-wrap
-msgid "*mount -t* _type device dir_\n"
+msgid "*mount -t* _type device dir_"
 msgstr ""
 
 #. type: Plain text
@@ -28584,8 +27816,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../sys-utils/mount.8.adoc:76
-#, no-wrap
-msgid "*mount* _/dir_\n"
+msgid "*mount* _/dir_"
 msgstr ""
 
 #. type: Plain text
@@ -28599,8 +27830,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../sys-utils/mount.8.adoc:82
-#, no-wrap
-msgid "*mount --target* _/mountpoint_\n"
+msgid "*mount --target* _/mountpoint_"
 msgstr ""
 
 #. type: Plain text
@@ -28641,8 +27871,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../sys-utils/mount.8.adoc:96
-#, no-wrap
-msgid "*mount* [*-l*] [*-t* _type_]\n"
+msgid "*mount* [*-l*] [*-t* _type_]"
 msgstr ""
 
 #. type: Plain text
@@ -28808,8 +28037,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../sys-utils/mount.8.adoc:139
-#, no-wrap
-msgid "*mount -a* [*-t* _type_] [*-O* _optlist_]\n"
+msgid "*mount -a* [*-t* _type_] [*-O* _optlist_]"
 msgstr ""
 
 #. type: Plain text
@@ -28858,8 +28086,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../sys-utils/mount.8.adoc:153
-#, no-wrap
-msgid "*mount* __device__|__dir__ *-o* _options_\n"
+msgid "*mount* __device__|__dir__ *-o* _options_"
 msgstr ""
 
 #. type: Plain text
@@ -28881,8 +28108,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../sys-utils/mount.8.adoc:161
-#, no-wrap
-msgid "*mount /dev/foo /dir*\n"
+msgid "*mount /dev/foo /dir*"
 msgstr ""
 
 #. type: Plain text
@@ -28914,8 +28140,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../sys-utils/mount.8.adoc:173
-#, no-wrap
-msgid "*/dev/cdrom /cd iso9660 ro,user,noauto,unhide*\n"
+msgid "*/dev/cdrom /cd iso9660 ro,user,noauto,unhide*"
 msgstr ""
 
 #. type: Plain text
@@ -28927,8 +28152,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../sys-utils/mount.8.adoc:179
-#, no-wrap
-msgid "*mount /cd*\n"
+msgid "*mount /cd*"
 msgstr ""
 
 #. type: Plain text
@@ -28986,8 +28210,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../sys-utils/mount.8.adoc:195 ../sys-utils/mount.8.adoc:233
-#, no-wrap
-msgid "*mount --bind* _olddir newdir_\n"
+msgid "*mount --bind* _olddir newdir_"
 msgstr ""
 
 #. type: Plain text
@@ -28997,8 +28220,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../sys-utils/mount.8.adoc:201
-#, no-wrap
-msgid "**/**__olddir__ **/**__newdir__ *none bind*\n"
+msgid "**/**__olddir__ **/**__newdir__ *none bind*"
 msgstr ""
 
 #. type: Plain text
@@ -29026,8 +28248,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../sys-utils/mount.8.adoc:211
-#, no-wrap
-msgid "*mount --bind foo foo*\n"
+msgid "*mount --bind foo foo*"
 msgstr ""
 
 #. type: Plain text
@@ -29040,8 +28261,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../sys-utils/mount.8.adoc:217
-#, no-wrap
-msgid "*mount --rbind* _olddir newdir_\n"
+msgid "*mount --rbind* _olddir newdir_"
 msgstr ""
 
 #. type: Plain text
@@ -29062,8 +28282,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../sys-utils/mount.8.adoc:225
-#, no-wrap
-msgid "*mount -o bind,ro foo foo*\n"
+msgid "*mount -o bind,ro foo foo*"
 msgstr ""
 
 #. type: Plain text
@@ -29083,8 +28302,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../sys-utils/mount.8.adoc:235
-#, no-wrap
-msgid "*mount -o remount,bind,ro* _olddir newdir_\n"
+msgid "*mount -o remount,bind,ro* _olddir newdir_"
 msgstr ""
 
 #. type: Plain text
@@ -29135,8 +28353,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../sys-utils/mount.8.adoc:249
-#, no-wrap
-msgid "*mount --move* _olddir newdir_\n"
+msgid "*mount --move* _olddir newdir_"
 msgstr ""
 
 #. type: Plain text
@@ -29209,11 +28426,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:278
-#, no-wrap
 msgid ""
 "*mount* *does not read* *fstab*(5) when a *--make-** operation is "
 "requested. All necessary information has to be specified on the command "
-"line.\n"
+"line."
 msgstr ""
 
 #. type: Plain text
@@ -29501,13 +28717,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:356
-#, no-wrap
 msgid ""
 "*mount* switches to the mount namespace when it reads _/etc/fstab_, writes "
 "_/etc/mtab: (or writes to _/run/mount_) and calls *mount*(2), otherwise it "
 "runs in the original mount namespace. This means that the target namespace "
 "does not have to contain any libraries or other requirements necessary to "
-"execute the *mount*(2) call.\n"
+"execute the *mount*(2) call."
 msgstr ""
 
 #. type: Plain text
@@ -29531,8 +28746,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:363
-#, no-wrap
-msgid "*mount -a -O no_netdev*\n"
+msgid "*mount -a -O no_netdev*"
 msgstr ""
 
 #. type: Plain text
@@ -29556,8 +28770,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:371
-#, no-wrap
-msgid "*mount -a -t ext2 -O  _netdev*\n"
+msgid "*mount -a -t ext2 -O _netdev*"
 msgstr ""
 
 #. type: Plain text
@@ -29582,8 +28795,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:378
-#, no-wrap
-msgid "*mount LABEL=mydisk -o noatime,nodev,nosuid*\n"
+msgid "*mount LABEL=mydisk -o noatime,nodev,nosuid*"
 msgstr ""
 
 #. type: Plain text
@@ -29743,8 +28955,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:416
-#, no-wrap
-msgid "*mount --all --target-prefix /chroot -o X-mount.mkdir*\n"
+msgid "*mount --all --target-prefix /chroot -o X-mount.mkdir*"
 msgstr ""
 
 #. type: Plain text
@@ -29849,8 +29060,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:439
-#, no-wrap
-msgid "*mount -a -t nomsdos,smbfs*\n"
+msgid "*mount -a -t nomsdos,smbfs*"
 msgstr ""
 
 #. type: Plain text
@@ -30120,12 +29330,11 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:524
-#, no-wrap
 msgid ""
 "*Warning: the* _context_ *value might contain commas*, in which case the "
 "value has to be properly quoted, otherwise *mount* will interpret the comma "
 "as a separator between mount options. Don't forget that the shell strips off "
-"quotes and thus *double quoting is required*. For example:\n"
+"quotes and thus *double quoting is required*. For example:"
 msgstr ""
 
 #. type: delimited block _
@@ -30540,8 +29749,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:639
-#, no-wrap
-msgid "*mount -o remount,rw /dev/foo /dir*\n"
+msgid "*mount -o remount,rw /dev/foo /dir*"
 msgstr ""
 
 #. type: Plain text
@@ -30554,8 +29762,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:643
-#, no-wrap
-msgid "*mount -o remount,rw /dir*\n"
+msgid "*mount -o remount,rw /dir*"
 msgstr ""
 
 #. type: Plain text
@@ -30568,16 +29775,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:648
-#, no-wrap
 msgid ""
 "*mount* allows the use of *--all* to remount all already mounted filesystems "
-"which match a specified filter (*-O* and *-t*). For example:\n"
+"which match a specified filter (*-O* and *-t*). For example:"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:650
-#, no-wrap
-msgid "*mount --all -o remount,ro -t vfat*\n"
+msgid "*mount --all -o remount,ro -t vfat*"
 msgstr ""
 
 #. type: Plain text
@@ -30747,8 +29952,8 @@ msgstr ""
 #: ../sys-utils/mount.8.adoc:699
 msgid ""
 "Note that comma is used as a separator between mount options, it means that "
-"auto-fstypes values have to be properly quoted, donât forget that the "
-"shell strips off quotes and thus double quoting is required. For example:"
+"auto-fstypes values have to be properly quoted, don’t forget that the shell "
+"strips off quotes and thus double quoting is required. For example:"
 msgstr ""
 
 #. type: delimited block _
@@ -31598,17 +30803,15 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:933
-#, no-wrap
 msgid ""
 "*stale_rw*: This option maintains an index (cache) of directory inodes which "
 "is used by the nfs-related code to improve look-ups. Full file operations "
 "(read/write) over NFS are supported but with cache eviction at NFS server, "
-"this could result in spurious *ESTALE* errors.\n"
+"this could result in spurious *ESTALE* errors."
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:935
-#, no-wrap
 msgid ""
 "*nostale_ro*: This option bases the inode number and file handle on the "
 "on-disk location of a file in the FAT directory entry. This ensures that "
@@ -31616,7 +30819,7 @@ msgid ""
 "cache. However, it means that operations such as rename, create and unlink "
 "could cause file handles that previously pointed at one file to point at a "
 "different file, potentially causing data corruption. For this reason, this "
-"option also mounts the filesystem readonly.\n"
+"option also mounts the filesystem readonly."
 msgstr ""
 
 #. type: Plain text
@@ -32667,7 +31870,7 @@ msgstr ""
 msgid ""
 "In order to avoid a giving a false sense of safety, the syncfs (and fsync) "
 "semantics of volatile mounts are slightly different than that of the rest of "
-"VFS. If any writeback error occurs on the upperdirâs filesystem after a "
+"VFS. If any writeback error occurs on the upperdir’s filesystem after a "
 "volatile mount takes place, all sync functions will return an error. Once "
 "this condition is reached, the filesystem will not recover, and every "
 "subsequent sync call will return an error, even if the upperdir has not "
@@ -33909,8 +33112,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../sys-utils/mount.8.adoc:1549
-#, no-wrap
-msgid "*mount /tmp/disk.img /mnt -t vfat -o loop=/dev/loop3*\n"
+msgid "*mount /tmp/disk.img /mnt -t vfat -o loop=/dev/loop3*"
 msgstr ""
 
 #. type: Plain text
@@ -33930,8 +33132,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../sys-utils/mount.8.adoc:1557
-#, no-wrap
-msgid "*mount /tmp/disk.img /mnt -o loop*\n"
+msgid "*mount /tmp/disk.img /mnt -o loop*"
 msgstr ""
 
 #. type: Plain text
@@ -33944,14 +33145,12 @@ msgstr ""
 
 #. type: delimited block _
 #: ../sys-utils/mount.8.adoc:1563
-#, no-wrap
-msgid "*mount /tmp/disk.img /mnt*\n"
+msgid "*mount /tmp/disk.img /mnt*"
 msgstr ""
 
 #. type: delimited block _
 #: ../sys-utils/mount.8.adoc:1565
-#, no-wrap
-msgid "*mount -t ext4 /tmp/disk.img /mnt*\n"
+msgid "*mount -t ext4 /tmp/disk.img /mnt*"
 msgstr ""
 
 #. type: Plain text
@@ -33986,8 +33185,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:1578
-#, no-wrap
-msgid "*mount* has the following exit status values (the bits can be ORed):\n"
+msgid "*mount* has the following exit status values (the bits can be ORed):"
 msgstr ""
 
 #. type: Plain text
@@ -34045,10 +33243,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:1610
-#, no-wrap
 msgid ""
 "**/sbin/mount.**__suffix__ _spec dir_ [*-sfnv*] [*-N* _namespace_] [*-o* "
-"_options_] [*-t* __type__**.**_subtype_]\n"
+"_options_] [*-t* __type__**.**_subtype_]"
 msgstr ""
 
 #. type: Plain text
@@ -34228,27 +33425,11 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:1697
-#, no-wrap
 msgid ""
-"*mount*(2),\n"
-"*umount*(2),\n"
-"*filesystems*(5),\n"
-"*fstab*(5),\n"
-"*nfs*(5),\n"
-"*xfs*(5),\n"
-"*mount_namespaces*(7),\n"
-"*xattr*(7),\n"
-"*e2label*(8),\n"
-"*findmnt*(8),\n"
-"*losetup*(8),\n"
-"*lsblk*(8),\n"
-"*mke2fs*(8),\n"
-"*mountd*(8),\n"
-"*nfsd*(8),\n"
-"*swapon*(8),\n"
-"*tune2fs*(8),\n"
-"*umount*(8),\n"
-"*xfs_admin*(8)\n"
+"*mount*(2), *umount*(2), *filesystems*(5), *fstab*(5), *nfs*(5), *xfs*(5), "
+"*mount_namespaces*(7), *xattr*(7), *e2label*(8), *findmnt*(8), *losetup*(8), "
+"*lsblk*(8), *mke2fs*(8), *mountd*(8), *nfsd*(8), *swapon*(8), *tune2fs*(8), "
+"*umount*(8), *xfs_admin*(8)"
 msgstr ""
 
 #. type: Title =
@@ -34264,22 +33445,19 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mountpoint.1.adoc:16
-#, no-wrap
-msgid "*mountpoint* [*-d*|*-q*] _directory_|_file_\n"
+msgid "*mountpoint* [*-d*|*-q*] _directory_|_file_"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mountpoint.1.adoc:18
-#, no-wrap
-msgid "*mountpoint* *-x* _device_\n"
+msgid "*mountpoint* *-x* _device_"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mountpoint.1.adoc:22
-#, no-wrap
 msgid ""
 "*mountpoint* checks whether the given _directory_ or _file_ is mentioned in "
-"the _/proc/self/mountinfo_ file.\n"
+"the _/proc/self/mountinfo_ file."
 msgstr ""
 
 #. type: Labeled list
@@ -34324,8 +33502,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/mountpoint.1.adoc:42
-#, no-wrap
-msgid "*mountpoint* has the following exit status values:\n"
+msgid "*mountpoint* has the following exit status values:"
 msgstr ""
 
 #. type: Plain text
@@ -34368,8 +33545,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/nsenter.1.adoc:16
-#, no-wrap
-msgid "*nsenter* [options] [_program_ [_arguments_]]\n"
+msgid "*nsenter* [options] [_program_ [_arguments_]]"
 msgstr ""
 
 #. type: Plain text
@@ -34895,11 +34071,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/nsenter.1.adoc:149
-#, no-wrap
-msgid ""
-"*clone*(2),\n"
-"*setns*(2),\n"
-"*namespaces*(7)\n"
+msgid "*clone*(2), *setns*(2), *namespaces*(7)"
 msgstr ""
 
 #. type: Title =
@@ -34915,18 +34087,16 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/pivot_root.8.adoc:16
-#, no-wrap
-msgid "*pivot_root* _new_root_ _put_old_\n"
+msgid "*pivot_root* _new_root_ _put_old_"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/pivot_root.8.adoc:20
-#, no-wrap
 msgid ""
 "*pivot_root* moves the root file system of the current process to the "
 "directory _put_old_ and makes _new_root_ the new root file system. Since "
 "*pivot_root*(8) simply calls *pivot_root*(2), we refer to the man page of "
-"the latter for further details.\n"
+"the latter for further details."
 msgstr ""
 
 #. type: Plain text
@@ -35006,13 +34176,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/pivot_root.8.adoc:70
-#, no-wrap
-msgid ""
-"*chroot*(1),\n"
-"*pivot_root*(2),\n"
-"*mount*(8),\n"
-"*switch_root*(8),\n"
-"*umount*(8)\n"
+msgid "*chroot*(1), *pivot_root*(2), *mount*(8), *switch_root*(8), *umount*(8)"
 msgstr ""
 
 #. prlimit.1 --
@@ -35031,14 +34195,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/prlimit.1.adoc:22
-#, no-wrap
-msgid "*prlimit* [options] [*--resource*[=_limits_]] [*--pid* _PID_]\n"
+msgid "*prlimit* [options] [*--resource*[=_limits_]] [*--pid* _PID_]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/prlimit.1.adoc:24
-#, no-wrap
-msgid "*prlimit* [options] [*--resource*[=_limits_]] _command_ [_argument_...]\n"
+msgid "*prlimit* [options] [*--resource*[=_limits_]] _command_ [_argument_...]"
 msgstr ""
 
 #. type: Plain text
@@ -35381,10 +34543,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/prlimit.1.adoc:139
-#, no-wrap
-msgid ""
-"*ulimit*(1p),\n"
-"*prlimit*(2)\n"
+msgid "*ulimit*(1p), *prlimit*(2)"
 msgstr ""
 
 #. type: Title =
@@ -35400,8 +34559,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/readprofile.8.adoc:16
-#, no-wrap
-msgid "*readprofile* [options]\n"
+msgid "*readprofile* [options]"
 msgstr ""
 
 #. type: Title ==
@@ -35574,10 +34732,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/readprofile.8.adoc:70
-#, no-wrap
 msgid ""
 "*readprofile* only works with a 1.3.x or newer kernel, because "
-"_/proc/profile_ changed in the step from 1.2 to 1.3.\n"
+"_/proc/profile_ changed in the step from 1.2 to 1.3."
 msgstr ""
 
 #. type: Plain text
@@ -35716,15 +34873,13 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/renice.1.adoc:50
-#, no-wrap
 msgid ""
 "*renice* [*--priority|--relative*] _priority_ [*-g*|*-p*|*-u*] "
-"_identifier_...\n"
+"_identifier_..."
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/renice.1.adoc:54
-#, no-wrap
 msgid ""
 "*renice* alters the scheduling priority of one or more running "
 "processes. The first argument is the _priority_ value to be used. The other "
@@ -35732,7 +34887,7 @@ msgid ""
 "user IDs, or user names. *renice*'ing a process group causes all processes "
 "in the process group to have their scheduling priority altered. *renice*'ing "
 "a user causes all processes owned by the user to have their scheduling "
-"priority altered.\n"
+"priority altered."
 msgstr ""
 
 #. type: Plain text
@@ -35867,20 +35022,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/renice.1.adoc:101
-#, no-wrap
-msgid "*renice +1 987 -u daemon root -p 32*\n"
+msgid "*renice +1 987 -u daemon root -p 32*"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/renice.1.adoc:110
-#, no-wrap
 msgid ""
-"*nice*(1),\n"
-"*chrt*(1),\n"
-"*getpriority*(2),\n"
-"*setpriority*(2),\n"
-"*credentials*(7),\n"
-"*sched*(7)\n"
+"*nice*(1), *chrt*(1), *getpriority*(2), *setpriority*(2), *credentials*(7), "
+"*sched*(7)"
 msgstr ""
 
 #. type: Title =
@@ -35896,14 +35045,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/rfkill.8.adoc:16
-#, no-wrap
-msgid "*rfkill* [options] [_command_] [_ID_|_type_ ...]\n"
+msgid "*rfkill* [options] [_command_] [_ID_|_type_ ...]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/rfkill.8.adoc:20
-#, no-wrap
-msgid "*rfkill* lists, enabling and disabling wireless devices.\n"
+msgid "*rfkill* lists, enabling and disabling wireless devices."
 msgstr ""
 
 #. type: Plain text
@@ -36012,12 +35159,11 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/rfkill.8.adoc:75
-#, no-wrap
 msgid ""
 "*rfkill* was originally written by mailto:johannes@sipsolutions.net[Johannes "
 "Berg] and mailto:marcel@holtmann.org[Marcel Holtmann]. The code has been "
 "later modified by mailto:kerolasa@iki.fi[Sami Kerola] and "
-"mailto:kzak@redhat.com[Karel Zak] for the util-linux project.\n"
+"mailto:kzak@redhat.com[Karel Zak] for the util-linux project."
 msgstr ""
 
 #. type: Plain text
@@ -36030,11 +35176,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/rfkill.8.adoc:83
-#, no-wrap
 msgid ""
-"*powertop*(8),\n"
-"*systemd-rfkill*(8),\n"
-"https://docs.kernel.org/driver-api/rfkill.html[Linux kernel documentation]\n"
+"*powertop*(8), *systemd-rfkill*(8), "
+"https://docs.kernel.org/driver-api/rfkill.html[Linux kernel documentation]"
 msgstr ""
 
 #. type: Title =
@@ -36050,10 +35194,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/rtcwake.8.adoc:16
-#, no-wrap
 msgid ""
 "*rtcwake* [options] [*-d* _device_] [*-m* _standby_mode_] {*-s* "
-"_seconds_|*-t* _time_t_}\n"
+"_seconds_|*-t* _time_t_}"
 msgstr ""
 
 #. type: Plain text
@@ -36378,11 +35521,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/rtcwake.8.adoc:135
-#, no-wrap
-msgid ""
-"*adjtime_config*(5),\n"
-"*hwclock*(8),\n"
-"*date*(1)\n"
+msgid "*adjtime_config*(5), *hwclock*(8), *date*(1)"
 msgstr ""
 
 #. type: Title =
@@ -36400,26 +35539,22 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/setarch.8.adoc:16
-#, no-wrap
-msgid "*setarch* [_arch_] [options] [_program_ [_argument_...]]\n"
+msgid "*setarch* [_arch_] [options] [_program_ [_argument_...]]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/setarch.8.adoc:18
-#, no-wrap
-msgid "*setarch* *--list*|*-h*|*-V*\n"
+msgid "*setarch* *--list*|*-h*|*-V*"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/setarch.8.adoc:20
-#, no-wrap
-msgid "*arch* [options] [_program_ [_argument_...]]\n"
+msgid "*arch* [options] [_program_ [_argument_...]]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/setarch.8.adoc:24
-#, no-wrap
-msgid "*setarch* modifies execution domains and process personality flags.\n"
+msgid "*setarch* modifies execution domains and process personality flags."
 msgstr ""
 
 #. type: Plain text
@@ -36646,10 +35781,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/setarch.8.adoc:99
-#, no-wrap
-msgid ""
-"*personality*(2),\n"
-"*select*(2)\n"
+msgid "*personality*(2), *select*(2)"
 msgstr ""
 
 #. type: Title =
@@ -36665,8 +35797,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/setpriv.1.adoc:16
-#, no-wrap
-msgid "*setpriv* [options] _program_ [_arguments_]\n"
+msgid "*setpriv* [options] _program_ [_arguments_]"
 msgstr ""
 
 #. type: Plain text
@@ -36900,8 +36031,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/setpriv.1.adoc:74
-#, no-wrap
-msgid "*setpriv --reuid=1000 --regid=1000 --inh-caps=-all*\n"
+msgid "*setpriv --reuid=1000 --regid=1000 --inh-caps=-all*"
 msgstr ""
 
 #. type: Labeled list
@@ -37013,8 +36143,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/setpriv.1.adoc:105
-#, no-wrap
-msgid "*setpriv --reuid=1000 --regid=1000 --init-groups*\n"
+msgid "*setpriv --reuid=1000 --regid=1000 --init-groups*"
 msgstr ""
 
 #. type: Plain text
@@ -37024,8 +36153,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/setpriv.1.adoc:109
-#, no-wrap
-msgid "*setpriv --reuid=1000 --regid=1000 --clear-groups*\n"
+msgid "*setpriv --reuid=1000 --regid=1000 --clear-groups*"
 msgstr ""
 
 #. type: Plain text
@@ -37035,12 +36163,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/setpriv.1.adoc:120
-#, no-wrap
-msgid ""
-"*runuser*(1),\n"
-"*su*(1),\n"
-"*prctl*(2),\n"
-"*capabilities*(7)\n"
+msgid "*runuser*(1), *su*(1), *prctl*(2), *capabilities*(7)"
 msgstr ""
 
 #.  Rick Sladkey <jrs@world.std.com>
@@ -37058,18 +36181,16 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/setsid.1.adoc:18
-#, no-wrap
-msgid "*setsid* [options] _program_ [_arguments_]\n"
+msgid "*setsid* [options] _program_ [_arguments_]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/setsid.1.adoc:22
-#, no-wrap
 msgid ""
 "*setsid* runs a program in a new session. The command calls *fork*(2) if "
 "already a process group leader. Otherwise, it executes a program in the "
 "current process. This default behavior is possible to override by the "
-"*--fork* option.\n"
+"*--fork* option."
 msgstr ""
 
 #. type: Labeled list
@@ -37114,8 +36235,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/setsid.1.adoc:47
-#, no-wrap
-msgid "*setsid*(2)\n"
+msgid "*setsid*(2)"
 msgstr ""
 
 #. type: Title =
@@ -37131,22 +36251,19 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/swapon.8.adoc:16
-#, no-wrap
-msgid "*swapon* [options] [_specialfile_...]\n"
+msgid "*swapon* [options] [_specialfile_...]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/swapon.8.adoc:18
-#, no-wrap
-msgid "*swapoff* [*-va*] [_specialfile_...]\n"
+msgid "*swapoff* [*-va*] [_specialfile_...]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/swapon.8.adoc:22
-#, no-wrap
 msgid ""
 "*swapon* is used to specify devices on which paging and swapping are to take "
-"place.\n"
+"place."
 msgstr ""
 
 #. type: Plain text
@@ -37167,11 +36284,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/swapon.8.adoc:28
-#, no-wrap
 msgid ""
 "*swapoff* disables swapping on the specified devices and files. When the "
 "*-a* flag is given, swapping is disabled on all known swap devices and files "
-"(as found in _/proc/swaps_ or _/etc/fstab_).\n"
+"(as found in _/proc/swaps_ or _/etc/fstab_)."
 msgstr ""
 
 #. type: Plain text
@@ -37291,8 +36407,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/swapon.8.adoc:62
-#, no-wrap
-msgid "*swapon -o pri=1,discard=pages,nofail /dev/sda2*\n"
+msgid "*swapon -o pri=1,discard=pages,nofail /dev/sda2*"
 msgstr ""
 
 #. type: Plain text
@@ -37375,8 +36490,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/swapon.8.adoc:97
-#, no-wrap
-msgid "*swapoff* has the following exit status values since v2.36:\n"
+msgid "*swapoff* has the following exit status values since v2.36:"
 msgstr ""
 
 #. type: Plain text
@@ -37386,8 +36500,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/swapon.8.adoc:106
-#, no-wrap
-msgid "*swapoff*(2) syscall failed for another reason\n"
+msgid "*swapoff*(2) syscall failed for another reason"
 msgstr ""
 
 #. type: Plain text
@@ -37509,12 +36622,11 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/swapon.8.adoc:162
-#, no-wrap
 msgid ""
 "*swapon* automatically detects and rewrites a swap space signature with old "
 "software suspend data (e.g., *S1SUSPEND*, *S2SUSPEND*, ...). The problem is "
 "that if we don't do it, then we get data corruption the next time an attempt "
-"at unsuspending is made.\n"
+"at unsuspending is made."
 msgstr ""
 
 #. type: Plain text
@@ -37524,16 +36636,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/swapon.8.adoc:177
-#, no-wrap
 msgid ""
-"*swapoff*(2),\n"
-"*swapon*(2),\n"
-"*fstab*(5),\n"
-"*init*(8),\n"
-"*fallocate*(1),\n"
-"*mkswap*(8),\n"
-"*mount*(8),\n"
-"*rc*(8)\n"
+"*swapoff*(2), *swapon*(2), *fstab*(5), *init*(8), *fallocate*(1), "
+"*mkswap*(8), *mount*(8), *rc*(8)"
 msgstr ""
 
 #. type: Title =
@@ -37549,47 +36654,41 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/switch_root.8.adoc:16
-#, no-wrap
-msgid "*switch_root* [*-hV*]\n"
+msgid "*switch_root* [*-hV*]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/switch_root.8.adoc:18
-#, no-wrap
-msgid "*switch_root* _newroot init_ [_arg_...]\n"
+msgid "*switch_root* _newroot init_ [_arg_...]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/switch_root.8.adoc:22
-#, no-wrap
 msgid ""
 "*switch_root* moves already mounted _/proc_, _/dev_, _/sys_ and _/run_ to "
 "_newroot_ and makes _newroot_ the new root filesystem and starts _init_ "
-"process.\n"
+"process."
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/switch_root.8.adoc:24
-#, no-wrap
 msgid ""
 "*WARNING: switch_root removes recursively all files and directories on the "
-"current root filesystem.*\n"
+"current root filesystem.*"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/switch_root.8.adoc:32
-#, no-wrap
-msgid "*switch_root* returns 1 on failure, it never returns on success.\n"
+msgid "*switch_root* returns 1 on failure, it never returns on success."
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/switch_root.8.adoc:36
-#, no-wrap
 msgid ""
 "*switch_root* will fail to function if _newroot_ is not the root of a "
 "mount. If you want to switch root into a directory that does not meet this "
 "requirement then you can first use a bind-mounting trick to turn any "
-"directory into a mount point:\n"
+"directory into a mount point:"
 msgstr ""
 
 #. type: delimited block .
@@ -37607,12 +36706,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/switch_root.8.adoc:53
-#, no-wrap
-msgid ""
-"*chroot*(2),\n"
-"*init*(8),\n"
-"*mkinitrd*(8),\n"
-"*mount*(8)\n"
+msgid "*chroot*(2), *init*(8), *mkinitrd*(8), *mount*(8)"
 msgstr ""
 
 #. type: Title =
@@ -37628,19 +36722,17 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/tunelp.8.adoc:16
-#, no-wrap
-msgid "*tunelp* [options] _device_\n"
+msgid "*tunelp* [options] _device_"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/tunelp.8.adoc:20
-#, no-wrap
 msgid ""
 "*tunelp* sets several parameters for the /dev/lp__?__ devices, for better "
 "performance (or for any performance at all, if your printer won't work "
 "without it...) Without parameters, it tells whether the device is using "
 "interrupts, and if so, which one. With parameters, it sets the device "
-"characteristics accordingly.\n"
+"characteristics accordingly."
 msgstr ""
 
 #. type: Labeled list
@@ -37663,13 +36755,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/tunelp.8.adoc:27
-#, no-wrap
 msgid ""
 "*NOTE*: This option will have no effect with kernel 2.1.131 or later since "
 "the irq is handled by the parport driver. You can change the parport irq for "
 "example via _/proc/parport/*/irq_. Read "
 "_/usr/src/linux/Documentation/admin-guide/parport.rst_ for more details on "
-"parport.\n"
+"parport."
 msgstr ""
 
 #. type: Labeled list
@@ -37779,10 +36870,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/tunelp.8.adoc:49
-#, no-wrap
 msgid ""
 "*NOTE*: This option is obsolete because it's the default in 2.1.131 kernel "
-"or later.\n"
+"or later."
 msgstr ""
 
 #. type: Labeled list
@@ -37824,16 +36914,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/tunelp.8.adoc:67
-#, no-wrap
-msgid ""
-"*-o*, *-C*, and *-s* all require a Linux kernel version of 1.1.76 or "
-"later.\n"
+msgid "*-o*, *-C*, and *-s* all require a Linux kernel version of 1.1.76 or later."
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/tunelp.8.adoc:69
-#, no-wrap
-msgid "*-C* requires a Linux version prior to 2.1.131.\n"
+msgid "*-C* requires a Linux version prior to 2.1.131."
 msgstr ""
 
 #. Copyright (c) 1996 Andries Brouwer
@@ -37872,20 +36958,17 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/umount.8.adoc:41
-#, no-wrap
-msgid "*umount* *-a* [*-dflnrv*] [*-t* _fstype_] [*-O* _option_...]\n"
+msgid "*umount* *-a* [*-dflnrv*] [*-t* _fstype_] [*-O* _option_...]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/umount.8.adoc:43
-#, no-wrap
-msgid "*umount* [*-dflnrv*] {_directory_|_device_}\n"
+msgid "*umount* [*-dflnrv*] {_directory_|_device_}"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/umount.8.adoc:45
-#, no-wrap
-msgid "*umount* *-h*|*-V*\n"
+msgid "*umount* *-h*|*-V*"
 msgstr ""
 
 #. type: Plain text
@@ -38046,13 +37129,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/umount.8.adoc:90
-#, no-wrap
 msgid ""
 "*umount* switches to the namespace when it reads _/etc/fstab_, writes "
 "_/etc/mtab_ (or writes to _/run/mount_) and calls *umount*(2) system call, "
 "otherwise it runs in the original namespace. It means that the target mount "
 "namespace does not have to contain any libraries or other requirements "
-"necessary to execute *umount*(2) command.\n"
+"necessary to execute *umount*(2) command."
 msgstr ""
 
 #. type: Plain text
@@ -38182,10 +37264,9 @@ msgstr ""
 
 #. type: delimited block _
 #: ../sys-utils/umount.8.adoc:136
-#, no-wrap
 msgid ""
 "**umount.**__suffix__ {__directory__|_device_} [*-flnrv*] [*-N* _namespace_] "
-"[*-t* _type_._subtype_]\n"
+"[*-t* _type_._subtype_]"
 msgstr ""
 
 #. type: Plain text
@@ -38198,8 +37279,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../sys-utils/umount.8.adoc:142
-#, no-wrap
-msgid "*umount.fuse -t fuse.sshfs*\n"
+msgid "*umount.fuse -t fuse.sshfs*"
 msgstr ""
 
 #. type: Plain text
@@ -38265,12 +37345,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/umount.8.adoc:179
-#, no-wrap
-msgid ""
-"*umount*(2),\n"
-"*losetup*(8),\n"
-"*mount_namespaces*(7),\n"
-"*mount*(8)\n"
+msgid "*umount*(2), *losetup*(8), *mount_namespaces*(7), *mount*(8)"
 msgstr ""
 
 #. type: Title =
@@ -38286,8 +37361,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/unshare.1.adoc:16
-#, no-wrap
-msgid "*unshare* [options] [_program_ [_arguments_]]\n"
+msgid "*unshare* [options] [_program_ [_arguments_]]"
 msgstr ""
 
 #. type: Plain text
@@ -38315,12 +37389,11 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/unshare.1.adoc:24
-#, no-wrap
 msgid ""
 "*unshare* since util-linux version 2.36 uses "
 "_/proc/[pid]/ns/pid_for_children_ and _/proc/[pid]/ns/time_for_children_ "
 "files for persistent PID and TIME namespaces. This change requires Linux "
-"kernel 4.17 or newer.\n"
+"kernel 4.17 or newer."
 msgstr ""
 
 #. type: Plain text
@@ -38339,12 +37412,11 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/unshare.1.adoc:31
-#, no-wrap
 msgid ""
 "*unshare* since util-linux version 2.27 automatically sets propagation to "
 "*private* in a new mount namespace to make sure that the new namespace is "
 "really unshared. It's possible to disable this feature with option "
-"*--propagation unchanged*. Note that *private* is the kernel default.\n"
+"*--propagation unchanged*. Note that *private* is the kernel default."
 msgstr ""
 
 #. type: Plain text
@@ -38981,14 +38053,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/unshare.1.adoc:269
-#, no-wrap
 msgid ""
-"*newuidmap*(1),\n"
-"*newgidmap*(1),\n"
-"*clone*(2),\n"
-"*unshare*(2),\n"
-"*namespaces*(7),\n"
-"*mount*(8)\n"
+"*newuidmap*(1), *newgidmap*(1), *clone*(2), *unshare*(2), *namespaces*(7), "
+"*mount*(8)"
 msgstr ""
 
 #. type: Title =
@@ -39004,8 +38071,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/wdctl.8.adoc:16
-#, no-wrap
-msgid "*wdctl* [options] [_device_...]\n"
+msgid "*wdctl* [options] [_device_...]"
 msgstr ""
 
 #. type: Plain text
@@ -39174,8 +38240,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/zramctl.8.adoc:18
-#, no-wrap
-msgid "*zramctl* [options]\n"
+msgid "*zramctl* [options]"
 msgstr ""
 
 #. type: Labeled list
@@ -39186,8 +38251,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/zramctl.8.adoc:22
-#, no-wrap
-msgid "*zramctl* *-r* _zramdev_...\n"
+msgid "*zramctl* *-r* _zramdev_..."
 msgstr ""
 
 #. type: Labeled list
@@ -39198,8 +38262,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/zramctl.8.adoc:26
-#, no-wrap
-msgid "*zramctl* *-f*\n"
+msgid "*zramctl* *-f*"
 msgstr ""
 
 #. type: Labeled list
@@ -39210,18 +38273,16 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/zramctl.8.adoc:30
-#, no-wrap
 msgid ""
 "*zramctl* [*-f* | _zramdev_] [*-s* _size_] [*-t* _number_] [*-a* "
-"_algorithm_]\n"
+"_algorithm_]"
 msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/zramctl.8.adoc:34
-#, no-wrap
 msgid ""
 "*zramctl* is used to quickly set up zram device parameters, to reset zram "
-"devices, and to query the status of used zram devices.\n"
+"devices, and to query the status of used zram devices."
 msgstr ""
 
 #. type: Plain text
@@ -39336,8 +38397,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../sys-utils/zramctl.8.adoc:77
-#, no-wrap
-msgid "*zramctl* returns 0 on success, nonzero on failure.\n"
+msgid "*zramctl* returns 0 on success, nonzero on failure."
 msgstr ""
 
 #. type: Labeled list
@@ -39398,24 +38458,21 @@ msgstr ""
 
 #. type: Plain text
 #: ../term-utils/agetty.8.adoc:16
-#, no-wrap
-msgid "*agetty* [options] _port_ [_baud_rate_...] [_term_]\n"
+msgid "*agetty* [options] _port_ [_baud_rate_...] [_term_]"
 msgstr ""
 
 #. type: Plain text
 #: ../term-utils/agetty.8.adoc:20
-#, no-wrap
 msgid ""
 "*agetty* opens a tty port, prompts for a login name and invokes the "
-"/bin/login command. It is normally invoked by *init*(8).\n"
+"/bin/login command. It is normally invoked by *init*(8)."
 msgstr ""
 
 #. type: Plain text
 #: ../term-utils/agetty.8.adoc:22
-#, no-wrap
 msgid ""
 "*agetty* has several _non-standard_ features that are useful for hardwired "
-"and for dial-in lines:\n"
+"and for dial-in lines:"
 msgstr ""
 
 #. type: Plain text
@@ -39889,8 +38946,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../term-utils/agetty.8.adoc:130
-#, no-wrap
-msgid "*--login-options '-h darkstar \\-- \\u'*\n"
+msgid "*--login-options '-h darkstar \\-- \\u'*"
 msgstr ""
 
 #. type: Plain text
@@ -40116,13 +39172,11 @@ msgstr ""
 
 #. type: Plain text
 #: ../term-utils/agetty.8.adoc:189
-#, no-wrap
 msgid ""
 "*agetty* reads the _/etc/login.defs_ configuration file (see "
-"*login.defs*(5)).\n"
-"Note that the configuration file could be distributed with another package "
-"(usually shadow-utils).\n"
-"The following configuration items are relevant for *agetty*:\n"
+"*login.defs*(5)).  Note that the configuration file could be distributed "
+"with another package (usually shadow-utils).  The following configuration "
+"items are relevant for *agetty*:"
 msgstr ""
 
 #. type: Plain text
@@ -40148,8 +39202,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../term-utils/agetty.8.adoc:202
-#, no-wrap
-msgid "*/sbin/agetty 9600 ttyS1*\n"
+msgid "*/sbin/agetty 9600 ttyS1*"
 msgstr ""
 
 #. type: Plain text
@@ -40161,8 +39214,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../term-utils/agetty.8.adoc:208
-#, no-wrap
-msgid "*/sbin/agetty --local-line 9600 ttyS1 vt100*\n"
+msgid "*/sbin/agetty --local-line 9600 ttyS1 vt100*"
 msgstr ""
 
 #. type: Plain text
@@ -40172,8 +39224,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../term-utils/agetty.8.adoc:214
-#, no-wrap
-msgid "*/sbin/agetty --extract-baud --timeout 60 ttyS1 9600,2400,1200*\n"
+msgid "*/sbin/agetty --extract-baud --timeout 60 ttyS1 9600,2400,1200*"
 msgstr ""
 
 #. type: Plain text
@@ -40187,10 +39238,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../term-utils/agetty.8.adoc:220
-#, no-wrap
-msgid ""
-"*/sbin/agetty --wait-cr --init-string 'ATE0Q1&D2&C1S0=1\\015' 115200 "
-"ttyS1*\n"
+msgid "*/sbin/agetty --wait-cr --init-string 'ATE0Q1&D2&C1S0=1\\015' 115200 ttyS1*"
 msgstr ""
 
 #. type: Title ==
@@ -40561,8 +39609,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../term-utils/agetty.8.adoc:321
-#, no-wrap
-msgid "*init*(8) configuration file for SysV-style init daemon.\n"
+msgid "*init*(8) configuration file for SysV-style init daemon."
 msgstr ""
 
 #. type: Plain text
@@ -40656,8 +39703,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../term-utils/mesg.1.adoc:50
-#, no-wrap
-msgid "*mesg* [_option_] [*n*|*y*]\n"
+msgid "*mesg* [_option_] [*n*|*y*]"
 msgstr ""
 
 #. type: Plain text
@@ -40744,22 +39790,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../term-utils/mesg.1.adoc:95
-#, no-wrap
 msgid ""
-"*mesg* (I) appears in the UNIX Programmer's Manual.\n"
-"It used to invert the current state with no argument before Version 7 AT&T "
-"UNIX.\n"
+"*mesg* (I) appears in the UNIX Programmer's Manual.  It used to invert the "
+"current state with no argument before Version 7 AT&T UNIX."
 msgstr ""
 
 #. type: Plain text
 #: ../term-utils/mesg.1.adoc:103
-#, no-wrap
-msgid ""
-"*login*(1),\n"
-"*talk*(1),\n"
-"*write*(1),\n"
-"*wall*(1),\n"
-"*xterm*(1)\n"
+msgid "*login*(1), *talk*(1), *write*(1), *wall*(1), *xterm*(1)"
 msgstr ""
 
 #. Copyright (c) 1980, 1990 Regents of the University of California.
@@ -40807,19 +39845,17 @@ msgstr ""
 
 #. type: Plain text
 #: ../term-utils/script.1.adoc:51
-#, no-wrap
-msgid "*script* [options] [_file_]\n"
+msgid "*script* [options] [_file_]"
 msgstr ""
 
 #. type: Plain text
 #: ../term-utils/script.1.adoc:55
-#, no-wrap
 msgid ""
 "*script* makes a typescript of everything on your terminal session. The "
 "terminal data are stored in raw form to the log file and information about "
 "timing to another (optional) structured log file. The timing log file is "
 "necessary to replay the session later by *scriptreplay*(1) and to store "
-"additional information about the session.\n"
+"additional information about the session."
 msgstr ""
 
 #. type: Plain text
@@ -41167,30 +40203,24 @@ msgstr ""
 
 #. type: Plain text
 #: ../term-utils/script.1.adoc:158
-#, no-wrap
 msgid ""
 "*script* places _everything_ in the log file, including linefeeds and "
-"backspaces. This is not what the naive user expects.\n"
+"backspaces. This is not what the naive user expects."
 msgstr ""
 
 #. type: Plain text
 #: ../term-utils/script.1.adoc:160
-#, no-wrap
 msgid ""
 "*script* is primarily designed for interactive terminal sessions. When stdin "
 "is not a terminal (for example: *echo foo | script*), then the session can "
 "hang, because the interactive shell within the script session misses EOF and "
 "*script* has no clue when to close the session. See the *NOTES* section for "
-"more information.\n"
+"more information."
 msgstr ""
 
 #. type: Plain text
 #: ../term-utils/script.1.adoc:166
-#, no-wrap
-msgid ""
-"*csh*(1) (for the _history_ mechanism),\n"
-"*scriptreplay*(1),\n"
-"*scriptlive*(1)\n"
+msgid "*csh*(1) (for the _history_ mechanism), *scriptreplay*(1), *scriptlive*(1)"
 msgstr ""
 
 #. type: Title =
@@ -41206,8 +40236,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../term-utils/scriptlive.1.adoc:17
-#, no-wrap
-msgid "*scriptlive* [options] [*-t*] _timingfile_ [*-I*|*-B*] _typescript_\n"
+msgid "*scriptlive* [options] [*-t*] _timingfile_ [*-I*|*-B*] _typescript_"
 msgstr ""
 
 #. type: Plain text
@@ -41227,12 +40256,11 @@ msgstr ""
 
 #. type: Plain text
 #: ../term-utils/scriptlive.1.adoc:25
-#, no-wrap
 msgid ""
 "*Be careful!* Do not forget that the typescript may contains arbitrary "
 "commands. It is recommended to use *\"scriptreplay --stream in --log-in "
 "typescript\"* (or with *--log-io* instead of *--log-in*) to verify the "
-"typescript before it is executed by *scriptlive*.\n"
+"typescript before it is executed by *scriptlive*."
 msgstr ""
 
 #. type: Plain text
@@ -41328,10 +40356,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../term-utils/scriptlive.1.adoc:79
-#, no-wrap
-msgid ""
-"*script*(1),\n"
-"*scriptreplay*(1)\n"
+msgid "*script*(1), *scriptreplay*(1)"
 msgstr ""
 
 #. type: Title =
@@ -41347,8 +40372,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../term-utils/scriptreplay.1.adoc:17
-#, no-wrap
-msgid "*scriptreplay* [options] [*-t*] _timingfile_ [_typescript_ [_divisor_]]\n"
+msgid "*scriptreplay* [options] [*-t*] _timingfile_ [_typescript_ [_divisor_]]"
 msgstr ""
 
 #. type: Plain text
@@ -41499,10 +40523,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../term-utils/scriptreplay.1.adoc:99
-#, no-wrap
-msgid ""
-"*script*(1),\n"
-"*scriptlive*(1)\n"
+msgid "*script*(1), *scriptlive*(1)"
 msgstr ""
 
 #. Copyright 1990 Gordon Irlam (gordoni@cs.ua.oz.au)
@@ -41523,13 +40544,11 @@ msgstr ""
 
 #. type: Plain text
 #: ../term-utils/setterm.1.adoc:23
-#, no-wrap
-msgid "*setterm* [options]\n"
+msgid "*setterm* [options]"
 msgstr ""
 
 #. type: Plain text
 #: ../term-utils/setterm.1.adoc:27
-#, no-wrap
 msgid ""
 "*setterm* writes to standard output a character string that will invoke the "
 "specified terminal capabilities. Where possible _terminfo_ is consulted to "
@@ -41537,7 +40556,7 @@ msgid ""
 "only\" below) do not correspond to a *terminfo*(5) capability. In this case, "
 "if the terminal type is \"con\" or \"linux\" the string that invokes the "
 "specified capabilities on the PC Minix virtual console driver is "
-"output. Options that are not implemented by the terminal are ignored.\n"
+"output. Options that are not implemented by the terminal are ignored."
 msgstr ""
 
 #. type: Plain text
@@ -42086,12 +41105,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../term-utils/setterm.1.adoc:173
-#, no-wrap
-msgid ""
-"*stty*(1),\n"
-"*tput*(1),\n"
-"*tty*(4),\n"
-"*terminfo*(5)\n"
+msgid "*stty*(1), *tput*(1), *tty*(4), *terminfo*(5)"
 msgstr ""
 
 #. Copyright (c) 1989, 1990 The Regents of the University of California.
@@ -42140,19 +41154,17 @@ msgstr ""
 
 #. type: Plain text
 #: ../term-utils/wall.1.adoc:51
-#, no-wrap
-msgid "*wall* [*-n*] [*-t* _timeout_] [*-g* _group_] [_message_ | _file_]\n"
+msgid "*wall* [*-n*] [*-t* _timeout_] [*-g* _group_] [_message_ | _file_]"
 msgstr ""
 
 #. type: Plain text
 #: ../term-utils/wall.1.adoc:55
-#, no-wrap
 msgid ""
 "*wall* displays a _message_, or the contents of a _file_, or otherwise its "
 "standard input, on the terminals of all currently logged in users. The "
 "command will wrap lines that are longer than 79 characters. Short lines are "
 "whitespace padded to have 79 characters. The command will always put a "
-"carriage return and new line at the end of each line.\n"
+"carriage return and new line at the end of each line."
 msgstr ""
 
 #. type: Plain text
@@ -42216,12 +41228,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../term-utils/wall.1.adoc:87
-#, no-wrap
-msgid ""
-"*mesg*(1),\n"
-"*talk*(1),\n"
-"*write*(1),\n"
-"*shutdown*(8)\n"
+msgid "*mesg*(1), *talk*(1), *write*(1), *shutdown*(8)"
 msgstr ""
 
 #. Copyright (c) 1989, 1993
@@ -42272,16 +41279,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../term-utils/write.1.adoc:51
-#, no-wrap
-msgid "*write* _user_ [_ttyname_]\n"
+msgid "*write* _user_ [_ttyname_]"
 msgstr ""
 
 #. type: Plain text
 #: ../term-utils/write.1.adoc:55
-#, no-wrap
 msgid ""
 "*write* allows you to communicate with other users, by copying lines from "
-"your terminal to theirs.\n"
+"your terminal to theirs."
 msgstr ""
 
 #. type: Plain text
@@ -42347,11 +41352,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../term-utils/write.1.adoc:85
-#, no-wrap
-msgid ""
-"*mesg*(1),\n"
-"*talk*(1),\n"
-"*who*(1)\n"
+msgid "*mesg*(1), *talk*(1), *who*(1)"
 msgstr ""
 
 #. Copyright (c) 1990 The Regents of the University of California.
@@ -42402,24 +41403,21 @@ msgstr ""
 
 #. type: Plain text
 #: ../text-utils/col.1.adoc:53
-#, no-wrap
-msgid "*col* _options_\n"
+msgid "*col* _options_"
 msgstr ""
 
 #. type: Plain text
 #: ../text-utils/col.1.adoc:57
-#, no-wrap
 msgid ""
 "*col* filters out reverse (and half-reverse) line feeds so the output is in "
 "the correct order, with only forward and half-forward line feeds. It also "
 "replaces any whitespace characters with tabs where possible. This can be "
-"useful in processing the output of *nroff*(1) and *tbl*(1).\n"
+"useful in processing the output of *nroff*(1) and *tbl*(1)."
 msgstr ""
 
 #. type: Plain text
 #: ../text-utils/col.1.adoc:59
-#, no-wrap
-msgid "*col* reads from standard input and writes to standard output.\n"
+msgid "*col* reads from standard input and writes to standard output."
 msgstr ""
 
 #. type: Labeled list
@@ -42645,10 +41643,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../text-utils/col.1.adoc:120
-#, no-wrap
 msgid ""
 "*col* keeps track of the character set as characters are read and makes sure "
-"the character set is correct when they are output.\n"
+"the character set is correct when they are output."
 msgstr ""
 
 #. type: Plain text
@@ -42665,11 +41662,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../text-utils/col.1.adoc:132
-#, no-wrap
-msgid ""
-"*expand*(1),\n"
-"*nroff*(1),\n"
-"*tbl*(1)\n"
+msgid "*expand*(1), *nroff*(1), *tbl*(1)"
 msgstr ""
 
 #. Copyright (c) 1980, 1990, 1993
@@ -42717,18 +41710,16 @@ msgstr ""
 
 #. type: Plain text
 #: ../text-utils/colcrt.1.adoc:51
-#, no-wrap
-msgid "*colcrt* [options] [_file_ ...]\n"
+msgid "*colcrt* [options] [_file_ ...]"
 msgstr ""
 
 #. type: Plain text
 #: ../text-utils/colcrt.1.adoc:55
-#, no-wrap
 msgid ""
 "*colcrt* provides virtual half-line and reverse line feed sequences for "
 "terminals without such capability, and on which overstriking is "
 "destructive. Half-line characters and underlining (changed to dashing `-') "
-"are placed on new lines in between the normal output lines.\n"
+"are placed on new lines in between the normal output lines."
 msgstr ""
 
 #. type: Labeled list
@@ -42805,19 +41796,12 @@ msgstr ""
 
 #. type: delimited block _
 #: ../text-utils/colcrt.1.adoc:89
-#, no-wrap
-msgid "*tbl exum2.n | nroff -ms | colcrt - | more*\n"
+msgid "*tbl exum2.n | nroff -ms | colcrt - | more*"
 msgstr ""
 
 #. type: Plain text
 #: ../text-utils/colcrt.1.adoc:99
-#, no-wrap
-msgid ""
-"*col*(1),\n"
-"*more*(1),\n"
-"*nroff*(1),\n"
-"*troff*(1),\n"
-"*ul*(1)\n"
+msgid "*col*(1), *more*(1), *nroff*(1), *troff*(1), *ul*(1)"
 msgstr ""
 
 #. Copyright (c) 1980, 1990 The Regents of the University of California.
@@ -42865,16 +41849,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../text-utils/colrm.1.adoc:50
-#, no-wrap
-msgid "*colrm* _[first [last]]_\n"
+msgid "*colrm* _[first [last]]_"
 msgstr ""
 
 #. type: Plain text
 #: ../text-utils/colrm.1.adoc:54
-#, no-wrap
 msgid ""
 "*colrm* removes selected columns from a file. Input is taken from standard "
-"input. Output is sent to standard output.\n"
+"input. Output is sent to standard output."
 msgstr ""
 
 #. type: Plain text
@@ -42897,12 +41879,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../text-utils/colrm.1.adoc:73
-#, no-wrap
-msgid ""
-"*awk*(1p),\n"
-"*column*(1),\n"
-"*expand*(1),\n"
-"*paste*(1)\n"
+msgid "*awk*(1p), *column*(1), *expand*(1), *paste*(1)"
 msgstr ""
 
 #. Copyright (c) 1989, 1990, 1993
@@ -42950,8 +41927,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../text-utils/column.1.adoc:50
-#, no-wrap
-msgid "*column* [options] [_file_ ...]\n"
+msgid "*column* [options] [_file_ ...]"
 msgstr ""
 
 #. type: Plain text
@@ -43544,12 +42520,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../text-utils/column.1.adoc:240
-#, no-wrap
-msgid ""
-"*colrm*(1),\n"
-"*ls*(1),\n"
-"*paste*(1),\n"
-"*sort*(1)\n"
+msgid "*colrm*(1), *ls*(1), *paste*(1), *sort*(1)"
 msgstr ""
 
 #. Copyright (c) 1989, 1990, 1993
@@ -43597,14 +42568,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../text-utils/hexdump.1.adoc:50
-#, no-wrap
-msgid "*hexdump* _options file_ ...\n"
+msgid "*hexdump* _options file_ ..."
 msgstr ""
 
 #. type: Plain text
 #: ../text-utils/hexdump.1.adoc:52
-#, no-wrap
-msgid "*hd* _options file_ ...\n"
+msgid "*hd* _options file_ ..."
 msgstr ""
 
 #. type: Plain text
@@ -44007,8 +42976,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../text-utils/hexdump.1.adoc:174
-#, no-wrap
-msgid "*_L[color_unit_1,color_unit_2,...,color_unit_n]*\n"
+msgid "*_L[color_unit_1,color_unit_2,...,color_unit_n]*"
 msgstr ""
 
 #. type: delimited block _
@@ -44018,8 +42986,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../text-utils/hexdump.1.adoc:178
-#, no-wrap
-msgid "*[!]COLOR[:VALUE][@OFFSET_START[-END]]*\n"
+msgid "*[!]COLOR[:VALUE][@OFFSET_START[-END]]*"
 msgstr ""
 
 #. type: Labeled list
@@ -44190,8 +43157,7 @@ msgstr ""
 
 #. type: delimited block _
 #: ../text-utils/hexdump.1.adoc:222
-#, no-wrap
-msgid "*hexdump* exits 0 on success and > 0 if an error occurred.\n"
+msgid "*hexdump* exits 0 on success and > 0 if an error occurred."
 msgstr ""
 
 #. type: delimited block _
@@ -44258,8 +43224,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../text-utils/line.1.adoc:17
-#, no-wrap
-msgid "*line*\n"
+msgid "*line*"
 msgstr ""
 
 #. type: Plain text
@@ -44272,8 +43237,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../text-utils/line.1.adoc:25
-#, no-wrap
-msgid "*read*(1p)\n"
+msgid "*read*(1p)"
 msgstr ""
 
 #. Copyright (c) 1988, 1990 The Regents of the University of California.
@@ -44324,17 +43288,15 @@ msgstr ""
 
 #. type: Plain text
 #: ../text-utils/more.1.adoc:53
-#, no-wrap
-msgid "*more* [options] _file_ ...\n"
+msgid "*more* [options] _file_ ..."
 msgstr ""
 
 #. type: Plain text
 #: ../text-utils/more.1.adoc:57
-#, no-wrap
 msgid ""
 "*more* is a filter for paging through text one screenful at a time. This "
 "version is especially primitive. Users should realize that *less*(1) "
-"provides *more*(1) emulation plus extensive enhancements.\n"
+"provides *more*(1) emulation plus extensive enhancements."
 msgstr ""
 
 #. type: Plain text
@@ -44806,10 +43768,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../text-utils/more.1.adoc:202
-#, no-wrap
-msgid ""
-"*less*(1),\n"
-"*vi*(1)\n"
+msgid "*less*(1), *vi*(1)"
 msgstr ""
 
 #.  Copyright 2001 Gunnar Ritter
@@ -44826,17 +43785,15 @@ msgstr ""
 
 #. type: Plain text
 #: ../text-utils/pg.1.adoc:17
-#, no-wrap
-msgid "*pg* *-*_amount_ *-p* _prompt_ *-cefnrs* +line +/pattern/ file_ ...\n"
+msgid "*pg* *-*_amount_ *-p* _prompt_ *-cefnrs* +line +/pattern/ file_ ..."
 msgstr ""
 
 #. type: Plain text
 #: ../text-utils/pg.1.adoc:21
-#, no-wrap
 msgid ""
 "*pg* displays a text file on a CRT one screenful at once. After each page, a "
 "prompt is displayed. The user may then either press the newline key to view "
-"the next page or one of the keys described below.\n"
+"the next page or one of the keys described below."
 msgstr ""
 
 #. type: Plain text
@@ -44856,8 +43813,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../text-utils/pg.1.adoc:29
-#, no-wrap
-msgid "*pg* accepts the following options:\n"
+msgid "*pg* accepts the following options:"
 msgstr ""
 
 #. type: Plain text
@@ -45201,8 +44157,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../text-utils/pg.1.adoc:139
-#, no-wrap
-msgid "*pg* expects the terminal tabulators to be set every eight positions.\n"
+msgid "*pg* expects the terminal tabulators to be set every eight positions."
 msgstr ""
 
 #. type: Plain text
@@ -45212,15 +44167,9 @@ msgstr ""
 
 #. type: Plain text
 #: ../text-utils/pg.1.adoc:151
-#, no-wrap
 msgid ""
-"*cat*(1),\n"
-"*more*(1),\n"
-"*sh*(1p),\n"
-"*terminfo*(5),\n"
-"*locale*(7),\n"
-"*regex*(7),\n"
-"*term*(7)\n"
+"*cat*(1), *more*(1), *sh*(1p), *terminfo*(5), *locale*(7), *regex*(7), "
+"*term*(7)"
 msgstr ""
 
 #. Copyright (c) 1985, 1992 The Regents of the University of California.
@@ -45268,8 +44217,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../text-utils/rev.1.adoc:50
-#, no-wrap
-msgid "*rev* [option] [_file_...]\n"
+msgid "*rev* [option] [_file_...]"
 msgstr ""
 
 #. type: Plain text
@@ -45301,8 +44249,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../text-utils/rev.1.adoc:67
-#, no-wrap
-msgid "*tac*(1)\n"
+msgid "*tac*(1)"
 msgstr ""
 
 #. Copyright (c) 1980, 1991, 1993
@@ -45350,13 +44297,11 @@ msgstr ""
 
 #. type: Plain text
 #: ../text-utils/ul.1.adoc:50
-#, no-wrap
-msgid "*ul* [options] [_file_...]\n"
+msgid "*ul* [options] [_file_...]"
 msgstr ""
 
 #. type: Plain text
 #: ../text-utils/ul.1.adoc:54
-#, no-wrap
 msgid ""
 "*ul* reads the named files (or standard input if none are given) and "
 "translates occurrences of underscores to the sequence which indicates "
@@ -45366,7 +44311,7 @@ msgid ""
 "underlining but is capable of a standout mode, then that is used instead. If "
 "the terminal can overstrike, or handles underlining automatically, *ul* "
 "degenerates to *cat*(1). If the terminal cannot underline, underlining is "
-"ignored.\n"
+"ignored."
 msgstr ""
 
 #. type: Labeled list
@@ -45416,21 +44361,13 @@ msgstr ""
 
 #. type: Plain text
 #: ../text-utils/ul.1.adoc:79
-#, no-wrap
 msgid ""
 "*nroff* usually outputs a series of backspaces and underlines intermixed "
 "with the text to indicate underlining. No attempt is made to optimize the "
-"backward motion.\n"
+"backward motion."
 msgstr ""
 
 #. type: Plain text
 #: ../text-utils/ul.1.adoc:88
-#, no-wrap
-msgid ""
-"*colcrt*(1),\n"
-"*login*(1),\n"
-"*man*(1),\n"
-"*nroff*(1),\n"
-"*setenv*(3),\n"
-"*terminfo*(5)\n"
+msgid "*colcrt*(1), *login*(1), *man*(1), *nroff*(1), *setenv*(3), *terminfo*(5)"
 msgstr ""
