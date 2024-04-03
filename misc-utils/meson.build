@@ -56,6 +56,7 @@ lsfd_sources = files (
   'lsfd-sock-xinfo.c',
   'lsfd-unkn.c',
   'lsfd-fifo.c',
+  'lsfd-pidfd.c',
 )
 
 uuidgen_sources = files(

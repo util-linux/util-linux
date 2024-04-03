@@ -289,7 +289,9 @@ lsfd_SOURCES = \
 	misc-utils/lsfd-sock.h \
 	misc-utils/lsfd-sock-xinfo.c \
 	misc-utils/lsfd-unkn.c \
-	misc-utils/lsfd-fifo.c
+	misc-utils/lsfd-fifo.c \
+	misc-utils/lsfd-pidfd.h \
+	misc-utils/lsfd-pidfd.c
 lsfd_LDADD = $(LDADD) $(MQ_LIBS) libsmartcols.la libcommon.la
 lsfd_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
 endif
