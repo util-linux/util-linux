@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.17.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-12-04 13:21+0100\n"
+"POT-Creation-Date: 2024-04-03 14:31+0200\n"
 "PO-Revision-Date: 2010-02-16 19:58+0100\n"
 "Last-Translator: Mikel Olasagasti Uranga <hey_neken@mundurat.net>\n"
 "Language-Team: Basque <translation-team-eu@lists.sourceforge.net>\n"
@@ -58,7 +58,7 @@ msgstr "%s: argumentu gehiegi\n"
 #: misc-utils/fadvise.c:148 misc-utils/findmnt.c:1227 misc-utils/logger.c:1247
 #: misc-utils/mcookie.c:119 misc-utils/pipesz.c:162 misc-utils/uuidd.c:235
 #: sys-utils/blkdiscard.c:248 sys-utils/blkpr.c:164 sys-utils/blkzone.c:144
-#: sys-utils/dmesg.c:547 sys-utils/eject.c:501 sys-utils/eject.c:696
+#: sys-utils/dmesg.c:548 sys-utils/eject.c:501 sys-utils/eject.c:696
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:116 sys-utils/fstrim.c:106
 #: sys-utils/hwclock.c:241 sys-utils/hwclock.c:912 sys-utils/hwclock-rtc.c:108
 #: sys-utils/hwclock-rtc.c:353 sys-utils/hwclock-rtc.c:389
@@ -778,7 +778,7 @@ msgid " -r, --read-only          forced open cfdisk in read-only mode\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
 #: disk-utils/cfdisk.c:2770 disk-utils/fdisk.c:1016 disk-utils/sfdisk.c:2350
-#: misc-utils/cal.c:421 sys-utils/dmesg.c:1505 text-utils/hexdump.c:114
+#: misc-utils/cal.c:421 sys-utils/dmesg.c:1506 text-utils/hexdump.c:114
 #, fuzzy
 msgid "unsupported color mode"
 msgstr "%s: Komando ezezaguna: %s\n"
@@ -883,7 +883,7 @@ msgstr "baliogabeko id-a: %s\n"
 #: disk-utils/mkfs.minix.c:839 disk-utils/mkswap.c:381 disk-utils/partx.c:966
 #: login-utils/last.c:697 login-utils/utmpdump.c:145 misc-utils/namei.c:146
 #: misc-utils/rename.c:164 misc-utils/rename.c:229 sys-utils/blkdiscard.c:251
-#: sys-utils/blkzone.c:147 sys-utils/dmesg.c:549 sys-utils/fallocate.c:201
+#: sys-utils/blkzone.c:147 sys-utils/dmesg.c:550 sys-utils/fallocate.c:201
 #: sys-utils/fsfreeze.c:119 sys-utils/fstrim.c:78 sys-utils/nsenter.c:187
 #: sys-utils/swapon.c:530 sys-utils/switch_root.c:93
 #: sys-utils/switch_root.c:134 sys-utils/switch_root.c:139
@@ -1237,7 +1237,7 @@ msgstr ""
 #: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:592
 #: misc-utils/whereis.c:603 misc-utils/whereis.c:614 misc-utils/whereis.c:659
 #: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:207
-#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1585
+#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1586
 #: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:926
 #: sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656 sys-utils/mount.c:867
 #: sys-utils/mount.c:875 sys-utils/mount.c:924 sys-utils/mount.c:937
@@ -1324,7 +1324,7 @@ msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
 #: disk-utils/fdisk-list.c:136 disk-utils/fdisk-list.c:257
 #: disk-utils/partx.c:676 login-utils/lslogins.c:1113 misc-utils/fincore.c:357
-#: misc-utils/findmnt.c:1763 misc-utils/lsblk.c:2351 misc-utils/lsfd.c:1974
+#: misc-utils/findmnt.c:1761 misc-utils/lsblk.c:2351 misc-utils/lsfd.c:1974
 #: misc-utils/lslocks.c:472 misc-utils/uuidparse.c:252 misc-utils/wipefs.c:157
 #: sys-utils/losetup.c:326 sys-utils/lscpu.c:604 sys-utils/lscpu.c:759
 #: sys-utils/lscpu.c:970 sys-utils/lsipc.c:354 sys-utils/prlimit.c:311
@@ -2915,7 +2915,7 @@ msgstr ""
 
 #: disk-utils/fsck.minix.c:1435 disk-utils/mkfs.minix.c:858
 #: disk-utils/mkswap.c:744 disk-utils/partx.c:1078 disk-utils/resizepart.c:125
-#: login-utils/utmpdump.c:408 sys-utils/dmesg.c:690 sys-utils/wdctl.c:457
+#: login-utils/utmpdump.c:408 sys-utils/dmesg.c:691 sys-utils/wdctl.c:457
 #: sys-utils/wdctl.c:536 term-utils/setterm.c:911 text-utils/col.c:195
 #: text-utils/pg.c:1255
 #, fuzzy
@@ -4024,7 +4024,7 @@ msgid_plural "#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n"
 msgstr[0] ""
 msgstr[1] ""
 
-#: disk-utils/partx.c:687 misc-utils/fincore.c:371 misc-utils/findmnt.c:1792
+#: disk-utils/partx.c:687 misc-utils/fincore.c:371 misc-utils/findmnt.c:1790
 #: misc-utils/lsblk.c:2395 misc-utils/lsfd.c:533 misc-utils/lsfd.c:1988
 #: misc-utils/lslocks.c:487 sys-utils/losetup.c:340 sys-utils/lscpu.c:616
 #: sys-utils/lscpu.c:772 sys-utils/prlimit.c:320 sys-utils/rfkill.c:487
@@ -4676,7 +4676,7 @@ msgstr ""
 msgid "   , 4G     Creates a 4GiB partition at default start offset.\n"
 msgstr "  n          Sortu partizio berria libre dagoen espaziotik"
 
-#: disk-utils/sfdisk.c:1546 sys-utils/dmesg.c:1680
+#: disk-utils/sfdisk.c:1546 sys-utils/dmesg.c:1681
 #, fuzzy
 msgid "unsupported command"
 msgstr "%s: Komando ezezaguna: %s\n"
@@ -8785,7 +8785,7 @@ msgstr "Irteten - ez da ezer aldatu\n"
 msgid "Usage: %s <passwordfile> <username>...\n"
 msgstr "erabilera: %s [fitxategia]\n"
 
-#: login-utils/last.c:175 login-utils/lslogins.c:1433 sys-utils/dmesg.c:1348
+#: login-utils/last.c:175 login-utils/lslogins.c:1433 sys-utils/dmesg.c:1349
 #: sys-utils/lsipc.c:283
 #, fuzzy, c-format
 msgid "unknown time format: %s"
@@ -8881,7 +8881,7 @@ msgid "failed to parse number"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
 #: login-utils/last.c:1032 login-utils/last.c:1037 login-utils/last.c:1042
-#: sys-utils/dmesg.c:1566 sys-utils/dmesg.c:1572 sys-utils/rtcwake.c:511
+#: sys-utils/dmesg.c:1567 sys-utils/dmesg.c:1573 sys-utils/rtcwake.c:511
 #, fuzzy, c-format
 msgid "invalid time value \"%s\""
 msgstr "baliogabeko aukera"
@@ -9593,7 +9593,7 @@ msgstr "setuid()-k huts egin du"
 
 #: login-utils/nologin.c:28 misc-utils/lsfd.c:1539 misc-utils/lslocks.c:545
 #: misc-utils/mcookie.c:83 misc-utils/uuidd.c:97 misc-utils/uuidgen.c:26
-#: sys-utils/dmesg.c:282 sys-utils/ipcmk.c:67 sys-utils/irqtop.c:262
+#: sys-utils/dmesg.c:283 sys-utils/ipcmk.c:67 sys-utils/irqtop.c:262
 #: sys-utils/lscpu.c:1177 sys-utils/lsipc.c:292 sys-utils/lsirq.c:57
 #: sys-utils/lsmem.c:519 sys-utils/readprofile.c:106 sys-utils/rtcwake.c:99
 #: term-utils/scriptlive.c:57 term-utils/scriptreplay.c:47
@@ -9955,7 +9955,7 @@ msgid ""
 " -e, --force              examine password files directly if getpwnam(3) fails\n"
 msgstr ""
 
-#: login-utils/sulogin.c:938 misc-utils/findmnt.c:1619 sys-utils/wdctl.c:764
+#: login-utils/sulogin.c:938 misc-utils/findmnt.c:1617 sys-utils/wdctl.c:764
 #: term-utils/agetty.c:860 term-utils/wall.c:219
 #, fuzzy
 msgid "invalid timeout argument"
@@ -10789,7 +10789,7 @@ msgstr "huts egin da lerro buffer-a hasieratzen\n"
 msgid "poll() failed"
 msgstr "malloc()-ek huts egin du"
 
-#: misc-utils/findmnt.c:1320
+#: misc-utils/findmnt.c:1318
 #, c-format
 msgid ""
 " %1$s [options]\n"
@@ -10798,237 +10798,237 @@ msgid ""
 " %1$s [options] [--source <device>] [--target <path> | --mountpoint <dir>]\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1327
+#: misc-utils/findmnt.c:1325
 #, fuzzy
 msgid "Find a (mounted) filesystem.\n"
 msgstr "Sartu fitxategi sistema moeta: "
 
-#: misc-utils/findmnt.c:1330
+#: misc-utils/findmnt.c:1328
 #, fuzzy
 msgid " -s, --fstab            search in static table of filesystems\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: misc-utils/findmnt.c:1331
+#: misc-utils/findmnt.c:1329
 #, fuzzy
 msgid ""
 " -m, --mtab             search in table of mounted filesystems\n"
 "                          (includes user space mount options)\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: misc-utils/findmnt.c:1333
+#: misc-utils/findmnt.c:1331
 msgid ""
 " -k, --kernel           search in kernel table of mounted\n"
 "                          filesystems (default)\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1336
+#: misc-utils/findmnt.c:1334
 #, fuzzy
 msgid " -p, --poll[=<list>]    monitor changes in table of mounted filesystems\n"
 msgstr "   l   zerrendatu ezagutzen diren fitxategi sistema moetak"
 
-#: misc-utils/findmnt.c:1337
+#: misc-utils/findmnt.c:1335
 msgid " -w, --timeout <num>    upper limit in milliseconds that --poll will block\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1340
+#: misc-utils/findmnt.c:1338
 #, fuzzy
 msgid " -A, --all              disable all built-in filters, print all filesystems\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: misc-utils/findmnt.c:1341
+#: misc-utils/findmnt.c:1339
 #, fuzzy
 msgid " -a, --ascii            use ASCII chars for tree formatting\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1342
+#: misc-utils/findmnt.c:1340
 #, fuzzy
 msgid " -b, --bytes            print sizes in bytes rather than in human readable format\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1343
+#: misc-utils/findmnt.c:1341
 msgid " -C, --nocanonicalize   don't canonicalize when comparing paths\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1344
+#: misc-utils/findmnt.c:1342
 msgid " -c, --canonicalize     canonicalize printed paths\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1345
+#: misc-utils/findmnt.c:1343
 #, fuzzy
 msgid " -D, --df               imitate the output of df(1)\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1346
+#: misc-utils/findmnt.c:1344
 msgid " -d, --direction <word> direction of search, 'forward' or 'backward'\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1347
+#: misc-utils/findmnt.c:1345
 msgid ""
 " -e, --evaluate         convert tags (LABEL,UUID,PARTUUID,PARTLABEL) \n"
 "                          to device names\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1349
+#: misc-utils/findmnt.c:1347
 msgid " -F, --tab-file <path>  alternative file for -s, -m or -k options\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1350
+#: misc-utils/findmnt.c:1348
 #, fuzzy
 msgid " -f, --first-only       print the first found filesystem only\n"
 msgstr "   l   zerrendatu ezagutzen diren fitxategi sistema moetak"
 
-#: misc-utils/findmnt.c:1351
+#: misc-utils/findmnt.c:1349
 #, fuzzy
 msgid " -i, --invert           invert the sense of matching\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1352 misc-utils/lslocks.c:552 sys-utils/lsns.c:1291
+#: misc-utils/findmnt.c:1350 misc-utils/lslocks.c:552 sys-utils/lsns.c:1291
 #: sys-utils/rfkill.c:639
 #, fuzzy
 msgid " -J, --json             use JSON output format\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1353 sys-utils/lsns.c:1292
+#: misc-utils/findmnt.c:1351 sys-utils/lsns.c:1292
 #, fuzzy
 msgid " -l, --list             use list format output\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1354
+#: misc-utils/findmnt.c:1352
 msgid " -N, --task <tid>       use alternative namespace (/proc/<tid>/mountinfo file)\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1355
+#: misc-utils/findmnt.c:1353
 #, fuzzy
 msgid " -n, --noheadings       don't print column headings\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1356
+#: misc-utils/findmnt.c:1354
 msgid " -O, --options <list>   limit the set of filesystems by mount options\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1357
+#: misc-utils/findmnt.c:1355
 msgid " -o, --output <list>    the output columns to be shown\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1358
+#: misc-utils/findmnt.c:1356
 #, fuzzy
 msgid "     --output-all       output all available columns\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: misc-utils/findmnt.c:1359
+#: misc-utils/findmnt.c:1357
 #, fuzzy
 msgid " -P, --pairs            use key=\"value\" output format\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1360
+#: misc-utils/findmnt.c:1358
 #, fuzzy
 msgid "     --pseudo           print only pseudo-filesystems\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1361
+#: misc-utils/findmnt.c:1359
 #, fuzzy
 msgid "     --shadowed         print only filesystems over-mounted by another filesystem\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1362
+#: misc-utils/findmnt.c:1360
 #, fuzzy
 msgid " -R, --submounts        print all submounts for the matching filesystems\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: misc-utils/findmnt.c:1363
+#: misc-utils/findmnt.c:1361
 #, fuzzy
 msgid " -r, --raw              use raw output format\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1364
+#: misc-utils/findmnt.c:1362
 #, fuzzy
 msgid "     --real             print only real filesystems\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1365
+#: misc-utils/findmnt.c:1363
 msgid ""
 " -S, --source <string>  the device to mount (by name, maj:min, \n"
 "                          LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1367
+#: misc-utils/findmnt.c:1365
 #, fuzzy
 msgid " -T, --target <path>    the path to the filesystem to use\n"
 msgstr "   l   zerrendatu ezagutzen diren fitxategi sistema moetak"
 
-#: misc-utils/findmnt.c:1368
+#: misc-utils/findmnt.c:1366
 #, fuzzy
 msgid "     --tree             enable tree format output if possible\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1369
+#: misc-utils/findmnt.c:1367
 #, fuzzy
 msgid " -M, --mountpoint <dir> the mountpoint directory\n"
 msgstr "erro inodoa ez da direktorioa"
 
-#: misc-utils/findmnt.c:1370
+#: misc-utils/findmnt.c:1368
 #, fuzzy
 msgid " -t, --types <list>     limit the set of filesystems by FS types\n"
 msgstr "   l   zerrendatu ezagutzen diren fitxategi sistema moetak"
 
-#: misc-utils/findmnt.c:1371
+#: misc-utils/findmnt.c:1369
 #, fuzzy
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1372 misc-utils/lslocks.c:559 sys-utils/lsns.c:1299
+#: misc-utils/findmnt.c:1370 misc-utils/lslocks.c:559 sys-utils/lsns.c:1299
 #, fuzzy
 msgid " -u, --notruncate       don't truncate text in columns\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: misc-utils/findmnt.c:1373
+#: misc-utils/findmnt.c:1371
 #, fuzzy
 msgid " -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: misc-utils/findmnt.c:1374
+#: misc-utils/findmnt.c:1372
 msgid " -y, --shell            use column names to be usable as shell variable identifiers\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1377
+#: misc-utils/findmnt.c:1375
 #, fuzzy
 msgid " -x, --verify           verify mount table content (default is fstab)\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1378
+#: misc-utils/findmnt.c:1376
 #, fuzzy
 msgid "     --verbose          print more details\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: misc-utils/findmnt.c:1379
+#: misc-utils/findmnt.c:1377
 #, fuzzy
 msgid "     --vfs-all          print all VFS options\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: misc-utils/findmnt.c:1519
+#: misc-utils/findmnt.c:1517
 #, fuzzy, c-format
 msgid "unknown direction '%s'"
 msgstr "<i> (ez dago iradokizunik) </i>"
 
-#: misc-utils/findmnt.c:1596
+#: misc-utils/findmnt.c:1594
 #, fuzzy
 msgid "invalid TID argument"
 msgstr "baliogabeko id-a: %s\n"
 
-#: misc-utils/findmnt.c:1683
+#: misc-utils/findmnt.c:1681
 msgid "--poll accepts only one file, but more specified by --tab-file"
 msgstr ""
 
-#: misc-utils/findmnt.c:1687
+#: misc-utils/findmnt.c:1685
 msgid "options --target and --source can't be used together with command line element that is not an option"
 msgstr ""
 
-#: misc-utils/findmnt.c:1740 sys-utils/fstrim.c:308
+#: misc-utils/findmnt.c:1738 sys-utils/fstrim.c:308
 #, fuzzy
 msgid "failed to initialize libmount cache"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: misc-utils/findmnt.c:1785
+#: misc-utils/findmnt.c:1783
 #, c-format
 msgid "%s column is requested, but --poll is not enabled"
 msgstr ""
@@ -15587,228 +15587,228 @@ msgstr ""
 msgid "debug-level messages"
 msgstr ""
 
-#: sys-utils/dmesg.c:131
+#: sys-utils/dmesg.c:132
 msgid "kernel messages"
 msgstr ""
 
-#: sys-utils/dmesg.c:132
+#: sys-utils/dmesg.c:133
 msgid "random user-level messages"
 msgstr ""
 
-#: sys-utils/dmesg.c:133
+#: sys-utils/dmesg.c:134
 #, fuzzy
 msgid "mail system"
 msgstr "Sartu fitxategi sistema moeta: "
 
-#: sys-utils/dmesg.c:134
+#: sys-utils/dmesg.c:135
 msgid "system daemons"
 msgstr ""
 
-#: sys-utils/dmesg.c:135
+#: sys-utils/dmesg.c:136
 msgid "security/authorization messages"
 msgstr ""
 
-#: sys-utils/dmesg.c:136
+#: sys-utils/dmesg.c:137
 msgid "messages generated internally by syslogd"
 msgstr ""
 
-#: sys-utils/dmesg.c:137
+#: sys-utils/dmesg.c:138
 msgid "line printer subsystem"
 msgstr ""
 
-#: sys-utils/dmesg.c:138
+#: sys-utils/dmesg.c:139
 msgid "network news subsystem"
 msgstr ""
 
-#: sys-utils/dmesg.c:139
+#: sys-utils/dmesg.c:140
 msgid "UUCP subsystem"
 msgstr ""
 
-#: sys-utils/dmesg.c:140
+#: sys-utils/dmesg.c:141
 #, fuzzy
 msgid "clock daemon"
 msgstr "Ezin da ireki"
 
-#: sys-utils/dmesg.c:141
+#: sys-utils/dmesg.c:142
 msgid "security/authorization messages (private)"
 msgstr ""
 
-#: sys-utils/dmesg.c:142
+#: sys-utils/dmesg.c:143
 #, fuzzy
 msgid "FTP daemon"
 msgstr "Ezin da ireki"
 
-#: sys-utils/dmesg.c:285
+#: sys-utils/dmesg.c:286
 msgid "Display or control the kernel ring buffer.\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:288
+#: sys-utils/dmesg.c:289
 #, fuzzy
 msgid " -C, --clear                 clear the kernel ring buffer\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/dmesg.c:289
+#: sys-utils/dmesg.c:290
 msgid " -c, --read-clear            read and clear all messages\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:290
+#: sys-utils/dmesg.c:291
 msgid " -D, --console-off           disable printing messages to console\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:291
+#: sys-utils/dmesg.c:292
 msgid " -E, --console-on            enable printing messages to console\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:292
+#: sys-utils/dmesg.c:293
 msgid " -F, --file <file>           use the file instead of the kernel log buffer\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:293
+#: sys-utils/dmesg.c:294
 msgid " -f, --facility <list>       restrict output to defined facilities\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:294
+#: sys-utils/dmesg.c:295
 #, fuzzy
 msgid " -H, --human                 human readable output\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/dmesg.c:295
+#: sys-utils/dmesg.c:296
 #, fuzzy
 msgid " -J, --json                  use JSON output format\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/dmesg.c:296
+#: sys-utils/dmesg.c:297
 #, fuzzy
 msgid " -k, --kernel                display kernel messages\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/dmesg.c:298
+#: sys-utils/dmesg.c:299
 #, fuzzy, c-format
 msgid " -L, --color[=<when>]        colorize messages (%s, %s or %s)\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/dmesg.c:301
+#: sys-utils/dmesg.c:302
 msgid " -l, --level <list>          restrict output to defined levels\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:302
+#: sys-utils/dmesg.c:303
 msgid " -n, --console-level <level> set level of messages printed to console\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:303
+#: sys-utils/dmesg.c:304
 #, fuzzy
 msgid " -P, --nopager               do not pipe output into a pager\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: sys-utils/dmesg.c:304
+#: sys-utils/dmesg.c:305
 msgid " -p, --force-prefix          force timestamp output on each line of multi-line messages\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:305
+#: sys-utils/dmesg.c:306
 #, fuzzy
 msgid " -r, --raw                   print the raw message buffer\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/dmesg.c:306
+#: sys-utils/dmesg.c:307
 #, fuzzy
 msgid "     --noescape              don't escape unprintable character\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/dmesg.c:307
+#: sys-utils/dmesg.c:308
 msgid " -S, --syslog                force to use syslog(2) rather than /dev/kmsg\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:308
+#: sys-utils/dmesg.c:309
 msgid " -s, --buffer-size <size>    buffer size to query the kernel ring buffer\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:309
+#: sys-utils/dmesg.c:310
 #, fuzzy
 msgid " -u, --userspace             display userspace messages\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/dmesg.c:310
+#: sys-utils/dmesg.c:311
 #, fuzzy
 msgid " -w, --follow                wait for new messages\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/dmesg.c:311
+#: sys-utils/dmesg.c:312
 #, fuzzy
 msgid " -W, --follow-new            wait and print only new messages\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/dmesg.c:312
+#: sys-utils/dmesg.c:313
 msgid " -x, --decode                decode facility and level to readable string\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:313
+#: sys-utils/dmesg.c:314
 msgid " -d, --show-delta            show time delta between printed messages\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:314
+#: sys-utils/dmesg.c:315
 msgid " -e, --reltime               show local time and time delta in readable format\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:315
+#: sys-utils/dmesg.c:316
 #, fuzzy
 msgid " -T, --ctime                 show human-readable timestamp (may be inaccurate!)\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/dmesg.c:316
+#: sys-utils/dmesg.c:317
 #, fuzzy
 msgid " -t, --notime                don't show any timestamp with messages\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/dmesg.c:317
+#: sys-utils/dmesg.c:318
 msgid ""
 "     --time-format <format>  show timestamp using the given format:\n"
 "                               [delta|reltime|ctime|notime|iso]\n"
 "Suspending/resume will make ctime and iso timestamps inaccurate.\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:320
+#: sys-utils/dmesg.c:321
 #, fuzzy
 msgid "     --since <time>          display the lines since the specified time\n"
 msgstr "  p          Erakutsi partizio taula pantailan edo idatzi fitxategiren batean"
 
-#: sys-utils/dmesg.c:321
+#: sys-utils/dmesg.c:322
 #, fuzzy
 msgid "     --until <time>          display the lines until the specified time\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: sys-utils/dmesg.c:325
+#: sys-utils/dmesg.c:326
 msgid ""
 "\n"
 "Supported log facilities:\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:331
+#: sys-utils/dmesg.c:332
 msgid ""
 "\n"
 "Supported log levels (priorities):\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:385
+#: sys-utils/dmesg.c:386
 #, fuzzy, c-format
 msgid "failed to parse level '%s'"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/dmesg.c:387
+#: sys-utils/dmesg.c:388
 #, fuzzy, c-format
 msgid "unknown level '%s'"
 msgstr "%s: Komando ezezaguna: %s\n"
 
-#: sys-utils/dmesg.c:423
+#: sys-utils/dmesg.c:424
 #, fuzzy, c-format
 msgid "failed to parse facility '%s'"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: sys-utils/dmesg.c:425
+#: sys-utils/dmesg.c:426
 #, fuzzy, c-format
 msgid "unknown facility '%s'"
 msgstr "<i> (ez dago iradokizunik) </i>"
 
-#: sys-utils/dmesg.c:553
+#: sys-utils/dmesg.c:554
 #, fuzzy, c-format
 msgid "cannot mmap: %s"
 msgstr "ezin da %s ireki"
@@ -15817,41 +15817,41 @@ msgstr "ezin da %s ireki"
 #. where %a is abbreviated name of the day, %b is abbreviated month
 #. name and %e is day of the month as a decimal number. Please, set
 #. proper month/day order here
-#: sys-utils/dmesg.c:869
+#: sys-utils/dmesg.c:870
 msgid "%a %b %e %H:%M:%S %Y"
 msgstr ""
 
 #. TRANSLATORS: dmesg uses strftime() fo generate date-time string
 #. where: %b is abbreviated month and %e is day of the month as a
 #. decimal number. Please, set proper month/day order here.
-#: sys-utils/dmesg.c:879
+#: sys-utils/dmesg.c:880
 msgid "%b%e %H:%M"
 msgstr ""
 
-#: sys-utils/dmesg.c:1532
+#: sys-utils/dmesg.c:1533
 #, fuzzy
 msgid "invalid buffer size argument"
 msgstr "baliogabeko aukera"
 
-#: sys-utils/dmesg.c:1618
+#: sys-utils/dmesg.c:1619
 msgid "--show-delta is ignored when used together with iso8601 time format"
 msgstr ""
 
-#: sys-utils/dmesg.c:1642
+#: sys-utils/dmesg.c:1643
 msgid "--raw can be used together with --level or --facility only when reading messages from /dev/kmsg"
 msgstr ""
 
-#: sys-utils/dmesg.c:1662
+#: sys-utils/dmesg.c:1663
 #, fuzzy
 msgid "read kernel buffer failed"
 msgstr "irakurri rtc ordua"
 
-#: sys-utils/dmesg.c:1670
+#: sys-utils/dmesg.c:1671
 #, fuzzy
 msgid "clear kernel buffer failed"
 msgstr "irakurri rtc ordua"
 
-#: sys-utils/dmesg.c:1686
+#: sys-utils/dmesg.c:1687
 #, fuzzy
 msgid "klogctl failed"
 msgstr "msgctl-ek huts egin du"

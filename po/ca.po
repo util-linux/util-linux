@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.38-rc4\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-12-04 13:21+0100\n"
+"POT-Creation-Date: 2024-04-03 14:31+0200\n"
 "PO-Revision-Date: 2022-08-18 13:40+0200\n"
 "Last-Translator: Jordi Mas i Hernàndez <jmas@softcatala.org>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -68,7 +68,7 @@ msgstr "Massa arguments.\n"
 #: misc-utils/fadvise.c:148 misc-utils/findmnt.c:1227 misc-utils/logger.c:1247
 #: misc-utils/mcookie.c:119 misc-utils/pipesz.c:162 misc-utils/uuidd.c:235
 #: sys-utils/blkdiscard.c:248 sys-utils/blkpr.c:164 sys-utils/blkzone.c:144
-#: sys-utils/dmesg.c:547 sys-utils/eject.c:501 sys-utils/eject.c:696
+#: sys-utils/dmesg.c:548 sys-utils/eject.c:501 sys-utils/eject.c:696
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:116 sys-utils/fstrim.c:106
 #: sys-utils/hwclock.c:241 sys-utils/hwclock.c:912 sys-utils/hwclock-rtc.c:108
 #: sys-utils/hwclock-rtc.c:353 sys-utils/hwclock-rtc.c:389
@@ -869,7 +869,7 @@ msgid " -r, --read-only          forced open cfdisk in read-only mode\n"
 msgstr "-r, --read-only obre cfdisk forçat en mode de només lectura"
 
 #: disk-utils/cfdisk.c:2770 disk-utils/fdisk.c:1016 disk-utils/sfdisk.c:2350
-#: misc-utils/cal.c:421 sys-utils/dmesg.c:1505 text-utils/hexdump.c:114
+#: misc-utils/cal.c:421 sys-utils/dmesg.c:1506 text-utils/hexdump.c:114
 #, fuzzy
 msgid "unsupported color mode"
 msgstr "mode de color no admès"
@@ -991,7 +991,7 @@ msgstr "argument no vàlid - es repara"
 #: disk-utils/mkfs.minix.c:839 disk-utils/mkswap.c:381 disk-utils/partx.c:966
 #: login-utils/last.c:697 login-utils/utmpdump.c:145 misc-utils/namei.c:146
 #: misc-utils/rename.c:164 misc-utils/rename.c:229 sys-utils/blkdiscard.c:251
-#: sys-utils/blkzone.c:147 sys-utils/dmesg.c:549 sys-utils/fallocate.c:201
+#: sys-utils/blkzone.c:147 sys-utils/dmesg.c:550 sys-utils/fallocate.c:201
 #: sys-utils/fsfreeze.c:119 sys-utils/fstrim.c:78 sys-utils/nsenter.c:187
 #: sys-utils/swapon.c:530 sys-utils/switch_root.c:93
 #: sys-utils/switch_root.c:134 sys-utils/switch_root.c:139
@@ -1386,7 +1386,7 @@ msgstr "Avís: l'opció -b (estableix la mida del sector) s'ha d'usar amb un dis
 #: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:592
 #: misc-utils/whereis.c:603 misc-utils/whereis.c:614 misc-utils/whereis.c:659
 #: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:207
-#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1585
+#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1586
 #: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:926
 #: sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656 sys-utils/mount.c:867
 #: sys-utils/mount.c:875 sys-utils/mount.c:924 sys-utils/mount.c:937
@@ -1506,7 +1506,7 @@ msgstr "No s'ha pogut assignar la memòria temporal.\n"
 
 #: disk-utils/fdisk-list.c:136 disk-utils/fdisk-list.c:257
 #: disk-utils/partx.c:676 login-utils/lslogins.c:1113 misc-utils/fincore.c:357
-#: misc-utils/findmnt.c:1763 misc-utils/lsblk.c:2351 misc-utils/lsfd.c:1974
+#: misc-utils/findmnt.c:1761 misc-utils/lsblk.c:2351 misc-utils/lsfd.c:1974
 #: misc-utils/lslocks.c:472 misc-utils/uuidparse.c:252 misc-utils/wipefs.c:157
 #: sys-utils/losetup.c:326 sys-utils/lscpu.c:604 sys-utils/lscpu.c:759
 #: sys-utils/lscpu.c:970 sys-utils/lsipc.c:354 sys-utils/prlimit.c:311
@@ -3290,7 +3290,7 @@ msgstr ""
 
 #: disk-utils/fsck.minix.c:1435 disk-utils/mkfs.minix.c:858
 #: disk-utils/mkswap.c:744 disk-utils/partx.c:1078 disk-utils/resizepart.c:125
-#: login-utils/utmpdump.c:408 sys-utils/dmesg.c:690 sys-utils/wdctl.c:457
+#: login-utils/utmpdump.c:408 sys-utils/dmesg.c:691 sys-utils/wdctl.c:457
 #: sys-utils/wdctl.c:536 term-utils/setterm.c:911 text-utils/col.c:195
 #: text-utils/pg.c:1255
 #, fuzzy
@@ -4521,7 +4521,7 @@ msgid_plural "#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n"
 msgstr[0] ")%2d: %9ju-%9ju (%9ju sector, %6ju MB)"
 msgstr[1] ")%2d: %9ju-%9ju (%9ju sectors, %6ju MB)"
 
-#: disk-utils/partx.c:687 misc-utils/fincore.c:371 misc-utils/findmnt.c:1792
+#: disk-utils/partx.c:687 misc-utils/fincore.c:371 misc-utils/findmnt.c:1790
 #: misc-utils/lsblk.c:2395 misc-utils/lsfd.c:533 misc-utils/lsfd.c:1988
 #: misc-utils/lslocks.c:487 sys-utils/losetup.c:340 sys-utils/lscpu.c:616
 #: sys-utils/lscpu.c:772 sys-utils/prlimit.c:320 sys-utils/rfkill.c:487
@@ -5259,7 +5259,7 @@ msgstr "Exemple:"
 msgid "   , 4G     Creates a 4GiB partition at default start offset.\n"
 msgstr ", 4G Crea una partició 4GiB al desplaçament inicial predeterminat."
 
-#: disk-utils/sfdisk.c:1546 sys-utils/dmesg.c:1680
+#: disk-utils/sfdisk.c:1546 sys-utils/dmesg.c:1681
 #, fuzzy
 #| msgid "no command?\n"
 msgid "unsupported command"
@@ -9981,7 +9981,7 @@ msgstr "S'ha canviat l'intèrpret d'ordres.\n"
 msgid "Usage: %s <passwordfile> <username>...\n"
 msgstr "Forma d'ús: passwd [nom_usuari [contrasenya]]\n"
 
-#: login-utils/last.c:175 login-utils/lslogins.c:1433 sys-utils/dmesg.c:1348
+#: login-utils/last.c:175 login-utils/lslogins.c:1433 sys-utils/dmesg.c:1349
 #: sys-utils/lsipc.c:283
 #, fuzzy, c-format
 msgid "unknown time format: %s"
@@ -10096,7 +10096,7 @@ msgid "failed to parse number"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
 #: login-utils/last.c:1032 login-utils/last.c:1037 login-utils/last.c:1042
-#: sys-utils/dmesg.c:1566 sys-utils/dmesg.c:1572 sys-utils/rtcwake.c:511
+#: sys-utils/dmesg.c:1567 sys-utils/dmesg.c:1573 sys-utils/rtcwake.c:511
 #, fuzzy, c-format
 #| msgid "Invalid set time value: %s\n"
 msgid "invalid time value \"%s\""
@@ -10918,7 +10918,7 @@ msgstr "setuid() ha fallat"
 
 #: login-utils/nologin.c:28 misc-utils/lsfd.c:1539 misc-utils/lslocks.c:545
 #: misc-utils/mcookie.c:83 misc-utils/uuidd.c:97 misc-utils/uuidgen.c:26
-#: sys-utils/dmesg.c:282 sys-utils/ipcmk.c:67 sys-utils/irqtop.c:262
+#: sys-utils/dmesg.c:283 sys-utils/ipcmk.c:67 sys-utils/irqtop.c:262
 #: sys-utils/lscpu.c:1177 sys-utils/lsipc.c:292 sys-utils/lsirq.c:57
 #: sys-utils/lsmem.c:519 sys-utils/readprofile.c:106 sys-utils/rtcwake.c:99
 #: term-utils/scriptlive.c:57 term-utils/scriptreplay.c:47
@@ -11335,7 +11335,7 @@ msgstr ""
 " -t, --timeout <seconds> max temps per esperar una contrasenya (per defecte: sense límit)\n"
 " -e, --force examina els fitxers de contrasenya directament si falla getpwnam(3)"
 
-#: login-utils/sulogin.c:938 misc-utils/findmnt.c:1619 sys-utils/wdctl.c:764
+#: login-utils/sulogin.c:938 misc-utils/findmnt.c:1617 sys-utils/wdctl.c:764
 #: term-utils/agetty.c:860 term-utils/wall.c:219
 #, fuzzy
 msgid "invalid timeout argument"
@@ -12259,7 +12259,7 @@ msgstr "No s'ha pogut assignar la memòria temporal.\n"
 msgid "poll() failed"
 msgstr "l'assignació de memòria (malloc) ha fallat"
 
-#: misc-utils/findmnt.c:1320
+#: misc-utils/findmnt.c:1318
 #, fuzzy, c-format
 msgid ""
 " %1$s [options]\n"
@@ -12272,17 +12272,17 @@ msgstr ""
 " %1$s ]opcions] <device> <mountpoint>\n"
 " %1$s ]opcions] ]--source <device>] ]--target <path> ] --mountpoint <dir>]"
 
-#: misc-utils/findmnt.c:1327
+#: misc-utils/findmnt.c:1325
 #, fuzzy
 msgid "Find a (mounted) filesystem.\n"
 msgstr "S'està forçant la comprovació del sistema de fitxers a %s.\n"
 
-#: misc-utils/findmnt.c:1330
+#: misc-utils/findmnt.c:1328
 #, fuzzy
 msgid " -s, --fstab            search in static table of filesystems\n"
 msgstr "-s, --fstab cerca a la taula estàtica de sistemes de fitxers"
 
-#: misc-utils/findmnt.c:1331
+#: misc-utils/findmnt.c:1329
 #, fuzzy
 msgid ""
 " -m, --mtab             search in table of mounted filesystems\n"
@@ -12291,7 +12291,7 @@ msgstr ""
 "-m, --mtab cerca a la taula de sistemes de fitxers muntats\n"
 "                          (inclou les opcions de muntatge de l'espai d'usuari)"
 
-#: misc-utils/findmnt.c:1333
+#: misc-utils/findmnt.c:1331
 #, fuzzy
 msgid ""
 " -k, --kernel           search in kernel table of mounted\n"
@@ -12300,54 +12300,54 @@ msgstr ""
 "-k, --kernel cerca a la taula del nucli muntada\n"
 "                          sistemes de fitxers (per defecte)"
 
-#: misc-utils/findmnt.c:1336
+#: misc-utils/findmnt.c:1334
 #, fuzzy
 msgid " -p, --poll[=<list>]    monitor changes in table of mounted filesystems\n"
 msgstr "-p, --poll]=<list>] monitora els canvis a la taula dels sistemes de fitxers muntats"
 
-#: misc-utils/findmnt.c:1337
+#: misc-utils/findmnt.c:1335
 #, fuzzy
 msgid " -w, --timeout <num>    upper limit in milliseconds that --poll will block\n"
 msgstr "-w, --timeout <num> límit superior en mil·lisegons que --poll bloquejarà"
 
-#: misc-utils/findmnt.c:1340
+#: misc-utils/findmnt.c:1338
 #, fuzzy
 msgid " -A, --all              disable all built-in filters, print all filesystems\n"
 msgstr "-A, --all desactiva tots els filtres integrats, imprimeix tots els sistemes de fitxers"
 
-#: misc-utils/findmnt.c:1341
+#: misc-utils/findmnt.c:1339
 #, fuzzy
 #| msgid "  -V, --version                Output version information\n"
 msgid " -a, --ascii            use ASCII chars for tree formatting\n"
 msgstr "  -V, --version                Mostra la informació de la versió\n"
 
-#: misc-utils/findmnt.c:1342
+#: misc-utils/findmnt.c:1340
 #, fuzzy
 msgid " -b, --bytes            print sizes in bytes rather than in human readable format\n"
 msgstr "-b, --bytes imprimeix les mides en bytes en lloc d'en un format llegible per humans"
 
-#: misc-utils/findmnt.c:1343
+#: misc-utils/findmnt.c:1341
 #, fuzzy
 msgid " -C, --nocanonicalize   don't canonicalize when comparing paths\n"
 msgstr "-C, --nocanonicalize no és canònic en comparar camins"
 
-#: misc-utils/findmnt.c:1344
+#: misc-utils/findmnt.c:1342
 #, fuzzy
 msgid " -c, --canonicalize     canonicalize printed paths\n"
 msgstr "-c, --canonicalitza els camins impresos"
 
-#: misc-utils/findmnt.c:1345
+#: misc-utils/findmnt.c:1343
 #, fuzzy
 #| msgid "  -u, --unqote                 Do not quote the output\n"
 msgid " -D, --df               imitate the output of df(1)\n"
 msgstr "  -u, --unqote                 No es posarà la sortida entre cometes\n"
 
-#: misc-utils/findmnt.c:1346
+#: misc-utils/findmnt.c:1344
 #, fuzzy
 msgid " -d, --direction <word> direction of search, 'forward' or 'backward'\n"
 msgstr "-d, --direction <word> adreça de cerca, 'endavant' o 'endavant'"
 
-#: misc-utils/findmnt.c:1347
+#: misc-utils/findmnt.c:1345
 #, fuzzy
 msgid ""
 " -e, --evaluate         convert tags (LABEL,UUID,PARTUUID,PARTLABEL) \n"
@@ -12356,92 +12356,92 @@ msgstr ""
 "-e, --evaluate converteix etiquetes (ETIQUETA,UUID,PARTUUID,PARTLABEL) \n"
 "                          als noms dels dispositius"
 
-#: misc-utils/findmnt.c:1349
+#: misc-utils/findmnt.c:1347
 #, fuzzy
 msgid " -F, --tab-file <path>  alternative file for -s, -m or -k options\n"
 msgstr "-F, --tab-file <path> fitxer alternatiu per a les opcions -s, -m o -k"
 
-#: misc-utils/findmnt.c:1350
+#: misc-utils/findmnt.c:1348
 #, fuzzy
 msgid " -f, --first-only       print the first found filesystem only\n"
 msgstr "-f, --first-only només imprimeix el primer sistema de fitxers trobat"
 
-#: misc-utils/findmnt.c:1351
+#: misc-utils/findmnt.c:1349
 #, fuzzy
 msgid " -i, --invert           invert the sense of matching\n"
 msgstr "-i, --invert inverteix el sentit de la coincidència"
 
-#: misc-utils/findmnt.c:1352 misc-utils/lslocks.c:552 sys-utils/lsns.c:1291
+#: misc-utils/findmnt.c:1350 misc-utils/lslocks.c:552 sys-utils/lsns.c:1291
 #: sys-utils/rfkill.c:639
 #, fuzzy
 #| msgid "  -V, --version                Output version information\n"
 msgid " -J, --json             use JSON output format\n"
 msgstr "  -V, --version                Mostra la informació de la versió\n"
 
-#: misc-utils/findmnt.c:1353 sys-utils/lsns.c:1292
+#: misc-utils/findmnt.c:1351 sys-utils/lsns.c:1292
 #, fuzzy
 #| msgid "  -Q, --quiet-output           No normal output\n"
 msgid " -l, --list             use list format output\n"
 msgstr "  -Q, --quiet-output           No hi ha sortida normal\n"
 
-#: misc-utils/findmnt.c:1354
+#: misc-utils/findmnt.c:1352
 #, fuzzy
 msgid " -N, --task <tid>       use alternative namespace (/proc/<tid>/mountinfo file)\n"
 msgstr "-N, --task <tid> utilitza un espai de noms alternatiu (/proc/<tid>/mountinfo fitxer)"
 
-#: misc-utils/findmnt.c:1355
+#: misc-utils/findmnt.c:1353
 #, fuzzy
 msgid " -n, --noheadings       don't print column headings\n"
 msgstr "-n, --noheadings no imprimeix encapçalaments de columna"
 
-#: misc-utils/findmnt.c:1356
+#: misc-utils/findmnt.c:1354
 #, fuzzy
 msgid " -O, --options <list>   limit the set of filesystems by mount options\n"
 msgstr "-O, --options <list> limita el conjunt de sistemes de fitxers per les opcions de muntatge"
 
-#: misc-utils/findmnt.c:1357
+#: misc-utils/findmnt.c:1355
 #, fuzzy
 msgid " -o, --output <list>    the output columns to be shown\n"
 msgstr "-o, --output <list> les columnes de sortida a mostrar"
 
-#: misc-utils/findmnt.c:1358
+#: misc-utils/findmnt.c:1356
 #, fuzzy
 msgid "     --output-all       output all available columns\n"
 msgstr "--output-all mostra totes les columnes disponibles"
 
-#: misc-utils/findmnt.c:1359
+#: misc-utils/findmnt.c:1357
 #, fuzzy
 #| msgid "  -V, --version                Output version information\n"
 msgid " -P, --pairs            use key=\"value\" output format\n"
 msgstr "  -V, --version                Mostra la informació de la versió\n"
 
-#: misc-utils/findmnt.c:1360
+#: misc-utils/findmnt.c:1358
 #, fuzzy
 msgid "     --pseudo           print only pseudo-filesystems\n"
 msgstr "--pseudo només imprimeix pseudosistema de fitxers"
 
-#: misc-utils/findmnt.c:1361
+#: misc-utils/findmnt.c:1359
 #, fuzzy
 msgid "     --shadowed         print only filesystems over-mounted by another filesystem\n"
 msgstr "--shadowed print només els sistemes de fitxers sobremuntats per un altre sistema de fitxers"
 
-#: misc-utils/findmnt.c:1362
+#: misc-utils/findmnt.c:1360
 #, fuzzy
 msgid " -R, --submounts        print all submounts for the matching filesystems\n"
 msgstr "-R, --submounts imprimeix totes les submuntacions per als sistemes de fitxers coincidents"
 
-#: misc-utils/findmnt.c:1363
+#: misc-utils/findmnt.c:1361
 #, fuzzy
 #| msgid "  -V, --version                Output version information\n"
 msgid " -r, --raw              use raw output format\n"
 msgstr "  -V, --version                Mostra la informació de la versió\n"
 
-#: misc-utils/findmnt.c:1364
+#: misc-utils/findmnt.c:1362
 #, fuzzy
 msgid "     --real             print only real filesystems\n"
 msgstr "--real només imprimeix sistemes de fitxers reals"
 
-#: misc-utils/findmnt.c:1365
+#: misc-utils/findmnt.c:1363
 #, fuzzy
 msgid ""
 " -S, --source <string>  the device to mount (by name, maj:min, \n"
@@ -12450,91 +12450,91 @@ msgstr ""
 "-S, --source <string> el dispositiu a muntar (per nom, maj:min, \n"
 "                          ETIQUETA=, UUID=, PARTUUID=, PARTLABEL=)"
 
-#: misc-utils/findmnt.c:1367
+#: misc-utils/findmnt.c:1365
 #, fuzzy
 msgid " -T, --target <path>    the path to the filesystem to use\n"
 msgstr "-T, --target <path> el camí al sistema de fitxers a usar"
 
-#: misc-utils/findmnt.c:1368
+#: misc-utils/findmnt.c:1366
 #, fuzzy
 #| msgid "                t - Table in raw format"
 msgid "     --tree             enable tree format output if possible\n"
 msgstr "                t - Taula en format cru"
 
-#: misc-utils/findmnt.c:1369
+#: misc-utils/findmnt.c:1367
 #, fuzzy
 #| msgid "mount: mount point %s is not a directory"
 msgid " -M, --mountpoint <dir> the mountpoint directory\n"
 msgstr "mount: el punt de muntatge %s no és un directori"
 
-#: misc-utils/findmnt.c:1370
+#: misc-utils/findmnt.c:1368
 #, fuzzy
 #| msgid "   l   list known filesystem types"
 msgid " -t, --types <list>     limit the set of filesystems by FS types\n"
 msgstr "   l   llista els tipus de sistemes de fitxers coneguts"
 
-#: misc-utils/findmnt.c:1371
+#: misc-utils/findmnt.c:1369
 #, fuzzy
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
 msgstr "-U, --uniq ignora els sistemes de fitxers amb un objectiu duplicat"
 
-#: misc-utils/findmnt.c:1372 misc-utils/lslocks.c:559 sys-utils/lsns.c:1299
+#: misc-utils/findmnt.c:1370 misc-utils/lslocks.c:559 sys-utils/lsns.c:1299
 #, fuzzy
 msgid " -u, --notruncate       don't truncate text in columns\n"
 msgstr "-u, --notruncate no trunca el text en columnes"
 
-#: misc-utils/findmnt.c:1373
+#: misc-utils/findmnt.c:1371
 #, fuzzy
 msgid " -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
 msgstr "-v, --nofsroot no imprimeix s/dir] per als muntatges de lligadures o btrfs"
 
-#: misc-utils/findmnt.c:1374
+#: misc-utils/findmnt.c:1372
 #, fuzzy
 msgid " -y, --shell            use column names to be usable as shell variable identifiers\n"
 msgstr "-y, --shell usa els noms de les columnes perquè es puguin utilitzar com a identificadors de variable de l'intèrpret d'ordres"
 
-#: misc-utils/findmnt.c:1377
+#: misc-utils/findmnt.c:1375
 #, fuzzy
 msgid " -x, --verify           verify mount table content (default is fstab)\n"
 msgstr "-x, --verify verifica el contingut de la taula de muntatge (per defecte és fstab)"
 
-#: misc-utils/findmnt.c:1378
+#: misc-utils/findmnt.c:1376
 #, fuzzy
 #| msgid "              parameters\n"
 msgid "     --verbose          print more details\n"
 msgstr "              paràmetres\n"
 
-#: misc-utils/findmnt.c:1379
+#: misc-utils/findmnt.c:1377
 #, fuzzy
 msgid "     --vfs-all          print all VFS options\n"
 msgstr "--vfs-all imprimeix totes les opcions VFS"
 
-#: misc-utils/findmnt.c:1519
+#: misc-utils/findmnt.c:1517
 #, fuzzy, c-format
 msgid "unknown direction '%s'"
 msgstr "no es reconeix el tipus de la font: %s\n"
 
-#: misc-utils/findmnt.c:1596
+#: misc-utils/findmnt.c:1594
 #, fuzzy
 msgid "invalid TID argument"
 msgstr "col: argument -l incorrecte %s.\n"
 
-#: misc-utils/findmnt.c:1683
+#: misc-utils/findmnt.c:1681
 #, fuzzy
 msgid "--poll accepts only one file, but more specified by --tab-file"
 msgstr "--poll accepta només un fitxer, però més especificat per --tab-file"
 
-#: misc-utils/findmnt.c:1687
+#: misc-utils/findmnt.c:1685
 #, fuzzy
 msgid "options --target and --source can't be used together with command line element that is not an option"
 msgstr "les opcions --target i --source no es poden utilitzar juntament amb l'element de línia d'ordres que no és una opció"
 
-#: misc-utils/findmnt.c:1740 sys-utils/fstrim.c:308
+#: misc-utils/findmnt.c:1738 sys-utils/fstrim.c:308
 #, fuzzy
 msgid "failed to initialize libmount cache"
 msgstr "no s'ha pogut inicialitzar la memòria cau de la libmount"
 
-#: misc-utils/findmnt.c:1785
+#: misc-utils/findmnt.c:1783
 #, fuzzy, c-format
 msgid "%s column is requested, but --poll is not enabled"
 msgstr "Es demana la columna %s, però --poll no està habilitat"
@@ -17561,73 +17561,73 @@ msgstr "informacióal"
 msgid "debug-level messages"
 msgstr "missatges a nivell de depuració"
 
-#: sys-utils/dmesg.c:131
+#: sys-utils/dmesg.c:132
 #, fuzzy
 #| msgid "messages"
 msgid "kernel messages"
 msgstr "missatges"
 
-#: sys-utils/dmesg.c:132
+#: sys-utils/dmesg.c:133
 #, fuzzy
 msgid "random user-level messages"
 msgstr "missatges aleatoris a nivell d'usuari"
 
-#: sys-utils/dmesg.c:133
+#: sys-utils/dmesg.c:134
 #, fuzzy
 msgid "mail system"
 msgstr "sistema de correu"
 
-#: sys-utils/dmesg.c:134
+#: sys-utils/dmesg.c:135
 #, fuzzy
 msgid "system daemons"
 msgstr "dimonis del sistema"
 
-#: sys-utils/dmesg.c:135
+#: sys-utils/dmesg.c:136
 #, fuzzy
 msgid "security/authorization messages"
 msgstr "missatges de seguretat/autorització"
 
-#: sys-utils/dmesg.c:136
+#: sys-utils/dmesg.c:137
 #, fuzzy
 msgid "messages generated internally by syslogd"
 msgstr "missatges generats internament per syslogd"
 
-#: sys-utils/dmesg.c:137
+#: sys-utils/dmesg.c:138
 #, fuzzy
 msgid "line printer subsystem"
 msgstr "subsistema d'impressora de línia"
 
-#: sys-utils/dmesg.c:138
+#: sys-utils/dmesg.c:139
 #, fuzzy
 msgid "network news subsystem"
 msgstr "subsistema de notícies de xarxa"
 
-#: sys-utils/dmesg.c:139
+#: sys-utils/dmesg.c:140
 #, fuzzy
 msgid "UUCP subsystem"
 msgstr "Subsistema UUCP"
 
-#: sys-utils/dmesg.c:140
+#: sys-utils/dmesg.c:141
 #, fuzzy
 msgid "clock daemon"
 msgstr "%s no es pot obrir"
 
-#: sys-utils/dmesg.c:141
+#: sys-utils/dmesg.c:142
 #, fuzzy
 msgid "security/authorization messages (private)"
 msgstr "missatges de seguretat/autorització (privat)"
 
-#: sys-utils/dmesg.c:142
+#: sys-utils/dmesg.c:143
 #, fuzzy
 msgid "FTP daemon"
 msgstr "Dimoni FTP"
 
-#: sys-utils/dmesg.c:285
+#: sys-utils/dmesg.c:286
 #, fuzzy
 msgid "Display or control the kernel ring buffer.\n"
 msgstr "Mostra o controla la memòria intermèdia de l'anell del nucli."
 
-#: sys-utils/dmesg.c:288
+#: sys-utils/dmesg.c:289
 #, fuzzy
 #| msgid "  -q, --quiet                  Disable error reporting by getopt(3)\n"
 msgid " -C, --clear                 clear the kernel ring buffer\n"
@@ -17635,140 +17635,140 @@ msgstr ""
 "  -q, --quiet                  Inhabilita els informes d'error mitjançant\n"
 "                               getopt(3)\n"
 
-#: sys-utils/dmesg.c:289
+#: sys-utils/dmesg.c:290
 #, fuzzy
 msgid " -c, --read-clear            read and clear all messages\n"
 msgstr "-c, --read-clear llegeix i neteja tots els missatges"
 
-#: sys-utils/dmesg.c:290
+#: sys-utils/dmesg.c:291
 #, fuzzy
 msgid " -D, --console-off           disable printing messages to console\n"
 msgstr "-D, --console-off desactiva la impressió de missatges a la consola"
 
-#: sys-utils/dmesg.c:291
+#: sys-utils/dmesg.c:292
 #, fuzzy
 msgid " -E, --console-on            enable printing messages to console\n"
 msgstr "-E, --console-on permet imprimir missatges a la consola"
 
-#: sys-utils/dmesg.c:292
+#: sys-utils/dmesg.c:293
 #, fuzzy
 msgid " -F, --file <file>           use the file instead of the kernel log buffer\n"
 msgstr "-F, --file <file> utilitza el fitxer en lloc de la memòria intermèdia del registre del nucli"
 
-#: sys-utils/dmesg.c:293
+#: sys-utils/dmesg.c:294
 #, fuzzy
 msgid " -f, --facility <list>       restrict output to defined facilities\n"
 msgstr "-f, --facility <list> restringeix la sortida a les instal·lacions definides"
 
-#: sys-utils/dmesg.c:294
+#: sys-utils/dmesg.c:295
 #, fuzzy
 #| msgid "  -u, --unqote                 Do not quote the output\n"
 msgid " -H, --human                 human readable output\n"
 msgstr "  -u, --unqote                 No es posarà la sortida entre cometes\n"
 
-#: sys-utils/dmesg.c:295
+#: sys-utils/dmesg.c:296
 #, fuzzy
 #| msgid "  -V, --version                Output version information\n"
 msgid " -J, --json                  use JSON output format\n"
 msgstr "  -V, --version                Mostra la informació de la versió\n"
 
-#: sys-utils/dmesg.c:296
+#: sys-utils/dmesg.c:297
 #, fuzzy
 #| msgid "  -h, --help                   This small usage guide\n"
 msgid " -k, --kernel                display kernel messages\n"
 msgstr "  -h, --help                   Aquesta petita guia d'ús\n"
 
-#: sys-utils/dmesg.c:298
+#: sys-utils/dmesg.c:299
 #, fuzzy, c-format
 msgid " -L, --color[=<when>]        colorize messages (%s, %s or %s)\n"
 msgstr "-L, --color)=<when>] acoloreix els missatges (%s, %s o %s)"
 
-#: sys-utils/dmesg.c:301
+#: sys-utils/dmesg.c:302
 #, fuzzy
 msgid " -l, --level <list>          restrict output to defined levels\n"
 msgstr "-l, --level <list> restringeix la sortida als nivells definits"
 
-#: sys-utils/dmesg.c:302
+#: sys-utils/dmesg.c:303
 #, fuzzy
 msgid " -n, --console-level <level> set level of messages printed to console\n"
 msgstr "-n, --console-level <level> estableix el nivell dels missatges impresos a la consola"
 
-#: sys-utils/dmesg.c:303
+#: sys-utils/dmesg.c:304
 #, fuzzy
 #| msgid "  -u, --unqote                 Do not quote the output\n"
 msgid " -P, --nopager               do not pipe output into a pager\n"
 msgstr "  -u, --unqote                 No es posarà la sortida entre cometes\n"
 
-#: sys-utils/dmesg.c:304
+#: sys-utils/dmesg.c:305
 #, fuzzy
 msgid " -p, --force-prefix          force timestamp output on each line of multi-line messages\n"
 msgstr "-p, --force-prefix força la sortida de la marca horària a cada línia de missatges multilínia"
 
-#: sys-utils/dmesg.c:305
+#: sys-utils/dmesg.c:306
 #, fuzzy
 #| msgid "  -h, --help                   This small usage guide\n"
 msgid " -r, --raw                   print the raw message buffer\n"
 msgstr "  -h, --help                   Aquesta petita guia d'ús\n"
 
-#: sys-utils/dmesg.c:306
+#: sys-utils/dmesg.c:307
 #, fuzzy
 msgid "     --noescape              don't escape unprintable character\n"
 msgstr "--noescape no escapa del caràcter imprimible"
 
-#: sys-utils/dmesg.c:307
+#: sys-utils/dmesg.c:308
 #, fuzzy
 msgid " -S, --syslog                force to use syslog(2) rather than /dev/kmsg\n"
 msgstr "-S, --syslog force per utilitzar syslog(2) en lloc de /dev/kmsg"
 
-#: sys-utils/dmesg.c:308
+#: sys-utils/dmesg.c:309
 #, fuzzy
 msgid " -s, --buffer-size <size>    buffer size to query the kernel ring buffer\n"
 msgstr "-s, --buffer-size <size> mida de la memòria intermèdia per consultar la memòria intermèdia de l'anell del nucli"
 
-#: sys-utils/dmesg.c:309
+#: sys-utils/dmesg.c:310
 #, fuzzy
 #| msgid "  -h, --help                   This small usage guide\n"
 msgid " -u, --userspace             display userspace messages\n"
 msgstr "  -h, --help                   Aquesta petita guia d'ús\n"
 
-#: sys-utils/dmesg.c:310
+#: sys-utils/dmesg.c:311
 #, fuzzy
 #| msgid "  -h, --help                   This small usage guide\n"
 msgid " -w, --follow                wait for new messages\n"
 msgstr "  -h, --help                   Aquesta petita guia d'ús\n"
 
-#: sys-utils/dmesg.c:311
+#: sys-utils/dmesg.c:312
 #, fuzzy
 msgid " -W, --follow-new            wait and print only new messages\n"
 msgstr "-W, --follow-new espera i imprimeix només els missatges nous"
 
-#: sys-utils/dmesg.c:312
+#: sys-utils/dmesg.c:313
 #, fuzzy
 msgid " -x, --decode                decode facility and level to readable string\n"
 msgstr "-x, --decode descodifica la instal·lació i el nivell a la cadena llegible"
 
-#: sys-utils/dmesg.c:313
+#: sys-utils/dmesg.c:314
 #, fuzzy
 msgid " -d, --show-delta            show time delta between printed messages\n"
 msgstr "-d, --show-delta mostra el delta del temps entre els missatges impresos"
 
-#: sys-utils/dmesg.c:314
+#: sys-utils/dmesg.c:315
 #, fuzzy
 msgid " -e, --reltime               show local time and time delta in readable format\n"
 msgstr "-e, --reltime mostra el delta local de l'hora i l'hora en format llegible"
 
-#: sys-utils/dmesg.c:315
+#: sys-utils/dmesg.c:316
 #, fuzzy
 msgid " -T, --ctime                 show human-readable timestamp (may be inaccurate!)\n"
 msgstr "-T, --ctime mostra la marca horària llegible per humans (pot ser inexacta!)"
 
-#: sys-utils/dmesg.c:316
+#: sys-utils/dmesg.c:317
 #, fuzzy
 #| msgid "  -u, --unqote                 Do not quote the output\n"
 msgid " -t, --notime                don't show any timestamp with messages\n"
 msgstr "  -u, --unqote                 No es posarà la sortida entre cometes\n"
 
-#: sys-utils/dmesg.c:317
+#: sys-utils/dmesg.c:318
 #, fuzzy
 msgid ""
 "     --time-format <format>  show timestamp using the given format:\n"
@@ -17779,51 +17779,51 @@ msgstr ""
 "                               ]delta]reltime]ctime]notime]iso]\n"
 "La suspensió/resumir farà que les marques horàries ctime i iso siguin inexactes."
 
-#: sys-utils/dmesg.c:320
+#: sys-utils/dmesg.c:321
 #, fuzzy
 msgid "     --since <time>          display the lines since the specified time\n"
 msgstr "--since <time> mostra les línies des del temps especificat"
 
-#: sys-utils/dmesg.c:321
+#: sys-utils/dmesg.c:322
 #, fuzzy
 msgid "     --until <time>          display the lines until the specified time\n"
 msgstr "--until <time> mostra les línies fins al temps especificat"
 
-#: sys-utils/dmesg.c:325
+#: sys-utils/dmesg.c:326
 #, fuzzy
 msgid ""
 "\n"
 "Supported log facilities:\n"
 msgstr "Instal·lacions de registre admeses:"
 
-#: sys-utils/dmesg.c:331
+#: sys-utils/dmesg.c:332
 #, fuzzy
 msgid ""
 "\n"
 "Supported log levels (priorities):\n"
 msgstr "Nivells de registre admesos (prioritats):"
 
-#: sys-utils/dmesg.c:385
+#: sys-utils/dmesg.c:386
 #, fuzzy, c-format
 msgid "failed to parse level '%s'"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: sys-utils/dmesg.c:387
+#: sys-utils/dmesg.c:388
 #, fuzzy, c-format
 msgid "unknown level '%s'"
 msgstr "no es reconeix el tipus de la font: %s\n"
 
-#: sys-utils/dmesg.c:423
+#: sys-utils/dmesg.c:424
 #, fuzzy, c-format
 msgid "failed to parse facility '%s'"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: sys-utils/dmesg.c:425
+#: sys-utils/dmesg.c:426
 #, fuzzy, c-format
 msgid "unknown facility '%s'"
 msgstr "no es reconeix el tipus de la font: %s\n"
 
-#: sys-utils/dmesg.c:553
+#: sys-utils/dmesg.c:554
 #, fuzzy, c-format
 #| msgid "cannot open %s"
 msgid "cannot mmap: %s"
@@ -17833,7 +17833,7 @@ msgstr "%s no es pot obrir"
 #. where %a is abbreviated name of the day, %b is abbreviated month
 #. name and %e is day of the month as a decimal number. Please, set
 #. proper month/day order here
-#: sys-utils/dmesg.c:869
+#: sys-utils/dmesg.c:870
 #, fuzzy
 msgid "%a %b %e %H:%M:%S %Y"
 msgstr "%a %e %b %H:%M:%S %Y"
@@ -17841,37 +17841,37 @@ msgstr "%a %e %b %H:%M:%S %Y"
 #. TRANSLATORS: dmesg uses strftime() fo generate date-time string
 #. where: %b is abbreviated month and %e is day of the month as a
 #. decimal number. Please, set proper month/day order here.
-#: sys-utils/dmesg.c:879
+#: sys-utils/dmesg.c:880
 #, fuzzy
 msgid "%b%e %H:%M"
 msgstr "%b%e %H:%M"
 
-#: sys-utils/dmesg.c:1532
+#: sys-utils/dmesg.c:1533
 #, fuzzy
 msgid "invalid buffer size argument"
 msgstr "l'argument de mida de la memòria intermèdia no és vàlid"
 
-#: sys-utils/dmesg.c:1618
+#: sys-utils/dmesg.c:1619
 #, fuzzy
 msgid "--show-delta is ignored when used together with iso8601 time format"
 msgstr "--show-delta s'ignora quan s'utilitza juntament amb el format d'hora ISO8601"
 
-#: sys-utils/dmesg.c:1642
+#: sys-utils/dmesg.c:1643
 #, fuzzy
 msgid "--raw can be used together with --level or --facility only when reading messages from /dev/kmsg"
 msgstr "--raw es pot utilitzar juntament amb --level o --facility només en llegir missatges de /dev/kmsg"
 
-#: sys-utils/dmesg.c:1662
+#: sys-utils/dmesg.c:1663
 #, fuzzy
 msgid "read kernel buffer failed"
 msgstr "ha fallat la lectura de la memòria intermèdia del nucli"
 
-#: sys-utils/dmesg.c:1670
+#: sys-utils/dmesg.c:1671
 #, fuzzy
 msgid "clear kernel buffer failed"
 msgstr "ha fallat la neteja de la memòria intermèdia del nucli"
 
-#: sys-utils/dmesg.c:1686
+#: sys-utils/dmesg.c:1687
 #, fuzzy
 msgid "klogctl failed"
 msgstr "no s'ha pogut fer fsync"

@@ -52,7 +52,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.39-rc3\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2023-12-04 13:21+0100\n"
+"POT-Creation-Date: 2024-04-03 14:31+0200\n"
 "PO-Revision-Date: 2023-04-19 19:46+0200\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -103,7 +103,7 @@ msgstr "Nicht genug Argumente"
 #: misc-utils/fadvise.c:148 misc-utils/findmnt.c:1227 misc-utils/logger.c:1247
 #: misc-utils/mcookie.c:119 misc-utils/pipesz.c:162 misc-utils/uuidd.c:235
 #: sys-utils/blkdiscard.c:248 sys-utils/blkpr.c:164 sys-utils/blkzone.c:144
-#: sys-utils/dmesg.c:547 sys-utils/eject.c:501 sys-utils/eject.c:696
+#: sys-utils/dmesg.c:548 sys-utils/eject.c:501 sys-utils/eject.c:696
 #: sys-utils/fallocate.c:405 sys-utils/fsfreeze.c:116 sys-utils/fstrim.c:106
 #: sys-utils/hwclock.c:241 sys-utils/hwclock.c:912 sys-utils/hwclock-rtc.c:108
 #: sys-utils/hwclock-rtc.c:353 sys-utils/hwclock-rtc.c:389
@@ -775,7 +775,7 @@ msgstr ""
 "                            Modus erzwingen\n"
 
 #: disk-utils/cfdisk.c:2770 disk-utils/fdisk.c:1016 disk-utils/sfdisk.c:2350
-#: misc-utils/cal.c:421 sys-utils/dmesg.c:1505 text-utils/hexdump.c:114
+#: misc-utils/cal.c:421 sys-utils/dmesg.c:1506 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "nicht unterstützter Farbmodus"
 
@@ -880,7 +880,7 @@ msgstr "Ungültiges Argument - repair"
 #: disk-utils/mkfs.minix.c:839 disk-utils/mkswap.c:381 disk-utils/partx.c:966
 #: login-utils/last.c:697 login-utils/utmpdump.c:145 misc-utils/namei.c:146
 #: misc-utils/rename.c:164 misc-utils/rename.c:229 sys-utils/blkdiscard.c:251
-#: sys-utils/blkzone.c:147 sys-utils/dmesg.c:549 sys-utils/fallocate.c:201
+#: sys-utils/blkzone.c:147 sys-utils/dmesg.c:550 sys-utils/fallocate.c:201
 #: sys-utils/fsfreeze.c:119 sys-utils/fstrim.c:78 sys-utils/nsenter.c:187
 #: sys-utils/swapon.c:530 sys-utils/switch_root.c:93
 #: sys-utils/switch_root.c:134 sys-utils/switch_root.c:139
@@ -1218,7 +1218,7 @@ msgstr "Die Geräteeigenschaften (Sektorgröße und Geometrie) sollten nur mit e
 #: misc-utils/findfs.c:58 misc-utils/look.c:147 misc-utils/whereis.c:592
 #: misc-utils/whereis.c:603 misc-utils/whereis.c:614 misc-utils/whereis.c:659
 #: schedutils/chrt.c:442 schedutils/ionice.c:264 schedutils/taskset.c:207
-#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1585
+#: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1586
 #: sys-utils/ipcmk.c:143 sys-utils/ldattach.c:321 sys-utils/losetup.c:926
 #: sys-utils/lscpu.c:1350 sys-utils/lsmem.c:656 sys-utils/mount.c:867
 #: sys-utils/mount.c:875 sys-utils/mount.c:924 sys-utils/mount.c:937
@@ -1310,7 +1310,7 @@ msgstr "Zuweisen des Iterators fehlgeschlagen"
 
 #: disk-utils/fdisk-list.c:136 disk-utils/fdisk-list.c:257
 #: disk-utils/partx.c:676 login-utils/lslogins.c:1113 misc-utils/fincore.c:357
-#: misc-utils/findmnt.c:1763 misc-utils/lsblk.c:2351 misc-utils/lsfd.c:1974
+#: misc-utils/findmnt.c:1761 misc-utils/lsblk.c:2351 misc-utils/lsfd.c:1974
 #: misc-utils/lslocks.c:472 misc-utils/uuidparse.c:252 misc-utils/wipefs.c:157
 #: sys-utils/losetup.c:326 sys-utils/lscpu.c:604 sys-utils/lscpu.c:759
 #: sys-utils/lscpu.c:970 sys-utils/lsipc.c:354 sys-utils/prlimit.c:311
@@ -2830,7 +2830,7 @@ msgstr ""
 
 #: disk-utils/fsck.minix.c:1435 disk-utils/mkfs.minix.c:858
 #: disk-utils/mkswap.c:744 disk-utils/partx.c:1078 disk-utils/resizepart.c:125
-#: login-utils/utmpdump.c:408 sys-utils/dmesg.c:690 sys-utils/wdctl.c:457
+#: login-utils/utmpdump.c:408 sys-utils/dmesg.c:691 sys-utils/wdctl.c:457
 #: sys-utils/wdctl.c:536 term-utils/setterm.c:911 text-utils/col.c:195
 #: text-utils/pg.c:1255
 msgid "write failed"
@@ -3922,7 +3922,7 @@ msgid_plural "#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n"
 msgstr[0] "#%2d: %9ju-%9ju (%9ju Sektor, %6ju MB)\n"
 msgstr[1] "#%2d: %9ju-%9ju (%9ju Sektoren, %6ju MB)\n"
 
-#: disk-utils/partx.c:687 misc-utils/fincore.c:371 misc-utils/findmnt.c:1792
+#: disk-utils/partx.c:687 misc-utils/fincore.c:371 misc-utils/findmnt.c:1790
 #: misc-utils/lsblk.c:2395 misc-utils/lsfd.c:533 misc-utils/lsfd.c:1988
 #: misc-utils/lslocks.c:487 sys-utils/losetup.c:340 sys-utils/lscpu.c:616
 #: sys-utils/lscpu.c:772 sys-utils/prlimit.c:320 sys-utils/rfkill.c:487
@@ -4567,7 +4567,7 @@ msgstr ""
 "   , 4G     erzeugt eine 4GiB-Partition beginnend bei der\n"
 "            vorgegebenen Startposition.\n"
 
-#: disk-utils/sfdisk.c:1546 sys-utils/dmesg.c:1680
+#: disk-utils/sfdisk.c:1546 sys-utils/dmesg.c:1681
 msgid "unsupported command"
 msgstr "nicht unterstützter Befehl"
 
@@ -8486,7 +8486,7 @@ msgstr "Shell geändert.\n"
 msgid "Usage: %s <passwordfile> <username>...\n"
 msgstr "Aufruf: %s <Passwortdatei> <Benutzername> …\n"
 
-#: login-utils/last.c:175 login-utils/lslogins.c:1433 sys-utils/dmesg.c:1348
+#: login-utils/last.c:175 login-utils/lslogins.c:1433 sys-utils/dmesg.c:1349
 #: sys-utils/lsipc.c:283
 #, c-format
 msgid "unknown time format: %s"
@@ -8584,7 +8584,7 @@ msgid "failed to parse number"
 msgstr "Einlesen der Nummer fehlgeschlagen"
 
 #: login-utils/last.c:1032 login-utils/last.c:1037 login-utils/last.c:1042
-#: sys-utils/dmesg.c:1566 sys-utils/dmesg.c:1572 sys-utils/rtcwake.c:511
+#: sys-utils/dmesg.c:1567 sys-utils/dmesg.c:1573 sys-utils/rtcwake.c:511
 #, c-format
 msgid "invalid time value \"%s\""
 msgstr "ungültiger Zeitwert »%s«"
@@ -9266,7 +9266,7 @@ msgstr "setuid fehlgeschlagen"
 
 #: login-utils/nologin.c:28 misc-utils/lsfd.c:1539 misc-utils/lslocks.c:545
 #: misc-utils/mcookie.c:83 misc-utils/uuidd.c:97 misc-utils/uuidgen.c:26
-#: sys-utils/dmesg.c:282 sys-utils/ipcmk.c:67 sys-utils/irqtop.c:262
+#: sys-utils/dmesg.c:283 sys-utils/ipcmk.c:67 sys-utils/irqtop.c:262
 #: sys-utils/lscpu.c:1177 sys-utils/lsipc.c:292 sys-utils/lsirq.c:57
 #: sys-utils/lsmem.c:519 sys-utils/readprofile.c:106 sys-utils/rtcwake.c:99
 #: term-utils/scriptlive.c:57 term-utils/scriptreplay.c:47
@@ -9626,7 +9626,7 @@ msgstr ""
 " -t, --timeout <Sekunden> maximale Wartezeit auf ein Passwort (Vorgabe: unbegrenzt)\n"
 " -e, --force              Passwort direkt untersuchen, falls getpwnam(3) fehlschlägt\n"
 
-#: login-utils/sulogin.c:938 misc-utils/findmnt.c:1619 sys-utils/wdctl.c:764
+#: login-utils/sulogin.c:938 misc-utils/findmnt.c:1617 sys-utils/wdctl.c:764
 #: term-utils/agetty.c:860 term-utils/wall.c:219
 msgid "invalid timeout argument"
 msgstr "ungültiges Zeitüberschreitungsargument"
@@ -10406,7 +10406,7 @@ msgstr "libmount tabdiff konnte nicht initialisiert werden"
 msgid "poll() failed"
 msgstr "poll() fehlgeschlagen"
 
-#: misc-utils/findmnt.c:1320
+#: misc-utils/findmnt.c:1318
 #, c-format
 msgid ""
 " %1$s [options]\n"
@@ -10419,15 +10419,15 @@ msgstr ""
 " %1$s [Optionen] [<Gerät> <Einhängepunkt>]\n"
 " %1$s [Optionen] [--source <Gerät>] [--target <Pfad> | --mountpoint <Verzeichnis>]\n"
 
-#: misc-utils/findmnt.c:1327
+#: misc-utils/findmnt.c:1325
 msgid "Find a (mounted) filesystem.\n"
 msgstr "Ein (eingehängtes) Dateisystem suchen.\n"
 
-#: misc-utils/findmnt.c:1330
+#: misc-utils/findmnt.c:1328
 msgid " -s, --fstab            search in static table of filesystems\n"
 msgstr " -s, --fstab            in der statischen Dateisystemtabelle suchen\n"
 
-#: misc-utils/findmnt.c:1331
+#: misc-utils/findmnt.c:1329
 msgid ""
 " -m, --mtab             search in table of mounted filesystems\n"
 "                          (includes user space mount options)\n"
@@ -10436,7 +10436,7 @@ msgstr ""
 "                          Dateisysteme (schließt Einhängeoptionen\n"
 "                          auf Anwendungsebene ein)\n"
 
-#: misc-utils/findmnt.c:1333
+#: misc-utils/findmnt.c:1331
 msgid ""
 " -k, --kernel           search in kernel table of mounted\n"
 "                          filesystems (default)\n"
@@ -10444,47 +10444,47 @@ msgstr ""
 " -k, --kernel           in der Kernel-Tabelle der eingehängten Dateisysteme\n"
 "                          suchen (Vorgabe)\n"
 
-#: misc-utils/findmnt.c:1336
+#: misc-utils/findmnt.c:1334
 msgid " -p, --poll[=<list>]    monitor changes in table of mounted filesystems\n"
 msgstr ""
 " -p, --poll[=<Liste>]   Änderungen in der Tabelle der eingehängten\n"
 "                          Dateisysteme überwachen\n"
 
-#: misc-utils/findmnt.c:1337
+#: misc-utils/findmnt.c:1335
 msgid " -w, --timeout <num>    upper limit in milliseconds that --poll will block\n"
 msgstr ""
 " -w, --timeout <Zahl>   obere Grenze in Millisekunden, bei der --poll\n"
 "                          blockiert\n"
 
-#: misc-utils/findmnt.c:1340
+#: misc-utils/findmnt.c:1338
 msgid " -A, --all              disable all built-in filters, print all filesystems\n"
 msgstr " -A, --all              alle eingebauten Filter deaktivieren, alle Dateisysteme ausgeben\n"
 
-#: misc-utils/findmnt.c:1341
+#: misc-utils/findmnt.c:1339
 msgid " -a, --ascii            use ASCII chars for tree formatting\n"
 msgstr " -a, --ascii            ASCII-Zeichen für die Formatierung des Baums verwenden\n"
 
-#: misc-utils/findmnt.c:1342
+#: misc-utils/findmnt.c:1340
 msgid " -b, --bytes            print sizes in bytes rather than in human readable format\n"
 msgstr " -b, --bytes            Größen in Bytes ausgeben, anstatt im menschenlesbaren Format\n"
 
-#: misc-utils/findmnt.c:1343
+#: misc-utils/findmnt.c:1341
 msgid " -C, --nocanonicalize   don't canonicalize when comparing paths\n"
 msgstr " -C, --no-canonicalize   Pfade beim Vergleichen nicht kanonisieren\n"
 
-#: misc-utils/findmnt.c:1344
+#: misc-utils/findmnt.c:1342
 msgid " -c, --canonicalize     canonicalize printed paths\n"
 msgstr " -c, --canonicalize     Pfade kanonisieren\n"
 
-#: misc-utils/findmnt.c:1345
+#: misc-utils/findmnt.c:1343
 msgid " -D, --df               imitate the output of df(1)\n"
 msgstr " -D, --df               die Ausgabe von df(1) imitieren\n"
 
-#: misc-utils/findmnt.c:1346
+#: misc-utils/findmnt.c:1344
 msgid " -d, --direction <word> direction of search, 'forward' or 'backward'\n"
 msgstr " -d, --direction <Wort> Suchrichtung, »forward« oder »backward«\n"
 
-#: misc-utils/findmnt.c:1347
+#: misc-utils/findmnt.c:1345
 msgid ""
 " -e, --evaluate         convert tags (LABEL,UUID,PARTUUID,PARTLABEL) \n"
 "                          to device names\n"
@@ -10492,76 +10492,76 @@ msgstr ""
 " -e, --evaluate         Markierungen (LABEL,UUID,PARTUUID,PARTLABEL) \n"
 "                          in Gerätenamen umwandeln\n"
 
-#: misc-utils/findmnt.c:1349
+#: misc-utils/findmnt.c:1347
 msgid " -F, --tab-file <path>  alternative file for -s, -m or -k options\n"
 msgstr " -F, --tab-file <Pfad>  alternative Datei für die Optionen -s, -m oder -k\n"
 
-#: misc-utils/findmnt.c:1350
+#: misc-utils/findmnt.c:1348
 msgid " -f, --first-only       print the first found filesystem only\n"
 msgstr " -f, --first-only       nur das erste gefundene Dateisystem ausgeben\n"
 
-#: misc-utils/findmnt.c:1351
+#: misc-utils/findmnt.c:1349
 msgid " -i, --invert           invert the sense of matching\n"
 msgstr " -i, --invert           Suchkriterien umkehren\n"
 
-#: misc-utils/findmnt.c:1352 misc-utils/lslocks.c:552 sys-utils/lsns.c:1291
+#: misc-utils/findmnt.c:1350 misc-utils/lslocks.c:552 sys-utils/lsns.c:1291
 #: sys-utils/rfkill.c:639
 msgid " -J, --json             use JSON output format\n"
 msgstr " -J, --json             Daten im JSON-Format ausgeben\n"
 
-#: misc-utils/findmnt.c:1353 sys-utils/lsns.c:1292
+#: misc-utils/findmnt.c:1351 sys-utils/lsns.c:1292
 msgid " -l, --list             use list format output\n"
 msgstr " -l, --list             im Listenformat ausgeben\n"
 
-#: misc-utils/findmnt.c:1354
+#: misc-utils/findmnt.c:1352
 msgid " -N, --task <tid>       use alternative namespace (/proc/<tid>/mountinfo file)\n"
 msgstr " -N, --task <tid>       alternativen Namensraum verwenden (Datei /proc/<tid>/mountinfo)\n"
 
-#: misc-utils/findmnt.c:1355
+#: misc-utils/findmnt.c:1353
 msgid " -n, --noheadings       don't print column headings\n"
 msgstr " -n, --noheadings       keine Überschriften anzeigen\n"
 
-#: misc-utils/findmnt.c:1356
+#: misc-utils/findmnt.c:1354
 msgid " -O, --options <list>   limit the set of filesystems by mount options\n"
 msgstr " -O, --options <Liste>  Dateisysteme nach Einhängeoptionen begrenzen\n"
 
-#: misc-utils/findmnt.c:1357
+#: misc-utils/findmnt.c:1355
 msgid " -o, --output <list>    the output columns to be shown\n"
 msgstr " -o, --output <Liste>    in der Ausgabe anzuzeigende Spalten\n"
 
-#: misc-utils/findmnt.c:1358
+#: misc-utils/findmnt.c:1356
 msgid "     --output-all       output all available columns\n"
 msgstr "     --output-all       gibt alle verfügbaren Spalten aus\n"
 
-#: misc-utils/findmnt.c:1359
+#: misc-utils/findmnt.c:1357
 msgid " -P, --pairs            use key=\"value\" output format\n"
 msgstr " -P, --pairs            Ausgabeformat Schlüssel=\"Wert\" verwenden\n"
 
-#: misc-utils/findmnt.c:1360
+#: misc-utils/findmnt.c:1358
 msgid "     --pseudo           print only pseudo-filesystems\n"
 msgstr "     --pseudo           gibt nur Pseudo-Dateisysteme aus\n"
 
-#: misc-utils/findmnt.c:1361
+#: misc-utils/findmnt.c:1359
 msgid "     --shadowed         print only filesystems over-mounted by another filesystem\n"
 msgstr ""
 "     --shadowed         nur Dateisysteme ausgeben, die von einem\n"
 "                          anderen Dateisystem übereingehängt sind\n"
 
-#: misc-utils/findmnt.c:1362
+#: misc-utils/findmnt.c:1360
 msgid " -R, --submounts        print all submounts for the matching filesystems\n"
 msgstr ""
 " -R, --submounts        Alle Untereinhängungen für passende Dateisysteme\n"
 "                          ausgeben\n"
 
-#: misc-utils/findmnt.c:1363
+#: misc-utils/findmnt.c:1361
 msgid " -r, --raw              use raw output format\n"
 msgstr " -r, --raw              Rohausgabeformat verwenden\n"
 
-#: misc-utils/findmnt.c:1364
+#: misc-utils/findmnt.c:1362
 msgid "     --real             print only real filesystems\n"
 msgstr "     --real             gibt nur reale Dateisysteme aus\n"
 
-#: misc-utils/findmnt.c:1365
+#: misc-utils/findmnt.c:1363
 msgid ""
 " -S, --source <string>  the device to mount (by name, maj:min, \n"
 "                          LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"
@@ -10570,78 +10570,78 @@ msgstr ""
 "                        einzuhängendes Gerät (nach Name, maj:min, \n"
 "                          LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"
 
-#: misc-utils/findmnt.c:1367
+#: misc-utils/findmnt.c:1365
 msgid " -T, --target <path>    the path to the filesystem to use\n"
 msgstr " -T, --target <Pfad>    der Pfad zum zu verwendenden Dateisystem\n"
 
-#: misc-utils/findmnt.c:1368
+#: misc-utils/findmnt.c:1366
 msgid "     --tree             enable tree format output if possible\n"
 msgstr ""
 "     --tree             aktiviert die Ausgabe im Baumformat,\n"
 "                          falls möglich\n"
 
-#: misc-utils/findmnt.c:1369
+#: misc-utils/findmnt.c:1367
 msgid " -M, --mountpoint <dir> the mountpoint directory\n"
 msgstr " -M, --mountpoint <Verz> das Wurzelverzeichnis\n"
 
-#: misc-utils/findmnt.c:1370
+#: misc-utils/findmnt.c:1368
 msgid " -t, --types <list>     limit the set of filesystems by FS types\n"
 msgstr " -t, --types <Liste>    Dateisysteme nach Typ begrenzen\n"
 
-#: misc-utils/findmnt.c:1371
+#: misc-utils/findmnt.c:1369
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
 msgstr " -U, --uniq             Dateisysteme mit doppeltem Ziel ignorieren\n"
 
-#: misc-utils/findmnt.c:1372 misc-utils/lslocks.c:559 sys-utils/lsns.c:1299
+#: misc-utils/findmnt.c:1370 misc-utils/lslocks.c:559 sys-utils/lsns.c:1299
 msgid " -u, --notruncate       don't truncate text in columns\n"
 msgstr " -u, --notruncate       Text in Spalten nicht kürzen\n"
 
-#: misc-utils/findmnt.c:1373
+#: misc-utils/findmnt.c:1371
 msgid " -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
 msgstr " -v, --nofsroot         [/dir] für bind- oder btrfs-Einhängungen nicht anzeigen\n"
 
-#: misc-utils/findmnt.c:1374
+#: misc-utils/findmnt.c:1372
 msgid " -y, --shell            use column names to be usable as shell variable identifiers\n"
 msgstr ""
 " -y, --shell            Spaltennamen verwenden, die als\n"
 "                          Shell-Variablen nutzbar sind\n"
 
-#: misc-utils/findmnt.c:1377
+#: misc-utils/findmnt.c:1375
 msgid " -x, --verify           verify mount table content (default is fstab)\n"
 msgstr ""
 " -x, --verify           verifiziert den Inhalt der Einhängetabelle\n"
 "                          (Voreinstellung ist fstab)\n"
 
-#: misc-utils/findmnt.c:1378
+#: misc-utils/findmnt.c:1376
 msgid "     --verbose          print more details\n"
 msgstr "     --verbose          gibt mehr Details aus\n"
 
-#: misc-utils/findmnt.c:1379
+#: misc-utils/findmnt.c:1377
 msgid "     --vfs-all          print all VFS options\n"
 msgstr "     --vfs-all          alle VFS-Optionen ausgeben\n"
 
-#: misc-utils/findmnt.c:1519
+#: misc-utils/findmnt.c:1517
 #, c-format
 msgid "unknown direction '%s'"
 msgstr "unbekanntes Verzeichnis »%s«"
 
-#: misc-utils/findmnt.c:1596
+#: misc-utils/findmnt.c:1594
 msgid "invalid TID argument"
 msgstr "ungültiges TID-Argument"
 
-#: misc-utils/findmnt.c:1683
+#: misc-utils/findmnt.c:1681
 msgid "--poll accepts only one file, but more specified by --tab-file"
 msgstr "--poll akzeptiert nur eine Datei, aber mit --tab-file wurden mehr angegeben"
 
-#: misc-utils/findmnt.c:1687
+#: misc-utils/findmnt.c:1685
 msgid "options --target and --source can't be used together with command line element that is not an option"
 msgstr "Die Optionen --target und --source können nicht zusammen mit einem Befehlszeilenelement verwendet werden, das keine Option ist."
 
-#: misc-utils/findmnt.c:1740 sys-utils/fstrim.c:308
+#: misc-utils/findmnt.c:1738 sys-utils/fstrim.c:308
 msgid "failed to initialize libmount cache"
 msgstr "libmount-Cache konnte nicht initialisiert werden"
 
-#: misc-utils/findmnt.c:1785
+#: misc-utils/findmnt.c:1783
 #, c-format
 msgid "%s column is requested, but --poll is not enabled"
 msgstr "Spalte %s wurde angefordert, aber --poll ist nicht aktiviert "
@@ -14978,168 +14978,168 @@ msgstr "informatorisch"
 msgid "debug-level messages"
 msgstr "Debug-Level-Meldungen"
 
-#: sys-utils/dmesg.c:131
+#: sys-utils/dmesg.c:132
 msgid "kernel messages"
 msgstr "Kernel-Meldungen"
 
-#: sys-utils/dmesg.c:132
+#: sys-utils/dmesg.c:133
 msgid "random user-level messages"
 msgstr "zufällige Nachrichten auf Anwenderebene"
 
-#: sys-utils/dmesg.c:133
+#: sys-utils/dmesg.c:134
 msgid "mail system"
 msgstr "Mailsystem"
 
-#: sys-utils/dmesg.c:134
+#: sys-utils/dmesg.c:135
 msgid "system daemons"
 msgstr "Systemdienste (Daemons)"
 
-#: sys-utils/dmesg.c:135
+#: sys-utils/dmesg.c:136
 msgid "security/authorization messages"
 msgstr "Sicherheits-/Autorisations-Nachrichten"
 
-#: sys-utils/dmesg.c:136
+#: sys-utils/dmesg.c:137
 msgid "messages generated internally by syslogd"
 msgstr "Nachrichten, die intern vom syslogd erzeugt wurden"
 
-#: sys-utils/dmesg.c:137
+#: sys-utils/dmesg.c:138
 msgid "line printer subsystem"
 msgstr "Zeilendrucker-Subsystem"
 
-#: sys-utils/dmesg.c:138
+#: sys-utils/dmesg.c:139
 msgid "network news subsystem"
 msgstr "Netzwerknachrichten-Subsystem"
 
-#: sys-utils/dmesg.c:139
+#: sys-utils/dmesg.c:140
 msgid "UUCP subsystem"
 msgstr "UUCP-Subsystem"
 
-#: sys-utils/dmesg.c:140
+#: sys-utils/dmesg.c:141
 msgid "clock daemon"
 msgstr "Uhr-Daemon"
 
-#: sys-utils/dmesg.c:141
+#: sys-utils/dmesg.c:142
 msgid "security/authorization messages (private)"
 msgstr "Sicherheits-/Autorisations-Nachrichten (privat)"
 
-#: sys-utils/dmesg.c:142
+#: sys-utils/dmesg.c:143
 msgid "FTP daemon"
 msgstr "FTP-Daemon"
 
-#: sys-utils/dmesg.c:285
+#: sys-utils/dmesg.c:286
 msgid "Display or control the kernel ring buffer.\n"
 msgstr "Den Kernel-Ringpuffer anzeigen und steuern.\n"
 
-#: sys-utils/dmesg.c:288
+#: sys-utils/dmesg.c:289
 msgid " -C, --clear                 clear the kernel ring buffer\n"
 msgstr " -C, --clear                 den Kernel-Ringpuffer leeren\n"
 
-#: sys-utils/dmesg.c:289
+#: sys-utils/dmesg.c:290
 msgid " -c, --read-clear            read and clear all messages\n"
 msgstr " -c, --read-clear            alle Meldungen lesen und löschen\n"
 
-#: sys-utils/dmesg.c:290
+#: sys-utils/dmesg.c:291
 msgid " -D, --console-off           disable printing messages to console\n"
 msgstr " -D, --console-off           Ausgabe von Nachrichten auf die Konsole deaktivieren\n"
 
-#: sys-utils/dmesg.c:291
+#: sys-utils/dmesg.c:292
 msgid " -E, --console-on            enable printing messages to console\n"
 msgstr " -E, --console-on            Ausgabe von Nachrichten auf die Konsole aktivieren\n"
 
-#: sys-utils/dmesg.c:292
+#: sys-utils/dmesg.c:293
 msgid " -F, --file <file>           use the file instead of the kernel log buffer\n"
 msgstr " -F, --file <Datei>          Datei anstelle des Kernel-Protokollpuffers verwenden\n"
 
-#: sys-utils/dmesg.c:293
+#: sys-utils/dmesg.c:294
 msgid " -f, --facility <list>       restrict output to defined facilities\n"
 msgstr " -f, --facility <Liste>      Ausgabe auf die definierten Leistungen beschränken\n"
 
-#: sys-utils/dmesg.c:294
+#: sys-utils/dmesg.c:295
 msgid " -H, --human                 human readable output\n"
 msgstr " -H, --human                 menschenlesbare Ausgabe\n"
 
-#: sys-utils/dmesg.c:295
+#: sys-utils/dmesg.c:296
 msgid " -J, --json                  use JSON output format\n"
 msgstr " -J, --json                  Daten im JSON-Format ausgeben\n"
 
-#: sys-utils/dmesg.c:296
+#: sys-utils/dmesg.c:297
 msgid " -k, --kernel                display kernel messages\n"
 msgstr " -k, --kernel                Kernel-Meldungen anzeigen\n"
 
-#: sys-utils/dmesg.c:298
+#: sys-utils/dmesg.c:299
 #, c-format
 msgid " -L, --color[=<when>]        colorize messages (%s, %s or %s)\n"
 msgstr " -L, --color[=<Wann>]        Meldungen einfärben (»%s«, »%s« oder »%s«)\n"
 
-#: sys-utils/dmesg.c:301
+#: sys-utils/dmesg.c:302
 msgid " -l, --level <list>          restrict output to defined levels\n"
 msgstr " -l, --level <Liste>         Ausgabe auf definierte Ebenen beschränken\n"
 
-#: sys-utils/dmesg.c:302
+#: sys-utils/dmesg.c:303
 msgid " -n, --console-level <level> set level of messages printed to console\n"
 msgstr ""
 " -n, --console-level <Ebene> Stufe der an die Konsole ausgegebenen\n"
 "                              Meldungen festlegen\n"
 
-#: sys-utils/dmesg.c:303
+#: sys-utils/dmesg.c:304
 msgid " -P, --nopager               do not pipe output into a pager\n"
 msgstr " -P, --nopager               Ausgabe nicht in einen Pager weiterleiten\n"
 
-#: sys-utils/dmesg.c:304
+#: sys-utils/dmesg.c:305
 msgid " -p, --force-prefix          force timestamp output on each line of multi-line messages\n"
 msgstr ""
 " -p, --force-prefix          Zeitstempelinformationen zu jeder Zeile einer\n"
 "                               mehrzeiligen Nachricht hinzufügen\n"
 
-#: sys-utils/dmesg.c:305
+#: sys-utils/dmesg.c:306
 msgid " -r, --raw                   print the raw message buffer\n"
 msgstr " -r, --raw                   den unverarbeiteten Meldungspuffer ausgeben\n"
 
-#: sys-utils/dmesg.c:306
+#: sys-utils/dmesg.c:307
 msgid "     --noescape              don't escape unprintable character\n"
 msgstr "     --noescape              nicht darstellbare Zeichen nicht maskieren\n"
 
-#: sys-utils/dmesg.c:307
+#: sys-utils/dmesg.c:308
 msgid " -S, --syslog                force to use syslog(2) rather than /dev/kmsg\n"
 msgstr " -S, --syslog                syslog(2) anstelle von /dev/kmsg erzwingen\n"
 
-#: sys-utils/dmesg.c:308
+#: sys-utils/dmesg.c:309
 msgid " -s, --buffer-size <size>    buffer size to query the kernel ring buffer\n"
 msgstr " -s, --buffer-size <Größe>   Puffergröße zur Abfrage des Kernel-Ringpuffers\n"
 
-#: sys-utils/dmesg.c:309
+#: sys-utils/dmesg.c:310
 msgid " -u, --userspace             display userspace messages\n"
 msgstr " -u, --userspace             Nachrichten im Benutzerbereich anzeigen\n"
 
-#: sys-utils/dmesg.c:310
+#: sys-utils/dmesg.c:311
 msgid " -w, --follow                wait for new messages\n"
 msgstr " -w, --follow                auf neue Nachrichten warten\n"
 
-#: sys-utils/dmesg.c:311
+#: sys-utils/dmesg.c:312
 msgid " -W, --follow-new            wait and print only new messages\n"
 msgstr " -W, --follow-new            warten und nur neue Meldungen ausgeben\n"
 
-#: sys-utils/dmesg.c:312
+#: sys-utils/dmesg.c:313
 msgid " -x, --decode                decode facility and level to readable string\n"
 msgstr " -x, --decode                Leistungen und Ebenen in lesbaren String dekodieren\n"
 
-#: sys-utils/dmesg.c:313
+#: sys-utils/dmesg.c:314
 msgid " -d, --show-delta            show time delta between printed messages\n"
 msgstr " -d, --show-delta            Zeitspanne zwischen ausgegebenen Meldungen anzeigen\n"
 
-#: sys-utils/dmesg.c:314
+#: sys-utils/dmesg.c:315
 msgid " -e, --reltime               show local time and time delta in readable format\n"
 msgstr " -e, --reltime               lokale Zeit und Zeitspanne in lesbarem Format ausgeben\n"
 
-#: sys-utils/dmesg.c:315
+#: sys-utils/dmesg.c:316
 msgid " -T, --ctime                 show human-readable timestamp (may be inaccurate!)\n"
 msgstr " -T, --ctime                 menschenlesbaren Zeitstempel anzeigen (kann ungenau sein!)\n"
 
-#: sys-utils/dmesg.c:316
+#: sys-utils/dmesg.c:317
 msgid " -t, --notime                don't show any timestamp with messages\n"
 msgstr " -t, --notime                keine Zeitstempel der Meldungen ausgeben\n"
 
-#: sys-utils/dmesg.c:317
+#: sys-utils/dmesg.c:318
 msgid ""
 "     --time-format <format>  show timestamp using the given format:\n"
 "                               [delta|reltime|ctime|notime|iso]\n"
@@ -15149,15 +15149,15 @@ msgstr ""
 "                               [delta|reltime|ctime|notime|iso]\n"
 "Einschlafen/Aufwachen will verursacht inkorrekte ctime- und iso-Zeitstempel.\n"
 
-#: sys-utils/dmesg.c:320
+#: sys-utils/dmesg.c:321
 msgid "     --since <time>          display the lines since the specified time\n"
 msgstr "     --since <Zeit>          die Zeilen seit der angegebenen Zeit anzeigen\n"
 
-#: sys-utils/dmesg.c:321
+#: sys-utils/dmesg.c:322
 msgid "     --until <time>          display the lines until the specified time\n"
 msgstr "     --until <Zeit>          die Zeilen bis zur angegebenen Zeit anzeigen\n"
 
-#: sys-utils/dmesg.c:325
+#: sys-utils/dmesg.c:326
 msgid ""
 "\n"
 "Supported log facilities:\n"
@@ -15165,7 +15165,7 @@ msgstr ""
 "\n"
 "Unterstützte Protokollleistungen:\n"
 
-#: sys-utils/dmesg.c:331
+#: sys-utils/dmesg.c:332
 msgid ""
 "\n"
 "Supported log levels (priorities):\n"
@@ -15173,27 +15173,27 @@ msgstr ""
 "\n"
 "Unterstützte Protokollierstufen (Prioritäten):\n"
 
-#: sys-utils/dmesg.c:385
+#: sys-utils/dmesg.c:386
 #, c-format
 msgid "failed to parse level '%s'"
 msgstr "Ebene »%s« konnte nicht eingelesen werden"
 
-#: sys-utils/dmesg.c:387
+#: sys-utils/dmesg.c:388
 #, c-format
 msgid "unknown level '%s'"
 msgstr "unbekanntes Level »%s«"
 
-#: sys-utils/dmesg.c:423
+#: sys-utils/dmesg.c:424
 #, c-format
 msgid "failed to parse facility '%s'"
 msgstr "Leistung »%s« konnte nicht eingelesen werden"
 
-#: sys-utils/dmesg.c:425
+#: sys-utils/dmesg.c:426
 #, c-format
 msgid "unknown facility '%s'"
 msgstr "unbekannte Einrichtung »%s«"
 
-#: sys-utils/dmesg.c:553
+#: sys-utils/dmesg.c:554
 #, c-format
 msgid "cannot mmap: %s"
 msgstr "mmap fehlgeschlagen: %s"
@@ -15202,38 +15202,38 @@ msgstr "mmap fehlgeschlagen: %s"
 #. where %a is abbreviated name of the day, %b is abbreviated month
 #. name and %e is day of the month as a decimal number. Please, set
 #. proper month/day order here
-#: sys-utils/dmesg.c:869
+#: sys-utils/dmesg.c:870
 msgid "%a %b %e %H:%M:%S %Y"
 msgstr "%a, %e. %b %Y, %H:%M:%S"
 
 #. TRANSLATORS: dmesg uses strftime() fo generate date-time string
 #. where: %b is abbreviated month and %e is day of the month as a
 #. decimal number. Please, set proper month/day order here.
-#: sys-utils/dmesg.c:879
+#: sys-utils/dmesg.c:880
 msgid "%b%e %H:%M"
 msgstr "%e. %b %H:%M"
 
-#: sys-utils/dmesg.c:1532
+#: sys-utils/dmesg.c:1533
 msgid "invalid buffer size argument"
 msgstr "ungültiges Puffergrößenargument"
 
-#: sys-utils/dmesg.c:1618
+#: sys-utils/dmesg.c:1619
 msgid "--show-delta is ignored when used together with iso8601 time format"
 msgstr "--show-delta wird ignoriert, wenn es zusammen mit dem iso8601-Zeitformat verwendet wird"
 
-#: sys-utils/dmesg.c:1642
+#: sys-utils/dmesg.c:1643
 msgid "--raw can be used together with --level or --facility only when reading messages from /dev/kmsg"
 msgstr "--raw kann nur dann zusammen mit --level oder --facility verwendet werden, wenn Meldungen aus /dev/kmsg gelesen werden"
 
-#: sys-utils/dmesg.c:1662
+#: sys-utils/dmesg.c:1663
 msgid "read kernel buffer failed"
 msgstr "Lesen des Kernelpuffers ist fehlgeschlagen"
 
-#: sys-utils/dmesg.c:1670
+#: sys-utils/dmesg.c:1671
 msgid "clear kernel buffer failed"
 msgstr "Leeren des Kernelpuffers ist fehlgeschlagen"
 
-#: sys-utils/dmesg.c:1686
+#: sys-utils/dmesg.c:1687
 msgid "klogctl failed"
 msgstr "»klogctl« fehlgeschlagen"
 
