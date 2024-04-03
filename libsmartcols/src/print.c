@@ -499,20 +499,34 @@ static void print_json_data(struct libscols_table *tb,
 		break;
 	case SCOLS_JSON_ARRAY_STRING:
 	case SCOLS_JSON_ARRAY_NUMBER:
-		/* name: [ "aaa", "bbb", "ccc" ] */
-		ul_jsonwrt_array_open(&tb->json, name);
+		{
+			/* name: [ "aaa", "bbb", "ccc" ] */
+			int items = 0;
 
-		if (!scols_column_is_customwrap(cl))
-			ul_jsonwrt_value_s(&tb->json, NULL, data);
-		else do {
-			if (cl->json_type == SCOLS_JSON_ARRAY_STRING)
-				ul_jsonwrt_value_s(&tb->json, NULL, data);
+			if (!scols_column_is_customwrap(cl)) {
+				if (data && *data) {
+					ul_jsonwrt_array_open(&tb->json, name);
+					ul_jsonwrt_value_s(&tb->json, NULL, data);
+					items++;
+				}
+			} else do {
+				if (!data || !*data)
+					continue;
+				if (!items)
+					ul_jsonwrt_array_open(&tb->json, name);
+				if (cl->json_type == SCOLS_JSON_ARRAY_STRING)
+					ul_jsonwrt_value_s(&tb->json, NULL, data);
+				else
+					ul_jsonwrt_value_raw(&tb->json, NULL, data);
+				items++;
+			} while (scols_column_next_wrap(cl, NULL, &data) == 0);
+
+			if (!items)
+				ul_jsonwrt_array_empty(&tb->json, name);
 			else
-				ul_jsonwrt_value_raw(&tb->json, NULL, data);
-		} while (scols_column_next_wrap(cl, NULL, &data) == 0);
-
-		ul_jsonwrt_array_close(&tb->json);
-		break;
+				ul_jsonwrt_array_close(&tb->json);
+			break;
+		}
 	}
 }
 
