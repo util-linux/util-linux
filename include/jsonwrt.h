@@ -23,6 +23,7 @@ int ul_jsonwrt_is_ready(struct ul_jsonwrt *fmt);
 void ul_jsonwrt_indent(struct ul_jsonwrt *fmt);
 void ul_jsonwrt_open(struct ul_jsonwrt *fmt, const char *name, int type);
 void ul_jsonwrt_close(struct ul_jsonwrt *fmt, int type);
+void ul_jsonwrt_empty(struct ul_jsonwrt *fmt, const char *name, int type);
 void ul_jsonwrt_flush(struct ul_jsonwrt *fmt);
 
 #define ul_jsonwrt_root_open(_f)	ul_jsonwrt_open(_f, NULL, UL_JSON_OBJECT)
@@ -30,13 +31,14 @@ void ul_jsonwrt_flush(struct ul_jsonwrt *fmt);
 
 #define ul_jsonwrt_array_open(_f, _n)	ul_jsonwrt_open(_f, _n, UL_JSON_ARRAY)
 #define ul_jsonwrt_array_close(_f)	ul_jsonwrt_close(_f, UL_JSON_ARRAY)
+#define ul_jsonwrt_array_empty(_f, _n)	ul_jsonwrt_empty(_f, _n, UL_JSON_ARRAY)
 
 #define ul_jsonwrt_object_open(_f, _n)	ul_jsonwrt_open(_f, _n, UL_JSON_OBJECT)
 #define ul_jsonwrt_object_close(_f)	ul_jsonwrt_close(_f, UL_JSON_OBJECT)
+#define ul_jsonwrt_object_empty(_f, _n)	ul_jsonwrt_empty(_f, _n, UL_JSON_OBJECT)
 
 #define ul_jsonwrt_value_open(_f, _n)	ul_jsonwrt_open(_f, _n, UL_JSON_VALUE)
 #define ul_jsonwrt_value_close(_f)	ul_jsonwrt_close(_f, UL_JSON_VALUE)
-
 
 void ul_jsonwrt_value_raw(struct ul_jsonwrt *fmt,
 			const char *name, const char *data);
@@ -50,7 +52,7 @@ void ul_jsonwrt_value_double(struct ul_jsonwrt *fmt,
 			const char *name, long double data);
 void ul_jsonwrt_value_boolean(struct ul_jsonwrt *fmt,
 			const char *name, int data);
-void ul_jsonwrt_value_null(struct ul_jsonwrt *fmt,
-			const char *name);
+
+#define ul_jsonwrt_value_null(_f, _n)	ul_jsonwrt_empty(_f, _n, UL_JSON_VALUE)
 
 #endif /* UTIL_LINUX_JSONWRT_H */
