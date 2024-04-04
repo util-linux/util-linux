@@ -240,6 +240,8 @@ It's also possible to change nosuid, nodev, noexec, noatime, nodiratime, relatim
 
 Since util-linux 2.31, *mount* ignores the *bind* flag from _/etc/fstab_ on a *remount* operation (if *-o remount* is specified on command line). This is necessary to fully control mount options on remount by command line. In previous versions the bind flag has been always applied and it was impossible to re-define mount options without interaction with the bind semantic. This *mount* behavior does not affect situations when "remount,bind" is specified in the _/etc/fstab_ file.
 
+Since util-linux 2.39, *mount* may use the new kernel mount API if it is available. This new kernel interface provides a more precise way to work with mountpoint attributes. For example, the *-o bind,rw* operation will create a read-write node even if the original node was read-only. This was impossible with the old classic mount(2) syscall, where the read-only VFS flag was inherited from the original node.
+
 === The move operation
 
 Move a *mounted tree* to another place (atomically). The call is:
