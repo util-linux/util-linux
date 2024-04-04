@@ -1,5 +1,5 @@
 /*
- * SPDX-License-Identifier: GPL-2.1-or-later
+ * SPDX-License-Identifier: LGPL-2.1-or-later
  *
  * irq-common.c - functions to display kernel interrupt information.
  *
