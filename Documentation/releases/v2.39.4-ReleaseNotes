@@ -1,0 +1,56 @@
+util-linux v2.39.4 Release Notes
+================================
+ 
+Security issues
+---------------
+
+This release fixes CVE-2024-28085. The wall command does not filter escape
+sequences from command line arguments. The vulnerable code was introduced in
+commit cdd3cc7fa4 (2013). Every version since has been vulnerable.
+
+This allows unprivileged users to put arbitrary text on other users terminals,
+if mesg is set to y and *wall is setgid*. Not all distros are affected (e.g.
+CentOS, RHEL, Fedora are not; Ubuntu and Debian wall is both setgid and mesg is
+set to y by default).
+
+
+Changes between v2.39.3 and v2.39.4
+-----------------------------------
+
+build:
+   - only build test_enosys if an audit arch exists  [Thomas Weißschuh]
+dmesg:
+   - (tests) validate json output  [Thomas Weißschuh]
+   - -r LOG_MAKEPRI needs fac << 3  [Edward Chron]
+   - correctly print all supported facility names  [Thomas Weißschuh]
+   - only write one message to json  [Thomas Weißschuh]
+   - open-code LOG_MAKEPRI  [Thomas Weißschuh]
+docs:
+   - update AUTHORS file  [Karel Zak]
+fadvise:
+   - (test) don't compare fincore page counts  [Thomas Weißschuh]
+   - (test) dynamically calculate expected test values  [Thomas Weißschuh]
+   - (test) test with 64k blocks  [Thomas Weißschuh]
+   - (tests) factor out calls to "fincore"  [Thomas Weißschuh]
+github:
+   - add labeler  [Karel Zak]
+jsonwrt:
+   - add ul_jsonwrt_value_s_sized  [Thomas Weißschuh]
+libblkid:
+   - Check offset in LUKS2 header  [Milan Broz]
+   - topology/ioctl  correctly handle kernel types  [Thomas Weißschuh]
+libmount:
+   - don't initialize variable twice (#2714)  [Thorsten Kukuk]
+   - make sure "option=" is used as string  [Karel Zak]
+libsmartcols:
+   - (tests) add test for continuous json output  [Thomas Weißschuh]
+   - drop spourious newline in between streamed JSON objects  [Thomas Weißschuh]
+   - flush correct stream  [Thomas Weißschuh]
+   - only recognize closed object as final element  [Thomas Weißschuh]
+po:
+   - merge changes  [Karel Zak]
+po-man:
+   - merge changes  [Karel Zak]
+wall:
+   - fix calloc cal [-Werror=calloc-transposed-args]  [Karel Zak]
+   - fix escape sequence Injection [CVE-2024-28085]  [Karel Zak]
