@@ -7,7 +7,7 @@ fs = import('fs')
 pkgconfig = import('pkgconfig')
 
 libblkid_version = '1.1.0'
-libblkid_date = '01-Jun-2021'
+libblkid_date = '04-Apr-2024'
 libuuid_version = '1.3.0'
 libmount_version = '1.1.0'
 libsmartcols_version = '1.1.0'
