@@ -80,6 +80,7 @@ lib_mount_static = static_library(
                lib_blkid.get_static_lib()],
   dependencies : [realtime_libs],
   install : false)
+mount_static_dep = declare_dependency(link_with: lib_mount_static, include_directories: '.')
 
 lib__mount_deps = [
   lib_selinux,

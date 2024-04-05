@@ -975,7 +975,6 @@ subdir('po')
 includes = [dir_include,
             dir_libblkid,
             dir_libsmartcols,
-            dir_libmount,
             dir_libfdisk,
             dir_libuuid,
             dir_liblastlog2,
@@ -1503,8 +1502,8 @@ exe = executable(
   'fstrim',
   fstrim_sources,
   include_directories : includes,
-  link_with : [lib_common,
-               lib_mount],
+  link_with : [lib_common],
+  dependencies : [mount_dep],
   install_dir : sbindir,
   install : true)
 if not is_disabler(exe)
@@ -1654,8 +1653,8 @@ exe = executable(
   'eject',
   eject_sources,
   include_directories : includes,
-  link_with : [lib_common,
-               lib_mount],
+  link_with : [lib_common],
+  dependencies : [mount_dep],
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -1731,8 +1730,8 @@ exe = executable(
   lsns_sources,
   include_directories : includes,
   link_with : [lib_common,
-               lib_smartcols,
-               lib_mount],
+               lib_smartcols],
+  dependencies : [mount_dep],
   install_dir : usrbin_exec_dir,
   install : true)
 if not is_disabler(exe)
@@ -1747,9 +1746,8 @@ exe = executable(
   mount_sources,
   include_directories : includes,
   link_with : [lib_common,
-               lib_smartcols,
-               lib_mount],
-  dependencies : lib_selinux,
+               lib_smartcols],
+  dependencies : [lib_selinux, mount_dep],
   install_mode : 'rwsr-xr-x',
   install : opt,
   build_by_default : opt)
@@ -1757,8 +1755,8 @@ exe2 = executable(
   'umount',
   umount_sources,
   include_directories : includes,
-  link_with : [lib_common,
-               lib_mount],
+  link_with : [lib_common],
+  dependencies : [mount_dep],
   install_mode : 'rwsr-xr-x',
   install : opt,
   build_by_default : opt)
@@ -1777,8 +1775,8 @@ exe = executable(
   include_directories : includes,
   link_args : ['--static'],
   link_with : [lib_common,
-               lib_smartcols_static,
-               lib_mount_static],
+               lib_smartcols_static],
+  dependencies : [mount_static_dep],
   install : opt2,
   build_by_default : opt2)
 if opt2 and not is_disabler(exe)
@@ -1791,8 +1789,8 @@ exe = executable(
   umount_sources,
   include_directories : includes,
   link_args : ['--static'],
-  link_with : [lib_common,
-               lib_mount_static],
+  link_with : [lib_common],
+  dependencies : [mount_static_dep],
   install : opt2,
   build_by_default : opt2)
 if opt2 and not is_disabler(exe)
@@ -1807,8 +1805,8 @@ exe = executable(
   include_directories : includes,
   link_with : [lib_common,
                lib_blkid,
-               lib_mount,
                lib_smartcols],
+  dependencies : [mount_dep],
   install_dir : sbindir,
   install : true)
 if not is_disabler(exe)
@@ -1822,8 +1820,8 @@ exe = executable(
   swapoff_sources,
   include_directories : includes,
   link_with : [lib_common,
-               lib_blkid,
-               lib_mount],
+               lib_blkid],
+  dependencies : [mount_dep],
   install_dir : sbindir,
   install : true)
 if not is_disabler(exe)
@@ -1876,7 +1874,7 @@ exe = executable(
   'mountpoint',
   mountpoint_sources,
   include_directories : includes,
-  link_with : [lib_mount],
+  dependencies : [mount_dep],
   install : opt,
   build_by_default : opt)
 if opt and not is_disabler(exe)
@@ -1936,6 +1934,7 @@ exe = executable(
   unshare_sources,
   include_directories : includes,
   link_with : [lib_common],
+  dependencies : [mount_dep],
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -1951,6 +1950,7 @@ exe = executable(
   unshare_sources,
   include_directories : includes,
   link_with : [lib_common],
+  dependencies : [mount_dep],
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -2156,9 +2156,8 @@ exe = executable(
   fsck_sources,
   include_directories : includes,
   link_with : [lib_common,
-               lib_blkid,
-               lib_mount],
-  dependencies : realtime_libs,
+               lib_blkid],
+  dependencies : [realtime_libs, mount_dep],
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
@@ -2345,9 +2344,8 @@ exe = executable(
   link_with : [lib_common,
                lib_fdisk,
                lib_smartcols,
-               lib_tcolors,
-               lib_mount],
-  dependencies : [curses_libs],
+               lib_tcolors],
+  dependencies : [curses_libs, mount_dep],
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
@@ -2731,8 +2729,8 @@ exe = executable(
   lslocks_sources,
   include_directories : includes,
   link_with : [lib_common,
-               lib_mount,
                lib_smartcols],
+  dependencies : [mount_dep],
   install_dir : usrbin_exec_dir,
   install : true)
 if not is_disabler(exe)
@@ -2747,10 +2745,9 @@ exe = executable(
   include_directories : includes,
   link_with : [lib_common,
                lib_blkid,
-               lib_mount,
                lib_tcolors,
                lib_smartcols],
-  dependencies : lib_udev,
+  dependencies : [lib_udev, mount_dep],
   install : true)
 if not is_disabler(exe)
   exes += exe
@@ -2947,9 +2944,8 @@ exe = executable(
   include_directories : includes,
   link_with : [lib_common,
                lib_blkid,
-               lib_mount,
                lib_smartcols],
-  dependencies : [lib_udev],
+  dependencies : [lib_udev, mount_dep],
   install : true)
 if not is_disabler(exe)
   exes += exe
