@@ -53,10 +53,16 @@ option('build-fdisks', type : 'feature',
        description : 'build fdisk(8), sfdisk(8) and cfdisk(8)')
 option('build-mount', type : 'feature',
        description : 'build mount(8) and umount(8)')
+option('build-swapon', type : 'feature',
+       description : 'build swapon')
+option('build-swapoff', type : 'feature',
+       description : 'build swapoff')
 option('build-losetup', type : 'feature',
        description : 'build losetup')
 option('build-zramctl', type : 'feature',
        description : 'build zramctl')
+option('build-lsns', type : 'feature',
+       description : 'build lsns')
 option('build-fsck', type : 'feature',
        description : 'build fsck')
 option('build-partx', type : 'feature',
@@ -101,6 +107,12 @@ option('build-cal', type : 'feature',
        description : 'build cal')
 option('build-logger', type : 'feature',
        description : 'build logger')
+option('build-lsblk', type : 'feature',
+       description : 'build lsblk')
+option('build-lslocks', type : 'feature',
+       description : 'build lslocks')
+option('build-findmnt', type : 'feature',
+       description : 'build findmnt')
 option('build-lsfd', type : 'feature',
        description : 'build lsfd')
 option('build-switch_root', type : 'feature',
@@ -123,6 +135,8 @@ option('build-rfkill', type : 'feature',
        description : 'build rfkill')
 option('build-tunelp', type : 'feature',
        description : 'build tunelp')
+option('build-fstrim', type : 'feature',
+       description : 'build fstrim')
 option('build-kill', type : 'feature',
        description : 'build kill')
 option('build-last', type : 'feature',
