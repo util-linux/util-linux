@@ -145,6 +145,7 @@ lib_blkid = both_libraries(
 blkid_dep = declare_dependency(link_with: lib_blkid, include_directories: '.')
 
 lib_blkid_static = lib_blkid.get_static_lib()
+blkid_static_dep = declare_dependency(link_with: lib_blkid_static, include_directories: '.')
 
 if build_libblkid
   pkgconfig.generate(lib_blkid,
