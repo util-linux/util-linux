@@ -24,7 +24,7 @@ enum {
 	FL_SHADOWED	= (1 << 20),
 	FL_DELETED      = (1 << 21),
 	FL_SHELLVAR     = (1 << 22),
-	FL_DF_INODES	= (1 << 23) | FL_DF,
+	FL_DF_INODES	= (1 << 23),
 
 	/* basic table settings */
 	FL_ASCII	= (1 << 25),
