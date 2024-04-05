@@ -78,7 +78,7 @@ conf.set_quoted('ADJTIME_PATH', '/etc/adjtime') # yes, both are used :(
 conf.set_quoted('_PATH_VENDORDIR', vendordir)
 conf.set('USE_VENDORDIR', vendordir == '' ? false : 1)
 
-build_libblkid = not get_option('build-libblkid').disabled()
+build_libblkid = not get_option('build-libblkid').require(get_option('build-libmount').allowed()).disabled()
 conf.set('HAVE_LIBBLKID', build_libblkid ? 1 : false)
 summary('libblkid', build_libblkid ? 'enabled' : 'disabled', section : 'components')
 
@@ -101,7 +101,8 @@ conf.set('HAVE_MOUNTFD_API', have_mountfd_api ? 1 : false)
 have_struct_statx = cc.sizeof('struct statx', prefix : '#include <sys/stat.h>') > 0
 conf.set('HAVE_STRUCT_STATX', have_struct_statx ? 1 : false)
 
-build_libmount = not get_option('build-libmount').disabled()
+build_libmount = get_option('build-libmount').require(get_option('build-libblkid').allowed()).allowed()
+
 conf.set('HAVE_LIBMOUNT', build_libmount ? 1 : false)
 conf.set('USE_LIBMOUNT_SUPPORT_NAMESPACES', 1)
 conf.set('USE_LIBMOUNT_MOUNTFD_SUPPORT', have_mountfd_api ? 1 : false)
@@ -111,7 +112,7 @@ build_libsmartcols = not get_option('build-libsmartcols').disabled()
 conf.set('HAVE_LIBSMARTCOLS', build_libsmartcols ? 1 : false)
 summary('libsmartcols', build_libsmartcols ? 'enabled' : 'disabled', section : 'components')
 
-build_libfdisk = not get_option('build-libfdisk').disabled()
+build_libfdisk = not get_option('build-libfdisk').require(get_option('build-libblkid').allowed()).disabled()
 conf.set('HAVE_LIBFDISK', build_libfdisk ? 1 : false)
 summary('libfdisk', build_libfdisk ? 'enabled' : 'disabled', section : 'components')
 
@@ -905,6 +906,12 @@ bison_gen = generator(
   output : ['@BASENAME@.tab.c', '@BASENAME@.tab.h'],
   arguments : ['@INPUT@', '--defines=@OUTPUT1@', '--output=@OUTPUT0@'])
 
+python_module = import('python')
+python = python_module.find_installation(
+    get_option('python'),
+    required : true,
+    disabler : true)
+
 meson_make_symlink = meson.current_source_dir() + '/tools/meson-make-symlink.sh'
 meson_make_manpage_stub = meson.current_source_dir() + '/tools/meson-make-manpage-stub.sh'
 
@@ -1497,6 +1504,7 @@ if opt and not is_disabler(exe)
   bashcompletions += ['tunelp']
 endif
 
+opt = not get_option('build-fstrim').disabled()
 exe = executable(
   'fstrim',
   fstrim_sources,
@@ -1504,8 +1512,9 @@ exe = executable(
   link_with : [lib_common],
   dependencies : [mount_dep],
   install_dir : sbindir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['sys-utils/fstrim.8.adoc']
   bashcompletions += ['fstrim']
@@ -1724,6 +1733,7 @@ if not is_disabler(exe)
   bashcompletions += ['prlimit']
 endif
 
+opt = not get_option('build-lsns').disabled()
 exe = executable(
   'lsns',
   lsns_sources,
@@ -1732,8 +1742,9 @@ exe = executable(
                lib_smartcols],
   dependencies : [mount_dep],
   install_dir : usrbin_exec_dir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['sys-utils/lsns.8.adoc']
   bashcompletions += ['lsns']
@@ -1798,6 +1809,7 @@ endif
 
 # setuid?
 
+opt = not get_option('build-swapon').disabled()
 exe = executable(
   'swapon',
   swapon_sources,
@@ -1806,13 +1818,15 @@ exe = executable(
                lib_smartcols],
   dependencies : [blkid_dep, mount_dep],
   install_dir : sbindir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['sys-utils/swapon.8.adoc']
   bashcompletions += ['swapon']
 endif
 
+opt = not get_option('build-swapoff').disabled()
 exe = executable(
   'swapoff',
   swapoff_sources,
@@ -1820,8 +1834,9 @@ exe = executable(
   link_with : [lib_common],
   dependencies : [blkid_dep, mount_dep],
   install_dir : sbindir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manlinks += {'swapoff.8': 'swapon.8'}
   bashcompletions += ['swapoff']
@@ -2719,6 +2734,7 @@ exes += exe
 manadocs += ['misc-utils/whereis.1.adoc']
 bashcompletions += ['whereis']
 
+opt = not get_option('build-lslocks').disabled()
 exe = executable(
   'lslocks',
   lslocks_sources,
@@ -2727,13 +2743,15 @@ exe = executable(
                lib_smartcols],
   dependencies : [mount_dep],
   install_dir : usrbin_exec_dir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['misc-utils/lslocks.8.adoc']
   bashcompletions += ['lslocks']
 endif
 
+opt = not get_option('build-lsblk').disabled()
 exe = executable(
   'lsblk',
   lsblk_sources,
@@ -2742,8 +2760,9 @@ exe = executable(
                lib_tcolors,
                lib_smartcols],
   dependencies : [blkid_dep, lib_udev, mount_dep],
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['misc-utils/lsblk.8.adoc']
   bashcompletions += ['lsblk']
@@ -2932,6 +2951,7 @@ if not is_disabler(exe)
   bashcompletions += ['wipefs']
 endif
 
+opt = not get_option('build-findmnt').disabled()
 exe = executable(
   'findmnt',
   findmnt_sources,
@@ -2939,8 +2959,9 @@ exe = executable(
   link_with : [lib_common,
                lib_smartcols],
   dependencies : [blkid_dep, lib_udev, mount_dep],
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['misc-utils/findmnt.8.adoc']
   bashcompletions += ['findmnt']

@@ -1,9 +1,3 @@
-python_module = import('python')
-
-python = python_module.find_installation(
-    get_option('python'),
-    required : get_option('build-python'),
-    disabler : true)
 build_python = python.found()
 
 pylibmount_sources = '''
