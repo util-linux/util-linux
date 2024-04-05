@@ -1636,7 +1636,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'I':
 			flags &= ~FL_TREE;
-			flags |= FL_DF_INODES;
+			flags |= (FL_DF_INODES | FL_DF);
 			break;
 		case 'i':
 			flags |= FL_INVERT;
@@ -1775,22 +1775,20 @@ int main(int argc, char *argv[])
 	if (collist)
 		list_colunms();		/* print end exit */
 
-	if (!ncolumns && (flags & FL_DF_INODES)) {
+	if (!ncolumns && (flags & FL_DF)) {
 		add_column(columns, ncolumns++, COL_SOURCE);
 		add_column(columns, ncolumns++, COL_FSTYPE);
-		add_column(columns, ncolumns++, COL_INO_TOTAL);
-		add_column(columns, ncolumns++, COL_INO_USED);
-		add_column(columns, ncolumns++, COL_INO_AVAIL);
-		add_column(columns, ncolumns++, COL_INO_USEPERC);
-		add_column(columns, ncolumns++, COL_TARGET);
-	}
-	else if (!ncolumns && (flags & FL_DF)) {
-		add_column(columns, ncolumns++, COL_SOURCE);
-		add_column(columns, ncolumns++, COL_FSTYPE);
-		add_column(columns, ncolumns++, COL_SIZE);
-		add_column(columns, ncolumns++, COL_USED);
-		add_column(columns, ncolumns++, COL_AVAIL);
-		add_column(columns, ncolumns++, COL_USEPERC);
+		if (flags & FL_DF_INODES) {
+			add_column(columns, ncolumns++, COL_INO_TOTAL);
+			add_column(columns, ncolumns++, COL_INO_USED);
+			add_column(columns, ncolumns++, COL_INO_AVAIL);
+			add_column(columns, ncolumns++, COL_INO_USEPERC);
+		} else {
+			add_column(columns, ncolumns++, COL_SIZE);
+			add_column(columns, ncolumns++, COL_USED);
+			add_column(columns, ncolumns++, COL_AVAIL);
+			add_column(columns, ncolumns++, COL_USEPERC);
+		}
 		add_column(columns, ncolumns++, COL_TARGET);
 	}
 
