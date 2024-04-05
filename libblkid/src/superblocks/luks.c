@@ -34,6 +34,8 @@
 #define LUKS_MAGIC	"LUKS\xba\xbe"
 #define LUKS_MAGIC_2	"SKUL\xba\xbe"
 
+#define LUKS2_HW_OPAL_SUBSYSTEM	"HW-OPAL"
+
 /* Offsets for secondary header (for scan if primary header is corrupted). */
 #define LUKS2_HDR2_OFFSETS { 0x04000, 0x008000, 0x010000, 0x020000, \
                              0x40000, 0x080000, 0x100000, 0x200000, 0x400000 }
@@ -139,10 +141,45 @@ static int probe_luks(blkid_probe pr, const struct blkid_idmag *mag __attribute_
 	return BLKID_PROBE_NONE;
 }
 
+static int probe_luks_opal(blkid_probe pr, const struct blkid_idmag *mag __attribute__((__unused__)))
+{
+	struct luks2_phdr *header;
+	int version;
+
+	header = (struct luks2_phdr *) blkid_probe_get_buffer(pr, 0, sizeof(struct luks2_phdr));
+	if (!header)
+		return errno ? -errno : BLKID_PROBE_NONE;
+
+	if (!luks_valid(header, LUKS_MAGIC, 0))
+		return BLKID_PROBE_NONE;
+
+	version = be16_to_cpu(header->version);
+
+	if (version != 2)
+		return BLKID_PROBE_NONE;
+
+	if (memcmp(header->subsystem, LUKS2_HW_OPAL_SUBSYSTEM, sizeof(LUKS2_HW_OPAL_SUBSYSTEM)) != 0)
+		return BLKID_PROBE_NONE;
+
+	if (!blkdid_probe_is_opal_locked(pr))
+		return BLKID_PROBE_NONE;
+
+	/* Locked drive with LUKS2 HW OPAL encryption, finish probe now */
+	return luks_attributes(pr, header, 0);
+}
+
 const struct blkid_idinfo luks_idinfo =
 {
 	.name		= "crypto_LUKS",
 	.usage		= BLKID_USAGE_CRYPTO,
 	.probefunc	= probe_luks,
 	.magics		= BLKID_NONE_MAGIC
+};
+
+const struct blkid_idinfo luks_opal_idinfo =
+{
+	.name		= "crypto_LUKS",
+	.usage		= BLKID_USAGE_CRYPTO,
+	.probefunc	= probe_luks_opal,
+	.magics		= BLKID_NONE_MAGIC,
 };

@@ -94,6 +94,9 @@ static int blkid_probe_set_usage(blkid_probe pr, int usage);
  */
 static const struct blkid_idinfo *idinfos[] =
 {
+	/* First, as access to locked OPAL region triggers IO errors */
+	&luks_opal_idinfo,
+
 	/* RAIDs */
 	&linuxraid_idinfo,
 	&ddfraid_idinfo,
