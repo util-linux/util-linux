@@ -3200,6 +3200,25 @@ static int send_diag_request(int diagsd, void *req, size_t req_size)
 	return 0;
 }
 
+static int recv_diag_request(int diagsd)
+{
+	__attribute__((aligned(sizeof(void *)))) uint8_t buf[8192];
+	const struct nlmsghdr *h;
+	int r = recvfrom(diagsd, buf, sizeof(buf), 0, NULL, NULL);;
+	if (r < 0)
+		return errno;
+
+	h = (void *)buf;
+	if (!NLMSG_OK(h, (size_t)r))
+		return -1;
+
+	if (h->nlmsg_type == NLMSG_ERROR) {
+		struct nlmsgerr *e = (struct nlmsgerr *)NLMSG_DATA(h);
+		return - e->error;
+	}
+	return 0;
+}
+
 static void *make_sockdiag(const struct factory *factory, struct fdesc fdescs[],
 			   int argc, char ** argv)
 {
@@ -3243,6 +3262,16 @@ static void *make_sockdiag(const struct factory *factory, struct fdesc fdescs[],
 		err(EXIT_FAILURE, "failed in sendmsg()");
 	}
 
+	e = recv_diag_request(diagsd);
+	if (e != 0) {
+		close (diagsd);
+		if (e == ENOENT)
+			err(EXIT_ENOENT, "failed in recvfrom()");
+		if (e > 0)
+			err(EXIT_FAILURE, "failed in recvfrom()");
+		if (e < 0)
+			errx(EXIT_FAILURE, "failed in recvfrom() => -1");
+	}
 
 	if (diagsd != fdescs[0].fd) {
 		if (dup2(diagsd, fdescs[0].fd) < 0) {

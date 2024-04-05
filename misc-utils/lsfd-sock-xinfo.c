@@ -179,9 +179,12 @@ static void load_sock_xinfo_no_nsswitch(struct netns *nsobj)
 	load_xinfo_from_proc_packet(netns);
 
 	diagsd = socket(AF_NETLINK, SOCK_DGRAM, NETLINK_SOCK_DIAG);
+	DBG(ENDPOINTS, ul_debug("made a diagnose socket [fd=%d; %s]", diagsd,
+				(diagsd >= 0)? "successful": strerror(errno)));
 	if (diagsd >= 0) {
 		load_xinfo_from_diag_unix(diagsd, netns);
 		close(diagsd);
+		DBG(ENDPOINTS, ul_debug("close the diagnose socket"));
 	}
 
 	if (nsobj)
@@ -337,6 +340,7 @@ static void send_diag_request(int diagsd, void *req, size_t req_size,
 			      bool (*cb)(ino_t, size_t, void *),
 			      ino_t netns)
 {
+	int r;
 	struct sockaddr_nl nladdr = {
 		.nl_family = AF_NETLINK,
 	};
@@ -361,30 +365,45 @@ static void send_diag_request(int diagsd, void *req, size_t req_size,
 
 	__attribute__((aligned(sizeof(void *)))) uint8_t buf[8192];
 
-	if (sendmsg(diagsd, &mhd, 0) < 0)
+	r = sendmsg(diagsd, &mhd, 0);
+	DBG(ENDPOINTS, ul_debug("sendmsg [rc=%d; %s]",
+				r, (r >= 0)? "successful": strerror(errno)));
+	if (r < 0)
 		return;
 
 	for (;;) {
 		const struct nlmsghdr *h;
-		int r = recvfrom(diagsd, buf, sizeof(buf), 0, NULL, NULL);
+		r = recvfrom(diagsd, buf, sizeof(buf), 0, NULL, NULL);
+		DBG(ENDPOINTS, ul_debug("recvfrom [rc=%d; %s]",
+					r, (r >= 0)? "successful": strerror(errno)));
 		if (r < 0)
 			return;
 
 		h = (void *) buf;
+		DBG(ENDPOINTS, ul_debug("   OK: %d", NLMSG_OK(h, (size_t)r)));
 		if (!NLMSG_OK(h, (size_t)r))
 			return;
 
 		for (; NLMSG_OK(h, (size_t)r); h = NLMSG_NEXT(h, r)) {
-			if (h->nlmsg_type == NLMSG_DONE)
+			if (h->nlmsg_type == NLMSG_DONE) {
+				DBG(ENDPOINTS, ul_debug("      DONE"));
 				return;
-			if (h->nlmsg_type == NLMSG_ERROR)
+			}
+			if (h->nlmsg_type == NLMSG_ERROR)  {
+				struct nlmsgerr *e = (struct nlmsgerr *)NLMSG_DATA(h);
+				DBG(ENDPOINTS, ul_debug("      ERROR: %s",
+							strerror(- e->error)));
 				return;
+			}
 
 			if (h->nlmsg_type == SOCK_DIAG_BY_FAMILY) {
+				DBG(ENDPOINTS, ul_debug("      FAMILY"));
 				if (!cb(netns, h->nlmsg_len, NLMSG_DATA(h)))
 					return;
 			}
+			DBG(ENDPOINTS, ul_debug("   NEXT"));
 		}
+		DBG(ENDPOINTS, ul_debug("   OK: 0"));
 	}
 }
 
@@ -639,6 +658,8 @@ static void load_xinfo_from_proc_unix(ino_t netns_inode)
 	FILE *unix_fp;
 
 	unix_fp = fopen("/proc/net/unix", "r");
+	DBG(ENDPOINTS, ul_debug("open /proc/net/unix [fp=%p; %s]", unix_fp,
+				unix_fp? "successful": strerror(errno)));
 	if (!unix_fp)
 		return;
 
@@ -655,13 +676,18 @@ static void load_xinfo_from_proc_unix(ino_t netns_inode)
 		unsigned long inode;
 		struct unix_xinfo *ux;
 		char path[UNIX_LINE_LEN + 1] = { 0 };
+		int r;
 
+		DBG(ENDPOINTS, ul_debug("   line: %s", line));
 
-		if (sscanf(line, "%*x: %*x %*x %" SCNx64 " %x %x %lu %"
+		r = sscanf(line, "%*x: %*x %*x %" SCNx64 " %x %x %lu %"
 			   stringify_value(UNIX_LINE_LEN) "[^\n]",
-			   &flags, &type, &st, &inode, path) < 4)
+			   &flags, &type, &st, &inode, path);
+		DBG(ENDPOINTS, ul_debug("   scanf: %d", r));
+		if (r < 4)
 			continue;
 
+		DBG(ENDPOINTS, ul_debug("   inode: %lu", inode));
 		if (inode == 0)
 			continue;
 
@@ -675,10 +701,12 @@ static void load_xinfo_from_proc_unix(ino_t netns_inode)
 		ux->st = st;
 		xstrncpy(ux->path, path, sizeof(ux->path));
 
+		DBG(ENDPOINTS, ul_debug("   path: %s", ux->path));
 		add_sock_info(&ux->sock);
 	}
 
  out:
+	DBG(ENDPOINTS, ul_debug("close /proc/net/unix"));
 	fclose(unix_fp);
 }
 
@@ -712,6 +740,9 @@ static bool handle_diag_unix(ino_t netns __attribute__((__unused__)),
 
 	if (diag->udiag_family != AF_UNIX)
 		return false;
+	DBG(ENDPOINTS, ul_debug("         UNIX"));
+	DBG(ENDPOINTS, ul_debug("         LEN: %zu (>= %zu)", nlmsg_len,
+				(size_t)(NLMSG_LENGTH(sizeof(*diag)))));
 
 	if (nlmsg_len < NLMSG_LENGTH(sizeof(*diag)))
 		return false;
@@ -719,21 +750,29 @@ static bool handle_diag_unix(ino_t netns __attribute__((__unused__)),
 	inode = (ino_t)diag->udiag_ino;
 	xinfo = get_sock_xinfo(inode);
 
+	DBG(ENDPOINTS, ul_debug("         inode: %llu", (unsigned long long)inode));
+	DBG(ENDPOINTS, ul_debug("         xinfo: %p", xinfo));
+
 	if (xinfo == NULL)
 		/* The socket is found in the diag response
 		   but not in the proc fs. */
 		return true;
 
+	DBG(ENDPOINTS, ul_debug("         xinfo->class == &unix_xinfo_class: %d",
+				xinfo->class == &unix_xinfo_class));
 	if (xinfo->class != &unix_xinfo_class)
 		return true;
 	unix_xinfo = (struct unix_xinfo *)xinfo;
 
 	rta_len = nlmsg_len - NLMSG_LENGTH(sizeof(*diag));
+	DBG(ENDPOINTS, ul_debug("         rta_len: %zu", rta_len));
 	for (struct rtattr *attr = (struct rtattr *)(diag + 1);
 	     RTA_OK(attr, rta_len);
 	     attr = RTA_NEXT(attr, rta_len)) {
 		size_t len = RTA_PAYLOAD(attr);
 
+		DBG(ENDPOINTS, ul_debug("            len = %2zu, type: %d",
+					rta_len, attr->rta_type));
 		switch (attr->rta_type) {
 		case UNIX_DIAG_NAME:
 			unix_refill_name(xinfo, RTA_DATA(attr), len);
