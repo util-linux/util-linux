@@ -388,30 +388,6 @@ static void trim_trailing_spaces(char *s)
 }
 
 /*
- * if strlen(fld) exceeds `tgtSize`, truncate `fld` to `tgtSize` characters,
- * with last character as utf8 ellipsis.
- */
-#define STR_ELLIPSIS "…"
-static void truncate_field(char *fld,  size_t fldSize, size_t tgtSize, int *newLen)
-{
-	if (strnlen(fld, fldSize) > tgtSize) {
-
-		/*
-		 * shrink target size by one for ellipsis char
-		 * TODO: this could bisect any multi-byte utf8 character that crosses
-		 *       fldSize.  Needs to be character-aware, and step back to previous
-		 *       character rather than previous byte.
-		 */
-		tgtSize -= 1;
-
-		if ((tgtSize + sizeof(STR_ELLIPSIS)) <= fldSize)
-			memcpy(fld + tgtSize, STR_ELLIPSIS, sizeof(STR_ELLIPSIS));
-
-		*newLen = strnlen(fld, fldSize);
-	}
-}
-
-/*
  *	Show one line of information on screen
  */
 static int list(const struct last_control *ctl, struct utmpx *p, time_t logout_time, int what)
@@ -548,35 +524,37 @@ static int list(const struct last_control *ctl, struct utmpx *p, time_t logout_t
 		mem2strcpy(domain, p->ut_host, sizeof(p->ut_host), sizeof(domain));
 
 	/*
-	 * set last displayed character to an ellipsis '…'
-	 * when user/domain/ip fields are truncated in non-fullnames mode
+	 * set last displayed character to an asterisk when
+	 * user/domain/ip fields are to be truncated in non-fullnames mode
 	 */
-	int fmt_dl = ctl->domain_len;
-	int fmt_nl = ctl->name_len;
-	if (!ctl->fullnames_mode) {
-		truncate_field(domain, sizeof(domain), LAST_DOMAIN_LEN, &fmt_dl);
-		truncate_field(p->ut_user, sizeof(p->ut_user), LAST_LOGIN_LEN, &fmt_nl);
-	}
+	if (!ctl->fullnames_mode && (strnlen(p->ut_user, sizeof(p->ut_user)) > ctl->name_len))
+		p->ut_user[ctl->name_len-1] = '*';
 
 	if (ctl->showhost) {
 		if (!ctl->altlist) {
+
+			if (!ctl->fullnames_mode && (strnlen(domain, sizeof(domain)) > ctl->domain_len))
+				domain[ctl->domain_len-1] = '*';
+
 			len = snprintf(final, sizeof(final),
 				"%-8.*s%c%-12.12s%c%-16.*s%c%-*.*s%c%-*.*s%c%s\n",
-				fmt_nl, p->ut_user, ctl->separator, utline, ctl->separator,
-				fmt_dl, domain, ctl->separator,
+				ctl->name_len, p->ut_user, ctl->separator, utline, ctl->separator,
+				ctl->domain_len, domain, ctl->separator,
 				fmt->in_len, fmt->in_len, logintime, ctl->separator, fmt->out_len, fmt->out_len,
 				logouttime, ctl->separator, length);
+
 		} else {
+
 			len = snprintf(final, sizeof(final),
 				"%-8.*s%c%-12.12s%c%-*.*s%c%-*.*s%c%-12.12s%c%s\n",
-				fmt_nl, p->ut_user, ctl->separator, utline, ctl->separator,
+				ctl->name_len, p->ut_user, ctl->separator, utline, ctl->separator,
 				fmt->in_len, fmt->in_len, logintime, ctl->separator, fmt->out_len, fmt->out_len,
 				logouttime, ctl->separator, length, ctl->separator, domain);
 		}
 	} else {
 		len = snprintf(final, sizeof(final),
 			"%-8.*s%c%-12.12s%c%-*.*s%c%-*.*s%c%s\n",
-			fmt_nl, p->ut_user, ctl->separator, utline, ctl->separator,
+			ctl->name_len, p->ut_user, ctl->separator, utline, ctl->separator,
 			fmt->in_len, fmt->in_len, logintime, ctl->separator, fmt->out_len, fmt->out_len,
 			logouttime, ctl->separator, length);
 	}
