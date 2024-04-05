@@ -122,7 +122,7 @@ void ul_jsonwrt_indent(struct ul_jsonwrt *fmt)
 		fputs("   ", fmt->out);
 }
 
-void ul_jsonwrt_open(struct ul_jsonwrt *fmt, const char *name, int type)
+static void print_name(struct ul_jsonwrt *fmt, const char *name)
 {
 	if (name) {
 		if (fmt->after_close)
@@ -135,6 +135,11 @@ void ul_jsonwrt_open(struct ul_jsonwrt *fmt, const char *name, int type)
 		else
 			ul_jsonwrt_indent(fmt);
 	}
+}
+
+void ul_jsonwrt_open(struct ul_jsonwrt *fmt, const char *name, int type)
+{
+	print_name(fmt, name);
 
 	switch (type) {
 	case UL_JSON_OBJECT:
@@ -150,6 +155,25 @@ void ul_jsonwrt_open(struct ul_jsonwrt *fmt, const char *name, int type)
 		break;
 	}
 	fmt->after_close = 0;
+}
+
+void ul_jsonwrt_empty(struct ul_jsonwrt *fmt, const char *name, int type)
+{
+	print_name(fmt, name);
+
+	switch (type) {
+	case UL_JSON_OBJECT:
+		fputs(name ? ": {}" : "{}", fmt->out);
+		break;
+	case UL_JSON_ARRAY:
+		fputs(name ? ": []" : "[]", fmt->out);
+		break;
+	case UL_JSON_VALUE:
+		fputs(name ? ": null" : "null", fmt->out);
+		break;
+	}
+
+	fmt->after_close = 1;
 }
 
 void ul_jsonwrt_close(struct ul_jsonwrt *fmt, int type)
@@ -177,6 +201,7 @@ void ul_jsonwrt_close(struct ul_jsonwrt *fmt, int type)
 
 	fmt->after_close = 1;
 }
+
 
 void ul_jsonwrt_flush(struct ul_jsonwrt *fmt)
 {
@@ -237,13 +262,5 @@ void ul_jsonwrt_value_boolean(struct ul_jsonwrt *fmt,
 {
 	ul_jsonwrt_value_open(fmt, name);
 	fputs(data ? "true" : "false", fmt->out);
-	ul_jsonwrt_value_close(fmt);
-}
-
-void ul_jsonwrt_value_null(struct ul_jsonwrt *fmt,
-			const char *name)
-{
-	ul_jsonwrt_value_open(fmt, name);
-	fputs("null", fmt->out);
 	ul_jsonwrt_value_close(fmt);
 }
