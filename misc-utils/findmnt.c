@@ -1499,6 +1499,58 @@ static void __attribute__((__noreturn__)) list_colunms(struct findmnt *findmnt)
 	exit(EXIT_SUCCESS);
 }
 
+static struct libscols_table *init_scols_table(unsigned int flags)
+{
+	struct libscols_table *table = scols_new_table();
+	if (!table) {
+		warn(_("failed to allocate output table"));
+		goto leave;
+	}
+
+	scols_table_enable_raw(table,        !!(flags & FL_RAW));
+	scols_table_enable_export(table,     !!(flags & FL_EXPORT));
+	scols_table_enable_shellvar(table,   !!(flags & FL_SHELLVAR));
+	scols_table_enable_json(table,       !!(flags & FL_JSON));
+	scols_table_enable_ascii(table,      !!(flags & FL_ASCII));
+	scols_table_enable_noheadings(table, !!(flags & FL_NOHEADINGS));
+
+	if (flags & FL_JSON)
+		scols_table_set_name(table, "filesystems");
+
+	for (size_t i = 0; i < ncolumns; i++) {
+		struct libscols_column *cl;
+		int fl = get_column_flags(i);
+		int id = get_column_id(i);
+
+		if (!(flags & FL_TREE))
+			fl &= ~SCOLS_FL_TREE;
+
+		if (!(flags & FL_POLL) && is_tabdiff_column(id)) {
+			warnx(_("%s column is requested, but --poll "
+			       "is not enabled"), get_column_name(i));
+			goto leave;
+		}
+		cl = scols_table_new_column(table, get_column_name(i),
+					get_column_whint(i), fl);
+		if (!cl)	{
+			warn(_("failed to allocate output column"));
+			goto leave;
+		}
+		/* multi-line cells (now used for SOURCES) */
+		if (fl & SCOLS_FL_WRAP)
+			scols_column_set_wrapfunc(cl,
+						NULL,
+						scols_wrapzero_nextchunk,
+						NULL);
+		if (flags & FL_JSON)
+	                scols_column_set_json_type(cl, get_column_json_type(id, fl, NULL,
+									    flags));
+	}
+
+ leave:
+	return table;
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -1894,50 +1946,9 @@ int main(int argc, char *argv[])
 	 * initialize libsmartcols
 	 */
 	scols_init_debug(0);
-	table = scols_new_table();
-	if (!table) {
-		warn(_("failed to allocate output table"));
+	table = init_scols_table(findmnt.flags);
+	if (!table)
 		goto leave;
-	}
-	scols_table_enable_raw(table,        !!(findmnt.flags & FL_RAW));
-	scols_table_enable_export(table,     !!(findmnt.flags & FL_EXPORT));
-	scols_table_enable_shellvar(table,   !!(findmnt.flags & FL_SHELLVAR));
-	scols_table_enable_json(table,       !!(findmnt.flags & FL_JSON));
-	scols_table_enable_ascii(table,      !!(findmnt.flags & FL_ASCII));
-	scols_table_enable_noheadings(table, !!(findmnt.flags & FL_NOHEADINGS));
-
-	if (findmnt.flags & FL_JSON)
-		scols_table_set_name(table, "filesystems");
-
-	for (i = 0; i < ncolumns; i++) {
-		struct libscols_column *cl;
-		int fl = get_column_flags(i);
-		int id = get_column_id(i);
-
-		if (!(findmnt.flags & FL_TREE))
-			fl &= ~SCOLS_FL_TREE;
-
-		if (!(findmnt.flags & FL_POLL) && is_tabdiff_column(id)) {
-			warnx(_("%s column is requested, but --poll "
-			       "is not enabled"), get_column_name(i));
-			goto leave;
-		}
-		cl = scols_table_new_column(table, get_column_name(i),
-					get_column_whint(i), fl);
-		if (!cl)	{
-			warn(_("failed to allocate output column"));
-			goto leave;
-		}
-		/* multi-line cells (now used for SOURCES) */
-		if (fl & SCOLS_FL_WRAP)
-			scols_column_set_wrapfunc(cl,
-						NULL,
-						scols_wrapzero_nextchunk,
-						NULL);
-		if (findmnt.flags & FL_JSON)
-	                scols_column_set_json_type(cl, get_column_json_type(id, fl, NULL,
-									    findmnt.flags));
-	}
 
 	/*
 	 * Fill in data to the output table
