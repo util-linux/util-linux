@@ -166,6 +166,12 @@ static blkid_cache blk_cache;
 static struct udev *udev;
 #endif
 
+/* "userdata" used by callback for libsmartcols filter */
+struct filler_data {
+	struct libmnt_fs *fs;
+	struct findmnt *findmnt;
+};
+
 static int match_func(struct libmnt_fs *fs, void *data __attribute__ ((__unused__)));
 
 
@@ -826,9 +832,24 @@ static void set_line_data(struct libscols_line *ln, size_t i, char *data, size_t
 		err(EXIT_FAILURE, _("failed to add output data"));
 }
 
+static int filter_filler_cb(
+		 struct libscols_filter *filter __attribute__((__unused__)),
+		 struct libscols_line *line,
+		 size_t column_index,
+		 void *userdata)
+{
+	struct filler_data *fid = (struct filler_data *) userdata;
+	size_t datasiz = 0;
+
+	char *data = get_data(fid->fs, column_index, &datasiz, fid->findmnt);
+	if (data)
+		set_line_data(line, column_index, data, datasiz);
+	return 0;
+}
+
 /* adds one line to the output @tab */
 static struct libscols_line *add_line(struct libscols_table *table, struct libmnt_fs *fs,
-					struct libscols_line *parent, struct findmnt *findmnt)
+				      struct libscols_line *parent, struct findmnt *findmnt, bool *filtered)
 {
 	size_t i;
 	struct libscols_line *line = scols_table_new_line(table, parent);
@@ -836,9 +857,36 @@ static struct libscols_line *add_line(struct libscols_table *table, struct libmn
 	if (!line)
 		err(EXIT_FAILURE, _("failed to allocate output line"));
 
+	if (findmnt->filter) {
+		int status = 0;
+		struct filler_data fid = {
+			.fs = fs,
+			.findmnt = findmnt,
+		};
+
+		scols_filter_set_filler_cb(findmnt->filter,
+				filter_filler_cb, (void *) &fid);
+
+		if (scols_line_apply_filter(line, findmnt->filter, &status))
+			err(EXIT_FAILURE, _("failed to apply filter"));
+
+		if (status == 0) {
+			if (parent)
+				scols_line_remove_child(parent, line);
+			scols_table_remove_line(table, line);
+			*filtered = true;
+			return NULL;
+		}
+	}
+
 	for (i = 0; i < ncolumns; i++) {
 		size_t datasiz = 0;
-		char *data = get_data(fs, i, &datasiz, findmnt);
+		char *data;
+
+		if (scols_line_is_filled(line, i))
+			continue;
+
+		data = get_data(fs, i, &datasiz, findmnt);
 
 		if (data)
 			set_line_data(line, i, data, datasiz);
@@ -912,9 +960,10 @@ static int create_treenode(struct libscols_table *table, struct libmnt_table *tb
 	if (!itr)
 		goto leave;
 
-	if ((findmnt->flags & FL_SUBMOUNTS) || match_func(fs, NULL)) {
-		line = add_line(table, fs, parent_line, findmnt);
-		if (!line)
+	if ((findmnt->flags & FL_SUBMOUNTS) || match_func(fs, findmnt)) {
+		bool filtered = false;
+		line = add_line(table, fs, parent_line, findmnt, &filtered);
+		if (!line || filtered)
 			goto leave;
 	} else
 		line = parent_line;
@@ -935,7 +984,7 @@ static int create_treenode(struct libscols_table *table, struct libmnt_table *tb
 		fs = NULL;
 
 		while (mnt_table_next_fs(tb, itr, &fs) == 0) {
-			if (!has_line(table, fs) && match_func(fs, NULL))
+			if (!has_line(table, fs) && match_func(fs, findmnt))
 				create_treenode(table, tb, fs, NULL, findmnt);
 		}
 	}
@@ -1207,8 +1256,13 @@ static int add_matching_lines(struct libmnt_table *tb,
 	while((fs = get_next_fs(tb, itr, findmnt))) {
 		if ((findmnt->flags & FL_TREE) || (findmnt->flags & FL_SUBMOUNTS))
 			rc = create_treenode(table, tb, fs, NULL, findmnt);
-		else
-			rc = !add_line(table, fs, NULL, findmnt);
+		else {
+			bool filtered = false;
+			struct libscols_line *l = add_line(table, fs, NULL, findmnt, &filtered);
+			if (filtered)
+				continue;
+			rc = !l;
+		}
 		if (rc)
 			goto done;
 		nlines++;
@@ -1443,6 +1497,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -P, --pairs            use key=\"value\" output format\n"), out);
 	fputs(_("     --pseudo           print only pseudo-filesystems\n"), out);
 	fputs(_("     --shadowed         print only filesystems over-mounted by another filesystem\n"), out);
+	fputs(_(" -Q, --filter <expr>    apply display filter\n"), out);
 	fputs(_(" -R, --submounts        print all submounts for the matching filesystems\n"), out);
 	fputs(_(" -r, --raw              use raw output format\n"), out);
 	fputs(_("     --real             print only real filesystems\n"), out);
@@ -1496,7 +1551,7 @@ static void __attribute__((__noreturn__)) list_colunms(struct findmnt *findmnt)
 	exit(EXIT_SUCCESS);
 }
 
-static struct libscols_table *init_scols_table(unsigned int flags)
+static struct libscols_table *init_scols_table(unsigned int flags, bool use_filter)
 {
 	struct libscols_table *table = scols_new_table();
 	if (!table) {
@@ -1539,7 +1594,7 @@ static struct libscols_table *init_scols_table(unsigned int flags)
 						NULL,
 						scols_wrapzero_nextchunk,
 						NULL);
-		if (flags & FL_JSON)
+		if ((flags & FL_JSON) || use_filter)
 	                scols_column_set_json_type(cl, get_column_json_type(id, fl, NULL,
 									    flags));
 	}
@@ -1548,6 +1603,59 @@ static struct libscols_table *init_scols_table(unsigned int flags)
 	return table;
 }
 
+static struct libscols_filter *new_filter(const char *query)
+{
+	struct libscols_filter *f;
+
+	f = scols_new_filter(NULL);
+	if (!f)
+		err(EXIT_FAILURE, _("failed to allocate filter"));
+	if (query && scols_filter_parse_string(f, query) != 0)
+		errx(EXIT_FAILURE, _("failed to parse \"%s\": %s"), query,
+				scols_filter_get_errmsg(f));
+	return f;
+}
+
+static void init_scols_filter(struct libscols_table *tb, struct libscols_filter *f, unsigned int flags)
+{
+	struct libscols_iter *itr;
+	const char *name = NULL;
+	int nerrs = 0;
+
+	itr = scols_new_iter(SCOLS_ITER_FORWARD);
+	if (!itr)
+		err(EXIT_FAILURE, _("failed to allocate iterator"));
+
+	while (scols_filter_next_holder(f, itr, &name, 0) == 0) {
+		struct libscols_column *col = scols_table_get_column_by_name(tb, name);
+		int id = column_name_to_id(name, strlen(name));
+		const struct colinfo *ci = id >= 0 ? &infos[id] : NULL;
+
+		if (!ci) {
+			nerrs++;
+			continue;	/* report all unknown columns */
+		}
+		if (!col) {
+			int json = get_column_json_type(id, ci->flags, NULL, flags);
+			add_column(id);
+			col = scols_table_new_column(tb, ci->name,
+						     ci->whint, SCOLS_FL_HIDDEN);
+			if (!col)
+				err(EXIT_FAILURE,_("failed to allocate output column"));
+
+			scols_column_set_json_type(col, json);
+		}
+
+		scols_filter_assign_column(f, itr, name, col);
+	}
+
+	scols_free_iter(itr);
+
+	if (!nerrs)
+		return;
+
+	errx(EXIT_FAILURE, _("failed to initialize filter"));
+}
 
 int main(int argc, char *argv[])
 {
@@ -1555,6 +1663,7 @@ int main(int argc, char *argv[])
 		.cache = NULL,
 		.flags = 0,
 		.parse_nerrors = 0,
+		.filter = NULL,
 	};
 	struct libmnt_table *tb = NULL;
 	char **tabfiles = NULL;
@@ -1603,6 +1712,7 @@ int main(int argc, char *argv[])
 		{ "output-all",	    no_argument,       NULL, FINDMNT_OPT_OUTPUT_ALL },
 		{ "poll",	    optional_argument, NULL, 'p'		 },
 		{ "pairs",	    no_argument,       NULL, 'P'		 },
+		{ "filter",	    required_argument, NULL, 'Q'		 },
 		{ "raw",	    no_argument,       NULL, 'r'		 },
 		{ "types",	    required_argument, NULL, 't'		 },
 		{ "nocanonicalize", no_argument,       NULL, 'C'		 },
@@ -1634,6 +1744,7 @@ int main(int argc, char *argv[])
 		{ 'M', 'T' },			/* mountpoint, target */
 		{ 'N','k','m','s' },		/* task,kernel,mtab,fstab */
 		{ 'P','l','r','x' },		/* pairs,list,raw,verify */
+		{ 'Q', 'p' },			/* filter,poll */
 		{ 'p','x' },			/* poll,verify */
 		{ 'm','p','s' },		/* mtab,poll,fstab */
 		{ FINDMNT_OPT_PSEUDO, FINDMNT_OPT_REAL },
@@ -1650,7 +1761,7 @@ int main(int argc, char *argv[])
 	findmnt.flags |= FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
-				"AabCcDd:ehIiJfF:o:O:p::PklmM:nN:rst:uvRS:T:Uw:VxyH",
+				"AabCcDd:ehIiJfF:o:O:p::PQ:klmM:nN:rst:uvRS:T:Uw:VxyH",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1733,6 +1844,10 @@ int main(int argc, char *argv[])
 			break;
 		case 'P':
 			findmnt.flags |= FL_EXPORT;
+			findmnt.flags &= ~FL_TREE;
+			break;
+		case 'Q':
+			findmnt.filter = new_filter(optarg);
 			findmnt.flags &= ~FL_TREE;
 			break;
 		case 'm':		/* mtab */
@@ -1943,9 +2058,11 @@ int main(int argc, char *argv[])
 	 * initialize libsmartcols
 	 */
 	scols_init_debug(0);
-	table = init_scols_table(findmnt.flags);
+	table = init_scols_table(findmnt.flags, findmnt.filter? true: false);
 	if (!table)
 		goto leave;
+
+	init_scols_filter(table, findmnt.filter, findmnt.flags);
 
 	/*
 	 * Fill in data to the output table
@@ -1983,6 +2100,7 @@ int main(int argc, char *argv[])
 		scols_print_table(table);
 leave:
 	scols_unref_table(table);
+	scols_unref_filter(findmnt.filter);
 
 	mnt_unref_table(tb);
 	mnt_unref_cache(findmnt.cache);

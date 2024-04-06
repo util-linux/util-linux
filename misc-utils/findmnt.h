@@ -39,6 +39,7 @@ struct findmnt {
 	struct libmnt_cache *cache;
 	unsigned int flags;
 	int parse_nerrors;
+	struct libscols_filter *filter;
 };
 
 extern int is_listall_mode(unsigned int flags);
