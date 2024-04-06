@@ -146,17 +146,14 @@ static struct colinfo infos[] = {
 static int columns[ARRAY_SIZE(infos) * 2];
 static size_t ncolumns;
 
-static inline size_t err_columns_index(size_t arysz, size_t idx)
+static inline void add_column(int id)
 {
-	if (idx >= arysz)
+	if (ncolumns >= ARRAY_SIZE(columns))
 		errx(EXIT_FAILURE, _("too many columns specified, "
 				     "the limit is %zu columns"),
-				arysz - 1);
-	return idx;
+				ARRAY_SIZE(columns) - 1);
+	columns[ ncolumns++ ] =  id;
 }
-
-#define add_column(ary, n, id)	\
-		((ary)[ err_columns_index(ARRAY_SIZE(ary), (n)) ] = (id))
 
 /* poll actions (parsed --poll=<list> */
 #define FINDMNT_NACTIONS	4		/* mount, umount, move, remount */
@@ -1832,31 +1829,31 @@ int main(int argc, char *argv[])
 		list_colunms(&findmnt);		/* print end exit */
 
 	if (!ncolumns && (findmnt.flags & FL_DF)) {
-		add_column(columns, ncolumns++, COL_SOURCE);
-		add_column(columns, ncolumns++, COL_FSTYPE);
+		add_column(COL_SOURCE);
+		add_column(COL_FSTYPE);
 		if (findmnt.flags & FL_DF_INODES) {
-			add_column(columns, ncolumns++, COL_INO_TOTAL);
-			add_column(columns, ncolumns++, COL_INO_USED);
-			add_column(columns, ncolumns++, COL_INO_AVAIL);
-			add_column(columns, ncolumns++, COL_INO_USEPERC);
+			add_column(COL_INO_TOTAL);
+			add_column(COL_INO_USED);
+			add_column(COL_INO_AVAIL);
+			add_column(COL_INO_USEPERC);
 		} else {
-			add_column(columns, ncolumns++, COL_SIZE);
-			add_column(columns, ncolumns++, COL_USED);
-			add_column(columns, ncolumns++, COL_AVAIL);
-			add_column(columns, ncolumns++, COL_USEPERC);
+			add_column(COL_SIZE);
+			add_column(COL_USED);
+			add_column(COL_AVAIL);
+			add_column(COL_USEPERC);
 		}
-		add_column(columns, ncolumns++, COL_TARGET);
+		add_column(COL_TARGET);
 	}
 
 	/* default columns */
 	if (!ncolumns) {
 		if (findmnt.flags & FL_POLL)
-			add_column(columns, ncolumns++, COL_ACTION);
+			add_column(COL_ACTION);
 
-		add_column(columns, ncolumns++, COL_TARGET);
-		add_column(columns, ncolumns++, COL_SOURCE);
-		add_column(columns, ncolumns++, COL_FSTYPE);
-		add_column(columns, ncolumns++, COL_OPTIONS);
+		add_column(COL_TARGET);
+		add_column(COL_SOURCE);
+		add_column(COL_FSTYPE);
+		add_column(COL_OPTIONS);
 	}
 
 	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
