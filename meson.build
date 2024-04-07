@@ -39,7 +39,7 @@ bash_completion = dependency('bash-completion', required : get_option('build-bas
 
 vendordir = get_option('vendordir')
 
-add_project_arguments('-D_GNU_SOURCE', language : 'c')
+add_project_arguments('-D_GNU_SOURCE', '-fsigned-char', language : 'c')
 
 cc = meson.get_compiler('c')
 
