@@ -32,7 +32,7 @@ Specifies partition UUID. This partition identifier is supported for example for
 *PARTLABEL*=_<label>_::
 Specifies partition label (name). The partition labels are supported for example for GUID Partition Table (GPT) or MAC partition tables.
 
-If the filesystem or partition is found, the device name will be printed on stdout.
+If the filesystem or partition is found, the device name will be printed on stdout. If the input is not in the format of NAME=value, then the input will be copied to the output without any modification.
 
 The complete overview about filesystems and partitions you can get for example by
 

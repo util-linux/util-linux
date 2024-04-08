@@ -224,6 +224,9 @@ static char *evaluate_by_scan(const char *token, const char *value,
  * @value: token data (e.g. "foo")
  * @cache: pointer to cache (or NULL when you don't want to re-use the cache)
  *
+* If the @value is NULL and @token is not in the NAME=value format, then return
+* a copy of the @token.
+ *
  * Returns: allocated string with a device name.
  */
 char *blkid_evaluate_tag(const char *token, const char *value, blkid_cache *cache)
