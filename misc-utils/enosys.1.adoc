@@ -8,7 +8,7 @@
 
 == NAME
 
-enosys - utility make syscalls fail with ENOSYS
+enosys - utility to make syscalls fail with ENOSYS
 
 == SYNOPSIS
 
