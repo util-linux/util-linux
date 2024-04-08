@@ -261,6 +261,7 @@ if lib_ncursesw.found()
 else
   lib_ncurses = dependency(
     'ncurses',
+    disabler : true,
     required : get_option('ncurses'))
   headers += ['ncurses.h',
               'term.h']
