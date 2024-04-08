@@ -86,7 +86,8 @@ build_libuuid = not get_option('build-libuuid').disabled()
 conf.set('HAVE_LIBUUID', build_libuuid ? 1 : false)
 summary('libuuid', build_libuuid ? 'enabled' : 'disabled', section : 'components')
 
-build_liblastlog2 = not get_option('build-liblastlog2').disabled()
+lib_sqlite3 = dependency('sqlite3', required : get_option('build-liblastlog2'))
+build_liblastlog2 = get_option('build-liblastlog2').require(lib_sqlite3.found()).allowed()
 conf.set('HAVE_LIBLASTLOG2', build_liblastlog2 ? 1 : false)
 summary('liblastlog2', build_liblastlog2 ? 'enabled' : 'disabled', section : 'components')
 
@@ -430,7 +431,6 @@ conf.set('HAVE_LIBAUDIT', lib_audit.found() ? 1 : false)
 
 conf.set('HAVE_SMACK', not get_option('smack').disabled())
 
-lib_sqlite3 = dependency('sqlite3', required : get_option('build-liblastlog2'))
 
 foreach header : headers
   have = cc.has_header(header)
