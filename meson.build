@@ -246,6 +246,7 @@ lib_m = cc.find_library('m')
 
 lib_tinfo = dependency(
   'tinfo',
+  disabler : true,
   required : get_option('tinfo'))
 
 lib_ncursesw = dependency(
