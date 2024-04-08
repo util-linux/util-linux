@@ -78,7 +78,7 @@ conf.set_quoted('ADJTIME_PATH', '/etc/adjtime') # yes, both are used :(
 conf.set_quoted('_PATH_VENDORDIR', vendordir)
 conf.set('USE_VENDORDIR', vendordir == '' ? false : 1)
 
-build_libblkid = not get_option('build-libblkid').require(get_option('build-libmount').allowed()).disabled()
+build_libblkid = get_option('build-libblkid').allowed()
 conf.set('HAVE_LIBBLKID', build_libblkid ? 1 : false)
 summary('libblkid', build_libblkid ? 'enabled' : 'disabled', section : 'components')
 
