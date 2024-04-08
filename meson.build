@@ -102,7 +102,12 @@ conf.set('HAVE_MOUNTFD_API', have_mountfd_api ? 1 : false)
 have_struct_statx = cc.sizeof('struct statx', prefix : '#include <sys/stat.h>') > 0
 conf.set('HAVE_STRUCT_STATX', have_struct_statx ? 1 : false)
 
-build_libmount = get_option('build-libmount').require(get_option('build-libblkid').allowed()).allowed()
+have_sys_vfs_header = cc.has_header('sys/vfs.h')
+
+build_libmount = get_option('build-libmount').require(
+  get_option('build-libblkid').allowed() \
+  and have_sys_vfs_header \
+).allowed()
 
 conf.set('HAVE_LIBMOUNT', build_libmount ? 1 : false)
 conf.set('USE_LIBMOUNT_SUPPORT_NAMESPACES', 1)
@@ -1501,7 +1506,7 @@ if opt and not is_disabler(exe)
   bashcompletions += ['tunelp']
 endif
 
-opt = not get_option('build-fstrim').disabled()
+opt = get_option('build-fstrim').require(have_sys_vfs_header).allowed()
 exe = executable(
   'fstrim',
   fstrim_sources,
