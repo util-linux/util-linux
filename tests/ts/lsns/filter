@@ -38,7 +38,7 @@ FD=4
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" --comm ABC userns $FD; }
     if read -u ${MKFDS[0]} PID; then
-	lsfd_expr="PID == \"${PID}\" and ASSOC == \"user\""
+	lsfd_expr="PID == ${PID} and ASSOC == \"user\""
 	inode=$(${TS_CMD_LSFD} -n --raw -o INODE -Q "${lsfd_expr}")
 	for opt in -Q --filter; do
 	    lsns_expr="NS == $inode && NPROCS == 1"
