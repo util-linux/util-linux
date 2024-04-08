@@ -34,7 +34,6 @@ ts_skip_qemu_user
 ts_cd "$TS_OUTDIR"
 PID=
 FD=4
-EXPR=
 
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" --comm ABC userns $FD; }
