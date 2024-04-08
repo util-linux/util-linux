@@ -26,6 +26,8 @@ ts_check_test_command "$TS_HELPER_MKFDS"
 # /proc/${PID}/syscall is rendered in the host side byteorder.
 ts_skip_qemu_user
 
+ts_check_prog "cat"
+ts_check_prog "cut"
 ts_check_prog "grep"
 
 ts_cd "$TS_OUTDIR"
@@ -44,12 +46,24 @@ for multiplexer in pselect6 select poll ppoll; do
     } > "$TS_OUTPUT" 2>&1
 
     if read -r -u "${MKFDS[0]}" PID; then
-	if ! cat /proc/"${PID}"/syscall > /dev/null 2>&1; then
+	syscall_line=$(cat /proc/"${PID}"/syscall 2>> "$TS_OUTPUT")
+	syscall_status=$?
+	if [[ "$syscall_status" != 0 ]]; then
 	    kill -CONT "${PID}"
 	    wait "${MKFDS_PID}"
 	    ts_skip_subtest "cannot open /proc/${PID}/syscall"
 	    continue
 	fi
+	syscall_n=$(cut -f1 -d' ' <<< "$syscall_line")
+	# We assume the syscall number for the $multiplexer is not zero
+	# on any platforms.
+	if [[ "$syscall_n" == 0 ]]; then
+	    kill -CONT "${PID}"
+	    wait "${MKFDS_PID}"
+	    ts_skip_subtest "incorrect syscall number in /proc/${PID}/syscall"
+	    continue
+	fi
+
 	{
 	    "${TS_CMD_LSFD}" -n -o ASSOC,XMODE -p "${PID}" -Q '(FD >= 10) && (FD <= 22)'
 	    echo "[$multiplexer] ASSOC,XMODE: $?"
