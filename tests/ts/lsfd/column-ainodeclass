@@ -42,10 +42,18 @@ for C in pidfd inotify; do
 	fi
 	wait "${MKFDS_PID}"
     } > "$TS_OUTPUT" 2>&1
+
     if [ "$C-$?" == "pidfd-$TS_EXIT_NOTSUPP" ]; then
 	ts_skip_subtest "pidfd_open(2) is not available"
 	continue
     fi
+
+    STTYPE="$(head -n1 "$TS_OUTPUT" | awk '{print $2}')"
+    if [ "$C-$STTYPE" == "pidfd-REG" ]; then
+	ts_skip_subtest "pidfd is from pidfs instead of anon inode"
+	continue
+    fi
+
     ts_finalize_subtest
 done
 

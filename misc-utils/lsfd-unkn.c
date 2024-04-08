@@ -28,6 +28,7 @@
 #include "timeutils.h"
 
 #include "lsfd.h"
+#include "lsfd-pidfd.h"
 
 #define offsetofend(TYPE, MEMBER)				\
 	(offsetof(TYPE, MEMBER)	+ sizeof_member(TYPE, MEMBER))
@@ -183,10 +184,6 @@ static int unkn_handle_fdinfo(struct file *file, const char *key, const char *va
 /*
  * pidfd
  */
-struct anon_pidfd_data {
-	pid_t pid;
-	char *nspid;
-};
 
 static bool anon_pidfd_probe(const char *str)
 {
@@ -195,51 +192,28 @@ static bool anon_pidfd_probe(const char *str)
 
 static char *anon_pidfd_get_name(struct unkn *unkn)
 {
-	char *str = NULL;
-	struct anon_pidfd_data *data = (struct anon_pidfd_data *)unkn->anon_data;
+	struct pidfd_data *data = (struct pidfd_data *)unkn->anon_data;
 
-	char *comm = NULL;
-	struct proc *proc = get_proc(data->pid);
-	if (proc)
-		comm = proc->command;
-
-	xasprintf(&str, "pid=%d comm=%s nspid=%s",
-		  data->pid,
-		  comm? comm: "",
-		  data->nspid? data->nspid: "");
-	return str;
+	return pidfd_get_name(data);
 }
 
 static void anon_pidfd_init(struct unkn *unkn)
 {
-	unkn->anon_data = xcalloc(1, sizeof(struct anon_pidfd_data));
+	unkn->anon_data = xcalloc(1, sizeof(struct pidfd_data));
 }
 
 static void anon_pidfd_free(struct unkn *unkn)
 {
-	struct anon_pidfd_data *data = (struct anon_pidfd_data *)unkn->anon_data;
+	struct pidfd_data *data = (struct pidfd_data *)unkn->anon_data;
 
-	if (data->nspid)
-		free(data->nspid);
+	pidfd_free(data);
 	free(data);
 }
 
 static int anon_pidfd_handle_fdinfo(struct unkn *unkn, const char *key, const char *value)
 {
-	if (strcmp(key, "Pid") == 0) {
-		uint64_t pid;
-
-		int rc = ul_strtou64(value, &pid, 10);
-		if (rc < 0)
-			return 0; /* ignore -- parse failed */
-		((struct anon_pidfd_data *)unkn->anon_data)->pid = (pid_t)pid;
-		return 1;
-	} else if (strcmp(key, "NSpid") == 0) {
-		((struct anon_pidfd_data *)unkn->anon_data)->nspid = xstrdup(value);
-		return 1;
-
-	}
-	return 0;
+	return pidfd_handle_fdinfo((struct pidfd_data *)unkn->anon_data,
+				   key, value);
 }
 
 static bool anon_pidfd_fill_column(struct proc *proc  __attribute__((__unused__)),
@@ -249,32 +223,9 @@ static bool anon_pidfd_fill_column(struct proc *proc  __attribute__((__unused__)
 				   size_t column_index __attribute__((__unused__)),
 				   char **str)
 {
-	struct anon_pidfd_data *data = (struct anon_pidfd_data *)unkn->anon_data;
-
-	switch(column_id) {
-	case COL_PIDFD_COMM: {
-		struct proc *pidfd_proc = get_proc(data->pid);
-		char *pidfd_comm = NULL;
-		if (pidfd_proc)
-			pidfd_comm = pidfd_proc->command;
-		if (pidfd_comm) {
-			*str = xstrdup(pidfd_comm);
-			return true;
-		}
-		break;
-	}
-	case COL_PIDFD_NSPID:
-		if (data->nspid) {
-			*str = xstrdup(data->nspid);
-			return true;
-		}
-		break;
-	case COL_PIDFD_PID:
-		xasprintf(str, "%d", (int)data->pid);
-		return true;
-	}
-
-	return false;
+	return pidfd_fill_column((struct pidfd_data *)unkn->anon_data,
+				 column_id,
+				 str);
 }
 
 static const struct anon_ops anon_pidfd_ops = {
