@@ -218,6 +218,7 @@ struct lsns {
 		     no_headings: 1,
 		     no_wrap    : 1;
 
+	dev_t nsfs_dev;
 
 	struct libmnt_table *tab;
 	struct libscols_filter *filter;
@@ -297,14 +298,14 @@ static inline const struct colinfo *get_column_info(unsigned num)
 	return &infos[ get_column_id(num) ];
 }
 
-static int get_ns_ino(int dir, const char *nsname, ino_t *ino, ino_t *pino, ino_t *oino)
+static int get_ns_ino(struct path_cxt *pc, const char *nsname, ino_t *ino, ino_t *pino, ino_t *oino)
 {
 	struct stat st;
 	char path[16];
 
 	snprintf(path, sizeof(path), "ns/%s", nsname);
 
-	if (fstatat(dir, path, &st, 0) != 0)
+	if (ul_path_stat(pc, &st, 0, path) != 0)
 		return -errno;
 	*ino = st.st_ino;
 
@@ -313,7 +314,7 @@ static int get_ns_ino(int dir, const char *nsname, ino_t *ino, ino_t *pino, ino_
 
 #ifdef USE_NS_GET_API
 	int fd, pfd, ofd;
-	fd = openat(dir, path, 0);
+	fd = ul_path_open(pc, 0, path);
 	if (fd < 0)
 		return -errno;
 	if (strcmp(nsname, "pid") == 0 || strcmp(nsname, "user") == 0) {
@@ -351,16 +352,10 @@ static int get_ns_ino(int dir, const char *nsname, ino_t *ino, ino_t *pino, ino_
 	return 0;
 }
 
-static int parse_proc_stat(FILE *fp, pid_t *pid, char *state, pid_t *ppid)
+static int parse_proc_stat(char *line, pid_t *pid, char *state, pid_t *ppid)
 {
-	char *line = NULL, *p;
-	size_t len = 0;
+	char *p;
 	int rc;
-
-	if (getline(&line, &len, fp) < 0) {
-		rc = -errno;
-		goto error;
-	}
 
 	p = strrchr(line, ')');
 	if (p == NULL ||
@@ -372,7 +367,6 @@ static int parse_proc_stat(FILE *fp, pid_t *pid, char *state, pid_t *ppid)
 	rc = 0;
 
 error:
-	free(line);
 	return rc;
 }
 
@@ -462,7 +456,7 @@ static int get_netnsid_via_netlink_recv_response(int *netnsid)
 	return 0;
 }
 
-static int get_netnsid_via_netlink(int dir, const char *path)
+static int get_netnsid_via_netlink(struct path_cxt *pc, const char *path)
 {
 	int netnsid;
 	int target_fd;
@@ -470,7 +464,7 @@ static int get_netnsid_via_netlink(int dir, const char *path)
 	if (netlink_fd < 0)
 		return LSNS_NETNS_UNUSABLE;
 
-	target_fd = openat(dir, path, O_RDONLY);
+	target_fd = ul_path_open(pc, O_RDONLY, path);
 	if (target_fd < 0)
 		return LSNS_NETNS_UNUSABLE;
 
@@ -489,61 +483,68 @@ static int get_netnsid_via_netlink(int dir, const char *path)
 	return netnsid;
 }
 
-static int get_netnsid(int dir, ino_t netino)
+static int get_netnsid(struct path_cxt *pc, ino_t netino)
 {
 	int netnsid;
 
 	if (!netnsid_cache_find(netino, &netnsid)) {
-		netnsid = get_netnsid_via_netlink(dir, "ns/net");
+		netnsid = get_netnsid_via_netlink(pc, "ns/net");
 		netnsid_cache_add(netino, netnsid);
 	}
 
 	return netnsid;
 }
 #else
-static int get_netnsid(int dir __attribute__((__unused__)),
+static int get_netnsid(struct path_cxt *pc __attribute__((__unused__)),
 		       ino_t netino __attribute__((__unused__)))
 {
 	return LSNS_NETNS_UNUSABLE;
 }
 #endif /* HAVE_LINUX_NET_NAMESPACE_H */
 
-static int read_process(struct lsns *ls, pid_t pid)
+static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, ino_t ino);
+
+static void read_open_ns_inos(struct lsns *ls, struct path_cxt *pc)
+{
+	DIR *sub = NULL;
+	struct dirent *d = NULL;
+	char path[sizeof("fd/") + sizeof(stringify_value(UINT64_MAX))];
+
+	while (ul_path_next_dirent(pc, &sub, "fd", &d) == 0) {
+		uint64_t num;
+		struct stat st;
+
+		if (ul_strtou64(d->d_name, &num, 10) != 0)	/* only numbers */
+			continue;
+
+		snprintf(path, sizeof(path), "fd/%ju", (uintmax_t) num);
+		ul_path_stat(pc, &st, 0, path);
+		if (st.st_dev == ls->nsfs_dev) {
+			int fd = ul_path_open(pc, O_RDONLY, path);
+			if (fd >= 0) {
+				add_namespace_for_nsfd(ls, fd, st.st_ino);
+				close(fd);
+			}
+		}
+	}
+}
+
+static int read_process(struct lsns *ls, struct path_cxt *pc)
 {
 	struct lsns_process *p = NULL;
+	int rc = 0;
 	char buf[BUFSIZ];
-	DIR *dir;
-	int rc = 0, fd;
-	FILE *f = NULL;
 	size_t i;
-	struct stat st;
-
-	DBG(PROC, ul_debug("reading %d", (int) pid));
-
-	snprintf(buf, sizeof(buf), "/proc/%d", pid);
-	dir = opendir(buf);
-	if (!dir)
-		return -errno;
 
 	p = xcalloc(1, sizeof(*p));
 	p->netnsid = LSNS_NETNS_UNUSABLE;
 
-	if (fstat(dirfd(dir), &st) == 0) {
-		p->uid = st.st_uid;
-		add_uid(uid_cache, st.st_uid);
-	}
+	if (procfs_process_get_uid(pc, &p->uid) == 0)
+		add_uid(uid_cache, p->uid);
 
-	fd = openat(dirfd(dir), "stat", O_RDONLY);
-	if (fd < 0) {
-		rc = -errno;
+	if ((rc = procfs_process_get_stat(pc, buf, sizeof(buf))) < 0)
 		goto done;
-	}
-	if (!(f = fdopen(fd, "r"))) {
-		rc = -errno;
-		goto done;
-	}
-	rc = parse_proc_stat(f, &p->pid, &p->state, &p->ppid);
-	if (rc < 0)
+	if ((rc = parse_proc_stat(buf, &p->pid, &p->state, &p->ppid)) < 0)
 		goto done;
 	rc = 0;
 
@@ -553,12 +554,12 @@ static int read_process(struct lsns *ls, pid_t pid)
 		if (!ls->fltr_types[i])
 			continue;
 
-		rc = get_ns_ino(dirfd(dir), ns_names[i], &p->ns_ids[i],
+		rc = get_ns_ino(pc, ns_names[i], &p->ns_ids[i],
 				&p->ns_pids[i], &p->ns_oids[i]);
 		if (rc && rc != -EACCES && rc != -ENOENT)
 			goto done;
 		if (i == LSNS_ID_NET)
-			p->netnsid = get_netnsid(dirfd(dir), p->ns_ids[i]);
+			p->netnsid = get_netnsid(pc, p->ns_ids[i]);
 		rc = 0;
 	}
 
@@ -566,10 +567,9 @@ static int read_process(struct lsns *ls, pid_t pid)
 
 	DBG(PROC, ul_debugobj(p, "new pid=%d", p->pid));
 	list_add_tail(&p->processes, &ls->processes);
+
+	read_open_ns_inos(ls, pc);
 done:
-	if (f)
-		fclose(f);
-	closedir(dir);
 	if (rc)
 		free(p);
 	return rc;
@@ -580,6 +580,7 @@ static int read_processes(struct lsns *ls)
 	DIR *dir;
 	struct dirent *d;
 	int rc = 0;
+	struct path_cxt *pc;
 
 	DBG(PROC, ul_debug("opening /proc"));
 
@@ -587,19 +588,30 @@ static int read_processes(struct lsns *ls)
 	if (!dir)
 		return -errno;
 
+	pc = ul_new_path(NULL);
+	if (!pc)
+		err(EXIT_FAILURE, _("failed to alloc procfs handler"));
+
 	while ((d = xreaddir(dir))) {
 		pid_t pid = 0;
 
 		if (procfs_dirent_get_pid(d, &pid) != 0)
 			continue;
 
-		/* TODO: use ul_new_procfs_path(pid, NULL) to read files from /proc/pid/
-		 */
-		rc = read_process(ls, pid);
+		DBG(PROC, ul_debug("reading %d", (int) pid));
+		rc = procfs_process_init_path(pc, pid);
+		if (rc < 0) {
+			DBG(PROC, ul_debug("failed in reading /proc/%d", (int) pid));
+			continue;
+		}
+
+		rc = read_process(ls, pc);
 		if (rc && rc != -EACCES && rc != -ENOENT)
 			break;
 		rc = 0;
 	}
+
+	ul_unref_path(pc);
 
 	DBG(PROC, ul_debug("closing /proc"));
 	closedir(dir);
@@ -1439,6 +1451,16 @@ static void __attribute__((__noreturn__)) list_colunms(bool raw, bool json)
    exit(EXIT_SUCCESS);
 }
 
+static dev_t read_nsfs_dev(void)
+{
+	struct stat st;
+
+	if (stat("/proc/self/ns/user", &st) < 0)
+		err(EXIT_FAILURE, _("failed to do stat /proc/self/ns/user"));
+
+	return st.st_dev;
+}
+
 int main(int argc, char *argv[])
 {
 	struct lsns ls;
@@ -1624,6 +1646,8 @@ int main(int argc, char *argv[])
 	ls.tab = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
 	if (!ls.tab)
 		err(MNT_EX_FAIL, _("failed to parse %s"), _PATH_PROC_MOUNTINFO);
+
+	ls.nsfs_dev = read_nsfs_dev();
 
 	r = read_processes(&ls);
 	if (!r)
