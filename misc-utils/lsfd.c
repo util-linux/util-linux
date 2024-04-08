@@ -84,6 +84,14 @@ static int kcmp(pid_t pid1 __attribute__((__unused__)),
 
 #include "lsfd.h"
 
+UL_DEBUG_DEFINE_MASK(lsfd);
+UL_DEBUG_DEFINE_MASKNAMES(lsfd) = UL_DEBUG_EMPTY_MASKNAMES;
+
+static void lsfd_init_debug(void)
+{
+	__UL_INIT_DEBUG_FROM_ENV(lsfd, LSFD_DEBUG_, 0, LSFD_DEBUG);
+}
+
 /*
  * /proc/$pid/mountinfo entries
  */
@@ -2508,6 +2516,8 @@ int main(int argc, char *argv[])
 		{ "_drop-privilege",no_argument,NULL,OPT_DROP_PRIVILEGE },
 		{ NULL, 0, NULL, 0 },
 	};
+
+	lsfd_init_debug();
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);

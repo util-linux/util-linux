@@ -20,6 +20,7 @@ TS_DESC="AF_UNIX socket pair created with socketpair(2)"
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
+. "$TS_SELF/lsfd-functions.bash"
 ts_check_test_command "$TS_CMD_LSFD"
 
 ts_check_test_command "$TS_HELPER_MKFDS"
@@ -27,6 +28,8 @@ ts_check_test_command "$TS_HELPER_MKFDS"
 ts_check_prog "sed"
 
 ts_cd "$TS_OUTDIR"
+
+lsfd_check_sockdiag "unix"
 
 PID=
 FD0=3
