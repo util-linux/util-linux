@@ -1,9 +1,3 @@
-python_module = import('python')
-
-python = python_module.find_installation(
-    get_option('python'),
-    required : get_option('build-python'),
-    disabler : true)
 build_python = python.found()
 
 pylibmount_sources = '''
@@ -21,10 +15,9 @@ if build_python
   python.extension_module(
     'pylibmount',
     pylibmount_sources,
-    include_directories : [dir_include, dir_libmount],
+    include_directories : [dir_include],
     subdir : 'libmount',
-    link_with : lib_mount,
-    dependencies : python.dependency(),
+    dependencies : [mount_dep, python.dependency()],
     c_args : [
       '-Wno-cast-function-type',
 

@@ -78,7 +78,7 @@ conf.set_quoted('ADJTIME_PATH', '/etc/adjtime') # yes, both are used :(
 conf.set_quoted('_PATH_VENDORDIR', vendordir)
 conf.set('USE_VENDORDIR', vendordir == '' ? false : 1)
 
-build_libblkid = not get_option('build-libblkid').disabled()
+build_libblkid = not get_option('build-libblkid').require(get_option('build-libmount').allowed()).disabled()
 conf.set('HAVE_LIBBLKID', build_libblkid ? 1 : false)
 summary('libblkid', build_libblkid ? 'enabled' : 'disabled', section : 'components')
 
@@ -101,7 +101,8 @@ conf.set('HAVE_MOUNTFD_API', have_mountfd_api ? 1 : false)
 have_struct_statx = cc.sizeof('struct statx', prefix : '#include <sys/stat.h>') > 0
 conf.set('HAVE_STRUCT_STATX', have_struct_statx ? 1 : false)
 
-build_libmount = not get_option('build-libmount').disabled()
+build_libmount = get_option('build-libmount').require(get_option('build-libblkid').allowed()).allowed()
+
 conf.set('HAVE_LIBMOUNT', build_libmount ? 1 : false)
 conf.set('USE_LIBMOUNT_SUPPORT_NAMESPACES', 1)
 conf.set('USE_LIBMOUNT_MOUNTFD_SUPPORT', have_mountfd_api ? 1 : false)
@@ -111,7 +112,7 @@ build_libsmartcols = not get_option('build-libsmartcols').disabled()
 conf.set('HAVE_LIBSMARTCOLS', build_libsmartcols ? 1 : false)
 summary('libsmartcols', build_libsmartcols ? 'enabled' : 'disabled', section : 'components')
 
-build_libfdisk = not get_option('build-libfdisk').disabled()
+build_libfdisk = not get_option('build-libfdisk').require(get_option('build-libblkid').allowed()).disabled()
 conf.set('HAVE_LIBFDISK', build_libfdisk ? 1 : false)
 summary('libfdisk', build_libfdisk ? 'enabled' : 'disabled', section : 'components')
 
@@ -905,6 +906,12 @@ bison_gen = generator(
   output : ['@BASENAME@.tab.c', '@BASENAME@.tab.h'],
   arguments : ['@INPUT@', '--defines=@OUTPUT1@', '--output=@OUTPUT0@'])
 
+python_module = import('python')
+python = python_module.find_installation(
+    get_option('python'),
+    required : true,
+    disabler : true)
+
 meson_make_symlink = meson.current_source_dir() + '/tools/meson-make-symlink.sh'
 meson_make_manpage_stub = meson.current_source_dir() + '/tools/meson-make-manpage-stub.sh'
 
@@ -973,9 +980,7 @@ subdir('term-utils')
 subdir('po')
 
 includes = [dir_include,
-            dir_libblkid,
             dir_libsmartcols,
-            dir_libmount,
             dir_libfdisk,
             dir_libuuid,
             dir_liblastlog2,
@@ -1499,15 +1504,17 @@ if opt and not is_disabler(exe)
   bashcompletions += ['tunelp']
 endif
 
+opt = not get_option('build-fstrim').disabled()
 exe = executable(
   'fstrim',
   fstrim_sources,
   include_directories : includes,
-  link_with : [lib_common,
-               lib_mount],
+  link_with : [lib_common],
+  dependencies : [mount_dep],
   install_dir : sbindir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['sys-utils/fstrim.8.adoc']
   bashcompletions += ['fstrim']
@@ -1563,8 +1570,8 @@ exe = executable(
   'blkdiscard',
   blkdiscard_sources,
   include_directories : includes,
-  link_with : [lib_common,
-               lib_blkid],
+  link_with : [lib_common],
+  dependencies : [blkid_dep],
   install_dir : sbindir,
   install : true)
 exes += exe
@@ -1654,8 +1661,8 @@ exe = executable(
   'eject',
   eject_sources,
   include_directories : includes,
-  link_with : [lib_common,
-               lib_mount],
+  link_with : [lib_common],
+  dependencies : [mount_dep],
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -1726,16 +1733,18 @@ if not is_disabler(exe)
   bashcompletions += ['prlimit']
 endif
 
+opt = not get_option('build-lsns').disabled()
 exe = executable(
   'lsns',
   lsns_sources,
   include_directories : includes,
   link_with : [lib_common,
-               lib_smartcols,
-               lib_mount],
+               lib_smartcols],
+  dependencies : [mount_dep],
   install_dir : usrbin_exec_dir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['sys-utils/lsns.8.adoc']
   bashcompletions += ['lsns']
@@ -1747,9 +1756,8 @@ exe = executable(
   mount_sources,
   include_directories : includes,
   link_with : [lib_common,
-               lib_smartcols,
-               lib_mount],
-  dependencies : lib_selinux,
+               lib_smartcols],
+  dependencies : [lib_selinux, mount_dep],
   install_mode : 'rwsr-xr-x',
   install : opt,
   build_by_default : opt)
@@ -1757,8 +1765,8 @@ exe2 = executable(
   'umount',
   umount_sources,
   include_directories : includes,
-  link_with : [lib_common,
-               lib_mount],
+  link_with : [lib_common],
+  dependencies : [mount_dep],
   install_mode : 'rwsr-xr-x',
   install : opt,
   build_by_default : opt)
@@ -1777,8 +1785,8 @@ exe = executable(
   include_directories : includes,
   link_args : ['--static'],
   link_with : [lib_common,
-               lib_smartcols_static,
-               lib_mount_static],
+               lib_smartcols_static],
+  dependencies : [mount_static_dep],
   install : opt2,
   build_by_default : opt2)
 if opt2 and not is_disabler(exe)
@@ -1791,8 +1799,8 @@ exe = executable(
   umount_sources,
   include_directories : includes,
   link_args : ['--static'],
-  link_with : [lib_common,
-               lib_mount_static],
+  link_with : [lib_common],
+  dependencies : [mount_static_dep],
   install : opt2,
   build_by_default : opt2)
 if opt2 and not is_disabler(exe)
@@ -1801,32 +1809,34 @@ endif
 
 # setuid?
 
+opt = not get_option('build-swapon').disabled()
 exe = executable(
   'swapon',
   swapon_sources,
   include_directories : includes,
   link_with : [lib_common,
-               lib_blkid,
-               lib_mount,
                lib_smartcols],
+  dependencies : [blkid_dep, mount_dep],
   install_dir : sbindir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['sys-utils/swapon.8.adoc']
   bashcompletions += ['swapon']
 endif
 
+opt = not get_option('build-swapoff').disabled()
 exe = executable(
   'swapoff',
   swapoff_sources,
   include_directories : includes,
-  link_with : [lib_common,
-               lib_blkid,
-               lib_mount],
+  link_with : [lib_common],
+  dependencies : [blkid_dep, mount_dep],
   install_dir : sbindir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manlinks += {'swapoff.8': 'swapon.8'}
   bashcompletions += ['swapoff']
@@ -1876,7 +1886,7 @@ exe = executable(
   'mountpoint',
   mountpoint_sources,
   include_directories : includes,
-  link_with : [lib_mount],
+  dependencies : [mount_dep],
   install : opt,
   build_by_default : opt)
 if opt and not is_disabler(exe)
@@ -1936,6 +1946,7 @@ exe = executable(
   unshare_sources,
   include_directories : includes,
   link_with : [lib_common],
+  dependencies : [mount_dep],
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -1951,6 +1962,7 @@ exe = executable(
   unshare_sources,
   include_directories : includes,
   link_with : [lib_common],
+  dependencies : [mount_dep],
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -2124,9 +2136,8 @@ exe = executable(
   mkswap_sources,
   include_directories : includes,
   link_with : [lib_common,
-               lib_blkid,
                lib_uuid],
-  dependencies: [lib_selinux],
+  dependencies: [blkid_dep, lib_selinux],
   install_dir : sbindir,
   install : true)
 if not is_disabler(exe)
@@ -2140,8 +2151,8 @@ exe = executable(
   swaplabel_sources,
   include_directories : includes,
   link_with : [lib_common,
-               lib_blkid,
                lib_uuid],
+  dependencies : [blkid_dep],
   install_dir : sbindir,
   install : true)
 if not is_disabler(exe)
@@ -2155,10 +2166,8 @@ exe = executable(
   'fsck',
   fsck_sources,
   include_directories : includes,
-  link_with : [lib_common,
-               lib_blkid,
-               lib_mount],
-  dependencies : realtime_libs,
+  link_with : [lib_common],
+  dependencies : [blkid_dep, mount_dep, realtime_libs],
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
@@ -2345,9 +2354,8 @@ exe = executable(
   link_with : [lib_common,
                lib_fdisk,
                lib_smartcols,
-               lib_tcolors,
-               lib_mount],
-  dependencies : [curses_libs],
+               lib_tcolors],
+  dependencies : [curses_libs, mount_dep],
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
@@ -2389,8 +2397,8 @@ exe4 = executable(
   partx_sources,
   include_directories : includes,
   link_with : [lib_common,
-               lib_blkid,
                lib_smartcols],
+  dependencies : [blkid_dep],
   install_dir : usrsbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -2436,8 +2444,8 @@ exe4 = executable(
   include_directories : includes,
   link_args : ['--static'],
   link_with : [lib_common,
-               lib_blkid.get_static_lib(),
                lib_smartcols.get_static_lib()],
+  dependencies : [blkid_static_dep],
   install_dir : usrsbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -2726,33 +2734,35 @@ exes += exe
 manadocs += ['misc-utils/whereis.1.adoc']
 bashcompletions += ['whereis']
 
+opt = not get_option('build-lslocks').disabled()
 exe = executable(
   'lslocks',
   lslocks_sources,
   include_directories : includes,
   link_with : [lib_common,
-               lib_mount,
                lib_smartcols],
+  dependencies : [mount_dep],
   install_dir : usrbin_exec_dir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['misc-utils/lslocks.8.adoc']
   bashcompletions += ['lslocks']
 endif
 
+opt = not get_option('build-lsblk').disabled()
 exe = executable(
   'lsblk',
   lsblk_sources,
   include_directories : includes,
   link_with : [lib_common,
-               lib_blkid,
-               lib_mount,
                lib_tcolors,
                lib_smartcols],
-  dependencies : lib_udev,
-  install : true)
-if not is_disabler(exe)
+  dependencies : [blkid_dep, lib_udev, mount_dep],
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['misc-utils/lsblk.8.adoc']
   bashcompletions += ['lsblk']
@@ -2840,8 +2850,8 @@ exe = executable(
   'blkid',
   blkid_sources,
   include_directories : includes,
-  link_with : [lib_common,
-               lib_blkid],
+  link_with : [lib_common],
+  dependencies : [blkid_dep],
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
@@ -2856,8 +2866,8 @@ exe = executable(
   'blkid.static',
   blkid_sources,
   include_directories : includes,
-  link_with : [lib_common,
-               lib_blkid_static],
+  link_with : [lib_common],
+  dependencies : [blkid_static_dep],
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
@@ -2869,7 +2879,7 @@ exe = executable(
   'sample-mkfs',
   'libblkid/samples/mkfs.c',
   include_directories : includes,
-  link_with : lib_blkid)
+  dependencies : [blkid_dep])
 if not is_disabler(exe)
   exes += exe
 endif
@@ -2878,7 +2888,7 @@ exe = executable(
   'sample-partitions',
   'libblkid/samples/partitions.c',
   include_directories : includes,
-  link_with : lib_blkid)
+  dependencies : [blkid_dep])
 if not is_disabler(exe)
   exes += exe
 endif
@@ -2887,7 +2897,7 @@ exe = executable(
   'sample-superblocks',
   'libblkid/samples/superblocks.c',
   include_directories : includes,
-  link_with : lib_blkid)
+  dependencies : [blkid_dep])
 if not is_disabler(exe)
   exes += exe
 endif
@@ -2896,7 +2906,7 @@ exe = executable(
   'sample-topology',
   'libblkid/samples/topology.c',
   include_directories : includes,
-  link_with : lib_blkid)
+  dependencies : [blkid_dep])
 if not is_disabler(exe)
   exes += exe
 endif
@@ -2905,7 +2915,7 @@ exe = executable(
   'test_blkid_fuzz_sample',
   'libblkid/src/fuzz.c',
   include_directories: includes,
-  link_with: lib_blkid,
+  dependencies : [blkid_dep],
   build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
@@ -2917,7 +2927,7 @@ exe = executable(
   'findfs',
   findfs_sources,
   include_directories : includes,
-  link_with : [lib_blkid],
+  dependencies : [blkid_dep],
   install_dir : sbindir,
   install : true)
 if not is_disabler(exe)
@@ -2931,8 +2941,8 @@ exe = executable(
   wipefs_sources,
   include_directories : includes,
   link_with : [lib_common,
-               lib_blkid,
                lib_smartcols],
+  dependencies : [blkid_dep],
   install_dir : sbindir,
   install : true)
 if not is_disabler(exe)
@@ -2941,17 +2951,17 @@ if not is_disabler(exe)
   bashcompletions += ['wipefs']
 endif
 
+opt = not get_option('build-findmnt').disabled()
 exe = executable(
   'findmnt',
   findmnt_sources,
   include_directories : includes,
   link_with : [lib_common,
-               lib_blkid,
-               lib_mount,
                lib_smartcols],
-  dependencies : [lib_udev],
-  install : true)
-if not is_disabler(exe)
+  dependencies : [blkid_dep, lib_udev, mount_dep],
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['misc-utils/findmnt.8.adoc']
   bashcompletions += ['findmnt']
@@ -3374,7 +3384,8 @@ endif
 ############################################################
 
 libfdisk_tests_cflags = ['-DTEST_PROGRAM']
-libfdisk_tests_ldadd = [lib_fdisk_static, lib_uuid, lib_blkid]
+libfdisk_tests_ldadd = [lib_fdisk_static, lib_uuid]
+libfdisk_tests_ldadd_deps = [blkid_dep]
 
 exe = executable(
   'test_fdisk_ask',
@@ -3382,6 +3393,7 @@ exe = executable(
   c_args : libfdisk_tests_cflags,
   include_directories : lib_fdisk_includes,
   link_with : libfdisk_tests_ldadd,
+  dependencies : libfdisk_tests_ldadd_deps,
   build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
@@ -3393,6 +3405,7 @@ exe = executable(
   c_args : libfdisk_tests_cflags,
   include_directories : lib_fdisk_includes,
   link_with : libfdisk_tests_ldadd,
+  dependencies : libfdisk_tests_ldadd_deps,
   build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
@@ -3404,6 +3417,7 @@ exe = executable(
   c_args : libfdisk_tests_cflags,
   include_directories : lib_fdisk_includes,
   link_with : libfdisk_tests_ldadd,
+  dependencies : libfdisk_tests_ldadd_deps,
   build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
@@ -3415,6 +3429,7 @@ exe = executable(
   c_args : libfdisk_tests_cflags,
   include_directories : lib_fdisk_includes,
   link_with : libfdisk_tests_ldadd,
+  dependencies : libfdisk_tests_ldadd_deps,
   build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
@@ -3426,6 +3441,7 @@ exe = executable(
   c_args : libfdisk_tests_cflags,
   include_directories : lib_fdisk_includes,
   link_with : libfdisk_tests_ldadd,
+  dependencies : libfdisk_tests_ldadd_deps,
   build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
@@ -3437,6 +3453,7 @@ exe = executable(
   c_args : libfdisk_tests_cflags,
   include_directories : lib_fdisk_includes,
   link_with : libfdisk_tests_ldadd,
+  dependencies : libfdisk_tests_ldadd_deps,
   build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe

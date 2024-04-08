@@ -1,4 +1,9 @@
 dir_libblkid = include_directories('.', 'src')
+if not build_libblkid
+  blkid_dep = disabler()
+  blkid_static_dep = disabler()
+  subdir_done()
+endif
 
 defs = configuration_data()
 defs.set('LIBBLKID_DATE', libblkid_date)
@@ -145,13 +150,12 @@ lib_blkid = both_libraries(
 blkid_dep = declare_dependency(link_with: lib_blkid, include_directories: '.')
 
 lib_blkid_static = lib_blkid.get_static_lib()
+blkid_static_dep = declare_dependency(link_with: lib_blkid_static, include_directories: '.')
 
-if build_libblkid
-  pkgconfig.generate(lib_blkid,
-                     description : 'Block device id library',
-                     subdirs : 'blkid',
-                     version : pc_version)
-  if meson.version().version_compare('>=0.54.0')
-    meson.override_dependency('blkid', blkid_dep)
-  endif
+pkgconfig.generate(lib_blkid,
+                    description : 'Block device id library',
+                    subdirs : 'blkid',
+                    version : pc_version)
+if meson.version().version_compare('>=0.54.0')
+  meson.override_dependency('blkid', blkid_dep)
 endif
