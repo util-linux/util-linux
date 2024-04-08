@@ -38,20 +38,30 @@ FD=4
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" --comm ABC userns $FD; }
     if read -u ${MKFDS[0]} PID; then
-	expr="PID == \"${PID}\" and ASSOC == \"user\""
-	inode=$(${TS_CMD_LSFD} -n --raw -o INODE -Q "${expr}")
+	lsfd_expr="PID == \"${PID}\" and ASSOC == \"user\""
+	inode=$(${TS_CMD_LSFD} -n --raw -o INODE -Q "${lsfd_expr}")
 	for opt in -Q --filter; do
-	    pid=$(${TS_CMD_LSNS} -n --raw -o PID "$opt" "NS == $inode && NPROCS == 1")
+	    lsns_expr="NS == $inode && NPROCS == 1"
+	    pid=$(${TS_CMD_LSNS} -n --raw -o PID "$opt" "${lsns_expr}")
 	    if [[ "$pid" = "$PID" ]]; then
 		echo  "$opt: pid == PID"
 	    else
 		echo "$opt: pid != PID"
-		echo expr: "${expr}"
-		${TS_CMD_LSFD} -n --raw -o INODE -Q "${expr}"
-		echo inode: "${inode}"
-		${TS_CMD_LSNS} -n --raw -o PID -Q "NS == $inode && NPROCS == 1"
+		echo lsfd_expr: "${lsfd_expr}"
+		echo lsns_expr: "${lsns_expr}"
 		echo pid: "${pid}"
 		echo PID: "${PID}"
+		echo inode: "${inode}"
+		echo lsfd:
+		${TS_CMD_LSFD} -n --raw $opt "${lsfd_expr}"
+		echo lsns:"${lsns_expr}"
+		${TS_CMD_LSNS} -n --raw $opt "${lsns_expr}"
+		echo lsns:inode:
+		${TS_CMD_LSNS} -n --raw $opt "NS == $inode"
+		echo lsns:NPROCS:
+		${TS_CMD_LSNS} -n --raw $opt "NPROCS == 1"
+		echo lsns
+		${TS_CMD_LSNS} -n --raw
 	    fi
 	done
 	echo DONE >&"${MKFDS[1]}"
