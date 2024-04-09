@@ -27,7 +27,7 @@
 #include "xalloc.h"
 
 #include "lsfd.h"
-#include "lsfd-pidfd.h"
+#include "pidfd.h"
 
 int pidfd_handle_fdinfo(struct pidfd_data *data, const char *key,
 			const char *value)

@@ -42,7 +42,7 @@
 #include "bitops.h"
 
 #include "lsfd.h"
-#include "lsfd-sock.h"
+#include "sock.h"
 
 static void load_xinfo_from_proc_icmp(ino_t netns_inode, enum sysfs_byteorder byteorder);
 static void load_xinfo_from_proc_icmp6(ino_t netns_inode, enum sysfs_byteorder byteorder);

@@ -23,7 +23,7 @@
 #include <sys/xattr.h>
 
 #include "lsfd.h"
-#include "lsfd-sock.h"
+#include "sock.h"
 
 static void attach_sock_xinfo(struct file *file)
 {

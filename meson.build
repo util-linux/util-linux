@@ -982,6 +982,7 @@ subdir('disk-utils')
 subdir('misc-utils')
 subdir('text-utils')
 subdir('term-utils')
+subdir('lsfd-cmd')
 subdir('po')
 
 includes = [dir_include,
@@ -2792,7 +2793,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/lsfd.1.adoc']
+  manadocs += ['lsfd-cmd/lsfd.1.adoc']
 endif
 
 exe = executable(
