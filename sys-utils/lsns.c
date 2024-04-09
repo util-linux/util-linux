@@ -518,8 +518,9 @@ static void read_open_ns_inos(struct lsns *ls, struct path_cxt *pc)
 			continue;
 
 		snprintf(path, sizeof(path), "fd/%ju", (uintmax_t) num);
-		ul_path_stat(pc, &st, 0, path);
-		if (st.st_dev == ls->nsfs_dev) {
+
+		if (ul_path_stat(pc, &st, 0, path) == 0
+		    && st.st_dev == ls->nsfs_dev) {
 			int fd = ul_path_open(pc, O_RDONLY, path);
 			if (fd >= 0) {
 				add_namespace_for_nsfd(ls, fd, st.st_ino);
