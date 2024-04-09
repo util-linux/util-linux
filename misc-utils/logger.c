@@ -815,12 +815,12 @@ static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 		if (localtime_r(&tv.tv_sec, &tm) != NULL) {
 			char fmt[64];
 			const size_t i = strftime(fmt, sizeof(fmt),
-						  "%Y-%m-%dT%H:%M:%S.%%06u%z ", &tm);
+						  "%Y-%m-%dT%H:%M:%S.%%06jd%z ", &tm);
 			/* patch TZ info to comply with RFC3339 (we left SP at end) */
 			fmt[i - 1] = fmt[i - 2];
 			fmt[i - 2] = fmt[i - 3];
 			fmt[i - 3] = ':';
-			xasprintf(&time, fmt, tv.tv_usec);
+			xasprintf(&time, fmt, (intmax_t) tv.tv_usec);
 		} else
 			err(EXIT_FAILURE, _("localtime() failed"));
 	} else
