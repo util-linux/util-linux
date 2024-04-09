@@ -17,7 +17,7 @@ if build_python
     pylibmount_sources,
     include_directories : [dir_include],
     subdir : 'libmount',
-    dependencies : [mount_dep, python.dependency()],
+    dependencies : [mount_dep, python.dependency(embed: true)],
     c_args : [
       '-Wno-cast-function-type',
 
