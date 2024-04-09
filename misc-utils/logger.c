@@ -154,13 +154,24 @@ static inline int logger_gettimeofday(struct timeval *tv, struct timezone *tz)
 	char *str = getenv("LOGGER_TEST_TIMEOFDAY");
 	uintmax_t sec, usec;
 
-	if (str && sscanf(str, "%ju.%ju", &sec, &usec) == 2) {
+	if (str) {
+		if (sscanf(str, "%ju.%ju", &sec, &usec) != 2)
+			goto err;
+
 		tv->tv_sec = sec;
 		tv->tv_usec = usec;
-		return tv->tv_sec >= 0 && tv->tv_usec >= 0 ? 0 : -EINVAL;
+
+		if (tv->tv_sec >= 0 && tv->tv_usec >= 0)
+			return 0;
+		else
+			goto err;
 	}
 
 	return gettimeofday(tv, tz);
+
+err:
+	errno = EINVAL;
+	return -1;
 }
 
 static inline char *logger_xgethostname(void)
