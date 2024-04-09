@@ -406,12 +406,15 @@ static char const *rfc3164_current_time(void)
 	static char time[32];
 	struct timeval tv;
 	struct tm tm;
+	int ret;
 	static char const * const monthnames[] = {
 		"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
 		"Sep", "Oct", "Nov", "Dec"
 	};
 
-	logger_gettimeofday(&tv, NULL);
+	ret = logger_gettimeofday(&tv, NULL);
+	if (ret == -1)
+		err(EXIT_FAILURE, _("gettimeofday() failed"));
 	localtime_r(&tv.tv_sec, &tm);
 	snprintf(time, sizeof(time),"%s %2d %2.2d:%2.2d:%2.2d",
 		monthnames[tm.tm_mon], tm.tm_mday,
@@ -782,6 +785,7 @@ static int valid_structured_data_id(const char *str)
  */
 static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 {
+	int ret;
 	char *time;
 	char *hostname;
 	char const *app_name = ctl->tag;
@@ -794,7 +798,9 @@ static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 		struct timeval tv;
 		struct tm tm;
 
-		logger_gettimeofday(&tv, NULL);
+		ret = logger_gettimeofday(&tv, NULL);
+		if (ret == -1)
+			err(EXIT_FAILURE, _("gettimeofday() failed"));
 		if (localtime_r(&tv.tv_sec, &tm) != NULL) {
 			char fmt[64];
 			const size_t i = strftime(fmt, sizeof(fmt),
