@@ -357,16 +357,13 @@ if not lib_crypt.found()
   lib_crypt = cc.find_library('crypt', required : get_option('build-sulogin'))
 endif
 
-lib_pam = cc.find_library('pam', required : get_option('build-login'))
-if not lib_pam.found()
-  lib_pam = cc.find_library('pam', required : get_option('build-chfn-chsh'))
-endif
-if not lib_pam.found()
-  lib_pam = cc.find_library('pam', required : get_option('build-su'))
-endif
-if not lib_pam.found()
-  lib_pam = cc.find_library('pam', required : get_option('build-runuser'))
-endif
+lib_pam = cc.find_library(
+  'pam',
+  disabler : true,
+  required : get_option('build-login').enabled() or \
+    get_option('build-chfn-chsh').enabled() or \
+    get_option('build-su').enabled() or \
+    get_option('build-runuser').enabled())
 if lib_pam.found()
   lib_pam_misc = cc.find_library('pam_misc')
   lib_pam = [lib_pam, lib_pam_misc]
