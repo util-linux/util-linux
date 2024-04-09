@@ -35,6 +35,8 @@
 #    endif
 #elif __powerpc__
 #    define SECCOMP_ARCH_NATIVE AUDIT_ARCH_PPC
+#elif __m68k__
+#    define SECCOMP_ARCH_NATIVE AUDIT_ARCH_M68K
 #elif __mips__
 #    if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 # 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_MIPS
@@ -46,6 +48,12 @@
 # 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_ARCV2BE
 #    else
 # 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_ARCV2
+#    endif
+#elif __sh__
+#    if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+# 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_SH
+#    else
+# 	 define SECCOMP_ARCH_NATIVE AUDIT_ARCH_SHEL
 #    endif
 #elif __sparc__
 #    if __SIZEOF_POINTER__ == 4
