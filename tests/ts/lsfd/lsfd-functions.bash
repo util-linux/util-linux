@@ -44,7 +44,7 @@ function lsfd_compare_dev {
     echo 'DEV[RUN]:' $?
     local MAJ=${DEV%:*}
     local MIN=${DEV#*:}
-    local DEVNUM=$(( ( MAJ << 8 ) + MIN ))
+    local DEVNUM=$(ts_makedev "$MAJ" "$MIN")
     local STAT_DEVNUM=$(stat -c "%d" "$FILE")
     echo 'STAT[RUN]:' $?
     if [ "${DEVNUM}" == "${STAT_DEVNUM}" ]; then

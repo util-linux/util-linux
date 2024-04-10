@@ -788,6 +788,21 @@ function ts_device_has {
 	return $res
 }
 
+# Based on __SYSMACROS_DEFINE_MAKEDEV macro
+# defined in /usr/include/bits/sysmacros.h of GNU libc.
+function ts_makedev
+{
+	local major="$1"
+	local minor="$2"
+	local dev
+
+	dev=$((      ( major & 0x00000fff ) <<  8))
+	dev=$((dev | ( major & 0xfffff000 ) << 32))
+	dev=$((dev | ( minor & 0x000000ff ) <<  0))
+	dev=$((dev | ( minor & 0xffffff00 ) << 12))
+	echo $dev
+}
+
 function ts_is_uuid()
 {
 	printf "%s\n" "$1" | grep -E -q '^[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}$'
