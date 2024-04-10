@@ -328,6 +328,7 @@ AC_CHECK_HEADERS([ \
 	inttypes.h \
 	lastlog.h \
 	libutil.h \
+	linux/audit.h \
 	linux/bpf.h \
 	linux/blkzoned.h \
 	linux/btrfs.h \
@@ -497,6 +498,7 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 
 dnl Convert some ac_cv_header_* variables to have_*
 dnl
+have_linux_audit_h=$ac_cv_header_linux_audit_h
 have_linux_blkzoned_h=$ac_cv_header_linux_blkzoned_h
 have_linux_btrfs_h=$ac_cv_header_linux_btrfs_h
 have_linux_capability_h=$ac_cv_header_linux_capability_h
@@ -1952,8 +1954,13 @@ UL_REQUIRES_LINUX([waitpid])
 UL_REQUIRES_SYSCALL_CHECK([waitpid], [UL_CHECK_SYSCALL([pidfd_open])], [pidfd_open])
 AM_CONDITIONAL([BUILD_WAITPID], [test "x$build_waitpid" = xyes])
 
-UL_BUILD_INIT([enosys], [check])
+AC_ARG_ENABLE([enosys],
+  AS_HELP_STRING([--disable-enosys], [do not build enosys]),
+  [], [UL_DEFAULT_ENABLE([enosys], [check])]
+)
+UL_BUILD_INIT([enosys])
 UL_REQUIRES_LINUX([enosys])
+UL_REQUIRES_HAVE([enosys], [linux_audit_h], [linux/audit.h header file])
 AS_IF([test "x$build_enosys" = xyes], [
   AC_MSG_CHECKING([for valid audit arch])
   AC_COMPILE_IFELSE(
