@@ -982,9 +982,9 @@ int mnt_update_already_done(struct libmnt_update *upd)
 			if (mnt_optstr_get_missing(fs->user_optstr, upd->fs->user_optstr, NULL) == 0) {
 				upd->missing_options = 1;
 				DBG(UPDATE, ul_debugobj(upd, " missing options detected"));
-			}
-		} else
-			rc = 1;
+			} else
+				rc = 1;
+		}
 
 	} else if (upd->target) {
 		/* umount */
