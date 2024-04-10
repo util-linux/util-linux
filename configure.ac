@@ -332,6 +332,7 @@ AC_CHECK_HEADERS([ \
 	inttypes.h \
 	lastlog.h \
 	libutil.h \
+	linux/bpf.h \
 	linux/blkzoned.h \
 	linux/btrfs.h \
 	linux/capability.h \
@@ -519,6 +520,8 @@ have_shadow_h=$ac_cv_header_shadow_h
 have_sys_signalfd_h=$ac_cv_header_sys_signalfd_h
 have_utmpx_h=$ac_cv_header_utmpx_h
 have_mntent_h=$ac_cv_header_mntent_h
+have_sys_vfs_h=$ac_cv_header_sys_vfs_h
+have_linux_bpf_h=$ac_cv_header_linux_bpf_h
 
 AS_CASE([$linux_os:$have_linux_version_h],
   [yes:no],
@@ -1290,6 +1293,7 @@ UL_BUILD_INIT([libmount])
 UL_REQUIRES_BUILD([libmount], [libblkid])
 UL_REQUIRES_HAVE([libmount], [dirfd,ddfd], [dirfd or ddfd function])
 UL_REQUIRES_HAVE([libmount], [mntent_h], [mntent.h header file])
+UL_REQUIRES_HAVE([libmount], [sys_vfs_h], [sys/vfs.h header file])
 AM_CONDITIONAL([BUILD_LIBMOUNT], [test "x$build_libmount" = xyes])
 AM_CONDITIONAL([BUILD_LIBMOUNT_TESTS], [test "x$build_libmount" = xyes && test "x$enable_static" = xyes])
 AS_IF([test "x$build_libmount" = xyes], [
@@ -1852,6 +1856,7 @@ AC_ARG_ENABLE([lsfd],
 UL_BUILD_INIT([lsfd])
 UL_REQUIRES_LINUX([lsfd])
 UL_REQUIRES_BUILD([lsfd], [libsmartcols])
+UL_REQUIRES_HAVE([lsfd], [linux_bpf_h], [linux/bpf.h header file])
 AM_CONDITIONAL([BUILD_LSFD], [test "x$build_lsfd" = xyes])
 
 AC_ARG_ENABLE([lslogins],
