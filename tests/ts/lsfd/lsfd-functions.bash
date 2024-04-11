@@ -40,13 +40,18 @@ function lsfd_compare_dev {
     ts_check_prog "expr"
     ts_check_prog "stat"
 
-    local DEV=$("${LSFD}" --raw -n -o DEV -Q "${EXPR}")
+    local DEV
+    DEV=$("${LSFD}" --raw -n -o DEV -Q "${EXPR}")
     echo 'DEV[RUN]:' $?
+
     local MAJ=${DEV%:*}
     local MIN=${DEV#*:}
     local DEVNUM=$(ts_makedev "$MAJ" "$MIN")
-    local STAT_DEVNUM=$(stat -c "%d" "$FILE")
+
+    local STAT_DEVNUM
+    STAT_DEVNUM=$(stat -c "%d" "$FILE")
     echo 'STAT[RUN]:' $?
+
     if [ "${DEVNUM}" == "${STAT_DEVNUM}" ]; then
 	echo 'DEVNUM[STR]:' 0
     else
