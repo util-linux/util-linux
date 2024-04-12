@@ -513,10 +513,8 @@ static int get_pids_locks(void *locks, void (*add_lock)(void *, struct lock *))
 		if (procfs_dirent_get_pid(d, &pid) != 0)
 			continue;
 
-		if (procfs_process_init_path(pc, pid) != 0) {
-			rc = -1;
-			break;
-		}
+		if (procfs_process_init_path(pc, pid) != 0)
+			continue;
 
 		if (procfs_process_get_cmdname(pc, buf, sizeof(buf)) <= 0)
 			continue;
