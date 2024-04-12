@@ -490,12 +490,11 @@ static int get_pid_locks(void *locks, void (*add_lock)(void *, struct lock *), s
 	return rc;
 }
 
-static int get_pids_locks(void *locks, void (*add_lock)(void *, struct lock *))
+static void get_pids_locks(void *locks, void (*add_lock)(void *, struct lock *))
 {
 	DIR *dir;
 	struct dirent *d;
 	struct path_cxt *pc = NULL;
-	int rc = 0;
 
 	pc = ul_new_path(NULL);
 	if (!pc)
@@ -526,7 +525,7 @@ static int get_pids_locks(void *locks, void (*add_lock)(void *, struct lock *))
 	closedir(dir);
 	ul_unref_path(pc);
 
-	return rc;
+	return;
 }
 
 static int get_proc_locks(void *locks, void (*add_lock)(void *, struct lock *), void *fallback)
