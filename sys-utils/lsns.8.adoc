@@ -96,6 +96,11 @@ General error.
 *2*::
 An ioctl was unknown to the kernel.
 
+== ENVIRONMENT
+
+*LSNS_DEBUG*=all::
+enables *lsns* debug output.
+
 == AUTHORS
 
 mailto:kzak@redhat.com[Karel Zak]
