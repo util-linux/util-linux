@@ -62,7 +62,8 @@ trap "cleanup" EXIT
 	    echo LSFD:
 	    ${TS_CMD_LSFD} -Q "PID == $PID"
 	    echo LSNS:
-	    ${TS_CMD_LSNS}
+	    LSNS_DEBUG=all ${TS_CMD_LSNS}
+	    echo lsns_status: $?
 	fi
 	echo DONE >&"${MKFDS[1]}"
     fi
