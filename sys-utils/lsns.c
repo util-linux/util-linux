@@ -602,7 +602,17 @@ static int read_processes(struct lsns *ls)
 		DBG(PROC, ul_debug("reading %d", (int) pid));
 		rc = procfs_process_init_path(pc, pid);
 		if (rc < 0) {
-			DBG(PROC, ul_debug("failed in reading /proc/%d", (int) pid));
+			DBG(PROC, ul_debug("failed in reading /proc/%d (rc: %d)", (int) pid, rc));
+			/* This failure is acceptable. If a process ($pid) owning
+			 * a namespace is gone while running this lsns process,
+			 * procfs_process_init_path(pc, $pid) may fail.
+			 *
+			 * We must reset this `rc' here. If this `d' is the last
+			 * dentry in `dir', this read_processes() invocation
+			 * returns this `rc'. In the caller context, the
+			 * non-zero value returned from read_processes() makes
+			 * lsns prints nothing. We should avoid the behavior. */
+			rc = 0;
 			continue;
 		}
 
