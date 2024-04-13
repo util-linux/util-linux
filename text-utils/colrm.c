@@ -81,7 +81,7 @@ static int process_input(unsigned long first, unsigned long last)
 	int padding;
 
 	for (;;) {
-		c = getwc(stdin);
+		c = fgetwc(stdin);
 		if (c == WEOF)
 			return 0;
 		if (c == '\t')
@@ -112,7 +112,7 @@ static int process_input(unsigned long first, unsigned long last)
 
 	/* Loop getting rid of characters */
 	while (!last || ct < last) {
-		c = getwc(stdin);
+		c = fgetwc(stdin);
 		if (c == WEOF)
 			return 0;
 		if (c == '\n') {
@@ -135,7 +135,7 @@ static int process_input(unsigned long first, unsigned long last)
 
 	/* Output last of the line */
 	for (;;) {
-		c = getwc(stdin);
+		c = fgetwc(stdin);
 		if (c == WEOF)
 			break;
 		if (c == '\n') {

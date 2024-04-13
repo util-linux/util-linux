@@ -164,7 +164,7 @@ static void colcrt(struct colcrt_control *ctl)
 			errno = 0;
 			old_pos = ftell(ctl->f);
 
-			while (getwc(ctl->f) != L'\n') {
+			while (fgetwc(ctl->f) != L'\n') {
 				long new_pos;
 
 				if (ferror(ctl->f) || feof(ctl->f))
@@ -179,10 +179,10 @@ static void colcrt(struct colcrt_control *ctl)
 			col = -1;
 			continue;
 		}
-		c = getwc(ctl->f);
+		c = fgetwc(ctl->f);
 		switch (c) {
 		case 033:	/* ESC */
-			c = getwc(ctl->f);
+			c = fgetwc(ctl->f);
 			if (c == L'8') {
 				col = rubchars(ctl, col, 1);
 				continue;

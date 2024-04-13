@@ -439,7 +439,7 @@ static int handle_escape(struct ul_ctl *ctl, struct term_caps const *const tcs, 
 {
 	wint_t c;
 
-	switch (c = getwc(f)) {
+	switch (c = fgetwc(f)) {
 	case HREV:
 		if (0 < ctl->half_position) {
 			ctl->mode &= ~SUBSCRIPT;
@@ -479,7 +479,7 @@ static void filter(struct ul_ctl *ctl, struct term_caps const *const tcs, FILE *
 	wint_t c;
 	int i, width;
 
-	while ((c = getwc(f)) != WEOF) {
+	while ((c = fgetwc(f)) != WEOF) {
 		switch (c) {
 		case '\b':
 			set_column(ctl, ctl->column && 0 < ctl->column ? ctl->column - 1 : 0);
@@ -498,7 +498,7 @@ static void filter(struct ul_ctl *ctl, struct term_caps const *const tcs, FILE *
 			continue;
 		case ESC:
 			if (handle_escape(ctl, tcs, f)) {
-				c = getwc(f);
+				c = fgetwc(f);
 				errx(EXIT_FAILURE,
 				     _("unknown escape sequence in input: %o, %o"), ESC, c);
 			}
