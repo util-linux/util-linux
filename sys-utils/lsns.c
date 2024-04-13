@@ -308,7 +308,11 @@ static int get_ns_ino(int dir, const char *nsname, ino_t *ino, ino_t *pino, ino_
 		return -errno;
 	if (strcmp(nsname, "pid") == 0 || strcmp(nsname, "user") == 0) {
 		if ((pfd = lsns_ioctl(fd, NS_GET_PARENT)) < 0) {
-			if (errno == EPERM)
+			if (errno == EPERM
+			    /* On the test platforms, "build (qemu-user, s390x)" and
+			     * "build (qemu-user, riscv64)", the ioctl reported ENOSYS.
+			     */
+			    || errno == ENOSYS)
 				goto user;
 			close(fd);
 			return -errno;
@@ -323,7 +327,11 @@ static int get_ns_ino(int dir, const char *nsname, ino_t *ino, ino_t *pino, ino_
 	}
  user:
 	if ((ofd = lsns_ioctl(fd, NS_GET_USERNS)) < 0) {
-		if (errno == EPERM)
+		if (errno == EPERM
+		    /* On the test platforms, "build (qemu-user, s390x)" and
+		     * "build (qemu-user, riscv64)", the ioctl reported ENOSYS.
+		     */
+		    || errno == ENOSYS)
 			goto out;
 		close(fd);
 		return -errno;
