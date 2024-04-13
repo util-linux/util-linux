@@ -28,6 +28,7 @@ check_input_file() {
 	ts_init_subtest ${1##*/}
 	timeout 2 env LC_ALL=C.UTF-8 $TS_CMD_COLCRT < $1 >> $TS_OUTPUT 2>> $TS_ERRLOG
 	echo "return value: $?" >> $TS_OUTPUT
+	sed -i -e 's/Illegal byte sequence/Invalid or incomplete multibyte or wide character/' $TS_ERRLOG
 	ts_finalize_subtest
 }
 

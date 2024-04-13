@@ -26,6 +26,7 @@ dist_noinst_HEADERS += \
 	include/env.h \
 	include/exec_shell.h \
 	include/exitcodes.h \
+	include/fgetwc_or_err.h \
 	include/fileeq.h \
 	include/fileutils.h \
 	include/fuzz.h \

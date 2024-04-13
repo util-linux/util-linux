@@ -63,6 +63,7 @@
 #include "widechar.h"
 #include "c.h"
 #include "closestream.h"
+#include "fgetwc_or_err.h"
 
 static void sig_handler(int signo __attribute__ ((__unused__)))
 {
@@ -100,7 +101,7 @@ static size_t read_line(wchar_t sep, wchar_t *str, size_t n, FILE *stream)
 {
 	size_t r = 0;
 	while (r < n) {
-		wint_t c = fgetwc(stream);
+		wint_t c = fgetwc_or_err(stream);
 		if (c == WEOF)
 			break;
 		str[r++] = c;
