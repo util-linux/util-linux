@@ -305,6 +305,7 @@ static int get_ns_ino(struct path_cxt *pc, const char *nsname, ino_t *ino, ino_t
 
 	snprintf(path, sizeof(path), "ns/%s", nsname);
 
+	*ino = 0;
 	if (ul_path_stat(pc, &st, 0, path) != 0)
 		return -errno;
 	*ino = st.st_ino;
@@ -573,7 +574,7 @@ static int read_process(struct lsns *ls, struct path_cxt *pc)
 			DBG(PROC, ul_debug("failed in get_ns_ino (rc: %d)", rc));
 			goto done;
 		}
-		if (i == LSNS_ID_NET)
+		if (p->ns_ids[i] && i == LSNS_ID_NET)
 			p->netnsid = get_netnsid(pc, p->ns_ids[i]);
 		rc = 0;
 	}
