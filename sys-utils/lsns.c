@@ -543,10 +543,14 @@ static int read_process(struct lsns *ls, struct path_cxt *pc)
 	if (procfs_process_get_uid(pc, &p->uid) == 0)
 		add_uid(uid_cache, p->uid);
 
-	if ((rc = procfs_process_get_stat(pc, buf, sizeof(buf))) < 0)
+	if ((rc = procfs_process_get_stat(pc, buf, sizeof(buf))) < 0) {
+		DBG(PROC, ul_debug("failed in procfs_process_get_stat() (rc: %d)", rc));
 		goto done;
-	if ((rc = parse_proc_stat(buf, &p->pid, &p->state, &p->ppid)) < 0)
+	}
+	if ((rc = parse_proc_stat(buf, &p->pid, &p->state, &p->ppid)) < 0) {
+		DBG(PROC, ul_debug("failed in parse_proc_stat() (rc: %d)", rc));
 		goto done;
+	}
 	rc = 0;
 
 	for (i = 0; i < ARRAY_SIZE(p->ns_ids); i++) {
@@ -557,8 +561,10 @@ static int read_process(struct lsns *ls, struct path_cxt *pc)
 
 		rc = get_ns_ino(pc, ns_names[i], &p->ns_ids[i],
 				&p->ns_pids[i], &p->ns_oids[i]);
-		if (rc && rc != -EACCES && rc != -ENOENT)
+		if (rc && rc != -EACCES && rc != -ENOENT) {
+			DBG(PROC, ul_debug("failed in get_ns_ino (rc: %d)", rc));
 			goto done;
+		}
 		if (i == LSNS_ID_NET)
 			p->netnsid = get_netnsid(pc, p->ns_ids[i]);
 		rc = 0;
@@ -602,7 +608,7 @@ static int read_processes(struct lsns *ls)
 		DBG(PROC, ul_debug("reading %d", (int) pid));
 		rc = procfs_process_init_path(pc, pid);
 		if (rc < 0) {
-			DBG(PROC, ul_debug("failed in reading /proc/%d (rc: %d)", (int) pid, rc));
+			DBG(PROC, ul_debug("failed in initializing path_cxt for /proc/%d (rc: %d)", (int) pid, rc));
 			/* This failure is acceptable. If a process ($pid) owning
 			 * a namespace is gone while running this lsns process,
 			 * procfs_process_init_path(pc, $pid) may fail.
@@ -617,8 +623,10 @@ static int read_processes(struct lsns *ls)
 		}
 
 		rc = read_process(ls, pc);
-		if (rc && rc != -EACCES && rc != -ENOENT)
+		if (rc && rc != -EACCES && rc != -ENOENT) {
+			DBG(PROC, ul_debug("failed in read_process() (pid: %d, rc: %d)", (int) pid, rc));
 			break;
+		}
 		rc = 0;
 	}
 
