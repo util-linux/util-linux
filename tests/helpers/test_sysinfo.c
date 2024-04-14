@@ -31,6 +31,13 @@
 
 #include "mount-api-utils.h"
 
+#ifdef HAVE_LINUX_NSFS_H
+# include <linux/nsfs.h>
+# if defined(NS_GET_NSTYPE) && defined(NS_GET_OWNER_UID)
+#  define USE_NS_GET_API	1
+# endif
+#endif
+
 typedef struct {
 	const char	*name;
 	int		(*fnc)(void);
@@ -132,6 +139,18 @@ static int hlp_sz_time(void)
 	return 0;
 }
 
+static int hlp_get_nstype_ok(void)
+{
+#ifdef USE_NS_GET_API
+	errno = 0;
+	ioctl(STDOUT_FILENO, NS_GET_NSTYPE);
+#else
+	errno = ENOSYS;
+#endif
+	printf("%d\n", errno != ENOSYS);
+	return 0;
+}
+
 static const mntHlpfnc hlps[] =
 {
 	{ "WORDSIZE",	hlp_wordsize	},
@@ -147,6 +166,7 @@ static const mntHlpfnc hlps[] =
 	{ "enotty-ok",  hlp_enotty_ok   },
 	{ "fsopen-ok",  hlp_fsopen_ok   },
 	{ "sz(time_t)", hlp_sz_time     },
+	{ "ns-gettype-ok", hlp_get_nstype_ok },
 	{ NULL, NULL }
 };
 
@@ -181,4 +201,3 @@ int main(int argc, char **argv)
 
 	exit(re ? EXIT_FAILURE : EXIT_SUCCESS);
 }
-
