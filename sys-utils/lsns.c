@@ -70,7 +70,7 @@ UL_DEBUG_DEFINE_MASKNAMES(lsns) = UL_DEBUG_EMPTY_MASKNAMES;
 
 #define lsns_ioctl(fildes, request, ...) __extension__ ({ \
 	int ret = ioctl(fildes, request, ##__VA_ARGS__); \
-	if (ret == -1 && errno == ENOTTY) \
+	if (ret == -1 && (errno == ENOTTY || errno == ENOSYS))	\
 		warnx("Unsupported ioctl %s", #request); \
 	ret; })
 
