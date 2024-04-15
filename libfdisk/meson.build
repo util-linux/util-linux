@@ -60,8 +60,8 @@ lib_fdisk_static = static_library(
   'fdisk_static',
   link_whole : lib__fdisk,
   link_with : [lib_common,
-               lib_blkid.get_static_lib(),
                lib_uuid.get_static_lib()],
+  dependencies : [blkid_static_dep],
   install : false)
 
 lib_fdisk = library(
@@ -71,8 +71,8 @@ lib_fdisk = library(
   version : libfdisk_version,
   link_args : ['-Wl,--version-script=@0@'.format(libfdisk_sym_path)],
   link_with : [lib_common,
-               lib_blkid,
                lib_uuid],
+  dependencies : [blkid_dep],
   install : build_libfdisk)
 fdisk_dep = declare_dependency(link_with: lib_fdisk, include_directories: '.')
 

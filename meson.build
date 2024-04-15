@@ -969,7 +969,6 @@ subdir('term-utils')
 subdir('po')
 
 includes = [dir_include,
-            dir_libblkid,
             dir_libsmartcols,
             dir_libfdisk,
             dir_libuuid,
@@ -1557,8 +1556,8 @@ exe = executable(
   'blkdiscard',
   blkdiscard_sources,
   include_directories : includes,
-  link_with : [lib_common,
-               lib_blkid],
+  link_with : [lib_common],
+  dependencies : [blkid_dep],
   install_dir : sbindir,
   install : true)
 exes += exe
@@ -1799,9 +1798,8 @@ exe = executable(
   swapon_sources,
   include_directories : includes,
   link_with : [lib_common,
-               lib_blkid,
                lib_smartcols],
-  dependencies : [mount_dep],
+  dependencies : [blkid_dep, mount_dep],
   install_dir : sbindir,
   install : true)
 if not is_disabler(exe)
@@ -1814,9 +1812,8 @@ exe = executable(
   'swapoff',
   swapoff_sources,
   include_directories : includes,
-  link_with : [lib_common,
-               lib_blkid],
-  dependencies : [mount_dep],
+  link_with : [lib_common],
+  dependencies : [blkid_dep, mount_dep],
   install_dir : sbindir,
   install : true)
 if not is_disabler(exe)
@@ -2119,9 +2116,8 @@ exe = executable(
   mkswap_sources,
   include_directories : includes,
   link_with : [lib_common,
-               lib_blkid,
                lib_uuid],
-  dependencies: [lib_selinux],
+  dependencies: [blkid_dep, lib_selinux],
   install_dir : sbindir,
   install : true)
 if not is_disabler(exe)
@@ -2135,8 +2131,8 @@ exe = executable(
   swaplabel_sources,
   include_directories : includes,
   link_with : [lib_common,
-               lib_blkid,
                lib_uuid],
+  dependencies : [blkid_dep],
   install_dir : sbindir,
   install : true)
 if not is_disabler(exe)
@@ -2150,9 +2146,8 @@ exe = executable(
   'fsck',
   fsck_sources,
   include_directories : includes,
-  link_with : [lib_common,
-               lib_blkid],
-  dependencies : [realtime_libs, mount_dep],
+  link_with : [lib_common],
+  dependencies : [blkid_dep, mount_dep, realtime_libs],
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
@@ -2382,8 +2377,8 @@ exe4 = executable(
   partx_sources,
   include_directories : includes,
   link_with : [lib_common,
-               lib_blkid,
                lib_smartcols],
+  dependencies : [blkid_dep],
   install_dir : usrsbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -2696,10 +2691,9 @@ exe = executable(
   lsblk_sources,
   include_directories : includes,
   link_with : [lib_common,
-               lib_blkid,
                lib_tcolors,
                lib_smartcols],
-  dependencies : [lib_udev, mount_dep],
+  dependencies : [blkid_dep, lib_udev, mount_dep],
   install : true)
 if not is_disabler(exe)
   exes += exe
@@ -2786,8 +2780,8 @@ exe = executable(
   'blkid',
   blkid_sources,
   include_directories : includes,
-  link_with : [lib_common,
-               lib_blkid],
+  link_with : [lib_common],
+  dependencies : [blkid_dep],
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
@@ -2802,8 +2796,8 @@ exe = executable(
   'blkid.static',
   blkid_sources,
   include_directories : includes,
-  link_with : [lib_common,
-               lib_blkid_static],
+  link_with : [lib_common],
+  dependencies : [blkid_static_dep],
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
@@ -2815,7 +2809,7 @@ exe = executable(
   'sample-mkfs',
   'libblkid/samples/mkfs.c',
   include_directories : includes,
-  link_with : lib_blkid)
+  dependencies : [blkid_dep])
 if not is_disabler(exe)
   exes += exe
 endif
@@ -2824,7 +2818,7 @@ exe = executable(
   'sample-partitions',
   'libblkid/samples/partitions.c',
   include_directories : includes,
-  link_with : lib_blkid)
+  dependencies : [blkid_dep])
 if not is_disabler(exe)
   exes += exe
 endif
@@ -2833,7 +2827,7 @@ exe = executable(
   'sample-superblocks',
   'libblkid/samples/superblocks.c',
   include_directories : includes,
-  link_with : lib_blkid)
+  dependencies : [blkid_dep])
 if not is_disabler(exe)
   exes += exe
 endif
@@ -2842,7 +2836,7 @@ exe = executable(
   'sample-topology',
   'libblkid/samples/topology.c',
   include_directories : includes,
-  link_with : lib_blkid)
+  dependencies : [blkid_dep])
 if not is_disabler(exe)
   exes += exe
 endif
@@ -2851,7 +2845,7 @@ exe = executable(
   'test_blkid_fuzz_sample',
   'libblkid/src/fuzz.c',
   include_directories: includes,
-  link_with: lib_blkid,
+  dependencies : [blkid_dep],
   build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
@@ -2863,7 +2857,7 @@ exe = executable(
   'findfs',
   findfs_sources,
   include_directories : includes,
-  link_with : [lib_blkid],
+  dependencies : [blkid_dep],
   install_dir : sbindir,
   install : true)
 if not is_disabler(exe)
@@ -2877,8 +2871,8 @@ exe = executable(
   wipefs_sources,
   include_directories : includes,
   link_with : [lib_common,
-               lib_blkid,
                lib_smartcols],
+  dependencies : [blkid_dep],
   install_dir : sbindir,
   install : true)
 if not is_disabler(exe)
@@ -2892,9 +2886,8 @@ exe = executable(
   findmnt_sources,
   include_directories : includes,
   link_with : [lib_common,
-               lib_blkid,
                lib_smartcols],
-  dependencies : [lib_udev, mount_dep],
+  dependencies : [blkid_dep, lib_udev, mount_dep],
   install : true)
 if not is_disabler(exe)
   exes += exe
@@ -3319,7 +3312,8 @@ endif
 ############################################################
 
 libfdisk_tests_cflags = ['-DTEST_PROGRAM']
-libfdisk_tests_ldadd = [lib_fdisk_static, lib_uuid, lib_blkid]
+libfdisk_tests_ldadd = [lib_fdisk_static, lib_uuid]
+libfdisk_tests_ldadd_deps = [blkid_dep]
 
 exe = executable(
   'test_fdisk_ask',
@@ -3327,6 +3321,7 @@ exe = executable(
   c_args : libfdisk_tests_cflags,
   include_directories : lib_fdisk_includes,
   link_with : libfdisk_tests_ldadd,
+  dependencies : libfdisk_tests_ldadd_deps,
   build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
@@ -3338,6 +3333,7 @@ exe = executable(
   c_args : libfdisk_tests_cflags,
   include_directories : lib_fdisk_includes,
   link_with : libfdisk_tests_ldadd,
+  dependencies : libfdisk_tests_ldadd_deps,
   build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
@@ -3349,6 +3345,7 @@ exe = executable(
   c_args : libfdisk_tests_cflags,
   include_directories : lib_fdisk_includes,
   link_with : libfdisk_tests_ldadd,
+  dependencies : libfdisk_tests_ldadd_deps,
   build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
@@ -3360,6 +3357,7 @@ exe = executable(
   c_args : libfdisk_tests_cflags,
   include_directories : lib_fdisk_includes,
   link_with : libfdisk_tests_ldadd,
+  dependencies : libfdisk_tests_ldadd_deps,
   build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
@@ -3371,6 +3369,7 @@ exe = executable(
   c_args : libfdisk_tests_cflags,
   include_directories : lib_fdisk_includes,
   link_with : libfdisk_tests_ldadd,
+  dependencies : libfdisk_tests_ldadd_deps,
   build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
@@ -3382,6 +3381,7 @@ exe = executable(
   c_args : libfdisk_tests_cflags,
   include_directories : lib_fdisk_includes,
   link_with : libfdisk_tests_ldadd,
+  dependencies : libfdisk_tests_ldadd_deps,
   build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
