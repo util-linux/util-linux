@@ -664,14 +664,14 @@ static void doprompt(const char *crypted, struct console *con, int deny)
 	else {
 #if defined(USE_ONELINE)
 		if (crypted[0] && !locked_account_password(crypted))
-			fprintf(con->file, _("Give root password for login: "));
+			fprintf(con->file, _("Enter root password for login: "));
 		else
 			fprintf(con->file, _("Press Enter for login: "));
 #else
 		if (crypted[0] && !locked_account_password(crypted))
-			fprintf(con->file, _("Give root password for maintenance\n"));
+			fprintf(con->file, _("Enter root password for system maintenance\n"));
 		else
-			fprintf(con->file, _("Press Enter for maintenance\n"));
+			fprintf(con->file, _("Press Enter for system maintenance\n"));
 		fprintf(con->file, _("(or press Control-D to continue): "));
 #endif
 	}
