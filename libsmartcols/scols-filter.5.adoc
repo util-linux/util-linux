@@ -43,6 +43,8 @@ param: integer
       | holder
 
 integer: [0-9]*
+      | [0-9]*[KMGTPEZY]
+      | [0-9]*[KMGTPEZY]iB
 
 float: integer.integer
 
@@ -103,8 +105,9 @@ The precedences within operators is `or`, `and`, and `eq`, `ne`, `le`, `gt`, `ge
 
 About `float` and `integer` typed values, the filter engine supports only
 non-negative numbers. The `integer` is unsigned 64-bit number, and `float` is
-long double.
-
+long double. The `integer` may be followed by the multiplicative suffixes KiB,
+GiB, TiB, PiB, EiB, ZiB, and YiB (the "iB" is optional, e.g., "K" has the same
+meaning as "KiB").
 
 == AUTHORS
 

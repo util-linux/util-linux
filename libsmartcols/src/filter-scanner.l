@@ -2,6 +2,8 @@
 #include "smartcolsP.h"
 #include "filter-parser.h"	/* define tokens (T_*) */
 
+void yyerror(yyscan_t *locp, struct libscols_filter *fltr, char const *fmt, ...);
+
 %}
 
 %option reentrant bison-bridge noyywrap noinput nounput
@@ -44,6 +46,29 @@ true|TRUE	return T_TRUE;
 {int}+\.{int}+ {
 	yylval->param_float = strtold(yytext, NULL);
 	return T_FLOAT;
+}
+
+{int}+([KMGTPEZY](iB)?) {
+	uintmax_t res;
+	int e;
+
+	errno = 0;
+	e = strtosize(yytext, &res);
+	if (e < 0) {
+		if (errno)
+			yyerror(yyscanner, yyextra, "\"%s\" token error: %m", yytext);
+		else
+			yyerror(yyscanner, yyextra, "\"%s\" token error", yytext);
+		return YYerror;
+       }
+
+       if (res > ULLONG_MAX) {
+		yyerror(yyscanner, yyextra, "\"%s\" number too large", yytext);
+		return YYerror;
+       }
+
+       yylval->param_number = (unsigned long long) res;
+       return T_NUMBER;
 }
 
 {int}+ {
