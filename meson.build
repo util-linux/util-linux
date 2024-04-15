@@ -246,6 +246,7 @@ lib_m = cc.find_library('m')
 
 lib_tinfo = dependency(
   'tinfo',
+  disabler : true,
   required : get_option('tinfo'))
 
 lib_ncursesw = dependency(
@@ -260,6 +261,7 @@ if lib_ncursesw.found()
 else
   lib_ncurses = dependency(
     'ncurses',
+    disabler : true,
     required : get_option('ncurses'))
   headers += ['ncurses.h',
               'term.h']
