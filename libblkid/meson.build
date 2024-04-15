@@ -136,14 +136,22 @@ if build_libblkid and not have_dirfd and not have_ddfd
   error('neither dirfd nor ddfd are available')
 endif
 
+libblkid_link_depends = []
+libblkid_link_args = []
+
+if cc.has_link_argument('-Wl,--version-script=@0@'.format(libblkid_sym_path))
+	libblkid_link_depends += [libblkid_sym]
+	libblkid_link_args += ['-Wl,--version-script=@0@'.format(libblkid_sym_path)]
+endif
+
 lib_blkid = both_libraries(
   'blkid',
   list_h,
   lib_blkid_sources,
   include_directories : [dir_include, dir_libblkid],
-  link_depends : libblkid_sym,
+  link_depends : libblkid_link_depends,
   version : libblkid_version,
-  link_args : ['-Wl,--version-script=@0@'.format(libblkid_sym_path)],
+  link_args : libblkid_link_args,
   link_with : lib_common,
   dependencies : build_libblkid ? [lib_econf] : disabler(),
   install : build_libblkid)
