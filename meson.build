@@ -294,6 +294,7 @@ endforeach
 
 lib_z = dependency(
   'zlib',
+  disabler : true,
   required : get_option('zlib'))
 
 lib_readline = dependency(
