@@ -55,6 +55,7 @@ void yyerror(yyscan_t *locp, struct libscols_filter *fltr, char const *fmt, ...)
 %left T_OR T_AND
 %left T_EQ T_NE T_LT T_LE T_GT T_GE T_REG T_NREG T_TRUE T_FALSE T_NEG
 
+%token T_INVALID_NUMBER
 
 %destructor {
 		/* This destruct is called on error. The root node will be deallocated
@@ -111,7 +112,10 @@ param:
 		bool x = false;
 		$$ = filter_new_param(fltr, SCOLS_DATA_BOOLEAN, 0, (void *) &x);
 	}
-
+	| T_INVALID_NUMBER {		/* YYerror token is unsupported in old Bisons */
+		ignore_result( $$ );	/* supress "unset value" warning */
+		YYERROR;		/* yyerror() already called by lex() */
+	}
 ;
 
 

@@ -59,12 +59,12 @@ true|TRUE	return T_TRUE;
 			yyerror(yyscanner, yyextra, "\"%s\" token error: %m", yytext);
 		else
 			yyerror(yyscanner, yyextra, "\"%s\" token error", yytext);
-		return YYerror;
+		return T_INVALID_NUMBER;
        }
 
        if (res > ULLONG_MAX) {
 		yyerror(yyscanner, yyextra, "\"%s\" number too large", yytext);
-		return YYerror;
+		return T_INVALID_NUMBER;
        }
 
        yylval->param_number = (unsigned long long) res;
