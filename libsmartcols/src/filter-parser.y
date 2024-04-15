@@ -12,7 +12,7 @@
 #include "filter-parser.h"
 #include "filter-scanner.h"
 
-void yyerror(yyscan_t *locp, struct libscols_filter *fltr, char const *msg);
+void yyerror(yyscan_t *locp, struct libscols_filter *fltr, char const *fmt, ...);
 
 %}
 
@@ -119,15 +119,21 @@ param:
 
 void yyerror (yyscan_t *locp __attribute__((__unused__)),
 	      struct libscols_filter *fltr,
-	      char const *msg)
+	      char const *fmt, ...)
 {
-	if (msg && fltr) {
+	if (fmt && fltr) {
 		char *p;
+		va_list ap;
 
-		if (fltr->errmsg)
+		if (fltr->errmsg) {
 			free(fltr->errmsg);
+			fltr->errmsg = NULL;
+		}
 
-		fltr->errmsg = strdup(msg);
+		va_start(ap, fmt);
+		vasprintf(&fltr->errmsg, fmt, ap);
+		va_end(ap);
+
 		if (!fltr->errmsg)
 			return;
 
