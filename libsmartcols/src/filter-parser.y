@@ -124,6 +124,7 @@ void yyerror (yyscan_t *locp __attribute__((__unused__)),
 	if (fmt && fltr) {
 		char *p;
 		va_list ap;
+		int e;
 
 		if (fltr->errmsg) {
 			free(fltr->errmsg);
@@ -131,10 +132,10 @@ void yyerror (yyscan_t *locp __attribute__((__unused__)),
 		}
 
 		va_start(ap, fmt);
-		vasprintf(&fltr->errmsg, fmt, ap);
+		e = vasprintf(&fltr->errmsg, fmt, ap);
 		va_end(ap);
 
-		if (!fltr->errmsg)
+		if (e < 0 || !fltr->errmsg)
 			return;
 
 		p = strstr(fltr->errmsg, "T_");
