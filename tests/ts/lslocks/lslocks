@@ -53,14 +53,6 @@ OFD_METHODS=(
     lease-w
 )
 
-SLEEP()
-{
-    # It appears that there is a time lag between locking and its
-    # visibility in /proc/locks.  See the unstbale results of errors I
-    # observed in https://github.com/util-linux/util-linux/pull/2629.
-    sleep 1
-}
-
 DFD=18
 COLS_WITH_HOLDERS=COMMAND,TYPE,SIZE,MODE,START,END,HOLDERS
 run_lslocks()
@@ -71,8 +63,6 @@ run_lslocks()
 	rm -f "${FILE}"
 	coproc MKFDS { "$TS_HELPER_MKFDS" make-regular-file $FD file="$FILE" lock=$m; }
 	if read -r -u "${MKFDS[0]}" PID; then
-	    SLEEP
-
 	    "$TS_CMD_LSLOCKS" ${OPTS} --pid "${PID}" -o "${COLS}"
 	    echo "# $m + ${COLS} + ${OPTS}": $?
 	    "$TS_CMD_LSLOCKS" ${OPTS} --pid "${PID}" -o PATH | sed -e 's#.*\('"$FILE0"'\)--[0-9]\+ *$#\1#'
@@ -91,7 +81,6 @@ run_lslocks_with_co_holders()
     {
 	rm -f "${FILE}"
 	coproc MKFDS { "$TS_HELPER_MKFDS" make-regular-file $FD file="$FILE" lock=$m dupfd=$DFD; }
-	SLEEP
 	if read -r -u "${MKFDS[0]}" PID; then
 	    "$TS_CMD_LSLOCKS" ${OPTS} --pid "${PID}" -o "${COLS_WITH_HOLDERS}" | sed -e "s/${PID},/1,/g"
 	    echo "# $m + ${COLS_WITH_HOLDERS} + ${OPTS}": ${PIPESTATUS[0]}
