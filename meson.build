@@ -729,12 +729,15 @@ if not cc.has_function('socket')
   endif
 endif
 
+lib_rt = cc.find_library('rt', required : false)
 realtime_libs = []
 have = cc.has_function('clock_gettime')
 if not have
-  realtime_libs += cc.find_library('rt', required : true)
-  have = cc.has_function('clock_gettime',
-                         dependencies : realtime_libs)
+  if lib_rt.found()
+    realtime_libs += lib_rt
+    have = cc.has_function('clock_gettime',
+                          dependencies : realtime_libs)
+  endif
 endif
 conf.set('HAVE_CLOCK_GETTIME', have ? 1 : false)
 
@@ -742,9 +745,11 @@ thread_libs = dependency('threads')
 
 have = cc.has_function('timer_create')
 if not have
-  realtime_libs = [cc.find_library('rt', required : true)]
-  have = cc.has_function('timer_create',
-                         dependencies : realtime_libs)
+  if lib_rt.found()
+    realtime_libs = [lib_rt]
+    have = cc.has_function('timer_create',
+                           dependencies : realtime_libs)
+  endif
   if not have
     realtime_libs += thread_libs
     have = cc.has_function('timer_create',
@@ -2708,16 +2713,18 @@ endif
 mq_libs = []
 mq_libs += cc.find_library('rt', required : true)
 
+opt = not get_option('build-lsfd').require(lib_rt.found()).disabled()
 exe = executable(
   'lsfd',
   lsfd_sources,
   include_directories : includes,
   link_with : [lib_common,
                lib_smartcols],
-  dependencies : mq_libs,
+  dependencies : [lib_rt],
   install_dir : usrbin_exec_dir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['misc-utils/lsfd.1.adoc']
 endif
@@ -3493,14 +3500,14 @@ exe = executable(
   build_by_default: program_tests)
 exes += exe
 
-if LINUX
+if LINUX and lib_rt.found()
   exe = executable(
     'test_mkfds',
     'tests/helpers/test_mkfds.c',
     'tests/helpers/test_mkfds.h',
     'tests/helpers/test_mkfds_ppoll.c',
     include_directories : includes,
-    dependencies : mq_libs,
+    dependencies : [lib_rt],
     build_by_default: program_tests)
   exes += exe
 endif
