@@ -1,9 +1,11 @@
 %{
 #include "smartcolsP.h"
 #include "filter-parser.h"	/* define tokens (T_*) */
+
 %}
 
 %option reentrant bison-bridge noyywrap noinput nounput
+%option extra-type="struct libscols_filter *"
 
 id	[a-zA-Z][a-zA-Z_.%:/\-0-9]*
 int	[0-9]+
