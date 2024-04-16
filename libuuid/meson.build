@@ -20,6 +20,14 @@ unparse_c = files('src/unparse.c')
 libuuid_sym = 'src/libuuid.sym'
 libuuid_sym_path = '@0@/@1@'.format(meson.current_source_dir(), libuuid_sym)
 
+libuuid_link_depends = []
+libuuid_link_args = []
+
+if cc.has_link_argument('-Wl,--version-script=@0@'.format(libuuid_sym_path))
+	libuuid_link_depends += [libuuid_sym]
+	libuuid_link_args += ['-Wl,--version-script=@0@'.format(libuuid_sym_path)]
+endif
+
 lib_uuid = both_libraries(
   'uuid',
   list_h,
@@ -31,9 +39,9 @@ lib_uuid = both_libraries(
   md5_c,
   sha1_c,
   include_directories : [dir_include, dir_libuuid],
-  link_depends : libuuid_sym,
+  link_depends : libuuid_link_depends,
   version : libuuid_version,
-  link_args : ['-Wl,--version-script=@0@'.format(libuuid_sym_path)],
+  link_args : libuuid_link_args,
   dependencies : [socket_libs,
                   build_libuuid ? [] : disabler()],
   install : build_libuuid)
