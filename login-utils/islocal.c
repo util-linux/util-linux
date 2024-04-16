@@ -39,7 +39,7 @@ static int is_local_in_file(const char *user, const char *filename)
 
 	match = 0u;
 	skip = 0;
-	while ((chin = getc(f)) != EOF) {
+	while ((chin = fgetc(f)) != EOF) {
 		if (skip) {
 			/* Looking for the start of the next line. */
 			if ('\n' == chin) {

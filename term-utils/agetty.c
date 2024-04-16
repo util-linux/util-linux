@@ -1843,9 +1843,9 @@ static int issuefile_read_stream(
 		ie->output = open_memstream(&ie->mem, &ie->mem_sz);
 	}
 
-	while ((c = getc(f)) != EOF) {
+	while ((c = fgetc(f)) != EOF) {
 		if (c == '\\')
-			output_special_char(ie, getc(f), op, tp, f);
+			output_special_char(ie, fgetc(f), op, tp, f);
 		else
 			putc(c, ie->output);
 	}

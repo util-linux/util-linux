@@ -379,7 +379,7 @@ static void more_fseek(struct more_control *ctl, off_t pos)
 
 static int more_getc(struct more_control *ctl)
 {
-	int ret = getc(ctl->current_file);
+	int ret = fgetc(ctl->current_file);
 	ctl->file_position = ftello(ctl->current_file);
 	return ret;
 }
