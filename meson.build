@@ -2720,9 +2720,6 @@ if opt and not is_disabler(exe)
   bashcompletions += ['lsblk']
 endif
 
-mq_libs = []
-mq_libs += cc.find_library('rt', required : true)
-
 opt = not get_option('build-lsfd').require(lib_rt.found()).disabled()
 exe = executable(
   'lsfd',
