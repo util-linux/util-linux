@@ -764,11 +764,11 @@ notree:
 		}
 	}
 
+done:
 	/* reset wrapping after greatest chunk calculation */
 	if (cal && scols_column_is_wrap(cl))
 		scols_column_reset_wrap(cl);
 
-done:
 	DBG(COL, ul_debugobj(cl, "__cursor_to_buffer rc=%d", rc));
 	return rc;
 }
@@ -802,8 +802,12 @@ static int print_line(struct libscols_table *tb,
 		rc = __cursor_to_buffer(tb, buf, 0);
 		if (!rc)
 			rc = print_data(tb, buf);
-		if (!rc && scols_column_has_pending_wrap(cl))
-			pending = 1;
+		if (!rc) {
+			if (scols_column_has_pending_wrap(cl))
+				pending = 1;
+			else
+				scols_column_reset_wrap(cl);
+		}
 		scols_table_reset_cursor(tb);
 	}
 	fputs_color_line_close(tb);
@@ -827,10 +831,12 @@ static int print_line(struct libscols_table *tb,
 				rc = __cursor_to_buffer(tb, buf, 0);
 				if (!rc)
 					rc = print_pending_data(tb, buf);
-				if (!rc && scols_column_has_pending_wrap(cl))
-					pending = 1;
-				if (!rc && !pending)
-					scols_column_reset_wrap(cl);
+				if (!rc) {
+					if (scols_column_has_pending_wrap(cl))
+						pending = 1;
+					else
+						scols_column_reset_wrap(cl);
+				}
 			} else
 				print_empty_cell(tb, cl, ln, NULL, ul_buffer_get_bufsiz(buf));
 			scols_table_reset_cursor(tb);
