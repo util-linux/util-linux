@@ -45,7 +45,7 @@
 #include "procfs.h"
 
 #include "lsfd.h"
-#include "lsfd-pidfd.h"
+#include "pidfd.h"
 #include "pidfd-utils.h"
 
 static size_t pagesize;

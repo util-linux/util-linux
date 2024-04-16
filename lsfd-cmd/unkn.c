@@ -28,7 +28,7 @@
 #include "timeutils.h"
 
 #include "lsfd.h"
-#include "lsfd-pidfd.h"
+#include "pidfd.h"
 
 #define offsetofend(TYPE, MEMBER)				\
 	(offsetof(TYPE, MEMBER)	+ sizeof_member(TYPE, MEMBER))

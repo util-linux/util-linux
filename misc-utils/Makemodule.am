@@ -280,31 +280,6 @@ hardlink_LDADD = $(LDADD) libcommon.la $(REALTIME_LIBS)
 hardlink_CFLAGS = $(AM_CFLAGS)
 endif
 
-if BUILD_LSFD
-
-misc-utils/lsfd-file.c: errnos.h
-
-bin_PROGRAMS += lsfd
-MANPAGES += misc-utils/lsfd.1
-dist_noinst_DATA += misc-utils/lsfd.1.adoc
-lsfd_SOURCES = \
-	misc-utils/lsfd.c \
-	misc-utils/lsfd.h \
-	misc-utils/lsfd-decode-file-flags.c \
-	misc-utils/lsfd-file.c \
-	misc-utils/lsfd-cdev.c \
-	misc-utils/lsfd-bdev.c \
-	misc-utils/lsfd-sock.c \
-	misc-utils/lsfd-sock.h \
-	misc-utils/lsfd-sock-xinfo.c \
-	misc-utils/lsfd-unkn.c \
-	misc-utils/lsfd-fifo.c \
-	misc-utils/lsfd-pidfd.h \
-	misc-utils/lsfd-pidfd.c
-lsfd_LDADD = $(LDADD) $(MQ_LIBS) libsmartcols.la libcommon.la
-lsfd_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
-endif
-
 if BUILD_PIPESZ
 bin_PROGRAMS += pipesz
 MANPAGES += misc-utils/pipesz.1
