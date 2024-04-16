@@ -1,15 +1,18 @@
 #!/bin/bash
 
 set -e
+set -o pipefail
 
+AWK="$1"
+shift
 OUTPUT=syscalls.h
 SYSCALL_INCLUDES="
 #include <sys/syscall.h>
 "
 
-trap 'rm $OUTPUT $OUTPUT.deps' ERR
+trap 'rm -f $OUTPUT $OUTPUT.deps' ERR
 
 "$@" -MD -MF "$OUTPUT.deps" <<< "$SYSCALL_INCLUDES" -dM -E - \
-	| gawk 'match($0, /^#define __NR_([^ ]+)/, res) { print "UL_SYSCALL(\"" res[1] "\", __NR_" res[1] ")" }' \
+	| "$AWK" 'match($0, /^#define __NR_([^ ]+)/, res) { print "UL_SYSCALL(\"" res[1] "\", __NR_" res[1] ")" }' \
 	| sort \
 	> "$OUTPUT"
