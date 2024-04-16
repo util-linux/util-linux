@@ -3,7 +3,7 @@
 set -e
 set -o pipefail
 
-AWK="$1"
+SED="$1"
 shift
 OUTPUT=syscalls.h
 SYSCALL_INCLUDES="
@@ -13,6 +13,6 @@ SYSCALL_INCLUDES="
 trap 'rm -f $OUTPUT $OUTPUT.deps' ERR
 
 "$@" -MD -MF "$OUTPUT.deps" <<< "$SYSCALL_INCLUDES" -dM -E - \
-	| "$AWK" 'match($0, /^#define __NR_([^ ]+)/, res) { print "UL_SYSCALL(\"" res[1] "\", __NR_" res[1] ")" }' \
+	| "$SED" -n -e 's/^#define __NR_\([^ ]*\).*$/UL_SYSCALL("\1", __NR_\1)/p' \
 	| sort \
 	> "$OUTPUT"
