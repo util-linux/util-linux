@@ -326,7 +326,7 @@ misc-utils/enosys.c: syscalls.h
 
 syscalls.h: $(top_srcdir)/tools/all_syscalls
 	@echo '  GEN      $@'
-	@$(top_srcdir)/tools/all_syscalls $(CC) $(CFLAGS)
+	@$(top_srcdir)/tools/all_syscalls "$(AWK)" $(CC) $(CFLAGS)
 
 -include syscalls.h.deps
 CLEANFILES += syscalls.h syscalls.h.deps

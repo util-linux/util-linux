@@ -895,6 +895,7 @@ conf.set('USE_TTY_GROUP', have ? 1 : false)
 
 bison = find_program('bison')
 flex = find_program('flex')
+awk = find_program('gawk', 'mawk', 'nawk', 'awk')
 
 build_hwclock = not get_option('build-hwclock').disabled()
 bison_gen = generator(
@@ -3034,7 +3035,8 @@ endif
 syscalls_h = custom_target('syscalls.h',
   input : 'tools/all_syscalls',
   output : 'syscalls.h',
-  command : ['tools/all_syscalls', cc.cmd_array(), get_option('c_args')] 
+  command : ['tools/all_syscalls', awk.full_path(),
+             cc.cmd_array(), get_option('c_args')],
 )
 
 if cc.compiles(fs.read('include/audit-arch.h'), name : 'has AUDIT_ARCH_NATIVE')
