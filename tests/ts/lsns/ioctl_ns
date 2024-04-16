@@ -95,7 +95,7 @@ init
 	cleanup
     fi
     exit $RESULT
-) &
+) >> $TS_ERRLOG 2>&1 &
 mainpid=$!
 (
     exec 4< $FIFO_WAIT
