@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -o pipefail
 
 OUTPUT=syscalls.h
 SYSCALL_INCLUDES="
