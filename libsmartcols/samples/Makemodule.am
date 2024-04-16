@@ -3,6 +3,7 @@ check_PROGRAMS += \
 	sample-scols-colors \
 	sample-scols-title \
 	sample-scols-wrap \
+	sample-scols-wrap-repeat \
 	sample-scols-continuous \
 	sample-scols-continuous-json \
 	sample-scols-fromfile \
@@ -31,6 +32,10 @@ sample_scols_title_CFLAGS = $(sample_scols_cflags)
 sample_scols_wrap_SOURCES = libsmartcols/samples/wrap.c
 sample_scols_wrap_LDADD = $(sample_scols_ldadd)
 sample_scols_wrap_CFLAGS = $(sample_scols_cflags)
+
+sample_scols_wrap_repeat_SOURCES = libsmartcols/samples/wrap-repeat.c
+sample_scols_wrap_repeat_LDADD = $(sample_scols_ldadd)
+sample_scols_wrap_repeat_CFLAGS = $(sample_scols_cflags)
 
 sample_scols_continuous_SOURCES = libsmartcols/samples/continuous.c
 sample_scols_continuous_LDADD = $(sample_scols_ldadd) libcommon.la
