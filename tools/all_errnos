@@ -10,7 +10,7 @@ ERRNO_INCLUDES="
 #include <sys/errno.h>
 "
 
-trap 'rm $OUTPUT $OUTPUT.deps' ERR
+trap 'rm -f $OUTPUT $OUTPUT.deps' ERR
 
 "$@" -MD -MF "$OUTPUT.deps" <<< "$ERRNO_INCLUDES" -dM -E - \
 	| gawk 'match($0, /^#[ \t]*define[ \t]*E([^ ]+)/, res) { print "UL_ERRNO(\"E" res[1] "\", E" res[1] ")" }' \
