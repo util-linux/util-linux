@@ -904,7 +904,7 @@ conf.set('USE_TTY_GROUP', have ? 1 : false)
 
 bison = find_program('bison')
 flex = find_program('flex')
-awk = find_program('gawk', 'mawk', 'nawk', 'awk')
+sed = find_program('sed')
 
 build_hwclock = not get_option('build-hwclock').disabled()
 bison_gen = generator(
@@ -2777,7 +2777,7 @@ endif
 errnos_h = custom_target('errnos.h',
   input : 'tools/all_errnos',
   output : 'errnos.h',
-  command : ['tools/all_errnos', awk.full_path(),
+  command : ['tools/all_errnos', sed.full_path(),
              cc.cmd_array(), get_option('c_args')],
 )
 
@@ -3095,7 +3095,7 @@ endif
 syscalls_h = custom_target('syscalls.h',
   input : 'tools/all_syscalls',
   output : 'syscalls.h',
-  command : ['tools/all_syscalls', awk.full_path(),
+  command : ['tools/all_syscalls', sed.full_path(),
              cc.cmd_array(), get_option('c_args')],
 )
 

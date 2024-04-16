@@ -132,7 +132,7 @@ AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_MKDIR_P
 AC_PROG_YACC
-AC_PROG_AWK
+AC_PROG_SED
 
 # Don't use autotools integrated LEX/YACC support for libsmartcols
 AC_PATH_PROG([FLEX], [flex])
