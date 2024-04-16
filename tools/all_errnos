@@ -3,6 +3,7 @@
 # Derrived from all_syscalls.
 
 set -e
+set -o pipefail
 
 OUTPUT=errnos.h
 ERRNO_INCLUDES="
