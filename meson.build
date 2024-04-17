@@ -1376,7 +1376,9 @@ exe = executable(
 exes += exe
 manadocs += ['sys-utils/choom.1.adoc']
 
-opt = get_option('build-ipcmk').allowed()
+has_seminfo_type = cc.has_type('struct seminfo', args : '-D_GNU_SOURCE', prefix : '#include <sys/sem.h>')
+
+opt = get_option('build-ipcmk').require(has_seminfo_type).allowed()
 exe = executable(
   'ipcmk',
   ipcmk_sources,
@@ -1391,7 +1393,7 @@ if opt and not is_disabler(exe)
   bashcompletions += ['ipcmk']
 endif
 
-opt = get_option('build-ipcrm').allowed()
+opt = get_option('build-ipcrm').require(has_seminfo_type).allowed()
 exe = executable(
   'ipcrm',
   ipcrm_sources,
@@ -1406,7 +1408,7 @@ if opt and not is_disabler(exe)
   bashcompletions += ['ipcrm']
 endif
 
-opt = not get_option('build-ipcs').disabled()
+opt = not get_option('build-ipcs').require(has_seminfo_type).disabled()
 exe = executable(
   'ipcs',
   ipcs_sources,
