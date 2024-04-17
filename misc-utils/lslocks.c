@@ -221,7 +221,6 @@ static char *get_filename_sz(ino_t inode, pid_t lock_pid, size_t *size)
 	struct stat sb;
 	struct dirent *dp;
 	DIR *dirp;
-	size_t sz;
 	int fd;
 	char path[PATH_MAX] = { 0 },
 	     sym[PATH_MAX] = { 0 }, *ret = NULL;
@@ -241,7 +240,7 @@ static char *get_filename_sz(ino_t inode, pid_t lock_pid, size_t *size)
 	if (!(dirp = opendir(path)))
 		return NULL;
 
-	if ((sz = strlen(path)) >= (sizeof(path) - 2))
+	if (strlen(path) >= (sizeof(path) - 2))
 		goto out;
 
 	if ((fd = dirfd(dirp)) < 0 )
