@@ -508,7 +508,7 @@ static int cmp_xattr_name_ptrs(const void *ptr1, const void *ptr2)
  */
 static const char **get_sorted_xattr_name_table(const char *names, int n)
 {
-	const char **table = xmalloc(n * sizeof(char *));
+	const char **table = xcalloc(n, sizeof(char *));
 	int i;
 
 	for (i = 0; i < n; i++) {
