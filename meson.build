@@ -1387,16 +1387,20 @@ exes += exe
 manadocs += ['sys-utils/ipcmk.1.adoc']
 bashcompletions += ['ipcmk']
 
+opt = get_option('build-ipcrm').allowed()
 exe = executable(
   'ipcrm',
   ipcrm_sources,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['sys-utils/ipcrm.1.adoc']
-bashcompletions += ['ipcrm']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['sys-utils/ipcrm.1.adoc']
+  bashcompletions += ['ipcrm']
+endif
 
 opt = not get_option('build-ipcs').disabled()
 exe = executable(
