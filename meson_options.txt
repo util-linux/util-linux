@@ -127,6 +127,8 @@ option('build-irqtop', type : 'feature',
        description : 'build irqtop')
 option('build-chmem', type : 'feature',
        description : 'build chmem')
+option('build-ipcmk', type : 'feature',
+       description : 'build ipcmk')
 option('build-ipcrm', type : 'feature',
        description : 'build ipcrm')
 option('build-ipcs', type : 'feature',

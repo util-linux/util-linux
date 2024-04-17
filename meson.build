@@ -1387,16 +1387,20 @@ exe = executable(
 exes += exe
 manadocs += ['sys-utils/choom.1.adoc']
 
+opt = get_option('build-ipcmk').allowed()
 exe = executable(
   'ipcmk',
   ipcmk_sources,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['sys-utils/ipcmk.1.adoc']
-bashcompletions += ['ipcmk']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['sys-utils/ipcmk.1.adoc']
+  bashcompletions += ['ipcmk']
+endif
 
 opt = get_option('build-ipcrm').allowed()
 exe = executable(
