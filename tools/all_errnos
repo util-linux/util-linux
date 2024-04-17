@@ -5,7 +5,7 @@
 set -e
 set -o pipefail
 
-AWK="$1"
+SED="$1"
 shift
 OUTPUT=errnos.h
 ERRNO_INCLUDES="
@@ -15,6 +15,6 @@ ERRNO_INCLUDES="
 trap 'rm -f $OUTPUT $OUTPUT.deps' ERR
 
 "$@" -MD -MF "$OUTPUT.deps" <<< "$ERRNO_INCLUDES" -dM -E - \
-	| "$AWK" 'match($0, /^#[ \t]*define[ \t]*E([^ ]+)/, res) { print "UL_ERRNO(\"E" res[1] "\", E" res[1] ")" }' \
+	| "$SED" -n -e 's/^[ \t]*#define[ \t]*E\([^ ]*\).*$/UL_ERRNO("E\1", E\1)/p' \
 	| sort \
 	> "$OUTPUT"
