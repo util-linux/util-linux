@@ -1524,16 +1524,18 @@ if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['sys-utils/fstrim.8.adoc']
   bashcompletions += ['fstrim']
-endif  
+endif
 
+opt = get_option('build-dmesg').require(cc.has_header('sys/klog.h')).allowed()
 exe = executable(
   'dmesg',
   dmesg_sources,
   include_directories : includes,
   link_with : [lib_common,
                lib_tcolors],
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['sys-utils/dmesg.1.adoc']
   bashcompletions += ['dmesg']
