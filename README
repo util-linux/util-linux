@@ -87,60 +87,54 @@ SOURCE CODE:
       to both repositories at the same time.
 
     Repository Branches: 'git branch -a'
-	  master branch
-	   - current development
-	   - the source for stable releases when deemed ready.
-	   - day-to-day status is: 'it works for me'. This means that its
+	  Master Branch:
+	   - Continuously developed, no feature freeze or translation freezes.
+	   - Day-to-day status is: 'it works for me'. This means that its
 	     normal state is useful but not well tested.
-	   - long-term development or invasive changes in active development are
-	     forked into separate 'topic' branches from the tip of 'master'.
 
-	  stable/ branches
-	   - public releases
-	   - branch name: stable/v<major>.<minor>.
-	   - created from the 'master' branch after two or more release
-	     candidates and the final public release. This means that the stable
-	     releases are committed, tagged, and reachable in 'master'.
-	   - these branches then become forked development branches. This means
-	     that any changes made to them diverge from the 'master' branch.
-	   - maintenance releases are part of, and belong to, their respective
+	  Stable Branches:
+	   - Public releases.
+	   - Branch name: stable/v<major>.<minor>.
+	   - Created from the 'master' branch.
+	   - The release candidates and final release are always based
+             on the stable branch.
+	   - Maintenance releases are part of, and belong to, their respective
 	     stable branch. As such, they are tags(<major>.<minor>.<maint>) and
 	     not branches of their own. They are not part of, visible in, or
 	     have anything to do with the 'master' development branch. In git
 	     terminology: maintenance releases are not reachable from 'master'.
-	   - when initially cloned (as with the 'git clone' command given above)
+	   - When initially cloned (as with the 'git clone' command given above),
 	     these branches are created as 'remote tracking branches' and are
 	     only visible by using the -a or -r options to 'git branch'. To
-	     create a local branch use the desired tag with this command:
+	     create a local branch, use the desired tag with this command:
 	     'git checkout -b v2.29.2 v2.29.2'
 
     Tags: 'git tag'
-	   - a new tag object is created for every release.
-	   - tag name: v<version>.
-	   - all tags are signed by the maintainer's PGP key.
+	   - v<version> tag is created in the stable branch for every release.
+	   - v<version>-devel is created in the master branch to start work on the next release.
+	   - All tags are signed by the maintainer's PGP key.
 
-    Known Bugs:
-	- don't use tag v2.13.1 (created and published by mistake),
-	  use v2.13.1-REAL instead.
 
 WORKFLOW EXAMPLE:
 
- 1) development (branch: <master>)
+    Development                     Releases
+    (Master Branch)                 (Stable/vX.Y Branch)
 
- 2) master release (tags: v2.29-rc1, v2.29-rc2, v2.29, branch: <master>)
-
- 3) development (work on v2.30, branch: <master>)
-
- 4) fork -- create a new branch <stable/v2.29> based on tag v2.29
-
-     4a) new patches or cherry-pick patches from <master> (branch: <stable/v2.29>)
-
-     4b) stable release (tag: v2.29.1, branch: <stable/v2.29>)
-
-     4c) more patches; another release (tag: v2.29.2, branch: <stable/v2.29>)
-
- 5) master release v2.30 (branch: <master>)
-    ...
-
-where 3) and 4) happen simultaneously.
+    - Sync latest translations
+      from translationproject.org
+    - Tag v<X.Y+1>-devel            - Fork from master to stable/v<X.Y> branch
+                                      - Code stabilization
+                                    - RC1 (Tag v<X.Y>-rc1)
+                                      - Backport bug fixes
+                                    - RC2 (Tag v<X.Y>-rc2)
+                                      - po/ and po-man/ translations available on
+                                        translationproject.org/
+                                      - Wait 7-17 days for translators
+                                      - Sync latest translations
+                                      - Backport bug fixes
+                                    - Final release v<X.Y> (Tag v<X.Y>)
+                                      ...
+                                    - Release v<X.Y>.1
+                                      ...
+                                    - Release v<X.Y>.2
 
