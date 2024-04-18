@@ -1387,29 +1387,39 @@ exe = executable(
 exes += exe
 manadocs += ['sys-utils/choom.1.adoc']
 
+has_seminfo_type = cc.has_type('struct seminfo', args : '-D_GNU_SOURCE', prefix : '#include <sys/sem.h>')
+
+opt = get_option('build-ipcmk').require(has_seminfo_type).allowed()
 exe = executable(
   'ipcmk',
   ipcmk_sources,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['sys-utils/ipcmk.1.adoc']
-bashcompletions += ['ipcmk']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['sys-utils/ipcmk.1.adoc']
+  bashcompletions += ['ipcmk']
+endif
 
+opt = get_option('build-ipcrm').require(has_seminfo_type).allowed()
 exe = executable(
   'ipcrm',
   ipcrm_sources,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['sys-utils/ipcrm.1.adoc']
-bashcompletions += ['ipcrm']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['sys-utils/ipcrm.1.adoc']
+  bashcompletions += ['ipcrm']
+endif
 
-opt = not get_option('build-ipcs').disabled()
+opt = not get_option('build-ipcs').require(has_seminfo_type).disabled()
 exe = executable(
   'ipcs',
   ipcs_sources,
