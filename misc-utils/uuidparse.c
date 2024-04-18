@@ -191,6 +191,8 @@ static void fill_table_row(struct libscols_table *tb, char const *const uuid)
 				str = xstrdup(_("invalid"));
 				break;
 			}
+			if (variant != UUID_VARIANT_DCE)
+				break;
 			switch (type) {
 			case UUID_TYPE_DCE_NIL:
 				if (uuid_is_null(buf))
