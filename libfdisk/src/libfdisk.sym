@@ -324,3 +324,7 @@ FDISK_2.38 {
 FDISK_2.40 {
 	fdisk_partition_get_max_size;
 } FDISK_2.38;
+
+FDISK_2_41 {
+	fdisk_ask_menu;
+} FDISK_2.40;

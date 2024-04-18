@@ -112,6 +112,7 @@ static const struct menu menu_generic = {
 		MENU_BENT_E('v', N_("verify the partition table"), FDISK_DISKLABEL_BSD),
 		MENU_ENT  ('i', N_("print information about a partition")),
 		MENU_ENT  ('e', N_("resize a partition")),
+		MENU_ENT  ('T', N_("discard (trim) sectors")),
 
 		MENU_XENT('d', N_("print the raw data of the first sector from the device")),
 		MENU_XENT('D', N_("print the raw data of the disklabel from the device")),
@@ -713,6 +714,10 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 			fdisk_info(cxt, _("Leaving nested disklabel."));
 			fdisk_unref_context(cxt);
 		}
+		break;
+	case 'T':
+		/* discard (trim) */
+		discard_sectors(cxt);
 		break;
 	}
 

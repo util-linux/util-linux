@@ -229,32 +229,45 @@ done:
 	fdisk_free_iter(itr);
 }
 
-void list_freespace(struct fdisk_context *cxt)
+/*
+ * List freespace areas and if @tb0 not NULL then returns the table.  The
+ * @best0 returns number of the "best" area (may be used as default in some
+ * dialog).
+ *
+ * Returns: <0 on error, else number of free areas
+ */
+int list_freespace_get_table(struct fdisk_context *cxt,
+			struct fdisk_table **tb0,
+			size_t *best0)
 {
 	struct fdisk_table *tb = NULL;
-	struct fdisk_partition *pa = NULL;
+	struct fdisk_partition *pa = NULL, *best = NULL;
 	struct fdisk_iter *itr = NULL;
 	struct libscols_table *out = NULL;
 	const char *bold = NULL;
 	size_t i;
-	uintmax_t sumsize = 0, bytes = 0;
+	uintmax_t sumsize = 0, bytes = 0, nbest = 0;
 	char *strsz;
+	int rc = 0, ct = 0;
 
 	static const char *colnames[] = { N_("Start"), N_("End"), N_("Sectors"), N_("Size") };
 	static const int colids[] = { FDISK_FIELD_START, FDISK_FIELD_END, FDISK_FIELD_SECTORS, FDISK_FIELD_SIZE };
 
-	if (fdisk_get_freespaces(cxt, &tb))
+	rc = fdisk_get_freespaces(cxt, &tb);
+	if (rc)
 		goto done;
 
 	itr = fdisk_new_iter(FDISK_ITER_FORWARD);
 	if (!itr) {
 		fdisk_warn(cxt, _("failed to allocate iterator"));
+		rc = -ENOMEM;
 		goto done;
 	}
 
 	out = scols_new_table();
 	if (!out) {
 		fdisk_warn(cxt, _("failed to allocate output table"));
+		rc = -ENOMEM;
 		goto done;
 	}
 
@@ -264,67 +277,120 @@ void list_freespace(struct fdisk_context *cxt)
 	}
 
 	for (i = 0; i < ARRAY_SIZE(colnames); i++) {
-		struct libscols_column *co = scols_table_new_column(out, _(colnames[i]), 5, SCOLS_FL_RIGHT);
+		struct libscols_column *co;
 
-		if (!co)
+		if (tb0 && i == 0) {
+			co = scols_table_new_column(out, "#", 5, SCOLS_FL_RIGHT);
+			if (!co) {
+				rc = -ENOMEM;
+				goto done;
+			}
+		}
+
+		co = scols_table_new_column(out, _(colnames[i]), 5, SCOLS_FL_RIGHT);
+		if (!co) {
+			rc = -ENOMEM;
 			goto done;
+		}
 		if (bold)
 			scols_cell_set_color(scols_column_get_header(co), bold);
 	}
 
 	/* fill-in output table */
 	while (fdisk_table_next_partition(tb, itr, &pa) == 0) {
+		int col;
 		struct libscols_line *ln = scols_table_new_line(out, NULL);
-		char *data;
 
 		if (!ln) {
 			fdisk_warn(cxt, _("failed to allocate output line"));
 			goto done;
 		}
-		for (i = 0; i < ARRAY_SIZE(colids); i++) {
+		for (col = 0, i = 0; i < ARRAY_SIZE(colnames); col++, i++) {
+			char *data = NULL;
+
+			if (tb0 && i == 0) {
+				xasprintf(&data, "%d", ct + 1);
+
+				if (scols_line_refer_data(ln, i, data)) {
+					fdisk_warn(cxt, _("failed to add output data"));
+					rc = -ENOMEM;
+					goto done;
+				}
+				col++;
+			}
+
 			if (fdisk_partition_to_string(pa, cxt, colids[i], &data))
 				continue;
-			if (scols_line_refer_data(ln, i, data)) {
+			if (scols_line_refer_data(ln, col, data)) {
 				fdisk_warn(cxt, _("failed to add output data"));
+				rc = -ENOMEM;
 				goto done;
 			}
 		}
 
-		if (fdisk_partition_has_size(pa))
-			sumsize += fdisk_partition_get_size(pa);
+		if (fdisk_partition_has_size(pa)) {
+			uintmax_t sz = fdisk_partition_get_size(pa);;
+
+			sumsize += sz;
+
+			if (best0 &&
+			    (best == NULL || fdisk_partition_get_size(best) < sz)) {
+				nbest = ct;
+				best = pa;
+			}
+		}
+		ct++;
 	}
 
-	bytes = sumsize * fdisk_get_sector_size(cxt);
-	strsz = size_to_human_string(SIZE_DECIMAL_2DIGITS
-				     | SIZE_SUFFIX_SPACE
-				     | SIZE_SUFFIX_3LETTER, bytes);
+	if (tb0 == NULL) {
+		bytes = sumsize * fdisk_get_sector_size(cxt);
+		strsz = size_to_human_string(SIZE_DECIMAL_2DIGITS
+					     | SIZE_SUFFIX_SPACE
+					     | SIZE_SUFFIX_3LETTER, bytes);
 
-	color_scheme_enable("header", UL_COLOR_BOLD);
-	fdisk_info(cxt,	_("Unpartitioned space %s: %s, %ju bytes, %ju sectors"),
-			fdisk_get_devname(cxt), strsz,
-			bytes, sumsize);
-	color_disable();
-	free(strsz);
+		color_scheme_enable("header", UL_COLOR_BOLD);
+		fdisk_info(cxt,	_("Unpartitioned space %s: %s, %ju bytes, %ju sectors"),
+				fdisk_get_devname(cxt), strsz,
+				bytes, sumsize);
+		color_disable();
+		free(strsz);
 
-	fdisk_info(cxt, _("Units: %s of %d * %ld = %ld bytes"),
-	       fdisk_get_unit(cxt, FDISK_PLURAL),
-	       fdisk_get_units_per_sector(cxt),
-	       fdisk_get_sector_size(cxt),
-	       fdisk_get_units_per_sector(cxt) * fdisk_get_sector_size(cxt));
+		fdisk_info(cxt, _("Units: %s of %d * %ld = %ld bytes"),
+		       fdisk_get_unit(cxt, FDISK_PLURAL),
+		       fdisk_get_units_per_sector(cxt),
+		       fdisk_get_sector_size(cxt),
+		       fdisk_get_units_per_sector(cxt) * fdisk_get_sector_size(cxt));
 
-	fdisk_info(cxt, _("Sector size (logical/physical): %lu bytes / %lu bytes"),
-				fdisk_get_sector_size(cxt),
-				fdisk_get_physector_size(cxt));
+		fdisk_info(cxt, _("Sector size (logical/physical): %lu bytes / %lu bytes"),
+					fdisk_get_sector_size(cxt),
+					fdisk_get_physector_size(cxt));
+	}
 
 	/* print */
 	if (!scols_table_is_empty(out)) {
 		fdisk_info(cxt, "%s", "");	/* line break */
 		scols_print_table(out);
 	}
+
+	rc = 0;
 done:
 	scols_unref_table(out);
-	fdisk_unref_table(tb);
 	fdisk_free_iter(itr);
+
+	if (tb0)
+		*tb0 = tb;
+	else
+		fdisk_unref_table(tb);
+
+	if (best0)
+		*best0 = nbest;
+
+	return rc < 0 ? rc : ct;
+}
+
+void list_freespace(struct fdisk_context *cxt)
+{
+	list_freespace_get_table(cxt, NULL, NULL);
 }
 
 char *next_proc_partition(FILE **f)

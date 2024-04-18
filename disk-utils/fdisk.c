@@ -55,6 +55,15 @@
 # include <linux/blkpg.h>
 #endif
 
+#ifdef __linux__
+# ifdef HAVE_LINUX_FS_H
+#  include <linux/fs.h>
+# endif
+# ifndef BLKDISCARD
+#   define BLKDISCARD     _IO(0x12,119)
+# endif
+#endif
+
 int pwipemode = WIPEMODE_AUTO;
 int device_is_used;
 int is_interactive;
@@ -201,8 +210,12 @@ static int ask_menu(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		size_t i = 0;
 
 		/* print menu items */
-		while (fdisk_ask_menu_get_item(ask, i++, &key, &name, &desc) == 0)
-			fprintf(stdout, "   %c   %s (%s)\n", key, name, desc);
+		while (fdisk_ask_menu_get_item(ask, i++, &key, &name, &desc) == 0) {
+			if (desc)
+				fprintf(stdout, "   %c   %s (%s)\n", key, name, desc);
+			else
+				fprintf(stdout, "   %c   %s\n", key, name);
+		}
 
 		/* ask for key */
 		snprintf(prompt, sizeof(prompt), _("Select (default %c): "), dft);
@@ -770,6 +783,131 @@ void change_partition_type(struct fdisk_context *cxt)
 	fdisk_unref_partition(pa);
 	fdisk_unref_parttype(t);
 }
+
+#ifdef BLKDISCARD
+
+static int do_discard(struct fdisk_context *cxt, struct fdisk_partition *pa)
+{
+	char buf[512];
+	unsigned long ss;
+	uint64_t range[2];
+	int yes = 0;
+
+	ss = fdisk_get_sector_size(cxt);
+
+	range[0] = (uint64_t) fdisk_partition_get_start(pa);
+	range[1] = (uint64_t) fdisk_partition_get_size(pa);
+
+	snprintf(buf, sizeof(buf), _("All data in the region (%"PRIu64
+				     "-%"PRIu64") will be lost! Continue?"),
+			range[0], range[0] + range[1] - 1);
+
+	range[0] *= (uint64_t) ss;
+	range[1] *= (uint64_t) ss;
+
+	fdisk_ask_yesno(cxt, buf, &yes);
+	if (!yes)
+		return 1;
+
+	errno = 0;
+	if (ioctl(fdisk_get_devfd(cxt), BLKDISCARD, &range)) {
+		fdisk_warn(cxt, _("BLKDISCARD ioctl failed"));
+		return -errno;
+	}
+	return 0;
+}
+
+static void discard_partition(struct fdisk_context *cxt)
+{
+	struct fdisk_partition *pa = NULL;
+	size_t n = 0;
+
+	fdisk_info(cxt, _("\nThe partition sectors will be immediately discarded.\n"
+			  "You can exit this dialog by pressing CTRL+C.\n"));
+
+	if (fdisk_ask_partnum(cxt, &n, FALSE))
+		goto done;
+	if (fdisk_get_partition(cxt, n, &pa)) {
+		fdisk_warnx(cxt, _("Partition %zu does not exist yet!"), n + 1);
+		goto done;
+	}
+
+	if (!fdisk_partition_has_size(pa) || !fdisk_partition_has_start(pa)) {
+		fdisk_warnx(cxt, _("Partition %zu has unspeficied range"), n + 1);
+		goto done;
+	}
+
+	if (do_discard(cxt, pa) == 0)
+		fdisk_info(cxt, _("Discarded sectors on partition %zu."), n + 1);
+done:
+	fdisk_unref_partition(pa);
+}
+
+static void discard_freespace(struct fdisk_context *cxt)
+{
+	struct fdisk_partition *pa = NULL;
+	struct fdisk_table *tb = NULL;
+	size_t best = 0;
+	uintmax_t n = 0;
+	int ct;
+
+	ct = list_freespace_get_table(cxt, &tb, &best);
+	if (ct <= 0) {
+		fdisk_info(cxt, _("No free space."));
+		goto done;
+	}
+	fdisk_info(cxt, _("\nThe unused sectors will be immediately discarded.\n"
+			  "You can exit this dialog by pressing CTRL+C.\n"));
+
+	if (fdisk_ask_number(cxt, 1, best + 1, (uintmax_t) ct,
+				_("Free space number"), &n) != 0)
+		goto done;
+
+	pa = fdisk_table_get_partition(tb, n - 1);
+	if (!pa)
+		goto done;
+
+	if (!fdisk_partition_has_size(pa) || !fdisk_partition_has_start(pa)) {
+		fdisk_warnx(cxt, _("Free space %"PRIu64 "has unspeficied range"), n);
+		goto done;
+	}
+
+	if (do_discard(cxt, pa) == 0)
+		fdisk_info(cxt, _("Discarded sectors on free space."));
+done:
+	fdisk_unref_table(tb);
+}
+
+void discard_sectors(struct fdisk_context *cxt)
+{
+	int c;
+
+	if (fdisk_is_readonly(cxt)) {
+		fdisk_warnx(cxt, _("Discarding sectors is not possible in read-only mode."));
+		return;
+	}
+
+	if (fdisk_ask_menu(cxt, _("Type of area to be discarded"),
+			&c, 'p', _("partition sectors"), 'p',
+				 _("free space sectros"), 'f', NULL) != 0)
+		return;
+
+	switch (c) {
+	case 'p':
+		discard_partition(cxt);
+		break;
+	case 'f':
+		discard_freespace(cxt);
+		break;
+	}
+}
+
+#else /* !BLKDISCARD */
+void discard_sectors(struct fdisk_context *cxt)
+{
+	fdisk_warnx(cxt, _("Discard unsupported on your system."));
+}
+#endif /* BLKDISCARD */
 
 int print_partition_info(struct fdisk_context *cxt)
 {

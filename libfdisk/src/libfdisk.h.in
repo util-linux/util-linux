@@ -872,6 +872,9 @@ int fdisk_ask_yesno(struct fdisk_context *cxt,
 		     int *result);
 int fdisk_ask_yesno_get_result(struct fdisk_ask *ask);
 int fdisk_ask_yesno_set_result(struct fdisk_ask *ask, int result);
+
+int fdisk_ask_menu(struct fdisk_context *cxt, char *query, int *result, int dflt, ...);
+
 int fdisk_ask_menu_get_default(struct fdisk_ask *ask);
 int fdisk_ask_menu_set_result(struct fdisk_ask *ask, int key);
 int fdisk_ask_menu_get_result(struct fdisk_ask *ask, int *key);

@@ -25,6 +25,7 @@ fdisk_ask
 fdisk_is_ask
 fdisk_ask_get_query
 fdisk_ask_get_type
+fdisk_ask_menu
 fdisk_ask_menu_get_default
 fdisk_ask_menu_get_item
 fdisk_ask_menu_get_nitems
