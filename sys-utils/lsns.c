@@ -1450,6 +1450,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --output-all       output all columns\n"), out);
 	fputs(_(" -P, --persistent       namespaces without processes\n"), out);
 	fputs(_(" -p, --task <pid>       print process namespaces\n"), out);
+	fputs(_(" -Q, --filter <expr>    apply display filter\n"), out);
 	fputs(_(" -r, --raw              use the raw output format\n"), out);
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
 	fputs(_(" -W, --nowrap           don't use multi-line representation\n"), out);
