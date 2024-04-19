@@ -1196,7 +1196,8 @@ static void open_tty(const char *tty, struct termios *tp, struct options *op)
 #endif
 	}
 
-	op->term = get_terminal_default_type(op->tty, !(op->flags & F_VCONSOLE));
+	if (!op->term)
+		op->term = get_terminal_default_type(op->tty, !(op->flags & F_VCONSOLE));
 	if (!op->term)
 		log_err(_("failed to allocate memory: %m"));
 
