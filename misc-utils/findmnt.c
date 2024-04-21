@@ -552,7 +552,6 @@ static char *get_vfs_attr(struct libmnt_fs *fs, int sizetype)
 static char *get_data_col_sources(struct libmnt_fs *fs, int evaluate, size_t *datasiz)
 {
 	const char *tag = NULL, *p = NULL;
-	int i = 0;
 	const char *device = NULL;
 	char *val = NULL;
 	blkid_dev_iterate iter;
@@ -602,10 +601,8 @@ static char *get_data_col_sources(struct libmnt_fs *fs, int evaluate, size_t *da
 		dev = blkid_verify(blk_cache, dev);
 		if (!dev)
 			continue;
-		if (i != 0)
-			ul_buffer_append_data(&buf, "\0", 1);
 		ul_buffer_append_string(&buf, blkid_dev_devname(dev));
-		i++;
+		ul_buffer_append_data(&buf, "\0", 1);
 	}
 	blkid_dev_iterate_end(iter);
 	free(val);
