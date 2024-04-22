@@ -1586,14 +1586,16 @@ exes += exe
 manadocs += ['sys-utils/blkdiscard.8.adoc']
 bashcompletions += ['blkdiscard']
 
-if cc.has_header('linux/blkzoned.h')
-  exe = executable(
-    'blkzone',
-    blkzone_sources,
-    include_directories : includes,
-    link_with : [lib_common],
-    install_dir : sbindir,
-    install : true)
+opt = get_option('build-blkzone').require(cc.has_header('linux/blkzoned.h')).allowed()
+exe = executable(
+  'blkzone',
+  blkzone_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['sys-utils/blkzone.8.adoc']
   bashcompletions += ['blkzone']
