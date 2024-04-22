@@ -149,6 +149,8 @@ option('build-blkzone', type : 'feature',
        description : 'build blkzone')
 option('build-blkpr', type : 'feature',
        description : 'build blkpr')
+option('build-ldattach', type : 'feature',
+       description : 'build ldattach')
 option('build-kill', type : 'feature',
        description : 'build kill')
 option('build-last', type : 'feature',

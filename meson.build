@@ -1625,16 +1625,20 @@ if opt and not is_disabler(exe)
   manadocs += ['sys-utils/blkpr.8.adoc']
 endif
 
+opt = get_option('build-ldattach').require(cc.has_header('linux/if.h')).allowed()
 exe = executable(
   'ldattach',
   ldattach_sources,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : usrsbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['sys-utils/ldattach.8.adoc']
-bashcompletions += ['ldattach']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['sys-utils/ldattach.8.adoc']
+  bashcompletions += ['ldattach']
+endif
 
 exe = executable(
   'rtcwake',
