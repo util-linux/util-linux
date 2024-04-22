@@ -915,6 +915,8 @@ int fdisk_ask_menu(struct fdisk_context *cxt, char *query, int *result, int dflt
 	while ((name = va_arg(ap, char *)))
 		fdisk_ask_menu_add_item(ask, va_arg(ap, int), name, NULL);
 
+	va_end(ap);
+
 	rc = fdisk_do_ask(cxt, ask);
 	if (~rc)
 		fdisk_ask_menu_get_result(ask, result);
