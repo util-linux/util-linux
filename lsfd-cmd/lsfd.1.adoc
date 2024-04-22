@@ -704,15 +704,15 @@ mailto:yamato@redhat.com[Masatake YAMATO],
 mailto:kzak@redhat.com[Karel Zak]
 
 == SEE ALSO
-*bpftool*(8)
-*bps*(8)
-*lslocks*(8)
-*lsof*(8)
-*pidof*(1)
-*proc*(5)
-*scols-filter*(5)
-*socket*(2)
-*ss*(8)
+*bpftool*(8),
+*bps*(8),
+*lslocks*(8),
+*lsof*(8),
+*pidof*(1),
+*proc*(5),
+*scols-filter*(5),
+*socket*(2),
+*ss*(8),
 *stat*(2)
 
 include::man-common/bugreports.adoc[]
