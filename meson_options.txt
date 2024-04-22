@@ -71,6 +71,8 @@ option('build-partx', type : 'feature',
        description : 'build addpart, delpart, partx')
 option('build-script', type : 'feature',
        description : 'build script')
+option('build-scriptlive', type : 'feature',
+       description : 'build scriptlive')
 
 option('build-uuidd', type : 'feature',
        description : 'build the uuid daemon')
