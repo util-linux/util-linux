@@ -1599,14 +1599,16 @@ if cc.has_header('linux/blkzoned.h')
   bashcompletions += ['blkzone']
 endif
 
-if cc.has_header('linux/pr.h')
-  exe = executable(
-    'blkpr',
-    blkpr_sources,
-    include_directories : includes,
-    link_with : [lib_common],
-    install_dir : sbindir,
-    install : true)
+opt = get_option('build-blkpr').require(cc.has_header('linux/pr.h')).allowed()
+exe = executable(
+  'blkpr',
+  blkpr_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['sys-utils/blkpr.8.adoc']
 endif

@@ -141,6 +141,8 @@ option('build-fstrim', type : 'feature',
        description : 'build fstrim')
 option('build-dmesg', type : 'feature',
        description : 'build dmesg')
+option('build-blkpr', type : 'feature',
+       description : 'build blkpr')
 option('build-kill', type : 'feature',
        description : 'build kill')
 option('build-last', type : 'feature',
