@@ -1081,7 +1081,7 @@ if opt and not is_disabler(exe)
   bashcompletions += ['utmpdump']
 endif
 
-opt = not get_option('build-su').disabled()
+opt = get_option('build-su').require(have_pty).allowed()
 exe = executable(
   'su',
   'login-utils/su.c',
@@ -1162,7 +1162,7 @@ if opt and not is_disabler(exe)
                            join_paths(mandir, 'man8/vigr.8'))
 endif
 
-opt = not get_option('build-runuser').disabled()
+opt = get_option('build-runuser').require(have_pty).allowed()
 exe = executable(
   'runuser',
   'login-utils/runuser.c',
