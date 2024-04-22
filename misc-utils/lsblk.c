@@ -935,8 +935,7 @@ static char *device_get_data(
 				ul_buffer_append_string(&buf, "[SWAP]");
 			else
 				ul_buffer_append_string(&buf, mnt_fs_get_target(fs));
-			if (i + 1 < n)
-				ul_buffer_append_data(&buf, "\0", 1);
+			ul_buffer_append_data(&buf, "\0", 1);
 		}
 		str = ul_buffer_get_data(&buf, datasiz, NULL);
 		break;
@@ -953,8 +952,7 @@ static char *device_get_data(
 			if (mnt_fs_is_swaparea(fs))
 				continue;
 			ul_buffer_append_string(&buf, root ? root : "/");
-			if (i + 1 < n)
-				ul_buffer_append_data(&buf, "\0", 1);
+			ul_buffer_append_data(&buf, "\0", 1);
 		}
 		str = ul_buffer_get_data(&buf, datasiz, NULL);
 		break;
@@ -1276,7 +1274,7 @@ static void device_fill_scols_cell(struct lsblk_device *dev,
 	ce = scols_line_get_cell(ln, colnum);
 	if (!ce)
 		return;
-	rc = datasiz ? scols_cell_refer_memory(ce, data, datasiz + 1)
+	rc = datasiz ? scols_cell_refer_memory(ce, data, datasiz)
 		     : scols_cell_refer_data(ce, data);
 	if (rc)
 		err(EXIT_FAILURE, _("failed to add output data"));

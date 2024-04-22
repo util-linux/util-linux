@@ -470,7 +470,7 @@ char *scols_wrapnl_nextchunk(const struct libscols_column *cl __attribute__((unu
  * This is built-in function for scols_column_set_wrapfunc(). This function
  * walk string separated by \0.
  *
- * For example for data "AAA\0BBB\0CCC" the next chunk is "BBB".
+ * For example for data "AAA\0BBB\0CCC\0" the next chunk is "BBB".
  *
  * Returns: next chunk
  *
