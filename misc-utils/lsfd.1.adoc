@@ -2,7 +2,7 @@
 ////
 Copyright 2021 Red Hat, Inc.
 
-This file may be copied under the terms of the GNU Public License.
+This file may be copied under the terms of the GNU General Public License.
 ////
 = lsfd(1)
 :doctype: manpage
