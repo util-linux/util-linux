@@ -2491,6 +2491,7 @@ if opt and not is_disabler(exe)
   exes += exe
 endif
 
+opt = get_option('build-scriptlive').require(have_pty).allowed()
 exe = executable(
   'scriptlive',
   scriptlive_sources,
@@ -2500,10 +2501,13 @@ exe = executable(
                   realtime_libs,
                   math_libs],
   install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['term-utils/scriptlive.1.adoc']
-bashcompletions += ['scriptlive']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['term-utils/scriptlive.1.adoc']
+  bashcompletions += ['scriptlive']
+endif
 
 exe = executable(
   'scriptreplay',
