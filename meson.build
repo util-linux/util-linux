@@ -3096,14 +3096,15 @@ if not is_disabler(exe)
   bashcompletions += ['hardlink']
 endif
 
-opt = not get_option('build-pipesz').disabled()
+opt = get_option('build-pipesz').allowed()
 exe = executable(
   'pipesz',
   pipesz_sources,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : usrbin_exec_dir,
-  install : true)
+  install : opt,
+  build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['misc-utils/pipesz.1.adoc']
