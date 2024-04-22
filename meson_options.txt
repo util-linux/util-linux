@@ -69,6 +69,8 @@ option('build-fsck', type : 'feature',
        description : 'build fsck')
 option('build-partx', type : 'feature',
        description : 'build addpart, delpart, partx')
+option('build-script', type : 'feature',
+       description : 'build script')
 
 option('build-uuidd', type : 'feature',
        description : 'build the uuid daemon')
