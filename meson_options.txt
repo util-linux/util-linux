@@ -99,6 +99,8 @@ option('build-minix', type : 'feature',
        description : 'build fsck.minix, mkfs.minix')
 option('build-fdformat', type : 'feature', value : 'disabled',
        description : 'build fdformat')
+option('build-blockdev', type : 'feature',
+       description : 'build blockdev')
 option('build-hwclock', type : 'feature',
        description : 'build hwclock')
 option('build-lslogins', type : 'feature',
