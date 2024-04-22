@@ -1892,16 +1892,20 @@ if not is_disabler(exe)
   bashcompletions += ['lscpu']
 endif
 
+opt = get_option('build-chcpu').require(have_cpu_set_t).allowed()
 exe = executable(
   'chcpu',
   chcpu_sources,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : sbindir,
-  install : true)
-exes += exe
-manadocs += ['sys-utils/chcpu.8.adoc']
-bashcompletions += ['chcpu']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['sys-utils/chcpu.8.adoc']
+  bashcompletions += ['chcpu']
+endif
 
 exe = executable(
   'wdctl',

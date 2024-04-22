@@ -57,6 +57,8 @@ option('build-swapon', type : 'feature',
        description : 'build swapon')
 option('build-swapoff', type : 'feature',
        description : 'build swapoff')
+option('build-chcpu', type : 'feature',
+       description : 'build chcpu')
 option('build-losetup', type : 'feature',
        description : 'build losetup')
 option('build-zramctl', type : 'feature',
