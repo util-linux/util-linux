@@ -793,6 +793,9 @@ static void interpolate_missing_namespaces(struct lsns *ls, struct lsns_namespac
 	int fd_orphan, fd_missing;
 	struct stat st;
 
+	if (!orphan->proc)
+		return;
+
 	orphan->related_ns[rela] = get_namespace(ls, orphan->related_id[rela]);
 	if (orphan->related_ns[rela])
 		return;
