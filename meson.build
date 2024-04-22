@@ -21,7 +21,7 @@ libsmartcols_version = '1.1.0'
 libfdisk_version = '1.1.0'
 
 prefixdir = get_option('prefix')
-if not prefixdir.startswith('/')
+if not fs.is_absolute(prefixdir)
         error('Prefix is not absolute: "@0@"'.format(prefixdir))
 endif
 bindir = join_paths(prefixdir, get_option('bindir'))
