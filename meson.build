@@ -2511,6 +2511,7 @@ endif
 
 ############################################################
 
+opt = get_option('build-script').require(have_pty).allowed()
 exe = executable(
   'script',
   script_sources,
@@ -2521,10 +2522,13 @@ exe = executable(
                   realtime_libs,
                   math_libs],
   install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['term-utils/script.1.adoc']
-bashcompletions += ['script']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['term-utils/script.1.adoc']
+  bashcompletions += ['script']
+endif
 
 exe = executable(
   'test_script',
@@ -2536,8 +2540,10 @@ exe = executable(
                   lib_utempter,
                   realtime_libs,
                   math_libs],
-  build_by_default : program_tests)
-exes += exe
+  build_by_default : opt and program_tests)
+if opt and not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'scriptlive',
