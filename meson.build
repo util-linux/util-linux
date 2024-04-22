@@ -2303,15 +2303,20 @@ if opt and not is_disabler(exe)
   bashcompletions += ['fdformat']
 endif
 
+opt = get_option('build-blockdev').require(LINUX).allowed()
 exe = executable(
   'blockdev',
   blockdev_sources,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : sbindir,
-  install : true)
-manadocs += ['disk-utils/blockdev.8.adoc']
-bashcompletions += ['blockdev']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['disk-utils/blockdev.8.adoc']
+  bashcompletions += ['blockdev']
+endif
 
 opt = not get_option('build-fdisks').disabled()
 if opt and not have_dirfd and not have_ddfd
