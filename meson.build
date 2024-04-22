@@ -787,9 +787,9 @@ int main(void) {
 have = cc.compiles(code, name : 'using __progname')
 conf.set('HAVE___PROGNAME', have ? 1 : false)
 
-have = conf.get('HAVE_PTY_H').to_string() == '1' \
-       and conf.get('HAVE_SYS_SIGNALFD_H').to_string() == '1'
-conf.set('HAVE_PTY', have ? 1 : false)
+have_pty = conf.get('HAVE_PTY_H').to_string() == '1' \
+           and conf.get('HAVE_SYS_SIGNALFD_H').to_string() == '1'
+conf.set('HAVE_PTY', have_pty ? 1 : false)
 
 have_opal_get_status= cc.has_header_symbol('linux/sed-opal.h', 'IOC_OPAL_GET_STATUS')
 conf.set('HAVE_OPAL_GET_STATUS', have_opal_get_status ? 1 : false)
@@ -3266,7 +3266,7 @@ if conf.get('HAVE_OPENAT').to_string() == '1' \
   exes += exe
 endif
 
-if conf.get('HAVE_PTY').to_string() == '1'
+if have_pty
   exe = executable(
     'test_pty',
     pty_session_c,
