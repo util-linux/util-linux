@@ -1454,7 +1454,7 @@ int mnt_fs_get_attribute(struct libmnt_fs *fs, const char *name,
  * mnt_fs_get_comment:
  * @fs: fstab/mtab/mountinfo entry pointer
  *
- * Returns: 0 on success, 1 when not found the @name or negative number in case of error.
+ * Returns: comment string
  */
 const char *mnt_fs_get_comment(struct libmnt_fs *fs)
 {
