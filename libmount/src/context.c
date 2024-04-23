@@ -367,8 +367,7 @@ const char *mnt_context_get_writable_tabpath(struct libmnt_context *cxt)
 {
 	assert(cxt);
 
-	context_init_paths(cxt, 1);
-	return cxt->utab_path;
+	return mnt_context_utab_writable(cxt) ? cxt->utab_path : NULL;
 }
 
 
