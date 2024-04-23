@@ -203,6 +203,8 @@ option('build-pipesz', type : 'feature',
        description : 'build pipesz')
 option('build-fadvise', type : 'feature',
        description : 'build fadvise')
+option('build-enosys', type : 'feature',
+       description : 'build enosys')
 option('build-setterm', type : 'feature',
        description : 'build setterm')
 option('build-schedutils', type : 'feature',
