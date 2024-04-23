@@ -1643,7 +1643,9 @@ if opt and not is_disabler(exe)
   bashcompletions += ['ldattach']
 endif
 
-opt = get_option('build-rtcwake').require(cc.has_header('linux/rtc.h')).allowed()
+have_linux_rtc_h = cc.has_header('linux/rtc.h')
+
+opt = get_option('build-rtcwake').require(have_linux_rtc_h).allowed()
 exe = executable(
   'rtcwake',
   rtcwake_sources,
@@ -3124,14 +3126,16 @@ if opt and not is_disabler(exe)
   bashcompletions += ['enosys']
 endif
 
+opt = get_option('build-lsclocks').require(have_linux_rtc_h).allowed()
 exe = executable(
   'lsclocks',
   lsclocks_sources,
   include_directories : includes,
   link_with : [lib_common, lib_smartcols],
   install_dir : usrbin_exec_dir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['misc-utils/lsclocks.1.adoc']
   bashcompletions += ['lsclocks']
