@@ -267,6 +267,9 @@ static int lookup_umount_fs_by_statfs(struct libmnt_context *cxt, const char *tg
 	 * So, let's use statfs() if possible (it's bad idea for --lazy/--force
 	 * umounts as target is probably unreachable NFS, also for --detach-loop
 	 * as this additionally needs to know the name of the loop device).
+	 *
+	 * For the "umount --read-only" command, we need to read the mountinfo
+	 * to obtain the mount source.
 	 */
 	if (mnt_context_is_restricted(cxt)
 	    || *tgt != '/'
@@ -275,6 +278,7 @@ static int lookup_umount_fs_by_statfs(struct libmnt_context *cxt, const char *tg
 	    || mnt_context_is_lazy(cxt)
 	    || mnt_context_is_nocanonicalize(cxt)
 	    || mnt_context_is_loopdel(cxt)
+	    || mnt_context_is_rdonly_umount(cxt)
 	    || mnt_safe_stat(tgt, &st) != 0 || !S_ISDIR(st.st_mode)
 	    || has_utab_entry(cxt, tgt))
 		return 1; /* not found */
