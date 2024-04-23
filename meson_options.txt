@@ -153,6 +153,8 @@ option('build-ldattach', type : 'feature',
        description : 'build ldattach')
 option('build-rtcwake', type : 'feature',
        description : 'build rtcwake')
+option('build-setarch', type : 'feature',
+       description : 'build setarch')
 option('build-kill', type : 'feature',
        description : 'build kill')
 option('build-last', type : 'feature',
