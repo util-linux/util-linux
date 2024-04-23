@@ -1655,36 +1655,42 @@ if opt and not is_disabler(exe)
   bashcompletions += ['rtcwake']
 endif
 
+opt = get_option('build-setarch').require(cc.has_header('sys/personality.h')).allowed()
 exe = executable(
   'setarch',
   setarch_sources,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['sys-utils/setarch.8.adoc']
-bashcompletions += ['setarch']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['sys-utils/setarch.8.adoc']
+  bashcompletions += ['setarch']
+endif
 
-setarch_links = ['uname26', 'linux32', 'linux64']
-setarch_links_arch = {
-  's390x' :   ['s390', 's390x'],
-  'x86' :     ['i386'],
-  'x86_64' :  ['i386', 'x86_64'],
-  'ppc64' :   ['ppc', 'ppc64', 'ppc32'],
-  'space64' : ['sparc', 'sparc64', 'sparc32', 'sparc32bash'],
-  'mips64' :  ['mips', 'mips64', 'mips32'],
-  'ia64' :    ['i386', 'ia64'],
-  'hppa' :    ['parisc', 'parisc64', 'parisc32'],
-}
-setarch_links += setarch_links_arch.get(host_machine.cpu_family(), [])
+if opt
+  setarch_links = ['uname26', 'linux32', 'linux64']
+  setarch_links_arch = {
+    's390x' :   ['s390', 's390x'],
+    'x86' :     ['i386'],
+    'x86_64' :  ['i386', 'x86_64'],
+    'ppc64' :   ['ppc', 'ppc64', 'ppc32'],
+    'space64' : ['sparc', 'sparc64', 'sparc32', 'sparc32bash'],
+    'mips64' :  ['mips', 'mips64', 'mips32'],
+    'ia64' :    ['i386', 'ia64'],
+    'hppa' :    ['parisc', 'parisc64', 'parisc32'],
+  }
+  setarch_links += setarch_links_arch.get(host_machine.cpu_family(), [])
 
-foreach link: setarch_links
-  meson.add_install_script(meson_make_symlink,
-                           'setarch',
-                           join_paths(usrbin_exec_dir, link))
-  manlinks += {link + '.8': 'setarch.8'}
-endforeach
+  foreach link: setarch_links
+    meson.add_install_script(meson_make_symlink,
+                            'setarch',
+                            join_paths(usrbin_exec_dir, link))
+    manlinks += {link + '.8': 'setarch.8'}
+  endforeach
+endif
 
 opt = not get_option('build-eject').disabled()
 exe = executable(
