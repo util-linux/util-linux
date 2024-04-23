@@ -205,6 +205,8 @@ option('build-fadvise', type : 'feature',
        description : 'build fadvise')
 option('build-enosys', type : 'feature',
        description : 'build enosys')
+option('build-lsclocks', type : 'feature',
+       description : 'build lsclocks')
 option('build-setterm', type : 'feature',
        description : 'build setterm')
 option('build-schedutils', type : 'feature',
