@@ -3167,19 +3167,22 @@ syscalls_h = custom_target('syscalls.h',
              cc.cmd_array(), get_option('c_args')],
 )
 
-if cc.compiles(fs.read('include/audit-arch.h'), name : 'has AUDIT_ARCH_NATIVE')
-  exe = executable(
-    'enosys',
-    'misc-utils/enosys.c', syscalls_h, errnos_h,
-    include_directories : includes,
-    link_with : [lib_common],
-    install_dir : usrbin_exec_dir,
-    install : true)
-  if not is_disabler(exe)
-    exes += exe
-    manadocs += ['misc-utils/enosys.1.adoc']
-    bashcompletions += ['enosys']
-  endif
+have_linux_audit_h = cc.has_header('linux/audit.h')
+have_audit_arch_native = cc.compiles(fs.read('include/audit-arch.h'), name : 'has AUDIT_ARCH_NATIVE')
+
+opt = get_option('build-enosys').require(have_linux_audit_h and have_audit_arch_native).allowed()
+exe = executable(
+  'enosys',
+  'misc-utils/enosys.c', syscalls_h, errnos_h,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['misc-utils/enosys.1.adoc']
+  bashcompletions += ['enosys']
 endif
 
 exe = executable(
