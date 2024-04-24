@@ -1,7 +1,7 @@
 //po4a: entry man manual
 ////
 Copyright 1999 Andreas Dilger (adilger@enel.ucalgary.ca)
-This file may be copied under the terms of the GNU Public License.
+This file may be copied under the terms of the GNU General Public License.
 ////
 = uuidgen(1)
 :doctype: manpage

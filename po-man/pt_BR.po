@@ -2935,7 +2935,7 @@ msgstr ""
 "*sfdisk*(8)\n"
 
 #. Copyright 1993, 1994, 1995 by Theodore Ts'o.  All Rights Reserved.
-#. This file may be copied under the terms of the GNU Public License.
+#. This file may be copied under the terms of the GNU General Public License.
 #. type: Title =
 #: ../disk-utils/fsck.8.adoc:6
 #, no-wrap
@@ -7984,7 +7984,7 @@ msgstr ""
 "*partx*(8)\n"
 
 #. Copyright 2010 Jason Borden <jborden@bluehost.com>
-#. This file may be copied under the terms of the GNU Public License.
+#. This file may be copied under the terms of the GNU General Public License.
 #. type: Title =
 #: ../disk-utils/swaplabel.8.adoc:6
 #, no-wrap
@@ -12507,7 +12507,7 @@ msgid ""
 msgstr ""
 
 #.  Copyright 2000 Andreas Dilger (adilger@turbolinux.com)
-#.  This file may be copied under the terms of the GNU Public License.
+#.  This file may be copied under the terms of the GNU General Public License.
 #. type: Title =
 #: ../misc-utils/blkid.8.adoc:4
 #, fuzzy, no-wrap
@@ -13914,7 +13914,7 @@ msgstr "ioprio_set falhou"
 
 #
 #. Copyright 2017 Red Hat, Inc.
-#. This file may be copied under the terms of the GNU Public License.
+#. This file may be copied under the terms of the GNU General Public License.
 #. type: Title =
 #: ../misc-utils/fincore.1.adoc:7
 #, no-wrap
@@ -14021,7 +14021,7 @@ msgstr ""
 "*getconf*(1p)\n"
 
 #.  Copyright 1993, 1994, 1995 by Theodore Ts'o.  All Rights Reserved.
-#.  This file may be copied under the terms of the GNU Public License.
+#.  This file may be copied under the terms of the GNU General Public License.
 #. type: Title =
 #: ../misc-utils/findfs.8.adoc:4
 #, no-wrap
@@ -18078,7 +18078,7 @@ msgid "*clock_getres*(2) *clock_gettime*(2)\n"
 msgstr ""
 
 #. Copyright 2021 Red Hat, Inc.
-#. This file may be copied under the terms of the GNU Public License.
+#. This file may be copied under the terms of the GNU General Public License.
 #. type: Title =
 #: ../misc-utils/lsfd.1.adoc:7
 #, fuzzy, no-wrap
@@ -21228,7 +21228,7 @@ msgid "*mv*(1)\n"
 msgstr "*mv*(1)\n"
 
 #. Copyright 2007 by Theodore Ts'o.  All Rights Reserved.
-#. This file may be copied under the terms of the GNU Public License.
+#. This file may be copied under the terms of the GNU General Public License.
 #. type: Title =
 #: ../misc-utils/uuidd.8.adoc:6
 #, no-wrap
@@ -21468,7 +21468,7 @@ msgid ""
 msgstr ""
 
 #. Copyright 1999 Andreas Dilger (adilger@enel.ucalgary.ca)
-#. This file may be copied under the terms of the GNU Public License.
+#. This file may be copied under the terms of the GNU General Public License.
 #. type: Title =
 #: ../misc-utils/uuidgen.1.adoc:6
 #, fuzzy, no-wrap
@@ -22073,7 +22073,7 @@ msgid ""
 msgstr ""
 
 #.  Copyright 2009 by Karel Zak.  All Rights Reserved.
-#.  This file may be copied under the terms of the GNU Public License.
+#.  This file may be copied under the terms of the GNU General Public License.
 #. type: Title =
 #: ../misc-utils/wipefs.8.adoc:4
 #, fuzzy, no-wrap
@@ -25490,7 +25490,7 @@ msgstr ""
 #
 #. Copyright (C) 1994-2005 Jeff Tranter (tranter@pobox.com)
 #. Copyright (C) 2012 Karel Zak <kzak@redhat.com>.
-#. It may be distributed under the GNU Public License, version 2, or
+#. It may be distributed under the GNU General Public License, version 2, or
 #. any higher version. See section COPYING of the GNU Public license
 #. for conditions under which this file may be redistributed.
 #. type: Title =

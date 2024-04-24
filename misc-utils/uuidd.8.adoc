@@ -1,7 +1,7 @@
 //po4a: entry man manual
 ////
 Copyright 2007 by Theodore Ts'o.  All Rights Reserved.
-This file may be copied under the terms of the GNU Public License.
+This file may be copied under the terms of the GNU General Public License.
 ////
 = uuidd(8)
 :doctype: manpage

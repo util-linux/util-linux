@@ -3,7 +3,7 @@
 Copyright (C) 1994-2005 Jeff Tranter (tranter@pobox.com)
 Copyright (C) 2012 Karel Zak <kzak@redhat.com>.
 
-It may be distributed under the GNU Public License, version 2, or
+It may be distributed under the GNU General Public License, version 2, or
 any higher version. See section COPYING of the GNU Public license
 for conditions under which this file may be redistributed.
 ////
