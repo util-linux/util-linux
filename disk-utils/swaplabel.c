@@ -8,7 +8,7 @@
  *
  * Usage: swaplabel [-L label] [-U UUID] device
  *
- * This file may be redistributed under the terms of the GNU Public License
+ * This file may be redistributed under the terms of the GNU General Public License
  * version 2 or later.
  *
  */

@@ -1,7 +1,7 @@
 //po4a: entry man manual
 ////
 Copyright 2010 Jason Borden <jborden@bluehost.com>
-This file may be copied under the terms of the GNU Public License.
+This file may be copied under the terms of the GNU General Public License.
 ////
 = swaplabel(8)
 :doctype: manpage

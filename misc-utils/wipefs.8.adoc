@@ -1,6 +1,6 @@
 //po4a: entry man manual
 // Copyright 2009 by Karel Zak.  All Rights Reserved.
-// This file may be copied under the terms of the GNU Public License.
+// This file may be copied under the terms of the GNU General Public License.
 = wipefs(8)
 :doctype: manpage
 :man manual: System Administration

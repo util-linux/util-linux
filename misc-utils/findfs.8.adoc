@@ -1,6 +1,6 @@
 //po4a: entry man manual
 // Copyright 1993, 1994, 1995 by Theodore Ts'o.  All Rights Reserved.
-// This file may be copied under the terms of the GNU Public License.
+// This file may be copied under the terms of the GNU General Public License.
 = findfs(8)
 :doctype: manpage
 :man manual: System Administration

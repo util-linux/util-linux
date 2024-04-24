@@ -1,7 +1,7 @@
 //po4a: entry man manual
 ////
 Copyright 2023 Thorsten Kukuk (kukuk@suse.de)
-This file may be copied under the terms of the GNU Public License.
+This file may be copied under the terms of the GNU General Public License.
 ////
 = lastlog2(8)
 :doctype: manpage
