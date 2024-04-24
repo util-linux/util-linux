@@ -2,7 +2,7 @@
 ////
 Copyright 2021 Red Hat, Inc.
 
-This file may be copied under the terms of the GNU Public License.
+This file may be copied under the terms of the GNU General Public License.
 ////
 = lsfd(1)
 :doctype: manpage
@@ -463,7 +463,7 @@ socket system call:
 
 SOURCE <``string``>::
 File system, partition, or device containing the file.
-For the association having ERROR as the value for _TYPE_ coulumn, *lsfd*
+For the association having ERROR as the value for _TYPE_ column, *lsfd*
 fills this column with _syscall_:_errno_.
 
 STTYPE <``string``>::
@@ -593,7 +593,7 @@ Do the same in a more efficient way: ::
 # lsfd --pid 1,2
 ....
 
-Whitescapes can be used instead of a comma: ::
+Whitespaces can be used instead of a comma: ::
 ....
 # lsfd --pid '1 2'
 ....
@@ -704,15 +704,15 @@ mailto:yamato@redhat.com[Masatake YAMATO],
 mailto:kzak@redhat.com[Karel Zak]
 
 == SEE ALSO
-*bpftool*(8)
-*bps*(8)
-*lslocks*(8)
-*lsof*(8)
-*pidof*(1)
-*proc*(5)
-*scols-filter*(5)
-*socket*(2)
-*ss*(8)
+*bpftool*(8),
+*bps*(8),
+*lslocks*(8),
+*lsof*(8),
+*pidof*(1),
+*proc*(5),
+*scols-filter*(5),
+*socket*(2),
+*ss*(8),
 *stat*(2)
 
 include::man-common/bugreports.adoc[]
