@@ -141,6 +141,8 @@ option('build-fstrim', type : 'feature',
        description : 'build fstrim')
 option('build-dmesg', type : 'feature',
        description : 'build dmesg')
+option('build-fsfreeze', type : 'feature',
+       description : 'build fsfreeze')
 option('build-blkzone', type : 'feature',
        description : 'build blkzone')
 option('build-blkpr', type : 'feature',

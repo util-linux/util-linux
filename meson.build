@@ -1564,15 +1564,19 @@ exes += exe
 manadocs += ['sys-utils/ctrlaltdel.8.adoc']
 bashcompletions += ['ctrlaltdel']
 
+opt = get_option('build-fsfreeze').require(conf.get('HAVE_LINUX_FS_H').to_string() == '1').allowed()
 exe = executable(
   'fsfreeze',
   fsfreeze_sources,
   include_directories : includes,
   install_dir : sbindir,
-  install : true)
-exes += exe
-manadocs += ['sys-utils/fsfreeze.8.adoc']
-bashcompletions += ['fsfreeze']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['sys-utils/fsfreeze.8.adoc']
+  bashcompletions += ['fsfreeze']
+endif
 
 exe = executable(
   'blkdiscard',
