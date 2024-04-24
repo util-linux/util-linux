@@ -143,6 +143,8 @@ option('build-dmesg', type : 'feature',
        description : 'build dmesg')
 option('build-fsfreeze', type : 'feature',
        description : 'build fsfreeze')
+option('build-blkdiscard', type : 'feature',
+       description : 'build blkdiscard')
 option('build-blkzone', type : 'feature',
        description : 'build blkzone')
 option('build-blkpr', type : 'feature',
