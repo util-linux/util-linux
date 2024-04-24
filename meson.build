@@ -1564,7 +1564,9 @@ exes += exe
 manadocs += ['sys-utils/ctrlaltdel.8.adoc']
 bashcompletions += ['ctrlaltdel']
 
-opt = get_option('build-fsfreeze').require(conf.get('HAVE_LINUX_FS_H').to_string() == '1').allowed()
+have_linux_fs_h = conf.get('HAVE_LINUX_FS_H').to_string() == '1'
+
+opt = get_option('build-fsfreeze').require(have_linux_fs_h).allowed()
 exe = executable(
   'fsfreeze',
   fsfreeze_sources,
@@ -1578,6 +1580,7 @@ if opt and not is_disabler(exe)
   bashcompletions += ['fsfreeze']
 endif
 
+opt = get_option('build-blkdiscard').require(have_linux_fs_h).allowed()
 exe = executable(
   'blkdiscard',
   blkdiscard_sources,
@@ -1585,12 +1588,15 @@ exe = executable(
   link_with : [lib_common],
   dependencies : [blkid_dep],
   install_dir : sbindir,
-  install : true)
-exes += exe
-manadocs += ['sys-utils/blkdiscard.8.adoc']
-bashcompletions += ['blkdiscard']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['sys-utils/blkdiscard.8.adoc']
+  bashcompletions += ['blkdiscard']
+endif
 
-opt = get_option('build-blkzone').require(cc.has_header('linux/blkzoned.h')).allowed()
+opt = get_option('build-blkzone').require(have_linux_fs_h).allowed()
 exe = executable(
   'blkzone',
   blkzone_sources,
