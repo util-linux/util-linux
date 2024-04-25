@@ -1,0 +1,83 @@
+#!/bin/bash
+# SPDX-License-Identifier: EUPL-1.2
+#
+# This file is part of util-linux
+#
+# Copyright (C) 2024 Thijs Raymakers
+# Licensed under the EUPL v1.2
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="coresched"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_CORESCHED"
+ts_check_prog "tee"
+ts_check_prog "sed"
+
+# If coresched cannot succesfully run, skip the test suite
+CORESCHED_TEST_KERNEL_SUPPORT_CMD=$($TS_CMD_CORESCHED 2>&1)
+if [[ $CORESCHED_TEST_KERNEL_SUPPORT_CMD == *"CONFIG_SCHED_CORE"* ]]; then
+  ts_skip "Kernel has no CONFIG_SCHED_CORE support or SMT is not available"
+fi
+
+# The output of coresched contains PIDs and core scheduling cookies, both of which should be
+# assumed to be random values as we have no control over them. The tests replace these values
+# with sed before writing them to the output file, so it can match the expected output file.
+# - The PID of this bash script is replaced with the placeholder `OWN_PID`
+# - The core scheduling cookie of this bash script is replaced by `COOKIE`
+# - Any other cookie is replaced by `DIFFERENT_COOKIE`
+# The behavior of coresched does not depend on the exact values of these cookies, so using
+# placeholder values does not change the behavior tests.
+ts_init_subtest "set-cookie-parent-pid"
+CORESCHED_OUTPUT=$( ($TS_CMD_CORESCHED -v new -d $$ \
+  | tee -a "$TS_OUTPUT") 3>&1 1>&2 2>&3 \
+  | sed "s/$$/PARENT_PID/g")
+CORESCHED_PARENT_COOKIE=$(echo "$CORESCHED_OUTPUT" | sed 's/^.*\(0x.*$\)/\1/g')
+if [ -z "$CORESCHED_PARENT_COOKIE" ]; then
+  ts_failed "empty value for CORESCHED_PARENT_COOKIE"
+fi
+CORESCHED_OUTPUT=$(echo "$CORESCHED_OUTPUT" \
+  | sed "s/$CORESCHED_PARENT_COOKIE/PARENT_COOKIE/g")
+echo "$CORESCHED_OUTPUT" >> "$TS_ERRLOG"
+ts_finalize_subtest
+
+ts_init_subtest "get-cookie-parent-pid"
+$TS_CMD_CORESCHED get -s $$ 2>> "$TS_ERRLOG" \
+  | sed -e "s/$$/PARENT_PID/g" \
+        -e "s/$CORESCHED_PARENT_COOKIE/PARENT_COOKIE/g" >> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "get-cookie-own-pid"
+$TS_CMD_CORESCHED get 2>> "$TS_ERRLOG" \
+  | sed -e "s/pid [0-9]\+/pid OWN_PID/g" \
+        -e "s/$CORESCHED_PARENT_COOKIE/PARENT_COOKIE/g" >> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "new-child-with-new-cookie"
+$TS_CMD_CORESCHED new -- "$TS_CMD_CORESCHED" get 2>> "$TS_ERRLOG" \
+  | sed -e 's/^.*\(0x.*$\)/\1/g' \
+        -e "s/$CORESCHED_PARENT_COOKIE/SAME_COOKIE/g" \
+        -e "s/0x.*$/DIFFERENT_COOKIE/g" >> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "copy-from-parent-to-nested-child"
+$TS_CMD_CORESCHED new -- /bin/bash -c \
+  "$TS_CMD_CORESCHED copy -s $$ -- $TS_CMD_CORESCHED get" \
+2>> "$TS_ERRLOG" \
+  | sed -e 's/^.*\(0x.*$\)/\1/g' \
+        -e "s/$CORESCHED_PARENT_COOKIE/SAME_COOKIE/g" \
+        -e "s/0x.*$/DIFFERENT_COOKIE/g" >> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "copy-from-child-to-parent"
+$TS_CMD_CORESCHED new -- /bin/bash -c \
+  "$TS_CMD_CORESCHED copy -s \$\$ -d $$"
+$TS_CMD_CORESCHED get 2>> "$TS_ERRLOG" \
+  | sed -e 's/^.*\(0x.*$\)/\1/g' \
+        -e "s/$CORESCHED_PARENT_COOKIE/SAME_COOKIE/g" \
+        -e "s/0x.*$/DIFFERENT_COOKIE/g" >> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_finalize
