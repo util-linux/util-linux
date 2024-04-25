@@ -1,0 +1,139 @@
+//po4a: entry man manual
+////
+coresched(1) manpage
+////
+= coresched(1)
+:doctype: manpage
+:man manual: User Commands
+:man source: util-linux {release-version}
+:page-layout: base
+:command: coresched
+:colon: :
+:copyright: ©
+
+== NAME
+
+coresched - manage core scheduling cookies for tasks
+
+== SYNOPSIS
+
+*{command}* [*get*] [*-s* _pid_]
+
+*{command}* *new* [*-t* _type_] *-d* _pid_
+
+*{command}* *new* [*-t* _type_] \-- _command_ [_argument_...]
+
+*{command}* *copy* [*-s* _pid_] [*-t* _type_] *-d* _pid_
+
+*{command}* *copy* [*-s* _pid_] [*-t* _type_] \-- _command_ [_argument_...]
+
+== DESCRIPTION
+The *{command}* command is used to retrieve or modify the core scheduling cookies of a running process given its _pid_, or to spawn a new _command_ with core scheduling cookies.
+
+Core scheduling permits the definition of groups of tasks that are allowed to share a physical core.
+This is done by assigning a cookie to each task.
+Only tasks have the same cookie are allowed to be scheduled on the same physical core.
+
+It is possible to either assign a new random cookie to a task, or copy a cookie from another task. It is not possible to choose the value of the cookie.
+
+== FUNCTIONS
+*get*::
+Retrieve the core scheduling cookie of the PID specified in *-s*.
+If *-s* is omitted, it will get the cookie of the current *{command}* process.
+
+*new*::
+Assign a new cookie to an existing PID specified in *-d*, or execute _command_ with a new cookie.
+
+*copy*::
+Copy the cookie from an existing PID (*-s*) to another PID (*-d*), or execute _command_ with that cookie.
+If *-s* is omitted, it will get the cookie of the current *{command}* process.
+
+If no function is specified, it will run the *get* function.
+
+== OPTIONS
+*-s*, *--source* _PID_::
+Which _PID_ to get the cookie from.
+If this option is omitted, it will get the cookie from the current *{command}* process.
+
+*-d*, *--dest* _PID_::
+Which _PID_ to modify the cookie of.
+
+*-t*, *--dest-type* _TYPE_::
+The type of the PID whose cookie will be modified. This can be one of three values:
+- *pid*, or process ID
+- *tgid*, or thread group ID (default value)
+- *pgid*, or process group ID
+
+*-v*, *--verbose*::
+Show extra information when modifying cookies of tasks.
+
+*-h*, *--help*::
+Display help text and exit.
+
+*-V*, *--version*::
+Print version and exit.
+
+== EXAMPLES
+Get the core scheduling cookie of the {command} task itself, usually inherited from its parent{colon}::
+*{command} get*
+
+Get the core scheduling cookie of a task with PID _123_{colon}::
+*{command} get -s* _123_
+
+Give a task with PID _123_ a new core scheduling cookie{colon}::
+*{command} new -d* _123_
+
+Spawn a new task with a new core scheduling cookie{colon}::
+*{command} new* \-- _command_ [_argument_...]
+
+Copy the cookie from the current {command} process another task with pid _456_{colon}::
+*{command} copy -d* _456_
+
+Copy the cookie from a task with pid _123_ to another task with pid _456_{colon}::
+*{command} copy -s* _123_ *-d* _456_
+
+Copy the cookie from a task with pid _123_ to a new task _command_{colon}::
+*{command} copy -s* _123_ \-- _command_ [_argument_...]
+
+Copy the cookie from a task with pid _123_ to the process group ID _456_{colon}::
+*{command} copy -s* _123_ *-t* _pgid_ *-d* _456_
+
+== PERMISSIONS
+Retrieving or modifying the core scheduling cookie of a process requires *PTRACE_MODE_READ_REALCREDS* ptrace access to that process.
+See the section "Ptrace access mode checking" in *ptrace*(2) for more information.
+
+== RETURN VALUE
+On success, *{command}* returns 0.
+If *{command}* fails, it will print an error and return 1.
+
+If a _command_ is being executed, the return value of *{command}* will be the return value of _command_.
+
+== NOTES
+*{command}* requires core scheduling support in the kernel.
+This can be enabled via the *CONFIG_SCHED_CORE* kernel config option.
+
+== AUTHORS
+mailto:thijs@raymakers.nl[Thijs Raymakers],
+mailto:pauld@redhat.com[Phil Auld]
+
+== COPYRIGHT
+
+Copyright {copyright} 2024 Thijs Raymakers and Phil Auld. This is free software licensed under the EUPL.
+
+== SEE ALSO
+*chrt*(1),
+*nice*(1),
+*renice*(1),
+*taskset*(1),
+*ptrace*(2),
+*sched*(7)
+
+The Linux kernel source files _Documentation/admin-guide/hw-vuln/core-scheduling.rst_
+
+include::man-common/bugreports.adoc[]
+
+include::man-common/footer.adoc[]
+
+ifdef::translation[]
+include::man-common/translation.adoc[]
+endif::[]
