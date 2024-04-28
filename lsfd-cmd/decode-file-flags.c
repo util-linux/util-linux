@@ -49,15 +49,7 @@
 #error "kernel's fcntl.h is not available"
 #endif
 
-#include <stddef.h>		/* for size_t */
-
 #include "decode-file-flags.h"
-
-/* We cannot include buffer.h because buffer.h includes
- * /usr/include/fcntl.h indirectly. */
-extern int ul_buffer_is_empty(struct ul_buffer *buf);
-extern int ul_buffer_append_data(struct ul_buffer *buf, const char *data, size_t sz);
-extern int ul_buffer_append_string(struct ul_buffer *buf, const char *str);
 
 void lsfd_decode_file_flags(struct ul_buffer *buf, int flags)
 {
