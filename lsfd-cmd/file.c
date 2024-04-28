@@ -47,6 +47,7 @@
 #include "lsfd.h"
 #include "pidfd.h"
 #include "pidfd-utils.h"
+#include "decode-file-flags.h"
 
 static size_t pagesize;
 
@@ -84,7 +85,6 @@ static const char *assocstr[N_ASSOCS] = {
 	[ASSOC_SHM]       = "shm",
 };
 
-extern void lsfd_decode_file_flags(struct ul_buffer *buf, int flags);
 static void file_fill_flags_buf(struct ul_buffer *buf, int flags)
 {
 	lsfd_decode_file_flags(buf, flags);

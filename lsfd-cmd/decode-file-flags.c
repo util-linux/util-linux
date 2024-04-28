@@ -50,9 +50,8 @@
 #endif
 
 #include <stddef.h>		/* for size_t */
-struct ul_buffer;
 
-void lsfd_decode_file_flags(struct ul_buffer *buf, int flags);
+#include "decode-file-flags.h"
 
 /* We cannot include buffer.h because buffer.h includes
  * /usr/include/fcntl.h indirectly. */
