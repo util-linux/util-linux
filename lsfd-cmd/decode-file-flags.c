@@ -24,30 +24,24 @@
 
 /* lsfd_decode_file_flags() is for decoding `flags' field of
  * /proc/$pid/fdinfo/$fd. Bits of the field have name defined
- * in fctl.h.
+ * in fcntl.h.
  * A system on which lsfd is built may have multiple
- * fctl.h files:
+ * fcntl.h files:
  *
+ * - /usr/include/linux/fcntl.h       (a part of Linux kernel)
  * - /usr/include/asm/fcntl.h         (a part of Linux kernel)
  * - /usr/include/asm-generic/fcntl.h (a part of Linux kernel)
  * - /usr/include/fcntl.h             (a part of glibc)
  * - /usr/include/bits/fcntl.h        (a part of glibc)
  *
- * For decoding purpose, /usr/include/asm/fcntl.h or
- * /usr/include/asm-generic/fcntl.h is needed.
+ * For decoding purpose, /usr/include/linuc/fcntl.h is needed.
  *
  * /usr/include/bits/fcntl.h and /usr/include/fcntl.h are
  * not suitable for decoding. They should not be included.
  * /usr/include/fcntl.h includes /usr/include/bits/fcntl.h.
  */
 
-#if defined HAVE_ASM_FCNTL_H
-#include <asm/fcntl.h>
-#elif defined HAVE_ASM_GENERIC_FCNTL_H
-#include <asm-generic/fcntl.h>
-#else
-#error "kernel's fcntl.h is not available"
-#endif
+#include <linux/fcntl.h>
 
 #include <stddef.h>		/* for size_t */
 struct ul_buffer;

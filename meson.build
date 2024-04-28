@@ -189,8 +189,6 @@ headers = '''
         unistd.h
         utmp.h
         utmpx.h
-        asm-generic/fcntl.h
-        asm/fcntl.h
         asm/io.h
         linux/blkzoned.h
         linux/capability.h
