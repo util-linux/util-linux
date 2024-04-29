@@ -1265,16 +1265,16 @@ int parse_date(struct timespec *result, char const *p,
 	time_t Start;
 	intmax_t Start_ns;
 	struct tm const *tmp;
-	struct tm tm;
-	struct tm tm0;
-	parser_control pc;
-	struct timespec gettime_buffer;
+	struct tm tm = { 0 };
+	struct tm tm0 = { 0 };
+	parser_control pc = { 0 };
+	struct timespec gettime_buffer = { 0 };
 	unsigned char c;
 	int tz_was_altered = 0;
 	char *tz0 = NULL;
 	char tz0buf[TZBUFSIZE];
 	int ok = 1;
-	struct timeval tv;
+	struct timeval tv = { 0 };
 
 	if (! now) {
 		gettimeofday (&tv, NULL);
