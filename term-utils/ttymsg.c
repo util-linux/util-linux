@@ -123,7 +123,7 @@ ttymsg(struct iovec *iov, size_t iovcnt, char *line, int tmout) {
 				    iovcnt * sizeof(struct iovec));
 				iov = localiov;
 			}
-			for (cnt = 0; wret >= (ssize_t) iov->iov_len; ++cnt) {
+			for (cnt = 0; wret >= (ssize_t) iov->iov_len && iovcnt > 0; ++cnt) {
 				wret -= iov->iov_len;
 				++iov;
 				--iovcnt;
