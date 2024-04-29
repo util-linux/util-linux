@@ -80,6 +80,8 @@ init
 	echo
 	echo userns expected: "$expected"
 	echo userns actual:   "$actual"
+	echo "$TS_CMD_LSNS":
+	LSNS_DEBUG=all "$TS_CMD_LSNS"
 	cleanup
 	exit $RESULT
     fi
@@ -92,10 +94,12 @@ init
 	echo
 	echo pidns expected: "$expected"
 	echo pidns actual:   "$actual"
+	echo "$TS_CMD_LSNS":
+	LSNS_DEBUG=all "$TS_CMD_LSNS"
 	cleanup
     fi
     exit $RESULT
-) &
+) >> $TS_ERRLOG 2>&1 &
 mainpid=$!
 (
     exec 4< $FIFO_WAIT
