@@ -164,8 +164,6 @@ struct bcachefs_super_block {
 #define BCACHEFS_SECTOR_SIZE   512U
 /* maximum superblock size shift */
 #define BCACHEFS_SB_MAX_SIZE_SHIFT   0x10U
-/* maximum superblock size */
-#define BCACHEFS_SB_MAX_SIZE   (1U << BCACHEFS_SB_MAX_SIZE_SHIFT)
 /* fields offset within super block */
 #define BCACHEFS_SB_FIELDS_OFF offsetof(struct bcachefs_super_block, _start)
 /* tag value for members field */
@@ -359,9 +357,6 @@ static int probe_bcachefs(blkid_probe pr, const struct blkid_idmag *mag)
 		return BLKID_PROBE_NONE;
 
 	sb_size = BCACHEFS_SB_FIELDS_OFF + BYTES(bcs);
-
-	if (sb_size > BCACHEFS_SB_MAX_SIZE)
-		return BLKID_PROBE_NONE;
 
 	if (bcs->layout.sb_max_size_bits > BCACHEFS_SB_MAX_SIZE_SHIFT)
 		return BLKID_PROBE_NONE;
