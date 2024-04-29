@@ -93,7 +93,7 @@ Force the kernel to scan the partition table on a newly created loop device. Not
 Set up a read-only loop device.
 
 *--direct-io*[**=on**|*off*]::
-Enable or disable direct I/O for the backing file. The optional argument can be either *on* or *off*. If the optional argument is omitted, it defaults to *on*.
+Enable or disable direct I/O for the backing file. The default is *off*. Specifying either *--direct-io* or *--direct-io=on* will enable it. But, *--direct-io=off* can be provided to explicitly turn it off.
 
 *-v*, *--verbose*::
 Verbose mode.
