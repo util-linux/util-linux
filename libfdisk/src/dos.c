@@ -790,7 +790,7 @@ static void get_partition_table_geometry(struct fdisk_context *cxt,
 			unsigned int *ph, unsigned int *ps)
 {
 	unsigned char *bufp = cxt->firstsector;
-	struct { unsigned int c, h, o, v; } t[8];
+	struct { unsigned int c, h, o, v; } t[8] = { 0 };
 	unsigned int n1, n2, n3, n4, n5, n6;
 	const struct dos_partition *p;
 	unsigned int c, h, s, l;
