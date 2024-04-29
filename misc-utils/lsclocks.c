@@ -277,6 +277,7 @@ static int64_t get_namespace_offset(const char *name)
 	}
 
 	free(buf);
+	close(fd);
 	return ret;
 }
 
