@@ -360,7 +360,7 @@ int main(int argc, char **argv)
 	 * POSIX:  19971201 + 7 -1 = 0
 	 */
 	{
-		int wfd;
+		unsigned int wfd;
 		union { unsigned int word; char *string; } val;
 		val.string = nl_langinfo(_NL_TIME_WEEK_1STDAY);
 
