@@ -324,10 +324,10 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 
 	if (print_banner == TRUE) {
 		char *hostname = xgethostname();
-		char *whom, *where, date[CTIME_BUFSIZ];
+		char *whombuf, *whom, *where, date[CTIME_BUFSIZ];
 		time_t now;
 
-		whom = xgetlogin();
+		whombuf = whom = xgetlogin();
 		if (!whom) {
 			whom = "<someone>";
 			warn(_("cannot get passwd uid"));
@@ -358,6 +358,7 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 				whom, hostname, where, date);
 		fprintf(fs, "%-*.*s\007\007\r\n", TERM_WIDTH, TERM_WIDTH, lbuf);
 		free(hostname);
+		free(whombuf);
 	}
 	fprintf(fs, "%*s\r\n", TERM_WIDTH, " ");
 
