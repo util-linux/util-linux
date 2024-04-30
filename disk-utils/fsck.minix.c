@@ -548,7 +548,7 @@ get_dirsize(void) {
 		block = Inode[ROOT_INO].i_zone[0];
 	read_block(block, blk);
 
-	for (size = 16; size < MINIX_BLOCK_SIZE; size <<= 1) {
+	for (size = 16; size + 2 < MINIX_BLOCK_SIZE; size <<= 1) {
 		if (strcmp(blk + size + 2, "..") == 0) {
 			dirsize = size;
 			namelen = size - 2;
