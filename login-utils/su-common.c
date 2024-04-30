@@ -447,9 +447,10 @@ static void supam_open_session(struct su_context *su)
 
 	rc = pam_open_session(su->pamh, 0);
 	if (is_pam_failure(rc)) {
+		const char *msg = pam_strerror(su->pamh, rc);
+
 		supam_cleanup(su, rc);
-		errx(EXIT_FAILURE, _("cannot open session: %s"),
-		     pam_strerror(su->pamh, rc));
+		errx(EXIT_FAILURE, _("cannot open session: %s"), msg);
 	} else
 		su->pam_has_session = 1;
 }
