@@ -3027,4 +3027,5 @@ static void load_credentials(struct options *op) {
 			op->autolog = str;
 		}
 	}
+	closedir(dir);
 }
