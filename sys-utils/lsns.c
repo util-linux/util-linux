@@ -128,25 +128,25 @@ static int columns[ARRAY_SIZE(infos) * 2];
 static size_t ncolumns;
 
 enum {
-	LSNS_ID_MNT = 0,
-	LSNS_ID_NET,
-	LSNS_ID_PID,
-	LSNS_ID_UTS,
-	LSNS_ID_IPC,
-	LSNS_ID_USER,
-	LSNS_ID_CGROUP,
-	LSNS_ID_TIME
+	LSNS_TYPE_MNT = 0,
+	LSNS_TYPE_NET,
+	LSNS_TYPE_PID,
+	LSNS_TYPE_UTS,
+	LSNS_TYPE_IPC,
+	LSNS_TYPE_USER,
+	LSNS_TYPE_CGROUP,
+	LSNS_TYPE_TIME
 };
 
 static char *ns_names[] = {
-	[LSNS_ID_MNT] = "mnt",
-	[LSNS_ID_NET] = "net",
-	[LSNS_ID_PID] = "pid",
-	[LSNS_ID_UTS] = "uts",
-	[LSNS_ID_IPC] = "ipc",
-	[LSNS_ID_USER] = "user",
-	[LSNS_ID_CGROUP] = "cgroup",
-	[LSNS_ID_TIME] = "time"
+	[LSNS_TYPE_MNT] = "mnt",
+	[LSNS_TYPE_NET] = "net",
+	[LSNS_TYPE_PID] = "pid",
+	[LSNS_TYPE_UTS] = "uts",
+	[LSNS_TYPE_IPC] = "ipc",
+	[LSNS_TYPE_USER] = "user",
+	[LSNS_TYPE_CGROUP] = "cgroup",
+	[LSNS_TYPE_TIME] = "time"
 };
 
 enum {
@@ -574,7 +574,7 @@ static int read_process(struct lsns *ls, struct path_cxt *pc)
 			DBG(PROC, ul_debug("failed in get_ns_ino (rc: %d)", rc));
 			goto done;
 		}
-		if (p->ns_ids[i] && i == LSNS_ID_NET)
+		if (p->ns_ids[i] && i == LSNS_TYPE_NET)
 			p->netnsid = get_netnsid(pc, p->ns_ids[i]);
 		rc = 0;
 	}
@@ -744,22 +744,22 @@ static int clone_type_to_lsns_type(int clone_type)
 {
 	switch (clone_type) {
 	case CLONE_NEWNS:
-		return LSNS_ID_MNT;
+		return LSNS_TYPE_MNT;
 	case CLONE_NEWCGROUP:
-		return LSNS_ID_CGROUP;
+		return LSNS_TYPE_CGROUP;
 	case CLONE_NEWUTS:
-		return LSNS_ID_UTS;
+		return LSNS_TYPE_UTS;
 	case CLONE_NEWIPC:
-		return LSNS_ID_IPC;
+		return LSNS_TYPE_IPC;
 	case CLONE_NEWUSER:
-		return LSNS_ID_USER;
+		return LSNS_TYPE_USER;
 	case CLONE_NEWPID:
-		return LSNS_ID_PID;
+		return LSNS_TYPE_PID;
 	case CLONE_NEWNET:
-		return LSNS_ID_NET;
+		return LSNS_TYPE_NET;
 #ifdef CLONE_NEWTIME
 	case CLONE_NEWTIME:
-		return LSNS_ID_TIME;
+		return LSNS_TYPE_TIME;
 #endif
 	default:
 		return -1;
@@ -801,7 +801,7 @@ static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, in
 	lsns_ioctl(fd, NS_GET_OWNER_UID, &ns->uid_fallback);
 	add_uid(uid_cache, ns->uid_fallback);
 
-	if ((lsns_type == LSNS_ID_USER || lsns_type == LSNS_ID_PID)
+	if ((lsns_type == LSNS_TYPE_USER || lsns_type == LSNS_TYPE_PID)
 	    && ino_parent != ino && ino_parent != 0) {
 		ns->related_ns[RELA_PARENT] = get_namespace(ls, ino_parent);
 		if (!ns->related_ns[RELA_PARENT]) {
@@ -873,8 +873,8 @@ static void read_related_namespaces(struct lsns *ls)
 		struct list_head *pp;
 		list_for_each(pp, &ls->namespaces) {
 			struct lsns_namespace *pns = list_entry(pp, struct lsns_namespace, namespaces);
-			if (ns->type == LSNS_ID_USER
-			    || ns->type == LSNS_ID_PID) {
+			if (ns->type == LSNS_TYPE_USER
+			    || ns->type == LSNS_TYPE_PID) {
 				if (ns->related_id[RELA_PARENT] == pns->id)
 					ns->related_ns[RELA_PARENT] = pns;
 				if (ns->related_id[RELA_OWNER] == pns->id)
@@ -1113,7 +1113,7 @@ static void fill_column(struct lsns *ls,
 	case COL_NETNSID:
 		if (!proc)
 			break;
-		if (ns->type == LSNS_ID_NET)
+		if (ns->type == LSNS_TYPE_NET)
 			netnsid_xasputs(&str, proc->netnsid);
 		break;
 	case COL_NSFS:
@@ -1584,7 +1584,7 @@ int main(int argc, char *argv[])
 				errx(EXIT_FAILURE, _("unknown namespace type: %s"), optarg);
 			ls.fltr_types[type] = 1;
 			ls.fltr_ntypes++;
-			if (type == LSNS_ID_NET)
+			if (type == LSNS_TYPE_NET)
 				is_net = 1;
 			break;
 		}
