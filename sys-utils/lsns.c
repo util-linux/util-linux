@@ -301,6 +301,78 @@ static inline const struct colinfo *get_column_info(unsigned num)
 	return &infos[ get_column_id(num) ];
 }
 
+#ifdef USE_NS_GET_API
+/* Get the inode number for the parent namespace of the namespace `fd' specifies.
+ * If `pfd' is non-null, the file descriptor opening the parent namespace.*/
+static int get_parent_ns_ino(int fd, enum lsns_type lsns_type, ino_t *pino, int *pfd)
+{
+	struct stat st;
+	int my_fd;
+
+	if (pfd == NULL)
+		pfd = &my_fd;
+
+	*pino = 0;
+	*pfd = -1;
+
+	if (lsns_type == LSNS_TYPE_PID || lsns_type == LSNS_TYPE_USER) {
+		if ((*pfd = lsns_ioctl(fd, NS_GET_PARENT)) < 0) {
+			if (errno == EPERM
+			    /* On the test platforms, "build (qemu-user, s390x)" and
+			     * "build (qemu-user, riscv64)", the ioctl reported ENOSYS.
+			     */
+			    || errno == ENOSYS)
+				return 0;
+			return -errno;
+		}
+		if (fstat(*pfd, &st) < 0) {
+			close(*pfd);
+			*pfd = -1;
+			return -errno;
+		}
+		*pino = st.st_ino;
+	}
+
+	if (pfd == &my_fd)
+		close(*pfd);
+	return 0;
+}
+
+/* Get the inode number for the owner (user) namespace of the namespace `fd' specifies.
+ * If `pfd' is non-null, the file descriptor opening the user namespace.*/
+static int get_owner_ns_ino(int fd, ino_t *oino, int *ofd)
+{
+	struct stat st;
+	int my_fd;
+
+	if (ofd == NULL)
+		ofd = &my_fd;
+
+	*oino = 0;
+	*ofd = -1;
+
+	if ((*ofd = lsns_ioctl(fd, NS_GET_USERNS)) < 0) {
+		if (errno == EPERM
+		    /* On the test platforms, "build (qemu-user, s390x)" and
+		     * "build (qemu-user, riscv64)", the ioctl reported ENOSYS.
+		     */
+		    || errno == ENOSYS)
+			return 0;
+		return -errno;
+	}
+	if (fstat(*ofd, &st) < 0) {
+		close(*ofd);
+		*ofd = -1;
+		return -errno;
+	}
+	*oino = st.st_ino;
+
+	if (ofd == &my_fd)
+		close(*ofd);
+	return 0;
+}
+#endif
+
 static int get_ns_ino(struct path_cxt *pc, const char *nsname, ino_t *ino, ino_t *pino, ino_t *oino)
 {
 	struct stat st;
@@ -317,49 +389,18 @@ static int get_ns_ino(struct path_cxt *pc, const char *nsname, ino_t *ino, ino_t
 	*oino = 0;
 
 #ifdef USE_NS_GET_API
-	int fd, pfd, ofd;
-	fd = ul_path_open(pc, 0, path);
+	int r;
+	enum lsns_type lsns_type;
+	int fd = ul_path_open(pc, 0, path);
 	if (fd < 0)
 		return -errno;
-	if (strcmp(nsname, "pid") == 0 || strcmp(nsname, "user") == 0) {
-		if ((pfd = lsns_ioctl(fd, NS_GET_PARENT)) < 0) {
-			if (errno == EPERM
-			    /* On the test platforms, "build (qemu-user, s390x)" and
-			     * "build (qemu-user, riscv64)", the ioctl reported ENOSYS.
-			     */
-			    || errno == ENOSYS)
-				goto user;
-			close(fd);
-			return -errno;
-		}
-		if (fstat(pfd, &st) < 0) {
-			close(pfd);
-			close(fd);
-			return -errno;
-		}
-		*pino = st.st_ino;
-		close(pfd);
-	}
- user:
-	if ((ofd = lsns_ioctl(fd, NS_GET_USERNS)) < 0) {
-		if (errno == EPERM
-		    /* On the test platforms, "build (qemu-user, s390x)" and
-		     * "build (qemu-user, riscv64)", the ioctl reported ENOSYS.
-		     */
-		    || errno == ENOSYS)
-			goto out;
-		close(fd);
-		return -errno;
-	}
-	if (fstat(ofd, &st) < 0) {
-		close(ofd);
-		close(fd);
-		return -errno;
-	}
-	*oino = st.st_ino;
-	close(ofd);
- out:
+	lsns_type = ns_name2type(nsname);
+
+	r = get_parent_ns_ino(fd, lsns_type, pino, NULL);
+	if (r == 0)
+		r = get_owner_ns_ino(fd, oino, NULL);
 	close(fd);
+	return r;
 #endif
 	return 0;
 }
