@@ -813,7 +813,6 @@ static enum lsns_type clone_type_to_lsns_type(int clone_type)
 static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, ino_t ino)
 {
 	int fd_owner = -1, fd_parent = -1;
-	struct stat st_owner, st_parent;
 	ino_t ino_owner = 0, ino_parent = 0;
 	struct lsns_namespace *ns;
 	int clone_type;
@@ -826,22 +825,9 @@ static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, in
 	if (lsns_type < 0 || ls->fltr_types[lsns_type] == 0)
 		return NULL;
 
-	fd_owner = lsns_ioctl(fd, NS_GET_USERNS);
-	if (fd_owner < 0)
-		goto parent;
-	if (fstat(fd_owner, &st_owner) < 0)
-		goto parent;
-	ino_owner = st_owner.st_ino;
+	get_parent_ns_ino(fd, lsns_type, &ino_parent, &fd_parent);
+	get_owner_ns_ino(fd, &ino_owner, &fd_owner);
 
- parent:
-	fd_parent = lsns_ioctl(fd, NS_GET_PARENT);
-	if (fd_parent < 0)
-		goto add_ns;
-	if (fstat(fd_parent, &st_parent) < 0)
-		goto add_ns;
-	ino_parent = st_parent.st_ino;
-
- add_ns:
 	ns = add_namespace(ls, lsns_type, ino, ino_parent, ino_owner);
 	lsns_ioctl(fd, NS_GET_OWNER_UID, &ns->uid_fallback);
 	add_uid(uid_cache, ns->uid_fallback);
@@ -872,13 +858,10 @@ static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, in
 
 static void interpolate_missing_namespaces(struct lsns *ls, struct lsns_namespace *orphan, int rela)
 {
-	const int cmd[MAX_RELA] = {
-		[RELA_PARENT] = NS_GET_PARENT,
-		[RELA_OWNER] = NS_GET_USERNS
-	};
 	char buf[BUFSIZ];
 	int fd_orphan, fd_missing;
-	struct stat st;
+	ino_t ino;
+	int r;
 
 	if (!orphan->proc)
 		return;
@@ -892,13 +875,13 @@ static void interpolate_missing_namespaces(struct lsns *ls, struct lsns_namespac
 	if (fd_orphan < 0)
 		return;
 
-	fd_missing = lsns_ioctl(fd_orphan, cmd[rela]);
+	r = (rela == RELA_PARENT)
+		? get_parent_ns_ino(fd_orphan, orphan->type, &ino, &fd_missing)
+		: get_owner_ns_ino(fd_orphan, &ino, &fd_missing);
 	close(fd_orphan);
-	if (fd_missing < 0)
+	if (fd_missing < 0 || r < 0)
 		return;
-
-	if (fstat(fd_missing, &st) < 0
-	    || st.st_ino != orphan->related_id[rela]) {
+	if (ino != orphan->related_id[rela]) {
 		close(fd_missing);
 		return;
 	}
