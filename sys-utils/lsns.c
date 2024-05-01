@@ -557,7 +557,21 @@ static int get_netnsid(struct path_cxt *pc __attribute__((__unused__)),
 
 static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, ino_t ino);
 
-static void read_open_ns_inos(struct lsns *ls, struct path_cxt *pc)
+static struct lsns_namespace *get_namespace(struct lsns *ls, ino_t ino)
+{
+	struct list_head *p;
+
+	list_for_each(p, &ls->namespaces) {
+		struct lsns_namespace *ns = list_entry(p, struct lsns_namespace, namespaces);
+
+		if (ns->id == ino)
+			return ns;
+	}
+	return NULL;
+}
+
+/* Read namespaces open(2)ed explicitly by the process specified by `pc'. */
+static void read_opened_namespaces(struct lsns *ls, struct path_cxt *pc)
 {
 	DIR *sub = NULL;
 	struct dirent *d = NULL;
@@ -628,7 +642,7 @@ static int read_process(struct lsns *ls, struct path_cxt *pc)
 	DBG(PROC, ul_debugobj(p, "new pid=%d", p->pid));
 	list_add_tail(&p->processes, &ls->processes);
 
-	read_open_ns_inos(ls, pc);
+	read_opened_namespaces(ls, pc);
 done:
 	if (rc)
 		free(p);
@@ -688,19 +702,6 @@ static int read_processes(struct lsns *ls)
 	DBG(PROC, ul_debug("closing /proc"));
 	closedir(dir);
 	return rc;
-}
-
-static struct lsns_namespace *get_namespace(struct lsns *ls, ino_t ino)
-{
-	struct list_head *p;
-
-	list_for_each(p, &ls->namespaces) {
-		struct lsns_namespace *ns = list_entry(p, struct lsns_namespace, namespaces);
-
-		if (ns->id == ino)
-			return ns;
-	}
-	return NULL;
 }
 
 static int namespace_has_process(struct lsns_namespace *ns, pid_t pid)
@@ -856,7 +857,8 @@ static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, in
 	return ns;
 }
 
-static void interpolate_missing_namespaces(struct lsns *ls, struct lsns_namespace *orphan, int rela)
+/* read namespace that cannot be access directly. */
+static void read_ghost_namespaces(struct lsns *ls, struct lsns_namespace *orphan, int rela)
 {
 	char buf[BUFSIZ];
 	int fd_orphan, fd_missing;
@@ -940,11 +942,12 @@ static void connect_namespaces(struct lsns *ls)
 			struct lsns_namespace *current = orphan[rela];
 			orphan[rela] = orphan[rela]->related_ns[rela];
 			current->related_ns[rela] = NULL;
-			interpolate_missing_namespaces(ls, current, rela);
+			read_ghost_namespaces(ls, current, rela);
 		}
 	}
 }
 
+/* Read namespaces bind-mount'ed to the filesystem tree. */
 static int read_persistent_namespaces(struct lsns *ls)
 {
 	struct libmnt_iter *itr = mnt_new_iter(MNT_ITER_FORWARD);
@@ -983,7 +986,8 @@ static int read_persistent_namespaces(struct lsns *ls)
 
 #endif /* USE_NS_GET_API */
 
-static int read_namespaces(struct lsns *ls)
+/* Read namespaces assigned to processes. */
+static int read_assigned_namespaces(struct lsns *ls)
 {
 	struct list_head *p;
 
@@ -1006,6 +1010,16 @@ static int read_namespaces(struct lsns *ls)
 			add_process_to_namespace(ls, ns, proc);
 		}
 	}
+	return 0;
+}
+
+static int read_namespaces(struct lsns *ls)
+{
+	int r;
+
+	r = read_assigned_namespaces(ls);
+	if (r < 0)
+		return r;
 
 #ifdef USE_NS_GET_API
 	read_persistent_namespaces(ls);
