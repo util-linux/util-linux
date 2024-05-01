@@ -127,8 +127,9 @@ static const struct colinfo infos[] = {
 static int columns[ARRAY_SIZE(infos) * 2];
 static size_t ncolumns;
 
-enum {
-	LSNS_TYPE_MNT = 0,
+enum lsns_type {
+	LSNS_TYPE_UNKNOWN = -1,
+	LSNS_TYPE_MNT,
 	LSNS_TYPE_NET,
 	LSNS_TYPE_PID,
 	LSNS_TYPE_UTS,
@@ -139,6 +140,8 @@ enum {
 };
 
 static char *ns_names[] = {
+	/* Don't add LSNS_TYPE_UNKNOWN here.
+	 * ARRAY_SIZE(ns_names) in struct lsns_process may not work.*/
 	[LSNS_TYPE_MNT] = "mnt",
 	[LSNS_TYPE_NET] = "net",
 	[LSNS_TYPE_PID] = "pid",
@@ -157,7 +160,7 @@ enum {
 
 struct lsns_namespace {
 	ino_t id;
-	int type;			/* LSNS_* */
+	enum lsns_type type;
 	int nprocs;
 	int netnsid;
 	ino_t related_id[MAX_RELA];
@@ -246,7 +249,7 @@ static void lsns_init_debug(void)
 	__UL_INIT_DEBUG_FROM_ENV(lsns, LSNS_DEBUG_, 0, LSNS_DEBUG);
 }
 
-static int ns_name2type(const char *name)
+static enum lsns_type ns_name2type(const char *name)
 {
 	size_t i;
 
@@ -254,7 +257,7 @@ static int ns_name2type(const char *name)
 		if (strcmp(ns_names[i], name) == 0)
 			return i;
 	}
-	return -1;
+	return LSNS_TYPE_UNKNOWN;
 }
 
 static int column_name_to_id(const char *name, size_t namesz)
@@ -672,7 +675,7 @@ static int namespace_has_process(struct lsns_namespace *ns, pid_t pid)
 	return 0;
 }
 
-static struct lsns_namespace *add_namespace(struct lsns *ls, int type, ino_t ino,
+static struct lsns_namespace *add_namespace(struct lsns *ls, enum lsns_type type, ino_t ino,
 					    ino_t parent_ino, ino_t owner_ino)
 {
 	struct lsns_namespace *ns = xcalloc(1, sizeof(*ns));
@@ -740,7 +743,7 @@ static int netnsid_xasputs(char **str, int netnsid)
 }
 
 #ifdef USE_NS_GET_API
-static int clone_type_to_lsns_type(int clone_type)
+static enum lsns_type clone_type_to_lsns_type(int clone_type)
 {
 	switch (clone_type) {
 	case CLONE_NEWNS:
@@ -762,7 +765,7 @@ static int clone_type_to_lsns_type(int clone_type)
 		return LSNS_TYPE_TIME;
 #endif
 	default:
-		return -1;
+		return LSNS_TYPE_UNKNOWN;
 	}
 }
 
@@ -772,7 +775,8 @@ static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, in
 	struct stat st_owner, st_parent;
 	ino_t ino_owner = 0, ino_parent = 0;
 	struct lsns_namespace *ns;
-	int clone_type, lsns_type;
+	int clone_type;
+	enum lsns_type lsns_type;
 
 	clone_type = lsns_ioctl(fd, NS_GET_NSTYPE);
 	if (clone_type < 0)
@@ -1579,7 +1583,7 @@ int main(int argc, char *argv[])
 			break;
 		case 't':
 		{
-			int type = ns_name2type(optarg);
+			enum lsns_type type = ns_name2type(optarg);
 			if (type < 0)
 				errx(EXIT_FAILURE, _("unknown namespace type: %s"), optarg);
 			ls.fltr_types[type] = 1;
