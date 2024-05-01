@@ -373,7 +373,7 @@ static int get_owner_ns_ino(int fd, ino_t *oino, int *ofd)
 }
 #endif
 
-static int get_ns_ino(struct path_cxt *pc, const char *nsname, ino_t *ino, ino_t *pino, ino_t *oino)
+static int get_ns_inos(struct path_cxt *pc, const char *nsname, ino_t *ino, ino_t *pino, ino_t *oino)
 {
 	struct stat st;
 	char path[16];
@@ -612,10 +612,10 @@ static int read_process(struct lsns *ls, struct path_cxt *pc)
 		if (!ls->fltr_types[i])
 			continue;
 
-		rc = get_ns_ino(pc, ns_names[i], &p->ns_ids[i],
-				&p->ns_pids[i], &p->ns_oids[i]);
+		rc = get_ns_inos(pc, ns_names[i], &p->ns_ids[i],
+				 &p->ns_pids[i], &p->ns_oids[i]);
 		if (rc && rc != -EACCES && rc != -ENOENT) {
-			DBG(PROC, ul_debug("failed in get_ns_ino (rc: %d)", rc));
+			DBG(PROC, ul_debug("failed in get_ns_inos (rc: %d)", rc));
 			goto done;
 		}
 		if (p->ns_ids[i] && i == LSNS_TYPE_NET)
