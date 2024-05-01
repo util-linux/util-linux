@@ -57,6 +57,8 @@ option('build-swapon', type : 'feature',
        description : 'build swapon')
 option('build-swapoff', type : 'feature',
        description : 'build swapoff')
+option('build-chcpu', type : 'feature',
+       description : 'build chcpu')
 option('build-losetup', type : 'feature',
        description : 'build losetup')
 option('build-zramctl', type : 'feature',
@@ -67,6 +69,10 @@ option('build-fsck', type : 'feature',
        description : 'build fsck')
 option('build-partx', type : 'feature',
        description : 'build addpart, delpart, partx')
+option('build-script', type : 'feature',
+       description : 'build script')
+option('build-scriptlive', type : 'feature',
+       description : 'build scriptlive')
 
 option('build-uuidd', type : 'feature',
        description : 'build the uuid daemon')
@@ -97,6 +103,8 @@ option('build-minix', type : 'feature',
        description : 'build fsck.minix, mkfs.minix')
 option('build-fdformat', type : 'feature', value : 'disabled',
        description : 'build fdformat')
+option('build-blockdev', type : 'feature',
+       description : 'build blockdev')
 option('build-hwclock', type : 'feature',
        description : 'build hwclock')
 option('build-lslogins', type : 'feature',
@@ -141,6 +149,20 @@ option('build-fstrim', type : 'feature',
        description : 'build fstrim')
 option('build-dmesg', type : 'feature',
        description : 'build dmesg')
+option('build-fsfreeze', type : 'feature',
+       description : 'build fsfreeze')
+option('build-blkdiscard', type : 'feature',
+       description : 'build blkdiscard')
+option('build-blkzone', type : 'feature',
+       description : 'build blkzone')
+option('build-blkpr', type : 'feature',
+       description : 'build blkpr')
+option('build-ldattach', type : 'feature',
+       description : 'build ldattach')
+option('build-rtcwake', type : 'feature',
+       description : 'build rtcwake')
+option('build-setarch', type : 'feature',
+       description : 'build setarch')
 option('build-kill', type : 'feature',
        description : 'build kill')
 option('build-last', type : 'feature',
@@ -179,6 +201,12 @@ option('build-pg', type : 'feature',
        description : 'build pg')
 option('build-pipesz', type : 'feature',
        description : 'build pipesz')
+option('build-fadvise', type : 'feature',
+       description : 'build fadvise')
+option('build-enosys', type : 'feature',
+       description : 'build enosys')
+option('build-lsclocks', type : 'feature',
+       description : 'build lsclocks')
 option('build-setterm', type : 'feature',
        description : 'build setterm')
 option('build-schedutils', type : 'feature',

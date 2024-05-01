@@ -41,6 +41,10 @@ vendordir = get_option('vendordir')
 
 add_project_arguments('-D_GNU_SOURCE', language : 'c')
 
+if host_machine.system() == 'darwin'
+  add_project_arguments('-D_DARWIN_C_SOURCE', language : 'c')
+endif
+
 cc = meson.get_compiler('c')
 
 conf = configuration_data()
@@ -451,8 +455,7 @@ endforeach
 
 have = cc.has_header('sched.h')
 conf.set10('HAVE_DECL_CPU_ALLOC', have)
-# We get -1 if the size cannot be determined
-have_cpu_set_t = cc.sizeof('cpu_set_t', prefix : '#define _GNU_SOURCE\n#include <sched.h>') > 0
+have_cpu_set_t = cc.has_type('cpu_set_t', args : '-D_GNU_SOURCE', prefix : '#include <sched.h>')
 conf.set('HAVE_CPU_SET_T', have_cpu_set_t ? 1 : false)
 
 have = cc.has_header_symbol('unistd.h', 'environ', args : '-D_GNU_SOURCE')
@@ -788,9 +791,9 @@ int main(void) {
 have = cc.compiles(code, name : 'using __progname')
 conf.set('HAVE___PROGNAME', have ? 1 : false)
 
-have = conf.get('HAVE_PTY_H').to_string() == '1' \
-       and conf.get('HAVE_SYS_SIGNALFD_H').to_string() == '1'
-conf.set('HAVE_PTY', have ? 1 : false)
+have_pty = conf.get('HAVE_PTY_H').to_string() == '1' \
+           and conf.get('HAVE_SYS_SIGNALFD_H').to_string() == '1'
+conf.set('HAVE_PTY', have_pty ? 1 : false)
 
 have_opal_get_status= cc.has_header_symbol('linux/sed-opal.h', 'IOC_OPAL_GET_STATUS')
 conf.set('HAVE_OPAL_GET_STATUS', have_opal_get_status ? 1 : false)
@@ -1082,7 +1085,7 @@ if opt and not is_disabler(exe)
   bashcompletions += ['utmpdump']
 endif
 
-opt = not get_option('build-su').disabled()
+opt = get_option('build-su').require(have_pty).allowed()
 exe = executable(
   'su',
   'login-utils/su.c',
@@ -1163,7 +1166,7 @@ if opt and not is_disabler(exe)
                            join_paths(mandir, 'man8/vigr.8'))
 endif
 
-opt = not get_option('build-runuser').disabled()
+opt = get_option('build-runuser').require(have_pty).allowed()
 exe = executable(
   'runuser',
   'login-utils/runuser.c',
@@ -1564,16 +1567,23 @@ exes += exe
 manadocs += ['sys-utils/ctrlaltdel.8.adoc']
 bashcompletions += ['ctrlaltdel']
 
+have_linux_fs_h = conf.get('HAVE_LINUX_FS_H').to_string() == '1'
+
+opt = get_option('build-fsfreeze').require(have_linux_fs_h).allowed()
 exe = executable(
   'fsfreeze',
   fsfreeze_sources,
   include_directories : includes,
   install_dir : sbindir,
-  install : true)
-exes += exe
-manadocs += ['sys-utils/fsfreeze.8.adoc']
-bashcompletions += ['fsfreeze']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['sys-utils/fsfreeze.8.adoc']
+  bashcompletions += ['fsfreeze']
+endif
 
+opt = get_option('build-blkdiscard').require(have_linux_fs_h).allowed()
 exe = executable(
   'blkdiscard',
   blkdiscard_sources,
@@ -1581,88 +1591,111 @@ exe = executable(
   link_with : [lib_common],
   dependencies : [blkid_dep],
   install_dir : sbindir,
-  install : true)
-exes += exe
-manadocs += ['sys-utils/blkdiscard.8.adoc']
-bashcompletions += ['blkdiscard']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['sys-utils/blkdiscard.8.adoc']
+  bashcompletions += ['blkdiscard']
+endif
 
-if cc.has_header('linux/blkzoned.h')
-  exe = executable(
-    'blkzone',
-    blkzone_sources,
-    include_directories : includes,
-    link_with : [lib_common],
-    install_dir : sbindir,
-    install : true)
+opt = get_option('build-blkzone').require(have_linux_fs_h).allowed()
+exe = executable(
+  'blkzone',
+  blkzone_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['sys-utils/blkzone.8.adoc']
   bashcompletions += ['blkzone']
 endif
 
-if cc.has_header('linux/pr.h')
-  exe = executable(
-    'blkpr',
-    blkpr_sources,
-    include_directories : includes,
-    link_with : [lib_common],
-    install_dir : sbindir,
-    install : true)
+opt = get_option('build-blkpr').require(cc.has_header('linux/pr.h')).allowed()
+exe = executable(
+  'blkpr',
+  blkpr_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['sys-utils/blkpr.8.adoc']
 endif
 
+opt = get_option('build-ldattach').require(cc.has_header('linux/if.h')).allowed()
 exe = executable(
   'ldattach',
   ldattach_sources,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : usrsbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['sys-utils/ldattach.8.adoc']
-bashcompletions += ['ldattach']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['sys-utils/ldattach.8.adoc']
+  bashcompletions += ['ldattach']
+endif
 
+have_linux_rtc_h = cc.has_header('linux/rtc.h')
+
+opt = get_option('build-rtcwake').require(have_linux_rtc_h).allowed()
 exe = executable(
   'rtcwake',
   rtcwake_sources,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : usrsbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['sys-utils/rtcwake.8.adoc']
-bashcompletions += ['rtcwake']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['sys-utils/rtcwake.8.adoc']
+  bashcompletions += ['rtcwake']
+endif
 
+opt = get_option('build-setarch').require(cc.has_header('sys/personality.h')).allowed()
 exe = executable(
   'setarch',
   setarch_sources,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['sys-utils/setarch.8.adoc']
-bashcompletions += ['setarch']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['sys-utils/setarch.8.adoc']
+  bashcompletions += ['setarch']
+endif
 
-setarch_links = ['uname26', 'linux32', 'linux64']
-setarch_links_arch = {
-  's390x' :   ['s390', 's390x'],
-  'x86' :     ['i386'],
-  'x86_64' :  ['i386', 'x86_64'],
-  'ppc64' :   ['ppc', 'ppc64', 'ppc32'],
-  'space64' : ['sparc', 'sparc64', 'sparc32', 'sparc32bash'],
-  'mips64' :  ['mips', 'mips64', 'mips32'],
-  'ia64' :    ['i386', 'ia64'],
-  'hppa' :    ['parisc', 'parisc64', 'parisc32'],
-}
-setarch_links += setarch_links_arch.get(host_machine.cpu_family(), [])
+if opt
+  setarch_links = ['uname26', 'linux32', 'linux64']
+  setarch_links_arch = {
+    's390x' :   ['s390', 's390x'],
+    'x86' :     ['i386'],
+    'x86_64' :  ['i386', 'x86_64'],
+    'ppc64' :   ['ppc', 'ppc64', 'ppc32'],
+    'space64' : ['sparc', 'sparc64', 'sparc32', 'sparc32bash'],
+    'mips64' :  ['mips', 'mips64', 'mips32'],
+    'ia64' :    ['i386', 'ia64'],
+    'hppa' :    ['parisc', 'parisc64', 'parisc32'],
+  }
+  setarch_links += setarch_links_arch.get(host_machine.cpu_family(), [])
 
-foreach link: setarch_links
-  meson.add_install_script(meson_make_symlink,
-                           'setarch',
-                           join_paths(usrbin_exec_dir, link))
-  manlinks += {link + '.8': 'setarch.8'}
-endforeach
+  foreach link: setarch_links
+    meson.add_install_script(meson_make_symlink,
+                            'setarch',
+                            join_paths(usrbin_exec_dir, link))
+    manlinks += {link + '.8': 'setarch.8'}
+  endforeach
+endif
 
 opt = not get_option('build-eject').disabled()
 exe = executable(
@@ -1865,16 +1898,20 @@ if not is_disabler(exe)
   bashcompletions += ['lscpu']
 endif
 
+opt = get_option('build-chcpu').require(have_cpu_set_t).allowed()
 exe = executable(
   'chcpu',
   chcpu_sources,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : sbindir,
-  install : true)
-exes += exe
-manadocs += ['sys-utils/chcpu.8.adoc']
-bashcompletions += ['chcpu']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['sys-utils/chcpu.8.adoc']
+  bashcompletions += ['chcpu']
+endif
 
 exe = executable(
   'wdctl',
@@ -2272,15 +2309,20 @@ if opt and not is_disabler(exe)
   bashcompletions += ['fdformat']
 endif
 
+opt = get_option('build-blockdev').require(LINUX).allowed()
 exe = executable(
   'blockdev',
   blockdev_sources,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : sbindir,
-  install : true)
-manadocs += ['disk-utils/blockdev.8.adoc']
-bashcompletions += ['blockdev']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['disk-utils/blockdev.8.adoc']
+  bashcompletions += ['blockdev']
+endif
 
 opt = not get_option('build-fdisks').disabled()
 if opt and not have_dirfd and not have_ddfd
@@ -2421,6 +2463,7 @@ endif
 
 ############################################################
 
+opt = get_option('build-script').require(have_pty).allowed()
 exe = executable(
   'script',
   script_sources,
@@ -2431,10 +2474,13 @@ exe = executable(
                   realtime_libs,
                   math_libs],
   install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['term-utils/script.1.adoc']
-bashcompletions += ['script']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['term-utils/script.1.adoc']
+  bashcompletions += ['script']
+endif
 
 exe = executable(
   'test_script',
@@ -2446,9 +2492,12 @@ exe = executable(
                   lib_utempter,
                   realtime_libs,
                   math_libs],
-  build_by_default : program_tests)
-exes += exe
+  build_by_default : opt and program_tests)
+if opt and not is_disabler(exe)
+  exes += exe
+endif
 
+opt = get_option('build-scriptlive').require(have_pty).allowed()
 exe = executable(
   'scriptlive',
   scriptlive_sources,
@@ -2458,10 +2507,13 @@ exe = executable(
                   realtime_libs,
                   math_libs],
   install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['term-utils/scriptlive.1.adoc']
-bashcompletions += ['scriptlive']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['term-utils/scriptlive.1.adoc']
+  bashcompletions += ['scriptlive']
+endif
 
 exe = executable(
   'scriptreplay',
@@ -2989,14 +3041,15 @@ if not is_disabler(exe)
   bashcompletions += ['hardlink']
 endif
 
-opt = not get_option('build-pipesz').disabled()
+opt = get_option('build-pipesz').allowed()
 exe = executable(
   'pipesz',
   pipesz_sources,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : usrbin_exec_dir,
-  install : true)
+  install : opt,
+  build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['misc-utils/pipesz.1.adoc']
@@ -3016,14 +3069,18 @@ if not is_disabler(exe)
   exes += exe
 endif
 
+have_posix_fadvise = conf.get('HAVE_POSIX_FADVISE').to_string() == '1'
+
+opt = get_option('build-fadvise').require(have_posix_fadvise).allowed()
 exe = executable(
   'fadvise',
   fadvise_sources,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : usrbin_exec_dir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['misc-utils/fadvise.1.adoc']
   bashcompletions += ['fadvise']
@@ -3051,29 +3108,34 @@ syscalls_h = custom_target('syscalls.h',
              cc.cmd_array(), get_option('c_args')],
 )
 
-if cc.compiles(fs.read('include/audit-arch.h'), name : 'has AUDIT_ARCH_NATIVE')
-  exe = executable(
-    'enosys',
-    'misc-utils/enosys.c', syscalls_h,
-    include_directories : includes,
-    link_with : [lib_common],
-    install_dir : usrbin_exec_dir,
-    install : true)
-  if not is_disabler(exe)
-    exes += exe
-    manadocs += ['misc-utils/enosys.1.adoc']
-    bashcompletions += ['enosys']
-  endif
+have_linux_audit_h = cc.has_header('linux/audit.h')
+have_audit_arch_native = cc.compiles(fs.read('include/audit-arch.h'), name : 'has AUDIT_ARCH_NATIVE')
+
+opt = get_option('build-enosys').require(have_linux_audit_h and have_audit_arch_native).allowed()
+exe = executable(
+  'enosys',
+  'misc-utils/enosys.c', syscalls_h,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['misc-utils/enosys.1.adoc']
+  bashcompletions += ['enosys']
 endif
 
+opt = get_option('build-lsclocks').require(have_linux_rtc_h).allowed()
 exe = executable(
   'lsclocks',
   lsclocks_sources,
   include_directories : includes,
   link_with : [lib_common, lib_smartcols],
   install_dir : usrbin_exec_dir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['misc-utils/lsclocks.1.adoc']
   bashcompletions += ['lsclocks']
@@ -3230,7 +3292,7 @@ if conf.get('HAVE_OPENAT').to_string() == '1' \
   exes += exe
 endif
 
-if conf.get('HAVE_PTY').to_string() == '1'
+if have_pty
   exe = executable(
     'test_pty',
     pty_session_c,
