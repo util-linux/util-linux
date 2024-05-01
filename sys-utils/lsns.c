@@ -588,6 +588,8 @@ static void read_opened_namespaces(struct lsns *ls, struct path_cxt *pc)
 
 		if (ul_path_stat(pc, &st, 0, path) == 0
 		    && st.st_dev == ls->nsfs_dev) {
+			if (get_namespace(ls, st.st_ino))
+				continue;
 			int fd = ul_path_open(pc, O_RDONLY, path);
 			if (fd >= 0) {
 				add_namespace_for_nsfd(ls, fd, st.st_ino);
