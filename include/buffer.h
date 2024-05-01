@@ -5,7 +5,7 @@
 #ifndef UTIL_LINUX_BUFFER
 #define UTIL_LINUX_BUFFER
 
-#include "c.h"
+#include <stddef.h>
 
 struct ul_buffer {
 	char *begin;		/* begin of the data */

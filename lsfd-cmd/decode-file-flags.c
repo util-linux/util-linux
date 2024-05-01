@@ -43,16 +43,7 @@
 
 #include <linux/fcntl.h>
 
-#include <stddef.h>		/* for size_t */
-struct ul_buffer;
-
-void lsfd_decode_file_flags(struct ul_buffer *buf, int flags);
-
-/* We cannot include buffer.h because buffer.h includes
- * /usr/include/fcntl.h indirectly. */
-extern int ul_buffer_is_empty(struct ul_buffer *buf);
-extern int ul_buffer_append_data(struct ul_buffer *buf, const char *data, size_t sz);
-extern int ul_buffer_append_string(struct ul_buffer *buf, const char *str);
+#include "decode-file-flags.h"
 
 void lsfd_decode_file_flags(struct ul_buffer *buf, int flags)
 {
