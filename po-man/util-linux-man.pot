@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2024-03-27 12:11+0100\n"
+"POT-Creation-Date: 2024-05-01 21:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -7564,7 +7564,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../libuuid/man/uuid_compare.3.adoc:50
-msgid "*int uuid_compare(uuid_t __uu1__, uuid_t __uu2__)*"
+msgid "*int uuid_compare(const uuid_t __uu1__, const uuid_t __uu2__)*"
 msgstr ""
 
 #. type: Plain text
@@ -7639,7 +7639,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../libuuid/man/uuid_copy.3.adoc:50
-msgid "*void uuid_copy(uuid_t __dst__, uuid_t __src__);*"
+msgid "*void uuid_copy(uuid_t __dst__, const uuid_t __src__);*"
 msgstr ""
 
 #. type: Plain text
@@ -7844,7 +7844,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../libuuid/man/uuid_is_null.3.adoc:50
-msgid "*int uuid_is_null(uuid_t __uu__);*"
+msgid "*int uuid_is_null(const uuid_t __uu__);*"
 msgstr ""
 
 #. type: Plain text
@@ -7906,8 +7906,9 @@ msgstr ""
 #: ../libuuid/man/uuid_parse.3.adoc:51
 #, no-wrap
 msgid ""
-"*int uuid_parse(char *__in__, uuid_t __uu__);*\n"
-"*int uuid_parse_range(char *__in_start__, char *__in_end__, uuid_t __uu__);*"
+"*int uuid_parse(const char *__in__, uuid_t __uu__);*\n"
+"*int uuid_parse_range(const char *__in_start__, const char *__in_end__, "
+"uuid_t __uu__);*"
 msgstr ""
 
 #. type: Plain text
@@ -7990,7 +7991,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../libuuid/man/uuid_time.3.adoc:50
-msgid "*time_t uuid_time(uuid_t __uu__, struct timeval *__ret_tv__)*"
+msgid "*time_t uuid_time(const uuid_t __uu__, struct timeval *__ret_tv__)*"
 msgstr ""
 
 #. type: Plain text
@@ -8064,9 +8065,9 @@ msgstr ""
 #: ../libuuid/man/uuid_unparse.3.adoc:52
 #, no-wrap
 msgid ""
-"*void uuid_unparse(uuid_t __uu__, char *__out__);*\n"
-"*void uuid_unparse_upper(uuid_t __uu__, char *__out__);*\n"
-"*void uuid_unparse_lower(uuid_t __uu__, char *__out__);*"
+"*void uuid_unparse(const uuid_t __uu__, char *__out__);*\n"
+"*void uuid_unparse_upper(const uuid_t __uu__, char *__out__);*\n"
+"*void uuid_unparse_lower(const uuid_t __uu__, char *__out__);*"
 msgstr ""
 
 #. type: Plain text
@@ -27780,9 +27781,9 @@ msgstr ""
 #. type: Plain text
 #: ../sys-utils/losetup.8.adoc:97
 msgid ""
-"Enable or disable direct I/O for the backing file. The optional argument can "
-"be either *on* or *off*. If the optional argument is omitted, it defaults to "
-"*on*."
+"Enable or disable direct I/O for the backing file. The default is "
+"*off*. Specifying either *--direct-io* or *--direct-io=on* will enable "
+"it. But, *--direct-io=off* can be provided to explicitly turn it off."
 msgstr ""
 
 #. type: Plain text

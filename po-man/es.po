@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-man 2.37-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2024-03-27 12:11+0100\n"
+"POT-Creation-Date: 2024-05-01 21:34+0200\n"
 "PO-Revision-Date: 2021-09-11 20:10+0200\n"
 "Last-Translator: Antonio Ceballos Roa <aceballos@gmail.com>\n"
 "Language-Team: Spanish <es@tp.org.es>\n"
@@ -8439,7 +8439,7 @@ msgstr "uuid_compare - compara si dos UUIDs son el mismo"
 #: ../libuuid/man/uuid_compare.3.adoc:50
 #, fuzzy
 #| msgid "*int uuid_compare(uuid_t __uu1__, uuid_t __uu2__)*\n"
-msgid "*int uuid_compare(uuid_t __uu1__, uuid_t __uu2__)*"
+msgid "*int uuid_compare(const uuid_t __uu1__, const uuid_t __uu2__)*"
 msgstr "*int uuid_compare(uuid_t __uu1__, uuid_t __uu2__)*\n"
 
 #. type: Plain text
@@ -8536,7 +8536,7 @@ msgstr "uuid_copy - copia un valor de UUID"
 #: ../libuuid/man/uuid_copy.3.adoc:50
 #, fuzzy
 #| msgid "*void uuid_copy(uuid_t __dst__, uuid_t __src__;*\n"
-msgid "*void uuid_copy(uuid_t __dst__, uuid_t __src__);*"
+msgid "*void uuid_copy(uuid_t __dst__, const uuid_t __src__);*"
 msgstr "*void uuid_copy(uuid_t __dst__, uuid_t __src__;*\n"
 
 #. type: Plain text
@@ -8781,7 +8781,7 @@ msgstr ""
 #: ../libuuid/man/uuid_is_null.3.adoc:50
 #, fuzzy
 #| msgid "*int uuid_is_null(uuid_t __uu__);*\n"
-msgid "*int uuid_is_null(uuid_t __uu__);*"
+msgid "*int uuid_is_null(const uuid_t __uu__);*"
 msgstr "*int uuid_is_null(uuid_t __uu__);*\n"
 
 #. type: Plain text
@@ -8863,8 +8863,8 @@ msgstr ""
 #: ../libuuid/man/uuid_parse.3.adoc:51
 #, no-wrap
 msgid ""
-"*int uuid_parse(char *__in__, uuid_t __uu__);*\n"
-"*int uuid_parse_range(char *__in_start__, char *__in_end__, uuid_t __uu__);*"
+"*int uuid_parse(const char *__in__, uuid_t __uu__);*\n"
+"*int uuid_parse_range(const char *__in_start__, const char *__in_end__, uuid_t __uu__);*"
 msgstr ""
 
 #. type: Plain text
@@ -8978,7 +8978,7 @@ msgstr ""
 #: ../libuuid/man/uuid_time.3.adoc:50
 #, fuzzy
 #| msgid "*time_t uuid_time(uuid_t __uu__, struct timeval *__ret_tv__)*\n"
-msgid "*time_t uuid_time(uuid_t __uu__, struct timeval *__ret_tv__)*"
+msgid "*time_t uuid_time(const uuid_t __uu__, struct timeval *__ret_tv__)*"
 msgstr "*time_t uuid_time(uuid_t __uu__, struct timeval *__ret_tv__)*\n"
 
 #. type: Plain text
@@ -9075,9 +9075,9 @@ msgstr ""
 #| "*void uuid_unparse_upper(uuid_t __uu__, char *__out__);* +\n"
 #| "*void uuid_unparse_lower(uuid_t __uu__, char *__out__);*\n"
 msgid ""
-"*void uuid_unparse(uuid_t __uu__, char *__out__);*\n"
-"*void uuid_unparse_upper(uuid_t __uu__, char *__out__);*\n"
-"*void uuid_unparse_lower(uuid_t __uu__, char *__out__);*"
+"*void uuid_unparse(const uuid_t __uu__, char *__out__);*\n"
+"*void uuid_unparse_upper(const uuid_t __uu__, char *__out__);*\n"
+"*void uuid_unparse_lower(const uuid_t __uu__, char *__out__);*"
 msgstr ""
 "*void uuid_unparse(uuid_t __uu__, char *__out__);* +\n"
 "*void uuid_unparse_upper(uuid_t __uu__, char *__out__);* +\n"
@@ -30784,9 +30784,9 @@ msgstr "*--direct-io*[**=on**|*off*]"
 #. type: Plain text
 #: ../sys-utils/losetup.8.adoc:97
 msgid ""
-"Enable or disable direct I/O for the backing file. The optional argument can "
-"be either *on* or *off*. If the optional argument is omitted, it defaults to "
-"*on*."
+"Enable or disable direct I/O for the backing file. The default is *off*. "
+"Specifying either *--direct-io* or *--direct-io=on* will enable it. But, *--"
+"direct-io=off* can be provided to explicitly turn it off."
 msgstr ""
 
 #. type: Plain text
