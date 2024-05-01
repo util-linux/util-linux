@@ -890,7 +890,7 @@ static void interpolate_missing_namespaces(struct lsns *ls, struct lsns_namespac
 	close(fd_missing);
 }
 
-static void read_related_namespaces(struct lsns *ls)
+static void connect_namespaces(struct lsns *ls)
 {
 	struct list_head *p;
 	struct lsns_namespace *orphan[2] = {NULL, NULL};
@@ -1011,7 +1011,7 @@ static int read_namespaces(struct lsns *ls)
 	read_persistent_namespaces(ls);
 
 	if (ls->tree == LSNS_TREE_OWNER || ls->tree == LSNS_TREE_PARENT)
-		read_related_namespaces(ls);
+		connect_namespaces(ls);
 #endif
 	list_sort(&ls->namespaces, cmp_namespaces, NULL);
 
