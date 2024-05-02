@@ -376,12 +376,9 @@ static int get_owner_ns_ino(int fd, ino_t *oino, int *ofd)
 static int get_ns_inos(struct path_cxt *pc, const char *nsname, ino_t *ino, ino_t *pino, ino_t *oino)
 {
 	struct stat st;
-	char path[16];
-
-	snprintf(path, sizeof(path), "ns/%s", nsname);
 
 	*ino = 0;
-	if (ul_path_stat(pc, &st, 0, path) != 0)
+	if (ul_path_statf(pc, &st, 0, "ns/%s", nsname) != 0)
 		return -errno;
 	*ino = st.st_ino;
 
@@ -391,7 +388,7 @@ static int get_ns_inos(struct path_cxt *pc, const char *nsname, ino_t *ino, ino_
 #ifdef USE_NS_GET_API
 	int r;
 	enum lsns_type lsns_type;
-	int fd = ul_path_open(pc, 0, path);
+	int fd = ul_path_openf(pc, 0, "ns/%s", nsname);
 	if (fd < 0)
 		return -errno;
 	lsns_type = ns_name2type(nsname);
@@ -575,7 +572,6 @@ static void read_opened_namespaces(struct lsns *ls, struct path_cxt *pc)
 {
 	DIR *sub = NULL;
 	struct dirent *d = NULL;
-	char path[sizeof("fd/") + sizeof(stringify_value(UINT64_MAX))];
 
 	while (ul_path_next_dirent(pc, &sub, "fd", &d) == 0) {
 		uint64_t num;
@@ -584,13 +580,11 @@ static void read_opened_namespaces(struct lsns *ls, struct path_cxt *pc)
 		if (ul_strtou64(d->d_name, &num, 10) != 0)	/* only numbers */
 			continue;
 
-		snprintf(path, sizeof(path), "fd/%ju", (uintmax_t) num);
-
-		if (ul_path_stat(pc, &st, 0, path) == 0
+		if (ul_path_statf(pc, &st, 0, "fd/%ju", (uintmax_t) num) == 0
 		    && st.st_dev == ls->nsfs_dev) {
 			if (get_namespace(ls, st.st_ino))
 				continue;
-			int fd = ul_path_open(pc, O_RDONLY, path);
+			int fd = ul_path_openf(pc, O_RDONLY, "fd/%ju", (uintmax_t) num);
 			if (fd >= 0) {
 				add_namespace_for_nsfd(ls, fd, st.st_ino);
 				close(fd);
