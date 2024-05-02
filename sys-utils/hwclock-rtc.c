@@ -505,7 +505,7 @@ int set_param_rtc(const struct hwclock_control *ctl, const char *opt0)
 	rtc_fd = open_rtc(ctl);
 	if (rtc_fd < 0) {
 		warnx(_("cannot open %s"), rtc_dev_name);
-		return 1;
+		goto done;
 	}
 
 	if (ioctl(rtc_fd, RTC_PARAM_SET, &param) == -1) {
