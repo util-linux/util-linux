@@ -546,9 +546,10 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 		cxt->syscall_status = 0;
 	}
 
-	if (org_type && rc != 0)
+	if (org_type && rc != 0) {
 		__mnt_fs_set_fstype_ptr(cxt->fs, org_type);
-	org_type  = NULL;
+		org_type  = NULL;
+	}
 
 	if (rc == 0 && try_type && cxt->update) {
 		struct libmnt_fs *fs = mnt_update_get_fs(cxt->update);
