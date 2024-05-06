@@ -6,10 +6,10 @@
 # Yuri Chornoivan <yurchor@ukr.net>, 2012-2023, 2024.
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.40-rc2\n"
+"Project-Id-Version: util-linux 2.40.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2024-05-01 21:34+0200\n"
-"PO-Revision-Date: 2024-03-01 23:33+0200\n"
+"POT-Creation-Date: 2024-05-01 21:49+0200\n"
+"PO-Revision-Date: 2024-05-02 09:12+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
-"X-Generator: Lokalize 23.04.1\n"
+"X-Generator: Lokalize 23.04.3\n"
 "Plural-Forms: nplurals=4; plural=n==1 ? 3 : n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
 #: disk-utils/addpart.c:25
@@ -9116,10 +9116,8 @@ msgid "     --output-all         output all columns\n"
 msgstr "     --output-all         вивести усі стовпчики\n"
 
 #: login-utils/lslogins.c:1461
-#, fuzzy
-#| msgid " -p, --pwd                display information related to login by password.\n"
 msgid " -p, --pwd                display information related to login by password\n"
-msgstr " -p, --pwd                вивести дані, пов'язані із входом за паролем.\n"
+msgstr " -p, --pwd                вивести дані, пов'язані із входом за паролем\n"
 
 #: login-utils/lslogins.c:1462 sys-utils/lsipc.c:317
 msgid " -r, --raw                display in raw mode\n"
@@ -11418,58 +11416,40 @@ msgid "cannot find process \"%s\""
 msgstr "не вдалося знайти процес «%s»"
 
 #: misc-utils/lastlog2.c:111
-#, fuzzy
-#| msgid " -b, --before DAYS       Print only records older than DAYS\n"
 msgid " -b, --before DAYS       print only records older than DAYS\n"
-msgstr " -b, --before ДНІ        Вивести лише записи, вік яких перевищує вказану кількість днів\n"
+msgstr " -b, --before ДНІ        вивести лише записи, вік яких перевищує вказану кількість днів\n"
 
 #: misc-utils/lastlog2.c:112
-#, fuzzy
-#| msgid " -C, --clear             Clear record of a user (requires -u)\n"
 msgid " -C, --clear             clear record of a user (requires -u)\n"
-msgstr " -C, --clear             Спорожнити запис користувача (потребує -u)\n"
+msgstr " -C, --clear             спорожнити запис користувача (потребує -u)\n"
 
 #: misc-utils/lastlog2.c:113
-#, fuzzy
-#| msgid " -d, --database FILE     Use FILE as lastlog2 database\n"
 msgid " -d, --database FILE     use FILE as lastlog2 database\n"
-msgstr " -d, --database ФАЙЛ     Використати ФАЙЛ як базу даних lastlog2\n"
+msgstr " -d, --database ФАЙЛ     використати ФАЙЛ як базу даних lastlog2\n"
 
 #: misc-utils/lastlog2.c:114
-#, fuzzy
-#| msgid " -i, --import FILE       Import data from old lastlog file\n"
 msgid " -i, --import FILE       import data from old lastlog file\n"
-msgstr " -i, --import ФАЙЛ       Імпортувати дані зі старого файла lastlog\n"
+msgstr " -i, --import ФАЙЛ       імпортувати дані зі старого файла lastlog\n"
 
 #: misc-utils/lastlog2.c:115
-#, fuzzy
-#| msgid " -r, --rename NEWNAME    Rename existing user to NEWNAME (requires -u)\n"
 msgid " -r, --rename NEWNAME    rename existing user to NEWNAME (requires -u)\n"
-msgstr " -r, --rename НОВА_НАЗВА Перейменувати наявного користувача на НОВА_НАЗВА (потребує -u)\n"
+msgstr " -r, --rename НОВА_НАЗВА перейменувати наявного користувача на НОВА_НАЗВА (потребує -u)\n"
 
 #: misc-utils/lastlog2.c:116
-#, fuzzy
-#| msgid " -s, --service           Display PAM service\n"
 msgid " -s, --service           display PAM service\n"
-msgstr " -s, --service           Вивести службу PAM\n"
+msgstr " -s, --service           вивести службу PAM\n"
 
 #: misc-utils/lastlog2.c:117
-#, fuzzy
-#| msgid " -S, --set               ySet lastlog record to current time (requires -u)\n"
 msgid " -S, --set               set lastlog record to current time (requires -u)\n"
-msgstr " -S, --set               Встановити для запису lastlog поточний момент часу (потребує -u)\n"
+msgstr " -S, --set               встановити для запису lastlog поточний момент часу (потребує -u)\n"
 
 #: misc-utils/lastlog2.c:118
-#, fuzzy
-#| msgid " -t, --time DAYS         Print only lastlog records more recent than DAYS\n"
 msgid " -t, --time DAYS         print only lastlog records more recent than DAYS\n"
-msgstr " -t, --time ДНІ         Вивести лише записи lastlog, вік яких не перевищує кількість ДНІв\n"
+msgstr " -t, --time ДНІ         вивести лише записи lastlog, вік яких не перевищує кількість ДНІв\n"
 
 #: misc-utils/lastlog2.c:119
-#, fuzzy
-#| msgid " -u, --user LOGIN        Print lastlog record of the specified LOGIN\n"
 msgid " -u, --user LOGIN        print lastlog record of the specified LOGIN\n"
-msgstr " -u, --user ЗАПИС       Вивести запис lastlog для вказаного облікового ЗАПИСУ\n"
+msgstr " -u, --user ЗАПИС       вивести запис lastlog для вказаного облікового ЗАПИСУ\n"
 
 #: misc-utils/lastlog2.c:166 misc-utils/lastlog2.c:199
 msgid "Cannot parse days"
@@ -12712,8 +12692,6 @@ msgid "user of the process"
 msgstr "користувач процесу"
 
 #: misc-utils/lsfd.c:413
-#, fuzzy
-#| msgid "extended version of MDOE (rwxD[Ll]m)"
 msgid "extended version of MODE (rwxD[Ll]m)"
 msgstr "розширена версія РЕЖИМу (rwxD[Ll]m)"
 
@@ -12987,10 +12965,8 @@ msgid "PID of the process blocking the lock"
 msgstr "PID процесу, який утримує блокування"
 
 #: misc-utils/lslocks.c:92
-#, fuzzy
-#| msgid "owner of the file"
 msgid "holders of the lock"
-msgstr "власник файла"
+msgstr "утримувачі блокування"
 
 #: misc-utils/lslocks.c:286
 #, c-format
@@ -13828,8 +13804,7 @@ msgid "no PIDs specified"
 msgstr "не вказано PID"
 
 #: misc-utils/waitpid.c:239
-#, fuzzy, c-format
-#| msgid "can't want for %zu of %zu PIDs"
+#, c-format
 msgid "can't wait for %zu of %zu PIDs"
 msgstr "не вдалося дочекатися %zu з %zu PID"
 
@@ -17718,8 +17693,6 @@ msgstr ""
 "\n"
 
 #: sys-utils/irqtop.c:180
-#, fuzzy
-#| msgid "cannot not create timerfd"
 msgid "cannot create timerfd"
 msgstr "не вдалося створити timerfd"
 
@@ -17740,8 +17713,6 @@ msgid "sigprocmask failed"
 msgstr "помилка sigprocmask"
 
 #: sys-utils/irqtop.c:200
-#, fuzzy
-#| msgid "cannot not create signalfd"
 msgid "cannot create signalfd"
 msgstr "не вдалося створити signalfd"
 
@@ -20822,10 +20793,8 @@ msgid " --euid <uid|user>           set effective uid\n"
 msgstr " --euid <uid|користувач>    встановити ефективний uid\n"
 
 #: sys-utils/setpriv.c:135
-#, fuzzy
-#| msgid " --rgid <gid|user>           set real gid\n"
 msgid " --rgid <gid|group>          set real gid\n"
-msgstr " --rgid <gid|користувач>     встановити справжній gid\n"
+msgstr " --rgid <gid|група>         встановити справжній gid\n"
 
 #: sys-utils/setpriv.c:136
 msgid " --egid <gid|group>          set effective gid\n"
@@ -22729,10 +22698,8 @@ msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <рядок> встановити рядок ініціалізації\n"
 
 #: term-utils/agetty.c:2467
-#, fuzzy
-#| msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgid " -J, --noclear              do not clear the screen before prompt\n"
-msgstr " -J  --noclear              не спорожняти екран перед надсиланням запиту\n"
+msgstr " -J, --noclear              не спорожняти екран перед надсиланням запиту\n"
 
 #: term-utils/agetty.c:2468
 msgid " -l, --login-program <file> specify login program\n"
@@ -22751,8 +22718,6 @@ msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login           не просити про вхід до системи\n"
 
 #: term-utils/agetty.c:2472
-#, fuzzy
-#| msgid " -N  --nonewline            do not print a newline before issue\n"
 msgid " -N, --nonewline            do not print a newline before issue\n"
 msgstr " -N, --nonewline            не виводити символ нового рядка до issue\n"
 
