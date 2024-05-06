@@ -6,10 +6,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.40-rc2\n"
+"Project-Id-Version: util-linux 2.40.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2024-05-01 21:34+0200\n"
-"PO-Revision-Date: 2024-03-12 19:48+0100\n"
+"POT-Creation-Date: 2024-05-01 21:49+0200\n"
+"PO-Revision-Date: 2024-05-05 19:28+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "Language: pl\n"
@@ -9113,10 +9113,8 @@ msgid "     --output-all         output all columns\n"
 msgstr "     --output-all         wypisanie wszystkich kolumn\n"
 
 #: login-utils/lslogins.c:1461
-#, fuzzy
-#| msgid " -p, --pwd                display information related to login by password.\n"
 msgid " -p, --pwd                display information related to login by password\n"
-msgstr " -p, --pwd                wypisanie informacji związanych z logowaniem hasłem.\n"
+msgstr " -p, --pwd                wypisanie informacji związanych z logowaniem hasłem\n"
 
 #: login-utils/lslogins.c:1462 sys-utils/lsipc.c:317
 msgid " -r, --raw                display in raw mode\n"
@@ -11417,58 +11415,40 @@ msgid "cannot find process \"%s\""
 msgstr "nie znaleziono procesu \"%s\""
 
 #: misc-utils/lastlog2.c:111
-#, fuzzy
-#| msgid " -b, --before DAYS       Print only records older than DAYS\n"
 msgid " -b, --before DAYS       print only records older than DAYS\n"
-msgstr " -b, --before DNI        Wypisanie tylko rekordów starszych niż DNI\n"
+msgstr " -b, --before DNI        wypisanie tylko rekordów starszych niż DNI\n"
 
 #: misc-utils/lastlog2.c:112
-#, fuzzy
-#| msgid " -C, --clear             Clear record of a user (requires -u)\n"
 msgid " -C, --clear             clear record of a user (requires -u)\n"
-msgstr " -C, --clear             Wyczyszczenie rekordu użytkownika (wymaga -u)\n"
+msgstr " -C, --clear             wyczyszczenie rekordu użytkownika (wymaga -u)\n"
 
 #: misc-utils/lastlog2.c:113
-#, fuzzy
-#| msgid " -d, --database FILE     Use FILE as lastlog2 database\n"
 msgid " -d, --database FILE     use FILE as lastlog2 database\n"
-msgstr " -d, --database PLIK     Użycie PLIKU jako bazy danych lastlog2\n"
+msgstr " -d, --database PLIK     użycie PLIKU jako bazy danych lastlog2\n"
 
 #: misc-utils/lastlog2.c:114
-#, fuzzy
-#| msgid " -i, --import FILE       Import data from old lastlog file\n"
 msgid " -i, --import FILE       import data from old lastlog file\n"
-msgstr " -i, --import PLIK       Import danych ze starego pliku lastlog\n"
+msgstr " -i, --import PLIK       import danych ze starego pliku lastlog\n"
 
 #: misc-utils/lastlog2.c:115
-#, fuzzy
-#| msgid " -r, --rename NEWNAME    Rename existing user to NEWNAME (requires -u)\n"
 msgid " -r, --rename NEWNAME    rename existing user to NEWNAME (requires -u)\n"
-msgstr " -r, --rename NOWA       Zmiana nazwy istniejącego użytkownika na NOWĄ (wymaga -u)\n"
+msgstr " -r, --rename NOWA       zmiana nazwy istniejącego użytkownika na NOWĄ (wymaga -u)\n"
 
 #: misc-utils/lastlog2.c:116
-#, fuzzy
-#| msgid " -s, --service           Display PAM service\n"
 msgid " -s, --service           display PAM service\n"
-msgstr " -s, --service           Wyświetlanie usługi PAM\n"
+msgstr " -s, --service           wyświetlanie usługi PAM\n"
 
 #: misc-utils/lastlog2.c:117
-#, fuzzy
-#| msgid " -S, --set               ySet lastlog record to current time (requires -u)\n"
 msgid " -S, --set               set lastlog record to current time (requires -u)\n"
-msgstr " -S, --set               Ustawienie rekordu lastlog na czas bieżący (wymaga -u)\n"
+msgstr " -S, --set               ustawienie rekordu lastlog na czas bieżący (wymaga -u)\n"
 
 #: misc-utils/lastlog2.c:118
-#, fuzzy
-#| msgid " -t, --time DAYS         Print only lastlog records more recent than DAYS\n"
 msgid " -t, --time DAYS         print only lastlog records more recent than DAYS\n"
-msgstr " -t, --time DNI          Wypisanie tylko rekordów lastlog nowszych niż DNI\n"
+msgstr " -t, --time DNI          wypisanie tylko rekordów lastlog nowszych niż DNI\n"
 
 #: misc-utils/lastlog2.c:119
-#, fuzzy
-#| msgid " -u, --user LOGIN        Print lastlog record of the specified LOGIN\n"
 msgid " -u, --user LOGIN        print lastlog record of the specified LOGIN\n"
-msgstr " -u, --user LOGIN        Wypisanie rekordów lastlog dla podanego LOGINU\n"
+msgstr " -u, --user LOGIN        wypisanie rekordów lastlog dla podanego LOGINU\n"
 
 #: misc-utils/lastlog2.c:166 misc-utils/lastlog2.c:199
 msgid "Cannot parse days"
@@ -12714,8 +12694,6 @@ msgid "user of the process"
 msgstr "użytkownik procesu"
 
 #: misc-utils/lsfd.c:413
-#, fuzzy
-#| msgid "extended version of MDOE (rwxD[Ll]m)"
 msgid "extended version of MODE (rwxD[Ll]m)"
 msgstr "rozszerzona wersja TRYBU (rwxD[Ll]m)"
 
@@ -12989,10 +12967,8 @@ msgid "PID of the process blocking the lock"
 msgstr "PID procesu trzymającego blokadę"
 
 #: misc-utils/lslocks.c:92
-#, fuzzy
-#| msgid "owner of the file"
 msgid "holders of the lock"
-msgstr "właściciel pliku"
+msgstr "posiadacze blokady"
 
 #: misc-utils/lslocks.c:286
 #, c-format
@@ -13825,8 +13801,7 @@ msgid "no PIDs specified"
 msgstr "nie podano PIDów"
 
 #: misc-utils/waitpid.c:239
-#, fuzzy, c-format
-#| msgid "can't want for %zu of %zu PIDs"
+#, c-format
 msgid "can't wait for %zu of %zu PIDs"
 msgstr "nie można oczekiwać na %zu z %zu PIDów"
 
@@ -17713,8 +17688,6 @@ msgstr ""
 "\n"
 
 #: sys-utils/irqtop.c:180
-#, fuzzy
-#| msgid "cannot not create timerfd"
 msgid "cannot create timerfd"
 msgstr "nie można utworzyć timerfd"
 
@@ -17735,8 +17708,6 @@ msgid "sigprocmask failed"
 msgstr "sigprocmask nie powiodło się"
 
 #: sys-utils/irqtop.c:200
-#, fuzzy
-#| msgid "cannot not create signalfd"
 msgid "cannot create signalfd"
 msgstr "nie można utworzyć signalfd"
 
@@ -20814,8 +20785,6 @@ msgid " --euid <uid|user>           set effective uid\n"
 msgstr " --euid <uid|użytkownik>     ustawienie uidu efektywnego\n"
 
 #: sys-utils/setpriv.c:135
-#, fuzzy
-#| msgid " --rgid <gid|user>           set real gid\n"
 msgid " --rgid <gid|group>          set real gid\n"
 msgstr " --rgid <gid|grupa>          ustawienie gidu rzeczywistego\n"
 
@@ -22722,10 +22691,8 @@ msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <łańcuch>  podanie łańcucha inicjującego\n"
 
 #: term-utils/agetty.c:2467
-#, fuzzy
-#| msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgid " -J, --noclear              do not clear the screen before prompt\n"
-msgstr " -J  --noclear                bez czyszczenia ekranu przed wypisaniem zachęty\n"
+msgstr " -J, --noclear                bez czyszczenia ekranu przed wypisaniem zachęty\n"
 
 #: term-utils/agetty.c:2468
 msgid " -l, --login-program <file> specify login program\n"
@@ -22744,10 +22711,8 @@ msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login             bez pytania o nazwę logowania\n"
 
 #: term-utils/agetty.c:2472
-#, fuzzy
-#| msgid " -N  --nonewline            do not print a newline before issue\n"
 msgid " -N, --nonewline            do not print a newline before issue\n"
-msgstr " -N  --nonewline              bez wypisywania znaku nowej linii przed issue\n"
+msgstr " -N, --nonewline              bez wypisywania znaku nowej linii przed issue\n"
 
 #: term-utils/agetty.c:2473
 msgid " -o, --login-options <opts> options that are passed to login\n"
@@ -24403,6 +24368,3 @@ msgstr "problem z odczytem terminfo"
 #, c-format
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr "terminal `%s' jest nieznany, użycie domyślnego `dumb'"
-
-#~ msgid "HOLDERS of the lock"
-#~ msgstr "WŁAŚCICIELE blokady"
