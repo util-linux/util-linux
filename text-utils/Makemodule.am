@@ -1,3 +1,11 @@
+if BUILD_BITS
+usrbin_exec_PROGRAMS += bits
+MANPAGES += text-utils/bits.1
+dist_noinst_DATA += text-utils/bits.1.adoc
+bits_SOURCES = text-utils/bits.c
+bits_LDADD = $(LDADD) libcommon.la
+endif
+
 if BUILD_COL
 usrbin_exec_PROGRAMS += col
 MANPAGES += text-utils/col.1
@@ -105,4 +113,3 @@ test_more_CFLAGS = -DTEST_PROGRAM $(more_CFLAGS)
 test_more_LDADD = $(more_LDADD)
 
 endif # BUILD_MORE
-

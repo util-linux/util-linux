@@ -1199,6 +1199,20 @@ endif
 
 ############################################################
 
+opt = not get_option('build-bits').disabled()
+exe = executable(
+  'bits',
+  bits_sources,
+  include_directories : includes,
+  link_with : lib_common,
+  install_dir : usrbin_exec_dir,
+  install : true)
+if opt and not is_disabler(exe)
+exes += exe
+manadocs += ['text-utils/bits.1.adoc']
+bashcompletions += ['bits']
+endif
+
 opt = not get_option('build-col').require(is_glibc).disabled()
 exe = executable(
   'col',

@@ -76,6 +76,7 @@ ylwrap
 #
 /addpart
 /agetty
+/bits
 /build*/
 /blkdiscard
 /blkid

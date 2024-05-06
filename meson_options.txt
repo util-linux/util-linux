@@ -75,6 +75,8 @@ option('build-script', type : 'feature',
        description : 'build script')
 option('build-scriptutils', type : 'feature',
        description : 'build scriptutils')
+option('build-bits', type : 'feature',
+       description : 'build bits')
 option('build-col', type : 'feature',
        description : 'build col')
 option('build-colcrt', type : 'feature',

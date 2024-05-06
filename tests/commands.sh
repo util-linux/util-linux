@@ -66,6 +66,7 @@ TS_HELPER_TIMEUTILS="${ts_helpersdir}test_timeutils"
 # paths to commands
 TS_CMD_ADDPART=${TS_CMD_ADDPART:-"${ts_commandsdir}addpart"}
 TS_CMD_DELPART=${TS_CMD_DELPART:-"${ts_commandsdir}delpart"}
+TS_CMD_BITS=${TS_CMD_BITS-"${ts_commandsdir}bits"}
 TS_CMD_BLKDISCARD=${TS_CMD_BLKID-"${ts_commandsdir}blkdiscard"}
 TS_CMD_BLKID=${TS_CMD_BLKID-"${ts_commandsdir}blkid"}
 TS_CMD_CAL=${TS_CMD_CAL-"${ts_commandsdir}cal"}
