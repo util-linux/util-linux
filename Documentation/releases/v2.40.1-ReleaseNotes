@@ -8,6 +8,8 @@ README.licensing/flock:
    - Add MIT license mention  [Richard Purdie]
 agetty:
    - Don't override TERM passed by the user  [Daan De Meyer]
+   - fix resource leak  [Karel Zak]
+   - make reload code more robust  [Karel Zak]
 all_syscalls:
    - don't hardcode AWK invocation  [Thomas Weißschuh]
    - don't warn during cleanup  [Thomas Weißschuh]
@@ -17,13 +19,25 @@ autotools:
    - distribute pam_lastlog2/meson.build  [Thomas Weißschuh]
 bcachefs:
    - Remove BCACHEFS_SB_MAX_SIZE & check  [Tony Asleson]
+build-sys:
+   - release++ (v2.40.1-rc1)  [Karel Zak]
+cal:
+   - use unsigned int to follow union with unsigned int  [Karel Zak]
 docs:
    - add COPYING.MIT  [Karel Zak]
    - fix GPL name typo  [Karel Zak]
    - update AUTHORS file  [Karel Zak]
+   - update v2.40.1-ReleaseNotes  [Karel Zak]
 findmnt:
    - always zero-terminate SOURCES data  [Thomas Weißschuh]
    - revise the code for -I and -D option  [Masatake YAMATO]
+fsck.minix:
+   - fix possible overrun  [Karel Zak]
+getopt:
+   - remove free-before-exit  [Karel Zak]
+hwclock:
+   - free temporary variable before return  [Karel Zak]
+   - initialize parser variables  [Karel Zak]
 lastlog2:
    - begin descriptions of options with a lowercase letter  [Benno Schulenberg]
 lib/pager:
@@ -31,9 +45,12 @@ libblkid:
    - Fix segfault when blkid.conf doesn't exist  [Karel Zak]
    - topology/ioctl  correctly handle kernel types  [Thomas Weißschuh]
    - topology/ioctl  simplify ioctl handling  [Thomas Weißschuh]
+libfdisk:
+   - add initializer to geometry  [Karel Zak]
 libmount:
    - Fix access check for utab in context  [Karel Zak]
    - fix comment typo for mnt_fs_get_comment()  [Tianjia Zhang]
+   - fix possible memory leak  [Karel Zak]
    - fix umount --read-only  [Karel Zak]
 libsmartcols:
    - fix column reduction  [Karel Zak]
@@ -44,6 +61,8 @@ losetup:
    - losetup.8 Clarify --direct-io  [Colin Walters]
 lsblk:
    - simplify SOURCES code  [Karel Zak]
+lsclocks:
+   - fix FD leak  [Karel Zak]
 lsfd:
    - (man) fix license name  [Jakub Wilk]
    - add LSFD_DEBUG env var for debugging  [Masatake YAMATO]
@@ -94,8 +113,19 @@ pam_lastlog2:
    - link against liblastlog  [Thomas Weißschuh]
 po:
    - merge changes  [Karel Zak]
+   - update cs.po (from translationproject.org)  [Petr Písař]
+   - update fr.po (from translationproject.org)  [Frédéric Marchal]
+   - update hr.po (from translationproject.org)  [Božidar Putanec]
+   - update ja.po (from translationproject.org)  [Takeshi Hamasaki]
+   - update ko.po (from translationproject.org)  [Seong-ho Cho]
+   - update pl.po (from translationproject.org)  [Jakub Bogusz]
+   - update ro.po (from translationproject.org)  [Remus-Gabriel Chelu]
+   - update uk.po (from translationproject.org)  [Yuri Chornoivan]
 po-man:
    - merge changes  [Karel Zak]
+   - update de.po (from translationproject.org)  [Mario Blättermann]
+   - update ko.po (from translationproject.org)  [Seong-ho Cho]
+   - update ro.po (from translationproject.org)  [Remus-Gabriel Chelu]
 strutils.h:
    - Include strings.h header for strncasecmp function  [Jordan Williams]
 tests:
@@ -105,5 +135,9 @@ tests:
    - (test_mkfds  sockdiag) verify the recieved message to detect whether the socket is usable or not  [Masatake YAMATO]
 textual:
    - fix some typos and inconsistencies in usage and error messages  [Benno Schulenberg]
+wall:
+   - check sysconf() returnvalue  [Karel Zak]
+   - fix possible memory leak  [Karel Zak]
+   - make sure unsigned variable not underflow  [Karel Zak]
 xalloc.h:
    - Include stdio.h header for vasprintf function  [Jordan Williams]
