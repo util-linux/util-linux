@@ -30,6 +30,8 @@
 #include <sys/time.h>
 #include <termios.h>
 #include <fcntl.h>
+#include <wchar.h>
+#include <stdbool.h>
 
 #include "c.h"
 #include "xalloc.h"
@@ -149,12 +151,14 @@ int
 main(int argc, char *argv[])
 {
 	static const struct timeval mindelay = { .tv_sec = 0, .tv_usec = 100 };
+	static const struct timeval inputDelay = { .tv_sec = 0, .tv_usec = 100000 };
 	struct timeval maxdelay;
 
 	int isterm;
 	int saved_flag;
 	struct termios saved;
 
+	wint_t c;
 	struct replay_setup *setup = NULL;
 	struct replay_step *step = NULL;
 	char streams[6] = {0};		/* IOSI - in, out, signal,info */
@@ -318,6 +322,19 @@ main(int argc, char *argv[])
 	isterm = setterm(&saved, &saved_flag);
 
 	do {
+		c = fgetwc(stdin);
+		switch (c) {
+			case ' ':
+				replay_toggle_pause(setup);
+				break;
+		}
+
+		if (replay_get_is_paused(setup))
+		{
+			delay_for(&inputDelay);
+			continue;
+		}
+		
 		rc = replay_get_next_step(setup, streams, &step);
 		if (rc)
 			break;
