@@ -88,7 +88,7 @@ getnum(const char *s)
 }
 
 static void
-delay_for(struct timeval *delay)
+delay_for(const struct timeval *delay)
 {
 #ifdef HAVE_NANOSLEEP
 	struct timespec ts, remainder;
