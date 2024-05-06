@@ -29,6 +29,7 @@
 #include <getopt.h>
 #include <sys/time.h>
 #include <termios.h>
+#include <fcntl.h>
 
 #include "c.h"
 #include "xalloc.h"
@@ -122,9 +123,14 @@ appendchr(char *buf, size_t bufsz, int c)
 }
 
 static int
-setterm(struct termios *backup)
+setterm(struct termios *backup, int *saved_flag)
 {
 	struct termios tattr;
+
+	*saved_flag = fcntl(STDIN_FILENO, F_GETFL);
+	if (*saved_flag == -1)
+		err(EXIT_FAILURE, _("unexpected fcntl failure"));
+	fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);
 
 	if (tcgetattr(STDOUT_FILENO, backup) != 0) {
 		if (errno != ENOTTY) /* For debugger. */
@@ -146,6 +152,7 @@ main(int argc, char *argv[])
 	struct timeval maxdelay;
 
 	int isterm;
+	int saved_flag;
 	struct termios saved;
 
 	struct replay_setup *setup = NULL;
@@ -308,7 +315,7 @@ main(int argc, char *argv[])
 		replay_set_delay_max(setup, &maxdelay);
 	replay_set_delay_min(setup, &mindelay);
 
-	isterm = setterm(&saved);
+	isterm = setterm(&saved, &saved_flag);
 
 	do {
 		rc = replay_get_next_step(setup, streams, &step);
@@ -325,7 +332,10 @@ main(int argc, char *argv[])
 	} while (rc == 0);
 
 	if (isterm)
+	{
+		fcntl(STDIN_FILENO, F_SETFL, &saved_flag);
 		tcsetattr(STDOUT_FILENO, TCSADRAIN, &saved);
+	}
 
 	if (step && rc < 0)
 		err(EXIT_FAILURE, _("%s: log file error"), replay_step_get_filename(step));
