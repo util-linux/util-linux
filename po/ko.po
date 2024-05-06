@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.40-rc2\n"
+"Project-Id-Version: util-linux 2.40.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2024-05-01 21:34+0200\n"
-"PO-Revision-Date: 2024-03-03 14:19+0900\n"
+"POT-Creation-Date: 2024-05-01 21:49+0200\n"
+"PO-Revision-Date: 2024-05-04 10:45+0900\n"
 "Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
 "Language-Team: Korean <translation-team-ko@googlegroups.com>\n"
 "Language: ko\n"
@@ -79,7 +79,7 @@ msgstr "불충분한 인자"
 #: text-utils/rev.c:165 text-utils/ul.c:637
 #, c-format
 msgid "cannot open %s"
-msgstr "%s을(를) 열 수 없음"
+msgstr "%s을(를) 열 수 없습니다"
 
 #: disk-utils/addpart.c:70 disk-utils/delpart.c:71 disk-utils/resizepart.c:111
 msgid "invalid partition number argument"
@@ -171,7 +171,7 @@ msgstr "파일 시스템 readahead 값 확인"
 
 #: disk-utils/blockdev.c:187
 msgid "get disk sequence number"
-msgstr "디스크 순차 번호를 가져옵니다"
+msgstr "디스크 순차 번호 확인"
 
 #: disk-utils/blockdev.c:194
 msgid "get zone size"
@@ -193,7 +193,7 @@ msgid ""
 " %1$s -h|-V\n"
 msgstr ""
 " %1$s [-v|-q] <명령> <장치>\n"
-" %1$s --report [<장치>]\n"
+" %1$s --report [장치]\n"
 " %1$s -h|-V\n"
 
 #: disk-utils/blockdev.c:219
@@ -233,7 +233,7 @@ msgstr "지정한 장치가 없습니다"
 #: disk-utils/blockdev.c:352
 #, c-format
 msgid "get size in 512-byte sectors: "
-msgstr "가져온 512 바이트 단위 섹터 크기:"
+msgstr "가져온 512 바이트 단위 섹터 크기: "
 
 #: disk-utils/blockdev.c:357
 msgid "could not get device size"
@@ -599,7 +599,7 @@ msgstr "참고: 모든 명령을 위 아래 화살표로 입력할 수 있습니
 
 #: disk-utils/cfdisk.c:2282
 msgid "case letters (except for Write)."
-msgstr "case letters (except for Write)."
+msgstr "대소문자 구분 문자입니다(기록시 예외)."
 
 #: disk-utils/cfdisk.c:2284
 msgid "Use lsblk(8) or partx(8) to see more details about the device."
@@ -707,7 +707,7 @@ msgstr "장치를 사용 중입니다. 분할 영역 재배치는 별로 좋은 
 #: disk-utils/cfdisk.c:2725
 #, c-format
 msgid " %1$s [options] <disk>\n"
-msgstr " %1$s [<옵션>] <디스크>\n"
+msgstr " %1$s [옵션] <디스크>\n"
 
 #: disk-utils/cfdisk.c:2728 disk-utils/fdisk.c:952 disk-utils/sfdisk.c:2044
 msgid "Display or manipulate a disk partition table.\n"
@@ -725,7 +725,7 @@ msgstr " -z, --zero               빈 분할 영역 배치로 시작합니다\n"
 #: disk-utils/cfdisk.c:2737
 #, c-format
 msgid "     --lock[=<mode>]      use exclusive device lock (%s, %s or %s)\n"
-msgstr "     --lock[=<mode>]      장치 동시 접근 방지 잠금을 사용합니다 (%s, %s, %s)\n"
+msgstr "     --lock[=<모드>]      장치 동시 접근 방지 잠금을 사용합니다 (%s, %s, %s)\n"
 
 #: disk-utils/cfdisk.c:2738
 msgid " -r, --read-only          forced open cfdisk in read-only mode\n"
@@ -791,7 +791,7 @@ msgstr ""
 #: sys-utils/blkpr.c:213 sys-utils/tunelp.c:95
 #, c-format
 msgid " %s [options] <device>\n"
-msgstr " %s [<옵션>] <장치>\n"
+msgstr " %s [옵션] <장치>\n"
 
 #: disk-utils/fdformat.c:159
 msgid "Do a low-level formatting of a floppy disk.\n"
@@ -803,7 +803,7 @@ msgstr " -f, --from <숫자>    <숫자>번 트랙에서 시작 (기본값: 0)\n
 
 #: disk-utils/fdformat.c:163
 msgid " -t, --to <N>      stop at the track N\n"
-msgstr " -t, --to <N>      <숫자>번 트랙에서 정지\n"
+msgstr " -t, --to <숫자>   <숫자>번 트랙에서 정지\n"
 
 #: disk-utils/fdformat.c:164
 msgid ""
@@ -1052,8 +1052,8 @@ msgid ""
 " %1$s [options] <disk>         change partition table\n"
 " %1$s [options] -l [<disk>...] list partition table(s)\n"
 msgstr ""
-" %1$s [<옵션>] <디스크>         분할 영역 배치 바꿈\n"
-" %1$s [<옵션>] -l [<디스크>...] 분할 영역 배치 조회\n"
+" %1$s [옵션] <디스크>         분할 영역 배치 바꿈\n"
+" %1$s [옵션] -l [디스크 ...] 분할 영역 배치 조회\n"
 
 #: disk-utils/fdisk.c:955
 msgid " -b, --sector-size <size>      physical and logical sector size\n"
@@ -1107,7 +1107,7 @@ msgstr "     --bytes                   가독성 형식이 아닌 바이트 단�
 #: disk-utils/fdisk.c:972
 #, c-format
 msgid "     --lock[=<mode>]           use exclusive device lock (%s, %s or %s)\n"
-msgstr "     --lock[=<mode>]           장치 동시 접근 방지 잠금 활용 (%s, %s, %s)\n"
+msgstr "     --lock[=<모드>]           장치 동시 접근 방지 잠금 활용 (%s, %s, %s)\n"
 
 #: disk-utils/fdisk.c:974
 #, c-format
@@ -1959,7 +1959,7 @@ msgstr "--대기-- (%d회 성공)\n"
 #: disk-utils/fsck.c:1396
 #, c-format
 msgid " %s [options] -- [fs-options] [<filesystem> ...]\n"
-msgstr " %s [<옵션>] -- [<파일시스템-옵션>] [<파일시스템> ...]\n"
+msgstr " %s [옵션] -- [파일시스템-옵션] [파일시스템 ...]\n"
 
 #: disk-utils/fsck.c:1400
 msgid "Check and repair a Linux filesystem.\n"
@@ -1971,7 +1971,7 @@ msgstr " -A             모든 파일 시스템 검사\n"
 
 #: disk-utils/fsck.c:1404
 msgid " -C [<fd>]  display progress bar; file descriptor is for GUIs\n"
-msgstr " -C [<파일서술자>]  진행 표시줄 표시. <파일서술자>는 GUI용\n"
+msgstr " -C [파일서술자]    진행 표시줄 표시. <파일서술자>는 GUI용\n"
 
 #: disk-utils/fsck.c:1405
 msgid " -l         lock the device to guarantee exclusive access\n"
@@ -1998,8 +1998,8 @@ msgid ""
 " -r [<fd>]  report statistics for each device checked;\n"
 "            file descriptor is for GUIs\n"
 msgstr ""
-" -r [<파일서술자>]  검사한 각 장치의 통계를 보고합니다.\n"
-"                <파일서술자>는 GUI용\n"
+" -r [파일서술자]  검사한 각 장치의 통계를 보고합니다.\n"
+"                <파일서술자>는 GUI용입니다\n"
 
 #: disk-utils/fsck.c:1412
 msgid " -s         serialize the checking operations\n"
@@ -2074,7 +2074,7 @@ msgstr "-l 옵션은 하나의 장치에만 활용할 수 있습니다 -- 무시
 #: disk-utils/fsck.cramfs.c:119
 #, c-format
 msgid " %s [options] <file>\n"
-msgstr " %s [<옵션>] <파일>\n"
+msgstr " %s [옵션] <파일>\n"
 
 #: disk-utils/fsck.cramfs.c:122
 msgid "Check and repair a compressed ROM filesystem.\n"
@@ -2821,7 +2821,7 @@ msgstr "섹터 수: %d, 섹터 크기: %d\n"
 #: disk-utils/isosize.c:106
 #, c-format
 msgid " %s [options] <iso9660_image_file> ...\n"
-msgstr " %s [<옵션>] <iso9660_이미지_파일> ...\n"
+msgstr " %s [옵션] <iso9660_이미지_파일> ...\n"
 
 #: disk-utils/isosize.c:110
 msgid "Show the length of an ISO-9660 filesystem.\n"
@@ -2842,7 +2842,7 @@ msgstr "부적절한 제수 인자"
 #: disk-utils/mkfs.bfs.c:83
 #, c-format
 msgid "Usage: %s [options] device [block-count]\n"
-msgstr "사용법: %s [<옵션>] <장치> [<블록-갯수>]\n"
+msgstr "사용법: %s [옵션] <장치> [블록-갯수]\n"
 
 #: disk-utils/mkfs.bfs.c:87
 msgid "Make an SCO bfs filesystem.\n"
@@ -2978,7 +2978,7 @@ msgstr "%s 닫기 오류"
 #: disk-utils/mkfs.c:52
 #, c-format
 msgid " %s [options] [-t <type>] [fs-options] <device> [<size>]\n"
-msgstr " %s [<옵션>] [-t <형식>] [<파일시스템-옵션>] <장치> [<크기>]\n"
+msgstr " %s [옵션] [-t 형식] [파일시스템-옵션] <장치> [크기]\n"
 
 #: disk-utils/mkfs.c:56
 msgid "Make a Linux filesystem.\n"
@@ -3023,7 +3023,7 @@ msgstr "%s 실행 실패"
 #: disk-utils/mkfs.cramfs.c:131
 #, c-format
 msgid " %s [-h] [-v] [-b blksize] [-e edition] [-N endian] [-i file] [-n name] dirname outfile\n"
-msgstr " %s [-h] [-v] [-b <블록크기>] [-e <에디션>] [-N <엔디안>] [-i <파일>] [-n <이름>] <디렉터리이름> <출력파일>\n"
+msgstr " %s [-h] [-v] [-b 블록크기] [-e 에디션] [-N 엔디안] [-i 파일] [-n 이름] <디렉터리이름> <출력파일>\n"
 
 #: disk-utils/mkfs.cramfs.c:134
 msgid "Make compressed ROM file system."
@@ -3204,7 +3204,7 @@ msgstr ""
 #: disk-utils/mkfs.minix.c:143
 #, c-format
 msgid " %s [options] /dev/name [blocks]\n"
-msgstr " %s [<옵션>] /dev/<이름> [<블록>]\n"
+msgstr " %s [옵션] /dev/<이름> [블록]\n"
 
 #: disk-utils/mkfs.minix.c:145
 msgid " -1                      use Minix version 1\n"
@@ -3449,7 +3449,7 @@ msgstr "UUID 없음\n"
 #: disk-utils/mkswap.c:192
 #, c-format
 msgid " %s [options] device [size]\n"
-msgstr " %s [<옵션>] <장치> [<크기>]\n"
+msgstr " %s [옵션] <장치> [크기]\n"
 
 #: disk-utils/mkswap.c:195
 msgid "Set up a Linux swap area.\n"
@@ -4701,12 +4701,12 @@ msgid ""
 " %1$s [options] <dev> [[-N] <part>]\n"
 " %1$s [options] <command>\n"
 msgstr ""
-" %1$s [<옵션>] <장치> [[-N] <분할영역>]\n"
-" %1$s [<옵션>] <명령>\n"
+" %1$s [옵션] <장치> [[-N] 분할영역]\n"
+" %1$s [옵션] <명령>\n"
 
 #: disk-utils/sfdisk.c:2047
 msgid " -A, --activate <dev> [<part> ...] list or set bootable (P)MBR partitions\n"
-msgstr " -A, --activate <장치> [<분할영역> ...] (P)MBR 분할 영역의 부팅 여부를 나타내거나 설정합니다\n"
+msgstr " -A, --activate <장치> [분할영역 ...]   (P)MBR 분할 영역의 부팅 여부를 나타내거나 설정합니다\n"
 
 #: disk-utils/sfdisk.c:2048
 msgid " -d, --dump <dev>                  dump partition table (usable for later input)\n"
@@ -4722,15 +4722,15 @@ msgstr " -b, --backup-pt-sectors <장치>     이진 분할 영역 배치 백업
 
 #: disk-utils/sfdisk.c:2051
 msgid " -g, --show-geometry [<dev> ...]   list geometry of all or specified devices\n"
-msgstr " -g, --show-geometry [<장치> ...]   모든 또는 지정 장치의 수치 사양을 표시\n"
+msgstr " -g, --show-geometry [장치 ...]     모든 또는 지정 장치의 수치 사양을 표시\n"
 
 #: disk-utils/sfdisk.c:2052
 msgid " -l, --list [<dev> ...]            list partitions of each device\n"
-msgstr " -l, --list [<장치> ...]            각 장치의 분할 영역을 보여줍니다\n"
+msgstr " -l, --list [장치 ...]              각 장치의 분할 영역을 보여줍니다\n"
 
 #: disk-utils/sfdisk.c:2053
 msgid " -F, --list-free [<dev> ...]       list unpartitioned free areas of each device\n"
-msgstr " -F, --list-free [<장치> ...]       각 장치에서 분할 영역으로 지정하지 않은 여분 영역을 보여줍니다\n"
+msgstr " -F, --list-free [장치 ...]         각 장치에서 분할 영역으로 지정하지 않은 여분 영역을 보여줍니다\n"
 
 #: disk-utils/sfdisk.c:2054
 msgid " -r, --reorder <dev>               fix partitions order (by start offset)\n"
@@ -4738,7 +4738,7 @@ msgstr " -r, --reorder <장치>               (시작 오프셋 값으로) 분�
 
 #: disk-utils/sfdisk.c:2055
 msgid " -s, --show-size [<dev> ...]       list sizes of all or specified devices\n"
-msgstr " -s, --show-size [<장치> ...]       모든 장치 또는 지정 장치의 용량을 보여줍니다\n"
+msgstr " -s, --show-size [장치 ...]         모든 장치 또는 지정 장치의 용량을 보여줍니다\n"
 
 #: disk-utils/sfdisk.c:2056
 msgid " -T, --list-types                  print the recognized types (see -X)\n"
@@ -4746,31 +4746,31 @@ msgstr " -T, --list-types                   인식한 형식을 출력합니다(
 
 #: disk-utils/sfdisk.c:2057
 msgid " -V, --verify [<dev> ...]          test whether partitions seem correct\n"
-msgstr " -V, --verify [<장치> ...]          분할 영역이 무결한지 시험합니다\n"
+msgstr " -V, --verify [장치 ...]            분할 영역이 올바른지 시험합니다\n"
 
 #: disk-utils/sfdisk.c:2058
 msgid "     --delete <dev> [<part> ...]   delete all or specified partitions\n"
-msgstr "     --delete <장치> [<분할영역> ...]   모든 분할 영역 또는 지정 분할 영역을 삭제합니다\n"
+msgstr "     --delete <장치> [분할영역 ...]     모든 분할 영역 또는 지정 분할 영역을 삭제합니다\n"
 
 #: disk-utils/sfdisk.c:2061
 msgid " --part-label <dev> <part> [<str>] print or change partition label\n"
-msgstr " --part-label <장치> <분할영역> [<문자열>] 분할 영역 레이블을 출력하거나 바꿉니다\n"
+msgstr " --part-label <장치> <분할영역> [문자열] 분할 영역 레이블을 출력하거나 바꿉니다\n"
 
 #: disk-utils/sfdisk.c:2062
 msgid " --part-type <dev> <part> [<type>] print or change partition type\n"
-msgstr " --part-type <장치> <분할영역> [<형식>] 분할 영역 형식을 출력하거나 바꿉니다\n"
+msgstr " --part-type <장치> <분할영역> [형식] 분할 영역 형식을 출력하거나 바꿉니다\n"
 
 #: disk-utils/sfdisk.c:2063
 msgid " --part-uuid <dev> <part> [<uuid>] print or change partition uuid\n"
-msgstr " --part-uuid <장치> <분할영역> [<UUID>] 분할 영역 UUID를 출력하거나 바꿉니다\n"
+msgstr " --part-uuid <장치> <분할영역> [UUID] 분할 영역 UUID를 출력하거나 바꿉니다\n"
 
 #: disk-utils/sfdisk.c:2064
 msgid " --part-attrs <dev> <part> [<str>] print or change partition attributes\n"
-msgstr " --part-attrs <장치> <분할영역> [<문자열>] 분할 영역 속성을 출력하거나 바꿉니다\n"
+msgstr " --part-attrs <장치> <분할영역> [문자열] 분할 영역 속성을 출력하거나 바꿉니다\n"
 
 #: disk-utils/sfdisk.c:2067
 msgid " --disk-id <dev> [<str>]           print or change disk label ID (UUID)\n"
-msgstr " --disk-id <장치> [<문자열>]        디스크 레이블 ID(UUID)를 출력하거나 바꿉니다\n"
+msgstr " --disk-id <장치> [문자열]        디스크 레이블 ID(UUID)를 출력하거나 바꿉니다\n"
 
 #: disk-utils/sfdisk.c:2068
 msgid " --relocate <oper> <dev>           move partition header\n"
@@ -4802,7 +4802,7 @@ msgstr "     --bytes               가독성 형식이 아닌 바이트 단위 <
 
 #: disk-utils/sfdisk.c:2079
 msgid "     --move-data[=<typescript>] move partition data after relocation (requires -N)\n"
-msgstr "     --move-data[=<타입스크립트>] 재배치 후 분할 영역 데이터 이동 (-N 옵션 필요)\n"
+msgstr "     --move-data[=<형식스크립트>] 재배치 후 분할 영역 데이터 이동 (-N 옵션 필요)\n"
 
 #: disk-utils/sfdisk.c:2080
 msgid "     --move-use-fsync      use fsync after each write when move data\n"
@@ -7487,7 +7487,7 @@ msgstr "스왑 분할 영역에 스왑 형식이 없습니다."
 
 #: libfdisk/src/sgi.c:714
 msgid "You have chosen an unusual bootfile name."
-msgstr "정상적이지 않은 부팅 파일 이름을 입력했습니다."
+msgstr "다른 부팅 파일 이름을 입력했습니다."
 
 #: libfdisk/src/sgi.c:764
 msgid "Partition overlap on the disk."
@@ -8201,7 +8201,7 @@ msgstr "format_reltime: 버퍼 오버플로우."
 #: login-utils/chfn.c:91 login-utils/chsh.c:70 login-utils/lslogins.c:1442
 #, c-format
 msgid " %s [options] [<username>]\n"
-msgstr " %s [옵션] [<사용자이름>]\n"
+msgstr " %s [옵션] [사용자이름]\n"
 
 #: login-utils/chfn.c:94
 msgid "Change your finger information.\n"
@@ -8423,7 +8423,7 @@ msgstr "선 할당 크기를 초과했습니다"
 #: login-utils/last.c:574
 #, c-format
 msgid " %s [options] [<username>...] [<tty>...]\n"
-msgstr " %s [<옵션>] [<사용자이름>...] [<TTY>...]\n"
+msgstr " %s [옵션] [사용자이름...] [TTY...]\n"
 
 #: login-utils/last.c:577
 msgid "Show a listing of last logged in users.\n"
@@ -9080,10 +9080,8 @@ msgid "     --output-all         output all columns\n"
 msgstr "     --output-all         모든 내용 항목 출력\n"
 
 #: login-utils/lslogins.c:1461
-#, fuzzy
-#| msgid " -p, --pwd                display information related to login by password.\n"
 msgid " -p, --pwd                display information related to login by password\n"
-msgstr " -p, --pwd                암호로 로그인하는 관련 정보 출력.\n"
+msgstr " -p, --pwd                암호로 로그인하는 관련 정보를 출력합니다\n"
 
 #: login-utils/lslogins.c:1462 sys-utils/lsipc.c:317
 msgid " -r, --raw                display in raw mode\n"
@@ -9185,7 +9183,7 @@ msgstr "setuid 실패"
 #: term-utils/setterm.c:381 text-utils/line.c:30
 #, c-format
 msgid " %s [options]\n"
-msgstr " %s [<옵션>]\n"
+msgstr " %s [옵션]\n"
 
 #: login-utils/nologin.c:31
 msgid "Politely refuse a login.\n"
@@ -9364,8 +9362,8 @@ msgid ""
 " %1$s [options] -u <user> [[--] <command>]\n"
 " %1$s [options] [-] [<user> [<argument>...]]\n"
 msgstr ""
-" %1$s [<옵션>] -u <사용자> [[--] <명령>]\n"
-" %1$s [<옵션>] [-] [<사용자> [<인자>...]]\n"
+" %1$s [옵션] -u <사용자> [[--] 명령]\n"
+" %1$s [옵션] [-] [사용자 [인자 ...]]\n"
 
 #: login-utils/su-common.c:919
 msgid ""
@@ -9384,7 +9382,7 @@ msgstr " -u, --user <사용자>               사용자 이름\n"
 #: login-utils/su-common.c:935
 #, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
-msgstr " %s [<옵션>] [-] [<사용자> [<인자>...]]\n"
+msgstr " %s [옵션] [-] [사용자 [인자 ...]]\n"
 
 #: login-utils/su-common.c:939
 msgid ""
@@ -9551,7 +9549,7 @@ msgstr "%2$s 터미널의 %1$s 컨텍스트 초기화 실패"
 #: login-utils/sulogin.c:976
 #, c-format
 msgid " %s [options] [tty device]\n"
-msgstr " %s [<옵션>] [<tty장치>]\n"
+msgstr " %s [옵션] [tty장치]\n"
 
 #: login-utils/sulogin.c:979
 msgid "Single-user login.\n"
@@ -9625,7 +9623,7 @@ msgstr "파일에 상관없는 개행 문자가 있습니다. 빠져나감."
 #: login-utils/utmpdump.c:318
 #, c-format
 msgid " %s [options] [filename]\n"
-msgstr " %s [<옵션>] [<파일 이름>]\n"
+msgstr " %s [옵션] [파일이름]\n"
 
 #: login-utils/utmpdump.c:321
 msgid "Dump UTMP and WTMP files in raw format.\n"
@@ -9728,8 +9726,8 @@ msgid ""
 "       [--match-token <token>] [<dev> ...]\n"
 "\n"
 msgstr ""
-" %s [--cache-file <파일>] [-ghlLv] [--output <형식>] [--match-tag <태그>] \n"
-"       [--match-token <토큰>] [<장치> ...]\n"
+" %s [--cache-file 파일] [-ghlLv] [--output 형식] [--match-tag 태그] \n"
+"       [--match-token 토큰] [장치 ...]\n"
 "\n"
 
 #: misc-utils/blkid.c:75
@@ -9973,12 +9971,12 @@ msgstr "잘못된 주 값: %d 연도에는 %d 주차가 없습니다"
 #: misc-utils/cal.c:1271
 #, c-format
 msgid " %s [options] [[[day] month] year]\n"
-msgstr " %s [<옵션>] [[[<일>] <월>] <년>]\n"
+msgstr " %s [옵션] [[[일] 월] 년]\n"
 
 #: misc-utils/cal.c:1272
 #, c-format
 msgid " %s [options] <timestamp|monthname>\n"
-msgstr " %s [<옵션>] <타임스탬프|월_이름>\n"
+msgstr " %s [옵션] <타임스탬프|월_이름>\n"
 
 #: misc-utils/cal.c:1275
 msgid "Display a calendar, or some part of it.\n"
@@ -10052,7 +10050,7 @@ msgstr "     --color[=<시기>]  메시지에 색상을 입힙니다 (%s, %s, %s
 #: misc-utils/enosys.c:85
 #, c-format
 msgid " %s [options] -- <command>\n"
-msgstr " %s [<옵션>] [--] [<명령>]\n"
+msgstr " %s [옵션] -- <명령>\n"
 
 #: misc-utils/enosys.c:88
 msgid " -s, --syscall           syscall to block\n"
@@ -10097,7 +10095,7 @@ msgstr "실행할 수 없음"
 #: misc-utils/exch.c:42
 #, c-format
 msgid " %s [options] oldpath newpath\n"
-msgstr " %s [<옵션>] <이전경로> <신규경로>\n"
+msgstr " %s [옵션] <이전경로> <신규경로>\n"
 
 #: misc-utils/exch.c:44
 msgid "Atomically exchanges paths between two files.\n"
@@ -10115,12 +10113,12 @@ msgstr "\"%s\"와(과) \"%s\" 교환 실패"
 #: misc-utils/fadvise.c:49
 #, c-format
 msgid " %s [options] file\n"
-msgstr " %s [<옵션>] <파일>\n"
+msgstr " %s [옵션] <파일>\n"
 
 #: misc-utils/fadvise.c:50
 #, c-format
 msgid " %s [options] --fd|-d file-descriptor\n"
-msgstr " %s [<옵션>] --fd|-d <파일서술자>\n"
+msgstr " %s [옵션] --fd|-d <파일서술자>\n"
 
 #: misc-utils/fadvise.c:53
 msgid " -a, --advice <advice> applying advice to the file (default: \"dontneed\")\n"
@@ -10244,7 +10242,7 @@ msgstr "ioctl에서 크기 확인 실패: %s"
 #: misc-utils/fincore.c:397
 #, c-format
 msgid " %s [options] file...\n"
-msgstr " %s [<옵션>] <파일>...\n"
+msgstr " %s [옵션] <파일>...\n"
 
 #: misc-utils/fincore.c:400
 msgid " -J, --json            use JSON output format\n"
@@ -10273,7 +10271,7 @@ msgstr " -r, --raw              원시 형식으로 출력\n"
 #: misc-utils/findfs.c:28
 #, c-format
 msgid " %s [options] {LABEL,UUID,PARTUUID,PARTLABEL}=<value>\n"
-msgstr " %s [<옵션>] {LABEL,UUID,PARTUUID,PARTLABEL}=<값>\n"
+msgstr " %s [옵션] {LABEL,UUID,PARTUUID,PARTLABEL}=<값>\n"
 
 #: misc-utils/findfs.c:32
 msgid "Find a filesystem by label or UUID.\n"
@@ -10460,10 +10458,10 @@ msgid ""
 " %1$s [options] <device> <mountpoint>\n"
 " %1$s [options] [--source <device>] [--target <path> | --mountpoint <dir>]\n"
 msgstr ""
-" %1$s [<옵션>]\n"
-" %1$s [<옵션>] <장치> | <마운트지점>\n"
-" %1$s [<옵션>] <장치> <마운트지점>\n"
-" %1$s [<옵션>] [--source <장치>] [--target <경로> | --mountpoint <디렉터리>]\n"
+" %1$s [옵션]\n"
+" %1$s [옵션] <장치> | <마운트지점>\n"
+" %1$s [옵션] <장치> <마운트지점>\n"
+" %1$s [옵션] [--source 장치] [--target 경로 | --mountpoint 디렉터리]\n"
 
 #: misc-utils/findmnt.c:1412
 msgid "Find a (mounted) filesystem.\n"
@@ -10883,8 +10881,8 @@ msgid ""
 " %1$s [options] -o|--options <optstring> [options] [--] <parameters>\n"
 msgstr ""
 " %1$s <옵션_문자열> <매개변수>\n"
-" %1$s [options] [--] <옵션_문자열> <매개변수>\n"
-" %1$s [options] -o|--options <옵션_문자열> [<옵션>] [--] <매개변수>\n"
+" %1$s [옵션] [--] <옵션_문자열> <매개변수>\n"
+" %1$s [옵션] -o|--options <옵션_문자열> [옵션] [--] <매개변수>\n"
 
 #: misc-utils/getopt.c:349
 msgid "Parse command options.\n"
@@ -11070,7 +11068,7 @@ msgstr "건너뜀 (내용 일치하지 않음) %s"
 #: misc-utils/hardlink.c:1158
 #, c-format
 msgid " %s [options] <directory>|<file> ...\n"
-msgstr " %s [<옵션>] <디렉터리>|<파일> ...\n"
+msgstr " %s [옵션] <디렉터리>|<파일> ...\n"
 
 #: misc-utils/hardlink.c:1162
 msgid "Consolidate duplicate files using hardlinks.\n"
@@ -11236,7 +11234,7 @@ msgstr "알 수 없는 %s 시그널. 알려진 시그널:"
 #: misc-utils/kill.c:197
 #, c-format
 msgid " %s [options] <pid>|<name>...\n"
-msgstr " %s [<옵션>] <PID>|<이름>...\n"
+msgstr " %s [옵션] <PID>|<이름>...\n"
 
 #: misc-utils/kill.c:200
 msgid "Forcibly terminate a process.\n"
@@ -11360,56 +11358,38 @@ msgid "cannot find process \"%s\""
 msgstr "\"%s\" 프로세스를 찾을 수 없음"
 
 #: misc-utils/lastlog2.c:111
-#, fuzzy
-#| msgid " -b, --before DAYS       Print only records older than DAYS\n"
 msgid " -b, --before DAYS       print only records older than DAYS\n"
 msgstr " -b, --before <일>       <일> 전까지의 레코드만 출력합니다\n"
 
 #: misc-utils/lastlog2.c:112
-#, fuzzy
-#| msgid " -C, --clear             Clear record of a user (requires -u)\n"
 msgid " -C, --clear             clear record of a user (requires -u)\n"
 msgstr " -C, --clear                 사용자 레코드를 소거합니다 (-u 필요)\n"
 
 #: misc-utils/lastlog2.c:113
-#, fuzzy
-#| msgid " -d, --database FILE     Use FILE as lastlog2 database\n"
 msgid " -d, --database FILE     use FILE as lastlog2 database\n"
 msgstr " -d, --database <파일>   <파일>을 loastlog2 데이터베이스로 사용합니다\n"
 
 #: misc-utils/lastlog2.c:114
-#, fuzzy
-#| msgid " -i, --import FILE       Import data from old lastlog file\n"
 msgid " -i, --import FILE       import data from old lastlog file\n"
 msgstr " -i, --import <파일>     이전 lastlog 파일에서 데이터를 가져옵니다\n"
 
 #: misc-utils/lastlog2.c:115
-#, fuzzy
-#| msgid " -r, --rename NEWNAME    Rename existing user to NEWNAME (requires -u)\n"
 msgid " -r, --rename NEWNAME    rename existing user to NEWNAME (requires -u)\n"
 msgstr " -r, --rename <새이름>   기존 사용자의 이름을 <새이름>으로 바꿉니다 (-u 필요)\n"
 
 #: misc-utils/lastlog2.c:116
-#, fuzzy
-#| msgid " -s, --service           Display PAM service\n"
 msgid " -s, --service           display PAM service\n"
 msgstr " -s, --service           PAM 서비스를 표시합니다\n"
 
 #: misc-utils/lastlog2.c:117
-#, fuzzy
-#| msgid " -S, --set               ySet lastlog record to current time (requires -u)\n"
 msgid " -S, --set               set lastlog record to current time (requires -u)\n"
 msgstr " -S, --set               lastlog 레코드를 현재 시간으로 설정합니다 (-u 필요)\n"
 
 #: misc-utils/lastlog2.c:118
-#, fuzzy
-#| msgid " -t, --time DAYS         Print only lastlog records more recent than DAYS\n"
 msgid " -t, --time DAYS         print only lastlog records more recent than DAYS\n"
 msgstr " -t, --time <일>         <일> 이후의 lastlog 레코드만 출력합니다\n"
 
 #: misc-utils/lastlog2.c:119
-#, fuzzy
-#| msgid " -u, --user LOGIN        Print lastlog record of the specified LOGIN\n"
 msgid " -u, --user LOGIN        print lastlog record of the specified LOGIN\n"
 msgstr " -u, --user <로그인>      지정 <로그인>의 lastlog 레코드를 출력합니다\n"
 
@@ -11538,7 +11518,7 @@ msgstr "부적절한 인자: %s: 자동 오류를 사용합니다"
 #: misc-utils/logger.c:1059
 #, c-format
 msgid " %s [options] [<message>]\n"
-msgstr " %s [<옵션>] [<메시지>]\n"
+msgstr " %s [옵션] [메시지]\n"
 
 #: misc-utils/logger.c:1062
 msgid "Enter messages into the system log.\n"
@@ -11682,7 +11662,7 @@ msgstr "journald 항목을 기록할 수 없습니다"
 #: misc-utils/look.c:357
 #, c-format
 msgid " %s [options] <string> [<file>...]\n"
-msgstr " %s [<옵션>] <문자열> [<파일>...]\n"
+msgstr " %s [옵션] <문자열> [파일 ...]\n"
 
 #: misc-utils/look.c:360
 msgid "Display lines beginning with a specified string.\n"
@@ -12034,7 +12014,7 @@ msgstr "필터 초기화 실패"
 #: misc-utils/lsblk.c:2300 sys-utils/wdctl.c:230
 #, c-format
 msgid " %s [options] [<device> ...]\n"
-msgstr " %s [<옵션>] [<장치> ...]\n"
+msgstr " %s [옵션] [장치 ...]\n"
 
 #: misc-utils/lsblk.c:2303
 msgid "List information about block devices.\n"
@@ -12471,7 +12451,7 @@ msgstr "링크 횟수"
 
 #: misc-utils/lsfd.c:275
 msgid "name of the namespace (NS.TYPE:[INODE])"
-msgstr "이름 영역 이름 (NS.TYPE:[<아이노드>])"
+msgstr "이름 영역 이름 (NS.TYPE:[아이노드])"
 
 #: misc-utils/lsfd.c:278
 msgid "type of the namespace"
@@ -12654,10 +12634,8 @@ msgid "user of the process"
 msgstr "프로세스 사용자"
 
 #: misc-utils/lsfd.c:413
-#, fuzzy
-#| msgid "extended version of MDOE (rwxD[Ll]m)"
 msgid "extended version of MODE (rwxD[Ll]m)"
-msgstr "MDOE 확장 버전 (rwxD[Ll]m)"
+msgstr "MODE 확장 버전 (rwxD[Ll]m)"
 
 #: misc-utils/lsfd.c:457 sys-utils/prlimit.c:79
 msgid "processes"
@@ -12929,10 +12907,8 @@ msgid "PID of the process blocking the lock"
 msgstr "잠금을 막는 프로세스 PID"
 
 #: misc-utils/lslocks.c:92
-#, fuzzy
-#| msgid "owner of the file"
 msgid "holders of the lock"
-msgstr "파일 소유"
+msgstr "잠금 소유자"
 
 #: misc-utils/lslocks.c:286
 #, c-format
@@ -13044,7 +13020,7 @@ msgstr "심볼릭 링크 읽기 실패: %s"
 #: misc-utils/namei.c:359
 #, c-format
 msgid " %s [options] <pathname>...\n"
-msgstr " %s [<옵션>] <경로이름>...\n"
+msgstr " %s [옵션] <경로이름>...\n"
 
 #: misc-utils/namei.c:362
 msgid "Follow a pathname until a terminal point is found.\n"
@@ -13086,12 +13062,12 @@ msgstr "%s: 심볼릭 링크 한계 초과"
 #: misc-utils/pipesz.c:65
 #, c-format
 msgid " %s [options] [--set <size>] [--] [command]\n"
-msgstr " %s [<옵션>] [--set <크기>] [--] [<명령>]\n"
+msgstr " %s [옵션] [--set 크기] [--] [명령]\n"
 
 #: misc-utils/pipesz.c:66
 #, c-format
 msgid " %s [options] --get\n"
-msgstr " %s [<옵션>] --get\n"
+msgstr " %s [옵션] --get\n"
 
 #. TRANSLATORS: 'command' refers to a program argument
 #: misc-utils/pipesz.c:70
@@ -13238,7 +13214,7 @@ msgstr "%s: %s(으)로의 이름 바꾸기 실패"
 #: misc-utils/rename.c:254
 #, c-format
 msgid " %s [options] <expression> <replacement> <file>...\n"
-msgstr " %s [<옵션>] <표현식> <바꿀이름> <파일>...\n"
+msgstr " %s [옵션] <표현식> <바꿀이름> <파일>...\n"
 
 #: misc-utils/rename.c:258
 msgid "Rename files.\n"
@@ -13628,7 +13604,7 @@ msgstr "타임스탬프"
 #: misc-utils/uuidparse.c:97
 #, c-format
 msgid " %s [options] <uuid ...>\n"
-msgstr " %s [<옵션>] <UUID ...>\n"
+msgstr " %s [옵션] <UUID ...>\n"
 
 #: misc-utils/uuidparse.c:100
 msgid " -J, --json             use JSON output format"
@@ -13724,7 +13700,7 @@ msgstr "PID %d번이 끝났습니다\n"
 #: misc-utils/waitpid.c:158
 #, c-format
 msgid " %s [options] pid...\n"
-msgstr " %s [<옵션>] PID...\n"
+msgstr " %s [옵션] PID...\n"
 
 #: misc-utils/waitpid.c:161
 msgid " -v, --verbose           be more verbose\n"
@@ -13755,8 +13731,7 @@ msgid "no PIDs specified"
 msgstr "지정한 PID가 없습니다"
 
 #: misc-utils/waitpid.c:239
-#, fuzzy, c-format
-#| msgid "can't want for %zu of %zu PIDs"
+#, c-format
 msgid "can't wait for %zu of %zu PIDs"
 msgstr "%2$zu PID의 %1$zu번을 기다릴 수 없습니다"
 
@@ -13767,7 +13742,7 @@ msgstr "epoll을 만들 수 없습니다"
 #: misc-utils/whereis.c:205
 #, c-format
 msgid " %s [options] [-BMS <dir>... -f] <name>\n"
-msgstr " %s [<옵션>] [-BMS <디렉터리>... -f] <이름>\n"
+msgstr " %s [옵션] [-BMS 디렉터리 ... -f] <이름>\n"
 
 #: misc-utils/whereis.c:208
 msgid "Locate the binary, source, and manual-page files for a command.\n"
@@ -13962,8 +13937,8 @@ msgid ""
 " chrt [options] --pid <priority> <pid>\n"
 msgstr ""
 "정책 설정:\n"
-" chrt [<옵션>] <우선순위> <명령> [<인자>...]\n"
-" chrt [<옵션>] --pid <우선순위> <PID>\n"
+" chrt [옵션] <우선순위> <명령> [인자 ...]\n"
+" chrt [옵션] --pid <우선순위> <PID>\n"
 
 #: schedutils/chrt.c:66
 msgid ""
@@ -13971,7 +13946,7 @@ msgid ""
 " chrt [options] -p <pid>\n"
 msgstr ""
 "정책 확인:\n"
-" chrt [<옵션>] -p <PID>\n"
+" chrt [옵션] -p <PID>\n"
 
 #: schedutils/chrt.c:70
 msgid "Policy options:\n"
@@ -14156,10 +14131,10 @@ msgid ""
 " %1$s [options] -u <uid>...\n"
 " %1$s [options] <command>\n"
 msgstr ""
-" %1$s [<옵션>] -p <PID>...\n"
-" %1$s [<옵션>] -P <PGID>...\n"
-" %1$s [<옵션>] -u <UID>...\n"
-" %1$s [<옵션>] <명령>\n"
+" %1$s [옵션] -p <PID>...\n"
+" %1$s [옵션] -P <PGID>...\n"
+" %1$s [옵션] -u <UID>...\n"
+" %1$s [옵션] <명령>\n"
 
 #: schedutils/ionice.c:113
 msgid "Show or change the I/O-scheduling class and priority of a process.\n"
@@ -14241,7 +14216,7 @@ msgid ""
 "Usage: %s [options] [mask | cpu-list] [pid|cmd [args...]]\n"
 "\n"
 msgstr ""
-"사용법: %s [<옵션>] [<마스크> | <CPU_목록>] [<PID>|<명령> [<인자>...]]\n"
+"사용법: %s [옵션] [마스크 | CPU_목록] [PID|명령 [인자 ...]]\n"
 "\n"
 
 #: schedutils/taskset.c:60
@@ -14349,8 +14324,8 @@ msgid ""
 " %1$s [options]\n"
 " %1$s [options] --pid <pid> | --system | <command> <arg>...\n"
 msgstr ""
-" %1$s [<옵션>]\n"
-" %1$s [<옵션>] --pid <PID> | --system | <명령> <인자>...\n"
+" %1$s [옵션]\n"
+" %1$s [옵션] --pid <PID> | --system | <명령> <인자>...\n"
 
 #: schedutils/uclampset.c:61
 msgid "Show or change the utilization clamping attributes.\n"
@@ -14675,7 +14650,7 @@ msgstr "%1$s: %3$<PRIu64> ~ %4$<PRIu64> 범위 영역의 %2$s 명령 처리 성�
 #: sys-utils/blkzone.c:389
 #, c-format
 msgid " %s <command> [options] <device>\n"
-msgstr " %s <명령> [<옵션>] <장치>\n"
+msgstr " %s <명령> [옵션] <장치>\n"
 
 #: sys-utils/blkzone.c:392
 msgid "Run zone command on the given block device.\n"
@@ -14865,7 +14840,7 @@ msgid ""
 msgstr ""
 "\n"
 "사용법:\n"
-" %s [<옵션>]\n"
+" %s [옵션]\n"
 
 #: sys-utils/chcpu.c:245
 msgid "Configure CPUs in a multi-processor system.\n"
@@ -15027,7 +15002,7 @@ msgstr "부적절한 범위: %s"
 #: sys-utils/chmem.c:340
 #, c-format
 msgid " %s [options] [SIZE|RANGE|BLOCKRANGE]\n"
-msgstr " %s [<옵션>] [<크기>|<범위>|<블록범위>]\n"
+msgstr " %s [옵션] [크기|범위|블록범위]\n"
 
 #: sys-utils/chmem.c:343
 msgid "Set a particular size or range of memory online or offline.\n"
@@ -15082,9 +15057,9 @@ msgid ""
 " %1$s [options] -n number -p pid\n"
 " %1$s [options] -n number [--] command [args...]]\n"
 msgstr ""
-" %1$s [<옵션>] -p <PID>\n"
-" %1$s [<옵션>] -n <번호> -p <PID>\n"
-" %1$s [<옵션>] -n <번호> [--] <명령> [<인자>...]]\n"
+" %1$s [옵션] -p <PID>\n"
+" %1$s [옵션] -n <번호> -p <PID>\n"
+" %1$s [옵션] -n <번호> [--] <명령> [인자 ...]\n"
 
 #: sys-utils/choom.c:44
 msgid "Display and adjust OOM-killer score.\n"
@@ -15512,7 +15487,7 @@ msgstr "klogctl 실패"
 #: sys-utils/eject.c:140
 #, c-format
 msgid " %s [options] [<device>|<mountpoint>]\n"
-msgstr " %s [<옵션>] [<장치>|<마운트지점>]\n"
+msgstr " %s [옵션] [장치|마운트지점]\n"
 
 #: sys-utils/eject.c:143
 msgid "Eject removable media.\n"
@@ -15849,7 +15824,7 @@ msgstr "추출할 수 없음"
 #: sys-utils/fallocate.c:84
 #, c-format
 msgid " %s [options] <filename>\n"
-msgstr " %s [<옵션>] <파일 이름>\n"
+msgstr " %s [옵션] <파일이름>\n"
 
 #: sys-utils/fallocate.c:87
 msgid "Preallocate space to, or deallocate space from a file.\n"
@@ -15961,9 +15936,9 @@ msgid ""
 " %1$s [options] <file>|<directory> -c <command>\n"
 " %1$s [options] <file descriptor number>\n"
 msgstr ""
-" %1$s [<옵션>] <파일>|<디렉터리> <명령행> [<인자>...]\n"
-" %1$s [<옵션>] <파일>|<디렉터리> -c <명령행>\n"
-" %1$s [<옵션>] <파일 서술자 번호>\n"
+" %1$s [옵션] <파일>|<디렉터리> <명령행> [인자 ...]\n"
+" %1$s [옵션] <파일>|<디렉터리> -c <명령행>\n"
+" %1$s [옵션] <파일 서술자 번호>\n"
 
 #: sys-utils/flock.c:61
 msgid "Manage file locks from shell scripts.\n"
@@ -16064,7 +16039,7 @@ msgstr "%s: %s 실행 중\n"
 #: sys-utils/fsfreeze.c:41
 #, c-format
 msgid " %s [options] <mountpoint>\n"
-msgstr " %s [<옵션>] <마운트지점>\n"
+msgstr " %s [옵션] <마운트지점>\n"
 
 #: sys-utils/fsfreeze.c:44
 msgid "Suspend access to a filesystem.\n"
@@ -16147,7 +16122,7 @@ msgstr "%s: 폐기 동작을 지원하지 않습니다"
 #: sys-utils/fstrim.c:454
 #, c-format
 msgid " %s [options] <mount point>\n"
-msgstr " %s [<옵션>] <마운트지점>\n"
+msgstr " %s [옵션] <마운트지점>\n"
 
 #: sys-utils/fstrim.c:457
 msgid "Discard unused blocks on a mounted filesystem.\n"
@@ -16465,7 +16440,7 @@ msgstr "0x%jx RTC 매개변수를 0x%jx(으)로 설정했습니다.\n"
 #: sys-utils/hwclock.c:1219
 #, c-format
 msgid " %s [function] [option...]\n"
-msgstr " %s [<함수>] [<옵션>...]\n"
+msgstr " %s [함수] [옵션 ...]\n"
 
 #: sys-utils/hwclock.c:1222
 msgid "Time clocks utility."
@@ -16876,7 +16851,7 @@ msgid ""
 " %1$s [options]\n"
 " %1$s shm|msg|sem <id>...\n"
 msgstr ""
-" %1$s [<옵션>]\n"
+" %1$s [옵션]\n"
 " %1$s <공유메모리>|<메시지큐>|<세마포어> <ID>...\n"
 
 #: sys-utils/ipcrm.c:60
@@ -16995,7 +16970,7 @@ msgid ""
 " %1$s [resource-option...] [output-option]\n"
 " %1$s -m|-q|-s -i <id>\n"
 msgstr ""
-" %1$s [<자원옵션>...] [<출력옵션>]\n"
+" %1$s [자원옵션 ...] [출력옵션]\n"
 " %1$s -m|-q|-s -i <ID>\n"
 
 #: sys-utils/ipcs.c:75 sys-utils/lsipc.c:295
@@ -17639,10 +17614,8 @@ msgstr ""
 "\n"
 
 #: sys-utils/irqtop.c:180
-#, fuzzy
-#| msgid "cannot not create timerfd"
 msgid "cannot create timerfd"
-msgstr "timerfd를 만들 수 없음"
+msgstr "timerfd를 만들 수 없습니다"
 
 #: sys-utils/irqtop.c:182
 msgid "cannot set timerfd"
@@ -17661,8 +17634,6 @@ msgid "sigprocmask failed"
 msgstr "sigprocmask 실패"
 
 #: sys-utils/irqtop.c:200
-#, fuzzy
-#| msgid "cannot not create signalfd"
 msgid "cannot create signalfd"
 msgstr "signalfd를 만들 수 없습니다"
 
@@ -17740,7 +17711,7 @@ msgstr "부적절한 iflag"
 #: sys-utils/ldattach.c:197
 #, c-format
 msgid " %s [options] <ldisc> <device>\n"
-msgstr " %s [<옵션>] <ldisc> <장치>\n"
+msgstr " %s [옵션] <ldisc> <장치>\n"
 
 #: sys-utils/ldattach.c:200
 msgid "Attach a line discipline to a serial line.\n"
@@ -17945,8 +17916,8 @@ msgid ""
 " %1$s [options] [<loopdev>]\n"
 " %1$s [options] -f | <loopdev> <file>\n"
 msgstr ""
-" %1$s [<옵션>] [<루프장치>]\n"
-" %1$s [<옵션>] -f | <루프장치> <파일>\n"
+" %1$s [옵션] [루프장치]\n"
+" %1$s [옵션] -f | <루프장치> <파일>\n"
 
 #: sys-utils/losetup.c:470
 msgid "Set up and control loop devices.\n"
@@ -18212,7 +18183,7 @@ msgstr "CPU의 현재 MHz를 표시합니다"
 
 #: sys-utils/lscpu.c:150
 msgid "shows scaling percentage of the CPU frequency"
-msgstr "CPU 주파수의 스케일링 백분율을 보여줍니다."
+msgstr "CPU 연산 주파수의 스케일링 백분율을 보여줍니다."
 
 #: sys-utils/lscpu.c:151
 msgid "shows the maximum MHz of the CPU"
@@ -19190,7 +19161,7 @@ msgstr "소유자 이름 영역 식별자 (inode 숫자값)"
 #: sys-utils/lsns.c:1289
 #, c-format
 msgid " %s [options] [<namespace>]\n"
-msgstr " %s [<옵션>] [<이름영역>]\n"
+msgstr " %s [옵션] [이름영역]\n"
 
 #: sys-utils/lsns.c:1292
 msgid "List system namespaces.\n"
@@ -19344,10 +19315,10 @@ msgid ""
 " %1$s <operation> <mountpoint> [<target>]\n"
 msgstr ""
 " %1$s [-lhV]\n"
-" %1$s -a [<옵션>]\n"
-" %1$s [<옵션>] [--source] <원본> | [--target] <디렉터리>\n"
-" %1$s [<옵션>] <원본> <디렉터리>\n"
-" %1$s <처리방식> <마운트지점> [<대상>]\n"
+" %1$s -a [옵션]\n"
+" %1$s [옵션] [--source] <원본> | [--target] <디렉터리>\n"
+" %1$s [옵션] <원본> <디렉터리>\n"
+" %1$s <처리방식> <마운트지점> [대상]\n"
 
 #: sys-utils/mount.c:486
 msgid "Mount a filesystem.\n"
@@ -19632,7 +19603,7 @@ msgstr "%s은(는) 마운트 지점입니다\n"
 #: sys-utils/nsenter.c:82 sys-utils/setarch.c:144 sys-utils/unshare.c:733
 #, c-format
 msgid " %s [options] [<program> [<argument>...]]\n"
-msgstr " %s [<옵션>] [<프로그램> [<인자>...]]\n"
+msgstr " %s [옵션] [프로그램 [인자 ...]]\n"
 
 #: sys-utils/nsenter.c:86
 msgid "Run a program with namespaces of other processes.\n"
@@ -19828,7 +19799,7 @@ msgstr "setgroups 실패"
 #: sys-utils/pivot_root.c:29
 #, c-format
 msgid " %s [options] new_root put_old\n"
-msgstr " %s [<옵션>] 새_루트 이전_위치\n"
+msgstr " %s [옵션] 새_루트 이전_위치\n"
 
 #: sys-utils/pivot_root.c:33
 msgid "Change the root filesystem.\n"
@@ -19946,12 +19917,12 @@ msgstr "단위"
 #: sys-utils/prlimit.c:160
 #, c-format
 msgid " %s [options] [--<resource>=<limit>] [-p PID]\n"
-msgstr " %s [<옵션>] [--<자원>=<제한>] [-p PID]\n"
+msgstr " %s [옵션] [--<자원>=<제한>] [-p PID]\n"
 
 #: sys-utils/prlimit.c:162
 #, c-format
 msgid " %s [options] [--<resource>=<limit>] COMMAND\n"
-msgstr " %s [<옵션>] [--<자원>=<제한>] <명령>\n"
+msgstr " %s [옵션] [--<자원>=<제한>] <명령>\n"
 
 #: sys-utils/prlimit.c:165
 msgid "Show or change the resource limits of a process.\n"
@@ -20310,7 +20281,7 @@ msgstr "잘못된 식별자: %s"
 #: sys-utils/rfkill.c:634
 #, c-format
 msgid " %s [options] command [identifier ...]\n"
-msgstr " %s [<옵션>] <명령> [<식별자> ...]\n"
+msgstr " %s [옵션] <명령> [식별자 ...]\n"
 
 #: sys-utils/rfkill.c:637
 msgid "Tool for enabling and disabling wireless devices.\n"
@@ -20562,7 +20533,7 @@ msgstr "%s(으)로 전환하는 중.\n"
 #: sys-utils/setarch.c:142
 #, c-format
 msgid " %s [<arch>] [options] [<program> [<argument>...]]\n"
-msgstr " %s [<아키텍처>] [<옵션>] [<프로그램> [<인자>...]]\n"
+msgstr " %s [아키텍처] [옵션] [프로그램 [인자...]]\n"
 
 #: sys-utils/setarch.c:147
 msgid "Change the reported architecture and set personality flags.\n"
@@ -20675,7 +20646,7 @@ msgstr "`%s' 명령을 실행합니다.\n"
 #: sys-utils/setpgid.c:20 sys-utils/setsid.c:35
 #, c-format
 msgid " %s [options] <program> [arguments ...]\n"
-msgstr " %s [<옵션>] <프로그램> [<인자> ...]\n"
+msgstr " %s [옵션] <프로그램> [인자 ...]\n"
 
 #: sys-utils/setpgid.c:24
 msgid "Run a program in a new process group.\n"
@@ -20704,7 +20675,7 @@ msgstr "tcsetpgrp 실패"
 #: sys-utils/setpriv.c:121
 #, c-format
 msgid " %s [options] <program> [<argument>...]\n"
-msgstr " %s [<옵션>] <프로그램> [<인자>...]\n"
+msgstr " %s [옵션] <프로그램> [인자 ...]\n"
 
 #: sys-utils/setpriv.c:125
 msgid "Run a program with different privilege settings.\n"
@@ -20739,8 +20710,6 @@ msgid " --euid <uid|user>           set effective uid\n"
 msgstr " --euid <UID|사용자>           실효 UID 설정\n"
 
 #: sys-utils/setpriv.c:135
-#, fuzzy
-#| msgid " --rgid <gid|user>           set real gid\n"
 msgid " --rgid <gid|group>          set real gid\n"
 msgstr " --rgid <GID|그룹>           실제 GID 설정\n"
 
@@ -21230,7 +21199,7 @@ msgstr "%s: swapoff 실패"
 #: sys-utils/swapoff.c:154 sys-utils/swapon.c:820
 #, c-format
 msgid " %s [options] [<spec>]\n"
-msgstr " %s [<옵션>] [<사양>]\n"
+msgstr " %s [옵션] [사양]\n"
 
 #: sys-utils/swapoff.c:157
 msgid "Disable devices and files for paging and swapping.\n"
@@ -21549,7 +21518,7 @@ msgstr "이전 루트 파일 시스템은 initramfs가 아닙니다"
 #: sys-utils/switch_root.c:226
 #, c-format
 msgid " %s [options] <newrootdir> <init> <args to init>\n"
-msgstr " %s [<옵션>] <새루트_디렉터리> <초기> <초기인자>\n"
+msgstr " %s [옵션] <새루트_디렉터리> <초기> <초기인자>\n"
 
 #: sys-utils/switch_root.c:230
 msgid "Switch to another filesystem as the root of the mount tree.\n"
@@ -21676,8 +21645,8 @@ msgid ""
 " %1$s [options] <source> | <directory>\n"
 msgstr ""
 " %1$s [-hV]\n"
-" %1$s -a [<옵션>]\n"
-" %1$s [<옵션>] <원본> | <디렉터리>\n"
+" %1$s -a [옵션]\n"
+" %1$s [옵션] <원본> | <디렉터리>\n"
 
 #: sys-utils/umount.c:88
 msgid "Unmount filesystems.\n"
@@ -22306,9 +22275,9 @@ msgid ""
 " %1$s -r <device> [...]\n"
 " %1$s [options] -f | <device> -s <size>\n"
 msgstr ""
-" %1$s [<옵션>] <장치>\n"
+" %1$s [옵션] <장치>\n"
 " %1$s -r <장치> [...]\n"
-" %1$s [<옵션>] -f | <장치> -s <크기>\n"
+" %1$s [옵션] -f | <장치> -s <크기>\n"
 
 #: sys-utils/zramctl.c:547
 msgid "Set up and control zram devices.\n"
@@ -22589,8 +22558,8 @@ msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
 " %1$s [options] <baud_rate>,... <line> [<termtype>]\n"
 msgstr ""
-" %1$s [<옵션>] <회선> [<보전송율>,...] [<터미널형식>]\n"
-" %1$s [<옵션>] <보전송율>,... <회선> [<터미널형식>]\n"
+" %1$s [옵션] <회선> [보전송율, ...] [터미널형식]\n"
+" %1$s [옵션] <보전송율>,... <회선> [터미널형식]\n"
 
 #: term-utils/agetty.c:2454
 msgid "Open a terminal and set its mode.\n"
@@ -22637,8 +22606,6 @@ msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <문자열> 초기 문자열을 지정합니다\n"
 
 #: term-utils/agetty.c:2467
-#, fuzzy
-#| msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgid " -J, --noclear              do not clear the screen before prompt\n"
 msgstr " -J  --noclear              프롬프트를 띄우기 전 화면을 지우지 않습니다\n"
 
@@ -22659,8 +22626,6 @@ msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login           로그인을 묻지 않습니다\n"
 
 #: term-utils/agetty.c:2472
-#, fuzzy
-#| msgid " -N  --nonewline            do not print a newline before issue\n"
 msgid " -N, --nonewline            do not print a newline before issue\n"
 msgstr " -N  --nonewline            issue 출력 전 개행 문자를 출력하지 않습니다\n"
 
@@ -22763,7 +22728,7 @@ msgstr "인증 디렉터리 열기 실패"
 #: term-utils/mesg.c:78
 #, c-format
 msgid " %s [options] [y | n]\n"
-msgstr " %s [<옵션>] [y | n]\n"
+msgstr " %s [옵션] [y | n]\n"
 
 #: term-utils/mesg.c:81
 msgid "Control write access of other users to your terminal.\n"
@@ -22806,7 +22771,7 @@ msgstr "터미널 쓰기 접근을 거절했습니다"
 #: term-utils/script.c:193
 #, c-format
 msgid " %s [options] [file]\n"
-msgstr " %s [<옵션>] [<파일>]\n"
+msgstr " %s [옵션] [파일]\n"
 
 #: term-utils/script.c:196
 msgid "Make a typescript of a terminal session.\n"
@@ -23038,7 +23003,7 @@ msgstr ""
 #: term-utils/scriptreplay.c:50
 #, c-format
 msgid " %s [-t] timingfile [typescript] [divisor]\n"
-msgstr " %s [-t] <타이밍파일> [<타입스크립트>] [<배수>]\n"
+msgstr " %s [-t] <타이밍파일> [형식스크립트] [배수]\n"
 
 #: term-utils/scriptreplay.c:54
 msgid "Play back terminal typescripts, using timing information.\n"
@@ -23354,7 +23319,7 @@ msgstr "%s: 부적절한 오류, 메시지가 너무 깁니다"
 #: term-utils/wall.c:94
 #, c-format
 msgid " %s [options] [<file> | <message>]\n"
-msgstr " %s [<옵션>] [<파일> | <메시지>]\n"
+msgstr " %s [옵션] [<파일> | <메시지>]\n"
 
 #: term-utils/wall.c:97
 msgid "Write a message to all users.\n"
@@ -23421,7 +23386,7 @@ msgstr "%s을(를) 읽지 않습니다. 표준 입력 스트림을 활용합니�
 #: term-utils/write.c:92
 #, c-format
 msgid " %s [options] <user> [<ttyname>]\n"
-msgstr " %s [<옵션>] <사용자> [<TTY명칭>]\n"
+msgstr " %s [옵션] <사용자> [<TTY명칭>]\n"
 
 #: term-utils/write.c:96
 msgid "Send a message to another user.\n"
@@ -23524,7 +23489,7 @@ msgstr "잘못된 -l 인자"
 #: text-utils/colcrt.c:82 text-utils/column.c:745
 #, c-format
 msgid " %s [options] [<file>...]\n"
-msgstr " %s [<옵션>] [<파일>...]\n"
+msgstr " %s [옵션] [파일 ...]\n"
 
 #: text-utils/colcrt.c:85
 msgid "Filter nroff output for CRT previewing.\n"
@@ -23749,7 +23714,7 @@ msgstr "--table-columns 또는 --table-column 옵션은 --json 옵션에 필요�
 #: text-utils/hexdump.c:167 text-utils/more.c:238
 #, c-format
 msgid " %s [options] <file>...\n"
-msgstr " %s [<옵션>] <파일>...\n"
+msgstr " %s [옵션] <파일>...\n"
 
 #: text-utils/hexdump.c:170
 msgid "Display file contents in hexadecimal, decimal, octal, or ascii.\n"
@@ -24141,7 +24106,7 @@ msgstr ""
 #: text-utils/pg.c:231
 #, c-format
 msgid " %s [options] [+line] [+/pattern/] [files]\n"
-msgstr " %s [<옵션>] [+<행>] [+/<패턴>/] [<파일>]\n"
+msgstr " %s [옵션] [+행] [+/패턴/] [파일]\n"
 
 #: text-utils/pg.c:235
 msgid "Browse pagewise through text files.\n"
@@ -24276,7 +24241,7 @@ msgstr "페이지당 줄 수 해석 실패"
 #: text-utils/rev.c:75
 #, c-format
 msgid "Usage: %s [options] [file ...]\n"
-msgstr "사용법: %s [<옵션>] [<파일> ...]\n"
+msgstr "사용법: %s [옵션] [파일 ...]\n"
 
 #: text-utils/rev.c:79
 msgid "Reverse lines characterwise.\n"
@@ -24285,7 +24250,7 @@ msgstr "줄을 문자 쓰기 방향으로 뒤집습니다.\n"
 #: text-utils/ul.c:123
 #, c-format
 msgid " %s [options] [<file> ...]\n"
-msgstr " %s [<옵션>] [<파일> ...]\n"
+msgstr " %s [옵션] [파일 ...]\n"
 
 #: text-utils/ul.c:126
 msgid "Do underlining.\n"
