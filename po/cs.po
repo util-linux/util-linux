@@ -50,10 +50,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.40-rc2\n"
+"Project-Id-Version: util-linux 2.40.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2024-05-01 21:34+0200\n"
-"PO-Revision-Date: 2024-03-26 11:57+01:00\n"
+"POT-Creation-Date: 2024-05-01 21:49+0200\n"
+"PO-Revision-Date: 2024-05-02 20:37+02:00\n"
 "Last-Translator: Petr Písař <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
 "Language: cs\n"
@@ -9236,10 +9236,7 @@ msgstr " -o, --output[=<seznam>]  určuje, které výstupní sloupce se použij�
 msgid "     --output-all         output all columns\n"
 msgstr "     --output-all         vypíše všechny sloupce\n"
 
-# FIXME: Remove trailing period
 #: login-utils/lslogins.c:1461
-#, fuzzy
-#| msgid " -p, --pwd                display information related to login by password.\n"
 msgid " -p, --pwd                display information related to login by password\n"
 msgstr " -p, --pwd                zobrazí údaje související s přihlášením heslem\n"
 
@@ -11594,61 +11591,42 @@ msgid "cannot find process \"%s\""
 msgstr "proces „%s“ nelze nalézt"
 
 #: misc-utils/lastlog2.c:111
-#, fuzzy
-#| msgid " -b, --before DAYS       Print only records older than DAYS\n"
 msgid " -b, --before DAYS       print only records older than DAYS\n"
-msgstr " -b, --before DNY        Vypíše pouze záznamy starší než DNŮ\n"
+msgstr " -b, --before DNY        vypíše pouze záznamy starší než DNŮ\n"
 
 #: misc-utils/lastlog2.c:112
-#, fuzzy
-#| msgid " -C, --clear             Clear record of a user (requires -u)\n"
 msgid " -C, --clear             clear record of a user (requires -u)\n"
-msgstr " -C, --clear              Vyprázdní záznam uživatele (vyžaduje -u)\n"
+msgstr " -C, --clear              vyprázdní záznam uživatele (vyžaduje -u)\n"
 
 #: misc-utils/lastlog2.c:113
-#, fuzzy
-#| msgid " -d, --database FILE     Use FILE as lastlog2 database\n"
 msgid " -d, --database FILE     use FILE as lastlog2 database\n"
-msgstr " -d, --database SOUBOR   Použije SOUBOR jako databázi lastlog2\n"
+msgstr " -d, --database SOUBOR   použije SOUBOR jako databázi lastlog2\n"
 
 #: misc-utils/lastlog2.c:114
-#, fuzzy
-#| msgid " -i, --import FILE       Import data from old lastlog file\n"
 msgid " -i, --import FILE       import data from old lastlog file\n"
-msgstr " -i, --import SOUBOR     Importuje data ze starého souboru lastlog\n"
+msgstr " -i, --import SOUBOR     importuje data ze starého souboru lastlog\n"
 
 #: misc-utils/lastlog2.c:115
-#, fuzzy
-#| msgid " -r, --rename NEWNAME    Rename existing user to NEWNAME (requires -u)\n"
 msgid " -r, --rename NEWNAME    rename existing user to NEWNAME (requires -u)\n"
 msgstr ""
-" -r, --rename NOVÉ_JMÉNO Přejmenuje existujícího uživatele na NOVÉ_JMÉNO\n"
+" -r, --rename NOVÉ_JMÉNO přejmenuje existujícího uživatele na NOVÉ_JMÉNO\n"
 "                         (vyžaduje -u)\n"
 
 #: misc-utils/lastlog2.c:116
-#, fuzzy
-#| msgid " -s, --service           Display PAM service\n"
 msgid " -s, --service           display PAM service\n"
-msgstr " -s, --service           Zobrazí službu PAM\n"
+msgstr " -s, --service           zobrazí službu PAM\n"
 
-# FIX: Typo "ySet"
 #: misc-utils/lastlog2.c:117
-#, fuzzy
-#| msgid " -S, --set               ySet lastlog record to current time (requires -u)\n"
 msgid " -S, --set               set lastlog record to current time (requires -u)\n"
-msgstr "  -S, --set              Nastaví záznam lastlog na současný čas (vyžaduje -u)\n"
+msgstr "  -S, --set              nastaví záznam lastlog na současný čas (vyžaduje -u)\n"
 
 #: misc-utils/lastlog2.c:118
-#, fuzzy
-#| msgid " -t, --time DAYS         Print only lastlog records more recent than DAYS\n"
 msgid " -t, --time DAYS         print only lastlog records more recent than DAYS\n"
-msgstr " -t, --time DNY          Vypíše pouze záznamy lastlog novější než DNŮ\n"
+msgstr " -t, --time DNY          vypíše pouze záznamy lastlog novější než DNŮ\n"
 
 #: misc-utils/lastlog2.c:119
-#, fuzzy
-#| msgid " -u, --user LOGIN        Print lastlog record of the specified LOGIN\n"
 msgid " -u, --user LOGIN        print lastlog record of the specified LOGIN\n"
-msgstr " -u, --user JMÉNO        Vypíše záznam lastlog zadaného přihlašovacího JMÉNA\n"
+msgstr " -u, --user JMÉNO        vypíše záznam lastlog zadaného přihlašovacího JMÉNA\n"
 
 #: misc-utils/lastlog2.c:166 misc-utils/lastlog2.c:199
 msgid "Cannot parse days"
@@ -12924,10 +12902,7 @@ msgstr "cesta k souborovému systému unixového socketu"
 msgid "user of the process"
 msgstr "uživatel procesu"
 
-# FIX: s/MDOE/MODE/
 #: misc-utils/lsfd.c:413
-#, fuzzy
-#| msgid "extended version of MDOE (rwxD[Ll]m)"
 msgid "extended version of MODE (rwxD[Ll]m)"
 msgstr "rozšířená verze MÓDU (rwxD[Ll]m)"
 
@@ -13206,10 +13181,8 @@ msgid "PID of the process blocking the lock"
 msgstr "ID procesu, který blokuje zámek"
 
 #: misc-utils/lslocks.c:92
-#, fuzzy
-#| msgid "owner of the file"
 msgid "holders of the lock"
-msgstr "vlastník souboru"
+msgstr "držitelé zámku"
 
 #: misc-utils/lslocks.c:286
 #, c-format
@@ -14047,10 +14020,9 @@ msgstr "Neplatný počet"
 msgid "no PIDs specified"
 msgstr "nezadán žádný PID"
 
-# FIXME: a typo
+# TODO Pluralize
 #: misc-utils/waitpid.c:239
-#, fuzzy, c-format
-#| msgid "can't want for %zu of %zu PIDs"
+#, c-format
 msgid "can't wait for %zu of %zu PIDs"
 msgstr "nelze čekat na %zu z %zu PID"
 
@@ -17972,10 +17944,7 @@ msgstr ""
 "irqtop | celkem: %ld rozdíl: %ld | %s | %s\n"
 "\n"
 
-# FIXME: A typo
 #: sys-utils/irqtop.c:180
-#, fuzzy
-#| msgid "cannot not create timerfd"
 msgid "cannot create timerfd"
 msgstr "časovač timerfd nelze vytvořit"
 
@@ -17996,10 +17965,8 @@ msgid "sigprocmask failed"
 msgstr "volání sigprocmask() selhalo"
 
 #: sys-utils/irqtop.c:200
-#, fuzzy
-#| msgid "cannot not create signalfd"
 msgid "cannot create signalfd"
-msgstr "deskriptor pro příjem signálu nelze vytvořit"
+msgstr "deskriptor pro příjem signálů nelze vytvořit"
 
 #: sys-utils/irqtop.c:258
 msgid "Interactive utility to display kernel interrupt information."
@@ -21138,12 +21105,9 @@ msgstr " --ruid <UID|uživatel>       nastaví reálné UID\n"
 msgid " --euid <uid|user>           set effective uid\n"
 msgstr " --euid <UID|uživatel>       nastaví efektivní UID\n"
 
-# FIXME user should read group
 #: sys-utils/setpriv.c:135
-#, fuzzy
-#| msgid " --rgid <gid|user>           set real gid\n"
 msgid " --rgid <gid|group>          set real gid\n"
-msgstr " --rgid <GID|uživatel>       nastaví reálné GID\n"
+msgstr " --rgid <GID|skupina>        nastaví reálné GID\n"
 
 #: sys-utils/setpriv.c:136
 msgid " --egid <gid|group>          set effective gid\n"
@@ -23098,10 +23062,7 @@ msgstr ""
 " -I, --init-string <řetězec>\n"
 "                            nastaví inicializační řetězec\n"
 
-# FIXME: Missing a comma
 #: term-utils/agetty.c:2467
-#, fuzzy
-#| msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgid " -J, --noclear              do not clear the screen before prompt\n"
 msgstr " -J, --noclear              před výzvou nesmaže obrazovku\n"
 
@@ -23123,10 +23084,7 @@ msgstr " -m, --extract-baud         získá baud rate z připojující se fáze
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login           neptá se na přihlašovací jméno\n"
 
-# FIXME: Missing comma
 #: term-utils/agetty.c:2472
-#, fuzzy
-#| msgid " -N  --nonewline            do not print a newline before issue\n"
 msgid " -N, --nonewline            do not print a newline before issue\n"
 msgstr " -N, --nonewline            neodřádkuje před výpisem vydání\n"
 
