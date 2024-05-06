@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.37-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2024-05-01 21:34+0200\n"
+"POT-Creation-Date: 2024-05-06 10:08+0200\n"
 "PO-Revision-Date: 2021-09-13 10:00+0200\n"
 "Last-Translator: Jose Riha <jose1711@gmail.com>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
@@ -70,12 +70,12 @@ msgstr "málo argumentov"
 #: sys-utils/setpriv.c:262 sys-utils/setpriv.c:628 sys-utils/setpriv.c:651
 #: sys-utils/swapon.c:395 sys-utils/swapon.c:538 sys-utils/switch_root.c:174
 #: sys-utils/unshare.c:115 sys-utils/unshare.c:130 sys-utils/wdctl.c:422
-#: sys-utils/zramctl.c:517 term-utils/agetty.c:2988 term-utils/mesg.c:154
+#: sys-utils/zramctl.c:517 term-utils/agetty.c:2989 term-utils/mesg.c:154
 #: term-utils/script.c:386 term-utils/scriptlive.c:256
 #: term-utils/scriptlive.c:259 term-utils/scriptlive.c:262
 #: term-utils/scriptreplay.c:282 term-utils/scriptreplay.c:285
 #: term-utils/scriptreplay.c:288 term-utils/scriptreplay.c:291
-#: term-utils/wall.c:393 text-utils/colcrt.c:284 text-utils/more.c:460
+#: term-utils/wall.c:401 text-utils/colcrt.c:284 text-utils/more.c:460
 #: text-utils/rev.c:165 text-utils/ul.c:637
 #, c-format
 msgid "cannot open %s"
@@ -1299,7 +1299,7 @@ msgstr "nepodarilo sa alokovať iterátor"
 #: disk-utils/fdisk-list.c:136 disk-utils/fdisk-list.c:257
 #: disk-utils/partx.c:676 include/column-list-table.h:45
 #: login-utils/lslogins.c:1113 misc-utils/fincore.c:500
-#: misc-utils/findmnt.c:1891 misc-utils/lsblk.c:2727 misc-utils/lsclocks.c:649
+#: misc-utils/findmnt.c:1891 misc-utils/lsblk.c:2727 misc-utils/lsclocks.c:650
 #: misc-utils/lsfd.c:2396 misc-utils/lslocks.c:751 misc-utils/uuidparse.c:252
 #: misc-utils/wipefs.c:157 sys-utils/losetup.c:389 sys-utils/lscpu.c:596
 #: sys-utils/lscpu.c:751 sys-utils/lscpu.c:966 sys-utils/lsipc.c:354
@@ -1312,7 +1312,7 @@ msgstr "nepodarilo sa alokovať výstupnú tabuľku"
 #: disk-utils/partx.c:590 include/column-list-table.h:72
 #: login-utils/lslogins.c:1173 misc-utils/fincore.c:218
 #: misc-utils/findmnt.c:844 misc-utils/findmnt.c:865 misc-utils/lsblk.c:1329
-#: misc-utils/lsclocks.c:294 misc-utils/lsfd.c:1269 misc-utils/lslocks.c:616
+#: misc-utils/lsclocks.c:295 misc-utils/lsfd.c:1269 misc-utils/lslocks.c:616
 #: misc-utils/uuidparse.c:154 misc-utils/wipefs.c:202 sys-utils/losetup.c:412
 #: sys-utils/losetup.c:441 sys-utils/lscpu.c:510 sys-utils/lscpu.c:786
 #: sys-utils/lscpu.c:818 sys-utils/lsipc.c:486 sys-utils/lsipc.c:567
@@ -3069,7 +3069,7 @@ msgstr ""
 " -V, --verbose      vysvetliť, čo sa práve deje\n"
 "                    ak použijete -V viac ako jedenkrát, aktivuje sa režim bez zápisu zmien\n"
 
-#: disk-utils/mkfs.c:140 include/c.h:321 login-utils/su-common.c:1301
+#: disk-utils/mkfs.c:140 include/c.h:321 login-utils/su-common.c:1302
 #: login-utils/sulogin.c:940 login-utils/sulogin.c:944 sys-utils/flock.c:125
 #: sys-utils/rtcwake.c:632
 #, c-format
@@ -3991,7 +3991,7 @@ msgstr[2] ""
 
 #: disk-utils/partx.c:687 include/column-list-table.h:62
 #: misc-utils/fincore.c:514 misc-utils/findmnt.c:1920 misc-utils/lsblk.c:2268
-#: misc-utils/lsblk.c:2771 misc-utils/lsclocks.c:657 misc-utils/lsfd.c:623
+#: misc-utils/lsblk.c:2771 misc-utils/lsclocks.c:658 misc-utils/lsfd.c:623
 #: misc-utils/lsfd.c:2410 misc-utils/lslocks.c:766 sys-utils/losetup.c:403
 #: sys-utils/lscpu.c:608 sys-utils/lscpu.c:764 sys-utils/prlimit.c:312
 #: sys-utils/rfkill.c:488 sys-utils/swapon.c:318 sys-utils/wdctl.c:365
@@ -7808,313 +7808,313 @@ msgstr ""
 msgid "operation failed: %m"
 msgstr ""
 
-#: libmount/src/context_mount.c:1417
+#: libmount/src/context_mount.c:1418
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr ""
 
-#: libmount/src/context_mount.c:1427
+#: libmount/src/context_mount.c:1428
 #, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr ""
 
-#: libmount/src/context_mount.c:1441
+#: libmount/src/context_mount.c:1442
 #, c-format
 msgid "operation permitted for root only"
 msgstr ""
 
-#: libmount/src/context_mount.c:1445
+#: libmount/src/context_mount.c:1446
 #, c-format
 msgid "%s is already mounted"
 msgstr ""
 
-#: libmount/src/context_mount.c:1451
+#: libmount/src/context_mount.c:1452
 #, c-format
 msgid "can't find in %s"
 msgstr ""
 
-#: libmount/src/context_mount.c:1454
+#: libmount/src/context_mount.c:1455
 #, c-format
 msgid "can't find mount point in %s"
 msgstr ""
 
-#: libmount/src/context_mount.c:1457
+#: libmount/src/context_mount.c:1458
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr ""
 
-#: libmount/src/context_mount.c:1462
+#: libmount/src/context_mount.c:1463
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr ""
 
-#: libmount/src/context_mount.c:1467
+#: libmount/src/context_mount.c:1468
 #, c-format
 msgid "failed to determine filesystem type"
 msgstr ""
 
-#: libmount/src/context_mount.c:1468
+#: libmount/src/context_mount.c:1469
 #, fuzzy, c-format
 #| msgid "no device specified"
 msgid "no valid filesystem type specified"
 msgstr "nebolo zadané žiadne zariadenie"
 
-#: libmount/src/context_mount.c:1475
+#: libmount/src/context_mount.c:1476
 #, c-format
 msgid "can't find %s"
 msgstr ""
 
-#: libmount/src/context_mount.c:1477
+#: libmount/src/context_mount.c:1478
 #, c-format
 msgid "no mount source specified"
 msgstr ""
 
-#: libmount/src/context_mount.c:1488
+#: libmount/src/context_mount.c:1489
 #, fuzzy, c-format
 #| msgid "failed to parse number of inodes"
 msgid "failed to parse mount options '%s': %m"
 msgstr "nepodarilo sa prečítať počet i-uzlov"
 
-#: libmount/src/context_mount.c:1489
+#: libmount/src/context_mount.c:1490
 #, fuzzy, c-format
 #| msgid "failed to parse number of inodes"
 msgid "failed to parse mount options '%s'"
 msgstr "nepodarilo sa prečítať počet i-uzlov"
 
-#: libmount/src/context_mount.c:1492
+#: libmount/src/context_mount.c:1493
 #, c-format
 msgid "failed to parse mount options: %m"
 msgstr ""
 
-#: libmount/src/context_mount.c:1493
+#: libmount/src/context_mount.c:1494
 #, c-format
 msgid "failed to parse mount options"
 msgstr ""
 
-#: libmount/src/context_mount.c:1498
+#: libmount/src/context_mount.c:1499
 #, c-format
 msgid "failed to setup loop device for %s"
 msgstr ""
 
-#: libmount/src/context_mount.c:1502
+#: libmount/src/context_mount.c:1503
 #, c-format
 msgid "overlapping loop device exists for %s"
 msgstr ""
 
-#: libmount/src/context_mount.c:1506 libmount/src/context_umount.c:1267
+#: libmount/src/context_mount.c:1507 libmount/src/context_umount.c:1267
 #, c-format
 msgid "locking failed"
 msgstr ""
 
-#: libmount/src/context_mount.c:1510 libmount/src/context_umount.c:1273
+#: libmount/src/context_mount.c:1511 libmount/src/context_umount.c:1273
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, c-format
 msgid "failed to switch namespace"
 msgstr ""
 
-#: libmount/src/context_mount.c:1514
+#: libmount/src/context_mount.c:1515
 #, fuzzy, c-format
 #| msgid "set filesystem readahead"
 msgid "filesystem already mounted"
 msgstr "nastaviť dopredné načítanie pre súborový systém"
 
-#: libmount/src/context_mount.c:1517
+#: libmount/src/context_mount.c:1518
 #, c-format
 msgid "mount failed: %m"
 msgstr ""
 
-#: libmount/src/context_mount.c:1527
+#: libmount/src/context_mount.c:1528
 #, c-format
 msgid "filesystem was mounted, but failed to apply flags"
 msgstr ""
 
-#: libmount/src/context_mount.c:1533
+#: libmount/src/context_mount.c:1534
 #, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr ""
 
-#: libmount/src/context_mount.c:1539
+#: libmount/src/context_mount.c:1540
 #, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr ""
 
-#: libmount/src/context_mount.c:1545
+#: libmount/src/context_mount.c:1546
 #, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr ""
 
-#: libmount/src/context_mount.c:1551
+#: libmount/src/context_mount.c:1552
 #, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr ""
 
-#: libmount/src/context_mount.c:1557
+#: libmount/src/context_mount.c:1558
 #, c-format
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr ""
 
-#: libmount/src/context_mount.c:1563
+#: libmount/src/context_mount.c:1564
 #, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr ""
 
-#: libmount/src/context_mount.c:1575
+#: libmount/src/context_mount.c:1576
 #, fuzzy, c-format
 #| msgid "symlink failed: %s"
 msgid "%s system call failed: %s"
 msgstr "volanie symlink skončilo s chybou: %s"
 
-#: libmount/src/context_mount.c:1590 login-utils/newgrp.c:228
+#: libmount/src/context_mount.c:1591 login-utils/newgrp.c:228
 #, c-format
 msgid "permission denied"
 msgstr ""
 
-#: libmount/src/context_mount.c:1592 libmount/src/context_mount.c:1633
+#: libmount/src/context_mount.c:1593 libmount/src/context_mount.c:1634
 #, c-format
 msgid "mount point is not a directory"
 msgstr ""
 
-#: libmount/src/context_mount.c:1594
+#: libmount/src/context_mount.c:1595
 #, c-format
 msgid "must be superuser to use mount"
 msgstr ""
 
-#: libmount/src/context_mount.c:1601
+#: libmount/src/context_mount.c:1602
 #, c-format
 msgid "mount point is busy"
 msgstr ""
 
-#: libmount/src/context_mount.c:1608
+#: libmount/src/context_mount.c:1609
 #, c-format
 msgid "%s already mounted on %s"
 msgstr ""
 
-#: libmount/src/context_mount.c:1612
+#: libmount/src/context_mount.c:1613
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr ""
 
-#: libmount/src/context_mount.c:1617
+#: libmount/src/context_mount.c:1618
 #, c-format
 msgid "mount point does not exist"
 msgstr ""
 
-#: libmount/src/context_mount.c:1620
+#: libmount/src/context_mount.c:1621
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr ""
 
-#: libmount/src/context_mount.c:1625
+#: libmount/src/context_mount.c:1626
 #, c-format
 msgid "special device %s does not exist"
 msgstr ""
 
-#: libmount/src/context_mount.c:1638
+#: libmount/src/context_mount.c:1639
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr ""
 
-#: libmount/src/context_mount.c:1648
+#: libmount/src/context_mount.c:1649
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr ""
 
-#: libmount/src/context_mount.c:1650
+#: libmount/src/context_mount.c:1651
 #, c-format
 msgid "not mount point or bad option"
 msgstr ""
 
-#: libmount/src/context_mount.c:1653
+#: libmount/src/context_mount.c:1654
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr ""
 
-#: libmount/src/context_mount.c:1657
+#: libmount/src/context_mount.c:1658
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 
-#: libmount/src/context_mount.c:1661
+#: libmount/src/context_mount.c:1662
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr ""
 
-#: libmount/src/context_mount.c:1668
+#: libmount/src/context_mount.c:1669
 #, c-format
 msgid "mount table full"
 msgstr ""
 
-#: libmount/src/context_mount.c:1673
+#: libmount/src/context_mount.c:1674
 #, c-format
 msgid "can't read superblock on %s"
 msgstr ""
 
-#: libmount/src/context_mount.c:1680
+#: libmount/src/context_mount.c:1681
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr ""
 
-#: libmount/src/context_mount.c:1683
+#: libmount/src/context_mount.c:1684
 #, c-format
 msgid "unknown filesystem type"
 msgstr ""
 
-#: libmount/src/context_mount.c:1692
+#: libmount/src/context_mount.c:1693
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr ""
 
-#: libmount/src/context_mount.c:1695
+#: libmount/src/context_mount.c:1696
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr ""
 
-#: libmount/src/context_mount.c:1698
+#: libmount/src/context_mount.c:1699
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr ""
 
-#: libmount/src/context_mount.c:1700
+#: libmount/src/context_mount.c:1701
 #, c-format
 msgid "%s is not a block device"
 msgstr ""
 
-#: libmount/src/context_mount.c:1707
+#: libmount/src/context_mount.c:1708
 #, c-format
 msgid "%s is not a valid block device"
 msgstr ""
 
-#: libmount/src/context_mount.c:1715
+#: libmount/src/context_mount.c:1716
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr ""
 
-#: libmount/src/context_mount.c:1717
+#: libmount/src/context_mount.c:1718
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr ""
 
-#: libmount/src/context_mount.c:1719
+#: libmount/src/context_mount.c:1720
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr ""
 
-#: libmount/src/context_mount.c:1721
+#: libmount/src/context_mount.c:1722
 #, c-format
 msgid "bind %s failed"
 msgstr ""
 
-#: libmount/src/context_mount.c:1730
+#: libmount/src/context_mount.c:1731
 #, c-format
 msgid "no medium found on %s"
 msgstr ""
 
-#: libmount/src/context_mount.c:1737
+#: libmount/src/context_mount.c:1738
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr ""
 
-#: libmount/src/context_mount.c:1746
+#: libmount/src/context_mount.c:1747
 #, fuzzy, c-format
 #| msgid "symlink failed: %s"
 msgid "%s system call failed: %m"
@@ -8761,7 +8761,7 @@ msgstr ""
 msgid " -H             suppress hostname in the login prompt"
 msgstr ""
 
-#: login-utils/login.c:1305 term-utils/agetty.c:3011
+#: login-utils/login.c:1305 term-utils/agetty.c:3012
 #, fuzzy
 #| msgid "failed to initialize loopcxt"
 msgid "failed to initialize path context"
@@ -9257,139 +9257,139 @@ msgstr ""
 msgid "authentication failed"
 msgstr ""
 
-#: login-utils/su-common.c:451
+#: login-utils/su-common.c:453
 #, c-format
 msgid "cannot open session: %s"
 msgstr ""
 
-#: login-utils/su-common.c:470
+#: login-utils/su-common.c:471
 msgid "cannot block signals"
 msgstr ""
 
-#: login-utils/su-common.c:487
+#: login-utils/su-common.c:488
 msgid "cannot initialize signal mask for session"
 msgstr ""
 
-#: login-utils/su-common.c:495
+#: login-utils/su-common.c:496
 msgid "cannot initialize signal mask"
 msgstr ""
 
-#: login-utils/su-common.c:505
+#: login-utils/su-common.c:506
 msgid "cannot set signal handler for session"
 msgstr ""
 
-#: login-utils/su-common.c:513 misc-utils/uuidd.c:439
+#: login-utils/su-common.c:514 misc-utils/uuidd.c:439
 #: sys-utils/lscpu-virt.c:506
 msgid "cannot set signal handler"
 msgstr ""
 
-#: login-utils/su-common.c:521
+#: login-utils/su-common.c:522
 msgid "cannot set signal mask"
 msgstr ""
 
-#: login-utils/su-common.c:548 term-utils/script.c:961
+#: login-utils/su-common.c:549 term-utils/script.c:961
 #: term-utils/scriptlive.c:296
 msgid "failed to create pseudo-terminal"
 msgstr ""
 
-#: login-utils/su-common.c:550 term-utils/script.c:968
+#: login-utils/su-common.c:551 term-utils/script.c:968
 #: term-utils/scriptlive.c:298
 #, fuzzy
 #| msgid "failed to initialize loopcxt"
 msgid "failed to initialize signals handler"
 msgstr "loopctx sa nepodařilo inicializovať"
 
-#: login-utils/su-common.c:565
+#: login-utils/su-common.c:566
 msgid "cannot set child signal handler"
 msgstr ""
 
-#: login-utils/su-common.c:575 term-utils/script.c:977
+#: login-utils/su-common.c:576 term-utils/script.c:977
 #: term-utils/scriptlive.c:305
 msgid "cannot create child process"
 msgstr ""
 
-#: login-utils/su-common.c:594 sys-utils/nsenter.c:621
+#: login-utils/su-common.c:595 sys-utils/nsenter.c:621
 #: sys-utils/switch_root.c:189
 #, c-format
 msgid "cannot change directory to %s"
 msgstr ""
 
-#: login-utils/su-common.c:620 term-utils/scriptlive.c:354
+#: login-utils/su-common.c:621 term-utils/scriptlive.c:354
 #, c-format
 msgid ""
 "\n"
 "Session terminated, killing shell..."
 msgstr ""
 
-#: login-utils/su-common.c:631
+#: login-utils/su-common.c:632
 #, c-format
 msgid " ...killed.\n"
 msgstr ""
 
-#: login-utils/su-common.c:728
+#: login-utils/su-common.c:729
 msgid "failed to set the PATH environment variable"
 msgstr ""
 
-#: login-utils/su-common.c:805
+#: login-utils/su-common.c:806
 msgid "cannot set groups"
 msgstr ""
 
-#: login-utils/su-common.c:811
+#: login-utils/su-common.c:812
 #, c-format
 msgid "failed to establish user credentials: %s"
 msgstr ""
 
-#: login-utils/su-common.c:821
+#: login-utils/su-common.c:822
 msgid "cannot set group id"
 msgstr ""
 
-#: login-utils/su-common.c:823
+#: login-utils/su-common.c:824
 msgid "cannot set user id"
 msgstr ""
 
-#: login-utils/su-common.c:889
+#: login-utils/su-common.c:890
 msgid " -m, -p, --preserve-environment      do not reset environment variables\n"
 msgstr ""
 
-#: login-utils/su-common.c:890
+#: login-utils/su-common.c:891
 msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
 msgstr ""
 
-#: login-utils/su-common.c:893
+#: login-utils/su-common.c:894
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr ""
 
-#: login-utils/su-common.c:894
+#: login-utils/su-common.c:895
 msgid " -G, --supp-group <group>        specify a supplemental group\n"
 msgstr ""
 
-#: login-utils/su-common.c:897
+#: login-utils/su-common.c:898
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr ""
 
-#: login-utils/su-common.c:898
+#: login-utils/su-common.c:899
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr ""
 
-#: login-utils/su-common.c:899
+#: login-utils/su-common.c:900
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
 msgstr ""
 
-#: login-utils/su-common.c:901
+#: login-utils/su-common.c:902
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr ""
 
-#: login-utils/su-common.c:902
+#: login-utils/su-common.c:903
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr ""
 
-#: login-utils/su-common.c:903
+#: login-utils/su-common.c:904
 msgid " -P, --pty                       create a new pseudo-terminal\n"
 msgstr ""
 
-#: login-utils/su-common.c:904
+#: login-utils/su-common.c:905
 #, fuzzy
 #| msgid " -n, --noauto-pt               don't create default partition table on empty devices\n"
 msgid " -T, --no-pty                    do not create a new pseudo-terminal (bad security!)\n"
@@ -9397,36 +9397,36 @@ msgstr ""
 " -n, --noauto-pt               nevytvárať na prázdnych zariadeniach predvolené\n"
 "                               tabuľky rozdelenia disku\n"
 
-#: login-utils/su-common.c:914
+#: login-utils/su-common.c:915
 #, c-format
 msgid ""
 " %1$s [options] -u <user> [[--] <command>]\n"
 " %1$s [options] [-] [<user> [<argument>...]]\n"
 msgstr ""
 
-#: login-utils/su-common.c:919
+#: login-utils/su-common.c:920
 msgid ""
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
 "not given, fall back to su(1)-compatible semantics and execute standard shell.\n"
 "The options -c, -f, -l, and -s are mutually exclusive with -u.\n"
 msgstr ""
 
-#: login-utils/su-common.c:924
+#: login-utils/su-common.c:925
 msgid " -u, --user <user>               username\n"
 msgstr ""
 
-#: login-utils/su-common.c:935
+#: login-utils/su-common.c:936
 #, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr ""
 
-#: login-utils/su-common.c:939
+#: login-utils/su-common.c:940
 msgid ""
 "Change the effective user ID and group ID to that of <user>.\n"
 "A mere - implies -l.  If <user> is not given, root is assumed.\n"
 msgstr ""
 
-#: login-utils/su-common.c:1016
+#: login-utils/su-common.c:1017
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
@@ -9434,46 +9434,46 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: login-utils/su-common.c:1022
+#: login-utils/su-common.c:1023
 #, c-format
 msgid "group %s does not exist"
 msgstr ""
 
-#: login-utils/su-common.c:1132
+#: login-utils/su-common.c:1133
 msgid "--pty is not supported for your system"
 msgstr ""
 
-#: login-utils/su-common.c:1170
+#: login-utils/su-common.c:1171
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr ""
 
-#: login-utils/su-common.c:1184
+#: login-utils/su-common.c:1185
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr ""
 
-#: login-utils/su-common.c:1187
+#: login-utils/su-common.c:1188
 msgid "no command was specified"
 msgstr ""
 
-#: login-utils/su-common.c:1199
+#: login-utils/su-common.c:1200
 msgid "only root can specify alternative groups"
 msgstr ""
 
-#: login-utils/su-common.c:1210
+#: login-utils/su-common.c:1211
 #, c-format
 msgid "user %s does not exist or the user entry does not contain all the required fields"
 msgstr ""
 
-#: login-utils/su-common.c:1245
+#: login-utils/su-common.c:1246
 #, c-format
 msgid "using restricted shell %s"
 msgstr ""
 
-#: login-utils/su-common.c:1266
+#: login-utils/su-common.c:1267
 msgid "failed to allocate pty handler"
 msgstr ""
 
-#: login-utils/su-common.c:1292
+#: login-utils/su-common.c:1293
 #, c-format
 msgid "warning: cannot change directory to %s"
 msgstr ""
@@ -9604,7 +9604,7 @@ msgid ""
 msgstr ""
 
 #: login-utils/sulogin.c:1038 misc-utils/findmnt.c:1733 sys-utils/wdctl.c:792
-#: term-utils/agetty.c:852 term-utils/wall.c:224
+#: term-utils/agetty.c:852 term-utils/wall.c:231
 msgid "invalid timeout argument"
 msgstr ""
 
@@ -10995,11 +10995,11 @@ msgstr ""
 msgid " -u, --unquoted                do not quote the output\n"
 msgstr ""
 
-#: misc-utils/getopt.c:409 misc-utils/getopt.c:468
+#: misc-utils/getopt.c:409 misc-utils/getopt.c:467
 msgid "missing optstring argument"
 msgstr ""
 
-#: misc-utils/getopt.c:463
+#: misc-utils/getopt.c:462
 msgid "internal error, contact the author."
 msgstr ""
 
@@ -12401,47 +12401,47 @@ msgstr ""
 msgid "Unknown clock: %s"
 msgstr "Neznámy príkaz: %s"
 
-#: misc-utils/lsclocks.c:259 misc-utils/lsclocks.c:388
-#: misc-utils/lsclocks.c:435
+#: misc-utils/lsclocks.c:259 misc-utils/lsclocks.c:389
+#: misc-utils/lsclocks.c:436
 #, fuzzy, c-format
 #| msgid "cannot open %s"
 msgid "Could not open %s"
 msgstr "%s sa nedá otvoriť"
 
-#: misc-utils/lsclocks.c:325
+#: misc-utils/lsclocks.c:326
 #, fuzzy
 #| msgid "failed to remove partition"
 msgid "failed to format iso time"
 msgstr "oddiel sa nepodarilo odstrániť"
 
-#: misc-utils/lsclocks.c:334 misc-utils/lsclocks.c:347
+#: misc-utils/lsclocks.c:335 misc-utils/lsclocks.c:348
 #, fuzzy
 #| msgid "failed to read partitions"
 msgid "failed to format relative time"
 msgstr "oddiely sa nepodarilo načítať"
 
-#: misc-utils/lsclocks.c:414 misc-utils/lsclocks.c:478
+#: misc-utils/lsclocks.c:415 misc-utils/lsclocks.c:479
 #, fuzzy, c-format
 #| msgid "cannot open %s"
 msgid "Could not glob: %d"
 msgstr "%s sa nedá otvoriť"
 
-#: misc-utils/lsclocks.c:443 sys-utils/hwclock-rtc.c:145
+#: misc-utils/lsclocks.c:444 sys-utils/hwclock-rtc.c:145
 #, c-format
 msgid "ioctl(RTC_RD_NAME) to %s to read the time failed"
 msgstr ""
 
-#: misc-utils/lsclocks.c:502
+#: misc-utils/lsclocks.c:503
 #, c-format
 msgid "Could not get CPU clock of process %jd: %s"
 msgstr ""
 
-#: misc-utils/lsclocks.c:599 misc-utils/lslocks.c:385 misc-utils/uuidd.c:791
+#: misc-utils/lsclocks.c:600 misc-utils/lslocks.c:385 misc-utils/uuidd.c:791
 #: misc-utils/waitpid.c:54 sys-utils/nsenter.c:390
 msgid "failed to parse pid"
 msgstr ""
 
-#: misc-utils/lsclocks.c:627
+#: misc-utils/lsclocks.c:628
 #, fuzzy
 #| msgid "Failed to parse size."
 msgid "failed to get time"
@@ -22591,7 +22591,7 @@ msgstr ""
 #: term-utils/agetty.c:606 term-utils/agetty.c:774 term-utils/agetty.c:953
 #: term-utils/agetty.c:1202 term-utils/agetty.c:1481 term-utils/agetty.c:1499
 #: term-utils/agetty.c:1536 term-utils/agetty.c:1546 term-utils/agetty.c:1588
-#: term-utils/agetty.c:1949 term-utils/agetty.c:2310 term-utils/agetty.c:2892
+#: term-utils/agetty.c:1950 term-utils/agetty.c:2311 term-utils/agetty.c:2893
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr ""
@@ -22682,137 +22682,137 @@ msgstr ""
 msgid "failed to create reload file: %s: %m"
 msgstr ""
 
-#: term-utils/agetty.c:2013
+#: term-utils/agetty.c:2014
 #, c-format
 msgid "failed to get terminal attributes: %m"
 msgstr ""
 
-#: term-utils/agetty.c:2035
+#: term-utils/agetty.c:2036
 msgid "[press ENTER to login]"
 msgstr ""
 
-#: term-utils/agetty.c:2063
+#: term-utils/agetty.c:2064
 msgid "Num Lock off"
 msgstr ""
 
-#: term-utils/agetty.c:2066
+#: term-utils/agetty.c:2067
 msgid "Num Lock on"
 msgstr ""
 
-#: term-utils/agetty.c:2069
+#: term-utils/agetty.c:2070
 msgid "Caps Lock on"
 msgstr ""
 
-#: term-utils/agetty.c:2072
+#: term-utils/agetty.c:2073
 msgid "Scroll Lock on"
 msgstr ""
 
-#: term-utils/agetty.c:2075
+#: term-utils/agetty.c:2076
 #, c-format
 msgid ""
 "Hint: %s\n"
 "\n"
 msgstr ""
 
-#: term-utils/agetty.c:2219
+#: term-utils/agetty.c:2220
 #, c-format
 msgid "%s: read: %m"
 msgstr ""
 
-#: term-utils/agetty.c:2286
+#: term-utils/agetty.c:2287
 #, c-format
 msgid "%s: input overrun"
 msgstr ""
 
-#: term-utils/agetty.c:2306 term-utils/agetty.c:2314
+#: term-utils/agetty.c:2307 term-utils/agetty.c:2315
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr ""
 
-#: term-utils/agetty.c:2320
+#: term-utils/agetty.c:2321
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr ""
 
-#: term-utils/agetty.c:2405
+#: term-utils/agetty.c:2406
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr ""
 
-#: term-utils/agetty.c:2450
+#: term-utils/agetty.c:2451
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
 " %1$s [options] <baud_rate>,... <line> [<termtype>]\n"
 msgstr ""
 
-#: term-utils/agetty.c:2454
+#: term-utils/agetty.c:2455
 msgid "Open a terminal and set its mode.\n"
 msgstr ""
 
-#: term-utils/agetty.c:2457
+#: term-utils/agetty.c:2458
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr ""
 
-#: term-utils/agetty.c:2458
+#: term-utils/agetty.c:2459
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr ""
 
-#: term-utils/agetty.c:2459
+#: term-utils/agetty.c:2460
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr ""
 
-#: term-utils/agetty.c:2460
+#: term-utils/agetty.c:2461
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr ""
 
-#: term-utils/agetty.c:2461
+#: term-utils/agetty.c:2462
 msgid " -f, --issue-file <list>    display issue files or directories\n"
 msgstr ""
 
-#: term-utils/agetty.c:2462
+#: term-utils/agetty.c:2463
 msgid "     --show-issue           display issue file and exit\n"
 msgstr ""
 
-#: term-utils/agetty.c:2463
+#: term-utils/agetty.c:2464
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr ""
 
-#: term-utils/agetty.c:2464
+#: term-utils/agetty.c:2465
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr ""
 
-#: term-utils/agetty.c:2465
+#: term-utils/agetty.c:2466
 msgid " -i, --noissue              do not display issue file\n"
 msgstr ""
 
-#: term-utils/agetty.c:2466
+#: term-utils/agetty.c:2467
 msgid " -I, --init-string <string> set init string\n"
 msgstr ""
 
-#: term-utils/agetty.c:2467
+#: term-utils/agetty.c:2468
 #, fuzzy
 #| msgid "     --verbose             verbose output\n"
 msgid " -J, --noclear              do not clear the screen before prompt\n"
 msgstr "     --verbose             podrobný výstup\n"
 
-#: term-utils/agetty.c:2468
+#: term-utils/agetty.c:2469
 msgid " -l, --login-program <file> specify login program\n"
 msgstr ""
 
-#: term-utils/agetty.c:2469
+#: term-utils/agetty.c:2470
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr ""
 
-#: term-utils/agetty.c:2470
+#: term-utils/agetty.c:2471
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr ""
 
-#: term-utils/agetty.c:2471
+#: term-utils/agetty.c:2472
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr ""
 
-#: term-utils/agetty.c:2472
+#: term-utils/agetty.c:2473
 #, fuzzy
 #| msgid " -n, --noauto-pt               don't create default partition table on empty devices\n"
 msgid " -N, --nonewline            do not print a newline before issue\n"
@@ -22820,79 +22820,79 @@ msgstr ""
 " -n, --noauto-pt               nevytvárať na prázdnych zariadeniach predvolené\n"
 "                               tabuľky rozdelenia disku\n"
 
-#: term-utils/agetty.c:2473
+#: term-utils/agetty.c:2474
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr ""
 
-#: term-utils/agetty.c:2474
+#: term-utils/agetty.c:2475
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr ""
 
-#: term-utils/agetty.c:2475
+#: term-utils/agetty.c:2476
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr ""
 
-#: term-utils/agetty.c:2476
+#: term-utils/agetty.c:2477
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr ""
 
-#: term-utils/agetty.c:2477
+#: term-utils/agetty.c:2478
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr ""
 
-#: term-utils/agetty.c:2478
+#: term-utils/agetty.c:2479
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr ""
 
-#: term-utils/agetty.c:2479
+#: term-utils/agetty.c:2480
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr ""
 
-#: term-utils/agetty.c:2480
+#: term-utils/agetty.c:2481
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr ""
 
-#: term-utils/agetty.c:2481
+#: term-utils/agetty.c:2482
 msgid "     --nohints              do not print hints\n"
 msgstr ""
 
-#: term-utils/agetty.c:2482
+#: term-utils/agetty.c:2483
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr ""
 
-#: term-utils/agetty.c:2483
+#: term-utils/agetty.c:2484
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr ""
 
-#: term-utils/agetty.c:2484
+#: term-utils/agetty.c:2485
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr ""
 
-#: term-utils/agetty.c:2485
+#: term-utils/agetty.c:2486
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr ""
 
-#: term-utils/agetty.c:2486
+#: term-utils/agetty.c:2487
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr ""
 
-#: term-utils/agetty.c:2487
+#: term-utils/agetty.c:2488
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr ""
 
-#: term-utils/agetty.c:2488
+#: term-utils/agetty.c:2489
 msgid "     --nice <number>        run login with this priority\n"
 msgstr ""
 
-#: term-utils/agetty.c:2489
+#: term-utils/agetty.c:2490
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr ""
 
-#: term-utils/agetty.c:2490
+#: term-utils/agetty.c:2491
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr ""
 
-#: term-utils/agetty.c:2849
+#: term-utils/agetty.c:2850
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
@@ -22900,21 +22900,21 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: term-utils/agetty.c:2979
+#: term-utils/agetty.c:2980
 #, c-format
 msgid "checkname failed: %m"
 msgstr ""
 
-#: term-utils/agetty.c:2991
+#: term-utils/agetty.c:2992
 #, c-format
 msgid "cannot touch file %s"
 msgstr ""
 
-#: term-utils/agetty.c:2995
+#: term-utils/agetty.c:2996
 msgid "--reload is unsupported on your system"
 msgstr ""
 
-#: term-utils/agetty.c:3017
+#: term-utils/agetty.c:3018
 #, fuzzy
 #| msgid "Failed to parse size."
 msgid "failed to open credentials directory"
@@ -23530,41 +23530,41 @@ msgstr ""
 msgid "%s: unknown gid"
 msgstr ""
 
-#: term-utils/wall.c:175
+#: term-utils/wall.c:182
 msgid "getgrouplist found more groups than sysconf allows"
 msgstr ""
 
-#: term-utils/wall.c:221
+#: term-utils/wall.c:228
 msgid "--nobanner is available only for root"
 msgstr ""
 
-#: term-utils/wall.c:226
+#: term-utils/wall.c:233
 #, c-format
 msgid "invalid timeout argument: %s"
 msgstr ""
 
-#: term-utils/wall.c:262 term-utils/write.c:144 term-utils/write.c:215
+#: term-utils/wall.c:269 term-utils/write.c:144 term-utils/write.c:215
 #, fuzzy, c-format
 #| msgid "size error in symlink: %s"
 msgid "error getting sessions: %s"
 msgstr "chyba v symbolickom odkaze: %s"
 
-#: term-utils/wall.c:270 term-utils/write.c:153 term-utils/write.c:223
+#: term-utils/wall.c:277 term-utils/write.c:153 term-utils/write.c:223
 #, fuzzy, c-format
 #| msgid "utimes failed: %s"
 msgid "get user name failed: %s"
 msgstr "volanie utimes skončilo s chybou: %s"
 
-#: term-utils/wall.c:333
+#: term-utils/wall.c:340
 msgid "cannot get passwd uid"
 msgstr ""
 
-#: term-utils/wall.c:357
+#: term-utils/wall.c:364
 #, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr ""
 
-#: term-utils/wall.c:389
+#: term-utils/wall.c:397
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr ""

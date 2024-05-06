@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.40.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2024-05-01 21:49+0200\n"
+"POT-Creation-Date: 2024-05-06 10:08+0200\n"
 "PO-Revision-Date: 2024-05-04 10:45+0900\n"
 "Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
 "Language-Team: Korean <translation-team-ko@googlegroups.com>\n"
@@ -70,12 +70,12 @@ msgstr "불충분한 인자"
 #: sys-utils/setpriv.c:262 sys-utils/setpriv.c:628 sys-utils/setpriv.c:651
 #: sys-utils/swapon.c:395 sys-utils/swapon.c:538 sys-utils/switch_root.c:174
 #: sys-utils/unshare.c:115 sys-utils/unshare.c:130 sys-utils/wdctl.c:422
-#: sys-utils/zramctl.c:517 term-utils/agetty.c:2988 term-utils/mesg.c:154
+#: sys-utils/zramctl.c:517 term-utils/agetty.c:2989 term-utils/mesg.c:154
 #: term-utils/script.c:386 term-utils/scriptlive.c:256
 #: term-utils/scriptlive.c:259 term-utils/scriptlive.c:262
 #: term-utils/scriptreplay.c:282 term-utils/scriptreplay.c:285
 #: term-utils/scriptreplay.c:288 term-utils/scriptreplay.c:291
-#: term-utils/wall.c:393 text-utils/colcrt.c:284 text-utils/more.c:460
+#: term-utils/wall.c:401 text-utils/colcrt.c:284 text-utils/more.c:460
 #: text-utils/rev.c:165 text-utils/ul.c:637
 #, c-format
 msgid "cannot open %s"
@@ -1273,7 +1273,7 @@ msgstr "반복자 할당 실패"
 #: disk-utils/fdisk-list.c:136 disk-utils/fdisk-list.c:257
 #: disk-utils/partx.c:676 include/column-list-table.h:45
 #: login-utils/lslogins.c:1113 misc-utils/fincore.c:500
-#: misc-utils/findmnt.c:1891 misc-utils/lsblk.c:2727 misc-utils/lsclocks.c:649
+#: misc-utils/findmnt.c:1891 misc-utils/lsblk.c:2727 misc-utils/lsclocks.c:650
 #: misc-utils/lsfd.c:2396 misc-utils/lslocks.c:751 misc-utils/uuidparse.c:252
 #: misc-utils/wipefs.c:157 sys-utils/losetup.c:389 sys-utils/lscpu.c:596
 #: sys-utils/lscpu.c:751 sys-utils/lscpu.c:966 sys-utils/lsipc.c:354
@@ -1286,7 +1286,7 @@ msgstr "출력 테이블 할당 실패"
 #: disk-utils/partx.c:590 include/column-list-table.h:72
 #: login-utils/lslogins.c:1173 misc-utils/fincore.c:218
 #: misc-utils/findmnt.c:844 misc-utils/findmnt.c:865 misc-utils/lsblk.c:1329
-#: misc-utils/lsclocks.c:294 misc-utils/lsfd.c:1269 misc-utils/lslocks.c:616
+#: misc-utils/lsclocks.c:295 misc-utils/lsfd.c:1269 misc-utils/lslocks.c:616
 #: misc-utils/uuidparse.c:154 misc-utils/wipefs.c:202 sys-utils/losetup.c:412
 #: sys-utils/losetup.c:441 sys-utils/lscpu.c:510 sys-utils/lscpu.c:786
 #: sys-utils/lscpu.c:818 sys-utils/lsipc.c:486 sys-utils/lsipc.c:567
@@ -3013,7 +3013,7 @@ msgstr ""
 " -V, --verbose      완료한 작업 항목을 설명합니다.\n"
 "                      -V 옵션을 여러번 지정하면 시험 동작을 진행합니다\n"
 
-#: disk-utils/mkfs.c:140 include/c.h:321 login-utils/su-common.c:1301
+#: disk-utils/mkfs.c:140 include/c.h:321 login-utils/su-common.c:1302
 #: login-utils/sulogin.c:940 login-utils/sulogin.c:944 sys-utils/flock.c:125
 #: sys-utils/rtcwake.c:632
 #, c-format
@@ -3902,7 +3902,7 @@ msgstr[0] "#%2d: %9ju-%9ju (%9ju 섹터, %6ju MB)\n"
 
 #: disk-utils/partx.c:687 include/column-list-table.h:62
 #: misc-utils/fincore.c:514 misc-utils/findmnt.c:1920 misc-utils/lsblk.c:2268
-#: misc-utils/lsblk.c:2771 misc-utils/lsclocks.c:657 misc-utils/lsfd.c:623
+#: misc-utils/lsblk.c:2771 misc-utils/lsclocks.c:658 misc-utils/lsfd.c:623
 #: misc-utils/lsfd.c:2410 misc-utils/lslocks.c:766 sys-utils/losetup.c:403
 #: sys-utils/lscpu.c:608 sys-utils/lscpu.c:764 sys-utils/prlimit.c:312
 #: sys-utils/rfkill.c:488 sys-utils/swapon.c:318 sys-utils/wdctl.c:365
@@ -7764,308 +7764,308 @@ msgstr "hush 로그인 상태: 원본 ID 복원 실패"
 msgid "operation failed: %m"
 msgstr "처리 실패: %m"
 
-#: libmount/src/context_mount.c:1417
+#: libmount/src/context_mount.c:1418
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "경고: 전달 플래그 적용 실패"
 
-#: libmount/src/context_mount.c:1427
+#: libmount/src/context_mount.c:1428
 #, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "경고: 원본 쓰기 방지. 읽기 전용으로 마운트했습니다"
 
-#: libmount/src/context_mount.c:1441
+#: libmount/src/context_mount.c:1442
 #, c-format
 msgid "operation permitted for root only"
 msgstr "루트 사용자만 처리를 허용합니다"
 
-#: libmount/src/context_mount.c:1445
+#: libmount/src/context_mount.c:1446
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s을(를) 이미 마운트했습니다"
 
-#: libmount/src/context_mount.c:1451
+#: libmount/src/context_mount.c:1452
 #, c-format
 msgid "can't find in %s"
 msgstr "%s에서 찾을 수 없음"
 
-#: libmount/src/context_mount.c:1454
+#: libmount/src/context_mount.c:1455
 #, c-format
 msgid "can't find mount point in %s"
 msgstr "%s에 마운트 지점이 없습니다"
 
-#: libmount/src/context_mount.c:1457
+#: libmount/src/context_mount.c:1458
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "%2$s에 %1$s 마운트 원본이 없습니다"
 
-#: libmount/src/context_mount.c:1462
+#: libmount/src/context_mount.c:1463
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr "%s에서 더 많은 파일 시스템을 찾았습니다. -t <형식> 또는 wipefs(8)를 사용하십시오"
 
-#: libmount/src/context_mount.c:1467
+#: libmount/src/context_mount.c:1468
 #, c-format
 msgid "failed to determine filesystem type"
 msgstr "파일 시스템 형식 확인 실패"
 
-#: libmount/src/context_mount.c:1468
+#: libmount/src/context_mount.c:1469
 #, c-format
 msgid "no valid filesystem type specified"
 msgstr "적절한 파일 시스템 형식을 지정하지 않았습니다"
 
-#: libmount/src/context_mount.c:1475
+#: libmount/src/context_mount.c:1476
 #, c-format
 msgid "can't find %s"
 msgstr "%s을(를) 찾을 수 없음"
 
-#: libmount/src/context_mount.c:1477
+#: libmount/src/context_mount.c:1478
 #, c-format
 msgid "no mount source specified"
 msgstr "지정한 마운트 원본이 없습니다"
 
-#: libmount/src/context_mount.c:1488
+#: libmount/src/context_mount.c:1489
 #, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr "'%s' 마운트 옵션 해석 실패: %m"
 
-#: libmount/src/context_mount.c:1489
+#: libmount/src/context_mount.c:1490
 #, c-format
 msgid "failed to parse mount options '%s'"
 msgstr "'%s' 마운트 옵션 해석 실패"
 
-#: libmount/src/context_mount.c:1492
+#: libmount/src/context_mount.c:1493
 #, c-format
 msgid "failed to parse mount options: %m"
 msgstr "마운트 옵션 해석 실패: %m"
 
-#: libmount/src/context_mount.c:1493
+#: libmount/src/context_mount.c:1494
 #, c-format
 msgid "failed to parse mount options"
 msgstr "마운트 옵션 해석 실패"
 
-#: libmount/src/context_mount.c:1498
+#: libmount/src/context_mount.c:1499
 #, c-format
 msgid "failed to setup loop device for %s"
 msgstr "%s 루프 장치 설정 실패"
 
-#: libmount/src/context_mount.c:1502
+#: libmount/src/context_mount.c:1503
 #, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "%s에 겹치는 루프 장치가 있습니다"
 
-#: libmount/src/context_mount.c:1506 libmount/src/context_umount.c:1267
+#: libmount/src/context_mount.c:1507 libmount/src/context_umount.c:1267
 #, c-format
 msgid "locking failed"
 msgstr "잠금 실패"
 
-#: libmount/src/context_mount.c:1510 libmount/src/context_umount.c:1273
+#: libmount/src/context_mount.c:1511 libmount/src/context_umount.c:1273
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, c-format
 msgid "failed to switch namespace"
 msgstr "이름 영역 전환 실패"
 
-#: libmount/src/context_mount.c:1514
+#: libmount/src/context_mount.c:1515
 #, c-format
 msgid "filesystem already mounted"
 msgstr "파일 시스템을 이미 마운트했습니다"
 
-#: libmount/src/context_mount.c:1517
+#: libmount/src/context_mount.c:1518
 #, c-format
 msgid "mount failed: %m"
 msgstr "마운트 실패: %m"
 
-#: libmount/src/context_mount.c:1527
+#: libmount/src/context_mount.c:1528
 #, c-format
 msgid "filesystem was mounted, but failed to apply flags"
 msgstr "파일 시스템을 마운트했지만, 플래그 적용에 실패했습니다"
 
-#: libmount/src/context_mount.c:1533
+#: libmount/src/context_mount.c:1534
 #, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "파일 시스템을 마운트했지만, 사용자 영역 마운트 배치 업데이트에 실패했습니다"
 
-#: libmount/src/context_mount.c:1539
+#: libmount/src/context_mount.c:1540
 #, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "파일 시스템을 마운트했지만, 이름 영역 복귀 전환에 실패했습니다"
 
-#: libmount/src/context_mount.c:1545
+#: libmount/src/context_mount.c:1546
 #, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "파일 시스템을 마운트했지만, 소유자 전환에 실패했습니다: %m"
 
-#: libmount/src/context_mount.c:1551
+#: libmount/src/context_mount.c:1552
 #, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "파일 시스템을 마운트했지만, 권한 변경에 실패했습니다: %m"
 
-#: libmount/src/context_mount.c:1557
+#: libmount/src/context_mount.c:1558
 #, c-format
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "파일 시스템을 마운트했지만, ID 대응 연결에 실패했습니다"
 
-#: libmount/src/context_mount.c:1563
+#: libmount/src/context_mount.c:1564
 #, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "파일 시스템을 마운트했지만, 이후 처리 동작에 실패했습니다: %m"
 
-#: libmount/src/context_mount.c:1575
+#: libmount/src/context_mount.c:1576
 #, c-format
 msgid "%s system call failed: %s"
 msgstr "%s 시스템 콜 실패: %s"
 
-#: libmount/src/context_mount.c:1590 login-utils/newgrp.c:228
+#: libmount/src/context_mount.c:1591 login-utils/newgrp.c:228
 #, c-format
 msgid "permission denied"
 msgstr "권한 거부"
 
-#: libmount/src/context_mount.c:1592 libmount/src/context_mount.c:1633
+#: libmount/src/context_mount.c:1593 libmount/src/context_mount.c:1634
 #, c-format
 msgid "mount point is not a directory"
 msgstr "마운트 지점이 디렉터리가 아닙니다"
 
-#: libmount/src/context_mount.c:1594
+#: libmount/src/context_mount.c:1595
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "마운트는 최고 관리자만 가능합니다"
 
-#: libmount/src/context_mount.c:1601
+#: libmount/src/context_mount.c:1602
 #, c-format
 msgid "mount point is busy"
 msgstr "마운트 지점이 사용중입니다"
 
-#: libmount/src/context_mount.c:1608
+#: libmount/src/context_mount.c:1609
 #, c-format
 msgid "%s already mounted on %s"
 msgstr "%s을(를) 이미 %s에 마운트 했습니다"
 
-#: libmount/src/context_mount.c:1612
+#: libmount/src/context_mount.c:1613
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s을(를) 이미 마운트했거나 마운트 지점이 사용중입니다"
 
-#: libmount/src/context_mount.c:1617
+#: libmount/src/context_mount.c:1618
 #, c-format
 msgid "mount point does not exist"
 msgstr "마운트 지점 없음"
 
-#: libmount/src/context_mount.c:1620
+#: libmount/src/context_mount.c:1621
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "마운트 지점이 그 어떤 곳도 가리키지 않는 심볼릭 링크입니다"
 
-#: libmount/src/context_mount.c:1625
+#: libmount/src/context_mount.c:1626
 #, c-format
 msgid "special device %s does not exist"
 msgstr "%s 특수 장치 없음"
 
-#: libmount/src/context_mount.c:1638
+#: libmount/src/context_mount.c:1639
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "%s 특수 장치가 없습니다 (경로 접두사가 디렉터리가 아님)"
 
-#: libmount/src/context_mount.c:1648
+#: libmount/src/context_mount.c:1649
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr "마운트 지점을 마운트하지 않았거나 옵션이 잘못되었습니다"
 
-#: libmount/src/context_mount.c:1650
+#: libmount/src/context_mount.c:1651
 #, c-format
 msgid "not mount point or bad option"
 msgstr "마운트 지점이 아니거나 옵션이 잘못되었습니다"
 
-#: libmount/src/context_mount.c:1653
+#: libmount/src/context_mount.c:1654
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr "잘못된 옵션. 공유 마운트의 마운트 위치 이동을 지원하지 않음"
 
-#: libmount/src/context_mount.c:1657
+#: libmount/src/context_mount.c:1658
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr "잘못된 옵션. 여러 파일 시스템(예: nfs, cifs)에 대해 /sbin/mount.<type> 보조 프로그램이 필요합니다."
 
-#: libmount/src/context_mount.c:1661
+#: libmount/src/context_mount.c:1662
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr "잘못된 파일 시스템 형식, 불량 옵션, %s에 불량 수퍼블록, 코드 페이지 또는 보조 프로그램 누락, 또는 기타 오류"
 
-#: libmount/src/context_mount.c:1668
+#: libmount/src/context_mount.c:1669
 #, c-format
 msgid "mount table full"
 msgstr "마운트 배치가 가득찼습니다"
 
-#: libmount/src/context_mount.c:1673
+#: libmount/src/context_mount.c:1674
 #, c-format
 msgid "can't read superblock on %s"
 msgstr "%s의 수퍼블록을 읽을 수 없습니다"
 
-#: libmount/src/context_mount.c:1680
+#: libmount/src/context_mount.c:1681
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "알 수 없는 '%s' 파일 시스템 형식"
 
-#: libmount/src/context_mount.c:1683
+#: libmount/src/context_mount.c:1684
 #, c-format
 msgid "unknown filesystem type"
 msgstr "알 수 없는 파일 시스템 형식"
 
-#: libmount/src/context_mount.c:1692
+#: libmount/src/context_mount.c:1693
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s은(는) 블록 장치가 아닙니다. stat(2)에 실패했습니까?"
 
-#: libmount/src/context_mount.c:1695
+#: libmount/src/context_mount.c:1696
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr "커널에서 %s 장치를 블록 장치로 인식하지 않습니다. 아마도 \"modprobe driver\" 명령 실행이 필요한 것 같습니다"
 
-#: libmount/src/context_mount.c:1698
+#: libmount/src/context_mount.c:1699
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s은(는) 블록 장치가 아닙니다. \"-o loop\"를 입력하십시오"
 
-#: libmount/src/context_mount.c:1700
+#: libmount/src/context_mount.c:1701
 #, c-format
 msgid "%s is not a block device"
 msgstr "%s은(는) 블록 장치가 아닙니다"
 
-#: libmount/src/context_mount.c:1707
+#: libmount/src/context_mount.c:1708
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s은(는) 적절한 블록 장치가 아닙니다"
 
-#: libmount/src/context_mount.c:1715
+#: libmount/src/context_mount.c:1716
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "%s을(를) 읽기 전용으로 마운트할 수 없습니다"
 
-#: libmount/src/context_mount.c:1717
+#: libmount/src/context_mount.c:1718
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s은(는) 쓰기 방지 상태이나, 분명한 읽기-쓰기 모드를 요청했습니다"
 
-#: libmount/src/context_mount.c:1719
+#: libmount/src/context_mount.c:1720
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "%s을(를) 읽기-쓰기로 재마운트할 수 없습니다. 쓰기 방지 상태"
 
-#: libmount/src/context_mount.c:1721
+#: libmount/src/context_mount.c:1722
 #, c-format
 msgid "bind %s failed"
 msgstr "%s 바인딩 실패"
 
-#: libmount/src/context_mount.c:1730
+#: libmount/src/context_mount.c:1731
 #, c-format
 msgid "no medium found on %s"
 msgstr "%s에 미디어가 없습니다"
 
-#: libmount/src/context_mount.c:1737
+#: libmount/src/context_mount.c:1738
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "마운트할 수 없음. %s의 파일 시스템이 깨진 것 같습니다"
 
-#: libmount/src/context_mount.c:1746
+#: libmount/src/context_mount.c:1747
 #, c-format
 msgid "%s system call failed: %m"
 msgstr "%s 시스템 콜 실패: %m"
@@ -8724,7 +8724,7 @@ msgstr " -h <host>      utmp 로깅에 활용할 호스트 이름"
 msgid " -H             suppress hostname in the login prompt"
 msgstr " -H             로그인 프롬프트에 호스트 이름 숨김"
 
-#: login-utils/login.c:1305 term-utils/agetty.c:3011
+#: login-utils/login.c:1305 term-utils/agetty.c:3012
 msgid "failed to initialize path context"
 msgstr "경로 컨텍스트 초기화 실패"
 
@@ -9218,62 +9218,62 @@ msgstr "비 루트 사용자는 사용할 수 없습니다"
 msgid "authentication failed"
 msgstr "인증 실패"
 
-#: login-utils/su-common.c:451
+#: login-utils/su-common.c:453
 #, c-format
 msgid "cannot open session: %s"
 msgstr "세션을 열 수 없습니다: %s"
 
-#: login-utils/su-common.c:470
+#: login-utils/su-common.c:471
 msgid "cannot block signals"
 msgstr "시그널을 차단할 수 없습니다"
 
-#: login-utils/su-common.c:487
+#: login-utils/su-common.c:488
 msgid "cannot initialize signal mask for session"
 msgstr "세션의 시그널 마스크를 초기화할 수 없습니다"
 
-#: login-utils/su-common.c:495
+#: login-utils/su-common.c:496
 msgid "cannot initialize signal mask"
 msgstr "시그널 마스크를 초기화할 수 없습니다"
 
-#: login-utils/su-common.c:505
+#: login-utils/su-common.c:506
 msgid "cannot set signal handler for session"
 msgstr "세션의 시그널 핸들러를 설정할 수 없습니다"
 
-#: login-utils/su-common.c:513 misc-utils/uuidd.c:439
+#: login-utils/su-common.c:514 misc-utils/uuidd.c:439
 #: sys-utils/lscpu-virt.c:506
 msgid "cannot set signal handler"
 msgstr "시그널 핸들러를 설정할 수 없습니다"
 
-#: login-utils/su-common.c:521
+#: login-utils/su-common.c:522
 msgid "cannot set signal mask"
 msgstr "시그널 마스크를 설정할 수 없습니다"
 
-#: login-utils/su-common.c:548 term-utils/script.c:961
+#: login-utils/su-common.c:549 term-utils/script.c:961
 #: term-utils/scriptlive.c:296
 msgid "failed to create pseudo-terminal"
 msgstr "모조 터미널 생성 실패"
 
-#: login-utils/su-common.c:550 term-utils/script.c:968
+#: login-utils/su-common.c:551 term-utils/script.c:968
 #: term-utils/scriptlive.c:298
 msgid "failed to initialize signals handler"
 msgstr "시그널 핸들러 초기화에 실패했습니다"
 
-#: login-utils/su-common.c:565
+#: login-utils/su-common.c:566
 msgid "cannot set child signal handler"
 msgstr "하위 시그널 핸들러를 설정할 수 없습니다"
 
-#: login-utils/su-common.c:575 term-utils/script.c:977
+#: login-utils/su-common.c:576 term-utils/script.c:977
 #: term-utils/scriptlive.c:305
 msgid "cannot create child process"
 msgstr "하위 프로세스를 만들 수 없습니다"
 
-#: login-utils/su-common.c:594 sys-utils/nsenter.c:621
+#: login-utils/su-common.c:595 sys-utils/nsenter.c:621
 #: sys-utils/switch_root.c:189
 #, c-format
 msgid "cannot change directory to %s"
 msgstr "%s 디렉터리로 위치를 바꿀 수 없습니다"
 
-#: login-utils/su-common.c:620 term-utils/scriptlive.c:354
+#: login-utils/su-common.c:621 term-utils/scriptlive.c:354
 #, c-format
 msgid ""
 "\n"
@@ -9282,57 +9282,57 @@ msgstr ""
 "\n"
 "세션을 멈췄습니다. 셸 강제로 끝내는 중..."
 
-#: login-utils/su-common.c:631
+#: login-utils/su-common.c:632
 #, c-format
 msgid " ...killed.\n"
 msgstr " ...강제로 끝났습니다.\n"
 
-#: login-utils/su-common.c:728
+#: login-utils/su-common.c:729
 msgid "failed to set the PATH environment variable"
 msgstr "PATH 환경 변수 설정 실패"
 
-#: login-utils/su-common.c:805
+#: login-utils/su-common.c:806
 msgid "cannot set groups"
 msgstr "그룹을 설정할 수 없습니다"
 
-#: login-utils/su-common.c:811
+#: login-utils/su-common.c:812
 #, c-format
 msgid "failed to establish user credentials: %s"
 msgstr "사용자 보안 수립 실패: %s"
 
-#: login-utils/su-common.c:821
+#: login-utils/su-common.c:822
 msgid "cannot set group id"
 msgstr "그룹 ID를 설정할 수 없습니다"
 
-#: login-utils/su-common.c:823
+#: login-utils/su-common.c:824
 msgid "cannot set user id"
 msgstr "사용자 ID를 설정할 수 없습니다"
 
-#: login-utils/su-common.c:889
+#: login-utils/su-common.c:890
 msgid " -m, -p, --preserve-environment      do not reset environment variables\n"
 msgstr " -m, -p, --preserve-environment      환경 변수 재설정하지 않음\n"
 
-#: login-utils/su-common.c:890
+#: login-utils/su-common.c:891
 msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
 msgstr " -w, --whitelist-environment <목록>  지정 변수 재설정하지 않음\n"
 
-#: login-utils/su-common.c:893
+#: login-utils/su-common.c:894
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr " -g, --group <그룹>                  주 그룹 지정\n"
 
-#: login-utils/su-common.c:894
+#: login-utils/su-common.c:895
 msgid " -G, --supp-group <group>        specify a supplemental group\n"
 msgstr " -G, --supp-group <그룹>             추가 그룹 지정\n"
 
-#: login-utils/su-common.c:897
+#: login-utils/su-common.c:898
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr " -, -l, --login                      셸을 로그인 셸로 지정\n"
 
-#: login-utils/su-common.c:898
+#: login-utils/su-common.c:899
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr " -c, --command <명령>                단일 명령을 -c 옵션으로 전달\n"
 
-#: login-utils/su-common.c:899
+#: login-utils/su-common.c:900
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
@@ -9340,23 +9340,23 @@ msgstr ""
 " --session-command <명령>                   단일 명령을 셸에 -c 옵션으로 전달하며\n"
 "                                              새 세션을 만들지 않음\n"
 
-#: login-utils/su-common.c:901
+#: login-utils/su-common.c:902
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr " -f, --fast                          -f 옵션을 셸에 전달(csh, tcsh 용)\n"
 
-#: login-utils/su-common.c:902
+#: login-utils/su-common.c:903
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr " -s, --shell <셸>                    /etc/shells에서 허용할 경우 <셸>을 실행합니다\n"
 
-#: login-utils/su-common.c:903
+#: login-utils/su-common.c:904
 msgid " -P, --pty                       create a new pseudo-terminal\n"
 msgstr " -P, --pty                           새 의사 터미널을 만듭니다\n"
 
-#: login-utils/su-common.c:904
+#: login-utils/su-common.c:905
 msgid " -T, --no-pty                    do not create a new pseudo-terminal (bad security!)\n"
 msgstr " -T, --no-pty                    모조 터미널을 만들지 않습니다 (보안에 취약함!)\n"
 
-#: login-utils/su-common.c:914
+#: login-utils/su-common.c:915
 #, c-format
 msgid ""
 " %1$s [options] -u <user> [[--] <command>]\n"
@@ -9365,7 +9365,7 @@ msgstr ""
 " %1$s [옵션] -u <사용자> [[--] 명령]\n"
 " %1$s [옵션] [-] [사용자 [인자 ...]]\n"
 
-#: login-utils/su-common.c:919
+#: login-utils/su-common.c:920
 msgid ""
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
 "not given, fall back to su(1)-compatible semantics and execute standard shell.\n"
@@ -9375,16 +9375,16 @@ msgstr ""
 "제시하지 않으면 su(1) 호환 문법으로 전환하여 표준 셸을 실행합니다.\n"
 "-c, -f, -l, -s 옵션은 -u 옵션과 병용할 수 없습니다.\n"
 
-#: login-utils/su-common.c:924
+#: login-utils/su-common.c:925
 msgid " -u, --user <user>               username\n"
 msgstr " -u, --user <사용자>               사용자 이름\n"
 
-#: login-utils/su-common.c:935
+#: login-utils/su-common.c:936
 #, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr " %s [옵션] [-] [사용자 [인자 ...]]\n"
 
-#: login-utils/su-common.c:939
+#: login-utils/su-common.c:940
 msgid ""
 "Change the effective user ID and group ID to that of <user>.\n"
 "A mere - implies -l.  If <user> is not given, root is assumed.\n"
@@ -9392,52 +9392,52 @@ msgstr ""
 "<사용자>의 사용자 ID과 그룹 ID를 바꿉니다.\n"
 "단순 - 옵션은 -l을 의미합니다. <사용자>가 없다면, 루트 계정으로 간주합니다.\n"
 
-#: login-utils/su-common.c:1016
+#: login-utils/su-common.c:1017
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
 msgstr[0] "추가 그룹은 %d개 이상 지정할 수 없습니다"
 
-#: login-utils/su-common.c:1022
+#: login-utils/su-common.c:1023
 #, c-format
 msgid "group %s does not exist"
 msgstr "%s 그룹이 없습니다"
 
-#: login-utils/su-common.c:1132
+#: login-utils/su-common.c:1133
 msgid "--pty is not supported for your system"
 msgstr "--pty는 시스템에서 지원하지 않습니다"
 
-#: login-utils/su-common.c:1170
+#: login-utils/su-common.c:1171
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr "--preserve-environment 무시함. --login과 병용할 수 없습니다"
 
-#: login-utils/su-common.c:1184
+#: login-utils/su-common.c:1185
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr "--{shell,fast,command,session-command,login} 옵션과 --user 옵션은 병용할 수 없습니다"
 
-#: login-utils/su-common.c:1187
+#: login-utils/su-common.c:1188
 msgid "no command was specified"
 msgstr "지정한 명령이 없습니다"
 
-#: login-utils/su-common.c:1199
+#: login-utils/su-common.c:1200
 msgid "only root can specify alternative groups"
 msgstr "루트 계정만 대체 그룹을 지정할 수 있습니다"
 
-#: login-utils/su-common.c:1210
+#: login-utils/su-common.c:1211
 #, c-format
 msgid "user %s does not exist or the user entry does not contain all the required fields"
 msgstr " %s 사용자가 없거나 해당 사용자에게 필요한 모든 필드 항목이 없습니다"
 
-#: login-utils/su-common.c:1245
+#: login-utils/su-common.c:1246
 #, c-format
 msgid "using restricted shell %s"
 msgstr "%s 제한 셸 사용 중"
 
-#: login-utils/su-common.c:1266
+#: login-utils/su-common.c:1267
 msgid "failed to allocate pty handler"
 msgstr "pty 핸들러 할당 실패"
 
-#: login-utils/su-common.c:1292
+#: login-utils/su-common.c:1293
 #, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "경고: %s 디렉터리로 위치를 바꿀 수 없습니다"
@@ -9566,7 +9566,7 @@ msgstr ""
 " -e, --force              getpwnam(3)에 실패했을 때 암호 파일을 직접 확인\n"
 
 #: login-utils/sulogin.c:1038 misc-utils/findmnt.c:1733 sys-utils/wdctl.c:792
-#: term-utils/agetty.c:852 term-utils/wall.c:224
+#: term-utils/agetty.c:852 term-utils/wall.c:231
 msgid "invalid timeout argument"
 msgstr "부적절한 시간 초과 인자"
 
@@ -10924,11 +10924,11 @@ msgstr " -T, --test                    getopt(1) 버전 시험\n"
 msgid " -u, --unquoted                do not quote the output\n"
 msgstr " -u, --unquoted                출력 내용에 따옴표 처리하지 않음\n"
 
-#: misc-utils/getopt.c:409 misc-utils/getopt.c:468
+#: misc-utils/getopt.c:409 misc-utils/getopt.c:467
 msgid "missing optstring argument"
 msgstr "optstring 인자 빠짐"
 
-#: misc-utils/getopt.c:463
+#: misc-utils/getopt.c:462
 msgid "internal error, contact the author."
 msgstr "내부 오류, 작성자에게 문의하십시오."
 
@@ -12251,41 +12251,41 @@ msgstr " -c, --cpu-clock <PID>      지정 프로세스의 CPU 클록도 나타�
 msgid "Unknown clock: %s"
 msgstr "알 수 없는 클록: %s"
 
-#: misc-utils/lsclocks.c:259 misc-utils/lsclocks.c:388
-#: misc-utils/lsclocks.c:435
+#: misc-utils/lsclocks.c:259 misc-utils/lsclocks.c:389
+#: misc-utils/lsclocks.c:436
 #, c-format
 msgid "Could not open %s"
 msgstr "%s을(를) 열 수 없음"
 
-#: misc-utils/lsclocks.c:325
+#: misc-utils/lsclocks.c:326
 msgid "failed to format iso time"
 msgstr "iso 시간 포매팅 실패"
 
-#: misc-utils/lsclocks.c:334 misc-utils/lsclocks.c:347
+#: misc-utils/lsclocks.c:335 misc-utils/lsclocks.c:348
 msgid "failed to format relative time"
 msgstr "상대 시간 포매팅 실패"
 
-#: misc-utils/lsclocks.c:414 misc-utils/lsclocks.c:478
+#: misc-utils/lsclocks.c:415 misc-utils/lsclocks.c:479
 #, c-format
 msgid "Could not glob: %d"
 msgstr "구분 검색할 수 없음: %d"
 
-#: misc-utils/lsclocks.c:443 sys-utils/hwclock-rtc.c:145
+#: misc-utils/lsclocks.c:444 sys-utils/hwclock-rtc.c:145
 #, c-format
 msgid "ioctl(RTC_RD_NAME) to %s to read the time failed"
 msgstr "시간을 읽어올 %s에 대한 ioctl(RTC_RD_NAME) 호출 실패"
 
-#: misc-utils/lsclocks.c:502
+#: misc-utils/lsclocks.c:503
 #, c-format
 msgid "Could not get CPU clock of process %jd: %s"
 msgstr "%jd 프로세스의 CPU 시간을 확인할 수 없음: %s"
 
-#: misc-utils/lsclocks.c:599 misc-utils/lslocks.c:385 misc-utils/uuidd.c:791
+#: misc-utils/lsclocks.c:600 misc-utils/lslocks.c:385 misc-utils/uuidd.c:791
 #: misc-utils/waitpid.c:54 sys-utils/nsenter.c:390
 msgid "failed to parse pid"
 msgstr "PID 해석 실패"
 
-#: misc-utils/lsclocks.c:627
+#: misc-utils/lsclocks.c:628
 msgid "failed to get time"
 msgstr "시간 확인 실패"
 
@@ -22403,7 +22403,7 @@ msgstr "%s: %s을(를) 실행할 수 없음: %m"
 #: term-utils/agetty.c:606 term-utils/agetty.c:774 term-utils/agetty.c:953
 #: term-utils/agetty.c:1202 term-utils/agetty.c:1481 term-utils/agetty.c:1499
 #: term-utils/agetty.c:1536 term-utils/agetty.c:1546 term-utils/agetty.c:1588
-#: term-utils/agetty.c:1949 term-utils/agetty.c:2310 term-utils/agetty.c:2892
+#: term-utils/agetty.c:1950 term-utils/agetty.c:2311 term-utils/agetty.c:2893
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "메모리 할당 실패: %m"
@@ -22493,32 +22493,32 @@ msgstr "os-release 파일을 열 수 없습니다"
 msgid "failed to create reload file: %s: %m"
 msgstr "다시 불러오기 파일 만들기 실패: %s: %m"
 
-#: term-utils/agetty.c:2013
+#: term-utils/agetty.c:2014
 #, c-format
 msgid "failed to get terminal attributes: %m"
 msgstr "터미널 속성 확인 실패: %m"
 
-#: term-utils/agetty.c:2035
+#: term-utils/agetty.c:2036
 msgid "[press ENTER to login]"
 msgstr "[로그인 하려면 ENTER를 누르십시오]"
 
-#: term-utils/agetty.c:2063
+#: term-utils/agetty.c:2064
 msgid "Num Lock off"
 msgstr "Num Lock 끔"
 
-#: term-utils/agetty.c:2066
+#: term-utils/agetty.c:2067
 msgid "Num Lock on"
 msgstr "Num Lock 켬"
 
-#: term-utils/agetty.c:2069
+#: term-utils/agetty.c:2070
 msgid "Caps Lock on"
 msgstr "Caps Lock 켬"
 
-#: term-utils/agetty.c:2072
+#: term-utils/agetty.c:2073
 msgid "Scroll Lock on"
 msgstr "Scroll Lock 켬"
 
-#: term-utils/agetty.c:2075
+#: term-utils/agetty.c:2076
 #, c-format
 msgid ""
 "Hint: %s\n"
@@ -22527,32 +22527,32 @@ msgstr ""
 "힌트: %s\n"
 "\n"
 
-#: term-utils/agetty.c:2219
+#: term-utils/agetty.c:2220
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: 읽음: %m"
 
-#: term-utils/agetty.c:2286
+#: term-utils/agetty.c:2287
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: 입력 초과"
 
-#: term-utils/agetty.c:2306 term-utils/agetty.c:2314
+#: term-utils/agetty.c:2307 term-utils/agetty.c:2315
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s: 로그인 이름에 잘못된 문자 변환"
 
-#: term-utils/agetty.c:2320
+#: term-utils/agetty.c:2321
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s: 로그인 이름에 잘못된 0x%x 문자"
 
-#: term-utils/agetty.c:2405
+#: term-utils/agetty.c:2406
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s: 터미널 속성 지정 실패: %m"
 
-#: term-utils/agetty.c:2450
+#: term-utils/agetty.c:2451
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -22561,167 +22561,167 @@ msgstr ""
 " %1$s [옵션] <회선> [보전송율, ...] [터미널형식]\n"
 " %1$s [옵션] <보전송율>,... <회선> [터미널형식]\n"
 
-#: term-utils/agetty.c:2454
+#: term-utils/agetty.c:2455
 msgid "Open a terminal and set its mode.\n"
 msgstr "터미널을 열어 지정 모드로 설정합니다.\n"
 
-#: term-utils/agetty.c:2457
+#: term-utils/agetty.c:2458
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                8-bit tty로 가정합니다\n"
 
-#: term-utils/agetty.c:2458
+#: term-utils/agetty.c:2459
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr " -a, --autologin <사용자>   지정 사용자로 자동으로 로그인합니다.\n"
 
-#: term-utils/agetty.c:2459
+#: term-utils/agetty.c:2460
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset              제어 모드를 초기화하지 않습니다\n"
 
-#: term-utils/agetty.c:2460
+#: term-utils/agetty.c:2461
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote               login(1)에 -r <호스트이름>을 사용합니다\n"
 
-#: term-utils/agetty.c:2461
+#: term-utils/agetty.c:2462
 msgid " -f, --issue-file <list>    display issue files or directories\n"
 msgstr " -f, --issue-file <목록>    issue 파일 또는 디렉터리를 표시합니다\n"
 
-#: term-utils/agetty.c:2462
+#: term-utils/agetty.c:2463
 msgid "     --show-issue           display issue file and exit\n"
 msgstr "     --show-issue           issue 파일을 표시하고 빠져나갑니다\n"
 
-#: term-utils/agetty.c:2463
+#: term-utils/agetty.c:2464
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr " -h, --flow-control         하드웨어 흐름 제어 동작을 켭니다\n"
 
-#: term-utils/agetty.c:2464
+#: term-utils/agetty.c:2465
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -H, --host <호스트이름>      로그인 호스트를 지정합니다\n"
 
-#: term-utils/agetty.c:2465
+#: term-utils/agetty.c:2466
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue              issue 파일을 표시하지 않습니다\n"
 
-#: term-utils/agetty.c:2466
+#: term-utils/agetty.c:2467
 msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <문자열> 초기 문자열을 지정합니다\n"
 
-#: term-utils/agetty.c:2467
+#: term-utils/agetty.c:2468
 msgid " -J, --noclear              do not clear the screen before prompt\n"
 msgstr " -J  --noclear              프롬프트를 띄우기 전 화면을 지우지 않습니다\n"
 
-#: term-utils/agetty.c:2468
+#: term-utils/agetty.c:2469
 msgid " -l, --login-program <file> specify login program\n"
 msgstr " -l, --login-program <파일> 로그인 프로그램을 지정합니다\n"
 
-#: term-utils/agetty.c:2469
+#: term-utils/agetty.c:2470
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr " -L, --local-line[=<모드>]  로컬 라인 플래그를 다룹니다\n"
 
-#: term-utils/agetty.c:2470
+#: term-utils/agetty.c:2471
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr " -m, --extract-baud         연결하는 동안 정확한 보 전송율을 설정합니다\n"
 
-#: term-utils/agetty.c:2471
+#: term-utils/agetty.c:2472
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login           로그인을 묻지 않습니다\n"
 
-#: term-utils/agetty.c:2472
+#: term-utils/agetty.c:2473
 msgid " -N, --nonewline            do not print a newline before issue\n"
 msgstr " -N  --nonewline            issue 출력 전 개행 문자를 출력하지 않습니다\n"
 
-#: term-utils/agetty.c:2473
+#: term-utils/agetty.c:2474
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -o, --login-options <옵션> 로그인할 때 전달할 옵션입니다\n"
 
-#: term-utils/agetty.c:2474
+#: term-utils/agetty.c:2475
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -p, --login-pause          로그인 전 키 입력을 기다립니다\n"
 
-#: term-utils/agetty.c:2475
+#: term-utils/agetty.c:2476
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -r, --chroot <디렉터리>    루트 위치를 지정 디렉터리로 전환합니다\n"
 
-#: term-utils/agetty.c:2476
+#: term-utils/agetty.c:2477
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup               tty에서 가상으로 연결을 끊습니다\n"
 
-#: term-utils/agetty.c:2477
+#: term-utils/agetty.c:2478
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -s, --keep-baud            터미널 중단 후 보 전송율 유지를 시도합니다\n"
 
-#: term-utils/agetty.c:2478
+#: term-utils/agetty.c:2479
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr " -t, --timeout <숫자>       로그인 프로세스 제한 시간\n"
 
-#: term-utils/agetty.c:2479
+#: term-utils/agetty.c:2480
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr " -U, --detect-case          대문자 터미널을 감지합니다\n"
 
-#: term-utils/agetty.c:2480
+#: term-utils/agetty.c:2481
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait-cr              캐리지 리턴 대기\n"
 
-#: term-utils/agetty.c:2481
+#: term-utils/agetty.c:2482
 msgid "     --nohints              do not print hints\n"
 msgstr "     --nohints              힌트를 출력하지 않습니다\n"
 
-#: term-utils/agetty.c:2482
+#: term-utils/agetty.c:2483
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "     --nohostname           호스트 이름을 보여주지 않습니다\n"
 
-#: term-utils/agetty.c:2483
+#: term-utils/agetty.c:2484
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "     --long-hostname        완전한 호스트 이름을 표시합니다\n"
 
-#: term-utils/agetty.c:2484
+#: term-utils/agetty.c:2485
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "     --erase-chars <문자열> 추가 백스페이스 문자\n"
 
-#: term-utils/agetty.c:2485
+#: term-utils/agetty.c:2486
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "     --kill-chars <문자열>  추가 kill 문자\n"
 
-#: term-utils/agetty.c:2486
+#: term-utils/agetty.c:2487
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "     --chdir <디렉터리>     로그인 전 지정 디렉터리로 이동합니다\n"
 
-#: term-utils/agetty.c:2487
+#: term-utils/agetty.c:2488
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "     --delay <숫자>         묻기 전 지정 초 만큼 대기합니다\n"
 
-#: term-utils/agetty.c:2488
+#: term-utils/agetty.c:2489
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "     --nice <숫자>          지정 우선 순위로 로그인을 실행합니다\n"
 
-#: term-utils/agetty.c:2489
+#: term-utils/agetty.c:2490
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --reload               실행중인 agetty 인스턴스의 프롬프트를 다시 불러옵니다\n"
 
-#: term-utils/agetty.c:2490
+#: term-utils/agetty.c:2491
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "     --list-speeds          지원하는 모든 보 전송율을 표시합니다\n"
 
-#: term-utils/agetty.c:2849
+#: term-utils/agetty.c:2850
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] "사용자 %d명"
 
-#: term-utils/agetty.c:2979
+#: term-utils/agetty.c:2980
 #, c-format
 msgid "checkname failed: %m"
 msgstr "checkname 실패: %m"
 
-#: term-utils/agetty.c:2991
+#: term-utils/agetty.c:2992
 #, c-format
 msgid "cannot touch file %s"
 msgstr "%s 파일의 날짜 정보를 업데이트할 수 없습니다"
 
-#: term-utils/agetty.c:2995
+#: term-utils/agetty.c:2996
 msgid "--reload is unsupported on your system"
 msgstr "--reload 옵션은 시스템에서 지원하지 않습니다"
 
-#: term-utils/agetty.c:3017
+#: term-utils/agetty.c:3018
 msgid "failed to open credentials directory"
 msgstr "인증 디렉터리 열기 실패"
 
@@ -23346,39 +23346,39 @@ msgstr "알 수 없는 그룹 인자"
 msgid "%s: unknown gid"
 msgstr "%s: 알 수 없는 GID"
 
-#: term-utils/wall.c:175
+#: term-utils/wall.c:182
 msgid "getgrouplist found more groups than sysconf allows"
 msgstr "getgrouplist에서 sysconf에 허용한 그룹보다 더 많은 그룹을 찾았습니다"
 
-#: term-utils/wall.c:221
+#: term-utils/wall.c:228
 msgid "--nobanner is available only for root"
 msgstr "--nobanner 옵션은 루트 계정에서만 쓸 수 있습니다"
 
-#: term-utils/wall.c:226
+#: term-utils/wall.c:233
 #, c-format
 msgid "invalid timeout argument: %s"
 msgstr "잘못된 제한 시간 인자: %s"
 
-#: term-utils/wall.c:262 term-utils/write.c:144 term-utils/write.c:215
+#: term-utils/wall.c:269 term-utils/write.c:144 term-utils/write.c:215
 #, c-format
 msgid "error getting sessions: %s"
 msgstr "세션 확인 오류: %s"
 
-#: term-utils/wall.c:270 term-utils/write.c:153 term-utils/write.c:223
+#: term-utils/wall.c:277 term-utils/write.c:153 term-utils/write.c:223
 #, c-format
 msgid "get user name failed: %s"
 msgstr "사용자 이름 확인 실패: %s"
 
-#: term-utils/wall.c:333
+#: term-utils/wall.c:340
 msgid "cannot get passwd uid"
 msgstr "passwd UID를 가져올 수 없습니다"
 
-#: term-utils/wall.c:357
+#: term-utils/wall.c:364
 #, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "%s@%s 사용자가 %s 터미널에서 보낸 전체 메시지 (%s):"
 
-#: term-utils/wall.c:389
+#: term-utils/wall.c:397
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr "%s을(를) 읽지 않습니다. 표준 입력 스트림을 활용합니다."
