@@ -152,6 +152,7 @@ main(int argc, char *argv[])
 {
 	static const struct timeval mindelay = { .tv_sec = 0, .tv_usec = 100 };
 	static const struct timeval inputDelay = { .tv_sec = 0, .tv_usec = 100000 };
+	struct timeval stepDelay = { 0, 0 };
 	struct timeval maxdelay;
 
 	int isterm;
@@ -334,6 +335,21 @@ main(int argc, char *argv[])
 			delay_for(&inputDelay);
 			continue;
 		}
+
+		if (timerisset(&stepDelay))
+		{
+			const struct timeval *timeout = (timercmp(&stepDelay, &inputDelay, <) ? (&stepDelay) : (&inputDelay));
+			delay_for(timeout);
+			timersub(&stepDelay, timeout, &stepDelay);
+			if (stepDelay.tv_sec < 0 || stepDelay.tv_usec < 0)
+				timerclear(&stepDelay);
+			continue;
+		}
+
+		if (!timerisset(&stepDelay) && step)
+			rc = replay_emit_step_data(setup, step, STDOUT_FILENO);
+		if (rc)
+			break;
 		
 		rc = replay_get_next_step(setup, streams, &step);
 		if (rc)
@@ -341,11 +357,9 @@ main(int argc, char *argv[])
 
 		if (!summary) {
 			struct timeval *delay = replay_step_get_delay(step);
-
 			if (delay && timerisset(delay))
-				delay_for(delay);
+				stepDelay = *delay;
 		}
-		rc = replay_emit_step_data(setup, step, STDOUT_FILENO);
 	} while (rc == 0);
 
 	if (isterm)
