@@ -356,7 +356,8 @@ int main(int argc, char *argv[])
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
 	struct namespace_file *nsfile;
-	int c, pass, namespaces = 0, setgroups_nerrs = 0, preserve_cred = 0;
+	int c, pass, nstype,
+	    namespaces = 0, setgroups_nerrs = 0, preserve_cred = 0;
 	bool do_rd = false, do_wd = false, do_uid = false, force_uid = false,
 	     do_gid = false, force_gid = false, do_env = false, do_all = false,
 	     do_join_cgroup = false, do_user_parent = false;
@@ -390,52 +391,32 @@ int main(int argc, char *argv[])
 			    strtoul_or_err(optarg, _("failed to parse pid"));
 			break;
 		case 'm':
-			if (optarg)
-				open_namespace_fd(CLONE_NEWNS, optarg);
-			else
-				namespaces |= CLONE_NEWNS;
-			break;
+			nstype = CLONE_NEWNS;
+			goto namespace_arg;
 		case 'u':
-			if (optarg)
-				open_namespace_fd(CLONE_NEWUTS, optarg);
-			else
-				namespaces |= CLONE_NEWUTS;
-			break;
+			nstype = CLONE_NEWUTS;
+			goto namespace_arg;
 		case 'i':
-			if (optarg)
-				open_namespace_fd(CLONE_NEWIPC, optarg);
-			else
-				namespaces |= CLONE_NEWIPC;
-			break;
+			nstype = CLONE_NEWIPC;
+			goto namespace_arg;
 		case 'n':
-			if (optarg)
-				open_namespace_fd(CLONE_NEWNET, optarg);
-			else
-				namespaces |= CLONE_NEWNET;
-			break;
+			nstype = CLONE_NEWNET;
+			goto namespace_arg;
 		case 'p':
-			if (optarg)
-				open_namespace_fd(CLONE_NEWPID, optarg);
-			else
-				namespaces |= CLONE_NEWPID;
-			break;
+			nstype = CLONE_NEWPID;
+			goto namespace_arg;
 		case 'C':
-			if (optarg)
-				open_namespace_fd(CLONE_NEWCGROUP, optarg);
-			else
-				namespaces |= CLONE_NEWCGROUP;
-			break;
+			nstype = CLONE_NEWCGROUP;
+			goto namespace_arg;
 		case 'U':
-			if (optarg)
-				open_namespace_fd(CLONE_NEWUSER, optarg);
-			else
-				namespaces |= CLONE_NEWUSER;
-			break;
+			nstype = CLONE_NEWUSER;
+			goto namespace_arg;
 		case 'T':
+			nstype = CLONE_NEWTIME;
+namespace_arg:
 			if (optarg)
-				open_namespace_fd(CLONE_NEWTIME, optarg);
-			else
-				namespaces |= CLONE_NEWTIME;
+				open_namespace_fd(nstype, optarg);
+			namespaces |= nstype;
 			break;
 		case 'S':
 			if (strcmp(optarg, "follow") == 0)
@@ -527,12 +508,15 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	/*
-	 * Open remaining namespace and directory descriptors.
-	 */
-	for (nsfile = namespace_files; nsfile->nstype; nsfile++)
-		if (nsfile->nstype & namespaces)
-			open_namespace_fd(nsfile->nstype, NULL);
+	for (nsfile = namespace_files; nsfile->nstype; nsfile++) {
+		if (nsfile->nstype & namespaces) {
+			if (nsfile->fd < 0)
+				open_namespace_fd(nsfile->nstype, NULL);
+			if (nsfile->nstype == CLONE_NEWPID && do_fork == -1)
+				do_fork = 1;
+		}
+	}
+
 	if (do_rd)
 		open_target_fd(&root_fd, "root", NULL);
 	if (do_wd)
@@ -552,15 +536,6 @@ int main(int argc, char *argv[])
 	 */
 	if (do_user_parent)
 		set_parent_user_ns_fd();
-
-	/*
-	 * Update namespaces variable to contain all requested namespaces
-	 */
-	for (nsfile = namespace_files; nsfile->nstype; nsfile++) {
-		if (nsfile->fd < 0)
-			continue;
-		namespaces |= nsfile->nstype;
-	}
 
 	/* for user namespaces we always set UID and GID (default is 0)
 	 * and clear root's groups if --preserve-credentials is no specified */
@@ -585,8 +560,6 @@ int main(int argc, char *argv[])
 		for (nsfile = namespace_files + 1 - pass; nsfile->nstype; nsfile++) {
 			if (nsfile->fd < 0)
 				continue;
-			if (nsfile->nstype == CLONE_NEWPID && do_fork == -1)
-				do_fork = 1;
 			if (setns(nsfile->fd, nsfile->nstype)) {
 				if (pass != 0)
 					err(EXIT_FAILURE,
