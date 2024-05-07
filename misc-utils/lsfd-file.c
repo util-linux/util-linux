@@ -657,9 +657,10 @@ static unsigned long get_minor_for_mqueue(void)
 
 static unsigned long get_minor_for_pidfs(void)
 {
+	unsigned long ret = 0;
+#ifdef UL_HAVE_PIDFD
 	int fd = pidfd_open(getpid(), 0);
 	struct stat sb;
-	unsigned long ret = 0;
 
 	if (fd < 0)
 		return 0;
@@ -668,6 +669,7 @@ static unsigned long get_minor_for_pidfs(void)
 		ret = minor(sb.st_dev);
 
 	close(fd);
+#endif
 	return ret;
 }
 
