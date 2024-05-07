@@ -49,6 +49,7 @@
 #include "caputils.h"
 #include "statfs_magic.h"
 #include "pathnames.h"
+#include "pidfd-utils.h"
 
 static struct namespace_file {
 	int nstype;
@@ -356,11 +357,12 @@ int main(int argc, char *argv[])
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
 	struct namespace_file *nsfile;
-	int c, pass, nstype,
+	int c, pass, nstype, pidfd,
 	    namespaces = 0, setgroups_nerrs = 0, preserve_cred = 0;
 	bool do_rd = false, do_wd = false, do_uid = false, force_uid = false,
 	     do_gid = false, force_gid = false, do_env = false, do_all = false,
-	     do_join_cgroup = false, do_user_parent = false;
+	     do_join_cgroup = false, do_user_parent = false,
+	     try_pidfd = true;
 	int do_fork = -1; /* unknown yet */
 	char *wdns = NULL;
 	uid_t uid = 0;
@@ -414,8 +416,10 @@ int main(int argc, char *argv[])
 		case 'T':
 			nstype = CLONE_NEWTIME;
 namespace_arg:
-			if (optarg)
+			if (optarg) {
 				open_namespace_fd(nstype, optarg);
+				try_pidfd = false;
+			}
 			namespaces |= nstype;
 			break;
 		case 'S':
@@ -548,6 +552,24 @@ namespace_arg:
 			setgroups_nerrs++;
 	}
 
+#ifdef UL_HAVE_PIDFD
+	if (try_pidfd && namespace_target_pid && !do_user_parent) {
+		pidfd = pidfd_open(namespace_target_pid, 0);
+		if (pidfd != -1) {
+			if (!setns(pidfd, namespaces)) {
+				close(pidfd);
+				for (nsfile = namespace_files; nsfile->nstype; nsfile++) {
+					if (nsfile->fd >= 0)
+						close(nsfile->fd);
+					nsfile->fd = -1;
+				}
+				goto done_setns;
+			}
+			close(pidfd);
+		}
+	}
+#endif
+
 	/*
 	 * Now that we know which namespaces we want to enter, enter
 	 * them.  Do this in two passes, not entering the user
@@ -574,6 +596,7 @@ namespace_arg:
 		}
 	}
 
+done_setns:
 	/* Remember the current working directory if I'm not changing it */
 	if (root_fd >= 0 && wd_fd < 0 && wdns == NULL) {
 		wd_fd = open(".", O_RDONLY);
