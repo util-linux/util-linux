@@ -579,57 +579,63 @@ int __uuid_generate_time_cont(uuid_t out, int *num, uint32_t cont_offset)
  * If neither of these is possible (e.g. because of insufficient permissions), it generates
  * the UUID anyway, but returns -1. Otherwise, returns 0.
  */
-static int uuid_generate_time_generic(uuid_t out) {
-	/* thread local cache for uuidd based requests */
-	THREAD_LOCAL int		num = 0;
-	THREAD_LOCAL int		cache_size = CS_MIN;
-	THREAD_LOCAL int		last_used = 0;
-	THREAD_LOCAL struct uuid	uu;
-	THREAD_LOCAL time_t		last_time = 0;
-	time_t				now;
 
-	if (num > 0) { /* expire cache */
+/* thread local cache for uuidd based requests */
+THREAD_LOCAL struct {
+	int		num;
+	int		cache_size;
+	int		last_used;
+	struct uuid	uu;
+	time_t		last_time;
+} uuidd_cache = {
+	.cache_size = CS_MIN,
+};
+
+static int uuid_generate_time_generic(uuid_t out) {
+	time_t	now;
+
+	if (uuidd_cache.num > 0) { /* expire cache */
 		now = time(NULL);
-		if (now > last_time+1) {
-			last_used = cache_size - num;
-			num = 0;
+		if (now > uuidd_cache.last_time+1) {
+			uuidd_cache.last_used = uuidd_cache.cache_size - uuidd_cache.num;
+			uuidd_cache.num = 0;
 		}
 	}
-	if (num <= 0) { /* fill cache */
+	if (uuidd_cache.num <= 0) { /* fill cache */
 		/*
 		 * num + OP_BULK provides a local cache in each application.
 		 * Start with a small cache size to cover short running applications
 		 * and adjust the cache size over the runntime.
 		 */
-		if ((last_used == cache_size) && (cache_size < CS_MAX))
-			cache_size *= CS_FACTOR;
-		else if ((last_used < (cache_size / CS_FACTOR)) && (cache_size > CS_MIN))
-			cache_size /= CS_FACTOR;
+		if ((uuidd_cache.last_used == uuidd_cache.cache_size) && (uuidd_cache.cache_size < CS_MAX))
+			uuidd_cache.cache_size *= CS_FACTOR;
+		else if ((uuidd_cache.last_used < (uuidd_cache.cache_size / CS_FACTOR)) && (uuidd_cache.cache_size > CS_MIN))
+			uuidd_cache.cache_size /= CS_FACTOR;
 
-		num = cache_size;
+		uuidd_cache.num = uuidd_cache.cache_size;
 
 		if (get_uuid_via_daemon(UUIDD_OP_BULK_TIME_UUID,
-					out, &num) == 0) {
-			last_time = time(NULL);
-			uuid_unpack(out, &uu);
-			num--;
+					out, &uuidd_cache.num) == 0) {
+			uuidd_cache.last_time = time(NULL);
+			uuid_unpack(out, &uuidd_cache.uu);
+			uuidd_cache.num--;
 			return 0;
 		}
 		/* request to daemon failed, reset cache */
-		num = 0;
-		cache_size = CS_MIN;
+		uuidd_cache.num = 0;
+		uuidd_cache.cache_size = CS_MIN;
 	}
-	if (num > 0) { /* serve uuid from cache */
-		uu.time_low++;
-		if (uu.time_low == 0) {
-			uu.time_mid++;
-			if (uu.time_mid == 0)
-				uu.time_hi_and_version++;
+	if (uuidd_cache.num > 0) { /* serve uuid from cache */
+		uuidd_cache.uu.time_low++;
+		if (uuidd_cache.uu.time_low == 0) {
+			uuidd_cache.uu.time_mid++;
+			if (uuidd_cache.uu.time_mid == 0)
+				uuidd_cache.uu.time_hi_and_version++;
 		}
-		num--;
-		uuid_pack(&uu, out);
-		if (num == 0)
-			last_used = cache_size;
+		uuidd_cache.num--;
+		uuid_pack(&uuidd_cache.uu, out);
+		if (uuidd_cache.num == 0)
+			uuidd_cache.last_used = uuidd_cache.cache_size;
 		return 0;
 	}
 
