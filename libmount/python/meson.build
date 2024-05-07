@@ -18,6 +18,11 @@ python = python_module.find_installation(
     get_option('python'),
     required : true,
     disabler : true)
+if meson.version().version_compare('<1.4.1')
+  cc.has_header('Python.h',
+    include_directories : include_directories(python.get_path('include')),
+    required : true)
+endif
 python.extension_module(
   'pylibmount',
   pylibmount_sources,
