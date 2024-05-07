@@ -91,11 +91,7 @@
 #include "sha1.h"
 #include "timeutils.h"
 
-#ifdef HAVE_TLS
 #define THREAD_LOCAL static __thread
-#else
-#define THREAD_LOCAL static
-#endif
 
 #ifdef _WIN32
 static void gettimeofday (struct timeval *tv, void *dummy)
@@ -585,7 +581,6 @@ int __uuid_generate_time_cont(uuid_t out, int *num, uint32_t cont_offset)
  * the UUID anyway, but returns -1. Otherwise, returns 0.
  */
 static int uuid_generate_time_generic(uuid_t out) {
-#ifdef HAVE_TLS
 	/* thread local cache for uuidd based requests */
 	THREAD_LOCAL int		num = 0;
 	THREAD_LOCAL int		cache_size = CS_MIN;
@@ -638,10 +633,6 @@ static int uuid_generate_time_generic(uuid_t out) {
 			last_used = cache_size;
 		return 0;
 	}
-#else
-	if (get_uuid_via_daemon(UUIDD_OP_TIME_UUID, out, 0) == 0)
-		return 0;
-#endif
 
 	return __uuid_generate_time(out, NULL);
 }
