@@ -159,7 +159,6 @@ main(int argc, char *argv[])
 	int saved_flag;
 	struct termios saved;
 
-	wint_t c;
 	struct replay_setup *setup = NULL;
 	struct replay_step *step = NULL;
 	char streams[6] = {0};		/* IOSI - in, out, signal,info */
@@ -323,8 +322,7 @@ main(int argc, char *argv[])
 	isterm = setterm(&saved, &saved_flag);
 
 	do {
-		c = fgetwc(stdin);
-		switch (c) {
+		switch (fgetwc(stdin)) {
 			case ' ':
 				replay_toggle_pause(setup);
 				break;
