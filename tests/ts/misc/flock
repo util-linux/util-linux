@@ -41,11 +41,14 @@ function do_lock {
 	fi
 }
 
-for api in flock ; do
+for api in flock fcntl ; do
 	case $api in
 		(flock)
 			subtest_prefix=""
 			api_arg="" ;;
+		(fcntl)
+			subtest_prefix="fcntl-"
+			api_arg="--fcntl" ;;
 	esac
 
 	# general lock
@@ -104,6 +107,12 @@ for api in flock ; do
 	[ -f 4 ] && ts_log "fd file should not exist"
 	ts_finalize_subtest
 
+	# fcntl locks are independent of flock locks, so we should be able to get an exclusive flock lock.
+	if [ "$api" = "fcntl" ] ; then
+		ts_init_subtest "fcntl-vs-flock"
+		do_lock "--nonblock --exclusive" 0 "flock vs fcntl"
+		ts_finalize_subtest
+	fi
 
 	ts_init_subtest "${subtest_prefix}timeout"
 	do_lock "${api_arg} --timeout 5 --conflict-exit-code 5" 0 "After timeout."

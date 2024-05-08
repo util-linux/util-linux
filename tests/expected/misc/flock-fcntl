@@ -2,7 +2,3 @@ API: flock(2)
 Locking
 Unlocking
 Unlocked
-API: fcntl(2)
-Locking
-Unlocking
-Unlocked
