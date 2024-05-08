@@ -328,6 +328,25 @@ main(int argc, char *argv[])
 			case ' ':
 				replay_toggle_pause(setup);
 				break;
+			case '\033':
+				switch (fgetwc(stdin)) {
+					case '[':
+						switch (fgetwc(stdin)) {
+							case 'A':	// Up arrow
+								divi += 0.1;
+								replay_set_delay_div(setup, divi);
+								break;
+							case 'B': 	// Down arrow
+								divi -= 0.1;
+								if (divi < 0.1)
+									divi = 0.1;
+								replay_set_delay_div(setup, divi);
+								break;
+						}
+						break;
+				
+				}
+				break;
 		}
 
 		if (replay_get_is_paused(setup))
