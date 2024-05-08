@@ -340,12 +340,22 @@ main(int argc, char *argv[])
 									divi = 0.1;
 								replay_set_delay_div(setup, divi);
 								break;
+							case 'C':	// Right arrow
+								rc = replay_emit_step_data(setup, step, STDOUT_FILENO);
+								if (rc)
+									break;
+								rc = replay_get_next_step(setup, streams, &step);
+								struct timeval *delay = replay_step_get_delay(step);
+								if (delay && timerisset(delay))
+									stepDelay = *delay;
+								break;
 						}
 						break;
-				
 				}
 				break;
 		}
+		if (rc)
+			break;
 
 		if (replay_get_is_paused(setup))
 		{
