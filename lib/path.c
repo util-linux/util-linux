@@ -682,7 +682,7 @@ int ul_path_read_buffer(struct path_cxt *pc, char *buf, size_t bufsz, const char
 		if (*(buf + rc - 1) == '\n')
 			buf[--rc] = '\0';
 		else
-			buf[rc - 1] = '\0';
+			buf[rc] = '\0';
 	}
 
 	return rc;
