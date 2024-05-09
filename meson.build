@@ -906,11 +906,7 @@ bison_gen = generator(
   output : ['@BASENAME@.tab.c', '@BASENAME@.tab.h'],
   arguments : ['@INPUT@', '--defines=@OUTPUT1@', '--output=@OUTPUT0@'])
 
-python_module = import('python')
-python = python_module.find_installation(
-    get_option('python'),
-    required : true,
-    disabler : true)
+python_program = find_program('python3', 'python', native : true)
 
 meson_make_symlink = meson.current_source_dir() + '/tools/meson-make-symlink.sh'
 meson_make_manpage_stub = meson.current_source_dir() + '/tools/meson-make-manpage-stub.sh'
@@ -3715,7 +3711,7 @@ configure_file(output : 'meson.conf',
                           '''asan=@0@
 PYTHON=@1@
 '''.format(get_option('b_sanitize')=='address' ? 'yes' : '',
-           python.full_path())])
+           python_program.full_path())])
 
 run_sh = find_program('tests/run.sh')
 run_target(
