@@ -13,6 +13,11 @@ if LINUX
   pylibmount_sources += 'context.c'
 endif
 
+python_module = import('python')
+python = python_module.find_installation(
+    get_option('python'),
+    required : true,
+    disabler : true)
 python.extension_module(
   'pylibmount',
   pylibmount_sources,
