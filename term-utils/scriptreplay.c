@@ -345,7 +345,11 @@ main(int argc, char *argv[])
 								rc = replay_emit_step_data(setup, step, STDOUT_FILENO);
 								if (rc)
 									break;
+
 								rc = replay_get_next_step(setup, streams, &step);
+								if (rc)
+									break;
+
 								struct timeval *delay = replay_step_get_delay(step);
 								if (delay && timerisset(delay))
 									stepDelay = *delay;
@@ -385,6 +389,7 @@ main(int argc, char *argv[])
 
 		if (!summary) {
 			struct timeval *delay = replay_step_get_delay(step);
+
 			if (delay && timerisset(delay))
 				stepDelay = *delay;
 		}
