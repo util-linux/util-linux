@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2024, Jonathan Ketchker <jonathan@ketchker.com>
  * Copyright (C) 2008-2019, Karel Zak <kzak@redhat.com>
  * Copyright (C) 2008, James Youngman <jay@gnu.org>
  *

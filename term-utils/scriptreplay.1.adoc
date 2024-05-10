@@ -98,6 +98,9 @@ Copyright {copyright} 2008 James Youngman
 //TRANSLATORS: Keep {copyright} untranslated.
 Copyright {copyright} 2008-2019 Karel Zak
 
+//TRANSLATORS: Keep {copyright} untranslated.
+Copyright {copyright} 2024 Jonathan Ketchker
+
 This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 Released under the GNU General Public License version 2 or later.
