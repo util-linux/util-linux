@@ -211,7 +211,7 @@ Historical versions of this tool indicated that "rows are filled before columns"
 Print fstab with header line and align number to the right:
 
 ....
-sed 's/#.*//' /etc/fstab | column --table --table-columns SOURCE,TARGET,TYPE,OPTIONS,PASS,FREQ --table-right PASS,FREQ
+sed 's/#.*//' /etc/fstab | column --table --table-columns SOURCE,TARGET,TYPE,OPTIONS,FREQ,PASS --table-right FREQ,PASS
 ....
 
 Print fstab and hide unnamed columns:
