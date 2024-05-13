@@ -80,6 +80,11 @@ Drop a lock. This is usually not required, since a lock is automatically dropped
 *-w*, *--wait*, *--timeout* _seconds_::
 Fail if the lock cannot be acquired within _seconds_. Decimal fractional values are allowed. See the *-E* option for the exit status used. The zero number of _seconds_ is interpreted as *--nonblock*.
 
+*--fcntl*::
+Instead of flock(2), apply an fcntl(2) open file description lock (that is, using the F_OFD_SETLK (non-blocking) or F_OFD_SETLKW (blocking) commands). These locks are independent of those applied via flock(2), but, unlike traditional POSIX fcntl() locks (F_SETLK, F_SETLKW), have semantics matching those of flock(2).
+
+This is only available on kernel versions >= 3.15.
+
 *--verbose*::
 Report how long it took to acquire the lock, or why the lock could not be obtained.
 
@@ -130,7 +135,8 @@ Copyright {copyright} 2003-2006 H. Peter Anvin. This is free software; see the s
 
 == SEE ALSO
 
-*flock*(2)
+*flock*(2),
+*fcntl*(2)
 
 include::man-common/bugreports.adoc[]
 
