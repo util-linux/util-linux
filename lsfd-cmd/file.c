@@ -591,7 +591,6 @@ static unsigned long get_minor_for_sysvipc(void)
 
 	pid_t self = getpid();
 	struct path_cxt *pc = NULL;
-	char map_file[sizeof("map_files/0000000000000000-ffffffffffffffff")];
 
 	struct stat sb;
 	unsigned long m = 0;
@@ -613,9 +612,8 @@ static unsigned long get_minor_for_sysvipc(void)
 	if (procfs_process_init_path(pc, self) != 0)
 		goto out;
 
-	snprintf(map_file, sizeof(map_file),
-		 "map_files/%lx-%lx", (long)start, (long)start + pagesize);
-	if (ul_path_stat(pc, &sb, 0, map_file) < 0)
+	if (ul_path_statf(pc, &sb, 0, "map_files/%lx-%lx",
+			  (long)start, (long)start + pagesize) < 0)
 		goto out;
 
 	m = minor(sb.st_dev);
