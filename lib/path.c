@@ -659,17 +659,11 @@ int ul_path_read_string(struct path_cxt *pc, char **str, const char *path)
 		return -EINVAL;
 
 	*str = NULL;
-	rc = ul_path_read(pc, buf, sizeof(buf) - 1, path);
+
+	rc = ul_path_read_buffer(pc, buf, sizeof(buf), path);
 	if (rc < 0)
 		return rc;
 
-	/* Remove trailing newline (usual in sysfs) */
-	if (rc > 0 && *(buf + rc - 1) == '\n')
-		--rc;
-	if (rc == 0)
-		return 0;
-
-	buf[rc] = '\0';
 	*str = strdup(buf);
 	if (!*str)
 		rc = -ENOMEM;
