@@ -211,14 +211,6 @@ static struct cfdisk_menuitem main_menuitems[] = {
 	{ 0, NULL, NULL }
 };
 
-/* extra partinfo in name:value pairs */
-struct cfdisk_extra {
-	char *name;
-	char *data;
-
-	struct list_head exs;
-};
-
 /* line and extra partinfo list_head */
 struct cfdisk_line {
 	char			*data;		/* line data */
