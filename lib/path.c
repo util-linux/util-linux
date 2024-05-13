@@ -1021,7 +1021,6 @@ int ul_path_next_dirent(struct path_cxt *pc, DIR **sub, const char *dirname, str
 #ifdef HAVE_CPU_SET_T
 static int ul_path_cpuparse(struct path_cxt *pc, cpu_set_t **set, int maxcpus, int islist, const char *path, va_list ap)
 {
-	FILE *f;
 	size_t setsize, len = maxcpus * 7;
 	char *buf;
 	int rc;
@@ -1032,26 +1031,9 @@ static int ul_path_cpuparse(struct path_cxt *pc, cpu_set_t **set, int maxcpus, i
 	if (!buf)
 		return -ENOMEM;
 
-	f = ul_path_vfopenf(pc, "r" UL_CLOEXECSTR, path, ap);
-	if (!f) {
-		rc = -errno;
+	rc = ul_path_vreadf_buffer(pc, buf, len, path, ap);
+	if (rc < 0)
 		goto out;
-	}
-
-	if (fgets(buf, len, f) == NULL) {
-		errno = EIO;
-		rc = -errno;
-	} else
-		rc = 0;
-
-	fclose(f);
-
-	if (rc)
-		goto out;
-
-	len = strlen(buf);
-	if (len > 0 && buf[len - 1] == '\n')
-		buf[len - 1] = '\0';
 
 	*set = cpuset_alloc(maxcpus, &setsize, NULL);
 	if (!*set) {
