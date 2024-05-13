@@ -127,26 +127,29 @@ static const struct colinfo infos[] = {
 static int columns[ARRAY_SIZE(infos) * 2];
 static size_t ncolumns;
 
-enum {
-	LSNS_ID_MNT = 0,
-	LSNS_ID_NET,
-	LSNS_ID_PID,
-	LSNS_ID_UTS,
-	LSNS_ID_IPC,
-	LSNS_ID_USER,
-	LSNS_ID_CGROUP,
-	LSNS_ID_TIME
+enum lsns_type {
+	LSNS_TYPE_UNKNOWN = -1,
+	LSNS_TYPE_MNT,
+	LSNS_TYPE_NET,
+	LSNS_TYPE_PID,
+	LSNS_TYPE_UTS,
+	LSNS_TYPE_IPC,
+	LSNS_TYPE_USER,
+	LSNS_TYPE_CGROUP,
+	LSNS_TYPE_TIME
 };
 
 static char *ns_names[] = {
-	[LSNS_ID_MNT] = "mnt",
-	[LSNS_ID_NET] = "net",
-	[LSNS_ID_PID] = "pid",
-	[LSNS_ID_UTS] = "uts",
-	[LSNS_ID_IPC] = "ipc",
-	[LSNS_ID_USER] = "user",
-	[LSNS_ID_CGROUP] = "cgroup",
-	[LSNS_ID_TIME] = "time"
+	/* Don't add LSNS_TYPE_UNKNOWN here.
+	 * ARRAY_SIZE(ns_names) in struct lsns_process may not work.*/
+	[LSNS_TYPE_MNT] = "mnt",
+	[LSNS_TYPE_NET] = "net",
+	[LSNS_TYPE_PID] = "pid",
+	[LSNS_TYPE_UTS] = "uts",
+	[LSNS_TYPE_IPC] = "ipc",
+	[LSNS_TYPE_USER] = "user",
+	[LSNS_TYPE_CGROUP] = "cgroup",
+	[LSNS_TYPE_TIME] = "time"
 };
 
 enum {
@@ -157,7 +160,7 @@ enum {
 
 struct lsns_namespace {
 	ino_t id;
-	int type;			/* LSNS_* */
+	enum lsns_type type;
 	int nprocs;
 	int netnsid;
 	ino_t related_id[MAX_RELA];
@@ -246,7 +249,7 @@ static void lsns_init_debug(void)
 	__UL_INIT_DEBUG_FROM_ENV(lsns, LSNS_DEBUG_, 0, LSNS_DEBUG);
 }
 
-static int ns_name2type(const char *name)
+static enum lsns_type ns_name2type(const char *name)
 {
 	size_t i;
 
@@ -254,7 +257,7 @@ static int ns_name2type(const char *name)
 		if (strcmp(ns_names[i], name) == 0)
 			return i;
 	}
-	return -1;
+	return LSNS_TYPE_UNKNOWN;
 }
 
 static int column_name_to_id(const char *name, size_t namesz)
@@ -298,15 +301,84 @@ static inline const struct colinfo *get_column_info(unsigned num)
 	return &infos[ get_column_id(num) ];
 }
 
-static int get_ns_ino(struct path_cxt *pc, const char *nsname, ino_t *ino, ino_t *pino, ino_t *oino)
+#ifdef USE_NS_GET_API
+/* Get the inode number for the parent namespace of the namespace `fd' specifies.
+ * If `pfd' is non-null, the file descriptor opening the parent namespace.*/
+static int get_parent_ns_ino(int fd, enum lsns_type lsns_type, ino_t *pino, int *pfd)
 {
 	struct stat st;
-	char path[16];
+	int my_fd;
 
-	snprintf(path, sizeof(path), "ns/%s", nsname);
+	if (pfd == NULL)
+		pfd = &my_fd;
+
+	*pino = 0;
+	*pfd = -1;
+
+	if (lsns_type == LSNS_TYPE_PID || lsns_type == LSNS_TYPE_USER) {
+		if ((*pfd = lsns_ioctl(fd, NS_GET_PARENT)) < 0) {
+			if (errno == EPERM
+			    /* On the test platforms, "build (qemu-user, s390x)" and
+			     * "build (qemu-user, riscv64)", the ioctl reported ENOSYS.
+			     */
+			    || errno == ENOSYS)
+				return 0;
+			return -errno;
+		}
+		if (fstat(*pfd, &st) < 0) {
+			close(*pfd);
+			*pfd = -1;
+			return -errno;
+		}
+		*pino = st.st_ino;
+	}
+
+	if (pfd == &my_fd)
+		close(*pfd);
+	return 0;
+}
+
+/* Get the inode number for the owner (user) namespace of the namespace `fd' specifies.
+ * If `pfd' is non-null, the file descriptor opening the user namespace.*/
+static int get_owner_ns_ino(int fd, ino_t *oino, int *ofd)
+{
+	struct stat st;
+	int my_fd;
+
+	if (ofd == NULL)
+		ofd = &my_fd;
+
+	*oino = 0;
+	*ofd = -1;
+
+	if ((*ofd = lsns_ioctl(fd, NS_GET_USERNS)) < 0) {
+		if (errno == EPERM
+		    /* On the test platforms, "build (qemu-user, s390x)" and
+		     * "build (qemu-user, riscv64)", the ioctl reported ENOSYS.
+		     */
+		    || errno == ENOSYS)
+			return 0;
+		return -errno;
+	}
+	if (fstat(*ofd, &st) < 0) {
+		close(*ofd);
+		*ofd = -1;
+		return -errno;
+	}
+	*oino = st.st_ino;
+
+	if (ofd == &my_fd)
+		close(*ofd);
+	return 0;
+}
+#endif
+
+static int get_ns_inos(struct path_cxt *pc, const char *nsname, ino_t *ino, ino_t *pino, ino_t *oino)
+{
+	struct stat st;
 
 	*ino = 0;
-	if (ul_path_stat(pc, &st, 0, path) != 0)
+	if (ul_path_statf(pc, &st, 0, "ns/%s", nsname) != 0)
 		return -errno;
 	*ino = st.st_ino;
 
@@ -314,49 +386,18 @@ static int get_ns_ino(struct path_cxt *pc, const char *nsname, ino_t *ino, ino_t
 	*oino = 0;
 
 #ifdef USE_NS_GET_API
-	int fd, pfd, ofd;
-	fd = ul_path_open(pc, 0, path);
+	int r;
+	enum lsns_type lsns_type;
+	int fd = ul_path_openf(pc, 0, "ns/%s", nsname);
 	if (fd < 0)
 		return -errno;
-	if (strcmp(nsname, "pid") == 0 || strcmp(nsname, "user") == 0) {
-		if ((pfd = lsns_ioctl(fd, NS_GET_PARENT)) < 0) {
-			if (errno == EPERM
-			    /* On the test platforms, "build (qemu-user, s390x)" and
-			     * "build (qemu-user, riscv64)", the ioctl reported ENOSYS.
-			     */
-			    || errno == ENOSYS)
-				goto user;
-			close(fd);
-			return -errno;
-		}
-		if (fstat(pfd, &st) < 0) {
-			close(pfd);
-			close(fd);
-			return -errno;
-		}
-		*pino = st.st_ino;
-		close(pfd);
-	}
- user:
-	if ((ofd = lsns_ioctl(fd, NS_GET_USERNS)) < 0) {
-		if (errno == EPERM
-		    /* On the test platforms, "build (qemu-user, s390x)" and
-		     * "build (qemu-user, riscv64)", the ioctl reported ENOSYS.
-		     */
-		    || errno == ENOSYS)
-			goto out;
-		close(fd);
-		return -errno;
-	}
-	if (fstat(ofd, &st) < 0) {
-		close(ofd);
-		close(fd);
-		return -errno;
-	}
-	*oino = st.st_ino;
-	close(ofd);
- out:
+	lsns_type = ns_name2type(nsname);
+
+	r = get_parent_ns_ino(fd, lsns_type, pino, NULL);
+	if (r == 0)
+		r = get_owner_ns_ino(fd, oino, NULL);
 	close(fd);
+	return r;
 #endif
 	return 0;
 }
@@ -513,11 +554,24 @@ static int get_netnsid(struct path_cxt *pc __attribute__((__unused__)),
 
 static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, ino_t ino);
 
-static void read_open_ns_inos(struct lsns *ls, struct path_cxt *pc)
+static struct lsns_namespace *get_namespace(struct lsns *ls, ino_t ino)
+{
+	struct list_head *p;
+
+	list_for_each(p, &ls->namespaces) {
+		struct lsns_namespace *ns = list_entry(p, struct lsns_namespace, namespaces);
+
+		if (ns->id == ino)
+			return ns;
+	}
+	return NULL;
+}
+
+/* Read namespaces open(2)ed explicitly by the process specified by `pc'. */
+static void read_opened_namespaces(struct lsns *ls, struct path_cxt *pc)
 {
 	DIR *sub = NULL;
 	struct dirent *d = NULL;
-	char path[sizeof("fd/") + sizeof(stringify_value(UINT64_MAX))];
 
 	while (ul_path_next_dirent(pc, &sub, "fd", &d) == 0) {
 		uint64_t num;
@@ -526,11 +580,11 @@ static void read_open_ns_inos(struct lsns *ls, struct path_cxt *pc)
 		if (ul_strtou64(d->d_name, &num, 10) != 0)	/* only numbers */
 			continue;
 
-		snprintf(path, sizeof(path), "fd/%ju", (uintmax_t) num);
-
-		if (ul_path_stat(pc, &st, 0, path) == 0
+		if (ul_path_statf(pc, &st, 0, "fd/%ju", (uintmax_t) num) == 0
 		    && st.st_dev == ls->nsfs_dev) {
-			int fd = ul_path_open(pc, O_RDONLY, path);
+			if (get_namespace(ls, st.st_ino))
+				continue;
+			int fd = ul_path_openf(pc, O_RDONLY, "fd/%ju", (uintmax_t) num);
 			if (fd >= 0) {
 				add_namespace_for_nsfd(ls, fd, st.st_ino);
 				close(fd);
@@ -568,13 +622,13 @@ static int read_process(struct lsns *ls, struct path_cxt *pc)
 		if (!ls->fltr_types[i])
 			continue;
 
-		rc = get_ns_ino(pc, ns_names[i], &p->ns_ids[i],
-				&p->ns_pids[i], &p->ns_oids[i]);
+		rc = get_ns_inos(pc, ns_names[i], &p->ns_ids[i],
+				 &p->ns_pids[i], &p->ns_oids[i]);
 		if (rc && rc != -EACCES && rc != -ENOENT) {
-			DBG(PROC, ul_debug("failed in get_ns_ino (rc: %d)", rc));
+			DBG(PROC, ul_debug("failed in get_ns_inos (rc: %d)", rc));
 			goto done;
 		}
-		if (p->ns_ids[i] && i == LSNS_ID_NET)
+		if (p->ns_ids[i] && i == LSNS_TYPE_NET)
 			p->netnsid = get_netnsid(pc, p->ns_ids[i]);
 		rc = 0;
 	}
@@ -584,7 +638,7 @@ static int read_process(struct lsns *ls, struct path_cxt *pc)
 	DBG(PROC, ul_debugobj(p, "new pid=%d", p->pid));
 	list_add_tail(&p->processes, &ls->processes);
 
-	read_open_ns_inos(ls, pc);
+	read_opened_namespaces(ls, pc);
 done:
 	if (rc)
 		free(p);
@@ -646,19 +700,6 @@ static int read_processes(struct lsns *ls)
 	return rc;
 }
 
-static struct lsns_namespace *get_namespace(struct lsns *ls, ino_t ino)
-{
-	struct list_head *p;
-
-	list_for_each(p, &ls->namespaces) {
-		struct lsns_namespace *ns = list_entry(p, struct lsns_namespace, namespaces);
-
-		if (ns->id == ino)
-			return ns;
-	}
-	return NULL;
-}
-
 static int namespace_has_process(struct lsns_namespace *ns, pid_t pid)
 {
 	struct list_head *p;
@@ -672,7 +713,7 @@ static int namespace_has_process(struct lsns_namespace *ns, pid_t pid)
 	return 0;
 }
 
-static struct lsns_namespace *add_namespace(struct lsns *ls, int type, ino_t ino,
+static struct lsns_namespace *add_namespace(struct lsns *ls, enum lsns_type type, ino_t ino,
 					    ino_t parent_ino, ino_t owner_ino)
 {
 	struct lsns_namespace *ns = xcalloc(1, sizeof(*ns));
@@ -740,39 +781,39 @@ static int netnsid_xasputs(char **str, int netnsid)
 }
 
 #ifdef USE_NS_GET_API
-static int clone_type_to_lsns_type(int clone_type)
+static enum lsns_type clone_type_to_lsns_type(int clone_type)
 {
 	switch (clone_type) {
 	case CLONE_NEWNS:
-		return LSNS_ID_MNT;
+		return LSNS_TYPE_MNT;
 	case CLONE_NEWCGROUP:
-		return LSNS_ID_CGROUP;
+		return LSNS_TYPE_CGROUP;
 	case CLONE_NEWUTS:
-		return LSNS_ID_UTS;
+		return LSNS_TYPE_UTS;
 	case CLONE_NEWIPC:
-		return LSNS_ID_IPC;
+		return LSNS_TYPE_IPC;
 	case CLONE_NEWUSER:
-		return LSNS_ID_USER;
+		return LSNS_TYPE_USER;
 	case CLONE_NEWPID:
-		return LSNS_ID_PID;
+		return LSNS_TYPE_PID;
 	case CLONE_NEWNET:
-		return LSNS_ID_NET;
+		return LSNS_TYPE_NET;
 #ifdef CLONE_NEWTIME
 	case CLONE_NEWTIME:
-		return LSNS_ID_TIME;
+		return LSNS_TYPE_TIME;
 #endif
 	default:
-		return -1;
+		return LSNS_TYPE_UNKNOWN;
 	}
 }
 
 static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, ino_t ino)
 {
 	int fd_owner = -1, fd_parent = -1;
-	struct stat st_owner, st_parent;
 	ino_t ino_owner = 0, ino_parent = 0;
 	struct lsns_namespace *ns;
-	int clone_type, lsns_type;
+	int clone_type;
+	enum lsns_type lsns_type;
 
 	clone_type = lsns_ioctl(fd, NS_GET_NSTYPE);
 	if (clone_type < 0)
@@ -781,27 +822,14 @@ static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, in
 	if (lsns_type < 0 || ls->fltr_types[lsns_type] == 0)
 		return NULL;
 
-	fd_owner = lsns_ioctl(fd, NS_GET_USERNS);
-	if (fd_owner < 0)
-		goto parent;
-	if (fstat(fd_owner, &st_owner) < 0)
-		goto parent;
-	ino_owner = st_owner.st_ino;
+	get_parent_ns_ino(fd, lsns_type, &ino_parent, &fd_parent);
+	get_owner_ns_ino(fd, &ino_owner, &fd_owner);
 
- parent:
-	fd_parent = lsns_ioctl(fd, NS_GET_PARENT);
-	if (fd_parent < 0)
-		goto add_ns;
-	if (fstat(fd_parent, &st_parent) < 0)
-		goto add_ns;
-	ino_parent = st_parent.st_ino;
-
- add_ns:
 	ns = add_namespace(ls, lsns_type, ino, ino_parent, ino_owner);
 	lsns_ioctl(fd, NS_GET_OWNER_UID, &ns->uid_fallback);
 	add_uid(uid_cache, ns->uid_fallback);
 
-	if ((lsns_type == LSNS_ID_USER || lsns_type == LSNS_ID_PID)
+	if ((lsns_type == LSNS_TYPE_USER || lsns_type == LSNS_TYPE_PID)
 	    && ino_parent != ino && ino_parent != 0) {
 		ns->related_ns[RELA_PARENT] = get_namespace(ls, ino_parent);
 		if (!ns->related_ns[RELA_PARENT]) {
@@ -825,15 +853,13 @@ static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, in
 	return ns;
 }
 
-static void interpolate_missing_namespaces(struct lsns *ls, struct lsns_namespace *orphan, int rela)
+/* read namespace that cannot be access directly. */
+static void read_ghost_namespaces(struct lsns *ls, struct lsns_namespace *orphan, int rela)
 {
-	const int cmd[MAX_RELA] = {
-		[RELA_PARENT] = NS_GET_PARENT,
-		[RELA_OWNER] = NS_GET_USERNS
-	};
 	char buf[BUFSIZ];
 	int fd_orphan, fd_missing;
-	struct stat st;
+	ino_t ino;
+	int r;
 
 	if (!orphan->proc)
 		return;
@@ -847,13 +873,13 @@ static void interpolate_missing_namespaces(struct lsns *ls, struct lsns_namespac
 	if (fd_orphan < 0)
 		return;
 
-	fd_missing = lsns_ioctl(fd_orphan, cmd[rela]);
+	r = (rela == RELA_PARENT)
+		? get_parent_ns_ino(fd_orphan, orphan->type, &ino, &fd_missing)
+		: get_owner_ns_ino(fd_orphan, &ino, &fd_missing);
 	close(fd_orphan);
-	if (fd_missing < 0)
+	if (fd_missing < 0 || r < 0)
 		return;
-
-	if (fstat(fd_missing, &st) < 0
-	    || st.st_ino != orphan->related_id[rela]) {
+	if (ino != orphan->related_id[rela]) {
 		close(fd_missing);
 		return;
 	}
@@ -862,7 +888,7 @@ static void interpolate_missing_namespaces(struct lsns *ls, struct lsns_namespac
 	close(fd_missing);
 }
 
-static void read_related_namespaces(struct lsns *ls)
+static void connect_namespaces(struct lsns *ls)
 {
 	struct list_head *p;
 	struct lsns_namespace *orphan[2] = {NULL, NULL};
@@ -873,8 +899,8 @@ static void read_related_namespaces(struct lsns *ls)
 		struct list_head *pp;
 		list_for_each(pp, &ls->namespaces) {
 			struct lsns_namespace *pns = list_entry(pp, struct lsns_namespace, namespaces);
-			if (ns->type == LSNS_ID_USER
-			    || ns->type == LSNS_ID_PID) {
+			if (ns->type == LSNS_TYPE_USER
+			    || ns->type == LSNS_TYPE_PID) {
 				if (ns->related_id[RELA_PARENT] == pns->id)
 					ns->related_ns[RELA_PARENT] = pns;
 				if (ns->related_id[RELA_OWNER] == pns->id)
@@ -912,11 +938,12 @@ static void read_related_namespaces(struct lsns *ls)
 			struct lsns_namespace *current = orphan[rela];
 			orphan[rela] = orphan[rela]->related_ns[rela];
 			current->related_ns[rela] = NULL;
-			interpolate_missing_namespaces(ls, current, rela);
+			read_ghost_namespaces(ls, current, rela);
 		}
 	}
 }
 
+/* Read namespaces bind-mount'ed to the filesystem tree. */
 static int read_persistent_namespaces(struct lsns *ls)
 {
 	struct libmnt_iter *itr = mnt_new_iter(MNT_ITER_FORWARD);
@@ -955,7 +982,8 @@ static int read_persistent_namespaces(struct lsns *ls)
 
 #endif /* USE_NS_GET_API */
 
-static int read_namespaces(struct lsns *ls)
+/* Read namespaces assigned to processes. */
+static int read_assigned_namespaces(struct lsns *ls)
 {
 	struct list_head *p;
 
@@ -978,12 +1006,22 @@ static int read_namespaces(struct lsns *ls)
 			add_process_to_namespace(ls, ns, proc);
 		}
 	}
+	return 0;
+}
+
+static int read_namespaces(struct lsns *ls)
+{
+	int r;
+
+	r = read_assigned_namespaces(ls);
+	if (r < 0)
+		return r;
 
 #ifdef USE_NS_GET_API
 	read_persistent_namespaces(ls);
 
 	if (ls->tree == LSNS_TREE_OWNER || ls->tree == LSNS_TREE_PARENT)
-		read_related_namespaces(ls);
+		connect_namespaces(ls);
 #endif
 	list_sort(&ls->namespaces, cmp_namespaces, NULL);
 
@@ -1113,7 +1151,7 @@ static void fill_column(struct lsns *ls,
 	case COL_NETNSID:
 		if (!proc)
 			break;
-		if (ns->type == LSNS_ID_NET)
+		if (ns->type == LSNS_TYPE_NET)
 			netnsid_xasputs(&str, proc->netnsid);
 		break;
 	case COL_NSFS:
@@ -1579,12 +1617,12 @@ int main(int argc, char *argv[])
 			break;
 		case 't':
 		{
-			int type = ns_name2type(optarg);
+			enum lsns_type type = ns_name2type(optarg);
 			if (type < 0)
 				errx(EXIT_FAILURE, _("unknown namespace type: %s"), optarg);
 			ls.fltr_types[type] = 1;
 			ls.fltr_ntypes++;
-			if (type == LSNS_ID_NET)
+			if (type == LSNS_TYPE_NET)
 				is_net = 1;
 			break;
 		}

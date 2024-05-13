@@ -370,6 +370,25 @@ int ul_path_stat(struct path_cxt *pc, struct stat *sb, int flags, const char *pa
 	return rc;
 }
 
+int ul_path_vstatf(struct path_cxt *pc, struct stat *sb, int flags, const char *path, va_list ap)
+{
+	const char *p = ul_path_mkpath(pc, path, ap);
+
+	return !p ? -errno : ul_path_stat(pc, sb, flags, p);
+}
+
+int ul_path_statf(struct path_cxt *pc, struct stat *sb, int flags, const char *path, ...)
+{
+	va_list ap;
+	int rc;
+
+	va_start(ap, path);
+	rc = ul_path_vstatf(pc, sb, flags, path, ap);
+	va_end(ap);
+
+	return rc;
+}
+
 int ul_path_open(struct path_cxt *pc, int flags, const char *path)
 {
 	int fd;
