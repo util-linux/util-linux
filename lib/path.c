@@ -701,16 +701,25 @@ int ul_path_read_buffer(struct path_cxt *pc, char *buf, size_t bufsz, const char
 	return rc;
 }
 
-int ul_path_readf_buffer(struct path_cxt *pc, char *buf, size_t bufsz, const char *path, ...)
+int ul_path_vreadf_buffer(struct path_cxt *pc, char *buf, size_t bufsz, const char *path, va_list ap)
 {
 	const char *p;
-	va_list ap;
 
-	va_start(ap, path);
 	p = ul_path_mkpath(pc, path, ap);
-	va_end(ap);
 
 	return !p ? -errno : ul_path_read_buffer(pc, buf, bufsz, p);
+}
+
+int ul_path_readf_buffer(struct path_cxt *pc, char *buf, size_t bufsz, const char *path, ...)
+{
+	va_list ap;
+	int rc;
+
+	va_start(ap, path);
+	rc = ul_path_vreadf_buffer(pc, buf, bufsz, path, ap);
+	va_end(ap);
+
+	return rc;
 }
 
 int ul_path_scanf(struct path_cxt *pc, const char *path, const char *fmt, ...)

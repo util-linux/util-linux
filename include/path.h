@@ -95,6 +95,8 @@ int ul_path_readf_string(struct path_cxt *pc, char **str, const char *path, ...)
 int ul_path_read_buffer(struct path_cxt *pc, char *buf, size_t bufsz, const char *path);
 int ul_path_readf_buffer(struct path_cxt *pc, char *buf, size_t bufsz, const char *path, ...)
 				__attribute__ ((__format__ (__printf__, 4, 5)));
+int ul_path_vreadf_buffer(struct path_cxt *pc, char *buf, size_t bufsz, const char *path, va_list ap)
+				__attribute__ ((__format__ (__printf__, 4, 0)));
 
 int ul_path_scanf(struct path_cxt *pc, const char *path, const char *fmt, ...)
 				__attribute__ ((__format__ (__scanf__, 3, 4)));
