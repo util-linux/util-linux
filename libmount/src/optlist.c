@@ -837,6 +837,7 @@ int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *cl
 	struct libmnt_iter itr;
 	struct libmnt_opt *opt;
 	uint64_t remount_reset = 0;
+	uint64_t atime_set = 0;
 
 	if (!ls || !ls->linux_map || !set || !clr)
 		return -EINVAL;
@@ -879,29 +880,37 @@ int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *cl
 			remount_reset &= ~x;
 
 		if (opt->ent->mask & MNT_INVERT) {
-			DBG(OPTLIST, ul_debugobj(ls, " clr: %s", opt->ent->name));
-			/*
-			 * All atime settings are mutually exclusive so *clr must
-			 * have MOUNT_ATTR__ATIME set.
-			 *
-			 * See the function fs/namespace.c:build_mount_kattr()
-			 * in the linux kernel source.
-			 */
+			DBG(OPTLIST, ul_debugobj(ls, " clr: %s 0x%08" PRIx64,
+						opt->ent->name, x));
+
 			if (x == MOUNT_ATTR_RELATIME || x == MOUNT_ATTR_NOATIME ||
 			    x == MOUNT_ATTR_STRICTATIME)
 				*clr |= MOUNT_ATTR__ATIME;
 			else
 				*clr |= x;
 		} else {
-			DBG(OPTLIST, ul_debugobj(ls, " set: %s", opt->ent->name));
-			*set |= x;
-
 			if (x == MOUNT_ATTR_RELATIME || x == MOUNT_ATTR_NOATIME ||
-			    x == MOUNT_ATTR_STRICTATIME)
+			    x == MOUNT_ATTR_STRICTATIME) {
+				/* All atime settings are mutually exclusive,
+				 * the last option wins and MOUNT_ATTR__ATIME
+				 * is required in clr mask.
+				 */
+				DBG(OPTLIST, ul_debugobj(ls, " atime: %s 0x%08" PRIx64,
+							opt->ent->name, x));
 				*clr |= MOUNT_ATTR__ATIME;
+				atime_set = x;
+			} else {
+				DBG(OPTLIST, ul_debugobj(ls, " set: %s 0x%08" PRIx64,
+							opt->ent->name, x));
+				*set |= x;
+			}
 		}
 	}
 
+	if (atime_set) {
+		DBG(OPTLIST, ul_debugobj(ls, " set atime 0x%08" PRIx64, atime_set));
+		*set |= atime_set;
+	}
 	if (remount_reset)
 		*clr |= remount_reset;
 
