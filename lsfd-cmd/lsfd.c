@@ -968,14 +968,14 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 		f = new_file(proc, stat2class(&sb), &sb, path, -assoc);
 	} else {
 		/* As used in tcpdump, AF_PACKET socket can be mmap'ed. */
-		char map_file[sizeof("map_files/0000000000000000-ffffffffffffffff")];
 		char sym[PATH_MAX] = { '\0' };
 
 	try_map_files:
-		snprintf(map_file, sizeof(map_file), "map_files/%"PRIx64"-%"PRIx64, start, end);
-		if (ul_path_readlink(pc, sym, sizeof(sym), map_file) < 0)
+		if (ul_path_readlinkf(pc, sym, sizeof(sym),
+				      "map_files/%"PRIx64"-%"PRIx64, start, end) < 0)
 			f = new_readlink_error_file(proc, errno, -assoc);
-		else if (ul_path_stat(pc, &sb, 0, map_file) < 0)
+		else if (ul_path_statf(pc, &sb, 0,
+				       "map_files/%"PRIx64"-%"PRIx64, start, end) < 0)
 			f = new_stat_error_file(proc, sym, errno, -assoc);
 		else
 			f = new_file(proc, stat2class(&sb), &sb, sym, -assoc);
