@@ -68,6 +68,8 @@
 static int quiet;		/* don't print anything */
 static int rootbasesz;		/* size of the directory for nftw() */
 
+static unsigned short curr_tree;	/* seq. number of the current top-level directory */
+
 #ifdef USE_REFLINK
 enum {
 	REFLINK_NEVER  = 0,
@@ -106,6 +108,8 @@ struct file {
 		char path[1];
 #endif
 	} *links;
+
+	unsigned short tree_seqnum;
 };
 
 /**
@@ -163,6 +167,7 @@ struct hdl_regex {
  * @maximise: Chose the file with the highest link count as master
  * @minimise: Chose the file with the lowest link count as master
  * @keep_oldest: Choose the file with oldest timestamp as master (default = FALSE)
+ * @prio_trees: Prioritize trees; choose the file that was found in the earliest specified tree (default = FALSE)
  * @dry_run: Specifies whether hardlink should not link files (default = FALSE)
  * @min_size: Minimum size of files to consider. (default = 1 byte)
  * @max_size: Maximum size of files to consider, 0 means umlimited. (default = 0 byte)
@@ -182,6 +187,7 @@ static struct options {
 	unsigned int maximise:1;
 	unsigned int minimise:1;
 	unsigned int keep_oldest:1;
+	unsigned int prio_trees:1;
 	unsigned int dry_run:1;
 	uintmax_t min_size;
 	uintmax_t max_size;
@@ -199,6 +205,7 @@ static struct options {
 	.respect_time = TRUE,
 	.respect_xattrs = FALSE,
 	.keep_oldest = FALSE,
+	.prio_trees = FALSE,
 	.min_size = 1,
 	.cache_size = 10*1024*1024
 };
@@ -672,6 +679,8 @@ static int file_compare(const struct file *a, const struct file *b)
 		res = CMP(a->st.st_nlink, b->st.st_nlink);
 	if (res == 0 && opts.minimise)
 		res = CMP(b->st.st_nlink, a->st.st_nlink);
+	if (res == 0 && opts.prio_trees)
+		res = CMP(a->tree_seqnum, b->tree_seqnum);
 	if (res == 0)
 		res = opts.keep_oldest ? CMP(b->st.st_mtime, a->st.st_mtime)
 		    : CMP(a->st.st_mtime, b->st.st_mtime);
@@ -875,6 +884,7 @@ static int inserter(const char *fpath, const struct stat *sb,
 	fil->links->basename = ftwbuf->base;
 	fil->links->dirname = rootbasesz;
 	fil->links->next = NULL;
+	fil->tree_seqnum = curr_tree;
 
 	memcpy(fil->links->path, fpath, pathlen);
 
@@ -1173,6 +1183,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -M, --minimize             reverse the meaning of -m\n"), out);
 	fputs(_(" -n, --dry-run              don't actually link anything\n"), out);
 	fputs(_(" -o, --ignore-owner         ignore owner changes\n"), out);
+	fputs(_(" -F, --prioritize-trees     files found in the earliest specified top-level\n"
+                "                              directory have higher priority (lower precedence\n"
+		"                              than minimize/maximize)\n"), out);
 	fputs(_(" -O, --keep-oldest          keep the oldest file of multiple equal files\n"
 		"                              (lower precedence than minimize/maximize)\n"), out);
 	fputs(_(" -p, --ignore-mode          ignore changes of file mode\n"), out);
@@ -1210,7 +1223,7 @@ static int parse_options(int argc, char *argv[])
 		OPT_REFLINK = CHAR_MAX + 1,
 		OPT_SKIP_RELINKS
 	};
-	static const char optstr[] = "VhvndfpotXcmMOx:y:i:r:S:s:b:q";
+	static const char optstr[] = "VhvndfpotXcmMFOx:y:i:r:S:s:b:q";
 	static const struct option long_options[] = {
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
@@ -1224,6 +1237,7 @@ static int parse_options(int argc, char *argv[])
 		{"respect-xattrs", no_argument, NULL, 'X'},
 		{"maximize", no_argument, NULL, 'm'},
 		{"minimize", no_argument, NULL, 'M'},
+		{"prioritize-trees", no_argument, NULL, 'F'},
 		{"keep-oldest", no_argument, NULL, 'O'},
 		{"exclude", required_argument, NULL, 'x'},
 		{"include", required_argument, NULL, 'i'},
@@ -1272,6 +1286,9 @@ static int parse_options(int argc, char *argv[])
 			break;
 		case 'O':
 			opts.keep_oldest = TRUE;
+			break;
+		case 'F':
+			opts.prio_trees = TRUE;
 			break;
 		case 'f':
 			opts.respect_name = TRUE;
@@ -1443,8 +1460,12 @@ int main(int argc, char *argv[])
 		}
 		if (opts.respect_dir)
 			rootbasesz = strlen(path);
+		if (opts.prio_trees)
+			++curr_tree;
+
 		if (nftw(path, inserter, 20, FTW_PHYS) == -1)
 			warn(_("cannot process %s"), path);
+
 		free(path);
 		rootbasesz = 0;
 	}
