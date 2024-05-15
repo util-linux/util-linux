@@ -665,13 +665,14 @@ int uuid_generate_time_safe(uuid_t out)
 void uuid_generate_time_v6(uuid_t out)
 {
 	struct uuid uu = {};
-	uint64_t clock_reg;
+	uint32_t clock_high, clock_low;
+	uint16_t clock_seq;
 
-	clock_reg = get_clock_counter();
+	get_clock(&clock_high, &clock_low, &clock_seq, NULL);
 
-	uu.time_low = clock_reg >> 28;
-	uu.time_mid = clock_reg >> 12;
-	uu.time_hi_and_version = (clock_reg & 0x0FFF) | (6 << 12);
+	uu.time_low = (clock_high << 4) | (clock_low >> 28);
+	uu.time_mid = clock_low >> 12;
+	uu.time_hi_and_version = (clock_low & 0x0FFF) | (6 << 12);
 
 	ul_random_get_bytes(&uu.clock_seq, 8);
 	uu.clock_seq = (uu.clock_seq & 0x3FFF) | 0x8000;
