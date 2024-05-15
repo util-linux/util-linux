@@ -57,7 +57,7 @@ global:
  */
 UUID_2.40 {
 global:
-        uuid_time64; /* only on 32bit architectures with 64bit time_t */
+        uuid_time64*; /* only on 32bit architectures with 64bit time_t */
 } UUID_2.36;
 
 
