@@ -14,6 +14,7 @@ lib_uuid_sources = '''
 '''.split()
 
 predefined_c = files('src/predefined.c')
+pack_c = files('src/pack.c')
 unpack_c = files('src/unpack.c')
 unparse_c = files('src/unparse.c')
 
@@ -57,3 +58,11 @@ if build_libuuid
     meson.override_dependency('uuid', uuid_dep)
   endif
 endif
+
+test_uuid_time_sources = files('src/gen_uuid.c') + [
+  pack_c,
+  unpack_c,
+  randutils_c,
+  md5_c,
+  sha1_c,
+]
