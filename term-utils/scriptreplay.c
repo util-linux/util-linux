@@ -328,34 +328,29 @@ main(int argc, char *argv[])
 				replay_toggle_pause(setup);
 				break;
 			case '\033':
-				switch (fgetwc(stdin)) {
-					case '[':
-						switch (fgetwc(stdin)) {
-							case 'A':	// Up arrow
-								divi += 0.1;
-								replay_set_delay_div(setup, divi);
-								break;
-							case 'B': 	// Down arrow
-								divi -= 0.1;
-								if (divi < 0.1)
-									divi = 0.1;
-								replay_set_delay_div(setup, divi);
-								break;
-							case 'C':	// Right arrow
-								rc = replay_emit_step_data(setup, step, STDOUT_FILENO);
-								if (rc)
-									break;
+				wchar_t firstChar = fgetwc(stdin);
+				if (firstChar == '[') {
+					wchar_t secondChar = fgetwc(stdin);
 
-								rc = replay_get_next_step(setup, streams, &step);
-								if (rc)
-									break;
-
+					if (secondChar == 'A') { // Up arrow
+						divi += 0.1;
+						replay_set_delay_div(setup, divi);
+					} else if (secondChar == 'B') { // Down arrow
+						divi -= 0.1;
+						if (divi < 0.1)
+							divi = 0.1;
+						replay_set_delay_div(setup, divi);
+					} else if (secondChar == 'C') { // Right arrow
+						rc = replay_emit_step_data(setup, step, STDOUT_FILENO);
+						if (!rc) {
+							rc = replay_get_next_step(setup, streams, &step);
+							if (!rc) {
 								struct timeval *delay = replay_step_get_delay(step);
 								if (delay && timerisset(delay))
 									stepDelay = *delay;
-								break;
+							}
 						}
-						break;
+					}
 				}
 				break;
 		}
