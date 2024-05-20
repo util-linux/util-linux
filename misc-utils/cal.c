@@ -992,16 +992,31 @@ cal_vert_output_months(struct cal_month *month, const struct cal_control *ctl)
 	if (!ctl->weektype)
 		return;
 
+	const char *seq_ws_start = cal_get_color_sequence(CAL_COLOR_WEEKS);
+	const char *seq_ws_end = cal_get_color_disable_sequence(CAL_COLOR_WEEKS);
+
 	printf("%*s", (int)ctl->day_width - 1, "");
 	for (m = month; m; m = m->next) {
 		for (week = 0; week < MAXDAYS / DAYS_IN_WEEK; week++) {
 			if (0 < m->weeks[week]) {
-				if ((ctl->weektype & WEEK_NUM_MASK) == m->weeks[week])
-					printf("%s%*d%s",
-						 cal_get_color_sequence(CAL_COLOR_WEEKNUMBER),
-						 skip - (ctl->julian ? 3 : 2),
-						 m->weeks[week],
-						 cal_get_color_disable_sequence(CAL_COLOR_WEEKNUMBER));
+				const char *seq_start = NULL, *seq_end = NULL;
+
+				/* colorize by requested week-number or generic weeks color */
+				if (ctl->req.week &&
+				    ctl->req.week == m->weeks[week]) {
+					seq_start = cal_get_color_sequence(CAL_COLOR_WEEKNUMBER);
+					seq_end = cal_get_color_disable_sequence(CAL_COLOR_WEEKNUMBER);
+				} else {
+					seq_start = seq_ws_start;
+					seq_end = seq_ws_end;
+				}
+
+				if (seq_start && *seq_start)
+					printf("%*s%s%*d%s",
+						 skip - (ctl->julian ? 3 : 2), "",
+						 seq_start,
+						 (ctl->julian ? 3 : 2), m->weeks[week],
+						 seq_end);
 				else
 					printf("%*d", skip, m->weeks[week]);
 			} else
