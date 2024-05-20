@@ -85,15 +85,17 @@ enum {
 	CAL_COLOR_TODAY,
 	CAL_COLOR_HEADER,
 	CAL_COLOR_WEEKNUMBER,
+	CAL_COLOR_WEEKS,
 	CAL_COLOR_WORKDAY,
 	CAL_COLOR_WEEKEND
 };
 
 static const struct { const char * const scheme; const char * dflt; } colors[] =
 {
-        [CAL_COLOR_TODAY]      = { "today",      UL_COLOR_REVERSE },
-        [CAL_COLOR_WEEKNUMBER] = { "weeknumber", UL_COLOR_REVERSE },
-        [CAL_COLOR_HEADER]     = { "header",     ""               },
+	[CAL_COLOR_TODAY]      = { "today",      UL_COLOR_REVERSE },
+	[CAL_COLOR_WEEKNUMBER] = { "weeknumber", UL_COLOR_REVERSE },	/* requested week */
+	[CAL_COLOR_WEEKS]      = { "weeks",	 ""               },	/* week numbers */
+	[CAL_COLOR_HEADER]     = { "header",     ""               },
 	[CAL_COLOR_WORKDAY]    = { "workday",    ""               },
 	[CAL_COLOR_WEEKEND]    = { "weekend",    ""               }
 };
@@ -407,6 +409,8 @@ int main(int argc, char **argv)
 			break;
 		case 'w':
 			if (optarg) {
+				if (*optarg == '=')
+					optarg++;
 				ctl.req.week = strtos32_or_err(optarg,
 						_("invalid week argument"));
 				if (ctl.req.week < 1 || 54 < ctl.req.week)
@@ -517,10 +521,13 @@ int main(int argc, char **argv)
 		}
 		break;
 	case 0:
-		ctl.req.day = local_time.tm_yday + 1;
+		if (!ctl.req.week) {
+			ctl.req.day = local_time.tm_yday + 1;
+			if (!ctl.req.month)
+				ctl.req.month = local_time.tm_mon + 1;
+		}
 		ctl.req.year = local_time.tm_year + 1900;
-		if (!ctl.req.month)
-			ctl.req.month = local_time.tm_mon + 1;
+
 		break;
 	default:
 		warnx(_("bad usage"));
@@ -859,6 +866,13 @@ static void cal_output_months(struct cal_month *month, const struct cal_control 
 	const char *seq_we_start = cal_get_color_sequence(CAL_COLOR_WEEKEND);
 	const char *seq_we_end = cal_get_color_disable_sequence(CAL_COLOR_WEEKEND);
 
+	const char *seq_ws_start = NULL, *seq_ws_end = NULL;
+
+	if (ctl->weektype) {
+		seq_ws_start = cal_get_color_sequence(CAL_COLOR_WEEKS);
+		seq_ws_end = cal_get_color_disable_sequence(CAL_COLOR_WEEKS);
+	}
+
 	for (week_line = 0; week_line < MAXDAYS / DAYS_IN_WEEK; week_line++) {
 		for (i = month; i; i = i->next) {
 			/* Determine the day that should be highlighted. */
@@ -874,11 +888,21 @@ static void cal_output_months(struct cal_month *month, const struct cal_control 
 
 			if (ctl->weektype) {
 				if (0 < i->weeks[week_line]) {
-					if ((ctl->weektype & WEEK_NUM_MASK) == i->weeks[week_line])
-						printf("%s%2d%s",
-						       cal_get_color_sequence(CAL_COLOR_WEEKNUMBER),
-						       i->weeks[week_line],
-						       cal_get_color_disable_sequence(CAL_COLOR_WEEKNUMBER));
+					const char *seq_start, *seq_end;
+
+					/* colorize by requested week-number or generic weeks color */
+					if (ctl->req.week &&
+					    ctl->req.week == i->weeks[week_line]) {
+						seq_start = cal_get_color_sequence(CAL_COLOR_WEEKNUMBER);
+						seq_end = cal_get_color_disable_sequence(CAL_COLOR_WEEKNUMBER);
+					} else {
+						seq_start = seq_ws_start;
+						seq_end = seq_ws_end;
+					}
+
+					if (seq_start && *seq_start)
+						printf("%s%2d%s", seq_start,
+						       i->weeks[week_line], seq_end);
 					else
 						printf("%2d", i->weeks[week_line]);
 				} else
