@@ -92,7 +92,7 @@ static void hookset_set_syscall_status(struct libmnt_context *cxt,
 {
 	struct libmnt_sysapi *api;
 
-	set_syscall_status(cxt, name, x);
+	mnt_context_syscall_save_status(cxt, name, x);
 
 	if (!x) {
 		api = get_sysapi(cxt);
@@ -819,7 +819,7 @@ enosys:
 	/* we need to recover from this error, so hook_mount_legacy.c
 	 * can try to continue */
 	DBG(HOOK, ul_debugobj(hs, "failed to init new API"));
-	reset_syscall_status(cxt);
+	mnt_context_syscall_reset_status(cxt);
 	hookset_deinit(cxt, hs);
 	return 1;
 }
