@@ -822,6 +822,8 @@ static void cal_vert_output_header(struct cal_month *month,
 	struct cal_month *m;
 	int month_width;
 
+	cal_enable_color(CAL_COLOR_HEADER);
+
 	month_width = ctl->day_width * (MAXDAYS / DAYS_IN_WEEK);
 
 	/* Padding for the weekdays */
@@ -848,6 +850,8 @@ static void cal_vert_output_header(struct cal_month *month,
 			left(out, month_width, ctl->gutter_width);
 		}
 	}
+
+	cal_disable_color(CAL_COLOR_HEADER);
 	fputc('\n', stdout);
 }
 
@@ -951,10 +955,32 @@ cal_vert_output_months(struct cal_month *month, const struct cal_control *ctl)
 	int i, reqday, week, d;
 	int skip;
 	struct cal_month *m;
+	int firstwork = ctl->weekstart == SUNDAY ? 1 : 0;       /* first workday in week */
+
+	const char *seq_wo_start = cal_get_color_sequence(CAL_COLOR_WORKDAY);
+	const char *seq_wo_end = cal_get_color_disable_sequence(CAL_COLOR_WORKDAY);
+	const char *seq_we_start = cal_get_color_sequence(CAL_COLOR_WEEKEND);
+	const char *seq_we_end = cal_get_color_disable_sequence(CAL_COLOR_WEEKEND);
+	const char *seq_hd_start = cal_get_color_sequence(CAL_COLOR_HEADER);
+	const char *seq_hd_end = cal_get_color_disable_sequence(CAL_COLOR_HEADER);
 
 	skip = ctl->day_width;
 	for (i = 0; i < DAYS_IN_WEEK; i++) {
+		const char *seq_start = seq_wo_start,
+			   *seq_end = seq_wo_end;
+
+		/* Day name */
+		fput_seq(seq_hd_start);
 		left(ctl->weekdays[i], ctl->day_width - 1, 0);
+		fput_seq(seq_hd_end);
+
+		/* Workday/Weekend color */
+		if (i < firstwork || i > firstwork + 4) {
+			seq_start = seq_we_start;
+			seq_end = seq_we_end;
+		}
+
+		/* Day digits */
 		for (m = month; m; m = m->next) {
 			reqday = 0;
 			if (m->month == ctl->req.month && m->year == ctl->req.year) {
@@ -967,7 +993,9 @@ cal_vert_output_months(struct cal_month *month, const struct cal_control *ctl)
 			}
 			for (week = 0; week < MAXDAYS / DAYS_IN_WEEK; week++) {
 				d = i + DAYS_IN_WEEK * week;
+
 				if (0 < m->days[d]) {
+					fput_seq(seq_start);
 					if (reqday == m->days[d]) {
 						printf("%*s%s%*d%s",
 						       skip - (ctl->julian ? 3 : 2),
@@ -979,6 +1007,7 @@ cal_vert_output_months(struct cal_month *month, const struct cal_control *ctl)
 					} else {
 						printf("%*d",  skip, m->days[d]);
 					}
+					fput_seq(seq_end);
 				} else {
 					printf("%*s", skip, "");
 				}
@@ -992,6 +1021,7 @@ cal_vert_output_months(struct cal_month *month, const struct cal_control *ctl)
 	if (!ctl->weektype)
 		return;
 
+	/* Week numbers */
 	const char *seq_ws_start = cal_get_color_sequence(CAL_COLOR_WEEKS);
 	const char *seq_ws_end = cal_get_color_disable_sequence(CAL_COLOR_WEEKS);
 
