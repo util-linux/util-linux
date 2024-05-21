@@ -576,6 +576,13 @@ int __uuid_generate_time_cont(uuid_t out, int *num, uint32_t cont_offset)
 #define CS_MAX		(1<<18)
 #define CS_FACTOR	2
 
+static void __uuid_set_variant_and_version(uuid_t uuid, int version)
+{
+	uuid[6] = (uuid[6] & UUID_TYPE_MASK) | version << UUID_TYPE_SHIFT;
+	/* only DCE is supported */
+	uuid[8] = (uuid[10] & 0x3F) | 0x80;
+}
+
 /*
  * Generate time-based UUID and store it to @out
  *
