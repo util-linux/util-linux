@@ -694,21 +694,20 @@ void uuid_generate_time_v6(uuid_t out)
 void uuid_generate_time_v7(uuid_t out)
 {
 	struct timeval tv;
-	struct uuid uu;
 	uint64_t ms;
 
 	gettimeofday(&tv, NULL);
 
 	ms = tv.tv_sec * MSEC_PER_SEC + tv.tv_usec / USEC_PER_MSEC;
 
-	uu.time_low = ms >> 16;
-	uu.time_mid = ms;
-
-	ul_random_get_bytes(&uu.time_hi_and_version, 10);
-	uu.time_hi_and_version = (uu.time_hi_and_version & 0x0FFF) | (7 << 12);
-	uu.clock_seq = (uu.clock_seq & 0x3FFF) | 0x8000;
-
-	uuid_pack(&uu, out);
+	out[0] = ms >> 40;
+	out[1] = ms >> 32;
+	out[2] = ms >> 24;
+	out[3] = ms >> 16;
+	out[4] = ms >>  8;
+	out[5] = ms >>  0;
+	ul_random_get_bytes(out + 6, 10);
+	__uuid_set_variant_and_version(out, UUID_TYPE_DCE_TIME_V7);
 }
 
 
