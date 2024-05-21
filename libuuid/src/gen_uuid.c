@@ -671,20 +671,23 @@ int uuid_generate_time_safe(uuid_t out)
 
 void uuid_generate_time_v6(uuid_t out)
 {
-	struct uuid uu = {};
 	uint32_t clock_high, clock_low;
 	uint16_t clock_seq;
 
 	get_clock(&clock_high, &clock_low, &clock_seq, NULL);
 
-	uu.time_low = (clock_high << 4) | (clock_low >> 28);
-	uu.time_mid = clock_low >> 12;
-	uu.time_hi_and_version = (clock_low & 0x0FFF) | (6 << 12);
+	out[0] = clock_high >> 20;
+	out[1] = clock_high >> 12;
+	out[2] = clock_high >>  4;
+	out[3] = clock_high <<  4;
+	out[3] |= clock_low >> 28;
+	out[4] = clock_low >> 20;
+	out[5] = clock_low >> 12;
+	out[6] = clock_low >>  8;
+	out[7] = clock_low >>  0;
 
-	ul_random_get_bytes(&uu.clock_seq, 8);
-	uu.clock_seq = (uu.clock_seq & 0x3FFF) | 0x8000;
-
-	uuid_pack(&uu, out);
+	ul_random_get_bytes(out + 8, 8);
+	__uuid_set_variant_and_version(out, UUID_TYPE_DCE_TIME_V6);
 }
 
 // FIXME variable additional information
