@@ -432,7 +432,7 @@ struct libmnt_context
 
 	int	syscall_status;	/* 1: not called yet, 0: success, <0: -errno */
 	const char *syscall_name;	/* failed syscall name */
-	char	*syscall_errmsg;	/* message from kernel */
+	char	*errmsg;	/* library or kernel message */
 
 	struct libmnt_ns	ns_orig;	/* original namespace */
 	struct libmnt_ns	ns_tgt;		/* target namespace */
@@ -625,6 +625,9 @@ extern int mnt_context_update_tabs(struct libmnt_context *cxt);
 
 extern int mnt_context_umount_setopt(struct libmnt_context *cxt, int c, char *arg);
 extern int mnt_context_mount_setopt(struct libmnt_context *cxt, int c, char *arg);
+
+extern int mnt_context_set_errmsg(struct libmnt_context *cxt, const char *msg);
+extern int mnt_context_append_errmsg(struct libmnt_context *cxt, const char *msg);
 
 extern int mnt_context_propagation_only(struct libmnt_context *cxt)
 			__attribute__((nonnull));

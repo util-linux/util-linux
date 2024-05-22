@@ -70,8 +70,7 @@ static void save_fd_messages(struct libmnt_context *cxt, int fd)
 	uint8_t buf[BUFSIZ];
 	int rc;
 
-	free(cxt->syscall_errmsg);
-	cxt->syscall_errmsg = NULL;
+	mnt_context_set_errmsg(cxt, NULL);
 
 	while ((rc = read(fd, buf, sizeof(buf))) != -1) {
 		if (rc > 0 && buf[rc - 1] == '\n')
@@ -80,10 +79,7 @@ static void save_fd_messages(struct libmnt_context *cxt, int fd)
 
 		if (rc < 3 || strncmp((char *) buf, "e ", 2) != 0)
 			continue;
-		if (cxt->syscall_errmsg)
-			strappend(&cxt->syscall_errmsg, "; ");
-
-		strappend(&cxt->syscall_errmsg, ((char *) buf) + 2);
+		mnt_context_append_errmsg(cxt, ((char *) buf) + 2);
 	}
 }
 

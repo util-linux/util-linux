@@ -1572,10 +1572,13 @@ int mnt_context_get_mount_excode(
 	 */
 	syserr = mnt_context_get_syscall_errno(cxt);
 
-	if (buf && cxt->syscall_errmsg) {
-		snprintf(buf, bufsz, _("%s system call failed: %s"),
-					cxt->syscall_name ? : "mount",
-					cxt->syscall_errmsg);
+	if (buf && cxt->errmsg) {
+		if (cxt->syscall_name)
+			snprintf(buf, bufsz, _("%s system call failed: %s"),
+					cxt->syscall_name, cxt->errmsg);
+		else
+			xstrncpy(buf, cxt->errmsg, bufsz);
+
 		return MNT_EX_FAIL;
 	}
 

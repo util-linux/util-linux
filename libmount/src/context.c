@@ -2635,8 +2635,35 @@ void mnt_context_syscall_reset_status(struct libmnt_context *cxt)
 	cxt->syscall_status = 0;
 	cxt->syscall_name = NULL;
 
-	free(cxt->syscall_errmsg);
-	cxt->syscall_errmsg = NULL;
+	free(cxt->errmsg);
+	cxt->errmsg = NULL;
+}
+
+int mnt_context_set_errmsg(struct libmnt_context *cxt, const char *msg)
+{
+	char *p = NULL;
+
+	if (msg) {
+		p = strdup(msg);
+		if (!p)
+			return -ENOMEM;
+	}
+
+	free(cxt->errmsg);
+	cxt->errmsg = p;
+
+	return 0;
+}
+
+int mnt_context_append_errmsg(struct libmnt_context *cxt, const char *msg)
+{
+	if (cxt->errmsg) {
+		int rc = strappend(&cxt->errmsg, "; ");
+		if (rc)
+			return rc;
+	}
+
+	return strappend(&cxt->errmsg, msg);
 }
 
 /**
