@@ -3468,6 +3468,17 @@ if not is_disabler(exe)
   exes += exe
 endif
 
+exe = executable(
+  'test_uuid_time',
+  test_uuid_time_sources,
+  include_directories : [dir_include],
+  link_with : lib_uuid,
+  c_args : '-DTEST_PROGRAM',
+  build_by_default : program_tests)
+if not is_disabler(exe)
+  exes += exe
+endif
+
 ############################################################
 
 libfdisk_tests_cflags = ['-DTEST_PROGRAM']

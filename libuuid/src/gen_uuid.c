@@ -121,6 +121,17 @@ static int getuid (void)
 }
 #endif
 
+#ifdef TEST_PROGRAM
+#define gettimeofday gettimeofday_fixed
+
+static int gettimeofday_fixed(struct timeval *tv, void *tz __attribute__((unused)))
+{
+	tv->tv_sec = 1645557742;
+	tv->tv_usec = 123456;
+	return 0;
+}
+#endif
+
 /*
  * Get the ethernet hardware address, if we can find it...
  *
@@ -454,7 +465,7 @@ error:
 	return -1;
 }
 
-#if defined(HAVE_UUIDD) && defined(HAVE_SYS_UN_H)
+#if defined(HAVE_UUIDD) && defined(HAVE_SYS_UN_H) && !defined(TEST_PROGRAM)
 
 /*
  * Try using the uuidd daemon to generate the UUID
@@ -800,3 +811,25 @@ void uuid_generate_sha1(uuid_t out, const uuid_t ns, const char *name, size_t le
 	uu.time_hi_and_version = (uu.time_hi_and_version & 0x0FFF) | 0x5000;
 	uuid_pack(&uu, out);
 }
+
+#ifdef TEST_PROGRAM
+int main(void)
+{
+	char buf[UUID_STR_LEN];
+	uuid_t uuid;
+
+	uuid_generate_time(uuid);
+	uuid_unparse(uuid, buf);
+	printf("%s\n", buf);
+
+	uuid_generate_time_v6(uuid);
+	uuid_unparse(uuid, buf);
+	printf("%s\n", buf);
+
+	uuid_generate_time_v7(uuid);
+	uuid_unparse(uuid, buf);
+	printf("%s\n", buf);
+
+	return 0;
+}
+#endif
