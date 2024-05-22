@@ -628,6 +628,7 @@ extern int mnt_context_mount_setopt(struct libmnt_context *cxt, int c, char *arg
 
 extern int mnt_context_set_errmsg(struct libmnt_context *cxt, const char *msg);
 extern int mnt_context_append_errmsg(struct libmnt_context *cxt, const char *msg);
+extern int mnt_context_sprintf_errmsg(struct libmnt_context *cxt, const char *msg, ...);
 
 extern int mnt_context_propagation_only(struct libmnt_context *cxt)
 			__attribute__((nonnull));

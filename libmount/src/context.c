@@ -41,6 +41,7 @@
 #include "namespace.h"
 #include "match.h"
 
+#include <stdarg.h>
 #include <sys/wait.h>
 
 /**
@@ -2664,6 +2665,25 @@ int mnt_context_append_errmsg(struct libmnt_context *cxt, const char *msg)
 	}
 
 	return strappend(&cxt->errmsg, msg);
+}
+
+int mnt_context_sprintf_errmsg(struct libmnt_context *cxt, const char *msg, ...)
+{
+	int rc;
+	va_list ap;
+	char *p = NULL;
+
+	va_start(ap, msg);
+	rc = vasprintf(&p, msg, ap);
+	va_end(ap);
+
+	if (rc < 0 || !p)
+		return rc;
+
+	free(cxt->errmsg);
+	cxt->errmsg = p;
+
+	return 0;
 }
 
 /**

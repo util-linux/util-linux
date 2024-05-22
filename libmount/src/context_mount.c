@@ -1433,6 +1433,11 @@ int mnt_context_get_mount_excode(
 	mnt_context_get_user_mflags(cxt, &uflags);	/* userspace flags */
 
 	if (!mnt_context_syscall_called(cxt)) {
+		if (buf && cxt->errmsg) {
+			xstrncpy(buf, cxt->errmsg, bufsz);
+			return MNT_EX_USAGE;
+		}
+
 		/*
 		 * libmount errors (extra library checks)
 		 */
