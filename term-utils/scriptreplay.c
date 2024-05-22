@@ -332,15 +332,15 @@ main(int argc, char *argv[])
 				if (first_char == '[') {
 					wchar_t second_char = fgetwc(stdin);
 
-					if (second_char == 'A') { // Up arrow
+					if (second_char == 'A') { /* Up arrow */
 						divi += 0.1;
 						replay_set_delay_div(setup, divi);
-					} else if (second_char == 'B') { // Down arrow
+					} else if (second_char == 'B') { /* Down arrow */
 						divi -= 0.1;
 						if (divi < 0.1)
 							divi = 0.1;
 						replay_set_delay_div(setup, divi);
-					} else if (second_char == 'C') { // Right arrow
+					} else if (second_char == 'C') { /* Right arrow */
 						rc = replay_emit_step_data(setup, step, STDOUT_FILENO);
 						if (!rc) {
 							rc = replay_get_next_step(setup, streams, &step);
@@ -357,14 +357,12 @@ main(int argc, char *argv[])
 		if (rc)
 			break;
 
-		if (replay_get_is_paused(setup))
-		{
+		if (replay_get_is_paused(setup)) {
 			delay_for(&input_delay);
 			continue;
 		}
 
-		if (timerisset(&step_delay))
-		{
+		if (timerisset(&step_delay)) {
 			const struct timeval *timeout = (timercmp(&step_delay, &input_delay, <) ? (&step_delay) : (&input_delay));
 			delay_for(timeout);
 			timersub(&step_delay, timeout, &step_delay);
@@ -390,8 +388,7 @@ main(int argc, char *argv[])
 		}
 	} while (rc == 0);
 
-	if (isterm)
-	{
+	if (isterm) {
 		fcntl(STDIN_FILENO, F_SETFL, &saved_flag);
 		tcsetattr(STDOUT_FILENO, TCSADRAIN, &saved);
 	}
