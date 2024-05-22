@@ -585,6 +585,13 @@ int __uuid_generate_time_cont(uuid_t out, int *num, uint32_t cont_offset)
 #define CS_MAX		(1<<18)
 #define CS_FACTOR	2
 
+static void __uuid_set_variant_and_version(uuid_t uuid, int version)
+{
+	uuid[6] = (uuid[6] & UUID_TYPE_MASK) | version << UUID_TYPE_SHIFT;
+	/* only DCE is supported */
+	uuid[8] = (uuid[10] & 0x3F) | 0x80;
+}
+
 /*
  * Generate time-based UUID and store it to @out
  *
@@ -685,41 +692,43 @@ int uuid_generate_time_safe(uuid_t out)
 
 void uuid_generate_time_v6(uuid_t out)
 {
-	struct uuid uu = {};
 	uint32_t clock_high, clock_low;
 	uint16_t clock_seq;
 
 	get_clock(&clock_high, &clock_low, &clock_seq, NULL);
 
-	uu.time_low = (clock_high << 4) | (clock_low >> 28);
-	uu.time_mid = clock_low >> 12;
-	uu.time_hi_and_version = (clock_low & 0x0FFF) | (6 << 12);
+	out[0] = clock_high >> 20;
+	out[1] = clock_high >> 12;
+	out[2] = clock_high >>  4;
+	out[3] = clock_high <<  4;
+	out[3] |= clock_low >> 28;
+	out[4] = clock_low >> 20;
+	out[5] = clock_low >> 12;
+	out[6] = clock_low >>  8;
+	out[7] = clock_low >>  0;
 
-	ul_random_get_bytes(&uu.clock_seq, 8);
-	uu.clock_seq = (uu.clock_seq & 0x3FFF) | 0x8000;
-
-	uuid_pack(&uu, out);
+	ul_random_get_bytes(out + 8, 8);
+	__uuid_set_variant_and_version(out, UUID_TYPE_DCE_TIME_V6);
 }
 
 // FIXME variable additional information
 void uuid_generate_time_v7(uuid_t out)
 {
 	struct timeval tv;
-	struct uuid uu;
 	uint64_t ms;
 
 	gettimeofday(&tv, NULL);
 
 	ms = tv.tv_sec * MSEC_PER_SEC + tv.tv_usec / USEC_PER_MSEC;
 
-	uu.time_low = ms >> 16;
-	uu.time_mid = ms;
-
-	ul_random_get_bytes(&uu.time_hi_and_version, 10);
-	uu.time_hi_and_version = (uu.time_hi_and_version & 0x0FFF) | (7 << 12);
-	uu.clock_seq = (uu.clock_seq & 0x3FFF) | 0x8000;
-
-	uuid_pack(&uu, out);
+	out[0] = ms >> 40;
+	out[1] = ms >> 32;
+	out[2] = ms >> 24;
+	out[3] = ms >> 16;
+	out[4] = ms >>  8;
+	out[5] = ms >>  0;
+	ul_random_get_bytes(out + 6, 10);
+	__uuid_set_variant_and_version(out, UUID_TYPE_DCE_TIME_V7);
 }
 
 
