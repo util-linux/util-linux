@@ -306,6 +306,8 @@ static int reduce_column(struct libscols_table *tb,
 	size_t wanted, org_width, reduce = 1;
 	int is_trunc = 0;
 
+	if (stage > 6)
+		return -1;
 	if (tb->termwidth >= *width)
 		return 1;
 	/* ignore hidden columns */
@@ -493,7 +495,7 @@ int __scols_calculate(struct libscols_table *tb, struct ul_buffer *buf)
 	/* reduce columns width */
 	while (width > tb->termwidth) {
 		size_t org_width = width;
-		int rc = 0, n = 0;
+		int xrc = 0, n = 0;
 
 		if (!sorted) {
 			DBG(TAB, ul_debugobj(tb, "sorting by deviation"));
@@ -508,12 +510,12 @@ int __scols_calculate(struct libscols_table *tb, struct ul_buffer *buf)
 		scols_reset_iter(&itr, SCOLS_ITER_BACKWARD);
 
 		while (width > tb->termwidth
-		       && rc == 0
+		       && xrc == 0
 		       && scols_table_next_column(tb, &itr, &cl) == 0) {
-			rc = reduce_column(tb, cl, &width, stage, n++);
+			xrc = reduce_column(tb, cl, &width, stage, n++);
 		}
 
-		if (rc != 0)
+		if (xrc != 0)
 			break;
 		if (org_width == width)
 			stage++;
