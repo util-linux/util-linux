@@ -152,8 +152,8 @@ int
 main(int argc, char *argv[])
 {
 	static const struct timeval mindelay = { .tv_sec = 0, .tv_usec = 100 };
-	static const struct timeval inputDelay = { .tv_sec = 0, .tv_usec = 100000 };
-	struct timeval stepDelay = { 0, 0 };
+	static const struct timeval input_delay = { .tv_sec = 0, .tv_usec = 100000 };
+	struct timeval step_delay = { 0, 0 };
 	struct timeval maxdelay;
 
 	int isterm;
@@ -328,26 +328,26 @@ main(int argc, char *argv[])
 				replay_toggle_pause(setup);
 				break;
 			case '\033':
-				wchar_t firstChar = fgetwc(stdin);
-				if (firstChar == '[') {
-					wchar_t secondChar = fgetwc(stdin);
+				wchar_t first_char = fgetwc(stdin);
+				if (first_char == '[') {
+					wchar_t second_char = fgetwc(stdin);
 
-					if (secondChar == 'A') { // Up arrow
+					if (second_char == 'A') { // Up arrow
 						divi += 0.1;
 						replay_set_delay_div(setup, divi);
-					} else if (secondChar == 'B') { // Down arrow
+					} else if (second_char == 'B') { // Down arrow
 						divi -= 0.1;
 						if (divi < 0.1)
 							divi = 0.1;
 						replay_set_delay_div(setup, divi);
-					} else if (secondChar == 'C') { // Right arrow
+					} else if (second_char == 'C') { // Right arrow
 						rc = replay_emit_step_data(setup, step, STDOUT_FILENO);
 						if (!rc) {
 							rc = replay_get_next_step(setup, streams, &step);
 							if (!rc) {
 								struct timeval *delay = replay_step_get_delay(step);
 								if (delay && timerisset(delay))
-									stepDelay = *delay;
+									step_delay = *delay;
 							}
 						}
 					}
@@ -359,21 +359,21 @@ main(int argc, char *argv[])
 
 		if (replay_get_is_paused(setup))
 		{
-			delay_for(&inputDelay);
+			delay_for(&input_delay);
 			continue;
 		}
 
-		if (timerisset(&stepDelay))
+		if (timerisset(&step_delay))
 		{
-			const struct timeval *timeout = (timercmp(&stepDelay, &inputDelay, <) ? (&stepDelay) : (&inputDelay));
+			const struct timeval *timeout = (timercmp(&step_delay, &input_delay, <) ? (&step_delay) : (&input_delay));
 			delay_for(timeout);
-			timersub(&stepDelay, timeout, &stepDelay);
-			if (stepDelay.tv_sec < 0 || stepDelay.tv_usec < 0)
-				timerclear(&stepDelay);
+			timersub(&step_delay, timeout, &step_delay);
+			if (step_delay.tv_sec < 0 || step_delay.tv_usec < 0)
+				timerclear(&step_delay);
 			continue;
 		}
 
-		if (!timerisset(&stepDelay) && step)
+		if (!timerisset(&step_delay) && step)
 			rc = replay_emit_step_data(setup, step, STDOUT_FILENO);
 		if (rc)
 			break;
@@ -386,7 +386,7 @@ main(int argc, char *argv[])
 			struct timeval *delay = replay_step_get_delay(step);
 
 			if (delay && timerisset(delay))
-				stepDelay = *delay;
+				step_delay = *delay;
 		}
 	} while (rc == 0);
 
