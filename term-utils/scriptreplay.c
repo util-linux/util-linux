@@ -31,7 +31,6 @@
 #include <sys/time.h>
 #include <termios.h>
 #include <fcntl.h>
-#include <wchar.h>
 #include <stdbool.h>
 
 #include "c.h"
@@ -323,14 +322,14 @@ main(int argc, char *argv[])
 	isterm = setterm(&saved, &saved_flag);
 
 	do {
-		switch (fgetwc(stdin)) {
+		switch (fgetc(stdin)) {
 			case ' ':
 				replay_toggle_pause(setup);
 				break;
 			case '\033':
-				wchar_t first_char = fgetwc(stdin);
+				int first_char = fgetc(stdin);
 				if (first_char == '[') {
-					wchar_t second_char = fgetwc(stdin);
+					int second_char = fgetc(stdin);
 
 					if (second_char == 'A') { /* Up arrow */
 						divi += 0.1;
