@@ -460,6 +460,7 @@ static int exec_helper(struct libmnt_context *cxt)
 							i, args[i]));
 		DBG_FLUSH;
 		execv(cxt->helper, (char * const *) args);
+		fprintf(stderr, "Error executing %s: %s\n", cxt->helper, strerror(errno));
 		_exit(EXIT_FAILURE);
 	}
 	default:
