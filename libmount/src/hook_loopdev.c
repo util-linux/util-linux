@@ -277,6 +277,14 @@ static int setup_loopdev(struct libmnt_context *cxt,
 		goto done_no_deinit;
 	if (mnt_opt_has_value(loopopt)) {
 		rc = loopcxt_set_device(&lc, mnt_opt_get_value(loopopt));
+		if (rc == 0 && loopcxt_is_lost(&lc)) {
+			DBG(LOOP, ul_debugobj(cxt, "node lost"));
+
+			dev_t devno = loopcxt_get_devno(&lc);
+			mnt_context_sprintf_errmsg(cxt, _("device node %s (%u:%u) is lost"),
+					loopcxt_get_device(&lc), major(devno), minor(devno));
+			rc = -EINVAL;
+		}
 		if (rc == 0)
 			loopdev = loopcxt_get_device(&lc);
 	}

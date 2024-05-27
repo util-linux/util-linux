@@ -41,6 +41,7 @@
 #include "namespace.h"
 #include "match.h"
 
+#include <stdarg.h>
 #include <sys/wait.h>
 
 /**
@@ -314,7 +315,7 @@ int mnt_context_reset_status(struct libmnt_context *cxt)
 	if (!cxt)
 		return -EINVAL;
 
-	reset_syscall_status(cxt);
+	mnt_context_syscall_reset_status(cxt);
 
 	cxt->syscall_status = 1;		/* means not called yet */
 	cxt->helper_exec_status = 1;
@@ -2599,8 +2600,8 @@ int mnt_context_get_syscall_errno(struct libmnt_context *cxt)
  *
  * The @status should be 0 on success, or negative number on error (-errno).
  *
- * This function should only be used if the [u]mount(2) syscall is NOT called by
- * libmount code.
+ * This function is intended for cases where mount/umount is called externally,
+ * rather than by libmount.
  *
  * Returns: 0 or negative number in case of error.
  */
@@ -2611,6 +2612,77 @@ int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status)
 
 	DBG(CXT, ul_debugobj(cxt, "syscall status set to: %d", status));
 	cxt->syscall_status = status;
+	return 0;
+}
+
+/* Use this for syscalls called from libmount */
+void mnt_context_syscall_save_status(	struct libmnt_context *cxt,
+					const char *syscallname,
+					int success)
+{
+	if (!success) {
+		DBG(CXT, ul_debug("syscall '%s' [failed: %m]", syscallname));
+		cxt->syscall_status = -errno;
+		cxt->syscall_name = syscallname;
+	} else {
+		DBG(CXT, ul_debug("syscall '%s' [success]", syscallname));
+		cxt->syscall_status = 0;
+	}
+}
+
+void mnt_context_syscall_reset_status(struct libmnt_context *cxt)
+{
+	DBG(CXT, ul_debug("reset syscall status"));
+	cxt->syscall_status = 0;
+	cxt->syscall_name = NULL;
+
+	free(cxt->errmsg);
+	cxt->errmsg = NULL;
+}
+
+int mnt_context_set_errmsg(struct libmnt_context *cxt, const char *msg)
+{
+	char *p = NULL;
+
+	if (msg) {
+		p = strdup(msg);
+		if (!p)
+			return -ENOMEM;
+	}
+
+	free(cxt->errmsg);
+	cxt->errmsg = p;
+
+	return 0;
+}
+
+int mnt_context_append_errmsg(struct libmnt_context *cxt, const char *msg)
+{
+	if (cxt->errmsg) {
+		int rc = strappend(&cxt->errmsg, "; ");
+		if (rc)
+			return rc;
+	}
+
+	return strappend(&cxt->errmsg, msg);
+}
+
+int mnt_context_sprintf_errmsg(struct libmnt_context *cxt, const char *msg, ...)
+{
+	int rc;
+	va_list ap;
+	char *p = NULL;
+
+	va_start(ap, msg);
+	rc = vasprintf(&p, msg, ap);
+	va_end(ap);
+
+	if (rc < 0 || !p)
+		return rc;
+
+	free(cxt->errmsg);
+	cxt->errmsg = p;
+
 	return 0;
 }
 

@@ -76,10 +76,8 @@ static int hook_propagation(struct libmnt_context *cxt,
 
 	if (rc) {
 		/* Update global syscall status if only this function called */
-		if (mnt_context_propagation_only(cxt)) {
-			cxt->syscall_status = -errno;
-			cxt->syscall_name = "mount";
-		}
+		if (mnt_context_propagation_only(cxt))
+			mnt_context_syscall_save_status(cxt, "mount", rc == 0);
 
 		DBG(HOOK, ul_debugobj(hs, "  mount(2) failed [errno=%d %m]", errno));
 		rc = -MNT_ERR_APPLYFLAGS;
@@ -240,10 +238,7 @@ static int hook_mount(struct libmnt_context *cxt,
 			  options : "<none>"));
 
 	if (mount(src, target, type, flags, options)) {
-		cxt->syscall_status = -errno;
-		cxt->syscall_name = "mount";
-		DBG(HOOK, ul_debugobj(hs, "  mount(2) failed [errno=%d %m]",
-					-cxt->syscall_status));
+		mnt_context_syscall_save_status(cxt, "mount", 0);
 		rc = -cxt->syscall_status;
 		return rc;
 	}

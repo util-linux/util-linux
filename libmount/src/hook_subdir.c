@@ -189,7 +189,7 @@ static int do_mount_subdir(
 		DBG(HOOK, ul_debug("attach subdir  %s", subdir));
 		fd = open_tree(api->fd_tree, subdir,
 					OPEN_TREE_CLOEXEC | OPEN_TREE_CLONE);
-		set_syscall_status(cxt, "open_tree", fd >= 0);
+		mnt_context_syscall_save_status(cxt, "open_tree", fd >= 0);
 		if (fd < 0)
 			rc = -errno;
 
@@ -201,7 +201,7 @@ static int do_mount_subdir(
 			setns(hsd->old_ns_fd, CLONE_NEWNS);
 
 			rc = move_mount(fd, "", AT_FDCWD, target, MOVE_MOUNT_F_EMPTY_PATH);
-			set_syscall_status(cxt, "move_mount", rc == 0);
+			mnt_context_syscall_save_status(cxt, "move_mount", rc == 0);
 			if (rc)
 				rc = -errno;
 
@@ -223,8 +223,7 @@ static int do_mount_subdir(
 		/* Classic mount(2) based way */
 		DBG(HOOK, ul_debug("mount subdir %s to %s", src, target));
 		rc = mount(src, target, NULL, MS_BIND, NULL);
-
-		set_syscall_status(cxt, "mount", rc == 0);
+		mnt_context_syscall_save_status(cxt, "mount", rc == 0);
 		if (rc)
 			rc = -errno;
 		free(src);
@@ -233,7 +232,7 @@ static int do_mount_subdir(
 	if (!rc) {
 		DBG(HOOK, ul_debug("umount old root %s", root));
 		rc = umount(root);
-		set_syscall_status(cxt, "umount", rc == 0);
+		mnt_context_syscall_save_status(cxt, "umount", rc == 0);
 		if (rc)
 			rc = -errno;
 		hsd->tmp_umounted = 1;

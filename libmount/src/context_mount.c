@@ -1433,6 +1433,11 @@ int mnt_context_get_mount_excode(
 	mnt_context_get_user_mflags(cxt, &uflags);	/* userspace flags */
 
 	if (!mnt_context_syscall_called(cxt)) {
+		if (buf && cxt->errmsg) {
+			xstrncpy(buf, cxt->errmsg, bufsz);
+			return MNT_EX_USAGE;
+		}
+
 		/*
 		 * libmount errors (extra library checks)
 		 */
@@ -1572,10 +1577,13 @@ int mnt_context_get_mount_excode(
 	 */
 	syserr = mnt_context_get_syscall_errno(cxt);
 
-	if (buf && cxt->syscall_errmsg) {
-		snprintf(buf, bufsz, _("%s system call failed: %s"),
-					cxt->syscall_name ? : "mount",
-					cxt->syscall_errmsg);
+	if (buf && cxt->errmsg) {
+		if (cxt->syscall_name)
+			snprintf(buf, bufsz, _("%s system call failed: %s"),
+					cxt->syscall_name, cxt->errmsg);
+		else
+			xstrncpy(buf, cxt->errmsg, bufsz);
+
 		return MNT_EX_FAIL;
 	}
 

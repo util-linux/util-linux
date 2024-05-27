@@ -432,7 +432,7 @@ struct libmnt_context
 
 	int	syscall_status;	/* 1: not called yet, 0: success, <0: -errno */
 	const char *syscall_name;	/* failed syscall name */
-	char	*syscall_errmsg;	/* message from kernel */
+	char	*errmsg;	/* library or kernel message */
 
 	struct libmnt_ns	ns_orig;	/* original namespace */
 	struct libmnt_ns	ns_tgt;		/* target namespace */
@@ -480,27 +480,6 @@ struct libmnt_context
 /* Flags usable with MS_BIND|MS_REMOUNT */
 #define MNT_BIND_SETTABLE	(MS_NOSUID|MS_NODEV|MS_NOEXEC|MS_NOATIME|MS_NODIRATIME|MS_RELATIME|MS_RDONLY|MS_NOSYMFOLLOW)
 
-static inline void set_syscall_status(struct libmnt_context *cxt, const char *name, int x)
-{
-	if (!x) {
-		DBG(CXT, ul_debug("syscall '%s' [%m]", name));
-		cxt->syscall_status = -errno;
-		cxt->syscall_name = name;
-	} else {
-		DBG(CXT, ul_debug("syscall '%s' [success]", name));
-		cxt->syscall_status = 0;
-	}
-}
-
-static inline void reset_syscall_status(struct libmnt_context *cxt)
-{
-	DBG(CXT, ul_debug("reset syscall status"));
-	cxt->syscall_status = 0;
-	cxt->syscall_name = NULL;
-
-	free(cxt->syscall_errmsg);
-	cxt->syscall_errmsg = NULL;
-}
 
 /* optmap.c */
 extern const struct libmnt_optmap *mnt_optmap_get_entry(
@@ -621,6 +600,10 @@ extern int __mnt_fs_set_target_ptr(struct libmnt_fs *fs, char *tgt)
 			__attribute__((nonnull(1)));
 
 /* context.c */
+extern void mnt_context_syscall_save_status(struct libmnt_context *cxt,
+                                        const char *syscallname, int success);
+extern void mnt_context_syscall_reset_status(struct libmnt_context *cxt);
+
 extern struct libmnt_context *mnt_copy_context(struct libmnt_context *o);
 extern int mnt_context_utab_writable(struct libmnt_context *cxt);
 extern const char *mnt_context_get_writable_tabpath(struct libmnt_context *cxt);
@@ -642,6 +625,10 @@ extern int mnt_context_update_tabs(struct libmnt_context *cxt);
 
 extern int mnt_context_umount_setopt(struct libmnt_context *cxt, int c, char *arg);
 extern int mnt_context_mount_setopt(struct libmnt_context *cxt, int c, char *arg);
+
+extern int mnt_context_set_errmsg(struct libmnt_context *cxt, const char *msg);
+extern int mnt_context_append_errmsg(struct libmnt_context *cxt, const char *msg);
+extern int mnt_context_sprintf_errmsg(struct libmnt_context *cxt, const char *msg, ...);
 
 extern int mnt_context_propagation_only(struct libmnt_context *cxt)
 			__attribute__((nonnull));

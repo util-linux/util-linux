@@ -70,8 +70,7 @@ static void save_fd_messages(struct libmnt_context *cxt, int fd)
 	uint8_t buf[BUFSIZ];
 	int rc;
 
-	free(cxt->syscall_errmsg);
-	cxt->syscall_errmsg = NULL;
+	mnt_context_set_errmsg(cxt, NULL);
 
 	while ((rc = read(fd, buf, sizeof(buf))) != -1) {
 		if (rc > 0 && buf[rc - 1] == '\n')
@@ -80,10 +79,7 @@ static void save_fd_messages(struct libmnt_context *cxt, int fd)
 
 		if (rc < 3 || strncmp((char *) buf, "e ", 2) != 0)
 			continue;
-		if (cxt->syscall_errmsg)
-			strappend(&cxt->syscall_errmsg, "; ");
-
-		strappend(&cxt->syscall_errmsg, ((char *) buf) + 2);
+		mnt_context_append_errmsg(cxt, ((char *) buf) + 2);
 	}
 }
 
@@ -92,7 +88,7 @@ static void hookset_set_syscall_status(struct libmnt_context *cxt,
 {
 	struct libmnt_sysapi *api;
 
-	set_syscall_status(cxt, name, x);
+	mnt_context_syscall_save_status(cxt, name, x);
 
 	if (!x) {
 		api = get_sysapi(cxt);
@@ -819,7 +815,7 @@ enosys:
 	/* we need to recover from this error, so hook_mount_legacy.c
 	 * can try to continue */
 	DBG(HOOK, ul_debugobj(hs, "failed to init new API"));
-	reset_syscall_status(cxt);
+	mnt_context_syscall_reset_status(cxt);
 	hookset_deinit(cxt, hs);
 	return 1;
 }
