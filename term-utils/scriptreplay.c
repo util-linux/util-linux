@@ -323,34 +323,34 @@ main(int argc, char *argv[])
 
 	do {
 		switch (fgetc(stdin)) {
-			case ' ':
-				replay_toggle_pause(setup);
-				break;
-			case '\033':
+		case ' ':
+			replay_toggle_pause(setup);
+			break;
+		case '\033':
+			ch = fgetc(stdin);
+			if (ch == '[') {
 				ch = fgetc(stdin);
-				if (ch == '[') {
-					ch = fgetc(stdin);
-					if (ch == 'A') { /* Up arrow */
-						divi += 0.1;
-						replay_set_delay_div(setup, divi);
-					} else if (ch == 'B') { /* Down arrow */
-						divi -= 0.1;
-						if (divi < 0.1)
-							divi = 0.1;
-						replay_set_delay_div(setup, divi);
-					} else if (ch == 'C') { /* Right arrow */
-						rc = replay_emit_step_data(setup, step, STDOUT_FILENO);
+				if (ch == 'A') { /* Up arrow */
+					divi += 0.1;
+					replay_set_delay_div(setup, divi);
+				} else if (ch == 'B') { /* Down arrow */
+					divi -= 0.1;
+					if (divi < 0.1)
+						divi = 0.1;
+					replay_set_delay_div(setup, divi);
+				} else if (ch == 'C') { /* Right arrow */
+					rc = replay_emit_step_data(setup, step, STDOUT_FILENO);
+					if (!rc) {
+						rc = replay_get_next_step(setup, streams, &step);
 						if (!rc) {
-							rc = replay_get_next_step(setup, streams, &step);
-							if (!rc) {
-								struct timeval *delay = replay_step_get_delay(step);
-								if (delay && timerisset(delay))
-									step_delay = *delay;
-							}
+							struct timeval *delay = replay_step_get_delay(step);
+							if (delay && timerisset(delay))
+								step_delay = *delay;
 						}
 					}
 				}
-				break;
+			}
+			break;
 		}
 		if (rc)
 			break;
