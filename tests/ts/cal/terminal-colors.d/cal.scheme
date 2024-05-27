@@ -1,0 +1,6 @@
+workday yellow
+weekend red
+today \e[48;5;160m\e[38;5;221
+header magenta
+weeks green
+weeknumber blue

@@ -31,64 +31,47 @@ fi
 # --color output depends on terminal type
 export TERM=linux
 
+function call_cal {
+	if [ "$USETERM" == "yes" ]; then
+		XDG_CONFIG_HOME="$TS_SELF" $TS_CMD_CAL --color=always "$@"
+	fi
+	XDG_CONFIG_HOME="$TS_SELF" $TS_CMD_CAL --color=always "$@" >> $TS_OUTPUT
+}
+
 USETERM=$( ts_has_option "useterm" "$*" )
 
 [ "$USETERM" == "yes" ] && TS_VERBOSE="yes"
 
 ts_init_subtest "first-day"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL --color=always 1 1 1
-fi
-$TS_CMD_CAL --color=always 1 1 1 >> $TS_OUTPUT
+call_cal --color=always 1 1 1
 ts_finalize_subtest
 
 ts_init_subtest "reformation-corner-cases-1"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL --color=always 2 9 1752
-fi
-$TS_CMD_CAL --color=always 2 9 1752 >> $TS_OUTPUT
+call_cal --color=always 2 9 1752
 ts_finalize_subtest
 
 ts_init_subtest "reformation-corner-cases-2"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL --color=always 3 9 1752
-fi
-$TS_CMD_CAL --color=always 3 9 1752 >> $TS_OUTPUT
+call_cal --color=always 3 9 1752
 ts_finalize_subtest
 
 ts_init_subtest "reformation-corner-cases-3"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL --color=always 13 9 1752
-fi
-$TS_CMD_CAL --color=always 13 9 1752 >> $TS_OUTPUT
+call_cal --color=always 13 9 1752
 ts_finalize_subtest
 
 ts_init_subtest "reformation-corner-cases-4"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL --color=always 14 9 1752
-fi
-$TS_CMD_CAL --color=always 14 9 1752 >> $TS_OUTPUT
+call_cal --color=always 14 9 1752
 ts_finalize_subtest
 
 ts_init_subtest "last-day"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL --color=always 31 12 9999
-fi
-$TS_CMD_CAL --color=always -3 31 12 9999 >> $TS_OUTPUT
+call_cal --color=always -3 31 12 9999
 ts_finalize_subtest
 
 ts_init_subtest "vertical"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL --color=always 15 2 2023
-fi
-$TS_CMD_CAL --color=always --vertical 15 2 2023 >> $TS_OUTPUT
+call_cal --color=always --vertical 15 2 2023
 ts_finalize_subtest
 
 ts_init_subtest "vertical-week"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL --color=always 15 2 2023
-fi
-$TS_CMD_CAL --color=always --vertical --week=15 15 2 2023 >> $TS_OUTPUT
+call_cal --color=always --vertical --week=15 15 2 2023
 ts_finalize_subtest
 
 
