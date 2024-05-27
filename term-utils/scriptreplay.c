@@ -327,19 +327,18 @@ main(int argc, char *argv[])
 				replay_toggle_pause(setup);
 				break;
 			case '\033':
-				int first_char = fgetc(stdin);
-				if (first_char == '[') {
-					int second_char = fgetc(stdin);
-
-					if (second_char == 'A') { /* Up arrow */
+				ch = fgetc(stdin);
+				if (ch == '[') {
+					ch = fgetc(stdin);
+					if (ch == 'A') { /* Up arrow */
 						divi += 0.1;
 						replay_set_delay_div(setup, divi);
-					} else if (second_char == 'B') { /* Down arrow */
+					} else if (ch == 'B') { /* Down arrow */
 						divi -= 0.1;
 						if (divi < 0.1)
 							divi = 0.1;
 						replay_set_delay_div(setup, divi);
-					} else if (second_char == 'C') { /* Right arrow */
+					} else if (ch == 'C') { /* Right arrow */
 						rc = replay_emit_step_data(setup, step, STDOUT_FILENO);
 						if (!rc) {
 							rc = replay_get_next_step(setup, streams, &step);
