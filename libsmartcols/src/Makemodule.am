@@ -58,6 +58,7 @@ $(SCOLS_YACC_STEMP): $(SCOLS_YACC_BASENAME).y
 	@rm -f $(SCOLS_YACC_STEMP).tmp
 	@touch -f $(SCOLS_YACC_STEMP).tmp
 	$(AM_V_YACC) $(BISON) $< --output=${basename $@}.c --defines=${basename $@}.h
+	@touch -f ${basename $@}.c
 	@mv -f $(SCOLS_YACC_STEMP).tmp $@
 
 $(SCOLS_YACC_BASENAME).c $(SCOLS_YACC_BASENAME).h: $(SCOLS_YACC_STEMP)
@@ -69,6 +70,7 @@ $(SCOLS_LEX_STEMP): $(SCOLS_LEX_BASENAME).l
 	@rm -f $(SCOLS_LEX_STEMP).tmp
 	@touch -f $(SCOLS_LEX_STEMP).tmp
 	$(AM_V_GEN) $(FLEX) --header-file=${basename $@}.h --outfile=${basename $@}.c $<
+	@touch -f ${basename $@}.c
 	@mv -f $(SCOLS_LEX_STEMP).tmp $@
 
 $(SCOLS_LEX_BASENAME).c $(SCOLS_LEX_BASENAME).h: $(SCOLS_LEX_STEMP)
