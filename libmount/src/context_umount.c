@@ -741,7 +741,7 @@ static int exec_helper(struct libmnt_context *cxt)
 							i, args[i]));
 		DBG_FLUSH;
 		execv(cxt->helper, (char * const *) args);
-		_exit(EXIT_FAILURE);
+		_exit(MNT_EX_EXEC);
 	}
 	default:
 	{
@@ -750,14 +750,20 @@ static int exec_helper(struct libmnt_context *cxt)
 		if (waitpid(pid, &st, 0) == (pid_t) -1) {
 			cxt->helper_status = -1;
 			rc = -errno;
+			DBG(CXT, ul_debugobj(cxt, "waitpid failed [errno=%d]", -rc));
 		} else {
 			cxt->helper_status = WIFEXITED(st) ? WEXITSTATUS(st) : -1;
 			cxt->helper_exec_status = rc = 0;
-		}
-		DBG(CXT, ul_debugobj(cxt, "%s executed [status=%d, rc=%d%s]",
+
+			if (cxt->helper_status == MNT_EX_EXEC) {
+				rc = -MNT_ERR_EXEC;
+				DBG(CXT, ul_debugobj(cxt, "%s exec failed", cxt->helper));
+			}
+
+			DBG(CXT, ul_debugobj(cxt, "%s forked [status=%d, rc=%d]",
 				cxt->helper,
-				cxt->helper_status, rc,
-				rc ? " waitpid failed" : ""));
+				cxt->helper_status, rc));
+		}
 		break;
 	}
 
@@ -1238,11 +1244,15 @@ int mnt_context_get_umount_excode(
 			char *buf,
 			size_t bufsz)
 {
-	if (mnt_context_helper_executed(cxt))
+	if (mnt_context_helper_executed(cxt)) {
 		/*
 		 * /sbin/umount.<type> called, return status
 		 */
+		if (rc == -MNT_ERR_EXEC && buf)
+			snprintf(buf, bufsz, _("failed to execute %s"), cxt->helper);
+
 		return mnt_context_get_helper_status(cxt);
+	}
 
 	if (rc == 0 && mnt_context_get_status(cxt) == 1)
 		/*

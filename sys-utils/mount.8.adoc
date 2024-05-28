@@ -1612,6 +1612,9 @@ some mount succeeded
 +
 The command *mount -a* returns 0 (all succeeded), 32 (all failed), or 64 (some failed, some succeeded).
 
+*126*::
+failed to execute external /sbin/mount.<type> mount helper (since util-linux v2.41)
+
 == EXTERNAL HELPERS
 
 The syntax of external mount helpers is:
@@ -1621,6 +1624,8 @@ The syntax of external mount helpers is:
 where the _suffix_ is the filesystem type and the *-sfnvoN* options have the same meaning as the normal mount options. The *-t* option is used for filesystems with subtypes support (for example */sbin/mount.fuse -t fuse.sshfs*).
 
 The command *mount* does not pass the mount options *unbindable*, *runbindable*, *private*, *rprivate*, *slave*, *rslave*, *shared*, *rshared*, *auto*, *noauto*, *comment*, *x-**, *loop*, *offset* and *sizelimit* to the mount.<suffix> helpers. All other options are used in a comma-separated list as an argument to the *-o* option.
+
+The exit status value of the helper is returned as the exit status of *mount*(8). The value 126 is sed if the mount helper program is found, but the execl() failed.
 
 == ENVIRONMENT
 

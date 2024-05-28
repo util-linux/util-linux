@@ -127,6 +127,39 @@ The *umount* command will automatically detach loop device previously initialize
 
 In this case the device is initialized with "autoclear" flag (see *losetup*(8) output for more details), otherwise it's necessary to use the option *--detach-loop* or call *losetup -d* _device_. The autoclear feature is supported since Linux 2.6.25.
 
+== EXIT STATUS
+
+*umount* has the following exit status values (the bits can be ORed):
+
+*0*::
+success
+
+*1*::
+incorrect invocation or permissions
+
+*2*::
+system error (out of memory, cannot fork, no more loop devices)
+
+*4*::
+internal *mount* bug
+
+*8*::
+user interrupt
+
+*16*::
+problems writing or locking _/etc/mtab_
+
+*32*::
+mount failure
+
+*64*::
+some umount succeeded
++
+The command *umount -a* returns 0 (all succeeded), 32 (all failed), or 64 (some failed, some succeeded).
+
+*126*::
+failed to execute external /sbin/umount.<type> mount helper (since util-linux v2.41)
+
 == EXTERNAL HELPERS
 
 The syntax of external unmount helpers is:
@@ -146,6 +179,8 @@ A **uhelper=**__something__ marker (unprivileged helper) can appear in the _/etc
 A **helper=**__type__ marker in the _mtab_ file will redirect all unmount requests to the **/sbin/umount.**__type__ helper independently of UID.
 
 Note that _/etc/mtab_ is currently deprecated and *helper=* and other userspace mount options are maintained by *libmount*.
+
+The exit status value of the helper is returned as the exit status of *umount*(8). The value 126 is used if the mount helper program is found, but the execl() failed.
 
 == ENVIRONMENT
 
