@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2024, Jonathan Ketchker <jonathan@ketchker.com>
  * Copyright (C) 2008-2019, Karel Zak <kzak@redhat.com>
  * Copyright (C) 2008, James Youngman <jay@gnu.org>
  *
@@ -29,6 +30,8 @@
 #include <getopt.h>
 #include <sys/time.h>
 #include <termios.h>
+#include <fcntl.h>
+#include <stdbool.h>
 
 #include "c.h"
 #include "xalloc.h"
@@ -87,7 +90,7 @@ getnum(const char *s)
 }
 
 static void
-delay_for(struct timeval *delay)
+delay_for(const struct timeval *delay)
 {
 #ifdef HAVE_NANOSLEEP
 	struct timespec ts, remainder;
@@ -122,9 +125,14 @@ appendchr(char *buf, size_t bufsz, int c)
 }
 
 static int
-setterm(struct termios *backup)
+setterm(struct termios *backup, int *saved_flag)
 {
 	struct termios tattr;
+
+	*saved_flag = fcntl(STDIN_FILENO, F_GETFL);
+	if (*saved_flag == -1)
+		err(EXIT_FAILURE, _("unexpected fcntl failure"));
+	fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);
 
 	if (tcgetattr(STDOUT_FILENO, backup) != 0) {
 		if (errno != ENOTTY) /* For debugger. */
@@ -143,9 +151,12 @@ int
 main(int argc, char *argv[])
 {
 	static const struct timeval mindelay = { .tv_sec = 0, .tv_usec = 100 };
+	static const struct timeval input_delay = { .tv_sec = 0, .tv_usec = 100000 };
+	struct timeval step_delay = { 0, 0 };
 	struct timeval maxdelay;
 
 	int isterm;
+	int saved_flag;
 	struct termios saved;
 
 	struct replay_setup *setup = NULL;
@@ -308,9 +319,61 @@ main(int argc, char *argv[])
 		replay_set_delay_max(setup, &maxdelay);
 	replay_set_delay_min(setup, &mindelay);
 
-	isterm = setterm(&saved);
+	isterm = setterm(&saved, &saved_flag);
 
 	do {
+		switch (fgetc(stdin)) {
+		case ' ':
+			replay_toggle_pause(setup);
+			break;
+		case '\033':
+			ch = fgetc(stdin);
+			if (ch == '[') {
+				ch = fgetc(stdin);
+				if (ch == 'A') { /* Up arrow */
+					divi += 0.1;
+					replay_set_delay_div(setup, divi);
+				} else if (ch == 'B') { /* Down arrow */
+					divi -= 0.1;
+					if (divi < 0.1)
+						divi = 0.1;
+					replay_set_delay_div(setup, divi);
+				} else if (ch == 'C') { /* Right arrow */
+					rc = replay_emit_step_data(setup, step, STDOUT_FILENO);
+					if (!rc) {
+						rc = replay_get_next_step(setup, streams, &step);
+						if (!rc) {
+							struct timeval *delay = replay_step_get_delay(step);
+							if (delay && timerisset(delay))
+								step_delay = *delay;
+						}
+					}
+				}
+			}
+			break;
+		}
+		if (rc)
+			break;
+
+		if (replay_get_is_paused(setup)) {
+			delay_for(&input_delay);
+			continue;
+		}
+
+		if (timerisset(&step_delay)) {
+			const struct timeval *timeout = (timercmp(&step_delay, &input_delay, <) ? (&step_delay) : (&input_delay));
+			delay_for(timeout);
+			timersub(&step_delay, timeout, &step_delay);
+			if (step_delay.tv_sec < 0 || step_delay.tv_usec < 0)
+				timerclear(&step_delay);
+			continue;
+		}
+
+		if (!timerisset(&step_delay) && step)
+			rc = replay_emit_step_data(setup, step, STDOUT_FILENO);
+		if (rc)
+			break;
+		
 		rc = replay_get_next_step(setup, streams, &step);
 		if (rc)
 			break;
@@ -319,13 +382,14 @@ main(int argc, char *argv[])
 			struct timeval *delay = replay_step_get_delay(step);
 
 			if (delay && timerisset(delay))
-				delay_for(delay);
+				step_delay = *delay;
 		}
-		rc = replay_emit_step_data(setup, step, STDOUT_FILENO);
 	} while (rc == 0);
 
-	if (isterm)
+	if (isterm) {
+		fcntl(STDIN_FILENO, F_SETFL, &saved_flag);
 		tcsetattr(STDOUT_FILENO, TCSADRAIN, &saved);
+	}
 
 	if (step && rc < 0)
 		err(EXIT_FAILURE, _("%s: log file error"), replay_step_get_filename(step));

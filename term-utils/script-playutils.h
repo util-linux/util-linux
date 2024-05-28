@@ -1,6 +1,8 @@
 #ifndef UTIL_LINUX_SCRIPT_PLAYUTILS_H
 #define UTIL_LINUX_SCRIPT_PLAYUTILS_H
 
+#include <stdbool.h>
+
 #include "c.h"
 #include "debug.h"
 
@@ -46,5 +48,8 @@ int replay_step_is_empty(struct replay_step *step);
 int replay_get_next_step(struct replay_setup *stp, char *streams, struct replay_step **xstep);
 
 int replay_emit_step_data(struct replay_setup *stp, struct replay_step *step, int fd);
+
+bool replay_get_is_paused(struct replay_setup *setup);
+void replay_toggle_pause(struct replay_setup *setup);
 
 #endif /* UTIL_LINUX_SCRIPT_PLAYUTILS_H */

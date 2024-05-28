@@ -27,6 +27,8 @@ By default, the typescript to display is assumed to be named _typescript_, but o
 
 If the third parameter or *--divisor* is specified, it is used as a speed-up multiplier. For example, a speed-up of 2 makes *scriptreplay* go twice as fast, and a speed-down of 0.1 makes it go ten times slower than the original session.
 
+During the replay, you can interactively speed up, slow down, or pause the playback using key bindings.
+
 == OPTIONS
 
 *-I*, *--log-in* _file_::
@@ -76,6 +78,14 @@ Script done, file is script.out
 % scriptreplay --log-timing file.tm --log-out script.out
 ....
 
+== KEY BINDINGS
+
+The following keys control the playback of the script:
+
+- *Space*: Toggles pause and unpause. Press this key to pause the playback, and press it again to resume.
+- *Up Arrow*: Increases the playback speed. Each press of this key will make the script replay faster by x0.1.
+- *Down Arrow*: Decreases the playback speed. Each press of this key will slow down the script replay by x0.1.
+
 == AUTHORS
 
 The original *scriptreplay* program was written by mailto:joey@kitenet.net[Joey Hess]. The program was re-written in C by mailto:jay@gnu.org[James Youngman] and mailto:kzak@redhat.com[Karel Zak]
@@ -87,6 +97,9 @@ Copyright {copyright} 2008 James Youngman
 
 //TRANSLATORS: Keep {copyright} untranslated.
 Copyright {copyright} 2008-2019 Karel Zak
+
+//TRANSLATORS: Keep {copyright} untranslated.
+Copyright {copyright} 2024 Jonathan Ketchker
 
 This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
