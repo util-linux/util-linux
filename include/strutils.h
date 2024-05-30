@@ -199,6 +199,36 @@ static inline int strdup_between_offsets(void *stru_dst, void *stru_src, size_t 
 #define strdup_between_structs(_dst, _src, _m) \
 		strdup_between_offsets((void *)_dst, (void *)_src, offsetof(__typeof__(*(_src)), _m))
 
+static inline int is_nonnull_offset(const void *stru, size_t offset)
+{
+	const char **o;
+
+	if (!stru)
+		return -EINVAL;
+
+	o = (const char **) ((const char *) stru + offset);
+	return *o != NULL;
+}
+
+#define is_nonnull_member(_stru, _m) \
+		is_nonnull_offset((void *) _stru, offsetof(__typeof__(*(_stru)), _m))
+
+static inline int strcmp_offsets(const void *sa, const void *sb, size_t offset)
+{
+	const char **a = (const char **) ((const char *) sa + offset),
+	           **b = (const char **) ((const char *) sb + offset);
+
+	if (!*a && !*b)
+		return 0;
+	if (!*a)
+		return -1;
+	if (!*b)
+		return 1;
+	return strcmp(*a, *b);
+}
+
+#define strcmp_members(_a, _b, _m) \
+		strcmp_offsets((void *) _a, (void *) _b, offsetof(__typeof__(*(_a)), _m))
 
 extern char *xstrmode(mode_t mode, char *str);
 

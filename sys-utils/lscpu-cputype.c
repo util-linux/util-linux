@@ -73,7 +73,7 @@ void lscpu_ref_cputype(struct lscpu_cputype *ct)
 {
 	if (ct) {
 		ct->refcount++;
-		DBG(TYPE, ul_debugobj(ct, ">>> ref %d", ct->refcount));
+		/*DBG(TYPE, ul_debugobj(ct, ">>> ref %d", ct->refcount));*/
 	}
 }
 
@@ -133,15 +133,27 @@ static void fprintf_cputypes(FILE *f, struct lscpu_cxt *cxt)
 	for (i = 0; i <	cxt->ncputypes; i++) {
 		struct lscpu_cputype *ct = cxt->cputypes[i];
 
-		fprintf(f, "\n vendor: %s\n", ct->vendor);
-		fprintf(f, " machinetype: %s\n", ct->machinetype);
-		fprintf(f, " family: %s\n", ct->family);
-		fprintf(f, " model: %s\n", ct->model);
-		fprintf(f, " modelname: %s\n", ct->modelname);
-		fprintf(f, " revision: %s\n", ct->revision);
-		fprintf(f, " stepping: %s\n", ct->stepping);
-		fprintf(f, " mtid: %s\n", ct->mtid);
-		fprintf(f, " addrsz: %s\n", ct->addrsz);
+		fprintf(f, "\ncpu type: %p\n", ct);
+		if (ct->vendor)
+			fprintf(f, " vendor: %s\n", ct->vendor);
+		if (ct->machinetype)
+			fprintf(f, " machinetype: %s\n", ct->machinetype);
+		if (ct->family)
+			fprintf(f, " family: %s\n", ct->family);
+		if (ct->model)
+			fprintf(f, " model: %s\n", ct->model);
+		if (ct->modelname)
+			fprintf(f, " modelname: %s\n", ct->modelname);
+		if (ct->revision)
+			fprintf(f, " revision: %s\n", ct->revision);
+		if (ct->stepping)
+			fprintf(f, " stepping: %s\n", ct->stepping);
+		if (ct->mtid)
+			fprintf(f, " mtid: %s\n", ct->mtid);
+		if (ct->addrsz)
+			fprintf(f, " addrsz: %s\n", ct->addrsz);
+		if (ct->bogomips)
+			fprintf(f, " bogomips: %s\n", ct->bogomips);
 	}
 }
 
@@ -292,20 +304,111 @@ struct cpuinfo_parser {
 	unsigned int		curr_type_added : 1;
 };
 
-static int is_different_cputype(struct lscpu_cputype *ct, size_t offset, const char *value)
+/* Be careful when defining which fields should be used to differentiate
+ * between CPU types. It is possible that CPUs differentiate in flags or
+ * BogoMIPS values, but it seems better to ignore it.
+ */
+static int cmp_cputype(const void *x, const void *y)
 {
-	switch (offset) {
-	case offsetof(struct lscpu_cputype, vendor):
-		return ct->vendor && value && strcmp(ct->vendor, value) != 0;
-	case offsetof(struct lscpu_cputype, model):
-		return ct->model && value && strcmp(ct->model, value) != 0;
-	case offsetof(struct lscpu_cputype, modelname):
-		return ct->modelname && value && strcmp(ct->modelname, value) != 0;
-	case offsetof(struct lscpu_cputype, stepping):
-		return ct->stepping && value && strcmp(ct->stepping, value) != 0;
-	}
+	const struct lscpu_cputype *a = *((const struct lscpu_cputype **) x),
+				   *b = *((const struct lscpu_cputype **) y);
+	int rc;
+
+	if ((rc = strcmp_members(a, b, vendor)))
+		return rc;
+	if ((rc = strcmp_members(a, b, model)))
+		return rc;
+	if ((rc = strcmp_members(a, b, modelname)))
+		return rc;
+	if ((rc = strcmp_members(a, b, stepping)))
+		return rc;
+
 	return 0;
 }
+
+static void replace_cpu_type(struct lscpu_cxt *cxt,
+			struct lscpu_cputype *old, struct lscpu_cputype *new)
+{
+	size_t i;
+
+	for (i = 0; i < cxt->npossibles; i++) {
+		struct lscpu_cpu *cpu = cxt->cpus[i];
+
+		if (cpu && cpu->type == old)
+			lscpu_cpu_set_type(cpu, new);
+	}
+}
+
+static void deduplicate_cputypes(struct lscpu_cxt *cxt)
+{
+	size_t i, u;
+
+	if (!cxt->ncputypes)
+		return;
+
+	/* sort */
+	DBG(GATHER, ul_debug("de-duplicate %zu CPU types", cxt->ncputypes));
+	qsort(cxt->cputypes, cxt->ncputypes,
+			sizeof(struct lscpu_cputype *), cmp_cputype);
+
+	/* remove the same entries */
+	for (u = 0, i = 1; i < cxt->ncputypes; i++) {
+		struct lscpu_cputype *ct = cxt->cputypes[i];
+
+		DBG(TYPE, ul_debugobj(ct, "compare with %p", cxt->cputypes[u]));
+
+		if (cmp_cputype(&cxt->cputypes[u], &ct) == 0) {
+			DBG(TYPE, ul_debugobj(ct, " duplicated"));
+			replace_cpu_type(cxt, ct, cxt->cputypes[u]);
+			lscpu_unref_cputype(ct);
+		} else {
+			DBG(TYPE, ul_debugobj(ct, " uniq"));
+			u++;
+			if (u != i)
+				cxt->cputypes[u] = ct;
+		}
+	}
+
+	cxt->ncputypes = u + 1;
+
+	/* In certain cases (e.g. ppc), the cpuinfo file may contain additional
+	 * information at the end. The parser reads this information up to the
+	 * last cputype, with previous cputypes being a subset. In such cases, the
+	 * last cputype should be used.
+	 *
+	 * Let's ignore cputypes[0] if it only contains data that is already covered
+	 * by cputypes[1].
+	 */
+	if (cxt->ncputypes == 2) {
+		static const size_t items[] = {
+			offsetof(struct lscpu_cputype, model),
+			offsetof(struct lscpu_cputype, modelname),
+			offsetof(struct lscpu_cputype, vendor),
+			offsetof(struct lscpu_cputype, bogomips),
+			offsetof(struct lscpu_cputype, revision),
+		};
+		struct lscpu_cputype *ct = cxt->cputypes[0],	/* subset ? */
+				     *mt = cxt->cputypes[1];	/* master ? */
+
+		DBG(TYPE, ul_debugobj(ct, "checking items in %p", mt));
+		for (i = 0; i < ARRAY_SIZE(items); i++) {
+			if (!is_nonnull_offset(ct, items[i]))
+				continue;
+			if (strcmp_offsets(mt, ct, items[i]) != 0)
+				break;
+		}
+
+		if (i == ARRAY_SIZE(items)) {
+			replace_cpu_type(cxt, ct, mt);
+			lscpu_unref_cputype(ct);
+			cxt->cputypes[0] = cxt->cputypes[1];
+			cxt->ncputypes = 1;
+		}
+	}
+
+	DBG(GATHER, ul_debug(" %zu uniq CPU types", cxt->ncputypes));
+}
+
 
 /* canonicalize @str -- remove number at the end return the
  * number by @keynum. This is usable for example for "processor 5" or "cache1"
@@ -562,7 +665,8 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 			}
 			break;
 		case CPUINFO_LINE_CPUTYPE:
-			if (pr->curr_type && is_different_cputype(pr->curr_type, pattern->offset, value)) {
+			if (pr->curr_type && is_nonnull_offset(pr->curr_type, pattern->offset)) {
+				/* Don't overwrite the current type, create a new */
 				lscpu_unref_cputype(pr->curr_type);
 				pr->curr_type = NULL;
 			}
@@ -581,10 +685,12 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 		}
 	} while (1);
 
-	DBG(GATHER, fprintf_cputypes(stderr, cxt));
-
 	if (pr->curr_cpu && !pr->curr_cpu->type)
 		lscpu_cpu_set_type(pr->curr_cpu, pr->curr_type);
+
+	deduplicate_cputypes(cxt);
+
+	DBG(GATHER, fprintf_cputypes(stderr, cxt));
 
 	lscpu_unref_cputype(pr->curr_type);
 	lscpu_unref_cpu(pr->curr_cpu);
