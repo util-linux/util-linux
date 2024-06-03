@@ -44,6 +44,8 @@
 #include <stdarg.h>
 #include <sys/wait.h>
 
+#include "mount-api-utils.h"
+
 /**
  * mnt_new_context:
  *
@@ -1790,6 +1792,45 @@ int mnt_context_set_mountdata(struct libmnt_context *cxt, void *data)
 	cxt->flags |= MNT_FL_MOUNTDATA;
 	return 0;
 }
+
+#ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
+int mnt_context_open_tree(struct libmnt_context *cxt, const char *path, unsigned long mflg)
+{
+	unsigned long oflg = OPEN_TREE_CLOEXEC;
+	int rc = 0, fd = -1;
+
+	if (mflg == (unsigned long) -1) {
+		rc = mnt_optlist_get_flags(cxt->optlist, &mflg, cxt->map_linux, 0);
+		if (rc)
+			return rc;
+	}
+	if (!path) {
+		path = mnt_fs_get_target(cxt->fs);
+		if (!path)
+			return -EINVAL;
+	}
+
+	/* Classic -oremount,bind,ro is not bind operation, it's just
+	 * VFS flags update only */
+	if ((mflg & MS_BIND) && !(mflg & MS_REMOUNT)) {
+		oflg |= OPEN_TREE_CLONE;
+
+		if (mnt_optlist_is_rbind(cxt->optlist))
+			oflg |= AT_RECURSIVE;
+	}
+
+	if (cxt->force_clone)
+		oflg |= OPEN_TREE_CLONE;
+
+	DBG(CXT, ul_debugobj(cxt, "open_tree(path=%s%s%s)", path,
+				oflg & OPEN_TREE_CLONE ? " clone" : "",
+				oflg & AT_RECURSIVE ? " recursive" : ""));
+	fd = open_tree(AT_FDCWD, path, oflg);
+	mnt_context_syscall_save_status(cxt, "open_tree", fd >= 0);
+
+	return fd;
+}
+#endif
 
 /*
  * Translates LABEL/UUID/path to mountable path
