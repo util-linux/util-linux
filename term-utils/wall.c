@@ -78,6 +78,7 @@
 #include "closestream.h"
 #include "timeutils.h"
 #include "pwdutils.h"
+#include "strv.h"
 
 #define	TERM_WIDTH	79
 #define	WRITE_TIME_OUT	300		/* in seconds */
@@ -190,19 +191,30 @@ static int is_gr_member(const char *login, const struct group_workspace *buf)
 	return 0;
 }
 
+static int has_tty(char **ttys, char *name)
+{
+	char **str;
+
+	STRV_FOREACH(str, ttys) {
+		if (strcmp(*str, name) == 0)
+			return 1;
+	}
+
+	return 0;
+}
+
 int main(int argc, char **argv)
 {
 	int ch;
 	struct iovec iov;
 	struct utmpx *utmpptr;
-	char *p;
 	char line[sizeof(utmpptr->ut_line) + 1];
 	int print_banner = TRUE;
 	struct group_workspace *group_buf = NULL;
 	char *mbuf, *fname = NULL;
 	size_t mbufsize;
 	unsigned timeout = WRITE_TIME_OUT;
-	char **mvec = NULL;
+	char **mvec = NULL, **ttys = NULL, **str;
 	int mvecsz = 0;
 
 	static const struct option longopts[] = {
@@ -265,30 +277,30 @@ int main(int argc, char **argv)
 		int sessions;
 
 		sessions = sd_get_sessions(&sessions_list);
-		if (sessions < 0)
-			errx(EXIT_FAILURE, _("error getting sessions: %s"),
-				strerror(-sessions));
+		if (sessions < 0) {
+			warnx(_("error getting sessions: %s"), strerror(-sessions));
+			goto utmp;
+		}
 
 		for (int i = 0; i < sessions; i++) {
 			char *name, *tty;
 			int r;
 
-			if ((r = sd_session_get_username(sessions_list[i], &name)) < 0)
-				errx(EXIT_FAILURE, _("get user name failed: %s"), strerror (-r));
-
-			if (!(group_buf && !is_gr_member(name, group_buf))) {
-				if (sd_session_get_tty(sessions_list[i], &tty) >= 0) {
-					if ((p = ttymsg(&iov, 1, tty, timeout)) != NULL)
-						warnx("%s", p);
-
-					free(tty);
-				}
+			if ((r = sd_session_get_username(sessions_list[i], &name)) < 0) {
+				warnx(_("get user name failed: %s"), strerror (-r));
+				goto utmp;
 			}
+			if (!(group_buf && !is_gr_member(name, group_buf))
+			    && sd_session_get_tty(sessions_list[i], &tty) >= 0
+			    && strv_consume(&ttys, tty) < 0)
+				err(EXIT_FAILURE, _("failed to allocate lines list"));
+
 			free(name);
 			free(sessions_list[i]);
 		}
 		free(sessions_list);
-	} else
+	}
+utmp:
 #endif
 	{
 		while ((utmpptr = getutxent())) {
@@ -310,12 +322,21 @@ int main(int argc, char **argv)
 				continue;
 
 			mem2strcpy(line, utmpptr->ut_line, sizeof(utmpptr->ut_line), sizeof(line));
-			if ((p = ttymsg(&iov, 1, line, timeout)) != NULL)
-				warnx("%s", p);
+			if (has_tty(ttys, line))
+				continue;
+			if (strv_extend(&ttys, line) < 0)
+				err(EXIT_FAILURE, _("failed to allocate lines list"));
 		}
 		endutxent();
 	}
 
+	STRV_FOREACH(str, ttys) {
+		char *er = ttymsg(&iov, 1, *str, timeout);
+		if (er)
+			 warnx("%s", er);
+	}
+
+	strv_free(ttys);
 	free(mbuf);
 	free_group_workspace(group_buf);
 	exit(EXIT_SUCCESS);
