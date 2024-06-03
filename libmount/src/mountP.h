@@ -692,6 +692,9 @@ static inline struct libmnt_sysapi *mnt_context_get_sysapi(struct libmnt_context
 {
 	return mnt_context_get_hookset_data(cxt, &hookset_mount);
 }
+
+int mnt_context_open_tree(struct libmnt_context *cxt, const char *path, unsigned long mflg);
+
 #endif
 
 #endif /* _LIBMOUNT_PRIVATE_H */

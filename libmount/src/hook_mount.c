@@ -259,43 +259,6 @@ static int open_fs_configuration_context(struct libmnt_context *cxt,
 	return api->fd_fs;
 }
 
-static int open_mount_tree(struct libmnt_context *cxt, const char *path, unsigned long mflg)
-{
-	unsigned long oflg = OPEN_TREE_CLOEXEC;
-	int rc = 0, fd = -1;
-
-	if (mflg == (unsigned long) -1) {
-		rc = mnt_optlist_get_flags(cxt->optlist, &mflg, cxt->map_linux, 0);
-		if (rc)
-			return rc;
-	}
-	if (!path) {
-		path = mnt_fs_get_target(cxt->fs);
-		if (!path)
-			return -EINVAL;
-	}
-
-	/* Classic -oremount,bind,ro is not bind operation, it's just
-	 * VFS flags update only */
-	if ((mflg & MS_BIND) && !(mflg & MS_REMOUNT)) {
-		oflg |= OPEN_TREE_CLONE;
-
-		if (mnt_optlist_is_rbind(cxt->optlist))
-			oflg |= AT_RECURSIVE;
-	}
-
-	if (cxt->force_clone)
-		oflg |= OPEN_TREE_CLONE;
-
-	DBG(HOOK, ul_debug("open_tree(path=%s%s%s)", path,
-				oflg & OPEN_TREE_CLONE ? " clone" : "",
-				oflg & AT_RECURSIVE ? " recursive" : ""));
-	fd = open_tree(AT_FDCWD, path, oflg);
-	hookset_set_syscall_status(cxt, "open_tree", fd >= 0);
-
-	return fd;
-}
-
 static int hook_create_mount(struct libmnt_context *cxt,
 			const struct libmnt_hookset *hs,
 			void *data __attribute__((__unused__)))
@@ -423,7 +386,7 @@ static int set_vfsflags(struct libmnt_context *cxt,
 	/* fallback only; necessary when init_sysapi() during preparation
 	 * cannot open the tree -- for example when we call /sbin/mount.<type> */
 	if (api->fd_tree < 0 && mnt_fs_get_target(cxt->fs)) {
-		rc = api->fd_tree = open_mount_tree(cxt, NULL, (unsigned long) -1);
+		rc = api->fd_tree = mnt_context_open_tree(cxt, NULL, (unsigned long) -1);
 		if (rc < 0)
 			return rc;
 		rc = 0;
@@ -501,7 +464,7 @@ static int hook_set_propagation(struct libmnt_context *cxt,
 	/* fallback only; necessary when init_sysapi() during preparation
 	 * cannot open the tree -- for example when we call /sbin/mount.<type> */
 	if (api->fd_tree < 0 && mnt_fs_get_target(cxt->fs)) {
-		rc = api->fd_tree = open_mount_tree(cxt, NULL, (unsigned long) -1);
+		rc = api->fd_tree = mnt_context_open_tree(cxt, NULL, (unsigned long) -1);
 		if (rc < 0)
 			goto done;
 		rc = 0;
@@ -638,7 +601,7 @@ static int init_sysapi(struct libmnt_context *cxt,
 		return -ENOMEM;
 
 	if (path) {
-		api->fd_tree = open_mount_tree(cxt, path, flags);
+		api->fd_tree = mnt_context_open_tree(cxt, path, flags);
 		if (api->fd_tree < 0)
 			goto fail;
 
