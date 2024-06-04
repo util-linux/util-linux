@@ -427,18 +427,16 @@ static inline int xusleep(useconds_t usec)
 #endif
 }
 
-
-#define ul_err_write(_m) ignore_result( write(STDERR_FILENO, _m, strlen(_m)) )
+/* ul_sig_printf is signal safe as long you don't use floating point formats,
+   positional arguments or wide characters.*/
+#define ul_sig_printf(fmt, ...) ignore_result(dprintf(STDERR_FILENO, fmt, __VA_ARGS__))
 
 /*
  * warn() for signal handlers
  */
 static inline void ul_sig_warn(const char *mesg)
 {
-	ul_err_write(program_invocation_short_name);
-	ul_err_write(": ");
-	ul_err_write(mesg);
-	ul_err_write("\n");
+	ul_sig_printf("%s: %s\n", program_invocation_short_name, mesg);
 }
 
 /*
