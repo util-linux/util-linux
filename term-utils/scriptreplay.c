@@ -168,7 +168,7 @@ main(int argc, char *argv[])
 		   *log_tm = NULL;
 	double divi = 1;
 	int diviopt = FALSE, idx;
-	int ch, rc, crmode = REPLAY_CRMODE_AUTO, summary = 0;
+	int ch, rc = 0, crmode = REPLAY_CRMODE_AUTO, summary = 0;
 	enum {
 		OPT_SUMMARY = CHAR_MAX + 1
 	};
@@ -340,13 +340,12 @@ main(int argc, char *argv[])
 					replay_set_delay_div(setup, divi);
 				} else if (ch == 'C') { /* Right arrow */
 					rc = replay_emit_step_data(setup, step, STDOUT_FILENO);
-					if (!rc) {
+					if (!rc)
 						rc = replay_get_next_step(setup, streams, &step);
-						if (!rc) {
-							struct timeval *delay = replay_step_get_delay(step);
-							if (delay && timerisset(delay))
-								step_delay = *delay;
-						}
+					if (!rc) {
+						struct timeval *delay = replay_step_get_delay(step);
+						if (delay && timerisset(delay))
+							step_delay = *delay;
 					}
 				}
 			}
@@ -373,7 +372,7 @@ main(int argc, char *argv[])
 			rc = replay_emit_step_data(setup, step, STDOUT_FILENO);
 		if (rc)
 			break;
-		
+
 		rc = replay_get_next_step(setup, streams, &step);
 		if (rc)
 			break;
