@@ -225,7 +225,7 @@ jobs:
           echo "OPENWRT_TARGET=${{ matrix.target }}" >> $GITHUB_ENV
       - name: Cache OpenWRT SDK
         id: cache-openwrt-sdk
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/${{ env.OPENWRT_SDK }}
           key: ${{ env.OPENWRT_SDK }}
