@@ -859,7 +859,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 		if (sockets_only
 		    /* A nsfs file is not a socket but the nsfs file can
 		     * be used as a entry point to collect information from
-		     * other network namespaces. Besed on the information,
+		     * other network namespaces. Based on the information,
 		     * various columns of sockets can be filled.
 		     */
 		    && (class != &sock_class) && (class != &nsfs_file_class))
@@ -1060,7 +1060,7 @@ static void collect_namespace_files_tophalf(struct path_cxt *pc, struct proc *pr
 		[ASSOC_NS_MNT]    = "ns/mnt",
 	};
 	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs),
-			       /* Namespace information is alwasys needed. */
+			       /* Namespace information is always needed. */
 			       false);
 }
 
@@ -1085,7 +1085,7 @@ static void collect_namespace_files_bottomhalf(struct path_cxt *pc, struct proc 
 		[ASSOC_NS_UTS]    = "ns/uts",
 	};
 	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs),
-			       /* Namespace information is alwasys needed. */
+			       /* Namespace information is always needed. */
 			       false);
 }
 

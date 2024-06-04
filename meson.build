@@ -10,7 +10,7 @@ project('util-linux', 'c',
 fs = import('fs')
 pkgconfig = import('pkgconfig')
 
-# soname versions; This never change because we use symbols versioing. There is also
+# soname versions; This never change because we use symbol versioning. There is also
 # API version (LIB*_VERSION macros) and it follow package version.
 libblkid_version = '1.1.0'
 libblkid_date = '01-Jun-2021'

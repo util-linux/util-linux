@@ -637,7 +637,7 @@ int scols_column_get_wrap_data(const struct libscols_column *cl,
  *
  * The table always keep data in strings in form that is printed on output, but
  * for some internal operations (like filters or counters) it needs to convert
- * the strings to usable data format. If this converion is not possible then
+ * the strings to usable data format. If this conversion is not possible then
  * application can define datafunc() callback to provide data for filters and counters.
 
  * The callback needs to return the data as pointer to void, and the data type
@@ -834,7 +834,7 @@ int scols_column_is_customwrap(const struct libscols_column *cl)
  * @cl: a pointer to a struct libscols_column instance
  * @opts: options string
  *
- * Set properties from string, the string is comma seprated list, like
+ * Set properties from string, the string is comma separated list, like
  * "trunc,right,json=number", ...
  *
  * Returns: 0 on success, <0 on error

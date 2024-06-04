@@ -544,7 +544,7 @@ static int probe_all(blkid_cache cache, int only_if_new, int update_interval)
 
 	rc = sysfs_probe_all(cache, only_if_new, 0);
 
-	/* Don't mark the change as "probed" if /sys not avalable */
+	/* Don't mark the change as "probed" if /sys not available */
 	if (update_interval && rc == 0) {
 		cache->bic_time = time(NULL);
 		cache->bic_flags |= BLKID_BIC_FL_PROBED;

@@ -430,7 +430,7 @@ static int verify_fstype(struct verify_context *vfy)
 		if (none
 		    && mnt_fs_get_option(vfy->fs, "bind", NULL, NULL) == 1
 		    && mnt_fs_get_option(vfy->fs, "move", NULL, NULL) == 1) {
-			verify_warn(vfy, _("\"none\" FS type is recommended for bind or move oprations only"));
+			verify_warn(vfy, _("\"none\" FS type is recommended for bind or move operations only"));
 			goto done;
 		}
 

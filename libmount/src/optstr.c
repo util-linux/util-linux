@@ -582,7 +582,7 @@ int mnt_optstr_get_options(const char *optstr, char **subset,
  * @wanted: options expected in @optstr
  * @missing: returns options from @wanted which missing in @optstr (optional)
  *
- * Retursn: <0 on error, 0 on missing options, 1 if nothing is missing
+ * Returns: <0 on error, 0 on missing options, 1 if nothing is missing
  */
 int mnt_optstr_get_missing(const char *optstr, const char *wanted, char **missing)
 {

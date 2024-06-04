@@ -230,7 +230,7 @@ int main(int argc, char **argv)
 	}
 
 	if (Cflg || Sflg || rflg) {
-		/* udpating, inserting and removing entries */
+		/* updating, inserting and removing entries */
 		if (!uflg || strlen(user) == 0) {
 			warnx(_("Options -C, -r and -S require option -u to specify the user"));
 			goto err;

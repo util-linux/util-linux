@@ -1119,7 +1119,7 @@ int mnt_context_next_mount(struct libmnt_context *cxt,
 	if (!cxt || !fs || !itr)
 		return -EINVAL;
 
-	/* ingore --onlyonce, it's default behavior for --all */
+	/* ignore --onlyonce, it's default behavior for --all */
 	mnt_context_enable_onlyonce(cxt, 0);
 
 	rc = mnt_context_get_fstab(cxt, &fstab);

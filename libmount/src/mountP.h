@@ -413,7 +413,7 @@ struct libmnt_context
 	const struct libmnt_optmap *map_linux;		/* system options map */
 	const struct libmnt_optmap *map_userspace;	/* userspace options map */
 
-	const char	*mountinfo_path; /* usualy /proc/self/moutinfo */
+	const char	*mountinfo_path; /* usually /proc/self/moutinfo */
 
 	const char	*utab_path; /* path to utab */
 	int		utab_writable; /* is utab writable */

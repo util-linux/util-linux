@@ -82,8 +82,8 @@ struct lscpu_cputype {
 	char	*flags;
 	char	*mtid;		/* maximum thread id (s390) */
 	char	*addrsz;	/* address sizes */
-	int	dispatching;	/* -1 if not evailable, DIST_* */
-	int	freqboost;	/* -1 if not evailable */
+	int	dispatching;	/* -1 if not available, DIST_* */
+	int	freqboost;	/* -1 if not available */
 
 	size_t	physsockets;	/* Physical sockets (modules) */
 	size_t	physchips;	/* Physical chips */

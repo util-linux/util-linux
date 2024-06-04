@@ -1939,7 +1939,7 @@ static void eval_issue_file(struct issue *ie,
 		goto done;
 	/*
 	 * The custom issue file or directory list specified by:
-	 *   agetty --isue-file <path[:path]...>
+	 *   agetty --issue-file <path[:path]...>
 	 * Note that nothing is printed if the file/dir does not exist.
 	 */
 	if (op->issue) {

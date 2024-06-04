@@ -22,7 +22,7 @@
  *
  *  * Linux crypto API: zero-copy method based on sendfile(), data blocks are
  *  send to the kernel hash functions (sha1, ...), and only hash digest is read
- *  and cached in usersapce. Fast for large set of (large) files.
+ *  and cached in userspace. Fast for large set of (large) files.
  *
  *
  * No copyright is claimed.  This code is in the public domain; do with
@@ -345,7 +345,7 @@ static void memcmp_reset(struct ul_fileeq *eq, struct ul_fileeq_data *data)
 	/* only intro[] is cached */
 	if (data->nblocks)
 		data->nblocks = 1;
-	/* reset file possition */
+	/* reset file position */
 	if (data->fd >= 0)
 		lseek(data->fd, get_cached_offset(eq, data), SEEK_SET);
 	data->is_eof = 0;
@@ -535,7 +535,7 @@ int ul_fileeq(struct ul_fileeq *eq,
 
 	if (cmp == 0) {
 		if (!a->is_eof || !b->is_eof)
-			goto done; /* filesize chnaged? */
+			goto done; /* filesize changed? */
 
 		DBG(EQ, ul_debugobj(eq, "<-- MATCH"));
 		return 1;

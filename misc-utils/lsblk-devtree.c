@@ -9,9 +9,9 @@
  * reference counting here due to complexity and it's unnecessary.
  *
  * Note that the same device maybe have more parents and more children. The
- * device is allocated only once and shared within the tree. The dependence
+ * device is allocated only once and shared within the tree. The dependency
  * (devdep struct) contains reference to child as well as to parent and the
- * dependence is reference by ls_childs from parent device and by ls_parents
+ * dependency is referenced by ls_childs from parent device and by ls_parents
  * from child. (Yes, "childs" is used for children ;-)
  *
  * Copyright (C) 2018 Karel Zak <kzak@redhat.com>

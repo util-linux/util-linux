@@ -216,7 +216,7 @@ int scols_filter_parse_string(struct libscols_filter *fltr, const char *str)
  * @out: output stream
  *
  * Dumps internal filter nodes in JSON format. This function is mostly designed
- * for debugging purpose. The fileds in the output are subject to change.
+ * for debugging purpose. The fields in the output are subject to change.
  *
  * Returns: 0, a negative number in case of an error.
  *
@@ -365,7 +365,7 @@ int scols_filter_set_filler_cb(struct libscols_filter *fltr,
  * scols_filter_new_counter:
  * @fltr: filter instance
  *
- * Alocates a new counter instance into the filter.
+ * Allocates a new counter instance into the filter.
  *
  * Returns: new counter or NULL in case of an error.
  *
@@ -398,7 +398,7 @@ struct libscols_counter *scols_filter_new_counter(struct libscols_filter *fltr)
  * @name: something for humans
  *
  * The name is not use by library, it's just description usable for application
- * when prints results from countes.
+ * when prints results from counters.
  *
  * Returns: 0, a negative number in case of an error.
  *

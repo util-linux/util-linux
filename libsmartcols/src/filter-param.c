@@ -807,7 +807,7 @@ int filter_next_param(struct libscols_filter *fltr,
  * @name: holder name
  * @col: column
  *
- * Assign @col to filter parametr. The parametr is addressed by @itr or by
+ * Assign @col to filter parameter. The parameter is addressed by @itr or by
  * @name. See scols_filter_next_holder().
  *
  * Returns: 0, a negative value in case of an error.
@@ -843,7 +843,7 @@ int scols_filter_assign_column(struct libscols_filter *fltr,
 		if (n->col)
 			scols_unref_column(n->col);
 
-		DBG(FPARAM, ul_debugobj(n, "assing %s to column %s", name,
+		DBG(FPARAM, ul_debugobj(n, "assign %s to column %s", name,
 					scols_column_get_name(col)));
 		n->col = col;
 		scols_ref_column(col);

@@ -346,7 +346,7 @@ static int column_name_to_id(const char *name, size_t namesz)
 {
 	size_t i;
 
-	/* name as diplayed for users */
+	/* name as displayed for users */
 	for (i = 0; i < ARRAY_SIZE(infos); i++) {
 		const char *cn = infos[i].name;
 

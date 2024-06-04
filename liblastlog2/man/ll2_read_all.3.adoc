@@ -22,7 +22,7 @@ ll2_read_all -  Reads all entries from database and calls the callback function 
 
 == DESCRIPTION
 
-Reads all entries from database, defined in _context_, and calls callback fuction _callback_ for each entry.
+Reads all entries from database, defined in _context_, and calls callback function _callback_ for each entry.
 If _context_ is NULL, the default database, defined in _LL2_DEFAULT_DATABASE_, will be taken.
 
 --------------------------------------

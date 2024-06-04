@@ -153,7 +153,7 @@ static int guess_expr_datatype(struct filter_expr *n)
 	else {
 		bool l_holder, r_holder;
 
-		/* for expression like "FOO > 5.5" preffer type defined by a real param
+		/* for expression like "FOO > 5.5" prefer type defined by a real param
 		 * rather than by holder (FOO) */
 		l_holder = is_filter_holder_node(n->left);
 		r_holder = is_filter_holder_node(n->right);

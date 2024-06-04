@@ -680,7 +680,7 @@ static void map_ids_internal(const char *type, int ppid, struct map_range *chain
  * @groupmap: The range of GIDs to map (or %NULL)
  *
  * fork_and_wait() for our parent to call sync_with_child() on @fd. Upon
- * recieving the go-ahead, use newuidmap and newgidmap to set the uid/gid map
+ * receiving the go-ahead, use newuidmap and newgidmap to set the uid/gid map
  * for our parent's PID.
  *
  * Return: The pid of the child.

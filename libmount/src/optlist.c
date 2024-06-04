@@ -139,7 +139,7 @@ int mnt_optlist_register_map(struct libmnt_optlist *ls, const struct libmnt_optm
 
 	for (i = 0; i < ls->nmaps; i++) {
 		if (ls->maps[i] == map)
-			return 0;		/* already registred, ignore */
+			return 0;		/* already registered, ignore */
 	}
 	if (ls->nmaps + 1 >= MNT_OL_MAXMAPS)
 		return -ERANGE;
@@ -849,7 +849,7 @@ int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *cl
 	 * specified (except atime stuff). For backward compatibility we need
 	 * to emulate this semantic by mount_setattr(). The new
 	 * mount_setattr() has simple set/unset sematinc and nothing is
-	 * internally in kernel reseted.
+	 * reset internally in kernel.
 	 */
 	if (mnt_optlist_is_remount(ls)
 	    && !mnt_optlist_is_bind(ls)
@@ -946,7 +946,7 @@ int mnt_optlist_strdup_optstr(struct libmnt_optlist *ls, char **optstr,
 
 	*optstr = NULL;
 
-	/* For generic options srings ro/rw is expected at the begining */
+	/* For generic options strings ro/rw are expected at the beginning */
 	if ((!map || map == ls->linux_map)
 	     && (what == MNT_OL_FLTR_DFLT ||
 		 what == MNT_OL_FLTR_ALL ||
