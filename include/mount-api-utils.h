@@ -8,6 +8,7 @@
 #ifdef HAVE_LINUX_MOUNT_H
 #include <linux/mount.h>
 #include <sys/syscall.h>
+#include <inttypes.h>
 
 /*
  * File descritors based mount API
@@ -207,8 +208,110 @@ static inline int fspick(int dfd, const char *pathname, unsigned int flags)
 }
 #endif
 
-
 #endif /* HAVE_MOUNTFD_API */
+
+/*
+ * statmount() and listmount()
+ */
+#ifdef HAVE_STATMOUNT_API
+
+#ifndef HAVE_STRUCT_MNT_ID_REQ
+# ifndef MNT_ID_REQ_SIZE_VER0 /* For case mount.h comes from a place invisible for autotools/meson */
+struct mnt_id_req {
+	uint32_t size;
+	uint32_t spare;
+	uint64_t mnt_id;
+	uint64_t param;
+};
+# endif
+#endif
+
+#ifndef HAVE_STRUCT_STATMOUNT
+struct statmount {
+	uint32_t size;		/* Total size, including strings */
+	uint32_t __spare1;
+	uint64_t mask;		/* What results were written */
+	uint32_t sb_dev_major;	/* Device ID */
+	uint32_t sb_dev_minor;
+	uint64_t sb_magic;		/* ..._SUPER_MAGIC */
+	uint32_t sb_flags;		/* SB_{RDONLY,SYNCHRONOUS,DIRSYNC,LAZYTIME} */
+	uint32_t fs_type;		/* [str] Filesystem type */
+	uint64_t mnt_id;		/* Unique ID of mount */
+	uint64_t mnt_parent_id;	/* Unique ID of parent (for root == mnt_id) */
+	uint32_t mnt_id_old;	/* Reused IDs used in proc/.../mountinfo */
+	uint32_t mnt_parent_id_old;
+	uint64_t mnt_attr;		/* MOUNT_ATTR_... */
+	uint64_t mnt_propagation;	/* MS_{SHARED,SLAVE,PRIVATE,UNBINDABLE} */
+	uint64_t mnt_peer_group;	/* ID of shared peer group */
+	uint64_t mnt_master;	/* Mount receives propagation from this ID */
+	uint64_t propagate_from;	/* Propagation from in current namespace */
+	uint32_t mnt_root;		/* [str] Root of mount relative to root of fs */
+	uint32_t mnt_point;	/* [str] Mountpoint relative to current root */
+	uint64_t __spare2[50];
+	char str[];		/* Variable size part containing strings */
+};
+#endif
+
+
+/*
+ * @mask bits for statmount(2)
+ */
+#ifndef STATMOUNT_SB_BASIC
+# define STATMOUNT_SB_BASIC		0x00000001U     /* Want/got sb_... */
+#endif
+#ifndef STATMOUNT_MNT_BASIC
+# define STATMOUNT_MNT_BASIC		0x00000002U	/* Want/got mnt_... */
+#endif
+#ifndef STATMOUNT_PROPAGATE_FROM
+# define STATMOUNT_PROPAGATE_FROM	0x00000004U	/* Want/got propagate_from */
+#endif
+#ifndef STATMOUNT_MNT_ROOT
+# define STATMOUNT_MNT_ROOT		0x00000008U	/* Want/got mnt_root  */
+#endif
+#ifndef STATMOUNT_MNT_POINT
+# define STATMOUNT_MNT_POINT		0x00000010U	/* Want/got mnt_point */
+#endif
+#ifndef STATMOUNT_FS_TYPE
+# define STATMOUNT_FS_TYPE		0x00000020U	/* Want/got fs_type */
+#endif
+
+/*
+ * Special @mnt_id values that can be passed to listmount
+ */
+#ifdef LSMT_ROOT
+# define LSMT_ROOT		0xffffffffffffffff	/* root mount */
+#endif
+
+#if !defined(HAVE_STATMOUNT) && defined(SYS_statmount)
+static inline int statmount(uint64_t mnt_id, uint64_t mask,
+			struct statmount *buf,
+			size_t bufsize, unsigned int flags)
+{
+       struct mnt_id_req req = {
+               .size = MNT_ID_REQ_SIZE_VER0,
+               .mnt_id = mnt_id,
+               .param = mask,
+       };
+
+       return syscall(__NR_statmount, &req, buf, bufsize, flags);
+}
+#endif
+
+#if !defined(HAVE_LISTMOUNT) && defined(SYS_listmount)
+static inline ssize_t listmount(uint64_t mnt_id, uint64_t last_mnt_id,
+			uint64_t list[], size_t num, unsigned int flags)
+{
+       struct mnt_id_req req = {
+               .size = MNT_ID_REQ_SIZE_VER0,
+               .mnt_id = mnt_id,
+               .param = last_mnt_id,
+       };
+
+       return syscall(__NR_listmount, &req, list, num, flags);
+}
+#endif
+
+#endif /* HAVE_STATMOUNT_API */
 
 #endif /* HAVE_LINUX_MOUNT_H */
 
