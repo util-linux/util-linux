@@ -5,10 +5,14 @@
 #ifndef UTIL_LINUX_MOUNT_API_UTILS
 #define UTIL_LINUX_MOUNT_API_UTILS
 
-#if defined(HAVE_MOUNTFD_API) && defined(HAVE_LINUX_MOUNT_H)
-
-#include <sys/syscall.h>
+#ifdef HAVE_LINUX_MOUNT_H
 #include <linux/mount.h>
+#include <sys/syscall.h>
+
+/*
+ * File descritors based mount API
+ */
+#ifdef HAVE_MOUNTFD_API
 
 /* Accepted by both open_tree() and mount_setattr(). */
 #ifndef AT_RECURSIVE
@@ -203,6 +207,9 @@ static inline int fspick(int dfd, const char *pathname, unsigned int flags)
 }
 #endif
 
-#endif /* HAVE_MOUNTFD_API && HAVE_LINUX_MOUNT_H */
-#endif /* UTIL_LINUX_MOUNT_API_UTILS */
 
+#endif /* HAVE_MOUNTFD_API */
+
+#endif /* HAVE_LINUX_MOUNT_H */
+
+#endif /* UTIL_LINUX_MOUNT_API_UTILS */
