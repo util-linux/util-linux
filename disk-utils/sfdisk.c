@@ -119,7 +119,7 @@ struct sfdisk {
 		     json : 1,		/* JSON dump */
 		     movedata: 1,	/* move data after resize */
 		     movefsync: 1,	/* use fsync() after each write() */
-		     notell : 1,	/* don't tell kernel aout new PT */
+		     notell : 1,	/* don't tell kernel about new PT */
 		     noact  : 1;	/* do not write to device */
 };
 

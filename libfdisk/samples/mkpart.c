@@ -19,7 +19,7 @@
   *     labels (e.g. GPT).
   *
   *     The Ask-API does not use anything else than warning/info. The
-  *     partitionning has to be done non-interactive.
+  *     partitioning has to be done non-interactive.
   */
 #include <stdlib.h>
 #include <unistd.h>

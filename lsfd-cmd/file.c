@@ -523,7 +523,7 @@ static unsigned int parse_lock_line(const char *line)
 {
 	char mode[6] = {0};
 
-	/* Exapmles of lines:
+	/* Examples of lines:
 	   ----------------------------------------------------
 	   1: FLOCK  ADVISORY  READ 2283292 fd:03:26219728 0 EOF
 	   1: FLOCK  ADVISORY  WRITE 2283321 fd:03:26219728 0 EOF

@@ -208,7 +208,7 @@ static int do_mount_subdir(
 		if (!rc) {
 			/* Note that the original parental namespace could be
 			 * private, in this case, it will not see our final mount,
-			 * so we need to move the the orignal namespace.
+			 * so we need to move the the original namespace.
 			 */
 			setns(hsd->old_ns_fd, CLONE_NEWNS);
 

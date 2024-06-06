@@ -209,9 +209,9 @@ static void ext_get_info(blkid_probe pr, int ver, struct ext2_super_block *es)
 		(uint64_t) le32_to_cpu(es->s_blocks_count_hi) << 32 : 0);
 	blkid_probe_set_fslastblock(pr, fslastblock);
 
-	/* The total number of blocks is taken without substraction of overhead
+	/* The total number of blocks is taken without subtraction of overhead
 	 * (journal, metadata). The ext4 has non-trivial overhead calculation
-	 * viz. ext4_calculate_overhead(). Thefore, the FSSIZE would show number
+	 * viz. ext4_calculate_overhead(). Therefore, the FSSIZE would show number
 	 * slightly higher than the real value (for example, calculated via
 	 * statfs()).
 	 */

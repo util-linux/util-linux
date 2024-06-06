@@ -15,7 +15,7 @@
  * @title: Locking
  * @short_description: locking methods for utab or another libmount files
  *
- * Since v2.39 libmount does nto support classic mtab locking. Now all is based
+ * Since v2.39 libmount does not support classic mtab locking. Now all is based
  * on flock only.
  *
  */

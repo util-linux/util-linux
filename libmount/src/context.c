@@ -1695,7 +1695,7 @@ struct libmnt_lock *mnt_context_get_lock(struct libmnt_context *cxt)
  *
  * Be careful if use MS_REC flag -- this is flags is generic for
  * all mask. In this case is better to use options string where
- * mount options are independent and nothign is applied to all options.
+ * mount options are independent and nothing is applied to all options.
  *
  * Returns: 0 on success, negative number in case of error.
  */
@@ -2150,7 +2150,7 @@ int mnt_context_merge_mflags(struct libmnt_context *cxt)
 		return -ENOMEM;
 
 	/* TODO: optlist returns always flags as merged, so
-	 * MNT_FL_MOUNTFLAGS_MERGED is unncessary anymore
+	 * MNT_FL_MOUNTFLAGS_MERGED is unnecessary anymore
 	 */
 	cxt->flags |= MNT_FL_MOUNTFLAGS_MERGED;
 	return mnt_optlist_merge_opts(ls);

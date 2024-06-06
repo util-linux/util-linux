@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Derrived from all_syscalls.
+# Derived from all_syscalls.
 
 set -e
 set -o pipefail

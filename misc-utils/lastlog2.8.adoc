@@ -51,7 +51,7 @@ database will be overwritten.
 *-r*, *--rename* _NEWNAME_::
 This option can only be used together with *-u* (*--user*).
 
-*-s*, *--servive* _num_::
+*-s*, *--service* _num_::
 Display PAM service used to login in the last column.
 
 *-S*, *--set*::

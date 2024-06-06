@@ -10800,7 +10800,7 @@ msgid "do not check %s FS type (pseudo/net)"
 msgstr ""
 
 #: misc-utils/findmnt-verify.c:433
-msgid "\"none\" FS type is recommended for bind or move oprations only"
+msgid "\"none\" FS type is recommended for bind or move operations only"
 msgstr ""
 
 #: misc-utils/findmnt-verify.c:445

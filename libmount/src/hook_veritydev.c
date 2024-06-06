@@ -26,7 +26,7 @@
 #ifdef CRYPTSETUP_VIA_DLOPEN
 # include <dlfcn.h>
 
-/* Pointers to libcryptsetup functions (initiliazed by dlsym()) */
+/* Pointers to libcryptsetup functions (initialized by dlsym()) */
 struct verity_opers {
 	void (*crypt_set_debug_level)(int);
 	void (*crypt_set_log_callback)(struct crypt_device *, void (*log)(int, const char *, void *), void *);

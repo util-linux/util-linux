@@ -603,7 +603,7 @@ static int init_sysapi(struct libmnt_context *cxt,
 
 	/* C) FS based operation
 	 *
-	 *  Note, fstype is optinal and may be specified later if mount by
+	 *  Note, fstype is optional and may be specified later if mount by
 	 *  list of FS types (mount -t foo,bar,ext4). In this case fsopen()
 	 *  is called later in hook_create_mount(). */
 	} else {
@@ -698,7 +698,7 @@ static int hook_prepare(struct libmnt_context *cxt,
 	if (!ol)
 		return -ENOMEM;
 
-	/* classic MS_* flags (include oprations like MS_REMOUNT, etc) */
+	/* classic MS_* flags (include operations like MS_REMOUNT, etc) */
 	rc = mnt_optlist_get_flags(ol, &flags, cxt->map_linux, 0);
 
 	/* MOUNT_ATTR_* flags for mount_setattr() */

@@ -558,7 +558,7 @@ static char *get_data_col_sources(struct libmnt_fs *fs, int evaluate, size_t *da
 	blkid_dev dev;
 	struct ul_buffer buf = UL_INIT_BUFFER;
 
-	/* get TAG from libmount if avalable (e.g. fstab) */
+	/* get TAG from libmount if available (e.g. fstab) */
 	if (mnt_fs_get_tag(fs, &tag, &p) == 0) {
 
 		/* if device is in the form 'UUID=..' or 'LABEL=..' and evaluate==0

@@ -1440,7 +1440,7 @@ int main(int argc, char *argv[])
 	if (rc < 0)
 		err(EXIT_FAILURE, _("failed to initialize files comparior"));
 
-	/* defautl I/O size */
+	/* default I/O size */
 	if (!opts.io_size) {
 		if (strcmp(opts.method, "memcmp") == 0)
 			opts.io_size = 8*1024;

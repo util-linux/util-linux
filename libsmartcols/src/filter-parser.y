@@ -113,7 +113,7 @@ param:
 		$$ = filter_new_param(fltr, SCOLS_DATA_BOOLEAN, 0, (void *) &x);
 	}
 	| T_INVALID_NUMBER {		/* YYerror token is unsupported in old Bisons */
-		ignore_result( $$ );	/* supress "unset value" warning */
+		ignore_result( $$ );	/* suppress "unset value" warning */
 		YYERROR;		/* yyerror() already called by lex() */
 	}
 ;

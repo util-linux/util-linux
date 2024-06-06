@@ -523,7 +523,7 @@ int __scols_calculate(struct libscols_table *tb, struct ul_buffer *buf)
 
 	/* enlarge */
 	if (width < tb->termwidth) {
-		DBG(TAB, ul_debugobj(tb, " enlarge (extreme, avalable %zu)",
+		DBG(TAB, ul_debugobj(tb, " enlarge (extreme, available %zu)",
 					tb->termwidth - width));
 		if (ignore_extremes) {
 			if (!sorted) {
@@ -560,7 +560,7 @@ int __scols_calculate(struct libscols_table *tb, struct ul_buffer *buf)
 		}
 
 		if (width < tb->termwidth && scols_table_is_maxout(tb)) {
-			DBG(TAB, ul_debugobj(tb, " enlarge (max-out, avalable %zu)",
+			DBG(TAB, ul_debugobj(tb, " enlarge (max-out, available %zu)",
 						tb->termwidth - width));
 
 			/* try enlarging all columns */
@@ -579,7 +579,7 @@ int __scols_calculate(struct libscols_table *tb, struct ul_buffer *buf)
 			}
 		} else if (width < tb->termwidth) {
 			/* enlarge the last column */
-			DBG(TAB, ul_debugobj(tb, " enlarge (last column, avalable %zu)",
+			DBG(TAB, ul_debugobj(tb, " enlarge (last column, available %zu)",
 						tb->termwidth - width));
 
 			if (!scols_column_is_right(last_cl)) {

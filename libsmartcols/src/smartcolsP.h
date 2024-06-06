@@ -147,7 +147,7 @@ struct libscols_column {
 	void *datafunc_data;
 
 	struct libscols_cell	header;		/* column name with color etc. */
-	char	*shellvar;			/* raw colum name in shell compatible format */
+	char	*shellvar;			/* raw column name in shell compatible format */
 
 	struct list_head	cl_columns;	/* member of table->tb_columns */
 
@@ -501,7 +501,7 @@ enum filter_ntype {
 	F_NODE_EXPR
 };
 
-/* expresion types */
+/* expression types */
 enum filter_etype {
 	F_EXPR_AND,
 	F_EXPR_OR,
