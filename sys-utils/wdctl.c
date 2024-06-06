@@ -608,6 +608,9 @@ static int read_governors(struct wd_device *wd)
 
 static bool should_read_from_device(struct wd_device *wd)
 {
+	if (wd->no_sysfs)
+		return true;
+
 	if (!wd->has_nowayout)
 		return false;
 
