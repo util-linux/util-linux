@@ -132,7 +132,7 @@ setterm(struct termios *backup, int *saved_flag)
 	*saved_flag = fcntl(STDIN_FILENO, F_GETFL);
 	if (*saved_flag == -1)
 		err(EXIT_FAILURE, _("unexpected fcntl failure"));
-	fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);
+	fcntl(STDIN_FILENO, F_SETFL, *saved_flag | O_NONBLOCK);
 
 	if (tcgetattr(STDOUT_FILENO, backup) != 0) {
 		if (errno != ENOTTY) /* For debugger. */
