@@ -18,7 +18,7 @@ jobs:
       COVERITY_SCAN_TOKEN: "${{ secrets.COVERITY_SCAN_TOKEN }}"
     steps:
       - name: Repository checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v4
       - name: Ubuntu setup
         run: sudo -E .github/workflows/cibuild-setup-ubuntu.sh
       - name: Configure
