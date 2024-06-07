@@ -553,8 +553,10 @@ static int read_process(struct lsns *ls, pid_t pid)
 
 		rc = get_ns_ino(dirfd(dir), ns_names[i], &p->ns_ids[i],
 				&p->ns_pids[i], &p->ns_oids[i]);
-		if (rc && rc != -EACCES && rc != -ENOENT)
+		if (rc && rc != -EACCES && rc != -ENOENT && rc != ESRCH) {
+			DBG(PROC, ul_debug("failed in get_ns_inos (rc: %d)", rc));
 			goto done;
+		}
 		if (i == LSNS_ID_NET)
 			p->netnsid = get_netnsid(dirfd(dir), p->ns_ids[i]);
 		rc = 0;
@@ -595,7 +597,10 @@ static int read_processes(struct lsns *ls)
 		 */
 		rc = read_process(ls, pid);
 		if (rc && rc != -EACCES && rc != -ENOENT)
+		if (rc && rc != -EACCES && rc != -ENOENT && rc != ESRCH) {
+			DBG(PROC, ul_debug("failed in read_process() (pid: %d, rc: %d)", (int) pid, rc));
 			break;
+		}
 		rc = 0;
 	}
 
