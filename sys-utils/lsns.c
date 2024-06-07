@@ -624,7 +624,7 @@ static int read_process(struct lsns *ls, struct path_cxt *pc)
 
 		rc = get_ns_inos(pc, ns_names[i], &p->ns_ids[i],
 				 &p->ns_pids[i], &p->ns_oids[i]);
-		if (rc && rc != -EACCES && rc != -ENOENT) {
+		if (rc && rc != -EACCES && rc != -ENOENT && rc != ESRCH) {
 			DBG(PROC, ul_debug("failed in get_ns_inos (rc: %d)", rc));
 			goto done;
 		}
@@ -686,7 +686,7 @@ static int read_processes(struct lsns *ls)
 		}
 
 		rc = read_process(ls, pc);
-		if (rc && rc != -EACCES && rc != -ENOENT) {
+		if (rc && rc != -EACCES && rc != -ENOENT && rc != ESRCH) {
 			DBG(PROC, ul_debug("failed in read_process() (pid: %d, rc: %d)", (int) pid, rc));
 			break;
 		}
