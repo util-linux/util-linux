@@ -265,7 +265,8 @@ struct libmnt_table {
 	int		(*fltrcb)(struct libmnt_fs *fs, void *data);
 	void		*fltrcb_data;
 
-	int		noautofs;	/* ignore autofs mounts */
+	unsigned int	noautofs : 1;	/* ignore autofs mounts */
+
 
 	struct list_head	ents;	/* list of entries (libmnt_fs) */
 	void		*userdata;
