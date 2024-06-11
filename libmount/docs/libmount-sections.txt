@@ -229,10 +229,12 @@ mnt_fs_get_freq
 mnt_fs_get_fs_options
 mnt_fs_get_fstype
 mnt_fs_get_id
+mnt_fs_get_uniq_id
 mnt_fs_get_option
 mnt_fs_get_optional_fields
 mnt_fs_get_options
 mnt_fs_get_parent_id
+mnt_fs_get_parent_uniq_id
 mnt_fs_get_passno
 mnt_fs_get_priority
 mnt_fs_get_propagation
@@ -273,6 +275,7 @@ mnt_fs_set_priority
 mnt_fs_set_root
 mnt_fs_set_source
 mnt_fs_set_target
+mnt_fs_set_uniq_id
 mnt_fs_set_userdata
 mnt_fs_strdup_options
 mnt_fs_streq_srcpath

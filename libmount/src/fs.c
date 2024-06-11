@@ -1361,11 +1361,50 @@ int mnt_fs_set_bindsrc(struct libmnt_fs *fs, const char *src)
  * mnt_fs_get_id:
  * @fs: /proc/self/mountinfo entry
  *
- * Returns: mount ID (unique identifier of the mount) or negative number in case of error.
+ * This ID is "old" and used in mountinfo only. Since Linux v6.8 there is also unique
+ * 64-bit ID, see mnt_fs_get_uniq_id().
+ *
+ * Returns: mount ID or negative number in case of error.
  */
 int mnt_fs_get_id(struct libmnt_fs *fs)
 {
 	return fs ? fs->id : -EINVAL;
+}
+
+/**
+ * mnt_fs_get_uniq_id:
+ * @fs: filesystem instance
+ *
+ * This ID is provided by statmount() or statx(STATX_MNT_ID_UNIQUE) since Linux
+ * kernel since v6.8.
+ *
+ * Returns: unique mount ID
+ *
+ * Since: 2.41
+ */
+uint64_t mnt_fs_get_uniq_id(struct libmnt_fs *fs)
+{
+	return fs ? fs->uniq_id : 0;
+}
+
+/**
+ * mnt_fs_set_uniq_id:
+ * @fs: filesystem instance
+ * @id: mount node ID
+ *
+ * This ID is provided by statmount() or statx(STATX_MNT_ID_UNIQUE) since Linux
+ * kernel since v6.8.
+ *
+ * Returns: 0 or negative number in case of error.
+ *
+ * Since: 2.41
+ */
+int mnt_fs_set_uniq_id(struct libmnt_fs *fs, uint64_t id)
+{
+	if (!fs)
+		return -EINVAL;
+	fs->uniq_id = id;
+	return 0;
 }
 
 /**
@@ -1377,6 +1416,19 @@ int mnt_fs_get_id(struct libmnt_fs *fs)
 int mnt_fs_get_parent_id(struct libmnt_fs *fs)
 {
 	return fs ? fs->parent : -EINVAL;
+}
+
+/**
+ * mnt_fs_get_parent_uniq_id:
+ * @fs: filesystem instance
+ *
+ * This ID is provided by statmount() since Linux kernel since v6.8.
+ *
+ * Returns: parent mount ID or 0 if not avalable
+ */
+uint64_t mnt_fs_get_parent_uniq_id(struct libmnt_fs *fs)
+{
+	return fs ? fs->uniq_parent : 0;
 }
 
 /**
@@ -1714,6 +1766,10 @@ int mnt_fs_print_debug(struct libmnt_fs *fs, FILE *file)
 		fprintf(file, "id:     %d\n", mnt_fs_get_id(fs));
 	if (mnt_fs_get_parent_id(fs))
 		fprintf(file, "parent: %d\n", mnt_fs_get_parent_id(fs));
+	if (mnt_fs_get_uniq_id(fs))
+		fprintf(file, "uniq-id:     %" PRIu64 "\n", mnt_fs_get_uniq_id(fs));
+	if (mnt_fs_get_parent_uniq_id(fs))
+		fprintf(file, "uniq-parent: %" PRIu64 "\n", mnt_fs_get_parent_uniq_id(fs));
 	if (mnt_fs_get_devno(fs))
 		fprintf(file, "devno:  %d:%d\n", major(mnt_fs_get_devno(fs)),
 						minor(mnt_fs_get_devno(fs)));

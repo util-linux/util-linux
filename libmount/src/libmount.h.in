@@ -31,6 +31,7 @@ extern "C" {
 #include <stdio.h>
 #include <mntent.h>
 #include <sys/types.h>
+#include <stdint.h>
 
 /* Make sure libc MS_* definitions are used by default. Note that MS_* flags
  * may be already defined by linux/fs.h or another file -- in this case we
@@ -530,8 +531,14 @@ extern const char *mnt_fs_get_root(struct libmnt_fs *fs);
 extern int mnt_fs_set_root(struct libmnt_fs *fs, const char *path);
 extern const char *mnt_fs_get_bindsrc(struct libmnt_fs *fs);
 extern int mnt_fs_set_bindsrc(struct libmnt_fs *fs, const char *src);
+
 extern int mnt_fs_get_id(struct libmnt_fs *fs);
+extern uint64_t mnt_fs_get_uniq_id(struct libmnt_fs *fs);
+extern int mnt_fs_set_uniq_id(struct libmnt_fs *fs, uint64_t id);
+
 extern int mnt_fs_get_parent_id(struct libmnt_fs *fs);
+extern uint64_t mnt_fs_get_parent_uniq_id(struct libmnt_fs *fs);
+
 extern dev_t mnt_fs_get_devno(struct libmnt_fs *fs);
 extern pid_t mnt_fs_get_tid(struct libmnt_fs *fs);
 

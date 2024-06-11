@@ -381,3 +381,9 @@ MOUNT_2_40 {
 	mnt_unref_lock;
 	mnt_monitor_veil_kernel;
 } MOUNT_2_39;
+
+MOUNT_2_41 {
+	mnt_fs_get_uniq_id;
+	mnt_fs_get_parent_uniq_id;
+	mnt_fs_set_uniq_id;
+} MOUNT_2_40;

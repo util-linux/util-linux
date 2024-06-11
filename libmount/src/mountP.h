@@ -201,7 +201,9 @@ struct libmnt_fs {
 	struct libmnt_optlist *optlist;
 
 	int		id;		/* mountinfo[1]: ID */
+	uint64_t	uniq_id;	/* unique node ID; statx(STATX_MNT_ID_UNIQUE); statmount->mnt_id */
 	int		parent;		/* mountinfo[2]: parent */
+	uint64_t	uniq_parent;	/* unique parent ID; statmount->mnt_parent_id */
 	dev_t		devno;		/* mountinfo[3]: st_dev */
 
 	char		*bindsrc;	/* utab, full path from fstab[1] for bind mounts */
