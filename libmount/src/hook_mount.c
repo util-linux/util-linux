@@ -311,22 +311,8 @@ static int hook_create_mount(struct libmnt_context *cxt,
 		/* cleanup after fail (libmount may only try the FS type) */
 		close_sysapi_fds(api);
 
-#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID)
-	if (!rc && cxt->fs) {
-		struct statx st;
-
-		rc = statx(api->fd_tree, "", AT_EMPTY_PATH, STATX_MNT_ID, &st);
-		if (rc == 0) {
-			cxt->fs->id = (int) st.stx_mnt_id;
-			if (cxt->update) {
-				struct libmnt_fs *fs = mnt_update_get_fs(cxt->update);
-				if (fs)
-					fs->id = cxt->fs->id;
-			}
-		}
-	}
-#endif
-
+	if (!rc && cxt->fs)
+		mnt_id_from_fd(api->fd_tree, &cxt->fs->uniq_id, &cxt->fs->id);
 done:
 	DBG(HOOK, ul_debugobj(hs, "create FS done [rc=%d, id=%d]", rc, cxt->fs ? cxt->fs->id : -1));
 	return rc;

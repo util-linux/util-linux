@@ -266,6 +266,50 @@ int mnt_is_readonly(const char *path)
 	return 0;
 }
 
+static int get_mnt_id(	int fd, const char *path,
+			uint64_t *uniq_id, int *id)
+{
+#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID)
+	int rc;
+	struct statx sx = { 0 };
+
+	if (id) {
+		rc = statx(fd,	path ? path : "",
+				path ? 0 : AT_EMPTY_PATH,
+				STATX_MNT_ID, &sx);
+		if (rc)
+			return rc;
+		*id = sx.stx_mnt_id;
+	}
+	if (uniq_id) {
+# ifdef STATX_MNT_ID_UNIQUE
+		rc = statx(fd,	path && *path ? path : "",
+				path && *path ? 0 : AT_EMPTY_PATH,
+				STATX_MNT_ID_UNIQUE, &sx);
+		if (rc)
+			return rc;
+		*uniq_id = sx.stx_mnt_id;
+# else
+		return -ENOSYS;
+# endif
+	}
+	return 0;
+#else
+	return -ENOSYS;
+#endif
+}
+
+int mnt_id_from_fd(int fd, uint64_t *uniq_id, int *id)
+{
+	return get_mnt_id(fd, NULL, uniq_id, id);
+}
+
+int mnt_id_from_path(const char *path, uint64_t *uniq_id, int *id)
+{
+	return get_mnt_id(-1, path, uniq_id, id);
+}
+
+
 /**
  * mnt_mangle:
  * @str: string
