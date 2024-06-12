@@ -467,6 +467,10 @@ static int sysfs_devchain_is_removable(char *chain)
 		/* append "/removable" to the path */
 		memcpy(chain + len, REMOVABLE_FILENAME, sizeof(REMOVABLE_FILENAME));
 
+		/* root of device hierarchy */
+		if (strcmp(chain, "/sys/dev/block" REMOVABLE_FILENAME) == 0)
+			break;
+
 		/* try to read it */
 		fd = open(chain, O_RDONLY);
 		if (fd != -1) {
