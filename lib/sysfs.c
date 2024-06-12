@@ -404,8 +404,8 @@ char *sysfs_blkdev_get_devchain(struct path_cxt *pc, char *buf, size_t bufsz)
 	ul_buffer_append_string(&tmp, _PATH_SYS_DEVBLOCK "/");
 	ul_buffer_append_data(&tmp, buf, ssz);
 
-	p = ul_buffer_get_data(&tmp, &sz, NULL);
-	if (p && sz < bufsz) {
+	p = ul_buffer_get_string(&tmp, &sz, NULL);
+	if (p && sz <= bufsz) {
 		memcpy(buf, p, sz);
 		res = buf;
 	}
