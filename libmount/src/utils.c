@@ -272,10 +272,14 @@ static int get_mnt_id(	int fd, const char *path,
 #if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID)
 	int rc;
 	struct statx sx = { 0 };
+	int flags;
+
+	flags = AT_STATX_DONT_SYNC | AT_NO_AUTOMOUNT;
+	if (!path || !*path)
+		flags |= AT_EMPTY_PATH;
 
 	if (id) {
-		rc = statx(fd,	path ? path : "",
-				path ? 0 : AT_EMPTY_PATH,
+		rc = statx(fd,	path && *path ? path : "", flags,
 				STATX_MNT_ID, &sx);
 		if (rc)
 			return rc;
@@ -283,8 +287,7 @@ static int get_mnt_id(	int fd, const char *path,
 	}
 	if (uniq_id) {
 # ifdef STATX_MNT_ID_UNIQUE
-		rc = statx(fd,	path && *path ? path : "",
-				path && *path ? 0 : AT_EMPTY_PATH,
+		rc = statx(fd,	path && *path ? path : "", flags,
 				STATX_MNT_ID_UNIQUE, &sx);
 		if (rc)
 			return rc;
