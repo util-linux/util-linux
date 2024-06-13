@@ -100,6 +100,7 @@ void mnt_reset_fs(struct libmnt_fs *fs)
 	fs->optlist = NULL;
 
 	fs->opts_age = 0;
+	fs->propagation = 0;
 
 	memset(fs, 0, sizeof(*fs));
 	INIT_LIST_HEAD(&fs->ents);
@@ -657,21 +658,21 @@ int mnt_fs_get_propagation(struct libmnt_fs *fs, unsigned long *flags)
 	if (!fs || !flags)
 		return -EINVAL;
 
-	*flags = 0;
+	if (!fs->propagation && fs->opt_fields) {
+		 /*
+		 * The optional fields format is incompatible with mount options
+		 * ... we have to parse the field here.
+		 */
+		fs->propagation |= strstr(fs->opt_fields, "shared:") ?
+						MS_SHARED : MS_PRIVATE;
 
-	if (!fs->opt_fields)
-		return 0;
+		if (strstr(fs->opt_fields, "master:"))
+			fs->propagation |= MS_SLAVE;
+		if (strstr(fs->opt_fields, "unbindable"))
+			fs->propagation |= MS_UNBINDABLE;
+	}
 
-	 /*
-	 * The optional fields format is incompatible with mount options
-	 * ... we have to parse the field here.
-	 */
-	*flags |= strstr(fs->opt_fields, "shared:") ? MS_SHARED : MS_PRIVATE;
-
-	if (strstr(fs->opt_fields, "master:"))
-		*flags |= MS_SLAVE;
-	if (strstr(fs->opt_fields, "unbindable"))
-		*flags |= MS_UNBINDABLE;
+	*flags = fs->propagation;
 
 	return 0;
 }
