@@ -240,6 +240,9 @@ struct libmnt_fs {
 	int		flags;		/* MNT_FS_* flags */
 	pid_t		tid;		/* /proc/<tid>/mountinfo otherwise zero */
 
+	unsigned int	stmnt_done : 1,
+			stmnt_enabled : 1;
+
 	char		*comment;	/* fstab comment */
 
 	void		*userdata;	/* library independent data */

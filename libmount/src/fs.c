@@ -22,6 +22,7 @@
 
 #include "mountP.h"
 #include "strutils.h"
+#include "mount-api-utils.h"
 
 /**
  * mnt_new_fs:
@@ -238,6 +239,165 @@ int mnt_fs_follow_optlist(struct libmnt_fs *fs, struct libmnt_optlist *ol)
 	if (ol)
 		mnt_ref_optlist(ol);
 	return 0;
+}
+
+/**
+ * mnt_fs_enable_statmount:
+ * @fs: filesystem instance
+ * @enable: 0 or 1
+ *
+ * Enable or disable on demand fetching mount node information by statmount().
+ *
+ * Returns: 0 or negative number in case of error (if @fs is NULL).
+ *
+ * Since: 2.41
+ */
+int mnt_fs_enable_statmount(struct libmnt_fs *fs, int enable)
+{
+	if (!fs)
+		return -EINVAL;
+	fs->stmnt_enabled = enable ? 1 : 0;
+	return 0;
+}
+
+#ifdef HAVE_STATMOUNT_API
+
+# define sm_str(_sm, member)    ((_sm)->str + member)
+
+static int apply_statmount(struct libmnt_fs *fs, struct statmount *sm)
+{
+	int rc = 0, merge = !fs->vfs_optstr || fs->fs_optstr;
+
+	if ((sm->mask & STATMOUNT_FS_TYPE) && !fs->fstype)
+		rc = mnt_fs_set_fstype(fs, sm_str(sm, sm->fs_type));
+
+	if (!rc && (sm->mask & STATMOUNT_MNT_POINT) && !fs->target)
+		rc = mnt_fs_set_target(fs, sm_str(sm, sm->mnt_point));
+
+	if (!rc && (sm->mask & STATMOUNT_MNT_ROOT) && !fs->root)
+		rc = mnt_fs_set_root(fs, sm_str(sm, sm->mnt_root));
+
+	if (!rc && (sm->mask & STATMOUNT_MNT_BASIC)) {
+		if (!fs->propagation)
+			fs->propagation = sm->mnt_propagation;
+		if (!fs->parent)
+			fs->parent = sm->mnt_parent_id_old;
+		if (!fs->uniq_parent)
+			fs->uniq_parent = sm->mnt_parent_id;
+		if (!fs->id)
+			fs->id = sm->mnt_id_old;
+		if (!fs->uniq_id)
+			fs->uniq_id = sm->mnt_id;
+		if (!fs->vfs_optstr) {
+			rc = mnt_optstr_append_option(&fs->vfs_optstr,
+					sm->mnt_attr & MOUNT_ATTR_RDONLY ? "ro" : "rw", NULL);
+			if (!rc && (sm->mnt_attr & MOUNT_ATTR_NOSUID))
+				rc = mnt_optstr_append_option(&fs->vfs_optstr, "nosuid", NULL);
+			if (!rc && (sm->mnt_attr & MOUNT_ATTR_NODEV))
+				rc = mnt_optstr_append_option(&fs->vfs_optstr, "nodev", NULL);
+			if (!rc && (sm->mnt_attr & MOUNT_ATTR_NOEXEC))
+				rc = mnt_optstr_append_option(&fs->vfs_optstr, "noexec", NULL);
+			if (!rc && (sm->mnt_attr & MOUNT_ATTR_NODIRATIME))
+				rc = mnt_optstr_append_option(&fs->vfs_optstr, "nodiratime", NULL);
+			if (!rc && (sm->mnt_attr & MOUNT_ATTR_NOSYMFOLLOW))
+				rc = mnt_optstr_append_option(&fs->vfs_optstr, "nosymfollow", NULL);
+
+			switch (sm->mnt_attr & MOUNT_ATTR__ATIME) {
+			case MOUNT_ATTR_STRICTATIME:
+				rc = mnt_optstr_append_option(&fs->vfs_optstr, "strictatime", NULL);
+				break;
+			case MOUNT_ATTR_NOATIME:
+				rc = mnt_optstr_append_option(&fs->vfs_optstr, "noatime", NULL);
+				break;
+			case MOUNT_ATTR_RELATIME:
+				rc = mnt_optstr_append_option(&fs->vfs_optstr, "relatime", NULL);
+				break;
+			}
+
+		}
+	}
+	if (!rc && (sm->mask & STATMOUNT_SB_BASIC)) {
+		if (!fs->devno)
+			fs->devno = makedev(sm->sb_dev_major, sm->sb_dev_minor);
+		if (!fs->fs_optstr) {
+			rc = mnt_optstr_append_option(&fs->fs_optstr,
+					sm->sb_flags & SB_RDONLY ? "ro" : "rw", NULL);
+			if (!rc && (sm->sb_flags & SB_SYNCHRONOUS))
+				rc = mnt_optstr_append_option(&fs->fs_optstr, "sync", NULL);
+			if (!rc && (sm->sb_flags & SB_DIRSYNC))
+				rc = mnt_optstr_append_option(&fs->fs_optstr, "dirsync", NULL);
+			if (!rc && (sm->sb_flags & SB_LAZYTIME))
+				rc = mnt_optstr_append_option(&fs->fs_optstr, "lazytime", NULL);
+		}
+	}
+
+	if (!rc && merge) {
+		free(fs->optstr);
+
+		/* merge VFS and FS options to one string (we do the same in mountinfo parser) */
+		fs->optstr = mnt_fs_strdup_options(fs);
+	}
+	return rc;
+}
+#endif /* HAVE_STATMOUNT_API */
+
+/**
+ * mnt_fs_fetch_statmount:
+ * @fs: filesystem instance
+ *
+ * Force fetching mount node information from kernel.
+ *
+ * Returns: 0 or negative number in case of error (if @fs is NULL).
+ *
+ * Since: 2.41
+ */
+int mnt_fs_fetch_statmount(struct libmnt_fs *fs)
+{
+	int rc = 0, status;
+
+	if (!fs)
+		return -EINVAL;
+	if (fs->stmnt_done)
+		return 0;
+
+	/* temporary disable statmount() to avoid recursive
+	 * mnt_fs_fetch_statmount() from mnt_fs_get...() functions */
+	status = fs->stmnt_enabled;
+	fs->stmnt_enabled = 0;
+
+	if (!fs->uniq_id) {
+		if (!fs->target) {
+			rc = -EINVAL;
+			goto done;
+		}
+		rc = mnt_id_from_path(fs->target, &fs->uniq_id, NULL);
+		if (rc)
+			goto done;
+	}
+
+#ifdef HAVE_STATMOUNT_API
+	uint64_t mask = STATMOUNT_SB_BASIC | STATMOUNT_MNT_BASIC;
+	char buf[BUFSIZ];
+	struct statmount *sm = (struct statmount *) buf;
+
+	if (!fs->fstype)
+		mask |= STATMOUNT_FS_TYPE;
+	if (!fs->target)
+		mask |= STATMOUNT_MNT_POINT;
+	if (!fs->root)
+		mask |= STATMOUNT_MNT_ROOT;
+
+	rc = statmount(fs->uniq_id, mask, sm, sizeof(buf), 0);
+	if (!rc)
+		rc = apply_statmount(fs, sm);
+#else
+	rc = -ENOSYS;
+#endif
+
+done:
+	fs->stmnt_enabled = status;
+	fs->stmnt_done = 1;
+	return rc;
 }
 
 /**
@@ -1379,10 +1539,32 @@ int mnt_fs_get_id(struct libmnt_fs *fs)
  * kernel since v6.8.
  *
  * Returns: unique mount ID
+ *
+ * Since: 2.41
  */
 uint64_t mnt_fs_get_uniq_id(struct libmnt_fs *fs)
 {
 	return fs ? fs->uniq_id : 0;
+}
+
+/**
+ * mnt_fs_set_uniq_id:
+ * @fs: filesystem instance
+ * @id: mount node ID
+ *
+ * This ID is provided by statmount() or statx(STATX_MNT_ID_UNIQUE) since Linux
+ * kernel since v6.8.
+ *
+ * Returns: 0 or negative number in case of error.
+ *
+ * Since: 2.41
+ */
+int mnt_fs_set_uniq_id(struct libmnt_fs *fs, uint64_t id)
+{
+	if (!fs)
+		return -EINVAL;
+	fs->uniq_id = id;
+	return 0;
 }
 
 /**
@@ -1698,6 +1880,8 @@ int mnt_fs_match_options(struct libmnt_fs *fs, const char *options)
  */
 int mnt_fs_print_debug(struct libmnt_fs *fs, FILE *file)
 {
+	unsigned long pro = 0;
+
 	if (!fs || !file)
 		return -EINVAL;
 
@@ -1722,6 +1906,12 @@ int mnt_fs_print_debug(struct libmnt_fs *fs, FILE *file)
 	if (mnt_fs_get_attributes(fs))
 		fprintf(file, "attributes: %s\n", mnt_fs_get_attributes(fs));
 
+	if (mnt_fs_get_propagation(fs, &pro) == 0)
+		fprintf(file, "propagation: %s %s %s\n",
+				pro & MS_SHARED ? "shared" : "private",
+				pro & MS_SLAVE ? "slave" : "",
+				pro & MS_UNBINDABLE ? "unbindable" : "");
+
 	if (mnt_fs_get_root(fs))
 		fprintf(file, "root:   %s\n", mnt_fs_get_root(fs));
 
@@ -1744,6 +1934,11 @@ int mnt_fs_print_debug(struct libmnt_fs *fs, FILE *file)
 		fprintf(file, "id:     %d\n", mnt_fs_get_id(fs));
 	if (mnt_fs_get_parent_id(fs))
 		fprintf(file, "parent: %d\n", mnt_fs_get_parent_id(fs));
+	if (mnt_fs_get_uniq_id(fs))
+		fprintf(file, "uniq-id:     %" PRIu64 "\n", mnt_fs_get_uniq_id(fs));
+	if (mnt_fs_get_parent_uniq_id(fs))
+		fprintf(file, "uniq-parent: %" PRIu64 "\n", mnt_fs_get_parent_uniq_id(fs));
+
 	if (mnt_fs_get_devno(fs))
 		fprintf(file, "devno:  %d:%d\n", major(mnt_fs_get_devno(fs)),
 						minor(mnt_fs_get_devno(fs)));
