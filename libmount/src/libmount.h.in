@@ -477,6 +477,10 @@ extern void mnt_reset_fs(struct libmnt_fs *fs);
 extern struct libmnt_fs *mnt_copy_fs(struct libmnt_fs *dest,
 				     const struct libmnt_fs *src)
 			__ul_attribute__((warn_unused_result));
+
+extern int mnt_fs_enable_statmount(struct libmnt_fs *fs, int enable);
+extern int mnt_fs_fetch_statmount(struct libmnt_fs *fs);
+
 extern void *mnt_fs_get_userdata(struct libmnt_fs *fs);
 extern int mnt_fs_set_userdata(struct libmnt_fs *fs, void *data);
 extern const char *mnt_fs_get_source(struct libmnt_fs *fs);
@@ -534,6 +538,7 @@ extern int mnt_fs_set_bindsrc(struct libmnt_fs *fs, const char *src);
 
 extern int mnt_fs_get_id(struct libmnt_fs *fs);
 extern uint64_t mnt_fs_get_uniq_id(struct libmnt_fs *fs);
+extern int mnt_fs_set_uniq_id(struct libmnt_fs *fs, uint64_t id);
 
 extern int mnt_fs_get_parent_id(struct libmnt_fs *fs);
 extern uint64_t mnt_fs_get_parent_uniq_id(struct libmnt_fs *fs);
