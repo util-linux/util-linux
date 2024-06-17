@@ -36,8 +36,7 @@ int main(int argc, char *argv[])
 	else
 		mnt_fs_set_target(fs, mnt);
 
-	if (mnt_fs_fetch_statmount(fs))
-		err(EXIT_FAILURE, "cannot fetch FS infomation");
+	mnt_fs_enable_statmount(fs, 1);
 
 	mnt_fs_print_debug(fs, stdout);
 
