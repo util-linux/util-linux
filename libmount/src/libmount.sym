@@ -387,4 +387,5 @@ MOUNT_2_41 {
 	mnt_fs_set_uniq_id;
 	mnt_fs_get_parent_uniq_id;
 	mnt_fs_fetch_statmount;
+	mnt_fs_enable_statmount;
 } MOUNT_2_40;
