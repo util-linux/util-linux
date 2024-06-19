@@ -90,6 +90,9 @@ When *unshare* terminates, have _signame_ be sent to the forked child process. C
 *--mount-proc*[**=**__mountpoint__]::
 Just before running the program, mount the proc filesystem at _mountpoint_ (default is _/proc_). This is useful when creating a new PID namespace. It also implies creating a new mount namespace since the _/proc_ mount would otherwise mess up existing programs on the system. The new proc filesystem is explicitly mounted as private (with *MS_PRIVATE*|*MS_REC*).
 
+*--mount-binfmt*[**=**__mountpoint__]::
+Just before running the program, mount the binfmt_misc filesystem at _mountpoint_ (default is /proc/sys/fs/binfmt_misc).  It also implies creating a new mount namespace since the binfmt_misc mount would otherwise mess up existing programs on the system.  The new binfmt_misc filesystem is explicitly mounted as private (with *MS_PRIVATE*|*MS_REC*).
+
 **--map-user=**__uid|name__::
 Run the program only after the current effective user ID has been mapped to _uid_. If this option is specified multiple times, the last occurrence takes precedence. This option implies *--user*.
 
