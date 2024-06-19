@@ -127,6 +127,8 @@ The *umount* command will automatically detach loop device previously initialize
 
 In this case the device is initialized with "autoclear" flag (see *losetup*(8) output for more details), otherwise it's necessary to use the option *--detach-loop* or call *losetup -d* _device_. The autoclear feature is supported since Linux 2.6.25.
 
+Note that since Linux v3.7 kernel uses "lazy device destruction". The system just marks the loop device by autoclear flag and destroys it later. If you need to wait for a complete removal of the loop device, call *udevadm settle* after *umount*.
+
 == EXIT STATUS
 
 *umount* has the following exit status values (the bits can be ORed):
