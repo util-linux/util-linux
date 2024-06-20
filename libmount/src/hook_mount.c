@@ -72,9 +72,15 @@ static void save_fd_messages(struct libmnt_context *cxt, int fd)
 
 	mnt_context_set_errmsg(cxt, NULL);
 
-	while ((rc = read(fd, buf, sizeof(buf))) != -1) {
-		if (rc > 0 && buf[rc - 1] == '\n')
-			buf[rc - 1] = '\0';
+	while ((rc = read(fd, buf, sizeof(buf) - 1)) != -1) {
+
+		if (rc == 0)
+			continue;
+		if (buf[rc - 1] == '\n')
+			buf[--rc] = '\0';
+		else
+			buf[rc] = '\0';
+
 		DBG(CXT, ul_debug("message from kernel: \"%*s\"", rc, buf));
 
 		if (rc < 3 || strncmp((char *) buf, "e ", 2) != 0)
