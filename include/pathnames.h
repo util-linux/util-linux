@@ -110,6 +110,8 @@
 #define _PATH_PROC_FDDIR	"/proc/self/fd"
 #define _PATH_PROC_TIMENS_OFF   "/proc/self/timens_offsets"
 
+#define _PATH_PROC_OOM_ADJ	"/proc/self/oom_score_adj"
+
 #define _PATH_PROC_ATTR_CURRENT	"/proc/self/attr/current"
 #define _PATH_PROC_ATTR_EXEC	"/proc/self/attr/exec"
 #define _PATH_PROC_CAPLASTCAP	"/proc/sys/kernel/cap_last_cap"
