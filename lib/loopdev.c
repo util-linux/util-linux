@@ -32,6 +32,7 @@
 #include <sys/mman.h>
 #include <inttypes.h>
 #include <dirent.h>
+#include <sys/file.h>
 
 #include "linux_version.h"
 #include "c.h"
@@ -1623,9 +1624,15 @@ int loopcxt_ioctl_blocksize(struct loopdev_cxt *lc, uint64_t blocksize)
 int loopcxt_delete_device(struct loopdev_cxt *lc)
 {
 	int rc, fd = loopcxt_get_fd(lc);
+	int lock_fd = -1;
 
 	if (fd < 0)
 		return -EINVAL;
+
+	lock_fd = open(lc->device, O_RDONLY|O_CLOEXEC);
+	if (flock(lock_fd, LOCK_EX) < 0) {
+		return -errno;
+	}
 
 	DBG(SETUP, ul_debugobj(lc, "calling LOOP_SET_CLR_FD"));
 
@@ -1634,7 +1641,6 @@ int loopcxt_delete_device(struct loopdev_cxt *lc)
 		DBG(CXT, ul_debugobj(lc, "LOOP_CLR_FD failed: %m"));
 		return rc;
 	}
-
 	DBG(CXT, ul_debugobj(lc, "device removed"));
 	return 0;
 }
