@@ -49,6 +49,7 @@
 #include "caputils.h"
 #include "statfs_magic.h"
 #include "pathnames.h"
+#include "pidfd-utils.h"
 
 static struct namespace_file {
 	int nstype;
@@ -356,10 +357,12 @@ int main(int argc, char *argv[])
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
 	struct namespace_file *nsfile;
-	int c, pass, namespaces = 0, setgroups_nerrs = 0, preserve_cred = 0;
+	int c, pass, nstype, pidfd,
+	    namespaces = 0, setgroups_nerrs = 0, preserve_cred = 0;
 	bool do_rd = false, do_wd = false, do_uid = false, force_uid = false,
 	     do_gid = false, force_gid = false, do_env = false, do_all = false,
-	     do_join_cgroup = false, do_user_parent = false;
+	     do_join_cgroup = false, do_user_parent = false,
+	     try_pidfd = true;
 	int do_fork = -1; /* unknown yet */
 	char *wdns = NULL;
 	uid_t uid = 0;
@@ -390,52 +393,34 @@ int main(int argc, char *argv[])
 			    strtoul_or_err(optarg, _("failed to parse pid"));
 			break;
 		case 'm':
-			if (optarg)
-				open_namespace_fd(CLONE_NEWNS, optarg);
-			else
-				namespaces |= CLONE_NEWNS;
-			break;
+			nstype = CLONE_NEWNS;
+			goto namespace_arg;
 		case 'u':
-			if (optarg)
-				open_namespace_fd(CLONE_NEWUTS, optarg);
-			else
-				namespaces |= CLONE_NEWUTS;
-			break;
+			nstype = CLONE_NEWUTS;
+			goto namespace_arg;
 		case 'i':
-			if (optarg)
-				open_namespace_fd(CLONE_NEWIPC, optarg);
-			else
-				namespaces |= CLONE_NEWIPC;
-			break;
+			nstype = CLONE_NEWIPC;
+			goto namespace_arg;
 		case 'n':
-			if (optarg)
-				open_namespace_fd(CLONE_NEWNET, optarg);
-			else
-				namespaces |= CLONE_NEWNET;
-			break;
+			nstype = CLONE_NEWNET;
+			goto namespace_arg;
 		case 'p':
-			if (optarg)
-				open_namespace_fd(CLONE_NEWPID, optarg);
-			else
-				namespaces |= CLONE_NEWPID;
-			break;
+			nstype = CLONE_NEWPID;
+			goto namespace_arg;
 		case 'C':
-			if (optarg)
-				open_namespace_fd(CLONE_NEWCGROUP, optarg);
-			else
-				namespaces |= CLONE_NEWCGROUP;
-			break;
+			nstype = CLONE_NEWCGROUP;
+			goto namespace_arg;
 		case 'U':
-			if (optarg)
-				open_namespace_fd(CLONE_NEWUSER, optarg);
-			else
-				namespaces |= CLONE_NEWUSER;
-			break;
+			nstype = CLONE_NEWUSER;
+			goto namespace_arg;
 		case 'T':
-			if (optarg)
-				open_namespace_fd(CLONE_NEWTIME, optarg);
-			else
-				namespaces |= CLONE_NEWTIME;
+			nstype = CLONE_NEWTIME;
+namespace_arg:
+			if (optarg) {
+				open_namespace_fd(nstype, optarg);
+				try_pidfd = false;
+			}
+			namespaces |= nstype;
 			break;
 		case 'S':
 			if (strcmp(optarg, "follow") == 0)
@@ -527,12 +512,15 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	/*
-	 * Open remaining namespace and directory descriptors.
-	 */
-	for (nsfile = namespace_files; nsfile->nstype; nsfile++)
-		if (nsfile->nstype & namespaces)
-			open_namespace_fd(nsfile->nstype, NULL);
+	for (nsfile = namespace_files; nsfile->nstype; nsfile++) {
+		if (nsfile->nstype & namespaces) {
+			if (nsfile->fd < 0)
+				open_namespace_fd(nsfile->nstype, NULL);
+			if (nsfile->nstype == CLONE_NEWPID && do_fork == -1)
+				do_fork = 1;
+		}
+	}
+
 	if (do_rd)
 		open_target_fd(&root_fd, "root", NULL);
 	if (do_wd)
@@ -553,15 +541,6 @@ int main(int argc, char *argv[])
 	if (do_user_parent)
 		set_parent_user_ns_fd();
 
-	/*
-	 * Update namespaces variable to contain all requested namespaces
-	 */
-	for (nsfile = namespace_files; nsfile->nstype; nsfile++) {
-		if (nsfile->fd < 0)
-			continue;
-		namespaces |= nsfile->nstype;
-	}
-
 	/* for user namespaces we always set UID and GID (default is 0)
 	 * and clear root's groups if --preserve-credentials is no specified */
 	if ((namespaces & CLONE_NEWUSER) && !preserve_cred) {
@@ -572,6 +551,24 @@ int main(int argc, char *argv[])
 		if (setgroups(0, NULL) != 0)
 			setgroups_nerrs++;
 	}
+
+#ifdef UL_HAVE_PIDFD
+	if (try_pidfd && namespace_target_pid && !do_user_parent) {
+		pidfd = pidfd_open(namespace_target_pid, 0);
+		if (pidfd != -1) {
+			if (!setns(pidfd, namespaces)) {
+				close(pidfd);
+				for (nsfile = namespace_files; nsfile->nstype; nsfile++) {
+					if (nsfile->fd >= 0)
+						close(nsfile->fd);
+					nsfile->fd = -1;
+				}
+				goto done_setns;
+			}
+			close(pidfd);
+		}
+	}
+#endif
 
 	/*
 	 * Now that we know which namespaces we want to enter, enter
@@ -585,8 +582,6 @@ int main(int argc, char *argv[])
 		for (nsfile = namespace_files + 1 - pass; nsfile->nstype; nsfile++) {
 			if (nsfile->fd < 0)
 				continue;
-			if (nsfile->nstype == CLONE_NEWPID && do_fork == -1)
-				do_fork = 1;
 			if (setns(nsfile->fd, nsfile->nstype)) {
 				if (pass != 0)
 					err(EXIT_FAILURE,
@@ -601,6 +596,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
+done_setns:
 	/* Remember the current working directory if I'm not changing it */
 	if (root_fd >= 0 && wd_fd < 0 && wdns == NULL) {
 		wd_fd = open(".", O_RDONLY);
