@@ -1741,6 +1741,8 @@ static int ui_table_goto(struct cfdisk *cf, int where)
 
 	if (where < 0)
 		where = 0;
+	if (!nparts)
+		where = 0;
 	else if ((size_t) where > nparts - 1)
 		where = nparts - 1;
 
