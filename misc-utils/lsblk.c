@@ -2389,7 +2389,9 @@ int main(int argc, char *argv[])
 		.sort_id = -1,
 		.dedup_id = -1,
 		.flags = LSBLK_TREE,
-		.tree_id = COL_NAME
+		.tree_id = COL_NAME,
+		.properties_by = { LSBLK_METHOD_FILE, LSBLK_METHOD_UDEV,
+				     LSBLK_METHOD_BLKID, LSBLK_METHOD_NONE }
 	};
 	struct lsblk_devtree *tr = NULL;
 	int c, status = EXIT_FAILURE, collist = 0;
@@ -2403,6 +2405,7 @@ int main(int argc, char *argv[])
 		OPT_COUNTER_FILTER,
 		OPT_COUNTER,
 		OPT_HIGHLIGHT,
+		OPT_PROPERTIES_BY
 	};
 
 	static const struct option longopts[] = {
@@ -2443,6 +2446,7 @@ int main(int argc, char *argv[])
 		{ "width",	required_argument, NULL, 'w' },
 		{ "ct-filter",  required_argument, NULL, OPT_COUNTER_FILTER },
 		{ "ct",         required_argument, NULL, OPT_COUNTER },
+		{ "properties-by", required_argument, NULL, OPT_PROPERTIES_BY },
 		{ "list-columns", no_argument,     NULL, 'H' },
 		{ NULL, 0, NULL, 0 },
 	};
@@ -2657,7 +2661,10 @@ int main(int argc, char *argv[])
 		case OPT_HIGHLIGHT:
 			lsblk->hlighter = new_filter(optarg);
 			break;
-
+		case OPT_PROPERTIES_BY:
+			if (lsblk_set_properties_method(optarg) < 0)
+				errtryhelp(EXIT_FAILURE);
+			break;
 		case 'H':
 			collist = 1;
 			break;

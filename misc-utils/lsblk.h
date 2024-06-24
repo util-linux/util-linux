@@ -32,6 +32,16 @@ UL_DEBUG_DECLARE_MASK(lsblk);
 #define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(lsblk)
 #include "debugobj.h"
 
+/* --properties-by items */
+enum lsblk_devprop_method {
+	LSBLK_METHOD_NONE = 0,
+	LSBLK_METHOD_UDEV,
+	LSBLK_METHOD_BLKID,
+	LSBLK_METHOD_FILE,
+
+	__LSBLK_NMETHODS	/* keep last */
+};
+
 struct lsblk {
 	struct libscols_table *table;	/* output table */
 	struct libscols_column *sort_col;/* sort output by this column */
@@ -50,6 +60,8 @@ struct lsblk {
 
 	const char *sysroot;
 	int flags;			/* LSBLK_* */
+
+	int properties_by[__LSBLK_NMETHODS];
 
 	unsigned int all_devices:1;	/* print all devices, including empty */
 	unsigned int bytes:1;		/* print SIZE in bytes */
@@ -93,6 +105,8 @@ struct lsblk_devprop {
 	char *group;		/* group name */
 	char *mode;		/* access mode in ls(1)-like notation */
 };
+
+
 
 /* Device dependence
  *
@@ -232,6 +246,8 @@ extern struct lsblk_devprop *lsblk_device_get_properties(struct lsblk_device *de
 extern void lsblk_properties_deinit(void);
 
 extern const char *lsblk_parttype_code_to_string(const char *code, const char *pttype);
+
+extern int lsblk_set_properties_method(const char *opts);
 
 /* lsblk-devtree.c */
 void lsblk_reset_iter(struct lsblk_iter *itr, int direction);
