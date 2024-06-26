@@ -240,8 +240,9 @@ struct libmnt_fs {
 	int		flags;		/* MNT_FS_* flags */
 	pid_t		tid;		/* /proc/<tid>/mountinfo otherwise zero */
 
-	unsigned int	stmnt_done : 1,
-			stmnt_enabled : 1;
+	uint64_t	stmnt_done;	/* mask of already called masks */
+	uint64_t        stmnt_mask;	/* default statmount() mask */
+	unsigned int	stmnt_enabled:1; /* enable or disable statmount() */
 
 	char		*comment;	/* fstab comment */
 

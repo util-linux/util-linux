@@ -478,8 +478,8 @@ extern struct libmnt_fs *mnt_copy_fs(struct libmnt_fs *dest,
 				     const struct libmnt_fs *src)
 			__ul_attribute__((warn_unused_result));
 
-extern int mnt_fs_enable_statmount(struct libmnt_fs *fs, int enable);
-extern int mnt_fs_fetch_statmount(struct libmnt_fs *fs);
+extern int mnt_fs_enable_statmount(struct libmnt_fs *fs, int enable, uint64_t mask);
+extern int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask);
 
 extern void *mnt_fs_get_userdata(struct libmnt_fs *fs);
 extern int mnt_fs_set_userdata(struct libmnt_fs *fs, void *data);
