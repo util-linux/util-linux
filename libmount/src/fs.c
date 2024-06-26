@@ -24,7 +24,7 @@
 #include "strutils.h"
 #include "mount-api-utils.h"
 
-#define is_stmnt_possible(_x)	((_x)->stmnt_enabled && !(_x)->stmnt_done)
+#define want_statmount(_x, _m)	((_x)->stmnt_enabled && !((_x)->stmnt_done & (_m)))
 
 /**
  * mnt_new_fs:
@@ -104,6 +104,10 @@ void mnt_reset_fs(struct libmnt_fs *fs)
 
 	fs->opts_age = 0;
 	fs->propagation = 0;
+
+	fs->stmnt_done = 0;
+	fs->stmnt_enabled = 0;
+	fs->stmnt_mask = 0;
 
 	memset(fs, 0, sizeof(*fs));
 	INIT_LIST_HEAD(&fs->ents);
@@ -247,17 +251,30 @@ int mnt_fs_follow_optlist(struct libmnt_fs *fs, struct libmnt_optlist *ol)
  * mnt_fs_enable_statmount:
  * @fs: filesystem instance
  * @enable: 0 or 1
+ * @mask: default statmount() mask
  *
  * Enable or disable on demand fetching mount node information by statmount().
+ * The setting is possible to reset by mnt_reset_fs().
+ *
+ * The default behavior of on-demand fetching is to minimize the size of data read
+ * from the kernel. For example, mnt_fs_get_fstype() will only read the filesystem
+ * type, but nothing else. However, this behavior may introduce unwanted overhead
+ * (a large number of syscalls) in some use cases. In such cases, you can define
+ * the @mask to force libmount to fetch (and save) more data with one statmount()
+ * call.
+ *
+ * See mnt_fs_fetch_statmount() for details about the @mask.
  *
  * Returns: 0 or negative number in case of error (if @fs is NULL).
  *
  * Since: 2.41
  */
-int mnt_fs_enable_statmount(struct libmnt_fs *fs, int enable)
+int mnt_fs_enable_statmount(struct libmnt_fs *fs, int enable, uint64_t mask)
 {
 	if (!fs)
 		return -EINVAL;
+
+	fs->stmnt_mask = mask;
 	fs->stmnt_enabled = enable ? 1 : 0;
 	return 0;
 }
@@ -347,20 +364,32 @@ static int apply_statmount(struct libmnt_fs *fs, struct statmount *sm)
 /**
  * mnt_fs_fetch_statmount:
  * @fs: filesystem instance
+ * @mask: extends the default statmount() mask.
  *
- * Force fetching mount node information from kernel.
+ * This function retrieves mount node information from the kernel. The @mask is
+ * extended (bitwise-OR) by the mask specified for mnt_fs_enable_statmount() if
+ * on-demand fetching is enabled. If the mask is still 0, then a mask is
+ * generated for all missing data in @fs.
  *
  * Returns: 0 or negative number in case of error (if @fs is NULL).
  *
  * Since: 2.41
  */
-int mnt_fs_fetch_statmount(struct libmnt_fs *fs)
+int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 {
 	int rc = 0, status;
 
 	if (!fs)
 		return -EINVAL;
-	if (fs->stmnt_done)
+
+	/* add default mask if on-demand enabled */
+	if (fs->stmnt_enabled
+	    && fs->stmnt_mask
+	    && !(fs->stmnt_done & fs->stmnt_mask))
+		mask |= fs->stmnt_mask;
+
+	/* ignore repeated requests */
+	if (mask && fs->stmnt_done & mask)
 		return 0;
 
 	/* temporary disable statmount() to avoid recursive
@@ -380,19 +409,30 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs)
 	}
 
 #ifdef HAVE_STATMOUNT_API
-	uint64_t mask = STATMOUNT_SB_BASIC | STATMOUNT_MNT_BASIC;
 	char buf[BUFSIZ];
 	struct statmount *sm = (struct statmount *) buf;
 
-	if (!fs->fstype)
-		mask |= STATMOUNT_FS_TYPE;
-	if (!fs->target)
-		mask |= STATMOUNT_MNT_POINT;
-	if (!fs->root)
-		mask |= STATMOUNT_MNT_ROOT;
+	/* fetch all missing information by default */
+	if (!mask) {
+		mask = STATMOUNT_SB_BASIC | STATMOUNT_MNT_BASIC;
+		if (!fs->fstype)
+			mask |= STATMOUNT_FS_TYPE;
+		if (!fs->target)
+			mask |= STATMOUNT_MNT_POINT;
+		if (!fs->root)
+			mask |= STATMOUNT_MNT_ROOT;
+	}
+	if (!mask)
+		goto done;
 
 	rc = statmount(fs->uniq_id, mask, sm, sizeof(buf), 0);
-	DBG(FS, ul_debugobj(fs, "statmount [rc=%d]", rc));
+	DBG(FS, ul_debugobj(fs, "statmount [rc=%d  mask: %s%s%s%s%s]", rc,
+				mask & STATMOUNT_SB_BASIC ? "sb-basic " : "",
+				mask & STATMOUNT_MNT_BASIC ? "mnt-basic " : "",
+				mask & STATMOUNT_MNT_ROOT ? "mnt-root " : "",
+				mask & STATMOUNT_MNT_POINT ? "mnt-point " : "",
+				mask & STATMOUNT_FS_TYPE ? "fs-type " : ""));
+
 	if (!rc)
 		rc = apply_statmount(fs, sm);
 #else
@@ -401,7 +441,7 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs)
 
 done:
 	fs->stmnt_enabled = status;
-	fs->stmnt_done = 1;
+	fs->stmnt_done |= mask;
 	return rc;
 }
 
@@ -778,8 +818,8 @@ const char *mnt_fs_get_target(struct libmnt_fs *fs)
 {
 	if (!fs)
 		return NULL;
-	if (!fs->target && is_stmnt_possible(fs))
-		mnt_fs_fetch_statmount(fs);
+	if (!fs->target && want_statmount(fs, STATMOUNT_MNT_POINT))
+		mnt_fs_fetch_statmount(fs, STATMOUNT_MNT_POINT);
 	return fs->target;;
 }
 
@@ -826,8 +866,8 @@ int mnt_fs_get_propagation(struct libmnt_fs *fs, unsigned long *flags)
 {
 	if (!fs || !flags)
 		return -EINVAL;
-	if (!fs->propagation && is_stmnt_possible(fs))
-		mnt_fs_fetch_statmount(fs);
+	if (!fs->propagation && want_statmount(fs, STATMOUNT_MNT_BASIC))
+		mnt_fs_fetch_statmount(fs, STATMOUNT_MNT_BASIC);
 
 	if (!fs->propagation && fs->opt_fields) {
 		 /*
@@ -880,8 +920,8 @@ int mnt_fs_is_pseudofs(struct libmnt_fs *fs)
 {
 	if (!fs)
 		return 0;
-	if (!fs->fstype && is_stmnt_possible(fs))
-		mnt_fs_fetch_statmount(fs);
+	if (!fs->fstype && want_statmount(fs, STATMOUNT_FS_TYPE))
+		mnt_fs_fetch_statmount(fs, STATMOUNT_FS_TYPE);
 
 	return mnt_fs_get_flags(fs) & MNT_FS_PSEUDO ? 1 : 0;
 }
@@ -896,8 +936,8 @@ int mnt_fs_is_netfs(struct libmnt_fs *fs)
 {
 	if (!fs)
 		return 0;
-	if (!fs->fstype && is_stmnt_possible(fs))
-		mnt_fs_fetch_statmount(fs);
+	if (!fs->fstype && want_statmount(fs, STATMOUNT_FS_TYPE))
+		mnt_fs_fetch_statmount(fs, STATMOUNT_FS_TYPE);
 
 	return mnt_fs_get_flags(fs) & MNT_FS_NET ? 1 : 0;
 }
@@ -927,8 +967,9 @@ const char *mnt_fs_get_fstype(struct libmnt_fs *fs)
 {
 	if (!fs)
 		return NULL;
-	if (!fs->fstype && is_stmnt_possible(fs))
-		mnt_fs_fetch_statmount(fs);
+
+	if (!fs->fstype && want_statmount(fs, STATMOUNT_FS_TYPE))
+		mnt_fs_fetch_statmount(fs, STATMOUNT_FS_TYPE);
 
 	return fs->fstype;
 }
@@ -1052,8 +1093,8 @@ char *mnt_fs_strdup_options(struct libmnt_fs *fs)
 		return NULL;
 	if (fs->optlist)
 		sync_opts_from_optlist(fs, fs->optlist);
-	else if (!fs->optstr && is_stmnt_possible(fs))
-		mnt_fs_fetch_statmount(fs);
+	else if (!fs->optstr && want_statmount(fs, STATMOUNT_SB_BASIC | STATMOUNT_MNT_BASIC))
+		mnt_fs_fetch_statmount(fs, STATMOUNT_SB_BASIC | STATMOUNT_MNT_BASIC);
 
 	errno = 0;
 	if (fs->optstr)
@@ -1082,8 +1123,8 @@ const char *mnt_fs_get_options(struct libmnt_fs *fs)
 	       return NULL;
 	if (fs->optlist)
 		sync_opts_from_optlist(fs, fs->optlist);
-	else if (!fs->optstr && is_stmnt_possible(fs))
-		mnt_fs_fetch_statmount(fs);
+	else if (!fs->optstr && want_statmount(fs, STATMOUNT_SB_BASIC | STATMOUNT_MNT_BASIC))
+		mnt_fs_fetch_statmount(fs, STATMOUNT_SB_BASIC | STATMOUNT_MNT_BASIC);
 
 	return fs->optstr;
 }
@@ -1254,8 +1295,8 @@ const char *mnt_fs_get_fs_options(struct libmnt_fs *fs)
 		return NULL;
 	if (fs->optlist)
 		sync_opts_from_optlist(fs, fs->optlist);
-	else if (!fs->fs_optstr && is_stmnt_possible(fs))
-		mnt_fs_fetch_statmount(fs);
+	else if (!fs->fs_optstr && want_statmount(fs, STATMOUNT_SB_BASIC))
+		mnt_fs_fetch_statmount(fs, STATMOUNT_SB_BASIC);
 
 	return fs->fs_optstr;
 }
@@ -1272,8 +1313,8 @@ const char *mnt_fs_get_vfs_options(struct libmnt_fs *fs)
 		return NULL;
 	if (fs->optlist)
 		sync_opts_from_optlist(fs, fs->optlist);
-	else if (!fs->vfs_optstr && is_stmnt_possible(fs))
-		mnt_fs_fetch_statmount(fs);
+	else if (!fs->vfs_optstr && want_statmount(fs, STATMOUNT_MNT_BASIC))
+		mnt_fs_fetch_statmount(fs, STATMOUNT_MNT_BASIC);
 
 	return fs->vfs_optstr;
 }
@@ -1459,8 +1500,8 @@ const char *mnt_fs_get_root(struct libmnt_fs *fs)
 {
 	if (!fs)
 		return NULL;
-	if (!fs->root && is_stmnt_possible(fs))
-		mnt_fs_fetch_statmount(fs);
+	if (!fs->root && want_statmount(fs, STATMOUNT_MNT_ROOT))
+		mnt_fs_fetch_statmount(fs, STATMOUNT_MNT_ROOT);
 
 	return fs->root;
 }
@@ -1574,8 +1615,8 @@ int mnt_fs_get_id(struct libmnt_fs *fs)
 {
 	if (!fs)
 		return 0;
-	if (!fs->id && is_stmnt_possible(fs))
-		mnt_fs_fetch_statmount(fs);
+	if (!fs->id && want_statmount(fs, STATMOUNT_MNT_BASIC))
+		mnt_fs_fetch_statmount(fs, STATMOUNT_MNT_BASIC);
 
 	return fs->id;
 }
@@ -1595,8 +1636,8 @@ uint64_t mnt_fs_get_uniq_id(struct libmnt_fs *fs)
 {
 	if (!fs)
 		return 0;
-	if (!fs->uniq_id && is_stmnt_possible(fs))
-		mnt_fs_fetch_statmount(fs);
+	if (!fs->uniq_id && want_statmount(fs, STATMOUNT_MNT_BASIC))
+		mnt_fs_fetch_statmount(fs, STATMOUNT_MNT_BASIC);
 
 	return fs->uniq_id;
 }
@@ -1631,8 +1672,8 @@ int mnt_fs_get_parent_id(struct libmnt_fs *fs)
 {
 	if (!fs)
 		return 0;
-	if (!fs->parent && is_stmnt_possible(fs))
-		mnt_fs_fetch_statmount(fs);
+	if (!fs->parent && want_statmount(fs, STATMOUNT_MNT_BASIC))
+		mnt_fs_fetch_statmount(fs, STATMOUNT_MNT_BASIC);
 
 	return fs->parent;
 }
@@ -1649,8 +1690,8 @@ uint64_t mnt_fs_get_parent_uniq_id(struct libmnt_fs *fs)
 {
 	if (!fs)
 		return 0;
-	if (!fs->uniq_parent && is_stmnt_possible(fs))
-		mnt_fs_fetch_statmount(fs);
+	if (!fs->uniq_parent && want_statmount(fs, STATMOUNT_MNT_BASIC))
+		mnt_fs_fetch_statmount(fs, STATMOUNT_MNT_BASIC);
 
 	return fs->uniq_parent;
 }
@@ -1665,8 +1706,8 @@ dev_t mnt_fs_get_devno(struct libmnt_fs *fs)
 {
 	if (!fs)
 		return 0;
-	if (!fs->devno && is_stmnt_possible(fs))
-		mnt_fs_fetch_statmount(fs);
+	if (!fs->devno && want_statmount(fs, STATMOUNT_SB_BASIC))
+		mnt_fs_fetch_statmount(fs, STATMOUNT_SB_BASIC);
 
 	return fs->devno;
 }
@@ -1701,8 +1742,8 @@ int mnt_fs_get_option(struct libmnt_fs *fs, const char *name,
 
 	if (fs->optlist)
 		sync_opts_from_optlist(fs, fs->optlist);
-	else if (!fs->vfs_optstr && is_stmnt_possible(fs))
-		mnt_fs_fetch_statmount(fs);
+	else if (!fs->vfs_optstr && want_statmount(fs, STATMOUNT_MNT_BASIC | STATMOUNT_SB_BASIC))
+		mnt_fs_fetch_statmount(fs, STATMOUNT_MNT_BASIC | STATMOUNT_SB_BASIC);
 
 	if (fs->fs_optstr)
 		rc = mnt_optstr_get_option(fs->fs_optstr, name, value, valsz);
@@ -1809,8 +1850,8 @@ int mnt_fs_match_target(struct libmnt_fs *fs, const char *target,
 
 	if (!fs || !target)
 		return 0;
-	if (!fs->target && is_stmnt_possible(fs))
-		mnt_fs_fetch_statmount(fs);
+	if (!fs->target && want_statmount(fs, STATMOUNT_MNT_POINT))
+		mnt_fs_fetch_statmount(fs, STATMOUNT_MNT_POINT);
 	if (!fs->target)
 		return 0;
 
@@ -1956,19 +1997,25 @@ int mnt_fs_match_options(struct libmnt_fs *fs, const char *options)
 int mnt_fs_print_debug(struct libmnt_fs *fs, FILE *file)
 {
 	unsigned long pro = 0;
+	int stmnt_status;
 
 	if (!fs || !file)
 		return -EINVAL;
 
 	if (fs->optlist)
 		sync_opts_from_optlist(fs, fs->optlist);
-	else if (is_stmnt_possible(fs))
-		mnt_fs_fetch_statmount(fs);
+
+	stmnt_status = fs->stmnt_enabled;
+	fs->stmnt_enabled = 0;
 
 	fprintf(file, "------ fs:\n");
-	fprintf(file, "source: %s\n", mnt_fs_get_source(fs));
-	fprintf(file, "target: %s\n", mnt_fs_get_target(fs));
-	fprintf(file, "fstype: %s\n", mnt_fs_get_fstype(fs));
+	fprintf(file, "auto-statmount: %s\n", stmnt_status ? "on" : "off");
+	if (mnt_fs_get_source(fs))
+		fprintf(file, "source: %s\n", mnt_fs_get_source(fs));
+	if (mnt_fs_get_target(fs))
+		fprintf(file, "target: %s\n", mnt_fs_get_target(fs));
+	if (mnt_fs_get_fstype(fs))
+		fprintf(file, "fstype: %s\n", mnt_fs_get_fstype(fs));
 
 	if (mnt_fs_get_options(fs))
 		fprintf(file, "optstr: %s\n", mnt_fs_get_options(fs));
@@ -1983,7 +2030,7 @@ int mnt_fs_print_debug(struct libmnt_fs *fs, FILE *file)
 	if (mnt_fs_get_attributes(fs))
 		fprintf(file, "attributes: %s\n", mnt_fs_get_attributes(fs));
 
-	if (mnt_fs_get_propagation(fs, &pro) == 0)
+	if (mnt_fs_get_propagation(fs, &pro) == 0 && pro)
 		fprintf(file, "propagation: %s %s %s\n",
 				pro & MS_SHARED ? "shared" : "private",
 				pro & MS_SLAVE ? "slave" : "",
@@ -2024,6 +2071,7 @@ int mnt_fs_print_debug(struct libmnt_fs *fs, FILE *file)
 	if (mnt_fs_get_comment(fs))
 		fprintf(file, "comment: '%s'\n", mnt_fs_get_comment(fs));
 
+	fs->stmnt_enabled = stmnt_status;
 	return 0;
 }
 
