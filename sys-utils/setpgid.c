@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((ch = getopt_long(argc, argv, "+Vh", longopts, NULL)) != -1)
+	while ((ch = getopt_long(argc, argv, "+fVh", longopts, NULL)) != -1)
 		switch (ch) {
 		case 'f':
 			foreground = 1;
