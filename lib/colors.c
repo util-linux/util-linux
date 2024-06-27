@@ -560,8 +560,11 @@ static int colors_terminal_is_ready(void)
 	{
 		int ret;
 
-		if (setupterm(NULL, STDOUT_FILENO, &ret) == 0 && ret == 1)
+		/* setupterm() allocates memory, del_curterm() deallocates it */
+		if (setupterm(NULL, STDOUT_FILENO, &ret) == 0 && ret == 1) {
 			ncolors = tigetnum("colors");
+			del_curterm(cur_term);
+		}
 	}
 #endif
 	if (1 < ncolors) {
