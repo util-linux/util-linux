@@ -2247,7 +2247,11 @@ UL_BUILD_INIT([column], [check])
 UL_REQUIRES_BUILD([column], [libsmartcols])
 AM_CONDITIONAL([BUILD_COLUMN], [test "x$build_column" = xyes])
 
-UL_BUILD_INIT([hexdump], [yes])
+AC_ARG_ENABLE([hexdump],
+  AS_HELP_STRING([--disable-hexdump], [do not build hexdump]),
+  [], [UL_DEFAULT_ENABLE([hexdump], [check])]
+)
+UL_BUILD_INIT([hexdump])
 AM_CONDITIONAL([BUILD_HEXDUMP], [test "x$build_hexdump" = xyes])
 
 UL_BUILD_INIT([rev], [yes])
