@@ -1825,7 +1825,7 @@ int mnt_context_open_tree(struct libmnt_context *cxt, const char *path, unsigned
 				oflg & OPEN_TREE_CLONE ? " clone" : "",
 				oflg & AT_RECURSIVE ? " recursive" : ""));
 	fd = open_tree(AT_FDCWD, path, oflg);
-	mnt_context_syscall_save_status(cxt, "open_tree", fd >= 0);
+	set_syscall_status(cxt, "open_tree", fd >= 0);
 
 	return fd;
 }
