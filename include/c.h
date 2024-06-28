@@ -37,6 +37,8 @@
 # define NAME_MAX PATH_MAX
 #endif
 
+#define BIT(n)                 (1 << (n))
+
 /*
  * __GNUC_PREREQ is deprecated in favour of __has_attribute() and
  * __has_feature(). The __has macros are supported by clang and gcc>=5.

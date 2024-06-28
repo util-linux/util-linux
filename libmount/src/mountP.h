@@ -134,6 +134,9 @@ extern int mnt_is_path(const char *target);
 extern int mnt_tmptgt_unshare(int *old_ns_fd);
 extern int mnt_tmptgt_cleanup(int old_ns_fd);
 
+extern int mnt_id_from_fd(int fd, uint64_t *uniq_id, int *id);
+extern int mnt_id_from_path(const char *path, uint64_t *uniq_id, int *id);
+
 /* tab.c */
 extern int is_mountinfo(struct libmnt_table *tb);
 extern int mnt_table_set_parser_fltrcb(	struct libmnt_table *tb,
@@ -199,7 +202,9 @@ struct libmnt_fs {
 	struct libmnt_optlist *optlist;
 
 	int		id;		/* mountinfo[1]: ID */
+	uint64_t	uniq_id;	/* unique node ID; statx(STATX_MNT_ID_UNIQUE); statmount->mnt_id */
 	int		parent;		/* mountinfo[2]: parent */
+	uint64_t	uniq_parent;	/* unique parent ID; statmount->mnt_parent_id */
 	dev_t		devno;		/* mountinfo[3]: st_dev */
 
 	char		*bindsrc;	/* utab, full path from fstab[1] for bind mounts */
@@ -215,7 +220,10 @@ struct libmnt_fs {
 
 	char		*optstr;	/* fstab[4], merged options */
 	char		*vfs_optstr;	/* mountinfo[6]: fs-independent (VFS) options */
+
 	char		*opt_fields;	/* mountinfo[7]: optional fields */
+	uint64_t	propagation;	/* statmmount() or parsed opt_fields */
+
 	char		*fs_optstr;	/* mountinfo[11]: fs-dependent options */
 	char		*user_optstr;	/* userspace mount options */
 	char		*attrs;		/* mount attributes */
@@ -231,6 +239,10 @@ struct libmnt_fs {
 
 	int		flags;		/* MNT_FS_* flags */
 	pid_t		tid;		/* /proc/<tid>/mountinfo otherwise zero */
+
+	uint64_t	stmnt_done;	/* mask of already called masks */
+	uint64_t        stmnt_mask;	/* default statmount() mask */
+	unsigned int	stmnt_enabled:1; /* enable or disable statmount() */
 
 	char		*comment;	/* fstab comment */
 
@@ -265,7 +277,8 @@ struct libmnt_table {
 	int		(*fltrcb)(struct libmnt_fs *fs, void *data);
 	void		*fltrcb_data;
 
-	int		noautofs;	/* ignore autofs mounts */
+	unsigned int	noautofs : 1;	/* ignore autofs mounts */
+
 
 	struct list_head	ents;	/* list of entries (libmnt_fs) */
 	void		*userdata;
