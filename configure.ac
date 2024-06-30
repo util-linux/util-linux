@@ -2790,16 +2790,17 @@ AM_CONDITIONAL([BUILD_PYLIBMOUNT], [test "x$build_pylibmount" = "xyes"])
 
 # We need to introduce a verbatim dependency into the Makefile, without automake
 # trying to interpret it, so push it as a AM_SUBST_NOTMAKE variable.
-verbatim_pylibmount_dependency='
+verbatim_extra_dependency='
 
 # pylibmountexec module must be installed after usrlib_exec libraries,
 # otherwise the libtool relink step will fail to find libmount.la and
 # will try -lmount which is possibly not available.
 install-pylibmountexecLTLIBRARIES: install-usrlib_execLTLIBRARIES
+install-usrsecurelib_execLTLIBRARIES: install-usrlib_execLTLIBRARIES
 
 '
-AC_SUBST([verbatim_pylibmount_dependency])
-AM_SUBST_NOTMAKE([verbatim_pylibmount_dependency])
+AC_SUBST([verbatim_extra_dependency])
+AM_SUBST_NOTMAKE([verbatim_extra_dependency])
 
 AC_ARG_ENABLE([pg-bell],
   AS_HELP_STRING([--disable-pg-bell], [let pg not ring the bell on invalid keys]),
