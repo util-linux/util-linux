@@ -1,5 +1,4 @@
-securelibdir = $(libdir)/security
-securelib_LTLIBRARIES = pam_lastlog2.la
+usrsecurelib_exec_LTLIBRARIES += pam_lastlog2.la
 
 pam_lastlog2_la_SOURCES = \
 	pam_lastlog2/src/pam_lastlog2.c
