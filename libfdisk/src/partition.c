@@ -261,8 +261,9 @@ int fdisk_partition_cmp_start(struct fdisk_partition *a,
  * @pa: partition
  * @enable: 0|1
  *
- * When @pa used as a template for fdisk_add_partition() when force label driver
- * to use the first possible space for the new partition.
+ * When @pa is used as a template for fdisk_add_partition(), it follows the driver's default for
+ * the beginning of the partition. For DOS, it is the first usable space, while for GPT, it is
+ * the first sector of the largest area.
  *
  * Returns: 0 on success, <0 on error.
  */
