@@ -4704,7 +4704,7 @@ msgid ""
 "Type 'help' to get more information.\n"
 msgstr ""
 "\n"
-"请执行“%s --help”了解更多信息。\n"
+"请执行“help”了解更多信息。\n"
 
 #: disk-utils/sfdisk.c:1875
 msgid "All partitions used."
