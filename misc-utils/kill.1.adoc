@@ -19,8 +19,9 @@ kill - terminate a process
 
 *kill*  [**-**_signal_|*-s* _signal_|*-p*]  [*-q* _value_] [*-a*] [*--timeout* _milliseconds_ _signal_] [*--*] _pid_|_name_...
 
-*kill* *-l* [_number_] | *-L*
+*kill* *-l* [_number_|``0x``_sigmask_] | *-L*
 
+*kill* *-d* _pid_
 
 == DESCRIPTION
 
@@ -54,8 +55,20 @@ All processes invoked using this _name_ will be signaled.
 
 *-s*, *--signal* _signal_::
 The signal to send. It may be given as a name or a number.
-*-l*, *--list* [_number_]::
-Print a list of signal names, or convert the given signal number to a name. The signals can be found in _/usr/include/linux/signal.h_.
+*-l*, *--list* [_number_|``0x``_sigmask_]::
+Print a list of signal names, convert the given signal number to a name, or convert the given signal mask to names.
+The signals can be found in _/usr/include/linux/signal.h_.
++
+....
+$ ps s $$
+  UID     PID          PENDING          BLOCKED          IGNORED           CAUGHT STAT TTY        TIME COMMAND
+ 1000 1608069 0000000000000000 0000000000000002 0000000000384000 0000000008013003 Ss   pts/44     0:02 zsh
+$ kill -l 0x0000000000384000
+TERM
+TSTP
+TTIN
+TTOU
+....
 *-L*, *--table*::
 Similar to *-l*, but it will print signal names and their corresponding numbers.
 *-a*, *--all*::
@@ -80,6 +93,15 @@ As an example, the following command sends the signals *QUIT*, *TERM* and *KILL*
 ....
 kill --verbose --timeout 1000 TERM --timeout 1000 KILL \
         --signal QUIT 12345
+....
+*-d*, *--show-process-state* _pid_::
+Decode signal related fields in /proc/_pid_/status.
++
+....
+$ kill -d $$
+Blocked: INT
+Ignored: TERM TSTP TTIN TTOU
+Caught: HUP INT PIPE ALRM CHLD WINCH
 ....
 
 == EXIT STATUS
@@ -114,6 +136,8 @@ The original version was taken from BSD 4.4.
 *kill*(2),
 *sigqueue*(3),
 *signal*(7)
+*proc(5)*
+*proc_pid_status(5)*
 
 include::man-common/bugreports.adoc[]
 
