@@ -2,7 +2,7 @@
  * This code is in the public domain; do with it what you wish.
  *
  * Copyright (C) 2012 Sami Kerola <kerolasa@iki.fi>
- * Copyright (C) 2012-2020 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2012-2024 Karel Zak <kzak@redhat.com>
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -310,4 +310,36 @@ int ul_reopen(int fd, int flags)
 	buf[ssz] = '\0';
 
 	return open(buf, flags);
+}
+
+
+/* This is a libc-independent version of basename(), which is necessary to
+ * maintain functionality across different libc implementations. It was
+ * inspired by the behavior and implementation of glibc.
+ */
+char *ul_basename(char *path)
+{
+	char *p;
+
+	if (!path || !*path)
+		return (char *) ".";	/* ugly, static string */
+
+	p = strrchr(path, '/');
+	if (!p)
+		return path;		/* no '/', return original */
+
+	if (*(p + 1) != '\0')
+		return p + 1;		/* begin of the name */
+
+	while (p > path && *(p - 1) == '/')
+		--p;			/* remove tailing '/' */
+
+	if (p > path) {
+		*p-- = '\0';
+		while (p > path && *(p - 1) != '/')
+			--p;		/* move to the beginning of the name */
+	} else while (*(p + 1) != '\0')
+		++p;
+
+	return p;
 }
