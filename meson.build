@@ -3049,6 +3049,7 @@ exe = executable(
   'rename',
   rename_sources,
   include_directories : includes,
+  link_with : [lib_common],
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
