@@ -233,4 +233,9 @@
 /* Maximum number of PIDs system supports */
 #define _PATH_PROC_PIDMAX	"/proc/sys/kernel/pid_max"
 
+/* libeconf default */
+#ifndef _PATH_VENDORDIR
+# define _PATH_VENDORDIR	"/usr/etc"
+#endif
+
 #endif /* PATHNAMES_H */

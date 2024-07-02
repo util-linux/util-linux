@@ -79,7 +79,9 @@ conf.set_quoted('_PATH_LOCALSTATEDIR', localstatedir)
 conf.set_quoted('CONFIG_ADJTIME_PATH', '/etc/adjtime')
 conf.set_quoted('ADJTIME_PATH', '/etc/adjtime') # yes, both are used :(
 
-conf.set_quoted('_PATH_VENDORDIR', vendordir)
+if vendordir != ''
+  conf.set_quoted('_PATH_VENDORDIR', vendordir)
+endif
 conf.set('USE_VENDORDIR', vendordir == '' ? false : 1)
 
 build_libblkid = get_option('build-libblkid').allowed()

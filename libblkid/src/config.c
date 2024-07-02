@@ -28,6 +28,7 @@
 
 #include "blkidP.h"
 #include "env.h"
+#include "pathnames.h"
 
 static int parse_evaluate(struct blkid_config *conf, char *s)
 {
@@ -162,11 +163,7 @@ struct blkid_config *blkid_read_config(const char *filename)
 		error = econf_readFile(&file, filename, "= \t", "#");
 	} else {
 		error = econf_readDirs(&file,
-#if USE_VENDORDIR
 				       _PATH_VENDORDIR,
-#else
-				       NULL,
-#endif
 				       "/etc", "blkid", "conf", "= \t", "#");
 	}
 
