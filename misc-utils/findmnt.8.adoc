@@ -131,6 +131,15 @@ Print only pseudo filesystems.
 *--shadow*::
 Print only filesystems over-mounted by another filesystem.
 
+*-Q*, *--filter* _expr_::
+Print only the filesystems that meet the conditions specified by the expr.
++
+This feature is EXPERIMENTAL. See also *scols-filter*(5).
+For example, include xfs having more than 50% free space:
+____
+ findmnt -Q 'INO.USED < INO.AVAIL && FSTYPE == "xfs"'
+____
+
 *-R*, *--submounts*::
 Print recursively all submounts for the selected filesystems. The restrictions defined by options *-t*, *-O*, *-S*, *-T* and *--direction* are not applied to submounts. All submounts are always printed in tree-like order. The option enables the tree-like output format by default. This option has no effect for *--mtab* or *--fstab*.
 
@@ -243,6 +252,7 @@ mailto:kzak@redhat.com[Karel Zak]
 
 *fstab*(5),
 *mount*(8)
+*scols-filter*(5)
 
 include::man-common/bugreports.adoc[]
 
