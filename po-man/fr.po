@@ -36,7 +36,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-man 2.39-rc3\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2024-05-01 21:34+0200\n"
+"POT-Creation-Date: 2024-07-03 14:31+0200\n"
 "PO-Revision-Date: 2024-01-08 15:23+0100\n"
 "Last-Translator: Frédéric Marchal <fmarchal@perso.be>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -5722,9 +5722,13 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/mkswap.8.adoc:116
+#, fuzzy
+#| msgid ""
+#| "To set up a swap file, it is necessary to create that file before "
+#| "initializing it with *mkswap*, e.g. using a command like"
 msgid ""
-"To set up a swap file, it is necessary to create that file before "
-"initializing it with *mkswap*, e.g. using a command like"
+"Aside from *mkswap --file*, it is also possible to create the swapfile "
+"manually before initializing it with *mkswap*, e.g. using a command like"
 msgstr ""
 "Pour installer un fichier d'échange, il est nécessaire de créer ce fichier "
 "avant de l'initialiser avec *mkswap*, par exemple en utilisant une commande "
@@ -5743,9 +5747,13 @@ msgstr "pour créer un fichier d’échange de 8 GiB."
 
 #. type: Plain text
 #: ../disk-utils/mkswap.8.adoc:124
+#, fuzzy
+#| msgid ""
+#| "Please read notes from *swapon*(8) about *the swap file use restrictions* "
+#| "(holes, preallocation and copy-on-write issues)."
 msgid ""
-"Please read notes from *swapon*(8) about *the swap file use restrictions* "
-"(holes, preallocation and copy-on-write issues)."
+"In such a case, please read notes from *swapon*(8) about *the swap file use "
+"restrictions* (holes, preallocation and copy-on-write issues)."
 msgstr ""
 "Veuillez lire les notes dans *swapon*(8) sur les *restrictions d’utilisation "
 "de fichier d’échange* (trous, préallocation et problèmes de copie sur "
@@ -55470,7 +55478,7 @@ msgstr ""
 #. type: delimited block .
 #: ../text-utils/column.1.adoc:215
 #, no-wrap
-msgid "sed 's/#.*//' /etc/fstab | column --table --table-columns SOURCE,TARGET,TYPE,OPTIONS,PASS,FREQ --table-right PASS,FREQ\n"
+msgid "sed 's/#.*//' /etc/fstab | column --table --table-columns SOURCE,TARGET,TYPE,OPTIONS,FREQ,PASS --table-right FREQ,PASS\n"
 msgstr ""
 
 #. type: Plain text

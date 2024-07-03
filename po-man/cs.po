@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-man 2.38-rc4\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2024-05-01 21:34+0200\n"
+"POT-Creation-Date: 2024-07-03 14:31+0200\n"
 "PO-Revision-Date: 2022-03-19 16:33+01:00\n"
 "Last-Translator: Petr Písař <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -4663,8 +4663,8 @@ msgstr ""
 #. type: Plain text
 #: ../disk-utils/mkswap.8.adoc:116
 msgid ""
-"To set up a swap file, it is necessary to create that file before "
-"initializing it with *mkswap*, e.g. using a command like"
+"Aside from *mkswap --file*, it is also possible to create the swapfile "
+"manually before initializing it with *mkswap*, e.g. using a command like"
 msgstr ""
 
 #. type: delimited block .
@@ -4681,8 +4681,8 @@ msgstr ""
 #. type: Plain text
 #: ../disk-utils/mkswap.8.adoc:124
 msgid ""
-"Please read notes from *swapon*(8) about *the swap file use restrictions* "
-"(holes, preallocation and copy-on-write issues)."
+"In such a case, please read notes from *swapon*(8) about *the swap file use "
+"restrictions* (holes, preallocation and copy-on-write issues)."
 msgstr ""
 
 #. type: Plain text
@@ -45310,7 +45310,7 @@ msgstr ""
 #. type: delimited block .
 #: ../text-utils/column.1.adoc:215
 #, no-wrap
-msgid "sed 's/#.*//' /etc/fstab | column --table --table-columns SOURCE,TARGET,TYPE,OPTIONS,PASS,FREQ --table-right PASS,FREQ\n"
+msgid "sed 's/#.*//' /etc/fstab | column --table --table-columns SOURCE,TARGET,TYPE,OPTIONS,FREQ,PASS --table-right FREQ,PASS\n"
 msgstr ""
 
 #. type: Plain text

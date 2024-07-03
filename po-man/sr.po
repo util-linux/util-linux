@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-man 2.39-rc3\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2024-05-01 21:34+0200\n"
+"POT-Creation-Date: 2024-07-03 14:31+0200\n"
 "PO-Revision-Date: 2023-07-17 09:13+0200\n"
 "Last-Translator: Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
 "Language-Team: Serbian <(nothing)>\n"
@@ -5537,9 +5537,13 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/mkswap.8.adoc:116
+#, fuzzy
+#| msgid ""
+#| "To set up a swap file, it is necessary to create that file before "
+#| "initializing it with *mkswap*, e.g. using a command like"
 msgid ""
-"To set up a swap file, it is necessary to create that file before "
-"initializing it with *mkswap*, e.g. using a command like"
+"Aside from *mkswap --file*, it is also possible to create the swapfile "
+"manually before initializing it with *mkswap*, e.g. using a command like"
 msgstr ""
 "Да подесите разменску датотеку, неопходно је да направите ту датотеку пре "
 "него што је покренете са *mkswap*, нпр. користећи наредбу као што је"
@@ -5557,9 +5561,13 @@ msgstr "да направите 8GiB разменску датотеку."
 
 #. type: Plain text
 #: ../disk-utils/mkswap.8.adoc:124
+#, fuzzy
+#| msgid ""
+#| "Please read notes from *swapon*(8) about *the swap file use restrictions* "
+#| "(holes, preallocation and copy-on-write issues)."
 msgid ""
-"Please read notes from *swapon*(8) about *the swap file use restrictions* "
-"(holes, preallocation and copy-on-write issues)."
+"In such a case, please read notes from *swapon*(8) about *the swap file use "
+"restrictions* (holes, preallocation and copy-on-write issues)."
 msgstr ""
 "Прочитајте напомене из *swapon*(8) о *ограничењима коришћења разменске "
 "датотеке* (о рупама, проблемима поновног додељивања и умножавања-при-писању)."
@@ -54965,8 +54973,9 @@ msgstr "Исписује „fstab“ са редом заглавља и пор�
 
 #. type: delimited block .
 #: ../text-utils/column.1.adoc:215
-#, no-wrap
-msgid "sed 's/#.*//' /etc/fstab | column --table --table-columns SOURCE,TARGET,TYPE,OPTIONS,PASS,FREQ --table-right PASS,FREQ\n"
+#, fuzzy, no-wrap
+#| msgid "sed 's/#.*//' /etc/fstab | column --table --table-columns SOURCE,TARGET,TYPE,OPTIONS,PASS,FREQ --table-right PASS,FREQ\n"
+msgid "sed 's/#.*//' /etc/fstab | column --table --table-columns SOURCE,TARGET,TYPE,OPTIONS,FREQ,PASS --table-right FREQ,PASS\n"
 msgstr "sed 's/#.*//' /etc/fstab | column --table --table-columns ИЗВОР,МЕТА,ВРСТА,ОПЦИЈЕ,ПРОЛАЗ,УЧЕСТ --table-right ПРОЛАЗ,УЧЕСТ\n"
 
 #. type: Plain text
