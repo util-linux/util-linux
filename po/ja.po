@@ -8,6 +8,7 @@
 # Takeshi Hamasaki <hmatrjp@users.sourceforge.jp>, 2011, 2013.
 # victory <victory.deb@gmail.com>, 2013.
 # Takeshi Hamasaki <hmatrjp@users.sourceforge.jp>, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024.
+# Hideki Yoshida <hideki@acm.org>, 2024.
 #
 # (Additional History)
 #  Once util-linux-ng was forked from util-linux,
@@ -15,11 +16,11 @@
 #  Work in 2013 is by courtesy of Yasuhiko Kamata <belphegor@belbel.or.jp>.
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.40-rc2\n"
+"Project-Id-Version: util-linux 2.40.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2024-05-06 10:08+0200\n"
-"PO-Revision-Date: 2024-03-05 23:29+0900\n"
-"Last-Translator: Takeshi Hamasaki <hmatrjp@users.sourceforge.jp>\n"
+"POT-Creation-Date: 2024-05-01 21:49+0200\n"
+"PO-Revision-Date: 2024-06-15 14:39+0900\n"
+"Last-Translator: Hideki Yoshida <hideki@acm.org>\n"
 "Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -82,12 +83,12 @@ msgstr "十分な引数がありません"
 #: sys-utils/setpriv.c:262 sys-utils/setpriv.c:628 sys-utils/setpriv.c:651
 #: sys-utils/swapon.c:395 sys-utils/swapon.c:538 sys-utils/switch_root.c:174
 #: sys-utils/unshare.c:115 sys-utils/unshare.c:130 sys-utils/wdctl.c:422
-#: sys-utils/zramctl.c:517 term-utils/agetty.c:2989 term-utils/mesg.c:154
+#: sys-utils/zramctl.c:517 term-utils/agetty.c:2988 term-utils/mesg.c:154
 #: term-utils/script.c:386 term-utils/scriptlive.c:256
 #: term-utils/scriptlive.c:259 term-utils/scriptlive.c:262
 #: term-utils/scriptreplay.c:282 term-utils/scriptreplay.c:285
 #: term-utils/scriptreplay.c:288 term-utils/scriptreplay.c:291
-#: term-utils/wall.c:401 text-utils/colcrt.c:284 text-utils/more.c:460
+#: term-utils/wall.c:393 text-utils/colcrt.c:284 text-utils/more.c:460
 #: text-utils/rev.c:165 text-utils/ul.c:637
 #, c-format
 msgid "cannot open %s"
@@ -1297,7 +1298,7 @@ msgstr "列挙子の割り当てに失敗しました"
 #: disk-utils/fdisk-list.c:136 disk-utils/fdisk-list.c:257
 #: disk-utils/partx.c:676 include/column-list-table.h:45
 #: login-utils/lslogins.c:1113 misc-utils/fincore.c:500
-#: misc-utils/findmnt.c:1891 misc-utils/lsblk.c:2727 misc-utils/lsclocks.c:650
+#: misc-utils/findmnt.c:1891 misc-utils/lsblk.c:2727 misc-utils/lsclocks.c:649
 #: misc-utils/lsfd.c:2396 misc-utils/lslocks.c:751 misc-utils/uuidparse.c:252
 #: misc-utils/wipefs.c:157 sys-utils/losetup.c:389 sys-utils/lscpu.c:596
 #: sys-utils/lscpu.c:751 sys-utils/lscpu.c:966 sys-utils/lsipc.c:354
@@ -1310,7 +1311,7 @@ msgstr "出力テーブルの準備に失敗しました"
 #: disk-utils/partx.c:590 include/column-list-table.h:72
 #: login-utils/lslogins.c:1173 misc-utils/fincore.c:218
 #: misc-utils/findmnt.c:844 misc-utils/findmnt.c:865 misc-utils/lsblk.c:1329
-#: misc-utils/lsclocks.c:295 misc-utils/lsfd.c:1269 misc-utils/lslocks.c:616
+#: misc-utils/lsclocks.c:294 misc-utils/lsfd.c:1269 misc-utils/lslocks.c:616
 #: misc-utils/uuidparse.c:154 misc-utils/wipefs.c:202 sys-utils/losetup.c:412
 #: sys-utils/losetup.c:441 sys-utils/lscpu.c:510 sys-utils/lscpu.c:786
 #: sys-utils/lscpu.c:818 sys-utils/lsipc.c:486 sys-utils/lsipc.c:567
@@ -3037,7 +3038,7 @@ msgstr ""
 " -V, --verbose      何が行われるのかを詳しく表示します;\n"
 "                      2 つ以上 -V を指定すると、実際には何も行わないようになります。\n"
 
-#: disk-utils/mkfs.c:140 include/c.h:321 login-utils/su-common.c:1302
+#: disk-utils/mkfs.c:140 include/c.h:321 login-utils/su-common.c:1301
 #: login-utils/sulogin.c:940 login-utils/sulogin.c:944 sys-utils/flock.c:125
 #: sys-utils/rtcwake.c:632
 #, c-format
@@ -3926,7 +3927,7 @@ msgstr[0] "#%2d: %9ju-%9ju (%9ju セクタ, %6ju MB)\n"
 
 #: disk-utils/partx.c:687 include/column-list-table.h:62
 #: misc-utils/fincore.c:514 misc-utils/findmnt.c:1920 misc-utils/lsblk.c:2268
-#: misc-utils/lsblk.c:2771 misc-utils/lsclocks.c:658 misc-utils/lsfd.c:623
+#: misc-utils/lsblk.c:2771 misc-utils/lsclocks.c:657 misc-utils/lsfd.c:623
 #: misc-utils/lsfd.c:2410 misc-utils/lslocks.c:766 sys-utils/losetup.c:403
 #: sys-utils/lscpu.c:608 sys-utils/lscpu.c:764 sys-utils/prlimit.c:312
 #: sys-utils/rfkill.c:488 sys-utils/swapon.c:318 sys-utils/wdctl.c:365
@@ -7821,309 +7822,309 @@ msgstr "ハッシュログイン状態: オリジナルの ID の復元に失敗
 msgid "operation failed: %m"
 msgstr "処理に失敗しました: %m"
 
-#: libmount/src/context_mount.c:1418
+#: libmount/src/context_mount.c:1417
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "警告: 伝播フラグの適用に失敗しました"
 
-#: libmount/src/context_mount.c:1428
+#: libmount/src/context_mount.c:1427
 #, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "警告: ソースは書き込み禁止です、読み込み専用でマウントします"
 
-#: libmount/src/context_mount.c:1442
+#: libmount/src/context_mount.c:1441
 #, c-format
 msgid "operation permitted for root only"
 msgstr "この操作を実行できるのは root だけです"
 
-#: libmount/src/context_mount.c:1446
+#: libmount/src/context_mount.c:1445
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s はマウント済みです"
 
-#: libmount/src/context_mount.c:1452
+#: libmount/src/context_mount.c:1451
 #, c-format
 msgid "can't find in %s"
 msgstr "%s 内に見つかりません"
 
-#: libmount/src/context_mount.c:1455
+#: libmount/src/context_mount.c:1454
 #, c-format
 msgid "can't find mount point in %s"
 msgstr "%s 内にマウントポイントが見つかりません"
 
-#: libmount/src/context_mount.c:1458
+#: libmount/src/context_mount.c:1457
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "%2$s 内にマウント元 %1$s が見つかりません"
 
-#: libmount/src/context_mount.c:1463
+#: libmount/src/context_mount.c:1462
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr "複数のファイルシステムが %s に検出されました; -t <type> で指定するか wipefs(8) を実行してください"
 
-#: libmount/src/context_mount.c:1468
+#: libmount/src/context_mount.c:1467
 #, c-format
 msgid "failed to determine filesystem type"
 msgstr "ファイルシステムの判別に失敗しました"
 
-#: libmount/src/context_mount.c:1469
+#: libmount/src/context_mount.c:1468
 #, c-format
 msgid "no valid filesystem type specified"
 msgstr "有効なファイルシステムタイプが指定されていません"
 
-#: libmount/src/context_mount.c:1476
+#: libmount/src/context_mount.c:1475
 #, c-format
 msgid "can't find %s"
 msgstr "%s が見つかりません"
 
-#: libmount/src/context_mount.c:1478
+#: libmount/src/context_mount.c:1477
 #, c-format
 msgid "no mount source specified"
 msgstr "マウント対象が指定されていません"
 
-#: libmount/src/context_mount.c:1489
+#: libmount/src/context_mount.c:1488
 #, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr "マウントオプションの解釈に失敗しました '%s': %m"
 
-#: libmount/src/context_mount.c:1490
+#: libmount/src/context_mount.c:1489
 #, c-format
 msgid "failed to parse mount options '%s'"
 msgstr "マウントオプションの解釈に失敗しました '%s'"
 
-#: libmount/src/context_mount.c:1493
+#: libmount/src/context_mount.c:1492
 #, c-format
 msgid "failed to parse mount options: %m"
 msgstr "マウントオプションの解釈に失敗しました: %m"
 
-#: libmount/src/context_mount.c:1494
+#: libmount/src/context_mount.c:1493
 #, c-format
 msgid "failed to parse mount options"
 msgstr "マウントオプションの解釈に失敗しました"
 
-#: libmount/src/context_mount.c:1499
+#: libmount/src/context_mount.c:1498
 #, c-format
 msgid "failed to setup loop device for %s"
 msgstr "%s 用のループバックデバイスの設定に失敗しました"
 
-#: libmount/src/context_mount.c:1503
+#: libmount/src/context_mount.c:1502
 #, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "%s 用の重複するループバックデバイスが存在します"
 
-#: libmount/src/context_mount.c:1507 libmount/src/context_umount.c:1267
+#: libmount/src/context_mount.c:1506 libmount/src/context_umount.c:1267
 #, c-format
 msgid "locking failed"
 msgstr "ロックに失敗しました"
 
-#: libmount/src/context_mount.c:1511 libmount/src/context_umount.c:1273
+#: libmount/src/context_mount.c:1510 libmount/src/context_umount.c:1273
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, c-format
 msgid "failed to switch namespace"
 msgstr "名前空間を切り替えられません"
 
-#: libmount/src/context_mount.c:1515
+#: libmount/src/context_mount.c:1514
 #, c-format
 msgid "filesystem already mounted"
 msgstr "ファイルシステムはマウント済みです"
 
-#: libmount/src/context_mount.c:1518
+#: libmount/src/context_mount.c:1517
 #, c-format
 msgid "mount failed: %m"
 msgstr "マウントに失敗しました: %m"
 
-#: libmount/src/context_mount.c:1528
+#: libmount/src/context_mount.c:1527
 #, c-format
 msgid "filesystem was mounted, but failed to apply flags"
 msgstr "ファイルシステムをマウントしましたが、フラグを適用できませんでした"
 
-#: libmount/src/context_mount.c:1534
+#: libmount/src/context_mount.c:1533
 #, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "ファイルシステムをマウントしましたが、 ユーザー空間のマウントテーブルの更新が失敗しました"
 
-#: libmount/src/context_mount.c:1540
+#: libmount/src/context_mount.c:1539
 #, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "ファイルシステムをマウントしましたが、名前空間を元に戻せませんでした"
 
-#: libmount/src/context_mount.c:1546
+#: libmount/src/context_mount.c:1545
 #, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "ファイルシステムをマウントしましたが、所有者を変更できませんでした: %m"
 
-#: libmount/src/context_mount.c:1552
+#: libmount/src/context_mount.c:1551
 #, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "ファイルシステムをマウントしましたが、モードを変更できませんでした: %m"
 
-#: libmount/src/context_mount.c:1558
+#: libmount/src/context_mount.c:1557
 #, fuzzy, c-format
 #| msgid "filesystem was mounted, but failed to switch namespace back"
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "ファイルシステムをマウントしましたが、名前空間を元に戻せませんでした"
 
-#: libmount/src/context_mount.c:1564
+#: libmount/src/context_mount.c:1563
 #, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "ファイルシステムをマウントしましたが、続く操作が失敗しました: %m"
 
-#: libmount/src/context_mount.c:1576
+#: libmount/src/context_mount.c:1575
 #, c-format
 msgid "%s system call failed: %s"
 msgstr "%s システムコールが失敗しました: %s"
 
-#: libmount/src/context_mount.c:1591 login-utils/newgrp.c:228
+#: libmount/src/context_mount.c:1590 login-utils/newgrp.c:228
 #, c-format
 msgid "permission denied"
 msgstr "アクセスが拒否されました"
 
-#: libmount/src/context_mount.c:1593 libmount/src/context_mount.c:1634
+#: libmount/src/context_mount.c:1592 libmount/src/context_mount.c:1633
 #, c-format
 msgid "mount point is not a directory"
 msgstr "マウントポイントがディレクトリではありません"
 
-#: libmount/src/context_mount.c:1595
+#: libmount/src/context_mount.c:1594
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "mount を使用するにはスーパーユーザでなければなりません"
 
-#: libmount/src/context_mount.c:1602
+#: libmount/src/context_mount.c:1601
 #, c-format
 msgid "mount point is busy"
 msgstr "マウントポイントは使用中です"
 
-#: libmount/src/context_mount.c:1609
+#: libmount/src/context_mount.c:1608
 #, c-format
 msgid "%s already mounted on %s"
 msgstr "%s は %s にマウント済みです"
 
-#: libmount/src/context_mount.c:1613
+#: libmount/src/context_mount.c:1612
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s はマウント済み、もしくはマウントポイントが使用中です"
 
-#: libmount/src/context_mount.c:1618
+#: libmount/src/context_mount.c:1617
 #, c-format
 msgid "mount point does not exist"
 msgstr "マウントポイントが存在しません"
 
-#: libmount/src/context_mount.c:1621
+#: libmount/src/context_mount.c:1620
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "マウントポイントは存在しない場所を指すシンボリックリンクです"
 
-#: libmount/src/context_mount.c:1626
+#: libmount/src/context_mount.c:1625
 #, c-format
 msgid "special device %s does not exist"
 msgstr "スペシャルデバイス %s が存在しません"
 
-#: libmount/src/context_mount.c:1639
+#: libmount/src/context_mount.c:1638
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "スペシャルデバイス %s が存在しません (パスプレフィクスがディレクトリではありません)"
 
-#: libmount/src/context_mount.c:1649
+#: libmount/src/context_mount.c:1648
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr "マウントポイントにはマウントされていないか、オプション設定が正しくありません"
 
-#: libmount/src/context_mount.c:1651
+#: libmount/src/context_mount.c:1650
 #, c-format
 msgid "not mount point or bad option"
 msgstr "マウントポイントではないか、オプション設定が正しくありません"
 
-#: libmount/src/context_mount.c:1654
+#: libmount/src/context_mount.c:1653
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr "間違ったオプション設定; 共有マウント内のマウントを移動する処理には、対応していません。"
 
-#: libmount/src/context_mount.c:1658
+#: libmount/src/context_mount.c:1657
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr "間違ったオプション設定; (nfs, cifs など)ファイルシステムによっては /sbin/mount.<タイプ> のヘルパープログラムが必要です"
 
-#: libmount/src/context_mount.c:1662
+#: libmount/src/context_mount.c:1661
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr "ファイルシステムタイプ, オプション, %s 上のスーパーブロック, 必要なコードページ指定／ヘルパープログラムなど、何かが間違っています。"
 
-#: libmount/src/context_mount.c:1669
+#: libmount/src/context_mount.c:1668
 #, c-format
 msgid "mount table full"
 msgstr "マウントテーブルがいっぱいです"
 
-#: libmount/src/context_mount.c:1674
+#: libmount/src/context_mount.c:1673
 #, c-format
 msgid "can't read superblock on %s"
 msgstr "%s のスーパーブロックを読み込むことができません"
 
-#: libmount/src/context_mount.c:1681
+#: libmount/src/context_mount.c:1680
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "未知のファイルシステムタイプ '%s' です"
 
-#: libmount/src/context_mount.c:1684
+#: libmount/src/context_mount.c:1683
 #, c-format
 msgid "unknown filesystem type"
 msgstr "未知のファイルシステムタイプです"
 
-#: libmount/src/context_mount.c:1693
+#: libmount/src/context_mount.c:1692
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s はブロックデバイスではありません (そのために stat(2) が失敗した可能性があります)"
 
-#: libmount/src/context_mount.c:1696
+#: libmount/src/context_mount.c:1695
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr "このカーネルは %s をブロックデバイスとして認識していません;おそらく `modprobe ドライバ' を実行する必要があります"
 
-#: libmount/src/context_mount.c:1699
+#: libmount/src/context_mount.c:1698
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s はブロックデバイスではありません (`-o loop' を指定すると解決できるかもしれません)"
 
-#: libmount/src/context_mount.c:1701
+#: libmount/src/context_mount.c:1700
 #, c-format
 msgid "%s is not a block device"
 msgstr "%s はブロックデバイスではありません"
 
-#: libmount/src/context_mount.c:1708
+#: libmount/src/context_mount.c:1707
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s は正常なブロックデバイスではありません"
 
-#: libmount/src/context_mount.c:1716
+#: libmount/src/context_mount.c:1715
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "%s を読み込み専用でマウントできません"
 
-#: libmount/src/context_mount.c:1718
+#: libmount/src/context_mount.c:1717
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s は書き込み禁止ですが、明示的に読み書きモードが指定されています"
 
-#: libmount/src/context_mount.c:1720
+#: libmount/src/context_mount.c:1719
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "%s を読み書き可能な状態で再マウントできません、ライトプロテクトされています"
 
-#: libmount/src/context_mount.c:1722
+#: libmount/src/context_mount.c:1721
 #, c-format
 msgid "bind %s failed"
 msgstr "bind %s が失敗しました"
 
-#: libmount/src/context_mount.c:1731
+#: libmount/src/context_mount.c:1730
 #, c-format
 msgid "no medium found on %s"
 msgstr "%s にメディアが挿入されていません"
 
-#: libmount/src/context_mount.c:1738
+#: libmount/src/context_mount.c:1737
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "マウントできません; おそらく %s のファイルシステムが壊れています"
 
-#: libmount/src/context_mount.c:1747
+#: libmount/src/context_mount.c:1746
 #, c-format
 msgid "%s system call failed: %m"
 msgstr "%s システムコールが失敗しました: %m"
@@ -8784,7 +8785,7 @@ msgstr " -h <host>      utmp ログに使用するホスト名"
 msgid " -H             suppress hostname in the login prompt"
 msgstr " -H             ホスト名をログインプロンプトに出さない"
 
-#: login-utils/login.c:1305 term-utils/agetty.c:3012
+#: login-utils/login.c:1305 term-utils/agetty.c:3011
 #, fuzzy
 #| msgid "failed to initialize loopcxt"
 msgid "failed to initialize path context"
@@ -9307,64 +9308,64 @@ msgstr "root 以外のユーザが使用することはできません"
 msgid "authentication failed"
 msgstr "認証に失敗しました"
 
-#: login-utils/su-common.c:453
+#: login-utils/su-common.c:451
 #, c-format
 msgid "cannot open session: %s"
 msgstr "セッションを開くことができません: %s"
 
-#: login-utils/su-common.c:471
+#: login-utils/su-common.c:470
 msgid "cannot block signals"
 msgstr "シグナルをブロックできません"
 
-#: login-utils/su-common.c:488
+#: login-utils/su-common.c:487
 msgid "cannot initialize signal mask for session"
 msgstr "セッションのシグナルマスクを初期化できません"
 
-#: login-utils/su-common.c:496
+#: login-utils/su-common.c:495
 msgid "cannot initialize signal mask"
 msgstr "シグナルマスクを初期化できません"
 
-#: login-utils/su-common.c:506
+#: login-utils/su-common.c:505
 msgid "cannot set signal handler for session"
 msgstr "セッションのシグナルハンドラを設定できません"
 
-#: login-utils/su-common.c:514 misc-utils/uuidd.c:439
+#: login-utils/su-common.c:513 misc-utils/uuidd.c:439
 #: sys-utils/lscpu-virt.c:506
 msgid "cannot set signal handler"
 msgstr "シグナルハンドラを設定できません"
 
-#: login-utils/su-common.c:522
+#: login-utils/su-common.c:521
 msgid "cannot set signal mask"
 msgstr "シグナルマスクを設定できません"
 
-#: login-utils/su-common.c:549 term-utils/script.c:961
+#: login-utils/su-common.c:548 term-utils/script.c:961
 #: term-utils/scriptlive.c:296
 msgid "failed to create pseudo-terminal"
 msgstr "疑似端末の作成に失敗しました"
 
-#: login-utils/su-common.c:551 term-utils/script.c:968
+#: login-utils/su-common.c:550 term-utils/script.c:968
 #: term-utils/scriptlive.c:298
 msgid "failed to initialize signals handler"
 msgstr "シグナルハンドラの初期化に失敗しました"
 
-#: login-utils/su-common.c:566
+#: login-utils/su-common.c:565
 #, fuzzy
 #| msgid "cannot set signal handler"
 msgid "cannot set child signal handler"
 msgstr "シグナルハンドラを設定できません"
 
-#: login-utils/su-common.c:576 term-utils/script.c:977
+#: login-utils/su-common.c:575 term-utils/script.c:977
 #: term-utils/scriptlive.c:305
 msgid "cannot create child process"
 msgstr "子プロセスを作成できません"
 
-#: login-utils/su-common.c:595 sys-utils/nsenter.c:621
+#: login-utils/su-common.c:594 sys-utils/nsenter.c:621
 #: sys-utils/switch_root.c:189
 #, c-format
 msgid "cannot change directory to %s"
 msgstr "ディレクトリを %s に変更できません"
 
-#: login-utils/su-common.c:621 term-utils/scriptlive.c:354
+#: login-utils/su-common.c:620 term-utils/scriptlive.c:354
 #, c-format
 msgid ""
 "\n"
@@ -9373,62 +9374,62 @@ msgstr ""
 "\n"
 "セッションが終了しました, シェルを停止しています..."
 
-#: login-utils/su-common.c:632
+#: login-utils/su-common.c:631
 #, c-format
 msgid " ...killed.\n"
 msgstr " ...停止しました。\n"
 
-#: login-utils/su-common.c:729
+#: login-utils/su-common.c:728
 msgid "failed to set the PATH environment variable"
 msgstr "PATH 環境変数の設定に失敗しました"
 
-#: login-utils/su-common.c:806
+#: login-utils/su-common.c:805
 msgid "cannot set groups"
 msgstr "グループを設定できません"
 
-#: login-utils/su-common.c:812
+#: login-utils/su-common.c:811
 #, fuzzy, c-format
 #| msgid "failed to parse level '%s'"
 msgid "failed to establish user credentials: %s"
 msgstr "ターゲットユーザーの PAM 資格情報による認証を試みる"
 
-#: login-utils/su-common.c:822
+#: login-utils/su-common.c:821
 msgid "cannot set group id"
 msgstr "グループ ID を設定できません"
 
-#: login-utils/su-common.c:824
+#: login-utils/su-common.c:823
 msgid "cannot set user id"
 msgstr "ユーザ ID を設定できません"
 
-#: login-utils/su-common.c:890
+#: login-utils/su-common.c:889
 msgid " -m, -p, --preserve-environment      do not reset environment variables\n"
 msgstr " -m, -p, --preserve-environment      環境変数をリセットしません\n"
 
-#: login-utils/su-common.c:891
+#: login-utils/su-common.c:890
 msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
 msgstr ""
 " -w, --whitelist-environment <list>  指定した変数をリセットしません\n"
 "\n"
 
-#: login-utils/su-common.c:894
+#: login-utils/su-common.c:893
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr " -g, --group <グループ>          プライマリグループを指定します\n"
 
-#: login-utils/su-common.c:895
+#: login-utils/su-common.c:894
 msgid " -G, --supp-group <group>        specify a supplemental group\n"
 msgstr " -G, --supp-group <グループ>            補助グループを指定します\n"
 
-#: login-utils/su-common.c:898
+#: login-utils/su-common.c:897
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr "  -h, --help                     このちょっとした使い方を表示する\n"
 
-#: login-utils/su-common.c:899
+#: login-utils/su-common.c:898
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr ""
 " -c, --command <コマンド>        -c を利用して単一のコマンドを\n"
 "                                    シェルに渡します\n"
 
-#: login-utils/su-common.c:900
+#: login-utils/su-common.c:899
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
@@ -9436,29 +9437,29 @@ msgstr ""
 " --session-command <コマンド>    -c を利用して単一のコマンドをシェルに渡し、\n"
 "                                    新しいセッションの作成は行いません\n"
 
-#: login-utils/su-common.c:902
+#: login-utils/su-common.c:901
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr ""
 " -f, --fast                      シェルに -f を渡します\n"
 "                                   (csh や tcsh 向けの機能)\n"
 
-#: login-utils/su-common.c:903
+#: login-utils/su-common.c:902
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr ""
 " -s, --shell <シェル>            /etc/shells で許可していれば、\n"
 "                                   <シェル>を起動します\n"
 
-#: login-utils/su-common.c:904
+#: login-utils/su-common.c:903
 msgid " -P, --pty                       create a new pseudo-terminal\n"
 msgstr " -P, --pty                       新しい疑似端末を作成します\n"
 
-#: login-utils/su-common.c:905
+#: login-utils/su-common.c:904
 #, fuzzy
 #| msgid " -P, --pty                       create a new pseudo-terminal\n"
 msgid " -T, --no-pty                    do not create a new pseudo-terminal (bad security!)\n"
 msgstr " -P, --pty                       新しい疑似端末を作成します\n"
 
-#: login-utils/su-common.c:915
+#: login-utils/su-common.c:914
 #, c-format
 msgid ""
 " %1$s [options] -u <user> [[--] <command>]\n"
@@ -9467,7 +9468,7 @@ msgstr ""
 " %1$s [オプション] -u <ユーザー> [[--] <コマンド>]\n"
 " %1$s [オプション] [-] [<ユーザー> [<引数>...]]\n"
 
-#: login-utils/su-common.c:920
+#: login-utils/su-common.c:919
 msgid ""
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
 "not given, fall back to su(1)-compatible semantics and execute standard shell.\n"
@@ -9477,16 +9478,16 @@ msgstr ""
 "-u を指定しない場合、従来の su(1) と互換性のある動作となり、標準シェルが起動\n"
 "されます。なお、-c, -f, -l, -s のオプションは -u と排他関係にあります。\n"
 
-#: login-utils/su-common.c:925
+#: login-utils/su-common.c:924
 msgid " -u, --user <user>               username\n"
 msgstr " -u, --user <ユーザー>             ユーザー名\n"
 
-#: login-utils/su-common.c:936
+#: login-utils/su-common.c:935
 #, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr " %s [オプション] [-] [<ユーザ> [<引数>...]]\n"
 
-#: login-utils/su-common.c:940
+#: login-utils/su-common.c:939
 msgid ""
 "Change the effective user ID and group ID to that of <user>.\n"
 "A mere - implies -l.  If <user> is not given, root is assumed.\n"
@@ -9495,52 +9496,52 @@ msgstr ""
 "なお、 - は -l の意味を含みます。<ユーザ>を指定しない場合は root であるものと\n"
 "みなされます。\n"
 
-#: login-utils/su-common.c:1017
+#: login-utils/su-common.c:1016
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
 msgstr[0] "%d 個以上の補助グループを指定することはできません"
 
-#: login-utils/su-common.c:1023
+#: login-utils/su-common.c:1022
 #, c-format
 msgid "group %s does not exist"
 msgstr "グループ %s が存在しません"
 
-#: login-utils/su-common.c:1133
+#: login-utils/su-common.c:1132
 msgid "--pty is not supported for your system"
 msgstr "--pty はあなたのシステムではサポートされていません"
 
-#: login-utils/su-common.c:1171
+#: login-utils/su-common.c:1170
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr "--preserve-environment を無視します。--login と排他的なためです。"
 
-#: login-utils/su-common.c:1185
+#: login-utils/su-common.c:1184
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr "オプション --{shell,fast,command,session-command,login} と --user のオプションは、同時に使用することができません"
 
-#: login-utils/su-common.c:1188
+#: login-utils/su-common.c:1187
 msgid "no command was specified"
 msgstr "コマンドが指定されていません"
 
-#: login-utils/su-common.c:1200
+#: login-utils/su-common.c:1199
 msgid "only root can specify alternative groups"
 msgstr "補助グループを指定できるのは root だけです"
 
-#: login-utils/su-common.c:1211
+#: login-utils/su-common.c:1210
 #, c-format
 msgid "user %s does not exist or the user entry does not contain all the required fields"
 msgstr "ユーザー %s が存在しないかユーザーのエントリーが必要な情報を含んでいません"
 
-#: login-utils/su-common.c:1246
+#: login-utils/su-common.c:1245
 #, c-format
 msgid "using restricted shell %s"
 msgstr "制限シェル %s を使用しています"
 
-#: login-utils/su-common.c:1267
+#: login-utils/su-common.c:1266
 msgid "failed to allocate pty handler"
 msgstr "pty ハンドラの割り当てに失敗しました"
 
-#: login-utils/su-common.c:1293
+#: login-utils/su-common.c:1292
 #, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "警告: ディレクトリを %s に変更できません"
@@ -9681,7 +9682,7 @@ msgstr ""
 " -e, --force              getpwnam(3) が失敗した場合、パスワードファイルを直接読み込みます\n"
 
 #: login-utils/sulogin.c:1038 misc-utils/findmnt.c:1733 sys-utils/wdctl.c:792
-#: term-utils/agetty.c:852 term-utils/wall.c:231
+#: term-utils/agetty.c:852 term-utils/wall.c:224
 msgid "invalid timeout argument"
 msgstr "時間切れの引数が間違っています"
 
@@ -11155,11 +11156,11 @@ msgstr " -T, --test                    getopt(1) のバージョンを確認し�
 msgid " -u, --unquoted                do not quote the output\n"
 msgstr " -u, --unquoted                出力をクォートしません\n"
 
-#: misc-utils/getopt.c:409 misc-utils/getopt.c:467
+#: misc-utils/getopt.c:409 misc-utils/getopt.c:468
 msgid "missing optstring argument"
 msgstr "解析対象の文字列が指定されていません"
 
-#: misc-utils/getopt.c:462
+#: misc-utils/getopt.c:463
 msgid "internal error, contact the author."
 msgstr "内部エラーです。作者にご連絡ください。"
 
@@ -12714,48 +12715,48 @@ msgstr ""
 msgid "Unknown clock: %s"
 msgstr "不明なコマンド: %s"
 
-#: misc-utils/lsclocks.c:259 misc-utils/lsclocks.c:389
-#: misc-utils/lsclocks.c:436
+#: misc-utils/lsclocks.c:259 misc-utils/lsclocks.c:388
+#: misc-utils/lsclocks.c:435
 #, fuzzy, c-format
 #| msgid "Couldn't read %s"
 msgid "Could not open %s"
 msgstr "ディレクトリ %s を読み込むことができませんでした"
 
-#: misc-utils/lsclocks.c:326
+#: misc-utils/lsclocks.c:325
 #, fuzzy
 #| msgid "failed to read pipe"
 msgid "failed to format iso time"
 msgstr "パイプの読み込みに失敗しました"
 
-#: misc-utils/lsclocks.c:335 misc-utils/lsclocks.c:348
+#: misc-utils/lsclocks.c:334 misc-utils/lsclocks.c:347
 #, fuzzy
 #| msgid "failed to create reload file: %s: %m"
 msgid "failed to format relative time"
 msgstr "リロードファイル %s の作成に失敗しました: %m"
 
-#: misc-utils/lsclocks.c:415 misc-utils/lsclocks.c:479
+#: misc-utils/lsclocks.c:414 misc-utils/lsclocks.c:478
 #, fuzzy, c-format
 #| msgid "Couldn't read %s"
 msgid "Could not glob: %d"
 msgstr "ディレクトリ %s を読み込むことができませんでした"
 
-#: misc-utils/lsclocks.c:444 sys-utils/hwclock-rtc.c:145
+#: misc-utils/lsclocks.c:443 sys-utils/hwclock-rtc.c:145
 #, fuzzy, c-format
 #| msgid "ioctl(%s) to %s to read the time failed"
 msgid "ioctl(RTC_RD_NAME) to %s to read the time failed"
 msgstr "時刻を読み込む際、 %2$s に対して ioctl(%1$s) を要求しましたが、失敗しました"
 
-#: misc-utils/lsclocks.c:503
+#: misc-utils/lsclocks.c:502
 #, c-format
 msgid "Could not get CPU clock of process %jd: %s"
 msgstr ""
 
-#: misc-utils/lsclocks.c:600 misc-utils/lslocks.c:385 misc-utils/uuidd.c:791
+#: misc-utils/lsclocks.c:599 misc-utils/lslocks.c:385 misc-utils/uuidd.c:791
 #: misc-utils/waitpid.c:54 sys-utils/nsenter.c:390
 msgid "failed to parse pid"
 msgstr "pid の解析に失敗しました"
 
-#: misc-utils/lsclocks.c:628
+#: misc-utils/lsclocks.c:627
 #, fuzzy
 #| msgid "failed to get lock"
 msgid "failed to get time"
@@ -17600,15 +17601,14 @@ msgid "%s: not a directory"
 msgstr "%s: ディレクトリではありません"
 
 #: sys-utils/fstrim.c:113
-#, fuzzy, c-format
-#| msgid "%s: %s mounted on %s.\n"
+#, c-format
 msgid "%s: 0 B (dry run) trimmed on %s\n"
-msgstr "%s: %s は %s にマウントされました。\n"
+msgstr "%s: %s で 0 B (ドライラン) trim されました\n"
 
 #: sys-utils/fstrim.c:115
 #, c-format
 msgid "%s: 0 B (dry run) trimmed\n"
-msgstr ""
+msgstr "%s: 0 B (ドライラン) trim されました\n"
 
 #: sys-utils/fstrim.c:133
 #, c-format
@@ -17617,16 +17617,15 @@ msgstr "%s: FITRIM ioctl に失敗しました"
 
 #. TRANSLATORS: The standard value here is a very large number.
 #: sys-utils/fstrim.c:143
-#, fuzzy, c-format
-#| msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
+#, c-format
 msgid "%s: %s (%<PRIu64> bytes) trimmed on %s\n"
-msgstr "%s: %s (%<PRIu64> バイト) に切り揃えました\n"
+msgstr "%1$s: %4$s で %2$s (%3$<PRIu64> バイト) trim されました\n"
 
 #. TRANSLATORS: The standard value here is a very large number.
 #: sys-utils/fstrim.c:147
 #, c-format
 msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
-msgstr "%s: %s (%<PRIu64> バイト) に切り揃えました\n"
+msgstr "%s: %s (%<PRIu64> バイト) trim されました\n"
 
 #: sys-utils/fstrim.c:290 sys-utils/lsns.c:1498 sys-utils/swapon.c:759
 #: sys-utils/umount.c:271
@@ -17653,24 +17652,16 @@ msgid "Discard unused blocks on a mounted filesystem.\n"
 msgstr "マウントされたファイルシステムの未使用ブロックを破棄します。\n"
 
 #: sys-utils/fstrim.c:460
-#, fuzzy
-#| msgid " -a, --all               unmount all filesystems\n"
 msgid " -a, --all                trim mounted filesystems\n"
-msgstr " -a, --all               すべてのファイルシステムをアンマウントします\n"
+msgstr " -a, --all                マウントされたファイルシステムを trim します\n"
 
 #: sys-utils/fstrim.c:461
-#, fuzzy
-#| msgid " -a, --all               unmount all filesystems\n"
 msgid " -A, --fstab              trim filesystems from /etc/fstab\n"
-msgstr " -a, --all               すべてのファイルシステムをアンマウントします\n"
+msgstr " -A, --fstab              /etc/fstab にあるファイルシステムを trim します\n"
 
 #: sys-utils/fstrim.c:462
-#, fuzzy
-#| msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
 msgid " -I, --listed-in <list>   trim filesystems listed in specified files\n"
-msgstr ""
-" -w, --whitelist-environment <list>  指定した変数をリセットしません\n"
-"\n"
+msgstr " -I, --listed-in <list>   指定したファイルの一覧内のファイルシステムを trim します\n"
 
 #: sys-utils/fstrim.c:463
 #, fuzzy
@@ -17703,16 +17694,12 @@ msgid " -v, --verbose            print number of discarded bytes\n"
 msgstr " -v, --verbose             冗長なデータ出力を行います\n"
 
 #: sys-utils/fstrim.c:468
-#, fuzzy
-#| msgid " -q, --quiet               suppress extra info messages\n"
 msgid "     --quiet-unsupported  suppress error messages if trim unsupported\n"
-msgstr " -q, --quiet               出力するメッセージの量を抑えます\n"
+msgstr "     --quiet-unsupported  trim 非対応時に出力するエラーメッセージを省略します\n"
 
 #: sys-utils/fstrim.c:469
-#, fuzzy
-#| msgid " -n, --dry-run            does everything, but suspend\n"
 msgid " -n, --dry-run            does everything, but trim\n"
-msgstr " -n, --dry-run            実際のサスペンド処理以外のすべてを行います\n"
+msgstr " -n, --dry-run            実際の trim 処理以外のすべてを行います\n"
 
 #: sys-utils/fstrim.c:550
 msgid "failed to parse minimum extent length"
@@ -24815,7 +24802,7 @@ msgstr "%s: %s を実行できません: %m"
 #: term-utils/agetty.c:606 term-utils/agetty.c:774 term-utils/agetty.c:953
 #: term-utils/agetty.c:1202 term-utils/agetty.c:1481 term-utils/agetty.c:1499
 #: term-utils/agetty.c:1536 term-utils/agetty.c:1546 term-utils/agetty.c:1588
-#: term-utils/agetty.c:1950 term-utils/agetty.c:2311 term-utils/agetty.c:2893
+#: term-utils/agetty.c:1949 term-utils/agetty.c:2310 term-utils/agetty.c:2892
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "メモリの割り当てに失敗しました: %m"
@@ -24906,33 +24893,33 @@ msgstr "os-release ファイルを開くことができません"
 msgid "failed to create reload file: %s: %m"
 msgstr "リロードファイル %s の作成に失敗しました: %m"
 
-#: term-utils/agetty.c:2014
+#: term-utils/agetty.c:2013
 #, fuzzy, c-format
 #| msgid "%s: failed to get terminal attributes: %m"
 msgid "failed to get terminal attributes: %m"
 msgstr "%s: 端末の属性取得に失敗しました: %m"
 
-#: term-utils/agetty.c:2036
+#: term-utils/agetty.c:2035
 msgid "[press ENTER to login]"
 msgstr "[Enter を押すとログインできます]"
 
-#: term-utils/agetty.c:2064
+#: term-utils/agetty.c:2063
 msgid "Num Lock off"
 msgstr "Num Lock は無効な状態です"
 
-#: term-utils/agetty.c:2067
+#: term-utils/agetty.c:2066
 msgid "Num Lock on"
 msgstr "Num Lock が有効な状態です"
 
-#: term-utils/agetty.c:2070
+#: term-utils/agetty.c:2069
 msgid "Caps Lock on"
 msgstr "Caps Lock が有効な状態です"
 
-#: term-utils/agetty.c:2073
+#: term-utils/agetty.c:2072
 msgid "Scroll Lock on"
 msgstr "Scroll Lock が有効な状態です"
 
-#: term-utils/agetty.c:2076
+#: term-utils/agetty.c:2075
 #, c-format
 msgid ""
 "Hint: %s\n"
@@ -24941,32 +24928,32 @@ msgstr ""
 "ヒント: %s\n"
 "\n"
 
-#: term-utils/agetty.c:2220
+#: term-utils/agetty.c:2219
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: 読み込み: %m"
 
-#: term-utils/agetty.c:2287
+#: term-utils/agetty.c:2286
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: 入力が溢れました"
 
-#: term-utils/agetty.c:2307 term-utils/agetty.c:2315
+#: term-utils/agetty.c:2306 term-utils/agetty.c:2314
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s: ログイン名の文字変換が失敗しました"
 
-#: term-utils/agetty.c:2321
+#: term-utils/agetty.c:2320
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s: ログイン名に不正な文字 0x%x が含まれています"
 
-#: term-utils/agetty.c:2406
+#: term-utils/agetty.c:2405
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s: 端末属性の設定に失敗しました: %m"
 
-#: term-utils/agetty.c:2451
+#: term-utils/agetty.c:2450
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -24975,175 +24962,175 @@ msgstr ""
 " %1$s [オプション] <回線> [<ボーレート>,...] [端末タイプ]\n"
 " %1$s [オプション] <ボーレート>,... 回線 [端末タイプ]\n"
 
-#: term-utils/agetty.c:2455
+#: term-utils/agetty.c:2454
 msgid "Open a terminal and set its mode.\n"
 msgstr "端末を開き、モードを指定します。\n"
 
-#: term-utils/agetty.c:2458
+#: term-utils/agetty.c:2457
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                端末が 8 ビットであるものとみなします\n"
 
-#: term-utils/agetty.c:2459
+#: term-utils/agetty.c:2458
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr " -a, --autologin <ユーザ>   指定したユーザで自動ログインします\n"
 
-#: term-utils/agetty.c:2460
+#: term-utils/agetty.c:2459
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset              制御モードをリセットしないようにします\n"
 
-#: term-utils/agetty.c:2461
+#: term-utils/agetty.c:2460
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote               login(1) に対して -r <ホスト名> を設定します\n"
 
-#: term-utils/agetty.c:2462
+#: term-utils/agetty.c:2461
 #, fuzzy
 #| msgid " -f, --issue-file <file>    display issue file\n"
 msgid " -f, --issue-file <list>    display issue files or directories\n"
 msgstr " -f, --issue-file <file>    issue ファイルを表示します\n"
 
-#: term-utils/agetty.c:2463
+#: term-utils/agetty.c:2462
 #, fuzzy
 #| msgid " -i, --noissue              do not display issue file\n"
 msgid "     --show-issue           display issue file and exit\n"
 msgstr " -f, --issue-file <file>    issue ファイルを表示します\n"
 
-#: term-utils/agetty.c:2464
+#: term-utils/agetty.c:2463
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr " -h, --flow-control         ハードウェアフロー制御を有効にします\n"
 
-#: term-utils/agetty.c:2465
+#: term-utils/agetty.c:2464
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -H, --host <ホスト名>      ログインホストを指定します\n"
 
-#: term-utils/agetty.c:2466
+#: term-utils/agetty.c:2465
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue              issue ファイルを表示しないようにします\n"
 
-#: term-utils/agetty.c:2467
+#: term-utils/agetty.c:2466
 msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <文字列> 初期化文字列を指定します\n"
 
-#: term-utils/agetty.c:2468
+#: term-utils/agetty.c:2467
 #, fuzzy
 #| msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgid " -J, --noclear              do not clear the screen before prompt\n"
 msgstr " -J  --noclear              プロンプトの表示前に画面消去を行いません\n"
 
-#: term-utils/agetty.c:2469
+#: term-utils/agetty.c:2468
 msgid " -l, --login-program <file> specify login program\n"
 msgstr " -l, --login-program <ファイル> ログインプログラムを指定します\n"
 
-#: term-utils/agetty.c:2470
+#: term-utils/agetty.c:2469
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr " -L, --local-line[=<モード>] ローカル回線フラグを設定します\n"
 
-#: term-utils/agetty.c:2471
+#: term-utils/agetty.c:2470
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr " -m, --extract-baud         接続時にボーレートを取得します\n"
 
-#: term-utils/agetty.c:2472
+#: term-utils/agetty.c:2471
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login           ログインプロンプトを表示しないようにします\n"
 
-#: term-utils/agetty.c:2473
+#: term-utils/agetty.c:2472
 #, fuzzy
 #| msgid " -N  --nonewline            do not print a newline before issue\n"
 msgid " -N, --nonewline            do not print a newline before issue\n"
 msgstr " -N  --nonewline            issue を表示する前に、改行を表示しないようにします\n"
 
-#: term-utils/agetty.c:2474
+#: term-utils/agetty.c:2473
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -o, --login-options <オプション> login コマンドに渡すオプションを指定します\n"
 
-#: term-utils/agetty.c:2475
+#: term-utils/agetty.c:2474
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -p, --login-pause          ログイン前に任意のキーが入力されるのを待つようにします\n"
 
-#: term-utils/agetty.c:2476
+#: term-utils/agetty.c:2475
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -r, --chroot <ディレクトリ> 指定したディレクトリをルートにします\n"
 
-#: term-utils/agetty.c:2477
+#: term-utils/agetty.c:2476
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup               tty を擬似的にハングアップするようにします\n"
 
-#: term-utils/agetty.c:2478
+#: term-utils/agetty.c:2477
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -s, --keep-baud            break 後もボーレートを維持するようにします\n"
 
-#: term-utils/agetty.c:2479
+#: term-utils/agetty.c:2478
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr " -t, --timeout <数値>       ログイン処理の制限時間を指定します\n"
 
-#: term-utils/agetty.c:2480
+#: term-utils/agetty.c:2479
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr " -U, --detect-case          大文字のみを使用する端末を検出するようにします\n"
 
-#: term-utils/agetty.c:2481
+#: term-utils/agetty.c:2480
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait-cr              キャリッジリターンを待機します\n"
 
-#: term-utils/agetty.c:2482
+#: term-utils/agetty.c:2481
 msgid "     --nohints              do not print hints\n"
 msgstr "     --nohints              ヒントを表示しないようにします\n"
 
-#: term-utils/agetty.c:2483
+#: term-utils/agetty.c:2482
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "     --nohostname           ホスト名を全く表示しないようにします\n"
 
-#: term-utils/agetty.c:2484
+#: term-utils/agetty.c:2483
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "     --long-hostname        完全修飾ホスト名を表示します\n"
 
-#: term-utils/agetty.c:2485
+#: term-utils/agetty.c:2484
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "     --erase-chars <文字列> 追加のバックスペース文字を指定します\n"
 
-#: term-utils/agetty.c:2486
+#: term-utils/agetty.c:2485
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "     --kill-chars <文字列>  追加の kill 文字を指定します\n"
 
-#: term-utils/agetty.c:2487
+#: term-utils/agetty.c:2486
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "     --chdir <ディレクトリ>  ログインする前にディレクトリを変更します\n"
 
-#: term-utils/agetty.c:2488
+#: term-utils/agetty.c:2487
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "     --delay <秒数>         プロンプトを表示する前に指定した秒数待ちます\n"
 
-#: term-utils/agetty.c:2489
+#: term-utils/agetty.c:2488
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "     --nice <優先度>        login を指定した優先度で実行します\n"
 
-#: term-utils/agetty.c:2490
+#: term-utils/agetty.c:2489
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --reload               実行中の agetty インスタンスをリロードします\n"
 
-#: term-utils/agetty.c:2491
+#: term-utils/agetty.c:2490
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "     --list-speeds          設定可能なボーレートを表示します\n"
 
-#: term-utils/agetty.c:2850
+#: term-utils/agetty.c:2849
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] "%d ユーザ"
 
-#: term-utils/agetty.c:2980
+#: term-utils/agetty.c:2979
 #, c-format
 msgid "checkname failed: %m"
 msgstr "checkname に失敗しました: %m"
 
-#: term-utils/agetty.c:2992
+#: term-utils/agetty.c:2991
 #, c-format
 msgid "cannot touch file %s"
 msgstr "ファイル %s にアクセスできません"
 
-#: term-utils/agetty.c:2996
+#: term-utils/agetty.c:2995
 msgid "--reload is unsupported on your system"
 msgstr "--reload はあなたのシステムではサポートされていません"
 
-#: term-utils/agetty.c:3018
+#: term-utils/agetty.c:3017
 #, fuzzy
 #| msgid "failed to open directory"
 msgid "failed to open credentials directory"
@@ -25962,42 +25949,42 @@ msgstr "引数が正しくありません - 終了トラック"
 msgid "%s: unknown gid"
 msgstr "%s: 未知のグループIDです"
 
-#: term-utils/wall.c:182
+#: term-utils/wall.c:175
 msgid "getgrouplist found more groups than sysconf allows"
 msgstr ""
 
-#: term-utils/wall.c:228
+#: term-utils/wall.c:221
 msgid "--nobanner is available only for root"
 msgstr "--nobanner は root だけが使用できます"
 
-#: term-utils/wall.c:233
+#: term-utils/wall.c:226
 #, c-format
 msgid "invalid timeout argument: %s"
 msgstr "制限時間の引数が正しくありません: %s"
 
-#: term-utils/wall.c:269 term-utils/write.c:144 term-utils/write.c:215
+#: term-utils/wall.c:262 term-utils/write.c:144 term-utils/write.c:215
 #, fuzzy, c-format
 #| msgid "error writing %s: %s"
 msgid "error getting sessions: %s"
 msgstr "%s への書き込み時にエラーが発生しました: %s"
 
-#: term-utils/wall.c:277 term-utils/write.c:153 term-utils/write.c:223
+#: term-utils/wall.c:270 term-utils/write.c:153 term-utils/write.c:223
 #, fuzzy, c-format
 #| msgid "gethostname failed"
 msgid "get user name failed: %s"
 msgstr "gethostname に失敗しました"
 
-#: term-utils/wall.c:340
+#: term-utils/wall.c:333
 msgid "cannot get passwd uid"
 msgstr "passwd uid を取得できません"
 
 # Translator's NOTE: whom, hostname, where, date
-#: term-utils/wall.c:364
+#: term-utils/wall.c:357
 #, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "%s@%s から流れてきた全体周知メッセージ (%s) (%s):"
 
-#: term-utils/wall.c:397
+#: term-utils/wall.c:389
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr "%s からは読み込みません - 標準入力をお使いください。"
