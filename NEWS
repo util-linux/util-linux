@@ -1,3 +1,7 @@
+util-linux 2.40.2: Jul 04 2024
+* see Documentation/releases/v2.40.2-ReleaseNotes or the complete changelog at
+  https://www.kernel.org/pub/linux/utils/util-linux/v2.40/v2.40.2-ChangeLog
+
 util-linux 2.40.1: May 06 2024
 * see Documentation/releases/v2.40.1-ReleaseNotes or the complete changelog at
   https://www.kernel.org/pub/linux/utils/util-linux/v2.40/v2.40.1-ChangeLog
