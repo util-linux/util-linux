@@ -89,6 +89,9 @@ Specify the columns delimiter for table output (default is two spaces).
 *-s, --separator* _separators_::
 Specify the possible input item delimiters (default is whitespace).
 
+*-S, --use-spaces* _number_::
+When not in table mode, use whitespaces instead of tabulations to align the columns. This option specifies the minimum number of whitespaces that separate two columns.
+
 *-t, --table*::
 Determine the number of columns the input contains and create a table. Columns are delimited with whitespace, by default, or with the characters supplied using the *--output-separator* option. Table output is useful for pretty-printing.
 
