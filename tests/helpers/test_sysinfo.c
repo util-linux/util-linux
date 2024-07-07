@@ -27,7 +27,9 @@
 #include <errno.h>
 #include <time.h>
 #include <sys/ioctl.h>
-#include <sys/mount.h>
+#ifdef __linux__
+# include <sys/mount.h>
+#endif
 
 #include "mount-api-utils.h"
 
