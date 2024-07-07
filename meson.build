@@ -3650,6 +3650,14 @@ exe = executable(
 exes += exe
 
 exe = executable(
+  'test_sigstate',
+  'tests/helpers/test_sigstate.c',
+  include_directories : includes,
+  link_with : lib_common,
+  build_by_default: program_tests)
+exes += exe
+
+exe = executable(
   'test_tiocsti',
   'tests/helpers/test_tiocsti.c',
   include_directories : includes,
