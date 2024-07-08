@@ -3773,6 +3773,16 @@ if not is_disabler(exe)
 endif
 
 exe = executable(
+  'sample-mount-overwrite',
+  'libmount/samples/overwrite.c',
+  include_directories : includes,
+  dependencies : [mount_dep],
+  link_with : [lib_common])
+if not is_disabler(exe)
+  exes += exe
+endif
+
+exe = executable(
   'test_boilerplate',
   'Documentation/boilerplate.c',
    include_directories : includes,
