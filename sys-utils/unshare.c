@@ -413,10 +413,11 @@ static struct map_range get_map_range(const char *s)
  * @filename: The file to look up the range from. This should be either
  *            ``/etc/subuid`` or ``/etc/subgid``.
  * @uid: The uid of the user whose range we should look up.
+ * @identity: (boolean) If true identity map the range, otherwise map to 0
  *
  * This finds the first subid range matching @uid in @filename.
  */
-static struct map_range read_subid_range(char *filename, uid_t uid)
+static struct map_range read_subid_range(char *filename, uid_t uid, int identity)
 {
 	char *line = NULL, *pwbuf;
 	FILE *idmap;
@@ -462,6 +463,9 @@ static struct map_range read_subid_range(char *filename, uid_t uid)
 		if (rest)
 			*rest = '\0';
 		map.count = strtoul_or_err(s, _("failed to parse subid map"));
+
+		if (identity)
+			map.inner = map.outer;
 
 		fclose(idmap);
 		free(pw);
@@ -541,15 +545,17 @@ static void add_single_map_range(struct map_range **chain, unsigned int outer,
 				 *next = map->next;
 		unsigned int inner_offset, outer_offset;
 
-		/*
-		 * Start inner IDs from zero for an auto mapping; otherwise, if
-		 * the single mapping exists and overlaps the range, remove an ID
-		 */
+		/* Start inner IDs from zero for an auto mapping */
 		if (map->inner + 1 == 0)
 			map->inner = 0;
-		else if (inner + 1 != 0 &&
-		         ((outer >= map->outer && outer <= map->outer + map->count) ||
-			  (inner >= map->inner && inner <= map->inner + map->count)))
+
+		/*
+		 * If the single mapping exists and overlaps the range, remove
+		 * an ID
+		 */
+		if (inner + 1 != 0 &&
+		    ((outer >= map->outer && outer <= map->outer + map->count) ||
+		     (inner >= map->inner && inner <= map->inner + map->count)))
 			map->count--;
 
 		/* Determine where the splits between lo, mid, and hi will be */
@@ -826,6 +832,7 @@ int main(int argc, char *argv[])
 		OPT_MAPGROUP,
 		OPT_MAPGROUPS,
 		OPT_MAPAUTO,
+		OPT_MAPSUBIDS,
 	};
 	static const struct option longopts[] = {
 		{ "help",          no_argument,       NULL, 'h'             },
@@ -851,6 +858,7 @@ int main(int argc, char *argv[])
 		{ "map-root-user", no_argument,       NULL, 'r'             },
 		{ "map-current-user", no_argument,    NULL, 'c'             },
 		{ "map-auto",      no_argument,       NULL, OPT_MAPAUTO     },
+		{ "map-subids",    no_argument,       NULL, OPT_MAPSUBIDS   },
 		{ "propagation",   required_argument, NULL, OPT_PROPAGATION },
 		{ "setgroups",     required_argument, NULL, OPT_SETGROUPS   },
 		{ "keep-caps",     no_argument,       NULL, OPT_KEEPCAPS    },
@@ -980,7 +988,10 @@ int main(int argc, char *argv[])
 			unshare_flags |= CLONE_NEWUSER;
 			if (!strcmp(optarg, "auto"))
 				insert_map_range(&usermap,
-					read_subid_range(_PATH_SUBUID, real_euid));
+						 read_subid_range(_PATH_SUBUID, real_euid, 0));
+			else if (!strcmp(optarg, "subids"))
+				insert_map_range(&usermap,
+						 read_subid_range(_PATH_SUBUID, real_euid, 1));
 			else if (!strcmp(optarg, "all"))
 				read_kernel_map(&usermap, _PATH_PROC_UIDMAP);
 			else
@@ -990,7 +1001,10 @@ int main(int argc, char *argv[])
 			unshare_flags |= CLONE_NEWUSER;
 			if (!strcmp(optarg, "auto"))
 				insert_map_range(&groupmap,
-					read_subid_range(_PATH_SUBGID, real_euid));
+						 read_subid_range(_PATH_SUBGID, real_euid, 0));
+			else if (!strcmp(optarg, "subids"))
+				insert_map_range(&usermap,
+						 read_subid_range(_PATH_SUBGID, real_euid, 1));
 			else if (!strcmp(optarg, "all"))
 				read_kernel_map(&groupmap, _PATH_PROC_GIDMAP);
 			else
@@ -998,8 +1012,13 @@ int main(int argc, char *argv[])
 			break;
 		case OPT_MAPAUTO:
 			unshare_flags |= CLONE_NEWUSER;
-			insert_map_range(&usermap, read_subid_range(_PATH_SUBUID, real_euid));
-			insert_map_range(&groupmap, read_subid_range(_PATH_SUBGID, real_euid));
+			insert_map_range(&usermap, read_subid_range(_PATH_SUBUID, real_euid, 0));
+			insert_map_range(&groupmap, read_subid_range(_PATH_SUBGID, real_euid, 0));
+			break;
+		case OPT_MAPSUBIDS:
+			unshare_flags |= CLONE_NEWUSER;
+			insert_map_range(&usermap, read_subid_range(_PATH_SUBUID, real_euid, 1));
+			insert_map_range(&groupmap, read_subid_range(_PATH_SUBGID, real_euid, 1));
 			break;
 		case OPT_SETGROUPS:
 			setgrpcmd = setgroups_str2id(optarg);
