@@ -94,6 +94,7 @@ struct column_control {
 	size_t	nents;		/* number of entries */
 	size_t	maxlength;	/* longest input record (line) */
 	size_t  maxncols;	/* maximal number of input columns */
+	size_t  mincolsep;	/* minimal spaces between columns */
 
 	unsigned int greedy :1,
 		     json :1,
@@ -101,7 +102,8 @@ struct column_control {
 		     hide_unnamed :1,
 		     maxout : 1,
 		     keep_empty_lines :1,	/* --keep-empty-lines */
-		     tab_noheadings :1;
+		     tab_noheadings :1,
+		     use_spaces :1;
 };
 
 typedef enum {
@@ -753,11 +755,17 @@ static int read_input(struct column_control *ctl, FILE *fp)
 
 static void columnate_fillrows(struct column_control *ctl)
 {
-	size_t chcnt, col, cnt, endcol, numcols;
+	size_t chcnt, col, cnt, endcol, numcols, remains;
 	wchar_t **lp;
 
-	ctl->maxlength = (ctl->maxlength + TABCHAR_CELLS) & ~(TABCHAR_CELLS - 1);
+	if (ctl->use_spaces)
+		ctl->maxlength += ctl->mincolsep;
+	else
+		ctl->maxlength = (ctl->maxlength + TABCHAR_CELLS) & ~(TABCHAR_CELLS - 1);
 	numcols = ctl->termwidth / ctl->maxlength;
+	remains = ctl->termwidth % ctl->maxlength;
+	if (ctl->use_spaces && remains + ctl->mincolsep >= ctl->maxlength)
+		numcols++;
 	endcol = ctl->maxlength;
 	for (chcnt = col = 0, lp = ctl->ents; /* nothing */; ++lp) {
 		fputws(*lp, stdout);
@@ -769,9 +777,16 @@ static void columnate_fillrows(struct column_control *ctl)
 			endcol = ctl->maxlength;
 			putwchar('\n');
 		} else {
-			while ((cnt = ((chcnt + TABCHAR_CELLS) & ~(TABCHAR_CELLS - 1))) <= endcol) {
-				putwchar('\t');
-				chcnt = cnt;
+			if (ctl->use_spaces) {
+				while (chcnt < endcol) {
+					putwchar(' ');
+					chcnt++;
+				}
+			} else {
+				while ((cnt = ((chcnt + TABCHAR_CELLS) & ~(TABCHAR_CELLS - 1))) <= endcol) {
+					putwchar('\t');
+					chcnt = cnt;
+				}
 			}
 			endcol += ctl->maxlength;
 		}
@@ -782,12 +797,18 @@ static void columnate_fillrows(struct column_control *ctl)
 
 static void columnate_fillcols(struct column_control *ctl)
 {
-	size_t base, chcnt, cnt, col, endcol, numcols, numrows, row;
+	size_t base, chcnt, cnt, col, endcol, numcols, numrows, row, remains;
 
-	ctl->maxlength = (ctl->maxlength + TABCHAR_CELLS) & ~(TABCHAR_CELLS - 1);
+	if (ctl->use_spaces)
+		ctl->maxlength += ctl->mincolsep;
+	else
+		ctl->maxlength = (ctl->maxlength + TABCHAR_CELLS) & ~(TABCHAR_CELLS - 1);
 	numcols = ctl->termwidth / ctl->maxlength;
+	remains = ctl->termwidth % ctl->maxlength;
 	if (!numcols)
 		numcols = 1;
+	if (ctl->use_spaces && remains + ctl->mincolsep >= ctl->maxlength)
+		numcols++;
 	numrows = ctl->nents / numcols;
 	if (ctl->nents % numcols)
 		++numrows;
@@ -799,9 +820,16 @@ static void columnate_fillcols(struct column_control *ctl)
 			chcnt += width(ctl->ents[base]);
 			if ((base += numrows) >= ctl->nents)
 				break;
-			while ((cnt = ((chcnt + TABCHAR_CELLS) & ~(TABCHAR_CELLS - 1))) <= endcol) {
-				putwchar('\t');
-				chcnt = cnt;
+			if (ctl->use_spaces) {
+				while (chcnt < endcol) {
+					putwchar(' ');
+					chcnt++;
+				}
+			} else {
+				while ((cnt = ((chcnt + TABCHAR_CELLS) & ~(TABCHAR_CELLS - 1))) <= endcol) {
+					putwchar('\t');
+					chcnt = cnt;
+				}
 			}
 			endcol += ctl->maxlength;
 		}
@@ -858,6 +886,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -o, --output-separator <string>  columns separator for table output (default is two spaces)\n"), out);
 	fputs(_(" -s, --separator <string>         possible table delimiters\n"), out);
 	fputs(_(" -x, --fillrows                   fill rows before columns\n"), out);
+	fputs(_(" -S, --use-spaces <number>        minimal whitespaces between columns (no tabs)\n"), out);
 
 
 	fputs(USAGE_SEPARATOR, out);
@@ -906,6 +935,7 @@ int main(int argc, char **argv)
 		{ "tree",                required_argument, NULL, 'r' },
 		{ "tree-id",             required_argument, NULL, 'i' },
 		{ "tree-parent",         required_argument, NULL, 'p' },
+		{ "use-spaces",          required_argument, NULL, 'S' },
 		{ "version",             no_argument,       NULL, 'V' },
 		{ NULL,	0, NULL, 0 },
 	};
@@ -925,7 +955,7 @@ int main(int argc, char **argv)
 	ctl.output_separator = "  ";
 	ctl.input_separator = mbs_to_wcs("\t ");
 
-	while ((c = getopt_long(argc, argv, "C:c:dE:eH:hi:Jl:LN:n:mO:o:p:R:r:s:T:tVW:x", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "C:c:dE:eH:hi:Jl:LN:n:mO:o:p:R:r:S:s:T:tVW:x", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -991,6 +1021,10 @@ int main(int argc, char **argv)
 			break;
 		case 'r':
 			ctl.tree = optarg;
+			break;
+		case 'S':
+			ctl.use_spaces = 1;
+			ctl.mincolsep = strtou32_or_err(optarg, _("invalid spaces argument"));
 			break;
 		case 's':
 			free(ctl.input_separator);
