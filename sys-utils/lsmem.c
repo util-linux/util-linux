@@ -496,10 +496,8 @@ static void read_basic_info(struct lsmem *lsmem)
 	if (lsmem->ndirs <= 0)
 		err(EXIT_FAILURE, _("Failed to read %s"), dir);
 
-	for (i = 0; i < lsmem->ndirs; i++)
-	{
-		if (memory_block_get_node(lsmem, lsmem->dirs[i]->d_name) != -1)
-		{
+	for (i = 0; i < lsmem->ndirs; i++) {
+		if (memory_block_get_node(lsmem, lsmem->dirs[i]->d_name) != -1)	{
 			lsmem->have_nodes = 1;
 			break;
 		}
