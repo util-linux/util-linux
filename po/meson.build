@@ -1,4 +1,4 @@
-if not find_program('gettext', required : false).found()
+if not find_program('gettext', required : get_option('nls')).found()
   subdir_done()
 endif
 
