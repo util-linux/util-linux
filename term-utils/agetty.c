@@ -683,6 +683,9 @@ static void output_version(void)
 #ifdef USE_SYSLOG
 		"syslog",
 #endif
+#ifdef USE_SYSTEMD
+		"systemd",
+#endif
 #ifdef HAVE_WIDECHAR
 		"widechar",
 #endif
