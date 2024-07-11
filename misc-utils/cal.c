@@ -1175,6 +1175,9 @@ static int day_in_week(const struct cal_control *ctl, int day,
 	static const int reform[] = { 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4 };
 	static const int old[]    = { 5, 1, 0, 3, 5, 1, 3, 6, 2, 4, 0, 2 };
 
+	if (month > 0 && month - 1 >= (int) ARRAY_SIZE(old))
+		month = ARRAY_SIZE(old);	/* for sure */
+
 	if (year != ctl->reform_year + 1)
 		year -= month < MARCH;
 	else
