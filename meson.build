@@ -1197,49 +1197,63 @@ endif
 
 ############################################################
 
-if is_glibc
-  exe = executable(
-    'col',
-    col_sources,
-    include_directories : includes,
-    link_with : lib_common,
-    install_dir : usrbin_exec_dir,
-    install : true)
+opt = not get_option('build-col').require(is_glibc).disabled()
+exe = executable(
+  'col',
+  col_sources,
+  include_directories : includes,
+  link_with : lib_common,
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['text-utils/col.1.adoc']
   bashcompletions += ['col']
 endif
 
+opt = not get_option('build-colcrt').disabled()
 exe = executable(
   'colcrt',
   colcrt_sources,
   include_directories : includes,
   install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['text-utils/colcrt.1.adoc']
-bashcompletions += ['colcrt']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['text-utils/colcrt.1.adoc']
+  bashcompletions += ['colcrt']
+endif
 
+opt = not get_option('build-colrm').disabled()
 exe = executable(
   'colrm',
   colrm_sources,
   include_directories : includes,
   link_with : lib_common,
   install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['text-utils/colrm.1.adoc']
-bashcompletions += ['colrm']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['text-utils/colrm.1.adoc']
+  bashcompletions += ['colrm']
+endif
 
+opt = not get_option('build-rev').disabled()
 exe = executable(
   'rev',
   rev_sources,
   include_directories : includes,
   install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['text-utils/rev.1.adoc']
-bashcompletions += ['rev']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['text-utils/rev.1.adoc']
+  bashcompletions += ['rev']
+endif
 
 exe = executable(
   'column',
@@ -1374,15 +1388,20 @@ if opt and not is_disabler(exe)
   bashcompletions += ['chmem']
 endif
 
+opt = not get_option('build-choom').disabled()
 exe = executable(
   'choom',
   choom_sources,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['sys-utils/choom.1.adoc']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['sys-utils/choom.1.adoc']
+  bashcompletions += ['choom']
+endif
 
 has_seminfo_type = cc.has_type('struct seminfo', args : '-D_GNU_SOURCE', prefix : '#include <sys/sem.h>')
 
@@ -1561,16 +1580,20 @@ if not is_disabler(exe)
   exes += exe
 endif
 
+opt = get_option('build-ctrlaltdel').allowed()
 exe = executable(
   'ctrlaltdel',
   ctrlaltdel_sources,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : sbindir,
-  install : true)
-exes += exe
-manadocs += ['sys-utils/ctrlaltdel.8.adoc']
-bashcompletions += ['ctrlaltdel']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['sys-utils/ctrlaltdel.8.adoc']
+  bashcompletions += ['ctrlaltdel']
+endif
 
 have_linux_fs_h = conf.get('HAVE_LINUX_FS_H').to_string() == '1'
 
@@ -2066,6 +2089,7 @@ if opt and not is_disabler(exe)
   bashcompletions += ['setpriv']
 endif
 
+opt = not get_option('build-flock').disabled()
 exe = executable(
   'flock',
   flock_sources,
@@ -2073,10 +2097,13 @@ exe = executable(
   link_with : [lib_common],
   dependencies : realtime_libs,
   install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['sys-utils/flock.1.adoc']
-bashcompletions += ['flock']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['sys-utils/flock.1.adoc']
+  bashcompletions += ['flock']
+endif
 
 opt = not get_option('build-lsirq').disabled()
 exe = executable(
@@ -2145,15 +2172,19 @@ if opt and not is_disabler(exe)
   bashcompletions += ['hwclock']
 endif
 
+opt = not get_option('build-mkfs').disabled()
 exe = executable(
   'mkfs',
   mkfs_sources,
   include_directories : includes,
   install_dir : sbindir,
-  install : true)
-exes += exe
-manadocs += ['disk-utils/mkfs.8.adoc']
-bashcompletions += ['mkfs']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['disk-utils/mkfs.8.adoc']
+  bashcompletions += ['mkfs']
+endif
 
 opt = not get_option('build-bfs').disabled()
 exe = executable(
@@ -2170,16 +2201,20 @@ if opt and not is_disabler(exe)
   bashcompletions += ['mkfs.bfs']
 endif
 
+opt = not get_option('build-isosize').disabled()
 exe = executable(
   'isosize',
   isosize_sources,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['disk-utils/isosize.8.adoc']
-bashcompletions += ['isosize']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['disk-utils/isosize.8.adoc']
+  bashcompletions += ['isosize']
+endif
 
 exe = executable(
   'mkswap',
@@ -2545,7 +2580,7 @@ if opt and not is_disabler(exe)
   exes += exe
 endif
 
-opt = get_option('build-scriptlive').require(have_pty).allowed()
+opt = get_option('build-scriptutils').require(have_pty).allowed()
 exe = executable(
   'scriptlive',
   scriptlive_sources,
@@ -2570,10 +2605,13 @@ exe = executable(
   link_with : [lib_common],
   dependencies : [math_libs],
   install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['term-utils/scriptreplay.1.adoc']
-bashcompletions += ['scriptreplay']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['term-utils/scriptreplay.1.adoc']
+  bashcompletions += ['scriptreplay']
+endif
 
 opt = not get_option('build-agetty').disabled()
 exe = executable(
@@ -2734,26 +2772,34 @@ if not is_disabler(exe)
   exes += exe
 endif
 
+opt = not get_option('build-look').disabled()
 exe = executable(
   'look',
   look_sources,
   include_directories : includes,
   install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['misc-utils/look.1.adoc']
-bashcompletions += ['look']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['misc-utils/look.1.adoc']
+  bashcompletions += ['look']
+endif
 
+opt = not get_option('build-mcookie').disabled()
 exe = executable(
   'mcookie',
   mcookie_sources,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['misc-utils/mcookie.1.adoc']
-bashcompletions += ['mcookie']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['misc-utils/mcookie.1.adoc']
+  bashcompletions += ['mcookie']
+endif
 
 if build_liblastlog2
   exe = executable(
@@ -2777,27 +2823,35 @@ if build_liblastlog2
 	       ]
 endif
 
+opt = not get_option('build-namei').disabled()
 exe = executable(
   'namei',
   namei_sources,
   include_directories : includes,
   dependencies : [lib_selinux],
   install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['misc-utils/namei.1.adoc']
-bashcompletions += ['namei']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['misc-utils/namei.1.adoc']
+  bashcompletions += ['namei']
+endif
 
+opt = not get_option('build-whereis').disabled()
 exe = executable(
   'whereis',
   whereis_sources,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['misc-utils/whereis.1.adoc']
-bashcompletions += ['whereis']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['misc-utils/whereis.1.adoc']
+  bashcompletions += ['whereis']
+endif
 
 opt = not get_option('build-lslocks').disabled()
 exe = executable(
@@ -3033,13 +3087,15 @@ if opt and not is_disabler(exe)
   bashcompletions += ['findmnt']
 endif
 
+opt = not get_option('build-kill').disabled()
 exe = executable(
   'kill',
   kill_sources,
   include_directories : includes,
   link_with : [lib_common],
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['misc-utils/kill.1.adoc']
 endif
@@ -3059,16 +3115,20 @@ if opt and not is_disabler(exe)
   bashcompletions += ['rename']
 endif
 
+opt = not get_option('build-getopt').disabled()
 exe = executable(
   'getopt',
   getopt_sources,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['misc-utils/getopt.1.adoc']
-bashcompletions += ['getopt']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['misc-utils/getopt.1.adoc']
+  bashcompletions += ['getopt']
+endif
 
 exe = executable(
   'fincore',
@@ -3084,14 +3144,16 @@ if not is_disabler(exe)
   bashcompletions += ['fincore']
 endif
 
+opt = get_option('build-hardlink').allowed()
 exe = executable(
   'hardlink',
   hardlink_sources,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : usrbin_exec_dir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['misc-utils/hardlink.1.adoc']
   bashcompletions += ['hardlink']
@@ -3142,19 +3204,19 @@ if opt and not is_disabler(exe)
   bashcompletions += ['fadvise']
 endif
 
-if LINUX and conf.get('HAVE_PIDFD_OPEN').to_string() == '1'
-  exe = executable(
-    'waitpid',
-    waitpid_sources,
-    include_directories : includes,
-    link_with : [lib_common],
-    install_dir : usrbin_exec_dir,
-    install : true)
-  if not is_disabler(exe)
-    exes += exe
-    manadocs += ['misc-utils/waitpid.1.adoc']
-    bashcompletions += ['waitpid']
-  endif
+opt = get_option('build-waitpid').require(LINUX and conf.get('HAVE_PIDFD_OPEN').to_string() == '1').allowed()
+exe = executable(
+  'waitpid',
+  waitpid_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['misc-utils/waitpid.1.adoc']
+  bashcompletions += ['waitpid']
 endif
 
 syscalls_h = custom_target('syscalls.h',
@@ -3197,19 +3259,19 @@ if opt and not is_disabler(exe)
   bashcompletions += ['lsclocks']
 endif
 
-if conf.get('HAVE_RENAMEAT2').to_string() == '1'
+opt = get_option('build-exch').require(conf.get('HAVE_RENAMEAT2').to_string() == '1').allowed()
 exe = executable(
   'exch',
   exch_sources,
   include_directories : includes,
   link_with : [lib_common],
   install_dir : usrbin_exec_dir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['misc-utils/exch.1.adoc']
   bashcompletions += ['exch']
-endif
 endif
 
 ############################################################
