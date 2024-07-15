@@ -46,6 +46,7 @@
 
 #include <ctype.h>		/* for isdigit() */
 #include <signal.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -103,21 +104,84 @@ struct kill_control {
 		verbose:1;
 };
 
-static void print_signal_name(int signum)
+static void print_signal_name(int signum, bool newline)
 {
 	const char *name = signum_to_signame(signum);
+	const char *eol = newline? "\n": "";
 
 	if (name) {
-		printf("%s\n", name);
+		printf("%s%s", name, eol);
 		return;
 	}
 #ifdef SIGRTMIN
 	if (SIGRTMIN <= signum && signum <= SIGRTMAX) {
-		printf("RT%d\n", signum - SIGRTMIN);
+		printf("RT%d%s", signum - SIGRTMIN, eol);
 		return;
 	}
 #endif
-	printf("%d\n", signum);
+	printf("%d%s", signum, eol);
+}
+
+static void print_signal_mask(uint64_t sigmask, const char sep)
+{
+	for (size_t i = 0; i < sizeof(sigmask) * 8; i++) {
+		if ((((uint64_t)0x1) << i) & sigmask) {
+			const int signum = i + 1;
+			print_signal_name(signum, false);
+			putchar(sep);
+		}
+	}
+}
+
+static void print_process_signal_state(pid_t pid)
+{
+	struct path_cxt *pc = NULL;
+	FILE *fp;
+	char buf[BUFSIZ];
+
+	static const struct sigfield {
+		char *key;
+		char *label;
+	} sigfields[] = {
+		{ "SigPnd:\t", N_("Pending (thread)")  },
+		{ "ShdPnd:\t", N_("Pending (process)") },
+		{ "SigBlk:\t", N_("Blocked")           },
+		{ "SigIgn:\t", N_("Ignored")           },
+		{ "SigCgt:\t", N_("Caught")            },
+	};
+
+	pc = ul_new_procfs_path(pid, NULL);
+	if (!pc)
+		err(EXIT_FAILURE, _("failed to initialize procfs handler"));
+	fp = ul_path_fopen(pc, "r", "status");
+	if (!fp)
+		err(EXIT_FAILURE, _("cannot open /proc/%d/status"), pid);
+
+	while (fgets(buf, sizeof(buf), fp) != NULL) {
+		for (size_t i = 0; i < ARRAY_SIZE(sigfields); i++) {
+			const char *key = sigfields[i].key;
+			size_t keylen = strlen(key);
+
+			if (strncmp(buf, key, keylen) == 0) {
+				char *val = buf + keylen;
+				uint64_t sigmask;
+
+				rtrim_whitespace((unsigned char*)val);
+				if (ul_strtou64(val, &sigmask, 16) < 0) {
+					warnx( _("unexpected sigmask format: %s (%s)"), val, key);
+					continue;
+				}
+				if (sigmask != 0) {
+					printf("%s: ", _(sigfields[i].label));
+					print_signal_mask(sigmask, ' ');
+					putchar('\n');
+				}
+			}
+		}
+	}
+
+	fclose(fp);
+	ul_unref_path(pc);
 }
 
 static void pretty_print_signal(FILE *fp, size_t term_width, size_t *lpos,
@@ -211,9 +275,13 @@ static void __attribute__((__noreturn__)) usage(void)
 		"                        wait up to timeout and send follow-up signal\n"), out);
 #endif
 	fputs(_(" -p, --pid              print pids without signaling them\n"), out);
-	fputs(_(" -l, --list[=<signal>]  list signal names, or convert a signal number to a name\n"), out);
+	fputs(_(" -l, --list[=<signal>|=0x<sigmask>]\n"
+		"                        list signal names, convert a signal number to a name,\n"
+		"                         or convrt a signal mask to names\n"), out);
 	fputs(_(" -L, --table            list signal names and numbers\n"), out);
 	fputs(_(" -r, --require-handler  do not send signal if signal handler is not present\n"), out);
+	fputs(_(" -d, --show-process-state <pid>\n"
+		"                        show signal related fields in /proc/<pid>/status\n"), out);
 	fputs(_("     --verbose          print pids that will be signaled\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -286,22 +354,55 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 				errx(EXIT_FAILURE, _("too many arguments"));
 			/* argc == 2, accept "kill -l $?" */
 			arg = argv[1];
+			if (arg[0] == '0' && arg[1] == 'x') {
+				uint64_t sigmask;
+				if (ul_strtou64(arg + 2, &sigmask, 16) < 0)
+					errx(EXIT_FAILURE, _("invalid sigmask format: %s"), arg);
+				print_signal_mask(sigmask, '\n');
+				exit(EXIT_SUCCESS);
+			}
 			if ((ctl->numsig = arg_to_signum(arg, 1)) < 0)
 				errx(EXIT_FAILURE, _("unknown signal: %s"),
 				     arg);
-			print_signal_name(ctl->numsig);
+			print_signal_name(ctl->numsig, true);
 			exit(EXIT_SUCCESS);
 		}
 		/* for compatibility with procps kill(1) */
 		if (!strncmp(arg, "--list=", 7) || !strncmp(arg, "-l=", 3)) {
 			char *p = strchr(arg, '=') + 1;
+			if (p[0] == '0' && p[1] == 'x') {
+				uint64_t sigmask;
+				if (ul_strtou64(p + 2, &sigmask, 16) < 0)
+					errx(EXIT_FAILURE, _("invalid sigmask format: %s"), p);
+				print_signal_mask(sigmask, '\n');
+				exit(EXIT_SUCCESS);
+			}
 			if ((ctl->numsig = arg_to_signum(p, 1)) < 0)
 				errx(EXIT_FAILURE, _("unknown signal: %s"), p);
-			print_signal_name(ctl->numsig);
+			print_signal_name(ctl->numsig, true);
 			exit(EXIT_SUCCESS);
 		}
 		if (!strcmp(arg, "-L") || !strcmp(arg, "--table")) {
 			print_all_signals(stdout, 1);
+			exit(EXIT_SUCCESS);
+		}
+		if (!strcmp(arg, "-d") || !strcmp(arg, "--show-process-state")) {
+			pid_t pid;
+			if (argc < 2)
+				errx(EXIT_FAILURE, _("too few arguments"));
+			if (2 < argc)
+				errx(EXIT_FAILURE, _("too many arguments"));
+			arg = argv[1];
+			pid = strtopid_or_err(arg, _("invalid pid argument"));
+			print_process_signal_state(pid);
+			exit(EXIT_SUCCESS);
+		}
+		if (!strncmp(arg, "-d=", 3) || !strncmp(arg, "--show-process-state=", 21)) {
+			pid_t pid;
+			char *p = strchr(arg, '=') + 1;
+
+			pid = strtopid_or_err(p, _("invalid pid argument"));
+			print_process_signal_state((pid_t)pid);
 			exit(EXIT_SUCCESS);
 		}
 		if (!strcmp(arg, "-r") || !strcmp(arg, "--require-handler")) {
