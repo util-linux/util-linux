@@ -43,6 +43,9 @@ static const char *lib_features[] = {
 #ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
 	"fd-based-mount",
 #endif
+#ifdef HAVE_STATMOUNT_API
+	"statmount",
+#endif
 #if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && defined(AT_STATX_DONT_SYNC)
 	"statx",
 #endif
