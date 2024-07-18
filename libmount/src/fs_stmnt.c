@@ -12,6 +12,8 @@
 #include "mountP.h"
 #include "mount-api-utils.h"
 
+#ifdef HAVE_STATMOUNT_API
+
 /**
  * mnt_fs_enable_statmount:
  * @fs: filesystem instance
@@ -44,8 +46,6 @@ int mnt_fs_enable_statmount(struct libmnt_fs *fs, int enable, uint64_t mask)
 	return 0;
 
 }
-
-#ifdef HAVE_STATMOUNT_API
 
 # define sm_str(_sm, member)    ((_sm)->str + member)
 
@@ -125,7 +125,6 @@ static int apply_statmount(struct libmnt_fs *fs, struct statmount *sm)
 	}
 	return rc;
 }
-#endif /* HAVE_STATMOUNT_API */
 
 /**
  * mnt_fs_fetch_statmount:
@@ -144,6 +143,8 @@ static int apply_statmount(struct libmnt_fs *fs, struct statmount *sm)
 int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 {
 	int rc = 0, status;
+	char buf[BUFSIZ];
+	struct statmount *sm = (struct statmount *) buf;
 
 	if (!fs)
 		return -EINVAL;
@@ -174,9 +175,6 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 		DBG(FS, ul_debugobj(fs, "uniq-ID=%" PRIu64, fs->uniq_id));
 	}
 
-#ifdef HAVE_STATMOUNT_API
-	char buf[BUFSIZ];
-	struct statmount *sm = (struct statmount *) buf;
 
 	/* fetch all missing information by default */
 	if (!mask) {
@@ -201,12 +199,25 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 
 	if (!rc)
 		rc = apply_statmount(fs, sm);
-#else
-	rc = -ENOSYS;
-#endif
-
 done:
 	fs->stmnt_enabled = status;
 	fs->stmnt_done |= mask;
 	return rc;
 }
+
+#else /* HAVE_STATMOUNT_API */
+
+int mnt_fs_enable_statmount(struct libmnt_fs *fs __attribute__((__unused__)),
+			    int enable __attribute__((__unused__)),
+			    uint64_t mask __attribute__((__unused__)))
+{
+	return -ENOTSUP;
+}
+
+int mnt_fs_fetch_statmount(struct libmnt_fs *fs __attribute__((__unused__)),
+			   uint64_t mask __attribute__((__unused__)))
+{
+	return -ENOTSUP;
+}
+
+#endif /* HAVE_STATMOUNT_API */
