@@ -258,6 +258,8 @@ struct libmnt_fs {
 #define MNT_FS_KERNEL	(1 << 4) /* data from /proc/{mounts,self/mountinfo} */
 #define MNT_FS_MERGED	(1 << 5) /* already merged data from /run/mount/utab */
 
+#define mnt_fs_want_statmount(_x, _m)  ((_x)->stmnt_enabled && !((_x)->stmnt_done & (_m)))
+
 /*
  * fstab/mountinfo file
  */
