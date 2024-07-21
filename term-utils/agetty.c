@@ -2289,7 +2289,14 @@ static char *get_logname(struct issue *ie, struct options *op, struct termios *t
 				if ((size_t)(bp - logname) >= sizeof(logname) - 1)
 					log_err(_("%s: input overrun"), op->tty);
 				if ((tp->c_lflag & ECHO) == 0)
-					write_all(1, &c, 1);	/* echo the character */
+					/* Visualize escape sequence instead of its execution */
+					if (ascval == CTL('['))
+						/* Ideally it should be "\xe2\x90\x9b"
+						 * if (op->flags & (F_UTF8)),
+						 * but only some fonts contain it */
+						write_all(1, "^[", 2);
+					else
+						write_all(1, &c, 1);	/* echo the character */
 				*bp++ = ascval;			/* and store it */
 				break;
 			}
