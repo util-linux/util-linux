@@ -178,6 +178,11 @@ static void lscpu_init_debug(void)
 	__UL_INIT_DEBUG_FROM_ENV(lscpu, LSCPU_DEBUG_, 0, LSCPU_DEBUG);
 }
 
+static int is_arm(struct lscpu_cxt *cxt)
+{
+	return strcmp(cxt->arch->name, "aarch64") == 0;
+}
+
 static int
 cpu_column_name_to_id(const char *name, size_t namesz)
 {
@@ -1365,7 +1370,8 @@ int main(int argc, char *argv[])
 	lscpu_read_numas(cxt);
 	lscpu_read_topology(cxt);
 
-	lscpu_decode_arm(cxt);
+	if (is_arm(cxt))
+		lscpu_decode_arm(cxt);
 
 	cxt->virt = lscpu_read_virtualization(cxt);
 
