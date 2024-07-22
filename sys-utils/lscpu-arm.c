@@ -333,12 +333,47 @@ static int parse_id(const char *str)
 
 #define parse_model_id(_cxt)		(parse_id((_cxt)->model))
 
-static inline int parse_implementer_id(struct lscpu_cputype *ct)
+static inline int get_implementer_id(struct lscpu_cputype *ct)
 {
 	if (ct->vendor_id)
 		return ct->vendor_id;
-	ct->vendor_id = parse_id(ct->vendor);
+	return parse_id(ct->vendor);
+}
+
+static inline int parse_implementer_id(struct lscpu_cputype *ct)
+{
+	int id;
+
+	if (ct->vendor_id)
+		return ct->vendor_id;
+	id = get_implementer_id(ct);
+	if (id <= 0)
+		return id;
+
+	ct->vendor_id = id;
 	return ct->vendor_id;
+}
+
+int is_arm(struct lscpu_cxt *cxt)
+{
+	size_t i;
+
+	if (is_live(cxt))
+		return strcmp(cxt->arch->name, "aarch64") == 0;
+
+	/* dump; assume ARM if vendor ID is known */
+	for (i = 0; i < cxt->ncputypes; i++) {
+
+		int j, id = get_implementer_id(cxt->cputypes[i]);
+		if (id <= 0)
+			continue;
+		for (j = 0; hw_implementer[j].id != -1; j++) {
+			if (hw_implementer[j].id == id)
+				return 1;
+		}
+	}
+
+	return 0;
 }
 
 /*
