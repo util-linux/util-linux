@@ -46,7 +46,6 @@
 #include "mountP.h"
 #include "fileutils.h"	/* statx() fallback */
 #include "strutils.h"
-#include "mount-api-utils.h"
 #include "linux_version.h"
 
 #include <inttypes.h>

@@ -19,7 +19,6 @@
 #include <ctype.h>
 
 #include "mountP.h"
-#include "mount-api-utils.h"
 
 static const char *lib_version = LIBMOUNT_VERSION;
 static const char *lib_features[] = {
