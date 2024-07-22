@@ -10,7 +10,6 @@
  * (at your option) any later version.
  */
 #include "mountP.h"
-#include "mount-api-utils.h"
 
 #ifdef HAVE_STATMOUNT_API
 
