@@ -288,9 +288,8 @@ main(int argc, char *argv[])
 	cb->child_sigstop = callback_child_sigstop;
 	cb->mainloop = mainloop_cb;
 
-	if (!isatty(STDIN_FILENO))
-		/* We keep ECHO flag for compatibility with script(1) */
-		ul_pty_slave_echo(ss.pty, 1);
+	/* We keep ECHO flag for compatibility with script(1) */
+	ul_pty_slave_echo(ss.pty, 1);
 
 	if (ul_pty_setup(ss.pty))
 		err(EXIT_FAILURE, _("failed to create pseudo-terminal"));
