@@ -33,6 +33,11 @@ File containing *script*'s terminal input.
 *-B*, *--log-io* _file_::
 File containing *script*'s terminal output and input.
 
+*-E*, *--echo* _when_::
+This option controls the *ECHO* flag for the slave end of the session's pseudoterminal. The supported modes are _always_, _never_, or _auto_.
++
+The default is _auto_ -- in this case, *ECHO* enabled; this default behavior is subject to change.
+
 *-t*, *--timing* _file_::
 File containing *script*'s timing output. This option overrides old-style arguments.
 
