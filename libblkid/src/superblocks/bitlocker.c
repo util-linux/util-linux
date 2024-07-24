@@ -51,6 +51,15 @@ struct bde_fve_metadata_header {
 /*   8 */ uint32_t      header_size;
 /*  12 */ uint32_t      size_copy;
 /*  16 */ unsigned char volume_identifier[16];
+/*  32 */ unsigned char __dummy[48 - 32];
+} __attribute__((packed));
+
+struct bde_fve_metadata_entry {
+/*   0 */ uint16_t      size;
+/*   2 */ uint16_t      entry_type;
+/*   4 */ uint16_t      value_type;
+/*   6 */ uint16_t      version;
+/*   8 */ unsigned char data[];
 } __attribute__((packed));
 
 struct bde_fve_metadata {
@@ -69,6 +78,9 @@ enum {
 #define BDE_MAGIC_TOGO		"\xeb\x58\x90MSWIN4.1"
 
 #define BDE_MAGIC_FVE		"-FVE-FS-"
+
+#define BDE_METADATA_ENTRY_TYPE_DESCRIPTION 0x0007
+#define BDE_METADATA_VALUE_TYPE_STRING      0x0002
 
 static int get_bitlocker_type(const unsigned char *buf)
 {
@@ -140,8 +152,15 @@ static int get_bitlocker_headers(blkid_probe pr,
 	fve = (const struct bde_fve_metadata *) buf;
 	if (memcmp(fve->block_header.signature, BDE_MAGIC_FVE, sizeof(fve->block_header.signature)) != 0)
 		goto nothing;
-	if (buf_fve)
+
+	if (buf_fve) {
+		buf = blkid_probe_get_buffer(pr, off,
+			(uint64_t) sizeof(struct bde_fve_metadata_block_header) + le32_to_cpu(fve->header.size));
+		if (!buf)
+			return errno ? -errno : 1;
+
 		*buf_fve = buf;
+	}
 done:
 	if (type)
 		*type = kind;
@@ -163,7 +182,9 @@ static int probe_bitlocker(blkid_probe pr,
 {
 	const unsigned char *buf_fve = NULL;
 	const unsigned char *buf_hdr = NULL;
+	const struct bde_fve_metadata_entry *entry;
 	int rc, kind;
+	uint64_t off;
 
 	rc = get_bitlocker_headers(pr, &kind, &buf_hdr, &buf_fve);
 	if (rc)
@@ -173,6 +194,24 @@ static int probe_bitlocker(blkid_probe pr,
 		const struct bde_fve_metadata *fve = (const struct bde_fve_metadata *) buf_fve;
 
 		blkid_probe_sprintf_version(pr, "%d", le16_to_cpu(fve->block_header.version));
+
+		for (off = sizeof(struct bde_fve_metadata_header);
+		     off + sizeof(struct bde_fve_metadata_entry) < le32_to_cpu(fve->header.size);
+		     off += le16_to_cpu(entry->size)) {
+			entry = (const struct bde_fve_metadata_entry *) ((const char *) &fve->header + off);
+			if (off % 2 ||
+			    le16_to_cpu(entry->size) < sizeof(struct bde_fve_metadata_entry) ||
+			    off + le16_to_cpu(entry->size) > le32_to_cpu(fve->header.size))
+				return -1;
+
+			if (le16_to_cpu(entry->entry_type) == BDE_METADATA_ENTRY_TYPE_DESCRIPTION &&
+			    le16_to_cpu(entry->value_type) == BDE_METADATA_VALUE_TYPE_STRING) {
+				blkid_probe_set_utf8label(pr,
+					entry->data, le16_to_cpu(entry->size) - sizeof(struct bde_fve_metadata_entry),
+					UL_ENCODE_UTF16LE);
+				break;
+			}
+		}
 
 		/* Microsoft GUID format, interpreted as explained by Raymond Chen:
 		 * https://devblogs.microsoft.com/oldnewthing/20220928-00/?p=107221
