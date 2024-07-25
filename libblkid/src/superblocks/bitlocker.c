@@ -168,7 +168,7 @@ static int probe_bitlocker(blkid_probe pr,
 	if (buf_fve) {
 		const struct bde_fve_metadata *fve = (const struct bde_fve_metadata *) buf_fve;
 
-		blkid_probe_sprintf_version(pr, "%d", fve->version);
+		blkid_probe_sprintf_version(pr, "%d", le16_to_cpu(fve->version));
 	}
 	return 0;
 }
