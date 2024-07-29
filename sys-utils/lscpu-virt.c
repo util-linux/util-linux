@@ -557,7 +557,7 @@ struct lscpu_virt *lscpu_read_virtualization(struct lscpu_cxt *cxt)
 			goto done;
 	}
 
-	if (!cxt->noalive) {
+	if (is_live(cxt)) {
 		virt->vendor = read_hypervisor_cpuid();
 		if (!virt->vendor)
 			virt->vendor = read_hypervisor_dmi();
