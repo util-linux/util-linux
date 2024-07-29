@@ -263,6 +263,9 @@ struct lscpu_cxt {
 	int is_cluster; /* For aarch64 if the machine doesn't have ACPI PPTT */
 };
 
+#define is_live(_cxt)	(!(_cxt)->noalive)
+#define is_dump(_cxt)	((_cxt)->noalive)
+
 #define is_cpu_online(_cxt, _cpu) \
 		((_cxt) && (_cpu) && (_cxt)->online && \
 		 CPU_ISSET_S((_cpu)->logical_id, (_cxt)->setsize, (_cxt)->online))

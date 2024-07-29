@@ -727,7 +727,7 @@ struct lscpu_arch *lscpu_read_architecture(struct lscpu_cxt *cxt)
 	ar = xcalloc(1, sizeof(*cxt->arch));
 	ar->name = xstrdup(utsbuf.machine);
 
-	if (cxt->noalive)
+	if (is_dump(cxt))
 		/* reading info from any /{sys,proc} dump, don't mix it with
 		 * information about our real CPU */
 		;
@@ -779,7 +779,7 @@ struct lscpu_arch *lscpu_read_architecture(struct lscpu_cxt *cxt)
 			ar->bit64 = 1;
 	}
 
-	if (ar->name && !cxt->noalive) {
+	if (ar->name && is_live(cxt)) {
 		if (strcmp(ar->name, "ppc64") == 0)
 			ar->bit32 = 1, ar->bit64 = 1;
 		else if (strcmp(ar->name, "ppc") == 0)
@@ -812,7 +812,7 @@ int lscpu_read_cpulists(struct lscpu_cxt *cxt)
 		/* note that kernel_max is maximum index [NR_CPUS-1] */
 		cxt->maxcpus += 1;
 
-	else if (!cxt->noalive)
+	else if (is_live(cxt))
 		/* the root is '/' so we are working with data from the current kernel */
 		cxt->maxcpus = get_max_number_of_cpus();
 
@@ -884,7 +884,7 @@ int lscpu_read_archext(struct lscpu_cxt *cxt)
 
 #if defined(HAVE_LIBRTAS)
 	/* Get PowerPC specific info */
-	if (!cxt->noalive) {
+	if (is_live(cxt)) {
 		int rc, len, ntypes;
 
 		ct->physsockets = ct->physchips = ct->physcoresperchip = 0;
