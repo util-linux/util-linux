@@ -178,11 +178,6 @@ static void lscpu_init_debug(void)
 	__UL_INIT_DEBUG_FROM_ENV(lscpu, LSCPU_DEBUG_, 0, LSCPU_DEBUG);
 }
 
-static int is_arm(struct lscpu_cxt *cxt)
-{
-	return strcmp(cxt->arch->name, "aarch64") == 0;
-}
-
 static int
 cpu_column_name_to_id(const char *name, size_t namesz)
 {

@@ -274,6 +274,8 @@ struct lscpu_cxt {
 		((_cxt) && (_cpu) && (_cxt)->present && \
 		 CPU_ISSET_S((_cpu)->logical_id, (_cxt)->setsize, (_cxt)->present))
 
+int is_arm(struct lscpu_cxt *cxt);
+
 struct lscpu_cputype *lscpu_new_cputype(void);
 void lscpu_ref_cputype(struct lscpu_cputype *ct);
 void lscpu_unref_cputype(struct lscpu_cputype *ct);
