@@ -9,42 +9,148 @@
  * the Free Software Foundation; either version 2.1 of the License, or
  * (at your option) any later version.
  */
-#include "mountP.h"
-
-#ifdef HAVE_STATMOUNT_API
 
 /**
- * mnt_fs_enable_statmount:
- * @fs: filesystem instance
- * @enable: 0 or 1
- * @mask: default statmount() mask
+ * SECTION: statmount
+ * @title: statmount setting
+ * @short_description: Fetches information about mount node from the kernel.
+ */
+#include "mountP.h"
+
+/**
+ * mnt_new_statmnt:
  *
- * Enable or disable on demand fetching mount node information by statmount().
- * The setting is possible to reset by mnt_reset_fs().
+ * The initial refcount is 1, and needs to be decremented to
+ * release the resources of the filesystem.
  *
- * The default behavior of on-demand fetching is to minimize the size of data read
- * from the kernel. For example, mnt_fs_get_fstype() will only read the filesystem
- * type, but nothing else. However, this behavior may introduce unwanted overhead
- * (a large number of syscalls) in some use cases. In such cases, you can define
- * the @mask to force libmount to fetch (and save) more data with one statmount()
- * call.
+ * Returns: newly allocated struct libmnt_statmnt.
+ */
+struct libmnt_statmnt *mnt_new_statmnt(void)
+{
+	struct libmnt_statmnt *sm = calloc(1, sizeof(*sm));
+
+	if (!sm)
+		return NULL;
+
+	sm->refcount = 1;
+	DBG(STATMNT, ul_debugobj(sm, "alloc"));
+	return sm;
+}
+
+/**
+ * mnt_ref_statmount:
+ * @sm: statmount setting
  *
- * See mnt_fs_fetch_statmount() for details about the @mask.
+ * Increments reference counter.
+ */
+void mnt_ref_statmnt(struct libmnt_statmnt *sm)
+{
+	if (sm) {
+		sm->refcount++;
+		/*DBG(STATMNT, ul_debugobj(sm, "ref=%d", sm->refcount));*/
+	}
+}
+
+/**
+ * mnt_unref_statmnt:
+ * @sm: statmount setting
  *
- * Returns: 0 or negative number in case of error
+ * De-increments reference counter, on zero the @sm is automatically
+ * deallocated.
+ */
+void mnt_unref_statmnt(struct libmnt_statmnt *sm)
+{
+	if (sm) {
+		sm->refcount--;
+		/*DBG(STATMNT, ul_debugobj(sm, "unref=%d", sm->refcount));*/
+		if (sm->refcount <= 0)
+			free(sm);
+	}
+}
+
+/**
+ * mnt_statmnt_set_mask:
+ * @sm: statmount setting
+ * @mask: default mask for statmount() or 0
+ *
+ * Returns: 0 on succees or  or <0 on error.
+ */
+int mnt_statmnt_set_mask(struct libmnt_statmnt *sm, uint64_t mask)
+{
+	if (!sm)
+		return -EINVAL;
+	sm->mask = mask;
+
+	DBG(STATMNT, ul_debugobj(sm, "mask=0x%" PRIx64, sm->mask));
+	return 0;
+}
+
+/**
+ * mnt_statmnt_disable_fetching:
+ * @sm: statmount setting
+ * @disable: 0 or 1
+ *
+ * Disable or enable on-demand statmount() use for the @fs.
+ *
+ * Returns: current setting (0 or 1) or <0 on error.
  *
  * Since: 2.41
  */
-int mnt_fs_enable_statmount(struct libmnt_fs *fs, int enable, uint64_t mask)
+int mnt_statmnt_disable_fetching(struct libmnt_statmnt *sm, int disable)
+{
+	int old;
+
+	if (!sm)
+		return -EINVAL;
+	old = sm->disabled;
+	sm->disabled = disable ? 1 : 0;
+
+	DBG(STATMNT, ul_debugobj(sm, "disabled=%u", sm->disabled));
+	return old;
+}
+
+/**
+ * mnt_fs_refer_statmnt:
+ * @fs: filesystem
+ * @sm: statmount() setting
+ *
+ * Add a reference to the statmount() setting. This setting can be overwritten
+ * if you add @fs into a table that uses a different statmount() setting. See
+ * mnt_table_refer_statmnt(). It is recommended to use the statmount() setting
+ * on a table level if you do not want to work with complete mount table.
+ *
+ * Returns: 0 on success or negative number in case of error.
+ *
+ * Since: 2.41
+ */
+int mnt_fs_refer_statmnt(struct libmnt_fs *fs, struct libmnt_statmnt *sm)
 {
 	if (!fs)
 		return -EINVAL;
-
-	fs->stmnt_mask = mask;
-	fs->stmnt_enabled = enable ? 1 : 0;
+	if (fs->stmnt == sm)
+		return 0;
+	if (!fs->stmnt)
+		mnt_unref_statmnt(fs->stmnt);
+	if (sm)
+		mnt_ref_statmnt(sm);
+	fs->stmnt = sm;
 	return 0;
-
 }
+
+/**
+ * mnt_fs_get_statmnt:
+ * @fs: filesystem
+ *
+ * Returns: pointer to linmnt_statmnt instance used for the filesystem or NULL
+ *
+ * Since: 2.41
+ */
+struct libmnt_statmnt *mnt_fs_get_statmnt(struct libmnt_fs *fs)
+{
+	return fs ? fs->stmnt : NULL;
+}
+
+#ifdef HAVE_STATMOUNT_API
 
 # define sm_str(_sm, member)    ((_sm)->str + member)
 
@@ -131,7 +237,7 @@ static int apply_statmount(struct libmnt_fs *fs, struct statmount *sm)
  * @mask: extends the default statmount() mask.
  *
  * This function retrieves mount node information from the kernel. The @mask is
- * extended (bitwise-OR) by the mask specified for mnt_fs_enable_statmount() if
+ * extended (bitwise-OR) by the mask specified for mnt_statmnt_set_mask() if
  * on-demand fetching is enabled. If the mask is still 0, then a mask is
  * generated for all missing data in @fs.
  *
@@ -141,7 +247,7 @@ static int apply_statmount(struct libmnt_fs *fs, struct statmount *sm)
  */
 int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 {
-	int rc = 0, status;
+	int rc = 0, status = 0;
 	char buf[BUFSIZ];
 	struct statmount *sm = (struct statmount *) buf;
 
@@ -149,10 +255,11 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 		return -EINVAL;
 
 	/* add default mask if on-demand enabled */
-	if (fs->stmnt_enabled
-	    && fs->stmnt_mask
-	    && !(fs->stmnt_done & fs->stmnt_mask))
-		mask |= fs->stmnt_mask;
+	if (fs->stmnt
+	    && !fs->stmnt->disabled
+	    && fs->stmnt->mask
+	    && !(fs->stmnt_done & fs->stmnt->mask))
+		mask |= fs->stmnt->mask;
 
 	/* ignore repeated requests */
 	if (mask && fs->stmnt_done & mask)
@@ -160,8 +267,8 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 
 	/* temporary disable statmount() to avoid recursive
 	 * mnt_fs_fetch_statmount() from mnt_fs_get...() functions */
-	status = fs->stmnt_enabled;
-	fs->stmnt_enabled = 0;
+	if (fs->stmnt)
+		status = mnt_statmnt_disable_fetching(fs->stmnt, 1);
 
 	if (!fs->uniq_id) {
 		if (!fs->target) {
@@ -199,19 +306,13 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 	if (!rc)
 		rc = apply_statmount(fs, sm);
 done:
-	fs->stmnt_enabled = status;
+	if (fs->stmnt)
+		mnt_statmnt_disable_fetching(fs->stmnt, status);
 	fs->stmnt_done |= mask;
 	return rc;
 }
 
 #else /* HAVE_STATMOUNT_API */
-
-int mnt_fs_enable_statmount(struct libmnt_fs *fs __attribute__((__unused__)),
-			    int enable __attribute__((__unused__)),
-			    uint64_t mask __attribute__((__unused__)))
-{
-	return -ENOTSUP;
-}
 
 int mnt_fs_fetch_statmount(struct libmnt_fs *fs __attribute__((__unused__)),
 			   uint64_t mask __attribute__((__unused__)))

@@ -141,6 +141,13 @@ struct libmnt_tabdiff;
  */
 struct libmnt_ns;
 
+/**
+ * libmnt_statmnt
+ *
+ * Setting for statmount()
+ */
+struct libmnt_statmnt;
+
 /*
  * Actions
  */
@@ -480,9 +487,6 @@ extern struct libmnt_fs *mnt_copy_fs(struct libmnt_fs *dest,
 				     const struct libmnt_fs *src)
 			__ul_attribute__((warn_unused_result));
 
-extern int mnt_fs_enable_statmount(struct libmnt_fs *fs, int enable, uint64_t mask);
-extern int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask);
-
 extern void *mnt_fs_get_userdata(struct libmnt_fs *fs);
 extern int mnt_fs_set_userdata(struct libmnt_fs *fs, void *data);
 extern const char *mnt_fs_get_source(struct libmnt_fs *fs);
@@ -575,6 +579,17 @@ extern int mnt_fs_is_regularfs(struct libmnt_fs *fs);
 extern void mnt_free_mntent(struct mntent *mnt);
 extern int mnt_fs_to_mntent(struct libmnt_fs *fs, struct mntent **mnt);
 
+/* fs_stmnt.c */
+extern struct libmnt_statmnt *mnt_new_statmnt(void);
+extern void mnt_ref_statmnt(struct libmnt_statmnt *sm);
+extern void mnt_unref_statmnt(struct libmnt_statmnt *sm);
+extern int mnt_statmnt_set_mask(struct libmnt_statmnt *sm, uint64_t mask);
+extern int mnt_statmnt_disable_fetching(struct libmnt_statmnt *sm, int disable);
+
+extern int mnt_fs_refer_statmnt(struct libmnt_fs *fs, struct libmnt_statmnt *sm);
+extern struct libmnt_statmnt *mnt_fs_get_statmnt(struct libmnt_fs *fs);
+extern int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask);
+
 /* tab-parse.c */
 extern struct libmnt_table *mnt_new_table_from_file(const char *filename)
 			__ul_attribute__((warn_unused_result));
@@ -606,6 +621,8 @@ extern int mnt_table_is_empty(struct libmnt_table *tb);
 extern int mnt_table_enable_listmount(struct libmnt_table *tb, uint64_t id, size_t stepsiz);
 extern void mnt_table_disable_listmount(struct libmnt_table *tb);
 extern int mnt_table_fetch_listmount(struct libmnt_table *tb, uint64_t id);
+
+extern int mnt_table_refer_statmnt(struct libmnt_table *tb, struct libmnt_statmnt *sm);
 
 extern int mnt_table_set_userdata(struct libmnt_table *tb, void *data);
 extern void *mnt_table_get_userdata(struct libmnt_table *tb);

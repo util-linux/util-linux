@@ -24,7 +24,10 @@ static void print_table(struct libmnt_table *tb)
 		err(MNT_EX_SYSERR, "failed to initialize libmount iterator");
 
 	while (mnt_table_next_fs(tb, itr, &fs) == 0) {
-		printf ("id: %" PRIu64 "\n", mnt_fs_get_uniq_id(fs));
+		printf ("%" PRIu64 " %5d %s\n",
+				mnt_fs_get_uniq_id(fs),
+				mnt_fs_get_id(fs),
+				mnt_fs_get_target(fs));
 	}
 
 	mnt_free_iter(itr);
@@ -33,13 +36,11 @@ static void print_table(struct libmnt_table *tb)
 int main(int argc, char *argv[])
 {
         struct libmnt_table *tb;
+	struct libmnt_statmnt *sm;
 	uint64_t id = 0;
 
 	mnt_init_debug(0);
 
-	tb = mnt_new_table();
-	if (!tb)
-		err(EXIT_FAILURE, "failed to allocate table handler");
 
 	if (argc == 2) {
 		const char *arg = argv[1];
@@ -49,15 +50,23 @@ int main(int argc, char *argv[])
 			id = strtou64_or_err(arg, "cannot ID");
 	}
 
+	tb = mnt_new_table();
+	if (!tb)
+		err(EXIT_FAILURE, "failed to allocate table handler");
+
+	sm = mnt_new_statmnt();
+	if (!sm)
+		err(EXIT_FAILURE, "failed to allocate statmnt handler");
+
+	/* enable don-demand statmount() call for all filesystems in the table */
+	mnt_table_refer_statmnt(tb, sm);
 
 	/* fetch complete table */
 	mnt_table_fetch_listmount(tb, id);
 	print_table(tb);
 
-	/* enable on-demand fetching from kernel */
-	//mnt_table_enable_listmount(tb, id, 0);
-
 	mnt_unref_table(tb);
+	mnt_unref_statmnt(sm);
 
 	return EXIT_SUCCESS;
 }

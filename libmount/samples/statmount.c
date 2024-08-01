@@ -17,6 +17,7 @@
 int main(int argc, char *argv[])
 {
         struct libmnt_fs *fs;
+	struct libmnt_statmnt *sm;
 	const char *mnt;
 
 	if (argc != 2)
@@ -35,8 +36,12 @@ int main(int argc, char *argv[])
 	else
 		mnt_fs_set_target(fs, mnt);
 
+	sm = mnt_new_statmnt();
+	if (!sm)
+		err(EXIT_FAILURE, "failed to allocate statmount handler");
+
 	/* enable on-demand fetching from kernel */
-	mnt_fs_enable_statmount(fs, 1, 0);
+	mnt_fs_refer_statmnt(fs, sm);
 
 	/* read fs type, but nothing else */
 	mnt_fs_get_fstype(fs);
@@ -54,6 +59,7 @@ int main(int argc, char *argv[])
 	mnt_fs_get_fstype(fs);
 
 	mnt_unref_fs(fs);
+	mnt_unref_statmnt(sm);
 
 	return EXIT_SUCCESS;
 }

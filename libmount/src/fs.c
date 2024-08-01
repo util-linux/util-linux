@@ -102,9 +102,9 @@ void mnt_reset_fs(struct libmnt_fs *fs)
 	fs->opts_age = 0;
 	fs->propagation = 0;
 
+	mnt_unref_statmnt(fs->stmnt);
+	fs->stmnt = NULL;
 	fs->stmnt_done = 0;
-	fs->stmnt_enabled = 0;
-	fs->stmnt_mask = 0;
 
 	memset(fs, 0, sizeof(*fs));
 	INIT_LIST_HEAD(&fs->ents);
@@ -1796,7 +1796,7 @@ int mnt_fs_match_options(struct libmnt_fs *fs, const char *options)
 int mnt_fs_print_debug(struct libmnt_fs *fs, FILE *file)
 {
 	unsigned long pro = 0;
-	int stmnt_status;
+	int stmnt_disabled = 0;
 
 	if (!fs || !file)
 		return -EINVAL;
@@ -1804,11 +1804,11 @@ int mnt_fs_print_debug(struct libmnt_fs *fs, FILE *file)
 	if (fs->optlist)
 		sync_opts_from_optlist(fs, fs->optlist);
 
-	stmnt_status = fs->stmnt_enabled;
-	fs->stmnt_enabled = 0;
+	if (fs->stmnt)
+		stmnt_disabled = mnt_statmnt_disable_fetching(fs->stmnt, 1);
 
 	fprintf(file, "------ fs:\n");
-	fprintf(file, "auto-statmount: %s\n", stmnt_status ? "on" : "off");
+	fprintf(file, "auto-statmount: %s\n", stmnt_disabled ? "off" : "on");
 	if (mnt_fs_get_source(fs))
 		fprintf(file, "source: %s\n", mnt_fs_get_source(fs));
 	if (mnt_fs_get_target(fs))
@@ -1870,7 +1870,8 @@ int mnt_fs_print_debug(struct libmnt_fs *fs, FILE *file)
 	if (mnt_fs_get_comment(fs))
 		fprintf(file, "comment: '%s'\n", mnt_fs_get_comment(fs));
 
-	fs->stmnt_enabled = stmnt_status;
+	if (fs->stmnt)
+		mnt_statmnt_disable_fetching(fs->stmnt, stmnt_disabled);
 	return 0;
 }
 
