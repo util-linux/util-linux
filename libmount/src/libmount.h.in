@@ -369,6 +369,8 @@ extern char *mnt_get_mountpoint(const char *path)
 extern int mnt_guess_system_root(dev_t devno, struct libmnt_cache *cache, char **path)
 			__ul_attribute__((nonnull(3)));
 
+extern int mnt_id_from_path(const char *path, uint64_t *uniq_id, int *id);
+
 /* cache.c */
 extern struct libmnt_cache *mnt_new_cache(void)
 			__ul_attribute__((warn_unused_result));
@@ -600,6 +602,10 @@ extern void mnt_unref_table(struct libmnt_table *tb);
 extern int mnt_reset_table(struct libmnt_table *tb);
 extern int mnt_table_get_nents(struct libmnt_table *tb);
 extern int mnt_table_is_empty(struct libmnt_table *tb);
+
+extern int mnt_table_enable_listmount(struct libmnt_table *tb, uint64_t id, size_t stepsiz);
+extern void mnt_table_disable_listmount(struct libmnt_table *tb);
+extern int mnt_table_fetch_listmount(struct libmnt_table *tb, uint64_t id);
 
 extern int mnt_table_set_userdata(struct libmnt_table *tb, void *data);
 extern void *mnt_table_get_userdata(struct libmnt_table *tb);

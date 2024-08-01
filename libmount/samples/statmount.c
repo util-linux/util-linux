@@ -3,11 +3,6 @@
  *
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
- *
- *
- * This sample reads the mountpoint entry from /etc/fstab and mounts it to the
- * different (on the command line specified) mountpoint. The mount options
- * settings are read from fstab.
  */
 #include <stdlib.h>
 

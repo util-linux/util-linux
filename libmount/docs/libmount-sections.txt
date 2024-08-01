@@ -352,8 +352,11 @@ mnt_new_table_from_file
 mnt_table_add_fs
 mnt_table_append_intro_comment
 mnt_table_append_trailing_comment
+mnt_table_disable_listmount
 mnt_table_enable_comments
+mnt_table_enable_listmount
 mnt_table_enable_noautofs
+mnt_table_fetch_listmount
 mnt_table_find_devno
 mnt_table_find_fs
 mnt_table_find_mountpoint
@@ -432,6 +435,7 @@ mnt_get_mtab_path
 mnt_get_swaps_path
 mnt_guess_system_root
 mnt_has_regular_mtab
+mnt_id_from_path
 mnt_mangle
 mnt_match_fstype
 mnt_tag_is_valid

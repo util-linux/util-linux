@@ -388,4 +388,8 @@ MOUNT_2_41 {
 	mnt_fs_get_parent_uniq_id;
 	mnt_fs_fetch_statmount;
 	mnt_fs_enable_statmount;
+	mnt_id_from_path;
+	mnt_table_enable_listmount;
+	mnt_table_disable_listmount;
+	mnt_table_fetch_listmount;
 } MOUNT_2_40;

@@ -307,6 +307,16 @@ int mnt_id_from_fd(int fd, uint64_t *uniq_id, int *id)
 	return get_mnt_id(fd, NULL, uniq_id, id);
 }
 
+/**
+ * mnt_id_from_path:
+ * @path: mountpoint
+ * @uniq_id: returns STATX_MNT_ID_UNIQUE
+ * @id: returns STATX_MNT_ID
+ *
+ * Converts @path to ID.
+ *
+ * Returns: 0 on success, <0 on error
+ */
 int mnt_id_from_path(const char *path, uint64_t *uniq_id, int *id)
 {
 	return get_mnt_id(-1, path, uniq_id, id);

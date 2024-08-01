@@ -172,6 +172,9 @@ void mnt_free_table(struct libmnt_table *tb)
 	mnt_unref_cache(tb->cache);
 	free(tb->comm_intro);
 	free(tb->comm_tail);
+
+	mnt_table_disable_listmount(tb);
+
 	free(tb);
 }
 
