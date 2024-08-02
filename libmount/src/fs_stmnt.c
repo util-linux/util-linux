@@ -152,7 +152,10 @@ struct libmnt_statmnt *mnt_fs_get_statmnt(struct libmnt_fs *fs)
 
 #ifdef HAVE_STATMOUNT_API
 
-# define sm_str(_sm, member)    ((_sm)->str + member)
+static inline const char *sm_str(struct statmount *sm, uint32_t offset)
+{
+	return sm->str + offset;
+}
 
 static int apply_statmount(struct libmnt_fs *fs, struct statmount *sm)
 {
