@@ -78,7 +78,7 @@ static struct sigaction saved_sigquit;
 static struct sigaction saved_sighup;
 static struct sigaction saved_sigchld;
 
-static volatile sig_atomic_t alarm_rised;
+static volatile sig_atomic_t alarm_raised;
 static volatile sig_atomic_t sigchild;
 
 #define SULOGIN_PASSWORD_BUFSIZ	128
@@ -419,7 +419,7 @@ static void tcfinal(struct console *con)
 static void alrm_handler(int sig __attribute__((unused)))
 {
 	/* Timeout expired */
-	alarm_rised = 1;
+	alarm_raised = 1;
 }
 
 static void chld_handler(int sig __attribute__((unused)))
@@ -781,7 +781,7 @@ static char *getpasswd(struct console *con)
 
 		if (read(fd, &c, 1) < 1) {
 			if (errno == EINTR || errno == EAGAIN) {
-				if (alarm_rised) {
+				if (alarm_raised) {
 					ret = NULL;
 					goto quit;
 				}
@@ -1213,7 +1213,7 @@ int main(int argc, char **argv)
 				}
 				fprintf(stderr, _("Login incorrect\n\n"));
 			}
-			if (alarm_rised) {
+			if (alarm_raised) {
 				tcfinal(con);
 				warnx(_("Timed out\n\n"));
 			}

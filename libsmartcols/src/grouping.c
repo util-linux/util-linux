@@ -11,7 +11,7 @@
  * Lines groups manipulation API. The grouping API can be used to create M:N
  * relations between lines and on tree-like output it prints extra chart to
  * visualize these relations. The group has unlimited number of members and
- * group childs. See libsmartcols/sample/grouping* for more details.
+ * group children. See libsmartcols/sample/grouping* for more details.
  */
 
 /* Private API */

@@ -449,12 +449,12 @@ static int verify_fstype(struct verify_context *vfy)
 	realtype = mnt_get_fstype(src, &ambi, cache);
 
 	if (!realtype) {
-		const char *reson = errno ? strerror(errno) : _("reason unknown");
+		const char *raeson = errno ? strerror(errno) : _("reason unknown");
 
 		if (isauto)
-			verify_err(vfy, _("cannot detect on-disk filesystem type (%s)"), reson);
+			verify_err(vfy, _("cannot detect on-disk filesystem type (%s)"), raeson);
 		else
-			verify_warn(vfy, _("cannot detect on-disk filesystem type (%s)"), reson);
+			verify_warn(vfy, _("cannot detect on-disk filesystem type (%s)"), raeson);
 		goto done;
 	}
 
