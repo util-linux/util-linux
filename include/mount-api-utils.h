@@ -302,7 +302,7 @@ struct statmount {
 #endif
 
 #ifndef LISTMOUNT_REVERS
-# define LISTMOUNT_REVERSE      (1 << 0) /* List later mounts first */
+# define LISTMOUNT_REVERSE      BIT(0) /* List later mounts first */
 #endif
 
 #if !defined(HAVE_STATMOUNT) && defined(SYS_statmount)
@@ -316,7 +316,7 @@ static inline int statmount(uint64_t mnt_id, uint64_t mask,
                .param = mask,
        };
 
-       return syscall(__NR_statmount, &req, buf, bufsize, flags);
+       return syscall(SYS_statmount, &req, buf, bufsize, flags);
 }
 #endif
 
@@ -330,7 +330,7 @@ static inline ssize_t listmount(uint64_t mnt_id, uint64_t last_mnt_id,
                .param = last_mnt_id,
        };
 
-       return syscall(__NR_listmount, &req, list, num, flags);
+       return syscall(SYS_listmount, &req, list, num, flags);
 }
 #endif
 
