@@ -420,10 +420,10 @@ int mnt_table_refer_statmnt(struct libmnt_table *tb, struct libmnt_statmnt *sm)
 		return -EINVAL;
 	if (tb->stmnt == sm)
 		return 0;
-	if (!tb->stmnt)
-		mnt_unref_statmnt(tb->stmnt);
-	if (sm)
-		mnt_ref_statmnt(sm);
+
+	mnt_unref_statmnt(tb->stmnt);
+	mnt_ref_statmnt(sm);
+
 	tb->stmnt = sm;
 	return 0;
 }

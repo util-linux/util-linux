@@ -129,10 +129,10 @@ int mnt_fs_refer_statmnt(struct libmnt_fs *fs, struct libmnt_statmnt *sm)
 		return -EINVAL;
 	if (fs->stmnt == sm)
 		return 0;
-	if (!fs->stmnt)
-		mnt_unref_statmnt(fs->stmnt);
-	if (sm)
-		mnt_ref_statmnt(sm);
+
+	mnt_unref_statmnt(fs->stmnt);
+	mnt_ref_statmnt(sm);
+
 	fs->stmnt = sm;
 	return 0;
 }
