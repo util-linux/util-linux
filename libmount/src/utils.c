@@ -272,9 +272,8 @@ static int get_mnt_id(	int fd, const char *path,
 #if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID)
 	int rc;
 	struct statx sx = { 0 };
-	int flags;
+	int flags = AT_STATX_DONT_SYNC | AT_NO_AUTOMOUNT;
 
-	flags = AT_STATX_DONT_SYNC | AT_NO_AUTOMOUNT;
 	if (!path || !*path)
 		flags |= AT_EMPTY_PATH;
 
