@@ -326,7 +326,7 @@ static int mnt_parse_utab_line(struct libmnt_fs *fs, const char *s)
 		if (!fs->uniq_id && !strncmp(p, "UNIQID=", 7)) {
 			int rc = 0;
 
-			end = next_u64(p + 3, &fs->uniq_id, &rc);
+			end = next_u64(p + 7, &fs->uniq_id, &rc);
 			if (!end || rc)
 				return rc;
 
