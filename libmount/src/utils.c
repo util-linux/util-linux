@@ -278,22 +278,22 @@ static int get_mnt_id(	int fd, const char *path,
 		flags |= AT_EMPTY_PATH;
 
 	if (id) {
-		rc = statx(fd,	path && *path ? path : "", flags,
+		rc = statx(fd, path ? path : "", flags,
 				STATX_MNT_ID, &sx);
 		if (rc)
 			return rc;
 		*id = sx.stx_mnt_id;
 	}
 	if (uniq_id) {
-# ifdef STATX_MNT_ID_UNIQUE
-		rc = statx(fd,	path && *path ? path : "", flags,
+		errno = 0;
+		rc = statx(fd, path ? path : "", flags,
 				STATX_MNT_ID_UNIQUE, &sx);
+
+		if (rc && errno == EINVAL)
+			return -ENOSYS;		/* *_ID_UNIQUE unsupported? */
 		if (rc)
 			return rc;
 		*uniq_id = sx.stx_mnt_id;
-# else
-		return -ENOSYS;
-# endif
 	}
 	return 0;
 #else
