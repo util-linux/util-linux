@@ -29,7 +29,7 @@ struct libmnt_lsmnt {
 /**
  * mnt_table_enable_listmount:
  * @tb: mount table
- * @id: 0 for root filesystem, statx(TATX_MNT_ID_UNIQUE) for subdirectory
+ * @id: 0 for root filesystem, statx(STATX_MNT_ID_UNIQUE) for subdirectory
  * @stepsize: 0 for built-in default, otherwise number of mountpoints to read in one step
  *
  * This function initializes @tb to read data from the listmount() syscall. The
