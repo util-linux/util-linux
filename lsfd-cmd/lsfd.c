@@ -1822,7 +1822,7 @@ static void mark_select_fds_as_multiplexed(char *buf,
 		return;
 
 	for (int i = 0; i < 3; i++) {
-		/* If the remote address for the fd_set is 0x0, no set is tehre. */
+		/* If the remote address for the fd_set is 0x0, no set is there. */
 		remote[i].iov_len = local[i].iov_len = fds[i]? sizeof(local_set[i]): 0;
 		expected_n += (ssize_t)local[i].iov_len;
 		local[i].iov_base = local_set + i;

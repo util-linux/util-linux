@@ -417,7 +417,7 @@ int scols_counter_set_name(struct libscols_counter *ct, const char *name)
  * @name: holder (column) name
  *
  * Assigns a counter to the column. The name is used in the same way as names
- * in the filter expression. This is usable for counter that calcuate with data
+ * in the filter expression. This is usable for counter that calculate with data
  * from table cells (e.g. max, sum, etc.)
  *
  * Returns: 0, a negative number in case of an error.
