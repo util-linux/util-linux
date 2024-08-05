@@ -494,9 +494,15 @@ function ts_init_py {
 
 	    export PYTHON="python${PYTHON_MAJOR_VERSION}"
 
+	    ASAN_RT_PATH="$(ts_get_asan_rt_path "$top_builddir/.libs/py${LIBNAME}.so")"
+	    [ -n "$ASAN_RT_PATH" ] && export LD_PRELOAD="$ASAN_RT_PATH:$LD_PRELOAD"
+
         elif compgen -G "$top_builddir/$LIBNAME/python/py$LIBNAME*.so" >/dev/null; then
             # mezon!
             export PYTHONPATH="$top_builddir/$LIBNAME/python:$PYTHONPATH"
+
+            ASAN_RT_PATH="$(ts_get_asan_rt_path "$top_builddir/$LIBNAME/python/py$LIBNAME"*.so)"
+            [ -n "$ASAN_RT_PATH" ] && export LD_PRELOAD="$ASAN_RT_PATH:$LD_PRELOAD"
 
         else
             ts_skip "py${LIBNAME} not compiled"
