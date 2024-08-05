@@ -114,6 +114,7 @@ static int probe_f2fs(blkid_probe pr, const struct blkid_idmag *mag)
 		blkid_probe_set_fsblocksize(pr, blocksize);
 		blkid_probe_set_block_size(pr, blocksize);
 		blkid_probe_set_fssize(pr, le64_to_cpu(sb->block_count) * blocksize);
+		blkid_probe_set_fslastblock(pr, le64_to_cpu(sb->block_count));
 	}
 	return 0;
 }

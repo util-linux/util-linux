@@ -284,6 +284,7 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 	blkid_probe_set_fsblocksize(pr, logical_block_size);
 	blkid_probe_set_block_size(pr, logical_block_size);
 	blkid_probe_set_fssize(pr, (uint64_t) space_size * logical_block_size);
+	blkid_probe_set_fslastblock(pr, space_size);
 
 	if (joliet && (len = merge_utf16be_ascii(buf, sizeof(buf), joliet->system_id, pvd->system_id, sizeof(pvd->system_id))) != 0)
 		blkid_probe_set_utf8_id_label(pr, "SYSTEM_ID", buf, len, UL_ENCODE_UTF16BE);
