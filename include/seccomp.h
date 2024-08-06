@@ -18,7 +18,7 @@ static int ul_set_seccomp_filter_spec_allow(const struct sock_fprog *prog)
 		return 0;
 #endif
 
-	return prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, prog);
+	return prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, prog, 0L, 0L);
 }
 
 #endif /* UL_SECCOMP_H */

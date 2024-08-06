@@ -191,11 +191,11 @@ char *safe_getenv(const char *arg)
 	if ((getuid() != geteuid()) || (getgid() != getegid()))
 		return NULL;
 #ifdef HAVE_PRCTL
-	if (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+	if (prctl(PR_GET_DUMPABLE, 0L, 0L, 0L, 0L) == 0)
 		return NULL;
 #else
 #if (defined(linux) && defined(SYS_prctl))
-	if (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+	if (syscall(SYS_prctl, PR_GET_DUMPABLE, 0L, 0L, 0L, 0L) == 0)
 		return NULL;
 #endif
 #endif
