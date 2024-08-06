@@ -35,7 +35,36 @@ struct apfs_super_block {
 	uint64_t read_only_features;
 	uint64_t incompatible_features;
 	uint8_t uuid[16];
-};
+
+	uint8_t padding[4008]; // Pad to 4096 bytes for checksum
+} __attribute__((packed));
+
+static uint64_t apfs_fletcher64(const uint32_t *buf, size_t size)
+{
+	uint64_t lo32 = 0, hi32 = 0, csum_hi;
+	uint32_t csum_low;
+	size_t i;
+
+	for (i = 0; i < size / sizeof(*buf); i++) {
+		lo32 += le32_to_cpu(buf[i]);
+		hi32 += lo32;
+	}
+
+	csum_low = ~((lo32 + hi32) % UINT32_MAX);
+	csum_hi = ~((lo32 + csum_low) % UINT32_MAX);
+
+	return csum_hi << 32 | csum_low;
+}
+
+static int apfs_verify_checksum(blkid_probe pr,
+				const struct apfs_super_block *sb)
+{
+	uint64_t csum;
+
+	csum = apfs_fletcher64(((const uint32_t *)sb) + 2, sizeof(*sb) - 8);
+
+	return blkid_probe_verify_csum(pr, csum, le64_to_cpu(sb->checksum));
+}
 
 static int probe_apfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
@@ -44,6 +73,9 @@ static int probe_apfs(blkid_probe pr, const struct blkid_idmag *mag)
 	sb = blkid_probe_get_sb(pr, mag, struct apfs_super_block);
 	if (!sb)
 		return errno ? -errno : BLKID_PROBE_NONE;
+
+	if (!apfs_verify_checksum(pr, sb))
+		return BLKID_PROBE_NONE;
 
 	if (le16_to_cpu(sb->type) != APFS_CONTAINER_SUPERBLOCK_TYPE)
 		return BLKID_PROBE_NONE;
