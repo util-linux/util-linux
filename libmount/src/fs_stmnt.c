@@ -17,6 +17,8 @@
  */
 #include "mountP.h"
 
+#include "mangle.h"
+
 /**
  * mnt_new_statmnt:
  *
@@ -152,12 +154,12 @@ struct libmnt_statmnt *mnt_fs_get_statmnt(struct libmnt_fs *fs)
 
 #ifdef HAVE_STATMOUNT_API
 
-static inline const char *sm_str(struct statmount *sm, uint32_t offset)
+static inline const char *sm_str(struct ul_statmount *sm, uint32_t offset)
 {
 	return sm->str + offset;
 }
 
-static int apply_statmount(struct libmnt_fs *fs, struct statmount *sm)
+static int apply_statmount(struct libmnt_fs *fs, struct ul_statmount *sm)
 {
 	int rc = 0, merge = !fs->vfs_optstr || fs->fs_optstr;
 
@@ -209,6 +211,8 @@ static int apply_statmount(struct libmnt_fs *fs, struct statmount *sm)
 
 		}
 	}
+	if (!rc && (sm->mask & STATMOUNT_MNT_OPTS) && !fs->fs_optstr)
+		fs->fs_optstr = unmangle(sm_str(sm, sm->mnt_opts), NULL);
 
 	if (!rc && (sm->mask & STATMOUNT_SB_BASIC)) {
 		if (!fs->devno)
@@ -231,6 +235,9 @@ static int apply_statmount(struct libmnt_fs *fs, struct statmount *sm)
 		/* merge VFS and FS options to one string (we do the same in mountinfo parser) */
 		fs->optstr = mnt_fs_strdup_options(fs);
 	}
+
+	fs->flags |= MNT_FS_KERNEL;
+
 	return rc;
 }
 
@@ -251,8 +258,8 @@ static int apply_statmount(struct libmnt_fs *fs, struct statmount *sm)
 int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 {
 	int rc = 0, status = 0;
-	char buf[BUFSIZ];
-	struct statmount *sm = (struct statmount *) buf;
+	char buf[BUFSIZ] = { 0 };
+	struct ul_statmount *sm = (struct ul_statmount *) buf;
 
 	if (!fs)
 		return -EINVAL;
@@ -284,7 +291,6 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 		DBG(FS, ul_debugobj(fs, "uniq-ID=%" PRIu64, fs->uniq_id));
 	}
 
-
 	/* fetch all missing information by default */
 	if (!mask) {
 		mask = STATMOUNT_SB_BASIC | STATMOUNT_MNT_BASIC;
@@ -294,17 +300,20 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 			mask |= STATMOUNT_MNT_POINT;
 		if (!fs->root)
 			mask |= STATMOUNT_MNT_ROOT;
+		if (!fs->fs_optstr)
+			mask |= STATMOUNT_MNT_OPTS;
 	}
 	if (!mask)
 		goto done;
 
 	rc = statmount(fs->uniq_id, mask, sm, sizeof(buf), 0);
-	DBG(FS, ul_debugobj(fs, "statmount [rc=%d  mask: %s%s%s%s%s]", rc,
+	DBG(FS, ul_debugobj(fs, "statmount [rc=%d  mask: %s%s%s%s%s%s]", rc,
 				mask & STATMOUNT_SB_BASIC ? "sb-basic " : "",
 				mask & STATMOUNT_MNT_BASIC ? "mnt-basic " : "",
 				mask & STATMOUNT_MNT_ROOT ? "mnt-root " : "",
 				mask & STATMOUNT_MNT_POINT ? "mnt-point " : "",
-				mask & STATMOUNT_FS_TYPE ? "fs-type " : ""));
+				mask & STATMOUNT_FS_TYPE ? "fs-type " : "",
+				mask & STATMOUNT_MNT_OPTS ? "mnt-opts " : ""));
 
 	if (!rc)
 		rc = apply_statmount(fs, sm);

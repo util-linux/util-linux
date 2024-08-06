@@ -227,10 +227,14 @@ struct mnt_id_req {
 # endif
 #endif
 
-#ifndef HAVE_STRUCT_STATMOUNT
-struct statmount {
+/*
+ * Do not depend on system headers. We must ensure that the struct contains all
+ * the members expected by our code. Please note that due to the variable length
+ * of the statmount buffer, the struct cannot be versioned by size (like struct mnt_id_req).
+ */
+struct ul_statmount {
 	uint32_t size;		/* Total size, including strings */
-	uint32_t __spare1;
+	uint32_t mnt_opts;	/* [str] Mount options of the mount */
 	uint64_t mask;		/* What results were written */
 	uint32_t sb_dev_major;	/* Device ID */
 	uint32_t sb_dev_minor;
@@ -251,7 +255,6 @@ struct statmount {
 	uint64_t __spare2[50];
 	char str[];		/* Variable size part containing strings */
 };
-#endif
 
 /* sb_flags (defined in kernel include/linux/fs.h) */
 #ifndef SB_RDONLY
@@ -293,6 +296,9 @@ struct statmount {
 #ifndef STATMOUNT_FS_TYPE
 # define STATMOUNT_FS_TYPE		0x00000020U	/* Want/got fs_type */
 #endif
+#ifndef STATMOUNT_MNT_OPTS
+# define STATMOUNT_MNT_OPTS		0x00000080U     /* Want/got mnt_opts */
+#endif
 
 /*
  * Special @mnt_id values that can be passed to listmount
@@ -307,7 +313,7 @@ struct statmount {
 
 #if !defined(HAVE_STATMOUNT) && defined(SYS_statmount)
 static inline int statmount(uint64_t mnt_id, uint64_t mask,
-			struct statmount *buf,
+			struct ul_statmount *buf,
 			size_t bufsize, unsigned int flags)
 {
        struct mnt_id_req req = {
