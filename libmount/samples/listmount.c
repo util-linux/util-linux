@@ -22,10 +22,11 @@ static void __iter_table(	struct libmnt_table *tb,
 
 	mnt_reset_iter(itr, MNT_ITER_FORWARD);
 	while (mnt_table_next_fs(tb, itr, &fs) == 0) {
-		const char *x = mnt_fs_get_target(fs);
+		const char *tgt = mnt_fs_get_target(fs);
+		const char *type = mnt_fs_get_fstype(fs);
 
 		if (output)
-			printf ("  %s\n", x);
+			printf (" %15s %s\n", type, tgt);
 	}
 }
 
@@ -68,11 +69,18 @@ int main(int argc, char *argv[])
 	if (!sm)
 		err(EXIT_FAILURE, "failed to allocate statmnt handler");
 
-	/* force aread all by default
+	/* Without this mask setting, the library will make two statmount() calls
+	 * for each node. */
+	mnt_statmnt_set_mask(sm, STATMOUNT_MNT_POINT | STATMOUNT_FS_TYPE);
+
+	/* force fetch all data
 	mnt_statmnt_set_mask(sm,
-			STATMOUNT_SB_BASIC | STATMOUNT_MNT_BASIC |
-			STATMOUNT_PROPAGATE_FROM | STATMOUNT_MNT_ROOT |
-			STATMOUNT_MNT_POINT | STATMOUNT_FS_TYPE |
+			STATMOUNT_SB_BASIC |
+			STATMOUNT_MNT_BASIC |
+			STATMOUNT_PROPAGATE_FROM |
+			STATMOUNT_MNT_ROOT |
+			STATMOUNT_MNT_POINT |
+			STATMOUNT_FS_TYPE
 			STATMOUNT_MNT_OPTS);
 	*/
 
