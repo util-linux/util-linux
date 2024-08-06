@@ -212,7 +212,7 @@ static int busywait_for_rtc_clock_tick(const struct hwclock_control *ctl,
 		if (rc || start_time.tm_sec != nowtime.tm_sec)
 			break;
 		gettime_monotonic(&now);
-		if (time_diff(now, begin) > 1.5) {
+		if (time_diff(&now, &begin) > 1.5) {
 			warnx(_("Timed out waiting for time change."));
 			return 1;
 		}

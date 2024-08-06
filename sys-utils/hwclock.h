@@ -81,9 +81,6 @@ struct clock_ops {
 extern const struct clock_ops *probe_for_cmos_clock(void);
 extern const struct clock_ops *probe_for_rtc_clock(const struct hwclock_control *ctl);
 
-/* hwclock.c */
-extern double time_diff(struct timeval subtrahend, struct timeval subtractor);
-
 /* rtc.c */
 #if defined(__linux__) && defined(__alpha__)
 extern int get_epoch_rtc(const struct hwclock_control *ctl, unsigned long *epoch);
