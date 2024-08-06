@@ -630,7 +630,7 @@ static int do_mount_by_types(struct libmnt_context *cxt, const char *types)
 			rc = do_mount(cxt, p);
 		p = end ? end + 1 : NULL;
 		free(autotype);
-	} while (!is_success_status(cxt) && p);
+	} while (!is_termination_status(cxt) && p);
 
 	free(p0);
 	return rc;
