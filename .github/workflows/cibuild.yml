@@ -183,7 +183,7 @@ jobs:
             .github/workflows/cibuild.sh CHECK
 
   build-openwrt:
-    name: build (openwrt, ${{ matrix.target }})
+    name: build (openwrt, ${{ matrix.target }}/${{ matrix.subtarget}})
     runs-on: ubuntu-latest
     concurrency:
       group: ${{ github.workflow }}-${{ toJSON(matrix) }}-${{ github.ref }}
