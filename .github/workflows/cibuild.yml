@@ -211,6 +211,12 @@ jobs:
           - target: archs38
             subtarget: generic
             abi: glibc
+          - target: malta
+            subtarget: le
+            abi: musl
+          - target: malta
+            subtarget: be64
+            abi: musl
     env:
       COMPILER: none
     steps:
