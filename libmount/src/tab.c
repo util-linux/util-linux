@@ -499,9 +499,8 @@ static int __table_insert_fs(
 			struct libmnt_fs *pos, struct libmnt_fs *fs)
 {
 	if (!pos)
-		return mnt_table_add_fs(tb, fs);
-
-	if (before)
+		list_add_tail(&fs->ents, &tb->ents);
+	else if (before)
 		list_add_tail(&fs->ents, &pos->ents);
 	else
 		list_add(&fs->ents, &pos->ents);
