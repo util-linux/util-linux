@@ -222,7 +222,7 @@ int mnt_table_fetch_listmount(struct libmnt_table *tb, uint64_t id)
 	size_t stepsiz = 0;
 	uint64_t *list = NULL;
 	ssize_t n;
-	int rc = 0;
+	int rc = 0, stmnt_status = 0;
 
 	if (!tb)
 		return -EINVAL;
@@ -245,6 +245,13 @@ int mnt_table_fetch_listmount(struct libmnt_table *tb, uint64_t id)
 
 	mnt_reset_table(tb);
 
+	/* Temporary disable on-demand fetching by statmount(), as it can
+	 * be triggered, for example, by debug output. This is overkill
+	 * now when we are fetching the complete mount table.
+	 */
+	if (tb->stmnt)
+		stmnt_status = mnt_statmnt_disable_fetching(tb->stmnt, 1);
+
 	do {
 		n = listmount(id, 0, list, stepsiz, 0);
 		if (n < 0) {
@@ -258,6 +265,9 @@ int mnt_table_fetch_listmount(struct libmnt_table *tb, uint64_t id)
 		/* Avoid using on-demand mnt_table_next_lsmnt() if we already
 		 * have all the necessary data (or on error) */
 		tb->lsmnt->done = 1;
+
+	if (tb->stmnt)
+		mnt_statmnt_disable_fetching(tb->stmnt, stmnt_status);
 
 	if (!tb->lsmnt || !tb->lsmnt->list)
 		free(list);
