@@ -112,4 +112,8 @@ static inline bool is_timespecset(const struct timespec *t)
 	return t->tv_sec || t->tv_nsec;
 }
 
+static inline double time_diff(const struct timeval *a, const struct timeval *b)
+{
+	return (a->tv_sec - b->tv_sec) + (a->tv_usec - b->tv_usec) / (double) USEC_PER_SEC;
+}
 #endif /* UTIL_LINUX_TIME_UTIL_H */
