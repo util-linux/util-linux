@@ -207,6 +207,12 @@ jobs:
           - target: x86
             subtarget: generic
             abi: musl
+          - target: octeon
+            subtarget: generic
+            abi: musl
+          - target: ramips
+            subtarget: mt7620
+            abi: musl
     env:
       COMPILER: none
     steps:
