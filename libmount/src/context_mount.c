@@ -577,6 +577,15 @@ static int is_success_status(struct libmnt_context *cxt)
 	return 0;
 }
 
+static int is_termination_status(struct libmnt_context *cxt)
+{
+	if (is_success_status(cxt))
+		return 1;
+
+	return mnt_context_get_syscall_errno(cxt) != EINVAL &&
+	       mnt_context_get_syscall_errno(cxt) != ENODEV;
+}
+
 /* try mount(2) for all items in comma separated list of the filesystem @types */
 static int do_mount_by_types(struct libmnt_context *cxt, const char *types)
 {
@@ -662,10 +671,7 @@ static int do_mount_by_pattern(struct libmnt_context *cxt, const char *pattern)
 	for (fp = filesystems; *fp; fp++) {
 		DBG(CXT, ul_debugobj(cxt, " ##### trying '%s'", *fp));
 		rc = do_mount(cxt, *fp);
-		if (is_success_status(cxt))
-			break;
-		if (mnt_context_get_syscall_errno(cxt) != EINVAL &&
-		    mnt_context_get_syscall_errno(cxt) != ENODEV)
+		if (is_termination_status(cxt))
 			break;
 	}
 	mnt_free_filesystems(filesystems);
