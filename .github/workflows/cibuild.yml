@@ -184,7 +184,7 @@ jobs:
             .github/workflows/cibuild.sh CHECK
 
   build-openwrt:
-    name: build (openwrt, ${{ matrix.target }})
+    name: build (openwrt, ${{ matrix.target }}/${{ matrix.subtarget}})
     runs-on: ubuntu-latest
     concurrency:
       group: ${{ github.workflow }}-${{ toJSON(matrix) }}-${{ github.ref }}
@@ -211,6 +211,12 @@ jobs:
           - target: archs38
             subtarget: generic
             abi: glibc
+          - target: malta
+            subtarget: le
+            abi: musl
+          - target: malta
+            subtarget: be64
+            abi: musl
     env:
       COMPILER: none
     steps:
