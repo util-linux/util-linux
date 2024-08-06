@@ -25,7 +25,6 @@
 #include "strutils.h"
 #include "all-io.h"
 #include "namespace.h"
-#include "mount-api-utils.h"
 
 #include "mountP.h"
 

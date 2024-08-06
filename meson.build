@@ -103,8 +103,36 @@ have_mountfd_api = cc.sizeof('struct mount_attr', prefix : '#include <linux/moun
 conf.set('HAVE_STRUCT_MOUNT_ATTR', have_mountfd_api ? 1 : false)
 conf.set('HAVE_MOUNTFD_API', have_mountfd_api ? 1 : false)
 
-have_struct_statx = cc.sizeof('struct statx', prefix : '#include <sys/stat.h>') > 0
+
+have_struct_statmount = cc.sizeof('struct statmount', prefix : '#include <linux/mount.h>') > 0
+conf.set('HAVE_STRUCT_STATMOUNT', have_struct_statmount ? 1 : false)
+
+have_struct_mnt_id_req = cc.sizeof('struct mnt_id_req', prefix : '#include <linux/mount.h>') > 0
+conf.set('HAVE_STRUCT_MNT_ID_REQ', have_struct_mnt_id_req ? 1 : false)
+
+have_listmount = cc.has_header_symbol('linux/mount.h', 'LSMT_ROOT')
+
+# kernel headers provides the syscall (and relevant structs),
+# but there is not SYS_xxx yet
+if have_struct_statmount and not cc.has_header_symbol('bits/syscall.h', 'SYS_statmount')
+  conf.set('SYS_statmount', '__NR_statmount')
+endif
+
+if have_listmount and not cc.has_header_symbol('bits/syscall.h', 'SYS_listmount')
+  conf.set('SYS_listmount', '__NR_listmount')
+endif
+
+# all is ready to use the API
+conf.set('HAVE_STATMOUNT_API', have_struct_statmount and have_listmount ? 1 : false)
+
+
+have_struct_statx = cc.sizeof('struct statx', prefix : '#include <linux/stat.h>') > 0
 conf.set('HAVE_STRUCT_STATX', have_struct_statx ? 1 : false)
+
+have = cc.has_member('struct statx', 'stx_mnt_id',
+                     prefix : '#include <linux/stat.h>')
+conf.set('HAVE_STRUCT_STATX_STX_MNT_ID', have ? 1 : false)
+
 
 have_sys_vfs_header = cc.has_header('sys/vfs.h')
 
@@ -576,6 +604,7 @@ funcs = '''
         landlock_restrict_self
         lchown
         lgetxattr
+        listmount
         llistxattr
         llseek
         newlocale
@@ -604,6 +633,7 @@ funcs = '''
         sched_setscheduler
         sigqueue
         srandom
+        statmount
         statx
         strnchr
         strndup
@@ -685,10 +715,6 @@ have = cc.has_member('struct stat', 'st_mtim.tv_nsec',
                      args : '-D_GNU_SOURCE',
                      prefix : '#include <sys/stat.h>')
 conf.set('HAVE_STRUCT_STAT_ST_MTIM_TV_NSEC', have ? 1 : false)
-
-have = cc.has_member('struct statx', 'stx_mnt_id',
-                     prefix : '#include <sys/stat.h>')
-conf.set('HAVE_STRUCT_STATX_STX_MNT_ID', have ? 1 : false)
 
 # replacement for AC_STRUCT_TIMEZONE
 have = cc.has_member('struct tm', 'tm_zone',

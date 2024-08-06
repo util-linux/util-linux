@@ -105,6 +105,9 @@ static inline int statx(int fd, const char *restrict path, int flags,
 
 #endif	/* HAVE_SYS_SYSCALL_H */
 
+#if defined(HAVE_STATX) && !defined(STATX_MNT_ID_UNIQUE)
+# define STATX_MNT_ID_UNIQUE	0x00004000U	/* Want/got extended stx_mount_id */
+#endif
 
 extern void ul_close_all_fds(unsigned int first, unsigned int last);
 
