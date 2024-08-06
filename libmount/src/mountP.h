@@ -201,6 +201,10 @@ struct libmnt_iter {
 struct libmnt_statmnt {
 	int		refcount;
 	uint64_t	mask;		/* default statmount() mask */
+
+	struct ul_statmount *buf;
+	size_t bufsiz;
+
 	unsigned int	disabled: 1;	/* enable or disable statmount() */
 };
 

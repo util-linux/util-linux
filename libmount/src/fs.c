@@ -1796,7 +1796,7 @@ int mnt_fs_match_options(struct libmnt_fs *fs, const char *options)
 int mnt_fs_print_debug(struct libmnt_fs *fs, FILE *file)
 {
 	unsigned long pro = 0;
-	int stmnt_disabled = 0;
+	int stmnt_disabled = 1;
 
 	if (!fs || !file)
 		return -EINVAL;

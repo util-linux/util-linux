@@ -340,6 +340,48 @@ static inline ssize_t listmount(uint64_t mnt_id, uint64_t last_mnt_id,
 }
 #endif
 
+/* This is a version of statmount() that reallocates @buf to be large enough to
+ * store data for the requested @id. This function never deallocates; it is the
+ * caller's responsibility.
+ */
+static inline int sys_statmount(uint64_t id, uint64_t mask,
+			struct ul_statmount **buf,
+			size_t *bufsiz,
+			unsigned int flags)
+{
+	size_t sz;
+	int rc = 0;
+
+	if (!buf || !bufsiz)
+		return -EINVAL;
+
+	sz = *bufsiz;
+	if (!sz)
+		sz = 32 * 1024;
+
+	do {
+		if (sz > *bufsiz) {
+			struct ul_statmount *tmp = realloc(*buf, sz);
+			if (!tmp)
+				return -ENOMEM;
+			*buf = tmp;
+			*bufsiz = sz;
+		}
+
+		errno = 0;
+		rc = statmount(id, mask, *buf, *bufsiz, flags);
+		if (!rc)
+			break;
+		if (errno != EOVERFLOW)
+			break;
+		if (sz >= SIZE_MAX / 2)
+			break;
+		sz <<= 1;
+	} while (rc);
+
+	return rc;
+}
+
 #endif /* HAVE_STATMOUNT_API */
 
 #endif /* HAVE_LINUX_MOUNT_H */

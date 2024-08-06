@@ -65,8 +65,10 @@ void mnt_unref_statmnt(struct libmnt_statmnt *sm)
 	if (sm) {
 		sm->refcount--;
 		/*DBG(STATMNT, ul_debugobj(sm, "unref=%d", sm->refcount));*/
-		if (sm->refcount <= 0)
+		if (sm->refcount <= 0) {
+			free(sm->buf);
 			free(sm);
+		}
 	}
 }
 
@@ -92,7 +94,8 @@ int mnt_statmnt_set_mask(struct libmnt_statmnt *sm, uint64_t mask)
  * @sm: statmount setting
  * @disable: 0 or 1
  *
- * Disable or enable on-demand statmount() use for the @fs.
+ * Disable or enable on-demand statmount() in all libmnt_table of libmnt_fs
+ * onjects that references this @sm.
  *
  * Returns: current setting (0 or 1) or <0 on error.
  *
@@ -107,7 +110,7 @@ int mnt_statmnt_disable_fetching(struct libmnt_statmnt *sm, int disable)
 	old = sm->disabled;
 	sm->disabled = disable ? 1 : 0;
 
-	DBG(STATMNT, ul_debugobj(sm, "disabled=%u", sm->disabled));
+	/*DBG(STATMNT, ul_debugobj(sm, "disabled=%u", sm->disabled));*/
 	return old;
 }
 
@@ -161,7 +164,12 @@ static inline const char *sm_str(struct ul_statmount *sm, uint32_t offset)
 
 static int apply_statmount(struct libmnt_fs *fs, struct ul_statmount *sm)
 {
-	int rc = 0, merge = !fs->vfs_optstr || fs->fs_optstr;
+	int rc = 0, merge = 0;
+
+	if (!sm || !sm->size || !fs)
+		return -EINVAL;
+
+	merge = !fs->vfs_optstr || fs->fs_optstr;
 
 	if ((sm->mask & STATMOUNT_FS_TYPE) && !fs->fstype)
 		rc = mnt_fs_set_fstype(fs, sm_str(sm, sm->fs_type));
@@ -246,10 +254,14 @@ static int apply_statmount(struct libmnt_fs *fs, struct ul_statmount *sm)
  * @fs: filesystem instance
  * @mask: extends the default statmount() mask.
  *
- * This function retrieves mount node information from the kernel. The @mask is
- * extended (bitwise-OR) by the mask specified for mnt_statmnt_set_mask() if
- * on-demand fetching is enabled. If the mask is still 0, then a mask is
- * generated for all missing data in @fs.
+ * This function retrieves mount node information from the kernel and applies it
+ * to the @fs. If the @fs is associated with any libmnt_statmnt object (see
+ * mnt_fs_refer_statmnt()), then this object is used to reduce the overhead of
+ * allocating statmount buffer and to define default statmount() mask.
+ *
+ * The @mask is extended (bitwise-OR) by the mask specified for
+ * mnt_statmnt_set_mask() if on-demand fetching is enabled. If the mask is
+ * still 0, then a mask is generated for all missing data in @fs.
  *
  * Returns: 0 or negative number in case of error (if @fs is NULL).
  *
@@ -258,11 +270,13 @@ static int apply_statmount(struct libmnt_fs *fs, struct ul_statmount *sm)
 int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 {
 	int rc = 0, status = 0;
-	char buf[BUFSIZ] = { 0 };
-	struct ul_statmount *sm = (struct ul_statmount *) buf;
+	struct ul_statmount *buf = NULL;
+	size_t bufsiz = 0;
 
 	if (!fs)
 		return -EINVAL;
+
+	DBG(FS, ul_debugobj(fs, "statmount fetch"));
 
 	/* add default mask if on-demand enabled */
 	if (fs->stmnt
@@ -288,7 +302,7 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 		rc = mnt_id_from_path(fs->target, &fs->uniq_id, NULL);
 		if (rc)
 			goto done;
-		DBG(FS, ul_debugobj(fs, "uniq-ID=%" PRIu64, fs->uniq_id));
+		DBG(FS, ul_debugobj(fs, " uniq-ID=%" PRIu64, fs->uniq_id));
 	}
 
 	/* fetch all missing information by default */
@@ -306,8 +320,19 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 	if (!mask)
 		goto done;
 
-	rc = statmount(fs->uniq_id, mask, sm, sizeof(buf), 0);
-	DBG(FS, ul_debugobj(fs, "statmount [rc=%d  mask: %s%s%s%s%s%s]", rc,
+	if (fs->stmnt) {
+		DBG(FS, ul_debugobj(fs, " reuse libmnt_stmnt"));
+		memset(fs->stmnt->buf, 0, fs->stmnt->bufsiz);
+		rc = sys_statmount(fs->uniq_id, mask,
+				   &fs->stmnt->buf, &fs->stmnt->bufsiz, 0);
+		buf = fs->stmnt->buf;
+		bufsiz = fs->stmnt->bufsiz;
+	} else {
+		DBG(FS, ul_debugobj(fs, " use private buffer"));
+		rc = sys_statmount(fs->uniq_id, mask, &buf, &bufsiz, 0);
+	}
+	DBG(FS, ul_debugobj(fs, " statmount [rc=%d bufsiz=%zu  mask: %s%s%s%s%s%s]",
+				rc, bufsiz,
 				mask & STATMOUNT_SB_BASIC ? "sb-basic " : "",
 				mask & STATMOUNT_MNT_BASIC ? "mnt-basic " : "",
 				mask & STATMOUNT_MNT_ROOT ? "mnt-root " : "",
@@ -316,10 +341,14 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 				mask & STATMOUNT_MNT_OPTS ? "mnt-opts " : ""));
 
 	if (!rc)
-		rc = apply_statmount(fs, sm);
+		rc = apply_statmount(fs, buf);
 done:
+
 	if (fs->stmnt)
 		mnt_statmnt_disable_fetching(fs->stmnt, status);
+	else
+		free(buf);
+
 	fs->stmnt_done |= mask;
 	return rc;
 }

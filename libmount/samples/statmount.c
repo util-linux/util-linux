@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
         struct libmnt_fs *fs;
 	struct libmnt_statmnt *sm;
 	const char *mnt;
+	uint64_t id = 0;
 
 	if (argc != 2)
 		errx(EXIT_FAILURE, "usage: %s <mountpoint | id>",
@@ -30,17 +31,32 @@ int main(int argc, char *argv[])
 	if (!fs)
 		err(EXIT_FAILURE, "failed to allocate fs handler");
 
+	/* define target (mountpoint) or mount ID */
 	mnt = argv[1];
-	if (isdigit_string(mnt))
-		mnt_fs_set_uniq_id(fs, strtou64_or_err(mnt, "cannot ID"));
-	else
+	if (isdigit_string(mnt)) {
+		id = strtou64_or_err(mnt, "cannot ID");
+		mnt_fs_set_uniq_id(fs, id);
+	} else
 		mnt_fs_set_target(fs, mnt);
 
+	/*
+	 * A) fetch all data without reference to libmnt_statmnt
+	 */
+	mnt_fs_fetch_statmount(fs, 0);
+	mnt_fs_print_debug(fs, stdout);
+
+	/* reset */
+	id = mnt_fs_get_uniq_id(fs);
+	mnt_reset_fs(fs);
+	mnt_fs_set_uniq_id(fs, id);
+
+	/*
+	 * B) fetch data by on-demand way
+	 */
 	sm = mnt_new_statmnt();
 	if (!sm)
 		err(EXIT_FAILURE, "failed to allocate statmount handler");
 
-	/* enable on-demand fetching from kernel */
 	mnt_fs_refer_statmnt(fs, sm);
 
 	/* read fs type, but nothing else */
