@@ -1092,7 +1092,7 @@ msgstr "O dispositivo já contém uma assinatura \"%s\" e ela será removida por
 msgid "The device contains '%s' signature and it may remain on the device. It is recommended to wipe the device with wipefs(8) or fdisk --wipe, in order to avoid possible collisions."
 msgstr "O dispositivo contém a assinatura \"%s\" e ela pode ser mantida no dispositivo. É recomendado apagar o dispositivo com wipefs(8) ou fdisk --wipe, para evitar possíveis colisões."
 
-# Alinhamento reajustado às demais opções abaixo; vide fdisk --help 
+# Alinhamento reajustado às demais opções abaixo; vide fdisk --help
 #: disk-utils/fdisk.c:947
 #, c-format
 msgid ""
@@ -16912,7 +16912,7 @@ msgstr " -i, --insert-range   insere um buraco no intervalo, trocando dados exis
 
 #: sys-utils/fallocate.c:93
 msgid " -l, --length <num>   length for range operations, in bytes\n"
-msgstr " -n, --length <núm>   comprimento para operações de intervalo em bytes\n"
+msgstr " -l, --length <núm>   comprimento para operações de intervalo em bytes\n"
 
 #: sys-utils/fallocate.c:94
 msgid " -n, --keep-size      maintain the apparent size of the file\n"
