@@ -300,7 +300,7 @@ struct libmnt_table {
 	int		(*fltrcb)(struct libmnt_fs *fs, void *data);
 	void		*fltrcb_data;
 
-	struct libmnt_lsmnt	*lsmnt;	/* listmount() stuff */
+	struct libmnt_listmnt	*lsmnt;	/* listmount() stuff */
 	struct libmnt_statmnt	*stmnt;	/* statmount() stuff */
 
 	unsigned int	noautofs : 1;	/* ignore autofs mounts */

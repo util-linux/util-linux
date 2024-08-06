@@ -11,7 +11,7 @@
  */
 #include "mountP.h"
 
-struct libmnt_lsmnt {
+struct libmnt_listmnt {
 
 	uint64_t	id;		/* node ID (LSMT_ROOT for "/") */
 	size_t		stepsiz;	/* how many IDs read in one step */
@@ -53,7 +53,7 @@ struct libmnt_lsmnt {
  */
 int mnt_table_enable_listmount(struct libmnt_table *tb, uint64_t id, size_t stepsiz)
 {
-	struct libmnt_lsmnt *ls;
+	struct libmnt_listmnt *ls;
 	size_t ss = stepsiz == 0 ? MNT_LSMNT_STEPSIZ : stepsiz;
 
 	if (!tb)
@@ -74,14 +74,14 @@ int mnt_table_enable_listmount(struct libmnt_table *tb, uint64_t id, size_t step
 		tb->lsmnt = NULL;
 	}
 
-	/* alloc buffer and struct libmnt_lsmnt by one calloc() call */
+	/* alloc buffer and struct libmnt_listmnt by one calloc() call */
 	if (tb->lsmnt)
 		ls = tb->lsmnt;
 	else {
 		char *x = calloc(1, sizeof(tb->lsmnt) + (sizeof(uint64_t) * ss));
 		if (!x)
 			return -ENOMEM;
-		ls = (struct libmnt_lsmnt *) x;
+		ls = (struct libmnt_listmnt *) x;
 		ls->list = (uint64_t *) (x + sizeof(tb->lsmnt));
 		tb->lsmnt = ls;
 	}
@@ -149,7 +149,7 @@ static int lsmnt_to_table(
 	return rc;
 }
 
-static inline int is_reverse_supported(struct libmnt_lsmnt *ls)
+static inline int is_reverse_supported(struct libmnt_listmnt *ls)
 {
 	if (!ls->reverse_verified) {
 		ls->reverse_verified = 1;
@@ -170,7 +170,7 @@ static inline int is_reverse_supported(struct libmnt_lsmnt *ls)
  */
 int mnt_table_next_lsmnt(struct libmnt_table *tb, int direction)
 {
-	struct libmnt_lsmnt *ls;
+	struct libmnt_listmnt *ls;
 	ssize_t n;
 	uint64_t last = 0;
 	int reverse = direction == MNT_ITER_BACKWARD;
