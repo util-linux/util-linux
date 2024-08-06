@@ -116,6 +116,8 @@ int mnt_reset_table(struct libmnt_table *tb)
 	}
 
 	tb->nents = 0;
+	mnt_table_reset_listmount(tb);
+
 	return 0;
 }
 
@@ -174,8 +176,10 @@ void mnt_free_table(struct libmnt_table *tb)
 	free(tb->comm_tail);
 
 	mnt_table_disable_listmount(tb);
+	tb->lsmnt = NULL;
 
 	mnt_unref_statmnt(tb->stmnt);
+	tb->stmnt = NULL;
 
 	free(tb);
 }
@@ -409,6 +413,9 @@ struct libmnt_cache *mnt_table_get_cache(struct libmnt_table *tb)
  * mnt_new_statmnt() function, etc.).  This reference will automatically be
  * used for any newly added filesystems in the @tb, eliminating the need for
  * extra mnt_fs_refer_statmnt() calls for each filesystem.
+ *
+ * The reference is not removed by mnt_reset_table(), use NULL as @sm to
+ * remove the reference.
  *
  * Returns: 0 on success or negative number in case of error.
  *

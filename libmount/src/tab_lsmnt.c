@@ -46,6 +46,10 @@ struct libmnt_listmnt {
  * LISTMOUNT_REVERSE is unsupported, it will reset the table and read the complete
  * mount table rather then use on-demand incremental way.
  *
+ * This function is possible more than once to modify, for example, @id or @stepsize.
+ *
+ * The listmount() setting is not affected by mnt_reset_table().
+ *
  * The table is reset before new data is added.
  *
  * Returns: 0 on sucess, < 0 on error
@@ -93,12 +97,31 @@ int mnt_table_enable_listmount(struct libmnt_table *tb, uint64_t id, size_t step
 	return 0;
 }
 
+/*
+ * This function is called by mnt_reset_table() and the table must already be
+ * empty.
+ *
+ * Private; not export to library API!
+ **/
+int mnt_table_reset_listmount(struct libmnt_table *tb)
+{
+	if (!tb || !tb->lsmnt)
+	       return 0;
+	if (tb->nents)
+		return -EINVAL;
+
+	tb->lsmnt->done = 0;
+	tb->lsmnt->reverse = 0;
+	return 0;
+}
+
 /**
  * mnt_table_disable_listmount:
  * @tb: table instance
  *
  * Disables listmount() for the @tb (and deallocates relevant resources).
  *
+ * Since: 2.40
  */
 void mnt_table_disable_listmount(struct libmnt_table *tb)
 {

@@ -166,6 +166,9 @@ extern int mnt_table_is_noautofs(struct libmnt_table *tb);
 
 extern int mnt_table_next_lsmnt(struct libmnt_table *tb, int direction);
 
+/* tab_lsmnt.c */
+extern int mnt_table_reset_listmount(struct libmnt_table *tb);
+
 /*
  * Generic iterator
  */
