@@ -245,6 +245,4 @@ jobs:
       - name: Check
         run: |
           source .github/workflows/openwrt-sdk-env.sh  ~/${{ env.OPENWRT_SDK }}
-          if [[ "$OPENWRT_TARGET" = "x86" ]]; then
-              .github/workflows/cibuild.sh CHECK
-          fi
+          .github/workflows/cibuild.sh CHECK
