@@ -215,6 +215,8 @@ jobs:
         uses: actions/checkout@v1
       - name: Ubuntu setup
         run: sudo -E .github/workflows/cibuild-setup-ubuntu.sh
+      - name: Install qemu-user
+        run: sudo -E apt-get install qemu-user-binfmt
       - name: OpenWrt environment
         run: |
           OPENWRT_RELEASE=23.05.4
