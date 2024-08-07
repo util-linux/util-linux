@@ -246,5 +246,8 @@ jobs:
           .github/workflows/cibuild.sh MAKE
       - name: Check
         run: |
+          if [[ "$OPENWRT_TARGET" != "x86" ]]; then
+              export QEMU_USER=1
+          fi
           source .github/workflows/openwrt-sdk-env.sh  ~/${{ env.OPENWRT_SDK }}
           .github/workflows/cibuild.sh CHECK
