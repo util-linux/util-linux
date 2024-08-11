@@ -24,17 +24,17 @@ prefixdir = get_option('prefix')
 if not fs.is_absolute(prefixdir)
         error('Prefix is not absolute: "@0@"'.format(prefixdir))
 endif
-bindir = join_paths(prefixdir, get_option('bindir'))
-sbindir = join_paths(prefixdir, get_option('sbindir'))
-sysconfstaticdir = join_paths(prefixdir, 'lib')
-docdir = join_paths(prefixdir, get_option('datadir'), 'doc', 'util-linux')
-mandir = join_paths(prefixdir, get_option('mandir'))
+bindir = prefixdir / get_option('bindir')
+sbindir = prefixdir / get_option('sbindir')
+sysconfstaticdir = prefixdir / 'lib'
+docdir = prefixdir / get_option('datadir') / 'doc' / 'util-linux'
+mandir = prefixdir / get_option('mandir')
 runstatedir = '/run'
 localstatedir = '/var'
 execprefixdir = prefixdir
-sysconfdir = join_paths(prefixdir, get_option('sysconfdir'))
-usrbin_exec_dir = join_paths(execprefixdir, bindir)
-usrsbin_exec_dir = join_paths(execprefixdir, sbindir)
+sysconfdir = prefixdir / get_option('sysconfdir')
+usrbin_exec_dir = execprefixdir / bindir
+usrsbin_exec_dir = execprefixdir / sbindir
 bash_completion = dependency('bash-completion', required : get_option('build-bash-completion'))
 
 vendordir = get_option('vendordir')
@@ -1053,7 +1053,7 @@ if opt and not is_disabler(exe)
   exes += exe
   meson.add_install_script(meson_make_symlink,
                            'last',
-                           join_paths(usrbin_exec_dir, 'lastb'))
+                           usrbin_exec_dir / 'lastb')
   manadocs += ['login-utils/last.1.adoc']
   manlinks += {'lastb.1': 'last.1'}
   bashcompletions += ['last']
@@ -1164,11 +1164,11 @@ if opt and not is_disabler(exe)
   exes += exe
   meson.add_install_script(meson_make_symlink,
                            'vipw',
-                           join_paths(usrbin_exec_dir, 'vigr'))
+                           usrbin_exec_dir / 'vigr')
   manadocs += ['login-utils/vipw.8.adoc']
   meson.add_install_script(meson_make_symlink,
                            'vipw.8',
-                           join_paths(mandir, 'man8/vigr.8'))
+                           mandir / 'man8/vigr.8')
 endif
 
 opt = get_option('build-runuser').require(have_pty).allowed()
@@ -1720,7 +1720,7 @@ if opt
   foreach link: setarch_links
     meson.add_install_script(meson_make_symlink,
                             'setarch',
-                            join_paths(usrbin_exec_dir, link))
+                            usrbin_exec_dir / link)
     manlinks += {link + '.8': 'setarch.8'}
   endforeach
 endif
@@ -3912,7 +3912,7 @@ if asciidoctor.found()
     name = adoc.split('/')[-1]
     page = name.split('.adoc')[0]
     section = page.split('.')[-1]
-    mandirn = join_paths(mandir, 'man' + section)
+    mandirn = mandir / 'man' + section
     input = adoc
 
     custom_target(
@@ -3939,21 +3939,21 @@ if asciidoctor.found()
     link_section = link_name.split('.')[-1]
     target_section = target.split('.')[-1]
     meson.add_install_script(meson_make_manpage_stub,
-      join_paths('man' + target_section, target),
-      join_paths(mandir, 'man' + link_section, link_name))
+      'man' + target_section / target,
+      mandir / 'man' + link_section / link_name)
   endforeach
 endif
 
 if bash_completion.found()
   foreach completion : bashcompletions
     install_data(
-      join_paths('bash-completion', completion),
+      'bash-completion' / completion,
       install_dir : bash_completion.get_variable(pkgconfig : 'completionsdir')
     )
   endforeach
   foreach link_name, target : bashcompletionslinks
     meson.add_install_script(meson_make_symlink,
       target,
-      join_paths(bash_completion.get_variable(pkgconfig : 'completionsdir'), link_name))
+      bash_completion.get_variable(pkgconfig : 'completionsdir') / link_name)
   endforeach
 endif

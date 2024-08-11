@@ -14,7 +14,7 @@ configure_file(
   output : 'blkid.h',
   configuration : defs,
   install : build_libblkid,
-  install_dir : join_paths(get_option('includedir'), 'blkid'),
+  install_dir : get_option('includedir') / 'blkid',
 )
 
 lib_blkid_sources = '''
