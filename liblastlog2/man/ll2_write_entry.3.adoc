@@ -9,7 +9,7 @@
 
 == NAME
 
-ll2_write_entry -  Write a new entry into the database.
+ll2_write_entry -  Writes a new entry into the database.
 
 == SYNOPSIS
 
@@ -22,7 +22,7 @@ ll2_write_entry -  Write a new entry into the database.
 
 == DESCRIPTION
 
-Writes an new entry into database, which is defined in _context_.
+Writes a new entry into database, which is defined in _context_.
 If _context_ is NULL, the default database, defined in _LL2_DEFAULT_DATABASE_,
 will be taken.
 

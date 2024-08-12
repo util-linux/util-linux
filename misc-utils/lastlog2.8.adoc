@@ -12,7 +12,7 @@ This file may be copied under the terms of the GNU General Public License.
 
 == NAME
 
-lastlog2 - display date of last login for all users or a specific one
+lastlog2 - displays date of last login for all users or a specific one
 
 == SYNOPSIS
 

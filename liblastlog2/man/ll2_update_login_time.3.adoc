@@ -9,7 +9,7 @@
 
 == NAME
 
-ll2_update_login_time - Writes an *new* entry with updated login time.
+ll2_update_login_time - Writes a *new* entry with updated login time.
 
 == SYNOPSIS
 
@@ -21,7 +21,7 @@ ll2_update_login_time - Writes an *new* entry with updated login time.
 
 == DESCRIPTION
 
-Writes an *new* entry to database, defined in _context_, for user _user_.
+Writes a *new* entry to database, defined in _context_, for user _user_.
 Time is set by _ll_time_ whereas the other values are taken from
 an already existing entry.
 If _context_ is NULL, the default database, defined in _LL2_DEFAULT_DATABASE_,
@@ -39,7 +39,7 @@ int ret = ll2_update_login_time (NULL, user, login_time, &error);
 
 Returns 0 on success, -ENOMEM or -1 on other failure.
 _error_ contains an error string if the return value is -1.
-_error_ is not guaranteed to contain an error string. It could also be NULL if the return value is -1.
+_error_ is not guaranteed to contain an error string, could also be NULL.
 _error_ should be freed by the caller.
 
 == AUTHORS

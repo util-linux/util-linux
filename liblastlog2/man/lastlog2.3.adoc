@@ -19,7 +19,7 @@ lastlog2 - Y2038 safe version of lastlog library.
 
 *lastlog2* reports the last login of a given user or of all users who did ever login on a system.
 
-It's using sqlite3 as database backend. Data is only collected via a PAM module, so that every
+It's using sqlite3 as database backend. Data is only collected via a PAM module, so that all
 tools can make use of it, without modifying existing packages.
 The output is as compatible as possible with the old lastlog implementation.
 By default the database will be written as `/var/lib/lastlog/lastlog2.db`.

@@ -18,15 +18,15 @@ Since there are only few applications which really support `lastlog`, the data i
 
 ## lastlog2
 
-`lastlog2` tries to solve this problems:
+`lastlog2` tries to solve these problems:
 
 * It's using sqlite3 as database backend.
-* Data is only collected via a PAM module, so that every tools can make use of it, without modifying existing packages.
+* Data is only collected via a PAM module, so that all tools can make use of it, without modifying existing packages.
 * The output is as compatible as possible with the old lastlog implementation.
 * The old `/var/log/lastlog` file can be imported into the new database.
 * The size of the database depends on the amount of users, not how big the biggest UID is.
 
-**IMPORTANT** To be Y2038 safe on 32bit architectures, the binaries needs to be build with a **64bit time_t**. This should be the standard on 64bit architectures.
+**IMPORTANT** To be Y2038 safe on 32bit architectures, the binaries need to be built with a **64bit time_t**. This should be the standard on 64bit architectures.
 
 Besides the lastlog2 library in this directory there are additional parts like service definition, PAM module and applications:
 

@@ -9,7 +9,7 @@
 
 == NAME
 
-ll2_new_context - Context which defines the lastlog2 environment.
+ll2_new_context - Allocates context which defines the lastlog2 environment.
 
 == SYNOPSIS
 
@@ -19,8 +19,8 @@ ll2_new_context - Context which defines the lastlog2 environment.
 
 == DESCRIPTION
 
-Defining lastlog2 context e.g. database file, which will be used for
-any other lastlog2 calls. If _db_path_ is NULL, the default path defined
+Defines lastlog2 context e.g. database file, which will be used for
+any other lastlog2 call. If _db_path_ is NULL, the default path defined
 in _LL2_DEFAULT_DATABASE_ will be taken.
 
 --------------------------------------
@@ -32,7 +32,7 @@ ll2_context *context = ll2_new_context(db_path);
 
 == RETURN VALUE
 
-Returns context which will used for all other lastlog2 library calls.
+Returns context which will be used for all other lastlog2 library calls.
 This context should be released with _ll2_unref_context_ when it is not
 needed anymore.
 Returns NULL on an error.
