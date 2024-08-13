@@ -2779,6 +2779,16 @@ AS_IF([test "x$with_python" != xno], [
 ])
 
 
+AC_ARG_ENABLE([pylastlog2],
+  AS_HELP_STRING([--disable-pylastlog2], [do not build pylastlog2]),
+  [], [UL_DEFAULT_ENABLE([pylastlog2], [check])]
+)
+UL_BUILD_INIT([pylastlog2])
+UL_REQUIRES_HAVE([pylastlog2], [libpython], [libpython])
+UL_REQUIRES_BUILD([pylastlog2], [liblastlog2])
+AM_CONDITIONAL([BUILD_PYLASTLOG2], [test "x$build_pylastlog2" = "xyes"])
+
+
 AC_ARG_ENABLE([pylibmount],
   AS_HELP_STRING([--disable-pylibmount], [do not build pylibmount]),
   [], [UL_DEFAULT_ENABLE([pylibmount], [check])]
