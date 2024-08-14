@@ -39,7 +39,7 @@
 #include "lastlog2P.h"
 #include "strutils.h"
 
-/* Set the ll2 context/environment */
+/* Sets the ll2 context/environment. */
 /* Returns the context or NULL if an error has happened. */
 extern struct ll2_context * ll2_new_context(const char *db_path)
 {
@@ -61,7 +61,7 @@ extern struct ll2_context * ll2_new_context(const char *db_path)
 	return context;
 }
 
-/* Release ll2 context/environment */
+/* Releases ll2 context/environment. */
 extern void ll2_unref_context(struct ll2_context *context)
 {
 	if (context)
@@ -206,7 +206,8 @@ out_read_entry:
 	return retval;
 }
 
-/* reads 1 entry from database and returns that. Returns 0 on success, -ENOMEM or -1 on other failure. */
+/* Reads one entry from database and returns that.
+   Returns 0 on success, -ENOMEM or -1 on other failure. */
 int
 ll2_read_entry(struct ll2_context *context, const char *user,
 	       int64_t *ll_time, char **tty, char **rhost,
@@ -225,7 +226,8 @@ ll2_read_entry(struct ll2_context *context, const char *user,
 	return retval;
 }
 
-/* Write a new entry. Returns 0 on success, -ENOMEM or -1 on other failure. */
+/* Writes a new entry.
+   Returns 0 on success, -ENOMEM or -1 on other failure. */
 static int
 write_entry(sqlite3 *db, const char *user,
 	    int64_t ll_time, const char *tty, const char *rhost,
@@ -324,7 +326,8 @@ out_ll2_read_entry:
 	return retval;
 }
 
-/* Write a new entry. Returns 0 on success, -ENOMEM or -1 on other failure. */
+/* Writes a new entry.
+   Returns 0 on success, -ENOMEM or -1 on other failure. */
 int
 ll2_write_entry(struct ll2_context *context, const char *user,
 		int64_t ll_time, const char *tty, const char *rhost,
@@ -343,7 +346,7 @@ ll2_write_entry(struct ll2_context *context, const char *user,
 	return retval;
 }
 
-/* Write a new entry with updated login time.
+/* Writes a new entry with updated login time.
    Returns 0 on success, -ENOMEM or -1 on other failure. */
 int
 ll2_update_login_time(struct ll2_context *context, const char *user,
@@ -409,7 +412,7 @@ ll2_read_all(struct ll2_context *context,
 	     char **error)
 {
 	sqlite3 *db;
-	char *err_msg = 0;
+	char *err_msg = NULL;
 	int retval = 0;
 
 	if ((retval = open_database_ro(context, &db, error)) != 0)
@@ -431,7 +434,8 @@ ll2_read_all(struct ll2_context *context,
 	return retval;
 }
 
-/* Remove an user entry. Returns 0 on success, -ENOMEM or -1 on other failure. */
+/* Removes a user entry.
+   Returns 0 on success, -ENOMEM or -1 on other failure. */
 static int
 remove_entry(sqlite3 *db, const char *user, char **error)
 {
@@ -480,7 +484,8 @@ out_remove_entry:
 	return retval;
 }
 
-/* Remove an user entry. Returns 0 on success, -ENOMEM or -1 on other failure. */
+/* Removes a user entry.
+   Returns 0 on success, -ENOMEM or -1 on other failure. */
 int
 ll2_remove_entry(struct ll2_context *context, const char *user,
 		 char **error)
@@ -498,7 +503,8 @@ ll2_remove_entry(struct ll2_context *context, const char *user,
 	return retval;
 }
 
-/* Renames an user entry. Returns 0 on success, -ENOMEM or -1 on other failure. */
+/* Renames a user entry.
+   Returns 0 on success, -ENOMEM or -1 on other failure. */
 int
 ll2_rename_user(struct ll2_context *context, const char *user,
 		const char *newname, char **error)
@@ -536,7 +542,7 @@ ll2_rename_user(struct ll2_context *context, const char *user,
 	return retval;
 }
 
-/* Import old lastlog file.
+/* Imports old lastlog file.
    Returns 0 on success, -ENOMEM or -1 on other failure. */
 int
 ll2_import_lastlog(struct ll2_context *context, const char *lastlog_file,

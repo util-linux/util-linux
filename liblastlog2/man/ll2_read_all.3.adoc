@@ -46,7 +46,7 @@ Returns 0 on success, -ENOMEM or -1 on other failure.
 _error_ contains an error string if the return value is -1.
 _error_ is not guaranteed to contain an error string, could also be NULL.
 _error_ should be freed by the caller.
-If lastlog2 database does not exist at all, the errno ENOENT has been set
+If lastlog2 database does not exist at all, the errno ENOENT is set
 and can be checked.
 
 == AUTHORS

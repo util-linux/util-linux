@@ -189,6 +189,8 @@ write_login_data (pam_handle_t *pamh, int ctrl, const char *user)
 		return PAM_SYSTEM_ERR;
 
 	struct ll2_context *context = ll2_new_context(lastlog2_path);
+	if (context == NULL)
+		return PAM_SYSTEM_ERR;
 	if (ll2_write_entry (context, user, ll_time, tty, rhost,
 			     pam_service, &error) != 0) {
 		if (error) {
@@ -220,6 +222,8 @@ show_lastlogin (pam_handle_t *pamh, int ctrl, const char *user)
 		return retval;
 
 	struct ll2_context *context = ll2_new_context(lastlog2_path);
+	if (context == NULL)
+		return PAM_SYSTEM_ERR;
 	if (ll2_read_entry (context, user, &ll_time, &tty, &rhost,
 			    &service, &error) != 0) {
 		if (errno == ENOENT)
