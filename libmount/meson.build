@@ -17,7 +17,7 @@ configure_file(
   output : 'libmount.h',
   configuration : defs,
   install : build_libmount,
-  install_dir : join_paths(get_option('includedir'), 'libmount'),
+  install_dir : get_option('includedir') / 'libmount',
 )
 
 lib_mount_sources = '''

@@ -11,7 +11,7 @@ configure_file(
   output : 'libfdisk.h',
   configuration : defs,
   install : build_libfdisk,
-  install_dir : join_paths(get_option('includedir'), 'libfdisk'),
+  install_dir : get_option('includedir') / 'libfdisk',
 )
 
 lib_fdisk_sources = '''
