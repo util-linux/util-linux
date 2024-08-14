@@ -208,9 +208,6 @@ jobs:
           - target: x86
             subtarget: generic
             abi: musl
-          - target: archs38
-            subtarget: generic
-            abi: glibc
     env:
       COMPILER: none
     steps:
@@ -220,8 +217,8 @@ jobs:
         run: sudo -E .github/workflows/cibuild-setup-ubuntu.sh
       - name: OpenWrt environment
         run: |
-          OPENWRT_RELEASE=22.03.5
-          OPENWRT_SDK=openwrt-sdk-$OPENWRT_RELEASE-${{ matrix.target }}-${{ matrix.subtarget }}_gcc-11.2.0_${{ matrix.abi }}.Linux-x86_64
+          OPENWRT_RELEASE=23.05.4
+          OPENWRT_SDK=openwrt-sdk-$OPENWRT_RELEASE-${{ matrix.target }}-${{ matrix.subtarget }}_gcc-12.3.0_${{ matrix.abi }}.Linux-x86_64
           echo "COMPILER=$COMPILER" >> $GITHUB_ENV
           echo "OPENWRT_RELEASE=$OPENWRT_RELEASE" >> $GITHUB_ENV
           echo "OPENWRT_SDK=$OPENWRT_SDK" >> $GITHUB_ENV
