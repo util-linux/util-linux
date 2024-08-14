@@ -136,6 +136,8 @@ extern int mnt_is_path(const char *target);
 extern int mnt_tmptgt_unshare(int *old_ns_fd);
 extern int mnt_tmptgt_cleanup(int old_ns_fd);
 
+extern int mnt_id_from_fd(int fd, uint64_t *uniq_id, int *id);
+
 /* tab.c */
 extern int is_mountinfo(struct libmnt_table *tb);
 extern int mnt_table_set_parser_fltrcb(	struct libmnt_table *tb,

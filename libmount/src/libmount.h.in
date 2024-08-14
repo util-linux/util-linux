@@ -369,6 +369,8 @@ extern char *mnt_get_mountpoint(const char *path)
 extern int mnt_guess_system_root(dev_t devno, struct libmnt_cache *cache, char **path)
 			__ul_attribute__((nonnull(3)));
 
+extern int mnt_id_from_path(const char *path, uint64_t *uniq_id, int *id);
+
 /* cache.c */
 extern struct libmnt_cache *mnt_new_cache(void)
 			__ul_attribute__((warn_unused_result));

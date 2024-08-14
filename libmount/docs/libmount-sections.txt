@@ -430,6 +430,7 @@ mnt_get_mtab_path
 mnt_get_swaps_path
 mnt_guess_system_root
 mnt_has_regular_mtab
+mnt_id_from_path
 mnt_mangle
 mnt_match_fstype
 mnt_tag_is_valid
