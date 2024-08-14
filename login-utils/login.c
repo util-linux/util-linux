@@ -1190,11 +1190,24 @@ static void init_environ(struct login_context *cxt)
 	struct passwd *pwd = cxt->pwd;
 	char *termenv, **env;
 	char tmp[PATH_MAX];
-	int len, i;
+	int len;
+	size_t i;
 
+	const char *locale_keys[] = {
+		"LANG",
+		"LC_CTYPE", "LC_COLLATE", "LC_MESSAGES", "LC_MONETARY",
+		"LC_NUMERIC", "LC_TIME", "LC_ADDRESS", "LC_IDENTIFICATION",
+		"LC_MEASUREMENT", "LC_NAME", "LC_PAPER", "LC_TELEPHONE",
+	};
+	const char *locale_values[ARRAY_SIZE(locale_keys)] = { 0 };
+
+	/* Some envvars are worth keeping */
 	termenv = getenv("TERM");
 	if (termenv)
 		termenv = xstrdup(termenv);
+
+	for (i = 0; i <  ARRAY_SIZE(locale_keys); i++)
+		locale_values[i] = getenv(locale_keys[i]);
 
 	/* destroy environment unless user has requested preservation (-p) */
 	if (!cxt->keep_env)
@@ -1205,6 +1218,10 @@ static void init_environ(struct login_context *cxt)
 	xsetenv("SHELL", pwd->pw_shell, 1);
 	xsetenv("TERM", termenv ? termenv : "dumb", 1);
 	free(termenv);
+
+	for (i = 0; i < ARRAY_SIZE(locale_keys); i++)
+		if (locale_values[i] != NULL)
+			xsetenv(locale_keys[i], locale_values[i], 0);
 
 	if (pwd->pw_uid) {
 		if (logindefs_setenv("PATH", "ENV_PATH", _PATH_DEFPATH) != 0)
