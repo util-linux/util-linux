@@ -87,7 +87,8 @@ struct privctx {
 		clear_groups:1,		/* remove groups */
 		init_groups:1,		/* initialize groups */
 		reset_env:1,		/* reset environment */
-		have_securebits:1;	/* remove groups */
+		have_securebits:1,	/* remove groups */
+		have_ptracer:1;		/* modify ptracer */
 
 	/* uids and gids */
 	uid_t ruid, euid;
@@ -109,6 +110,9 @@ struct privctx {
 	int securebits;
 	/* parent death signal (<0 clear, 0 nothing, >0 signal) */
 	int pdeathsig;
+
+	/* permitted ptracer under Yama mode 1 */
+	long ptracer;
 
 	/* LSMs */
 	const char *selinux_label;
@@ -146,6 +150,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --securebits <bits>         set securebits\n"), out);
 	fputs(_(" --pdeathsig keep|clear|<signame>\n"
 	        "                             set or clear parent death signal\n"), out);
+	fputs(_(" --ptracer <pid>|any|none    allow ptracing from the given process\n"), out);
 	fputs(_(" --selinux-label <label>     set SELinux label\n"), out);
 	fputs(_(" --apparmor-profile <pr>     set AppArmor profile\n"), out);
 	fputs(_(" --landlock-access <access>  add Landlock access\n"), out);
@@ -456,6 +461,17 @@ static void parse_pdeathsig(struct privctx *opts, const char *str)
 		opts->pdeathsig = -1;
 	} else if ((opts->pdeathsig = signame_to_signum(str)) < 0) {
 		errx(EXIT_FAILURE, _("unknown signal: %s"), str);
+	}
+}
+
+static void parse_ptracer(struct privctx *opts, const char *str)
+{
+	if (!strcmp(str, "any")) {
+		opts->ptracer = PR_SET_PTRACER_ANY;
+	} else if (!strcmp(str, "none")) {
+		opts->ptracer = 0;
+	} else {
+		opts->ptracer = strtopid_or_err(str, _("failed to parse ptracer pid"));
 	}
 }
 
@@ -801,6 +817,7 @@ int main(int argc, char **argv)
 		CAPBSET,
 		SECUREBITS,
 		PDEATHSIG,
+		PTRACER,
 		SELINUX_LABEL,
 		APPARMOR_PROFILE,
 		LANDLOCK_ACCESS,
@@ -829,6 +846,7 @@ int main(int argc, char **argv)
 		{ "bounding-set",     required_argument, NULL, CAPBSET          },
 		{ "securebits",       required_argument, NULL, SECUREBITS       },
 		{ "pdeathsig",        required_argument, NULL, PDEATHSIG,       },
+		{ "ptracer",          required_argument, NULL, PTRACER,       },
 		{ "selinux-label",    required_argument, NULL, SELINUX_LABEL    },
 		{ "apparmor-profile", required_argument, NULL, APPARMOR_PROFILE },
 		{ "landlock-access",  required_argument, NULL, LANDLOCK_ACCESS  },
@@ -949,6 +967,13 @@ int main(int argc, char **argv)
 				errx(EXIT_FAILURE,
 				     _("duplicate --keep-pdeathsig option"));
 			parse_pdeathsig(&opts, optarg);
+			break;
+		case PTRACER:
+			if (opts.have_ptracer)
+				errx(EXIT_FAILURE,
+				     _("duplicate --ptracer option"));
+			opts.have_ptracer = 1;
+			parse_ptracer(&opts, optarg);
 			break;
 		case LISTCAPS:
 			list_caps = 1;
@@ -1125,6 +1150,12 @@ int main(int argc, char **argv)
 	/* Clear or set parent death signal */
 	if (opts.pdeathsig && prctl(PR_SET_PDEATHSIG, opts.pdeathsig < 0 ? 0 : opts.pdeathsig) != 0)
 		err(SETPRIV_EXIT_PRIVERR, _("set parent death signal failed"));
+
+	if (opts.have_ptracer) {
+		if (prctl(PR_SET_PTRACER, opts.ptracer) < 0) {
+			err(SETPRIV_EXIT_PRIVERR, _("set ptracer"));
+		}
+	}
 
 	do_landlock(&opts.landlock);
 
