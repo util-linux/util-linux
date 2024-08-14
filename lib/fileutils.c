@@ -332,7 +332,7 @@ char *ul_basename(char *path)
 		return p + 1;		/* begin of the name */
 
 	while (p > path && *(p - 1) == '/')
-		--p;			/* remove tailing '/' */
+		--p;			/* remove trailing '/' */
 
 	if (p > path) {
 		*p-- = '\0';

@@ -146,7 +146,7 @@
 
 #ifndef _PATH_DEV
   /*
-   * The tailing '/' in _PATH_DEV is there for compatibility with libc.
+   * The trailing '/' in _PATH_DEV is there for compatibility with libc.
    */
 # define _PATH_DEV		"/dev/"
 #endif

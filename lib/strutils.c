@@ -919,7 +919,7 @@ int streq_paths(const char *a, const char *b)
 		if (a_sz + b_sz == 0)
 			return 1;
 
-		/* ignore tailing slash */
+		/* ignore trailing slash */
 		if (a_sz + b_sz == 1 &&
 		    ((a_seg && *a_seg == '/') || (b_seg && *b_seg == '/')))
 			return 1;

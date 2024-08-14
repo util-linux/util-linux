@@ -584,7 +584,7 @@ static PyObject *Fs_match_options(FsObject *self, PyObject *args, PyObject *kwds
 }
 
 #define Fs_streq_srcpath_HELP "streq_srcpath(srcpath)\n\n" \
-		"Compares fs source path with path. The tailing slash is ignored.\n" \
+		"Compares fs source path with path. The trailing slash is ignored.\n" \
 		"Returns True if fs source path equal to path, otherwise False."
 static PyObject *Fs_streq_srcpath(FsObject *self, PyObject *args, PyObject *kwds)
 {
@@ -599,7 +599,7 @@ static PyObject *Fs_streq_srcpath(FsObject *self, PyObject *args, PyObject *kwds
 }
 
 #define Fs_streq_target_HELP "streq_target(target)\n\n" \
-		"Compares fs target path with path. The tailing slash is ignored.\n" \
+		"Compares fs target path with path. The trailing slash is ignored.\n" \
 		"See also Fs.match_target().\n" \
 		"Returns True if fs target path equal to path, otherwise False."
 static PyObject *Fs_streq_target(FsObject *self, PyObject *args, PyObject *kwds)
