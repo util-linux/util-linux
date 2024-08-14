@@ -717,7 +717,20 @@ AS_IF([test "x$ul_cv_syscall_fsconfig" = xno ||
 	have_mountfd_api="no"
    ],[
         have_mountfd_api="yes"
-	AC_DEFINE([HAVE_MOUNTFD_API], [1], [Define to 1 if you want mount API based on FDs.])
+	AC_DEFINE([HAVE_MOUNTFD_API], [1], [Define to 1 if you want to use mount API based on FDs.])
+   ])
+
+
+UL_CHECK_SYSCALL([statmount])
+UL_CHECK_SYSCALL([listmount])
+
+AS_IF([test "x$ul_cv_syscall_statmount" = xno ||
+       test "x$ul_cv_syscall_listmount" = xno],
+   [
+	have_statmount_api="no"
+   ],[
+	have_statmount_api="yes"
+	AC_DEFINE([HAVE_STATMOUNT_API], [1], [Define to 1 if you want to use statmount API.])
    ])
 
 
