@@ -281,8 +281,25 @@ mnt_fs_strdup_options
 mnt_fs_streq_srcpath
 mnt_fs_streq_target
 mnt_fs_to_mntent
+mnt_fs_fetch_statmount
+mnt_fs_get_ns
+mnt_fs_set_ns
 mnt_new_fs
 mnt_reset_fs
+</SECTION>
+
+<SECTION>
+<FILE>statmount</FILE>
+libmnt_statmnt
+mnt_new_statmnt
+mnt_ref_statmnt
+mnt_unref_statmnt
+mnt_statmnt_disable_fetching
+mnt_statmnt_set_mask
+mnt_fs_fetch_statmount
+mnt_fs_get_statmnt
+mnt_fs_refer_statmnt
+mnt_table_refer_statmnt
 </SECTION>
 
 <SECTION>

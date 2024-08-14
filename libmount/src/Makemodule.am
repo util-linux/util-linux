@@ -30,6 +30,7 @@ libmount_la_SOURCES += \
 	libmount/src/context.c \
 	libmount/src/context_mount.c \
 	libmount/src/context_umount.c \
+	libmount/src/fs_statmount.c \
 	libmount/src/hooks.c \
 	libmount/src/hook_mount.c \
 	libmount/src/hook_mount_legacy.c \

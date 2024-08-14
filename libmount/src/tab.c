@@ -172,6 +172,10 @@ void mnt_free_table(struct libmnt_table *tb)
 	mnt_unref_cache(tb->cache);
 	free(tb->comm_intro);
 	free(tb->comm_tail);
+
+	mnt_unref_statmnt(tb->stmnt);
+	tb->stmnt = NULL;
+
 	free(tb);
 }
 
@@ -396,6 +400,40 @@ struct libmnt_cache *mnt_table_get_cache(struct libmnt_table *tb)
 }
 
 /**
+ * mnt_table_refer_statmnt:
+ * @tb: pointer to tab
+ * @sm: statmount setting or NULL
+ *
+ * Add a reference to the statmount() setting in the table (see
+ * mnt_new_statmnt() function, etc.).  This reference will automatically be
+ * used for any newly added filesystems in the @tb, eliminating the need for
+ * extra mnt_fs_refer_statmnt() calls for each filesystem.
+ *
+ * The reference is not removed by mnt_reset_table(), use NULL as @sm to
+ * remove the reference.
+ *
+ * Returns: 0 on success or negative number in case of error.
+ *
+ * Since: 2.41
+ */
+int mnt_table_refer_statmnt(struct libmnt_table *tb, struct libmnt_statmnt *sm)
+{
+	if (!tb)
+		return -EINVAL;
+	if (tb->stmnt == sm)
+		return 0;
+
+	mnt_unref_statmnt(tb->stmnt);
+	mnt_ref_statmnt(sm);
+
+	DBG(TAB, ul_debugobj(tb, "refer statmnt"));
+
+	tb->stmnt = sm;
+	return 0;
+}
+
+
+/**
  * mnt_table_find_fs:
  * @tb: tab pointer
  * @fs: entry to look for
@@ -455,6 +493,10 @@ int mnt_table_add_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
 
 	DBG(TAB, ul_debugobj(tb, "add entry: %s %s",
 			mnt_fs_get_source(fs), mnt_fs_get_target(fs)));
+
+	if (tb->stmnt)
+		mnt_fs_refer_statmnt(fs, tb->stmnt);
+
 	return 0;
 }
 
@@ -474,6 +516,10 @@ static int __table_insert_fs(
 
 	DBG(TAB, ul_debugobj(tb, "insert entry: %s %s",
 			mnt_fs_get_source(fs), mnt_fs_get_target(fs)));
+
+	if (tb->stmnt)
+		mnt_fs_refer_statmnt(fs, tb->stmnt);
+
 	return 0;
 }
 

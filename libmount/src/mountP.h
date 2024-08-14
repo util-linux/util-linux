@@ -52,6 +52,7 @@
 #define MNT_DEBUG_VERITY	(1 << 14)
 #define MNT_DEBUG_HOOK		(1 << 15)
 #define MNT_DEBUG_OPTLIST	(1 << 16)
+#define MNT_DEBUG_STATMNT	(1 << 17)
 
 #define MNT_DEBUG_ALL		0xFFFFFF
 
@@ -190,6 +191,20 @@ struct libmnt_iter {
 
 
 /*
+ * statmount setting; shared between tables and filesystems
+ */
+struct libmnt_statmnt {
+	int             refcount;
+	uint64_t        mask;           /* default statmount() mask */
+
+	struct ul_statmount *buf;
+	size_t bufsiz;
+
+	unsigned int    disabled: 1;    /* enable or disable statmount() */
+};
+
+
+/*
  * This struct represents one entry in a fstab/mountinfo file.
  * (note that fstab[1] means the first column from fstab, and so on...)
  */
@@ -204,6 +219,8 @@ struct libmnt_fs {
 
 	int		id;		/* mountinfo[1]: ID */
 	uint64_t	uniq_id;	/* unique node ID; statx(STATX_MNT_ID_UNIQUE); statmount->mnt_id */
+	uint64_t        ns_id;		/* namespace ID; statmount->mnt_ns_id */
+
 	int		parent;		/* mountinfo[2]: parent */
 	uint64_t	uniq_parent;	/* unique parent ID; statmount->mnt_parent_id */
 	dev_t		devno;		/* mountinfo[3]: st_dev */
@@ -241,6 +258,9 @@ struct libmnt_fs {
 	int		flags;		/* MNT_FS_* flags */
 	pid_t		tid;		/* /proc/<tid>/mountinfo otherwise zero */
 
+	uint64_t	stmnt_done;	/* mask of already called masks */
+	struct libmnt_statmnt *stmnt;	/* statmount() stuff */
+
 	char		*comment;	/* fstab comment */
 
 	void		*userdata;	/* library independent data */
@@ -254,6 +274,9 @@ struct libmnt_fs {
 #define MNT_FS_SWAP	(1 << 3) /* swap device */
 #define MNT_FS_KERNEL	(1 << 4) /* data from /proc/{mounts,self/mountinfo} */
 #define MNT_FS_MERGED	(1 << 5) /* already merged data from /run/mount/utab */
+
+#define mnt_fs_want_statmount(_x, _m) \
+		((_x)->stmnt && !(_x)->stmnt->disabled && !((_x)->stmnt_done & (_m)))
 
 /*
  * fstab/mountinfo file
@@ -273,6 +296,8 @@ struct libmnt_table {
 
 	int		(*fltrcb)(struct libmnt_fs *fs, void *data);
 	void		*fltrcb_data;
+
+	struct libmnt_statmnt	*stmnt; /* statmount() stuff */
 
 	int		noautofs;	/* ignore autofs mounts */
 

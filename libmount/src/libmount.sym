@@ -383,8 +383,19 @@ MOUNT_2_40 {
 } MOUNT_2_39;
 
 MOUNT_2_41 {
-	mnt_fs_get_uniq_id;
+	mnt_fs_fetch_statmount;
+	mnt_fs_get_ns_id;
 	mnt_fs_get_parent_uniq_id;
+	mnt_fs_get_statmnt;
+	mnt_fs_get_uniq_id;
+	mnt_fs_refer_statmnt;
+	mnt_fs_set_ns;
 	mnt_fs_set_uniq_id;
 	mnt_id_from_path;
+	mnt_new_statmnt;
+	mnt_ref_statmnt;
+	mnt_statmnt_disable_fetching;
+	mnt_statmnt_set_mask;
+	mnt_table_refer_statmnt;
+	mnt_unref_statmnt;
 } MOUNT_2_40;

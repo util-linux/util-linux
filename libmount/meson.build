@@ -43,6 +43,7 @@ lib_mount_sources = '''
 
 if LINUX
   lib_mount_sources += '''
+    src/fs_statmount.c
     src/hooks.c
     src/monitor.c
     src/optlist.c
