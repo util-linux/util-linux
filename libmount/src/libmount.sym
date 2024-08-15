@@ -384,7 +384,7 @@ MOUNT_2_40 {
 
 MOUNT_2_41 {
 	mnt_fs_fetch_statmount;
-	mnt_fs_get_ns_id;
+	mnt_fs_get_ns;
 	mnt_fs_get_parent_uniq_id;
 	mnt_fs_get_statmnt;
 	mnt_fs_get_uniq_id;
