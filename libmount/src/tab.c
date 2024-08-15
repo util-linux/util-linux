@@ -504,18 +504,22 @@ static int __table_insert_fs(
 			struct libmnt_table *tb, int before,
 			struct libmnt_fs *pos, struct libmnt_fs *fs)
 {
-	struct list_head *head = pos ? &pos->ents : &tb->ents;
-
-	if (before)
-		list_add(&fs->ents, head);
+	if (!pos)
+		list_add_tail(&fs->ents, &tb->ents);
+	else if (before)
+		list_add_tail(&fs->ents, &pos->ents);
 	else
-		list_add_tail(&fs->ents, head);
+		list_add(&fs->ents, &pos->ents);
 
 	fs->tab = tb;
 	tb->nents++;
 
-	DBG(TAB, ul_debugobj(tb, "insert entry: %s %s",
+	if (mnt_fs_get_uniq_id(fs)) {
+		DBG(TAB, ul_debugobj(tb, "insert entry: %" PRIu64, mnt_fs_get_uniq_id(fs)));
+	} else {
+		DBG(TAB, ul_debugobj(tb, "insert entry: %s %s",
 			mnt_fs_get_source(fs), mnt_fs_get_target(fs)));
+	}
 
 	if (tb->stmnt)
 		mnt_fs_refer_statmnt(fs, tb->stmnt);
