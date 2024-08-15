@@ -16070,7 +16070,7 @@ msgid ""
 msgstr ""
 "     --time-format <Format>  gibt Zeitstempel im angegebenen I<Format> aus:\n"
 "                               [delta|reltime|ctime|notime|iso]\n"
-"Einschlafen/Aufwachen will verursacht inkorrekte ctime- und iso-Zeitstempel.\n"
+"Einschlafen/Aufwachen verursacht inkorrekte ctime- und iso-Zeitstempel.\n"
 
 #: sys-utils/dmesg.c:356
 msgid "     --since <time>          display the lines since the specified time\n"
