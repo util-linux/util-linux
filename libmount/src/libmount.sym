@@ -396,6 +396,11 @@ MOUNT_2_41 {
 	mnt_ref_statmnt;
 	mnt_statmnt_disable_fetching;
 	mnt_statmnt_set_mask;
+	mnt_table_enable_listmount;
+	mnt_table_fetch_listmount;
+	mnt_table_listmount_set_id;
+	mnt_table_listmount_set_ns;
+	mnt_table_listmount_set_stepsiz;
 	mnt_table_refer_statmnt;
 	mnt_unref_statmnt;
 } MOUNT_2_40;

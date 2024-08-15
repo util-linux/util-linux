@@ -99,6 +99,9 @@ struct libmnt_test {
 extern int mnt_run_test(struct libmnt_test *tests, int argc, char *argv[]);
 #endif
 
+/* private tab_listmount.c */
+struct libmnt_listmnt;
+
 /* utils.c */
 extern int mnt_valid_tagname(const char *tagname);
 
@@ -160,6 +163,11 @@ extern int __mnt_table_is_fs_mounted(	struct libmnt_table *tb,
 
 extern int mnt_table_enable_noautofs(struct libmnt_table *tb, int ignore);
 extern int mnt_table_is_noautofs(struct libmnt_table *tb);
+
+/* tab_listmount.c */
+extern int mnt_table_next_lsmnt(struct libmnt_table *tb, int direction);
+extern int mnt_table_reset_listmount(struct libmnt_table *tb);
+extern int mnt_table_want_listmount(struct libmnt_table *tb);
 
 /*
  * Generic iterator
@@ -297,6 +305,7 @@ struct libmnt_table {
 	int		(*fltrcb)(struct libmnt_fs *fs, void *data);
 	void		*fltrcb_data;
 
+	struct libmnt_listmnt	*lsmnt;	/* listmount() stuff */
 	struct libmnt_statmnt	*stmnt; /* statmount() stuff */
 
 	int		noautofs;	/* ignore autofs mounts */

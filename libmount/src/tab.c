@@ -116,6 +116,8 @@ int mnt_reset_table(struct libmnt_table *tb)
 	}
 
 	tb->nents = 0;
+	mnt_table_reset_listmount(tb);
+
 	return 0;
 }
 
@@ -172,6 +174,9 @@ void mnt_free_table(struct libmnt_table *tb)
 	mnt_unref_cache(tb->cache);
 	free(tb->comm_intro);
 	free(tb->comm_tail);
+
+	free(tb->lsmnt);
+	tb->lsmnt = NULL;
 
 	mnt_unref_statmnt(tb->stmnt);
 	tb->stmnt = NULL;
@@ -432,7 +437,6 @@ int mnt_table_refer_statmnt(struct libmnt_table *tb, struct libmnt_statmnt *sm)
 	return 0;
 }
 
-
 /**
  * mnt_table_find_fs:
  * @tb: tab pointer
@@ -493,7 +497,6 @@ int mnt_table_add_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
 
 	DBG(TAB, ul_debugobj(tb, "add entry: %s %s",
 			mnt_fs_get_source(fs), mnt_fs_get_target(fs)));
-
 	if (tb->stmnt)
 		mnt_fs_refer_statmnt(fs, tb->stmnt);
 
@@ -852,6 +855,22 @@ int mnt_table_next_fs(struct libmnt_table *tb, struct libmnt_iter *itr, struct l
 		return -EINVAL;
 	if (fs)
 		*fs = NULL;
+
+	if (mnt_table_want_listmount(tb) &&
+	    (list_empty(&tb->ents) || itr->p == itr->head)) {
+		struct list_head *prev = NULL;
+
+		if (itr->p)
+			prev = IS_ITER_FORWARD(itr) ? itr->p->prev : itr->p->next;
+		rc =  mnt_table_next_lsmnt(tb, itr->direction);
+		if (rc)
+			return rc;
+		MNT_ITER_INIT(itr, &tb->ents);
+		if (prev) {
+		        itr->p = prev;
+			MNT_ITER_ITERATE(itr);
+		}
+	}
 
 	if (!itr->head)
 		MNT_ITER_INIT(itr, &tb->ents);

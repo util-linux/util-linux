@@ -592,7 +592,7 @@ extern int mnt_fs_refer_statmnt(struct libmnt_fs *fs, struct libmnt_statmnt *sm)
 extern struct libmnt_statmnt *mnt_fs_get_statmnt(struct libmnt_fs *fs);
 extern int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask);
 
-/* tab-parse.c */
+/* tab_parse.c */
 extern struct libmnt_table *mnt_new_table_from_file(const char *filename)
 			__ul_attribute__((warn_unused_result));
 extern struct libmnt_table *mnt_new_table_from_dir(const char *dirname)
@@ -689,6 +689,14 @@ extern int mnt_table_find_next_fs(struct libmnt_table *tb,
 		        struct libmnt_fs **fs);
 
 extern int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs);
+
+/* tab_listmount.c */
+extern int mnt_table_listmount_set_id(struct libmnt_table *tb, uint64_t id);
+extern int mnt_table_listmount_set_ns(struct libmnt_table *tb, uint64_t ns);
+extern int mnt_table_listmount_set_stepsiz(struct libmnt_table *tb, size_t sz);
+
+extern int mnt_table_enable_listmount(struct libmnt_table *tb, int enable);
+extern int mnt_table_fetch_listmount(struct libmnt_table *tb);
 
 /* tab_update.c */
 extern struct libmnt_update *mnt_new_update(void)
