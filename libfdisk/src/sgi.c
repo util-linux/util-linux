@@ -443,7 +443,7 @@ int fdisk_sgi_set_bootfile(struct fdisk_context *cxt)
 
 	fdisk_info(cxt, _("The current boot file is: %s"), sgilabel->boot_file);
 
-	rc = fdisk_ask_string(cxt, _("Enter of the new boot file"), &name);
+	rc = fdisk_ask_string(cxt, _("Enter full path of the new boot file"), &name);
 	if (rc == 0)
 		rc = sgi_check_bootfile(cxt, name);
 	if (rc) {
