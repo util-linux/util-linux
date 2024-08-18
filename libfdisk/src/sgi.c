@@ -447,8 +447,10 @@ int fdisk_sgi_set_bootfile(struct fdisk_context *cxt)
 	if (rc == 0)
 		rc = sgi_check_bootfile(cxt, name);
 	if (rc) {
-		if (rc == 1)
+		if (rc == 1) {
 			fdisk_info(cxt, _("Boot file is unchanged."));
+			rc = 0;
+		}
 		goto done;
 	}
 
