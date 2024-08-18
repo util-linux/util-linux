@@ -391,8 +391,8 @@ static int sgi_check_bootfile(struct fdisk_context *cxt, const char *name)
 
 	sz = strlen(name);
 
-	if (sz < 3) {
-		/* "/a\n" is minimum */
+	if (sz < 2) {
+		/* "/a" is minimum */
 		fdisk_warnx(cxt, _("Invalid bootfile!  The bootfile must "
 				   "be an absolute non-zero pathname, "
 				   "e.g. \"/unix\" or \"/unix.save\"."));
