@@ -11,6 +11,54 @@
  */
 #include "mountP.h"
 
+#ifndef HAVE_STATMOUNT_API
+
+int mnt_table_listmount_set_id(
+		struct libmnt_table *tb __attribute__((__unused__)),
+		uint64_t id __attribute__((__unused__)))
+{
+	return -ENOSYS;
+}
+
+int mnt_table_listmount_set_ns(
+		struct libmnt_table *tb __attribute__((__unused__)),
+		uint64_t ns __attribute__((__unused__)))
+{
+	return -ENOSYS;
+}
+
+int mnt_table_listmount_set_stepsiz(
+		struct libmnt_table *tb __attribute__((__unused__)),
+		size_t sz __attribute__((__unused__)))
+{
+	return -ENOSYS;
+}
+
+int mnt_table_enable_listmount(
+		struct libmnt_table *tb __attribute__((__unused__)),
+		int enable __attribute__((__unused__)))
+{
+	return -ENOSYS;
+}
+
+int mnt_table_fetch_listmount(struct libmnt_table *tb __attribute__((__unused__)))
+{
+	return -ENOSYS;
+}
+
+int mnt_table_reset_listmount(struct libmnt_table *tb __attribute__((__unused__)))
+{
+	return -ENOSYS;
+}
+
+int mnt_table_next_lsmnt(struct libmnt_table *tb __attribute__((__unused__)),
+			int direction __attribute__((__unused__)))
+{
+	return -ENOSYS;
+}
+
+#else /* HAVE_STATMOUNT_API */
+
 /*
 * This struct is not shared between multiple tables, so reference counting is
 * not used for it.
@@ -371,4 +419,4 @@ int mnt_table_fetch_listmount(struct libmnt_table *tb)
 	return rc;
 }
 
-
+#endif /* HAVE_STATMOUNT_API */

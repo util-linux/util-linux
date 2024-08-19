@@ -855,7 +855,7 @@ int mnt_table_next_fs(struct libmnt_table *tb, struct libmnt_iter *itr, struct l
 		return -EINVAL;
 	if (fs)
 		*fs = NULL;
-
+#ifdef HAVE_STATMOUNT_API
 	if (mnt_table_want_listmount(tb) &&
 	    (list_empty(&tb->ents) || itr->p == itr->head)) {
 		struct list_head *prev = NULL;
@@ -871,7 +871,7 @@ int mnt_table_next_fs(struct libmnt_table *tb, struct libmnt_iter *itr, struct l
 			MNT_ITER_ITERATE(itr);
 		}
 	}
-
+#endif
 	if (!itr->head)
 		MNT_ITER_INIT(itr, &tb->ents);
 	if (itr->p != itr->head) {

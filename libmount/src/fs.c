@@ -617,8 +617,9 @@ const char *mnt_fs_get_target(struct libmnt_fs *fs)
 {
 	if (!fs)
 		return NULL;
-	if (!fs->target && mnt_fs_want_statmount(fs, STATMOUNT_MNT_POINT))
-		mnt_fs_fetch_statmount(fs, STATMOUNT_MNT_POINT);
+#ifdef HAVE_STATMOUNT_API
+	mnt_fs_try_statmount(fs, target, STATMOUNT_MNT_POINT);
+#endif
 	return fs->target;;
 }
 
@@ -665,9 +666,9 @@ int mnt_fs_get_propagation(struct libmnt_fs *fs, unsigned long *flags)
 {
 	if (!fs || !flags)
 		return -EINVAL;
-	if (!fs->propagation && mnt_fs_want_statmount(fs, STATMOUNT_MNT_BASIC))
-		mnt_fs_fetch_statmount(fs, STATMOUNT_MNT_BASIC);
-
+#ifdef HAVE_STATMOUNT_API
+	mnt_fs_try_statmount(fs, propagation, STATMOUNT_MNT_BASIC);
+#endif
 	if (!fs->propagation && fs->opt_fields) {
 		 /*
 		 * The optional fields format is incompatible with mount options
@@ -719,9 +720,9 @@ int mnt_fs_is_pseudofs(struct libmnt_fs *fs)
 {
 	if (!fs)
 		return 0;
-	if (!fs->fstype && mnt_fs_want_statmount(fs, STATMOUNT_FS_TYPE))
-		mnt_fs_fetch_statmount(fs, STATMOUNT_FS_TYPE);
-
+#ifdef HAVE_STATMOUNT_API
+	mnt_fs_try_statmount(fs, fstype, STATMOUNT_FS_TYPE);
+#endif
 	return mnt_fs_get_flags(fs) & MNT_FS_PSEUDO ? 1 : 0;
 }
 
@@ -735,9 +736,9 @@ int mnt_fs_is_netfs(struct libmnt_fs *fs)
 {
 	if (!fs)
 		return 0;
-	if (!fs->fstype && mnt_fs_want_statmount(fs, STATMOUNT_FS_TYPE))
-		mnt_fs_fetch_statmount(fs, STATMOUNT_FS_TYPE);
-
+#ifdef HAVE_STATMOUNT_API
+	mnt_fs_try_statmount(fs, fstype, STATMOUNT_FS_TYPE);
+#endif
 	return mnt_fs_get_flags(fs) & MNT_FS_NET ? 1 : 0;
 }
 
@@ -766,10 +767,9 @@ const char *mnt_fs_get_fstype(struct libmnt_fs *fs)
 {
 	if (!fs)
 		return NULL;
-
-	if (!fs->fstype && mnt_fs_want_statmount(fs, STATMOUNT_FS_TYPE))
-		mnt_fs_fetch_statmount(fs, STATMOUNT_FS_TYPE);
-
+#ifdef HAVE_STATMOUNT_API
+	mnt_fs_try_statmount(fs, fstype, STATMOUNT_FS_TYPE);
+#endif
 	return fs->fstype;
 }
 
@@ -892,9 +892,10 @@ char *mnt_fs_strdup_options(struct libmnt_fs *fs)
 		return NULL;
 	if (fs->optlist)
 		sync_opts_from_optlist(fs, fs->optlist);
-	else if (!fs->optstr && mnt_fs_want_statmount(fs, STATMOUNT_SB_BASIC | STATMOUNT_MNT_BASIC))
-		mnt_fs_fetch_statmount(fs, STATMOUNT_SB_BASIC | STATMOUNT_MNT_BASIC);
-
+#ifdef HAVE_STATMOUNT_API
+	else
+		mnt_fs_try_statmount(fs, optstr, STATMOUNT_SB_BASIC | STATMOUNT_MNT_BASIC);
+#endif
 	errno = 0;
 	if (fs->optstr)
 		return strdup(fs->optstr);
@@ -922,9 +923,10 @@ const char *mnt_fs_get_options(struct libmnt_fs *fs)
 	       return NULL;
 	if (fs->optlist)
 		sync_opts_from_optlist(fs, fs->optlist);
-	else if (!fs->optstr && mnt_fs_want_statmount(fs, STATMOUNT_SB_BASIC | STATMOUNT_MNT_BASIC))
-		mnt_fs_fetch_statmount(fs, STATMOUNT_SB_BASIC | STATMOUNT_MNT_BASIC);
-
+#ifdef HAVE_STATMOUNT_API
+	else
+		mnt_fs_try_statmount(fs, optstr, STATMOUNT_SB_BASIC | STATMOUNT_MNT_BASIC);
+#endif
 	return fs->optstr;
 }
 
@@ -1094,9 +1096,10 @@ const char *mnt_fs_get_fs_options(struct libmnt_fs *fs)
 		return NULL;
 	if (fs->optlist)
 		sync_opts_from_optlist(fs, fs->optlist);
-	else if (!fs->fs_optstr && mnt_fs_want_statmount(fs, STATMOUNT_SB_BASIC))
-		mnt_fs_fetch_statmount(fs, STATMOUNT_SB_BASIC);
-
+#ifdef HAVE_STATMOUNT_API
+	else
+		mnt_fs_try_statmount(fs, fs_optstr, STATMOUNT_SB_BASIC);
+#endif
 	return fs->fs_optstr;
 }
 
@@ -1112,9 +1115,10 @@ const char *mnt_fs_get_vfs_options(struct libmnt_fs *fs)
 		return NULL;
 	if (fs->optlist)
 		sync_opts_from_optlist(fs, fs->optlist);
-	else if (!fs->vfs_optstr && mnt_fs_want_statmount(fs, STATMOUNT_MNT_BASIC))
-		mnt_fs_fetch_statmount(fs, STATMOUNT_MNT_BASIC);
-
+#ifdef HAVE_STATMOUNT_API
+	else
+		mnt_fs_try_statmount(fs, vfs_optstr, STATMOUNT_MNT_BASIC);
+#endif
 	return fs->vfs_optstr;
 }
 
@@ -1299,9 +1303,9 @@ const char *mnt_fs_get_root(struct libmnt_fs *fs)
 {
 	if (!fs)
 		return NULL;
-	if (!fs->root && mnt_fs_want_statmount(fs, STATMOUNT_MNT_ROOT))
-		mnt_fs_fetch_statmount(fs, STATMOUNT_MNT_ROOT);
-
+#ifdef HAVE_STATMOUNT_API
+	mnt_fs_try_statmount(fs, root, STATMOUNT_MNT_ROOT);
+#endif
 	return fs->root;
 }
 
@@ -1414,9 +1418,9 @@ int mnt_fs_get_id(struct libmnt_fs *fs)
 {
 	if (!fs)
 		return 0;
-	if (!fs->id && mnt_fs_want_statmount(fs, STATMOUNT_MNT_BASIC))
-		mnt_fs_fetch_statmount(fs, STATMOUNT_MNT_BASIC);
-
+#ifdef HAVE_STATMOUNT_API
+	mnt_fs_try_statmount(fs, id, STATMOUNT_MNT_BASIC);
+#endif
 	return fs->id;
 }
 
@@ -1435,9 +1439,9 @@ uint64_t mnt_fs_get_uniq_id(struct libmnt_fs *fs)
 {
 	if (!fs)
 		return 0;
-	if (!fs->uniq_id && mnt_fs_want_statmount(fs, STATMOUNT_MNT_BASIC))
-		mnt_fs_fetch_statmount(fs, STATMOUNT_MNT_BASIC);
-
+#ifdef HAVE_STATMOUNT_API
+	mnt_fs_try_statmount(fs, uniq_id, STATMOUNT_MNT_BASIC);
+#endif
 	return fs->uniq_id;
 }
 
@@ -1471,9 +1475,9 @@ int mnt_fs_get_parent_id(struct libmnt_fs *fs)
 {
 	if (!fs)
 		return 0;
-	if (!fs->parent && mnt_fs_want_statmount(fs, STATMOUNT_MNT_BASIC))
-		mnt_fs_fetch_statmount(fs, STATMOUNT_MNT_BASIC);
-
+#ifdef HAVE_STATMOUNT_API
+	mnt_fs_try_statmount(fs, parent, STATMOUNT_MNT_BASIC);
+#endif
 	return fs->parent;
 }
 
@@ -1489,9 +1493,9 @@ uint64_t mnt_fs_get_parent_uniq_id(struct libmnt_fs *fs)
 {
 	if (!fs)
 		return 0;
-	if (!fs->uniq_parent && mnt_fs_want_statmount(fs, STATMOUNT_MNT_BASIC))
-		mnt_fs_fetch_statmount(fs, STATMOUNT_MNT_BASIC);
-
+#ifdef HAVE_STATMOUNT_API
+	mnt_fs_try_statmount(fs, uniq_parent, STATMOUNT_MNT_BASIC);
+#endif
 	return fs->uniq_parent;
 }
 
@@ -1509,8 +1513,9 @@ uint64_t mnt_fs_get_ns(struct libmnt_fs *fs)
 {
 	if (!fs)
 		return 0;
-	if (!fs->ns_id && mnt_fs_want_statmount(fs, STATMOUNT_MNT_NS_ID))
-		mnt_fs_fetch_statmount(fs, STATMOUNT_MNT_NS_ID);
+#ifdef HAVE_STATMOUNT_API
+	mnt_fs_try_statmount(fs, ns_id, STATMOUNT_MNT_NS_ID);
+#endif
 	return fs->ns_id;
 }
 
@@ -1542,9 +1547,9 @@ dev_t mnt_fs_get_devno(struct libmnt_fs *fs)
 {
 	if (!fs)
 		return 0;
-	if (!fs->devno && mnt_fs_want_statmount(fs, STATMOUNT_SB_BASIC))
-		mnt_fs_fetch_statmount(fs, STATMOUNT_SB_BASIC);
-
+#ifdef HAVE_STATMOUNT_API
+	mnt_fs_try_statmount(fs, devno, STATMOUNT_SB_BASIC);
+#endif
 	return fs->devno;
 }
 
@@ -1578,9 +1583,10 @@ int mnt_fs_get_option(struct libmnt_fs *fs, const char *name,
 
 	if (fs->optlist)
 		sync_opts_from_optlist(fs, fs->optlist);
-	else if (!fs->vfs_optstr && mnt_fs_want_statmount(fs, STATMOUNT_MNT_BASIC | STATMOUNT_SB_BASIC))
-		mnt_fs_fetch_statmount(fs, STATMOUNT_MNT_BASIC | STATMOUNT_SB_BASIC);
-
+#ifdef HAVE_STATMOUNT_API
+	else
+		mnt_fs_try_statmount(fs, vfs_optstr, STATMOUNT_SB_BASIC | STATMOUNT_MNT_BASIC);
+#endif
 	if (fs->fs_optstr)
 		rc = mnt_optstr_get_option(fs->fs_optstr, name, value, valsz);
 	if (rc == 1 && fs->vfs_optstr)
@@ -1686,8 +1692,9 @@ int mnt_fs_match_target(struct libmnt_fs *fs, const char *target,
 
 	if (!fs || !target)
 		return 0;
-	if (!fs->target && mnt_fs_want_statmount(fs, STATMOUNT_MNT_POINT))
-		mnt_fs_fetch_statmount(fs, STATMOUNT_MNT_POINT);
+#ifdef HAVE_STATMOUNT_API
+	mnt_fs_try_statmount(fs, target, STATMOUNT_MNT_BASIC);
+#endif
 	if (!fs->target)
 		return 0;
 

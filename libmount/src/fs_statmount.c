@@ -29,6 +29,7 @@
  */
 struct libmnt_statmnt *mnt_new_statmnt(void)
 {
+#ifdef HAVE_STATMOUNT_API
 	struct libmnt_statmnt *sm;
 
 	errno = 0;
@@ -44,6 +45,10 @@ struct libmnt_statmnt *mnt_new_statmnt(void)
 	sm->refcount = 1;
 	DBG(STATMNT, ul_debugobj(sm, "alloc"));
 	return sm;
+#else
+	errno = ENOSYS;
+	return NULL;
+#endif
 }
 
 /**
