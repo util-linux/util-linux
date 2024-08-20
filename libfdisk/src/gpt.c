@@ -87,7 +87,7 @@ enum {
 };
 
 #define GPT_ATTRSTR_REQ		"RequiredPartition"
-#define GPT_ATTRSTR_REQ_TYPO	"RequiredPartiton"
+#define GPT_ATTRSTR_REQ_TYPO	"RequiredPartition"
 #define GPT_ATTRSTR_NOBLOCK	"NoBlockIOProtocol"
 #define GPT_ATTRSTR_LEGACY	"LegacyBIOSBootable"
 

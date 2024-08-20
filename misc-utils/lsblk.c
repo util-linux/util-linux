@@ -2311,8 +2311,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -M, --merge          group parents of sub-trees (usable for RAIDs, Multi-path)\n"), out);
 	fputs(_(" -O, --output-all     output all columns\n"), out);
 	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
-	fputs(_(" -Q, --filter <expr>  print only lines maching the expression\n"), out);
-	fputs(_("     --highlight <expr> colorize lines maching the expression\n"), out);
+	fputs(_(" -Q, --filter <expr>  print only lines matching the expression\n"), out);
+	fputs(_("     --highlight <expr> colorize lines matching the expression\n"), out);
 	fputs(_("     --ct-filter <expr> restrict the next counter\n"), out);
 	fputs(_("     --ct <name>[:<param>[:<func>]] define a custom counter\n"), out);
 	fputs(_(" -S, --scsi           output info about SCSI devices\n"), out);

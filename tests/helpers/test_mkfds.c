@@ -1693,7 +1693,7 @@ static void *make_unix_in_new_netns(const struct factory *factory, struct fdesc 
 		close_fdesc(tmp_netns, NULL);
 		close_unix_socket(sd, fdescs[2].data);
 		errno = e;
-		err(EXIT_FAILURE, "failed to swich back to the original net namespace");
+		err(EXIT_FAILURE, "failed to switch back to the original net namespace");
 	}
 
 	return NULL;
@@ -4156,13 +4156,13 @@ static const struct factory factories[] = {
 			{
 				.name = "interval",
 				.type = PTYPE_UINTEGER,
-				.desc = "inteval in seconds",
+				.desc = "interval in seconds",
 				.defv.uinteger = 10,
 			},
 			{
 				.name = "interval-nanofrac",
 				.type = PTYPE_UINTEGER,
-				.desc = "nsec part of inteval",
+				.desc = "nsec part of interval",
 				.defv.uinteger = 0,
 			},
 
