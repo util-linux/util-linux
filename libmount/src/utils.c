@@ -285,6 +285,7 @@ static int get_mnt_id(	int fd, const char *path,
 		*id = sx.stx_mnt_id;
 	}
 	if (uniq_id) {
+# ifdef STATX_MNT_ID_UNIQUE
 		errno = 0;
 		rc = statx(fd, path ? path : "", flags,
 				STATX_MNT_ID_UNIQUE, &sx);
@@ -294,6 +295,9 @@ static int get_mnt_id(	int fd, const char *path,
 		if (rc)
 			return rc;
 		*uniq_id = sx.stx_mnt_id;
+# else
+		return -ENOSYS;
+# endif
 	}
 	return 0;
 #else
