@@ -430,7 +430,7 @@ static char *mk_string_list(char *ptr, size_t *len, size_t *begin,
 
 	if (cur == -1 && *begin) {
 		/* end of the list */
-		*(ptr - 1) = '\0';	/* remove tailing ',' from the list */
+		*(ptr - 1) = '\0';	/* remove trailing ',' from the list */
 		return ptr;
 	}
 

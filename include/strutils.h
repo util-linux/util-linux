@@ -388,7 +388,7 @@ static inline size_t __normalize_whitespace(
 		else
 			dst[x++] = src[i++];
 	}
-	if (nsp && x > 0)		/* tailing space */
+	if (nsp && x > 0)		/* trailing space */
 		x--;
 done:
 	dst[x] = '\0';

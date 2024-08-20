@@ -101,7 +101,7 @@ static int Table_set_trailing_comment(TableObject *self, PyObject *value,
 	"The initial (intro) file comment is accessible by\n" \
 	"Tab.intro_comment. The intro and the comment of the first fstab" \
 	"entry has to be separated by blank line.  The filesystem comments are\n" \
-	"accessible by Fs.comment. The tailing fstab comment is accessible\n" \
+	"accessible by Fs.comment. The trailing fstab comment is accessible\n" \
 	"by Tab.trailing_comment.\n" \
 	"\n" \
 	"<informalexample>\n" \
@@ -114,7 +114,7 @@ static int Table_set_trailing_comment(TableObject *self, PyObject *value,
 	"LABEL=foo /mnt/foo auto defaults 1 2\n" \
 	"# this comments belongs to the second fs\n" \
 	"LABEL=bar /mnt/bar auto defaults 1 2 \n" \
-	"# tailing comment\n" \
+	"# trailing comment\n" \
 	"</programlisting>\n" \
 	"</informalexample>"
 static PyObject *Table_enable_comments(TableObject *self, PyObject *args,
