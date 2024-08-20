@@ -77,7 +77,9 @@ int main(int argc, char *argv[])
 
 	/* Without this mask setting, the library will make two statmount() calls
 	 * for each node. */
+#if defined(STATMOUNT_MNT_POINT) && defined(STATMOUNT_FS_TYPE)
 	mnt_statmnt_set_mask(sm, STATMOUNT_MNT_POINT | STATMOUNT_FS_TYPE);
+#endif
 
 	/* force fetch all data
 	mnt_statmnt_set_mask(sm,
