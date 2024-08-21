@@ -23,8 +23,11 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdint.h>
+#include <inttypes.h>
 
 #include "c.h"
+
 #include "list.h"
 #include "debug.h"
 #include "buffer.h"

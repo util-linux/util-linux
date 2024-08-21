@@ -48,8 +48,6 @@
 #include "strutils.h"
 #include "linux_version.h"
 
-#include <inttypes.h>
-
 #ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
 
 #define get_sysapi(_cxt) mnt_context_get_sysapi(_cxt)
