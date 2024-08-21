@@ -266,10 +266,10 @@ int mnt_is_readonly(const char *path)
 	return 0;
 }
 
+#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID)
 static int get_mnt_id(	int fd, const char *path,
 			uint64_t *uniq_id, int *id)
 {
-#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID)
 	int rc;
 	struct statx sx = { 0 };
 	int flags = AT_STATX_DONT_SYNC | AT_NO_AUTOMOUNT;
@@ -300,10 +300,16 @@ static int get_mnt_id(	int fd, const char *path,
 # endif
 	}
 	return 0;
-#else
-	return -ENOSYS;
-#endif
 }
+#else /* HAVE_STATX && HAVE_STRUCT_STATX && AVE_STRUCT_STATX_STX_MNT_ID */
+static int get_mnt_id(	int fd __attribute__((__unused__)),
+			const char *path __attribute__((__unused__)),
+			uint64_t *uniq_id __attribute__((__unused__)),
+			int *id __attribute__((__unused__)))
+{
+	return -ENOSYS;
+}
+#endif
 
 int mnt_id_from_fd(int fd, uint64_t *uniq_id, int *id)
 {
