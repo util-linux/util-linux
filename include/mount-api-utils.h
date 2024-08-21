@@ -324,7 +324,7 @@ struct ul_statmount {
 # define LSMT_ROOT		0xffffffffffffffff	/* root mount */
 #endif
 
-#ifndef LISTMOUNT_REVERS
+#ifndef LISTMOUNT_REVERSE
 # define LISTMOUNT_REVERSE      BIT(0) /* List later mounts first */
 #endif
 
