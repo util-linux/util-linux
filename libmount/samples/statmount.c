@@ -10,8 +10,6 @@
 #include "strutils.h"
 #include "libmount.h"
 
-#include <linux/mount.h>	/* STATMOUNT_* masks */
-
 #include "mount-api-utils.h"	/* fallback for old linux/mount.h */
 
 int main(int argc, char *argv[])
