@@ -130,7 +130,7 @@ static int hlp_enotty_ok(void)
 
 static int hlp_fsopen_ok(void)
 {
-#ifdef FSOPEN_CLOEXEC
+#if defined(HAVE_FSOPEN) && defined(FSOPEN_CLOEXEC)
 	errno = 0;
 	fsopen(NULL, FSOPEN_CLOEXEC);
 #else
