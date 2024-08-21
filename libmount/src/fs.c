@@ -1852,7 +1852,6 @@ int mnt_fs_print_debug(struct libmnt_fs *fs, FILE *file)
 		stmnt_disabled = mnt_statmnt_disable_fetching(fs->stmnt, 1);
 
 	fprintf(file, "------ fs:\n");
-	fprintf(file, "auto-statmount: %s\n", stmnt_disabled ? "off" : "on");
 	if (mnt_fs_get_source(fs))
 		fprintf(file, "source: %s\n", mnt_fs_get_source(fs));
 	if (mnt_fs_get_target(fs))
