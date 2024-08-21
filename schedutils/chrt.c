@@ -299,7 +299,7 @@ static int set_sched_one(struct chrt_ctl *ctl, pid_t pid)
 	if (ctl->policy != SCHED_DEADLINE)
 		return set_sched_one_by_setscheduler(ctl, pid);
 
-	/* no changeed by chrt, follow the current setting */
+	/* not changed by chrt, follow the current setting */
 	sa.sched_nice = getpriority(PRIO_PROCESS, pid);
 
 	/* use main() to check if the setting makes sense */

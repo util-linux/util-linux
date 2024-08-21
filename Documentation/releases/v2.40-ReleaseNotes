@@ -158,7 +158,7 @@ ci:
    - don't combine -Werror and -fsanitize  [Thomas Weißschuh]
    - enable -Werror for meson  [Thomas Weißschuh]
    - fix indentation  [Frantisek Sumsal]
-   - hide coverage-related stuff begind --enable-coverage  [Frantisek Sumsal]
+   - hide coverage-related stuff behind --enable-coverage  [Frantisek Sumsal]
    - mark source directory as safe  [Thomas Weißschuh]
    - packit  add flex  [Karel Zak]
    - prevent prompts during installation  [Thomas Weißschuh]
@@ -623,7 +623,7 @@ libuuid:
 libuuid/src/gen_uuid.c:
    - fix cs_min declaration  [Fabrice Fontaine]
 logger:
-   - initialize socket credentials contol union  [Karel Zak]
+   - initialize socket credentials control union  [Karel Zak]
    - make sure path is terminated [coverity scan]  [Karel Zak]
    - use strncpy instead of strcpy  [Thomas Weißschuh]
 login:

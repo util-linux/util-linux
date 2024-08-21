@@ -106,7 +106,7 @@ mainpid=$!
     $TS_CMD_UNSHARE --user --pid --mount-proc --fork bash -s > $FIFO_DATA <<'EOF'
     stat -c %i -L /proc/self/ns/user
     stat -c %i -L /proc/self/ns/pid
-    # Wait till FIFO_WAIT is clsoed.
+    # Wait till FIFO_WAIT is closed.
     read -u 4
 EOF
 ) &

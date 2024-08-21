@@ -2827,7 +2827,7 @@ static int gpt_check_table_overlap(struct fdisk_context *cxt,
  * @cxt: context
  * @nents: number of wanted entries
  *
- * Elarge GPT entries array if possible. The function check if an existing
+ * Enlarge GPT entries array if possible. The function check if an existing
  * partition does not overlap the entries array area. If yes, then it report
  * warning and returns -EINVAL.
  *

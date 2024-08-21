@@ -1,5 +1,5 @@
 
-Howto add new lsblk test:
+How to add new lsblk test:
 
 * run mk-input.sh <testname>
 

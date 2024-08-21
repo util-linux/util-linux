@@ -34,7 +34,7 @@ losetup(8):
        table parser
 
 mount(8), umount(8):
-   - new pure libmount based mount(8) and umounts(8) commands are available,
+   - new pure libmount based mount(8) and umount(8) commands are available,
      this experimental implementation could be enabled by --enable-new-mount
 
 agetty(8):
@@ -355,7 +355,7 @@ fdisk:
    - remove PACKED macro  [Karel Zak]
    - remove possibly_osf_label variable that is only assigned  [Francesco Cosoleto]
    - remove redundant declaration [cppcheck]  [Sami Kerola]
-   - remove uneecessary code  [Karel Zak]
+   - remove unnecessary code  [Karel Zak]
    - remove unused 'require' member in enum action  [Francesco Cosoleto]
    - remove unused guess_device_type() function  [Francesco Cosoleto]
    - rename bselect, xselect functions  [Francesco Cosoleto]
@@ -525,7 +525,7 @@ libblkid:
    - remove unnecessary position check from list_for_each_safe loops  [Karel Zak]
    - silence a format string warning [-Wformat]  [Francesco Cosoleto]
    - update docs  [Karel Zak]
-   - verify arroy bound before reference [cppcheck]  [Sami Kerola]
+   - verify array bound before reference [cppcheck]  [Sami Kerola]
 libmount:
    - Use filter arg of scandir* to pickup /etc/fstab.d/*.fstab files  [Masatake YAMATO]
    - add "+" prefix for options pattern (e.g findmnt -O)  [Karel Zak]
@@ -535,7 +535,7 @@ libmount:
    - add function to parse offsets/sizes  [Karel Zak]
    - add functions to export syscall/helpers status  [Karel Zak]
    - add mnt_context_umount_next()  [Karel Zak]
-   - add new exprimental umount(8)  [Karel Zak]
+   - add new experimental umount(8)  [Karel Zak]
    - add post-mount checks to detect ro/rw  [Karel Zak]
    - add sanitize_env() to mount(8) sample  [Karel Zak]
    - add support for encrypted loopdevs  [Karel Zak]
@@ -576,16 +576,16 @@ libmount:
    - fix use of logical '&&' with constant operand  [Francesco Cosoleto]
    - fixed a small typo  [s.p@orbitalfox.com]
    - ignore "defaults" mount option  [Karel Zak]
-   - ignore tailing slash in netfs source paths  [Petr Uzel]
+   - ignore trailing slash in netfs source paths  [Petr Uzel]
    - improve verbose message  [Karel Zak]
    - make iter reset more robust [coverity scan]  [Karel Zak]
    - make options in fstab optional  [Karel Zak]
-   - potential null derefence [smatch scan]  [Karel Zak]
+   - potential null dereference [smatch scan]  [Karel Zak]
    - previously assumed null pointer [smatch scan]  [Karel Zak]
    - redundant null check on calling free() [smatch scan]  [Karel Zak]
-   - remove dead assigment  [Karel Zak]
+   - remove dead assignment  [Karel Zak]
    - remove fstab.d support  [Karel Zak]
-   - remove magic constatnt from mount(8)  [Karel Zak]
+   - remove magic constant from mount(8)  [Karel Zak]
    - remove teaser proto for mnt_table_get_name  [Dave Reisner]
    - scandirat based mnt_table_parse_dir implementation  [Masatake YAMATO]
    - support -o loop=<devname>  [Karel Zak]

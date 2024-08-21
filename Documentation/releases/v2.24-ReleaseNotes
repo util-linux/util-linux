@@ -136,7 +136,7 @@ build-sys:
    - fix last stuff  [Karel Zak]
    - fix lastb symlink  [Karel Zak]
    - fix static builds  [Karel Zak]
-   - fix tinfo congitional  [Karel Zak]
+   - fix tinfo conditional  [Karel Zak]
    - fix {lib,sbin}dir paths  [Karel Zak]
    - improbe UL_CONFLICT_BUILD macro  [Karel Zak]
    - install pylibmount into  [Karel Zak]

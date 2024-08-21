@@ -225,7 +225,7 @@ struct lscpu_cxt {
 	struct lscpu_cputype **cputypes;
 
 	size_t npossibles;	/* number of possible CPUs */
-	struct lscpu_cpu **cpus; /* possible CPUs, contains gaps (cups[n]=NULL) */
+	struct lscpu_cpu **cpus; /* possible CPUs, contains gaps (cpus[n]=NULL) */
 
 	size_t npresents;
 	cpu_set_t *present;	/* mask with present CPUs */

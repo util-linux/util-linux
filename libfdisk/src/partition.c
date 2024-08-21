@@ -1283,7 +1283,7 @@ static int recount_resize(
 		DBG(PART, ul_debugobj(tpl, "resize: moving start %s relative, new start: %ju",
 				tpl->movestart == FDISK_MOVE_DOWN  ? "DOWN" : "UP", (uintmax_t)start));
 
-	/* 1b) set new start - try freespace before the curret partition */
+	/* 1b) set new start - try freespace before the current partition */
 	} else if (tpl->movestart == FDISK_MOVE_DOWN) {
 
 		if (resize_get_first_possible(tb, cur, &start) != 0)

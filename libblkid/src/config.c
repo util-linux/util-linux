@@ -191,7 +191,7 @@ struct blkid_config *blkid_read_config(const char *filename)
 
 	if ((error = econf_getBoolValue(file, NULL, "SEND_UEVENT", &uevent))) {
 		if (error != ECONF_NOKEY) {
-			DBG(CONFIG, ul_debug("couldn't fetch SEND_UEVENT corrently: %s", econf_errString(error)));
+			DBG(CONFIG, ul_debug("couldn't fetch SEND_UEVENT currently: %s", econf_errString(error)));
 			goto err;
 		} else {
 			DBG(CONFIG, ul_debug("key SEND_UEVENT not found, using built-in default "));

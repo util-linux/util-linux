@@ -77,7 +77,7 @@ void fdisk_ref_table(struct fdisk_table *tb)
  * fdisk_unref_table:
  * @tb: table pointer
  *
- * Descrements reference counter, on zero the @tb is automatically
+ * Decrements reference counter, on zero the @tb is automatically
  * deallocated.
  */
 void fdisk_unref_table(struct fdisk_table *tb)

@@ -494,7 +494,7 @@ struct fdisk_labelitem {
 };
 
 /* Use only internally for non-allocated items, never use
- * refcouting for such items!
+ * refcounting for such items!
  */
 #define FDISK_LABELITEM_INIT	{ .type = 0, .refcount = 0 }
 

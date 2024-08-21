@@ -330,10 +330,10 @@ static inline int filename_strcmp(const struct file *a, const struct file *b)
 /**
  * Compare only directory names (ignores root directory and basename (filename))
  *
- * The complete path conrains three fragments:
+ * The complete path contains three fragments:
  *
  * <rootdir> is specified on hardlink command line
- * <dirname> is all betweehn rootdir and filename
+ * <dirname> is all between rootdir and filename
  * <filename> is last component (aka basename)
  */
 static inline int dirname_strcmp(const struct file *a, const struct file *b)

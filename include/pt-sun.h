@@ -75,7 +75,7 @@ struct sun_disklabel {
 #define SUN_TAG_LINUX_SWAP	0x82	/* Linux SWAP		*/
 #define SUN_TAG_LINUX_NATIVE	0x83	/* Linux filesystem	*/
 #define SUN_TAG_LINUX_LVM	0x8e	/* Linux LVM		*/
-#define SUN_TAG_LINUX_RAID	0xfd	/* LInux RAID		*/
+#define SUN_TAG_LINUX_RAID	0xfd	/* Linux RAID		*/
 
 #define SUN_FLAG_UNMNT		0x01	/* Unmountable partition*/
 #define SUN_FLAG_RONLY		0x10	/* Read only		*/

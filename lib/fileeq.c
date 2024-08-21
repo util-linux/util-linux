@@ -400,7 +400,7 @@ static ssize_t get_digest(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 	if (n > eq->blocksmax)
 		return 0;
 
-	/* return already cached if alvalable */
+	/* return already cached if available */
 	if (n < get_cached_nblocks(data)) {
 		DBG(DATA, ul_debugobj(data, " digest cached"));
 		assert(data->blocks);

@@ -364,7 +364,7 @@ static int hook_reconfigure_mount(struct libmnt_context *cxt,
 
 	rc = configure_superblock(cxt, hs, api->fd_fs, 1);
 	if (!rc) {
-		DBG(HOOK, ul_debugobj(hs, "re-configurate FS"));
+		DBG(HOOK, ul_debugobj(hs, "reconfigure FS"));
 		rc = fsconfig(api->fd_fs, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0);
 		hookset_set_syscall_status(cxt, "fsconfig", rc == 0);
 	}

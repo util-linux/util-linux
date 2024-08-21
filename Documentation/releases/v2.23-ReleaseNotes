@@ -260,7 +260,7 @@ dmesg:
    - add boundary check to facility & level array usage  [Sami Kerola]
    - fix console-level off-by-one  [Bjørn Mork]
    - fix usage()  [Karel Zak]
-   - fix usage() output consistancy  [Sami Kerola]
+   - fix usage() output consistency  [Sami Kerola]
    - make usage() translator friendly  [Sami Kerola]
    - minor cleanup of EXCL_xxx_ERR macros  [Andrii Bordunov]
    - more colors, more fun  [Karel Zak]
@@ -545,10 +545,6 @@ lib/canonicalize:
    - don't use /dev/mapper/<name> if the node does not exist  [Karel Zak]
 lib/color:
    - add module for work with terminal colors  [Ondrej Oprala]
-lib/consolas:
-   - remove global variable concount, fix linked list  [Karel Zak]
-lib/console:
-   - fix possible fd leak  [Karel Zak]
 lib/consoles:
    - /proc/consoles code refactoring  [Karel Zak]
    - TIOCGDEV code refactoring  [Karel Zak]
@@ -557,8 +553,10 @@ lib/consoles:
    - add test program  [Karel Zak]
    - cmdline code refactoring  [Karel Zak]
    - don't call perror()  [Karel Zak]
+   - fix possible fd leak  [Karel Zak]
    - minor clean ups  [Karel Zak]
    - remove global variable comparedev  [Karel Zak]
+   - remove global variable concount, fix linked list  [Karel Zak]
    - remove global variable consoles  [Karel Zak]
    - remove global variable initcp  [Karel Zak]
    - small cleanup  [Karel Zak]

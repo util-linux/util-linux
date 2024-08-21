@@ -65,7 +65,7 @@ to avoid collisions between JSON libraries and to reduce dependencies overhead i
 libmount.  Note that dm-verity support is still EXPERIMENTAL and disabled by
 default.
 
-more(1) has been refactored to meet 21st century codding standards. Thanks to
+more(1) has been refactored to meet 21st century coding standards. Thanks to
 Sami Kerola.
 
 Thanks to Michael Kerrisk for massive man pages cleanup, and thanks to Evgeny
@@ -144,7 +144,7 @@ bash-completion:
    - umount explicitly needs gawk  [Wolfram Sang]
    - update irqtop and lsirq completions  [Sami Kerola]
 bash-completion/umount:
-   - shell charaters escape  [Etienne Mollier]
+   - shell characters escape  [Etienne Mollier]
 blkdiscard:
    - (man) offset and length must be sector aligned  [Lukas Czerner]
    - Refuse to proceed if signatures are found  [Lukas Czerner]
@@ -500,7 +500,7 @@ more:
    - do not reset parent process terminal in execute()  [Sami Kerola]
    - drop setuid permissions before executing anything  [Sami Kerola]
    - fix SIGSTOP and SIGCONT handling  [Sami Kerola]
-   - fix moving backwards so that it can reach begining of the file  [Sami Kerola]
+   - fix moving backwards so that it can reach beginning of the file  [Sami Kerola]
    - make execute() more robust and timely  [Sami Kerola]
    - make page and arrow up/down to update view  [Sami Kerola]
    - move code blocks from more_key_command() to functions  [Sami Kerola]

@@ -15,7 +15,7 @@
 # GNU General Public License for more details.
 #
 TS_TOPDIR="${0%/*}/../.."
-TS_DESC="UNIX sockets made in a differenct net namespace"
+TS_DESC="UNIX sockets made in a different net namespace"
 
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
@@ -47,7 +47,7 @@ compare_net_namespaces()
     sock_netns=$(${TS_CMD_LSFD} -n -o SOCK.NETNS -p "${pid}" -Q '(FD == 5)')
 
     if [[ "${altns_inode}" == "${sock_netns}" ]]; then
-	echo "the netns for the $type socket is extracted as expectedly"
+	echo "the netns for the $type socket is extracted as expected"
     else
 	echo "the netns for the $type socket is not extracted well"
 	echo "altns_inode=${altns_inode}"

@@ -364,7 +364,7 @@ fdisk:
    - warn users about 2.2TB dos partition limit  [Karel Zak]
 flock:
    - Allow lock directory  [Alexey Gladkov]
-   - add NLS support, remove tailing white-spaces  [Karel Zak]
+   - add NLS support, remove trailing white-spaces  [Karel Zak]
    - fix printf format error in usage()  [Karel Zak]
    - segfaults when file name is not given  [Karel Zak]
 fsck:
@@ -419,7 +419,7 @@ ipcmk:
    - new command  [Hayden James]
 ipcs:
    - adjust some field positions and widths for correct alignment  [Benno Schulenberg]
-   - fix exit codes, remove tailing white-spaces  [Karel Zak]
+   - fix exit codes, remove trailing white-spaces  [Karel Zak]
    - ungettextize the spacing of the table headers  [Benno Schulenberg]
 ldattach:
    - don't compile for non-linux systems  [Samuel Thibault]

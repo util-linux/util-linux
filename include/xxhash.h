@@ -1568,7 +1568,7 @@ static void* XXH_memcpy(void* dest, const void* src, size_t size)
  * @brief Used to prevent unwanted optimizations for @p var.
  *
  * It uses an empty GCC inline assembly statement with a register constraint
- * which forces @p var into a general purpose register (eg eax, ebx, ecx
+ * which forces @p var into a general purpose register (e.g., eax, ebx, ecx
  * on x86) and marks it as modified.
  *
  * This is used in a few places to avoid unwanted autovectorization (e.g.

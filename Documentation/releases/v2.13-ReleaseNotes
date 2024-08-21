@@ -149,7 +149,7 @@ cfdisk:
    - fix stupid typo in GPT checker call  [Karel Zak]
 chsh:
    - don't use empty shell field in /etc/passwd  [Karel Zak]
-   - remove tailing wihit-spaces and use PATH_BSHELL  [Karel Zak]
+   - remove trailing white-spaces and use PATH_BSHELL  [Karel Zak]
 col:
    - getwchar() errors shouldn't be hidden  [Karel Zak]
 cytune:
@@ -170,7 +170,7 @@ docs:
    - clean up TODO file and add a new resuest for 2.14  [Karel Zak]
    - fix authorship of 8-bit cleanup agetty patch  [Karel Zak]
    - fix BSD licence name in README.licensing  [Karel Zak]
-   - fix info about devel/master branchs  [Karel Zak]
+   - fix info about devel/master branches  [Karel Zak]
    - fix URL and typos in README.devel  [Karel Zak]
    - remove deprecated section from README  [Karel Zak]
    - update release notes  [Karel Zak]
@@ -198,7 +198,7 @@ hwclock:
    - add support for audit system  [Karel Zak]
    - fix --systohc sets clock 0.5 seconds slow  [Karel Zak]
    - make ggc happy and check return values from fgets, read and write  [Karel Zak]
-   - remove tailing white-spaces and clean up clock.h  [Karel Zak]
+   - remove trailing white-spaces and clean up clock.h  [Karel Zak]
 ionice:
    - clean up error handling  [Matthias Koenig]
    - cleanup usage for idle class  [Matthias Koenig]
@@ -229,7 +229,7 @@ lomount.c:
 look:
    - fix problem with !isalnum() words  [Karel Zak]
    - man page clarification  [Pádraig Brady]
-   - remove tailing white-spaces  [Karel Zak]
+   - remove trailing white-spaces  [Karel Zak]
 losetup:
    - add -a option to list all used loop devices  [Karel Zak]
    - add a new option -s  [Karel Zak]
@@ -365,7 +365,7 @@ sfdisk:
 swapoff:
    - correctly handle UUID= and LABEL= identifiers  [LaMont Jones]
 swapon:
-   - cleanup PATH_ macros and tailing white-spaces  [Karel Zak]
+   - cleanup PATH_ macros and trailing white-spaces  [Karel Zak]
    - cleanup fsprobe_*() usage  [Karel Zak]
    - does not correctly deal with symlinks  [Marco d'Itri]
    - fix swapon headers and syscalls  [Mike Frysinger]

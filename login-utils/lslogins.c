@@ -741,7 +741,7 @@ static const char *get_pwd_method(const char *str, const char **next)
 #define is_valid_pwd_char(x)	(isascii((unsigned char) (x)) && !is_invalid_pwd_char(x))
 
 /*
- * This function do not accept empty passwords or locked accouns.
+ * This function does not accept empty passwords or locked accounts.
  */
 static int valid_pwd(const char *str)
 {

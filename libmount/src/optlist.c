@@ -1259,7 +1259,7 @@ static const struct libmnt_optmap *get_map(const char *name)
 
 static inline unsigned long str2flg(const char *str)
 {
-	return (unsigned long) strtox64_or_err(str, "connt convert string to flags");
+	return (unsigned long) strtox64_or_err(str, "can't convert string to flags");
 }
 
 static int test_append_str(struct libmnt_test *ts __attribute__((unused)),

@@ -101,7 +101,7 @@ cal:
 cfdisk:
    - check mnt_table_parse_fstab() return code [coverity scan]  [Karel Zak]
 chfn:
-   - don't append extra tailing commas  [Karel Zak]
+   - don't append extra trailing commas  [Karel Zak]
 choom:
    - improve docs  [Karel Zak]
 chsh:
@@ -113,8 +113,6 @@ colcrt:
 column:
    - fix outputing empty column at the end of line  [Yousong Zhou]
    - pass control struct to local_wcstok()  [Sami Kerola]
-cript:
-   - always use decimal point numbers in logs  [Karel Zak]
 disk-utils:
    - docs  fix sfdisk(8) man page typo  [Matthew Krupcale]
 dmesg:
@@ -387,6 +385,7 @@ script:
    - add option --log-out  [Karel Zak]
    - add option --log-timing  [Karel Zak]
    - allow to use the same log for more streams  [Karel Zak]
+   - always use decimal point numbers in logs  [Karel Zak]
    - cleanup info logging  [Karel Zak]
    - cleanup logs freeing  [Karel Zak]
    - cleanup usage  [Karel Zak]

@@ -505,7 +505,7 @@ int scols_table_group_lines(	struct libscols_table *tb,
 			return -EINVAL;
 		}
 		if (ln->group && member->group && ln->group != member->group) {
-			DBG(GROUP, ul_debugobj(gr, "failed group lines (groups mismatch bwteen member and line"));
+			DBG(GROUP, ul_debugobj(gr, "failed group lines (groups mismatch between member and line)"));
 			return -EINVAL;
 		}
 	}
