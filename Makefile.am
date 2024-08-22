@@ -56,7 +56,6 @@ usrsbin_exec_PROGRAMS =
 man_MANS =
 pkgconfig_DATA =
 usrlib_exec_LTLIBRARIES =
-usrsecurelib_exec_LTLIBRARIES =
 bin_PROGRAMS =
 sbin_PROGRAMS =
 dist_usrbin_exec_SCRIPTS =

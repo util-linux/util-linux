@@ -120,9 +120,6 @@ AS_CASE([$libdir],
 )
 AC_SUBST([usrlib_execdir])
 
-usrsecurelib_execdir='${usrlib_execdir}/security'
-AC_SUBST([usrsecurelib_execdir])
-
 # static configuration maintained by packages (e.g. /usr/lib)
 AC_ARG_VAR([SYSCONFSTATICDIR],
 	   [Path to static system configuration, default ${prefix}/lib])
