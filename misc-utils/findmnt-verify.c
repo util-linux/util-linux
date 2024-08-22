@@ -9,6 +9,7 @@
 #include <libmount.h>
 #include <blkid.h>
 #include <sys/utsname.h>
+#include <stdbool.h>
 
 #include "nls.h"
 #include "c.h"
@@ -69,13 +70,14 @@ static int __attribute__ ((__format__ (__printf__, 2, 3)))
 	return 0;
 }
 
-static int __attribute__ ((__format__ (__printf__, 2, 3)))
+static int __attribute__ ((__format__ (__printf__, 3, 4)))
 	verify_ok(struct verify_context *vfy __attribute__((unused)),
+		      bool verbose,
 		      const char *fmt, ...)
 {
 	va_list ap;
 
-	if (!(flags & FL_VERBOSE))
+	if (!verbose)
 		return 0;
 
 	va_start(ap, fmt);
@@ -84,15 +86,15 @@ static int __attribute__ ((__format__ (__printf__, 2, 3)))
 	return 0;
 }
 
-static int verify_order(struct verify_context *vfy)
+static int verify_order(struct verify_context *vfy, struct findmnt *findmnt)
 {
 	struct libmnt_iter *itr = NULL;
 	struct libmnt_fs *next;
 	const char *tgt;
 
 	tgt = mnt_fs_get_target(vfy->fs);
-	if (tgt && !(flags & FL_NOCACHE))
-		tgt  = mnt_resolve_target(tgt, cache);
+	if (tgt && !(findmnt->flags & FL_NOCACHE))
+		tgt  = mnt_resolve_target(tgt, findmnt->cache);
 	else if (!tgt)
 		return 0;
 
@@ -114,8 +116,8 @@ static int verify_order(struct verify_context *vfy)
 		size_t len;
 
 		n_tgt = mnt_fs_get_target(next);
-		if (n_tgt && !(flags & FL_NOCACHE))
-			n_tgt  = mnt_resolve_target(n_tgt, cache);
+		if (n_tgt && !(findmnt->flags & FL_NOCACHE))
+			n_tgt  = mnt_resolve_target(n_tgt, findmnt->cache);
 		else if (!n_tgt)
 			continue;
 		len = strlen(n_tgt);
@@ -132,7 +134,7 @@ done:
 	return 0;
 }
 
-static int verify_target(struct verify_context *vfy)
+static int verify_target(struct verify_context *vfy, struct findmnt *findmnt)
 {
 	const char *tgt = mnt_fs_get_target(vfy->fs);
 	struct stat sb;
@@ -140,8 +142,8 @@ static int verify_target(struct verify_context *vfy)
 	if (!tgt)
 		return verify_err(vfy, _("undefined target (fs_file)"));
 
-	if (!(flags & FL_NOCACHE)) {
-		const char *cn = mnt_resolve_target(tgt, cache);
+	if (!(findmnt->flags & FL_NOCACHE)) {
+		const char *cn = mnt_resolve_target(tgt, findmnt->cache);
 		if (!cn)
 			return -ENOMEM;
 		if (strcmp(cn, tgt) != 0)
@@ -158,18 +160,18 @@ static int verify_target(struct verify_context *vfy)
 		 && mnt_fs_get_option(vfy->fs, "bind", NULL, NULL) == 1) {
 		verify_err(vfy, _("target is not a directory"));
 	} else
-		verify_ok(vfy, _("target exists"));
+		verify_ok(vfy, findmnt->flags & FL_VERBOSE, _("target exists"));
 
 	return 0;
 }
 
 static char *verify_tag(struct verify_context *vfy, const char *name,
-		      const char *value)
+		      const char *value, struct findmnt *findmnt)
 {
 	char *src = NULL;
 
-	if (!(flags & FL_NOCACHE))
-		src = mnt_resolve_tag(name, value, cache);
+	if (!(findmnt->flags & FL_NOCACHE))
+		src = mnt_resolve_tag(name, value, findmnt->cache);
 
 	if (!src) {
 		if (mnt_fs_get_option(vfy->fs, "noauto", NULL, NULL) == 1)
@@ -177,7 +179,7 @@ static char *verify_tag(struct verify_context *vfy, const char *name,
 		else
 			verify_warn(vfy, _("unreachable: %s=%s"), name, value);
 	} else
-		verify_ok(vfy, _("%s=%s translated to %s"), name, value, src);
+		verify_ok(vfy, findmnt->flags & FL_VERBOSE, _("%s=%s translated to %s"), name, value, src);
 
 	return src;
 }
@@ -186,7 +188,7 @@ static char *verify_tag(struct verify_context *vfy, const char *name,
  * interpret unreachable source as error. The exception is only
  * NAME=value, this has to be convertible to device name.
  */
-static int verify_source(struct verify_context *vfy)
+static int verify_source(struct verify_context *vfy, struct findmnt *findmnt)
 {
 	const char *src = mnt_fs_get_srcpath(vfy->fs);
 	char *t = NULL, *v = NULL;
@@ -200,7 +202,7 @@ static int verify_source(struct verify_context *vfy)
 		if (mnt_fs_get_tag(vfy->fs, &tag, &val) != 0)
 			return verify_err(vfy, _("undefined source (fs_spec)"));
 
-		src = verify_tag(vfy, tag, val);
+		src = verify_tag(vfy, tag, val, findmnt);
 		if (!src)
 			goto done;
 
@@ -214,7 +216,7 @@ static int verify_source(struct verify_context *vfy)
 
 	/* source is path */
 	if (mnt_fs_is_pseudofs(vfy->fs) || mnt_fs_is_netfs(vfy->fs))
-		verify_ok(vfy, _("do not check %s source (pseudo/net)"), src);
+		verify_ok(vfy, findmnt->flags & FL_VERBOSE, _("do not check %s source (pseudo/net)"), src);
 
 	else if (stat(src, &sb) != 0)
 		verify_warn(vfy, _("unreachable source: %s: %m"), src);
@@ -225,28 +227,28 @@ static int verify_source(struct verify_context *vfy)
 	else if (!S_ISBLK(sb.st_mode) && !isbind)
 		verify_warn(vfy, _("source %s is not a block device"), src);
 	else
-		verify_ok(vfy, _("source %s exists"), src);
+		verify_ok(vfy, findmnt->flags & FL_VERBOSE, _("source %s exists"), src);
 done:
 	free(t);
 	free(v);
 	return rc;
 }
 
-static int verify_options(struct verify_context *vfy)
+static int verify_options(struct verify_context *vfy, bool verbose)
 {
 	const char *opts;
 
 	opts = mnt_fs_get_vfs_options(vfy->fs);
 	if (opts)
-		verify_ok(vfy, _("VFS options: %s"), opts);
+		verify_ok(vfy, verbose, _("VFS options: %s"), opts);
 
 	opts = mnt_fs_get_fs_options(vfy->fs);
 	if (opts)
-		verify_ok(vfy, _("FS options: %s"), opts);
+		verify_ok(vfy, verbose, _("FS options: %s"), opts);
 
 	opts = mnt_fs_get_user_options(vfy->fs);
 	if (opts)
-		verify_ok(vfy, _("userspace options: %s"), opts);
+		verify_ok(vfy, verbose, _("userspace options: %s"), opts);
 
 	return 0;
 }
@@ -407,9 +409,9 @@ static int read_kernel_filesystems(struct verify_context *vfy)
 	return rc;
 }
 
-static int verify_fstype(struct verify_context *vfy)
+static int verify_fstype(struct verify_context *vfy, struct findmnt *findmnt)
 {
-	char *src = mnt_resolve_spec(mnt_fs_get_source(vfy->fs), cache);
+	char *src = mnt_resolve_spec(mnt_fs_get_source(vfy->fs), findmnt->cache);
 	char *realtype = NULL;
 	const char *type;
 	int ambi = 0, isauto = 0, isswap = 0;
@@ -418,7 +420,7 @@ static int verify_fstype(struct verify_context *vfy)
 		return 0;
 
 	if (mnt_fs_is_pseudofs(vfy->fs) || mnt_fs_is_netfs(vfy->fs)) {
-		verify_ok(vfy, _("do not check %s FS type (pseudo/net)"), src);
+		verify_ok(vfy, findmnt->flags & FL_VERBOSE, _("do not check %s FS type (pseudo/net)"), src);
 		goto done;
 	}
 
@@ -446,7 +448,7 @@ static int verify_fstype(struct verify_context *vfy)
 	}
 
 	errno = 0;
-	realtype = mnt_get_fstype(src, &ambi, cache);
+	realtype = mnt_get_fstype(src, &ambi, findmnt->cache);
 
 	if (!realtype) {
 		const char *reason = errno ? strerror(errno) : _("reason unknown");
@@ -472,11 +474,11 @@ static int verify_fstype(struct verify_context *vfy)
 			goto done;
 		}
 
-		verify_ok(vfy, _("FS type is %s"), realtype);
+		verify_ok(vfy, findmnt->flags & FL_VERBOSE, _("FS type is %s"), realtype);
 	}
 
 done:
-	if (!cache) {
+	if (!findmnt->cache) {
 		free(src);
 		free(realtype);
 	}
@@ -494,34 +496,34 @@ static int verify_passno(struct verify_context *vfy)
 	return 0;
 }
 
-static int verify_filesystem(struct verify_context *vfy)
+static int verify_filesystem(struct verify_context *vfy, struct findmnt *findmnt)
 {
 	int rc = 0;
 
 	if (mnt_fs_is_swaparea(vfy->fs))
 		rc = verify_swaparea(vfy);
 	else {
-		rc = verify_target(vfy);
+		rc = verify_target(vfy, findmnt);
 		if (!rc)
-			rc = verify_options(vfy);
+			rc = verify_options(vfy, findmnt->flags & FL_VERBOSE);
 	}
 
 	if (!rc)
-		rc = verify_source(vfy);
+		rc = verify_source(vfy, findmnt);
 	if (!rc)
-		rc = verify_fstype(vfy);
+		rc = verify_fstype(vfy, findmnt);
 	if (!rc)
 		rc = verify_passno(vfy);	/* depends on verify_fstype() */
 
 	return rc;
 }
 
-int verify_table(struct libmnt_table *tb)
+int verify_table(struct libmnt_table *tb, struct findmnt *findmnt)
 {
 	struct verify_context vfy = { .nerrors = 0 };
 	struct libmnt_iter *itr;
 	int rc = 0;		/* overall return code (alloc errors, etc.) */
-	int check_order = is_listall_mode();
+	int check_order = is_listall_mode(findmnt->flags);
 	static int has_read_fs = 0;
 
 	itr = mnt_new_iter(MNT_ITER_FORWARD);
@@ -538,18 +540,18 @@ int verify_table(struct libmnt_table *tb)
 		has_read_fs = 1;
 	}
 
-	while (rc == 0 && (vfy.fs = get_next_fs(tb, itr))) {
+	while (rc == 0 && (vfy.fs = get_next_fs(tb, itr, findmnt))) {
 		vfy.target_printed = 0;
 		vfy.no_fsck = 0;
 
 		if (check_order)
-			rc = verify_order(&vfy);
+			rc = verify_order(&vfy, findmnt);
 		if (!rc)
-			rc = verify_filesystem(&vfy);
+			rc = verify_filesystem(&vfy, findmnt);
 
-		if (flags & FL_FIRSTONLY)
+		if (findmnt->flags & FL_FIRSTONLY)
 			break;
-		flags |= FL_NOSWAPMATCH;
+		findmnt->flags |= FL_NOSWAPMATCH;
 	}
 
 #ifdef USE_SYSTEMD
@@ -569,9 +571,9 @@ done:
 	mnt_free_iter(itr);
 
 	/* summary */
-	if (vfy.nerrors || parse_nerrors || vfy.nwarnings) {
+	if (vfy.nerrors || findmnt->parse_nerrors || vfy.nwarnings) {
 		fputc('\n', stderr);
-		fprintf(stderr, P_("%d parse error", "%d parse errors", parse_nerrors), parse_nerrors);
+		fprintf(stderr, P_("%d parse error", "%d parse errors", findmnt->parse_nerrors), findmnt->parse_nerrors);
 		fprintf(stderr, P_(", %d error",     ", %d errors", vfy.nerrors), vfy.nerrors);
 		fprintf(stderr, P_(", %d warning",   ", %d warnings", vfy.nwarnings), vfy.nwarnings);
 		fputc('\n', stderr);
@@ -581,5 +583,5 @@ done:
 
 	free_proc_filesystems(&vfy);
 
-	return rc != 0 ? rc : vfy.nerrors + parse_nerrors;
+	return rc != 0 ? rc : vfy.nerrors + findmnt->parse_nerrors;
 }
