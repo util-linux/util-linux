@@ -2891,7 +2891,7 @@ endif
 errnos_h = custom_target('errnos.h',
   input : 'tools/all_errnos',
   output : 'errnos.h',
-  command : ['tools/all_errnos', sed.full_path(),
+  command : ['tools/all_errnos', sed.full_path(), '@OUTPUT@',
              cc.cmd_array(), get_option('c_args')],
 )
 
@@ -3223,7 +3223,7 @@ endif
 syscalls_h = custom_target('syscalls.h',
   input : 'tools/all_syscalls',
   output : 'syscalls.h',
-  command : ['tools/all_syscalls', sed.full_path(),
+  command : ['tools/all_syscalls', sed.full_path(), '@OUTPUT@',
              cc.cmd_array(), get_option('c_args')],
 )
 
