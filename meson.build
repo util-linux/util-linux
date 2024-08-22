@@ -99,11 +99,11 @@ login_lastlogin = get_option('login-lastlogin')
 conf.set('USE_LOGIN_LASTLOG', login_lastlogin ? 1 : false)
 summary('login-lastlogin', login_lastlogin ? 'enabled' : 'disabled', section : 'components')
 
-have_mountfd_api = cc.sizeof('struct mount_attr', prefix : '#include <linux/mount.h>') > 0
+have_mountfd_api = cc.has_type('struct mount_attr', prefix : '#include <linux/mount.h>')
 conf.set('HAVE_STRUCT_MOUNT_ATTR', have_mountfd_api ? 1 : false)
 conf.set('HAVE_MOUNTFD_API', have_mountfd_api ? 1 : false)
 
-have_struct_statx = cc.sizeof('struct statx', prefix : '#include <sys/stat.h>') > 0
+have_struct_statx = cc.has_type('struct statx', prefix : '#include <sys/stat.h>')
 conf.set('HAVE_STRUCT_STATX', have_struct_statx ? 1 : false)
 
 have_sys_vfs_header = cc.has_header('sys/vfs.h')
@@ -474,7 +474,8 @@ conf.set('HAVE_SIGHANDLER_T', have ? 1 : false)
 have = cc.has_function('strsignal')
 conf.set10('HAVE_STRSIGNAL_DECL', have)
 
-have = cc.sizeof('union semun', prefix : '#include <sys/sem.h>') > 0
+have = cc.has_type('union semun',
+                   prefix : '#include <sys/sem.h>')
 conf.set('HAVE_UNION_SEMUN', have ? 1 : false)
 
 have = cc.has_type('loff_t',
@@ -674,7 +675,7 @@ conf.set('HAVE_TM_GMTOFF', have ? 1 : false)
 
 
 
-have = cc.sizeof('enum fsconfig_command', prefix : '#include <linux/mount.h>') > 0
+have = cc.has_type('enum fsconfig_command', prefix : '#include <linux/mount.h>')
 conf.set('HAVE_ENUM_FSCONFIG_COMMAND', have ? 1 : false)
 
 have = cc.has_member('struct termios', 'c_line',
