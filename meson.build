@@ -2895,7 +2895,8 @@ errnos_h = custom_target('errnos.h',
              cc.cmd_array(), get_option('c_args')],
 )
 
-opt = not get_option('build-lsfd').require(lib_rt.found()).disabled()
+opt = not get_option('build-lsfd').require(lib_rt.found()).disabled() \
+      and cc.has_header_symbol('linux/bpf.h', 'BPF_OBJ_NAME_LEN')
 exe = executable(
   'lsfd',
   lsfd_sources, errnos_h,
