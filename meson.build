@@ -2783,7 +2783,8 @@ if opt and not is_disabler(exe)
   bashcompletions += ['lsblk']
 endif
 
-opt = not get_option('build-lsfd').require(lib_rt.found()).disabled()
+opt = not get_option('build-lsfd').require(lib_rt.found()).disabled() \
+      and cc.has_header_symbol('linux/bpf.h', 'BPF_OBJ_NAME_LEN')
 exe = executable(
   'lsfd',
   lsfd_sources,
