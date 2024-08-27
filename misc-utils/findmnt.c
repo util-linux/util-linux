@@ -962,8 +962,12 @@ static int create_treenode(struct libscols_table *table, struct libmnt_table *tb
 
 	if ((findmnt->flags & FL_SUBMOUNTS) || match_func(fs, findmnt)) {
 		bool filtered = false;
+		if (has_line(table, fs))
+			goto leave;
 		line = add_line(table, fs, parent_line, findmnt, &filtered);
-		if (!line || filtered)
+		if (filtered)
+			line = parent_line;
+		else if (!line)
 			goto leave;
 	} else
 		line = parent_line;
@@ -1848,7 +1852,6 @@ int main(int argc, char *argv[])
 			break;
 		case 'Q':
 			findmnt.filter = new_filter(optarg);
-			findmnt.flags &= ~FL_TREE;
 			break;
 		case 'm':		/* mtab */
 			tabtype = TABTYPE_MTAB;
