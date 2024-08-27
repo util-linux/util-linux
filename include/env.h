@@ -13,6 +13,10 @@ struct ul_env_list;
 extern void sanitize_env(void);
 extern void __sanitize_env(struct ul_env_list **org);
 
+extern struct ul_env_list *env_list_add_variable(struct ul_env_list *ls,
+				const char *name, const char *value);
+
+
 extern int env_list_setenv(struct ul_env_list *ls);
 extern void env_list_free(struct ul_env_list *ls);
 extern struct ul_env_list *env_from_fd(int pid);
