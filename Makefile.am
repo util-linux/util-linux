@@ -56,7 +56,7 @@ usrsbin_exec_PROGRAMS =
 man_MANS =
 pkgconfig_DATA =
 usrlib_exec_LTLIBRARIES =
-usrsecurelib_exec_LTLIBRARIES =
+securelib_exec_LTLIBRARIES =
 bin_PROGRAMS =
 sbin_PROGRAMS =
 dist_usrbin_exec_SCRIPTS =
@@ -154,11 +154,11 @@ EXTRA_DIST += \
 # pylibmountexec module must be installed after usrlib_exec libraries,
 # otherwise the libtool relink step will fail to find libmount.la and
 # will try -lmount which is possibly not available.
-# The same for usrsecurelib_exec and liblastlog2.la
+# The same for securelib_exec and liblastlog2.la
 #
 # So introduce this dependency rule:
 # install-pylibmountexecLTLIBRARIES: install-usrlib_execLTLIBRARIES
-# install-usrsecurelib_execLTLIBRARIES: install-usrlib_execLTLIBRARIES
+# install-securelib_execLTLIBRARIES: install-usrlib_execLTLIBRARIES
 @verbatim_extra_dependency@
 
 #

@@ -120,8 +120,8 @@ AS_CASE([$libdir],
 )
 AC_SUBST([usrlib_execdir])
 
-usrsecurelib_execdir='${usrlib_execdir}/security'
-AC_SUBST([usrsecurelib_execdir])
+securelib_execdir='${libdir}/security'
+AC_SUBST([securelib_execdir])
 
 # static configuration maintaned by packages (e.g. /usr/lib)
 AC_ARG_VAR([SYSCONFSTATICDIR],
@@ -2781,7 +2781,7 @@ verbatim_extra_dependency='
 # otherwise the libtool relink step will fail to find libmount.la and
 # will try -lmount which is possibly not available.
 install-pylibmountexecLTLIBRARIES: install-usrlib_execLTLIBRARIES
-install-usrsecurelib_execLTLIBRARIES: install-usrlib_execLTLIBRARIES
+install-securelib_execLTLIBRARIES: install-usrlib_execLTLIBRARIES
 
 '
 AC_SUBST([verbatim_extra_dependency])
