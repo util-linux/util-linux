@@ -1146,8 +1146,8 @@ fail:
  * @cxt: mount context
  * @optstr: comma delimited mount options
  *
- * Note that MS_MOVE cannot be specified as "string". It's an operation that
- * is not supported in fstab (etc.)
+ * Please note that MS_MOVE cannot be specified as a "string". The move operation
+ * cannot be specified in fstab.
  *
  * Returns: 0 on success, negative number in case of error.
  */
