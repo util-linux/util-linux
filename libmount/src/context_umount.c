@@ -349,7 +349,7 @@ static int lookup_umount_fs_by_mountinfo(struct libmnt_context *cxt, const char 
 
 /* This function searches for FS according to cxt->fs->target,
  * apply result to cxt->fs and it's umount replacement to
- * mnt_context_apply_fstab(), use mnt_context_tab_applied()
+ * mnt_context_apply_fstab(); use mnt_context_tab_applied()
  * to check result.
  *
  * The goal is to minimize situations when we need to parse

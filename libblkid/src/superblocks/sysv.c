@@ -146,8 +146,8 @@ const struct blkid_idinfo sysv_idinfo =
 	.usage		= BLKID_USAGE_FILESYSTEM,
 	.probefunc	= probe_sysv,
 
-	/* SYSV is BE and LE and superblock could be on four positions. It's
-	 * simpler to probe for the magic string by .probefunc().
+	/* SYSV is BE and LE, and superblock could be one of four positions.
+	 * So it's simpler to probe for the magic string via .probefunc().
 	 */
 	.magics		= BLKID_NONE_MAGIC
 };

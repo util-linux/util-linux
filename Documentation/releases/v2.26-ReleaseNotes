@@ -756,7 +756,7 @@ mkswap:
    - remove memory leaks [LeakSanitizer] [valgrind]  [Sami Kerola]
    - remove system architecture specific max swap size checks  [Sami Kerola]
    - remove unnecessary size check  [Sami Kerola]
-   - set variable only when it's value is known  [Sami Kerola]
+   - set variable only when its value is known  [Sami Kerola]
    - use err() rather than perror() && exit()  [Sami Kerola]
    - various minor improvement  [Sami Kerola]
 more:

@@ -459,7 +459,7 @@ int main(int argc, char **argv)
 	if (ctl->policy == SCHED_DEADLINE) {
 		/* The basic rule is runtime <= deadline <= period, so we can
 		 * make deadline and runtime optional on command line. Note we
-		 * don't check any values or set any defaults, it's kernel
+		 * don't check any values or set any defaults; it's kernel's
 		 * responsibility.
 		 */
 		if (ctl->deadline == 0)

@@ -1,5 +1,5 @@
 
-# blkid.h is generated, so it's store in builddir!
+# blkid.h is generated, so it's stored in builddir!
 blkidincdir = $(includedir)/blkid
 nodist_blkidinc_HEADERS = libblkid/src/blkid.h
 

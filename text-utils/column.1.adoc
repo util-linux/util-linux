@@ -67,7 +67,7 @@ Input is taken from _file_, or otherwise from standard input. Empty lines are ig
 
 The argument _columns_ for *--table-** options is a comma separated list of the
 column names as defined by *--table-columns*, or names defined by
-*--table-column* or it's column number in order as specified by input. It's
+*--table-column* or its column number in order as specified by input. It's
 possible to mix names and numbers. The special placeholder '0' (e.g. -R0) may
 be used to specify all columns and '-1' (e.g. -R -1) to specify the last visible column.
 It's possible to use ranges like '1-5' when addressing columns by numbers.

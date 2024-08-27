@@ -2004,7 +2004,7 @@ int main(int argc, char *argv[])
 	if (!(findmnt.flags & FL_NOSWAPMATCH) &&
 	    !get_match(COL_TARGET) && get_match(COL_SOURCE)) {
 		/*
-		 * Check if we can swap source and target, it's
+		 * Check if we can swap source and target; it's
 		 * not possible if the source is LABEL=/UUID=
 		 */
 		const char *x = get_match(COL_SOURCE);
