@@ -19,6 +19,7 @@
 #include <sys/types.h>
 
 #include "env.h"
+#include "strv.h"
 #include "all-io.h"
 
 #ifndef HAVE_ENVIRON_DECL
@@ -81,7 +82,6 @@ static struct ul_env_list *env_list_add( struct ul_env_list *ls0,
 	return ls;
 }
 
-
 /*
  * Saves the @str (with the name=value string) to the @ls and returns a pointer
  * to the new head of the list.
@@ -118,6 +118,47 @@ struct ul_env_list *env_list_add_variable(
 		return ls;
 
 	return env_list_add(ls, name, strlen(name), value, value ? strlen(value) : 0);
+}
+
+/*
+ * Calls getenv() and adds the result to the list.
+ */
+struct ul_env_list *env_list_add_getenv(struct ul_env_list *ls,
+				const char *name, const char *dflt)
+{
+	const char *val;
+
+	if (!name)
+		return ls;
+
+	val = getenv(name);
+	if (!val)
+		val= dflt;
+	if (val)
+		ls = env_list_add_variable(ls, name, val);
+	return ls;
+}
+
+/*
+ * Calls getenv() for each name (comma-separated) in @str and adds the results
+ * to the list.
+ */
+struct ul_env_list *env_list_add_getenvs(struct ul_env_list *ls, const char *str)
+{
+	char **all, **name;
+
+	if (!str)
+		return ls;
+
+	all = strv_split(str, ",");
+	if (!all)
+		return ls;
+
+	STRV_FOREACH(name, all)
+		ls = env_list_add_getenv(ls, *name, NULL);
+
+	strv_free(all);
+	return ls;
 }
 
 /*
