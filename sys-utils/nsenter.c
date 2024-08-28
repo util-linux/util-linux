@@ -644,7 +644,7 @@ int main(int argc, char *argv[])
 
 	/* Pass environment variables of the target process to the spawned process */
 	if (env_fd >= 0) {
-		if ((envls = env_from_fd(env_fd)) == NULL)
+		if ((envls = env_list_from_fd(env_fd)) == NULL)
 			err(EXIT_FAILURE, _("failed to get environment variables"));
 		clearenv();
 		if (env_list_setenv(envls, 0) < 0)

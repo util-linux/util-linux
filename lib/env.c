@@ -121,11 +121,11 @@ struct ul_env_list *env_list_add_variable(
 }
 
 /*
- * Use env_from_fd() to read environment from @fd.
+ * Use env_list_from_fd() to read environment from @fd.
  *
  * @fd must be /proc/<pid>/environ file.
 */
-struct ul_env_list *env_from_fd(int fd)
+struct ul_env_list *env_list_from_fd(int fd)
 {
 	char *buf = NULL, *p;
 	ssize_t rc = 0;
@@ -189,7 +189,7 @@ void __sanitize_env(struct ul_env_list **org)
                         if (strncmp(*cur, *bad, strlen(*bad)) == 0) {
 				if (org)
 					*org = env_list_add_from_string(*org, *cur);
-                                last = remove_entry(envp, cur - envp, last);
+                                last = ul_remove_entry(envp, cur - envp, last);
                                 cur--;
                                 break;
                         }
@@ -204,7 +204,7 @@ void __sanitize_env(struct ul_env_list **org)
                                 continue;  /* OK */
 			if (org)
 				*org = env_list_add_from_string(*org, *cur);
-                        last = remove_entry(envp, cur - envp, last);
+                        last = ul_remove_entry(envp, cur - envp, last);
                         cur--;
                         break;
                 }
