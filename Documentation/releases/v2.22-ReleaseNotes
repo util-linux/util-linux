@@ -40,7 +40,7 @@ eject(1):
   - supports new options --manualeject, --force and --no-partitions-unmount
 
 lslocks(1)
-  - this NEW COMMAND prints local system locks and it's replacement to very
+  - this NEW COMMAND prints local system locks; it's a replacement for very
     long time unmaintained lslk(1)
 
 wdctl(8):

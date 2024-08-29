@@ -47,7 +47,7 @@ Set the specified _RANGE_, _SIZE_, or _BLOCKRANGE_ of memory online.
 Select the memory _ZONE_ where to set the specified _RANGE_, _SIZE_, or _BLOCKRANGE_ of memory online or offline. By default, memory will be set online to the zone Movable, if possible.
 
 *-v*, *--verbose*::
-Verbose mode. Causes *chmem* to print debugging messages about it's progress.
+Verbose mode. Causes *chmem* to print debugging messages about its progress.
 
 include::man-common/help-version.adoc[]
 

@@ -1142,7 +1142,7 @@ static int resize_get_first_possible(
  * counts size of all this space.
  *
  * This is core of the partition start offset move operation. We can move the
- * start within the current partition of to the another free space. It's
+ * start within the current partition to another free space. It's
  * forbidden to move start of the partition to another already defined
  * partition.
  */

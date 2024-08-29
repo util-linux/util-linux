@@ -423,7 +423,7 @@ getopt:
 hexdump:
    - Create struct hexdump containing previously global variables.  [Ondrej Oprala]
    - Merge hexsyntax.c into hexdump.c  [Ondrej Oprala]
-   - Rename struct _pr to struct hexdump_pr and remove it's typedef  [Ondrej Oprala]
+   - Rename struct _pr to struct hexdump_pr and remove its typedef  [Ondrej Oprala]
    - add --color to the man page  [Karel Zak]
    - add __attribute__ ((__noreturn__)) to bad*() functions  [Ondrej Oprala]
    - add basic tests  [Ondrej Oprala]
