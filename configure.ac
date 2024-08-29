@@ -565,6 +565,10 @@ AC_CHECK_DECL([strsignal],
 		[Define to 1 if have strsignal function prototype])],
 )
 
+AC_CHECK_DECL([BPF_OBJ_NAME_LEN],
+	      [have_bpf_obj_name_len=yes], [have_bpf_obj_name_len=no],
+	      [#include <linux/bpf.h>])
+
 AC_CHECK_DECL([TIOCGLCKTRMIOS],
 	      [have_tiocglcktrmios=yes], [have_tiocglcktrmios=no],
 	      [#include <sys/ioctl.h>])
@@ -1857,6 +1861,7 @@ UL_BUILD_INIT([lsfd])
 UL_REQUIRES_LINUX([lsfd])
 UL_REQUIRES_BUILD([lsfd], [libsmartcols])
 UL_REQUIRES_HAVE([lsfd], [linux_bpf_h], [linux/bpf.h header file])
+UL_REQUIRES_HAVE([lsfd], [bpf_obj_name_len], [BPF_OBJ_NAME_LEN macro in linux/bpf.h])
 AM_CONDITIONAL([BUILD_LSFD], [test "x$build_lsfd" = xyes])
 
 AC_ARG_ENABLE([lslogins],
