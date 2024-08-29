@@ -73,6 +73,7 @@
 #define EXIT_EPROTONOSUPPORT 20
 #define EXIT_EACCES 21
 #define EXIT_ENOENT 22
+#define EXIT_ENOSYS 23
 
 #define _U_ __attribute__((__unused__))
 
