@@ -18,7 +18,9 @@ newgrp - log in to a new group
 
 == SYNOPSIS
 
-*newgrp* [_group_]
+*newgrp* [_group_ [_command_]]
+
+*newgrp* [*-c* _command_] [_group_]
 
 == DESCRIPTION
 
@@ -26,7 +28,12 @@ newgrp - log in to a new group
 
 If no group is specified, the GID is changed to the login GID.
 
+An optional command can be specified, which is invoked after group change instead of the user's shell.
+
 == OPTIONS
+
+*-c*, *--command*=__command__::
+Pass _command_ to the user's shell with the *-c* option.
 
 include::man-common/help-version.adoc[]
 
