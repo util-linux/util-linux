@@ -1925,7 +1925,14 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 				ignored++;
 				continue;
 			}
-			if (!created) {		/* create a new disklabel */
+			if (!created) {
+				/* ignore "last-lba" and use default if --force specified */
+				if (sf->force && fdisk_script_get_header(dp, "last-lba")) {
+					fdisk_info(sf->cxt, _("Ignoring last-lba script header."));
+					fdisk_script_set_header(dp, "last-lba", NULL);
+				}
+
+				/* create a new disklabel */
 				rc = fdisk_apply_script_headers(sf->cxt, dp);
 				created = !rc;
 				if (rc) {
@@ -1933,7 +1940,6 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 					fdisk_warn(sf->cxt, _(
 					  "Failed to apply script headers, disk label not created"));
 				}
-
 				if (rc == 0 && fdisk_get_collision(sf->cxt))
 					follow_wipe_mode(sf);
 			}

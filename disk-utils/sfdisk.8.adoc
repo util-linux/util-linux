@@ -243,7 +243,7 @@ Specify the partition table identifier. It should be a hexadecimal number (with 
 *first-lba*::
 Specify the first usable sector for GPT partitions. This header is ignored if the script and device sector size differ. In this case *sfdisk* uses label specific default.
 *last-lba*::
-Specify the last usable sector for GPT partitions. This header is ignored if the script and device sector size differ. In this case *sfdisk* uses label specific default.
+Specify the last usable sector for GPT partitions. This header is ignored if the script and device sector size differ. In this case *sfdisk* uses label specific default. The last-lba header is ignored if *--force* is specified, making the script usable on disks with different sizes.
 *table-length*::
 Specify the maximal number of GPT partitions.
 *grain*::
