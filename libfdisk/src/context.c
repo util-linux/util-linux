@@ -303,8 +303,7 @@ int __fdisk_switch_label(struct fdisk_context *cxt, struct fdisk_label *lb)
 	cxt->label = lb;
 	DBG(CXT, ul_debugobj(cxt, "--> switching context to %s!", lb->name));
 
-	fdisk_apply_label_device_properties(cxt);
-	return 0;
+	return fdisk_apply_label_device_properties(cxt);
 }
 
 /**

@@ -1570,8 +1570,12 @@ int fdisk_apply_script_headers(struct fdisk_context *cxt, struct fdisk_script *d
 			return rc;
 	}
 
-	if (fdisk_has_user_device_properties(cxt))
-		fdisk_apply_user_device_properties(cxt);
+	if (fdisk_has_user_device_properties(cxt)) {
+		rc = fdisk_apply_user_device_properties(cxt);
+		if (rc)
+			return rc;
+	}
+
 
 	/* create empty label */
 	name = fdisk_script_get_header(dp, "label");

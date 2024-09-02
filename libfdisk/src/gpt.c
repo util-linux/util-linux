@@ -3185,8 +3185,11 @@ static int gpt_reset_alignment(struct fdisk_context *cxt)
 	} else {
 		/* estimate ranges for GPT */
 		uint64_t first, last;
+		int rc;
 
-		count_first_last_lba(cxt, &first, &last, NULL);
+		rc = count_first_last_lba(cxt, &first, &last, NULL);
+		if (rc)
+			return rc;
 		if (cxt->first_lba < first)
 			cxt->first_lba = first;
 		if (cxt->last_lba > last)
