@@ -57,7 +57,6 @@
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/file.h>
-#include <sys/ttydefaults.h>
 #include <sys/wait.h>
 #include <regex.h>
 #include <assert.h>
@@ -65,6 +64,10 @@
 #include <sys/signalfd.h>
 #include <paths.h>
 #include <getopt.h>
+
+#ifdef HAVE_SYS_TTYDEFAULTS_H
+# include <sys/ttydefaults.h>
+#endif
 
 #if defined(HAVE_NCURSESW_TERM_H)
 # include <ncursesw/term.h>
