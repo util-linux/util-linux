@@ -647,7 +647,7 @@ int main(int argc, char *argv[])
 		if ((envls = env_from_fd(env_fd)) == NULL)
 			err(EXIT_FAILURE, _("failed to get environment variables"));
 		clearenv();
-		if (env_list_setenv(envls) < 0)
+		if (env_list_setenv(envls, 0) < 0)
 			err(EXIT_FAILURE, _("failed to set environment variables"));
 		env_list_free(envls);
 		close(env_fd);

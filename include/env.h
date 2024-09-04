@@ -17,7 +17,7 @@ extern struct ul_env_list *env_list_add_variable(struct ul_env_list *ls,
 				const char *name, const char *value);
 
 
-extern int env_list_setenv(struct ul_env_list *ls);
+extern int env_list_setenv(struct ul_env_list *ls, int overwrite);
 extern void env_list_free(struct ul_env_list *ls);
 extern struct ul_env_list *env_from_fd(int pid);
 

@@ -149,13 +149,13 @@ struct ul_env_list *env_from_fd(int fd)
 /*
  * Use setenv() for all stuff in @ls.
  */
-int env_list_setenv(struct ul_env_list *ls)
+int env_list_setenv(struct ul_env_list *ls, int overwrite)
 {
 	int rc = 0;
 
 	while (ls && rc == 0) {
 		if (ls->name && ls->value)
-			rc = setenv(ls->name, ls->value, 0);
+			rc = setenv(ls->name, ls->value, overwrite);
 		ls = ls->next;
 	}
 	return rc;
@@ -273,7 +273,7 @@ int main(void)
 	}
 
 	/* restore removed */
-	env_list_setenv(removed);
+	env_list_setenv(removed, 0);
 
 	/* check restore */
 	for (bad = forbid; *bad; bad++) {
