@@ -126,6 +126,7 @@ TS_CMD_SETARCH=${TS_CMD_SETARCH-"${ts_commandsdir}setarch"}
 TS_CMD_SETPGID=${TS_CMD_SETPGID-"${ts_commandsdir}setpgid"}
 TS_CMD_SETPRIV=${TS_CMD_SETPRIV-"${ts_commandsdir}setpriv"}
 TS_CMD_SETSID=${TS_CMD_SETSID-"${ts_commandsdir}setsid"}
+TS_CMD_SU=${TS_CMD_SU-"${ts_commandsdir}su"}
 TS_CMD_SWAPLABEL=${TS_CMD_SWAPLABEL:-"${ts_commandsdir}swaplabel"}
 TS_CMD_SWAPOFF=${TS_CMD_SWAPOFF:-"${ts_commandsdir}swapoff"}
 TS_CMD_SWAPON=${TS_CMD_SWAPON:-"${ts_commandsdir}swapon"}

@@ -1188,23 +1188,29 @@ static void fork_session(struct login_context *cxt)
 static void init_environ(struct login_context *cxt)
 {
 	struct passwd *pwd = cxt->pwd;
-	char *termenv, **env;
+	struct ul_env_list *saved;
+	char **env;
 	char tmp[PATH_MAX];
 	int len, i;
 
-	termenv = getenv("TERM");
-	if (termenv)
-		termenv = xstrdup(termenv);
+	saved = env_list_add_getenv(NULL, "TERM", "dumb");
 
 	/* destroy environment unless user has requested preservation (-p) */
-	if (!cxt->keep_env)
+	if (!cxt->keep_env) {
+		const char *str = getlogindefs_str("LOGIN_ENV_SAFELIST", NULL);
+
+		saved = env_list_add_getenvs(saved, str);
 		environ = xcalloc(1, sizeof(char *));
+	}
+
+	if (env_list_setenv(saved, 1) != 0)
+		err(EXIT_FAILURE, _("failed to set the environment variables"));
+
+	env_list_free(saved);
 
 	xsetenv("HOME", pwd->pw_dir, 0);	/* legal to override */
 	xsetenv("USER", pwd->pw_name, 1);
 	xsetenv("SHELL", pwd->pw_shell, 1);
-	xsetenv("TERM", termenv ? termenv : "dumb", 1);
-	free(termenv);
 
 	if (pwd->pw_uid) {
 		if (logindefs_setenv("PATH", "ENV_PATH", _PATH_DEFPATH) != 0)

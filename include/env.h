@@ -13,12 +13,19 @@ struct ul_env_list;
 extern void sanitize_env(void);
 extern void __sanitize_env(struct ul_env_list **org);
 
-extern int env_list_setenv(struct ul_env_list *ls);
+extern struct ul_env_list *env_list_add_variable(struct ul_env_list *ls,
+				const char *name, const char *value);
+
+extern struct ul_env_list *env_list_add_getenv(struct ul_env_list *ls,
+				const char *name, const char *dflt);
+extern struct ul_env_list *env_list_add_getenvs(struct ul_env_list *ls,
+				const char *str);
+
+extern int env_list_setenv(struct ul_env_list *ls, int overwrite);
 extern void env_list_free(struct ul_env_list *ls);
-extern struct ul_env_list *env_from_fd(int pid);
+extern struct ul_env_list *env_list_from_fd(int pid);
 
 extern char *safe_getenv(const char *arg);
-
 
 #ifndef XSETENV_EXIT_CODE
 # define XSETENV_EXIT_CODE EXIT_FAILURE
@@ -30,7 +37,7 @@ static inline void xsetenv(char const *name, char const *val, int overwrite)
 		err(XSETENV_EXIT_CODE, _("failed to set the %s environment variable"), name);
 }
 
-static inline int remove_entry(char **argv, int remove, int last)
+static inline int ul_remove_entry(char **argv, int remove, int last)
 {
 	memmove(argv + remove, argv + remove + 1, sizeof(char *) * (last - remove));
 	return last - 1;

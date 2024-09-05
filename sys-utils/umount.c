@@ -129,7 +129,7 @@ static void suid_drop(struct libmnt_context *cxt)
 
 	/* restore "bad" environment variables */
 	if (envs_removed) {
-		env_list_setenv(envs_removed);
+		env_list_setenv(envs_removed, 0);
 		env_list_free(envs_removed);
 		envs_removed = NULL;
 	}
