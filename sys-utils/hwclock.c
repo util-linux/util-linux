@@ -1236,6 +1236,7 @@ usage(void)
 #ifdef __linux__
 	puts(_("     --param-get <param>         display the RTC parameter"));
 	puts(_("     --param-set <param>=<value> set the RTC parameter"));
+	puts(_("     --param-index <number>      parameter index (default 0)"));
 	puts(_("     --vl-read                   read voltage low information"));
 	puts(_("     --vl-clear                  clear voltage low information"));
 #endif
@@ -1309,6 +1310,7 @@ int main(int argc, char **argv)
 		OPT_NOADJFILE,
 		OPT_PARAM_GET,
 		OPT_PARAM_SET,
+		OPT_PARAM_IDX,
 		OPT_VL_READ,
 		OPT_VL_CLEAR,
 		OPT_PREDICT,
@@ -1340,6 +1342,7 @@ int main(int argc, char **argv)
 #ifdef __linux__
 		{ "param-get",    required_argument, NULL, OPT_PARAM_GET  },
 		{ "param-set",    required_argument, NULL, OPT_PARAM_SET  },
+		{ "param-index",  required_argument, NULL, OPT_PARAM_IDX  },
 		{ "vl-read",      no_argument,       NULL, OPT_VL_READ    },
 		{ "vl-clear",     no_argument,       NULL, OPT_VL_CLEAR   },
 #endif
@@ -1465,6 +1468,9 @@ int main(int argc, char **argv)
 			ctl.param_set_option = optarg;
 			ctl.show = 0;
 			ctl.hwaudit_on = 1;
+			break;
+		case OPT_PARAM_IDX:
+			ctl.param_idx = strtou32_or_err(optarg, _("failed to parse param-index"));
 			break;
 		case OPT_VL_READ:
 			ctl.vl_read = 1;

@@ -37,6 +37,7 @@ struct hwclock_control {
 #endif
 #ifdef __linux__
 	char *rtc_dev_name;
+	uint32_t param_idx;	/* --param-index <n> */
 #endif
 	char *param_get_option;
 	char *param_set_option;
