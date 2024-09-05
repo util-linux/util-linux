@@ -2501,7 +2501,7 @@ AC_ARG_ENABLE([more],
 )
 UL_BUILD_INIT([more])
 UL_REQUIRES_HAVE([more], [ncursesw, ncurses], [ncursesw or ncurses libraries])
-UL_REQUIRES_LINUX([more])
+UL_REQUIRES_HAVE([more], [sys_signalfd_h], [sys/signalfd.h header])
 AM_CONDITIONAL([BUILD_MORE], [test "x$build_more" = xyes])
 
 
