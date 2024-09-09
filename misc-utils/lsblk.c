@@ -2308,7 +2308,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -E, --dedup <column> de-duplicate output by <column>\n"), out);
 	fputs(_(" -I, --include <list> show only devices with specified major numbers\n"), out);
 	fputs(_(" -J, --json           use JSON output format\n"), out);
-	fputs(_(" -M, --merge          group parents of sub-trees (usable for RAIDs, Multi-path)\n"), out);
+	fputs(_(" -M, --merge          group parents of sub-trees (RAIDs, Multi-path)\n"), out);
 	fputs(_(" -O, --output-all     output all columns\n"), out);
 	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
 	fputs(_(" -Q, --filter <expr>  print only lines matching the expression\n"), out);
@@ -2320,7 +2320,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -v, --virtio         output info about virtio devices\n"), out);
 	fputs(_(" -T, --tree[=<column>] use tree format output\n"), out);
 	fputs(_(" -a, --all            print all devices\n"), out);
-	fputs(_(" -b, --bytes          print SIZE in bytes rather than in human readable format\n"), out);
+	fputs(_(" -b, --bytes          print SIZE in bytes instead of a human-readable format\n"), out);
 	fputs(_(" -d, --nodeps         don't print slaves or holders\n"), out);
 	fputs(_(" -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"), out);
 	fputs(_(" -f, --fs             output info about filesystems\n"), out);
@@ -2335,9 +2335,11 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -t, --topology       output info about topology\n"), out);
 	fputs(_(" -w, --width <num>    specifies output width as number of characters\n"), out);
 	fputs(_(" -x, --sort <column>  sort output by <column>\n"), out);
-	fputs(_(" -y, --shell          use column names to be usable as shell variable identifiers\n"), out);
+	fputs(_(" -y, --shell          use column names that can be used as shell variables\n"), out);
 	fputs(_(" -z, --zoned          print zone related information\n"), out);
 	fputs(_("     --sysroot <dir>  use specified directory as system root\n"), out);
+	fputs(_("     --properties-by <list>\n"
+		"                      methods used to gather data (default: file,udev,blkid)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -H, --list-columns   list the available columns\n"), out);
