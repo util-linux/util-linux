@@ -628,6 +628,7 @@ AC_CHECK_FUNCS([ \
 	ntp_gettime \
 	open_tree \
 	personality \
+	pidfd_getfd \
 	pidfd_open \
 	pidfd_send_signal \
 	posix_fadvise \
@@ -682,6 +683,7 @@ AS_IF([test "x$ul_cv_syscall_setns" = xno], [
    have_setns_syscall="no"
 ])
 
+UL_CHECK_SYSCALL([pidfd_getfd])
 UL_CHECK_SYSCALL([pidfd_open])
 UL_CHECK_SYSCALL([pidfd_send_signal])
 UL_CHECK_SYSCALL([close_range])

@@ -31,6 +31,13 @@ static inline int pidfd_open(pid_t pid, unsigned int flags)
 }
 #  endif
 
+#  ifndef HAVE_PIDFD_GETFD
+static inline int pidfd_getfd(int pidfd, int targetfd, unsigned int flags)
+{
+	return syscall(SYS_pidfd_getfd, pidfd, targetfd, flags);
+}
+#  endif
+
 #  define UL_HAVE_PIDFD 1
 
 # endif	/* SYS_pidfd_send_signal */
@@ -48,6 +55,14 @@ static inline int pidfd_send_signal(int pidfd __attribute__((unused)),
 
 static inline int pidfd_open(pid_t pid __attribute__((unused)),
 			     unsigned int flags __attribute__((unused)))
+{
+	errno = ENOSYS;
+	return -1;
+}
+
+static inline int pidfd_getfd(int pidfd __attribute__((unused)),
+			      int targetfd __attribute__((unused)),
+			      unsigned int flags __attribute__((unused)))
 {
 	errno = ENOSYS;
 	return -1;
