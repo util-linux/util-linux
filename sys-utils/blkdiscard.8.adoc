@@ -24,7 +24,7 @@ The _device_ argument is the pathname of the block device.
 
 *WARNING: All data in the discarded region on the device will be lost!*
 
-Since util-linux v2.41, fdisk has the ability to discard sectors on both partitions and unpartitioned areas using the 'T' command.
+Since util-linux v2.41, *fdisk* has the ability to discard sectors on both partitions and unpartitioned areas using the 'T' command. Additionally, *sfdisk* has the option --discard-free to discard unpartitioned areas.
 
 == OPTIONS
 

@@ -87,6 +87,7 @@ enum {
 	ACT_PARTUUID,
 	ACT_PARTLABEL,
 	ACT_PARTATTRS,
+	ACT_DISCARD_FREE,
 	ACT_DISKID,
 	ACT_DELETE,
 	ACT_BACKUP_SECTORS,
@@ -1370,6 +1371,69 @@ static int command_partattrs(struct sfdisk *sf, int argc, char **argv)
 }
 
 /*
+ * sfdisk --discard-free <device>
+ */
+static int command_discard_free(struct sfdisk *sf, int argc, char **argv)
+{
+	struct fdisk_table *tb = NULL;
+	struct fdisk_iter *itr = NULL;
+	struct fdisk_partition *pa = NULL;
+	const char *devname = NULL;
+	uint64_t ss;
+	int rc;
+
+	if (!argc)
+		errx(EXIT_FAILURE, _("no disk device specified"));
+	devname = argv[0];
+	if (argc > 1)
+		errx(EXIT_FAILURE, _("unexpected arguments"));
+
+	itr = fdisk_new_iter(FDISK_ITER_FORWARD);
+	if (!itr)
+		err(EXIT_FAILURE, _("failed to allocate iterator"));
+
+	assign_device(sf, devname, 0);
+
+	ss = fdisk_get_sector_size(sf->cxt);
+
+	rc = fdisk_get_freespaces(sf->cxt, &tb);
+	if (rc) {
+		 fdisk_warn(sf->cxt, _("failed to gather unpartitioned space"));
+		 goto done;
+	}
+
+	while (fdisk_table_next_partition(tb, itr, &pa) == 0) {
+		uint64_t range[2];
+
+		if (!fdisk_partition_has_size(pa) ||
+		    !fdisk_partition_has_start(pa))
+			continue;
+
+		range[0] = (uint64_t) fdisk_partition_get_start(pa);
+		range[1] = (uint64_t) fdisk_partition_get_size(pa);
+
+		fdisk_info(sf->cxt, _("Discarding region %"PRIu64
+					     "-%"PRIu64""),
+				range[0], range[0] + range[1] - 1);
+
+		range[0] *= ss;
+		range[1] *= ss;
+
+		errno = 0;
+		if (ioctl(fdisk_get_devfd(sf->cxt), BLKDISCARD, &range)) {
+			rc = -errno;
+			fdisk_warn(sf->cxt, _("BLKDISCARD ioctl failed"));
+			break;
+		}
+	}
+
+done:
+	fdisk_free_iter(itr);
+	fdisk_unref_table(tb);
+	return rc;
+}
+
+/*
  * sfdisk --disk-id <device> [<str>]
  */
 static int command_diskid(struct sfdisk *sf, int argc, char **argv)
@@ -2070,6 +2134,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --part-attrs <dev> <part> [<str>] print or change partition attributes\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" --discard-free <dev>              discard (trim) unpartitioned areas\n"), out);
 	fputs(_(" --disk-id <dev> [<str>]           print or change disk label ID (UUID)\n"), out);
 	fputs(_(" --relocate <oper> <dev>           move partition header\n"), out);
 
@@ -2142,6 +2207,7 @@ int main(int argc, char *argv[])
 		OPT_PARTLABEL,
 		OPT_PARTTYPE,
 		OPT_PARTATTRS,
+		OPT_DISCARDFREE,
 		OPT_DISKID,
 		OPT_BYTES,
 		OPT_COLOR,
@@ -2193,6 +2259,8 @@ int main(int argc, char *argv[])
 		{ "part-label", no_argument,    NULL, OPT_PARTLABEL },
 		{ "part-type",  no_argument,    NULL, OPT_PARTTYPE },
 		{ "part-attrs", no_argument,    NULL, OPT_PARTATTRS },
+
+		{ "discard-free", no_argument, NULL, OPT_DISCARDFREE },
 
 		{ "disk-id",    no_argument,	NULL, OPT_DISKID },
 
@@ -2340,6 +2408,9 @@ int main(int argc, char *argv[])
 		case OPT_PARTATTRS:
 			sf->act = ACT_PARTATTRS;
 			break;
+		case OPT_DISCARDFREE:
+			sf->act = ACT_DISCARD_FREE;
+			break;
 		case OPT_DISKID:
 			sf->act = ACT_DISKID;
 			break;
@@ -2460,6 +2531,10 @@ int main(int argc, char *argv[])
 
 	case ACT_PARTATTRS:
 		rc = command_partattrs(sf, argc - optind, argv + optind);
+		break;
+
+	case ACT_DISCARD_FREE:
+		rc = command_discard_free(sf, argc - optind, argv + optind);
 		break;
 
 	case ACT_DISKID:
