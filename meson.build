@@ -111,7 +111,7 @@ have = cc.has_member('struct statx', 'stx_mnt_id',
 conf.set('HAVE_STRUCT_STATX_STX_MNT_ID', have ? 1 : false)
 
 
-have_statmount = cc.has_type('struct statmount', prefix : '#include <linux/mount.h>') > 0
+have_statmount = cc.has_type('struct statmount', prefix : '#include <linux/mount.h>')
 have_listmount = cc.has_header_symbol('linux/mount.h', 'LSMT_ROOT')
 
 # kernel headers provides the syscall, but there is not SYS_xxx yet
