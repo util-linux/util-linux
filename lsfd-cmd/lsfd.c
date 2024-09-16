@@ -881,6 +881,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 
 	else if (assoc >= 0) {
 		/* file-descriptor based association */
+		bool is_socket = (sb.st_mode & S_IFMT) == S_IFSOCK;
 		FILE *fdinfo;
 
 		if (ul_path_stat(pc, &sb, AT_SYMLINK_NOFOLLOW, name) == 0)
@@ -888,6 +889,9 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 
 		if (is_nsfs_dev(f->stat.st_dev))
 			load_sock_xinfo(pc, name, f->stat.st_ino);
+
+		if (is_socket)
+			load_fdsk_xinfo(proc, assoc);
 
 		fdinfo = ul_path_fopenf(pc, "r", "fdinfo/%d", assoc);
 		if (fdinfo) {
