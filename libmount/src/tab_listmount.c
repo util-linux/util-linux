@@ -276,6 +276,7 @@ static int lsmnt_to_table(
 
 		fs = mnt_new_fs();
 		if (fs) {
+			fs->flags |= MNT_FS_KERNEL;
 			mnt_fs_set_uniq_id(fs, id);
 			if (ls && ls->ns)
 				mnt_fs_set_ns(fs, ls->ns);

@@ -92,7 +92,8 @@ enum {
 enum {
 	TABTYPE_FSTAB = 1,
 	TABTYPE_MTAB,
-	TABTYPE_KERNEL_MOUNTINFO
+	TABTYPE_KERNEL_MOUNTINFO,
+	TABTYPE_KERNEL_LISTMOUNT
 };
 
 /* column names */
@@ -965,6 +966,7 @@ static int create_treenode(struct libscols_table *table, struct libmnt_table *tb
 		bool filtered = false;
 		if (has_line(table, fs))
 			goto leave;
+
 		line = add_line(table, fs, parent_line, findmnt, &filtered);
 		if (filtered)
 			line = parent_line;
@@ -987,7 +989,6 @@ static int create_treenode(struct libscols_table *table, struct libmnt_table *tb
 		     (size_t) scols_table_get_nlines(table)) {
 		mnt_reset_iter(itr, MNT_ITER_FORWARD);
 		fs = NULL;
-
 		while (mnt_table_next_fs(tb, itr, &fs) == 0) {
 			if (!has_line(table, fs) && match_func(fs, findmnt))
 				create_treenode(table, tb, fs, NULL, findmnt);
@@ -1067,6 +1068,35 @@ static struct libmnt_table *parse_tabfiles(char **files,
 			return NULL;
 		}
 	} while (--nfiles > 0);
+
+	return tb;
+}
+
+static struct libmnt_table *fetch_listmount(void)
+{
+	struct libmnt_table *tb;
+	struct libmnt_statmnt *sm;
+
+	sm = mnt_new_statmnt();
+	if (!sm) {
+		warn(_("failed to allocate statmnt handler"));
+		return NULL;
+	}
+
+	tb = mnt_new_table();
+	if (!tb) {
+		warn(_("failed to initialize libmount table"));
+		return NULL;
+	}
+
+	mnt_table_refer_statmnt(tb, sm);
+
+	if (mnt_table_fetch_listmount(tb) != 0) {
+		warn(_("failed to fetch mount nodes"));
+		mnt_unref_table(tb);
+		mnt_unref_statmnt(sm);
+		return NULL;
+	}
 
 	return tb;
 }
@@ -1878,6 +1908,8 @@ int main(int argc, char *argv[])
 			if (optarg) {
 				if (strcmp(optarg, "mountinfo") == 0)
 					tabtype = TABTYPE_KERNEL_MOUNTINFO;
+				else if (strcmp(optarg, "listmount") == 0)
+					tabtype = TABTYPE_KERNEL_LISTMOUNT;
 				else
 					errx(EXIT_FAILURE, _("invalid --kernel argument"));
 			} else
@@ -2007,6 +2039,10 @@ int main(int argc, char *argv[])
 	if ((findmnt.flags & FL_POLL) && ntabfiles > 1)
 		errx(EXIT_FAILURE, _("--poll accepts only one file, but more specified by --tab-file"));
 
+	if (ntabfiles && tabtype == TABTYPE_KERNEL_LISTMOUNT)
+		errx(EXIT_FAILURE, _(
+			"options --kernel=listmount and --tab-file or --task can't be used together"));
+
 	if (optind < argc && (get_match(COL_SOURCE) || get_match(COL_TARGET)))
 		errx(EXIT_FAILURE, _(
 			"options --target and --source can't be used together "
@@ -2045,7 +2081,10 @@ int main(int argc, char *argv[])
 	 */
 	mnt_init_debug(0);
 
-	tb = parse_tabfiles(tabfiles, ntabfiles, tabtype);
+	if (tabtype == TABTYPE_KERNEL_LISTMOUNT)
+		tb = fetch_listmount();
+	else
+		tb = parse_tabfiles(tabfiles, ntabfiles, tabtype);
 	if (!tb)
 		goto leave;
 	mnt_table_set_userdata(tb, &findmnt);
@@ -2068,7 +2107,7 @@ int main(int argc, char *argv[])
 		}
 		mnt_table_set_cache(tb, findmnt.cache);
 
-		if (tabtype != TABTYPE_KERNEL_MOUNTINFO)
+		if (tabtype == TABTYPE_FSTAB || tabtype == TABTYPE_MTAB)
 			cache_set_targets(findmnt.cache);
 	}
 
