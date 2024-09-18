@@ -701,8 +701,7 @@ static void *make_w_regular_file(const struct factory *factory, struct fdesc fde
 			errno = e;
 			err(EXIT_FAILURE, "failed in dup2");
 		}
-		data = xmalloc(sizeof(iDupfd));
-		*((int *)data) = iDupfd;
+		data = xmemdup(&iDupfd, sizeof(iDupfd));
 	}
 
 	lock_fn(fd, fname);
@@ -2828,8 +2827,7 @@ static void *make_pty(const struct factory *factory _U_, struct fdesc fdescs[],
 		.data  = NULL
 	};
 
-	indexp = xmalloc(sizeof(index));
-	*indexp = index;
+	indexp = xmemdup(&index, sizeof(index));
 	return indexp;
 }
 
