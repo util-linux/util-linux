@@ -59,9 +59,6 @@
 # ifdef HAVE_LINUX_FS_H
 #  include <linux/fs.h>
 # endif
-# ifndef BLKDISCARD
-#   define BLKDISCARD     _IO(0x12,119)
-# endif
 #endif
 
 int pwipemode = WIPEMODE_AUTO;

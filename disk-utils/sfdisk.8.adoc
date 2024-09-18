@@ -116,6 +116,13 @@ Change the GPT partition UUID. If _uuid_ is not specified, then print the curren
 *--disk-id* _device_ [__id__]::
 Change the disk identifier. If _id_ is not specified, then print the current identifier. The identifier is UUID for GPT or unsigned integer for MBR.
 
+*--discard-free* _device_ ::
+Discard any unused (unpartitioned) sectors on the device. Use the *--list-free* option to get a list of the free regions. See also *blkdiscard*(8).
++
+WARNING: All data in the discarded regions on the device will be lost! Do not use this option if you are unsure.
++
+Note that the 'T' command in *fdisk* provides a dialog to specify which unused area should be discarded. However, *sfdisk* always discards all unpartitioned regions (except for the areas where it is not possible to create partitions, such as the beginning of the device).
+
 *-r*, *--reorder* _device_::
 Renumber the partitions, ordering them by their start offset.
 
