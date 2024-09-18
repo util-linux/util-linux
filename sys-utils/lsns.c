@@ -29,6 +29,7 @@
 # include <linux/netlink.h>
 # include <linux/rtnetlink.h>
 # include <linux/net_namespace.h>
+# include <linux/sockios.h>
 #endif
 
 #ifdef HAVE_LINUX_NSFS_H
@@ -51,6 +52,7 @@
 #include "idcache.h"
 #include "fileutils.h"
 #include "column-list-table.h"
+#include "pidfd-utils.h"
 
 #include "debug.h"
 
@@ -420,6 +422,22 @@ error:
 	return rc;
 }
 
+static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, ino_t ino);
+
+static struct lsns_namespace *get_namespace(struct lsns *ls, ino_t ino)
+{
+	struct list_head *p;
+
+	list_for_each(p, &ls->namespaces) {
+		struct lsns_namespace *ns = list_entry(p, struct lsns_namespace, namespaces);
+
+		if (ns->id == ino)
+			return ns;
+	}
+	return NULL;
+}
+
+
 #ifdef HAVE_LINUX_NET_NAMESPACE_H
 static int netnsid_cache_find(ino_t netino, int *netnsid)
 {
@@ -544,31 +562,54 @@ static int get_netnsid(struct path_cxt *pc, ino_t netino)
 
 	return netnsid;
 }
+
+static void add_namespace_from_sock(struct lsns *ls, pid_t pid, uint64_t fd)
+{
+	int pidfd, sk, nsfd;
+	struct stat sb;
+
+	/* This is additional/extra information, ignoring failures. */
+	pidfd = pidfd_open(pid, 0);
+	if (pidfd < 0)
+		return;
+
+	sk = pidfd_getfd(pidfd, (int)fd, 0);
+	if (sk < 0)
+		goto out_pidfd;
+
+	nsfd = ioctl(sk, SIOCGSKNS);
+	if (nsfd < 0)
+		goto out_sk;
+
+	if (fstat(nsfd, &sb) < 0)
+		goto out_nsfd;
+
+	if (get_namespace(ls, sb.st_ino))
+		goto out_nsfd;
+
+	add_namespace_for_nsfd(ls, nsfd, sb.st_ino);
+out_nsfd:
+	close(nsfd);
+out_sk:
+	close(sk);
+out_pidfd:
+	close(pidfd);
+}
 #else
 static int get_netnsid(struct path_cxt *pc __attribute__((__unused__)),
 		       ino_t netino __attribute__((__unused__)))
 {
 	return LSNS_NETNS_UNUSABLE;
 }
-#endif /* HAVE_LINUX_NET_NAMESPACE_H */
 
-static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, ino_t ino);
-
-static struct lsns_namespace *get_namespace(struct lsns *ls, ino_t ino)
+static void add_namespace_from_sock(struct lsns *ls __attribute__((__unused__)),
+				    pid_t pid __attribute__((__unused__)),
+				    uint64_t fd __attribute__((__unused__)))
 {
-	struct list_head *p;
-
-	list_for_each(p, &ls->namespaces) {
-		struct lsns_namespace *ns = list_entry(p, struct lsns_namespace, namespaces);
-
-		if (ns->id == ino)
-			return ns;
-	}
-	return NULL;
 }
-
+#endif /* HAVE_LINUX_NET_NAMESPACE_H */
 /* Read namespaces open(2)ed explicitly by the process specified by `pc'. */
-static void read_opened_namespaces(struct lsns *ls, struct path_cxt *pc)
+static void read_opened_namespaces(struct lsns *ls, struct path_cxt *pc, pid_t pid)
 {
 	DIR *sub = NULL;
 	struct dirent *d = NULL;
@@ -580,8 +621,10 @@ static void read_opened_namespaces(struct lsns *ls, struct path_cxt *pc)
 		if (ul_strtou64(d->d_name, &num, 10) != 0)	/* only numbers */
 			continue;
 
-		if (ul_path_statf(pc, &st, 0, "fd/%ju", (uintmax_t) num) == 0
-		    && st.st_dev == ls->nsfs_dev) {
+		if (ul_path_statf(pc, &st, 0, "fd/%ju", (uintmax_t) num))
+			continue;
+
+		if (st.st_dev == ls->nsfs_dev) {
 			if (get_namespace(ls, st.st_ino))
 				continue;
 			int fd = ul_path_openf(pc, O_RDONLY, "fd/%ju", (uintmax_t) num);
@@ -589,6 +632,8 @@ static void read_opened_namespaces(struct lsns *ls, struct path_cxt *pc)
 				add_namespace_for_nsfd(ls, fd, st.st_ino);
 				close(fd);
 			}
+		} else if ((st.st_mode & S_IFMT) == S_IFSOCK) {
+			add_namespace_from_sock(ls, pid, num);
 		}
 	}
 }
@@ -638,7 +683,7 @@ static int read_process(struct lsns *ls, struct path_cxt *pc)
 	DBG(PROC, ul_debugobj(p, "new pid=%d", p->pid));
 	list_add_tail(&p->processes, &ls->processes);
 
-	read_opened_namespaces(ls, pc);
+	read_opened_namespaces(ls, pc, p->pid);
 done:
 	if (rc)
 		free(p);
