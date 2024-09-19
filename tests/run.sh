@@ -19,7 +19,7 @@
 TS_TOPDIR=$(cd ${0%/*} && pwd)
 SUBTESTS=
 for x in {1..32}; do
-    SUBTESTS="lsns/filter $SUBTESTS"
+    SUBTESTS="lsns/filter$x $SUBTESTS"
 done
 
 EXCLUDETESTS=
