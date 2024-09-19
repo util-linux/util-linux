@@ -64,6 +64,10 @@ FD=4
 		${TS_CMD_LSNS} -n --raw $opt "NPROCS == 1"
 		echo lsns
 		${TS_CMD_LSNS} -n --raw
+		for i in {0..8}; do
+		    echo '#' ${i}:
+		    ${TS_CMD_LSNS} -n --raw -o PID "$opt" "${lsns_expr}"
+		done
 	    fi
 	done
 	echo DONE >&"${MKFDS[1]}"
