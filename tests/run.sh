@@ -17,7 +17,7 @@
 #
 
 TS_TOPDIR=$(cd ${0%/*} && pwd)
-SUBTESTS=
+SUBTESTS=lsns/filter
 EXCLUDETESTS=
 OPTS=
 SYSCOMMANDS=
