@@ -319,7 +319,7 @@ Note that it is a bad practice to use *mount -a* for _fstab_ checking. The recom
 Remount a subtree somewhere else (so that its contents are available in both places). See above, under *Bind mount operation*.
 
 *-c*, *--no-canonicalize*::
-Don't canonicalize paths. The *mount* command canonicalizes all paths (from the command line or _fstab_) by default. This option can be used together with the *-f* flag for already canonicalized absolute paths. The option is designed for mount helpers which call *mount -i*. It is strongly recommended to not use this command-line option for normal mount operations.
+Do not canonicalize any paths or tags during the mount process. The *mount* command automatically canonicalizes all paths (from the command line or _fstab_). This option can be used in conjunction with the *-f* flag for paths that are already canonicalized. This option is intended for mount helpers that call *mount -i*. It is highly recommended to not use this command-line option for regular mount operations. See also the X-mount.nocanonicalize mount options.
 +
 Note that *mount* does not pass this option to the **/sbin/mount.**__type__ helpers.
 
@@ -713,6 +713,13 @@ ____
 
 *X-mount.mkdir*[=_mode_]::
 Allow to make a target directory (mountpoint) if it does not exist yet. The optional argument _mode_ specifies the filesystem access mode used for *mkdir*(2) in octal notation. The default mode is 0755. This functionality is supported only for root users or when *mount* is executed without suid permissions. The option is also supported as *x-mount.mkdir*, but this notation is deprecated since v2.30. See also *--mkdir* command line option.
+
+*X-mount.nocanonicalize*[=_type_]::
+Allows disabling of canonicalization for mount source and target paths. By default, the `mount` command resolves all paths to their absolute paths without symlinks. However, this behavior may not be desired in certain situations, such as when bind-mounting over a symlink. The optional argument _type_ can be either "source" or "target" (mountpoint). If no _type_ is specified, then canonicalization is disabled for both types. This mount option does not affect the conversion of source tags (e.g. LABEL= or UUID=) and fstab processing.
++
+The command line option *--no-canonicalize* overrides this mount option and affects all path and tag conversions in all situations.
++
+Note that *mount*(8) still sanitizes and canonicalizes the source and target paths specified on the command line by non-root users, regardless of the X-mount.nocanonicalize setting.
 
 **X-mount.subdir=**__directory__::
 Allow mounting sub-directory from a filesystem instead of the root directory. For now, this feature is implemented by temporary filesystem root directory mount in unshared namespace and then bind the sub-directory to the final mount point and umount the root of the filesystem. The sub-directory mount shows up atomically for the rest of the system although it is implemented by multiple *mount*(2) syscalls.
