@@ -114,6 +114,7 @@ TS_CMD_MKSWAP=${TS_CMD_MKSWAP:-"${ts_commandsdir}mkswap"}
 TS_CMD_MOUNT=${TS_CMD_MOUNT:-"${ts_commandsdir}mount"}
 TS_CMD_MOUNTPOINT=${TS_CMD_MOUNTPOINT:-"${ts_commandsdir}mountpoint"}
 TS_CMD_NAMEI=${TS_CMD_NAMEI-"${ts_commandsdir}namei"}
+TS_CMD_NSENTER=${TS_CMD_NSENTER-"${ts_commandsdir}nsenter"}
 TS_CMD_PARTX=${TS_CMD_PARTX-"${ts_commandsdir}partx"}
 TS_CMD_PIPESZ=${TS_CMD_PIPESZ-"${ts_commandsdir}pipesz"}
 TS_CMD_RENAME=${TS_CMD_RENAME-"${ts_commandsdir}rename"}
