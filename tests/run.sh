@@ -17,7 +17,11 @@
 #
 
 TS_TOPDIR=$(cd ${0%/*} && pwd)
-SUBTESTS=lsns/filter
+SUBTESTS=
+for x in {1..32}; do
+    SUBTESTS="lsns/filter $SUBTESTS"
+done
+
 EXCLUDETESTS=
 OPTS=
 SYSCOMMANDS=
