@@ -4249,7 +4249,7 @@ int main(int argc, char **argv)
 		{ "comm",       required_argument, NULL, 'r' },
 		{ "quiet",	no_argument, NULL, 'q' },
 		{ "dont-monitor-stdin", no_argument, NULL, 'X' },
-		{ "dont-puase", no_argument, NULL, 'c' },
+		{ "dont-pause", no_argument, NULL, 'c' },
 		{ "wait-with",  required_argument, NULL, 'w' },
 		{ "multiplexers",no_argument,NULL, 'W' },
 		{ "help",	no_argument, NULL, 'h' },
