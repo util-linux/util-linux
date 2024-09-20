@@ -382,6 +382,7 @@ static void supam_export_environment(struct su_context *su)
 static void supam_authenticate(struct su_context *su)
 {
 	const char *srvname = NULL;
+	const char *pam_user = NULL;
 	int rc;
 
 	srvname = su->runuser ?
@@ -422,6 +423,16 @@ static void supam_authenticate(struct su_context *su)
 	rc = pam_acct_mgmt(su->pamh, 0);
 	if (rc == PAM_NEW_AUTHTOK_REQD)
 		rc = pam_chauthtok(su->pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
+
+	rc = pam_get_item(su->pamh, PAM_USER, (const void **) &pam_user);
+	if (is_pam_failure(rc))
+		goto done;
+
+	if (pam_user == NULL || strcmp(pam_user, su->pwd->pw_name) != 0) {
+		rc = PAM_USER_UNKNOWN;
+		goto done;
+	}
+
  done:
 	log_syslog(su, !is_pam_failure(rc));
 
