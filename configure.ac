@@ -2167,7 +2167,11 @@ UL_BUILD_INIT([readprofile], [check])
 UL_REQUIRES_LINUX([readprofile])
 AM_CONDITIONAL([BUILD_READPROFILE], [test "x$build_readprofile" = xyes])
 
-UL_BUILD_INIT([dmesg], [check])
+AC_ARG_ENABLE([dmesg],
+  AS_HELP_STRING([--disable-dmesg], [do not build dmesg]),
+  [], [UL_DEFAULT_ENABLE([dmesg], [check])]
+)
+UL_BUILD_INIT([dmesg])
 UL_REQUIRES_LINUX([dmesg])
 AM_CONDITIONAL([BUILD_DMESG], [test "x$build_dmesg" = xyes])
 
