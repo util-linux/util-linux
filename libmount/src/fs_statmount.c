@@ -305,9 +305,15 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 	/* add default mask if on-demand enabled */
 	if (fs->stmnt
 	    && !fs->stmnt->disabled
-	    && fs->stmnt->mask
-	    && !(fs->stmnt_done & fs->stmnt->mask))
+	    && fs->stmnt->mask)
 		mask |= fs->stmnt->mask;
+
+	/* call only for missing stuff */
+	if (mask && fs->stmnt_done) {
+		mask &= ~fs->stmnt_done;	/* remove what is already done */
+		if (!mask)
+			return 0;
+	}
 
 	/* ignore repeated requests */
 	if (mask && fs->stmnt_done & mask)

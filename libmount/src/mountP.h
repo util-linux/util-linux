@@ -291,7 +291,7 @@ struct libmnt_fs {
 			if (!(FS)->MEMBER					\
 			    && (FS)->stmnt					\
 			    && !(FS)->stmnt->disabled				\
-			    && !((FS)->stmnt_done & (FLAGS)))			\
+			    && ((FLAGS) & ~((FS)->stmnt_done)))			\
 				mnt_fs_fetch_statmount((FS), (FLAGS)); })
 #endif
 
