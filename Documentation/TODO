@@ -128,12 +128,12 @@ login-utils:
   - consolidate newgrp(1)
     * we have "su --group/--supp-group" to switch between groups, newgrp(1) in
       util-linux and shadow-utils (and sg(1) alias in shadow-utils)
-    * the unique functionality provided by newgpr(1) is support for group
+    * the unique functionality provided by newgrp(1) is support for group
       passwords [/etc/gshadow] -- do we really need this functionality?
     * maybe we can mark group-passwords as deprecated, and replace sg(1) and
-      newgpr(1) with su(1) code. The another way is to ask for group password in
+      newgrp(1) with su(1) code. The another way is to ask for group password in
       su --group too.
-    * note that shadow-utils newgpr(1) provides support for syslog and audit log.
+    * note that shadow-utils newgrp(1) provides support for syslog and audit log.
 
 
 libsmartcols / column -t
