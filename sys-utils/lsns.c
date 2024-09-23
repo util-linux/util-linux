@@ -333,7 +333,7 @@ static int get_parent_ns_ino(int fd, enum lsns_type lsns_type, ino_t *pino, int 
 		*pino = st.st_ino;
 	}
 
-	if (pfd == &my_fd)
+	if (pfd == &my_fd && *pfd >= 0)
 		close(*pfd);
 	return 0;
 }
