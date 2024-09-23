@@ -122,8 +122,10 @@ int mnt_statmnt_disable_fetching(struct libmnt_statmnt *sm, int disable)
 	old = sm->disabled;
 	sm->disabled = disable ? 1 : 0;
 
+	/*
 	DBG(STATMNT, ul_debugobj(sm, "statmount() %s",
 				sm->disabled ? "off" : "on"));
+	*/
 	return old;
 }
 
@@ -179,12 +181,10 @@ static inline const char *sm_str(struct ul_statmount *sm, uint32_t offset)
 
 static int apply_statmount(struct libmnt_fs *fs, struct ul_statmount *sm)
 {
-	int rc = 0, merge = 0;
+	int rc = 0;
 
 	if (!sm || !sm->size || !fs)
 		return -EINVAL;
-
-	merge = !fs->vfs_optstr || fs->fs_optstr;
 
 	if ((sm->mask & STATMOUNT_FS_TYPE) && !fs->fstype)
 		rc = mnt_fs_set_fstype(fs, sm_str(sm, sm->fs_type));
@@ -231,15 +231,19 @@ static int apply_statmount(struct libmnt_fs *fs, struct ul_statmount *sm)
 				rc = mnt_optstr_append_option(&fs->vfs_optstr, "relatime", NULL);
 				break;
 			}
-
+			free(fs->optstr);
+			fs->optstr = NULL;
 		}
 	}
 
 	if (!rc && (sm->mask & STATMOUNT_MNT_NS_ID) && !fs->ns_id)
 		fs->ns_id = sm->mnt_ns_id;
 
-	if (!rc && (sm->mask & STATMOUNT_MNT_OPTS) && !fs->fs_optstr)
+	if (!rc && (sm->mask & STATMOUNT_MNT_OPTS) && !fs->fs_optstr) {
 		fs->fs_optstr = unmangle(sm_str(sm, sm->mnt_opts), NULL);
+		free(fs->optstr);
+		fs->optstr = NULL;
+	}
 
 	if (!rc && (sm->mask & STATMOUNT_SB_BASIC)) {
 		if (!fs->devno)
@@ -253,14 +257,9 @@ static int apply_statmount(struct libmnt_fs *fs, struct ul_statmount *sm)
 				rc = mnt_optstr_append_option(&fs->fs_optstr, "dirsync", NULL);
 			if (!rc && (sm->sb_flags & SB_LAZYTIME))
 				rc = mnt_optstr_append_option(&fs->fs_optstr, "lazytime", NULL);
+			free(fs->optstr);
+			fs->optstr = NULL;
 		}
-	}
-
-	if (!rc && merge) {
-		free(fs->optstr);
-
-		/* merge VFS and FS options to one string (we do the same in mountinfo parser) */
-		fs->optstr = mnt_fs_strdup_options(fs);
 	}
 
 	fs->flags |= MNT_FS_KERNEL;

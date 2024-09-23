@@ -822,18 +822,8 @@ int mnt_fs_set_fstype(struct libmnt_fs *fs, const char *fstype)
 }
 
 /*
- * Merges @vfs and @fs options strings into a new string.
- * This function cares about 'ro/rw' options. The 'ro' is
- * always used if @vfs or @fs is read-only.
- * For example:
- *
- *    mnt_merge_optstr("rw,noexec", "ro,journal=update")
- *
- *           returns: "ro,noexec,journal=update"
- *
- *    mnt_merge_optstr("rw,noexec", "rw,journal=update")
- *
- *           returns: "rw,noexec,journal=update"
+ * Merges @vfs and @fs options strings into a new string.  This function cares
+ * about 'ro/rw' options. The 'ro' is always used if @vfs or @fs is read-only.
  */
 static char *merge_optstr(const char *vfs, const char *fs)
 {
@@ -875,27 +865,10 @@ static char *merge_optstr(const char *vfs, const char *fs)
 	return res;
 }
 
-/**
- * mnt_fs_strdup_options:
- * @fs: fstab/mtab/mountinfo entry pointer
- *
- * Merges all mount options (VFS, FS and userspace) to one options string
- * and returns the result. This function does not modify @fs.
- *
- * Returns: pointer to string (can be freed by free(3)) or NULL in case of error.
- */
-char *mnt_fs_strdup_options(struct libmnt_fs *fs)
+static char *fs_strdup_options(struct libmnt_fs *fs)
 {
 	char *res;
 
-	if (!fs)
-		return NULL;
-	if (fs->optlist)
-		sync_opts_from_optlist(fs, fs->optlist);
-#ifdef HAVE_STATMOUNT_API
-	else
-		mnt_fs_try_statmount(fs, optstr, STATMOUNT_SB_BASIC | STATMOUNT_MNT_BASIC);
-#endif
 	errno = 0;
 	if (fs->optstr)
 		return strdup(fs->optstr);
@@ -912,6 +885,30 @@ char *mnt_fs_strdup_options(struct libmnt_fs *fs)
 }
 
 /**
+ * mnt_fs_strdup_options:
+ * @fs: fstab/mtab/mountinfo entry pointer
+ *
+ * Merges all mount options (VFS, FS and userspace) to one options string
+ * and returns the result. This function does not modify @fs.
+ *
+ * Returns: pointer to string (can be freed by free(3)) or NULL in case of error.
+ */
+char *mnt_fs_strdup_options(struct libmnt_fs *fs)
+{
+	if (!fs)
+		return NULL;
+	if (fs->optlist)
+		sync_opts_from_optlist(fs, fs->optlist);
+#ifdef HAVE_STATMOUNT_API
+	else
+		mnt_fs_try_statmount(fs, optstr, STATMOUNT_SB_BASIC
+				| STATMOUNT_MNT_BASIC | STATMOUNT_MNT_OPTS);
+#endif
+	return fs_strdup_options(fs);
+
+}
+
+/**
  * mnt_fs_get_options:
  * @fs: fstab/mtab/mountinfo entry pointer
  *
@@ -924,8 +921,12 @@ const char *mnt_fs_get_options(struct libmnt_fs *fs)
 	if (fs->optlist)
 		sync_opts_from_optlist(fs, fs->optlist);
 #ifdef HAVE_STATMOUNT_API
-	else
-		mnt_fs_try_statmount(fs, optstr, STATMOUNT_SB_BASIC | STATMOUNT_MNT_BASIC);
+	else {
+		mnt_fs_try_statmount(fs, optstr, STATMOUNT_SB_BASIC
+				| STATMOUNT_MNT_BASIC | STATMOUNT_MNT_OPTS);
+		if (!fs->optstr)
+			fs->optstr = fs_strdup_options(fs);
+	}
 #endif
 	return fs->optstr;
 }
@@ -1098,7 +1099,7 @@ const char *mnt_fs_get_fs_options(struct libmnt_fs *fs)
 		sync_opts_from_optlist(fs, fs->optlist);
 #ifdef HAVE_STATMOUNT_API
 	else
-		mnt_fs_try_statmount(fs, fs_optstr, STATMOUNT_SB_BASIC);
+		mnt_fs_try_statmount(fs, fs_optstr, STATMOUNT_SB_BASIC | STATMOUNT_MNT_OPTS);
 #endif
 	return fs->fs_optstr;
 }
