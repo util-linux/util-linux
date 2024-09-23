@@ -881,7 +881,7 @@ AM_CONDITIONAL([HAVE_MANPAGES], [test "x$have_manpages" = xyes])
 
 
 AC_ARG_ENABLE([poman],
-  AS_HELP_STRING([--disable-poman], [generate translated man pages]),
+  AS_HELP_STRING([--disable-poman], [do not generate translated man pages]),
   [], [UL_DEFAULT_ENABLE([poman], [check])]
 )
 UL_BUILD_INIT([poman])
