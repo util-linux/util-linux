@@ -89,6 +89,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out, int status)
 	fputs(" -a, --is-available <factory>  exit 0 if the factory is available\n", out);
 	fputs(" -l, --list                    list available file descriptor factories and exit\n", out);
 	fputs(" -I, --parameters <factory>    list parameters the factory takes\n", out);
+	fputs(" -O, --output-values <factory> list output values the factory prints\n", out);
 	fputs(" -r, --comm <name>             rename self\n", out);
 	fputs(" -q, --quiet                   don't print pid(s)\n", out);
 	fputs(" -X, --dont-monitor-stdin      don't monitor stdin when pausing\n", out);
@@ -329,11 +330,14 @@ struct factory {
 #define MAX_N 13
 	int  N;			/* the number of fds this factory makes */
 	int  EX_N;		/* fds made optionally */
-	int  EX_R;		/* the number of extra words printed to stdout. */
+	int  EX_O;		/* the number of extra words printed to stdout. */
 	void *(*make)(const struct factory *, struct fdesc[], int, char **);
 	void (*free)(const struct factory *, void *);
 	void (*report)(const struct factory *, int, void *, FILE *);
 	const struct parameter * params;
+	const char **o_descs;	/* string array describing values printed
+				 * to stdout. Used in -O option.
+				 * EX_O elements are expected. */
 };
 
 static void close_fdesc(int fd, void *data _U_)
@@ -4077,13 +4081,16 @@ static const struct factory factories[] = {
 		.priv = false,
 		.N    = 2,
 		.EX_N = 0,
-		.EX_R = 1,
+		.EX_O = 1,
 		.make = make_eventfd,
 		.report = report_eventfd,
 		.free = free_eventfd,
 		.params = (struct parameter []) {
 			PARAM_END
-		}
+		},
+		.o_descs = (const char *[]){
+			"the pid of child process",
+		},
 	},
 	{
 		.name = "mqueue",
@@ -4091,7 +4098,7 @@ static const struct factory factories[] = {
 		.priv = false,
 		.N    = 2,
 		.EX_N = 0,
-		.EX_R = 1,
+		.EX_O = 1,
 		.make = make_mqueue,
 		.report = report_mqueue,
 		.free = free_mqueue,
@@ -4103,7 +4110,10 @@ static const struct factory factories[] = {
 				.defv.string = "/test_mkfds-mqueue",
 			},
 			PARAM_END
-		}
+		},
+		.o_descs = (const char *[]){
+			"the pid of the child process",
+		},
 	},
 	{
 		.name = "sysvshm",
@@ -4187,13 +4197,16 @@ static const struct factory factories[] = {
 		.priv = true,
 		.N    = 1,
 		.EX_N = 0,
-		.EX_R = 1,
+		.EX_O = 1,
 		.make = make_cdev_tun,
 		.report = report_cdev_tun,
 		.free = free_cdev_tun,
 		.params = (struct parameter []) {
 			PARAM_END
-		}
+		},
+		.o_descs = (const char *[]){
+			"the network device name",
+		},
 	},
 	{
 		.name = "bpf-prog",
@@ -4258,13 +4271,16 @@ static const struct factory factories[] = {
 		.priv = false,
 		.N = 2,
 		.EX_N = 0,
-		.EX_R = 1,
+		.EX_O = 1,
 		.make = make_pty,
 		.report = report_pty,
 		.free = free_pty,
 		.params = (struct parameter []) {
 			PARAM_END
-		}
+		},
+		.o_descs = (const char *[]){
+			"the index of the slave device",
+		},
 	},
 	{
 		.name = "mmap",
@@ -4332,7 +4348,7 @@ static void print_factory(const struct factory *factory)
 	       factory->name,
 	       factory->priv? "yes": "no",
 	       factory->N,
-	       factory->EX_R + 1,
+	       factory->EX_O + 1,
 	       count_parameters(factory),
 	       factory->desc);
 }
@@ -4369,6 +4385,25 @@ static void list_parameters(const char *factory_name)
 		printf(fmt, p->name, ptype_classes[p->type].name, defv, p->desc);
 		free(defv);
 	}
+}
+
+static void list_output_values(const char *factory_name)
+{
+	const struct factory *factory = find_factory(factory_name);
+	const char *fmt = "%3d %s\n";
+	const char **o;
+
+	if (!factory)
+		errx(EXIT_FAILURE, "no such factory: %s", factory_name);
+
+	printf("%-3s %s\n", "NTH", "DESCRIPTION");
+	printf(fmt, 0, "the pid owning the file descriptor(s)");
+
+	o  = factory->o_descs;
+	if (!o)
+		return;
+	for (int i = 0; i < factory->EX_O; i++)
+		printf(fmt, i + 1, *o);
 }
 
 static void rename_self(const char *comm)
@@ -4555,6 +4590,7 @@ int main(int argc, char **argv)
 		{ "is-available",required_argument,NULL, 'a' },
 		{ "list",	no_argument, NULL, 'l' },
 		{ "parameters", required_argument, NULL, 'I' },
+		{ "output-values", required_argument, NULL, 'O' },
 		{ "comm",       required_argument, NULL, 'r' },
 		{ "quiet",	no_argument, NULL, 'q' },
 		{ "dont-monitor-stdin", no_argument, NULL, 'X' },
@@ -4565,7 +4601,7 @@ int main(int argc, char **argv)
 		{ NULL, 0, NULL, 0 },
 	};
 
-	while ((c = getopt_long(argc, argv, "a:lhqcI:r:w:WX", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "a:lhqcI:O:r:w:WX", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
 			usage(stdout, EXIT_SUCCESS);
@@ -4576,6 +4612,9 @@ int main(int argc, char **argv)
 			exit(EXIT_SUCCESS);
 		case 'I':
 			list_parameters(optarg);
+			exit(EXIT_SUCCESS);
+		case 'O':
+			list_output_values(optarg);
 			exit(EXIT_SUCCESS);
 		case 'q':
 			quiet = true;
@@ -4657,7 +4696,7 @@ int main(int argc, char **argv)
 	if (!quiet) {
 		printf("%d", getpid());
 		if (factory->report) {
-			for (int i = 0; i < factory->EX_R; i++) {
+			for (int i = 0; i < factory->EX_O; i++) {
 				putchar(' ');
 				factory->report(factory, i, data, stdout);
 			}
