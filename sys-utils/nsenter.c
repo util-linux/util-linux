@@ -25,6 +25,7 @@
 #include <sys/statfs.h>
 
 #include <sys/ioctl.h>
+#include <linux/sockios.h>
 #ifdef HAVE_LINUX_NSFS_H
 # include <linux/nsfs.h>
 #endif
@@ -49,6 +50,7 @@
 #include "caputils.h"
 #include "statfs_magic.h"
 #include "pathnames.h"
+#include "pidfd-utils.h"
 
 static struct namespace_file {
 	int nstype;
@@ -92,6 +94,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -u, --uts[=<file>]     enter UTS namespace (hostname etc)\n"), out);
 	fputs(_(" -i, --ipc[=<file>]     enter System V IPC namespace\n"), out);
 	fputs(_(" -n, --net[=<file>]     enter network namespace\n"), out);
+	fputs(_(" -N, --net-socket <fd>  enter socket's network namespace (use with --target)\n"), out);
 	fputs(_(" -p, --pid[=<file>]     enter pid namespace\n"), out);
 	fputs(_(" -C, --cgroup[=<file>]  enter cgroup namespace\n"), out);
 	fputs(_(" -U, --user[=<file>]    enter user namespace\n"), out);
@@ -187,6 +190,40 @@ static void open_namespace_fd(int nstype, const char *path)
 	}
 	/* This should never happen */
 	assert(nsfile->nstype);
+}
+
+static void open_target_sk_netns(int pid, int sock_fd)
+{
+	struct namespace_file *nsfile;
+	struct stat sb;
+	int pidfd, sk, nsfd;
+
+	for (nsfile = namespace_files; nsfile->nstype; nsfile++) {
+		if (nsfile->nstype == CLONE_NEWNET)
+			break;
+	}
+	assert(nsfile->nstype);
+
+	pidfd = pidfd_open(pid, 0);
+	if (pidfd < 0)
+		err(EXIT_FAILURE, _("failed to pidfd_open() for %d"), pid);
+
+	sk = pidfd_getfd(pidfd, sock_fd, 0);
+	if (sk < 0)
+		err(EXIT_FAILURE, _("pidfd_getfd(%d, %u)"), pidfd, sock_fd);
+
+	if (fstat(sk, &sb) < 0)
+		err(EXIT_FAILURE, _("fstat(%d)"), sk);
+
+	nsfd = ioctl(sk, SIOCGSKNS);
+	if (nsfd < 0)
+		err(EXIT_FAILURE, _("ioctl(%d, SIOCGSKNS)"), sk);
+
+	if (nsfile->fd >= 0)
+		close(nsfile->fd);
+	nsfile->fd = nsfd;
+	close(sk);
+	close(pidfd);
 }
 
 static int get_ns_ino(const char *path, ino_t *ino)
@@ -329,6 +366,7 @@ int main(int argc, char *argv[])
 		{ "uts", optional_argument, NULL, 'u' },
 		{ "ipc", optional_argument, NULL, 'i' },
 		{ "net", optional_argument, NULL, 'n' },
+		{ "net-socket", required_argument, NULL, 'N' },
 		{ "pid", optional_argument, NULL, 'p' },
 		{ "user", optional_argument, NULL, 'U' },
 		{ "cgroup", optional_argument, NULL, 'C' },
@@ -365,6 +403,7 @@ int main(int argc, char *argv[])
 	uid_t uid = 0;
 	gid_t gid = 0;
 	int keepcaps = 0;
+	int sock_fd = -1;
 	struct ul_env_list *envls;
 #ifdef HAVE_LIBSELINUX
 	bool selinux = 0;
@@ -376,7 +415,7 @@ int main(int argc, char *argv[])
 	close_stdout_atexit();
 
 	while ((c =
-		getopt_long(argc, argv, "+ahVt:m::u::i::n::p::C::U::T::S:G:r::w::W::ecFZ",
+		getopt_long(argc, argv, "+ahVt:m::u::i::n::N:p::C::U::T::S:G:r::w::W::ecFZ",
 			    longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -412,6 +451,10 @@ int main(int argc, char *argv[])
 				open_namespace_fd(CLONE_NEWNET, optarg);
 			else
 				namespaces |= CLONE_NEWNET;
+			break;
+		case 'N':
+			sock_fd = str2num_or_err(optarg, 10, _("failed to parse file descriptor"),
+						 0, INT_MAX);
 			break;
 		case 'p':
 			if (optarg)
@@ -560,6 +603,13 @@ int main(int argc, char *argv[])
 		if (nsfile->fd < 0)
 			continue;
 		namespaces |= nsfile->nstype;
+	}
+
+	if (sock_fd != -1) {
+		if (!namespace_target_pid)
+			errx(EXIT_FAILURE, _("--net-socket needs target PID"));
+		open_target_sk_netns(namespace_target_pid, sock_fd);
+		namespaces |= CLONE_NEWNET;
 	}
 
 	/* for user namespaces we always set UID and GID (default is 0)
