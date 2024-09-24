@@ -31,7 +31,7 @@ endif
 
 thread_dep = dependency('threads')
 
-lib_uuid = both_libraries(
+lib_uuid = library(
   'uuid',
   list_h,
   lib_uuid_sources,
