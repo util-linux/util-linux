@@ -122,7 +122,7 @@ Lists the length in sectors and human-readable size of partition 5 on _/dev/sda_
 partx --add --nr 3:5 /dev/sdd::
 Adds all available partitions from 3 to 5 (inclusive) on _/dev/sdd_.
 
-partx -d --nr :-1 /dev/sdd::
+partx -d --nr -1: /dev/sdd::
 Removes the last partition on _/dev/sdd_.
 
 == AUTHORS
