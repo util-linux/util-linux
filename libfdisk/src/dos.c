@@ -11,6 +11,7 @@
 #include "randutils.h"
 #include "pt-mbr.h"
 #include "strutils.h"
+#include "sysfs.h"
 
 #include "fdiskP.h"
 
@@ -526,6 +527,13 @@ static void read_extended(struct fdisk_context *cxt, size_t ext)
 	struct pte *pex, *pe;
 	struct dos_partition *p, *q;
 	struct fdisk_dos_label *l = self_label(cxt);
+
+	if (fdisk_is_listonly(cxt) &&
+	    !sysfs_devno_is_wholedisk(fdisk_get_devno(cxt))) {
+		DBG(LABEL, ul_debug("DOS: unable to gather logical partition chain "
+				  "when running on a non-whole disk device."));
+		return;
+	}
 
 	l->ext_index = ext;
 	pex = self_pte(cxt, ext);
