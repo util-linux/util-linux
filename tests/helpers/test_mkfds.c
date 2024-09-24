@@ -2362,7 +2362,7 @@ static void *make_eventfd(const struct factory *factory _U_, struct fdesc fdescs
 
 	signal(SIGCHLD, abort_with_child_death_message);
 	*pid = fork();
-	if (*pid < -1) {
+	if (*pid < 0) {
 		int e = errno;
 		close(fdescs[0].fd);
 		close(fdescs[1].fd);
@@ -2568,7 +2568,7 @@ static void *make_mqueue(const struct factory *factory, struct fdesc fdescs[],
 
 	signal(SIGCHLD, abort_with_child_death_message);
 	mqueue_data->pid = fork();
-	if (mqueue_data->pid < -1) {
+	if (mqueue_data->pid < 0) {
 		int e = errno;
 		mq_close(fdescs[0].fd);
 		mq_close(fdescs[1].fd);
