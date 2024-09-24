@@ -136,7 +136,7 @@ jobs:
       image: ${{ matrix.image }}
     steps:
       - name: Repository checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v1
       - name: Ubuntu setup
         run: .github/workflows/cibuild-setup-ubuntu.sh
       - name: Configure
