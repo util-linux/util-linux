@@ -423,6 +423,8 @@ static void supam_authenticate(struct su_context *su)
 	rc = pam_acct_mgmt(su->pamh, 0);
 	if (rc == PAM_NEW_AUTHTOK_REQD)
 		rc = pam_chauthtok(su->pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
+	if (is_pam_failure(rc))
+		goto done;
 
 	rc = pam_get_item(su->pamh, PAM_USER, (const void **) &pam_user);
 	if (is_pam_failure(rc))
