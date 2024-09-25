@@ -587,6 +587,7 @@ funcs = '''
         ntp_gettime
         open_tree
         personality
+        pidfd_getfd
         pidfd_open
         pidfd_send_signal
         posix_fadvise
