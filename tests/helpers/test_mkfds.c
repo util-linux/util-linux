@@ -2495,7 +2495,7 @@ static void *make_timerfd(const struct factory *factory, struct fdesc fdescs[],
 	const char *sclockid = ARG_STRING(clockid_);
 	clockid_t clockid;
 
-	if (decode_clockid (sclockid, &clockid) == false)
+	if (decode_clockid(sclockid, &clockid) == false)
 		err(EXIT_FAILURE, "unknown clockid: %s", sclockid);
 
 	free_arg(&clockid_);
