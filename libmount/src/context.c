@@ -1854,6 +1854,9 @@ int mnt_context_open_tree(struct libmnt_context *cxt, const char *path, unsigned
 	if (cxt->force_clone)
 		oflg |= OPEN_TREE_CLONE;
 
+	if (mnt_context_is_xnocanonicalize(cxt, "source"))
+		oflg |= AT_SYMLINK_NOFOLLOW;
+
 	DBG(CXT, ul_debugobj(cxt, "open_tree(path=%s%s%s)", path,
 				oflg & OPEN_TREE_CLONE ? " clone" : "",
 				oflg & AT_RECURSIVE ? " recursive" : ""));
