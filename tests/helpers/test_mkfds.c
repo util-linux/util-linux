@@ -2609,6 +2609,7 @@ static void *make_mqueue(const struct factory *factory, struct fdesc fdescs[],
 
 	return mqueue_data;
 }
+
 struct sysvshm_data {
 	void *addr;
 	int id;
