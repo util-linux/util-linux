@@ -2796,11 +2796,8 @@ static void *make_timerfd(const struct factory *factory, struct fdesc fdescs[],
 	free_arg(&remaining);
 	free_arg(&abstime);
 
-	if (babstime) {
-		int r = clock_gettime(clockid, &now);
-		if (r == -1)
-			err(EXIT_FAILURE, "failed in clock_gettime(2)");
-	}
+	if (babstime && (clock_gettime(clockid, &now) == -1))
+		err(EXIT_FAILURE, "failed in clock_gettime(2)");
 
 	tfd = timerfd_create(clockid, 0);
 	if (tfd < 0)
