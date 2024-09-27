@@ -2519,7 +2519,9 @@ static void *make_mqueue(const struct factory *factory, struct fdesc fdescs[],
 
 	fd = mq_open(mqueue_data->path, O_CREAT|O_EXCL | O_RDONLY, S_IRUSR | S_IWUSR, &attr);
 	if (fd < 0) {
+		int e = errno;
 		mqueue_data_free(mqueue_data);
+		errno = e;
 		err(EXIT_FAILURE, "failed in mq_open(3) for reading");
 	}
 
@@ -2599,8 +2601,10 @@ static void *make_mqueue(const struct factory *factory, struct fdesc fdescs[],
 
 		/* Wait till the child is ready. */
 		if (mq_receive(fdescs[0].fd, &c, 1, NULL) < 0) {
+			int e = errno;
 			mq_close(fdescs[0].fd);
 			mqueue_data_free(mqueue_data);
+			errno = e;
 			err(EXIT_FAILURE,
 			    "failed in mq_receive() the readiness notification from the child");
 		}
