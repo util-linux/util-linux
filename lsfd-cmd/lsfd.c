@@ -1731,7 +1731,7 @@ unsigned long add_name(struct name_manager *nm, const char *name)
 	if (e)
 		return e->id;
 
-	e = xmalloc(sizeof(struct identry));
+	e = xmalloc(sizeof(*e));
 	e->name = xstrdup(name);
 	e->id = nm->next_id++;
 	e->next = nm->cache->ent;
@@ -2268,7 +2268,7 @@ static struct counter_spec *new_counter_spec(const char *spec_str)
 		     _("don't use `{' in the name of a counter: %s"),
 		     spec_str);
 
-	spec = xmalloc(sizeof(struct counter_spec));
+	spec = xmalloc(sizeof(*spec));
 	INIT_LIST_HEAD(&spec->specs);
 	spec->name = spec_str;
 	spec->expr = sep + 1;
