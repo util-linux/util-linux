@@ -506,11 +506,43 @@ int mnt_context_disable_canonicalize(struct libmnt_context *cxt, int disable)
  * mnt_context_is_nocanonicalize:
  * @cxt: mount context
  *
- * Returns: 1 if no-canonicalize mode is enabled or 0.
+ * Returns: 1 if no-canonicalize mode (on [u]mount command line) is enabled or 0.
  */
 int mnt_context_is_nocanonicalize(struct libmnt_context *cxt)
 {
 	return cxt->flags & MNT_FL_NOCANONICALIZE ? 1 : 0;
+}
+
+
+/*
+ * Returns 1 if "x-mount.nocanonicalize[=<type>]" userspace mount option is
+ * specified. The optional arguments 'type' should be "source" or "target".
+ */
+int mnt_context_is_xnocanonicalize(
+			struct libmnt_context *cxt,
+			const char *type)
+{
+	struct libmnt_optlist *ol;
+	struct libmnt_opt *opt;
+	const char *arg;
+
+	assert(cxt);
+	assert(type);
+
+	if (mnt_context_is_nocanonicalize(cxt))
+		return 1;
+
+	ol = mnt_context_get_optlist(cxt);
+	if (!ol)
+		return 0;
+	opt = mnt_optlist_get_named(ol,	"X-mount.nocanonicalize",
+			cxt->map_userspace);
+	if (!opt)
+		return 0;
+	arg = mnt_opt_get_value(opt);
+	if (!arg)
+		return 1;
+	return strcmp(arg, type) == 0;
 }
 
 /**
@@ -1822,6 +1854,9 @@ int mnt_context_open_tree(struct libmnt_context *cxt, const char *path, unsigned
 	if (cxt->force_clone)
 		oflg |= OPEN_TREE_CLONE;
 
+	if (mnt_context_is_xnocanonicalize(cxt, "source"))
+		oflg |= AT_SYMLINK_NOFOLLOW;
+
 	DBG(CXT, ul_debugobj(cxt, "open_tree(path=%s%s%s)", path,
 				oflg & OPEN_TREE_CLONE ? " clone" : "",
 				oflg & AT_RECURSIVE ? " recursive" : ""));
@@ -1884,7 +1919,8 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 
 		rc = path ? mnt_fs_set_source(cxt->fs, path) : -MNT_ERR_NOSOURCE;
 
-	} else if (cache && !mnt_fs_is_pseudofs(cxt->fs)) {
+	} else if (cache && !mnt_fs_is_pseudofs(cxt->fs)
+			 && !mnt_context_is_xnocanonicalize(cxt, "source")) {
 		/*
 		 * Source is PATH (canonicalize)
 		 */

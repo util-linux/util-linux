@@ -726,7 +726,7 @@ static int prepare_target(struct libmnt_context *cxt)
 		return -MNT_ERR_NAMESPACE;
 
 	/* canonicalize the path */
-	if (rc == 0) {
+	if (rc == 0 && !mnt_context_is_xnocanonicalize(cxt, "target")) {
 		struct libmnt_cache *cache = mnt_context_get_cache(cxt);
 
 		if (cache) {

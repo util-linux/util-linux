@@ -887,7 +887,17 @@ static int do_umount(struct libmnt_context *cxt)
 	if (mnt_context_is_fake(cxt))
 		rc = 0;
 	else {
+		struct stat st;
+
 		rc = flags ? umount2(target, flags) : umount(target);
+
+		if (rc < 0
+		    && errno == EINVAL
+		    && !(flags & UMOUNT_NOFOLLOW)
+		    && !mnt_context_is_restricted(cxt)
+		    && mnt_safe_lstat(target, &st) == 0 && S_ISLNK(st.st_mode))
+			rc = umount2(target, flags | UMOUNT_NOFOLLOW);
+
 		if (rc < 0)
 			cxt->syscall_status = -errno;
 		free(tgtbuf);

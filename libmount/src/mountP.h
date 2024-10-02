@@ -654,6 +654,8 @@ extern int mnt_context_apply_fs(struct libmnt_context *cxt, struct libmnt_fs *fs
 
 extern struct libmnt_optlist *mnt_context_get_optlist(struct libmnt_context *cxt);
 
+extern int mnt_context_is_xnocanonicalize(struct libmnt_context *cxt, const char *type);
+
 /* tab_update.c */
 extern int mnt_update_emit_event(struct libmnt_update *upd);
 extern int mnt_update_set_filename(struct libmnt_update *upd, const char *filename);
