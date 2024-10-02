@@ -1694,7 +1694,7 @@ int mnt_fs_match_target(struct libmnt_fs *fs, const char *target,
 	if (!fs || !target)
 		return 0;
 #ifdef HAVE_STATMOUNT_API
-	mnt_fs_try_statmount(fs, target, STATMOUNT_MNT_BASIC);
+	mnt_fs_try_statmount(fs, target, STATMOUNT_MNT_POINT);
 #endif
 	if (!fs->target)
 		return 0;
