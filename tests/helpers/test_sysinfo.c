@@ -28,6 +28,8 @@
 #include <time.h>
 #include <sys/ioctl.h>
 
+#include "c.h"
+
 #ifdef __linux__
 # include <sys/mount.h>
 # include "mount-api-utils.h"
@@ -140,6 +142,31 @@ static int hlp_fsopen_ok(void)
 	return 0;
 }
 
+static int hlp_statmount_ok(void)
+{
+#ifdef HAVE_STATMOUNT_API
+	errno = 0;
+	ul_statmount(0, 0, 0, NULL, 0, 0);
+#else
+	errno = ENOSYS;
+#endif
+	printf("%d\n", errno != ENOSYS);
+	return 0;
+}
+
+static int hlp_listmount_ok(void)
+{
+#ifdef HAVE_STATMOUNT_API
+	uint64_t dummy;
+	errno = 0;
+	ul_listmount(LSMT_ROOT, 0, 0, &dummy, 1, LISTMOUNT_REVERSE);
+#else
+	errno = ENOSYS;
+#endif
+	printf("%d\n", errno != ENOSYS);
+	return 0;
+}
+
 static int hlp_sz_time(void)
 {
 	printf("%zu\n", sizeof(time_t));
@@ -191,6 +218,8 @@ static const mntHlpfnc hlps[] =
 	{ "wcsspn-ok",  hlp_wcsspn_ok   },
 	{ "enotty-ok",  hlp_enotty_ok   },
 	{ "fsopen-ok",  hlp_fsopen_ok   },
+	{ "statmount-ok", hlp_statmount_ok },
+	{ "listmount-ok", hlp_listmount_ok },
 	{ "sz(time_t)", hlp_sz_time     },
 	{ "ns-gettype-ok", hlp_get_nstype_ok },
 	{ "ns-getuserns-ok", hlp_get_userns_ok },
