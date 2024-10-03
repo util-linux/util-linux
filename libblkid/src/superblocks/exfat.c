@@ -161,6 +161,8 @@ static int exfat_validate_checksum(blkid_probe pr,
 	return 1;
 }
 
+#define in_range_inclusive(val, start, stop) (val >= start && val <= stop)
+
 static int exfat_valid_superblock(blkid_probe pr, const struct exfat_super_block *sb)
 {
 	if (le16_to_cpu(sb->BootSignature) != 0xAA55)
@@ -172,9 +174,40 @@ static int exfat_valid_superblock(blkid_probe pr, const struct exfat_super_block
 	if (memcmp(sb->JumpBoot, "\xEB\x76\x90", 3) != 0)
 		return 0;
 
+	if (memcmp(sb->FileSystemName, "EXFAT   ", 8) != 0)
+		return 0;
+
 	for (size_t i = 0; i < sizeof(sb->MustBeZero); i++)
 		if (sb->MustBeZero[i] != 0x00)
 			return 0;
+
+	if (!in_range_inclusive(sb->NumberOfFats, 1, 2))
+		return 0;
+
+	if (!in_range_inclusive(sb->BytesPerSectorShift, 9, 12))
+		return 0;
+
+	if (!in_range_inclusive(sb->SectorsPerClusterShift,
+				0,
+				25 - sb->BytesPerSectorShift))
+		return 0;
+
+	if (!in_range_inclusive(le32_to_cpu(sb->FatOffset),
+				24,
+				le32_to_cpu(sb->ClusterHeapOffset) -
+					(le32_to_cpu(sb->FatLength) * sb->NumberOfFats)))
+		return 0;
+
+	if (!in_range_inclusive(le32_to_cpu(sb->ClusterHeapOffset),
+				le32_to_cpu(sb->FatOffset) +
+					le32_to_cpu(sb->FatLength) * sb->NumberOfFats,
+				1U << (32 - 1)))
+		return 0;
+
+	if (!in_range_inclusive(le32_to_cpu(sb->FirstClusterOfRootDirectory),
+				2,
+				le32_to_cpu(sb->ClusterCount) + 1))
+		return 0;
 
 	if (!exfat_validate_checksum(pr, sb))
 		return 0;
