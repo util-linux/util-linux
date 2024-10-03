@@ -52,6 +52,17 @@ UL_DEBUG_DECLARE_MASK(lsfd);
 #define DBG(m, x)       __UL_DBG(lsfd, LSFD_DEBUG_, m, x)
 
 /*
+ * Early filter
+ *
+ * early_filter works when collecting information.
+ */
+struct early_filters;
+struct early_filters *new_early_filters(void);
+void free_early_filters(struct early_filters *early_filters);
+
+void early_filters_optimize(struct early_filters *early_filters);
+
+/*
  * column IDs
  */
 enum {
