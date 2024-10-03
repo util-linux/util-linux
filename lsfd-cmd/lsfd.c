@@ -1574,6 +1574,7 @@ static void finalize_class(const struct file_class *class)
 
 static void finalize_classes(void)
 {
+	finalize_class(&abst_class);
 	finalize_class(&file_class);
 	finalize_class(&cdev_class);
 	finalize_class(&bdev_class);
