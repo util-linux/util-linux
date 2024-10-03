@@ -564,6 +564,8 @@ struct lsfd_control {
 
 	struct libscols_filter *filter;		/* filter */
 	struct libscols_filter **ct_filters;	/* counters (NULL terminated array) */
+
+	struct early_filters *early_filters;
 };
 
 static void *proc_tree;			/* for tsearch/tfind */
@@ -2508,7 +2510,7 @@ int main(int argc, char *argv[])
 	struct lsfd_control ctl = {
 		.show_main = 1
 	};
-
+	ctl.early_filters = new_early_filters();
 	INIT_LIST_HEAD(&counter_specs);
 
 	enum {
@@ -2713,6 +2715,8 @@ int main(int argc, char *argv[])
 	if (n_pids > 0)
 		sort_pids(pids, n_pids);
 
+	early_filters_optimize(ctl.early_filters);
+
 	if (scols_table_get_column_by_name(ctl.tb, "XMODE"))
 		ctl.show_xmode = 1;
 
@@ -2756,6 +2760,8 @@ int main(int argc, char *argv[])
 	finalize_classes();
 	finalize_ipc_table();
 	finalize_nodevs();
+
+	free_early_filters(ctl.early_filters);
 
 	return 0;
 }
