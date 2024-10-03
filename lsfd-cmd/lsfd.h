@@ -65,8 +65,12 @@ void cl_filters_optimize(struct cl_filters *cl_filters);
 void cl_filters_add_pid(struct cl_filters *cl_filters, pid_t pid);
 bool cl_filters_has_pid_filter(struct cl_filters *cl_filters);
 
+void cl_filters_add_name(struct cl_filters *cl_filters, const char *name);
+bool cl_filters_has_name(struct cl_filters *cl_filters);
+
 /* Return: true => accept, false => reject */
 bool cl_filters_apply_pid(struct cl_filters *cl_filters, pid_t pid);
+bool cl_filters_apply_name(struct cl_filters *cl_filters, const char *name);
 
 /*
  * column IDs

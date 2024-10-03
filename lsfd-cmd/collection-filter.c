@@ -28,11 +28,13 @@
 
 enum cl_filter_type {
 	clf_pid,
+	clf_name,
 };
 
 struct cl_filters {
 	struct list_head filters;
 	unsigned int n_pid_filters;
+	unsigned int n_name_filters;
 
 	pid_t *pids;
 };
@@ -41,6 +43,7 @@ struct cl_filter {
 	enum cl_filter_type type;
 	union {
 		pid_t pid;
+		const char *name;
 	};
 	struct list_head filters;
 };
@@ -50,6 +53,7 @@ struct cl_filters *new_cl_filters(void)
 	struct cl_filters *cl_filters = xmalloc(sizeof(*cl_filters));
 	INIT_LIST_HEAD(&cl_filters->filters);
 	cl_filters->n_pid_filters = 0;
+	cl_filters->n_name_filters = 0;
 	cl_filters->pids = NULL;
 	return cl_filters;
 }
@@ -107,6 +111,22 @@ void cl_filters_optimize(struct cl_filters *cl_filters)
 	}
 }
 
+static bool cl_filters_apply (struct cl_filters *cl_filters,
+			      bool (*predicate)(struct cl_filter *, const void *), const void *data)
+{
+	struct list_head *clf;
+
+	list_for_each(clf, &cl_filters->filters) {
+		struct cl_filter *cl_filter = list_entry(clf,
+							 struct cl_filter,
+							 filters);
+		if (predicate(cl_filter, data))
+			return true;
+	}
+
+	return false;
+}
+
 static struct cl_filter *new_cl_filter_pid(pid_t pid)
 {
 	struct cl_filter *clf = xmalloc(sizeof(*clf));
@@ -136,4 +156,43 @@ bool cl_filters_apply_pid(struct cl_filters *cl_filters, pid_t pid)
 	return bsearch(&pid, cl_filters->pids, cl_filters->n_pid_filters, sizeof(pid_t), pidcmp)
 		? true
 		: false;
+}
+
+static struct cl_filter *new_cl_filter_name(const char *name)
+{
+	struct cl_filter *clf = xmalloc(sizeof(*clf));
+	clf->type = clf_name;
+	INIT_LIST_HEAD(&clf->filters);
+	clf->name = name;
+	return clf;
+}
+
+void cl_filters_add_name(struct cl_filters *cl_filters, const char *name)
+{
+	struct cl_filter *clf = new_cl_filter_name(name);
+	list_add_tail(&clf->filters, &cl_filters->filters);
+	cl_filters->n_name_filters++;
+}
+
+bool cl_filters_has_name(struct cl_filters *cl_filters)
+{
+	return cl_filters->n_name_filters > 0;
+}
+
+static bool name_equal(struct cl_filter *cl_filter, const void *data)
+{
+	const char *name = data;
+
+	if (cl_filter->type != clf_name)
+		return false;
+
+	return strcmp(cl_filter->name, name) == 0;
+}
+
+bool cl_filters_apply_name(struct cl_filters *cl_filters, const char *name)
+{
+	if (!cl_filters_has_name(cl_filters))
+		return true;
+
+	return cl_filters_apply(cl_filters, name_equal, name);
 }
