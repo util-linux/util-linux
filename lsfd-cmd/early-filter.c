@@ -28,11 +28,13 @@
 
 enum early_filter_type {
 	ef_pid,
+	ef_file_path,
 };
 
 struct early_filters {
 	struct list_head filters;
 	unsigned int n_pid_filters;
+	unsigned int n_file_path_filters;
 
 	pid_t *pids;
 };
@@ -41,6 +43,7 @@ struct early_filter {
 	enum early_filter_type type;
 	union {
 		pid_t pid;
+		const char *file_path;
 	};
 	struct list_head filters;
 };
@@ -50,6 +53,7 @@ struct early_filters *new_early_filters(void)
 	struct early_filters *early_filters = xmalloc(sizeof(*early_filters));
 	INIT_LIST_HEAD(&early_filters->filters);
 	early_filters->n_pid_filters = 0;
+	early_filters->n_file_path_filters = 0;
 	early_filters->pids = NULL;
 	return early_filters;
 }
@@ -107,6 +111,22 @@ void early_filters_optimize(struct early_filters *early_filters)
 	}
 }
 
+static bool early_filters_apply (struct early_filters *early_filters,
+				 bool (*predicate)(struct early_filter *, const void *), const void *data)
+{
+	struct list_head *ef;
+
+	list_for_each(ef, &early_filters->filters) {
+		struct early_filter *early_filter = list_entry(ef,
+							       struct early_filter,
+							       filters);
+		if (predicate(early_filter, data))
+			return true;
+	}
+
+	return false;
+}
+
 static struct early_filter *new_early_filter_pid(pid_t pid)
 {
 	struct early_filter *ef = xmalloc(sizeof(*ef));
@@ -136,4 +156,43 @@ bool early_filters_apply_pid(struct early_filters *early_filters, pid_t pid)
 	return bsearch(&pid, early_filters->pids, early_filters->n_pid_filters, sizeof(pid_t), pidcmp)
 		? true
 		: false;
+}
+
+static struct early_filter *new_early_filter_file_path(const char *file_path)
+{
+	struct early_filter *ef = xmalloc(sizeof(*ef));
+	ef->type = ef_file_path;
+	INIT_LIST_HEAD(&ef->filters);
+	ef->file_path = file_path;
+	return ef;
+}
+
+void early_filters_add_file_path(struct early_filters *early_filters, const char *file_path)
+{
+	struct early_filter *ef = new_early_filter_file_path(file_path);
+	list_add_tail(&ef->filters, &early_filters->filters);
+	early_filters->n_file_path_filters++;
+}
+
+bool early_filters_has_file_path(struct early_filters *early_filters)
+{
+	return early_filters->n_file_path_filters > 0;
+}
+
+static bool file_path_equal(struct early_filter *early_filter, const void *data)
+{
+	const char *file_path = data;
+
+	if (early_filter->type != ef_file_path)
+		return false;
+
+	return strcmp(early_filter->file_path, file_path) == 0;
+}
+
+bool early_filters_apply_file_path(struct early_filters *early_filters, const char *file_path)
+{
+	if (!early_filters_has_file_path(early_filters))
+		return true;
+
+	return early_filters_apply(early_filters, file_path_equal, file_path);
 }
