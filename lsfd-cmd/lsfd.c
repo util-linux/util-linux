@@ -849,9 +849,10 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 	 */
 	else if ((prev = list_last_entry(&proc->files, struct file, files))
 		 && (!prev->is_error)
-		 && prev->name && strcmp(prev->name, sym) == 0)
+		 && prev->name && strcmp(prev->name, sym) == 0) {
 		f = copy_file(prev, assoc);
-	else if (ul_path_stat(pc, &sb, 0, name) < 0)
+		sb = prev->stat;
+	} else if (ul_path_stat(pc, &sb, 0, name) < 0)
 		f = new_stat_error_file(proc, sym, errno, assoc);
 	else {
 		const struct file_class *class = stat2class(&sb);
