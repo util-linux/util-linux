@@ -20,7 +20,7 @@ lsfd - list file descriptors
 
 == SYNOPSIS
 
-*lsfd* [options]
+*lsfd* [options] [[-] _file_...]
 
 == DESCRIPTION
 
