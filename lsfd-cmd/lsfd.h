@@ -52,6 +52,17 @@ UL_DEBUG_DECLARE_MASK(lsfd);
 #define DBG(m, x)       __UL_DBG(lsfd, LSFD_DEBUG_, m, x)
 
 /*
+ * collection filter
+ *
+ * A filter mechanism works when collecting information.
+ */
+struct cl_filters;
+struct cl_filters *new_cl_filters(void);
+void free_cl_filters(struct cl_filters *cl_filters);
+
+void cl_filters_optimize(struct cl_filters *cl_filters);
+
+/*
  * column IDs
  */
 enum {
