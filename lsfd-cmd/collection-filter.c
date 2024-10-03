@@ -32,6 +32,9 @@ enum cl_filter_type {
 
 struct cl_filters {
 	struct list_head filters;
+	unsigned int n_pid_filters;
+
+	pid_t *pids;
 };
 
 struct cl_filter {
@@ -46,6 +49,8 @@ struct cl_filters *new_cl_filters(void)
 {
 	struct cl_filters *cl_filters = xmalloc(sizeof(*cl_filters));
 	INIT_LIST_HEAD(&cl_filters->filters);
+	cl_filters->n_pid_filters = 0;
+	cl_filters->pids = NULL;
 	return cl_filters;
 }
 
@@ -58,10 +63,77 @@ void free_cl_filters(struct cl_filters *cl_filters)
 {
 	list_free(&cl_filters->filters, struct cl_filter, filters,
 		  free_cl_filter);
+	free(cl_filters->pids);
+
 	free(cl_filters);
 }
 
-void cl_filters_optimize(struct cl_filters *cl_filters __attribute__((unused)))
+static int pidcmp(const void *a, const void *b)
 {
-	/* STUB */
+	pid_t pa = *(pid_t *)a;
+	pid_t pb = *(pid_t *)b;
+
+	if (pa < pb)
+		return -1;
+	else if (pa == pb)
+		return 0;
+	else
+		return 1;
+}
+
+static void sort_pids(pid_t pids[], const int count)
+{
+	qsort(pids, count, sizeof(pid_t), pidcmp);
+}
+
+void cl_filters_optimize(struct cl_filters *cl_filters)
+{
+	if (cl_filters->n_pid_filters > 0) {
+		int i = 0;
+		struct list_head *clf;
+
+		cl_filters->pids = xmalloc(sizeof(cl_filters->pids[0]) *
+					   cl_filters->n_pid_filters);
+
+
+		list_for_each(clf, &cl_filters->filters) {
+			struct cl_filter *cl_filter = list_entry(clf,
+								 struct cl_filter,
+								 filters);
+			if (cl_filter->type == clf_pid)
+				cl_filters->pids[i++] = cl_filter->pid;
+		}
+		sort_pids(cl_filters->pids, cl_filters->n_pid_filters);
+	}
+}
+
+static struct cl_filter *new_cl_filter_pid(pid_t pid)
+{
+	struct cl_filter *clf = xmalloc(sizeof(*clf));
+	clf->type = clf_pid;
+	INIT_LIST_HEAD(&clf->filters);
+	clf->pid = pid;
+	return clf;
+}
+
+void cl_filters_add_pid(struct cl_filters *cl_filters, pid_t pid)
+{
+	struct cl_filter *clf = new_cl_filter_pid(pid);
+	list_add_tail(&clf->filters, &cl_filters->filters);
+	cl_filters->n_pid_filters++;
+}
+
+bool cl_filters_has_pid_filter(struct cl_filters *cl_filters)
+{
+	return cl_filters->n_pid_filters > 0;
+}
+
+bool cl_filters_apply_pid(struct cl_filters *cl_filters, pid_t pid)
+{
+	if (!cl_filters_has_pid_filter(cl_filters))
+		return true;
+
+	return bsearch(&pid, cl_filters->pids, cl_filters->n_pid_filters, sizeof(pid_t), pidcmp)
+		? true
+		: false;
 }

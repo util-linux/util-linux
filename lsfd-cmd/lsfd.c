@@ -2131,7 +2131,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	ul_path_close_dirfd(pc);
 }
 
-static void parse_pids(const char *str, pid_t **pids, int *count)
+static void add_pids_to_cl_filters(const char *str, struct cl_filters *cl_filters)
 {
 	long v;
 	char *next = NULL;
@@ -2148,41 +2148,16 @@ static void parse_pids(const char *str, pid_t **pids, int *count)
 	if (v < 0)
 		errx(EXIT_FAILURE, _("out of range value for pid specification: %ld"), v);
 
-	(*count)++;
-	*pids = xreallocarray(*pids, *count, sizeof(**pids));
-	(*pids)[*count - 1] = (pid_t)v;
+	cl_filters_add_pid(cl_filters, v);
 
 	while (next && *next != '\0'
 	       && (isspace((unsigned char)*next) || *next == ','))
 		next++;
 	if (*next != '\0')
-		parse_pids(next, pids, count);
+		add_pids_to_cl_filters(next, cl_filters);
 }
 
-static int pidcmp(const void *a, const void *b)
-{
-	pid_t pa = *(pid_t *)a;
-	pid_t pb = *(pid_t *)b;
-
-	if (pa < pb)
-		return -1;
-	else if (pa == pb)
-		return 0;
-	else
-		return 1;
-}
-
-static void sort_pids(pid_t pids[], const int count)
-{
-	qsort(pids, count, sizeof(pid_t), pidcmp);
-}
-
-static bool member_pids(const pid_t pid, const pid_t pids[], const int count)
-{
-	return bsearch(&pid, pids, count, sizeof(pid_t), pidcmp)? true: false;
-}
-
-static void collect_processes(struct lsfd_control *ctl, const pid_t pids[], int n_pids)
+static void collect_processes(struct lsfd_control *ctl)
 {
 	DIR *dir;
 	struct dirent *d;
@@ -2201,7 +2176,8 @@ static void collect_processes(struct lsfd_control *ctl, const pid_t pids[], int 
 
 		if (procfs_dirent_get_pid(d, &pid) != 0)
 			continue;
-		if (n_pids == 0 || member_pids(pid, pids, n_pids))
+		if (cl_filters_has_pid_filter(ctl->cl_filters) == false
+		    || cl_filters_apply_pid(ctl->cl_filters, pid))
 			read_process(ctl, pc, pid, 0);
 	}
 
@@ -2589,8 +2565,6 @@ int main(int argc, char *argv[])
 	char  *filter_expr = NULL;
 	bool debug_filter = false;
 	bool dump_counters = false;
-	pid_t *pids = NULL;
-	int n_pids = 0;
 	struct list_head counter_specs;
 
 	struct lsfd_control ctl = {
@@ -2656,7 +2630,7 @@ int main(int argc, char *argv[])
 			ctl.notrunc = 1;
 			break;
 		case 'p':
-			parse_pids(optarg, &pids, &n_pids);
+			add_pids_to_cl_filters(optarg, ctl.cl_filters);
 			break;
 		case 'i': {
 			const char *subexpr = NULL;
@@ -2799,9 +2773,6 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (n_pids > 0)
-		sort_pids(pids, n_pids);
-
 	cl_filters_optimize(ctl.cl_filters);
 
 	if (scols_table_get_column_by_name(ctl.tb, "XMODE"))
@@ -2823,8 +2794,7 @@ int main(int argc, char *argv[])
 	initialize_classes();
 	initialize_devdrvs();
 
-	collect_processes(&ctl, pids, n_pids);
-	free(pids);
+	collect_processes(&ctl);
 
 	attach_xinfos(&ctl.procs);
 	if (ctl.show_xmode)
