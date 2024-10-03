@@ -43,7 +43,10 @@ struct cl_filter {
 	enum cl_filter_type type;
 	union {
 		pid_t pid;
-		const char *name;
+		struct {
+			const char *name;
+			size_t name_len;
+		};
 	};
 	struct list_head filters;
 };
@@ -164,6 +167,7 @@ static struct cl_filter *new_cl_filter_name(const char *name)
 	clf->type = clf_name;
 	INIT_LIST_HEAD(&clf->filters);
 	clf->name = name;
+	clf->name_len = strlen(name);
 	return clf;
 }
 
@@ -186,7 +190,17 @@ static bool name_equal(struct cl_filter *cl_filter, const void *data)
 	if (cl_filter->type != clf_name)
 		return false;
 
-	return strcmp(cl_filter->name, name) == 0;
+	if (strncmp(cl_filter->name, name, cl_filter->name_len) == 0) {
+		const char *rest;
+		if (name[cl_filter->name_len] == '\0')
+			return true;
+
+		rest = name + cl_filter->name_len;
+		if (strcmp(rest, " (deleted)") == 0)
+			return true;
+	}
+
+	return false;
 }
 
 bool cl_filters_apply_name(struct cl_filters *cl_filters, const char *name)
