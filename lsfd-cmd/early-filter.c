@@ -43,7 +43,10 @@ struct early_filter {
 	enum early_filter_type type;
 	union {
 		pid_t pid;
-		const char *file_path;
+		struct {
+			const char *file_path;
+			size_t file_path_len;
+		};
 	};
 	struct list_head filters;
 };
@@ -164,6 +167,7 @@ static struct early_filter *new_early_filter_file_path(const char *file_path)
 	ef->type = ef_file_path;
 	INIT_LIST_HEAD(&ef->filters);
 	ef->file_path = file_path;
+	ef->file_path_len = strlen(file_path);
 	return ef;
 }
 
@@ -186,7 +190,17 @@ static bool file_path_equal(struct early_filter *early_filter, const void *data)
 	if (early_filter->type != ef_file_path)
 		return false;
 
-	return strcmp(early_filter->file_path, file_path) == 0;
+	if (strncmp(early_filter->file_path, file_path, early_filter->file_path_len) == 0) {
+		const char *rest;
+		if (file_path[early_filter->file_path_len] == '\0')
+			return true;
+
+		rest = file_path + early_filter->file_path_len;
+		if (strcmp(rest, " (deleted)") == 0)
+			return true;
+	}
+
+	return false;
 }
 
 bool early_filters_apply_file_path(struct early_filters *early_filters, const char *file_path)
