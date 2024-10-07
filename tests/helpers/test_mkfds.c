@@ -998,14 +998,14 @@ static int make_packet_socket(int socktype, const char *interface)
 	if (interface == NULL)
 		return sd;	/* Just making a socket */
 
-	memset(&addr, 0, sizeof(struct sockaddr_ll));
+	memset(&addr, 0, sizeof(addr));
 	addr.sll_family = AF_PACKET;
 	addr.sll_ifindex = if_nametoindex(interface);
 	if (addr.sll_ifindex == 0) {
 		err(EXIT_FAILURE,
 		    "failed to get the interface index for %s", interface);
 	}
-	if (bind(sd, (struct sockaddr *)&addr, sizeof(struct sockaddr_ll)) < 0) {
+	if (bind(sd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
 		err(EXIT_FAILURE,
 		    "failed to get the interface index for %s", interface);
 	}

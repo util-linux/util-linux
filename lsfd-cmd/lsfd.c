@@ -849,9 +849,10 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 	 */
 	else if ((prev = list_last_entry(&proc->files, struct file, files))
 		 && (!prev->is_error)
-		 && prev->name && strcmp(prev->name, sym) == 0)
+		 && prev->name && strcmp(prev->name, sym) == 0) {
 		f = copy_file(prev, assoc);
-	else if (ul_path_stat(pc, &sb, 0, name) < 0)
+		sb = prev->stat;
+	} else if (ul_path_stat(pc, &sb, 0, name) < 0)
 		f = new_stat_error_file(proc, sym, errno, assoc);
 	else {
 		const struct file_class *class = stat2class(&sb);
@@ -1574,6 +1575,7 @@ static void finalize_class(const struct file_class *class)
 
 static void finalize_classes(void)
 {
+	finalize_class(&abst_class);
 	finalize_class(&file_class);
 	finalize_class(&cdev_class);
 	finalize_class(&bdev_class);
@@ -1731,7 +1733,7 @@ unsigned long add_name(struct name_manager *nm, const char *name)
 	if (e)
 		return e->id;
 
-	e = xmalloc(sizeof(struct identry));
+	e = xmalloc(sizeof(*e));
 	e->name = xstrdup(name);
 	e->id = nm->next_id++;
 	e->next = nm->cache->ent;
@@ -2268,7 +2270,7 @@ static struct counter_spec *new_counter_spec(const char *spec_str)
 		     _("don't use `{' in the name of a counter: %s"),
 		     spec_str);
 
-	spec = xmalloc(sizeof(struct counter_spec));
+	spec = xmalloc(sizeof(*spec));
 	INIT_LIST_HEAD(&spec->specs);
 	spec->name = spec_str;
 	spec->expr = sep + 1;
