@@ -74,6 +74,18 @@ void *xcalloc(const size_t nelems, const size_t size)
 
 static inline
 __attribute__((warn_unused_result))
+__ul_alloc_size(2)
+__ul_returns_nonnull
+void *xmemdup(const void *ptr, size_t size)
+{
+	void *ret = xmalloc(size);
+
+	memcpy(ret, ptr, size);
+	return ret;
+}
+
+static inline
+__attribute__((warn_unused_result))
 __ul_returns_nonnull
 char *xstrdup(const char *str)
 {

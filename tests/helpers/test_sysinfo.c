@@ -36,7 +36,10 @@
 #ifdef HAVE_LINUX_NSFS_H
 # include <linux/nsfs.h>
 # if defined(NS_GET_NSTYPE) && defined(NS_GET_OWNER_UID)
-#  define USE_NS_GET_API	1
+#  define USE_NS_GET_NSTYPE	1
+# endif
+# if defined(NS_GET_USERNS)
+#  define USE_NS_GET_USERNS	1
 # endif
 #endif
 
@@ -143,9 +146,21 @@ static int hlp_sz_time(void)
 
 static int hlp_get_nstype_ok(void)
 {
-#ifdef USE_NS_GET_API
+#ifdef USE_NS_GET_NSTYPE
 	errno = 0;
 	ioctl(STDOUT_FILENO, NS_GET_NSTYPE);
+#else
+	errno = ENOSYS;
+#endif
+	printf("%d\n", errno != ENOSYS);
+	return 0;
+}
+
+static int hlp_get_userns_ok(void)
+{
+#ifdef USE_NS_GET_USERNS
+	errno = 0;
+	ioctl(STDOUT_FILENO, NS_GET_USERNS);
 #else
 	errno = ENOSYS;
 #endif
@@ -169,6 +184,7 @@ static const mntHlpfnc hlps[] =
 	{ "fsopen-ok",  hlp_fsopen_ok   },
 	{ "sz(time_t)", hlp_sz_time     },
 	{ "ns-gettype-ok", hlp_get_nstype_ok },
+	{ "ns-getuserns-ok", hlp_get_userns_ok },
 	{ NULL, NULL }
 };
 

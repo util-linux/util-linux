@@ -701,8 +701,7 @@ static void *make_w_regular_file(const struct factory *factory, struct fdesc fde
 			errno = e;
 			err(EXIT_FAILURE, "failed in dup2");
 		}
-		data = xmalloc(sizeof(iDupfd));
-		*((int *)data) = iDupfd;
+		data = xmemdup(&iDupfd, sizeof(iDupfd));
 	}
 
 	lock_fn(fd, fname);
@@ -2495,7 +2494,7 @@ static void *make_timerfd(const struct factory *factory, struct fdesc fdescs[],
 	const char *sclockid = ARG_STRING(clockid_);
 	clockid_t clockid;
 
-	if (decode_clockid (sclockid, &clockid) == false)
+	if (decode_clockid(sclockid, &clockid) == false)
 		err(EXIT_FAILURE, "unknown clockid: %s", sclockid);
 
 	free_arg(&clockid_);
@@ -2828,8 +2827,7 @@ static void *make_pty(const struct factory *factory _U_, struct fdesc fdescs[],
 		.data  = NULL
 	};
 
-	indexp = xmalloc(sizeof(index));
-	*indexp = index;
+	indexp = xmemdup(&index, sizeof(index));
 	return indexp;
 }
 
@@ -3091,6 +3089,68 @@ static void *make_sockdiag(const struct factory *factory, struct fdesc fdescs[],
 	};
 
 	return NULL;
+}
+
+static void *make_foreign_sockets(const struct factory *factory _U_, struct fdesc fdescs[],
+				  int argc _U_, char ** argv _U_)
+{
+	int foreign_sd[2];	/* These two */
+	int original_ns;
+	int foreign_ns;
+	struct stat foreign_ns_sb;
+
+	original_ns = open("/proc/self/ns/net", O_RDONLY);
+	if (original_ns < 0)
+		err(EXIT_FAILURE, "failed in open(/proc/self/ns/net) before unshare");
+
+	if (unshare(CLONE_NEWNET) < 0)
+		err((errno == EPERM? EXIT_EPERM: EXIT_FAILURE),
+		    "failed in unshare()");
+
+	foreign_ns = open("/proc/self/ns/net", O_RDONLY);
+	if (foreign_ns < 0)
+		err(EXIT_FAILURE, "failed in open(/proc/self/ns/net) after unshare");
+	if (fstat(foreign_ns, &foreign_ns_sb) < 0)
+			err(EXIT_FAILURE, "failed in fstat(NETNS)");
+
+	if (socketpair(AF_UNIX, SOCK_STREAM, 0, foreign_sd) < 0)
+		err(EXIT_FAILURE, "failed in socketpair(SOCK_STREAM)");
+
+	if (setns(original_ns, CLONE_NEWNET) < 0)
+		err(EXIT_FAILURE, "failed in setns()");
+
+	close(foreign_ns);	/* Make the namespace unreadable. */
+	close(original_ns);
+
+	for (int i = 0; i < 2; i++) {
+		if (foreign_sd[i] != fdescs[i].fd) {
+			if (dup2(foreign_sd[i], fdescs[i].fd) < 0)
+				err(EXIT_FAILURE, "failed to dup %d -> %d",
+				    foreign_sd[i], fdescs[i].fd);
+			close(foreign_sd[i]);
+		}
+		fdescs[i] = (struct fdesc){
+			.fd    = fdescs[i].fd,
+			.close = close_fdesc,
+			.data  = NULL
+		};
+	}
+
+	return xmemdup(&foreign_ns_sb.st_ino, sizeof(foreign_ns_sb.st_ino));
+}
+
+static void report_foreign_sockets(const struct factory *factory _U_,
+				   int nth, void *data, FILE *fp)
+{
+	if (nth == 0) {
+		long *netns_id = (long *)data;
+		fprintf(fp, "%ld", *netns_id);
+	}
+}
+
+static void free_foreign_sockets(const struct factory * factory _U_, void *data)
+{
+	free (data);
 }
 
 #define PARAM_END { .name = NULL, }
@@ -3984,6 +4044,20 @@ static const struct factory factories[] = {
 			PARAM_END
 		}
 	},
+	{
+		.name = "foreign-sockets",
+		.desc = "import sockets made in a foreign network namespaec",
+		.priv = true,
+		.N = 2,
+		.EX_N = 0,
+		.EX_O = 1,
+		.make = make_foreign_sockets,
+		.report = report_foreign_sockets,
+		.free = free_foreign_sockets,
+		.params = (struct parameter []) {
+			PARAM_END
+		}
+	},
 };
 
 static int count_parameters(const struct factory *factory)
@@ -4249,7 +4323,7 @@ int main(int argc, char **argv)
 		{ "comm",       required_argument, NULL, 'r' },
 		{ "quiet",	no_argument, NULL, 'q' },
 		{ "dont-monitor-stdin", no_argument, NULL, 'X' },
-		{ "dont-puase", no_argument, NULL, 'c' },
+		{ "dont-pause", no_argument, NULL, 'c' },
 		{ "wait-with",  required_argument, NULL, 'w' },
 		{ "multiplexers",no_argument,NULL, 'W' },
 		{ "help",	no_argument, NULL, 'h' },

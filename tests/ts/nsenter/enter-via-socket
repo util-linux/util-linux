@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+# Copyright (C) 2024 Masatake YAMATO <yamato@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="entering network namespace via socket"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_NSENTER"
+ts_check_test_command "$TS_HELPER_MKFDS"
+
+ts_check_prog "readlink"
+
+ts_skip_nonroot
+
+"$TS_HELPER_MKFDS" --dont-pause --quiet netns 6 2> /dev/null ||  ts_skip "ioctl(SIOCGSKNS) is not available"
+ts_cd "$TS_OUTDIR"
+
+FD0=3
+FD1=4
+
+PID=
+NETNS=
+
+{
+    coproc MKFDS { "$TS_HELPER_MKFDS" foreign-sockets "$FD0" "$FD1"; }
+    if read -r -u "${MKFDS[0]}" PID NETNS; then
+	expected_netns="net:[$NETNS]"
+	output_netns=$("$TS_CMD_NSENTER" --target "$PID" --net-socket "$FD0" readlink /proc/self/ns/net)
+	echo "\$?: $?"
+	if [[ "$expected_netns" == "$output_netns" ]]; then
+	    echo "==: 0"
+	else
+	    echo "==: 1"
+	    echo expected: "${expected_netns}"
+	    echo output: "${output_netns}"
+	fi
+	echo DONE >&"${MKFDS[1]}"
+    fi
+    wait "${MKFDS_PID}"
+} > $TS_OUTPUT 2>&1
+
+ts_finalize
