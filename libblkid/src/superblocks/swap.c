@@ -50,6 +50,7 @@ static void swap_set_info_swap1(blkid_probe pr,
 	uint32_t lastpage = endianness == BLKID_ENDIANNESS_LITTLE ?
 		le32_to_cpu(hdr->lastpage) : be32_to_cpu(hdr->lastpage);
 	blkid_probe_set_fssize(pr, (uint64_t) pagesize * lastpage);
+	blkid_probe_set_fslastblock(pr, lastpage);
 }
 
 static int swap_set_info(blkid_probe pr, const struct blkid_idmag *mag,

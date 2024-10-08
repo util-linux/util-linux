@@ -275,6 +275,7 @@ static int probe_exfat(blkid_probe pr, const struct blkid_idmag *mag)
 	blkid_probe_set_fsblocksize(pr, BLOCK_SIZE(sb));
 	blkid_probe_set_block_size(pr, BLOCK_SIZE(sb));
 	blkid_probe_set_fssize(pr, BLOCK_SIZE(sb) * le64_to_cpu(sb->VolumeLength));
+	blkid_probe_set_fslastblock(pr, le64_to_cpu(sb->VolumeLength));
 
 	return BLKID_PROBE_OK;
 }
