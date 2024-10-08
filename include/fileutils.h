@@ -114,5 +114,6 @@ int ul_copy_file(int from, int to);
 
 
 extern int ul_reopen(int fd, int flags);
+extern char *ul_basename(char *path);
 
 #endif /* UTIL_LINUX_FILEUTILS */

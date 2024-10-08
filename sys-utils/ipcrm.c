@@ -19,25 +19,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/ipc.h>
-#include <sys/msg.h>
-#include <sys/sem.h>
-#include <sys/shm.h>
 #include <sys/types.h>
 #include "c.h"
 #include "nls.h"
 #include "strutils.h"
 #include "closestream.h"
 
-#ifndef HAVE_UNION_SEMUN
-/* according to X/OPEN we have to define it ourselves */
-union semun {
-	int val;
-	struct semid_ds *buf;
-	unsigned short int *array;
-	struct seminfo *__buf;
-};
-#endif
+#include "ipcutils.h"
 
 typedef enum type_id {
 	SHM,
@@ -281,13 +269,6 @@ static int remove_all(type_id type)
 			ret |= remove_id(SEM, 0, rm_me);
 		}
 	}
-/* kFreeBSD hackery -- ah 20140723 */
-#ifndef MSG_STAT
-#define MSG_STAT 11
-#endif
-#ifndef MSG_INFO
-#define MSG_INFO 12
-#endif
 	if (type == MSG || type == ALL) {
 		maxid =
 		    msgctl(0, MSG_INFO, (struct msqid_ds *)(void *)&msginfo);

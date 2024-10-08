@@ -94,7 +94,9 @@ Output all available columns. This option must be combined with either *--extend
 
 == BUGS
 
-The basic overview of CPU family, model, etc. is always based on the first CPU only.
+The basic overview of CPU models is based on heuristics, taking into account differences such as
+CPU model names and implementer IDs. In some (unusual) cases, CPUs may differentiate in flags or BogoMIPS,
+but these differences are ignored in the lscpu overview.
 
 Sometimes in Xen Dom0 the kernel reports wrong data.
 

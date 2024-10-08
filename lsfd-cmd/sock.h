@@ -30,7 +30,7 @@
 #include "libsmartcols.h"
 
 /*
- * xinfo: eXtra inforation about sockets
+ * xinfo: eXtra information about sockets
  */
 struct sock_xinfo {
 	ino_t inode;		/* inode in sockfs */

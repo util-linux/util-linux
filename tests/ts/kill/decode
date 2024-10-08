@@ -1,0 +1,69 @@
+#!/bin/bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="decode functions"
+
+. "$TS_TOPDIR/functions.sh"
+ts_init "$*"
+
+ts_skip_qemu_user
+
+ts_check_test_command "$TS_CMD_KILL"
+ts_check_test_command "$TS_HELPER_SIGSTATE"
+
+. "$TS_SELF/kill_functions.sh"
+
+decode()
+{
+    echo decode "\"$1\":"
+    "$TS_CMD_KILL" -l "$1"
+}
+
+PID=
+ACK=
+{
+    for d in 0x00000000000044aa \
+		 0x0000000000003015 \
+		 0x0000000000000200; do
+	decode "$d"
+    done
+
+    coproc SIGSTATE { "$TS_HELPER_SIGSTATE" ; }
+    if read -u ${SIGSTATE[0]} PID; then
+	"$TS_CMD_KILL" -USR1 "$PID"
+	if read -u ${SIGSTATE[0]} ACK; then
+	    # The taget process is in its signal handler for USR1.
+	    # Sending one more USR1 is for making the signal pending state.
+	    "$TS_CMD_KILL" -USR1 "$PID"
+	    "$TS_CMD_KILL" -d "$PID" | {
+		if [[ $("$TS_CMD_KILL" --list=34) == RT0 ]]; then
+		    # See man signal(7).
+		    #   The  Linux  kernel  supports a range of 33 different real-time signals,
+		    #   numbered 32 to 64.  However, the glibc POSIX threads implementation in‐
+		    #   ternally uses two (for NPTL) or three (for LinuxThreads) real-time sig‐
+		    #   nals (see pthreads(7)), and adjusts the value of SIGRTMIN suitably  (to
+		    #   34 or 35).
+		    sed -e s/' 32 33'// -e s/' 34'//
+		else
+		    cat
+		fi
+	    }
+	fi
+	echo DONE >&"${SIGSTATE[1]}"
+    fi
+    wait ${SIGSTATE_PID}
+} > "$TS_OUTPUT" 2>&1
+
+ts_finalize

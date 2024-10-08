@@ -1,6 +1,6 @@
 errnos.h: $(top_srcdir)/tools/all_errnos
 	@echo '  GEN      $@'
-	@$(top_srcdir)/tools/all_errnos "$(SED)" $(CC) $(CFLAGS)
+	@$(top_srcdir)/tools/all_errnos "$(SED)" "$@" $(CC) $(CFLAGS)
 
 -include errnos.h.deps
 CLEANFILES += errnos.h errnos.h.deps
@@ -239,6 +239,7 @@ usrbin_exec_PROGRAMS += rename
 MANPAGES += misc-utils/rename.1
 dist_noinst_DATA += misc-utils/rename.1.adoc
 rename_SOURCES = misc-utils/rename.c
+rename_LDADD = $(LDADD) libcommon.la
 endif
 
 if BUILD_GETOPT
@@ -313,7 +314,7 @@ misc-utils/enosys.c: syscalls.h errnos.h
 
 syscalls.h: $(top_srcdir)/tools/all_syscalls
 	@echo '  GEN      $@'
-	@$(top_srcdir)/tools/all_syscalls "$(SED)" $(CC) $(CFLAGS)
+	@$(top_srcdir)/tools/all_syscalls "$(SED)" "$@" $(CC) $(CFLAGS)
 
 -include syscalls.h.deps
 CLEANFILES += syscalls.h syscalls.h.deps

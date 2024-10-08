@@ -39,7 +39,7 @@ If the file _.hushlogin_ exists, then a "quiet" login is performed. This disable
 == OPTIONS
 
 *-p*::
-Used by *getty*(8) to tell *login* to preserve the environment.
+Used by *getty*(8) to tell *login* to preserve the environment. See also *LOGIN_ENV_SAFELIST* config file item.
 
 *-f*::
 Used to skip a login authentication. This option is usually used by the *getty*(8) autologin feature.
@@ -70,6 +70,10 @@ Note that *login* does not implement any filenames overriding behavior like pam_
 *MOTD_FIRSTONLY* (boolean)::
 
 Forces *login* to stop display content specified by *MOTD_FILE* after the first accessible item in the list. Note that a directory is one item in this case. This option allows *login* semantics to be configured to be more compatible with pam_motd. The default value is _no_.
+
+*LOGIN_ENV_SAFELIST* (string)::
+
+Forces *login* to protect the specified environment variables if *-p* is not used. The string value is a comma-separated list of variable names. For example: "LANG,LC_MESSAGES,LC_COLLATE".  The safelist is ignored for the environment variables HOME, SHELL and USER.
 
 *LOGIN_PLAIN_PROMPT* (boolean)::
 

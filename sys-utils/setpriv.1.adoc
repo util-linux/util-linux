@@ -78,6 +78,9 @@ Set or clear securebits. The argument is a comma-separated list. The valid secur
 **--pdeathsig keep**|**clear**|*<signal>*::
 Keep, clear or set the parent death signal. Some LSMs, most notably SELinux and AppArmor, clear the signal when the process' credentials change. Using *--pdeathsig keep* will restore the parent death signal after changing credentials to remedy that situation.
 
+*--ptracer* _pid_|**any**|**none**::
+When Yama's restricted ptrace mode is in effect (that is, when _/proc/sys/kernel/yama/ptrace_scope_ is set to 1), allow being traced via **ptrace**(2) by the process with the specified PID, or any process, or no process. See **PR_SET_PTRACER**(2const). (Note that this is not inherited by child processes, though it is preserved across **execve**(2).) This option has no effect when Yama is not enabled or is in a mode other than restricted ptrace.
+
 *--selinux-label* _label_::
 Request a particular SELinux transition (using a transition on exec, not dyntrans). This will fail and cause *setpriv* to abort if SELinux is not in use, and the transition may be ignored or cause *execve*(2) to fail at SELinux's whim. (In particular, this is unlikely to work in conjunction with _no_new_privs_.) This is similar to *runcon*(1).
 

@@ -405,7 +405,7 @@ libsmartcols:
    - print title only with SCOLS_FMT_HUMAN  [Igor Gnatenko]
    - put new line after title  [Igor Gnatenko]
    - reduce also SCOLS_FL_WRAP columns  [Karel Zak]
-   - reflect changinging SCOLS_FL_TREE after adding to table  [Igor Gnatenko]
+   - reflect changing SCOLS_FL_TREE after adding to table  [Igor Gnatenko]
    - rewrite ./sample-scols-wrap  [Karel Zak]
    - set everything once in scols_table_set_title()  [Igor Gnatenko]
    - support continuous printing  [Karel Zak]

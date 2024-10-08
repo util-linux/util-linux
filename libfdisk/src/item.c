@@ -58,7 +58,7 @@ struct fdisk_labelitem *fdisk_new_labelitem(void)
 void fdisk_ref_labelitem(struct fdisk_labelitem *li)
 {
 	if (li) {
-		/* me sure we do not use refcouting for static items */
+		/* make sure we do not use refcounting for static items */
 		assert(li->refcount > 0);
 		li->refcount++;
 	}
@@ -102,7 +102,7 @@ void fdisk_unref_labelitem(struct fdisk_labelitem *li)
 	if (!li)
 		return;
 
-	/* me sure we do not use refcouting for static items */
+	/* make sure we do not use refcounting for static items */
 	assert(li->refcount > 0);
 
 	li->refcount--;

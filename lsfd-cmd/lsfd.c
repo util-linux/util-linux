@@ -849,9 +849,10 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 	 */
 	else if ((prev = list_last_entry(&proc->files, struct file, files))
 		 && (!prev->is_error)
-		 && prev->name && strcmp(prev->name, sym) == 0)
+		 && prev->name && strcmp(prev->name, sym) == 0) {
 		f = copy_file(prev, assoc);
-	else if (ul_path_stat(pc, &sb, 0, name) < 0)
+		sb = prev->stat;
+	} else if (ul_path_stat(pc, &sb, 0, name) < 0)
 		f = new_stat_error_file(proc, sym, errno, assoc);
 	else {
 		const struct file_class *class = stat2class(&sb);
@@ -859,7 +860,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 		if (sockets_only
 		    /* A nsfs file is not a socket but the nsfs file can
 		     * be used as a entry point to collect information from
-		     * other network namespaces. Besed on the information,
+		     * other network namespaces. Based on the information,
 		     * various columns of sockets can be filled.
 		     */
 		    && (class != &sock_class) && (class != &nsfs_file_class))
@@ -881,6 +882,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 
 	else if (assoc >= 0) {
 		/* file-descriptor based association */
+		bool is_socket = (sb.st_mode & S_IFMT) == S_IFSOCK;
 		FILE *fdinfo;
 
 		if (ul_path_stat(pc, &sb, AT_SYMLINK_NOFOLLOW, name) == 0)
@@ -888,6 +890,9 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 
 		if (is_nsfs_dev(f->stat.st_dev))
 			load_sock_xinfo(pc, name, f->stat.st_ino);
+
+		if (is_socket)
+			load_fdsk_xinfo(proc, assoc);
 
 		fdinfo = ul_path_fopenf(pc, "r", "fdinfo/%d", assoc);
 		if (fdinfo) {
@@ -968,14 +973,14 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 		f = new_file(proc, stat2class(&sb), &sb, path, -assoc);
 	} else {
 		/* As used in tcpdump, AF_PACKET socket can be mmap'ed. */
-		char map_file[sizeof("map_files/0000000000000000-ffffffffffffffff")];
 		char sym[PATH_MAX] = { '\0' };
 
 	try_map_files:
-		snprintf(map_file, sizeof(map_file), "map_files/%"PRIx64"-%"PRIx64, start, end);
-		if (ul_path_readlink(pc, sym, sizeof(sym), map_file) < 0)
+		if (ul_path_readlinkf(pc, sym, sizeof(sym),
+				      "map_files/%"PRIx64"-%"PRIx64, start, end) < 0)
 			f = new_readlink_error_file(proc, errno, -assoc);
-		else if (ul_path_stat(pc, &sb, 0, map_file) < 0)
+		else if (ul_path_statf(pc, &sb, 0,
+				       "map_files/%"PRIx64"-%"PRIx64, start, end) < 0)
 			f = new_stat_error_file(proc, sym, errno, -assoc);
 		else
 			f = new_file(proc, stat2class(&sb), &sb, sym, -assoc);
@@ -1060,7 +1065,7 @@ static void collect_namespace_files_tophalf(struct path_cxt *pc, struct proc *pr
 		[ASSOC_NS_MNT]    = "ns/mnt",
 	};
 	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs),
-			       /* Namespace information is alwasys needed. */
+			       /* Namespace information is always needed. */
 			       false);
 }
 
@@ -1085,7 +1090,7 @@ static void collect_namespace_files_bottomhalf(struct path_cxt *pc, struct proc 
 		[ASSOC_NS_UTS]    = "ns/uts",
 	};
 	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs),
-			       /* Namespace information is alwasys needed. */
+			       /* Namespace information is always needed. */
 			       false);
 }
 
@@ -1570,6 +1575,7 @@ static void finalize_class(const struct file_class *class)
 
 static void finalize_classes(void)
 {
+	finalize_class(&abst_class);
 	finalize_class(&file_class);
 	finalize_class(&cdev_class);
 	finalize_class(&bdev_class);
@@ -1727,7 +1733,7 @@ unsigned long add_name(struct name_manager *nm, const char *name)
 	if (e)
 		return e->id;
 
-	e = xmalloc(sizeof(struct identry));
+	e = xmalloc(sizeof(*e));
 	e->name = xstrdup(name);
 	e->id = nm->next_id++;
 	e->next = nm->cache->ent;
@@ -1822,7 +1828,7 @@ static void mark_select_fds_as_multiplexed(char *buf,
 		return;
 
 	for (int i = 0; i < 3; i++) {
-		/* If the remote address for the fd_set is 0x0, no set is tehre. */
+		/* If the remote address for the fd_set is 0x0, no set is there. */
 		remote[i].iov_len = local[i].iov_len = fds[i]? sizeof(local_set[i]): 0;
 		expected_n += (ssize_t)local[i].iov_len;
 		local[i].iov_base = local_set + i;
@@ -2264,7 +2270,7 @@ static struct counter_spec *new_counter_spec(const char *spec_str)
 		     _("don't use `{' in the name of a counter: %s"),
 		     spec_str);
 
-	spec = xmalloc(sizeof(struct counter_spec));
+	spec = xmalloc(sizeof(*spec));
 	INIT_LIST_HEAD(&spec->specs);
 	spec->name = spec_str;
 	spec->expr = sep + 1;
@@ -2688,6 +2694,12 @@ int main(int argc, char *argv[])
 
 	if (scols_table_get_column_by_name(ctl.tb, "XMODE"))
 		ctl.show_xmode = 1;
+
+	/* Minimize the output related to lsfd itself. */
+# ifdef HAVE_CLOSE_RANGE
+	if (close_range(STDERR_FILENO + 1, ~0U, 0) < 0)
+# endif
+		ul_close_all_fds(STDERR_FILENO + 1, ~0U);
 
 	/* collect data
 	 *

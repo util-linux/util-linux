@@ -59,6 +59,17 @@
 #  define BLKPBSZGET _IO(0x12,123)
 # endif
 
+/* discard area on a device */
+#ifndef BLKDISCARD
+# define BLKDISCARD	_IO(0x12,119)
+#endif
+#ifndef BLKSECDISCARD
+# define BLKSECDISCARD	_IO(0x12,125)
+#endif
+#ifndef BLKZEROOUT
+# define BLKZEROOUT	_IO(0x12,127)
+#endif
+
 /* discard zeroes support, introduced in 2.6.33 (commit 98262f27) */
 # ifndef BLKDISCARDZEROES
 #  define BLKDISCARDZEROES _IO(0x12,124)
@@ -79,7 +90,6 @@
 # ifndef CDROM_GET_CAPABILITY
 #  define CDROM_GET_CAPABILITY 0x5331
 # endif
-
 #endif /* __linux */
 
 

@@ -316,7 +316,7 @@ getops:
 hwclock:
    - --set and --predict segmentation fault  [J William Piggott]
    - add debugging to open_rtc()  [Sami Kerola]
-   - alloate date_resp parsing buffer in interpret_date_string()  [Sami Kerola]
+   - allocate date_resp parsing buffer in interpret_date_string()  [Sami Kerola]
    - clarify cmos inb and outb preprocessor directives  [Sami Kerola]
    - clarify set_cmos_epoch() code  [Sami Kerola]
    - do not hardcode date command magic string twice  [Sami Kerola]

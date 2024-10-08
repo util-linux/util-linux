@@ -135,7 +135,7 @@ int loopcxt_set_device(struct loopdev_cxt *lc, const char *device)
 				if (strlen(device) < 5)
 					return -1;
 				device += 4;
-				dir = _PATH_DEV_LOOP "/";	/* _PATH_DEV uses tailing slash */
+				dir = _PATH_DEV_LOOP "/";	/* _PATH_DEV uses trailing slash */
 			}
 			snprintf(lc->device, sizeof(lc->device), "%s%s",
 				dir, device);

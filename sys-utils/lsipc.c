@@ -129,7 +129,7 @@ struct lsipc_control {
 	int outmode;
 	unsigned int noheadings : 1,		/* don't print header line */
 		     notrunc : 1,		/* don't truncate columns */
-		     shellvar : 1,              /* use shell compatible colum names */
+		     shellvar : 1,              /* use shell compatible column names */
 		     bytes : 1,			/* SIZE in bytes */
 		     numperms : 1,		/* numeric permissions */
 		     time_mode : 2;

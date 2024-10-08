@@ -44,7 +44,7 @@ while [ "$#" -ne 0 ]; do
 	# Note that we use HAVE_ macros since util-linux-ng-2.14. The
 	# previous version also have used ENABLE_ too.
 	#
-	# ENABLE_ and HAVE_ macros shouldn't be used for any other pupose that
+	# ENABLE_ and HAVE_ macros shouldn't be used for any other purpose than
 	# for config/build options.
 	#
 	DEFINES=$(sed -n -e 's/.*[ \t(]\+\(HAVE_[[:alnum:]]\+[^ \t);]*\).*/\1/p' \

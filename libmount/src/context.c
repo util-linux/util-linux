@@ -41,7 +41,10 @@
 #include "namespace.h"
 #include "match.h"
 
+#include <stdarg.h>
 #include <sys/wait.h>
+
+#include "mount-api-utils.h"
 
 /**
  * mnt_new_context:
@@ -314,7 +317,7 @@ int mnt_context_reset_status(struct libmnt_context *cxt)
 	if (!cxt)
 		return -EINVAL;
 
-	reset_syscall_status(cxt);
+	mnt_context_syscall_reset_status(cxt);
 
 	cxt->syscall_status = 1;		/* means not called yet */
 	cxt->helper_exec_status = 1;
@@ -503,11 +506,43 @@ int mnt_context_disable_canonicalize(struct libmnt_context *cxt, int disable)
  * mnt_context_is_nocanonicalize:
  * @cxt: mount context
  *
- * Returns: 1 if no-canonicalize mode is enabled or 0.
+ * Returns: 1 if no-canonicalize mode (on [u]mount command line) is enabled or 0.
  */
 int mnt_context_is_nocanonicalize(struct libmnt_context *cxt)
 {
 	return cxt->flags & MNT_FL_NOCANONICALIZE ? 1 : 0;
+}
+
+
+/*
+ * Returns 1 if "x-mount.nocanonicalize[=<type>]" userspace mount option is
+ * specified. The optional arguments 'type' should be "source" or "target".
+ */
+int mnt_context_is_xnocanonicalize(
+			struct libmnt_context *cxt,
+			const char *type)
+{
+	struct libmnt_optlist *ol;
+	struct libmnt_opt *opt;
+	const char *arg;
+
+	assert(cxt);
+	assert(type);
+
+	if (mnt_context_is_nocanonicalize(cxt))
+		return 1;
+
+	ol = mnt_context_get_optlist(cxt);
+	if (!ol)
+		return 0;
+	opt = mnt_optlist_get_named(ol,	"X-mount.nocanonicalize",
+			cxt->map_userspace);
+	if (!opt)
+		return 0;
+	arg = mnt_opt_get_value(opt);
+	if (!arg)
+		return 1;
+	return strcmp(arg, type) == 0;
 }
 
 /**
@@ -1143,8 +1178,8 @@ fail:
  * @cxt: mount context
  * @optstr: comma delimited mount options
  *
- * Note that MS_MOVE cannot be specified as "string". It's operation that
- * is no supported in fstab (etc.)
+ * Please note that MS_MOVE cannot be specified as a "string". The move operation
+ * cannot be specified in fstab.
  *
  * Returns: 0 on success, negative number in case of error.
  */
@@ -1692,7 +1727,7 @@ struct libmnt_lock *mnt_context_get_lock(struct libmnt_context *cxt)
  *
  * Be careful if use MS_REC flag -- this is flags is generic for
  * all mask. In this case is better to use options string where
- * mount options are independent and nothign is applied to all options.
+ * mount options are independent and nothing is applied to all options.
  *
  * Returns: 0 on success, negative number in case of error.
  */
@@ -1790,6 +1825,48 @@ int mnt_context_set_mountdata(struct libmnt_context *cxt, void *data)
 	return 0;
 }
 
+#ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
+int mnt_context_open_tree(struct libmnt_context *cxt, const char *path, unsigned long mflg)
+{
+	unsigned long oflg = OPEN_TREE_CLOEXEC;
+	int rc = 0, fd = -1;
+
+	if (mflg == (unsigned long) -1) {
+		rc = mnt_optlist_get_flags(cxt->optlist, &mflg, cxt->map_linux, 0);
+		if (rc)
+			return rc;
+	}
+	if (!path) {
+		path = mnt_fs_get_target(cxt->fs);
+		if (!path)
+			return -EINVAL;
+	}
+
+	/* Classic -oremount,bind,ro is not bind operation, it's just
+	 * VFS flags update only */
+	if ((mflg & MS_BIND) && !(mflg & MS_REMOUNT)) {
+		oflg |= OPEN_TREE_CLONE;
+
+		if (mnt_optlist_is_rbind(cxt->optlist))
+			oflg |= AT_RECURSIVE;
+	}
+
+	if (cxt->force_clone)
+		oflg |= OPEN_TREE_CLONE;
+
+	if (mnt_context_is_xnocanonicalize(cxt, "source"))
+		oflg |= AT_SYMLINK_NOFOLLOW;
+
+	DBG(CXT, ul_debugobj(cxt, "open_tree(path=%s%s%s)", path,
+				oflg & OPEN_TREE_CLONE ? " clone" : "",
+				oflg & AT_RECURSIVE ? " recursive" : ""));
+	fd = open_tree(AT_FDCWD, path, oflg);
+	mnt_context_syscall_save_status(cxt, "open_tree", fd >= 0);
+
+	return fd;
+}
+#endif
+
 /*
  * Translates LABEL/UUID/path to mountable path
  */
@@ -1842,7 +1919,8 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 
 		rc = path ? mnt_fs_set_source(cxt->fs, path) : -MNT_ERR_NOSOURCE;
 
-	} else if (cache && !mnt_fs_is_pseudofs(cxt->fs)) {
+	} else if (cache && !mnt_fs_is_pseudofs(cxt->fs)
+			 && !mnt_context_is_xnocanonicalize(cxt, "source")) {
 		/*
 		 * Source is PATH (canonicalize)
 		 */
@@ -2108,7 +2186,7 @@ int mnt_context_merge_mflags(struct libmnt_context *cxt)
 		return -ENOMEM;
 
 	/* TODO: optlist returns always flags as merged, so
-	 * MNT_FL_MOUNTFLAGS_MERGED is unncessary anymore
+	 * MNT_FL_MOUNTFLAGS_MERGED is unnecessary anymore
 	 */
 	cxt->flags |= MNT_FL_MOUNTFLAGS_MERGED;
 	return mnt_optlist_merge_opts(ls);
@@ -2599,8 +2677,8 @@ int mnt_context_get_syscall_errno(struct libmnt_context *cxt)
  *
  * The @status should be 0 on success, or negative number on error (-errno).
  *
- * This function should only be used if the [u]mount(2) syscall is NOT called by
- * libmount code.
+ * This function is intended for cases where mount/umount is called externally,
+ * rather than by libmount.
  *
  * Returns: 0 or negative number in case of error.
  */
@@ -2611,6 +2689,77 @@ int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status)
 
 	DBG(CXT, ul_debugobj(cxt, "syscall status set to: %d", status));
 	cxt->syscall_status = status;
+	return 0;
+}
+
+/* Use this for syscalls called from libmount */
+void mnt_context_syscall_save_status(	struct libmnt_context *cxt,
+					const char *syscallname,
+					int success)
+{
+	if (!success) {
+		DBG(CXT, ul_debug("syscall '%s' [failed: %m]", syscallname));
+		cxt->syscall_status = -errno;
+		cxt->syscall_name = syscallname;
+	} else {
+		DBG(CXT, ul_debug("syscall '%s' [success]", syscallname));
+		cxt->syscall_status = 0;
+	}
+}
+
+void mnt_context_syscall_reset_status(struct libmnt_context *cxt)
+{
+	DBG(CXT, ul_debug("reset syscall status"));
+	cxt->syscall_status = 0;
+	cxt->syscall_name = NULL;
+
+	free(cxt->errmsg);
+	cxt->errmsg = NULL;
+}
+
+int mnt_context_set_errmsg(struct libmnt_context *cxt, const char *msg)
+{
+	char *p = NULL;
+
+	if (msg) {
+		p = strdup(msg);
+		if (!p)
+			return -ENOMEM;
+	}
+
+	free(cxt->errmsg);
+	cxt->errmsg = p;
+
+	return 0;
+}
+
+int mnt_context_append_errmsg(struct libmnt_context *cxt, const char *msg)
+{
+	if (cxt->errmsg) {
+		int rc = strappend(&cxt->errmsg, "; ");
+		if (rc)
+			return rc;
+	}
+
+	return strappend(&cxt->errmsg, msg);
+}
+
+int mnt_context_sprintf_errmsg(struct libmnt_context *cxt, const char *msg, ...)
+{
+	int rc;
+	va_list ap;
+	char *p = NULL;
+
+	va_start(ap, msg);
+	rc = vasprintf(&p, msg, ap);
+	va_end(ap);
+
+	if (rc < 0 || !p)
+		return rc;
+
+	free(cxt->errmsg);
+	cxt->errmsg = p;
+
 	return 0;
 }
 

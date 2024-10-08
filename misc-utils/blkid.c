@@ -464,7 +464,7 @@ static int print_udev_ambivalent(blkid_probe pr)
 	}
 
 	if (count > 1) {
-		*(val + valsz - 1) = '\0';		/* rem tailing whitespace */
+		*(val + valsz - 1) = '\0';		/* rem trailing whitespace */
 		printf("ID_FS_AMBIVALENT=%s\n", val);
 		rc = 0;
 	}

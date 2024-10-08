@@ -261,8 +261,9 @@ int fdisk_partition_cmp_start(struct fdisk_partition *a,
  * @pa: partition
  * @enable: 0|1
  *
- * When @pa used as a template for fdisk_add_partition() when force label driver
- * to use the first possible space for the new partition.
+ * When @pa is used as a template for fdisk_add_partition(), it follows the driver's default for
+ * the beginning of the partition. For DOS, it is the first usable space, while for GPT, it is
+ * the first sector of the largest area.
  *
  * Returns: 0 on success, <0 on error.
  */
@@ -1141,7 +1142,7 @@ static int resize_get_first_possible(
  * counts size of all this space.
  *
  * This is core of the partition start offset move operation. We can move the
- * start within the current partition of to the another free space. It's
+ * start within the current partition to another free space. It's
  * forbidden to move start of the partition to another already defined
  * partition.
  */
@@ -1282,7 +1283,7 @@ static int recount_resize(
 		DBG(PART, ul_debugobj(tpl, "resize: moving start %s relative, new start: %ju",
 				tpl->movestart == FDISK_MOVE_DOWN  ? "DOWN" : "UP", (uintmax_t)start));
 
-	/* 1b) set new start - try freespace before the curret partition */
+	/* 1b) set new start - try freespace before the current partition */
 	} else if (tpl->movestart == FDISK_MOVE_DOWN) {
 
 		if (resize_get_first_possible(tb, cur, &start) != 0)

@@ -35,46 +35,35 @@ USETERM=$( ts_has_option "useterm" "$*" )
 
 [ "$USETERM" == "yes" ] && TS_VERBOSE="yes"
 
+function call_cal {
+	if [ "$USETERM" == "yes" ]; then
+		 XDG_CONFIG_HOME="$TS_SELF" $TS_CMD_CAL --color=always "$@"
+	fi
+	XDG_CONFIG_HOME="$TS_SELF" $TS_CMD_CAL --color=always "$@" >> $TS_OUTPUT
+}
+
 ts_init_subtest "first-day-week-numbers"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -w --color=always 1 1 1
-fi
-$TS_CMD_CAL -w --color=always 1 1 1 >> $TS_OUTPUT
+call_cal -w --color=always 1 1 1
 ts_finalize_subtest
 
 ts_init_subtest "reformation-corner-cases-1-week-numbers"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -w --color=always 2 9 1752
-fi
-$TS_CMD_CAL -w --color=always 2 9 1752 >> $TS_OUTPUT
+call_cal -w --color=always 2 9 1752
 ts_finalize_subtest
 
 ts_init_subtest "reformation-corner-cases-2-week-numbers"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -w --color=always 3 9 1752
-fi
-$TS_CMD_CAL -w --color=always 3 9 1752 >> $TS_OUTPUT
+call_cal -w --color=always 3 9 1752
 ts_finalize_subtest
 
 ts_init_subtest "reformation-corner-cases-3-week-numbers"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -w --color=always 13 9 1752
-fi
-$TS_CMD_CAL -w --color=always 13 9 1752 >> $TS_OUTPUT
+call_cal -w --color=always 13 9 1752
 ts_finalize_subtest
 
 ts_init_subtest "reformation-corner-cases-4-week-numbers"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -w --color=always 14 9 1752
-fi
-$TS_CMD_CAL -w --color=always 14 9 1752 >> $TS_OUTPUT
+call_cal -w --color=always 14 9 1752
 ts_finalize_subtest
 
 ts_init_subtest "last-day-week-numbers"
-if [ "$USETERM" == "yes" ]; then
-	$TS_CMD_CAL -w --color=always 31 12 9999
-fi
-$TS_CMD_CAL -w --color=always -3 31 12 9999 >> $TS_OUTPUT
+call_cal -w --color=always -3 31 12 9999
 ts_finalize_subtest
 
 ts_finalize

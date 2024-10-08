@@ -23,7 +23,7 @@
  *   hooksets with more callbacks in more stages. Usually implemented by
  *   locally defined 'struct hookset_data' in hook_*.c.
  *
- * - per-hook data; acessible for specific callback
+ * - per-hook data; accessible for specific callback
  *   Usually implemented by locally defined 'struct hook_data' in hook_*.c.
  */
 #include "mountP.h"

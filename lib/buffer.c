@@ -188,6 +188,19 @@ char *ul_buffer_get_data(struct ul_buffer *buf, size_t *sz, size_t *width)
 	return buf->begin;
 }
 
+char *ul_buffer_get_string(struct ul_buffer *buf, size_t *sz, size_t *width)
+{
+	char *ret;
+
+	ret = ul_buffer_get_data(buf, sz, width);
+
+	/* data in buffer is already zero-terminated */
+	if (sz)
+		*sz = *sz + 1;
+
+	return ret;
+}
+
 /* size of allocated area (!= size of stored data */
 size_t ul_buffer_get_bufsiz(struct ul_buffer *buf)
 {

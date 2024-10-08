@@ -5,7 +5,8 @@ set -o pipefail
 
 SED="$1"
 shift
-OUTPUT=syscalls.h
+OUTPUT="$1"
+shift
 SYSCALL_INCLUDES="
 #include <sys/syscall.h>
 "

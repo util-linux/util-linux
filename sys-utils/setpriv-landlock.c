@@ -191,7 +191,7 @@ void do_landlock(const struct setpriv_landlock_opts *opts)
 		err(SETPRIV_EXIT_PRIVERR, _("disallow granting new privileges for landlock failed"));
 
 	if (landlock_restrict_self(fd, 0) == -1)
-		err(SETPRIV_EXIT_PRIVERR, _("landlock_restrict_self faild"));
+		err(SETPRIV_EXIT_PRIVERR, _("landlock_restrict_self failed"));
 }
 
 void usage_setpriv(FILE *out)

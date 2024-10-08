@@ -338,7 +338,7 @@ static void timeout_handler(int sig __attribute__((__unused__)),
 #ifdef HAVE_TIMER_CREATE
 	if (info->si_code == SI_TIMER)
 #endif
-		errx(EXIT_FAILURE, _("timed out"));
+		ul_sig_err(EXIT_FAILURE, "timed out");
 }
 
 static void server_loop(const char *socket_path, const char *pidfile_path,

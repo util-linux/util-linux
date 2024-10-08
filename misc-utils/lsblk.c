@@ -346,7 +346,7 @@ static int column_name_to_id(const char *name, size_t namesz)
 {
 	size_t i;
 
-	/* name as diplayed for users */
+	/* name as displayed for users */
 	for (i = 0; i < ARRAY_SIZE(infos); i++) {
 		const char *cn = infos[i].name;
 
@@ -2308,11 +2308,11 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -E, --dedup <column> de-duplicate output by <column>\n"), out);
 	fputs(_(" -I, --include <list> show only devices with specified major numbers\n"), out);
 	fputs(_(" -J, --json           use JSON output format\n"), out);
-	fputs(_(" -M, --merge          group parents of sub-trees (usable for RAIDs, Multi-path)\n"), out);
+	fputs(_(" -M, --merge          group parents of sub-trees (RAIDs, Multi-path)\n"), out);
 	fputs(_(" -O, --output-all     output all columns\n"), out);
 	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
-	fputs(_(" -Q, --filter <expr>  print only lines maching the expression\n"), out);
-	fputs(_("     --highlight <expr> colorize lines maching the expression\n"), out);
+	fputs(_(" -Q, --filter <expr>  print only lines matching the expression\n"), out);
+	fputs(_("     --highlight <expr> colorize lines matching the expression\n"), out);
 	fputs(_("     --ct-filter <expr> restrict the next counter\n"), out);
 	fputs(_("     --ct <name>[:<param>[:<func>]] define a custom counter\n"), out);
 	fputs(_(" -S, --scsi           output info about SCSI devices\n"), out);
@@ -2320,7 +2320,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -v, --virtio         output info about virtio devices\n"), out);
 	fputs(_(" -T, --tree[=<column>] use tree format output\n"), out);
 	fputs(_(" -a, --all            print all devices\n"), out);
-	fputs(_(" -b, --bytes          print SIZE in bytes rather than in human readable format\n"), out);
+	fputs(_(" -b, --bytes          print SIZE in bytes instead of a human-readable format\n"), out);
 	fputs(_(" -d, --nodeps         don't print slaves or holders\n"), out);
 	fputs(_(" -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"), out);
 	fputs(_(" -f, --fs             output info about filesystems\n"), out);
@@ -2335,9 +2335,11 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -t, --topology       output info about topology\n"), out);
 	fputs(_(" -w, --width <num>    specifies output width as number of characters\n"), out);
 	fputs(_(" -x, --sort <column>  sort output by <column>\n"), out);
-	fputs(_(" -y, --shell          use column names to be usable as shell variable identifiers\n"), out);
+	fputs(_(" -y, --shell          use column names that can be used as shell variables\n"), out);
 	fputs(_(" -z, --zoned          print zone related information\n"), out);
 	fputs(_("     --sysroot <dir>  use specified directory as system root\n"), out);
+	fputs(_("     --properties-by <list>\n"
+		"                      methods used to gather data (default: file,udev,blkid)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -H, --list-columns   list the available columns\n"), out);
@@ -2389,7 +2391,9 @@ int main(int argc, char *argv[])
 		.sort_id = -1,
 		.dedup_id = -1,
 		.flags = LSBLK_TREE,
-		.tree_id = COL_NAME
+		.tree_id = COL_NAME,
+		.properties_by = { LSBLK_METHOD_FILE, LSBLK_METHOD_UDEV,
+				     LSBLK_METHOD_BLKID, LSBLK_METHOD_NONE }
 	};
 	struct lsblk_devtree *tr = NULL;
 	int c, status = EXIT_FAILURE, collist = 0;
@@ -2403,6 +2407,7 @@ int main(int argc, char *argv[])
 		OPT_COUNTER_FILTER,
 		OPT_COUNTER,
 		OPT_HIGHLIGHT,
+		OPT_PROPERTIES_BY
 	};
 
 	static const struct option longopts[] = {
@@ -2443,6 +2448,7 @@ int main(int argc, char *argv[])
 		{ "width",	required_argument, NULL, 'w' },
 		{ "ct-filter",  required_argument, NULL, OPT_COUNTER_FILTER },
 		{ "ct",         required_argument, NULL, OPT_COUNTER },
+		{ "properties-by", required_argument, NULL, OPT_PROPERTIES_BY },
 		{ "list-columns", no_argument,     NULL, 'H' },
 		{ NULL, 0, NULL, 0 },
 	};
@@ -2657,7 +2663,10 @@ int main(int argc, char *argv[])
 		case OPT_HIGHLIGHT:
 			lsblk->hlighter = new_filter(optarg);
 			break;
-
+		case OPT_PROPERTIES_BY:
+			if (lsblk_set_properties_method(optarg) < 0)
+				errtryhelp(EXIT_FAILURE);
+			break;
 		case 'H':
 			collist = 1;
 			break;

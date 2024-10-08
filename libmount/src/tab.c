@@ -249,7 +249,7 @@ void *mnt_table_get_userdata(struct libmnt_table *tb)
  *	LABEL=foo /mnt/foo auto defaults 1 2
  *	# this comments belongs to the second fs
  *	LABEL=bar /mnt/bar auto defaults 1 2
- *	# tailing comment
+ *	# trailing comment
  *  </programlisting>
  * </informalexample>
  */

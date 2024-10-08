@@ -48,18 +48,7 @@
 #include "closestream.h"
 #include "monotonic.h"
 #include "exitcodes.h"
-
-#ifndef BLKDISCARD
-# define BLKDISCARD	_IO(0x12,119)
-#endif
-
-#ifndef BLKSECDISCARD
-# define BLKSECDISCARD	_IO(0x12,125)
-#endif
-
-#ifndef BLKZEROOUT
-# define BLKZEROOUT	_IO(0x12,127)
-#endif
+#include "blkdev.h"
 
 enum {
 	ACT_DISCARD = 0,	/* default */

@@ -979,7 +979,7 @@ static int sgi_menu_cb(struct fdisk_context **cxt0,
 			rc = fdisk_toggle_partition_flag(cxt, n, SGI_FLAG_BOOT);
 		break;
 	case 'b':
-		fdisk_sgi_set_bootfile(cxt);
+		rc = fdisk_sgi_set_bootfile(cxt);
 		break;
 	case 'c':
 		rc = fdisk_ask_partnum(cxt, &n, FALSE);

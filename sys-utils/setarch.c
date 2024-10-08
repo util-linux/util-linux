@@ -89,6 +89,11 @@
 # define PER_LINUX_FDPIC	(PER_LINUX | FDPIC_FUNCPTRS)
 #endif
 
+/* fallback for old uclibc-headers < 1.0.39 */
+#ifndef PER_LINUX32_3GB
+# define PER_LINUX32_3GB	(PER_LINUX32 | ADDR_LIMIT_3GB)
+#endif
+
 #define ALL_PERSONALITIES \
     X(PER_LINUX) \
     X(PER_LINUX_32BIT) \

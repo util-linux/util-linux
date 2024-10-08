@@ -159,7 +159,7 @@ docs:
    - cleanup DEPRECATED file  [Karel Zak]
    - cleanup README.devel, add note about coding style and Signed-off-by  [Karel Zak]
    - fix ChangeLog URL  [Pascal Terjan]
-   - fix stable branche name in README.devel  [Karel Zak]
+   - fix stable branch name in README.devel  [Karel Zak]
    - mark vipw(1) is deprecated in favor of vipw from shadow-utils  [Karel Zak]
    - refresh TODO list  [Karel Zak]
    - remove date from ReleasNotes  [Karel Zak]
@@ -302,7 +302,7 @@ mount:
    - use canonicalize in getfs_by_devname  [Karel Zak]
 namei:
    - add to identify FIFO (named pipe) and update manpage  [Li Zefan]
-   - cleanup tailing white-spaces  [Karel Zak]
+   - cleanup trailing white-spaces  [Karel Zak]
    - non-linux support (get_current_dir_name() and PATH_MAX)  [Karel Zak, Samuel Thibault]
 partx:
    - fix compiler warnings  [Karel Zak]
@@ -408,7 +408,7 @@ tests:
    - fix blkid cache usage  [Karel Zak]
    - move test_bkdev to lib/  [Karel Zak]
    - redirect libblkid cache to BLKID_FILE  [Karel Zak]
-   - rename test_sysinfo, remove tailing white-spaces  [Karel Zak]
+   - rename test_sysinfo, remove trailing white-spaces  [Karel Zak]
    - use losetup -s  [Karel Zak]
 umount:
    - add hint about lsof & fuser  [Karel Zak]

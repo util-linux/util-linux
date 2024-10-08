@@ -1,13 +1,14 @@
 #!/bin/bash
 
-# Derrived from all_syscalls.
+# Derived from all_syscalls.
 
 set -e
 set -o pipefail
 
 SED="$1"
 shift
-OUTPUT=errnos.h
+OUTPUT="$1"
+shift
 ERRNO_INCLUDES="
 #include <sys/errno.h>
 "

@@ -82,7 +82,7 @@ Use ASCII *tab* characters to separate the columns in the output instead of spac
 Define the output timestamp _format_ to be one of _notime_, _short_, _full_, or _iso_. The _notime_ variant will not print any timestamps at all, _short_ is the default, and _full_ is the same as the *--fulltimes* option. The _iso_ variant will display the timestamp in ISO-8601 format. The ISO format contains timezone information, making it preferable when printouts are investigated outside of the system.
 
 *-w*, *--fullnames*::
-Display full user names and domain names in the output.
+Display full user names and domain names / IP addresses in the output.  Domain names and IP addresses are truncated to 16 characters, and user names are truncated to 8 characters when this flag is not specified.  An asterisk is set as the last character of truncated fields.
 
 *-x*, *--system*::
 Display the system shutdown entries and run level changes.

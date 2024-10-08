@@ -157,7 +157,7 @@ static int hook_prepare_options(
 				char *raw = NULL;
 
 				/* @target placeholder is replaced later when target
-				 * is already avalable. The mountpoint does not have to exist
+				 * is already available. The mountpoint does not have to exist
 				 * yet (for example "-o X-mount.mkdir=" or --target-prefix).
 				 */
 				if (strcmp(opt_name, "rootcontext") == 0 &&

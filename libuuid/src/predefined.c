@@ -37,7 +37,7 @@
 
 /*
  * These are time-based UUIDs that are well-known in that they've
- * been canonized as part of RFC-4122, Appendex C.  They are to
+ * been canonicalized as part of RFC-4122, Appendix C.  They are to
  * be used as the namespace (ns) argument to the uuid_generate_md5()
  * and uuid_generate_sha1() functions.
  *

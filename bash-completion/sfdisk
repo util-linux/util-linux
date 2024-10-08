@@ -58,6 +58,7 @@ _sfdisk_module()
 				--show-geometry
 				--list
 				--list-free
+				--discard-free
 				--disk-id
 				--reorder
 				--show-size

@@ -24,9 +24,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Run a program in a new process group.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -f, --foregound     Make a foreground process group\n"), out);
+	fputs(_(" -f, --foreground    Make a foreground process group\n"), out);
 
-	fprintf(out, USAGE_HELP_OPTIONS(16));
+	fprintf(out, USAGE_HELP_OPTIONS(21));
 
 	fprintf(out, USAGE_MAN_TAIL("setpgid(1)"));
 	exit(EXIT_SUCCESS);
@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((ch = getopt_long(argc, argv, "+Vh", longopts, NULL)) != -1)
+	while ((ch = getopt_long(argc, argv, "+fVh", longopts, NULL)) != -1)
 		switch (ch) {
 		case 'f':
 			foreground = 1;

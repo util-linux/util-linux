@@ -367,7 +367,7 @@ static struct cdev_ops cdev_misc_ops = {
 };
 
 /*
- * tun devcie driver
+ * tun device driver
  */
 static bool cdev_tun_probe(struct cdev *cdev)
 {

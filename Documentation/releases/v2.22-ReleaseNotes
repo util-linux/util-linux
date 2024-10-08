@@ -40,7 +40,7 @@ eject(1):
   - supports new options --manualeject, --force and --no-partitions-unmount
 
 lslocks(1)
-  - this NEW COMMAND prints local system locks and it's replacement to very
+  - this NEW COMMAND prints local system locks; it's a replacement for very
     long time unmaintained lslk(1)
 
 wdctl(8):
@@ -579,7 +579,7 @@ include:
    - add stream error checking facility  [Sami Kerola]
    - define format to be constant in xasprintf()  [Sami Kerola]
    - fix spurious list.h warnings  [Sami Kerola]
-   - fix void pointer arithmetics warnings  [Sami Kerola]
+   - fix void pointer arithmetic warnings  [Sami Kerola]
    - move get_terminal_width() to ttyutils.h  [Petr Uzel]
    - rename writeall.h to all-io.h  [Petr Uzel]
 include [optutils]:
@@ -719,7 +719,7 @@ libmount:
    - improve ifdef HAVE_LIBSELINUX stuff  [Karel Zak]
    - improve mnt_tables_is_mounted  [Karel Zak]
    - make some string operations more robust  [Karel Zak]
-   - optimize for paths with tailing slash  [Karel Zak]
+   - optimize for paths with trailing slash  [Karel Zak]
    - plug a memory leak in exec_helper()  [Petr Uzel]
    - remount does not add entry to mtab file  [Karel Zak]
    - rename mnt_context_fstab_applied to mnt_context_tab_applied  [Karel Zak]

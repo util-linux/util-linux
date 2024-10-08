@@ -32,8 +32,8 @@ fstrim(8) ignores all /ect/fstab entries with X-fstrim.notrim mount option now.
 
 hardlink(1) now supports reflinks (new options --reflinks and --skip-reflinks),
 and a new option --method=<memcmp,sha1,crc32,sha256> to specify a way how to
-compare files. Now the files comparation use Linux crypto API in zero-copy way
--- all is calculated in kernel and userspace compares only hash checksums
+compare files. Now the files are compared using Linux crypto API in zero-copy
+way -- all is calculated in kernel and userspace compares only hash checksums
 (default is sha256).
 
 hwclock(8) supports new command line options --param-get and --param-set to
@@ -220,7 +220,7 @@ fixup! lsns:
    - interpolate missing namespaces for converting forests to a tree  [Masatake YAMATO]
 flock:
    - (adoc) fix example  [Karel Zak]
-   - Decribe limitations of flock  deadlock, NFS, CIFS  [Stanislav Brabec]
+   - Describe limitations of flock  deadlock, NFS, CIFS  [Stanislav Brabec]
 fsck:
    - check errno after strto..()  [Karel Zak]
    - clear SIGCHLD inherited setting  [Karel Zak]
@@ -683,7 +683,7 @@ lsfd:
    - specify column more declarative way  [Masatake YAMATO]
    - split new_file(), remove map_file_data  [Karel Zak]
    - support threads with -l option  [Masatake YAMATO]
-   - tiny change to default colummns initialization  [Karel Zak]
+   - tiny change to default columns initialization  [Karel Zak]
    - unify nodev lists into global one  [Masatake YAMATO]
    - use 'new_' prefix when we allocate something  [Karel Zak]
    - use lib/procfs.c  [Karel Zak]

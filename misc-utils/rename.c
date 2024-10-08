@@ -28,7 +28,6 @@ for i in $@; do N=`echo "$i" | sed "s/$FROM/$TO/g"`; mv "$i" "$N"; done
 #include <errno.h>
 #include <getopt.h>
 #include <fcntl.h>
-#include <libgen.h>
 #include <unistd.h>
 #include <termios.h>
 #include <sys/types.h>
@@ -40,6 +39,7 @@ for i in $@; do N=`echo "$i" | sed "s/$FROM/$TO/g"`; mv "$i" "$N"; done
 #include "closestream.h"
 #include "optutils.h"
 #include "rpmatch.h"
+#include "fileutils.h"
 
 #define RENAME_EXIT_SOMEOK	2
 #define RENAME_EXIT_NOTHING	4
@@ -59,7 +59,7 @@ static char *find_initial_replace(char *from, char *to, char *orig)
 		/* We only want to search in the final path component. Don't
 		   include the final '/' in that component; if `from` is empty,
 		   we want it to first match after the '/', not before. */
-		search_start = basename(orig);
+		search_start = ul_basename(orig);
 	}
 
 	return strstr(search_start, from);

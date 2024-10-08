@@ -39,6 +39,7 @@ _nsenter_module()
 				--uts=
 				--ipc=
 				--net=
+				--net-socket
 				--pid=
 				--cgroup=
 				--user=

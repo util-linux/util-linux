@@ -94,6 +94,8 @@ static const struct id_part arm_part[] = {
     { 0xd81, "Cortex-A720" },
     { 0xd82, "Cortex-X4" },
     { 0xd84, "Neoverse-V3" },
+    { 0xd85, "Cortex-X925" },
+    { 0xd87, "Cortex-A725" },
     { 0xd8e, "Neoverse-N3" },
     { -1, "unknown" },
 };
@@ -134,6 +136,7 @@ static const struct id_part apm_part[] = {
 };
 
 static const struct id_part qcom_part[] = {
+    { 0x001, "Oryon" },
     { 0x00f, "Scorpion" },
     { 0x02d, "Scorpion" },
     { 0x04d, "Krait" },
@@ -331,12 +334,47 @@ static int parse_id(const char *str)
 
 #define parse_model_id(_cxt)		(parse_id((_cxt)->model))
 
-static inline int parse_implementer_id(struct lscpu_cputype *ct)
+static inline int get_implementer_id(struct lscpu_cputype *ct)
 {
 	if (ct->vendor_id)
 		return ct->vendor_id;
-	ct->vendor_id = parse_id(ct->vendor);
+	return parse_id(ct->vendor);
+}
+
+static inline int parse_implementer_id(struct lscpu_cputype *ct)
+{
+	int id;
+
+	if (ct->vendor_id)
+		return ct->vendor_id;
+	id = get_implementer_id(ct);
+	if (id <= 0)
+		return id;
+
+	ct->vendor_id = id;
 	return ct->vendor_id;
+}
+
+int is_arm(struct lscpu_cxt *cxt)
+{
+	size_t i;
+
+	if (is_live(cxt))
+		return strcmp(cxt->arch->name, "aarch64") == 0;
+
+	/* dump; assume ARM if vendor ID is known */
+	for (i = 0; i < cxt->ncputypes; i++) {
+
+		int j, id = get_implementer_id(cxt->cputypes[i]);
+		if (id <= 0)
+			continue;
+		for (j = 0; hw_implementer[j].id != -1; j++) {
+			if (hw_implementer[j].id == id)
+				return 1;
+		}
+	}
+
+	return 0;
 }
 
 /*
@@ -411,13 +449,13 @@ static int arm_rXpY_decode(struct lscpu_cputype *ct)
 
 static void arm_decode(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
 {
-	if (!cxt->noalive && access(_PATH_SYS_DMI, R_OK) == 0)
+	if (is_live(cxt) && access(_PATH_SYS_DMI, R_OK) == 0)
 		dmi_decode_cputype(ct);
 
 	arm_ids_decode(ct);
 	arm_rXpY_decode(ct);
 
-	if (!cxt->noalive && cxt->is_cluster)
+	if (is_live(cxt) && cxt->is_cluster)
 		ct->nr_socket_on_cluster = get_number_of_physical_sockets_from_dmi();
 }
 
@@ -425,7 +463,7 @@ static int is_cluster_arm(struct lscpu_cxt *cxt)
 {
 	struct stat st;
 
-	if (!cxt->noalive
+	if (is_live(cxt)
 	    && strcmp(cxt->arch->name, "aarch64") == 0
 	    && stat(_PATH_ACPI_PPTT, &st) < 0 && cxt->ncputypes == 1)
 		return 1;

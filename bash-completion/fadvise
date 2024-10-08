@@ -5,7 +5,7 @@ _fadvise_module()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     case $prev in
-	'-a'|'--advise')
+	'-a'|'--advice')
 	    ADVS='normal
 		  sequential
 		  random
@@ -25,7 +25,7 @@ _fadvise_module()
     esac
     case $cur in
 	-*)
-	    OPTS='--advise
+	    OPTS='--advice
 		  --length
 		  --offset
 		  --help

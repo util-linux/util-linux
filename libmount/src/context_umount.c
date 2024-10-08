@@ -347,13 +347,12 @@ static int lookup_umount_fs_by_mountinfo(struct libmnt_context *cxt, const char 
 	return 0;
 }
 
-/* This function searchs for FS according to cxt->fs->target,
- * apply result to cxt->fs and it's umount replacement to
- * mnt_context_apply_fstab(), use mnt_context_tab_applied()
- * to check result.
+/*
+ * This function searches for the file system according to cxt->fs->target and
+ * applies the result to cxt->fs. This function is a umount replacement for
+ * mnt_context_apply_fstab(). Use mnt_context_tab_applied() to check the result.
  *
- * The goal is to minimize situations when we need to parse
- * /proc/self/mountinfo.
+ * The goal is to minimize situations when we need to parse /proc/self/mountinfo.
  */
 static int lookup_umount_fs(struct libmnt_context *cxt)
 {
@@ -741,7 +740,7 @@ static int exec_helper(struct libmnt_context *cxt)
 							i, args[i]));
 		DBG_FLUSH;
 		execv(cxt->helper, (char * const *) args);
-		_exit(EXIT_FAILURE);
+		_exit(MNT_EX_EXEC);
 	}
 	default:
 	{
@@ -750,14 +749,20 @@ static int exec_helper(struct libmnt_context *cxt)
 		if (waitpid(pid, &st, 0) == (pid_t) -1) {
 			cxt->helper_status = -1;
 			rc = -errno;
+			DBG(CXT, ul_debugobj(cxt, "waitpid failed [errno=%d]", -rc));
 		} else {
 			cxt->helper_status = WIFEXITED(st) ? WEXITSTATUS(st) : -1;
 			cxt->helper_exec_status = rc = 0;
-		}
-		DBG(CXT, ul_debugobj(cxt, "%s executed [status=%d, rc=%d%s]",
+
+			if (cxt->helper_status == MNT_EX_EXEC) {
+				rc = -MNT_ERR_EXEC;
+				DBG(CXT, ul_debugobj(cxt, "%s exec failed", cxt->helper));
+			}
+
+			DBG(CXT, ul_debugobj(cxt, "%s forked [status=%d, rc=%d]",
 				cxt->helper,
-				cxt->helper_status, rc,
-				rc ? " waitpid failed" : ""));
+				cxt->helper_status, rc));
+		}
 		break;
 	}
 
@@ -882,7 +887,17 @@ static int do_umount(struct libmnt_context *cxt)
 	if (mnt_context_is_fake(cxt))
 		rc = 0;
 	else {
+		struct stat st;
+
 		rc = flags ? umount2(target, flags) : umount(target);
+
+		if (rc < 0
+		    && errno == EINVAL
+		    && !(flags & UMOUNT_NOFOLLOW)
+		    && !mnt_context_is_restricted(cxt)
+		    && mnt_safe_lstat(target, &st) == 0 && S_ISLNK(st.st_mode))
+			rc = umount2(target, flags | UMOUNT_NOFOLLOW);
+
 		if (rc < 0)
 			cxt->syscall_status = -errno;
 		free(tgtbuf);
@@ -1238,11 +1253,15 @@ int mnt_context_get_umount_excode(
 			char *buf,
 			size_t bufsz)
 {
-	if (mnt_context_helper_executed(cxt))
+	if (mnt_context_helper_executed(cxt)) {
 		/*
 		 * /sbin/umount.<type> called, return status
 		 */
+		if (rc == -MNT_ERR_EXEC && buf)
+			snprintf(buf, bufsz, _("failed to execute %s"), cxt->helper);
+
 		return mnt_context_get_helper_status(cxt);
+	}
 
 	if (rc == 0 && mnt_context_get_status(cxt) == 1)
 		/*

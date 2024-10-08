@@ -2,7 +2,7 @@
  * This code is from freebsd/sys/libkern/crc32.c
  *
  * Simplest table-based crc32c.  Performance is not important
- * for checking crcs on superblocks
+ * for checking CRCs on superblocks.
  */
 
 /*-

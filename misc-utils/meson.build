@@ -147,11 +147,13 @@ getopt_sources = files(
   'getopt.c',
 )
 
-install_data(
-  'getopt-example.bash',
-  'getopt-example.tcsh',
-  install_dir : docdir,
-  install_mode: 'rwxr-xr-x')
+if not get_option('build-getopt').disabled()
+  install_data(
+    'getopt-example.bash',
+    'getopt-example.tcsh',
+    install_dir : docdir,
+    install_mode: 'rwxr-xr-x')
+endif
 
 exch_sources = files(
   'exch.c',

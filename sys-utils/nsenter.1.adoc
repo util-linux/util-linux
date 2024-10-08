@@ -91,6 +91,9 @@ Enter the IPC namespace. If no file is specified, enter the IPC namespace of the
 *-n*, *--net*[=_file_]::
 Enter the network namespace. If no file is specified, enter the network namespace of the target process. If _file_ is specified, enter the network namespace specified by _file_.
 
+*-N*, *--net-socket* _fd_::
+Enter the network namespace of the target process's socket. It requires *--target* process specified.
+
 *-p*, *--pid*[=_file_]::
 Enter the PID namespace. If no file is specified, enter the PID namespace of the target process. If _file_ is specified, enter the PID namespace specified by _file_.
 

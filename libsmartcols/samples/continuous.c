@@ -112,7 +112,7 @@ int main(void)
 
 			/* Note that libsmartcols don't print \n for last line
 			 * in the table, but if you print a line somewhere in
-			 * the midle of the table you need
+			 * the middle of the table you need
 			 *
 			 *    scols_table_enable_nolinesep(tb, !done);
 			 *

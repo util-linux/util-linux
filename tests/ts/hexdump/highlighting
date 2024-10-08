@@ -57,8 +57,8 @@ $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	$FILES/ascii.in &> $TS_OUTPUT
 ts_finalize_subtest
 
-# highlight the byte at offset 194 if it's value is 0x61 (a)
-# and the byte at offset 130 if it's value is A (0x41)
+# highlight the byte at offset 194 if its value is 0x61 (a)
+# and the byte at offset 130 if its value is A (0x41)
 ts_init_subtest "1b_octal-4"
 TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
@@ -66,8 +66,8 @@ $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	$FILES/ascii.in &> $TS_OUTPUT
 ts_finalize_subtest
 
-# highlight the byte at offset 194 if it's value is 0x61 (a)
-# and the byte at offset 130 if it's value is C (0x41) (false)
+# highlight the byte at offset 194 if its value is 0x61 (a)
+# and the byte at offset 130 if its value is C (0x41) (false)
 ts_init_subtest "1b_octal-5"
 TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP $OPTS $ADDRFMT \

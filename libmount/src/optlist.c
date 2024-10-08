@@ -139,7 +139,7 @@ int mnt_optlist_register_map(struct libmnt_optlist *ls, const struct libmnt_optm
 
 	for (i = 0; i < ls->nmaps; i++) {
 		if (ls->maps[i] == map)
-			return 0;		/* already registred, ignore */
+			return 0;		/* already registered, ignore */
 	}
 	if (ls->nmaps + 1 >= MNT_OL_MAXMAPS)
 		return -ERANGE;
@@ -837,6 +837,7 @@ int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *cl
 	struct libmnt_iter itr;
 	struct libmnt_opt *opt;
 	uint64_t remount_reset = 0;
+	uint64_t atime_set = 0;
 
 	if (!ls || !ls->linux_map || !set || !clr)
 		return -EINVAL;
@@ -848,7 +849,7 @@ int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *cl
 	 * specified (except atime stuff). For backward compatibility we need
 	 * to emulate this semantic by mount_setattr(). The new
 	 * mount_setattr() has simple set/unset sematinc and nothing is
-	 * internally in kernel reseted.
+	 * reset internally in kernel.
 	 */
 	if (mnt_optlist_is_remount(ls)
 	    && !mnt_optlist_is_bind(ls)
@@ -879,29 +880,37 @@ int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *cl
 			remount_reset &= ~x;
 
 		if (opt->ent->mask & MNT_INVERT) {
-			DBG(OPTLIST, ul_debugobj(ls, " clr: %s", opt->ent->name));
-			/*
-			 * All atime settings are mutually exclusive so *clr must
-			 * have MOUNT_ATTR__ATIME set.
-			 *
-			 * See the function fs/namespace.c:build_mount_kattr()
-			 * in the linux kernel source.
-			 */
+			DBG(OPTLIST, ul_debugobj(ls, " clr: %s 0x%08" PRIx64,
+						opt->ent->name, x));
+
 			if (x == MOUNT_ATTR_RELATIME || x == MOUNT_ATTR_NOATIME ||
 			    x == MOUNT_ATTR_STRICTATIME)
 				*clr |= MOUNT_ATTR__ATIME;
 			else
 				*clr |= x;
 		} else {
-			DBG(OPTLIST, ul_debugobj(ls, " set: %s", opt->ent->name));
-			*set |= x;
-
 			if (x == MOUNT_ATTR_RELATIME || x == MOUNT_ATTR_NOATIME ||
-			    x == MOUNT_ATTR_STRICTATIME)
+			    x == MOUNT_ATTR_STRICTATIME) {
+				/* All atime settings are mutually exclusive,
+				 * the last option wins and MOUNT_ATTR__ATIME
+				 * is required in clr mask.
+				 */
+				DBG(OPTLIST, ul_debugobj(ls, " atime: %s 0x%08" PRIx64,
+							opt->ent->name, x));
 				*clr |= MOUNT_ATTR__ATIME;
+				atime_set = x;
+			} else {
+				DBG(OPTLIST, ul_debugobj(ls, " set: %s 0x%08" PRIx64,
+							opt->ent->name, x));
+				*set |= x;
+			}
 		}
 	}
 
+	if (atime_set) {
+		DBG(OPTLIST, ul_debugobj(ls, " set atime 0x%08" PRIx64, atime_set));
+		*set |= atime_set;
+	}
 	if (remount_reset)
 		*clr |= remount_reset;
 
@@ -937,7 +946,7 @@ int mnt_optlist_strdup_optstr(struct libmnt_optlist *ls, char **optstr,
 
 	*optstr = NULL;
 
-	/* For generic options srings ro/rw is expected at the begining */
+	/* For generic options strings ro/rw are expected at the beginning */
 	if ((!map || map == ls->linux_map)
 	     && (what == MNT_OL_FLTR_DFLT ||
 		 what == MNT_OL_FLTR_ALL ||
@@ -1250,7 +1259,7 @@ static const struct libmnt_optmap *get_map(const char *name)
 
 static inline unsigned long str2flg(const char *str)
 {
-	return (unsigned long) strtox64_or_err(str, "connt convert string to flags");
+	return (unsigned long) strtox64_or_err(str, "can't convert string to flags");
 }
 
 static int test_append_str(struct libmnt_test *ts __attribute__((unused)),

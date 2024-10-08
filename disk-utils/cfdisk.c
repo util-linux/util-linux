@@ -211,14 +211,6 @@ static struct cfdisk_menuitem main_menuitems[] = {
 	{ 0, NULL, NULL }
 };
 
-/* extra partinfo in name:value pairs */
-struct cfdisk_extra {
-	char *name;
-	char *data;
-
-	struct list_head exs;
-};
-
 /* line and extra partinfo list_head */
 struct cfdisk_line {
 	char			*data;		/* line data */
@@ -1740,6 +1732,8 @@ static int ui_table_goto(struct cfdisk *cf, int where)
 	DBG(UI, ul_debug("goto table %d", where));
 
 	if (where < 0)
+		where = 0;
+	if (!nparts)
 		where = 0;
 	else if ((size_t) where > nparts - 1)
 		where = nparts - 1;

@@ -460,7 +460,7 @@ static int exec_helper(struct libmnt_context *cxt)
 							i, args[i]));
 		DBG_FLUSH;
 		execv(cxt->helper, (char * const *) args);
-		_exit(EXIT_FAILURE);
+		_exit(MNT_EX_EXEC);
 	}
 	default:
 	{
@@ -469,14 +469,20 @@ static int exec_helper(struct libmnt_context *cxt)
 		if (waitpid(pid, &st, 0) == (pid_t) -1) {
 			cxt->helper_status = -1;
 			rc = -errno;
+			DBG(CXT, ul_debugobj(cxt, "waitpid failed [errno=%d]", -rc));
 		} else {
 			cxt->helper_status = WIFEXITED(st) ? WEXITSTATUS(st) : -1;
 			cxt->helper_exec_status = rc = 0;
-		}
-		DBG(CXT, ul_debugobj(cxt, "%s executed [status=%d, rc=%d%s]",
+
+			if (cxt->helper_status == MNT_EX_EXEC) {
+				rc = -MNT_ERR_EXEC;
+				DBG(CXT, ul_debugobj(cxt, "%s exec failed", cxt->helper));
+			}
+
+			DBG(CXT, ul_debugobj(cxt, "%s forked [status=%d, rc=%d]",
 				cxt->helper,
-				cxt->helper_status, rc,
-				rc ? " waitpid failed" : ""));
+				cxt->helper_status, rc));
+		}
 		break;
 	}
 
@@ -575,6 +581,15 @@ static int is_success_status(struct libmnt_context *cxt)
 	return 0;
 }
 
+static int is_termination_status(struct libmnt_context *cxt)
+{
+	if (is_success_status(cxt))
+		return 1;
+
+	return mnt_context_get_syscall_errno(cxt) != EINVAL &&
+	       mnt_context_get_syscall_errno(cxt) != ENODEV;
+}
+
 /* try mount(2) for all items in comma separated list of the filesystem @types */
 static int do_mount_by_types(struct libmnt_context *cxt, const char *types)
 {
@@ -615,7 +630,7 @@ static int do_mount_by_types(struct libmnt_context *cxt, const char *types)
 			rc = do_mount(cxt, p);
 		p = end ? end + 1 : NULL;
 		free(autotype);
-	} while (!is_success_status(cxt) && p);
+	} while (!is_termination_status(cxt) && p);
 
 	free(p0);
 	return rc;
@@ -660,10 +675,7 @@ static int do_mount_by_pattern(struct libmnt_context *cxt, const char *pattern)
 	for (fp = filesystems; *fp; fp++) {
 		DBG(CXT, ul_debugobj(cxt, " ##### trying '%s'", *fp));
 		rc = do_mount(cxt, *fp);
-		if (is_success_status(cxt))
-			break;
-		if (mnt_context_get_syscall_errno(cxt) != EINVAL &&
-		    mnt_context_get_syscall_errno(cxt) != ENODEV)
+		if (is_termination_status(cxt))
 			break;
 	}
 	mnt_free_filesystems(filesystems);
@@ -714,7 +726,7 @@ static int prepare_target(struct libmnt_context *cxt)
 		return -MNT_ERR_NAMESPACE;
 
 	/* canonicalize the path */
-	if (rc == 0) {
+	if (rc == 0 && !mnt_context_is_xnocanonicalize(cxt, "target")) {
 		struct libmnt_cache *cache = mnt_context_get_cache(cxt);
 
 		if (cache) {
@@ -1113,7 +1125,7 @@ int mnt_context_next_mount(struct libmnt_context *cxt,
 	if (!cxt || !fs || !itr)
 		return -EINVAL;
 
-	/* ingore --onlyonce, it's default behavior for --all */
+	/* ignore --onlyonce, it's default behavior for --all */
 	mnt_context_enable_onlyonce(cxt, 0);
 
 	rc = mnt_context_get_fstab(cxt, &fstab);
@@ -1414,8 +1426,16 @@ int mnt_context_get_mount_excode(
 		/*
 		 * /sbin/mount.<type> called, return status
 		 */
-		if (rc == -MNT_ERR_APPLYFLAGS && buf)
-			snprintf(buf, bufsz, _("WARNING: failed to apply propagation flags"));
+		if (buf) {
+			switch (rc) {
+			case -MNT_ERR_APPLYFLAGS:
+				snprintf(buf, bufsz, _("WARNING: failed to apply propagation flags"));
+				break;
+			case -MNT_ERR_EXEC:
+				snprintf(buf, bufsz, _("failed to execute %s"), cxt->helper);
+				break;
+			}
+		}
 
 		return mnt_context_get_helper_status(cxt);
 	}
@@ -1433,6 +1453,11 @@ int mnt_context_get_mount_excode(
 	mnt_context_get_user_mflags(cxt, &uflags);	/* userspace flags */
 
 	if (!mnt_context_syscall_called(cxt)) {
+		if (buf && cxt->errmsg) {
+			xstrncpy(buf, cxt->errmsg, bufsz);
+			return MNT_EX_USAGE;
+		}
+
 		/*
 		 * libmount errors (extra library checks)
 		 */
@@ -1572,10 +1597,13 @@ int mnt_context_get_mount_excode(
 	 */
 	syserr = mnt_context_get_syscall_errno(cxt);
 
-	if (buf && cxt->syscall_errmsg) {
-		snprintf(buf, bufsz, _("%s system call failed: %s"),
-					cxt->syscall_name ? : "mount",
-					cxt->syscall_errmsg);
+	if (buf && cxt->errmsg) {
+		if (cxt->syscall_name)
+			snprintf(buf, bufsz, _("%s system call failed: %s"),
+					cxt->syscall_name, cxt->errmsg);
+		else
+			xstrncpy(buf, cxt->errmsg, bufsz);
+
 		return MNT_EX_FAIL;
 	}
 

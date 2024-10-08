@@ -6,6 +6,6 @@ includedir=@includedir@
 Name: uuid
 Description: Universally unique id library
 Version: @LIBUUID_VERSION@
-Requires:
 Cflags: -I${includedir}/uuid
+Libs.private: @SOCKET_LIBS@ -lpthread
 Libs: -L${libdir} -luuid

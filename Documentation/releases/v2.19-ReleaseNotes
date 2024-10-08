@@ -607,7 +607,7 @@ tests:
    - add quoted optstr  [Karel Zak]
    - add utab update tests  [Karel Zak]
    - check for mtab  [Karel Zak]
-   - fix blkid MD test (missing tailing whitespaces)  [Karel Zak]
+   - fix blkid MD test (missing trailing whitespaces)  [Karel Zak]
    - fix libmount test  [Karel Zak]
    - fix strtosize() test  [Karel Zak]
    - ignore device name used in some fdisk and blkid tests  [Francesco Cosoleto]

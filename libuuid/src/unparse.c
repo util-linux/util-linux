@@ -37,8 +37,8 @@
 
 #include "uuidP.h"
 
-static char const hexdigits_lower[16] = "0123456789abcdef";
-static char const hexdigits_upper[16] = "0123456789ABCDEF";
+static char const hexdigits_lower[] = "0123456789abcdef";
+static char const hexdigits_upper[] = "0123456789ABCDEF";
 
 static void uuid_fmt(const uuid_t uuid, char *buf, char const *restrict fmt)
 {

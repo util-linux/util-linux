@@ -13,6 +13,8 @@
 #include <limits.h>
 #include <sys/stat.h>
 
+#include "c.h"
+
 /* Simple program to see if dlopen() would succeed. */
 int main(int argc, char **argv)
 {

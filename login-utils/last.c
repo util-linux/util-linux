@@ -96,6 +96,8 @@ struct last_control {
 	time_t present;		/* who where present at time_t */
 	unsigned int time_fmt;	/* time format */
 	char separator;        /* output separator */
+
+	bool fullnames_mode;
 };
 
 /* Double linked list of struct utmp's */
@@ -521,8 +523,19 @@ static int list(const struct last_control *ctl, struct utmpx *p, time_t logout_t
 	if (r < 0)
 		mem2strcpy(domain, p->ut_host, sizeof(p->ut_host), sizeof(domain));
 
+	/*
+	 * set last displayed character to an asterisk when
+	 * user/domain/ip fields are to be truncated in non-fullnames mode
+	 */
+	if (!ctl->fullnames_mode && (strnlen(p->ut_user, sizeof(p->ut_user)) > ctl->name_len))
+		p->ut_user[ctl->name_len-1] = '*';
+
 	if (ctl->showhost) {
 		if (!ctl->altlist) {
+
+			if (!ctl->fullnames_mode && (strnlen(domain, sizeof(domain)) > ctl->domain_len))
+				domain[ctl->domain_len-1] = '*';
+
 			len = snprintf(final, sizeof(final),
 				"%-8.*s%c%-12.12s%c%-16.*s%c%-*.*s%c%-*.*s%c%s\n",
 				ctl->name_len, p->ut_user, ctl->separator, utline, ctl->separator,
@@ -958,7 +971,8 @@ int main(int argc, char **argv)
 		.showhost = TRUE,
 		.name_len = LAST_LOGIN_LEN,
 		.time_fmt = LAST_TIMEFTM_SHORT,
-		.domain_len = LAST_DOMAIN_LEN
+		.domain_len = LAST_DOMAIN_LEN,
+		.fullnames_mode = false,
 	};
 	char **files = NULL;
 	size_t i, nfiles = 0;
@@ -1055,6 +1069,7 @@ int main(int argc, char **argv)
 			ctl.until = (time_t) (p / 1000000);
 			break;
 		case 'w':
+			ctl.fullnames_mode = true;
 			if (ctl.name_len < sizeof_member(struct utmpx, ut_user))
 				ctl.name_len = sizeof_member(struct utmpx, ut_user);
 			if (ctl.domain_len < sizeof_member(struct utmpx, ut_host))

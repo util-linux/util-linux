@@ -120,7 +120,10 @@ AS_CASE([$libdir],
 )
 AC_SUBST([usrlib_execdir])
 
-# static configuration maintaned by packages (e.g. /usr/lib)
+securelib_execdir='${libdir}/security'
+AC_SUBST([securelib_execdir])
+
+# static configuration maintained by packages (e.g. /usr/lib)
 AC_ARG_VAR([SYSCONFSTATICDIR],
 	   [Path to static system configuration, default ${prefix}/lib])
 AS_IF([test "x$SYSCONFSTATICDIR" = x],
@@ -562,6 +565,10 @@ AC_CHECK_DECL([strsignal],
 		[Define to 1 if have strsignal function prototype])],
 )
 
+AC_CHECK_DECL([BPF_OBJ_NAME_LEN],
+	      [have_bpf_obj_name_len=yes], [have_bpf_obj_name_len=no],
+	      [#include <linux/bpf.h>])
+
 AC_CHECK_DECL([TIOCGLCKTRMIOS],
 	      [have_tiocglcktrmios=yes], [have_tiocglcktrmios=no],
 	      [#include <sys/ioctl.h>])
@@ -621,6 +628,7 @@ AC_CHECK_FUNCS([ \
 	ntp_gettime \
 	open_tree \
 	personality \
+	pidfd_getfd \
 	pidfd_open \
 	pidfd_send_signal \
 	posix_fadvise \
@@ -675,6 +683,7 @@ AS_IF([test "x$ul_cv_syscall_setns" = xno], [
    have_setns_syscall="no"
 ])
 
+UL_CHECK_SYSCALL([pidfd_getfd])
 UL_CHECK_SYSCALL([pidfd_open])
 UL_CHECK_SYSCALL([pidfd_send_signal])
 UL_CHECK_SYSCALL([close_range])
@@ -874,7 +883,7 @@ AM_CONDITIONAL([HAVE_MANPAGES], [test "x$have_manpages" = xyes])
 
 
 AC_ARG_ENABLE([poman],
-  AS_HELP_STRING([--disable-poman], [generate translated man pages]),
+  AS_HELP_STRING([--disable-poman], [do not generate translated man pages]),
   [], [UL_DEFAULT_ENABLE([poman], [check])]
 )
 UL_BUILD_INIT([poman])
@@ -1828,7 +1837,11 @@ AC_CHECK_FUNCS([swapon])
 AC_CHECK_FUNCS([swapoff])
 
 
-UL_BUILD_INIT([lsblk], [check])
+AC_ARG_ENABLE([lsblk],
+  AS_HELP_STRING([--disable-lsblk], [do not build lsblk]),
+  [], [UL_DEFAULT_ENABLE([lsblk], [check])]
+)
+UL_BUILD_INIT([lsblk])
 UL_REQUIRES_LINUX([lsblk])
 UL_REQUIRES_BUILD([lsblk], [libblkid])
 UL_REQUIRES_BUILD([lsblk], [libmount])
@@ -1854,6 +1867,7 @@ UL_BUILD_INIT([lsfd])
 UL_REQUIRES_LINUX([lsfd])
 UL_REQUIRES_BUILD([lsfd], [libsmartcols])
 UL_REQUIRES_HAVE([lsfd], [linux_bpf_h], [linux/bpf.h header file])
+UL_REQUIRES_HAVE([lsfd], [bpf_obj_name_len], [BPF_OBJ_NAME_LEN macro in linux/bpf.h])
 AM_CONDITIONAL([BUILD_LSFD], [test "x$build_lsfd" = xyes])
 
 AC_ARG_ENABLE([lslogins],
@@ -2153,7 +2167,11 @@ UL_BUILD_INIT([readprofile], [check])
 UL_REQUIRES_LINUX([readprofile])
 AM_CONDITIONAL([BUILD_READPROFILE], [test "x$build_readprofile" = xyes])
 
-UL_BUILD_INIT([dmesg], [check])
+AC_ARG_ENABLE([dmesg],
+  AS_HELP_STRING([--disable-dmesg], [do not build dmesg]),
+  [], [UL_DEFAULT_ENABLE([dmesg], [check])]
+)
+UL_BUILD_INIT([dmesg])
 UL_REQUIRES_LINUX([dmesg])
 AM_CONDITIONAL([BUILD_DMESG], [test "x$build_dmesg" = xyes])
 
@@ -2247,7 +2265,11 @@ UL_BUILD_INIT([column], [check])
 UL_REQUIRES_BUILD([column], [libsmartcols])
 AM_CONDITIONAL([BUILD_COLUMN], [test "x$build_column" = xyes])
 
-UL_BUILD_INIT([hexdump], [yes])
+AC_ARG_ENABLE([hexdump],
+  AS_HELP_STRING([--disable-hexdump], [do not build hexdump]),
+  [], [UL_DEFAULT_ENABLE([hexdump], [check])]
+)
+UL_BUILD_INIT([hexdump])
 AM_CONDITIONAL([BUILD_HEXDUMP], [test "x$build_hexdump" = xyes])
 
 UL_BUILD_INIT([rev], [yes])
@@ -2489,7 +2511,7 @@ AC_ARG_ENABLE([more],
 )
 UL_BUILD_INIT([more])
 UL_REQUIRES_HAVE([more], [ncursesw, ncurses], [ncursesw or ncurses libraries])
-UL_REQUIRES_LINUX([more])
+UL_REQUIRES_HAVE([more], [sys_signalfd_h], [sys/signalfd.h header])
 AM_CONDITIONAL([BUILD_MORE], [test "x$build_more" = xyes])
 
 
@@ -2783,16 +2805,17 @@ AM_CONDITIONAL([BUILD_PYLIBMOUNT], [test "x$build_pylibmount" = "xyes"])
 
 # We need to introduce a verbatim dependency into the Makefile, without automake
 # trying to interpret it, so push it as a AM_SUBST_NOTMAKE variable.
-verbatim_pylibmount_dependency='
+verbatim_extra_dependency='
 
 # pylibmountexec module must be installed after usrlib_exec libraries,
 # otherwise the libtool relink step will fail to find libmount.la and
 # will try -lmount which is possibly not available.
 install-pylibmountexecLTLIBRARIES: install-usrlib_execLTLIBRARIES
+install-securelib_execLTLIBRARIES: install-usrlib_execLTLIBRARIES
 
 '
-AC_SUBST([verbatim_pylibmount_dependency])
-AM_SUBST_NOTMAKE([verbatim_pylibmount_dependency])
+AC_SUBST([verbatim_extra_dependency])
+AM_SUBST_NOTMAKE([verbatim_extra_dependency])
 
 AC_ARG_ENABLE([pg-bell],
   AS_HELP_STRING([--disable-pg-bell], [let pg not ring the bell on invalid keys]),

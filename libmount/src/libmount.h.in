@@ -241,6 +241,13 @@ enum {
  * filesystem mounted, but subsequent X-mount.idmap= failed
  */
 #define MNT_ERR_IDMAP    5013
+/**
+ * MNT_ERR_EXEC:
+ *
+ * failed to execute external program
+ */
+#define MNT_ERR_EXEC	5014
+
 
 
 /*
@@ -305,6 +312,12 @@ enum {
  */
 #define MNT_EX_SOMEOK	64
 
+/**
+ * MNT_EX_EXEC:
+ *
+ * [u]mount(8) exit code: external program execution failed
+ */
+#define MNT_EX_EXEC	126
 
 
 #ifndef __GNUC_PREREQ

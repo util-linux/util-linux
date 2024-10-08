@@ -54,7 +54,7 @@ The _size_ and _offset_ arguments may be followed by the multiplicative suffixes
 Show the status of all loop devices. Note that not all information is accessible for non-root users. See also *--list*. The old output format (as printed without *--list*) is deprecated.
 
 *-d*, *--detach* _loopdev_...::
-Detach the file or device associated with the specified loop device(s). Note that since Linux v3.7 kernel uses "lazy device destruction". The detach operation does not return *EBUSY* error anymore if device is actively used by system, but it is marked by autoclear flag and destroyed later.
+Detach the file or device associated with the specified loop device(s). Note that since Linux v3.7 kernel uses "lazy device destruction". The detach operation does not return *EBUSY* error anymore if device is actively used by system, but it is marked by autoclear flag and destroyed later. Even if the device is not used, the loop device can be destroyed later. If you need to wait for a complete removal of the loop device, call *udevadm settle* after *losetup*.
 
 *-D*, *--detach-all*::
 Detach all associated loop devices.

@@ -55,7 +55,7 @@ void *UL_RaiseExc(int e)
 			PyErr_SetString(LibmountError, "Not found required entry in fstab");
 			break;
 		case MNT_ERR_NOFSTYPE:
-			PyErr_SetString(LibmountError, "Lailed to detect filesystem type");
+			PyErr_SetString(LibmountError, "Failed to detect filesystem type");
 			break;
 		case MNT_ERR_NOSOURCE:
 			PyErr_SetString(LibmountError, "Required mount source undefined");

@@ -205,7 +205,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		"\n %s [options] <column-data-file> ...\n\n", program_invocation_short_name);
 
 	fputs(" -m, --maxout                   fill all terminal width\n", out);
-	fputs(" -M, --minout                   minimize tailing padding\n", out);
+	fputs(" -M, --minout                   minimize trailing padding\n", out);
 	fputs(" -c, --column <file>            column definition\n", out);
 	fputs(" -n, --nlines <num>             number of lines\n", out);
 	fputs(" -J, --json                     JSON output format\n", out);

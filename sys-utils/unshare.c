@@ -413,10 +413,11 @@ static struct map_range get_map_range(const char *s)
  * @filename: The file to look up the range from. This should be either
  *            ``/etc/subuid`` or ``/etc/subgid``.
  * @uid: The uid of the user whose range we should look up.
+ * @identity: (boolean) If true identity map the range, otherwise map to 0
  *
  * This finds the first subid range matching @uid in @filename.
  */
-static struct map_range read_subid_range(char *filename, uid_t uid)
+static struct map_range read_subid_range(char *filename, uid_t uid, int identity)
 {
 	char *line = NULL, *pwbuf;
 	FILE *idmap;
@@ -462,6 +463,9 @@ static struct map_range read_subid_range(char *filename, uid_t uid)
 		if (rest)
 			*rest = '\0';
 		map.count = strtoul_or_err(s, _("failed to parse subid map"));
+
+		if (identity)
+			map.inner = map.outer;
 
 		fclose(idmap);
 		free(pw);
@@ -541,15 +545,17 @@ static void add_single_map_range(struct map_range **chain, unsigned int outer,
 				 *next = map->next;
 		unsigned int inner_offset, outer_offset;
 
-		/*
-		 * Start inner IDs from zero for an auto mapping; otherwise, if
-		 * the single mapping exists and overlaps the range, remove an ID
-		 */
+		/* Start inner IDs from zero for an auto mapping */
 		if (map->inner + 1 == 0)
 			map->inner = 0;
-		else if (inner + 1 != 0 &&
-		         ((outer >= map->outer && outer <= map->outer + map->count) ||
-			  (inner >= map->inner && inner <= map->inner + map->count)))
+
+		/*
+		 * If the single mapping exists and overlaps the range, remove
+		 * an ID
+		 */
+		if (inner + 1 != 0 &&
+		    ((outer >= map->outer && outer <= map->outer + map->count) ||
+		     (inner >= map->inner && inner <= map->inner + map->count)))
 			map->count--;
 
 		/* Determine where the splits between lo, mid, and hi will be */
@@ -680,7 +686,7 @@ static void map_ids_internal(const char *type, int ppid, struct map_range *chain
  * @groupmap: The range of GIDs to map (or %NULL)
  *
  * fork_and_wait() for our parent to call sync_with_child() on @fd. Upon
- * recieving the go-ahead, use newuidmap and newgidmap to set the uid/gid map
+ * receiving the go-ahead, use newuidmap and newgidmap to set the uid/gid map
  * for our parent's PID.
  *
  * Return: The pid of the child.
@@ -725,6 +731,35 @@ static pid_t map_ids_from_child(int *fd, uid_t mapuser,
 	exit(EXIT_SUCCESS);
 }
 
+static int is_fixed(const char *interp)
+{
+	const char *flags;
+
+	flags = strrchr(interp, ':');
+
+	return strchr(flags, 'F') != NULL;
+}
+
+static void load_interp(const char *binfmt_mnt, const char *interp)
+{
+	int dirfd, fd;
+
+	dirfd = open(binfmt_mnt, O_PATH | O_DIRECTORY);
+	if (dirfd < 0)
+		err(EXIT_FAILURE, _("cannot open %s"), binfmt_mnt);
+
+	fd = openat(dirfd, "register", O_WRONLY);
+	if (fd < 0)
+		err(EXIT_FAILURE, _("cannot open %s/register"), binfmt_mnt);
+
+	if (write_all(fd, interp, strlen(interp)))
+		err(EXIT_FAILURE, _("write failed %s/register"), binfmt_mnt);
+
+	close(fd);
+
+	close(dirfd);
+}
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
@@ -760,6 +795,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --kill-child[=<signame>]  when dying, kill the forked child (implies --fork)\n"
 		"                             defaults to SIGKILL\n"), out);
 	fputs(_(" --mount-proc[=<dir>]      mount proc filesystem first (implies --mount)\n"), out);
+	fputs(_(" --mount-binfmt[=<dir>]    mount binfmt filesystem first (implies --user and --mount)\n"), out);
 	fputs(_(" --propagation slave|shared|private|unchanged\n"
 	        "                           modify mount propagation in mount namespace\n"), out);
 	fputs(_(" --setgroups allow|deny    control the setgroups syscall in user namespaces\n"), out);
@@ -771,6 +807,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -G, --setgid <gid>        set gid in entered namespace\n"), out);
 	fputs(_(" --monotonic <offset>      set clock monotonic offset (seconds) in time namespaces\n"), out);
 	fputs(_(" --boottime <offset>       set clock boottime offset (seconds) in time namespaces\n"), out);
+	fputs(_(" -l, --load-interp <file>  load binfmt definition in the namespace (implies --mount-binfmt)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(27));
@@ -783,6 +820,7 @@ int main(int argc, char *argv[])
 {
 	enum {
 		OPT_MOUNTPROC = CHAR_MAX + 1,
+		OPT_MOUNTBINFMT,
 		OPT_PROPAGATION,
 		OPT_SETGROUPS,
 		OPT_KILLCHILD,
@@ -794,6 +832,7 @@ int main(int argc, char *argv[])
 		OPT_MAPGROUP,
 		OPT_MAPGROUPS,
 		OPT_MAPAUTO,
+		OPT_MAPSUBIDS,
 	};
 	static const struct option longopts[] = {
 		{ "help",          no_argument,       NULL, 'h'             },
@@ -811,6 +850,7 @@ int main(int argc, char *argv[])
 		{ "fork",          no_argument,       NULL, 'f'             },
 		{ "kill-child",    optional_argument, NULL, OPT_KILLCHILD   },
 		{ "mount-proc",    optional_argument, NULL, OPT_MOUNTPROC   },
+		{ "mount-binfmt",  optional_argument, NULL, OPT_MOUNTBINFMT },
 		{ "map-user",      required_argument, NULL, OPT_MAPUSER     },
 		{ "map-users",     required_argument, NULL, OPT_MAPUSERS    },
 		{ "map-group",     required_argument, NULL, OPT_MAPGROUP    },
@@ -818,6 +858,7 @@ int main(int argc, char *argv[])
 		{ "map-root-user", no_argument,       NULL, 'r'             },
 		{ "map-current-user", no_argument,    NULL, 'c'             },
 		{ "map-auto",      no_argument,       NULL, OPT_MAPAUTO     },
+		{ "map-subids",    no_argument,       NULL, OPT_MAPSUBIDS   },
 		{ "propagation",   required_argument, NULL, OPT_PROPAGATION },
 		{ "setgroups",     required_argument, NULL, OPT_SETGROUPS   },
 		{ "keep-caps",     no_argument,       NULL, OPT_KEEPCAPS    },
@@ -827,6 +868,7 @@ int main(int argc, char *argv[])
 		{ "wd",		   required_argument, NULL, 'w'		    },
 		{ "monotonic",     required_argument, NULL, OPT_MONOTONIC   },
 		{ "boottime",      required_argument, NULL, OPT_BOOTTIME    },
+		{ "load-interp",   required_argument, NULL, 'l'		    },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -839,9 +881,11 @@ int main(int argc, char *argv[])
 	struct map_range *groupmap = NULL;
 	int kill_child_signo = 0; /* 0 means --kill-child was not used */
 	const char *procmnt = NULL;
+	const char *binfmt_mnt = NULL;
 	const char *newroot = NULL;
 	const char *newdir = NULL;
 	pid_t pid_bind = 0, pid_idmap = 0;
+	const char *newinterp = NULL;
 	pid_t pid = 0;
 #ifdef UL_HAVE_PIDFD
 	int fd_parent_pid = -1;
@@ -864,7 +908,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "+fhVmuinpCTUrR:w:S:G:c", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "+fhVmuinpCTUrR:w:S:G:cl:", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'f':
 			forkit = 1;
@@ -913,6 +957,15 @@ int main(int argc, char *argv[])
 			unshare_flags |= CLONE_NEWNS;
 			procmnt = optarg ? optarg : "/proc";
 			break;
+		case OPT_MOUNTBINFMT:
+			unshare_flags |= CLONE_NEWNS | CLONE_NEWUSER;
+			binfmt_mnt = optarg;
+			if (!binfmt_mnt) {
+				if (!procmnt)
+					procmnt = "/proc";
+				binfmt_mnt = _PATH_PROC_BINFMT_MISC;
+			}
+			break;
 		case OPT_MAPUSER:
 			unshare_flags |= CLONE_NEWUSER;
 			mapuser = get_user(optarg, _("failed to parse uid"));
@@ -935,7 +988,10 @@ int main(int argc, char *argv[])
 			unshare_flags |= CLONE_NEWUSER;
 			if (!strcmp(optarg, "auto"))
 				insert_map_range(&usermap,
-					read_subid_range(_PATH_SUBUID, real_euid));
+						 read_subid_range(_PATH_SUBUID, real_euid, 0));
+			else if (!strcmp(optarg, "subids"))
+				insert_map_range(&usermap,
+						 read_subid_range(_PATH_SUBUID, real_euid, 1));
 			else if (!strcmp(optarg, "all"))
 				read_kernel_map(&usermap, _PATH_PROC_UIDMAP);
 			else
@@ -945,7 +1001,10 @@ int main(int argc, char *argv[])
 			unshare_flags |= CLONE_NEWUSER;
 			if (!strcmp(optarg, "auto"))
 				insert_map_range(&groupmap,
-					read_subid_range(_PATH_SUBGID, real_euid));
+						 read_subid_range(_PATH_SUBGID, real_euid, 0));
+			else if (!strcmp(optarg, "subids"))
+				insert_map_range(&usermap,
+						 read_subid_range(_PATH_SUBGID, real_euid, 1));
 			else if (!strcmp(optarg, "all"))
 				read_kernel_map(&groupmap, _PATH_PROC_GIDMAP);
 			else
@@ -953,8 +1012,13 @@ int main(int argc, char *argv[])
 			break;
 		case OPT_MAPAUTO:
 			unshare_flags |= CLONE_NEWUSER;
-			insert_map_range(&usermap, read_subid_range(_PATH_SUBUID, real_euid));
-			insert_map_range(&groupmap, read_subid_range(_PATH_SUBGID, real_euid));
+			insert_map_range(&usermap, read_subid_range(_PATH_SUBUID, real_euid, 0));
+			insert_map_range(&groupmap, read_subid_range(_PATH_SUBGID, real_euid, 0));
+			break;
+		case OPT_MAPSUBIDS:
+			unshare_flags |= CLONE_NEWUSER;
+			insert_map_range(&usermap, read_subid_range(_PATH_SUBUID, real_euid, 1));
+			insert_map_range(&groupmap, read_subid_range(_PATH_SUBGID, real_euid, 1));
 			break;
 		case OPT_SETGROUPS:
 			setgrpcmd = setgroups_str2id(optarg);
@@ -997,6 +1061,15 @@ int main(int argc, char *argv[])
                 case OPT_BOOTTIME:
 			boottime = strtos64_or_err(optarg, _("failed to parse boottime offset"));
 			force_boottime = 1;
+			break;
+		case 'l':
+			unshare_flags |= CLONE_NEWNS | CLONE_NEWUSER;
+			if (!binfmt_mnt) {
+				if (!procmnt)
+					procmnt = "/proc";
+				binfmt_mnt = _PATH_PROC_BINFMT_MISC;
+			}
+			newinterp = optarg;
 			break;
 
 		case 'h':
@@ -1152,6 +1225,13 @@ int main(int argc, char *argv[])
 	if ((unshare_flags & CLONE_NEWNS) && propagation)
 		set_propagation(propagation);
 
+	if (newinterp && is_fixed(newinterp) && newroot) {
+		if (mount("binfmt_misc", _PATH_PROC_BINFMT_MISC, "binfmt_misc",
+			  MS_NOSUID|MS_NOEXEC|MS_NODEV, NULL) != 0)
+			err(EXIT_FAILURE, _("mount %s failed"), _PATH_PROC_BINFMT_MISC);
+		load_interp(_PATH_PROC_BINFMT_MISC, newinterp);
+	}
+
 	if (newroot) {
 		if (chroot(newroot) != 0)
 			err(EXIT_FAILURE,
@@ -1177,6 +1257,14 @@ int main(int argc, char *argv[])
 		if (mount("proc", procmnt, "proc", MS_NOSUID|MS_NOEXEC|MS_NODEV, NULL) != 0)
 			err(EXIT_FAILURE, _("mount %s failed"), procmnt);
 	}
+
+	if (binfmt_mnt) {
+		if (mount("binfmt_misc", binfmt_mnt, "binfmt_misc",
+			  MS_NOSUID|MS_NOEXEC|MS_NODEV, NULL) != 0)
+			err(EXIT_FAILURE, _("mount %s failed"), binfmt_mnt);
+	}
+	if (newinterp && !(is_fixed(newinterp) && newroot))
+		load_interp(binfmt_mnt, newinterp);
 
 	if (force_gid) {
 		if (setgroups(0, NULL) != 0)	/* drop supplementary groups */

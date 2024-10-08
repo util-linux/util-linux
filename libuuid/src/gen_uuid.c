@@ -80,6 +80,8 @@
 #if defined(__linux__) && defined(HAVE_SYS_SYSCALL_H)
 #include <sys/syscall.h>
 #endif
+#include <pthread.h>
+#include <signal.h>
 
 #include "all-io.h"
 #include "uuidP.h"
@@ -89,12 +91,9 @@
 #include "c.h"
 #include "md5.h"
 #include "sha1.h"
+#include "timeutils.h"
 
-#ifdef HAVE_TLS
 #define THREAD_LOCAL static __thread
-#else
-#define THREAD_LOCAL static
-#endif
 
 #ifdef _WIN32
 static void gettimeofday (struct timeval *tv, void *dummy)
@@ -117,6 +116,17 @@ static void gettimeofday (struct timeval *tv, void *dummy)
 static int getuid (void)
 {
 	return 1;
+}
+#endif
+
+#ifdef TEST_PROGRAM
+#define gettimeofday gettimeofday_fixed
+
+static int gettimeofday_fixed(struct timeval *tv, void *tz __attribute__((unused)))
+{
+	tv->tv_sec = 1645557742;
+	tv->tv_usec = 123456;
+	return 0;
 }
 #endif
 
@@ -453,7 +463,7 @@ error:
 	return -1;
 }
 
-#if defined(HAVE_UUIDD) && defined(HAVE_SYS_UN_H)
+#if defined(HAVE_UUIDD) && defined(HAVE_SYS_UN_H) && !defined(TEST_PROGRAM)
 
 /*
  * Try using the uuidd daemon to generate the UUID
@@ -575,6 +585,13 @@ int __uuid_generate_time_cont(uuid_t out, int *num, uint32_t cont_offset)
 #define CS_MAX		(1<<18)
 #define CS_FACTOR	2
 
+static void __uuid_set_variant_and_version(uuid_t uuid, int version)
+{
+	uuid[6] = (uuid[6] & UUID_TYPE_MASK) | version << UUID_TYPE_SHIFT;
+	/* only DCE is supported */
+	uuid[8] = (uuid[8] & 0x3F) | 0x80;
+}
+
 /*
  * Generate time-based UUID and store it to @out
  *
@@ -583,64 +600,76 @@ int __uuid_generate_time_cont(uuid_t out, int *num, uint32_t cont_offset)
  * If neither of these is possible (e.g. because of insufficient permissions), it generates
  * the UUID anyway, but returns -1. Otherwise, returns 0.
  */
-static int uuid_generate_time_generic(uuid_t out) {
-#ifdef HAVE_TLS
-	/* thread local cache for uuidd based requests */
-	THREAD_LOCAL int		num = 0;
-	THREAD_LOCAL int		cache_size = CS_MIN;
-	THREAD_LOCAL int		last_used = 0;
-	THREAD_LOCAL struct uuid	uu;
-	THREAD_LOCAL time_t		last_time = 0;
-	time_t				now;
 
-	if (num > 0) { /* expire cache */
+/* thread local cache for uuidd based requests */
+THREAD_LOCAL struct {
+	int		num;
+	int		cache_size;
+	int		last_used;
+	struct uuid	uu;
+	time_t		last_time;
+} uuidd_cache = {
+	.cache_size = CS_MIN,
+};
+
+static void reset_uuidd_cache(void)
+{
+	memset(&uuidd_cache, 0, sizeof(uuidd_cache));
+	uuidd_cache.cache_size = CS_MIN;
+}
+
+static int uuid_generate_time_generic(uuid_t out) {
+	static volatile sig_atomic_t atfork_registered;
+	time_t	now;
+
+	if (!atfork_registered) {
+		pthread_atfork(NULL, NULL, reset_uuidd_cache);
+		atfork_registered = 1;
+	}
+
+	if (uuidd_cache.num > 0) { /* expire cache */
 		now = time(NULL);
-		if (now > last_time+1) {
-			last_used = cache_size - num;
-			num = 0;
+		if (now > uuidd_cache.last_time+1) {
+			uuidd_cache.last_used = uuidd_cache.cache_size - uuidd_cache.num;
+			uuidd_cache.num = 0;
 		}
 	}
-	if (num <= 0) { /* fill cache */
+	if (uuidd_cache.num <= 0) { /* fill cache */
 		/*
 		 * num + OP_BULK provides a local cache in each application.
 		 * Start with a small cache size to cover short running applications
 		 * and adjust the cache size over the runntime.
 		 */
-		if ((last_used == cache_size) && (cache_size < CS_MAX))
-			cache_size *= CS_FACTOR;
-		else if ((last_used < (cache_size / CS_FACTOR)) && (cache_size > CS_MIN))
-			cache_size /= CS_FACTOR;
+		if ((uuidd_cache.last_used == uuidd_cache.cache_size) && (uuidd_cache.cache_size < CS_MAX))
+			uuidd_cache.cache_size *= CS_FACTOR;
+		else if ((uuidd_cache.last_used < (uuidd_cache.cache_size / CS_FACTOR)) && (uuidd_cache.cache_size > CS_MIN))
+			uuidd_cache.cache_size /= CS_FACTOR;
 
-		num = cache_size;
+		uuidd_cache.num = uuidd_cache.cache_size;
 
 		if (get_uuid_via_daemon(UUIDD_OP_BULK_TIME_UUID,
-					out, &num) == 0) {
-			last_time = time(NULL);
-			uuid_unpack(out, &uu);
-			num--;
+					out, &uuidd_cache.num) == 0) {
+			uuidd_cache.last_time = time(NULL);
+			uuid_unpack(out, &uuidd_cache.uu);
+			uuidd_cache.num--;
 			return 0;
 		}
 		/* request to daemon failed, reset cache */
-		num = 0;
-		cache_size = CS_MIN;
+		reset_uuidd_cache();
 	}
-	if (num > 0) { /* serve uuid from cache */
-		uu.time_low++;
-		if (uu.time_low == 0) {
-			uu.time_mid++;
-			if (uu.time_mid == 0)
-				uu.time_hi_and_version++;
+	if (uuidd_cache.num > 0) { /* serve uuid from cache */
+		uuidd_cache.uu.time_low++;
+		if (uuidd_cache.uu.time_low == 0) {
+			uuidd_cache.uu.time_mid++;
+			if (uuidd_cache.uu.time_mid == 0)
+				uuidd_cache.uu.time_hi_and_version++;
 		}
-		num--;
-		uuid_pack(&uu, out);
-		if (num == 0)
-			last_used = cache_size;
+		uuidd_cache.num--;
+		uuid_pack(&uuidd_cache.uu, out);
+		if (uuidd_cache.num == 0)
+			uuidd_cache.last_used = uuidd_cache.cache_size;
 		return 0;
 	}
-#else
-	if (get_uuid_via_daemon(UUIDD_OP_TIME_UUID, out, 0) == 0)
-		return 0;
-#endif
 
 	return __uuid_generate_time(out, NULL);
 }
@@ -659,6 +688,47 @@ void uuid_generate_time(uuid_t out)
 int uuid_generate_time_safe(uuid_t out)
 {
 	return uuid_generate_time_generic(out);
+}
+
+void uuid_generate_time_v6(uuid_t out)
+{
+	uint32_t clock_high, clock_low;
+	uint16_t clock_seq;
+
+	get_clock(&clock_high, &clock_low, &clock_seq, NULL);
+
+	out[0] = clock_high >> 20;
+	out[1] = clock_high >> 12;
+	out[2] = clock_high >>  4;
+	out[3] = clock_high <<  4;
+	out[3] |= clock_low >> 28;
+	out[4] = clock_low >> 20;
+	out[5] = clock_low >> 12;
+	out[6] = clock_low >>  8;
+	out[7] = clock_low >>  0;
+
+	ul_random_get_bytes(out + 8, 8);
+	__uuid_set_variant_and_version(out, UUID_TYPE_DCE_TIME_V6);
+}
+
+// FIXME variable additional information
+void uuid_generate_time_v7(uuid_t out)
+{
+	struct timeval tv;
+	uint64_t ms;
+
+	gettimeofday(&tv, NULL);
+
+	ms = tv.tv_sec * MSEC_PER_SEC + tv.tv_usec / USEC_PER_MSEC;
+
+	out[0] = ms >> 40;
+	out[1] = ms >> 32;
+	out[2] = ms >> 24;
+	out[3] = ms >> 16;
+	out[4] = ms >>  8;
+	out[5] = ms >>  0;
+	ul_random_get_bytes(out + 6, 10);
+	__uuid_set_variant_and_version(out, UUID_TYPE_DCE_TIME_V7);
 }
 
 
@@ -760,3 +830,25 @@ void uuid_generate_sha1(uuid_t out, const uuid_t ns, const char *name, size_t le
 	uu.time_hi_and_version = (uu.time_hi_and_version & 0x0FFF) | 0x5000;
 	uuid_pack(&uu, out);
 }
+
+#ifdef TEST_PROGRAM
+int main(void)
+{
+	char buf[UUID_STR_LEN];
+	uuid_t uuid;
+
+	uuid_generate_time(uuid);
+	uuid_unparse(uuid, buf);
+	printf("%s\n", buf);
+
+	uuid_generate_time_v6(uuid);
+	uuid_unparse(uuid, buf);
+	printf("%s\n", buf);
+
+	uuid_generate_time_v7(uuid);
+	uuid_unparse(uuid, buf);
+	printf("%s\n", buf);
+
+	return 0;
+}
+#endif

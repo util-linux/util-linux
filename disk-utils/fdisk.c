@@ -59,9 +59,6 @@
 # ifdef HAVE_LINUX_FS_H
 #  include <linux/fs.h>
 # endif
-# ifndef BLKDISCARD
-#   define BLKDISCARD     _IO(0x12,119)
-# endif
 #endif
 
 int pwipemode = WIPEMODE_AUTO;
@@ -833,7 +830,7 @@ static void discard_partition(struct fdisk_context *cxt)
 	}
 
 	if (!fdisk_partition_has_size(pa) || !fdisk_partition_has_start(pa)) {
-		fdisk_warnx(cxt, _("Partition %zu has unspeficied range"), n + 1);
+		fdisk_warnx(cxt, _("Partition %zu has an unspecified range."), n + 1);
 		goto done;
 	}
 
@@ -868,7 +865,7 @@ static void discard_freespace(struct fdisk_context *cxt)
 		goto done;
 
 	if (!fdisk_partition_has_size(pa) || !fdisk_partition_has_start(pa)) {
-		fdisk_warnx(cxt, _("Free space %"PRIu64 "has unspeficied range"), n);
+		fdisk_warnx(cxt, _("Free space %"PRIu64 "has an unspecified range"), n);
 		goto done;
 	}
 

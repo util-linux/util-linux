@@ -187,7 +187,7 @@ fstrim:
 fstrim -a/-A:
    - Skip read-only volumes  [Stanislav Brabec]
 fstrim.c:
-   - Remove commnet about vfat not supporting fstrim  [Marcos Paulo de Souza]
+   - Remove comment about vfat not supporting fstrim  [Marcos Paulo de Souza]
 hardlink:
    - (man) add AVAILABILITY  [Karel Zak]
    - add first simple tests  [Ruediger Meier]
@@ -348,7 +348,7 @@ libsmartcols:
    - (docs) add reference to v2.33 and v2.34  [Karel Zak]
    - (groups) improve debug messages  [Karel Zak]
    - (groups) improve scols_table_group_lines() args check [coverity scan]  [Karel Zak]
-   - (groups) print group childrent after regualr tree  [Karel Zak]
+   - (groups) print group children after regular tree  [Karel Zak]
    - (groups) remove hardcoded const numbers  [Karel Zak]
    - (groups) use print functions tp calculate grpset  [Karel Zak]
    - add another UTF symbols  [Karel Zak]
@@ -357,7 +357,7 @@ libsmartcols:
    - add grouping samples  [Karel Zak]
    - add is_last_child(), move is_last_column()  [Karel Zak]
    - add lines grouping support  [Karel Zak]
-   - cell width calulation cleanup  [Karel Zak]
+   - cell width calculation cleanup  [Karel Zak]
    - fix  variable shadowing  [Sami Kerola]
    - fix docs  [Karel Zak]
    - fix groups reset, add debugs  [Karel Zak]

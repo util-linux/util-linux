@@ -198,7 +198,7 @@ static const struct colinfo *get_column_info(unsigned num)
 	return &infos[ get_column_id(num) ];
 }
 
-/* We preffer cdev /dev/watchdog0 as this device has node in
+/* We prefer cdev /dev/watchdog0 as this device has node in
  * /sys/class/watchdog/. The old miscdev /dev/watchdog is fallback for old
  * systemds only.
  */
@@ -608,6 +608,9 @@ static int read_governors(struct wd_device *wd)
 
 static bool should_read_from_device(struct wd_device *wd)
 {
+	if (wd->no_sysfs)
+		return true;
+
 	if (!wd->has_nowayout)
 		return false;
 

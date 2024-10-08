@@ -60,6 +60,10 @@ Only try to link files with the same directory name. The top-level directory (as
 *-f*, *--respect-name*::
 Only try to link files with the same (base)name. It's strongly recommended to use long options rather than *-f* which is interpreted in a different way by other *hardlink* implementations.
 
+*-F*, *--prioritize-trees*::
+Keep files found in the earliest specified top-level directory if there are multiple identical files in different trees.
+For example, *hardlink foo/ bar/* will link files in bar/ to equal files in the foo/ directory.
+
 *-i*, *--include* _regex_::
 A regular expression to include files. If the option *--exclude* has been given, this option re-includes files which would otherwise be excluded. If the option is used without *--exclude*, only files matched by the pattern are included.
 

@@ -87,14 +87,14 @@
  *  <programlisting>
  * blkid_probe pr;
  * blkid_partlist ls;
- * int nparts, i;
+ * int nparts = 0, i;
  *
  * pr = blkid_new_probe_from_filename(devname);
  * if (!pr)
  *	err("%s: failed to open device", devname);
- *
  * ls = blkid_probe_get_partitions(pr);
- * nparts = blkid_partlist_numof_partitions(ls);
+ * if (ls)
+ *	nparts = blkid_partlist_numof_partitions(ls);
  *
  * for (i = 0; i < nparts; i++) {
  *      blkid_partition par = blkid_partlist_get_partition(ls, i);

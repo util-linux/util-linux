@@ -370,6 +370,25 @@ int ul_path_stat(struct path_cxt *pc, struct stat *sb, int flags, const char *pa
 	return rc;
 }
 
+int ul_path_vstatf(struct path_cxt *pc, struct stat *sb, int flags, const char *path, va_list ap)
+{
+	const char *p = ul_path_mkpath(pc, path, ap);
+
+	return !p ? -errno : ul_path_stat(pc, sb, flags, p);
+}
+
+int ul_path_statf(struct path_cxt *pc, struct stat *sb, int flags, const char *path, ...)
+{
+	va_list ap;
+	int rc;
+
+	va_start(ap, path);
+	rc = ul_path_vstatf(pc, sb, flags, path, ap);
+	va_end(ap);
+
+	return rc;
+}
+
 int ul_path_open(struct path_cxt *pc, int flags, const char *path)
 {
 	int fd;
@@ -640,17 +659,11 @@ int ul_path_read_string(struct path_cxt *pc, char **str, const char *path)
 		return -EINVAL;
 
 	*str = NULL;
-	rc = ul_path_read(pc, buf, sizeof(buf) - 1, path);
+
+	rc = ul_path_read_buffer(pc, buf, sizeof(buf), path);
 	if (rc < 0)
 		return rc;
 
-	/* Remove trailing newline (usual in sysfs) */
-	if (rc > 0 && *(buf + rc - 1) == '\n')
-		--rc;
-	if (rc == 0)
-		return 0;
-
-	buf[rc] = '\0';
 	*str = strdup(buf);
 	if (!*str)
 		rc = -ENOMEM;
@@ -682,22 +695,31 @@ int ul_path_read_buffer(struct path_cxt *pc, char *buf, size_t bufsz, const char
 		if (*(buf + rc - 1) == '\n')
 			buf[--rc] = '\0';
 		else
-			buf[rc - 1] = '\0';
+			buf[rc] = '\0';
 	}
 
 	return rc;
 }
 
-int ul_path_readf_buffer(struct path_cxt *pc, char *buf, size_t bufsz, const char *path, ...)
+int ul_path_vreadf_buffer(struct path_cxt *pc, char *buf, size_t bufsz, const char *path, va_list ap)
 {
 	const char *p;
-	va_list ap;
 
-	va_start(ap, path);
 	p = ul_path_mkpath(pc, path, ap);
-	va_end(ap);
 
 	return !p ? -errno : ul_path_read_buffer(pc, buf, bufsz, p);
+}
+
+int ul_path_readf_buffer(struct path_cxt *pc, char *buf, size_t bufsz, const char *path, ...)
+{
+	va_list ap;
+	int rc;
+
+	va_start(ap, path);
+	rc = ul_path_vreadf_buffer(pc, buf, bufsz, path, ap);
+	va_end(ap);
+
+	return rc;
 }
 
 int ul_path_scanf(struct path_cxt *pc, const char *path, const char *fmt, ...)
@@ -999,7 +1021,6 @@ int ul_path_next_dirent(struct path_cxt *pc, DIR **sub, const char *dirname, str
 #ifdef HAVE_CPU_SET_T
 static int ul_path_cpuparse(struct path_cxt *pc, cpu_set_t **set, int maxcpus, int islist, const char *path, va_list ap)
 {
-	FILE *f;
 	size_t setsize, len = maxcpus * 7;
 	char *buf;
 	int rc;
@@ -1010,26 +1031,9 @@ static int ul_path_cpuparse(struct path_cxt *pc, cpu_set_t **set, int maxcpus, i
 	if (!buf)
 		return -ENOMEM;
 
-	f = ul_path_vfopenf(pc, "r" UL_CLOEXECSTR, path, ap);
-	if (!f) {
-		rc = -errno;
+	rc = ul_path_vreadf_buffer(pc, buf, len, path, ap);
+	if (rc < 0)
 		goto out;
-	}
-
-	if (fgets(buf, len, f) == NULL) {
-		errno = EIO;
-		rc = -errno;
-	} else
-		rc = 0;
-
-	fclose(f);
-
-	if (rc)
-		goto out;
-
-	len = strlen(buf);
-	if (len > 0 && buf[len - 1] == '\n')
-		buf[len - 1] = '\0';
 
 	*set = cpuset_alloc(maxcpus, &setsize, NULL);
 	if (!*set) {

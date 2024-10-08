@@ -33,7 +33,7 @@ Block devices can be divided into one or more logical disks called _partitions_.
 //TRANSLATORS: Keep {plus} untranslated.
 All partitioning is driven by device I/O limits (the topology) by default. *fdisk* is able to optimize the disk layout for a 4K-sector size and use an alignment offset on modern devices for MBR and GPT. It is always a good idea to follow *fdisk*'s defaults as the default values (e.g., first and last partition sectors) and partition sizes specified by the {plus}/-<size>{M,G,...} notation are always aligned according to the device properties.
 
-CHS (Cylinder-Head-Sector) addressing is deprecated and not used by default. Please, do not follow old articles and recommendations with *fdisk -S <n> -H <n>* advices for SSD or 4K-sector devices.
+CHS (Cylinder-Head-Sector) addressing is deprecated and not used by default. Please, do not follow old articles and recommendations with *fdisk -S <n> -H <n>* advice for SSD or 4K-sector devices.
 
 Note that *partx*(8) provides a rich interface for scripts to print disk layouts, *fdisk* is mostly designed for humans. Backward compatibility in the output of *fdisk* is not guaranteed. The input (the commands) should always be backward compatible.
 

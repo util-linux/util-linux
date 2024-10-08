@@ -1292,7 +1292,7 @@ int scols_table_enable_maxout(struct libscols_table *tb, int enable)
  *
  * Force library to terminate line after last column with data. The extra
  * padding is not added to the empty cells at the end of the line. The default is fill
- * tailing empty cells except the last line cell.
+ * trailing empty cells except the last line cell.
  *
  * This setting is mutually exclusive to scols_table_enable_maxout().
  *

@@ -9,7 +9,7 @@
 
 == NAME
 
-ll2_remove_entry - Remove all entries of an user.
+ll2_remove_entry - Removes all entries of a user.
 
 == SYNOPSIS
 
@@ -20,7 +20,7 @@ ll2_remove_entry - Remove all entries of an user.
 
 == DESCRIPTION
 
-Removing all database entries, defined in _context_, with the user name _user_.
+Removes all database entries, defined in _context_, with the user name _user_.
 If _context_ is NULL, the default database, defined in _LL2_DEFAULT_DATABASE_,
 will be taken.
 

@@ -328,7 +328,7 @@ libblkid:
    - return first detected crypto device  [Scott James Remnant]
    - topology - add logical and physical sector size  [Karel Zak]
    - topology - ignore non-blockdevs  [Karel Zak]
-   - trim tailing whitespace from unicode LABELs  [Karel Zak]
+   - trim trailing whitespace from unicode LABELs  [Karel Zak]
    - update docs/.gitignore  [Karel Zak]
    - use BLKSSZGET for GPT sectors  [Karel Zak]
    - use blkid_new_probe_from_filename() in docs  [Karel Zak]
@@ -403,7 +403,7 @@ namei:
    - use c.h  [Karel Zak]
 newgrp:
    - newgrp.1 formatting  [Peter Breitenlohner]
-   - use c.h, remove tailing whitespace  [Karel Zak]
+   - use c.h, remove trailing whitespace  [Karel Zak]
 partx:
    - partx.8 formatting  [Peter Breitenlohner]
    - use c.h  [Karel Zak]
@@ -453,7 +453,7 @@ setsid:
    - setsid.1 formatting  [Peter Breitenlohner]
 setterm:
    - setterm.1 formatting  [Peter Breitenlohner]
-   - use c.h, remove tailing whitespace  [Karel Zak]
+   - use c.h, remove trailing whitespace  [Karel Zak]
 sfdisk:
    - confused about disk size  [Karel Zak]
    - dump has to be $LANG insensitive  [Karel Zak]

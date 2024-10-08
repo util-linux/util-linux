@@ -766,7 +766,7 @@ XXH_PUBLIC_API XXH64_hash_t XXH64_hashFromCanonical(const XXH64_canonical_t* src
  *
  * XXH3 implementation is portable:
  * it has a generic C90 formulation that can be compiled on any platform,
- * all implementations generage exactly the same hash value on all platforms.
+ * all implementations generate exactly the same hash value on all platforms.
  * Starting from v0.8.0, it's also labelled "stable", meaning that
  * any future version will also generate the same hash value.
  *
@@ -1568,7 +1568,7 @@ static void* XXH_memcpy(void* dest, const void* src, size_t size)
  * @brief Used to prevent unwanted optimizations for @p var.
  *
  * It uses an empty GCC inline assembly statement with a register constraint
- * which forces @p var into a general purpose register (eg eax, ebx, ecx
+ * which forces @p var into a general purpose register (e.g., eax, ebx, ecx
  * on x86) and marks it as modified.
  *
  * This is used in a few places to avoid unwanted autovectorization (e.g.
@@ -2843,7 +2843,7 @@ enum XXH_VECTOR_TYPE /* fake enum */ {
  * @ingroup tuning
  * @brief Selects the minimum alignment for XXH3's accumulators.
  *
- * When using SIMD, this should match the alignment reqired for said vector
+ * When using SIMD, this should match the alignment required for said vector
  * type, so, for example, 32 for AVX2.
  *
  * Default: Auto detected.

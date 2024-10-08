@@ -67,7 +67,7 @@ Input is taken from _file_, or otherwise from standard input. Empty lines are ig
 
 The argument _columns_ for *--table-** options is a comma separated list of the
 column names as defined by *--table-columns*, or names defined by
-*--table-column* or it's column number in order as specified by input. It's
+*--table-column* or its column number in order as specified by input. It's
 possible to mix names and numbers. The special placeholder '0' (e.g. -R0) may
 be used to specify all columns and '-1' (e.g. -R -1) to specify the last visible column.
 It's possible to use ranges like '1-5' when addressing columns by numbers.
@@ -88,6 +88,9 @@ Specify the columns delimiter for table output (default is two spaces).
 
 *-s, --separator* _separators_::
 Specify the possible input item delimiters (default is whitespace).
+
+*-S, --use-spaces* _number_::
+When not in table mode, use whitespaces instead of tabulations to align the columns. This option specifies the minimum number of whitespaces that separate two columns.
 
 *-t, --table*::
 Determine the number of columns the input contains and create a table. Columns are delimited with whitespace, by default, or with the characters supplied using the *--output-separator* option. Table output is useful for pretty-printing.
@@ -211,7 +214,7 @@ Historical versions of this tool indicated that "rows are filled before columns"
 Print fstab with header line and align number to the right:
 
 ....
-sed 's/#.*//' /etc/fstab | column --table --table-columns SOURCE,TARGET,TYPE,OPTIONS,PASS,FREQ --table-right PASS,FREQ
+sed 's/#.*//' /etc/fstab | column --table --table-columns SOURCE,TARGET,TYPE,OPTIONS,FREQ,PASS --table-right FREQ,PASS
 ....
 
 Print fstab and hide unnamed columns:

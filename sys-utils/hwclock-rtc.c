@@ -439,7 +439,7 @@ int get_param_rtc(const struct hwclock_control *ctl,
 		  const char *name, uint64_t *id, uint64_t *value)
 {
 	int rtc_fd;
-	struct rtc_param param = { .param = 0 };
+	struct rtc_param param = { .index = ctl->param_idx };
 
 	/* handle name */
 	if (resolve_rtc_param_alias(name, &param.param) != 0
@@ -479,7 +479,7 @@ int get_param_rtc(const struct hwclock_control *ctl,
 int set_param_rtc(const struct hwclock_control *ctl, const char *opt0)
 {
 	int rtc_fd, rc = 1;
-	struct rtc_param param = { .param = 0 };
+	struct rtc_param param = { .index = ctl->param_idx };
 	char *tok, *opt = xstrdup(opt0);
 
 	/* handle name */

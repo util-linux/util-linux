@@ -12,7 +12,7 @@ This file may be copied under the terms of the GNU General Public License.
 
 == NAME
 
-lastlog2 - display date of last login for all users or a specific one
+lastlog2 - displays date of last login for all users or a specific one
 
 == SYNOPSIS
 
@@ -51,7 +51,7 @@ database will be overwritten.
 *-r*, *--rename* _NEWNAME_::
 This option can only be used together with *-u* (*--user*).
 
-*-s*, *--servive* _num_::
+*-s*, *--service* _num_::
 Display PAM service used to login in the last column.
 
 *-S*, *--set*::

@@ -2827,7 +2827,7 @@ static int gpt_check_table_overlap(struct fdisk_context *cxt,
  * @cxt: context
  * @nents: number of wanted entries
  *
- * Elarge GPT entries array if possible. The function check if an existing
+ * Enlarge GPT entries array if possible. The function check if an existing
  * partition does not overlap the entries array area. If yes, then it report
  * warning and returns -EINVAL.
  *
@@ -3185,8 +3185,11 @@ static int gpt_reset_alignment(struct fdisk_context *cxt)
 	} else {
 		/* estimate ranges for GPT */
 		uint64_t first, last;
+		int rc;
 
-		count_first_last_lba(cxt, &first, &last, NULL);
+		rc = count_first_last_lba(cxt, &first, &last, NULL);
+		if (rc)
+			return rc;
 		if (cxt->first_lba < first)
 			cxt->first_lba = first;
 		if (cxt->last_lba > last)

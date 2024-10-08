@@ -110,6 +110,8 @@
 #define _PATH_PROC_FDDIR	"/proc/self/fd"
 #define _PATH_PROC_TIMENS_OFF   "/proc/self/timens_offsets"
 
+#define _PATH_PROC_OOM_ADJ	"/proc/self/oom_score_adj"
+
 #define _PATH_PROC_ATTR_CURRENT	"/proc/self/attr/current"
 #define _PATH_PROC_ATTR_EXEC	"/proc/self/attr/exec"
 #define _PATH_PROC_CAPLASTCAP	"/proc/sys/kernel/cap_last_cap"
@@ -144,7 +146,7 @@
 
 #ifndef _PATH_DEV
   /*
-   * The tailing '/' in _PATH_DEV is there for compatibility with libc.
+   * The trailing '/' in _PATH_DEV is there for compatibility with libc.
    */
 # define _PATH_DEV		"/dev/"
 #endif
@@ -204,6 +206,7 @@
 /* sysctl fs paths */
 #define _PATH_PROC_SYS_FS	"/proc/sys/fs"
 #define _PATH_PROC_PIPE_MAX_SIZE	_PATH_PROC_SYS_FS "/pipe-max-size"
+#define _PATH_PROC_BINFMT_MISC	_PATH_PROC_SYS_FS "/binfmt_misc"
 
 /* irqtop paths */
 #define _PATH_PROC_INTERRUPTS	"/proc/interrupts"

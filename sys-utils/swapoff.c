@@ -23,6 +23,8 @@
 #include "c.h"
 #include "xalloc.h"
 #include "closestream.h"
+#include "pathnames.h"
+#include "path.h"
 
 #include "swapprober.h"
 #include "swapon-common.h"
@@ -271,6 +273,9 @@ int main(int argc, char *argv[])
 		warnx(_("bad usage"));
 		errtryhelp(SWAPOFF_EX_USAGE);
 	}
+
+	/* prevent the OOM killer from killing myself */
+	ul_path_write_string(NULL, "-1000", _PATH_PROC_OOM_ADJ);
 
 	mnt_init_debug(0);
 	mntcache = mnt_new_cache();

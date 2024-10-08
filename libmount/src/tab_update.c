@@ -939,7 +939,7 @@ int mnt_update_table(struct libmnt_update *upd, struct libmnt_lock *lc)
 	else if (upd->mountflags & MS_REMOUNT)
 		rc = update_modify_options(upd);	/* remount */
 	else if (upd->fs && upd->missing_options)
-		rc = update_add_options(upd);		/* mount by externel helper */
+		rc = update_add_options(upd);		/* mount by external helper */
 	else if (upd->fs)
 		rc = update_add_entry(upd);		/* mount */
 
@@ -977,7 +977,7 @@ int mnt_update_already_done(struct libmnt_update *upd)
 			DBG(UPDATE, ul_debugobj(upd, "%s: found %s %s",
 						upd->filename, src, tgt));
 
-			/* Check if utab entry (probably writen by /sbin/mount.<type>
+			/* Check if utab entry (probably written by /sbin/mount.<type>
 			 * helper) contains all options expected by this update */
 			if (mnt_optstr_get_missing(fs->user_optstr, upd->fs->user_optstr, NULL) == 0) {
 				upd->missing_options = 1;
@@ -1052,7 +1052,7 @@ int mnt_update_start(struct libmnt_update *upd)
 	    asprintf(&upd->act_filename, "%s.act", upd->filename) <= 0)
 		return -ENOMEM;
 
-	/* Use exclusive lock to avoid some other proces will remove the the
+	/* Use exclusive lock to avoid some other process will remove the the
 	 * file before it's marked as used by LOCK_SH (below) */
 	rc = update_init_lock(upd, NULL);
 	if (rc)

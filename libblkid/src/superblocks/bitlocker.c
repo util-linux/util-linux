@@ -38,11 +38,34 @@ struct bde_header_togo {
 } __attribute__((packed));
 
 
-struct bde_fve_metadata {
+struct bde_fve_metadata_block_header {
 /*   0 */ unsigned char  signature[8];
-/*   8 */ uint16_t       size;
+/*   8 */ unsigned char  __dummy1[10 - 8];
 /*  10 */ uint16_t       version;
-};
+/*  12 */ unsigned char  __dummy2[64 - 12];
+} __attribute__((packed));
+
+struct bde_fve_metadata_header {
+/*   0 */ uint32_t      size;
+/*   4 */ uint32_t      version;
+/*   8 */ uint32_t      header_size;
+/*  12 */ uint32_t      size_copy;
+/*  16 */ unsigned char volume_identifier[16];
+/*  32 */ unsigned char __dummy[48 - 32];
+} __attribute__((packed));
+
+struct bde_fve_metadata_entry {
+/*   0 */ uint16_t      size;
+/*   2 */ uint16_t      entry_type;
+/*   4 */ uint16_t      value_type;
+/*   6 */ uint16_t      version;
+/*   8 */ unsigned char data[];
+} __attribute__((packed));
+
+struct bde_fve_metadata {
+	struct bde_fve_metadata_block_header block_header;
+	struct bde_fve_metadata_header header;
+} __attribute__((packed));
 
 enum {
 	BDE_VERSION_VISTA = 0,
@@ -55,6 +78,9 @@ enum {
 #define BDE_MAGIC_TOGO		"\xeb\x58\x90MSWIN4.1"
 
 #define BDE_MAGIC_FVE		"-FVE-FS-"
+
+#define BDE_METADATA_ENTRY_TYPE_DESCRIPTION 0x0007
+#define BDE_METADATA_VALUE_TYPE_STRING      0x0002
 
 static int get_bitlocker_type(const unsigned char *buf)
 {
@@ -124,10 +150,17 @@ static int get_bitlocker_headers(blkid_probe pr,
 		return errno ? -errno : 1;
 
 	fve = (const struct bde_fve_metadata *) buf;
-	if (memcmp(fve->signature, BDE_MAGIC_FVE, sizeof(fve->signature)) != 0)
+	if (memcmp(fve->block_header.signature, BDE_MAGIC_FVE, sizeof(fve->block_header.signature)) != 0)
 		goto nothing;
-	if (buf_fve)
+
+	if (buf_fve) {
+		buf = blkid_probe_get_buffer(pr, off,
+			(uint64_t) sizeof(struct bde_fve_metadata_block_header) + le32_to_cpu(fve->header.size));
+		if (!buf)
+			return errno ? -errno : 1;
+
 		*buf_fve = buf;
+	}
 done:
 	if (type)
 		*type = kind;
@@ -149,26 +182,50 @@ static int probe_bitlocker(blkid_probe pr,
 {
 	const unsigned char *buf_fve = NULL;
 	const unsigned char *buf_hdr = NULL;
+	const struct bde_fve_metadata_entry *entry;
 	int rc, kind;
+	uint64_t off;
 
 	rc = get_bitlocker_headers(pr, &kind, &buf_hdr, &buf_fve);
 	if (rc)
 		return rc;
 
-	if (kind == BDE_VERSION_WIN7) {
-		const struct bde_header_win7 *hdr = (const struct bde_header_win7 *) buf_hdr;
-
-		/* Unfortunately, it seems volume_serial is always zero */
-		blkid_probe_sprintf_uuid(pr,
-				(const unsigned char *) &hdr->volume_serial,
-				sizeof(hdr->volume_serial),
-				"%016d", le32_to_cpu(hdr->volume_serial));
-	}
-
 	if (buf_fve) {
 		const struct bde_fve_metadata *fve = (const struct bde_fve_metadata *) buf_fve;
 
-		blkid_probe_sprintf_version(pr, "%d", fve->version);
+		blkid_probe_sprintf_version(pr, "%d", le16_to_cpu(fve->block_header.version));
+
+		for (off = sizeof(struct bde_fve_metadata_header);
+		     off + sizeof(struct bde_fve_metadata_entry) < le32_to_cpu(fve->header.size);
+		     off += le16_to_cpu(entry->size)) {
+			entry = (const struct bde_fve_metadata_entry *) ((const char *) &fve->header + off);
+			if (off % 2 ||
+			    le16_to_cpu(entry->size) < sizeof(struct bde_fve_metadata_entry) ||
+			    off + le16_to_cpu(entry->size) > le32_to_cpu(fve->header.size))
+				return -1;
+
+			if (le16_to_cpu(entry->entry_type) == BDE_METADATA_ENTRY_TYPE_DESCRIPTION &&
+			    le16_to_cpu(entry->value_type) == BDE_METADATA_VALUE_TYPE_STRING) {
+				blkid_probe_set_utf8label(pr,
+					entry->data, le16_to_cpu(entry->size) - sizeof(struct bde_fve_metadata_entry),
+					UL_ENCODE_UTF16LE);
+				break;
+			}
+		}
+
+		/* Microsoft GUID format, interpreted as explained by Raymond Chen:
+		 * https://devblogs.microsoft.com/oldnewthing/20220928-00/?p=107221
+		 */
+		blkid_probe_sprintf_uuid(pr, fve->header.volume_identifier, 16,
+			"%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+			fve->header.volume_identifier[3], fve->header.volume_identifier[2], /* uint32_t Data1 */
+			fve->header.volume_identifier[1], fve->header.volume_identifier[0],
+			fve->header.volume_identifier[5], fve->header.volume_identifier[4], /* uint16_t Data2 */
+			fve->header.volume_identifier[7], fve->header.volume_identifier[6], /* uint16_t Data3 */
+			fve->header.volume_identifier[8], fve->header.volume_identifier[9], /* uint8_t Data4[8] */
+			fve->header.volume_identifier[10], fve->header.volume_identifier[11],
+			fve->header.volume_identifier[12], fve->header.volume_identifier[13],
+			fve->header.volume_identifier[14], fve->header.volume_identifier[15]);
 	}
 	return 0;
 }

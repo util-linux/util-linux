@@ -159,7 +159,7 @@ switch_root:
    - rewrite to use fstatat() and unlinkat()  [Karel Zak]
    - use err.h, clean up return codes  [Karel Zak]
    - use file descriptor instead of path for recursiveRemove()  [Peter Jones]
-   - use snprintf() rather tan str{cpy,cat}()  [Karel Zak]
+   - use snprintf() rather than str{cpy,cat}()  [Karel Zak]
 tests:
    - add functions for work withdisk images  [Karel Zak]
    - add mdraid libblkid test  [Karel Zak]

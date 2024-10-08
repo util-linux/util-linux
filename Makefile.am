@@ -56,6 +56,7 @@ usrsbin_exec_PROGRAMS =
 man_MANS =
 pkgconfig_DATA =
 usrlib_exec_LTLIBRARIES =
+securelib_exec_LTLIBRARIES =
 bin_PROGRAMS =
 sbin_PROGRAMS =
 dist_usrbin_exec_SCRIPTS =
@@ -154,10 +155,12 @@ EXTRA_DIST += \
 # pylibmountexec module must be installed after usrlib_exec libraries,
 # otherwise the libtool relink step will fail to find libmount.la and
 # will try -lmount which is possibly not available.
+# The same for securelib_exec and liblastlog2.la
 #
 # So introduce this dependency rule:
 # install-pylibmountexecLTLIBRARIES: install-usrlib_execLTLIBRARIES
-@verbatim_pylibmount_dependency@
+# install-securelib_execLTLIBRARIES: install-usrlib_execLTLIBRARIES
+@verbatim_extra_dependency@
 
 #
 # Don't rely on configure.ac AC_CONFIG_FILES for install paths.
@@ -181,6 +184,7 @@ edit_cmd = sed \
 	 -e 's|@usrlib_execdir[@]|$(usrlib_execdir)|g' \
 	 -e 's|@usrbin_execdir[@]|$(usrbin_execdir)|g' \
 	 -e 's|@usrsbin_execdir[@]|$(usrsbin_execdir)|g' \
+	 -e 's|@SOCKET_LIBS[@]|$(SOCKET_LIBS)|g' \
 	 -e 's|@VERSION[@]|$(VERSION)|g' \
 	 -e 's|@ADJTIME_PATH[@]|$(ADJTIME_PATH)|g' \
 	 -e 's|@LIBUUID_VERSION[@]|$(LIBUUID_VERSION)|g' \

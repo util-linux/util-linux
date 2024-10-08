@@ -340,6 +340,7 @@ int mnt_fstype_is_pseudofs(const char *type)
 		"none",
 		"nsfs",
 		"overlay",
+		"pidfs",
 		"pipefs",
 		"proc",
 		"pstore",

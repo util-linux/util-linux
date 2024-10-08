@@ -29,6 +29,7 @@
 #include <linux/netlink.h>	/* NETLINK_*, NLMSG_* */
 #include <linux/rtnetlink.h>	/* RTA_*, struct rtattr,  */
 #include <linux/sock_diag.h>	/* SOCK_DIAG_BY_FAMILY */
+#include <linux/sockios.h>	/* SIOCGSKNS */
 #include <linux/un.h>		/* UNIX_PATH_MAX */
 #include <linux/unix_diag.h>	/* UNIX_DIAG_*, UDIAG_SHOW_*,
 				   struct unix_diag_req */
@@ -36,12 +37,14 @@
 #include <search.h>		/* tfind, tsearch */
 #include <stdint.h>
 #include <string.h>
+#include <sys/ioctl.h>
 #include <sys/socket.h>		/* SOCK_* */
 
 #include "sysfs.h"
 #include "bitops.h"
 
 #include "lsfd.h"
+#include "pidfd-utils.h"
 #include "sock.h"
 
 static void load_xinfo_from_proc_icmp(ino_t netns_inode, enum sysfs_byteorder byteorder);
@@ -214,6 +217,42 @@ void load_sock_xinfo(struct path_cxt *pc, const char *name, ino_t netns)
 		load_sock_xinfo_with_fd(fd, nsobj);
 		close(fd);
 	}
+}
+
+void load_fdsk_xinfo(struct proc *proc, int fd)
+{
+	int pidfd, sk, nsfd;
+	struct netns *nsobj;
+	struct stat sb;
+
+	/* This is additional/extra information, ignoring failures. */
+	pidfd = pidfd_open(proc->pid, 0);
+	if (pidfd < 0)
+		return;
+
+	sk = pidfd_getfd(pidfd, fd, 0);
+	if (sk < 0)
+		goto out_pidfd;
+
+	nsfd = ioctl(sk, SIOCGSKNS);
+	if (nsfd < 0)
+		goto out_sk;
+
+	if (fstat(nsfd, &sb) < 0)
+		goto out_nsfd;
+
+	if (is_sock_xinfo_loaded(sb.st_ino))
+		goto out_nsfd;
+
+	nsobj = mark_sock_xinfo_loaded(sb.st_ino);
+	load_sock_xinfo_with_fd(nsfd, nsobj);
+
+out_nsfd:
+	close(nsfd);
+out_sk:
+	close(sk);
+out_pidfd:
+	close(pidfd);
 }
 
 void initialize_sock_xinfos(void)

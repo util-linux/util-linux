@@ -39,6 +39,10 @@ _logger_module()
 			COMPREPLY=( $(compgen -W "msgid" -- $cur) )
 			return 0
 			;;
+		'--sd-id')
+			COMPREPLY=( $(compgen -W "timeQuality origin meta" -- $cur) )
+			return 0
+			;;
 		'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
@@ -58,6 +62,8 @@ _logger_module()
 				--priority
 				--rfc3164
 				--rfc5424
+				--sd-id
+				--sd-param
 				--server
 				--size
 				--skip-empty

@@ -112,7 +112,7 @@ Presently, Linux allows 32 swap areas. The areas in use can be seen in the file 
 
 If you don't know the page size that your machine uses, you can look it up with *getconf PAGESIZE*.
 
-To set up a swap file, it is necessary to create that file before initializing it with *mkswap*, e.g. using a command like
+Aside from *mkswap --file*, it is also possible to create the swapfile manually before initializing it with *mkswap*, e.g. using a command like
 
 ....
 # dd if=/dev/zero of=swapfile bs=1MiB count=$((8*1024))
@@ -120,7 +120,7 @@ To set up a swap file, it is necessary to create that file before initializing i
 
 to create 8GiB swapfile.
 
-Please read notes from *swapon*(8) about *the swap file use restrictions* (holes, preallocation and copy-on-write issues).
+In such a case, please read notes from *swapon*(8) about *the swap file use restrictions* (holes, preallocation and copy-on-write issues).
 
 == SEE ALSO
 

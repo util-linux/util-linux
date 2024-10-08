@@ -76,11 +76,11 @@ int lscpu_cpu_set_type(struct lscpu_cpu *cpu, struct lscpu_cputype *type)
 	if (cpu->type == type)
 		return 0;
 
+	DBG(CPU, ul_debugobj(cpu, " type %p -> %p", cpu->type, type));
 	lscpu_unref_cputype(cpu->type);
 	cpu->type = type;
 	lscpu_ref_cputype(type);
 
-	DBG(CPU, ul_debugobj(cpu, "cputype set to %s", type ? type->vendor : NULL));
 	return 0;
 }
 

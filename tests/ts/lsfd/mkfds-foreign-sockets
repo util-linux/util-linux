@@ -1,0 +1,80 @@
+#!/bin/bash
+#
+# Copyright (C) 2024 Masatake YAMATO <yamato@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="SOCK.NETNS and ENDPOINTS for sockets made in another netns"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+. "$TS_SELF/lsfd-functions.bash"
+
+ts_check_test_command "$TS_CMD_LSFD"
+ts_check_test_command "$TS_HELPER_MKFDS"
+
+ts_skip_nonroot
+# It seems that ioctls related to namespaces don't work.
+ts_skip_qemu_user
+ts_cd "$TS_OUTDIR"
+
+declare -A tcase
+tcase[NAME]="state=connected"
+tcase[SOCK.NETNS]=
+tcase[ENDPOINTS]=
+
+PID=
+NETNS=
+FD0=3
+FD1=4
+
+{
+    coproc MKFDS { "$TS_HELPER_MKFDS" foreign-sockets $FD0 $FD1 ; }
+    if read -r -u "${MKFDS[0]}" PID NETNS; then
+
+	for fd in $FD0 $FD1; do
+	    altfd=$FD0
+	    if [[ "$fd" == "$FD0" ]]; then
+		altfd=$FD1
+	    fi
+
+	    tcase[SOCK.NETNS]="$NETNS"
+	    tcase[ENDPOINTS]="$PID,test_mkfds,${altfd}rw"
+
+	    # Sort the keys to stable the test output.
+	    for t in $(for t0 in "${!tcase[@]}"; do echo "$t0"; done | sort); do
+		column=$t
+		expected=${tcase[$t]}
+		output=$(${TS_CMD_LSFD} -n -o $column -p "${PID}" -Q "FD == $fd")
+		echo "$fd/$column \$? $?"
+
+		if [[ "${output}" == "$expected" ]]; then
+		    echo "$fd/$column == 0"
+		else
+		    echo "$fd/$column == 1"
+		    echo expected: "$expected"
+		    echo actual: "$output"
+		fi
+	    done
+	done
+	echo DONE >&"${MKFDS[1]}"
+    fi
+    wait "${MKFDS_PID}"
+} > "$TS_OUTPUT" 2>&1
+if [[ "$?" == "$EPERM" ]]; then
+    ts_skip "unshare(2) is not permitted on this platform"
+fi
+
+ts_finalize

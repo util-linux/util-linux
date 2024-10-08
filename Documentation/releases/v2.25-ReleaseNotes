@@ -123,8 +123,6 @@ blkid:
 blockdev:
    - Some minor corrections to the manual  [Bjarni Ingi Gislason]
    - don't use HDIO_GETGEO  [Phillip Susi]
-buil-sys:
-   - disable in UL_BUILD_INIT() on --disable-all-programs  [Karel Zak]
 build:
    - fix some compiler warnings  [Ruediger Meier]
 build-sys:
@@ -149,6 +147,7 @@ build-sys:
    - add sys-utils/uname26.8 to gitignore  [Karel Zak]
    - cleanup bash-completion/  [Karel Zak]
    - consolidate systemd support  [Karel Zak]
+   - disable in UL_BUILD_INIT() on --disable-all-programs  [Karel Zak]
    - don't compile deprecated last(1) on --enable-all-programs  [Karel Zak]
    - don't connect _DEPENDENCIES and _LIBADD  [Karel Zak]
    - enable chfn and chsh by default  [Karel Zak]
@@ -171,7 +170,7 @@ build-sys:
    - improve the informative message when not building some util  [Benno Schulenberg]
    - libmount/python/__init__.py is always a dist file  [Ruediger Meier]
    - move libsmartcols.so to /lib if they exists  [Karel Zak]
-   - ove fdisks to disk-utils  [Karel Zak]
+   - move fdisks to disk-utils  [Karel Zak]
    - release++ (v2.25-rc1)  [Karel Zak]
    - release++ (v2.25-rc2)  [Karel Zak]
    - remove deprecated-mount/  [Karel Zak]
@@ -424,7 +423,7 @@ getopt:
 hexdump:
    - Create struct hexdump containing previously global variables.  [Ondrej Oprala]
    - Merge hexsyntax.c into hexdump.c  [Ondrej Oprala]
-   - Rename struct _pr to struct hexdump_pr and remove it's typedef  [Ondrej Oprala]
+   - Rename struct _pr to struct hexdump_pr and remove its typedef  [Ondrej Oprala]
    - add --color to the man page  [Karel Zak]
    - add __attribute__ ((__noreturn__)) to bad*() functions  [Ondrej Oprala]
    - add basic tests  [Ondrej Oprala]
@@ -520,7 +519,7 @@ kill:
    - deprecat invocation as 'pid' command name  [Sami Kerola]
    - fix bug in --all semantic  [Karel Zak]
    - fix coding style  [Sami Kerola]
-   - flip all comparions to be in smaller - greater order  [Sami Kerola]
+   - flip all comparisons to be in smaller - greater order  [Sami Kerola]
    - make kill-by-name more obvious in man page  [Karel Zak]
    - make options --pid and --queue mutually exclusive  [Sami Kerola]
    - make usage() not to return  [Sami Kerola]
@@ -649,14 +648,14 @@ libfdisk:
    - (dos) be more verbose when change bootable flag  [Karel Zak]
    - (dos) calculation of total size based on CHS in check function  [Thorsten Wilmer]
    - (dos) consolidate partition end-offset code  [Karel Zak]
-   - (dos) count fisrt usable LBA to total number of used sectors  [Karel Zak]
+   - (dos) count first usable LBA to total number of used sectors  [Karel Zak]
    - (dos) fix ext_index usage  [Karel Zak]
    - (dos) fix free part counter  [Karel Zak]
    - (dos) fix log.partition delete  [Karel Zak]
    - (dos) improve logical partition reorder command  [Karel Zak]
    - (dos) make EBR parser more robust  [Karel Zak]
    - (dos) remove get_partition_type()  [Karel Zak]
-   - (dos) use check() for dos-comaptible mode only  [Karel Zak]
+   - (dos) use check() for dos-compatible mode only  [Karel Zak]
    - (dos) use new list() and get_part() API  [Karel Zak]
    - (dos) warn on type 0  [Karel Zak]
    - (gpt) add /home GUID  [Karel Zak]
@@ -805,7 +804,7 @@ libsmartcols:
    - init symbols when necessary  [Karel Zak]
    - move some code around  [Ondrej Oprala]
    - remove unnecessary code  [Karel Zak]
-   - resuse buffer for encoded data  [Karel Zak]
+   - reuse buffer for encoded data  [Karel Zak]
    - revert the column flags API  [Ondrej Oprala]
    - rewrite test code to tree(1)-like util  [Karel Zak]
    - separate flags, add getters/setters  [Ondrej Oprala]
@@ -897,7 +896,7 @@ lslogins:
    - cleanup time formats  [Karel Zak]
    - cleanup usage()  [Karel Zak]
    - comment-in an expensive realloc  [Ondrej Oprala]
-   - conding style changes  [Karel Zak]
+   - coding style changes  [Karel Zak]
    - count per-user processes  [Ondrej Oprala]
    - fix nologins check  [Karel Zak]
    - fix option exclusivity  [Ondrej Oprala]
@@ -1016,7 +1015,7 @@ prlimit:
 pylibmount:
    - correctly import from pylibmount.so  [Dave Reisner]
    - import directly from pylibmount in tests  [Karel Zak]
-   - remove unncessary subdirectory  [Karel Zak]
+   - remove unnecessary subdirectory  [Karel Zak]
 raw:
    - Improve the typesetting of the manual  [Bjarni Ingi Gislason]
 rename:
@@ -1030,7 +1029,7 @@ script:
    - --quiet option is not quiet.  [James Hunt]
    - Also flush writes to timing file.  [Jesper Dahl Nyerup]
    - check that stdin is a terminal  [Karel Zak]
-   - clean up code to genenrate Star/Done messages  [Karel Zak]
+   - clean up code to generate Star/Done messages  [Karel Zak]
    - clean up files usage  [Karel Zak]
    - don't call TIOCGWINSZ in signal handler  [Karel Zak]
    - don't wait for empty descriptors if child is dead  [Karel Zak]
@@ -1119,7 +1118,7 @@ switch_root:
 taskset:
    - fix PERMISSIONS section of taskset man page  [Rik van Riel]
 term-utils:
-   - avoid error message string length couting errors  [Sami Kerola]
+   - avoid error message string length counting errors  [Sami Kerola]
 tests:
    - add .BE hexdump test results (from s390)  [Karel Zak]
    - add TERM= to all cal(1) tests  [Karel Zak]
@@ -1207,7 +1206,7 @@ tests:
    - split off losetup scsi_debug part  [Ruediger Meier]
    - style Makefile and make output  [Ruediger Meier]
    - swaplabel needs to respect pagesize  [Ruediger Meier]
-   - test corruted GPT headers  [Karel Zak]
+   - test corrupted GPT headers  [Karel Zak]
    - try hard to create swaplabel's test image  [Ruediger Meier]
    - ts_device_init remove useless error handling  [Ruediger Meier]
    - ts_device_init requires loop support  [Ruediger Meier]

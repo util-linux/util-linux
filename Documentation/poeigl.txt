@@ -231,7 +231,7 @@ Version 1.27 (10-May-94):
 Version 1.26 alpha (25-Apr-94):
 	Added patch from Bill Reynolds <bill@goshawk.lanl.gov> to
 	simpleinit, so it will drop into single user if /etc/rc
-	fails, eg. from fsck.
+	fails, e.g. from fsck.
 
 Version 1.25 (9-Feb-94):
 	Agetty should now work with the Linux 0.99pl15a kernel.

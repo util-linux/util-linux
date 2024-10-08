@@ -391,8 +391,8 @@ static int sgi_check_bootfile(struct fdisk_context *cxt, const char *name)
 
 	sz = strlen(name);
 
-	if (sz < 3) {
-		/* "/a\n" is minimum */
+	if (sz < 2) {
+		/* "/a" is minimum */
 		fdisk_warnx(cxt, _("Invalid bootfile!  The bootfile must "
 				   "be an absolute non-zero pathname, "
 				   "e.g. \"/unix\" or \"/unix.save\"."));
@@ -443,12 +443,14 @@ int fdisk_sgi_set_bootfile(struct fdisk_context *cxt)
 
 	fdisk_info(cxt, _("The current boot file is: %s"), sgilabel->boot_file);
 
-	rc = fdisk_ask_string(cxt, _("Enter of the new boot file"), &name);
+	rc = fdisk_ask_string(cxt, _("Enter full path of the new boot file"), &name);
 	if (rc == 0)
 		rc = sgi_check_bootfile(cxt, name);
 	if (rc) {
-		if (rc == 1)
+		if (rc == 1) {
 			fdisk_info(cxt, _("Boot file is unchanged."));
+			rc = 0;
+		}
 		goto done;
 	}
 

@@ -180,6 +180,20 @@ Print the zone related information for each device.
 *--sysroot* _directory_::
 Gather data for a Linux instance other than the instance from which the *lsblk* command is issued. The specified directory is the system root of the Linux instance to be inspected. The real device nodes in the target directory can be replaced by text files with udev attributes.
 
+*--properties-by* _list_::
+This option specifies the methods used by *lsblk* to gather information about
+filesystems and partition tables. The list is a comma-separated list of method
+names. The default setting is "file,udev,blkid". The supported methods are:
++
+*udev*;;
+Reads data from udev DB. If unsuccessful, it continues to the next probing method.
+*blkid*;;
+Reads data directly from the device using libblkid. If unsuccessful, it continues to the next probing method.
+*file*;;
+Reads data from a file. This method is only used if the --sysroot option is specified. This method always stops probing if used.
+*none*;;
+Does not probe. This method always stops probing.
+
 == EXIT STATUS
 
 0::

@@ -152,7 +152,7 @@ dnl Modifies $build_<name>  variable according to $enable_<name> and OS type. Th
 dnl $enable_<name> could be "yes", "no" and "check". If build_<name> is "no" then
 dnl all checks are skipped.
 dnl
-dnl The default <name> for $build_ and $enable_ could be overwrited by option $2.
+dnl The default <name> for $build_ and $enable_ could be overwritten by option $2.
 dnl
 AC_DEFUN([UL_REQUIRES_LINUX], [
   m4_define([suffix], m4_default([$2],$1))
@@ -181,7 +181,7 @@ dnl Modifies $build_<name>  variable according to $enable_<name> and $host. The
 dnl $enable_<name> could be "yes", "no" and "check". If build_<name> is "no" then
 dnl all checks are skipped.
 dnl
-dnl The default <name> for $build_ and $enable_ could be overwrited by option $3.
+dnl The default <name> for $build_ and $enable_ could be overwritten by option $3.
 dnl
 AC_DEFUN([UL_EXCLUDE_ARCH], [
   m4_define([suffix], m4_default([$3],$1))
@@ -214,7 +214,7 @@ dnl
 dnl The <arch> maybe a list, then at least one of the patterns in the list
 dnl have to match.
 dnl
-dnl The default <name> for $build_ and $enable_ could be overwrited by option $3.
+dnl The default <name> for $build_ and $enable_ could be overwritten by option $3.
 dnl
 AC_DEFUN([UL_REQUIRES_ARCH], [
   m4_define([suffix], m4_default([$3],$1))
@@ -253,7 +253,7 @@ dnl The <havename> maybe a list, then at least one of the items in the list
 dnl have to exist, for example: [ncurses, tinfo] means that have_ncurser=yes
 dnl *or* have_tinfo=yes must be defined.
 dnl
-dnl The default <name> for $build_ and $enable_ could be overwrited by option $4.
+dnl The default <name> for $build_ and $enable_ could be overwritten by option $4.
 dnl
 AC_DEFUN([UL_REQUIRES_HAVE], [
   m4_define([suffix], m4_default([$4],$1))
@@ -290,7 +290,7 @@ dnl ability compile AC_LANG_PROGRAM(<program_prologue>, <program_body>).
 dnl
 dnl The <desc> is description used for warning/error dnl message (e.g. "foo support").
 dnl
-dnl The default <name> for $build_ and $enable_ could be overwrited by option $5.
+dnl The default <name> for $build_ and $enable_ could be overwritten by option $5.
 
 AC_DEFUN([UL_REQUIRES_COMPILE], [
   m4_define([suffix], m4_default([$5],$1))
@@ -328,7 +328,7 @@ dnl ability compile AC_PATH_PROG().
 dnl
 dnl The <desc> is description used for warning/error dnl message (e.g. "foo support").
 dnl
-dnl The default <name> for $build_ and $enable_ could be overwrited by option $5.
+dnl The default <name> for $build_ and $enable_ could be overwritten by option $5.
 AC_DEFUN([UL_REQUIRES_PROGRAM], [
   m4_define([suffix], m4_default([$5],$1))
 
@@ -363,7 +363,7 @@ dnl
 dnl The <havedesc> is description used for warning/error
 dnl message (e.g. "function").
 dnl
-dnl The default <name> for $build_ and $enable_ could be overwrited by option $4.
+dnl The default <name> for $build_ and $enable_ could be overwritten by option $4.
 dnl
 AC_DEFUN([UL_CONFLICTS_BUILD], [
   m4_define([suffix], m4_default([$4],$1))
@@ -387,7 +387,7 @@ dnl UL_REQUIRES_BUILD(NAME, BUILDNAME, [VARSUFFIX=$1])
 dnl
 dnl Modifies $build_<name> variable according to $enable_<name> and $have_funcname.
 dnl
-dnl The default <name> for $build_ and $enable_ could be overwrited by option $3.
+dnl The default <name> for $build_ and $enable_ could be overwritten by option $3.
 dnl
 AC_DEFUN([UL_REQUIRES_BUILD], [
   m4_define([suffix], m4_default([$3],$1))
@@ -418,8 +418,8 @@ dnl
 dnl Note that SYSCALL-TEST has to define $ul_cv_syscall_<name> variable, see
 dnl also UL_CHECK_SYSCALL().
 dnl
-dnl The default <name> for $build_ and $enable_ count be overwrited by option $4 and
-dnl $ul_cv_syscall_ could be overwrited by $3.
+dnl The default <name> for $build_ and $enable_ count be overwritten by option $4 and
+dnl $ul_cv_syscall_ could be overwritten by $3.
 dnl
 AC_DEFUN([UL_REQUIRES_SYSCALL_CHECK], [
   m4_define([suffix], m4_default([$4],$1))
@@ -452,7 +452,7 @@ dnl Initializes $build_<name>  variable according to $enable_<name>. If
 dnl $enable_<name> is undefined then ENABLE_STATE is used and $enable_<name> is
 dnl set to ENABLE_STATE.
 dnl
-dnl The default <name> for $build_ and $enable_ could be overwrited by option $3.
+dnl The default <name> for $build_ and $enable_ could be overwritten by option $3.
 dnl
 AC_DEFUN([UL_BUILD_INIT], [
   m4_define([suffix], m4_default([$3],$1))

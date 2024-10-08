@@ -273,16 +273,15 @@ static int read_hypervisor_dmi(void)
 	return rc < 0 ? VIRT_VENDOR_NONE : rc;
 }
 
-static int has_pci_device(struct lscpu_cxt *cxt,
-			unsigned int vendor, unsigned int device)
+static int find_virt_pci_device(struct lscpu_cxt *cxt)
 {
 	FILE *f;
-	unsigned int num, fn, ven, dev;
-	int res = 1;
+	int num, fn, ven, dev;
+	int vendor = VIRT_VENDOR_NONE;
 
 	f = ul_path_fopen(cxt->procfs, "r", "bus/pci/devices");
 	if (!f)
-		return 0;
+		return vendor;
 
 	 /* for more details about bus/pci/devices format see
 	  * drivers/pci/proc.c in linux kernel
@@ -290,14 +289,28 @@ static int has_pci_device(struct lscpu_cxt *cxt,
 	while(fscanf(f, "%02x%02x\t%04x%04x\t%*[^\n]",
 			&num, &fn, &ven, &dev) == 4) {
 
-		if (ven == vendor && dev == device)
+		if (ven == hv_vendor_pci[VIRT_VENDOR_XEN] &&
+			dev == hv_graphics_pci[VIRT_VENDOR_XEN]) {
+			vendor = VIRT_VENDOR_XEN;
 			goto found;
+		}
+
+		if (ven == hv_vendor_pci[VIRT_VENDOR_VMWARE] &&
+			dev == hv_graphics_pci[VIRT_VENDOR_VMWARE]) {
+			vendor = VIRT_VENDOR_VMWARE;
+			goto found;
+		}
+
+		if (ven == hv_vendor_pci[VIRT_VENDOR_VBOX] &&
+			dev == hv_graphics_pci[VIRT_VENDOR_VBOX]) {
+			vendor = VIRT_VENDOR_VBOX;
+			goto found;
+		}
 	}
 
-	res = 0;
 found:
 	fclose(f);
-	return res;
+	return vendor;
 }
 
 #if defined(__x86_64__) || defined(__i386__)
@@ -558,7 +571,7 @@ struct lscpu_virt *lscpu_read_virtualization(struct lscpu_cxt *cxt)
 			goto done;
 	}
 
-	if (!cxt->noalive) {
+	if (is_live(cxt)) {
 		virt->vendor = read_hypervisor_cpuid();
 		if (!virt->vendor)
 			virt->vendor = read_hypervisor_dmi();
@@ -597,16 +610,8 @@ struct lscpu_virt *lscpu_read_virtualization(struct lscpu_cxt *cxt)
 		virt->vendor = VIRT_VENDOR_XEN;
 
 	/* Xen full-virt on non-x86_64 */
-	} else if (has_pci_device(cxt, hv_vendor_pci[VIRT_VENDOR_XEN], hv_graphics_pci[VIRT_VENDOR_XEN])) {
-		virt->vendor = VIRT_VENDOR_XEN;
+	} else if ((virt->vendor = find_virt_pci_device(cxt))) {
 		virt->type = VIRT_TYPE_FULL;
-	} else if (has_pci_device(cxt, hv_vendor_pci[VIRT_VENDOR_VMWARE], hv_graphics_pci[VIRT_VENDOR_VMWARE])) {
-		virt->vendor = VIRT_VENDOR_VMWARE;
-		virt->type = VIRT_TYPE_FULL;
-	} else if (has_pci_device(cxt, hv_vendor_pci[VIRT_VENDOR_VBOX], hv_graphics_pci[VIRT_VENDOR_VBOX])) {
-		virt->vendor = VIRT_VENDOR_VBOX;
-		virt->type = VIRT_TYPE_FULL;
-
 	/* IBM PR/SM */
 	} else if ((fd = ul_path_fopen(cxt->procfs, "r", "sysinfo"))) {
 

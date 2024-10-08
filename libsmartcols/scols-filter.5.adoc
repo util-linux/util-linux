@@ -78,7 +78,7 @@ used without quotes. Before evaluation, application map column names in the
 given expression to the output table columns and assign column data type to the
 holder. The default type is "string".
 
-The `param` is for representing a value directly. The currenly supported data
+The `param` is for representing a value directly. The currently supported data
 types are integer, float, string and boolean.
 
 An operator works with one or two operand(s). An operator has an expectation

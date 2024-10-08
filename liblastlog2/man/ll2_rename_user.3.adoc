@@ -9,7 +9,7 @@
 
 == NAME
 
-ll2_rename_user - Renames an user entry.
+ll2_rename_user - Renames a user entry.
 
 == SYNOPSIS
 
@@ -20,7 +20,7 @@ ll2_rename_user - Renames an user entry.
 
 == DESCRIPTION
 
-Changing user name from _user_ to _newname_ of one entry in
+Changes user name from _user_ to _newname_ of one entry in
 database, which is defined by _context_. All other entries with the user _user_
 will be deleted.
 If _context_ is NULL, the default database, defined in _LL2_DEFAULT_DATABASE_,

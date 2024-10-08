@@ -1,6 +1,8 @@
 
+if LINUX
 check_PROGRAMS += \
 	sample-mount-overwrite
+endif
 
 sample_mount_cflags = $(AM_CFLAGS) -I$(ul_libmount_incdir)
 sample_mount_ldadd = libmount.la $(LDADD)

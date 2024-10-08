@@ -1844,7 +1844,7 @@ msgstr ""
 msgid ""
 "CHS (Cylinder-Head-Sector) addressing is deprecated and not used by "
 "default. Please, do not follow old articles and recommendations with *fdisk "
-"-S <n> -H <n>* advices for SSD or 4K-sector devices."
+"-S <n> -H <n>* advice for SSD or 4K-sector devices."
 msgstr ""
 
 #. type: Plain text
@@ -19799,7 +19799,7 @@ msgid ""
 "Activate continuous clock handling for time based UUIDs. *uuidd* could use "
 "all possible clock values, beginning with the daemon's start time. The "
 "optional argument can be used to set a value for the max_clock_offset. This "
-"gurantees, that a clock value of a UUID will always be within the range of "
+"guarantees, that a clock value of a UUID will always be within the range of "
 "the max_clock_offset."
 msgstr ""
 

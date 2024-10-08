@@ -53,7 +53,7 @@ typedef struct processentry process_t;
 
 struct threadentry {
 	process_t	*proc;
-	pthread_t	tid;		/* pthread_self() / phtread_create() */
+	pthread_t	tid;		/* pthread_self() / pthread_create() */
 	pthread_attr_t	thread_attr;
 	size_t		index;		/* index in object[] */
 	int		retval;		/* pthread exit() */

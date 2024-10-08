@@ -45,7 +45,7 @@ build-sys:
    - add --enable-libuuid-force-uuidd  [Ruediger Meier]
    - add UL_REQUIRES_COMPILE macro  [Karel Zak]
    - add missing include/plymouth-ctrl.h  [Karel Zak]
-   - add non-action for ncurses pkg-cong test  [Karel Zak]
+   - add non-action for ncurses pkg-config test  [Karel Zak]
    - add parisc to define ARCH_  [Karel Zak]
    - add tools/Makemodule.am  [Karel Zak]
    - clean up relation between ncurses[w] and wide-char support  [Karel Zak]
@@ -322,7 +322,7 @@ logger:
    - remove trailing spaces when outputing to journal  [Sami Kerola]
    - simplify if clause [oclint]  [Sami Kerola]
 loopdev:
-   - Implememt loopcxt_set_status()  [Stanislav Brabec]
+   - Implement loopcxt_set_status()  [Stanislav Brabec]
 losetup:
    - Prevent AUTOCLEAR detach race  [Stanislav Brabec]
    - add --nooverlap options  [Karel Zak, Stanislav Brabec]

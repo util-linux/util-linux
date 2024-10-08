@@ -23,11 +23,11 @@
  * Glibc defines sigset_t its own way. However, it is not what kernel
  * expects.
  *
- * If an applicaiton uses the glibc's sigset_t via ppoll(2) wrapper,
+ * If an application uses the glibc's sigset_t via ppoll(2) wrapper,
  * there is no problem; the wrapper function may translate the glibc's
  * sigset_t to what kernel expects.
  *
- * Here, we want to ppoll(2) directly. In this case, the glibc's sigset_t
+ * Here, we want to use ppoll(2) directly. In this case, the glibc's sigset_t
  * becomes an issue. To use ppoll(2) directly, we have to include <asm/poll.h>.
  * Including both <poll.h> provided by glibc and <asm/poll.h> provided by kernel
  * causes "redefined ***" errors.

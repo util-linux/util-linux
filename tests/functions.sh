@@ -168,7 +168,7 @@ function ts_skip_nonroot {
 #	ts_skip_capability cap_wake_alarm
 #
 function ts_skip_capability {
-	ts_check_prog "$TS_HELPER_CAP"
+	ts_check_test_command "$TS_HELPER_CAP"
 
 	if ! "$TS_HELPER_CAP" "$1"; then
 		ts_skip "no capability: $1"

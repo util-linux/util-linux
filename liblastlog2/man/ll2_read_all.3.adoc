@@ -22,7 +22,7 @@ ll2_read_all -  Reads all entries from database and calls the callback function 
 
 == DESCRIPTION
 
-Reads all entries from database, defined in _context_, and calls callback fuction _callback_ for each entry.
+Reads all entries from database, defined in _context_, and calls callback function _callback_ for each entry.
 If _context_ is NULL, the default database, defined in _LL2_DEFAULT_DATABASE_, will be taken.
 
 --------------------------------------
@@ -46,7 +46,7 @@ Returns 0 on success, -ENOMEM or -1 on other failure.
 _error_ contains an error string if the return value is -1.
 _error_ is not guaranteed to contain an error string, could also be NULL.
 _error_ should be freed by the caller.
-If lastlog2 database does not exist at all, the errno ENOENT has been set
+If lastlog2 database does not exist at all, the errno ENOENT is set
 and can be checked.
 
 == AUTHORS

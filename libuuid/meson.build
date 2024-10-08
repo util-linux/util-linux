@@ -14,6 +14,7 @@ lib_uuid_sources = '''
 '''.split()
 
 predefined_c = files('src/predefined.c')
+pack_c = files('src/pack.c')
 unpack_c = files('src/unpack.c')
 unparse_c = files('src/unparse.c')
 
@@ -27,6 +28,8 @@ if cc.has_link_argument('-Wl,--version-script=@0@'.format(libuuid_sym_path))
 	libuuid_link_depends += [libuuid_sym]
 	libuuid_link_args += ['-Wl,--version-script=@0@'.format(libuuid_sym_path)]
 endif
+
+thread_dep = dependency('threads')
 
 lib_uuid = both_libraries(
   'uuid',
@@ -42,7 +45,7 @@ lib_uuid = both_libraries(
   link_depends : libuuid_link_depends,
   version : libuuid_version,
   link_args : libuuid_link_args,
-  dependencies : [socket_libs,
+  dependencies : [socket_libs, thread_dep,
                   build_libuuid ? [] : disabler()],
   install : build_libuuid)
 uuid_dep = declare_dependency(link_with: lib_uuid, include_directories: dir_libuuid)
@@ -57,3 +60,11 @@ if build_libuuid
     meson.override_dependency('uuid', uuid_dep)
   endif
 endif
+
+test_uuid_time_sources = files('src/gen_uuid.c') + [
+  pack_c,
+  unpack_c,
+  randutils_c,
+  md5_c,
+  sha1_c,
+]
