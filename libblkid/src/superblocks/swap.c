@@ -47,9 +47,12 @@ static void swap_set_info_swap1(blkid_probe pr,
 	uint32_t pagesize = mag->sboff + mag->len;
 	blkid_probe_set_fsblocksize(pr, pagesize);
 
+	/* note that "lastpage" in swap header means number of pages used by
+	 * swap, see mkswap */
 	uint32_t lastpage = endianness == BLKID_ENDIANNESS_LITTLE ?
 		le32_to_cpu(hdr->lastpage) : be32_to_cpu(hdr->lastpage);
 	blkid_probe_set_fssize(pr, (uint64_t) pagesize * lastpage);
+	blkid_probe_set_fslastblock(pr, lastpage + 1);
 }
 
 static int swap_set_info(blkid_probe pr, const struct blkid_idmag *mag,

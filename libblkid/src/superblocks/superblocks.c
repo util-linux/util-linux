@@ -597,6 +597,7 @@ static int blkid_probe_set_usage(blkid_probe pr, int usage)
 			(const unsigned char *) u, strlen(u) + 1);
 }
 
+/* size used by filesystem for data */
 int blkid_probe_set_fssize(blkid_probe pr, uint64_t size)
 {
 	struct blkid_chain *chn = blkid_probe_get_chain(pr);
