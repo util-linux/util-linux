@@ -734,8 +734,10 @@ int blkid_probe_set_label(blkid_probe pr, const unsigned char *label, size_t len
 	rc = blkid_probe_value_set_data(v, label, len);
 	if (!rc) {
 		v->len = blkid_rtrim_whitespace(v->data) + 1;
-		if (v->len > 1)
+		if (v->len > 1) {
+			blkid_probe_free_value(v);
 			return 0;
+		}
 	}
 
 	blkid_probe_free_value(v);
@@ -826,8 +828,10 @@ int blkid_probe_strncpy_uuid(blkid_probe pr, const unsigned char *str, size_t le
 		rc = blkid_probe_value_set_data(v, str, len);
 	if (!rc) {
 		v->len = blkid_rtrim_whitespace(v->data) + 1;
-		if (v->len > 1)
+		if (v->len > 1) {
+			blkid_probe_free_value(v);
 			return 0;
+		}
 	}
 
 	blkid_probe_free_value(v);
