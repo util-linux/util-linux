@@ -1894,6 +1894,7 @@ int blkid_probe_value_set_data(struct blkid_prval *v,
 		return -ENOMEM;
 	memcpy(v->data, data, len);
 	v->len = len;
+	blkid_probe_free_value(v);
 	return 0;
 }
 
@@ -1926,6 +1927,7 @@ int blkid_probe_vsprintf_value(blkid_probe pr, const char *name,
 		return len == 0 ? -EINVAL : -ENOMEM;
 	}
 	v->len = len + 1;
+	blkid_probe_free_value(v);
 	return 0;
 }
 
