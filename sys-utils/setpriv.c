@@ -578,6 +578,7 @@ static void do_caps(enum cap_type type, const char *caps)
 static void parse_securebits(struct privctx *opts, const char *arg)
 {
 	char *buf = xstrdup(arg);
+	char *source_buf = buf;
 	char *c;
 
 	opts->have_securebits = 1;
@@ -631,7 +632,7 @@ static void parse_securebits(struct privctx *opts, const char *arg)
 
 	opts->securebits |= SECBIT_KEEP_CAPS;	/* We need it, and it's reset on exec */
 
-	free(buf);
+	free(source_buf);
 }
 
 static void do_selinux_label(const char *label)
