@@ -1505,8 +1505,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -s, --fstab            search in static table of filesystems\n"), out);
 	fputs(_(" -m, --mtab             search in table of mounted filesystems\n"
 		"                          (includes user space mount options)\n"), out);
-	fputs(_(" -k, --kernel           search in kernel table of mounted\n"
-		"                          filesystems (default)\n"), out);
+	fputs(_(" -k, --kernel[=<method>] search in kernel mount table (default)\n"
+		"                          <method> is mountinfo or listmount\n"), out);
 	fputc('\n', out);
 	fputs(_(" -p, --poll[=<list>]    monitor changes in table of mounted filesystems\n"), out);
 	fputs(_(" -w, --timeout <num>    upper limit in milliseconds that --poll will block\n"), out);
