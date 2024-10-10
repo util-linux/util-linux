@@ -91,7 +91,8 @@ enum {
 enum {
 	TABTYPE_FSTAB = 1,
 	TABTYPE_MTAB,
-	TABTYPE_KERNEL
+	TABTYPE_KERNEL_MOUNTINFO,
+	TABTYPE_KERNEL_LISTMOUNT
 };
 
 /* column names */
@@ -964,6 +965,7 @@ static int create_treenode(struct libscols_table *table, struct libmnt_table *tb
 		bool filtered = false;
 		if (has_line(table, fs))
 			goto leave;
+
 		line = add_line(table, fs, parent_line, findmnt, &filtered);
 		if (filtered)
 			line = parent_line;
@@ -986,7 +988,6 @@ static int create_treenode(struct libscols_table *table, struct libmnt_table *tb
 		     (size_t) scols_table_get_nlines(table)) {
 		mnt_reset_iter(itr, MNT_ITER_FORWARD);
 		fs = NULL;
-
 		while (mnt_table_next_fs(tb, itr, &fs) == 0) {
 			if (!has_line(table, fs) && match_func(fs, findmnt))
 				create_treenode(table, tb, fs, NULL, findmnt);
@@ -1048,13 +1049,16 @@ static struct libmnt_table *parse_tabfiles(char **files,
 		case TABTYPE_MTAB:
 			rc = mnt_table_parse_mtab(tb, path);
 			break;
-		case TABTYPE_KERNEL:
+		case TABTYPE_KERNEL_MOUNTINFO:
 			if (!path)
 				path = access(_PATH_PROC_MOUNTINFO, R_OK) == 0 ?
 					      _PATH_PROC_MOUNTINFO :
 					      _PATH_PROC_MOUNTS;
 
 			rc = mnt_table_parse_file(tb, path);
+			break;
+		default:
+			rc = -EINVAL;
 			break;
 		}
 		if (rc) {
@@ -1063,6 +1067,35 @@ static struct libmnt_table *parse_tabfiles(char **files,
 			return NULL;
 		}
 	} while (--nfiles > 0);
+
+	return tb;
+}
+
+static struct libmnt_table *fetch_listmount(void)
+{
+	struct libmnt_table *tb;
+	struct libmnt_statmnt *sm;
+
+	sm = mnt_new_statmnt();
+	if (!sm) {
+		warn(_("failed to allocate statmnt handler"));
+		return NULL;
+	}
+
+	tb = mnt_new_table();
+	if (!tb) {
+		warn(_("failed to initialize libmount table"));
+		return NULL;
+	}
+
+	mnt_table_refer_statmnt(tb, sm);
+
+	if (mnt_table_fetch_listmount(tb) != 0) {
+		warn(_("failed to fetch mount nodes"));
+		mnt_unref_table(tb);
+		mnt_unref_statmnt(sm);
+		return NULL;
+	}
 
 	return tb;
 }
@@ -1471,8 +1504,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -s, --fstab            search in static table of filesystems\n"), out);
 	fputs(_(" -m, --mtab             search in table of mounted filesystems\n"
 		"                          (includes user space mount options)\n"), out);
-	fputs(_(" -k, --kernel           search in kernel table of mounted\n"
-		"                          filesystems (default)\n"), out);
+	fputs(_(" -k, --kernel[=<method>] search in kernel mount table (default)\n"
+		"                          <method> is mountinfo or listmount\n"), out);
 	fputc('\n', out);
 	fputs(_(" -p, --poll[=<list>]    monitor changes in table of mounted filesystems\n"), out);
 	fputs(_(" -w, --timeout <num>    upper limit in milliseconds that --poll will block\n"), out);
@@ -1705,7 +1738,7 @@ int main(int argc, char *argv[])
 		{ "help",	    no_argument,       NULL, 'h'		 },
 		{ "invert",	    no_argument,       NULL, 'i'		 },
 		{ "json",	    no_argument,       NULL, 'J'		 },
-		{ "kernel",	    no_argument,       NULL, 'k'		 },
+		{ "kernel",	    optional_argument, NULL, 'k'		 },
 		{ "list",	    no_argument,       NULL, 'l'		 },
 		{ "mountpoint",	    required_argument, NULL, 'M'		 },
 		{ "mtab",	    no_argument,       NULL, 'm'		 },
@@ -1765,7 +1798,7 @@ int main(int argc, char *argv[])
 	findmnt.flags |= FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
-				"AabCcDd:ehIiJfF:o:O:p::PQ:klmM:nN:rst:uvRS:T:Uw:VxyH",
+				"AabCcDd:ehIiJfF:o:O:p::PQ:k::lmM:nN:rst:uvRS:T:Uw:VxyH",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1861,8 +1894,16 @@ int main(int argc, char *argv[])
 			tabtype = TABTYPE_FSTAB;
 			findmnt.flags &= ~FL_TREE;
 			break;
-		case 'k':		/* kernel (mountinfo) */
-			tabtype = TABTYPE_KERNEL;
+		case 'k':
+			if (optarg) {
+				if (strcmp(optarg, "mountinfo") == 0)
+					tabtype = TABTYPE_KERNEL_MOUNTINFO;
+				else if (strcmp(optarg, "listmount") == 0)
+					tabtype = TABTYPE_KERNEL_LISTMOUNT;
+				else
+					errx(EXIT_FAILURE, _("invalid --kernel argument"));
+			} else
+				tabtype = TABTYPE_KERNEL_MOUNTINFO;
 			break;
 		case 't':
 			set_match(COL_FSTYPE, optarg);
@@ -1878,7 +1919,7 @@ int main(int argc, char *argv[])
 			findmnt.flags |= FL_NOHEADINGS;
 			break;
 		case 'N':
-			tabtype = TABTYPE_KERNEL;
+			tabtype = TABTYPE_KERNEL_MOUNTINFO;
 			tabfiles = append_pid_tabfile(tabfiles, &ntabfiles,
 					strtou32_or_err(optarg,
 						_("invalid TID argument")));
@@ -1979,10 +2020,14 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 
 	if (!tabtype)
-		tabtype = verify ? TABTYPE_FSTAB : TABTYPE_KERNEL;
+		tabtype = verify ? TABTYPE_FSTAB : TABTYPE_KERNEL_MOUNTINFO;
 
 	if ((findmnt.flags & FL_POLL) && ntabfiles > 1)
 		errx(EXIT_FAILURE, _("--poll accepts only one file, but more specified by --tab-file"));
+
+	if (ntabfiles && tabtype == TABTYPE_KERNEL_LISTMOUNT)
+		errx(EXIT_FAILURE, _(
+			"options --kernel=listmount and --tab-file or --task can't be used together"));
 
 	if (optind < argc && (get_match(COL_SOURCE) || get_match(COL_TARGET)))
 		errx(EXIT_FAILURE, _(
@@ -2022,13 +2067,16 @@ int main(int argc, char *argv[])
 	 */
 	mnt_init_debug(0);
 
-	tb = parse_tabfiles(tabfiles, ntabfiles, tabtype);
+	if (tabtype == TABTYPE_KERNEL_LISTMOUNT)
+		tb = fetch_listmount();
+	else
+		tb = parse_tabfiles(tabfiles, ntabfiles, tabtype);
 	if (!tb)
 		goto leave;
 	mnt_table_set_userdata(tb, &findmnt);
 
 	if (tabtype == TABTYPE_MTAB && tab_is_kernel(tb))
-		tabtype = TABTYPE_KERNEL;
+		tabtype = TABTYPE_KERNEL_MOUNTINFO;
 
 	istree = tab_is_tree(tb);
 	if (istree && force_tree)
@@ -2045,7 +2093,7 @@ int main(int argc, char *argv[])
 		}
 		mnt_table_set_cache(tb, findmnt.cache);
 
-		if (tabtype != TABTYPE_KERNEL)
+		if (tabtype == TABTYPE_FSTAB || tabtype == TABTYPE_MTAB)
 			cache_set_targets(findmnt.cache);
 	}
 
@@ -2082,7 +2130,7 @@ int main(int argc, char *argv[])
 		rc = add_matching_lines(tb, table, direction, &findmnt);
 
 		if (rc != 0
-		    && tabtype == TABTYPE_KERNEL
+		    && tabtype == TABTYPE_KERNEL_MOUNTINFO
 		    && (findmnt.flags & FL_NOSWAPMATCH)
 		    && !(findmnt.flags & FL_STRICTTARGET)
 		    && get_match(COL_TARGET)) {

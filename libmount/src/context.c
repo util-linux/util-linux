@@ -44,8 +44,6 @@
 #include <stdarg.h>
 #include <sys/wait.h>
 
-#include "mount-api-utils.h"
-
 /**
  * mnt_new_context:
  *
