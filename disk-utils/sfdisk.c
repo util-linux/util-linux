@@ -2155,6 +2155,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	      _("     --color[=<when>]      colorize output (%s, %s or %s)\n"), "auto", "always", "never");
 	fprintf(out,
 	        "                             %s\n", USAGE_COLORS_DEFAULT);
+	fputs(_("     --sector-size <size>  physical and logical sector size\n"), out);
+
 	fprintf(out,
 	      _("     --lock[=<mode>]       use exclusive device lock (%s, %s or %s)\n"), "yes", "no", "nonblock");
 	fputs(_(" -N, --partno <num>        specify partition number\n"), out);
@@ -2191,6 +2193,7 @@ int main(int argc, char *argv[])
 	const char *outarg = NULL;
 	int rc = -EINVAL, c, longidx = -1, bytes = 0;
 	int colormode = UL_COLORMODE_UNDEF;
+	size_t user_ss = 0;
 	struct sfdisk _sf = {
 		.partno = -1,
 		.wipemode = WIPEMODE_AUTO,
@@ -2217,6 +2220,7 @@ int main(int argc, char *argv[])
 		OPT_NOTELL,
 		OPT_RELOCATE,
 		OPT_LOCK,
+		OPT_SECTORSIZE
 	};
 
 	static const struct option longopts[] = {
@@ -2246,6 +2250,7 @@ int main(int argc, char *argv[])
 		{ "output",  required_argument, NULL, 'o' },
 		{ "partno",  required_argument, NULL, 'N' },
 		{ "reorder", no_argument,       NULL, 'r' },
+		{ "sector-size", required_argument, NULL, OPT_SECTORSIZE },
 		{ "show-geometry", no_argument, NULL, 'g' },
 		{ "quiet",   no_argument,       NULL, 'q' },
 		{ "verify",  no_argument,       NULL, 'V' },
@@ -2450,6 +2455,13 @@ int main(int argc, char *argv[])
 				sf->lockmode = optarg;
 			}
 			break;
+		case OPT_SECTORSIZE:
+			user_ss = strtou32_or_err(optarg,
+					_("invalid sector size argument"));
+			if (user_ss != 512 && user_ss != 1024 &&
+			    user_ss != 2048 && user_ss != 4096)
+				errx(EXIT_FAILURE, _("invalid sector size argument"));
+			break;
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
@@ -2460,6 +2472,8 @@ int main(int argc, char *argv[])
 	sfdisk_init(sf);
 	if (bytes)
 		fdisk_set_size_unit(sf->cxt, FDISK_SIZEUNIT_BYTES);
+	if (user_ss)
+		fdisk_save_user_sector_size(sf->cxt, user_ss, user_ss);
 
 	if (outarg)
 		init_fields(NULL, outarg, NULL);
