@@ -972,6 +972,7 @@ static const char *bpf_prog_type_table[] = {
 	[29] = "lsm",		 /* BPF_PROG_TYPE_LSM*/
 	[30] = "sk_lookup",	 /* BPF_PROG_TYPE_SK_LOOKUP*/
 	[31] = "syscall",	 /* BPF_PROG_TYPE_SYSCALL*/
+	[32] = "netfilter",	 /* BPF_PROG_TYPE_NETFILTER */
 };
 
 struct anon_bpf_prog_data {
@@ -1156,6 +1157,7 @@ static const char *bpf_map_type_table[] = {
 	[30] = "bloom-filter",	/* BPF_MAP_TYPE_BLOOM_FILTER */
 	[31] = "user-ringbuf",	/* BPF_MAP_TYPE_USER_RINGBUF */
 	[32] = "cgrp-storage",	/* BPF_MAP_TYPE_CGRP_STORAGE */
+	[33] = "arena",		/* BPF_MAP_TYPE_ARENA */
 };
 
 struct anon_bpf_map_data {
