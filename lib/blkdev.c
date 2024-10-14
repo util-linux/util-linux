@@ -194,6 +194,16 @@ blkdev_get_sectors(int fd, unsigned long long *sectors)
 	return -1;
 }
 
+int
+blkdev_get_default_sector_size(void)
+{
+	char *p = getenv("BLK_DEFAULT_SECTOR_SIZE");
+	if (!p)
+		return 512;
+
+	return atoi(p);
+}
+
 /*
  * Get logical sector size.
  *

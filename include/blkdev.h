@@ -21,7 +21,7 @@
 # include <sys/mkdev.h>		/* major and minor on Solaris */
 #endif
 
-#define DEFAULT_SECTOR_SIZE       512
+#define DEFAULT_SECTOR_SIZE       blkdev_get_default_sector_size()
 
 #ifdef __linux__
 /* very basic ioctls, should be available everywhere */
@@ -125,6 +125,9 @@ int blkdev_get_size(int fd, unsigned long long *bytes);
 
 /* get 512-byte sector count */
 int blkdev_get_sectors(int fd, unsigned long long *sectors);
+
+/* get the default sector size if it cannot be determined by the kernel */
+int blkdev_get_default_sector_size(void);
 
 /* get hardware sector size */
 int blkdev_get_sector_size(int fd, int *sector_size);
