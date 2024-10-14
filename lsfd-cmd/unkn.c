@@ -1183,7 +1183,7 @@ static bool anon_bpf_map_fill_column(struct proc *proc  __attribute__((__unused_
 				     size_t column_index __attribute__((__unused__)),
 				     char **str)
 {
-	struct anon_bpf_prog_data *data = (struct anon_bpf_prog_data *)unkn->anon_data;
+	struct anon_bpf_map_data *data = (struct anon_bpf_map_data *)unkn->anon_data;
 	const char *t;
 
 	switch(column_id) {
