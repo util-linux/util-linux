@@ -133,6 +133,7 @@ int fdisk_do_wipe(struct fdisk_context *cxt)
 			DBG(WIPE, ul_debugobj(wp, "blkid_probe_set_device() failed [rc=%d]", rc));
 			return rc;
 		}
+		blkid_probe_set_sectorsize(pr, cxt->sector_size);
 
 		DBG(WIPE, ul_debugobj(wp, " wiping..."));
 		blkid_wipe_all(pr);
@@ -175,6 +176,8 @@ int fdisk_check_collisions(struct fdisk_context *cxt)
 	cxt->pt_collision = 0;
 	free(cxt->collision);
 	cxt->collision = NULL;
+
+	blkid_probe_set_sectorsize(pr, cxt->sector_size);
 
 	blkid_probe_enable_superblocks(pr, 1);
 	blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_TYPE |
