@@ -208,6 +208,9 @@ The default list of columns may be extended if _list_ is specified in the format
 *-q*, *--quiet*::
 Suppress extra info messages.
 
+*--sector-size* _sectorsize_::
+Specify the sector size of the disk. Valid values are 512, 1024, 2048, and 4096. The kernel is aware of the sector size for regular block devices. Use this option only on very old kernels, when working with disk images, or to override the kernel's default sector size. Since util-linux-2.17, *fdisk* distinguishes between logical and physical sector size. This option changes both sector sizes to the specified _sectorsize_.
+
 *-u*, *--unit S*::
 Deprecated option. Only the sector unit is supported. This option is not supported when using the *--show-size* command.
 
@@ -256,7 +259,7 @@ Specify the maximal number of GPT partitions.
 *grain*::
 Specify minimal size in bytes used to calculate partitions alignment. The default is 1MiB and it's strongly recommended to use the default. Do not modify this variable if you're not sure.
 *sector-size*::
-Specify sector size. *sfdisk* always uses device sector size. Since version 2.39 *sfdisk* recalculates sizes from dump if the script and device sector size differ.
+Specifies the sector size used in the input. *sfdisk* always internally uses the device sector size provided by the kernel for the block device, or as specified by the user on the command line (see *--sector-size*). Starting with version 2.39, *sfdisk* recalculates sizes from the input if the *sector-size* header and device sector size are different.
 
 Note that it is only possible to use header lines before the first partition is specified in the input.
 
