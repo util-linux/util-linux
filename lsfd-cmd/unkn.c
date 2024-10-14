@@ -979,6 +979,8 @@ struct anon_bpf_prog_data {
 	int type;
 	int id;
 	char name[BPF_OBJ_NAME_LEN + 1];
+#define BPF_TAG_SIZE_AS_STRING (BPF_TAG_SIZE * 2)
+	char tag[BPF_TAG_SIZE_AS_STRING + 1];
 };
 
 static bool anon_bpf_prog_probe(const char *str)
@@ -1006,6 +1008,9 @@ static bool anon_bpf_prog_fill_column(struct proc *proc  __attribute__((__unused
 	switch(column_id) {
 	case COL_BPF_PROG_ID:
 		xasprintf(str, "%d", data->id);
+		return true;
+	case COL_BPF_PROG_TAG:
+		*str = xstrdup(data->tag);
 		return true;
 	case COL_BPF_PROG_TYPE_RAW:
 		xasprintf(str, "%d", data->type);
@@ -1037,6 +1042,9 @@ static char *anon_bpf_prog_get_name(struct unkn *unkn)
 	else
 		xasprintf(&str, "id=%d type=UNKNOWN(%d)", data->id, data->type);
 
+	if (data->tag[0] != '\0')
+		xstrfappend(&str, " tag=%s", data->tag);
+
 	if (*data->name)
 		xstrfappend(&str, " name=%s", data->name);
 
@@ -1050,6 +1058,7 @@ static void anon_bpf_prog_init(struct unkn *unkn)
 	data->type = -1;
 	data->id = -1;
 	data->name[0] = '\0';
+	data->tag[0] = '\0';
 	unkn->anon_data = data;
 }
 
@@ -1104,6 +1113,13 @@ static int anon_bpf_prog_handle_fdinfo(struct unkn *unkn, const char *key, const
 		if (rc < 0)
 			return 0; /* ignore -- parse failed */
 		((struct anon_bpf_prog_data *)unkn->anon_data)->type = (int)t;
+		return 1;
+	}
+
+	if (strcmp(key, "prog_tag") == 0) {
+		char *dst = ((struct anon_bpf_prog_data *)unkn->anon_data)->tag;
+		strncpy(dst, value, BPF_TAG_SIZE_AS_STRING);
+		dst[BPF_TAG_SIZE_AS_STRING] = '\0';
 		return 1;
 	}
 
