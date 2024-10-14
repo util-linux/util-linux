@@ -2731,6 +2731,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	      _("     --lock[=<mode>]      use exclusive device lock (%s, %s or %s)\n"), "yes", "no", "nonblock");
 	fputs(_(" -r, --read-only          forced open cfdisk in read-only mode\n"), out);
 
+	fputs(_(" -b, --sector-size <size> physical and logical sector size\n"), out);
+
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(26));
 
@@ -2743,6 +2745,7 @@ int main(int argc, char *argv[])
 	const char *diskpath = NULL, *lockmode = NULL;
 	int rc, c, colormode = UL_COLORMODE_UNDEF;
 	int read_only = 0;
+	size_t user_ss = 0;
 	struct cfdisk _cf = { .lines_idx = 0 },
 		      *cf = &_cf;
 	enum {
@@ -2752,6 +2755,7 @@ int main(int argc, char *argv[])
 		{ "color",   optional_argument, NULL, 'L' },
 		{ "lock",    optional_argument, NULL, OPT_LOCK },
 		{ "help",    no_argument,       NULL, 'h' },
+		{ "sector-size", required_argument, NULL, 'b' },
 		{ "version", no_argument,       NULL, 'V' },
 		{ "zero",    no_argument,	NULL, 'z' },
 		{ "read-only", no_argument,     NULL, 'r' },
@@ -2763,8 +2767,15 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while((c = getopt_long(argc, argv, "L::hVzr", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "b:L::hVzr", longopts, NULL)) != -1) {
 		switch(c) {
+		case 'b':
+			user_ss = strtou32_or_err(optarg,
+					_("invalid sector size argument"));
+			if (user_ss != 512 && user_ss != 1024 &&
+			    user_ss != 2048 && user_ss != 4096)
+				errx(EXIT_FAILURE, _("invalid sector size argument"));
+			break;
 		case 'h':
 			usage();
 			break;
@@ -2803,6 +2814,8 @@ int main(int argc, char *argv[])
 	cf->cxt = fdisk_new_context();
 	if (!cf->cxt)
 		err(EXIT_FAILURE, _("failed to allocate libfdisk context"));
+	if (user_ss)
+		fdisk_save_user_sector_size(cf->cxt, user_ss, user_ss);
 
 	fdisk_set_ask(cf->cxt, ask_callback, (void *) cf);
 
