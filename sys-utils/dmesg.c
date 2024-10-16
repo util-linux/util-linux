@@ -602,11 +602,6 @@ static const char *parse_kmsg_timestamp(const char *str0, struct timeval *tv)
 	return end + 1;	/* skip separator */
 }
 
-static double time_diff(struct timeval *a, struct timeval *b)
-{
-	return (a->tv_sec - b->tv_sec) + (a->tv_usec - b->tv_usec) / (double) USEC_PER_SEC;
-}
-
 static int get_syslog_buffer_size(void)
 {
 	int n = klogctl(SYSLOG_ACTION_SIZE_BUFFER, NULL, 0);

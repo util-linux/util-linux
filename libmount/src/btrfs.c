@@ -15,7 +15,6 @@
 #include <dirent.h>
 #include <sys/ioctl.h>
 #include <stdlib.h>
-#include <stdint.h>
 #include <linux/btrfs.h>
 
 #include "mountP.h"
