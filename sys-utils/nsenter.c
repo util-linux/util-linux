@@ -252,6 +252,27 @@ static void open_namespaces(int namespaces)
 	}
 }
 
+static void enter_namespaces(int namespaces, bool ignore_errors)
+{
+	struct namespace_file *n;
+
+	for (n = namespace_files; n->nstype; n++) {
+		if (!n->enabled)
+			continue;
+		if (!(n->nstype & namespaces))
+			continue;
+		if (n->fd < 0)
+			continue;
+
+		if (setns(n->fd, n->nstype) == 0)
+			disable_nsfile(n);		/* sucess */
+		else if (!ignore_errors)
+			err(EXIT_FAILURE,
+				    _("reassociate to namespace '%s' failed"),
+				    n->name);
+	}
+}
+
 static void open_target_sk_netns(int pid, int sock_fd)
 {
 	struct namespace_file *nsfile;
@@ -455,7 +476,7 @@ int main(int argc, char *argv[])
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
 	struct namespace_file *nsfile;
-	int c, pass, namespaces = 0, setgroups_nerrs = 0, preserve_cred = 0;
+	int c, namespaces = 0, setgroups_nerrs = 0, preserve_cred = 0;
 	bool do_rd = false, do_wd = false, do_uid = false, force_uid = false,
 	     do_gid = false, force_gid = false, do_env = false, do_all = false,
 	     do_join_cgroup = false, do_user_parent = false;
@@ -643,6 +664,11 @@ int main(int argc, char *argv[])
 
 	/* All initialized, get final set of namespaces */
 	namespaces = get_namespaces();
+	if (!namespaces)
+		errx(EXIT_FAILURE, _("no namespace specified"));
+
+	if ((namespaces & CLONE_NEWPID) && do_fork == -1)
+		do_fork = 1;
 
 	/* for user namespaces we always set UID and GID (default is 0)
 	 * and clear root's groups if --preserve-credentials is no specified */
@@ -656,31 +682,17 @@ int main(int argc, char *argv[])
 	}
 
 	/*
-	 * Now that we know which namespaces we want to enter, enter
-	 * them.  Do this in two passes, not entering the user
-	 * namespace on the first pass.  So if we're deprivileging the
-	 * container we'll enter the user namespace last and if we're
-	 * privileging it then we enter the user namespace first
-	 * (because the initial setns will fail).
+	 * Now that we know which namespaces we want to enter, enter them.  Do
+	 * this in two passes, not entering the user namespace on the first
+	 * pass.  So if we're deprivileging the container we'll enter the user
+	 * namespace last and if we're privileging it then we enter the user
+	 * namespace first (because the initial setns will fail).
 	 */
-	for (pass = 0; pass < 2; pass ++) {
-		for (nsfile = namespace_files + 1 - pass; nsfile->nstype; nsfile++) {
-			if (nsfile->fd < 0)
-				continue;
-			if (nsfile->nstype == CLONE_NEWPID && do_fork == -1)
-				do_fork = 1;
-			if (setns(nsfile->fd, nsfile->nstype)) {
-				if (pass != 0)
-					err(EXIT_FAILURE,
-					    _("reassociate to namespace '%s' failed"),
-					    nsfile->name);
-				else
-					continue;
-			}
+	enter_namespaces(namespaces & ~CLONE_NEWUSER, 1);	/* ignore errors */
 
-			disable_nsfile(nsfile);
-		}
-	}
+	namespaces = get_namespaces();
+	if (namespaces)
+		enter_namespaces(namespaces, 0);		/* report errors */
 
 	/* Remember the current working directory if I'm not changing it */
 	if (root_fd >= 0 && wd_fd < 0 && wdns == NULL) {
