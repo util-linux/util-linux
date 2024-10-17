@@ -23,6 +23,7 @@
 #include <grp.h>
 #include <sys/stat.h>
 #include <sys/statfs.h>
+#include <stdbool.h>
 
 #include <sys/ioctl.h>
 #include <linux/sockios.h>
@@ -56,6 +57,7 @@ static struct namespace_file {
 	int nstype;
 	const char *name;
 	int fd;
+	bool enabled;
 } namespace_files[] = {
 	/* Careful the order is significant in this array.
 	 *
@@ -128,7 +130,7 @@ static int env_fd = -1;
 static int uid_gid_fd = -1;
 static int cgroup_procs_fd = -1;
 
-static void set_parent_user_ns_fd(void)
+static void open_parent_user_ns_fd(void)
 {
 	struct namespace_file *nsfile = NULL;
 	struct namespace_file *user_nsfile = NULL;
@@ -150,8 +152,10 @@ static void set_parent_user_ns_fd(void)
 
 	if (parent_ns < 0)
 		errx(EXIT_FAILURE, _("no namespaces to get parent of"));
-	if (user_nsfile)
+	if (user_nsfile) {
 		user_nsfile->fd = parent_ns;
+		user_nsfile->enabled = true;
+	}
 }
 
 
@@ -177,19 +181,75 @@ static void open_target_fd(int *fd, const char *type, const char *path)
 		err(EXIT_FAILURE, _("cannot open %s"), path);
 }
 
-static void open_namespace_fd(int nstype, const char *path)
+static void enable_nsfile(struct namespace_file *n, const char *path)
+{
+	if (path)
+		open_target_fd(&n->fd, n->name, path);
+	n->enabled = true;
+}
+
+static void disable_nsfile(struct namespace_file *n)
+{
+	if (n->fd >= 0)
+		close(n->fd);
+	n->fd = -1;
+	n->enabled = false;
+}
+
+/* Enable namespace; optionally open @path if not NULL. */
+static void enable_namespace(int nstype, const char *path)
 {
 	struct namespace_file *nsfile;
 
 	for (nsfile = namespace_files; nsfile->nstype; nsfile++) {
 		if (nstype != nsfile->nstype)
 			continue;
-
-		open_target_fd(&nsfile->fd, nsfile->name, path);
+		enable_nsfile(nsfile, path);
 		return;
 	}
 	/* This should never happen */
 	assert(nsfile->nstype);
+}
+
+/* Returns mask of all enabled namespaces */
+static int get_namespaces(void)
+{
+	struct namespace_file *n;
+	int mask = 0;
+
+	for (n = namespace_files; n->nstype; n++) {
+		if (n->enabled)
+			mask |= n->nstype;
+	}
+	return mask;
+}
+
+static int get_namespaces_without_fd(void)
+{
+	struct namespace_file *n;
+	int mask = 0;
+
+	for (n = namespace_files; n->nstype; n++) {
+		if (n->enabled && n->fd < 0)
+			mask |= n->nstype;
+	}
+	return mask;
+}
+
+/* Open /proc/#/ns/ files for enabled namespaces specified in @namespaces
+ * if they have not been opened yet. */
+static void open_namespaces(int namespaces)
+{
+	struct namespace_file *n;
+
+	for (n = namespace_files; n->nstype; n++) {
+		if (!n->enabled)
+			continue;
+		if (!(n->nstype & namespaces))
+			continue;
+		if (n->fd < 0)
+			open_target_fd(&n->fd, n->name, NULL);
+	}
 }
 
 static void open_target_sk_netns(int pid, int sock_fd)
@@ -222,6 +282,7 @@ static void open_target_sk_netns(int pid, int sock_fd)
 	if (nsfile->fd >= 0)
 		close(nsfile->fd);
 	nsfile->fd = nsfd;
+	nsfile->enabled = true;
 	close(sk);
 	close(pidfd);
 }
@@ -429,56 +490,32 @@ int main(int argc, char *argv[])
 			    strtoul_or_err(optarg, _("failed to parse pid"));
 			break;
 		case 'm':
-			if (optarg)
-				open_namespace_fd(CLONE_NEWNS, optarg);
-			else
-				namespaces |= CLONE_NEWNS;
+			enable_namespace(CLONE_NEWNS, optarg);
 			break;
 		case 'u':
-			if (optarg)
-				open_namespace_fd(CLONE_NEWUTS, optarg);
-			else
-				namespaces |= CLONE_NEWUTS;
+			enable_namespace(CLONE_NEWUTS, optarg);
 			break;
 		case 'i':
-			if (optarg)
-				open_namespace_fd(CLONE_NEWIPC, optarg);
-			else
-				namespaces |= CLONE_NEWIPC;
+			enable_namespace(CLONE_NEWIPC, optarg);
 			break;
 		case 'n':
-			if (optarg)
-				open_namespace_fd(CLONE_NEWNET, optarg);
-			else
-				namespaces |= CLONE_NEWNET;
+			enable_namespace(CLONE_NEWNET, optarg);
 			break;
 		case 'N':
 			sock_fd = str2num_or_err(optarg, 10, _("failed to parse file descriptor"),
 						 0, INT_MAX);
 			break;
 		case 'p':
-			if (optarg)
-				open_namespace_fd(CLONE_NEWPID, optarg);
-			else
-				namespaces |= CLONE_NEWPID;
+			enable_namespace(CLONE_NEWPID, optarg);
 			break;
 		case 'C':
-			if (optarg)
-				open_namespace_fd(CLONE_NEWCGROUP, optarg);
-			else
-				namespaces |= CLONE_NEWCGROUP;
+			enable_namespace(CLONE_NEWCGROUP, optarg);
 			break;
 		case 'U':
-			if (optarg)
-				open_namespace_fd(CLONE_NEWUSER, optarg);
-			else
-				namespaces |= CLONE_NEWUSER;
+			enable_namespace(CLONE_NEWUSER, optarg);
 			break;
 		case 'T':
-			if (optarg)
-				open_namespace_fd(CLONE_NEWTIME, optarg);
-			else
-				namespaces |= CLONE_NEWTIME;
+			enable_namespace(CLONE_NEWTIME, optarg);
 			break;
 		case 'S':
 			if (strcmp(optarg, "follow") == 0)
@@ -557,25 +594,27 @@ int main(int argc, char *argv[])
 #endif
 
 	if (do_all) {
-		if (!namespace_target_pid)
-			errx(EXIT_FAILURE, _("no target PID specified for --all"));
 		for (nsfile = namespace_files; nsfile->nstype; nsfile++) {
-			if (nsfile->fd >= 0)
+			if (nsfile->enabled)
 				continue;	/* namespace already specified */
 
 			if (!is_usable_namespace(namespace_target_pid, nsfile))
 				continue;
 
-			namespaces |= nsfile->nstype;
+			enable_nsfile(nsfile, NULL);
 		}
 	}
 
 	/*
 	 * Open remaining namespace and directory descriptors.
 	 */
-	for (nsfile = namespace_files; nsfile->nstype; nsfile++)
-		if (nsfile->nstype & namespaces)
-			open_namespace_fd(nsfile->nstype, NULL);
+	namespaces = get_namespaces_without_fd();
+	if (namespaces) {
+		if (!namespace_target_pid)
+			errx(EXIT_FAILURE, _("no target PID specified"));
+		open_namespaces(namespaces);
+	}
+
 	if (do_rd)
 		open_target_fd(&root_fd, "root", NULL);
 	if (do_wd)
@@ -594,23 +633,16 @@ int main(int argc, char *argv[])
 	 * Get parent userns from any available ns.
 	 */
 	if (do_user_parent)
-		set_parent_user_ns_fd();
-
-	/*
-	 * Update namespaces variable to contain all requested namespaces
-	 */
-	for (nsfile = namespace_files; nsfile->nstype; nsfile++) {
-		if (nsfile->fd < 0)
-			continue;
-		namespaces |= nsfile->nstype;
-	}
+		open_parent_user_ns_fd();
 
 	if (sock_fd != -1) {
 		if (!namespace_target_pid)
 			errx(EXIT_FAILURE, _("--net-socket needs target PID"));
 		open_target_sk_netns(namespace_target_pid, sock_fd);
-		namespaces |= CLONE_NEWNET;
 	}
+
+	/* All initialized, get final set of namespaces */
+	namespaces = get_namespaces();
 
 	/* for user namespaces we always set UID and GID (default is 0)
 	 * and clear root's groups if --preserve-credentials is no specified */
@@ -646,8 +678,7 @@ int main(int argc, char *argv[])
 					continue;
 			}
 
-			close(nsfile->fd);
-			nsfile->fd = -1;
+			disable_nsfile(nsfile);
 		}
 	}
 
