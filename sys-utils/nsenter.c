@@ -130,6 +130,30 @@ static int env_fd = -1;
 static int uid_gid_fd = -1;
 static int cgroup_procs_fd = -1;
 
+static inline struct namespace_file *__next_nsfile(struct namespace_file *n, int namespaces, bool enabled)
+{
+	if (!n)
+		n = namespace_files;
+	else if (n->nstype != 0)
+		n++;
+
+	for ( ; n && n->nstype; n++) {
+		if (namespaces && !(n->nstype & namespaces))
+			continue;
+		if (enabled && !n->enabled)
+			continue;
+		return n;
+	}
+
+	return NULL;
+}
+
+#define next_nsfile(_n, _ns)		__next_nsfile(_n, _ns, 0)
+#define next_enabled_nsfile(_n, _ns)	__next_nsfile(_n, _ns, 1)
+
+#define get_nsfile(_ns)			__next_nsfile(NULL, _ns, 0)
+#define get_enabled_nsfile(_ns)		__next_nsfile(NULL, _ns, 1)
+
 static void open_parent_user_ns_fd(void)
 {
 	struct namespace_file *nsfile = NULL;
@@ -199,51 +223,43 @@ static void disable_nsfile(struct namespace_file *n)
 /* Enable namespace; optionally open @path if not NULL. */
 static void enable_namespace(int nstype, const char *path)
 {
-	struct namespace_file *nsfile;
+	struct namespace_file *nsfile = get_nsfile(nstype);
 
-	for (nsfile = namespace_files; nsfile->nstype; nsfile++) {
-		if (nstype != nsfile->nstype)
-			continue;
+	if (nsfile)
 		enable_nsfile(nsfile, path);
-		return;
-	}
-	/* This should never happen */
-	assert(nsfile->nstype);
+	else
+		assert(nsfile);
 }
 
 static void disable_namespaces(int namespaces)
 {
-	struct namespace_file *n;
+	struct namespace_file *n = NULL;
 
-	for (n = namespace_files; n->nstype; n++) {
-		if (!(namespaces & n->nstype))
-			continue;
+	while ((n = next_enabled_nsfile(n, namespaces)))
 		disable_nsfile(n);
-	}
 }
 
 /* Returns mask of all enabled namespaces */
 static int get_namespaces(void)
 {
-	struct namespace_file *n;
+	struct namespace_file *n = NULL;
 	int mask = 0;
 
-	for (n = namespace_files; n->nstype; n++) {
-		if (n->enabled)
-			mask |= n->nstype;
-	}
+	while ((n = next_enabled_nsfile(n, 0)))
+		mask |= n->nstype;
 	return mask;
 }
 
 static int get_namespaces_without_fd(void)
 {
-	struct namespace_file *n;
+	struct namespace_file *n = NULL;
 	int mask = 0;
 
-	for (n = namespace_files; n->nstype; n++) {
-		if (n->enabled && n->fd < 0)
+	while ((n = next_enabled_nsfile(n, 0))) {
+		if (n->fd < 0)
 			mask |= n->nstype;
 	}
+
 	return mask;
 }
 
@@ -251,13 +267,9 @@ static int get_namespaces_without_fd(void)
  * if they have not been opened yet. */
 static void open_namespaces(int namespaces)
 {
-	struct namespace_file *n;
+	struct namespace_file *n = NULL;
 
-	for (n = namespace_files; n->nstype; n++) {
-		if (!n->enabled)
-			continue;
-		if (!(n->nstype & namespaces))
-			continue;
+	while ((n = next_enabled_nsfile(n, namespaces))) {
 		if (n->fd < 0)
 			open_target_fd(&n->fd, n->name, NULL);
 	}
@@ -278,20 +290,21 @@ static int do_setns(int fd, int ns, const char *name, bool ignore_errors)
 
 static void enter_namespaces(int pid_fd, int namespaces, bool ignore_errors)
 {
-	struct namespace_file *n;
+	struct namespace_file *n =  NULL;
 
 	if (pid_fd) {
 		int ns = 0;
-		for (n = namespace_files; n->nstype; n++) {
-			if (n->enabled && (n->nstype & namespaces) && n->fd < 0)
+		while ((n = next_enabled_nsfile(n, namespaces))) {
+			if (n->fd < 0)
 				ns |= n->nstype;
 		}
 		if (ns && do_setns(pid_fd, ns, NULL, ignore_errors) == 0)
 			disable_namespaces(ns);
 	}
 
-	for (n = namespace_files; n->nstype; n++) {
-		if (!n->enabled || !(n->nstype & namespaces) || n->fd < 0)
+	n = NULL;
+	while ((n = next_enabled_nsfile(n, namespaces))) {
+		if (n->fd < 0)
 			continue;
 		if (do_setns(n->fd, n->nstype, n->name, ignore_errors) == 0)
 			disable_nsfile(n);
@@ -304,10 +317,7 @@ static void open_target_sk_netns(int pid, int sock_fd)
 	struct stat sb;
 	int pidfd, sk, nsfd;
 
-	for (nsfile = namespace_files; nsfile->nstype; nsfile++) {
-		if (nsfile->nstype == CLONE_NEWNET)
-			break;
-	}
+	nsfile = get_nsfile(CLONE_NEWNET);
 	assert(nsfile->nstype);
 
 	pidfd = pidfd_open(pid, 0);
@@ -500,7 +510,6 @@ int main(int argc, char *argv[])
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
-	struct namespace_file *nsfile;
 	int c, namespaces = 0, setgroups_nerrs = 0, preserve_cred = 0;
 	bool do_rd = false, do_wd = false, do_uid = false, force_uid = false,
 	     do_gid = false, force_gid = false, do_env = false, do_all = false,
@@ -641,14 +650,11 @@ int main(int argc, char *argv[])
 #endif
 
 	if (do_all) {
-		for (nsfile = namespace_files; nsfile->nstype; nsfile++) {
-			if (nsfile->enabled)
-				continue;	/* namespace already specified */
-
-			if (!is_usable_namespace(namespace_target_pid, nsfile))
+		struct namespace_file *n = NULL;
+		while ((n = next_nsfile(n, 0))) {
+			if (n->enabled || !is_usable_namespace(namespace_target_pid, n))
 				continue;
-
-			enable_nsfile(nsfile, NULL);
+			enable_nsfile(n, NULL);
 		}
 	}
 
