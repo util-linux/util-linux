@@ -311,18 +311,14 @@ static void enter_namespaces(int pid_fd, int namespaces, bool ignore_errors)
 	}
 }
 
-static void open_target_sk_netns(int pid, int sock_fd)
+static void open_target_sk_netns(int pidfd, int sock_fd)
 {
 	struct namespace_file *nsfile;
 	struct stat sb;
-	int pidfd, sk, nsfd;
+	int sk, nsfd;
 
 	nsfile = get_nsfile(CLONE_NEWNET);
 	assert(nsfile->nstype);
-
-	pidfd = pidfd_open(pid, 0);
-	if (pidfd < 0)
-		err(EXIT_FAILURE, _("failed to pidfd_open() for %d"), pid);
 
 	sk = pidfd_getfd(pidfd, sock_fd, 0);
 	if (sk < 0)
@@ -340,7 +336,6 @@ static void open_target_sk_netns(int pid, int sock_fd)
 	nsfile->fd = nsfd;
 	nsfile->enabled = true;
 	close(sk);
-	close(pidfd);
 }
 
 static int get_ns_ino(const char *path, ino_t *ino)
@@ -662,14 +657,16 @@ int main(int argc, char *argv[])
 	 * Open remaining namespace and directory descriptors.
 	 */
 	namespaces = get_namespaces_without_fd();
-	if (namespaces) {
+	if (namespaces || sock_fd >= 0) {
 		if (!namespace_target_pid)
 			errx(EXIT_FAILURE, _("no target PID specified"));
 
 		pid_fd = pidfd_open(namespace_target_pid, 0);
 		if (pid_fd < 0) {
-			/* fallback to classic way */
-			open_namespaces(namespaces);
+			if (sock_fd >= 0)
+				err(EXIT_FAILURE, _("failed to pidfd_open() for %d"), namespace_target_pid);
+			if (namespaces)
+				open_namespaces(namespaces);	/* fallback */
 		}
 	}
 
@@ -693,11 +690,8 @@ int main(int argc, char *argv[])
 	if (do_user_parent)
 		open_parent_user_ns_fd();
 
-	if (sock_fd != -1) {
-		if (!namespace_target_pid)
-			errx(EXIT_FAILURE, _("--net-socket needs target PID"));
-		open_target_sk_netns(namespace_target_pid, sock_fd);
-	}
+	if (sock_fd >= 0)
+		open_target_sk_netns(pid_fd, sock_fd);
 
 	/* All initialized, get final set of namespaces */
 	namespaces = get_namespaces();
