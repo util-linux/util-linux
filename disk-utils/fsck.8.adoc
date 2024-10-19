@@ -158,7 +158,7 @@ and other factors. Consequently, *fsck* is called individually for each device.
 
 == AUTHORS
 
-mailto:tytso@mit.edu>[Theodore Ts'o],
+mailto:tytso@mit.edu[Theodore Ts'o],
 mailto:kzak@redhat.com[Karel Zak]
 
 == SEE ALSO
