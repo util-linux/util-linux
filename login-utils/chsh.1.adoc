@@ -44,7 +44,7 @@ deprecated *-u*.
 Print version and exit. The short options *-V* have been used since version 2.39; old versions use
 deprecated *-v*.
 
-include::man-common/help-version.adoc[]
+// Do not include::man-common/help-version.adoc[]  as both -h and -V were already explicitly given above in more detail. 
 
 == VALID SHELLS
 
