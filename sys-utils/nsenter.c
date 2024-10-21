@@ -154,35 +154,6 @@ static inline struct namespace_file *__next_nsfile(struct namespace_file *n, int
 #define get_nsfile(_ns)			__next_nsfile(NULL, _ns, 0)
 #define get_enabled_nsfile(_ns)		__next_nsfile(NULL, _ns, 1)
 
-static void open_parent_user_ns_fd(void)
-{
-	struct namespace_file *nsfile = NULL;
-	struct namespace_file *user_nsfile = NULL;
-	int parent_ns = -1;
-
-	for (nsfile = namespace_files; nsfile->nstype; nsfile++) {
-		if (nsfile->nstype == CLONE_NEWUSER)
-			user_nsfile = nsfile;
-
-		if (nsfile->fd == -1)
-			continue;
-
-		parent_ns = ioctl(nsfile->fd, NS_GET_USERNS);
-		if (parent_ns < 0)
-			err(EXIT_FAILURE, _("failed to open parent ns of %s"), nsfile->name);
-
-		break;
-	}
-
-	if (parent_ns < 0)
-		errx(EXIT_FAILURE, _("no namespaces to get parent of"));
-	if (user_nsfile) {
-		user_nsfile->fd = parent_ns;
-		user_nsfile->enabled = true;
-	}
-}
-
-
 static void open_target_fd(int *fd, const char *type, const char *path)
 {
 	char pathbuf[PATH_MAX];
@@ -310,6 +281,50 @@ static void enter_namespaces(int pid_fd, int namespaces, bool ignore_errors)
 			disable_nsfile(n);
 	}
 }
+
+static void open_parent_user_ns_fd(int pid_fd)
+{
+	struct namespace_file *user = NULL;
+	int fd = -1, parent_fd = -1;
+	bool islocal = false;
+
+	/* try user namespace if FD defined */
+	user = get_nsfile(CLONE_NEWUSER);
+	if (user->enabled)
+		fd = user->fd;
+
+	/* try pidfd to get FD */
+	if (fd < 0 && pid_fd >= 0) {
+		fd = ioctl(pid_fd, PIDFD_GET_USER_NAMESPACE, 0);
+		if (fd >= 0)
+			islocal = true;
+	}
+
+	/* try any enabled namespace */
+	if (fd < 0) {
+		struct namespace_file *n = get_enabled_nsfile(0);
+		if (n)
+			fd = n->fd;
+	}
+
+	/* try directly open the NS */
+	if (fd < 0) {
+		open_target_fd(&fd, "ns/user", NULL);
+		islocal = true;
+	}
+
+	parent_fd = ioctl(fd, NS_GET_USERNS);
+	if (parent_fd < 0)
+		err(EXIT_FAILURE, _("failed to open parent namespace"));
+
+	if (islocal)
+		close(fd);
+	if (user->fd > 0)
+		close(user->fd);
+	user->fd = parent_fd;
+	user->enabled = true;
+}
+
 
 static void open_target_sk_netns(int pidfd, int sock_fd)
 {
@@ -657,7 +672,7 @@ int main(int argc, char *argv[])
 	 * Open remaining namespace and directory descriptors.
 	 */
 	namespaces = get_namespaces_without_fd();
-	if (namespaces || sock_fd >= 0) {
+	if (namespaces || sock_fd >= 0 || do_user_parent) {
 		if (!namespace_target_pid)
 			errx(EXIT_FAILURE, _("no target PID specified"));
 
@@ -688,7 +703,7 @@ int main(int argc, char *argv[])
 	 * Get parent userns from any available ns.
 	 */
 	if (do_user_parent)
-		open_parent_user_ns_fd();
+		open_parent_user_ns_fd(pid_fd);
 
 	if (sock_fd >= 0)
 		open_target_sk_netns(pid_fd, sock_fd);
