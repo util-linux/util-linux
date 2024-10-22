@@ -898,6 +898,7 @@ static int save_adjtime(const struct hwclock_control *ctl,
 {
 	char *content;		/* Stuff to write to disk file */
 	FILE *fp;
+	int rc = EXIT_FAILURE;
 
 	xasprintf(&content, "%f %"PRId64" %f\n%"PRId64"\n%s\n",
 		  adjtime->drift_factor,
@@ -917,8 +918,7 @@ static int save_adjtime(const struct hwclock_control *ctl,
 		fp = fopen(ctl->adj_file_name, "w");
 		if (fp == NULL) {
 			warn(_("cannot open %s"), ctl->adj_file_name);
-			free(content);
-			return EXIT_FAILURE;
+			goto done;
 		}
 
 		rc = fputs(content, fp) < 0;
@@ -926,12 +926,14 @@ static int save_adjtime(const struct hwclock_control *ctl,
 
 		if (rc) {
 			warn(_("cannot update %s"), ctl->adj_file_name);
-			free(content);
-			return EXIT_FAILURE;
+			goto done;
 		}
 	}
+
+	rc = EXIT_SUCCESS;
+done:
 	free(content);
-	return EXIT_SUCCESS;
+	return rc;
 }
 
 /*
