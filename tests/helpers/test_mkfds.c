@@ -4132,7 +4132,7 @@ static void list_output_values(const char *factory_name)
 	if (!o)
 		return;
 	for (int i = 0; i < factory->EX_O; i++)
-		printf(fmt, i + 1, *o);
+		printf(fmt, i + 1, o[i]);
 }
 
 static void rename_self(const char *comm)
