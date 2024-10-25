@@ -2644,6 +2644,8 @@ static void *make_bpf_prog(const struct factory *factory, struct fdesc fdescs[],
 		},
 	};
 
+	struct bpf_prog_info info = {};
+
 	memset(&attr, 0, sizeof(attr));
 	attr.prog_type = iprog_type_id;
 	attr.insns = (uint64_t)(unsigned long)insns;
@@ -2658,6 +2660,14 @@ static void *make_bpf_prog(const struct factory *factory, struct fdesc fdescs[],
 	if (bfd < 0)
 		err_nosys(EXIT_FAILURE, "failed in bpf(BPF_PROG_LOAD)");
 
+
+	memset(&attr, 0, sizeof(attr));
+	attr.info.bpf_fd = bfd;
+	attr.info.info_len = sizeof(info);
+	attr.info.info = (uint64_t)(unsigned long)&info;
+	if (syscall(SYS_bpf, BPF_OBJ_GET_INFO_BY_FD, &attr, sizeof(attr)) < 0)
+		err_nosys(EXIT_FAILURE, "failed in bpf(BPF_OBJ_GET_INFO_BY_FD)");
+
 	if (bfd != fdescs[0].fd) {
 		if (dup2(bfd, fdescs[0].fd) < 0) {
 			err(EXIT_FAILURE, "failed to dup %d -> %d", bfd, fdescs[0].fd);
@@ -2671,7 +2681,38 @@ static void *make_bpf_prog(const struct factory *factory, struct fdesc fdescs[],
 		.data  = NULL
 	};
 
-	return NULL;
+	return xmemdup(&info, sizeof(info));
+}
+
+enum ritem_bpf_prog {
+	RITEM_BPF_PROG_ID,
+	RITEM_BPF_PROG_TAG,
+};
+
+static void report_bpf_prog(const struct factory *factory _U_,
+			    int nth, void *data, FILE *fp)
+{
+	struct bpf_prog_info *info = data;
+
+	switch (nth) {
+	case RITEM_BPF_PROG_ID:
+		fprintf(fp, "%u", info->id);
+		break;
+	case RITEM_BPF_PROG_TAG:
+		for (size_t i = 0; i < BPF_TAG_SIZE; i++) {
+			unsigned char ch = (info->tag[i] >> 4);
+			unsigned char cl = info->tag[i] & 0x0f;
+
+			fprintf(fp, "%x", (unsigned int)ch);
+			fprintf(fp, "%x", (unsigned int)cl);
+		}
+		break;
+	}
+}
+
+static void free_bpf_prog(const struct factory * factory _U_, void *data)
+{
+	free(data);
 }
 
 static void *make_some_pipes(const struct factory *factory _U_, struct fdesc fdescs[],
@@ -3929,7 +3970,10 @@ static const struct factory factories[] = {
 		.priv = true,
 		.N    = 1,
 		.EX_N = 0,
+		.EX_O = 2,
 		.make = make_bpf_prog,
+		.report = report_bpf_prog,
+		.free = free_bpf_prog,
 		.params = (struct parameter []) {
 			{
 				.name = "prog-type-id",
@@ -3944,7 +3988,11 @@ static const struct factory factories[] = {
 				.defv.string = "mkfds_bpf_prog",
 			},
 			PARAM_END
-		}
+		},
+		.o_descs = (const char *[]) {
+			[RITEM_BPF_PROG_ID]  = "the id of bpf prog object",
+			[RITEM_BPF_PROG_TAG] = "the tag of bpf prog object",
+		},
 	},
 	{
 		.name = "multiplexing",
