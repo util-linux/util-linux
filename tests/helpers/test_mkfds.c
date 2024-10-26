@@ -353,6 +353,14 @@ static void abort_with_child_death_message(int signum _U_)
 	_exit(EXIT_FAILURE);
 }
 
+static void reserve_fd(int fd)
+{
+	(void)close(fd);
+	if (dup2(0, fd) < 0)
+		errx(EXIT_FAILURE,
+		     "faild to reserve fd with dup2(%d, %d)", 0, fd);
+}
+
 static void *open_ro_regular_file(const struct factory *factory, struct fdesc fdescs[],
 				  int argc, char ** argv)
 {
@@ -744,6 +752,13 @@ static void *make_pipe(const struct factory *factory, struct fdesc fdescs[],
 	int xpd[2];
 	xpd [0] = ARG_INTEGER(rdup);
 	xpd [1] = ARG_INTEGER(wdup);
+
+	/* Reserve the fd */
+	for (int i = 0; i < 2; i++) {
+		if (xpd[i] < 0)
+			continue;
+		reserve_fd(xpd[i]);
+	}
 
 	for (int i = 0; i < 2; i++) {
 		if (ARG_STRING(nonblock)[i] == '-')
@@ -4462,6 +4477,10 @@ int main(int argc, char **argv)
 			errx(EXIT_FAILURE, "fd number should not be negative: %s", str);
 		if (fd < 3)
 			errx(EXIT_FAILURE, "fd 0, 1, 2 are reserved: %s", str);
+		if (fd > INT_MAX)
+			errx(EXIT_FAILURE, "too large fd number for INT: %s", str);
+
+		reserve_fd(fd);
 		fdescs[i].fd = fd;
 	}
 	optind += factory->N;
