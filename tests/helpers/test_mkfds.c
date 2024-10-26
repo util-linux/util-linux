@@ -3271,7 +3271,7 @@ static const struct factory factories[] = {
 				.name = "readable",
 				.type = PTYPE_BOOLEAN,
 				.desc = "open the new file readable way",
-				.defv.string = false,
+				.defv.boolean = false,
 			},
 			{
 				.name = "lock",
