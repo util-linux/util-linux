@@ -145,11 +145,11 @@ static struct lscpu_coldesc coldescs_cpu[] =
 	[COL_CPU_POLARIZATION] = { "POLARIZATION", N_("CPU dispatching mode on virtual hardware") },
 	[COL_CPU_ADDRESS]      = { "ADDRESS", N_("physical address of a CPU") },
 	[COL_CPU_CONFIGURED]   = { "CONFIGURED", N_("shows if the hypervisor has allocated the CPU"), 0, 0, SCOLS_JSON_BOOLEAN_OPTIONAL },
-	[COL_CPU_ONLINE]       = { "ONLINE", N_("shows if Linux currently makes use of the CPU"), 0, SCOLS_JSON_BOOLEAN_OPTIONAL },
-	[COL_CPU_MHZ]          = { "MHZ", N_("shows the currently MHz of the CPU"), 0, SCOLS_JSON_NUMBER },
-	[COL_CPU_SCALMHZ]      = { "SCALMHZ%", N_("shows scaling percentage of the CPU frequency"), SCOLS_JSON_NUMBER },
-	[COL_CPU_MAXMHZ]       = { "MAXMHZ", N_("shows the maximum MHz of the CPU"), 0, SCOLS_JSON_NUMBER },
-	[COL_CPU_MINMHZ]       = { "MINMHZ", N_("shows the minimum MHz of the CPU"), 0, SCOLS_JSON_NUMBER },
+	[COL_CPU_ONLINE]       = { "ONLINE", N_("shows if Linux currently makes use of the CPU"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_BOOLEAN_OPTIONAL },
+	[COL_CPU_MHZ]          = { "MHZ", N_("shows the currently MHz of the CPU"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
+	[COL_CPU_SCALMHZ]      = { "SCALMHZ%", N_("shows scaling percentage of the CPU frequency"), SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER },
+	[COL_CPU_MAXMHZ]       = { "MAXMHZ", N_("shows the maximum MHz of the CPU"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
+	[COL_CPU_MINMHZ]       = { "MINMHZ", N_("shows the minimum MHz of the CPU"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
 	[COL_CPU_MODELNAME]    = { "MODELNAME", N_("shows CPU model name"), 0, 0, SCOLS_JSON_STRING }
 };
 
