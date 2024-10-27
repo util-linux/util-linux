@@ -133,14 +133,14 @@ struct lscpu_coldesc {
 
 static struct lscpu_coldesc coldescs_cpu[] =
 {
-	[COL_CPU_BOGOMIPS]     = { "BOGOMIPS", N_("crude measurement of CPU speed"), 1, SCOLS_JSON_NUMBER },
-	[COL_CPU_CPU]          = { "CPU", N_("logical CPU number"), 1, SCOLS_JSON_NUMBER },
-	[COL_CPU_CORE]         = { "CORE", N_("logical core number"), 0, SCOLS_JSON_NUMBER },
-	[COL_CPU_CLUSTER]      = { "CLUSTER", N_("logical cluster number"), 0, SCOLS_JSON_NUMBER },
-	[COL_CPU_SOCKET]       = { "SOCKET", N_("logical socket number"), 0, SCOLS_JSON_NUMBER },
-	[COL_CPU_NODE]         = { "NODE", N_("logical NUMA node number"), 0, SCOLS_JSON_NUMBER },
-	[COL_CPU_BOOK]         = { "BOOK", N_("logical book number"), 0, SCOLS_JSON_NUMBER },
-	[COL_CPU_DRAWER]       = { "DRAWER", N_("logical drawer number"), SCOLS_JSON_NUMBER },
+	[COL_CPU_BOGOMIPS]     = { "BOGOMIPS", N_("crude measurement of CPU speed"), 0, 1, SCOLS_JSON_NUMBER },
+	[COL_CPU_CPU]          = { "CPU", N_("logical CPU number"), 0, 1, SCOLS_JSON_NUMBER },
+	[COL_CPU_CORE]         = { "CORE", N_("logical core number"), 0, 0, SCOLS_JSON_NUMBER },
+	[COL_CPU_CLUSTER]      = { "CLUSTER", N_("logical cluster number"), 0, 0, SCOLS_JSON_NUMBER },
+	[COL_CPU_SOCKET]       = { "SOCKET", N_("logical socket number"), 0, 0, SCOLS_JSON_NUMBER },
+	[COL_CPU_NODE]         = { "NODE", N_("logical NUMA node number"), 0, 0, SCOLS_JSON_NUMBER },
+	[COL_CPU_BOOK]         = { "BOOK", N_("logical book number"), 0, 0, SCOLS_JSON_NUMBER },
+	[COL_CPU_DRAWER]       = { "DRAWER", N_("logical drawer number"), 0, SCOLS_JSON_NUMBER },
 	[COL_CPU_CACHE]        = { "CACHE", N_("shows how caches are shared between CPUs") },
 	[COL_CPU_POLARIZATION] = { "POLARIZATION", N_("CPU dispatching mode on virtual hardware") },
 	[COL_CPU_ADDRESS]      = { "ADDRESS", N_("physical address of a CPU") },
