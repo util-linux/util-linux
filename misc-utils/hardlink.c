@@ -649,8 +649,7 @@ static int file_xattrs_equal(const struct file *a, const struct file *b)
  */
 static int file_may_link_to(const struct file *a, const struct file *b)
 {
-	return (a->st.st_size != 0 &&
-		a->st.st_size == b->st.st_size &&
+	return (a->st.st_size == b->st.st_size &&
 		a->links != NULL && b->links != NULL &&
 		a->st.st_dev == b->st.st_dev &&
 		a->st.st_ino != b->st.st_ino &&

@@ -465,7 +465,7 @@ static ssize_t get_intro(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 			return -1;
 		rsz = read_all(fd, (char *) data->intro, sizeof(data->intro));
 		DBG(DATA, ul_debugobj(data, " read %zu bytes intro", sizeof(data->intro)));
-		if (rsz <= 0)
+		if (rsz < 0)
 			return -1;
 		data->nblocks = 1;
 	}
