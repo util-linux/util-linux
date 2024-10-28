@@ -18,7 +18,7 @@ hardlink - link multiple copies of a file
 
 == SYNOPSIS
 
-*hardlink* [options] [_directory_|_file_]...
+*hardlink* [options] _directory_|_file_...
 
 == DESCRIPTION
 
