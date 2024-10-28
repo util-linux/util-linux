@@ -76,6 +76,15 @@ static struct namespace_file {
 	{ .nstype = 0, .name = NULL, .fd = -1 }
 };
 
+static struct namespace_file* user_namespace_file = &namespace_files[0];
+static struct namespace_file* cgroup_namespace_file = &namespace_files[1];
+static struct namespace_file* ipc_namespace_file = &namespace_files[2];
+static struct namespace_file* uts_namespace_file = &namespace_files[3];
+static struct namespace_file* net_namespace_file = &namespace_files[4];
+static struct namespace_file* pid_namespace_file = &namespace_files[5];
+static struct namespace_file* mnt_namespace_file = &namespace_files[6];
+static struct namespace_file* time_namespace_file = &namespace_files[7];
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
@@ -131,13 +140,9 @@ static int cgroup_procs_fd = -1;
 static void set_parent_user_ns_fd(void)
 {
 	struct namespace_file *nsfile = NULL;
-	struct namespace_file *user_nsfile = NULL;
 	int parent_ns = -1;
 
 	for (nsfile = namespace_files; nsfile->nstype; nsfile++) {
-		if (nsfile->nstype == CLONE_NEWUSER)
-			user_nsfile = nsfile;
-
 		if (nsfile->fd == -1)
 			continue;
 
@@ -150,8 +155,8 @@ static void set_parent_user_ns_fd(void)
 
 	if (parent_ns < 0)
 		errx(EXIT_FAILURE, _("no namespaces to get parent of"));
-	if (user_nsfile)
-		user_nsfile->fd = parent_ns;
+
+	user_namespace_file->fd = parent_ns;
 }
 
 
@@ -177,18 +182,9 @@ static void open_target_fd(int *fd, const char *type, const char *path)
 		err(EXIT_FAILURE, _("cannot open %s"), path);
 }
 
-static void open_namespace_fd(int nstype, const char *path)
+static void open_namespace_fd(struct namespace_file* nsfile, const char *path)
 {
-	struct namespace_file *nsfile;
-
-	for (nsfile = namespace_files; nsfile->nstype; nsfile++) {
-		if (nstype != nsfile->nstype)
-			continue;
-
-		open_target_fd(&nsfile->fd, nsfile->name, path);
-		return;
-	}
-	/* This should never happen */
+	open_target_fd(&nsfile->fd, nsfile->name, path);
 	assert(nsfile->nstype);
 }
 
@@ -430,25 +426,25 @@ int main(int argc, char *argv[])
 			break;
 		case 'm':
 			if (optarg)
-				open_namespace_fd(CLONE_NEWNS, optarg);
+				open_namespace_fd(mnt_namespace_file, optarg);
 			else
 				namespaces |= CLONE_NEWNS;
 			break;
 		case 'u':
 			if (optarg)
-				open_namespace_fd(CLONE_NEWUTS, optarg);
+				open_namespace_fd(uts_namespace_file, optarg);
 			else
 				namespaces |= CLONE_NEWUTS;
 			break;
 		case 'i':
 			if (optarg)
-				open_namespace_fd(CLONE_NEWIPC, optarg);
+				open_namespace_fd(ipc_namespace_file, optarg);
 			else
 				namespaces |= CLONE_NEWIPC;
 			break;
 		case 'n':
 			if (optarg)
-				open_namespace_fd(CLONE_NEWNET, optarg);
+				open_namespace_fd(net_namespace_file, optarg);
 			else
 				namespaces |= CLONE_NEWNET;
 			break;
@@ -458,25 +454,25 @@ int main(int argc, char *argv[])
 			break;
 		case 'p':
 			if (optarg)
-				open_namespace_fd(CLONE_NEWPID, optarg);
+				open_namespace_fd(pid_namespace_file, optarg);
 			else
 				namespaces |= CLONE_NEWPID;
 			break;
 		case 'C':
 			if (optarg)
-				open_namespace_fd(CLONE_NEWCGROUP, optarg);
+				open_namespace_fd(cgroup_namespace_file, optarg);
 			else
 				namespaces |= CLONE_NEWCGROUP;
 			break;
 		case 'U':
 			if (optarg)
-				open_namespace_fd(CLONE_NEWUSER, optarg);
+				open_namespace_fd(user_namespace_file, optarg);
 			else
 				namespaces |= CLONE_NEWUSER;
 			break;
 		case 'T':
 			if (optarg)
-				open_namespace_fd(CLONE_NEWTIME, optarg);
+				open_namespace_fd(time_namespace_file, optarg);
 			else
 				namespaces |= CLONE_NEWTIME;
 			break;
@@ -575,7 +571,7 @@ int main(int argc, char *argv[])
 	 */
 	for (nsfile = namespace_files; nsfile->nstype; nsfile++)
 		if (nsfile->nstype & namespaces)
-			open_namespace_fd(nsfile->nstype, NULL);
+			open_namespace_fd(nsfile, NULL);
 	if (do_rd)
 		open_target_fd(&root_fd, "root", NULL);
 	if (do_wd)
