@@ -189,6 +189,8 @@ static struct options {
 	unsigned int keep_oldest:1;
 	unsigned int prio_trees:1;
 	unsigned int dry_run:1;
+	unsigned int list_duplicates:1;
+	char line_delim;
 	uintmax_t min_size;
 	uintmax_t max_size;
 	size_t io_size;
@@ -206,6 +208,7 @@ static struct options {
 	.respect_xattrs = FALSE,
 	.keep_oldest = FALSE,
 	.prio_trees = FALSE,
+	.line_delim = '\n',
 	.min_size = 1,
 	.cache_size = 10*1024*1024
 };
@@ -1152,6 +1155,10 @@ static void visitor(const void *nodep, const VISIT which, const int depth)
 
 	/* final cleanup */
 	for (other = begin; other != NULL; other = other->next) {
+		if (opts.list_duplicates && other->st.st_nlink > 1)
+			for (struct link *l = other->links; l; l = l->next)
+				printf("%016zu\t%s%c", (size_t)other, l->path, opts.line_delim);
+
 		if (ul_fileeq_data_associated(&other->data))
 			ul_fileeq_data_deinit(&other->data);
 	}
@@ -1182,6 +1189,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	        "                              lowest hardlink count\n"), out);
 	fputs(_(" -M, --minimize             reverse the meaning of -m\n"), out);
 	fputs(_(" -n, --dry-run              don't actually link anything\n"), out);
+	fputs(_(" -l, --list-duplicates      print every group of duplicate files\n"), out);
+	fputs(_(" -z, --zero                 delimit output with NULs instead of newlines\n"), out);
 	fputs(_(" -o, --ignore-owner         ignore owner changes\n"), out);
 	fputs(_(" -F, --prioritize-trees     files found in the earliest specified top-level\n"
                 "                              directory have higher priority (lower precedence\n"
@@ -1223,7 +1232,7 @@ static int parse_options(int argc, char *argv[])
 		OPT_REFLINK = CHAR_MAX + 1,
 		OPT_SKIP_RELINKS
 	};
-	static const char optstr[] = "VhvndfpotXcmMFOx:y:i:r:S:s:b:q";
+	static const char optstr[] = "VhvndfpotXcmMFOlzx:y:i:r:S:s:b:q";
 	static const struct option long_options[] = {
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
@@ -1252,6 +1261,8 @@ static int parse_options(int argc, char *argv[])
 		{"content", no_argument, NULL, 'c'},
 		{"quiet", no_argument, NULL, 'q'},
 		{"cache-size", required_argument, NULL, 'r'},
+		{"list-duplicates", no_argument, NULL, 'l'},
+		{"zero", no_argument, NULL, 'z'},
 		{NULL, 0, NULL, 0}
 	};
 	static const ul_excl_t excl[] = {
@@ -1328,6 +1339,14 @@ static int parse_options(int argc, char *argv[])
 			break;
 		case 'b':
 			opts.io_size = strtosize_or_err(optarg, _("failed to parse I/O size"));
+			break;
+		case 'l':
+			opts.list_duplicates = TRUE;
+			opts.dry_run = TRUE;
+			quiet = TRUE;
+			break;
+		case 'z':
+			opts.line_delim = '\0';
 			break;
 #ifdef USE_REFLINK
 		case OPT_REFLINK:

@@ -76,6 +76,12 @@ Among equal files, keep the file with the lowest link count.
 *-n*, *--dry-run*::
 Do not act, just print what would happen.
 
+*-l*, *--list-duplicates*::
+Don't link anything, but list the absolute path of every duplicate file, one per line, preceded by a unique 16-byte discriminator and a tab.
+
+*-z*, *--zero*::
+Separate lines with a NUL instead of a newline in *-l* mode.
+
 *-o*, *--ignore-owner*::
 Link and compare files even if their owner information (user and group) differs. Results may be unpredictable.
 
