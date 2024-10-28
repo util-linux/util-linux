@@ -428,23 +428,20 @@ static void print_stats(void)
 
 /**
  * handle_interrupt - Handle a signal
- *
- * Returns: %TRUE on SIGINT, SIGTERM; %FALSE on all other signals.
  */
-static int handle_interrupt(void)
+static void handle_interrupt(void)
 {
 	switch (last_signal) {
-	case SIGINT:
-	case SIGTERM:
-		return TRUE;
 	case SIGUSR1:
 		print_stats();
 		putchar('\n');
 		break;
+	default:
+		signal(last_signal, SIG_DFL);
+		raise(last_signal);
+		break;
 	}
-
 	last_signal = 0;
-	return FALSE;
 }
 
 #ifdef USE_XATTR
@@ -589,8 +586,7 @@ static int file_xattrs_equal(const struct file *a, const struct file *b)
 	// We now have two sorted tables of xattr names.
 
 	for (i = 0; i < n_a; i++) {
-		if (handle_interrupt())
-			goto exit;	// user wants to quit
+		handle_interrupt();
 
 		if (strcmp(name_ptrs_a[i], name_ptrs_b[i]) != 0)
 			goto exit;	// names at same slot differ
@@ -845,8 +841,7 @@ static int inserter(const char *fpath, const struct stat *sb,
 	int included;
 	int excluded;
 
-	if (handle_interrupt())
-		return 1;
+	handle_interrupt();
 	if (typeflag == FTW_DNR || typeflag == FTW_NS)
 		warn(_("cannot read %s"), fpath);
 	if (typeflag != FTW_F || !S_ISREG(sb->st_mode))
@@ -1072,8 +1067,7 @@ static void visitor(const void *nodep, const VISIT which, const int depth)
 		size_t nnodes, memsiz;
 		int may_reflink = 0;
 
-		if (handle_interrupt())
-			exit(EXIT_FAILURE);
+		handle_interrupt();
 		if (master->links == NULL)
 			continue;
 
@@ -1098,8 +1092,7 @@ static void visitor(const void *nodep, const VISIT which, const int depth)
 		for (other = master->next; other != NULL; other = other->next) {
 			int eq;
 
-			if (handle_interrupt())
-				exit(EXIT_FAILURE);
+			handle_interrupt();
 
 			assert(other != other->next);
 			assert(other->st.st_size == master->st.st_size);
@@ -1413,12 +1406,7 @@ static void to_be_called_atexit(void)
 */
 static void sighandler(int i)
 {
-	UL_PROTECT_ERRNO;
-	if (last_signal != SIGINT)
-		last_signal = i;
-	if (i == SIGINT)
-		/* can't use stdio on signal handler */
-		ignore_result(write(STDOUT_FILENO, "\n", sizeof("\n")-1));
+	last_signal = i;
 }
 
 int main(int argc, char *argv[])
@@ -1430,7 +1418,6 @@ int main(int argc, char *argv[])
 	sa.sa_flags = SA_RESTART;
 	sigfillset(&sa.sa_mask);
 
-	/* If we receive a SIGINT, end the processing */
 	sigaction(SIGINT, &sa, NULL);
 	sigaction(SIGUSR1, &sa, NULL);
 
