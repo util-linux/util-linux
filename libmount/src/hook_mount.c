@@ -214,6 +214,10 @@ static int configure_superblock(struct libmnt_context *cxt,
 		const int is_linux = ent && mnt_opt_get_map(opt) == cxt->map_linux;
 
 		if (is_linux && ent->id == MS_RDONLY) {
+			/* ignore if specified as "ro=vfs" */
+			if (mnt_opt_value_with(opt, "vfs")
+			    && !mnt_opt_value_with(opt, "fs"))
+				continue;
 			/* Use ro/rw for superblock (for backward compatibility) */
 			value = NULL;
 			has_rwro = 1;

@@ -481,7 +481,7 @@ static struct libmnt_opt *optlist_new_opt(struct libmnt_optlist *ls,
 	}
 #ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
 	if (!opt->recursive && opt->value
-	    && is_vfs_opt(opt) && strcmp(opt->value, "recursive") == 0)
+	    && is_vfs_opt(opt) && mnt_opt_value_with(opt, "recursive"))
 		opt->recursive = 1;
 #endif
 	if (ent && map) {
@@ -876,6 +876,10 @@ int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *cl
 		if (flag_to_attr( opt->ent->id, &x) < 0)
 			continue;
 
+		if (x == MOUNT_ATTR_RDONLY && !mnt_opt_value_with(opt, "vfs")
+				           && mnt_opt_value_with(opt, "fs"))
+			continue;
+
 		if (x && remount_reset)
 			remount_reset &= ~x;
 
@@ -964,6 +968,17 @@ int mnt_optlist_strdup_optstr(struct libmnt_optlist *ls, char **optstr,
 		if (!opt->name)
 			continue;
 		if (opt->map == ls->linux_map && opt->ent->id == MS_RDONLY) {
+			/* "ro=fs" -- ignore for VFS (linux map wanted) */
+			if (map == ls->linux_map
+			    && !mnt_opt_value_with(opt, "vfs")
+			    && mnt_opt_value_with(opt, "fs"))
+				continue;
+			/* "ro=vfs" -- ignore for FS */
+			if (what == MNT_OL_FLTR_UNKNOWN
+			    && !mnt_opt_value_with(opt, "fs")
+			    && mnt_opt_value_with(opt, "vfs"))
+				continue;
+
 			is_rdonly = opt->ent->mask & MNT_INVERT ? 0 : 1;
 			continue;
 		}
@@ -1145,6 +1160,34 @@ const char *mnt_opt_get_value(struct libmnt_opt *opt)
 	return opt->value;
 }
 
+/* check if option value is @str or comma separated @str */
+int mnt_opt_value_with(struct libmnt_opt *opt, const char *str)
+{
+	char *p;
+	const char *start = opt->value;
+	size_t len;
+
+	if (!str || !opt->value || !*opt->value)
+		return 0;
+
+	len = strlen(str);
+
+	while (start && *start) {
+		p = strstr(start, str);
+		if (!p)
+			return 0;
+		start = p + len;
+
+		if (p > opt->value && *(p - 1) != ',')
+			continue;
+		len = strlen(str);
+		if (*(p + len) != '\0' && *(p + len) != ',')
+			continue;
+		return 1;
+	}
+	return 0;
+}
+
 const char *mnt_opt_get_name(struct libmnt_opt *opt)
 {
 	return opt->name;
@@ -1167,7 +1210,7 @@ int mnt_opt_set_value(struct libmnt_opt *opt, const char *str)
 	opt->recursive = 0;
 	rc = strdup_to_struct_member(opt, value, str);
 
-	if (rc == 0 && str && strcmp(str, "recursive") == 0)
+	if (rc == 0 && mnt_opt_value_with(opt, "recursive"))
 		opt->recursive = 1;
 	return rc;
 }
@@ -1454,6 +1497,32 @@ done:
 	return rc;
 }
 
+static int test_value_with(struct libmnt_test *ts __attribute__((unused)),
+		int argc, char *argv[])
+{
+	struct libmnt_optlist *ol;
+	struct libmnt_opt *opt;
+	int rc;
+
+	if (argc != 4)
+		return -EINVAL;
+
+	rc = mk_optlist(&ol, argv[1]);
+	if (rc)
+		goto done;
+
+	opt = mnt_optlist_get_named(ol, argv[2], NULL);
+	if (!opt)
+		warnx("not found '%s' option", argv[2]);
+	else if (mnt_opt_value_with(opt, argv[3]))
+		printf("found\n");
+	else
+		printf("'%s' not found within '%s'\n", argv[3], mnt_opt_get_value(opt));
+
+done:
+	mnt_unref_optlist(ol);
+	return rc;
+}
 
 int main(int argc, char *argv[])
 {
@@ -1466,6 +1535,7 @@ int main(int argc, char *argv[])
 		{ "--get-str",     test_get_str,     "<list> [linux|user]        all options in string" },
 		{ "--get-flg",     test_get_flg,     "<list>  linux|user         all options by flags" },
 		{ "--split",       test_split,       "<list>                     split options into key-value pairs"},
+		{ "--value-with",  test_value_with,  "<list> <opt> <str>        check if option value contains string"},
 
 		{ NULL }
 	};
