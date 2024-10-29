@@ -1847,6 +1847,9 @@ int mnt_context_open_tree(struct libmnt_context *cxt, const char *path, unsigned
 	if ((mflg & MS_BIND) && !(mflg & MS_REMOUNT)) {
 		oflg |= OPEN_TREE_CLONE;
 
+		/* AT_RECURSIVE is only permitted for OPEN_TREE_CLONE (rbind).
+		 * The other recursive operations are handled by
+		 * mount_setattr() and are independent of open_tree() */
 		if (mnt_optlist_is_rbind(cxt->optlist))
 			oflg |= AT_RECURSIVE;
 	}
