@@ -1,0 +1,2 @@
+Cannot open database (no_file): unable to open database file
+Returning the correct errno: No such file or directory
