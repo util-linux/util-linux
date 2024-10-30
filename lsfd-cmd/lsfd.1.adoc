@@ -147,6 +147,9 @@ Bpf object name.
 BPF-PROG.ID <``number``>::
 Bpf program ID.
 
+BPF-PROG.TAG <``string``>::
+Bpf program TAG.
+
 BPF-PROG.TYPE <``string``>::
 Decoded name of bpf program type.
 
@@ -273,7 +276,7 @@ bpf-map:::
 id=_BPF-MAP.ID_ type=_BPF-MAP.TYPE_[ name=_BPF.NAME_]
 +
 bpf-prog:::
-id=_BPF-PROG.ID_ type=_BPF-PROG.TYPE_[ name=_BPF.NAME_]
+id=_BPF-PROG.ID_ type=_BPF-PROG.TYPE_ tag= _BPF-PROG.TAG_ [ name=_BPF.NAME_]
 +
 eventpoll:::
 tfds=_EVENTPOLL.TFDS_
