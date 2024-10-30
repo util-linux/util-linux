@@ -212,27 +212,27 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputsln(_("Convert bit masks from/to various formats."), stdout);
 
 	fputs(USAGE_ARGUMENTS, stdout);
-	fputsln(_(" <mask_or_list>      A set of bits specified as a hex mask value (e.g. 0xeec2)\n"
-		  "                     or as a comma-separated list of bit IDs."),
+	fputsln(_(" <mask_or_list>      bits specified as a hex mask (e.g. 0xeec2)\n"
+		  "                       or as a comma-separated list of bit IDs"),
 		stdout);
 	fputs(USAGE_SEPARATOR, stdout);
-	fputsln(_("                     If not specified, arguments will be read from stdin."),
+	fputsln(_(" If not specified, arguments will be read from stdin."),
 		stdout);
 
 	fputs(USAGE_OPTIONS, stdout);
 	fprintf(stdout, USAGE_HELP_OPTIONS(21));
 	fputsln(_(" -w <num>, --width <num>\n"
-		  "                     Maximum width of bit masks handled by this tool (default 8192)."),
+	          "                     maximum width of bit masks (default 8192)"),
 		stdout);
 
-	fputs(_("\nMode:\n"), stdout);
-	fputsln(_(" -m, --mask          Print the combined args as a hex mask value (default)."),
+	fputs(_("\nOutput modes:\n"), stdout);
+	fputsln(_(" -m, --mask          display bits as a hex mask value (default)"),
 		stdout);
-	fputsln(_(" -g, --grouped-mask  Print the combined args as a hex mask value in 32bit\n"
-		  "                     comma separated groups."), stdout);
-	fputsln(_(" -b, --binary        Print the combined args as a binary mask value."),
+	fputsln(_(" -g, --grouped-mask  display bits as a hex mask value in 32bit\n"
+		  "                       comma separated groups"), stdout);
+	fputsln(_(" -b, --binary        display bits as a binary mask value"),
 		stdout);
-	fputsln(_(" -l, --list          Print the combined args as a compressed list of bit IDs."),
+	fputsln(_(" -l, --list          display bits as a compressed list of bit IDs"),
 		stdout);
 
 	fprintf(stdout, USAGE_MAN_TAIL("bits(1)"));
@@ -282,7 +282,7 @@ int main(int argc, char **argv)
 		case 'w':
 			/* allow up to 128k masks */
 			width = str2unum_or_err(optarg,
-				10, "invalid --width", 128 * 1024);
+				10, _("invalid --width"), 128 * 1024);
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
