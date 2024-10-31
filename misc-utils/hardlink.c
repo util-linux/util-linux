@@ -46,6 +46,10 @@
 # endif
 #endif
 
+#if defined(FTW_ACTIONRETVAL) && defined(FTW_SKIP_SUBTREE)
+# define USE_SKIP_SUBTREE 1
+#endif
+
 #include "nls.h"
 #include "c.h"
 #include "xalloc.h"
@@ -158,6 +162,7 @@ struct hdl_regex {
  * struct options - Processed command-line options
  * @include: A linked list of regular expressions for the --include option
  * @exclude: A linked list of regular expressions for the --exclude option
+ * @exclude_subtree: A linked list of regular expressions for the --exclude-subtree options
  * @verbosity: The verbosity. Should be one of #enum log_level
  * @respect_mode: Whether to respect file modes (default = TRUE)
  * @respect_owner: Whether to respect file owners (uid, gid; default = TRUE)
@@ -175,6 +180,7 @@ struct hdl_regex {
 static struct options {
 	struct hdl_regex *include;
 	struct hdl_regex *exclude;
+	struct hdl_regex *exclude_subtree;
 
 	const char *method;
 	signed int verbosity;
@@ -847,6 +853,12 @@ static int inserter(const char *fpath, const struct stat *sb,
 		return 1;
 	if (typeflag == FTW_DNR || typeflag == FTW_NS)
 		warn(_("cannot read %s"), fpath);
+#ifdef USE_SKIP_SUBTREE
+	if (opts.exclude_subtree
+	    && typeflag == FTW_D
+	    && match_any_regex(opts.exclude_subtree, fpath))
+		return FTW_SKIP_SUBTREE;
+#endif
 	if (typeflag != FTW_F || !S_ISREG(sb->st_mode))
 		return 0;
 
@@ -1196,6 +1208,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -t, --ignore-time          ignore timestamps (when testing for equality)\n"), out);
 	fputs(_(" -v, --verbose              verbose output (repeat for more verbosity)\n"), out);
 	fputs(_(" -x, --exclude <regex>      regular expression to exclude files\n"), out);
+#ifdef USE_SKIP_SUBTREE
+	fputs(_("     --exclude-subtree <regex>  regular expression to exclude directories\n"), out);
+#endif
 #ifdef USE_XATTR
 	fputs(_(" -X, --respect-xattrs       respect extended attributes\n"), out);
 #endif
@@ -1221,7 +1236,8 @@ static int parse_options(int argc, char *argv[])
 {
 	enum {
 		OPT_REFLINK = CHAR_MAX + 1,
-		OPT_SKIP_RELINKS
+		OPT_SKIP_RELINKS,
+		OPT_EXCLUDE_SUBTREE
 	};
 	static const char optstr[] = "VhvndfpotXcmMFOx:y:i:r:S:s:b:q";
 	static const struct option long_options[] = {
@@ -1241,6 +1257,9 @@ static int parse_options(int argc, char *argv[])
 		{"keep-oldest", no_argument, NULL, 'O'},
 		{"exclude", required_argument, NULL, 'x'},
 		{"include", required_argument, NULL, 'i'},
+#ifdef USE_SKIP_SUBTREE
+		{"exclude-subtree", required_argument, NULL, OPT_EXCLUDE_SUBTREE},
+#endif
 		{"method", required_argument, NULL, 'y' },
 		{"minimum-size", required_argument, NULL, 's'},
 		{"maximum-size", required_argument, NULL, 'S'},
@@ -1311,6 +1330,11 @@ static int parse_options(int argc, char *argv[])
 		case 'x':
 			register_regex(&opts.exclude, optarg);
 			break;
+#ifdef USE_SKIP_SUBTREE
+		case OPT_EXCLUDE_SUBTREE:
+			register_regex(&opts.exclude_subtree, optarg);
+			break;
+#endif
 		case 'y':
 			opts.method = optarg;
 			break;
@@ -1360,6 +1384,9 @@ static int parse_options(int argc, char *argv[])
 #ifdef USE_FILEEQ_CRYPTOAPI
 				"cryptoapi",
 #endif
+#ifdef USE_SKIP_SUBTREE
+				"ftw_skip_subtree",
+#endif
 				NULL
 			};
 			print_version_with_features(EXIT_SUCCESS, features);
@@ -1407,6 +1434,7 @@ int main(int argc, char *argv[])
 {
 	struct sigaction sa;
 	int rc;
+	int ftw_flags;
 
 	sa.sa_handler = sighandler;
 	sa.sa_flags = SA_RESTART;
@@ -1450,6 +1478,12 @@ int main(int argc, char *argv[])
 
 	stats.started = TRUE;
 
+	ftw_flags = FTW_PHYS;
+#ifdef USE_SKIP_SUBTREE
+	if (opts.exclude_subtree)
+		ftw_flags |= FTW_ACTIONRETVAL;
+#endif
+
 	jlog(JLOG_VERBOSE2, _("Scanning [device/inode/links]:"));
 	for (; optind < argc; optind++) {
 		char *path = realpath(argv[optind], NULL);
@@ -1463,7 +1497,7 @@ int main(int argc, char *argv[])
 		if (opts.prio_trees)
 			++curr_tree;
 
-		if (nftw(path, inserter, 20, FTW_PHYS) == -1)
+		if (nftw(path, inserter, 20, ftw_flags) == -1)
 			warn(_("cannot process %s"), path);
 
 		free(path);

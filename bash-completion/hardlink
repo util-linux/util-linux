@@ -9,6 +9,10 @@ _hardlink_module()
 			COMPREPLY=( $(compgen -W "regex" -- $cur) )
 			return 0
 			;;
+		'--exclude-subtree')
+			COMPREPLY=( $(compgen -W "regex" -- $cur) )
+			return 0
+			;;
 		'-i'|'--include')
 			COMPREPLY=( $(compgen -W "regex" -- $cur) )
 			return 0
