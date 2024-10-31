@@ -856,8 +856,11 @@ static int inserter(const char *fpath, const struct stat *sb,
 #ifdef USE_SKIP_SUBTREE
 	if (opts.exclude_subtree
 	    && typeflag == FTW_D
-	    && match_any_regex(opts.exclude_subtree, fpath))
+	    && match_any_regex(opts.exclude_subtree, fpath)) {
+		jlog(JLOG_VERBOSE1,
+			_("Skipped (excluded subtree) %s"), fpath);
 		return FTW_SKIP_SUBTREE;
+	}
 #endif
 	if (typeflag != FTW_F || !S_ISREG(sb->st_mode))
 		return 0;
@@ -866,14 +869,17 @@ static int inserter(const char *fpath, const struct stat *sb,
 	excluded = match_any_regex(opts.exclude, fpath);
 
 	if ((opts.exclude && excluded && !included) ||
-	    (!opts.exclude && opts.include && !included))
+	    (!opts.exclude && opts.include && !included)) {
+		jlog(JLOG_VERBOSE1,
+			_("Skipped (excluded) %s"), fpath);
 		return 0;
+	}
 
 	stats.files++;
 
 	if ((uintmax_t) sb->st_size < opts.min_size) {
 		jlog(JLOG_VERBOSE1,
-		     _("Skipped %s (smaller than configured size)"), fpath);
+		     _("Skipped (smaller than configured size) %s"), fpath);
 		return 0;
 	}
 
@@ -883,7 +889,7 @@ static int inserter(const char *fpath, const struct stat *sb,
 
 	if ((opts.max_size > 0) && ((uintmax_t) sb->st_size > opts.max_size)) {
 		jlog(JLOG_VERBOSE1,
-		     _("Skipped %s (greater than configured size)"), fpath);
+		     _("Skipped (greater than configured size) %s"), fpath);
 		return 0;
 	}
 
@@ -912,7 +918,7 @@ static int inserter(const char *fpath, const struct stat *sb,
 
 		if (has_fpath(*node, fpath)) {
 			jlog(JLOG_VERBOSE1,
-				_("Skipped %s (specified more than once)"), fpath);
+				_("Skipped (specified more than once) %s"), fpath);
 			free(fil->links);
 		} else {
 			fil->links->next = (*node)->links;
