@@ -195,6 +195,7 @@ static struct options {
 	unsigned int keep_oldest:1;
 	unsigned int prio_trees:1;
 	unsigned int dry_run:1;
+	unsigned int within_mount:1;
 	uintmax_t min_size;
 	uintmax_t max_size;
 	size_t io_size;
@@ -1217,6 +1218,7 @@ static void __attribute__((__noreturn__)) usage(void)
 #ifdef USE_SKIP_SUBTREE
 	fputs(_("     --exclude-subtree <regex>  regular expression to exclude directories\n"), out);
 #endif
+	fputs(_("     --mount                stay within the same filesystem\n"), out);
 #ifdef USE_XATTR
 	fputs(_(" -X, --respect-xattrs       respect extended attributes\n"), out);
 #endif
@@ -1243,7 +1245,8 @@ static int parse_options(int argc, char *argv[])
 	enum {
 		OPT_REFLINK = CHAR_MAX + 1,
 		OPT_SKIP_RELINKS,
-		OPT_EXCLUDE_SUBTREE
+		OPT_EXCLUDE_SUBTREE,
+		OPT_MOUNT
 	};
 	static const char optstr[] = "VhvndfpotXcmMFOx:y:i:r:S:s:b:q";
 	static const struct option long_options[] = {
@@ -1266,6 +1269,7 @@ static int parse_options(int argc, char *argv[])
 #ifdef USE_SKIP_SUBTREE
 		{"exclude-subtree", required_argument, NULL, OPT_EXCLUDE_SUBTREE},
 #endif
+		{"mount", no_argument, NULL, OPT_MOUNT},
 		{"method", required_argument, NULL, 'y' },
 		{"minimum-size", required_argument, NULL, 's'},
 		{"maximum-size", required_argument, NULL, 'S'},
@@ -1379,6 +1383,9 @@ static int parse_options(int argc, char *argv[])
 			reflinks_skip = 1;
 			break;
 #endif
+		case OPT_MOUNT:
+			opts.within_mount = 1;
+			break;
 		case 'h':
 			usage();
 		case 'V':
@@ -1485,11 +1492,14 @@ int main(int argc, char *argv[])
 	stats.started = TRUE;
 
 	ftw_flags = FTW_PHYS;
+
+	if (opts.within_mount)
+		ftw_flags |= FTW_MOUNT;
+
 #ifdef USE_SKIP_SUBTREE
 	if (opts.exclude_subtree)
 		ftw_flags |= FTW_ACTIONRETVAL;
 #endif
-
 	jlog(JLOG_VERBOSE2, _("Scanning [device/inode/links]:"));
 	for (; optind < argc; optind++) {
 		char *path = realpath(argv[optind], NULL);

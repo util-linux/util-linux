@@ -53,6 +53,7 @@ _hardlink_module()
 			--respect-name
 			--maximize
 			--minimize
+			--mount
 			--dry-run
 			--ignore-owner
 			--keep-oldest

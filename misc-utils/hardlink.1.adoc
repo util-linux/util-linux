@@ -112,6 +112,9 @@ A regular expression that excludes files from being compared and linked. This op
 *--exclude-subtree* _regex_::
 A regular expression that excludes entire directories from being compared and linked. This option can also be used multiple times.
 
+*--mount*::
+Do not traverse directories on different filesystems (remain within the same filesystem).
+
 *-X*, *--respect-xattrs*::
 Only try to link files with the same extended attributes.
 
