@@ -45,18 +45,16 @@ fail:
 
 static struct libscols_line *add_line(struct libscols_table *tb, size_t i)
 {
-	char *p;
 	struct libscols_line *ln = scols_table_new_line(tb, NULL);
 
 	if (!ln)
 		err(EXIT_FAILURE, "failed to create output line");
 
-	xasprintf(&p, "%zu", i);
-	if (scols_line_refer_data(ln, COL_NUM, p))
+	if (scols_line_sprintf(ln, COL_NUM, "%zu", i))
 		goto fail;
 
-	xasprintf(&p, "data-%02zu-%02zu-%02zu-end", i + 1, i + 2, i + 3);
-	if (scols_line_refer_data(ln, COL_DATA, p))
+	if (scols_line_sprintf(ln, COL_DATA,  "data-%02zu-%02zu-%02zu-end",
+			       i + 1, i + 2, i + 3))
 		goto fail;
 
 	return ln;

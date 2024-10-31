@@ -309,9 +309,7 @@ int list_freespace_get_table(struct fdisk_context *cxt,
 			char *data = NULL;
 
 			if (tb0 && i == 0) {
-				xasprintf(&data, "%d", ct + 1);
-
-				if (scols_line_refer_data(ln, i, data)) {
+				if (scols_line_sprintf(ln, i, "%d", ct + 1)) {
 					fdisk_warn(cxt, _("failed to add output data"));
 					rc = -ENOMEM;
 					goto done;

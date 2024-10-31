@@ -823,12 +823,13 @@ static struct libscols_line *
 
 	/* data column */
 	if (fmt) {
-		char *data;
+		int ret;
+
 		va_start(args, fmt);
-		xvasprintf(&data, fmt, args);
+		ret = scols_line_vprintf(ln, 1, fmt, args);
 		va_end(args);
 
-		if (data && scols_line_refer_data(ln, 1, data))
+		if (ret < 0)
 			err(EXIT_FAILURE, _("failed to add output data"));
 	}
 

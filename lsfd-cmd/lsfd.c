@@ -2404,15 +2404,13 @@ static void emit_summary(struct lsfd_control *ctl)
 
 		scols_reset_iter(itr, SCOLS_ITER_FORWARD);
 		while (scols_filter_next_counter(*ct_fltr, itr, &ct) == 0) {
-			char *str = NULL;
 			struct libscols_line *ln;
 
 			ln = scols_table_new_line(tb, NULL);
 			if (!ln)
 				err(EXIT_FAILURE, _("failed to allocate summary line"));
 
-			xasprintf(&str, "%llu", scols_counter_get_result(ct));
-			if (scols_line_refer_data(ln, 0, str))
+			if (scols_line_sprintf(ln, 0, "%llu", scols_counter_get_result(ct)))
 				err(EXIT_FAILURE, _("failed to add summary data"));
 			if (scols_line_set_data(ln, 1, scols_counter_get_name(ct)))
 				err(EXIT_FAILURE, _("failed to add summary data"));
