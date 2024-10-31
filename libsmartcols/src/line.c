@@ -505,6 +505,61 @@ int scols_line_refer_data(struct libscols_line *ln, size_t n, char *data)
 }
 
 /**
+ * scols_line_vprintf:
+ * @ln: a pointer to a struct libscols_line instance
+ * @n: number of the cell which will refer to @data
+ * @fmt: a printf(3) compatible format string used to generate cell data
+ * @ap: a variable argument list that was initialized with va_start(3)
+ *
+ * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.41
+ */
+int scols_line_vprintf(struct libscols_line *ln, size_t n,
+		       const char *fmt, va_list ap)
+{
+	struct libscols_cell *ce = scols_line_get_cell(ln, n);
+	char *data = NULL;
+	int ret;
+
+	if (!ce)
+		return -EINVAL;
+
+	if (vasprintf(&data, fmt, ap) < 0)
+		return errno ? -errno : -ENOMEM;
+
+	ret = scols_cell_refer_data(ce, data);
+	if (ret < 0)
+		free(data);
+
+	return ret;
+}
+
+/**
+ * scols_line_sprintf:
+ * @ln: a pointer to a struct libscols_line instance
+ * @n: number of the cell which will refer to @data
+ * @fmt: an printf(3) compatible format string used to generate cell data
+ * @...: variable argument list
+ *
+ * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.41
+ */
+int scols_line_sprintf(struct libscols_line *ln, size_t n,
+		       const char *fmt, ...)
+{
+	va_list ap;
+	int ret;
+
+	va_start(ap, fmt);
+	ret = scols_line_vprintf(ln, n, fmt, ap);
+	va_end(ap);
+
+	return ret;
+}
+
+/**
  * scols_line_is_filled:
  * @ln: a pointer to a struct libscols_line instance
  * @n: number of the cell
@@ -535,6 +590,55 @@ int scols_line_refer_column_data(struct libscols_line *ln,
 			       char *data)
 {
 	return scols_line_refer_data(ln, cl->seqnum, data);
+}
+
+/**
+ * scols_line_vprintf_column:
+ * @ln: a pointer to a struct libscols_line instance
+ * @cl: column, whose data is to be set
+ * @fmt: a printf(3) compatible format string used to generate column data
+ * @ap: a variable argument list that was initialized with va_start(3)
+ *
+ * The same as scols_line_vprintf() but cell is referenced by column object.
+ *
+ * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.41
+ */
+int scols_line_vprintf_column(struct libscols_line *ln,
+			      struct libscols_column *cl,
+			      const char *fmt,
+			      va_list ap)
+{
+	return scols_line_vprintf(ln, cl->seqnum, fmt, ap);
+}
+
+
+/**
+ * scols_line_sprintf_column:
+ * @ln: a pointer to a struct libscols_line instance
+ * @cl: column, whose data is to be set
+ * @fmt: a printf(3) compatible format string used to generate column data
+ * @...: variable argument list
+ *
+ * The same as scols_line_sprintf() but cell is referenced by column object.
+ *
+ * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.41
+ */
+int scols_line_sprintf_column(struct libscols_line *ln,
+			      struct libscols_column *cl,
+			      const char *fmt, ...)
+{
+	va_list ap;
+	int ret;
+
+	va_start(ap, fmt);
+	ret = scols_line_vprintf(ln, cl->seqnum, fmt, ap);
+	va_end(ap);
+
+	return ret;
 }
 
 /**

@@ -14,6 +14,7 @@
 extern "C" {
 #endif
 
+#include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -291,10 +292,18 @@ extern struct libscols_cell *scols_line_get_column_cell(
 		                        struct libscols_column *cl);
 extern int scols_line_set_data(struct libscols_line *ln, size_t n, const char *data);
 extern int scols_line_refer_data(struct libscols_line *ln, size_t n, char *data);
+extern int scols_line_vprintf(struct libscols_line *ln, size_t n, const char *fmt, va_list ap)
+	__attribute__((format(printf, 3, 0)));
+extern int scols_line_sprintf(struct libscols_line *ln, size_t n, const char *fmt, ...)
+	__attribute__((format(printf, 3, 4)));
 extern int scols_line_is_filled(struct libscols_line *ln, size_t n);
 extern int scols_line_set_column_data(struct libscols_line *ln, struct libscols_column *cl, const char *data);
 extern const char *scols_line_get_column_data(struct libscols_line *ln, struct libscols_column *cl);
 extern int scols_line_refer_column_data(struct libscols_line *ln, struct libscols_column *cl, char *data);
+extern int scols_line_vprintf_column(struct libscols_line *ln, struct libscols_column *cl, const char *fmt, va_list ap)
+	__attribute__((format(printf, 3, 0)));
+extern int scols_line_sprintf_column(struct libscols_line *ln, struct libscols_column *cl, const char *fmt, ...)
+	__attribute__((format(printf, 3, 4)));
 extern struct libscols_line *scols_copy_line(const struct libscols_line *ln);
 
 /* table */

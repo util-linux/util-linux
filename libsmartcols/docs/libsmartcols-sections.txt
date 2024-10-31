@@ -120,6 +120,10 @@ scols_line_set_color
 scols_line_set_column_data
 scols_line_set_data
 scols_line_set_userdata
+scols_line_sprintf
+scols_line_sprintf_column
+scols_line_vprintf
+scols_line_vprintf_column
 scols_new_line
 scols_ref_line
 scols_unref_line
