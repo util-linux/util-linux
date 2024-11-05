@@ -22,6 +22,9 @@ _lsirq_module()
 			COMPREPLY=( $(compgen -W "irq total name" -- $cur) )
 			return 0
 			;;
+		'-t'|'--threshold')
+			return 0
+			;;
 		'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
@@ -32,6 +35,7 @@ _lsirq_module()
 		--output
 		--softirq
 		--sort
+		--threshold
 		--help
 		--version"
 	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )

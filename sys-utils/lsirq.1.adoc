@@ -40,6 +40,9 @@ Produce output in the form of key="value" pairs. All potentially unsafe characte
 *-S*, *--softirq*::
 Show softirqs information.
 
+*-t*, *--threshold* _min_::
+Only show IRQs with counters above the specified threshold. Human readable values are supported (e.g. 1.2K).
+
 include::man-common/help-version.adoc[]
 
 == AUTHORS
@@ -47,6 +50,7 @@ include::man-common/help-version.adoc[]
 mailto:pizhenwei@bytedance.com[Zhenwei Pi],
 mailto:kerolasa@iki.fi[Sami Kerola],
 mailto:kzak@redhat.com[Karel Zak]
+mailto:robin@jarry.cc[Robin Jarry]
 
 include::man-common/bugreports.adoc[]
 
