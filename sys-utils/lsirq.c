@@ -33,11 +33,12 @@
 #include "irq-common.h"
 
 static int print_irq_data(struct irq_output *out,
-			  int softirq, unsigned long threshold)
+			  int softirq, unsigned long threshold,
+			  size_t setsize, cpu_set_t *cpuset)
 {
 	struct libscols_table *table;
 
-	table = get_scols_table(out, NULL, NULL, softirq, threshold, 0, NULL);
+	table = get_scols_table(out, NULL, NULL, softirq, threshold, setsize, cpuset);
 	if (!table)
 		return -1;
 
@@ -62,6 +63,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -s, --sort <column>  specify sort column\n"), stdout);
 	fputs(_(" -S, --softirq        show softirqs instead of interrupts\n"), stdout);
 	fputs(_(" -t, --threshold <N>  only IRQs with counters above <N>\n"), stdout);
+	fputs(_(" -C, --cpu-list <list> only show counters for these CPUs\n"), stdout);
 	fputs(USAGE_SEPARATOR, stdout);
 	fprintf(stdout, USAGE_HELP_OPTIONS(22));
 
@@ -82,6 +84,7 @@ int main(int argc, char **argv)
 		{"noheadings", no_argument, NULL, 'n'},
 		{"output", required_argument, NULL, 'o'},
 		{"threshold", required_argument, NULL, 't'},
+		{"cpu-list", required_argument, NULL, 'C'},
 		{"softirq", no_argument, NULL, 'S'},
 		{"json", no_argument, NULL, 'J'},
 		{"pairs", no_argument, NULL, 'P'},
@@ -97,11 +100,13 @@ int main(int argc, char **argv)
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 	uintmax_t threshold = 0;
+	cpu_set_t *cpuset = NULL;
+	size_t setsize = 0;
 	int softirq = 0;
 
 	setlocale(LC_ALL, "");
 
-	while ((c = getopt_long(argc, argv, "no:s:t:ShJPV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "no:s:t:C:ShJPV", longopts, NULL)) != -1) {
 		err_exclusive_options(c, longopts, excl, excl_st);
 
 		switch (c) {
@@ -126,6 +131,23 @@ int main(int argc, char **argv)
 		case 't':
 			threshold = strtosize_or_err(optarg, _("error: --threshold"));
 			break;
+		case 'C': {
+			int ncpus = get_max_number_of_cpus();
+			if (ncpus <= 0)
+				errx(EXIT_FAILURE, _("cannot determine NR_CPUS; aborting"));
+
+			if (cpuset != NULL)
+				cpuset_free(cpuset);
+
+			cpuset = cpuset_alloc(ncpus, &setsize, NULL);
+			if (!cpuset)
+				err(EXIT_FAILURE, _("cpuset_alloc failed"));
+
+			if (cpulist_parse(optarg, cpuset, setsize, 0))
+				errx(EXIT_FAILURE, _("failed to parse CPU list: %s"),
+					optarg);
+			break;
+		}
 		case 'V':
 			print_version(EXIT_SUCCESS);
 		case 'h':
@@ -149,7 +171,7 @@ int main(int argc, char **argv)
 				irq_column_name_to_id) < 0)
 		exit(EXIT_FAILURE);
 
-	if (print_irq_data(&out, softirq, threshold) < 0)
+	if (print_irq_data(&out, softirq, threshold, setsize, cpuset) < 0)
 		return EXIT_FAILURE;
 
 	return EXIT_SUCCESS;

@@ -43,6 +43,9 @@ Show softirqs information.
 *-t*, *--threshold* _min_::
 Only show IRQs with counters above the specified threshold. Human readable values are supported (e.g. 1.2K).
 
+*-C*, *--cpu-list* _list_::
+Only show interrupt counters on the specified CPU list.
+
 include::man-common/help-version.adoc[]
 
 == AUTHORS
