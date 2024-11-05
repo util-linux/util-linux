@@ -507,10 +507,10 @@ static void global_set_data(struct lsipc_control *ctl, struct libscols_table *tb
 				rc = scols_line_set_data(ln, n, "-");
 			break;
 		case COL_USEPERC:
-			if (usage) {
-				xasprintf(&arg, "%2.2f%%", (double) used / limit * 100);
-				rc = scols_line_refer_data(ln, n, arg);
-			} else
+			if (usage)
+				rc = scols_line_sprintf(ln, n, "%2.2f%%",
+					(double) used / limit * 100);
+			else
 				rc = scols_line_set_data(ln, n, "-");
 			break;
 		case COL_LIMIT:
@@ -570,12 +570,10 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 			int rc = 0;
 			switch (get_column_id(n)) {
 			case COL_KEY:
-				xasprintf(&arg, "0x%08x", p->sem_perm.key);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "0x%08x", p->sem_perm.key);
 				break;
 			case COL_ID:
-				xasprintf(&arg, "%d", p->sem_perm.id);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "%d", p->sem_perm.id);
 				break;
 			case COL_OWNER:
 				arg = get_username(&pw, p->sem_perm.uid);
@@ -593,8 +591,7 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 				rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_CUID:
-				xasprintf(&arg, "%u", p->sem_perm.cuid);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "%u", p->sem_perm.cuid);
 				break;
 			case COL_CUSER:
 				arg = get_username(&cpw, p->sem_perm.cuid);
@@ -602,8 +599,7 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 					rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_CGID:
-				xasprintf(&arg, "%u", p->sem_perm.cgid);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "%u", p->sem_perm.cgid);
 				break;
 			case COL_CGROUP:
 				arg = get_groupname(&cgr, p->sem_perm.cgid);
@@ -611,8 +607,7 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 					rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_UID:
-				xasprintf(&arg, "%u", p->sem_perm.uid);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "%u", p->sem_perm.uid);
 				break;
 			case COL_USER:
 				arg = get_username(&pw, p->sem_perm.uid);
@@ -620,8 +615,7 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 					rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_GID:
-				xasprintf(&arg, "%u", p->sem_perm.gid);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "%u", p->sem_perm.gid);
 				break;
 			case COL_GROUP:
 				arg = get_groupname(&gr, p->sem_perm.gid);
@@ -636,8 +630,7 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 				}
 				break;
 			case COL_NSEMS:
-				xasprintf(&arg, "%ju", p->sem_nsems);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "%ju", p->sem_nsems);
 				break;
 			case COL_OTIME:
 				if (p->sem_otime != 0) {
@@ -669,32 +662,27 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 					err(EXIT_FAILURE, _("failed to allocate output line"));
 
 				/* SEMNUM */
-				xasprintf(&arg, "%zu", i);
-				rc = scols_line_refer_data(sln, 0, arg);
+				rc = scols_line_sprintf(sln, 0, "%zu", i);
 				if (rc)
 					break;
 
 				/* VALUE */
-				xasprintf(&arg, "%d", e->semval);
-				rc = scols_line_refer_data(sln, 1, arg);
+				rc = scols_line_sprintf(sln, 1, "%d", e->semval);
 				if (rc)
 					break;
 
 				/* NCOUNT */
-				xasprintf(&arg, "%d", e->ncount);
-				rc = scols_line_refer_data(sln, 2, arg);
+				rc = scols_line_sprintf(sln, 2, "%d", e->ncount);
 				if (rc)
 					break;
 
 				/* ZCOUNT */
-				xasprintf(&arg, "%d", e->zcount);
-				rc = scols_line_refer_data(sln, 3, arg);
+				rc = scols_line_sprintf(sln, 3, "%d", e->zcount);
 				if (rc)
 					break;
 
 				/* PID */
-				xasprintf(&arg, "%d", e->pid);
-				rc = scols_line_refer_data(sln, 4, arg);
+				rc = scols_line_sprintf(sln, 4, "%d", e->pid);
 				if (rc)
 					break;
 
@@ -775,12 +763,10 @@ static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 
 			switch (get_column_id(n)) {
 			case COL_KEY:
-				xasprintf(&arg, "0x%08x", p->msg_perm.key);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "0x%08x", p->msg_perm.key);
 				break;
 			case COL_ID:
-				xasprintf(&arg, "%d", p->msg_perm.id);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "%d", p->msg_perm.id);
 				break;
 			case COL_OWNER:
 				arg = get_username(&pw, p->msg_perm.uid);
@@ -798,8 +784,7 @@ static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 				}
 				break;
 			case COL_CUID:
-				xasprintf(&arg, "%u", p->msg_perm.cuid);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "%u", p->msg_perm.cuid);
 				break;
 			case COL_CUSER:
 				arg = get_username(&pw, p->msg_perm.cuid);
@@ -807,8 +792,7 @@ static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 					rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_CGID:
-				xasprintf(&arg, "%u", p->msg_perm.cuid);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "%u", p->msg_perm.cuid);
 				break;
 			case COL_CGROUP:
 				arg = get_groupname(&gr, p->msg_perm.cgid);
@@ -816,8 +800,7 @@ static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 					rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_UID:
-				xasprintf(&arg, "%u", p->msg_perm.uid);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "%u", p->msg_perm.uid);
 				break;
 			case COL_USER:
 				arg = get_username(&pw, p->msg_perm.uid);
@@ -825,8 +808,7 @@ static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 					rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_GID:
-				xasprintf(&arg, "%u", p->msg_perm.gid);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "%u", p->msg_perm.gid);
 				break;
 			case COL_GROUP:
 				arg = get_groupname(&gr, p->msg_perm.gid);
@@ -848,8 +830,7 @@ static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 				rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_MSGS:
-				xasprintf(&arg, "%ju", p->q_qnum);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "%ju", p->q_qnum);
 				break;
 			case COL_SEND:
 				if (p->q_stime != 0)
@@ -864,12 +845,10 @@ static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 							  (time_t) p->q_rtime));
 				break;
 			case COL_LSPID:
-				xasprintf(&arg, "%u", p->q_lspid);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "%u", p->q_lspid);
 				break;
 			case COL_LRPID:
-				xasprintf(&arg, "%u", p->q_lrpid);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "%u", p->q_lrpid);
 				break;
 			}
 			if (rc != 0)
@@ -934,12 +913,10 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 
 			switch (get_column_id(n)) {
 			case COL_KEY:
-				xasprintf(&arg, "0x%08x", p->shm_perm.key);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "0x%08x", p->shm_perm.key);
 				break;
 			case COL_ID:
-				xasprintf(&arg, "%d", p->shm_perm.id);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "%d", p->shm_perm.id);
 				break;
 			case COL_OWNER:
 				arg = get_username(&pw, p->shm_perm.uid);
@@ -957,8 +934,7 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 				rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_CUID:
-				xasprintf(&arg, "%u", p->shm_perm.cuid);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "%u", p->shm_perm.cuid);
 				break;
 			case COL_CUSER:
 				arg = get_username(&pw, p->shm_perm.cuid);
@@ -966,8 +942,7 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 					rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_CGID:
-				xasprintf(&arg, "%u", p->shm_perm.cuid);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "%u", p->shm_perm.cuid);
 				break;
 			case COL_CGROUP:
 				arg = get_groupname(&gr, p->shm_perm.cgid);
@@ -975,8 +950,7 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 					rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_UID:
-				xasprintf(&arg, "%u", p->shm_perm.uid);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "%u", p->shm_perm.uid);
 				break;
 			case COL_USER:
 				arg = get_username(&pw, p->shm_perm.uid);
@@ -984,8 +958,7 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 					rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_GID:
-				xasprintf(&arg, "%u", p->shm_perm.gid);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "%u", p->shm_perm.gid);
 				break;
 			case COL_GROUP:
 				arg = get_groupname(&gr, p->shm_perm.gid);
@@ -1007,8 +980,7 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 				rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_NATTCH:
-				xasprintf(&arg, "%ju", p->shm_nattch);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "%ju", p->shm_nattch);
 				break;
 			case COL_STATUS: {
 					int comma = 0;
@@ -1062,12 +1034,10 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 							  (time_t) p->shm_dtim));
 				break;
 			case COL_CPID:
-				xasprintf(&arg, "%u", p->shm_cprid);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "%u", p->shm_cprid);
 				break;
 			case COL_LPID:
-				xasprintf(&arg, "%u", p->shm_lprid);
-				rc = scols_line_refer_data(ln, n, arg);
+				rc = scols_line_sprintf(ln, n, "%u", p->shm_lprid);
 				break;
 			case COL_COMMAND:
 				arg = pid_get_cmdline(p->shm_cprid);

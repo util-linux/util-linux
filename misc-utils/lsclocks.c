@@ -211,22 +211,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-__attribute__ ((__format__ (__printf__, 3, 4)))
-static void scols_line_asprintf(struct libscols_line *ln, size_t n, const char *format, ...)
-{
-	char *data;
-	va_list args;
-
-	va_start(args, format);
-	xvasprintf(&data, format, args);
-	va_end(args);
-
-	scols_line_refer_data(ln, n, data);
-}
-
 static void scols_line_format_timespec(struct libscols_line *ln, size_t n, const struct timespec *ts)
 {
-	scols_line_asprintf(ln, n, "%ju.%09" PRId32, (uintmax_t) ts->tv_sec, (uint32_t) ts->tv_nsec);
+	scols_line_sprintf(ln, n, "%ju.%09" PRId32, (uintmax_t) ts->tv_sec, (uint32_t) ts->tv_nsec);
 }
 
 static clockid_t parse_clock(const char *name)
@@ -301,7 +288,7 @@ static void add_clock_line(struct libscols_table *tb, const int *columns,
 				break;
 			case COL_ID:
 				if (!clockinfo->no_id)
-					scols_line_asprintf(ln, i, "%ju", (uintmax_t) clockinfo->id);
+					scols_line_sprintf(ln, i, "%ju", (uintmax_t) clockinfo->id);
 				break;
 			case COL_CLOCK:
 				scols_line_set_data(ln, i, clockinfo->id_name);
@@ -350,8 +337,8 @@ static void add_clock_line(struct libscols_table *tb, const int *columns,
 				break;
 			case COL_NS_OFFSET:
 				if (clockinfo->ns_offset_name)
-					scols_line_asprintf(ln, i, "%"PRId64,
-							    get_namespace_offset(clockinfo->ns_offset_name));
+					scols_line_sprintf(ln, i, "%"PRId64,
+							   get_namespace_offset(clockinfo->ns_offset_name));
 				break;
 		}
 	}

@@ -244,3 +244,10 @@ SMARTCOLS_2.40 {
 	scols_column_set_data_type;
 	scols_column_get_data_type;
 } SMARTCOLS_2.39;
+
+SMARTCOLS_2.41 {
+	scols_line_vprintf;
+	scols_line_sprintf;
+	scols_line_vprintf_column;
+	scols_line_sprintf_column;
+} SMARTCOLS_2.40;
