@@ -52,12 +52,14 @@ _hardlink_module()
 			--dry-run
 			--ignore-owner
 			--keep-oldest
+			--list-duplicates
 			--ignore-mode
 			--quiet
 			--ignore-time
 			--verbose
 			--respect-xattrs
 			--skip-reflinks
+			--zero
 			--version
 			--help
 		"
