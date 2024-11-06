@@ -17,19 +17,25 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdio.h>
+#include <ctype.h>
 
 #include "lscpu.h"
 
 /* add @set to the @ary, unnecessary set is deallocated. */
-static int add_cpuset_to_array(cpu_set_t **ary, size_t *items, cpu_set_t *set, size_t setsize)
+static int add_cpuset_to_array(cpu_set_t **ary, size_t *items, cpu_set_t *set, size_t setsize, cpu_set_t *common_cpus_set)
 {
 	size_t i;
 
 	if (!ary)
 		return -EINVAL;
 
+	/*
+	 * Check if @set has no cpu in common with the cpusets
+	 * saved in @ary and if so append @set to @ary.
+	 */
 	for (i = 0; i < *items; i++) {
-		if (CPU_EQUAL_S(setsize, set, ary[i]))
+		CPU_AND_S(setsize, common_cpus_set, set, ary[i]);
+		if (CPU_COUNT_S(setsize, common_cpus_set))
 			break;
 	}
 	if (i == *items) {
@@ -98,20 +104,58 @@ void lscpu_sort_caches(struct lscpu_cache *caches, size_t n)
 		qsort(caches, n, sizeof(struct lscpu_cache), cmp_cache);
 }
 
+/*
+ * Get the hotplug state number representing a completely online
+ * cpu from /sys/devices/system/cpu/hotplug/state
+ */
+static int get_online_state(struct path_cxt *sys)
+{
+	int hp_online_state_val = 0, page_size, rc;
+	char *buf, *strp;
+
+	hp_online_state_val = -1;
+
+	/* sysfs text files have size = page size */
+	page_size = getpagesize();
+
+	buf = (char *)xmalloc(page_size);
+	rc = ul_path_readf_buffer(sys, buf, page_size, "hotplug/states");
+	if (rc <= 0)
+		goto done;
+
+	strp = strstr(buf, ": online");
+	if (!strp)
+		goto done;
+
+	strp--; /* get digits before ': online' */
+	while (strp >= buf && isdigit(*strp))
+		strp--;
+	ul_strtos32(strp + 1, &hp_online_state_val, 10);
+done:
+	free(buf);
+	return hp_online_state_val;
+}
 
 /* Read topology for specified type */
 static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
 {
 	size_t i, npos;
 	struct path_cxt *sys;
-	int nthreads = 0, sw_topo = 0;
+	int nthreads = 0, sw_topo = 0, rc, hp_state, hp_online_state;
 	FILE *fd;
+	cpu_set_t *temp_set;
 
 	sys = cxt->syscpu;				/* /sys/devices/system/cpu/ */
 	npos = cxt->npossibles;				/* possible CPUs */
 
 	DBG(TYPE, ul_debugobj(ct, "reading %s/%s/%s topology",
 				ct->vendor ?: "", ct->model ?: "", ct->modelname ?:""));
+
+	hp_online_state = get_online_state(sys);
+
+	temp_set = CPU_ALLOC(cxt->maxcpus);
+	if (!temp_set)
+		err(EXIT_FAILURE, _("cpuset_alloc failed"));
 
 	for (i = 0; i < cxt->npossibles; i++) {
 		struct lscpu_cpu *cpu = cxt->cpus[i];
@@ -125,6 +169,15 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 		num = cpu->logical_id;
 		if (ul_path_accessf(sys, F_OK,
 					"cpu%d/topology/thread_siblings", num) != 0)
+			continue;
+
+		/*
+		 * Ignore cpus which are not fully online.
+		 * If hp_online_state is negative/zero or rc is negative,
+		 * online state could not be read correctly, skip this check.
+		 */
+		rc = ul_path_readf_s32(sys, &hp_state, "cpu%d/hotplug/state", num);
+		if (hp_online_state > 0 && rc >= 0 && hp_state != hp_online_state)
 			continue;
 
 		/* read topology maps */
@@ -163,15 +216,16 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 
 		/* add to topology maps */
 		if (thread_siblings)
-			add_cpuset_to_array(ct->coremaps, &ct->ncores, thread_siblings, cxt->setsize);
+			add_cpuset_to_array(ct->coremaps, &ct->ncores, thread_siblings, cxt->setsize, temp_set);
 		if (core_siblings)
-			add_cpuset_to_array(ct->socketmaps, &ct->nsockets, core_siblings, cxt->setsize);
+			add_cpuset_to_array(ct->socketmaps, &ct->nsockets, core_siblings, cxt->setsize, temp_set);
 		if (book_siblings)
-			add_cpuset_to_array(ct->bookmaps, &ct->nbooks, book_siblings, cxt->setsize);
+			add_cpuset_to_array(ct->bookmaps, &ct->nbooks, book_siblings, cxt->setsize, temp_set);
 		if (drawer_siblings)
-			add_cpuset_to_array(ct->drawermaps, &ct->ndrawers, drawer_siblings, cxt->setsize);
+			add_cpuset_to_array(ct->drawermaps, &ct->ndrawers, drawer_siblings, cxt->setsize, temp_set);
 
 	}
+	CPU_FREE(temp_set);
 
 	/* s390 detects its cpu topology via /proc/sysinfo, if present.
 	 * Using simply the cpu topology masks in sysfs will not give
