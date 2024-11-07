@@ -365,7 +365,6 @@ int main(int argc, char *argv[])
 	uid_t uid = 0;
 	gid_t gid = 0;
 	int keepcaps = 0;
-	struct ul_env_list *envls;
 #ifdef HAVE_LIBSELINUX
 	bool selinux = 0;
 #endif
@@ -644,12 +643,15 @@ int main(int argc, char *argv[])
 
 	/* Pass environment variables of the target process to the spawned process */
 	if (env_fd >= 0) {
-		if ((envls = env_from_fd(env_fd)) == NULL)
+		struct ul_env_list *ls;
+
+		ls = env_from_fd(env_fd);
+		if (!ls && errno)
 			err(EXIT_FAILURE, _("failed to get environment variables"));
 		clearenv();
-		if (env_list_setenv(envls) < 0)
+		if (ls && env_list_setenv(ls) < 0)
 			err(EXIT_FAILURE, _("failed to set environment variables"));
-		env_list_free(envls);
+		env_list_free(ls);
 		close(env_fd);
 	}
 

@@ -93,6 +93,7 @@ struct ul_env_list *env_from_fd(int fd)
 	ssize_t rc = 0;
 	struct ul_env_list *ls = NULL;
 
+	errno = 0;
 	if ((rc = read_all_alloc(fd, &buf)) < 1)
 		return NULL;
 	buf[rc] = '\0';
