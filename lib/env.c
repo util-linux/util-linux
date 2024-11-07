@@ -118,13 +118,13 @@ int env_list_setenv(struct ul_env_list *ls)
 	int rc = 0;
 
 	while (ls && rc == 0) {
-		if (ls->env) {
+		if (ls->env && *ls->env) {
 			char *val = strchr(ls->env, '=');
-			if (!val)
-				continue;
-			*val = '\0';
-			rc = setenv(ls->env, val + 1, 0);
-			*val = '=';
+			if (val) {
+				*val = '\0';
+				rc = setenv(ls->env, val + 1, 0);
+				*val = '=';
+			}
 		}
 		ls = ls->next;
 	}
