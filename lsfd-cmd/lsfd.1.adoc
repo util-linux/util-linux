@@ -666,6 +666,16 @@ List timerfd files expired within 0.5 seconds: ::
 # lsfd -Q '(TIMERFD.remaining < 0.5) and (TIMERFD.remaining > 0.0)'
 ....
 
+List processes communicating via unix stream sockets: ::
+....
+# lsfd  -Q 'TYPE == "UNIX-STREAM" && UNIX.PATH =~ ".+"' -oUNIX.PATH,PID,COMMAND,FD,SOCK.STATE,ENDPOINTS
+....
+
+List processes communicating via a specified unix stream socket: ::
+....
+# lsfd  -Q 'TYPE == "UNIX-STREAM" && UNIX.PATH == "@/tmp/.X11-unix/X0"' -oUNIX.PATH,PID,COMMAND,FD,SOCK.STATE,ENDPOINTS
+....
+
 == COUNTER EXAMPLES
 
 Report the numbers of netlink socket descriptors and unix socket descriptors: ::
