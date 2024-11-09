@@ -345,6 +345,8 @@ static int fincore_fd (struct fincore_control *ctl,
 	if (errno != ENOSYS)
 		warn(_("failed to do cachestat: %s"), st->name);
 
+	memset(&st->cstat, 0, sizeof(st->cstat));
+
 	return mincore_fd(ctl, fd, st);
 }
 
