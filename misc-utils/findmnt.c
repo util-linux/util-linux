@@ -320,6 +320,8 @@ int is_listall_mode(unsigned int flags)
 		!is_defined_match(COL_TARGET) &&
 		!is_defined_match(COL_FSTYPE) &&
 		!is_defined_match(COL_OPTIONS) &&
+		!is_defined_match(COL_ID) &&
+		!is_defined_match(COL_UNIQ_ID) &&
 		!is_defined_match(COL_MAJMIN));
 }
 
@@ -365,7 +367,10 @@ static int is_mount_compatible_mode(unsigned int flags)
 {
 	if (!is_defined_match(COL_SOURCE))
 	       return 0;		/* <devname|TAG=|mountpoint> is required */
-	if (is_defined_match(COL_FSTYPE) || is_defined_match(COL_OPTIONS))
+	if (is_defined_match(COL_FSTYPE)
+	    || is_defined_match(COL_OPTIONS)
+	    || is_defined_match(COL_ID)
+	    || is_defined_match(COL_UNIQ_ID))
 		return 0;		/* cannot be restricted by -t or -O */
 	if (!(flags & FL_FIRSTONLY))
 		return 0;		/* we have to return the first entry only */
@@ -1181,6 +1186,14 @@ static int match_func(struct libmnt_fs *fs,
 	const char *m;
 	void *md;
 
+	md = get_match_data(COL_ID);
+	if (md && mnt_fs_get_id(fs) != *((int *) md))
+		return rc;
+
+	md = get_match_data(COL_UNIQ_ID);
+	if (md && mnt_fs_get_uniq_id(fs) != *((uint64_t *) md))
+		return rc;
+
 	m = get_match(COL_FSTYPE);
 	if (m && !mnt_fs_match_fstype(fs, m))
 		return rc;
@@ -1522,12 +1535,13 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -s, --fstab            search in static table of filesystems\n"), out);
 
 
-
 	fputs(_("\nData filters:\n"), out);
 	fputs(_(" -A, --all              disable all built-in filters, print all filesystems\n"), out);
 	fputs(_(" -d, --direction <word> direction of search, 'forward' or 'backward'\n"), out);
 	fputs(_(" -f, --first-only       print the first found filesystem only\n"), out);
 	fputs(_(" -i, --invert           invert the sense of matching\n"), out);
+	fputs(_("     --id <num>         filter by mount node ID\n"), out);
+	fputs(_("     --uniq-id <num>    filter by mount node 64-bit ID (requires --kernel=listmount)\n"), out);
 	fputs(_("     --pseudo           print only pseudo-filesystems\n"), out);
 	fputs(_(" -Q, --filter <expr>    apply display filter\n"), out);
 	fputs(_(" -M, --mountpoint <dir> the mountpoint directory\n"), out);
@@ -1745,7 +1759,9 @@ int main(int argc, char *argv[])
 		FINDMNT_OPT_REAL,
 		FINDMNT_OPT_VFS_ALL,
 		FINDMNT_OPT_SHADOWED,
-		FINDMNT_OPT_HYPERLINK
+		FINDMNT_OPT_HYPERLINK,
+		FINDMNT_OPT_ID,
+		FINDMNT_OPT_UNIQ_ID
 	};
 
 	static const struct option longopts[] = {
@@ -1795,6 +1811,8 @@ int main(int argc, char *argv[])
 		{ "vfs-all",	    no_argument,       NULL, FINDMNT_OPT_VFS_ALL },
 		{ "shadowed",       no_argument,       NULL, FINDMNT_OPT_SHADOWED },
 		{ "hyperlink",      optional_argument, NULL, FINDMNT_OPT_HYPERLINK },
+		{ "id",             required_argument, NULL, FINDMNT_OPT_ID },
+		{ "uniq-id",        required_argument, NULL, FINDMNT_OPT_UNIQ_ID },
 		{ "list-columns",   no_argument,       NULL, 'H' },
 		{ NULL, 0, NULL, 0 }
 	};
@@ -2001,6 +2019,22 @@ int main(int argc, char *argv[])
 					_("invalid hyperlink argument")))
 				findmnt.uri = xgethosturi(NULL);
 			break;
+		case FINDMNT_OPT_ID:
+			{
+				int *id = xmalloc(sizeof(int));
+
+				*id = strtos32_or_err(optarg, _("invalid id argument"));
+				set_match_data(COL_ID, (void *) id);
+				break;
+			}
+		case FINDMNT_OPT_UNIQ_ID:
+			{
+				uint64_t *id = xmalloc(sizeof(uint64_t));
+
+				*id = strtou64_or_err(optarg, _("invalid uniq-id argument"));
+				set_match_data(COL_UNIQ_ID, (void *) id);
+				break;
+			}
 		case 'H':
 			collist = 1;
 			break;

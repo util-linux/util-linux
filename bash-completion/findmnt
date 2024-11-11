@@ -112,6 +112,8 @@ _findmnt_module()
 				--tab-file
 				--first-only
 				--hyperlink
+				--id
+				--uniq-id
 				--invert
 				--json
 				--list

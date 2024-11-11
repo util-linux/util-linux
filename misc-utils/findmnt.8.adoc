@@ -75,6 +75,12 @@ Imitate the output of *df*(1) with its *-i* option. This option is equivalent to
 *-i*, *--invert*::
 Invert the sense of matching.
 
+*--id* _number_::
+Select a filesystem using the mount node ID.
+
+*--uniq-id* _number_::
+Select a filesystem using the mount node 64-bit ID, use with *--kernel=listmount* option.
+
 *-J*, *--json*::
 Use JSON output format.
 
