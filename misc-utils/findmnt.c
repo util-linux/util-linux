@@ -225,6 +225,8 @@ static void *get_match_data(int id)
 	return infos[id].match_data;
 }
 
+#define is_defined_match(x)	(get_match(x) || get_match_data(x))
+
 static void set_match(int id, const char *match)
 {
 	assert((size_t) id < ARRAY_SIZE(infos));
@@ -314,11 +316,11 @@ int is_listall_mode(unsigned int flags)
 	if ((flags & FL_DF || flags & FL_REAL || flags & FL_PSEUDO) && !(flags & FL_ALL))
 		return 0;
 
-	return (!get_match(COL_SOURCE) &&
-		!get_match(COL_TARGET) &&
-		!get_match(COL_FSTYPE) &&
-		!get_match(COL_OPTIONS) &&
-		!get_match(COL_MAJMIN));
+	return (!is_defined_match(COL_SOURCE) &&
+		!is_defined_match(COL_TARGET) &&
+		!is_defined_match(COL_FSTYPE) &&
+		!is_defined_match(COL_OPTIONS) &&
+		!is_defined_match(COL_MAJMIN));
 }
 
 /*
@@ -361,9 +363,9 @@ static int poll_action_name_to_id(const char *name, size_t namesz)
  */
 static int is_mount_compatible_mode(unsigned int flags)
 {
-	if (!get_match(COL_SOURCE))
+	if (!is_defined_match(COL_SOURCE))
 	       return 0;		/* <devname|TAG=|mountpoint> is required */
-	if (get_match(COL_FSTYPE) || get_match(COL_OPTIONS))
+	if (is_defined_match(COL_FSTYPE) || is_defined_match(COL_OPTIONS))
 		return 0;		/* cannot be restricted by -t or -O */
 	if (!(flags & FL_FIRSTONLY))
 		return 0;		/* we have to return the first entry only */
@@ -1265,7 +1267,7 @@ again:
 
 		if (!fs &&
 		    !(findmnt->flags & FL_NOSWAPMATCH) &&
-		    !get_match(COL_TARGET) && get_match(COL_SOURCE)) {
+		    !is_defined_match(COL_TARGET) && is_defined_match(COL_SOURCE)) {
 
 			/* swap 'spec' and target. */
 			set_match(COL_TARGET, get_match(COL_SOURCE));
@@ -1327,7 +1329,7 @@ static int poll_match(struct libmnt_fs *fs, struct findmnt *findmnt)
 	int rc = match_func(fs, findmnt);
 
 	if (rc == 0 && !(findmnt->flags & FL_NOSWAPMATCH) &&
-	    get_match(COL_SOURCE) && !get_match(COL_TARGET)) {
+	    is_defined_match(COL_SOURCE) && !is_defined_match(COL_TARGET)) {
 		/*
 		 * findmnt --poll /foo
 		 * The '/foo' maybe source as well as target.
@@ -2050,7 +2052,7 @@ int main(int argc, char *argv[])
 		errx(EXIT_FAILURE, _(
 			"options --kernel=listmount and --tab-file or --task can't be used together"));
 
-	if (optind < argc && (get_match(COL_SOURCE) || get_match(COL_TARGET)))
+	if (optind < argc && (is_defined_match(COL_SOURCE) || is_defined_match(COL_TARGET)))
 		errx(EXIT_FAILURE, _(
 			"options --target and --source can't be used together "
 			"with command line element that is not an option"));
@@ -2065,13 +2067,13 @@ int main(int argc, char *argv[])
 		findmnt.flags &= ~FL_SUBMOUNTS;
 
 	if (!(findmnt.flags & FL_SUBMOUNTS) && ((findmnt.flags & FL_FIRSTONLY)
-	    || get_match(COL_TARGET)
-	    || get_match(COL_SOURCE)
-	    || get_match(COL_MAJMIN)))
+	    || is_defined_match(COL_TARGET)
+	    || is_defined_match(COL_SOURCE)
+	    || is_defined_match(COL_MAJMIN)))
 		findmnt.flags &= ~FL_TREE;
 
 	if (!(findmnt.flags & FL_NOSWAPMATCH) &&
-	    !get_match(COL_TARGET) && get_match(COL_SOURCE)) {
+	    !is_defined_match(COL_TARGET) && is_defined_match(COL_SOURCE)) {
 		/*
 		 * Check if we can swap source and target; it's
 		 * not possible if the source is LABEL=/UUID=
@@ -2155,7 +2157,7 @@ int main(int argc, char *argv[])
 		    && tabtype == TABTYPE_KERNEL_MOUNTINFO
 		    && (findmnt.flags & FL_NOSWAPMATCH)
 		    && !(findmnt.flags & FL_STRICTTARGET)
-		    && get_match(COL_TARGET)) {
+		    && is_defined_match(COL_TARGET)) {
 			/*
 			 * Found nothing, maybe the --target is regular file,
 			 * try it again with extra functionality for target
