@@ -373,6 +373,7 @@ mnt_table_enable_noautofs
 mnt_table_fetch_listmount
 mnt_table_find_devno
 mnt_table_find_fs
+mnt_table_find_id
 mnt_table_find_mountpoint
 mnt_table_find_next_fs
 mnt_table_find_pair
@@ -381,6 +382,7 @@ mnt_table_find_srcpath
 mnt_table_find_tag
 mnt_table_find_target
 mnt_table_find_target_with_option
+mnt_table_find_uniq_id
 mnt_table_first_fs
 mnt_table_get_cache
 mnt_table_get_intro_comment

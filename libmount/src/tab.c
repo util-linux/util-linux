@@ -1541,6 +1541,67 @@ struct libmnt_fs *mnt_table_find_devno(struct libmnt_table *tb,
 	return NULL;
 }
 
+/**
+ * mnt_table_find_id:
+ * @tb: mount table
+ * @id: classic mount ID
+ *
+ * See also mnt_id_from_path().
+ *
+ * Returns: a tab entry or NULL.
+ *
+ * Since: 2.41
+ */
+struct libmnt_fs *mnt_table_find_id(struct libmnt_table *tb, int id)
+{
+	struct libmnt_fs *fs = NULL;
+	struct libmnt_iter itr;
+
+	if (!tb)
+		return NULL;
+
+	DBG(TAB, ul_debugobj(tb, "lookup ID: %d", id));
+	mnt_reset_iter(&itr, MNT_ITER_BACKWARD);
+
+	while (mnt_table_next_fs(tb, &itr, &fs) == 0) {
+		if (mnt_fs_get_id(fs) == id)
+			return fs;
+	}
+
+	return NULL;
+}
+
+/**
+ * mnt_table_find_uniq_id:
+ * @tb: mount table
+ * @id: uniqie 64-bit mount ID
+ *
+ * See also mnt_id_from_path().
+ *
+ * Returns: a tab entry or NULL.
+ *
+ * Since: 2.41
+ */
+struct libmnt_fs *mnt_table_find_uniq_id(struct libmnt_table *tb, uint64_t id)
+{
+	struct libmnt_fs *fs = NULL;
+	struct libmnt_iter itr;
+
+	if (!tb)
+		return NULL;
+
+	DBG(TAB, ul_debugobj(tb, "lookup uniq-ID: %" PRIu64, id));
+	mnt_reset_iter(&itr, MNT_ITER_BACKWARD);
+
+	while (mnt_table_next_fs(tb, &itr, &fs) == 0) {
+		if (mnt_fs_get_uniq_id(fs) == id)
+			return fs;
+	}
+
+	return NULL;
+}
+
+
 static char *remove_mountpoint_from_path(const char *path, const char *mnt)
 {
         char *res;

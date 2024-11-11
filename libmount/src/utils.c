@@ -319,8 +319,8 @@ int mnt_id_from_fd(int fd, uint64_t *uniq_id, int *id)
 /**
  * mnt_id_from_path:
  * @path: mountpoint
- * @uniq_id: returns STATX_MNT_ID_UNIQUE
- * @id: returns STATX_MNT_ID
+ * @uniq_id: returns STATX_MNT_ID_UNIQUE (optional)
+ * @id: returns STATX_MNT_ID (optional)
  *
  * Converts @path to ID.
  *

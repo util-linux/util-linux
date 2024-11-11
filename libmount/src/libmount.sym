@@ -398,6 +398,8 @@ MOUNT_2_41 {
 	mnt_statmnt_set_mask;
 	mnt_table_enable_listmount;
 	mnt_table_fetch_listmount;
+	mnt_table_find_id;
+	mnt_table_find_uniq_id;
 	mnt_table_listmount_set_id;
 	mnt_table_listmount_set_ns;
 	mnt_table_listmount_set_stepsiz;

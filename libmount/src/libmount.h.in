@@ -681,6 +681,8 @@ extern struct libmnt_fs *mnt_table_find_pair(struct libmnt_table *tb,
 				const char *target, int direction);
 extern struct libmnt_fs *mnt_table_find_devno(struct libmnt_table *tb,
 				dev_t devno, int direction);
+extern struct libmnt_fs *mnt_table_find_uniq_id(struct libmnt_table *tb, uint64_t id);
+extern struct libmnt_fs *mnt_table_find_id(struct libmnt_table *tb, int id);
 
 extern int mnt_table_find_next_fs(struct libmnt_table *tb,
 			struct libmnt_iter *itr,
