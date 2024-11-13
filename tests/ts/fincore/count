@@ -10,8 +10,8 @@ ts_check_test_command "$TS_CMD_FINDMNT"
 ts_check_test_command "$TS_HELPER_SYSINFO"
 
 FS="$("$TS_CMD_FINDMNT" -nr -o FSTYPE -T "$PWD")"
-if [[ "$FS" = "tmpfs" ]]; then
-	ts_skip "fincore does not work on tmpfs"
+if [[ "$FS" = "tmpfs" || "$FS" = "overlay" || "$FS" = "" ]]; then
+	ts_skip "fincore does not work on tmpfs or unknown fs"
 fi
 
 function footer
