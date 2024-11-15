@@ -52,7 +52,23 @@ mesg - display (or do not display) messages from other users
 
 The *mesg* utility is invoked by a user to control write access others have to the terminal device associated with standard error output. If write access is allowed, then programs such as *talk*(1) and *write*(1) may display messages on the terminal.
 
-Traditionally, write access is allowed by default. However, as users become more conscious of various security risks, there is a trend to remove write access by default, at least for the primary login shell. To make sure your ttys are set the way you want them to be set, *mesg* should be executed in your login scripts.
+Traditionally, write access is allowed by default. However, as users become
+more conscious of various security risks, there is a trend to remove write
+access by default, at least for the primary login shell.
+
+The initial permissions for the terminal are set by *login*(1) according to TTYPERM
+and TTYGROUP from /etc/login.defs. The default is mode _0620_ if a tty group is used,
+and _0600_ without the group. The default tty group name is "tty".
+
+To ensure that your ttys are set in a portable and independent manner from system
+settings, *mesg* should be executed in your login scripts.
+
+*mesg* modifies the write permissions for a group on the current terminal
+device. Since version 2.41, *mesg* can no longer be compiled to make the
+terminal writable for _others_ and strictly modifies only _group_ permissions.
+The usual setup is to use a "tty" group and add relevant users to this group.
+Alternatively, a less secure solution is to set utilities like *write*(1) or
+*wall*(1) to setgid for the "tty" group.
 
 The *mesg* utility silently exits with error status 2 if not executed on a terminal. In this case executing *mesg* is pointless. The command line option *--verbose* forces *mesg* to print a warning in this situation. This behaviour has been introduced in version 2.33.
 
@@ -65,6 +81,7 @@ Disallow messages.
 Allow messages to be displayed.
 
 If no arguments are given, *mesg* shows the current message status on standard error output.
+
 
 == OPTIONS
 
