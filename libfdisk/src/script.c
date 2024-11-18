@@ -767,7 +767,7 @@ static int parse_line_header(struct fdisk_script *dp, char *s)
 {
 	size_t i;
 	char *name, *value;
-	static const char *supported[] = {
+	static const char *const supported[] = {
 		"label", "unit", "label-id", "device", "grain",
 		"first-lba", "last-lba", "table-length", "sector-size"
 	};
