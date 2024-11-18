@@ -1045,7 +1045,7 @@ int main(int argc, char **argv)
 			break;
 		case 'V':
 		{
-			static const char *features[] = {
+			static const char *const features[] = {
 #ifdef USE_SULOGIN_EMERGENCY_MOUNT
 				"emergency-mount",
 #endif
