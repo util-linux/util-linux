@@ -655,7 +655,7 @@ static void login_options_to_argv(char *argv[], int *argc,
 
 static void output_version(void)
 {
-	static const char *features[] = {
+	static const char *const features[] = {
 #ifdef DEBUGGING
 		"debug",
 #endif
@@ -2146,7 +2146,7 @@ static char *get_logname(struct issue *ie, struct options *op, struct termios *t
 	char c;			/* input character, full eight bits */
 	char ascval;		/* low 7 bits of input character */
 	int eightbit;
-	static char *erase[] = {	/* backspace-space-backspace */
+	static const char *const erase[] = {	/* backspace-space-backspace */
 		"\010\040\010",		/* space parity */
 		"\010\040\010",		/* odd parity */
 		"\210\240\210",		/* even parity */

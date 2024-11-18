@@ -99,7 +99,7 @@ enum {
 	DEFAULT
 };
 
-static const char *colornames[] = {
+static const char *const colornames[] = {
 	[BLACK] = "black",
 	[RED]	= "red",
 	[GREEN]	= "green",
