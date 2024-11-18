@@ -76,6 +76,7 @@ struct libscols_table *get_scols_table(struct irq_output *out,
                                               struct irq_stat *prev,
                                               struct irq_stat **xstat,
                                               int softirq,
+                                              unsigned long threshold,
                                               size_t setsize,
                                               cpu_set_t *cpuset);
 

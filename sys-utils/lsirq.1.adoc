@@ -40,6 +40,12 @@ Produce output in the form of key="value" pairs. All potentially unsafe characte
 *-S*, *--softirq*::
 Show softirqs information.
 
+*-t*, *--threshold* _min_::
+Only show IRQs with counters above the specified threshold. Human readable values are supported (e.g. 1.2K).
+
+*-C*, *--cpu-list* _list_::
+Only show interrupt counters on the specified CPU list.
+
 include::man-common/help-version.adoc[]
 
 == AUTHORS
@@ -47,6 +53,7 @@ include::man-common/help-version.adoc[]
 mailto:pizhenwei@bytedance.com[Zhenwei Pi],
 mailto:kerolasa@iki.fi[Sami Kerola],
 mailto:kzak@redhat.com[Karel Zak]
+mailto:robin@jarry.cc[Robin Jarry]
 
 include::man-common/bugreports.adoc[]
 

@@ -12,6 +12,9 @@ _irqtop_module()
 		'-C'|'--cpu-list')
 			return 0
 			;;
+		'-t'|'--threshold')
+			return 0
+			;;
 		'-d'|'--delay')
 			COMPREPLY=( $(compgen -W "secs" -- $cur) )
 			return 0
@@ -43,6 +46,7 @@ _irqtop_module()
 		--sort
 		--output
 		--softirq
+		--threshold
 		--help
 		--version"
 	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )

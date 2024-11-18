@@ -531,6 +531,7 @@ struct libscols_table *get_scols_table(struct irq_output *out,
 					      struct irq_stat *prev,
 					      struct irq_stat **xstat,
 					      int softirq,
+					      unsigned long threshold,
 					      size_t setsize,
 					      cpu_set_t *cpuset)
 {
@@ -569,7 +570,8 @@ struct libscols_table *get_scols_table(struct irq_output *out,
 	}
 
 	for (i = 0; i < stat->nr_irq; i++)
-		add_scols_line(out, &result[i], table);
+		if (result[i].total >= threshold)
+			add_scols_line(out, &result[i], table);
 
 	free(result);
 

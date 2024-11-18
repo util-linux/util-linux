@@ -40,6 +40,9 @@ Specify sort criteria by column name. See *--help* output to get column names. T
 *-S*, *--softirq*::
 Show softirqs information.
 
+*-t*, *--threshold* _min_::
+Only show IRQs with counters above the specified threshold. Human readable values are supported (e.g. 1.2K).
+
 include::man-common/help-version.adoc[]
 
 == INTERACTIVE MODE KEY COMMANDS
@@ -64,6 +67,7 @@ stop updates and exit program
 mailto:pizhenwei@bytedance.com[Zhenwei Pi],
 mailto:kerolasa@iki.fi[Sami Kerola],
 mailto:kzak@redhat.com[Karel Zak]
+mailto:robin@jarry.cc[Robin Jarry]
 
 include::man-common/bugreports.adoc[]
 

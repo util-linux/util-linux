@@ -5,6 +5,7 @@
  *
  * Copyright (C) 2019 zhenwei pi <pizhenwei@bytedance.com>
  * Copyright (C) 2020 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2024 Robin Jarry <robin@jarry.cc>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -77,6 +78,7 @@ struct irqtop_ctl {
 
 	struct itimerspec timer;
 	struct irq_stat	*prev_stat;
+	uintmax_t threshold;
 	size_t setsize;
 	cpu_set_t *cpuset;
 
@@ -107,8 +109,8 @@ static int update_screen(struct irqtop_ctl *ctl, struct irq_output *out)
 	char timestr[64], *data, *data0, *p;
 
 	/* make irqs table */
-	table = get_scols_table(out, ctl->prev_stat, &stat, ctl->softirq, ctl->setsize,
-				ctl->cpuset);
+	table = get_scols_table(out, ctl->prev_stat, &stat, ctl->softirq,
+				ctl->threshold, ctl->setsize, ctl->cpuset);
 	if (!table) {
 		ctl->request_exit = 1;
 		return 1;
@@ -264,6 +266,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -o, --output <list>  define which output columns to use\n"), stdout);
 	fputs(_(" -s, --sort <column>  specify sort column\n"), stdout);
 	fputs(_(" -S, --softirq        show softirqs instead of interrupts\n"), stdout);
+	fputs(_(" -t, --threshold <N>  only IRQs with counters above <N>\n"), stdout);
 	fputs(USAGE_SEPARATOR, stdout);
 	fprintf(stdout, USAGE_HELP_OPTIONS(22));
 
@@ -294,13 +297,14 @@ static void parse_args(	struct irqtop_ctl *ctl,
 		{"sort", required_argument, NULL, 's'},
 		{"output", required_argument, NULL, 'o'},
 		{"softirq", no_argument, NULL, 'S'},
+		{"threshold", required_argument, NULL, 't'},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
 	};
 	int o;
 
-	while ((o = getopt_long(argc, argv, "c:C:d:o:s:ShV", longopts, NULL)) != -1) {
+	while ((o = getopt_long(argc, argv, "c:C:d:o:s:St:hV", longopts, NULL)) != -1) {
 		switch (o) {
 		case 'c':
 			if (!strcmp(optarg, "auto"))
@@ -345,6 +349,9 @@ static void parse_args(	struct irqtop_ctl *ctl,
 			break;
 		case 'S':
 			ctl->softirq = 1;
+			break;
+		case 't':
+			ctl->threshold = strtosize_or_err(optarg, _("error: --threshold"));
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
