@@ -30,7 +30,7 @@
 #include "mount-api-utils.h"
 
 /* built-in hooksets */
-static const struct libmnt_hookset *hooksets[] =
+static const struct libmnt_hookset *const hooksets[] =
 {
 #ifdef __linux__
 	&hookset_loopdev,
