@@ -100,7 +100,7 @@ struct wh_dirlist {
 	struct wh_dirlist *next;
 };
 
-static const char *bindirs[] = {
+static const char *const bindirs[] = {
 	"/usr/bin",
 	"/usr/sbin",
 	"/bin",
@@ -161,7 +161,7 @@ static const char *bindirs[] = {
 	NULL
 };
 
-static const char *mandirs[] = {
+static const char *const mandirs[] = {
 	"/usr/man/*",
 	"/usr/share/man/*",
 	"/usr/X386/man/*",
@@ -172,7 +172,7 @@ static const char *mandirs[] = {
 	NULL
 };
 
-static const char *srcdirs[] = {
+static const char *const srcdirs[] = {
 	"/usr/src/*",
 	"/usr/src/lib/libc/*",
 	"/usr/src/lib/libc/net/*",
@@ -355,7 +355,7 @@ static void construct_dirlist_from_argv(struct wh_dirlist **ls,
 
 static void construct_dirlist(struct wh_dirlist **ls,
 			      int type,
-			      const char **paths)
+			      const char *const*paths)
 {
 	size_t i;
 

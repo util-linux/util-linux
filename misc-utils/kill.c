@@ -293,7 +293,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 static void __attribute__((__noreturn__)) print_kill_version(void)
 {
-	static const char *features[] = {
+	static const char *const features[] = {
 #ifdef HAVE_SIGQUEUE
 		"sigqueue",
 #endif
