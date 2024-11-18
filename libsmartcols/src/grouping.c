@@ -142,7 +142,7 @@ void scols_groups_fix_members_order(struct libscols_table *tb)
 
 static inline const char *group_state_to_string(int state)
 {
-	static const char *grpstates[] = {
+	static const char *const grpstates[] = {
 		[SCOLS_GSTATE_NONE]		= "none",
 		[SCOLS_GSTATE_FIRST_MEMBER]	= "1st-member",
 		[SCOLS_GSTATE_MIDDLE_MEMBER]	= "middle-member",
