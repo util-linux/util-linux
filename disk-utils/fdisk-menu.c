@@ -254,7 +254,7 @@ static const struct menu menu_bsd = {
 	}
 };
 
-static const struct menu *menus[] = {
+static const struct menu *const menus[] = {
 	&menu_gpt,
 	&menu_sun,
 	&menu_sgi,

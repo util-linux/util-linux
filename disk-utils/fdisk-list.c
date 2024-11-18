@@ -250,7 +250,7 @@ int list_freespace_get_table(struct fdisk_context *cxt,
 	char *strsz;
 	int rc = 0, ct = 0;
 
-	static const char *colnames[] = { N_("Start"), N_("End"), N_("Sectors"), N_("Size") };
+	static const char *const colnames[] = { N_("Start"), N_("End"), N_("Sectors"), N_("Size") };
 	static const int colids[] = { FDISK_FIELD_START, FDISK_FIELD_END, FDISK_FIELD_SECTORS, FDISK_FIELD_SIZE };
 
 	rc = fdisk_get_freespaces(cxt, &tb);

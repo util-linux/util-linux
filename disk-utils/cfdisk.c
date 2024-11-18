@@ -69,7 +69,7 @@
 #include "list.h"
 #include "blkdev.h"
 
-static const char *default_disks[] = {
+static const char *const default_disks[] = {
 #ifdef __GNU__
 		"/dev/hd0",
 		"/dev/sd0",
@@ -2247,7 +2247,7 @@ done:
 static int ui_help(void)
 {
 	size_t i;
-	static const char *help[] = {
+	static const char *const help[] = {
 		N_("This is cfdisk, a curses-based disk partitioning program."),
 		N_("It lets you create, delete, and modify partitions on a block device."),
 		"  ",

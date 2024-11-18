@@ -41,7 +41,7 @@ enum {
 static inline int wipemode_from_string(const char *str)
 {
 	size_t i;
-	static const char *modes[] = {
+	static const char *const modes[] = {
 		[WIPEMODE_AUTO]   = "auto",
 		[WIPEMODE_NEVER]  = "never",
 		[WIPEMODE_ALWAYS] = "always"
