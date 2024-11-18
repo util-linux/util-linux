@@ -568,7 +568,7 @@ extern int mnt_optlist_strdup_optstr(struct libmnt_optlist *ls, char **optstr,
 extern int mnt_optlist_get_propagation(struct libmnt_optlist *ls);
 extern int mnt_optlist_is_propagation_only(struct libmnt_optlist *ls);
 extern int mnt_optlist_is_remount(struct libmnt_optlist *ls);
-extern int mnt_optlist_is_recursive(struct libmnt_optlist *ls);
+extern int mnt_optlist_is_rpropagation(struct libmnt_optlist *ls);
 extern int mnt_optlist_is_bind(struct libmnt_optlist *ls);
 extern int mnt_optlist_is_rbind(struct libmnt_optlist *ls);
 extern int mnt_optlist_is_move(struct libmnt_optlist *ls);
@@ -588,6 +588,7 @@ extern int mnt_opt_set_u64value(struct libmnt_opt *opt, uint64_t num);
 extern int mnt_opt_set_quoted_value(struct libmnt_opt *opt, const char *str);
 extern int mnt_opt_is_external(struct libmnt_opt *opt);
 extern int mnt_opt_is_sepnodata(struct libmnt_opt *opt);
+extern int mnt_opt_value_with(struct libmnt_opt *opt, const char *str);
 
 /* fs.c */
 extern int mnt_fs_follow_optlist(struct libmnt_fs *fs, struct libmnt_optlist *ol);
