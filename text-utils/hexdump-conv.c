@@ -87,7 +87,7 @@ strpr:		*pr->cchar = 's';
 void
 conv_u(struct hexdump_pr *pr, u_char *p)
 {
-	static const char *list[] = {
+	static const char *const list[] = {
 		"nul", "soh", "stx", "etx", "eot", "enq", "ack", "bel",
 		 "bs",  "ht",  "lf",  "vt",  "ff",  "cr",  "so",  "si",
 		"dle", "dc1", "dc2", "dc3", "dc4", "nak", "syn", "etb",
