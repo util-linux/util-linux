@@ -108,11 +108,13 @@ wall_CFLAGS += $(SYSTEMD_CFLAGS)
 endif
 if USE_TTY_GROUP
 if MAKEINSTALL_DO_CHOWN
+if MAKEINSTALL_DO_TTY_SETGID
 install-exec-hook-wall::
 	chgrp tty $(DESTDIR)$(usrbin_execdir)/wall
 	chmod g+s $(DESTDIR)$(usrbin_execdir)/wall
 
 INSTALL_EXEC_HOOKS += install-exec-hook-wall
+endif
 endif
 endif
 endif # BUILD_WALL
@@ -133,11 +135,13 @@ endif
 
 if USE_TTY_GROUP
 if MAKEINSTALL_DO_CHOWN
+if MAKEINSTALL_DO_TTY_SETGID
 install-exec-hook-write::
 	chgrp tty $(DESTDIR)$(usrbin_execdir)/write
 	chmod g+s $(DESTDIR)$(usrbin_execdir)/write
 
 INSTALL_EXEC_HOOKS += install-exec-hook-write
+endif
 endif
 endif
 endif # BUILD_WRITE

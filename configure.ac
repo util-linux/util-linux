@@ -2911,6 +2911,14 @@ AC_ARG_ENABLE([makeinstall-setuid],
 AM_CONDITIONAL([MAKEINSTALL_DO_SETUID], [test "x$enable_makeinstall_setuid" = xyes])
 
 
+AC_ARG_ENABLE([makeinstall-tty-setgid],
+	      AS_HELP_STRING([--disable-makeinstall-tty-setgid], [do not setgid for wall, and write during "make install"]),
+  [], [enable_makeinstall_tty_setgid=yes]
+)
+AM_CONDITIONAL([MAKEINSTALL_DO_TTY_SETGID], [test "x$enable_makeinstall_tty_setgid" = xyes])
+
+
+
 AC_ARG_ENABLE([colors-default],
   AS_HELP_STRING([--disable-colors-default], [do not colorize output from utils by default]),
   [], [enable_colors_default=yes]

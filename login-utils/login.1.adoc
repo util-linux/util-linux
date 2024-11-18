@@ -97,13 +97,13 @@ Delay in seconds before being allowed another three tries after a login failure.
 
 *TTYPERM* (string)::
 
-The terminal permissions. The default value is _0600_ or _0620_ if tty group is used.
+The terminal permissions. The default value is _0600_ or _0620_ if tty group is used. See also *mesg*(1).
 
 *TTYGROUP* (string)::
 
 The login tty will be owned by the *TTYGROUP*. The default value is _tty_. If the *TTYGROUP* does not exist, then the ownership of the terminal is set to the user's primary group.
 +
-The *TTYGROUP* can be either the name of a group or a numeric group identifier.
+The *TTYGROUP* can be either the name of a group or a numeric group identifier. See also *mesg*(1).
 
 *HUSHLOGIN_FILE* (string)::
 

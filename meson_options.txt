@@ -309,3 +309,7 @@ option('lastlog-compat-symlink', type : 'boolean',
 option('login-lastlogin', type : 'boolean',
        value : false,
        description : 'program login writes lastlog entries')
+
+option('tty-setgid', type : 'boolean',
+       value : true,
+       description : 'setgid tty group for wall and write programs')

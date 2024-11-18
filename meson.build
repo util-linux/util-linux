@@ -2675,6 +2675,13 @@ if opt
   bashcompletions += ['mesg']
 endif
 
+tty_setgid = get_option('tty-setgid')
+if tty_setgid
+  tty_install_mode = [ 'rwxr-sr-x', 'root', 'tty' ]
+else
+  tty_install_mode = [ false, false, false ]
+endif
+
 opt = not get_option('build-wall').disabled()
 exe = executable(
   'wall',
@@ -2683,7 +2690,7 @@ exe = executable(
   link_with : [lib_common],
   dependencies : [lib_systemd],
   install_dir : usrbin_exec_dir,
-  install_mode : [ 'rwxr-sr-x', 'root', 'tty' ],
+  install_mode : tty_install_mode,
   install : opt,
   build_by_default : opt)
 if opt
@@ -2703,7 +2710,7 @@ exe = executable(
   link_with : [lib_common],
   dependencies : [lib_systemd],
   install_dir : usrbin_exec_dir,
-  install_mode : [ 'rwxr-sr-x', 'root', 'tty' ],
+  install_mode : tty_install_mode,
   install : opt,
   build_by_default : opt)
 if opt
