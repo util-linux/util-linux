@@ -409,6 +409,16 @@ int mnt_context_delete_loopdev(struct libmnt_context *cxt)
 	return delete_loopdev(cxt, NULL);
 }
 
+/**
+ * Can the kernel mount regular files of this filesystem type
+ * directly, i.e. without a loop device?
+ */
+static bool fstype_supports_regular_files(const char *fstype)
+{
+	/* Linux supports mounting erofs files since 6.12 */
+	return strcmp(fstype, "erofs") == 0;
+}
+
 static int is_loopdev_required(struct libmnt_context *cxt, struct libmnt_optlist *ol)
 {
 	const char *src, *type;
@@ -441,12 +451,11 @@ static int is_loopdev_required(struct libmnt_context *cxt, struct libmnt_optlist
 	 * (these filesystems work with block devices only). The file size
 	 * should be at least 1KiB, otherwise we will create an empty loopdev with
 	 * no mountable filesystem...
-	 *
-	 * Note that there is no restriction (on kernel side) that would prevent a regular
-	 * file as a mount(2) source argument. A filesystem that is able to mount
-	 * regular files could be implemented.
 	 */
 	type = mnt_fs_get_fstype(cxt->fs);
+
+	if (type && fstype_supports_regular_files(type))
+		return 0;
 
 	if (mnt_fs_is_regularfs(cxt->fs) &&
 	    (!type || strcmp(type, "auto") == 0 || blkid_known_fstype(type))) {
