@@ -52,6 +52,7 @@
 #include "statfs_magic.h"
 #include "pathnames.h"
 #include "pidfd-utils.h"
+#include "linux_version.h"
 
 static struct namespace_file {
 	int nstype;
@@ -331,9 +332,17 @@ static void open_target_sk_netns(int pidfd, int sock_fd)
 	struct namespace_file *nsfile;
 	struct stat sb;
 	int sk, nsfd;
+	bool local_fd = false;
 
 	nsfile = get_nsfile(CLONE_NEWNET);
 	assert(nsfile->nstype);
+
+	if (pidfd < 0) {
+		pidfd = pidfd_open(namespace_target_pid, 0);
+		if (pidfd < 0)
+			err(EXIT_FAILURE, _("failed to pidfd_open() for %d"), namespace_target_pid);
+		local_fd = true;
+	}
 
 	sk = pidfd_getfd(pidfd, sock_fd, 0);
 	if (sk < 0)
@@ -351,6 +360,9 @@ static void open_target_sk_netns(int pidfd, int sock_fd)
 	nsfile->fd = nsfd;
 	nsfile->enabled = true;
 	close(sk);
+
+	if (local_fd)
+		close(pidfd);
 }
 
 static int get_ns_ino(const char *path, ino_t *ino)
@@ -675,13 +687,14 @@ int main(int argc, char *argv[])
 		if (!namespace_target_pid)
 			errx(EXIT_FAILURE, _("no target PID specified"));
 
-		pid_fd = pidfd_open(namespace_target_pid, 0);
-		if (pid_fd < 0) {
-			if (sock_fd >= 0)
-				err(EXIT_FAILURE, _("failed to pidfd_open() for %d"), namespace_target_pid);
-			if (namespaces)
-				open_namespaces(namespaces);	/* fallback */
-		}
+		/* The syscall setns() before Linux 5.7 does not support pidfd.
+		 * For other cases such as sock_fd and user-parent, the global
+		 * pidfd needs to be optional.
+		 */
+		if (get_linux_version() > KERNEL_VERSION(5, 7, 0))
+			pid_fd = pidfd_open(namespace_target_pid, 0);
+		if (pid_fd < 0 && namespaces)
+			open_namespaces(namespaces);	/* fallback */
 	}
 
 	if (do_rd)
