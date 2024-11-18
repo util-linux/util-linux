@@ -141,7 +141,7 @@ enum lsns_type {
 	LSNS_TYPE_TIME
 };
 
-static char *ns_names[] = {
+static const char *const ns_names[] = {
 	/* Don't add LSNS_TYPE_UNKNOWN here.
 	 * ARRAY_SIZE(ns_names) in struct lsns_process may not work.*/
 	[LSNS_TYPE_MNT] = "mnt",

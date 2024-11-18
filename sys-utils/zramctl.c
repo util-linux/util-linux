@@ -99,7 +99,7 @@ enum {
 	MM_NUM_MIGRATED
 };
 
-static const char *mm_stat_names[] = {
+static const char *const mm_stat_names[] = {
 	[MM_ORIG_DATA_SIZE]  = "orig_data_size",
 	[MM_COMPR_DATA_SIZE] = "compr_data_size",
 	[MM_MEM_USED_TOTAL]  = "mem_used_total",

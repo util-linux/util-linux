@@ -100,7 +100,7 @@ enum {
 	ACT_LIST_OLD
 };
 
-static char *rfkill_actions[] = {
+static const char *const rfkill_actions[] = {
 	[ACT_LIST]	= "list",
 	[ACT_HELP]	= "help",
 	[ACT_EVENT]	= "event",

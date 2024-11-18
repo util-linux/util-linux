@@ -207,14 +207,14 @@ done:
  */
 #define DEF_REPORT_LEN		(1U << 12) /* 4k zones per report (256k kzalloc) */
 
-static const char *type_text[] = {
+static const char *const type_text[] = {
 	"RESERVED",
 	"CONVENTIONAL",
 	"SEQ_WRITE_REQUIRED",
 	"SEQ_WRITE_PREFERRED",
 };
 
-static const char *condition_str[] = {
+static const char *const condition_str[] = {
 	"nw", /* Not write pointer */
 	"em", /* Empty */
 	"oi", /* Implicitly opened */

@@ -75,7 +75,7 @@ enum rtc_modes {	/* manual page --mode option explains these. */
 
 };
 
-static const char *rtcwake_mode_string[] = {
+static const char *const rtcwake_mode_string[] = {
 	[OFF_MODE] = "off",
 	[NO_MODE] = "no",
 	[ON_MODE] = "on",

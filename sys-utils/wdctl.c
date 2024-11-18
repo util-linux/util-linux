@@ -204,8 +204,8 @@ static const struct colinfo *get_column_info(unsigned num)
  */
 static const char *get_default_device(void)
 {
-	const char **p;
-	static const char *devs[] = {
+	const char *const*p;
+	static const char *const devs[] = {
 		"/dev/watchdog0",
 		"/dev/watchdog",
 		NULL

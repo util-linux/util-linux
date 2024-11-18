@@ -67,7 +67,7 @@ enum zone_id {
 	ZONE_DEVICE,
 };
 
-static char *zone_names[] = {
+static const char *const zone_names[] = {
 	[ZONE_DMA]	= "DMA",
 	[ZONE_DMA32]	= "DMA32",
 	[ZONE_NORMAL]	= "Normal",
