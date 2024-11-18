@@ -191,7 +191,7 @@ const char *random_tell_source(void)
 	return _("getrandom() function");
 #else
 	size_t i;
-	static const char *random_sources[] = {
+	static const char *const random_sources[] = {
 		"/dev/urandom",
 		"/dev/random"
 	};

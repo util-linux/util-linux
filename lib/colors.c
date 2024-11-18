@@ -729,7 +729,7 @@ const char *color_get_disable_sequence(void)
 int colormode_from_string(const char *str)
 {
 	size_t i;
-	static const char *modes[] = {
+	static const char *const modes[] = {
 		[UL_COLORMODE_AUTO]   = "auto",
 		[UL_COLORMODE_NEVER]  = "never",
 		[UL_COLORMODE_ALWAYS] = "always",
