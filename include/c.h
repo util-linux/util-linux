@@ -484,10 +484,10 @@ static inline void __attribute__((__noreturn__)) ul_sig_err(int excode, const ch
 		exit(eval); \
 })
 
-static inline void print_features(const char **features, const char *prefix)
+static inline void print_features(const char *const*features, const char *prefix)
 {
 	if (features && *features) {
-		const char **p = features;
+		const char *const*p = features;
 		while (p && *p) {
 			if (prefix && p == features)
 				printf(" (%s ", prefix);
