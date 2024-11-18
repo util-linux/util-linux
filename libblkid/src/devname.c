@@ -147,7 +147,7 @@ done:
 }
 
 /* Directories where we will try to search for device names */
-static const char *dirlist[] = { "/dev", "/devfs", "/devices", NULL };
+static const char *const dirlist[] = { "/dev", "/devfs", "/devices", NULL };
 
 /*
  * Return 1 if the device is a device-mapper 'leaf' node
@@ -177,7 +177,7 @@ static void probe_one(blkid_cache cache, const char *ptname,
 {
 	blkid_dev dev = NULL;
 	struct list_head *p, *pnext;
-	const char **dir;
+	const char *const*dir;
 	char *devname = NULL;
 
 	/* See if we already have this device number in the cache. */
@@ -359,7 +359,7 @@ exit:
 static void
 ubi_probe_all(blkid_cache cache, int only_if_new)
 {
-	const char **dirname;
+	const char *const*dirname;
 
 	for (dirname = dirlist; *dirname; dirname++) {
 		DIR		*dir;

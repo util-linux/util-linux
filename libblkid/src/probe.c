@@ -125,7 +125,7 @@
 /*
  * All supported chains
  */
-static const struct blkid_chaindrv *chains_drvs[] = {
+static const struct blkid_chaindrv *const chains_drvs[] = {
 	[BLKID_CHAIN_SUBLKS] = &superblocks_drv,
 	[BLKID_CHAIN_TOPLGY] = &topology_drv,
 	[BLKID_CHAIN_PARTS] = &partitions_drv

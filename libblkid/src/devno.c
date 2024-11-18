@@ -159,7 +159,7 @@ void blkid__scan_dir(char *dirname, dev_t devno, struct dir_list **list,
 }
 
 /* Directories where we will try to search for device numbers */
-static const char *devdirs[] = { "/devices", "/devfs", "/dev", NULL };
+static const char *const devdirs[] = { "/devices", "/devfs", "/dev", NULL };
 
 /**
  * SECTION: misc
@@ -173,7 +173,7 @@ static char *scandev_devno_to_devpath(dev_t devno)
 {
 	struct dir_list *list = NULL, *new_list = NULL;
 	char *devname = NULL;
-	const char **dir;
+	const char *const*dir;
 
 	/*
 	 * Add the starting directories to search in reverse order of
