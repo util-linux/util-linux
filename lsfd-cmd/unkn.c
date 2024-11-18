@@ -939,7 +939,7 @@ static const struct anon_ops anon_inotify_ops = {
  * Generally, we use "-" as the word separators in lsfd's output.
  * However, about bpf*, we use "_" because bpftool uses "_".
  */
-static const char *bpf_prog_type_table[] = {
+static const char *const bpf_prog_type_table[] = {
 	[0] = "unspec",		   /* BPF_PROG_TYPE_UNSPEC*/
 	[1] = "socket_filter",	   /* BPF_PROG_TYPE_SOCKET_FILTER*/
 	[2] = "kprobe",		   /* BPF_PROG_TYPE_KPROBE*/
@@ -1139,7 +1139,7 @@ static const struct anon_ops anon_bpf_prog_ops = {
 /*
  * bpf-map
  */
-static const char *bpf_map_type_table[] = {
+static const char *const bpf_map_type_table[] = {
 	[0] = "unspec",		  /* BPF_MAP_TYPE_UNSPEC */
 	[1] = "hash",		  /* BPF_MAP_TYPE_HASH */
 	[2] = "array",		  /* BPF_MAP_TYPE_ARRAY */
@@ -1332,7 +1332,7 @@ static const struct anon_ops anon_generic_ops = {
 	.handle_fdinfo = NULL,
 };
 
-static const struct anon_ops *anon_ops[] = {
+static const struct anon_ops *const anon_ops[] = {
 	&anon_pidfd_ops,
 	&anon_eventfd_ops,
 	&anon_eventpoll_ops,
