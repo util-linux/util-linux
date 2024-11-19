@@ -760,7 +760,10 @@ The command line option *--no-canonicalize* overrides this mount option and affe
 +
 Note that *mount*(8) still sanitizes and canonicalizes the source and target paths specified on the command line by non-root users, regardless of the X-mount.nocanonicalize setting.
 
-**X-mount.subdir=**__directory__::
+*X-mount.noloop*::
+Do not create and mount a loop device, even if the source of the mount is a regular file.
+
+*X-mount.subdir=*__directory__::
 Allow mounting sub-directory from a filesystem instead of the root directory. For now, this feature is implemented by temporary filesystem root directory mount in unshared namespace and then bind the sub-directory to the final mount point and umount the root of the filesystem. The sub-directory mount shows up atomically for the rest of the system although it is implemented by multiple *mount*(2) syscalls.
 +
 Note that this feature will not work in session with an unshared private mount namespace (after *unshare --mount*) on old kernels or with *mount*(8) without support for file-descriptors-based mount kernel API. In this case, you need *unshare --mount --propagation shared*.
