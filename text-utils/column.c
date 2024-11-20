@@ -36,11 +36,12 @@
 #include <sys/ioctl.h>
 
 #include <ctype.h>
+#include <errno.h>
+#include <stdbool.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h>
+#include <unistd.h>
 #include <getopt.h>
 
 #include "nls.h"
@@ -96,14 +97,14 @@ struct column_control {
 	size_t  maxncols;	/* maximal number of input columns */
 	size_t  mincolsep;	/* minimal spaces between columns */
 
-	unsigned int greedy :1,
-		     json :1,
-		     header_repeat :1,
-		     hide_unnamed :1,
-		     maxout : 1,
-		     keep_empty_lines :1,	/* --keep-empty-lines */
-		     tab_noheadings :1,
-		     use_spaces :1;
+	bool	greedy,
+		json,
+		header_repeat,
+		hide_unnamed,
+		maxout : 1,
+		keep_empty_lines,	/* --keep-empty-lines */
+		tab_noheadings,
+		use_spaces;
 };
 
 typedef enum {

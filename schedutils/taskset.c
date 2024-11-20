@@ -18,6 +18,7 @@
  * Copyright (C) 2010 Karel Zak <kzak@redhat.com>
  */
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -45,8 +46,8 @@ struct taskset {
 	size_t		setsize;
 	char		*buf;		/* buffer for conversion from mask to string */
 	size_t		buflen;
-	unsigned int	use_list:1,	/* use list rather than masks */
-			get_only:1;	/* print the mask, but not modify */
+	bool		use_list,	/* use list rather than masks */
+			get_only;	/* print the mask, but not modify */
 };
 
 static void __attribute__((__noreturn__)) usage(void)

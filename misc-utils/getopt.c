@@ -57,6 +57,7 @@
 #define CLOSE_EXIT_CODE		XALLOC_EXIT_CODE
 #define TEST_EXIT_CODE		4
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -88,11 +89,10 @@ struct getopt_control {
 	struct option *long_options;	/* long options */
 	int long_options_length;	/* length of options array */
 	int long_options_nr;		/* number of used elements in array */
-	unsigned int
-		compatible:1,		/* compatibility mode for 'difficult' programs */
-		quiet_errors:1,		/* print errors */
-		quiet_output:1,		/* print output */
-		quote:1;		/* quote output */
+	bool	compatible,		/* compatibility mode for 'difficult' programs */
+		quiet_errors,		/* print errors */
+		quiet_output,		/* print output */
+		quote;			/* quote output */
 };
 
 enum { REALLOC_INCREMENT = 8 };

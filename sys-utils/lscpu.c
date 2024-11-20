@@ -127,7 +127,7 @@ struct lscpu_coldesc {
 	const char *help;
 
 	int flags;
-	unsigned int  is_abbr:1;	/* name is abbreviation */
+	bool is_abbr;	/* name is abbreviation */
 	int json_type;
 };
 

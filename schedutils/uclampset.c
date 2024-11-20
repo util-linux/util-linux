@@ -21,6 +21,7 @@
 #include <errno.h>
 #include <getopt.h>
 #include <sched.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -38,12 +39,12 @@ struct uclampset {
 	unsigned int util_max;
 
 	pid_t pid;
-	unsigned int	all_tasks:1,		/* all threads of the PID */
-			system:1,
-			util_min_set:1,		/* indicates -m option was passed */
-			util_max_set:1,		/* indicates -M option was passed */
-			reset_on_fork:1,
-			verbose:1;
+	bool	all_tasks,		/* all threads of the PID */
+		system,
+		util_min_set,		/* indicates -m option was passed */
+		util_max_set,		/* indicates -M option was passed */
+		reset_on_fork,
+		verbose;
 	char *cmd;
 };
 

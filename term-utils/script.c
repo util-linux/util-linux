@@ -140,13 +140,12 @@ struct script_control {
 	pid_t child;		/* child pid */
 	int childstatus;	/* child process exit value */
 
-	unsigned int
-	 append:1,		/* append output */
-	 rc_wanted:1,		/* return child exit value */
-	 flush:1,		/* flush after each write */
-	 quiet:1,		/* suppress most output */
-	 force:1,		/* write output to links */
-	 isterm:1;		/* is child process running as terminal */
+	bool	append,		/* append output */
+		rc_wanted,	/* return child exit value */
+		flush,		/* flush after each write */
+		quiet,		/* suppress most output */
+		force,		/* write output to links */
+		isterm;		/* is child process running as terminal */
 };
 
 static ssize_t log_info(struct script_control *ctl, const char *name, const char *msgfmt, ...)

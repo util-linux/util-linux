@@ -5,6 +5,7 @@
 #ifndef UTIL_LINUX_LOOPDEV_H
 #define UTIL_LINUX_LOOPDEV_H
 
+#include <stdbool.h>
 #include "sysfs.h"
 
 /*
@@ -95,8 +96,8 @@ struct loopdev_iter {
 	int		ct_perm;	/* count permission problems */
 	int		ct_succ;	/* count number of detected devices */
 
-	unsigned int	done:1;		/* scanning done */
-	unsigned int	default_check:1;/* check first LOOPDEV_NLOOPS */
+	bool		done;		/* scanning done */
+	bool		default_check;  /* check first LOOPDEV_NLOOPS */
 	int		flags;		/* LOOPITER_FL_* flags */
 };
 
@@ -117,11 +118,11 @@ struct loopdev_cxt {
 	uint64_t	blocksize;	/* used by loopcxt_setup_device() */
 
 	int		flags;		/* LOOPDEV_FL_* flags */
-	unsigned int	has_info:1;	/* .info contains data */
-	unsigned int	extra_check:1;	/* unusual stuff for iterator */
-	unsigned int	info_failed:1;	/* LOOP_GET_STATUS ioctl failed */
-	unsigned int    control_ok:1;	/* /dev/loop-control success */
-	unsigned int	is_lost:1;	/* device in /sys, but missing in /dev */
+	bool		has_info;	/* .info contains data */
+	bool		extra_check;	/* unusual stuff for iterator */
+	bool		info_failed;	/* LOOP_GET_STATUS ioctl failed */
+	bool		control_ok;	/* /dev/loop-control success */
+	bool		is_lost;	/* device in /sys, but missing in /dev */
 
 	struct path_cxt		*sysfs; /* pointer to /sys/dev/block/<maj:min>/ */
 	struct loop_config	config;	/* for GET/SET ioctl */

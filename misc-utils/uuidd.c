@@ -85,9 +85,9 @@ struct uuidd_options_t {
 	const char	 *socket_path;
 	uuidd_prot_num_t num;
 	uuidd_prot_op_t	 do_type;
-	unsigned int	 do_kill:1,
-			 no_pid:1,
-			 s_flag:1;
+	bool		 do_kill,
+			 no_pid,
+			 s_flag;
 };
 
 static void __attribute__((__noreturn__)) usage(void)

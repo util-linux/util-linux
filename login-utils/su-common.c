@@ -150,18 +150,18 @@ struct su_context {
 #ifdef USE_PTY
 	struct ul_pty	*pty;			/* pseudo terminal handler (for --pty) */
 #endif
-	unsigned int runuser :1,		/* flase=su, true=runuser */
-		     runuser_uopt :1,		/* runuser -u specified */
-		     isterm :1,			/* is stdin terminal? */
-		     fast_startup :1,		/* pass the `-f' option to the subshell. */
-		     simulate_login :1,		/* simulate a login instead of just starting a shell. */
-		     change_environment :1,	/* change some environment vars to indicate the user su'd to.*/
-		     same_session :1,		/* don't call setsid() with a command. */
-		     suppress_pam_info:1,	/* don't print PAM info messages (Last login, etc.). */
-		     pam_has_session :1,	/* PAM session opened */
-		     pam_has_cred :1,		/* PAM cred established */
-		     force_pty :1,		/* create pseudo-terminal */
-		     restricted :1;		/* false for root user */
+	bool		runuser,		/* flase=su, true=runuser */
+			runuser_uopt,		/* runuser -u specified */
+			isterm,			/* is stdin terminal? */
+			fast_startup,		/* pass the `-f' option to the subshell. */
+			simulate_login,		/* simulate a login instead of just starting a shell. */
+			change_environment,	/* change some environment vars to indicate the user su'd to.*/
+			same_session,		/* don't call setsid() with a command. */
+			suppress_pam_info,	/* don't print PAM info messages (Last login, etc.). */
+			pam_has_session,	/* PAM session opened */
+			pam_has_cred,		/* PAM cred established */
+			force_pty,		/* create pseudo-terminal */
+			restricted;		/* false for root user */
 };
 
 

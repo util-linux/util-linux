@@ -15,6 +15,7 @@
  * Copyright (C) 2007-2014 Karel Zak <kzak@redhat.com>
  */
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
@@ -94,11 +95,11 @@ struct mkswap_control {
 
 	enum ENDIANNESS         endianness;
 
-	unsigned int		check:1,	/* --check */
-				verbose:1,      /* --verbose */
-				quiet:1,        /* --quiet */
-				force:1,	/* --force */
-				file:1;		/* --file */
+	bool			check,		/* --check */
+				verbose,      	/* --verbose */
+				quiet,        	/* --quiet */
+				force,		/* --force */
+				file;		/* --file */
 };
 
 static uint32_t cpu32_to_endianness(uint32_t v, enum ENDIANNESS e)

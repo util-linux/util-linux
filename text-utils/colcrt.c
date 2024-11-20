@@ -41,6 +41,7 @@
  *	modified to work correctly in multi-byte locales
  */
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
@@ -67,13 +68,13 @@
 enum { OUTPUT_COLS = 132 };
 
 struct colcrt_control {
-	FILE		*f;
-	wchar_t		line[OUTPUT_COLS + 1];
-	wchar_t		line_under[OUTPUT_COLS + 1];
-	unsigned int	print_nl:1,
-			need_line_under:1,
-			no_underlining:1,
-			half_lines:1;
+	FILE	*f;
+	wchar_t	line[OUTPUT_COLS + 1];
+	wchar_t	line_under[OUTPUT_COLS + 1];
+ 	bool	print_nl,
+		need_line_under,
+		no_underlining,
+		half_lines;
 };
 
 static void __attribute__((__noreturn__)) usage(void)

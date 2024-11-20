@@ -6,6 +6,7 @@
 #ifndef UTIL_LINUX_LSBLK_H
 #define UTIL_LINUX_LSBLK_H
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <inttypes.h>
 #include <sys/stat.h>
@@ -63,20 +64,20 @@ struct lsblk {
 
 	int properties_by[__LSBLK_NMETHODS];
 
-	unsigned int all_devices:1;	/* print all devices, including empty */
-	unsigned int bytes:1;		/* print SIZE in bytes */
-	unsigned int inverse:1;		/* print inverse dependencies */
-	unsigned int merge:1;           /* merge sub-trees */
-	unsigned int nodeps:1;		/* don't print slaves/holders */
-	unsigned int scsi:1;		/* print only device with HCTL (SCSI) */
-	unsigned int nvme:1;		/* print NVMe device only */
-	unsigned int virtio:1;		/* print virtio device only */
-	unsigned int paths:1;		/* print devnames with "/dev" prefix */
-	unsigned int sort_hidden:1;	/* sort column not between output columns */
-	unsigned int rawdata : 1;	/* has rawdata in cell userdata */
-	unsigned int dedup_hidden :1;	/* deduplication column not between output columns */
-	unsigned int force_tree_order:1;/* sort lines by parent->tree relation */
-	unsigned int noempty:1;		/* hide empty devices */
+	bool all_devices;	/* print all devices, including empty */
+	bool bytes;		/* print SIZE in bytes */
+	bool inverse;		/* print inverse dependencies */
+	bool merge;		/* merge sub-trees */
+	bool nodeps;		/* don't print slaves/holders */
+	bool scsi;		/* print only device with HCTL (SCSI) */
+	bool nvme;		/* print NVMe device only */
+	bool virtio;		/* print virtio device only */
+	bool paths;		/* print devnames with "/dev" prefix */
+	bool sort_hidden;	/* sort column not between output columns */
+	bool rawdata;		/* has rawdata in cell userdata */
+	bool dedup_hidden;	/* deduplication column not between output columns */
+	bool force_tree_order;	/* sort lines by parent->tree relation */
+	bool noempty;		/* hide empty devices */
 };
 
 extern struct lsblk *lsblk;     /* global handler */

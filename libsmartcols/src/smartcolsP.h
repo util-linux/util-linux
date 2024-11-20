@@ -265,22 +265,22 @@ struct libscols_table {
 	struct libscols_column *cur_column;	/* currently used column */
 
 	/* flags */
-	unsigned int	ascii		:1,	/* don't use unicode */
-			colors_wanted	:1,	/* enable colors */
-			is_term		:1,	/* isatty() */
-			padding_debug	:1,	/* output visible padding chars */
-			is_dummy_print	:1,	/* printing used for width calculation only */
-			is_shellvar	:1,	/* shell compatible column names */
-			maxout		:1,	/* maximize output */
-			minout		:1,	/* minimize output (mutually exclusive to maxout) */
-			header_repeat   :1,     /* print header after libscols_table->termheight */
-			header_printed  :1,	/* header already printed */
-			priv_symbols	:1,	/* default private symbols */
-			walk_last_done	:1,	/* last tree root walked */
-			no_headings	:1,	/* don't print header */
-			no_encode	:1,	/* don't care about control and non-printable chars */
-			no_linesep	:1,	/* don't print line separator */
-			no_wrap		:1;	/* never wrap lines */
+	bool		ascii	      ,	/* don't use unicode */
+			colors_wanted ,	/* enable colors */
+			is_term	      ,	/* isatty() */
+			padding_debug ,	/* output visible padding chars */
+			is_dummy_print,	/* printing used for width calculation only */
+			is_shellvar   ,	/* shell compatible column names */
+			maxout	      ,	/* maximize output */
+			minout	      ,	/* minimize output (mutually exclusive to maxout) */
+			header_repeat , /* print header after libscols_table->termheight */
+			header_printed,	/* header already printed */
+			priv_symbols  ,	/* default private symbols */
+			walk_last_done,	/* last tree root walked */
+			no_headings   ,	/* don't print header */
+			no_encode     ,	/* don't care about control and non-printable chars */
+			no_linesep    ,	/* don't print line separator */
+			no_wrap	      ;	/* never wrap lines */
 };
 
 #define IS_ITER_FORWARD(_i)	((_i)->direction == SCOLS_ITER_FORWARD)

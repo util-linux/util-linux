@@ -25,6 +25,7 @@
 #include <linux/securebits.h>
 #include <pwd.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/prctl.h>
@@ -75,20 +76,19 @@ enum cap_type {
  */
 
 struct privctx {
-	unsigned int
-		nnp:1,			/* no_new_privs */
-		have_ruid:1,		/* real uid */
-		have_euid:1,		/* effective uid */
-		have_rgid:1,		/* real gid */
-		have_egid:1,		/* effective gid */
-		have_passwd:1,		/* passwd entry */
-		have_groups:1,		/* add groups */
-		keep_groups:1,		/* keep groups */
-		clear_groups:1,		/* remove groups */
-		init_groups:1,		/* initialize groups */
-		reset_env:1,		/* reset environment */
-		have_securebits:1,	/* remove groups */
-		have_ptracer:1;		/* modify ptracer */
+	bool	nnp,			/* no_new_privs */
+		have_ruid,		/* real uid */
+		have_euid,		/* effective uid */
+		have_rgid,		/* real gid */
+		have_egid,		/* effective gid */
+		have_passwd,		/* passwd entry */
+		have_groups,		/* add groups */
+		keep_groups,		/* keep groups */
+		clear_groups,		/* remove groups */
+		init_groups,		/* initialize groups */
+		reset_env,		/* reset environment */
+		have_securebits,	/* remove groups */
+		have_ptracer;		/* modify ptracer */
 
 	/* uids and gids */
 	uid_t ruid, euid;

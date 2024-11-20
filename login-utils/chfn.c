@@ -72,13 +72,12 @@ struct chfn_control {
 	 *          NULL in fields that haven't been changed.
 	 *  In the end, "newf" is folded into "oldf".  */
 	struct finfo oldf, newf;
-	unsigned int
-		allow_fullname:1,	/* The login.defs restriction */
-		allow_room:1,		   /* see: man login.defs(5) */
-		allow_work:1,		   /* and look for CHFN_RESTRICT */
-		allow_home:1,		   /* keyword for these four. */
-		changed:1,		/* is change requested */
-		interactive:1;		/* whether to prompt for fields or not */
+	bool 	allow_fullname,	/* The login.defs restriction */
+		allow_room,	/* see: man login.defs(5) */
+		allow_work,	/* and look for CHFN_RESTRICT */
+		allow_home,	/* keyword for these four. */
+		changed,	/* is change requested */
+		interactive;	/* whether to prompt for fields or not */
 };
 
 /* we do not accept gecos field sizes longer than MAX_FIELD_SIZE */

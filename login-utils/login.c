@@ -132,11 +132,11 @@ struct login_context {
 
 	pid_t		pid;
 
-	unsigned int	quiet:1,        /* hush file exists */
-			remote:1,	/* login -h */
-			nohost:1,	/* login -H */
-			noauth:1,	/* login -f */
-			keep_env:1;	/* login -p */
+	bool		quiet,		/* hush file exists */
+			remote,		/* login -h */
+			nohost,		/* login -H */
+			noauth,		/* login -f */
+			keep_env;	/* login -p */
 };
 
 static pid_t child_pid = 0;

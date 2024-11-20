@@ -12,6 +12,7 @@
  * the code. Karel Zak rewrote the code under GPL-2.0-or-later.
  */
 #include <assert.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <getopt.h>
@@ -138,14 +139,13 @@ struct swapon_ctl {
 
 	struct swap_prop props;		/* global settings for all devices */
 
-	unsigned int
-		all:1,			/* turn on all swap devices */
-		bytes:1,		/* display --show in bytes */
-		fix_page_size:1,	/* reinitialize page size */
-		no_heading:1,		/* toggle --show headers */
-		raw:1,			/* toggle --show alignment */
-		show:1,			/* display --show information */
-		verbose:1;		/* be chatty */
+	bool	all,			/* turn on all swap devices */
+		bytes,			/* display --show in bytes */
+		fix_page_size,		/* reinitialize page size */
+		no_heading,		/* toggle --show headers */
+		raw,			/* toggle --show alignment */
+		show,			/* display --show information */
+		verbose;		/* be chatty */
 };
 
 static int column_name_to_id(const char *name, size_t namesz)

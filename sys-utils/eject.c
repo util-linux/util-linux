@@ -75,27 +75,27 @@ struct eject_control {
 	struct libmnt_table *mtab;
 	char *device;			/* device or mount point to be ejected */
 	int fd;				/* file descriptor for device */
-	unsigned int 			/* command flags and arguments */
-		a_option:1,
-		c_option:1,
-		d_option:1,
-		F_option:1,
-		f_option:1,
-		i_option:1,
-		M_option:1,
-		m_option:1,
-		n_option:1,
-		p_option:1,
-		q_option:1,
-		r_option:1,
-		s_option:1,
-		T_option:1,
-		t_option:1,
-		v_option:1,
-		X_option:1,
-		x_option:1,
-		a_arg:1,
-		i_arg:1;
+	bool	 			/* command flags and arguments */
+		a_option,
+		c_option,
+		d_option,
+		F_option,
+		f_option,
+		i_option,
+		M_option,
+		m_option,
+		n_option,
+		p_option,
+		q_option,
+		r_option,
+		s_option,
+		T_option,
+		t_option,
+		v_option,
+		X_option,
+		x_option,
+		a_arg,
+		i_arg;
 
 	unsigned int force_exclusive;	/* use O_EXCL */
 

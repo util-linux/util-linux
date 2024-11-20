@@ -71,10 +71,10 @@ enum irqtop_cpustat_mode {
 
 /* top control struct */
 struct irqtop_ctl {
-	WINDOW		*win;
-	int		cols;
-	int		rows;
-	char		*hostname;
+	WINDOW	*win;
+	int	cols;
+	int	rows;
+	char	*hostname;
 
 	struct itimerspec timer;
 	struct irq_stat	*prev_stat;
@@ -83,8 +83,8 @@ struct irqtop_ctl {
 	cpu_set_t *cpuset;
 
 	enum irqtop_cpustat_mode cpustat_mode;
-	unsigned int request_exit:1;
-	unsigned int softirq:1;
+	bool	request_exit,
+		softirq;
 };
 
 /* user's input parser */

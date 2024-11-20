@@ -77,12 +77,12 @@
 #define UCHUNKSIZE	16384	/* How much we read at once. */
 
 struct last_control {
-	unsigned int lastb :1,	  /* Is this command 'lastb' */
-		     extended :1, /* Lots of info */
-		     showhost :1, /* Show hostname */
-		     altlist :1,  /* Hostname at the end */
-		     usedns :1,	  /* Use DNS to lookup the hostname */
-		     useip :1;    /* Print IP address in number format */
+	bool lastb,	/* Is this command 'lastb' */
+	     extended,	/* Lots of info */
+	     showhost,	/* Show hostname */
+	     altlist,	/* Hostname at the end */
+	     usedns,	/* Use DNS to lookup the hostname */
+	     useip;	/* Print IP address in number format */
 
 	unsigned int name_len;	/* Number of login name characters to print */
 	unsigned int domain_len; /* Number of domain name characters to print */
