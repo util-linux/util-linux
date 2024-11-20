@@ -68,6 +68,7 @@ enum {
 	COL_MEMLIMIT,
 	COL_MEMUSED,
 	COL_MIGRATED,
+	COL_COMPRATIO,
 	COL_MOUNTPOINT
 };
 
@@ -83,6 +84,7 @@ static const struct colinfo infos[] = {
 	[COL_MEMLIMIT]  = { "MEM-LIMIT",    5, SCOLS_FL_RIGHT, N_("memory limit used to store compressed data") },
 	[COL_MEMUSED]   = { "MEM-USED",     5, SCOLS_FL_RIGHT, N_("memory zram have been consumed to store compressed data") },
 	[COL_MIGRATED]  = { "MIGRATED",     5, SCOLS_FL_RIGHT, N_("number of objects migrated by compaction") },
+	[COL_COMPRATIO] = { "COMP-RATIO",   5, SCOLS_FL_RIGHT, N_("compression ratio: DATA/TOTAL") },
 	[COL_MOUNTPOINT]= { "MOUNTPOINT",0.10, SCOLS_FL_TRUNC, N_("where the device is mounted") },
 };
 
@@ -450,6 +452,20 @@ static void fill_table_row(struct libscols_table *tb, struct zram *z)
 			check_mount_point(z->devname, &fl, path, sizeof(path));
 			if (*path)
 				str = xstrdup(path);
+			break;
+		}
+		case COL_COMPRATIO:
+		{
+			size_t orig_size, total_size;
+
+			str = get_mm_stat(z, MM_MEM_USED_TOTAL, 1);
+			total_size = atol(str);
+
+			str = get_mm_stat(z, MM_ORIG_DATA_SIZE, 1);
+			orig_size = atol(str);
+
+			str = malloc(10);
+			sprintf(str, "%.4f", (1. * orig_size) / total_size);
 			break;
 		}
 		case COL_STREAMS:
