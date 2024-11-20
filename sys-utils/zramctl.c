@@ -464,8 +464,7 @@ static void fill_table_row(struct libscols_table *tb, struct zram *z)
 			str = get_mm_stat(z, MM_ORIG_DATA_SIZE, 1);
 			orig_size = atol(str);
 
-			str = malloc(10);
-			sprintf(str, "%.4f", (1. * orig_size) / total_size);
+			xasprintf(&str, "%.4f", (1. * orig_size) / total_size);
 			break;
 		}
 		case COL_STREAMS:
