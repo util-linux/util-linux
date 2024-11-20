@@ -13,31 +13,40 @@
 #include <ctype.h>
 #include <inttypes.h>
 #include <limits.h>
+#include <stdbool.h>
 
 #include "superblocks.h"
 
-#define VDEV_LABEL_UBERBLOCK	(128 * 1024ULL)
 #define VDEV_LABEL_NVPAIR	( 16 * 1024ULL)
 #define VDEV_LABEL_SIZE		(256 * 1024ULL)
-#define UBERBLOCK_SIZE		1024ULL
-#define UBERBLOCKS_COUNT   128
+#define	VDEV_PHYS_SIZE		(112 * 1024ULL)
+#define	VDEV_LABELS		4
+#define ZFS_MINDEVSIZE		(64ULL << 20)
+#define DATA_TYPE_UNKNOWN	0
+#define DATA_TYPE_UINT64	8
+#define DATA_TYPE_STRING 	9
+#define DATA_TYPE_DIRECTORY 	19
 
-/* #include <sys/uberblock_impl.h> */
-#define UBERBLOCK_MAGIC         0x00bab10c              /* oo-ba-bloc!  */
-struct zfs_uberblock {
-	uint64_t	ub_magic;	/* UBERBLOCK_MAGIC		*/
-	uint64_t	ub_version;	/* SPA_VERSION			*/
-	uint64_t	ub_txg;		/* txg of last sync		*/
-	uint64_t	ub_guid_sum;	/* sum of all vdev guids	*/
-	uint64_t	ub_timestamp;	/* UTC time of last sync	*/
-	char		ub_rootbp;	/* MOS objset_phys_t		*/
-} __attribute__((packed));
+typedef enum pool_state {
+	POOL_STATE_ACTIVE = 0,		/* In active use		*/
+	POOL_STATE_EXPORTED,		/* Explicitly exported		*/
+	POOL_STATE_DESTROYED,		/* Explicitly destroyed		*/
+	POOL_STATE_SPARE,		/* Reserved for hot spare use	*/
+	POOL_STATE_L2CACHE,		/* Level 2 ARC device		*/
+	POOL_STATE_UNINITIALIZED,	/* Internal spa_t state		*/
+	POOL_STATE_UNAVAIL,		/* Internal libzfs state	*/
+	POOL_STATE_POTENTIALLY_ACTIVE	/* Internal libzfs state	*/
+} pool_state_t;
 
-#define ZFS_WANT	 4
-
-#define DATA_TYPE_UINT64 8
-#define DATA_TYPE_STRING 9
-#define DATA_TYPE_DIRECTORY 19
+struct nvs_header_t {
+	char	  nvh_encoding;		/* encoding method */
+	char	  nvh_endian;		/* endianess */
+	char	  nvh_reserved1;
+	char	  nvh_reserved2;
+	uint32_t  nvh_reserved3;
+	uint32_t  nvh_reserved4;
+	uint32_t  nvh_first_size;	/* first nvpair encode size */
+};
 
 struct nvpair {
 	uint32_t	nvp_size;
@@ -71,114 +80,128 @@ struct nvlist {
 	struct nvpair	nvl_nvpair;
 };
 
-static void zfs_process_value(blkid_probe pr, const char *name, size_t namelen,
-			     const void *value, size_t max_value_size, unsigned directory_level)
+/*
+ * Return the offset of the given label.
+ */
+static uint64_t
+label_offset(uint64_t size, int l)
 {
-	if (strncmp(name, "name", namelen) == 0 &&
-	    sizeof(struct nvstring) <= max_value_size &&
-	    !directory_level) {
-		const struct nvstring *nvs = value;
-		uint32_t nvs_type = be32_to_cpu(nvs->nvs_type);
-		uint32_t nvs_strlen = be32_to_cpu(nvs->nvs_strlen);
+	loff_t blk_align = (size % VDEV_LABEL_SIZE);
+	return (l * VDEV_LABEL_SIZE + (l < VDEV_LABELS / 2 ?
+	    0 : size - VDEV_LABELS * VDEV_LABEL_SIZE - blk_align));
+}
 
-		if (nvs_type != DATA_TYPE_STRING ||
-		    (uint64_t)nvs_strlen + sizeof(*nvs) > max_value_size)
-			return;
+static bool zfs_process_value(blkid_probe pr, const char *name, size_t namelen,
+    const void *value, size_t max_value_size, unsigned directory_level, int *found)
+{
+	uint32_t type = be32_to_cpu(*(uint32_t *)value);
+	if (strncmp(name, "name", namelen) == 0 &&
+	    type == DATA_TYPE_STRING && !directory_level) {
+		const struct nvstring *nvs = value;
+		if (max_value_size < sizeof(struct nvstring))
+			return (false);
+		uint32_t nvs_strlen = be32_to_cpu(nvs->nvs_strlen);
+		if ((uint64_t)nvs_strlen + sizeof(*nvs) > max_value_size)
+			return (false);
 
 		DBG(LOWPROBE, ul_debug("nvstring: type %u string %*s",
-				       nvs_type, nvs_strlen, nvs->nvs_string));
+				       type, nvs_strlen, nvs->nvs_string));
 
 		blkid_probe_set_label(pr, nvs->nvs_string, nvs_strlen);
+		(*found)++;
 	} else if (strncmp(name, "guid", namelen) == 0 &&
-		   sizeof(struct nvuint64) <= max_value_size &&
-		   !directory_level) {
+		   type == DATA_TYPE_UINT64 && !directory_level) {
 		const struct nvuint64 *nvu = value;
-		uint32_t nvu_type = be32_to_cpu(nvu->nvu_type);
 		uint64_t nvu_value;
+
+		if (max_value_size < sizeof(struct nvuint64))
+			return (false);
 
 		memcpy(&nvu_value, &nvu->nvu_value, sizeof(nvu_value));
 		nvu_value = be64_to_cpu(nvu_value);
 
-		if (nvu_type != DATA_TYPE_UINT64)
-			return;
-
 		DBG(LOWPROBE, ul_debug("nvuint64: type %u value %"PRIu64,
-				       nvu_type, nvu_value));
+				       type, nvu_value));
 
 		blkid_probe_sprintf_value(pr, "UUID_SUB",
 					  "%"PRIu64, nvu_value);
+		(*found)++;
 	} else if (strncmp(name, "pool_guid", namelen) == 0 &&
-		   sizeof(struct nvuint64) <= max_value_size &&
-		   !directory_level) {
+		   type == DATA_TYPE_UINT64 && !directory_level) {
 		const struct nvuint64 *nvu = value;
-		uint32_t nvu_type = be32_to_cpu(nvu->nvu_type);
 		uint64_t nvu_value;
+
+		if (max_value_size < sizeof(struct nvuint64))
+			return (false);
 
 		memcpy(&nvu_value, &nvu->nvu_value, sizeof(nvu_value));
 		nvu_value = be64_to_cpu(nvu_value);
 
-		if (nvu_type != DATA_TYPE_UINT64)
-			return;
-
 		DBG(LOWPROBE, ul_debug("nvuint64: type %u value %"PRIu64,
-				       nvu_type, nvu_value));
+				       type, nvu_value));
 
 		blkid_probe_sprintf_uuid(pr, (unsigned char *) &nvu_value,
 					 sizeof(nvu_value),
 					 "%"PRIu64, nvu_value);
+		(*found)++;
 	} else if (strncmp(name, "ashift", namelen) == 0 &&
-		   sizeof(struct nvuint64) <= max_value_size) {
+		   type == DATA_TYPE_UINT64) {
 		const struct nvuint64 *nvu = value;
-		uint32_t nvu_type = be32_to_cpu(nvu->nvu_type);
 		uint64_t nvu_value;
+
+		if (max_value_size < sizeof(struct nvuint64))
+			return (false);
 
 		memcpy(&nvu_value, &nvu->nvu_value, sizeof(nvu_value));
 		nvu_value = be64_to_cpu(nvu_value);
-
-		if (nvu_type != DATA_TYPE_UINT64)
-			return;
 
 		if (nvu_value < 32){
 			blkid_probe_set_fsblocksize(pr, 1U << nvu_value);
 			blkid_probe_set_block_size(pr, 1U << nvu_value);
 		}
+		(*found)++;
+	} else if (strncmp(name, "version", namelen) == 0 &&
+		   type == DATA_TYPE_UINT64 && !directory_level) {
+		const struct nvuint64 *nvu = value;
+		uint64_t nvu_value;
+		if (max_value_size < sizeof(struct nvuint64))
+			return (false);
+		memcpy(&nvu_value, &nvu->nvu_value, sizeof(nvu_value));
+		nvu_value = be64_to_cpu(nvu_value);
+		DBG(LOWPROBE, ul_debug("nvuint64: type %u value %"PRIu64,
+					   type, nvu_value));
+		blkid_probe_sprintf_version(pr, "%" PRIu64, nvu_value);
+		(*found)++;
 	}
+	return (true);
 }
 
-static void zfs_extract_guid_name(blkid_probe pr, loff_t offset)
+static bool zfs_extract_guid_name(blkid_probe pr, void *buf, size_t size, bool find_label)
 {
-	const unsigned char *p;
 	const struct nvlist *nvl;
 	const struct nvpair *nvp;
-	size_t left = 4096;
 	unsigned directory_level = 0;
-
-	offset = (offset & ~(VDEV_LABEL_SIZE - 1)) + VDEV_LABEL_NVPAIR;
-
-	/* Note that we currently assume that the desired fields are within
-	 * the first 4k (left) of the nvlist.  This is true for all pools
-	 * I've seen, and simplifies this code somewhat, because we don't
-	 * have to handle an nvpair crossing a buffer boundary. */
-	p = blkid_probe_get_buffer(pr, offset, left);
-	if (!p)
-		return;
-
-	DBG(LOWPROBE, ul_debug("zfs_extract: nvlist offset %jd",
-			       (intmax_t)offset));
-
-	nvl = (const struct nvlist *) p;
+	uint64_t state = -1, guid = 0, txg = 0;
+	nvl = (const struct nvlist *)buf;
 	nvp = &nvl->nvl_nvpair;
-	left -= (const unsigned char *)nvp - p; /* Already used up 12 bytes */
+	int found = 0;
 
-	while (left > sizeof(*nvp)) {
+	 /* Already used up 12 bytes */
+	size -= (const unsigned char *)nvp - (const unsigned char *)buf;
+
+	while (size > sizeof(*nvp)) {
 		uint32_t nvp_size = be32_to_cpu(nvp->nvp_size);
 		uint32_t nvp_namelen = be32_to_cpu(nvp->nvp_namelen);
 		uint64_t namesize = ((uint64_t)nvp_namelen + 3) & ~3;
 		size_t max_value_size;
 		const void *value;
+		uint32_t type;
 
-		if (!nvp->nvp_size) {
+		if (!nvp_size) {
 			if (!directory_level)
+				/*
+				 * End of nvlist!
+				 */
 				break;
 			directory_level--;
 			nvp_size = 8;
@@ -186,11 +209,11 @@ static void zfs_extract_guid_name(blkid_probe pr, loff_t offset)
 		}
 
 		DBG(LOWPROBE, ul_debug("left %zd nvp_size %u",
-				       left, nvp_size));
+				       size, nvp_size));
 
 		/* nvpair fits in buffer and name fits in nvpair? */
-		if (nvp_size > left || namesize + sizeof(*nvp) > nvp_size)
-			break;
+		if (nvp_size > size || namesize + sizeof(*nvp) > nvp_size)
+			return (false);
 
 		DBG(LOWPROBE,
 		    ul_debug("nvlist: size %u, namelen %u, name %*s",
@@ -199,54 +222,63 @@ static void zfs_extract_guid_name(blkid_probe pr, loff_t offset)
 
 		max_value_size = nvp_size - (namesize + sizeof(*nvp));
 		value = nvp->nvp_name + namesize;
+		type = be32_to_cpu(*(uint32_t *)value);
 
-		if (sizeof(struct nvdirectory) <= max_value_size) {
+		if (type == DATA_TYPE_UNKNOWN)
+			return (false);
+
+		if (type == DATA_TYPE_DIRECTORY) {
+			if (max_value_size < sizeof(struct nvdirectory))
+				return (false);
 			const struct nvdirectory *nvu = value;
-			if (be32_to_cpu(nvu->nvd_type) == DATA_TYPE_DIRECTORY) {
-				nvp_size = sizeof(*nvp) + namesize + sizeof(*nvu);
-				directory_level++;
-				goto cont;
-			}
+			nvp_size = sizeof(*nvp) + namesize + sizeof(*nvu);
+			directory_level++;
+			goto cont;
 		}
 
-		zfs_process_value(pr, nvp->nvp_name, nvp_namelen,
-				  value, max_value_size, directory_level);
+		if (find_label) {
+			/*
+			 * We don't need to parse any tree to find a label
+			 */
+			if (directory_level)
+				goto cont;
+			const struct nvuint64 *nvu = value;
+			if (!strncmp(nvp->nvp_name, "guid", nvp_namelen) &&
+			    type == DATA_TYPE_UINT64) {
+				if (max_value_size < sizeof(struct nvuint64))
+					return (false);
+				memcpy(&guid, &nvu->nvu_value, sizeof(nvu->nvu_value));
+				guid = be64_to_cpu(guid);
+			} else if (!strncmp(nvp->nvp_name, "state", nvp_namelen) &&
+				   type == DATA_TYPE_UINT64) {
+				if (max_value_size < sizeof(struct nvuint64))
+					return (false);
+				memcpy(&state, &nvu->nvu_value, sizeof(nvu->nvu_value));
+				state = be64_to_cpu(state);
+			} else if (!strncmp(nvp->nvp_name, "txg", nvp_namelen) &&
+				   type == DATA_TYPE_UINT64) {
+				if (max_value_size < sizeof(struct nvuint64))
+					return (false);
+				memcpy(&txg, &nvu->nvu_value, sizeof(nvu->nvu_value));
+				txg = be64_to_cpu(txg);
+			}
+		} else {
+			if (zfs_process_value(pr, nvp->nvp_name, nvp_namelen, value,
+			    max_value_size,directory_level, &found) == false || found >= 5)
+				return (false);
+		}
 
 cont:
-		if (nvp_size > left)
-			break;
-		left -= nvp_size;
+		if (nvp_size > size)
+			return (false);
+		size -= nvp_size;
 
 		nvp = (struct nvpair *)((char *)nvp + nvp_size);
 	}
-}
-
-static int find_uberblocks(const void *label, loff_t *ub_offset, int *swap_endian)
-{
-	uint64_t swab_magic = swab64((uint64_t)UBERBLOCK_MAGIC);
-	const struct zfs_uberblock *ub;
-	int i, found = 0;
-	loff_t offset = VDEV_LABEL_UBERBLOCK;
-
-	for (i = 0; i < UBERBLOCKS_COUNT; i++, offset += UBERBLOCK_SIZE) {
-		ub = (const struct zfs_uberblock *)((const char *) label + offset);
-
-		if (ub->ub_magic == UBERBLOCK_MAGIC) {
-			*ub_offset = offset;
-			*swap_endian = 0;
-			found++;
-			DBG(LOWPROBE, ul_debug("probe_zfs: found little-endian uberblock at %jd", (intmax_t)offset >> 10));
-		}
-
-		if (ub->ub_magic == swab_magic) {
-			*ub_offset = offset;
-			*swap_endian = 1;
-			found++;
-			DBG(LOWPROBE, ul_debug("probe_zfs: found big-endian uberblock at %jd", (intmax_t)offset >> 10));
-		}
-	}
-
-	return found;
+	if (find_label && guid && state <= POOL_STATE_POTENTIALLY_ACTIVE && (state ==
+	    POOL_STATE_L2CACHE || state == POOL_STATE_SPARE || txg > 0))
+		return (true);
+	return (false);
 }
 
 /* ZFS has 128x1kB host-endian root blocks, stored in 2 areas at the start
@@ -255,72 +287,68 @@ static int find_uberblocks(const void *label, loff_t *ub_offset, int *swap_endia
 static int probe_zfs(blkid_probe pr,
 	const struct blkid_idmag *mag  __attribute__((__unused__)))
 {
+#if BYTE_ORDER == LITTLE_ENDIAN
+	int host_endian = 1;
+#else
+	int host_endian = 0;
+#endif
 	int swab_endian = 0;
-	struct zfs_uberblock *ub = NULL;
-	loff_t offset = 0, ub_offset = 0;
-	int label_no, found = 0, found_in_label;
-	const void *label;
-	loff_t blk_align = (pr->size % (256 * 1024ULL));
+	loff_t offset = 0;
+	int label_no;
+	struct nvs_header_t *label = NULL;
+	bool found_label = false;
 
 	DBG(PROBE, ul_debug("probe_zfs"));
-	/* Look for at least 4 uberblocks to ensure a positive match */
+
+	if (pr->size < ZFS_MINDEVSIZE)
+		return (1);
+
+	/* Look for at least one valid label to ensure a positive match */
 	for (label_no = 0; label_no < 4; label_no++) {
-		switch(label_no) {
-		case 0: // jump to L0
-			offset = 0;
-			break;
-		case 1: // jump to L1
-			offset = VDEV_LABEL_SIZE;
-			break;
-		case 2: // jump to L2
-			offset = pr->size - 2 * VDEV_LABEL_SIZE - blk_align;
-			break;
-		case 3: // jump to L3
-			offset = pr->size - VDEV_LABEL_SIZE - blk_align;
-			break;
-		}
+		offset = label_offset(pr->size, label_no) + VDEV_LABEL_NVPAIR;
 
 		if ((S_ISREG(pr->mode) || blkid_probe_is_wholedisk(pr)) &&
-		    blkid_probe_is_covered_by_pt(pr,  offset, VDEV_LABEL_SIZE))
+		    blkid_probe_is_covered_by_pt(pr,  offset, VDEV_PHYS_SIZE))
 			/* ignore this area, it's within any partition and
 			 * we are working with whole-disk now */
 			continue;
 
-		label = blkid_probe_get_buffer(pr, offset, VDEV_LABEL_SIZE);
-		if (label == NULL)
-			return errno ? -errno : 1;
+		label = (struct nvs_header_t *) blkid_probe_get_buffer(pr, offset, VDEV_PHYS_SIZE);
 
-		found_in_label = find_uberblocks(label, &ub_offset, &swab_endian);
+		/*
+		 * Label supports XDR encoding, reject for any other unsupported format. Also
+		 * endianess can be 0 or 1, reject garbage value. Moreover, check if first
+		 * nvpair encode size is non-zero.
+		 */
+		if (!label || label->nvh_encoding != 0x1 || !be32_to_cpu(label->nvh_first_size) ||
+		    (unsigned char) label->nvh_endian > 0x1)
+			continue;
 
-		if (found_in_label > 0) {
-			found+= found_in_label;
-			ub = (struct zfs_uberblock *)((char *) label + ub_offset);
-			ub_offset += offset;
+		if (host_endian != label->nvh_endian)
+			swab_endian = 1;
 
-			if (found >= ZFS_WANT)
-				break;
+		if (zfs_extract_guid_name(pr, label, VDEV_PHYS_SIZE, true)) {
+			found_label = true;
+			break;
 		}
 	}
 
-	if (found < ZFS_WANT)
-		return 1;
+	if (!label || !found_label)
+		return (1);
 
-	/* If we found the 4th uberblock, then we will have exited from the
-	 * scanning loop immediately, and ub will be a valid uberblock. */
-	blkid_probe_sprintf_version(pr, "%" PRIu64, swab_endian ?
-				    swab64(ub->ub_version) : ub->ub_version);
+	(void) zfs_extract_guid_name(pr, label, VDEV_PHYS_SIZE, false);
 
-	zfs_extract_guid_name(pr, offset);
-
-	if (blkid_probe_set_magic(pr, ub_offset,
-				sizeof(ub->ub_magic),
-				(unsigned char *) &ub->ub_magic))
-		return 1;
+	/*
+	 * Zero out whole nvlist header including fisrt nvpair size
+	 */
+	if (blkid_probe_set_magic(pr, offset, sizeof(struct nvs_header_t),
+	    (unsigned char *) &label->nvh_first_size))
+		return (1);
 
 	blkid_probe_set_fsendianness(pr, !swab_endian ?
 			BLKID_ENDIANNESS_NATIVE : BLKID_ENDIANNESS_OTHER);
 
-	return 0;
+	return (0);
 }
 
 const struct blkid_idinfo zfs_idinfo =
