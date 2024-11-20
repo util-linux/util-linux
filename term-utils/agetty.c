@@ -1933,8 +1933,6 @@ static void eval_issue_file(struct issue *ie,
 			    struct options *op,
 			    struct termios *tp)
 {
-	int has_file = 0;
-
 #ifdef AGETTY_RELOAD
 	netlink_groups = 0;
 #endif
@@ -1973,22 +1971,13 @@ static void eval_issue_file(struct issue *ie,
 	if (access(_PATH_ISSUE, F_OK|R_OK) == 0) {
 		issuefile_read(ie, _PATH_ISSUE, op, tp);
 		issuedir_read(ie, _PATH_ISSUEDIR, op, tp);
-		goto done;
 	}
 
-	/* Fallback @runstatedir (usually /run) -- the file is not required to
-	 * read the dir.
-	 */
-	if (issuefile_read(ie, _PATH_RUNSTATEDIR "/" _PATH_ISSUE_FILENAME, op, tp) == 0)
-		has_file++;
-	if (issuedir_read(ie, _PATH_RUNSTATEDIR "/" _PATH_ISSUE_DIRNAME, op, tp) == 0)
-		has_file++;
-	if (has_file)
-		goto done;
+	/* Fallback @runstatedir (usually /run) */
+	issuefile_read(ie, _PATH_RUNSTATEDIR "/" _PATH_ISSUE_FILENAME, op, tp);
+	issuedir_read(ie, _PATH_RUNSTATEDIR "/" _PATH_ISSUE_DIRNAME, op, tp);
 
-	/* Fallback @sysconfstaticdir (usually /usr/lib) -- the file is not
-	 * required to read the dir
-	 */
+	/* Fallback @sysconfstaticdir (usually /usr/lib)*/
 	issuefile_read(ie, _PATH_SYSCONFSTATICDIR "/" _PATH_ISSUE_FILENAME, op, tp);
 	issuedir_read(ie, _PATH_SYSCONFSTATICDIR "/" _PATH_ISSUE_DIRNAME, op, tp);
 
