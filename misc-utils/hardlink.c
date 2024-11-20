@@ -1401,7 +1401,7 @@ static int parse_options(int argc, char *argv[])
 			usage();
 		case 'V':
 		{
-			static const char *features[] = {
+			static const char *const features[] = {
 #ifdef USE_REFLINK
 				"reflink",
 #endif

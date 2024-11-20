@@ -1739,7 +1739,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'V':
 		{
-			static const char *features[] = {
+			static const char *const features[] = {
 #ifdef HAVE_LIBLASTLOG2
 				"lastlog2",
 #endif

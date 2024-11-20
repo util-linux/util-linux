@@ -50,7 +50,7 @@
 #include "c.h"
 #include "closestream.h"
 
-static const char *idtype[] = {
+static const char *const idtype[] = {
 	[PRIO_PROCESS]	= N_("process ID"),
 	[PRIO_PGRP]	= N_("process group ID"),
 	[PRIO_USER]	= N_("user ID"),

@@ -85,7 +85,7 @@ enum {
 static int get_bitlocker_type(const unsigned char *buf)
 {
 	size_t i;
-	static const char *map[] = {
+	static const char *const map[] = {
 		[BDE_VERSION_VISTA] = BDE_MAGIC_VISTA,
 		[BDE_VERSION_WIN7]  = BDE_MAGIC_WIN7,
 		[BDE_VERSION_TOGO]  = BDE_MAGIC_TOGO

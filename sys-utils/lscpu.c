@@ -36,14 +36,14 @@
 
 #include "lscpu.h"
 
-static const char *virt_types[] = {
+static const char *const virt_types[] = {
 	[VIRT_TYPE_NONE]	= N_("none"),
 	[VIRT_TYPE_PARA]	= N_("para"),
 	[VIRT_TYPE_FULL]	= N_("full"),
 	[VIRT_TYPE_CONTAINER]	= N_("container"),
 };
 
-static const char *hv_vendors[] = {
+static const char *const hv_vendors[] = {
 	[VIRT_VENDOR_NONE]	= NULL,
 	[VIRT_VENDOR_XEN]	= "Xen",
 	[VIRT_VENDOR_KVM]	= "KVM",
@@ -63,7 +63,7 @@ static const char *hv_vendors[] = {
 };
 
 /* dispatching modes */
-static const char *disp_modes[] = {
+static const char *const disp_modes[] = {
 	[DISP_HORIZONTAL]	= N_("horizontal"),
 	[DISP_VERTICAL]		= N_("vertical")
 };
