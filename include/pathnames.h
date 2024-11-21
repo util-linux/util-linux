@@ -236,4 +236,11 @@
 /* Maximum number of PIDs system supports */
 #define _PATH_PROC_PIDMAX	"/proc/sys/kernel/pid_max"
 
+/* econf path */
+#if USE_VENDORDIR
+# define UL_VENDORDIR_PATH      _PATH_VENDORDIR
+#else
+# define UL_VENDORDIR_PATH      NULL
+#endif
+
 #endif /* PATHNAMES_H */
