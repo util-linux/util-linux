@@ -1,9 +1,10 @@
 _su_module()
 {
-	local cur prev OPTS
+	local cur prev OPTS prog
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	prog="${COMP_WORDS[0]}"
 	case $prev in
 		'-'|'-u'|'--user')
 			COMPREPLY=( $(compgen -u -- $cur) )
@@ -23,8 +24,7 @@ _su_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="	--user
-				--preserve-environment
+			OPTS="	--preserve-environment
 				--whitelist-environment
 				--group
 				--supp-group
@@ -33,8 +33,14 @@ _su_module()
 				--session-command
 				--fast
 				--shell
+				--pty
+				--no-pty
 				--help
 				--version"
+			if [ "${prog}" = runuser ]; then
+				OPTS="  ${OPTS}
+					--user"
+			fi
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;
