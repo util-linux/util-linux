@@ -229,9 +229,11 @@ Some programs use "--" to indicate that the rest of the command line should not 
 
 The default issue file is _/etc/issue_. If the file exists, then *agetty* also checks for _/etc/issue.d_ directory. The directory is optional extension to the default issue file and content of the directory is printed after _/etc/issue_ content. If the _/etc/issue_ does not exist, then the directory is ignored. All files *with .issue extension* from the directory are printed in version-sort order. The directory can be used to maintain 3rd-party messages independently on the primary system _/etc/issue_ file.
 
-Since version 2.35 additional locations for issue file and directory are supported. If the default _/etc/issue_ does not exist, then *agetty* checks for _/run/issue_ and _/run/issue.d_, thereafter for _/usr/lib/issue_ and _/usr/lib/issue.d_. The directory _/etc_ is expected for host specific configuration, _/run_ is expected for generated stuff and _/usr/lib_ for static distribution maintained configuration.
+Since version 2.35, additional locations for the issue file and directory are supported. *agetty* checks for the files _/run/issue_ and _/run/issue.d_, and then for _/usr/lib/issue_ and _/usr/lib/issue.d_. The directory _/etc_ is expected for host-specific configuration, _/run_ is expected for generated content, and _/usr/lib_ is used for static configuration maintained by the distribution.
 
-The default path maybe overridden by *--issue-file* option. In this case specified path has to be file or directory and all the default issue file and directory locations are ignored.
+Note that in versions 2.35 to 2.40, the additional locations were only read if the default _/etc/issue_ file did not exist. However, since version 2.41, the additional locations are always read, regardless of the existence of the _/etc/issue_ file. This change allows for the generation of issue files by default.
+
+The default paths maybe completely overridden by *--issue-file* option. In this case specified path has to be file or directory and all the default issue file and directory locations are ignored.
 
 The issue file feature can be completely disabled by *--noissue* option.
 
