@@ -254,14 +254,13 @@ static void load_defaults(void)
 	if (file != NULL)
 	        free_getlogindefs_data();
 
-	error = econf_readDirs(&file,
-#if USE_VENDORDIR
-			_PATH_VENDORDIR,
+#ifdef HAVE_ECONF_READCONFIG
+	error = econf_readConfig(&file, NULL,
+			UL_VENDORDIR_PATH, "login", "defs", "= \t", "#");
 #else
-			NULL,
+	error = econf_readDirs(&file,
+			UL_VENDORDIR_PATH, "/etc", "login", "defs", "= \t", "#");
 #endif
-			"/etc", "login", "defs", "= \t", "#");
-
 	if (error)
 	  syslog(LOG_NOTICE, _("Error reading login.defs: %s"),
 		 econf_errString(error));

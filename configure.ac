@@ -2723,8 +2723,15 @@ AC_ARG_WITH([econf],
 
 have_econf=no
 AS_IF([test "x$with_econf" != xno], [
-  PKG_CHECK_MODULES([ECONF], [libeconf], [have_econf=yes], [have_econf=no])
-    AS_CASE([$with_econf:$have_econf],
+  PKG_CHECK_MODULES([ECONF], [libeconf],
+     [have_econf=yes
+      AC_CHECK_LIB([econf], [econf_readConfig], [
+	  AC_DEFINE([HAVE_ECONF_READCONFIG], [1], [Define if econf_readConfig exist in -leconf])
+	  ])
+     ],
+     [have_econf=no]
+  )
+  AS_CASE([$with_econf:$have_econf],
     [yes:no],
       [AC_MSG_ERROR([libeconf expected but libeconf not found])],
     [*:yes],

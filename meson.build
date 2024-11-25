@@ -431,6 +431,11 @@ lib_econf = dependency(
   required : get_option('econf'))
 conf.set('HAVE_LIBECONF', lib_econf.found() ? 1 : false)
 
+have = cc.has_function(
+  'econf_readConfig',
+  dependencies : lib_econf)
+conf.set('HAVE_ECONF_READCONFIG', have ? 1 : false)
+
 lib_audit = dependency(
   'audit',
   required : get_option('audit'))
