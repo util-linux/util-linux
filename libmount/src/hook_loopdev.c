@@ -423,6 +423,9 @@ static int is_loopdev_required(struct libmnt_context *cxt, struct libmnt_optlist
 	    || mnt_context_propagation_only(cxt))
 		return 0;
 
+	if (mnt_optlist_get_named(ol, "X-mount.noloop", cxt->map_userspace))
+		return 0;
+
 	src = mnt_fs_get_srcpath(cxt->fs);
 	if (!src)
 		return 0;		/* backing file not set */
