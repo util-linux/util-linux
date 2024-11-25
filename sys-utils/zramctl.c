@@ -89,7 +89,7 @@ static const struct colinfo infos[] = {
 };
 
 static int columns[ARRAY_SIZE(infos) * 2] = {-1};
-static int ncolumns;
+static size_t ncolumns;
 
 enum {
 	MM_ORIG_DATA_SIZE = 0,
@@ -124,7 +124,7 @@ struct zram {
 static unsigned int raw, no_headings, inbytes;
 static struct path_cxt *__control;
 
-static int get_column_id(int num)
+static int get_column_id(size_t num)
 {
 	assert(num < ncolumns);
 	assert(columns[num] < (int) ARRAY_SIZE(infos));
@@ -442,7 +442,7 @@ static void fill_table_row(struct libscols_table *tb, struct zram *z)
 	if (!ln)
 		err(EXIT_FAILURE, _("failed to allocate output line"));
 
-	for (i = 0; i < (size_t) ncolumns; i++) {
+	for (i = 0; i < ncolumns; i++) {
 		char *str = NULL;
 
 		switch (get_column_id(i)) {
@@ -532,7 +532,7 @@ static void status(struct zram *z)
 	scols_table_enable_raw(tb, raw);
 	scols_table_enable_noheadings(tb, no_headings);
 
-	for (i = 0; i < (size_t) ncolumns; i++) {
+	for (i = 0; i < ncolumns; i++) {
 		const struct colinfo *col = get_column_info(i);
 
 		if (!scols_table_new_column(tb, col->name, col->whint, col->flags))
@@ -625,6 +625,7 @@ int main(int argc, char **argv)
 	char *algorithm = NULL;
 	int rc = 0, c, find = 0, act = A_NONE;
 	struct zram *zram = NULL;
+	char *outarg = NULL;
 
 	enum {
 		OPT_RAW = CHAR_MAX + 1,
@@ -674,14 +675,10 @@ int main(int argc, char **argv)
 			find = 1;
 			break;
 		case 'o':
-			ncolumns = string_to_idarray(optarg,
-						     columns, ARRAY_SIZE(columns),
-						     column_name_to_id);
-			if (ncolumns < 0)
-				return EXIT_FAILURE;
+			outarg = optarg;
 			break;
 		case OPT_LIST_TYPES:
-			for (ncolumns = 0; (size_t)ncolumns < ARRAY_SIZE(infos); ncolumns++)
+			for (ncolumns = 0; ncolumns < ARRAY_SIZE(infos); ncolumns++)
 				columns[ncolumns] = ncolumns;
 			break;
 		case 's':
@@ -738,6 +735,12 @@ int main(int argc, char **argv)
 			columns[ncolumns++] = COL_STREAMS;
 			columns[ncolumns++] = COL_MOUNTPOINT;
 		}
+
+		if (outarg && string_add_to_idarray(outarg,
+					columns, ARRAY_SIZE(columns),
+					&ncolumns, column_name_to_id) < 0)
+	                return EXIT_FAILURE;
+
 		if (optind < argc) {
 			zram = new_zram(argv[optind++]);
 			if (!zram_exist(zram))
