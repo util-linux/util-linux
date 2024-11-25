@@ -64,7 +64,7 @@ PAM) from this point of view. You need to use tools like *systemd-run* or
 Preserve the entire environment, i.e., do not set *HOME*, *SHELL*, *USER* or *LOGNAME*. This option is ignored if the option *--login* is specified.
 
 *-P*, *--pty*::
-Create a pseudo-terminal for the session. The independent terminal provides better security as the user does not share a terminal with the original session. This can be used to avoid *TIOCSTI* ioctl terminal injection and other security attacks against terminal file descriptors. The entire session can also be moved to the background (e.g., *su --pty* **-** __username__ *-c* _application_ *&*). If the pseudo-terminal is enabled, then *su* works as a proxy between the sessions (sync stdin and stdout).
+Create a pseudo-terminal for the session. The independent terminal provides better security as the user does not share a terminal with the original session. This can be used to avoid *TIOCSTI* ioctl terminal injection and other security attacks against terminal file descriptors. The entire session can also be moved to the background (e.g., *su --pty* **-** __user__ *-c* _application_ *&*). If the pseudo-terminal is enabled, then *su* works as a proxy between the sessions (sync stdin and stdout).
 +
 This feature is mostly designed for interactive sessions. If the standard input is not a terminal, but for example a pipe (e.g., *echo "date" | su --pty*), then the *ECHO* flag for the pseudo-terminal is disabled to avoid messy output.
 
