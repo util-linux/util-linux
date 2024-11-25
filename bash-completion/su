@@ -33,6 +33,8 @@ _su_module()
 				--session-command
 				--fast
 				--shell
+				--pty
+				--no-pty
 				--help
 				--version"
 			if [ "${prog}" = runuser ]; then
