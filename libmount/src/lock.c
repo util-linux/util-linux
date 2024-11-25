@@ -40,8 +40,8 @@ struct libmnt_lock {
 	char	*lockfile;	/* path to lock file (e.g. /etc/mtab~) */
 	int	lockfile_fd;	/* lock file descriptor */
 
-	unsigned int	locked :1,	/* do we own the lock? */
-			sigblock :1;	/* block signals when locked */
+	bool	locked, 	/* do we own the lock? */
+		sigblock;	/* block signals when locked */
 
 	sigset_t oldsigmask;
 };

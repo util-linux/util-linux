@@ -40,6 +40,7 @@
  *	modified to work correctly in multi-byte locales
  */
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <unistd.h>		/* for getopt(), isatty() */
 #include <string.h>		/* for memset(), strcpy() */
@@ -110,10 +111,9 @@ struct ul_ctl {
 	int current_mode;
 	size_t buflen;
 	struct ul_char *buf;
-	unsigned int
-		indicated_opt:1,
-		must_use_uc:1,
-		must_overstrike:1;
+	bool	indicated_opt,
+		must_use_uc,
+		must_overstrike;
 };
 
 static void __attribute__((__noreturn__)) usage(void)

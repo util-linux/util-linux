@@ -33,6 +33,7 @@
 
 #include <fcntl.h>
 #include <getopt.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -50,7 +51,7 @@ struct mcookie_control {
 	size_t	nfiles;
 	uint64_t maxsz;
 
-	unsigned int verbose:1;
+	bool	verbose;
 };
 
 /* The basic function to hash a file */

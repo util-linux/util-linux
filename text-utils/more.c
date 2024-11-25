@@ -201,38 +201,38 @@ struct more_control {
 	magic_t magic;			/* libmagic database entries */
 #endif
 	unsigned int
-		ignore_stdin:1,		/* POLLHUP; peer closed pipe */
-		bad_stdout:1,		/* true if overwriting does not turn off standout */
-		catch_suspend:1,	/* we should catch the SIGTSTP signal */
-		clear_line_ends:1,	/* do not scroll, paint each screen from the top */
-		clear_first:1,		/* is first character in file \f */
-		dumb_tty:1,		/* is terminal type known */
-		eat_newline:1,		/* is newline ignored after 80 cols */
-		erase_input_ok:1,	/* is erase input supported */
-		erase_previous_ok:1,	/* is erase previous supported */
-		exit_on_eof:1,		/* exit on EOF */
-		first_file:1,		/* is the input file the first in list */
-		fold_long_lines:1,	/* fold long lines */
-		hard_tabs:1,		/* print spaces instead of '\t' */
-		hard_tty:1,		/* is this hard copy terminal (a printer or such) */
-		leading_colon:1,	/* key command has leading ':' character */
-		is_eof:1,               /* EOF detected */
-		is_paused:1,		/* is output paused */
-		no_quit_dialog:1,	/* suppress quit dialog */
-		no_scroll:1,		/* do not scroll, clear the screen and then display text */
-		no_tty_in:1,		/* is input in interactive mode */
-		no_tty_out:1,		/* is output in interactive mode */
-		no_tty_err:1,           /* is stderr terminal */
-		print_banner:1,		/* print file name banner */
-		reading_num:1,		/* are we reading leading_number */
-		report_errors:1,	/* is an error reported */
-		search_at_start:1,	/* search pattern defined at start up */
-		search_called:1,	/* previous more command was a search */
-		squeeze_spaces:1,	/* suppress white space */
-		stdout_glitch:1,	/* terminal has standout mode glitch */
-		stop_after_formfeed:1,	/* stop after form feeds */
-		suppress_bell:1,	/* suppress bell */
-		wrap_margin:1;		/* set if automargins */
+		ignore_stdin,  		/* POLLHUP; peer closed pipe */
+		bad_stdout,  		/* true if overwriting does not turn off standout */
+		catch_suspend,  	/* we should catch the SIGTSTP signal */
+		clear_line_ends,  	/* do not scroll, paint each screen from the top */
+		clear_first,  		/* is first character in file \f */
+		dumb_tty,  		/* is terminal type known */
+		eat_newline,  		/* is newline ignored after 80 cols */
+		erase_input_ok,  	/* is erase input supported */
+		erase_previous_ok,  	/* is erase previous supported */
+		exit_on_eof,  		/* exit on EOF */
+		first_file,  		/* is the input file the first in list */
+		fold_long_lines,  	/* fold long lines */
+		hard_tabs,  		/* print spaces instead of '\t' */
+		hard_tty,  		/* is this hard copy terminal (a printer or such) */
+		leading_colon,  	/* key command has leading ':' character */
+		is_eof,                 /* EOF detected */
+		is_paused,  		/* is output paused */
+		no_quit_dialog,  	/* suppress quit dialog */
+		no_scroll,  		/* do not scroll, clear the screen and then display text */
+		no_tty_in,  		/* is input in interactive mode */
+		no_tty_out,  		/* is output in interactive mode */
+		no_tty_err,             /* is stderr terminal */
+		print_banner,  		/* print file name banner */
+		reading_num,  		/* are we reading leading_number */
+		report_errors,  	/* is an error reported */
+		search_at_start,  	/* search pattern defined at start up */
+		search_called,  	/* previous more command was a search */
+		squeeze_spaces,  	/* suppress white space */
+		stdout_glitch,  	/* terminal has standout mode glitch */
+		stop_after_formfeed,  	/* stop after form feeds */
+		suppress_bell,  	/* suppress bell */
+		wrap_margin;		/* set if automargins */
 };
 
 static void __attribute__((__noreturn__)) usage(void)

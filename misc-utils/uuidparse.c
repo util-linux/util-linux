@@ -83,10 +83,9 @@ static int columns[ARRAY_SIZE(infos) * 2];
 static size_t ncolumns;
 
 struct control {
-	unsigned int
-		json:1,
-		no_headings:1,
-		raw:1;
+	bool	json,
+		no_headings,
+		raw;
 };
 
 static void __attribute__((__noreturn__)) usage(void)

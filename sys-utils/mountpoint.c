@@ -14,6 +14,7 @@
  * This is libmount based reimplementation of the mountpoint(1)
  * from sysvinit project.
  */
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -37,11 +38,10 @@ struct mountpoint_control {
 	char *path;
 	dev_t dev;
 	struct stat st;
-	unsigned int
-		dev_devno:1,
-		fs_devno:1,
-		nofollow:1,
-		quiet:1;
+	bool	dev_devno,
+		fs_devno,
+		nofollow,
+		quiet;
 };
 
 static int dir_to_device(struct mountpoint_control *ctl)

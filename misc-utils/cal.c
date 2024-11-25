@@ -214,22 +214,22 @@ struct cal_control {
 	const char *abbr_month[MONTHS_IN_YEAR];	/* abbreviated month names */
 	const char *weekdays[DAYS_IN_WEEK];     /* day names */
 
-	int reform_year;		/* Gregorian reform year */
-	int colormode;			/* day and week number highlight */
-	int num_months;			/* number of requested months */
-	int span_months;		/* span the date */
-	int months_in_row;		/* number of months horizontally in print out */
-	int weekstart;			/* day the week starts, often Sun or Mon */
-	int weektype;			/* WEEK_TYPE_{NONE,ISO,US} */
-	size_t day_width;		/* day width in characters in printout */
-	size_t week_width;		/* 7 * day_width + possible week num */
-	size_t month_width;		/* width of a month (vertical mode) */
-	int gutter_width;		/* spaces in between horizontal month outputs */
-	struct cal_request req;		/* the times user is interested */
-	unsigned int	julian:1,	/* julian output */
-			header_year:1,	/* print year number */
-			header_hint:1,	/* does month name + year need two lines to fit */
-			vertical:1;	/* display the output in vertical */
+	int reform_year;	/* Gregorian reform year */
+	int colormode;		/* day and week number highlight */
+	int num_months;		/* number of requested months */
+	int span_months;	/* span the date */
+	int months_in_row;	/* number of months horizontally in print out */
+	int weekstart;		/* day the week starts, often Sun or Mon */
+	int weektype;		/* WEEK_TYPE_{NONE,ISO,US} */
+	size_t day_width;	/* day width in characters in printout */
+	size_t week_width;	/* 7 * day_width + possible week num */
+	size_t month_width;	/* width of a month (vertical mode) */
+	int gutter_width;	/* spaces in between horizontal month outputs */
+	struct cal_request req;	/* the times user is interested */
+	bool	julian,		/* julian output */
+		header_year,	/* print year number */
+		header_hint,	/* does month name + year need two lines to fit */
+		vertical;	/* display the output in vertical */
 };
 
 struct cal_month {

@@ -9,6 +9,7 @@
 #ifndef HWCLOCK_CLOCK_H
 #define HWCLOCK_CLOCK_H
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -41,30 +42,29 @@ struct hwclock_control {
 #endif
 	char *param_get_option;
 	char *param_set_option;
-	unsigned int
-		hwaudit_on:1,
-		adjust:1,
-		show:1,
-		hctosys:1,
-		utc:1,
-		systohc:1,
+	bool	hwaudit_on,
+		adjust,
+		show,
+		hctosys,
+		utc,
+		systohc,
 #if defined(__linux__) && defined(__alpha__)
-		getepoch:1,
-		setepoch:1,
+		getepoch,
+		setepoch,
 #endif
-		noadjfile:1,
-		local_opt:1,
-		directisa:1,
-		testing:1,
-		systz:1,
-		predict:1,
-		get:1,
-		set:1,
-		update:1,
-		universal:1,	/* will store hw_clock_is_utc() return value */
-		vl_read:1,
-		vl_clear:1,
-		verbose:1;
+		noadjfile,
+		local_opt,
+		directisa,
+		testing,
+		systz,
+		predict,
+		get,
+		set,
+		update,
+		universal,	/* will store hw_clock_is_utc() return value */
+		vl_read,
+		vl_clear,
+		verbose;
 };
 
 struct clock_ops {

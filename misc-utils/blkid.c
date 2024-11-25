@@ -9,6 +9,7 @@
  * %End-Header%
  */
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -56,15 +57,14 @@ struct blkid_control {
 	uintmax_t size;
 	char *show[128];
 	struct ul_jsonwrt *json_fmt;
-	unsigned int
-		eval:1,
-		gc:1,
-		lookup:1,
-		lowprobe:1,
-		lowprobe_superblocks:1,
-		lowprobe_topology:1,
-		no_part_details:1,
-		raw_chars:1;
+	bool	eval,
+		gc,
+		lookup,
+		lowprobe,
+		lowprobe_superblocks,
+		lowprobe_topology,
+		no_part_details,
+		raw_chars;
 };
 
 static void __attribute__((__noreturn__)) usage(void)

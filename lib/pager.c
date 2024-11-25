@@ -11,6 +11,7 @@
  */
 
 #include <unistd.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <err.h>
@@ -44,7 +45,7 @@ struct child_process {
 	struct sigaction orig_sigquit;
 	struct sigaction orig_sigpipe;
 
-	unsigned no_stdin:1;
+	bool no_stdin;
 	void (*preexec_cb)(void);
 };
 static struct child_process pager_process;

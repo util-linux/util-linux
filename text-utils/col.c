@@ -56,6 +56,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <getopt.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -105,7 +106,7 @@ struct col_char {
 	wchar_t		c_char;		/* character in question */
 	int		c_width;	/* character width */
 
-	uint8_t		c_set:1;	/* character set (currently only 2) */
+  	uint8_t		c_set;		/* character set (currently only 2) */
 };
 
 struct col_line {
@@ -116,7 +117,7 @@ struct col_line {
 	size_t		l_line_len;	/* strlen(l_line) */
 	size_t		l_max_col;	/* max column in the line */
 
-	uint8_t		l_needs_sort:1;	/* set if chars went in out of order */
+	bool		l_needs_sort;	/* set if chars went in out of order */
 };
 
 #ifdef COL_DEALLOCATE_ON_EXIT
@@ -139,12 +140,11 @@ struct col_ctl {
 	struct col_alloc *alloc_root;	/* first of line allocations */
 	struct col_alloc *alloc_head;	/* latest line allocation */
 #endif
-	unsigned int
-		last_set:1,		/* char_set of last char printed */
-		compress_spaces:1,	/* if doing space -> tab conversion */
-		fine:1,			/* if `fine' resolution (half lines) */
-		no_backspaces:1,	/* if not to output any backspaces */
-		pass_unknown_seqs:1;	/* whether to pass unknown control sequences */
+	bool	last_set,		/* char_set of last char printed */
+		compress_spaces,	/* if doing space -> tab conversion */
+		fine,			/* if `fine' resolution (half lines) */
+		no_backspaces,		/* if not to output any backspaces */
+		pass_unknown_seqs;	/* whether to pass unknown control sequences */
 };
 
 struct col_lines {
@@ -158,9 +158,8 @@ struct col_lines {
 	size_t nflushd_lines;
 	size_t this_line;
 
-	unsigned int
-		cur_set:1,
-		warned:1;
+	bool	cur_set,
+		warned;
 };
 
 static void __attribute__((__noreturn__)) usage(void)

@@ -58,6 +58,7 @@
  *
  */
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
@@ -117,8 +118,7 @@ struct fs_control {
 	size_t fs_dirsize;		/* maximum size of directory */
 	unsigned long fs_inodes;	/* number of inodes */
 	int fs_magic;			/* file system magic number */
-	unsigned int
-	 check_blocks:1;		/* check for bad blocks */
+	bool check_blocks;		/* check for bad blocks */
 };
 
 static char root_block[MINIX_BLOCK_SIZE];

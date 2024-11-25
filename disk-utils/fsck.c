@@ -99,9 +99,9 @@ struct fsck_fs_data
 {
 	const char	*device;
 	dev_t		disk;
-	unsigned int	stacked:1,
-			done:1,
-			eval_device:1;
+	bool		stacked,
+			done,
+			eval_device;
 };
 
 /*

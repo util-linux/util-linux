@@ -12,6 +12,8 @@
 #ifndef LSCPU_H
 #define LSCPU_H
 
+#include <stdbool.h>
+
 #include "c.h"
 #include "nls.h"
 #include "cpuset.h"
@@ -160,8 +162,8 @@ struct lscpu_cpu {
 struct lscpu_arch {
 	char	*name;		/* uname() .machine */
 
-	unsigned int	bit32:1,
-			bit64:1;
+	bool	bit32,
+		bit64;
 };
 
 struct lscpu_vulnerability {

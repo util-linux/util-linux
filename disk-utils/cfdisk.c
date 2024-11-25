@@ -247,10 +247,10 @@ struct cfdisk {
 	struct libmnt_table *fstab;
 	struct libmnt_cache *mntcache;
 #endif
-	unsigned int	wrong_order :1,		/* PT not in right order */
-			zero_start :1,		/* ignore existing partition table */
-			device_is_used : 1,	/* don't use re-read ioctl */
-			show_extra :1;		/* show extra partinfo */
+	bool	wrong_order,	/* PT not in right order */
+		zero_start,	/* ignore existing partition table */
+		device_is_used,	/* don't use re-read ioctl */
+		show_extra;	/* show extra partinfo */
 };
 
 

@@ -116,8 +116,8 @@ struct lock {
 	off_t end;
 	ino_t inode;
 	dev_t dev;
-	unsigned int mandatory :1,
-		     blocked   :1;
+	bool  mandatory,
+	      blocked;
 	uint64_t size;
 	int fd;
 	int id;
