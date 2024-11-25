@@ -10,6 +10,8 @@ the first line of po4a.cfg:
 It is not crucial to sort the entries alphabetically, but do it anyway for
 better readability.
 
+Also, add the "lang/" directory to the .gitignore file.
+
 ## Update the template and create translated files
 
 This is done in one step using the following simple command:
