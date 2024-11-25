@@ -77,6 +77,9 @@ Same as *-c*, but do not create a new session. (Discouraged.)
 Do not create a pseudo-terminal, opposite of *--pty* and *-P*.
 Note that running without a pseudo-terminal opens the security risk of privilege escalation through TIOCSTI/TIOCLINUX ioctl command injection.
 
+*-u*, *--user*=_user_::
+Run _command_ with the effective user ID and group ID of the user name _user_.
+
 *-w*, *--whitelist-environment*=_list_::
 Don't reset the environment variables specified in the comma-separated _list_ when clearing the environment for *--login*. The whitelist is ignored for the environment variables *HOME*, *SHELL*, *USER*, *LOGNAME*, and *PATH*.
 
