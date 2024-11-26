@@ -8,7 +8,9 @@ cc = meson.get_compiler('c')
 pkg = import('pkgconfig')
 lib_pam_lastlog2_sources = '''
   src/pam_lastlog2.c
-'''.split()  
+'''.split()
+
+subdir('man')
 
 pamlibdir = get_option('pamlibdir')
 if pamlibdir == ''
@@ -32,5 +34,5 @@ if build_pam_lastlog2
     install : build_liblastlog2,
     install_dir : pamlibdir,
   )
-  manadocs += ['pam_lastlog2/man/pam_lastlog2.8.adoc']
-endif  
+  manadocs += lib_pam_lastlog2_manadocs
+endif
