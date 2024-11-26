@@ -4070,6 +4070,8 @@ if asciidoctor.found()
       'man' + target_section / target,
       mandir / 'man' + link_section / link_name)
   endforeach
+
+  subdir('po-man')
 endif
 
 if bash_completion.found()
