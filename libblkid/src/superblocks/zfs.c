@@ -342,7 +342,7 @@ static int probe_zfs(blkid_probe pr,
 	 * Zero out whole nvlist header including fisrt nvpair size
 	 */
 	if (blkid_probe_set_magic(pr, offset, sizeof(struct nvs_header_t),
-	    (unsigned char *) &label->nvh_first_size))
+	    (unsigned char *) label))
 		return (1);
 
 	blkid_probe_set_fsendianness(pr, !swab_endian ?
