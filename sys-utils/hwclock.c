@@ -171,15 +171,6 @@ static struct timeval t2tv(time_t timet)
 }
 
 /*
- * The difference in seconds between two times in "timeval" format.
- */
-double time_diff(struct timeval subtrahend, struct timeval subtractor)
-{
-	return (subtrahend.tv_sec - subtractor.tv_sec)
-	    + (subtrahend.tv_usec - subtractor.tv_usec) / 1E6;
-}
-
-/*
  * The time, in "timeval" format, which is <increment> seconds after the
  * time <addend>. Of course, <increment> may be negative.
  */
@@ -572,8 +563,8 @@ set_hardware_clock_exact(const struct hwclock_control *ctl,
 		ON_DBG(RANDOM_SLEEP, up_to_1000ms_sleep());
 
 		gettimeofday(&nowsystime, NULL);
-		deltavstarget = time_diff(nowsystime, targetsystime);
-		ticksize = time_diff(nowsystime, prevsystime);
+		deltavstarget = time_diff(&nowsystime, &targetsystime);
+		ticksize = time_diff(&nowsystime, &prevsystime);
 		prevsystime = nowsystime;
 
 		if (ticksize < 0) {
@@ -624,7 +615,7 @@ set_hardware_clock_exact(const struct hwclock_control *ctl,
 	}
 
 	newhwtime = sethwtime
-		    + round(time_diff(nowsystime, refsystime)
+		    + round(time_diff(&nowsystime, &refsystime)
 			    - delay /* don't count this */);
 	if (ctl->verbose)
 		printf(_("%"PRId64".%06"PRId64" is close enough to %"PRId64".%06"PRId64" (%.6f < %.6f)\n"
@@ -821,8 +812,8 @@ adjust_drift_factor(const struct hwclock_control *ctl,
 		 * hclocktime is fully corrected with the current drift factor.
 		 * Its difference from nowtime is the missed drift correction.
 		 */
-		factor_adjust = time_diff(nowtime, hclocktime) /
-				(time_diff(nowtime, last_calib) / sec_per_day);
+		factor_adjust = time_diff(&nowtime, &hclocktime) /
+				(time_diff(&nowtime, &last_calib) / sec_per_day);
 
 		drift_factor = adjtime_p->drift_factor + factor_adjust;
 		if (fabs(drift_factor) > MAX_DRIFT) {
@@ -838,8 +829,8 @@ adjust_drift_factor(const struct hwclock_control *ctl,
 					 "%f seconds\nin spite of a drift factor of "
 					 "%f seconds/day.\n"
 					 "Adjusting drift factor by %f seconds/day\n"),
-				       time_diff(nowtime, hclocktime),
-				       time_diff(nowtime, last_calib),
+				       time_diff(&nowtime, &hclocktime),
+				       time_diff(&nowtime, &last_calib),
 				       adjtime_p->drift_factor, factor_adjust);
 		}
 
@@ -1101,7 +1092,7 @@ manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 			hclocktime = time_inc(tdrift, hclocktime.tv_sec);
 
 		startup_hclocktime =
-		 time_inc(hclocktime, time_diff(startup_time, read_time));
+		 time_inc(hclocktime, time_diff(&startup_time, &read_time));
 	}
 	if (ctl->show || ctl->get) {
 		return display_time(startup_hclocktime);
