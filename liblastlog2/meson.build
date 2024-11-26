@@ -5,7 +5,9 @@ lib_lastlog2_sources = '''
   src/lastlog2.h
   src/lastlog2P.h
   src/lastlog2.c
-'''.split()  
+'''.split()
+
+subdir('man')
 
 liblastlog2_sym = 'src/liblastlog2.sym'
 liblastlog2_sym_path = '@0@/@1@'.format(meson.current_source_dir(), liblastlog2_sym)
@@ -60,4 +62,4 @@ if build_liblastlog2
       check : true)
   endforeach
 
-endif  
+endif
