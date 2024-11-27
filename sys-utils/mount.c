@@ -447,10 +447,10 @@ static void append_option(struct libmnt_context *cxt, const char *opt, const cha
 {
 	char *o = NULL;
 
-	if (opt && (*opt == '=' || *opt == '\'' || *opt == '\"' || isblank(*opt)))
+	if (opt && !ul_optstr_is_valid(opt))
 		errx(MNT_EX_USAGE, _("unsupported option format: %s"), opt);
 
-	if (arg && *arg)
+	if (opt && arg && *arg)
 		xasprintf(&o, "%s=\"%s\"", opt, arg);
 
 	if (mnt_context_append_options(cxt, o ? : opt))
