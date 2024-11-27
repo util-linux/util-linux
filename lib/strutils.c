@@ -1217,6 +1217,8 @@ int ul_optstr_next(char **optstr, char **name, size_t *namesz,
 		optstr0++;
 
 	for (p = optstr0; p && *p; p++) {
+		if (!start && *p == '=')
+			return -EINVAL;
 		if (!start)
 			start = p;		/* beginning of the option item */
 		if (*p == '"')
@@ -1250,6 +1252,15 @@ int ul_optstr_next(char **optstr, char **name, size_t *namesz,
 	}
 
 	return 1;				/* end of optstr */
+}
+
+int ul_optstr_is_valid(const char *optstr)
+{
+	int rc;
+	char *p = (char *) optstr;
+
+	while ((rc = ul_optstr_next(&p, NULL, NULL, NULL, NULL)) == 0);
+	return rc < 0 ? 0 : 1;
 }
 
 #ifdef TEST_PROGRAM_STRUTILS
@@ -1430,6 +1441,24 @@ int main(int argc, char *argv[])
 			printf("str: '%s'\n", p);
 		} while ((p = ul_next_string(p, end)));
 
+		return EXIT_SUCCESS;
+
+	} else if (argc == 3 && strcmp(argv[1], "--optstr") == 0) {
+
+		size_t namesz, valsz;
+		char *name = NULL, *val = NULL;
+		char *p = argv[2];
+		int rc;
+
+		if (!ul_optstr_is_valid(p))
+			errx(EXIT_FAILURE, _("unsupported option format: %s"), p);
+
+		while ((rc = ul_optstr_next(&p, &name, &namesz, &val, &valsz)) == 0) {
+			printf("'%.*s' : '%.*s'\n", (int) namesz, name,
+						   (int) valsz, val);
+		}
+		if (rc == 1)
+			return EXIT_SUCCESS;
 	} else {
 		fprintf(stderr, "usage: %1$s --size <number>[suffix]\n"
 				"       %1$s --cmp-paths <path> <path>\n"

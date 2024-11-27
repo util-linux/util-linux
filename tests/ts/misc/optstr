@@ -1,0 +1,14 @@
+#!/bin/bash
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="optstr"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_HELPER_STRUTILS"
+
+$TS_HELPER_STRUTILS --optstr "key=\"v,a,l,u,e\",foo,bar=BAR,\"/path/with/,comma\"=data" >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+ts_finalize
+

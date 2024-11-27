@@ -456,5 +456,6 @@ extern int skip_fline(FILE *fp);
 extern int ul_stralnumcmp(const char *p1, const char *p2);
 
 extern int ul_optstr_next(char **optstr, char **name, size_t *namesz, char **value, size_t *valsz);
+extern int ul_optstr_is_valid(const char *optstr);
 
 #endif
