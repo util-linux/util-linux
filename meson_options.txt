@@ -253,6 +253,8 @@ option('build-bash-completion', type : 'feature',
        description : 'install bash completion files')
 option('build-pylibmount', type : 'feature',
        description : 'build pylibmount')
+option('build-hexdump', type : 'feature',
+       description : 'build hexdump')
 
 # static programs
 
