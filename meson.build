@@ -2762,6 +2762,7 @@ if opt and not is_disabler(exe)
   manadocs += ['login-utils/sulogin.8.adoc']
 endif
 
+opt = not get_option('build-cal').disabled()
 exe = executable(
   'cal',
   cal_sources,
@@ -2770,10 +2771,13 @@ exe = executable(
                lib_tcolors],
   dependencies : [curses_libs],
   install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['misc-utils/cal.1.adoc']
-bashcompletions += ['cal']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['misc-utils/cal.1.adoc']
+  bashcompletions += ['cal']
+endif
 
 opt = not get_option('build-logger').disabled()
 exe = executable(
