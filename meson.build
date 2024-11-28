@@ -3923,7 +3923,9 @@ run_target(
 
 
 manadocs += ['lib/terminal-colors.d.5.adoc']
-manadocs += ['libblkid/libblkid.3.adoc']
+if build_libblkid
+  manadocs += ['libblkid/libblkid.3.adoc']
+endif
 
 if build_libuuid
   manadocs += [
