@@ -2741,7 +2741,7 @@ exe = executable(
                   lib_selinux],
   install : opt,
   build_by_default : opt)
-if not is_disabler(exe)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['login-utils/login.1.adoc']
 endif
