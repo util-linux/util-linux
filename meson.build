@@ -2757,7 +2757,7 @@ exe = executable(
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
-if not is_disabler(exe)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['login-utils/sulogin.8.adoc']
 endif
