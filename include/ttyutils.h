@@ -7,6 +7,7 @@
 #ifndef UTIL_LINUX_TTYUTILS_H
 #define UTIL_LINUX_TTYUTILS_H
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <termios.h>
 #include <limits.h>
@@ -208,6 +209,32 @@ static inline void reset_virtual_console(struct termios *tp, int flags)
 	tp->c_cc[VWERASE]  = CWERASE;
 	tp->c_cc[VLNEXT]   = CLNEXT;
 	tp->c_cc[VEOL2]    = _POSIX_VDISABLE;
+}
+
+#define UL_OSC8		"\033]8"	/* operating system command) */
+#define UL_ST		"\033\\"	/* string terminator */
+
+/* OSC8 hyperlink is composed from:
+ *
+ *  UL_HYPERLINK_START UL_HYPERLINK_PARAMS <uri> UL_HYPERLINK_LINK <link-text> UL_HYPERLINK_END
+ *
+ * Alternatively, BEL (\a) can be used instead of ST.
+ */
+#define UL_HYPERLINK_START		UL_OSC8
+#define UL_HYPERLINK_PARAMS		";;"
+#define UL_HYPERLINK_LINK		UL_ST
+#define UL_HYPERLINK_END		(UL_OSC8 ";;" UL_ST)
+
+static inline void ul_fputs_hyperlink(const char *uri, const char *link, FILE *out)
+{
+	fputs(UL_HYPERLINK_START, out);
+	fputs(UL_HYPERLINK_PARAMS, out);
+	fputs(uri, out);
+
+	fputs(UL_HYPERLINK_LINK, out);
+	fputs(link, out);
+
+	fputs(UL_HYPERLINK_END, out);
 }
 
 #endif /* UTIL_LINUX_TTYUTILS_H */
