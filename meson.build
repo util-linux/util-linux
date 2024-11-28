@@ -2335,7 +2335,7 @@ exe2 = executable(
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
-if not is_disabler(exe)
+if opt and not is_disabler(exe)
   exes += [exe, exe2]
   manadocs += ['disk-utils/mkfs.cramfs.8.adoc','disk-utils/fsck.cramfs.8.adoc']
   bashcompletions += ['mkfs.cramfs', 'fsck.cramfs']
