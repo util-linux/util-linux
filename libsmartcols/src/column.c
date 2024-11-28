@@ -72,6 +72,8 @@ void scols_unref_column(struct libscols_column *cl)
 		list_del(&cl->cl_columns);
 		scols_reset_cell(&cl->header);
 		free(cl->color);
+		free(cl->uri);
+		ul_buffer_free_data(&cl->uri_buf);
 		free(cl->safechars);
 		free(cl->wrap_data);
 		free(cl->shellvar);
@@ -100,6 +102,8 @@ struct libscols_column *scols_copy_column(const struct libscols_column *cl)
 	DBG(COL, ul_debugobj(cl, "copy"));
 
 	if (scols_column_set_color(ret, cl->color))
+		goto err;
+	if (scols_column_set_uri(ret, cl->uri))
 		goto err;
 	if (scols_cell_copy_content(&ret->header, &cl->header))
 		goto err;
@@ -431,6 +435,42 @@ const char *scols_column_get_color(const struct libscols_column *cl)
 	return cl->color;
 }
 
+/**
+ * scols_column_set_uri:
+ * @cl: a pointer to a struct libscols_column instance
+ * @uri: URI string
+ *
+ * The default URI prefix for cells is used when creating hyperlinks. However,
+ * it can still be disabled for selected cells using scols_cell_disable_uri().
+ * See also scols_cell_set_uri().
+ *
+ * The final cell URI is composed of the column-uri, cell-uri, and cell-data.
+ * The column-uri and/or cell-uri must be set for this feature to be enabled.
+ *
+ * column-uri  cell-uri                  cell-data      final-URI                 link
+ * -----------------------------------------------------------------------------------
+ *             file://host/path/foo.txt  foo            file://host/path/foo.txt  foo
+ * file://host /path/foo.txt             foo            file://host/path/foo.txt  foo
+ * file://host                           /path/foo.txt  file://host/path/foo.txt  /path/foo.txt
+ *
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
+int scols_column_set_uri(struct libscols_column *cl, const char *uri)
+{
+	return strdup_to_struct_member(cl, uri, uri);
+}
+
+/**
+ * scols_column_get_uri:
+ * @cl: a pointer to a struct libscols_column instance
+ *
+ * Returns: The current URI setting of the column @cl.
+ */
+const char *scols_column_get_uri(const struct libscols_column *cl)
+{
+	return cl->uri;
+}
 
 /**
  * scols_wrapnl_nextchunk:
