@@ -39,6 +39,7 @@ struct findmnt {
 	struct libmnt_cache *cache;
 	unsigned int flags;
 	int parse_nerrors;
+	char *uri;
 	struct libscols_filter *filter;
 };
 
