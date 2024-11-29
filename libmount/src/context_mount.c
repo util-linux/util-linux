@@ -451,10 +451,10 @@ static int exec_helper(struct libmnt_context *cxt)
 			args[i++] = type;		/* 11 */
 		}
 		if (namespace) {
-			args[i++] = "-N";		/* 11 */
-			args[i++] = namespace;		/* 12 */
+			args[i++] = "-N";		/* 12 */
+			args[i++] = namespace;		/* 13 */
 		}
-		args[i] = NULL;				/* 13 */
+		args[i] = NULL;				/* 14 */
 		for (i = 0; args[i]; i++)
 			DBG(CXT, ul_debugobj(cxt, "argv[%d] = \"%s\"",
 							i, args[i]));
