@@ -289,6 +289,8 @@ struct lsfd_control {
 	struct libscols_table *tb;		/* output */
 	struct list_head procs;			/* list of all processes */
 
+	char *uri;				/* hyperlinks prefix */
+
 	bool		noheadings,
 			raw,
 			json,

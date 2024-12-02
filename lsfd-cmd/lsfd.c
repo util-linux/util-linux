@@ -612,6 +612,9 @@ static struct libscols_column *add_column(struct libscols_table *tb,
 						  NULL);
 			scols_column_set_safechars(cl, "\n");
 		}
+		if (!(extra & SCOLS_FL_HIDDEN) && lsfd->uri &&
+		    (id == COL_NAME || id == COL_KNAME))
+			scols_column_set_uri(cl, lsfd->uri);
 	}
 
 	return cl;
@@ -2489,6 +2492,7 @@ int main(int argc, char *argv[])
 		OPT_SUMMARY,
 		OPT_DUMP_COUNTERS,
 		OPT_DROP_PRIVILEGE,
+		OPT_HYPERLINK
 	};
 	static const struct option longopts[] = {
 		{ "noheadings", no_argument, NULL, 'n' },
@@ -2508,6 +2512,7 @@ int main(int argc, char *argv[])
 		{ "dump-counters",no_argument, NULL, OPT_DUMP_COUNTERS },
 		{ "list-columns",no_argument, NULL, 'H' },
 		{ "_drop-privilege",no_argument,NULL,OPT_DROP_PRIVILEGE },
+		{ "hyperlink",  optional_argument, NULL, OPT_HYPERLINK },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -2591,6 +2596,11 @@ int main(int argc, char *argv[])
 		case OPT_DROP_PRIVILEGE:
 			if (setuid(1) == -1)
 				err(EXIT_FAILURE, _("failed to drop privilege"));
+			break;
+		case OPT_HYPERLINK:
+			if (hyperlinkwanted_or_err(optarg,
+					_("invalid hyperlink argument")))
+				lsfd->uri = xgethosturi(NULL);
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
