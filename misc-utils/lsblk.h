@@ -60,6 +60,7 @@ struct lsblk {
 	size_t ncts;				/* number of ct filters */
 
 	const char *sysroot;
+	char *uri;
 	int flags;			/* LSBLK_* */
 
 	int properties_by[__LSBLK_NMETHODS];
