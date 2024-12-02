@@ -602,18 +602,23 @@ static int get_column_id(int num)
 	return columns[num];
 }
 
-static const struct colinfo *get_column_info(int num)
+static const struct colinfo *get_column_info(int id)
 {
-	return &infos[ get_column_id(num) ];
+	return &infos[ id ];
 }
 
 static struct libscols_column *add_column(struct libscols_table *tb,
-					  const struct colinfo *col, int extra)
+					  int id, int extra)
 {
+	const struct colinfo *col;
 	struct libscols_column *cl;
-	int flags = col->flags;
 
-	cl = scols_table_new_column(tb, col->name, col->whint, flags | extra);
+	assert(id < LSFD_N_COLS);
+
+	col = get_column_info(id);
+
+	cl = scols_table_new_column(tb, col->name, col->whint,
+				col->flags | extra);
 	if (cl) {
 		scols_column_set_json_type(cl, col->json_type);
 		if (col->flags & SCOLS_FL_WRAP) {
@@ -628,17 +633,15 @@ static struct libscols_column *add_column(struct libscols_table *tb,
 	return cl;
 }
 
-static struct libscols_column *add_column_by_id(struct lsfd_control *ctl,
-						int colid, int extra)
+static struct libscols_column *add_hidden_column(struct lsfd_control *ctl,
+						 int colid)
 {
 	struct libscols_column *cl;
 
 	if (ncolumns >= ARRAY_SIZE(columns))
 		errx(EXIT_FAILURE, _("too many columns are added via filter expression"));
 
-	assert(colid < LSFD_N_COLS);
-
-	cl = add_column(ctl->tb, infos + colid, extra);
+	cl = add_column(ctl->tb, colid, SCOLS_FL_HIDDEN);
 	if (!cl)
 		err(EXIT_FAILURE, _("failed to allocate output column"));
 	columns[ncolumns++] = colid;
@@ -2220,7 +2223,7 @@ static struct libscols_filter *new_filter(const char *expr, bool debug, struct l
 		if (!col) {
 			int id = column_name_to_id(name, strlen(name));
 			if (id >= 0)
-				col = add_column_by_id(ctl, id, SCOLS_FL_HIDDEN);
+				col = add_hidden_column(ctl, id);
 			if (!col) {
 				nerrs++;	/* report all unknown columns */
 				continue;
@@ -2652,8 +2655,7 @@ int main(int argc, char *argv[])
 
 	/* create output columns */
 	for (i = 0; i < ncolumns; i++) {
-		const struct colinfo *col = get_column_info(i);
-		struct libscols_column *cl = add_column(ctl.tb, col, 0);
+		struct libscols_column *cl = add_column(ctl.tb, get_column_id(i), 0);
 
 		if (!cl)
 			err(EXIT_FAILURE, _("failed to allocate output column"));
