@@ -84,6 +84,8 @@ static int kcmp(pid_t pid1 __attribute__((__unused__)),
 
 #include "lsfd.h"
 
+struct lsfd_control *lsfd;
+
 UL_DEBUG_DEFINE_MASK(lsfd);
 UL_DEBUG_DEFINE_MASKNAMES(lsfd) = UL_DEBUG_EMPTY_MASKNAMES;
 
@@ -543,24 +545,6 @@ static const struct counter_spec default_counter_specs[] = {
 struct filler_data {
 	struct proc *proc;
 	struct file *file;
-};
-
-struct lsfd_control {
-	struct libscols_table *tb;		/* output */
-	struct list_head procs;			/* list of all processes */
-
-	unsigned int	noheadings : 1,
-			raw : 1,
-			json : 1,
-			notrunc : 1,
-			threads : 1,
-			show_main : 1,		/* print main table */
-			show_summary : 1,	/* print summary/counters */
-			sockets_only : 1,	/* display only SOCKETS */
-			show_xmode : 1;		/* XMODE column is enabled. */
-
-	struct libscols_filter *filter;		/* filter */
-	struct libscols_filter **ct_filters;	/* counters (NULL terminated array) */
 };
 
 static void *proc_tree;			/* for tsearch/tfind */
@@ -2523,6 +2507,8 @@ int main(int argc, char *argv[])
 		{ "_drop-privilege",no_argument,NULL,OPT_DROP_PRIVILEGE },
 		{ NULL, 0, NULL, 0 },
 	};
+
+	lsfd = &ctl;	/* global */
 
 	lsfd_init_debug();
 
