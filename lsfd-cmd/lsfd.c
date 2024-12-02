@@ -543,6 +543,7 @@ static const struct counter_spec default_counter_specs[] = {
 struct filler_data {
 	struct proc *proc;
 	struct file *file;
+	const char *uri;
 };
 
 struct lsfd_control {
@@ -558,6 +559,8 @@ struct lsfd_control {
 			show_summary : 1,	/* print summary/counters */
 			sockets_only : 1,	/* display only SOCKETS */
 			show_xmode : 1;		/* XMODE column is enabled. */
+
+	char *uri;
 
 	struct libscols_filter *filter;		/* filter */
 	struct libscols_filter **ct_filters;	/* counters (NULL terminated array) */
@@ -608,7 +611,7 @@ static const struct colinfo *get_column_info(int id)
 }
 
 static struct libscols_column *add_column(struct libscols_table *tb,
-					  int id, int extra)
+					  int id, int extra, char *uri)
 {
 	const struct colinfo *col;
 	struct libscols_column *cl;
@@ -628,6 +631,9 @@ static struct libscols_column *add_column(struct libscols_table *tb,
 						  NULL);
 			scols_column_set_safechars(cl, "\n");
 		}
+		if (!(extra & SCOLS_FL_HIDDEN) && uri &&
+		    (id == COL_NAME || id == COL_KNAME))
+			scols_column_set_uri(cl, uri);
 	}
 
 	return cl;
@@ -641,7 +647,7 @@ static struct libscols_column *add_hidden_column(struct lsfd_control *ctl,
 	if (ncolumns >= ARRAY_SIZE(columns))
 		errx(EXIT_FAILURE, _("too many columns are added via filter expression"));
 
-	cl = add_column(ctl->tb, colid, SCOLS_FL_HIDDEN);
+	cl = add_column(ctl->tb, colid, SCOLS_FL_HIDDEN, ctl->uri);
 	if (!cl)
 		err(EXIT_FAILURE, _("failed to allocate output column"));
 	columns[ncolumns++] = colid;
@@ -1448,14 +1454,15 @@ static void fill_column(struct proc *proc,
 			struct file *file,
 			struct libscols_line *ln,
 			int column_id,
-			size_t column_index)
+			size_t column_index,
+			const char *uri __attribute__((__unused__)))
 {
 	const struct file_class *class = file->class;
 
 	while (class) {
 		if (class->fill_column
 		    && class->fill_column(proc, file, ln,
-					  column_id, column_index))
+					  column_id, column_index, uri))
 			break;
 		class = class->super;
 	}
@@ -1469,13 +1476,15 @@ static int filter_filler_cb(
 {
 	struct filler_data *fid = (struct filler_data *) userdata;
 
-	fill_column(fid->proc, fid->file, ln, get_column_id(colnum), colnum);
+	fill_column(fid->proc, fid->file, ln, get_column_id(colnum), colnum,
+		    fid->uri);
 	return 0;
 }
 
 static void convert_file(struct proc *proc,
 		     struct file *file,
-		     struct libscols_line *ln)
+		     struct libscols_line *ln,
+		     const char *uri __attribute__((__unused__)))
 
 {
 	size_t i;
@@ -1483,7 +1492,7 @@ static void convert_file(struct proc *proc,
 	for (i = 0; i < ncolumns; i++) {
 		if (scols_line_is_filled(ln, i))
 			continue;
-		fill_column(proc, file, ln, get_column_id(i), i);
+		fill_column(proc, file, ln, get_column_id(i), i, uri);
 	}
 }
 
@@ -1506,7 +1515,8 @@ static void convert(struct list_head *procs, struct lsfd_control *ctl)
 				int status = 0;
 				struct filler_data fid = {
 					.proc = proc,
-					.file = file
+					.file = file,
+					.uri = ctl->uri,
 				};
 
 				scols_filter_set_filler_cb(ctl->filter,
@@ -1519,7 +1529,7 @@ static void convert(struct list_head *procs, struct lsfd_control *ctl)
 				}
 			}
 
-			convert_file(proc, file, ln);
+			convert_file(proc, file, ln, ctl->uri);
 
 			if (!ctl->ct_filters)
 				continue;
@@ -2160,6 +2170,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --debug-filter           dump the internal data structure of filter and exit\n"), out);
 	fputs(_(" -C, --counter <name>:<expr>  define custom counter for --summary output\n"), out);
 	fputs(_("     --dump-counters          dump counter definitions\n"), out);
+	fputs(_("     --hyperlink[=mode]       print paths as terminal hyperlinks (always, never, or auto)\n"), out);
 	fputs(_("     --summary[=<when>]       print summary information (only, append, or never)\n"), out);
 	fputs(_("     --_drop-privilege        (testing purpose) do setuid(1) just after starting\n"), out);
 
@@ -2505,6 +2516,7 @@ int main(int argc, char *argv[])
 		OPT_SUMMARY,
 		OPT_DUMP_COUNTERS,
 		OPT_DROP_PRIVILEGE,
+		OPT_HYPERLINK
 	};
 	static const struct option longopts[] = {
 		{ "noheadings", no_argument, NULL, 'n' },
@@ -2524,6 +2536,7 @@ int main(int argc, char *argv[])
 		{ "dump-counters",no_argument, NULL, OPT_DUMP_COUNTERS },
 		{ "list-columns",no_argument, NULL, 'H' },
 		{ "_drop-privilege",no_argument,NULL,OPT_DROP_PRIVILEGE },
+		{ "hyperlink",  optional_argument, NULL, OPT_HYPERLINK },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -2606,6 +2619,11 @@ int main(int argc, char *argv[])
 			if (setuid(1) == -1)
 				err(EXIT_FAILURE, _("failed to drop privilege"));
 			break;
+		case OPT_HYPERLINK:
+			if (hyperlinkwanted_or_err(optarg,
+					_("invalid hyperlink argument")))
+				ctl.uri = xgethosturi(NULL);
+			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
 		case 'h':
@@ -2655,7 +2673,7 @@ int main(int argc, char *argv[])
 
 	/* create output columns */
 	for (i = 0; i < ncolumns; i++) {
-		struct libscols_column *cl = add_column(ctl.tb, get_column_id(i), 0);
+		struct libscols_column *cl = add_column(ctl.tb, get_column_id(i), 0, ctl.uri);
 
 		if (!cl)
 			err(EXIT_FAILURE, _("failed to allocate output column"));
