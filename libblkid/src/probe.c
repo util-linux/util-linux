@@ -791,6 +791,33 @@ const unsigned char *blkid_probe_get_buffer(blkid_probe pr, uint64_t off, uint64
 	return real_off ? bf->data + (real_off - bf->off + bias) : bf->data + bias;
 }
 
+/*
+ * This is blkid_probe_get_buffer with the read done as an O_DIRECT operation.
+ * Note that @off is offset within probing area, the probing area is defined by
+ * pr->off and pr->size.
+ */
+const unsigned char *blkid_probe_get_buffer_direct(blkid_probe pr, uint64_t off, uint64_t len)
+{
+	const unsigned char *ret = NULL;
+	int flags, rc, olderrno;
+
+	flags = fcntl(pr->fd, F_GETFL);
+	rc = fcntl(pr->fd, F_SETFL, flags | O_DIRECT);
+	if (rc) {
+		DBG(LOWPROBE, ul_debug("fcntl F_SETFL failed to set O_DIRECT"));
+		errno = 0;
+		return NULL;
+	}
+	ret = blkid_probe_get_buffer(pr, off, len);
+	olderrno = errno;
+	rc = fcntl(pr->fd, F_SETFL, flags);
+	if (rc) {
+		DBG(LOWPROBE, ul_debug("fcntl F_SETFL failed to clear O_DIRECT"));
+		errno = olderrno;
+	}
+	return ret;
+}
+
 /**
  * blkid_probe_reset_buffers:
  * @pr: prober

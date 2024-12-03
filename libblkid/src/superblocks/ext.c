@@ -156,8 +156,26 @@ static struct ext2_super_block *ext_get_super(
 		return NULL;
 	if (le32_to_cpu(es->s_feature_ro_compat) & EXT4_FEATURE_RO_COMPAT_METADATA_CSUM) {
 		uint32_t csum = crc32c(~0, es, offsetof(struct ext2_super_block, s_checksum));
-		if (!blkid_probe_verify_csum(pr, csum, le32_to_cpu(es->s_checksum)))
-			return NULL;
+		/*
+		 * A read of the superblock can race with other updates to the
+		 * same superblock.  In the unlikely event that this occurs and
+		 * we see a checksum failure, re-read the superblock with
+		 * O_DIRECT to ensure that it's consistent.  If it _still_ fails
+		 * then declare a checksum mismatch.
+		 */
+		if (!blkid_probe_verify_csum(pr, csum, le32_to_cpu(es->s_checksum))) {
+			if (blkid_probe_reset_buffers(pr))
+				return NULL;
+
+			es = (struct ext2_super_block *)
+			    blkid_probe_get_buffer_direct(pr, EXT_SB_OFF, sizeof(struct ext2_super_block));
+			if (!es)
+				return NULL;
+
+			csum = crc32c(~0, es, offsetof(struct ext2_super_block, s_checksum));
+			if (!blkid_probe_verify_csum(pr, csum, le32_to_cpu(es->s_checksum)))
+				return NULL;
+		}
 	}
 	if (fc)
 		*fc = le32_to_cpu(es->s_feature_compat);
