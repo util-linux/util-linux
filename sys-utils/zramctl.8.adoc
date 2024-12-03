@@ -51,6 +51,8 @@ Do not print a header line in status output.
 
 *-o*, *--output* _list_::
 Define the status output columns to be used. If no output arrangement is specified, then a default set is used. Use *--help* to get a list of all supported columns.
++
+The default list of columns may be extended if _list_ is specified in the format _+list_ (e.g., *zramctl -o+COMP-RATIO*).
 
 *--output-all*::
 Output all available columns.

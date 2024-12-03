@@ -68,6 +68,7 @@ enum {
 	COL_MEMLIMIT,
 	COL_MEMUSED,
 	COL_MIGRATED,
+	COL_COMPRATIO,
 	COL_MOUNTPOINT
 };
 
@@ -83,11 +84,12 @@ static const struct colinfo infos[] = {
 	[COL_MEMLIMIT]  = { "MEM-LIMIT",    5, SCOLS_FL_RIGHT, N_("memory limit used to store compressed data") },
 	[COL_MEMUSED]   = { "MEM-USED",     5, SCOLS_FL_RIGHT, N_("memory zram have been consumed to store compressed data") },
 	[COL_MIGRATED]  = { "MIGRATED",     5, SCOLS_FL_RIGHT, N_("number of objects migrated by compaction") },
+	[COL_COMPRATIO] = { "COMP-RATIO",   5, SCOLS_FL_RIGHT, N_("compression ratio: DATA/TOTAL") },
 	[COL_MOUNTPOINT]= { "MOUNTPOINT",0.10, SCOLS_FL_TRUNC, N_("where the device is mounted") },
 };
 
 static int columns[ARRAY_SIZE(infos) * 2] = {-1};
-static int ncolumns;
+static size_t ncolumns;
 
 enum {
 	MM_ORIG_DATA_SIZE = 0,
@@ -122,7 +124,7 @@ struct zram {
 static unsigned int raw, no_headings, inbytes;
 static struct path_cxt *__control;
 
-static int get_column_id(int num)
+static int get_column_id(size_t num)
 {
 	assert(num < ncolumns);
 	assert(columns[num] < (int) ARRAY_SIZE(infos));
@@ -341,7 +343,9 @@ static struct zram *find_free_zram(void)
 	return z;
 }
 
-static char *get_mm_stat(struct zram *z, size_t idx, int bytes)
+static int get_mm_stat(struct zram *z,
+			 size_t idx, int bytes,
+			 char **re_str, uint64_t *re_num)
 {
 	struct path_cxt *sysfs;
 	const char *name;
@@ -353,7 +357,7 @@ static char *get_mm_stat(struct zram *z, size_t idx, int bytes)
 
 	sysfs = zram_get_sysfs(z);
 	if (!sysfs)
-		return NULL;
+		return -ENOENT;
 
 	/* Linux >= 4.1 uses /sys/block/zram<id>/mm_stat */
 	if (!z->mm_stat && !z->mm_stat_probed) {
@@ -372,25 +376,50 @@ static char *get_mm_stat(struct zram *z, size_t idx, int bytes)
 	}
 
 	if (z->mm_stat) {
-		if (bytes)
-			return xstrdup(z->mm_stat[idx]);
+		if (re_str && bytes)
+			*re_str = xstrdup(z->mm_stat[idx]);
 
 		num = strtou64_or_err(z->mm_stat[idx], _("Failed to parse mm_stat"));
-		return size_to_human_string(SIZE_SUFFIX_1LETTER, num);
+		if (re_num)
+			*re_num = num;
+		if (re_str && !bytes)
+			*re_str = size_to_human_string(SIZE_SUFFIX_1LETTER, num);
+		return 0;
 	}
 
 	/* Linux < 4.1 uses /sys/block/zram<id>/<attrname> */
 	name = mm_stat_names[idx];
-	if (bytes) {
+	if (re_str && bytes)
 		ul_path_read_string(sysfs, &str, name);
-		return str;
 
+	if ((re_str && !bytes) || re_num) {
+		int rc = ul_path_read_u64(sysfs, &num, name);
+		if (rc != 0)
+			return rc;
+
+		if (re_str && !bytes)
+			*re_str = size_to_human_string(SIZE_SUFFIX_1LETTER, num);
+		if (re_num)
+			*re_num = num;
 	}
 
-	if (ul_path_read_u64(sysfs, &num, name) == 0)
-		return size_to_human_string(SIZE_SUFFIX_1LETTER, num);
+	return 0;
+}
 
-	return NULL;
+static char *get_mm_stat_string(struct zram *z, size_t idx, int bytes)
+{
+	char *str = NULL;
+
+	get_mm_stat(z, idx, bytes, &str, NULL);
+	return str;
+}
+
+static uint64_t get_mm_stat_number(struct zram *z, size_t idx)
+{
+	uint64_t num = 0;
+
+	get_mm_stat(z, idx, 0, NULL, &num);
+	return num;
 }
 
 static void fill_table_row(struct libscols_table *tb, struct zram *z)
@@ -413,7 +442,7 @@ static void fill_table_row(struct libscols_table *tb, struct zram *z)
 	if (!ln)
 		err(EXIT_FAILURE, _("failed to allocate output line"));
 
-	for (i = 0; i < (size_t) ncolumns; i++) {
+	for (i = 0; i < ncolumns; i++) {
 		char *str = NULL;
 
 		switch (get_column_id(i)) {
@@ -452,29 +481,34 @@ static void fill_table_row(struct libscols_table *tb, struct zram *z)
 				str = xstrdup(path);
 			break;
 		}
+		case COL_COMPRATIO:
+			xasprintf(&str, "%.4f",
+				(double) get_mm_stat_number(z, MM_ORIG_DATA_SIZE)
+				/ get_mm_stat_number(z, MM_MEM_USED_TOTAL));
+			break;
 		case COL_STREAMS:
 			ul_path_read_string(sysfs, &str, "max_comp_streams");
 			break;
 		case COL_ZEROPAGES:
-			str = get_mm_stat(z, MM_ZERO_PAGES, 1);
+			str = get_mm_stat_string(z, MM_ZERO_PAGES, 1);
 			break;
 		case COL_ORIG_SIZE:
-			str = get_mm_stat(z, MM_ORIG_DATA_SIZE, inbytes);
+			str = get_mm_stat_string(z, MM_ORIG_DATA_SIZE, inbytes);
 			break;
 		case COL_COMP_SIZE:
-			str = get_mm_stat(z, MM_COMPR_DATA_SIZE, inbytes);
+			str = get_mm_stat_string(z, MM_COMPR_DATA_SIZE, inbytes);
 			break;
 		case COL_MEMTOTAL:
-			str = get_mm_stat(z, MM_MEM_USED_TOTAL, inbytes);
+			str = get_mm_stat_string(z, MM_MEM_USED_TOTAL, inbytes);
 			break;
 		case COL_MEMLIMIT:
-			str = get_mm_stat(z, MM_MEM_LIMIT, inbytes);
+			str = get_mm_stat_string(z, MM_MEM_LIMIT, inbytes);
 			break;
 		case COL_MEMUSED:
-			str = get_mm_stat(z, MM_MEM_USED_MAX, inbytes);
+			str = get_mm_stat_string(z, MM_MEM_USED_MAX, inbytes);
 			break;
 		case COL_MIGRATED:
-			str = get_mm_stat(z, MM_NUM_MIGRATED, inbytes);
+			str = get_mm_stat_string(z, MM_NUM_MIGRATED, inbytes);
 			break;
 		}
 		if (str && scols_line_refer_data(ln, i, str))
@@ -498,7 +532,7 @@ static void status(struct zram *z)
 	scols_table_enable_raw(tb, raw);
 	scols_table_enable_noheadings(tb, no_headings);
 
-	for (i = 0; i < (size_t) ncolumns; i++) {
+	for (i = 0; i < ncolumns; i++) {
 		const struct colinfo *col = get_column_info(i);
 
 		if (!scols_table_new_column(tb, col->name, col->whint, col->flags))
@@ -591,6 +625,7 @@ int main(int argc, char **argv)
 	char *algorithm = NULL;
 	int rc = 0, c, find = 0, act = A_NONE;
 	struct zram *zram = NULL;
+	char *outarg = NULL;
 
 	enum {
 		OPT_RAW = CHAR_MAX + 1,
@@ -640,14 +675,10 @@ int main(int argc, char **argv)
 			find = 1;
 			break;
 		case 'o':
-			ncolumns = string_to_idarray(optarg,
-						     columns, ARRAY_SIZE(columns),
-						     column_name_to_id);
-			if (ncolumns < 0)
-				return EXIT_FAILURE;
+			outarg = optarg;
 			break;
 		case OPT_LIST_TYPES:
-			for (ncolumns = 0; (size_t)ncolumns < ARRAY_SIZE(infos); ncolumns++)
+			for (ncolumns = 0; ncolumns < ARRAY_SIZE(infos); ncolumns++)
 				columns[ncolumns] = ncolumns;
 			break;
 		case 's':
@@ -704,6 +735,12 @@ int main(int argc, char **argv)
 			columns[ncolumns++] = COL_STREAMS;
 			columns[ncolumns++] = COL_MOUNTPOINT;
 		}
+
+		if (outarg && string_add_to_idarray(outarg,
+					columns, ARRAY_SIZE(columns),
+					&ncolumns, column_name_to_id) < 0)
+	                return EXIT_FAILURE;
+
 		if (optind < argc) {
 			zram = new_zram(argv[optind++]);
 			if (!zram_exist(zram))
