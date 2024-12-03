@@ -84,15 +84,16 @@ extern char *strnchr(const char *s, size_t maxlen, int c);
 #endif
 
 /* caller guarantees n > 0 */
-static inline void xstrncpy(char *dest, const char *src, size_t n)
+static inline int xstrncpy(char *dest, const char *src, size_t n)
 {
 	size_t len = src ? strlen(src) : 0;
 
 	if (!len)
-		return;
+		return 0;
 	len = min(len, n - 1);
 	memcpy(dest, src, len);
 	dest[len] = 0;
+	return len;
 }
 
 /* This is like strncpy(), but based on memcpy(), so compilers and static
