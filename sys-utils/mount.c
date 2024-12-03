@@ -31,6 +31,7 @@
 #include "closestream.h"
 #include "canonicalize.h"
 #include "pathnames.h"
+#include "strv.h"
 
 #define XALLOC_EXIT_CODE MNT_EX_SYSERR
 #include "xalloc.h"
@@ -355,6 +356,51 @@ static void systemd_hint(void)
 # define systemd_hint()
 #endif
 
+static size_t libmount_mesgs(struct libmnt_context *cxt, char type)
+{
+	size_t n = mnt_context_get_nmesgs(cxt, type);
+	char **mesgs = mnt_context_get_mesgs(cxt);
+	char **s;
+
+	if (!n)
+		return 0;
+
+	/* Header */
+	switch (type) {
+		case 'e':
+			fputs(P_("mount error:\n", "mount errors:\n", n), stderr);
+			break;
+		case 'w':
+			fputs(P_("mount warning:\n", "mount warnings:\n", n), stdout);
+			break;
+		case 'i':
+			fputs(P_("mount info:\n", "mount infos:\n", n), stdout);
+			break;
+	}
+
+	/* messgaes */
+	STRV_FOREACH(s, mesgs) {
+		switch (type) {
+		case 'e':
+			if (!startswith(*s, "e "))
+				break;
+			fprintf(stderr, "      * %s\n", (*s) + 2);
+			break;
+		case 'w':
+			if (!startswith(*s, "w "))
+				break;
+			fprintf(stdout, "      * %s\n", (*s) + 2);
+			break;
+		case 'i':
+			if (!startswith(*s, "i "))
+				break;
+			fprintf(stdout, "      * %s\n", (*s) + 2);
+			break;
+		}
+	}
+
+	return n;
+}
 
 /*
  * Returns exit status (MNT_EX_*) and/or prints error message.
@@ -367,6 +413,12 @@ static int mk_exit_code(struct libmnt_context *cxt, int rc)
 	rc = mnt_context_get_excode(cxt, rc, buf, sizeof(buf));
 	tgt = mnt_context_get_target(cxt);
 
+	/* error messages
+	 *
+	 * Note that mnt_context_get_excode() is used for backward compatibility and
+	 * will fill @buf with error messages from mnt_context_get_mesgs(). Therefore,
+	 * calling libmount_mesgs(cxt, 'e') is currently unnecessary.
+	 */
 	if (*buf) {
 		const char *spec = tgt;
 		if (!spec)
@@ -380,6 +432,14 @@ static int mk_exit_code(struct libmnt_context *cxt, int rc)
 			fprintf(stderr, _("       dmesg(1) may have more information after failed mount system call.\n"));
 	}
 
+	/* warning messages */
+	libmount_mesgs(cxt, 'w');
+
+	/* info messages */
+	if (mnt_context_is_verbose(cxt))
+		libmount_mesgs(cxt, 'i');
+
+	/* extra mount(8) messages */
 	if (rc == MNT_EX_SUCCESS && mnt_context_get_status(cxt) == 1) {
 		selinux_warning(cxt, tgt);
 	}
