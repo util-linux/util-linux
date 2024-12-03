@@ -381,3 +381,8 @@ MOUNT_2_40 {
 	mnt_unref_lock;
 	mnt_monitor_veil_kernel;
 } MOUNT_2_39;
+
+MOUNT_2_41 {
+	mnt_context_get_nmesgs;
+	mnt_context_get_mesgs;
+} MOUNT_2_40;

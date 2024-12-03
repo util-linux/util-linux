@@ -45,6 +45,7 @@
 #include <sys/wait.h>
 
 #include "mount-api-utils.h"
+#include "strv.h"
 
 /**
  * mnt_new_context:
@@ -2716,54 +2717,73 @@ void mnt_context_syscall_reset_status(struct libmnt_context *cxt)
 	cxt->syscall_status = 0;
 	cxt->syscall_name = NULL;
 
-	free(cxt->errmsg);
-	cxt->errmsg = NULL;
+	mnt_context_reset_mesgs(cxt);
 }
 
-int mnt_context_set_errmsg(struct libmnt_context *cxt, const char *msg)
+void mnt_context_reset_mesgs(struct libmnt_context *cxt)
 {
-	char *p = NULL;
-
-	if (msg) {
-		p = strdup(msg);
-		if (!p)
-			return -ENOMEM;
-	}
-
-	free(cxt->errmsg);
-	cxt->errmsg = p;
-
-	return 0;
+	DBG(CXT, ul_debug("reset messages"));
+	strv_free(cxt->mesgs);
+	cxt->mesgs = NULL;
 }
 
-int mnt_context_append_errmsg(struct libmnt_context *cxt, const char *msg)
+int mnt_context_append_mesg(struct libmnt_context *cxt, const char *msg)
 {
-	if (cxt->errmsg) {
-		int rc = strappend(&cxt->errmsg, "; ");
-		if (rc)
-			return rc;
-	}
-
-	return strappend(&cxt->errmsg, msg);
+	return strv_extend(&cxt->mesgs, msg);
 }
 
-int mnt_context_sprintf_errmsg(struct libmnt_context *cxt, const char *msg, ...)
+int mnt_context_sprintf_mesg(struct libmnt_context *cxt, const char *msg, ...)
 {
 	int rc;
 	va_list ap;
-	char *p = NULL;
 
 	va_start(ap, msg);
-	rc = vasprintf(&p, msg, ap);
+	rc = strv_extendv(&cxt->mesgs, msg, ap);
 	va_end(ap);
 
-	if (rc < 0 || !p)
-		return rc;
+	return rc;
+}
 
-	free(cxt->errmsg);
-	cxt->errmsg = p;
+/**
+ * mnt_context_get_nmesgs:
+ * @cxt: mount context
+ * @type: type of message (see fsopen() man page) or zero for all types
+ *
+ * Returns: number of messages
+ *
+ * Since: 2.41
+ */
+size_t mnt_context_get_nmesgs(struct libmnt_context *cxt, char type)
+{
+	size_t n;
+	char **s;
 
-	return 0;
+	if (!cxt || !cxt->mesgs)
+		return 0;
+
+	n = strv_length(cxt->mesgs);
+	if (n && type) {
+		n = 0;
+		STRV_FOREACH(s, cxt->mesgs) {
+			if (*s && **s == type)
+				n++;
+		}
+	}
+
+	return n;
+}
+
+/**
+ * mnt_context_get_mesgs:
+ * @cxt: mount context
+ *
+ * Returns: NULL terminated array of messages or NULL
+ *
+ * Since: 2.41
+ */
+char **mnt_context_get_mesgs(struct libmnt_context *cxt)
+{
+	return cxt ? cxt->mesgs : NULL;
 }
 
 /**

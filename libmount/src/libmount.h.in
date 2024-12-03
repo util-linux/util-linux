@@ -886,6 +886,9 @@ extern int mnt_context_syscall_called(struct libmnt_context *cxt);
 
 extern int mnt_context_get_syscall_errno(struct libmnt_context *cxt);
 
+extern size_t mnt_context_get_nmesgs(struct libmnt_context *cxt, char type);
+extern char **mnt_context_get_mesgs(struct libmnt_context *cxt);
+
 extern int mnt_context_strerror(struct libmnt_context *cxt, char *buf,
 				size_t bufsiz)
 				__ul_attribute__((deprecated));

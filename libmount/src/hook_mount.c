@@ -70,8 +70,6 @@ static void save_fd_messages(struct libmnt_context *cxt, int fd)
 	uint8_t buf[BUFSIZ];
 	int rc;
 
-	mnt_context_set_errmsg(cxt, NULL);
-
 	while ((rc = read(fd, buf, sizeof(buf) - 1)) != -1) {
 
 		if (rc == 0)
@@ -82,10 +80,7 @@ static void save_fd_messages(struct libmnt_context *cxt, int fd)
 			buf[rc] = '\0';
 
 		DBG(CXT, ul_debug("message from kernel: \"%*s\"", rc, buf));
-
-		if (rc < 3 || strncmp((char *) buf, "e ", 2) != 0)
-			continue;
-		mnt_context_append_errmsg(cxt, ((char *) buf) + 2);
+		mnt_context_append_mesg(cxt, (char *) buf);
 	}
 }
 
@@ -96,11 +91,12 @@ static void hookset_set_syscall_status(struct libmnt_context *cxt,
 
 	mnt_context_syscall_save_status(cxt, name, x);
 
-	if (!x) {
-		api = get_sysapi(cxt);
-		if (api && api->fd_fs >= 0)
-			save_fd_messages(cxt, api->fd_fs);
-	}
+	if (!x)
+		mnt_context_reset_mesgs(cxt);	/* reset om error */
+
+	api = get_sysapi(cxt);
+	if (api && api->fd_fs >= 0)
+		save_fd_messages(cxt, api->fd_fs);
 }
 
 /*

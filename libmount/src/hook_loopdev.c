@@ -281,7 +281,8 @@ static int setup_loopdev(struct libmnt_context *cxt,
 			DBG(LOOP, ul_debugobj(cxt, "node lost"));
 
 			dev_t devno = loopcxt_get_devno(&lc);
-			mnt_context_sprintf_errmsg(cxt, _("device node %s (%u:%u) is lost"),
+			/* TRANSLATORS: Do not translate "e ". It is a message classifier. */
+			mnt_context_sprintf_mesg(cxt, _("e device node %s (%u:%u) is lost"),
 					loopcxt_get_device(&lc), major(devno), minor(devno));
 			rc = -EINVAL;
 		}

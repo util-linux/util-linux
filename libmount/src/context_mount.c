@@ -20,6 +20,7 @@
 
 #include "mountP.h"
 #include "strutils.h"
+#include "strv.h"
 
 #if defined(HAVE_SMACK)
 static int is_option(const char *name, const char *const *names)
@@ -1445,6 +1446,31 @@ done:
 	return rc;
 }
 
+static void join_err_mesgs(struct libmnt_context *cxt, char *buf, size_t bufsz)
+{
+	char **s;
+	int n = 0;
+
+	if (!cxt || !buf || strv_isempty(cxt->mesgs))
+		return;
+
+	STRV_FOREACH(s, cxt->mesgs) {
+		size_t len;
+
+		if (!bufsz)
+			break;
+		if (!startswith(*s, "e "))
+			continue;
+		if (n) {
+			len = xstrncpy(buf, "; ", bufsz);
+			buf += len, bufsz -= len;
+		}
+		len = xstrncpy(buf, (*s) + 2, bufsz);
+		buf += len, bufsz -= len;
+		n++;
+	}
+}
+
 int mnt_context_get_mount_excode(
 			struct libmnt_context *cxt,
 			int rc,
@@ -1490,8 +1516,10 @@ int mnt_context_get_mount_excode(
 	mnt_context_get_user_mflags(cxt, &uflags);	/* userspace flags */
 
 	if (!mnt_context_syscall_called(cxt)) {
-		if (buf && cxt->errmsg) {
-			xstrncpy(buf, cxt->errmsg, bufsz);
+
+		/* libmount errors already added to context log */
+		if (buf && mnt_context_get_nmesgs(cxt, 'e')) {
+			join_err_mesgs(cxt, buf, bufsz);
 			return MNT_EX_USAGE;
 		}
 
@@ -1634,16 +1662,20 @@ int mnt_context_get_mount_excode(
 	 */
 	syserr = mnt_context_get_syscall_errno(cxt);
 
-	if (buf && cxt->errmsg) {
-		if (cxt->syscall_name)
-			snprintf(buf, bufsz, _("%s system call failed: %s"),
-					cxt->syscall_name, cxt->errmsg);
-		else
-			xstrncpy(buf, cxt->errmsg, bufsz);
+	/* Error with already generated messages (by kernel or libmount) */
+	if (buf && mnt_context_get_nmesgs(cxt, 'e')) {
+		if (cxt->syscall_name) {
+			size_t len = snprintf(buf, bufsz,
+					_("%s system call failed: "),
+					cxt->syscall_name);
+			join_err_mesgs(cxt, buf + len, bufsz - len);
+		} else
+			join_err_mesgs(cxt, buf, bufsz);
 
 		return MNT_EX_FAIL;
 	}
 
+	/* Classic mount(2) errors */
 	switch(syserr) {
 	case EPERM:
 		if (!buf)
