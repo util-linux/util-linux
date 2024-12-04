@@ -73,4 +73,4 @@ if build_libsmartcols
   endif
 endif
 
-manadocs += ['libsmartcols/scols-filter.5.adoc']
+lib_smartcols_manadocs = files('scols-filter.5.adoc')

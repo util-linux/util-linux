@@ -51,7 +51,7 @@ lib_blkid_sources = '''
   src/partitions/sun.c
   src/partitions/ultrix.c
   src/partitions/unixware.c
-  
+
   src/superblocks/adaptec_raid.c
   src/superblocks/apfs.c
   src/superblocks/bcache.c
@@ -128,6 +128,8 @@ if LINUX
     src/topology/sysfs.c
   '''.split()
 endif
+
+lib_blkid_manadocs = files('libblkid.3.adoc')
 
 libblkid_sym = 'src/libblkid.sym'
 libblkid_sym_path = '@0@/@1@'.format(meson.current_source_dir(), libblkid_sym)
