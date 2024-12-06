@@ -58,4 +58,18 @@ ts_init_subtest "regular-file"
 wait "${MKFDS_PID}"
 ts_finalize_subtest
 
+ts_init_subtest "character-device"
+{
+    coproc MKFDS { "$TS_HELPER_MKFDS" rw-character-device $FD; }
+    if read -r -u "${MKFDS[0]}" PID; then
+	for o in NAME KNAME; do
+	    echo "# $o"
+	    "${TS_CMD_LSFD}" -n --hyperlink=always -o "$o" -p "${PID}" -Q "$EXPR" | replace_hostname | "$TS_CMD_HEXDUMP" -C
+	done
+	echo DONE >&"${MKFDS[1]}"
+    fi
+} > "$TS_OUTPUT" 2>&1
+wait "${MKFDS_PID}"
+ts_finalize_subtest
+
 ts_finalize

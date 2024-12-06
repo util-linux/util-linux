@@ -433,7 +433,9 @@ static bool file_fill_column(struct proc *proc __attribute__((__unused__)),
 		    && scols_line_set_data(ln, column_index, file->name))
 			err(EXIT_FAILURE, _("failed to add output data"));
 
-		if (uri && (!file->name || *file->name != '/')) {
+		ftype = file->stat.st_mode & S_IFMT;
+		if (uri && (!file->name || *file->name != '/'
+			    || (ftype != S_IFREG && ftype != S_IFDIR))) {
 			struct libscols_cell *ce = scols_line_get_cell(ln, column_index);
 			if (ce)
 				scols_cell_disable_uri(ce, 1);
