@@ -1364,18 +1364,21 @@ if opt and not is_disabler(exe)
   bashcompletions += ['more']
 endif
 
-exe = executable(
-  'hexdump',
-  hexdump_sources,
-  include_directories : includes,
-  link_with : [lib_common,
-               lib_tcolors],
-  install_dir : usrbin_exec_dir,
-  install : true)
+if not get_option('build-hexdump').disabled()
+  exe = executable(
+    'hexdump',
+    hexdump_sources,
+    include_directories : includes,
+    link_with : [lib_common,
+                 lib_tcolors],
+    install_dir : usrbin_exec_dir)
+else
+  exe = disabler()
+endif
 if not is_disabler(exe)
-  exes += exe
-  manadocs += ['text-utils/hexdump.1.adoc']
-  bashcompletions += ['hexdump']
+    exes += exe
+    manadocs += ['text-utils/hexdump.1.adoc']
+    bashcompletions += ['hexdump']
 endif
 
 opt = not get_option('build-lsmem').disabled()
@@ -2332,7 +2335,7 @@ exe2 = executable(
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
-if not is_disabler(exe)
+if opt and not is_disabler(exe)
   exes += [exe, exe2]
   manadocs += ['disk-utils/mkfs.cramfs.8.adoc','disk-utils/fsck.cramfs.8.adoc']
   bashcompletions += ['mkfs.cramfs', 'fsck.cramfs']
@@ -2738,7 +2741,7 @@ exe = executable(
                   lib_selinux],
   install : opt,
   build_by_default : opt)
-if not is_disabler(exe)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['login-utils/login.1.adoc']
 endif
@@ -2754,11 +2757,12 @@ exe = executable(
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
-if not is_disabler(exe)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['login-utils/sulogin.8.adoc']
 endif
 
+opt = not get_option('build-cal').disabled()
 exe = executable(
   'cal',
   cal_sources,
@@ -2767,10 +2771,13 @@ exe = executable(
                lib_tcolors],
   dependencies : [curses_libs],
   install_dir : usrbin_exec_dir,
-  install : true)
-exes += exe
-manadocs += ['misc-utils/cal.1.adoc']
-bashcompletions += ['cal']
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += ['misc-utils/cal.1.adoc']
+  bashcompletions += ['cal']
+endif
 
 opt = not get_option('build-logger').disabled()
 exe = executable(
@@ -3916,7 +3923,9 @@ run_target(
 
 
 manadocs += ['lib/terminal-colors.d.5.adoc']
-manadocs += ['libblkid/libblkid.3.adoc']
+if build_libblkid
+  manadocs += ['libblkid/libblkid.3.adoc']
+endif
 
 if build_libuuid
   manadocs += [
