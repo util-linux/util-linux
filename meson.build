@@ -367,15 +367,19 @@ if not lib_crypt.found()
   lib_crypt = cc.find_library('crypt', required : get_option('build-sulogin'))
 endif
 
+pam_requirement = get_option('build-login').enabled() or \
+    get_option('build-chfn-chsh').enabled() or \
+    get_option('build-su').enabled() or \
+    get_option('build-runuser').enabled()
 lib_pam = cc.find_library(
   'pam',
   disabler : true,
-  required : get_option('build-login').enabled() or \
-    get_option('build-chfn-chsh').enabled() or \
-    get_option('build-su').enabled() or \
-    get_option('build-runuser').enabled())
+  required : pam_requirement)
 if lib_pam.found()
-  lib_pam_misc = cc.find_library('pam_misc')
+  lib_pam_misc = cc.find_library(
+    'pam_misc',
+    disabler : true,
+    required : pam_requirement)
   lib_pam = [lib_pam, lib_pam_misc]
 else
   lib_pam_misc = declare_dependency()
