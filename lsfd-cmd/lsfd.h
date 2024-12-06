@@ -281,6 +281,32 @@ enum decode_source_level {
 
 void decode_source(char *buf, size_t bufsize, unsigned int dev_major, unsigned int dev_minor,
 		   enum decode_source_level level);
+
+/*
+ * Global settings
+ */
+struct lsfd_control {
+	struct libscols_table *tb;		/* output */
+	struct list_head procs;			/* list of all processes */
+
+	char *uri;				/* hyperlinks prefix */
+
+	bool		noheadings,
+			raw,
+			json,
+			notrunc,
+			threads,
+			show_main,		/* print main table */
+			show_summary,		/* print summary/counters */
+			sockets_only,		/* display only SOCKETS */
+			show_xmode;		/* XMODE column is enabled. */
+
+	struct libscols_filter *filter;		/* filter */
+	struct libscols_filter **ct_filters;	/* counters (NULL terminated array) */
+};
+
+extern struct lsfd_control *lsfd;
+
 /*
  * Name managing
  */

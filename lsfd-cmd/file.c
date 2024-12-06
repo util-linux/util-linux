@@ -428,6 +428,12 @@ static bool file_fill_column(struct proc *proc __attribute__((__unused__)),
 		if (file->name
 		    && scols_line_set_data(ln, column_index, file->name))
 			err(EXIT_FAILURE, _("failed to add output data"));
+
+		if (lsfd->uri && (!file->name || *file->name != '/')) {
+			struct libscols_cell *ce = scols_line_get_cell(ln, column_index);
+			if (ce)
+				scols_cell_disable_uri(ce, 1);
+		}
 		return true;
 	case COL_STTYPE:
 	case COL_TYPE:

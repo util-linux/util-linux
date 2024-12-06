@@ -250,4 +250,9 @@ SMARTCOLS_2.41 {
 	scols_line_sprintf;
 	scols_line_vprintf_column;
 	scols_line_sprintf_column;
+	scols_cell_set_uri;
+	scols_cell_get_uri;
+	scols_cell_disable_uri;
+	scols_column_set_uri;
+	scols_column_get_uri;
 } SMARTCOLS_2.40;

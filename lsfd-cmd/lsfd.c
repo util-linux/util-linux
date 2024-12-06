@@ -84,6 +84,8 @@ static int kcmp(pid_t pid1 __attribute__((__unused__)),
 
 #include "lsfd.h"
 
+struct lsfd_control *lsfd;
+
 UL_DEBUG_DEFINE_MASK(lsfd);
 UL_DEBUG_DEFINE_MASKNAMES(lsfd) = UL_DEBUG_EMPTY_MASKNAMES;
 
@@ -545,24 +547,6 @@ struct filler_data {
 	struct file *file;
 };
 
-struct lsfd_control {
-	struct libscols_table *tb;		/* output */
-	struct list_head procs;			/* list of all processes */
-
-	unsigned int	noheadings : 1,
-			raw : 1,
-			json : 1,
-			notrunc : 1,
-			threads : 1,
-			show_main : 1,		/* print main table */
-			show_summary : 1,	/* print summary/counters */
-			sockets_only : 1,	/* display only SOCKETS */
-			show_xmode : 1;		/* XMODE column is enabled. */
-
-	struct libscols_filter *filter;		/* filter */
-	struct libscols_filter **ct_filters;	/* counters (NULL terminated array) */
-};
-
 static void *proc_tree;			/* for tsearch/tfind */
 
 static int proc_tree_compare(const void *a, const void *b)
@@ -602,18 +586,23 @@ static int get_column_id(int num)
 	return columns[num];
 }
 
-static const struct colinfo *get_column_info(int num)
+static const struct colinfo *get_column_info(int id)
 {
-	return &infos[ get_column_id(num) ];
+	return &infos[ id ];
 }
 
 static struct libscols_column *add_column(struct libscols_table *tb,
-					  const struct colinfo *col, int extra)
+					  int id, int extra)
 {
+	const struct colinfo *col;
 	struct libscols_column *cl;
-	int flags = col->flags;
 
-	cl = scols_table_new_column(tb, col->name, col->whint, flags | extra);
+	assert(id < LSFD_N_COLS);
+
+	col = get_column_info(id);
+
+	cl = scols_table_new_column(tb, col->name, col->whint,
+				col->flags | extra);
 	if (cl) {
 		scols_column_set_json_type(cl, col->json_type);
 		if (col->flags & SCOLS_FL_WRAP) {
@@ -623,22 +612,23 @@ static struct libscols_column *add_column(struct libscols_table *tb,
 						  NULL);
 			scols_column_set_safechars(cl, "\n");
 		}
+		if (!(extra & SCOLS_FL_HIDDEN) && lsfd->uri &&
+		    (id == COL_NAME || id == COL_KNAME))
+			scols_column_set_uri(cl, lsfd->uri);
 	}
 
 	return cl;
 }
 
-static struct libscols_column *add_column_by_id(struct lsfd_control *ctl,
-						int colid, int extra)
+static struct libscols_column *add_hidden_column(struct lsfd_control *ctl,
+						 int colid)
 {
 	struct libscols_column *cl;
 
 	if (ncolumns >= ARRAY_SIZE(columns))
 		errx(EXIT_FAILURE, _("too many columns are added via filter expression"));
 
-	assert(colid < LSFD_N_COLS);
-
-	cl = add_column(ctl->tb, infos + colid, extra);
+	cl = add_column(ctl->tb, colid, SCOLS_FL_HIDDEN);
 	if (!cl)
 		err(EXIT_FAILURE, _("failed to allocate output column"));
 	columns[ncolumns++] = colid;
@@ -2220,7 +2210,7 @@ static struct libscols_filter *new_filter(const char *expr, bool debug, struct l
 		if (!col) {
 			int id = column_name_to_id(name, strlen(name));
 			if (id >= 0)
-				col = add_column_by_id(ctl, id, SCOLS_FL_HIDDEN);
+				col = add_hidden_column(ctl, id);
 			if (!col) {
 				nerrs++;	/* report all unknown columns */
 				continue;
@@ -2502,6 +2492,7 @@ int main(int argc, char *argv[])
 		OPT_SUMMARY,
 		OPT_DUMP_COUNTERS,
 		OPT_DROP_PRIVILEGE,
+		OPT_HYPERLINK
 	};
 	static const struct option longopts[] = {
 		{ "noheadings", no_argument, NULL, 'n' },
@@ -2521,8 +2512,11 @@ int main(int argc, char *argv[])
 		{ "dump-counters",no_argument, NULL, OPT_DUMP_COUNTERS },
 		{ "list-columns",no_argument, NULL, 'H' },
 		{ "_drop-privilege",no_argument,NULL,OPT_DROP_PRIVILEGE },
+		{ "hyperlink",  optional_argument, NULL, OPT_HYPERLINK },
 		{ NULL, 0, NULL, 0 },
 	};
+
+	lsfd = &ctl;	/* global */
 
 	lsfd_init_debug();
 
@@ -2603,6 +2597,11 @@ int main(int argc, char *argv[])
 			if (setuid(1) == -1)
 				err(EXIT_FAILURE, _("failed to drop privilege"));
 			break;
+		case OPT_HYPERLINK:
+			if (hyperlinkwanted_or_err(optarg,
+					_("invalid hyperlink argument")))
+				lsfd->uri = xgethosturi(NULL);
+			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
 		case 'h':
@@ -2652,8 +2651,7 @@ int main(int argc, char *argv[])
 
 	/* create output columns */
 	for (i = 0; i < ncolumns; i++) {
-		const struct colinfo *col = get_column_info(i);
-		struct libscols_column *cl = add_column(ctl.tb, col, 0);
+		struct libscols_column *cl = add_column(ctl.tb, get_column_id(i), 0);
 
 		if (!cl)
 			err(EXIT_FAILURE, _("failed to allocate output column"));
