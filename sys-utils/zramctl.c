@@ -349,7 +349,6 @@ static int get_mm_stat(struct zram *z,
 {
 	struct path_cxt *sysfs;
 	const char *name;
-	char *str = NULL;
 	uint64_t num;
 
 	assert(idx < ARRAY_SIZE(mm_stat_names));
@@ -361,6 +360,7 @@ static int get_mm_stat(struct zram *z,
 
 	/* Linux >= 4.1 uses /sys/block/zram<id>/mm_stat */
 	if (!z->mm_stat && !z->mm_stat_probed) {
+		char *str = NULL;
 		if (ul_path_read_string(sysfs, &str, "mm_stat") > 0 && str) {
 			z->mm_stat = strv_split(str, " ");
 
@@ -390,7 +390,7 @@ static int get_mm_stat(struct zram *z,
 	/* Linux < 4.1 uses /sys/block/zram<id>/<attrname> */
 	name = mm_stat_names[idx];
 	if (re_str && bytes)
-		ul_path_read_string(sysfs, &str, name);
+		ul_path_read_string(sysfs, re_str, name);
 
 	if ((re_str && !bytes) || re_num) {
 		int rc = ul_path_read_u64(sysfs, &num, name);
