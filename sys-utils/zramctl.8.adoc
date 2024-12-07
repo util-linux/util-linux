@@ -54,6 +54,9 @@ Define the status output columns to be used. If no output arrangement is specifi
 +
 The default list of columns may be extended if _list_ is specified in the format _+list_ (e.g., *zramctl -o+COMP-RATIO*).
 
+*-p*, *--params*::
+Set the algorithm parameters, for example, *level=9 dict=/etc/dictionary* to set compression level and pre-trained dictionary. Parameters are algorithm specific.
+
 *--output-all*::
 Output all available columns.
 
