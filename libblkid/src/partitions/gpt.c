@@ -294,7 +294,7 @@ static struct gpt_header *get_gpt_header(
 
 	/* Validate entries */
 	crc = count_crc32((unsigned char *) *ents, esz, 0, 0);
-	if (crc != le32_to_cpu(h->partition_entry_array_crc32)) {
+	if (!blkid_probe_verify_csum(pr, crc, le32_to_cpu(h->partition_entry_array_crc32))) {
 		DBG(LOWPROBE, ul_debug("GPT entries corrupted"));
 		return NULL;
 	}
