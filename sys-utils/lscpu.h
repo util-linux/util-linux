@@ -260,6 +260,7 @@ struct lscpu_cxt {
 		     show_compatible : 1,
 		     hex : 1,
 		     json : 1,
+		     raw : 1,
 		     bytes : 1;
 
 	int is_cluster; /* For aarch64 if the machine doesn't have ACPI PPTT */
