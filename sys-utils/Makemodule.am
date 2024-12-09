@@ -570,6 +570,11 @@ hwclock_SOURCES += \
 	lib/monotonic.c
 hwclock_LDADD += $(REALTIME_LIBS)
 endif
+if HURD
+hwclock_SOURCES += \
+	sys-utils/hwclock-rtc.c \
+	lib/monotonic.c
+endif
 if HAVE_AUDIT
 hwclock_LDADD += -laudit
 endif
