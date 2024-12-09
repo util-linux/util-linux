@@ -78,6 +78,9 @@ When specifying the _list_ argument, the string of option, equal sign (=), and _
 +
 The default list of columns may be extended if list is specified in the format +list (e.g., lscpu -p=+MHZ).
 
+*-r*, *--raw*::
+Produce output in its raw format. This option is only applicable for the *--extended*, *--parse*, and *--caches* outputs.
+
 *-s*, *--sysroot* _directory_::
 Gather CPU data for a Linux instance other than the instance from which the *lscpu* command is issued. The specified _directory_ is the system root of the Linux instance to be inspected.
 

@@ -598,6 +598,8 @@ static void print_caches_readable(struct lscpu_cxt *cxt, int cols[], size_t ncol
 		scols_table_enable_json(tb, 1);
 		scols_table_set_name(tb, "caches");
 	}
+	if (cxt->raw)
+		scols_table_enable_raw(tb, 1);
 
 	for (i = 0; i < ncols; i++) {
 		struct lscpu_coldesc *cd = &coldescs_cache[cols[i]];
@@ -753,6 +755,8 @@ static void print_cpus_readable(struct lscpu_cxt *cxt, int cols[], size_t ncols)
 		scols_table_enable_json(tb, 1);
 		scols_table_set_name(tb, "cpus");
 	}
+	if (cxt->raw)
+		scols_table_enable_raw(tb, 1);
 
 	for (i = 0; i < ncols; i++) {
 		data = get_cell_header(cxt, cols[i], buf, sizeof(buf));
@@ -1183,6 +1187,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -J, --json              use JSON for default or extended format\n"), out);
 	fputs(_(" -e, --extended[=<list>] print out an extended readable format\n"), out);
 	fputs(_(" -p, --parse[=<list>]    print out a parsable format\n"), out);
+	fputs(_(" -r, --raw               use raw output format (for -e, -p and -C)\n"), out);
 	fputs(_(" -s, --sysroot <dir>     use specified directory as system root\n"), out);
 	fputs(_(" -x, --hex               print hexadecimal masks rather than lists of CPUs\n"), out);
 	fputs(_(" -y, --physical          print physical instead of logical IDs\n"), out);
@@ -1226,6 +1231,7 @@ int main(int argc, char *argv[])
 		{ "extended",	optional_argument, NULL, 'e' },
 		{ "json",       no_argument,       NULL, 'J' },
 		{ "parse",	optional_argument, NULL, 'p' },
+		{ "raw",        no_argument,       NULL, 'r' },
 		{ "sysroot",	required_argument, NULL, 's' },
 		{ "physical",	no_argument,	   NULL, 'y' },
 		{ "hex",	no_argument,	   NULL, 'x' },
@@ -1249,7 +1255,7 @@ int main(int argc, char *argv[])
 
 	cxt = lscpu_new_context();
 
-	while ((c = getopt_long(argc, argv, "aBbC::ce::hJp::s:xyV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "aBbC::ce::hJp::rs:xyV", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -1288,6 +1294,9 @@ int main(int argc, char *argv[])
 				outarg = optarg;
 			}
 			cxt->mode = c == 'p' ? LSCPU_OUTPUT_PARSABLE : LSCPU_OUTPUT_READABLE;
+			break;
+		case 'r':
+			cxt->raw = 1;
 			break;
 		case 's':
 			cxt->prefix = optarg;
