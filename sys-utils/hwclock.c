@@ -989,7 +989,7 @@ static void determine_clock_access_method(const struct hwclock_control *ctl)
 	if (ctl->directisa)
 		ur = probe_for_cmos_clock();
 #endif
-#ifdef __linux__
+#if defined(__linux__) || defined(__GNU__)
 	if (!ur)
 		ur = probe_for_rtc_clock(ctl);
 #endif

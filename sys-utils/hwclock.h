@@ -36,8 +36,10 @@ struct hwclock_control {
 #if defined(__linux__) && defined(__alpha__)
 	char *epoch_option;
 #endif
-#ifdef __linux__
+#if defined(__linux__) || defined(__GNU__)
 	char *rtc_dev_name;
+#endif
+#ifdef __linux__
 	uint32_t param_idx;	/* --param-index <n> */
 #endif
 	char *param_get_option;
