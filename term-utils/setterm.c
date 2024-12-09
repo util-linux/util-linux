@@ -235,7 +235,7 @@ static int parse_ulhb_color(char **av, int *oi)
 	if (!is_valid_color(color) || color == DEFAULT)
 		errx(EXIT_FAILURE, "%s: %s", _("argument error"), color_name);
 	if (bright && (color == BLACK || color == GREY))
-		errx(EXIT_FAILURE, _("argument error: bright %s is not supported"), color_name);
+		errx(EXIT_FAILURE, _("argument error: bright color %s is not supported"), color_name);
 
 	if (bright)
 		color |= 8;
