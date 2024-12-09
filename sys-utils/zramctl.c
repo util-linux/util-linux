@@ -581,16 +581,17 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Set up and control zram devices.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --algorithm <alg>     compression algorithm to use\n"), out);
-	fputs(_(" -b, --bytes               print sizes in bytes rather than in human readable format\n"), out);
-	fputs(_(" -f, --find                find a free device\n"), out);
-	fputs(_(" -n, --noheadings          don't print headings\n"), out);
-	fputs(_(" -o, --output <list>       columns to use for status output\n"), out);
-	fputs(_("     --output-all          output all columns\n"), out);
-	fputs(_("     --raw                 use raw status output format\n"), out);
-	fputs(_(" -r, --reset               reset all specified devices\n"), out);
-	fputs(_(" -s, --size <size>         device size\n"), out);
-	fputs(_(" -t, --streams <number>    number of compression streams\n"), out);
+	fputs(_(" -a, --algorithm <alg>              compression algorithm to use\n"), out);
+	fputs(_(" -b, --bytes                        print sizes in bytes rather than in human readable format\n"), out);
+	fputs(_(" -f, --find                         find a free device\n"), out);
+	fputs(_(" -n, --noheadings                   don't print headings\n"), out);
+	fputs(_(" -o, --output <list>                columns to use for status output\n"), out);
+	fputs(_("     --output-all                   output all columns\n"), out);
+	fputs(_(" -p, --algorithm-params <params>    algorithm parameters to use\n"), out);
+	fputs(_("     --raw                          use raw status output format\n"), out);
+	fputs(_(" -r, --reset                        reset all specified devices\n"), out);
+	fputs(_(" -s, --size <size>                  device size\n"), out);
+	fputs(_(" -t, --streams <number>             number of compression streams\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(27));
@@ -623,6 +624,7 @@ int main(int argc, char **argv)
 {
 	uintmax_t size = 0, nstreams = 0;
 	char *algorithm = NULL;
+	char *algorithm_params = NULL;
 	int rc = 0, c, find = 0, act = A_NONE;
 	struct zram *zram = NULL;
 	char *outarg = NULL;
@@ -633,18 +635,19 @@ int main(int argc, char **argv)
 	};
 
 	static const struct option longopts[] = {
-		{ "algorithm", required_argument, NULL, 'a' },
-		{ "bytes",     no_argument, NULL, 'b' },
-		{ "find",      no_argument, NULL, 'f' },
-		{ "help",      no_argument, NULL, 'h' },
-		{ "output",    required_argument, NULL, 'o' },
-		{ "output-all",no_argument, NULL, OPT_LIST_TYPES },
-		{ "noheadings",no_argument, NULL, 'n' },
-		{ "reset",     no_argument, NULL, 'r' },
-		{ "raw",       no_argument, NULL, OPT_RAW },
-		{ "size",      required_argument, NULL, 's' },
-		{ "streams",   required_argument, NULL, 't' },
-		{ "version",   no_argument, NULL, 'V' },
+		{ "algorithm",       required_argument, NULL, 'a' },
+		{ "bytes",           no_argument, NULL, 'b' },
+		{ "find",            no_argument, NULL, 'f' },
+		{ "help",            no_argument, NULL, 'h' },
+		{ "output",          required_argument, NULL, 'o' },
+		{ "output-all",      no_argument, NULL, OPT_LIST_TYPES },
+		{ "algorithm-params",required_argument, NULL, 'p' },
+		{ "noheadings",      no_argument, NULL, 'n' },
+		{ "reset",           no_argument, NULL, 'r' },
+		{ "raw",             no_argument, NULL, OPT_RAW },
+		{ "size",            required_argument, NULL, 's' },
+		{ "streams",         required_argument, NULL, 't' },
+		{ "version",         no_argument, NULL, 'V' },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -660,7 +663,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "a:bfho:nrs:t:V", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "a:bfho:p:nrs:t:V", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -680,6 +683,9 @@ int main(int argc, char **argv)
 		case OPT_LIST_TYPES:
 			for (ncolumns = 0; ncolumns < ARRAY_SIZE(infos); ncolumns++)
 				columns[ncolumns] = ncolumns;
+			break;
+		case 'p':
+			algorithm_params = optarg;
 			break;
 		case 's':
 			size = strtosize_or_err(optarg, _("failed to parse size"));
@@ -716,8 +722,8 @@ int main(int argc, char **argv)
 	if (act != A_RESET && optind + 1 < argc)
 		errx(EXIT_FAILURE, _("only one <device> at a time is allowed"));
 
-	if ((act == A_STATUS || act == A_FINDONLY) && (algorithm || nstreams))
-		errx(EXIT_FAILURE, _("options --algorithm and --streams "
+	if ((act == A_STATUS || act == A_FINDONLY) && (algorithm || algorithm_params || nstreams))
+		errx(EXIT_FAILURE, _("options --algorithm, --algorithm-params, and --streams "
 				     "must be combined with --size"));
 
 	ul_path_init_debug();
@@ -794,6 +800,10 @@ int main(int argc, char **argv)
 		if (algorithm &&
 		    zram_set_strparm(zram, "comp_algorithm", algorithm))
 			err(EXIT_FAILURE, _("%s: failed to set algorithm"), zram->devname);
+
+		if (algorithm_params &&
+		    zram_set_strparm(zram, "algorithm_params", algorithm_params))
+			err(EXIT_FAILURE, _("%s: failed to set algorithm params"), zram->devname);
 
 		if (zram_set_u64parm(zram, "disksize", size))
 			err(EXIT_FAILURE, _("%s: failed to set disksize (%ju bytes)"),
