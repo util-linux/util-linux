@@ -352,7 +352,6 @@ static int i386_iopl(const int level)
 # else
 static int i386_iopl(const int level __attribute__ ((__unused__)))
 {
-	extern int ioperm(unsigned long from, unsigned long num, int turn_on);
 	return ioperm(clock_ctl_addr, 2, 1);
 }
 # endif
