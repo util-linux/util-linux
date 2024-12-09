@@ -581,17 +581,17 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Set up and control zram devices.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --algorithm <alg>     compression algorithm to use\n"), out);
-	fputs(_(" -b, --bytes               print sizes in bytes rather than in human readable format\n"), out);
-	fputs(_(" -f, --find                find a free device\n"), out);
-	fputs(_(" -n, --noheadings          don't print headings\n"), out);
-	fputs(_(" -o, --output <list>       columns to use for status output\n"), out);
-	fputs(_("     --output-all          output all columns\n"), out);
-	fputs(_(" -p, --params <params>     algorithm parameters to use\n"), out);
-	fputs(_("     --raw                 use raw status output format\n"), out);
-	fputs(_(" -r, --reset               reset all specified devices\n"), out);
-	fputs(_(" -s, --size <size>         device size\n"), out);
-	fputs(_(" -t, --streams <number>    number of compression streams\n"), out);
+	fputs(_(" -a, --algorithm <alg>              compression algorithm to use\n"), out);
+	fputs(_(" -b, --bytes                        print sizes in bytes rather than in human readable format\n"), out);
+	fputs(_(" -f, --find                         find a free device\n"), out);
+	fputs(_(" -n, --noheadings                   don't print headings\n"), out);
+	fputs(_(" -o, --output <list>                columns to use for status output\n"), out);
+	fputs(_("     --output-all                   output all columns\n"), out);
+	fputs(_(" -p, --algorithm-params <params>    algorithm parameters to use\n"), out);
+	fputs(_("     --raw                          use raw status output format\n"), out);
+	fputs(_(" -r, --reset                        reset all specified devices\n"), out);
+	fputs(_(" -s, --size <size>                  device size\n"), out);
+	fputs(_(" -t, --streams <number>             number of compression streams\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(27));
@@ -635,19 +635,19 @@ int main(int argc, char **argv)
 	};
 
 	static const struct option longopts[] = {
-		{ "algorithm", required_argument, NULL, 'a' },
-		{ "bytes",     no_argument, NULL, 'b' },
-		{ "find",      no_argument, NULL, 'f' },
-		{ "help",      no_argument, NULL, 'h' },
-		{ "output",    required_argument, NULL, 'o' },
-		{ "output-all",no_argument, NULL, OPT_LIST_TYPES },
-		{ "params",    required_argument, NULL, 'p' },
-		{ "noheadings",no_argument, NULL, 'n' },
-		{ "reset",     no_argument, NULL, 'r' },
-		{ "raw",       no_argument, NULL, OPT_RAW },
-		{ "size",      required_argument, NULL, 's' },
-		{ "streams",   required_argument, NULL, 't' },
-		{ "version",   no_argument, NULL, 'V' },
+		{ "algorithm",       required_argument, NULL, 'a' },
+		{ "bytes",           no_argument, NULL, 'b' },
+		{ "find",            no_argument, NULL, 'f' },
+		{ "help",            no_argument, NULL, 'h' },
+		{ "output",          required_argument, NULL, 'o' },
+		{ "output-all",      no_argument, NULL, OPT_LIST_TYPES },
+		{ "algorithm-params",required_argument, NULL, 'p' },
+		{ "noheadings",      no_argument, NULL, 'n' },
+		{ "reset",           no_argument, NULL, 'r' },
+		{ "raw",             no_argument, NULL, OPT_RAW },
+		{ "size",            required_argument, NULL, 's' },
+		{ "streams",         required_argument, NULL, 't' },
+		{ "version",         no_argument, NULL, 'V' },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -723,7 +723,7 @@ int main(int argc, char **argv)
 		errx(EXIT_FAILURE, _("only one <device> at a time is allowed"));
 
 	if ((act == A_STATUS || act == A_FINDONLY) && (algorithm || algorithm_params || nstreams))
-		errx(EXIT_FAILURE, _("options --algorithm, --params, and --streams "
+		errx(EXIT_FAILURE, _("options --algorithm, --algorithm-params, and --streams "
 				     "must be combined with --size"));
 
 	ul_path_init_debug();
