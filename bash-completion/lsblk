@@ -71,6 +71,7 @@ _lsblk_module()
 				--fs
 				--filter
 				--highlight
+				--hyperlink
 				--ct
 				--ct-filter
 				--help

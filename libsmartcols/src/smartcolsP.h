@@ -86,11 +86,13 @@ struct libscols_cell {
 	char	*data;
 	size_t	datasiz;
 	char	*color;
+	char	*uri;
 	void    *userdata;
 	int	flags;
 	size_t	width;
 
-	unsigned int is_filled : 1;
+	unsigned int is_filled : 1,
+		     no_uri : 1;
 };
 
 extern int scols_line_move_cells(struct libscols_line *ln, size_t newn, size_t oldn);
@@ -123,6 +125,8 @@ struct libscols_column {
 
 	int	flags;
 	char	*color;		/* default column color */
+	char	*uri;		/* default column URI prefix */
+	struct ul_buffer uri_buf; /* temporary buffer to compose URIs */
 	char	*safechars;	/* do not encode this bytes */
 
 	int (*cmpfunc)(struct libscols_cell *,

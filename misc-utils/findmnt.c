@@ -50,6 +50,7 @@
 #include "mangle.h"
 #include "buffer.h"
 #include "column-list-table.h"
+#include "ttyutils.h"
 
 #include "findmnt.h"
 
@@ -1555,9 +1556,12 @@ static void __attribute__((__noreturn__)) list_colunms(struct findmnt *findmnt)
 	exit(EXIT_SUCCESS);
 }
 
-static struct libscols_table *init_scols_table(unsigned int flags, bool use_filter)
+static struct libscols_table *init_scols_table(struct findmnt *findmnt)
 {
 	struct libscols_table *table = scols_new_table();
+	unsigned int flags = findmnt->flags;
+	bool use_filter = findmnt->filter? true: false;
+
 	if (!table) {
 		warn(_("failed to allocate output table"));
 		goto leave;
@@ -1592,6 +1596,10 @@ static struct libscols_table *init_scols_table(unsigned int flags, bool use_filt
 			warn(_("failed to allocate output column"));
 			goto leave;
 		}
+
+		if (findmnt->uri && id == COL_TARGET)
+			scols_column_set_uri(cl, findmnt->uri);
+
 		/* multi-line cells (now used for SOURCES) */
 		if (fl & SCOLS_FL_WRAP)
 			scols_column_set_wrapfunc(cl,
@@ -1688,7 +1696,8 @@ int main(int argc, char *argv[])
 		FINDMNT_OPT_PSEUDO,
 		FINDMNT_OPT_REAL,
 		FINDMNT_OPT_VFS_ALL,
-		FINDMNT_OPT_SHADOWED
+		FINDMNT_OPT_SHADOWED,
+		FINDMNT_OPT_HYPERLINK
 	};
 
 	static const struct option longopts[] = {
@@ -1737,6 +1746,7 @@ int main(int argc, char *argv[])
 		{ "pseudo",	    no_argument,       NULL, FINDMNT_OPT_PSEUDO	 },
 		{ "vfs-all",	    no_argument,       NULL, FINDMNT_OPT_VFS_ALL },
 		{ "shadowed",       no_argument,       NULL, FINDMNT_OPT_SHADOWED },
+		{ "hyperlink",      optional_argument, NULL, FINDMNT_OPT_HYPERLINK },
 		{ "list-columns",   no_argument,       NULL, 'H' },
 		{ NULL, 0, NULL, 0 }
 	};
@@ -1930,7 +1940,11 @@ int main(int argc, char *argv[])
 		case FINDMNT_OPT_SHADOWED:
 			findmnt.flags |= FL_SHADOWED;
 			break;
-
+		case FINDMNT_OPT_HYPERLINK:
+			if (hyperlinkwanted_or_err(optarg,
+					_("invalid hyperlink argument")))
+				findmnt.uri = xgethosturi(NULL);
+			break;
 		case 'H':
 			collist = 1;
 			break;
@@ -2061,11 +2075,12 @@ int main(int argc, char *argv[])
 	 * initialize libsmartcols
 	 */
 	scols_init_debug(0);
-	table = init_scols_table(findmnt.flags, findmnt.filter? true: false);
+	table = init_scols_table(&findmnt);
 	if (!table)
 		goto leave;
 
 	init_scols_filter(table, findmnt.filter, findmnt.flags);
+
 
 	/*
 	 * Fill in data to the output table

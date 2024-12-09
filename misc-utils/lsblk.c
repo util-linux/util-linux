@@ -1274,10 +1274,14 @@ static void device_fill_scols_cell(struct lsblk_device *dev,
 	ce = scols_line_get_cell(ln, colnum);
 	if (!ce)
 		return;
+
 	rc = datasiz ? scols_cell_refer_memory(ce, data, datasiz)
 		     : scols_cell_refer_data(ce, data);
 	if (rc)
 		err(EXIT_FAILURE, _("failed to add output data"));
+
+	if (lsblk->uri && (id == COL_TARGETS || id == COL_TARGET) && dev->is_swap)
+		scols_cell_disable_uri(ce, 1);
 }
 
 static int filter_filler_cb(
@@ -2407,7 +2411,8 @@ int main(int argc, char *argv[])
 		OPT_COUNTER_FILTER,
 		OPT_COUNTER,
 		OPT_HIGHLIGHT,
-		OPT_PROPERTIES_BY
+		OPT_PROPERTIES_BY,
+		OPT_HYPERLINK
 	};
 
 	static const struct option longopts[] = {
@@ -2424,6 +2429,7 @@ int main(int argc, char *argv[])
 		{ "output-all", no_argument,       NULL, 'O' },
 		{ "filter",     required_argument, NULL, 'Q' },
 		{ "highlight",  required_argument, NULL, OPT_HIGHLIGHT },
+		{ "hyperlink",  optional_argument, NULL, OPT_HYPERLINK },
 		{ "merge",      no_argument,       NULL, 'M' },
 		{ "perms",      no_argument,       NULL, 'm' },
 		{ "noheadings",	no_argument,       NULL, 'n' },
@@ -2667,6 +2673,11 @@ int main(int argc, char *argv[])
 			if (lsblk_set_properties_method(optarg) < 0)
 				errtryhelp(EXIT_FAILURE);
 			break;
+		case OPT_HYPERLINK:
+			if (hyperlinkwanted_or_err(optarg,
+					_("invalid hyperlink argument")))
+				lsblk->uri = xgethosturi(NULL);
+			break;
 		case 'H':
 			collist = 1;
 			break;
@@ -2792,6 +2803,9 @@ int main(int argc, char *argv[])
 		/* multi-line cells (now used for MOUNTPOINTS) */
 		if (fl & SCOLS_FL_WRAP)
 			scols_column_set_wrapfunc(cl, NULL, scols_wrapzero_nextchunk, NULL);
+
+		if (lsblk->uri && (id == COL_TARGET || id == COL_TARGETS))
+			scols_column_set_uri(cl, lsblk->uri);
 
 		set_column_type(ci, cl, fl);
 	}
