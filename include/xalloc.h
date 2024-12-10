@@ -193,4 +193,21 @@ char *xgethostname(void)
 	return name;
 }
 
+static inline
+__attribute__((warn_unused_result))
+char *xgethosturi(const char *proto)
+{
+	char *n = xgethostname();
+	char *uri = NULL;
+
+	if (!proto)
+		proto = "file://";
+	if (!n)
+		return xstrdup(proto);
+
+	xasprintf(&uri, "%s%s", proto, n);
+	free(n);
+	return uri;
+}
+
 #endif

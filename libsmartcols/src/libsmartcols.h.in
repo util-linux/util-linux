@@ -207,6 +207,10 @@ extern size_t scols_cell_get_datasiz(struct libscols_cell *ce);
 extern int scols_cell_set_color(struct libscols_cell *ce, const char *color);
 extern const char *scols_cell_get_color(const struct libscols_cell *ce);
 
+extern int scols_cell_set_uri(struct libscols_cell *ce, const char *uri);
+extern const char *scols_cell_get_uri(const struct libscols_cell *ce);
+extern int scols_cell_disable_uri(struct libscols_cell *ce, int disable);
+
 extern int scols_cell_set_flags(struct libscols_cell *ce, int flags);
 extern int scols_cell_get_flags(const struct libscols_cell *ce);
 extern int scols_cell_get_alignment(const struct libscols_cell *ce);
@@ -250,6 +254,9 @@ extern struct libscols_cell *scols_column_get_header(struct libscols_column *cl)
 extern int scols_column_set_color(struct libscols_column *cl, const char *color);
 extern const char *scols_column_get_color(const struct libscols_column *cl);
 extern struct libscols_table *scols_column_get_table(const struct libscols_column *cl);
+
+extern int scols_column_set_uri(struct libscols_column *cl, const char *uri);
+extern const char *scols_column_get_uri(const struct libscols_column *cl);
 
 extern int scols_column_set_name(struct libscols_column *cl, const char *name);
 extern const char *scols_column_get_name(struct libscols_column *cl);
