@@ -962,6 +962,24 @@ int mnt_context_finalize_mount(struct libmnt_context *cxt)
 	return rc;
 }
 
+static int is_erofs_regfile(struct libmnt_context *cxt)
+{
+	const char *type = mnt_fs_get_fstype(cxt->fs);
+	const char *src = mnt_fs_get_srcpath(cxt->fs);
+	unsigned long flags = 0;
+	struct stat st;
+
+	if (!type || strcmp(type, "erofs") != 0)
+		return 0;
+	if (mnt_context_get_user_mflags(cxt, &flags))
+		return 0;
+	if (flags & (MNT_MS_LOOP | MNT_MS_OFFSET | MNT_MS_SIZELIMIT))
+		return 0;	/* it's already loopdev */
+	if (!src || stat(src, &st) != 0 || !S_ISREG(st.st_mode))
+		return 0;
+	return 1;
+}
+
 /**
  * mnt_context_mount:
  * @cxt: mount context
@@ -1064,6 +1082,23 @@ again:
 			cxt->flags |= MNT_FL_FORCED_RDONLY;
 			goto again;
 		}
+	}
+
+	/*
+	 * Try mount EROFS image again with loop device.
+	 * See hook_loopdev.c:is_loopdev_required() for more details.
+	 */
+	if (rc && mnt_context_get_syscall_errno(cxt) == ENOTBLK
+	       && is_erofs_regfile(cxt)) {
+		struct libmnt_optlist *ol = mnt_context_get_optlist(cxt);
+
+		mnt_context_reset_status(cxt);
+		DBG(CXT, ul_debugobj(cxt, "enabling loop= for EROFS"));
+		mnt_optlist_append_flags(ol, MNT_MS_LOOP, cxt->map_userspace);
+
+		rc = mnt_context_call_hooks(cxt, MNT_STAGE_PREP_SOURCE);
+		if (!rc)
+			goto again;
 	}
 
 	if (rc == 0)
