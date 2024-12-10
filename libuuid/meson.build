@@ -13,6 +13,8 @@ lib_uuid_sources = '''
   src/uuid_time.c
 '''.split()
 
+subdir('man')
+
 predefined_c = files('src/predefined.c')
 pack_c = files('src/pack.c')
 unpack_c = files('src/unpack.c')
