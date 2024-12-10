@@ -367,15 +367,19 @@ if not lib_crypt.found()
   lib_crypt = cc.find_library('crypt', required : get_option('build-sulogin'))
 endif
 
+pam_req = get_option('build-login').enabled() or \
+    get_option('build-chfn-chsh').enabled() or \
+    get_option('build-su').enabled() or \
+    get_option('build-runuser').enabled()
 lib_pam = cc.find_library(
   'pam',
   disabler : true,
-  required : get_option('build-login').enabled() or \
-    get_option('build-chfn-chsh').enabled() or \
-    get_option('build-su').enabled() or \
-    get_option('build-runuser').enabled())
+  required : pam_req)
 if lib_pam.found()
-  lib_pam_misc = cc.find_library('pam_misc')
+  lib_pam_misc = cc.find_library(
+    'pam_misc',
+    disabler : true,
+    required : pam_req)
   lib_pam = [lib_pam, lib_pam_misc]
 else
   lib_pam_misc = declare_dependency()
@@ -1211,11 +1215,12 @@ exe = executable(
   include_directories : includes,
   link_with : lib_common,
   install_dir : usrbin_exec_dir,
-  install : true)
+  install : opt,
+  build_by_default : opt)
 if opt and not is_disabler(exe)
-exes += exe
-manadocs += ['text-utils/bits.1.adoc']
-bashcompletions += ['bits']
+  exes += exe
+  manadocs += ['text-utils/bits.1.adoc']
+  bashcompletions += ['bits']
 endif
 
 opt = not get_option('build-col').require(is_glibc).disabled()
