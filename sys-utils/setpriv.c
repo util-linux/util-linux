@@ -542,6 +542,7 @@ static int cap_update(capng_act_t action,
 static void do_caps(enum cap_type type, const char *caps)
 {
 	char *my_caps = xstrdup(caps);
+	char *source_my_caps = my_caps;
 	char *c;
 
 	while ((c = strsep(&my_caps, ","))) {
@@ -572,7 +573,7 @@ static void do_caps(enum cap_type type, const char *caps)
 		}
 	}
 
-	free(my_caps);
+	free(source_my_caps);
 }
 
 static void parse_securebits(struct privctx *opts, const char *arg)
