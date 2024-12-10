@@ -110,10 +110,10 @@ struct lscpu_cputype {
 	size_t		ndrawers;
 	cpu_set_t	**drawermaps;
 
-	unsigned int	has_freq : 1,
-			has_configured : 1,
-			has_polarization : 1,
-			has_addresses : 1;
+	bool	has_freq,
+		has_configured,
+		has_polarization,
+		has_addresses;
 
 	size_t nr_socket_on_cluster; /* the number of sockets if the is_cluster is 1 */
 
@@ -253,14 +253,15 @@ struct lscpu_cxt {
 
 	int mode;	/* LSCPU_OUTPUT_* */
 
-	unsigned int noalive : 1,
-		     show_online : 1,
-		     show_offline : 1,
-		     show_physical : 1,
-		     show_compatible : 1,
-		     hex : 1,
-		     json : 1,
-		     bytes : 1;
+	bool	 noalive,
+		 show_online,
+		 show_offline,
+		 show_physical,
+		 show_compatible,
+		 hex,
+		 json,
+		 raw,
+		 bytes;
 
 	int is_cluster; /* For aarch64 if the machine doesn't have ACPI PPTT */
 };
