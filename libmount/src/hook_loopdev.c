@@ -413,6 +413,7 @@ static int is_loopdev_required(struct libmnt_context *cxt, struct libmnt_optlist
 {
 	const char *src, *type;
 	unsigned long flags = 0;
+	struct stat st;
 
 	if (cxt->action != MNT_ACT_MOUNT)
 		return 0;
@@ -434,37 +435,55 @@ static int is_loopdev_required(struct libmnt_context *cxt, struct libmnt_optlist
 	if (mnt_context_get_user_mflags(cxt, &flags))
 		return 0;
 
+	/* loop= (sizelimit= or offset=) explicitly specified */
 	if (flags & (MNT_MS_LOOP | MNT_MS_OFFSET | MNT_MS_SIZELIMIT)) {
 		DBG(LOOP, ul_debugobj(cxt, "loopdev specific options detected"));
 		return 1;
 	}
 
-	/* Automatically create a loop device from a regular file if a
-	 * filesystem is not specified or the filesystem is known for libblkid
-	 * (these filesystems work with block devices only). The file size
-	 * should be at least 1KiB, otherwise we will create an empty loopdev with
-	 * no mountable filesystem...
-	 *
-	 * Note that there is no restriction (on kernel side) that would prevent a regular
-	 * file as a mount(2) source argument. A filesystem that is able to mount
-	 * regular files could be implemented.
+	/* Automatically create a loop device from a regular file. The file
+	 * size should be at least 1KiB, otherwise we will create an empty
+	 * loop device with no mountable filesystem.
 	 */
+	if (stat(src, &st) != 0 || !S_ISREG(st.st_mode))
+		return 0;
+	if (st.st_size <= 1024)
+		return 0;
+
 	type = mnt_fs_get_fstype(cxt->fs);
+	if (!type || strcmp(type, "auto") == 0) {
+		char *autotype = NULL;
+		int rc;
 
-	if (mnt_fs_is_regularfs(cxt->fs) &&
-	    (!type || strcmp(type, "auto") == 0 || blkid_known_fstype(type))) {
-		struct stat st;
-
-		if (stat(src, &st) == 0 && S_ISREG(st.st_mode) &&
-		    st.st_size > 1024) {
-
-			DBG(LOOP, ul_debugobj(cxt, "automatically enabling loop= option"));
-			mnt_optlist_append_flags(ol, MNT_MS_LOOP, cxt->map_userspace);
-			return 1;
+		rc = mnt_context_guess_srcpath_fstype(cxt, &autotype);
+		if (rc) {
+			DBG(CXT, ul_debugobj(cxt, "failed to guess regfile FS type [rc=%d]", rc));
+			return 0;
+		}
+		if (autotype) {
+			__mnt_fs_set_fstype_ptr(cxt->fs, autotype);
+			type = mnt_fs_get_fstype(cxt->fs);
 		}
 	}
 
-	return 0;
+	/* The EROFS kernel driver can be compiled with EROFS_FS_BACKED_BY_FILE,
+	 * allowing for the mounting of a regular file as a filesystem without
+	 * a loop device.
+	 */
+	if (type && strcmp(type, "erofs") == 0)
+		return 0;
+
+	/* Note that there is no restriction (on kernel side) that would
+	 * prevent a regular file as a mount(2) source argument. A filesystem
+	 * that is able to mount regular files could be implemented. For this
+	 * reason we do not enable loop device for unknown filesystems.
+	 */
+	if (type && !blkid_known_fstype(type))
+		return 0;
+
+	DBG(LOOP, ul_debugobj(cxt, "automatically enabling loop= option"));
+	mnt_optlist_append_flags(ol, MNT_MS_LOOP, cxt->map_userspace);
+	return 1;
 }
 
 /* call after mount(2) */
