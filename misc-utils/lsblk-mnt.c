@@ -64,6 +64,9 @@ static void add_filesystem(struct lsblk_device *dev, struct libmnt_fs *fs)
 	dev->fss[dev->nfss] = fs;
 	dev->nfss++;
 	dev->is_mounted = 1;
+
+	if (mnt_fs_is_swaparea(fs))
+		dev->is_swap = 1;
 }
 
 struct libmnt_fs **lsblk_device_get_filesystems(struct lsblk_device *dev, size_t *n)
@@ -162,8 +165,10 @@ const char *lsblk_device_get_mountpoint(struct lsblk_device *dev)
 			}
 		}
 	}
-	if (mnt_fs_is_swaparea(fs))
+	if (mnt_fs_is_swaparea(fs)) {
+		dev->is_swap = 1;
 		return "[SWAP]";
+	}
 	return mnt_fs_get_target(fs);
 }
 

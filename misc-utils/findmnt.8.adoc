@@ -57,6 +57,9 @@ The search direction, either *forward* or *backward*.
 *-e*, *--evaluate*::
 Convert all tags (LABEL, UUID, PARTUUID, or PARTLABEL) to the corresponding device names for the SOURCE column.  It's an unusual situation, but the same tag may be duplicated (used for more devices). For this purpose, there is SOURCES (pl.) column. This column displays by multi-line cell all devices where the tag is detected by libblkid. This option makes sense for _fstab_ only.
 
+*--hyperlink*[=_mode_]::
+Print mountpoint paths as terminal hyperlinks. The _mode_ can be set to "always", "never", or "auto". The optional argument _when_ can be set to "auto", "never", or "always". If the _when_ argument is omitted, it will default to "auto". The "auto" setting means that hyperlinks will only be used if the output is on a terminal.
+
 *-F*, *--tab-file* _path_::
 Search in an alternative file. If used with *--fstab*, *--mtab* or *--kernel*, then it overrides the default paths. If specified more than once, then tree-like output is disabled (see the *--list* option).
 

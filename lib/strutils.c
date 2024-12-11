@@ -524,6 +524,20 @@ time_t strtotime_or_err(const char *str, const char *errmesg)
 	return (time_t) user_input;
 }
 
+bool hyperlinkwanted_or_err(const char *mode, const char *errmesg)
+{
+	if (mode && strcmp(mode, "never") == 0)
+		return false;
+
+	if (mode && strcmp(mode, "always") == 0)
+		return true;
+
+	if (!mode || strcmp(mode, "auto") == 0)
+		return isatty(STDOUT_FILENO) ? true : false;
+
+	errx(EXIT_FAILURE, "%s: '%s'", errmesg, mode);
+}
+
 /*
  * Converts stat->st_mode to ls(1)-like mode string. The size of "str" must
  * be 11 bytes.

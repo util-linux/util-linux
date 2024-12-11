@@ -47,6 +47,7 @@ int scols_reset_cell(struct libscols_cell *ce)
 	/*DBG(CELL, ul_debugobj(ce, "reset"));*/
 	free(ce->data);
 	free(ce->color);
+	free(ce->uri);
 	memset(ce, 0, sizeof(*ce));
 	return 0;
 }
@@ -245,6 +246,65 @@ const char *scols_cell_get_color(const struct libscols_cell *ce)
 }
 
 /**
+ * scols_cell_set_uri:
+ * @ce: a pointer to a struct libscols_cell instance
+ * @uri: URI string
+ *
+ * Set the URI of @ce to @uri.
+ *
+ * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.41
+ */
+int scols_cell_set_uri(struct libscols_cell *ce, const char *uri)
+{
+	if (!ce)
+		return -EINVAL;
+
+	return strdup_to_struct_member(ce, uri, uri);
+}
+
+/**
+ * scols_cell_get_uri:
+ * @ce: a pointer to a struct libscols_cell instance
+ *
+ * The function returns the URI setting, but it may not necessarily be the final
+ * URI used in the output. This is because the column may define a URI prefix or
+ * the cell content may be used as part of the URI.
+ *
+ * Returns: the current URI of @ce.
+ *
+ * Since: 2.41
+ */
+const char *scols_cell_get_uri(const struct libscols_cell *ce)
+{
+	if (!ce)
+		return NULL;
+
+	return ce->uri;
+}
+
+/**
+ * scols_cell_disable_uri:
+ * @ce: a pointer to a struct libscols_cell instance
+ * @disable: 1 or 0
+ *
+ * Force the library to ignore the cell and column URI setting and print the
+ * content as a regular string.
+ *
+ * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.41
+ */
+int scols_cell_disable_uri(struct libscols_cell *ce, int disable)
+{
+	if (!ce)
+		return -EINVAL;
+	ce->no_uri = disable ? 1 : 0;
+	return 0;
+}
+
+/**
  * scols_cell_set_flags:
  * @ce: a pointer to a struct libscols_cell instance
  * @flags: SCOLS_CELL_FL_* flags
@@ -321,6 +381,8 @@ int scols_cell_copy_content(struct libscols_cell *dest,
 	rc = scols_cell_refer_memory(dest, data, src->datasiz);
 	if (!rc)
 		rc = scols_cell_set_color(dest, scols_cell_get_color(src));
+	if (!rc)
+		rc = scols_cell_set_uri(dest, scols_cell_get_uri(src));
 	if (!rc)
 		dest->userdata = src->userdata;
 

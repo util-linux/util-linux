@@ -2,17 +2,20 @@
 <FILE>cell</FILE>
 libscols_cell
 scols_cell_copy_content
+scols_cell_disable_uri
 scols_cell_get_alignment
 scols_cell_get_color
 scols_cell_get_data
 scols_cell_get_datasiz
 scols_cell_get_flags
+scols_cell_get_uri
 scols_cell_get_userdata
 scols_cell_refer_data
 scols_cell_refer_memory
 scols_cell_set_color
 scols_cell_set_data
 scols_cell_set_flags
+scols_cell_set_uri
 scols_cell_set_userdata
 scols_cmpstr_cells
 scols_reset_cell
@@ -30,6 +33,7 @@ scols_column_get_name
 scols_column_get_name_as_shellvar
 scols_column_get_safechars
 scols_column_get_table
+scols_column_get_uri
 scols_column_get_whint
 scols_column_get_width
 scols_column_get_wrap_data
@@ -51,6 +55,7 @@ scols_column_set_json_type
 scols_column_set_name
 scols_column_set_properties
 scols_column_set_safechars
+scols_column_set_uri
 scols_column_set_whint
 scols_column_set_wrapfunc
 scols_copy_column
