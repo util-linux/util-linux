@@ -2376,8 +2376,10 @@ int main(int argc, char *argv[])
 			sf->act = ACT_LIST_TYPES;
 			break;
 		case 'u':
-			if (*optarg != 'S')
-				errx(EXIT_FAILURE, _("unsupported unit '%c'"), *optarg);
+			if (optarg) {
+				if (*optarg != 'S')
+					errx(EXIT_FAILURE, _("unsupported unit '%c'"), *optarg);
+			}
 			break;
 		case 'v':
 			print_version(EXIT_SUCCESS);
