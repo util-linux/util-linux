@@ -39,6 +39,12 @@ replace_hostname()
     sed -e 's@file://'"${HOSTNAME_PATTERN}"'/@file:///@'
 }
 
+replace_filename()
+{
+    # Make the output PWD independent:
+    sed -e 's@'"$TS_OUTDIR"'@.@g'
+}
+
 ts_cd "$TS_OUTDIR"
 PID=
 FD=3
@@ -65,6 +71,23 @@ ts_init_subtest "character-device"
 	for o in NAME KNAME; do
 	    echo "# $o"
 	    "${TS_CMD_LSFD}" -n --hyperlink=always -o "$o" -p "${PID}" -Q "$EXPR" | replace_hostname | "$TS_CMD_HEXDUMP" -C
+	done
+	echo DONE >&"${MKFDS[1]}"
+    fi
+} > "$TS_OUTPUT" 2>&1
+wait "${MKFDS_PID}"
+ts_finalize_subtest
+
+ts_init_subtest "deleted-file"
+{
+    coproc MKFDS { "$TS_HELPER_MKFDS" make-regular-file $FD file=tmp-option-hyperlink delete=true; }
+    if read -r -u "${MKFDS[0]}" PID; then
+	for o in NAME KNAME; do
+	    echo "# $o"
+	    "${TS_CMD_LSFD}" -n --hyperlink=always -o "$o" -p "${PID}" -Q "$EXPR" \
+		| replace_hostname \
+		| replace_filename \
+		| "$TS_CMD_HEXDUMP" -C
 	done
 	echo DONE >&"${MKFDS[1]}"
     fi

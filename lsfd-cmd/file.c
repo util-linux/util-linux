@@ -424,6 +424,11 @@ static bool file_fill_column(struct proc *proc __attribute__((__unused__)),
 				*d = '(';
 				if (r)
 					err(EXIT_FAILURE, _("failed to add output data"));
+				if (uri) {
+					struct libscols_cell *ce = scols_line_get_cell(ln, column_index);
+					if (ce)
+						scols_cell_disable_uri(ce, 1);
+				}
 				return true;
 			}
 		}
@@ -435,7 +440,8 @@ static bool file_fill_column(struct proc *proc __attribute__((__unused__)),
 
 		ftype = file->stat.st_mode & S_IFMT;
 		if (uri && (!file->name || *file->name != '/'
-			    || (ftype != S_IFREG && ftype != S_IFDIR))) {
+			    || (ftype != S_IFREG && ftype != S_IFDIR)
+			    || file->stat.st_nlink == 0)) {
 			struct libscols_cell *ce = scols_line_get_cell(ln, column_index);
 			if (ce)
 				scols_cell_disable_uri(ce, 1);
