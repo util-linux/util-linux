@@ -66,6 +66,7 @@ stamp-h1
 syscalls.h
 tags
 test-suite.log
+tests/failures
 tests/run.sh.log
 tests/run.sh.trs
 update.log
