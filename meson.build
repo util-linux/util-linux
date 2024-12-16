@@ -3085,14 +3085,16 @@ endif
 
 ############################################################
 
+opt = not get_option('build-findfs').disabled()
 exe = executable(
   'findfs',
   findfs_sources,
   include_directories : includes,
   dependencies : [blkid_dep],
   install_dir : sbindir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['misc-utils/findfs.8.adoc']
   bashcompletions += ['findfs']

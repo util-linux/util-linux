@@ -255,6 +255,8 @@ option('build-pylibmount', type : 'feature',
        description : 'build pylibmount')
 option('build-hexdump', type : 'feature',
        description : 'build hexdump')
+option('build-findfs', type : 'feature',
+       description : 'build findfs')
 
 # static programs
 
