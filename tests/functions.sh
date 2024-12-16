@@ -1195,3 +1195,9 @@ function ts_check_enosys_syscalls {
 function ts_skip_docker {
 	test -e /.dockerenv && ts_skip "unsupported in docker environment"
 }
+
+function ts_check_ipv6 {
+       if [ ! -e /proc/net/if_inet6 ]; then
+               ts_skip "IPv6 is not supported"
+       fi
+}
