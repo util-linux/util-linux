@@ -51,7 +51,8 @@ static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
 			     struct file *file,
 			     struct libscols_line *ln,
 			     int column_id,
-			     size_t column_index)
+			     size_t column_index,
+			     const char *uri __attribute__((__unused__)))
 {
 	char *str = NULL;
 	struct sock *sock = (struct sock *)file;

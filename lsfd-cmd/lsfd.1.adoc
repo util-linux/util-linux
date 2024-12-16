@@ -110,6 +110,9 @@ only for *lsfd* developers.
 *--dump-counters*::
 Dump the definition of counters used in *--summary* output.
 
+*--hyperlink*[=_mode_]::
+Print paths as terminal hyperlinks. The _mode_ can be set to "always", "never", or "auto". The optional argument _when_ can be set to "auto", "never", or "always". If the _when_ argument is omitted, it will default to "auto". The "auto" setting means that hyperlinks will only be used if the output is on a terminal.
+
 *-H*, *--list-columns*::
 List available columns that you can specify at *--output* option.
 

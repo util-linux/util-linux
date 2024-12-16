@@ -226,7 +226,8 @@ struct file_class {
 			    struct file *file,
 			    struct libscols_line *ln,
 			    int column_id,
-			    size_t column_index);
+			    size_t column_index,
+			    const char *uri);
 	int  (*handle_fdinfo)(struct file *file, const char *key, const char* value);
 	void (*attach_xinfo)(struct file *file);
 	void (*initialize_content)(struct file *file);
@@ -281,6 +282,7 @@ enum decode_source_level {
 
 void decode_source(char *buf, size_t bufsize, unsigned int dev_major, unsigned int dev_minor,
 		   enum decode_source_level level);
+
 /*
  * Name managing
  */

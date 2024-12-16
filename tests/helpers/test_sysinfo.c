@@ -43,6 +43,8 @@
 # endif
 #endif
 
+#include "xalloc.h"
+
 typedef struct {
 	const char	*name;
 	int		(*fnc)(void);
@@ -168,6 +170,13 @@ static int hlp_get_userns_ok(void)
 	return 0;
 }
 
+static int hlp_hostname(void)
+{
+	char * h = xgethostname();
+	printf("%s\n", h);
+	return 0;
+}
+
 static const mntHlpfnc hlps[] =
 {
 	{ "WORDSIZE",	hlp_wordsize	},
@@ -185,6 +194,7 @@ static const mntHlpfnc hlps[] =
 	{ "sz(time_t)", hlp_sz_time     },
 	{ "ns-gettype-ok", hlp_get_nstype_ok },
 	{ "ns-getuserns-ok", hlp_get_userns_ok },
+	{ "hostname", hlp_hostname, },
 	{ NULL, NULL }
 };
 
