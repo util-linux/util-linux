@@ -12,7 +12,7 @@ fstrim - discard unused blocks on a mounted filesystem
 
 == SYNOPSIS
 
-*fstrim* [*-Aav*] [*-o* _offset_] [*-l* _length_] [*-m* _minimum-size_] [_mountpoint_]
+*fstrim* [*-v*] [*-o* _offset_] [*-l* _length_] [*-m* _minimum-size_] *-A*|*-a*|_mountpoint_
 
 == DESCRIPTION
 

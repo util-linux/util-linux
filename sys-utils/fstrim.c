@@ -451,7 +451,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
-	      _(" %s [options] <mount point>\n"), program_invocation_short_name);
+	      _(" %s [options] <-A|-a|mount point>\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Discard unused blocks on a mounted filesystem.\n"), out);
