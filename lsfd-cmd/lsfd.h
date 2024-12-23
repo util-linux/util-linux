@@ -142,6 +142,12 @@ enum {
 	COL_UID,		/* process */
 	COL_UNIX_PATH,
 	COL_USER,		/* process */
+	COL_VSOCK_LADDR,
+	COL_VSOCK_RADDR,
+	COL_VSOCK_LCID,
+	COL_VSOCK_RCID,
+	COL_VSOCK_LPORT,
+	COL_VSOCK_RPORT,
 	COL_XMODE,
 	LSFD_N_COLS		/* This must be at last. */
 };

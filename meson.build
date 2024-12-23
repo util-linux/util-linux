@@ -830,6 +830,10 @@ have_so_passcred = cc.has_header_symbol(
   prefix : '#include <sys/types.h>',
   required : build_plymouth_support.enabled())
 
+have = cc.has_header_symbol('linux/vm_sockets.h', 'VMADDR_CID_LOCAL',
+                            prefix : '#include <sys/socket.h>')
+conf.set('HAVE_DECL_VMADDR_CID_LOCAL', have ? 1 : false)
+
 build_plymouth_support = (not build_plymouth_support.disabled() and 
                           have_tiocglcktrmios and
                           have_sock_cloexec and

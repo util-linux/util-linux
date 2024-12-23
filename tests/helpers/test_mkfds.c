@@ -37,6 +37,7 @@
 #include <linux/sock_diag.h>
 # include <linux/unix_diag.h> /* for UNIX domain sockets */
 #include <linux/sockios.h>  /* SIOCGSKNS */
+#include <linux/vm_sockets.h>
 #include <mqueue.h>
 #include <net/if.h>
 #include <netinet/in.h>
@@ -74,6 +75,8 @@
 #define EXIT_EACCES 21
 #define EXIT_ENOENT 22
 #define EXIT_ENOSYS 23
+#define EXIT_EADDRNOTAVAIL 24
+#define EXIT_ENODEV 25
 
 #define _U_ __attribute__((__unused__))
 
@@ -2016,6 +2019,145 @@ static void *make_ping6(const struct factory *factory, struct fdesc fdescs[],
 				(struct sockaddr *)&in6);
 }
 
+#if HAVE_DECL_VMADDR_CID_LOCAL
+static void *make_vsock(const struct factory *factory, struct fdesc fdescs[],
+			int argc, char ** argv)
+{
+	struct sockaddr_vm svm;
+	struct sockaddr_vm cvm;
+
+	struct arg server_port = decode_arg("server-port", factory->params, argc, argv);
+	unsigned short iserver_port = (unsigned short)ARG_INTEGER(server_port);
+	struct arg client_port = decode_arg("client-port", factory->params, argc, argv);
+	unsigned short iclient_port = (unsigned short)ARG_INTEGER(client_port);
+	struct arg socktype = decode_arg("socktype", factory->params, argc, argv);
+	int isocktype;
+	int ssd, csd, asd = -1;
+
+	const int y = 1;
+
+	free_arg(&server_port);
+	free_arg(&client_port);
+
+	if (strcmp(ARG_STRING(socktype), "STREAM") == 0)
+		isocktype = SOCK_STREAM;
+	else if (strcmp(ARG_STRING(socktype), "DGRAM") == 0)
+		isocktype = SOCK_DGRAM;
+	else if (strcmp(ARG_STRING(socktype), "SEQPACKET") == 0)
+		isocktype = SOCK_SEQPACKET;
+	else
+		errx(EXIT_FAILURE,
+		     "unknown socket type for socket(AF_VSOCK,...): %s",
+		     ARG_STRING(socktype));
+	free_arg(&socktype);
+
+	ssd = socket(AF_VSOCK, isocktype, 0);
+	if (ssd < 0) {
+		if (errno == ENODEV)
+			err(EXIT_ENODEV, "failed to make a vsock socket for listening (maybe `modprobe vmw_vsock_vmci_transport'?)");
+		err(EXIT_FAILURE,
+		    "failed to make a vsock socket for listening");
+	}
+
+	if (setsockopt(ssd, SOL_SOCKET,
+		       SO_REUSEADDR, (const char *)&y, sizeof(y)) < 0) {
+		err(EXIT_FAILURE, "failed to setsockopt(SO_REUSEADDR)");
+	}
+
+	if (ssd != fdescs[0].fd) {
+		if (dup2(ssd, fdescs[0].fd) < 0) {
+			err(EXIT_FAILURE, "failed to dup %d -> %d", ssd, fdescs[0].fd);
+		}
+		close(ssd);
+		ssd = fdescs[0].fd;
+	}
+
+	memset(&svm, 0, sizeof(svm));
+	svm.svm_family = AF_VSOCK;
+	svm.svm_port = iserver_port;
+	svm.svm_cid = VMADDR_CID_LOCAL;
+
+	memset(&cvm, 0, sizeof(svm));
+	cvm.svm_family = AF_VSOCK;
+	cvm.svm_port = iclient_port;
+	cvm.svm_cid = VMADDR_CID_LOCAL;
+
+	if (bind(ssd, (struct sockaddr *)&svm, sizeof(svm)) < 0) {
+		if (errno == EADDRNOTAVAIL)
+			err(EXIT_EADDRNOTAVAIL, "failed to bind a listening socket (maybe `modprobe vsock_loopback'?)");
+		err(EXIT_FAILURE, "failed to bind a listening socket");
+	}
+
+
+	if (isocktype == SOCK_DGRAM) {
+		if (connect(ssd, (struct sockaddr *)&cvm, sizeof(cvm)) < 0)
+			err(EXIT_FAILURE, "failed to connect the server socket to a client socket");
+	} else {
+		if (listen(ssd, 1) < 0)
+			err(EXIT_FAILURE, "failed to listen a socket");
+	}
+
+	csd = socket(AF_VSOCK, isocktype, 0);
+	if (csd < 0) {
+		err(EXIT_FAILURE,
+		    "failed to make a vsock client socket");
+	}
+
+	if (setsockopt(csd, SOL_SOCKET,
+		       SO_REUSEADDR, (const char *)&y, sizeof(y)) < 0) {
+		err(EXIT_FAILURE, "failed to setsockopt(SO_REUSEADDR)");
+	}
+
+	if (csd != fdescs[1].fd) {
+		if (dup2(csd, fdescs[1].fd) < 0) {
+			err(EXIT_FAILURE, "failed to dup %d -> %d", csd, fdescs[1].fd);
+		}
+		close(csd);
+		csd = fdescs[1].fd;
+	}
+
+	if (bind(csd, (struct sockaddr *)&cvm, sizeof(cvm)) < 0) {
+		err(EXIT_FAILURE, "failed to bind a client socket");
+	}
+
+	if (connect(csd, (struct sockaddr *)&svm, sizeof(svm)) < 0) {
+		err(EXIT_FAILURE, "failed to connect a client socket to the server socket");
+	}
+
+	if (isocktype != SOCK_DGRAM) {
+		asd = accept(ssd, NULL, NULL);
+		if (asd < 0) {
+			err(EXIT_FAILURE, "failed to accept a socket from the listening socket");
+		}
+		if (asd != fdescs[2].fd) {
+			if (dup2(asd, fdescs[2].fd) < 0) {
+				err(EXIT_FAILURE, "failed to dup %d -> %d", asd, fdescs[2].fd);
+			}
+			close(asd);
+			asd = fdescs[2].fd;
+		}
+	}
+
+	fdescs[0] = (struct fdesc) {
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+	fdescs[1] = (struct fdesc) {
+		.fd    = fdescs[1].fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+
+	fdescs[2] = (struct fdesc) {
+		.fd    = (iserver_port == SOCK_DGRAM)? -1: fdescs[2].fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+	return NULL;
+}
+#endif	/* HAVE_DECL_VMADDR_CID_LOCAL */
+
 #ifdef SIOCGSKNS
 static void *make_netns(const struct factory *factory _U_, struct fdesc fdescs[],
 			int argc _U_, char ** argv _U_)
@@ -3810,6 +3952,37 @@ static const struct factory factories[] = {
 			PARAM_END
 		}
 	},
+#if HAVE_DECL_VMADDR_CID_LOCAL
+	{
+		"vsock",
+		.desc = "AF_VSOCK sockets",
+		.priv = false,
+		.N    = 3,	/* NOTE: The 3rd one is not used if socktype is DGRAM. */
+		.EX_N = 0,
+		.make = make_vsock,
+		.params = (struct parameter []) {
+			{
+				.name = "socktype",
+				.type = PTYPE_STRING,
+				.desc = "STREAM, DGRAM, or SEQPACKET",
+				.defv.string = "STREAM",
+			},
+			{
+				.name = "server-port",
+				.type = PTYPE_INTEGER,
+				.desc = "VSOCK port the server may listen",
+				.defv.integer = 12345,
+			},
+			{
+				.name = "client-port",
+				.type = PTYPE_INTEGER,
+				.desc = "VSOCK port the client may bind",
+				.defv.integer = 23456,
+			},
+			PARAM_END
+		}
+	},
+#endif	/* HAVE_DECL_VMADDR_CID_LOCAL */
 #ifdef SIOCGSKNS
 	{
 		.name = "netns",

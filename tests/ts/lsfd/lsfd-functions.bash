@@ -22,6 +22,8 @@ readonly EPROTONOSUPPORT=20
 readonly EACCES=21
 readonly ENOENT=22
 readonly ENOSYS=23
+readonly EADDRNOTAVAIL=24
+readonly ENODEV=25
 
 function lsfd_wait_for_pausing {
 	ts_check_prog "sleep"
@@ -123,5 +125,27 @@ function lsfd_check_sockdiag
 		ts_skip "sockdiag netlink socket is not available";;
 	    *)
 		ts_failed "failed to create a sockdiag netlink socket $family ($err): $msg";;
+	esac
+}
+
+function lsfd_check_vsock
+{
+	ts_check_test_command "$TS_HELPER_MKFDS"
+
+	local msg
+	local err
+
+	msg=$("$TS_HELPER_MKFDS" -c vsock 3 4 5 socktype=DGRAM 2>&1)
+	err=$?
+
+	case $err in
+	    0)
+		return;;
+	    "$EADDRNOTAVAIL")
+		ts_skip "VMADDR_CID_LOCAL doesn't work";;
+	    "$ENODEV")
+		ts_skip "AF_VSOCK+SOCK_DGRAM doesn't work";;
+	    *)
+		ts_failed "failed to use a AF_VSOCK socket: $msg [$err]";;
 	esac
 }
