@@ -46,7 +46,11 @@
 #ifndef HAVE_CACHESTAT
 
 #ifndef SYS_cachestat
+#if defined (__alpha__)
+#define SYS_cachestat 561
+#else
 #define SYS_cachestat 451
+#endif
 #endif
 
 struct cachestat_range {
