@@ -40,6 +40,13 @@
 #include "all-io.h"
 #include "list.h"
 
+#define CLOCKFD 3
+
+static inline clockid_t FD_TO_CLOCKID(int fd)
+{
+	return (~(unsigned int) fd << 3) | CLOCKFD;
+}
+
 #ifndef CLOCK_REALTIME
 #define CLOCK_REALTIME			0
 #endif
@@ -380,6 +387,7 @@ static void add_dynamic_clock_from_path(struct libscols_table *tb,
 
 	struct clockinfo clockinfo = {
 		.type = CT_PTP,
+		.id = FD_TO_CLOCKID(fd),
 		.no_id = true,
 		.id_name = path,
 		.name = path,
