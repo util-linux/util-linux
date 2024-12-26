@@ -250,6 +250,7 @@ static const struct id_part intel_part[] = {
 
 static const struct id_part fujitsu_part[] = {
     { 0x001, "A64FX" },
+    { 0x003, "MONAKA" },
     { -1, "unknown" },
 };
 
