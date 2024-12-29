@@ -114,11 +114,11 @@ function lsfd_check_sockdiag
 	case $err in
 	    0)
 		return;;
-	    $EPROTONOSUPPORT)
+	    "$EPROTONOSUPPORT")
 		ts_skip "NETLINK_SOCK_DIAG protocol is not supported in socket(2)";;
-	    $EACCES)
+	    "$EACCES")
 		ts_skip "sending a msg via a sockdiag netlink socket is not permitted";;
-	    $ENOENT)
+	    "$ENOENT")
 		ts_skip "sockdiag netlink socket is not available";;
 	    *)
 		ts_failed "failed to create a sockdiag netlink socket $family ($err): $msg";;
