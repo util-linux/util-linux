@@ -575,6 +575,45 @@ static int cpuinfo_parse_cache(struct lscpu_cxt *cxt, int keynum, char *data)
 	return 1;
 }
 
+#define STR_FIELD_DUP_IF_EXISTS(dst, src, field_name) \
+	{ \
+		if (src->field_name) \
+			dst->field_name = xstrdup(src->field_name); \
+	}
+
+static void copy_cputype_data(struct lscpu_cputype *dst, struct lscpu_cputype *src)
+{
+	STR_FIELD_DUP_IF_EXISTS(dst, src, vendor);
+	dst->vendor_id = src->vendor_id;
+	STR_FIELD_DUP_IF_EXISTS(dst, src, bios_vendor);
+	STR_FIELD_DUP_IF_EXISTS(dst, src, family);
+	STR_FIELD_DUP_IF_EXISTS(dst, src, model);
+	STR_FIELD_DUP_IF_EXISTS(dst, src, modelname);
+	STR_FIELD_DUP_IF_EXISTS(dst, src, bios_modelname);
+	STR_FIELD_DUP_IF_EXISTS(dst, src, bios_family);
+	STR_FIELD_DUP_IF_EXISTS(dst, src, revision);
+	STR_FIELD_DUP_IF_EXISTS(dst, src, stepping);
+	STR_FIELD_DUP_IF_EXISTS(dst, src, bogomips);
+	STR_FIELD_DUP_IF_EXISTS(dst, src, flags);
+	STR_FIELD_DUP_IF_EXISTS(dst, src, mtid);
+	STR_FIELD_DUP_IF_EXISTS(dst, src, addrsz);
+	dst->dispatching = src->dispatching;
+	dst->freqboost = src->freqboost;
+
+	dst->physsockets = src->physsockets;
+	dst->physchips = src->physchips;
+	dst->physcoresperchip = src->physcoresperchip;
+
+	dst->nthreads_per_core = src->nthreads_per_core;
+	dst->ncores_per_socket = src->ncores_per_socket;
+	dst->nsockets_per_book = src->nsockets_per_book;
+	dst->nbooks_per_drawer = src->nbooks_per_drawer;
+	dst->ndrawers_per_system = src->ndrawers_per_system;
+
+	STR_FIELD_DUP_IF_EXISTS(dst, src, dynamic_mhz);
+	STR_FIELD_DUP_IF_EXISTS(dst, src, static_mhz);
+}
+
 int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 {
 	FILE *fp;
@@ -672,6 +711,15 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 			}
 			if (!pr->curr_type) {
 				pr->curr_type = lscpu_new_cputype();
+				/*
+				 * Due to streaming parsing, and treating as different cputype
+				 * only happens when hitting a different CPU attribute, newly
+				 * created cputype does not contain previously parsed results,
+				 * so we need to copy them back from the previous cputype (if
+				 * exists).
+				 */
+				if (cxt->ncputypes != 0)
+					copy_cputype_data(pr->curr_type, cxt->cputypes[cxt->ncputypes-1]);
 				lscpu_add_cputype(cxt, pr->curr_type);
 			}
 
