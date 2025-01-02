@@ -447,12 +447,15 @@ const char *scols_column_get_color(const struct libscols_column *cl)
  * The final cell URI is composed of the column-uri, cell-uri, and cell-data.
  * The column-uri and/or cell-uri must be set for this feature to be enabled.
  *
+ * <informalexample>
+ * <programlisting>
  * column-uri  cell-uri                  cell-data      final-URI                 link
- * -----------------------------------------------------------------------------------
+ * --------------------------------------------------------------------------------------------
  *             file://host/path/foo.txt  foo            file://host/path/foo.txt  foo
  * file://host /path/foo.txt             foo            file://host/path/foo.txt  foo
  * file://host                           /path/foo.txt  file://host/path/foo.txt  /path/foo.txt
- *
+ * </programlisting>
+ * </informalexample>
  *
  * Returns: 0, a negative value in case of an error.
  */

@@ -365,16 +365,24 @@ int scols_table_move_column(struct libscols_table *tb,
  *
  * This is shortcut for
  *
- *   cl = scols_new_column();
- *   scols_column_set_....(cl, ...);
- *   scols_table_add_column(tb, cl);
+ * <informalexample>
+ *   <programlisting language="C">
+ *     cl = scols_new_column();
+ *     scols_column_set_....(cl, ...);
+ *     scols_table_add_column(tb, cl);
+ *   </programlisting>
+ * </informalexample>
  *
  * The column width is possible to define by:
  *
- *  @whint: 0 < N < 1  : relative width, percent of terminal width
+ * <informalexample>
+ * <programlisting>
+ * whint: 0 < N < 1  : relative width, percent of terminal width
  *
- *  @whint: N >= 1     : absolute width, empty column will be truncated to
+ * whint: N >= 1     : absolute width, empty column will be truncated to
  *                     the column header width if no specified STRICTWIDTH flag
+ * </programlisting>
+ * </informalexample>
  *
  * Note that if table has disabled "maxout" flag (disabled by default) than
  * relative width is used as a hint only. It's possible that column will be
@@ -384,12 +392,12 @@ int scols_table_move_column(struct libscols_table *tb,
  * If the width of all columns is greater than terminal width then library
  * tries to reduce width of the individual columns. It's done in three stages:
  *
- * #1 reduce columns with SCOLS_FL_TRUNC flag and with relative width if the
+ * 1. reduce columns with SCOLS_FL_TRUNC flag and with relative width if the
  *    width is greater than width defined by @whint (@whint * terminal_width)
  *
- * #2 reduce all columns with SCOLS_FL_TRUNC flag
+ * 2. reduce all columns with SCOLS_FL_TRUNC flag
  *
- * #3 reduce all columns with relative width
+ * 3. reduce all columns with relative width
  *
  * The next stage is always used if the previous stage is unsuccessful. Note
  * that SCOLS_FL_WRAP is interpreted as SCOLS_FL_TRUNC when calculate column
@@ -400,12 +408,16 @@ int scols_table_move_column(struct libscols_table *tb,
  * The column is necessary to address by sequential number. The first defined
  * column has the colnum = 0. For example:
  *
- *	scols_table_new_column(tab, "FOO", 0.5, 0);		// colnum = 0
- *	scols_table_new_column(tab, "BAR", 0.5, 0);		// colnum = 1
- *      .
- *      .
- *	scols_line_get_cell(line, 0);				// FOO column
- *	scols_line_get_cell(line, 1);				// BAR column
+ * <informalexample>
+ *   <programlisting language="C">
+ *     scols_table_new_column(tab, "FOO", 0.5, 0);    // colnum = 0
+ *     scols_table_new_column(tab, "BAR", 0.5, 0);    // colnum = 1
+ *     .
+ *     .
+ *     scols_line_get_cell(line, 0);                  // FOO column
+ *     scols_line_get_cell(line, 1);                  // BAR column
+ *   </programlisting>
+ * </informalexample>
  *
  * Returns: newly allocated column
  */
@@ -801,10 +813,13 @@ int scols_table_next_line(struct libscols_table *tb,
  *
  * This is shortcut for
  *
- *   ln = scols_new_line();
- *   scols_table_add_line(tb, ln);
- *   scols_line_add_child(parent, ln);
- *
+ * <informalexample>
+ *   <programlisting language="C">
+ *     ln = scols_new_line();
+ *     scols_table_add_line(tb, ln);
+ *     scols_line_add_child(parent, ln);
+ *   </programlisting>
+ * </informalexample>
  *
  * Returns: newly allocate line
  */
