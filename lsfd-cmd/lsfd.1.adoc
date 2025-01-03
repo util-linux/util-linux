@@ -275,6 +275,11 @@ Cooked version of KNAME. It is mostly same as KNAME.
 +
 Some files have special formats and information sources:
 +
+AF_VSOCK:::
+state=_SOCK.STATE_ type=_SOCK.TYPE_ laddr=_VSOCK.LADDR_[ raddr=_VSOCK.RADDR_]
++
+`raddr` is not shown for listening sockets.
++
 bpf-map:::
 id=_BPF-MAP.ID_ type=_BPF-MAP.TYPE_[ name=_BPF.NAME_]
 +
@@ -348,7 +353,6 @@ state=_SOCK.STATE_[ path=_UNIX.PATH_]
 +
 UNIX:::
 state=_SOCK.STATE_[ path=_UNIX.PATH_] type=_SOCK.TYPE_
-
 ____
 Note that `(deleted)` markers are removed from this column.
 Refer to _KNAME_, _DELETED_, or _XMODE_ to know the
@@ -546,6 +550,22 @@ Filesystem pathname for UNIX domain socket.
 USER <``string``>::
 User of the process.
 
+VSOCK.LADDR <``string``>::
+VSOCK.RADDR <``string``>::
+Local VSOCK address. The format of the element
+is _VSOCK.LCID_``:``_VSOCK.LPORT_.
++
+Well-known CIDs will be decoded: "`{asterisk}`", "`hypervisor`", "`local`", or "`host`".
+Well-known ports will be decoded: "`{asterisk}`".
+
+VSOCK.LCID <``number``>::
+VSOCK.RCID <``number``>::
+Local and remote VSOCK context identifiers.
+
+VSOCK.LPORT <``number``>::
+VSOCK.RPORT <``number``>::
+Local and remote VSOCK ports.
+
 XMODE <``string``>::
 Extended version of _MODE_. This column may grow; new letters may be
 appended to _XMODE_ when *lsfd* supports a new state of file descriptors
@@ -729,7 +749,8 @@ mailto:kzak@redhat.com[Karel Zak]
 *scols-filter*(5),
 *socket*(2),
 *ss*(8),
-*stat*(2)
+*stat*(2),
+*vsock*(7)
 
 include::man-common/bugreports.adoc[]
 

@@ -592,6 +592,10 @@ AC_CHECK_DECL([SO_PASSCRED],
 	      [#include <sys/types.h>
 	       #include <sys/socket.h>])
 
+AC_CHECK_DECLS([VMADDR_CID_LOCAL], [], [], [
+	       #include <sys/socket.h>
+	       #include <linux/vm_sockets.h>])
+
 AC_CHECK_FUNCS([ \
 	cachestat \
 	clearenv \

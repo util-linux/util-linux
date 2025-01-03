@@ -33,6 +33,8 @@
 #include <linux/un.h>		/* UNIX_PATH_MAX */
 #include <linux/unix_diag.h>	/* UNIX_DIAG_*, UDIAG_SHOW_*,
 				   struct unix_diag_req */
+#include <linux/vm_sockets.h>	/* VMADDR_CID* */
+#include <linux/vm_sockets_diag.h> /* vsock_diag_req/vsock_diag_msg */
 #include <sched.h>		/* for setns(2) */
 #include <search.h>		/* tfind, tsearch */
 #include <stdint.h>
@@ -62,6 +64,7 @@ static void load_xinfo_from_proc_netlink(ino_t netns_inode);
 static void load_xinfo_from_proc_packet(ino_t netns_inode);
 
 static void load_xinfo_from_diag_unix(int diag, ino_t netns_inode);
+static void load_xinfo_from_diag_vsock(int diag, ino_t netns_inode);
 
 static int self_netns_fd = -1;
 static struct stat self_netns_sb;
@@ -186,6 +189,7 @@ static void load_sock_xinfo_no_nsswitch(struct netns *nsobj)
 				(diagsd >= 0)? "successful": strerror(errno)));
 	if (diagsd >= 0) {
 		load_xinfo_from_diag_unix(diagsd, netns);
+		load_xinfo_from_diag_vsock(diagsd, netns);
 		close(diagsd);
 		DBG(ENDPOINTS, ul_debug("close the diagnose socket"));
 	}
@@ -2387,4 +2391,216 @@ static void load_xinfo_from_proc_packet(ino_t netns_inode)
 
  out:
 	fclose(packet_fp);
+}
+
+/*
+ * VSOCK
+ */
+struct vsock_addr {
+	uint32_t cid;
+	uint32_t port;
+};
+
+struct vsock_xinfo {
+	struct sock_xinfo sock;
+	uint8_t type;
+	uint8_t  st;
+	uint8_t  shutdown_mask:3;
+	struct vsock_addr local;
+	struct vsock_addr remote;
+};
+
+static const char *vsock_decode_cid(uint32_t cid)
+{
+	switch (cid) {
+	case VMADDR_CID_ANY:
+		return "*";
+	case VMADDR_CID_HYPERVISOR:
+		return "hypervisor";
+#if HAVE_DECL_VMADDR_CID_LOCAL
+	case VMADDR_CID_LOCAL:
+		return "local";
+#endif	/* HAVE_DECL_VMADDR_CID_LOCAL */
+	case VMADDR_CID_HOST:
+		return "host";
+	default:
+		return NULL;
+	}
+}
+
+static const char *vsock_decode_port(uint32_t port)
+{
+	if (port == VMADDR_PORT_ANY)
+		return "*";
+	return NULL;
+}
+
+static char* vsock_get_addr(struct vsock_addr *addr)
+{
+	const char *tmp_cid = vsock_decode_cid(addr->cid);
+	const char *tmp_port = vsock_decode_port(addr->port);
+	char cidstr[BUFSIZ];
+	char portstr[BUFSIZ];
+	char *str = NULL;
+
+	if (tmp_cid)
+		snprintf(cidstr, sizeof(cidstr), "%s", tmp_cid);
+	else
+		snprintf(cidstr, sizeof(cidstr), "%"PRIu32, addr->cid);
+
+	if (tmp_port)
+		snprintf(portstr, sizeof(portstr), "%s", tmp_port);
+	else
+		snprintf(portstr, sizeof(portstr), "%"PRIu32, addr->port);
+
+	xasprintf(&str, "%s:%s", cidstr, portstr);
+	return str;
+}
+
+static char *vsock_get_name(struct sock_xinfo *sock_xinfo,
+			    struct sock *sock __attribute__((__unused__)))
+{
+	struct vsock_xinfo *vs = (struct vsock_xinfo *)sock_xinfo;
+	char *str = NULL;
+	const char *st_str = l4_decode_state(vs->st);
+	const char *type_str = sock_decode_type(vs->type);
+	char *laddr = vsock_get_addr(&vs->local);
+
+	if (vs->st == TCP_LISTEN)
+		xasprintf(&str, "state=%s type=%s laddr=%s",
+			  st_str, type_str, laddr);
+	else {
+		char *raddr = vsock_get_addr(&vs->remote);
+
+		xasprintf(&str, "state=%s type=%s laddr=%s raddr=%s",
+			  st_str, type_str, laddr, raddr);
+		free(raddr);
+	}
+	free(laddr);
+
+	return str;
+}
+
+static char *vsock_get_type(struct sock_xinfo *sock_xinfo,
+			   struct sock *sock __attribute__((__unused__)))
+{
+	const char *str;
+	struct vsock_xinfo *vs = (struct vsock_xinfo *)sock_xinfo;
+
+	str = sock_decode_type(vs->type);
+	return xstrdup(str);
+}
+
+static char *vsock_get_state(struct sock_xinfo *sock_xinfo,
+			     struct sock *sock __attribute__((__unused__)))
+{
+	const char *str;
+	struct vsock_xinfo *vs = (struct vsock_xinfo *)sock_xinfo;
+
+	str = l4_decode_state(vs->st);
+	return xstrdup(str);
+}
+
+static bool vsock_get_listening(struct sock_xinfo *sock_xinfo,
+				struct sock *sock __attribute__((__unused__)))
+{
+	return ((struct vsock_xinfo *)sock_xinfo)->st == TCP_LISTEN;
+}
+
+static bool vsock_fill_column(struct proc *proc __attribute__((__unused__)),
+			      struct sock_xinfo *sock_xinfo,
+			      struct sock *sock __attribute__((__unused__)),
+			      struct libscols_line *ln __attribute__((__unused__)),
+			      int column_id,
+			      size_t column_index __attribute__((__unused__)),
+			      char **str)
+{
+	struct vsock_xinfo *vs = (struct vsock_xinfo *)sock_xinfo;
+
+	switch (column_id) {
+	case COL_VSOCK_LCID:
+		xasprintf(str, "%"PRIu32, vs->local.cid);
+		return true;
+	case COL_VSOCK_RCID:
+		xasprintf(str, "%"PRIu32, vs->remote.cid);
+		return true;
+	case COL_VSOCK_LPORT:
+		xasprintf(str, "%"PRIu32, vs->local.port);
+		return true;
+	case COL_VSOCK_RPORT:
+		xasprintf(str, "%"PRIu32, vs->remote.port);
+		return true;
+	case COL_VSOCK_LADDR:
+		*str = vsock_get_addr(&vs->local);
+		return true;
+	case COL_VSOCK_RADDR:
+		*str = vsock_get_addr(&vs->remote);
+		return true;
+	}
+	return false;
+}
+
+static const struct sock_xinfo_class vsock_xinfo_class = {
+	.get_name = vsock_get_name,
+	.get_type = vsock_get_type,
+	.get_state = vsock_get_state,
+	.get_listening = vsock_get_listening,
+	.fill_column = vsock_fill_column,
+	.free = NULL,
+};
+
+static bool handle_diag_vsock(ino_t netns __attribute__((__unused__)),
+			     size_t nlmsg_len, void *nlmsg_data)
+{
+	const struct vsock_diag_msg *diag = nlmsg_data;
+	ino_t inode;
+	struct sock_xinfo *xinfo;
+	struct vsock_xinfo *vx;
+
+	if (diag->vdiag_family != AF_VSOCK)
+		return false;
+	DBG(ENDPOINTS, ul_debug("         VSOCK"));
+	DBG(ENDPOINTS, ul_debug("         LEN: %zu (>= %zu)", nlmsg_len,
+				(size_t)(NLMSG_LENGTH(sizeof(*diag)))));
+
+	if (nlmsg_len < NLMSG_LENGTH(sizeof(*diag)))
+		return false;
+
+	inode = (ino_t)diag->vdiag_ino;
+	DBG(ENDPOINTS, ul_debug("         inode: %llu", (unsigned long long)inode));
+
+	xinfo = get_sock_xinfo(inode);
+	if (xinfo != NULL)
+		/* It seems that the same socket reported twice. */
+		return true;
+
+	vx = xcalloc(1, sizeof(*vx));
+	xinfo = &vx->sock;
+	DBG(ENDPOINTS, ul_debug("         xinfo: %p", xinfo));
+
+	xinfo->class = &vsock_xinfo_class;
+	xinfo->inode = (ino_t)inode;
+	xinfo->netns_inode = (ino_t)netns;
+
+	vx->type = diag->vdiag_type;
+	vx->st = diag->vdiag_state;
+	vx->shutdown_mask = diag->vdiag_shutdown;
+	vx->local.cid = diag->vdiag_src_cid;
+	vx->local.port = diag->vdiag_src_port;
+	vx->remote.cid = diag->vdiag_dst_cid;
+	vx->remote.port = diag->vdiag_dst_port;
+
+	add_sock_info(xinfo);
+	return true;
+}
+
+static void load_xinfo_from_diag_vsock(int diagsd, ino_t netns)
+{
+	struct vsock_diag_req vdr;
+
+	memset(&vdr, 0, sizeof(vdr));
+	vdr.sdiag_family = AF_VSOCK;
+	vdr.vdiag_states =  ~(uint32_t)0;
+
+	send_diag_request(diagsd, &vdr, sizeof(vdr), handle_diag_vsock, netns);
 }
