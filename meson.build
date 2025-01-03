@@ -988,7 +988,9 @@ subdir('pam_lastlog2')
 subdir('login-utils')
 subdir('sys-utils')
 subdir('disk-utils')
+subdir('man-common')
 subdir('misc-utils')
+subdir('schedutils')
 subdir('text-utils')
 subdir('term-utils')
 subdir('lsfd-cmd')
@@ -1030,7 +1032,7 @@ exe2 = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += [exe, exe2]
-  manadocs += ['login-utils/chfn.1.adoc', 'login-utils/chsh.1.adoc']
+  manadocs += chfn_chsh_manadocs
   bashcompletions += ['chfn', 'chsh']
 endif
 
@@ -1065,7 +1067,7 @@ if opt and not is_disabler(exe)
   meson.add_install_script(meson_make_symlink,
                            'last',
                            usrbin_exec_dir / 'lastb')
-  manadocs += ['login-utils/last.1.adoc']
+  manadocs += last_manadocs
   manlinks += {'lastb.1': 'last.1'}
   bashcompletions += ['last']
   bashcompletionslinks += {'lastb': 'last'}
@@ -1082,7 +1084,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['login-utils/nologin.8.adoc']
+  manadocs += nologin_manadocs
 endif
 
 opt = not get_option('build-utmpdump').disabled()
@@ -1096,7 +1098,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['login-utils/utmpdump.1.adoc']
+  manadocs += utmpdump_manadocs
   bashcompletions += ['utmpdump']
 endif
 
@@ -1120,7 +1122,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['login-utils/su.1.adoc']
+  manadocs += su_manadocs
   bashcompletions += ['su']
 endif
 
@@ -1136,7 +1138,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['login-utils/newgrp.1.adoc']
+  manadocs += newgrp_manadocs
   bashcompletions += ['newgrp']
 endif
 
@@ -1156,7 +1158,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['login-utils/lslogins.1.adoc']
+  manadocs += lslogins_manadocs
   bashcompletions += ['lslogins']
 endif
 
@@ -1176,7 +1178,7 @@ if opt and not is_disabler(exe)
   meson.add_install_script(meson_make_symlink,
                            'vipw',
                            usrbin_exec_dir / 'vigr')
-  manadocs += ['login-utils/vipw.8.adoc']
+  manadocs += vipw_manadocs
   meson.add_install_script(meson_make_symlink,
                            'vipw.8',
                            mandir / 'man8/vigr.8')
@@ -1202,7 +1204,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['login-utils/runuser.1.adoc']
+  manadocs += runuser_manadocs
   bashcompletionslinks += {'runuser': 'su'}
 endif
 
@@ -1218,7 +1220,7 @@ exe = executable(
   install : true)
 if opt and not is_disabler(exe)
 exes += exe
-manadocs += ['text-utils/bits.1.adoc']
+manadocs += bits_manadocs
 bashcompletions += ['bits']
 endif
 
@@ -1233,7 +1235,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['text-utils/col.1.adoc']
+  manadocs += col_manadocs
   bashcompletions += ['col']
 endif
 
@@ -1247,7 +1249,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['text-utils/colcrt.1.adoc']
+  manadocs += colcrt_manadocs
   bashcompletions += ['colcrt']
 endif
 
@@ -1262,7 +1264,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['text-utils/colrm.1.adoc']
+  manadocs += colrm_manadocs
   bashcompletions += ['colrm']
 endif
 
@@ -1276,7 +1278,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['text-utils/rev.1.adoc']
+  manadocs += rev_manadocs
   bashcompletions += ['rev']
 endif
 
@@ -1290,7 +1292,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  manadocs += ['text-utils/column.1.adoc']
+  manadocs += column_manadocs
   bashcompletions += ['column']
 endif
 
@@ -1304,7 +1306,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['text-utils/line.1.adoc']
+  manadocs += line_manadocs
 endif
 
 opt = not get_option('build-pg').disabled()
@@ -1320,7 +1322,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['text-utils/pg.1.adoc']
+  manadocs += pg_manadocs
   bashcompletions += ['pg']
 endif
 
@@ -1336,7 +1338,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['text-utils/ul.1.adoc']
+  manadocs += ul_manadocs
   bashcompletions += ['ul']
 endif
 
@@ -1364,7 +1366,7 @@ exe2 = executable(
 exes += exe
 if opt and not is_disabler(exe)
   exes += [exe, exe2]
-  manadocs += ['text-utils/more.1.adoc']
+  manadocs += more_manadocs
   bashcompletions += ['more']
 endif
 
@@ -1381,7 +1383,7 @@ else
 endif
 if not is_disabler(exe)
     exes += exe
-    manadocs += ['text-utils/hexdump.1.adoc']
+    manadocs += hexdump_manadocs
     bashcompletions += ['hexdump']
 endif
 
@@ -1397,7 +1399,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/lsmem.1.adoc']
+  manadocs += lsmem_manadocs
   bashcompletions += ['lsmem']
 endif
 
@@ -1412,7 +1414,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/chmem.8.adoc']
+  manadocs += chmem_manadocs
   bashcompletions += ['chmem']
 endif
 
@@ -1427,7 +1429,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/choom.1.adoc']
+  manadocs += choom_manadocs
   bashcompletions += ['choom']
 endif
 
@@ -1444,7 +1446,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/ipcmk.1.adoc']
+  manadocs += ipcmk_manadocs
   bashcompletions += ['ipcmk']
 endif
 
@@ -1459,7 +1461,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/ipcrm.1.adoc']
+  manadocs += ipcrm_manadocs
   bashcompletions += ['ipcrm']
 endif
 
@@ -1474,7 +1476,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/ipcs.1.adoc']
+  manadocs += ipcs_manadocs
   bashcompletions += ['ipcs']
 endif
 
@@ -1490,7 +1492,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/rfkill.8.adoc']
+  manadocs += rfkill_manadocs
   bashcompletions += ['rfkill']
 endif
 
@@ -1504,7 +1506,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/renice.1.adoc']
+  manadocs += renice_manadocs
   bashcompletions += ['renice']
 endif
 
@@ -1518,7 +1520,7 @@ exe = executable(
   install : true)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/setpgid.1.adoc']
+  manadocs += setpgid_manadocs
   bashcompletions += ['setpgid']
 endif
 
@@ -1532,7 +1534,7 @@ exe = executable(
   install : true)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/setsid.1.adoc']
+  manadocs += setsid_manadocs
   bashcompletions += ['setsid']
 endif
 
@@ -1546,7 +1548,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/readprofile.8.adoc']
+  manadocs += readprofile_manadocs
   bashcompletions += ['readprofile']
 endif
 
@@ -1561,7 +1563,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/tunelp.8.adoc']
+  manadocs += tunelp_manadocs
   bashcompletions += ['tunelp']
 endif
 
@@ -1577,7 +1579,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/fstrim.8.adoc']
+  manadocs += fstrim_manadocs
   bashcompletions += ['fstrim']
 endif
 
@@ -1592,7 +1594,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/dmesg.1.adoc']
+  manadocs += dmesg_manadocs
   bashcompletions += ['dmesg']
 endif
 
@@ -1619,7 +1621,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/ctrlaltdel.8.adoc']
+  manadocs += ctrlaltdel_manadocs
   bashcompletions += ['ctrlaltdel']
 endif
 
@@ -1635,7 +1637,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/fsfreeze.8.adoc']
+  manadocs += fsfreeze_manadocs
   bashcompletions += ['fsfreeze']
 endif
 
@@ -1651,7 +1653,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/blkdiscard.8.adoc']
+  manadocs += blkdiscard_manadocs
   bashcompletions += ['blkdiscard']
 endif
 
@@ -1666,7 +1668,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/blkzone.8.adoc']
+  manadocs += blkzone_manadocs
   bashcompletions += ['blkzone']
 endif
 
@@ -1681,7 +1683,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/blkpr.8.adoc']
+  manadocs += blkpr_manadocs
 endif
 
 opt = get_option('build-ldattach').require(cc.has_header('linux/if.h')).allowed()
@@ -1695,7 +1697,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/ldattach.8.adoc']
+  manadocs += ldattach_manadocs
   bashcompletions += ['ldattach']
 endif
 
@@ -1712,7 +1714,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/rtcwake.8.adoc']
+  manadocs += rtcwake_manadocs
   bashcompletions += ['rtcwake']
 endif
 
@@ -1727,7 +1729,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/setarch.8.adoc']
+  manadocs += setarch_manadocs
   bashcompletions += ['setarch']
 endif
 
@@ -1765,7 +1767,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exe = exe
-  manadocs += ['sys-utils/eject.1.adoc']
+  manadocs += eject_manadocs
   bashcompletions += ['eject']
 endif
 
@@ -1780,7 +1782,7 @@ exe = executable(
   install : opt,
   build_by_default : opt)
 if opt and not is_disabler(exe)
-  manadocs += ['sys-utils/losetup.8.adoc']
+  manadocs += losetup_manadocs
   exes += exe
   bashcompletions += ['losetup']
 endif
@@ -1812,7 +1814,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/zramctl.8.adoc']
+  manadocs += zramctl_manadocs
   bashcompletions += ['zramctl']
 endif
 
@@ -1826,7 +1828,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/prlimit.1.adoc']
+  manadocs += prlimit_manadocs
   bashcompletions += ['prlimit']
 endif
 
@@ -1843,7 +1845,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/lsns.8.adoc']
+  manadocs += lsns_manadocs
   bashcompletions += ['lsns']
 endif
 
@@ -1869,9 +1871,9 @@ exe2 = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += [exe, exe2]
-  manadocs += ['sys-utils/fstab.5.adoc',
-		    'sys-utils/mount.8.adoc',
-	            'sys-utils/umount.8.adoc']
+  manadocs += [fstab_manadocs,
+              mount_manadocs,
+	            umount_manadocs]
   bashcompletions += ['mount', 'umount']
 endif
 
@@ -1919,7 +1921,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/swapon.8.adoc']
+  manadocs += swapon_manadocs
   bashcompletions += ['swapon']
 endif
 
@@ -1950,7 +1952,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/lscpu.1.adoc']
+  manadocs += lscpu_manadocs
   bashcompletions += ['lscpu']
 endif
 
@@ -1965,7 +1967,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/chcpu.8.adoc']
+  manadocs += chcpu_manadocs
   bashcompletions += ['chcpu']
 endif
 
@@ -1978,7 +1980,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/wdctl.8.adoc']
+  manadocs += wdctl_manadocs
   bashcompletions += ['wdctl']
 endif
 
@@ -1992,7 +1994,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/mountpoint.1.adoc']
+  manadocs += mountpoint_manadocs
   bashcompletions += ['mountpoint']
 endif
 
@@ -2007,7 +2009,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/fallocate.1.adoc']
+  manadocs += fallocate_manadocs
   bashcompletions += ['fallocate']
 endif
 
@@ -2021,7 +2023,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/pivot_root.8.adoc']
+  manadocs += pivot_root_manadocs
   bashcompletions += ['pivot_root']
 endif
 
@@ -2038,7 +2040,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/switch_root.8.adoc']
+  manadocs += switch_root_manadocs
 endif
 
 opt = not get_option('build-unshare').disabled()
@@ -2053,7 +2055,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/unshare.1.adoc']
+  manadocs += unshare_manadocs
   bashcompletions += ['unshare']
 endif
 
@@ -2083,7 +2085,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/nsenter.1.adoc']
+  manadocs += nsenter_manadocs
   bashcompletions += ['nsenter']
 endif
 
@@ -2113,7 +2115,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/setpriv.1.adoc']
+  manadocs += setpriv_manadocs
   bashcompletions += ['setpriv']
 endif
 
@@ -2129,7 +2131,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/flock.1.adoc']
+  manadocs += flock_manadocs
   bashcompletions += ['flock']
 endif
 
@@ -2145,7 +2147,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/lsirq.1.adoc']
+  manadocs += lsirq_manadocs
   bashcompletions += ['lsirq']
 endif
 
@@ -2163,7 +2165,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/irqtop.1.adoc']
+  manadocs += irqtop_manadocs
   bashcompletions += ['irqtop']
 endif
 
@@ -2179,7 +2181,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/lsipc.1.adoc']
+  manadocs += lsipc_manadocs
   bashcompletions += ['lsipc']
 endif
 
@@ -2196,7 +2198,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['sys-utils/hwclock.8.adoc', 'sys-utils/adjtime_config.5.adoc']
+  manadocs +=  hwclock_manadocs
   bashcompletions += ['hwclock']
 endif
 
@@ -2210,7 +2212,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['disk-utils/mkfs.8.adoc']
+  manadocs += mkfs_manadocs
   bashcompletions += ['mkfs']
 endif
 
@@ -2225,7 +2227,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['disk-utils/mkfs.bfs.8.adoc']
+  manadocs += mkfs_bfs_manadocs
   bashcompletions += ['mkfs.bfs']
 endif
 
@@ -2240,7 +2242,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['disk-utils/isosize.8.adoc']
+  manadocs += isosize_manadocs
   bashcompletions += ['isosize']
 endif
 
@@ -2255,7 +2257,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  manadocs += ['disk-utils/mkswap.8.adoc']
+  manadocs += mkswap_manadocs
   bashcompletions += ['mkswap']
 endif
 
@@ -2270,7 +2272,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  manadocs += ['disk-utils/swaplabel.8.adoc']
+  manadocs += swaplabel_manadocs
   bashcompletions += ['swaplabel']
 endif
 
@@ -2286,7 +2288,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['disk-utils/fsck.8.adoc']
+  manadocs += fsck_manadocs
   bashcompletions += ['fsck']
 endif
 
@@ -2316,7 +2318,7 @@ exe3 = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += [exe, exe2, exe3]
-  manadocs += ['disk-utils/mkfs.minix.8.adoc','disk-utils/fsck.minix.8.adoc']
+  manadocs += fsck_minix_manadocs
   bashcompletions += ['mkfs.minix', 'fsck.minix']
 endif
 
@@ -2341,7 +2343,7 @@ exe2 = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += [exe, exe2]
-  manadocs += ['disk-utils/mkfs.cramfs.8.adoc','disk-utils/fsck.cramfs.8.adoc']
+  manadocs += fsck_cramfs_manadocs
   bashcompletions += ['mkfs.cramfs', 'fsck.cramfs']
 endif
 
@@ -2358,7 +2360,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['disk-utils/raw.8.adoc']
+  manadocs += raw_manadocs
   bashcompletions += ['raw']
 endif
 
@@ -2373,7 +2375,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['disk-utils/fdformat.8.adoc']
+  manadocs += fdformat_manadocs
   bashcompletions += ['fdformat']
 endif
 
@@ -2388,7 +2390,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['disk-utils/blockdev.8.adoc']
+  manadocs += blockdev_manadocs
   bashcompletions += ['blockdev']
 endif
 
@@ -2479,9 +2481,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['disk-utils/fdisk.8.adoc',
-		    'disk-utils/sfdisk.8.adoc',
-		    'disk-utils/cfdisk.8.adoc']
+  manadocs += cfdisk_manadocs + fdisk_manadocs + sfdisk_manadocs
   bashcompletions += ['cfdisk']
 endif
 
@@ -2522,10 +2522,7 @@ exe4 = executable(
   build_by_default : opt)
 if opt
   exes += [exe, exe2, exe3, exe4]
-  manadocs += ['disk-utils/addpart.8.adoc',
-		    'disk-utils/delpart.8.adoc',
-		    'disk-utils/resizepart.8.adoc',
-		    'disk-utils/partx.8.adoc']
+  manadocs += addpart_manadocs + delpart_manadocs + resizepart_manadocs + partx_manadocs
   bashcompletions += ['addpart', 'delpart', 'resizepart', 'partx']
 endif
 opt = opt and 'partx' in static_programs
@@ -2589,7 +2586,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['term-utils/script.1.adoc']
+  manadocs += script_manadocs
   bashcompletions += ['script']
 endif
 
@@ -2622,7 +2619,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['term-utils/scriptlive.1.adoc']
+  manadocs += scriptlive_manadocs
   bashcompletions += ['scriptlive']
 endif
 
@@ -2637,7 +2634,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['term-utils/scriptreplay.1.adoc']
+  manadocs += scriptreplay_manadocs
   bashcompletions += ['scriptreplay']
 endif
 
@@ -2653,7 +2650,7 @@ exe = executable(
   build_by_default : opt)
 if opt
   exes += exe
-  manadocs += ['term-utils/agetty.8.adoc']
+  manadocs += agetty_manadocs
 endif
 
 opt = not get_option('build-setterm').disabled()
@@ -2668,7 +2665,7 @@ exe = executable(
   build_by_default : opt)
 if opt
   exes += exe
-  manadocs += ['term-utils/setterm.1.adoc']
+  manadocs += setterm_manadocs
   bashcompletions += ['setterm']
 endif
 
@@ -2683,7 +2680,7 @@ exe = executable(
   build_by_default : opt)
 if opt
   exes += exe
-  manadocs += ['term-utils/mesg.1.adoc']
+  manadocs += mesg_manadocs
   bashcompletions += ['mesg']
 endif
 
@@ -2707,7 +2704,7 @@ exe = executable(
   build_by_default : opt)
 if opt
   exes += exe
-  manadocs += ['term-utils/wall.1.adoc']
+  manadocs += wall_manadocs
   bashcompletions += ['wall']
 endif
 
@@ -2727,7 +2724,7 @@ exe = executable(
   build_by_default : opt)
 if opt
   exes += exe
-  manadocs += ['term-utils/write.1.adoc']
+  manadocs += write_manadocs
   bashcompletions += ['write']
 endif
 
@@ -2747,7 +2744,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['login-utils/login.1.adoc']
+  manadocs += login_manadocs
 endif
 
 opt = not get_option('build-sulogin').disabled()
@@ -2763,7 +2760,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['login-utils/sulogin.8.adoc']
+  manadocs += sulogin_manadocs
 endif
 
 opt = not get_option('build-cal').disabled()
@@ -2779,7 +2776,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/cal.1.adoc']
+  manadocs += cal_manadocs
   bashcompletions += ['cal']
 endif
 
@@ -2795,7 +2792,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/logger.1.adoc']
+  manadocs += logger_manadocs
   bashcompletions += ['logger']
 endif
 
@@ -2821,7 +2818,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/look.1.adoc']
+  manadocs += look_manadocs
   bashcompletions += ['look']
 endif
 
@@ -2836,7 +2833,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/mcookie.1.adoc']
+  manadocs += mcookie_manadocs
   bashcompletions += ['mcookie']
 endif
 
@@ -2849,17 +2846,9 @@ if build_liblastlog2
     install_dir : usrbin_exec_dir,
     install : true)
   exes += exe
-  manadocs += ['misc-utils/lastlog2.8.adoc']
+  manadocs += lastlog2_manadocs
   bashcompletions += ['lastlog2']
-  manadocs += ['liblastlog2/man/lastlog2.3.adoc',
-               'liblastlog2/man/ll2_write_entry.3.adoc',
-	       'liblastlog2/man/ll2_read_entry.3.adoc',
-	       'liblastlog2/man/ll2_import_lastlog.3.adoc',
-	       'liblastlog2/man/ll2_read_all.3.adoc',
-	       'liblastlog2/man/ll2_remove_entry.3.adoc',
-	       'liblastlog2/man/ll2_rename_user.3.adoc',
-	       'liblastlog2/man/ll2_update_login_time.3.adoc'
-	       ]
+  manadocs += lib_lastlog2_manadocs
 endif
 
 opt = not get_option('build-namei').disabled()
@@ -2873,7 +2862,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/namei.1.adoc']
+  manadocs += namei_manadocs
   bashcompletions += ['namei']
 endif
 
@@ -2888,7 +2877,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/whereis.1.adoc']
+  manadocs += whereis_manadocs
   bashcompletions += ['whereis']
 endif
 
@@ -2905,7 +2894,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/lslocks.8.adoc']
+  manadocs += lslocks_manadocs
   bashcompletions += ['lslocks']
 endif
 
@@ -2922,7 +2911,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/lsblk.8.adoc']
+  manadocs += lsblk_manadocs
   bashcompletions += ['lsblk']
 endif
 
@@ -2948,7 +2937,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['lsfd-cmd/lsfd.1.adoc']
+  manadocs += lsfd_manadocs
 endif
 
 exe = executable(
@@ -2961,7 +2950,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/uuidgen.1.adoc']
+  manadocs += uuidgen_manadocs
   bashcompletions += ['uuidgen']
 endif
 
@@ -2976,7 +2965,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/uuidparse.1.adoc']
+  manadocs += uuidparse_manadocs
   bashcompletions += ['uuidparse']
 endif
 
@@ -3002,7 +2991,7 @@ exe2 = executable(
   build_by_default : opt and program_tests)
 if not is_disabler(exe)
   exes += [exe, exe2]
-  manadocs += ['misc-utils/uuidd.8.adoc']
+  manadocs += uuidd_manadocs
   bashcompletions += ['uuidd']
 endif
 
@@ -3018,7 +3007,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/blkid.8.adoc']
+  manadocs += blkid_manadocs
   bashcompletions += ['blkid']
 endif
 
@@ -3093,7 +3082,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/findfs.8.adoc']
+  manadocs += findfs_manadocs
   bashcompletions += ['findfs']
 endif
 
@@ -3108,7 +3097,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/wipefs.8.adoc']
+  manadocs += wipefs_manadocs
   bashcompletions += ['wipefs']
 endif
 
@@ -3124,7 +3113,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/findmnt.8.adoc']
+  manadocs += findmnt_manadocs
   bashcompletions += ['findmnt']
 endif
 
@@ -3138,7 +3127,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/kill.1.adoc']
+  manadocs += kill_manadocs
 endif
 
 opt = not get_option('build-rename').disabled()
@@ -3152,7 +3141,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/rename.1.adoc']
+  manadocs += rename_manadocs
   bashcompletions += ['rename']
 endif
 
@@ -3167,7 +3156,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/getopt.1.adoc']
+  manadocs += getopt_manadocs
   bashcompletions += ['getopt']
 endif
 
@@ -3181,7 +3170,7 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/fincore.1.adoc']
+  manadocs += fincore_manadocs
   bashcompletions += ['fincore']
 endif
 
@@ -3196,7 +3185,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/hardlink.1.adoc']
+  manadocs += hardlink_manadocs
   bashcompletions += ['hardlink']
 endif
 
@@ -3211,7 +3200,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/pipesz.1.adoc']
+  manadocs += pipesz_manadocs
   bashcompletions += ['pipesz']
 endif
 
@@ -3241,7 +3230,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/fadvise.1.adoc']
+  manadocs += fadvise_manadocs
   bashcompletions += ['fadvise']
 endif
 
@@ -3256,7 +3245,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/waitpid.1.adoc']
+  manadocs += waitpid_manadocs
   bashcompletions += ['waitpid']
 endif
 
@@ -3281,7 +3270,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/enosys.1.adoc']
+  manadocs += enosys_manadocs
   bashcompletions += ['enosys']
 endif
 
@@ -3296,7 +3285,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/lsclocks.1.adoc']
+  manadocs += lsclocks_manadocs
   bashcompletions += ['lsclocks']
 endif
 
@@ -3311,7 +3300,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
-  manadocs += ['misc-utils/exch.1.adoc']
+  manadocs += exch_manadocs
   bashcompletions += ['exch']
 endif
 
@@ -3365,11 +3354,7 @@ exe5 = executable(
 
 if opt and not is_disabler(exe)
   exes += [exe, exe2, exe3, exe4, exe5]
-  manadocs += ['schedutils/chrt.1.adoc',
-               'schedutils/ionice.1.adoc',
-               'schedutils/taskset.1.adoc',
-               'schedutils/uclampset.1.adoc',
-               'schedutils/coresched.1.adoc']
+  manadocs += schedutils_manadocs
   bashcompletions += ['chrt', 'ionice', 'taskset', 'uclampset', 'coresched']
 endif
 
@@ -3926,22 +3911,13 @@ run_target(
   depends : exes)
 
 
-manadocs += ['lib/terminal-colors.d.5.adoc']
+manadocs += lib_tcolors_manadocs
 if build_libblkid
-  manadocs += ['libblkid/libblkid.3.adoc']
+  manadocs += lib_blkid_manadocs + lib_smartcols_manadocs
 endif
 
 if build_libuuid
-  manadocs += [
-    'libuuid/man/uuid.3.adoc',
-    'libuuid/man/uuid_clear.3.adoc',
-    'libuuid/man/uuid_compare.3.adoc',
-    'libuuid/man/uuid_copy.3.adoc',
-    'libuuid/man/uuid_generate.3.adoc',
-    'libuuid/man/uuid_is_null.3.adoc',
-    'libuuid/man/uuid_parse.3.adoc',
-    'libuuid/man/uuid_time.3.adoc',
-    'libuuid/man/uuid_unparse.3.adoc']
+  manadocs += lib_uuid_manadocs
   manlinks += {
     'uuid_generate_random.3': 'uuid_generate.3',
     'uuid_generate_time.3': 'uuid_generate.3',
@@ -3952,8 +3928,8 @@ endif
 asciidoctor = find_program('asciidoctor', required : false)
 if asciidoctor.found()
   foreach adoc : manadocs
-    name = adoc.split('/')[-1]
-    page = name.split('.adoc')[0]
+    name = fs.name(adoc)
+    page = fs.stem(adoc)
     section = page.split('.')[-1]
     mandirn = mandir / 'man' + section
     input = adoc
@@ -3985,6 +3961,8 @@ if asciidoctor.found()
       'man' + target_section / target,
       mandir / 'man' + link_section / link_name)
   endforeach
+
+  subdir('po-man')
 endif
 
 if bash_completion.found()
