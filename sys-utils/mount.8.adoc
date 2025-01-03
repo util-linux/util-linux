@@ -790,7 +790,8 @@ The __id-mount__ parameter indicates the starting ID in the new mount.
 The __id-host__ parameter indicates the starting ID in the filesystem.
 The __id-range__ parameter indicates how many IDs are to be mapped.
 It is possible to specify multiple ID-mappings.
-The individual ID-mappings must be separated by spaces.
++
+The individual ID mappings must be separated by spaces. Please note that in the __/etc/fstab__ file, spaces are interpreted as separators between fields. To avoid this, you must escape them using \040. For example, X-mount.idmap=0:0:1\040500:1000:1.
 +
 For example, the ID-mapping *X-mount.idmap=u:1000:0:1 g:1001:1:2 5000:1000:2* creates an idmapped mount where
 UID 0 is mapped to UID 1000, GID 1 is mapped to GUID 1001, GID 2 is mapped to GID 1002, UID and GID 1000 are mapped to 5000, and UID and GID 1001 are mapped to 5001 in the mount.
