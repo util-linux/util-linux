@@ -436,8 +436,13 @@ ICMP echo request id used on the PING socket.
 POS <``number``>::
 File position.
 
-RAW.PROTOCOL <``number``>::
-Protocol number of the raw socket.
+RAW.PROTOCOL <``string``>::
+Protocol name of the raw socket (decoded).
++
+NOTE: The data type of this column was <``number``> from v2.39 to v2.41.
+
+RAW.PROTOCOL.RAW <``number``>::
+Protocol number of the raw socket (raw).
 
 RDEV <``string``>::
 Device ID (if special file).
