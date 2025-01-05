@@ -1004,12 +1004,12 @@ static void *open_ro_blkdev(const struct factory *factory, struct fdesc fdescs[]
 	return NULL;
 }
 
-static int make_packet_socket(int socktype, const char *interface)
+static int make_packet_socket(int socktype, const char *interface, int protocol)
 {
 	int sd;
 	struct sockaddr_ll addr;
 
-	sd = socket(AF_PACKET, socktype, htons(ETH_P_ALL));
+	sd = socket(AF_PACKET, socktype, htons(protocol));
 	if (sd < 0)
 		err(EXIT_FAILURE, "failed to make a socket with AF_PACKET");
 
@@ -1050,9 +1050,11 @@ static void *make_mmapped_packet_socket(const struct factory *factory, struct fd
 	int sd;
 	struct arg socktype = decode_arg("socktype", factory->params, argc, argv);
 	struct arg interface = decode_arg("interface", factory->params, argc, argv);
+	struct arg protocol = decode_arg("protocol", factory->params, argc, argv);
 
 	int isocktype;
 	const char *sinterface;
+	int iprotocol;
 	struct tpacket_req req;
 	struct munmap_data *munmap_data;
 
@@ -1067,7 +1069,9 @@ static void *make_mmapped_packet_socket(const struct factory *factory, struct fd
 	free_arg(&socktype);
 
 	sinterface = ARG_STRING(interface);
-	sd = make_packet_socket(isocktype, sinterface);
+	iprotocol = ARG_INTEGER(protocol);
+	sd = make_packet_socket(isocktype, sinterface, iprotocol);
+	free_arg(&protocol);
 	free_arg(&interface);
 
 	/* Specify the spec of ring buffers.
@@ -3599,6 +3603,13 @@ static const struct factory factories[] = {
 				.desc = "a name of network interface like eth0 or lo",
 				.defv.string = "lo",
 			},
+			{
+				.name = "protocol",
+				.type = PTYPE_INTEGER,
+				.desc = "protocol passed to socket(AF_PACKET, *, htons(protocol))",
+				.defv.integer = ETH_P_ALL,
+			},
+
 			PARAM_END
 		},
 	},
