@@ -2110,8 +2110,6 @@ struct packet_xinfo {
 static const char *packet_decode_protocol(uint16_t proto)
 {
 	switch (proto) {
-	case 0:
-		return NULL;
 	case ETH_P_802_3:
 		return "802_3";
 	case ETH_P_AX25:
@@ -2372,9 +2370,9 @@ static const char *packet_decode_protocol(uint16_t proto)
 	case ETH_P_802_3_MIN:
 		return "802_3_min";
 #endif
-	default:
-		return "unknown";
 	}
+
+	return NULL;
 }
 
 static char *packet_get_name(struct sock_xinfo *sock_xinfo,
@@ -2383,21 +2381,22 @@ static char *packet_get_name(struct sock_xinfo *sock_xinfo,
 	struct packet_xinfo *pkt = (struct packet_xinfo *)sock_xinfo;
 	char *str = NULL;
 	const char *type = sock_decode_type(pkt->type);
-	const char *proto = packet_decode_protocol(pkt->protocol);
+	const char *proto_str = packet_decode_protocol(pkt->protocol);
+	char proto_buf[ sizeof("unknown(") + sizeof (stringify_value(UINT16_MAX)) + sizeof (")") ];
 	const char *iface = get_iface_name(sock_xinfo->netns_inode,
 					   pkt->iface);
 
-	if (iface && proto)
+	if (proto_str == NULL) {
+		snprintf(proto_buf, sizeof(proto_buf), "unknown(%"PRIu16")", pkt->protocol);
+		proto_str = proto_buf;
+	}
+
+	if (iface)
 		xasprintf(&str, "type=%s protocol=%s iface=%s",
-			  type, proto, iface);
-	else if (proto)
-		xasprintf(&str, "type=%s protocol=%s",
-			  type, proto);
-	else if (iface)
-		xasprintf(&str, "type=%s iface=%s",
-			  type, iface);
+			  type, proto_str, iface);
 	else
-		xasprintf(&str, "type=%s", type);
+		xasprintf(&str, "type=%s protocol=%s",
+			  type, proto_str);
 
 	return str;
 }
@@ -2436,12 +2435,15 @@ static bool packet_fill_column(struct proc *proc __attribute__((__unused__)),
 	case COL_PACKET_PROTOCOL: {
 		const char *proto;
 		proto = packet_decode_protocol(pkt->protocol);
-		if (proto) {
+		if (proto)
 			*str = xstrdup(proto);
-			return true;
-		}
-		break;
+		else
+			xstrfappend(str, "unknown(%"PRIu16")", pkt->protocol);
+		return true;
 	}
+	case COL_PACKET_PROTOCOL_RAW:
+		xasprintf(str, "%"PRIu16, pkt->protocol);
+		return true;
 	default:
 		break;
 	}
