@@ -311,7 +311,7 @@ static const struct colinfo infos[] = {
 				   N_("net interface associated with the packet socket") },
 	[COL_PACKET_PROTOCOL]  = { "PACKET.PROTOCOL",
 				   0,   SCOLS_FL_RIGHT,SCOLS_JSON_STRING,
-				   N_("L3 protocol associated with the packet socket") },
+				   N_("L2 protocol associated with the packet socket") },
 	[COL_PARTITION]        = { "PARTITION",
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 				   N_("block device name resolved by /proc/partition") },
