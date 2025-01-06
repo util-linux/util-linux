@@ -105,13 +105,14 @@ function lsfd_check_mkfds_factory
 function lsfd_check_sockdiag
 {
 	local family=$1
+	local type=${2:-dgram}
 
 	ts_check_test_command "$TS_HELPER_MKFDS"
 
 	local msg
 	local err
 
-	msg=$("$TS_HELPER_MKFDS" -c sockdiag 9 family=$family 2>&1)
+	msg=$("$TS_HELPER_MKFDS" -c sockdiag 9 family=$family type=$type 2>&1)
 	err=$?
 
 	case $err in
