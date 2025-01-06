@@ -149,3 +149,23 @@ function lsfd_check_vsock
 		ts_failed "failed to use a AF_VSOCK socket: $msg [$err]";;
 	esac
 }
+
+function lsfd_check_userns
+{
+	ts_check_test_command "$TS_HELPER_MKFDS"
+
+	local msg
+	local err
+
+	msg=$("$TS_HELPER_MKFDS" -c userns 3 2>&1)
+	err=$?
+
+	case $err in
+	    0)
+		return;;
+	    "$EPERM")
+		ts_skip "maybe /proc/self/uid_map it not writable";;
+	    *)
+		ts_failed "failed to use a AF_VSOCK socket: $msg [$err]";;
+	esac
+}

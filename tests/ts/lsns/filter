@@ -31,6 +31,8 @@ ts_check_test_command "$TS_HELPER_MKFDS"
 # unshare(2) used in userns factory of test_mkfds reports "Invalid argument".
 ts_skip_qemu_user
 
+lsfd_check_userns
+
 ts_cd "$TS_OUTDIR"
 PID=
 FD=4
