@@ -3091,7 +3091,7 @@ static void map_root_user(uid_t uid, uid_t gid)
 		    "failed to open /proc/self/uid_map");
 	r = write (mapfd, buf, n);
 	if (r < 0)
-		err(EXIT_FAILURE,
+		err((errno == EPERM? EXIT_EPERM: EXIT_FAILURE),
 		    "failed to write to /proc/self/uid_map");
 	if (r != n)
 		errx(EXIT_FAILURE,
