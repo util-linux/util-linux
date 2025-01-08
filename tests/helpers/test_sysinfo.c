@@ -163,7 +163,7 @@ static int hlp_listmount_ok(void)
 #else
 	errno = ENOSYS;
 #endif
-	printf("%d\n", errno != ENOSYS);
+	printf("%d\n", !(errno == ENOSYS || errno == EINVAL));
 	return 0;
 }
 
