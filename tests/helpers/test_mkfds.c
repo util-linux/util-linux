@@ -38,6 +38,7 @@
 # include <linux/unix_diag.h> /* for UNIX domain sockets */
 #include <linux/sockios.h>  /* SIOCGSKNS */
 #include <linux/vm_sockets.h>
+#include <linux/vm_sockets_diag.h> /* vsock_diag_req/vsock_diag_msg */
 #include <mqueue.h>
 #include <net/if.h>
 #include <netinet/in.h>
@@ -3091,7 +3092,7 @@ static void map_root_user(uid_t uid, uid_t gid)
 		    "failed to open /proc/self/uid_map");
 	r = write (mapfd, buf, n);
 	if (r < 0)
-		err(EXIT_FAILURE,
+		err((errno == EPERM? EXIT_EPERM: EXIT_FAILURE),
 		    "failed to write to /proc/self/uid_map");
 	if (r != n)
 		errx(EXIT_FAILURE,
@@ -3224,22 +3225,37 @@ static void *make_sockdiag(const struct factory *factory, struct fdesc fdescs[],
 	struct arg family = decode_arg("family", factory->params, argc, argv);
 	const char *sfamily = ARG_STRING(family);
 	int ifamily;
+	struct arg type = decode_arg("type", factory->params, argc, argv);
+	const char *stype = ARG_STRING(type);
+	int itype;
 	int diagsd;
 	void *req = NULL;
 	size_t reqlen = 0;
 	int e;
 	struct unix_diag_req udr;
+	struct vsock_diag_req vdr;
 
 	if (strcmp(sfamily, "unix") == 0)
 		ifamily = AF_UNIX;
+	else if (strcmp(sfamily, "vsock") == 0)
+		ifamily = AF_VSOCK;
 	else
 		errx(EXIT_FAILURE, "unknown/unsupported family: %s", sfamily);
-	free_arg(&family);
 
-	diagsd = socket(AF_NETLINK, SOCK_DGRAM, NETLINK_SOCK_DIAG);
+	if (strcmp(stype, "dgram") == 0)
+		itype = SOCK_DGRAM;
+	else if (strcmp(stype, "raw") == 0)
+		itype = SOCK_RAW;
+	else
+		errx(EXIT_FAILURE, "unknown/unsupported type: %s", stype);
+
+
+	diagsd = socket(AF_NETLINK, itype, NETLINK_SOCK_DIAG);
 	if (diagsd < 0)
 		err(errno == EPROTONOSUPPORT? EXIT_EPROTONOSUPPORT: EXIT_FAILURE,
-		    "failed in sendmsg()");
+		    "failed in socket(AF_NETLINK, %s, NETLINK_SOCK_DIAG)", stype);
+	free_arg(&family);
+	free_arg(&type);
 
 	if (ifamily == AF_UNIX) {
 		udr = (struct unix_diag_req) {
@@ -3249,6 +3265,13 @@ static void *make_sockdiag(const struct factory *factory, struct fdesc fdescs[],
 		};
 		req = &udr;
 		reqlen = sizeof(udr);
+	} else if (ifamily == AF_VSOCK) {
+		vdr = (struct vsock_diag_req) {
+			.sdiag_family = AF_VSOCK,
+			.vdiag_states = ~(uint32_t)0,
+		};
+		req = &vdr;
+		reqlen = sizeof(vdr);
 	}
 
 	e = send_diag_request(diagsd, req, reqlen);
@@ -4271,10 +4294,16 @@ static const struct factory factories[] = {
 		.make = make_sockdiag,
 		.params = (struct parameter []) {
 			{
+				.name = "type",
+				.type = PTYPE_STRING,
+				.desc = "dgram or raw",
+				.defv.string = "dgram",
+			},
+			{
 				.name = "family",
 				.type = PTYPE_STRING,
 				/* TODO: inet, inet6 */
-				.desc = "name of a protocol family ([unix])",
+				.desc = "name of a protocol family ([unix]|vsock)",
 				.defv.string = "unix",
 			},
 			PARAM_END

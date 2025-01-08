@@ -48,7 +48,10 @@ modprobe --quiet hv_vsock ||:
 # VMADDR_CID_LOCAL requires this.
 modprobe --quiet vsock_loopback	||:
 
+modprobe --quiet vsock_diag || :
+
 lsfd_check_vsock
+lsfd_check_sockdiag vsock raw
 
 {
 
