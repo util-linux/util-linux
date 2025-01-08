@@ -72,8 +72,13 @@ UL_DEBUG_DEFINE_MASKNAMES(lsns) = UL_DEBUG_EMPTY_MASKNAMES;
 
 #define lsns_ioctl(fildes, request, ...) __extension__ ({ \
 	int ret = ioctl(fildes, request, ##__VA_ARGS__); \
-	if (ret == -1 && (errno == ENOTTY || errno == ENOSYS))	\
-		warnx("Unsupported ioctl %s", #request); \
+	if (ret == -1 && (errno == ENOTTY || errno == ENOSYS)) {	\
+		warnx("Unsupported ioctl %s (%d, notty: %d, nosys: %d)", #request, errno, ENOTTY, ENOSYS); \
+		if (NS_GET_NSTYPE == request) {				\
+			ret = ioctl(fildes, request, ##__VA_ARGS__);	\
+			warnx("RETRY %s => %d (%d, notty: %d, nosys: %d)", #request, ret, errno, ENOTTY, ENOSYS); \
+		} \
+	}	  \
 	ret; })
 
 #define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(lsns)
