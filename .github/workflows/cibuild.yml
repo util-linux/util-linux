@@ -60,7 +60,7 @@ jobs:
       cancel-in-progress: true
     env:
       COMPILER: gcc
-      COMPILER_VERSION: 10
+      COMPILER_VERSION: 13
       SANITIZE: no
       COVERAGE: yes
     steps:
