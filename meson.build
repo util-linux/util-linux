@@ -2026,7 +2026,7 @@ if opt and not is_disabler(exe)
 endif
 
 opt = not get_option('build-switch_root').disabled()
-if opt and  not have_dirfd and not have_ddfd
+if opt and not have_dirfd and not have_ddfd
   error('neither dirfd nor ddfd are available')
 endif
 exe = executable(
@@ -2520,7 +2520,7 @@ exe4 = executable(
   install_dir : usrsbin_exec_dir,
   install : opt,
   build_by_default : opt)
-if opt
+if opt and not is_disabler(exe)
   exes += [exe, exe2, exe3, exe4]
   manadocs += ['disk-utils/addpart.8.adoc',
 		    'disk-utils/delpart.8.adoc',
@@ -2568,7 +2568,7 @@ exe4 = executable(
   install : opt,
   build_by_default : opt)
 
-if opt
+if opt and not is_disabler(exe)
   exes += [exe, exe2, exe3, exe4]
 endif
 
@@ -2651,7 +2651,7 @@ exe = executable(
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
-if opt
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['term-utils/agetty.8.adoc']
 endif
@@ -2666,7 +2666,7 @@ exe = executable(
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
-if opt
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['term-utils/setterm.1.adoc']
   bashcompletions += ['setterm']
@@ -2681,7 +2681,7 @@ exe = executable(
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
-if opt
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['term-utils/mesg.1.adoc']
   bashcompletions += ['mesg']
@@ -2705,7 +2705,7 @@ exe = executable(
   install_mode : tty_install_mode,
   install : opt,
   build_by_default : opt)
-if opt
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['term-utils/wall.1.adoc']
   bashcompletions += ['wall']
@@ -2725,7 +2725,7 @@ exe = executable(
   install_mode : tty_install_mode,
   install : opt,
   build_by_default : opt)
-if opt
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += ['term-utils/write.1.adoc']
   bashcompletions += ['write']
@@ -3384,7 +3384,9 @@ exe = executable(
   include_directories : dir_include,
   link_with : lib_common,
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_blkdev',
@@ -3393,7 +3395,9 @@ exe = executable(
   include_directories : dir_include,
   link_with : lib_common,
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_ismounted',
@@ -3402,7 +3406,9 @@ exe = executable(
   include_directories : dir_include,
   link_with : lib_common,
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_mangle',
@@ -3410,7 +3416,9 @@ exe = executable(
   c_args : ['-DTEST_PROGRAM_MANGLE'],
   include_directories : dir_include,
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_strutils',
@@ -3418,7 +3426,9 @@ exe = executable(
   c_args : ['-DTEST_PROGRAM_STRUTILS'],
   include_directories : dir_include,
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_colors',
@@ -3428,7 +3438,9 @@ exe = executable(
   include_directories : dir_include,
   link_with : [lib_common, lib_tcolors],
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_randutils',
@@ -3436,7 +3448,9 @@ exe = executable(
   c_args : ['-DTEST_PROGRAM_RANDUTILS'],
   include_directories : dir_include,
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 if conf.get('HAVE_OPENAT').to_string() == '1' \
    and conf.get('HAVE_DIRFD').to_string() == '1'
@@ -3447,7 +3461,9 @@ if conf.get('HAVE_OPENAT').to_string() == '1' \
     include_directories : dir_include,
     link_with : lib_common,
     build_by_default: program_tests)
-  exes += exe
+  if not is_disabler(exe)
+    exes += exe
+  endif
 
   exe = executable(
     'test_path',
@@ -3458,7 +3474,9 @@ if conf.get('HAVE_OPENAT').to_string() == '1' \
     include_directories : dir_include,
     link_with : lib_common,
     build_by_default: program_tests)
-  exes += exe
+  if not is_disabler(exe)
+    exes += exe
+  endif
 endif
 
 if have_pty
@@ -3473,7 +3491,9 @@ if have_pty
                     realtime_libs,
                     lib_util],
     build_by_default: program_tests)
-  exes += exe
+  if not is_disabler(exe)
+    exes += exe
+  endif
 endif
 
 if LINUX
@@ -3483,7 +3503,9 @@ if LINUX
     c_args : ['-DTEST_PROGRAM_CPUSET'],
     include_directories : dir_include,
     build_by_default: program_tests)
-  exes += exe
+  if not is_disabler(exe)
+    exes += exe
+  endif
 endif
 
 exe = executable(
@@ -3497,7 +3519,9 @@ exe = executable(
   c_args : ['-DTEST_PROGRAM_SYSFS'],
   include_directories : dir_include,
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_pager',
@@ -3505,7 +3529,9 @@ exe = executable(
   c_args : ['-DTEST_PROGRAM_PAGER'],
   include_directories : dir_include,
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_linux_version',
@@ -3513,7 +3539,9 @@ exe = executable(
   c_args : ['-DTEST_PROGRAM_LINUXVERSION'],
   include_directories : dir_include,
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_fileutils',
@@ -3521,7 +3549,9 @@ exe = executable(
   c_args : ['-DTEST_PROGRAM_FILEUTILS'],
   include_directories : dir_include,
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_canonicalize',
@@ -3529,7 +3559,9 @@ exe = executable(
   c_args : ['-DTEST_PROGRAM_CANONICALIZE'],
   include_directories : dir_include,
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_timeutils',
@@ -3538,7 +3570,9 @@ exe = executable(
   c_args : ['-DTEST_PROGRAM_TIMEUTILS'],
   include_directories : dir_include,
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_pwdutils',
@@ -3547,7 +3581,9 @@ exe = executable(
   include_directories : dir_include,
   link_with : lib_common,
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_logindefs',
@@ -3556,8 +3592,9 @@ exe = executable(
   include_directories : dir_include,
   link_with : [lib_common, logindefs_c],
   build_by_default: program_tests)
-exes += exe
-
+if not is_disabler(exe)
+  exes += exe
+endif
 
 ############################################################
 
@@ -3699,14 +3736,18 @@ exe = executable(
   include_directories : includes,
   link_with : lib_common,
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_byteswap',
   'tests/helpers/test_byteswap.c',
   include_directories : includes,
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_md5',
@@ -3714,7 +3755,9 @@ exe = executable(
   md5_c,
   include_directories : includes,
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_sha1',
@@ -3722,28 +3765,36 @@ exe = executable(
   sha1_c,
   include_directories : includes,
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_pathnames',
   'tests/helpers/test_pathnames.c',
   include_directories : includes,
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_strerror',
   'tests/helpers/test_strerror.c',
   include_directories : includes,
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_sysinfo',
   'tests/helpers/test_sysinfo.c',
   include_directories : includes,
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_sigreceive',
@@ -3751,7 +3802,9 @@ exe = executable(
   include_directories : includes,
   link_with : lib_common,
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_sigstate',
@@ -3759,14 +3812,18 @@ exe = executable(
   include_directories : includes,
   link_with : lib_common,
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_tiocsti',
   'tests/helpers/test_tiocsti.c',
   include_directories : includes,
   build_by_default: program_tests)
-exes += exe
+if not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_uuid_namespace',
