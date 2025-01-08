@@ -2941,7 +2941,7 @@ msgstr ""
 "|/dev/hda[1-63] |Discul IDE 1\n"
 "|/dev/hdb[1-63] |Discul IDE 2\n"
 "|/dev/sda[1-15] |Discul SCSI 1\n"
-"|/dev/sdb[1-15] ||Discul SCSI 2\n"
+"|/dev/sdb[1-15] |Discul SCSI 2\n"
 
 #. type: delimited block _
 #: ../disk-utils/fsck.minix.8.adoc:40
