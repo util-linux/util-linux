@@ -27,7 +27,6 @@
  *   Usually implemented by locally defined 'struct hook_data' in hook_*.c.
  */
 #include "mountP.h"
-#include "mount-api-utils.h"
 
 /* built-in hooksets */
 static const struct libmnt_hookset *const hooksets[] =

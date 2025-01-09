@@ -5,10 +5,16 @@
 #ifndef UTIL_LINUX_MOUNT_API_UTILS
 #define UTIL_LINUX_MOUNT_API_UTILS
 
-#if defined(HAVE_MOUNTFD_API) && defined(HAVE_LINUX_MOUNT_H)
-
-#include <sys/syscall.h>
+#ifdef HAVE_LINUX_MOUNT_H
+#include <sys/mount.h>
 #include <linux/mount.h>
+#include <sys/syscall.h>
+#include <inttypes.h>
+
+/*
+ * File descritors based mount API
+ */
+#ifdef HAVE_MOUNTFD_API
 
 /* Accepted by both open_tree() and mount_setattr(). */
 #ifndef AT_RECURSIVE
@@ -203,6 +209,207 @@ static inline int fspick(int dfd, const char *pathname, unsigned int flags)
 }
 #endif
 
-#endif /* HAVE_MOUNTFD_API && HAVE_LINUX_MOUNT_H */
-#endif /* UTIL_LINUX_MOUNT_API_UTILS */
+#endif /* HAVE_MOUNTFD_API */
 
+/*
+ * statmount() and listmount()
+ */
+#ifdef HAVE_STATMOUNT_API
+
+#ifndef MNT_ID_REQ_SIZE_VER0
+# define MNT_ID_REQ_SIZE_VER0    24 /* sizeof first published struct */
+#endif
+#ifndef MNT_ID_REQ_SIZE_VER1
+# define MNT_ID_REQ_SIZE_VER1    32 /* sizeof second published struct */
+#endif
+
+/*
+ * The structs mnt_id_req and statmount may differ between kernel versions, so
+ * we must ensure that the structs contain everything we need. For now (during
+ * development), it seems best to define local copies of the structs to avoid
+ * relying on installed kernel headers and to avoid a storm of #ifdefs.
+ */
+
+/*
+ * listmount() and statmount() request
+ */
+struct ul_mnt_id_req {
+	uint32_t size;
+	uint32_t spare;
+	uint64_t mnt_id;
+	uint64_t param;
+	uint64_t mnt_ns_id;
+};
+
+/*
+ * Please note that due to the variable length of the statmount buffer, the
+ * struct cannot be versioned by size (like struct mnt_id_req).
+ */
+struct ul_statmount {
+	uint32_t size;		/* Total size, including strings */
+	uint32_t mnt_opts;	/* [str] Mount options of the mount */
+	uint64_t mask;		/* What results were written */
+	uint32_t sb_dev_major;	/* Device ID */
+	uint32_t sb_dev_minor;
+	uint64_t sb_magic;		/* ..._SUPER_MAGIC */
+	uint32_t sb_flags;		/* SB_{RDONLY,SYNCHRONOUS,DIRSYNC,LAZYTIME} */
+	uint32_t fs_type;		/* [str] Filesystem type */
+	uint64_t mnt_id;		/* Unique ID of mount */
+	uint64_t mnt_parent_id;	/* Unique ID of parent (for root == mnt_id) */
+	uint32_t mnt_id_old;	/* Reused IDs used in proc/.../mountinfo */
+	uint32_t mnt_parent_id_old;
+	uint64_t mnt_attr;		/* MOUNT_ATTR_... */
+	uint64_t mnt_propagation;	/* MS_{SHARED,SLAVE,PRIVATE,UNBINDABLE} */
+	uint64_t mnt_peer_group;	/* ID of shared peer group */
+	uint64_t mnt_master;	/* Mount receives propagation from this ID */
+	uint64_t propagate_from;	/* Propagation from in current namespace */
+	uint32_t mnt_root;		/* [str] Root of mount relative to root of fs */
+	uint32_t mnt_point;	/* [str] Mountpoint relative to current root */
+	uint64_t mnt_ns_id;	 /* ID of the mount namespace */
+	uint64_t __spare2[49];
+	char str[];		/* Variable size part containing strings */
+};
+
+/* sb_flags (defined in kernel include/linux/fs.h) */
+#ifndef SB_RDONLY
+# define SB_RDONLY       BIT(0)	/* Mount read-only */
+# define SB_NOSUID       BIT(1)	/* Ignore suid and sgid bits */
+# define SB_NODEV        BIT(2)	/* Disallow access to device special files */
+# define SB_NOEXEC       BIT(3)	/* Disallow program execution */
+# define SB_SYNCHRONOUS  BIT(4)	/* Writes are synced at once */
+# define SB_MANDLOCK     BIT(6)	/* Allow mandatory locks on an FS */
+# define SB_DIRSYNC      BIT(7)	/* Directory modifications are synchronous */
+# define SB_NOATIME      BIT(10)	/* Do not update access times. */
+# define SB_NODIRATIME   BIT(11)	/* Do not update directory access times */
+# define SB_SILENT       BIT(15)
+# define SB_POSIXACL     BIT(16)	/* Supports POSIX ACLs */
+# define SB_INLINECRYPT  BIT(17)	/* Use blk-crypto for encrypted files */
+# define SB_KERNMOUNT    BIT(22)	/* this is a kern_mount call */
+# define SB_I_VERSION    BIT(23)	/* Update inode I_version field */
+# define SB_LAZYTIME     BIT(25)	/* Update the on-disk [acm]times lazily */
+#endif
+
+/*
+ * @mask bits for statmount(2)
+ */
+#ifndef STATMOUNT_SB_BASIC
+# define STATMOUNT_SB_BASIC		0x00000001U     /* Want/got sb_... */
+#endif
+#ifndef STATMOUNT_MNT_BASIC
+# define STATMOUNT_MNT_BASIC		0x00000002U	/* Want/got mnt_... */
+#endif
+#ifndef STATMOUNT_PROPAGATE_FROM
+# define STATMOUNT_PROPAGATE_FROM	0x00000004U	/* Want/got propagate_from */
+#endif
+#ifndef STATMOUNT_MNT_ROOT
+# define STATMOUNT_MNT_ROOT		0x00000008U	/* Want/got mnt_root  */
+#endif
+#ifndef STATMOUNT_MNT_POINT
+# define STATMOUNT_MNT_POINT		0x00000010U	/* Want/got mnt_point */
+#endif
+#ifndef STATMOUNT_FS_TYPE
+# define STATMOUNT_FS_TYPE		0x00000020U	/* Want/got fs_type */
+#endif
+#ifndef STATMOUNT_MNT_NS_ID
+# define STATMOUNT_MNT_NS_ID		0x00000040U     /* Want/got mnt_ns_id */
+#endif
+#ifndef STATMOUNT_MNT_OPTS
+# define STATMOUNT_MNT_OPTS		0x00000080U     /* Want/got mnt_opts */
+#endif
+
+/*
+ * Special @mnt_id values that can be passed to listmount
+ */
+#ifdef LSMT_ROOT
+# define LSMT_ROOT		0xffffffffffffffff	/* root mount */
+#endif
+
+#ifndef LISTMOUNT_REVERSE
+# define LISTMOUNT_REVERSE      BIT(0) /* List later mounts first */
+#endif
+
+#if defined(SYS_statmount)
+static inline int ul_statmount(uint64_t mnt_id,
+			uint64_t ns_id,
+			uint64_t mask,
+			struct ul_statmount *buf,
+			size_t bufsize, unsigned int flags)
+{
+       struct ul_mnt_id_req req = {
+		.size = MNT_ID_REQ_SIZE_VER1,
+		.mnt_id = mnt_id,
+		.param = mask,
+		.mnt_ns_id = ns_id
+       };
+
+       return syscall(SYS_statmount, &req, buf, bufsize, flags);
+}
+#endif
+
+#if defined(SYS_listmount)
+static inline ssize_t ul_listmount(uint64_t mnt_id,
+			uint64_t ns_id,
+			uint64_t last_mnt_id,
+			uint64_t list[], size_t num,
+			unsigned int flags)
+{
+       struct ul_mnt_id_req req = {
+		.size = MNT_ID_REQ_SIZE_VER1,
+		.mnt_id = mnt_id,
+		.param = last_mnt_id,
+		.mnt_ns_id = ns_id
+       };
+
+       return syscall(SYS_listmount, &req, list, num, flags);
+}
+#endif
+
+/* This is a version of statmount() that reallocates @buf to be large enough to
+ * store data for the requested @id. This function never deallocates; it is the
+ * caller's responsibility.
+ */
+static inline int sys_statmount(uint64_t id,
+			uint64_t ns_id,
+			uint64_t mask,
+			struct ul_statmount **buf,
+			size_t *bufsiz,
+			unsigned int flags)
+{
+	size_t sz;
+	int rc = 0;
+
+	if (!buf || !bufsiz)
+		return -EINVAL;
+
+	sz = *bufsiz;
+	if (!sz)
+		sz = 32 * 1024;
+
+	do {
+		if (sz > *bufsiz) {
+			struct ul_statmount *tmp = realloc(*buf, sz);
+			if (!tmp)
+				return -ENOMEM;
+			*buf = tmp;
+			*bufsiz = sz;
+		}
+
+		errno = 0;
+		rc = ul_statmount(id, ns_id, mask, *buf, *bufsiz, flags);
+		if (!rc)
+			break;
+		if (errno != EOVERFLOW)
+			break;
+		if (sz >= SIZE_MAX / 2)
+			break;
+		sz <<= 1;
+	} while (rc);
+
+	return rc;
+}
+
+#endif /* HAVE_STATMOUNT_API */
+
+#endif /* HAVE_LINUX_MOUNT_H */
+
+#endif /* UTIL_LINUX_MOUNT_API_UTILS */

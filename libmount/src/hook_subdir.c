@@ -19,7 +19,6 @@
 
 #include "mountP.h"
 #include "fileutils.h"
-#include "mount-api-utils.h"
 
 struct hookset_data {
 	char *subdir;

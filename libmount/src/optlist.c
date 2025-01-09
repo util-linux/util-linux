@@ -16,7 +16,6 @@
 #include "strutils.h"
 #include "list.h"
 #include "mountP.h"
-#include "mount-api-utils.h"
 
 #define MNT_OL_MAXMAPS	8
 

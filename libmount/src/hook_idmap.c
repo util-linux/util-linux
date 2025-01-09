@@ -20,12 +20,10 @@
 #include <sys/wait.h>
 #include <sys/ioctl.h>
 #include <sys/mount.h>
-#include <inttypes.h>
 
 #include "strutils.h"
 #include "all-io.h"
 #include "namespace.h"
-#include "mount-api-utils.h"
 
 #include "mountP.h"
 

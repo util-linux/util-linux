@@ -266,6 +266,73 @@ int mnt_is_readonly(const char *path)
 	return 0;
 }
 
+#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID)
+static int get_mnt_id(	int fd, const char *path,
+			uint64_t *uniq_id, int *id)
+{
+	int rc;
+	struct statx sx = { 0 };
+	int flags = AT_STATX_DONT_SYNC | AT_NO_AUTOMOUNT;
+
+	if (!path || !*path)
+		flags |= AT_EMPTY_PATH;
+
+	if (id) {
+		rc = statx(fd, path ? path : "", flags,
+				STATX_MNT_ID, &sx);
+		if (rc)
+			return rc;
+		*id = sx.stx_mnt_id;
+	}
+	if (uniq_id) {
+# ifdef STATX_MNT_ID_UNIQUE
+		errno = 0;
+		rc = statx(fd, path ? path : "", flags,
+				STATX_MNT_ID_UNIQUE, &sx);
+
+		if (rc && errno == EINVAL)
+			return -ENOSYS;		/* *_ID_UNIQUE unsupported? */
+		if (rc)
+			return rc;
+		*uniq_id = sx.stx_mnt_id;
+# else
+		return -ENOSYS;
+# endif
+	}
+	return 0;
+}
+#else /* HAVE_STATX && HAVE_STRUCT_STATX && AVE_STRUCT_STATX_STX_MNT_ID */
+static int get_mnt_id(	int fd __attribute__((__unused__)),
+			const char *path __attribute__((__unused__)),
+			uint64_t *uniq_id __attribute__((__unused__)),
+			int *id __attribute__((__unused__)))
+{
+	return -ENOSYS;
+}
+#endif
+
+int mnt_id_from_fd(int fd, uint64_t *uniq_id, int *id)
+{
+	return get_mnt_id(fd, NULL, uniq_id, id);
+}
+
+/**
+ * mnt_id_from_path:
+ * @path: mountpoint
+ * @uniq_id: returns STATX_MNT_ID_UNIQUE (optional)
+ * @id: returns STATX_MNT_ID (optional)
+ *
+ * Converts @path to ID.
+ *
+ * Returns: 0 on success, <0 on error
+ *
+ * Since: 2.41
+ */
+int mnt_id_from_path(const char *path, uint64_t *uniq_id, int *id)
+{
+	return get_mnt_id(-1, path, uniq_id, id);
+}
+
 /**
  * mnt_mangle:
  * @str: string

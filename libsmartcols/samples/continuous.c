@@ -14,6 +14,7 @@
 #include "c.h"
 #include "nls.h"
 #include "strutils.h"
+#include "timeutils.h"
 #include "xalloc.h"
 
 #include "libsmartcols.h"
@@ -21,11 +22,6 @@
 #define TIME_PERIOD	3.0	/* seconds */
 
 enum { COL_NUM, COL_DATA, COL_TIME };
-
-static double time_diff(struct timeval *a, struct timeval *b)
-{
-	return (a->tv_sec - b->tv_sec) + (a->tv_usec - b->tv_usec) / 1E6;
-}
 
 /* add columns to the @tb */
 static void setup_columns(struct libscols_table *tb)

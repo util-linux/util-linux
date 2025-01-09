@@ -75,11 +75,23 @@ Imitate the output of *df*(1) with its *-i* option. This option is equivalent to
 *-i*, *--invert*::
 Invert the sense of matching.
 
+*--id* _number_::
+Select a filesystem using the mount node ID.
+
+*--uniq-id* _number_::
+Select a filesystem using the mount node 64-bit ID, use with *--kernel=listmount* option.
+
 *-J*, *--json*::
 Use JSON output format.
 
-*-k*, *--kernel*::
-Search in _/proc/self/mountinfo_. The output is in the tree-like format. This is the default. The output contains only mount options maintained by kernel (see also *--mtab*).
+*-k*, *--kernel*[_=method_]::
+Reads information about filesystems from the kernel. This is the default output. The format is tree-like and only includes mount options managed by the kernel (see also *--mtab*).
++
+The optional argument _method_ can be either:
++
+* *mountinfo* - this is the default method and it reads data from the _/proc/self/mountinfo_ file.
++
+* *listmount* - This is an EXPERIMENTAL method that uses the listmount() and statmount() syscalls to generate the mount table. The output may not contain all details about mount nodes (for example, SOURCE is currently missing).
 
 *-l*, *--list*::
 Use the list output format. This output format is automatically enabled if the output is restricted by the *-t*, *-O*, *-S* or *-T* option and the option *--submounts* is not used or if more that one source file (the option *-F*) is specified.

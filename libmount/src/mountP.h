@@ -23,12 +23,17 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdint.h>
+#include <inttypes.h>
 
 #include "c.h"
+
 #include "list.h"
 #include "debug.h"
 #include "buffer.h"
 #include "libmount.h"
+
+#include "mount-api-utils.h"
 
 /*
  * Debug
@@ -50,6 +55,7 @@
 #define MNT_DEBUG_VERITY	(1 << 14)
 #define MNT_DEBUG_HOOK		(1 << 15)
 #define MNT_DEBUG_OPTLIST	(1 << 16)
+#define MNT_DEBUG_STATMNT	(1 << 17)
 
 #define MNT_DEBUG_ALL		0xFFFFFF
 
@@ -96,6 +102,9 @@ struct libmnt_test {
 extern int mnt_run_test(struct libmnt_test *tests, int argc, char *argv[]);
 #endif
 
+/* private tab_listmount.c */
+struct libmnt_listmnt;
+
 /* utils.c */
 extern int mnt_valid_tagname(const char *tagname);
 
@@ -134,6 +143,8 @@ extern int mnt_is_path(const char *target);
 extern int mnt_tmptgt_unshare(int *old_ns_fd);
 extern int mnt_tmptgt_cleanup(int old_ns_fd);
 
+extern int mnt_id_from_fd(int fd, uint64_t *uniq_id, int *id);
+
 /* tab.c */
 extern int is_mountinfo(struct libmnt_table *tb);
 extern int mnt_table_set_parser_fltrcb(	struct libmnt_table *tb,
@@ -155,6 +166,11 @@ extern int __mnt_table_is_fs_mounted(	struct libmnt_table *tb,
 
 extern int mnt_table_enable_noautofs(struct libmnt_table *tb, int ignore);
 extern int mnt_table_is_noautofs(struct libmnt_table *tb);
+
+/* tab_listmount.c */
+extern int mnt_table_next_lsmnt(struct libmnt_table *tb, int direction);
+extern int mnt_table_reset_listmount(struct libmnt_table *tb);
+extern int mnt_table_want_listmount(struct libmnt_table *tb);
 
 /*
  * Generic iterator
@@ -186,6 +202,20 @@ struct libmnt_iter {
 
 
 /*
+ * statmount setting; shared between tables and filesystems
+ */
+struct libmnt_statmnt {
+	int             refcount;
+	uint64_t        mask;           /* default statmount() mask */
+
+	struct ul_statmount *buf;
+	size_t bufsiz;
+
+	unsigned int    disabled: 1;    /* enable or disable statmount() */
+};
+
+
+/*
  * This struct represents one entry in a fstab/mountinfo file.
  * (note that fstab[1] means the first column from fstab, and so on...)
  */
@@ -199,7 +229,11 @@ struct libmnt_fs {
 	struct libmnt_optlist *optlist;
 
 	int		id;		/* mountinfo[1]: ID */
+	uint64_t	uniq_id;	/* unique node ID; statx(STATX_MNT_ID_UNIQUE); statmount->mnt_id */
+	uint64_t        ns_id;		/* namespace ID; statmount->mnt_ns_id */
+
 	int		parent;		/* mountinfo[2]: parent */
+	uint64_t	uniq_parent;	/* unique parent ID; statmount->mnt_parent_id */
 	dev_t		devno;		/* mountinfo[3]: st_dev */
 
 	char		*bindsrc;	/* utab, full path from fstab[1] for bind mounts */
@@ -215,7 +249,10 @@ struct libmnt_fs {
 
 	char		*optstr;	/* fstab[4], merged options */
 	char		*vfs_optstr;	/* mountinfo[6]: fs-independent (VFS) options */
+
 	char		*opt_fields;	/* mountinfo[7]: optional fields */
+	uint64_t	propagation;	/* statmmount() or parsed opt_fields */
+
 	char		*fs_optstr;	/* mountinfo[11]: fs-dependent options */
 	char		*user_optstr;	/* userspace mount options */
 	char		*attrs;		/* mount attributes */
@@ -232,6 +269,9 @@ struct libmnt_fs {
 	int		flags;		/* MNT_FS_* flags */
 	pid_t		tid;		/* /proc/<tid>/mountinfo otherwise zero */
 
+	uint64_t	stmnt_done;	/* mask of already called masks */
+	struct libmnt_statmnt *stmnt;	/* statmount() stuff */
+
 	char		*comment;	/* fstab comment */
 
 	void		*userdata;	/* library independent data */
@@ -245,6 +285,16 @@ struct libmnt_fs {
 #define MNT_FS_SWAP	(1 << 3) /* swap device */
 #define MNT_FS_KERNEL	(1 << 4) /* data from /proc/{mounts,self/mountinfo} */
 #define MNT_FS_MERGED	(1 << 5) /* already merged data from /run/mount/utab */
+
+#ifdef HAVE_STATMOUNT_API
+# define	mnt_fs_try_statmount(FS, MEMBER, FLAGS) __extension__ ({	\
+			if (!(FS)->MEMBER					\
+			    && (FS)->stmnt					\
+			    && !(FS)->stmnt->disabled				\
+			    && ((FLAGS) & ~((FS)->stmnt_done)))			\
+				mnt_fs_fetch_statmount((FS), (FLAGS)); })
+#endif
+
 
 /*
  * fstab/mountinfo file
@@ -264,6 +314,9 @@ struct libmnt_table {
 
 	int		(*fltrcb)(struct libmnt_fs *fs, void *data);
 	void		*fltrcb_data;
+
+	struct libmnt_listmnt	*lsmnt;	/* listmount() stuff */
+	struct libmnt_statmnt	*stmnt; /* statmount() stuff */
 
 	int		noautofs;	/* ignore autofs mounts */
 

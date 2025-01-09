@@ -103,8 +103,27 @@ have_mountfd_api = cc.has_type('struct mount_attr', prefix : '#include <linux/mo
 conf.set('HAVE_STRUCT_MOUNT_ATTR', have_mountfd_api ? 1 : false)
 conf.set('HAVE_MOUNTFD_API', have_mountfd_api ? 1 : false)
 
+
 have_struct_statx = cc.has_type('struct statx', prefix : '#include <sys/stat.h>')
 conf.set('HAVE_STRUCT_STATX', have_struct_statx ? 1 : false)
+have = cc.has_member('struct statx', 'stx_mnt_id',
+                     prefix : '#include <linux/stat.h>')
+conf.set('HAVE_STRUCT_STATX_STX_MNT_ID', have ? 1 : false)
+
+
+have_statmount = cc.has_type('struct statmount', prefix : '#include <linux/mount.h>')
+have_listmount = cc.has_header_symbol('linux/mount.h', 'LSMT_ROOT')
+
+# kernel headers provides the syscall, but there is not SYS_xxx yet
+if have_statmount and not cc.has_header_symbol('bits/syscall.h', 'SYS_statmount')
+  conf.set('SYS_statmount', '__NR_statmount')
+endif
+if have_listmount and not cc.has_header_symbol('bits/syscall.h', 'SYS_listmount')
+  conf.set('SYS_listmount', '__NR_listmount')
+endif
+
+conf.set('HAVE_STATMOUNT_API', have_statmount and have_listmount ? 1 : false)
+
 
 have_sys_vfs_header = cc.has_header('sys/vfs.h')
 
@@ -696,10 +715,6 @@ have = cc.has_member('struct stat', 'st_mtim.tv_nsec',
                      args : '-D_GNU_SOURCE',
                      prefix : '#include <sys/stat.h>')
 conf.set('HAVE_STRUCT_STAT_ST_MTIM_TV_NSEC', have ? 1 : false)
-
-have = cc.has_member('struct statx', 'stx_mnt_id',
-                     prefix : '#include <sys/stat.h>')
-conf.set('HAVE_STRUCT_STATX_STX_MNT_ID', have ? 1 : false)
 
 # replacement for AC_STRUCT_TIMEZONE
 have = cc.has_member('struct tm', 'tm_zone',

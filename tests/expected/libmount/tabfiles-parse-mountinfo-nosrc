@@ -72,6 +72,7 @@ optstr: rw,relatime
 VFS-optstr: rw,relatime
 FS-opstr: rw
 optional-fields: 'shared:212'
+propagation: shared  
 root:   /
 id:     21
 parent: 20
