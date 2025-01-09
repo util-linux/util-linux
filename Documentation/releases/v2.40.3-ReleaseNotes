@@ -1,0 +1,109 @@
+
+util-linux v2.40.3 Release Notes
+================================
+
+Changes between v2.40.2 and v2.40.3
+-----------------------------------
+
+agetty:
+   - Prevent cursor escape  [Stanislav Brabec]
+   - add "systemd" to --version output  [Karel Zak]
+   - fix ambiguous ‘else’ [-Werror=dangling-else]  [Karel Zak]
+audit-arch.h:
+   - add defines for m68k, sh  [Chris Hofstaedtler]
+autotools:
+   - Check for BPF_OBJ_NAME_LEN (required by lsfd)  [Karel Zak]
+   - add --disable-enosys, check for linux/audit.h  [Karel Zak]
+   - add Libs.private to uuid.pc  [Karel Zak]
+   - allow enabling dmesg with --disable-all-programs  [Henrik Lindström]
+   - allow enabling lsblk with --disable-all-programs  [Henrik Lindström]
+   - check for sys/vfs.h and linux/bpf.h  [Karel Zak]
+   - fix securedir and pam_lastlog2 install  [Karel Zak]
+bash-completion:
+   - add `--pty` and `--no-pty` options for `su` and `runuser`  [Christoph Anton Mitterer]
+   - complete `--user` only for `runuser`, not for `su`  [Christoph Anton Mitterer]
+chcpu(8):
+   - Document CPU deconfiguring behavior  [Mete Durlu]
+   - Fix typo  [Mete Durlu]
+ci:
+   - bump coveralls compiler version to gcc 13  [Karel Zak]
+doc:
+   - fsck.8.adoc - fix email typo  [Geoffrey Casper]
+docs:
+   - update AUTHORS file  [Karel Zak]
+fdisk:
+   - (man) improve --sector-size description  [Karel Zak]
+   - fix SGI boot file prompt  [mr-bronson]
+   - fix fdisk_sgi_set_bootfile return value  [mr-bronson]
+   - fix sgi_check_bootfile name size minimum  [mr-bronson]
+   - fix sgi_menu_cb return value  [mr-bronson]
+fincore:
+   - Use correct syscall number for cachestat on alpha  [John Paul Adrian Glaubitz]
+fstab.5 mount:
+   - fstab.5 mount.8 add note about field separator  [Karel Zak]
+hardlink:
+   - fix memory corruption (size calculation)  [Karel Zak]
+   - hardlink.1 directory|file is mandatory  [наб]
+hwclock:
+   - Remove ioperm declare as it causes nested extern declare warning  [Zhaoming Luo]
+lib/env:
+   - fix env_list_setenv() for strings without '='  [Karel Zak]
+libblkid:
+   - (exfat) validate fields used by prober  [Thomas Weißschuh]
+   - (gpt) use blkid_probe_verify_csum() for partition array checksum  [Thomas Weißschuh]
+   - add FSLASTBLOCK for swaparea  [Karel Zak]
+   - bitlocker add image for Windows 7+ BitLocker  [Victor Westerhuis]
+   - bitlocker fix version on big-endian systems  [Victor Westerhuis]
+   - improve portability  [Yang Kun]
+libfdisk:
+   - make sure libblkid uses the same sector size  [Karel Zak]
+libmount:
+   - exec mount helpers with posixly correct argument order  [nilfsuser5678]
+   - extract common error handling function  [John Keeping]
+   - propagate first error of multiple filesystem types  [John Keeping]
+libmount/context_mount:
+   - fix argument number comments  [nilfsuser5678]
+logger:
+   - correctly format tv_usec  [Thomas Weißschuh]
+lscpu:
+   - Skip aarch64 decode path for rest of the architectures  [Pratik R. Sampat]
+   - make code more readable  [Karel Zak]
+lslocks:
+   - remove deadcode [coverity scan]  [Karel Zak]
+lsns:
+   - ignore ESRCH errors reported when accessing files under /proc  [Masatake YAMATO]
+man pages:
+   - document `--user` option for `runuser`  [Christoph Anton Mitterer]
+   - use `user` rather than `username`  [Christoph Anton Mitterer]
+meson:
+   - check for BPF_OBJ_NAME_LEN and linux/bpf.h  [Karel Zak]
+mkswap:
+   - set selinux label also when creating file  [Zbigniew Jędrzejewski-Szmek]
+more:
+   - make sure we have data on stderr  [Karel Zak]
+nsenter:
+   - support empty environ[]  [Karel Zak]
+partx:
+   - Fix example in man page  [Michal Suchanek]
+po:
+   - merge changes  [Karel Zak]
+   - update de.po (from translationproject.org)  [Mario Blättermann]
+   - update ja.po (from translationproject.org)  [Hideki Yoshida]
+   - update pt_BR.po (from translationproject.org)  [Rafael Fontenelle]
+   - update sr.po (from translationproject.org)  [Мирослав Николић]
+   - update zh_CN.po (from translationproject.org)  [Mingye Wang (Artoria2e5)]
+po-man:
+   - add missing langs to po4a.cfg  [Karel Zak]
+   - fix typo, update .gitignore  [Karel Zak]
+   - merge changes  [Karel Zak]
+   - update fr.po (from translationproject.org)  [Frédéric Marchal]
+   - update pt_BR.po (from translationproject.org)  [Rafael Fontenelle]
+tests:
+   - fdisk/bsd Update expected output for alpha  [John Paul Adrian Glaubitz]
+umount, losetup:
+   - Document loop destroy behavior  [Stanislav Brabec]
+uuidd:
+   - fix /var/lib/libuuid mode uuidd-tmpfiles.conf  [Karel Zak]
+   - fix typo in tmpfiles.conf  [Karel Zak]
+- fix /var/lib/libuuid mode uuidd-tmpfiles.conf  [Karel Zak]
+- fix typo in tmpfiles.conf  [Karel Zak]
