@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.40.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2024-07-03 14:31+0200\n"
+"POT-Creation-Date: 2025-01-09 12:31+0100\n"
 "PO-Revision-Date: 2024-05-03 15:11+0200\n"
 "Last-Translator: Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>\n"
 "Language-Team: Romanian <translation-team-ro@lists.sourceforge.net>\n"
@@ -45,8 +45,8 @@ msgstr "Informează nucleul despre existența partiției specificate.\n"
 #: misc-utils/kill.c:384 misc-utils/rename.c:344 misc-utils/whereis.c:539
 #: sys-utils/flock.c:179 sys-utils/ipcrm.c:166 sys-utils/ldattach.c:365
 #: sys-utils/renice.c:177 sys-utils/switch_root.c:261 sys-utils/tunelp.c:152
-#: term-utils/agetty.c:902 term-utils/agetty.c:903 term-utils/agetty.c:911
-#: term-utils/agetty.c:912
+#: term-utils/agetty.c:905 term-utils/agetty.c:906 term-utils/agetty.c:914
+#: term-utils/agetty.c:915
 msgid "not enough arguments"
 msgstr "nu sunt suficiente argumente"
 
@@ -82,7 +82,7 @@ msgstr "nu sunt suficiente argumente"
 #: sys-utils/setpriv.c:262 sys-utils/setpriv.c:628 sys-utils/setpriv.c:651
 #: sys-utils/swapon.c:395 sys-utils/swapon.c:538 sys-utils/switch_root.c:174
 #: sys-utils/unshare.c:115 sys-utils/unshare.c:130 sys-utils/wdctl.c:422
-#: sys-utils/zramctl.c:517 term-utils/agetty.c:2989 term-utils/mesg.c:154
+#: sys-utils/zramctl.c:517 term-utils/agetty.c:3000 term-utils/mesg.c:154
 #: term-utils/script.c:386 term-utils/scriptlive.c:256
 #: term-utils/scriptlive.c:259 term-utils/scriptlive.c:262
 #: term-utils/scriptreplay.c:282 term-utils/scriptreplay.c:285
@@ -352,7 +352,7 @@ msgid "Quit program without writing changes"
 msgstr "Părăsește programul fără a scrie modificările"
 
 #: disk-utils/cfdisk.c:206 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1031
-#: libfdisk/src/dos.c:2819 libfdisk/src/gpt.c:3249 libfdisk/src/sgi.c:1168
+#: libfdisk/src/dos.c:2819 libfdisk/src/gpt.c:3249 libfdisk/src/sgi.c:1170
 #: libfdisk/src/sun.c:1140
 msgid "Type"
 msgstr "Tip"
@@ -1242,7 +1242,7 @@ msgstr "Proprietățile dispozitivului (dimensiunea și geometria sectorului) tr
 #: sys-utils/mount.c:960 sys-utils/mount.c:1032 sys-utils/mountpoint.c:182
 #: sys-utils/pivot_root.c:66 sys-utils/swapoff.c:271 sys-utils/swapon.c:1024
 #: sys-utils/switch_root.c:270 sys-utils/umount.c:629 term-utils/setterm.c:1200
-#: text-utils/col.c:584 text-utils/more.c:2135
+#: text-utils/col.c:584 text-utils/more.c:2143
 msgid "bad usage"
 msgstr "utilizare greșită"
 
@@ -1326,9 +1326,9 @@ msgstr "nu s-a reușit alocarea iteratorului"
 
 #: disk-utils/fdisk-list.c:136 disk-utils/fdisk-list.c:257
 #: disk-utils/partx.c:676 include/column-list-table.h:45
-#: login-utils/lslogins.c:1113 misc-utils/fincore.c:500
+#: login-utils/lslogins.c:1113 misc-utils/fincore.c:504
 #: misc-utils/findmnt.c:1891 misc-utils/lsblk.c:2727 misc-utils/lsclocks.c:650
-#: misc-utils/lsfd.c:2399 misc-utils/lslocks.c:751 misc-utils/uuidparse.c:252
+#: misc-utils/lsfd.c:2399 misc-utils/lslocks.c:750 misc-utils/uuidparse.c:252
 #: misc-utils/wipefs.c:157 sys-utils/losetup.c:389 sys-utils/lscpu.c:596
 #: sys-utils/lscpu.c:751 sys-utils/lscpu.c:966 sys-utils/lsipc.c:354
 #: sys-utils/prlimit.c:303 sys-utils/rfkill.c:475 sys-utils/swapon.c:309
@@ -1338,9 +1338,9 @@ msgstr "nu s-a reușit alocarea tabelului de ieșire"
 
 #: disk-utils/fdisk-list.c:177 disk-utils/fdisk-list.c:281
 #: disk-utils/partx.c:590 include/column-list-table.h:72
-#: login-utils/lslogins.c:1173 misc-utils/fincore.c:218
+#: login-utils/lslogins.c:1173 misc-utils/fincore.c:222
 #: misc-utils/findmnt.c:844 misc-utils/findmnt.c:865 misc-utils/lsblk.c:1329
-#: misc-utils/lsclocks.c:295 misc-utils/lsfd.c:1272 misc-utils/lslocks.c:616
+#: misc-utils/lsclocks.c:295 misc-utils/lsfd.c:1272 misc-utils/lslocks.c:615
 #: misc-utils/uuidparse.c:154 misc-utils/wipefs.c:202 sys-utils/losetup.c:412
 #: sys-utils/losetup.c:441 sys-utils/lscpu.c:510 sys-utils/lscpu.c:786
 #: sys-utils/lscpu.c:818 sys-utils/lsipc.c:486 sys-utils/lsipc.c:567
@@ -1354,7 +1354,7 @@ msgstr "nu s-a reușit alocarea liniei de ieșire"
 #: disk-utils/fdisk-list.c:187 disk-utils/fdisk-list.c:288
 #: disk-utils/partx.c:653 include/column-list-table.h:75
 #: include/column-list-table.h:83 include/column-list-table.h:85
-#: login-utils/lslogins.c:1277 misc-utils/fincore.c:266
+#: login-utils/lslogins.c:1277 misc-utils/fincore.c:270
 #: misc-utils/findmnt.c:833 misc-utils/lsblk.c:1280 misc-utils/lsfd-bdev.c:44
 #: misc-utils/lsfd-bdev.c:57 misc-utils/lsfd-bdev.c:83
 #: misc-utils/lsfd-bdev.c:85 misc-utils/lsfd-cdev.c:86
@@ -1371,7 +1371,7 @@ msgstr "nu s-a reușit alocarea liniei de ieșire"
 #: misc-utils/lsfd-file.c:859 misc-utils/lsfd-sock.c:75
 #: misc-utils/lsfd-sock.c:132 misc-utils/lsfd-sock.c:134
 #: misc-utils/lsfd-unkn.c:124 misc-utils/lsfd-unkn.c:126
-#: misc-utils/lslocks.c:697 misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242
+#: misc-utils/lslocks.c:696 misc-utils/uuidparse.c:239 misc-utils/wipefs.c:242
 #: sys-utils/losetup.c:369 sys-utils/lscpu.c:578 sys-utils/lscpu.c:793
 #: sys-utils/lscpu.c:822 sys-utils/lscpu.c:832 sys-utils/lsipc.c:526
 #: sys-utils/lsipc.c:651 sys-utils/prlimit.c:267 sys-utils/rfkill.c:418
@@ -1395,22 +1395,22 @@ msgid "Partition table entries are not in disk order."
 msgstr "Intrările din tabela de partiții nu sunt în ordinea de pe disc."
 
 #: disk-utils/fdisk-list.c:243 libfdisk/src/bsd.c:1026 libfdisk/src/dos.c:2813
-#: libfdisk/src/gpt.c:3245 libfdisk/src/sgi.c:1162 libfdisk/src/sun.c:1134
+#: libfdisk/src/gpt.c:3245 libfdisk/src/sgi.c:1164 libfdisk/src/sun.c:1134
 msgid "Start"
 msgstr "Începe"
 
 #: disk-utils/fdisk-list.c:243 libfdisk/src/bsd.c:1027 libfdisk/src/dos.c:2814
-#: libfdisk/src/gpt.c:3246 libfdisk/src/sgi.c:1163 libfdisk/src/sun.c:1135
+#: libfdisk/src/gpt.c:3246 libfdisk/src/sgi.c:1165 libfdisk/src/sun.c:1135
 msgid "End"
 msgstr "Termină"
 
 #: disk-utils/fdisk-list.c:243 libfdisk/src/bsd.c:1028 libfdisk/src/dos.c:2815
-#: libfdisk/src/gpt.c:3247 libfdisk/src/sgi.c:1164 libfdisk/src/sun.c:1136
+#: libfdisk/src/gpt.c:3247 libfdisk/src/sgi.c:1166 libfdisk/src/sun.c:1136
 msgid "Sectors"
 msgstr "Sectoare"
 
 #: disk-utils/fdisk-list.c:243 libfdisk/src/bsd.c:1030 libfdisk/src/dos.c:2817
-#: libfdisk/src/gpt.c:3248 libfdisk/src/sgi.c:1166 libfdisk/src/sun.c:1138
+#: libfdisk/src/gpt.c:3248 libfdisk/src/sgi.c:1168 libfdisk/src/sun.c:1138
 msgid "Size"
 msgstr "Dim."
 
@@ -2866,7 +2866,7 @@ msgstr ""
 "------------------------------------\n"
 
 #: disk-utils/fsck.minix.c:1435 disk-utils/mkfs.minix.c:858
-#: disk-utils/mkswap.c:795 disk-utils/partx.c:1078 disk-utils/resizepart.c:125
+#: disk-utils/mkswap.c:796 disk-utils/partx.c:1078 disk-utils/resizepart.c:125
 #: login-utils/utmpdump.c:408 sys-utils/dmesg.c:819 sys-utils/wdctl.c:462
 #: sys-utils/wdctl.c:541 term-utils/setterm.c:911 text-utils/col.c:195
 #: text-utils/pg.c:1255
@@ -3835,25 +3835,25 @@ msgstr "Nu se poate configura spațiul de interschimb (swap): nu se poate citi"
 msgid "Setting up swapspace version %d, size = %s (%<PRIu64> bytes)\n"
 msgstr "Configurând spațiul de interschimb versiunea %d, dimensiune = %s (%<PRIu64> bytes)\n"
 
-#: disk-utils/mkswap.c:765
+#: disk-utils/mkswap.c:766
 #, c-format
 msgid "%s: unable to obtain selinux file label"
 msgstr "%s: nu se poate obține eticheta fișierului SELinux"
 
-#: disk-utils/mkswap.c:770
+#: disk-utils/mkswap.c:771
 #, c-format
 msgid "%s: unable to obtain default selinux file label"
 msgstr "%s: nu se poate obține eticheta implicită a fișierului SElinux"
 
-#: disk-utils/mkswap.c:774
+#: disk-utils/mkswap.c:775
 msgid "unable to create new selinux context"
 msgstr "nu se poate crea un nou context SELinux"
 
-#: disk-utils/mkswap.c:776
+#: disk-utils/mkswap.c:777
 msgid "couldn't compute selinux context"
 msgstr "nu se poate crea un nou context SELinux"
 
-#: disk-utils/mkswap.c:782
+#: disk-utils/mkswap.c:783
 #, c-format
 msgid "unable to relabel %s to %s"
 msgstr "nu se poate re-eticheta %s în %s"
@@ -3922,9 +3922,9 @@ msgstr "%s: nu s-a putut configura fișierul de rezervă"
 msgid "%s: failed to set up loop device"
 msgstr "%s: nu s-a reușit configurarea dispozitivului de buclă"
 
-#: disk-utils/partx.c:168 login-utils/lslogins.c:322 misc-utils/fincore.c:151
+#: disk-utils/partx.c:168 login-utils/lslogins.c:322 misc-utils/fincore.c:155
 #: misc-utils/findmnt.c:393 misc-utils/lsblk.c:373 misc-utils/lsclocks.c:171
-#: misc-utils/lsfd.c:572 misc-utils/lslocks.c:561 misc-utils/uuidparse.c:125
+#: misc-utils/lsfd.c:572 misc-utils/lslocks.c:560 misc-utils/uuidparse.c:125
 #: misc-utils/wipefs.c:132 sys-utils/irq-common.c:95 sys-utils/losetup.c:130
 #: sys-utils/lscpu.c:192 sys-utils/lscpu.c:207 sys-utils/lsipc.c:233
 #: sys-utils/lsmem.c:171 sys-utils/lsns.c:261 sys-utils/prlimit.c:283
@@ -4028,9 +4028,9 @@ msgstr[1] "#%2d: %9ju-%9ju (%9ju sectoare, %6ju Mo)\n"
 msgstr[2] "#%2d: %9ju-%9ju (%9ju de sectoare, %6ju Mo)\n"
 
 #: disk-utils/partx.c:687 include/column-list-table.h:62
-#: misc-utils/fincore.c:514 misc-utils/findmnt.c:1920 misc-utils/lsblk.c:2268
+#: misc-utils/fincore.c:518 misc-utils/findmnt.c:1920 misc-utils/lsblk.c:2268
 #: misc-utils/lsblk.c:2771 misc-utils/lsclocks.c:658 misc-utils/lsfd.c:623
-#: misc-utils/lsfd.c:2413 misc-utils/lslocks.c:766 sys-utils/losetup.c:403
+#: misc-utils/lsfd.c:2413 misc-utils/lslocks.c:765 sys-utils/losetup.c:403
 #: sys-utils/lscpu.c:608 sys-utils/lscpu.c:764 sys-utils/prlimit.c:312
 #: sys-utils/rfkill.c:488 sys-utils/swapon.c:318 sys-utils/wdctl.c:365
 msgid "failed to allocate output column"
@@ -5215,7 +5215,7 @@ msgstr ""
 msgid "%s from %s\n"
 msgstr "%s din %s\n"
 
-#: include/c.h:504 misc-utils/kill.c:237 term-utils/agetty.c:693
+#: include/c.h:504 misc-utils/kill.c:237 term-utils/agetty.c:696
 #, c-format
 msgid "%s from %s"
 msgstr "%s din %s"
@@ -5238,7 +5238,7 @@ msgid "colors are disabled by default"
 msgstr "culorile sunt dezactivate în mod implicit"
 
 #: include/env.h:30 lib/pager.c:158 login-utils/login.c:1207
-#: login-utils/login.c:1211 term-utils/agetty.c:1205
+#: login-utils/login.c:1211 term-utils/agetty.c:1208
 #, c-format
 msgid "failed to set the %s environment variable"
 msgstr "nu s-a putut defini variabila de mediu %s"
@@ -6626,7 +6626,7 @@ msgid "Sectors/Cylinder"
 msgstr "Sectoare/Cilindru"
 
 #: libfdisk/src/bsd.c:491 libfdisk/src/bsd.c:1029 libfdisk/src/dos.c:2816
-#: libfdisk/src/sgi.c:1165 libfdisk/src/sun.c:203 libfdisk/src/sun.c:1137
+#: libfdisk/src/sgi.c:1167 libfdisk/src/sun.c:203 libfdisk/src/sun.c:1137
 msgid "Cylinders"
 msgstr "Cilindri"
 
@@ -6906,7 +6906,7 @@ msgstr "Identificatorul nevalid 0x%02x%02x din EBR (pentru partiția %zu) va fi 
 msgid "Start sector %ju out of range."
 msgstr "Sectorul de început %ju în afara intervalului."
 
-#: libfdisk/src/dos.c:1276 libfdisk/src/gpt.c:2410 libfdisk/src/sgi.c:844
+#: libfdisk/src/dos.c:1276 libfdisk/src/gpt.c:2410 libfdisk/src/sgi.c:846
 #: libfdisk/src/sun.c:532
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
@@ -7113,7 +7113,7 @@ msgstr "Fanionul de pornire de pe partiția %zu este activat acum."
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "Fanionul de pornire de pe partiția %zu este dezactivat acum."
 
-#: libfdisk/src/dos.c:2811 libfdisk/src/gpt.c:3244 libfdisk/src/sgi.c:1161
+#: libfdisk/src/dos.c:2811 libfdisk/src/gpt.c:3244 libfdisk/src/sgi.c:1163
 #: libfdisk/src/sun.c:1133
 msgid "Device"
 msgstr "Dispozitiv"
@@ -7122,7 +7122,7 @@ msgstr "Dispozitiv"
 msgid "Boot"
 msgstr "Pornire"
 
-#: libfdisk/src/dos.c:2818 libfdisk/src/sgi.c:1167 libfdisk/src/sun.c:1139
+#: libfdisk/src/dos.c:2818 libfdisk/src/sgi.c:1169 libfdisk/src/sun.c:1139
 msgid "Id"
 msgstr "Id"
 
@@ -7134,7 +7134,7 @@ msgstr "Început-C/H/S"
 msgid "End-C/H/S"
 msgstr "Sfârșit-C/H/S"
 
-#: libfdisk/src/dos.c:2824 libfdisk/src/gpt.c:3254 libfdisk/src/sgi.c:1169
+#: libfdisk/src/dos.c:2824 libfdisk/src/gpt.c:3254 libfdisk/src/sgi.c:1171
 msgid "Attrs"
 msgstr "Atrib."
 
@@ -7619,40 +7619,42 @@ msgid "The current boot file is: %s"
 msgstr "Fișierul de pornire curent este: %s"
 
 #: libfdisk/src/sgi.c:446
-msgid "Enter of the new boot file"
+#, fuzzy
+#| msgid "Enter of the new boot file"
+msgid "Enter full path of the new boot file"
 msgstr "Introduceți noul fișier de pornire"
 
 #: libfdisk/src/sgi.c:451
 msgid "Boot file is unchanged."
 msgstr "Fișierul de pornire rămâne neschimbat."
 
-#: libfdisk/src/sgi.c:462
+#: libfdisk/src/sgi.c:464
 #, c-format
 msgid "Bootfile has been changed to \"%s\"."
 msgstr "Fișierul de pornire a fost schimbat în „%s”."
 
-#: libfdisk/src/sgi.c:601
+#: libfdisk/src/sgi.c:603
 msgid "More than one entire disk entry present."
 msgstr "Este prezentă mai mult de o intrare de disc întreg."
 
-#: libfdisk/src/sgi.c:608 libfdisk/src/sun.c:471
+#: libfdisk/src/sgi.c:610 libfdisk/src/sun.c:471
 msgid "No partitions defined."
 msgstr "Nu există partiții definite."
 
-#: libfdisk/src/sgi.c:618
+#: libfdisk/src/sgi.c:620
 msgid "IRIX likes it when partition 11 covers the entire disk."
 msgstr "IRIX preferă ca partiția 11 să acopere întregul disc."
 
-#: libfdisk/src/sgi.c:622
+#: libfdisk/src/sgi.c:624
 #, c-format
 msgid "The entire disk partition should start at block 0, not at block %d."
 msgstr "Întreaga partiție a discului ar trebui să înceapă de la blocul 0, nu de la blocul %d."
 
-#: libfdisk/src/sgi.c:633
+#: libfdisk/src/sgi.c:635
 msgid "Partition 11 should cover the entire disk."
 msgstr "Partiția 11 trebuie să acopere întregul disc."
 
-#: libfdisk/src/sgi.c:657
+#: libfdisk/src/sgi.c:659
 #, c-format
 msgid "Partitions %d and %d overlap by %d sector."
 msgid_plural "Partitions %d and %d overlap by %d sectors."
@@ -7660,7 +7662,7 @@ msgstr[0] "Partițiile %d și %d se suprapun pe %d sector."
 msgstr[1] "Partițiile %d și %d se suprapun pe %d sectoare."
 msgstr[2] "Partițiile %d și %d se suprapun pe %d de sectoare."
 
-#: libfdisk/src/sgi.c:668 libfdisk/src/sgi.c:690
+#: libfdisk/src/sgi.c:670 libfdisk/src/sgi.c:692
 #, c-format
 msgid "Unused gap of %8u sector: sector %8u"
 msgid_plural "Unused gap of %8u sectors: sectors %8u-%u"
@@ -7668,70 +7670,70 @@ msgstr[0] "Spațiu neutilizat din %8u sector: sectorul %8u"
 msgstr[1] "Spațiu neutilizat din %8u sectoare: sectoarele %8u-%u"
 msgstr[2] "Spațiu neutilizat din %8u de sectoare: sectoarele %8u-%u"
 
-#: libfdisk/src/sgi.c:703
+#: libfdisk/src/sgi.c:705
 msgid "The boot partition does not exist."
 msgstr "Partiția de pornire nu există."
 
-#: libfdisk/src/sgi.c:707
+#: libfdisk/src/sgi.c:709
 msgid "The swap partition does not exist."
 msgstr "Partiția spațiului de interschimb (swap) nu există."
 
-#: libfdisk/src/sgi.c:711
+#: libfdisk/src/sgi.c:713
 msgid "The swap partition has no swap type."
 msgstr "Partiția spațiului de interschimb (swap) nu are un tip de swap."
 
-#: libfdisk/src/sgi.c:714
+#: libfdisk/src/sgi.c:716
 msgid "You have chosen an unusual bootfile name."
 msgstr "Ați ales un nume de fișier de pornire neobișnuit."
 
-#: libfdisk/src/sgi.c:764
+#: libfdisk/src/sgi.c:766
 msgid "Partition overlap on the disk."
 msgstr "Suprapunere de partiții pe disc."
 
-#: libfdisk/src/sgi.c:849
+#: libfdisk/src/sgi.c:851
 msgid "Attempting to generate entire disk entry automatically."
 msgstr "Se încearcă generarea automată a întregii intrări pe disc."
 
-#: libfdisk/src/sgi.c:854
+#: libfdisk/src/sgi.c:856
 msgid "The entire disk is already covered with partitions."
 msgstr "The entire disk is already covered with partitions."
 
-#: libfdisk/src/sgi.c:858
+#: libfdisk/src/sgi.c:860
 msgid "You got a partition overlap on the disk. Fix it first!"
 msgstr "Aveți o partiție suprapusă pe disc. Rezolvați mai întâi acest lucru!"
 
-#: libfdisk/src/sgi.c:880 libfdisk/src/sun.c:567
+#: libfdisk/src/sgi.c:882 libfdisk/src/sun.c:567
 #, c-format
 msgid "First %s"
 msgstr "Prima %s"
 
-#: libfdisk/src/sgi.c:904 libfdisk/src/sgi.c:955
+#: libfdisk/src/sgi.c:906 libfdisk/src/sgi.c:957
 msgid "It is highly recommended that the eleventh partition covers the entire disk and is of type 'SGI volume'."
 msgstr "Este foarte recomandat ca cea de-a unsprezecea partiție să acopere întregul disc și să fie de tip „volum SGI”."
 
-#: libfdisk/src/sgi.c:919
+#: libfdisk/src/sgi.c:921
 #, c-format
 msgid "Last %s or +%s or +size{K,M,G,T,P}"
 msgstr "Ultima %s sau +%s sau +dimensiunea{K,M,G,T,P}"
 
-#: libfdisk/src/sgi.c:991 libfdisk/src/sun.c:248
+#: libfdisk/src/sgi.c:993 libfdisk/src/sun.c:248
 #, c-format
 msgid "BLKGETSIZE ioctl failed on %s. Using geometry cylinder value of %ju. This value may be truncated for devices > 33.8 GB."
 msgstr "ioctl BLKGETSIZE a eșuat pe %s. Se utilizează valoarea geometriei cilindrului de %ju. Această valoare poate fi trunchiată pentru dispozitive > 33,8 GB."
 
-#: libfdisk/src/sgi.c:1059
+#: libfdisk/src/sgi.c:1061
 msgid "Created a new SGI disklabel."
 msgstr "A fost creată o nouă etichetă de disc SGI."
 
-#: libfdisk/src/sgi.c:1078
+#: libfdisk/src/sgi.c:1080
 msgid "Sorry, only for non-empty partitions you can change the tag."
 msgstr "Scuze, numai pentru partițiile care nu sunt goale puteți schimba eticheta."
 
-#: libfdisk/src/sgi.c:1084
+#: libfdisk/src/sgi.c:1086
 msgid "Consider leaving partition 9 as volume header (0), and partition 11 as entire volume (6), as IRIX expects it."
 msgstr "Luați în considerare posibilitatea de a lăsa partiția 9 ca antet de volum (0), iar partiția 11 ca volum întreg (6), așa cum se așteaptă IRIX."
 
-#: libfdisk/src/sgi.c:1093
+#: libfdisk/src/sgi.c:1095
 msgid "It is highly recommended that the partition at offset 0 is of type \"SGI volhdr\", the IRIX system will rely on it to retrieve from its directory standalone tools like sash and fx. Only the \"SGI volume\" entire disk section may violate this. Are you sure about tagging this partition differently?"
 msgstr "Este foarte recomandat ca partiția de la poziția 0 să fie de tip „SGI volhdr”, deoarece sistemul IRIX se va baza pe ea pentru a prelua din directorul său instrumente autonome precum «sash» și «fx». Doar secțiunea de disc întreg „SGI volume” poate încălca acest lucru. Sunteți sigur că etichetați această partiție în mod diferit?"
 
@@ -7960,368 +7962,368 @@ msgstr "starea de conectare silențioasă: restaurarea ID-urilor originale a eș
 msgid "operation failed: %m"
 msgstr "operația a eșuat: %m"
 
-#: libmount/src/context_mount.c:1418
+#: libmount/src/context_mount.c:1426
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "AVERTISMENT: nu s-a reușit aplicarea indicatoarelor de propagare"
 
-#: libmount/src/context_mount.c:1428
+#: libmount/src/context_mount.c:1436
 #, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "AVERTISMENT: sursă protejată la scriere, montată numai-pentru-citire"
 
-#: libmount/src/context_mount.c:1442
+#: libmount/src/context_mount.c:1450
 #, c-format
 msgid "operation permitted for root only"
 msgstr "operație permisă doar pentru root"
 
-#: libmount/src/context_mount.c:1446
+#: libmount/src/context_mount.c:1454
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s este deja montată"
 
-#: libmount/src/context_mount.c:1452
+#: libmount/src/context_mount.c:1460
 #, c-format
 msgid "can't find in %s"
 msgstr "nu se poate găsi în %s"
 
-#: libmount/src/context_mount.c:1455
+#: libmount/src/context_mount.c:1463
 #, c-format
 msgid "can't find mount point in %s"
 msgstr "nu se poate găsi punctul de montare în %s"
 
-#: libmount/src/context_mount.c:1458
+#: libmount/src/context_mount.c:1466
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "nu se poate găsi sursa de montare %s în %s"
 
-#: libmount/src/context_mount.c:1463
+#: libmount/src/context_mount.c:1471
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr "mai multe sisteme de fișiere detectate pe %s; utilizați „-t <tip>” sau wipefs(8)"
 
-#: libmount/src/context_mount.c:1468
+#: libmount/src/context_mount.c:1476
 #, c-format
 msgid "failed to determine filesystem type"
 msgstr "nu s-a reușit să se determine tipul de sistem de fișiere"
 
-#: libmount/src/context_mount.c:1469
+#: libmount/src/context_mount.c:1477
 #, c-format
 msgid "no valid filesystem type specified"
 msgstr "nu este specificat un tip de sistem de fișiere valid"
 
-#: libmount/src/context_mount.c:1476
+#: libmount/src/context_mount.c:1484
 #, c-format
 msgid "can't find %s"
 msgstr "nu se poate găsi %s"
 
-#: libmount/src/context_mount.c:1478
+#: libmount/src/context_mount.c:1486
 #, c-format
 msgid "no mount source specified"
 msgstr "nu este specificată nicio sursă de montare"
 
-#: libmount/src/context_mount.c:1489
+#: libmount/src/context_mount.c:1497
 #, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr "nu s-au putut analiza opțiunile de montare „%s”: %m"
 
-#: libmount/src/context_mount.c:1490
+#: libmount/src/context_mount.c:1498
 #, c-format
 msgid "failed to parse mount options '%s'"
 msgstr "nu s-au putut analiza opțiunile de montare „%s”"
 
-#: libmount/src/context_mount.c:1493
+#: libmount/src/context_mount.c:1501
 #, c-format
 msgid "failed to parse mount options: %m"
 msgstr "nu s-au putut analiza opțiunile de montare: %m"
 
-#: libmount/src/context_mount.c:1494
+#: libmount/src/context_mount.c:1502
 #, c-format
 msgid "failed to parse mount options"
 msgstr "nu s-au putut analiza opțiunile de montare"
 
-#: libmount/src/context_mount.c:1499
+#: libmount/src/context_mount.c:1507
 #, c-format
 msgid "failed to setup loop device for %s"
 msgstr "nu s-a reușit să se configureze dispozitivul de buclă pentru %s"
 
-#: libmount/src/context_mount.c:1503
+#: libmount/src/context_mount.c:1511
 #, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "există un dispozitiv de buclă suprapus pentru %s"
 
-#: libmount/src/context_mount.c:1507 libmount/src/context_umount.c:1267
+#: libmount/src/context_mount.c:1515 libmount/src/context_umount.c:1268
 #, c-format
 msgid "locking failed"
 msgstr "blocarea a eșuat"
 
-#: libmount/src/context_mount.c:1511 libmount/src/context_umount.c:1273
+#: libmount/src/context_mount.c:1519 libmount/src/context_umount.c:1274
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, c-format
 msgid "failed to switch namespace"
 msgstr "nu s-a putut schimba spațiul de nume"
 
-#: libmount/src/context_mount.c:1515
+#: libmount/src/context_mount.c:1523
 #, c-format
 msgid "filesystem already mounted"
 msgstr "sistemul de fișiere este deja montat"
 
-#: libmount/src/context_mount.c:1518
+#: libmount/src/context_mount.c:1526
 #, c-format
 msgid "mount failed: %m"
 msgstr "montare eșuată: %m"
 
-#: libmount/src/context_mount.c:1528
+#: libmount/src/context_mount.c:1536
 #, c-format
 msgid "filesystem was mounted, but failed to apply flags"
 msgstr "sistemul de fișiere a fost montat, dar nu s-a reușit să se aplice fanioanele"
 
-#: libmount/src/context_mount.c:1534
+#: libmount/src/context_mount.c:1542
 #, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "sistemul de fișiere a fost montat, dar nu s-a reușit să se actualizeze tabelul de montare din spațiul utilizatorului"
 
-#: libmount/src/context_mount.c:1540
+#: libmount/src/context_mount.c:1548
 #, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "sistemul de fișiere a fost montat, dar nu s-a reușit să se schimbe spațiul de nume înapoi (la cel dinainte)"
 
-#: libmount/src/context_mount.c:1546
+#: libmount/src/context_mount.c:1554
 #, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "sistemul de fișiere a fost montat, dar nu s-a reușit să se schimbe proprietarul: %m"
 
-#: libmount/src/context_mount.c:1552
+#: libmount/src/context_mount.c:1560
 #, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "sistemul de fișiere a fost montat, dar nu s-a reușit să se schimbe modul: %m"
 
-#: libmount/src/context_mount.c:1558
+#: libmount/src/context_mount.c:1566
 #, c-format
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "sistemul de fișiere a fost montat, dar nu s-a reușit să se atașeze idmapping"
 
-#: libmount/src/context_mount.c:1564
+#: libmount/src/context_mount.c:1572
 #, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "sistemul de fișiere a fost montat, dar orice operație ulterioară a eșuat: %m"
 
-#: libmount/src/context_mount.c:1576
+#: libmount/src/context_mount.c:1584
 #, c-format
 msgid "%s system call failed: %s"
 msgstr "apelul de sistem %s a eșuat: %s"
 
-#: libmount/src/context_mount.c:1591 login-utils/newgrp.c:228
+#: libmount/src/context_mount.c:1599 login-utils/newgrp.c:228
 #, c-format
 msgid "permission denied"
 msgstr "permisiune refuzată"
 
-#: libmount/src/context_mount.c:1593 libmount/src/context_mount.c:1634
+#: libmount/src/context_mount.c:1601 libmount/src/context_mount.c:1642
 #, c-format
 msgid "mount point is not a directory"
 msgstr "punctul de montare nu este un director"
 
-#: libmount/src/context_mount.c:1595
+#: libmount/src/context_mount.c:1603
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "trebuie să fiți superutilizator pentru a utiliza «mount»"
 
-#: libmount/src/context_mount.c:1602
+#: libmount/src/context_mount.c:1610
 #, c-format
 msgid "mount point is busy"
 msgstr "punctul de montare este ocupat"
 
-#: libmount/src/context_mount.c:1609
+#: libmount/src/context_mount.c:1617
 #, c-format
 msgid "%s already mounted on %s"
 msgstr "%s este deja montat pe %s"
 
-#: libmount/src/context_mount.c:1613
+#: libmount/src/context_mount.c:1621
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s este deja montat sau punctul de montare este ocupat"
 
-#: libmount/src/context_mount.c:1618
+#: libmount/src/context_mount.c:1626
 #, c-format
 msgid "mount point does not exist"
 msgstr "punctul de montare nu există"
 
-#: libmount/src/context_mount.c:1621
+#: libmount/src/context_mount.c:1629
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "punctul de montare este o legătură simbolică către nicăieri"
 
-#: libmount/src/context_mount.c:1626
+#: libmount/src/context_mount.c:1634
 #, c-format
 msgid "special device %s does not exist"
 msgstr "dispozitivul special %s nu există"
 
-#: libmount/src/context_mount.c:1639
+#: libmount/src/context_mount.c:1647
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "dispozitivul special %s nu există (un prefix de rută nu este un director)"
 
-#: libmount/src/context_mount.c:1649
+#: libmount/src/context_mount.c:1657
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr "punctul de montare nu este montat sau opțiunea este incorectă"
 
-#: libmount/src/context_mount.c:1651
+#: libmount/src/context_mount.c:1659
 #, c-format
 msgid "not mount point or bad option"
 msgstr "nu este punct de montare sau opțiune incorectă"
 
-#: libmount/src/context_mount.c:1654
+#: libmount/src/context_mount.c:1662
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr "opțiune greșită; mutarea unei montări care se află sub o montare partajată nu este admisă"
 
-#: libmount/src/context_mount.c:1658
+#: libmount/src/context_mount.c:1666
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr "opțiune incorectă; pentru mai multe sisteme de fișiere (de exemplu, nfs, cifs) s-ar putea să aveți nevoie de un program auxiliar «/sbin/mount.<tip>»."
 
-#: libmount/src/context_mount.c:1662
+#: libmount/src/context_mount.c:1670
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr "tip de sistem de fișiere incorect, opțiune incorectă, super-bloc incorect pe %s, pagină de cod sau program auxiliar lipsă sau altă eroare"
 
-#: libmount/src/context_mount.c:1669
+#: libmount/src/context_mount.c:1677
 #, c-format
 msgid "mount table full"
 msgstr "tabelul de montare este plin"
 
-#: libmount/src/context_mount.c:1674
+#: libmount/src/context_mount.c:1682
 #, c-format
 msgid "can't read superblock on %s"
 msgstr "nu se poate citi super-blocul de pe %s"
 
-#: libmount/src/context_mount.c:1681
+#: libmount/src/context_mount.c:1689
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "tip de sistem de fișiere necunoscut „%s”"
 
-#: libmount/src/context_mount.c:1684
+#: libmount/src/context_mount.c:1692
 #, c-format
 msgid "unknown filesystem type"
 msgstr "tip de sistem de fișiere necunoscut"
 
-#: libmount/src/context_mount.c:1693
+#: libmount/src/context_mount.c:1701
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s nu este un dispozitiv de blocuri, iar stat(2) eșuează?"
 
-#: libmount/src/context_mount.c:1696
+#: libmount/src/context_mount.c:1704
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr "nucleul nu recunoaște %s ca fiind un dispozitiv de bloc; poate că este necesar să rulați «modprobe „controlor-dispozitiv”»."
 
-#: libmount/src/context_mount.c:1699
+#: libmount/src/context_mount.c:1707
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s nu este un dispozitiv de blocuri; încercați „-o loop”"
 
-#: libmount/src/context_mount.c:1701
+#: libmount/src/context_mount.c:1709
 #, c-format
 msgid "%s is not a block device"
 msgstr "%s nu este un dispozitiv de blocuri"
 
-#: libmount/src/context_mount.c:1708
+#: libmount/src/context_mount.c:1716
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s nu este un dispozitiv de blocuri valid"
 
-#: libmount/src/context_mount.c:1716
+#: libmount/src/context_mount.c:1724
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "nu se poate monta %s numai-pentru-citire"
 
-#: libmount/src/context_mount.c:1718
+#: libmount/src/context_mount.c:1726
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s este protejat la scriere, dar se solicită modul explicit de citire-scriere"
 
-#: libmount/src/context_mount.c:1720
+#: libmount/src/context_mount.c:1728
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "nu se poate remonta %s pentru citire-scriere, este protejat la scriere"
 
-#: libmount/src/context_mount.c:1722
+#: libmount/src/context_mount.c:1730
 #, c-format
 msgid "bind %s failed"
 msgstr "„bind” %s a eșuat"
 
-#: libmount/src/context_mount.c:1731
+#: libmount/src/context_mount.c:1739
 #, c-format
 msgid "no medium found on %s"
 msgstr "nu s-a găsit nici un mediu de stocare pe %s"
 
-#: libmount/src/context_mount.c:1738
+#: libmount/src/context_mount.c:1746
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "nu se poate monta; probabil sistem de fișiere corupt pe %s"
 
-#: libmount/src/context_mount.c:1747
+#: libmount/src/context_mount.c:1755
 #, c-format
 msgid "%s system call failed: %m"
 msgstr "apelul de sistem %s a eșuat: %m"
 
-#: libmount/src/context_umount.c:1261 libmount/src/context_umount.c:1315
+#: libmount/src/context_umount.c:1262 libmount/src/context_umount.c:1316
 #, c-format
 msgid "not mounted"
 msgstr "nu este montat"
 
-#: libmount/src/context_umount.c:1277
+#: libmount/src/context_umount.c:1278
 #, c-format
 msgid "umount failed: %m"
 msgstr "«umount» a eșuat: %m"
 
-#: libmount/src/context_umount.c:1286
+#: libmount/src/context_umount.c:1287
 #, c-format
 msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr "sistemul de fișiere a fost demontat, dar nu s-a reușit să se actualizeze tabelul de montare din spațiul utilizatorului"
 
-#: libmount/src/context_umount.c:1292
+#: libmount/src/context_umount.c:1293
 #, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
 msgstr "sistemul de fișiere a fost demontat, dar nu s-a reușit să se schimbe spațiul de nume înapoi (la cel dinainte)"
 
-#: libmount/src/context_umount.c:1299
+#: libmount/src/context_umount.c:1300
 #, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "sistemul de fișiere a fost demontat, dar orice operație ulterioară a eșuat: %m"
 
-#: libmount/src/context_umount.c:1312
+#: libmount/src/context_umount.c:1313
 #, c-format
 msgid "invalid block device"
 msgstr "dispozitiv de blocuri nevalid"
 
-#: libmount/src/context_umount.c:1318
+#: libmount/src/context_umount.c:1319
 #, c-format
 msgid "can't write superblock"
 msgstr "nu se poate scrie super-blocul"
 
-#: libmount/src/context_umount.c:1321
+#: libmount/src/context_umount.c:1322
 #, c-format
 msgid "target is busy"
 msgstr "ținta este ocupată"
 
-#: libmount/src/context_umount.c:1324
+#: libmount/src/context_umount.c:1325
 #, c-format
 msgid "no mount point specified"
 msgstr "niciun punct de montare specificat"
 
-#: libmount/src/context_umount.c:1327
+#: libmount/src/context_umount.c:1328
 #, c-format
 msgid "must be superuser to unmount"
 msgstr "trebuie să fiți superutilizator pentru a utiliza «unmount»"
 
-#: libmount/src/context_umount.c:1330
+#: libmount/src/context_umount.c:1331
 #, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr "dispozitivele de blocuri nu sunt permise pe sistemul de fișiere"
 
-#: libmount/src/context_umount.c:1333
+#: libmount/src/context_umount.c:1334
 #, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "apelul de sistem unmount(2) a eșuat: %m"
@@ -8942,7 +8944,7 @@ msgstr " -h <gazda>     numele de gazdă care va fi utilizat pentru jurnalizarea
 msgid " -H             suppress hostname in the login prompt"
 msgstr " -H             suprimă numele de gazdă în promptul de conectare"
 
-#: login-utils/login.c:1305 term-utils/agetty.c:3012
+#: login-utils/login.c:1305 term-utils/agetty.c:3023
 msgid "failed to initialize path context"
 msgstr "nu s-a reușit să se inițializeze contextul rutei"
 
@@ -9392,7 +9394,7 @@ msgstr "Intrați într-un grup nou.\n"
 msgid "who are you?"
 msgstr "cine sunteți?"
 
-#: login-utils/newgrp.c:218 login-utils/newgrp.c:230 sys-utils/nsenter.c:682
+#: login-utils/newgrp.c:218 login-utils/newgrp.c:230 sys-utils/nsenter.c:684
 #: sys-utils/unshare.c:1185
 msgid "setgid failed"
 msgstr "setgid() a eșuat"
@@ -9401,12 +9403,12 @@ msgstr "setgid() a eșuat"
 msgid "no such group"
 msgstr "nu există acest grup"
 
-#: login-utils/newgrp.c:234 sys-utils/nsenter.c:684 sys-utils/unshare.c:1188
+#: login-utils/newgrp.c:234 sys-utils/nsenter.c:686 sys-utils/unshare.c:1188
 msgid "setuid failed"
 msgstr "setuid() a eșuat"
 
 #: login-utils/nologin.c:28 misc-utils/lastlog2.c:108 misc-utils/lsclocks.c:182
-#: misc-utils/lsfd.c:1904 misc-utils/lslocks.c:807 misc-utils/mcookie.c:87
+#: misc-utils/lsfd.c:1904 misc-utils/lslocks.c:806 misc-utils/mcookie.c:87
 #: misc-utils/uuidd.c:97 misc-utils/uuidgen.c:29 sys-utils/dmesg.c:317
 #: sys-utils/ipcmk.c:67 sys-utils/irqtop.c:255 sys-utils/lscpu.c:1171
 #: sys-utils/lsipc.c:292 sys-utils/lsirq.c:50 sys-utils/lsmem.c:512
@@ -9499,7 +9501,7 @@ msgstr "nu se poate configura gestionarul de semnal-copil"
 msgid "cannot create child process"
 msgstr "nu se poate crea procesul-copil"
 
-#: login-utils/su-common.c:595 sys-utils/nsenter.c:621
+#: login-utils/su-common.c:595 sys-utils/nsenter.c:620
 #: sys-utils/switch_root.c:189
 #, c-format
 msgid "cannot change directory to %s"
@@ -9811,7 +9813,7 @@ msgstr ""
 "                          eșuează\n"
 
 #: login-utils/sulogin.c:1038 misc-utils/findmnt.c:1733 sys-utils/wdctl.c:795
-#: term-utils/agetty.c:852 term-utils/wall.c:231
+#: term-utils/agetty.c:855 term-utils/wall.c:231
 msgid "invalid timeout argument"
 msgstr "valoare de limită de timp nevalidă"
 
@@ -10441,7 +10443,7 @@ msgstr ""
 msgid "invalid fd argument"
 msgstr "argument de descriptor de fișier nevalid"
 
-#: misc-utils/fadvise.c:131 misc-utils/fincore.c:482 sys-utils/losetup.c:917
+#: misc-utils/fadvise.c:131 misc-utils/fincore.c:486 sys-utils/losetup.c:917
 msgid "no file specified"
 msgstr "niciun fișier specificat"
 
@@ -10458,80 +10460,80 @@ msgstr "specifică un descriptor de fișier sau un nume de fișier"
 msgid "failed to advise: %s"
 msgstr "nu s-a reușit să se indice: %s"
 
-#: misc-utils/fincore.c:98
+#: misc-utils/fincore.c:102
 msgid "file data resident in memory in pages"
 msgstr "date de fișier rezidente în memorie în pagini"
 
-#: misc-utils/fincore.c:99
+#: misc-utils/fincore.c:103
 msgid "file data resident in memory in bytes"
 msgstr "date de fișier rezidente în memorie în octeți"
 
-#: misc-utils/fincore.c:100
+#: misc-utils/fincore.c:104
 msgid "size of the file"
 msgstr "dimensiunea fișierului"
 
-#: misc-utils/fincore.c:101
+#: misc-utils/fincore.c:105
 msgid "file name"
 msgstr "numele fișierului"
 
-#: misc-utils/fincore.c:102
+#: misc-utils/fincore.c:106
 msgid "number of dirty pages"
 msgstr "numărul de pagini murdare „dirty”"
 
-#: misc-utils/fincore.c:103
+#: misc-utils/fincore.c:107
 msgid "number of dirty bytes"
 msgstr "numărul de octeți murdari „dirty”"
 
-#: misc-utils/fincore.c:104
+#: misc-utils/fincore.c:108
 msgid "number of pages marked for writeback"
 msgstr "numărul de pagini marcate pentru rescriere"
 
-#: misc-utils/fincore.c:105
+#: misc-utils/fincore.c:109
 msgid "number of bytes marked for writeback"
 msgstr "numărul de octeți marcați pentru rescriere"
 
-#: misc-utils/fincore.c:106
+#: misc-utils/fincore.c:110
 msgid "number of evicted pages"
 msgstr "numărul de pagini evacuate"
 
-#: misc-utils/fincore.c:107
+#: misc-utils/fincore.c:111
 msgid "number of evicted bytes"
 msgstr "numărul de octeți evacuați"
 
-#: misc-utils/fincore.c:108
+#: misc-utils/fincore.c:112
 msgid "number of recently evicted pages"
 msgstr "numărul de pagini evacuate recent"
 
-#: misc-utils/fincore.c:109
+#: misc-utils/fincore.c:113
 msgid "number of recently evicted bytes"
 msgstr "numărul de octeți evacuați recent"
 
-#: misc-utils/fincore.c:280
+#: misc-utils/fincore.c:284
 #, c-format
 msgid "failed to do mincore: %s"
 msgstr "nu s-a putut executa mincore: %s"
 
-#: misc-utils/fincore.c:315
+#: misc-utils/fincore.c:319
 #, c-format
 msgid "failed to do mmap: %s"
 msgstr "nu s-a putut executa mmap: %s"
 
-#: misc-utils/fincore.c:346
+#: misc-utils/fincore.c:350
 #, c-format
 msgid "failed to do cachestat: %s"
 msgstr "nu s-a putut executa cachestat: %s"
 
-#: misc-utils/fincore.c:362
+#: misc-utils/fincore.c:366
 #, c-format
 msgid "failed to open: %s"
 msgstr "nu s-a putut deschide: %s"
 
-#: misc-utils/fincore.c:367
+#: misc-utils/fincore.c:371
 #, c-format
 msgid "failed to do fstat: %s"
 msgstr "nu s-a putut executa fstat: %s"
 
-#: misc-utils/fincore.c:376
+#: misc-utils/fincore.c:380
 #, c-format
 msgid "failed ioctl to get size: %s"
 msgstr "ioctl a eșuat să obțină dimensiunea: %s"
@@ -10540,34 +10542,34 @@ msgstr "ioctl a eșuat să obțină dimensiunea: %s"
 # acest mesaj și următoarele, pot fi
 # vizualizate rulînd comanda:
 # «fincore --help».
-#: misc-utils/fincore.c:397
+#: misc-utils/fincore.c:401
 #, c-format
 msgid " %s [options] file...\n"
 msgstr " %s [opțiuni] fișier...\n"
 
-#: misc-utils/fincore.c:400
+#: misc-utils/fincore.c:404
 msgid " -J, --json            use JSON output format\n"
 msgstr " -J, --json            utilizează formatul de ieșire JSON\n"
 
-#: misc-utils/fincore.c:401
+#: misc-utils/fincore.c:405
 msgid " -b, --bytes           print sizes in bytes rather than in human readable format\n"
 msgstr ""
 " -b, --bytes           afișează dimensiunile în octeți și nu într-un format ușor\n"
 "                       de citit de către om\n"
 
-#: misc-utils/fincore.c:402
+#: misc-utils/fincore.c:406
 msgid " -n, --noheadings      don't print headings\n"
 msgstr " -n, --noheadings      nu imprimă titlurile\n"
 
-#: misc-utils/fincore.c:403
+#: misc-utils/fincore.c:407
 msgid " -o, --output <list>   output columns\n"
 msgstr " -o, --output <listă>  afișează coloanele din lista dată\n"
 
-#: misc-utils/fincore.c:404
+#: misc-utils/fincore.c:408
 msgid "     --output-all      output all columns\n"
 msgstr "     --output-all      afișează toate coloanele\n"
 
-#: misc-utils/fincore.c:405
+#: misc-utils/fincore.c:409
 msgid " -r, --raw             use raw output format\n"
 msgstr " -r, --raw             utilizează formatul de ieșire brut\n"
 
@@ -10866,12 +10868,12 @@ msgstr " -I, --dfi              imită ieșirea lui df(1) cu opțiunea -i\n"
 msgid " -i, --invert           invert the sense of matching\n"
 msgstr " -i, --invert           inversează sensul potrivirii\n"
 
-#: misc-utils/findmnt.c:1438 misc-utils/lslocks.c:814 sys-utils/lsns.c:1295
+#: misc-utils/findmnt.c:1438 misc-utils/lslocks.c:813 sys-utils/lsns.c:1300
 #: sys-utils/rfkill.c:640
 msgid " -J, --json             use JSON output format\n"
 msgstr " -J, --json             utilizează formatul de ieșire JSON\n"
 
-#: misc-utils/findmnt.c:1439 sys-utils/lsns.c:1296
+#: misc-utils/findmnt.c:1439 sys-utils/lsns.c:1301
 msgid " -l, --list             use list format output\n"
 msgstr " -l, --list             utilizează formatul de ieșire din listă\n"
 
@@ -10891,7 +10893,7 @@ msgstr ""
 " -O, --options <listă>  limitează setul de sisteme de fișiere prin opțiuni de\n"
 "                        montare\n"
 
-#: misc-utils/findmnt.c:1443 misc-utils/lslocks.c:817
+#: misc-utils/findmnt.c:1443 misc-utils/lslocks.c:816
 msgid " -o, --output <list>    output columns (see --list-columns)\n"
 msgstr " -o, --output <listă>   afișează coloanele din listă (a se vedea „--list-columns”)\n"
 
@@ -10957,7 +10959,7 @@ msgstr ""
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
 msgstr " -U, --uniq             ignoră sistemele de fișiere cu țintă duplicată\n"
 
-#: misc-utils/findmnt.c:1458 misc-utils/lslocks.c:821 sys-utils/lsns.c:1303
+#: misc-utils/findmnt.c:1458 misc-utils/lslocks.c:820 sys-utils/lsns.c:1308
 msgid " -u, --notruncate       don't truncate text in columns\n"
 msgstr " -u, --notruncate       nu se trunchiază textul din coloane\n"
 
@@ -10985,7 +10987,7 @@ msgstr "     --verbose          afișează mai multe detalii\n"
 msgid "     --vfs-all          print all VFS options\n"
 msgstr "     --vfs-all          afișează toate opțiunile VFS\n"
 
-#: misc-utils/findmnt.c:1468 misc-utils/lslocks.c:824
+#: misc-utils/findmnt.c:1468 misc-utils/lslocks.c:823
 msgid " -H, --list-columns     list the available columns\n"
 msgstr " -H, --list-columns     listează coloanele disponibile\n"
 
@@ -12700,8 +12702,8 @@ msgstr "ioctl(RTC_RD_NAME) pe %s pentru a citi timpul a eșuat"
 msgid "Could not get CPU clock of process %jd: %s"
 msgstr "Nu s-a putut obține ceasul CPU al procesului %jd: %s"
 
-#: misc-utils/lsclocks.c:600 misc-utils/lslocks.c:385 misc-utils/uuidd.c:791
-#: misc-utils/waitpid.c:54 sys-utils/nsenter.c:390
+#: misc-utils/lsclocks.c:600 misc-utils/lslocks.c:384 misc-utils/uuidd.c:791
+#: misc-utils/waitpid.c:54 sys-utils/nsenter.c:389
 msgid "failed to parse pid"
 msgstr "nu s-a putut analiza pid-ul"
 
@@ -13129,7 +13131,7 @@ msgstr "sunt adăugate prea multe coloane prin intermediul expresiei de filtrare
 msgid "failed to allocate an idcache"
 msgstr "nu s-a reușit să se aloce un idcache"
 
-#: misc-utils/lsfd.c:1691 misc-utils/lslocks.c:421
+#: misc-utils/lsfd.c:1691 misc-utils/lslocks.c:420
 msgid "(unknown)"
 msgstr "(necunoscut)"
 
@@ -13153,11 +13155,11 @@ msgstr "deșeuri la sfârșitul specificației pid: %s"
 msgid "out of range value for pid specification: %ld"
 msgstr "valoare în afara intervalului pentru specificația pid: %ld"
 
-#: misc-utils/lsfd.c:1851 misc-utils/lslocks.c:501
+#: misc-utils/lsfd.c:1851 misc-utils/lslocks.c:500
 msgid "failed to alloc procfs handler"
 msgstr "nu s-a putut aloca gestionarul procfs"
 
-#: misc-utils/lsfd.c:1855 misc-utils/lslocks.c:505
+#: misc-utils/lsfd.c:1855 misc-utils/lslocks.c:504
 msgid "failed to open /proc"
 msgstr "nu s-a putut deschide „/proc”"
 
@@ -13289,7 +13291,7 @@ msgstr "argument necunoscut al opțiunii „-i/--inet”: %s"
 msgid "unsupported --summary argument"
 msgstr "argument neacceptat pentru „--summary”"
 
-#: misc-utils/lsfd-file.c:522 misc-utils/namei.c:455 sys-utils/lsns.c:1490
+#: misc-utils/lsfd-file.c:522 misc-utils/namei.c:455 sys-utils/lsns.c:1495
 msgid "failed to allocate UID cache"
 msgstr "nu s-a putut aloca cache-ul pentru UID"
 
@@ -13341,28 +13343,28 @@ msgstr "PID-ul procesului care blochează blocarea"
 msgid "holders of the lock"
 msgstr "deținătorii blocării"
 
-#: misc-utils/lslocks.c:286
+#: misc-utils/lslocks.c:285
 #, c-format
 msgid "failed to parse '%s'"
 msgstr "nu s-a putut analiza: „%s”"
 
-#: misc-utils/lslocks.c:358
+#: misc-utils/lslocks.c:357
 msgid "failed to parse ID"
 msgstr "nu s-a putut analiza id-ul"
 
-#: misc-utils/lslocks.c:403
+#: misc-utils/lslocks.c:402
 msgid "failed to parse start"
 msgstr "nu s-a putut analiza începutul"
 
-#: misc-utils/lslocks.c:410
+#: misc-utils/lslocks.c:409
 msgid "failed to parse end"
 msgstr "nu s-a putut analiza sfârșitul"
 
-#: misc-utils/lslocks.c:423
+#: misc-utils/lslocks.c:422
 msgid "(undefined)"
 msgstr "(nedefinit)"
 
-#: misc-utils/lslocks.c:810
+#: misc-utils/lslocks.c:809
 msgid "List local system locks.\n"
 msgstr "Listează blocările sistemului local\n"
 
@@ -13370,35 +13372,35 @@ msgstr "Listează blocările sistemului local\n"
 # acest mesaj și următoarele, pot fi
 # vizualizate rulînd comanda:
 # «lslocks --help».
-#: misc-utils/lslocks.c:813
+#: misc-utils/lslocks.c:812
 msgid " -b, --bytes            print SIZE in bytes rather than in human readable format\n"
 msgstr ""
 " -b, --bytes            afișează DIMENSIUNEA în octeți, mai degrabă decât\n"
 "                        într-un format ușor de citit de către om\n"
 
-#: misc-utils/lslocks.c:815
+#: misc-utils/lslocks.c:814
 msgid " -i, --noinaccessible   ignore locks without read permissions\n"
 msgstr " -i, --noinaccessible   ignoră blocările fără permisiuni de citire\n"
 
-#: misc-utils/lslocks.c:816 sys-utils/lsns.c:1297 sys-utils/rfkill.c:641
+#: misc-utils/lslocks.c:815 sys-utils/lsns.c:1302 sys-utils/rfkill.c:641
 msgid " -n, --noheadings       don't print headings\n"
 msgstr " -n, --noheadings       nu imprimă titlurile\n"
 
-#: misc-utils/lslocks.c:818 sys-utils/lsns.c:1299 sys-utils/rfkill.c:643
+#: misc-utils/lslocks.c:817 sys-utils/lsns.c:1304 sys-utils/rfkill.c:643
 msgid "     --output-all       output all columns\n"
 msgstr "     --output-all       afișează toate coloanele\n"
 
-#: misc-utils/lslocks.c:819
+#: misc-utils/lslocks.c:818
 msgid " -p, --pid <pid>        display only locks held by this process\n"
 msgstr " -p, --pid <pid>        afișează numai blocările deținute de acest proces\n"
 
-#: misc-utils/lslocks.c:820 sys-utils/lsns.c:1302 sys-utils/rfkill.c:644
+#: misc-utils/lslocks.c:819 sys-utils/lsns.c:1307 sys-utils/rfkill.c:644
 msgid " -r, --raw              use the raw output format\n"
 msgstr " -r, --raw              utilizează formatul de ieșire brut\n"
 
-#: misc-utils/lslocks.c:907 schedutils/chrt.c:413 schedutils/ionice.c:179
+#: misc-utils/lslocks.c:906 schedutils/chrt.c:413 schedutils/ionice.c:179
 #: schedutils/taskset.c:190 schedutils/uclampset.c:249 sys-utils/choom.c:102
-#: sys-utils/lsns.c:1392 sys-utils/prlimit.c:598
+#: sys-utils/lsns.c:1397 sys-utils/prlimit.c:598
 msgid "invalid PID argument"
 msgstr "argument PID nevalid"
 
@@ -13846,7 +13848,7 @@ msgstr "nu s-au primit descriptori de fișiere, verificați starea soclului „u
 msgid "too many file descriptors received, check uuidd.socket"
 msgstr "prea mulți descriptori de fișiere primiți, verificați „uuidd.socket”"
 
-#: misc-utils/uuidd.c:452 text-utils/more.c:1380
+#: misc-utils/uuidd.c:452 text-utils/more.c:1383
 msgid "poll failed"
 msgstr "poll() a eșuat"
 
@@ -14128,7 +14130,7 @@ msgstr "bazat pe sha1"
 
 #: misc-utils/uuidparse.c:267 misc-utils/wipefs.c:178
 #: sys-utils/irq-common.c:148 sys-utils/irq-common.c:481 sys-utils/lscpu.c:986
-#: sys-utils/lsns.c:1150 sys-utils/zramctl.c:505
+#: sys-utils/lsns.c:1155 sys-utils/zramctl.c:505
 msgid "failed to initialize output column"
 msgstr "nu s-a putut inițializa coloana de ieșire"
 
@@ -16686,7 +16688,7 @@ msgstr "%s: %s (%<PRIu64> octeți) decupat pe %s\n"
 msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
 msgstr "%s: %s (%<PRIu64> octeți) decupat\n"
 
-#: sys-utils/fstrim.c:290 sys-utils/lsns.c:1498 sys-utils/swapon.c:759
+#: sys-utils/fstrim.c:290 sys-utils/lsns.c:1503 sys-utils/swapon.c:759
 #: sys-utils/umount.c:271
 #, c-format
 msgid "failed to parse %s"
@@ -17205,15 +17207,15 @@ msgstr "Modul de testare: nu s-a schimbat nimic."
 msgid "could not send audit message"
 msgstr "nu se poate trimite mesajul de auditare"
 
-#: sys-utils/hwclock-cmos.c:366
+#: sys-utils/hwclock-cmos.c:365
 msgid "ISA port access is not implemented"
 msgstr "accesul la portul ISA nu este implementat"
 
-#: sys-utils/hwclock-cmos.c:368
+#: sys-utils/hwclock-cmos.c:367
 msgid "iopl() port access failed"
 msgstr "accesul la portul iopl() a eșuat"
 
-#: sys-utils/hwclock-cmos.c:379
+#: sys-utils/hwclock-cmos.c:378
 msgid "Using direct ISA access to the clock"
 msgstr "Se utilizează accesul direct ISA la ceas"
 
@@ -18193,11 +18195,11 @@ msgid "name"
 msgstr "nume"
 
 #: sys-utils/irq-common.c:131 sys-utils/irq-common.c:463 sys-utils/lsmem.c:695
-#: sys-utils/lsns.c:1120
+#: sys-utils/lsns.c:1125
 msgid "failed to initialize output table"
 msgstr "nu s-a reușit să se inițializeze tabelul de ieșire"
 
-#: sys-utils/irq-common.c:165 sys-utils/lsns.c:1041
+#: sys-utils/irq-common.c:165 sys-utils/lsns.c:1046
 msgid "failed to add line to output"
 msgstr "nu s-a reușit să se adauge o linie la ieșire"
 
@@ -19821,64 +19823,64 @@ msgstr "identificatorul spațiului de nume al proprietarului (numărul de nod-i)
 # acest mesaj și următoarele, pot fi
 # vizualizate rulînd comanda:
 # «lsns --help».
-#: sys-utils/lsns.c:1289
+#: sys-utils/lsns.c:1294
 #, c-format
 msgid " %s [options] [<namespace>]\n"
 msgstr " %s [opțiuni] [<spațiu-nume>]\n"
 
-#: sys-utils/lsns.c:1292
+#: sys-utils/lsns.c:1297
 msgid "List system namespaces.\n"
 msgstr "Listează spațiile de nume ale sistemului.\n"
 
-#: sys-utils/lsns.c:1298 sys-utils/rfkill.c:642
+#: sys-utils/lsns.c:1303 sys-utils/rfkill.c:642
 msgid " -o, --output <list>    define which output columns to use\n"
 msgstr " -o, --output <listă>   definește ce coloane de ieșire se utilizează\n"
 
-#: sys-utils/lsns.c:1300
+#: sys-utils/lsns.c:1305
 msgid " -P, --persistent       namespaces without processes\n"
 msgstr " -P, --persistent       spațiile de nume fără procese\n"
 
-#: sys-utils/lsns.c:1301
+#: sys-utils/lsns.c:1306
 msgid " -p, --task <pid>       print process namespaces\n"
 msgstr " -p, --task <pid>       afișează spațiile de nume ale procesului  cu PID-ul specificat\n"
 
-#: sys-utils/lsns.c:1304
+#: sys-utils/lsns.c:1309
 msgid " -W, --nowrap           don't use multi-line representation\n"
 msgstr " -W, --nowrap           nu utilizează reprezentarea pe mai multe linii\n"
 
-#: sys-utils/lsns.c:1305
+#: sys-utils/lsns.c:1310
 msgid " -t, --type <name>      namespace type (mnt, net, ipc, user, pid, uts, cgroup, time)\n"
 msgstr " -t, --type <nume>      tipul de spațiu de nume (mnt, net, ipc, user, pid, uts, cgroup, time)\n"
 
-#: sys-utils/lsns.c:1306
+#: sys-utils/lsns.c:1311
 msgid " -T, --tree <rel>       use tree format (parent, owner, or process)\n"
 msgstr ""
 " -T, --tree <rel>       utilizează formatul arbore („parent” părinte, „own” proprietar sau\n"
 "                        „process” proces)\n"
 
-#: sys-utils/lsns.c:1407
+#: sys-utils/lsns.c:1412
 #, c-format
 msgid "unknown namespace type: %s"
 msgstr "tip de spațiu de nume necunoscut: %s"
 
-#: sys-utils/lsns.c:1427
+#: sys-utils/lsns.c:1432
 #, c-format
 msgid "unknown tree type: %s"
 msgstr "tip de arbore necunoscut: %s"
 
-#: sys-utils/lsns.c:1449
+#: sys-utils/lsns.c:1454
 msgid "--task is mutually exclusive with <namespace>"
 msgstr "„--task” se exclude reciproc cu <spațiu de nume>"
 
-#: sys-utils/lsns.c:1450
+#: sys-utils/lsns.c:1455
 msgid "invalid namespace argument"
 msgstr "argument de spațiu de nume nevalid"
 
-#: sys-utils/lsns.c:1480
+#: sys-utils/lsns.c:1485
 msgid "--tree={parent|owner} is unsupported for your system"
 msgstr "--tree={parent|owner} nu este admisă de sistemul dvs."
 
-#: sys-utils/lsns.c:1508
+#: sys-utils/lsns.c:1513
 #, c-format
 msgid "not found namespace: %ju"
 msgstr "nu s-a găsit spațiul de nume: %ju"
@@ -20402,70 +20404,70 @@ msgstr "statfs %s a eșuat"
 msgid "write cgroup.procs failed"
 msgstr "scrierea cgroup.procs a eșuat"
 
-#: sys-utils/nsenter.c:444 sys-utils/unshare.c:918 sys-utils/unshare.c:980
+#: sys-utils/nsenter.c:443 sys-utils/unshare.c:918 sys-utils/unshare.c:980
 msgid "failed to parse uid"
 msgstr "nu s-a putut analiza uid-ul"
 
-#: sys-utils/nsenter.c:451 sys-utils/unshare.c:922 sys-utils/unshare.c:984
+#: sys-utils/nsenter.c:450 sys-utils/unshare.c:922 sys-utils/unshare.c:984
 msgid "failed to parse gid"
 msgstr "nu s-a putut analiza gid-ul"
 
-#: sys-utils/nsenter.c:506
+#: sys-utils/nsenter.c:505
 msgid "no target PID specified for --follow-context"
 msgstr "nu este specificat niciun PID țintă pentru „--follow-context”"
 
-#: sys-utils/nsenter.c:508
+#: sys-utils/nsenter.c:507
 #, c-format
 msgid "failed to get %d SELinux context"
 msgstr "nu s-a reușit să se obțină contextul SELinux %d"
 
-#: sys-utils/nsenter.c:511
+#: sys-utils/nsenter.c:510
 #, c-format
 msgid "failed to set exec context to '%s'"
 msgstr "nu s-a putut stabili contextul de execuție la „%s”"
 
-#: sys-utils/nsenter.c:518
+#: sys-utils/nsenter.c:517
 msgid "no target PID specified for --all"
 msgstr "nu este specificat niciun PID țintă pentru „--all”"
 
-#: sys-utils/nsenter.c:546
+#: sys-utils/nsenter.c:545
 msgid "--join-cgroup is only supported in cgroup v2"
 msgstr "opțiunea „--join-cgroup” este acceptată doar în cgroup v2"
 
-#: sys-utils/nsenter.c:593
+#: sys-utils/nsenter.c:592
 #, c-format
 msgid "reassociate to namespace '%s' failed"
 msgstr "reasocierea la spațiul de nume „%s” a eșuat"
 
-#: sys-utils/nsenter.c:609 sys-utils/nsenter.c:632
+#: sys-utils/nsenter.c:608 sys-utils/nsenter.c:631
 msgid "cannot open current working directory"
 msgstr "nu se poate deschide directorul de lucru actual"
 
-#: sys-utils/nsenter.c:616
+#: sys-utils/nsenter.c:615
 msgid "change directory by root file descriptor failed"
 msgstr "schimbarea directorului prin descriptorul de fișiere root a eșuat"
 
-#: sys-utils/nsenter.c:619
+#: sys-utils/nsenter.c:618
 msgid "chroot failed"
 msgstr "«chroot» a eșuat"
 
-#: sys-utils/nsenter.c:639
+#: sys-utils/nsenter.c:638
 msgid "change directory by working directory file descriptor failed"
 msgstr "schimbarea directorului prin descriptorul de fișier al directorului de lucru a eșuat"
 
-#: sys-utils/nsenter.c:648
+#: sys-utils/nsenter.c:650
 msgid "failed to get environment variables"
 msgstr "nu s-a reușit să se obțină variabilele de mediu"
 
-#: sys-utils/nsenter.c:651
+#: sys-utils/nsenter.c:653
 msgid "failed to set environment variables"
 msgstr "nu s-a reușit să se definească variabilele de mediu"
 
-#: sys-utils/nsenter.c:664
+#: sys-utils/nsenter.c:666
 msgid "can not get process stat"
 msgstr "nu se poate obține starea procesului"
 
-#: sys-utils/nsenter.c:680 sys-utils/setpriv.c:1041 sys-utils/setpriv.c:1048
+#: sys-utils/nsenter.c:682 sys-utils/setpriv.c:1041 sys-utils/setpriv.c:1048
 #: sys-utils/unshare.c:1183
 msgid "setgroups failed"
 msgstr "setgroups() a eșuat"
@@ -23177,125 +23179,125 @@ msgstr "%s: nu se poate schimba prioritatea procesului: %m"
 msgid "%s: can't exec %s: %m"
 msgstr "%s: nu se poate executa %s: %m"
 
-#: term-utils/agetty.c:606 term-utils/agetty.c:774 term-utils/agetty.c:953
-#: term-utils/agetty.c:1202 term-utils/agetty.c:1481 term-utils/agetty.c:1499
-#: term-utils/agetty.c:1536 term-utils/agetty.c:1546 term-utils/agetty.c:1588
-#: term-utils/agetty.c:1950 term-utils/agetty.c:2311 term-utils/agetty.c:2893
+#: term-utils/agetty.c:606 term-utils/agetty.c:777 term-utils/agetty.c:956
+#: term-utils/agetty.c:1205 term-utils/agetty.c:1484 term-utils/agetty.c:1502
+#: term-utils/agetty.c:1539 term-utils/agetty.c:1549 term-utils/agetty.c:1591
+#: term-utils/agetty.c:1953 term-utils/agetty.c:2322 term-utils/agetty.c:2904
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "nu s-a reușit să se aloce memorie: %m"
 
-#: term-utils/agetty.c:783
+#: term-utils/agetty.c:786
 msgid "invalid delay argument"
 msgstr "argument de întârziere nevalid"
 
-#: term-utils/agetty.c:821
+#: term-utils/agetty.c:824
 msgid "invalid argument of --local-line"
 msgstr "argument nevalid pentru opțiunea „--local-line”"
 
-#: term-utils/agetty.c:840
+#: term-utils/agetty.c:843
 msgid "invalid nice argument"
 msgstr "argument de curtoazie (nice) nevalid"
 
-#: term-utils/agetty.c:931
+#: term-utils/agetty.c:934
 #, c-format
 msgid "could not get terminal name: %d"
 msgstr "nu s-a putut obține numele terminalului: %d"
 
-#: term-utils/agetty.c:958
+#: term-utils/agetty.c:961
 #, c-format
 msgid "bad speed: %s"
 msgstr "viteză incorectă: %s"
 
-#: term-utils/agetty.c:960
+#: term-utils/agetty.c:963
 msgid "too many alternate speeds"
 msgstr "prea multe viteze alternative"
 
-#: term-utils/agetty.c:1067 term-utils/agetty.c:1071 term-utils/agetty.c:1124
+#: term-utils/agetty.c:1070 term-utils/agetty.c:1074 term-utils/agetty.c:1127
 #, c-format
 msgid "/dev/%s: cannot open as standard input: %m"
 msgstr "/dev/%s: nu se poate deschide ca intrare standard: %m"
 
-#: term-utils/agetty.c:1090
+#: term-utils/agetty.c:1093
 #, c-format
 msgid "/dev/%s: not a character device"
 msgstr "/dev/%s: nu este un dispozitiv de caractere"
 
-#: term-utils/agetty.c:1092
+#: term-utils/agetty.c:1095
 #, c-format
 msgid "/dev/%s: not a tty"
 msgstr "/dev/%s: nu este un terminal (tty)"
 
-#: term-utils/agetty.c:1096 term-utils/agetty.c:1128
+#: term-utils/agetty.c:1099 term-utils/agetty.c:1131
 #, c-format
 msgid "/dev/%s: cannot get controlling tty: %m"
 msgstr "/dev/%s: nu se poate obține terminalul de control: %m"
 
-#: term-utils/agetty.c:1118
+#: term-utils/agetty.c:1121
 #, c-format
 msgid "/dev/%s: vhangup() failed: %m"
 msgstr "/dev/%s: vhangup() a eșuat: %m"
 
-#: term-utils/agetty.c:1139
+#: term-utils/agetty.c:1142
 #, c-format
 msgid "%s: not open for read/write"
 msgstr "%s: nu este deschis pentru citire/scriere"
 
-#: term-utils/agetty.c:1144
+#: term-utils/agetty.c:1147
 #, c-format
 msgid "/dev/%s: cannot set process group: %m"
 msgstr "/dev/%s: nu se poate defini grupul de procese: %m"
 
-#: term-utils/agetty.c:1158
+#: term-utils/agetty.c:1161
 #, c-format
 msgid "%s: dup problem: %m"
 msgstr "%s: problemă de dup: %m"
 
-#: term-utils/agetty.c:1175
+#: term-utils/agetty.c:1178
 #, c-format
 msgid "%s: failed to get terminal attributes: %m"
 msgstr "%s: nu s-a reușit să se obțină atributele terminalului: %m"
 
-#: term-utils/agetty.c:1378 term-utils/agetty.c:1407
+#: term-utils/agetty.c:1381 term-utils/agetty.c:1410
 #, c-format
 msgid "setting terminal attributes failed: %m"
 msgstr "definirea atributelor terminalului a eșuat: %m"
 
-#: term-utils/agetty.c:1526
+#: term-utils/agetty.c:1529
 msgid "cannot open os-release file"
 msgstr "nu se poate deschide fișierul „os-release”"
 
-#: term-utils/agetty.c:1693
+#: term-utils/agetty.c:1696
 #, c-format
 msgid "failed to create reload file: %s: %m"
 msgstr "nu s-a putut crea fișierul de reîncărcare: %s: %m"
 
-#: term-utils/agetty.c:2014
+#: term-utils/agetty.c:2017
 #, c-format
 msgid "failed to get terminal attributes: %m"
 msgstr "nu s-a reușit să se obțină atributele terminalului: %m"
 
-#: term-utils/agetty.c:2036
+#: term-utils/agetty.c:2039
 msgid "[press ENTER to login]"
 msgstr "[apăsați «Enter» pentru autentificare]"
 
-#: term-utils/agetty.c:2064
+#: term-utils/agetty.c:2067
 msgid "Num Lock off"
 msgstr "«Blocarea Numerelor» dezactivată"
 
-#: term-utils/agetty.c:2067
+#: term-utils/agetty.c:2070
 msgid "Num Lock on"
 msgstr "«Blocarea Numerelor» activată"
 
-#: term-utils/agetty.c:2070
+#: term-utils/agetty.c:2073
 msgid "Caps Lock on"
 msgstr "«Blocarea Majusculelor» activată"
 
-#: term-utils/agetty.c:2073
+#: term-utils/agetty.c:2076
 msgid "Scroll Lock on"
 msgstr "«Blocarea Derulării» activată"
 
-#: term-utils/agetty.c:2076
+#: term-utils/agetty.c:2079
 #, c-format
 msgid ""
 "Hint: %s\n"
@@ -23304,27 +23306,27 @@ msgstr ""
 "Sugestie: %s\n"
 "\n"
 
-#: term-utils/agetty.c:2220
+#: term-utils/agetty.c:2223
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: citit: %m"
 
-#: term-utils/agetty.c:2287
+#: term-utils/agetty.c:2290
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: depășire a memoriei tampon de intrare"
 
-#: term-utils/agetty.c:2307 term-utils/agetty.c:2315
+#: term-utils/agetty.c:2318 term-utils/agetty.c:2326
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s: conversie incorectă a caracterelor pentru numele de utilizator"
 
-#: term-utils/agetty.c:2321
+#: term-utils/agetty.c:2332
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s: caracter nevalid 0x%x în numele de autentificare"
 
-#: term-utils/agetty.c:2406
+#: term-utils/agetty.c:2417
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s: definirea atributelor terminalului a eșuat: %m"
@@ -23333,7 +23335,7 @@ msgstr "%s: definirea atributelor terminalului a eșuat: %m"
 # acest mesaj și următoarele, pot fi
 # vizualizate rulînd comanda:
 # «agetty --help».
-#: term-utils/agetty.c:2451
+#: term-utils/agetty.c:2462
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -23342,151 +23344,151 @@ msgstr ""
 " %1$s [opțiuni] <linie> [<rata-baud>,...] [<tip-terminal>]\n"
 " %1$s [opțiuni] <rata-baud>,... <linie> [<tip-terminal>]\n"
 
-#: term-utils/agetty.c:2455
+#: term-utils/agetty.c:2466
 msgid "Open a terminal and set its mode.\n"
 msgstr "Deschide un terminal și stabilește modul acestuia.\n"
 
-#: term-utils/agetty.c:2458
+#: term-utils/agetty.c:2469
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                presupune un terminal (tty) pe 8 biți\n"
 
-#: term-utils/agetty.c:2459
+#: term-utils/agetty.c:2470
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr " -a, --autologin <utilizator> autentifică automat utilizatorul specificat\n"
 
-#: term-utils/agetty.c:2460
+#: term-utils/agetty.c:2471
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset              nu reinițiază modul de control\n"
 
-#: term-utils/agetty.c:2461
+#: term-utils/agetty.c:2472
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote               utilizează „-r <nume-gazdă>” pentru login(1)\n"
 
-#: term-utils/agetty.c:2462
+#: term-utils/agetty.c:2473
 msgid " -f, --issue-file <list>    display issue files or directories\n"
 msgstr " -f, --issue-file <listă>   afișează fișierele sau directoarele „issue”\n"
 
-#: term-utils/agetty.c:2463
+#: term-utils/agetty.c:2474
 msgid "     --show-issue           display issue file and exit\n"
 msgstr "     --show-issue           afișează fișierele „issue” și iese\n"
 
-#: term-utils/agetty.c:2464
+#: term-utils/agetty.c:2475
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr " -h, --flow-control         activează controlul fluxului hardware\n"
 
-#: term-utils/agetty.c:2465
+#: term-utils/agetty.c:2476
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -H, --host <nume-gazdă>    specifică gazda (mașina) de autentificare\n"
 
-#: term-utils/agetty.c:2466
+#: term-utils/agetty.c:2477
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue              nu afișează fișierele „issue”\n"
 
-#: term-utils/agetty.c:2467
+#: term-utils/agetty.c:2478
 msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <șir>    definește șirul textului de întâmpinare\n"
 
-#: term-utils/agetty.c:2468
+#: term-utils/agetty.c:2479
 msgid " -J, --noclear              do not clear the screen before prompt\n"
 msgstr " -J, --noclear              nu curăță ecranul înainte de prompt\n"
 
-#: term-utils/agetty.c:2469
+#: term-utils/agetty.c:2480
 msgid " -l, --login-program <file> specify login program\n"
 msgstr " -l, --login-program <fișier> specifică programul de autentificare\n"
 
-#: term-utils/agetty.c:2470
+#: term-utils/agetty.c:2481
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr " -L, --local-line[=<mod>]   controlează indicatorul liniei locale\n"
 
-#: term-utils/agetty.c:2471
+#: term-utils/agetty.c:2482
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr ""
 " -m, --extract-baud         extrage rata de baud (viteza de transmisie) în timpul\n"
 "                            conectării\n"
 
-#: term-utils/agetty.c:2472
+#: term-utils/agetty.c:2483
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login           nu afișează solicitarea de autentificare\n"
 
-#: term-utils/agetty.c:2473
+#: term-utils/agetty.c:2484
 msgid " -N, --nonewline            do not print a newline before issue\n"
 msgstr " -N, --nonewline            nu scrie o linie nouă înainte de mesajul din „issue”\n"
 
-#: term-utils/agetty.c:2474
+#: term-utils/agetty.c:2485
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -o, --login-options <opț.> opțiuni care sunt pasate la «login» (autentificare)\n"
 
-#: term-utils/agetty.c:2475
+#: term-utils/agetty.c:2486
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -p, --login-pause          așteaptă pulsarea oricărei taste înainte de autentificare\n"
 
-#: term-utils/agetty.c:2476
+#: term-utils/agetty.c:2487
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -r, --chroot <director>    stabilește ca rădăcină directorul specificat\n"
 
-#: term-utils/agetty.c:2477
+#: term-utils/agetty.c:2488
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup               efectuează o închidere virtuală în terminal(tty)\n"
 
-#: term-utils/agetty.c:2478
+#: term-utils/agetty.c:2489
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -s, --keep-baud            încearcă să mențină viteza de transmisie după pauză\n"
 
-#: term-utils/agetty.c:2479
+#: term-utils/agetty.c:2490
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr " -t, --timeout <număr>      timpul de așteptare al procesului de autentificare\n"
 
-#: term-utils/agetty.c:2480
+#: term-utils/agetty.c:2491
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr " -U, --detect-case          detectează un terminal cu majuscule\n"
 
-#: term-utils/agetty.c:2481
+#: term-utils/agetty.c:2492
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait-cr              așteaptă returul de cărucior\n"
 
-#: term-utils/agetty.c:2482
+#: term-utils/agetty.c:2493
 msgid "     --nohints              do not print hints\n"
 msgstr "     --nohints              nu afișează sugestii\n"
 
-#: term-utils/agetty.c:2483
+#: term-utils/agetty.c:2494
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "     --nohostname           nu va fi afișat niciun nume de gazdă\n"
 
-#: term-utils/agetty.c:2484
+#: term-utils/agetty.c:2495
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "     --long-hostname        afișează numele de gazdă complet\n"
 
-#: term-utils/agetty.c:2485
+#: term-utils/agetty.c:2496
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "     --erase-chars <șir>    caractere adiționale de „backspace” (ștergere)\n"
 
-#: term-utils/agetty.c:2486
+#: term-utils/agetty.c:2497
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "     --kill-chars <șir>     caractere adiționale de „kill” (omorâre/terminare)\n"
 
-#: term-utils/agetty.c:2487
+#: term-utils/agetty.c:2498
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr ""
 "     --chdir <director>     schimbă la directorul specificat înainte de-a face\n"
 "                            autentificarea\n"
 
-#: term-utils/agetty.c:2488
+#: term-utils/agetty.c:2499
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "     --delay <număr>        întârzierea în secunde înainte de afișarea promptului\n"
 
-#: term-utils/agetty.c:2489
+#: term-utils/agetty.c:2500
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "     --nice <număr>         rulează «login» cu această prioritate\n"
 
-#: term-utils/agetty.c:2490
+#: term-utils/agetty.c:2501
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --reload               reîncarcă solicitările instanțelor «agetty» în execuție\n"
 
-#: term-utils/agetty.c:2491
+#: term-utils/agetty.c:2502
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "     --list-speeds          afișează vitezele de transmisie acceptate\n"
 
-#: term-utils/agetty.c:2850
+#: term-utils/agetty.c:2861
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
@@ -23494,21 +23496,21 @@ msgstr[0] "%d utilizator"
 msgstr[1] "%d utilizatori"
 msgstr[2] "%d de utilizatori"
 
-#: term-utils/agetty.c:2980
+#: term-utils/agetty.c:2991
 #, c-format
 msgid "checkname failed: %m"
 msgstr "checkname a eșuat: %m"
 
-#: term-utils/agetty.c:2992
+#: term-utils/agetty.c:3003
 #, c-format
 msgid "cannot touch file %s"
 msgstr "nu se poate atinge (crea) fișierul %s"
 
-#: term-utils/agetty.c:2996
+#: term-utils/agetty.c:3007
 msgid "--reload is unsupported on your system"
 msgstr "opțiunea „--reload” nu este admisă pe sistemul dvs."
 
-#: term-utils/agetty.c:3018
+#: term-utils/agetty.c:3029
 msgid "failed to open credentials directory"
 msgstr "nu s-a putut deschide directorul de acreditări"
 
@@ -24832,11 +24834,11 @@ msgstr "exec() a eșuat\n"
 msgid "can't fork\n"
 msgstr "nu s-a putut efectua bifurcarea proceului\n"
 
-#: text-utils/more.c:1480
+#: text-utils/more.c:1486
 msgid "...skipping\n"
 msgstr "...se omite\n"
 
-#: text-utils/more.c:1517
+#: text-utils/more.c:1523
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -24844,11 +24846,11 @@ msgstr ""
 "\n"
 "Modelul nu a fost găsit\n"
 
-#: text-utils/more.c:1521 text-utils/pg.c:1032 text-utils/pg.c:1180
+#: text-utils/more.c:1527 text-utils/pg.c:1032 text-utils/pg.c:1180
 msgid "Pattern not found"
 msgstr "Modelul nu a fost găsit"
 
-#: text-utils/more.c:1539
+#: text-utils/more.c:1545
 msgid ""
 "Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
 "Star (*) indicates argument becomes new default.\n"
@@ -24857,7 +24859,7 @@ msgstr ""
 "Valorile implicite sunt prezentate între paranteze.\n"
 "Steluța (*) indică faptul că argumentul devine noua valoare implicită.\n"
 
-#: text-utils/more.c:1545
+#: text-utils/more.c:1551
 #, c-format
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
@@ -24903,7 +24905,7 @@ msgstr ""
 ":f                      Afișează numele fișierului curent și numărul liniei\n"
 ".                       Repetă comanda anterioară\n"
 
-#: text-utils/more.c:1611
+#: text-utils/more.c:1617
 #, c-format
 msgid "...back %d page"
 msgid_plural "...back %d pages"
@@ -24911,7 +24913,7 @@ msgstr[0] "...înapoi %d pagină"
 msgstr[1] "...înapoi %d pagini"
 msgstr[2] "...înapoi %d de pagini"
 
-#: text-utils/more.c:1635
+#: text-utils/more.c:1641
 #, c-format
 msgid "...skipping %d line"
 msgid_plural "...skipping %d lines"
@@ -24919,7 +24921,7 @@ msgstr[0] "... se sare %d linie"
 msgstr[1] "... se sare %d linii"
 msgstr[2] "... se sare %d de linii"
 
-#: text-utils/more.c:1735
+#: text-utils/more.c:1743
 msgid ""
 "\n"
 "***Back***\n"
@@ -24929,21 +24931,21 @@ msgstr ""
 "***Înapoi***\n"
 "\n"
 
-#: text-utils/more.c:1754
+#: text-utils/more.c:1762
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "„%s” linia %d"
 
-#: text-utils/more.c:1757
+#: text-utils/more.c:1765
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[Nu este un fișier] linia %d"
 
-#: text-utils/more.c:1763
+#: text-utils/more.c:1771
 msgid "No previous regular expression"
 msgstr "Nu există o expresie regulată precedentă"
 
-#: text-utils/more.c:1832
+#: text-utils/more.c:1840
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[Apăsați «h» pentru instrucțiuni.]"
