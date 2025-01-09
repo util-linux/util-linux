@@ -904,7 +904,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			}
 			break;
 		case COL_HUSH_STATUS:
-			user->hushed = get_hushlogin_status(pwd, 0);
+			user->hushed = get_hushlogin_status(pwd, /* override_home= */ NULL, 0);
 			if (user->hushed == -1)
 				user->hushed = STATUS_UNKNOWN;
 			break;

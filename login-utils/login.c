@@ -1493,7 +1493,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	cxt.quiet = get_hushlogin_status(pwd, 1) == 1 ? 1 : 0;
+	cxt.quiet = get_hushlogin_status(pwd, pam_getenv(cxt.pamh, "HOME"), 1) == 1 ? 1 : 0;
 
 	/*
 	 * Open PAM session (after successful authentication and account check).
@@ -1543,8 +1543,9 @@ int main(int argc, char **argv)
 	}
 
 	/* wait until here to change directory! */
-	if (chdir(pwd->pw_dir) < 0) {
-		warn(_("%s: change directory failed"), pwd->pw_dir);
+	const char *home = getenv("HOME") ?: pwd->pw_dir;
+	if (chdir(home) < 0) {
+		warn(_("%s: change directory failed"), home);
 
 		if (!getlogindefs_bool("DEFAULT_HOME", 1))
 			exit(0);

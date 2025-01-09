@@ -467,7 +467,7 @@ int effective_access(const char *path, int mode)
  * BSD setreuid().
  */
 
-int get_hushlogin_status(struct passwd *pwd, int force_check)
+int get_hushlogin_status(struct passwd *pwd, const char *override_home, int force_check)
 {
 	const char *files[] = { _PATH_HUSHLOGINS, _PATH_HUSHLOGIN, NULL };
 	const char *file;
@@ -520,7 +520,7 @@ int get_hushlogin_status(struct passwd *pwd, int force_check)
 		if (strlen(pwd->pw_dir) + strlen(file) + 2 > sizeof(buf))
 			continue;
 
-		if (snprintf(buf, sizeof(buf), "%s/%s", pwd->pw_dir, file) < 0)
+		if (snprintf(buf, sizeof(buf), "%s/%s", override_home ?: pwd->pw_dir, file) < 0)
 			continue;
 
 		if (force_check) {
