@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-man 2.40.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2024-07-03 14:31+0200\n"
+"POT-Creation-Date: 2025-01-09 12:31+0100\n"
 "PO-Revision-Date: 2024-05-05 00:12+0200\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -567,7 +567,7 @@ msgstr "gibt die Länge der Partition (in 512-Byte-Sektoren) an."
 #: ../login-utils/chsh.1.adoc:63 ../login-utils/last.1.adoc:129
 #: ../login-utils/login.1.adoc:169 ../login-utils/lslogins.1.adoc:144
 #: ../login-utils/newgrp.1.adoc:42 ../login-utils/nologin.8.adoc:67
-#: ../login-utils/runuser.1.adoc:133 ../login-utils/su.1.adoc:156
+#: ../login-utils/runuser.1.adoc:136 ../login-utils/su.1.adoc:156
 #: ../login-utils/utmpdump.1.adoc:75 ../login-utils/vipw.8.adoc:72
 #: ../misc-utils/blkid.8.adoc:179 ../misc-utils/cal.1.adoc:183
 #: ../misc-utils/enosys.1.adoc:56 ../misc-utils/exch.1.adoc:41
@@ -585,24 +585,24 @@ msgstr "gibt die Länge der Partition (in 512-Byte-Sektoren) an."
 #: ../schedutils/ionice.1.adoc:91 ../schedutils/taskset.1.adoc:145
 #: ../schedutils/uclampset.1.adoc:130 ../sys-utils/adjtime_config.5.adoc:54
 #: ../sys-utils/blkdiscard.8.adoc:75 ../sys-utils/blkzone.8.adoc:108
-#: ../sys-utils/blkpr.8.adoc:52 ../sys-utils/chcpu.8.adoc:78
+#: ../sys-utils/blkpr.8.adoc:52 ../sys-utils/chcpu.8.adoc:80
 #: ../sys-utils/chmem.8.adoc:81 ../sys-utils/choom.1.adoc:51
 #: ../sys-utils/ctrlaltdel.8.adoc:47 ../sys-utils/dmesg.1.adoc:198
 #: ../sys-utils/eject.1.adoc:117 ../sys-utils/fallocate.1.adoc:86
 #: ../sys-utils/flock.1.adoc:131 ../sys-utils/fsfreeze.8.adoc:53
-#: ../sys-utils/fstab.5.adoc:141 ../sys-utils/fstrim.8.adoc:91
+#: ../sys-utils/fstab.5.adoc:143 ../sys-utils/fstrim.8.adoc:91
 #: ../sys-utils/hwclock.8.adoc:378 ../sys-utils/ipcmk.1.adoc:49
 #: ../sys-utils/ipcrm.1.adoc:68 ../sys-utils/ipcs.1.adoc:88
 #: ../sys-utils/ldattach.8.adoc:118 ../sys-utils/lscpu.1.adoc:109
 #: ../sys-utils/lsipc.1.adoc:106 ../sys-utils/lsmem.1.adoc:72
-#: ../sys-utils/lsns.8.adoc:90 ../sys-utils/mount.8.adoc:1684
+#: ../sys-utils/lsns.8.adoc:90 ../sys-utils/mount.8.adoc:1685
 #: ../sys-utils/mountpoint.1.adoc:65 ../sys-utils/nsenter.1.adoc:158
 #: ../sys-utils/pivot_root.8.adoc:63 ../sys-utils/prlimit.1.adoc:135
 #: ../sys-utils/renice.1.adoc:102 ../sys-utils/rfkill.8.adoc:78
 #: ../sys-utils/rtcwake.8.adoc:130 ../sys-utils/setarch.8.adoc:95
 #: ../sys-utils/setpriv.1.adoc:140 ../sys-utils/setsid.1.adoc:44
 #: ../sys-utils/swapon.8.adoc:167 ../sys-utils/switch_root.8.adoc:47
-#: ../sys-utils/umount.8.adoc:173 ../sys-utils/unshare.1.adoc:261
+#: ../sys-utils/umount.8.adoc:175 ../sys-utils/unshare.1.adoc:261
 #: ../sys-utils/zramctl.8.adoc:102 ../term-utils/mesg.1.adoc:96
 #: ../term-utils/script.1.adoc:161 ../term-utils/scriptlive.1.adoc:75
 #: ../term-utils/scriptreplay.1.adoc:95 ../term-utils/setterm.1.adoc:171
@@ -1093,7 +1093,7 @@ msgstr "hebt einen Schreibschutz auf."
 #: ../schedutils/ionice.1.adoc:86 ../schedutils/taskset.1.adoc:136
 #: ../schedutils/uclampset.1.adoc:126 ../sys-utils/blkdiscard.8.adoc:70
 #: ../sys-utils/blkzone.8.adoc:103 ../sys-utils/blkpr.8.adoc:48
-#: ../sys-utils/chcpu.8.adoc:70 ../sys-utils/choom.1.adoc:47
+#: ../sys-utils/chcpu.8.adoc:72 ../sys-utils/choom.1.adoc:47
 #: ../sys-utils/ctrlaltdel.8.adoc:43 ../sys-utils/dmesg.1.adoc:192
 #: ../sys-utils/eject.1.adoc:113 ../sys-utils/fallocate.1.adoc:81
 #: ../sys-utils/flock.1.adoc:122 ../sys-utils/fsfreeze.8.adoc:49
@@ -1103,7 +1103,7 @@ msgstr "hebt einen Schreibschutz auf."
 #: ../sys-utils/losetup.8.adoc:157 ../sys-utils/lscpu.1.adoc:103
 #: ../sys-utils/lsipc.1.adoc:101 ../sys-utils/lsirq.1.adoc:45
 #: ../sys-utils/lsmem.1.adoc:68 ../sys-utils/lsns.8.adoc:86
-#: ../sys-utils/mount.8.adoc:1680 ../sys-utils/mountpoint.1.adoc:61
+#: ../sys-utils/mount.8.adoc:1681 ../sys-utils/mountpoint.1.adoc:61
 #: ../sys-utils/nsenter.1.adoc:153 ../sys-utils/prlimit.1.adoc:131
 #: ../sys-utils/rfkill.8.adoc:72 ../sys-utils/rtcwake.8.adoc:122
 #: ../sys-utils/setarch.8.adoc:89 ../sys-utils/setpriv.1.adoc:136
@@ -1607,9 +1607,9 @@ msgstr ""
 #: ../misc-utils/getopt.1.adoc:133 ../misc-utils/look.1.adoc:77
 #: ../misc-utils/lsblk.8.adoc:197 ../misc-utils/whereis.1.adoc:112
 #: ../misc-utils/wipefs.8.adoc:80 ../sys-utils/hwclock.8.adoc:357
-#: ../sys-utils/losetup.8.adoc:131 ../sys-utils/mount.8.adoc:1623
+#: ../sys-utils/losetup.8.adoc:131 ../sys-utils/mount.8.adoc:1624
 #: ../sys-utils/mountpoint.1.adoc:52 ../sys-utils/swapon.8.adoc:123
-#: ../sys-utils/umount.8.adoc:150 ../term-utils/script.1.adoc:127
+#: ../sys-utils/umount.8.adoc:152 ../term-utils/script.1.adoc:127
 #: ../text-utils/column.1.adoc:177 ../text-utils/more.1.adoc:164
 #: ../text-utils/pg.1.adoc:117 ../text-utils/ul.1.adoc:65
 #, no-wrap
@@ -1643,7 +1643,7 @@ msgstr "aktiviert die Debug-Ausgabe für libfdisk."
 #. type: Labeled list
 #: ../disk-utils/cfdisk.8.adoc:127 ../disk-utils/fdisk.8.adoc:201
 #: ../disk-utils/sfdisk.8.adoc:413 ../misc-utils/lsblk.8.adoc:202
-#: ../sys-utils/mount.8.adoc:1634 ../sys-utils/swapon.8.adoc:128
+#: ../sys-utils/mount.8.adoc:1635 ../sys-utils/swapon.8.adoc:128
 #, no-wrap
 msgid "*LIBBLKID_DEBUG*=all"
 msgstr "*LIBBLKID_DEBUG*=all"
@@ -1707,7 +1707,7 @@ msgstr ""
 #: ../login-utils/nologin.8.adoc:66 ../misc-utils/findmnt.8.adoc:241
 #: ../misc-utils/wipefs.8.adoc:102 ../sys-utils/choom.1.adoc:50
 #: ../sys-utils/dmesg.1.adoc:195 ../sys-utils/lsns.8.adoc:89
-#: ../sys-utils/mount.8.adoc:1683 ../sys-utils/mountpoint.1.adoc:64
+#: ../sys-utils/mount.8.adoc:1684 ../sys-utils/mountpoint.1.adoc:64
 #: ../term-utils/scriptlive.1.adoc:65
 msgid "mailto:kzak@redhat.com[Karel Zak]"
 msgstr "mailto:kzak@redhat.com[Karel Zak]"
@@ -1912,7 +1912,7 @@ msgstr ""
 #: ../schedutils/ionice.1.adoc:68 ../schedutils/uclampset.1.adoc:114
 #: ../sys-utils/choom.1.adoc:33 ../sys-utils/eject.1.adoc:97
 #: ../sys-utils/flock.1.adoc:94 ../sys-utils/fsfreeze.8.adoc:45
-#: ../sys-utils/fstab.5.adoc:129 ../sys-utils/hwclock.8.adoc:176
+#: ../sys-utils/fstab.5.adoc:131 ../sys-utils/hwclock.8.adoc:176
 #: ../sys-utils/ipcrm.1.adoc:63 ../sys-utils/ipcs.1.adoc:80
 #: ../sys-utils/losetup.8.adoc:127 ../sys-utils/mountpoint.1.adoc:57
 #: ../sys-utils/nsenter.1.adoc:149 ../sys-utils/prlimit.1.adoc:110
@@ -2049,12 +2049,20 @@ msgstr "*-b*, *--sector-size* _Sektorgröße_"
 
 #. type: Plain text
 #: ../disk-utils/fdisk.8.adoc:44
+#, fuzzy
+#| msgid ""
+#| "Specify the sector size of the disk. Valid values are 512, 1024, 2048, "
+#| "and 4096. (Recent kernels know the sector size. Use this option only on "
+#| "old kernels or to override the kernel's ideas.) Since util-linux-2.17, "
+#| "*fdisk* differentiates between logical and physical sector size. This "
+#| "option changes both sector sizes to _sectorsize_."
 msgid ""
 "Specify the sector size of the disk. Valid values are 512, 1024, 2048, and "
-"4096. (Recent kernels know the sector size. Use this option only on old "
-"kernels or to override the kernel's ideas.) Since util-linux-2.17, *fdisk* "
-"differentiates between logical and physical sector size. This option changes "
-"both sector sizes to _sectorsize_."
+"4096. The kernel is aware of the sector size for regular block devices. Use "
+"this option only on very old kernels, when working with disk images, or to "
+"override the kernel's default sector size. Since util-linux-2.17, *fdisk* "
+"distinguishes between logical and physical sector size. This option changes "
+"both sector sizes to the specified _sectorsize_."
 msgstr ""
 "gibt die Sektorgröße der Festplatte an. Gültige Werte sind 512, 1024, 2048 "
 "oder 4096. (Neuere Kernel kennen die Sektorgröße. Verwenden Sie diese Option "
@@ -2980,9 +2988,9 @@ msgstr "Der Exit-Status von *fsck* ergibt sich aus den folgenden Bedingungen:"
 #: ../misc-utils/fadvise.1.adoc:48 ../misc-utils/findfs.8.adoc:51
 #: ../misc-utils/kill.1.adoc:43 ../misc-utils/kill.1.adoc:89
 #: ../misc-utils/rename.1.adoc:72 ../misc-utils/waitpid.1.adoc:44
-#: ../sys-utils/blkdiscard.8.adoc:61 ../sys-utils/chcpu.8.adoc:61
+#: ../sys-utils/blkdiscard.8.adoc:61 ../sys-utils/chcpu.8.adoc:63
 #: ../sys-utils/chmem.8.adoc:58 ../sys-utils/lsns.8.adoc:79
-#: ../sys-utils/mount.8.adoc:1587 ../sys-utils/mountpoint.1.adoc:43
+#: ../sys-utils/mount.8.adoc:1588 ../sys-utils/mountpoint.1.adoc:43
 #: ../sys-utils/swapon.8.adoc:98 ../term-utils/mesg.1.adoc:80
 #, no-wrap
 msgid "*0*"
@@ -3000,8 +3008,8 @@ msgstr "Keine Fehler"
 #: ../misc-utils/fadvise.1.adoc:50 ../misc-utils/findfs.8.adoc:53
 #: ../misc-utils/kill.1.adoc:91 ../misc-utils/rename.1.adoc:75
 #: ../misc-utils/waitpid.1.adoc:46 ../sys-utils/blkdiscard.8.adoc:64
-#: ../sys-utils/chcpu.8.adoc:64 ../sys-utils/chmem.8.adoc:61
-#: ../sys-utils/lsns.8.adoc:81 ../sys-utils/mount.8.adoc:1590
+#: ../sys-utils/chcpu.8.adoc:66 ../sys-utils/chmem.8.adoc:61
+#: ../sys-utils/lsns.8.adoc:81 ../sys-utils/mount.8.adoc:1591
 #: ../sys-utils/mountpoint.1.adoc:46 ../term-utils/mesg.1.adoc:82
 #, no-wrap
 msgid "*1*"
@@ -3016,8 +3024,8 @@ msgstr "Dateisystemfehler wurden korrigiert"
 #: ../disk-utils/fsck.8.adoc:33 ../misc-utils/enosys.1.adoc:49
 #: ../misc-utils/findfs.8.adoc:55 ../misc-utils/rename.1.adoc:78
 #: ../misc-utils/waitpid.1.adoc:48 ../sys-utils/blkdiscard.8.adoc:67
-#: ../sys-utils/lsns.8.adoc:83 ../sys-utils/mount.8.adoc:889
-#: ../sys-utils/mount.8.adoc:1593 ../sys-utils/swapon.8.adoc:101
+#: ../sys-utils/lsns.8.adoc:83 ../sys-utils/mount.8.adoc:890
+#: ../sys-utils/mount.8.adoc:1594 ../sys-utils/swapon.8.adoc:101
 #, no-wrap
 msgid "*2*"
 msgstr "*2*"
@@ -3030,7 +3038,7 @@ msgstr "System sollte neu gestartet werden"
 #. type: Labeled list
 #: ../disk-utils/fsck.8.adoc:35 ../disk-utils/fsck.cramfs.8.adoc:44
 #: ../disk-utils/fsck.minix.8.adoc:84 ../misc-utils/rename.1.adoc:81
-#: ../sys-utils/mount.8.adoc:1596 ../sys-utils/swapon.8.adoc:104
+#: ../sys-utils/mount.8.adoc:1597 ../sys-utils/swapon.8.adoc:104
 #, no-wrap
 msgid "*4*"
 msgstr "*4*"
@@ -3043,7 +3051,7 @@ msgstr "Dateisystemfehler wurden nicht korrigiert"
 #. type: Labeled list
 #: ../disk-utils/fsck.8.adoc:37 ../disk-utils/fsck.cramfs.8.adoc:46
 #: ../disk-utils/fsck.minix.8.adoc:88 ../disk-utils/mkfs.cramfs.8.adoc:79
-#: ../sys-utils/mount.8.adoc:1599 ../sys-utils/swapon.8.adoc:107
+#: ../sys-utils/mount.8.adoc:1600 ../sys-utils/swapon.8.adoc:107
 #, no-wrap
 msgid "*8*"
 msgstr "*8*"
@@ -3056,7 +3064,7 @@ msgstr "Betriebsfehler"
 
 #. type: Labeled list
 #: ../disk-utils/fsck.8.adoc:39 ../disk-utils/fsck.cramfs.8.adoc:48
-#: ../disk-utils/fsck.minix.8.adoc:90 ../sys-utils/mount.8.adoc:1602
+#: ../disk-utils/fsck.minix.8.adoc:90 ../sys-utils/mount.8.adoc:1603
 #: ../sys-utils/swapon.8.adoc:110
 #, no-wrap
 msgid "*16*"
@@ -3070,7 +3078,7 @@ msgstr "Aufruf- oder Syntaxfehler"
 
 #. type: Labeled list
 #: ../disk-utils/fsck.8.adoc:41 ../disk-utils/isosize.8.adoc:39
-#: ../sys-utils/mount.8.adoc:1605 ../sys-utils/mountpoint.1.adoc:49
+#: ../sys-utils/mount.8.adoc:1606 ../sys-utils/mountpoint.1.adoc:49
 #: ../sys-utils/swapon.8.adoc:113
 #, no-wrap
 msgid "*32*"
@@ -3695,15 +3703,15 @@ msgstr "aktiviert die Fehlersuchausgabe für libmount."
 #. type: Title ==
 #: ../disk-utils/fsck.8.adoc:150 ../lib/terminal-colors.d.5.adoc:134
 #: ../login-utils/last.1.adoc:112 ../login-utils/login.1.adoc:137
-#: ../login-utils/newgrp.1.adoc:33 ../login-utils/runuser.1.adoc:115
+#: ../login-utils/newgrp.1.adoc:33 ../login-utils/runuser.1.adoc:118
 #: ../login-utils/su.1.adoc:130 ../misc-utils/look.1.adoc:82
 #: ../misc-utils/mcookie.1.adoc:44 ../sys-utils/adjtime_config.5.adoc:50
-#: ../sys-utils/ctrlaltdel.8.adoc:39 ../sys-utils/fstab.5.adoc:124
+#: ../sys-utils/ctrlaltdel.8.adoc:39 ../sys-utils/fstab.5.adoc:126
 #: ../sys-utils/hwclock.8.adoc:365 ../sys-utils/losetup.8.adoc:136
-#: ../sys-utils/mount.8.adoc:1640 ../sys-utils/readprofile.8.adoc:56
+#: ../sys-utils/mount.8.adoc:1641 ../sys-utils/readprofile.8.adoc:56
 #: ../sys-utils/renice.1.adoc:79 ../sys-utils/rtcwake.8.adoc:114
 #: ../sys-utils/swapon.8.adoc:131 ../sys-utils/tunelp.8.adoc:59
-#: ../sys-utils/umount.8.adoc:158 ../sys-utils/zramctl.8.adoc:78
+#: ../sys-utils/umount.8.adoc:160 ../sys-utils/zramctl.8.adoc:78
 #: ../term-utils/agetty.8.adoc:305 ../term-utils/mesg.1.adoc:87
 #, no-wrap
 msgid "FILES"
@@ -3711,8 +3719,8 @@ msgstr "DATEIEN"
 
 #. type: Labeled list
 #: ../disk-utils/fsck.8.adoc:153 ../sys-utils/fstab.5.adoc:50
-#: ../sys-utils/mount.8.adoc:1644 ../sys-utils/swapon.8.adoc:136
-#: ../sys-utils/umount.8.adoc:163
+#: ../sys-utils/mount.8.adoc:1645 ../sys-utils/swapon.8.adoc:136
+#: ../sys-utils/umount.8.adoc:165
 #, no-wrap
 msgid "_/etc/fstab_"
 msgstr "_/etc/fstab_"
@@ -3728,7 +3736,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/fsck.8.adoc:163
-msgid "mailto:tytso@mit.edu>[Theodore Ts'o], mailto:kzak@redhat.com[Karel Zak]"
+#, fuzzy
+#| msgid ""
+#| "mailto:tytso@mit.edu>[Theodore Ts'o], mailto:kzak@redhat.com[Karel Zak]"
+msgid "mailto:tytso@mit.edu[Theodore Ts'o], mailto:kzak@redhat.com[Karel Zak]"
 msgstr ""
 "mailto:tytso@mit.edu>[Theodore Ts'o], mailto:kzak@redhat.com[Karel Zak]"
 
@@ -3841,19 +3852,19 @@ msgstr "*-y*"
 #: ../disk-utils/isosize.8.adoc:33 ../disk-utils/mkfs.bfs.8.adoc:53
 #: ../disk-utils/mkfs.cramfs.8.adoc:75 ../disk-utils/mkfs.minix.8.adoc:75
 #: ../login-utils/chfn.1.adoc:72 ../login-utils/chsh.1.adoc:55
-#: ../login-utils/lslogins.1.adoc:107 ../login-utils/runuser.1.adoc:101
+#: ../login-utils/lslogins.1.adoc:107 ../login-utils/runuser.1.adoc:104
 #: ../login-utils/su.1.adoc:117 ../misc-utils/blkid.8.adoc:148
 #: ../misc-utils/enosys.1.adoc:41 ../misc-utils/exch.1.adoc:28
 #: ../misc-utils/fadvise.1.adoc:44 ../misc-utils/findfs.8.adoc:49
 #: ../misc-utils/findmnt.8.adoc:189 ../misc-utils/kill.1.adoc:85
 #: ../misc-utils/logger.1.adoc:186 ../misc-utils/lsblk.8.adoc:183
 #: ../misc-utils/rename.1.adoc:70 ../misc-utils/waitpid.1.adoc:40
-#: ../sys-utils/blkdiscard.8.adoc:57 ../sys-utils/chcpu.8.adoc:57
+#: ../sys-utils/blkdiscard.8.adoc:57 ../sys-utils/chcpu.8.adoc:59
 #: ../sys-utils/chmem.8.adoc:54 ../sys-utils/dmesg.1.adoc:188
 #: ../sys-utils/eject.1.adoc:93 ../sys-utils/flock.1.adoc:88
 #: ../sys-utils/fstrim.8.adoc:74 ../sys-utils/hwclock.8.adoc:347
 #: ../sys-utils/losetup.8.adoc:123 ../sys-utils/lsipc.1.adoc:86
-#: ../sys-utils/lsns.8.adoc:75 ../sys-utils/mount.8.adoc:1583
+#: ../sys-utils/lsns.8.adoc:75 ../sys-utils/mount.8.adoc:1584
 #: ../sys-utils/mountpoint.1.adoc:39 ../sys-utils/swapon.8.adoc:94
 #: ../sys-utils/switch_root.8.adoc:29 ../sys-utils/zramctl.8.adoc:74
 #: ../term-utils/mesg.1.adoc:76 ../text-utils/hexdump.1.adoc:224
@@ -3867,8 +3878,8 @@ msgstr "EXIT-STATUS"
 #: ../misc-utils/fadvise.1.adoc:50 ../misc-utils/findfs.8.adoc:53
 #: ../misc-utils/kill.1.adoc:91 ../misc-utils/lsblk.8.adoc:187
 #: ../misc-utils/waitpid.1.adoc:46 ../sys-utils/blkdiscard.8.adoc:63
-#: ../sys-utils/chcpu.8.adoc:63 ../sys-utils/chmem.8.adoc:60
-#: ../sys-utils/fstrim.8.adoc:78 ../sys-utils/mount.8.adoc:1589
+#: ../sys-utils/chcpu.8.adoc:65 ../sys-utils/chmem.8.adoc:60
+#: ../sys-utils/fstrim.8.adoc:78 ../sys-utils/mount.8.adoc:1590
 #: ../sys-utils/swapon.8.adoc:100
 msgid "success"
 msgstr "Erfolg"
@@ -4240,8 +4251,8 @@ msgstr "alle fehlgeschlagen"
 
 #. type: Labeled list
 #: ../disk-utils/isosize.8.adoc:41 ../misc-utils/kill.1.adoc:93
-#: ../misc-utils/rename.1.adoc:84 ../sys-utils/chcpu.8.adoc:67
-#: ../sys-utils/chmem.8.adoc:64 ../sys-utils/mount.8.adoc:1608
+#: ../misc-utils/rename.1.adoc:84 ../sys-utils/chcpu.8.adoc:69
+#: ../sys-utils/chmem.8.adoc:64 ../sys-utils/mount.8.adoc:1609
 #: ../sys-utils/swapon.8.adoc:116
 #, no-wrap
 msgid "*64*"
@@ -4370,7 +4381,7 @@ msgstr ""
 #: ../misc-utils/cal.1.adoc:177 ../misc-utils/getopt.1.adoc:141
 #: ../misc-utils/hardlink.1.adoc:138 ../misc-utils/mcookie.1.adoc:50
 #: ../misc-utils/namei.1.adoc:65 ../misc-utils/pipesz.1.adoc:91
-#: ../sys-utils/lscpu.1.adoc:95 ../sys-utils/mount.8.adoc:1666
+#: ../sys-utils/lscpu.1.adoc:95 ../sys-utils/mount.8.adoc:1667
 #: ../sys-utils/readprofile.8.adoc:67 ../term-utils/agetty.8.adoc:330
 #: ../term-utils/script.1.adoc:155 ../term-utils/setterm.1.adoc:167
 #: ../text-utils/colcrt.1.adoc:70 ../text-utils/column.1.adoc:185
@@ -5818,8 +5829,9 @@ msgstr ""
 
 #. type: Labeled list
 #: ../disk-utils/partx.8.adoc:125
-#, no-wrap
-msgid "partx -d --nr :-1 /dev/sdd"
+#, fuzzy, no-wrap
+#| msgid "partx -d --nr :-1 /dev/sdd"
+msgid "partx -d --nr -1: /dev/sdd"
 msgstr "partx -d --nr :-1 /dev/sdd"
 
 #. type: Plain text
@@ -10065,6 +10077,7 @@ msgstr ""
 "gibt einen Hilfetext aus und beendet das Programm. Die Kurzoption *-h* wird "
 "seit Version 2.30 verwendet; in älteren Versionen wurde *-u* verwendet."
 
+#.  Do not include::man-common/help-version.adoc[]  as both -h and -V were already explicitly given above in more detail. 
 #. type: Title ==
 #: ../login-utils/chsh.1.adoc:49
 #, no-wrap
@@ -11003,7 +11016,7 @@ msgstr ""
 "Benutzernamens eingegeben haben könnte."
 
 #. type: Labeled list
-#: ../login-utils/login.1.adoc:128 ../login-utils/runuser.1.adoc:89
+#: ../login-utils/login.1.adoc:128 ../login-utils/runuser.1.adoc:92
 #: ../login-utils/su.1.adoc:105
 #, no-wrap
 msgid "*ENV_PATH* (string)"
@@ -11020,14 +11033,14 @@ msgstr ""
 "local/bin:/bin:/usr/bin>_."
 
 #. type: Labeled list
-#: ../login-utils/login.1.adoc:132 ../login-utils/runuser.1.adoc:92
+#: ../login-utils/login.1.adoc:132 ../login-utils/runuser.1.adoc:95
 #: ../login-utils/su.1.adoc:108
 #, no-wrap
 msgid "*ENV_ROOTPATH* (string)"
 msgstr "*ENV_ROOTPATH* (Zeichenkette)"
 
 #. type: Labeled list
-#: ../login-utils/login.1.adoc:133 ../login-utils/runuser.1.adoc:93
+#: ../login-utils/login.1.adoc:133 ../login-utils/runuser.1.adoc:96
 #: ../login-utils/su.1.adoc:109
 #, no-wrap
 msgid "*ENV_SUPATH* (string)"
@@ -11541,7 +11554,7 @@ msgid "if OK,"
 msgstr "wenn alles in Ordnung ist,"
 
 #. type: Labeled list
-#: ../login-utils/lslogins.1.adoc:112 ../login-utils/runuser.1.adoc:107
+#: ../login-utils/lslogins.1.adoc:112 ../login-utils/runuser.1.adoc:110
 #: ../login-utils/su.1.adoc:123 ../misc-utils/lsblk.8.adoc:188
 #: ../sys-utils/fstrim.8.adoc:78 ../sys-utils/hwclock.8.adoc:295
 #: ../sys-utils/lsipc.1.adoc:91
@@ -11638,13 +11651,13 @@ msgstr ""
 
 #. type: Title ==
 #: ../login-utils/lslogins.1.adoc:135 ../login-utils/nologin.8.adoc:59
-#: ../login-utils/runuser.1.adoc:129 ../login-utils/su.1.adoc:152
+#: ../login-utils/runuser.1.adoc:132 ../login-utils/su.1.adoc:152
 #: ../login-utils/vipw.8.adoc:68 ../misc-utils/cal.1.adoc:173
 #: ../misc-utils/look.1.adoc:90 ../misc-utils/lsfd.1.adoc:692
-#: ../sys-utils/fstab.5.adoc:137 ../sys-utils/lsipc.1.adoc:97
-#: ../sys-utils/mount.8.adoc:1662 ../sys-utils/renice.1.adoc:92
+#: ../sys-utils/fstab.5.adoc:139 ../sys-utils/lsipc.1.adoc:97
+#: ../sys-utils/mount.8.adoc:1663 ../sys-utils/renice.1.adoc:92
 #: ../sys-utils/rtcwake.8.adoc:118 ../sys-utils/swapon.8.adoc:163
-#: ../sys-utils/umount.8.adoc:169 ../term-utils/mesg.1.adoc:91
+#: ../sys-utils/umount.8.adoc:171 ../term-utils/mesg.1.adoc:91
 #: ../term-utils/script.1.adoc:151 ../term-utils/wall.1.adoc:77
 #: ../term-utils/write.1.adoc:78 ../text-utils/col.1.adoc:123
 #: ../text-utils/colcrt.1.adoc:66 ../text-utils/colrm.1.adoc:63
@@ -12097,14 +12110,24 @@ msgstr "*-P*, *--pty*"
 
 #. type: Plain text
 #: ../login-utils/runuser.1.adoc:60
+#, fuzzy
+#| msgid ""
+#| "Create a pseudo-terminal for the session. The independent terminal "
+#| "provides better security as the user does not share a terminal with the "
+#| "original session. This can be used to avoid TIOCSTI ioctl terminal "
+#| "injection and other security attacks against terminal file descriptors. "
+#| "The entire session can also be moved to the background (e.g., *runuser --"
+#| "pty* *-u* _username_ *--* _command_ *&*). If the pseudo-terminal is "
+#| "enabled, then *runuser* works as a proxy between the sessions (sync stdin "
+#| "and stdout)."
 msgid ""
 "Create a pseudo-terminal for the session. The independent terminal provides "
 "better security as the user does not share a terminal with the original "
 "session. This can be used to avoid TIOCSTI ioctl terminal injection and "
 "other security attacks against terminal file descriptors. The entire session "
-"can also be moved to the background (e.g., *runuser --pty* *-u* _username_ "
-"*--* _command_ *&*). If the pseudo-terminal is enabled, then *runuser* works "
-"as a proxy between the sessions (sync stdin and stdout)."
+"can also be moved to the background (e.g., *runuser --pty* *-u* _user_ *--* "
+"_command_ *&*). If the pseudo-terminal is enabled, then *runuser* works as a "
+"proxy between the sessions (sync stdin and stdout)."
 msgstr ""
 "erstellt ein Pseudo-Terminal für die Sitzung. Das unabhängige Terminal "
 "gewährleistet bessere Sicherheit, da der Benutzer das Terminal nicht mit der "
@@ -12210,12 +12233,26 @@ msgstr ""
 
 #. type: Labeled list
 #: ../login-utils/runuser.1.adoc:80
+#, fuzzy, no-wrap
+#| msgid "*-u*, *--user*"
+msgid "*-u*, *--user*=_user_"
+msgstr "*-u*, *--user*"
+
+#. type: Plain text
+#: ../login-utils/runuser.1.adoc:82
+msgid ""
+"Run _command_ with the effective user ID and group ID of the user name "
+"_user_."
+msgstr ""
+
+#. type: Labeled list
+#: ../login-utils/runuser.1.adoc:83
 #, no-wrap
 msgid "*-w*, *--whitelist-environment*=_list_"
 msgstr "*-w*, *--whitelist-environment*=_Liste_"
 
 #. type: Plain text
-#: ../login-utils/runuser.1.adoc:82 ../login-utils/su.1.adoc:90
+#: ../login-utils/runuser.1.adoc:85 ../login-utils/su.1.adoc:90
 msgid ""
 "Don't reset the environment variables specified in the comma-separated "
 "_list_ when clearing the environment for *--login*. The whitelist is ignored "
@@ -12227,13 +12264,13 @@ msgstr ""
 "*LOGNAME* und *PATH* ignoriert."
 
 #. type: Title ==
-#: ../login-utils/runuser.1.adoc:85 ../login-utils/su.1.adoc:97
+#: ../login-utils/runuser.1.adoc:88 ../login-utils/su.1.adoc:97
 #, no-wrap
 msgid "CONFIG FILES"
 msgstr "KONFIGURATIONSDATEIEN"
 
 #. type: Plain text
-#: ../login-utils/runuser.1.adoc:88
+#: ../login-utils/runuser.1.adoc:91
 msgid ""
 "*runuser* reads the _/etc/default/runuser_ and _/etc/login.defs_ "
 "configuration files. The following configuration items are relevant for "
@@ -12244,7 +12281,7 @@ msgstr ""
 "Bedeutung:"
 
 #. type: Plain text
-#: ../login-utils/runuser.1.adoc:91
+#: ../login-utils/runuser.1.adoc:94
 msgid ""
 "Defines the PATH environment variable for a regular user. The default value "
 "is _/usr/local/bin:/bin:/usr/bin_."
@@ -12253,7 +12290,7 @@ msgstr ""
 "Vorgabewert ist _/usr/local/bin:/bin:/usr/bin_."
 
 #. type: Plain text
-#: ../login-utils/runuser.1.adoc:95 ../login-utils/su.1.adoc:111
+#: ../login-utils/runuser.1.adoc:98 ../login-utils/su.1.adoc:111
 msgid ""
 "Defines the *PATH* environment variable for root. *ENV_SUPATH* takes "
 "precedence. The default value is _/usr/local/sbin:/usr/local/bin:/sbin:/bin:/"
@@ -12264,13 +12301,13 @@ msgstr ""
 "usr/bin_."
 
 #. type: Labeled list
-#: ../login-utils/runuser.1.adoc:96 ../login-utils/su.1.adoc:112
+#: ../login-utils/runuser.1.adoc:99 ../login-utils/su.1.adoc:112
 #, no-wrap
 msgid "*ALWAYS_SET_PATH* (boolean)"
 msgstr "*ALWAYS_SET_PATH* (boolescher Wert)"
 
 #. type: Plain text
-#: ../login-utils/runuser.1.adoc:98
+#: ../login-utils/runuser.1.adoc:101
 msgid ""
 "If set to _yes_ and *--login* and *--preserve-environment* were not "
 "specified *runuser* initializes *PATH*."
@@ -12280,7 +12317,7 @@ msgstr ""
 "Umgebungsvariable *PATH*."
 
 #. type: Plain text
-#: ../login-utils/runuser.1.adoc:100 ../login-utils/su.1.adoc:116
+#: ../login-utils/runuser.1.adoc:103 ../login-utils/su.1.adoc:116
 msgid ""
 "The environment variable *PATH* may be different on systems where _/bin_ and "
 "_/sbin_ are merged into _/usr_; this variable is also affected by the *--"
@@ -12292,7 +12329,7 @@ msgstr ""
 "*pam_env*(8)) beeinflusst."
 
 #. type: Plain text
-#: ../login-utils/runuser.1.adoc:104
+#: ../login-utils/runuser.1.adoc:107
 msgid ""
 "*runuser* normally returns the exit status of the command it executed. If "
 "the command was killed by a signal, *runuser* returns the number of the "
@@ -12303,83 +12340,83 @@ msgstr ""
 "*runuser* die Nummer des Signals plus 128 zurück."
 
 #. type: Plain text
-#: ../login-utils/runuser.1.adoc:106
+#: ../login-utils/runuser.1.adoc:109
 msgid "Exit status generated by *runuser* itself:"
 msgstr "Von *runuser* erzeugter Exit-Status:"
 
 #. type: Plain text
-#: ../login-utils/runuser.1.adoc:109 ../login-utils/su.1.adoc:125
+#: ../login-utils/runuser.1.adoc:112 ../login-utils/su.1.adoc:125
 msgid "Generic error before executing the requested command"
 msgstr "Allgemeiner Fehler vor dem Ausführen des angeforderten Befehls"
 
 #. type: Labeled list
-#: ../login-utils/runuser.1.adoc:109 ../login-utils/su.1.adoc:125
+#: ../login-utils/runuser.1.adoc:112 ../login-utils/su.1.adoc:125
 #, no-wrap
 msgid "126"
 msgstr "126"
 
 #. type: Plain text
-#: ../login-utils/runuser.1.adoc:111 ../login-utils/su.1.adoc:127
+#: ../login-utils/runuser.1.adoc:114 ../login-utils/su.1.adoc:127
 msgid "The requested command could not be executed"
 msgstr "Der angeforderte Befehl konnte nicht ausgeführt werden"
 
 #. type: Labeled list
-#: ../login-utils/runuser.1.adoc:111 ../login-utils/su.1.adoc:127
+#: ../login-utils/runuser.1.adoc:114 ../login-utils/su.1.adoc:127
 #, no-wrap
 msgid "127"
 msgstr "127"
 
 #. type: Plain text
-#: ../login-utils/runuser.1.adoc:113 ../login-utils/su.1.adoc:129
+#: ../login-utils/runuser.1.adoc:116 ../login-utils/su.1.adoc:129
 msgid "The requested command was not found"
 msgstr "Der angeforderte Befehl wurde nicht gefunden"
 
 #. type: Labeled list
-#: ../login-utils/runuser.1.adoc:117
+#: ../login-utils/runuser.1.adoc:120
 #, no-wrap
 msgid "_/etc/pam.d/runuser_"
 msgstr "_/etc/pam.d/runuser_"
 
 #. type: Plain text
-#: ../login-utils/runuser.1.adoc:119 ../login-utils/su.1.adoc:134
+#: ../login-utils/runuser.1.adoc:122 ../login-utils/su.1.adoc:134
 msgid "default PAM configuration file"
 msgstr "Standard-PAM-Konfigurationsdatei"
 
 #. type: Labeled list
-#: ../login-utils/runuser.1.adoc:120
+#: ../login-utils/runuser.1.adoc:123
 #, no-wrap
 msgid "_/etc/pam.d/runuser-l_"
 msgstr "_/etc/pam.d/runuser-l_"
 
 #. type: Plain text
-#: ../login-utils/runuser.1.adoc:122 ../login-utils/su.1.adoc:137
+#: ../login-utils/runuser.1.adoc:125 ../login-utils/su.1.adoc:137
 msgid "PAM configuration file if *--login* is specified"
 msgstr "PAM-Konfigurationsdatei, falls *--login* angegeben wurde"
 
 #. type: Labeled list
-#: ../login-utils/runuser.1.adoc:123
+#: ../login-utils/runuser.1.adoc:126
 #, no-wrap
 msgid "_/etc/default/runuser_"
 msgstr "_/etc/default/runuser_"
 
 #. type: Plain text
-#: ../login-utils/runuser.1.adoc:125
+#: ../login-utils/runuser.1.adoc:128
 msgid "runuser specific logindef config file"
 msgstr "runuser-spezifische logindef-Konfigurationsdatei"
 
 #. type: Labeled list
-#: ../login-utils/runuser.1.adoc:126 ../login-utils/su.1.adoc:141
+#: ../login-utils/runuser.1.adoc:129 ../login-utils/su.1.adoc:141
 #, no-wrap
 msgid "_/etc/login.defs_"
 msgstr "_/etc/login.defs_"
 
 #. type: Plain text
-#: ../login-utils/runuser.1.adoc:128 ../login-utils/su.1.adoc:143
+#: ../login-utils/runuser.1.adoc:131 ../login-utils/su.1.adoc:143
 msgid "global logindef config file"
 msgstr "Globale Logindef-Konfigurationsdatei"
 
 #. type: Plain text
-#: ../login-utils/runuser.1.adoc:132
+#: ../login-utils/runuser.1.adoc:135
 msgid ""
 "This *runuser* command was derived from coreutils' *su*, which was based on "
 "an implementation by David MacKenzie, and the Fedora *runuser* command by "
@@ -12390,7 +12427,7 @@ msgstr ""
 "Befehl *runuser* in Fedora von Dan Walsh."
 
 #. type: Plain text
-#: ../login-utils/runuser.1.adoc:140
+#: ../login-utils/runuser.1.adoc:143
 msgid "*setpriv*(1), *su*(1), *login.defs*(5), *shells*(5), *pam*(8)"
 msgstr "*setpriv*(1), *su*(1), *login.defs*(5), *shells*(5), *pam*(8)"
 
@@ -12564,14 +12601,24 @@ msgstr ""
 
 #. type: Plain text
 #: ../login-utils/su.1.adoc:68
+#, fuzzy
+#| msgid ""
+#| "Create a pseudo-terminal for the session. The independent terminal "
+#| "provides better security as the user does not share a terminal with the "
+#| "original session. This can be used to avoid *TIOCSTI* ioctl terminal "
+#| "injection and other security attacks against terminal file descriptors. "
+#| "The entire session can also be moved to the background (e.g., *su --pty* "
+#| "**-** __username__ *-c* _application_ *&*). If the pseudo-terminal is "
+#| "enabled, then *su* works as a proxy between the sessions (sync stdin and "
+#| "stdout)."
 msgid ""
 "Create a pseudo-terminal for the session. The independent terminal provides "
 "better security as the user does not share a terminal with the original "
 "session. This can be used to avoid *TIOCSTI* ioctl terminal injection and "
 "other security attacks against terminal file descriptors. The entire session "
-"can also be moved to the background (e.g., *su --pty* **-** __username__ *-"
-"c* _application_ *&*). If the pseudo-terminal is enabled, then *su* works as "
-"a proxy between the sessions (sync stdin and stdout)."
+"can also be moved to the background (e.g., *su --pty* **-** __user__ *-c* "
+"_application_ *&*). If the pseudo-terminal is enabled, then *su* works as a "
+"proxy between the sessions (sync stdin and stdout)."
 msgstr ""
 "erzeugt ein Pseudo-Terminal für die Sitzung. Das unabhängige Terminal erhöht "
 "die Sicherheit, da der Benutzer sein Terminal nicht mit der ursprünglichen "
@@ -15927,8 +15974,8 @@ msgstr ""
 "Einhängepunkt nicht existiert."
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:197 ../sys-utils/mount.8.adoc:1628
-#: ../sys-utils/umount.8.adoc:152
+#: ../misc-utils/findmnt.8.adoc:197 ../sys-utils/mount.8.adoc:1629
+#: ../sys-utils/umount.8.adoc:154
 #, no-wrap
 msgid "*LIBMOUNT_FSTAB*=<path>"
 msgstr "*LIBMOUNT_FSTAB*=<Pfad>"
@@ -15951,14 +15998,14 @@ msgstr "setzt den standardmäßigen Ort der Datei _mtab_ außer Kraft."
 
 #. type: Labeled list
 #: ../misc-utils/findmnt.8.adoc:203 ../misc-utils/lsblk.8.adoc:205
-#: ../sys-utils/mount.8.adoc:1631 ../sys-utils/mountpoint.1.adoc:54
-#: ../sys-utils/swapon.8.adoc:125 ../sys-utils/umount.8.adoc:155
+#: ../sys-utils/mount.8.adoc:1632 ../sys-utils/mountpoint.1.adoc:54
+#: ../sys-utils/swapon.8.adoc:125 ../sys-utils/umount.8.adoc:157
 #, no-wrap
 msgid "*LIBMOUNT_DEBUG*=all"
 msgstr "*LIBMOUNT_DEBUG*=all"
 
 #. type: Plain text
-#: ../misc-utils/findmnt.8.adoc:205 ../sys-utils/mount.8.adoc:1633
+#: ../misc-utils/findmnt.8.adoc:205 ../sys-utils/mount.8.adoc:1634
 msgid "enables libmount debug output"
 msgstr "aktiviert die Fehlersuch-Ausgabe von Libmount."
 
@@ -16831,7 +16878,9 @@ msgstr "hardlink - mehrere Kopien einer Datei verlinken"
 
 #. type: Plain text
 #: ../misc-utils/hardlink.1.adoc:22
-msgid "*hardlink* [options] [_directory_|_file_]..."
+#, fuzzy
+#| msgid "*hardlink* [options] [_directory_|_file_]..."
+msgid "*hardlink* [options] _directory_|_file_..."
 msgstr "*hardlink* [Optionen] [_Verzeichnis_|_Datei_]..."
 
 #. type: Plain text
@@ -17669,7 +17718,7 @@ msgstr "*kill* gibt die folgenden Rückgabewerte aus:"
 
 #. type: Plain text
 #: ../misc-utils/kill.1.adoc:93 ../misc-utils/lsblk.8.adoc:190
-#: ../sys-utils/chcpu.8.adoc:66 ../sys-utils/chmem.8.adoc:63
+#: ../sys-utils/chcpu.8.adoc:68 ../sys-utils/chmem.8.adoc:63
 #: ../sys-utils/fstrim.8.adoc:80
 msgid "failure"
 msgstr "Fehlschlag"
@@ -25453,7 +25502,7 @@ msgid "Written by Robert M. Love."
 msgstr "Geschrieben von Robert M. Love."
 
 #. type: Title ==
-#: ../schedutils/taskset.1.adoc:140 ../sys-utils/chcpu.8.adoc:74
+#: ../schedutils/taskset.1.adoc:140 ../sys-utils/chcpu.8.adoc:76
 #: ../sys-utils/flock.1.adoc:126 ../sys-utils/rtcwake.8.adoc:126
 #: ../term-utils/scriptlive.1.adoc:66 ../term-utils/scriptreplay.1.adoc:83
 #, no-wrap
@@ -26669,17 +26718,26 @@ msgstr ""
 #. type: Plain text
 #: ../sys-utils/chcpu.8.adoc:42
 msgid ""
-"*chcpu -g* is not supported on IBM z/VM, CPUs are always in a configured."
+"*chcpu -g* is not supported on IBM z/VM, CPUs are always in a configured "
+"state."
+msgstr ""
+
+#. type: Plain text
+#: ../sys-utils/chcpu.8.adoc:44
+msgid ""
+"if *chcpu -g* is supported, any *disabled* CPUs should be *deconfigured* to "
+"inform the hypervisor that these CPUs won't be used, avoiding potential "
+"performance penalties."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/chcpu.8.adoc:43
+#: ../sys-utils/chcpu.8.adoc:45
 #, no-wrap
 msgid "*-p*, *--dispatch* _mode_"
 msgstr "*-p*, *--dispatch* _Modus_"
 
 #. type: Plain text
-#: ../sys-utils/chcpu.8.adoc:45
+#: ../sys-utils/chcpu.8.adoc:47
 msgid ""
 "Set the CPU dispatching _mode_ (polarization). This option has an effect "
 "only if your hardware architecture and hypervisor support CPU polarization. "
@@ -26690,35 +26748,35 @@ msgstr ""
 "Polarisierung unterstützt. Verfügbare _Modi_ sind:"
 
 #. type: Labeled list
-#: ../sys-utils/chcpu.8.adoc:46
+#: ../sys-utils/chcpu.8.adoc:48
 #, no-wrap
 msgid "*horizontal*"
 msgstr "*horizontal*"
 
 #. type: Plain text
-#: ../sys-utils/chcpu.8.adoc:48
+#: ../sys-utils/chcpu.8.adoc:50
 msgid "The workload is spread across all available CPUs."
 msgstr "Die Last wird über alle CPUs verteilt."
 
 #. type: Labeled list
-#: ../sys-utils/chcpu.8.adoc:49
+#: ../sys-utils/chcpu.8.adoc:51
 #, no-wrap
 msgid "*vertical*"
 msgstr "*vertical*"
 
 #. type: Plain text
-#: ../sys-utils/chcpu.8.adoc:51
+#: ../sys-utils/chcpu.8.adoc:53
 msgid "The workload is concentrated on few CPUs."
 msgstr "Die Last wird auf wenige CPUs konzentriert."
 
 #. type: Labeled list
-#: ../sys-utils/chcpu.8.adoc:52
+#: ../sys-utils/chcpu.8.adoc:54
 #, no-wrap
 msgid "*-r*, *--rescan*"
 msgstr "*-r*, *--rescan*"
 
 #. type: Plain text
-#: ../sys-utils/chcpu.8.adoc:54
+#: ../sys-utils/chcpu.8.adoc:56
 msgid ""
 "Trigger a rescan of CPUs. After a rescan, the Linux kernel recognizes the "
 "new CPUs. Use this option on systems that do not automatically detect newly "
@@ -26729,27 +26787,27 @@ msgstr ""
 "hinzugekommene CPUs nicht automatisch erkennen."
 
 #. type: Plain text
-#: ../sys-utils/chcpu.8.adoc:60
+#: ../sys-utils/chcpu.8.adoc:62
 msgid "*chcpu* has the following exit status values:"
 msgstr "*chcpu* hat die folgenden Exit-Status-Werte:"
 
 #. type: Plain text
-#: ../sys-utils/chcpu.8.adoc:69 ../sys-utils/chmem.8.adoc:66
+#: ../sys-utils/chcpu.8.adoc:71 ../sys-utils/chmem.8.adoc:66
 msgid "partial success"
 msgstr "Teilerfolg"
 
 #. type: Plain text
-#: ../sys-utils/chcpu.8.adoc:73
+#: ../sys-utils/chcpu.8.adoc:75
 msgid "mailto:heiko.carstens@de.ibm.com[Heiko Carstens]"
 msgstr "mailto:heiko.carstens@de.ibm.com[Heiko Carstens]"
 
 #. type: Plain text
-#: ../sys-utils/chcpu.8.adoc:77
+#: ../sys-utils/chcpu.8.adoc:79
 msgid "Copyright IBM Corp. 2011"
 msgstr "Copyright IBM Corp. 2011"
 
 #. type: Plain text
-#: ../sys-utils/chcpu.8.adoc:81
+#: ../sys-utils/chcpu.8.adoc:83
 msgid "*lscpu*(1)"
 msgstr "*lscpu*(1)"
 
@@ -29459,33 +29517,36 @@ msgstr ""
 #. type: Plain text
 #: ../sys-utils/fstab.5.adoc:58
 msgid ""
-"Each filesystem is described on a separate line. Fields on each line are "
-"separated by tabs or spaces. Lines starting with '#' are comments. Blank "
-"lines are ignored."
+"Each filesystem is described on a separate line, with fields separated by "
+"tabs or spaces. The line is split into fields before being parsed. This "
+"means that any spaces or tabs within the fields must be escaped using \\040 "
+"or \\011, even within quoted strings (e.g. LABEL=\"foo\\040bar\")."
 msgstr ""
-"Jedes Dateisystem wird auf einer separaten Zeile beschrieben; die Felder "
-"innerhalb einer Zeile werden durch Tabulatoren oder Leerzeichen getrennt. "
-"Kommentarzeilen beginnen mit »#«, leere Zeilen werden ignoriert."
 
 #. type: Plain text
 #: ../sys-utils/fstab.5.adoc:60
+msgid "Lines starting with '#' are comments. Blank lines are ignored."
+msgstr ""
+
+#. type: Plain text
+#: ../sys-utils/fstab.5.adoc:62
 msgid "The following is a typical example of an *fstab* entry:"
 msgstr "Ein typisches Beispiel eines Eintrags in *fstab*:"
 
 #. type: delimited block .
-#: ../sys-utils/fstab.5.adoc:63
+#: ../sys-utils/fstab.5.adoc:65
 #, no-wrap
 msgid "LABEL=t-home2   /home      ext4    defaults,auto_da_alloc      0  2\n"
 msgstr "LABEL=t-home2   /home      ext4    defaults,auto_da_alloc      0  2\n"
 
 #. type: Title ===
-#: ../sys-utils/fstab.5.adoc:65
+#: ../sys-utils/fstab.5.adoc:67
 #, no-wrap
 msgid "The first field (_fs_spec_)."
 msgstr "Das erste Feld (_fs_spec_)."
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:68
+#: ../sys-utils/fstab.5.adoc:70
 msgid ""
 "This field describes the block special device, remote filesystem or "
 "filesystem image for loop device to be mounted or swap file or swap device "
@@ -29496,7 +29557,7 @@ msgstr ""
 "zu aktivierende Auslagerungsdatei oder das zu aktivierende Auslagerungsgerät."
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:70
+#: ../sys-utils/fstab.5.adoc:72
 msgid ""
 "For ordinary mounts, it will hold (a link to) a block special device node "
 "(as created by *mknod*(2)) for the device to be mounted, like _/dev/cdrom_ "
@@ -29518,7 +29579,7 @@ msgstr ""
 "*fstab* aufgeführt."
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:72
+#: ../sys-utils/fstab.5.adoc:74
 msgid ""
 "LABEL=<label> or UUID=<uuid> may be given instead of a device name. This is "
 "the recommended method, as device names are often a coincidence of hardware "
@@ -29536,7 +29597,7 @@ msgstr ""
 "um Bezeichnungen für Dateisysteme zu setzen."
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:74
+#: ../sys-utils/fstab.5.adoc:76
 msgid ""
 "It's also possible to use *PARTUUID=* and *PARTLABEL=*. These partitions "
 "identifiers are supported for example for GUID Partition Table (GPT)."
@@ -29546,7 +29607,7 @@ msgstr ""
 "unterstützt."
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:76
+#: ../sys-utils/fstab.5.adoc:78
 msgid ""
 "See *mount*(8), *blkid*(8) or *lsblk*(8) for more details about device "
 "identifiers."
@@ -29555,7 +29616,7 @@ msgstr ""
 "über Geräteidentifizierer."
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:78
+#: ../sys-utils/fstab.5.adoc:80
 msgid ""
 "Note that *mount*(8) uses UUIDs as strings. The string representation of the "
 "UUID should be based on lower case characters. But when specifying the "
@@ -29569,13 +29630,13 @@ msgstr ""
 "UUID=\"61DB7756DB7779B3\")."
 
 #. type: Title ===
-#: ../sys-utils/fstab.5.adoc:79
+#: ../sys-utils/fstab.5.adoc:81
 #, no-wrap
 msgid "The second field (_fs_file_)."
 msgstr "Das zweite Feld (_fs_file_)."
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:82
+#: ../sys-utils/fstab.5.adoc:84
 msgid ""
 "This field describes the mount point (target) for the filesystem. For swap "
 "area, this field should be specified as `none'. If the name of the mount "
@@ -29588,13 +29649,13 @@ msgstr ""
 "als »\\040« respektive »\\011« maskiert werden."
 
 #. type: Title ===
-#: ../sys-utils/fstab.5.adoc:83
+#: ../sys-utils/fstab.5.adoc:85
 #, no-wrap
 msgid "The third field (_fs_vfstype_)."
 msgstr "Das dritte Feld (_fs_vfstype_)."
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:86
+#: ../sys-utils/fstab.5.adoc:88
 msgid ""
 "This field describes the type of the filesystem. Linux supports many "
 "filesystem types: ext4, xfs, btrfs, f2fs, vfat, ntfs, hfsplus, tmpfs, sysfs, "
@@ -29607,7 +29668,7 @@ msgstr ""
 "Details siehe *mount*(8)."
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:88
+#: ../sys-utils/fstab.5.adoc:90
 msgid ""
 "An entry _swap_ denotes a file or partition to be used for swapping, cf. "
 "*swapon*(8). An entry _none_ is useful for bind or move mounts."
@@ -29617,14 +29678,14 @@ msgstr ""
 "Einhängen mit den Optionen »bind« oder »move« nützlich."
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:90
+#: ../sys-utils/fstab.5.adoc:92
 msgid "More than one type may be specified in a comma-separated list."
 msgstr ""
 "Mit einer Kommata-getrennten Liste kann mehr als ein Dateisystem angegeben "
 "werden."
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:92
+#: ../sys-utils/fstab.5.adoc:94
 msgid ""
 "*mount*(8) and *umount*(8) support filesystem _subtypes_. The subtype is "
 "defined by '.subtype' suffix. For example 'fuse.sshfs'. It's recommended to "
@@ -29638,19 +29699,19 @@ msgstr ""
 "versehen (beispielsweise ist »sshfs#example.com« missbilligt)."
 
 #. type: Title ===
-#: ../sys-utils/fstab.5.adoc:93
+#: ../sys-utils/fstab.5.adoc:95
 #, no-wrap
 msgid "The fourth field (_fs_mntops_)."
 msgstr "Das vierte Feld (_fs_mntops_)."
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:96
+#: ../sys-utils/fstab.5.adoc:98
 msgid "This field describes the mount options associated with the filesystem."
 msgstr ""
 "Dieses Feld beschreibt die zum Dateisystem gehörenden Einhängeoptionen."
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:98
+#: ../sys-utils/fstab.5.adoc:100
 msgid ""
 "It is formatted as a comma-separated list of options and is optional for "
 "*mount*(8) or *swapon*(8). The usual convention is to use at least "
@@ -29661,7 +29722,7 @@ msgstr ""
 "hier zumindest das Schlüsselwort »defaults« verwendet."
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:100
+#: ../sys-utils/fstab.5.adoc:102
 msgid ""
 "It usually contains the type of mount (*ro* or *rw*, the default is *rw*), "
 "plus any additional options appropriate to the filesystem type (including "
@@ -29673,18 +29734,18 @@ msgstr ""
 "Leistung). Für Details siehe *mount*(8) oder *swapon*(8)."
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:102
+#: ../sys-utils/fstab.5.adoc:104
 msgid "Basic filesystem-independent options are:"
 msgstr "Grundlegende, vom Dateisystem unabhängige Optionen sind:"
 
 #. type: Labeled list
-#: ../sys-utils/fstab.5.adoc:103 ../sys-utils/mount.8.adoc:540
+#: ../sys-utils/fstab.5.adoc:105 ../sys-utils/mount.8.adoc:540
 #, no-wrap
 msgid "*defaults*"
 msgstr "*defaults*"
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:105
+#: ../sys-utils/fstab.5.adoc:107
 msgid ""
 "use default options. The default depends on the kernel and the filesystem. "
 "*mount*(8) does not have any hardcoded set of default options. The kernel "
@@ -29696,70 +29757,70 @@ msgstr ""
 "und async."
 
 #. type: Labeled list
-#: ../sys-utils/fstab.5.adoc:105 ../sys-utils/mount.8.adoc:513
+#: ../sys-utils/fstab.5.adoc:107 ../sys-utils/mount.8.adoc:513
 #, no-wrap
 msgid "*noauto*"
 msgstr "*noauto*"
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:107
+#: ../sys-utils/fstab.5.adoc:109
 msgid "do not mount when *mount -a* is given (e.g., at boot time)"
 msgstr ""
 "Nicht automatisch einhängen, wenn *mount -a* aufgerufen wird (z. B. beim "
 "Hochfahren)"
 
 #. type: Labeled list
-#: ../sys-utils/fstab.5.adoc:107 ../sys-utils/mount.8.adoc:671
+#: ../sys-utils/fstab.5.adoc:109 ../sys-utils/mount.8.adoc:671
 #, no-wrap
 msgid "*user*"
 msgstr "*user*"
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:109
+#: ../sys-utils/fstab.5.adoc:111
 msgid "allow a user to mount"
 msgstr "Einem Benutzer das Einhängen erlauben"
 
 #. type: Labeled list
-#: ../sys-utils/fstab.5.adoc:109 ../sys-utils/mount.8.adoc:628
+#: ../sys-utils/fstab.5.adoc:111 ../sys-utils/mount.8.adoc:628
 #, no-wrap
 msgid "*owner*"
 msgstr "*owner*"
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:111
+#: ../sys-utils/fstab.5.adoc:113
 msgid "allow device owner to mount"
 msgstr "Dem Gerätebesitzer das Einhängen erlauben"
 
 #. type: Labeled list
-#: ../sys-utils/fstab.5.adoc:111
+#: ../sys-utils/fstab.5.adoc:113
 #, no-wrap
 msgid "*comment*"
 msgstr "*comment*"
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:113
+#: ../sys-utils/fstab.5.adoc:115
 msgid "or *x-<name>* for use by fstab-maintaining programs"
 msgstr "oder *x-<name>* für die Verwendung durch fstab-Wartungsprogramme"
 
 #. type: Labeled list
-#: ../sys-utils/fstab.5.adoc:113 ../sys-utils/mount.8.adoc:584
+#: ../sys-utils/fstab.5.adoc:115 ../sys-utils/mount.8.adoc:584
 #, no-wrap
 msgid "*nofail*"
 msgstr "*nofail*"
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:115
+#: ../sys-utils/fstab.5.adoc:117
 msgid "do not report errors for this device if it does not exist."
 msgstr "Keine Fehler für dieses Gerät melden, wenn es nicht existiert."
 
 #. type: Title ===
-#: ../sys-utils/fstab.5.adoc:116
+#: ../sys-utils/fstab.5.adoc:118
 #, no-wrap
 msgid "The fifth field (_fs_freq_)."
 msgstr "Das fünfte Feld (_fs_freq_)."
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:119
+#: ../sys-utils/fstab.5.adoc:121
 msgid ""
 "This field is used by *dump*(8) to determine which filesystems need to be "
 "dumped. Defaults to zero (don't dump) if not present."
@@ -29769,13 +29830,13 @@ msgstr ""
 "falls nicht vorhanden."
 
 #. type: Title ===
-#: ../sys-utils/fstab.5.adoc:120
+#: ../sys-utils/fstab.5.adoc:122
 #, no-wrap
 msgid "The sixth field (_fs_passno_)."
 msgstr "Das sechste Feld (_fs_passno_)."
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:123
+#: ../sys-utils/fstab.5.adoc:125
 msgid ""
 "This field is used by *fsck*(8) to determine the order in which filesystem "
 "checks are done at boot time. The root filesystem should be specified with a "
@@ -29795,12 +29856,12 @@ msgstr ""
 "Dateisystemüberprüfung) falls nicht vorhanden."
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:128
+#: ../sys-utils/fstab.5.adoc:130
 msgid "_/etc/fstab_, _<fstab.h>_"
 msgstr "_/etc/fstab_, _<fstab.h>_"
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:132
+#: ../sys-utils/fstab.5.adoc:134
 msgid ""
 "The proper way to read records from *fstab* is to use the routines "
 "*getmntent*(3) or *libmount*."
@@ -29809,7 +29870,7 @@ msgstr ""
 "Routinen *getmntent*(3) oder *libmount*."
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:134
+#: ../sys-utils/fstab.5.adoc:136
 msgid ""
 "The keyword *ignore* as a filesystem type (3rd field) is no longer supported "
 "by the pure libmount based mount utility (since util-linux v2.22)."
@@ -29819,19 +29880,19 @@ msgstr ""
 "linux v2.22)."
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:136
+#: ../sys-utils/fstab.5.adoc:138
 msgid ""
 "This document describes handling of *fstab* by *util-linux* and *libmount*. "
 "For *systemd*, read *systemd* documentation. There are slight differences."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:140
+#: ../sys-utils/fstab.5.adoc:142
 msgid "The ancestor of this *fstab* file format appeared in 4.0BSD."
 msgstr "Der Urahn des *fstab*-Dateiformats erschien in 4.0BSD."
 
 #. type: Plain text
-#: ../sys-utils/fstab.5.adoc:148
+#: ../sys-utils/fstab.5.adoc:150
 msgid "*getmntent*(3), *fs*(5), *findmnt*(8), *mount*(8), *swapon*(8)"
 msgstr "*getmntent*(3), *fs*(5), *findmnt*(8), *mount*(8), *swapon*(8)"
 
@@ -33567,11 +33628,21 @@ msgstr "*-d*, *--detach* _Loop-Gerät_..."
 
 #. type: Plain text
 #: ../sys-utils/losetup.8.adoc:58
+#, fuzzy
+#| msgid ""
+#| "Detach the file or device associated with the specified loop device(s). "
+#| "Note that since Linux v3.7 kernel uses \"lazy device destruction\". The "
+#| "detach operation does not return *EBUSY* error anymore if device is "
+#| "actively used by system, but it is marked by autoclear flag and destroyed "
+#| "later."
 msgid ""
 "Detach the file or device associated with the specified loop device(s). Note "
 "that since Linux v3.7 kernel uses \"lazy device destruction\". The detach "
 "operation does not return *EBUSY* error anymore if device is actively used "
-"by system, but it is marked by autoclear flag and destroyed later."
+"by system, but it is marked by autoclear flag and destroyed later. Even if "
+"the device is not used, the loop device can be destroyed later. If you need "
+"to wait for a complete removal of the loop device, call *udevadm settle* "
+"after *losetup*."
 msgstr ""
 "hängt die Datei oder das Gerät aus, das dem oder den angegebenen Loop-"
 "Gerät(en) zugeordnet ist. Beachten Sie, dass der Kernel seit Linux v3.7 die "
@@ -33863,7 +33934,7 @@ msgstr ""
 "gleiche zu erreichen."
 
 #. type: Labeled list
-#: ../sys-utils/losetup.8.adoc:133 ../sys-utils/mount.8.adoc:1637
+#: ../sys-utils/losetup.8.adoc:133 ../sys-utils/mount.8.adoc:1638
 #, no-wrap
 msgid "*LOOPDEV_DEBUG*=all"
 msgstr "*LOOPDEV_DEBUG*=all"
@@ -37988,7 +38059,7 @@ msgid "A user can specify the ID-mapping directly."
 msgstr "Ein Benutzer kann die IP-Zuweisung direkt angeben."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:743
+#: ../sys-utils/mount.8.adoc:742
 msgid ""
 "The ID-mapping must be specified using the syntax __id-type__:__id-mount__:"
 "__id-host__:__id-range__.  Specifying *u* as the __id-type__ prefix creates "
@@ -37997,12 +38068,20 @@ msgid ""
 "parameter indicates the starting ID in the new mount.  The __id-host__ "
 "parameter indicates the starting ID in the filesystem.  The __id-range__ "
 "parameter indicates how many IDs are to be mapped.  It is possible to "
-"specify multiple ID-mappings.  The individual ID-mappings must be separated "
-"by spaces."
+"specify multiple ID-mappings."
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:746
+#: ../sys-utils/mount.8.adoc:744
+msgid ""
+"The individual ID mappings must be separated by spaces. Please note that in "
+"the __/etc/fstab__ file, spaces are interpreted as separators between "
+"fields. To avoid this, you must escape them using \\040. For example, X-"
+"mount.idmap=0:0:1\\040500:1000:1."
+msgstr ""
+
+#. type: delimited block _
+#: ../sys-utils/mount.8.adoc:747
 msgid ""
 "For example, the ID-mapping *X-mount.idmap=u:1000:0:1 g:1001:1:2 "
 "5000:1000:2* creates an idmapped mount where UID 0 is mapped to UID 1000, "
@@ -38011,7 +38090,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:749
+#: ../sys-utils/mount.8.adoc:750
 msgid ""
 "When an ID-mapping is specified directly a new user namespace will be "
 "allocated with the requested ID-mapping.  The newly created user namespace "
@@ -38022,12 +38101,12 @@ msgstr ""
 "erzeugte Benutzernamensraum wird an die Einhängung angehängt."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:750
+#: ../sys-utils/mount.8.adoc:751
 msgid "A user can specify a user namespace file."
 msgstr "Ein Benutzer kann eine Benutzernamensraum-Datei angeben."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:752
+#: ../sys-utils/mount.8.adoc:753
 msgid ""
 "The user namespace will then be attached to the mount and the ID-mapping of "
 "the user namespace will become the ID-mapping of the mount."
@@ -38036,7 +38115,7 @@ msgstr ""
 "Zuweisung des Benutzernamensraums wird zur ID-Zuweisung der Einhängung."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:754
+#: ../sys-utils/mount.8.adoc:755
 msgid ""
 "For example, *X-mount.idmap=/proc/PID/ns/user* will attach the user "
 "namespace of the process PID to the mount."
@@ -38045,13 +38124,13 @@ msgstr ""
 "Benutzernamensraum der Kennung (PID) des Prozesses an die Einhängung an."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:755
+#: ../sys-utils/mount.8.adoc:756
 #, no-wrap
 msgid "*nosymfollow*"
 msgstr "*nosymfollow*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:757
+#: ../sys-utils/mount.8.adoc:758
 msgid ""
 "Do not follow symlinks when resolving paths. Symlinks can still be created, "
 "and *readlink*(1), *readlink*(2), *realpath*(1), and *realpath*(3) all still "
@@ -38062,13 +38141,13 @@ msgstr ""
 "*realpath*(3) werden noch korrekt funktionieren."
 
 #. type: Title ==
-#: ../sys-utils/mount.8.adoc:758
+#: ../sys-utils/mount.8.adoc:759
 #, no-wrap
 msgid "FILESYSTEM-SPECIFIC MOUNT OPTIONS"
 msgstr "DATEISYSTEMSPEZIFISCHE EINHÄNGEOPTIONEN"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:761
+#: ../sys-utils/mount.8.adoc:762
 msgid ""
 "This section lists options that are specific to particular filesystems. "
 "Where possible, you should first consult filesystem-specific manual pages "
@@ -38080,7 +38159,7 @@ msgstr ""
 "Handbuchseiten sind in der folgenden Tabelle aufgelistet."
 
 #. type: Table
-#: ../sys-utils/mount.8.adoc:772
+#: ../sys-utils/mount.8.adoc:773
 #, no-wrap
 msgid ""
 "|*Filesystem(s)* |*Manual page*\n"
@@ -38102,7 +38181,7 @@ msgstr ""
 "|xfs |*xfs*(5)\n"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:775
+#: ../sys-utils/mount.8.adoc:776
 msgid ""
 "Note that some of the pages listed above might be available only after you "
 "install the respective userland tools."
@@ -38112,7 +38191,7 @@ msgstr ""
 "installiert haben."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:777
+#: ../sys-utils/mount.8.adoc:778
 msgid ""
 "The following options apply only to certain filesystems. We sort them by "
 "filesystem. All options follow the *-o* flag."
@@ -38121,7 +38200,7 @@ msgstr ""
 "sind nach Dateisystem sortiert und folgen alle dem Schalter *-o*."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:779
+#: ../sys-utils/mount.8.adoc:780
 msgid ""
 "What options are supported depends a bit on the running kernel. Further "
 "information may be available in filesystem-specific files in the kernel "
@@ -38132,21 +38211,21 @@ msgstr ""
 "Kernel-Quellen unter _Documentation/filesystems_."
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:780
+#: ../sys-utils/mount.8.adoc:781
 #, no-wrap
 msgid "Mount options for adfs"
 msgstr "Einhängeoptionen für Adfs"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:782 ../sys-utils/mount.8.adoc:790
-#: ../sys-utils/mount.8.adoc:840 ../sys-utils/mount.8.adoc:871
-#: ../sys-utils/mount.8.adoc:998 ../sys-utils/mount.8.adoc:1030
+#: ../sys-utils/mount.8.adoc:783 ../sys-utils/mount.8.adoc:791
+#: ../sys-utils/mount.8.adoc:841 ../sys-utils/mount.8.adoc:872
+#: ../sys-utils/mount.8.adoc:999 ../sys-utils/mount.8.adoc:1031
 #, no-wrap
 msgid "**uid=**__value__ and **gid=**__value__"
 msgstr "**uid=**__Wert__ und **gid=**__Wert__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:784
+#: ../sys-utils/mount.8.adoc:785
 msgid ""
 "Set the owner and group of the files in the filesystem (default: uid=gid=0)."
 msgstr ""
@@ -38154,13 +38233,13 @@ msgstr ""
 "fest (Standard: uid=gid=0)."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:785
+#: ../sys-utils/mount.8.adoc:786
 #, no-wrap
 msgid "**ownmask=**__value__ and **othmask=**__value__"
 msgstr "**ownmask=**__Wert__ und **othmask=**__Wert__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:787
+#: ../sys-utils/mount.8.adoc:788
 msgid ""
 "Set the permission mask for ADFS 'owner' permissions and 'other' "
 "permissions, respectively (default: 0700 and 0077, respectively). See also _/"
@@ -38170,13 +38249,13 @@ msgstr ""
 "bzw. 0077). Siehe auch _/usr/src/linux/Documentation/filesystems/adfs.rst_."
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:788
+#: ../sys-utils/mount.8.adoc:789
 #, no-wrap
 msgid "Mount options for affs"
 msgstr "Einhängeoptionen für Affs"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:792
+#: ../sys-utils/mount.8.adoc:793
 msgid ""
 "Set the owner and group of the root of the filesystem (default: uid=gid=0, "
 "but with option *uid* or *gid* without specified value, the UID and GID of "
@@ -38188,25 +38267,25 @@ msgstr ""
 "Gruppenkennung des aktuellen Prozesses übernommen)."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:793
+#: ../sys-utils/mount.8.adoc:794
 #, no-wrap
 msgid "**setuid=**__value__ and **setgid=**__value__"
 msgstr "**setuid=**__Wert__ und **setgid=**__Wert__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:795
+#: ../sys-utils/mount.8.adoc:796
 msgid "Set the owner and group of all files."
 msgstr "legt den Eigentümer und die Gruppe aller Dateien fest."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:796 ../sys-utils/mount.8.adoc:833
-#: ../sys-utils/mount.8.adoc:843 ../sys-utils/mount.8.adoc:1036
+#: ../sys-utils/mount.8.adoc:797 ../sys-utils/mount.8.adoc:834
+#: ../sys-utils/mount.8.adoc:844 ../sys-utils/mount.8.adoc:1037
 #, no-wrap
 msgid "**mode=**__value__"
 msgstr "**mode=**__Wert__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:798
+#: ../sys-utils/mount.8.adoc:799
 msgid ""
 "Set the mode of all files to _value_ & 0777 disregarding the original "
 "permissions. Add search permission to directories that have read permission. "
@@ -38218,24 +38297,24 @@ msgstr ""
 "oktaler Notation angegeben."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:799
+#: ../sys-utils/mount.8.adoc:800
 #, no-wrap
 msgid "*protect*"
 msgstr "*protect*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:801
+#: ../sys-utils/mount.8.adoc:802
 msgid "Do not allow any changes to the protection bits on the filesystem."
 msgstr "erlaubt keine Änderungen an den Schutz-Bits des Dateisystems."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:802
+#: ../sys-utils/mount.8.adoc:803
 #, no-wrap
 msgid "*usemp*"
 msgstr "*usemp*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:804
+#: ../sys-utils/mount.8.adoc:805
 msgid ""
 "Set UID and GID of the root of the filesystem to the UID and GID of the "
 "mount point upon the first sync or umount, and then clear this option. "
@@ -38246,37 +38325,37 @@ msgstr ""
 "Synchronisieren oder Aushängen und löscht dann diese Option. Seltsam ..."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:805
+#: ../sys-utils/mount.8.adoc:806
 #, no-wrap
 msgid "*verbose*"
 msgstr "*verbose*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:807
+#: ../sys-utils/mount.8.adoc:808
 msgid "Print an informational message for each successful mount."
 msgstr ""
 "gibt eine informative Meldung zu jedem erfolgreichen Einhängevorgang aus."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:808
+#: ../sys-utils/mount.8.adoc:809
 #, no-wrap
 msgid "**prefix=**__string__"
 msgstr "**prefix=**__Zeichenkette__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:810
+#: ../sys-utils/mount.8.adoc:811
 msgid "Prefix used before volume name, when following a link."
 msgstr ""
 "gibt das Präfix vor dem Datenträgernamen an, wenn einem Link gefolgt wird."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:811
+#: ../sys-utils/mount.8.adoc:812
 #, no-wrap
 msgid "**volume=**__string__"
 msgstr "**volume=**__Zeichenkette__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:813
+#: ../sys-utils/mount.8.adoc:814
 msgid ""
 "Prefix (of length at most 30) used before '/' when following a symbolic link."
 msgstr ""
@@ -38284,48 +38363,48 @@ msgstr ""
 "wenn einem symbolischen Link gefolgt wird."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:814
+#: ../sys-utils/mount.8.adoc:815
 #, no-wrap
 msgid "**reserved=**__value__"
 msgstr "**reserved=**__Wert__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:816
+#: ../sys-utils/mount.8.adoc:817
 msgid "(Default: 2.) Number of unused blocks at the start of the device."
 msgstr ""
 "bezeichnet die Anzahl der ungenutzten Blöcke am Anfang des Gerätes "
 "(Standard: 2)."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:817
+#: ../sys-utils/mount.8.adoc:818
 #, no-wrap
 msgid "**root=**__value__"
 msgstr "**root=**__Wert__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:819
+#: ../sys-utils/mount.8.adoc:820
 msgid "Give explicitly the location of the root block."
 msgstr "gibt explizit den Ort des Wurzel-Blocks an."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:820
+#: ../sys-utils/mount.8.adoc:821
 #, no-wrap
 msgid "**bs=**__value__"
 msgstr "**bs=**__Wert__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:822
+#: ../sys-utils/mount.8.adoc:823
 msgid "Give blocksize. Allowed values are 512, 1024, 2048, 4096."
 msgstr "gibt die Blockgröße an. Zulässige Werte sind 512, 1024, 2048 und 4096."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:823
+#: ../sys-utils/mount.8.adoc:824
 #, no-wrap
 msgid "**grpquota**|**noquota**|**quota**|*usrquota*"
 msgstr "**grpquota**|**noquota**|**quota**|*usrquota*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:825
+#: ../sys-utils/mount.8.adoc:826
 msgid ""
 "These options are accepted but ignored. (However, quota utilities may react "
 "to such strings in _/etc/fstab_.)"
@@ -38335,13 +38414,13 @@ msgstr ""
 "Zeichenketten in _/etc/fstab_ auswerten)."
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:826
+#: ../sys-utils/mount.8.adoc:827
 #, no-wrap
 msgid "Mount options for debugfs"
 msgstr "Einhängeoptionen für Debugfs"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:829
+#: ../sys-utils/mount.8.adoc:830
 msgid ""
 "The debugfs filesystem is a pseudo filesystem, traditionally mounted on _/"
 "sys/kernel/debug_. As of kernel version 3.4, debugfs has the following "
@@ -38352,29 +38431,29 @@ msgstr ""
 "folgende Optionen:"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:830 ../sys-utils/mount.8.adoc:981
+#: ../sys-utils/mount.8.adoc:831 ../sys-utils/mount.8.adoc:982
 #, no-wrap
 msgid "**uid=**__n__**, gid=**__n__"
 msgstr "**uid=**__n__**, gid=**__n__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:832
+#: ../sys-utils/mount.8.adoc:833
 msgid "Set the owner and group of the mountpoint."
 msgstr "legt den Eigentümer und die Gruppe des Einhängepunkts fest."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:835
+#: ../sys-utils/mount.8.adoc:836
 msgid "Sets the mode of the mountpoint."
 msgstr "legt den Modus des Einhängepunkts fest."
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:836
+#: ../sys-utils/mount.8.adoc:837
 #, no-wrap
 msgid "Mount options for devpts"
 msgstr "Einhängeoptionen für Devpts"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:839
+#: ../sys-utils/mount.8.adoc:840
 msgid ""
 "The devpts filesystem is a pseudo filesystem, traditionally mounted on _/dev/"
 "pts_. In order to acquire a pseudo terminal, a process opens _/dev/ptmx_; "
@@ -38388,7 +38467,7 @@ msgstr ""
 "_<Nummer> zugegriffen werden."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:842
+#: ../sys-utils/mount.8.adoc:843
 msgid ""
 "This sets the owner or the group of newly created pseudo terminals to the "
 "specified values. When nothing is specified, they will be set to the UID and "
@@ -38403,7 +38482,7 @@ msgstr ""
 "*gid=5* dafür, dass neu erstellte Pseudo-Terminals zu der TTY-Gruppe gehören."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:845
+#: ../sys-utils/mount.8.adoc:846
 msgid ""
 "Set the mode of newly created pseudo terminals to the specified value. The "
 "default is 0600. A value of *mode=620* and *gid=5* makes \"mesg y\" the "
@@ -38414,13 +38493,13 @@ msgstr ""
 "Vorgabe auf neu erstellten Pseudo-Terminals."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:846
+#: ../sys-utils/mount.8.adoc:847
 #, no-wrap
 msgid "*newinstance*"
 msgstr "*newinstance*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:848
+#: ../sys-utils/mount.8.adoc:849
 msgid ""
 "Create a private instance of the devpts filesystem, such that indices of "
 "pseudo terminals allocated in this new instance are independent of indices "
@@ -38431,7 +38510,7 @@ msgstr ""
 "Instanzen von Devpts erzeugten Indizes unabhängig sind."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:850
+#: ../sys-utils/mount.8.adoc:851
 msgid ""
 "All mounts of devpts without this *newinstance* option share the same set of "
 "pseudo terminal indices (i.e., legacy mode). Each mount of devpts with the "
@@ -38443,7 +38522,7 @@ msgstr ""
 "Terminal-Indizes."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:852
+#: ../sys-utils/mount.8.adoc:853
 msgid ""
 "This option is mainly used to support containers in the Linux kernel. It is "
 "implemented in Linux kernel versions starting with 2.6.29. Further, this "
@@ -38456,7 +38535,7 @@ msgstr ""
 "*CONFIG_DEVPTS_MULTIPLE_INSTANCES* in der Kernel-Konfiguration aktiviert ist."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:854
+#: ../sys-utils/mount.8.adoc:855
 msgid ""
 "To use this option effectively, _/dev/ptmx_ must be a symbolic link to _pts/"
 "ptmx_. See _Documentation/filesystems/devpts.txt_ in the Linux kernel source "
@@ -38467,19 +38546,19 @@ msgstr ""
 "Quellbaum für Details."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:855
+#: ../sys-utils/mount.8.adoc:856
 #, no-wrap
 msgid "**ptmxmode=**__value__"
 msgstr "**ptmxmode=**__Wert__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:857
+#: ../sys-utils/mount.8.adoc:858
 msgid "Set the mode for the new _ptmx_ device node in the devpts filesystem."
 msgstr ""
 "legt den Modus für den neuen _ptmx_-Geräteknoten im Devpts-Dateisystem fest."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:859
+#: ../sys-utils/mount.8.adoc:860
 msgid ""
 "With the support for multiple instances of devpts (see *newinstance* option "
 "above), each instance has a private _ptmx_ node in the root of the devpts "
@@ -38490,7 +38569,7 @@ msgstr ""
 "Wurzel des Devpts-Dateisystems (typischerweise _/dev/pts/ptmx_)."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:861
+#: ../sys-utils/mount.8.adoc:862
 msgid ""
 "For compatibility with older versions of the kernel, the default mode of the "
 "new _ptmx_ node is 0000. **ptmxmode=**__value__ specifies a more useful mode "
@@ -38503,7 +38582,7 @@ msgstr ""
 "Option *newinstance* angegeben wird."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:863
+#: ../sys-utils/mount.8.adoc:864
 msgid ""
 "This option is only implemented in Linux kernel versions starting with "
 "2.6.29. Further, this option is valid only if "
@@ -38514,13 +38593,13 @@ msgstr ""
 "Kernel-Konfiguration aktiviert ist."
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:864
+#: ../sys-utils/mount.8.adoc:865
 #, no-wrap
 msgid "Mount options for fat"
 msgstr "Einhängeoptionen für FAT"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:867
+#: ../sys-utils/mount.8.adoc:868
 msgid ""
 "(Note: _fat_ is not a separate filesystem, but a common part of the _msdos_, "
 "_umsdos_ and _vfat_ filesystems.)"
@@ -38529,20 +38608,20 @@ msgstr ""
 "der Dateisysteme _msdos_, _umsdos_ und _vfat_.)"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:868
+#: ../sys-utils/mount.8.adoc:869
 #, no-wrap
 msgid "*blocksize=*{**512**|**1024**|*2048*}"
 msgstr "*blocksize=*{**512**|**1024**|*2048*}"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:870
+#: ../sys-utils/mount.8.adoc:871
 msgid "Set blocksize (default 512). This option is obsolete."
 msgstr ""
 "legt die Blockgröße fest (standardmäßig 512). Diese Option ist veraltet."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:873 ../sys-utils/mount.8.adoc:983
-#: ../sys-utils/mount.8.adoc:1000
+#: ../sys-utils/mount.8.adoc:874 ../sys-utils/mount.8.adoc:984
+#: ../sys-utils/mount.8.adoc:1001
 msgid ""
 "Set the owner and group of all files. (Default: the UID and GID of the "
 "current process.)"
@@ -38551,13 +38630,13 @@ msgstr ""
 "Benutzerkennung und Gruppenkennung des aktuellen Prozesses)."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:874 ../sys-utils/mount.8.adoc:1001
+#: ../sys-utils/mount.8.adoc:875 ../sys-utils/mount.8.adoc:1002
 #, no-wrap
 msgid "**umask=**__value__"
 msgstr "**umask=**__Wert__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:876 ../sys-utils/mount.8.adoc:1003
+#: ../sys-utils/mount.8.adoc:877 ../sys-utils/mount.8.adoc:1004
 msgid ""
 "Set the umask (the bitmask of the permissions that are *not* present). The "
 "default is the umask of the current process. The value is given in octal."
@@ -38567,13 +38646,13 @@ msgstr ""
 "oktaler Notation angegeben."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:877
+#: ../sys-utils/mount.8.adoc:878
 #, no-wrap
 msgid "**dmask=**__value__"
 msgstr "**dmask=**__Wert__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:879
+#: ../sys-utils/mount.8.adoc:880
 msgid ""
 "Set the umask applied to directories only. The default is the umask of the "
 "current process. The value is given in octal."
@@ -38583,13 +38662,13 @@ msgstr ""
 "angegeben."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:880
+#: ../sys-utils/mount.8.adoc:881
 #, no-wrap
 msgid "**fmask=**__value__"
 msgstr "**fmask=**__Wert__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:882
+#: ../sys-utils/mount.8.adoc:883
 msgid ""
 "Set the umask applied to regular files only. The default is the umask of the "
 "current process. The value is given in octal."
@@ -38599,24 +38678,24 @@ msgstr ""
 "angegeben."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:883
+#: ../sys-utils/mount.8.adoc:884
 #, no-wrap
 msgid "**allow_utime=**__value__"
 msgstr "**allow_utime=**__Wert__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:885
+#: ../sys-utils/mount.8.adoc:886
 msgid "This option controls the permission check of mtime/atime."
 msgstr "steuert die Überprüfung der Zugriffsrechte von mtime/atime."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:886
+#: ../sys-utils/mount.8.adoc:887
 #, no-wrap
 msgid "*20*"
 msgstr "*20*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:888
+#: ../sys-utils/mount.8.adoc:889
 msgid ""
 "If current process is in group of file's group ID, you can change timestamp."
 msgstr ""
@@ -38624,12 +38703,12 @@ msgstr ""
 "Element der Gruppe mit der Gruppenkennung der Datei ist."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:891
+#: ../sys-utils/mount.8.adoc:892
 msgid "Other users can change timestamp."
 msgstr "legt fest, dass andere Benutzer den Zeitstempel ändern können."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:893
+#: ../sys-utils/mount.8.adoc:894
 msgid ""
 "The default is set from 'dmask' option. (If the directory is writable, "
 "*utime*(2) is also allowed. I.e. ~dmask & 022)"
@@ -38639,7 +38718,7 @@ msgstr ""
 "h. ~ dmask & 022)."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:895
+#: ../sys-utils/mount.8.adoc:896
 msgid ""
 "Normally *utime*(2) checks that the current process is owner of the file, or "
 "that it has the *CAP_FOWNER* capability. But FAT filesystems don't have UID/"
@@ -38652,24 +38731,24 @@ msgstr ""
 "Überprüfung zu unflexibel ist. Mit dieser Option können Sie sie lockern."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:896
+#: ../sys-utils/mount.8.adoc:897
 #, no-wrap
 msgid "**check=**__value__"
 msgstr "**check=**__Wert__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:898
+#: ../sys-utils/mount.8.adoc:899
 msgid "Three different levels of pickiness can be chosen:"
 msgstr "Drei verschiedene Pingeligkeitsstufen können gewählt werden:"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:899
+#: ../sys-utils/mount.8.adoc:900
 #, no-wrap
 msgid "*r*[*elaxed*]"
 msgstr "*r*[*elaxed*]"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:901
+#: ../sys-utils/mount.8.adoc:902
 msgid ""
 "Upper and lower case are accepted and equivalent, long name parts are "
 "truncated (e.g. _verylongname.foobar_ becomes _verylong.foo_), leading and "
@@ -38681,13 +38760,13 @@ msgstr ""
 "jedem Namensbestandteil akzeptiert (Name und Erweiterung)."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:902
+#: ../sys-utils/mount.8.adoc:903
 #, no-wrap
 msgid "*n*[*ormal*]"
 msgstr "*n*[*ormal*]"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:904
+#: ../sys-utils/mount.8.adoc:905
 msgid ""
 "Like \"relaxed\", but many special characters (*, ?, <, spaces, etc.) are "
 "rejected. This is the default."
@@ -38696,13 +38775,13 @@ msgstr ""
 "Leerzeichen, usw.) werden abgewiesen. Dies ist die Voreinstellung."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:905
+#: ../sys-utils/mount.8.adoc:906
 #, no-wrap
 msgid "*s*[*trict*]"
 msgstr "*s*[*trict*]"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:907
+#: ../sys-utils/mount.8.adoc:908
 msgid ""
 "Like \"normal\", but names that contain long parts or special characters "
 "that are sometimes used on Linux but are not accepted by MS-DOS (+, =, etc.) "
@@ -38713,13 +38792,13 @@ msgstr ""
 "MS-DOS nicht akzeptiert werden (+, =, usw.), werden abgewiesen."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:908
+#: ../sys-utils/mount.8.adoc:909
 #, no-wrap
 msgid "**codepage=**__value__"
 msgstr "**codepage=**__Wert__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:910
+#: ../sys-utils/mount.8.adoc:911
 msgid ""
 "Sets the codepage for converting to shortname characters on FAT and VFAT "
 "filesystems. By default, codepage 437 is used."
@@ -38729,26 +38808,26 @@ msgstr ""
 "die Zeichensatztabelle 437 verwendet."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:911 ../sys-utils/mount.8.adoc:1007
-#: ../sys-utils/mount.8.adoc:1045
+#: ../sys-utils/mount.8.adoc:912 ../sys-utils/mount.8.adoc:1008
+#: ../sys-utils/mount.8.adoc:1046
 #, no-wrap
 msgid "**conv=**__mode__"
 msgstr "**conv=**__Modus__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:913
+#: ../sys-utils/mount.8.adoc:914
 msgid "This option is obsolete and may fail or be ignored."
 msgstr ""
 "Diese Option ist veraltet und könnte fehlschlagen oder ignoriert werden."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:914
+#: ../sys-utils/mount.8.adoc:915
 #, no-wrap
 msgid "**cvf_format=**__module__"
 msgstr "**cvf_format=**__Modul__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:916
+#: ../sys-utils/mount.8.adoc:917
 msgid ""
 "Forces the driver to use the CVF (Compressed Volume File) module "
 "cvf___module__ instead of auto-detection. If the kernel supports *kmod*, the "
@@ -38761,24 +38840,24 @@ msgstr ""
 "das bedarfsabhängige Laden von CVF-Modulen. Diese Option ist veraltet."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:917
+#: ../sys-utils/mount.8.adoc:918
 #, no-wrap
 msgid "**cvf_option=**__option__"
 msgstr "**cvf_option=**__Option__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:919
+#: ../sys-utils/mount.8.adoc:920
 msgid "Option passed to the CVF module. This option is obsolete."
 msgstr "wird an das CVF-Modul übergeben. Diese Option ist veraltet."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:920
+#: ../sys-utils/mount.8.adoc:921
 #, no-wrap
 msgid "*debug*"
 msgstr "*debug*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:922
+#: ../sys-utils/mount.8.adoc:923
 msgid ""
 "Turn on the _debug_ flag. A version string and a list of filesystem "
 "parameters will be printed (these data are also printed if the parameters "
@@ -38789,13 +38868,13 @@ msgstr ""
 "ausgegeben, wenn die Parameter inkonsistent zu sein scheinen)."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:923
+#: ../sys-utils/mount.8.adoc:924
 #, no-wrap
 msgid "*discard*"
 msgstr "*discard*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:925
+#: ../sys-utils/mount.8.adoc:926
 msgid ""
 "If set, causes discard/TRIM commands to be issued to the block device when "
 "blocks are freed. This is useful for SSD devices and sparse/thinly-"
@@ -38806,13 +38885,13 @@ msgstr ""
 "bei schlanker Speicherzuweisung bei LUNs nützlich."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:926
+#: ../sys-utils/mount.8.adoc:927
 #, no-wrap
 msgid "*dos1xfloppy*"
 msgstr "*dos1xfloppy*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:928
+#: ../sys-utils/mount.8.adoc:929
 msgid ""
 "If set, use a fallback default BIOS Parameter Block configuration, "
 "determined by backing device size. These static parameters match defaults "
@@ -38826,13 +38905,13 @@ msgstr ""
 "Werten."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:929
+#: ../sys-utils/mount.8.adoc:930
 #, no-wrap
 msgid "*errors=*{**panic**|**continue**|*remount-ro*}"
 msgstr "*errors=*{**panic**|**continue**|*remount-ro*}"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:931
+#: ../sys-utils/mount.8.adoc:932
 msgid ""
 "Specify FAT behavior on critical errors: panic, continue without doing "
 "anything, or remount the partition in read-only mode (default behavior)."
@@ -38842,13 +38921,13 @@ msgstr ""
 "schreibgeschützten Modus (Standardverhalten)."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:932
+#: ../sys-utils/mount.8.adoc:933
 #, no-wrap
 msgid "*fat=*{**12**|**16**|*32*}"
 msgstr "*fat=*{**12**|**16**|*32*}"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:934
+#: ../sys-utils/mount.8.adoc:935
 msgid ""
 "Specify a 12, 16 or 32 bit fat. This overrides the automatic FAT type "
 "detection routine. Use with caution!"
@@ -38858,13 +38937,13 @@ msgstr ""
 "Vorsicht verwenden!"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:935 ../sys-utils/mount.8.adoc:1059
+#: ../sys-utils/mount.8.adoc:936 ../sys-utils/mount.8.adoc:1060
 #, no-wrap
 msgid "**iocharset=**__value__"
 msgstr "**iocharset=**__Wert__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:937
+#: ../sys-utils/mount.8.adoc:938
 msgid ""
 "Character set to use for converting between 8 bit characters and 16 bit "
 "Unicode characters. The default is iso8859-1. Long filenames are stored on "
@@ -38875,20 +38954,20 @@ msgstr ""
 "Dateinamen werden auf der Platte im Unicode-Format gespeichert."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:938
+#: ../sys-utils/mount.8.adoc:939
 #, no-wrap
 msgid "*nfs=*{**stale_rw**|*nostale_ro*}"
 msgstr "*nfs=*{**stale_rw**|*nostale_ro*}"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:940
+#: ../sys-utils/mount.8.adoc:941
 msgid "Enable this only if you want to export the FAT filesystem over NFS."
 msgstr ""
 "Aktivieren Sie dies nur, wenn Sie das FAT-Dateisystem über NFS exportieren "
 "wollen."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:942
+#: ../sys-utils/mount.8.adoc:943
 msgid ""
 "*stale_rw*: This option maintains an index (cache) of directory inodes which "
 "is used by the nfs-related code to improve look-ups. Full file operations "
@@ -38902,7 +38981,7 @@ msgstr ""
 "dem NFS-Server, was fälschliche *ESTALE*-Fehler verursachen könnte."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:944
+#: ../sys-utils/mount.8.adoc:945
 msgid ""
 "*nostale_ro*: This option bases the inode number and file handle on the on-"
 "disk location of a file in the FAT directory entry. This ensures that "
@@ -38922,7 +39001,7 @@ msgstr ""
 "Grund hängt die Option das Dateisystem schreibgeschützt ein."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:946
+#: ../sys-utils/mount.8.adoc:947
 msgid ""
 "To maintain backward compatibility, *-o nfs* is also accepted, defaulting to "
 "*stale_rw*."
@@ -38931,13 +39010,13 @@ msgstr ""
 "*stale_rw*."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:947
+#: ../sys-utils/mount.8.adoc:948
 #, no-wrap
 msgid "*tz=UTC*"
 msgstr "*tz=UTC*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:949
+#: ../sys-utils/mount.8.adoc:950
 msgid ""
 "This option disables the conversion of timestamps between local time (as "
 "used by Windows on FAT) and UTC (which Linux uses internally). This is "
@@ -38951,13 +39030,13 @@ msgstr ""
 "lokalen Zeit zu umgehen."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:950
+#: ../sys-utils/mount.8.adoc:951
 #, no-wrap
 msgid "**time_offset=**__minutes__"
 msgstr "**time_offset=**__Minuten__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:952
+#: ../sys-utils/mount.8.adoc:953
 msgid ""
 "Set offset for conversion of timestamps from local time used by FAT to UTC. "
 "I.e., _minutes_ will be subtracted from each timestamp to convert it to UTC "
@@ -38978,13 +39057,13 @@ msgstr ""
 "eine Stunde versetzt sein."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:953 ../sys-utils/mount.8.adoc:993
+#: ../sys-utils/mount.8.adoc:954 ../sys-utils/mount.8.adoc:994
 #, no-wrap
 msgid "*quiet*"
 msgstr "*quiet*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:955
+#: ../sys-utils/mount.8.adoc:956
 msgid ""
 "Turn on the _quiet_ flag. Attempts to chown or chmod files do not return "
 "errors, although they fail. Use with caution!"
@@ -38994,13 +39073,13 @@ msgstr ""
 "sollten dies mit Vorsicht verwenden!"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:956
+#: ../sys-utils/mount.8.adoc:957
 #, no-wrap
 msgid "*rodir*"
 msgstr "*rodir*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:958
+#: ../sys-utils/mount.8.adoc:959
 msgid ""
 "FAT has the *ATTR_RO* (read-only) attribute. On Windows, the *ATTR_RO* of "
 "the directory will just be ignored, and is used only by applications as a "
@@ -39012,7 +39091,7 @@ msgstr ""
 "benutzerdefinierten Ordner gesetzt)."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:960
+#: ../sys-utils/mount.8.adoc:961
 msgid ""
 "If you want to use *ATTR_RO* as read-only flag even for the directory, set "
 "this option."
@@ -39021,13 +39100,13 @@ msgstr ""
 "Verzeichnis verwenden wollen, setzen Sie diese Option."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:961
+#: ../sys-utils/mount.8.adoc:962
 #, no-wrap
 msgid "*showexec*"
 msgstr "*showexec*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:963
+#: ../sys-utils/mount.8.adoc:964
 msgid ""
 "If set, the execute permission bits of the file will be allowed only if the "
 "extension part of the name is .EXE, .COM, or .BAT. Not set by default."
@@ -39037,13 +39116,13 @@ msgstr ""
 "gesetzt."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:964
+#: ../sys-utils/mount.8.adoc:965
 #, no-wrap
 msgid "*sys_immutable*"
 msgstr "*sys_immutable*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:966
+#: ../sys-utils/mount.8.adoc:967
 msgid ""
 "If set, *ATTR_SYS* attribute on FAT is handled as *IMMUTABLE* flag on Linux. "
 "Not set by default."
@@ -39052,13 +39131,13 @@ msgstr ""
 "*IMMUTABLE* unter Linux behandelt wird. Dies ist standardmäßig nicht gesetzt."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:967
+#: ../sys-utils/mount.8.adoc:968
 #, no-wrap
 msgid "*flush*"
 msgstr "*flush*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:969
+#: ../sys-utils/mount.8.adoc:970
 msgid ""
 "If set, the filesystem will try to flush to disk more early than normal. Not "
 "set by default."
@@ -39067,13 +39146,13 @@ msgstr ""
 "versucht. Dies ist standardmäßig nicht gesetzt."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:970
+#: ../sys-utils/mount.8.adoc:971
 #, no-wrap
 msgid "*usefree*"
 msgstr "*usefree*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:972
+#: ../sys-utils/mount.8.adoc:973
 msgid ""
 "Use the \"free clusters\" value stored on *FSINFO*. It'll be used to "
 "determine number of free clusters without scanning disk. But it's not used "
@@ -39089,13 +39168,13 @@ msgstr ""
 "dass die Platte durchsucht wird."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:973
+#: ../sys-utils/mount.8.adoc:974
 #, no-wrap
 msgid "*dots*, *nodots*, *dotsOK=*[**yes**|*no*]"
 msgstr "*dots*, *nodots*, *dotsOK=*[**yes**|*no*]"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:975
+#: ../sys-utils/mount.8.adoc:976
 msgid ""
 "Various misguided attempts to force Unix or DOS conventions onto a FAT "
 "filesystem."
@@ -39104,19 +39183,19 @@ msgstr ""
 "Dateisystem zu erzwingen."
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:976
+#: ../sys-utils/mount.8.adoc:977
 #, no-wrap
 msgid "Mount options for hfs"
 msgstr "Einhängeoptionen für HFS"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:978
+#: ../sys-utils/mount.8.adoc:979
 #, no-wrap
 msgid "**creator=**__cccc__**, type=**__cccc__"
 msgstr "**creator=**__cccc__**, type=**__cccc__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:980
+#: ../sys-utils/mount.8.adoc:981
 msgid ""
 "Set the creator/type values as shown by the MacOS finder used for creating "
 "new files. Default values: '????'."
@@ -39125,13 +39204,13 @@ msgstr ""
 "zum Anlegen neuer Dateien. Standardwerte: »????«."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:984
+#: ../sys-utils/mount.8.adoc:985
 #, no-wrap
 msgid "**dir_umask=**__n__**, file_umask=**__n__**, umask=**__n__"
 msgstr "**dir_umask=**__n__**, file_umask=**__n__**, umask=**__n__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:986
+#: ../sys-utils/mount.8.adoc:987
 msgid ""
 "Set the umask used for all directories, all regular files, or all files and "
 "directories. Defaults to the umask of the current process."
@@ -39140,13 +39219,13 @@ msgstr ""
 "Dateien und Verzeichnisse. Standardmäßig die Umask des aktuellen Prozesses."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:987
+#: ../sys-utils/mount.8.adoc:988
 #, no-wrap
 msgid "**session=**__n__"
 msgstr "**session=**__n__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:989
+#: ../sys-utils/mount.8.adoc:990
 msgid ""
 "Select the CDROM session to mount. Defaults to leaving that decision to the "
 "CDROM driver. This option will fail with anything but a CDROM as underlying "
@@ -39157,13 +39236,13 @@ msgstr ""
 "darunterliegende Gerät keine CD-ROM ist."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:990
+#: ../sys-utils/mount.8.adoc:991
 #, no-wrap
 msgid "**part=**__n__"
 msgstr "**part=**__n__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:992
+#: ../sys-utils/mount.8.adoc:993
 msgid ""
 "Select partition number n from the device. Only makes sense for CDROMs. "
 "Defaults to not parsing the partition table at all."
@@ -39172,24 +39251,24 @@ msgstr ""
 "Sinn. Standardmäßig wird die Partitionstabelle überhaupt nicht ausgewertet."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:995
+#: ../sys-utils/mount.8.adoc:996
 msgid "Don't complain about invalid mount options."
 msgstr "beschwert sich nicht über unzulässige Einhängeoptionen."
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:996
+#: ../sys-utils/mount.8.adoc:997
 #, no-wrap
 msgid "Mount options for hpfs"
 msgstr "Einhängeoptionen für Hpfs"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1004
+#: ../sys-utils/mount.8.adoc:1005
 #, no-wrap
 msgid "*case=*{**lower**|*asis*}"
 msgstr "*case=*{**lower**|*asis*}"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1006
+#: ../sys-utils/mount.8.adoc:1007
 msgid ""
 "Convert all files names to lower case, or leave them. (Default: "
 "*case=lower*.)"
@@ -39198,32 +39277,32 @@ msgstr ""
 "(Voreinstellung *case=lower*)."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1009 ../sys-utils/mount.8.adoc:1047
+#: ../sys-utils/mount.8.adoc:1010 ../sys-utils/mount.8.adoc:1048
 msgid "This option is obsolete and may fail or being ignored."
 msgstr ""
 "Diese Option ist veraltet und könnte fehlschlagen oder ignoriert werden."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1010
+#: ../sys-utils/mount.8.adoc:1011
 #, no-wrap
 msgid "*nocheck*"
 msgstr "*nocheck*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1012
+#: ../sys-utils/mount.8.adoc:1013
 msgid "Do not abort mounting when certain consistency checks fail."
 msgstr ""
 "bricht die Einhängung nicht ab, wenn bestimmte Konsistenzprüfungen "
 "fehlschlagen."
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1013
+#: ../sys-utils/mount.8.adoc:1014
 #, no-wrap
 msgid "Mount options for iso9660"
 msgstr "Einhängeoptionen für ISO9660"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1016
+#: ../sys-utils/mount.8.adoc:1017
 msgid ""
 "ISO 9660 is a standard describing a filesystem structure to be used on CD-"
 "ROMs. (This filesystem type is also seen on some DVDs. See also the _udf_ "
@@ -39234,7 +39313,7 @@ msgstr ""
 "DVDs, siehe auch das Dateisystem _udf_)."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1018
+#: ../sys-utils/mount.8.adoc:1019
 msgid ""
 "Normal _iso9660_ filenames appear in an 8.3 format (i.e., DOS-like "
 "restrictions on filename length), and in addition all characters are in "
@@ -39248,7 +39327,7 @@ msgstr ""
 "Geräte usw."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1020
+#: ../sys-utils/mount.8.adoc:1021
 msgid ""
 "Rock Ridge is an extension to iso9660 that provides all of these UNIX-like "
 "features. Basically there are extensions to each directory record that "
@@ -39264,26 +39343,26 @@ msgstr ""
 "schreibgeschützt ist)."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1021
+#: ../sys-utils/mount.8.adoc:1022
 #, no-wrap
 msgid "*norock*"
 msgstr "*norock*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1023
+#: ../sys-utils/mount.8.adoc:1024
 msgid "Disable the use of Rock Ridge extensions, even if available. Cf. *map*."
 msgstr ""
 "deaktiviert die Verwendung der Rock-Ridge-Erweiterungen, selbst wenn diese "
 "verfügbar sind. Siehe *map*."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1024
+#: ../sys-utils/mount.8.adoc:1025
 #, no-wrap
 msgid "*nojoliet*"
 msgstr "*nojoliet*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1026
+#: ../sys-utils/mount.8.adoc:1027
 msgid ""
 "Disable the use of Microsoft Joliet extensions, even if available. Cf. *map*."
 msgstr ""
@@ -39291,13 +39370,13 @@ msgstr ""
 "diese verfügbar sind. Siehe *map*."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1027
+#: ../sys-utils/mount.8.adoc:1028
 #, no-wrap
 msgid "*check=*{*r*[*elaxed*]|*s*[*trict*]}"
 msgstr "*check=*{*r*[*elaxed*]|*s*[*trict*]}"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1029
+#: ../sys-utils/mount.8.adoc:1030
 msgid ""
 "With *check=relaxed*, a filename is first converted to lower case before "
 "doing the lookup. This is probably only meaningful together with *norock* "
@@ -39308,7 +39387,7 @@ msgstr ""
 "zusammen mit *norock* und *map=normal* sinnvoll (Standard: *check=strict*)."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1032
+#: ../sys-utils/mount.8.adoc:1033
 msgid ""
 "Give all files in the filesystem the indicated user or group id, possibly "
 "overriding the information found in the Rock Ridge extensions. (Default: "
@@ -39319,13 +39398,13 @@ msgstr ""
 "gefundene Information außer Kraft gesetzt wird (Standard: *uid=0,gid=0*)."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1033
+#: ../sys-utils/mount.8.adoc:1034
 #, no-wrap
 msgid "*map=*{*n*[*ormal*]|*o*[*ff*]|*a*[*corn*]}"
 msgstr "*map=*{*n*[*ormal*]|*o*[*ff*]|*a*[*corn*]}"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1035
+#: ../sys-utils/mount.8.adoc:1036
 msgid ""
 "For non-Rock Ridge volumes, normal name translation maps upper to lower case "
 "ASCII, drops a trailing ';1', and converts ';' to '.'. With *map=off* no "
@@ -39340,7 +39419,7 @@ msgstr ""
 "Erweiterungen angewendet werden, sofern vorhanden."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1038
+#: ../sys-utils/mount.8.adoc:1039
 msgid ""
 "For non-Rock Ridge volumes, give all files the indicated mode. (Default: "
 "read and execute permission for everybody.) Octal mode values require a "
@@ -39351,13 +39430,13 @@ msgstr ""
 "Angabe des Wertes in oktaler Notation ist eine vorangestellte 0 erforderlich."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1039 ../sys-utils/mount.8.adoc:1354
+#: ../sys-utils/mount.8.adoc:1040 ../sys-utils/mount.8.adoc:1355
 #, no-wrap
 msgid "*unhide*"
 msgstr "*unhide*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1041
+#: ../sys-utils/mount.8.adoc:1042
 msgid ""
 "Also show hidden and associated files. (If the ordinary files and the "
 "associated or hidden files have the same filenames, this may make the "
@@ -39368,25 +39447,25 @@ msgstr ""
 "auf die normalen Dateien dadurch verhindert)."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1042
+#: ../sys-utils/mount.8.adoc:1043
 #, no-wrap
 msgid "*block=*{**512**|**1024**|*2048*}"
 msgstr "*block=*{**512**|**1024**|*2048*}"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1044
+#: ../sys-utils/mount.8.adoc:1045
 msgid "Set the block size to the indicated value. (Default: *block=1024*.)"
 msgstr ""
 "setzt die Blockgröße auf den angegebenen Wert (standardmäßig *block=1024*)."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1048
+#: ../sys-utils/mount.8.adoc:1049
 #, no-wrap
 msgid "*cruft*"
 msgstr "*cruft*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1050
+#: ../sys-utils/mount.8.adoc:1051
 msgid ""
 "If the high byte of the file length contains other garbage, set this mount "
 "option to ignore the high order bits of the file length. This implies that a "
@@ -39397,30 +39476,30 @@ msgstr ""
 "größer als 16 MB sein darf."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1051
+#: ../sys-utils/mount.8.adoc:1052
 #, no-wrap
 msgid "**session=**__x__"
 msgstr "**session=**__x__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1053
+#: ../sys-utils/mount.8.adoc:1054
 msgid "Select number of session on a multisession CD."
 msgstr ""
 "wählt die Nummer der Sitzung auf einer Mehrfachsitzung-(Multisession-)CD."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1054
+#: ../sys-utils/mount.8.adoc:1055
 #, no-wrap
 msgid "**sbsector=**__xxx__"
 msgstr "**sbsector=**__xxx__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1056
+#: ../sys-utils/mount.8.adoc:1057
 msgid "Session begins from sector xxx."
 msgstr "gibt an, dass die Sitzung mit dem Sektor xxx beginnt."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1058
+#: ../sys-utils/mount.8.adoc:1059
 msgid ""
 "The following options are the same as for vfat and specifying them only "
 "makes sense when using discs encoded using Microsoft's Joliet extensions."
@@ -39430,7 +39509,7 @@ msgstr ""
 "sind."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1061
+#: ../sys-utils/mount.8.adoc:1062
 msgid ""
 "Character set to use for converting 16 bit Unicode characters on CD to 8 bit "
 "characters. The default is iso8859-1."
@@ -39440,31 +39519,31 @@ msgstr ""
 "iso8859-1."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1062 ../sys-utils/mount.8.adoc:1101
-#: ../sys-utils/mount.8.adoc:1378 ../sys-utils/mount.8.adoc:1476
+#: ../sys-utils/mount.8.adoc:1063 ../sys-utils/mount.8.adoc:1102
+#: ../sys-utils/mount.8.adoc:1379 ../sys-utils/mount.8.adoc:1477
 #, no-wrap
 msgid "*utf8*"
 msgstr "*utf8*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1064
+#: ../sys-utils/mount.8.adoc:1065
 msgid "Convert 16 bit Unicode characters on CD to UTF-8."
 msgstr "wandelt 16-Bit-Unicode-Zeichen auf der CD in UTF-8 um."
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1065
+#: ../sys-utils/mount.8.adoc:1066
 #, no-wrap
 msgid "Mount options for jfs"
 msgstr "Einhängeoptionen für JFS"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1067 ../sys-utils/mount.8.adoc:1095
+#: ../sys-utils/mount.8.adoc:1068 ../sys-utils/mount.8.adoc:1096
 #, no-wrap
 msgid "**iocharset=**__name__"
 msgstr "**iocharset=**__Name__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1069
+#: ../sys-utils/mount.8.adoc:1070
 msgid ""
 "Character set to use for converting from Unicode to ASCII. The default is to "
 "do no conversion. Use *iocharset=utf8* for UTF8 translations. This requires "
@@ -39476,13 +39555,13 @@ msgstr ""
 "*CONFIG_NLS_UTF8* in der Kernelkonfiguration _.config_."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1070
+#: ../sys-utils/mount.8.adoc:1071
 #, no-wrap
 msgid "**resize=**__value__"
 msgstr "**resize=**__Blöcke__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1072
+#: ../sys-utils/mount.8.adoc:1073
 msgid ""
 "Resize the volume to _value_ blocks. JFS only supports growing a volume, not "
 "shrinking it. This option is only valid during a remount, when the volume is "
@@ -39496,13 +39575,13 @@ msgstr ""
 "vergrößert den Datenträger auf die Gesamtgröße der Partition."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1073
+#: ../sys-utils/mount.8.adoc:1074
 #, no-wrap
 msgid "*nointegrity*"
 msgstr "*nointegrity*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1075
+#: ../sys-utils/mount.8.adoc:1076
 msgid ""
 "Do not write to the journal. The primary use of this option is to allow for "
 "higher performance when restoring a volume from backup media. The integrity "
@@ -39514,13 +39593,13 @@ msgstr ""
 "gewährleistet werden, wenn das System unerwartet endet."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1076
+#: ../sys-utils/mount.8.adoc:1077
 #, no-wrap
 msgid "*integrity*"
 msgstr "*integrity*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1078
+#: ../sys-utils/mount.8.adoc:1079
 msgid ""
 "Default. Commit metadata changes to the journal. Use this option to remount "
 "a volume where the *nointegrity* option was previously specified in order to "
@@ -39532,13 +39611,13 @@ msgstr ""
 "wiederherzustellen."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1079
+#: ../sys-utils/mount.8.adoc:1080
 #, no-wrap
 msgid "*errors=*{**continue**|**remount-ro**|*panic*}"
 msgstr "*errors=*{**continue**|**remount-ro**|*panic*}"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1081
+#: ../sys-utils/mount.8.adoc:1082
 msgid ""
 "Define the behavior when an error is encountered. (Either ignore errors and "
 "just mark the filesystem erroneous and continue, or remount the filesystem "
@@ -39550,24 +39629,24 @@ msgstr ""
 "»panic« ausgelöst und das System angehalten)."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1082
+#: ../sys-utils/mount.8.adoc:1083
 #, no-wrap
 msgid "**noquota**|**quota**|**usrquota**|*grpquota*"
 msgstr "**noquota**|**quota**|**usrquota**|*grpquota*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1084
+#: ../sys-utils/mount.8.adoc:1085
 msgid "These options are accepted but ignored."
 msgstr "Diese Optionen werden akzeptiert, aber ignoriert."
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1085
+#: ../sys-utils/mount.8.adoc:1086
 #, no-wrap
 msgid "Mount options for msdos"
 msgstr "Einhängeoptionen für MSDOS"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1088
+#: ../sys-utils/mount.8.adoc:1089
 msgid ""
 "See mount options for fat. If the _msdos_ filesystem detects an "
 "inconsistency, it reports an error and sets the file system read-only. The "
@@ -39579,13 +39658,13 @@ msgstr ""
 "indem es erneut eingehängt wird."
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1089
+#: ../sys-utils/mount.8.adoc:1090
 #, no-wrap
 msgid "Mount options for ncpfs"
 msgstr "Einhängeoptionen für Ncpfs"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1092
+#: ../sys-utils/mount.8.adoc:1093
 msgid ""
 "Just like _nfs_, the _ncpfs_ implementation expects a binary argument (a "
 "_struct ncp_mount_data_) to the *mount*(2) system call. This argument is "
@@ -39598,13 +39677,13 @@ msgstr ""
 "weiß nichts über Ncpfs."
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1093
+#: ../sys-utils/mount.8.adoc:1094
 #, no-wrap
 msgid "Mount options for ntfs"
 msgstr "Einhängeoptionen für NTFS"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1097
+#: ../sys-utils/mount.8.adoc:1098
 msgid ""
 "Character set to use when returning file names. Unlike VFAT, NTFS suppresses "
 "names that contain nonconvertible characters. Deprecated."
@@ -39614,29 +39693,29 @@ msgstr ""
 "Zeichen enthalten. Missbilligt."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1098
+#: ../sys-utils/mount.8.adoc:1099
 #, no-wrap
 msgid "**nls=**__name__"
 msgstr "**nls=**__Name__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1100
+#: ../sys-utils/mount.8.adoc:1101
 msgid "New name for the option earlier called _iocharset_."
 msgstr "ist ein neuer Name für die frühere Option _iocharset_."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1103
+#: ../sys-utils/mount.8.adoc:1104
 msgid "Use UTF-8 for converting file names."
 msgstr "verwendet UTF-8 zur Umwandlung von Dateinamen."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1104
+#: ../sys-utils/mount.8.adoc:1105
 #, no-wrap
 msgid "*uni_xlate=*{**0**|**1**|*2*}"
 msgstr "*uni_xlate=*{**0**|**1**|*2*}"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1106
+#: ../sys-utils/mount.8.adoc:1107
 msgid ""
 "For 0 (or 'no' or 'false'), do not use escape sequences for unknown Unicode "
 "characters. For 1 (or 'yes' or 'true') or 2, use vfat-style 4-byte escape "
@@ -39644,19 +39723,19 @@ msgid ""
 "byteswapped bigendian encoding."
 msgstr ""
 "Für 0 (oder »no« oder »false«) werden keine Escape-Sequenzen für unbekannte "
-"Unicode-Zeichen verwendet. Für 1 (oder »yes« oder »true«) oder 2 werden mit "
-"»:« beginnende 4-Byte-Escape-Sequenzen im VFAT-Stil verwendet: Hier ergibt 2 "
-"eine Little-Endian-Kodierung und 1 eine Big-Endian-Kodierung mit "
+"Unicode-Zeichen verwendet. Für 1 (oder »yes« oder »true«) oder 2 werden "
+"mit »:« beginnende 4-Byte-Escape-Sequenzen im VFAT-Stil verwendet: Hier "
+"ergibt 2 eine Little-Endian-Kodierung und 1 eine Big-Endian-Kodierung mit "
 "vertauschten Bytes."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1107
+#: ../sys-utils/mount.8.adoc:1108
 #, no-wrap
 msgid "*posix=[0|1]*"
 msgstr "*posix=[0|1]*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1109
+#: ../sys-utils/mount.8.adoc:1110
 msgid ""
 "If enabled (posix=1), the filesystem distinguishes between upper and lower "
 "case. The 8.3 alias names are presented as hard links instead of being "
@@ -39667,13 +39746,13 @@ msgstr ""
 "dargestellt, statt unterdrückt zu werden. Diese Option ist veraltet."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1110
+#: ../sys-utils/mount.8.adoc:1111
 #, no-wrap
 msgid "**uid=**__value__, **gid=**__value__ and **umask=**__value__"
 msgstr "**uid=**__Wert__, **gid=**__Wert__ und **umask=**__Wert__"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1112
+#: ../sys-utils/mount.8.adoc:1113
 msgid ""
 "Set the file permission on the filesystem. The umask value is given in "
 "octal. By default, the files are owned by root and not readable by somebody "
@@ -39684,13 +39763,13 @@ msgstr ""
 "und können von anderen nicht gelesen werden."
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1113
+#: ../sys-utils/mount.8.adoc:1114
 #, no-wrap
 msgid "Mount options for overlay"
 msgstr "Einhängeoptionen für Überlagerung"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1116
+#: ../sys-utils/mount.8.adoc:1117
 msgid ""
 "Since Linux 3.18 the overlay pseudo filesystem implements a union mount for "
 "other filesystems."
@@ -39699,7 +39778,7 @@ msgstr ""
 "vereinigte Einhängung für andere Dateisysteme."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1118
+#: ../sys-utils/mount.8.adoc:1119
 msgid ""
 "An overlay filesystem combines two filesystems - an *upper* filesystem and a "
 "*lower* filesystem. When a name exists in both filesystems, the object in "
@@ -39713,7 +39792,7 @@ msgstr ""
 "dem oberen Objekt zusammengeführt wird."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1120
+#: ../sys-utils/mount.8.adoc:1121
 msgid ""
 "The lower filesystem can be any filesystem supported by Linux and does not "
 "need to be writable. The lower filesystem can even be another overlayfs. The "
@@ -39730,7 +39809,7 @@ msgstr ""
 "geeignet."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1122
+#: ../sys-utils/mount.8.adoc:1123
 msgid ""
 "A read-only overlay of two read-only filesystems may use any filesystem "
 "type. The options *lowerdir* and *upperdir* are combined into a merged "
@@ -39741,7 +39820,7 @@ msgstr ""
 "werden folgendermaßen in einem zusammengeführten Verzeichnis kombiniert:"
 
 #. type: delimited block .
-#: ../sys-utils/mount.8.adoc:1127
+#: ../sys-utils/mount.8.adoc:1128
 #, no-wrap
 msgid ""
 "mount -t overlay  overlay  \\\n"
@@ -39751,36 +39830,36 @@ msgstr ""
 "  -olowerdir=/lower,upperdir=/upper,workdir=/work  /merged\n"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1130
+#: ../sys-utils/mount.8.adoc:1131
 #, no-wrap
 msgid "**lowerdir=**__directory__"
 msgstr "**lowerdir=**__Verzeichnis__"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1132
+#: ../sys-utils/mount.8.adoc:1133
 msgid "Any filesystem, does not need to be on a writable filesystem."
 msgstr "Jedes Dateisystem, muss kein schreibbares Dateisystem sein."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1133
+#: ../sys-utils/mount.8.adoc:1134
 #, no-wrap
 msgid "**upperdir=**__directory__"
 msgstr "**upperdir=**__Verzeichnis__"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1135
+#: ../sys-utils/mount.8.adoc:1136
 msgid "The upperdir is normally on a writable filesystem."
 msgstr ""
 "Das obere Verzeichnis liegt normalerweise auf einem schreibbaren Dateisystem."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1136
+#: ../sys-utils/mount.8.adoc:1137
 #, no-wrap
 msgid "**workdir=**__directory__"
 msgstr "**workdir=**__Verzeichnis__"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1138
+#: ../sys-utils/mount.8.adoc:1139
 msgid ""
 "The workdir needs to be an empty directory on the same filesystem as "
 "upperdir."
@@ -39789,13 +39868,13 @@ msgstr ""
 "Dateisystem wie das obere Verzeichnis sein."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1139
+#: ../sys-utils/mount.8.adoc:1140
 #, no-wrap
 msgid "*userxattr*"
 msgstr "*userxattr*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1141
+#: ../sys-utils/mount.8.adoc:1142
 msgid ""
 "Use the \"*user.overlay.*\" xattr namespace instead of \"*trusted.overlay."
 "*\". This is useful for unprivileged mounting of overlayfs."
@@ -39804,13 +39883,13 @@ msgstr ""
 "*. Dies ist für das unprivilegierte Einhängen von Overlayfs nützlich."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1142
+#: ../sys-utils/mount.8.adoc:1143
 #, no-wrap
 msgid "*redirect_dir=*{**on**|**off**|**follow**|**nofollow**}"
 msgstr "*redirect_dir=*{**on**|**off**|**follow**|**nofollow**}"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1144
+#: ../sys-utils/mount.8.adoc:1145
 msgid ""
 "If the _redirect_dir_ feature is enabled, then the directory will be copied "
 "up (but not the contents). Then the \"{**trusted**|**user**}.overlay."
@@ -39825,25 +39904,25 @@ msgstr ""
 "wird das Verzeichnis an den neuen Ort verschoben."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1145 ../sys-utils/rtcwake.8.adoc:84
+#: ../sys-utils/mount.8.adoc:1146 ../sys-utils/rtcwake.8.adoc:84
 #, no-wrap
 msgid "*on*"
 msgstr "*on*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1147
+#: ../sys-utils/mount.8.adoc:1148
 msgid "Redirects are enabled."
 msgstr "Umleitungen sind aktiviert."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1148 ../sys-utils/rtcwake.8.adoc:78
+#: ../sys-utils/mount.8.adoc:1149 ../sys-utils/rtcwake.8.adoc:78
 #: ../term-utils/setterm.1.adoc:124
 #, no-wrap
 msgid "*off*"
 msgstr "*off*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1150
+#: ../sys-utils/mount.8.adoc:1151
 msgid ""
 "Redirects are not created and only followed if \"redirect_always_follow\" "
 "feature is enabled in the kernel/module config."
@@ -39853,24 +39932,24 @@ msgstr ""
 "aktiviert ist."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1151
+#: ../sys-utils/mount.8.adoc:1152
 #, no-wrap
 msgid "*follow*"
 msgstr "*follow*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1153
+#: ../sys-utils/mount.8.adoc:1154
 msgid "Redirects are not created, but followed."
 msgstr "Umleitungen werden nicht erstellt, aber ihnen wird gefolgt."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1154
+#: ../sys-utils/mount.8.adoc:1155
 #, no-wrap
 msgid "*nofollow*"
 msgstr "*nofollow*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1156
+#: ../sys-utils/mount.8.adoc:1157
 msgid ""
 "Redirects are not created and not followed (equivalent to "
 "\"redirect_dir=off\" if \"redirect_always_follow\" feature is not enabled)."
@@ -39880,13 +39959,13 @@ msgstr ""
 "»redirect_always_follow« nicht aktiviert ist)."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1157
+#: ../sys-utils/mount.8.adoc:1158
 #, no-wrap
 msgid "*index=*{**on**|**off**}"
 msgstr "*index=*{**on**|**off**}"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1159
+#: ../sys-utils/mount.8.adoc:1160
 msgid ""
 "Inode index. If this feature is disabled and a file with multiple hard links "
 "is copied up, then this will \"break\" the link. Changes will not be "
@@ -39898,13 +39977,13 @@ msgstr ""
 "die sich auf den selben Inode beziehen."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1160
+#: ../sys-utils/mount.8.adoc:1161
 #, no-wrap
 msgid "*uuid=*{**on**|**off**}"
 msgstr "*uuid=*{**on**|**off**}"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1162
+#: ../sys-utils/mount.8.adoc:1163
 msgid ""
 "Can be used to replace UUID of the underlying filesystem in file handles "
 "with null, and effectively disable UUID checks. This can be useful in case "
@@ -39921,13 +40000,13 @@ msgstr ""
 "zurück."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1163
+#: ../sys-utils/mount.8.adoc:1164
 #, no-wrap
 msgid "*nfs_export=*{**on**|**off**}"
 msgstr "*nfs_export=*{**on**|**off**}"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1166
+#: ../sys-utils/mount.8.adoc:1167
 msgid ""
 "When the underlying filesystems supports NFS export and the \"nfs_export\" "
 "feature is enabled, an overlay filesystem may be exported to NFS."
@@ -39937,7 +40016,7 @@ msgstr ""
 "NFS exportiert werden."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1173
+#: ../sys-utils/mount.8.adoc:1174
 msgid ""
 "With the \"nfs_export\" feature, on copy_up of any lower object, an index "
 "entry is created under the index directory. The index entry name is the "
@@ -39956,27 +40035,27 @@ msgstr ""
 "einkodierten Datei-Handle der oberen Verzeichnis-Inode."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1174
+#: ../sys-utils/mount.8.adoc:1175
 #, no-wrap
 msgid "When encoding a file handle from an overlay filesystem object, the following rules apply"
 msgstr "Beim Kodieren eines Datei-Handles von einem Überlagerungs-Dateisystemobjekt gelten die folgenden Regeln:"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1177
+#: ../sys-utils/mount.8.adoc:1178
 msgid "For a non-upper object, encode a lower file handle from lower inode"
 msgstr ""
 "Für ein Objekt, das nicht oben ist, wird ein niedrigerer Datei-Handle von "
 "einer niedrigeren Inode kodiert."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1178
+#: ../sys-utils/mount.8.adoc:1179
 msgid "For an indexed object, encode a lower file handle from copy_up origin"
 msgstr ""
 "Für in indiziertes Objekt wird ein niedriger Datei-Handle vom copy_up-"
 "Ursprung kodiert."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1179
+#: ../sys-utils/mount.8.adoc:1180
 msgid ""
 "For a pure-upper object and for an existing non-indexed upper object, encode "
 "an upper file handle from upper inode"
@@ -39985,54 +40064,54 @@ msgstr ""
 "oberes Objekt wird ein oberer Datei-Handle von einem oberen Inode kodiert."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1181
+#: ../sys-utils/mount.8.adoc:1182
 #, no-wrap
 msgid "The encoded overlay file handle includes"
 msgstr "Das kodierte Überlagerungs-Datei-Handle enthält"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1184
+#: ../sys-utils/mount.8.adoc:1185
 msgid "Header including path type information (e.g. lower/upper)"
 msgstr "Kopfzeilen, einschließlich Pfadtypinformationen (z.B. oberer/unterer)"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1185
+#: ../sys-utils/mount.8.adoc:1186
 msgid "UUID of the underlying filesystem"
 msgstr "UUID des zugrundeliegenden Dateisystems"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1186
+#: ../sys-utils/mount.8.adoc:1187
 msgid "Underlying filesystem encoding of underlying inode"
 msgstr "Zugrundeliegende Dateisystemkodierung der zugrundeliegenden Inode"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1188
+#: ../sys-utils/mount.8.adoc:1189
 #, no-wrap
 msgid "This encoding format is identical to the encoding format of file handles that are stored in extended attribute \"{**trusted**|**user**}.overlay.origin\". When decoding an overlay file handle, the following steps are followed"
 msgstr "Dieses Kodierungsformat ist identisch zu dem Kodierungsformat von Datei-Handles, die im erweiterten Attribut »{**trusted**|**user**}.overlay.origin« gespeichert sind. Beim Dekodieren eines Überlagerungs-Datei-Handles werden die folgenden Schritte durchlaufen."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1191
+#: ../sys-utils/mount.8.adoc:1192
 msgid "Find underlying layer by UUID and path type information."
 msgstr ""
 "Die zugrundeliegende Ebene durch UUID- und Pfadinformationen ermitteln."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1192
+#: ../sys-utils/mount.8.adoc:1193
 msgid "Decode the underlying filesystem file handle to underlying dentry."
 msgstr ""
 "Das zugrundeliegende Dateisystem-Handle auf den zugrundeliegenden Dentry "
 "dekodieren."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1193
+#: ../sys-utils/mount.8.adoc:1194
 msgid "For a lower file handle, lookup the handle in index directory by name."
 msgstr ""
 "Für einen unteren Datei-Handle den Handle im Indexverzeichnis durch den "
 "Namen nachschlagen."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1194
+#: ../sys-utils/mount.8.adoc:1195
 msgid ""
 "If a whiteout is found in index, return **ESTALE**. This represents an "
 "overlay object that was deleted after its file handle was encoded."
@@ -40042,7 +40121,7 @@ msgstr ""
 "Handle kodiert wurde."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1195
+#: ../sys-utils/mount.8.adoc:1196
 msgid ""
 "For a non-directory, instantiate a disconnected overlay dentry from the "
 "decoded underlying dentry, the path type and index inode, if found."
@@ -40052,7 +40131,7 @@ msgstr ""
 "Pfadtyp und dem Index-Inode instanziiert, falls diese gefunden werden."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1196
+#: ../sys-utils/mount.8.adoc:1197
 msgid ""
 "For a directory, use the connected underlying decoded dentry, path type and "
 "index, to lookup a connected overlay dentry."
@@ -40062,7 +40141,7 @@ msgstr ""
 "nachzuschlagen."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1202
+#: ../sys-utils/mount.8.adoc:1203
 msgid ""
 "Decoding a non-directory file handle may return a disconnected dentry. "
 "copy_up of that disconnected dentry will create an upper index entry with no "
@@ -40074,7 +40153,7 @@ msgstr ""
 "Alias erstellen."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1214
+#: ../sys-utils/mount.8.adoc:1215
 msgid ""
 "When overlay filesystem has multiple lower layers, a middle layer directory "
 "may have a \"redirect\" to lower directory. Because middle layer "
@@ -40106,7 +40185,7 @@ msgstr ""
 "abgeschaltet werden (z.B. »__redirect_dir=nofollow__«)."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1216
+#: ../sys-utils/mount.8.adoc:1217
 msgid ""
 "The overlay filesystem does not support non-directory connectable file "
 "handles, so exporting with the _subtree_check_ exportfs configuration will "
@@ -40118,7 +40197,7 @@ msgstr ""
 "über NFS."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1218
+#: ../sys-utils/mount.8.adoc:1219
 msgid ""
 "When the NFS export feature is enabled, all directory index entries are "
 "verified on mount time to check that upper file handles are not stale. This "
@@ -40130,7 +40209,7 @@ msgstr ""
 "einigen Fällen zu einem signifikanten Zusatzaufwand führen."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1221
+#: ../sys-utils/mount.8.adoc:1222
 msgid ""
 "Note: the mount options __index=off,nfs_export=on__ are conflicting for a "
 "read-write mount and will result in an error."
@@ -40140,13 +40219,13 @@ msgstr ""
 "hervorrufen."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1223
+#: ../sys-utils/mount.8.adoc:1224
 #, no-wrap
 msgid "*xino=*{**on**|**off**|**auto**}"
 msgstr "*xino=*{**on**|**off**|**auto**}"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1225
+#: ../sys-utils/mount.8.adoc:1226
 msgid ""
 "The \"xino\" feature composes a unique object identifier from the real "
 "object st_ino and an underlying fsid index. The \"xino\" feature uses the "
@@ -40164,7 +40243,7 @@ msgstr ""
 "Verhalten ohne xino für diese Inode zurückfallen."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1227
+#: ../sys-utils/mount.8.adoc:1228
 msgid ""
 "For a detailed description of the effect of this option please refer to "
 "https://docs.kernel.org/filesystems/overlayfs.html"
@@ -40173,13 +40252,13 @@ msgstr ""
 "docs.kernel.org/filesystems/overlayfs.html"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1228
+#: ../sys-utils/mount.8.adoc:1229
 #, no-wrap
 msgid "*metacopy=*{**on**|**off**}"
 msgstr "*metacopy=*{**on**|**off**}"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1230
+#: ../sys-utils/mount.8.adoc:1231
 msgid ""
 "When metadata only copy up feature is enabled, overlayfs will only copy up "
 "metadata (as opposed to whole file), when a metadata specific operation like "
@@ -40193,7 +40272,7 @@ msgstr ""
 "Datei für eine WRITE-Aktion geöffnet ist."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1232
+#: ../sys-utils/mount.8.adoc:1233
 msgid ""
 "In other words, this is delayed data copy up operation and data is copied up "
 "when there is a need to actually modify data."
@@ -40202,13 +40281,13 @@ msgstr ""
 "werden erst hochkopiert, wenn tatsächlich Daten geändert werden müssen."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1233
+#: ../sys-utils/mount.8.adoc:1234
 #, no-wrap
 msgid "*volatile*"
 msgstr "*volatile*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1235
+#: ../sys-utils/mount.8.adoc:1236
 msgid ""
 "Volatile mounts are not guaranteed to survive a crash. It is strongly "
 "recommended that volatile mounts are only used if data written to the "
@@ -40220,7 +40299,7 @@ msgstr ""
 "nennenswerten Aufwand wiederhergestellt werden können."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1237
+#: ../sys-utils/mount.8.adoc:1238
 msgid ""
 "The advantage of mounting with the \"volatile\" option is that all forms of "
 "sync calls to the upper filesystem are omitted."
@@ -40229,7 +40308,7 @@ msgstr ""
 "von Sync-Aufrufen zum oberen Dateisystem weggelassen werden."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1239
+#: ../sys-utils/mount.8.adoc:1240
 msgid ""
 "In order to avoid a giving a false sense of safety, the syncfs (and fsync) "
 "semantics of volatile mounts are slightly different than that of the rest of "
@@ -40250,7 +40329,7 @@ msgstr ""
 "verursacht hat."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1241
+#: ../sys-utils/mount.8.adoc:1242
 msgid ""
 "When overlay is mounted with \"volatile\" option, the directory \"$workdir/"
 "work/incompat/volatile\" is created. During next mount, overlay checks for "
@@ -40271,24 +40350,24 @@ msgstr ""
 "werden."
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1242
+#: ../sys-utils/mount.8.adoc:1243
 #, no-wrap
 msgid "Mount options for reiserfs"
 msgstr "Einhängeoptionen für Reiserfs"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1245
+#: ../sys-utils/mount.8.adoc:1246
 msgid "Reiserfs is a journaling filesystem."
 msgstr "Reiserfs ist ein Journaling-Dateisystem."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1246
+#: ../sys-utils/mount.8.adoc:1247
 #, no-wrap
 msgid "*conv*"
 msgstr "*conv*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1248
+#: ../sys-utils/mount.8.adoc:1249
 msgid ""
 "Instructs version 3.6 reiserfs software to mount a version 3.5 filesystem, "
 "using the 3.6 format for newly created objects. This filesystem will no "
@@ -40300,13 +40379,13 @@ msgstr ""
 "kompatibel."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1249
+#: ../sys-utils/mount.8.adoc:1250
 #, no-wrap
 msgid "*hash=*{**rupasov**|**tea**|**r5**|*detect*}"
 msgstr "*hash=*{**rupasov**|**tea**|**r5**|*detect*}"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1251
+#: ../sys-utils/mount.8.adoc:1252
 msgid ""
 "Choose which hash function reiserfs will use to find files within "
 "directories."
@@ -40315,13 +40394,13 @@ msgstr ""
 "Verzeichnissen zu finden."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1252
+#: ../sys-utils/mount.8.adoc:1253
 #, no-wrap
 msgid "*rupasov*"
 msgstr "*rupasov*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1254
+#: ../sys-utils/mount.8.adoc:1255
 msgid ""
 "A hash invented by Yury Yu. Rupasov. It is fast and preserves locality, "
 "mapping lexicographically close file names to close hash values. This option "
@@ -40333,13 +40412,13 @@ msgstr ""
 "Wahrscheinlichkeit von Hash-Kollisionen erhöht."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1255
+#: ../sys-utils/mount.8.adoc:1256
 #, no-wrap
 msgid "*tea*"
 msgstr "*tea*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1257
+#: ../sys-utils/mount.8.adoc:1258
 msgid ""
 "A Davis-Meyer function implemented by Jeremy Fitzhardinge. It uses hash "
 "permuting bits in the name. It gets high randomness and, therefore, low "
@@ -40353,13 +40432,13 @@ msgstr ""
 "Hash *EHASHCOLLISION*-Fehler auftreten."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1258
+#: ../sys-utils/mount.8.adoc:1259
 #, no-wrap
 msgid "*r5*"
 msgstr "*r5*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1260
+#: ../sys-utils/mount.8.adoc:1261
 msgid ""
 "A modified version of the rupasov hash. It is used by default and is the "
 "best choice unless the filesystem has huge directories and unusual file-name "
@@ -40370,13 +40449,13 @@ msgstr ""
 "Verzeichnisse und ungewöhnliche Dateinamensmuster."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1261
+#: ../sys-utils/mount.8.adoc:1262
 #, no-wrap
 msgid "*detect*"
 msgstr "*detect*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1263
+#: ../sys-utils/mount.8.adoc:1264
 msgid ""
 "Instructs *mount* to detect which hash function is in use by examining the "
 "filesystem being mounted, and to write this information into the reiserfs "
@@ -40389,13 +40468,13 @@ msgstr ""
 "Dateisystems des alten Formats nützlich."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1264
+#: ../sys-utils/mount.8.adoc:1265
 #, no-wrap
 msgid "*hashed_relocation*"
 msgstr "*hashed_relocation*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1266 ../sys-utils/mount.8.adoc:1269
+#: ../sys-utils/mount.8.adoc:1267 ../sys-utils/mount.8.adoc:1270
 msgid ""
 "Tunes the block allocator. This may provide performance improvements in some "
 "situations."
@@ -40404,19 +40483,19 @@ msgstr ""
 "Performance verbessern."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1267
+#: ../sys-utils/mount.8.adoc:1268
 #, no-wrap
 msgid "*no_unhashed_relocation*"
 msgstr "*no_unhashed_relocation*"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1270
+#: ../sys-utils/mount.8.adoc:1271
 #, no-wrap
 msgid "*noborder*"
 msgstr "*noborder*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1272
+#: ../sys-utils/mount.8.adoc:1273
 msgid ""
 "Disable the border allocator algorithm invented by Yury Yu. Rupasov. This "
 "may provide performance improvements in some situations."
@@ -40425,13 +40504,13 @@ msgstr ""
 "Algorithmus. Dies kann in einigen Situationen die Performance verbessern."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1273
+#: ../sys-utils/mount.8.adoc:1274
 #, no-wrap
 msgid "*nolog*"
 msgstr "*nolog*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1275
+#: ../sys-utils/mount.8.adoc:1276
 msgid ""
 "Disable journaling. This will provide slight performance improvements in "
 "some situations at the cost of losing reiserfs's fast recovery from crashes. "
@@ -40447,13 +40526,13 @@ msgstr ""
 "Journaling-Bereich. An der Implementation von _nolog_ wird noch gearbeitet."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1276
+#: ../sys-utils/mount.8.adoc:1277
 #, no-wrap
 msgid "*notail*"
 msgstr "*notail*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1278
+#: ../sys-utils/mount.8.adoc:1279
 msgid ""
 "By default, reiserfs stores small files and 'file tails' directly into its "
 "tree. This confuses some utilities such as *lilo*(8). This option is used to "
@@ -40464,13 +40543,13 @@ msgstr ""
 "einige Dienstprogramme wie *lilo*(8)."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1279
+#: ../sys-utils/mount.8.adoc:1280
 #, no-wrap
 msgid "*replayonly*"
 msgstr "*replayonly*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1281
+#: ../sys-utils/mount.8.adoc:1282
 msgid ""
 "Replay the transactions which are in the journal, but do not actually mount "
 "the filesystem. Mainly used by _reiserfsck_."
@@ -40480,13 +40559,13 @@ msgstr ""
 "verwendet."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1282
+#: ../sys-utils/mount.8.adoc:1283
 #, no-wrap
 msgid "**resize=**__number__"
 msgstr "**resize=**__Anzahl__"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1284
+#: ../sys-utils/mount.8.adoc:1285
 msgid ""
 "A remount option which permits online expansion of reiserfs partitions. "
 "Instructs reiserfs to assume that the device has _number_ blocks. This "
@@ -40502,38 +40581,38 @@ msgstr ""
 "das auf _ftp://ftp.namesys.com/pub/reiserfsprogs_ verfügbar ist."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1285
+#: ../sys-utils/mount.8.adoc:1286
 #, no-wrap
 msgid "*user_xattr*"
 msgstr "*user_xattr*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1287
+#: ../sys-utils/mount.8.adoc:1288
 msgid "Enable Extended User Attributes. See the *attr*(1) manual page."
 msgstr ""
 "aktiviert die erweiterten Benutzerattribute (»Extended User Attributes«). "
 "Siehe die Handbuchseite *attr*(1)."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1288
+#: ../sys-utils/mount.8.adoc:1289
 #, no-wrap
 msgid "*acl*"
 msgstr "*acl*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1290
+#: ../sys-utils/mount.8.adoc:1291
 msgid "Enable POSIX Access Control Lists. See the *acl*(5) manual page."
 msgstr ""
 "aktiviert die POSIX-Zugriffssteuerlisten. Siehe die Handbuchseite *acl*(5)."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1291
+#: ../sys-utils/mount.8.adoc:1292
 #, no-wrap
 msgid "*barrier=none* / *barrier=flush*"
 msgstr "*barrier=none* / *barrier=flush*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1293
+#: ../sys-utils/mount.8.adoc:1294
 msgid ""
 "This disables / enables the use of write barriers in the journaling code. "
 "*barrier=none* disables, *barrier=flush* enables (default). This also "
@@ -40556,13 +40635,13 @@ msgstr ""
 "sicher die Performance verbessern."
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1294
+#: ../sys-utils/mount.8.adoc:1295
 #, no-wrap
 msgid "Mount options for ubifs"
 msgstr "Einhängeoptionen für Ubifs"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1297
+#: ../sys-utils/mount.8.adoc:1298
 msgid ""
 "UBIFS is a flash filesystem which works on top of UBI volumes. Note that "
 "*atime* is not supported and is always turned off."
@@ -40572,72 +40651,72 @@ msgstr ""
 "abgeschaltet ist."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1299
+#: ../sys-utils/mount.8.adoc:1300
 msgid "The device name may be specified as"
 msgstr "Der Gerätename kann folgendermaßen angegeben werden:"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1301
+#: ../sys-utils/mount.8.adoc:1302
 #, no-wrap
 msgid "*ubiX_Y*"
 msgstr "*ubiX_Y*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1303
+#: ../sys-utils/mount.8.adoc:1304
 msgid "UBI device number *X*, volume number *Y*"
 msgstr "UBI-Gerätenummer *0*, Datenträgernummer *Y*"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1303
+#: ../sys-utils/mount.8.adoc:1304
 #, no-wrap
 msgid "*ubiY*"
 msgstr "*ubiY*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1305
+#: ../sys-utils/mount.8.adoc:1306
 msgid "UBI device number *0*, volume number *Y*"
 msgstr "UBI-Gerätenummer *0*, Datenträgernummer *Y*"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1305
+#: ../sys-utils/mount.8.adoc:1306
 #, no-wrap
 msgid "*ubiX:NAME*"
 msgstr "*ubiX:NAME*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1307
+#: ../sys-utils/mount.8.adoc:1308
 msgid "UBI device number *X*, volume with name *NAME*"
 msgstr "UBI-Gerätenummer *X*, Datenträger mit dem Namen *NAME*"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1307
+#: ../sys-utils/mount.8.adoc:1308
 #, no-wrap
 msgid "*ubi:NAME*"
 msgstr "*ubi:NAME*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1309
+#: ../sys-utils/mount.8.adoc:1310
 msgid "UBI device number *0*, volume with name *NAME*"
 msgstr "UBI-Gerätenummer *0*, Datenträger mit dem Namen *NAME*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1312
+#: ../sys-utils/mount.8.adoc:1313
 msgid "Alternative *!* separator may be used instead of *:*."
 msgstr "Alternativ kann *!* als Trenner anstelle von *:* angegeben werden."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1314
+#: ../sys-utils/mount.8.adoc:1315
 msgid "The following mount options are available:"
 msgstr "Die folgenden Einhängeoptionen sind verfügbar:"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1315
+#: ../sys-utils/mount.8.adoc:1316
 #, no-wrap
 msgid "*bulk_read*"
 msgstr "*bulk_read*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1317
+#: ../sys-utils/mount.8.adoc:1318
 msgid ""
 "Enable bulk-read. VFS read-ahead is disabled because it slows down the "
 "filesystem. Bulk-Read is an internal optimization. Some flashes may read "
@@ -40652,36 +40731,36 @@ msgstr ""
 "»Lesen-beim-Laden« ausführen, wenn es mehr als eine NAND-Seite liest."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1318
+#: ../sys-utils/mount.8.adoc:1319
 #, no-wrap
 msgid "*no_bulk_read*"
 msgstr "*no_bulk_read*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1320
+#: ../sys-utils/mount.8.adoc:1321
 msgid "Do not bulk-read. This is the default."
 msgstr "deaktiviert Lesen in einem Zug. Dies ist der Standard."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1321
+#: ../sys-utils/mount.8.adoc:1322
 #, no-wrap
 msgid "*chk_data_crc*"
 msgstr "*chk_data_crc*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1323
+#: ../sys-utils/mount.8.adoc:1324
 msgid "Check data CRC-32 checksums. This is the default."
 msgstr ""
 "überprüft die CRC-32-Prüfsummen der Daten. Dies ist die Voreinstellung."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1324
+#: ../sys-utils/mount.8.adoc:1325
 #, no-wrap
 msgid "*no_chk_data_crc*"
 msgstr "*no_chk_data_crc*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1326
+#: ../sys-utils/mount.8.adoc:1327
 msgid ""
 "Do not check data CRC-32 checksums. With this option, the filesystem does "
 "not check CRC-32 checksum for data, but it does check it for the internal "
@@ -40695,13 +40774,13 @@ msgstr ""
 "werden beim Schreiben der Daten immer errechnet."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1327
+#: ../sys-utils/mount.8.adoc:1328
 #, no-wrap
 msgid "*compr=*{**none**|**lzo**|*zlib*}"
 msgstr "*compr=*{**none**|**lzo**|*zlib*}"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1329
+#: ../sys-utils/mount.8.adoc:1330
 msgid ""
 "Select the default compressor which is used when new files are written. It "
 "is still possible to read compressed files if mounted with the *none* option."
@@ -40711,13 +40790,13 @@ msgstr ""
 "mit der Option *none* eingehängt sind."
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1330
+#: ../sys-utils/mount.8.adoc:1331
 #, no-wrap
 msgid "Mount options for udf"
 msgstr "Einhängeoptionen für UDF"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1333
+#: ../sys-utils/mount.8.adoc:1334
 msgid ""
 "UDF is the \"Universal Disk Format\" filesystem defined by OSTA, the Optical "
 "Storage Technology Association, and is often used for DVD-ROM, frequently in "
@@ -40733,13 +40812,13 @@ msgstr ""
 "_iso9660_."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1334
+#: ../sys-utils/mount.8.adoc:1335
 #, no-wrap
 msgid "*uid=*"
 msgstr "*uid=*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1336
+#: ../sys-utils/mount.8.adoc:1337
 msgid ""
 "Make all files in the filesystem belong to the given user. uid=forget can be "
 "specified independently of (or usually in addition to) uid=<user> and "
@@ -40758,13 +40837,13 @@ msgstr ""
 "spezielle Zeichenkette »forget«."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1337
+#: ../sys-utils/mount.8.adoc:1338
 #, no-wrap
 msgid "*gid=*"
 msgstr "*gid=*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1339
+#: ../sys-utils/mount.8.adoc:1340
 msgid ""
 "Make all files in the filesystem belong to the given group. gid=forget can "
 "be specified independently of (or usually in addition to) gid=<group> and "
@@ -40783,13 +40862,13 @@ msgstr ""
 "Zeichenkette »forget«."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1340
+#: ../sys-utils/mount.8.adoc:1341
 #, no-wrap
 msgid "*umask=*"
 msgstr "*umask=*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1342
+#: ../sys-utils/mount.8.adoc:1343
 msgid ""
 "Mask out the given permissions from all inodes read from the filesystem. The "
 "value is given in octal."
@@ -40798,13 +40877,13 @@ msgstr ""
 "Wert wird in oktaler Notation angegeben."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1343
+#: ../sys-utils/mount.8.adoc:1344
 #, no-wrap
 msgid "*mode=*"
 msgstr "*mode=*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1345
+#: ../sys-utils/mount.8.adoc:1346
 msgid ""
 "If *mode=* is set the permissions of all non-directory inodes read from the "
 "filesystem will be set to the given mode. The value is given in octal."
@@ -40814,13 +40893,13 @@ msgstr ""
 "Der Wert wird in oktaler Notation angegeben."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1346
+#: ../sys-utils/mount.8.adoc:1347
 #, no-wrap
 msgid "*dmode=*"
 msgstr "*dmode=*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1348
+#: ../sys-utils/mount.8.adoc:1349
 msgid ""
 "If *dmode=* is set the permissions of all directory inodes read from the "
 "filesystem will be set to the given dmode. The value is given in octal."
@@ -40830,13 +40909,13 @@ msgstr ""
 "angegeben."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1349
+#: ../sys-utils/mount.8.adoc:1350
 #, no-wrap
 msgid "*bs=*"
 msgstr "*bs=*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1351
+#: ../sys-utils/mount.8.adoc:1352
 msgid ""
 "Set the block size. Default value prior to kernel version 2.6.30 was 2048. "
 "Since 2.6.30 and prior to 4.11 it was logical device block size with "
@@ -40850,7 +40929,7 @@ msgstr ""
 "zwischen der Blockgröße des logischen Gerätes und 4096."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1353
+#: ../sys-utils/mount.8.adoc:1354
 msgid ""
 "For other details see the *mkudffs*(8) 2.0+ manpage, see the *COMPATIBILITY* "
 "and *BLOCK SIZE* sections."
@@ -40859,84 +40938,84 @@ msgstr ""
 "*COMPATIBILITY* und *BLOCK SIZE*."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1356
+#: ../sys-utils/mount.8.adoc:1357
 msgid "Show otherwise hidden files."
 msgstr "zeigt ansonsten verborgene Dateien an."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1357
+#: ../sys-utils/mount.8.adoc:1358
 #, no-wrap
 msgid "*undelete*"
 msgstr "*undelete*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1359
+#: ../sys-utils/mount.8.adoc:1360
 msgid "Show deleted files in lists."
 msgstr "zeigt gelöschte Dateien in Listen an."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1360
+#: ../sys-utils/mount.8.adoc:1361
 #, no-wrap
 msgid "*adinicb*"
 msgstr "*adinicb*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1362
+#: ../sys-utils/mount.8.adoc:1363
 msgid "Embed data in the inode. (default)"
 msgstr "bettet Daten im Inode ein (Standard)."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1363
+#: ../sys-utils/mount.8.adoc:1364
 #, no-wrap
 msgid "*noadinicb*"
 msgstr "*noadinicb*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1365
+#: ../sys-utils/mount.8.adoc:1366
 msgid "Don't embed data in the inode."
 msgstr "bettet keine Daten im Inode ein."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1366
+#: ../sys-utils/mount.8.adoc:1367
 #, no-wrap
 msgid "*shortad*"
 msgstr "*shortad*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1368
+#: ../sys-utils/mount.8.adoc:1369
 msgid "Use short UDF address descriptors."
 msgstr "verwendet kurze UDF-Adressdeskriptoren."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1369
+#: ../sys-utils/mount.8.adoc:1370
 #, no-wrap
 msgid "*longad*"
 msgstr "*longad*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1371
+#: ../sys-utils/mount.8.adoc:1372
 msgid "Use long UDF address descriptors. (default)"
 msgstr "verwendet lange UDF-Adressdeskriptoren (Standard)."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1372
+#: ../sys-utils/mount.8.adoc:1373
 #, no-wrap
 msgid "*nostrict*"
 msgstr "*nostrict*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1374
+#: ../sys-utils/mount.8.adoc:1375
 msgid "Unset strict conformance."
 msgstr "setzt die strikte Konformität zurück."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1375
+#: ../sys-utils/mount.8.adoc:1376
 #, no-wrap
 msgid "*iocharset=*"
 msgstr "*iocharset=*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1377
+#: ../sys-utils/mount.8.adoc:1378
 msgid ""
 "Set the NLS character set. This requires kernel compiled with "
 "*CONFIG_UDF_NLS* option."
@@ -40945,37 +41024,37 @@ msgstr ""
 "der Option *CONFIG_UDF_NLS* kompiliert wurde."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1380
+#: ../sys-utils/mount.8.adoc:1381
 msgid "Set the UTF-8 character set."
 msgstr "legt den UTF-8-Zeichensatz fest."
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1381
+#: ../sys-utils/mount.8.adoc:1382
 #, no-wrap
 msgid "Mount options for debugging and disaster recovery"
 msgstr "Einhängeoptionen für Fehlersuche (Debugging) und Notfallwiederherstellung"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1383
+#: ../sys-utils/mount.8.adoc:1384
 #, no-wrap
 msgid "*novrs*"
 msgstr "*novrs*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1385
+#: ../sys-utils/mount.8.adoc:1386
 msgid "Ignore the Volume Recognition Sequence and attempt to mount anyway."
 msgstr ""
 "ignoriert die »Volume Recognition Sequence« und versucht, trotzdem "
 "einzuhängen."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1386
+#: ../sys-utils/mount.8.adoc:1387
 #, no-wrap
 msgid "*session=*"
 msgstr "*session=*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1388
+#: ../sys-utils/mount.8.adoc:1389
 msgid ""
 "Select the session number for multi-session recorded optical media. "
 "(default= last session)"
@@ -40984,100 +41063,100 @@ msgstr ""
 "aufgenommen sind (Standard: die letzte Sitzung)."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1389
+#: ../sys-utils/mount.8.adoc:1390
 #, no-wrap
 msgid "*anchor=*"
 msgstr "*anchor=*"
 
 # CHECK anchor
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1391
+#: ../sys-utils/mount.8.adoc:1392
 msgid "Override standard anchor location. (default= 256)"
 msgstr "setzt den Standardort des Ankers außer Kraft (Standard: 256)."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1392
+#: ../sys-utils/mount.8.adoc:1393
 #, no-wrap
 msgid "*lastblock=*"
 msgstr "*lastblock=*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1394
+#: ../sys-utils/mount.8.adoc:1395
 msgid "Set the last block of the filesystem."
 msgstr "setzt den letzten Block des Dateisystems."
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1395
+#: ../sys-utils/mount.8.adoc:1396
 #, no-wrap
 msgid "Unused historical mount options that may be encountered and should be removed"
 msgstr "Nicht mehr genutzte frühere Einhängeoptionen, die Sie entdecken könnten und entfernt werden sollten"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1397
+#: ../sys-utils/mount.8.adoc:1398
 #, no-wrap
 msgid "*uid=ignore*"
 msgstr "*uid=ignore*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1399
+#: ../sys-utils/mount.8.adoc:1400
 msgid "Ignored, use uid=<user> instead."
 msgstr "wird ignoriert, verwenden Sie stattdessen uid=<Benutzer>."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1400
+#: ../sys-utils/mount.8.adoc:1401
 #, no-wrap
 msgid "*gid=ignore*"
 msgstr "*gid=ignore*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1402
+#: ../sys-utils/mount.8.adoc:1403
 msgid "Ignored, use gid=<group> instead."
 msgstr "wird ignoriert, verwenden Sie stattdessen gid=<Gruppe>."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1403
+#: ../sys-utils/mount.8.adoc:1404
 #, no-wrap
 msgid "*volume=*"
 msgstr "*volume=*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1405 ../sys-utils/mount.8.adoc:1408
-#: ../sys-utils/mount.8.adoc:1411 ../sys-utils/mount.8.adoc:1414
+#: ../sys-utils/mount.8.adoc:1406 ../sys-utils/mount.8.adoc:1409
+#: ../sys-utils/mount.8.adoc:1412 ../sys-utils/mount.8.adoc:1415
 msgid "Unimplemented and ignored."
 msgstr "ist nicht implementiert und wird ignoriert."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1406
+#: ../sys-utils/mount.8.adoc:1407
 #, no-wrap
 msgid "*partition=*"
 msgstr "*partition=*"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1409
+#: ../sys-utils/mount.8.adoc:1410
 #, no-wrap
 msgid "*fileset=*"
 msgstr "*fileset=*"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1412
+#: ../sys-utils/mount.8.adoc:1413
 #, no-wrap
 msgid "*rootdir=*"
 msgstr "*rootdir=*"
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1415
+#: ../sys-utils/mount.8.adoc:1416
 #, no-wrap
 msgid "Mount options for ufs"
 msgstr "Einhängeoptionen für UFS"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1417
+#: ../sys-utils/mount.8.adoc:1418
 #, no-wrap
 msgid "**ufstype=**__value__"
 msgstr "**ufstype=**__Wert__"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1419
+#: ../sys-utils/mount.8.adoc:1420
 msgid ""
 "UFS is a filesystem widely used in different operating systems. The problem "
 "are differences among implementations. Features of some implementations are "
@@ -41093,13 +41172,13 @@ msgstr ""
 "Werte sind:"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1420
+#: ../sys-utils/mount.8.adoc:1421
 #, no-wrap
 msgid "*old*"
 msgstr "*old*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1422
+#: ../sys-utils/mount.8.adoc:1423
 msgid ""
 "Old format of ufs, this is the default, read only. (Don't forget to give the "
 "*-r* option.)"
@@ -41108,13 +41187,13 @@ msgstr ""
 "(vergessen Sie nicht, die Option *-r* anzugeben)."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1423
+#: ../sys-utils/mount.8.adoc:1424
 #, no-wrap
 msgid "*44bsd*"
 msgstr "*44bsd*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1425
+#: ../sys-utils/mount.8.adoc:1426
 msgid ""
 "For filesystems created by a BSD-like system (NetBSD, FreeBSD, OpenBSD)."
 msgstr ""
@@ -41122,70 +41201,70 @@ msgstr ""
 "FreeBSD, OpenBSD)."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1426
+#: ../sys-utils/mount.8.adoc:1427
 #, no-wrap
 msgid "*ufs2*"
 msgstr "*ufs2*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1428
+#: ../sys-utils/mount.8.adoc:1429
 msgid "Used in FreeBSD 5.x supported as read-write."
 msgstr "Wird in FreeBSD 5.x als les- und schreibbar unterstützt."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1429
+#: ../sys-utils/mount.8.adoc:1430
 #, no-wrap
 msgid "*5xbsd*"
 msgstr "*5xbsd*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1431
+#: ../sys-utils/mount.8.adoc:1432
 msgid "Synonym for ufs2."
 msgstr "ist ein Synonym für ufs2."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1432
+#: ../sys-utils/mount.8.adoc:1433
 #, no-wrap
 msgid "*sun*"
 msgstr "*sun*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1434
+#: ../sys-utils/mount.8.adoc:1435
 msgid "For filesystems created by SunOS or Solaris on Sparc."
 msgstr ""
 "für die von SunOS oder Solaris auf Sparc-Architekturen erzeugten "
 "Dateisysteme."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1435
+#: ../sys-utils/mount.8.adoc:1436
 #, no-wrap
 msgid "*sunx86*"
 msgstr "*sunx86*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1437
+#: ../sys-utils/mount.8.adoc:1438
 msgid "For filesystems created by Solaris on x86."
 msgstr "für die von Solaris auf x86-Architekturen erzeugten Dateisysteme."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1438
+#: ../sys-utils/mount.8.adoc:1439
 #, no-wrap
 msgid "*hp*"
 msgstr "*hp*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1440
+#: ../sys-utils/mount.8.adoc:1441
 msgid "For filesystems created by HP-UX, read-only."
 msgstr "für die von HP-UX erzeugten Dateisysteme, nur lesbar."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1441
+#: ../sys-utils/mount.8.adoc:1442
 #, no-wrap
 msgid "*nextstep*"
 msgstr "*nextstep*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1443
+#: ../sys-utils/mount.8.adoc:1444
 msgid ""
 "For filesystems created by NeXTStep (on NeXT station) (currently read only)."
 msgstr ""
@@ -41193,24 +41272,24 @@ msgstr ""
 "gegenwärtig nur lesbar)."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1444
+#: ../sys-utils/mount.8.adoc:1445
 #, no-wrap
 msgid "*nextstep-cd*"
 msgstr "*nextstep-cd*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1446
+#: ../sys-utils/mount.8.adoc:1447
 msgid "For NextStep CDROMs (block_size == 2048), read-only."
 msgstr "für NextStep-CDROMs (Blockgröße == 2048), nur lesbar."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1447
+#: ../sys-utils/mount.8.adoc:1448
 #, no-wrap
 msgid "*openstep*"
 msgstr "*openstep*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1449
+#: ../sys-utils/mount.8.adoc:1450
 msgid ""
 "For filesystems created by OpenStep (currently read only). The same "
 "filesystem type is also used by macOS."
@@ -41219,35 +41298,35 @@ msgstr ""
 "gleiche Dateisystemtyp wird auch von macOS verwendet."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1450
+#: ../sys-utils/mount.8.adoc:1451
 #, no-wrap
 msgid "**onerror=**__value__"
 msgstr "**onerror=**__Wert__"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1452
+#: ../sys-utils/mount.8.adoc:1453
 msgid "Set behavior on error:"
 msgstr "legt das Verhalten bei Fehlern fest:"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1453
+#: ../sys-utils/mount.8.adoc:1454
 #, no-wrap
 msgid "*panic*"
 msgstr "*panic*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1455
+#: ../sys-utils/mount.8.adoc:1456
 msgid "If an error is encountered, cause a kernel panic."
 msgstr "löst ein »kernel panic« aus, wenn ein Fehler auftritt."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1456
+#: ../sys-utils/mount.8.adoc:1457
 #, no-wrap
 msgid "[**lock**|**umount**|*repair*]"
 msgstr "[**lock**|**umount**|*repair*]"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1458
+#: ../sys-utils/mount.8.adoc:1459
 msgid ""
 "These mount options don't do anything at present; when an error is "
 "encountered only a console message is printed."
@@ -41256,13 +41335,13 @@ msgstr ""
 "Konsolenmeldung ausgegeben."
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1459
+#: ../sys-utils/mount.8.adoc:1460
 #, no-wrap
 msgid "Mount options for umsdos"
 msgstr "Einhängeoptionen für UMSDOS"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1462
+#: ../sys-utils/mount.8.adoc:1463
 msgid ""
 "See mount options for msdos. The *dotsOK* option is explicitly killed by "
 "_umsdos_."
@@ -41271,13 +41350,13 @@ msgstr ""
 "_umsdos_ explizit unwirksam."
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1463
+#: ../sys-utils/mount.8.adoc:1464
 #, no-wrap
 msgid "Mount options for vfat"
 msgstr "Einhängeoptionen für VFAT"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1466
+#: ../sys-utils/mount.8.adoc:1467
 msgid ""
 "First of all, the mount options for _fat_ are recognized. The *dotsOK* "
 "option is explicitly killed by _vfat_. Furthermore, there are"
@@ -41286,13 +41365,13 @@ msgstr ""
 "*dotsOK* wird bei _vfat_ explizit unwirksam. Weiterhin gibt es"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1467
+#: ../sys-utils/mount.8.adoc:1468
 #, no-wrap
 msgid "*uni_xlate*"
 msgstr "*uni_xlate*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1469
+#: ../sys-utils/mount.8.adoc:1470
 msgid ""
 "Translate unhandled Unicode characters to special escaped sequences. This "
 "lets you backup and restore filenames that are created with any Unicode "
@@ -41304,19 +41383,19 @@ msgstr ""
 "übersetzt unbehandelte Unicode-Zeichen in spezielle Escape−Sequenzen. "
 "Dadurch können Sie Dateinamen sichern und wiederherstellen, die aus "
 "beliebigen Unicode-Zeichen erzeugt wurden. Ohne diese Option wird ein »?« "
-"verwendet, wenn keine Übersetzung möglich ist. Das Maskierungszeichen ist "
-"»:«, weil es ansonsten im VFAT−Dateisystem unzulässig ist. Die verwendete "
-"Escape-Sequenz ist »:«, (u & 0x3f), ((u>>6) & 0x3f), (u>>12), wobei »u« das "
-"Unicode-Zeichen ist."
+"verwendet, wenn keine Übersetzung möglich ist. Das Maskierungszeichen "
+"ist »:«, weil es ansonsten im VFAT−Dateisystem unzulässig ist. Die "
+"verwendete Escape-Sequenz ist »:«, (u & 0x3f), ((u>>6) & 0x3f), (u>>12), "
+"wobei »u« das Unicode-Zeichen ist."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1470
+#: ../sys-utils/mount.8.adoc:1471
 #, no-wrap
 msgid "*posix*"
 msgstr "*posix*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1472
+#: ../sys-utils/mount.8.adoc:1473
 msgid ""
 "Allow two files with names that only differ in case. This option is obsolete."
 msgstr ""
@@ -41324,13 +41403,13 @@ msgstr ""
 "hinsichtlich Groß-/Kleinschreibung unterscheiden. Diese Option ist veraltet."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1473
+#: ../sys-utils/mount.8.adoc:1474
 #, no-wrap
 msgid "*nonumtail*"
 msgstr "*nonumtail*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1475
+#: ../sys-utils/mount.8.adoc:1476
 msgid ""
 "First try to make a short name without sequence number, before trying "
 "_name~num.ext_."
@@ -41339,7 +41418,7 @@ msgstr ""
 "_Name~Num.Erw_ versucht wird."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1478
+#: ../sys-utils/mount.8.adoc:1479
 msgid ""
 "UTF8 is the filesystem safe 8-bit encoding of Unicode that is used by the "
 "console. It can be enabled for the filesystem with this option or disabled "
@@ -41352,13 +41431,13 @@ msgstr ""
 "Wenn _uni_xlate_ gesetzt wird, dann wird UTF8 deaktiviert."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1479
+#: ../sys-utils/mount.8.adoc:1480
 #, no-wrap
 msgid "**shortname=**__mode__"
 msgstr "**shortname=**__Modus__"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1481
+#: ../sys-utils/mount.8.adoc:1482
 msgid ""
 "Defines the behavior for creation and display of filenames which fit into "
 "8.3 characters. If a long name for a file exists, it will always be the "
@@ -41369,13 +41448,13 @@ msgstr ""
 "Anzeige stets bevorzugt. Es gibt vier _Modi_:"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1482
+#: ../sys-utils/mount.8.adoc:1483
 #, no-wrap
 msgid "*lower*"
 msgstr "*lower*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1484
+#: ../sys-utils/mount.8.adoc:1485
 msgid ""
 "Force the short name to lower case upon display; store a long name when the "
 "short name is not all upper case."
@@ -41385,13 +41464,13 @@ msgstr ""
 "ist."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1485
+#: ../sys-utils/mount.8.adoc:1486
 #, no-wrap
 msgid "*win95*"
 msgstr "*win95*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1487
+#: ../sys-utils/mount.8.adoc:1488
 msgid ""
 "Force the short name to upper case upon display; store a long name when the "
 "short name is not all upper case."
@@ -41401,13 +41480,13 @@ msgstr ""
 "ist."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1488
+#: ../sys-utils/mount.8.adoc:1489
 #, no-wrap
 msgid "*winnt*"
 msgstr "*winnt*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1490
+#: ../sys-utils/mount.8.adoc:1491
 msgid ""
 "Display the short name as is; store a long name when the short name is not "
 "all lower case or all upper case."
@@ -41417,13 +41496,13 @@ msgstr ""
 "in Großbuchstaben geschrieben ist."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1491
+#: ../sys-utils/mount.8.adoc:1492
 #, no-wrap
 msgid "*mixed*"
 msgstr "*mixed*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1493
+#: ../sys-utils/mount.8.adoc:1494
 msgid ""
 "Display the short name as is; store a long name when the short name is not "
 "all upper case. This mode is the default since Linux 2.6.32."
@@ -41433,19 +41512,19 @@ msgstr ""
 "das Standardverhalten seit Linux 2.6.32."
 
 #. type: Title ===
-#: ../sys-utils/mount.8.adoc:1494
+#: ../sys-utils/mount.8.adoc:1495
 #, no-wrap
 msgid "Mount options for usbfs"
 msgstr "Einhängeoptionen für Usbfs"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1496
+#: ../sys-utils/mount.8.adoc:1497
 #, no-wrap
 msgid "**devuid=**__uid__ and **devgid=**__gid__ and **devmode=**__mode__"
 msgstr "**devuid=**__Benutzerkennung__ und **devgid=**__Gruppenkennung__ und **devmode=**__Modus__"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1498
+#: ../sys-utils/mount.8.adoc:1499
 msgid ""
 "Set the owner and group and mode of the device files in the usbfs filesystem "
 "(default: uid=gid=0, mode=0644). The mode is given in octal."
@@ -41455,13 +41534,13 @@ msgstr ""
 "oktaler Notation angegeben."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1499
+#: ../sys-utils/mount.8.adoc:1500
 #, no-wrap
 msgid "**busuid=**__uid__ and **busgid=**__gid__ and **busmode=**__mode__"
 msgstr "**busuid=**__Benutzerkennung__ und **busgid=**__Gruppenkennung__ und **busmode=**__Modus__"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1501
+#: ../sys-utils/mount.8.adoc:1502
 msgid ""
 "Set the owner and group and mode of the bus directories in the usbfs "
 "filesystem (default: uid=gid=0, mode=0555). The mode is given in octal."
@@ -41471,13 +41550,13 @@ msgstr ""
 "oktaler Notation angegeben."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1502
+#: ../sys-utils/mount.8.adoc:1503
 #, no-wrap
 msgid "**listuid=**__uid__ and **listgid=**__gid__ and **listmode=**__mode__"
 msgstr "**listuid=**__Benutzerkennung__ und **listgid=**__Gruppenkennung__ und **listmode=**__Modus__"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1504
+#: ../sys-utils/mount.8.adoc:1505
 msgid ""
 "Set the owner and group and mode of the file _devices_ (default: uid=gid=0, "
 "mode=0444). The mode is given in octal."
@@ -41486,13 +41565,13 @@ msgstr ""
 "Modus=0444). Der Modus wird in oktaler Notation angegeben."
 
 #. type: Title ==
-#: ../sys-utils/mount.8.adoc:1505
+#: ../sys-utils/mount.8.adoc:1506
 #, no-wrap
 msgid "DM-VERITY SUPPORT"
 msgstr "DM-VERITY-UNTERSTÜTZUNG"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1508
+#: ../sys-utils/mount.8.adoc:1509
 msgid ""
 "The device-mapper verity target provides read-only transparent integrity "
 "checking of block devices using kernel crypto API. The *mount* command can "
@@ -41513,13 +41592,13 @@ msgstr ""
 "sind:"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1509
+#: ../sys-utils/mount.8.adoc:1510
 #, no-wrap
 msgid "**verity.hashdevice=**__path__"
 msgstr "**verity.hashdevice=**__Pfad__"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1511
+#: ../sys-utils/mount.8.adoc:1512
 msgid ""
 "Path to the hash tree device associated with the source volume to pass to dm-"
 "verity."
@@ -41528,13 +41607,13 @@ msgstr ""
 "dm-verity übergeben werden soll."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1512
+#: ../sys-utils/mount.8.adoc:1513
 #, no-wrap
 msgid "**verity.roothash=**__hex__"
 msgstr "**verity.roothash=**__hex__"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1514
+#: ../sys-utils/mount.8.adoc:1515
 msgid ""
 "Hex-encoded hash of the root of _verity.hashdevice_. Mutually exclusive with "
 "_verity.roothashfile._"
@@ -41543,13 +41622,13 @@ msgstr ""
 "gegenseitig mit _verity.roothashfile_ aus."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1515
+#: ../sys-utils/mount.8.adoc:1516
 #, no-wrap
 msgid "**verity.roothashfile=**__path__"
 msgstr "**verity.roothashfile=**__Pfad__"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1517
+#: ../sys-utils/mount.8.adoc:1518
 msgid ""
 "Path to file containing the hex-encoded hash of the root of _verity."
 "hashdevice._ Mutually exclusive with _verity.roothash._"
@@ -41558,13 +41637,13 @@ msgstr ""
 "hashdevice_ enthält. Schließt sich gegenseitig mit _verity.roothash_ aus."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1518
+#: ../sys-utils/mount.8.adoc:1519
 #, no-wrap
 msgid "**verity.hashoffset=**__offset__"
 msgstr "**verity.hashoffset=**__Versatz__"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1520
+#: ../sys-utils/mount.8.adoc:1521
 msgid ""
 "If the hash tree device is embedded in the source volume, _offset_ (default: "
 "0) is used by dm-verity to get to the tree."
@@ -41573,13 +41652,13 @@ msgstr ""
 "_Versatz_ (Vorgabe: 0) durch Dm-verity verwendet, um den Baum zu erhalten."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1521
+#: ../sys-utils/mount.8.adoc:1522
 #, no-wrap
 msgid "**verity.fecdevice=**__path__"
 msgstr "**verity.fecdevice=**__Pfad__"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1523
+#: ../sys-utils/mount.8.adoc:1524
 msgid ""
 "Path to the Forward Error Correction (FEC) device associated with the source "
 "volume to pass to dm-verity. Optional. Requires kernel built with "
@@ -41590,13 +41669,13 @@ msgstr ""
 "einen mit *CONFIG_DM_VERITY_FEC* gebauten Kernel."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1524
+#: ../sys-utils/mount.8.adoc:1525
 #, no-wrap
 msgid "**verity.fecoffset=**__offset__"
 msgstr "**verity.fecoffset=**__Versatz__"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1526
+#: ../sys-utils/mount.8.adoc:1527
 msgid ""
 "If the FEC device is embedded in the source volume, _offset_ (default: 0) is "
 "used by dm-verity to get to the FEC area. Optional."
@@ -41605,24 +41684,24 @@ msgstr ""
 "0) durch Dm-verity verwendet, um den FEC-Bereich zu erhalten. Optional."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1527
+#: ../sys-utils/mount.8.adoc:1528
 #, no-wrap
 msgid "**verity.fecroots=**__value__"
 msgstr "**verity.fecroots=**__Wert__"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1529
+#: ../sys-utils/mount.8.adoc:1530
 msgid "Parity bytes for FEC (default: 2). Optional."
 msgstr "Paritäts-Bytes für FEC (Standard: 2). Optional."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1530
+#: ../sys-utils/mount.8.adoc:1531
 #, no-wrap
 msgid "**verity.roothashsig=**__path__"
 msgstr "**verity.roothashsig=**__Pfad__"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1532
+#: ../sys-utils/mount.8.adoc:1533
 msgid ""
 "Path to *pkcs7*(1ssl) signature of root hash hex string. Requires "
 "crypt_activate_by_signed_key() from cryptsetup and kernel built with "
@@ -41636,13 +41715,13 @@ msgstr ""
 "verwendet werden. Dies ist optional."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1533
+#: ../sys-utils/mount.8.adoc:1534
 #, no-wrap
 msgid "**verity.oncorruption=**__ignore__|__restart__|__panic__"
 msgstr "**verity.oncorruption=**__ignore__|__restart__|__panic__"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1535
+#: ../sys-utils/mount.8.adoc:1536
 msgid ""
 "Instruct the kernel to ignore, reboot or panic when corruption is detected. "
 "By default the I/O operation simply fails. Requires Linux 4.1 or newer, and "
@@ -41654,17 +41733,17 @@ msgstr ""
 "neuer erforderlich. Dies ist optional."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1537
+#: ../sys-utils/mount.8.adoc:1538
 msgid "Supported since util-linux v2.35."
 msgstr "Wird seit Util-linux v2.35 unterstützt."
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1539
+#: ../sys-utils/mount.8.adoc:1540
 msgid "For example commands:"
 msgstr "Zum Beispiel erstellen die Befehle"
 
 #. type: delimited block .
-#: ../sys-utils/mount.8.adoc:1547
+#: ../sys-utils/mount.8.adoc:1548
 #, no-wrap
 msgid ""
 "mksquashfs /etc /tmp/etc.raw\n"
@@ -41682,7 +41761,7 @@ msgstr ""
 "verity.roothashsig=/tmp/etc.roothash.p7s /tmp/etc.raw /mnt\n"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1550
+#: ../sys-utils/mount.8.adoc:1551
 msgid ""
 "create squashfs image from _/etc_ directory, verity hash device and mount "
 "verified filesystem image to _/mnt_. The kernel will verify that the root "
@@ -41694,13 +41773,13 @@ msgstr ""
 "Root-Hash mit einem Schlüssel aus dem Kernel-Schlüsselbund signiert ist."
 
 #. type: Title ==
-#: ../sys-utils/mount.8.adoc:1551
+#: ../sys-utils/mount.8.adoc:1552
 #, no-wrap
 msgid "LOOP-DEVICE SUPPORT"
 msgstr "UNTERSTÜTZUNG FÜR LOOP-GERÄTE"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1554
+#: ../sys-utils/mount.8.adoc:1555
 msgid ""
 "One further possible type is a mount via the loop device. For example, the "
 "command"
@@ -41709,12 +41788,12 @@ msgstr ""
 "Befehl"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1557
+#: ../sys-utils/mount.8.adoc:1558
 msgid "*mount /tmp/disk.img /mnt -t vfat -o loop=/dev/loop3*"
 msgstr "*mount /tmp/disk.img /mnt -t vfat -o loop=/dev/loop3*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1560
+#: ../sys-utils/mount.8.adoc:1561
 msgid ""
 "will set up the loop device _/dev/loop3_ to correspond to the file _/tmp/"
 "disk.img_, and then mount this device on _/mnt_."
@@ -41723,7 +41802,7 @@ msgstr ""
 "und hängt dieses Gerät dann in _/mnt_ ein."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1562
+#: ../sys-utils/mount.8.adoc:1563
 msgid ""
 "If no explicit loop device is mentioned (but just an option '**-o loop**' is "
 "given), then *mount* will try to find some unused loop device and use that, "
@@ -41734,12 +41813,12 @@ msgstr ""
 "diese zu verwenden, zum Beispiel"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1565
+#: ../sys-utils/mount.8.adoc:1566
 msgid "*mount /tmp/disk.img /mnt -o loop*"
 msgstr "*mount /tmp/disk.img /mnt -o loop*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1568
+#: ../sys-utils/mount.8.adoc:1569
 msgid ""
 "The *mount* command *automatically* creates a loop device from a regular "
 "file if a filesystem type is not specified or the filesystem is known for "
@@ -41750,17 +41829,17 @@ msgstr ""
 "Dateisystem kennt, zum Beispiel:"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1571
+#: ../sys-utils/mount.8.adoc:1572
 msgid "*mount /tmp/disk.img /mnt*"
 msgstr "*mount /tmp/disk.img /mnt*"
 
 #. type: delimited block _
-#: ../sys-utils/mount.8.adoc:1573
+#: ../sys-utils/mount.8.adoc:1574
 msgid "*mount -t ext4 /tmp/disk.img /mnt*"
 msgstr "*mount -t ext4 /tmp/disk.img /mnt*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1576
+#: ../sys-utils/mount.8.adoc:1577
 msgid ""
 "This type of mount knows about three options, namely *loop*, *offset* and "
 "*sizelimit*, that are really options to *losetup*(8). (These options can be "
@@ -41771,7 +41850,7 @@ msgstr ""
 "zusätzlich zu den dateisystemspezifischen Optionen verwendet werden)."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1578
+#: ../sys-utils/mount.8.adoc:1579
 msgid ""
 "Since Linux 2.6.25 auto-destruction of loop devices is supported, meaning "
 "that any loop device allocated by *mount* will be freed by *umount* "
@@ -41782,7 +41861,7 @@ msgstr ""
 "unabhängig von der Datei _/etc/mtab_ von *umount* freigegeben wird."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1580
+#: ../sys-utils/mount.8.adoc:1581
 msgid ""
 "You can also free a loop device by hand, using *losetup -d* or *umount -d*."
 msgstr ""
@@ -41790,7 +41869,7 @@ msgstr ""
 "freigeben."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1582
+#: ../sys-utils/mount.8.adoc:1583
 msgid ""
 "Since util-linux v2.29, *mount* re-uses the loop device rather than "
 "initializing a new device if the same backing file is already used for some "
@@ -41804,50 +41883,50 @@ msgstr ""
 "eine Beschädigung des Dateisystems zu vermeiden."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1586
+#: ../sys-utils/mount.8.adoc:1587
 msgid "*mount* has the following exit status values (the bits can be ORed):"
 msgstr ""
 "*mount* hat die folgenden Exit-Status-Werte (die Bits können mit ODER "
 "verknüpft werden):"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1592
+#: ../sys-utils/mount.8.adoc:1593
 msgid "incorrect invocation or permissions"
 msgstr "Inkorrekter Aufruf oder Zugriffsrechte"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1595
+#: ../sys-utils/mount.8.adoc:1596
 msgid "system error (out of memory, cannot fork, no more loop devices)"
 msgstr ""
 "Systemfehler (Speicherüberlauf, Forken nicht möglich, keine Loop-Geräte mehr)"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1598
+#: ../sys-utils/mount.8.adoc:1599
 msgid "internal *mount* bug"
 msgstr "Interner Fehler in *mount*"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1601
+#: ../sys-utils/mount.8.adoc:1602
 msgid "user interrupt"
 msgstr "Abbruch durch Benutzer"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1604
+#: ../sys-utils/mount.8.adoc:1605
 msgid "problems writing or locking _/etc/mtab_"
 msgstr "Probleme beim Schreiben oder Sperren der Datei _/etc/mtab_"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1607
+#: ../sys-utils/mount.8.adoc:1608
 msgid "mount failure"
 msgstr "Einhängefehler"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1610
+#: ../sys-utils/mount.8.adoc:1611
 msgid "some mount succeeded"
 msgstr "Einige Einhängungen waren erfolgreich"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1612
+#: ../sys-utils/mount.8.adoc:1613
 msgid ""
 "The command *mount -a* returns 0 (all succeeded), 32 (all failed), or 64 "
 "(some failed, some succeeded)."
@@ -41856,18 +41935,18 @@ msgstr ""
 "oder 64 (teils fehlgeschlagen, teils erfolgreich) zurück."
 
 #. type: Title ==
-#: ../sys-utils/mount.8.adoc:1613 ../sys-utils/umount.8.adoc:130
+#: ../sys-utils/mount.8.adoc:1614 ../sys-utils/umount.8.adoc:132
 #, no-wrap
 msgid "EXTERNAL HELPERS"
 msgstr "EXTERNE HILFSPROGRAMME"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1616
+#: ../sys-utils/mount.8.adoc:1617
 msgid "The syntax of external mount helpers is:"
 msgstr "Die Syntax der externen Einhänge-Hilfsprogramme ist:"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1618
+#: ../sys-utils/mount.8.adoc:1619
 msgid ""
 "**/sbin/mount.**__suffix__ _spec dir_ [*-sfnv*] [*-N* _namespace_] [*-o* "
 "_options_] [*-t* __type__**.**_subtype_]"
@@ -41876,7 +41955,7 @@ msgstr ""
 "[*-o* _Optionen_] [*-t* __Typ__**.**_Subtyp_]"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1620
+#: ../sys-utils/mount.8.adoc:1621
 msgid ""
 "where the _suffix_ is the filesystem type and the *-sfnvoN* options have the "
 "same meaning as the normal mount options. The *-t* option is used for "
@@ -41889,7 +41968,7 @@ msgstr ""
 "sbin/mount.fuse -t fuse.sshfs*)."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1622
+#: ../sys-utils/mount.8.adoc:1623
 msgid ""
 "The command *mount* does not pass the mount options *unbindable*, "
 "*runbindable*, *private*, *rprivate*, *slave*, *rslave*, *shared*, "
@@ -41905,13 +41984,13 @@ msgstr ""
 "Option *-o* verwendet."
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1625
+#: ../sys-utils/mount.8.adoc:1626
 #, no-wrap
 msgid "*LIBMOUNT_FORCE_MOUNT2*={always|never|auto}"
 msgstr "*LIBMOUNT_FORCE_MOUNT2*={always|never|auto}"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1627
+#: ../sys-utils/mount.8.adoc:1628
 msgid ""
 "force to use classic *mount*(2) system call (requires support for new file "
 "descriptors based mount API). The default is *auto*; in this case, libmount "
@@ -41921,24 +42000,24 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1630
+#: ../sys-utils/mount.8.adoc:1631
 msgid "overrides the default location of the _fstab_ file (ignored for suid)"
 msgstr ""
 "setzt den standardmäßigen Ort der _fstab_-Datei außer Kraft (wird für Suid "
 "ignoriert)."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1636
+#: ../sys-utils/mount.8.adoc:1637
 msgid "enables libblkid debug output"
 msgstr "aktiviert die Fehlersuch-Ausgabe von Libblkid."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1639
+#: ../sys-utils/mount.8.adoc:1640
 msgid "enables loop device setup debug output"
 msgstr "aktiviert die Fehlersuch-Ausgabe für die Einrichtung von Loop-Geräten."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1643
+#: ../sys-utils/mount.8.adoc:1644
 msgid ""
 "See also \"*The files /etc/fstab, /etc/mtab and /proc/mounts*\" section "
 "above."
@@ -41947,77 +42026,77 @@ msgstr ""
 "mounts*« oben."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1646
+#: ../sys-utils/mount.8.adoc:1647
 msgid "filesystem table"
 msgstr "Dateisystemtabelle"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1647
+#: ../sys-utils/mount.8.adoc:1648
 #, no-wrap
 msgid "_/run/mount_"
 msgstr "_/run/mount_"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1649
+#: ../sys-utils/mount.8.adoc:1650
 msgid "libmount private runtime directory"
 msgstr "Privates Laufzeitverzeichnis von Libmount"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1650 ../sys-utils/umount.8.adoc:160
+#: ../sys-utils/mount.8.adoc:1651 ../sys-utils/umount.8.adoc:162
 #, no-wrap
 msgid "_/etc/mtab_"
 msgstr "_/etc/mtab_"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1652
+#: ../sys-utils/mount.8.adoc:1653
 msgid "table of mounted filesystems or symlink to _/proc/mounts_"
 msgstr "Tabelle der eingehängten Dateisysteme oder Symlink auf _/proc/mounts_"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1653
+#: ../sys-utils/mount.8.adoc:1654
 #, no-wrap
 msgid "_/etc/mtab~_"
 msgstr "_/etc/mtab~_"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1655
+#: ../sys-utils/mount.8.adoc:1656
 msgid "lock file (unused on systems with _mtab_ symlink)"
 msgstr "Sperrdatei (wird auf Systemen mit _mtab_-Symlink nicht verwendet)"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1656
+#: ../sys-utils/mount.8.adoc:1657
 #, no-wrap
 msgid "_/etc/mtab.tmp_"
 msgstr "_/etc/mtab.tmp_"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1658
+#: ../sys-utils/mount.8.adoc:1659
 msgid "temporary file (unused on systems with _mtab_ symlink)"
 msgstr "Temporäre Datei (wird auf Systemen mit _mtab_-Symlink nicht verwendet)"
 
 #. type: Labeled list
-#: ../sys-utils/mount.8.adoc:1659
+#: ../sys-utils/mount.8.adoc:1660
 #, no-wrap
 msgid "_/etc/filesystems_"
 msgstr "_/etc/filesystems_"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1661
+#: ../sys-utils/mount.8.adoc:1662
 msgid "a list of filesystem types to try"
 msgstr "Eine Liste zu versuchender Dateisystemtypen"
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1665
+#: ../sys-utils/mount.8.adoc:1666
 msgid "A *mount* command existed in Version 5 AT&T UNIX."
 msgstr "Ein *mount*-Befehl erschien in Version 5 von AT&T UNIX."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1669
+#: ../sys-utils/mount.8.adoc:1670
 msgid "It is possible for a corrupted filesystem to cause a crash."
 msgstr "Ein beschädigtes Dateisystem könnte einen Absturz verursachen."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1671
+#: ../sys-utils/mount.8.adoc:1672
 msgid ""
 "Some Linux filesystems don't support *-o sync* and *-o dirsync* (the ext2, "
 "ext3, ext4, fat and vfat filesystems _do_ support synchronous updates (a la "
@@ -42029,7 +42108,7 @@ msgstr ""
 "werden)."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1673
+#: ../sys-utils/mount.8.adoc:1674
 msgid ""
 "The *-o remount* may not be able to change mount parameters (all _ext2fs_-"
 "specific parameters, except *sb*, are changeable with a remount, for "
@@ -42041,7 +42120,7 @@ msgstr ""
 "*umask* für _fatfs_ nicht ändern)."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1675
+#: ../sys-utils/mount.8.adoc:1676
 msgid ""
 "It is possible that the files _/etc/mtab_ and _/proc/mounts_ don't match on "
 "systems with a regular _mtab_ file. The first file is based only on the "
@@ -42063,7 +42142,7 @@ msgstr ""
 "einen Symlink auf die Datei _/proc/mounts_ zu ersetzen."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1677
+#: ../sys-utils/mount.8.adoc:1678
 msgid ""
 "Checking files on NFS filesystems referenced by file descriptors (i.e. the "
 "*fcntl* and *ioctl* families of functions) may lead to inconsistent results "
@@ -42076,7 +42155,7 @@ msgstr ""
 "selbst dann fehlt, wenn *noac* verwendet wird."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1679
+#: ../sys-utils/mount.8.adoc:1680
 msgid ""
 "The *loop* option with the *offset* or *sizelimit* options used may fail "
 "when using older kernels if the *mount* command can't confirm that the size "
@@ -42092,7 +42171,7 @@ msgstr ""
 "konfigurierten Loop−Gerät aufrufen."
 
 #. type: Plain text
-#: ../sys-utils/mount.8.adoc:1705
+#: ../sys-utils/mount.8.adoc:1706
 msgid ""
 "*mount*(2), *umount*(2), *filesystems*(5), *fstab*(5), *nfs*(5), *xfs*(5), "
 "*mount_namespaces*(7), *xattr*(7), *e2label*(8), *findmnt*(8), *losetup*(8), "
@@ -46933,12 +47012,21 @@ msgstr ""
 "unterstützt."
 
 #. type: Plain text
-#: ../sys-utils/umount.8.adoc:133
+#: ../sys-utils/umount.8.adoc:131
+msgid ""
+"Note that since Linux v3.7 kernel uses \"lazy device destruction\". The "
+"system just marks the loop device by autoclear flag and destroys it later. "
+"If you need to wait for a complete removal of the loop device, call *udevadm "
+"settle* after *umount*."
+msgstr ""
+
+#. type: Plain text
+#: ../sys-utils/umount.8.adoc:135
 msgid "The syntax of external unmount helpers is:"
 msgstr "Die Syntax der externen Aushänge-Hilfsprogramme ist:"
 
 #. type: delimited block _
-#: ../sys-utils/umount.8.adoc:136
+#: ../sys-utils/umount.8.adoc:138
 msgid ""
 "**umount.**__suffix__ {__directory__|_device_} [*-flnrv*] [*-N* _namespace_] "
 "[*-t* _type_._subtype_]"
@@ -46947,7 +47035,7 @@ msgstr ""
 "_Namensraum_] [*-t* _Typ_._Untertyp_]"
 
 #. type: Plain text
-#: ../sys-utils/umount.8.adoc:139
+#: ../sys-utils/umount.8.adoc:141
 msgid ""
 "where _suffix_ is the filesystem type (or the value from a *uhelper=* or "
 "*helper=* marker in the mtab file). The *-t* option can be used for "
@@ -46958,12 +47046,12 @@ msgstr ""
 "Dateisysteme verwendet werden, die Untertypen unterstützen, zum Beispiel:"
 
 #. type: delimited block _
-#: ../sys-utils/umount.8.adoc:142
+#: ../sys-utils/umount.8.adoc:144
 msgid "*umount.fuse -t fuse.sshfs*"
 msgstr "*umount.fuse -t fuse.sshfs*"
 
 #. type: Plain text
-#: ../sys-utils/umount.8.adoc:145
+#: ../sys-utils/umount.8.adoc:147
 msgid ""
 "A **uhelper=**__something__ marker (unprivileged helper) can appear in the _/"
 "etc/mtab_ file when ordinary users need to be able to unmount a mountpoint "
@@ -46976,7 +47064,7 @@ msgstr ""
 "ist (zum Beispiel für ein Gerät, das durch *udisks*(1) eingehängt wurde)."
 
 #. type: Plain text
-#: ../sys-utils/umount.8.adoc:147
+#: ../sys-utils/umount.8.adoc:149
 msgid ""
 "A **helper=**__type__ marker in the _mtab_ file will redirect all unmount "
 "requests to the **/sbin/umount.**__type__ helper independently of UID."
@@ -46986,7 +47074,7 @@ msgstr ""
 "Benutzerkennung (UID)."
 
 #. type: Plain text
-#: ../sys-utils/umount.8.adoc:149
+#: ../sys-utils/umount.8.adoc:151
 msgid ""
 "Note that _/etc/mtab_ is currently deprecated and *helper=* and other "
 "userspace mount options are maintained by *libmount*."
@@ -46996,19 +47084,19 @@ msgstr ""
 "werden."
 
 #. type: Plain text
-#: ../sys-utils/umount.8.adoc:154
+#: ../sys-utils/umount.8.adoc:156
 msgid "overrides the default location of the _fstab_ file (ignored for *suid*)"
 msgstr ""
 "setzt den standardmäßigen Ort der __fstab__-Datei außer Kraft (wird für "
 "*suid* ignoriert)."
 
 #. type: Plain text
-#: ../sys-utils/umount.8.adoc:157
+#: ../sys-utils/umount.8.adoc:159
 msgid "enables *libmount* debug output"
 msgstr "aktiviert die Fehlersuchausgabe für *libmount*."
 
 #. type: Plain text
-#: ../sys-utils/umount.8.adoc:162
+#: ../sys-utils/umount.8.adoc:164
 msgid ""
 "table of mounted filesystems (deprecated and usually replaced by symlink to "
 "_/proc/mounts_)"
@@ -47017,28 +47105,28 @@ msgstr ""
 "durch einen Symlink auf _/proc/mounts_ ersetzt)"
 
 #. type: Plain text
-#: ../sys-utils/umount.8.adoc:165
+#: ../sys-utils/umount.8.adoc:167
 msgid "table of known filesystems"
 msgstr "Tabelle der bekannten Dateisysteme"
 
 #. type: Labeled list
-#: ../sys-utils/umount.8.adoc:166
+#: ../sys-utils/umount.8.adoc:168
 #, no-wrap
 msgid "_/proc/self/mountinfo_"
 msgstr "_/proc/self/mountinfo_"
 
 #. type: Plain text
-#: ../sys-utils/umount.8.adoc:168
+#: ../sys-utils/umount.8.adoc:170
 msgid "table of mounted filesystems generated by kernel."
 msgstr "Durch den Kernel erstellte Tabelle der eingehängten Dateisysteme"
 
 #. type: Plain text
-#: ../sys-utils/umount.8.adoc:172
+#: ../sys-utils/umount.8.adoc:174
 msgid "A *umount* command appeared in Version 6 AT&T UNIX."
 msgstr "Ein *umount*-Befehl erschien in Version 6 von AT&T UNIX."
 
 #. type: Plain text
-#: ../sys-utils/umount.8.adoc:179
+#: ../sys-utils/umount.8.adoc:181
 msgid "*umount*(2), *losetup*(8), *mount_namespaces*(7), *mount*(8)"
 msgstr "*umount*(2), *losetup*(8), *mount_namespaces*(7), *mount*(8)"
 
@@ -49331,9 +49419,9 @@ msgid ""
 msgstr ""
 "Diese Option legt zusätzliche Zeichen fest, die als Rückschritt (»das letzte "
 "Zeichen ignorieren«) interpretiert werden sollen, wenn der Benutzer den "
-"Anmeldenamen eingibt. Standardmäßig war »#« das zusätzliche "
-"»erase« (löschen), aber seit Util-Linux 2.23 werden keine zusätzlichen "
-"Löschzeichen standardmäßig aktiviert."
+"Anmeldenamen eingibt. Standardmäßig war »#« das zusätzliche »erase« "
+"(löschen), aber seit Util-Linux 2.23 werden keine zusätzlichen Löschzeichen "
+"standardmäßig aktiviert."
 
 #. type: Labeled list
 #: ../term-utils/agetty.8.adoc:168
@@ -51228,9 +51316,9 @@ msgid ""
 "*setterm* can interpret the next non-option argument as an optional argument "
 "too."
 msgstr ""
-"Es wird empfohlen, die optionalen Argumente durch ein "
-"»=« (Gleichheitszeichen) statt Leerraum zwischen der Option und dem Argument "
-"zu trennen. Beispiel: --Option=Argument. *setterm* kann das nächste Nicht-"
+"Es wird empfohlen, die optionalen Argumente durch ein »=« "
+"(Gleichheitszeichen) statt Leerraum zwischen der Option und dem Argument zu "
+"trennen. Beispiel: --Option=Argument. *setterm* kann das nächste Nicht-"
 "Options-Argument auch als optionales Argument interpretieren."
 
 #. type: Labeled list
@@ -55663,3 +55751,12 @@ msgid ""
 "*colcrt*(1), *login*(1), *man*(1), *nroff*(1), *setenv*(3), *terminfo*(5)"
 msgstr ""
 "*colcrt*(1), *login*(1), *man*(1), *nroff*(1), *setenv*(3), *terminfo*(5)"
+
+#~ msgid ""
+#~ "Each filesystem is described on a separate line. Fields on each line are "
+#~ "separated by tabs or spaces. Lines starting with '#' are comments. Blank "
+#~ "lines are ignored."
+#~ msgstr ""
+#~ "Jedes Dateisystem wird auf einer separaten Zeile beschrieben; die Felder "
+#~ "innerhalb einer Zeile werden durch Tabulatoren oder Leerzeichen getrennt. "
+#~ "Kommentarzeilen beginnen mit »#«, leere Zeilen werden ignoriert."
