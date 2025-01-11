@@ -109,6 +109,8 @@ int blkid_flush_cache(blkid_cache cache)
 		    && errno != EEXIST) {
 			DBG(SAVE, ul_debug("can't create %s directory for cache file",
 					BLKID_RUNTIME_DIR));
+			if (filename != cache->bic_filename)
+				free(filename);
 			return 0;
 		}
 	}
@@ -117,6 +119,8 @@ int blkid_flush_cache(blkid_cache cache)
 	if (((ret = stat(filename, &st)) < 0 && errno != ENOENT) ||
 	    (ret == 0 && access(filename, W_OK) < 0)) {
 		DBG(SAVE, ul_debug("can't write to cache file %s", filename));
+		if (filename != cache->bic_filename)
+			free(filename);
 		return 0;
 	}
 
