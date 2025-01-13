@@ -1,6 +1,7 @@
 lsfd_sources = files (
   'lsfd.c',
   'lsfd.h',
+  'early-filter.c',
   'decode-file-flags.c',
   'file.c',
   'cdev.c',
