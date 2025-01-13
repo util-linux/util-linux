@@ -75,7 +75,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.34-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2025-01-09 12:31+0100\n"
+"POT-Creation-Date: 2025-01-13 13:14+0100\n"
 "PO-Revision-Date: 2019-06-03 14:30+01:00\n"
 "Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
@@ -8158,385 +8158,385 @@ msgstr "hush-logindstatus: gendan af oprindelige id'er mislykkedes"
 msgid "operation failed: %m"
 msgstr "operation mislykkedes: %m"
 
-#: libmount/src/context_mount.c:1426
+#: libmount/src/context_mount.c:1424
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "ADVARSEL: kunne ikke anvende propagationsflag"
 
 # hvad er forskel på engelsk write-protected og read-only
-#: libmount/src/context_mount.c:1436
+#: libmount/src/context_mount.c:1434
 #, fuzzy, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "ADVARSEL: enheden er skrivebeskyttet, monterer skrivebeskyttet"
 
-#: libmount/src/context_mount.c:1450
+#: libmount/src/context_mount.c:1448
 #, c-format
 msgid "operation permitted for root only"
 msgstr "operation tilladt kun for root (administrator)"
 
-#: libmount/src/context_mount.c:1454
+#: libmount/src/context_mount.c:1452
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s er allerede monteret"
 
-#: libmount/src/context_mount.c:1460
+#: libmount/src/context_mount.c:1458
 #, c-format
 msgid "can't find in %s"
 msgstr "kan ikke finde i %s"
 
-#: libmount/src/context_mount.c:1463
+#: libmount/src/context_mount.c:1461
 #, c-format
 msgid "can't find mount point in %s"
 msgstr "kan ikke finde monteringspunkt i %s"
 
-#: libmount/src/context_mount.c:1466
+#: libmount/src/context_mount.c:1464
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "kan ikke finde monteringskilde %s i %s"
 
-#: libmount/src/context_mount.c:1471
+#: libmount/src/context_mount.c:1469
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr "flere filsystemer registreret på %s; brug -t <type> eller wipefs(8)"
 
-#: libmount/src/context_mount.c:1476
+#: libmount/src/context_mount.c:1474
 #, c-format
 msgid "failed to determine filesystem type"
 msgstr "kan ikke bestemme filsystemtype"
 
-#: libmount/src/context_mount.c:1477
+#: libmount/src/context_mount.c:1475
 #, fuzzy, c-format
 #| msgid "no filesystem type specified"
 msgid "no valid filesystem type specified"
 msgstr "ingen filsystemtype angivet"
 
-#: libmount/src/context_mount.c:1484
+#: libmount/src/context_mount.c:1482
 #, c-format
 msgid "can't find %s"
 msgstr "kan ikke finde %s"
 
-#: libmount/src/context_mount.c:1486
+#: libmount/src/context_mount.c:1484
 #, c-format
 msgid "no mount source specified"
 msgstr "ingen monteringskilde angivet"
 
-#: libmount/src/context_mount.c:1497
+#: libmount/src/context_mount.c:1495
 #, fuzzy, c-format
 #| msgid "failed to parse mount options: %m"
 msgid "failed to parse mount options '%s': %m"
 msgstr "kunne ikke fortolke monteringsindstillinger: %m"
 
-#: libmount/src/context_mount.c:1498
+#: libmount/src/context_mount.c:1496
 #, fuzzy, c-format
 #| msgid "failed to parse mount options: %m"
 msgid "failed to parse mount options '%s'"
 msgstr "kunne ikke fortolke monteringsindstillinger: %m"
 
-#: libmount/src/context_mount.c:1501
+#: libmount/src/context_mount.c:1499
 #, c-format
 msgid "failed to parse mount options: %m"
 msgstr "kunne ikke fortolke monteringsindstillinger: %m"
 
-#: libmount/src/context_mount.c:1502
+#: libmount/src/context_mount.c:1500
 #, c-format
 msgid "failed to parse mount options"
 msgstr "kunne ikke fortolke monteringsindstillinger"
 
-#: libmount/src/context_mount.c:1507
+#: libmount/src/context_mount.c:1505
 #, c-format
 msgid "failed to setup loop device for %s"
 msgstr "kunne ikke opsætte løkkeenhed for %s"
 
-#: libmount/src/context_mount.c:1511
+#: libmount/src/context_mount.c:1509
 #, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "der er overlappende løkkenheder for %s"
 
-#: libmount/src/context_mount.c:1515 libmount/src/context_umount.c:1268
+#: libmount/src/context_mount.c:1513 libmount/src/context_umount.c:1267
 #, c-format
 msgid "locking failed"
 msgstr "Lås mislykkedes"
 
-#: libmount/src/context_mount.c:1519 libmount/src/context_umount.c:1274
+#: libmount/src/context_mount.c:1517 libmount/src/context_umount.c:1273
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, c-format
 msgid "failed to switch namespace"
 msgstr "kunne ikke skifte navnerum"
 
-#: libmount/src/context_mount.c:1523
+#: libmount/src/context_mount.c:1521
 #, fuzzy, c-format
 #| msgid "%s is already mounted"
 msgid "filesystem already mounted"
 msgstr "%s er allerede monteret"
 
-#: libmount/src/context_mount.c:1526
+#: libmount/src/context_mount.c:1524
 #, c-format
 msgid "mount failed: %m"
 msgstr "montering mislykkedes: %m"
 
-#: libmount/src/context_mount.c:1536
+#: libmount/src/context_mount.c:1534
 #, fuzzy, c-format
 #| msgid "filesystem was mounted, but failed to switch namespace back"
 msgid "filesystem was mounted, but failed to apply flags"
 msgstr "filsystem blev monteret, men kunne ikke ændre navnerum tilbage igen"
 
-#: libmount/src/context_mount.c:1542
+#: libmount/src/context_mount.c:1540
 #, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "filsystem blev monteret, men opdatering af brugerrummets monteringstabel mislykkedes"
 
-#: libmount/src/context_mount.c:1548
+#: libmount/src/context_mount.c:1546
 #, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "filsystem blev monteret, men kunne ikke ændre navnerum tilbage igen"
 
-#: libmount/src/context_mount.c:1554
+#: libmount/src/context_mount.c:1552
 #, fuzzy, c-format
 #| msgid "filesystem was mounted, but failed to switch namespace back"
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "filsystem blev monteret, men kunne ikke ændre navnerum tilbage igen"
 
-#: libmount/src/context_mount.c:1560
+#: libmount/src/context_mount.c:1558
 #, fuzzy, c-format
 #| msgid "filesystem was mounted, but failed to switch namespace back"
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "filsystem blev monteret, men kunne ikke ændre navnerum tilbage igen"
 
-#: libmount/src/context_mount.c:1566
+#: libmount/src/context_mount.c:1564
 #, fuzzy, c-format
 #| msgid "filesystem was mounted, but failed to switch namespace back"
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "filsystem blev monteret, men kunne ikke ændre navnerum tilbage igen"
 
-#: libmount/src/context_mount.c:1572
+#: libmount/src/context_mount.c:1570
 #, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "filsystem blev monteret, men efterfølgende operationer mislykkedes: %m"
 
-#: libmount/src/context_mount.c:1584
+#: libmount/src/context_mount.c:1582
 #, fuzzy, c-format
 #| msgid "mount(2) system call failed: %m"
 msgid "%s system call failed: %s"
 msgstr "mount(2)-systemkald mislykkedes: %m"
 
-#: libmount/src/context_mount.c:1599 login-utils/newgrp.c:228
+#: libmount/src/context_mount.c:1597 login-utils/newgrp.c:228
 #, c-format
 msgid "permission denied"
 msgstr "adgang nægtet"
 
-#: libmount/src/context_mount.c:1601 libmount/src/context_mount.c:1642
+#: libmount/src/context_mount.c:1599 libmount/src/context_mount.c:1640
 #, c-format
 msgid "mount point is not a directory"
 msgstr "monteringspunkt er ikke en mappe"
 
-#: libmount/src/context_mount.c:1603
+#: libmount/src/context_mount.c:1601
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "skal være superbruger for at bruge mount"
 
-#: libmount/src/context_mount.c:1610
+#: libmount/src/context_mount.c:1608
 #, c-format
 msgid "mount point is busy"
 msgstr "monteringspunkt er optaget"
 
-#: libmount/src/context_mount.c:1617
+#: libmount/src/context_mount.c:1615
 #, c-format
 msgid "%s already mounted on %s"
 msgstr "%s er allerede monteret på %s"
 
-#: libmount/src/context_mount.c:1621
+#: libmount/src/context_mount.c:1619
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s er allerede monteret eller monteringspunkt er optaget"
 
-#: libmount/src/context_mount.c:1626
+#: libmount/src/context_mount.c:1624
 #, c-format
 msgid "mount point does not exist"
 msgstr "monteringspunkt findes ikke"
 
-#: libmount/src/context_mount.c:1629
+#: libmount/src/context_mount.c:1627
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "monteringspunkt er en symbolsk henvisning ud i ingenting"
 
-#: libmount/src/context_mount.c:1634
+#: libmount/src/context_mount.c:1632
 #, c-format
 msgid "special device %s does not exist"
 msgstr "specielenhed %s findes ikke"
 
-#: libmount/src/context_mount.c:1647
+#: libmount/src/context_mount.c:1645
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "specielenhed %s findes ikke (et stipræfiks er ikke en mappe)"
 
-#: libmount/src/context_mount.c:1657
+#: libmount/src/context_mount.c:1655
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr "monteringspunkt er ikke monteret, eller forkert tilvalg"
 
-#: libmount/src/context_mount.c:1659
+#: libmount/src/context_mount.c:1657
 #, c-format
 msgid "not mount point or bad option"
 msgstr "ikke et monteringspunkt, eller forkert tilvalg"
 
-#: libmount/src/context_mount.c:1662
+#: libmount/src/context_mount.c:1660
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr ""
 "forkert tilvalg. Bemærk at flytning af en montering under en delt montering\n"
 "ikke er understøttet."
 
-#: libmount/src/context_mount.c:1666
+#: libmount/src/context_mount.c:1664
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 "forkert tilvalg. For flere filsystemer (f.eks. nfs, cifs) skal du måske bruge et\n"
 "/sbin/mount.<type>-hjælpeprogram"
 
-#: libmount/src/context_mount.c:1670
+#: libmount/src/context_mount.c:1668
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr ""
 "forkert filsystemtype, forkert tilvalg, ugyldig superblok på %s, manglende tegnsæt,\n"
 "hjælpeprogram eller anden fejl"
 
-#: libmount/src/context_mount.c:1677
+#: libmount/src/context_mount.c:1675
 #, c-format
 msgid "mount table full"
 msgstr "monteringstabellen er fuld"
 
-#: libmount/src/context_mount.c:1682
+#: libmount/src/context_mount.c:1680
 #, c-format
 msgid "can't read superblock on %s"
 msgstr "kan ikke læse superblokken på %s"
 
-#: libmount/src/context_mount.c:1689
+#: libmount/src/context_mount.c:1687
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "ukendt filsystemtype »%s«"
 
-#: libmount/src/context_mount.c:1692
+#: libmount/src/context_mount.c:1690
 #, c-format
 msgid "unknown filesystem type"
 msgstr "ukendt filsystemtype"
 
-#: libmount/src/context_mount.c:1701
+#: libmount/src/context_mount.c:1699
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s er ikke en blokenhed, og stat(2) fejler?"
 
-#: libmount/src/context_mount.c:1704
+#: libmount/src/context_mount.c:1702
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr "kernen genkender ikke %s som en blokenhed;  måske er »modprobe driver« nødvendig"
 
-#: libmount/src/context_mount.c:1707
+#: libmount/src/context_mount.c:1705
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s er ikke en blokenhed; prøv »-o loop«"
 
-#: libmount/src/context_mount.c:1709
+#: libmount/src/context_mount.c:1707
 #, c-format
 msgid "%s is not a block device"
 msgstr "%s er ikke en blokenhed"
 
-#: libmount/src/context_mount.c:1716
+#: libmount/src/context_mount.c:1714
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s er ikke en gyldig blokenhed"
 
-#: libmount/src/context_mount.c:1724
+#: libmount/src/context_mount.c:1722
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "kan ikke montere %s skrivebeskyttet"
 
-#: libmount/src/context_mount.c:1726
+#: libmount/src/context_mount.c:1724
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s er skrivebeskyttet, men eksplicit skriv/læs-tilstand er angivet"
 
-#: libmount/src/context_mount.c:1728
+#: libmount/src/context_mount.c:1726
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "kan ikke montere %s læs/skriv igen, er skrivebeskyttet"
 
-#: libmount/src/context_mount.c:1730
+#: libmount/src/context_mount.c:1728
 #, c-format
 msgid "bind %s failed"
 msgstr "bind %s mislykkedes"
 
-#: libmount/src/context_mount.c:1739
+#: libmount/src/context_mount.c:1737
 #, c-format
 msgid "no medium found on %s"
 msgstr "intet medie fundet på %s"
 
-#: libmount/src/context_mount.c:1746
+#: libmount/src/context_mount.c:1744
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "kan ikke montere; sandsynligvis på grund af et ødelagt filsystem på %s"
 
-#: libmount/src/context_mount.c:1755
+#: libmount/src/context_mount.c:1753
 #, fuzzy, c-format
 #| msgid "mount(2) system call failed: %m"
 msgid "%s system call failed: %m"
 msgstr "mount(2)-systemkald mislykkedes: %m"
 
-#: libmount/src/context_umount.c:1262 libmount/src/context_umount.c:1316
+#: libmount/src/context_umount.c:1261 libmount/src/context_umount.c:1315
 #, c-format
 msgid "not mounted"
 msgstr "ikke monteret"
 
-#: libmount/src/context_umount.c:1278
+#: libmount/src/context_umount.c:1277
 #, c-format
 msgid "umount failed: %m"
 msgstr "umount mislykkedes: %m"
 
-#: libmount/src/context_umount.c:1287
+#: libmount/src/context_umount.c:1286
 #, c-format
 msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr "filsystem blev afmonteret, men kunnne ikke opdatere brugerrummets monteringstabel"
 
-#: libmount/src/context_umount.c:1293
+#: libmount/src/context_umount.c:1292
 #, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
 msgstr "filsystem blev afmonteret, men kunne ikke ændre navnerum tilbage igen"
 
-#: libmount/src/context_umount.c:1300
+#: libmount/src/context_umount.c:1299
 #, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "filsystem blev afmonteret, men efterfølgende operationer mislykkedes: %m"
 
-#: libmount/src/context_umount.c:1313
+#: libmount/src/context_umount.c:1312
 #, c-format
 msgid "invalid block device"
 msgstr "ugyldig blokenhed"
 
-#: libmount/src/context_umount.c:1319
+#: libmount/src/context_umount.c:1318
 #, c-format
 msgid "can't write superblock"
 msgstr "kan ikke skrive superblok"
 
-#: libmount/src/context_umount.c:1322
+#: libmount/src/context_umount.c:1321
 #, c-format
 msgid "target is busy"
 msgstr "mål er optaget"
 
-#: libmount/src/context_umount.c:1325
+#: libmount/src/context_umount.c:1324
 #, c-format
 msgid "no mount point specified"
 msgstr "intet monteringspunkt angivet"
 
-#: libmount/src/context_umount.c:1328
+#: libmount/src/context_umount.c:1327
 #, c-format
 msgid "must be superuser to unmount"
 msgstr "skal være superbruger for at afmontere"
 
-#: libmount/src/context_umount.c:1331
+#: libmount/src/context_umount.c:1330
 #, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr "blokenheder tillades ikke på dette filsystem"
 
-#: libmount/src/context_umount.c:1334
+#: libmount/src/context_umount.c:1333
 #, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "mount(2)-systemkald mislykkedes: %m"

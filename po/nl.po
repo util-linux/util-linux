@@ -33,7 +33,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.29-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2025-01-09 12:31+0100\n"
+"POT-Creation-Date: 2025-01-13 13:14+0100\n"
 "PO-Revision-Date: 2016-10-30 17:01+0100\n"
 "Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -8219,266 +8219,266 @@ msgstr "hush login-status: herstellen van originele ID's is mislukt"
 msgid "operation failed: %m"
 msgstr "openen van %s is mislukt"
 
-#: libmount/src/context_mount.c:1426
+#: libmount/src/context_mount.c:1424
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "WAARSCHUWING: toepassen van doorgavevlaggen is mislukt"
 
-#: libmount/src/context_mount.c:1436
+#: libmount/src/context_mount.c:1434
 #, fuzzy, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "%s is schrijfbeveiligd en wordt als alleen-lezen aangekoppeld"
 
-#: libmount/src/context_mount.c:1450
+#: libmount/src/context_mount.c:1448
 #, c-format
 msgid "operation permitted for root only"
 msgstr ""
 
-#: libmount/src/context_mount.c:1454
+#: libmount/src/context_mount.c:1452
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s is al aangekoppeld"
 
-#: libmount/src/context_mount.c:1460
+#: libmount/src/context_mount.c:1458
 #, fuzzy, c-format
 msgid "can't find in %s"
 msgstr "kan %s niet vinden in %s"
 
-#: libmount/src/context_mount.c:1463
+#: libmount/src/context_mount.c:1461
 #, fuzzy, c-format
 msgid "can't find mount point in %s"
 msgstr "kan aankoppelingspunt %s niet vinden in %s"
 
-#: libmount/src/context_mount.c:1466
+#: libmount/src/context_mount.c:1464
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "kan aankoppelingsbron %s niet vinden in %s"
 
-#: libmount/src/context_mount.c:1471
+#: libmount/src/context_mount.c:1469
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr ""
 
-#: libmount/src/context_mount.c:1476
+#: libmount/src/context_mount.c:1474
 #, fuzzy, c-format
 msgid "failed to determine filesystem type"
 msgstr "%s: bepalen van bron is mislukt"
 
-#: libmount/src/context_mount.c:1477
+#: libmount/src/context_mount.c:1475
 #, fuzzy, c-format
 msgid "no valid filesystem type specified"
 msgstr "geen bestandsnaam gegeven"
 
-#: libmount/src/context_mount.c:1484
+#: libmount/src/context_mount.c:1482
 #, c-format
 msgid "can't find %s"
 msgstr "kan %s niet vinden"
 
-#: libmount/src/context_mount.c:1486
+#: libmount/src/context_mount.c:1484
 #, fuzzy, c-format
 msgid "no mount source specified"
 msgstr "geen aankoppelingspunt opgegeven"
 
-#: libmount/src/context_mount.c:1497
+#: libmount/src/context_mount.c:1495
 #, fuzzy, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr "ontleden van aankoppelingsopties is mislukt"
 
-#: libmount/src/context_mount.c:1498
+#: libmount/src/context_mount.c:1496
 #, fuzzy, c-format
 msgid "failed to parse mount options '%s'"
 msgstr "ontleden van aankoppelingsopties is mislukt"
 
-#: libmount/src/context_mount.c:1501
+#: libmount/src/context_mount.c:1499
 #, fuzzy, c-format
 msgid "failed to parse mount options: %m"
 msgstr "ontleden van aankoppelingsopties is mislukt"
 
-#: libmount/src/context_mount.c:1502
+#: libmount/src/context_mount.c:1500
 #, c-format
 msgid "failed to parse mount options"
 msgstr "ontleden van aankoppelingsopties is mislukt"
 
-#: libmount/src/context_mount.c:1507
+#: libmount/src/context_mount.c:1505
 #, fuzzy, c-format
 msgid "failed to setup loop device for %s"
 msgstr "%s: instellen van lus-apparaat is mislukt"
 
-#: libmount/src/context_mount.c:1511
+#: libmount/src/context_mount.c:1509
 #, fuzzy, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "%s: er is een overlappend lus-apparaat"
 
-#: libmount/src/context_mount.c:1515 libmount/src/context_umount.c:1268
+#: libmount/src/context_mount.c:1513 libmount/src/context_umount.c:1267
 #, fuzzy, c-format
 msgid "locking failed"
 msgstr "sluiten van %s is mislukt"
 
-#: libmount/src/context_mount.c:1519 libmount/src/context_umount.c:1274
+#: libmount/src/context_mount.c:1517 libmount/src/context_umount.c:1273
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, fuzzy, c-format
 msgid "failed to switch namespace"
 msgstr "pad naar de naamsruimte"
 
-#: libmount/src/context_mount.c:1523
+#: libmount/src/context_mount.c:1521
 #, fuzzy, c-format
 #| msgid "%s is already mounted"
 msgid "filesystem already mounted"
 msgstr "%s is al aangekoppeld"
 
-#: libmount/src/context_mount.c:1526
+#: libmount/src/context_mount.c:1524
 #, fuzzy, c-format
 msgid "mount failed: %m"
 msgstr "aankoppelen is mislukt"
 
-#: libmount/src/context_mount.c:1536
+#: libmount/src/context_mount.c:1534
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to apply flags"
 msgstr "%s: bestandssysteem is afgekoppeld, maar mount(8) is mislukt"
 
-#: libmount/src/context_mount.c:1542
+#: libmount/src/context_mount.c:1540
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "%s: bestandssysteem is afgekoppeld, maar mount(8) is mislukt"
 
-#: libmount/src/context_mount.c:1548
+#: libmount/src/context_mount.c:1546
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "%s: bestandssysteem is afgekoppeld, maar mount(8) is mislukt"
 
-#: libmount/src/context_mount.c:1554
+#: libmount/src/context_mount.c:1552
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "%s: bestandssysteem is afgekoppeld, maar mount(8) is mislukt"
 
-#: libmount/src/context_mount.c:1560
+#: libmount/src/context_mount.c:1558
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "%s: bestandssysteem is afgekoppeld, maar mount(8) is mislukt"
 
-#: libmount/src/context_mount.c:1566
+#: libmount/src/context_mount.c:1564
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "%s: bestandssysteem is afgekoppeld, maar mount(8) is mislukt"
 
-#: libmount/src/context_mount.c:1572
+#: libmount/src/context_mount.c:1570
 #, fuzzy, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "%s: bestandssysteem is afgekoppeld, maar mount(8) is mislukt"
 
-#: libmount/src/context_mount.c:1584
+#: libmount/src/context_mount.c:1582
 #, fuzzy, c-format
 msgid "%s system call failed: %s"
 msgstr "mount(2) is mislukt"
 
-#: libmount/src/context_mount.c:1599 login-utils/newgrp.c:228
+#: libmount/src/context_mount.c:1597 login-utils/newgrp.c:228
 #, c-format
 msgid "permission denied"
 msgstr "toegang geweigerd"
 
-#: libmount/src/context_mount.c:1601 libmount/src/context_mount.c:1642
+#: libmount/src/context_mount.c:1599 libmount/src/context_mount.c:1640
 #, fuzzy, c-format
 msgid "mount point is not a directory"
 msgstr "aankoppelingspunt %s is geen map"
 
-#: libmount/src/context_mount.c:1603
+#: libmount/src/context_mount.c:1601
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "u moet root zijn om aan te kunnen koppelen"
 
-#: libmount/src/context_mount.c:1610
+#: libmount/src/context_mount.c:1608
 #, fuzzy, c-format
 msgid "mount point is busy"
 msgstr "mount: %s is bezig"
 
-#: libmount/src/context_mount.c:1617
+#: libmount/src/context_mount.c:1615
 #, fuzzy, c-format
 msgid "%s already mounted on %s"
 msgstr "mount: %s is al aangekoppeld op %s\n"
 
-#: libmount/src/context_mount.c:1621
+#: libmount/src/context_mount.c:1619
 #, fuzzy, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s is al aangekoppeld of %s is bezig"
 
-#: libmount/src/context_mount.c:1626
+#: libmount/src/context_mount.c:1624
 #, fuzzy, c-format
 msgid "mount point does not exist"
 msgstr "aankoppelingspunt %s bestaat niet"
 
-#: libmount/src/context_mount.c:1629
+#: libmount/src/context_mount.c:1627
 #, fuzzy, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "aankoppelingspunt %s is een symbolische koppeling die nergens naar wijst"
 
-#: libmount/src/context_mount.c:1634
+#: libmount/src/context_mount.c:1632
 #, c-format
 msgid "special device %s does not exist"
 msgstr "apparaat %s bestaat niet"
 
-#: libmount/src/context_mount.c:1647
+#: libmount/src/context_mount.c:1645
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "apparaat %s bestaat niet  (het pad bevat iets dat geen map is)"
 
-#: libmount/src/context_mount.c:1657
+#: libmount/src/context_mount.c:1655
 #, fuzzy, c-format
 msgid "mount point not mounted or bad option"
 msgstr "mount: %s is nog niet aangekoppeld, of een ongeldige optie"
 
-#: libmount/src/context_mount.c:1659
+#: libmount/src/context_mount.c:1657
 #, fuzzy, c-format
 msgid "not mount point or bad option"
 msgstr "%s is geen aankoppelingspunt of een ongeldige optie"
 
-#: libmount/src/context_mount.c:1662
+#: libmount/src/context_mount.c:1660
 #, fuzzy, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr ""
 "ongeldige optie -- het verplaatsen van een aankoppeling\n"
 "onder een gedeelde aankoppeling wordt niet ondersteund"
 
-#: libmount/src/context_mount.c:1666
+#: libmount/src/context_mount.c:1664
 #, fuzzy, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 "       (voor sommige bestandssystemen (bijvoorbeeld nfs of cifs) kan\n"
 "       een /sbin/mount.<type> hulpprogramma nodig zijn)"
 
-#: libmount/src/context_mount.c:1670
+#: libmount/src/context_mount.c:1668
 #, fuzzy, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr ""
 "onjuiste bestandssysteemsoort, ongeldige optie, ontbrekende codepagina,\n"
 "       ontbrekend hulpprogramma, slecht superblok op %s, of een andere fout"
 
-#: libmount/src/context_mount.c:1677
+#: libmount/src/context_mount.c:1675
 #, c-format
 msgid "mount table full"
 msgstr "aankoppelingstabel is vol"
 
-#: libmount/src/context_mount.c:1682
+#: libmount/src/context_mount.c:1680
 #, fuzzy, c-format
 msgid "can't read superblock on %s"
 msgstr "%s: kan superblok niet lezen"
 
-#: libmount/src/context_mount.c:1689
+#: libmount/src/context_mount.c:1687
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "onbekende bestandssysteemsoort '%s'"
 
-#: libmount/src/context_mount.c:1692
+#: libmount/src/context_mount.c:1690
 #, c-format
 msgid "unknown filesystem type"
 msgstr "onbekende bestandssysteemsoort"
 
-#: libmount/src/context_mount.c:1701
+#: libmount/src/context_mount.c:1699
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s is geen blok-apparaat, en stat(2) is mislukt... heel vreemd"
 
 # FIXME: backtick
-#: libmount/src/context_mount.c:1704
+#: libmount/src/context_mount.c:1702
 #, fuzzy, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr ""
@@ -8486,113 +8486,113 @@ msgstr ""
 "       (misschien is 'modprobe stuurprogramma' nodig?)"
 
 # FIXME: backtick
-#: libmount/src/context_mount.c:1707
+#: libmount/src/context_mount.c:1705
 #, fuzzy, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s is geen blok-apparaat  (misschien '-o loop' proberen?)"
 
-#: libmount/src/context_mount.c:1709
+#: libmount/src/context_mount.c:1707
 #, fuzzy, c-format
 msgid "%s is not a block device"
 msgstr " %s is geen blok-apparaat"
 
-#: libmount/src/context_mount.c:1716
+#: libmount/src/context_mount.c:1714
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s is geen geldig blok-apparaat"
 
-#: libmount/src/context_mount.c:1724
+#: libmount/src/context_mount.c:1722
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "kan %s niet aankoppelen voor alleen-lezen"
 
 # FIXME: backtick
-#: libmount/src/context_mount.c:1726
+#: libmount/src/context_mount.c:1724
 #, fuzzy, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s is schrijfbeveiligd, maar expliciete optie '-w' is gegeven"
 
-#: libmount/src/context_mount.c:1728
+#: libmount/src/context_mount.c:1726
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "kan %s niet heraankoppelen als lezen-en-schrijven, want is schrijfbeveiligd"
 
-#: libmount/src/context_mount.c:1730
+#: libmount/src/context_mount.c:1728
 #, fuzzy, c-format
 msgid "bind %s failed"
 msgstr "'%s' is mislukt"
 
-#: libmount/src/context_mount.c:1739
+#: libmount/src/context_mount.c:1737
 #, c-format
 msgid "no medium found on %s"
 msgstr "geen medium gevonden op %s"
 
-#: libmount/src/context_mount.c:1746
+#: libmount/src/context_mount.c:1744
 #, fuzzy, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "zal niet proberen een bestandssysteem te maken op '%s'"
 
-#: libmount/src/context_mount.c:1755
+#: libmount/src/context_mount.c:1753
 #, fuzzy, c-format
 msgid "%s system call failed: %m"
 msgstr "mount(2) is mislukt"
 
-#: libmount/src/context_umount.c:1262 libmount/src/context_umount.c:1316
+#: libmount/src/context_umount.c:1261 libmount/src/context_umount.c:1315
 #, fuzzy, c-format
 msgid "not mounted"
 msgstr "%s is niet aangekoppeld"
 
-#: libmount/src/context_umount.c:1278
+#: libmount/src/context_umount.c:1277
 #, fuzzy, c-format
 msgid "umount failed: %m"
 msgstr "aankoppelen is mislukt"
 
-#: libmount/src/context_umount.c:1287
+#: libmount/src/context_umount.c:1286
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr "%s: bestandssysteem is afgekoppeld, maar mount(8) is mislukt"
 
-#: libmount/src/context_umount.c:1293
+#: libmount/src/context_umount.c:1292
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
 msgstr "%s: bestandssysteem is afgekoppeld, maar mount(8) is mislukt"
 
-#: libmount/src/context_umount.c:1300
+#: libmount/src/context_umount.c:1299
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "%s: bestandssysteem is afgekoppeld, maar mount(8) is mislukt"
 
-#: libmount/src/context_umount.c:1313
+#: libmount/src/context_umount.c:1312
 #, fuzzy, c-format
 msgid "invalid block device"
 msgstr "%s: ongeldig blok-apparaat"
 
-#: libmount/src/context_umount.c:1319
+#: libmount/src/context_umount.c:1318
 #, fuzzy, c-format
 msgid "can't write superblock"
 msgstr "%s: kan niet naar superblok schrijven"
 
-#: libmount/src/context_umount.c:1322
+#: libmount/src/context_umount.c:1321
 #, fuzzy, c-format
 msgid "target is busy"
 msgstr "doel bestaat"
 
-#: libmount/src/context_umount.c:1325
+#: libmount/src/context_umount.c:1324
 #, fuzzy, c-format
 msgid "no mount point specified"
 msgstr "geen aankoppelingspunt opgegeven"
 
-#: libmount/src/context_umount.c:1328
+#: libmount/src/context_umount.c:1327
 #, fuzzy, c-format
 msgid "must be superuser to unmount"
 msgstr "%s: u moet root zijn om te kunnen afkoppelen"
 
-#: libmount/src/context_umount.c:1331
+#: libmount/src/context_umount.c:1330
 #, fuzzy, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr "%s: blok-apparaten zijn niet toegestaan op bestandssysteem"
 
-#: libmount/src/context_umount.c:1334
+#: libmount/src/context_umount.c:1333
 #, fuzzy, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "mount(2) is mislukt"

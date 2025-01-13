@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.40.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2025-01-09 12:31+0100\n"
+"POT-Creation-Date: 2025-01-13 13:14+0100\n"
 "PO-Revision-Date: 2024-05-02 11:44-0700\n"
 "Last-Translator: Božidar Putanec <bozidarp@yahoo.com>\n"
 "Language-Team: Croatian <lokalizacija@linux.hr>\n"
@@ -7934,376 +7934,376 @@ msgstr "tihi prijavni status: nije uspjelo vratiti originalni ID"
 msgid "operation failed: %m"
 msgstr "operacija nije uspjela: %m"
 
-#: libmount/src/context_mount.c:1426
+#: libmount/src/context_mount.c:1424
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "UPOZORENJE: nije uspjelo primijeniti propagacijske flagove"
 
-#: libmount/src/context_mount.c:1436
+#: libmount/src/context_mount.c:1434
 #, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "UPOZORENJE: uređaj je zaštićen od pisanja; montiramo ga samo-za-čitanje"
 
-#: libmount/src/context_mount.c:1450
+#: libmount/src/context_mount.c:1448
 #, c-format
 msgid "operation permitted for root only"
 msgstr "samo root može koristiti ovu operaciju"
 
-#: libmount/src/context_mount.c:1454
+#: libmount/src/context_mount.c:1452
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s je već montiran"
 
-#: libmount/src/context_mount.c:1460
+#: libmount/src/context_mount.c:1458
 #, c-format
 msgid "can't find in %s"
 msgstr "ne može naći u %s"
 
-#: libmount/src/context_mount.c:1463
+#: libmount/src/context_mount.c:1461
 #, c-format
 msgid "can't find mount point in %s"
 msgstr "ne može naći točku montiranja u %s"
 
-#: libmount/src/context_mount.c:1466
+#: libmount/src/context_mount.c:1464
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "ne može naći izvor montiranja %s u %s"
 
-#: libmount/src/context_mount.c:1471
+#: libmount/src/context_mount.c:1469
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr "na %s je pronađeno nekoliko datotečnih sustava; rabite -t <tip> ili wipefs(8)"
 
-#: libmount/src/context_mount.c:1476
+#: libmount/src/context_mount.c:1474
 #, c-format
 msgid "failed to determine filesystem type"
 msgstr "nije uspjelo odrediti tip datotečnog sustava"
 
-#: libmount/src/context_mount.c:1477
+#: libmount/src/context_mount.c:1475
 #, c-format
 msgid "no valid filesystem type specified"
 msgstr "nijedan valjani datotečni sustav nije specificiran"
 
-#: libmount/src/context_mount.c:1484
+#: libmount/src/context_mount.c:1482
 #, c-format
 msgid "can't find %s"
 msgstr "ne može naći %s"
 
-#: libmount/src/context_mount.c:1486
+#: libmount/src/context_mount.c:1484
 #, c-format
 msgid "no mount source specified"
 msgstr "ni jedan izvor montiranja nije specificiran"
 
-#: libmount/src/context_mount.c:1497
+#: libmount/src/context_mount.c:1495
 #, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr "nije uspjelo raščlaniti opcije ‘%s’ za montiranje: %m"
 
-#: libmount/src/context_mount.c:1498
+#: libmount/src/context_mount.c:1496
 #, c-format
 msgid "failed to parse mount options '%s'"
 msgstr "nije uspjelo raščlaniti opcije ‘%s’ za montiranje"
 
-#: libmount/src/context_mount.c:1501
+#: libmount/src/context_mount.c:1499
 #, c-format
 msgid "failed to parse mount options: %m"
 msgstr "nije uspjelo raščlaniti opcije za montiranje: %m"
 
-#: libmount/src/context_mount.c:1502
+#: libmount/src/context_mount.c:1500
 #, c-format
 msgid "failed to parse mount options"
 msgstr "nije uspjelo raščlaniti opcije za montiranje"
 
-#: libmount/src/context_mount.c:1507
+#: libmount/src/context_mount.c:1505
 #, c-format
 msgid "failed to setup loop device for %s"
 msgstr "nije uspjelo postaviti loop uređaj za %s"
 
-#: libmount/src/context_mount.c:1511
+#: libmount/src/context_mount.c:1509
 #, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "za %s postoji preklapajući loop-uređaj"
 
-#: libmount/src/context_mount.c:1515 libmount/src/context_umount.c:1268
+#: libmount/src/context_mount.c:1513 libmount/src/context_umount.c:1267
 #, c-format
 msgid "locking failed"
 msgstr "zaključavanje nije uspjelo"
 
-#: libmount/src/context_mount.c:1519 libmount/src/context_umount.c:1274
+#: libmount/src/context_mount.c:1517 libmount/src/context_umount.c:1273
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, c-format
 msgid "failed to switch namespace"
 msgstr "nije uspjelo zamijeniti imenski prostor"
 
-#: libmount/src/context_mount.c:1523
+#: libmount/src/context_mount.c:1521
 #, c-format
 msgid "filesystem already mounted"
 msgstr "datotečni sustav je već montiran"
 
-#: libmount/src/context_mount.c:1526
+#: libmount/src/context_mount.c:1524
 #, c-format
 msgid "mount failed: %m"
 msgstr "montiranje nije uspjelo: %m"
 
-#: libmount/src/context_mount.c:1536
+#: libmount/src/context_mount.c:1534
 #, c-format
 msgid "filesystem was mounted, but failed to apply flags"
 msgstr "datotečni sustav je montiran, ali nije uspjelo primijeniti zastavice"
 
-#: libmount/src/context_mount.c:1542
+#: libmount/src/context_mount.c:1540
 #, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr ""
 "datotečni sustav je montiran, ali ažurirati tablicu montiranja u korisničkom\n"
 "prostoru nije uspjelo"
 
-#: libmount/src/context_mount.c:1548
+#: libmount/src/context_mount.c:1546
 #, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "datotečni sustav je montiran, ali povratak u imenski prostor nije uspio"
 
-#: libmount/src/context_mount.c:1554
+#: libmount/src/context_mount.c:1552
 #, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "datotečni sustav je montiran, ali promjena vlasništva nije uspjela: %m"
 
-#: libmount/src/context_mount.c:1560
+#: libmount/src/context_mount.c:1558
 #, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "datotečni sustav je montiran, ali promjena moda nije uspjela: %m"
 
-#: libmount/src/context_mount.c:1566
+#: libmount/src/context_mount.c:1564
 #, c-format
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "datotečni sustav je montiran, ali nije uspjelo prikvačiti idmapping"
 
-#: libmount/src/context_mount.c:1572
+#: libmount/src/context_mount.c:1570
 #, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "datotečni sustav je montiran, ali sljedeća operacija nije uspjela: %m"
 
-#: libmount/src/context_mount.c:1584
+#: libmount/src/context_mount.c:1582
 #, c-format
 msgid "%s system call failed: %s"
 msgstr "Sustavni poziv %s nije uspio: %s"
 
-#: libmount/src/context_mount.c:1599 login-utils/newgrp.c:228
+#: libmount/src/context_mount.c:1597 login-utils/newgrp.c:228
 #, c-format
 msgid "permission denied"
 msgstr "pristup je odbijen"
 
-#: libmount/src/context_mount.c:1601 libmount/src/context_mount.c:1642
+#: libmount/src/context_mount.c:1599 libmount/src/context_mount.c:1640
 #, c-format
 msgid "mount point is not a directory"
 msgstr "točka montiranja nije direktorij"
 
-#: libmount/src/context_mount.c:1603
+#: libmount/src/context_mount.c:1601
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "za koristiti mount morate biti superuser (root)"
 
-#: libmount/src/context_mount.c:1610
+#: libmount/src/context_mount.c:1608
 #, c-format
 msgid "mount point is busy"
 msgstr "točka montiranja je zauzeta"
 
-#: libmount/src/context_mount.c:1617
+#: libmount/src/context_mount.c:1615
 #, c-format
 msgid "%s already mounted on %s"
 msgstr "%s je već montiran na %s"
 
-#: libmount/src/context_mount.c:1621
+#: libmount/src/context_mount.c:1619
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s je već montiran ili je točka montiranja zauzeta"
 
-#: libmount/src/context_mount.c:1626
+#: libmount/src/context_mount.c:1624
 #, c-format
 msgid "mount point does not exist"
 msgstr "točka montiranja ne postoji"
 
-#: libmount/src/context_mount.c:1629
+#: libmount/src/context_mount.c:1627
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "točka montiranja je simbolična poveznica u ‘nikuda’"
 
-#: libmount/src/context_mount.c:1634
+#: libmount/src/context_mount.c:1632
 #, c-format
 msgid "special device %s does not exist"
 msgstr "specijalni uređaj %s ne postoji"
 
-#: libmount/src/context_mount.c:1647
+#: libmount/src/context_mount.c:1645
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "specijalni uređaj %s ne postoji (prefiks staze nije direktorij)"
 
-#: libmount/src/context_mount.c:1657
+#: libmount/src/context_mount.c:1655
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr "točka montiranja nije montirana ili je dana loša opcija"
 
-#: libmount/src/context_mount.c:1659
+#: libmount/src/context_mount.c:1657
 #, c-format
 msgid "not mount point or bad option"
 msgstr "nije točka montiranja ili je opcija loša"
 
-#: libmount/src/context_mount.c:1662
+#: libmount/src/context_mount.c:1660
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr "loša opcija; nije podržano premještanje montiranja ispod dijeljenog montiranja"
 
-#: libmount/src/context_mount.c:1666
+#: libmount/src/context_mount.c:1664
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 "loša opcija; za nekoliko datotečnih sustava (npr. nfs, cifs) možda će vam\n"
 "zatrebati pomoćni program /sbin/mount.<tip>"
 
-#: libmount/src/context_mount.c:1670
+#: libmount/src/context_mount.c:1668
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr ""
 "krivi datotečni sustav / loša opcija / oštećeni superblok na %s,\n"
 "manjka codepage ili pomoćni program ili neka druga greška"
 
-#: libmount/src/context_mount.c:1677
+#: libmount/src/context_mount.c:1675
 #, c-format
 msgid "mount table full"
 msgstr "tablica montiranja je popunjena"
 
-#: libmount/src/context_mount.c:1682
+#: libmount/src/context_mount.c:1680
 #, c-format
 msgid "can't read superblock on %s"
 msgstr "ne može pročitati superblok na %s"
 
-#: libmount/src/context_mount.c:1689
+#: libmount/src/context_mount.c:1687
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "nepoznati tip datotečnog sustava ‘%s’"
 
-#: libmount/src/context_mount.c:1692
+#: libmount/src/context_mount.c:1690
 #, c-format
 msgid "unknown filesystem type"
 msgstr "nepoznati tip datotečnog sustava"
 
-#: libmount/src/context_mount.c:1701
+#: libmount/src/context_mount.c:1699
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s nije blok-uređaj, a poziv stat(2) nije uspješan?"
 
-#: libmount/src/context_mount.c:1704
+#: libmount/src/context_mount.c:1702
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr "jezgra (kernel) ne prepoznaje %s kao blok-uređaj; možda je potrebno izvršiti \"modprobe driver\""
 
-#: libmount/src/context_mount.c:1707
+#: libmount/src/context_mount.c:1705
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s nije blok-uređaj; probajte s \"-o loop\""
 
-#: libmount/src/context_mount.c:1709
+#: libmount/src/context_mount.c:1707
 #, c-format
 msgid "%s is not a block device"
 msgstr "%s: nije blok-uređaj"
 
-#: libmount/src/context_mount.c:1716
+#: libmount/src/context_mount.c:1714
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s nije valjani blok-uređaj"
 
-#: libmount/src/context_mount.c:1724
+#: libmount/src/context_mount.c:1722
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "ne može montirati %s samo-za-čitanje"
 
-#: libmount/src/context_mount.c:1726
+#: libmount/src/context_mount.c:1724
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s je zaštićen od pisanja, a eksplicitno je zatražen način za čitanje i pisanje"
 
-#: libmount/src/context_mount.c:1728
+#: libmount/src/context_mount.c:1726
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "ne može remontirati %s za čitanje i pisanje jer je zaštićen od pisanja"
 
-#: libmount/src/context_mount.c:1730
+#: libmount/src/context_mount.c:1728
 #, c-format
 msgid "bind %s failed"
 msgstr "vezanje %s nije uspjelo"
 
-#: libmount/src/context_mount.c:1739
+#: libmount/src/context_mount.c:1737
 #, c-format
 msgid "no medium found on %s"
 msgstr "ni jedan medij nije nađen na %s"
 
-#: libmount/src/context_mount.c:1746
+#: libmount/src/context_mount.c:1744
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "ne može montirati; datotečni sustav na %s je vjerojatno oštećen"
 
-#: libmount/src/context_mount.c:1755
+#: libmount/src/context_mount.c:1753
 #, c-format
 msgid "%s system call failed: %m"
 msgstr "sustavni poziv %s nije uspio: %m"
 
-#: libmount/src/context_umount.c:1262 libmount/src/context_umount.c:1316
+#: libmount/src/context_umount.c:1261 libmount/src/context_umount.c:1315
 #, c-format
 msgid "not mounted"
 msgstr "nije montiran"
 
-#: libmount/src/context_umount.c:1278
+#: libmount/src/context_umount.c:1277
 #, c-format
 msgid "umount failed: %m"
 msgstr "demontiranje nije uspjelo: %m"
 
-#: libmount/src/context_umount.c:1287
+#: libmount/src/context_umount.c:1286
 #, c-format
 msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr ""
 "datotečni sustav je demontiran, ali ažurirati tablicu montiranja u korisničkom\n"
 "prostoru nije uspjelo"
 
-#: libmount/src/context_umount.c:1293
+#: libmount/src/context_umount.c:1292
 #, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
 msgstr "datotečni sustav je demontiran, ali povratak u imenski prostor nije uspio"
 
-#: libmount/src/context_umount.c:1300
+#: libmount/src/context_umount.c:1299
 #, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "datotečni sustav je demontiran, ali sljedeća operacija nije uspjela: %m"
 
-#: libmount/src/context_umount.c:1313
+#: libmount/src/context_umount.c:1312
 #, c-format
 msgid "invalid block device"
 msgstr "nevaljani blok-uređaj"
 
-#: libmount/src/context_umount.c:1319
+#: libmount/src/context_umount.c:1318
 #, c-format
 msgid "can't write superblock"
 msgstr "ne može zapisati superblok"
 
-#: libmount/src/context_umount.c:1322
+#: libmount/src/context_umount.c:1321
 #, c-format
 msgid "target is busy"
 msgstr "cilj je zauzet"
 
-#: libmount/src/context_umount.c:1325
+#: libmount/src/context_umount.c:1324
 #, c-format
 msgid "no mount point specified"
 msgstr "ni jedna točka montiranja nije specificirana"
 
-#: libmount/src/context_umount.c:1328
+#: libmount/src/context_umount.c:1327
 #, c-format
 msgid "must be superuser to unmount"
 msgstr "za koristiti umount morate biti superuser (root)"
 
-#: libmount/src/context_umount.c:1331
+#: libmount/src/context_umount.c:1330
 #, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr "blok-uređaji nisu dopušteni na datotečnom sustavu"
 
-#: libmount/src/context_umount.c:1334
+#: libmount/src/context_umount.c:1333
 #, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "sustavski poziv umount(2) nije uspio: %m"

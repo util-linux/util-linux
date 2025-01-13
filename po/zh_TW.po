@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.23.1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2025-01-09 12:31+0100\n"
+"POT-Creation-Date: 2025-01-13 13:14+0100\n"
 "PO-Revision-Date: 2013-06-07 23:29+0800\n"
 "Last-Translator: Wei-Lun Chao <bluebat@member.fsf.org>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -8448,374 +8448,374 @@ msgstr ""
 msgid "operation failed: %m"
 msgstr "開啟失敗：%s"
 
-#: libmount/src/context_mount.c:1426
+#: libmount/src/context_mount.c:1424
 #, fuzzy, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "附加選項時失敗"
 
-#: libmount/src/context_mount.c:1436
+#: libmount/src/context_mount.c:1434
 #, fuzzy, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "%s 被防止寫入的，掛載唯讀"
 
-#: libmount/src/context_mount.c:1450
+#: libmount/src/context_mount.c:1448
 #, c-format
 msgid "operation permitted for root only"
 msgstr ""
 
-#: libmount/src/context_mount.c:1454
+#: libmount/src/context_mount.c:1452
 #, fuzzy, c-format
 msgid "%s is already mounted"
 msgstr "%s 已經掛載"
 
-#: libmount/src/context_mount.c:1460
+#: libmount/src/context_mount.c:1458
 #, fuzzy, c-format
 msgid "can't find in %s"
 msgstr "找不到 %s 在中 %s"
 
-#: libmount/src/context_mount.c:1463
+#: libmount/src/context_mount.c:1461
 #, fuzzy, c-format
 msgid "can't find mount point in %s"
 msgstr "找不到 mountpoint %s 在中 %s"
 
-#: libmount/src/context_mount.c:1466
+#: libmount/src/context_mount.c:1464
 #, fuzzy, c-format
 msgid "can't find mount source %s in %s"
 msgstr "找不到掛載來源 %s 在中 %s"
 
-#: libmount/src/context_mount.c:1471
+#: libmount/src/context_mount.c:1469
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr ""
 
-#: libmount/src/context_mount.c:1476
+#: libmount/src/context_mount.c:1474
 #, fuzzy, c-format
 msgid "failed to determine filesystem type"
 msgstr "%s：無法讀取速度"
 
-#: libmount/src/context_mount.c:1477
+#: libmount/src/context_mount.c:1475
 #, fuzzy, c-format
 msgid "no valid filesystem type specified"
 msgstr "未指定任何檔名"
 
-#: libmount/src/context_mount.c:1484
+#: libmount/src/context_mount.c:1482
 #, fuzzy, c-format
 msgid "can't find %s"
 msgstr "找不到 %s"
 
-#: libmount/src/context_mount.c:1486
+#: libmount/src/context_mount.c:1484
 #, fuzzy, c-format
 msgid "no mount source specified"
 msgstr "沒有 mountpoint 指定的。"
 
-#: libmount/src/context_mount.c:1497
+#: libmount/src/context_mount.c:1495
 #, fuzzy, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr "剖析掛載選項時失敗"
 
-#: libmount/src/context_mount.c:1498
+#: libmount/src/context_mount.c:1496
 #, fuzzy, c-format
 msgid "failed to parse mount options '%s'"
 msgstr "剖析掛載選項時失敗"
 
-#: libmount/src/context_mount.c:1501
+#: libmount/src/context_mount.c:1499
 #, fuzzy, c-format
 msgid "failed to parse mount options: %m"
 msgstr "剖析掛載選項時失敗"
 
-#: libmount/src/context_mount.c:1502
+#: libmount/src/context_mount.c:1500
 #, fuzzy, c-format
 msgid "failed to parse mount options"
 msgstr "剖析掛載選項時失敗"
 
-#: libmount/src/context_mount.c:1507
+#: libmount/src/context_mount.c:1505
 #, fuzzy, c-format
 msgid "failed to setup loop device for %s"
 msgstr "%s：無法設定迴圈裝置"
 
-#: libmount/src/context_mount.c:1511
+#: libmount/src/context_mount.c:1509
 #, fuzzy, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "%s 不是 lp 裝置"
 
-#: libmount/src/context_mount.c:1515 libmount/src/context_umount.c:1268
+#: libmount/src/context_mount.c:1513 libmount/src/context_umount.c:1267
 #, fuzzy, c-format
 msgid "locking failed"
 msgstr "關閉 %s 失敗"
 
-#: libmount/src/context_mount.c:1519 libmount/src/context_umount.c:1274
+#: libmount/src/context_mount.c:1517 libmount/src/context_umount.c:1273
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, fuzzy, c-format
 msgid "failed to switch namespace"
 msgstr "狀態的裝置"
 
-#: libmount/src/context_mount.c:1523
+#: libmount/src/context_mount.c:1521
 #, fuzzy, c-format
 msgid "filesystem already mounted"
 msgstr "%s 已經掛載"
 
-#: libmount/src/context_mount.c:1526
+#: libmount/src/context_mount.c:1524
 #, fuzzy, c-format
 msgid "mount failed: %m"
 msgstr "掛載失敗"
 
-#: libmount/src/context_mount.c:1536
+#: libmount/src/context_mount.c:1534
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to apply flags"
 msgstr "%s：檔案系統 umounted，但是掛載 (8) 失敗"
 
-#: libmount/src/context_mount.c:1542
+#: libmount/src/context_mount.c:1540
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "%s：檔案系統 umounted，但是掛載 (8) 失敗"
 
-#: libmount/src/context_mount.c:1548
+#: libmount/src/context_mount.c:1546
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "%s：檔案系統 umounted，但是掛載 (8) 失敗"
 
-#: libmount/src/context_mount.c:1554
+#: libmount/src/context_mount.c:1552
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "%s：檔案系統 umounted，但是掛載 (8) 失敗"
 
-#: libmount/src/context_mount.c:1560
+#: libmount/src/context_mount.c:1558
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "%s：檔案系統 umounted，但是掛載 (8) 失敗"
 
-#: libmount/src/context_mount.c:1566
+#: libmount/src/context_mount.c:1564
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "%s：檔案系統 umounted，但是掛載 (8) 失敗"
 
-#: libmount/src/context_mount.c:1572
+#: libmount/src/context_mount.c:1570
 #, fuzzy, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "%s：檔案系統 umounted，但是掛載 (8) 失敗"
 
-#: libmount/src/context_mount.c:1584
+#: libmount/src/context_mount.c:1582
 #, fuzzy, c-format
 msgid "%s system call failed: %s"
 msgstr "掛載 (2) 失敗"
 
-#: libmount/src/context_mount.c:1599 login-utils/newgrp.c:228
+#: libmount/src/context_mount.c:1597 login-utils/newgrp.c:228
 #, fuzzy, c-format
 msgid "permission denied"
 msgstr "權限被拒"
 
-#: libmount/src/context_mount.c:1601 libmount/src/context_mount.c:1642
+#: libmount/src/context_mount.c:1599 libmount/src/context_mount.c:1640
 #, fuzzy, c-format
 msgid "mount point is not a directory"
 msgstr "掛載點 %s 並非目錄"
 
-#: libmount/src/context_mount.c:1603
+#: libmount/src/context_mount.c:1601
 #, fuzzy, c-format
 msgid "must be superuser to use mount"
 msgstr "必須是系統管理者以使用掛載"
 
-#: libmount/src/context_mount.c:1610
+#: libmount/src/context_mount.c:1608
 #, fuzzy, c-format
 msgid "mount point is busy"
 msgstr "mount：%s 忙碌中"
 
-#: libmount/src/context_mount.c:1617
+#: libmount/src/context_mount.c:1615
 #, fuzzy, c-format
 msgid "%s already mounted on %s"
 msgstr "mount：%s 已經掛載到 %s\n"
 
-#: libmount/src/context_mount.c:1621
+#: libmount/src/context_mount.c:1619
 #, fuzzy, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s 已經掛載的或 %s 忙碌"
 
-#: libmount/src/context_mount.c:1626
+#: libmount/src/context_mount.c:1624
 #, fuzzy, c-format
 msgid "mount point does not exist"
 msgstr "掛載點 %s 不存在"
 
-#: libmount/src/context_mount.c:1629
+#: libmount/src/context_mount.c:1627
 #, fuzzy, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "掛載點 %s 是符號連結到 nowhere"
 
-#: libmount/src/context_mount.c:1634
+#: libmount/src/context_mount.c:1632
 #, fuzzy, c-format
 msgid "special device %s does not exist"
 msgstr "特殊裝置 %s 不存在"
 
-#: libmount/src/context_mount.c:1647
+#: libmount/src/context_mount.c:1645
 #, fuzzy, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "特殊裝置 %s 不存在 (a 路徑前綴並非目錄)"
 
-#: libmount/src/context_mount.c:1657
+#: libmount/src/context_mount.c:1655
 #, fuzzy, c-format
 msgid "mount point not mounted or bad option"
 msgstr "掛載：%s 無法掛載的或不當的選項"
 
-#: libmount/src/context_mount.c:1659
+#: libmount/src/context_mount.c:1657
 #, fuzzy, c-format
 msgid "not mount point or bad option"
 msgstr "%s 不是 mountpoint 或不當的選項"
 
-#: libmount/src/context_mount.c:1662
+#: libmount/src/context_mount.c:1660
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr ""
 
-#: libmount/src/context_mount.c:1666
+#: libmount/src/context_mount.c:1664
 #, fuzzy, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 "       (對於許多檔案系統 (例如 nfs，cifs) 您也許\n"
 "       需要 /sbin/mount.<type> 輔助程式)"
 
-#: libmount/src/context_mount.c:1670
+#: libmount/src/context_mount.c:1668
 #, fuzzy, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr ""
 "錯誤的 fs 型態，不當的選項，不當的超區塊於 %s，\n"
 "       缺少的編碼頁或輔助程式程式，或其他錯誤"
 
-#: libmount/src/context_mount.c:1677
+#: libmount/src/context_mount.c:1675
 #, c-format
 msgid "mount table full"
 msgstr "掛載表已滿"
 
-#: libmount/src/context_mount.c:1682
+#: libmount/src/context_mount.c:1680
 #, fuzzy, c-format
 msgid "can't read superblock on %s"
 msgstr "%s：無法讀取超區塊"
 
-#: libmount/src/context_mount.c:1689
+#: libmount/src/context_mount.c:1687
 #, fuzzy, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "不明檔案系統型態『%s』"
 
-#: libmount/src/context_mount.c:1692
+#: libmount/src/context_mount.c:1690
 #, fuzzy, c-format
 msgid "unknown filesystem type"
 msgstr "不明檔案系統型態『%s』"
 
-#: libmount/src/context_mount.c:1701
+#: libmount/src/context_mount.c:1699
 #, fuzzy, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s 並非區塊裝置，而stat (2) 失敗？"
 
-#: libmount/src/context_mount.c:1704
+#: libmount/src/context_mount.c:1702
 #, fuzzy, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr ""
 "內核不識別 %s 做為區塊裝置\n"
 "       (也許『modprobe 驅動程式』?)"
 
-#: libmount/src/context_mount.c:1707
+#: libmount/src/context_mount.c:1705
 #, fuzzy, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s 並非區塊裝置 (也許嘗試『-o 迴圈』?)"
 
-#: libmount/src/context_mount.c:1709
+#: libmount/src/context_mount.c:1707
 #, fuzzy, c-format
 msgid "%s is not a block device"
 msgstr " %s 並非區塊裝置"
 
-#: libmount/src/context_mount.c:1716
+#: libmount/src/context_mount.c:1714
 #, fuzzy, c-format
 msgid "%s is not a valid block device"
 msgstr "%s 並非有效區塊裝置"
 
-#: libmount/src/context_mount.c:1724
+#: libmount/src/context_mount.c:1722
 #, fuzzy, c-format
 msgid "cannot mount %s read-only"
 msgstr "無法掛載 %s 唯讀"
 
-#: libmount/src/context_mount.c:1726
+#: libmount/src/context_mount.c:1724
 #, fuzzy, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s 被防止寫入的但是明確的『-w』旗標給定的"
 
-#: libmount/src/context_mount.c:1728
+#: libmount/src/context_mount.c:1726
 #, fuzzy, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "無法 remount %s 可讀可寫，被防止寫入的"
 
-#: libmount/src/context_mount.c:1730
+#: libmount/src/context_mount.c:1728
 #, fuzzy, c-format
 msgid "bind %s failed"
 msgstr "%s 失敗。\n"
 
-#: libmount/src/context_mount.c:1739
+#: libmount/src/context_mount.c:1737
 #, fuzzy, c-format
 msgid "no medium found on %s"
 msgstr "找不到任何中於 %s"
 
-#: libmount/src/context_mount.c:1746
+#: libmount/src/context_mount.c:1744
 #, fuzzy, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "將不會試著於「%s」製作檔案系統"
 
-#: libmount/src/context_mount.c:1755
+#: libmount/src/context_mount.c:1753
 #, fuzzy, c-format
 msgid "%s system call failed: %m"
 msgstr "掛載 (2) 失敗"
 
-#: libmount/src/context_umount.c:1262 libmount/src/context_umount.c:1316
+#: libmount/src/context_umount.c:1261 libmount/src/context_umount.c:1315
 #, fuzzy, c-format
 msgid "not mounted"
 msgstr "%s：無法掛載"
 
-#: libmount/src/context_umount.c:1278
+#: libmount/src/context_umount.c:1277
 #, fuzzy, c-format
 msgid "umount failed: %m"
 msgstr "%s：umount 失敗"
 
-#: libmount/src/context_umount.c:1287
+#: libmount/src/context_umount.c:1286
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr "%s：檔案系統 umounted，但是掛載 (8) 失敗"
 
-#: libmount/src/context_umount.c:1293
+#: libmount/src/context_umount.c:1292
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
 msgstr "%s：檔案系統 umounted，但是掛載 (8) 失敗"
 
-#: libmount/src/context_umount.c:1300
+#: libmount/src/context_umount.c:1299
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "%s：檔案系統 umounted，但是掛載 (8) 失敗"
 
-#: libmount/src/context_umount.c:1313
+#: libmount/src/context_umount.c:1312
 #, fuzzy, c-format
 msgid "invalid block device"
 msgstr "%s：無效的區塊裝置"
 
-#: libmount/src/context_umount.c:1319
+#: libmount/src/context_umount.c:1318
 #, fuzzy, c-format
 msgid "can't write superblock"
 msgstr "%s：無法寫入超區塊"
 
-#: libmount/src/context_umount.c:1322
+#: libmount/src/context_umount.c:1321
 #, fuzzy, c-format
 msgid "target is busy"
 msgstr "%s 忙碌中"
 
-#: libmount/src/context_umount.c:1325
+#: libmount/src/context_umount.c:1324
 #, fuzzy, c-format
 msgid "no mount point specified"
 msgstr "沒有 mountpoint 指定的。"
 
-#: libmount/src/context_umount.c:1328
+#: libmount/src/context_umount.c:1327
 #, fuzzy, c-format
 msgid "must be superuser to unmount"
 msgstr "%s：必須是系統管理者到 umount"
 
-#: libmount/src/context_umount.c:1331
+#: libmount/src/context_umount.c:1330
 #, fuzzy, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr "%s：區塊裝置無法允許的於 fs"
 
-#: libmount/src/context_umount.c:1334
+#: libmount/src/context_umount.c:1333
 #, fuzzy, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "掛載 (2) 失敗"

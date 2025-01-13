@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.17.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2025-01-09 12:31+0100\n"
+"POT-Creation-Date: 2025-01-13 13:14+0100\n"
 "PO-Revision-Date: 2010-02-16 19:58+0100\n"
 "Last-Translator: Mikel Olasagasti Uranga <hey_neken@mundurat.net>\n"
 "Language-Team: Basque <translation-team-eu@lists.sourceforge.net>\n"
@@ -8273,370 +8273,370 @@ msgstr ""
 msgid "operation failed: %m"
 msgstr "read-ek huts egin du: %s"
 
-#: libmount/src/context_mount.c:1426
+#: libmount/src/context_mount.c:1424
 #, fuzzy, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: libmount/src/context_mount.c:1436
+#: libmount/src/context_mount.c:1434
 #, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr ""
 
-#: libmount/src/context_mount.c:1450
+#: libmount/src/context_mount.c:1448
 #, c-format
 msgid "operation permitted for root only"
 msgstr ""
 
-#: libmount/src/context_mount.c:1454
+#: libmount/src/context_mount.c:1452
 #, fuzzy, c-format
 msgid "%s is already mounted"
 msgstr "Diskoa aldatu egin da.\n"
 
-#: libmount/src/context_mount.c:1460
+#: libmount/src/context_mount.c:1458
 #, fuzzy, c-format
 msgid "can't find in %s"
 msgstr "%s: ezin da %s estekatu: %s\n"
 
-#: libmount/src/context_mount.c:1463
+#: libmount/src/context_mount.c:1461
 #, fuzzy, c-format
 msgid "can't find mount point in %s"
 msgstr "%s: ezin da %s estekatu: %s\n"
 
-#: libmount/src/context_mount.c:1466
+#: libmount/src/context_mount.c:1464
 #, fuzzy, c-format
 msgid "can't find mount source %s in %s"
 msgstr "%s: ezin da %s estekatu: %s\n"
 
-#: libmount/src/context_mount.c:1471
+#: libmount/src/context_mount.c:1469
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr ""
 
-#: libmount/src/context_mount.c:1476
+#: libmount/src/context_mount.c:1474
 #, fuzzy, c-format
 msgid "failed to determine filesystem type"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: libmount/src/context_mount.c:1477
+#: libmount/src/context_mount.c:1475
 #, fuzzy, c-format
 msgid "no valid filesystem type specified"
 msgstr "Ez da --date aukerarik zehaztu.\n"
 
-#: libmount/src/context_mount.c:1484
+#: libmount/src/context_mount.c:1482
 #, fuzzy, c-format
 msgid "can't find %s"
 msgstr "%s: ezin da %s estekatu: %s\n"
 
-#: libmount/src/context_mount.c:1486
+#: libmount/src/context_mount.c:1484
 #, fuzzy, c-format
 msgid "no mount source specified"
 msgstr "Ez da --date aukerarik zehaztu.\n"
 
-#: libmount/src/context_mount.c:1497
+#: libmount/src/context_mount.c:1495
 #, fuzzy, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: libmount/src/context_mount.c:1498
+#: libmount/src/context_mount.c:1496
 #, fuzzy, c-format
 msgid "failed to parse mount options '%s'"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: libmount/src/context_mount.c:1501
+#: libmount/src/context_mount.c:1499
 #, fuzzy, c-format
 msgid "failed to parse mount options: %m"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: libmount/src/context_mount.c:1502
+#: libmount/src/context_mount.c:1500
 #, fuzzy, c-format
 msgid "failed to parse mount options"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: libmount/src/context_mount.c:1507
+#: libmount/src/context_mount.c:1505
 #, fuzzy, c-format
 msgid "failed to setup loop device for %s"
 msgstr "ezin dira bootbit sektoreak ezabatu"
 
-#: libmount/src/context_mount.c:1511
+#: libmount/src/context_mount.c:1509
 #, fuzzy, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "%s: %s ez da lp gailua.\n"
 
-#: libmount/src/context_mount.c:1515 libmount/src/context_umount.c:1268
+#: libmount/src/context_mount.c:1513 libmount/src/context_umount.c:1267
 #, fuzzy, c-format
 msgid "locking failed"
 msgstr "exec %s-(e)k huts egin du"
 
-#: libmount/src/context_mount.c:1519 libmount/src/context_umount.c:1274
+#: libmount/src/context_mount.c:1517 libmount/src/context_umount.c:1273
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, fuzzy, c-format
 msgid "failed to switch namespace"
 msgstr "%s: get size egiterakoan huts egin da"
 
-#: libmount/src/context_mount.c:1523
+#: libmount/src/context_mount.c:1521
 #, fuzzy, c-format
 msgid "filesystem already mounted"
 msgstr "Diskoa aldatu egin da.\n"
 
-#: libmount/src/context_mount.c:1526
+#: libmount/src/context_mount.c:1524
 #, fuzzy, c-format
 msgid "mount failed: %m"
 msgstr "mount-ek huts egin du"
 
-#: libmount/src/context_mount.c:1536
+#: libmount/src/context_mount.c:1534
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to apply flags"
 msgstr "mount: mount-ek huts egin du"
 
-#: libmount/src/context_mount.c:1542
+#: libmount/src/context_mount.c:1540
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "mount: mount-ek huts egin du"
 
-#: libmount/src/context_mount.c:1548
+#: libmount/src/context_mount.c:1546
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "mount: mount-ek huts egin du"
 
-#: libmount/src/context_mount.c:1554
+#: libmount/src/context_mount.c:1552
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "mount: mount-ek huts egin du"
 
-#: libmount/src/context_mount.c:1560
+#: libmount/src/context_mount.c:1558
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "mount: mount-ek huts egin du"
 
-#: libmount/src/context_mount.c:1566
+#: libmount/src/context_mount.c:1564
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "mount: mount-ek huts egin du"
 
-#: libmount/src/context_mount.c:1572
+#: libmount/src/context_mount.c:1570
 #, fuzzy, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "mount: mount-ek huts egin du"
 
-#: libmount/src/context_mount.c:1584
+#: libmount/src/context_mount.c:1582
 #, fuzzy, c-format
 msgid "%s system call failed: %s"
 msgstr "mount-ek huts egin du"
 
-#: libmount/src/context_mount.c:1599 login-utils/newgrp.c:228
+#: libmount/src/context_mount.c:1597 login-utils/newgrp.c:228
 #, c-format
 msgid "permission denied"
 msgstr ""
 
-#: libmount/src/context_mount.c:1601 libmount/src/context_mount.c:1642
+#: libmount/src/context_mount.c:1599 libmount/src/context_mount.c:1640
 #, fuzzy, c-format
 msgid "mount point is not a directory"
 msgstr "erro inodoa ez da direktorioa"
 
-#: libmount/src/context_mount.c:1603
+#: libmount/src/context_mount.c:1601
 #, c-format
 msgid "must be superuser to use mount"
 msgstr ""
 
-#: libmount/src/context_mount.c:1610
+#: libmount/src/context_mount.c:1608
 #, fuzzy, c-format
 msgid "mount point is busy"
 msgstr "mount: %s okupatua dago"
 
-#: libmount/src/context_mount.c:1617
+#: libmount/src/context_mount.c:1615
 #, fuzzy, c-format
 msgid "%s already mounted on %s"
 msgstr "Diskoa aldatu egin da.\n"
 
-#: libmount/src/context_mount.c:1621
+#: libmount/src/context_mount.c:1619
 #, fuzzy, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "Diskoa aldatu egin da.\n"
 
-#: libmount/src/context_mount.c:1626
+#: libmount/src/context_mount.c:1624
 #, fuzzy, c-format
 msgid "mount point does not exist"
 msgstr "mount: %s muntau puntua ez da existitzen"
 
-#: libmount/src/context_mount.c:1629
+#: libmount/src/context_mount.c:1627
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr ""
 
-#: libmount/src/context_mount.c:1634
+#: libmount/src/context_mount.c:1632
 #, fuzzy, c-format
 msgid "special device %s does not exist"
 msgstr ""
 "\n"
 "Ez da swap partiziorik existitzen.\n"
 
-#: libmount/src/context_mount.c:1647
+#: libmount/src/context_mount.c:1645
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr ""
 
-#: libmount/src/context_mount.c:1657
+#: libmount/src/context_mount.c:1655
 #, fuzzy, c-format
 msgid "mount point not mounted or bad option"
 msgstr "umount: %s: ez dago montatuta"
 
-#: libmount/src/context_mount.c:1659
+#: libmount/src/context_mount.c:1657
 #, fuzzy, c-format
 msgid "not mount point or bad option"
 msgstr "umount: %s: ez dago montatuta"
 
-#: libmount/src/context_mount.c:1662
+#: libmount/src/context_mount.c:1660
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr ""
 
-#: libmount/src/context_mount.c:1666
+#: libmount/src/context_mount.c:1664
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 
-#: libmount/src/context_mount.c:1670
+#: libmount/src/context_mount.c:1668
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr ""
 
-#: libmount/src/context_mount.c:1677
+#: libmount/src/context_mount.c:1675
 #, c-format
 msgid "mount table full"
 msgstr "muntai taula beteta"
 
-#: libmount/src/context_mount.c:1682
+#: libmount/src/context_mount.c:1680
 #, fuzzy, c-format
 msgid "can't read superblock on %s"
 msgstr "hexdump: ezin da %s  irakurri.\n"
 
-#: libmount/src/context_mount.c:1689
+#: libmount/src/context_mount.c:1687
 #, fuzzy, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "Partizio taula moeta ezezaguna"
 
-#: libmount/src/context_mount.c:1692
+#: libmount/src/context_mount.c:1690
 #, fuzzy, c-format
 msgid "unknown filesystem type"
 msgstr "Partizio taula moeta ezezaguna"
 
-#: libmount/src/context_mount.c:1701
+#: libmount/src/context_mount.c:1699
 #, fuzzy, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "Erabilera: %s [aukerak] gailua ...\n"
 
-#: libmount/src/context_mount.c:1704
+#: libmount/src/context_mount.c:1702
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr ""
 
-#: libmount/src/context_mount.c:1707
+#: libmount/src/context_mount.c:1705
 #, fuzzy, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "Erabilera: %s [aukerak] gailua ...\n"
 
-#: libmount/src/context_mount.c:1709
+#: libmount/src/context_mount.c:1707
 #, fuzzy, c-format
 msgid "%s is not a block device"
 msgstr "Erabilera: %s [aukerak] gailua ...\n"
 
-#: libmount/src/context_mount.c:1716
+#: libmount/src/context_mount.c:1714
 #, fuzzy, c-format
 msgid "%s is not a valid block device"
 msgstr "Erabilera: %s [aukerak] gailua ...\n"
 
-#: libmount/src/context_mount.c:1724
+#: libmount/src/context_mount.c:1722
 #, fuzzy, c-format
 msgid "cannot mount %s read-only"
 msgstr "ezin da badblocks fitxategia irakurri"
 
-#: libmount/src/context_mount.c:1726
+#: libmount/src/context_mount.c:1724
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr ""
 
-#: libmount/src/context_mount.c:1728
+#: libmount/src/context_mount.c:1726
 #, fuzzy, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "ezin da \"%s\" ireki irakurketarako"
 
-#: libmount/src/context_mount.c:1730
+#: libmount/src/context_mount.c:1728
 #, fuzzy, c-format
 msgid "bind %s failed"
 msgstr "%s-(e)k huts egin du.\n"
 
-#: libmount/src/context_mount.c:1739
+#: libmount/src/context_mount.c:1737
 #, c-format
 msgid "no medium found on %s"
 msgstr ""
 
-#: libmount/src/context_mount.c:1746
+#: libmount/src/context_mount.c:1744
 #, fuzzy, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "   t   aldatu paritzioaren fitxategi sistema IDa"
 
-#: libmount/src/context_mount.c:1755
+#: libmount/src/context_mount.c:1753
 #, fuzzy, c-format
 msgid "%s system call failed: %m"
 msgstr "mount-ek huts egin du"
 
-#: libmount/src/context_umount.c:1262 libmount/src/context_umount.c:1316
+#: libmount/src/context_umount.c:1261 libmount/src/context_umount.c:1315
 #, fuzzy, c-format
 msgid "not mounted"
 msgstr "fsck: %s: ez da aurkitu\n"
 
-#: libmount/src/context_umount.c:1278
+#: libmount/src/context_umount.c:1277
 #, fuzzy, c-format
 msgid "umount failed: %m"
 msgstr "mount-ek huts egin du"
 
-#: libmount/src/context_umount.c:1287
+#: libmount/src/context_umount.c:1286
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr "mount: mount-ek huts egin du"
 
-#: libmount/src/context_umount.c:1293
+#: libmount/src/context_umount.c:1292
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
 msgstr "mount: mount-ek huts egin du"
 
-#: libmount/src/context_umount.c:1300
+#: libmount/src/context_umount.c:1299
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "mount: mount-ek huts egin du"
 
-#: libmount/src/context_umount.c:1313
+#: libmount/src/context_umount.c:1312
 #, fuzzy, c-format
 msgid "invalid block device"
 msgstr "Erabilera: %s [aukerak] gailua ...\n"
 
-#: libmount/src/context_umount.c:1319
+#: libmount/src/context_umount.c:1318
 #, fuzzy, c-format
 msgid "can't write superblock"
 msgstr "hexdump: ezin da %s  irakurri.\n"
 
-#: libmount/src/context_umount.c:1322
+#: libmount/src/context_umount.c:1321
 #, fuzzy, c-format
 msgid "target is busy"
 msgstr "mount: %s okupatua dago"
 
-#: libmount/src/context_umount.c:1325
+#: libmount/src/context_umount.c:1324
 #, fuzzy, c-format
 msgid "no mount point specified"
 msgstr "Ez da --date aukerarik zehaztu.\n"
 
-#: libmount/src/context_umount.c:1328
+#: libmount/src/context_umount.c:1327
 #, c-format
 msgid "must be superuser to unmount"
 msgstr ""
 
-#: libmount/src/context_umount.c:1331
+#: libmount/src/context_umount.c:1330
 #, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr ""
 
-#: libmount/src/context_umount.c:1334
+#: libmount/src/context_umount.c:1333
 #, fuzzy, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "mount-ek huts egin du"

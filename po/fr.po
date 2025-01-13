@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.40.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2025-01-09 12:31+0100\n"
+"POT-Creation-Date: 2025-01-13 13:14+0100\n"
 "PO-Revision-Date: 2024-05-02 16:45+0200\n"
 "Last-Translator: Frédéric Marchal <fmarchal@perso.be>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -7808,369 +7808,369 @@ msgstr "état de connexion silencieuse : échec de restauration des identifiant
 msgid "operation failed: %m"
 msgstr "l'opération a échouée : %m"
 
-#: libmount/src/context_mount.c:1426
+#: libmount/src/context_mount.c:1424
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "Attention : échec d'application des indicateurs de propagation"
 
-#: libmount/src/context_mount.c:1436
+#: libmount/src/context_mount.c:1434
 #, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "ATTENTION: source protégée en écriture, montée en lecture seule"
 
-#: libmount/src/context_mount.c:1450
+#: libmount/src/context_mount.c:1448
 #, c-format
 msgid "operation permitted for root only"
 msgstr "opération permise uniquement pour root"
 
-#: libmount/src/context_mount.c:1454
+#: libmount/src/context_mount.c:1452
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s est déjà monté"
 
-#: libmount/src/context_mount.c:1460
+#: libmount/src/context_mount.c:1458
 #, c-format
 msgid "can't find in %s"
 msgstr "impossible à trouver dans %s"
 
-#: libmount/src/context_mount.c:1463
+#: libmount/src/context_mount.c:1461
 #, c-format
 msgid "can't find mount point in %s"
 msgstr "impossible de trouver le point de montage dans %s"
 
-#: libmount/src/context_mount.c:1466
+#: libmount/src/context_mount.c:1464
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "impossible de trouver la source du montage %s dans %s"
 
-#: libmount/src/context_mount.c:1471
+#: libmount/src/context_mount.c:1469
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr "plus de systèmes de fichiers détectés sur %s ; utilisez -t <type> ou wipefs(8)"
 
-#: libmount/src/context_mount.c:1476
+#: libmount/src/context_mount.c:1474
 #, c-format
 msgid "failed to determine filesystem type"
 msgstr "impossible de déterminer le type de système de fichiers"
 
-#: libmount/src/context_mount.c:1477
+#: libmount/src/context_mount.c:1475
 #, c-format
 msgid "no valid filesystem type specified"
 msgstr "aucun type de système de fichiers valide indiqué"
 
-#: libmount/src/context_mount.c:1484
+#: libmount/src/context_mount.c:1482
 #, c-format
 msgid "can't find %s"
 msgstr "impossible de trouver %s"
 
-#: libmount/src/context_mount.c:1486
+#: libmount/src/context_mount.c:1484
 #, c-format
 msgid "no mount source specified"
 msgstr "Aucun point de montage source indiqué"
 
-#: libmount/src/context_mount.c:1497
+#: libmount/src/context_mount.c:1495
 #, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr "échec d'analyse des options de montage « %s » : %m"
 
-#: libmount/src/context_mount.c:1498
+#: libmount/src/context_mount.c:1496
 #, c-format
 msgid "failed to parse mount options '%s'"
 msgstr "échec d'analyse des options de montage « %s »"
 
-#: libmount/src/context_mount.c:1501
+#: libmount/src/context_mount.c:1499
 #, c-format
 msgid "failed to parse mount options: %m"
 msgstr "échec d'analyse des options de montage : %m"
 
-#: libmount/src/context_mount.c:1502
+#: libmount/src/context_mount.c:1500
 #, c-format
 msgid "failed to parse mount options"
 msgstr "échec d'analyse des options de montage"
 
 # disk-utils/mkswap.c:612
-#: libmount/src/context_mount.c:1507
+#: libmount/src/context_mount.c:1505
 #, c-format
 msgid "failed to setup loop device for %s"
 msgstr "échec de configuration du périphérique de bouclage %s"
 
-#: libmount/src/context_mount.c:1511
+#: libmount/src/context_mount.c:1509
 #, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "périphérique de bouclage existant pour %s"
 
-#: libmount/src/context_mount.c:1515 libmount/src/context_umount.c:1268
+#: libmount/src/context_mount.c:1513 libmount/src/context_umount.c:1267
 #, c-format
 msgid "locking failed"
 msgstr "échec du verrouillage"
 
-#: libmount/src/context_mount.c:1519 libmount/src/context_umount.c:1274
+#: libmount/src/context_mount.c:1517 libmount/src/context_umount.c:1273
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, c-format
 msgid "failed to switch namespace"
 msgstr "impossible de changer l'espace de noms"
 
-#: libmount/src/context_mount.c:1523
+#: libmount/src/context_mount.c:1521
 #, c-format
 msgid "filesystem already mounted"
 msgstr "le système de fichier est déjà monté"
 
-#: libmount/src/context_mount.c:1526
+#: libmount/src/context_mount.c:1524
 #, c-format
 msgid "mount failed: %m"
 msgstr "montage échoué : %m"
 
-#: libmount/src/context_mount.c:1536
+#: libmount/src/context_mount.c:1534
 #, c-format
 msgid "filesystem was mounted, but failed to apply flags"
 msgstr "le système de fichiers a été monté mais l'application des fanions a échoué"
 
-#: libmount/src/context_mount.c:1542
+#: libmount/src/context_mount.c:1540
 #, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "le système de fichiers a été monté mais la table de montage dans l'espace utilisateur n'a pas été mise à jour "
 
-#: libmount/src/context_mount.c:1548
+#: libmount/src/context_mount.c:1546
 #, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "le système de fichiers a été monté mais le retour à l'espace de noms a échoué"
 
-#: libmount/src/context_mount.c:1554
+#: libmount/src/context_mount.c:1552
 #, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "le système de fichiers a été monté mais le propriétaire n'a pas pu être changé : %m"
 
-#: libmount/src/context_mount.c:1560
+#: libmount/src/context_mount.c:1558
 #, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "le système de fichiers a été monté mais le changement de mode a échoué : %m"
 
-#: libmount/src/context_mount.c:1566
+#: libmount/src/context_mount.c:1564
 #, c-format
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "le système de fichiers a été monté mais l'attachement du idmapping a échoué"
 
-#: libmount/src/context_mount.c:1572
+#: libmount/src/context_mount.c:1570
 #, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "le système de fichiers a été monté mais les opérations suivantes ont échoué : %m"
 
-#: libmount/src/context_mount.c:1584
+#: libmount/src/context_mount.c:1582
 #, c-format
 msgid "%s system call failed: %s"
 msgstr "échec de l’appel système %s : %s"
 
-#: libmount/src/context_mount.c:1599 login-utils/newgrp.c:228
+#: libmount/src/context_mount.c:1597 login-utils/newgrp.c:228
 #, c-format
 msgid "permission denied"
 msgstr "permission refusée"
 
-#: libmount/src/context_mount.c:1601 libmount/src/context_mount.c:1642
+#: libmount/src/context_mount.c:1599 libmount/src/context_mount.c:1640
 #, c-format
 msgid "mount point is not a directory"
 msgstr "le point de montage n'est pas un répertoire"
 
-#: libmount/src/context_mount.c:1603
+#: libmount/src/context_mount.c:1601
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "seul le superutilisateur peut utiliser mount"
 
-#: libmount/src/context_mount.c:1610
+#: libmount/src/context_mount.c:1608
 #, c-format
 msgid "mount point is busy"
 msgstr "point de montage actif"
 
-#: libmount/src/context_mount.c:1617
+#: libmount/src/context_mount.c:1615
 #, c-format
 msgid "%s already mounted on %s"
 msgstr "%s déjà monté sur %s"
 
-#: libmount/src/context_mount.c:1621
+#: libmount/src/context_mount.c:1619
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s déjà monté ou point de montage actif"
 
-#: libmount/src/context_mount.c:1626
+#: libmount/src/context_mount.c:1624
 #, c-format
 msgid "mount point does not exist"
 msgstr "le point de montage n'existe pas"
 
-#: libmount/src/context_mount.c:1629
+#: libmount/src/context_mount.c:1627
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "le point de montage est un lien symbolique qui ne pointe nulle part"
 
-#: libmount/src/context_mount.c:1634
+#: libmount/src/context_mount.c:1632
 #, c-format
 msgid "special device %s does not exist"
 msgstr "le périphérique spécial %s n'existe pas"
 
-#: libmount/src/context_mount.c:1647
+#: libmount/src/context_mount.c:1645
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "le périphérique spécial %s n'existe pas (un préfixe de chemin n'est pas un répertoire)"
 
-#: libmount/src/context_mount.c:1657
+#: libmount/src/context_mount.c:1655
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr "point de montage non monté ou mauvaise option"
 
-#: libmount/src/context_mount.c:1659
+#: libmount/src/context_mount.c:1657
 #, c-format
 msgid "not mount point or bad option"
 msgstr "n'est pas un point de montage ou mauvaise option"
 
-#: libmount/src/context_mount.c:1662
+#: libmount/src/context_mount.c:1660
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr "mauvaise option ; déplacer un montage résidant sous un montage partagé n'est pas pris en charge."
 
-#: libmount/src/context_mount.c:1666
+#: libmount/src/context_mount.c:1664
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr "mauvaise option ; pour plusieurs systèmes de fichiers (NFS ou CIFS par exemple), un programme /sbin/mount.<type> auxiliaire pourrait être nécessaire)"
 
-#: libmount/src/context_mount.c:1670
+#: libmount/src/context_mount.c:1668
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr "mauvais type de système de fichiers, option erronée, superbloc erroné sur %s, page de code ou programme auxiliaire manquant, ou autre erreur"
 
-#: libmount/src/context_mount.c:1677
+#: libmount/src/context_mount.c:1675
 #, c-format
 msgid "mount table full"
 msgstr "la table des périphériques montés est pleine"
 
-#: libmount/src/context_mount.c:1682
+#: libmount/src/context_mount.c:1680
 #, c-format
 msgid "can't read superblock on %s"
 msgstr "impossible de lire le superbloc à l’adresse %s"
 
-#: libmount/src/context_mount.c:1689
+#: libmount/src/context_mount.c:1687
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "type de système de fichiers « %s » inconnu"
 
-#: libmount/src/context_mount.c:1692
+#: libmount/src/context_mount.c:1690
 #, c-format
 msgid "unknown filesystem type"
 msgstr "type de système de fichiers inconnu"
 
-#: libmount/src/context_mount.c:1701
+#: libmount/src/context_mount.c:1699
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s n'est pas un périphérique bloc, et possible échec de stat(2)"
 
-#: libmount/src/context_mount.c:1704
+#: libmount/src/context_mount.c:1702
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr "le noyau ne reconnaît pas %s comme un périphérique bloc ; essayez « modprobe pilote » si nécessaire"
 
-#: libmount/src/context_mount.c:1707
+#: libmount/src/context_mount.c:1705
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s n'est pas un périphérique bloc ; essayer « -o loop »"
 
-#: libmount/src/context_mount.c:1709
+#: libmount/src/context_mount.c:1707
 #, c-format
 msgid "%s is not a block device"
 msgstr "%s n'est pas un périphérique bloc"
 
-#: libmount/src/context_mount.c:1716
+#: libmount/src/context_mount.c:1714
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s n'est pas un périphérique bloc valable"
 
-#: libmount/src/context_mount.c:1724
+#: libmount/src/context_mount.c:1722
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "impossible de monter %s en lecture seule"
 
-#: libmount/src/context_mount.c:1726
+#: libmount/src/context_mount.c:1724
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s est protégé en écriture mais le mode lecture-écriture a été explicitement demandé"
 
-#: libmount/src/context_mount.c:1728
+#: libmount/src/context_mount.c:1726
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "impossible de remonter %s en lecture/écriture, est protégé en écriture"
 
-#: libmount/src/context_mount.c:1730
+#: libmount/src/context_mount.c:1728
 #, c-format
 msgid "bind %s failed"
 msgstr "la liaison de %s a échoué"
 
-#: libmount/src/context_mount.c:1739
+#: libmount/src/context_mount.c:1737
 #, c-format
 msgid "no medium found on %s"
 msgstr "aucun support trouvé dans %s"
 
-#: libmount/src/context_mount.c:1746
+#: libmount/src/context_mount.c:1744
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "impossible de monter ; le système de fichiers est peut-être corrompu sur %s"
 
-#: libmount/src/context_mount.c:1755
+#: libmount/src/context_mount.c:1753
 #, c-format
 msgid "%s system call failed: %m"
 msgstr "échec de l’appel système %s : %m"
 
-#: libmount/src/context_umount.c:1262 libmount/src/context_umount.c:1316
+#: libmount/src/context_umount.c:1261 libmount/src/context_umount.c:1315
 #, c-format
 msgid "not mounted"
 msgstr "non monté"
 
-#: libmount/src/context_umount.c:1278
+#: libmount/src/context_umount.c:1277
 #, c-format
 msgid "umount failed: %m"
 msgstr "le démontage a échoué : %m"
 
-#: libmount/src/context_umount.c:1287
+#: libmount/src/context_umount.c:1286
 #, c-format
 msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr "le système de fichiers a été démonté mais la mise à jour de la table de montage dans l'espace utilisateur a échoué"
 
-#: libmount/src/context_umount.c:1293
+#: libmount/src/context_umount.c:1292
 #, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
 msgstr "le système de fichiers a été démonté mais le retour à l'espace de noms a échoué"
 
-#: libmount/src/context_umount.c:1300
+#: libmount/src/context_umount.c:1299
 #, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "le système de fichiers a été démonté mais les opérations suivantes ont échoué : %m"
 
-#: libmount/src/context_umount.c:1313
+#: libmount/src/context_umount.c:1312
 #, c-format
 msgid "invalid block device"
 msgstr "périphérique bloc non invalide"
 
-#: libmount/src/context_umount.c:1319
+#: libmount/src/context_umount.c:1318
 #, c-format
 msgid "can't write superblock"
 msgstr "impossible d'écrire le superbloc"
 
-#: libmount/src/context_umount.c:1322
+#: libmount/src/context_umount.c:1321
 #, c-format
 msgid "target is busy"
 msgstr "la cible est active"
 
-#: libmount/src/context_umount.c:1325
+#: libmount/src/context_umount.c:1324
 #, c-format
 msgid "no mount point specified"
 msgstr "Aucun point de montage indiqué"
 
-#: libmount/src/context_umount.c:1328
+#: libmount/src/context_umount.c:1327
 #, c-format
 msgid "must be superuser to unmount"
 msgstr "seul le superutilisateur peut démonter"
 
-#: libmount/src/context_umount.c:1331
+#: libmount/src/context_umount.c:1330
 #, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr "les périphériques bloc ne sont pas autorisés sur ce système de fichiers"
 
-#: libmount/src/context_umount.c:1334
+#: libmount/src/context_umount.c:1333
 #, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "l’appel système unnount(2) a échoué : %m"
