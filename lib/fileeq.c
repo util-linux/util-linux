@@ -183,6 +183,13 @@ int ul_fileeq_init(struct ul_fileeq *eq, const char *method)
 	return 0;
 }
 
+static void reset_fileeq_bufs(struct ul_fileeq *eq)
+{
+	free(eq->buf_a);
+	free(eq->buf_b);
+	eq->buf_last = eq->buf_a = eq->buf_b = NULL;
+}
+
 void ul_fileeq_deinit(struct ul_fileeq *eq)
 {
 	if (!eq)
@@ -192,8 +199,7 @@ void ul_fileeq_deinit(struct ul_fileeq *eq)
 #ifdef USE_FILEEQ_CRYPTOAPI
 	deinit_crypto_api(eq);
 #endif
-	free(eq->buf_a);
-	free(eq->buf_b);
+	reset_fileeq_bufs(eq);
 }
 
 void ul_fileeq_data_close_file(struct ul_fileeq_data *data)
@@ -281,6 +287,9 @@ size_t ul_fileeq_set_size(struct ul_fileeq *eq, uint64_t filesiz,
 
 	DBG(EQ, ul_debugobj(eq, "set sizes: filesiz=%ju, maxblocks=%" PRIu64 ", readsiz=%zu",
 				eq->filesiz, eq->blocksmax, eq->readsiz));
+
+	reset_fileeq_bufs(eq);
+
 	return eq->blocksmax;
 }
 
