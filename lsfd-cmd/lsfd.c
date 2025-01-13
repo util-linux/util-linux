@@ -37,6 +37,7 @@
 #include <sys/uio.h>
 #include <linux/sched.h>
 #include <sys/syscall.h>
+#include <errno.h>
 
 #ifdef HAVE_LINUX_KCMP_H
 #  include <linux/kcmp.h>
