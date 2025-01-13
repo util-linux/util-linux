@@ -1,0 +1,13 @@
+util-linux v2.40.4 Release Notes
+================================
+ 
+Changes between v2.40.3 and v2.40.4
+-----------------------------------
+
+libmount:
+   - Revert "libmount: exec mount helpers with posixly correct argument order"
+po:
+   - merge changes  [Karel Zak]
+po-man:
+   - merge changes  [Karel Zak]
+   - Fix table formatting  [M Sirabella]
