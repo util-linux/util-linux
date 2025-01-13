@@ -13,7 +13,7 @@ pkgconfig = import('pkgconfig')
 # soname versions; This never change because we use symbols versioing. There is also
 # API version (LIB*_VERSION macros) and it follow package version.
 libblkid_version = '1.1.0'
-libblkid_date = '09-Jan-2025'
+libblkid_date = '13-Jan-2025'
 libuuid_version = '1.3.0'
 liblastlog2_version = '2.0.0'
 libmount_version = '1.1.0'
