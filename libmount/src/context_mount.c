@@ -429,33 +429,31 @@ static int exec_helper(struct libmnt_context *cxt)
 		type = mnt_fs_get_fstype(cxt->fs);
 
 		args[i++] = cxt->helper;		/* 1 */
+		args[i++] = mnt_fs_get_srcpath(cxt->fs);/* 2 */
+		args[i++] = mnt_fs_get_target(cxt->fs);	/* 3 */
 
 		if (mnt_context_is_sloppy(cxt))
-			args[i++] = "-s";		/* 2 */
+			args[i++] = "-s";		/* 4 */
 		if (mnt_context_is_fake(cxt))
-			args[i++] = "-f";		/* 3 */
+			args[i++] = "-f";		/* 5 */
 		if (mnt_context_is_nomtab(cxt))
-			args[i++] = "-n";		/* 4 */
+			args[i++] = "-n";		/* 6 */
 		if (mnt_context_is_verbose(cxt))
-			args[i++] = "-v";		/* 5 */
+			args[i++] = "-v";		/* 7 */
 		if (o) {
-			args[i++] = "-o";		/* 6 */
-			args[i++] = o;			/* 7 */
+			args[i++] = "-o";		/* 8 */
+			args[i++] = o;			/* 9 */
 		}
 		if (type
 		    && strchr(type, '.')
 		    && !endswith(cxt->helper, type)) {
-			args[i++] = "-t";		/* 8 */
-			args[i++] = type;		/* 9 */
+			args[i++] = "-t";		/* 10 */
+			args[i++] = type;		/* 11 */
 		}
 		if (namespace) {
-			args[i++] = "-N";		/* 10 */
-			args[i++] = namespace;		/* 11 */
+			args[i++] = "-N";		/* 12 */
+			args[i++] = namespace;		/* 13 */
 		}
-
-		args[i++] = mnt_fs_get_srcpath(cxt->fs);/* 12 */
-		args[i++] = mnt_fs_get_target(cxt->fs);	/* 13 */
-
 		args[i] = NULL;				/* 14 */
 		for (i = 0; args[i]; i++)
 			DBG(CXT, ul_debugobj(cxt, "argv[%d] = \"%s\"",

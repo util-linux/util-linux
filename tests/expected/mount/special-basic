@@ -1,1 +1,1 @@
-/sbin/mount.mytest called with "-o rw /foo /bar"
+/sbin/mount.mytest called with "/foo /bar -o rw"
