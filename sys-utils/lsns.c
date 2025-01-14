@@ -1132,6 +1132,9 @@ static int nsfs_xasputs(char **str,
 
 		const char *tgt = mnt_fs_get_target(fs);
 
+		if(!tgt)
+			continue;
+
 		if (!*str)
 			xasprintf(str, "%s", tgt);
 
