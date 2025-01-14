@@ -396,6 +396,7 @@ int mnt_fstype_is_pseudofs(const char *type)
 		"fuse.gvfs-fuse-daemon", /* Old name, not used by gvfs any more. */
 		"fuse.gvfsd-fuse",
 		"fuse.lxcfs",
+		"fuse.portal",
 		"fuse.rofiles-fuse",
 		"fuse.vmware-vmblock",
 		"fuse.xwmfs",
