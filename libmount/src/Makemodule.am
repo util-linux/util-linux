@@ -11,6 +11,7 @@ libmount_la_SOURCES = \
 	libmount/src/mountP.h \
 	libmount/src/cache.c \
 	libmount/src/fs.c \
+	libmount/src/fs_statmount.c \
 	libmount/src/init.c \
 	libmount/src/iter.c \
 	libmount/src/lock.c \
@@ -19,6 +20,7 @@ libmount_la_SOURCES = \
 	libmount/src/optstr.c \
 	libmount/src/tab.c \
 	libmount/src/tab_diff.c \
+	libmount/src/tab_listmount.c \
 	libmount/src/tab_parse.c \
 	libmount/src/tab_update.c \
 	libmount/src/test.c \
@@ -30,8 +32,6 @@ libmount_la_SOURCES += \
 	libmount/src/context.c \
 	libmount/src/context_mount.c \
 	libmount/src/context_umount.c \
-	libmount/src/fs_statmount.c \
-	libmount/src/tab_listmount.c \
 	libmount/src/hooks.c \
 	libmount/src/hook_mount.c \
 	libmount/src/hook_mount_legacy.c \

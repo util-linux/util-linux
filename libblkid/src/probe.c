@@ -791,6 +791,7 @@ const unsigned char *blkid_probe_get_buffer(blkid_probe pr, uint64_t off, uint64
 	return real_off ? bf->data + (real_off - bf->off + bias) : bf->data + bias;
 }
 
+#ifdef O_DIRECT
 /*
  * This is blkid_probe_get_buffer with the read done as an O_DIRECT operation.
  * Note that @off is offset within probing area, the probing area is defined by
@@ -817,6 +818,7 @@ const unsigned char *blkid_probe_get_buffer_direct(blkid_probe pr, uint64_t off,
 	}
 	return ret;
 }
+#endif
 
 /**
  * blkid_probe_reset_buffers:

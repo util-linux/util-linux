@@ -1370,6 +1370,7 @@ static int command_partattrs(struct sfdisk *sf, int argc, char **argv)
 	return write_changes(sf);
 }
 
+#ifdef BLKDISCARD
 /*
  * sfdisk --discard-free <device>
  */
@@ -1432,6 +1433,12 @@ done:
 	fdisk_unref_table(tb);
 	return rc;
 }
+#else /* BLKDISCARD */
+static int command_discard_free(struct sfdisk *sf, int argc, char **argv)
+{
+	fdisk_warnx(sf->cxt, _("Discard unsupported on your system."));
+}
+#endif /* BLKDISCARD */
 
 /*
  * sfdisk --disk-id <device> [<str>]

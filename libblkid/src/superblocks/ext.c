@@ -164,6 +164,7 @@ static struct ext2_super_block *ext_get_super(
 		 * then declare a checksum mismatch.
 		 */
 		if (!blkid_probe_verify_csum(pr, csum, le32_to_cpu(es->s_checksum))) {
+#ifdef O_DIRECT
 			if (blkid_probe_reset_buffers(pr))
 				return NULL;
 
@@ -175,6 +176,9 @@ static struct ext2_super_block *ext_get_super(
 			csum = crc32c(~0, es, offsetof(struct ext2_super_block, s_checksum));
 			if (!blkid_probe_verify_csum(pr, csum, le32_to_cpu(es->s_checksum)))
 				return NULL;
+#else
+			return NULL;
+#endif
 		}
 	}
 	if (fc)
