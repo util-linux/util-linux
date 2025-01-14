@@ -37,10 +37,30 @@
 #include <sys/uio.h>
 #include <linux/sched.h>
 #include <sys/syscall.h>
-#include <errno.h>
 
 #ifdef HAVE_LINUX_KCMP_H
 #  include <linux/kcmp.h>
+#endif
+
+/* See proc(5).
+ * Defined in linux/include/linux/sched.h private header file. */
+#define PF_KTHREAD		0x00200000	/* I am a kernel thread */
+
+#include "c.h"
+#include "list.h"
+#include "closestream.h"
+#include "column-list-table.h"
+#include "strutils.h"
+#include "procfs.h"
+#include "fileutils.h"
+#include "idcache.h"
+#include "pathnames.h"
+
+#include "lsfd.h"
+
+// Make sure this ifdef block comes after all the includes since
+// c.h is required for the case where the system does not have kcmp.h
+#ifdef HAVE_LINUX_KCMP_H
 static int kcmp(pid_t pid1, pid_t pid2, int type,
 		unsigned long idx1, unsigned long idx2)
 {
@@ -68,22 +88,6 @@ static int kcmp(pid_t pid1 __attribute__((__unused__)),
 	return -1;
 }
 #endif
-
-/* See proc(5).
- * Defined in linux/include/linux/sched.h private header file. */
-#define PF_KTHREAD		0x00200000	/* I am a kernel thread */
-
-#include "c.h"
-#include "list.h"
-#include "closestream.h"
-#include "column-list-table.h"
-#include "strutils.h"
-#include "procfs.h"
-#include "fileutils.h"
-#include "idcache.h"
-#include "pathnames.h"
-
-#include "lsfd.h"
 
 UL_DEBUG_DEFINE_MASK(lsfd);
 UL_DEBUG_DEFINE_MASKNAMES(lsfd) = UL_DEBUG_EMPTY_MASKNAMES;
