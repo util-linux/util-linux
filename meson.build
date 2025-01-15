@@ -919,6 +919,11 @@ if systemd.found()
   systemdsystemunitdir = systemd.get_variable(pkgconfig : 'systemdsystemunitdir')
 endif
 
+systemd_sysusers_dir = ''
+if systemd.found()
+  systemd_sysusers_dir = systemd.get_variable(pkgconfig : 'sysusers_dir')
+endif
+
 sysvinit = get_option('sysvinit').enabled()
 sysvinitrcdir = sysconfdir + '/init.d'
 
