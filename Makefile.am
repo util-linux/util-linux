@@ -62,6 +62,7 @@ sbin_PROGRAMS =
 dist_usrbin_exec_SCRIPTS =
 systemdsystemunit_DATA =
 tmpfiles_DATA =
+sysusers_DATA =
 dist_bashcompletion_DATA =
 check_PROGRAMS =
 dist_check_SCRIPTS =
@@ -360,7 +361,8 @@ DISTCHECK_CONFIGURE_FLAGS = \
 	--with-python \
 	--with-bashcompletiondir=$$dc_install_base/$(bashcompletiondir) \
 	--with-systemdsystemunitdir=$$dc_install_base/$(systemdsystemunitdir) \
-	--with-tmpfilesdir=$$dc_install_base/$(tmpfilesdir)
+	--with-tmpfilesdir=$$dc_install_base/$(tmpfilesdir) \
+	--with-sysusersdir=$$dc_install_base/$(sysusersdir)
 
 BUILT_SOURCES += .version
 .version:
