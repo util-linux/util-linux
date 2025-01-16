@@ -1052,6 +1052,21 @@ int main(int argc, char **argv)
 #ifdef USE_SULOGIN_EMERGENCY_MOUNT
 				"emergency-mount",
 #endif
+#ifdef HAVE_LIBSELINUX
+				"selinux",
+#endif
+#ifdef USE_PLYMOUTH_SUPPORT
+				"plymouth",
+#endif
+#ifdef KDGKBMODE
+				"keyboard mode",
+#endif
+#ifdef HAVE_WIDECHAR
+				"widechar",
+#endif
+#ifdef TIOCGSERIAL
+				"serial-info",
+#endif
 				NULL
 			};
 			print_version_with_features(EXIT_SUCCESS, features);
