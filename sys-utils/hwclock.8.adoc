@@ -137,7 +137,7 @@ This option is meaningful for ISA compatible machines in the x86 and x86_64 fami
 This option is required when using the *--setepoch* function. The minimum _year_ value is 1900. The maximum is system dependent (*ULONG_MAX - 1*).
 
 *-f*, **--rtc=**__filename__::
-Override *hwclock*'s default rtc device file name. Otherwise it will use the first one found in this order: _/dev/rtc0_, _/dev/rtc_, _/dev/misc/rtc_. For *IA-64:* _/dev/efirtc_ _/dev/misc/efirtc_
+Override *hwclock*'s default rtc device file name. Otherwise it will use the first one found in this order: _/dev/rtc_, _/dev/rtc0_, _/dev/misc/rtc_. For *IA-64:* _/dev/efirtc_ _/dev/misc/efirtc_
 
 *-l*, *--localtime*; *-u*, *--utc*::
 Indicate which timescale the Hardware Clock is set to.
@@ -373,7 +373,7 @@ The system timezone file.
 _/usr/share/zoneinfo/_::
 The system timezone database directory.
 
-Device files *hwclock* may try for Hardware Clock access: _/dev/rtc0_ _/dev/rtc_ _/dev/misc/rtc_ _/dev/efirtc_ _/dev/misc/efirtc_
+Device files *hwclock* may try for Hardware Clock access: _/dev/rtc_ _/dev/rtc0_ _/dev/misc/rtc_ _/dev/efirtc_ _/dev/misc/efirtc_
 
 == SEE ALSO
 
