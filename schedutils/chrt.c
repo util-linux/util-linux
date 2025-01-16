@@ -26,6 +26,7 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <errno.h>
+#include <stdbool.h>
 #include <sys/time.h>
 #include <sys/resource.h>
 
@@ -127,11 +128,45 @@ static const char *get_policy_name(int policy)
 	return _("unknown");
 }
 
+static bool supports_custom_slice(int policy)
+{
+#ifdef SCHED_BATCH
+	if (policy == SCHED_BATCH)
+		return true;
+#endif
+	return policy == SCHED_OTHER;
+}
+
+static bool supports_runtime_param(int policy)
+{
+#ifdef SCHED_DEADLINE
+	if (policy == SCHED_DEADLINE)
+		return true;
+#endif
+	return supports_custom_slice(policy);
+}
+
+static const char *get_supported_runtime_param_policies(void)
+{
+#if defined(SCHED_BATCH)
+#if defined(SCHED_DEADLINE)
+	return _("SCHED_OTHER, SCHED_BATCH and SCHED_DEADLINE");
+#else
+	return _("SCHED_OTHER and SCHED_BATCH");
+#endif /* SCHED_DEADLINE */
+#elif defined(SCHED_DEADLINE)
+	return _("SCHED_OTHER and SCHED_DEADLINE");
+#else
+	return _("SCHED_OTHER");
+#endif
+}
+
 static void show_sched_pid_info(struct chrt_ctl *ctl, pid_t pid)
 {
 	int policy = -1, reset_on_fork = 0, prio = 0;
+	uint64_t runtime = 0;
 #ifdef SCHED_DEADLINE
-	uint64_t deadline = 0, runtime = 0, period = 0;
+	uint64_t deadline = 0, period = 0;
 #endif
 
 	/* don't display "pid 0" as that is confusing */
@@ -156,9 +191,11 @@ static void show_sched_pid_info(struct chrt_ctl *ctl, pid_t pid)
 		policy = sa.sched_policy;
 		prio = sa.sched_priority;
 		reset_on_fork = sa.sched_flags & SCHED_FLAG_RESET_ON_FORK;
-		deadline = sa.sched_deadline;
 		runtime = sa.sched_runtime;
+#ifdef SCHED_DEADLINE
+		deadline = sa.sched_deadline;
 		period = sa.sched_period;
+#endif
 	}
 
 	/*
@@ -197,6 +234,13 @@ fallback:
 		printf(_("pid %d's new scheduling priority: %d\n"), pid, prio);
 	else
 		printf(_("pid %d's current scheduling priority: %d\n"), pid, prio);
+
+	if (runtime && supports_custom_slice(policy)) {
+		if (ctl->altered)
+			printf(_("pid %d's new runtime parameter: %ju\n"), pid, runtime);
+		else
+			printf(_("pid %d's current runtime parameter: %ju\n"), pid, runtime);
+	}
 
 #ifdef SCHED_DEADLINE
 	if (policy == SCHED_DEADLINE) {
@@ -296,7 +340,7 @@ static int set_sched_one(struct chrt_ctl *ctl, pid_t pid)
 	struct sched_attr sa = { .size = sizeof(struct sched_attr) };
 
 	/* old API is good enough for non-deadline */
-	if (ctl->policy != SCHED_DEADLINE)
+	if (!supports_runtime_param(ctl->policy))
 		return set_sched_one_by_setscheduler(ctl, pid);
 
 	/* not changed by chrt, follow the current setting */
@@ -452,10 +496,13 @@ int main(int argc, char **argv)
 	errno = 0;
 	ctl->priority = strtos32_or_err(argv[optind], _("invalid priority argument"));
 
+	if (ctl->runtime && !supports_runtime_param(ctl->policy))
+		errx(EXIT_FAILURE, _("--sched-runtime option is supported for %s"),
+				     get_supported_runtime_param_policies());
 #ifdef SCHED_DEADLINE
-	if ((ctl->runtime || ctl->deadline || ctl->period) && ctl->policy != SCHED_DEADLINE)
-		errx(EXIT_FAILURE, _("--sched-{runtime,deadline,period} options "
-				     "are supported for SCHED_DEADLINE only"));
+	if ((ctl->deadline || ctl->period) && ctl->policy != SCHED_DEADLINE)
+		errx(EXIT_FAILURE, _("--sched-{deadline,period} options are "
+				     "supported for SCHED_DEADLINE only"));
 	if (ctl->policy == SCHED_DEADLINE) {
 		/* The basic rule is runtime <= deadline <= period, so we can
 		 * make deadline and runtime optional on command line. Note we
@@ -468,7 +515,7 @@ int main(int argc, char **argv)
 			ctl->runtime = ctl->deadline;
 	}
 #else
-	if (ctl->runtime || ctl->deadline || ctl->period)
+	if (ctl->deadline || ctl->period)
 		errx(EXIT_FAILURE, _("SCHED_DEADLINE is unsupported"));
 #endif
 	if (ctl->pid == -1)
