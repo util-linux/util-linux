@@ -22,7 +22,6 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
 #include <stdio.h>
 #include <sys/types.h>
 #include <inttypes.h>
@@ -58,8 +57,8 @@
 
 #include "lsfd.h"
 
-// Make sure this ifdef block comes after all the includes since
-// c.h is required for the case where the system does not have kcmp.h
+/* Make sure this ifdef block comes after all the includes since
+ * c.h is required for the case where the system does not have kcmp.h */
 #ifdef HAVE_LINUX_KCMP_H
 static int kcmp(pid_t pid1, pid_t pid2, int type,
 		unsigned long idx1, unsigned long idx2)
