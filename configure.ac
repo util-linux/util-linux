@@ -2729,6 +2729,20 @@ AS_IF([test "x$with_tmpfilesdir" != "xno"], [
   AC_SUBST([tmpfilesdir], [$with_tmpfilesdir])
 ])
 
+
+AC_ARG_WITH([sysusersdir],
+  AS_HELP_STRING([--with-sysusersdir=DIR], [directory for sysusers. See sysusers.d(5) for details]),
+  [], [
+  AS_IF([test "x$have_systemd" = xyes], [
+    PKG_CHECK_VAR([with_sysusersdir], [systemd], [sysusersdir],
+      [],
+      [with_sysusersdir=no])
+  ])
+])
+AS_IF([test "x$with_sysusersdir" != "xno"], [
+  AC_SUBST([sysusersdir], [$with_sysusersdir])
+])
+
 AC_ARG_WITH([smack],
   AS_HELP_STRING([--with-smack], [build with SMACK support]),
   [], [with_smack=no]
