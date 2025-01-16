@@ -107,11 +107,16 @@ if build_uuidd and systemd.found()
     uuidd_socket,
     install_dir : systemdsystemunitdir)
 
+  uuidd_sysusers = configure_file(
+    input : 'uuidd-sysusers.conf.in',
+    output : 'uuidd-sysusers.conf',
+    configuration : conf)
   install_data(
-    'uuidd-sysusers.conf',
+    uuidd_sysusers,
     install_dir: systemd_sysusers_dir,
     rename : 'uuidd.conf')
 endif
+
 if build_uuidd and sysvinit
   uuidd_rc = configure_file(
     input : 'uuidd.rc.in',
