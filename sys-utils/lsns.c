@@ -1012,7 +1012,8 @@ static int read_persistent_namespaces(struct lsns *ls)
 			continue;
 		if (get_namespace(ls, ino))
 			continue;
-
+		if (!mnt_fs_get_target(fs))
+			continue;
 		fd = open(mnt_fs_get_target(fs), O_RDONLY);
 		if (fd < 0)
 			continue;
@@ -1137,7 +1138,6 @@ static int nsfs_xasputs(char **str,
 
 		if (!*str)
 			xasprintf(str, "%s", tgt);
-
 		else if (!is_path_included(*str, tgt, sep)) {
 			char *tmp = NULL;
 
