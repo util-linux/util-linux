@@ -313,6 +313,7 @@ static void tcinit(struct console *con)
 		}
 
 		setlocale(LC_CTYPE, "POSIX");
+		setlocale(LC_MESSAGES, "POSIX");
 		goto setattr;
 	}
 #if defined(IUTF8) && defined(KDGKBMODE)
@@ -327,10 +328,12 @@ static void tcinit(struct console *con)
 	case K_XLATE:
 	default:
 		setlocale(LC_CTYPE, "POSIX");
+		setlocale(LC_MESSAGES, "POSIX");
 		break;
 	}
 #else
 	setlocale(LC_CTYPE, "POSIX");
+	setlocale(LC_MESSAGES, "POSIX");
 #endif
 	reset_virtual_console(tio, flags);
 setattr:
@@ -1048,6 +1051,21 @@ int main(int argc, char **argv)
 			static const char *const features[] = {
 #ifdef USE_SULOGIN_EMERGENCY_MOUNT
 				"emergency-mount",
+#endif
+#ifdef HAVE_LIBSELINUX
+				"selinux",
+#endif
+#ifdef USE_PLYMOUTH_SUPPORT
+				"plymouth",
+#endif
+#ifdef KDGKBMODE
+				"keyboard mode",
+#endif
+#ifdef HAVE_WIDECHAR
+				"widechar",
+#endif
+#ifdef TIOCGSERIAL
+				"serial-info",
 #endif
 				NULL
 			};
