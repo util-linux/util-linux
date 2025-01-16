@@ -69,7 +69,7 @@ if build_liblastlog2 and systemd.found()
     configuration : conf)
   install_data(
     lastlog2_tmpfiles,
-    install_dir : '/usr/lib/tmpfiles.d',
+    install_dir : systemd_tmpfiles_dir,
     rename : 'lastlog2.conf')
 
   lastlog2_service = configure_file(
@@ -88,7 +88,7 @@ if build_uuidd and systemd.found()
     configuration : conf)
   install_data(
     uuidd_tmpfiles,
-    install_dir : '/usr/lib/tmpfiles.d',
+    install_dir : systemd_tmpfiles_dir,
     rename : 'uuidd.conf')
 
   uuidd_service = configure_file(
