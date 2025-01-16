@@ -176,7 +176,7 @@
 #ifdef __ia64__
 # define _PATH_RTC_DEV		"/dev/efirtc"
 #else
-# define _PATH_RTC_DEV		"/dev/rtc0"
+# define _PATH_RTC_DEV		"/dev/rtc"
 #endif
 
 /* raw paths*/
