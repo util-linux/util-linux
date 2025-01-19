@@ -114,6 +114,8 @@ typedef enum {
 	ANSI_OSC = ']',
 	ANSI_LNK = '8',
 	ANSI_LBL = 0x7,
+	ANSI_LSP = ';',
+	ANSI_LSG = 'M',
 	ANSI_END = '\\'
 } ansi_esc_states;
 
@@ -175,23 +177,35 @@ static inline size_t ansi_esc_width(ansi_esc_states *state, size_t *found, const
 		case 0x7:  // Separated by BEL
 			*state = ANSI_LBL; //#  \e]8;;LINK\aTEXT\e]8;;\a  #
 			break;
-		case 0x1b: // OSC8-Link separated by ESC BACKSLASH
+		case 0x1b: // OSC8-Link separated by ESC-BACKSLASH
 			*found += 2;
 			*state = ANSI_LBL; //#  \e]8;;LINK\e\\TEXT\e]8;;\e\\  #
 			break;
 		default:
-			*found += 1;
+			*found += chw;
 		}
 		return 0; // ignore link width
 	case ANSI_LBL:
 		if (*str == 0x1b) { // Link label goes until ESC BACKSLASH
 			*found += chw;
-			*state = ANSI_END;
+			*state = ANSI_LSP;
 		}
+		return 0;
+	case ANSI_LSP:
+		*found += chw;
+		if (*str == '[') // SGR FG/BG colors nested inside OSC8-Link sequence
+			*state = ANSI_LSG;
+		else
+			*state = ANSI_END; //# Link label ends with \e[8;;\e\\ #
+		return 0;
+	case ANSI_LSG: //#  \e]8;;LINK\e\\\e[1;34mTEXT\e[0m\e]8;;\e\\  #
+		*found += chw;
+		if (*str < '0' || *str > '?') //  SGR color sequence ends with 'm'
+			*state = ANSI_LBL;
 		return 0;
 	case ANSI_END:
 		switch (*str) {
-		case 0x1b:  // APC/OSC8-Links ends with ESC BACKSLASH
+		case 0x1b:  // APC/OSC8-Links ends with ESC-BACKSLASH
 			*found += chw;
 			break;
 		case 0x7:  // APC/OSC/OSC8-Links ends with BEL
