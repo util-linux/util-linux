@@ -448,7 +448,7 @@ static void parse_groups(struct privctx *opts, const char *str)
 	while ((c = strsep(&groups, ",")))
 		opts->groups[i++] = get_group(c, _("Invalid supplementary group id"));
 
-	free(groups);
+	free(buf);
 }
 
 static void parse_pdeathsig(struct privctx *opts, const char *str)
