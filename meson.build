@@ -882,6 +882,7 @@ have = cc.links(code, name : 'fallocate() function')
 conf.set('HAVE_FALLOCATE', have ? 1 : false)
 
 code = '''
+#define _POSIX_C_SOURCE 200112L
 #include <unistd.h>
 #include <fcntl.h>
 
