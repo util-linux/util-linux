@@ -80,8 +80,6 @@
 #if defined(__linux__) && defined(HAVE_SYS_SYSCALL_H)
 #include <sys/syscall.h>
 #endif
-#include <pthread.h>
-#include <signal.h>
 
 #include "all-io.h"
 #include "uuidP.h"
@@ -608,6 +606,7 @@ THREAD_LOCAL struct {
 	int		last_used;
 	struct uuid	uu;
 	time_t		last_time;
+	pid_t		owner;
 } uuidd_cache = {
 	.cache_size = CS_MIN,
 };
@@ -616,15 +615,15 @@ static void reset_uuidd_cache(void)
 {
 	memset(&uuidd_cache, 0, sizeof(uuidd_cache));
 	uuidd_cache.cache_size = CS_MIN;
+	uuidd_cache.owner = getpid();
 }
 
 static int uuid_generate_time_generic(uuid_t out) {
-	static volatile sig_atomic_t atfork_registered;
 	time_t	now;
 
-	if (!atfork_registered) {
-		pthread_atfork(NULL, NULL, reset_uuidd_cache);
-		atfork_registered = 1;
+	/* avoid returning duplicate uuid from cache, in case of a fork() */
+	if (uuidd_cache.owner != getpid()) {
+		reset_uuidd_cache();
 	}
 
 	if (uuidd_cache.num > 0) { /* expire cache */

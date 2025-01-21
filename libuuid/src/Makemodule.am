@@ -7,7 +7,7 @@ test_uuid_parser_CFLAGS = $(AM_CFLAGS) -I$(ul_libuuid_incdir)
 check_PROGRAMS += test_uuid_time
 test_uuid_time_SOURCES = libuuid/src/gen_uuid.c \
 	libuuid/src/pack.c libuuid/src/unpack.c lib/randutils.c lib/md5.c lib/sha1.c
-test_uuid_time_LDADD = libuuid.la $(SOCKET_LIBS) $(LDADD) -lpthread
+test_uuid_time_LDADD = libuuid.la $(SOCKET_LIBS) $(LDADD)
 test_uuid_time_CFLAGS = $(AM_CFLAGS) -I$(ul_libuuid_incdir) -DTEST_PROGRAM
 
 # includes
@@ -37,7 +37,7 @@ libuuid_la_SOURCES = \
 EXTRA_libuuid_la_DEPENDENCIES = \
 	libuuid/src/libuuid.sym
 
-libuuid_la_LIBADD       = $(LDADD) $(SOCKET_LIBS) -lpthread
+libuuid_la_LIBADD       = $(LDADD) $(SOCKET_LIBS)
 
 libuuid_la_CFLAGS = \
 	$(AM_CFLAGS) \

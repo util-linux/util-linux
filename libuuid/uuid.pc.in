@@ -7,5 +7,5 @@ Name: uuid
 Description: Universally unique id library
 Version: @LIBUUID_VERSION@
 Cflags: -I${includedir}/uuid
-Libs.private: @SOCKET_LIBS@ -lpthread
+Libs.private: @SOCKET_LIBS@
 Libs: -L${libdir} -luuid
