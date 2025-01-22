@@ -3085,7 +3085,6 @@ libsmartcols/docs/Makefile
 libsmartcols/docs/version.xml
 libsmartcols/src/libsmartcols.h
 po/Makefile.in
-po-man/Makefile
 ])
 
 AC_OUTPUT

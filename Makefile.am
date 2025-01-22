@@ -291,6 +291,8 @@ gen-man:
 gen-man-dist:
 endif
 
+all-local: gen-man
+
 
 # Arrange so that .tarball-version appears only in the distribution
 # tarball, and never in a checked-out repository.

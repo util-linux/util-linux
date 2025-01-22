@@ -91,7 +91,7 @@ PO4A_TRANSLATE_ONLY_FLAGS=()
 for LOCALE in "${LOCALES[@]}"; do
     for ADOC in "${ADOCS[@]}"; do
         if [[ ! " ${PO4ACFG_TRANSLATIONS[*]} " =~ .*${ADOC}[[:space:]] ]]; then
-	  echo "Ignore $ADOC"
+	  echo "Untranslated: $LOCALE: $ADOC"
           continue
         fi
         PO4A_TRANSLATE_ONLY_FLAGS+=("--translate-only")

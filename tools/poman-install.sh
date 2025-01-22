@@ -21,7 +21,6 @@ Install translated man pages.
 HEREDOC
 }
 
-MESON_INSTALL_PREFIX="${MESON_INSTALL_PREFIX:-''}"
 MANPAGES=()
 PROGRAM=$(basename "$0")
 MYCMD="install"
@@ -79,12 +78,13 @@ for LOCALEDIR in "$MANSRCDIR"/*/; do
 
 	    if [ "$MYCMD" = "install" ]; then
                 if [ -z ${MESON_INSTALL_QUIET+x} ]; then
-                    echo "Installing $PAGE to $MESON_INSTALL_PREFIX/$MANDIR/$LOCALE/man$SECTION"
+			echo "Installing $PAGE to ${MANDIR}/$LOCALE/man$SECTION"
                 fi
-                install -D --mode=0644 --target-directory="$DESTDIR/$MESON_INSTALL_PREFIX/$MANDIR/$LOCALE/man$SECTION" "$PAGE"
+		mkdir -p "${MANDIR}/$LOCALE/man$SECTION"
+                install -m 644 "$PAGE" "${MANDIR}/$LOCALE/man$SECTION"
 
 	    elif [ "$MYCMD" = "uninstall" ]; then
-		rm -f "$DESTDIR/$MESON_INSTALL_PREFIX/$MANDIR/$LOCALE/man$SECTION/$PAGE"
+		rm -f "${MANDIR}/$LOCALE/man$SECTION/$PAGE"
 	    fi
         fi
     done

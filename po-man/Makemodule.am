@@ -1,7 +1,10 @@
 if ENABLE_ASCIIDOC
 if ENABLE_POMAN
 
+PO_STAMPS = po4a-gen.stamp
 PO_FILES = po-man/$(wildcard *.po)
+
+CLEANFILES += $(PO_STAMPS)
 
 EXTRA_DIST += po-man/README.md \
 	      po-man/po4a.cfg \
@@ -9,24 +12,26 @@ EXTRA_DIST += po-man/README.md \
 	      $(PO_FILES)
 
 
-asciidoc_poman_translate_cmd = $(top_srcdir)/tools/poman-translate.sh \
+asciidoc_poman_translate_cmd = $(abs_srcdir)/tools/poman-translate.sh \
 	--progress \
-	--srcdir '$(top_srcdir)/po-man' \
-	--destdir '$(top_builddir)/po-man/translations' \
-	--asciidoctor-load-path '$(top_srcdir)/tools' \
+	--srcdir '$(abs_srcdir)/po-man' \
+	--destdir '$(abs_builddir)/po-man/translations' \
+	--asciidoctor-load-path '$(abs_srcdir)/tools' \
 	--docdir '$(docdir)' \
-	--po4acfg '$(top_srcdir)/po-man/po4a.cfg' \
+	--po4acfg '$(abs_srcdir)/po-man/po4a.cfg' \
 	--util-linux-version '$(VERSION)'
 
-asciidoc_poman_install_cmd = $(top_srcdir)/tools/poman-install.sh \
-	--mandir '$(DESTDIR)/$(mandir)' \
-	--mansrcdir '$(top_builddir)/po-man/translations/man'
-
+asciidoc_poman_install_cmd = $(abs_srcdir)/tools/poman-install.sh \
+	--mandir '$(DESTDIR)$(mandir)' \
+	--mansrcdir '$(abs_builddir)/po-man/translations/man'
 
 ADOCFILES = $(MANPAGES:=.adoc)
-gen-poman: $(ADOCFILES_COMMON) $(ADOCFILES)
-	$(asciidoc_poman_translate_cmd) $(ADOCFILES)
 
+po4a-gen.stamp: $(PO_FILES) $(ADOCFILES_COMMON) $(ADOCFILES)
+	$(asciidoc_poman_translate_cmd) $(ADOCFILES)
+	@touch po4a-gen.stamp
+
+gen-poman: $(PO_STAMPS)
 
 install-data-hook-poman:
 	$(asciidoc_poman_install_cmd) --install
