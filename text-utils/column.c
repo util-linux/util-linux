@@ -112,18 +112,21 @@ typedef enum {
 	ANSI_ESC = 0x1b,
 	ANSI_SGR = '[',
 	ANSI_OSC = ']',
-	ANSI_APC = '_',
-	ANSI_BSL = '\\'
+	ANSI_LNK = '8',
+	ANSI_LBL = 0x7,
+	ANSI_LSP = ';',
+	ANSI_LSG = 'M',
+	ANSI_END = '\\'
 } ansi_esc_states;
 
 /**
  * Count how many characters are non-printable due to ANSI X3.41 escape codes.
  *
- * It detects and count only Fe Escape sequences. These sequences contains characters
- * that normally are printable, but due to being part of a escape sequence are ignored
- * when displayed in console terminals.
+ * It detects and count Fe Escape and OSC 8 links sequences. These sequences contains
+ * characters that normally are printable, but due to being part of a escape sequence
+ * are ignored when displayed in console terminals.
  */
-static inline size_t ansi_esc_width(ansi_esc_states *state, size_t *found, const wchar_t *str)
+static inline size_t ansi_esc_width(ansi_esc_states *state, size_t *found, const wchar_t *str, int chw)
 {
 	switch (*state) {
 	case ANSI_CHR:
@@ -144,7 +147,7 @@ static inline size_t ansi_esc_width(ansi_esc_states *state, size_t *found, const
 		case '_':  // APC - Application Program Command
 		case 'P':  // DCS - Device Control String
 		case '^':  // PM  - Privacy Message
-			*state = ANSI_APC;
+			*state = ANSI_END;
 			break;
 		default:
 			*state = ANSI_CHR;
@@ -153,7 +156,7 @@ static inline size_t ansi_esc_width(ansi_esc_states *state, size_t *found, const
 		*found = 1;
 		return 0;
 	case ANSI_SGR:
-		*found += 1;
+		*found += chw;
 		// Fe escape sequences allows the range 0x30-0x3f
 		// However SGR (Select Graphic Rendition) only uses: 0-9 ';' ':'
 		if (*str >= '0' && *str <= '?')
@@ -162,24 +165,56 @@ static inline size_t ansi_esc_width(ansi_esc_states *state, size_t *found, const
 		if (*str <= '@' && *str >= '~')
 			*found = 0;
 		break;
-	case ANSI_APC:
 	case ANSI_OSC:
-		*found += 1;
-#ifdef HAVE_WIDECHAR
-		if (*str == 0x9c || *str == 0x7) // ends with ST (String Terminator) or BEL (\a)
-			break;
-#else
-		if (((unsigned char)*str) == 0x9c || *str == 0x7)
-			break;
-#endif
-		else if (*str == 0x1b) // ends with ESC BACKSLASH
-			*state = ANSI_BSL;
+		*found += chw;
+		if (*str == ANSI_LNK) // OSC8-Link
+			*state = ANSI_LNK; 
+		else
+			*state = ANSI_END; // other command sequences are ignored
 		return 0;
-	case ANSI_BSL:
-		if (*str == '\\') // ends with BACKSLASH
+	case ANSI_LNK: // OSC8 Terminal Hiperlink Sequence
+		switch (*str) {
+		case 0x7:  // Separated by BEL
+			*state = ANSI_LBL; //#  \e]8;;LINK\aTEXT\e]8;;\a  #
 			break;
-		*found = 0;
+		case 0x1b: // OSC8-Link separated by ESC-BACKSLASH
+			*found += 2;
+			*state = ANSI_LBL; //#  \e]8;;LINK\e\\TEXT\e]8;;\e\\  #
+			break;
+		default:
+			*found += chw;
+		}
+		return 0; // ignore link width
+	case ANSI_LBL:
+		if (*str == 0x1b) { // Link label goes until ESC BACKSLASH
+			*found += chw;
+			*state = ANSI_LSP;
+		}
 		return 0;
+	case ANSI_LSP:
+		*found += chw;
+		if (*str == '[') // SGR FG/BG colors nested inside OSC8-Link sequence
+			*state = ANSI_LSG;
+		else
+			*state = ANSI_END; //# Link label ends with \e[8;;\e\\ #
+		return 0;
+	case ANSI_LSG: //#  \e]8;;LINK\e\\\e[1;34mTEXT\e[0m\e]8;;\e\\  #
+		*found += chw;
+		if (*str < '0' || *str > '?') //  SGR color sequence ends with 'm'
+			*state = ANSI_LBL;
+		return 0;
+	case ANSI_END:
+		switch (*str) {
+		case 0x1b:  // APC/OSC8-Links ends with ESC-BACKSLASH
+			*found += chw;
+			break;
+		case 0x7:  // APC/OSC/OSC8-Links ends with BEL
+		case 0x9c:  // APC/DCS/DM ends with ST (String Terminator)
+			break;
+		default:
+			*found += chw;
+		return 0;
+	}
 	}
 	size_t res = *found;
 	*state = ANSI_CHR;
@@ -196,13 +231,12 @@ static size_t width(const wchar_t *str)
 	for (; *str != '\0'; str++) {
 #ifdef HAVE_WIDECHAR
 		int x = wcwidth(*str);	/* don't use wcswidth(), need to ignore non-printable */
-		if (x > 0)
-			count += x;
 #else
-		if (isprint(*str))
-			count++;
+		int x = isprint(*str) ? 1 : 0;
 #endif
-		count -= ansi_esc_width(&state, &found, str);
+		int chw = x > 0 ? x : 0;
+		size_t nonpr = ansi_esc_width(&state, &found, str, chw);
+		count += chw - nonpr;
 	}
 	return count;
 }
