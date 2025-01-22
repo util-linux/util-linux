@@ -1,16 +1,16 @@
+
+POMAN_PO_FILES = $(wildcard po-man/*.po)
+EXTRA_DIST += po-man/README.md \
+	      po-man/po4a.cfg \
+	      po-man/util-linux-man.pot \
+	      $(POMAN_PO_FILES)
+
 if ENABLE_ASCIIDOC
 if ENABLE_POMAN
 
 PO_STAMPS = po4a-gen.stamp
-PO_FILES = po-man/$(wildcard *.po)
 
 CLEANFILES += $(PO_STAMPS)
-
-EXTRA_DIST += po-man/README.md \
-	      po-man/po4a.cfg \
-	      po-man/util-linux-man.pot \
-	      $(PO_FILES)
-
 
 asciidoc_poman_translate_cmd = $(abs_srcdir)/tools/poman-translate.sh \
 	--progress \
@@ -27,7 +27,7 @@ asciidoc_poman_install_cmd = $(abs_srcdir)/tools/poman-install.sh \
 
 ADOCFILES = $(MANPAGES:=.adoc)
 
-po4a-gen.stamp: $(PO_FILES) $(ADOCFILES_COMMON) $(ADOCFILES)
+po4a-gen.stamp: $(POMAN_PO_FILES) $(ADOCFILES_COMMON) $(ADOCFILES)
 	$(asciidoc_poman_translate_cmd) $(ADOCFILES)
 	@touch po4a-gen.stamp
 

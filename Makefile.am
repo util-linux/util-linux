@@ -139,6 +139,7 @@ EXTRA_DIST += \
 	libsmartcols/meson.build \
 	text-utils/meson.build \
 	po/meson.build \
+	po-man/meson.build \
 	lib/meson.build \
 	libuuid/meson.build \
 	liblastlog2/meson.build \
