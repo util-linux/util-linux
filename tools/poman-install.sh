@@ -69,23 +69,27 @@ if [ ${#MANPAGES[@]} -eq 0 ]; then
 fi
 
 for LOCALEDIR in "$MANSRCDIR"/*/; do
-    LOCALE=$(basename "$LOCALEDIR")
-    for MANPAGE in "${MANPAGES[@]}"; do
-        MANPAGE=$(basename "$MANPAGE")
-        SECTION="${MANPAGE##*.}"
-        PAGE="$LOCALEDIR/man$SECTION/$MANPAGE"
-        if [ -f "$PAGE" ]; then
+  LOCALE=$(basename "$LOCALEDIR")
+  for MANPAGE in "${MANPAGES[@]}"; do
+    MANPAGE=$(basename "$MANPAGE")
+    SECTION="${MANPAGE##*.}"
+     
+    if [ "$MYCMD" = "install" ]; then
+      PAGE="$LOCALEDIR/man$SECTION/$MANPAGE"
+      if [ -f "$PAGE" ]; then
+        if [ -z ${MESON_INSTALL_QUIET+x} ]; then
+	  echo "Installing $PAGE to ${MANDIR}/$LOCALE/man$SECTION"
+	fi
+	mkdir -p "${MANDIR}/$LOCALE/man$SECTION"
+        install -m 644 "$PAGE" "${MANDIR}/$LOCALE/man$SECTION"
+      fi
 
-	    if [ "$MYCMD" = "install" ]; then
-                if [ -z ${MESON_INSTALL_QUIET+x} ]; then
-			echo "Installing $PAGE to ${MANDIR}/$LOCALE/man$SECTION"
-                fi
-		mkdir -p "${MANDIR}/$LOCALE/man$SECTION"
-                install -m 644 "$PAGE" "${MANDIR}/$LOCALE/man$SECTION"
+    elif [ "$MYCMD" = "uninstall" ]; then
+      if [ -z ${MESON_INSTALL_QUIET+x} ]; then
+        echo "Uninstalling ${MANDIR}/$LOCALE/man$SECTION/$MANPAGE"
+      fi
+      rm -f "${MANDIR}/$LOCALE/man$SECTION/$MANPAGE"
+    fi
 
-	    elif [ "$MYCMD" = "uninstall" ]; then
-		rm -f "${MANDIR}/$LOCALE/man$SECTION/$PAGE"
-	    fi
-        fi
-    done
+  done
 done
