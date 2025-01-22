@@ -1,0 +1,52 @@
+if ENABLE_ASCIIDOC
+if ENABLE_POMAN
+
+PO_FILES = po-man/$(wildcard *.po)
+
+EXTRA_DIST += po-man/README.md \
+	      po-man/po4a.cfg \
+	      po-man/util-linux-man.pot \
+	      $(PO_FILES)
+
+
+asciidoc_poman_translate_cmd = $(top_srcdir)/po-man/translate.sh \
+	--progress \
+	--srcdir '$(top_srcdir)/po-man' \
+	--destdir '$(top_builddir)/po-man/translations' \
+	--asciidoctor-load-path '$(top_srcdir)/tools' \
+	--docdir '$(docdir)' \
+	--po4acfg '$(top_srcdir)/po-man/po4a.cfg' \
+	--util-linux-version '$(VERSION)'
+
+asciidoc_poman_install_cmd = $(top_srcdir)/po-man/install-translations.sh \
+	--mandir '$(DESTDIR)/$(mandir)' \
+	--mansrcdir '$(top_builddir)/po-man/translations/man'
+
+
+ADOCFILES = $(MANPAGES:=.adoc)
+gen-poman: $(ADOCFILES_COMMON) $(ADOCFILES)
+	$(asciidoc_poman_translate_cmd) $(ADOCFILES)
+
+
+install-data-hook-poman:
+	$(asciidoc_poman_install_cmd) --install
+INSTALL_DATA_HOOKS += install-data-hook-poman
+
+
+uninstall-hook-poman:
+	$(asciidoc_poman_install_cmd) --uninstall
+UNINSTALL_HOOKS += uninstall-hook-poman
+
+
+clean-local-hook-poman:
+	rm -rf $(top_builddir)/po-man/translations
+CLEAN_LOCALS += clean-local-hook-poman
+
+
+# !ENABLE_POMAN
+else
+gen-poman:
+endif
+
+# ENABLE_ASCIIDOC
+endif

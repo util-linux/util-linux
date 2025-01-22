@@ -85,12 +85,6 @@ CLEANFILES =
 
 SUBDIRS = po
 
-if ENABLE_ASCIIDOC
-if ENABLE_POMAN
-SUBDIRS += po-man
-endif
-endif
-
 RCS_FIND_IGNORE = \( -name SCCS -o -name BitKeeper -o -name .svn -o \
 		-name CVS -o -name .pc -o -name .hg -o -name .git \) -prune -o
 
@@ -125,6 +119,7 @@ include lsfd-cmd/Makemodule.am
 include pam_lastlog2/Makemodule.am
 include bash-completion/Makemodule.am
 include man-common/Makemodule.am
+include po-man/Makemodule.am
 
 include Documentation/Makemodule.am
 include tests/Makemodule.am
@@ -264,7 +259,6 @@ SUFFIXES = .1.adoc .3.adoc .5.adoc .8.adoc .1 .3 .5 .8
 		$(MKDIR_P) $$(dirname $@) && \
 		$(asciidoc_man_cmd) --base-dir=$(abs_srcdir) \
 				    --destination-dir $(abs_builddir)/$$(dirname $@) $<
-
 -include \
 	$(abs_builddir)/**.1.deps \
 	$(abs_builddir)/**.3.deps \
@@ -272,7 +266,7 @@ SUFFIXES = .1.adoc .3.adoc .5.adoc .8.adoc .1 .3 .5 .8
 	$(abs_builddir)/**.8.deps
 
 $(MANLINKS): $(MANPAGES)
-gen-man: $(man_MANS)
+gen-man: $(man_MANS) gen-poman
 
 # Standard "make" follows BUILD_* macros from ./configure, and in this case, it
 # ignores man pages for disabled tools, but for distribution tarball, we need
