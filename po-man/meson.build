@@ -14,7 +14,7 @@ endforeach
 
 custom_target('translate',
   build_by_default : true,
-  command : ['translate.sh',
+  command : [meson.project_source_root() / 'tools/poman-translate.sh',
     '--srcdir', meson.current_source_dir(),
     '--destdir', meson.current_build_dir() / 'translations',
     '--asciidoctor-load-path', meson.project_source_root() / 'tools',
@@ -32,7 +32,7 @@ foreach adoc : manadocs
   manpages += fs.stem(adoc)
 endforeach
 
-meson.add_install_script('install-translations.sh',
+meson.add_install_script(meson.project_source_root() / 'tools/poman-install.sh',
   '--mandir', get_option('mandir'),
   '--mansrcdir', meson.current_build_dir() / 'translations/man',
   manpages)
