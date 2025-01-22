@@ -6,7 +6,7 @@ function usage()
     cat << HEREDOC
 
  Usage:
-  $PROGRAM --mandir <directory> --mansrcdir <directory> [<man page name>...]
+  $PROGRAM --install|--uninstall --mandir <directory> --mansrcdir <directory> [<man page name>...]
 
 Install translated man pages.
 
@@ -17,14 +17,14 @@ Install translated man pages.
 
  Environment Variables:
   MESON_INSTALL_PREFIX               install destination prefix directory
-  DESTDIR                            install destination directory
 
 HEREDOC
 }
 
-DESTDIR="${DESTDIR:-''}"
+MESON_INSTALL_PREFIX="${MESON_INSTALL_PREFIX:-''}"
 MANPAGES=()
 PROGRAM=$(basename "$0")
+MYCMD="install"
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -40,6 +40,14 @@ while [[ $# -gt 0 ]]; do
     --mansrcdir)
       MANSRCDIR="$2"
       shift
+      shift
+      ;;
+    --install)
+      MYCMD="install"
+      shift
+      ;;
+    --uninstall)
+      MYCMD="uninstall"
       shift
       ;;
     --*|-*)
@@ -68,10 +76,16 @@ for LOCALEDIR in "$MANSRCDIR"/*/; do
         SECTION="${MANPAGE##*.}"
         PAGE="$LOCALEDIR/man$SECTION/$MANPAGE"
         if [ -f "$PAGE" ]; then
-            if [ -z ${MESON_INSTALL_QUIET+x} ]; then
-                echo "Installing $PAGE to $DESTDIR/$MESON_INSTALL_PREFIX/$MANDIR/$LOCALE/man$SECTION"
-            fi
-            install -D --mode=0644 --target-directory="$DESTDIR/$MESON_INSTALL_PREFIX/$MANDIR/$LOCALE/man$SECTION" "$PAGE"
+
+	    if [ "$MYCMD" = "install" ]; then
+                if [ -z ${MESON_INSTALL_QUIET+x} ]; then
+                    echo "Installing $PAGE to $MESON_INSTALL_PREFIX/$MANDIR/$LOCALE/man$SECTION"
+                fi
+                install -D --mode=0644 --target-directory="$DESTDIR/$MESON_INSTALL_PREFIX/$MANDIR/$LOCALE/man$SECTION" "$PAGE"
+
+	    elif [ "$MYCMD" = "uninstall" ]; then
+		rm -f "$DESTDIR/$MESON_INSTALL_PREFIX/$MANDIR/$LOCALE/man$SECTION/$PAGE"
+	    fi
         fi
     done
 done

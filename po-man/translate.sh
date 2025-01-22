@@ -11,6 +11,7 @@ Translate Asciidoc man page source files and generate man pages.
 
  Options:
   --help                               show this help message and exit
+  --progress                           report the current progress
   --srcdir <srcdir>                    directory containing the asciidoc files to translate
   --destdir <destdir>                  directory in which to place the translated asciidoc files and man pages
   --asciidoctor-load-path <directory>  value for the --load-path option passed to the Asciidoctor command
@@ -22,6 +23,7 @@ HEREDOC
 }
 
 PROGRAM=$(basename "$0")
+PROGRESS=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -54,6 +56,10 @@ while [[ $# -gt 0 ]]; do
           shift
           shift
           ;;
+	--progress)
+	  PROGRESS=true
+	  shift
+	  ;;
         --util-linux-version)
           UTIL_LINUX_VERSION="$2"
           shift
@@ -84,7 +90,8 @@ MANADOCS=()
 PO4A_TRANSLATE_ONLY_FLAGS=()
 for LOCALE in "${LOCALES[@]}"; do
     for ADOC in "${ADOCS[@]}"; do
-        if [[ ! " ${PO4ACFG_TRANSLATIONS[*]} " =~ [[:space:]]${ADOC}[[:space:]] ]]; then
+        if [[ ! " ${PO4ACFG_TRANSLATIONS[*]} " =~ .*${ADOC}[[:space:]] ]]; then
+	  echo "Ignore $ADOC"
           continue
         fi
         PO4A_TRANSLATE_ONLY_FLAGS+=("--translate-only")
@@ -108,6 +115,8 @@ PO4A_VERSION=$(po4a --version | { read -r _ _ v; echo "${v%*.}"; })
 if echo "0.72" "$PO4A_VERSION" | sort --check --version-sort; then
   PO4A_TRANSLATE_ONLY_FLAGS=("--no-update")
 fi
+
+[ "$PROGRESS" = true ] && echo "po4a: generate man-pages translations"
 
 DISCARDED_TRANSLATIONS=()
 output=$(po4a --srcdir "$SRCDIR" --destdir "$DESTDIR" "${PO4A_TRANSLATE_ONLY_FLAGS[@]}" "$PO4ACFG")
@@ -136,6 +145,10 @@ for ADOC in "${TRANSLATED_MANADOCS[@]}"; do
     LOCALE=$(basename "$(dirname "$ADOC")")
     PAGE="${ADOC%.*}"
     SECTION="${PAGE##*.}"
+    if [ "$PROGRESS" = true ]; then
+        PAGENAME=$(basename $PAGE)
+	echo "   GEN     " $LOCALE ": " $PAGENAME
+    fi
     asciidoctor \
         --backend manpage \
         --attribute VERSION="$UTIL_LINUX_VERSION" \
