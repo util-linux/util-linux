@@ -16,12 +16,15 @@ lsipc - show information on IPC facilities currently employed in the system
 
 == DESCRIPTION
 
-*lsipc* shows information on the System V inter-process communication facilities for which the calling process has read access.
+*lsipc* shows information on the POSIX and System V inter-process communication facilities for which the calling process has read access.
 
 == OPTIONS
 
 *-i*, *--id* _id_::
-Show full details on just the one resource element identified by _id_. This option needs to be combined with one of the three resource options: *-m*, *-q* or *-s*. It is possible to override the default output format for this option with the *--list*, *--raw*, *--json* or *--export* option.
+Show full details on just the one resource element (System V) identified by _id_. This option needs to be combined with one of the three resource options: *-m*, *-q* or *-s*. It is possible to override the default output format for this option with the *--list*, *--raw*, *--json* or *--export* option.
+
+*-N*, *--name* _name_::
+Show full details on just the one resource element (POSIX) identified by _name_. This option needs to be combined with one of the three resource options: *-M*, *-Q* or *-S*. It is possible to override the default output format for this option with the *--list*, *--raw*, *--json* or *--export* option.
 
 *-g*, *--global*::
 Show system-wide usage and limits of IPC resources. This option may be combined with one of the three resource options: *-m*, *-q* or *-s*. The default is to show information about all resources.
@@ -31,13 +34,22 @@ include::man-common/help-version.adoc[]
 === Resource options
 
 *-m*, *--shmems*::
-Write information about active shared memory segments.
+Write information about active System V shared memory segments.
+
+*-M*, *--posix-shmems*::
+Write information about active POSIX shared memory segments.
 
 *-q*, *--queues*::
-Write information about active message queues.
+Write information about active System V message queues.
+
+*-Q*, *--posix-mqueues*::
+Write information about active POSIX message queues. Mounts /dev/mqueue if not already mounted.
 
 *-s*, *--semaphores*::
-Write information about active semaphore sets.
+Write information about active System V semaphore sets.
+
+*-S*, *--posix-semaphores*::
+Write information about active POSIX named semaphores.
 
 === Output formatting
 

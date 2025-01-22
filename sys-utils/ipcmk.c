@@ -26,8 +26,12 @@
 #include <stdlib.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
+#include <mqueue.h>
 #include <sys/sem.h>
+#include <semaphore.h>
 #include <sys/shm.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
 #include <sys/time.h>
 
 #include "c.h"
@@ -44,6 +48,23 @@ static int create_shm(size_t size, int permission)
 	return shmget(key, size, permission | IPC_CREAT);
 }
 
+static int create_posix_shm(const char *name, size_t size, int permission)
+{
+	int shmfd;
+
+	if (-1 == (shmfd = shm_open(name, O_RDWR | O_CREAT, permission)))
+		return -1;
+	
+	if (-1 == ftruncate(shmfd, size)) {
+		close(shmfd);
+		return -1;
+	}
+
+	close(shmfd);
+	printf(_("POSIX shared memory name: %s\n"), name);
+	return 0;
+}
+
 static int create_msg(int permission)
 {
 	key_t key;
@@ -52,12 +73,32 @@ static int create_msg(int permission)
 	return msgget(key, permission | IPC_CREAT);
 }
 
+static int create_posix_msg(const char *name, int permission)
+{
+	if (-1 == mq_open(name, O_RDWR | O_CREAT, permission, NULL))
+		return -1;
+	printf(_("POSIX message queue name: %s\n"), name);
+	return 0;
+}
+
 static int create_sem(int nsems, int permission)
 {
 	key_t key;
 
 	ul_random_get_bytes(&key, sizeof(key));
 	return semget(key, nsems, permission | IPC_CREAT);
+}
+
+static int create_posix_sem(const char *name, int permission)
+{
+	sem_t *sem;
+
+	if (SEM_FAILED == (sem = sem_open(name, O_CREAT, permission, 0)))
+		return -1;
+
+	sem_close(sem);
+	printf(_("POSIX semaphore name: %s\n"), name);
+	return 0;
 }
 
 static void __attribute__((__noreturn__)) usage(void)
@@ -71,15 +112,22 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -M, --shmem <size>       create shared memory segment of size <size>\n"), out);
+	fputs(_(" -m, --posix-shmem <size> create POSIX shared memory segment of size <size>\n"), out);
 	fputs(_(" -S, --semaphore <number> create semaphore array with <number> elements\n"), out);
+	fputs(_(" -s, --posix-semaphore    create POSIX semaphore\n"), out);
 	fputs(_(" -Q, --queue              create message queue\n"), out);
+	fputs(_(" -q, --posix-mqueue       create POSIX message queue\n"), out);
 	fputs(_(" -p, --mode <mode>        permission for the resource (default is 0644)\n"), out);
+	fputs(_(" -n, --name <name>        name of the POSIX resource\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(26));
 
 	fputs(USAGE_ARGUMENTS, out);
 	fprintf(out, USAGE_ARG_SIZE(_("<size>")));
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" -n, --name <name> option is required for POSIX IPC\n"), out);
 
 	fprintf(out, USAGE_MAN_TAIL("ipcmk(1)"));
 
@@ -89,15 +137,20 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char **argv)
 {
 	int permission = 0644;
+	char *name = NULL;
 	int opt;
 	size_t size = 0;
 	int nsems = 0;
-	int ask_shm = 0, ask_msg = 0, ask_sem = 0;
+	int ask_shm = 0, ask_msg = 0, ask_sem = 0, ask_pshm = 0, ask_pmsg = 0, ask_psem = 0;
 	static const struct option longopts[] = {
 		{"shmem", required_argument, NULL, 'M'},
+		{"posix-shmem", required_argument, NULL, 'm'},
 		{"semaphore", required_argument, NULL, 'S'},
+		{"posix-semaphore", required_argument, NULL, 's'},
 		{"queue", no_argument, NULL, 'Q'},
+		{"posix-mqueue", no_argument, NULL, 'q'},
 		{"mode", required_argument, NULL, 'p'},
+		{"name", required_argument, NULL, 'n'},
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
 		{NULL, 0, NULL, 0}
@@ -108,18 +161,28 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while((opt = getopt_long(argc, argv, "hM:QS:p:Vh", longopts, NULL)) != -1) {
+	while((opt = getopt_long(argc, argv, "hM:m:QqS:sp:n:Vh", longopts, NULL)) != -1) {
 		switch(opt) {
 		case 'M':
 			size = strtosize_or_err(optarg, _("failed to parse size"));
 			ask_shm = 1;
 			break;
+		case 'm':
+			size = strtosize_or_err(optarg, _("failed to parse size"));
+			ask_pshm = 1;
+			break;
 		case 'Q':
 			ask_msg = 1;
+			break;
+		case 'q':
+			ask_pmsg = 1;
 			break;
 		case 'S':
 			nsems = strtos32_or_err(optarg, _("failed to parse elements"));
 			ask_sem = 1;
+			break;
+		case 's':
+			ask_psem = 1;
 			break;
 		case 'p':
 		{
@@ -130,6 +193,9 @@ int main(int argc, char **argv)
 				err(EXIT_FAILURE, _("failed to parse mode"));
 			break;
 		}
+		case 'n':
+			name = optarg;
+			break;
 		case 'h':
 			usage();
 		case 'V':
@@ -139,16 +205,27 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if(!ask_shm && !ask_msg && !ask_sem) {
+	if(!ask_shm && !ask_msg && !ask_sem && !ask_pshm && !ask_pmsg && !ask_psem) {
 		warnx(_("bad usage"));
 		errtryhelp(EXIT_FAILURE);
 	}
+
+	if ((ask_pshm + ask_pmsg + ask_psem > 0) && name == NULL) {
+		warnx(_("name is required for POSIX IPC"));
+		errtryhelp(EXIT_FAILURE);
+	}
+
 	if (ask_shm) {
 		int shmid;
 		if (-1 == (shmid = create_shm(size, permission)))
 			err(EXIT_FAILURE, _("create share memory failed"));
 		else
 			printf(_("Shared memory id: %d\n"), shmid);
+	}
+
+	if (ask_pshm) {
+		if (-1 == create_posix_shm(name, size, permission))
+			err(EXIT_FAILURE, _("create POSIX shared memory failed"));
 	}
 
 	if (ask_msg) {
@@ -159,12 +236,22 @@ int main(int argc, char **argv)
 			printf(_("Message queue id: %d\n"), msgid);
 	}
 
+	if (ask_pmsg) {
+		if (-1 == create_posix_msg(name, permission))
+			err(EXIT_FAILURE, _("create POSIX message queue failed"));
+	}
+
 	if (ask_sem) {
 		int semid;
 		if (-1 == (semid = create_sem(nsems, permission)))
 			err(EXIT_FAILURE, _("create semaphore failed"));
 		else
 			printf(_("Semaphore id: %d\n"), semid);
+	}
+
+	if (ask_psem) {
+		if (-1 == create_posix_sem(name, permission))
+			err(EXIT_FAILURE, _("create POSIX semaphore failed"));
 	}
 
 	return EXIT_SUCCESS;

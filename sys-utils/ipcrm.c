@@ -20,6 +20,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
 #include "c.h"
 #include "nls.h"
 #include "strutils.h"
@@ -29,8 +31,11 @@
 
 typedef enum type_id {
 	SHM,
+	PSHM,
 	SEM,
+	PSEM,
 	MSG,
+	PMSG,
 	ALL
 } type_id;
 
@@ -48,14 +53,17 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Remove certain IPC resources.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -m, --shmem-id <id>        remove shared memory segment by id\n"), out);
-	fputs(_(" -M, --shmem-key <key>      remove shared memory segment by key\n"), out);
-	fputs(_(" -q, --queue-id <id>        remove message queue by id\n"), out);
-	fputs(_(" -Q, --queue-key <key>      remove message queue by key\n"), out);
-	fputs(_(" -s, --semaphore-id <id>    remove semaphore by id\n"), out);
-	fputs(_(" -S, --semaphore-key <key>  remove semaphore by key\n"), out);
-	fputs(_(" -a, --all[=shm|msg|sem]    remove all (in the specified category)\n"), out);
-	fputs(_(" -v, --verbose              explain what is being done\n"), out);
+	fputs(_(" -m, --shmem-id <id>        				remove shared memory segment by id\n"), out);
+	fputs(_(" -M, --shmem-key <key>      				remove shared memory segment by key\n"), out);
+	fputs(_("     --posix-shmem <name>   				remove POSIX shared memory segment by name\n"), out);
+	fputs(_(" -q, --queue-id <id>        				remove message queue by id\n"), out);
+	fputs(_(" -Q, --queue-key <key>      				remove message queue by key\n"), out);
+	fputs(_("     --posix-mqueue <name>  				remove POSIX message queue by name\n"), out);
+	fputs(_(" -s, --semaphore-id <id>    				remove semaphore by id\n"), out);
+	fputs(_(" -S, --semaphore-key <key>  				remove semaphore by key\n"), out);
+	fputs(_("     --posix-semaphore <name> 				remove POSIX semaphore by name\n"), out);
+	fputs(_(" -a, --all[=shm|pshm|msg|pmsg|sem|psem]	remove all (in the specified category)\n"), out);
+	fputs(_(" -v, --verbose              				explain what is being done\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(28));
@@ -229,6 +237,50 @@ static int key_to_id(type_id type, char *s)
 	return id;
 }
 
+static int remove_name(type_id type, char *name)
+{
+	int ret;
+	
+	switch (type) {
+		case PSHM:
+			if (verbose)
+				printf(_("removing POSIX shared memory `%s'\n"), name);
+			ret = shm_unlink(name);
+			break;
+		case PMSG:
+			if (verbose)
+				printf(_("removing POSIX message queue `%s'\n"), name);
+			ret = mq_unlink(name);
+			break;
+		case PSEM:
+			if (verbose)
+				printf(_("removing POSIX semaphore `%s'\n"), name);
+			ret = sem_unlink(name);
+			break;
+		default:
+			errx(EXIT_FAILURE, "impossible occurred");
+	}
+
+	if (ret < 0) {
+		switch (errno) {
+		case EACCES:
+		case EPERM:
+			warnx(_("permission denied for name `%s'"), name);
+			break;
+		case ENOENT:
+			warnx(_("name `%s' not found"), name);
+			break;
+		case ENAMETOOLONG:
+			warnx(_("name `%s' too long"), name);
+			break;
+		default:
+			err(EXIT_FAILURE, _("name failed"));
+		}
+		return 1;
+	}
+	return 0;
+}		
+
 static int remove_all(type_id type)
 {
 	int ret = 0;
@@ -236,12 +288,18 @@ static int remove_all(type_id type)
 
 	struct shmid_ds shmseg;
 
+	struct posix_shm_data *shmds, *shmdsp;
+
 	struct semid_ds semary;
 	struct seminfo seminfo;
 	union semun arg;
 
+	struct posix_sem_data *semds, *semdsp;
+
 	struct msqid_ds msgque;
 	struct msginfo msginfo;
+
+	struct posix_msg_data *msgds, *msgdsp;
 
 	if (type == SHM || type == ALL) {
 		maxid = shmctl(0, SHM_INFO, &shmseg);
@@ -253,6 +311,16 @@ static int remove_all(type_id type)
 			if (rm_me < 0)
 				continue;
 			ret |= remove_id(SHM, 0, rm_me);
+		}
+	}
+	if (type == PSHM || type == ALL) {
+		if (posix_ipc_shm_get_info(NULL, &shmds) > 0) {
+			for (shmdsp = shmds; shmdsp->next != NULL; shmdsp = shmdsp->next) {
+				if (verbose)
+					printf(_("removing POSIX shared memory `%s'\n"), shmdsp->name);
+				ret |= remove_name(PSHM, shmdsp->name);
+			}
+			posix_ipc_shm_free_info(shmds);
 		}
 	}
 	if (type == SEM || type == ALL) {
@@ -269,6 +337,16 @@ static int remove_all(type_id type)
 			ret |= remove_id(SEM, 0, rm_me);
 		}
 	}
+	if (type == PSEM || type == ALL) {
+		if (posix_ipc_sem_get_info(NULL, &semds) > 0) {
+			for (semdsp = semds; semdsp->next != NULL; semdsp = semdsp->next) {
+				if (verbose)
+					printf(_("removing POSIX semaphore `%s'\n"), semdsp->sname);
+				ret |= remove_name(PSEM, semdsp->sname);
+			}
+			posix_ipc_sem_free_info(semds);
+		}
+	}
 	if (type == MSG || type == ALL) {
 		maxid =
 		    msgctl(0, MSG_INFO, (struct msqid_ds *)(void *)&msginfo);
@@ -280,6 +358,16 @@ static int remove_all(type_id type)
 			if (rm_me < 0)
 				continue;
 			ret |= remove_id(MSG, 0, rm_me);
+		}
+	}
+	if (type == PMSG || type == ALL) {
+		if (posix_ipc_msg_get_info(NULL, &msgds) > 0) {
+			for (msgdsp = msgds; msgdsp->next != NULL; msgdsp = msgdsp->next) {
+				if (verbose)
+					printf(_("removing POSIX message queue `%s'\n"), msgdsp->mname);
+				ret |= remove_name(PMSG, msgdsp->mname);
+			}
+			posix_ipc_msg_free_info(msgds);
 		}
 	}
 	return ret;
@@ -294,13 +382,22 @@ int main(int argc, char **argv)
 	int rm_all = 0;
 	type_id what_all = ALL;
 
+	enum {
+		OPT_PSHM = CHAR_MAX + 1,
+		OPT_PMSG,
+		OPT_PSEM
+	};
+
 	static const struct option longopts[] = {
 		{"shmem-id", required_argument, NULL, 'm'},
 		{"shmem-key", required_argument, NULL, 'M'},
+		{"posix-shmem", required_argument, NULL, OPT_PSHM},
 		{"queue-id", required_argument, NULL, 'q'},
 		{"queue-key", required_argument, NULL, 'Q'},
+		{"posix-mqueue", required_argument, NULL, OPT_PMSG},
 		{"semaphore-id", required_argument, NULL, 's'},
 		{"semaphore-key", required_argument, NULL, 'S'},
+		{"posix-semaphore", required_argument, NULL, OPT_PSEM},
 		{"all", optional_argument, NULL, 'a'},
 		{"verbose", no_argument, NULL, 'v'},
 		{"version", no_argument, NULL, 'V'},
@@ -309,8 +406,10 @@ int main(int argc, char **argv)
 	};
 
 	/* if the command is executed without parameters, do nothing */
-	if (argc == 1)
-		return 0;
+	if (argc == 1) {
+		warnx(_("bad usage"));
+		errtryhelp(EXIT_FAILURE);
+	}
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -368,15 +467,33 @@ int main(int argc, char **argv)
 			if (remove_id(SEM, iskey, id))
 				ret++;
 			break;
+		case OPT_PSHM:
+			if (remove_name(PSHM, optarg))
+				ret++;
+			break;
+		case OPT_PMSG:
+			if (remove_name(PMSG, optarg))
+				ret++;
+			break;
+		case OPT_PSEM:
+			if (remove_name(PSEM, optarg))
+				ret++;
+			break;
 		case 'a':
 			rm_all = 1;
 			if (optarg) {
 				if (!strcmp(optarg, "shm"))
 					what_all = SHM;
+				else if (!strcmp(optarg, "pshm"))
+					what_all = PSHM;
 				else if (!strcmp(optarg, "msg"))
 					what_all = MSG;
+				else if (!strcmp(optarg, "pmsg"))
+					what_all = PMSG;
 				else if (!strcmp(optarg, "sem"))
 					what_all = SEM;
+				else if (!strcmp(optarg, "psem"))
+					what_all = PSEM;
 				else
 					errx(EXIT_FAILURE,
 					     _("unknown argument: %s"), optarg);

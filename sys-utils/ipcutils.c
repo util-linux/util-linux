@@ -51,6 +51,30 @@ int ipc_msg_get_limits(struct ipc_limits *lim)
 		lim->msgmax = msginfo.msgmax;
 	}
 
+	/* POSIX IPC */
+	FILE *f;
+
+	f = fopen(_PATH_PROC_POSIX_IPC_MSGMNI, "r");
+	if (f) {
+		if(fscanf(f, "%"SCNu64, &lim->msgmni_posix) != 1)
+			lim->msgmni_posix = 0;
+		fclose(f);
+	}
+
+	f = fopen(_PATH_PROC_POSIX_IPC_MSGMNB, "r");
+	if (f) {
+		if(fscanf(f, "%"SCNu64, &lim->msgmnb_posix) != 1)
+			lim->msgmnb_posix = 0;
+		fclose(f);
+	}
+
+	f = fopen(_PATH_PROC_POSIX_IPC_MSGMAX, "r");
+	if (f) {
+		if(fscanf(f, "%"SCNu64, &lim->msgmax_posix) != 1)
+			lim->msgmax_posix = 0;
+		fclose(f);
+	}
+
 	return 0;
 }
 
@@ -227,6 +251,75 @@ void ipc_shm_free_info(struct shm_data *shmds)
 	}
 }
 
+int posix_ipc_shm_get_info(const char *name, struct posix_shm_data **shmds)
+{
+	DIR *d;
+	int i = 0;
+	struct posix_shm_data *p;
+	struct dirent *de;
+
+	p = *shmds = xcalloc(1, sizeof(struct posix_shm_data));
+	p->next = NULL;
+
+	d = opendir(_PATH_DEV_SHM);
+	if (!d)
+		err(EXIT_FAILURE, _("cannot open %s"), _PATH_DEV_SHM);
+
+	while ((de = readdir(d)) != NULL) {
+		if ((de->d_name[0] == '.' && de->d_name[1] == '\0') ||
+		    (de->d_name[0] == '.' && de->d_name[1] == '.' &&
+		     de->d_name[2] == '\0'))
+			continue;
+
+		if (strncmp(de->d_name, "sem.", 4) == 0)
+			continue;
+
+		struct stat st;
+		char path[PATH_MAX];
+		snprintf(path, sizeof(path), "%s/%s", _PATH_DEV_SHM, de->d_name);
+		if (stat(path, &st) < 0)
+			continue;
+		
+		memset(path, 0, sizeof(path));
+		path[0] = '/';
+		strcat(path, de->d_name);
+
+		p->name = xstrdup(path);
+		p->cuid = st.st_uid;
+		p->cgid = st.st_gid;
+		p->size = st.st_size;
+		p->mode = st.st_mode;
+		p->mtime = st.st_mtime;
+
+		if (name != NULL) {
+			if (strcmp(name, path) == 0) {
+				i = 1;
+				break;
+			}
+			continue;
+		}
+
+		p->next = xcalloc(1, sizeof(struct posix_shm_data));
+		p = p->next;
+		p->next = NULL;
+		i++;
+	}
+
+	if (i == 0)
+		free(*shmds);
+	closedir(d);
+	return i;
+}
+
+void posix_ipc_shm_free_info(struct posix_shm_data *shmds)
+{
+	while (shmds) {
+		struct posix_shm_data *next = shmds->next;
+		free(shmds);
+		shmds = next;
+	}
+}
+
 static void get_sem_elements(struct sem_data *p)
 {
 	size_t i;
@@ -366,6 +459,80 @@ void ipc_sem_free_info(struct sem_data *semds)
 	}
 }
 
+int posix_ipc_sem_get_info(const char *name, struct posix_sem_data **semds)
+{
+	DIR *d;
+	int i = 0;
+	struct posix_sem_data *p;
+	struct dirent *de;
+
+	p = *semds = xcalloc(1, sizeof(struct posix_sem_data));
+	p->next = NULL;
+
+	d = opendir(_PATH_DEV_SHM);
+	if (!d)
+		err(EXIT_FAILURE, _("cannot open %s"), _PATH_DEV_SHM);
+
+	while ((de = readdir(d)) != NULL) {
+		if ((de->d_name[0] == '.' && de->d_name[1] == '\0') ||
+		    (de->d_name[0] == '.' && de->d_name[1] == '.' &&
+		     de->d_name[2] == '\0'))
+			continue;
+
+		if (strncmp(de->d_name, "sem.", 4) != 0)
+			continue;
+
+		struct stat st;
+		char path[PATH_MAX];
+		snprintf(path, sizeof(path), "%s/%s", _PATH_DEV_SHM, de->d_name);
+		if (stat(path, &st) < 0)
+			continue;
+
+		sem_t *sem = sem_open(de->d_name + 4, 0);
+		if (sem == SEM_FAILED)
+			continue;
+		sem_getvalue(sem, &p->sval);
+		sem_close(sem);
+		
+		memset(path, 0, sizeof(path));
+		path[0] = '/';
+		strcat(path, de->d_name + 4);
+
+		p->sname = xstrdup(path);
+		p->cuid = st.st_uid;
+		p->cgid = st.st_gid;
+		p->mode = st.st_mode;
+		p->mtime = st.st_mtime;
+
+		if (name != NULL) {
+			if (strcmp(name, path) == 0) {
+				i = 1;
+				break;
+			}
+			continue;
+		}
+
+		p->next = xcalloc(1, sizeof(struct posix_sem_data));
+		p = p->next;
+		p->next = NULL;
+		i++;
+	}
+
+	if (i == 0)
+		free(*semds);
+	closedir(d);
+	return i;
+}
+
+void posix_ipc_sem_free_info(struct posix_sem_data *semds)
+{
+	while (semds) {
+		struct posix_sem_data *next = semds->next;
+		free(semds);
+		semds = next;
+	}
+}
+
 int ipc_msg_get_info(int id, struct msg_data **msgds)
 {
 	FILE *f;
@@ -472,6 +639,124 @@ void ipc_msg_free_info(struct msg_data *msgds)
 {
 	while (msgds) {
 		struct msg_data *next = msgds->next;
+		free(msgds);
+		msgds = next;
+	}
+}
+
+int posix_ipc_msg_get_info(const char *name, struct posix_msg_data **msgds)
+{
+	FILE *f;
+	DIR *d;
+	int i = 0, mounted = 0;
+	struct posix_msg_data *p;
+	struct dirent *de;
+
+	p = *msgds = xcalloc(1, sizeof(struct msg_data));
+	p->next = NULL;
+
+	d = opendir(_PATH_DEV_MQUEUE);
+	if (!d) {
+		if (errno == ENOENT) {
+			struct libmnt_context *ctx;
+
+			ctx = mnt_new_context();
+			if (!ctx)
+				err(EXIT_FAILURE, _("cannot create libmount context"));
+
+			if (mnt_context_set_source(ctx, "none") < 0)
+				err(EXIT_FAILURE, _("cannot set source"));
+
+			if (mnt_context_set_target(ctx, _PATH_DEV_MQUEUE) < 0)
+				err(EXIT_FAILURE, _("cannot set target"));
+
+			if (mnt_context_set_fstype(ctx, "mqueue") < 0)
+				err(EXIT_FAILURE, _("cannot set filesystem type"));
+
+			if (mnt_context_mount(ctx) < 0)
+				err(EXIT_FAILURE, _("cannot mount %s"), _PATH_DEV_MQUEUE);
+
+			mounted = 1;
+		} else err(EXIT_FAILURE, _("cannot open %s"), _PATH_DEV_MQUEUE);
+	}
+
+	while ((de = readdir(d)) != NULL) {
+		if ((de->d_name[0] == '.' && de->d_name[1] == '\0') ||
+		    (de->d_name[0] == '.' && de->d_name[1] == '.' &&
+		     de->d_name[2] == '\0'))
+			continue;
+
+		struct stat st;
+		char path[PATH_MAX];
+		snprintf(path, sizeof(path), "%s/%s", _PATH_DEV_MQUEUE, de->d_name);
+		if (stat(path, &st) < 0)
+			continue;
+
+		f = fopen(path, "r");
+		if (!f)
+			continue;
+		if (fscanf(f, "QSIZE:%"SCNu64, &p->q_cbytes) != 1) {
+			fclose(f);
+			continue;
+		}
+		fclose(f);
+		
+		memset(path, 0, sizeof(path));
+		path[0] = '/';
+		strcat(path, de->d_name);
+
+		p->mname = xstrdup(path);
+
+		mqd_t mq = mq_open(path, O_RDONLY);
+		struct mq_attr attr;
+		mq_getattr(mq, &attr);
+		p->q_qnum = attr.mq_curmsgs;
+		mq_close(mq);
+
+		p->cuid = st.st_uid;
+		p->cgid = st.st_gid;
+		p->mode = st.st_mode;
+		p->mtime = st.st_mtime;
+
+		if (name != NULL) {
+			if (strcmp(name, path) == 0) {
+				i = 1;
+				break;
+			}
+			continue;
+		}
+
+		p->next = xcalloc(1, sizeof(struct posix_msg_data));
+		p = p->next;
+		p->next = NULL;
+		i++;
+	}
+
+	if (i == 0)
+		free(*msgds);
+	closedir(d);
+
+	if (mounted) {
+		struct libmnt_context *ctx;
+
+		ctx = mnt_new_context();
+		if (!ctx)
+			err(EXIT_FAILURE, _("cannot create libmount context"));
+
+		if (mnt_context_set_target(ctx, _PATH_DEV_MQUEUE) < 0)
+			err(EXIT_FAILURE, _("cannot set target"));
+
+		if (mnt_context_umount(ctx) < 0)
+			err(EXIT_FAILURE, _("cannot umount %s"), _PATH_DEV_MQUEUE);
+	}
+
+	return i;
+}
+
+void posix_ipc_msg_free_info(struct posix_msg_data *msgds)
+{
+	while (msgds) {
+		struct posix_msg_data *next = msgds->next;
 		free(msgds);
 		msgds = next;
 	}
