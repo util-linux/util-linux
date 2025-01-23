@@ -471,7 +471,7 @@ static void findin(const char *dir, const char *pattern, int *count,
 
 static void lookup(const char *pattern, struct wh_dirlist *ls, int want)
 {
-	char patbuf[PATH_MAX];
+	char patbuf[PATH_MAX] = { 0 };
 	int count = 0;
 	char *wait = NULL, *p;
 
