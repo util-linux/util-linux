@@ -159,5 +159,6 @@ for ADOC in "${TRANSLATED_MANADOCS[@]}"; do
         --destination-dir "$DESTDIR/man/$LOCALE/man$SECTION" \
         --load-path "$ASCIIDOCTOR_LOAD_PATH" \
         --require asciidoctor-includetracker \
+	--require asciidoctor-unicodeconverter \
         "$ADOC"
 done
