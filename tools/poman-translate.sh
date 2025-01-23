@@ -160,5 +160,6 @@ for ADOC in "${TRANSLATED_MANADOCS[@]}"; do
         --load-path "$ASCIIDOCTOR_LOAD_PATH" \
         --require asciidoctor-includetracker \
 	--require asciidoctor-unicodeconverter \
+	--trace \
         "$ADOC"
 done
