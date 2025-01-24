@@ -73,8 +73,8 @@ static int probe_erofs(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!sb)
 		return errno ? -errno : BLKID_PROBE_NONE;
 
-	/* EROFS is restricted to 4KiB block size */
-	if (sb->blkszbits > 31 || (1U << sb->blkszbits) > 4096)
+	/* block size must be between 512 and 64k */
+	if (sb->blkszbits < 9 || sb->blkszbits > 16)
 		return BLKID_PROBE_NONE;
 
 	if (!erofs_verify_checksum(pr, mag, sb))
