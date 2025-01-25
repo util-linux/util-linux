@@ -1067,7 +1067,7 @@ static void do_posix_msg(const char *name, struct lsipc_control *ctl, struct lib
 				rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_MSGS:
-				rc = scols_line_sprintf(ln, n, "%ju", p->q_qnum);
+				rc = scols_line_sprintf(ln, n, "%ld", p->q_qnum);
 				break;
 			}
 			if (rc != 0)
