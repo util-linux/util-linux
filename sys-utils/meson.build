@@ -20,6 +20,8 @@ ipcmk_sources = files(
 
 ipcrm_sources = files(
   'ipcrm.c',
+  'ipcutils.c',
+  'ipcutils.h',
 )
 
 ipcs_sources = files(
