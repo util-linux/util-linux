@@ -146,7 +146,7 @@ static struct lscpu_coldesc coldescs_cpu[] =
 	[COL_CPU_ADDRESS]      = { "ADDRESS", N_("physical address of a CPU") },
 	[COL_CPU_CONFIGURED]   = { "CONFIGURED", N_("shows if the hypervisor has allocated the CPU"), 0, 0, SCOLS_JSON_BOOLEAN_OPTIONAL },
 	[COL_CPU_ONLINE]       = { "ONLINE", N_("shows if Linux currently makes use of the CPU"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_BOOLEAN_OPTIONAL },
-	[COL_CPU_MHZ]          = { "MHZ", N_("shows the currently MHz of the CPU"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
+	[COL_CPU_MHZ]          = { "MHZ", N_("shows the current MHz of the CPU"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
 	[COL_CPU_SCALMHZ]      = { "SCALMHZ%", N_("shows scaling percentage of the CPU frequency"), SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER },
 	[COL_CPU_MAXMHZ]       = { "MAXMHZ", N_("shows the maximum MHz of the CPU"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
 	[COL_CPU_MINMHZ]       = { "MINMHZ", N_("shows the minimum MHz of the CPU"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
@@ -163,8 +163,8 @@ static struct lscpu_coldesc coldescs_cache[] =
 	[COL_CACHE_WAYS]       = { "WAYS", N_("ways of associativity"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
 	[COL_CACHE_ALLOCPOL]   = { "ALLOC-POLICY", N_("allocation policy") },
 	[COL_CACHE_WRITEPOL]   = { "WRITE-POLICY", N_("write policy") },
-	[COL_CACHE_PHYLINE]    = { "PHY-LINE", N_("number of physical cache line per cache tag"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
-	[COL_CACHE_SETS]       = { "SETS", N_("number of sets in the cache; set lines has the same cache index"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
+	[COL_CACHE_PHYLINE]    = { "PHY-LINE", N_("number of physical cache lines per cache tag"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
+	[COL_CACHE_SETS]       = { "SETS", N_("number of sets in the cache (lines in a set have the same cache index)"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
 	[COL_CACHE_COHERENCYSIZE] = { "COHERENCY-SIZE", N_("minimum amount of data in bytes transferred from memory to cache"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER }
 };
 
