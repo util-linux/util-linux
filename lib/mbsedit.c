@@ -174,8 +174,8 @@ static size_t mbs_insert(char *str, wint_t c, size_t *ncells)
 	memmove(str + n, str, bytes);
 	memcpy(str, in, n);
 	str[bytes + n] = '\0';
-out:
 #ifdef HAVE_WIDECHAR
+out:
 	free(in);
 #endif
 	return n;
