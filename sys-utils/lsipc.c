@@ -178,7 +178,7 @@ static const struct lsipc_coldesc coldescs[] =
 	[COL_CTIME]	= { "CTIME",	N_("Time of the last change"), N_("Last change"), 1, SCOLS_FL_RIGHT},
 
 	/* posix-common */
-	[COL_NAME] 		= { "NAME",     N_("Resource name"), N_("Name"), 1 },
+	[COL_NAME] 		= { "NAME",     N_("POSIX resource name"), N_("Name"), 1 },
 	[COL_MTIME]	= { "MTIME",   N_("Time of last action"), N_("Last action"), 1, SCOLS_FL_RIGHT},
 
 	/* msgq-specific */

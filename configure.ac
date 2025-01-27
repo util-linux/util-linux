@@ -2102,6 +2102,13 @@ UL_BUILD_INIT([chmem])
 UL_REQUIRES_LINUX([chmem])
 AM_CONDITIONAL([BUILD_CHMEM], [test "x$build_chmem" = xyes])
 
+AC_CHECK_FUNCS([shm_open], [], [
+  AC_CHECK_LIB([rt], [shm_open], [POSIXIPC_LIBS="-lrt"])
+])
+AC_CHECK_FUNCS([sem_close], [], [
+  AC_CHECK_LIB([pthread], [sem_close], [POSIXIPC_LIBS="$POSIXIPC_LIBS -lpthread"])
+])
+AC_SUBST([POSIXIPC_LIBS])
 
 AC_ARG_ENABLE([ipcmk],
   AS_HELP_STRING([--disable-ipcmk], [do not build ipcmk]),

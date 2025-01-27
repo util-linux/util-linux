@@ -657,6 +657,7 @@ int posix_ipc_msg_get_info(const char *name, struct posix_msg_data **msgds)
 
 	d = opendir(_PATH_DEV_MQUEUE);
 	if (!d) {
+		/* Mount the mqueue filesystem if it is not mounted */
 		if (errno == ENOENT) {
 			struct libmnt_context *ctx;
 
@@ -676,6 +677,7 @@ int posix_ipc_msg_get_info(const char *name, struct posix_msg_data **msgds)
 			if (mnt_context_mount(ctx) < 0)
 				err(EXIT_FAILURE, _("cannot mount %s"), _PATH_DEV_MQUEUE);
 
+			mnt_free_context(ctx);
 			mounted = 1;
 		} else err(EXIT_FAILURE, _("cannot open %s"), _PATH_DEV_MQUEUE);
 	}
@@ -689,12 +691,21 @@ int posix_ipc_msg_get_info(const char *name, struct posix_msg_data **msgds)
 		struct stat st;
 		char path[PATH_MAX];
 		snprintf(path, sizeof(path), "%s/%s", _PATH_DEV_MQUEUE, de->d_name);
-		if (stat(path, &st) < 0)
+
+		int fd = open(path, O_RDONLY);
+		if (fd < 0)
 			continue;
 
-		f = fopen(path, "r");
-		if (!f)
+		if (fstat(fd, &st) < 0) {
+			close(fd);
 			continue;
+		}
+
+		f = fdopen(fd, "r");
+		if (!f) {
+			close(fd);
+			continue;
+		}
 		if (fscanf(f, "QSIZE:%"SCNu64, &p->q_cbytes) != 1) {
 			fclose(f);
 			continue;
@@ -736,6 +747,7 @@ int posix_ipc_msg_get_info(const char *name, struct posix_msg_data **msgds)
 		free(*msgds);
 	closedir(d);
 
+	/* Unmount the mqueue filesystem if it was not mounted by default */ 
 	if (mounted) {
 		struct libmnt_context *ctx;
 
@@ -748,6 +760,8 @@ int posix_ipc_msg_get_info(const char *name, struct posix_msg_data **msgds)
 
 		if (mnt_context_umount(ctx) < 0)
 			err(EXIT_FAILURE, _("cannot umount %s"), _PATH_DEV_MQUEUE);
+		
+		mnt_free_context(ctx);
 	}
 
 	return i;

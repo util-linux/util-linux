@@ -36,7 +36,7 @@ usrbin_exec_PROGRAMS += ipcmk
 MANPAGES += sys-utils/ipcmk.1
 dist_noinst_DATA += sys-utils/ipcmk.1.adoc
 ipcmk_SOURCES = sys-utils/ipcmk.c
-ipcmk_LDADD = $(LDADD) libcommon.la
+ipcmk_LDADD = $(LDADD) $(POSIXIPC_LIBS) libcommon.la
 endif
 
 if BUILD_IPCRM
@@ -46,7 +46,7 @@ dist_noinst_DATA += sys-utils/ipcrm.1.adoc
 ipcrm_SOURCES = sys-utils/ipcrm.c \
 		sys-utils/ipcutils.c \
 		sys-utils/ipcutils.h
-ipcrm_LDADD = $(LDADD) libcommon.la libmount.la
+ipcrm_LDADD = $(LDADD) $(POSIXIPC_LIBS) libcommon.la libmount.la
 ipcrm_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
 endif
 
@@ -57,7 +57,7 @@ dist_noinst_DATA += sys-utils/ipcs.1.adoc
 ipcs_SOURCES =	sys-utils/ipcs.c \
 		sys-utils/ipcutils.c \
 		sys-utils/ipcutils.h
-ipcs_LDADD = $(LDADD) libcommon.la libmount.la
+ipcs_LDADD = $(LDADD) $(POSIXIPC_LIBS) libcommon.la libmount.la
 ipcs_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
 endif
 
@@ -97,7 +97,7 @@ dist_noinst_DATA += sys-utils/lsipc.1.adoc
 lsipc_SOURCES =	sys-utils/lsipc.c \
 		sys-utils/ipcutils.c \
 		sys-utils/ipcutils.h
-lsipc_LDADD = $(LDADD) libcommon.la libsmartcols.la libmount.la
+lsipc_LDADD = $(LDADD) $(POSIXIPC_LIBS) libcommon.la libsmartcols.la libmount.la
 lsipc_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir) -I$(ul_libmount_incdir)
 endif
 

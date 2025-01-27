@@ -1463,12 +1463,22 @@ endif
 
 has_seminfo_type = cc.has_type('struct seminfo', args : '-D_GNU_SOURCE', prefix : '#include <sys/sem.h>')
 
+posixipc_libs = []
+if not cc.has_function('shm_open')
+  posixipc_libs = cc.find_library('rt', required : true)
+endif
+
+if not cc.has_function('sem_close')
+  posixipc_libs += cc.find_library('pthread', required : true)
+endif
+
 opt = get_option('build-ipcmk').require(has_seminfo_type).allowed()
 exe = executable(
   'ipcmk',
   ipcmk_sources,
   include_directories : includes,
   link_with : [lib_common],
+  dependencies : posixipc_libs,
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -1484,7 +1494,7 @@ exe = executable(
   ipcrm_sources,
   include_directories : includes,
   link_with : [lib_common],
-  dependencies : [mount_dep],
+  dependencies : [mount_dep] + posixipc_libs,
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -1500,7 +1510,7 @@ exe = executable(
   ipcs_sources,
   include_directories : includes,
   link_with : [lib_common],
-  dependencies : [mount_dep],
+  dependencies : [mount_dep] + posixipc_libs,
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -2206,7 +2216,7 @@ exe = executable(
   include_directories : includes,
   link_with : [lib_common,
                lib_smartcols],
-  dependencies : [mount_dep],
+  dependencies : [mount_dep] + posixipc_libs,
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
