@@ -37,7 +37,7 @@ libuuid_la_SOURCES = \
 EXTRA_libuuid_la_DEPENDENCIES = \
 	libuuid/src/libuuid.sym
 
-libuuid_la_LIBADD       = $(LDADD) $(SOCKET_LIBS) -lpthread
+libuuid_la_LIBADD       = $(LDADD) $(SOCKET_LIBS) $(PTHREAD_LIBS)
 
 libuuid_la_CFLAGS = \
 	$(AM_CFLAGS) \
