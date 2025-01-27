@@ -93,7 +93,6 @@
 #include "sha1.h"
 #include "timeutils.h"
 
-#define THREAD_LOCAL static __thread
 
 #ifdef _WIN32
 static void gettimeofday (struct timeval *tv, void *dummy)

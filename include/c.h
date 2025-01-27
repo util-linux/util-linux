@@ -604,4 +604,15 @@ static inline void ul_reset_errno(int *saved_errno) {
 
 #define UL_PROTECT_ERRNO __attribute__((__cleanup__(ul_reset_errno))) \
                          __attribute__((__unused__)) int __ul_saved_errno = errno
+
+
+/*
+ * thread-local storage
+ */
+#ifdef HAVE_TLS
+# define THREAD_LOCAL static __thread
+#else
+# define THREAD_LOCAL static
+#endif
+
 #endif /* UTIL_LINUX_C_H */
