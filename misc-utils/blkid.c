@@ -96,7 +96,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(	" -p, --probe                low-level superblocks probing (bypass cache)\n"), out);
 	fputs(_(	" -i, --info                 gather information about I/O limits\n"), out);
 	fputs(_(        " -H, --hint <value>         set hint for probing function\n"), out);
-	fputs(_(	" -S, --size <size>          overwrite device size\n"), out);
+	fputs(_(	" -S, --size <size>          override device size\n"), out);
 	fputs(_(	" -O, --offset <offset>      probe at the given offset\n"), out);
 	fputs(_(	" -u, --usages <list>        filter by \"usage\" (e.g. -u filesystem,raid)\n"), out);
 	fputs(_(	" -n, --match-types <list>   filter by filesystem type (e.g. -n vfat,ext3)\n"), out);
