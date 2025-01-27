@@ -1101,7 +1101,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --sd-param <data>    rfc5424 structured data name=value\n"), out);
 	fputs(_("     --msgid <msgid>      set rfc5424 message id field\n"), out);
 	fputs(_(" -u, --socket <socket>    write to this Unix socket\n"), out);
-	fputs(_("     --socket-errors[=<on|off|auto>]\n"
+	fputs(_("     --socket-errors on|off|auto\n"
 		"                          print connection errors when using Unix sockets\n"), out);
 #ifdef HAVE_LIBSYSTEMD
 	fputs(_("     --journald[=<file>]  write journald entry\n"), out);
