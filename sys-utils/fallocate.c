@@ -315,7 +315,7 @@ int main(int argc, char **argv)
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
 		{ 'c', 'd', 'p', 'z' },
 		{ 'c', 'n' },
-		{ 'x', 'c', 'd', 'i', 'n', 'p', 'z'},
+		{ 'c', 'd', 'i', 'n', 'p', 'x', 'z'},
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
