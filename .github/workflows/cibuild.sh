@@ -77,9 +77,18 @@ function run_coverity {
 }
 
 for phase in "${PHASES[@]}"; do
+    opts=()
     case $phase in
+    CONFIGUREFAST)
+	opts+=(
+	     --disable-poman
+	     --disable-asciidoc
+	     --disable-gtk-doc
+	)
+	# fallthrough
+	;&
     CONFIGURE)
-        opts=(
+        opts+=(
             --disable-use-tty-group
             --disable-makeinstall-chown
             --enable-all-programs
@@ -118,8 +127,8 @@ for phase in "${PHASES[@]}"; do
         CC="$CC" CXX="$CXX" CFLAGS="${CFLAGS[@]}" CXXFLAGS="${CXXFLAGS[@]}" LDFLAGS="${LDFLAGS[@]}" ./configure "${opts[@]}"
         ;;
     MAKE)
-        make -j"$(nproc)"
-        make -j"$(nproc)" check-programs
+        make -j"$(nproc)" V=1
+        make -j"$(nproc)" V=1 check-programs
 
         untracked_files="$(git ls-files --others --exclude-standard)"
         if [ -n "$untracked_files" ]; then
