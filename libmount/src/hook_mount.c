@@ -62,25 +62,6 @@ static void close_sysapi_fds(struct libmnt_sysapi *api)
 	api->fd_tree = api->fd_fs = -1;
 }
 
-static void save_fd_messages(struct libmnt_context *cxt, int fd)
-{
-	uint8_t buf[BUFSIZ];
-	int rc;
-
-	while ((rc = read(fd, buf, sizeof(buf) - 1)) != -1) {
-
-		if (rc == 0)
-			continue;
-		if (buf[rc - 1] == '\n')
-			buf[--rc] = '\0';
-		else
-			buf[rc] = '\0';
-
-		DBG(CXT, ul_debug("message from kernel: \"%*s\"", rc, buf));
-		mnt_context_append_mesg(cxt, (char *) buf);
-	}
-}
-
 static void hookset_set_syscall_status(struct libmnt_context *cxt,
 				       const char *name, int x)
 {
@@ -93,7 +74,7 @@ static void hookset_set_syscall_status(struct libmnt_context *cxt,
 
 	api = get_sysapi(cxt);
 	if (api && api->fd_fs >= 0)
-		save_fd_messages(cxt, api->fd_fs);
+		mnt_context_read_mesgs(cxt, api->fd_fs);
 }
 
 /*

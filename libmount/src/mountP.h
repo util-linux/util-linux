@@ -684,6 +684,7 @@ extern int mnt_context_mount_setopt(struct libmnt_context *cxt, int c, char *arg
 extern void mnt_context_reset_mesgs(struct libmnt_context *cxt);
 extern int mnt_context_append_mesg(struct libmnt_context *cxt, const char *msg);
 extern int mnt_context_sprintf_mesg(struct libmnt_context *cxt, const char *msg, ...);
+extern int mnt_context_read_mesgs(struct libmnt_context *cxt, int fd);
 
 extern int mnt_context_propagation_only(struct libmnt_context *cxt)
 			__attribute__((nonnull));
