@@ -162,7 +162,7 @@ Most receivers accept messages larger than 1KiB over any type of syslog protocol
 +
 Note: the message-size limit limits the overall message size, including the syslog header. Header sizes vary depending on the selected options and the hostname length. As a rule of thumb, headers are usually not longer than 50 to 80 characters. When selecting a maximum message size, it is important to ensure that the receiver supports the max size as well, otherwise messages may become truncated. Again, as a rule of thumb two to four KiB message size should generally be OK, whereas anything larger should be verified to work.
 
-*--socket-errors*[**=**__mode__]::
+*--socket-errors* __mode__::
 Print errors about Unix socket connections. The _mode_ can be a value of *off*, *on*, or *auto*. When the mode is *auto*, then *logger* will detect if the init process is *systemd*(1), and if so assumption is made _/dev/log_ can be used early at boot. Other init systems lack of _/dev/log_ will not cause errors that is identical with messaging using *openlog*(3) system call. The *logger*(1) before version 2.26 used *openlog*(3), and hence was unable to detected loss of messages sent to Unix sockets.
 +
 The default mode is *auto*. When errors are not enabled lost messages are not communicated and will result to successful exit status of *logger*(1) invocation.
