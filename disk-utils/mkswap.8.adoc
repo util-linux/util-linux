@@ -114,6 +114,8 @@ If you don't know the page size that your machine uses, you can look it up with 
 
 Aside from *mkswap --file*, it is also possible to create the swapfile manually before initializing it with *mkswap*, e.g. using a command like
 
+Since version 2.41, *mkswap --file* sets the nocow attribute for newly created files to support swapfiles on Btrfs.
+
 ....
 # dd if=/dev/zero of=swapfile bs=1MiB count=$((8*1024))
 ....

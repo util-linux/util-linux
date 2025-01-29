@@ -33,8 +33,10 @@
 # include <selinux/context.h>
 # include "selinux-utils.h"
 #endif
-#ifdef HAVE_LINUX_FIEMAP_H
+#ifdef HAVE_LINUX_FS_H
 # include <linux/fs.h>
+#endif
+#ifdef HAVE_LINUX_FIEMAP_H
 # include <linux/fiemap.h>
 #endif
 
@@ -405,7 +407,21 @@ static void open_device(struct mkswap_control *ctl)
 	}
 	if (ctl->fd < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), ctl->devname);
+
 	if (ctl->file && ctl->filesz) {
+		int attr = 0;
+
+		/* Let's attempt to set the "nocow" attribute for Btrfs, etc.
+		 * Ignore if unsupported. */
+#if defined(FS_IOC_GETFLAGS) && defined(FS_NOCOW_FL)
+		if (ioctl(ctl->fd, FS_IOC_GETFLAGS, &attr) == 0) {
+			attr |= FS_NOCOW_FL;
+			if (ioctl(ctl->fd, FS_IOC_SETFLAGS, &attr) < 0 &&
+			    (errno != EOPNOTSUPP && errno != ENOSYS && errno != EINVAL))
+				warn(_("failed to set 'nocow' attribute"));
+		}
+#endif
+
 		if (ftruncate(ctl->fd, ctl->filesz) < 0)
 			err(EXIT_FAILURE, _("couldn't allocate swap file %s"), ctl->devname);
 #ifdef HAVE_POSIX_FALLOCATE

@@ -152,6 +152,8 @@ The most portable solution to create a swap file is to use *dd*(1) and _/dev/zer
 
 Swap files on Btrfs are supported since Linux 5.0 on files with *nocow* attribute. See the *btrfs*(5) manual page for more details.
 
+Since version 2.41, the command *mkswap --file* can create a new swap file with the *nocow* attribute.
+
 === NFS
 
 Swap over *NFS* may not work.
