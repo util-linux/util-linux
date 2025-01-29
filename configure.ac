@@ -569,6 +569,13 @@ AC_CHECK_DECL([strsignal],
 		[Define to 1 if have strsignal function prototype])],
 )
 
+AC_CHECK_DECL([timegm],
+	[AC_DEFINE([HAVE_TIMEGM], [1],
+		[Define to 1 if have timegm function prototype])],,
+	[#include <time.h>
+	 #include <sys/time.h>]
+)
+
 AC_CHECK_DECL([BPF_OBJ_NAME_LEN],
 	      [have_bpf_obj_name_len=yes], [have_bpf_obj_name_len=no],
 	      [#include <linux/bpf.h>])
@@ -666,7 +673,6 @@ AC_CHECK_FUNCS([ \
 	strtod_l \
 	sysconf \
 	sysinfo \
-	timegm \
 	usleep \
 	uselocale \
 	utimensat \
