@@ -107,7 +107,13 @@ delay_for(const struct timeval *delay)
 			break;
 	}
 #else
-	select(0, NULL, NULL, NULL, delay);
+	{
+		struct timeval timeout;
+
+		/* On Linux, select() modifies timeout */
+		memcpy(&timeout, delay, sizeof(struct timeval));
+		select(0, NULL, NULL, NULL, &timeout);
+	}
 #endif
 }
 
