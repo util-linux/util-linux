@@ -37,6 +37,26 @@ function skip_policy {
 	return 0
 }
 
+function skip_kernel_lt {
+	ts_kernel_ver_lt $1 $2 $3
+	if [ $? == 0 ]; then
+		ts_skip_subtest "kernel version must be >= $1.$2.$3"
+		return 1
+	fi
+
+	return 0
+}
+
+function skip_kernel_ge {
+	ts_kernel_ver_lt $1 $2 $3
+	if [ $? == 1 ]; then
+		ts_skip_subtest "kernel version must be < $1.$2.$3"
+		return 1
+	fi
+
+	return 0
+}
+
 function cleanup_output {
 	sed -i -e 's/pid [0-9]*/<removed>/' $TS_OUTPUT
 }
@@ -53,7 +73,7 @@ fi
 
 
 ts_init_subtest "batch"
-skip_policy SCHED_BATCH
+skip_policy SCHED_BATCH && skip_kernel_ge 6 12 0
 if [ $? == 0 ]; then
 	do_chrt --batch 0
 	cleanup_output
@@ -61,10 +81,28 @@ if [ $? == 0 ]; then
 fi
 
 
+ts_init_subtest "batch-custom-slice"
+skip_policy SCHED_BATCH && skip_kernel_lt 6 12 0
+if [ $? == 0 ]; then
+	do_chrt --batch --sched-runtime 100000 0
+	cleanup_output
+	ts_finalize_subtest
+fi
+
+
 ts_init_subtest "other"
-skip_policy SCHED_OTHER
+skip_policy SCHED_OTHER && skip_kernel_ge 6 12 0
 if [ $? == 0 ]; then
 	do_chrt --other 0
+	cleanup_output
+	ts_finalize_subtest
+fi
+
+
+ts_init_subtest "other-custom-slice"
+skip_policy SCHED_OTHER && skip_kernel_lt 6 12 0
+if [ $? == 0 ]; then
+	do_chrt --other --sched-runtime 100000 0
 	cleanup_output
 	ts_finalize_subtest
 fi
