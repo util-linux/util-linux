@@ -146,7 +146,9 @@ static long startline;			/* start line from argv[] */
 static int nextfile = 1;		/* files to advance */
 static jmp_buf jmpenv;			/* jump from signal handlers */
 static int canjump;			/* jmpenv is valid */
+#ifdef HAVE_WIDECHAR
 static wchar_t wbuf[READBUF];		/* used in several widechar routines */
+#endif
 
 static char *copyright;
 static const char *helpscreen = N_("\
