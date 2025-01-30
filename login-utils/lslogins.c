@@ -498,10 +498,14 @@ static int parse_utmpx(const char *path, size_t *nrecords, struct utmpx **record
 
 	/* optimize allocation according to file size, the realloc() below is
 	 * just fallback only */
-	if (stat(path, &st) == 0 && (size_t) st.st_size >= sizeof(struct utmpx)) {
-		imax = st.st_size / sizeof(struct utmpx);
-		ary = xreallocarray(NULL, imax, sizeof(struct utmpx));
-	}
+	if (stat(path, &st) == 0) {
+		if ((size_t) st.st_size >= sizeof(struct utmpx)) {
+			imax = st.st_size / sizeof(struct utmpx);
+			ary = xreallocarray(NULL, imax, sizeof(struct utmpx));
+		} else
+			return -ENODATA;
+	} else
+		return -errno;
 
 	for (i = 0; ; i++) {
 		struct utmpx *u;
