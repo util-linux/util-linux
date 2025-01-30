@@ -39,7 +39,7 @@ jobs:
       - name: Ubuntu setup
         run: sudo -E .github/workflows/cibuild-setup-ubuntu.sh
       - name: Configure
-        run: .github/workflows/cibuild.sh CONFIGURE
+        run: .github/workflows/cibuild.sh CONFIGUREFAST
       - name: Code checks
         run: .github/workflows/cibuild.sh CODECHECK
       - name: Configure & Make
@@ -69,7 +69,7 @@ jobs:
       - name: Ubuntu setup
         run: sudo -E .github/workflows/cibuild-setup-ubuntu.sh
       - name: Configure & Make
-        run: .github/workflows/cibuild.sh CONFIGURE MAKE
+        run: .github/workflows/cibuild.sh CONFIGUREFAST MAKE
       - name: Check
         run: sudo -E .github/workflows/cibuild.sh CHECK
       - name: Coveralls
@@ -140,7 +140,7 @@ jobs:
       - name: Ubuntu setup
         run: .github/workflows/cibuild-setup-ubuntu.sh
       - name: Configure
-        run: .github/workflows/cibuild.sh CONFIGURE
+        run: .github/workflows/cibuild.sh CONFIGUREFAST
       - name: Code checks
         run: .github/workflows/cibuild.sh CODECHECK
       - name: Configure & Make
@@ -179,7 +179,7 @@ jobs:
             .github/workflows/cibuild-setup-ubuntu.sh
             git config --global --add safe.directory "$PWD"
             # Configure & Make
-            .github/workflows/cibuild.sh CONFIGURE MAKE
+            .github/workflows/cibuild.sh CONFIGUREFAST MAKE
             # Check
             .github/workflows/cibuild.sh CHECK
 
@@ -237,7 +237,7 @@ jobs:
       - name: Configure
         run: |
           source .github/workflows/openwrt-sdk-env.sh  ~/${{ env.OPENWRT_SDK }}
-          .github/workflows/cibuild.sh CONFIGURE
+          .github/workflows/cibuild.sh CONFIGUREFAST
       - name: Make
         run: |
           source .github/workflows/openwrt-sdk-env.sh  ~/${{ env.OPENWRT_SDK }}
