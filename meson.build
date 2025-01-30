@@ -779,6 +779,7 @@ endif
 conf.set('HAVE_CLOCK_GETTIME', have ? 1 : false)
 
 thread_libs = dependency('threads')
+conf.set('HAVE_LIBPTHREAD', thread_libs.found() ? 1 : false)
 
 have = cc.has_function('timer_create')
 if not have

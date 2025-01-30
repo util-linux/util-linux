@@ -771,6 +771,13 @@ AS_IF([test x"$have_timer" = xno], [
 ])
 
 
+AC_CHECK_LIB([pthread], [pthread_atfork], [
+	PTHREAD_LIBS="-lpthread"
+	AC_DEFINE([HAVE_LIBPTHREAD], [1], [Define if libpthred exist])
+])
+AC_SUBST([PTHREAD_LIBS])
+
+
 AC_CHECK_LIB([rtas], [rtas_get_sysparm], [
 	RTAS_LIBS="-lrtas"
 	AC_DEFINE([HAVE_LIBRTAS], [1], [Define if librtas exists])

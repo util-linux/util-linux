@@ -80,7 +80,10 @@
 #if defined(__linux__) && defined(HAVE_SYS_SYSCALL_H)
 #include <sys/syscall.h>
 #endif
-#include <pthread.h>
+#ifdef HAVE_LIBPTHREAD
+# include <pthread.h>
+#endif
+
 #include <signal.h>
 
 #include "all-io.h"
@@ -93,7 +96,6 @@
 #include "sha1.h"
 #include "timeutils.h"
 
-#define THREAD_LOCAL static __thread
 
 #ifdef _WIN32
 static void gettimeofday (struct timeval *tv, void *dummy)
@@ -600,8 +602,7 @@ static void __uuid_set_variant_and_version(uuid_t uuid, int version)
  * If neither of these is possible (e.g. because of insufficient permissions), it generates
  * the UUID anyway, but returns -1. Otherwise, returns 0.
  */
-
-/* thread local cache for uuidd based requests */
+#ifdef HAVE_LIBPTHREAD
 THREAD_LOCAL struct {
 	int		num;
 	int		cache_size;
@@ -617,8 +618,10 @@ static void reset_uuidd_cache(void)
 	memset(&uuidd_cache, 0, sizeof(uuidd_cache));
 	uuidd_cache.cache_size = CS_MIN;
 }
+#endif /* HAVE_LIBPTHREAD */
 
 static int uuid_generate_time_generic(uuid_t out) {
+#ifdef HAVE_LIBPTHREAD
 	static volatile sig_atomic_t atfork_registered;
 	time_t	now;
 
@@ -670,6 +673,14 @@ static int uuid_generate_time_generic(uuid_t out) {
 			uuidd_cache.last_used = uuidd_cache.cache_size;
 		return 0;
 	}
+
+#else /* !HAVE_LIBPTHREAD */
+	{
+		int num = 1;
+		if (get_uuid_via_daemon(UUIDD_OP_TIME_UUID, out, &num) == 0)
+			return 0;
+	}
+#endif /* HAVE_LIBPTHREAD */
 
 	return __uuid_generate_time(out, NULL);
 }

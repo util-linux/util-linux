@@ -20,11 +20,6 @@
 #include "randutils.h"
 #include "nls.h"
 
-#ifdef HAVE_TLS
-#define THREAD_LOCAL static __thread
-#else
-#define THREAD_LOCAL static
-#endif
 
 #ifdef HAVE_GETRANDOM
 # include <sys/random.h>
