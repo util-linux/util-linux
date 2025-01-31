@@ -660,6 +660,8 @@ float lsblk_cputype_get_minmhz(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
 
 		if (!cpu || cpu->type != ct || !is_cpu_present(cxt, cpu))
 			continue;
+		if (!cpu->mhz_min_freq)
+			continue;
 		if (res < 0.0 || cpu->mhz_min_freq < res)
 			res = cpu->mhz_min_freq;
 	}
