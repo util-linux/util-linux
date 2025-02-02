@@ -13,6 +13,9 @@
  *
  * 1999-04-02 frank zago
  * - can now remove several id's in the same call
+ * 
+ * 2025 Prasanna Paithankar <paithankarprasanna@gmail.com>
+ * - Added POSIX IPC support
  */
 #include <errno.h>
 #include <getopt.h>

@@ -56,7 +56,8 @@ include::man-common/help-version.adoc[]
 
 == AUTHORS
 
-mailto:hayden.james@gmail.com[Hayden A. James]
+mailto:hayden.james@gmail.com[Hayden A. James],
+mailto:paithankarprasanna@gmail.com[Prasanna Paithankar]
 
 == SEE ALSO
 
