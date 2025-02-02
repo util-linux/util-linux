@@ -146,7 +146,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --clear-groups              clear supplementary groups\n"), out);
 	fputs(_(" --keep-groups               keep supplementary groups\n"), out);
 	fputs(_(" --init-groups               initialize supplementary groups\n"), out);
-	fputs(_(" --groups <group,...>        set supplementary groups by UID or name\n"), out);
+	fputs(_(" --groups <group>[,...]      set supplementary group(s) by GID or name\n"), out);
 	fputs(_(" --securebits <bits>         set securebits\n"), out);
 	fputs(_(" --pdeathsig keep|clear|<signame>\n"
 	        "                             set or clear parent death signal\n"), out);
