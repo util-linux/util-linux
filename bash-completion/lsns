@@ -26,7 +26,7 @@ _lsns_module()
 			return 0
 			;;
 		'-t'|'--type')
-			COMPREPLY=( $(compgen -W "mnt net ipc user pid uts cgroup" -- $cur) )
+			COMPREPLY=( $(compgen -W "mnt net ipc user pid uts cgroup time" -- $cur) )
 			return 0
 			;;
 		'-h'|'--help'|'-V'|'--version')
@@ -36,6 +36,7 @@ _lsns_module()
 	case $cur in
 		-*)
 			COMPREPLY=( $(compgen -W "
+					--list-columns
 					--filter
 					--json
 					--list
@@ -46,14 +47,15 @@ _lsns_module()
 					--task
 					--raw
 					--notruncate
+					--nowrap
 					--type
+					--tree
 					--help
 					--version
 				" -- $cur) )
 			return 0
 			;;
 	esac
-	COMPREPLY=( $(compgen -W "mnt net pid uts ipc user" -- $cur ) )
 	return 0
 }
 complete -F _lsns_module lsns
