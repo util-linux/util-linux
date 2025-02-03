@@ -417,11 +417,11 @@ static void open_device(struct mkswap_control *ctl)
 		err(EXIT_FAILURE, _("cannot open %s"), ctl->devname);
 
 	if (ctl->file && ctl->filesz) {
-		int attr = 0;
-
+#ifdef USE_NOCOW
 		/* Let's attempt to set the "nocow" attribute for Btrfs, etc.
 		 * Ignore if unsupported. */
-#ifdef USE_NOCOW
+		int attr = 0;
+
 		if (ioctl(ctl->fd, FS_IOC_GETFLAGS, &attr) == 0) {
 			attr |= FS_NOCOW_FL;
 			if (ioctl(ctl->fd, FS_IOC_SETFLAGS, &attr) < 0 &&
@@ -429,7 +429,6 @@ static void open_device(struct mkswap_control *ctl)
 				warn(_("failed to set 'nocow' attribute"));
 		}
 #endif
-
 		if (ftruncate(ctl->fd, ctl->filesz) < 0)
 			err(EXIT_FAILURE, _("couldn't allocate swap file %s"), ctl->devname);
 #ifdef HAVE_POSIX_FALLOCATE
