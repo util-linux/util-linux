@@ -33,8 +33,10 @@
 # include <selinux/context.h>
 # include "selinux-utils.h"
 #endif
-#ifdef HAVE_LINUX_FIEMAP_H
+#ifdef HAVE_LINUX_FS_H
 # include <linux/fs.h>
+#endif
+#ifdef HAVE_LINUX_FIEMAP_H
 # include <linux/fiemap.h>
 #endif
 
@@ -58,6 +60,14 @@
 
 #ifdef HAVE_LIBBLKID
 # include <blkid.h>
+#endif
+
+#if defined(FS_IOC_FIEMAP) && defined(FIEMAP_EXTENT_LAST)
+# define USE_EXTENDS_CHECK 1
+#endif
+
+#if defined(FS_IOC_GETFLAGS) && defined(FS_NOCOW_FL)
+# define USE_NOCOW 1
 #endif
 
 #define MIN_GOODPAGES	10
@@ -262,7 +272,7 @@ static void check_blocks(struct mkswap_control *ctl)
 }
 
 
-#ifdef HAVE_LINUX_FIEMAP_H
+#ifdef USE_EXTENDS_CHECK
 static void warn_extent(struct mkswap_control *ctl, const char *msg, uint64_t off)
 {
 	if (ctl->nbad_extents == 0) {
@@ -349,7 +359,7 @@ done:
 	if (ctl->nbad_extents)
 		fputc('\n', stderr);
 }
-#endif /* HAVE_LINUX_FIEMAP_H */
+#endif /* USE_EXTENDS_CHECK */
 
 /* return size in pages */
 static unsigned long long get_size(const struct mkswap_control *ctl)
@@ -405,7 +415,20 @@ static void open_device(struct mkswap_control *ctl)
 	}
 	if (ctl->fd < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), ctl->devname);
+
 	if (ctl->file && ctl->filesz) {
+#ifdef USE_NOCOW
+		/* Let's attempt to set the "nocow" attribute for Btrfs, etc.
+		 * Ignore if unsupported. */
+		int attr = 0;
+
+		if (ioctl(ctl->fd, FS_IOC_GETFLAGS, &attr) == 0) {
+			attr |= FS_NOCOW_FL;
+			if (ioctl(ctl->fd, FS_IOC_SETFLAGS, &attr) < 0 &&
+			    (errno != EOPNOTSUPP && errno != ENOSYS && errno != EINVAL))
+				warn(_("failed to set 'nocow' attribute"));
+		}
+#endif
 		if (ftruncate(ctl->fd, ctl->filesz) < 0)
 			err(EXIT_FAILURE, _("couldn't allocate swap file %s"), ctl->devname);
 #ifdef HAVE_POSIX_FALLOCATE
@@ -627,8 +650,30 @@ int main(int argc, char **argv)
 			ctl.file = 1;
 			break;
 		case 'V':
-			print_version(EXIT_SUCCESS);
-			break;
+		{
+			static const char *const features[] = {
+#ifdef USE_EXTENDS_CHECK
+				"extends-check",
+#endif
+#ifdef USE_NOCOW
+				"nocow",
+#endif
+#if defined(HAVE_POSIX_FALLOCATE) || defined(HAVE_FALLOCATE)
+				"fallocate",
+#endif
+#ifdef HAVE_LIBBLKID
+				"blkid-check",
+#endif
+#ifdef HAVE_LIBUUID
+				"uuid",
+#endif
+#ifdef HAVE_LIBSELINUX
+				"selinux",
+#endif
+				NULL,
+			};
+			print_version_with_features(EXIT_SUCCESS, features);
+		}
 		case OPT_LOCK:
 			ctl.lockmode = "1";
 			if (optarg) {
@@ -724,7 +769,7 @@ int main(int argc, char **argv)
 
 	if (ctl.check)
 		check_blocks(&ctl);
-#ifdef HAVE_LINUX_FIEMAP_H
+#ifdef USE_EXTENDS_CHECK
 	if (!ctl.quiet && S_ISREG(ctl.devstat.st_mode))
 		check_extents(&ctl);
 #endif
