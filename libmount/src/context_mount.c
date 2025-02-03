@@ -1664,7 +1664,7 @@ int mnt_context_get_mount_excode(
 	if (buf && mnt_context_get_nmesgs(cxt, 'e')) {
 		if (cxt->syscall_name) {
 			size_t len = snprintf(buf, bufsz,
-					_("%s system call failed: "),
+					_("%s() failed: "),
 					cxt->syscall_name);
 			join_err_mesgs(cxt, buf + len, bufsz - len);
 		} else
@@ -1839,7 +1839,7 @@ int mnt_context_get_mount_excode(
 	generic_error:
 		if (buf) {
 			errno = syserr;
-			snprintf(buf, bufsz, _("%s system call failed: %m"),
+			snprintf(buf, bufsz, _("%s() failed: %m"),
 					cxt->syscall_name ? : "mount");
 		}
 		break;

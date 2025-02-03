@@ -2729,6 +2729,9 @@ void mnt_context_reset_mesgs(struct libmnt_context *cxt)
 
 int mnt_context_append_mesg(struct libmnt_context *cxt, const char *msg)
 {
+	if (msg) {
+		DBG(CXT, ul_debug("mesg: '%s'", msg));
+	}
 	return strv_extend(&cxt->mesgs, msg);
 }
 
@@ -2742,6 +2745,36 @@ int mnt_context_sprintf_mesg(struct libmnt_context *cxt, const char *msg, ...)
 	va_end(ap);
 
 	return rc;
+}
+
+int mnt_context_read_mesgs(struct libmnt_context *cxt, int fd)
+{
+	uint8_t buf[BUFSIZ];
+	ssize_t sz;
+	size_t count = 0;
+	int errsv = errno;
+
+	if (fd < 0)
+		return 0;
+
+	while ((sz = read(fd, buf, sizeof(buf) - 1)) != -1) {
+
+		if (sz <= 0)
+			continue;
+		if (buf[sz - 1] == '\n')
+			buf[--sz] = '\0';
+		else
+			buf[sz] = '\0';
+
+		if (!*buf)
+			continue;
+
+		mnt_context_append_mesg(cxt, (char *) buf);
+		count++;;
+	}
+
+	errno = errsv;
+	return count;
 }
 
 /**

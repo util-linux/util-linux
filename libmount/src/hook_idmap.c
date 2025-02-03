@@ -333,6 +333,7 @@ static int hook_mount_post(
 			    (recursive ? AT_RECURSIVE : 0));
 	if (fd_tree < 0) {
 		DBG(HOOK, ul_debugobj(hs, " failed to open tree"));
+		mnt_context_syscall_save_status(cxt, "open_tree", 0);
 		return -MNT_ERR_IDMAP;
 	}
 
@@ -341,7 +342,11 @@ static int hook_mount_post(
 			   AT_EMPTY_PATH | (recursive ? AT_RECURSIVE : 0),
 			   &attr, sizeof(attr));
 	if (rc < 0) {
-		DBG(HOOK, ul_debugobj(hs, " failed to set attributes"));
+		mnt_context_syscall_save_status(cxt, "mount_setattr", 0);
+		if (!mnt_context_read_mesgs(cxt, fd_tree)) {
+			/* TRANSLATORS: Don't translate "e ". It's a message classifier. */
+			mnt_context_sprintf_mesg(cxt, _("e cannot set ID-mapping: %m"));
+		}
 		goto done;
 	}
 
@@ -351,8 +356,13 @@ static int hook_mount_post(
 		umount2(target, MNT_DETACH);
 
 		rc = move_mount(fd_tree, "", -1, target, MOVE_MOUNT_F_EMPTY_PATH);
-		if (rc)
-			DBG(HOOK, ul_debugobj(hs, " failed to set move mount"));
+		if (rc < 0) {
+			mnt_context_syscall_save_status(cxt, "move_mount", 0);
+			if (!mnt_context_read_mesgs(cxt, fd_tree)) {
+				/* TRANSLATORS: Don't translate "e ". It's a message classifier. */
+				mnt_context_sprintf_mesg(cxt, _("e cannot set ID-mapping: %m"));
+			}
+		}
 	}
 done:
 	if (is_private)
