@@ -66,6 +66,10 @@
 # define USE_EXTENDS_CHECK 1
 #endif
 
+#if defined(FS_IOC_GETFLAGS) && defined(FS_NOCOW_FL)
+# define USE_NOCOW 1
+#endif
+
 #define MIN_GOODPAGES	10
 
 #define SELINUX_SWAPFILE_TYPE	"swapfile_t"
@@ -417,7 +421,7 @@ static void open_device(struct mkswap_control *ctl)
 
 		/* Let's attempt to set the "nocow" attribute for Btrfs, etc.
 		 * Ignore if unsupported. */
-#if defined(FS_IOC_GETFLAGS) && defined(FS_NOCOW_FL)
+#ifdef USE_NOCOW
 		if (ioctl(ctl->fd, FS_IOC_GETFLAGS, &attr) == 0) {
 			attr |= FS_NOCOW_FL;
 			if (ioctl(ctl->fd, FS_IOC_SETFLAGS, &attr) < 0 &&
@@ -647,8 +651,30 @@ int main(int argc, char **argv)
 			ctl.file = 1;
 			break;
 		case 'V':
-			print_version(EXIT_SUCCESS);
-			break;
+		{
+			static const char *const features[] = {
+#ifdef USE_EXTENDS_CHECK
+				"extends-check",
+#endif
+#ifdef USE_NOCOW
+				"nocow",
+#endif
+#if defined(HAVE_POSIX_FALLOCATE) || defined(HAVE_FALLOCATE)
+				"fallocate",
+#endif
+#ifdef HAVE_LIBBLKID
+				"blkid-check",
+#endif
+#ifdef HAVE_LIBUUID
+				"uuid",
+#endif
+#ifdef HAVE_LIBSELINUX
+				"selinux",
+#endif
+				NULL,
+			};
+			print_version_with_features(EXIT_SUCCESS, features);
+		}
 		case OPT_LOCK:
 			ctl.lockmode = "1";
 			if (optarg) {
