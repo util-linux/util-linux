@@ -648,38 +648,22 @@ int posix_ipc_msg_get_info(const char *name, struct posix_msg_data **msgds)
 {
 	FILE *f;
 	DIR *d;
-	int i = 0, mounted = 0;
+	int i = 0;
 	struct posix_msg_data *p;
 	struct dirent *de;
 
 	p = *msgds = xcalloc(1, sizeof(struct msg_data));
 	p->next = NULL;
 
+	if (access(_PATH_DEV_MQUEUE, F_OK) != 0) {
+		warnx(_("%s does not seem to be mounted. Use 'mount -t mqueue none %s' to mount it."), _PATH_DEV_MQUEUE, _PATH_DEV_MQUEUE);
+		return -1;
+	}
+
 	d = opendir(_PATH_DEV_MQUEUE);
 	if (!d) {
-		/* Mount the mqueue filesystem if it is not mounted */
-		if (errno == ENOENT) {
-			struct libmnt_context *ctx;
-
-			ctx = mnt_new_context();
-			if (!ctx)
-				err(EXIT_FAILURE, _("cannot create libmount context"));
-
-			if (mnt_context_set_source(ctx, "none") < 0)
-				err(EXIT_FAILURE, _("cannot set source"));
-
-			if (mnt_context_set_target(ctx, _PATH_DEV_MQUEUE) < 0)
-				err(EXIT_FAILURE, _("cannot set target"));
-
-			if (mnt_context_set_fstype(ctx, "mqueue") < 0)
-				err(EXIT_FAILURE, _("cannot set filesystem type"));
-
-			if (mnt_context_mount(ctx) < 0)
-				err(EXIT_FAILURE, _("cannot mount %s"), _PATH_DEV_MQUEUE);
-
-			mnt_free_context(ctx);
-			mounted = 1;
-		} else err(EXIT_FAILURE, _("cannot open %s"), _PATH_DEV_MQUEUE);
+		warnx(_("cannot open %s"), _PATH_DEV_MQUEUE);
+		return -1;
 	}
 
 	while ((de = readdir(d)) != NULL) {
@@ -746,23 +730,6 @@ int posix_ipc_msg_get_info(const char *name, struct posix_msg_data **msgds)
 	if (i == 0)
 		free(*msgds);
 	closedir(d);
-
-	/* Unmount the mqueue filesystem if it was not mounted by default */ 
-	if (mounted) {
-		struct libmnt_context *ctx;
-
-		ctx = mnt_new_context();
-		if (!ctx)
-			err(EXIT_FAILURE, _("cannot create libmount context"));
-
-		if (mnt_context_set_target(ctx, _PATH_DEV_MQUEUE) < 0)
-			err(EXIT_FAILURE, _("cannot set target"));
-
-		if (mnt_context_umount(ctx) < 0)
-			err(EXIT_FAILURE, _("cannot umount %s"), _PATH_DEV_MQUEUE);
-		
-		mnt_free_context(ctx);
-	}
 
 	return i;
 }

@@ -26,7 +26,6 @@
 #include <grp.h>
 #include <pwd.h>
 #include <stdint.h>
-#include <libmount.h>
 
 /*
  * SHM_DEST and SHM_LOCKED are defined in kernel headers, but inside

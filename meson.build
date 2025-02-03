@@ -1494,7 +1494,7 @@ exe = executable(
   ipcrm_sources,
   include_directories : includes,
   link_with : [lib_common],
-  dependencies : [mount_dep] + posixipc_libs,
+  dependencies : posixipc_libs,
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -1510,7 +1510,7 @@ exe = executable(
   ipcs_sources,
   include_directories : includes,
   link_with : [lib_common],
-  dependencies : [mount_dep] + posixipc_libs,
+  dependencies : posixipc_libs,
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -2216,7 +2216,7 @@ exe = executable(
   include_directories : includes,
   link_with : [lib_common,
                lib_smartcols],
-  dependencies : [mount_dep] + posixipc_libs,
+  dependencies : posixipc_libs,
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)

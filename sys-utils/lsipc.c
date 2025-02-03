@@ -992,7 +992,11 @@ static void do_posix_msg(const char *name, struct lsipc_control *ctl, struct lib
 	struct posix_msg_data *msgds, *p;
 	char *arg = NULL;
 
-	if (posix_ipc_msg_get_info(name, &msgds) < 1) {
+	int rc = posix_ipc_msg_get_info(name, &msgds);
+	if (rc == -1)
+		return;
+
+	if (rc < 1) {
 		if (name != NULL)
 			warnx(_("mqueue %s not found"), name);
 		return;
@@ -1106,18 +1110,12 @@ static void do_posix_msg_global(struct lsipc_control *ctl, struct libscols_table
 {
 	struct posix_msg_data *pmsgds;
 	struct ipc_limits lim;
-	int pmsgqs = 0;
+	int pmsgqs = posix_ipc_msg_get_info(NULL, &pmsgds);
 
 	ipc_msg_get_limits(&lim);
 
-	/* count number of used posix queues */
-	if (posix_ipc_msg_get_info(NULL, &pmsgds) > 0) {
-		struct posix_msg_data *p;
-
-		for (p = pmsgds; p->next != NULL; p = p->next)
-			++pmsgqs;
-		posix_ipc_msg_free_info(pmsgds);
-	}
+	if (pmsgqs == -1)
+		pmsgqs = 0;
 
 	global_set_data(ctl, tb, "MQUMNI", _("Number of POSIX message queues"), pmsgqs, lim.msgmni_posix, 1, 0);
 	global_set_data(ctl, tb, "MQUMAX", _("Max size of POSIX message (bytes)"), 0, lim.msgmax_posix, 0, 1);

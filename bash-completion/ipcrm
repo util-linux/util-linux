@@ -6,47 +6,47 @@ _ipcrm_module()
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
 		'-m'|'--shmem-id')
-			KEYIDS="$(lsipc -m | awk 'NR>1 {print $2}')"
+			KEYIDS="$(lsipc -m --noheadings -o ID)"
 			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
 			return 0
 			;;
 		'-M'|'--shmem-key')
-			KEYIDS="$(lsipc -m | awk 'NR>1 {print $1}')"
+			KEYIDS="$(lsipc -m --noheadings -o KEY)"
 			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
 			return 0
 			;;
 		'--posix-shmem')
-			KEYIDS="$(lsipc -M | awk 'NR>1 {print $1}')"
+			KEYIDS="$(lsipc -M --noheadings -o NAME)"
 			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
 			return 0
 			;;
 		'-q'|'--queue-id')
-			KEYIDS="$(lsipc -q | awk 'NR>1 {print $2}')"
+			KEYIDS="$(lsipc -q --noheadings -o ID)"
 			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
 			return 0
 			;;
 		'-Q'|'--queue-key')
-			KEYIDS="$(lsipc -q | awk 'NR>1 {print $1}')"
+			KEYIDS="$(lsipc -q --noheadings -o KEY)"
 			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
 			return 0
 			;;
 		'--posix-mqueue')
-			KEYIDS="$(lsipc -Q | awk 'NR>1 {print $1}')"
+			KEYIDS="$(lsipc -Q --noheadings -o NAME)"
 			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
 			return 0
 			;;
 		'-s'|'--semaphore-id')
-			KEYIDS="$(lsipc -s | awk '{if (3 < NR) {print $2}}')"
+			KEYIDS="$(lsipc -s --noheadings -o ID)"
 			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
 			return 0
 			;;
 		'-S'|'--semaphore-key')
-			KEYIDS="$(lsipc -s | awk '{if (3 < NR) {print $1}}')"
+			KEYIDS="$(lsipc -s --noheadings -o KEY)"
 			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
 			return 0
 			;;
 		'--posix-semaphore')
-			KEYIDS="$(lsipc -S | awk 'NR>1 {print $1}')"
+			KEYIDS="$(lsipc -S --noheadings -o NAME)"
 			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
 			return 0
 			;;
