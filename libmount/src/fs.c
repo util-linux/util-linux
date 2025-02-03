@@ -347,7 +347,12 @@ struct libmnt_fs *mnt_copy_mtab_fs(struct libmnt_fs *fs)
 		mnt_optstr_get_options(fs->vfs_optstr, &p,
 				mnt_get_builtin_optmap(MNT_LINUX_MAP),
 				MNT_NOMTAB);
-		n->vfs_optstr = p;
+		if (p) {
+			n->vfs_optstr = strdup(p); 
+			free(p); 
+		}
+		else
+			n->vfs_optstr = NULL;
 	}
 
 	if (fs->user_optstr) {
