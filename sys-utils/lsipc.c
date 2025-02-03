@@ -992,11 +992,11 @@ static void do_posix_msg(const char *name, struct lsipc_control *ctl, struct lib
 	struct posix_msg_data *msgds, *p;
 	char *arg = NULL;
 
-	int rc = posix_ipc_msg_get_info(name, &msgds);
-	if (rc == -1)
+	int retval = posix_ipc_msg_get_info(name, &msgds);
+	if (retval == -1)
 		return;
 
-	if (rc < 1) {
+	if (retval < 1) {
 		if (name != NULL)
 			warnx(_("mqueue %s not found"), name);
 		return;
