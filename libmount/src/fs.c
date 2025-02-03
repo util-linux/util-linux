@@ -347,7 +347,11 @@ struct libmnt_fs *mnt_copy_mtab_fs(struct libmnt_fs *fs)
 		mnt_optstr_get_options(fs->vfs_optstr, &p,
 				mnt_get_builtin_optmap(MNT_LINUX_MAP),
 				MNT_NOMTAB);
-		n->vfs_optstr = p;
+		if (p) {
+			n->vfs_optstr = strdup(p);
+			free(p);
+		} else 
+			n->vfs_optstr = NULL;
 	}
 
 	if (fs->user_optstr) {
@@ -355,7 +359,11 @@ struct libmnt_fs *mnt_copy_mtab_fs(struct libmnt_fs *fs)
 		mnt_optstr_get_options(fs->user_optstr, &p,
 				mnt_get_builtin_optmap(MNT_USERSPACE_MAP),
 				MNT_NOMTAB);
-		n->user_optstr = p;
+		if (p) {
+            		n->user_optstr = strdup(p);
+			free(p);
+		} else
+			n->user_optstr = NULL;
 	}
 
 	if (strdup_between_structs(n, fs, fs_optstr))
