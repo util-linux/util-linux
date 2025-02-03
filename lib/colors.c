@@ -246,7 +246,7 @@ static int filename_to_tokens(const char *str,
 static int colors_readdir(struct ul_color_ctl *cc, const char *dirname)
 {
 	DIR *dir;
-	int rc = 0;
+	int rc = -ENOENT;
 	struct dirent *d;
 	char sfile[PATH_MAX] = { '\0' };
 	size_t namesz, termsz;
@@ -312,6 +312,7 @@ static int colors_readdir(struct ul_color_ctl *cc, const char *dirname)
 					type == UL_COLORFILE_ENABLE ? "enable" : "???",
 					cc->scores[type], score));
 		cc->scores[type] = score;
+		rc = 0;
 		if (type == UL_COLORFILE_SCHEME)
 			strncpy(sfile, d->d_name, sizeof(sfile));
 	}
@@ -320,8 +321,6 @@ static int colors_readdir(struct ul_color_ctl *cc, const char *dirname)
 		sfile[sizeof(sfile) - 1] = '\0';
 		if (asprintf(&cc->sfile, "%s/%s", dirname, sfile) <= 0)
 			rc = -ENOMEM;
-	} else {
-		rc = -ENOENT;
 	}
 
 	closedir(dir);
