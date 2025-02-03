@@ -920,11 +920,7 @@ static int get_next_syslog_record(struct dmesg_control *ctl,
 		if (*begin == '[' && (*(begin + 1) == ' ' ||
 				      isdigit(*(begin + 1)))) {
 
-			if (!is_time_fmt_set(ctl, DMESG_TIMEFTM_NONE))
-				begin = parse_syslog_timestamp(begin + 1, &rec->tv);
-			else
-				begin = skip_item(begin, end, "]");
-
+			begin = parse_syslog_timestamp(begin + 1, &rec->tv);
 			if (begin < end && *begin == ' ')
 				begin++;
 		}
@@ -1461,10 +1457,7 @@ static int parse_kmsg_record(struct dmesg_control *ctl,
 		goto mesg;
 
 	/* C) timestamp */
-	if (is_time_fmt_set(ctl, DMESG_TIMEFTM_NONE))
-		p = skip_item(p, end, ",;");
-	else
-		p = parse_kmsg_timestamp(p, &rec->tv);
+	p = parse_kmsg_timestamp(p, &rec->tv);
 	if (LAST_KMSG_FIELD(p))
 		goto mesg;
 
