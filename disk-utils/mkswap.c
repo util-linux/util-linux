@@ -62,6 +62,10 @@
 # include <blkid.h>
 #endif
 
+#if defined(FS_IOC_FIEMAP) && defined(FIEMAP_EXTENT_LAST)
+# define USE_EXTENDS_CHECK 1
+#endif
+
 #define MIN_GOODPAGES	10
 
 #define SELINUX_SWAPFILE_TYPE	"swapfile_t"
@@ -264,7 +268,7 @@ static void check_blocks(struct mkswap_control *ctl)
 }
 
 
-#ifdef HAVE_LINUX_FIEMAP_H
+#ifdef USE_EXTENDS_CHECK
 static void warn_extent(struct mkswap_control *ctl, const char *msg, uint64_t off)
 {
 	if (ctl->nbad_extents == 0) {
@@ -351,7 +355,7 @@ done:
 	if (ctl->nbad_extents)
 		fputc('\n', stderr);
 }
-#endif /* HAVE_LINUX_FIEMAP_H */
+#endif /* USE_EXTENDS_CHECK */
 
 /* return size in pages */
 static unsigned long long get_size(const struct mkswap_control *ctl)
@@ -740,7 +744,7 @@ int main(int argc, char **argv)
 
 	if (ctl.check)
 		check_blocks(&ctl);
-#ifdef HAVE_LINUX_FIEMAP_H
+#ifdef USE_EXTENDS_CHECK
 	if (!ctl.quiet && S_ISREG(ctl.devstat.st_mode))
 		check_extents(&ctl);
 #endif
