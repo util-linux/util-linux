@@ -99,9 +99,8 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, out);
 	fprintf(out,
-	      _(" -m, --mapfile <mapfile>   (defaults: \"%s\" and\n"), defaultmap);
-	fprintf(out,
-	      _("                                      \"%s\")\n"), boot_uname_r_str());
+	      _(" -m, --mapfile <mapfile>   (defaults: \"%s\" and\n"
+	        "                                      \"%s\")\n"), defaultmap, boot_uname_r_str());
 	fprintf(out,
 	      _(" -p, --profile <pro-file>  (default:  \"%s\")\n"), defaultpro);
 	fputs(_(" -M, --multiplier <mult>   set the profiling multiplier to <mult>\n"), out);

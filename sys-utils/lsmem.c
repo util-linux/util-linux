@@ -713,7 +713,7 @@ int main(int argc, char **argv)
 
 		cl = scols_table_new_column(lsmem->table, ci->name, ci->whint, ci->flags);
 		if (!cl)
-			err(EXIT_FAILURE, _("Failed to initialize output column"));
+			err(EXIT_FAILURE, _("failed to initialize output column"));
 
 		if (lsmem->json) {
 			int id = get_column_id(i);

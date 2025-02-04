@@ -134,8 +134,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -d, --dump                  show current state (and do not exec)\n"), out);
 	fputs(_(" --nnp, --no-new-privs       disallow granting new privileges\n"), out);
-	fputs(_(" --ambient-caps <caps,...>   set ambient capabilities\n"), out);
-	fputs(_(" --inh-caps <caps,...>       set inheritable capabilities\n"), out);
+	fputs(_(" --ambient-caps <caps>       set ambient capabilities\n"), out);
+	fputs(_(" --inh-caps <caps>           set inheritable capabilities\n"), out);
 	fputs(_(" --bounding-set <caps>       set capability bounding set\n"), out);
 	fputs(_(" --ruid <uid|user>           set real uid\n"), out);
 	fputs(_(" --euid <uid|user>           set effective uid\n"), out);
@@ -146,7 +146,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --clear-groups              clear supplementary groups\n"), out);
 	fputs(_(" --keep-groups               keep supplementary groups\n"), out);
 	fputs(_(" --init-groups               initialize supplementary groups\n"), out);
-	fputs(_(" --groups <group,...>        set supplementary groups by UID or name\n"), out);
+	fputs(_(" --groups <group>[,...]      set supplementary group(s) by GID or name\n"), out);
 	fputs(_(" --securebits <bits>         set securebits\n"), out);
 	fputs(_(" --pdeathsig keep|clear|<signame>\n"
 	        "                             set or clear parent death signal\n"), out);
