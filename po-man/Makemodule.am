@@ -28,23 +28,23 @@ asciidoc_poman_install_cmd = $(abs_srcdir)/tools/poman-install.sh \
 ADOCFILES = $(MANPAGES:=.adoc)
 
 po4a-gen.stamp: $(POMAN_PO_FILES) $(ADOCFILES_COMMON) $(ADOCFILES)
-	$(asciidoc_poman_translate_cmd) $(ADOCFILES)
+	@$(asciidoc_poman_translate_cmd) $(ADOCFILES)
 	@touch po4a-gen.stamp
 
 gen-poman: $(PO_STAMPS)
 
 install-data-hook-poman:
-	$(asciidoc_poman_install_cmd) --install
+	@$(asciidoc_poman_install_cmd) --install
 INSTALL_DATA_HOOKS += install-data-hook-poman
 
 
 uninstall-hook-poman:
-	$(asciidoc_poman_install_cmd) --uninstall
+	@$(asciidoc_poman_install_cmd) --uninstall
 UNINSTALL_HOOKS += uninstall-hook-poman
 
 
 clean-local-hook-poman:
-	rm -rf $(top_builddir)/po-man/translations
+	@rm -rf $(top_builddir)/po-man/translations
 CLEAN_LOCALS += clean-local-hook-poman
 
 
