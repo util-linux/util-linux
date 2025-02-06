@@ -1687,6 +1687,8 @@ if opt and not is_disabler(exe)
   bashcompletions += ['blkdiscard']
 endif
 
+have_linux_blkzoned_h = conf.get('HAVE_LINUX_BLKZONED_H').to_string() == '1'
+
 opt = get_option('build-blkzone').require(have_linux_blkzoned_h).allowed()
 exe = executable(
   'blkzone',
