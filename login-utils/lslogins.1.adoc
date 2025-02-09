@@ -46,7 +46,7 @@ Display data about the users' last failed login attempts.
 *-G*, *--supp-groups*::
 Show information about supplementary groups.
 
-*-g*, **--groups**=_groups_::
+*-g*, *--groups* _groups_::
 Only show data of users belonging to _groups_. More than one group may be specified; the list has to be comma-separated. Unknown group names are ignored.
 +
 Note that the relation between user and group may be invisible for the primary group if the user is not explicitly specified as group member (e.g., in _/etc/group_). If the command *lslogins* scans for groups then it uses the groups database only, and the user database with primary GID is not used at all.
@@ -54,7 +54,7 @@ Note that the relation between user and group may be invisible for the primary g
 *-L*, *--last*::
 Display data containing information about the users' last login sessions.
 
-*-l*, **--logins**=_logins_::
+*-l*, *--logins* _logins_::
 Only show data of users with a login specified in _logins_ (user names or user IDs). More than one login may be specified; the list has to be comma-separated. Unknown login names are ignored.
 
 *-n*, *--newline*::

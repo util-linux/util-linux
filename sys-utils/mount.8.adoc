@@ -345,7 +345,7 @@ Add the labels in the mount output. *mount* must have permission to read the dis
 *-M*, *--move*::
 Move a subtree to some other place. See above, the subsection *The move operation*.
 
-*-m*, **--mkdir**[=__mode__]::
+*-m*, *--mkdir*[**=**__mode__]::
 Allow to make a target directory (mountpoint) if it does not exist yet. Alias to "-o X-mount.mkdir[=mode]", the default mode is 0755. For more details see *X-mount.mkdir* below.
 
 *--map-groups*, *--map-users* _inner_:_outer_:_count_::
