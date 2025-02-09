@@ -599,8 +599,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_ARGUMENTS, out);
 	fprintf(out, USAGE_ARG_SIZE(_("<size>")));
 
-	fputs(_(" <alg> specify algorithm, supported are:\n"), out);
-	fputs(_("   lzo, lz4, lz4hc, deflate, 842 and zstd\n"), out);
+	fputs(_(" <alg> is the name of an algorithm; supported are:\n"), out);
+	fputs(  "   lzo, lz4, lz4hc, deflate, 842, zstd\n", out);
 	fputs(_("   (List may be inaccurate, consult man page.)\n"), out);
 
 	fputs(USAGE_COLUMNS, out);
