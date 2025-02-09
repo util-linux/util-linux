@@ -691,19 +691,19 @@ After this call, *mount* reads _fstab_ and merges these options with the options
 +
 remounts all already mounted vfat filesystems in read-only mode. Each of the filesystems is remounted by *mount -o remount,ro* _/dir_ semantic. This means the *mount* command reads _fstab_ or _mtab_ and merges these options with the options from the command line.
 
-*ro*[=_recursive_,_vfs_,_fs_]::
+*ro*[**=**(*recursive*|*vfs*|*fs*)]::
 Mount the filesystem read-only. The optional argument is an experimental feature supported only by
 the file-descriptor based kernel mount API and it is silently ignored for the old *mount*(2) syscall.
 +
-The _recursive_ argument forces the VFS attribute to be applied recursively.
+The *recursive* argument forces the VFS attribute to be applied recursively.
 +
-The _vfs_ and _fs_ arguments specify the layer where the read-only flag should be applied. The _fs_ specifies
-the filesystem superblock (unique filesystem instance in the kernel), and _vfs_ specifies the mount node. If no attribute is specified, then
+The *vfs* and *fs* arguments specify the layer where the read-only flag should be applied. The *fs* specifies
+the filesystem superblock (unique filesystem instance in the kernel), and *vfs* specifies the mount node. If no attribute is specified, then
 both layers are set to read-only.
 +
 For more details, please refer to the *Read-only Setting Notes* section.
 
-*rw*[=_recursive_,_vfs_,_fs_]::
+*rw*[**=**(*recursive*|*vfs*|*fs*)]::
 Mount the filesystem read-write.
 
 *sync*::
