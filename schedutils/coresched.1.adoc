@@ -67,11 +67,7 @@ The type of the PID whose cookie will be modified. This can be one of three valu
 *-v*, *--verbose*::
 Show extra information when modifying cookies of tasks.
 
-*-h*, *--help*::
-Display help text and exit.
-
-*-V*, *--version*::
-Print version and exit.
+include::man-common/help-version.adoc[]
 
 == EXAMPLES
 Get the core scheduling cookie of the {command} task itself, usually inherited from its parent{colon}::

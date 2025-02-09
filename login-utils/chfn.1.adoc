@@ -50,10 +50,10 @@ Specify your home phone number.
 Display help text and exit.
 
 *-V*, *--version*::
-Print version and exit. The short options *-V* have been used since version 2.39; old versions use
-deprecated *-v*.
+Display version and exit. (Short option *-V* is used since version 2.39;
+older versions used the now-deprecated *-v*).
 
-include::man-common/help-version.adoc[]
+// Do not include::man-common/help-version.adoc[]  as --help and --version are already given explicitly above.
 
 == CONFIG FILE ITEMS
 
