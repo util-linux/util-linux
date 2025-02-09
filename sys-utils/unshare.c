@@ -782,14 +782,14 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -T, --time[=<file>]       unshare time namespace\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -f, --fork                fork before launching <program>\n"), out);
-	fputs(_(" --map-user=<uid>|<name>   map current user to uid (implies --user)\n"), out);
-	fputs(_(" --map-group=<gid>|<name>  map current group to gid (implies --user)\n"), out);
+	fputs(_(" --map-user <uid>|<name>   map current user to uid (implies --user)\n"), out);
+	fputs(_(" --map-group <gid>|<name>  map current group to gid (implies --user)\n"), out);
 	fputs(_(" -r, --map-root-user       map current user to root (implies --user)\n"), out);
 	fputs(_(" -c, --map-current-user    map current user to itself (implies --user)\n"), out);
 	fputs(_(" --map-auto                map users and groups automatically (implies --user)\n"), out);
-	fputs(_(" --map-users=<inneruid>:<outeruid>:<count>\n"
+	fputs(_(" --map-users <inneruid>:<outeruid>:<count>\n"
 		"                           map count users from outeruid to inneruid (implies --user)\n"), out);
-	fputs(_(" --map-groups=<innergid>:<outergid>:<count>\n"
+	fputs(_(" --map-groups <innergid>:<outergid>:<count>\n"
 		"                           map count groups from outergid to innergid (implies --user)\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" --kill-child[=<signame>]  when dying, kill the forked child (implies --fork)\n"
@@ -801,8 +801,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --setgroups allow|deny    control the setgroups syscall in user namespaces\n"), out);
 	fputs(_(" --keep-caps               retain capabilities granted in user namespaces\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_(" -R, --root=<dir>          run the command with root directory set to <dir>\n"), out);
-	fputs(_(" -w, --wd=<dir>            change working directory to <dir>\n"), out);
+	fputs(_(" -R, --root <dir>          run the command with root directory set to <dir>\n"), out);
+	fputs(_(" -w, --wd <dir>            change working directory to <dir>\n"), out);
 	fputs(_(" -S, --setuid <uid>        set uid in entered namespace\n"), out);
 	fputs(_(" -G, --setgid <gid>        set gid in entered namespace\n"), out);
 	fputs(_(" --monotonic <offset>      set clock monotonic offset (seconds) in time namespaces\n"), out);
