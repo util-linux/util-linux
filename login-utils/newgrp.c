@@ -219,7 +219,7 @@ int main(int argc, char *argv[])
 
 	if (argc <= optind) {
 		if (setgid(pw_entry->pw_gid) < 0)
-			err(EXIT_FAILURE, _("setgid failed"));
+			err(EXIT_FAILURE, _("setgid() failed"));
 	} else {
 		errno = 0;
 		if (!(gr_entry = getgrnam(argv[optind++]))) {
@@ -231,11 +231,11 @@ int main(int argc, char *argv[])
 		if (!allow_setgid(pw_entry, gr_entry))
 			errx(EXIT_FAILURE, _("permission denied"));
 		if (setgid(gr_entry->gr_gid) < 0)
-			err(EXIT_FAILURE, _("setgid failed"));
+			err(EXIT_FAILURE, _("setgid() failed"));
 	}
 
 	if (setuid(getuid()) < 0)
-		err(EXIT_FAILURE, _("setuid failed"));
+		err(EXIT_FAILURE, _("setuid() failed"));
 
 	fflush(NULL);
 	shell = (pw_entry->pw_shell && *pw_entry->pw_shell ?
