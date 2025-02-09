@@ -70,10 +70,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Alter the priority of running processes.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -n <num>               specify the nice value\n"), out);
-	fputs(_("                          If POSIXLY_CORRECT flag is set in environment\n"), out);
-	fputs(_("                          then the priority is 'relative' to current\n"), out);
-	fputs(_("                          process priority. Otherwise it is 'absolute'.\n"), out);
+	fputs(_(" -n <num>               specify the nice value;\n"
+		"                          if POSIXLY_CORRECT flag is set in environment,\n"
+		"                          then the priority is 'relative' to current\n"
+		"                          process priority; otherwise it is 'absolute'\n"), out);
 	fputs(_(" --priority <num>       specify the 'absolute' nice value\n"), out);
 	fputs(_(" --relative <num>       specify the 'relative' nice value\n"), out);
 	fputs(_(" -p, --pid              interpret arguments as process ID (default)\n"), out);
