@@ -413,7 +413,7 @@ static struct map_range get_map_range(const char *s)
  * @filename: The file to look up the range from. This should be either
  *            ``/etc/subuid`` or ``/etc/subgid``.
  * @uid: The uid of the user whose range we should look up.
- * @identity: (boolean) If true identity map the range, otherwise map to 0
+ * @identity: (boolean) If true, identity map the range, otherwise map to 0.
  *
  * This finds the first subid range matching @uid in @filename.
  */
