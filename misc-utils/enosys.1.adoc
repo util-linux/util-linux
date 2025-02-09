@@ -38,7 +38,7 @@ List syscalls known to *enosys*.
 *-m*, *--list-ioctl*::
 List ioctls known to *enosys*.
 
-*-d*, *--dump*[=_file_]::
+*-d*, *--dump*[**=**_file_]::
 Dump seccomp bytecode filter to standard output.
 +
 The dump can for example be used by *setpriv --seccomp-filter*.

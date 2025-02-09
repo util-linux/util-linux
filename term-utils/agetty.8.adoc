@@ -99,7 +99,7 @@ Do not clear the screen before prompting for the login name. By default the scre
 *-l*, *--login-program* _login_program_::
 Invoke the specified _login_program_ instead of /bin/login. This allows the use of a non-standard login program. Such a program could, for example, ask for a dial-up password or use a different password file. See *--login-options*.
 
-*-L*, *--local-line*[=__mode__]::
+*-L*, *--local-line*[**=**__mode__]::
 Control the CLOCAL line flag. The optional _mode_ argument is *auto*, *always* or *never*. If the _mode_ argument is omitted, then the default is *always*. If the *--local-line* option is not given at all, then the default is *auto*.
 
 _always_;;

@@ -45,12 +45,12 @@ Specify the sector size of the disk. Valid values are 512, 1024, 2048, and 4096.
 *-B*, *--protect-boot*::
 Don't erase the beginning of the first disk sector when creating a new disk label. This feature is supported for GPT and MBR.
 
-*-c*, *--compatibility*[=_mode_]::
+*-c*, *--compatibility*[**=**_mode_]::
 Specify the compatibility mode, 'dos' or 'nondos'. The default is non-DOS mode. For backward compatibility, it is possible to use the option without the _mode_ argument -- then the default is used. Note that the optional _mode_ argument cannot be separated from the *-c* option by a space, the correct form is for example *-c*=_dos_.
 
 include::man-common/help-version.adoc[]
 
-*-L*, *--color*[=_when_]::
+*-L*, *--color*[**=**_when_]::
 Colorize the output. The optional argument _when_ can be *auto*, *never* or *always*. If the _when_ argument is omitted, it defaults to *auto*. The colors can be disabled; for the current built-in default see the *--help* output. See also the *COLORS* section.
 
 *-l*, *--list*::
@@ -61,7 +61,7 @@ If no devices are given, the devices mentioned in _/proc/partitions_ (if this fi
 *-x*, *--list-details*::
 Like *--list*, but provides more details.
 
-*--lock*[=_mode_]::
+*--lock*[**=**_mode_]::
 Use exclusive BSD lock for device or file it operates. The optional argument _mode_ can be *yes*, *no* (or 1 and 0) or *nonblock*. If the _mode_ argument is omitted, it defaults to *yes*. This option overwrites environment variable *$LOCK_BLOCK_DEVICE*. The default is not to use any lock at all, but it's recommended to avoid collisions with *systemd-udevd*(8) or other tools.
 
 *-n*, *--noauto-pt*::
@@ -79,7 +79,7 @@ Print the size in 512-byte sectors of each given block device. This option is DE
 *-t*, *--type* _type_::
 Enable support only for disklabels of the specified _type_, and disable support for all other types.
 
-*-u*, *--units*[=_unit_]::
+*-u*, *--units*[**=**_unit_]::
 When listing partition tables, show sizes in 'sectors' or in 'cylinders'. The default is to show sizes in sectors. For backward compatibility, it is possible to use the option without the _unit_ argument -- then the default is used. Note that the optional _unit_ argument cannot be separated from the *-u* option by a space, the correct form is for example '**-u=**__cylinders__'.
 
 *-C*, *--cylinders* _number_::

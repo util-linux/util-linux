@@ -40,7 +40,7 @@ Note that by default *wipefs* does not erase nested partition tables on non-whol
 *-a*, *--all*::
 Erase all available signatures. The set of erased signatures can be restricted with the *-t* option.
 
-*-b*, *--backup*[=_dir_]::
+*-b*, *--backup*[**=**_dir_]::
 Create a signature backup to the file _wipefs-<devname>-<offset>.bak_ in _$HOME_ or the directory specified as the optional argument. For more details see the *EXAMPLE* section.
 
 *-f*, *--force*::
@@ -49,7 +49,7 @@ Force erasure, even if the filesystem is mounted. This is required in order to e
 *-J*, *--json*::
 Use JSON output format.
 
-*--lock*[=_mode_]::
+*--lock*[**=**_mode_]::
 Use exclusive BSD lock for device or file it operates. The optional argument _mode_ can be *yes*, *no* (or 1 and 0) or *nonblock*. If the _mode_ argument is omitted, it defaults to *"yes"*. This option overwrites environment variable *$LOCK_BLOCK_DEVICE*. The default is not to use any lock at all, but it's recommended to avoid collisions with udevd or other tools.
 
 *-i*, *--noheadings*::

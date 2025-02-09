@@ -14,7 +14,7 @@ lslogins - display information about known users in the system
 
 == SYNOPSIS
 
-*lslogins* [options] [*-s*|*-u*[=_UID_]] [*-g* _groups_] [*-l* _logins_] [_username_]
+*lslogins* [options] [*-s*|*-u*[**=**_UID_]] [*-g* _groups_] [*-l* _logins_] [_username_]
 
 == DESCRIPTION
 

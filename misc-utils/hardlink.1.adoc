@@ -131,7 +131,7 @@ Crypto API is not available. The methods based on checksums are implemented in
 zero-copy way, in this case file contents are not copied to the userspace and all
 calculation is done in kernel.
 
-*--reflink*[=_when_]::
+*--reflink*[**=**_when_]::
 Create copy-on-write clones (aka reflinks) rather than hardlinks. The reflinked files
 share only on-disk data, but the file mode and owner can be different. It's recommended
 to use it with *--ignore-owner* and *--ignore-mode* options. This option implies

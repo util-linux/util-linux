@@ -78,7 +78,7 @@ Read the /dev/kmsg messages from the given _file_. Different record as expected 
 *-k*, *--kernel*::
 Print kernel messages.
 
-*-L*, *--color*[=_when_]::
+*-L*, *--color*[**=**_when_]::
 Colorize the output. The optional argument _when_ can be *auto*, *never* or *always*. If the _when_ argument is omitted, it defaults to *auto*. The colors can be disabled; for the current built-in default see the *--help* output. See also the *COLORS* section below.
 
 *-l*, *--level* _list_::
