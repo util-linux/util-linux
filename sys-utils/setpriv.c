@@ -329,7 +329,7 @@ static void dump_pdeathsig(void)
 	int pdeathsig;
 
 	if (prctl(PR_GET_PDEATHSIG, &pdeathsig) != 0) {
-		warn(_("get pdeathsig failed"));
+		warn(_("failed to get parent death signal"));
 		return;
 	}
 
