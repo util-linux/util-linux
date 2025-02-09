@@ -213,12 +213,12 @@ static void __attribute__((__noreturn__)) usage(void)
 	      _(" %s [options] <device>\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_("Persistent reservations on a device.\n"), out);
+	fputs(_("Manage persistent reservations on a device.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -c, --command <cmd>      command of persistent reservations\n"), out);
-	fputs(_(" -k, --key <num>          key to operate\n"), out);
-	fputs(_(" -K, --oldkey <num>       old key to operate\n"), out);
+	fputs(_(" -c, --command <cmd>      command for persistent reservations\n"), out);
+	fputs(_(" -k, --key <num>          key to operate on\n"), out);
+	fputs(_(" -K, --oldkey <num>       old key to operate on\n"), out);
 	fputs(_(" -f, --flag <flag>        command flag\n"), out);
 	fputs(_(" -t, --type <type>        command type\n"), out);
 
@@ -227,13 +227,13 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_ARGUMENTS, out);
 
-	fputs(_(" <cmd> is an command, available command:\n"), out);
+	fputs(_(" <cmd> is a command; available commands are:\n"), out);
 	print_pr_command(out);
 
-	fputs(_(" <flag> is a command flag, available flags:\n"), out);
+	fputs(_(" <flag> is a command flag; available flags are:\n"), out);
 	print_pr_flag(out);
 
-	fputs(_(" <type> is a command type, available types:\n"), out);
+	fputs(_(" <type> is a command type; available types are:\n"), out);
 	print_pr_type(out);
 
 	fprintf(out, USAGE_MAN_TAIL("blkpr(8)"));
