@@ -149,7 +149,7 @@ static int init_device(struct blkzone_control *ctl, int mode)
 		errx(EXIT_FAILURE, _("%s: not a block device"), ctl->devname);
 
 	if (blkdev_get_sectors(fd, (unsigned long long *) &ctl->total_sectors))
-		err(EXIT_FAILURE, _("%s: blkdev_get_sectors ioctl failed"), ctl->devname);
+		err(EXIT_FAILURE, _("%s: blkdev_get_sectors() failed"), ctl->devname);
 
 	if (blkdev_get_sector_size(fd, &ctl->secsize))
 		err(EXIT_FAILURE, _("%s: BLKSSZGET ioctl failed"), ctl->devname);
