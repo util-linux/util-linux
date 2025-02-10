@@ -73,6 +73,12 @@ usage(void)
 	fputs(_(" -c, --cr-mode <type>    CR char mode (auto, never, always)\n"), out);
 	fprintf(out, USAGE_HELP_OPTIONS(25));
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Key bindings:\n"), out);
+	fputs(_(" space        toggles pause and unpause\n"), out);
+	fputs(_(" up-arrow     increases the playback speed by 0.1 times\n"), out);
+	fputs(_(" down-arrow   decreases the playback speed by 0.1 times\n"), out);
+
 	fprintf(out, USAGE_MAN_TAIL("scriptreplay(1)"));
 	exit(EXIT_SUCCESS);
 }
