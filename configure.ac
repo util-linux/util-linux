@@ -356,6 +356,7 @@ AC_CHECK_HEADERS([ \
 	linux/if_alg.h \
 	locale.h \
 	mntent.h \
+  mqueue.h \
 	net/if_dl.h \
 	net/if.h \
 	netinet/in.h \
@@ -363,6 +364,7 @@ AC_CHECK_HEADERS([ \
 	pty.h \
 	security/pam_appl.h \
 	security/pam_modules.h \
+  semaphore.h \
 	shadow.h \
 	stdint.h \
 	stdio_ext.h \
@@ -375,6 +377,7 @@ AC_CHECK_HEADERS([ \
 	sys/ioctl.h \
 	sys/io.h \
 	sys/mkdev.h \
+  sys/mman.h \
 	sys/mount.h \
 	sys/param.h \
 	sys/pidfd.h \

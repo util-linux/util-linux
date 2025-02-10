@@ -3,6 +3,9 @@
  *
  * Copyright (C) 2015 Ondrej Oprala <ooprala@redhat.com>
  * Copyright (C) 2015 Karel Zak <ooprala@redhat.com>
+ * 
+ * 2025 Prasanna Paithankar <paithankarprasanna@gmail.com>
+ * - Added POSIX IPC support
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -773,12 +776,18 @@ static void do_posix_sem(const char *name, struct lsipc_control *ctl, struct lib
 	struct posix_sem_data *semds, *p;
 	char *arg = NULL;
 
-	scols_table_set_name(tb, "posix-semaphores");
-	if (posix_ipc_sem_get_info(name, &semds) < 1) {
-		if (name)
-			warnx(_("name %s not found"), name);
+	int retval = posix_ipc_sem_get_info(name, &semds);
+	if (retval == -1)
+		return;
+
+	if (retval < 1) {
+		if (name != NULL)
+			warnx(_("mqueue %s not found"), name);
 		return;
 	}
+
+	scols_table_set_name(tb, "posix-semaphores");
+
 	for (p = semds; p->next != NULL || name != NULL; p = p->next) {
 		size_t n;
 
@@ -1001,6 +1010,7 @@ static void do_posix_msg(const char *name, struct lsipc_control *ctl, struct lib
 			warnx(_("mqueue %s not found"), name);
 		return;
 	}
+
 	scols_table_set_name(tb, "posix-messages");
 
 	for (p = msgds; p->next != NULL || name != NULL; p = p->next) {
@@ -1106,6 +1116,12 @@ static void do_msg_global(struct lsipc_control *ctl, struct libscols_table *tb)
 	global_set_data(ctl, tb, "MSGMNB", _("Default max size of System V queue (bytes)"), 0, lim.msgmnb, 0, 1);
 }
 
+#ifndef HAVE_MQUEUE_H
+static void do_posix_msg_global(struct lsipc_control *ctl __attribute__((unused)), struct libscols_table *tb __attribute__((unused)))
+{
+	return;
+}
+#else
 static void do_posix_msg_global(struct lsipc_control *ctl, struct libscols_table *tb)
 {
 	struct posix_msg_data *pmsgds;
@@ -1121,6 +1137,7 @@ static void do_posix_msg_global(struct lsipc_control *ctl, struct libscols_table
 	global_set_data(ctl, tb, "MQUMAX", _("Max size of POSIX message (bytes)"), 0, lim.msgmax_posix, 0, 1);
 	global_set_data(ctl, tb, "MQUMNB", _("Number of messages in POSIX message queue"), 0, lim.msgmnb_posix, 0, 0);
 }
+#endif
 
 
 static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
@@ -1300,7 +1317,11 @@ static void do_posix_shm(const char *name, struct lsipc_control *ctl, struct lib
 	struct posix_shm_data *shmds, *p;
 	char *arg = NULL;
 
-	if (posix_ipc_shm_get_info(name, &shmds) < 1) {
+	int retval = posix_ipc_shm_get_info(name, &shmds);
+	if (retval == -1)
+		return;
+
+	if (retval < 1) {
 		if (name != NULL)
 			warnx(_("shm %s not found"), name);
 		return;

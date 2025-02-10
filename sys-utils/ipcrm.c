@@ -242,23 +242,35 @@ static int key_to_id(type_id type, char *s)
 
 static int remove_name(type_id type, char *name)
 {
-	int ret;
+	int ret = 0;
 	
 	switch (type) {
 		case PSHM:
+			#ifndef HAVE_SYS_MMAN_H
+			warnx(_("POSIX shared memory is not supported"));
+			#else
 			if (verbose)
 				printf(_("removing POSIX shared memory `%s'\n"), name);
 			ret = shm_unlink(name);
+			#endif
 			break;
 		case PMSG:
+			#ifndef HAVE_MQUEUE_H
+			warnx(_("POSIX message queues are not supported"));
+			#else
 			if (verbose)
 				printf(_("removing POSIX message queue `%s'\n"), name);
 			ret = mq_unlink(name);
+			#endif
 			break;
 		case PSEM:
+			#ifndef HAVE_SEMAPHORE_H
+			warnx(_("POSIX semaphores are not supported"));
+			#else
 			if (verbose)
 				printf(_("removing POSIX semaphore `%s'\n"), name);
 			ret = sem_unlink(name);
+			#endif
 			break;
 		default:
 			errx(EXIT_FAILURE, "impossible occurred");
@@ -282,7 +294,7 @@ static int remove_name(type_id type, char *name)
 		return 1;
 	}
 	return 0;
-}		
+}
 
 static int remove_all(type_id type)
 {

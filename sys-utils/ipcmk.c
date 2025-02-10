@@ -3,6 +3,9 @@
  *
  *  Copyright (C) 2008 Hayden A. James (hayden.james@gmail.com)
  *  Copyright (C) 2008 Karel Zak <kzak@redhat.com>
+ *  
+ *  2025 Prasanna Paithankar <paithankarprasanna@gmail.com>
+ * 	- Added POSIX IPC support
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,13 +29,22 @@
 #include <stdlib.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
-#include <mqueue.h>
 #include <sys/sem.h>
-#include <semaphore.h>
 #include <sys/shm.h>
+#include <sys/time.h>
+
+#ifdef HAVE_MQUEUE_H
+#include <mqueue.h>
+#endif
+
+#ifdef HAVE_SEMAPHORE_H
+#include <semaphore.h>
+#endif
+
+#ifdef HAVE_SYS_MMAN_H
 #include <sys/stat.h>
 #include <sys/mman.h>
-#include <sys/time.h>
+#endif
 
 #include "c.h"
 #include "nls.h"
@@ -48,6 +60,15 @@ static int create_shm(size_t size, int permission)
 	return shmget(key, size, permission | IPC_CREAT);
 }
 
+#ifndef HAVE_SYS_MMAN_H
+static int create_posix_shm(const char *name __attribute__((__unused__)),
+							size_t size __attribute__((__unused__)),
+							int permission __attribute__((__unused__)))
+{
+	warnx(_("POSIX shared memory is not supported"));
+	return -1;
+}
+#else
 static int create_posix_shm(const char *name, size_t size, int permission)
 {
 	int shmfd;
@@ -64,6 +85,7 @@ static int create_posix_shm(const char *name, size_t size, int permission)
 	printf(_("POSIX shared memory name: %s\n"), name);
 	return 0;
 }
+#endif
 
 static int create_msg(int permission)
 {
@@ -73,13 +95,26 @@ static int create_msg(int permission)
 	return msgget(key, permission | IPC_CREAT);
 }
 
+#ifndef HAVE_MQUEUE_H
+static int create_posix_msg(const char *name __attribute__((__unused__)),
+							int permission __attribute__((__unused__)))
+{
+	warnx(_("POSIX message queue is not supported"));
+	return -1;
+}
+#else
 static int create_posix_msg(const char *name, int permission)
 {
-	if (-1 == mq_open(name, O_RDWR | O_CREAT, permission, NULL))
+	mqd_t mqd;
+
+	if (-1 == (mqd = mq_open(name, O_RDWR | O_CREAT, permission, NULL)))
 		return -1;
+
+	mq_close(mqd);
 	printf(_("POSIX message queue name: %s\n"), name);
 	return 0;
 }
+#endif
 
 static int create_sem(int nsems, int permission)
 {
@@ -89,6 +124,14 @@ static int create_sem(int nsems, int permission)
 	return semget(key, nsems, permission | IPC_CREAT);
 }
 
+#ifndef HAVE_SEMAPHORE_H
+static int create_posix_sem(const char *name __attribute__((__unused__)),
+							int permission __attribute__((__unused__)))
+{
+	warnx(_("POSIX semaphore is not supported"));
+	return -1;
+}
+#else
 static int create_posix_sem(const char *name, int permission)
 {
 	sem_t *sem;
@@ -100,6 +143,7 @@ static int create_posix_sem(const char *name, int permission)
 	printf(_("POSIX semaphore name: %s\n"), name);
 	return 0;
 }
+#endif
 
 static void __attribute__((__noreturn__)) usage(void)
 {

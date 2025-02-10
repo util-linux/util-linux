@@ -52,6 +52,7 @@ int ipc_msg_get_limits(struct ipc_limits *lim)
 	}
 
 	/* POSIX IPC */
+	#ifdef HAVE_MQUEUE_H
 	FILE *f;
 
 	f = fopen(_PATH_PROC_POSIX_IPC_MSGMNI, "r");
@@ -74,6 +75,7 @@ int ipc_msg_get_limits(struct ipc_limits *lim)
 			lim->msgmax_posix = 0;
 		fclose(f);
 	}
+	#endif
 
 	return 0;
 }
@@ -251,6 +253,14 @@ void ipc_shm_free_info(struct shm_data *shmds)
 	}
 }
 
+#ifndef HAVE_SYS_MMAN_H
+int posix_ipc_shm_get_info(const char *name __attribute__((unused)),
+			   			   struct posix_shm_data **shmds __attribute__((unused)))
+{
+	warnx(_("POSIX shared memory is not supported"));
+	return -1;
+}
+#else
 int posix_ipc_shm_get_info(const char *name, struct posix_shm_data **shmds)
 {
 	DIR *d;
@@ -258,12 +268,14 @@ int posix_ipc_shm_get_info(const char *name, struct posix_shm_data **shmds)
 	struct posix_shm_data *p;
 	struct dirent *de;
 
+	d = opendir(_PATH_DEV_SHM);
+	if (!d) {
+		warnx(_("cannot open %s"), _PATH_DEV_SHM);
+		return -1;
+	}
+
 	p = *shmds = xcalloc(1, sizeof(struct posix_shm_data));
 	p->next = NULL;
-
-	d = opendir(_PATH_DEV_SHM);
-	if (!d)
-		err(EXIT_FAILURE, _("cannot open %s"), _PATH_DEV_SHM);
 
 	while ((de = readdir(d)) != NULL) {
 		if ((de->d_name[0] == '.' && de->d_name[1] == '\0') ||
@@ -275,16 +287,10 @@ int posix_ipc_shm_get_info(const char *name, struct posix_shm_data **shmds)
 			continue;
 
 		struct stat st;
-		char path[PATH_MAX];
-		snprintf(path, sizeof(path), "%s/%s", _PATH_DEV_SHM, de->d_name);
-		if (stat(path, &st) < 0)
+		if (fstatat(dirfd(d), de->d_name, &st, 0) < 0)
 			continue;
-		
-		memset(path, 0, sizeof(path));
-		path[0] = '/';
-		strcat(path, de->d_name);
 
-		p->name = xstrdup(path);
+		p->name = xstrdup(de->d_name);
 		p->cuid = st.st_uid;
 		p->cgid = st.st_gid;
 		p->size = st.st_size;
@@ -292,7 +298,7 @@ int posix_ipc_shm_get_info(const char *name, struct posix_shm_data **shmds)
 		p->mtime = st.st_mtime;
 
 		if (name != NULL) {
-			if (strcmp(name, path) == 0) {
+			if (strcmp(name, p->name) == 0) {
 				i = 1;
 				break;
 			}
@@ -310,6 +316,7 @@ int posix_ipc_shm_get_info(const char *name, struct posix_shm_data **shmds)
 	closedir(d);
 	return i;
 }
+#endif
 
 void posix_ipc_shm_free_info(struct posix_shm_data *shmds)
 {
@@ -459,6 +466,14 @@ void ipc_sem_free_info(struct sem_data *semds)
 	}
 }
 
+#ifndef HAVE_SEMAPHORE_H
+int posix_ipc_sem_get_info(const char *name __attribute__((__unused__)),
+			   			   struct posix_sem_data **semds __attribute__((__unused__)))
+{
+	warnx(_("POSIX semaphore is not supported"));
+	return -1;
+}
+#else
 int posix_ipc_sem_get_info(const char *name, struct posix_sem_data **semds)
 {
 	DIR *d;
@@ -466,12 +481,14 @@ int posix_ipc_sem_get_info(const char *name, struct posix_sem_data **semds)
 	struct posix_sem_data *p;
 	struct dirent *de;
 
+	d = opendir(_PATH_DEV_SHM);
+	if (!d) {
+		warnx(_("cannot open %s"), _PATH_DEV_SHM);
+		return -1;
+	}
+
 	p = *semds = xcalloc(1, sizeof(struct posix_sem_data));
 	p->next = NULL;
-
-	d = opendir(_PATH_DEV_SHM);
-	if (!d)
-		err(EXIT_FAILURE, _("cannot open %s"), _PATH_DEV_SHM);
 
 	while ((de = readdir(d)) != NULL) {
 		if ((de->d_name[0] == '.' && de->d_name[1] == '\0') ||
@@ -483,9 +500,7 @@ int posix_ipc_sem_get_info(const char *name, struct posix_sem_data **semds)
 			continue;
 
 		struct stat st;
-		char path[PATH_MAX];
-		snprintf(path, sizeof(path), "%s/%s", _PATH_DEV_SHM, de->d_name);
-		if (stat(path, &st) < 0)
+		if (fstatat(dirfd(d), de->d_name, &st, 0) < 0)
 			continue;
 
 		sem_t *sem = sem_open(de->d_name + 4, 0);
@@ -493,19 +508,15 @@ int posix_ipc_sem_get_info(const char *name, struct posix_sem_data **semds)
 			continue;
 		sem_getvalue(sem, &p->sval);
 		sem_close(sem);
-		
-		memset(path, 0, sizeof(path));
-		path[0] = '/';
-		strcat(path, de->d_name + 4);
 
-		p->sname = xstrdup(path);
+		p->sname = xstrdup(de->d_name + 4);
 		p->cuid = st.st_uid;
 		p->cgid = st.st_gid;
 		p->mode = st.st_mode;
 		p->mtime = st.st_mtime;
 
 		if (name != NULL) {
-			if (strcmp(name, path) == 0) {
+			if (strcmp(name, p->sname) == 0) {
 				i = 1;
 				break;
 			}
@@ -523,6 +534,7 @@ int posix_ipc_sem_get_info(const char *name, struct posix_sem_data **semds)
 	closedir(d);
 	return i;
 }
+#endif
 
 void posix_ipc_sem_free_info(struct posix_sem_data *semds)
 {
@@ -644,6 +656,14 @@ void ipc_msg_free_info(struct msg_data *msgds)
 	}
 }
 
+#ifndef HAVE_MQUEUE_H
+int posix_ipc_msg_get_info(const char *name __attribute__((unused)),
+						   struct posix_msg_data **msgds __attribute__((unused)))
+{
+	warnx(_("POSIX message queues are not supported"));
+	return -1;
+}
+#else
 int posix_ipc_msg_get_info(const char *name, struct posix_msg_data **msgds)
 {
 	FILE *f;
@@ -652,11 +672,13 @@ int posix_ipc_msg_get_info(const char *name, struct posix_msg_data **msgds)
 	struct posix_msg_data *p;
 	struct dirent *de;
 
-	p = *msgds = xcalloc(1, sizeof(struct msg_data));
-	p->next = NULL;
-
 	if (access(_PATH_DEV_MQUEUE, F_OK) != 0) {
 		warnx(_("%s does not seem to be mounted. Use 'mount -t mqueue none %s' to mount it."), _PATH_DEV_MQUEUE, _PATH_DEV_MQUEUE);
+		return -1;
+	}
+
+	if (name && name[0] != '/') {
+		warnx(_("mqueue name must start with '/': %s"), name);
 		return -1;
 	}
 
@@ -666,6 +688,9 @@ int posix_ipc_msg_get_info(const char *name, struct posix_msg_data **msgds)
 		return -1;
 	}
 
+	p = *msgds = xcalloc(1, sizeof(struct msg_data));
+	p->next = NULL;
+
 	while ((de = readdir(d)) != NULL) {
 		if ((de->d_name[0] == '.' && de->d_name[1] == '\0') ||
 		    (de->d_name[0] == '.' && de->d_name[1] == '.' &&
@@ -673,17 +698,12 @@ int posix_ipc_msg_get_info(const char *name, struct posix_msg_data **msgds)
 			continue;
 
 		struct stat st;
-		char path[PATH_MAX];
-		snprintf(path, sizeof(path), "%s/%s", _PATH_DEV_MQUEUE, de->d_name);
+		if (fstatat(dirfd(d), de->d_name, &st, 0) < 0)
+			continue;
 
-		int fd = open(path, O_RDONLY);
+		int fd = openat(dirfd(d), de->d_name, O_RDONLY);
 		if (fd < 0)
 			continue;
-
-		if (fstat(fd, &st) < 0) {
-			close(fd);
-			continue;
-		}
 
 		f = fdopen(fd, "r");
 		if (!f) {
@@ -695,14 +715,10 @@ int posix_ipc_msg_get_info(const char *name, struct posix_msg_data **msgds)
 			continue;
 		}
 		fclose(f);
-		
-		memset(path, 0, sizeof(path));
-		path[0] = '/';
-		strcat(path, de->d_name);
 
-		p->mname = xstrdup(path);
+		p->mname = strconcat("/", de->d_name);
 
-		mqd_t mq = mq_open(path, O_RDONLY);
+		mqd_t mq = mq_open(p->mname, O_RDONLY);
 		struct mq_attr attr;
 		mq_getattr(mq, &attr);
 		p->q_qnum = attr.mq_curmsgs;
@@ -714,7 +730,7 @@ int posix_ipc_msg_get_info(const char *name, struct posix_msg_data **msgds)
 		p->mtime = st.st_mtime;
 
 		if (name != NULL) {
-			if (strcmp(name, path) == 0) {
+			if (strcmp(name, p->mname) == 0) {
 				i = 1;
 				break;
 			}
@@ -733,6 +749,7 @@ int posix_ipc_msg_get_info(const char *name, struct posix_msg_data **msgds)
 
 	return i;
 }
+#endif
 
 void posix_ipc_msg_free_info(struct posix_msg_data *msgds)
 {

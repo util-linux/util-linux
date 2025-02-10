@@ -199,6 +199,7 @@ headers = '''
         mntent.h
         paths.h
         pty.h
+        semaphore.h
         shadow.h
         stdint.h
         stdio_ext.h
@@ -229,6 +230,7 @@ headers = '''
         linux/tiocl.h
         linux/version.h
         linux/watchdog.h
+        mqueue.h
         net/if.h
         net/if_dl.h
         netinet/in.h
@@ -244,6 +246,7 @@ headers = '''
         sys/ioccom.h
         sys/ioctl.h
         sys/mkdev.h
+        sys/mman.h
         sys/mount.h
         sys/param.h
         sys/pidfd.h
@@ -1464,11 +1467,11 @@ endif
 has_seminfo_type = cc.has_type('struct seminfo', args : '-D_GNU_SOURCE', prefix : '#include <sys/sem.h>')
 
 posixipc_libs = []
-if not cc.has_function('shm_open')
+if not cc.has_function('shm_open') and conf.get('HAVE_SYS_MMAN_H').to_string() == '1'
   posixipc_libs = cc.find_library('rt', required : true)
 endif
 
-if not cc.has_function('sem_close')
+if not cc.has_function('sem_close') and conf.get('HAVE_SEMAPHORE_H').to_string() == '1'
   posixipc_libs += cc.find_library('pthread', required : true)
 endif
 

@@ -18,14 +18,20 @@
 #include <sys/msg.h>
 #include <sys/sem.h>
 #include <sys/shm.h>
-#include <mqueue.h>
-#include <semaphore.h>
 #include <sys/types.h>
 #include <time.h>
 #include <unistd.h>
 #include <grp.h>
 #include <pwd.h>
 #include <stdint.h>
+
+#ifdef HAVE_MQUEUE_H
+#include <mqueue.h>
+#endif
+
+#ifdef HAVE_SEMAPHORE_H
+#include <semaphore.h>
+#endif
 
 /*
  * SHM_DEST and SHM_LOCKED are defined in kernel headers, but inside
