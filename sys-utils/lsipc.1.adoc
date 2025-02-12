@@ -18,6 +18,8 @@ lsipc - show information on IPC facilities currently employed in the system
 
 *lsipc* shows information on the POSIX and System V inter-process communication facilities for which the calling process has read access.
 
+The default output, as well as the default output from options with predefined output columns (like *--shmems*, etc.), is subject to change. So whenever possible, you should avoid using default outputs in your scripts. Always explicitly define expected columns by using *--output* _columns-list_ in environments where a stable output is required.
+
 == OPTIONS
 
 *-i*, *--id* _id_::
