@@ -34,16 +34,16 @@
 #include <sys/time.h>
 
 #ifdef HAVE_MQUEUE_H
-#include <mqueue.h>
+# include <mqueue.h>
 #endif
 
 #ifdef HAVE_SEMAPHORE_H
-#include <semaphore.h>
+# include <semaphore.h>
 #endif
 
 #ifdef HAVE_SYS_MMAN_H
-#include <sys/stat.h>
-#include <sys/mman.h>
+# include <sys/stat.h>
+# include <sys/mman.h>
 #endif
 
 #include "c.h"
@@ -62,8 +62,8 @@ static int create_shm(size_t size, int permission)
 
 #ifndef HAVE_SYS_MMAN_H
 static int create_posix_shm(const char *name __attribute__((__unused__)),
-							size_t size __attribute__((__unused__)),
-							int permission __attribute__((__unused__)))
+			size_t size __attribute__((__unused__)),
+			int permission __attribute__((__unused__)))
 {
 	warnx(_("POSIX shared memory is not supported"));
 	return -1;
@@ -75,7 +75,7 @@ static int create_posix_shm(const char *name, size_t size, int permission)
 
 	if (-1 == (shmfd = shm_open(name, O_RDWR | O_CREAT, permission)))
 		return -1;
-	
+
 	if (-1 == ftruncate(shmfd, size)) {
 		close(shmfd);
 		return -1;
@@ -97,7 +97,7 @@ static int create_msg(int permission)
 
 #ifndef HAVE_MQUEUE_H
 static int create_posix_msg(const char *name __attribute__((__unused__)),
-							int permission __attribute__((__unused__)))
+			int permission __attribute__((__unused__)))
 {
 	warnx(_("POSIX message queue is not supported"));
 	return -1;
@@ -126,7 +126,7 @@ static int create_sem(int nsems, int permission)
 
 #ifndef HAVE_SEMAPHORE_H
 static int create_posix_sem(const char *name __attribute__((__unused__)),
-							int permission __attribute__((__unused__)))
+			int permission __attribute__((__unused__)))
 {
 	warnx(_("POSIX semaphore is not supported"));
 	return -1;

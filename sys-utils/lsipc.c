@@ -181,7 +181,7 @@ static const struct lsipc_coldesc coldescs[] =
 	[COL_CTIME]	= { "CTIME",	N_("Time of the last change"), N_("Last change"), 1, SCOLS_FL_RIGHT},
 
 	/* posix-common */
-	[COL_NAME] 		= { "NAME",     N_("POSIX resource name"), N_("Name"), 1 },
+	[COL_NAME]	= { "NAME",     N_("POSIX resource name"), N_("Name"), 1 },
 	[COL_MTIME]	= { "MTIME",   N_("Time of last action"), N_("Last action"), 1, SCOLS_FL_RIGHT},
 
 	/* msgq-specific */
@@ -322,21 +322,22 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Resource options:\n"), out);
-	fputs(_(" -m, --shmems           shared memory segments\n"), out);
-	fputs(_(" -M, --posix-shmems     POSIX shared memory segments\n"), out);
-	fputs(_(" -q, --queues        	 message queues\n"), out);
-	fputs(_(" -Q, --posix-mqueues 	 POSIX message queues\n"), out);
-	fputs(_(" -s, --semaphores    	 semaphores\n"), out);
-	fputs(_(" -S, --posix-semaphores POSIX semaphores\n"), out);
-	fputs(_(" -g, --global      	 info about system-wide usage (may be used with -m, -q and -s)\n"), out);
-	fputs(_(" -i, --id <id>          print details on resource identified by <id>\n"), out);
-	fputs(_(" -N, --name <name>      print details on posix resource identified by <name>\n"), out);
+	fputs(_(" -m, --shmems             shared memory segments\n"), out);
+	fputs(_(" -M, --posix-shmems       POSIX shared memory segments\n"), out);
+	fputs(_(" -q, --queues             message queues\n"), out);
+	fputs(_(" -Q, --posix-mqueues      POSIX message queues\n"), out);
+	fputs(_(" -s, --semaphores         semaphores\n"), out);
+	fputs(_(" -S, --posix-semaphores   POSIX semaphores\n"), out);
+	fputs(_(" -g, --global             info about system-wide usage\n"
+	        "                            (may be used with -m, -q and -s)\n"), out);
+	fputs(_(" -i, --id <id>            System V resource identified by <id>\n"), out);
+	fputs(_(" -N, --name <name>        POSIX resource identified by <name>\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_("     --noheadings         don't print headings\n"), out);
 	fputs(_("     --notruncate         don't truncate output\n"), out);
 	fputs(_("     --time-format=<type> display dates in short, full or iso format\n"), out);
-	fputs(_(" -b, --bytes              print SIZE in bytes rather than in human readable format\n"), out);
+	fputs(_(" -b, --bytes              print SIZE in bytes rather\n"), out);
 	fputs(_(" -c, --creator            show creator and owner\n"), out);
 	fputs(_(" -e, --export             display in an export-able output format\n"), out);
 	fputs(_(" -J, --json               use the JSON output format\n"), out);
@@ -346,7 +347,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -P, --numeric-perms      print numeric permissions (PERMS column)\n"), out);
 	fputs(_(" -r, --raw                display in raw mode\n"), out);
 	fputs(_(" -t, --time               show attach, detach and change times\n"), out);
-	fputs(_(" -y, --shell              use column names to be usable as shell variable identifiers\n"), out);
+	fputs(_(" -y, --shell              use column names to be usable as shell variables\n"), out);
 
 
 	fputs(USAGE_SEPARATOR, out);
@@ -355,7 +356,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fprintf(out, _("\nGeneric System V columns:\n"));
 	for (i = COLDESC_IDX_GEN_FIRST; i <= COLDESC_IDX_GEN_LAST; i++)
 		fprintf(out, " %14s  %s\n", coldescs[i].name, _(coldescs[i].help));
-	
+
 	fprintf(out, _("\nGeneric POSIX columns:\n"));
 	fprintf(out, " %14s  %s\n", coldescs[COL_NAME].name, _(coldescs[COL_NAME].help));
 	for (i = COLDESC_IDX_GEN_POSIX_FIRST; i <= COLDSEC_IDX_GEN_POSIX_LAST; i++)
@@ -768,7 +769,8 @@ static void do_sem_global(struct lsipc_control *ctl, struct libscols_table *tb)
 	global_set_data(ctl, tb, "SEMVMX", _("Semaphore max value"), 0, lim.semvmx, 0, 0);
 }
 
-static void do_posix_sem(const char *name, struct lsipc_control *ctl, struct libscols_table *tb)
+static void do_posix_sem(const char *name, struct lsipc_control *ctl,
+			struct libscols_table *tb)
 {
 	struct libscols_line *ln;
 	struct passwd *pw = NULL;
@@ -855,7 +857,7 @@ static void do_posix_sem(const char *name, struct lsipc_control *ctl, struct lib
 			arg = NULL;
 		}
 		if (name != NULL)
-			break;		
+			break;
 	}
 	posix_ipc_sem_free_info(semds);
 }
@@ -993,9 +995,10 @@ static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 	ipc_msg_free_info(msgds);
 }
 
-static void do_posix_msg(const char *name, struct lsipc_control *ctl, struct libscols_table *tb)
+static void do_posix_msg(const char *name, struct lsipc_control *ctl,
+			struct libscols_table *tb)
 {
-    struct libscols_line *ln;
+	struct libscols_line *ln;
 	struct passwd *pw = NULL;
 	struct group *gr = NULL;
 	struct posix_msg_data *msgds, *p;
@@ -1092,7 +1095,7 @@ static void do_posix_msg(const char *name, struct lsipc_control *ctl, struct lib
 			break;
 	}
 	posix_ipc_msg_free_info(msgds);
-} 
+}
 
 static void do_msg_global(struct lsipc_control *ctl, struct libscols_table *tb)
 {
@@ -1482,7 +1485,7 @@ int main(int argc, char *argv[])
 		{ 'J', 'e', 'l', 'n', 'r' },
 		{ 'N', 'g', 'i' },
 		{ 'c', 'o', 't' },
-		{ 'M', 'Q', 'S', 'm', 'q', 's' },	
+		{ 'M', 'Q', 'S', 'm', 'q', 's' },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;

@@ -52,7 +52,7 @@ int ipc_msg_get_limits(struct ipc_limits *lim)
 	}
 
 	/* POSIX IPC */
-	#ifdef HAVE_MQUEUE_H
+#ifdef HAVE_MQUEUE_H
 	FILE *f;
 
 	f = fopen(_PATH_PROC_POSIX_IPC_MSGMNI, "r");
@@ -75,8 +75,7 @@ int ipc_msg_get_limits(struct ipc_limits *lim)
 			lim->msgmax_posix = 0;
 		fclose(f);
 	}
-	#endif
-
+#endif
 	return 0;
 }
 
@@ -255,7 +254,7 @@ void ipc_shm_free_info(struct shm_data *shmds)
 
 #ifndef HAVE_SYS_MMAN_H
 int posix_ipc_shm_get_info(const char *name __attribute__((unused)),
-			   			   struct posix_shm_data **shmds __attribute__((unused)))
+			   struct posix_shm_data **shmds __attribute__((unused)))
 {
 	warnx(_("POSIX shared memory is not supported"));
 	return -1;
@@ -316,7 +315,7 @@ int posix_ipc_shm_get_info(const char *name, struct posix_shm_data **shmds)
 	closedir(d);
 	return i;
 }
-#endif
+#endif /* HAVE_SYS_MMAN_H */
 
 void posix_ipc_shm_free_info(struct posix_shm_data *shmds)
 {
@@ -468,7 +467,7 @@ void ipc_sem_free_info(struct sem_data *semds)
 
 #ifndef HAVE_SEMAPHORE_H
 int posix_ipc_sem_get_info(const char *name __attribute__((__unused__)),
-			   			   struct posix_sem_data **semds __attribute__((__unused__)))
+			   struct posix_sem_data **semds __attribute__((__unused__)))
 {
 	warnx(_("POSIX semaphore is not supported"));
 	return -1;
@@ -534,7 +533,7 @@ int posix_ipc_sem_get_info(const char *name, struct posix_sem_data **semds)
 	closedir(d);
 	return i;
 }
-#endif
+#endif /* HAVE_SEMAPHORE_H */
 
 void posix_ipc_sem_free_info(struct posix_sem_data *semds)
 {
@@ -658,7 +657,7 @@ void ipc_msg_free_info(struct msg_data *msgds)
 
 #ifndef HAVE_MQUEUE_H
 int posix_ipc_msg_get_info(const char *name __attribute__((unused)),
-						   struct posix_msg_data **msgds __attribute__((unused)))
+			   struct posix_msg_data **msgds __attribute__((unused)))
 {
 	warnx(_("POSIX message queues are not supported"));
 	return -1;
@@ -749,7 +748,7 @@ int posix_ipc_msg_get_info(const char *name, struct posix_msg_data **msgds)
 
 	return i;
 }
-#endif
+#endif /* HAVE_MQUEUE_H */
 
 void posix_ipc_msg_free_info(struct posix_msg_data *msgds)
 {
