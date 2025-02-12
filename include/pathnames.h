@@ -187,7 +187,7 @@
 
 #define _PATH_PROC_KERNEL	"/proc/sys/kernel"
 
-/* ipc paths */
+/* System V ipc paths */
 #define _PATH_PROC_SYSV_MSG	"/proc/sysvipc/msg"
 #define _PATH_PROC_SYSV_SEM	"/proc/sysvipc/sem"
 #define _PATH_PROC_SYSV_SHM	"/proc/sysvipc/shm"
@@ -207,6 +207,13 @@
 #define _PATH_PROC_SYS_FS	"/proc/sys/fs"
 #define _PATH_PROC_PIPE_MAX_SIZE	_PATH_PROC_SYS_FS "/pipe-max-size"
 #define _PATH_PROC_BINFMT_MISC	_PATH_PROC_SYS_FS "/binfmt_misc"
+
+/* Posix ipc paths */
+#define _PATH_DEV_MQUEUE	"/dev/mqueue"
+#define _PATH_PROC_POSIX_IPC_MSGMAX _PATH_PROC_SYS_FS "/mqueue/msgsize_max"
+#define _PATH_PROC_POSIX_IPC_MSGMNB _PATH_PROC_SYS_FS "/mqueue/msg_max"
+#define _PATH_PROC_POSIX_IPC_MSGMNI _PATH_PROC_SYS_FS "/mqueue/queues_max"
+#define _PATH_DEV_SHM	"/dev/shm"
 
 /* irqtop paths */
 #define _PATH_PROC_INTERRUPTS	"/proc/interrupts"

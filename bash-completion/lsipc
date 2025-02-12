@@ -9,6 +9,10 @@ _lsipc_module()
 			COMPREPLY=( $(compgen -W "id" -- $cur) )
 			return 0
 			;;
+		'-N'|'--name')
+			COMPREPLY=( $(compgen -W "name" -- $cur) )
+			return 0
+			;;
 		'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
@@ -45,10 +49,14 @@ _lsipc_module()
 	esac
 	OPTS="
 		--shmems
+		--posix-shmems
 		--queues
+		--posix-mqueues
 		--semaphores
+		--posix-semaphores
 		--global
 		--id
+		--name
 		--noheadings
 		--notruncate
 		--time-format
@@ -62,6 +70,7 @@ _lsipc_module()
 		--numeric-perms
 		--raw
 		--time
+		--shell
 		--help
 		--version
 	"

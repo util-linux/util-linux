@@ -20,7 +20,7 @@ ipcmk - make various IPC resources
 
 == DESCRIPTION
 
-*ipcmk* allows you to create System V inter-process communication (IPC) objects: shared memory segments, message queues, and semaphore arrays.
+*ipcmk* allows you to create POSIX and System V inter-process communication (IPC) objects: shared memory segments, message queues, and semaphore (arrays for System V).
 
 == OPTIONS
 
@@ -29,11 +29,23 @@ Resources can be specified with these options:
 *-M*, *--shmem* _size_::
 Create a shared memory segment of _size_ bytes. The _size_ argument may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, etc. (the "iB" is optional, e.g., "K" has the same meaning as "KiB") or the suffixes KB (=1000), MB (=1000*1000), and so on for GB, etc.
 
+*-m*, *--posix-shmem* _size_::
+Create a POSIX shared memory segment of _size_ bytes. The _size_ argument may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, etc. (the "iB" is optional, e.g., "K" has the same meaning as "KiB") or the suffixes KB (=1000), MB (=1000*1000), and so on for GB, etc.
+
 *-Q*, *--queue*::
 Create a message queue.
 
+*-q*, *--posix-mqueue*::
+Create a POSIX message queue.
+
 *-S*, *--semaphore* _number_::
 Create a semaphore array with _number_ of elements.
+
+*-s*, *--posix-semaphore*::
+Create a POSIX named semaphore.
+
+*-n*, *--name* _name_::
+Name of the POSIX IPC object. This option is mandatory for POSIX IPC objects.
 
 Other options are:
 
@@ -44,12 +56,14 @@ include::man-common/help-version.adoc[]
 
 == AUTHORS
 
-mailto:hayden.james@gmail.com[Hayden A. James]
+mailto:hayden.james@gmail.com[Hayden A. James],
+mailto:paithankarprasanna@gmail.com[Prasanna Paithankar]
 
 == SEE ALSO
 
 *ipcrm*(1),
 *ipcs*(1),
+*lsipc*(1),
 *sysvipc*(7)
 
 include::man-common/bugreports.adoc[]

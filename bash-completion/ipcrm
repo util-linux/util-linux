@@ -6,32 +6,47 @@ _ipcrm_module()
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
 		'-m'|'--shmem-id')
-			KEYIDS="$(ipcs -m | awk '{if (3 < NR) {print $2}}')"
+			KEYIDS="$(lsipc -m --noheadings -o ID)"
 			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
 			return 0
 			;;
 		'-M'|'--shmem-key')
-			KEYIDS="$(ipcs -m | awk '{if (3 < NR) {print $1}}')"
+			KEYIDS="$(lsipc -m --noheadings -o KEY)"
+			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
+			return 0
+			;;
+		'--posix-shmem')
+			KEYIDS="$(lsipc -M --noheadings -o NAME)"
 			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
 			return 0
 			;;
 		'-q'|'--queue-id')
-			KEYIDS="$(ipcs -q | awk '{if (3 < NR) {print $2}}')"
+			KEYIDS="$(lsipc -q --noheadings -o ID)"
 			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
 			return 0
 			;;
 		'-Q'|'--queue-key')
-			KEYIDS="$(ipcs -q | awk '{if (3 < NR) {print $1}}')"
+			KEYIDS="$(lsipc -q --noheadings -o KEY)"
+			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
+			return 0
+			;;
+		'--posix-mqueue')
+			KEYIDS="$(lsipc -Q --noheadings -o NAME)"
 			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
 			return 0
 			;;
 		'-s'|'--semaphore-id')
-			KEYIDS="$(ipcs -s | awk '{if (3 < NR) {print $2}}')"
+			KEYIDS="$(lsipc -s --noheadings -o ID)"
 			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
 			return 0
 			;;
 		'-S'|'--semaphore-key')
-			KEYIDS="$(ipcs -s | awk '{if (3 < NR) {print $1}}')"
+			KEYIDS="$(lsipc -s --noheadings -o KEY)"
+			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
+			return 0
+			;;
+		'--posix-semaphore')
+			KEYIDS="$(lsipc -S --noheadings -o NAME)"
 			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
 			return 0
 			;;
@@ -42,16 +57,19 @@ _ipcrm_module()
 	case $cur in
 		'=')
 			cur=${cur#=}
-			COMPREPLY=( $(compgen -W "shm msg sem" -- $cur) )
+			COMPREPLY=( $(compgen -W "shm pshm msg pmsg sem psem" -- $cur) )
 			return 0
 			;;
 	esac
 	OPTS="	--shmem-id
 		--shmem-key
+		--posix-shmem
 		--queue-id
 		--queue-key
+		--posix-mqueue
 		--semaphore-id
 		--semaphore-key
+		--posix-semaphore
 		--all=
 		--verbose
 		--help

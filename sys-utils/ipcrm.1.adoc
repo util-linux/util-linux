@@ -23,19 +23,19 @@ ipcrm - remove certain IPC resources
 
 == DESCRIPTION
 
-*ipcrm* removes System V inter-process communication (IPC) objects and associated data structures from the system. In order to delete such objects, you must be superuser, or the creator or owner of the object.
+*ipcrm* removes POSIX and System V inter-process communication (IPC) objects and associated data structures from the system. In order to delete such objects, you must be superuser, or the creator or owner of the object.
 
-System V IPC objects are of three types: shared memory, message queues, and semaphores. Deletion of a message queue or semaphore object is immediate (regardless of whether any process still holds an IPC identifier for the object). A shared memory object is only removed after all currently attached processes have detached (*shmdt*(2)) the object from their virtual address space.
+POSIX and System V IPC objects are of three types: shared memory, message queues, and semaphores. Deletion of a message queue or semaphore object is immediate (regardless of whether any process still holds an IPC identifier for the object). A shared memory object is only removed after all currently attached processes have detached (*shmdt*(2)) the object from their virtual address space.
 
 Two syntax styles are supported. The old Linux historical syntax specifies a three-letter keyword indicating which class of object is to be deleted, followed by one or more IPC identifiers for objects of this type.
 
 The SUS-compliant syntax allows the specification of zero or more objects of all three types in a single command line, with objects specified either by key or by identifier (see below). Both keys and identifiers may be specified in decimal, hexadecimal (specified with an initial '0x' or '0X'), or octal (specified with an initial '0').
 
-The details of the removes are described in *shmctl*(2), *msgctl*(2), and *semctl*(2). The identifiers and keys can be found by using *ipcs*(1).
+The details of the removes are described in *shmctl*(2), *shm_unlink*(3), *msgctl*(2), *mq_unlink*(3), *semctl*(2), and *sem_unlink*(3). The identifiers and keys can be found by using *lsipc*(1) or *ipcs*(1).
 
 == OPTIONS
 
-*-a*, *--all* [*shm*] [*msg*] [*sem*]::
+*-a*, *--all* [*shm*] [*pshm*] [*msg*] [*pmsg*] [*sem*] [*psem*]::
 Remove all resources. When an option argument is provided, the removal is performed only for the specified resource types.
 +
 _Warning!_ Do not use *-a* if you are unsure how the software using the resources might react to missing objects. Some programs create these resources at startup and may not have any code to deal with an unexpected disappearance.
@@ -46,17 +46,26 @@ Remove the shared memory segment created with _shmkey_ after the last detach is 
 *-m*, *--shmem-id* _shmid_::
 Remove the shared memory segment identified by _shmid_ after the last detach is performed.
 
+*-x*, *--posix-shmem* _name_::
+Remove the POSIX shared memory segment created with _name_.
+
 *-Q*, *--queue-key* _msgkey_::
 Remove the message queue created with _msgkey_.
 
 *-q*, *--queue-id* _msgid_::
 Remove the message queue identified by _msgid_.
 
+*-y*, *--posix-mqueue* _name_::
+Remove the POSIX message queue created with _name_.
+
 *-S*, *--semaphore-key* _semkey_::
 Remove the semaphore created with _semkey_.
 
 *-s*, *--semaphore-id* _semid_::
 Remove the semaphore identified by _semid_.
+
+*-z*, *--posix-semaphore* _name_::
+Remove the POSIX named semaphore created with _name_.
 
 include::man-common/help-version.adoc[]
 
@@ -69,13 +78,17 @@ In its first Linux implementation, *ipcrm* used the deprecated syntax shown in t
 
 *ipcmk*(1),
 *ipcs*(1),
+*lsipc*(1),
 *msgctl*(2),
+*mq_unlink*(3),
 *msgget*(2),
 *semctl*(2),
 *semget*(2),
+*sem_unlink*(3),
 *shmctl*(2),
 *shmdt*(2),
 *shmget*(2),
+*shm_unlink*(3),
 *ftok*(3),
 *sysvipc*(7)
 

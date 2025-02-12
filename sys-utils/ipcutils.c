@@ -51,6 +51,32 @@ int ipc_msg_get_limits(struct ipc_limits *lim)
 		lim->msgmax = msginfo.msgmax;
 	}
 
+	/* POSIX IPC */
+	#ifdef HAVE_MQUEUE_H
+	FILE *f;
+
+	f = fopen(_PATH_PROC_POSIX_IPC_MSGMNI, "r");
+	if (f) {
+		if(fscanf(f, "%"SCNu64, &lim->msgmni_posix) != 1)
+			lim->msgmni_posix = 0;
+		fclose(f);
+	}
+
+	f = fopen(_PATH_PROC_POSIX_IPC_MSGMNB, "r");
+	if (f) {
+		if(fscanf(f, "%"SCNu64, &lim->msgmnb_posix) != 1)
+			lim->msgmnb_posix = 0;
+		fclose(f);
+	}
+
+	f = fopen(_PATH_PROC_POSIX_IPC_MSGMAX, "r");
+	if (f) {
+		if(fscanf(f, "%"SCNu64, &lim->msgmax_posix) != 1)
+			lim->msgmax_posix = 0;
+		fclose(f);
+	}
+	#endif
+
 	return 0;
 }
 
@@ -227,6 +253,80 @@ void ipc_shm_free_info(struct shm_data *shmds)
 	}
 }
 
+#ifndef HAVE_SYS_MMAN_H
+int posix_ipc_shm_get_info(const char *name __attribute__((unused)),
+			   			   struct posix_shm_data **shmds __attribute__((unused)))
+{
+	warnx(_("POSIX shared memory is not supported"));
+	return -1;
+}
+#else
+int posix_ipc_shm_get_info(const char *name, struct posix_shm_data **shmds)
+{
+	DIR *d;
+	int i = 0;
+	struct posix_shm_data *p;
+	struct dirent *de;
+
+	d = opendir(_PATH_DEV_SHM);
+	if (!d) {
+		warnx(_("cannot open %s"), _PATH_DEV_SHM);
+		return -1;
+	}
+
+	p = *shmds = xcalloc(1, sizeof(struct posix_shm_data));
+	p->next = NULL;
+
+	while ((de = readdir(d)) != NULL) {
+		if ((de->d_name[0] == '.' && de->d_name[1] == '\0') ||
+		    (de->d_name[0] == '.' && de->d_name[1] == '.' &&
+		     de->d_name[2] == '\0'))
+			continue;
+
+		if (strncmp(de->d_name, "sem.", 4) == 0)
+			continue;
+
+		struct stat st;
+		if (fstatat(dirfd(d), de->d_name, &st, 0) < 0)
+			continue;
+
+		p->name = xstrdup(de->d_name);
+		p->cuid = st.st_uid;
+		p->cgid = st.st_gid;
+		p->size = st.st_size;
+		p->mode = st.st_mode;
+		p->mtime = st.st_mtime;
+
+		if (name != NULL) {
+			if (strcmp(name, p->name) == 0) {
+				i = 1;
+				break;
+			}
+			continue;
+		}
+
+		p->next = xcalloc(1, sizeof(struct posix_shm_data));
+		p = p->next;
+		p->next = NULL;
+		i++;
+	}
+
+	if (i == 0)
+		free(*shmds);
+	closedir(d);
+	return i;
+}
+#endif
+
+void posix_ipc_shm_free_info(struct posix_shm_data *shmds)
+{
+	while (shmds) {
+		struct posix_shm_data *next = shmds->next;
+		free(shmds);
+		shmds = next;
+	}
+}
+
 static void get_sem_elements(struct sem_data *p)
 {
 	size_t i;
@@ -366,6 +466,85 @@ void ipc_sem_free_info(struct sem_data *semds)
 	}
 }
 
+#ifndef HAVE_SEMAPHORE_H
+int posix_ipc_sem_get_info(const char *name __attribute__((__unused__)),
+			   			   struct posix_sem_data **semds __attribute__((__unused__)))
+{
+	warnx(_("POSIX semaphore is not supported"));
+	return -1;
+}
+#else
+int posix_ipc_sem_get_info(const char *name, struct posix_sem_data **semds)
+{
+	DIR *d;
+	int i = 0;
+	struct posix_sem_data *p;
+	struct dirent *de;
+
+	d = opendir(_PATH_DEV_SHM);
+	if (!d) {
+		warnx(_("cannot open %s"), _PATH_DEV_SHM);
+		return -1;
+	}
+
+	p = *semds = xcalloc(1, sizeof(struct posix_sem_data));
+	p->next = NULL;
+
+	while ((de = readdir(d)) != NULL) {
+		if ((de->d_name[0] == '.' && de->d_name[1] == '\0') ||
+		    (de->d_name[0] == '.' && de->d_name[1] == '.' &&
+		     de->d_name[2] == '\0'))
+			continue;
+
+		if (strncmp(de->d_name, "sem.", 4) != 0)
+			continue;
+
+		struct stat st;
+		if (fstatat(dirfd(d), de->d_name, &st, 0) < 0)
+			continue;
+
+		sem_t *sem = sem_open(de->d_name + 4, 0);
+		if (sem == SEM_FAILED)
+			continue;
+		sem_getvalue(sem, &p->sval);
+		sem_close(sem);
+
+		p->sname = xstrdup(de->d_name + 4);
+		p->cuid = st.st_uid;
+		p->cgid = st.st_gid;
+		p->mode = st.st_mode;
+		p->mtime = st.st_mtime;
+
+		if (name != NULL) {
+			if (strcmp(name, p->sname) == 0) {
+				i = 1;
+				break;
+			}
+			continue;
+		}
+
+		p->next = xcalloc(1, sizeof(struct posix_sem_data));
+		p = p->next;
+		p->next = NULL;
+		i++;
+	}
+
+	if (i == 0)
+		free(*semds);
+	closedir(d);
+	return i;
+}
+#endif
+
+void posix_ipc_sem_free_info(struct posix_sem_data *semds)
+{
+	while (semds) {
+		struct posix_sem_data *next = semds->next;
+		free(semds);
+		semds = next;
+	}
+}
+
 int ipc_msg_get_info(int id, struct msg_data **msgds)
 {
 	FILE *f;
@@ -472,6 +651,110 @@ void ipc_msg_free_info(struct msg_data *msgds)
 {
 	while (msgds) {
 		struct msg_data *next = msgds->next;
+		free(msgds);
+		msgds = next;
+	}
+}
+
+#ifndef HAVE_MQUEUE_H
+int posix_ipc_msg_get_info(const char *name __attribute__((unused)),
+						   struct posix_msg_data **msgds __attribute__((unused)))
+{
+	warnx(_("POSIX message queues are not supported"));
+	return -1;
+}
+#else
+int posix_ipc_msg_get_info(const char *name, struct posix_msg_data **msgds)
+{
+	FILE *f;
+	DIR *d;
+	int i = 0;
+	struct posix_msg_data *p;
+	struct dirent *de;
+
+	if (access(_PATH_DEV_MQUEUE, F_OK) != 0) {
+		warnx(_("%s does not seem to be mounted. Use 'mount -t mqueue none %s' to mount it."), _PATH_DEV_MQUEUE, _PATH_DEV_MQUEUE);
+		return -1;
+	}
+
+	if (name && name[0] != '/') {
+		warnx(_("mqueue name must start with '/': %s"), name);
+		return -1;
+	}
+
+	d = opendir(_PATH_DEV_MQUEUE);
+	if (!d) {
+		warnx(_("cannot open %s"), _PATH_DEV_MQUEUE);
+		return -1;
+	}
+
+	p = *msgds = xcalloc(1, sizeof(struct msg_data));
+	p->next = NULL;
+
+	while ((de = readdir(d)) != NULL) {
+		if ((de->d_name[0] == '.' && de->d_name[1] == '\0') ||
+		    (de->d_name[0] == '.' && de->d_name[1] == '.' &&
+		     de->d_name[2] == '\0'))
+			continue;
+
+		struct stat st;
+		if (fstatat(dirfd(d), de->d_name, &st, 0) < 0)
+			continue;
+
+		int fd = openat(dirfd(d), de->d_name, O_RDONLY);
+		if (fd < 0)
+			continue;
+
+		f = fdopen(fd, "r");
+		if (!f) {
+			close(fd);
+			continue;
+		}
+		if (fscanf(f, "QSIZE:%"SCNu64, &p->q_cbytes) != 1) {
+			fclose(f);
+			continue;
+		}
+		fclose(f);
+
+		p->mname = strconcat("/", de->d_name);
+
+		mqd_t mq = mq_open(p->mname, O_RDONLY);
+		struct mq_attr attr;
+		mq_getattr(mq, &attr);
+		p->q_qnum = attr.mq_curmsgs;
+		mq_close(mq);
+
+		p->cuid = st.st_uid;
+		p->cgid = st.st_gid;
+		p->mode = st.st_mode;
+		p->mtime = st.st_mtime;
+
+		if (name != NULL) {
+			if (strcmp(name, p->mname) == 0) {
+				i = 1;
+				break;
+			}
+			continue;
+		}
+
+		p->next = xcalloc(1, sizeof(struct posix_msg_data));
+		p = p->next;
+		p->next = NULL;
+		i++;
+	}
+
+	if (i == 0)
+		free(*msgds);
+	closedir(d);
+
+	return i;
+}
+#endif
+
+void posix_ipc_msg_free_info(struct posix_msg_data *msgds)
+{
+	while (msgds) {
+		struct posix_msg_data *next = msgds->next;
 		free(msgds);
 		msgds = next;
 	}

@@ -25,6 +25,14 @@
 #include <pwd.h>
 #include <stdint.h>
 
+#ifdef HAVE_MQUEUE_H
+#include <mqueue.h>
+#endif
+
+#ifdef HAVE_SEMAPHORE_H
+#include <semaphore.h>
+#endif
+
 /*
  * SHM_DEST and SHM_LOCKED are defined in kernel headers, but inside
  * #ifdef __KERNEL__ ... #endif
@@ -99,6 +107,7 @@ enum {
 };
 
 struct ipc_limits {
+	/* System V IPC */
 	uint64_t	shmmni;		/* max number of segments */
 	uint64_t	shmmax;		/* max segment size */
 	uint64_t	shmall;		/* max total shared memory */
@@ -113,6 +122,11 @@ struct ipc_limits {
 	int		msgmni;		/* max queues system wide */
 	uint64_t	msgmax;		/* max size of message */
 	int		msgmnb;		/* default max size of queue */
+
+	/* POSIX IPC */
+	uint64_t	msgmax_posix;	/* max size of message */
+	uint64_t	msgmni_posix;	/* max queues system wide */
+	uint64_t	msgmnb_posix;	/* default max number of messages in a queue */
 };
 
 extern int ipc_msg_get_limits(struct ipc_limits *lim);
@@ -153,6 +167,20 @@ struct shm_data {
 extern int ipc_shm_get_info(int id, struct shm_data **shmds);
 extern void ipc_shm_free_info(struct shm_data *shmds);
 
+struct posix_shm_data {
+	char			*name;
+	int64_t			mtime;	/* last change time */
+	uid_t			cuid;
+	gid_t			cgid;
+	off_t			size;
+	unsigned int	mode;
+
+	struct posix_shm_data *next;
+};
+
+extern int posix_ipc_shm_get_info(const char *name, struct posix_shm_data **shmds);
+extern void posix_ipc_shm_free_info(struct posix_shm_data *shmds);
+
 /* See 'struct sem_array' in kernel sources
  */
 struct sem_elem {
@@ -175,6 +203,20 @@ struct sem_data {
 extern int ipc_sem_get_info(int id, struct sem_data **semds);
 extern void ipc_sem_free_info(struct sem_data *semds);
 
+struct posix_sem_data {
+	char			*sname;
+	int64_t			mtime;	/* last change time */
+	uid_t			cuid;
+	gid_t			cgid;
+	unsigned int	mode;
+	int				sval;	/* semaphore value */
+
+	struct posix_sem_data *next;
+};
+
+extern int posix_ipc_sem_get_info(const char *name, struct posix_sem_data **semds);
+extern void posix_ipc_sem_free_info(struct posix_sem_data *semds);
+
 /* See 'struct msg_queue' in kernel sources
  */
 struct msg_data {
@@ -194,5 +236,20 @@ struct msg_data {
 
 extern int ipc_msg_get_info(int id, struct msg_data **msgds);
 extern void ipc_msg_free_info(struct msg_data *msgds);
+
+struct posix_msg_data {
+	char			*mname;
+	int64_t			mtime;
+	uid_t			cuid;
+	gid_t			cgid;
+	unsigned int	mode;
+	uint64_t		q_cbytes;	/* current number of bytes on the queue */
+	long			q_qnum;		/* number of messages on the queue */
+
+	struct posix_msg_data *next;
+};
+
+extern int posix_ipc_msg_get_info(const char *name, struct posix_msg_data **msgds);
+extern void posix_ipc_msg_free_info(struct posix_msg_data *msgds);
 
 #endif /* UTIL_LINUX_IPCUTILS_H */

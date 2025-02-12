@@ -356,6 +356,7 @@ AC_CHECK_HEADERS([ \
 	linux/if_alg.h \
 	locale.h \
 	mntent.h \
+  mqueue.h \
 	net/if_dl.h \
 	net/if.h \
 	netinet/in.h \
@@ -363,6 +364,7 @@ AC_CHECK_HEADERS([ \
 	pty.h \
 	security/pam_appl.h \
 	security/pam_modules.h \
+  semaphore.h \
 	shadow.h \
 	stdint.h \
 	stdio_ext.h \
@@ -375,6 +377,7 @@ AC_CHECK_HEADERS([ \
 	sys/ioctl.h \
 	sys/io.h \
 	sys/mkdev.h \
+  sys/mman.h \
 	sys/mount.h \
 	sys/param.h \
 	sys/pidfd.h \
@@ -2109,6 +2112,13 @@ UL_BUILD_INIT([chmem])
 UL_REQUIRES_LINUX([chmem])
 AM_CONDITIONAL([BUILD_CHMEM], [test "x$build_chmem" = xyes])
 
+AC_CHECK_FUNCS([shm_open], [], [
+  AC_CHECK_LIB([rt], [shm_open], [POSIXIPC_LIBS="-lrt"])
+])
+AC_CHECK_FUNCS([sem_close], [], [
+  AC_CHECK_LIB([pthread], [sem_close], [POSIXIPC_LIBS="$POSIXIPC_LIBS -lpthread"])
+])
+AC_SUBST([POSIXIPC_LIBS])
 
 AC_ARG_ENABLE([ipcmk],
   AS_HELP_STRING([--disable-ipcmk], [do not build ipcmk]),
