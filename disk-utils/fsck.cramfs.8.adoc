@@ -26,7 +26,7 @@ Enable verbose messaging.
 *-b*, *--blocksize* _blocksize_::
 Use this blocksize, defaults to page size. Must be equal to what was set at creation time. Only used for *--extract*.
 
-*--extract*[=_directory_]::
+*--extract*[**=**_directory_]::
 Test to uncompress the whole file system. Optionally extract contents of the _file_ to _directory_.
 
 *-a*::

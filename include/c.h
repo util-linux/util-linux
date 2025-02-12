@@ -474,8 +474,8 @@ static inline void __attribute__((__noreturn__)) ul_sig_err(int excode, const ch
 
 #define USAGE_ARG_SEPARATOR    "\n"
 #define USAGE_ARG_SIZE(_name) \
-		_(" %s arguments may be followed by the suffixes for\n" \
-		  "   GiB, TiB, PiB, EiB, ZiB, and YiB (the \"iB\" is optional)\n"), _name
+		_(" Values for %s may be followed by a suffix: KiB, MiB,\n" \
+		  " GiB, TiB, PiB, EiB, ZiB, or YiB (where the \"iB\" is optional).\n"), _name
 
 #define USAGE_MAN_TAIL(_man)   _("\nFor more details see %s.\n"), _man
 

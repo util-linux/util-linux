@@ -37,14 +37,14 @@ Specify your login shell.
 Print the list of shells listed in _/etc/shells_ and exit.
 
 *-h*, *--help*::
-Display help text and exit. The short options *-h* have been used since version 2.30; old versions use
-deprecated *-u*.
+Display help text and exit. (Short option *-h* is used since version 2.30;
+older versions used the now-deprecated *-u*).
 
 *-V*, *--version*::
-Print version and exit. The short options *-V* have been used since version 2.39; old versions use
-deprecated *-v*.
+Display version and exit. (Short option *-V* is used since version 2.39;
+older versions used the now-deprecated *-v*).
 
-// Do not include::man-common/help-version.adoc[]  as both -h and -V were already explicitly given above in more detail. 
+// Do not include::man-common/help-version.adoc[]  as both -h and -V are already given explicitly above in more detail.
 
 == VALID SHELLS
 

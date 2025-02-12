@@ -2,4 +2,4 @@
 Display help text and exit.
 
 *-V*, *--version*::
-Print version and exit.
+Display version and exit.

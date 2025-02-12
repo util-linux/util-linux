@@ -33,16 +33,16 @@ Since version 2.38 *su* resets process resource limits RLIMIT_NICE, RLIMIT_RTPRI
 
 == OPTIONS
 
-*-c*, **--command**=__command__::
+*-c*, *--command* __command__::
 Pass _command_ to the shell with the *-c* option.
 
 *-f*, *--fast*::
 Pass *-f* to the shell, which may or may not be useful, depending on the shell.
 
-*-g*, **--group**=__group__::
+*-g*, *--group* __group__::
 Specify the primary group. This option is available to the root user only.
 
-*-G*, **--supp-group**=__group__::
+*-G*, *--supp-group* __group__::
 Specify a supplementary group. This option is available to the root user only. The first specified supplementary group is also used as a primary group if the option *--group* is not specified.
 
 *-*, *-l*, *--login*::
@@ -68,7 +68,7 @@ Create a pseudo-terminal for the session. The independent terminal provides bett
 +
 This feature is mostly designed for interactive sessions. If the standard input is not a terminal, but for example a pipe (e.g., *echo "date" | su --pty*), then the *ECHO* flag for the pseudo-terminal is disabled to avoid messy output.
 
-*-s*, **--shell**=__shell__::
+*-s*, *--shell* __shell__::
 Run the specified _shell_ instead of the default. If the target user has a restricted shell (i.e., not listed in _/etc/shells_), the *--shell* option and the *SHELL* environment variables are ignored unless the calling user is root.
 +
 The shell to run is selected according to the following rules, in order:
@@ -85,7 +85,7 @@ Same as *-c*, but do not create a new session. (Discouraged.)
 Do not create a pseudo-terminal, opposite of *--pty* and *-P*.
 Note that running without a pseudo-terminal opens the security risk of privilege escalation through TIOCSTI/TIOCLINUX ioctl command injection.
 
-*-w*, **--whitelist-environment**=__list__::
+*-w*, *--whitelist-environment* __list__::
 Don't reset the environment variables specified in the comma-separated _list_ when clearing the environment for *--login*. The whitelist is ignored for the environment variables *HOME*, *SHELL*, *USER*, *LOGNAME*, and *PATH*.
 
 include::man-common/help-version.adoc[]

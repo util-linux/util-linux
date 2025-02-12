@@ -46,7 +46,7 @@ Check the device for bad blocks before creating the filesystem. If any are found
 *-n*, *--namelength* _length_::
 Specify the maximum length of filenames. Currently, the only allowable values are 14 and 30 for file system versions 1 and 2. Version 3 allows only value 60. The default is 30.
 
-*--lock*[=_mode_]::
+*--lock*[**=**_mode_]::
 Use exclusive BSD lock for device or file it operates. The optional argument _mode_ can be *yes*, *no* (or 1 and 0) or *nonblock*. If the _mode_ argument is omitted, it defaults to *yes*. This option overwrites environment variable *$LOCK_BLOCK_DEVICE*. The default is not to use any lock at all, but it's recommended to avoid collisions with *systemd-udevd*(8) or other tools.
 
 *-i*, *--inodes* _number_::

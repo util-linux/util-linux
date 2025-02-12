@@ -115,7 +115,7 @@ Limit the size of the typescript and timing files to _size_ and stop the child p
 *-q*, *--quiet*::
 Be quiet (do not write start and done messages to standard output).
 
-*-t*[_file_], *--timing*[=_file_]::
+*-t*[_file_], *--timing*[**=**_file_]::
 Output timing data to standard error, or to _file_ when given. This option is deprecated in favour of *--log-timing* where the _file_ argument is not optional.
 
 include::man-common/help-version.adoc[]

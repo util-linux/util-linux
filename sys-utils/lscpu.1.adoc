@@ -39,7 +39,7 @@ include::man-common/in-bytes.adoc[]
 *-b*, *--online*::
 Limit the output to online CPUs (default for *-p*). This option may only be specified together with option *-e* or *-p*.
 
-*-C*, *--caches*[=_list_]::
+*-C*, *--caches*[**=**_list_]::
 Display details about CPU caches. For details about available information see *--help* output.
 +
 If the _list_ argument is omitted, all columns for which data is available are included in the command output.
@@ -51,10 +51,10 @@ The default list of columns may be extended if list is specified in the format +
 *-c*, *--offline*::
 Limit the output to offline CPUs. This option may only be specified together with option *-e* or *-p*.
 
-*--hierarchic*[=_when_]::
+*--hierarchic*[**=**_when_]::
 Use subsections in summary output. For backward compatibility, the default is to use subsections only when output on a terminal and flattened output on a non-terminal. The optional argument _when_ can be *never*, *always* or *auto*. If the _when_ argument is omitted, it defaults to "always".
 
-*-e*, *--extended*[=_list_]::
+*-e*, *--extended*[**=**_list_]::
 Display the CPU information in human-readable format.
 +
 If the _list_ argument is omitted, the default columns are included in the command output.  The default output is subject to change.
@@ -69,7 +69,7 @@ Use JSON output format for the default summary or extended output (see
 summary behavior for non-terminals (e.g., pipes) where subsections are missing. See
 also *--hierarchic*.
 
-*-p*, *--parse*[=_list_]::
+*-p*, *--parse*[**=**_list_]::
 Optimize the command output for easy parsing.
 +
 If the _list_ argument is omitted, the command output is compatible with earlier versions of *lscpu*. In this compatible format, two commas are used to separate CPU cache columns. If no CPU caches are identified the cache column is omitted. If the _list_ argument is used, cache columns are separated with a colon (:).

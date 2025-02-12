@@ -82,7 +82,7 @@ Specify a format string to be used for displaying data.
 *-f*, *--format-file* _file_::
 Specify a file that contains one or more newline-separated format strings. Empty lines and lines whose first non-blank character is a hash mark (#) are ignored.
 
-*-L*, *--color*[=_when_]::
+*-L*, *--color*[**=**_when_]::
 Accept color units for the output. The optional argument _when_ can be *auto*, *never* or *always*. If the _when_ argument is omitted, it defaults to *auto*. The colors can be disabled; for the current built-in default see the *--help* output. See also the *Colors* subsection and the *COLORS* section below.
 
 *-n*, *--length* _length_::

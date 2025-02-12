@@ -413,7 +413,7 @@ static struct map_range get_map_range(const char *s)
  * @filename: The file to look up the range from. This should be either
  *            ``/etc/subuid`` or ``/etc/subgid``.
  * @uid: The uid of the user whose range we should look up.
- * @identity: (boolean) If true identity map the range, otherwise map to 0
+ * @identity: (boolean) If true, identity map the range, otherwise map to 0.
  *
  * This finds the first subid range matching @uid in @filename.
  */
@@ -782,14 +782,14 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -T, --time[=<file>]       unshare time namespace\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -f, --fork                fork before launching <program>\n"), out);
-	fputs(_(" --map-user=<uid>|<name>   map current user to uid (implies --user)\n"), out);
-	fputs(_(" --map-group=<gid>|<name>  map current group to gid (implies --user)\n"), out);
+	fputs(_(" --map-user <uid>|<name>   map current user to uid (implies --user)\n"), out);
+	fputs(_(" --map-group <gid>|<name>  map current group to gid (implies --user)\n"), out);
 	fputs(_(" -r, --map-root-user       map current user to root (implies --user)\n"), out);
 	fputs(_(" -c, --map-current-user    map current user to itself (implies --user)\n"), out);
 	fputs(_(" --map-auto                map users and groups automatically (implies --user)\n"), out);
-	fputs(_(" --map-users=<inneruid>:<outeruid>:<count>\n"
+	fputs(_(" --map-users <inneruid>:<outeruid>:<count>\n"
 		"                           map count users from outeruid to inneruid (implies --user)\n"), out);
-	fputs(_(" --map-groups=<innergid>:<outergid>:<count>\n"
+	fputs(_(" --map-groups <innergid>:<outergid>:<count>\n"
 		"                           map count groups from outergid to innergid (implies --user)\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" --kill-child[=<signame>]  when dying, kill the forked child (implies --fork)\n"
@@ -801,8 +801,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --setgroups allow|deny    control the setgroups syscall in user namespaces\n"), out);
 	fputs(_(" --keep-caps               retain capabilities granted in user namespaces\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_(" -R, --root=<dir>          run the command with root directory set to <dir>\n"), out);
-	fputs(_(" -w, --wd=<dir>            change working directory to <dir>\n"), out);
+	fputs(_(" -R, --root <dir>          run the command with root directory set to <dir>\n"), out);
+	fputs(_(" -w, --wd <dir>            change working directory to <dir>\n"), out);
 	fputs(_(" -S, --setuid <uid>        set uid in entered namespace\n"), out);
 	fputs(_(" -G, --setgid <gid>        set gid in entered namespace\n"), out);
 	fputs(_(" --monotonic <offset>      set clock monotonic offset (seconds) in time namespaces\n"), out);
@@ -1270,10 +1270,10 @@ int main(int argc, char *argv[])
 		if (setgroups(0, NULL) != 0)	/* drop supplementary groups */
 			err(EXIT_FAILURE, _("setgroups failed"));
 		if (setgid(gid) < 0)		/* change GID */
-			err(EXIT_FAILURE, _("setgid failed"));
+			err(EXIT_FAILURE, _("setgid() failed"));
 	}
 	if (force_uid && setuid(uid) < 0)	/* change UID */
-		err(EXIT_FAILURE, _("setuid failed"));
+		err(EXIT_FAILURE, _("setuid() failed"));
 
 	if (keepcaps && (unshare_flags & CLONE_NEWUSER))
 		cap_permitted_to_ambient();

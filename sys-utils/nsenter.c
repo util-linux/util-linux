@@ -836,9 +836,9 @@ int main(int argc, char *argv[])
 		if (force_gid && setgroups(0, NULL) != 0 && setgroups_nerrs)	/* drop supplementary groups */
 			err(EXIT_FAILURE, _("setgroups failed"));
 		if (force_gid && setgid(gid) < 0)		/* change GID */
-			err(EXIT_FAILURE, _("setgid failed"));
+			err(EXIT_FAILURE, _("setgid() failed"));
 		if (force_uid && setuid(uid) < 0)		/* change UID */
-			err(EXIT_FAILURE, _("setuid failed"));
+			err(EXIT_FAILURE, _("setuid() failed"));
 	}
 
 	if (keepcaps && (namespaces & CLONE_NEWUSER))

@@ -345,7 +345,7 @@ Add the labels in the mount output. *mount* must have permission to read the dis
 *-M*, *--move*::
 Move a subtree to some other place. See above, the subsection *The move operation*.
 
-*-m*, **--mkdir**[=__mode__]::
+*-m*, *--mkdir*[**=**__mode__]::
 Allow to make a target directory (mountpoint) if it does not exist yet. Alias to "-o X-mount.mkdir[=mode]", the default mode is 0755. For more details see *X-mount.mkdir* below.
 
 *--map-groups*, *--map-users* _inner_:_outer_:_count_::
@@ -691,19 +691,19 @@ After this call, *mount* reads _fstab_ and merges these options with the options
 +
 remounts all already mounted vfat filesystems in read-only mode. Each of the filesystems is remounted by *mount -o remount,ro* _/dir_ semantic. This means the *mount* command reads _fstab_ or _mtab_ and merges these options with the options from the command line.
 
-*ro*[=_recursive_,_vfs_,_fs_]::
+*ro*[**=**(*recursive*|*vfs*|*fs*)]::
 Mount the filesystem read-only. The optional argument is an experimental feature supported only by
 the file-descriptor based kernel mount API and it is silently ignored for the old *mount*(2) syscall.
 +
-The _recursive_ argument forces the VFS attribute to be applied recursively.
+The *recursive* argument forces the VFS attribute to be applied recursively.
 +
-The _vfs_ and _fs_ arguments specify the layer where the read-only flag should be applied. The _fs_ specifies
-the filesystem superblock (unique filesystem instance in the kernel), and _vfs_ specifies the mount node. If no attribute is specified, then
+The *vfs* and *fs* arguments specify the layer where the read-only flag should be applied. The *fs* specifies
+the filesystem superblock (unique filesystem instance in the kernel), and *vfs* specifies the mount node. If no attribute is specified, then
 both layers are set to read-only.
 +
 For more details, please refer to the *Read-only Setting Notes* section.
 
-*rw*[=_recursive_,_vfs_,_fs_]::
+*rw*[**=**(*recursive*|*vfs*|*fs*)]::
 Mount the filesystem read-write.
 
 *sync*::
@@ -750,10 +750,10 @@ ____
 mount -t auto -o'X-mount.auto-fstypes="noext2,ext3"'  /dev/sdc1 /mnt/test
 ____
 
-*X-mount.mkdir*[=_mode_]::
+*X-mount.mkdir*[**=**_mode_]::
 Allow to make a target directory (mountpoint) if it does not exist yet. The optional argument _mode_ specifies the filesystem access mode used for *mkdir*(2) in octal notation. The default mode is 0755. This functionality is supported only for root users or when *mount* is executed without suid permissions. The option is also supported as *x-mount.mkdir*, but this notation is deprecated since v2.30. See also *--mkdir* command line option.
 
-*X-mount.nocanonicalize*[=_type_]::
+*X-mount.nocanonicalize*[**=**_type_]::
 Allows disabling of canonicalization for mount source and target paths. By default, the `mount` command resolves all paths to their absolute paths without symlinks. However, this behavior may not be desired in certain situations, such as when binding a mount over a symlink, or a symlink over a directory or another symlink. The optional argument _type_ can be either "source" or "target" (mountpoint). If no _type_ is specified, then canonicalization is disabled for both types. This mount option does not affect the conversion of source tags (e.g. LABEL= or UUID=) and fstab processing.
 +
 The command line option *--no-canonicalize* overrides this mount option and affects all path and tag conversions in all situations, but it does not modify flags for open_tree syscalls.
