@@ -23,10 +23,15 @@
 #include <string.h>
 #include <stdarg.h>
 #include <assert.h>
+#include <sys/file.h>
 #include <sys/types.h>
 #include <dirent.h>
 
 #include <libsmartcols.h>
+
+#if HAVE_DECL_SD_DEVICE_NEW_FROM_SYSPATH
+#include <systemd/sd-device.h>
+#endif
 
 #include "c.h"
 #include "nls.h"
@@ -41,6 +46,8 @@
 #include "pathnames.h"
 
 /*#define CONFIG_ZRAM_DEBUG*/
+
+#define _cleanup_(x) __attribute__((__cleanup__(x)))
 
 #ifdef CONFIG_ZRAM_DEBUG
 # define DBG(x)	 do { fputs("zram: ", stderr); x; fputc('\n', stderr); } while(0)
@@ -113,8 +120,13 @@ static const char *const mm_stat_names[] = {
 
 struct zram {
 	char	devname[32];
+	int	lock_fd;
 	struct	path_cxt *sysfs;	/* device specific sysfs directory */
 	char	**mm_stat;
+
+#if HAVE_DECL_SD_DEVICE_NEW_FROM_SYSPATH
+	sd_device	*device;
+#endif
 
 	unsigned int mm_stat_probed : 1,
 		     control_probed : 1,
@@ -148,6 +160,149 @@ static int column_name_to_id(const char *name, size_t namesz)
 	}
 	warnx(_("unknown column: %s"), name);
 	return -1;
+}
+
+#if HAVE_DECL_SD_DEVICE_NEW_FROM_SYSPATH
+static int monitor_callback(sd_device_monitor *m, sd_device *device, void *userdata)
+{
+	struct zram *z = userdata;
+	sd_device_action_t a;
+	const char *s;
+
+	assert(z);
+	assert(device);
+
+	if (sd_device_get_action(device, &a) < 0)
+		return 0;
+
+	if (a == SD_DEVICE_REMOVE)
+		return 0;
+
+	if (sd_device_get_devname(device, &s) < 0)
+		return 0;
+
+	if (strcmp(s, z->devname) != 0)
+		return 0;
+
+	if (sd_device_get_is_initialized(device) <= 0)
+		return 0;
+
+	assert(!z->device);
+	z->device = sd_device_ref(device);
+
+	return sd_event_exit(sd_device_monitor_get_event(m), 0);
+}
+#endif
+
+static int zram_wait_initialized(struct zram *z)
+{
+#if HAVE_DECL_SD_DEVICE_NEW_FROM_SYSPATH
+	_cleanup_(sd_device_unrefp) sd_device *dev = NULL;
+	_cleanup_(sd_device_monitor_unrefp) sd_device_monitor *m = NULL;
+	sd_event *event;
+	int r;
+
+	assert(z);
+
+	z->device = sd_device_unref(z->device);
+
+	/* prepare device monitor. */
+	r = sd_device_monitor_new(&m);
+	if (r < 0)
+		return r;
+
+	r = sd_device_monitor_filter_add_match_subsystem_devtype(m, "block", "disk");
+	if (r < 0)
+		return r;
+
+	r = sd_device_monitor_start(m, monitor_callback, z);
+	if (r < 0)
+		return r;
+
+	event = sd_device_monitor_get_event(m);
+
+	/* Wait up to 3 seconds. */
+	r = sd_event_add_time_relative(event, NULL, CLOCK_BOOTTIME, 3 * 1000 * 1000, 0, NULL, (void*) (intptr_t) (-ETIMEDOUT));
+	if (r < 0)
+	        return r;
+
+	/* Check if the device is already initialized. */
+#if HAVE_DECL_SD_DEVICE_OPEN
+	/* sd_device_new_from_devname() and sd_device_open() are both since systemd-251 */
+	r = sd_device_new_from_devname(&dev, z->devname);
+#else
+	{
+		char syspath[PATH_MAX];
+		const char *slash;
+
+		slash = strrchr(z->devname, '/');
+		if (!slash)
+			return -EINVAL;
+		snprintf(syspath, sizeof(syspath), "/sys/class/block/%s", slash+1);
+
+		r = sd_device_new_from_syspath(&dev, syspath);
+	}
+#endif
+	if (r < 0)
+		return r;
+
+	r = sd_device_get_is_initialized(dev);
+	if (r < 0)
+		return r;
+	if (r > 0) {
+		/* Already initialized. It is not necessary to wait with the monitor. */
+		z->device = dev;
+		dev = NULL;
+		return 0;
+	}
+
+	return sd_event_loop(event);
+#else
+	assert(z);
+	return 0;
+#endif
+}
+
+static int zram_lock(struct zram *z, int operation)
+{
+	int fd, r;
+
+	assert(z);
+	assert((operation & ~LOCK_NB) == LOCK_SH ||
+	       (operation & ~LOCK_NB) == LOCK_EX);
+
+	if (z->lock_fd >= 0)
+		return 0;
+
+#if HAVE_DECL_SD_DEVICE_OPEN
+	if (z->device) {
+		fd = sd_device_open(z->device, O_RDONLY|O_CLOEXEC|O_NONBLOCK|O_NOCTTY);
+	        if (fd < 0)
+			return fd;
+	} else {
+#endif
+		fd = open(z->devname, O_RDONLY|O_CLOEXEC|O_NONBLOCK|O_NOCTTY);
+		if (fd < 0)
+			return -errno;
+#if HAVE_DECL_SD_DEVICE_OPEN
+	}
+#endif
+
+	if (flock(fd, operation) < 0) {
+		r = -errno;
+		close(fd);
+		return r;
+	}
+
+	z->lock_fd = fd;
+	return 0;
+}
+
+static void zram_unlock(struct zram *z) {
+	if (z && z->lock_fd >= 0) {
+		close(z->lock_fd);
+		z->lock_fd = -EBADF;
+	}
 }
 
 static void zram_reset_stat(struct zram *z)
@@ -192,6 +347,8 @@ static struct zram *new_zram(const char *devname)
 	DBG(fprintf(stderr, "new: %p", z));
 	if (devname)
 		zram_set_devname(z, devname, 0);
+
+	z->lock_fd = -EBADF;
 	return z;
 }
 
@@ -202,6 +359,12 @@ static void free_zram(struct zram *z)
 	DBG(fprintf(stderr, "free: %p", z));
 	ul_unref_path(z->sysfs);
 	zram_reset_stat(z);
+	zram_unlock(z);
+
+#if HAVE_DECL_SD_DEVICE_NEW_FROM_SYSPATH
+	sd_device_unref(z->device);
+#endif
+
 	free(z);
 }
 
@@ -760,8 +923,10 @@ int main(int argc, char **argv)
 			errx(EXIT_FAILURE, _("no device specified"));
 		while (optind < argc) {
 			zram = new_zram(argv[optind]);
-			if (!zram_exist(zram)
-			    || zram_set_u64parm(zram, "reset", 1)) {
+			if (!zram_exist(zram) ||
+			    zram_wait_initialized(zram) ||
+			    zram_lock(zram, LOCK_EX | LOCK_NB) ||
+			    (zram_unlock(zram), zram_set_u64parm(zram, "reset", 1))) {
 				warn(_("%s: failed to reset"), zram->devname);
 				rc = 1;
 			}
@@ -789,6 +954,19 @@ int main(int argc, char **argv)
 			if (!zram_exist(zram))
 				err(EXIT_FAILURE, "%s", zram->devname);
 		}
+
+		/* Wait for udevd initialized the device. */
+		if (zram_wait_initialized(zram))
+			err(EXIT_FAILURE, _("%s: failed to wait for initialized"), zram->devname);
+
+		/* Even if the device has been initialized by udevd, the device may be still opened and
+		 * locked by udevd. Let's wait for the lock taken by udevd is released. */
+		if (zram_lock(zram, LOCK_EX))
+			err(EXIT_FAILURE, _("%s: failed to lock"), zram->devname);
+
+		/* Writting 'reset' attribute is refused by the kernel when the device node is opened.
+		 * Hence, we cannot keep the lock, unfortunately. */
+		zram_unlock(zram);
 
 		if (zram_set_u64parm(zram, "reset", 1))
 			err(EXIT_FAILURE, _("%s: failed to reset"), zram->devname);
