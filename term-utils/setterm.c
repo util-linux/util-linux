@@ -430,8 +430,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --file <filename>             name of the dump file\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 
-	fputs(_(" --powersave on|vsync|hsync|powerdown|off\n"), out);
-	fputs(_("                               set vesa powersaving features\n"), out);
+	fputs(_(" --powersave on|vsync|hsync|powerdown|off\n"
+	        "                               set vesa powersaving features\n"), out);
 	fputs(_(" --powerdown[=<0-60>]          set vesa powerdown interval in minutes\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 

@@ -115,14 +115,14 @@ Sets the VESA powerdown interval in minutes. Without an argument, it defaults to
 *--powersave* _mode_::
 Valid values for _mode_ are:
 
-*vsync|on*;;
+*vsync*|*on*;;
 Puts the monitor into VESA vsync suspend mode.
 *hsync*;;
 Puts the monitor into VESA hsync suspend mode.
 *powerdown*;;
 Puts the monitor into VESA powerdown mode.
 *off*;;
-Turns monitor VESA powersaving features.
+Turns the monitor's powersaving features off.
 
 *--regtabs*[**=**1-160]::
 Clears all tab stops, then sets a regular tab stop pattern, with one tab every specified number of positions. Without an argument, it defaults to *8*. Virtual consoles only.
