@@ -216,6 +216,10 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(31));
+
+	fputs(USAGE_ARGUMENTS, out);
+	fprintf(out, USAGE_ARG_SIZE(_("<size>")));
+
 	fprintf(out, USAGE_MAN_TAIL("script(1)"));
 
 	exit(EXIT_SUCCESS);
