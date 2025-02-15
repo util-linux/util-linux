@@ -545,7 +545,7 @@ static int read_watchdog_from_device(struct wd_device *wd)
 }
 
 
-/* Returns: <0 error, 0 success, 1 unssuported */
+/* Returns: <0 on error, 0 on success, 1 for unsupported */
 static int read_watchdog_from_sysfs(struct wd_device *wd)
 {
 	struct path_cxt *sys;

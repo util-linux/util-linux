@@ -218,7 +218,7 @@ main(int argc, char *argv[])
 			else if (strcmp(optarg, "always") == 0)
 				echo = 1;
 			else
-				errx(EXIT_FAILURE, _("unssuported echo mode: '%s'"), optarg);
+				errx(EXIT_FAILURE, _("unsupported echo mode: '%s'"), optarg);
 			break;
 		case 't':
 		case 'T':
