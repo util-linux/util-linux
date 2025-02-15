@@ -144,6 +144,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputsln(_(  " -s             sort directory entries (old option, ignored)"), stdout);
 	fputsln(_(  " -z             make explicit holes"), stdout);
 	fputsln(_(  " -l[=<mode>]    use exclusive device lock (yes, no or nonblock)"), stdout);
+	fputs(USAGE_SEPARATOR, stdout);
 	fputsln(_(  " dirname        root of the filesystem to be compressed"), stdout);
 	fputsln(_(  " outfile        output file"), stdout);
 	fputs(USAGE_SEPARATOR, stdout);
