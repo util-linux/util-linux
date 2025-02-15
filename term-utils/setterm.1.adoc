@@ -23,7 +23,13 @@ setterm - set terminal attributes
 
 == DESCRIPTION
 
-*setterm* writes to standard output a character string that will invoke the specified terminal capabilities. Where possible _terminfo_ is consulted to find the string to use. Some options however (marked "virtual consoles only" below) do not correspond to a *terminfo*(5) capability. In this case, if the terminal type is "con" or "linux" the string that invokes the specified capabilities on the PC Minix virtual console driver is output. Options that are not implemented by the terminal are ignored.
+*setterm* writes to standard output a character string that will invoke the
+specified terminal capabilities. Where possible, _terminfo_ is consulted to
+find the string to use. Some options (marked "virtual consoles only" below)
+do not correspond to a *terminfo*(5) capability. In these cases, if the
+terminal type is "con" or "linux", the string that invokes the specified
+capability on the PC Minix virtual console is output. Options that are
+not implemented by the terminal are ignored.
 
 == OPTIONS
 
@@ -37,16 +43,16 @@ The various color options may be set independently, at least on virtual consoles
 
 The optional arguments are recommended with '=' (equals sign) and not space between the option and the argument. For example --option=argument. *setterm* can interpret the next non-option argument as an optional argument too.
 
-*--appcursorkeys* on|off::
+*--appcursorkeys* **on**|**off**::
 Sets Cursor Key Application Mode on or off. When on, ESC O A, ESC O B, etc. will be sent for the cursor keys instead of ESC [ A, ESC [ B, etc. See the _vi and Cursor-Keys_ section of the _Text-Terminal-HOWTO_ for how this can cause problems for *vi* users. Virtual consoles only.
 
 *--append* _console_number_::
 Like *--dump*, but appends to the snapshot file instead of overwriting it. Only works if no *--dump* options are given.
 
-*--background* __8-color__|default::
+*--background* __8-color__|**default**::
 Sets the background text color.
 
-*--blank*[**=**0-60|force|poke]::
+*--blank*[**=0**-**60**|**force**|**poke**]::
 Sets the interval of inactivity, in minutes, after which the screen will be automatically blanked (using APM if available). Without an argument, it gets the blank status (returns which vt was blanked, or zero for an unblanked vt). Virtual consoles only.
 +
 The *force* argument keeps the screen blank even if a key is pressed.
@@ -56,22 +62,22 @@ The *poke* argument unblanks the screen.
 *--bfreq*[**=**_number_]::
 Sets the bell frequency in Hertz. Without an argument, it defaults to *0*. Virtual consoles only.
 
-*--blength*[**=**0-2000]::
+*--blength*[**=0**-**2000**]::
 Sets the bell duration in milliseconds. Without an argument, it defaults to *0*. Virtual consoles only.
 
-*--blink* on|off::
+*--blink* **on**|**off**::
 Turns blink mode on or off. Except on a virtual console, *--blink off* turns off all attributes (bold, half-brightness, blink, reverse).
 
-*--bold* on|off::
-urns bold (extra bright) mode on or off. Except on a virtual console, *--bold off* turns off all attributes (bold, half-brightness, blink, reverse).
+*--bold* **on**|**off**::
+Turns bold (extra bright) mode on or off. Except on a virtual console, *--bold off* turns off all attributes (bold, half-brightness, blink, reverse).
 
-*--clear*[**=**all|rest]::
+*--clear*[**=all**|**rest**]::
 Without an argument or with the argument *all*, the entire screen is cleared and the cursor is set to the home position, just like *clear*(1) does. With the argument *rest*, the screen is cleared from the current cursor position to the end.
 
 *--clrtabs*[**=**_tab1 tab2 tab3_ ...]::
-Clears tab stops from the given horizontal cursor positions, in the range *1-160*. Without arguments, it clears all tab stops. Virtual consoles only.
+Clears tab stops from the given horizontal cursor positions, in the range *1*-*160*. Without arguments, it clears all tab stops. Virtual consoles only.
 
-*--cursor* on|off::
+*--cursor* **on**|**off**::
 Turns the terminal's cursor on or off.
 
 *--default*::
@@ -83,10 +89,10 @@ Writes a snapshot of the virtual console with the given number to the file speci
 *--file* _filename_::
 Sets the snapshot file name for any *--dump* or *--append* options on the same command line. If this option is not present, the default is _screen.dump_ in the current directory. A path name that exceeds the system maximum will be truncated, see *PATH_MAX* from _linux/limits.h_ for the value.
 
-*--foreground* __8-color__|default::
+*--foreground* __8-color__|**default**::
 Sets the foreground text color.
 
-*--half-bright* on|off::
+*--half-bright* **on**|**off**::
 Turns dim (half-brightness) mode on or off. Except on a virtual console, *--half-bright off* turns off all attributes (bold, half-brightness, blink, reverse).
 
 *--hbcolor* _16-color_::
@@ -95,21 +101,21 @@ Sets the color for half-bright characters.
 *--initialize*::
 Displays the terminal initialization string, which typically sets the terminal's rendering options, and other attributes to the default values.
 
-*--inversescreen* on|off::
+*--inversescreen* **on**|**off**::
 Swaps foreground and background colors for the whole screen.
 
-*--linewrap* on|off::
+*--linewrap* **on**|**off**::
 Makes the terminal continue on a new line when a line is full.
 
-*--msg* on|off::
+*--msg* **on**|**off**::
 Enables or disables the sending of kernel *printk*() messages to the console. Virtual consoles only.
 
-*--msglevel* 0-8::
+*--msglevel* **0**-**8**::
 Sets the console logging level for kernel *printk()* messages. All messages strictly more important than this will be printed, so a logging level of *0* has the same effect as *--msg on* and a logging level of *8* will print all kernel messages. *klogd*(8) may be a more convenient interface to the logging of kernel messages.
 +
 Virtual consoles only.
 
-*--powerdown*[**=**0-60]::
+*--powerdown*[**=0**-**60**]::
 Sets the VESA powerdown interval in minutes. Without an argument, it defaults to *0* (disable powerdown). If the console is blanked or the monitor is in suspend mode, then the monitor will go into vsync suspend mode or powerdown mode respectively after this period of time has elapsed.
 
 *--powersave* _mode_::
@@ -124,10 +130,10 @@ Puts the monitor into VESA powerdown mode.
 *off*;;
 Turns the monitor's powersaving features off.
 
-*--regtabs*[**=**1-160]::
+*--regtabs*[**=1**-**160**]::
 Clears all tab stops, then sets a regular tab stop pattern, with one tab every specified number of positions. Without an argument, it defaults to *8*. Virtual consoles only.
 
-*--repeat* on|off::
+*--repeat* **on**|**off**::
 Turns keyboard repeat on or off. Virtual consoles only.
 
 *--reset*::
@@ -136,14 +142,14 @@ Displays the terminal reset string, which typically resets the terminal to its p
 *--resize*::
 Reset terminal size by assessing maximum row and column. This is useful when actual geometry and kernel terminal driver are not in sync. Most notable use case is with serial consoles, that do not use *ioctl*(2) but just byte streams and breaks.
 
-*--reverse* on|off::
+*--reverse* **on**|**off**::
 Turns reverse video mode on or off. Except on a virtual console, *--reverse off* turns off all attributes (bold, half-brightness, blink, reverse).
 
 *--store*::
 Stores the terminal's current rendering options (foreground and background colors) as the values to be used at reset-to-default. Virtual consoles only.
 
 *--tabs*[**=**_tab1 tab2 tab3_ ...]::
-Sets tab stops at the given horizontal cursor positions, in the range *1-160*. Without arguments, it shows the current tab stop settings.
+Sets tab stops at the given horizontal cursor positions, in the range *1*-*160*. Without arguments, it shows the current tab stop settings.
 
 *--term* _terminal_name_::
 Overrides the *TERM* environment variable.
@@ -151,7 +157,7 @@ Overrides the *TERM* environment variable.
 *--ulcolor* _16-color_::
 Sets the color for underlined characters. Virtual consoles only.
 
-*--underline* on|off::
+*--underline* **on**|**off**::
 Turns underline mode on or off.
 
 include::man-common/help-version.adoc[]
