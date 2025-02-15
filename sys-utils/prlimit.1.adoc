@@ -18,9 +18,9 @@ prlimit - get and set process resource limits
 
 == SYNOPSIS
 
-*prlimit* [options] [*--resource*[**=**_limits_]] [*--pid* _PID_]
+*prlimit* [options] [**--**_resource_[**=**_limits_]] [*--pid* _PID_]
 
-*prlimit* [options] [*--resource*[**=**_limits_]] _command_ [_argument_...]
+*prlimit* [options] [**--**_resource_[**=**_limits_]] _command_ [_argument_...]
 
 == DESCRIPTION
 
@@ -46,8 +46,9 @@ Do not print a header line.
 *-o*, *--output* _list_::
 Define the output columns to use. If no output arrangement is specified, then a default set is used. Use *--help* to get a list of all supported columns.
 
-*-p*, *--pid*::
-Specify the process id; if none is given, the running process will be used.
+*-p*, *--pid* _PID_::
+Specify the process ID.  Without this option (and without a _command_),
+the running process will be used.
 
 *--raw*::
 Use the raw output format.
