@@ -32,7 +32,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(
-		" %s [options] <program> [arguments ...]\n"),
+		" %s [options] <program> [<argument>...]\n"),
 		program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
