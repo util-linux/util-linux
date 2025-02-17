@@ -23,7 +23,6 @@
 #include <grp.h>
 #include <sys/stat.h>
 #include <sys/statfs.h>
-#include <stdbool.h>
 
 #include <sys/ioctl.h>
 #include <linux/sockios.h>
