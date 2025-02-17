@@ -5,6 +5,8 @@ EXTRA_DIST += po-man/README.md \
 	      po-man/util-linux-man.pot \
 	      $(POMAN_PO_FILES)
 
+DISTCLEANFILES += po-man/util-linux-man.pot $(POMAN_PO_FILES)
+
 if ENABLE_ASCIIDOC
 if ENABLE_POMAN
 
@@ -35,7 +37,7 @@ gen-poman-dist:
 	@echo "Updating po-man PO and POT files"
 	@$(PO4A) --no-translations --force \
 		 --srcdir '$(abs_srcdir)/po-man' \
-		 --destdir '$(abs_srcdir)/po-man' \
+		 --destdir '$(abs_builddir)/po-man' \
 		 '$(abs_srcdir)/po-man/po4a.cfg'
 
 gen-poman: $(PO_STAMPS)
