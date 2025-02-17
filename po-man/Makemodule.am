@@ -31,6 +31,13 @@ po4a-gen.stamp: $(POMAN_PO_FILES) $(ADOCFILES_COMMON) $(ADOCFILES)
 	@$(asciidoc_poman_translate_cmd) $(ADOCFILES)
 	@touch po4a-gen.stamp
 
+gen-poman-dist:
+	@echo "Updating po-man PO and POT files"
+	@$(PO4A) --no-translations --force \
+		 --srcdir '$(abs_srcdir)/po-man' \
+		 --destdir '$(abs_srcdir)/po-man' \
+		 '$(abs_srcdir)/po-man/po4a.cfg'
+
 gen-poman: $(PO_STAMPS)
 
 install-data-hook-poman:
@@ -51,6 +58,7 @@ CLEAN_LOCALS += clean-local-hook-poman
 # !ENABLE_POMAN
 else
 gen-poman:
+gen-poman-dist:
 endif
 
 # ENABLE_ASCIIDOC
