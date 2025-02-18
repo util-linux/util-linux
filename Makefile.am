@@ -82,6 +82,7 @@ CHECK_LOCALS =
 
 EXTRA_DIST =
 CLEANFILES =
+DISTCLEANFILES =
 
 SUBDIRS = po
 
@@ -272,7 +273,7 @@ gen-man: $(man_MANS) gen-poman
 # Standard "make" follows BUILD_* macros from ./configure, and in this case, it
 # ignores man pages for disabled tools, but for distribution tarball, we need
 # to generate all man-pages (to avoid dependence on asciidoc). [kzak Jan-2022]
-gen-man-dist:
+gen-man-dist: gen-poman-dist
 	@list=`find -name *.adoc -not -path "*/man-common/*" -not -path "*/po-man/*" | sed -e 's/\.adoc//g'`; \
 	missing=`for p in $$list; do test -f $$p || echo $$p; done`; \
 	if test -n "$$missing"; then \

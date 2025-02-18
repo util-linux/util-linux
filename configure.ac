@@ -1289,6 +1289,9 @@ AC_SUBST([LIBLASTLOG2_VERSION_INFO])
 AC_DEFINE_UNQUOTED([LIBLASTLOG2_VERSION], ["$LIBLASTLOG2_VERSION"], [liblastlog2 version string])
 AM_CONDITIONAL([BUILD_LIBLASTLOG2], [test "x$build_liblastlog2" = xyes])
 AM_CONDITIONAL([BUILD_LIBLASTLOG2_TESTS], [test "x$build_liblastlog2" = xyes && test "x$enable_static" = xyes])
+AS_IF([test "x$build_liblastlog2" = xyes], [
+  AC_DEFINE([HAVE_LIBLASTLOG2], [1], [Define to 1 if you have the -lblkid.])
+])
 
 
 AC_ARG_ENABLE([pam_lastlog2],
