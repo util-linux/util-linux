@@ -81,7 +81,7 @@ struct libmnt_listmnt {
 
 static int table_init_listmount(struct libmnt_table *tb, size_t stepsiz)
 {
-	struct libmnt_listmnt *ls = NULL;;
+	struct libmnt_listmnt *ls;
 
 	if (!tb)
 		return -EINVAL;
@@ -120,18 +120,18 @@ static int table_init_listmount(struct libmnt_table *tb, size_t stepsiz)
 		ls->list = (uint64_t *) (x + sizeof(struct libmnt_listmnt));
 		ls->stepsiz = stepsiz;
 		ls->id = LSMT_ROOT;	/* default */
-	}
 
-	/* reuse old setting */
-	if (tb->lsmnt && ls != tb->lsmnt) {
-		ls->id = tb->lsmnt->id;
-		ls->ns = tb->lsmnt->ns;
-		ls->last = tb->lsmnt->last;
-		ls->enabled = tb->lsmnt->enabled;
-		ls->reverse = tb->lsmnt->reverse;
-		free(tb->lsmnt);
+		/* reuse old setting */
+		if (tb->lsmnt) {
+			ls->id = tb->lsmnt->id;
+			ls->ns = tb->lsmnt->ns;
+			ls->last = tb->lsmnt->last;
+			ls->enabled = tb->lsmnt->enabled;
+			ls->reverse = tb->lsmnt->reverse;
 
-		tb->lsmnt = ls;
+			free(tb->lsmnt);
+		}
+		tb->lsmnt = ls;;
 	}
 
 	DBG(TAB, ul_debugobj(tb, "listmount: init [step=%zu]", ls->stepsiz));
