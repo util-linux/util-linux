@@ -748,6 +748,10 @@ static void prompt(long long pageno)
 			}
 		}
 		write_all(STDOUT_FILENO, &key, 1);
+
+		if (cmd.cmdlen + 1 >= sizeof(cmd.cmdline))
+			goto endprompt;
+
 		cmd.cmdline[cmd.cmdlen++] = key;
 		cmd.cmdline[cmd.cmdlen] = '\0';
 		if (nflag && state == CMD_FIN)
