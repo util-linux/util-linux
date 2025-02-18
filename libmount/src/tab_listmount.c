@@ -123,16 +123,16 @@ static int table_init_listmount(struct libmnt_table *tb, size_t stepsiz)
 	}
 
 	/* reuse old setting */
-	if (tb->lsmnt) {
+	if (tb->lsmnt && ls != tb->lsmnt) {
 		ls->id = tb->lsmnt->id;
 		ls->ns = tb->lsmnt->ns;
 		ls->last = tb->lsmnt->last;
 		ls->enabled = tb->lsmnt->enabled;
 		ls->reverse = tb->lsmnt->reverse;
 		free(tb->lsmnt);
-	}
 
-	tb->lsmnt = ls;
+		tb->lsmnt = ls;
+	}
 
 	DBG(TAB, ul_debugobj(tb, "listmount: init [step=%zu]", ls->stepsiz));
 	return 0;
@@ -259,6 +259,8 @@ static int lsmnt_to_table(
 	size_t i;
 	struct libmnt_fs *prev = NULL;
 
+	if (!ls)
+		return -EINVAL;
 	if (reverse)
 		mnt_table_first_fs(tb, &prev);
 	else
@@ -279,7 +281,7 @@ static int lsmnt_to_table(
 		if (fs) {
 			fs->flags |= MNT_FS_KERNEL;
 			mnt_fs_set_uniq_id(fs, id);
-			if (ls && ls->ns)
+			if (ls->ns)
 				mnt_fs_set_ns(fs, ls->ns);
 
 			rc = mnt_table_insert_fs(tb, reverse, prev, fs);

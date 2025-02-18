@@ -349,8 +349,6 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 		if (!fs->ns_id)
 			mask |= STATMOUNT_MNT_NS_ID;
 	}
-	if (!mask)
-		goto done;
 
 	if (fs->ns_id)
 		ns = fs->ns_id;
