@@ -23,6 +23,9 @@ TS_DESC="-Q, --filter option"
 
 ts_init "$*"
 
+# https://github.com/util-linux/util-linux/pull/3205
+TS_KNOWN_FAIL="yes"
+
 ts_check_test_command "$TS_CMD_LSNS"
 ts_check_test_command "$TS_CMD_LSFD"
 
