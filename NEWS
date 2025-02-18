@@ -1,7 +1,13 @@
+util-linux 2.41-rc1: Fed 18 2025 (the most recent version)
 
-  Since util-linux-ng 2.13-rc1 (released on July 4, 2007), the ReleaseNotes have
-  been available in the Documentation/releases/ directory in release tarballs,
-  and at https://www.kernel.org/pub/linux/utils/util-linux/.
+ The most recent version (on the first line) may be used as a fallback for
+ the ./tools/git-version-gen script.
+
+---
+
+ Since util-linux-ng 2.13-rc1 (released on July 4, 2007), the ReleaseNotes have
+ been available in the Documentation/releases/ directory in release tarballs,
+ and at https://www.kernel.org/pub/linux/utils/util-linux/.
 
 
 util-linux 2.13-pre7
