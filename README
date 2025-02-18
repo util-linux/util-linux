@@ -111,7 +111,7 @@ SOURCE CODE:
 
     Tags: 'git tag'
 	   - v<version> tag is created in the stable branch for every release.
-	   - v<version>-devel is created in the master branch to start work on the next release.
+	   - v<version>-start is created in the master branch to start work on the next release.
 	   - All tags are signed by the maintainer's PGP key.
 
 
