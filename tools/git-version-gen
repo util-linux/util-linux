@@ -121,7 +121,7 @@ then
     v=`echo "$v" | sed 's/-g/-/'`;
 
     case $v in
-        *-rc*)
+        *-rc* | *-start*)
             ;;
         *)
             # Change the first '-' to a '.', so version-comparing tools work properly.
