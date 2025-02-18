@@ -15,10 +15,11 @@ fi
 
 DB_FILE="$TS_OUTDIR/${TS_TESTNAME}.db"
 
+export TZ="GMT"
 sqlite3 "$DB_FILE" < $TS_SELF/create_db.sql
 
 # tests for lastlog2 environment
-TZ=US/Pacific "$TS_CMD_LSLOGINS" --lastlog-file=/dev/null \
+$TS_CMD_LSLOGINS --lastlog-file=/dev/null \
 	--lastlog2-file="$DB_FILE" \
 	--wtmp-file=/dev/null \
 	--btmp-file=/dev/null \
