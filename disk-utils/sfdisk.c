@@ -1010,6 +1010,8 @@ static int command_delete(struct sfdisk *sf, int argc, char **argv)
 		for (i = 1; i < (size_t) argc; i++) {
 			size_t n = strtou32_or_err(argv[i], _("failed to parse partition number"));
 
+			if (n == 0)
+				errx(EXIT_FAILURE, _("partition number must be a positive number"));
 			if (fdisk_delete_partition(sf->cxt, n - 1) != 0)
 				errx(EXIT_FAILURE, _("%s: partition %zu: failed to delete"), devname, n);
 		}
