@@ -21,19 +21,26 @@
 #
 
 PROJECT="util-linux"
-if [ -n "$1" ]; then
-	while (( "$#" )); do
-		if [ -n "$1" ]; then
-			rsync  -Lrtvz  rsync://translationproject.org/tp/latest/$PROJECT/$1.po po
-		fi
-		shift
-	done
-else
-	rsync  -Lrtvz  rsync://translationproject.org/tp/latest/$PROJECT/ po
-fi
 
-PO_NEW=$(git ls-files -o -x '*~' po/ | gawk '/po\/[[:alpha:]_\-]*\.po/ { sub("po/", ""); print $0; }' | sort)
-PO_MOD=$(git ls-files -m po/ | gawk '/po\/[[:alpha:]_\-]*\.po/ { sub("po/", ""); print $0; }' | sort)
+DRYRUN="false"
+LANGS=()
+
+while [[ $# -gt 0 ]]; do
+	case $1 in
+	--dry-run)
+		DRYRUN="true"
+		shift
+		;;
+	--usage | --help)
+		echo "$(basename "$0") [--dry-run] [<lang>, ...]"
+		exit 0
+		;;
+	*)
+		LANGS+=("$1")
+		shift;
+		;;
+	esac
+done
 
 function get_author {
 	echo $(gawk 'BEGIN { FS=": " } /Last-Translator/ { sub("\\\\n\"", ""); print $2 }' "$1")
@@ -66,9 +73,27 @@ function try_lang {
 	old_rev=$(get_revision_orig "$POFILE")
 
 	if [ $new_rev -gt $old_rev ]; then
-		do_commit $POFILE "po: update $POLANG (from translationproject.org)"
+		if [ "$DRYRUN" = "true" ]; then
+			echo "po: update $POLANG (ingore, dry run)"
+		else
+			do_commit $POFILE "po: update $POLANG (from translationproject.org)"
+		fi
 	fi
 }
+
+#
+# Download
+#
+if [ ${#LANGS[@]} -eq 0 ]; then
+	rsync  -Lrtvz  rsync://translationproject.org/tp/latest/$PROJECT/ po
+else
+	for l in "${LANGS[@]}"; do
+		rsync  -Lrtvz  rsync://translationproject.org/tp/latest/$PROJECT/$l.po po
+	done
+fi
+
+PO_NEW=$(git ls-files -o -x '*~' po/ | gawk '/po\/[[:alpha:]_\-]*\.po/ { sub("po/", ""); print $0; }' | sort)
+PO_MOD=$(git ls-files -m po/ | gawk '/po\/[[:alpha:]_\-]*\.po/ { sub("po/", ""); print $0; }' | sort)
 
 for f in $PO_MOD; do
 	try_lang $f
