@@ -1,0 +1,38 @@
+#!/bin/bash
+#
+# git-version-bump - update versions and dates
+#
+# Copyright (C) 2025 Karel Zak <kzak@redhat.com>
+#
+VERSION="$1"
+
+if [ -z "$VERSION" ]; then
+	echo "$(basename "$0") <new-version>"
+	exit 1
+fi
+
+git rev-parse --is-inside-work-tree &> /dev/null
+if [ "$?" -ne 0 ]; then
+	echo "Must be called within a Git working tree."
+	exit 1
+fi
+
+
+function bump_news_version {
+	local version="$1"
+	local date=$(date +"%b %d %Y")
+
+	sed -i "1s/.*/util-linux ${version}: ${date} (the latest and greatest!)/" NEWS
+}
+
+function bump_libblkid_date() {
+   local current_date=$(date +"%d-%b-%Y")
+ 
+   sed -i "s/LIBBLKID_DATE=\"[0-9]\{2\}-[A-Z][a-z]\{2\}-[0-9]\{4\}\"/LIBBLKID_DATE=\"$current_date\"/g" ./configure.ac
+   sed -i "s/libblkid_date = '[0-9]\{2\}-[A-Za-z]\{3\}-[0-9]\{4\}'/libblkid_date = '$current_date'/g" meson.build
+}
+
+bump_news_version "$VERSION"
+bump_libblkid_date
+
+git commit -s -m "build-sys: update release dates" NEWS meson.build configure.ac 
