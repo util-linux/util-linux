@@ -106,7 +106,7 @@ function git_files {
 	local MODE="$1"
 	local PODIR="$2"
 
-	echo $(git ls-files $MODE -x '*~' "$PODIR" \
+	echo $(git ls-files $MODE "${PODIR}/*.po" \
 		| gawk '/[[:alpha:]_\-]*\.po/ { sub(".*/", ""); print $0; }' \
 		| sort)
 }
@@ -165,7 +165,32 @@ function update_project {
 	git checkout -f "$PODIR"/ &> /dev/null
 }
 
+function regenerate_po_files {
+	local PODIR="$1"
+
+	if [ ! -f "${PODIR}/Makefile" ]; then
+		return;
+	fi
+
+	echo "== Updating $PODIR (be patient) =="
+	make -C $PODIR update-po &> /dev/null
+
+	# ignore files where is only modified one line ("POT-Creation-Date")
+	PO_IGNORE=$(git diff --numstat  $PODIR/*.po | gawk -v ORS=" " '/1[[:blank:]]1[[:blank:]]/ { print $3 }')
+	git checkout -f $PO_IGNORE &> /dev/null
+
+	if [ $(git ls-files -m "$PODIR" | wc -l) -gt 0 ]; then
+		if [ "$DRYRUN" = "true" ]; then
+			echo "${PODIR}: needs merge changes"
+		else
+			git commit -m "$PODIR: merge changes" $PODIR
+		fi
+	fi
+
+	git checkout -f "$PODIR"/ &> /dev/null
+}
 
 for d in "${DIRS[@]}"; do
 	update_project "${TP_PROJECTS[$d]}" "$d"
+	regenerate_po_files "$d"
 done
