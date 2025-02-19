@@ -3,11 +3,7 @@
 # git-tp-sync - downloads the latest PO files from translationproject.org
 #               and commits changes to your GIT repository.
 #
-# Features:
-#             - commit per PO file (no more huge commits for all .po files)
-#             - the commit "Author:" field is set according to the Last-Translator
-#
-# Copyright (C) 2007-2016 Karel Zak <kzak@redhat.com>
+# Copyright (C) 2007-2025 Karel Zak <kzak@redhat.com>
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,11 +15,20 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
+declare -A TP_PROJECTS
 
-PROJECT="util-linux"
+# Define local directories and project names on TP.org
+#
+#  TP_PROJECTS[<dirname>]=<project>
+#
+TP_PROJECTS["po"]="util-linux"
+TP_PROJECTS["po-man"]="util-linux-man"
+
+URL="rsync://translationproject.org/tp/latest"
 
 DRYRUN="false"
 LANGS=()
+DIRS=()
 
 while [[ $# -gt 0 ]]; do
 	case $1 in
@@ -31,8 +36,13 @@ while [[ $# -gt 0 ]]; do
 		DRYRUN="true"
 		shift
 		;;
+	--dir)
+		DIRS+=("$2")
+		shift
+		shift
+		;;
 	--usage | --help)
-		echo "$(basename "$0") [--dry-run] [<lang>, ...]"
+		echo "$(basename "$0") [--dir <dir>] [--dry-run] [<lang> ...]"
 		exit 0
 		;;
 	*)
@@ -41,6 +51,11 @@ while [[ $# -gt 0 ]]; do
 		;;
 	esac
 done
+
+# default to all dirs defined by TP_PROJECTS
+if [ ${#DIRS[@]} -eq 0 ]; then
+	DIRS=( ${!TP_PROJECTS[@]} )
+fi
 
 function get_author {
 	echo $(gawk 'BEGIN { FS=": " } /Last-Translator/ { sub("\\\\n\"", ""); print $2 }' "$1")
@@ -57,7 +72,7 @@ function get_revision_orig {
 		| date '+%s' -f -)
 }
 
-function do_commit {
+function git_commit {
 	local POFILE="$1"
 	local MSG="$2"
 	local AUTHOR=$(get_author "$POFILE")
@@ -65,56 +80,92 @@ function do_commit {
 	git commit --author "$AUTHOR" -m "$MSG" "$POFILE"
 }
 
-function try_lang {
-	local POLANG="$1"
-	local POFILE="po/$1"
+function save_modified_files {
+	local POFILENAME="$1"
+	local PODIR="$2"
+	local POFILE="${PODIR}/${POFILENAME}"
+
+	printf " %s : %10s : " $PODIR $POFILENAME
 
 	new_rev=$(get_revision "$POFILE")
 	old_rev=$(get_revision_orig "$POFILE")
 
 	if [ $new_rev -gt $old_rev ]; then
 		if [ "$DRYRUN" = "true" ]; then
-			echo "po: update $POLANG (ingore, dry run)"
+			echo " updated (ingore, dry-run)"
 		else
-			do_commit $POFILE "po: update $POLANG (from translationproject.org)"
+			echo " updated"
+			git_commit $POFILE "$PODIR: update $POFILENAME (from translationproject.org)"
 		fi
+	else
+		echo " ok"
 	fi
 }
 
 function git_files {
 	local MODE="$1"
-	local DIRNAME="$2"
+	local PODIR="$2"
 
-	echo $(git ls-files $MODE -x '*~' "$DIRNAME" \
-		| gawk '/[[:alpha:]_\-]*\.po/ { sub("po/", ""); print $0; }' \
+	echo $(git ls-files $MODE -x '*~' "$PODIR" \
+		| gawk '/[[:alpha:]_\-]*\.po/ { sub(".*/", ""); print $0; }' \
 		| sort)
 }
 
-#
-# Download
-#
-if [ ${#LANGS[@]} -eq 0 ]; then
-	rsync  -Lrtvz  rsync://translationproject.org/tp/latest/$PROJECT/ po
-else
-	for l in "${LANGS[@]}"; do
-		rsync  -Lrtvz  rsync://translationproject.org/tp/latest/$PROJECT/$l.po po
+function download_files {
+	local PROJECT="$1"
+	local PODIR="$2"
+
+	echo -n " Dowloding from ${URL}/${PROJECT} ..."
+
+	if [ ${#LANGS[@]} -eq 0 ]; then
+		rsync  -Lrtz  "$URL"/"$PROJECT"/ "$PODIR"
+	else
+		for l in "${LANGS[@]}"; do
+			rsync  -Lrtz  "$URL"/"$PROJECT"/"$l".po "$PODIR"
+		done
+	fi
+	echo " done"
+}
+
+function update_project {
+	local PROJECT="$1"
+	local PODIR="$2"
+
+	echo
+	echo "== Syncing $PROJECT to $PODIR/ ==="
+
+	download_files $PROJECT $PODIR
+
+	PO_NEW=$(git_files -o $PODIR)
+	PO_MOD=$(git_files -m $PODIR)
+
+	for f in $PO_MOD; do
+		save_modified_files $f $PODIR
 	done
-fi
 
-PO_NEW=$(git_files -o po)
-PO_MOD=$(git_files -m po)
+	for f in $PO_NEW; do
+		git add "$PODIR/$f"
+		git_commit "$PODIR/$f" "$PODIR: add $f (from translationproject.org)"
+	done
 
-for f in $PO_MOD; do
-	try_lang $f
+	if [ -f "${PODIR}/LINGUAS" ]; then
+		LINGUAS=$(find $PODIR"/" -name '*.po' -type f -printf '%P\n' | sed 's/\.po//g' | sort)
+		echo "$LINGUAS" > "${PODIR}/LINGUAS"
+
+		if [ "$(git ls-files -m "${PODIR}/LINGUAS")" = "${PODIR}/LINGUAS" ]; then
+			if [ "$DRYRUN" = "true" ]; then
+				echo ""${PODIR}/LINGUAS" needs update"
+			else
+				git commit -m "$PODIR: update LINGUAS list" "${PODIR}/LINGUAS"
+			fi
+		fi
+	fi
+
+	# cleanup
+	git checkout -f "$PODIR"/ &> /dev/null
+}
+
+
+for d in "${DIRS[@]}"; do
+	update_project "${TP_PROJECTS[$d]}" "$d"
 done
-
-for f in $PO_NEW; do
-	git add "po/$f"
-	do_commit "po/$f" "po: add $f (from translationproject.org)"
-done
-
-LINGUAS=$(find po/ -name '*.po' -type f -printf '%P\n' | sed 's/\.po//g' | sort)
-echo "$LINGUAS" > po/LINGUAS
-
-# cleanup
-git checkout -f po/ &> /dev/null
