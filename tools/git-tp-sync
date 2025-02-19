@@ -81,6 +81,15 @@ function try_lang {
 	fi
 }
 
+function git_files {
+	local MODE="$1"
+	local DIRNAME="$2"
+
+	echo $(git ls-files $MODE -x '*~' "$DIRNAME" \
+		| gawk '/[[:alpha:]_\-]*\.po/ { sub("po/", ""); print $0; }' \
+		| sort)
+}
+
 #
 # Download
 #
@@ -92,8 +101,8 @@ else
 	done
 fi
 
-PO_NEW=$(git ls-files -o -x '*~' po/ | gawk '/po\/[[:alpha:]_\-]*\.po/ { sub("po/", ""); print $0; }' | sort)
-PO_MOD=$(git ls-files -m po/ | gawk '/po\/[[:alpha:]_\-]*\.po/ { sub("po/", ""); print $0; }' | sort)
+PO_NEW=$(git_files -o po)
+PO_MOD=$(git_files -m po)
 
 for f in $PO_MOD; do
 	try_lang $f
