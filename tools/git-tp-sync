@@ -52,6 +52,12 @@ while [[ $# -gt 0 ]]; do
 	esac
 done
 
+git rev-parse --is-inside-work-tree &> /dev/null
+if [ "$?" -ne 0 ]; then
+	echo "Must be called within a Git working tree."
+	exit 1
+fi
+
 # default to all dirs defined by TP_PROJECTS
 if [ ${#DIRS[@]} -eq 0 ]; then
 	DIRS=( ${!TP_PROJECTS[@]} )
