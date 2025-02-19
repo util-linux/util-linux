@@ -11,12 +11,10 @@ if [ -z "$VERSION" ]; then
 	exit 1
 fi
 
-git rev-parse --is-inside-work-tree &> /dev/null
-if [ "$?" -ne 0 ]; then
-	echo "Must be called within a Git working tree."
+git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
+	echo "Error: Not inside a Git repository." >&2
 	exit 1
-fi
-
+}
 
 function bump_news_version {
 	local version="$1"
