@@ -32,11 +32,22 @@ else
 	rsync  -Lrtvz  rsync://translationproject.org/tp/latest/$PROJECT/ po
 fi
 
-PO_NEW=$(git ls-files -o | gawk '/po\/[[:alpha:]_\-]*\.po/ { sub("po/", ""); print $0; }' | sort)
-PO_MOD=$(git ls-files -m | gawk '/po\/[[:alpha:]_\-]*\.po/ { sub("po/", ""); print $0; }' | sort)
+PO_NEW=$(git ls-files -o -x '*~' po/ | gawk '/po\/[[:alpha:]_\-]*\.po/ { sub("po/", ""); print $0; }' | sort)
+PO_MOD=$(git ls-files -m po/ | gawk '/po\/[[:alpha:]_\-]*\.po/ { sub("po/", ""); print $0; }' | sort)
 
 function get_author {
 	echo $(gawk 'BEGIN { FS=": " } /Last-Translator/ { sub("\\\\n\"", ""); print $2 }' "$1")
+}
+
+function get_revision {
+	echo $(gawk 'BEGIN { FS=": " } /PO-Revision-Date/ { sub("\\\\n\"", ""); print $2 }' "$1" \
+		| date '+%s' -f -)
+}
+
+function get_revision_orig {
+	echo $(git show HEAD:"$1" \
+		| gawk 'BEGIN { FS=": " } /PO-Revision-Date/ { sub("\\\\n\"", ""); print $2 }' \
+		| date '+%s' -f -)
 }
 
 function do_commit {
@@ -47,8 +58,20 @@ function do_commit {
 	git commit --author "$AUTHOR" -m "$MSG" "$POFILE"
 }
 
+function try_lang {
+	local POLANG="$1"
+	local POFILE="po/$1"
+
+	new_rev=$(get_revision "$POFILE")
+	old_rev=$(get_revision_orig "$POFILE")
+
+	if [ $new_rev -gt $old_rev ]; then
+		do_commit $POFILE "po: update $POLANG (from translationproject.org)"
+	fi
+}
+
 for f in $PO_MOD; do
-	do_commit "po/$f" "po: update $f (from translationproject.org)"
+	try_lang $f
 done
 
 for f in $PO_NEW; do
@@ -58,3 +81,6 @@ done
 
 LINGUAS=$(find po/ -name '*.po' -type f -printf '%P\n' | sed 's/\.po//g' | sort)
 echo "$LINGUAS" > po/LINGUAS
+
+# cleanup
+git checkout -f po/ &> /dev/null
