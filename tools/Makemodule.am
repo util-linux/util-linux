@@ -1,7 +1,6 @@
 
 EXTRA_DIST += \
 	tools/git-tp-sync \
-	tools/git-tp-sync-man \
 	tools/git-version-gen \
 	tools/ko-release-gen \
 	tools/ko-release-push \
