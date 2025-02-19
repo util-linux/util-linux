@@ -45,7 +45,7 @@ Write information about active POSIX shared memory segments.
 Write information about active System V message queues.
 
 *-Q*, *--posix-mqueues*::
-Write information about active POSIX message queues. Mounts /dev/mqueue if not already mounted.
+Write information about active POSIX message queues.
 
 *-s*, *--semaphores*::
 Write information about active System V semaphore sets.
