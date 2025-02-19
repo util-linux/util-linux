@@ -44,7 +44,7 @@ libuuid:
 findmnt, lsblk, and lsfd:
   - Added a new --hyperlink command line option to print paths as terminal hyperlinks.
 
-fdinmnt:
+findmnt:
   - Can now address filesystems using --id and --uniq-id (requires listmount() kernel support).
 
 flock:
@@ -55,7 +55,7 @@ hardlink:
   - Can exclude sub-trees using --exclude-subtree or keep them in the current mount using --mount.
   - Duplicates can now be printed using --list-duplicates.
 
-kwclock:
+hwclock:
   - Added a new --param-index option to address position for RTC_PARAM_{GET,SET} ioctls.
 
 kill:
