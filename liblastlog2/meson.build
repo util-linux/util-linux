@@ -13,7 +13,7 @@ liblastlog2_sym = 'src/liblastlog2.sym'
 liblastlog2_sym_path = '@0@/@1@'.format(meson.current_source_dir(), liblastlog2_sym)
 
 if build_liblastlog2
-  lib_lastlog2 = both_libraries(
+  lib_lastlog2 = library(
     'lastlog2',
     lib_lastlog2_sources,
     include_directories : [dir_include],

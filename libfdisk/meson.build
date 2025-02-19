@@ -56,15 +56,7 @@ lib__fdisk = static_library(
   include_directories : lib_fdisk_includes,
   dependencies : build_libfdisk ? [] : disabler())
 
-lib_fdisk_static = static_library(
-  'fdisk_static',
-  link_whole : lib__fdisk,
-  link_with : [lib_common,
-               lib_uuid.get_static_lib()],
-  dependencies : [blkid_static_dep],
-  install : false)
-
-lib_fdisk = library(
+lib_fdisk = both_libraries(
   'fdisk',
   link_whole : lib__fdisk,
   link_depends : libfdisk_sym,
@@ -75,6 +67,8 @@ lib_fdisk = library(
   dependencies : [blkid_dep],
   install : build_libfdisk)
 fdisk_dep = declare_dependency(link_with: lib_fdisk, include_directories: '.')
+
+lib_fdisk_static = lib_fdisk.get_static_lib()
 
 if build_libfdisk
   pkgconfig.generate(lib_fdisk,
