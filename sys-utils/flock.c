@@ -82,6 +82,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(  " -c, --command <command>  run a single command string through the shell\n"), stdout);
 	fputs(_(  " -F, --no-fork            execute command without forking\n"), stdout);
 	fputs(_(  "     --fcntl              use fcntl(F_OFD_SETLK) rather than flock()\n"), stdout);
+	fputs(_(  "     --start <offset>     starting offset for lock (implies --fcntl)\n"), stdout);
+	fputs(_(  "     --length <number>    number of bytes to lock (implies --fcntl)\n"), stdout);
 	fputs(_(  "     --verbose            increase verbosity\n"), stdout);
 	fputs(USAGE_SEPARATOR, stdout);
 	fprintf(stdout, USAGE_HELP_OPTIONS(26));
@@ -152,25 +154,25 @@ static int flock_to_fcntl_type(int op)
 	}
 }
 
-static int fcntl_lock(int fd, int op, int block)
+static int fcntl_lock(int fd, int op, int block, off_t start, off_t len)
 {
 	struct flock arg = {
 		.l_type = flock_to_fcntl_type(op),
 		.l_whence = SEEK_SET,
-		.l_start = 0,
-		.l_len = 0,
+		.l_start = start,
+		.l_len = len,
 	};
 	int cmd = (block & LOCK_NB) ? F_OFD_SETLK : F_OFD_SETLKW;
 	return fcntl(fd, cmd, &arg);
 }
 
-static int do_lock(int api, int fd, int op, int block)
+static int do_lock(int api, int fd, int op, int block, off_t start, off_t len)
 {
 	switch (api) {
 	case API_FLOCK:
 		return flock(fd, op | block);
 	case API_FCNTL_OFD:
-		return fcntl_lock(fd, op, block);
+		return fcntl_lock(fd, op, block, start, len);
 	/*
 	 * Should never happen, api can never have values other than
 	 * API_*.
@@ -197,6 +199,7 @@ int main(int argc, char *argv[])
 	int verbose = 0;
 	int api = API_FLOCK;
 	struct timeval time_start = { 0 }, time_done = { 0 };
+	off_t start = 0, length = 0;
 	/*
 	 * The default exit code for lock conflict or timeout
 	 * is specified in man flock.1
@@ -207,6 +210,8 @@ int main(int argc, char *argv[])
 	enum {
 		OPT_VERBOSE = CHAR_MAX + 1,
 		OPT_FCNTL,
+		OPT_FCNTL_START,
+		OPT_FCNTL_LENGTH,
 	};
 	static const struct option long_options[] = {
 		{"shared", no_argument, NULL, 's'},
@@ -221,6 +226,8 @@ int main(int argc, char *argv[])
 		{"no-fork", no_argument, NULL, 'F'},
 		{"verbose", no_argument, NULL, OPT_VERBOSE},
 		{"fcntl", no_argument, NULL, OPT_FCNTL},
+		{"start", required_argument, NULL, OPT_FCNTL_START},
+		{"length", required_argument, NULL, OPT_FCNTL_LENGTH},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
@@ -276,6 +283,16 @@ int main(int argc, char *argv[])
 				errx(EX_USAGE, _("exit code out of range (expected 0 to 255)"));
 			break;
 		case OPT_FCNTL:
+			api = API_FCNTL_OFD;
+			break;
+		case OPT_FCNTL_START:
+			start = strtosize_or_err(optarg,
+						_("invalid as start offset"));
+			api = API_FCNTL_OFD;
+			break;
+		case OPT_FCNTL_LENGTH:
+			length = strtosize_or_err(optarg,
+						  _("invalid as lenght of lock range"));
 			api = API_FCNTL_OFD;
 			break;
 		case OPT_VERBOSE:
@@ -348,7 +365,7 @@ int main(int argc, char *argv[])
 
 	if (verbose)
 		gettime_monotonic(&time_start);
-	while (do_lock(api, fd, type, block)) {
+	while (do_lock(api, fd, type, block, start, length)) {
 		switch (errno) {
 		case EWOULDBLOCK:
 			/*

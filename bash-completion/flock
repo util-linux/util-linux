@@ -34,6 +34,8 @@ _flock_module()
 				--command
 				--no-fork
 				--fcntl
+				--start
+				--length
 				--help
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )

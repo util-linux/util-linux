@@ -85,6 +85,12 @@ Instead of flock(2), apply an fcntl(2) open file description lock (that is, usin
 
 This is only available on kernel versions >= 3.15.
 
+*--start* _offset_::
+The starting offset for lock. Ths option implies *--fcntl*.
+
+*--length* _number_::
+The number of bytes to lock. Ths option implies *--fcntl*.
+
 *--verbose*::
 Report how long it took to acquire the lock, or why the lock could not be obtained.
 
