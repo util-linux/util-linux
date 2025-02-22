@@ -337,3 +337,12 @@ lsclocks_SOURCES = misc-utils/lsclocks.c
 lsclocks_LDADD = $(LDADD) libcommon.la libsmartcols.la
 lsclocks_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
 endif
+
+if BUILD_MU
+usrbin_exec_PROGRAMS += mu
+MANPAGES += misc-utils/mu.1
+dist_noinst_DATA += misc-utils/mu.1.adoc
+mu_SOURCES = misc-utils/mu.c
+mu_LDADD = $(LDADD) libcommon.la libmount.la
+mu_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
+endif

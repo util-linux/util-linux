@@ -3377,6 +3377,22 @@ if opt and not is_disabler(exe)
   bashcompletions += ['exch']
 endif
 
+opt = not get_option('build-mu').disabled()
+exe = executable(
+  'mu',
+  mu_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  dependencies : [mount_dep],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += mu_manadocs
+  # bashcompletions += ['mu']
+endif
+
 ############################################################
 
 opt = not get_option('build-schedutils').disabled()
