@@ -76,8 +76,8 @@ usage(void)
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Key bindings:\n"), out);
 	fputs(_(" space        toggles between pause and play\n"), out);
-	fputs(_(" up-arrow     increases the time divisor with 0.1\n"), out);
-	fputs(_(" down-arrow   decreases the time divisor with 0.1\n"), out);
+	fputs(_(" up-arrow     increases playback speed with ten percent\n"), out);
+	fputs(_(" down-arrow   decreases playback speed with ten percent\n"), out);
 
 	fprintf(out, USAGE_MAN_TAIL("scriptreplay(1)"));
 	exit(EXIT_SUCCESS);
@@ -343,10 +343,10 @@ main(int argc, char *argv[])
 			if (ch == '[') {
 				ch = fgetc(stdin);
 				if (ch == 'A') { /* Up arrow */
-					divi += 0.1;
+					divi *= 1.1;
 					replay_set_delay_div(setup, divi);
 				} else if (ch == 'B') { /* Down arrow */
-					divi -= 0.1;
+					divi *= 0.9;
 					if (divi < 0.1)
 						divi = 0.1;
 					replay_set_delay_div(setup, divi);
