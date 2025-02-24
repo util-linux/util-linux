@@ -21,9 +21,14 @@ This program re-runs a typescript, using stdin typescript and timing information
 
 The *session is executed* in a newly created pseudoterminal with the user's $SHELL (or defaults to _/bin/bash_).
 
-*Be careful!* Do not forget that the typescript may contains arbitrary commands. It is recommended to use *"scriptreplay --stream in --log-in typescript"* (or with *--log-io* instead of *--log-in*) to verify the typescript before it is executed by *scriptlive*.
+*Be careful!* The typescript may contain arbitrary commands. It is
+recommended to use *"scriptreplay --stream in --log-in typescript"*
+(or with *--log-io* instead of *--log-in*) to verify the typescript
+before it is executed with *scriptlive*.
 
-The timing information is what *script*(1) outputs to file specified by *--log-timing*. The typescript has to contain stdin information and it is what script1 outputs to file specified by *--log-in* or *--log-io*.
+The timing information is what *script*(1) outputs to the file specified by
+*--log-timing*. The typescript has to contain stdin information, and is what
+*script*(1) outputs to the file specified by *--log-in* or *--log-io*.
 
 == OPTIONS
 
@@ -34,15 +39,19 @@ File containing *script*'s terminal input.
 File containing *script*'s terminal output and input.
 
 *-E*, *--echo* _when_::
-This option controls the *ECHO* flag for the slave end of the session's pseudoterminal. The supported modes are _always_, _never_, or _auto_.
+This option controls the *ECHO* flag for the slave end of the session's
+pseudoterminal. The supported modes are *always*, *never*, and *auto*.
 +
-The default is _auto_ -- in this case, *ECHO* enabled; this default behavior is subject to change.
+The default is *auto* -- in which case *ECHO* is enabled. This default
+behavior is subject to change.
 
 *-t*, *--timing* _file_::
-File containing *script*'s timing output. This option overrides old-style arguments.
+File containing *script*'s timing output.
+This option replaces the _timingfile_ positional argument.
 
 *-T*, *--log-timing* _file_::
-Aliased to *-t*, maintained for compatibility with *script*(1) command-line options.
+An alias for *-t*; maintained for compatibility with the *script*(1)
+command-line options.
 
 *-d*, *--divisor* _number_::
 Speed up the replay displaying this _number_ of times. The argument is a floating-point number. It's called divisor because it divides the timings by this factor. This option overrides old-style arguments.
