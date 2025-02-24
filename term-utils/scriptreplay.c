@@ -50,7 +50,7 @@ usage(void)
 	      _(" %s [options]\n"),
 	      program_invocation_short_name);
 	fprintf(out,
-	      _(" %s [-t] timingfile [typescript] [divisor]\n"),
+	      _(" %s [-t] <timingfile> [<typescript> [<divisor>]]\n"),
 	      program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -75,9 +75,9 @@ usage(void)
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Key bindings:\n"), out);
-	fputs(_(" space        toggles pause and unpause\n"), out);
-	fputs(_(" up-arrow     increases the playback speed by 0.1 times\n"), out);
-	fputs(_(" down-arrow   decreases the playback speed by 0.1 times\n"), out);
+	fputs(_(" space        toggles between pause and play\n"), out);
+	fputs(_(" up-arrow     increases the time divisor with 0.1\n"), out);
+	fputs(_(" down-arrow   decreases the time divisor with 0.1\n"), out);
 
 	fprintf(out, USAGE_MAN_TAIL("scriptreplay(1)"));
 	exit(EXIT_SUCCESS);
