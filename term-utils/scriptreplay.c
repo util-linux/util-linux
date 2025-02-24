@@ -47,10 +47,7 @@ usage(void)
 	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
-	      _(" %s [options]\n"),
-	      program_invocation_short_name);
-	fprintf(out,
-	      _(" %s [-t] <timingfile> [<typescript> [<divisor>]]\n"),
+	      _(" %s [options] <timingfile> [<typescript> [<divisor>]]\n"),
 	      program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -71,6 +68,8 @@ usage(void)
 	fputs(_(" -m, --maxdelay <num>    wait at most this many seconds between updates\n"), out);
 	fputs(_(" -x, --stream <name>     stream type (out, in, signal or info)\n"), out);
 	fputs(_(" -c, --cr-mode <type>    CR char mode (auto, never, always)\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(25));
 
 	fputs(USAGE_SEPARATOR, out);
