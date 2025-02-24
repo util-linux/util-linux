@@ -203,10 +203,6 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		 *
 		 * The old deprecated way is to use mnt_optstr_get_flags().
 		 */
-		if (user_flags & (MNT_MS_OWNER | MNT_MS_GROUP))
-			rc = mnt_optlist_remove_flags(ol,
-					MNT_MS_OWNER | MNT_MS_GROUP, cxt->map_userspace);
-
 		if (!rc && (user_flags & MNT_MS_OWNER))
 			rc = mnt_optlist_insert_flags(ol,
 					MS_OWNERSECURE, cxt->map_linux,
@@ -226,6 +222,10 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		if (!rc && (user_flags & MNT_MS_USERS))
 			rc = mnt_optlist_insert_flags(ol, MS_SECURE, cxt->map_linux,
 					MNT_MS_USERS, cxt->map_userspace);
+
+		if (user_flags & (MNT_MS_OWNER | MNT_MS_GROUP))
+			rc = mnt_optlist_remove_flags(ol,
+					MNT_MS_OWNER | MNT_MS_GROUP, cxt->map_userspace);
 
 		DBG(CXT, ul_debugobj(cxt, "perms: superuser [rc=%d]", rc));
 		if (rc)
