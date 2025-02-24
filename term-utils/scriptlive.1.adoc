@@ -13,7 +13,7 @@ scriptlive - re-run session typescripts, using timing information
 
 == SYNOPSIS
 
-*scriptlive* [options] [*-t*] _timingfile_ [*-I*|*-B*] _typescript_
+*scriptlive* [options] _timingfile_ _typescript_
 
 == DESCRIPTION
 
