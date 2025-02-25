@@ -266,7 +266,13 @@ struct ul_statmount {
 	uint32_t mnt_root;		/* [str] Root of mount relative to root of fs */
 	uint32_t mnt_point;	/* [str] Mountpoint relative to current root */
 	uint64_t mnt_ns_id;	 /* ID of the mount namespace */
-	uint64_t __spare2[49];
+	uint32_t fs_subtype;	/* [str] Subtype of fs_type (if any) */
+	uint32_t sb_source;	/* [str] Source string of the mount */
+	uint32_t opt_num;	/* Number of fs options */
+	uint32_t opt_array;	/* [str] Array of nul terminated fs options */
+	uint32_t opt_sec_num;	/* Number of security options */
+	uint32_t opt_sec_array;	/* [str] Array of nul terminated security options */
+	uint64_t __spare2[46];
 	char str[];		/* Variable size part containing strings */
 };
 
@@ -316,6 +322,19 @@ struct ul_statmount {
 #ifndef STATMOUNT_MNT_OPTS
 # define STATMOUNT_MNT_OPTS		0x00000080U     /* Want/got mnt_opts */
 #endif
+#ifndef STATMOUNT_FS_SUBTYPE
+# define STATMOUNT_FS_SUBTYPE		0x00000100U	/* Want/got fs_subtype */
+#endif
+#ifndef STATMOUNT_SB_SOURCE
+# define STATMOUNT_SB_SOURCE		0x00000200U	/* Want/got sb_source */
+#endif
+#ifndef STATMOUNT_OPT_ARRAY
+# define STATMOUNT_OPT_ARRAY		0x00000400U	/* Want/got opt_... */
+#endif
+#ifndef STATMOUNT_OPT_SEC_ARRAY
+# define STATMOUNT_OPT_SEC_ARRAY	0x00000800U	/* Want/got opt_sec... */
+#endif
+
 
 /*
  * Special @mnt_id values that can be passed to listmount
