@@ -36,7 +36,7 @@ usrbin_exec_PROGRAMS += ipcmk
 MANPAGES += sys-utils/ipcmk.1
 dist_noinst_DATA += sys-utils/ipcmk.1.adoc
 ipcmk_SOURCES = sys-utils/ipcmk.c
-ipcmk_LDADD = $(LDADD) $(POSIXIPC_LIBS) libcommon.la
+ipcmk_LDADD = $(LDADD) $(POSIXIPC_LIBS) $(MQ_LIBS) libcommon.la
 endif
 
 if BUILD_IPCRM
@@ -46,7 +46,7 @@ dist_noinst_DATA += sys-utils/ipcrm.1.adoc
 ipcrm_SOURCES = sys-utils/ipcrm.c \
 		sys-utils/ipcutils.c \
 		sys-utils/ipcutils.h
-ipcrm_LDADD = $(LDADD) $(POSIXIPC_LIBS) libcommon.la
+ipcrm_LDADD = $(LDADD) $(POSIXIPC_LIBS) $(MQ_LIBS) libcommon.la
 endif
 
 if BUILD_IPCS
@@ -56,7 +56,7 @@ dist_noinst_DATA += sys-utils/ipcs.1.adoc
 ipcs_SOURCES =	sys-utils/ipcs.c \
 		sys-utils/ipcutils.c \
 		sys-utils/ipcutils.h
-ipcs_LDADD = $(LDADD) $(POSIXIPC_LIBS) libcommon.la
+ipcs_LDADD = $(LDADD) $(POSIXIPC_LIBS) $(MQ_LIBS) libcommon.la
 endif
 
 if BUILD_IRQTOP
