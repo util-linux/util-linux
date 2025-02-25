@@ -427,7 +427,8 @@ const char *mnt_fs_get_srcpath(struct libmnt_fs *fs)
 	/* fstab-like fs */
 	if (fs->tagname)
 		return NULL;	/* the source contains a "NAME=value" */
-	return fs->source;
+
+	return mnt_fs_get_source(fs);
 }
 
 /**
@@ -439,7 +440,13 @@ const char *mnt_fs_get_srcpath(struct libmnt_fs *fs)
  */
 const char *mnt_fs_get_source(struct libmnt_fs *fs)
 {
-	return fs ? fs->source : NULL;
+	if (!fs)
+		return NULL;
+
+#ifdef HAVE_STATMOUNT_API
+	mnt_fs_try_statmount(fs, source, STATMOUNT_SB_SOURCE);
+#endif
+	return fs->source;
 }
 
 /*

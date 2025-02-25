@@ -195,6 +195,9 @@ static int apply_statmount(struct libmnt_fs *fs, struct ul_statmount *sm)
 	if (!rc && (sm->mask & STATMOUNT_MNT_ROOT) && !fs->root)
 		rc = mnt_fs_set_root(fs, sm_str(sm, sm->mnt_root));
 
+	if (!rc && (sm->mask & STATMOUNT_SB_SOURCE) && !fs->source)
+		rc = mnt_fs_set_source(fs, sm_str(sm, sm->sb_source));
+
 	if (!rc && (sm->mask & STATMOUNT_MNT_BASIC)) {
 		if (!fs->propagation)
 			fs->propagation = sm->mnt_propagation;
@@ -348,6 +351,8 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 			mask |= STATMOUNT_MNT_OPTS;
 		if (!fs->ns_id)
 			mask |= STATMOUNT_MNT_NS_ID;
+		if (!fs->source)
+			mask |= STATMOUNT_SB_SOURCE;
 	}
 
 	if (fs->ns_id)
@@ -364,14 +369,15 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 		DBG(FS, ul_debugobj(fs, " use private buffer"));
 		rc = sys_statmount(fs->uniq_id, 0, mask, &buf, &bufsiz, 0);
 	}
-	DBG(FS, ul_debugobj(fs, " statmount [rc=%d bufsiz=%zu ns=%" PRIu64 " mask: %s%s%s%s%s%s]",
+	DBG(FS, ul_debugobj(fs, " statmount [rc=%d bufsiz=%zu ns=%" PRIu64 " mask: %s%s%s%s%s%s%s]",
 				rc, bufsiz, ns,
 				mask & STATMOUNT_SB_BASIC ? "sb-basic " : "",
 				mask & STATMOUNT_MNT_BASIC ? "mnt-basic " : "",
 				mask & STATMOUNT_MNT_ROOT ? "mnt-root " : "",
 				mask & STATMOUNT_MNT_POINT ? "mnt-point " : "",
 				mask & STATMOUNT_FS_TYPE ? "fs-type " : "",
-				mask & STATMOUNT_MNT_OPTS ? "mnt-opts " : ""));
+				mask & STATMOUNT_MNT_OPTS ? "mnt-opts " : "",
+				mask & STATMOUNT_SB_SOURCE ? "sb-source " : ""));
 
 	if (!rc)
 		rc = apply_statmount(fs, buf);
