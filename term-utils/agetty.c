@@ -928,11 +928,15 @@ static void parse_args(int argc, char **argv, struct options *op)
 
 	/* resolve the tty path in case it was provided as stdin */
 	if (strcmp(op->tty, "-") == 0) {
+		int fd;
+		const char *name = op->tty;
+
 		op->tty_is_stdin = 1;
-		int fd = get_terminal_name(NULL, &op->tty, NULL);
-		if (fd < 0) {
+		fd = get_terminal_name(NULL, &name, NULL);
+		if (fd >= 0)
+			op->tty = name;	/* set real device name */
+		else
 			log_warn(_("could not get terminal name: %d"), fd);
-		}
 	}
 
 	/* On virtual console remember the line which is used for */
