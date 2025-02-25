@@ -2718,6 +2718,8 @@ AS_IF([test "x$with_systemd" != xno], [
        AC_DEFINE([HAVE_LIBSYSTEMD], [1], [Define if libsystemd is available])
        AC_DEFINE([USE_SYSTEMD], [1], [Define if systemd support is wanted ])
        AC_CHECK_DECLS([sd_session_get_username], [], [], [#include <systemd/sd-login.h>])
+       AC_CHECK_DECLS([sd_device_new_from_syspath], [], [], [#include <systemd/sd-device.h>])
+       AC_CHECK_DECLS([sd_device_open], [], [], [#include <systemd/sd-device.h>])
   )
 ])
 AM_CONDITIONAL([HAVE_SYSTEMD], [test "x$have_systemd" = xyes])

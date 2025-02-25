@@ -332,7 +332,11 @@ zramctl_SOURCES = sys-utils/zramctl.c \
 		  lib/ismounted.c
 zramctl_LDADD = $(LDADD) libcommon.la libsmartcols.la
 zramctl_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
+if HAVE_SYSTEMD
+zramctl_LDADD += $(SYSTEMD_LIBS)
+zramctl_CFLAGS += $(SYSTEMD_CFLAGS)
 endif
+endif # BUILD_ZRAMCTL
 
 
 if BUILD_PRLIMIT

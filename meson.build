@@ -373,6 +373,19 @@ lib_systemd = dependency(
   required : get_option('systemd'))
 conf.set('HAVE_LIBSYSTEMD', lib_systemd.found() ? 1 : false)
 conf.set('USE_SYSTEMD', lib_systemd.found() ? 1 : false)
+summary('libsystemd', lib_systemd.found() ? 'enabled' : 'disabled', section : 'components')
+
+# Since systemd-240, which provides basic functions in sd-device.
+have = cc.has_function(
+  'sd_device_new_from_syspath',
+  dependencies : lib_systemd)
+conf.set('HAVE_DECL_SD_DEVICE_NEW_FROM_SYSPATH', have ? 1 : false)
+
+# Since systemd-251, which also newly provides sd_device_new_from_devname().
+have = cc.has_function(
+  'sd_device_open',
+  dependencies : lib_systemd)
+conf.set('HAVE_DECL_SD_DEVICE_OPEN', have ? 1 : false)
 
 have = cc.has_function(
   'sd_session_get_username',
@@ -1858,6 +1871,8 @@ exe = executable(
   include_directories : includes,
   link_with : [lib_common,
                lib_smartcols],
+  # requires systemd v240 or newer
+  dependencies : [conf.get('HAVE_DECL_SD_DEVICE_NEW_FROM_SYSPATH') == 1 ? lib_systemd : [] ],
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
