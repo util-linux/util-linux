@@ -1045,6 +1045,8 @@ static void print_summary(struct lscpu_cxt *cxt)
 					   _("Off-line CPU(s) list:"), set);
 		cpuset_free(set);
 	}
+	add_summary_n(tb, sec, _("Total socket(s):"), ct->nsockets);
+	add_summary_n(tb, sec, _("Total core(s):"), ct->ncores);
 	sec = NULL;
 
 	/* Section: cpu type description */
