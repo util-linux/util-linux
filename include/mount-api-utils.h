@@ -37,7 +37,7 @@ static inline int open_tree(int dfd, const char *filename, unsigned int flags)
 #endif
 
 #ifndef MOVE_MOUNT_F_SYMLINKS
-# define MOVE_MOUNT_F_SYMLINKS 0x00000001 /* Follow symlinks on from path */
+# define MOVE_MOUNT_F_SYMLINKS   0x00000001 /* Follow symlinks on from path */
 #endif
 
 #ifndef MOVE_MOUNT_F_AUTOMOUNTS
@@ -49,7 +49,7 @@ static inline int open_tree(int dfd, const char *filename, unsigned int flags)
 #endif
 
 #ifndef MOVE_MOUNT_T_SYMLINKS
-# define MOVE_MOUNT_T_SYMLINKS 0x00000010 /* Follow symlinks on to path */
+# define MOVE_MOUNT_T_SYMLINKS   0x00000010 /* Follow symlinks on to path */
 #endif
 
 #ifndef MOVE_MOUNT_T_AUTOMOUNTS
@@ -61,7 +61,7 @@ static inline int open_tree(int dfd, const char *filename, unsigned int flags)
 #endif
 
 #ifndef MOVE_MOUNT_SET_GROUP
-# define MOVE_MOUNT_SET_GROUP	0x00000100 /* Set sharing group instead */
+# define MOVE_MOUNT_SET_GROUP    0x00000100 /* Set sharing group instead */
 #endif
 
 #ifndef MOVE_MOUNT__MASK
@@ -246,93 +246,93 @@ struct ul_mnt_id_req {
  * struct cannot be versioned by size (like struct mnt_id_req).
  */
 struct ul_statmount {
-	uint32_t size;		/* Total size, including strings */
-	uint32_t mnt_opts;	/* [str] Mount options of the mount */
-	uint64_t mask;		/* What results were written */
-	uint32_t sb_dev_major;	/* Device ID */
+	uint32_t size;            /* Total size, including strings */
+	uint32_t mnt_opts;        /* [str] Mount options of the mount */
+	uint64_t mask;            /* What results were written */
+	uint32_t sb_dev_major;    /* Device ID */
 	uint32_t sb_dev_minor;
-	uint64_t sb_magic;		/* ..._SUPER_MAGIC */
-	uint32_t sb_flags;		/* SB_{RDONLY,SYNCHRONOUS,DIRSYNC,LAZYTIME} */
-	uint32_t fs_type;		/* [str] Filesystem type */
-	uint64_t mnt_id;		/* Unique ID of mount */
-	uint64_t mnt_parent_id;	/* Unique ID of parent (for root == mnt_id) */
-	uint32_t mnt_id_old;	/* Reused IDs used in proc/.../mountinfo */
+	uint64_t sb_magic;        /* ..._SUPER_MAGIC */
+	uint32_t sb_flags;        /* SB_{RDONLY,SYNCHRONOUS,DIRSYNC,LAZYTIME} */
+	uint32_t fs_type;         /* [str] Filesystem type */
+	uint64_t mnt_id;          /* Unique ID of mount */
+	uint64_t mnt_parent_id;   /* Unique ID of parent (for root == mnt_id) */
+	uint32_t mnt_id_old;      /* Reused IDs used in proc/.../mountinfo */
 	uint32_t mnt_parent_id_old;
-	uint64_t mnt_attr;		/* MOUNT_ATTR_... */
-	uint64_t mnt_propagation;	/* MS_{SHARED,SLAVE,PRIVATE,UNBINDABLE} */
-	uint64_t mnt_peer_group;	/* ID of shared peer group */
-	uint64_t mnt_master;	/* Mount receives propagation from this ID */
-	uint64_t propagate_from;	/* Propagation from in current namespace */
-	uint32_t mnt_root;		/* [str] Root of mount relative to root of fs */
-	uint32_t mnt_point;	/* [str] Mountpoint relative to current root */
-	uint64_t mnt_ns_id;	 /* ID of the mount namespace */
-	uint32_t fs_subtype;	/* [str] Subtype of fs_type (if any) */
-	uint32_t sb_source;	/* [str] Source string of the mount */
-	uint32_t opt_num;	/* Number of fs options */
-	uint32_t opt_array;	/* [str] Array of nul terminated fs options */
-	uint32_t opt_sec_num;	/* Number of security options */
-	uint32_t opt_sec_array;	/* [str] Array of nul terminated security options */
+	uint64_t mnt_attr;        /* MOUNT_ATTR_... */
+	uint64_t mnt_propagation; /* MS_{SHARED,SLAVE,PRIVATE,UNBINDABLE} */
+	uint64_t mnt_peer_group;  /* ID of shared peer group */
+	uint64_t mnt_master;      /* Mount receives propagation from this ID */
+	uint64_t propagate_from;  /* Propagation from in current namespace */
+	uint32_t mnt_root;        /* [str] Root of mount relative to root of fs */
+	uint32_t mnt_point;       /* [str] Mountpoint relative to current root */
+	uint64_t mnt_ns_id;       /* ID of the mount namespace */
+	uint32_t fs_subtype;      /* [str] Subtype of fs_type (if any) */
+	uint32_t sb_source;       /* [str] Source string of the mount */
+	uint32_t opt_num;         /* Number of fs options */
+	uint32_t opt_array;       /* [str] Array of nul terminated fs options */
+	uint32_t opt_sec_num;     /* Number of security options */
+	uint32_t opt_sec_array;   /* [str] Array of nul terminated security options */
 	uint64_t __spare2[46];
-	char str[];		/* Variable size part containing strings */
+	char str[];               /* Variable size part containing strings */
 };
 
 /* sb_flags (defined in kernel include/linux/fs.h) */
 #ifndef SB_RDONLY
-# define SB_RDONLY       BIT(0)	/* Mount read-only */
-# define SB_NOSUID       BIT(1)	/* Ignore suid and sgid bits */
-# define SB_NODEV        BIT(2)	/* Disallow access to device special files */
-# define SB_NOEXEC       BIT(3)	/* Disallow program execution */
-# define SB_SYNCHRONOUS  BIT(4)	/* Writes are synced at once */
-# define SB_MANDLOCK     BIT(6)	/* Allow mandatory locks on an FS */
-# define SB_DIRSYNC      BIT(7)	/* Directory modifications are synchronous */
-# define SB_NOATIME      BIT(10)	/* Do not update access times. */
-# define SB_NODIRATIME   BIT(11)	/* Do not update directory access times */
+# define SB_RDONLY       BIT(0)   /* Mount read-only */
+# define SB_NOSUID       BIT(1)   /* Ignore suid and sgid bits */
+# define SB_NODEV        BIT(2)   /* Disallow access to device special files */
+# define SB_NOEXEC       BIT(3)   /* Disallow program execution */
+# define SB_SYNCHRONOUS  BIT(4)   /* Writes are synced at once */
+# define SB_MANDLOCK     BIT(6)   /* Allow mandatory locks on an FS */
+# define SB_DIRSYNC      BIT(7)   /* Directory modifications are synchronous */
+# define SB_NOATIME      BIT(10)  /* Do not update access times. */
+# define SB_NODIRATIME   BIT(11)  /* Do not update directory access times */
 # define SB_SILENT       BIT(15)
-# define SB_POSIXACL     BIT(16)	/* Supports POSIX ACLs */
-# define SB_INLINECRYPT  BIT(17)	/* Use blk-crypto for encrypted files */
-# define SB_KERNMOUNT    BIT(22)	/* this is a kern_mount call */
-# define SB_I_VERSION    BIT(23)	/* Update inode I_version field */
-# define SB_LAZYTIME     BIT(25)	/* Update the on-disk [acm]times lazily */
+# define SB_POSIXACL     BIT(16)  /* Supports POSIX ACLs */
+# define SB_INLINECRYPT  BIT(17)  /* Use blk-crypto for encrypted files */
+# define SB_KERNMOUNT    BIT(22)  /* this is a kern_mount call */
+# define SB_I_VERSION    BIT(23)  /* Update inode I_version field */
+# define SB_LAZYTIME     BIT(25)  /* Update the on-disk [acm]times lazily */
 #endif
 
 /*
  * @mask bits for statmount(2)
  */
 #ifndef STATMOUNT_SB_BASIC
-# define STATMOUNT_SB_BASIC		0x00000001U     /* Want/got sb_... */
+# define STATMOUNT_SB_BASIC            0x00000001U   /* Want/got sb_... */
 #endif
 #ifndef STATMOUNT_MNT_BASIC
-# define STATMOUNT_MNT_BASIC		0x00000002U	/* Want/got mnt_... */
+# define STATMOUNT_MNT_BASIC           0x00000002U   /* Want/got mnt_... */
 #endif
 #ifndef STATMOUNT_PROPAGATE_FROM
-# define STATMOUNT_PROPAGATE_FROM	0x00000004U	/* Want/got propagate_from */
+# define STATMOUNT_PROPAGATE_FROM      0x00000004U   /* Want/got propagate_from */
 #endif
 #ifndef STATMOUNT_MNT_ROOT
-# define STATMOUNT_MNT_ROOT		0x00000008U	/* Want/got mnt_root  */
+# define STATMOUNT_MNT_ROOT            0x00000008U   /* Want/got mnt_root  */
 #endif
 #ifndef STATMOUNT_MNT_POINT
-# define STATMOUNT_MNT_POINT		0x00000010U	/* Want/got mnt_point */
+# define STATMOUNT_MNT_POINT           0x00000010U   /* Want/got mnt_point */
 #endif
 #ifndef STATMOUNT_FS_TYPE
-# define STATMOUNT_FS_TYPE		0x00000020U	/* Want/got fs_type */
+# define STATMOUNT_FS_TYPE             0x00000020U   /* Want/got fs_type */
 #endif
 #ifndef STATMOUNT_MNT_NS_ID
-# define STATMOUNT_MNT_NS_ID		0x00000040U     /* Want/got mnt_ns_id */
+# define STATMOUNT_MNT_NS_ID           0x00000040U   /* Want/got mnt_ns_id */
 #endif
 #ifndef STATMOUNT_MNT_OPTS
-# define STATMOUNT_MNT_OPTS		0x00000080U     /* Want/got mnt_opts */
+# define STATMOUNT_MNT_OPTS            0x00000080U   /* Want/got mnt_opts */
 #endif
 #ifndef STATMOUNT_FS_SUBTYPE
-# define STATMOUNT_FS_SUBTYPE		0x00000100U	/* Want/got fs_subtype */
+# define STATMOUNT_FS_SUBTYPE          0x00000100U   /* Want/got fs_subtype */
 #endif
 #ifndef STATMOUNT_SB_SOURCE
-# define STATMOUNT_SB_SOURCE		0x00000200U	/* Want/got sb_source */
+# define STATMOUNT_SB_SOURCE           0x00000200U   /* Want/got sb_source */
 #endif
 #ifndef STATMOUNT_OPT_ARRAY
-# define STATMOUNT_OPT_ARRAY		0x00000400U	/* Want/got opt_... */
+# define STATMOUNT_OPT_ARRAY           0x00000400U   /* Want/got opt_... */
 #endif
 #ifndef STATMOUNT_OPT_SEC_ARRAY
-# define STATMOUNT_OPT_SEC_ARRAY	0x00000800U	/* Want/got opt_sec... */
+# define STATMOUNT_OPT_SEC_ARRAY       0x00000800U   /* Want/got opt_sec... */
 #endif
 
 
@@ -340,11 +340,11 @@ struct ul_statmount {
  * Special @mnt_id values that can be passed to listmount
  */
 #ifdef LSMT_ROOT
-# define LSMT_ROOT		0xffffffffffffffff	/* root mount */
+# define LSMT_ROOT              0xffffffffffffffff    /* root mount */
 #endif
 
 #ifndef LISTMOUNT_REVERSE
-# define LISTMOUNT_REVERSE      BIT(0) /* List later mounts first */
+# define LISTMOUNT_REVERSE      BIT(0)               /* List later mounts first */
 #endif
 
 #if defined(SYS_statmount)
