@@ -31,6 +31,9 @@ information and not a sparse file.
 
 == OPTIONS
 
+*-a*, *--active*::
+Print last login records excluding users who have never logged in.
+
 *-b*, *--before* _DAYS_::
 Print only last login records older than _DAYS_.
 
