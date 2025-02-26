@@ -453,7 +453,7 @@ For most types all the *mount* program has to do is issue a simple *mount*(2) sy
 Mount the partition that has the specified _uuid_.
 
 *-v*, *--verbose*::
-Verbose mode.
+Enables verbose mode. Starting from version 2.41, if the new kernel mount API is available, it will also print kernel info messages.
 
 *-w*, *--rw*, *--read-write*::
 Mount the filesystem read/write. Read-write is the kernel default and the *mount* default is to try read-only if the previous *mount*(2) syscall with read-write flags on write-protected devices failed.
