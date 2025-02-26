@@ -41,6 +41,7 @@
 
 static char *lastlog2_path = LL2_DEFAULT_DATABASE;
 
+static int aflg;
 static int bflg;
 static time_t b_days;
 static int tflg;
@@ -78,8 +79,11 @@ static int print_entry(const char *user, int64_t ll_time,
 		datep = datetime;
 	}
 
-	if (ll_time == 0)
+	if (ll_time == 0) {
+		if (aflg)
+			return 0;
 		datep = "**Never logged in**";
+	}
 
 	if (!once) {
 		printf("Username         Port     From%*s Latest%*s%s\n",
@@ -108,6 +112,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fprintf(output, _(" %s [options]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, output);
+	fputs(_(" -a, --active            print lastlog excluding '**Never logged in**' users\n"), output);
 	fputs(_(" -b, --before DAYS       print only records older than DAYS\n"), output);
 	fputs(_(" -C, --clear             clear record of a user (requires -u)\n"), output);
 	fputs(_(" -d, --database FILE     use FILE as lastlog2 database\n"), output);
@@ -131,6 +136,7 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char **argv)
 {
 	static const struct option longopts[] = {
+		{"active",   no_argument,       NULL, 'a'},
 		{"before",   required_argument, NULL, 'b'},
 		{"clear",    no_argument,       NULL, 'C'},
 		{"database", required_argument, NULL, 'd'},
@@ -157,8 +163,11 @@ int main(int argc, char **argv)
 
 	int c;
 
-	while ((c = getopt_long(argc, argv, "b:Cd:hi:r:sSt:u:v", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "ab:Cd:hi:r:sSt:u:v", longopts, NULL)) != -1) {
 		switch (c) {
+		case 'a': /* active; print lastlog excluding '**Never logged in**' users */
+			aflg = 1;
+			break;
 		case 'b': /* before DAYS; Print only records older than DAYS */
 			{
 				unsigned long days;
