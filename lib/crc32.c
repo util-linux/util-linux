@@ -122,7 +122,7 @@ uint32_t ul_crc32(uint32_t seed, const unsigned char *buf, size_t len)
 }
 
 uint32_t ul_crc32_exclude_offset(uint32_t seed, const unsigned char *buf, size_t len,
-			      size_t exclude_off, size_t exclude_len)
+			      size_t exclude_off, size_t exclude_len, uint8_t exclude_fill)
 {
 	uint32_t crc = seed;
 	const unsigned char *p = buf;
@@ -132,7 +132,7 @@ uint32_t ul_crc32_exclude_offset(uint32_t seed, const unsigned char *buf, size_t
 		unsigned char x = *p++;
 
 		if (i >= exclude_off && i < exclude_off + exclude_len)
-			x = 0;
+			x = exclude_fill;
 
 		crc = crc32_add_char(crc, x);
 	}

@@ -64,7 +64,7 @@ static int cramfs_verify_csum(blkid_probe pr, const struct blkid_idmag *mag,
 
 	crc = ~ul_crc32_exclude_offset(~0LL, csummed, csummed_size,
 			offsetof(struct cramfs_super, info.crc),
-			sizeof_member(struct cramfs_super, info.crc));
+			sizeof_member(struct cramfs_super, info.crc), 0);
 
 	return blkid_probe_verify_csum(pr, crc, expected);
 }
