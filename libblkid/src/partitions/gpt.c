@@ -106,7 +106,7 @@ struct gpt_entry {
 static inline uint32_t count_crc32(const unsigned char *buf, size_t len,
 				   size_t exclude_off, size_t exclude_len)
 {
-	return (ul_crc32_exclude_offset(~0L, buf, len, exclude_off, exclude_len) ^ ~0L);
+	return (ul_crc32_exclude_offset(~0L, buf, len, exclude_off, exclude_len, 0) ^ ~0L);
 }
 
 static inline const unsigned char *get_lba_buffer(blkid_probe pr,
