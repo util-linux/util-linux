@@ -790,9 +790,13 @@ static void print_cpus_readable(struct lscpu_cxt *cxt, int cols[], size_t ncols)
 			err(EXIT_FAILURE, _("failed to allocate output line"));
 
 		for (c = 0; c < ncols; c++) {
+			struct libscols_column *cl;
 			data = get_cell_data(cxt, cpu, cols[c], buf, sizeof(buf));
-			if (!data || !*data)
+			if (!data || !*data) {
 				data = "-";
+				cl = scols_table_get_column(tb, c);
+				scols_column_set_json_type(cl, SCOLS_JSON_STRING);
+			}
 			if (scols_line_set_data(ln, c, data))
 				err(EXIT_FAILURE, _("failed to add output data"));
 		}
