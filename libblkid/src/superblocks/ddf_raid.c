@@ -13,6 +13,7 @@
 #include <string.h>
 #include <stdint.h>
 
+#include "crc32.h"
 #include "superblocks.h"
 
 /* http://www.snia.org/standards/home */
@@ -71,6 +72,21 @@ struct ddf_header {
 	uint8_t		pad4[256];	/* 0xff */
 } __attribute__((packed));
 
+static int ddf_verify_csum(blkid_probe pr, const struct ddf_header *ddf)
+{
+	uint32_t expected, crc;
+
+	expected = be32_to_cpu(ddf->crc);
+
+	crc = ul_crc32_exclude_offset(0,
+				      (const unsigned char *)ddf, sizeof(*ddf),
+				      offsetof(__typeof__(*ddf), crc),
+				      sizeof_member(__typeof__(*ddf), crc),
+				      0xff);
+
+	return blkid_probe_verify_csum(pr, crc, expected);
+}
+
 static int probe_ddf(blkid_probe pr,
 		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
@@ -88,7 +104,7 @@ static int probe_ddf(blkid_probe pr,
 					sizeof(struct ddf_header));
 		if (!ddf)
 			return errno ? -errno : 1;
-		if (ddf->signature == cpu_to_be32(DDF_MAGIC))
+		if (ddf->signature == cpu_to_be32(DDF_MAGIC) && ddf_verify_csum(pr, ddf))
 			break;
 		ddf = NULL;
 	}
