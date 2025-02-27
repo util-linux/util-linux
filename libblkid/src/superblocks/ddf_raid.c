@@ -76,14 +76,14 @@ static int probe_ddf(blkid_probe pr,
 {
 	int hdrs[] = { 1, 257 };
 	size_t i;
-	struct ddf_header *ddf = NULL;
+	const struct ddf_header *ddf = NULL;
 	char version[DDF_REV_LENGTH + 1];
 	uint64_t off = 0, lba;
 
 	for (i = 0; i < ARRAY_SIZE(hdrs); i++) {
 		off = ((pr->size / 0x200) - hdrs[i]) * 0x200;
 
-		ddf = (struct ddf_header *) blkid_probe_get_buffer(pr,
+		ddf = (const struct ddf_header *) blkid_probe_get_buffer(pr,
 					off,
 					sizeof(struct ddf_header));
 		if (!ddf)
@@ -123,7 +123,7 @@ static int probe_ddf(blkid_probe pr,
 		return 1;
 	if (blkid_probe_set_magic(pr, off,
 			sizeof(ddf->signature),
-			(unsigned char *) &ddf->signature))
+			(const unsigned char *) &ddf->signature))
 		return 1;
 	return 0;
 }
