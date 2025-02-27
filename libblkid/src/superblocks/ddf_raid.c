@@ -88,8 +88,7 @@ static int probe_ddf(blkid_probe pr,
 					sizeof(struct ddf_header));
 		if (!ddf)
 			return errno ? -errno : 1;
-		if (ddf->signature == cpu_to_be32(DDF_MAGIC) ||
-		    ddf->signature == cpu_to_le32(DDF_MAGIC))
+		if (ddf->signature == cpu_to_be32(DDF_MAGIC))
 			break;
 		ddf = NULL;
 	}
@@ -97,9 +96,7 @@ static int probe_ddf(blkid_probe pr,
 	if (!ddf)
 		return 1;
 
-	lba = ddf->signature == cpu_to_be32(DDF_MAGIC) ?
-			be64_to_cpu(ddf->primary_lba) :
-			le64_to_cpu(ddf->primary_lba);
+	lba = be64_to_cpu(ddf->primary_lba);
 
 	if (lba > 0) {
 		/* check primary header */
