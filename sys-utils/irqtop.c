@@ -130,10 +130,18 @@ static int update_screen(struct irqtop_ctl *ctl, struct irq_output *out)
 	struct irq_stat *stat;
 	time_t now = time(NULL);
 	char timestr[64], *data, *data0, *p;
+	char *input_file;
 
 	/* make irqs table */
-	table = get_scols_table(out, ctl->prev_stat, &stat, ctl->softirq,
-				ctl->threshold, ctl->setsize, ctl->cpuset);
+	if (ctl->softirq)
+		input_file = xstrdup(_PATH_PROC_SOFTIRQS);
+	else
+		input_file = xstrdup(_PATH_PROC_INTERRUPTS);
+
+	table = get_scols_table(input_file, out, ctl->prev_stat, &stat,
+				ctl->softirq, ctl->threshold, ctl->setsize,
+				ctl->cpuset);
+	free(input_file);
 	if (!table) {
 		ctl->request_exit = 1;
 		return 1;
