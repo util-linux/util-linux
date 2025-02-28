@@ -37,6 +37,9 @@ Specify cpus in list format to show.
 *-d*, *--delay* _seconds_::
 Update interrupt output every _seconds_ intervals.
 
+*-n*, *--iter* _number_::
+Specifies the maximum iterations before quitting.
+
 *-s*, *--sort* _column_::
 Specify sort criteria by column name. See *--help* output to get column names. The sort criteria may be changes in interactive mode.
 

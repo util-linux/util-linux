@@ -83,6 +83,7 @@ struct irqtop_ctl {
 	cpu_set_t *cpuset;
 
 	enum irqtop_cpustat_mode cpustat_mode;
+	int64_t	iter;
 	bool	batch;
 	bool	request_exit,
 		softirq;
@@ -190,6 +191,12 @@ static int update_screen(struct irqtop_ctl *ctl, struct irq_output *out)
 	if (ctl->prev_stat)
 		free_irqstat(ctl->prev_stat);
 	ctl->prev_stat = stat;
+
+	if (ctl->iter > 0) {
+		ctl->iter--;
+		if (ctl->iter == 0)
+			ctl->request_exit = 1;
+	}
 	return 0;
 }
 
@@ -295,6 +302,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -c, --cpu-stat <mode> show per-cpu stat (auto, enable, disable)\n"), stdout);
 	fputs(_(" -C, --cpu-list <list> specify cpus in list format\n"), stdout);
 	fputs(_(" -d, --delay <secs>   delay updates\n"), stdout);
+	fputs(_(" -n, --iter <number>  the maximum number of iterations\n"), stdout);
 	fputs(_(" -o, --output <list>  define which output columns to use\n"), stdout);
 	fputs(_(" -s, --sort <column>  specify sort column\n"), stdout);
 	fputs(_(" -S, --softirq        show softirqs instead of interrupts\n"), stdout);
@@ -327,6 +335,7 @@ static void parse_args(	struct irqtop_ctl *ctl,
 		{"cpu-stat", required_argument, NULL, 'c'},
 		{"cpu-list", required_argument, NULL, 'C'},
 		{"delay", required_argument, NULL, 'd'},
+		{"iter", required_argument, NULL, 'n'},
 		{"sort", required_argument, NULL, 's'},
 		{"output", required_argument, NULL, 'o'},
 		{"softirq", no_argument, NULL, 'S'},
@@ -337,7 +346,7 @@ static void parse_args(	struct irqtop_ctl *ctl,
 	};
 	int o;
 
-	while ((o = getopt_long(argc, argv, "bc:C:d:o:s:St:hV", longopts, NULL)) != -1) {
+	while ((o = getopt_long(argc, argv, "bc:C:d:n:o:s:St:hV", longopts, NULL)) != -1) {
 		switch (o) {
 		case 'b':
 			ctl->batch = 1;
@@ -376,6 +385,11 @@ static void parse_args(	struct irqtop_ctl *ctl,
 				TIMEVAL_TO_TIMESPEC(&delay, &ctl->timer.it_interval);
 				ctl->timer.it_value = ctl->timer.it_interval;
 			}
+			break;
+		case 'n':
+			ctl->iter = str2num_or_err(optarg, 10,
+					_("failed to parse iter argument"),
+					0, INT_MAX);
 			break;
 		case 's':
 			set_sort_func_by_name(out, optarg);
@@ -423,7 +437,8 @@ int main(int argc, char **argv)
 	};
 	struct irqtop_ctl ctl = {
 		.timer.it_interval = {3, 0},
-		.timer.it_value = {3, 0}
+		.timer.it_value = {3, 0},
+		.iter = -1
 	};
 
 	setlocale(LC_ALL, "");

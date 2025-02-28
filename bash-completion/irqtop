@@ -22,6 +22,10 @@ _irqtop_module()
 			COMPREPLY=( $(compgen -W "secs" -- $cur) )
 			return 0
 			;;
+		'-n'|'--iter')
+			COMPREPLY=( $(compgen -W "the max iterations" -- $cur) )
+			return 0
+			;;
 		'-s'|'--sort')
 			COMPREPLY=( $(compgen -W "irq total delta name" -- $cur) )
 			return 0
@@ -47,6 +51,7 @@ _irqtop_module()
 		--cpu-stat
 		--cpu-list
 		--delay
+		--iter
 		--sort
 		--output
 		--softirq
