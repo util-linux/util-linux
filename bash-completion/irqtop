@@ -5,6 +5,9 @@ _irqtop_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
+		'-b'|'--batch')
+			return 0
+			;;
 		'-c'|'--cpu-stat')
 			COMPREPLY=( $(compgen -W "auto enable disable" -- $cur) )
 			return 0
@@ -40,7 +43,8 @@ _irqtop_module()
 			return 0
 			;;
 	esac
-	OPTS="	--cpu-stat
+	OPTS="	--batch
+		--cpu-stat
 		--cpu-list
 		--delay
 		--sort
