@@ -302,6 +302,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -c, --cpu-stat <mode> show per-cpu stat (auto, enable, disable)\n"), stdout);
 	fputs(_(" -C, --cpu-list <list> specify cpus in list format\n"), stdout);
 	fputs(_(" -d, --delay <secs>   delay updates\n"), stdout);
+	fputs(_(" -J, --json  use JSON output format (will run in batch mode)\n"), stdout);
 	fputs(_(" -n, --iter <number>  the maximum number of iterations\n"), stdout);
 	fputs(_(" -o, --output <list>  define which output columns to use\n"), stdout);
 	fputs(_(" -s, --sort <column>  specify sort column\n"), stdout);
@@ -336,6 +337,7 @@ static void parse_args(	struct irqtop_ctl *ctl,
 		{"cpu-list", required_argument, NULL, 'C'},
 		{"delay", required_argument, NULL, 'd'},
 		{"iter", required_argument, NULL, 'n'},
+		{"json", no_argument, NULL, 'J'},
 		{"sort", required_argument, NULL, 's'},
 		{"output", required_argument, NULL, 'o'},
 		{"softirq", no_argument, NULL, 'S'},
@@ -346,7 +348,7 @@ static void parse_args(	struct irqtop_ctl *ctl,
 	};
 	int o;
 
-	while ((o = getopt_long(argc, argv, "bc:C:d:n:o:s:St:hV", longopts, NULL)) != -1) {
+	while ((o = getopt_long(argc, argv, "bc:C:d:Jn:o:s:St:hV", longopts, NULL)) != -1) {
 		switch (o) {
 		case 'b':
 			ctl->batch = 1;
@@ -385,6 +387,10 @@ static void parse_args(	struct irqtop_ctl *ctl,
 				TIMEVAL_TO_TIMESPEC(&delay, &ctl->timer.it_interval);
 				ctl->timer.it_value = ctl->timer.it_interval;
 			}
+			break;
+		case 'J':
+			out->json = 1;
+			ctl->batch = 1;
 			break;
 		case 'n':
 			ctl->iter = str2num_or_err(optarg, 10,

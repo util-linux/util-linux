@@ -37,6 +37,9 @@ Specify cpus in list format to show.
 *-d*, *--delay* _seconds_::
 Update interrupt output every _seconds_ intervals.
 
+*-J*, *--json*::
+Use JSON output format. irqtop will run in batch mode.
+
 *-n*, *--iter* _number_::
 Specifies the maximum iterations before quitting.
 

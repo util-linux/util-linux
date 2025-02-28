@@ -48,6 +48,7 @@ _irqtop_module()
 			;;
 	esac
 	OPTS="	--batch
+		--json
 		--cpu-stat
 		--cpu-list
 		--delay
