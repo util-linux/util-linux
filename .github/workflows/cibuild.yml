@@ -168,7 +168,7 @@ jobs:
     steps:
       - name: Repository checkout
         uses: actions/checkout@v4
-      - uses: uraimo/run-on-arch-action@v2
+      - uses: uraimo/run-on-arch-action@v3
         with:
           arch: ${{ matrix.arch }}
           dockerRunArgs: --privileged -v /dev:/dev
