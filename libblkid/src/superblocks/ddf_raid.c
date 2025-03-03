@@ -13,6 +13,7 @@
 #include <string.h>
 #include <stdint.h>
 
+#include "crc32.h"
 #include "superblocks.h"
 
 /* http://www.snia.org/standards/home */
@@ -71,25 +72,39 @@ struct ddf_header {
 	uint8_t		pad4[256];	/* 0xff */
 } __attribute__((packed));
 
+static int ddf_verify_csum(blkid_probe pr, const struct ddf_header *ddf)
+{
+	uint32_t expected, crc;
+
+	expected = be32_to_cpu(ddf->crc);
+
+	crc = ul_crc32_exclude_offset(0,
+				      (const unsigned char *)ddf, sizeof(*ddf),
+				      offsetof(__typeof__(*ddf), crc),
+				      sizeof_member(__typeof__(*ddf), crc),
+				      0xff);
+
+	return blkid_probe_verify_csum(pr, crc, expected);
+}
+
 static int probe_ddf(blkid_probe pr,
 		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	int hdrs[] = { 1, 257 };
 	size_t i;
-	struct ddf_header *ddf = NULL;
+	const struct ddf_header *ddf = NULL;
 	char version[DDF_REV_LENGTH + 1];
 	uint64_t off = 0, lba;
 
 	for (i = 0; i < ARRAY_SIZE(hdrs); i++) {
 		off = ((pr->size / 0x200) - hdrs[i]) * 0x200;
 
-		ddf = (struct ddf_header *) blkid_probe_get_buffer(pr,
+		ddf = (const struct ddf_header *) blkid_probe_get_buffer(pr,
 					off,
 					sizeof(struct ddf_header));
 		if (!ddf)
 			return errno ? -errno : 1;
-		if (ddf->signature == cpu_to_be32(DDF_MAGIC) ||
-		    ddf->signature == cpu_to_le32(DDF_MAGIC))
+		if (ddf->signature == cpu_to_be32(DDF_MAGIC) && ddf_verify_csum(pr, ddf))
 			break;
 		ddf = NULL;
 	}
@@ -97,9 +112,7 @@ static int probe_ddf(blkid_probe pr,
 	if (!ddf)
 		return 1;
 
-	lba = ddf->signature == cpu_to_be32(DDF_MAGIC) ?
-			be64_to_cpu(ddf->primary_lba) :
-			le64_to_cpu(ddf->primary_lba);
+	lba = be64_to_cpu(ddf->primary_lba);
 
 	if (lba > 0) {
 		/* check primary header */
@@ -123,7 +136,7 @@ static int probe_ddf(blkid_probe pr,
 		return 1;
 	if (blkid_probe_set_magic(pr, off,
 			sizeof(ddf->signature),
-			(unsigned char *) &ddf->signature))
+			(const unsigned char *) &ddf->signature))
 		return 1;
 	return 0;
 }
