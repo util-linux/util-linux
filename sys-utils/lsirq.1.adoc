@@ -25,6 +25,9 @@ The default output is subject to change. So whenever possible, you should avoid 
 *-n*, *--noheadings*::
 Don't print headings.
 
+*-i*, *--input* _file_::
+Read data from _file_ (Which was created by other tools, e.g. sosreport).
+
 *-o*, *--output* _list_::
 Specify which output columns to print. Use *--help* to get a list of all supported columns. The default list of columns may be extended if list is specified in the format _+list_.
 

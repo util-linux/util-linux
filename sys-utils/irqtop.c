@@ -83,9 +83,32 @@ struct irqtop_ctl {
 	cpu_set_t *cpuset;
 
 	enum irqtop_cpustat_mode cpustat_mode;
+	int64_t	iter;
+	bool	batch;
 	bool	request_exit,
 		softirq;
 };
+
+static inline int irqtop_printf(struct irqtop_ctl *ctl, const char *fmt, ...)
+{
+	int ret = 0;
+	va_list args;
+
+	if (!ctl)
+		return -1;
+
+	va_start(args, fmt);
+	if (ctl->batch)
+		ret = vprintf(fmt, args);
+	else
+		ret = vw_printw(ctl->win, fmt, args);
+	va_end(args);
+
+	if (!ctl->batch && ret == OK)
+		wrefresh(ctl->win);
+
+	return ret;
+}
 
 /* user's input parser */
 static void parse_input(struct irqtop_ctl *ctl, struct irq_output *out, char c)
@@ -107,10 +130,18 @@ static int update_screen(struct irqtop_ctl *ctl, struct irq_output *out)
 	struct irq_stat *stat;
 	time_t now = time(NULL);
 	char timestr[64], *data, *data0, *p;
+	char *input_file;
 
 	/* make irqs table */
-	table = get_scols_table(out, ctl->prev_stat, &stat, ctl->softirq,
-				ctl->threshold, ctl->setsize, ctl->cpuset);
+	if (ctl->softirq)
+		input_file = xstrdup(_PATH_PROC_SOFTIRQS);
+	else
+		input_file = xstrdup(_PATH_PROC_INTERRUPTS);
+
+	table = get_scols_table(input_file, out, ctl->prev_stat, &stat,
+				ctl->softirq, ctl->threshold, ctl->setsize,
+				ctl->cpuset);
+	free(input_file);
 	if (!table) {
 		ctl->request_exit = 1;
 		return 1;
@@ -128,16 +159,19 @@ static int update_screen(struct irqtop_ctl *ctl, struct irq_output *out)
 			scols_table_enable_nowrap(cpus, 1);
 	}
 
-	/* print header */
-	move(0, 0);
 	strtime_iso(&now, ISO_TIMESTAMP, timestr, sizeof(timestr));
-	wprintw(ctl->win, _("irqtop | total: %ld delta: %ld | %s | %s\n\n"),
+	if (!ctl->batch)
+		move(0, 0);
+
+	/* print header */
+	irqtop_printf(ctl, _("irqtop | total: %ld delta: %ld | %s | %s\n\n"),
 			   stat->total_irq, stat->delta_irq, ctl->hostname, timestr);
+
 
 	/* print cpus table or not by -c option */
 	if (cpus) {
 		scols_print_table_to_string(cpus, &data);
-		wprintw(ctl->win, "%s\n\n", data);
+		irqtop_printf(ctl, "%s\n\n", data);
 		free(data);
 	}
 
@@ -149,13 +183,15 @@ static int update_screen(struct irqtop_ctl *ctl, struct irq_output *out)
 	if (p) {
 		/* print header in reverse mode */
 		*p = '\0';
-		attron(A_REVERSE);
-		wprintw(ctl->win, "%s\n", data);
-		attroff(A_REVERSE);
+		if (!ctl->batch)
+			attron(A_REVERSE);
+		irqtop_printf(ctl, "%s\n", data);
+		if (!ctl->batch)
+			attroff(A_REVERSE);
 		data = p + 1;
 	}
 
-	wprintw(ctl->win, "%s", data);
+	irqtop_printf(ctl, "%s\n\n", data);
 	free(data0);
 
 	/* clean up */
@@ -163,6 +199,12 @@ static int update_screen(struct irqtop_ctl *ctl, struct irq_output *out)
 	if (ctl->prev_stat)
 		free_irqstat(ctl->prev_stat);
 	ctl->prev_stat = stat;
+
+	if (ctl->iter > 0) {
+		ctl->iter--;
+		if (ctl->iter == 0)
+			ctl->request_exit = 1;
+	}
 	return 0;
 }
 
@@ -212,7 +254,8 @@ static int event_loop(struct irqtop_ctl *ctl, struct irq_output *out)
 		err(EXIT_FAILURE, _("epoll_ctl failed"));
 
 	retval |= update_screen(ctl, out);
-	refresh();
+	if (!ctl->batch)
+		refresh();
 
 	while (!ctl->request_exit) {
 		const ssize_t nr_events = epoll_wait(efd, events, MAX_EVENTS, -1);
@@ -227,10 +270,12 @@ static int event_loop(struct irqtop_ctl *ctl, struct irq_output *out)
 					continue;
 				}
 				if (siginfo.ssi_signo == SIGWINCH) {
-					get_terminal_dimension(&ctl->cols, &ctl->rows);
+					if (!ctl->batch) {
+						get_terminal_dimension(&ctl->cols, &ctl->rows);
 #if HAVE_RESIZETERM
-					resizeterm(ctl->rows, ctl->cols);
+						resizeterm(ctl->rows, ctl->cols);
 #endif
+					}
 				}
 				else {
 					ctl->request_exit = 1;
@@ -245,7 +290,8 @@ static int event_loop(struct irqtop_ctl *ctl, struct irq_output *out)
 			} else
 				abort();
 			retval |= update_screen(ctl, out);
-			refresh();
+			if (!ctl->batch)
+				refresh();
 		}
 	}
 	return retval;
@@ -260,9 +306,12 @@ static void __attribute__((__noreturn__)) usage(void)
 	puts(_("Interactive utility to display kernel interrupt information."));
 
 	fputs(USAGE_OPTIONS, stdout);
+	fputs(_(" -b, --batch batch mode\n"), stdout);
 	fputs(_(" -c, --cpu-stat <mode> show per-cpu stat (auto, enable, disable)\n"), stdout);
 	fputs(_(" -C, --cpu-list <list> specify cpus in list format\n"), stdout);
 	fputs(_(" -d, --delay <secs>   delay updates\n"), stdout);
+	fputs(_(" -J, --json  use JSON output format (will run in batch mode)\n"), stdout);
+	fputs(_(" -n, --iter <number>  the maximum number of iterations\n"), stdout);
 	fputs(_(" -o, --output <list>  define which output columns to use\n"), stdout);
 	fputs(_(" -s, --sort <column>  specify sort column\n"), stdout);
 	fputs(_(" -S, --softirq        show softirqs instead of interrupts\n"), stdout);
@@ -291,9 +340,12 @@ static void parse_args(	struct irqtop_ctl *ctl,
 {
 	const char *outarg = NULL;
 	static const struct option longopts[] = {
+		{"batch", no_argument, NULL, 'b'},
 		{"cpu-stat", required_argument, NULL, 'c'},
 		{"cpu-list", required_argument, NULL, 'C'},
 		{"delay", required_argument, NULL, 'd'},
+		{"iter", required_argument, NULL, 'n'},
+		{"json", no_argument, NULL, 'J'},
 		{"sort", required_argument, NULL, 's'},
 		{"output", required_argument, NULL, 'o'},
 		{"softirq", no_argument, NULL, 'S'},
@@ -304,8 +356,11 @@ static void parse_args(	struct irqtop_ctl *ctl,
 	};
 	int o;
 
-	while ((o = getopt_long(argc, argv, "c:C:d:o:s:St:hV", longopts, NULL)) != -1) {
+	while ((o = getopt_long(argc, argv, "bc:C:d:Jn:o:s:St:hV", longopts, NULL)) != -1) {
 		switch (o) {
+		case 'b':
+			ctl->batch = 1;
+			break;
 		case 'c':
 			if (!strcmp(optarg, "auto"))
 				ctl->cpustat_mode = IRQTOP_CPUSTAT_AUTO;
@@ -340,6 +395,15 @@ static void parse_args(	struct irqtop_ctl *ctl,
 				TIMEVAL_TO_TIMESPEC(&delay, &ctl->timer.it_interval);
 				ctl->timer.it_value = ctl->timer.it_interval;
 			}
+			break;
+		case 'J':
+			out->json = 1;
+			ctl->batch = 1;
+			break;
+		case 'n':
+			ctl->iter = str2num_or_err(optarg, 10,
+					_("failed to parse iter argument"),
+					0, INT_MAX);
 			break;
 		case 's':
 			set_sort_func_by_name(out, optarg);
@@ -387,23 +451,26 @@ int main(int argc, char **argv)
 	};
 	struct irqtop_ctl ctl = {
 		.timer.it_interval = {3, 0},
-		.timer.it_value = {3, 0}
+		.timer.it_value = {3, 0},
+		.iter = -1
 	};
 
 	setlocale(LC_ALL, "");
 
 	parse_args(&ctl, &out, argc, argv);
 
-	is_tty = isatty(STDIN_FILENO);
-	if (is_tty && tcgetattr(STDIN_FILENO, &saved_tty) == -1)
-		fputs(_("terminal setting retrieval"), stdout);
+	if (!ctl.batch) {
+		is_tty = isatty(STDIN_FILENO);
+		if (is_tty && tcgetattr(STDIN_FILENO, &saved_tty) == -1)
+			fputs(_("terminal setting retrieval"), stdout);
 
-	ctl.win = initscr();
-	get_terminal_dimension(&ctl.cols, &ctl.rows);
+		ctl.win = initscr();
+		get_terminal_dimension(&ctl.cols, &ctl.rows);
 #if HAVE_RESIZETERM
-	resizeterm(ctl.rows, ctl.cols);
+		resizeterm(ctl.rows, ctl.cols);
 #endif
-	curs_set(0);
+		curs_set(0);
+	}
 
 	ctl.hostname = xgethostname();
 	event_loop(&ctl, &out);
@@ -412,10 +479,13 @@ int main(int argc, char **argv)
 	free(ctl.hostname);
 	cpuset_free(ctl.cpuset);
 
-	if (is_tty)
-		tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_tty);
-	delwin(ctl.win);
-	endwin();
+	if (!ctl.batch) {
+		if (is_tty)
+			tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_tty);
+
+		delwin(ctl.win);
+		endwin();
+	}
 
 	return EXIT_SUCCESS;
 }

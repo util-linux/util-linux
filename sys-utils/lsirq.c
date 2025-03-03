@@ -29,16 +29,17 @@
 #include "optutils.h"
 #include "strutils.h"
 #include "xalloc.h"
+#include "pathnames.h"
 
 #include "irq-common.h"
 
-static int print_irq_data(struct irq_output *out,
+static int print_irq_data(const char *input_file, struct irq_output *out,
 			  int softirq, unsigned long threshold,
 			  size_t setsize, cpu_set_t *cpuset)
 {
 	struct libscols_table *table;
 
-	table = get_scols_table(out, NULL, NULL, softirq, threshold, setsize, cpuset);
+	table = get_scols_table(input_file, out, NULL, NULL, softirq, threshold, setsize, cpuset);
 	if (!table)
 		return -1;
 
@@ -58,6 +59,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_OPTIONS, stdout);
 	fputs(_(" -J, --json           use JSON output format\n"), stdout);
 	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), stdout);
+	fputs(_(" -i, --input          read data from input file\n"), stdout);
 	fputs(_(" -n, --noheadings     don't print headings\n"), stdout);
 	fputs(_(" -o, --output <list>  define which output columns to use\n"), stdout);
 	fputs(_(" -s, --sort <column>  specify sort column\n"), stdout);
@@ -82,6 +84,7 @@ int main(int argc, char **argv)
 	static const struct option longopts[] = {
 		{"sort", required_argument, NULL, 's'},
 		{"noheadings", no_argument, NULL, 'n'},
+		{"input", required_argument, NULL, 'i'},
 		{"output", required_argument, NULL, 'o'},
 		{"threshold", required_argument, NULL, 't'},
 		{"cpu-list", required_argument, NULL, 'C'},
@@ -103,10 +106,11 @@ int main(int argc, char **argv)
 	cpu_set_t *cpuset = NULL;
 	size_t setsize = 0;
 	int softirq = 0;
+	char *input_file = NULL;
 
 	setlocale(LC_ALL, "");
 
-	while ((c = getopt_long(argc, argv, "no:s:t:C:ShJPV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "i:no:s:t:C:ShJPV", longopts, NULL)) != -1) {
 		err_exclusive_options(c, longopts, excl, excl_st);
 
 		switch (c) {
@@ -115,6 +119,9 @@ int main(int argc, char **argv)
 			break;
 		case 'P':
 			out.pairs = 1;
+			break;
+		case 'i':
+			input_file = xstrdup(optarg);
 			break;
 		case 'n':
 			out.no_headings = 1;
@@ -157,6 +164,13 @@ int main(int argc, char **argv)
 		}
 	}
 
+	if (input_file == NULL) {
+		if (softirq == 1)
+			input_file = xstrdup(_PATH_PROC_SOFTIRQS);
+		else
+			input_file = xstrdup(_PATH_PROC_INTERRUPTS);
+	}
+
 	/* default */
 	if (!out.ncolumns) {
 		out.columns[out.ncolumns++] = COL_IRQ;
@@ -171,8 +185,10 @@ int main(int argc, char **argv)
 				irq_column_name_to_id) < 0)
 		exit(EXIT_FAILURE);
 
-	if (print_irq_data(&out, softirq, threshold, setsize, cpuset) < 0)
+	if (print_irq_data(input_file, &out, softirq, threshold, setsize, cpuset) < 0)
 		return EXIT_FAILURE;
+
+	free(input_file);
 
 	return EXIT_SUCCESS;
 }
