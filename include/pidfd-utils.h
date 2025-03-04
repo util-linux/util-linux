@@ -36,7 +36,8 @@
 # include <sys/syscall.h>
 # include <unistd.h>
 
-# if defined(SYS_pidfd_send_signal) && defined(SYS_pidfd_open)
+# if defined(SYS_pidfd_send_signal) && defined(SYS_pidfd_open) \
+	&& defined(SYS_pidfd_getfd)
 #  ifndef HAVE_PIDFD_SEND_SIGNAL
 static inline int pidfd_send_signal(int pidfd, int sig, siginfo_t *info,
 				    unsigned int flags)
