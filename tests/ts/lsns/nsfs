@@ -27,6 +27,7 @@ ts_check_enotty
 ts_check_test_command "$TS_CMD_LSNS"
 ts_check_test_command "$TS_CMD_MOUNT"
 ts_check_test_command "$TS_CMD_UMOUNT"
+ts_check_test_command "$TS_HELPER_SYSINFO"
 ts_check_prog "ip"
 ts_check_prog "dd"
 ts_check_prog "touch"
