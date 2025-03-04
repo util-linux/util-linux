@@ -306,22 +306,22 @@ static void fill_scols_table(struct lsmem *lsmem)
 static void print_summary(struct lsmem *lsmem)
 {
 	if (lsmem->bytes) {
-		printf("%-23s %15"PRId64"\n",_("Memory block size:"), lsmem->block_size);
-		printf("%-23s %15"PRId64"\n",_("Total online memory:"), lsmem->mem_online);
-		printf("%-23s %15"PRId64"\n",_("Total offline memory:"), lsmem->mem_offline);
+		printf("%-32s %15"PRId64"\n",_("Memory block size:"), lsmem->block_size);
+		printf("%-32s %15"PRId64"\n",_("Total online memory:"), lsmem->mem_online);
+		printf("%-32s %15"PRId64"\n",_("Total offline memory:"), lsmem->mem_offline);
 	} else {
 		char *p;
 
 		if ((p = size_to_human_string(SIZE_SUFFIX_1LETTER, lsmem->block_size)))
-			printf("%-23s %5s\n",_("Memory block size:"), p);
+			printf("%-32s %5s\n",_("Memory block size:"), p);
 		free(p);
 
 		if ((p = size_to_human_string(SIZE_SUFFIX_1LETTER, lsmem->mem_online)))
-			printf("%-23s %5s\n",_("Total online memory:"), p);
+			printf("%-32s %5s\n",_("Total online memory:"), p);
 		free(p);
 
 		if ((p = size_to_human_string(SIZE_SUFFIX_1LETTER, lsmem->mem_offline)))
-			printf("%-23s %5s\n",_("Total offline memory:"), p);
+			printf("%-32s %5s\n",_("Total offline memory:"), p);
 		free(p);
 	}
 }
