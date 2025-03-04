@@ -21,6 +21,7 @@
 #include "xalloc.h"
 #include "test_mkfds.h"
 #include "exitcodes.h"
+#include "pidfd-utils.h"
 
 #include <arpa/inet.h>
 #include <ctype.h>
@@ -81,7 +82,6 @@
 
 #define _U_ __attribute__((__unused__))
 
-static int pidfd_open(pid_t pid, unsigned int flags);
 static void do_nothing(int signum _U_);
 
 static void __attribute__((__noreturn__)) usage(FILE *out, int status)
@@ -4409,22 +4409,6 @@ static void rename_self(const char *comm)
 static void do_nothing(int signum _U_)
 {
 }
-
-#ifdef __NR_pidfd_open
-
-static int
-pidfd_open(pid_t pid, unsigned int flags)
-{
-	return syscall(__NR_pidfd_open, pid, flags);
-}
-#else
-static int
-pidfd_open(pid_t pid _U_, unsigned int flags _U_)
-{
-	errno = ENOSYS;
-	return -1;
-}
-#endif
 
 /*
  * Multiplexers
