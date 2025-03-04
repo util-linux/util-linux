@@ -150,11 +150,7 @@ jobs:
 
   build-arch:
     name: build (qemu-user, ${{ matrix.arch }})
-    # FIXME: using Ubuntu 24.04 on the worker causes random segfaults in s390x containers
-    #        using qemu-user-static. Let's switch this, temporarily, to Ubuntu 22.04 which
-    #        doesn't seem to have this issue. Note: the coverage shouldn't change, since
-    #        the "inner" alt-arch containers still use "ubuntu-latest" (24.04 ATTOW).
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     concurrency:
       group: ${{ github.workflow }}-${{ toJSON(matrix) }}-${{ github.ref }}
       cancel-in-progress: true
