@@ -889,7 +889,7 @@ int main(int argc, char *argv[])
 	pid_t pid_bind = 0, pid_idmap = 0;
 	const char *newinterp = NULL;
 	pid_t pid = 0;
-#ifdef UL_HAVE_PIDFD
+#ifdef HAVE_PIDFD_OPEN
 	int fd_parent_pid = -1;
 #endif
 	int fd_idmap, fd_bind = -1;
@@ -1116,7 +1116,7 @@ int main(int argc, char *argv[])
 			sigaddset(&sigset, SIGTERM) != 0 ||
 			sigprocmask(SIG_BLOCK, &sigset, &oldsigset) != 0)
 			err(EXIT_FAILURE, _("sigprocmask block failed"));
-#ifdef UL_HAVE_PIDFD
+#ifdef HAVE_PIDFD_OPEN
 		if (kill_child_signo != 0) {
 			/* make a connection to the original process (parent) */
 			fd_parent_pid = pidfd_open(getpid(), 0);
@@ -1182,7 +1182,7 @@ int main(int argc, char *argv[])
 	if (kill_child_signo != 0) {
 		if (prctl(PR_SET_PDEATHSIG, kill_child_signo) < 0)
 			err(EXIT_FAILURE, "prctl failed");
-#ifdef UL_HAVE_PIDFD
+#ifdef HAVE_PIDFD_OPEN
 		/* Use poll() to check that there is still the original parent. */
 		if (fd_parent_pid != -1) {
 			struct pollfd pollfds[1] = {
