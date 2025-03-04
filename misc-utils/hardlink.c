@@ -1484,7 +1484,7 @@ int main(int argc, char *argv[])
 		rc = ul_fileeq_init(&fileeq, opts.method);
 	}
 	if (rc < 0)
-		err(EXIT_FAILURE, _("failed to initialize files comparior"));
+		err(EXIT_FAILURE, _("failed to initialize files comparer"));
 
 	/* default I/O size */
 	if (!opts.io_size) {
