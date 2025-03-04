@@ -987,6 +987,15 @@ AC_CHECK_TYPES([sighandler_t], [], [], [[
 #include <signal.h>
 ]])
 
+# checking sigset_t defined in the kernel header in
+# asm/signal.h. tests/helpers/test_mkfds_ppoll.c expects the RAW sigset_t
+# is defined in the header file.
+# However, a slightly older arch/parisc doesn't export the type.
+# See https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=487fa28fa8b60417642ac58e8beda6e2509d18f9
+AC_CHECK_TYPES([sigset_t], [], [], [[
+#include <asm/signal.h>
+]])
+
 AC_CHECK_DECLS([CPU_ALLOC], [], [], [[
 #include <sched.h>
 ]])

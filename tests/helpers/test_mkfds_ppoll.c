@@ -35,6 +35,8 @@
  * This file is for defining the poll multiplexer only with <asm/poll.h>.
  *
  */
+#ifdef HAVE_SIGSET_T		/* defined in config.h */
+
 #include "test_mkfds.h"
 
 #include <string.h>		/* memset */
@@ -77,3 +79,5 @@ DEFUN_WAIT_EVENT_POLL(ppoll,
 		      clear_sigset(&sigset);,
 		      syscall(__NR_ppoll, pfds, n, NULL, &sigset, sizeof(sigset)))
 #endif
+
+#endif	/* HAVE_SIGSET_T */
