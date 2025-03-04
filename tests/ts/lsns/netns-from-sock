@@ -30,6 +30,9 @@ ts_check_test_command "$TS_HELPER_SYSINFO"
 
 ts_skip_nonroot
 
+if [ "$($TS_HELPER_SYSINFO ns-gettype-ok)" == "0" ]; then
+    ts_skip "NS_GET_NSTYPE ioctl cmd not available"
+fi
 if [ "$($TS_HELPER_SYSINFO ns-getuserns-ok)" == "0" ]; then
     ts_skip "NS_GET_USERNS ioctl cmd not available"
 fi
