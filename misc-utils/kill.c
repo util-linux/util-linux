@@ -67,12 +67,16 @@
 /* partial success, otherwise we return regular EXIT_{SUCCESS,FAILURE} */
 #define KILL_EXIT_SOMEOK	64
 
+#if defined(HAVE_PIDFD_OPEN) && defined(HAVE_PIDFD_SEND_SIGNAL)
+# define USE_KILL_WITH_TIMEOUT 1
+#endif
+
 enum {
 	KILL_FIELD_WIDTH = 11,
 	KILL_OUTPUT_WIDTH = 72
 };
 
-#ifdef UL_HAVE_PIDFD
+#ifdef USE_KILL_WITH_TIMEOUT
 # include <poll.h>
 # include "list.h"
 struct timeouts {
@@ -89,7 +93,7 @@ struct kill_control {
 #ifdef HAVE_SIGQUEUE
 	union sigval sigdata;
 #endif
-#ifdef UL_HAVE_PIDFD
+#ifdef USE_KILL_WITH_TIMEOUT
 	struct list_head follow_ups;
 #endif
 	bool	check_all,
@@ -97,7 +101,7 @@ struct kill_control {
 		do_pid,
 		require_handler,
 		use_sigval,
-#ifdef UL_HAVE_PIDFD
+#ifdef USE_KILL_WITH_TIMEOUT
 		timeout,
 #endif
 		verbose;
@@ -269,7 +273,7 @@ static void __attribute__((__noreturn__)) usage(void)
 #ifdef HAVE_SIGQUEUE
 	fputs(_(" -q, --queue <value>    use sigqueue(2), not kill(2), and pass <value> as data\n"), out);
 #endif
-#ifdef UL_HAVE_PIDFD
+#ifdef USE_KILL_WITH_TIMEOUT
 	fputs(_("     --timeout <milliseconds> <follow-up signal>\n"
 		"                        wait up to timeout and send follow-up signal\n"), out);
 #endif
@@ -296,7 +300,7 @@ static void __attribute__((__noreturn__)) print_kill_version(void)
 #ifdef HAVE_SIGQUEUE
 		"sigqueue",
 #endif
-#ifdef UL_HAVE_PIDFD
+#ifdef USE_KILL_WITH_TIMEOUT
 		"pidfd",
 #endif
 	};
@@ -443,7 +447,7 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 			continue;
 		}
 #endif
-#ifdef UL_HAVE_PIDFD
+#ifdef USE_KILL_WITH_TIMEOUT
 		if (!strcmp(arg, "--timeout")) {
 			struct timeouts *next;
 
@@ -485,7 +489,7 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 	return argv;
 }
 
-#ifdef UL_HAVE_PIDFD
+#ifdef USE_KILL_WITH_TIMEOUT
 static int kill_with_timeout(const struct kill_control *ctl)
 {
 	int pfd, n;
@@ -537,7 +541,7 @@ static int kill_verbose(const struct kill_control *ctl)
 		printf("%ld\n", (long) ctl->pid);
 		return 0;
 	}
-#ifdef UL_HAVE_PIDFD
+#ifdef USE_KILL_WITH_TIMEOUT
 	if (ctl->timeout) {
 		rc = kill_with_timeout(ctl);
 	} else
@@ -590,7 +594,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-#ifdef UL_HAVE_PIDFD
+#ifdef USE_KILL_WITH_TIMEOUT
 	INIT_LIST_HEAD(&ctl.follow_ups);
 #endif
 	argv = parse_arguments(argc, argv, &ctl);
@@ -642,7 +646,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-#ifdef UL_HAVE_PIDFD
+#ifdef USE_KILL_WITH_TIMEOUT
 	while (!list_empty(&ctl.follow_ups)) {
 		struct timeouts *x = list_entry(ctl.follow_ups.next,
 				                  struct timeouts, follow_ups);
