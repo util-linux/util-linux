@@ -515,6 +515,10 @@ conf.set('HAVE_ENVIRON_DECL', have ? 1 : false)
 have = cc.has_header_symbol('signal.h', 'sighandler_t', args : '-D_GNU_SOURCE')
 conf.set('HAVE_SIGHANDLER_T', have ? 1 : false)
 
+# checking sigset_t defined in the kernel header
+have = cc.has_header_symbol('asm/signal.h', 'sigset_t', args : '-D_GNU_SOURCE')
+conf.set('HAVE_SIGSET_T', have ? 1 : false)
+
 have = cc.has_function('strsignal')
 conf.set10('HAVE_STRSIGNAL_DECL', have)
 

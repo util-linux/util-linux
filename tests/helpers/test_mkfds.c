@@ -4536,12 +4536,14 @@ static struct multiplexer multiplexers [] = {
 		.fn = wait_event_poll,
 	},
 #endif
+#ifdef HAVE_SIGSET_T
 #ifdef __NR_ppoll
 	{
 		.name = "ppoll",
 		.fn = wait_event_ppoll,
 	},
 #endif
+#endif	/* HAVE_SIGSET_T */
 };
 
 static struct multiplexer *lookup_multiplexer(const char *name)
