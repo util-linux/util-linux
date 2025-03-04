@@ -73,7 +73,8 @@ void irq_print_columns(FILE *f, int nodelta);
 void set_sort_func_by_name(struct irq_output *out, const char *name);
 void set_sort_func_by_key(struct irq_output *out, const char c);
 
-struct libscols_table *get_scols_table(struct irq_output *out,
+struct libscols_table *get_scols_table(const char *input_file,
+                                              struct irq_output *out,
                                               struct irq_stat *prev,
                                               struct irq_stat **xstat,
                                               int softirq,

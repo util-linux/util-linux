@@ -5,6 +5,9 @@ _irqtop_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
+		'-b'|'--batch')
+			return 0
+			;;
 		'-c'|'--cpu-stat')
 			COMPREPLY=( $(compgen -W "auto enable disable" -- $cur) )
 			return 0
@@ -17,6 +20,10 @@ _irqtop_module()
 			;;
 		'-d'|'--delay')
 			COMPREPLY=( $(compgen -W "secs" -- $cur) )
+			return 0
+			;;
+		'-n'|'--iter')
+			COMPREPLY=( $(compgen -W "the max iterations" -- $cur) )
 			return 0
 			;;
 		'-s'|'--sort')
@@ -40,9 +47,12 @@ _irqtop_module()
 			return 0
 			;;
 	esac
-	OPTS="	--cpu-stat
+	OPTS="	--batch
+		--json
+		--cpu-stat
 		--cpu-list
 		--delay
+		--iter
 		--sort
 		--output
 		--softirq

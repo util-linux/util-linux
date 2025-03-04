@@ -5,6 +5,9 @@ _lsirq_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
+		'-i'|'--input')
+			COMPREPLY=( $(compgen -W "input file" -- $cur) )
+			;;
 		'-o'|'--output')
 			local prefix realcur OUTPUT
 			realcur="${cur##*,}"
@@ -35,6 +38,7 @@ _lsirq_module()
 	OPTS="	--json
 		--pairs
 		--noheadings
+		--input
 		--output
 		--softirq
 		--sort
