@@ -79,8 +79,22 @@ fi
     dd if=/dev/zero bs=1 count=1 2> $NULL
 } > $FIFO
 
-test "$NSFS_NAMES_MLINES" = "$PATH1
-$PATH2" && test "$NSFS_NAMES_1LINE" = "$PATH1,$PATH2"
+
+does_combination_include()
+{
+    local p1 p2
+    for p1 in "$@"; do
+	for p2 in "$@"; do
+	    if [ "$p1" = "$PATH1" ] && [ "$p2" = "$PATH2" ]; then
+		return 0
+	    fi
+	done
+    done
+    return 1
+}
+
+does_combination_include $NSFS_NAMES_MLINES &&
+    does_combination_include ${NSFS_NAMES_1LINE//,/ }
 
 RESULT=$?
 echo $RESULT >> $TS_OUTPUT
