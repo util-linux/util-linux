@@ -46,6 +46,7 @@
 #endif
 
 #include "xalloc.h"
+#include "namespace.h"
 
 typedef struct {
 	const char	*name;
@@ -176,8 +177,21 @@ static int hlp_sz_time(void)
 static int hlp_get_nstype_ok(void)
 {
 #ifdef USE_NS_GET_NSTYPE
+	int fd = open("/proc/self/ns/mnt", O_RDONLY);
+
 	errno = 0;
-	ioctl(STDOUT_FILENO, NS_GET_NSTYPE);
+	if (fd >= 0) {
+		int errsv = 0;
+
+		/* Check for actual usability */
+		if (ioctl(fd, NS_GET_NSTYPE) != CLONE_NEWNS)
+			errsv = ENOSYS;
+		close(fd);
+		errno = errsv;
+	} else {
+		/* Generic check for ENOSYS only */
+		ioctl(STDOUT_FILENO, NS_GET_NSTYPE);
+	}
 #else
 	errno = ENOSYS;
 #endif
