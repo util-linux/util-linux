@@ -349,6 +349,7 @@ AC_CHECK_HEADERS([ \
 	linux/nsfs.h \
 	linux/pr.h \
 	linux/raw.h \
+	linux/seccomp.h \
 	linux/securebits.h \
 	linux/tiocl.h \
 	linux/version.h \
@@ -515,6 +516,7 @@ have_linux_kcmp_h=$ac_cv_header_linux_kcmp_h
 have_linux_mount_h=$ac_cv_header_linux_mount_h
 have_linux_pr_h=$ac_cv_header_linux_pr_h
 have_linux_raw_h=$ac_cv_header_linux_raw_h
+have_linux_seccomp_h=$ac_cv_header_linux_seccomp_h
 have_linux_securebits_h=$ac_cv_header_linux_securebits_h
 have_linux_version_h=$ac_cv_header_linux_version_h
 have_linux_watchdog_h=$ac_cv_header_linux_watchdog_h
@@ -1704,6 +1706,7 @@ AC_ARG_ENABLE([setpriv],
 )
 UL_BUILD_INIT([setpriv])
 UL_REQUIRES_LINUX([setpriv])
+UL_REQUIRES_HAVE([setpriv], [linux_seccomp_h], [linux/seccomp.h header file])
 UL_REQUIRES_HAVE([setpriv], [linux_securebits_h], [linux/securebits.h header file])
 UL_REQUIRES_HAVE([setpriv], [linux_capability_h], [linux/capability.h header file])
 UL_REQUIRES_HAVE([setpriv], [cap_ng], [libcap-ng library])
@@ -2021,6 +2024,7 @@ AC_ARG_ENABLE([enosys],
 UL_BUILD_INIT([enosys])
 UL_REQUIRES_LINUX([enosys])
 UL_REQUIRES_HAVE([enosys], [linux_audit_h], [linux/audit.h header file])
+UL_REQUIRES_HAVE([enosys], [linux_seccomp_h], [linux/seccomp.h header file])
 AS_IF([test "x$build_enosys" = xyes], [
   AC_MSG_CHECKING([for valid audit arch])
   AC_COMPILE_IFELSE(
