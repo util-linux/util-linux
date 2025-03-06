@@ -183,7 +183,9 @@ function regenerate_po_files {
 
 	# ignore files where is only modified one line ("POT-Creation-Date")
 	PO_IGNORE=$(git diff --numstat  $PODIR/*.po | gawk -v ORS=" " '/1[[:blank:]]1[[:blank:]]/ { print $3 }')
-	git checkout -f $PO_IGNORE &> /dev/null
+	if [ -n "$PO_IGNORE" ]; then
+		git checkout -f $PO_IGNORE &> /dev/null
+	fi
 
 	if [ $(git ls-files -m "$PODIR" | wc -l) -gt 0 ]; then
 		if [ "$DRYRUN" = "true" ]; then
