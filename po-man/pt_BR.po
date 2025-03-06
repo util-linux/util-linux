@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-man 2.40.1-rc1\n"
-"POT-Creation-Date: 2025-02-18 11:36+0100\n"
+"POT-Creation-Date: 2025-03-06 10:31+0100\n"
 "PO-Revision-Date: 2024-09-23 01:53-0300\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <ldpbr-translation@lists.sourceforge."
@@ -130,7 +130,7 @@ msgstr ""
 
 #. type: Labeled list
 #: ../man-common/help-version.adoc:1 ../disk-utils/sfdisk.8.adoc:232
-#: ../login-utils/chsh.1.adoc:39 ../misc-utils/lastlog2.8.adoc:44
+#: ../login-utils/chsh.1.adoc:39 ../misc-utils/lastlog2.8.adoc:47
 #: ../sys-utils/blkpr.8.adoc:46 ../sys-utils/setsid.1.adoc:37
 #, no-wrap
 msgid "*-h*, *--help*"
@@ -581,7 +581,7 @@ msgstr "O comprimento da partição (em setores de 512 setores)."
 #. type: Title ==
 #: ../disk-utils/addpart.8.adoc:45 ../disk-utils/cfdisk.8.adoc:148
 #: ../disk-utils/delpart.8.adoc:33 ../disk-utils/fdformat.8.adoc:74
-#: ../disk-utils/fdisk.8.adoc:220 ../disk-utils/fsck.8.adoc:164
+#: ../disk-utils/fdisk.8.adoc:222 ../disk-utils/fsck.8.adoc:164
 #: ../disk-utils/fsck.cramfs.8.adoc:51 ../disk-utils/fsck.minix.8.adoc:98
 #: ../disk-utils/mkfs.8.adoc:53 ../disk-utils/mkfs.bfs.8.adoc:57
 #: ../disk-utils/mkfs.cramfs.8.adoc:82 ../disk-utils/mkfs.minix.8.adoc:86
@@ -603,7 +603,7 @@ msgstr "O comprimento da partição (em setores de 512 setores)."
 #: ../misc-utils/exch.1.adoc:41 ../misc-utils/fadvise.1.adoc:57
 #: ../misc-utils/fincore.1.adoc:56 ../misc-utils/findfs.8.adoc:67
 #: ../misc-utils/findmnt.8.adoc:266 ../misc-utils/getopt.1.adoc:151
-#: ../misc-utils/kill.1.adoc:131 ../misc-utils/lastlog2.8.adoc:86
+#: ../misc-utils/kill.1.adoc:131 ../misc-utils/lastlog2.8.adoc:89
 #: ../misc-utils/logger.1.adoc:252 ../misc-utils/look.1.adoc:101
 #: ../misc-utils/lsblk.8.adoc:242 ../misc-utils/lsclocks.1.adoc:104
 #: ../misc-utils/lslocks.8.adoc:127 ../misc-utils/mcookie.1.adoc:54
@@ -635,7 +635,7 @@ msgstr "O comprimento da partição (em setores de 512 setores)."
 #: ../sys-utils/switch_root.8.adoc:47 ../sys-utils/umount.8.adoc:210
 #: ../sys-utils/unshare.1.adoc:285 ../sys-utils/zramctl.8.adoc:107
 #: ../term-utils/mesg.1.adoc:113 ../term-utils/script.1.adoc:161
-#: ../term-utils/scriptlive.1.adoc:80 ../term-utils/scriptreplay.1.adoc:108
+#: ../term-utils/scriptlive.1.adoc:89 ../term-utils/scriptreplay.1.adoc:120
 #: ../term-utils/setterm.1.adoc:177 ../term-utils/wall.1.adoc:81
 #: ../term-utils/write.1.adoc:82 ../text-utils/col.1.adoc:127
 #: ../text-utils/colcrt.1.adoc:92 ../text-utils/colrm.1.adoc:67
@@ -758,7 +758,7 @@ msgstr ""
 #: ../sys-utils/unshare.1.adoc:53 ../sys-utils/wdctl.8.adoc:25
 #: ../sys-utils/zramctl.8.adoc:39 ../term-utils/agetty.8.adoc:56
 #: ../term-utils/mesg.1.adoc:86 ../term-utils/script.1.adoc:62
-#: ../term-utils/scriptlive.1.adoc:28 ../term-utils/scriptreplay.1.adoc:32
+#: ../term-utils/scriptlive.1.adoc:33 ../term-utils/scriptreplay.1.adoc:35
 #: ../term-utils/setterm.1.adoc:34 ../term-utils/wall.1.adoc:60
 #: ../term-utils/write.1.adoc:74 ../text-utils/col.1.adoc:60
 #: ../text-utils/colcrt.1.adoc:56 ../text-utils/colrm.1.adoc:59
@@ -1111,7 +1111,7 @@ msgstr "Define leitura e escrita."
 
 #. type: Title ==
 #: ../disk-utils/blockdev.8.adoc:117 ../disk-utils/cfdisk.8.adoc:142
-#: ../disk-utils/fdformat.8.adoc:70 ../disk-utils/fdisk.8.adoc:213
+#: ../disk-utils/fdformat.8.adoc:70 ../disk-utils/fdisk.8.adoc:215
 #: ../disk-utils/fsck.8.adoc:159 ../disk-utils/fsck.minix.8.adoc:94
 #: ../disk-utils/mkfs.8.adoc:45 ../disk-utils/partx.8.adoc:128
 #: ../disk-utils/raw.8.adoc:57 ../disk-utils/sfdisk.8.adoc:459
@@ -1130,7 +1130,7 @@ msgstr "Define leitura e escrita."
 #: ../misc-utils/exch.1.adoc:37 ../misc-utils/fadvise.1.adoc:53
 #: ../misc-utils/fincore.1.adoc:52 ../misc-utils/findfs.8.adoc:63
 #: ../misc-utils/findmnt.8.adoc:262 ../misc-utils/kill.1.adoc:124
-#: ../misc-utils/lastlog2.8.adoc:82 ../misc-utils/logger.1.adoc:248
+#: ../misc-utils/lastlog2.8.adoc:85 ../misc-utils/logger.1.adoc:248
 #: ../misc-utils/lsblk.8.adoc:237 ../misc-utils/lsclocks.1.adoc:100
 #: ../misc-utils/lslocks.8.adoc:123 ../misc-utils/namei.1.adoc:69
 #: ../misc-utils/pipesz.1.adoc:95 ../misc-utils/uuidgen.1.adoc:71
@@ -1157,7 +1157,7 @@ msgstr "Define leitura e escrita."
 #: ../sys-utils/setsid.1.adoc:40 ../sys-utils/switch_root.8.adoc:41
 #: ../sys-utils/unshare.1.adoc:280 ../sys-utils/wdctl.8.adoc:68
 #: ../sys-utils/zramctl.8.adoc:102 ../term-utils/agetty.8.adoc:344
-#: ../term-utils/scriptlive.1.adoc:67 ../term-utils/scriptreplay.1.adoc:89
+#: ../term-utils/scriptlive.1.adoc:76 ../term-utils/scriptreplay.1.adoc:101
 #: ../text-utils/more.1.adoc:190 ../text-utils/bits.1.adoc:123
 #: ../liblastlog2/man/lastlog2.3.adoc:28
 #: ../liblastlog2/man/ll2_import_lastlog.3.adoc:43
@@ -1692,7 +1692,7 @@ msgstr ""
 "de cores.\n"
 
 #. type: Title ==
-#: ../disk-utils/cfdisk.8.adoc:122 ../disk-utils/fdisk.8.adoc:193
+#: ../disk-utils/cfdisk.8.adoc:122 ../disk-utils/fdisk.8.adoc:195
 #: ../disk-utils/fsck.8.adoc:128 ../disk-utils/mkfs.minix.8.adoc:70
 #: ../disk-utils/mkswap.8.adoc:95 ../disk-utils/partx.8.adoc:101
 #: ../disk-utils/sfdisk.8.adoc:417 ../disk-utils/swaplabel.8.adoc:39
@@ -1724,20 +1724,20 @@ msgid "enables cfdisk debug output."
 msgstr "habilita saída de depuração do cfdisk."
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:127 ../disk-utils/fdisk.8.adoc:198
+#: ../disk-utils/cfdisk.8.adoc:127 ../disk-utils/fdisk.8.adoc:200
 #: ../disk-utils/sfdisk.8.adoc:421
 #, no-wrap
 msgid "*LIBFDISK_DEBUG*=all"
 msgstr "*LIBFDISK_DEBUG*=all"
 
 #. type: Plain text
-#: ../disk-utils/cfdisk.8.adoc:129 ../disk-utils/fdisk.8.adoc:200
+#: ../disk-utils/cfdisk.8.adoc:129 ../disk-utils/fdisk.8.adoc:202
 #: ../disk-utils/sfdisk.8.adoc:423
 msgid "enables libfdisk debug output."
 msgstr "habilita saída de depuração do libfdisk."
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:130 ../disk-utils/fdisk.8.adoc:201
+#: ../disk-utils/cfdisk.8.adoc:130 ../disk-utils/fdisk.8.adoc:203
 #: ../disk-utils/sfdisk.8.adoc:423 ../misc-utils/lsblk.8.adoc:219
 #: ../sys-utils/mount.8.adoc:1691 ../sys-utils/swapon.8.adoc:128
 #, no-wrap
@@ -1745,7 +1745,7 @@ msgid "*LIBBLKID_DEBUG*=all"
 msgstr "*LIBBLKID_DEBUG*=all"
 
 #. type: Plain text
-#: ../disk-utils/cfdisk.8.adoc:132 ../disk-utils/fdisk.8.adoc:203
+#: ../disk-utils/cfdisk.8.adoc:132 ../disk-utils/fdisk.8.adoc:205
 #: ../disk-utils/fsck.8.adoc:146 ../disk-utils/mkswap.8.adoc:99
 #: ../disk-utils/partx.8.adoc:105 ../disk-utils/sfdisk.8.adoc:425
 #: ../disk-utils/swaplabel.8.adoc:43 ../misc-utils/findfs.8.adoc:62
@@ -1753,7 +1753,7 @@ msgid "enables libblkid debug output."
 msgstr "habilita saída de depuração do libblkid."
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:133 ../disk-utils/fdisk.8.adoc:204
+#: ../disk-utils/cfdisk.8.adoc:133 ../disk-utils/fdisk.8.adoc:206
 #: ../disk-utils/sfdisk.8.adoc:425 ../misc-utils/findmnt.8.adoc:230
 #: ../misc-utils/lsblk.8.adoc:225
 #, no-wrap
@@ -1761,13 +1761,13 @@ msgid "*LIBSMARTCOLS_DEBUG*=all"
 msgstr "*LIBSMARTCOLS_DEBUG*=all"
 
 #. type: Plain text
-#: ../disk-utils/cfdisk.8.adoc:135 ../disk-utils/fdisk.8.adoc:206
+#: ../disk-utils/cfdisk.8.adoc:135 ../disk-utils/fdisk.8.adoc:208
 #: ../disk-utils/sfdisk.8.adoc:427
 msgid "enables libsmartcols debug output."
 msgstr "habilita saída de depuração do libsmartcols."
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:136 ../disk-utils/fdisk.8.adoc:207
+#: ../disk-utils/cfdisk.8.adoc:136 ../disk-utils/fdisk.8.adoc:209
 #: ../misc-utils/findmnt.8.adoc:233 ../misc-utils/lsblk.8.adoc:228
 #, no-wrap
 msgid "*LIBSMARTCOLS_DEBUG_PADDING*=on"
@@ -1781,14 +1781,14 @@ msgstr ""
 "habilitado."
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:139 ../disk-utils/fdisk.8.adoc:210
+#: ../disk-utils/cfdisk.8.adoc:139 ../disk-utils/fdisk.8.adoc:212
 #: ../disk-utils/sfdisk.8.adoc:427
 #, no-wrap
 msgid "*LOCK_BLOCK_DEVICE*=<mode>"
 msgstr "*LOCK_BLOCK_DEVICE*=<modo>"
 
 #. type: Plain text
-#: ../disk-utils/cfdisk.8.adoc:141 ../disk-utils/fdisk.8.adoc:212
+#: ../disk-utils/cfdisk.8.adoc:141 ../disk-utils/fdisk.8.adoc:214
 #: ../disk-utils/mkfs.minix.8.adoc:74 ../disk-utils/mkswap.8.adoc:102
 #: ../disk-utils/sfdisk.8.adoc:429 ../misc-utils/wipefs.8.adoc:87
 msgid ""
@@ -1804,7 +1804,7 @@ msgstr ""
 #: ../misc-utils/findmnt.8.adoc:265 ../misc-utils/wipefs.8.adoc:102
 #: ../sys-utils/choom.1.adoc:50 ../sys-utils/dmesg.1.adoc:195
 #: ../sys-utils/lsns.8.adoc:107 ../sys-utils/mount.8.adoc:1740
-#: ../sys-utils/mountpoint.1.adoc:64 ../term-utils/scriptlive.1.adoc:70
+#: ../sys-utils/mountpoint.1.adoc:64 ../term-utils/scriptlive.1.adoc:79
 msgid "mailto:kzak@redhat.com[Karel Zak]"
 msgstr "mailto:kzak@redhat.com[Karel Zak]"
 
@@ -2604,15 +2604,28 @@ msgstr ""
 #. TRANSLATORS: Keep {plus} untranslated.
 #. type: Plain text
 #: ../disk-utils/fdisk.8.adoc:124
+#, fuzzy
+#| msgid ""
+#| "The relative sizes are always aligned according to device I/O limits. The "
+#| "{plus}/-<size>{K,B,M,G,...} notation is recommended."
 msgid ""
-"The relative sizes are always aligned according to device I/O limits. The "
-"{plus}/-<size>{K,B,M,G,...} notation is recommended."
+"The relative sizes if specified with multiplicative suffixes (e.g. +100MiB) "
+"are always aligned according to device I/O limits. The {plus}/-<size>{K,B,M,"
+"G,...} notation is recommended."
 msgstr ""
 "Os tamanhos relativos são sempre alinhados de acordo com os limites de E/S "
 "do dispositivo. A notação {plus}/-<tamanho>{K,B,M,G,...} é recomendada."
 
 #. type: Plain text
 #: ../disk-utils/fdisk.8.adoc:126
+msgid ""
+"The last sector of the partition is strictly calculated as <start> + <size> "
+"(without -1) if the size is specified by the +<sectors> notation. In this "
+"case, the size is not aligned to the device I/O limits."
+msgstr ""
+
+#. type: Plain text
+#: ../disk-utils/fdisk.8.adoc:128
 #, fuzzy
 #| msgid ""
 #| "For backward compatibility fdisk also accepts the suffixes KB=1000, "
@@ -2628,13 +2641,13 @@ msgstr ""
 "YB. Esses sufixos 10^N foram descontinuados."
 
 #. type: Title ==
-#: ../disk-utils/fdisk.8.adoc:127
+#: ../disk-utils/fdisk.8.adoc:129
 #, no-wrap
 msgid "SCRIPT FILES"
 msgstr "ARQUIVOS DE SCRIPT"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:130
+#: ../disk-utils/fdisk.8.adoc:132
 #, fuzzy
 #| msgid ""
 #| "*fdisk* allows reading (by 'I' command) *sfdisk*(8) compatible script "
@@ -2652,7 +2665,7 @@ msgstr ""
 "gravá-la no dispositivo.\n"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:132
+#: ../disk-utils/fdisk.8.adoc:134
 msgid ""
 "And vice-versa it is possible to write the current in-memory disk layout to "
 "the script file by command 'O'."
@@ -2661,7 +2674,7 @@ msgstr ""
 "arquivo de script pelo comando \"O\"."
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:134
+#: ../disk-utils/fdisk.8.adoc:136
 msgid ""
 "The script files are compatible between *cfdisk*(8), *sfdisk*(8), *fdisk* "
 "and other libfdisk applications. For more details see *sfdisk*(8)."
@@ -2671,19 +2684,19 @@ msgstr ""
 "*sfdisk*(8)."
 
 #. type: Title ==
-#: ../disk-utils/fdisk.8.adoc:135
+#: ../disk-utils/fdisk.8.adoc:137
 #, no-wrap
 msgid "DISK LABELS"
 msgstr "RÓTULOS DE DISCO"
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:137
+#: ../disk-utils/fdisk.8.adoc:139
 #, no-wrap
 msgid "*GPT (GUID Partition Table)*"
 msgstr "*GPT (Tabela de Partição GUID)*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:139
+#: ../disk-utils/fdisk.8.adoc:141
 msgid ""
 "GPT is modern standard for the layout of the partition table. GPT uses 64-"
 "bit logical block addresses, checksums, UUIDs and names for partitions and "
@@ -2697,7 +2710,7 @@ msgstr ""
 "particionamento)."
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:141
+#: ../disk-utils/fdisk.8.adoc:143
 msgid ""
 "Note that the first sector is still reserved for a *protective MBR* in the "
 "GPT specification. It prevents MBR-only partitioning tools from mis-"
@@ -2708,7 +2721,7 @@ msgstr ""
 "MBR reconheçam erroneamente e substituam os discos GPT."
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:143
+#: ../disk-utils/fdisk.8.adoc:145
 msgid ""
 "GPT is always a better choice than MBR, especially on modern hardware with a "
 "UEFI boot loader."
@@ -2717,13 +2730,13 @@ msgstr ""
 "moderno com um carregador de inicialização UEFI."
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:144
+#: ../disk-utils/fdisk.8.adoc:146
 #, no-wrap
 msgid "*DOS-type (MBR)*"
 msgstr "Tipo DOS (MBR)"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:146
+#: ../disk-utils/fdisk.8.adoc:148
 msgid ""
 "A DOS-type partition table can describe an unlimited number of partitions. "
 "In sector 0 there is room for the description of 4 partitions (called "
@@ -2743,7 +2756,7 @@ msgstr ""
 
 #. TRANSLATORS: Keep {plus} untranslated.
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:148
+#: ../disk-utils/fdisk.8.adoc:150
 msgid ""
 "In a DOS-type partition table the starting offset and the size of each "
 "partition is stored in two ways: as an absolute number of sectors (given in "
@@ -2769,7 +2782,7 @@ msgstr ""
 "pode não ser suportado em alguma versão posterior do *fdisk*."
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:151
+#: ../disk-utils/fdisk.8.adoc:153
 #, fuzzy
 #| msgid ""
 #| "*Please, read the DOS-mode section if you want DOS-compatible partitions."
@@ -2782,13 +2795,13 @@ msgstr ""
 "com DOS.* *fdisk* não se preocupa com os limites do cilindro por padrão.\n"
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:152
+#: ../disk-utils/fdisk.8.adoc:154
 #, no-wrap
 msgid "*BSD/Sun-type*"
 msgstr "*tipo BSD/Sun*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:154
+#: ../disk-utils/fdisk.8.adoc:156
 msgid ""
 "A BSD/Sun disklabel can describe 8 partitions, the third of which should be "
 "a `whole disk' partition. Do not start a partition that actually uses its "
@@ -2803,13 +2816,13 @@ msgstr ""
 "geralmente está aninhado em uma partição DOS."
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:155
+#: ../disk-utils/fdisk.8.adoc:157
 #, no-wrap
 msgid "*IRIX/SGI-type*"
 msgstr "*Tipo IRIX/SGI*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:157
+#: ../disk-utils/fdisk.8.adoc:159
 msgid ""
 "An IRIX/SGI disklabel can describe 16 partitions, the eleventh of which "
 "should be an entire `volume' partition, while the ninth should be labeled "
@@ -2833,7 +2846,7 @@ msgstr ""
 "IRIX/SGI em Linux."
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:159
+#: ../disk-utils/fdisk.8.adoc:161
 #, fuzzy
 #| msgid ""
 #| "A sync() and an ioctl(BLKRRPART) (rereading the partition table from "
@@ -2847,13 +2860,13 @@ msgstr ""
 "executados antes de sair quando a tabela de partição foi atualizada."
 
 #. type: Title ==
-#: ../disk-utils/fdisk.8.adoc:160
+#: ../disk-utils/fdisk.8.adoc:162
 #, no-wrap
 msgid "DOS mode and DOS 6.x WARNING"
 msgstr "Modo DOS e aviso de DOS 6.X"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:163
+#: ../disk-utils/fdisk.8.adoc:165
 #, fuzzy
 #| msgid ""
 #| "*Note that all this is deprecated. You don't have to care about things "
@@ -2874,7 +2887,7 @@ msgstr ""
 "comando \"-c=dos -u=cylinders\" do fdisk.*\n"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:165
+#: ../disk-utils/fdisk.8.adoc:167
 msgid ""
 "The DOS 6.x FORMAT command looks for some information in the first sector of "
 "the data area of the partition, and treats this information as more reliable "
@@ -2892,7 +2905,7 @@ msgstr ""
 "isso um bug no FORMAT e no FDISK do DOS."
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:167
+#: ../disk-utils/fdisk.8.adoc:169
 #, fuzzy
 #| msgid ""
 #| "The bottom line is that if you use *fdisk* or *cfdisk* to change the size "
@@ -2924,7 +2937,7 @@ msgstr ""
 "da partição."
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:169
+#: ../disk-utils/fdisk.8.adoc:171
 #, fuzzy
 #| msgid ""
 #| "*fdisk* usually obtains the disk geometry automatically. This is not "
@@ -2946,7 +2959,7 @@ msgstr ""
 "geometria do disco que o MS-DOS usa para a tabela de partição.\n"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:171
+#: ../disk-utils/fdisk.8.adoc:173
 msgid ""
 "Usually all goes well by default, and there are no problems if Linux is the "
 "only system on the disk. However, if the disk has to be shared with other "
@@ -2963,7 +2976,7 @@ msgstr ""
 "geometria (falsa) é necessária para uma boa cooperação com outros sistemas."
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:173
+#: ../disk-utils/fdisk.8.adoc:175
 msgid ""
 "Whenever a partition table is printed out in DOS mode, a consistency check "
 "is performed on the partition table entries. This check verifies that the "
@@ -2978,7 +2991,7 @@ msgstr ""
 "(exceto para a primeira partição)."
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:175
+#: ../disk-utils/fdisk.8.adoc:177
 msgid ""
 "Some versions of MS-DOS create a first partition which does not begin on a "
 "cylinder boundary, but on sector 2 of the first cylinder. Partitions "
@@ -2992,7 +3005,7 @@ msgstr ""
 "máquina."
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:177
+#: ../disk-utils/fdisk.8.adoc:179
 msgid ""
 "For best results, you should always use an OS-specific partition table "
 "program. For example, you should make DOS partitions with the DOS FDISK "
@@ -3005,69 +3018,69 @@ msgstr ""
 "programas *fdisk* ou *cfdisk*(8) do Linux."
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:180
+#: ../disk-utils/fdisk.8.adoc:182
 msgid "The logical color names supported by *fdisk* are:"
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:181 ../disk-utils/sfdisk.8.adoc:410
+#: ../disk-utils/fdisk.8.adoc:183 ../disk-utils/sfdisk.8.adoc:410
 #: ../misc-utils/cal.1.adoc:167
 #, no-wrap
 msgid "*header*"
 msgstr "*header*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:183 ../disk-utils/sfdisk.8.adoc:412
+#: ../disk-utils/fdisk.8.adoc:185 ../disk-utils/sfdisk.8.adoc:412
 msgid "The header of the output tables."
 msgstr "O cabeçalho das tabelas de saída."
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:184
+#: ../disk-utils/fdisk.8.adoc:186
 #, no-wrap
 msgid "*help-title*"
 msgstr "*help-title*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:186
+#: ../disk-utils/fdisk.8.adoc:188
 msgid "The help section titles."
 msgstr "Os títulos de seção de ajuda."
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:187 ../disk-utils/sfdisk.8.adoc:412
+#: ../disk-utils/fdisk.8.adoc:189 ../disk-utils/sfdisk.8.adoc:412
 #: ../sys-utils/dmesg.1.adoc:182
 #, no-wrap
 msgid "*warn*"
 msgstr "*warn*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:189 ../disk-utils/sfdisk.8.adoc:414
+#: ../disk-utils/fdisk.8.adoc:191 ../disk-utils/sfdisk.8.adoc:414
 msgid "The warning messages."
 msgstr "As mensagens de aviso."
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:190 ../disk-utils/sfdisk.8.adoc:414
+#: ../disk-utils/fdisk.8.adoc:192 ../disk-utils/sfdisk.8.adoc:414
 #, no-wrap
 msgid "*welcome*"
 msgstr "*welcome*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:192 ../disk-utils/sfdisk.8.adoc:416
+#: ../disk-utils/fdisk.8.adoc:194 ../disk-utils/sfdisk.8.adoc:416
 msgid "The welcome message."
 msgstr "A mensagem de boas vindas."
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:195
+#: ../disk-utils/fdisk.8.adoc:197
 #, no-wrap
 msgid "*FDISK_DEBUG*=all"
 msgstr "*FDISK_DEBUG*=all"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:197
+#: ../disk-utils/fdisk.8.adoc:199
 msgid "enables fdisk debug output."
 msgstr "habilita a saída de depuração do fdisk."
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:209 ../misc-utils/findmnt.8.adoc:235
+#: ../disk-utils/fdisk.8.adoc:211 ../misc-utils/findmnt.8.adoc:235
 #: ../misc-utils/lsblk.8.adoc:230
 #, fuzzy
 #| msgid "use visible padding characters. Requires enabled LIBSMARTCOLS_DEBUG."
@@ -3077,13 +3090,13 @@ msgstr ""
 "habilitado."
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:217
+#: ../disk-utils/fdisk.8.adoc:219
 msgid "mailto:kzak@redhat.com[Karel Zak], mailto:dave@gnu.org[Davidlohr Bueso]"
 msgstr ""
 "mailto:kzak@redhat.com[Karel Zak], mailto:dave@gnu.org[Davidlohr Bueso]"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:219
+#: ../disk-utils/fdisk.8.adoc:221
 msgid ""
 "The original version was written by Andries E. Brouwer, A. V. Le Blanc and "
 "others."
@@ -3092,7 +3105,7 @@ msgstr ""
 "outros."
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:226
+#: ../disk-utils/fdisk.8.adoc:228
 #, fuzzy
 #| msgid ""
 #| "*cfdisk*(8),\n"
@@ -3925,7 +3938,7 @@ msgstr "habilita a saída de depuração do libmount."
 #: ../disk-utils/fsck.8.adoc:150 ../lib/terminal-colors.d.5.adoc:134
 #: ../login-utils/last.1.adoc:112 ../login-utils/login.1.adoc:141
 #: ../login-utils/newgrp.1.adoc:40 ../login-utils/runuser.1.adoc:118
-#: ../login-utils/su.1.adoc:130 ../misc-utils/lastlog2.8.adoc:76
+#: ../login-utils/su.1.adoc:130 ../misc-utils/lastlog2.8.adoc:79
 #: ../misc-utils/look.1.adoc:82 ../misc-utils/mcookie.1.adoc:44
 #: ../sys-utils/adjtime_config.5.adoc:50 ../sys-utils/ctrlaltdel.8.adoc:39
 #: ../sys-utils/fstab.5.adoc:126 ../sys-utils/hwclock.8.adoc:365
@@ -4494,8 +4507,8 @@ msgstr ""
 "termo \"setores\" para \"blocos\"."
 
 #. type: Labeled list
-#: ../disk-utils/isosize.8.adoc:26 ../term-utils/scriptlive.1.adoc:47
-#: ../term-utils/scriptreplay.1.adoc:55
+#: ../disk-utils/isosize.8.adoc:26 ../term-utils/scriptlive.1.adoc:56
+#: ../term-utils/scriptreplay.1.adoc:62
 #, no-wrap
 msgid "*-d*, *--divisor* _number_"
 msgstr "*-d*, *--divisor* _número_"
@@ -6138,8 +6151,7 @@ msgstr "Sobrescreve o tamanho do setor."
 
 #. type: Plain text
 #: ../disk-utils/partx.8.adoc:98 ../sys-utils/losetup.8.adoc:100
-#: ../sys-utils/mount.8.adoc:457 ../sys-utils/prlimit.1.adoc:58
-#: ../sys-utils/umount.8.adoc:113
+#: ../sys-utils/prlimit.1.adoc:58 ../sys-utils/umount.8.adoc:113
 msgid "Verbose mode."
 msgstr "Modo detalhado."
 
@@ -7610,7 +7622,7 @@ msgstr ""
 "de uma nova partição. Veja também o comando *wipefs*(8)."
 
 #. type: Labeled list
-#: ../disk-utils/sfdisk.8.adoc:229 ../misc-utils/lastlog2.8.adoc:67
+#: ../disk-utils/sfdisk.8.adoc:229 ../misc-utils/lastlog2.8.adoc:70
 #, no-wrap
 msgid "*-v*, *--version*"
 msgstr "*-v*, *--version*"
@@ -8446,8 +8458,8 @@ msgstr ""
 #: ../schedutils/coresched.1.adoc:72 ../schedutils/ionice.1.adoc:72
 #: ../sys-utils/flock.1.adoc:105 ../sys-utils/prlimit.1.adoc:115
 #: ../sys-utils/renice.1.adoc:96 ../sys-utils/setpriv.1.adoc:135
-#: ../sys-utils/unshare.1.adoc:160 ../term-utils/scriptlive.1.adoc:55
-#: ../term-utils/scriptreplay.1.adoc:69 ../text-utils/colcrt.1.adoc:83
+#: ../sys-utils/unshare.1.adoc:160 ../term-utils/scriptlive.1.adoc:64
+#: ../term-utils/scriptreplay.1.adoc:81 ../text-utils/colcrt.1.adoc:83
 #: ../text-utils/column.1.adoc:212 ../text-utils/hexdump.1.adoc:232
 #: ../text-utils/bits.1.adoc:95 ../pam_lastlog2/man/pam_lastlog2.8.adoc:56
 #, no-wrap
@@ -19715,89 +19727,101 @@ msgstr ""
 #. type: Labeled list
 #: ../misc-utils/lastlog2.8.adoc:34
 #, fuzzy, no-wrap
+#| msgid "*-a*, *--ascii*"
+msgid "*-a*, *--active*"
+msgstr "*-a*, *--ascii*"
+
+#. type: Plain text
+#: ../misc-utils/lastlog2.8.adoc:36
+msgid "Print last login records excluding users who have never logged in."
+msgstr ""
+
+#. type: Labeled list
+#: ../misc-utils/lastlog2.8.adoc:37
+#, fuzzy, no-wrap
 #| msgid "*-f*, *--force*"
 msgid "*-b*, *--before* _DAYS_"
 msgstr "*-f*, *--force*"
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:36
+#: ../misc-utils/lastlog2.8.adoc:39
 msgid "Print only last login records older than _DAYS_."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lastlog2.8.adoc:37 ../sys-utils/dmesg.1.adoc:41
+#: ../misc-utils/lastlog2.8.adoc:40 ../sys-utils/dmesg.1.adoc:41
 #, no-wrap
 msgid "*-C*, *--clear*"
 msgstr "*-C*, *--clear*"
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:40
+#: ../misc-utils/lastlog2.8.adoc:43
 msgid ""
 "Clear last login record of a user. This option can be used only together "
 "with *-u' (*--user*)."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lastlog2.8.adoc:41
+#: ../misc-utils/lastlog2.8.adoc:44
 #, fuzzy, no-wrap
 msgid "*-d*, *--database _FILE_"
 msgstr " -p, --task <pid>       exibe espaços de nomes do processo\n"
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:43
+#: ../misc-utils/lastlog2.8.adoc:46
 msgid "Use _FILE_ as lastlog2 database."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:46
+#: ../misc-utils/lastlog2.8.adoc:49
 #, fuzzy
 msgid "Display help message and exit."
 msgstr "Exibe informação da versão e sai."
 
 #. type: Labeled list
-#: ../misc-utils/lastlog2.8.adoc:47
+#: ../misc-utils/lastlog2.8.adoc:50
 #, fuzzy, no-wrap
 msgid "*-i*, *--import* _FILE_"
 msgstr " -P, --port <porta>       usa esta porta para conexão UDP ou TCP\n"
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:50
+#: ../misc-utils/lastlog2.8.adoc:53
 msgid ""
 "Import data from old lastlog file _FILE_. Existing entries in the lastlog2 "
 "database will be overwritten."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lastlog2.8.adoc:51
+#: ../misc-utils/lastlog2.8.adoc:54
 #, fuzzy, no-wrap
 #| msgid "*-r*, *--repair* _N_"
 msgid "*-r*, *--rename* _NEWNAME_"
 msgstr "*-r*, *--repair* _N_"
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:53
-msgid "This option can only be used together with *-u* (*--user*)."
-msgstr ""
-
-#. type: Labeled list
-#: ../misc-utils/lastlog2.8.adoc:54
-#, fuzzy, no-wrap
-msgid "*-s*, *--service* _num_"
-msgstr " -s, --since <hora>   exibe as linhas desde o horário especificado\n"
-
-#. type: Plain text
 #: ../misc-utils/lastlog2.8.adoc:56
-msgid "Display PAM service used to login in the last column."
+msgid "This option can only be used together with *-u* (*--user*)."
 msgstr ""
 
 #. type: Labeled list
 #: ../misc-utils/lastlog2.8.adoc:57
 #, fuzzy, no-wrap
+msgid "*-s*, *--service* _num_"
+msgstr " -s, --since <hora>   exibe as linhas desde o horário especificado\n"
+
+#. type: Plain text
+#: ../misc-utils/lastlog2.8.adoc:59
+msgid "Display PAM service used to login in the last column."
+msgstr ""
+
+#. type: Labeled list
+#: ../misc-utils/lastlog2.8.adoc:60
+#, fuzzy, no-wrap
 msgid "*-S*, *--set*"
 msgstr " -R, --reset-on-fork       define o sinalizador reset-on-fork\n"
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:60
+#: ../misc-utils/lastlog2.8.adoc:63
 #, fuzzy
 #| msgid ""
 #| "List the partitions of all or the specified devices. This command can be "
@@ -19810,66 +19834,66 @@ msgstr ""
 "pode ser usado junto com *--verify*."
 
 #. type: Labeled list
-#: ../misc-utils/lastlog2.8.adoc:61
+#: ../misc-utils/lastlog2.8.adoc:64
 #, fuzzy, no-wrap
 msgid "*-t*, *--time* _DAYS_"
 msgstr " -t, --time              testa geração baseada em tempo\n"
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:63
+#: ../misc-utils/lastlog2.8.adoc:66
 msgid "Print only last login records more recent than _DAYS_."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lastlog2.8.adoc:64
+#: ../misc-utils/lastlog2.8.adoc:67
 #, fuzzy, no-wrap
 msgid "*-u*, *--users* _LOGINS_"
 msgstr " -u, --user-accs          exibe contas de usuários\n"
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:66
+#: ../misc-utils/lastlog2.8.adoc:69
 msgid "Print only the last login record of the user _LOGIN_."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:69
+#: ../misc-utils/lastlog2.8.adoc:72
 #, fuzzy
 #| msgid "Print version and exit."
 msgid "Print version number and exit."
 msgstr "Imprime a versão e sai."
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:72
+#: ../misc-utils/lastlog2.8.adoc:75
 msgid ""
 "If the user has never logged in the message **Never logged in** will be "
 "displayed in the latest login time row."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:75
+#: ../misc-utils/lastlog2.8.adoc:78
 msgid ""
 "Only the entries for the current users of the system will be displayed.  "
 "Other entries may exist for users that were deleted previously."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lastlog2.8.adoc:78
+#: ../misc-utils/lastlog2.8.adoc:81
 #, no-wrap
 msgid "*/var/lib/lastlog/lastlog2.db*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:80
+#: ../misc-utils/lastlog2.8.adoc:83
 msgid "Lastlog2 logging database file"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:85
+#: ../misc-utils/lastlog2.8.adoc:88
 msgid "lastlog2 was written by Thorsten Kukuk for *liblastlog2*(3)."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:89
+#: ../misc-utils/lastlog2.8.adoc:92
 msgid "*liblastlog2*(3)"
 msgstr ""
 
@@ -24590,8 +24614,8 @@ msgstr ""
 #. type: Title ==
 #: ../schedutils/coresched.1.adoc:115 ../schedutils/taskset.1.adoc:140
 #: ../sys-utils/chcpu.8.adoc:76 ../sys-utils/flock.1.adoc:131
-#: ../sys-utils/rtcwake.8.adoc:126 ../term-utils/scriptlive.1.adoc:71
-#: ../term-utils/scriptreplay.1.adoc:93
+#: ../sys-utils/rtcwake.8.adoc:126 ../term-utils/scriptlive.1.adoc:80
+#: ../term-utils/scriptreplay.1.adoc:105
 #, no-wrap
 msgid "COPYRIGHT"
 msgstr "DIREITOS AUTORAIS"
@@ -32825,10 +32849,9 @@ msgstr " -q, --queue-id <id>        remove fila de mensagens pelo id\n"
 
 #. type: Plain text
 #: ../sys-utils/lsipc.1.adoc:49
-msgid ""
-"Write information about active POSIX message queues. Mounts /dev/mqueue if "
-"not already mounted."
-msgstr ""
+#, fuzzy
+msgid "Write information about active POSIX message queues."
+msgstr "mostra como caches são compartilhados entre CPUs"
 
 #. type: Plain text
 #: ../sys-utils/lsipc.1.adoc:52
@@ -34769,6 +34792,13 @@ msgstr ""
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:454
 msgid "Mount the partition that has the specified _uuid_."
+msgstr ""
+
+#. type: Plain text
+#: ../sys-utils/mount.8.adoc:457
+msgid ""
+"Enables verbose mode. Starting from version 2.41, if the new kernel mount "
+"API is available, it will also print kernel info messages."
 msgstr ""
 
 #. type: Labeled list
@@ -46725,13 +46755,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/script.1.adoc:72 ../term-utils/scriptlive.1.adoc:36
+#: ../term-utils/script.1.adoc:72 ../term-utils/scriptlive.1.adoc:41
 #, fuzzy, no-wrap
 msgid "*-E*, *--echo* _when_"
 msgstr " -E, --echo <quando>           ecoa entrada na sessão (auto, always ou never)\n"
 
 #. type: Plain text
-#: ../term-utils/script.1.adoc:74 ../term-utils/scriptlive.1.adoc:38
+#: ../term-utils/script.1.adoc:74
 msgid ""
 "This option controls the *ECHO* flag for the slave end of the session's "
 "pseudoterminal. The supported modes are _always_, _never_, or _auto_."
@@ -46800,8 +46830,8 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/script.1.adoc:89 ../term-utils/scriptlive.1.adoc:33
-#: ../term-utils/scriptreplay.1.adoc:40
+#: ../term-utils/script.1.adoc:89 ../term-utils/scriptlive.1.adoc:38
+#: ../term-utils/scriptreplay.1.adoc:43
 #, fuzzy, no-wrap
 msgid "*-B*, *--log-io* _file_"
 msgstr " -B, --log-io <arquivo>  registra arquivo de registro de stdin e stdout\n"
@@ -46815,8 +46845,8 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/script.1.adoc:92 ../term-utils/scriptlive.1.adoc:30
-#: ../term-utils/scriptreplay.1.adoc:34
+#: ../term-utils/script.1.adoc:92 ../term-utils/scriptlive.1.adoc:35
+#: ../term-utils/scriptreplay.1.adoc:37
 #, fuzzy, no-wrap
 msgid "*-I*, *--log-in* _file_"
 msgstr " -I, --log-in <arquivo>  registra o arquivo de registro da stdin\n"
@@ -46836,7 +46866,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/script.1.adoc:97 ../term-utils/scriptreplay.1.adoc:37
+#: ../term-utils/script.1.adoc:97 ../term-utils/scriptreplay.1.adoc:40
 #, fuzzy, no-wrap
 msgid "*-O*, *--log-out* _file_"
 msgstr " -O, --log-out <arquivo> cria arquivo de registro da stdout (padrão)\n"
@@ -46850,8 +46880,8 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/script.1.adoc:100 ../term-utils/scriptlive.1.adoc:44
-#: ../term-utils/scriptreplay.1.adoc:46
+#: ../term-utils/script.1.adoc:100 ../term-utils/scriptlive.1.adoc:52
+#: ../term-utils/scriptreplay.1.adoc:50
 #, fuzzy, no-wrap
 msgid "*-T*, *--log-timing* _file_"
 msgstr ""
@@ -47060,7 +47090,7 @@ msgstr ""
 #. type: Plain text
 #: ../term-utils/scriptlive.1.adoc:17
 #, fuzzy
-msgid "*scriptlive* [options] [*-t*] _timingfile_ [*-I*|*-B*] _typescript_"
+msgid "*scriptlive* [options] _timingfile_ _typescript_"
 msgstr " %s [-t] arquivo-tempo [-I|-B] script-gravado\n"
 
 #. type: Plain text
@@ -47079,61 +47109,68 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:25
+#: ../term-utils/scriptlive.1.adoc:28
 msgid ""
-"*Be careful!* Do not forget that the typescript may contains arbitrary "
-"commands. It is recommended to use *\"scriptreplay --stream in --log-in "
-"typescript\"* (or with *--log-io* instead of *--log-in*) to verify the "
-"typescript before it is executed by *scriptlive*."
+"*Be careful!* The typescript may contain arbitrary commands. It is "
+"recommended to use *\"scriptreplay --stream in --log-in typescript\"* (or "
+"with *--log-io* instead of *--log-in*) to verify the typescript before it is "
+"executed with *scriptlive*."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:27
+#: ../term-utils/scriptlive.1.adoc:32
 msgid ""
-"The timing information is what *script*(1) outputs to file specified by *--"
-"log-timing*. The typescript has to contain stdin information and it is what "
-"script1 outputs to file specified by *--log-in* or *--log-io*."
+"The timing information is what *script*(1) outputs to the file specified by "
+"*--log-timing*. The typescript has to contain stdin information, and is what "
+"*script*(1) outputs to the file specified by *--log-in* or *--log-io*."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:32 ../term-utils/scriptreplay.1.adoc:36
+#: ../term-utils/scriptlive.1.adoc:37 ../term-utils/scriptreplay.1.adoc:39
 msgid "File containing *script*'s terminal input."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:35 ../term-utils/scriptreplay.1.adoc:42
+#: ../term-utils/scriptlive.1.adoc:40 ../term-utils/scriptreplay.1.adoc:45
 msgid "File containing *script*'s terminal output and input."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:40
+#: ../term-utils/scriptlive.1.adoc:44
 msgid ""
-"The default is _auto_ -- in this case, *ECHO* enabled; this default behavior "
-"is subject to change."
+"This option controls the *ECHO* flag for the slave end of the session's "
+"pseudoterminal. The supported modes are *always*, *never*, and *auto*."
+msgstr ""
+
+#. type: Plain text
+#: ../term-utils/scriptlive.1.adoc:47
+msgid ""
+"The default is *auto* -- in which case *ECHO* is enabled. This default "
+"behavior is subject to change."
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/scriptlive.1.adoc:41 ../term-utils/scriptreplay.1.adoc:43
+#: ../term-utils/scriptlive.1.adoc:48 ../term-utils/scriptreplay.1.adoc:46
 #, fuzzy, no-wrap
 msgid "*-t*, *--timing* _file_"
 msgstr " -t, --timing <arquivo>  registra o arquivo de registro de tempo\n"
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:43 ../term-utils/scriptreplay.1.adoc:45
+#: ../term-utils/scriptlive.1.adoc:51 ../term-utils/scriptreplay.1.adoc:49
 msgid ""
-"File containing *script*'s timing output. This option overrides old-style "
-"arguments."
+"File containing *script*'s timing output.  This option replaces the "
+"_timingfile_ positional argument."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:46
+#: ../term-utils/scriptlive.1.adoc:55
 msgid ""
-"Aliased to *-t*, maintained for compatibility with *script*(1) command-line "
-"options."
+"An alias for *-t*; maintained for compatibility with the *script*(1)  "
+"command-line options."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:49 ../term-utils/scriptreplay.1.adoc:57
+#: ../term-utils/scriptlive.1.adoc:58 ../term-utils/scriptreplay.1.adoc:64
 msgid ""
 "Speed up the replay displaying this _number_ of times. The argument is a "
 "floating-point number. It's called divisor because it divides the timings by "
@@ -47141,13 +47178,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/scriptlive.1.adoc:50 ../term-utils/scriptreplay.1.adoc:58
+#: ../term-utils/scriptlive.1.adoc:59 ../term-utils/scriptreplay.1.adoc:65
 #, no-wrap
 msgid "*-m*, *--maxdelay* _number_"
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:52 ../term-utils/scriptreplay.1.adoc:60
+#: ../term-utils/scriptlive.1.adoc:61 ../term-utils/scriptreplay.1.adoc:67
 msgid ""
 "Set the maximum delay between updates to _number_ of seconds. The argument "
 "is a floating-point number. This can be used to avoid long pauses in the "
@@ -47155,7 +47192,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block .
-#: ../term-utils/scriptlive.1.adoc:65
+#: ../term-utils/scriptlive.1.adoc:74
 #, no-wrap
 msgid ""
 "% script --log-timing file.tm --log-in script.in\n"
@@ -47169,24 +47206,24 @@ msgstr ""
 
 #. TRANSLATORS: Keep {copyright} untranslated.
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:75
+#: ../term-utils/scriptlive.1.adoc:84
 msgid "Copyright {copyright} 2019 Karel Zak"
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:77 ../term-utils/scriptreplay.1.adoc:105
+#: ../term-utils/scriptlive.1.adoc:86 ../term-utils/scriptreplay.1.adoc:117
 msgid ""
 "This is free software; see the source for copying conditions. There is NO "
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:79 ../term-utils/scriptreplay.1.adoc:107
+#: ../term-utils/scriptlive.1.adoc:88 ../term-utils/scriptreplay.1.adoc:119
 msgid "Released under the GNU General Public License version 2 or later."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:84
+#: ../term-utils/scriptlive.1.adoc:93
 #, fuzzy
 msgid "*script*(1), *scriptreplay*(1)"
 msgstr "last(1)"
@@ -47206,7 +47243,7 @@ msgstr "Reproduz dados digitados do terminal, usando informação de tempo.\n"
 #. type: Plain text
 #: ../term-utils/scriptreplay.1.adoc:17
 #, fuzzy
-msgid "*scriptreplay* [options] [*-t*] _timingfile_ [_typescript_ [_divisor_]]"
+msgid "*scriptreplay* [options] _timingfile_ [_typescript_ [_divisor_]]"
 msgstr " %s [-t] arquivo-tempo [dados-digitados] [divisor]\n"
 
 #. type: Plain text
@@ -47237,15 +47274,15 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:27
+#: ../term-utils/scriptreplay.1.adoc:29
 msgid ""
-"By default, the typescript to display is assumed to be named _typescript_, "
+"By default, the _typescript_ to display is assumed to be named *typescript*, "
 "but other filenames may be specified, as the second parameter or with option "
 "*--log-out*."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:29
+#: ../term-utils/scriptreplay.1.adoc:31
 msgid ""
 "If the third parameter or *--divisor* is specified, it is used as a speed-up "
 "multiplier. For example, a speed-up of 2 makes *scriptreplay* go twice as "
@@ -47254,26 +47291,26 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:31
+#: ../term-utils/scriptreplay.1.adoc:34
 msgid ""
 "During the replay, you can interactively speed up, slow down, or pause the "
-"playback using key bindings."
+"playback using the Up, Down, and Space keys."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:39
+#: ../term-utils/scriptreplay.1.adoc:42
 msgid "File containing *script*'s terminal output."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:48
+#: ../term-utils/scriptreplay.1.adoc:52
 msgid ""
 "This is an alias for *-t*, maintained for compatibility with *script*(1) "
 "command-line options."
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/scriptreplay.1.adoc:49
+#: ../term-utils/scriptreplay.1.adoc:53
 #, fuzzy, no-wrap
 msgid "*-s*, *--typescript* _file_"
 msgstr ""
@@ -47281,29 +47318,27 @@ msgstr ""
 "                         apelido descontinuado para -O\n"
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:51
-msgid ""
-"File containing *script*'s terminal output. Deprecated alias to *--log-out*. "
-"This option overrides old-style arguments."
+#: ../term-utils/scriptreplay.1.adoc:55
+msgid "Deprecated alias of *--log-out*."
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/scriptreplay.1.adoc:52
+#: ../term-utils/scriptreplay.1.adoc:56
 #, no-wrap
 msgid "*-c*, *--cr-mode* _mode_"
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:54
+#: ../term-utils/scriptreplay.1.adoc:61
 msgid ""
-"Specifies how to use the CR (0x0D, carriage return) character from log "
-"files. The default mode is _auto_, in this case CR is replaced with line "
-"break for stdin log, because otherwise *scriptreplay* would overwrite the "
-"same line. The other modes are _never_ and _always_."
+"Specifies how to handle the CR (carriage return, 0x0D) character from log "
+"files. The default mode is *auto*, in which case CR is replaced with a line "
+"break for the stdin log, because otherwise *scriptreplay* would overwrite "
+"the same line. The other modes are *never* and *always*."
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/scriptreplay.1.adoc:61
+#: ../term-utils/scriptreplay.1.adoc:68
 #, fuzzy, no-wrap
 msgid "*--summary*"
 msgstr ""
@@ -47311,30 +47346,30 @@ msgstr ""
 "Colunas de resumo (--global):\n"
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:63
+#: ../term-utils/scriptreplay.1.adoc:72
 msgid ""
 "Display details about the session recorded in the specified timing file and "
-"exit. The session has to be recorded using _advanced_ format (see "
+"exit. The session must have been recorded using the *advanced* format (see "
 "*script*(1) option *--logging-format* for more details)."
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/scriptreplay.1.adoc:64
+#: ../term-utils/scriptreplay.1.adoc:73
 #, no-wrap
 msgid "*-x*, *--stream* _type_"
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:66
+#: ../term-utils/scriptreplay.1.adoc:78
 msgid ""
 "Forces *scriptreplay* to print only the specified stream. The supported "
-"stream types are _in_, _out_, _signal_, or _info_. This option is "
-"recommended for multi-stream logs (e.g., *--log-io*) in order to print only "
-"specified data."
+"stream types are *in*, *out*, *signal*, and *info*. This option is "
+"recommended for multi-stream logs (created with *--log-io*) in order to "
+"print only the desired data."
 msgstr ""
 
 #. type: delimited block .
-#: ../term-utils/scriptreplay.1.adoc:79
+#: ../term-utils/scriptreplay.1.adoc:91
 #, no-wrap
 msgid ""
 "% script --log-timing file.tm --log-out script.out\n"
@@ -47347,39 +47382,39 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: ../term-utils/scriptreplay.1.adoc:81
+#: ../term-utils/scriptreplay.1.adoc:93
 #, no-wrap
 msgid "KEY BINDINGS"
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:84
+#: ../term-utils/scriptreplay.1.adoc:96
 msgid "The following keys control the playback of the script:"
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:86
+#: ../term-utils/scriptreplay.1.adoc:98
 msgid ""
 "*Space*: Toggles pause and unpause. Press this key to pause the playback, "
 "and press it again to resume."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:87
+#: ../term-utils/scriptreplay.1.adoc:99
 msgid ""
 "*Up Arrow*: Increases the playback speed. Each press of this key will make "
 "the script replay faster by x0.1."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:88
+#: ../term-utils/scriptreplay.1.adoc:100
 msgid ""
 "*Down Arrow*: Decreases the playback speed. Each press of this key will slow "
 "down the script replay by x0.1."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:92
+#: ../term-utils/scriptreplay.1.adoc:104
 msgid ""
 "The original *scriptreplay* program was written by mailto:joey@kitenet."
 "net[Joey Hess]. The program was re-written in C by mailto:jay@gnu.org[James "
@@ -47388,24 +47423,24 @@ msgstr ""
 
 #. TRANSLATORS: Keep {copyright} untranslated.
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:97
+#: ../term-utils/scriptreplay.1.adoc:109
 msgid "Copyright {copyright} 2008 James Youngman"
 msgstr ""
 
 #. TRANSLATORS: Keep {copyright} untranslated.
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:100
+#: ../term-utils/scriptreplay.1.adoc:112
 msgid "Copyright {copyright} 2008-2019 Karel Zak"
 msgstr ""
 
 #. TRANSLATORS: Keep {copyright} untranslated.
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:103
+#: ../term-utils/scriptreplay.1.adoc:115
 msgid "Copyright {copyright} 2024 Jonathan Ketchker"
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:112
+#: ../term-utils/scriptreplay.1.adoc:124
 #, fuzzy
 msgid "*script*(1), *scriptlive*(1)"
 msgstr "last(1)"
