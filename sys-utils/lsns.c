@@ -541,6 +541,18 @@ static int get_netnsid_via_netlink(int target_fd)
 	return netnsid;
 }
 
+static int get_netnsid_for_fd(int target_fd, ino_t netino)
+{
+	int netnsid;
+
+	if (!netnsid_cache_find(netino, &netnsid)) {
+		netnsid = get_netnsid_via_netlink(target_fd);
+		netnsid_cache_add(netino, netnsid);
+	}
+
+	return netnsid;
+}
+
 static int get_netnsid_for_pc_via_netlink(struct path_cxt *pc, const char *path)
 {
 	int netnsid;
@@ -772,7 +784,7 @@ static int namespace_has_process(struct lsns_namespace *ns, pid_t pid)
 }
 
 static struct lsns_namespace *add_namespace(struct lsns *ls, enum lsns_type type, ino_t ino,
-					    ino_t parent_ino, ino_t owner_ino)
+					    ino_t parent_ino, ino_t owner_ino, int netnsid)
 {
 	struct lsns_namespace *ns = xcalloc(1, sizeof(*ns));
 
@@ -788,6 +800,7 @@ static struct lsns_namespace *add_namespace(struct lsns *ls, enum lsns_type type
 	ns->id = ino;
 	ns->related_id[RELA_PARENT] = parent_ino;
 	ns->related_id[RELA_OWNER] = owner_ino;
+	ns->netnsid = netnsid;
 
 	list_add_tail(&ns->namespaces, &ls->namespaces);
 	return ns;
@@ -872,6 +885,7 @@ static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, in
 	struct lsns_namespace *ns;
 	int clone_type;
 	enum lsns_type lsns_type;
+	int netnsid;
 
 	clone_type = lsns_ioctl(fd, NS_GET_NSTYPE);
 	if (clone_type < 0)
@@ -883,7 +897,11 @@ static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, in
 	get_parent_ns_ino(fd, lsns_type, &ino_parent, &fd_parent);
 	get_owner_ns_ino(fd, &ino_owner, &fd_owner);
 
-	ns = add_namespace(ls, lsns_type, ino, ino_parent, ino_owner);
+	netnsid = (lsns_type == LSNS_TYPE_NET)
+		? get_netnsid_for_fd(fd, ino)
+		: LSNS_NETNS_UNUSABLE;
+
+	ns = add_namespace(ls, lsns_type, ino, ino_parent, ino_owner, netnsid);
 	lsns_ioctl(fd, NS_GET_OWNER_UID, &ns->uid_fallback);
 	add_uid(uid_cache, ns->uid_fallback);
 
@@ -1057,8 +1075,12 @@ static int read_assigned_namespaces(struct lsns *ls)
 			if (proc->ns_ids[i] == 0)
 				continue;
 			if (!(ns = get_namespace(ls, proc->ns_ids[i]))) {
+				int netnsid = (i == LSNS_TYPE_NET)
+					? proc->netnsid
+					: LSNS_NETNS_UNUSABLE;
 				ns = add_namespace(ls, i, proc->ns_ids[i],
-						   proc->ns_pids[i], proc->ns_oids[i]);
+						   proc->ns_pids[i], proc->ns_oids[i],
+						   netnsid);
 				if (!ns)
 					return -ENOMEM;
 			}
@@ -1210,10 +1232,8 @@ static void fill_column(struct lsns *ls,
 		xasprintf(&str, "%s", get_id(uid_cache, proc? proc->uid: ns->uid_fallback)->name);
 		break;
 	case COL_NETNSID:
-		if (!proc)
-			break;
 		if (ns->type == LSNS_TYPE_NET)
-			netnsid_xasputs(&str, proc->netnsid);
+			netnsid_xasputs(&str, ns->netnsid);
 		break;
 	case COL_NSFS:
 		nsfs_xasputs(&str, ns, ls->tab, ls->no_wrap ? ',' : '\n');
