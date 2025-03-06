@@ -14,9 +14,9 @@ RANGE                                  SIZE   STATE REMOVABLE BLOCK
 0x0000000120000000-0x000000013fffffff  512M  online       yes 18-19
 0x0000000140000000-0x000000017fffffff    1G offline           20-23
 
-Memory block size:       256M
-Total online memory:     4.8G
-Total offline memory:    1.3G
+Memory block size:                256M
+Total online memory:              4.8G
+Total offline memory:             1.3G
 
 ---
 
@@ -24,9 +24,9 @@ $ lsmem --output RANGE,SIZE --split none
 RANGE                                 SIZE
 0x0000000000000000-0x000000017fffffff   6G
 
-Memory block size:       256M
-Total online memory:     4.8G
-Total offline memory:    1.3G
+Memory block size:                256M
+Total online memory:              4.8G
+Total offline memory:             1.3G
 
 ---
 
@@ -37,9 +37,9 @@ RANGE                                  SIZE   STATE
 0x00000000f0000000-0x000000013fffffff  1.3G  online
 0x0000000140000000-0x000000017fffffff    1G offline
 
-Memory block size:       256M
-Total online memory:     4.8G
-Total offline memory:    1.3G
+Memory block size:                256M
+Total online memory:              4.8G
+Total offline memory:             1.3G
 
 ---
 
@@ -70,9 +70,9 @@ RANGE                                  SIZE   STATE REMOVABLE BLOCK NODE
 0x0000000160000000-0x000000016fffffff  256M offline              22    0
 0x0000000170000000-0x000000017fffffff  256M offline              23    0
 
-Memory block size:       256M
-Total online memory:     4.8G
-Total offline memory:    1.3G
+Memory block size:                256M
+Total online memory:              4.8G
+Total offline memory:             1.3G
 
 ---
 
@@ -185,9 +185,9 @@ RANGE                                  SIZE   STATE REMOVABLE BLOCK          ZON
 0x0000000130000000-0x000000013fffffff  256M  online       yes    19        Movable
 0x0000000140000000-0x000000017fffffff    1G offline           20-23        Movable
 
-Memory block size:       256M
-Total online memory:     4.8G
-Total offline memory:    1.3G
+Memory block size:                256M
+Total online memory:              4.8G
+Total offline memory:             1.3G
 
 ---
 
@@ -204,6 +204,6 @@ RANGE                                  SIZE   STATE REMOVABLE BLOCK
 0x0000000120000000-0x000000013fffffff  512M  online       yes 18-19
 0x0000000140000000-0x000000017fffffff    1G offline           20-23
 
-Memory block size:       256M
-Total online memory:     4.8G
-Total offline memory:    1.3G
+Memory block size:                256M
+Total online memory:              4.8G
+Total offline memory:             1.3G
