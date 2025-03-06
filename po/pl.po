@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.40.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2025-02-18 11:36+0100\n"
+"POT-Creation-Date: 2025-03-06 10:21+0100\n"
 "PO-Revision-Date: 2024-05-05 19:28+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -29,8 +29,8 @@ msgid "Tell the kernel about the existence of a specified partition.\n"
 msgstr "Powiadomienie jądra o istnieniu podanej partycji.\n"
 
 #: disk-utils/addpart.c:62 disk-utils/blockdev.c:270 disk-utils/delpart.c:62
-#: disk-utils/mkfs.bfs.c:142 disk-utils/resizepart.c:106 misc-utils/kill.c:423
-#: misc-utils/kill.c:484 misc-utils/rename.c:344 misc-utils/whereis.c:539
+#: disk-utils/mkfs.bfs.c:142 disk-utils/resizepart.c:106 misc-utils/kill.c:427
+#: misc-utils/kill.c:488 misc-utils/rename.c:344 misc-utils/whereis.c:539
 #: sys-utils/flock.c:237 sys-utils/ipcrm.c:165 sys-utils/ldattach.c:365
 #: sys-utils/renice.c:177 sys-utils/switch_root.c:261 sys-utils/tunelp.c:152
 #: term-utils/agetty.c:905 term-utils/agetty.c:906 term-utils/agetty.c:914
@@ -59,7 +59,7 @@ msgstr "za mało argumentów"
 #: misc-utils/mcookie.c:124 misc-utils/pipesz.c:162 misc-utils/uuidd.c:235
 #: sys-utils/blkdiscard.c:237 sys-utils/blkpr.c:164 sys-utils/blkzone.c:144
 #: sys-utils/dmesg.c:666 sys-utils/eject.c:501 sys-utils/eject.c:696
-#: sys-utils/fallocate.c:407 sys-utils/fsfreeze.c:116 sys-utils/fstrim.c:106
+#: sys-utils/fallocate.c:406 sys-utils/fsfreeze.c:116 sys-utils/fstrim.c:106
 #: sys-utils/hwclock.c:239 sys-utils/hwclock.c:911 sys-utils/hwclock-rtc.c:128
 #: sys-utils/hwclock-rtc.c:373 sys-utils/hwclock-rtc.c:409
 #: sys-utils/hwclock-rtc.c:470 sys-utils/hwclock-rtc.c:523
@@ -72,11 +72,11 @@ msgstr "za mało argumentów"
 #: sys-utils/setpriv.c:692 sys-utils/swapon.c:395 sys-utils/swapon.c:538
 #: sys-utils/switch_root.c:174 sys-utils/unshare.c:115 sys-utils/unshare.c:130
 #: sys-utils/unshare.c:749 sys-utils/wdctl.c:422 sys-utils/zramctl.c:551
-#: term-utils/agetty.c:2989 term-utils/mesg.c:154 term-utils/script.c:389
-#: term-utils/scriptlive.c:268 term-utils/scriptlive.c:271
-#: term-utils/scriptlive.c:274 term-utils/scriptreplay.c:305
-#: term-utils/scriptreplay.c:308 term-utils/scriptreplay.c:311
-#: term-utils/scriptreplay.c:314 term-utils/wall.c:422 text-utils/colcrt.c:286
+#: term-utils/agetty.c:2993 term-utils/mesg.c:154 term-utils/script.c:389
+#: term-utils/scriptlive.c:267 term-utils/scriptlive.c:270
+#: term-utils/scriptlive.c:273 term-utils/scriptreplay.c:304
+#: term-utils/scriptreplay.c:307 term-utils/scriptreplay.c:310
+#: term-utils/scriptreplay.c:313 term-utils/wall.c:422 text-utils/colcrt.c:286
 #: text-utils/more.c:463 text-utils/rev.c:166 text-utils/ul.c:638
 #, c-format
 msgid "cannot open %s"
@@ -1284,7 +1284,7 @@ msgstr "Właściwości urządzenia (rozmiar sektora i geometria) powinny być u�
 #: schedutils/chrt.c:486 schedutils/ionice.c:264 schedutils/taskset.c:208
 #: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1840
 #: sys-utils/ipcmk.c:253 sys-utils/ipcrm.c:425 sys-utils/ldattach.c:318
-#: sys-utils/losetup.c:997 sys-utils/lscpu.c:1354 sys-utils/lsmem.c:655
+#: sys-utils/losetup.c:997 sys-utils/lscpu.c:1358 sys-utils/lsmem.c:655
 #: sys-utils/mount.c:921 sys-utils/mount.c:947 sys-utils/mount.c:955
 #: sys-utils/mount.c:1007 sys-utils/mount.c:1020 sys-utils/mount.c:1092
 #: sys-utils/mountpoint.c:182 sys-utils/pivot_root.c:66 sys-utils/swapoff.c:273
@@ -1378,7 +1378,7 @@ msgstr "nie udało się przydzielić iteratora"
 #: misc-utils/findmnt.c:1630 misc-utils/lsblk.c:2747 misc-utils/lsclocks.c:645
 #: misc-utils/lslocks.c:748 misc-utils/uuidparse.c:266 misc-utils/wipefs.c:157
 #: sys-utils/losetup.c:389 sys-utils/lscpu.c:596 sys-utils/lscpu.c:753
-#: sys-utils/lscpu.c:971 sys-utils/lsipc.c:395 sys-utils/prlimit.c:303
+#: sys-utils/lscpu.c:975 sys-utils/lsipc.c:395 sys-utils/prlimit.c:303
 #: sys-utils/rfkill.c:474 sys-utils/swapon.c:309 sys-utils/wdctl.c:354
 #: sys-utils/zramctl.c:530 text-utils/column.c:337
 msgid "failed to allocate output table"
@@ -1391,7 +1391,7 @@ msgstr "nie udało się przydzielić tabeli wyjściowej"
 #: misc-utils/lsclocks.c:289 misc-utils/lslocks.c:613
 #: misc-utils/uuidparse.c:153 misc-utils/wipefs.c:202 sys-utils/losetup.c:412
 #: sys-utils/losetup.c:441 sys-utils/lscpu.c:510 sys-utils/lscpu.c:790
-#: sys-utils/lscpu.c:822 sys-utils/lsipc.c:527 sys-utils/lsipc.c:608
+#: sys-utils/lscpu.c:826 sys-utils/lsipc.c:527 sys-utils/lsipc.c:608
 #: sys-utils/lsipc.c:703 sys-utils/lsipc.c:798 sys-utils/lsipc.c:885
 #: sys-utils/lsipc.c:1024 sys-utils/lsipc.c:1167 sys-utils/lsipc.c:1340
 #: sys-utils/prlimit.c:232 sys-utils/rfkill.c:389 sys-utils/swapon.c:192
@@ -1417,8 +1417,8 @@ msgstr "nie udało się zainicjować linii wyjściowej"
 #: lsfd-cmd/sock.c:135 lsfd-cmd/unkn.c:125 lsfd-cmd/unkn.c:127
 #: misc-utils/fincore.c:270 misc-utils/findmnt.c:847 misc-utils/lsblk.c:1281
 #: misc-utils/lslocks.c:694 misc-utils/uuidparse.c:253 misc-utils/wipefs.c:242
-#: sys-utils/losetup.c:369 sys-utils/lscpu.c:578 sys-utils/lscpu.c:797
-#: sys-utils/lscpu.c:826 sys-utils/lscpu.c:837 sys-utils/lsipc.c:567
+#: sys-utils/losetup.c:369 sys-utils/lscpu.c:578 sys-utils/lscpu.c:801
+#: sys-utils/lscpu.c:830 sys-utils/lscpu.c:841 sys-utils/lsipc.c:567
 #: sys-utils/lsipc.c:685 sys-utils/lsipc.c:856 sys-utils/prlimit.c:267
 #: sys-utils/rfkill.c:417 sys-utils/swapon.c:240 sys-utils/wdctl.c:332
 #: sys-utils/zramctl.c:515 text-utils/column.c:682
@@ -2155,7 +2155,7 @@ msgid "couldn't find matching filesystem: %s"
 msgstr "nie udało się odnaleźć pasującego systemu plików: %s"
 
 #: disk-utils/fsck.c:1502 disk-utils/fsck.c:1599 misc-utils/exch.c:84
-#: misc-utils/kill.c:353 misc-utils/kill.c:393 sys-utils/eject.c:281
+#: misc-utils/kill.c:357 misc-utils/kill.c:397 sys-utils/eject.c:281
 #: sys-utils/hwclock.c:1531
 msgid "too many arguments"
 msgstr "zbyt dużo argumentów"
@@ -2169,7 +2169,7 @@ msgstr "błędny argument opcji -r"
 msgid "option '%s' may be specified only once"
 msgstr "opcja '%s' może być podana tylko raz"
 
-#: disk-utils/fsck.c:1579 misc-utils/kill.c:436 misc-utils/kill.c:452
+#: disk-utils/fsck.c:1579 misc-utils/kill.c:440 misc-utils/kill.c:456
 #, c-format
 msgid "option '%s' requires an argument"
 msgstr "opcja '%s' wymaga argumentu"
@@ -2331,7 +2331,7 @@ msgid "non-size (%ld vs %ld) bytes"
 msgstr "błędny rozmiar (%ld vs %ld bajtów)"
 
 #: disk-utils/fsck.cramfs.c:425 disk-utils/fsck.cramfs.c:550
-#: disk-utils/swaplabel.c:111 misc-utils/uuidd.c:407 sys-utils/fallocate.c:442
+#: disk-utils/swaplabel.c:111 misc-utils/uuidd.c:407 sys-utils/fallocate.c:441
 #: sys-utils/rfkill.c:565 sys-utils/setpriv.c:656 sys-utils/setpriv.c:679
 #: sys-utils/swapon.c:413 term-utils/script.c:325 term-utils/ttymsg.c:175
 #, c-format
@@ -5212,7 +5212,7 @@ msgstr ""
 msgid "%s from %s\n"
 msgstr "%s z pakietu %s\n"
 
-#: include/c.h:504 misc-utils/kill.c:304 term-utils/agetty.c:696
+#: include/c.h:504 misc-utils/kill.c:308 term-utils/agetty.c:696
 #, c-format
 msgid "%s from %s"
 msgstr "%s z pakietu %s"
@@ -5235,7 +5235,7 @@ msgid "colors are disabled by default"
 msgstr "kolory są domyślnie wyłączone"
 
 #: include/env.h:37 lib/pager.c:159 login-utils/login.c:1217
-#: login-utils/login.c:1221 term-utils/agetty.c:1208
+#: login-utils/login.c:1221 term-utils/agetty.c:1212
 #, c-format
 msgid "failed to set the %s environment variable"
 msgstr "nie udało się ustawić zmiennej środowiskowej %s"
@@ -8739,9 +8739,9 @@ msgstr ""
 "\n"
 "%s zaczyna się %s\n"
 
-#: login-utils/last.c:1037 term-utils/scriptlive.c:86
-#: term-utils/scriptlive.c:90 term-utils/scriptreplay.c:89
-#: term-utils/scriptreplay.c:93 text-utils/more.c:289 text-utils/more.c:295
+#: login-utils/last.c:1037 term-utils/scriptlive.c:85
+#: term-utils/scriptlive.c:89 term-utils/scriptreplay.c:88
+#: term-utils/scriptreplay.c:92 text-utils/more.c:289 text-utils/more.c:295
 msgid "failed to parse number"
 msgstr "niezrozumiała liczba"
 
@@ -8966,7 +8966,7 @@ msgstr " -h <host>      nazwa hosta do użycia przy logodwaniu utmp"
 msgid " -H             suppress hostname in the login prompt"
 msgstr " -H             pominięcie nazwy hosta w zachęcie do logowania"
 
-#: login-utils/login.c:1315 term-utils/agetty.c:3012
+#: login-utils/login.c:1315 term-utils/agetty.c:3016
 msgid "failed to initialize path context"
 msgstr "nie udało się zainicjować kontekstu ścieżki"
 
@@ -9415,14 +9415,13 @@ msgstr "kim jesteś?"
 msgid "no such group"
 msgstr "nie ma takiej grupy"
 
-#: login-utils/nologin.c:28 lsfd-cmd/lsfd.c:2180 misc-utils/lastlog2.c:108
+#: login-utils/nologin.c:28 lsfd-cmd/lsfd.c:2180 misc-utils/lastlog2.c:112
 #: misc-utils/lsclocks.c:189 misc-utils/lslocks.c:804 misc-utils/mcookie.c:88
 #: misc-utils/uuidd.c:97 misc-utils/uuidgen.c:29 sys-utils/dmesg.c:317
-#: sys-utils/ipcmk.c:152 sys-utils/irqtop.c:257 sys-utils/lscpu.c:1176
+#: sys-utils/ipcmk.c:152 sys-utils/irqtop.c:257 sys-utils/lscpu.c:1180
 #: sys-utils/lsipc.c:318 sys-utils/lsirq.c:53 sys-utils/lsmem.c:518
-#: sys-utils/readprofile.c:95 sys-utils/rtcwake.c:108
-#: term-utils/scriptlive.c:57 term-utils/scriptreplay.c:50
-#: term-utils/setterm.c:382 text-utils/line.c:30
+#: sys-utils/readprofile.c:95 sys-utils/rtcwake.c:108 term-utils/setterm.c:382
+#: text-utils/line.c:30
 #, c-format
 msgid " %s [options]\n"
 msgstr " %s [opcje]\n"
@@ -9491,12 +9490,12 @@ msgid "cannot set signal mask"
 msgstr "nie można ustawić maski sygnałów"
 
 #: login-utils/su-common.c:561 term-utils/script.c:964
-#: term-utils/scriptlive.c:307
+#: term-utils/scriptlive.c:306
 msgid "failed to create pseudo-terminal"
 msgstr "nie udało się utworzyć pseudoterminala"
 
 #: login-utils/su-common.c:563 term-utils/script.c:971
-#: term-utils/scriptlive.c:309
+#: term-utils/scriptlive.c:308
 msgid "failed to initialize signals handler"
 msgstr "nie udało się zainicjować obsługi sygnałów"
 
@@ -9505,7 +9504,7 @@ msgid "cannot set child signal handler"
 msgstr "nie można ustawić procedury obsługi sygnału potomka"
 
 #: login-utils/su-common.c:588 term-utils/script.c:980
-#: term-utils/scriptlive.c:316
+#: term-utils/scriptlive.c:315
 msgid "cannot create child process"
 msgstr "nie można utworzyć procesu potomnego"
 
@@ -9515,7 +9514,7 @@ msgstr "nie można utworzyć procesu potomnego"
 msgid "cannot change directory to %s"
 msgstr "nie można zmienić katalogu na %s"
 
-#: login-utils/su-common.c:633 term-utils/scriptlive.c:365
+#: login-utils/su-common.c:633 term-utils/scriptlive.c:364
 #, c-format
 msgid ""
 "\n"
@@ -11043,7 +11042,7 @@ msgstr " %s [opcje] stara_ścieżka nowa_ścieżka\n"
 msgid "Atomically exchanges paths between two files.\n"
 msgstr "Atomowo podmienia ścieżki między dwoma plikami.\n"
 
-#: misc-utils/exch.c:81 misc-utils/kill.c:391
+#: misc-utils/exch.c:81 misc-utils/kill.c:395
 msgid "too few arguments"
 msgstr "za mało argumentów"
 
@@ -11404,7 +11403,7 @@ msgstr "nie udało się zainicjować iteratora libmount"
 msgid "failed to initialize libmount tabdiff"
 msgstr "nie udało się zainicjować tablicy tabdiff libmount"
 
-#: misc-utils/findmnt.c:1418 misc-utils/kill.c:516
+#: misc-utils/findmnt.c:1418 misc-utils/kill.c:520
 msgid "poll() failed"
 msgstr "poll() nie powiodło się"
 
@@ -12299,7 +12298,9 @@ msgid "cannot initialize %s method, use 'memcmp' fallback"
 msgstr "nie udało się zainicjować metody %s, użycie 'memcmp'"
 
 #: misc-utils/hardlink.c:1487
-msgid "failed to initialize files comparior"
+#, fuzzy
+#| msgid "failed to initialize files comparior"
+msgid "failed to initialize files comparer"
 msgstr "nie udało się zainicjować porównywania plików"
 
 #: misc-utils/hardlink.c:1508
@@ -12316,63 +12317,63 @@ msgstr "nie można pobrać rzeczywistej ścieżki: %s"
 msgid "cannot process %s"
 msgstr "nie można przetworzyć %s"
 
-#: misc-utils/kill.c:145
+#: misc-utils/kill.c:149
 #, fuzzy
 #| msgid "kernel threads"
 msgid "Pending (thread)"
 msgstr "wątku jądra"
 
-#: misc-utils/kill.c:146
+#: misc-utils/kill.c:150
 #, fuzzy
 #| msgid "Running processes"
 msgid "Pending (process)"
 msgstr "Uruchomione procesy"
 
-#: misc-utils/kill.c:147
+#: misc-utils/kill.c:151
 #, fuzzy
 #| msgid "locked"
 msgid "Blocked"
 msgstr "blok."
 
-#: misc-utils/kill.c:148
+#: misc-utils/kill.c:152
 msgid "Ignored"
 msgstr ""
 
-#: misc-utils/kill.c:149
+#: misc-utils/kill.c:153
 msgid "Caught"
 msgstr ""
 
-#: misc-utils/kill.c:154 sys-utils/lscpu.c:235
+#: misc-utils/kill.c:158 sys-utils/lscpu.c:235
 msgid "failed to initialize procfs handler"
 msgstr "nie udało się zainicjować obsługi procfs"
 
-#: misc-utils/kill.c:157
+#: misc-utils/kill.c:161
 #, fuzzy, c-format
 #| msgid "cannot open %s"
 msgid "cannot open /proc/%d/status"
 msgstr "nie można otworzyć %s"
 
-#: misc-utils/kill.c:170
+#: misc-utils/kill.c:174
 #, fuzzy, c-format
 #| msgid "unexpected third line in: %s: %s"
 msgid "unexpected sigmask format: %s (%s)"
 msgstr "nieoczekiwana trzecia linia w: %s: %s"
 
-#: misc-utils/kill.c:234
+#: misc-utils/kill.c:238
 #, c-format
 msgid "unknown signal %s; valid signals:"
 msgstr "nieznany sygnał %s; poprawne sygnały:"
 
-#: misc-utils/kill.c:260
+#: misc-utils/kill.c:264
 #, c-format
 msgid " %s [options] <pid>|<name>...\n"
 msgstr " %s [opcje] <pid>|<nazwa>...\n"
 
-#: misc-utils/kill.c:263
+#: misc-utils/kill.c:267
 msgid "Forcibly terminate a process.\n"
 msgstr "Wymuszenie zakończenia procesu.\n"
 
-#: misc-utils/kill.c:266
+#: misc-utils/kill.c:270
 msgid ""
 " -a, --all              do not restrict the name-to-pid conversion to processes\n"
 "                          with the same uid as the present process\n"
@@ -12380,15 +12381,15 @@ msgstr ""
 " -a, --all              bez ograniczania przekształcenia nazwa-pid do procesów\n"
 "                          z tym samym uidem, co proces bieżący\n"
 
-#: misc-utils/kill.c:268
+#: misc-utils/kill.c:272
 msgid " -s, --signal <signal>  send this <signal> instead of SIGTERM\n"
 msgstr " -s, --signal <sygnał>  wysłanie podanego <sygnału> zamiast SIGTERM\n"
 
-#: misc-utils/kill.c:270
+#: misc-utils/kill.c:274
 msgid " -q, --queue <value>    use sigqueue(2), not kill(2), and pass <value> as data\n"
 msgstr " -q, --queue <wartość>  użycie sigqueue(2) zamiast kill(2) i przekazanie <wartości>\n"
 
-#: misc-utils/kill.c:273
+#: misc-utils/kill.c:277
 msgid ""
 "     --timeout <milliseconds> <follow-up signal>\n"
 "                        wait up to timeout and send follow-up signal\n"
@@ -12396,11 +12397,11 @@ msgstr ""
 "     --timeout <milisekundy> <kończący sygnał>\n"
 "                        odczekanie limitu czasu i wysłanie kończącego sygnału\n"
 
-#: misc-utils/kill.c:276
+#: misc-utils/kill.c:280
 msgid " -p, --pid              print pids without signaling them\n"
 msgstr " -p, --pid              wypisanie pidów bez wysyłania sygnału\n"
 
-#: misc-utils/kill.c:277
+#: misc-utils/kill.c:281
 #, fuzzy
 #| msgid " -l, --list[=<signal>]  list signal names, or convert a signal number to a name\n"
 msgid ""
@@ -12409,53 +12410,53 @@ msgid ""
 "                         or convert a signal mask to names\n"
 msgstr " -l, --list[=<sygnał>]  wypisanie nazw sygnałów lub zamiana numeru na nazwę\n"
 
-#: misc-utils/kill.c:280
+#: misc-utils/kill.c:284
 msgid " -L, --table            list signal names and numbers\n"
 msgstr " -L, --table            lista nazw i numerów sygnałów\n"
 
-#: misc-utils/kill.c:281
+#: misc-utils/kill.c:285
 msgid " -r, --require-handler  do not send signal if signal handler is not present\n"
 msgstr " -r, --require-handler  bez wysyłania sygnału, jeżeli obsługa nie jest obecna\n"
 
-#: misc-utils/kill.c:282
+#: misc-utils/kill.c:286
 msgid ""
 " -d, --show-process-state <pid>\n"
 "                        show signal related fields in /proc/<pid>/status\n"
 msgstr ""
 
-#: misc-utils/kill.c:284
+#: misc-utils/kill.c:288
 msgid "     --verbose          print pids that will be signaled\n"
 msgstr "     --verbose          wypisanie pidów, do których ma być wysłany sygnał\n"
 
-#: misc-utils/kill.c:308
+#: misc-utils/kill.c:312
 msgid " (with: "
 msgstr " (przy użyciu: "
 
-#: misc-utils/kill.c:359 misc-utils/kill.c:375
+#: misc-utils/kill.c:363 misc-utils/kill.c:379
 #, fuzzy, c-format
 #| msgid "Invalid start address format: %s"
 msgid "invalid sigmask format: %s"
 msgstr "Błędny format adresu początkowego: %s"
 
-#: misc-utils/kill.c:364 misc-utils/kill.c:380 sys-utils/setpriv.c:463
+#: misc-utils/kill.c:368 misc-utils/kill.c:384 sys-utils/setpriv.c:463
 #: sys-utils/unshare.c:1035
 #, c-format
 msgid "unknown signal: %s"
 msgstr "nieznany sygnał: %s"
 
-#: misc-utils/kill.c:395 misc-utils/kill.c:403
+#: misc-utils/kill.c:399 misc-utils/kill.c:407
 #, fuzzy
 #| msgid "invalid period argument"
 msgid "invalid pid argument"
 msgstr "błędna wartość okresu"
 
-#: misc-utils/kill.c:414 misc-utils/kill.c:417 misc-utils/kill.c:426
-#: misc-utils/kill.c:438 misc-utils/kill.c:481 sys-utils/mountpoint.c:186
+#: misc-utils/kill.c:418 misc-utils/kill.c:421 misc-utils/kill.c:430
+#: misc-utils/kill.c:442 misc-utils/kill.c:485 sys-utils/mountpoint.c:186
 #, c-format
 msgid "%s and %s are mutually exclusive"
 msgstr "%s i %s wykluczają się wzajemnie"
 
-#: misc-utils/kill.c:441 misc-utils/kill.c:456 sys-utils/eject.c:210
+#: misc-utils/kill.c:445 misc-utils/kill.c:460 sys-utils/eject.c:210
 #: sys-utils/eject.c:232 sys-utils/losetup.c:820 sys-utils/tunelp.c:164
 #: sys-utils/tunelp.c:171 sys-utils/tunelp.c:178 sys-utils/tunelp.c:185
 #: sys-utils/tunelp.c:192 sys-utils/tunelp.c:198 sys-utils/tunelp.c:202
@@ -12473,127 +12474,133 @@ msgstr "%s i %s wykluczają się wzajemnie"
 msgid "argument error"
 msgstr "błąd argumentu"
 
-#: misc-utils/kill.c:478
+#: misc-utils/kill.c:482
 #, c-format
 msgid "invalid signal name or number: %s"
 msgstr "błędna nazwa lub numer sygnału: %s"
 
-#: misc-utils/kill.c:504
+#: misc-utils/kill.c:508
 #, c-format
 msgid "pidfd_open() failed: %d"
 msgstr "pidfd_open() nie powiodło się: %d"
 
-#: misc-utils/kill.c:509 misc-utils/kill.c:523
+#: misc-utils/kill.c:513 misc-utils/kill.c:527
 msgid "pidfd_send_signal() failed"
 msgstr "pidfd_send_signal() nie powiodło się"
 
-#: misc-utils/kill.c:520
+#: misc-utils/kill.c:524
 #, c-format
 msgid "timeout, sending signal %d to pid %d\n"
 msgstr "upłynął limit czasu, wysyłanie sygnału %d do pidu %d\n"
 
-#: misc-utils/kill.c:535
+#: misc-utils/kill.c:539
 #, c-format
 msgid "sending signal %d to pid %d\n"
 msgstr "wysyłanie sygnału %d do pidu %d\n"
 
-#: misc-utils/kill.c:553
+#: misc-utils/kill.c:557
 #, c-format
 msgid "sending signal to %s failed"
 msgstr "wysłanie sygnału do %s nie powiodło się"
 
-#: misc-utils/kill.c:578
+#: misc-utils/kill.c:582
 #, c-format
 msgid "not signalling pid %d, it has no userspace handler for signal %d\n"
 msgstr "nie wysłano sygnału do pidu %d, on nie ma własnej obsługi sygnału %d\n"
 
-#: misc-utils/kill.c:640
+#: misc-utils/kill.c:644
 #, c-format
 msgid "cannot find process \"%s\""
 msgstr "nie znaleziono procesu \"%s\""
 
-#: misc-utils/lastlog2.c:111
+#: misc-utils/lastlog2.c:115
+#, fuzzy
+#| msgid " -a, --all            print all devices\n"
+msgid " -a, --active            print lastlog excluding '**Never logged in**' users\n"
+msgstr " -a, --all            wypisanie wszystkich urządzeń\n"
+
+#: misc-utils/lastlog2.c:116
 msgid " -b, --before DAYS       print only records older than DAYS\n"
 msgstr " -b, --before DNI        wypisanie tylko rekordów starszych niż DNI\n"
 
-#: misc-utils/lastlog2.c:112
+#: misc-utils/lastlog2.c:117
 msgid " -C, --clear             clear record of a user (requires -u)\n"
 msgstr " -C, --clear             wyczyszczenie rekordu użytkownika (wymaga -u)\n"
 
-#: misc-utils/lastlog2.c:113
+#: misc-utils/lastlog2.c:118
 msgid " -d, --database FILE     use FILE as lastlog2 database\n"
 msgstr " -d, --database PLIK     użycie PLIKU jako bazy danych lastlog2\n"
 
-#: misc-utils/lastlog2.c:114
+#: misc-utils/lastlog2.c:119
 msgid " -i, --import FILE       import data from old lastlog file\n"
 msgstr " -i, --import PLIK       import danych ze starego pliku lastlog\n"
 
-#: misc-utils/lastlog2.c:115
+#: misc-utils/lastlog2.c:120
 msgid " -r, --rename NEWNAME    rename existing user to NEWNAME (requires -u)\n"
 msgstr " -r, --rename NOWA       zmiana nazwy istniejącego użytkownika na NOWĄ (wymaga -u)\n"
 
-#: misc-utils/lastlog2.c:116
+#: misc-utils/lastlog2.c:121
 msgid " -s, --service           display PAM service\n"
 msgstr " -s, --service           wyświetlanie usługi PAM\n"
 
-#: misc-utils/lastlog2.c:117
+#: misc-utils/lastlog2.c:122
 msgid " -S, --set               set lastlog record to current time (requires -u)\n"
 msgstr " -S, --set               ustawienie rekordu lastlog na czas bieżący (wymaga -u)\n"
 
-#: misc-utils/lastlog2.c:118
+#: misc-utils/lastlog2.c:123
 msgid " -t, --time DAYS         print only lastlog records more recent than DAYS\n"
 msgstr " -t, --time DNI          wypisanie tylko rekordów lastlog nowszych niż DNI\n"
 
-#: misc-utils/lastlog2.c:119
+#: misc-utils/lastlog2.c:124
 msgid " -u, --user LOGIN        print lastlog record of the specified LOGIN\n"
 msgstr " -u, --user LOGIN        wypisanie rekordów lastlog dla podanego LOGINU\n"
 
-#: misc-utils/lastlog2.c:166 misc-utils/lastlog2.c:199
+#: misc-utils/lastlog2.c:175 misc-utils/lastlog2.c:208
 msgid "Cannot parse days"
 msgstr "Nie można przeanalizować dni"
 
-#: misc-utils/lastlog2.c:217
+#: misc-utils/lastlog2.c:226
 msgid "Option -C, -i and -S cannot be used together"
 msgstr "Opcji -C, -i oraz -S nie można używać razem"
 
-#: misc-utils/lastlog2.c:221
+#: misc-utils/lastlog2.c:230
 msgid "Couldn't initialize lastlog2 environment"
 msgstr "Nie udało się zainicjować środowiska lastlog2"
 
-#: misc-utils/lastlog2.c:226
+#: misc-utils/lastlog2.c:235
 #, c-format
 msgid "Couldn't import entries from '%s'"
 msgstr "Nie udało się zaimportować wpisów z '%s'"
 
-#: misc-utils/lastlog2.c:235
+#: misc-utils/lastlog2.c:244
 msgid "Options -C, -r and -S require option -u to specify the user"
 msgstr "Opcje -C, -r oraz -S wymagają opcji -u do określenia użytkownika"
 
-#: misc-utils/lastlog2.c:240 misc-utils/lastlog2.c:283
+#: misc-utils/lastlog2.c:249 misc-utils/lastlog2.c:292
 #, c-format
 msgid "User '%s' does not exist."
 msgstr "Użytkownik '%s' nie istnieje."
 
-#: misc-utils/lastlog2.c:246
+#: misc-utils/lastlog2.c:255
 #, c-format
 msgid "Couldn't remove entry for '%s'"
 msgstr "Nie udało się usunąć wpisu dla '%s'"
 
-#: misc-utils/lastlog2.c:255
+#: misc-utils/lastlog2.c:264
 msgid "Could not determine current time"
 msgstr "Nie udało się określić bieżącego czasu"
 
-#: misc-utils/lastlog2.c:260
+#: misc-utils/lastlog2.c:269
 #, c-format
 msgid "Couldn't update login time for '%s'"
 msgstr "Nie udało się uaktualnić czasu logowania dla '%s'"
 
-#: misc-utils/lastlog2.c:267
+#: misc-utils/lastlog2.c:276
 #, c-format
 msgid "Couldn't rename entry '%s' to '%s'"
 msgstr "Nie udało się zmienić nazwy wpisu '%s' na '%s'"
 
-#: misc-utils/lastlog2.c:297
+#: misc-utils/lastlog2.c:306
 msgid "Couldn't read entries for all users"
 msgstr "Nie udało się odczytać wpisów dla wszystkich użytkowników"
 
@@ -14276,7 +14283,7 @@ msgid "vendor"
 msgstr "producent urządzenia"
 
 #: misc-utils/uuidparse.c:281 misc-utils/wipefs.c:178
-#: sys-utils/irq-common.c:148 sys-utils/irq-common.c:481 sys-utils/lscpu.c:991
+#: sys-utils/irq-common.c:148 sys-utils/irq-common.c:481 sys-utils/lscpu.c:995
 #: sys-utils/lsmem.c:716 sys-utils/lsns.c:1327 sys-utils/zramctl.c:539
 msgid "failed to initialize output column"
 msgstr "nie udało się zainicjować kolumny wyjściowej"
@@ -15286,7 +15293,7 @@ msgid "failed to parse step"
 msgstr "niezrozumiały krok"
 
 #: sys-utils/blkdiscard.c:231 sys-utils/blkpr.c:307 sys-utils/blkzone.c:492
-#: sys-utils/fallocate.c:384 sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:577
+#: sys-utils/fallocate.c:383 sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:577
 #: sys-utils/umount.c:619 term-utils/script.c:911
 msgid "unexpected number of arguments"
 msgstr "nieoczekiwana liczba argumentów"
@@ -16724,47 +16731,47 @@ msgstr "%s: odczyt nie powiódł się"
 msgid "%s: %s (%ju bytes) converted to sparse holes.\n"
 msgstr "%s: %s (bajtów: %ju) przekształcono na rzadkie dziury.\n"
 
-#: sys-utils/fallocate.c:363
+#: sys-utils/fallocate.c:362
 msgid "posix_fallocate support is not compiled"
 msgstr "obsługa posix_fallocate nie jest wkompilowana"
 
-#: sys-utils/fallocate.c:379 sys-utils/fsfreeze.c:106
+#: sys-utils/fallocate.c:378 sys-utils/fsfreeze.c:106
 msgid "no filename specified"
 msgstr "nie podano nazwy pliku"
 
-#: sys-utils/fallocate.c:391 sys-utils/fallocate.c:397
+#: sys-utils/fallocate.c:390 sys-utils/fallocate.c:396
 msgid "invalid length value specified"
 msgstr "podano błędną wartość długości"
 
-#: sys-utils/fallocate.c:395
+#: sys-utils/fallocate.c:394
 msgid "no length argument specified"
 msgstr "nie podano argumentu długości"
 
-#: sys-utils/fallocate.c:400
+#: sys-utils/fallocate.c:399
 msgid "invalid offset value specified"
 msgstr "podano błędną wartość offsetu"
 
-#: sys-utils/fallocate.c:423
+#: sys-utils/fallocate.c:422
 #, c-format
 msgid "%s: %s (%ju bytes) hole created.\n"
 msgstr "%s: utworzono dziurę %s (bajtów: %ju).\n"
 
-#: sys-utils/fallocate.c:426
+#: sys-utils/fallocate.c:425
 #, c-format
 msgid "%s: %s (%ju bytes) removed.\n"
 msgstr "%s: usunięto %s (bajtów: %ju).\n"
 
-#: sys-utils/fallocate.c:429
+#: sys-utils/fallocate.c:428
 #, c-format
 msgid "%s: %s (%ju bytes) inserted.\n"
 msgstr "%s: wstawiono %s (bajtów: %ju).\n"
 
-#: sys-utils/fallocate.c:432
+#: sys-utils/fallocate.c:431
 #, c-format
 msgid "%s: %s (%ju bytes) zeroed.\n"
 msgstr "%s: wyzerowano %s (bajtów: %ju).\n"
 
-#: sys-utils/fallocate.c:435
+#: sys-utils/fallocate.c:434
 #, c-format
 msgid "%s: %s (%ju bytes) allocated.\n"
 msgstr "%s: przydzielono %s (bajtów: %ju).\n"
@@ -19330,209 +19337,209 @@ msgstr ""
 "# Każdy inny element w każdej kolumnie ma unikalny identyfikator\n"
 "# z numeracją zaczynającą zwykle od zera.\n"
 
-#: sys-utils/lscpu.c:881
+#: sys-utils/lscpu.c:885
 msgid "Model name:"
 msgstr "Nazwa modelu:"
 
-#: sys-utils/lscpu.c:883
+#: sys-utils/lscpu.c:887
 msgid "BIOS Model name:"
 msgstr "Nazwa modelu wg BIOS:"
 
-#: sys-utils/lscpu.c:885
+#: sys-utils/lscpu.c:889
 msgid "BIOS CPU family:"
 msgstr "Rodzina CPU wg BIOS:"
 
-#: sys-utils/lscpu.c:887
+#: sys-utils/lscpu.c:891
 msgid "Machine type:"
 msgstr "Typ maszyny:"
 
-#: sys-utils/lscpu.c:889
+#: sys-utils/lscpu.c:893
 msgid "CPU family:"
 msgstr "Rodzina CPU:"
 
-#: sys-utils/lscpu.c:891
+#: sys-utils/lscpu.c:895
 msgid "Model:"
 msgstr "Model:"
 
-#: sys-utils/lscpu.c:893
+#: sys-utils/lscpu.c:897
 msgid "Thread(s) per core:"
 msgstr "Wątków na rdzeń:"
 
-#: sys-utils/lscpu.c:895
+#: sys-utils/lscpu.c:899
 msgid "Core(s) per cluster:"
 msgstr "Rdzeni na klaster:"
 
-#: sys-utils/lscpu.c:897
+#: sys-utils/lscpu.c:901
 msgid "Core(s) per socket:"
 msgstr "Rdzeni na gniazdo:"
 
-#: sys-utils/lscpu.c:900
+#: sys-utils/lscpu.c:904
 msgid "Socket(s) per book:"
 msgstr "Gniazd na tom:"
 
-#: sys-utils/lscpu.c:902
+#: sys-utils/lscpu.c:906
 msgid "Book(s) per drawer:"
 msgstr "Tomów na półkę:"
 
-#: sys-utils/lscpu.c:903
+#: sys-utils/lscpu.c:907
 msgid "Drawer(s):"
 msgstr "Półek:"
 
-#: sys-utils/lscpu.c:905
+#: sys-utils/lscpu.c:909
 msgid "Book(s):"
 msgstr "Tomów:"
 
-#: sys-utils/lscpu.c:909 sys-utils/lscpu.c:911 sys-utils/lscpu.c:916
+#: sys-utils/lscpu.c:913 sys-utils/lscpu.c:915 sys-utils/lscpu.c:920
 msgid "Socket(s):"
 msgstr "Gniazd:"
 
-#: sys-utils/lscpu.c:913
+#: sys-utils/lscpu.c:917
 msgid "Cluster(s):"
 msgstr "Klastrów:"
 
-#: sys-utils/lscpu.c:921
+#: sys-utils/lscpu.c:925
 msgid "Stepping:"
 msgstr "Wersja:"
 
-#: sys-utils/lscpu.c:923
+#: sys-utils/lscpu.c:927
 msgid "Frequency boost:"
 msgstr "Zwiększenie częstotliwości:"
 
-#: sys-utils/lscpu.c:924
+#: sys-utils/lscpu.c:928
 msgid "enabled"
 msgstr "włączone"
 
-#: sys-utils/lscpu.c:924
+#: sys-utils/lscpu.c:928
 msgid "disabled"
 msgstr "wyłączone"
 
-#: sys-utils/lscpu.c:928
+#: sys-utils/lscpu.c:932
 msgid "CPU dynamic MHz:"
 msgstr "CPU dynamiczne MHz:"
 
-#: sys-utils/lscpu.c:930
+#: sys-utils/lscpu.c:934
 msgid "CPU static MHz:"
 msgstr "CPU statyczne MHz:"
 
-#: sys-utils/lscpu.c:935
+#: sys-utils/lscpu.c:939
 msgid "CPU(s) scaling MHz:"
 msgstr "Skalowanie MHz CPU:"
 
-#: sys-utils/lscpu.c:936
+#: sys-utils/lscpu.c:940
 msgid "CPU max MHz:"
 msgstr "CPU max MHz:"
 
-#: sys-utils/lscpu.c:937
+#: sys-utils/lscpu.c:941
 msgid "CPU min MHz:"
 msgstr "CPU min MHz:"
 
-#: sys-utils/lscpu.c:940
+#: sys-utils/lscpu.c:944
 msgid "BogoMIPS:"
 msgstr "BogoMIPS:"
 
-#: sys-utils/lscpu.c:943
+#: sys-utils/lscpu.c:947
 msgid "Dispatching mode:"
 msgstr "Tryb przekazywania:"
 
-#: sys-utils/lscpu.c:946
+#: sys-utils/lscpu.c:950
 msgid "Physical sockets:"
 msgstr "Fizyczne gniazda:"
 
-#: sys-utils/lscpu.c:947
+#: sys-utils/lscpu.c:951
 msgid "Physical chips:"
 msgstr "Fizyczne układy:"
 
-#: sys-utils/lscpu.c:948
+#: sys-utils/lscpu.c:952
 msgid "Physical cores/chip:"
 msgstr "Fizyczne rdzenie/układ:"
 
-#: sys-utils/lscpu.c:952
+#: sys-utils/lscpu.c:956
 msgid "Flags:"
 msgstr "Flagi:"
 
-#: sys-utils/lscpu.c:996
+#: sys-utils/lscpu.c:1000
 msgid "Architecture:"
 msgstr "Architektura:"
 
-#: sys-utils/lscpu.c:1007
+#: sys-utils/lscpu.c:1011
 msgid "CPU op-mode(s):"
 msgstr "Tryb(y) pracy CPU:"
 
-#: sys-utils/lscpu.c:1010
+#: sys-utils/lscpu.c:1014
 msgid "Address sizes:"
 msgstr "Rozmiary adresów:"
 
-#: sys-utils/lscpu.c:1013 sys-utils/lscpu.c:1015
+#: sys-utils/lscpu.c:1017 sys-utils/lscpu.c:1019
 msgid "Byte Order:"
 msgstr "Kolejność bajtów:"
 
-#: sys-utils/lscpu.c:1018
+#: sys-utils/lscpu.c:1022
 msgid "CPU(s):"
 msgstr "CPU:"
 
-#: sys-utils/lscpu.c:1022
+#: sys-utils/lscpu.c:1026
 msgid "On-line CPU(s) mask:"
 msgstr "Maska aktywnych CPU:"
 
-#: sys-utils/lscpu.c:1023
+#: sys-utils/lscpu.c:1027
 msgid "On-line CPU(s) list:"
 msgstr "Lista aktywnych CPU:"
 
-#: sys-utils/lscpu.c:1035
+#: sys-utils/lscpu.c:1039
 msgid "failed to callocate cpu set"
 msgstr "nie udało się wykonać calloc dla zbioru CPU"
 
-#: sys-utils/lscpu.c:1044
+#: sys-utils/lscpu.c:1048
 msgid "Off-line CPU(s) mask:"
 msgstr "Maska nieaktywnych CPU:"
 
-#: sys-utils/lscpu.c:1045
+#: sys-utils/lscpu.c:1049
 msgid "Off-line CPU(s) list:"
 msgstr "Lista nieaktywnych CPU:"
 
-#: sys-utils/lscpu.c:1052
+#: sys-utils/lscpu.c:1056
 msgid "Vendor ID:"
 msgstr "ID producenta:"
 
-#: sys-utils/lscpu.c:1054
+#: sys-utils/lscpu.c:1058
 msgid "BIOS Vendor ID:"
 msgstr "ID producenta BIOS-u:"
 
-#: sys-utils/lscpu.c:1062
+#: sys-utils/lscpu.c:1066
 msgid "Virtualization features:"
 msgstr "Właściwości wirtualizacji:"
 
-#: sys-utils/lscpu.c:1064 sys-utils/lscpu.c:1066
+#: sys-utils/lscpu.c:1068 sys-utils/lscpu.c:1070
 msgid "Virtualization:"
 msgstr "Wirtualizacja:"
 
-#: sys-utils/lscpu.c:1069
+#: sys-utils/lscpu.c:1073
 msgid "Hypervisor:"
 msgstr "Hipernadzorca:"
 
-#: sys-utils/lscpu.c:1071
+#: sys-utils/lscpu.c:1075
 msgid "Hypervisor vendor:"
 msgstr "Producent hipernadzorcy:"
 
-#: sys-utils/lscpu.c:1072
+#: sys-utils/lscpu.c:1076
 msgid "Virtualization type:"
 msgstr "Typ wirtualizacji:"
 
-#: sys-utils/lscpu.c:1095
+#: sys-utils/lscpu.c:1099
 msgid "Caches (sum of all):"
 msgstr "Pamięci podręczne (w sumie):"
 
-#: sys-utils/lscpu.c:1099 sys-utils/lscpu.c:1129 sys-utils/lscpu.c:1161
+#: sys-utils/lscpu.c:1103 sys-utils/lscpu.c:1133 sys-utils/lscpu.c:1165
 #, c-format
 msgid "%s:"
 msgstr "%s:"
 
-#: sys-utils/lscpu.c:1099 sys-utils/lscpu.c:1129
+#: sys-utils/lscpu.c:1103 sys-utils/lscpu.c:1133
 #, c-format
 msgid "%s cache:"
 msgstr "Cache %s:"
 
-#: sys-utils/lscpu.c:1102
+#: sys-utils/lscpu.c:1106
 #, c-format
 msgid "%<PRIu64> (%d instance)"
 msgid_plural "%<PRIu64> (%d instances)"
@@ -19540,7 +19547,7 @@ msgstr[0] "%<PRIu64> (%d instancja)"
 msgstr[1] "%<PRIu64> (%d instancje)"
 msgstr[2] "%<PRIu64> (%d instancji)"
 
-#: sys-utils/lscpu.c:1111
+#: sys-utils/lscpu.c:1115
 #, c-format
 msgid "%s (%d instance)"
 msgid_plural "%s (%d instances)"
@@ -19548,95 +19555,95 @@ msgstr[0] "%s (%d instancja)"
 msgstr[1] "%s (%d instancje)"
 msgstr[2] "%s (%d instancji)"
 
-#: sys-utils/lscpu.c:1126
+#: sys-utils/lscpu.c:1130
 msgid "Caches:"
 msgstr "Pamięci podręczne:"
 
-#: sys-utils/lscpu.c:1145
+#: sys-utils/lscpu.c:1149
 msgid "NUMA:"
 msgstr "NUMA:"
 
-#: sys-utils/lscpu.c:1147
+#: sys-utils/lscpu.c:1151
 msgid "NUMA node(s):"
 msgstr "Węzłów NUMA:"
 
-#: sys-utils/lscpu.c:1149
+#: sys-utils/lscpu.c:1153
 #, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr "Procesory węzła NUMA %d:"
 
-#: sys-utils/lscpu.c:1157
+#: sys-utils/lscpu.c:1161
 msgid "Vulnerabilities:"
 msgstr "Podatności:"
 
-#: sys-utils/lscpu.c:1161
+#: sys-utils/lscpu.c:1165
 #, c-format
 msgid "Vulnerability %s:"
 msgstr "Podatność %s:"
 
-#: sys-utils/lscpu.c:1179
+#: sys-utils/lscpu.c:1183
 msgid "Display information about the CPU architecture.\n"
 msgstr "Wyświetlenie informacji o architekturze procesora.\n"
 
-#: sys-utils/lscpu.c:1182
+#: sys-utils/lscpu.c:1186
 msgid " -a, --all               print both online and offline CPUs (default for -e)\n"
 msgstr " -a, --all                wypisanie wł. i wył. CPU (domyślne dla -e)\n"
 
-#: sys-utils/lscpu.c:1183
+#: sys-utils/lscpu.c:1187
 msgid " -b, --online            print online CPUs only (default for -p)\n"
 msgstr " -b, --online             wypisanie tylko włączonych CPU (domyślne dla -p)\n"
 
-#: sys-utils/lscpu.c:1184
+#: sys-utils/lscpu.c:1188
 msgid " -B, --bytes             print sizes in bytes rather than in human readable format\n"
 msgstr " -B, --bytes             wypisywanie rozmiarów w bajtach zamiast czytelnie dla człowieka\n"
 
-#: sys-utils/lscpu.c:1185
+#: sys-utils/lscpu.c:1189
 msgid " -C, --caches[=<list>]   info about caches in extended readable format\n"
 msgstr " -C, --caches[=<lista>]  informacja o pamięciach podręcznych w rozszerzonym, czytelnym formacie\n"
 
-#: sys-utils/lscpu.c:1186
+#: sys-utils/lscpu.c:1190
 msgid " -c, --offline           print offline CPUs only\n"
 msgstr " -c, --offline            wypisanie tylko wyłączonych CPU\n"
 
-#: sys-utils/lscpu.c:1187
+#: sys-utils/lscpu.c:1191
 msgid " -J, --json              use JSON for default or extended format\n"
 msgstr " -J, --json              wyjście domyślne lub rozszerzone w formacie JSON\n"
 
-#: sys-utils/lscpu.c:1188
+#: sys-utils/lscpu.c:1192
 msgid " -e, --extended[=<list>] print out an extended readable format\n"
 msgstr " -e, --extended[=<lista>] wypisanie w rozszerzonym, czytelnym formacie\n"
 
-#: sys-utils/lscpu.c:1189
+#: sys-utils/lscpu.c:1193
 msgid " -p, --parse[=<list>]    print out a parsable format\n"
 msgstr " -p, --parse[=<lista>]    wypisanie w formacie zdatnym do analizy\n"
 
-#: sys-utils/lscpu.c:1190
+#: sys-utils/lscpu.c:1194
 #, fuzzy
 #| msgid " -r, --raw              use raw output format\n"
 msgid " -r, --raw               use raw output format (for -e, -p and -C)\n"
 msgstr " -r, --raw              wyjście w formacie surowym\n"
 
-#: sys-utils/lscpu.c:1191
+#: sys-utils/lscpu.c:1195
 msgid " -s, --sysroot <dir>     use specified directory as system root\n"
 msgstr " -s, --sysroot <katalog>  użycie podanego katalogu jako głównego systemowego\n"
 
-#: sys-utils/lscpu.c:1192
+#: sys-utils/lscpu.c:1196
 msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
 msgstr " -x, --hex                wypisywanie masek szesnastkowych zamiast list CPU\n"
 
-#: sys-utils/lscpu.c:1193
+#: sys-utils/lscpu.c:1197
 msgid " -y, --physical          print physical instead of logical IDs\n"
 msgstr " -y, --physical          wypisanie identyfikatorów fizycznych zamiast logicznych\n"
 
-#: sys-utils/lscpu.c:1194
+#: sys-utils/lscpu.c:1198
 msgid "     --hierarchic[=when] use subsections in summary (auto, never, always)\n"
 msgstr "     --hierarchic[=kiedy] użycie podsekcji w podsumowaniu (auto, never, always)\n"
 
-#: sys-utils/lscpu.c:1195
+#: sys-utils/lscpu.c:1199
 msgid "     --output-all        print all available columns for -e, -p or -C\n"
 msgstr "     --output-all        wypisanie wszystkich dostępnych kolumn dla -e, -p lub -C\n"
 
-#: sys-utils/lscpu.c:1199
+#: sys-utils/lscpu.c:1203
 msgid ""
 "\n"
 "Available output columns for -e or -p:\n"
@@ -19644,7 +19651,7 @@ msgstr ""
 "\n"
 "Dostępne kolumny wyjściowe dla -e lub -p:\n"
 
-#: sys-utils/lscpu.c:1203
+#: sys-utils/lscpu.c:1207
 msgid ""
 "\n"
 "Available output columns for -C:\n"
@@ -19652,11 +19659,11 @@ msgstr ""
 "\n"
 "Dostępne kolumny wyjściowe dla -C:\n"
 
-#: sys-utils/lscpu.c:1323
+#: sys-utils/lscpu.c:1327
 msgid "unsupported --flat argument"
 msgstr "nie obsługiwany argument --flat"
 
-#: sys-utils/lscpu.c:1347
+#: sys-utils/lscpu.c:1351
 #, c-format
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr "%s: opcje --all, --online oraz --offline mogą być używane tylko z opcjami --extended lub --parse.\n"
@@ -23821,10 +23828,10 @@ msgstr "%s: nie można zmienić priorytetu procesu: %m"
 msgid "%s: can't exec %s: %m"
 msgstr "%s: nie można wywołać %s: %m"
 
-#: term-utils/agetty.c:606 term-utils/agetty.c:777 term-utils/agetty.c:956
-#: term-utils/agetty.c:1205 term-utils/agetty.c:1484 term-utils/agetty.c:1502
-#: term-utils/agetty.c:1539 term-utils/agetty.c:1549 term-utils/agetty.c:1591
-#: term-utils/agetty.c:1951 term-utils/agetty.c:2311 term-utils/agetty.c:2893
+#: term-utils/agetty.c:606 term-utils/agetty.c:777 term-utils/agetty.c:960
+#: term-utils/agetty.c:1209 term-utils/agetty.c:1488 term-utils/agetty.c:1506
+#: term-utils/agetty.c:1543 term-utils/agetty.c:1553 term-utils/agetty.c:1595
+#: term-utils/agetty.c:1955 term-utils/agetty.c:2315 term-utils/agetty.c:2897
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "nie udało się przydzielić pamięci: %m"
@@ -23841,105 +23848,105 @@ msgstr "błędny argument opcji --local-line"
 msgid "invalid nice argument"
 msgstr "błędna wartość priorytetu"
 
-#: term-utils/agetty.c:934
+#: term-utils/agetty.c:939
 #, c-format
 msgid "could not get terminal name: %d"
 msgstr "nie udało się pobrać nazwy terminala: %d"
 
-#: term-utils/agetty.c:961
+#: term-utils/agetty.c:965
 #, c-format
 msgid "bad speed: %s"
 msgstr "błędna szybkość: %s"
 
-#: term-utils/agetty.c:963
+#: term-utils/agetty.c:967
 msgid "too many alternate speeds"
 msgstr "zbyt dużo zamiennych szybkości"
 
-#: term-utils/agetty.c:1070 term-utils/agetty.c:1074 term-utils/agetty.c:1127
+#: term-utils/agetty.c:1074 term-utils/agetty.c:1078 term-utils/agetty.c:1131
 #, c-format
 msgid "/dev/%s: cannot open as standard input: %m"
 msgstr "/dev/%s: nie można otworzyć jako standardowe wejście: %m"
 
-#: term-utils/agetty.c:1093
+#: term-utils/agetty.c:1097
 #, c-format
 msgid "/dev/%s: not a character device"
 msgstr "/dev/%s: to nie jest urządzenie znakowe"
 
-#: term-utils/agetty.c:1095
+#: term-utils/agetty.c:1099
 #, c-format
 msgid "/dev/%s: not a tty"
 msgstr "/dev/%s: to nie jest terminal"
 
-#: term-utils/agetty.c:1099 term-utils/agetty.c:1131
+#: term-utils/agetty.c:1103 term-utils/agetty.c:1135
 #, c-format
 msgid "/dev/%s: cannot get controlling tty: %m"
 msgstr "/dev/%s: nie można uzyskać terminala sterującego: %m"
 
-#: term-utils/agetty.c:1121
+#: term-utils/agetty.c:1125
 #, c-format
 msgid "/dev/%s: vhangup() failed: %m"
 msgstr "/dev/%s: vhangup() nie powiodło się: %m"
 
-#: term-utils/agetty.c:1142
+#: term-utils/agetty.c:1146
 #, c-format
 msgid "%s: not open for read/write"
 msgstr "%s: nie jest otwarte do odczytu i zapisu"
 
-#: term-utils/agetty.c:1147
+#: term-utils/agetty.c:1151
 #, c-format
 msgid "/dev/%s: cannot set process group: %m"
 msgstr "/dev/%s: nie można ustawić grupy procesów: %m"
 
-#: term-utils/agetty.c:1161
+#: term-utils/agetty.c:1165
 #, c-format
 msgid "%s: dup problem: %m"
 msgstr "%s: problem z dup: %m"
 
-#: term-utils/agetty.c:1178
+#: term-utils/agetty.c:1182
 #, c-format
 msgid "%s: failed to get terminal attributes: %m"
 msgstr "%s: nie udało się pobrać atrybutów terminala: %m"
 
-#: term-utils/agetty.c:1381 term-utils/agetty.c:1410
+#: term-utils/agetty.c:1385 term-utils/agetty.c:1414
 #, c-format
 msgid "setting terminal attributes failed: %m"
 msgstr "nie udało się ustawić atrybutów terminala: %m"
 
-#: term-utils/agetty.c:1529
+#: term-utils/agetty.c:1533
 msgid "cannot open os-release file"
 msgstr "nie można otworzyć pliku os-release"
 
-#: term-utils/agetty.c:1696
+#: term-utils/agetty.c:1700
 #, c-format
 msgid "failed to create reload file: %s: %m"
 msgstr "nie udało się utworzyć pliku przeładowania: %s: %m"
 
-#: term-utils/agetty.c:2006
+#: term-utils/agetty.c:2010
 #, c-format
 msgid "failed to get terminal attributes: %m"
 msgstr "nie udało się pobrać atrybutów terminala: %m"
 
-#: term-utils/agetty.c:2028
+#: term-utils/agetty.c:2032
 msgid "[press ENTER to login]"
 msgstr "[proszę nacisnąć ENTER w celu zalogowania]"
 
-#: term-utils/agetty.c:2056
+#: term-utils/agetty.c:2060
 msgid "Num Lock off"
 msgstr "Num Lock wyłączony"
 
-#: term-utils/agetty.c:2059
+#: term-utils/agetty.c:2063
 msgid "Num Lock on"
 msgstr "Num Lock włączony"
 
-#: term-utils/agetty.c:2062
+#: term-utils/agetty.c:2066
 msgid "Caps Lock on"
 msgstr "Caps Lock włączony"
 
-#: term-utils/agetty.c:2065
+#: term-utils/agetty.c:2069
 msgid "Scroll Lock on"
 msgstr "Scroll Lock włączony"
 
-#: term-utils/agetty.c:2068
+#: term-utils/agetty.c:2072
 #, c-format
 msgid ""
 "Hint: %s\n"
@@ -23948,32 +23955,32 @@ msgstr ""
 "Uwaga: %s\n"
 "\n"
 
-#: term-utils/agetty.c:2212
+#: term-utils/agetty.c:2216
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: read: %m"
 
-#: term-utils/agetty.c:2279
+#: term-utils/agetty.c:2283
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: przepełnienie wejścia"
 
-#: term-utils/agetty.c:2307 term-utils/agetty.c:2315
+#: term-utils/agetty.c:2311 term-utils/agetty.c:2319
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s: błędna konwersja znaku dla nazwy użytkownika"
 
-#: term-utils/agetty.c:2321
+#: term-utils/agetty.c:2325
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s: błędny znak 0x%x w nazwie użytkownika"
 
-#: term-utils/agetty.c:2406
+#: term-utils/agetty.c:2410
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s: nie udało się ustawić atrybutów terminala: %m"
 
-#: term-utils/agetty.c:2451
+#: term-utils/agetty.c:2455
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -23982,147 +23989,147 @@ msgstr ""
 " %1$s [opcje] <linia> [<szybkość>,...] [<typ_terminala>]\n"
 " %1$s [opcje] <szybkość>,... <linia> [<typ_terminala>]\n"
 
-#: term-utils/agetty.c:2455
+#: term-utils/agetty.c:2459
 msgid "Open a terminal and set its mode.\n"
 msgstr "Otworzenie terminala i ustawienie jego trybu.\n"
 
-#: term-utils/agetty.c:2458
+#: term-utils/agetty.c:2462
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                  przyjęcie terminala 8-bitowego\n"
 
-#: term-utils/agetty.c:2459
+#: term-utils/agetty.c:2463
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr " -a, --autologin <użytkownik> automatyczne zalogowanie podanego użytkownika\n"
 
-#: term-utils/agetty.c:2460
+#: term-utils/agetty.c:2464
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset                bez resetowania trybu sterującego\n"
 
-#: term-utils/agetty.c:2461
+#: term-utils/agetty.c:2465
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote                 użycie -r <host> dla programu login(1)\n"
 
-#: term-utils/agetty.c:2462
+#: term-utils/agetty.c:2466
 msgid " -f, --issue-file <list>    display issue files or directories\n"
 msgstr " -f, --issue-file <plik>      wyświetlenie plików/katalogów wydania (issue)\n"
 
-#: term-utils/agetty.c:2463
+#: term-utils/agetty.c:2467
 msgid "     --show-issue           display issue file and exit\n"
 msgstr "     --show-issue             wyświetlenie pliku wydania (issue) i zakończenie\n"
 
-#: term-utils/agetty.c:2464
+#: term-utils/agetty.c:2468
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr " -h, --flow-control           włączenie sprzętowej kontroli przepływu\n"
 
-#: term-utils/agetty.c:2465
+#: term-utils/agetty.c:2469
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -H, --host <host>            podanie hosta logowania\n"
 
-#: term-utils/agetty.c:2466
+#: term-utils/agetty.c:2470
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue                bez wyświetlania pliku wydania (issue)\n"
 
-#: term-utils/agetty.c:2467
+#: term-utils/agetty.c:2471
 msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <łańcuch>  podanie łańcucha inicjującego\n"
 
-#: term-utils/agetty.c:2468
+#: term-utils/agetty.c:2472
 msgid " -J, --noclear              do not clear the screen before prompt\n"
 msgstr " -J, --noclear                bez czyszczenia ekranu przed wypisaniem zachęty\n"
 
-#: term-utils/agetty.c:2469
+#: term-utils/agetty.c:2473
 msgid " -l, --login-program <file> specify login program\n"
 msgstr " -l, --login-program <plik>   określenie programu login\n"
 
-#: term-utils/agetty.c:2470
+#: term-utils/agetty.c:2474
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr " -L, --local-line[=<tryb>]    sterowanie flagą linii lokalnej\n"
 
-#: term-utils/agetty.c:2471
+#: term-utils/agetty.c:2475
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr " -m, --extract-baud           wyciągnięcie szybkości w bodach przy połączeniu\n"
 
-#: term-utils/agetty.c:2472
+#: term-utils/agetty.c:2476
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login             bez pytania o nazwę logowania\n"
 
-#: term-utils/agetty.c:2473
+#: term-utils/agetty.c:2477
 msgid " -N, --nonewline            do not print a newline before issue\n"
 msgstr " -N, --nonewline              bez wypisywania znaku nowej linii przed issue\n"
 
-#: term-utils/agetty.c:2474
+#: term-utils/agetty.c:2478
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -o, --login-options <opcje>  opcje przekazywane do programu login\n"
 
-#: term-utils/agetty.c:2475
+#: term-utils/agetty.c:2479
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -p, --login-pause            oczekiwanie na dowolny klawisz przed logowaniem\n"
 
-#: term-utils/agetty.c:2476
+#: term-utils/agetty.c:2480
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -r, --chroot <katalog>       zmiana katalogu głównego na podany\n"
 
-#: term-utils/agetty.c:2477
+#: term-utils/agetty.c:2481
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup                 wirtualne rozłączenie na terminalu\n"
 
-#: term-utils/agetty.c:2478
+#: term-utils/agetty.c:2482
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -s, --keep-baud              zachowanie szybkości w bodach po sygnale break\n"
 
-#: term-utils/agetty.c:2479
+#: term-utils/agetty.c:2483
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr " -t, --timeout <liczba>       limit czasu procesu login\n"
 
-#: term-utils/agetty.c:2480
+#: term-utils/agetty.c:2484
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr " -U, --detect-case            wykrywanie terminala z samymi wielkimi literami\n"
 
-#: term-utils/agetty.c:2481
+#: term-utils/agetty.c:2485
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait-cr                oczekiwanie na znak powrotu karetki (CR)\n"
 
-#: term-utils/agetty.c:2482
+#: term-utils/agetty.c:2486
 msgid "     --nohints              do not print hints\n"
 msgstr "     --nohints                bez wypisywania podpowiedzi\n"
 
-#: term-utils/agetty.c:2483
+#: term-utils/agetty.c:2487
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "     --nohostname             bez wyświetlania nazwy hosta\n"
 
-#: term-utils/agetty.c:2484
+#: term-utils/agetty.c:2488
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "     --long-hostname          wyświetlenie pełnej nazwy hosta (z domeną)\n"
 
-#: term-utils/agetty.c:2485
+#: term-utils/agetty.c:2489
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "     --erase-chars <łańcuch>  dodatkowe znaki kasujące (backspace)\n"
 
-#: term-utils/agetty.c:2486
+#: term-utils/agetty.c:2490
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "     --kill-chars <łańcuch>   dodatkowe znaki kasujące linię (kill)\n"
 
-#: term-utils/agetty.c:2487
+#: term-utils/agetty.c:2491
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "     --chdir <katalog>        zmiana katalogu przed logowaniem\n"
 
-#: term-utils/agetty.c:2488
+#: term-utils/agetty.c:2492
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "     --delay <liczba>         oczekiwanie (w sekundach) przed zachętą\n"
 
-#: term-utils/agetty.c:2489
+#: term-utils/agetty.c:2493
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "     --nice <liczba>          uruchomienie programu login z podanym priorytetem\n"
 
-#: term-utils/agetty.c:2490
+#: term-utils/agetty.c:2494
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --reload                 przeładowanie zachęt w działających instancjach\n"
 
-#: term-utils/agetty.c:2491
+#: term-utils/agetty.c:2495
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "     --list-speeds          wyświetlenie obsługiwanych liczb bodów\n"
 
-#: term-utils/agetty.c:2850
+#: term-utils/agetty.c:2854
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
@@ -24130,21 +24137,21 @@ msgstr[0] "%d użytkownik"
 msgstr[1] "%d użytkownicy"
 msgstr[2] "%d użytkowników"
 
-#: term-utils/agetty.c:2980
+#: term-utils/agetty.c:2984
 #, c-format
 msgid "checkname failed: %m"
 msgstr "checkname nie powiodło się: %m"
 
-#: term-utils/agetty.c:2992
+#: term-utils/agetty.c:2996
 #, c-format
 msgid "cannot touch file %s"
 msgstr "nie można dotknąć pliku %s"
 
-#: term-utils/agetty.c:2996
+#: term-utils/agetty.c:3000
 msgid "--reload is unsupported on your system"
 msgstr "--reload nie jest obsługiwane w tym systemie"
 
-#: term-utils/agetty.c:3018
+#: term-utils/agetty.c:3022
 msgid "failed to open credentials directory"
 msgstr "nie udało się otworzyć katalogu danych uwierzytelniających"
 
@@ -24304,7 +24311,7 @@ msgstr ""
 "Proszę użyć opcji --force, jeżeli naprawdę ma by użyty.\n"
 "Skrypt nie uruchomiony."
 
-#: term-utils/script.c:836 term-utils/scriptlive.c:221
+#: term-utils/script.c:836 term-utils/scriptlive.c:220
 #, fuzzy, c-format
 #| msgid "unssuported echo mode: '%s'"
 msgid "unsupported echo mode: '%s'"
@@ -24353,71 +24360,72 @@ msgstr ".\n"
 msgid "Script done.\n"
 msgstr "Skrypt wykonany.\n"
 
-#: term-utils/scriptlive.c:60
-#, c-format
-msgid " %s [-t] timingfile [-I|-B] typescript\n"
+#: term-utils/scriptlive.c:57
+#, fuzzy, c-format
+#| msgid " %s [-t] timingfile [-I|-B] typescript\n"
+msgid " %s [options] <timingfile> <typescript>\n"
 msgstr "%s [-t] plik_czasów [-I|-B] skrypt\n"
 
-#: term-utils/scriptlive.c:64
+#: term-utils/scriptlive.c:61
 msgid "Execute terminal typescript.\n"
 msgstr "Uruchomienie skryptu terminalowego.\n"
 
-#: term-utils/scriptlive.c:67 term-utils/scriptreplay.c:60
+#: term-utils/scriptlive.c:64 term-utils/scriptreplay.c:57
 msgid " -t, --timing <file>     script timing log file\n"
 msgstr " -t, --timing <plik>     plik logu czasów z narzędzia script\n"
 
-#: term-utils/scriptlive.c:68 term-utils/scriptreplay.c:61
+#: term-utils/scriptlive.c:65 term-utils/scriptreplay.c:58
 msgid " -T, --log-timing <file> alias to -t\n"
 msgstr " -T, --log-timing <plik> alias dla -t\n"
 
-#: term-utils/scriptlive.c:69 term-utils/scriptreplay.c:62
+#: term-utils/scriptlive.c:66 term-utils/scriptreplay.c:59
 msgid " -I, --log-in <file>     script stdin log file\n"
 msgstr " -I, --log-in <plik>     plik logu standardowego wejścia ze script\n"
 
-#: term-utils/scriptlive.c:70 term-utils/scriptreplay.c:64
+#: term-utils/scriptlive.c:67 term-utils/scriptreplay.c:61
 msgid " -B, --log-io <file>     script stdin and stdout log file\n"
 msgstr " -B, --log-io <plik>     plik logu standardowego wejścia i wyjścia ze script\n"
 
-#: term-utils/scriptlive.c:73
+#: term-utils/scriptlive.c:70
 msgid " -c, --command <command> run command rather than interactive shell\n"
 msgstr " -c, --command <polecenie> uruchomienie polecenia zamiast powłoki interaktywnej\n"
 
-#: term-utils/scriptlive.c:74 term-utils/scriptreplay.c:70
+#: term-utils/scriptlive.c:71 term-utils/scriptreplay.c:67
 msgid " -d, --divisor <num>     speed up or slow down execution with time divisor\n"
 msgstr " -d, --divisor <liczba>  przyspieszenie lub spowolnienie wykonywania o dzielnik czasu\n"
 
-#: term-utils/scriptlive.c:75
+#: term-utils/scriptlive.c:72
 #, fuzzy
 #| msgid " -E, --echo <when>             echo input in session (auto, always or never)\n"
 msgid " -E, --echo <when>       echo input in session (auto, always or never)\n"
 msgstr " -E, --echo <kiedy>            powtarzanie wejścia w sesji (auto, always lub never)\n"
 
-#: term-utils/scriptlive.c:76 term-utils/scriptreplay.c:71
+#: term-utils/scriptlive.c:73 term-utils/scriptreplay.c:68
 msgid " -m, --maxdelay <num>    wait at most this many seconds between updates\n"
 msgstr " -m --maxdelay <liczba>  oczekiwanie najwyżej podaną liczbę sekund między uaktualnieniami\n"
 
-#: term-utils/scriptlive.c:238 term-utils/scriptreplay.c:257
+#: term-utils/scriptlive.c:237 term-utils/scriptreplay.c:256
 msgid "failed to parse maximal delay argument"
 msgstr "niezrozumiały argument maksymalnego opóźnienia"
 
-#: term-utils/scriptlive.c:261 term-utils/scriptreplay.c:298
+#: term-utils/scriptlive.c:260 term-utils/scriptreplay.c:297
 msgid "timing file not specified"
 msgstr "nie podano pliku czasów"
 
-#: term-utils/scriptlive.c:263
+#: term-utils/scriptlive.c:262
 msgid "stdin typescript file not specified"
 msgstr "nie podano pliku skryptu standardowego wejścia"
 
-#: term-utils/scriptlive.c:289
+#: term-utils/scriptlive.c:288
 #, c-format
 msgid ">>> scriptlive: Starting your typescript execution by %s.\n"
 msgstr ">>> scriptlive: Rozpoczęcie wykonywania skryptu terminalowego przez %s.\n"
 
-#: term-utils/scriptlive.c:296
+#: term-utils/scriptlive.c:295
 msgid "failed to allocate PTY handler"
 msgstr "nie udało się przydzielić obsługi PTY"
 
-#: term-utils/scriptlive.c:376
+#: term-utils/scriptlive.c:375
 #, c-format
 msgid ""
 "\n"
@@ -24426,81 +24434,82 @@ msgstr ""
 "\n"
 ">>> scriptlive: zakończono.\n"
 
-#: term-utils/scriptreplay.c:53
-#, c-format
-msgid " %s [-t] timingfile [typescript] [divisor]\n"
+#: term-utils/scriptreplay.c:50
+#, fuzzy, c-format
+#| msgid " %s [-t] timingfile [typescript] [divisor]\n"
+msgid " %s [options] <timingfile> [<typescript> [<divisor>]]\n"
 msgstr "%s [-t] plik_czasów [skrypt] [dzielnik]\n"
 
-#: term-utils/scriptreplay.c:57
+#: term-utils/scriptreplay.c:54
 msgid "Play back terminal typescripts, using timing information.\n"
 msgstr "Odtworzenie skryptu sesji terminalowej z użyciem informacji o czasie.\n"
 
-#: term-utils/scriptreplay.c:63
+#: term-utils/scriptreplay.c:60
 msgid " -O, --log-out <file>    script stdout log file (default)\n"
 msgstr " -O, --log-out <plik>    plik logu standardowego wyjścia ze script (domyślny)\n"
 
-#: term-utils/scriptreplay.c:66
+#: term-utils/scriptreplay.c:63
 msgid " -s, --typescript <file> deprecated alias to -O\n"
 msgstr " -s, --typescript <plik> przestarzały alias dla -O\n"
 
-#: term-utils/scriptreplay.c:69
+#: term-utils/scriptreplay.c:66
 msgid "     --summary           display overview about recorded session and exit\n"
 msgstr "     --summary           wyświetlenie ogólnych informacji o zapisanej sesji i zakończenie\n"
 
-#: term-utils/scriptreplay.c:72
+#: term-utils/scriptreplay.c:69
 msgid " -x, --stream <name>     stream type (out, in, signal or info)\n"
 msgstr " -x, --stream <nazwa>    rodzaj strumienia (out, in, signal lub info)\n"
 
-#: term-utils/scriptreplay.c:73
+#: term-utils/scriptreplay.c:70
 msgid " -c, --cr-mode <type>    CR char mode (auto, never, always)\n"
 msgstr " -c, --cr-mode <typ>     tryb znaku CR (auto, never, always)\n"
 
-#: term-utils/scriptreplay.c:77
+#: term-utils/scriptreplay.c:76
 msgid "Key bindings:\n"
 msgstr ""
 
+#: term-utils/scriptreplay.c:77
+msgid " space        toggles between pause and play\n"
+msgstr ""
+
 #: term-utils/scriptreplay.c:78
-msgid " space        toggles pause and unpause\n"
+msgid " up-arrow     increases playback speed with ten percent\n"
 msgstr ""
 
 #: term-utils/scriptreplay.c:79
-msgid " up-arrow     increases the playback speed by 0.1 times\n"
+msgid " down-arrow   decreases playback speed with ten percent\n"
 msgstr ""
 
-#: term-utils/scriptreplay.c:80
-msgid " down-arrow   decreases the playback speed by 0.1 times\n"
-msgstr ""
-
-#: term-utils/scriptreplay.c:146
+#: term-utils/scriptreplay.c:145
 #, fuzzy
 #| msgid "unexpected tcgetattr failure"
 msgid "unexpected fcntl failure"
 msgstr "nieoczekiwane niepowodzenie tcgetattr"
 
-#: term-utils/scriptreplay.c:151
+#: term-utils/scriptreplay.c:150
 msgid "unexpected tcgetattr failure"
 msgstr "nieoczekiwane niepowodzenie tcgetattr"
 
-#: term-utils/scriptreplay.c:236
+#: term-utils/scriptreplay.c:235
 #, c-format
 msgid "unsupported mode name: '%s'"
 msgstr "nie obsługiwana nazwa trybu: '%s'"
 
-#: term-utils/scriptreplay.c:269
+#: term-utils/scriptreplay.c:268
 #, c-format
 msgid "unsupported stream name: '%s'"
 msgstr "nie obsługiwana nazwa strumienia: '%s'"
 
-#: term-utils/scriptreplay.c:300
+#: term-utils/scriptreplay.c:299
 msgid "data log file not specified"
 msgstr "nie podano pliku logu danych"
 
-#: term-utils/scriptreplay.c:406
+#: term-utils/scriptreplay.c:405
 #, c-format
 msgid "%s: log file error"
 msgstr "%s: błąd pliku logu"
 
-#: term-utils/scriptreplay.c:408
+#: term-utils/scriptreplay.c:407
 #, c-format
 msgid "%s: line %d: timing file error"
 msgstr "%s: linia %d: błąd pliku czasów"
@@ -25243,7 +25252,9 @@ msgid "invalid spaces argument"
 msgstr "błędny argument przestrzeni nazw"
 
 #: text-utils/column.c:1068
-msgid "failed to use input separator"
+#, fuzzy
+#| msgid "failed to use input separator"
+msgid "failed to parse input separator"
 msgstr "nie udało się użyć separatora wejścia"
 
 #: text-utils/column.c:1101

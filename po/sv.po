@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.36-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2025-02-18 11:36+0100\n"
+"POT-Creation-Date: 2025-03-06 10:21+0100\n"
 "PO-Revision-Date: 2021-04-17 18:24+0200\n"
 "Last-Translator: Sebastian Rasmussen <sebras@gmail.com>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -36,8 +36,8 @@ msgid "Tell the kernel about the existence of a specified partition.\n"
 msgstr "Säg till kärnan om att en angiven partition existerar.\n"
 
 #: disk-utils/addpart.c:62 disk-utils/blockdev.c:270 disk-utils/delpart.c:62
-#: disk-utils/mkfs.bfs.c:142 disk-utils/resizepart.c:106 misc-utils/kill.c:423
-#: misc-utils/kill.c:484 misc-utils/rename.c:344 misc-utils/whereis.c:539
+#: disk-utils/mkfs.bfs.c:142 disk-utils/resizepart.c:106 misc-utils/kill.c:427
+#: misc-utils/kill.c:488 misc-utils/rename.c:344 misc-utils/whereis.c:539
 #: sys-utils/flock.c:237 sys-utils/ipcrm.c:165 sys-utils/ldattach.c:365
 #: sys-utils/renice.c:177 sys-utils/switch_root.c:261 sys-utils/tunelp.c:152
 #: term-utils/agetty.c:905 term-utils/agetty.c:906 term-utils/agetty.c:914
@@ -66,7 +66,7 @@ msgstr "inte tillräckligt många argument"
 #: misc-utils/mcookie.c:124 misc-utils/pipesz.c:162 misc-utils/uuidd.c:235
 #: sys-utils/blkdiscard.c:237 sys-utils/blkpr.c:164 sys-utils/blkzone.c:144
 #: sys-utils/dmesg.c:666 sys-utils/eject.c:501 sys-utils/eject.c:696
-#: sys-utils/fallocate.c:407 sys-utils/fsfreeze.c:116 sys-utils/fstrim.c:106
+#: sys-utils/fallocate.c:406 sys-utils/fsfreeze.c:116 sys-utils/fstrim.c:106
 #: sys-utils/hwclock.c:239 sys-utils/hwclock.c:911 sys-utils/hwclock-rtc.c:128
 #: sys-utils/hwclock-rtc.c:373 sys-utils/hwclock-rtc.c:409
 #: sys-utils/hwclock-rtc.c:470 sys-utils/hwclock-rtc.c:523
@@ -79,11 +79,11 @@ msgstr "inte tillräckligt många argument"
 #: sys-utils/setpriv.c:692 sys-utils/swapon.c:395 sys-utils/swapon.c:538
 #: sys-utils/switch_root.c:174 sys-utils/unshare.c:115 sys-utils/unshare.c:130
 #: sys-utils/unshare.c:749 sys-utils/wdctl.c:422 sys-utils/zramctl.c:551
-#: term-utils/agetty.c:2989 term-utils/mesg.c:154 term-utils/script.c:389
-#: term-utils/scriptlive.c:268 term-utils/scriptlive.c:271
-#: term-utils/scriptlive.c:274 term-utils/scriptreplay.c:305
-#: term-utils/scriptreplay.c:308 term-utils/scriptreplay.c:311
-#: term-utils/scriptreplay.c:314 term-utils/wall.c:422 text-utils/colcrt.c:286
+#: term-utils/agetty.c:2993 term-utils/mesg.c:154 term-utils/script.c:389
+#: term-utils/scriptlive.c:267 term-utils/scriptlive.c:270
+#: term-utils/scriptlive.c:273 term-utils/scriptreplay.c:304
+#: term-utils/scriptreplay.c:307 term-utils/scriptreplay.c:310
+#: term-utils/scriptreplay.c:313 term-utils/wall.c:422 text-utils/colcrt.c:286
 #: text-utils/more.c:463 text-utils/rev.c:166 text-utils/ul.c:638
 #, c-format
 msgid "cannot open %s"
@@ -1318,7 +1318,7 @@ msgstr "Enhetsegenskaperna (sektorstorlek och geometri) bör endast användas me
 #: schedutils/chrt.c:486 schedutils/ionice.c:264 schedutils/taskset.c:208
 #: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1840
 #: sys-utils/ipcmk.c:253 sys-utils/ipcrm.c:425 sys-utils/ldattach.c:318
-#: sys-utils/losetup.c:997 sys-utils/lscpu.c:1354 sys-utils/lsmem.c:655
+#: sys-utils/losetup.c:997 sys-utils/lscpu.c:1358 sys-utils/lsmem.c:655
 #: sys-utils/mount.c:921 sys-utils/mount.c:947 sys-utils/mount.c:955
 #: sys-utils/mount.c:1007 sys-utils/mount.c:1020 sys-utils/mount.c:1092
 #: sys-utils/mountpoint.c:182 sys-utils/pivot_root.c:66 sys-utils/swapoff.c:273
@@ -1418,7 +1418,7 @@ msgstr "misslyckades med att allokera iterator"
 #: misc-utils/findmnt.c:1630 misc-utils/lsblk.c:2747 misc-utils/lsclocks.c:645
 #: misc-utils/lslocks.c:748 misc-utils/uuidparse.c:266 misc-utils/wipefs.c:157
 #: sys-utils/losetup.c:389 sys-utils/lscpu.c:596 sys-utils/lscpu.c:753
-#: sys-utils/lscpu.c:971 sys-utils/lsipc.c:395 sys-utils/prlimit.c:303
+#: sys-utils/lscpu.c:975 sys-utils/lsipc.c:395 sys-utils/prlimit.c:303
 #: sys-utils/rfkill.c:474 sys-utils/swapon.c:309 sys-utils/wdctl.c:354
 #: sys-utils/zramctl.c:530 text-utils/column.c:337
 msgid "failed to allocate output table"
@@ -1431,7 +1431,7 @@ msgstr "misslyckades med att allokera utmatningstabell"
 #: misc-utils/lsclocks.c:289 misc-utils/lslocks.c:613
 #: misc-utils/uuidparse.c:153 misc-utils/wipefs.c:202 sys-utils/losetup.c:412
 #: sys-utils/losetup.c:441 sys-utils/lscpu.c:510 sys-utils/lscpu.c:790
-#: sys-utils/lscpu.c:822 sys-utils/lsipc.c:527 sys-utils/lsipc.c:608
+#: sys-utils/lscpu.c:826 sys-utils/lsipc.c:527 sys-utils/lsipc.c:608
 #: sys-utils/lsipc.c:703 sys-utils/lsipc.c:798 sys-utils/lsipc.c:885
 #: sys-utils/lsipc.c:1024 sys-utils/lsipc.c:1167 sys-utils/lsipc.c:1340
 #: sys-utils/prlimit.c:232 sys-utils/rfkill.c:389 sys-utils/swapon.c:192
@@ -1457,8 +1457,8 @@ msgstr "misslyckades med att allokera utmatningsrad"
 #: lsfd-cmd/sock.c:135 lsfd-cmd/unkn.c:125 lsfd-cmd/unkn.c:127
 #: misc-utils/fincore.c:270 misc-utils/findmnt.c:847 misc-utils/lsblk.c:1281
 #: misc-utils/lslocks.c:694 misc-utils/uuidparse.c:253 misc-utils/wipefs.c:242
-#: sys-utils/losetup.c:369 sys-utils/lscpu.c:578 sys-utils/lscpu.c:797
-#: sys-utils/lscpu.c:826 sys-utils/lscpu.c:837 sys-utils/lsipc.c:567
+#: sys-utils/losetup.c:369 sys-utils/lscpu.c:578 sys-utils/lscpu.c:801
+#: sys-utils/lscpu.c:830 sys-utils/lscpu.c:841 sys-utils/lsipc.c:567
 #: sys-utils/lsipc.c:685 sys-utils/lsipc.c:856 sys-utils/prlimit.c:267
 #: sys-utils/rfkill.c:417 sys-utils/swapon.c:240 sys-utils/wdctl.c:332
 #: sys-utils/zramctl.c:515 text-utils/column.c:682
@@ -2211,7 +2211,7 @@ msgid "couldn't find matching filesystem: %s"
 msgstr "kunde inte hitta matchande filsystem: %s"
 
 #: disk-utils/fsck.c:1502 disk-utils/fsck.c:1599 misc-utils/exch.c:84
-#: misc-utils/kill.c:353 misc-utils/kill.c:393 sys-utils/eject.c:281
+#: misc-utils/kill.c:357 misc-utils/kill.c:397 sys-utils/eject.c:281
 #: sys-utils/hwclock.c:1531
 msgid "too many arguments"
 msgstr "allt för många argument"
@@ -2225,7 +2225,7 @@ msgstr "ogiltigt argument för -r"
 msgid "option '%s' may be specified only once"
 msgstr "flaggan ”%s” kan endast anges en gång"
 
-#: disk-utils/fsck.c:1579 misc-utils/kill.c:436 misc-utils/kill.c:452
+#: disk-utils/fsck.c:1579 misc-utils/kill.c:440 misc-utils/kill.c:456
 #, c-format
 msgid "option '%s' requires an argument"
 msgstr "flagga ”%s” kräver ett argument"
@@ -2387,7 +2387,7 @@ msgid "non-size (%ld vs %ld) bytes"
 msgstr "icke-storlek (%ld versus %ld) byte"
 
 #: disk-utils/fsck.cramfs.c:425 disk-utils/fsck.cramfs.c:550
-#: disk-utils/swaplabel.c:111 misc-utils/uuidd.c:407 sys-utils/fallocate.c:442
+#: disk-utils/swaplabel.c:111 misc-utils/uuidd.c:407 sys-utils/fallocate.c:441
 #: sys-utils/rfkill.c:565 sys-utils/setpriv.c:656 sys-utils/setpriv.c:679
 #: sys-utils/swapon.c:413 term-utils/script.c:325 term-utils/ttymsg.c:175
 #, c-format
@@ -5326,7 +5326,7 @@ msgstr ""
 msgid "%s from %s\n"
 msgstr "%s från %s\n"
 
-#: include/c.h:504 misc-utils/kill.c:304 term-utils/agetty.c:696
+#: include/c.h:504 misc-utils/kill.c:308 term-utils/agetty.c:696
 #, c-format
 msgid "%s from %s"
 msgstr "%s från %s"
@@ -5349,7 +5349,7 @@ msgid "colors are disabled by default"
 msgstr "färger är inaktiverade som standard"
 
 #: include/env.h:37 lib/pager.c:159 login-utils/login.c:1217
-#: login-utils/login.c:1221 term-utils/agetty.c:1208
+#: login-utils/login.c:1221 term-utils/agetty.c:1212
 #, c-format
 msgid "failed to set the %s environment variable"
 msgstr "misslyckades med att ställa in miljövariabeln %s"
@@ -9125,9 +9125,9 @@ msgstr ""
 "\n"
 "%s inleder %s\n"
 
-#: login-utils/last.c:1037 term-utils/scriptlive.c:86
-#: term-utils/scriptlive.c:90 term-utils/scriptreplay.c:89
-#: term-utils/scriptreplay.c:93 text-utils/more.c:289 text-utils/more.c:295
+#: login-utils/last.c:1037 term-utils/scriptlive.c:85
+#: term-utils/scriptlive.c:89 term-utils/scriptreplay.c:88
+#: term-utils/scriptreplay.c:92 text-utils/more.c:289 text-utils/more.c:295
 msgid "failed to parse number"
 msgstr "misslyckades med att tolka nummer"
 
@@ -9360,7 +9360,7 @@ msgstr " -h <värd>      värdnamn som används vid utmp-loggning"
 msgid " -H             suppress hostname in the login prompt"
 msgstr " -H             undertryck värdnamn i inloggningsprompten"
 
-#: login-utils/login.c:1315 term-utils/agetty.c:3012
+#: login-utils/login.c:1315 term-utils/agetty.c:3016
 #, fuzzy
 #| msgid "failed to initialize loopcxt"
 msgid "failed to initialize path context"
@@ -9818,14 +9818,13 @@ msgstr "vem är du?"
 msgid "no such group"
 msgstr "ingen sådan grupp"
 
-#: login-utils/nologin.c:28 lsfd-cmd/lsfd.c:2180 misc-utils/lastlog2.c:108
+#: login-utils/nologin.c:28 lsfd-cmd/lsfd.c:2180 misc-utils/lastlog2.c:112
 #: misc-utils/lsclocks.c:189 misc-utils/lslocks.c:804 misc-utils/mcookie.c:88
 #: misc-utils/uuidd.c:97 misc-utils/uuidgen.c:29 sys-utils/dmesg.c:317
-#: sys-utils/ipcmk.c:152 sys-utils/irqtop.c:257 sys-utils/lscpu.c:1176
+#: sys-utils/ipcmk.c:152 sys-utils/irqtop.c:257 sys-utils/lscpu.c:1180
 #: sys-utils/lsipc.c:318 sys-utils/lsirq.c:53 sys-utils/lsmem.c:518
-#: sys-utils/readprofile.c:95 sys-utils/rtcwake.c:108
-#: term-utils/scriptlive.c:57 term-utils/scriptreplay.c:50
-#: term-utils/setterm.c:382 text-utils/line.c:30
+#: sys-utils/readprofile.c:95 sys-utils/rtcwake.c:108 term-utils/setterm.c:382
+#: text-utils/line.c:30
 #, c-format
 msgid " %s [options]\n"
 msgstr " %s [flaggor]\n"
@@ -9894,12 +9893,12 @@ msgid "cannot set signal mask"
 msgstr "kan inte ställa in signalmask"
 
 #: login-utils/su-common.c:561 term-utils/script.c:964
-#: term-utils/scriptlive.c:307
+#: term-utils/scriptlive.c:306
 msgid "failed to create pseudo-terminal"
 msgstr "misslyckades med att skapa pseudoterminal"
 
 #: login-utils/su-common.c:563 term-utils/script.c:971
-#: term-utils/scriptlive.c:309
+#: term-utils/scriptlive.c:308
 #, fuzzy
 #| msgid "failed to initialize %s handler"
 msgid "failed to initialize signals handler"
@@ -9912,7 +9911,7 @@ msgid "cannot set child signal handler"
 msgstr "kan inte ställa in signalhanterare"
 
 #: login-utils/su-common.c:588 term-utils/script.c:980
-#: term-utils/scriptlive.c:316
+#: term-utils/scriptlive.c:315
 msgid "cannot create child process"
 msgstr "kan inte skapa barnprocess"
 
@@ -9922,7 +9921,7 @@ msgstr "kan inte skapa barnprocess"
 msgid "cannot change directory to %s"
 msgstr "kan inte ändra katalog till %s"
 
-#: login-utils/su-common.c:633 term-utils/scriptlive.c:365
+#: login-utils/su-common.c:633 term-utils/scriptlive.c:364
 #, c-format
 msgid ""
 "\n"
@@ -11643,7 +11642,7 @@ msgstr " %s [flaggor] <sökvägsnamn>…\n"
 msgid "Atomically exchanges paths between two files.\n"
 msgstr ""
 
-#: misc-utils/exch.c:81 misc-utils/kill.c:391
+#: misc-utils/exch.c:81 misc-utils/kill.c:395
 #, fuzzy
 #| msgid "too many arguments"
 msgid "too few arguments"
@@ -12050,7 +12049,7 @@ msgstr "misslyckades med att initiera libmount-iterator"
 msgid "failed to initialize libmount tabdiff"
 msgstr "misslyckades med att initiera libmount-tabdiff"
 
-#: misc-utils/findmnt.c:1418 misc-utils/kill.c:516
+#: misc-utils/findmnt.c:1418 misc-utils/kill.c:520
 msgid "poll() failed"
 msgstr "poll() misslyckades"
 
@@ -13009,7 +13008,7 @@ msgstr ""
 #: misc-utils/hardlink.c:1487
 #, fuzzy
 #| msgid "failed to initialize loopcxt"
-msgid "failed to initialize files comparior"
+msgid "failed to initialize files comparer"
 msgstr "misslyckades med att initialisera loopcxt"
 
 #: misc-utils/hardlink.c:1508
@@ -13027,63 +13026,63 @@ msgstr "kan inte hämta realpath: %s"
 msgid "cannot process %s"
 msgstr "kan inte komma åt %s"
 
-#: misc-utils/kill.c:145
+#: misc-utils/kill.c:149
 #, fuzzy
 #| msgid "kernel messages"
 msgid "Pending (thread)"
 msgstr "kärnmeddelanden"
 
-#: misc-utils/kill.c:146
+#: misc-utils/kill.c:150
 #, fuzzy
 #| msgid "Running processes"
 msgid "Pending (process)"
 msgstr "Körande processer"
 
-#: misc-utils/kill.c:147
+#: misc-utils/kill.c:151
 #, fuzzy
 #| msgid "locked"
 msgid "Blocked"
 msgstr "låst"
 
-#: misc-utils/kill.c:148
+#: misc-utils/kill.c:152
 msgid "Ignored"
 msgstr ""
 
-#: misc-utils/kill.c:149
+#: misc-utils/kill.c:153
 msgid "Caught"
 msgstr ""
 
-#: misc-utils/kill.c:154 sys-utils/lscpu.c:235
+#: misc-utils/kill.c:158 sys-utils/lscpu.c:235
 msgid "failed to initialize procfs handler"
 msgstr "misslyckades med att initiera procfs-hanterare"
 
-#: misc-utils/kill.c:157
+#: misc-utils/kill.c:161
 #, fuzzy, c-format
 #| msgid "cannot open %s"
 msgid "cannot open /proc/%d/status"
 msgstr "kan inte öppna %s"
 
-#: misc-utils/kill.c:170
+#: misc-utils/kill.c:174
 #, fuzzy, c-format
 #| msgid "unexpected third line in: %s: %s"
 msgid "unexpected sigmask format: %s (%s)"
 msgstr "oväntad tredje rad i: %s: %s"
 
-#: misc-utils/kill.c:234
+#: misc-utils/kill.c:238
 #, c-format
 msgid "unknown signal %s; valid signals:"
 msgstr "okänd signal %s; giltiga signaler:"
 
-#: misc-utils/kill.c:260
+#: misc-utils/kill.c:264
 #, c-format
 msgid " %s [options] <pid>|<name>...\n"
 msgstr " %s [flaggor] <pid> | <namn>…\n"
 
-#: misc-utils/kill.c:263
+#: misc-utils/kill.c:267
 msgid "Forcibly terminate a process.\n"
 msgstr "Tvinga fram att en process avslutas.\n"
 
-#: misc-utils/kill.c:266
+#: misc-utils/kill.c:270
 msgid ""
 " -a, --all              do not restrict the name-to-pid conversion to processes\n"
 "                          with the same uid as the present process\n"
@@ -13091,15 +13090,15 @@ msgstr ""
 " -a, --all              begränsa inte namn-till-pid-konverteringen till processer\n"
 "                          med samma uid som den aktuella processen\n"
 
-#: misc-utils/kill.c:268
+#: misc-utils/kill.c:272
 msgid " -s, --signal <signal>  send this <signal> instead of SIGTERM\n"
 msgstr " -s, --signal <signal>  skicka <signal> istället för SIGTERM\n"
 
-#: misc-utils/kill.c:270
+#: misc-utils/kill.c:274
 msgid " -q, --queue <value>    use sigqueue(2), not kill(2), and pass <value> as data\n"
 msgstr " -q, --queue <värde>    använd sigqueue(2), inte kill(2), och skicka <värde> som data\n"
 
-#: misc-utils/kill.c:273
+#: misc-utils/kill.c:277
 msgid ""
 "     --timeout <milliseconds> <follow-up signal>\n"
 "                        wait up to timeout and send follow-up signal\n"
@@ -13107,11 +13106,11 @@ msgstr ""
 "     --timeout <millisekunder> <uppföljningssignal>\n"
 "                        vänta i upp till tidsgräns och skicka uppföljningssignal\n"
 
-#: misc-utils/kill.c:276
+#: misc-utils/kill.c:280
 msgid " -p, --pid              print pids without signaling them\n"
 msgstr " -p, --pid              skriv ut PID:ar utan att signalera dem\n"
 
-#: misc-utils/kill.c:277
+#: misc-utils/kill.c:281
 #, fuzzy
 #| msgid " -l, --list[=<signal>]  list signal names, or convert a signal number to a name\n"
 msgid ""
@@ -13120,53 +13119,53 @@ msgid ""
 "                         or convert a signal mask to names\n"
 msgstr " -l, --list[=<signal>]  lista signalnamn eller konvertera ett signalnummer till ett namn\n"
 
-#: misc-utils/kill.c:280
+#: misc-utils/kill.c:284
 msgid " -L, --table            list signal names and numbers\n"
 msgstr " -L, --table            lista signalnamn och signalnummer\n"
 
-#: misc-utils/kill.c:281
+#: misc-utils/kill.c:285
 msgid " -r, --require-handler  do not send signal if signal handler is not present\n"
 msgstr ""
 
-#: misc-utils/kill.c:282
+#: misc-utils/kill.c:286
 msgid ""
 " -d, --show-process-state <pid>\n"
 "                        show signal related fields in /proc/<pid>/status\n"
 msgstr ""
 
-#: misc-utils/kill.c:284
+#: misc-utils/kill.c:288
 msgid "     --verbose          print pids that will be signaled\n"
 msgstr "     --verbose          skriv ut PID:ar som kommer att signaleras\n"
 
-#: misc-utils/kill.c:308
+#: misc-utils/kill.c:312
 msgid " (with: "
 msgstr " (med: "
 
-#: misc-utils/kill.c:359 misc-utils/kill.c:375
+#: misc-utils/kill.c:363 misc-utils/kill.c:379
 #, fuzzy, c-format
 #| msgid "Invalid start address format: %s"
 msgid "invalid sigmask format: %s"
 msgstr "Ogiltigt startadressformat: %s"
 
-#: misc-utils/kill.c:364 misc-utils/kill.c:380 sys-utils/setpriv.c:463
+#: misc-utils/kill.c:368 misc-utils/kill.c:384 sys-utils/setpriv.c:463
 #: sys-utils/unshare.c:1035
 #, c-format
 msgid "unknown signal: %s"
 msgstr "okänd signal: %s"
 
-#: misc-utils/kill.c:395 misc-utils/kill.c:403
+#: misc-utils/kill.c:399 misc-utils/kill.c:407
 #, fuzzy
 #| msgid "invalid period argument"
 msgid "invalid pid argument"
 msgstr "ogiltigt periodargument"
 
-#: misc-utils/kill.c:414 misc-utils/kill.c:417 misc-utils/kill.c:426
-#: misc-utils/kill.c:438 misc-utils/kill.c:481 sys-utils/mountpoint.c:186
+#: misc-utils/kill.c:418 misc-utils/kill.c:421 misc-utils/kill.c:430
+#: misc-utils/kill.c:442 misc-utils/kill.c:485 sys-utils/mountpoint.c:186
 #, c-format
 msgid "%s and %s are mutually exclusive"
 msgstr "%s och %s är ömsesidigt uteslutande"
 
-#: misc-utils/kill.c:441 misc-utils/kill.c:456 sys-utils/eject.c:210
+#: misc-utils/kill.c:445 misc-utils/kill.c:460 sys-utils/eject.c:210
 #: sys-utils/eject.c:232 sys-utils/losetup.c:820 sys-utils/tunelp.c:164
 #: sys-utils/tunelp.c:171 sys-utils/tunelp.c:178 sys-utils/tunelp.c:185
 #: sys-utils/tunelp.c:192 sys-utils/tunelp.c:198 sys-utils/tunelp.c:202
@@ -13184,150 +13183,156 @@ msgstr "%s och %s är ömsesidigt uteslutande"
 msgid "argument error"
 msgstr "argumentfel"
 
-#: misc-utils/kill.c:478
+#: misc-utils/kill.c:482
 #, c-format
 msgid "invalid signal name or number: %s"
 msgstr "ogiltigt signalnamn eller nummer: %s"
 
-#: misc-utils/kill.c:504
+#: misc-utils/kill.c:508
 #, c-format
 msgid "pidfd_open() failed: %d"
 msgstr "pidfd_open() misslyckades: %d"
 
-#: misc-utils/kill.c:509 misc-utils/kill.c:523
+#: misc-utils/kill.c:513 misc-utils/kill.c:527
 msgid "pidfd_send_signal() failed"
 msgstr "pidfd_send_signal() misslyckades"
 
-#: misc-utils/kill.c:520
+#: misc-utils/kill.c:524
 #, c-format
 msgid "timeout, sending signal %d to pid %d\n"
 msgstr "tidsutlösning, skickar signal %d till pid %d\n"
 
-#: misc-utils/kill.c:535
+#: misc-utils/kill.c:539
 #, c-format
 msgid "sending signal %d to pid %d\n"
 msgstr "skickar signal %d till pid %d\n"
 
-#: misc-utils/kill.c:553
+#: misc-utils/kill.c:557
 #, c-format
 msgid "sending signal to %s failed"
 msgstr "att skicka signal till %s misslyckades"
 
-#: misc-utils/kill.c:578
+#: misc-utils/kill.c:582
 #, c-format
 msgid "not signalling pid %d, it has no userspace handler for signal %d\n"
 msgstr ""
 
-#: misc-utils/kill.c:640
+#: misc-utils/kill.c:644
 #, c-format
 msgid "cannot find process \"%s\""
 msgstr "kan inte hitta process ”%s”"
 
-#: misc-utils/lastlog2.c:111
+#: misc-utils/lastlog2.c:115
+#, fuzzy
+#| msgid " -a, --all            print all devices\n"
+msgid " -a, --active            print lastlog excluding '**Never logged in**' users\n"
+msgstr " -a, --all             skriv ut alla enheter\n"
+
+#: misc-utils/lastlog2.c:116
 #, fuzzy
 #| msgid " -z, --zoned          print zone model\n"
 msgid " -b, --before DAYS       print only records older than DAYS\n"
 msgstr " -z, --zoned           skriv ut zonmodell\n"
 
-#: misc-utils/lastlog2.c:112
+#: misc-utils/lastlog2.c:117
 #, fuzzy
 #| msgid " -C, --clear                 clear the kernel ring buffer\n"
 msgid " -C, --clear             clear record of a user (requires -u)\n"
 msgstr " -C, --clear                 töm kärnans ringbuffert\n"
 
-#: misc-utils/lastlog2.c:113
+#: misc-utils/lastlog2.c:118
 msgid " -d, --database FILE     use FILE as lastlog2 database\n"
 msgstr ""
 
-#: misc-utils/lastlog2.c:114
+#: misc-utils/lastlog2.c:119
 msgid " -i, --import FILE       import data from old lastlog file\n"
 msgstr ""
 
-#: misc-utils/lastlog2.c:115
+#: misc-utils/lastlog2.c:120
 msgid " -r, --rename NEWNAME    rename existing user to NEWNAME (requires -u)\n"
 msgstr ""
 
-#: misc-utils/lastlog2.c:116
+#: misc-utils/lastlog2.c:121
 #, fuzzy
 #| msgid " -u, --userspace             display userspace messages\n"
 msgid " -s, --service           display PAM service\n"
 msgstr " -u, --userspace             visa meddelanden från användarrymden\n"
 
-#: misc-utils/lastlog2.c:117
+#: misc-utils/lastlog2.c:122
 #, fuzzy
 #| msgid " -r, --reset               reset all the counters (root only)\n"
 msgid " -S, --set               set lastlog record to current time (requires -u)\n"
 msgstr " -r, --reset               återställ alla räknare (endast root)\n"
 
-#: misc-utils/lastlog2.c:118
+#: misc-utils/lastlog2.c:123
 #, fuzzy
 #| msgid " -r, --reset               reset all the counters (root only)\n"
 msgid " -t, --time DAYS         print only lastlog records more recent than DAYS\n"
 msgstr " -r, --reset               återställ alla räknare (endast root)\n"
 
-#: misc-utils/lastlog2.c:119
+#: misc-utils/lastlog2.c:124
 #, fuzzy
 #| msgid " -r, --reset               reset all the counters (root only)\n"
 msgid " -u, --user LOGIN        print lastlog record of the specified LOGIN\n"
 msgstr " -r, --reset               återställ alla räknare (endast root)\n"
 
-#: misc-utils/lastlog2.c:166 misc-utils/lastlog2.c:199
+#: misc-utils/lastlog2.c:175 misc-utils/lastlog2.c:208
 #, fuzzy
 #| msgid "cannot update %s"
 msgid "Cannot parse days"
 msgstr "kan inte uppdatera %s"
 
-#: misc-utils/lastlog2.c:217
+#: misc-utils/lastlog2.c:226
 msgid "Option -C, -i and -S cannot be used together"
 msgstr ""
 
-#: misc-utils/lastlog2.c:221
+#: misc-utils/lastlog2.c:230
 #, fuzzy
 #| msgid "Couldn't initialize PAM: %s"
 msgid "Couldn't initialize lastlog2 environment"
 msgstr "Kunde inte initiera PAM: %s"
 
-#: misc-utils/lastlog2.c:226
+#: misc-utils/lastlog2.c:235
 #, fuzzy, c-format
 #| msgid "Could not open %s\n"
 msgid "Couldn't import entries from '%s'"
 msgstr "Kunde inte öppna %s\n"
 
-#: misc-utils/lastlog2.c:235
+#: misc-utils/lastlog2.c:244
 msgid "Options -C, -r and -S require option -u to specify the user"
 msgstr ""
 
-#: misc-utils/lastlog2.c:240 misc-utils/lastlog2.c:283
+#: misc-utils/lastlog2.c:249 misc-utils/lastlog2.c:292
 #, fuzzy, c-format
 #| msgid "user %s does not exist"
 msgid "User '%s' does not exist."
 msgstr "användaren %s existerar inte"
 
-#: misc-utils/lastlog2.c:246
+#: misc-utils/lastlog2.c:255
 #, fuzzy, c-format
 #| msgid "Could not open %s\n"
 msgid "Couldn't remove entry for '%s'"
 msgstr "Kunde inte öppna %s\n"
 
-#: misc-utils/lastlog2.c:255
+#: misc-utils/lastlog2.c:264
 #, fuzzy
 #| msgid "could not determine current format type"
 msgid "Could not determine current time"
 msgstr "kunde inte avgöra aktuell formattyp"
 
-#: misc-utils/lastlog2.c:260
+#: misc-utils/lastlog2.c:269
 #, fuzzy, c-format
 #| msgid "unsupported logging format: '%s'"
 msgid "Couldn't update login time for '%s'"
 msgstr "loggformat stöds ej: ”%s”"
 
-#: misc-utils/lastlog2.c:267
+#: misc-utils/lastlog2.c:276
 #, fuzzy, c-format
 #| msgid "mount: translated %s '%s' to '%s'\n"
 msgid "Couldn't rename entry '%s' to '%s'"
 msgstr "mount: översatte %s \"%s\" till \"%s\"\n"
 
-#: misc-utils/lastlog2.c:297
+#: misc-utils/lastlog2.c:306
 #, fuzzy
 #| msgid "Could not open %s\n"
 msgid "Couldn't read entries for all users"
@@ -15156,7 +15161,7 @@ msgid "vendor"
 msgstr "enhetstillverkare"
 
 #: misc-utils/uuidparse.c:281 misc-utils/wipefs.c:178
-#: sys-utils/irq-common.c:148 sys-utils/irq-common.c:481 sys-utils/lscpu.c:991
+#: sys-utils/irq-common.c:148 sys-utils/irq-common.c:481 sys-utils/lscpu.c:995
 #: sys-utils/lsmem.c:716 sys-utils/lsns.c:1327 sys-utils/zramctl.c:539
 msgid "failed to initialize output column"
 msgstr "misslyckades att initiera utmatningskolumn"
@@ -16246,7 +16251,7 @@ msgid "failed to parse step"
 msgstr "misslyckades med att tolka steg"
 
 #: sys-utils/blkdiscard.c:231 sys-utils/blkpr.c:307 sys-utils/blkzone.c:492
-#: sys-utils/fallocate.c:384 sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:577
+#: sys-utils/fallocate.c:383 sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:577
 #: sys-utils/umount.c:619 term-utils/script.c:911
 msgid "unexpected number of arguments"
 msgstr "oväntat antal argument"
@@ -17748,51 +17753,51 @@ msgstr "%s: läsning misslyckades"
 msgid "%s: %s (%ju bytes) converted to sparse holes.\n"
 msgstr "%s: %s (%ju byte) konverterade till glesa hål.\n"
 
-#: sys-utils/fallocate.c:363
+#: sys-utils/fallocate.c:362
 msgid "posix_fallocate support is not compiled"
 msgstr "posix_fallocate-stöd är inte kompilerat"
 
-#: sys-utils/fallocate.c:379 sys-utils/fsfreeze.c:106
+#: sys-utils/fallocate.c:378 sys-utils/fsfreeze.c:106
 msgid "no filename specified"
 msgstr "inget filnamn angivet"
 
-#: sys-utils/fallocate.c:391 sys-utils/fallocate.c:397
+#: sys-utils/fallocate.c:390 sys-utils/fallocate.c:396
 msgid "invalid length value specified"
 msgstr "ogiltigt längdvärde angivet"
 
-#: sys-utils/fallocate.c:395
+#: sys-utils/fallocate.c:394
 msgid "no length argument specified"
 msgstr "inget längdargument angivet"
 
-#: sys-utils/fallocate.c:400
+#: sys-utils/fallocate.c:399
 msgid "invalid offset value specified"
 msgstr "ogiltigt positionsvärde angivet"
 
-#: sys-utils/fallocate.c:423
+#: sys-utils/fallocate.c:422
 #, fuzzy, c-format
 #| msgid "%s: %s (%ju bytes) converted to sparse holes.\n"
 msgid "%s: %s (%ju bytes) hole created.\n"
 msgstr "%s: %s (%ju byte) konverterade till glesa hål.\n"
 
-#: sys-utils/fallocate.c:426
+#: sys-utils/fallocate.c:425
 #, fuzzy, c-format
 #| msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
 msgid "%s: %s (%ju bytes) removed.\n"
 msgstr "%s: %s (%<PRIu64> byte) trimmade\n"
 
-#: sys-utils/fallocate.c:429
+#: sys-utils/fallocate.c:428
 #, fuzzy, c-format
 #| msgid "%s: %s (%ju bytes) converted to sparse holes.\n"
 msgid "%s: %s (%ju bytes) inserted.\n"
 msgstr "%s: %s (%ju byte) konverterade till glesa hål.\n"
 
-#: sys-utils/fallocate.c:432
+#: sys-utils/fallocate.c:431
 #, fuzzy, c-format
 #| msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
 msgid "%s: %s (%ju bytes) zeroed.\n"
 msgstr "%s: %s (%<PRIu64> byte) trimmade\n"
 
-#: sys-utils/fallocate.c:435
+#: sys-utils/fallocate.c:434
 #, fuzzy, c-format
 #| msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
 msgid "%s: %s (%ju bytes) allocated.\n"
@@ -20487,331 +20492,331 @@ msgstr ""
 "# andra program. Varje objekt har ett unikt ID som börjar på noll i\n"
 "#varje kolumn.\n"
 
-#: sys-utils/lscpu.c:881
+#: sys-utils/lscpu.c:885
 msgid "Model name:"
 msgstr "Modellnamn:"
 
-#: sys-utils/lscpu.c:883
+#: sys-utils/lscpu.c:887
 #, fuzzy
 #| msgid "Model name:"
 msgid "BIOS Model name:"
 msgstr "Modellnamn:"
 
-#: sys-utils/lscpu.c:885
+#: sys-utils/lscpu.c:889
 #, fuzzy
 #| msgid "CPU family:"
 msgid "BIOS CPU family:"
 msgstr "CPU-familj:"
 
-#: sys-utils/lscpu.c:887
+#: sys-utils/lscpu.c:891
 msgid "Machine type:"
 msgstr "Maskintyp:"
 
-#: sys-utils/lscpu.c:889
+#: sys-utils/lscpu.c:893
 msgid "CPU family:"
 msgstr "CPU-familj:"
 
-#: sys-utils/lscpu.c:891
+#: sys-utils/lscpu.c:895
 msgid "Model:"
 msgstr "Modell:"
 
-#: sys-utils/lscpu.c:893
+#: sys-utils/lscpu.c:897
 msgid "Thread(s) per core:"
 msgstr "Tråd(ar) per kärna:"
 
-#: sys-utils/lscpu.c:895
+#: sys-utils/lscpu.c:899
 #, fuzzy
 #| msgid "Core(s) per socket:"
 msgid "Core(s) per cluster:"
 msgstr "Kärn(or) per uttag:"
 
-#: sys-utils/lscpu.c:897
+#: sys-utils/lscpu.c:901
 msgid "Core(s) per socket:"
 msgstr "Kärn(or) per uttag:"
 
-#: sys-utils/lscpu.c:900
+#: sys-utils/lscpu.c:904
 msgid "Socket(s) per book:"
 msgstr "Uttag per bok:"
 
-#: sys-utils/lscpu.c:902
+#: sys-utils/lscpu.c:906
 msgid "Book(s) per drawer:"
 msgstr "Böcker per låda:"
 
-#: sys-utils/lscpu.c:903
+#: sys-utils/lscpu.c:907
 msgid "Drawer(s):"
 msgstr "Lådor:"
 
-#: sys-utils/lscpu.c:905
+#: sys-utils/lscpu.c:909
 msgid "Book(s):"
 msgstr "Böcker:"
 
-#: sys-utils/lscpu.c:909 sys-utils/lscpu.c:911 sys-utils/lscpu.c:916
+#: sys-utils/lscpu.c:913 sys-utils/lscpu.c:915 sys-utils/lscpu.c:920
 msgid "Socket(s):"
 msgstr "Uttag:"
 
-#: sys-utils/lscpu.c:913
+#: sys-utils/lscpu.c:917
 msgid "Cluster(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:921
+#: sys-utils/lscpu.c:925
 msgid "Stepping:"
 msgstr "Stegning:"
 
-#: sys-utils/lscpu.c:923
+#: sys-utils/lscpu.c:927
 msgid "Frequency boost:"
 msgstr "Frekvenshöjning:"
 
-#: sys-utils/lscpu.c:924
+#: sys-utils/lscpu.c:928
 msgid "enabled"
 msgstr "aktiverad"
 
-#: sys-utils/lscpu.c:924
+#: sys-utils/lscpu.c:928
 msgid "disabled"
 msgstr "inaktiverad"
 
-#: sys-utils/lscpu.c:928
+#: sys-utils/lscpu.c:932
 msgid "CPU dynamic MHz:"
 msgstr "CPU dynamisk MHz:"
 
-#: sys-utils/lscpu.c:930
+#: sys-utils/lscpu.c:934
 msgid "CPU static MHz:"
 msgstr "CPU statisk MHz:"
 
-#: sys-utils/lscpu.c:935
+#: sys-utils/lscpu.c:939
 #, fuzzy
 #| msgid "CPU min MHz:"
 msgid "CPU(s) scaling MHz:"
 msgstr "CPU min MHz:"
 
-#: sys-utils/lscpu.c:936
+#: sys-utils/lscpu.c:940
 msgid "CPU max MHz:"
 msgstr "CPU max MHz:"
 
-#: sys-utils/lscpu.c:937
+#: sys-utils/lscpu.c:941
 msgid "CPU min MHz:"
 msgstr "CPU min MHz:"
 
-#: sys-utils/lscpu.c:940
+#: sys-utils/lscpu.c:944
 msgid "BogoMIPS:"
 msgstr "BogoMIPS:"
 
-#: sys-utils/lscpu.c:943
+#: sys-utils/lscpu.c:947
 msgid "Dispatching mode:"
 msgstr "Avsändningsläge:"
 
-#: sys-utils/lscpu.c:946
+#: sys-utils/lscpu.c:950
 msgid "Physical sockets:"
 msgstr "Fysiska uttag:"
 
-#: sys-utils/lscpu.c:947
+#: sys-utils/lscpu.c:951
 msgid "Physical chips:"
 msgstr "Fysiska chip:"
 
-#: sys-utils/lscpu.c:948
+#: sys-utils/lscpu.c:952
 msgid "Physical cores/chip:"
 msgstr "Fysiska kärnor/chip:"
 
-#: sys-utils/lscpu.c:952
+#: sys-utils/lscpu.c:956
 msgid "Flags:"
 msgstr "Flaggor:"
 
-#: sys-utils/lscpu.c:996
+#: sys-utils/lscpu.c:1000
 msgid "Architecture:"
 msgstr "Arkitektur:"
 
-#: sys-utils/lscpu.c:1007
+#: sys-utils/lscpu.c:1011
 msgid "CPU op-mode(s):"
 msgstr "CPU op-läge(n):"
 
-#: sys-utils/lscpu.c:1010
+#: sys-utils/lscpu.c:1014
 msgid "Address sizes:"
 msgstr "Adresstorlekar:"
 
-#: sys-utils/lscpu.c:1013 sys-utils/lscpu.c:1015
+#: sys-utils/lscpu.c:1017 sys-utils/lscpu.c:1019
 msgid "Byte Order:"
 msgstr "Byteordning:"
 
-#: sys-utils/lscpu.c:1018
+#: sys-utils/lscpu.c:1022
 msgid "CPU(s):"
 msgstr "CPU(er):"
 
-#: sys-utils/lscpu.c:1022
+#: sys-utils/lscpu.c:1026
 msgid "On-line CPU(s) mask:"
 msgstr "Mask för aktiva CPU(er):"
 
-#: sys-utils/lscpu.c:1023
+#: sys-utils/lscpu.c:1027
 msgid "On-line CPU(s) list:"
 msgstr "Lista över aktiva CPU(er):"
 
-#: sys-utils/lscpu.c:1035
+#: sys-utils/lscpu.c:1039
 msgid "failed to callocate cpu set"
 msgstr "misslyckades att köra callocate för cpu-uppsättning"
 
-#: sys-utils/lscpu.c:1044
+#: sys-utils/lscpu.c:1048
 msgid "Off-line CPU(s) mask:"
 msgstr "Mask för inaktiva CPU(er):"
 
-#: sys-utils/lscpu.c:1045
+#: sys-utils/lscpu.c:1049
 msgid "Off-line CPU(s) list:"
 msgstr "Lista över inaktiva CPU(er):"
 
-#: sys-utils/lscpu.c:1052
+#: sys-utils/lscpu.c:1056
 msgid "Vendor ID:"
 msgstr "Tillverkar-ID:"
 
-#: sys-utils/lscpu.c:1054
+#: sys-utils/lscpu.c:1058
 #, fuzzy
 #| msgid "Vendor ID:"
 msgid "BIOS Vendor ID:"
 msgstr "Tillverkar-ID:"
 
-#: sys-utils/lscpu.c:1062
+#: sys-utils/lscpu.c:1066
 #, fuzzy
 #| msgid "Virtualization type:"
 msgid "Virtualization features:"
 msgstr "Virtualiseringstyp:"
 
-#: sys-utils/lscpu.c:1064 sys-utils/lscpu.c:1066
+#: sys-utils/lscpu.c:1068 sys-utils/lscpu.c:1070
 msgid "Virtualization:"
 msgstr "Virtualisering:"
 
-#: sys-utils/lscpu.c:1069
+#: sys-utils/lscpu.c:1073
 msgid "Hypervisor:"
 msgstr "Hypervisor:"
 
-#: sys-utils/lscpu.c:1071
+#: sys-utils/lscpu.c:1075
 msgid "Hypervisor vendor:"
 msgstr "Hypervisortillverkare:"
 
-#: sys-utils/lscpu.c:1072
+#: sys-utils/lscpu.c:1076
 msgid "Virtualization type:"
 msgstr "Virtualiseringstyp:"
 
-#: sys-utils/lscpu.c:1095
+#: sys-utils/lscpu.c:1099
 msgid "Caches (sum of all):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1099 sys-utils/lscpu.c:1129 sys-utils/lscpu.c:1161
+#: sys-utils/lscpu.c:1103 sys-utils/lscpu.c:1133 sys-utils/lscpu.c:1165
 #, fuzzy, c-format
 #| msgid "%s"
 msgid "%s:"
 msgstr "%s"
 
-#: sys-utils/lscpu.c:1099 sys-utils/lscpu.c:1129
+#: sys-utils/lscpu.c:1103 sys-utils/lscpu.c:1133
 #, c-format
 msgid "%s cache:"
 msgstr "%s cache:"
 
-#: sys-utils/lscpu.c:1102
+#: sys-utils/lscpu.c:1106
 #, c-format
 msgid "%<PRIu64> (%d instance)"
 msgid_plural "%<PRIu64> (%d instances)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: sys-utils/lscpu.c:1111
+#: sys-utils/lscpu.c:1115
 #, c-format
 msgid "%s (%d instance)"
 msgid_plural "%s (%d instances)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: sys-utils/lscpu.c:1126
+#: sys-utils/lscpu.c:1130
 #, fuzzy
 #| msgid "%s cache:"
 msgid "Caches:"
 msgstr "%s cache:"
 
-#: sys-utils/lscpu.c:1145
+#: sys-utils/lscpu.c:1149
 msgid "NUMA:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1147
+#: sys-utils/lscpu.c:1151
 msgid "NUMA node(s):"
 msgstr "NUMA nod(er):"
 
-#: sys-utils/lscpu.c:1149
+#: sys-utils/lscpu.c:1153
 #, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr "NUMA-nod%d CPU(er):"
 
-#: sys-utils/lscpu.c:1157
+#: sys-utils/lscpu.c:1161
 #, fuzzy
 #| msgid "Inheritable capabilities: "
 msgid "Vulnerabilities:"
 msgstr "Förmågor som kan ärvas: "
 
-#: sys-utils/lscpu.c:1161
+#: sys-utils/lscpu.c:1165
 #, fuzzy, c-format
 #| msgid "unknown capability \"%s\""
 msgid "Vulnerability %s:"
 msgstr "okänd förmåga ”%s”"
 
-#: sys-utils/lscpu.c:1179
+#: sys-utils/lscpu.c:1183
 msgid "Display information about the CPU architecture.\n"
 msgstr "Visa information om CPU-arkitekturen.\n"
 
-#: sys-utils/lscpu.c:1182
+#: sys-utils/lscpu.c:1186
 msgid " -a, --all               print both online and offline CPUs (default for -e)\n"
 msgstr " -a, --all                skriv ut både aktiva och inaktiva CPU:er (standard för -e)\n"
 
-#: sys-utils/lscpu.c:1183
+#: sys-utils/lscpu.c:1187
 msgid " -b, --online            print online CPUs only (default for -p)\n"
 msgstr " -b, --online             skriv endast ut aktiva CPU:er (standard för -p)\n"
 
-#: sys-utils/lscpu.c:1184
+#: sys-utils/lscpu.c:1188
 msgid " -B, --bytes             print sizes in bytes rather than in human readable format\n"
 msgstr " -B, --bytes             skriv ut storlekar i byte snarare än i ett format läsbart för människor\n"
 
-#: sys-utils/lscpu.c:1185
+#: sys-utils/lscpu.c:1189
 msgid " -C, --caches[=<list>]   info about caches in extended readable format\n"
 msgstr " -C, --caches[=<lista>]  information om cachar i utökat läsbart format\n"
 
-#: sys-utils/lscpu.c:1186
+#: sys-utils/lscpu.c:1190
 msgid " -c, --offline           print offline CPUs only\n"
 msgstr " -c, --offline            skriv endast ut inaktiva CPU:er\n"
 
-#: sys-utils/lscpu.c:1187
+#: sys-utils/lscpu.c:1191
 msgid " -J, --json              use JSON for default or extended format\n"
 msgstr " -J, --json               använd JSON som standard- eller utökat utmatningsformat\n"
 
-#: sys-utils/lscpu.c:1188
+#: sys-utils/lscpu.c:1192
 msgid " -e, --extended[=<list>] print out an extended readable format\n"
 msgstr " -e, --extended[=<lista>] skriv ut i ett utökat, läsbart format\n"
 
-#: sys-utils/lscpu.c:1189
+#: sys-utils/lscpu.c:1193
 msgid " -p, --parse[=<list>]    print out a parsable format\n"
 msgstr " -p, --parse[=<lista>]    skriv ut en lista i tolkningsbart format\n"
 
-#: sys-utils/lscpu.c:1190
+#: sys-utils/lscpu.c:1194
 #, fuzzy
 #| msgid " -r, --raw              use raw output format\n"
 msgid " -r, --raw               use raw output format (for -e, -p and -C)\n"
 msgstr " -r, --raw               använd rått utmatningsformat\n"
 
-#: sys-utils/lscpu.c:1191
+#: sys-utils/lscpu.c:1195
 msgid " -s, --sysroot <dir>     use specified directory as system root\n"
 msgstr " -s, --sysroot <kat>      använd angiven katalog som systemrot\n"
 
-#: sys-utils/lscpu.c:1192
+#: sys-utils/lscpu.c:1196
 msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
 msgstr " -x, --hex                skriv ut hexadecimala masker snarare än listor över CPU:er\n"
 
-#: sys-utils/lscpu.c:1193
+#: sys-utils/lscpu.c:1197
 msgid " -y, --physical          print physical instead of logical IDs\n"
 msgstr " -y, --physical           skriv ut fysiska istället för logiska ID\n"
 
-#: sys-utils/lscpu.c:1194
+#: sys-utils/lscpu.c:1198
 #, fuzzy
 #| msgid "     --summary[=when] print summary information (never,always or only)\n"
 msgid "     --hierarchic[=when] use subsections in summary (auto, never, always)\n"
 msgstr "     --summary[=när]   skriv ut sammanfattning (never,always eller only)\n"
 
-#: sys-utils/lscpu.c:1195
+#: sys-utils/lscpu.c:1199
 msgid "     --output-all        print all available columns for -e, -p or -C\n"
 msgstr "     --output-all        skriv ut alla tillgängliga kolumner för -e, -p eller -C\n"
 
-#: sys-utils/lscpu.c:1199
+#: sys-utils/lscpu.c:1203
 msgid ""
 "\n"
 "Available output columns for -e or -p:\n"
@@ -20819,7 +20824,7 @@ msgstr ""
 "\n"
 "Tillgängliga utdatakolumner för -e eller -p:\n"
 
-#: sys-utils/lscpu.c:1203
+#: sys-utils/lscpu.c:1207
 msgid ""
 "\n"
 "Available output columns for -C:\n"
@@ -20827,13 +20832,13 @@ msgstr ""
 "\n"
 "Tillgängliga utdatakolumner för -C:\n"
 
-#: sys-utils/lscpu.c:1323
+#: sys-utils/lscpu.c:1327
 #, fuzzy
 #| msgid "unsupported --summary argument"
 msgid "unsupported --flat argument"
 msgstr "argumentet --summary stöds inte"
 
-#: sys-utils/lscpu.c:1347
+#: sys-utils/lscpu.c:1351
 #, c-format
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr "%s: flaggorna --all, --online och --offline kan endast användas med flaggorna --extended eller --parse.\n"
@@ -25199,10 +25204,10 @@ msgstr "%s: kan inte ändra processprioritet: %m"
 msgid "%s: can't exec %s: %m"
 msgstr "%s: kan inte köra %s: %m"
 
-#: term-utils/agetty.c:606 term-utils/agetty.c:777 term-utils/agetty.c:956
-#: term-utils/agetty.c:1205 term-utils/agetty.c:1484 term-utils/agetty.c:1502
-#: term-utils/agetty.c:1539 term-utils/agetty.c:1549 term-utils/agetty.c:1591
-#: term-utils/agetty.c:1951 term-utils/agetty.c:2311 term-utils/agetty.c:2893
+#: term-utils/agetty.c:606 term-utils/agetty.c:777 term-utils/agetty.c:960
+#: term-utils/agetty.c:1209 term-utils/agetty.c:1488 term-utils/agetty.c:1506
+#: term-utils/agetty.c:1543 term-utils/agetty.c:1553 term-utils/agetty.c:1595
+#: term-utils/agetty.c:1955 term-utils/agetty.c:2315 term-utils/agetty.c:2897
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "misslyckades med att allokera minne: %m"
@@ -25219,106 +25224,106 @@ msgstr "ogiltigt argument till --local-line"
 msgid "invalid nice argument"
 msgstr "ogiltigt nice-argument"
 
-#: term-utils/agetty.c:934
+#: term-utils/agetty.c:939
 #, fuzzy, c-format
 #| msgid "could not set terminal attributes"
 msgid "could not get terminal name: %d"
 msgstr "kan inte ställa in terminalattribut"
 
-#: term-utils/agetty.c:961
+#: term-utils/agetty.c:965
 #, c-format
 msgid "bad speed: %s"
 msgstr "felaktig hastighet: %s"
 
-#: term-utils/agetty.c:963
+#: term-utils/agetty.c:967
 msgid "too many alternate speeds"
 msgstr "för många alternativa hastigheter"
 
-#: term-utils/agetty.c:1070 term-utils/agetty.c:1074 term-utils/agetty.c:1127
+#: term-utils/agetty.c:1074 term-utils/agetty.c:1078 term-utils/agetty.c:1131
 #, c-format
 msgid "/dev/%s: cannot open as standard input: %m"
 msgstr "/dev/%s: kan inte öppna som standard in: %m"
 
-#: term-utils/agetty.c:1093
+#: term-utils/agetty.c:1097
 #, c-format
 msgid "/dev/%s: not a character device"
 msgstr "/dev/%s: ingen teckenenhet"
 
-#: term-utils/agetty.c:1095
+#: term-utils/agetty.c:1099
 #, c-format
 msgid "/dev/%s: not a tty"
 msgstr "/dev/%s: inte en tty"
 
-#: term-utils/agetty.c:1099 term-utils/agetty.c:1131
+#: term-utils/agetty.c:1103 term-utils/agetty.c:1135
 #, c-format
 msgid "/dev/%s: cannot get controlling tty: %m"
 msgstr "/dev/%s: kan inte öppna kontrollerande tty: %m"
 
-#: term-utils/agetty.c:1121
+#: term-utils/agetty.c:1125
 #, c-format
 msgid "/dev/%s: vhangup() failed: %m"
 msgstr "/dev/%s: vhangup() misslyckades: %m"
 
-#: term-utils/agetty.c:1142
+#: term-utils/agetty.c:1146
 #, c-format
 msgid "%s: not open for read/write"
 msgstr "%s: inte öppen för läsning/skrivning"
 
-#: term-utils/agetty.c:1147
+#: term-utils/agetty.c:1151
 #, c-format
 msgid "/dev/%s: cannot set process group: %m"
 msgstr "/dev/%s: kan inte ställa in processgrupp: %m"
 
-#: term-utils/agetty.c:1161
+#: term-utils/agetty.c:1165
 #, c-format
 msgid "%s: dup problem: %m"
 msgstr "%s: dupliceringsproblem: %m"
 
-#: term-utils/agetty.c:1178
+#: term-utils/agetty.c:1182
 #, c-format
 msgid "%s: failed to get terminal attributes: %m"
 msgstr "%s: misslyckades med att hämta terminalattribut: %m"
 
-#: term-utils/agetty.c:1381 term-utils/agetty.c:1410
+#: term-utils/agetty.c:1385 term-utils/agetty.c:1414
 #, c-format
 msgid "setting terminal attributes failed: %m"
 msgstr "inställning av terminalattribut misslyckades: %m"
 
-#: term-utils/agetty.c:1529
+#: term-utils/agetty.c:1533
 msgid "cannot open os-release file"
 msgstr "kan inte öppna os-release-fil"
 
-#: term-utils/agetty.c:1696
+#: term-utils/agetty.c:1700
 #, c-format
 msgid "failed to create reload file: %s: %m"
 msgstr "misslyckades med att skapa återinläsningsfil: %s: %m"
 
-#: term-utils/agetty.c:2006
+#: term-utils/agetty.c:2010
 #, c-format
 msgid "failed to get terminal attributes: %m"
 msgstr "misslyckades med att hämta terminalattribut: %m"
 
-#: term-utils/agetty.c:2028
+#: term-utils/agetty.c:2032
 msgid "[press ENTER to login]"
 msgstr "[tryck på RETUR för att logga in]"
 
-#: term-utils/agetty.c:2056
+#: term-utils/agetty.c:2060
 msgid "Num Lock off"
 msgstr "Num Lock är av"
 
-#: term-utils/agetty.c:2059
+#: term-utils/agetty.c:2063
 msgid "Num Lock on"
 msgstr "Num Lock är på"
 
-#: term-utils/agetty.c:2062
+#: term-utils/agetty.c:2066
 msgid "Caps Lock on"
 msgstr "Caps Lock är på"
 
-#: term-utils/agetty.c:2065
+#: term-utils/agetty.c:2069
 msgid "Scroll Lock on"
 msgstr "Scroll Lock är på"
 
-#: term-utils/agetty.c:2068
+#: term-utils/agetty.c:2072
 #, c-format
 msgid ""
 "Hint: %s\n"
@@ -25327,32 +25332,32 @@ msgstr ""
 "Tips: %s\n"
 "\n"
 
-#: term-utils/agetty.c:2212
+#: term-utils/agetty.c:2216
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: läste: %m"
 
-#: term-utils/agetty.c:2279
+#: term-utils/agetty.c:2283
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: indataspill"
 
-#: term-utils/agetty.c:2307 term-utils/agetty.c:2315
+#: term-utils/agetty.c:2311 term-utils/agetty.c:2319
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s: ogiltig teckenkonvertering för inloggningsnamn"
 
-#: term-utils/agetty.c:2321
+#: term-utils/agetty.c:2325
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s: ogiltigt tecken 0x%x i inloggningsnamn"
 
-#: term-utils/agetty.c:2406
+#: term-utils/agetty.c:2410
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s misslyckades med att ställa in terminalattribut: %m"
 
-#: term-utils/agetty.c:2451
+#: term-utils/agetty.c:2455
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -25361,176 +25366,176 @@ msgstr ""
 " %1$s [flaggor] <linje> [<baud_hastighet>,…] [<termtyp>]\n"
 " %1$s [flaggor] <baud_hastighet>,… <linje> [<termtyp>]\n"
 
-#: term-utils/agetty.c:2455
+#: term-utils/agetty.c:2459
 msgid "Open a terminal and set its mode.\n"
 msgstr "Öppna en terminal och ställ in dess läge.\n"
 
-#: term-utils/agetty.c:2458
+#: term-utils/agetty.c:2462
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                   antag att det är en 8-bitars tty\n"
 
-#: term-utils/agetty.c:2459
+#: term-utils/agetty.c:2463
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr " -a, --autologin <användare>   logga in den angivna användaren automatiskt\n"
 
-#: term-utils/agetty.c:2460
+#: term-utils/agetty.c:2464
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset                 återställ inte kontrolläge\n"
 
-#: term-utils/agetty.c:2461
+#: term-utils/agetty.c:2465
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote                  använd -r <värdnamn> för login(1)\n"
 
-#: term-utils/agetty.c:2462
+#: term-utils/agetty.c:2466
 msgid " -f, --issue-file <list>    display issue files or directories\n"
 msgstr " -f, --issue-file <lista>   visa issue-filer eller kataloger\n"
 
-#: term-utils/agetty.c:2463
+#: term-utils/agetty.c:2467
 msgid "     --show-issue           display issue file and exit\n"
 msgstr "     --show-issue           visa issue-fil och avsluta\n"
 
-#: term-utils/agetty.c:2464
+#: term-utils/agetty.c:2468
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr " -h, --flow-control            aktivera hårdvarubaserad flödeskontroll\n"
 
-#: term-utils/agetty.c:2465
+#: term-utils/agetty.c:2469
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -H, --host <värdnamn>         ange inloggningsvärd\n"
 
-#: term-utils/agetty.c:2466
+#: term-utils/agetty.c:2470
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue                 visa inte issue-fil\n"
 
-#: term-utils/agetty.c:2467
+#: term-utils/agetty.c:2471
 msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <sträng>    ställ in initierings-sträng\n"
 
-#: term-utils/agetty.c:2468
+#: term-utils/agetty.c:2472
 #, fuzzy
 #| msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgid " -J, --noclear              do not clear the screen before prompt\n"
 msgstr " -J  --noclear                 rensa inte skärmen innan prompt\n"
 
-#: term-utils/agetty.c:2469
+#: term-utils/agetty.c:2473
 msgid " -l, --login-program <file> specify login program\n"
 msgstr " -l, --login-program <fil>     ange inloggningsprogram\n"
 
-#: term-utils/agetty.c:2470
+#: term-utils/agetty.c:2474
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr " -L, --local-line[=<läge>]     styr flaggan för den lokala linjen\n"
 
-#: term-utils/agetty.c:2471
+#: term-utils/agetty.c:2475
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr " -m, --extract-baud            extrahera baud-hastighet under anslutning\n"
 
-#: term-utils/agetty.c:2472
+#: term-utils/agetty.c:2476
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login              fråga inte efter inloggning\n"
 
-#: term-utils/agetty.c:2473
+#: term-utils/agetty.c:2477
 #, fuzzy
 #| msgid " -N  --nonewline            do not print a newline before issue\n"
 msgid " -N, --nonewline            do not print a newline before issue\n"
 msgstr " -N  --nonewline               skriv inte ut nyrad innan issue-fil\n"
 
-#: term-utils/agetty.c:2474
+#: term-utils/agetty.c:2478
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -o, --login-options <flaggor> flaggor som skickas vidare till login\n"
 
-#: term-utils/agetty.c:2475
+#: term-utils/agetty.c:2479
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -p, --login-pause             vänta på valfri tangent innan inloggning\n"
 
 # sebras: change root to the given directory
-#: term-utils/agetty.c:2476
+#: term-utils/agetty.c:2480
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -r, --chroot <kat>            ändra rot till angiven katalog\n"
 
-#: term-utils/agetty.c:2477
+#: term-utils/agetty.c:2481
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup                  avring tty:n virtuellt\n"
 
-#: term-utils/agetty.c:2478
+#: term-utils/agetty.c:2482
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -s, --keep-baud               försök att behålla baud-hastighet efter avbrott\n"
 
-#: term-utils/agetty.c:2479
+#: term-utils/agetty.c:2483
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr " -t, --timeout <nummer>        tidsgräns för inloggningsprocess\n"
 
-#: term-utils/agetty.c:2480
+#: term-utils/agetty.c:2484
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr " -U, --detect-case             identifiera terminal som använder versaler\n"
 
-#: term-utils/agetty.c:2481
+#: term-utils/agetty.c:2485
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait-cr                 vänta på vagnretur\n"
 
-#: term-utils/agetty.c:2482
+#: term-utils/agetty.c:2486
 msgid "     --nohints              do not print hints\n"
 msgstr "     --nohints                 skriv inte ut tips\n"
 
 # sebras: hostname will not be shown at all
-#: term-utils/agetty.c:2483
+#: term-utils/agetty.c:2487
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "     --nohostname              värdnamnet kommer inte att visas alls\n"
 
-#: term-utils/agetty.c:2484
+#: term-utils/agetty.c:2488
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "     --long-hostname           visa fullständigt värdnamn\n"
 
-#: term-utils/agetty.c:2485
+#: term-utils/agetty.c:2489
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "     --erase-chars <sträng>    ytterligare backstegstecken\n"
 
-#: term-utils/agetty.c:2486
+#: term-utils/agetty.c:2490
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "     --kill-chars <sträng>     ytterligare tecken som ignorerar alla tidigare tecken\n"
 
 # sebras: change directory before login
-#: term-utils/agetty.c:2487
+#: term-utils/agetty.c:2491
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "     --chdir <katalog>         byt katalog innan inloggning\n"
 
 # sebras: <seconds> seconds of delay before prompt
-#: term-utils/agetty.c:2488
+#: term-utils/agetty.c:2492
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "     --delay <nummer>          antal sekunder fördröjning innan prompt\n"
 
-#: term-utils/agetty.c:2489
+#: term-utils/agetty.c:2493
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "     --nice <nummer>           kör inloggning med denna prioritet\n"
 
-#: term-utils/agetty.c:2490
+#: term-utils/agetty.c:2494
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --reload                  återinläs prompt i körande agetty-instanser\n"
 
-#: term-utils/agetty.c:2491
+#: term-utils/agetty.c:2495
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "     --list-types      visa baud-hastigheter som stöds\n"
 
-#: term-utils/agetty.c:2850
+#: term-utils/agetty.c:2854
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] "%d användare"
 msgstr[1] "%d användare"
 
-#: term-utils/agetty.c:2980
+#: term-utils/agetty.c:2984
 #, c-format
 msgid "checkname failed: %m"
 msgstr "checkname misslyckades: %m"
 
-#: term-utils/agetty.c:2992
+#: term-utils/agetty.c:2996
 #, c-format
 msgid "cannot touch file %s"
 msgstr "kan inte röra filen %s"
 
-#: term-utils/agetty.c:2996
+#: term-utils/agetty.c:3000
 msgid "--reload is unsupported on your system"
 msgstr "--reload stöds inte på ditt system"
 
-#: term-utils/agetty.c:3018
+#: term-utils/agetty.c:3022
 #, fuzzy
 #| msgid "failed to open directory"
 msgid "failed to open credentials directory"
@@ -25696,7 +25701,7 @@ msgstr ""
 "Använd --force om du verkligen vill använda den.\n"
 "Programmet startades inte."
 
-#: term-utils/script.c:836 term-utils/scriptlive.c:221
+#: term-utils/script.c:836 term-utils/scriptlive.c:220
 #, fuzzy, c-format
 #| msgid "unssuported echo mode: '%s'"
 msgid "unsupported echo mode: '%s'"
@@ -25745,74 +25750,75 @@ msgstr ".\n"
 msgid "Script done.\n"
 msgstr "Skriptet färdigt.\n"
 
-#: term-utils/scriptlive.c:60
-#, c-format
-msgid " %s [-t] timingfile [-I|-B] typescript\n"
+#: term-utils/scriptlive.c:57
+#, fuzzy, c-format
+#| msgid " %s [-t] timingfile [-I|-B] typescript\n"
+msgid " %s [options] <timingfile> <typescript>\n"
 msgstr " %s [-t] tidmätningsfil [-I|-B] inmatningsskript\n"
 
-#: term-utils/scriptlive.c:64
+#: term-utils/scriptlive.c:61
 msgid "Execute terminal typescript.\n"
 msgstr "Kör terminalinmatningsskript.\n"
 
-#: term-utils/scriptlive.c:67 term-utils/scriptreplay.c:60
+#: term-utils/scriptlive.c:64 term-utils/scriptreplay.c:57
 msgid " -t, --timing <file>     script timing log file\n"
 msgstr " -t, --timing <fil>      loggfil för tidmätning av skript\n"
 
-#: term-utils/scriptlive.c:68 term-utils/scriptreplay.c:61
+#: term-utils/scriptlive.c:65 term-utils/scriptreplay.c:58
 msgid " -T, --log-timing <file> alias to -t\n"
 msgstr " -T, --log-timing <fil>  alias för -t\n"
 
-#: term-utils/scriptlive.c:69 term-utils/scriptreplay.c:62
+#: term-utils/scriptlive.c:66 term-utils/scriptreplay.c:59
 msgid " -I, --log-in <file>     script stdin log file\n"
 msgstr " -I, --log-in <fil>      loggfil för standard in\n"
 
-#: term-utils/scriptlive.c:70 term-utils/scriptreplay.c:64
+#: term-utils/scriptlive.c:67 term-utils/scriptreplay.c:61
 msgid " -B, --log-io <file>     script stdin and stdout log file\n"
 msgstr " -B, --log-io <fil>      loggfil för standard in/ut för skript\n"
 
-#: term-utils/scriptlive.c:73
+#: term-utils/scriptlive.c:70
 msgid " -c, --command <command> run command rather than interactive shell\n"
 msgstr " -c, --command <kommando> kör kommando snarare än interaktivt skal\n"
 
-#: term-utils/scriptlive.c:74 term-utils/scriptreplay.c:70
+#: term-utils/scriptlive.c:71 term-utils/scriptreplay.c:67
 msgid " -d, --divisor <num>     speed up or slow down execution with time divisor\n"
 msgstr " -d, --divisor <num>     snabba upp eller ner körtid med tidsdelare\n"
 
-#: term-utils/scriptlive.c:75
+#: term-utils/scriptlive.c:72
 #, fuzzy
 #| msgid " -E, --echo <when>             echo input (auto, always or never)\n"
 msgid " -E, --echo <when>       echo input in session (auto, always or never)\n"
 msgstr " -E, --echo <när>              eka inmatning (auto, always eller never)\n"
 
 # sebras: <seconds> seconds of delay before prompt
-#: term-utils/scriptlive.c:76 term-utils/scriptreplay.c:71
+#: term-utils/scriptlive.c:73 term-utils/scriptreplay.c:68
 msgid " -m, --maxdelay <num>    wait at most this many seconds between updates\n"
 msgstr ""
 " -m, --maxdelay <num>    vänta så här många sekunder som längst mellan uppdateringar\n"
 "a\n"
 
-#: term-utils/scriptlive.c:238 term-utils/scriptreplay.c:257
+#: term-utils/scriptlive.c:237 term-utils/scriptreplay.c:256
 msgid "failed to parse maximal delay argument"
 msgstr "misslyckades med att tolka maximalt fördröjningsargument"
 
-#: term-utils/scriptlive.c:261 term-utils/scriptreplay.c:298
+#: term-utils/scriptlive.c:260 term-utils/scriptreplay.c:297
 msgid "timing file not specified"
 msgstr "tidmätningsfil inte angiven"
 
-#: term-utils/scriptlive.c:263
+#: term-utils/scriptlive.c:262
 msgid "stdin typescript file not specified"
 msgstr "ingen standard in inmatningsskriptsfil angiven"
 
-#: term-utils/scriptlive.c:289
+#: term-utils/scriptlive.c:288
 #, c-format
 msgid ">>> scriptlive: Starting your typescript execution by %s.\n"
 msgstr ">>> scriptlive: Påbörja din inmatningsskriptskörning genom %s.\n"
 
-#: term-utils/scriptlive.c:296
+#: term-utils/scriptlive.c:295
 msgid "failed to allocate PTY handler"
 msgstr "misslyckades med att allokera PTY-hanterare"
 
-#: term-utils/scriptlive.c:376
+#: term-utils/scriptlive.c:375
 #, c-format
 msgid ""
 "\n"
@@ -25821,83 +25827,84 @@ msgstr ""
 "\n"
 ">>> scriptlive: klart.\n"
 
-#: term-utils/scriptreplay.c:53
-#, c-format
-msgid " %s [-t] timingfile [typescript] [divisor]\n"
+#: term-utils/scriptreplay.c:50
+#, fuzzy, c-format
+#| msgid " %s [-t] timingfile [typescript] [divisor]\n"
+msgid " %s [options] <timingfile> [<typescript> [<divisor>]]\n"
 msgstr " %s [-t] tidmätningsfil [inmatningsskript] [delare]\n"
 
-#: term-utils/scriptreplay.c:57
+#: term-utils/scriptreplay.c:54
 msgid "Play back terminal typescripts, using timing information.\n"
 msgstr "Återuppspela inmatningsskript för terminaler med hjälp av tidmätningsinformation.\n"
 
-#: term-utils/scriptreplay.c:63
+#: term-utils/scriptreplay.c:60
 msgid " -O, --log-out <file>    script stdout log file (default)\n"
 msgstr " -O, --log-out <fil>     loggfil standard ut för skript (standard)\n"
 
-#: term-utils/scriptreplay.c:66
+#: term-utils/scriptreplay.c:63
 msgid " -s, --typescript <file> deprecated alias to -O\n"
 msgstr " -s, --typescript <fil>  föråldrasalias för -O\n"
 
-#: term-utils/scriptreplay.c:69
+#: term-utils/scriptreplay.c:66
 msgid "     --summary           display overview about recorded session and exit\n"
 msgstr "     --summary           visa överblock om inspelad session och avsluta\n"
 
-#: term-utils/scriptreplay.c:72
+#: term-utils/scriptreplay.c:69
 msgid " -x, --stream <name>     stream type (out, in, signal or info)\n"
 msgstr " -x, --stream <namn>     strömtyp (out, in, signal eller info)\n"
 
-#: term-utils/scriptreplay.c:73
+#: term-utils/scriptreplay.c:70
 msgid " -c, --cr-mode <type>    CR char mode (auto, never, always)\n"
 msgstr " -c, --cr-mode <typ>     CR-teckenläge (auto, never, always)\n"
 
-#: term-utils/scriptreplay.c:77
+#: term-utils/scriptreplay.c:76
 msgid "Key bindings:\n"
 msgstr ""
 
+#: term-utils/scriptreplay.c:77
+msgid " space        toggles between pause and play\n"
+msgstr ""
+
 #: term-utils/scriptreplay.c:78
-msgid " space        toggles pause and unpause\n"
+msgid " up-arrow     increases playback speed with ten percent\n"
 msgstr ""
 
 #: term-utils/scriptreplay.c:79
-msgid " up-arrow     increases the playback speed by 0.1 times\n"
+msgid " down-arrow   decreases playback speed with ten percent\n"
 msgstr ""
 
-#: term-utils/scriptreplay.c:80
-msgid " down-arrow   decreases the playback speed by 0.1 times\n"
-msgstr ""
-
-#: term-utils/scriptreplay.c:146
+#: term-utils/scriptreplay.c:145
 #, fuzzy
 #| msgid "tcgetattr failed"
 msgid "unexpected fcntl failure"
 msgstr "tcgetattr misslyckades"
 
-#: term-utils/scriptreplay.c:151
+#: term-utils/scriptreplay.c:150
 #, fuzzy
 #| msgid "tcgetattr failed"
 msgid "unexpected tcgetattr failure"
 msgstr "tcgetattr misslyckades"
 
-#: term-utils/scriptreplay.c:236
+#: term-utils/scriptreplay.c:235
 #, c-format
 msgid "unsupported mode name: '%s'"
 msgstr "lägesnamn stöds ej: ”%s”"
 
-#: term-utils/scriptreplay.c:269
+#: term-utils/scriptreplay.c:268
 #, c-format
 msgid "unsupported stream name: '%s'"
 msgstr "strömnamn stöds inte: ”%s”"
 
-#: term-utils/scriptreplay.c:300
+#: term-utils/scriptreplay.c:299
 msgid "data log file not specified"
 msgstr "dataloggfil inte angiven"
 
-#: term-utils/scriptreplay.c:406
+#: term-utils/scriptreplay.c:405
 #, c-format
 msgid "%s: log file error"
 msgstr "%s: loggfilsfel"
 
-#: term-utils/scriptreplay.c:408
+#: term-utils/scriptreplay.c:407
 #, c-format
 msgid "%s: line %d: timing file error"
 msgstr "%s: rad %d: fel i tidsmätningsfil"
@@ -26658,7 +26665,7 @@ msgstr "ogiltigt namnrymdsargument"
 #: text-utils/column.c:1068
 #, fuzzy
 #| msgid "failed to allocate iterator"
-msgid "failed to use input separator"
+msgid "failed to parse input separator"
 msgstr "misslyckades med att allokera iterator"
 
 #: text-utils/column.c:1101

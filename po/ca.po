@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.38-rc4\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2025-02-18 11:36+0100\n"
+"POT-Creation-Date: 2025-03-06 10:21+0100\n"
 "PO-Revision-Date: 2022-08-18 13:40+0200\n"
 "Last-Translator: Jordi Mas i Hernàndez <jmas@softcatala.org>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -38,8 +38,8 @@ msgid "Tell the kernel about the existence of a specified partition.\n"
 msgstr "Explica al nucli l'existència d'una partició especificada."
 
 #: disk-utils/addpart.c:62 disk-utils/blockdev.c:270 disk-utils/delpart.c:62
-#: disk-utils/mkfs.bfs.c:142 disk-utils/resizepart.c:106 misc-utils/kill.c:423
-#: misc-utils/kill.c:484 misc-utils/rename.c:344 misc-utils/whereis.c:539
+#: disk-utils/mkfs.bfs.c:142 disk-utils/resizepart.c:106 misc-utils/kill.c:427
+#: misc-utils/kill.c:488 misc-utils/rename.c:344 misc-utils/whereis.c:539
 #: sys-utils/flock.c:237 sys-utils/ipcrm.c:165 sys-utils/ldattach.c:365
 #: sys-utils/renice.c:177 sys-utils/switch_root.c:261 sys-utils/tunelp.c:152
 #: term-utils/agetty.c:905 term-utils/agetty.c:906 term-utils/agetty.c:914
@@ -69,7 +69,7 @@ msgstr "Massa arguments.\n"
 #: misc-utils/mcookie.c:124 misc-utils/pipesz.c:162 misc-utils/uuidd.c:235
 #: sys-utils/blkdiscard.c:237 sys-utils/blkpr.c:164 sys-utils/blkzone.c:144
 #: sys-utils/dmesg.c:666 sys-utils/eject.c:501 sys-utils/eject.c:696
-#: sys-utils/fallocate.c:407 sys-utils/fsfreeze.c:116 sys-utils/fstrim.c:106
+#: sys-utils/fallocate.c:406 sys-utils/fsfreeze.c:116 sys-utils/fstrim.c:106
 #: sys-utils/hwclock.c:239 sys-utils/hwclock.c:911 sys-utils/hwclock-rtc.c:128
 #: sys-utils/hwclock-rtc.c:373 sys-utils/hwclock-rtc.c:409
 #: sys-utils/hwclock-rtc.c:470 sys-utils/hwclock-rtc.c:523
@@ -82,11 +82,11 @@ msgstr "Massa arguments.\n"
 #: sys-utils/setpriv.c:692 sys-utils/swapon.c:395 sys-utils/swapon.c:538
 #: sys-utils/switch_root.c:174 sys-utils/unshare.c:115 sys-utils/unshare.c:130
 #: sys-utils/unshare.c:749 sys-utils/wdctl.c:422 sys-utils/zramctl.c:551
-#: term-utils/agetty.c:2989 term-utils/mesg.c:154 term-utils/script.c:389
-#: term-utils/scriptlive.c:268 term-utils/scriptlive.c:271
-#: term-utils/scriptlive.c:274 term-utils/scriptreplay.c:305
-#: term-utils/scriptreplay.c:308 term-utils/scriptreplay.c:311
-#: term-utils/scriptreplay.c:314 term-utils/wall.c:422 text-utils/colcrt.c:286
+#: term-utils/agetty.c:2993 term-utils/mesg.c:154 term-utils/script.c:389
+#: term-utils/scriptlive.c:267 term-utils/scriptlive.c:270
+#: term-utils/scriptlive.c:273 term-utils/scriptreplay.c:304
+#: term-utils/scriptreplay.c:307 term-utils/scriptreplay.c:310
+#: term-utils/scriptreplay.c:313 term-utils/wall.c:422 text-utils/colcrt.c:286
 #: text-utils/more.c:463 text-utils/rev.c:166 text-utils/ul.c:638
 #, c-format
 msgid "cannot open %s"
@@ -1529,7 +1529,7 @@ msgstr "Avís: l'opció -b (estableix la mida del sector) s'ha d'usar amb un dis
 #: schedutils/chrt.c:486 schedutils/ionice.c:264 schedutils/taskset.c:208
 #: sys-utils/chcpu.c:355 sys-utils/chmem.c:429 sys-utils/dmesg.c:1840
 #: sys-utils/ipcmk.c:253 sys-utils/ipcrm.c:425 sys-utils/ldattach.c:318
-#: sys-utils/losetup.c:997 sys-utils/lscpu.c:1354 sys-utils/lsmem.c:655
+#: sys-utils/losetup.c:997 sys-utils/lscpu.c:1358 sys-utils/lsmem.c:655
 #: sys-utils/mount.c:921 sys-utils/mount.c:947 sys-utils/mount.c:955
 #: sys-utils/mount.c:1007 sys-utils/mount.c:1020 sys-utils/mount.c:1092
 #: sys-utils/mountpoint.c:182 sys-utils/pivot_root.c:66 sys-utils/swapoff.c:273
@@ -1653,7 +1653,7 @@ msgstr "No s'ha pogut assignar la memòria temporal.\n"
 #: misc-utils/findmnt.c:1630 misc-utils/lsblk.c:2747 misc-utils/lsclocks.c:645
 #: misc-utils/lslocks.c:748 misc-utils/uuidparse.c:266 misc-utils/wipefs.c:157
 #: sys-utils/losetup.c:389 sys-utils/lscpu.c:596 sys-utils/lscpu.c:753
-#: sys-utils/lscpu.c:971 sys-utils/lsipc.c:395 sys-utils/prlimit.c:303
+#: sys-utils/lscpu.c:975 sys-utils/lsipc.c:395 sys-utils/prlimit.c:303
 #: sys-utils/rfkill.c:474 sys-utils/swapon.c:309 sys-utils/wdctl.c:354
 #: sys-utils/zramctl.c:530 text-utils/column.c:337
 #, fuzzy
@@ -1667,7 +1667,7 @@ msgstr "No s'ha pogut assignar la memòria temporal.\n"
 #: misc-utils/lsclocks.c:289 misc-utils/lslocks.c:613
 #: misc-utils/uuidparse.c:153 misc-utils/wipefs.c:202 sys-utils/losetup.c:412
 #: sys-utils/losetup.c:441 sys-utils/lscpu.c:510 sys-utils/lscpu.c:790
-#: sys-utils/lscpu.c:822 sys-utils/lsipc.c:527 sys-utils/lsipc.c:608
+#: sys-utils/lscpu.c:826 sys-utils/lsipc.c:527 sys-utils/lsipc.c:608
 #: sys-utils/lsipc.c:703 sys-utils/lsipc.c:798 sys-utils/lsipc.c:885
 #: sys-utils/lsipc.c:1024 sys-utils/lsipc.c:1167 sys-utils/lsipc.c:1340
 #: sys-utils/prlimit.c:232 sys-utils/rfkill.c:389 sys-utils/swapon.c:192
@@ -1694,8 +1694,8 @@ msgstr "No s'ha pogut assignar la memòria temporal.\n"
 #: lsfd-cmd/sock.c:135 lsfd-cmd/unkn.c:125 lsfd-cmd/unkn.c:127
 #: misc-utils/fincore.c:270 misc-utils/findmnt.c:847 misc-utils/lsblk.c:1281
 #: misc-utils/lslocks.c:694 misc-utils/uuidparse.c:253 misc-utils/wipefs.c:242
-#: sys-utils/losetup.c:369 sys-utils/lscpu.c:578 sys-utils/lscpu.c:797
-#: sys-utils/lscpu.c:826 sys-utils/lscpu.c:837 sys-utils/lsipc.c:567
+#: sys-utils/losetup.c:369 sys-utils/lscpu.c:578 sys-utils/lscpu.c:801
+#: sys-utils/lscpu.c:830 sys-utils/lscpu.c:841 sys-utils/lsipc.c:567
 #: sys-utils/lsipc.c:685 sys-utils/lsipc.c:856 sys-utils/prlimit.c:267
 #: sys-utils/rfkill.c:417 sys-utils/swapon.c:240 sys-utils/wdctl.c:332
 #: sys-utils/zramctl.c:515 text-utils/column.c:682
@@ -2624,7 +2624,7 @@ msgid "couldn't find matching filesystem: %s"
 msgstr "S'està desmuntant els sistemes de fitxers restants..."
 
 #: disk-utils/fsck.c:1502 disk-utils/fsck.c:1599 misc-utils/exch.c:84
-#: misc-utils/kill.c:353 misc-utils/kill.c:393 sys-utils/eject.c:281
+#: misc-utils/kill.c:357 misc-utils/kill.c:397 sys-utils/eject.c:281
 #: sys-utils/hwclock.c:1531
 #, fuzzy
 msgid "too many arguments"
@@ -2640,7 +2640,7 @@ msgstr "Nombre invàlid: %s\n"
 msgid "option '%s' may be specified only once"
 msgstr "l'opció «%s» només es pot especificar una vegada"
 
-#: disk-utils/fsck.c:1579 misc-utils/kill.c:436 misc-utils/kill.c:452
+#: disk-utils/fsck.c:1579 misc-utils/kill.c:440 misc-utils/kill.c:456
 #, fuzzy, c-format
 #| msgid "%s requires an argument\n"
 msgid "option '%s' requires an argument"
@@ -2830,7 +2830,7 @@ msgid "non-size (%ld vs %ld) bytes"
 msgstr "%s: Octets sense mida (%ld vs %ld)\n"
 
 #: disk-utils/fsck.cramfs.c:425 disk-utils/fsck.cramfs.c:550
-#: disk-utils/swaplabel.c:111 misc-utils/uuidd.c:407 sys-utils/fallocate.c:442
+#: disk-utils/swaplabel.c:111 misc-utils/uuidd.c:407 sys-utils/fallocate.c:441
 #: sys-utils/rfkill.c:565 sys-utils/setpriv.c:656 sys-utils/setpriv.c:679
 #: sys-utils/swapon.c:413 term-utils/script.c:325 term-utils/ttymsg.c:175
 #, fuzzy, c-format
@@ -6105,7 +6105,7 @@ msgstr "S'ha canviat la informació del finger.\n"
 msgid "%s from %s\n"
 msgstr "%s de %s\n"
 
-#: include/c.h:504 misc-utils/kill.c:304 term-utils/agetty.c:696
+#: include/c.h:504 misc-utils/kill.c:308 term-utils/agetty.c:696
 #, fuzzy, c-format
 #| msgid "%s from %s\n"
 msgid "%s from %s"
@@ -6135,7 +6135,7 @@ msgid "colors are disabled by default"
 msgstr "Per defecte, s'ha denegat l'accés a %s des de %s.\n"
 
 #: include/env.h:37 lib/pager.c:159 login-utils/login.c:1217
-#: login-utils/login.c:1221 term-utils/agetty.c:1208
+#: login-utils/login.c:1221 term-utils/agetty.c:1212
 #, fuzzy, c-format
 msgid "failed to set the %s environment variable"
 msgstr "no s'ha pogut establir la variable d'entorn %s"
@@ -10430,9 +10430,9 @@ msgstr ""
 "\n"
 "wtmp comença %s"
 
-#: login-utils/last.c:1037 term-utils/scriptlive.c:86
-#: term-utils/scriptlive.c:90 term-utils/scriptreplay.c:89
-#: term-utils/scriptreplay.c:93 text-utils/more.c:289 text-utils/more.c:295
+#: login-utils/last.c:1037 term-utils/scriptlive.c:85
+#: term-utils/scriptlive.c:89 term-utils/scriptreplay.c:88
+#: term-utils/scriptreplay.c:92 text-utils/more.c:289 text-utils/more.c:295
 #, fuzzy
 msgid "failed to parse number"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
@@ -10687,7 +10687,7 @@ msgstr "-h <host> el nom d'ordinador a usar per al registre utmp"
 msgid " -H             suppress hostname in the login prompt"
 msgstr "-H suprimeix el nom de l'ordinador a la sol·licitud d'inici de sessió"
 
-#: login-utils/login.c:1315 term-utils/agetty.c:3012
+#: login-utils/login.c:1315 term-utils/agetty.c:3016
 #, fuzzy
 msgid "failed to initialize path context"
 msgstr "No s'ha pogut assignar la memòria temporal.\n"
@@ -11261,14 +11261,13 @@ msgstr "newgrp: Qui sou?"
 msgid "no such group"
 msgstr "newgrp: Aquest grup no existeix."
 
-#: login-utils/nologin.c:28 lsfd-cmd/lsfd.c:2180 misc-utils/lastlog2.c:108
+#: login-utils/nologin.c:28 lsfd-cmd/lsfd.c:2180 misc-utils/lastlog2.c:112
 #: misc-utils/lsclocks.c:189 misc-utils/lslocks.c:804 misc-utils/mcookie.c:88
 #: misc-utils/uuidd.c:97 misc-utils/uuidgen.c:29 sys-utils/dmesg.c:317
-#: sys-utils/ipcmk.c:152 sys-utils/irqtop.c:257 sys-utils/lscpu.c:1176
+#: sys-utils/ipcmk.c:152 sys-utils/irqtop.c:257 sys-utils/lscpu.c:1180
 #: sys-utils/lsipc.c:318 sys-utils/lsirq.c:53 sys-utils/lsmem.c:518
-#: sys-utils/readprofile.c:95 sys-utils/rtcwake.c:108
-#: term-utils/scriptlive.c:57 term-utils/scriptreplay.c:50
-#: term-utils/setterm.c:382 text-utils/line.c:30
+#: sys-utils/readprofile.c:95 sys-utils/rtcwake.c:108 term-utils/setterm.c:382
+#: text-utils/line.c:30
 #, fuzzy, c-format
 msgid " %s [options]\n"
 msgstr "Forma d'ús: %s [opcions] dispositiu ...\n"
@@ -11355,13 +11354,13 @@ msgid "cannot set signal mask"
 msgstr "No s'ha pogut determinar el gestor de senyals"
 
 #: login-utils/su-common.c:561 term-utils/script.c:964
-#: term-utils/scriptlive.c:307
+#: term-utils/scriptlive.c:306
 #, fuzzy
 msgid "failed to create pseudo-terminal"
 msgstr "No s'ha pogut assignar la memòria temporal.\n"
 
 #: login-utils/su-common.c:563 term-utils/script.c:971
-#: term-utils/scriptlive.c:309
+#: term-utils/scriptlive.c:308
 #, fuzzy
 msgid "failed to initialize signals handler"
 msgstr "No s'ha pogut assignar la memòria temporal.\n"
@@ -11373,7 +11372,7 @@ msgid "cannot set child signal handler"
 msgstr "No s'ha pogut determinar el gestor de senyals"
 
 #: login-utils/su-common.c:588 term-utils/script.c:980
-#: term-utils/scriptlive.c:316
+#: term-utils/scriptlive.c:315
 #, fuzzy
 #| msgid "cannot remove id %s (%s)\n"
 msgid "cannot create child process"
@@ -11386,7 +11385,7 @@ msgstr "no s'ha pogut suprimir l'id %s (%s)\n"
 msgid "cannot change directory to %s"
 msgstr "no es pot obtenir la mida de %s"
 
-#: login-utils/su-common.c:633 term-utils/scriptlive.c:365
+#: login-utils/su-common.c:633 term-utils/scriptlive.c:364
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -13161,7 +13160,7 @@ msgstr "forma d'ús: namei [-mx] camí [camí ...]\n"
 msgid "Atomically exchanges paths between two files.\n"
 msgstr ""
 
-#: misc-utils/exch.c:81 misc-utils/kill.c:391
+#: misc-utils/exch.c:81 misc-utils/kill.c:395
 #, fuzzy
 msgid "too few arguments"
 msgstr "%s: argument desconegut: %s\n"
@@ -13602,7 +13601,7 @@ msgstr "no s'ha pogut inicialitzar l'iterador libmount"
 msgid "failed to initialize libmount tabdiff"
 msgstr "No s'ha pogut assignar la memòria temporal.\n"
 
-#: misc-utils/findmnt.c:1418 misc-utils/kill.c:516
+#: misc-utils/findmnt.c:1418 misc-utils/kill.c:520
 #, fuzzy
 msgid "poll() failed"
 msgstr "l'assignació de memòria (malloc) ha fallat"
@@ -14617,7 +14616,7 @@ msgstr "no s'ha pogut inicialitzar el mètode %s, utilitzeu la reserva «memcmp�
 
 #: misc-utils/hardlink.c:1487
 #, fuzzy
-msgid "failed to initialize files comparior"
+msgid "failed to initialize files comparer"
 msgstr "No s'ha pogut assignar la memòria temporal.\n"
 
 #: misc-utils/hardlink.c:1508
@@ -14637,63 +14636,63 @@ msgstr "no es pot obtenir la mida de %s"
 msgid "cannot process %s"
 msgstr "%s no es pot obrir"
 
-#: misc-utils/kill.c:145
+#: misc-utils/kill.c:149
 #, fuzzy
 msgid "Pending (thread)"
 msgstr "fils del nucli"
 
-#: misc-utils/kill.c:146
+#: misc-utils/kill.c:150
 #, fuzzy
 msgid "Pending (process)"
 msgstr "S'estan executant els processos"
 
-#: misc-utils/kill.c:147
+#: misc-utils/kill.c:151
 #, fuzzy
 #| msgid "locked"
 msgid "Blocked"
 msgstr "blocat"
 
-#: misc-utils/kill.c:148
+#: misc-utils/kill.c:152
 msgid "Ignored"
 msgstr ""
 
-#: misc-utils/kill.c:149
+#: misc-utils/kill.c:153
 msgid "Caught"
 msgstr ""
 
-#: misc-utils/kill.c:154 sys-utils/lscpu.c:235
+#: misc-utils/kill.c:158 sys-utils/lscpu.c:235
 #, fuzzy
 msgid "failed to initialize procfs handler"
 msgstr "No s'ha pogut assignar la memòria temporal.\n"
 
-#: misc-utils/kill.c:157
+#: misc-utils/kill.c:161
 #, fuzzy, c-format
 #| msgid "cannot open %s"
 msgid "cannot open /proc/%d/status"
 msgstr "%s no es pot obrir"
 
-#: misc-utils/kill.c:170
+#: misc-utils/kill.c:174
 #, fuzzy, c-format
 msgid "unexpected sigmask format: %s (%s)"
 msgstr "tercera línia inesperada a: %s: %s"
 
-#: misc-utils/kill.c:234
+#: misc-utils/kill.c:238
 #, fuzzy, c-format
 #| msgid "%s: unknown signal %s; valid signals:\n"
 msgid "unknown signal %s; valid signals:"
 msgstr "%s: senyal desconegut %s; senyals vàlids:\n"
 
-#: misc-utils/kill.c:260
+#: misc-utils/kill.c:264
 #, fuzzy, c-format
 msgid " %s [options] <pid>|<name>...\n"
 msgstr "forma d'ús: %s programa [arg ...]\n"
 
-#: misc-utils/kill.c:263
+#: misc-utils/kill.c:267
 #, fuzzy
 msgid "Forcibly terminate a process.\n"
 msgstr "Finalitza un procés per la força."
 
-#: misc-utils/kill.c:266
+#: misc-utils/kill.c:270
 #, fuzzy
 msgid ""
 " -a, --all              do not restrict the name-to-pid conversion to processes\n"
@@ -14702,17 +14701,17 @@ msgstr ""
 "-a, --all no restringeix la conversió nom a pid a processos\n"
 "                          amb el mateix uid que el procés actual"
 
-#: misc-utils/kill.c:268
+#: misc-utils/kill.c:272
 #, fuzzy
 msgid " -s, --signal <signal>  send this <signal> instead of SIGTERM\n"
 msgstr "-s, --signal <signal> envia això <signal> en lloc de SIGTERM"
 
-#: misc-utils/kill.c:270
+#: misc-utils/kill.c:274
 #, fuzzy
 msgid " -q, --queue <value>    use sigqueue(2), not kill(2), and pass <value> as data\n"
 msgstr "-q, --queue <value> usa sigqueue(2), no kill(2), i passa <value> com a dades"
 
-#: misc-utils/kill.c:273
+#: misc-utils/kill.c:277
 #, fuzzy
 msgid ""
 "     --timeout <milliseconds> <follow-up signal>\n"
@@ -14721,12 +14720,12 @@ msgstr ""
 "--timeout <milliseconds> <follow-up signal>\n"
 "                        espera fins al temps d'espera i envia el senyal de seguiment"
 
-#: misc-utils/kill.c:276
+#: misc-utils/kill.c:280
 #, fuzzy
 msgid " -p, --pid              print pids without signaling them\n"
 msgstr "-p, --pid imprimeix els pids sense indicar-los"
 
-#: misc-utils/kill.c:277
+#: misc-utils/kill.c:281
 #, fuzzy
 msgid ""
 " -l, --list[=<signal>|=0x<sigmask>]\n"
@@ -14734,56 +14733,56 @@ msgid ""
 "                         or convert a signal mask to names\n"
 msgstr "-l, --list,=<signal>] llista els noms dels senyals, o converteix un número de senyal a un nom"
 
-#: misc-utils/kill.c:280
+#: misc-utils/kill.c:284
 #, fuzzy
 msgid " -L, --table            list signal names and numbers\n"
 msgstr "-L, --table llista els noms i números dels senyals"
 
-#: misc-utils/kill.c:281
+#: misc-utils/kill.c:285
 msgid " -r, --require-handler  do not send signal if signal handler is not present\n"
 msgstr ""
 
-#: misc-utils/kill.c:282
+#: misc-utils/kill.c:286
 msgid ""
 " -d, --show-process-state <pid>\n"
 "                        show signal related fields in /proc/<pid>/status\n"
 msgstr ""
 
-#: misc-utils/kill.c:284
+#: misc-utils/kill.c:288
 #, fuzzy
 msgid "     --verbose          print pids that will be signaled\n"
 msgstr "--verbose imprimeix els pids que s'indicaran"
 
-#: misc-utils/kill.c:308
+#: misc-utils/kill.c:312
 #, fuzzy
 msgid " (with: "
 msgstr "(amb:"
 
-#: misc-utils/kill.c:359 misc-utils/kill.c:375
+#: misc-utils/kill.c:363 misc-utils/kill.c:379
 #, fuzzy, c-format
 #| msgid "Invalid set value: %s\n"
 msgid "invalid sigmask format: %s"
 msgstr "Valor establert invàlid: %s\n"
 
-#: misc-utils/kill.c:364 misc-utils/kill.c:380 sys-utils/setpriv.c:463
+#: misc-utils/kill.c:368 misc-utils/kill.c:384 sys-utils/setpriv.c:463
 #: sys-utils/unshare.c:1035
 #, fuzzy, c-format
 #| msgid "%s: unknown signal %s\n"
 msgid "unknown signal: %s"
 msgstr "%s: senyal desconegut %s\n"
 
-#: misc-utils/kill.c:395 misc-utils/kill.c:403
+#: misc-utils/kill.c:399 misc-utils/kill.c:407
 #, fuzzy
 msgid "invalid pid argument"
 msgstr "identificador invàlid"
 
-#: misc-utils/kill.c:414 misc-utils/kill.c:417 misc-utils/kill.c:426
-#: misc-utils/kill.c:438 misc-utils/kill.c:481 sys-utils/mountpoint.c:186
+#: misc-utils/kill.c:418 misc-utils/kill.c:421 misc-utils/kill.c:430
+#: misc-utils/kill.c:442 misc-utils/kill.c:485 sys-utils/mountpoint.c:186
 #, fuzzy, c-format
 msgid "%s and %s are mutually exclusive"
 msgstr "%s i %s són mútuament excloents"
 
-#: misc-utils/kill.c:441 misc-utils/kill.c:456 sys-utils/eject.c:210
+#: misc-utils/kill.c:445 misc-utils/kill.c:460 sys-utils/eject.c:210
 #: sys-utils/eject.c:232 sys-utils/losetup.c:820 sys-utils/tunelp.c:164
 #: sys-utils/tunelp.c:171 sys-utils/tunelp.c:178 sys-utils/tunelp.c:185
 #: sys-utils/tunelp.c:192 sys-utils/tunelp.c:198 sys-utils/tunelp.c:202
@@ -14802,56 +14801,62 @@ msgstr "%s i %s són mútuament excloents"
 msgid "argument error"
 msgstr "s'ha produït un error en cercar"
 
-#: misc-utils/kill.c:478
+#: misc-utils/kill.c:482
 #, fuzzy, c-format
 #| msgid "Invalid interval value: %s\n"
 msgid "invalid signal name or number: %s"
 msgstr "Valor d'interval invàlid: %s\n"
 
-#: misc-utils/kill.c:504
+#: misc-utils/kill.c:508
 #, fuzzy, c-format
 msgid "pidfd_open() failed: %d"
 msgstr "no ha estat possible executar openpty\n"
 
-#: misc-utils/kill.c:509 misc-utils/kill.c:523
+#: misc-utils/kill.c:513 misc-utils/kill.c:527
 #, fuzzy
 msgid "pidfd_send_signal() failed"
 msgstr "Ha fallat pidfdsendsignal()"
 
-#: misc-utils/kill.c:520
+#: misc-utils/kill.c:524
 #, fuzzy, c-format
 msgid "timeout, sending signal %d to pid %d\n"
 msgstr "temps d'espera, s'està enviant el senyal %d al pid %d"
 
-#: misc-utils/kill.c:535
+#: misc-utils/kill.c:539
 #, fuzzy, c-format
 msgid "sending signal %d to pid %d\n"
 msgstr "s'està enviant el senyal %d al pid %d"
 
-#: misc-utils/kill.c:553
+#: misc-utils/kill.c:557
 #, fuzzy, c-format
 #| msgid "%s: renaming %s to %s failed: %s\n"
 msgid "sending signal to %s failed"
 msgstr "%s: no s'ha pogut reanomenar %s a %s: %s\n"
 
-#: misc-utils/kill.c:578
+#: misc-utils/kill.c:582
 #, c-format
 msgid "not signalling pid %d, it has no userspace handler for signal %d\n"
 msgstr ""
 
-#: misc-utils/kill.c:640
+#: misc-utils/kill.c:644
 #, fuzzy, c-format
 #| msgid "%s: can't find process \"%s\"\n"
 msgid "cannot find process \"%s\""
 msgstr "%s: no s'ha pogut trobar el procés \"%s\"\n"
 
-#: misc-utils/lastlog2.c:111
+#: misc-utils/lastlog2.c:115
+#, fuzzy
+#| msgid "              parameters\n"
+msgid " -a, --active            print lastlog excluding '**Never logged in**' users\n"
+msgstr "              paràmetres\n"
+
+#: misc-utils/lastlog2.c:116
 #, fuzzy
 #| msgid "  -V, --version                Output version information\n"
 msgid " -b, --before DAYS       print only records older than DAYS\n"
 msgstr "  -V, --version                Mostra la informació de la versió\n"
 
-#: misc-utils/lastlog2.c:112
+#: misc-utils/lastlog2.c:117
 #, fuzzy
 #| msgid "  -q, --quiet                  Disable error reporting by getopt(3)\n"
 msgid " -C, --clear             clear record of a user (requires -u)\n"
@@ -14859,98 +14864,98 @@ msgstr ""
 "  -q, --quiet                  Inhabilita els informes d'error mitjançant\n"
 "                               getopt(3)\n"
 
-#: misc-utils/lastlog2.c:113
+#: misc-utils/lastlog2.c:118
 msgid " -d, --database FILE     use FILE as lastlog2 database\n"
 msgstr ""
 
-#: misc-utils/lastlog2.c:114
+#: misc-utils/lastlog2.c:119
 msgid " -i, --import FILE       import data from old lastlog file\n"
 msgstr ""
 
-#: misc-utils/lastlog2.c:115
+#: misc-utils/lastlog2.c:120
 msgid " -r, --rename NEWNAME    rename existing user to NEWNAME (requires -u)\n"
 msgstr ""
 
-#: misc-utils/lastlog2.c:116
+#: misc-utils/lastlog2.c:121
 #, fuzzy
 #| msgid "  -h, --help                   This small usage guide\n"
 msgid " -s, --service           display PAM service\n"
 msgstr "  -h, --help                   Aquesta petita guia d'ús\n"
 
-#: misc-utils/lastlog2.c:117
+#: misc-utils/lastlog2.c:122
 #, fuzzy
 #| msgid "  -T, --test                   Test for getopt(1) version\n"
 msgid " -S, --set               set lastlog record to current time (requires -u)\n"
 msgstr "  -T, --test                   Prova la versió del getopt(1)\n"
 
-#: misc-utils/lastlog2.c:118
+#: misc-utils/lastlog2.c:123
 #, fuzzy
 #| msgid "  -T, --test                   Test for getopt(1) version\n"
 msgid " -t, --time DAYS         print only lastlog records more recent than DAYS\n"
 msgstr "  -T, --test                   Prova la versió del getopt(1)\n"
 
-#: misc-utils/lastlog2.c:119
+#: misc-utils/lastlog2.c:124
 #, fuzzy
 #| msgid "  -T, --test                   Test for getopt(1) version\n"
 msgid " -u, --user LOGIN        print lastlog record of the specified LOGIN\n"
 msgstr "  -T, --test                   Prova la versió del getopt(1)\n"
 
-#: misc-utils/lastlog2.c:166 misc-utils/lastlog2.c:199
+#: misc-utils/lastlog2.c:175 misc-utils/lastlog2.c:208
 #, fuzzy
 #| msgid "cannot open %s"
 msgid "Cannot parse days"
 msgstr "%s no es pot obrir"
 
-#: misc-utils/lastlog2.c:217
+#: misc-utils/lastlog2.c:226
 msgid "Option -C, -i and -S cannot be used together"
 msgstr ""
 
-#: misc-utils/lastlog2.c:221
+#: misc-utils/lastlog2.c:230
 #, fuzzy
 #| msgid "Couldn't initialize PAM: %s"
 msgid "Couldn't initialize lastlog2 environment"
 msgstr "No s'ha pogut inicialitzar PAM: %s"
 
-#: misc-utils/lastlog2.c:226
+#: misc-utils/lastlog2.c:235
 #, fuzzy, c-format
 #| msgid "Could not open %s\n"
 msgid "Couldn't import entries from '%s'"
 msgstr "No s'ha pogut obrir %s\n"
 
-#: misc-utils/lastlog2.c:235
+#: misc-utils/lastlog2.c:244
 msgid "Options -C, -r and -S require option -u to specify the user"
 msgstr ""
 
-#: misc-utils/lastlog2.c:240 misc-utils/lastlog2.c:283
+#: misc-utils/lastlog2.c:249 misc-utils/lastlog2.c:292
 #, fuzzy, c-format
 #| msgid "%s: user \"%s\" does not exist.\n"
 msgid "User '%s' does not exist."
 msgstr "%s: l'usuari \"%s\" no existeix.\n"
 
-#: misc-utils/lastlog2.c:246
+#: misc-utils/lastlog2.c:255
 #, fuzzy, c-format
 #| msgid "Could not open %s\n"
 msgid "Couldn't remove entry for '%s'"
 msgstr "No s'ha pogut obrir %s\n"
 
-#: misc-utils/lastlog2.c:255
+#: misc-utils/lastlog2.c:264
 #, fuzzy
 #| msgid "Could not determine current format type"
 msgid "Could not determine current time"
 msgstr "No es pot determinar l'actual tipus de format"
 
-#: misc-utils/lastlog2.c:260
+#: misc-utils/lastlog2.c:269
 #, fuzzy, c-format
 msgid "Couldn't update login time for '%s'"
 msgstr "format de registre no suportat: «%s»"
 
-#: misc-utils/lastlog2.c:267
+#: misc-utils/lastlog2.c:276
 #, fuzzy, c-format
 #| msgid "can't rename %s to %s: %s\n"
 msgid "Couldn't rename entry '%s' to '%s'"
 msgstr "no s'ha pogut tornar a nomenar %s per %s: %s\n"
 
-#: misc-utils/lastlog2.c:297
+#: misc-utils/lastlog2.c:306
 #, fuzzy
 #| msgid "Could not open %s\n"
 msgid "Couldn't read entries for all users"
@@ -16950,7 +16955,7 @@ msgid "vendor"
 msgstr "proveïdor del dispositiu"
 
 #: misc-utils/uuidparse.c:281 misc-utils/wipefs.c:178
-#: sys-utils/irq-common.c:148 sys-utils/irq-common.c:481 sys-utils/lscpu.c:991
+#: sys-utils/irq-common.c:148 sys-utils/irq-common.c:481 sys-utils/lscpu.c:995
 #: sys-utils/lsmem.c:716 sys-utils/lsns.c:1327 sys-utils/zramctl.c:539
 #, fuzzy
 msgid "failed to initialize output column"
@@ -18073,7 +18078,7 @@ msgid "failed to parse step"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
 #: sys-utils/blkdiscard.c:231 sys-utils/blkpr.c:307 sys-utils/blkzone.c:492
-#: sys-utils/fallocate.c:384 sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:577
+#: sys-utils/fallocate.c:383 sys-utils/fsfreeze.c:110 sys-utils/fstrim.c:577
 #: sys-utils/umount.c:619 term-utils/script.c:911
 #, fuzzy
 msgid "unexpected number of arguments"
@@ -19738,54 +19743,54 @@ msgstr "la cerca ha fallat"
 msgid "%s: %s (%ju bytes) converted to sparse holes.\n"
 msgstr "%s: %s (%ju bytes) convertit en forats dispersos."
 
-#: sys-utils/fallocate.c:363
+#: sys-utils/fallocate.c:362
 #, fuzzy
 msgid "posix_fallocate support is not compiled"
 msgstr "no s'ha compilat el suport posixfallocate"
 
-#: sys-utils/fallocate.c:379 sys-utils/fsfreeze.c:106
+#: sys-utils/fallocate.c:378 sys-utils/fsfreeze.c:106
 #, fuzzy
 msgid "no filename specified"
 msgstr "no s'ha especificat cap nom de fitxer"
 
-#: sys-utils/fallocate.c:391 sys-utils/fallocate.c:397
+#: sys-utils/fallocate.c:390 sys-utils/fallocate.c:396
 #, fuzzy
 msgid "invalid length value specified"
 msgstr "Valor establert invàlid: %s\n"
 
-#: sys-utils/fallocate.c:395
+#: sys-utils/fallocate.c:394
 #, fuzzy
 msgid "no length argument specified"
 msgstr "Massa arguments.\n"
 
-#: sys-utils/fallocate.c:400
+#: sys-utils/fallocate.c:399
 #, fuzzy
 msgid "invalid offset value specified"
 msgstr "Valor establert invàlid: %s\n"
 
-#: sys-utils/fallocate.c:423
+#: sys-utils/fallocate.c:422
 #, fuzzy, c-format
 msgid "%s: %s (%ju bytes) hole created.\n"
 msgstr "%s: %s (%ju bytes) forat creat."
 
-#: sys-utils/fallocate.c:426
+#: sys-utils/fallocate.c:425
 #, fuzzy, c-format
 #| msgid "%s: %s (%s)\n"
 msgid "%s: %s (%ju bytes) removed.\n"
 msgstr "%s: %s (%s)\n"
 
-#: sys-utils/fallocate.c:429
+#: sys-utils/fallocate.c:428
 #, fuzzy, c-format
 msgid "%s: %s (%ju bytes) inserted.\n"
 msgstr "%s: %s (%ju bytes) inserits."
 
-#: sys-utils/fallocate.c:432
+#: sys-utils/fallocate.c:431
 #, fuzzy, c-format
 #| msgid "%s: %s (%s)\n"
 msgid "%s: %s (%ju bytes) zeroed.\n"
 msgstr "%s: %s (%s)\n"
 
-#: sys-utils/fallocate.c:435
+#: sys-utils/fallocate.c:434
 #, fuzzy, c-format
 #| msgid "%s: '%c' is not allowed.\n"
 msgid "%s: %s (%ju bytes) allocated.\n"
@@ -22737,392 +22742,392 @@ msgstr ""
 ". programes. Cada element diferent de cada columna té un ID únic\n"
 ". començant normalment des de zero."
 
-#: sys-utils/lscpu.c:881
+#: sys-utils/lscpu.c:885
 #, fuzzy
 msgid "Model name:"
 msgstr "Nom del model:"
 
-#: sys-utils/lscpu.c:883
+#: sys-utils/lscpu.c:887
 #, fuzzy
 msgid "BIOS Model name:"
 msgstr "Nom del model BIOS:"
 
-#: sys-utils/lscpu.c:885
+#: sys-utils/lscpu.c:889
 #, fuzzy
 msgid "BIOS CPU family:"
 msgstr "Família de CPU BIOS:"
 
-#: sys-utils/lscpu.c:887
+#: sys-utils/lscpu.c:891
 #, fuzzy
 msgid "Machine type:"
 msgstr "Tipus de màquina:"
 
-#: sys-utils/lscpu.c:889
+#: sys-utils/lscpu.c:893
 #, fuzzy
 msgid "CPU family:"
 msgstr "Família de la CPU:"
 
-#: sys-utils/lscpu.c:891
+#: sys-utils/lscpu.c:895
 #, fuzzy
 msgid "Model:"
 msgstr "Model:"
 
-#: sys-utils/lscpu.c:893
+#: sys-utils/lscpu.c:897
 #, fuzzy
 msgid "Thread(s) per core:"
 msgstr "Converses per nucli:"
 
-#: sys-utils/lscpu.c:895
+#: sys-utils/lscpu.c:899
 #, fuzzy
 msgid "Core(s) per cluster:"
 msgstr "Nucli(s) per grup:"
 
-#: sys-utils/lscpu.c:897
+#: sys-utils/lscpu.c:901
 #, fuzzy
 msgid "Core(s) per socket:"
 msgstr "Nucli(s) per sòcol:"
 
-#: sys-utils/lscpu.c:900
+#: sys-utils/lscpu.c:904
 #, fuzzy
 msgid "Socket(s) per book:"
 msgstr "Socket(s) per llibre:"
 
-#: sys-utils/lscpu.c:902
+#: sys-utils/lscpu.c:906
 #, fuzzy
 msgid "Book(s) per drawer:"
 msgstr "Llibres per calaix:"
 
-#: sys-utils/lscpu.c:903
+#: sys-utils/lscpu.c:907
 #, fuzzy
 msgid "Drawer(s):"
 msgstr "Calaix(s):"
 
-#: sys-utils/lscpu.c:905
+#: sys-utils/lscpu.c:909
 #, fuzzy
 msgid "Book(s):"
 msgstr "Llibre(s):"
 
-#: sys-utils/lscpu.c:909 sys-utils/lscpu.c:911 sys-utils/lscpu.c:916
+#: sys-utils/lscpu.c:913 sys-utils/lscpu.c:915 sys-utils/lscpu.c:920
 #, fuzzy
 msgid "Socket(s):"
 msgstr "connector nfs"
 
-#: sys-utils/lscpu.c:913
+#: sys-utils/lscpu.c:917
 #, fuzzy
 msgid "Cluster(s):"
 msgstr "Grups:"
 
-#: sys-utils/lscpu.c:921
+#: sys-utils/lscpu.c:925
 #, fuzzy
 msgid "Stepping:"
 msgstr "Ajustament:"
 
-#: sys-utils/lscpu.c:923
+#: sys-utils/lscpu.c:927
 #, fuzzy
 msgid "Frequency boost:"
 msgstr "Millora de la freqüència:"
 
-#: sys-utils/lscpu.c:924
+#: sys-utils/lscpu.c:928
 #, fuzzy
 #| msgid "Unusable"
 msgid "enabled"
 msgstr "Inutilitzable"
 
-#: sys-utils/lscpu.c:924
+#: sys-utils/lscpu.c:928
 #, fuzzy
 #| msgid "Unusable"
 msgid "disabled"
 msgstr "Inutilitzable"
 
-#: sys-utils/lscpu.c:928
+#: sys-utils/lscpu.c:932
 #, fuzzy
 msgid "CPU dynamic MHz:"
 msgstr "MHz dinàmica de la CPU:"
 
-#: sys-utils/lscpu.c:930
+#: sys-utils/lscpu.c:934
 #, fuzzy
 msgid "CPU static MHz:"
 msgstr "MHz estàtica de la CPU:"
 
-#: sys-utils/lscpu.c:935
+#: sys-utils/lscpu.c:939
 #, fuzzy
 msgid "CPU(s) scaling MHz:"
 msgstr "Mida de la(es) de la CPU MHz:"
 
-#: sys-utils/lscpu.c:936
+#: sys-utils/lscpu.c:940
 #, fuzzy
 msgid "CPU max MHz:"
 msgstr "Nombre màxim de MHz de la CPU:"
 
-#: sys-utils/lscpu.c:937
+#: sys-utils/lscpu.c:941
 #, fuzzy
 msgid "CPU min MHz:"
 msgstr "Mig MHz de la CPU:"
 
-#: sys-utils/lscpu.c:940
+#: sys-utils/lscpu.c:944
 #, fuzzy
 msgid "BogoMIPS:"
 msgstr "BogoMIPS:"
 
-#: sys-utils/lscpu.c:943
+#: sys-utils/lscpu.c:947
 #, fuzzy
 msgid "Dispatching mode:"
 msgstr "Mode d'enviament:"
 
-#: sys-utils/lscpu.c:946
+#: sys-utils/lscpu.c:950
 #, fuzzy
 #| msgid "Physical cylinders"
 msgid "Physical sockets:"
 msgstr "Cilindres físics"
 
-#: sys-utils/lscpu.c:947
+#: sys-utils/lscpu.c:951
 #, fuzzy
 #| msgid "Physical cylinders"
 msgid "Physical chips:"
 msgstr "Cilindres físics"
 
-#: sys-utils/lscpu.c:948
+#: sys-utils/lscpu.c:952
 #, fuzzy
 #| msgid "Physical cylinders"
 msgid "Physical cores/chip:"
 msgstr "Cilindres físics"
 
-#: sys-utils/lscpu.c:952
+#: sys-utils/lscpu.c:956
 #, fuzzy
 #| msgid "Flags"
 msgid "Flags:"
 msgstr "Senyaladors"
 
-#: sys-utils/lscpu.c:996
+#: sys-utils/lscpu.c:1000
 #, fuzzy
 msgid "Architecture:"
 msgstr "Arquitectura:"
 
-#: sys-utils/lscpu.c:1007
+#: sys-utils/lscpu.c:1011
 #, fuzzy
 msgid "CPU op-mode(s):"
 msgstr "Modes d'operació de la CPU:"
 
-#: sys-utils/lscpu.c:1010
+#: sys-utils/lscpu.c:1014
 #, fuzzy
 msgid "Address sizes:"
 msgstr "Mides de l'adreça:"
 
-#: sys-utils/lscpu.c:1013 sys-utils/lscpu.c:1015
+#: sys-utils/lscpu.c:1017 sys-utils/lscpu.c:1019
 #, fuzzy
 msgid "Byte Order:"
 msgstr "Ordre dels bytes:"
 
-#: sys-utils/lscpu.c:1018
+#: sys-utils/lscpu.c:1022
 #, fuzzy
 msgid "CPU(s):"
 msgstr "CPU:"
 
-#: sys-utils/lscpu.c:1022
+#: sys-utils/lscpu.c:1026
 #, fuzzy
 msgid "On-line CPU(s) mask:"
 msgstr "Màscara de CPU en línia:"
 
-#: sys-utils/lscpu.c:1023
+#: sys-utils/lscpu.c:1027
 #, fuzzy
 msgid "On-line CPU(s) list:"
 msgstr "Llista de CPU en línia:"
 
-#: sys-utils/lscpu.c:1035
+#: sys-utils/lscpu.c:1039
 #, fuzzy
 msgid "failed to callocate cpu set"
 msgstr "No s'ha pogut assignar la memòria temporal.\n"
 
-#: sys-utils/lscpu.c:1044
+#: sys-utils/lscpu.c:1048
 #, fuzzy
 msgid "Off-line CPU(s) mask:"
 msgstr "Màscara de CPU fora de línia:"
 
-#: sys-utils/lscpu.c:1045
+#: sys-utils/lscpu.c:1049
 #, fuzzy
 msgid "Off-line CPU(s) list:"
 msgstr "Llista de CPU fora de línia:"
 
-#: sys-utils/lscpu.c:1052
+#: sys-utils/lscpu.c:1056
 #, fuzzy
 msgid "Vendor ID:"
 msgstr "Identificador del proveïdor:"
 
-#: sys-utils/lscpu.c:1054
+#: sys-utils/lscpu.c:1058
 #, fuzzy
 msgid "BIOS Vendor ID:"
 msgstr "ID del proveïdor del BIOS:"
 
-#: sys-utils/lscpu.c:1062
+#: sys-utils/lscpu.c:1066
 #, fuzzy
 msgid "Virtualization features:"
 msgstr "Antiga situació:\n"
 
-#: sys-utils/lscpu.c:1064 sys-utils/lscpu.c:1066
+#: sys-utils/lscpu.c:1068 sys-utils/lscpu.c:1070
 #, fuzzy
 msgid "Virtualization:"
 msgstr "Antiga situació:\n"
 
-#: sys-utils/lscpu.c:1069
+#: sys-utils/lscpu.c:1073
 #, fuzzy
 msgid "Hypervisor:"
 msgstr "Hipervisor:"
 
-#: sys-utils/lscpu.c:1071
+#: sys-utils/lscpu.c:1075
 #, fuzzy
 msgid "Hypervisor vendor:"
 msgstr "Proveïdor de l'hipervisor:"
 
-#: sys-utils/lscpu.c:1072
+#: sys-utils/lscpu.c:1076
 #, fuzzy
 msgid "Virtualization type:"
 msgstr "Tipus de virtualització:"
 
-#: sys-utils/lscpu.c:1095
+#: sys-utils/lscpu.c:1099
 #, fuzzy
 msgid "Caches (sum of all):"
 msgstr "Caixes (suma de tots):"
 
-#: sys-utils/lscpu.c:1099 sys-utils/lscpu.c:1129 sys-utils/lscpu.c:1161
+#: sys-utils/lscpu.c:1103 sys-utils/lscpu.c:1133 sys-utils/lscpu.c:1165
 #, fuzzy, c-format
 #| msgid "%s: OK\n"
 msgid "%s:"
 msgstr "%s: Correcte\n"
 
-#: sys-utils/lscpu.c:1099 sys-utils/lscpu.c:1129
+#: sys-utils/lscpu.c:1103 sys-utils/lscpu.c:1133
 #, fuzzy, c-format
 msgid "%s cache:"
 msgstr "Memòria cau %s:"
 
-#: sys-utils/lscpu.c:1102
+#: sys-utils/lscpu.c:1106
 #, fuzzy, c-format
 msgid "%<PRIu64> (%d instance)"
 msgid_plural "%<PRIu64> (%d instances)"
 msgstr[0] "%<PRIu64> (%d instància)"
 msgstr[1] "%<PRIu64> (%d instàncies)"
 
-#: sys-utils/lscpu.c:1111
+#: sys-utils/lscpu.c:1115
 #, fuzzy, c-format
 msgid "%s (%d instance)"
 msgid_plural "%s (%d instances)"
 msgstr[0] "%s (%d instància)"
 msgstr[1] "%s (%d instàncies)"
 
-#: sys-utils/lscpu.c:1126
+#: sys-utils/lscpu.c:1130
 #, fuzzy
 msgid "Caches:"
 msgstr "Caixes:"
 
-#: sys-utils/lscpu.c:1145
+#: sys-utils/lscpu.c:1149
 #, fuzzy
 msgid "NUMA:"
 msgstr "NUMA:"
 
-#: sys-utils/lscpu.c:1147
+#: sys-utils/lscpu.c:1151
 #, fuzzy
 msgid "NUMA node(s):"
 msgstr "Nodes NUMA:"
 
-#: sys-utils/lscpu.c:1149
+#: sys-utils/lscpu.c:1153
 #, fuzzy, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr "Node NUMA%d CPU(s):"
 
-#: sys-utils/lscpu.c:1157
+#: sys-utils/lscpu.c:1161
 #, fuzzy
 msgid "Vulnerabilities:"
 msgstr "Vulnerabilitats:"
 
-#: sys-utils/lscpu.c:1161
+#: sys-utils/lscpu.c:1165
 #, fuzzy, c-format
 msgid "Vulnerability %s:"
 msgstr "Vulnerabilitat %s:"
 
-#: sys-utils/lscpu.c:1179
+#: sys-utils/lscpu.c:1183
 #, fuzzy
 msgid "Display information about the CPU architecture.\n"
 msgstr "Mostra informació sobre l'arquitectura de la CPU."
 
-#: sys-utils/lscpu.c:1182
+#: sys-utils/lscpu.c:1186
 #, fuzzy
 msgid " -a, --all               print both online and offline CPUs (default for -e)\n"
 msgstr "-a, --all imprimeix CPU en línia i fora de línia (per defecte per -e)"
 
-#: sys-utils/lscpu.c:1183
+#: sys-utils/lscpu.c:1187
 #, fuzzy
 msgid " -b, --online            print online CPUs only (default for -p)\n"
 msgstr "-b, --online imprimeix només les CPU en línia (per defecte per -p)"
 
-#: sys-utils/lscpu.c:1184
+#: sys-utils/lscpu.c:1188
 #, fuzzy
 msgid " -B, --bytes             print sizes in bytes rather than in human readable format\n"
 msgstr "-B, --bytes imprimeix les mides en bytes en lloc d'en un format llegible per humans"
 
-#: sys-utils/lscpu.c:1185
+#: sys-utils/lscpu.c:1189
 #, fuzzy
 msgid " -C, --caches[=<list>]   info about caches in extended readable format\n"
 msgstr "-C, --caches[=<list>] informació sobre les memòries cau en format llegible ampliat"
 
-#: sys-utils/lscpu.c:1186
+#: sys-utils/lscpu.c:1190
 #, fuzzy
 msgid " -c, --offline           print offline CPUs only\n"
 msgstr "-c, --offline només imprimeix les CPU fora de línia"
 
-#: sys-utils/lscpu.c:1187
+#: sys-utils/lscpu.c:1191
 #, fuzzy
 #| msgid "  -V, --version                Output version information\n"
 msgid " -J, --json              use JSON for default or extended format\n"
 msgstr "  -V, --version                Mostra la informació de la versió\n"
 
-#: sys-utils/lscpu.c:1188
+#: sys-utils/lscpu.c:1192
 #, fuzzy
 msgid " -e, --extended[=<list>] print out an extended readable format\n"
 msgstr "-e, --extended]=<list>] imprimeix un format llegible ampliat"
 
-#: sys-utils/lscpu.c:1189
+#: sys-utils/lscpu.c:1193
 #, fuzzy
 msgid " -p, --parse[=<list>]    print out a parsable format\n"
 msgstr "-p, --parse[=<list>] imprimeix un format parsable"
 
-#: sys-utils/lscpu.c:1190
+#: sys-utils/lscpu.c:1194
 #, fuzzy
 #| msgid "  -V, --version                Output version information\n"
 msgid " -r, --raw               use raw output format (for -e, -p and -C)\n"
 msgstr "  -V, --version                Mostra la informació de la versió\n"
 
-#: sys-utils/lscpu.c:1191
+#: sys-utils/lscpu.c:1195
 #, fuzzy
 msgid " -s, --sysroot <dir>     use specified directory as system root\n"
 msgstr "-s, --sysroot <dir> usa el directori especificat com a arrel del sistema"
 
-#: sys-utils/lscpu.c:1192
+#: sys-utils/lscpu.c:1196
 #, fuzzy
 msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
 msgstr "-x, --hex imprimeix màscares hexadecimals en lloc de llistes de CPU"
 
-#: sys-utils/lscpu.c:1193
+#: sys-utils/lscpu.c:1197
 #, fuzzy
 msgid " -y, --physical          print physical instead of logical IDs\n"
 msgstr "-y, --physical print físic en lloc d'identificadors lògics"
 
-#: sys-utils/lscpu.c:1194
+#: sys-utils/lscpu.c:1198
 #, fuzzy
 msgid "     --hierarchic[=when] use subsections in summary (auto, never, always)\n"
 msgstr "--summary)=quan] mostra la informació del resum (mai,sempre o només)"
 
-#: sys-utils/lscpu.c:1195
+#: sys-utils/lscpu.c:1199
 #, fuzzy
 msgid "     --output-all        print all available columns for -e, -p or -C\n"
 msgstr "--output-all imprimeix totes les columnes disponibles per a -e, -p o -C"
 
-#: sys-utils/lscpu.c:1199
+#: sys-utils/lscpu.c:1203
 #, fuzzy
 msgid ""
 "\n"
 "Available output columns for -e or -p:\n"
 msgstr "Columnes de sortida disponibles per a -e o -p:"
 
-#: sys-utils/lscpu.c:1203
+#: sys-utils/lscpu.c:1207
 #, fuzzy
 #| msgid "Available commands:\n"
 msgid ""
@@ -23130,12 +23135,12 @@ msgid ""
 "Available output columns for -C:\n"
 msgstr "Ordres disponibles:\n"
 
-#: sys-utils/lscpu.c:1323
+#: sys-utils/lscpu.c:1327
 #, fuzzy
 msgid "unsupported --flat argument"
 msgstr "màx. nombre de segments = %lu\n"
 
-#: sys-utils/lscpu.c:1347
+#: sys-utils/lscpu.c:1351
 #, fuzzy, c-format
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr "%s: les opcions --all, --online i --offline només es poden utilitzar amb les opcions --extended o --parse."
@@ -27946,10 +27951,10 @@ msgstr "%s: no s'ha pogut trobar el procés \"%s\"\n"
 msgid "%s: can't exec %s: %m"
 msgstr "%s: no s'ha pogut executar %s: %m"
 
-#: term-utils/agetty.c:606 term-utils/agetty.c:777 term-utils/agetty.c:956
-#: term-utils/agetty.c:1205 term-utils/agetty.c:1484 term-utils/agetty.c:1502
-#: term-utils/agetty.c:1539 term-utils/agetty.c:1549 term-utils/agetty.c:1591
-#: term-utils/agetty.c:1951 term-utils/agetty.c:2311 term-utils/agetty.c:2893
+#: term-utils/agetty.c:606 term-utils/agetty.c:777 term-utils/agetty.c:960
+#: term-utils/agetty.c:1209 term-utils/agetty.c:1488 term-utils/agetty.c:1506
+#: term-utils/agetty.c:1543 term-utils/agetty.c:1553 term-utils/agetty.c:1595
+#: term-utils/agetty.c:1955 term-utils/agetty.c:2315 term-utils/agetty.c:2897
 #, fuzzy, c-format
 msgid "failed to allocate memory: %m"
 msgstr "No s'ha pogut assignar la memòria temporal.\n"
@@ -27969,116 +27974,116 @@ msgstr "Nombre invàlid: %s\n"
 msgid "invalid nice argument"
 msgstr "col: argument -l incorrecte %s.\n"
 
-#: term-utils/agetty.c:934
+#: term-utils/agetty.c:939
 #, fuzzy, c-format
 msgid "could not get terminal name: %d"
 msgstr "no es pot obtenir la mida de %s"
 
-#: term-utils/agetty.c:961
+#: term-utils/agetty.c:965
 #, c-format
 msgid "bad speed: %s"
 msgstr "velocitat incorrecta: %s"
 
-#: term-utils/agetty.c:963
+#: term-utils/agetty.c:967
 msgid "too many alternate speeds"
 msgstr "massa velocitats alternatives"
 
-#: term-utils/agetty.c:1070 term-utils/agetty.c:1074 term-utils/agetty.c:1127
+#: term-utils/agetty.c:1074 term-utils/agetty.c:1078 term-utils/agetty.c:1131
 #, c-format
 msgid "/dev/%s: cannot open as standard input: %m"
 msgstr "/dev/%s: no es pot obrir com a entrada estàndard: %m"
 
-#: term-utils/agetty.c:1093
+#: term-utils/agetty.c:1097
 #, c-format
 msgid "/dev/%s: not a character device"
 msgstr "/dev/%s: no és un dispositiu de caràcter"
 
-#: term-utils/agetty.c:1095
+#: term-utils/agetty.c:1099
 #, fuzzy, c-format
 #| msgid "/dev/%s: not a character device"
 msgid "/dev/%s: not a tty"
 msgstr "/dev/%s: no és un dispositiu de caràcter"
 
-#: term-utils/agetty.c:1099 term-utils/agetty.c:1131
+#: term-utils/agetty.c:1103 term-utils/agetty.c:1135
 #, fuzzy, c-format
 #| msgid "/dev/%s: cannot open as standard input: %m"
 msgid "/dev/%s: cannot get controlling tty: %m"
 msgstr "/dev/%s: no es pot obrir com a entrada estàndard: %m"
 
-#: term-utils/agetty.c:1121
+#: term-utils/agetty.c:1125
 #, fuzzy, c-format
 #| msgid "/dev: chdir() failed: %m"
 msgid "/dev/%s: vhangup() failed: %m"
 msgstr "/dev: chdir() ha fallat: %m"
 
-#: term-utils/agetty.c:1142
+#: term-utils/agetty.c:1146
 #, c-format
 msgid "%s: not open for read/write"
 msgstr "%s: no s'ha obert per a lectura/escriptura"
 
-#: term-utils/agetty.c:1147
+#: term-utils/agetty.c:1151
 #, fuzzy, c-format
 #| msgid "/dev/%s: cannot open as standard input: %m"
 msgid "/dev/%s: cannot set process group: %m"
 msgstr "/dev/%s: no es pot obrir com a entrada estàndard: %m"
 
-#: term-utils/agetty.c:1161
+#: term-utils/agetty.c:1165
 #, c-format
 msgid "%s: dup problem: %m"
 msgstr "%s: problema de dup: %m"
 
-#: term-utils/agetty.c:1178
+#: term-utils/agetty.c:1182
 #, fuzzy, c-format
 msgid "%s: failed to get terminal attributes: %m"
 msgstr "no es pot obtenir la mida de %s"
 
-#: term-utils/agetty.c:1381 term-utils/agetty.c:1410
+#: term-utils/agetty.c:1385 term-utils/agetty.c:1414
 #, fuzzy, c-format
 msgid "setting terminal attributes failed: %m"
 msgstr "no es pot obtenir la mida de %s"
 
-#: term-utils/agetty.c:1529
+#: term-utils/agetty.c:1533
 #, fuzzy
 #| msgid "cannot open %s read-write\n"
 msgid "cannot open os-release file"
 msgstr "no es pot obrir %s per a lectura-escriptura\n"
 
-#: term-utils/agetty.c:1696
+#: term-utils/agetty.c:1700
 #, fuzzy, c-format
 msgid "failed to create reload file: %s: %m"
 msgstr "no ha estat possible executar ioctl() per llegir l'hora de %s"
 
-#: term-utils/agetty.c:2006
+#: term-utils/agetty.c:2010
 #, fuzzy, c-format
 msgid "failed to get terminal attributes: %m"
 msgstr "no es pot obtenir la mida de %s"
 
-#: term-utils/agetty.c:2028
+#: term-utils/agetty.c:2032
 #, fuzzy
 msgid "[press ENTER to login]"
 msgstr "]premeu RETORN per iniciar la sessió]"
 
-#: term-utils/agetty.c:2056
+#: term-utils/agetty.c:2060
 #, fuzzy
 msgid "Num Lock off"
 msgstr "Bloqueig numèric desactivat"
 
-#: term-utils/agetty.c:2059
+#: term-utils/agetty.c:2063
 #, fuzzy
 msgid "Num Lock on"
 msgstr "Bloq Núm activat"
 
-#: term-utils/agetty.c:2062
+#: term-utils/agetty.c:2066
 #, fuzzy
 msgid "Caps Lock on"
 msgstr "Bloq Maj activat"
 
-#: term-utils/agetty.c:2065
+#: term-utils/agetty.c:2069
 #, fuzzy
 msgid "Scroll Lock on"
 msgstr "Bloqueig de desplaçament activat"
 
-#: term-utils/agetty.c:2068
+#: term-utils/agetty.c:2072
 #, fuzzy, c-format
 #| msgid "type: %s\n"
 msgid ""
@@ -28086,32 +28091,32 @@ msgid ""
 "\n"
 msgstr "tipus: %s\n"
 
-#: term-utils/agetty.c:2212
+#: term-utils/agetty.c:2216
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: lectura: %m"
 
-#: term-utils/agetty.c:2279
+#: term-utils/agetty.c:2283
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: desbordament de l'entrada"
 
-#: term-utils/agetty.c:2307 term-utils/agetty.c:2315
+#: term-utils/agetty.c:2311 term-utils/agetty.c:2319
 #, fuzzy, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s: la conversió de caràcters no és vàlida per al nom d'inici de sessió"
 
-#: term-utils/agetty.c:2321
+#: term-utils/agetty.c:2325
 #, fuzzy, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s: el caràcter 0x%x del nom d'inici de sessió no és vàlid"
 
-#: term-utils/agetty.c:2406
+#: term-utils/agetty.c:2410
 #, fuzzy, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "no es pot obtenir la mida de %s"
 
-#: term-utils/agetty.c:2451
+#: term-utils/agetty.c:2455
 #, fuzzy, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -28120,191 +28125,191 @@ msgstr ""
 "%1$s ]opcions] <line> ]<baudrate>,...] ]<termtype>]\n"
 " %1$s ]opcions] <baudrate>,... <line> ]<termtype>]"
 
-#: term-utils/agetty.c:2455
+#: term-utils/agetty.c:2459
 #, fuzzy
 msgid "Open a terminal and set its mode.\n"
 msgstr "Obre un terminal i estableix el seu mode."
 
-#: term-utils/agetty.c:2458
+#: term-utils/agetty.c:2462
 #, fuzzy
 #| msgid "  -u, --unqote                 Do not quote the output\n"
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr "  -u, --unqote                 No es posarà la sortida entre cometes\n"
 
-#: term-utils/agetty.c:2459
+#: term-utils/agetty.c:2463
 #, fuzzy
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr "-a, --autologin <user> inicia la sessió amb l'usuari especificat automàticament"
 
-#: term-utils/agetty.c:2460
+#: term-utils/agetty.c:2464
 #, fuzzy
 #| msgid "  -u, --unqote                 Do not quote the output\n"
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr "  -u, --unqote                 No es posarà la sortida entre cometes\n"
 
-#: term-utils/agetty.c:2461
+#: term-utils/agetty.c:2465
 #, fuzzy
 #| msgid "  -T, --test                   Test for getopt(1) version\n"
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr "  -T, --test                   Prova la versió del getopt(1)\n"
 
-#: term-utils/agetty.c:2462
+#: term-utils/agetty.c:2466
 #, fuzzy
 msgid " -f, --issue-file <list>    display issue files or directories\n"
 msgstr "-f, --issue-file <list> mostra els fitxers o directoris de problemes"
 
-#: term-utils/agetty.c:2463
+#: term-utils/agetty.c:2467
 #, fuzzy
 msgid "     --show-issue           display issue file and exit\n"
 msgstr "--show-issue mostra el fitxer d'error i surt"
 
-#: term-utils/agetty.c:2464
+#: term-utils/agetty.c:2468
 #, fuzzy
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr "-h, --flow-control permet el control de flux de maquinari"
 
-#: term-utils/agetty.c:2465
+#: term-utils/agetty.c:2469
 #, fuzzy
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr "-H, --host <hostname> especifica l'amfitrió d'inici de sessió"
 
-#: term-utils/agetty.c:2466
+#: term-utils/agetty.c:2470
 #, fuzzy
 #| msgid "  -u, --unqote                 Do not quote the output\n"
 msgid " -i, --noissue              do not display issue file\n"
 msgstr "  -u, --unqote                 No es posarà la sortida entre cometes\n"
 
-#: term-utils/agetty.c:2467
+#: term-utils/agetty.c:2471
 #, fuzzy
 msgid " -I, --init-string <string> set init string\n"
 msgstr "-I, --init-string <string> set init string"
 
-#: term-utils/agetty.c:2468
+#: term-utils/agetty.c:2472
 #, fuzzy
 #| msgid "  -u, --unqote                 Do not quote the output\n"
 msgid " -J, --noclear              do not clear the screen before prompt\n"
 msgstr "  -u, --unqote                 No es posarà la sortida entre cometes\n"
 
-#: term-utils/agetty.c:2469
+#: term-utils/agetty.c:2473
 #, fuzzy
 msgid " -l, --login-program <file> specify login program\n"
 msgstr "-l, --login-program <file> especifica el programa d'inici de sessió"
 
-#: term-utils/agetty.c:2470
+#: term-utils/agetty.c:2474
 #, fuzzy
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr "-L, --local-line the=<mode>] controla l'indicador de línia local"
 
-#: term-utils/agetty.c:2471
+#: term-utils/agetty.c:2475
 #, fuzzy
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr "-m, --extract-baud extreu la taxa de baud durant la connexió"
 
-#: term-utils/agetty.c:2472
+#: term-utils/agetty.c:2476
 #, fuzzy
 #| msgid "  -V, --version                Output version information\n"
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr "  -V, --version                Mostra la informació de la versió\n"
 
-#: term-utils/agetty.c:2473
+#: term-utils/agetty.c:2477
 #, fuzzy
 msgid " -N, --nonewline            do not print a newline before issue\n"
 msgstr "-N --nonewline no imprimeix una línia nova abans d'incidir"
 
-#: term-utils/agetty.c:2474
+#: term-utils/agetty.c:2478
 #, fuzzy
 #| msgid "  -l, --longoptions=longopts   Long options to be recognized\n"
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr "  -l, --longoptions=opc_llarg   Opcions llargues a reconèixer\n"
 
-#: term-utils/agetty.c:2475
+#: term-utils/agetty.c:2479
 #, fuzzy
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr "-p, --login-pause espera qualsevol clau abans de l'inici de sessió"
 
-#: term-utils/agetty.c:2476
+#: term-utils/agetty.c:2480
 #, fuzzy
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr "-r, --chroot <dir> canvia l'arrel al directori"
 
-#: term-utils/agetty.c:2477
+#: term-utils/agetty.c:2481
 #, fuzzy
 #| msgid "  -u, --unqote                 Do not quote the output\n"
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr "  -u, --unqote                 No es posarà la sortida entre cometes\n"
 
-#: term-utils/agetty.c:2478
+#: term-utils/agetty.c:2482
 #, fuzzy
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr "-s, --keep-baud intenta mantenir la taxa de baud després de trencar"
 
-#: term-utils/agetty.c:2479
+#: term-utils/agetty.c:2483
 #, fuzzy
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr "-t, --timeout <number> temps d'espera del procés d'inici de sessió"
 
-#: term-utils/agetty.c:2480
+#: term-utils/agetty.c:2484
 #, fuzzy
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr "-U, --detect-case detecta el terminal en majúscules"
 
-#: term-utils/agetty.c:2481
+#: term-utils/agetty.c:2485
 #, fuzzy
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr "-w, --wait-cr espera el retorn de carro"
 
-#: term-utils/agetty.c:2482
+#: term-utils/agetty.c:2486
 #, fuzzy
 #| msgid "    -n :                 do not actually write to disk"
 msgid "     --nohints              do not print hints\n"
 msgstr "    -n :                 No escrigues realment al disc"
 
-#: term-utils/agetty.c:2483
+#: term-utils/agetty.c:2487
 #, fuzzy
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "--nohostname no es mostrarà cap nom d'amfitrió"
 
-#: term-utils/agetty.c:2484
+#: term-utils/agetty.c:2488
 #, fuzzy
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "--long-hostname mostra el nom d'ordinador qualificat complet"
 
-#: term-utils/agetty.c:2485
+#: term-utils/agetty.c:2489
 #, fuzzy
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "--erase-chars <string> caràcters addicionals de retrocés"
 
-#: term-utils/agetty.c:2486
+#: term-utils/agetty.c:2490
 #, fuzzy
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "--kill-chars <string> caràcters addicionals per a matar"
 
-#: term-utils/agetty.c:2487
+#: term-utils/agetty.c:2491
 #, fuzzy
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "--chdir <directory> chdir abans de l'inici de sessió"
 
-#: term-utils/agetty.c:2488
+#: term-utils/agetty.c:2492
 #, fuzzy
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "--delay <number> segons de son abans de preguntar"
 
-#: term-utils/agetty.c:2489
+#: term-utils/agetty.c:2493
 #, fuzzy
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "--nice <number> executa l'inici de sessió amb aquesta prioritat"
 
-#: term-utils/agetty.c:2490
+#: term-utils/agetty.c:2494
 #, fuzzy
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "--reload torna a carregar els indicadors en executar instàncies d'obtenció"
 
-#: term-utils/agetty.c:2491
+#: term-utils/agetty.c:2495
 #, fuzzy
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "--list-speeds mostra taxes de baud compatibles"
 
-#: term-utils/agetty.c:2850
+#: term-utils/agetty.c:2854
 #, fuzzy, c-format
 #| msgid "user"
 msgid "%d user"
@@ -28312,23 +28317,23 @@ msgid_plural "%d users"
 msgstr[0] "usuari"
 msgstr[1] "usuari"
 
-#: term-utils/agetty.c:2980
+#: term-utils/agetty.c:2984
 #, fuzzy, c-format
 msgid "checkname failed: %m"
 msgstr "no s'ha estat possible muntar"
 
-#: term-utils/agetty.c:2992
+#: term-utils/agetty.c:2996
 #, fuzzy, c-format
 #| msgid "Cannot open file '%s'"
 msgid "cannot touch file %s"
 msgstr "No s'ha pogut obrir el fitxer '%s'"
 
-#: term-utils/agetty.c:2996
+#: term-utils/agetty.c:3000
 #, fuzzy
 msgid "--reload is unsupported on your system"
 msgstr "--reload no és compatible amb el vostre sistema"
 
-#: term-utils/agetty.c:3018
+#: term-utils/agetty.c:3022
 #, fuzzy
 msgid "failed to open credentials directory"
 msgstr "No s'ha pogut escriure la partició a %s\n"
@@ -28530,7 +28535,7 @@ msgstr ""
 "Useu «%s [opcions] %s» si realment desitgeu usar-lo.\n"
 "No s'ha executat script.\n"
 
-#: term-utils/script.c:836 term-utils/scriptlive.c:221
+#: term-utils/script.c:836 term-utils/scriptlive.c:220
 #, fuzzy, c-format
 msgid "unsupported echo mode: '%s'"
 msgstr "mode d'eco no proporcionat: «%s»"
@@ -28588,171 +28593,171 @@ msgstr ""
 "\n"
 "S'ha finalitzat l'execució de script a %s"
 
-#: term-utils/scriptlive.c:60
+#: term-utils/scriptlive.c:57
 #, fuzzy, c-format
-msgid " %s [-t] timingfile [-I|-B] typescript\n"
+msgid " %s [options] <timingfile> <typescript>\n"
 msgstr "%s ]-t] fitxer de temps ]-IB-B] tipusscript"
 
-#: term-utils/scriptlive.c:64
+#: term-utils/scriptlive.c:61
 #, fuzzy
 msgid "Execute terminal typescript.\n"
 msgstr "Executa una tipificació de terminal."
 
-#: term-utils/scriptlive.c:67 term-utils/scriptreplay.c:60
+#: term-utils/scriptlive.c:64 term-utils/scriptreplay.c:57
 #, fuzzy
 msgid " -t, --timing <file>     script timing log file\n"
 msgstr "-t, --timing <file> script del fitxer de registre de temps"
 
-#: term-utils/scriptlive.c:68 term-utils/scriptreplay.c:61
+#: term-utils/scriptlive.c:65 term-utils/scriptreplay.c:58
 #, fuzzy
 msgid " -T, --log-timing <file> alias to -t\n"
 msgstr "-T, --log-timing <file> àlies a -t"
 
-#: term-utils/scriptlive.c:69 term-utils/scriptreplay.c:62
+#: term-utils/scriptlive.c:66 term-utils/scriptreplay.c:59
 #, fuzzy
 msgid " -I, --log-in <file>     script stdin log file\n"
 msgstr "-I, --log-in <file> script fitxer de registre stdin"
 
-#: term-utils/scriptlive.c:70 term-utils/scriptreplay.c:64
+#: term-utils/scriptlive.c:67 term-utils/scriptreplay.c:61
 #, fuzzy
 msgid " -B, --log-io <file>     script stdin and stdout log file\n"
 msgstr "-B, --log-io <file> script stdin i fitxer de registre stdout"
 
-#: term-utils/scriptlive.c:73
+#: term-utils/scriptlive.c:70
 #, fuzzy
 msgid " -c, --command <command> run command rather than interactive shell\n"
 msgstr "-c, --command <command> executa una ordre en lloc d'un intèrpret d'ordres interactiu"
 
-#: term-utils/scriptlive.c:74 term-utils/scriptreplay.c:70
+#: term-utils/scriptlive.c:71 term-utils/scriptreplay.c:67
 #, fuzzy
 msgid " -d, --divisor <num>     speed up or slow down execution with time divisor\n"
 msgstr "-d, --divisor <num> accelera o alenteix l'execució amb el divisor de temps"
 
-#: term-utils/scriptlive.c:75
+#: term-utils/scriptlive.c:72
 #, fuzzy
 msgid " -E, --echo <when>       echo input in session (auto, always or never)\n"
 msgstr "-E, --echo <when> entrada d'eco a la sessió (auto, sempre o mai)"
 
-#: term-utils/scriptlive.c:76 term-utils/scriptreplay.c:71
+#: term-utils/scriptlive.c:73 term-utils/scriptreplay.c:68
 #, fuzzy
 msgid " -m, --maxdelay <num>    wait at most this many seconds between updates\n"
 msgstr "-m, --maxdelay <num> espera com a màxim aquest nombre de segons entre actualitzacions"
 
-#: term-utils/scriptlive.c:238 term-utils/scriptreplay.c:257
+#: term-utils/scriptlive.c:237 term-utils/scriptreplay.c:256
 #, fuzzy
 msgid "failed to parse maximal delay argument"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: term-utils/scriptlive.c:261 term-utils/scriptreplay.c:298
+#: term-utils/scriptlive.c:260 term-utils/scriptreplay.c:297
 #, fuzzy
 msgid "timing file not specified"
 msgstr "No s'ha especificat l'opció --date.\n"
 
-#: term-utils/scriptlive.c:263
+#: term-utils/scriptlive.c:262
 #, fuzzy
 msgid "stdin typescript file not specified"
 msgstr "No s'ha pogut obrir el fitxer '%s'"
 
-#: term-utils/scriptlive.c:289
+#: term-utils/scriptlive.c:288
 #, fuzzy, c-format
 msgid ">>> scriptlive: Starting your typescript execution by %s.\n"
 msgstr ". scriptlive: s'està iniciant l'execució de tipusscript per %s."
 
-#: term-utils/scriptlive.c:296
+#: term-utils/scriptlive.c:295
 #, fuzzy
 msgid "failed to allocate PTY handler"
 msgstr "No s'ha pogut assignar la memòria temporal.\n"
 
-#: term-utils/scriptlive.c:376
+#: term-utils/scriptlive.c:375
 #, fuzzy, c-format
 msgid ""
 "\n"
 ">>> scriptlive: done.\n"
 msgstr ". scriptlive: fet."
 
-#: term-utils/scriptreplay.c:53
+#: term-utils/scriptreplay.c:50
 #, fuzzy, c-format
-msgid " %s [-t] timingfile [typescript] [divisor]\n"
+msgid " %s [options] <timingfile> [<typescript> [<divisor>]]\n"
 msgstr "%s ]-t] fitxer de temps ]typescript] ]divisor]"
 
-#: term-utils/scriptreplay.c:57
+#: term-utils/scriptreplay.c:54
 #, fuzzy
 msgid "Play back terminal typescripts, using timing information.\n"
 msgstr "Reprodueix els tipus de lletra del terminal, utilitzant informació de temps."
 
-#: term-utils/scriptreplay.c:63
+#: term-utils/scriptreplay.c:60
 #, fuzzy
 msgid " -O, --log-out <file>    script stdout log file (default)\n"
 msgstr "-O, --log-out <file> script stdout fitxer de registre (per defecte)"
 
-#: term-utils/scriptreplay.c:66
+#: term-utils/scriptreplay.c:63
 #, fuzzy
 msgid " -s, --typescript <file> deprecated alias to -O\n"
 msgstr "-s, --typescript <file> àlies obsolets a -O"
 
-#: term-utils/scriptreplay.c:69
+#: term-utils/scriptreplay.c:66
 #, fuzzy
 msgid "     --summary           display overview about recorded session and exit\n"
 msgstr "--summary mostra la vista general de la sessió enregistrada i surt"
 
-#: term-utils/scriptreplay.c:72
+#: term-utils/scriptreplay.c:69
 #, fuzzy
 msgid " -x, --stream <name>     stream type (out, in, signal or info)\n"
 msgstr "-x, --stream <name> tipus de flux (sortida, entrada, senyal o informació)"
 
-#: term-utils/scriptreplay.c:73
+#: term-utils/scriptreplay.c:70
 #, fuzzy
 msgid " -c, --cr-mode <type>    CR char mode (auto, never, always)\n"
 msgstr "-c, --cr-mode <type> CR mode de caràcters (auto, mai, sempre)"
 
-#: term-utils/scriptreplay.c:77
+#: term-utils/scriptreplay.c:76
 msgid "Key bindings:\n"
 msgstr ""
 
+#: term-utils/scriptreplay.c:77
+msgid " space        toggles between pause and play\n"
+msgstr ""
+
 #: term-utils/scriptreplay.c:78
-msgid " space        toggles pause and unpause\n"
+msgid " up-arrow     increases playback speed with ten percent\n"
 msgstr ""
 
 #: term-utils/scriptreplay.c:79
-msgid " up-arrow     increases the playback speed by 0.1 times\n"
+msgid " down-arrow   decreases playback speed with ten percent\n"
 msgstr ""
 
-#: term-utils/scriptreplay.c:80
-msgid " down-arrow   decreases the playback speed by 0.1 times\n"
-msgstr ""
-
-#: term-utils/scriptreplay.c:146
+#: term-utils/scriptreplay.c:145
 #, fuzzy
 msgid "unexpected fcntl failure"
 msgstr "màx. nombre de segments = %lu\n"
 
-#: term-utils/scriptreplay.c:151
+#: term-utils/scriptreplay.c:150
 #, fuzzy
 msgid "unexpected tcgetattr failure"
 msgstr "màx. nombre de segments = %lu\n"
 
-#: term-utils/scriptreplay.c:236
+#: term-utils/scriptreplay.c:235
 #, fuzzy, c-format
 msgid "unsupported mode name: '%s'"
 msgstr "nom de mode no suportat: «%s»"
 
-#: term-utils/scriptreplay.c:269
+#: term-utils/scriptreplay.c:268
 #, fuzzy, c-format
 msgid "unsupported stream name: '%s'"
 msgstr "Introduïu el tipus del sistema de fitxers: "
 
-#: term-utils/scriptreplay.c:300
+#: term-utils/scriptreplay.c:299
 #, fuzzy
 msgid "data log file not specified"
 msgstr "No s'ha especificat l'opció --date.\n"
 
-#: term-utils/scriptreplay.c:406
+#: term-utils/scriptreplay.c:405
 #, fuzzy, c-format
 #| msgid "%s: option parse error\n"
 msgid "%s: log file error"
 msgstr "%s: s'ha produït un error en analitzar l'opció\n"
 
-#: term-utils/scriptreplay.c:408
+#: term-utils/scriptreplay.c:407
 #, fuzzy, c-format
 msgid "%s: line %d: timing file error"
 msgstr "%s: línia %d: error del fitxer de temps"
@@ -29623,7 +29628,7 @@ msgstr "argument d'espai de noms no vàlid"
 
 #: text-utils/column.c:1068
 #, fuzzy
-msgid "failed to use input separator"
+msgid "failed to parse input separator"
 msgstr "no s'ha pogut usar el separador d'entrada"
 
 #: text-utils/column.c:1101
