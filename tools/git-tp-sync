@@ -174,12 +174,20 @@ function update_project {
 function regenerate_po_files {
 	local PODIR="$1"
 
-	if [ ! -f "${PODIR}/Makefile" ]; then
+	if [ "$PODIR" = "po" ]; then
+		if [  "${PODIR}/Makefile" ]; then
+			return;
+		else
+			echo "== Updating $PODIR (be patient) =="
+			make -C $PODIR update-po &> /dev/null
+		fi
+	elif [ "$PODIR" = "po-man" ]; then
+		echo "== Updating $PODIR (be patient) =="
+		make gen-poman-dist
+	else
+		echo "Unsupported $PODIR directory (skip update)"
 		return;
 	fi
-
-	echo "== Updating $PODIR (be patient) =="
-	make -C $PODIR update-po &> /dev/null
 
 	# ignore files where is only modified one line ("POT-Creation-Date")
 	PO_IGNORE=$(git diff --numstat  $PODIR/*.po | gawk -v ORS=" " '/1[[:blank:]]1[[:blank:]]/ { print $3 }')
@@ -195,7 +203,7 @@ function regenerate_po_files {
 		fi
 	fi
 
-	git checkout -f "$PODIR"/ &> /dev/null
+	git checkout -f "$PODIR" &> /dev/null
 }
 
 for d in "${DIRS[@]}"; do
