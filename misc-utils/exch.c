@@ -26,13 +26,22 @@
 # define RENAME_EXCHANGE (1 << 1)
 #endif
 
-#if !defined(HAVE_RENAMEAT2) && defined(SYS_renameat2)
-static inline int renameat2(int olddirfd, const char *oldpath,
-			    int newdirfd, const char *newpath, unsigned int flags)
-{
-	return syscall (SYS_renameat2, olddirfd, oldpath, newdirfd, newpath, flags);
-}
+static inline int rename_exchange(int dirfd,
+				  const char *oldpath, const char *newpath) {
+	int rc;
+
+#if defined(HAVE_RENAMEAT2)
+	rc = renameat2(dirfd, oldpath, dirfd, newpath, RENAME_EXCHANGE);
+#elif defined(SYS_renameat2)
+	rc = syscall(SYS_renameat2,
+		     dirfd, oldpath, dirfd, newpath, RENAME_EXCHANGE);
+#else
+	rc = -1;
+	errno = ENOSYS;
 #endif
+
+	return rc;
+}
 
 static void __attribute__((__noreturn__)) usage(void)
 {
@@ -85,8 +94,7 @@ int main(int argc, char **argv)
 		errtryhelp(EXIT_FAILURE);
 	}
 
-	rc = renameat2(AT_FDCWD, argv[optind],
-		       AT_FDCWD, argv[optind + 1], RENAME_EXCHANGE);
+	rc = rename_exchange(AT_FDCWD, argv[optind], argv[optind + 1]);
 	if (rc)
 		warn(_("failed to exchange \"%s\" and \"%s\""),
 		     argv[optind], argv[optind + 1]);
