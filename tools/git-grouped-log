@@ -89,7 +89,7 @@ while IFS='|' read -r subj author; do
 done < <(git log --no-merges --pretty=format:'%s|%an' "$range" --)
 
 misc=""
-for key in "${!commits[@]}"; do
+for key in $(printf "%s\n" "${!commits[@]}" | sort); do
     if [[ "${subsystems[$key]}" == "Misc" ]]; then
         misc="${subsystems[$key]}:\n${commits[$key]}"
     else
