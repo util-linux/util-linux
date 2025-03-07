@@ -28,7 +28,7 @@ ts_check_prog "mkfifo"
 ts_check_prog "sed"
 ts_skip_nonroot
 
-grep -q '#define HAVE_LINUX_NET_NAMESPACE_H' ${top_builddir}/config.h || ts_skip "no netns support"
+ts_skip_netns
 ts_cd "$TS_OUTDIR"
 
 vetha=lsns-vetha
