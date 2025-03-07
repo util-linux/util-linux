@@ -278,6 +278,26 @@ static int column_name_to_id(const char *name, size_t namesz)
 	return -1;
 }
 
+static int is_column_in_filter(int id, struct libscols_filter *filter)
+{
+	int r = 0;
+	const char *name = NULL;
+	struct libscols_iter *itr = scols_new_iter(SCOLS_ITER_FORWARD);
+
+	if (!itr)
+		err(EXIT_FAILURE, _("failed to allocate iterator"));
+
+	while (scols_filter_next_holder(filter, itr, &name, 0) == 0) {
+		if (strcmp(infos[id].name, name) == 0) {
+			r = 1;
+			break;
+		}
+	}
+
+	scols_free_iter(itr);
+	return r;
+}
+
 static int has_column(int id)
 {
 	size_t i;
@@ -1791,7 +1811,8 @@ int main(int argc, char *argv[])
 		err(EXIT_FAILURE, _("failed to allocate UID cache"));
 
 #ifdef HAVE_LINUX_NET_NAMESPACE_H
-	if (has_column(COL_NETNSID))
+	if (has_column(COL_NETNSID)
+	    || (ls.filter && is_column_in_filter(COL_NETNSID, ls.filter)))
 		netlink_fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
 #endif
 	ls.tab = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
