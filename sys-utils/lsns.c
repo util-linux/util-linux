@@ -524,7 +524,24 @@ static int get_netnsid_via_netlink_recv_response(int *netnsid)
 	return 0;
 }
 
-static int get_netnsid_via_netlink(struct path_cxt *pc, const char *path)
+static int get_netnsid_via_netlink(int target_fd)
+{
+	int netnsid;
+
+	if (netlink_fd < 0)
+		return LSNS_NETNS_UNUSABLE;
+
+	if (get_netnsid_via_netlink_send_request(target_fd) < 0)
+		return LSNS_NETNS_UNUSABLE;
+
+	netnsid = LSNS_NETNS_UNUSABLE;
+	if (get_netnsid_via_netlink_recv_response(&netnsid) < 0)
+		return LSNS_NETNS_UNUSABLE;
+
+	return netnsid;
+}
+
+static int get_netnsid_for_pc_via_netlink(struct path_cxt *pc, const char *path)
 {
 	int netnsid;
 	int target_fd;
@@ -536,27 +553,18 @@ static int get_netnsid_via_netlink(struct path_cxt *pc, const char *path)
 	if (target_fd < 0)
 		return LSNS_NETNS_UNUSABLE;
 
-	if (get_netnsid_via_netlink_send_request(target_fd) < 0) {
-		netnsid = LSNS_NETNS_UNUSABLE;
-		goto out;
-	}
+	netnsid = get_netnsid_via_netlink(target_fd);
 
-	if (get_netnsid_via_netlink_recv_response(&netnsid) < 0) {
-		netnsid = LSNS_NETNS_UNUSABLE;
-		goto out;
-	}
-
- out:
 	close(target_fd);
 	return netnsid;
 }
 
-static int get_netnsid(struct path_cxt *pc, ino_t netino)
+static int get_netnsid_for_pc(struct path_cxt *pc, ino_t netino)
 {
 	int netnsid;
 
 	if (!netnsid_cache_find(netino, &netnsid)) {
-		netnsid = get_netnsid_via_netlink(pc, "ns/net");
+		netnsid = get_netnsid_for_pc_via_netlink(pc, "ns/net");
 		netnsid_cache_add(netino, netnsid);
 	}
 
@@ -596,8 +604,13 @@ out_pidfd:
 	close(pidfd);
 }
 #else
-static int get_netnsid(struct path_cxt *pc __attribute__((__unused__)),
-		       ino_t netino __attribute__((__unused__)))
+static int get_netnsid_for_fd(int target_fd __attribute__((__unused__)),
+			      ino_t netino __attribute__((__unused__)))
+{
+	return LSNS_NETNS_UNUSABLE;
+}
+static int get_netnsid_for_pc(struct path_cxt *pc __attribute__((__unused__)),
+			      ino_t netino __attribute__((__unused__)))
 {
 	return LSNS_NETNS_UNUSABLE;
 }
@@ -674,7 +687,7 @@ static int read_process(struct lsns *ls, struct path_cxt *pc)
 			goto done;
 		}
 		if (p->ns_ids[i] && i == LSNS_TYPE_NET)
-			p->netnsid = get_netnsid(pc, p->ns_ids[i]);
+			p->netnsid = get_netnsid_for_pc(pc, p->ns_ids[i]);
 		rc = 0;
 	}
 
