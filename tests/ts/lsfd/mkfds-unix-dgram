@@ -73,4 +73,27 @@ ts_init_subtest "abstract"
 } > "$TS_OUTPUT" 2>&1
 ts_finalize_subtest
 
+ts_init_subtest "ENDPOINTS-column"
+if ts_is_in_docker; then
+    ts_skip_subtest "unsupported in docker environment"
+else
+    {
+	coproc MKFDS { "$TS_HELPER_MKFDS" unix-dgram $FDS $FDC \
+					  path=test_mkfds-unix-dgram \
+					  abstract=true ; }
+
+	if read -r -u "${MKFDS[0]}" PID; then
+	    endpoint_c=$(${TS_CMD_LSFD} -n -r -Q "PID == ${PID} && FD == $FDC" -o ENDPOINTS)
+	    echo endpoint_c: $?
+
+	    test "$endpoint_c" = "${PID},test_mkfds,${FDS}rw"
+	    echo "endpoint_c == PID,test_mkfs,${FDS}rw:" $?
+
+	    echo DONE >&"${MKFDS[1]}"
+	fi
+	wait "${MKFDS_PID}"
+    } > "$TS_OUTPUT" 2>&1
+    ts_finalize_subtest
+fi
+
 ts_finalize

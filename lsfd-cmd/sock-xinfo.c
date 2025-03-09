@@ -780,6 +780,8 @@ static bool handle_diag_unix(ino_t netns __attribute__((__unused__)),
 	ino_t inode;
 	struct sock_xinfo *xinfo;
 	struct unix_xinfo *unix_xinfo;
+	bool peer_added = false;
+	bool maybe_oneway = false;
 
 	if (diag->udiag_family != AF_UNIX)
 		return false;
@@ -819,6 +821,7 @@ static bool handle_diag_unix(ino_t netns __attribute__((__unused__)),
 		switch (attr->rta_type) {
 		case UNIX_DIAG_NAME:
 			unix_refill_name(xinfo, RTA_DATA(attr), len);
+			maybe_oneway = true;
 			break;
 
 		case UNIX_DIAG_SHUTDOWN:
@@ -837,9 +840,18 @@ static bool handle_diag_unix(ino_t netns __attribute__((__unused__)),
 			unix_xinfo->unix_ipc->inode = inode;
 			unix_xinfo->unix_ipc->ipeer = (ino_t)(*(uint32_t *)RTA_DATA(attr));
 			add_ipc(&unix_xinfo->unix_ipc->ipc, inode % UINT_MAX);
+			peer_added = true;
 			break;
 		}
 	}
+
+	if (!peer_added && maybe_oneway) {
+		assert(unix_xinfo->unix_ipc == NULL);
+		unix_xinfo->unix_ipc = (struct unix_ipc *)new_ipc(&unix_ipc_class);
+		unix_xinfo->unix_ipc->inode = inode;
+		unix_xinfo->unix_ipc->ipeer = 0;
+		add_ipc(&unix_xinfo->unix_ipc->ipc, inode % UINT_MAX);
+	};
 	return true;
 }
 
