@@ -676,6 +676,12 @@ static bool unix_fill_column(struct proc *proc __attribute__((__unused__)),
 			return true;
 		}
 		break;
+	case COL_UNIX_IPEER:
+		if (ux->unix_ipc) {
+			xasprintf(str, "%llu", (unsigned long long)ux->unix_ipc->ipeer);
+			return true;
+		}
+		break;
 	case COL_ENDPOINTS:
 		if (ux->unix_ipc == NULL)
 			break;

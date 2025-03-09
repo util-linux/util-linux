@@ -1,0 +1,6 @@
+inode_s: 0
+inode_c: 0
+ipeer_s: 0
+ipeer_c: 0
+ipeer_s == 0: 0
+ipeer_s == inode_s: 0
