@@ -89,6 +89,12 @@ else
 	    test "$endpoint_c" = "${PID},test_mkfds,${FDS}rw"
 	    echo "endpoint_c == PID,test_mkfs,${FDS}rw:" $?
 
+	    endpoint_s=$(${TS_CMD_LSFD} -n -r -Q "PID == ${PID} && FD == $FDS" -o ENDPOINTS)
+	    echo endpoint_s: $?
+
+	    test "$endpoint_s" = "${PID},test_mkfds,${FDC}rw"
+	    echo "endpoint_s == PID,test_mkfs,${FDC}rw:" $?
+
 	    echo DONE >&"${MKFDS[1]}"
 	fi
 	wait "${MKFDS_PID}"

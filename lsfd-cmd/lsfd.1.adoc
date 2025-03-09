@@ -195,6 +195,16 @@ write mode of the endpoint.
 eventfd type:::
 _PID_,_COMMAND_,_ASSOC_
 
+UNIX:::
+Same as _UNIX-STREAM_.
++
+In a container, *lsfd* may not fill _ENDPOINTS_ column.
+*lsfd* uses *sock_diag*(7) to collect information
+about UNIX endpoints. SELinux may limit the use *sock_diag*
+in a container. You can remove the limit by setting
+1 to _virt_sandbox_use_netlink_ bool. See *container_selinux*(8)
+for more details.
+
 UNIX-STREAM:::
 _PID_,_COMMAND_,_ASSOC_[-r?][-w?]
 +

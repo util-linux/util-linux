@@ -66,11 +66,16 @@ static void load_xinfo_from_proc_packet(ino_t netns_inode);
 static void load_xinfo_from_diag_unix(int diag, ino_t netns_inode);
 static void load_xinfo_from_diag_vsock(int diag, ino_t netns_inode);
 
+static void fill_peers_of_unix_oneway_ipcs(void);
+
 static int self_netns_fd = -1;
 static struct stat self_netns_sb;
 
 static void *xinfo_tree;	/* for tsearch/tfind */
 static void *netns_tree;
+
+static LIST_HEAD(unix_ipcs);
+static void *unix_oneway_ipc_tree;	/* for tsearch/tfind */
 
 struct iface {
 	unsigned int index;
@@ -290,10 +295,8 @@ void initialize_sock_xinfos(void)
 	if (!pc)
 		err(EXIT_FAILURE, _("failed to alloc path context for /var/run/netns"));
 	dir = ul_path_opendir(pc, NULL);
-	if (dir == NULL) {
-		ul_unref_path(pc);
-		return;
-	}
+	if (dir == NULL)
+		goto out;
 	while ((d = readdir(dir))) {
 		struct stat sb;
 		int fd;
@@ -310,7 +313,10 @@ void initialize_sock_xinfos(void)
 		close(fd);
 	}
 	closedir(dir);
+ out:
 	ul_unref_path(pc);
+
+	fill_peers_of_unix_oneway_ipcs();
 }
 
 static void free_sock_xinfo(void *node)
@@ -321,12 +327,17 @@ static void free_sock_xinfo(void *node)
 	free(node);
 }
 
+static void do_nothing(void *node __attribute__((__unused__)))
+{
+}
+
 void finalize_sock_xinfos(void)
 {
 	if (self_netns_fd != -1)
 		close(self_netns_fd);
 	tdestroy(netns_tree, netns_free);
 	tdestroy(xinfo_tree, free_sock_xinfo);
+	tdestroy(unix_oneway_ipc_tree, do_nothing);
 }
 
 static int xinfo_compare(const void *a, const void *b)
@@ -461,6 +472,7 @@ struct unix_ipc {
 	struct ipc ipc;
 	ino_t inode;
 	ino_t ipeer;
+	struct list_head unix_ipcs;
 };
 
 struct unix_xinfo {
@@ -665,18 +677,25 @@ static bool unix_fill_column(struct proc *proc __attribute__((__unused__)),
 		}
 		break;
 	case COL_ENDPOINTS:
-		peer_ipc = unix_get_peer_ipc(ux, sock);
-		if (!peer_ipc)
+		if (ux->unix_ipc == NULL)
 			break;
 
-		unix_fill_column_append_endpoints(peer_ipc, str);
+		peer_ipc = unix_get_peer_ipc(ux, sock);
+		if (!peer_ipc && ux->unix_ipc->ipeer != 0)
+			break;
 
-			if (*str)
-				xstrputc(str, '\n');
-			estr = unix_xstrendpoint(peer_sock);
-			xstrappend(str, estr);
-			free(estr);
+		if (peer_ipc)
+			unix_fill_column_append_endpoints(peer_ipc, str);
+
+		if (ux->unix_ipc->ipeer == 0) {
+			struct list_head *e;
+			list_for_each(e, &ux->unix_ipc->unix_ipcs) {
+				struct unix_ipc *peer_unix_ipc = list_entry(e, struct unix_ipc, unix_ipcs);
+				peer_ipc = &peer_unix_ipc->ipc;
+				unix_fill_column_append_endpoints(peer_ipc, str);
+			}
 		}
+
 		if (*str)
 			return true;
 		break;
@@ -785,6 +804,33 @@ static void unix_refill_name(struct sock_xinfo *xinfo, const char *name, size_t 
 	ux->path[min_len] = '\0';
 }
 
+static int unix_oneway_ipc_compare(const void *a, const void *b)
+{
+	return ((struct unix_ipc *)a)->inode - ((struct unix_ipc *)b)->inode;
+}
+
+static void add_unix_oneway_ipc(struct unix_ipc *unix_oneway_ipc)
+{
+	struct unix_ipc **tmp = tsearch(unix_oneway_ipc,
+					&unix_oneway_ipc_tree,
+					unix_oneway_ipc_compare);
+
+	if (tmp == NULL)
+		errx(EXIT_FAILURE, _("failed to allocate memory"));
+}
+
+static struct unix_ipc *get_unix_oneway_ipc(ino_t inode)
+{
+	struct unix_ipc key = { .inode = inode };
+	struct unix_ipc  **unix_oneway_ipc = tfind(&key,
+						   &unix_oneway_ipc_tree,
+						   unix_oneway_ipc_compare);
+
+	if (unix_oneway_ipc)
+		return *unix_oneway_ipc;
+	return NULL;
+}
+
 static bool handle_diag_unix(ino_t netns __attribute__((__unused__)),
 			     size_t nlmsg_len, void *nlmsg_data)
 {
@@ -852,6 +898,10 @@ static bool handle_diag_unix(ino_t netns __attribute__((__unused__)),
 			unix_xinfo->unix_ipc = (struct unix_ipc *)new_ipc(&unix_ipc_class);
 			unix_xinfo->unix_ipc->inode = inode;
 			unix_xinfo->unix_ipc->ipeer = (ino_t)(*(uint32_t *)RTA_DATA(attr));
+
+			INIT_LIST_HEAD(&unix_xinfo->unix_ipc->unix_ipcs);
+			list_add(&unix_xinfo->unix_ipc->unix_ipcs, &unix_ipcs);
+
 			add_ipc(&unix_xinfo->unix_ipc->ipc, inode % UINT_MAX);
 			peer_added = true;
 			break;
@@ -863,6 +913,10 @@ static bool handle_diag_unix(ino_t netns __attribute__((__unused__)),
 		unix_xinfo->unix_ipc = (struct unix_ipc *)new_ipc(&unix_ipc_class);
 		unix_xinfo->unix_ipc->inode = inode;
 		unix_xinfo->unix_ipc->ipeer = 0;
+
+		INIT_LIST_HEAD(&unix_xinfo->unix_ipc->unix_ipcs);
+		add_unix_oneway_ipc(unix_xinfo->unix_ipc);
+
 		add_ipc(&unix_xinfo->unix_ipc->ipc, inode % UINT_MAX);
 	};
 	return true;
@@ -877,6 +931,25 @@ static void load_xinfo_from_diag_unix(int diagsd, ino_t netns)
 	};
 
 	send_diag_request(diagsd, &udr, sizeof(udr), handle_diag_unix, netns);
+}
+
+static void fill_peers_of_unix_oneway_ipcs(void)
+{
+	struct list_head *e, *enext;
+
+	list_for_each_safe(e, enext, &unix_ipcs) {
+		struct unix_ipc *unix_ipc = list_entry(e, struct unix_ipc, unix_ipcs);
+		struct unix_ipc *unix_oneway_ipc;
+
+		list_del_init(e);
+		if (unix_ipc->ipeer == 0)
+			continue;
+
+		unix_oneway_ipc = get_unix_oneway_ipc(unix_ipc->ipeer);
+		if (unix_oneway_ipc == NULL)
+			continue;
+		list_add(e, &unix_oneway_ipc->unix_ipcs);
+	};
 }
 
 /*
