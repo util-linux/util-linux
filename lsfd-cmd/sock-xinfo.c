@@ -629,6 +629,22 @@ static struct ipc *unix_get_peer_ipc(struct unix_xinfo *ux,
 	return get_ipc(&dummy_peer_sock.file);
 }
 
+static void unix_fill_column_append_endpoints(struct ipc *peer_ipc, char **str)
+{
+	struct list_head *e;
+
+	list_for_each_backwardly(e, &peer_ipc->endpoints) {
+		struct sock *peer_sock = list_entry(e, struct sock, endpoint.endpoints);
+		char *estr;
+
+		if (*str)
+			xstrputc(str, '\n');
+		estr = unix_xstrendpoint(peer_sock);
+		xstrappend(str, estr);
+		free(estr);
+	}
+}
+
 static bool unix_fill_column(struct proc *proc __attribute__((__unused__)),
 			     struct sock_xinfo *sock_xinfo,
 			     struct sock *sock,
@@ -639,7 +655,6 @@ static bool unix_fill_column(struct proc *proc __attribute__((__unused__)),
 {
 	struct unix_xinfo *ux = (struct unix_xinfo *)sock_xinfo;
 	struct ipc *peer_ipc;
-	struct list_head *e;
 	char shutdown_chars[3] = { 0 };
 
 	switch (column_id) {
@@ -654,9 +669,7 @@ static bool unix_fill_column(struct proc *proc __attribute__((__unused__)),
 		if (!peer_ipc)
 			break;
 
-		list_for_each_backwardly(e, &peer_ipc->endpoints) {
-			struct sock *peer_sock = list_entry(e, struct sock, endpoint.endpoints);
-			char *estr;
+		unix_fill_column_append_endpoints(peer_ipc, str);
 
 			if (*str)
 				xstrputc(str, '\n');
