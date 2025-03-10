@@ -38,6 +38,7 @@ make_state_connected()
     lsfd_make_state_connected | sed -e 's/unconnected/connected/'
 }
 
+ts_init_subtest "non-abstract"
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" unix-dgram $FDS $FDC \
 				      path=test_mkfds-unix-dgram ; }
@@ -51,7 +52,11 @@ make_state_connected()
 	echo DONE >&"${MKFDS[1]}"
     fi
     wait "${MKFDS_PID}"
+} > "$TS_OUTPUT" 2>&1
+ts_finalize_subtest
 
+ts_init_subtest "abstract"
+{
     coproc MKFDS { "$TS_HELPER_MKFDS" unix-dgram $FDS $FDC \
 				      path=test_mkfds-unix-dgram \
 				      abstract=true ; }
@@ -66,5 +71,6 @@ make_state_connected()
     fi
     wait "${MKFDS_PID}"
 } > "$TS_OUTPUT" 2>&1
+ts_finalize_subtest
 
 ts_finalize
