@@ -367,7 +367,7 @@ int main(int argc, char **argv)
 	int c, rc;
 
 	static const struct option longopts[] = {
-		{"block",	no_argument,		NULL, 'b'},
+		{"blocks",	no_argument,		NULL, 'b'},
 		{"disable",	no_argument,		NULL, 'd'},
 		{"enable",	no_argument,		NULL, 'e'},
 		{"help",	no_argument,		NULL, 'h'},
