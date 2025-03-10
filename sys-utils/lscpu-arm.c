@@ -93,10 +93,14 @@ static const struct id_part arm_part[] = {
     { 0xd80, "Cortex-A520" },
     { 0xd81, "Cortex-A720" },
     { 0xd82, "Cortex-X4" },
+    { 0xd83, "Neoverse-V3AE" },
     { 0xd84, "Neoverse-V3" },
     { 0xd85, "Cortex-X925" },
     { 0xd87, "Cortex-A725" },
+    { 0xd88, "Cortex-A520AE" },
+    { 0xd89, "Cortex-A720AE" },
     { 0xd8e, "Neoverse-N3" },
+    { 0xd8f, "Cortex-A320" },
     { -1, "unknown" },
 };
 
