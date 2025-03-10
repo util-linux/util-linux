@@ -89,6 +89,7 @@ scols_counter_set_param
 scols_dump_filter
 scols_filter_assign_column
 scols_filter_get_errmsg
+scols_filter_has_holder
 scols_filter_new_counter
 scols_filter_next_counter
 scols_filter_next_holder

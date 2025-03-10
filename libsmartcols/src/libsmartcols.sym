@@ -256,3 +256,8 @@ SMARTCOLS_2.41 {
 	scols_column_set_uri;
 	scols_column_get_uri;
 } SMARTCOLS_2.40;
+
+SMARTCOLS_2.42 {
+	scols_filter_has_holder;
+} SMARTCOLS_2.41;
+

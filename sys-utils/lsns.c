@@ -278,24 +278,12 @@ static int column_name_to_id(const char *name, size_t namesz)
 	return -1;
 }
 
-static int is_column_in_filter(int id, struct libscols_filter *filter)
+static inline const char *column_id_to_name(int id)
 {
-	int r = 0;
-	const char *name = NULL;
-	struct libscols_iter *itr = scols_new_iter(SCOLS_ITER_FORWARD);
+	assert(id >= 0);
+	assert(id < (int) ARRAY_SIZE(infos));
 
-	if (!itr)
-		err(EXIT_FAILURE, _("failed to allocate iterator"));
-
-	while (scols_filter_next_holder(filter, itr, &name, 0) == 0) {
-		if (strcmp(infos[id].name, name) == 0) {
-			r = 1;
-			break;
-		}
-	}
-
-	scols_free_iter(itr);
-	return r;
+	return infos[ id ].name;
 }
 
 static int has_column(int id)
@@ -322,6 +310,7 @@ static inline const struct colinfo *get_column_info(unsigned num)
 {
 	return &infos[ get_column_id(num) ];
 }
+
 
 #ifdef USE_NS_GET_API
 /* Get the inode number for the parent namespace of the namespace `fd' specifies.
@@ -1812,7 +1801,8 @@ int main(int argc, char *argv[])
 
 #ifdef HAVE_LINUX_NET_NAMESPACE_H
 	if (has_column(COL_NETNSID)
-	    || (ls.filter && is_column_in_filter(COL_NETNSID, ls.filter)))
+	    || (ls.filter && scols_filter_has_holder(ls.filter,
+						     column_id_to_name(COL_NETNSID))))
 		netlink_fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
 #endif
 	ls.tab = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);

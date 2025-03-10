@@ -887,3 +887,30 @@ int scols_filter_next_holder(struct libscols_filter *fltr,
 
 	return rc;
 }
+
+/**
+ * scols_filter_has_holder:
+ * @fltr: filter instance
+ * @name: wanted holder
+ *
+ * Returns: 0 or 1
+ *
+ * Since: 2.42
+ */
+int scols_filter_has_holder(struct libscols_filter *fltr, const char *name)
+{
+	struct libscols_iter itr;
+	const char *n = NULL;
+
+	if (!fltr || !name)
+		return 0;
+
+	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+
+	while (scols_filter_next_holder(fltr, &itr, &n, 0) == 0) {
+		if (strcmp(n, name) == 0)
+			return 1;
+	}
+
+	return 0;
+}
