@@ -1227,3 +1227,7 @@ function ts_check_ipv6 {
                ts_skip "IPv6 is not supported"
        fi
 }
+
+function ts_skip_netns {
+	grep -q '#define HAVE_LINUX_NET_NAMESPACE_H' ${top_builddir}/config.h || ts_skip "no netns support"
+}
