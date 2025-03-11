@@ -174,7 +174,7 @@ ID of the device containing the file.
 DEVTYPE <``string``>::
 Device type (`blk`, `char`, or `nodev`).
 
-ENDPOINT <``string``>::
+ENDPOINTS <``string``>::
 IPC endpoints information communicated with the fd.
 +
 *lsfd* collects endpoints within the processes that
