@@ -184,6 +184,7 @@ lscpu_sources = files(
   'lscpu-virt.c',
   'lscpu-arm.c',
   'lscpu-dmi.c',
+  'lscpu-riscv.c',
 )
 lscpu_manadocs = files('lscpu.1.adoc')
 

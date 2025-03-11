@@ -954,6 +954,11 @@ print_summary_cputype(struct lscpu_cxt *cxt,
 
 	if (ct->flags)
 		add_summary_s(tb, sec, _("Flags:"), ct->flags);
+
+	if (ct->isa && is_riscv(ct)) {
+		lscpu_format_isa_riscv(ct);
+		add_summary_s(tb, sec, _("ISA:"), ct->isa);
+	}
 }
 
 /*
