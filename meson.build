@@ -1409,18 +1409,17 @@ if opt and not is_disabler(exe)
   bashcompletions += ['more']
 endif
 
-if not get_option('build-hexdump').disabled()
-  exe = executable(
-    'hexdump',
-    hexdump_sources,
-    include_directories : includes,
-    link_with : [lib_common,
-                 lib_tcolors],
-    install_dir : usrbin_exec_dir)
-else
-  exe = disabler()
-endif
-if not is_disabler(exe)
+opt = not get_option('build-hexdump').disabled()
+exe = executable(
+  'hexdump',
+  hexdump_sources,
+  include_directories : includes,
+  link_with : [lib_common,
+               lib_tcolors],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
     exes += exe
     manadocs += hexdump_manadocs
     bashcompletions += ['hexdump']
