@@ -2023,8 +2023,11 @@ int mnt_context_guess_srcpath_fstype(struct libmnt_context *cxt, char **type)
 		struct libmnt_opt *opt;
 		const char *allowed;
 
-		if (!ol)
+		if (!ol) {
+			free(*type);
+			*type = NULL;
 			return -ENOMEM;
+		}
 
 		opt = mnt_optlist_get_named(ol,
 				"X-mount.auto-fstypes", cxt->map_userspace);
