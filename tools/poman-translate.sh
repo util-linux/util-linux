@@ -90,13 +90,16 @@ MANADOCS=()
 PO4A_TRANSLATE_ONLY_FLAGS=()
 for LOCALE in "${LOCALES[@]}"; do
     for ADOC in "${ADOCS[@]}"; do
-        if [[ ! " ${PO4ACFG_TRANSLATIONS[*]} " =~ .*${ADOC}[[:space:]] ]]; then
-	  echo "Untranslated: $LOCALE: $ADOC"
-          continue
+	if [[ "$ADOC" == *"/man-common/manpage-stub.adoc" ]]; then
+	    continue
+	fi
+	ADOC_NAME=$(basename "$ADOC")
+        if [[ ! " ${PO4ACFG_TRANSLATIONS[*]} " =~ .*${ADOC_NAME}[[:space:]] ]]; then
+	    echo "unconfigured in $PO4ACFG: $ADOC"
+            continue
         fi
         PO4A_TRANSLATE_ONLY_FLAGS+=("--translate-only")
-        ADOC_NAME=$(basename "$ADOC")
-        if [[ "$ADOC" == *"/man-common/"* ]]; then
+	if [[ "$ADOC" == *"/man-common/"* ]]; then
             PO4A_TRANSLATE_ONLY_FLAGS+=("$LOCALE/man-common/$ADOC_NAME")
         else
             MANADOCS+=("$LOCALE/$ADOC_NAME")
