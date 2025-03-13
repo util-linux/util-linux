@@ -42,6 +42,7 @@ static int
 test_args (struct ll2_context *context, const char *user, int64_t ll_time,
 	   const char *tty, const char *rhost, const char *service)
 {
+	int rc = 1;
 	char *error = NULL;
 	int64_t res_time;
 	char *res_tty = NULL;
@@ -54,7 +55,7 @@ test_args (struct ll2_context *context, const char *user, int64_t ll_time,
 			free (error);
 		} else
 			fprintf (stderr, "ll2_write_entry failed\n");
-		return 1;
+		goto done;
 	}
 
 	if (ll2_read_entry (context, user, &res_time, &res_tty, &res_rhost, &res_service, &error) != 0) {
@@ -63,42 +64,42 @@ test_args (struct ll2_context *context, const char *user, int64_t ll_time,
 			free (error);
 		} else
 			fprintf (stderr, "Unknown error reading database %s", context->lastlog2_path);
-		return 1;
+		goto done;
 	}
 
 	if (ll_time != res_time) {
 		fprintf (stderr, "Wrong time: got %lld, expect %lld\n",
 			 (long long int)res_time, (long long int)ll_time);
-		return 1;
+		goto done;
 	}
 
 	if ((tty == NULL && res_tty != NULL) ||
 	    (tty != NULL && res_tty == NULL) ||
 	    (tty != NULL && res_tty != NULL && strcmp (tty, res_tty) != 0)) {
 		fprintf (stderr, "Wrong tty: got %s, expect %s\n", tty, res_tty);
-		return 1;
+		goto done;
 	}
 
 	if ((rhost == NULL && res_rhost != NULL) ||
 	    (rhost != NULL && res_rhost == NULL) ||
 	    (rhost != NULL && res_rhost != NULL && strcmp (rhost, res_rhost) != 0)) {
 		fprintf (stderr, "Wrong rhost: got %s, expect %s\n", rhost, res_rhost);
-		return 1;
+		goto done;
 	}
 
 	if ((service == NULL && res_service != NULL) ||
 	    (service != NULL && res_service == NULL) ||
 	    (service != NULL && res_service != NULL && strcmp (service, res_service) != 0)) {
 		fprintf (stderr, "Wrong service: got %s, expect %s\n", service, res_service);
-		return 1;
+		goto done;
 	}
 
-
+	rc = 0;
+done:
 	free (res_tty);
 	free (res_rhost);
 	free (res_service);
-
-	return 0;
+	return rc;
 }
 
 int

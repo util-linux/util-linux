@@ -458,6 +458,7 @@ static int is_loopdev_required(struct libmnt_context *cxt, struct libmnt_optlist
 
 		rc = mnt_context_guess_srcpath_fstype(cxt, &autotype);
 		if (rc) {
+			free(autotype);;
 			DBG(CXT, ul_debugobj(cxt, "failed to guess regfile FS type [rc=%d]", rc));
 			return 0;
 		}

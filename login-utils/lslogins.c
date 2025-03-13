@@ -838,13 +838,15 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 	while (n < ncolumns) {
 		switch (columns[n++]) {
 		case COL_USER:
-			user->login = xstrdup(pwd->pw_name);
+			if (!user->login)
+				user->login = xstrdup(pwd->pw_name);
 			break;
 		case COL_UID:
 			user->uid = pwd->pw_uid;
 			break;
 		case COL_GROUP:
-			user->group = xstrdup(grp->gr_name);
+			if (!grp->gr_name)
+				user->group = xstrdup(grp->gr_name);
 			break;
 		case COL_GID:
 			user->gid = pwd->pw_gid;
@@ -856,15 +858,20 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 				err(EXIT_FAILURE, _("failed to get supplementary groups"));
 			break;
 		case COL_HOME:
-			user->homedir = xstrdup(pwd->pw_dir);
+			if (!user->homedir)
+				user->homedir = xstrdup(pwd->pw_dir);
 			break;
 		case COL_SHELL:
-			user->shell = xstrdup(pwd->pw_shell);
+			if (!user->shell)
+				user->shell = xstrdup(pwd->pw_shell);
 			break;
 		case COL_GECOS:
-			user->gecos = xstrdup(pwd->pw_gecos);
+			if (!user->gecos)
+				user->gecos = xstrdup(pwd->pw_gecos);
 			break;
 		case COL_LAST_LOGIN:
+			if (user->last_login)
+				break;
 			if (user_wtmp) {
 				time = user_wtmp->ut_tv.tv_sec;
 				user->last_login = make_time(ctl->time_mode, time);
@@ -876,6 +883,8 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			}
 			break;
 		case COL_LAST_TTY:
+			if (user->last_tty)
+				break;
 			user->last_tty = xcalloc(1, sizeof(user_wtmp->ut_line) + 1);
 			if (user_wtmp) {
 				mem2strcpy(user->last_tty, user_wtmp->ut_line,
@@ -885,6 +894,8 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 				get_lastlog(ctl, user->uid, user->login, user->last_tty, LASTLOG_LINE);
 			break;
 		case COL_LAST_HOSTNAME:
+			if (user->last_hostname)
+				break;
 			user->last_hostname = xcalloc(1, sizeof(user_wtmp->ut_host) + 1);
 			if (user_wtmp) {
 				mem2strcpy(user->last_hostname, user_wtmp->ut_host,
@@ -894,13 +905,13 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 				get_lastlog(ctl, user->uid, user->login, user->last_hostname, LASTLOG_HOST);
 			break;
 		case COL_FAILED_LOGIN:
-			if (user_btmp) {
+			if (!user->failed_login && user_btmp) {
 				time = user_btmp->ut_tv.tv_sec;
 				user->failed_login = make_time(ctl->time_mode, time);
 			}
 			break;
 		case COL_FAILED_TTY:
-			if (user_btmp) {
+			if (!user->failed_tty && user_btmp) {
 				user->failed_tty = xmalloc(sizeof(user_btmp->ut_line) + 1);
 				mem2strcpy(user->failed_tty, user_btmp->ut_line,
 						sizeof(user_btmp->ut_line),
@@ -972,11 +983,11 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 						access(_PATH_VAR_NOLOGIN, F_OK) == 0;
 			break;
 		case COL_PWD_WARN:
-			if (shadow && shadow->sp_warn >= 0)
+			if (!user->pwd_warn && shadow && shadow->sp_warn >= 0)
 				xasprintf(&user->pwd_warn, "%ld", shadow->sp_warn);
 			break;
 		case COL_PWD_EXPIR:
-			if (shadow && shadow->sp_expire >= 0)
+			if (!user->pwd_expire && shadow && shadow->sp_expire >= 0)
 				user->pwd_expire = make_time(ctl->time_mode == TIME_ISO ?
 						TIME_ISO_SHORT : ctl->time_mode,
 						shadow->sp_expire * 86400);
@@ -985,17 +996,17 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			/* sp_lstchg is specified in days, showing hours
 			 * (especially in non-GMT timezones) would only serve
 			 * to confuse */
-			if (shadow)
+			if (!user->pwd_ctime && shadow)
 				user->pwd_ctime = make_time(ctl->time_mode == TIME_ISO ?
 						TIME_ISO_SHORT : ctl->time_mode,
 						shadow->sp_lstchg * 86400);
 			break;
 		case COL_PWD_CTIME_MIN:
-			if (shadow && shadow->sp_min > 0)
+			if (user->pwd_ctime_min && shadow && shadow->sp_min > 0)
 				xasprintf(&user->pwd_ctime_min, "%ld", shadow->sp_min);
 			break;
 		case COL_PWD_CTIME_MAX:
-			if (shadow && shadow->sp_max > 0)
+			if (!user->pwd_ctime_max && shadow && shadow->sp_max > 0)
 				xasprintf(&user->pwd_ctime_max, "%ld", shadow->sp_max);
 			break;
 		case COL_SELINUX:
@@ -1006,8 +1017,8 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			break;
 		case COL_NPROCS:
 #ifdef __linux__
-
-			xasprintf(&user->nprocs, "%d", get_nprocs(pwd->pw_uid));
+			if (!user->nprocs)
+				xasprintf(&user->nprocs, "%d", get_nprocs(pwd->pw_uid));
 #endif
 			break;
 		default:
