@@ -1,4 +1,7 @@
 #!/bin/sh
+# 
+# SPDX-License-Identifier: GPL-3.0-or-later 
+#
 # Print a version string.
 scriptversion=2011-02-19.19; # UTC
 
