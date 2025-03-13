@@ -132,23 +132,29 @@ EXTRA_DIST += \
 	tools/meson-make-manpage-stub.sh \
 	tools/meson-make-symlink.sh \
 	\
+	disk-utils/meson.build \
 	include/meson.build \
 	libblkid/meson.build \
+	libfdisk/meson.build \
+	liblastlog2/man/meson.build \
+	liblastlog2/meson.build \
+	lib/meson.build \
 	libmount/meson.build \
 	libmount/python/meson.build \
-	misc-utils/meson.build \
 	libsmartcols/meson.build \
-	text-utils/meson.build \
-	po/meson.build \
-	po-man/meson.build \
-	lib/meson.build \
+	libuuid/man/meson.build \
 	libuuid/meson.build \
-	liblastlog2/meson.build \
+	login-utils/meson.build \
+	lsfd-cmd/meson.build \
+	man-common/meson.build \
+	misc-utils/meson.build \
+	pam_lastlog2/man/meson.build \
+	po-man/meson.build \
+	po/meson.build \
+	schedutils/meson.build \
 	sys-utils/meson.build \
-	libfdisk/meson.build \
 	term-utils/meson.build \
-	disk-utils/meson.build \
-	login-utils/meson.build
+	text-utils/meson.build
 
 # pylibmountexec module must be installed after usrlib_exec libraries,
 # otherwise the libtool relink step will fail to find libmount.la and
