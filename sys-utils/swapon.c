@@ -145,6 +145,7 @@ struct swapon_ctl {
 		no_heading,		/* toggle --show headers */
 		raw,			/* toggle --show alignment */
 		show,			/* display --show information */
+		summarize,		/* display summary of swap use */
 		verbose;		/* be chatty */
 };
 
@@ -965,8 +966,8 @@ int main(int argc, char *argv[])
 			ctl.fix_page_size = 1;
 			break;
 		case 's':		/* status report */
-			status = display_summary();
-			return status;
+			ctl.summarize = 1;
+			break;
 		case 'v':		/* be chatty */
 			ctl.verbose = 1;
 			break;
@@ -1006,6 +1007,11 @@ int main(int argc, char *argv[])
 		}
 	}
 	argv += optind;
+
+	if (ctl.summarize) {
+		status = display_summary();
+		return status;
+	}
 
 	if (ctl.show || (!ctl.all && !numof_labels() && !numof_uuids() && *argv == NULL)) {
 		if (!ctl.ncolumns) {
