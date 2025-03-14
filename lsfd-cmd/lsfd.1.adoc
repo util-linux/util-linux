@@ -189,7 +189,7 @@ mqueue type:::
 ptmx and pts sources:::
 _PID_,_COMMAND_,_ASSOC_[-r][-w]
 +
-The last characters ([-r][-w]) represents the read and/or
+The last characters ([-r][-w]) represent the read and/or
 write mode of the endpoint.
 
 eventfd type:::
