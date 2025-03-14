@@ -140,6 +140,7 @@ enum {
 	COL_UDPLITE_LPORT,
 	COL_UDPLITE_RPORT,
 	COL_UID,		/* process */
+	COL_UNIX_IPEER,
 	COL_UNIX_PATH,
 	COL_USER,		/* process */
 	COL_VSOCK_LADDR,

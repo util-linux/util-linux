@@ -174,7 +174,7 @@ ID of the device containing the file.
 DEVTYPE <``string``>::
 Device type (`blk`, `char`, or `nodev`).
 
-ENDPOINT <``string``>::
+ENDPOINTS <``string``>::
 IPC endpoints information communicated with the fd.
 +
 *lsfd* collects endpoints within the processes that
@@ -189,11 +189,21 @@ mqueue type:::
 ptmx and pts sources:::
 _PID_,_COMMAND_,_ASSOC_[-r][-w]
 +
-The last characters ([-r][-w]) represents the read and/or
+The last characters ([-r][-w]) represent the read and/or
 write mode of the endpoint.
 
 eventfd type:::
 _PID_,_COMMAND_,_ASSOC_
+
+UNIX:::
+Same as _UNIX-STREAM_.
++
+In a container, *lsfd* may not fill _ENDPOINTS_ column.
+*lsfd* uses *sock_diag*(7) to collect information
+about UNIX endpoints. SELinux may limit the use *sock_diag*
+in a container. You can remove the limit by setting
+1 to _virt_sandbox_use_netlink_ bool. See *container_selinux*(8)
+for more details.
 
 UNIX-STREAM:::
 _PID_,_COMMAND_,_ASSOC_[-r?][-w?]
@@ -543,6 +553,12 @@ Remote UDP port.
 
 UID <``number``>::
 User ID number.
+
+UNIX.IPEER < number >::
+Inode number for the peer of the UNIX domain socket.
++
+If *lsfd* runs in a container, it may not fill _UNIX.IPEER_ column.
+See the description of _UNIX_ in _ENDPOINTS_ column for more details.
 
 UNIX.PATH <``string``>::
 Filesystem pathname for UNIX domain socket.

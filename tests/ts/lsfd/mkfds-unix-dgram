@@ -38,6 +38,7 @@ make_state_connected()
     lsfd_make_state_connected | sed -e 's/unconnected/connected/'
 }
 
+ts_init_subtest "non-abstract"
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" unix-dgram $FDS $FDC \
 				      path=test_mkfds-unix-dgram ; }
@@ -51,7 +52,11 @@ make_state_connected()
 	echo DONE >&"${MKFDS[1]}"
     fi
     wait "${MKFDS_PID}"
+} > "$TS_OUTPUT" 2>&1
+ts_finalize_subtest
 
+ts_init_subtest "abstract"
+{
     coproc MKFDS { "$TS_HELPER_MKFDS" unix-dgram $FDS $FDC \
 				      path=test_mkfds-unix-dgram \
 				      abstract=true ; }
@@ -66,5 +71,69 @@ make_state_connected()
     fi
     wait "${MKFDS_PID}"
 } > "$TS_OUTPUT" 2>&1
+ts_finalize_subtest
+
+ts_init_subtest "ENDPOINTS-column"
+if ts_is_in_docker; then
+    ts_skip_subtest "unsupported in docker environment"
+else
+    {
+	coproc MKFDS { "$TS_HELPER_MKFDS" unix-dgram $FDS $FDC \
+					  path=test_mkfds-unix-dgram \
+					  abstract=true ; }
+
+	if read -r -u "${MKFDS[0]}" PID; then
+	    endpoint_c=$(${TS_CMD_LSFD} -n -r -Q "PID == ${PID} && FD == $FDC" -o ENDPOINTS)
+	    echo endpoint_c: $?
+
+	    test "$endpoint_c" = "${PID},test_mkfds,${FDS}rw"
+	    echo "endpoint_c == PID,test_mkfs,${FDS}rw:" $?
+
+	    endpoint_s=$(${TS_CMD_LSFD} -n -r -Q "PID == ${PID} && FD == $FDS" -o ENDPOINTS)
+	    echo endpoint_s: $?
+
+	    test "$endpoint_s" = "${PID},test_mkfds,${FDC}rw"
+	    echo "endpoint_s == PID,test_mkfs,${FDC}rw:" $?
+
+	    echo DONE >&"${MKFDS[1]}"
+	fi
+	wait "${MKFDS_PID}"
+    } > "$TS_OUTPUT" 2>&1
+    ts_finalize_subtest
+fi
+
+ts_init_subtest "UNIX.IPEEER-column"
+if ts_is_in_docker; then
+    ts_skip_subtest "unsupported in docker environment"
+else
+    {
+	coproc MKFDS { "$TS_HELPER_MKFDS" unix-dgram $FDS $FDC \
+					  path=test_mkfds-unix-dgram \
+					  abstract=true ; }
+
+	if read -r -u "${MKFDS[0]}" PID; then
+	    inode_s=$(${TS_CMD_LSFD} -n -r -p "${PID}" -Q "FD == $FDS" -o INODE)
+	    echo inode_s: $?
+	    inode_c=$(${TS_CMD_LSFD} -n -r -p "${PID}" -Q "FD == $FDC" -o INODE)
+	    echo inode_c: $?
+
+	    ipeer_s=$(${TS_CMD_LSFD} -n -r -p "${PID}" -Q "FD == $FDS" -o UNIX.IPEER)
+	    echo ipeer_s: $?
+
+	    ipeer_c=$(${TS_CMD_LSFD} -n -r -p "${PID}" -Q "FD == $FDC" -o UNIX.IPEER)
+	    echo ipeer_c: $?
+
+	    test "$ipeer_s" = 0
+	    echo "ipeer_s == 0:" $?
+
+	    test "$ipeer_c" = "$inode_s"
+	    echo "ipeer_s == inode_s:" $?
+
+	    echo DONE >&"${MKFDS[1]}"
+	fi
+	wait "${MKFDS_PID}"
+    } > "$TS_OUTPUT" 2>&1
+    ts_finalize_subtest
+fi
 
 ts_finalize
