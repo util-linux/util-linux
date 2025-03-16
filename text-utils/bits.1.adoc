@@ -67,11 +67,11 @@ groups so far.
 
 == OPTIONS
 
-include::man-common/help-version.adoc[]
-
 *-w* __<NUM>__, *--width* __<NUM>__::
 Maximum number of bits in the masks handled by *bits* (default __8192__). Any
 bit larger than this number will be truncated.
+
+include::man-common/help-version.adoc[]
 
 == CONVERSION MODE
 

@@ -34,8 +34,6 @@ Generate a random-based UUID. This method creates a UUID consisting mostly of ra
 *-t*, *--time*::
 Generate a time-based UUID. This method creates a UUID based on the system clock plus the system's ethernet hardware address, if present.
 
-include::man-common/help-version.adoc[]
-
 *-m*, *--md5*::
 Use MD5 as the hash algorithm.
 
@@ -59,6 +57,8 @@ Generate multiple UUIDs using the enhanced capability of the libuuid to cache ti
 
 *-x*, *--hex*::
 Interpret name _name_ as a hexadecimal string.
+
+include::man-common/help-version.adoc[]
 
 == CONFORMING TO
 

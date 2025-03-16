@@ -28,13 +28,13 @@ If an optional argument is present, then *swaplabel* will change the appropriate
 
 == OPTIONS
 
-include::man-common/help-version.adoc[]
-
 *-L*, *--label* _label_::
   Specify a new _label_ for the device. Swap partition labels can be at most 16 characters long. If _label_ is longer than 16 characters, *swaplabel* will truncate it and print a warning message.
 
 *-U*, *--uuid* _UUID_::
   Specify a new _UUID_ for the device. The _UUID_ must be in the standard 8-4-4-4-12 character format, such as is output by *uuidgen*(1).
+
+include::man-common/help-version.adoc[]
 
 == ENVIRONMENT
 

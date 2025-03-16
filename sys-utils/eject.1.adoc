@@ -79,8 +79,6 @@ With this option the drive is given a CD-ROM tray close command if it's opened, 
 *-t*, *--trayclose*::
 With this option the drive is given a CD-ROM tray close command. Not all devices support this command.
 
-include::man-common/help-version.adoc[]
-
 *-v*, *--verbose*::
 Run in verbose mode; more information is displayed about what the command is doing.
 
@@ -89,6 +87,8 @@ With this option the CD-ROM drive will be probed to detect the available speeds.
 
 *-x*, *--cdspeed* _speed_::
 With this option the drive is given a CD-ROM select speed command. The _speed_ argument is a number indicating the desired speed (e.g., 8 for 8X speed), or 0 for maximum data rate. Not all devices support this command and you can only specify speeds that the drive is capable of. Every time the media is changed this option is cleared. This option can be used alone, or with the *-t* and *-c* options.
+
+include::man-common/help-version.adoc[]
 
 == EXIT STATUS
 

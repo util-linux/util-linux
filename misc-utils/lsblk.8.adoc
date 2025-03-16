@@ -166,8 +166,6 @@ Output info about block-device topology. This option is equivalent to
 +
 *-o NAME,ALIGNMENT,MIN-IO,OPT-IO,PHY-SEC,LOG-SEC,ROTA,SCHED,RQ-SIZE,RA,WSAME*.
 
-include::man-common/help-version.adoc[]
-
 *-w*, *--width* _number_::
 Specifies output width as a number of characters. The default is the number of the terminal columns, and if not executed on a terminal, then output width is not restricted at all by default. This option also forces *lsblk* to assume that terminal control characters and unsafe characters are not allowed. The expected use-case is for example when *lsblk* is used by the *watch*(1) command.
 
@@ -196,6 +194,8 @@ Reads data directly from the device using libblkid. If unsuccessful, it continue
 Reads data from a file. This method is only used if the --sysroot option is specified. This method always stops probing if used.
 *none*;;
 Does not probe. This method always stops probing.
+
+include::man-common/help-version.adoc[]
 
 == EXIT STATUS
 

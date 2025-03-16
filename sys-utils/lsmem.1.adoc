@@ -60,10 +60,10 @@ Specify which columns (attributes) use to split memory blocks to ranges. The sup
 *-s*, *--sysroot* _directory_::
 Gather memory data for a Linux instance other than the instance from which the *lsmem* command is issued. The specified _directory_ is the system root of the Linux instance to be inspected.
 
-include::man-common/help-version.adoc[]
-
 *--summary*[**=**_when_]::
 This option controls summary lines output. The optional argument _when_ can be *never*, *always* or *only*. If the _when_ argument is omitted, it defaults to *"only"*. The summary output is suppressed for *--raw*, *--pairs* and *--json*.
+
+include::man-common/help-version.adoc[]
 
 == AUTHORS
 
