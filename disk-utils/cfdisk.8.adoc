@@ -44,8 +44,6 @@ If you want to remove an old partition table from a device, use *wipefs*(8).
 
 == OPTIONS
 
-include::man-common/help-version.adoc[]
-
 *-L*, *--color*[**=**__when__]::
 Colorize the output. The optional argument _when_ can be *auto*, *never* or *always*. If the _when_ argument is omitted, it defaults to *auto*. The colors can be disabled, for the current built-in default see *--help* output. See also the *COLORS* section.
 
@@ -60,6 +58,8 @@ Specify the sector size of the disk. Valid values are 512, 1024, 2048, and 4096.
 
 *-z*, *--zero*::
 Start with an in-memory zeroed partition table. This option does not zero the partition table on the disk; rather, it simply starts the program without reading the existing partition table. This option allows you to create a new partition table from scratch or from an *sfdisk*(8)-compatible script.
+
+include::man-common/help-version.adoc[]
 
 == COMMANDS
 

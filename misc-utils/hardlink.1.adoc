@@ -40,8 +40,6 @@ are very often different from the beginning.
 
 == OPTIONS
 
-include::man-common/help-version.adoc[]
-
 *-c*, *--content*::
 Consider only file content, not attributes, when determining whether two files are equal. Same as *-pot*.
 
@@ -146,6 +144,7 @@ only reflinks are allowed.
 *--skip-reflinks*::
 Ignore already cloned files. This option may be used without *--reflink* when creating classic hardlinks.
 
+include::man-common/help-version.adoc[]
 
 == ARGUMENTS
 

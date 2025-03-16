@@ -72,6 +72,8 @@ Specify a string termination character, i.e., only the characters in _string_ up
 
 include::man-common/help-version.adoc[]
 
+== EXIT STATUS
+
 The *look* utility exits 0 if one or more lines were found and displayed, 1 if no lines were found, and >1 if an error occurred.
 
 == ENVIRONMENT
