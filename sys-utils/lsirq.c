@@ -109,6 +109,9 @@ int main(int argc, char **argv)
 	char *input_file = NULL;
 
 	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	close_stdout_atexit();
 
 	while ((c = getopt_long(argc, argv, "i:no:s:t:C:ShJPV", longopts, NULL)) != -1) {
 		err_exclusive_options(c, longopts, excl, excl_st);
