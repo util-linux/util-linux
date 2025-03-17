@@ -1008,10 +1008,8 @@ int main(int argc, char *argv[])
 	}
 	argv += optind;
 
-	if (ctl.summarize) {
-		status = display_summary();
-		return status;
-	}
+	if (ctl.summarize)
+		return display_summary();
 
 	if (ctl.show || (!ctl.all && !numof_labels() && !numof_uuids() && *argv == NULL)) {
 		if (!ctl.ncolumns) {
@@ -1022,8 +1020,7 @@ int main(int argc, char *argv[])
 			ctl.columns[ctl.ncolumns++] = COL_USED;
 			ctl.columns[ctl.ncolumns++] = COL_PRIO;
 		}
-		status = show_table(&ctl);
-		return status;
+		return show_table(&ctl);
 	}
 
 	if (ctl.props.no_fail && !ctl.all) {
