@@ -278,6 +278,7 @@ struct lscpu_cxt {
 		 CPU_ISSET_S((_cpu)->logical_id, (_cxt)->setsize, (_cxt)->present))
 
 int is_arm(struct lscpu_cxt *cxt);
+bool is_riscv(struct lscpu_cputype *ct);
 
 struct lscpu_cputype *lscpu_new_cputype(void);
 void lscpu_ref_cputype(struct lscpu_cputype *ct);
@@ -320,6 +321,7 @@ int lscpu_create_cpus(struct lscpu_cxt *cxt, cpu_set_t *cpuset, size_t setsize);
 struct lscpu_cpu *lscpu_cpus_loopup_by_type(struct lscpu_cxt *cxt, struct lscpu_cputype *ct);
 
 void lscpu_decode_arm(struct lscpu_cxt *cxt);
+void lscpu_format_isa_riscv(struct lscpu_cputype *ct);
 
 int lookup(char *line, char *pattern, char **value);
 
