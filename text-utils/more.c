@@ -1684,6 +1684,9 @@ static int more_key_command(struct more_control *ctl, char *filename)
 			continue;
 		if (cmd.key == more_kc_repeat_previous)
 			cmd = ctl->previous_command;
+		else
+			ctl->previous_command = cmd;
+
 		switch (cmd.key) {
 		case more_kc_backwards:
 			if (ctl->no_tty_in) {
@@ -1849,7 +1852,6 @@ static int more_key_command(struct more_control *ctl, char *filename)
 			fflush(NULL);
 			break;
 		}
-		ctl->previous_command = cmd;
 		if (done) {
 			cmd.key = more_kc_unknown_command;
 			break;
