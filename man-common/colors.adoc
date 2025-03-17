@@ -9,6 +9,9 @@ for the *{command}* command or for all tools by
 ____
 _/etc/terminal-colors.d/disable_
 ____
+Since version 2.41, the $NO_COLOR environment variable is also supported to
+disable output colorization unless explicitly enabled by a command-line option.
+
 The user-specific _$XDG_CONFIG_HOME/terminal-colors.d_
 or _$HOME/.config/terminal-colors.d_ overrides the global setting. 
 
