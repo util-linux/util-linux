@@ -600,7 +600,9 @@ int colors_init(int mode, const char *name)
 		cc->mode = mode;
 
 	if (cc->mode == UL_COLORMODE_UNDEF
+	    && getenv("NO_COLOR") == NULL
 	    && (ready = colors_terminal_is_ready())) {
+
 		int rc = colors_read_configuration(cc);
 		if (rc)
 			cc->mode = UL_COLORMODE_DEFAULT;

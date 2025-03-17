@@ -33,8 +33,7 @@ The _term_ is a terminal identifier (the *TERM* environment variable). The termi
 The _type_ is a file type. Supported file types are:
 
 *disable*::
-Turns off output colorization for all compatible utilities.
-
+Turns off output colorization for all compatible utilities. See also the NO_COLOR environment variable below.
 *enable*::
 Turns on output colorization; any matching *disable* files are ignored.
 
@@ -130,6 +129,11 @@ Lines where the first non-blank character is a # (hash) are ignored. Any other u
 
 *TERMINAL_COLORS_DEBUG*=all::
 enables debug output.
+
+*NO_COLOR*::
+if defined, this disables output colorization unless explicitly enabled by a
+command-line option. See https://no-color.org/ for more details. Supported
+since util-linux version 2.41.
 
 == FILES
 
