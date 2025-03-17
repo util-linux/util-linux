@@ -1,8 +1,9 @@
 /*
- * SPDX-License-Identifier: LGPL-2.1-or-later
+ * No copyright is claimed.  This code is in the public domain; do with
+ * it what you wish.
  *
- * Copyright (C) 2012 Ondrej Oprala <ooprala@redhat.com>
- * Copyright (C) 2012-2014 Karel Zak <kzak@redhat.com>
+ * Authors: 2012 Ondrej Oprala <ooprala@redhat.com>
+ *          2012-2025 Karel Zak <kzak@redhat.com>
  *
  * This file may be distributed under the terms of the
  * GNU Lesser General Public License.
