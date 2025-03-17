@@ -215,6 +215,7 @@ static int hlp_hostname(void)
 {
 	char * h = xgethostname();
 	printf("%s\n", h);
+	free(h);
 	return 0;
 }
 

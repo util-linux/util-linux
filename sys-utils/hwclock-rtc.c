@@ -431,6 +431,9 @@ static int resolve_rtc_param_alias(const char *alias, __u64 *value)
 {
 	const struct hwclock_param *param = &hwclock_params[0];
 
+	if (!alias)
+		return 1;
+
 	while (param->name) {
 		if (!strcmp(alias, param->name)) {
 			*value = param->id;

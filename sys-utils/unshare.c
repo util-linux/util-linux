@@ -737,7 +737,7 @@ static int is_fixed(const char *interp)
 
 	flags = strrchr(interp, ':');
 
-	return strchr(flags, 'F') != NULL;
+	return flags && strchr(flags, 'F') != NULL;
 }
 
 static void load_interp(const char *binfmt_mnt, const char *interp)
