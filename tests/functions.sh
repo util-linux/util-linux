@@ -1218,8 +1218,12 @@ function ts_check_enosys_syscalls {
 	[ $? -ne 0 ] && ts_skip "test_enosys does not work: $*"
 }
 
+function ts_is_in_docker {
+	test -e /.dockerenv
+}
+
 function ts_skip_docker {
-	test -e /.dockerenv && ts_skip "unsupported in docker environment"
+	ts_is_in_docker && ts_skip "unsupported in docker environment"
 }
 
 function ts_check_ipv6 {
