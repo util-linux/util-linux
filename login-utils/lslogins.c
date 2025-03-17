@@ -1002,7 +1002,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 						shadow->sp_lstchg * 86400);
 			break;
 		case COL_PWD_CTIME_MIN:
-			if (user->pwd_ctime_min && shadow && shadow->sp_min > 0)
+			if (!user->pwd_ctime_min && shadow && shadow->sp_min > 0)
 				xasprintf(&user->pwd_ctime_min, "%ld", shadow->sp_min);
 			break;
 		case COL_PWD_CTIME_MAX:
