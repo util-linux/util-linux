@@ -8,6 +8,7 @@ Model:               0x4210427
 Thread(s) per core:  1
 Core(s) per socket:  4
 Socket(s):           1
+ISA:                 rv64imafdc zba zbb zicntr zicsr zifencei zihpm
 L1d cache:           128 KiB (4 instances)
 L1i cache:           128 KiB (4 instances)
 L2 cache:            2 MiB (1 instance)
