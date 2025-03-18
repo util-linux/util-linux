@@ -81,7 +81,7 @@ The shell to run is selected according to the following rules, in order:
 **--session-command=**__command__::
 Same as *-c*, but do not create a new session. (Discouraged.)
 
-*-T*, *--no-pty**::
+*-T*, *--no-pty*::
 Do not create a pseudo-terminal, opposite of *--pty* and *-P*.
 Note that running without a pseudo-terminal opens the security risk of privilege escalation through TIOCSTI/TIOCLINUX ioctl command injection.
 

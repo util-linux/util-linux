@@ -73,7 +73,7 @@ If the target user has a restricted shell (i.e., not listed in _/etc/shells_), t
 **--session-command=**__command__::
 Same as *-c*, but do not create a new session. (Discouraged.)
 
-*-T*, *--no-pty**::
+*-T*, *--no-pty*::
 Do not create a pseudo-terminal, opposite of *--pty* and *-P*.
 Note that running without a pseudo-terminal opens the security risk of privilege escalation through TIOCSTI/TIOCLINUX ioctl command injection.
 
