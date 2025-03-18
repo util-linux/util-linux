@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-man 2.37-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2025-02-18 11:36+0100\n"
+"POT-Creation-Date: 2025-03-18 14:33+0100\n"
 "PO-Revision-Date: 2021-09-11 20:10+0200\n"
 "Last-Translator: Antonio Ceballos Roa <aceballos@gmail.com>\n"
 "Language-Team: Spanish <es@tp.org.es>\n"
@@ -78,14 +78,22 @@ msgid "_/etc/terminal-colors.d/disable_"
 msgstr "_/etc/terminal-colors.d_"
 
 #. type: Plain text
-#: ../man-common/colors.adoc:14 ../lib/terminal-colors.d.5.adoc:47
+#: ../man-common/colors.adoc:14
+msgid ""
+"Since version 2.41, the $NO_COLOR environment variable is also supported to "
+"disable output colorization unless explicitly enabled by a command-line "
+"option."
+msgstr ""
+
+#. type: Plain text
+#: ../man-common/colors.adoc:17 ../lib/terminal-colors.d.5.adoc:46
 msgid ""
 "The user-specific _$XDG_CONFIG_HOME/terminal-colors.d_ or _$HOME/.config/"
 "terminal-colors.d_ overrides the global setting."
 msgstr ""
 
 #. type: Plain text
-#: ../man-common/colors.adoc:17
+#: ../man-common/colors.adoc:20
 msgid ""
 "Note that the output colorization may be enabled by default, and in this "
 "case _terminal-colors.d_ directories do not have to exist yet."
@@ -141,7 +149,7 @@ msgstr ""
 
 #. type: Labeled list
 #: ../man-common/help-version.adoc:1 ../disk-utils/sfdisk.8.adoc:232
-#: ../login-utils/chsh.1.adoc:39 ../misc-utils/lastlog2.8.adoc:44
+#: ../login-utils/chsh.1.adoc:39 ../misc-utils/lastlog2.8.adoc:47
 #: ../sys-utils/blkpr.8.adoc:46 ../sys-utils/setsid.1.adoc:37
 #, no-wrap
 msgid "*-h*, *--help*"
@@ -156,10 +164,9 @@ msgid "Display help text and exit."
 msgstr "Mostrar texto de ayuda y finalizar."
 
 #. type: Labeled list
-#: ../man-common/help-version.adoc:4 ../disk-utils/fdisk.8.adoc:100
-#: ../login-utils/chfn.1.adoc:52 ../login-utils/chsh.1.adoc:43
-#: ../sys-utils/blkpr.8.adoc:43 ../sys-utils/setsid.1.adoc:34
-#: ../text-utils/col.1.adoc:83
+#: ../man-common/help-version.adoc:4 ../login-utils/chfn.1.adoc:52
+#: ../login-utils/chsh.1.adoc:43 ../sys-utils/blkpr.8.adoc:43
+#: ../sys-utils/setsid.1.adoc:34 ../text-utils/col.1.adoc:83
 #, no-wrap
 msgid "*-V*, *--version*"
 msgstr "*-V*, *--version*"
@@ -599,7 +606,7 @@ msgstr "La longitud de la partición (en sectores de 512 bytes)."
 #. type: Title ==
 #: ../disk-utils/addpart.8.adoc:45 ../disk-utils/cfdisk.8.adoc:148
 #: ../disk-utils/delpart.8.adoc:33 ../disk-utils/fdformat.8.adoc:74
-#: ../disk-utils/fdisk.8.adoc:220 ../disk-utils/fsck.8.adoc:164
+#: ../disk-utils/fdisk.8.adoc:219 ../disk-utils/fsck.8.adoc:164
 #: ../disk-utils/fsck.cramfs.8.adoc:51 ../disk-utils/fsck.minix.8.adoc:98
 #: ../disk-utils/mkfs.8.adoc:53 ../disk-utils/mkfs.bfs.8.adoc:57
 #: ../disk-utils/mkfs.cramfs.8.adoc:82 ../disk-utils/mkfs.minix.8.adoc:86
@@ -616,13 +623,13 @@ msgstr "La longitud de la partición (en sectores de 512 bytes)."
 #: ../login-utils/newgrp.1.adoc:49 ../login-utils/nologin.8.adoc:67
 #: ../login-utils/runuser.1.adoc:136 ../login-utils/su.1.adoc:156
 #: ../login-utils/utmpdump.1.adoc:75 ../login-utils/vipw.8.adoc:72
-#: ../lsfd-cmd/lsfd.1.adoc:742 ../misc-utils/blkid.8.adoc:181
+#: ../lsfd-cmd/lsfd.1.adoc:758 ../misc-utils/blkid.8.adoc:181
 #: ../misc-utils/cal.1.adoc:191 ../misc-utils/enosys.1.adoc:83
 #: ../misc-utils/exch.1.adoc:41 ../misc-utils/fadvise.1.adoc:57
 #: ../misc-utils/fincore.1.adoc:56 ../misc-utils/findfs.8.adoc:67
 #: ../misc-utils/findmnt.8.adoc:266 ../misc-utils/getopt.1.adoc:151
-#: ../misc-utils/kill.1.adoc:131 ../misc-utils/lastlog2.8.adoc:86
-#: ../misc-utils/logger.1.adoc:252 ../misc-utils/look.1.adoc:101
+#: ../misc-utils/kill.1.adoc:131 ../misc-utils/lastlog2.8.adoc:89
+#: ../misc-utils/logger.1.adoc:252 ../misc-utils/look.1.adoc:103
 #: ../misc-utils/lsblk.8.adoc:242 ../misc-utils/lsclocks.1.adoc:104
 #: ../misc-utils/lslocks.8.adoc:127 ../misc-utils/mcookie.1.adoc:54
 #: ../misc-utils/namei.1.adoc:75 ../misc-utils/pipesz.1.adoc:99
@@ -637,7 +644,7 @@ msgstr "La longitud de la partición (en sectores de 512 bytes)."
 #: ../sys-utils/chmem.8.adoc:81 ../sys-utils/choom.1.adoc:51
 #: ../sys-utils/ctrlaltdel.8.adoc:47 ../sys-utils/dmesg.1.adoc:198
 #: ../sys-utils/eject.1.adoc:117 ../sys-utils/fallocate.1.adoc:86
-#: ../sys-utils/flock.1.adoc:136 ../sys-utils/fsfreeze.8.adoc:53
+#: ../sys-utils/flock.1.adoc:142 ../sys-utils/fsfreeze.8.adoc:53
 #: ../sys-utils/fstab.5.adoc:143 ../sys-utils/fstrim.8.adoc:91
 #: ../sys-utils/hwclock.8.adoc:378 ../sys-utils/ipcmk.1.adoc:62
 #: ../sys-utils/ipcrm.1.adoc:77 ../sys-utils/ipcs.1.adoc:88
@@ -653,7 +660,7 @@ msgstr "La longitud de la partición (en sectores de 512 bytes)."
 #: ../sys-utils/switch_root.8.adoc:47 ../sys-utils/umount.8.adoc:210
 #: ../sys-utils/unshare.1.adoc:285 ../sys-utils/zramctl.8.adoc:107
 #: ../term-utils/mesg.1.adoc:113 ../term-utils/script.1.adoc:161
-#: ../term-utils/scriptlive.1.adoc:80 ../term-utils/scriptreplay.1.adoc:108
+#: ../term-utils/scriptlive.1.adoc:89 ../term-utils/scriptreplay.1.adoc:120
 #: ../term-utils/setterm.1.adoc:177 ../term-utils/wall.1.adoc:81
 #: ../term-utils/write.1.adoc:82 ../text-utils/col.1.adoc:127
 #: ../text-utils/colcrt.1.adoc:92 ../text-utils/colrm.1.adoc:67
@@ -792,7 +799,7 @@ msgstr ""
 #: ../sys-utils/unshare.1.adoc:53 ../sys-utils/wdctl.8.adoc:25
 #: ../sys-utils/zramctl.8.adoc:39 ../term-utils/agetty.8.adoc:56
 #: ../term-utils/mesg.1.adoc:86 ../term-utils/script.1.adoc:62
-#: ../term-utils/scriptlive.1.adoc:28 ../term-utils/scriptreplay.1.adoc:32
+#: ../term-utils/scriptlive.1.adoc:33 ../term-utils/scriptreplay.1.adoc:35
 #: ../term-utils/setterm.1.adoc:34 ../term-utils/wall.1.adoc:60
 #: ../term-utils/write.1.adoc:74 ../text-utils/col.1.adoc:60
 #: ../text-utils/colcrt.1.adoc:56 ../text-utils/colrm.1.adoc:59
@@ -1131,7 +1138,7 @@ msgstr ""
 
 #. type: Title ==
 #: ../disk-utils/blockdev.8.adoc:117 ../disk-utils/cfdisk.8.adoc:142
-#: ../disk-utils/fdformat.8.adoc:70 ../disk-utils/fdisk.8.adoc:213
+#: ../disk-utils/fdformat.8.adoc:70 ../disk-utils/fdisk.8.adoc:212
 #: ../disk-utils/fsck.8.adoc:159 ../disk-utils/fsck.minix.8.adoc:94
 #: ../disk-utils/mkfs.8.adoc:45 ../disk-utils/partx.8.adoc:128
 #: ../disk-utils/raw.8.adoc:57 ../disk-utils/sfdisk.8.adoc:459
@@ -1145,12 +1152,12 @@ msgstr ""
 #: ../login-utils/last.1.adoc:125 ../login-utils/login.1.adoc:169
 #: ../login-utils/lslogins.1.adoc:139 ../login-utils/newgrp.1.adoc:45
 #: ../login-utils/nologin.8.adoc:63 ../login-utils/sulogin.8.adoc:70
-#: ../login-utils/utmpdump.1.adoc:71 ../lsfd-cmd/lsfd.1.adoc:737
+#: ../login-utils/utmpdump.1.adoc:71 ../lsfd-cmd/lsfd.1.adoc:753
 #: ../misc-utils/blkid.8.adoc:177 ../misc-utils/enosys.1.adoc:79
 #: ../misc-utils/exch.1.adoc:37 ../misc-utils/fadvise.1.adoc:53
 #: ../misc-utils/fincore.1.adoc:52 ../misc-utils/findfs.8.adoc:63
 #: ../misc-utils/findmnt.8.adoc:262 ../misc-utils/kill.1.adoc:124
-#: ../misc-utils/lastlog2.8.adoc:82 ../misc-utils/logger.1.adoc:248
+#: ../misc-utils/lastlog2.8.adoc:85 ../misc-utils/logger.1.adoc:248
 #: ../misc-utils/lsblk.8.adoc:237 ../misc-utils/lsclocks.1.adoc:100
 #: ../misc-utils/lslocks.8.adoc:123 ../misc-utils/namei.1.adoc:69
 #: ../misc-utils/pipesz.1.adoc:95 ../misc-utils/uuidgen.1.adoc:71
@@ -1162,13 +1169,13 @@ msgstr ""
 #: ../sys-utils/blkpr.8.adoc:49 ../sys-utils/chcpu.8.adoc:72
 #: ../sys-utils/choom.1.adoc:47 ../sys-utils/ctrlaltdel.8.adoc:43
 #: ../sys-utils/dmesg.1.adoc:192 ../sys-utils/eject.1.adoc:113
-#: ../sys-utils/fallocate.1.adoc:81 ../sys-utils/flock.1.adoc:127
+#: ../sys-utils/fallocate.1.adoc:81 ../sys-utils/flock.1.adoc:133
 #: ../sys-utils/fsfreeze.8.adoc:49 ../sys-utils/fstrim.8.adoc:87
 #: ../sys-utils/hwclock.8.adoc:388 ../sys-utils/ipcmk.1.adoc:57
-#: ../sys-utils/ipcs.1.adoc:84 ../sys-utils/irqtop.1.adoc:65
+#: ../sys-utils/ipcs.1.adoc:84 ../sys-utils/irqtop.1.adoc:74
 #: ../sys-utils/ldattach.8.adoc:114 ../sys-utils/losetup.8.adoc:157
 #: ../sys-utils/lscpu.1.adoc:108 ../sys-utils/lsipc.1.adoc:115
-#: ../sys-utils/lsirq.1.adoc:51 ../sys-utils/lsmem.1.adoc:68
+#: ../sys-utils/lsirq.1.adoc:54 ../sys-utils/lsmem.1.adoc:68
 #: ../sys-utils/lsns.8.adoc:104 ../sys-utils/mount.8.adoc:1737
 #: ../sys-utils/mountpoint.1.adoc:61 ../sys-utils/nsenter.1.adoc:156
 #: ../sys-utils/prlimit.1.adoc:132 ../sys-utils/rfkill.8.adoc:72
@@ -1177,7 +1184,7 @@ msgstr ""
 #: ../sys-utils/setsid.1.adoc:40 ../sys-utils/switch_root.8.adoc:41
 #: ../sys-utils/unshare.1.adoc:280 ../sys-utils/wdctl.8.adoc:68
 #: ../sys-utils/zramctl.8.adoc:102 ../term-utils/agetty.8.adoc:344
-#: ../term-utils/scriptlive.1.adoc:67 ../term-utils/scriptreplay.1.adoc:89
+#: ../term-utils/scriptlive.1.adoc:76 ../term-utils/scriptreplay.1.adoc:101
 #: ../text-utils/more.1.adoc:190 ../text-utils/bits.1.adoc:123
 #: ../liblastlog2/man/lastlog2.3.adoc:28
 #: ../liblastlog2/man/ll2_import_lastlog.3.adoc:43
@@ -1273,14 +1280,14 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:49
+#: ../disk-utils/cfdisk.8.adoc:47
 #, fuzzy, no-wrap
 #| msgid "B<-f>, B<--force>"
 msgid "*-L*, *--color*[**=**__when__]"
 msgstr "B<-f>, B<--force>"
 
 #. type: Plain text
-#: ../disk-utils/cfdisk.8.adoc:51
+#: ../disk-utils/cfdisk.8.adoc:49
 msgid ""
 "Colorize the output. The optional argument _when_ can be *auto*, *never* or "
 "*always*. If the _when_ argument is omitted, it defaults to *auto*. The "
@@ -1289,7 +1296,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:52 ../disk-utils/fdisk.8.adoc:64
+#: ../disk-utils/cfdisk.8.adoc:50 ../disk-utils/fdisk.8.adoc:62
 #: ../disk-utils/mkfs.bfs.8.adoc:38 ../disk-utils/mkfs.minix.8.adoc:49
 #: ../disk-utils/mkswap.8.adoc:60 ../disk-utils/sfdisk.8.adoc:165
 #: ../misc-utils/wipefs.8.adoc:52
@@ -1299,7 +1306,7 @@ msgid "*--lock*[**=**_mode_]"
 msgstr "*--lock*[=_modo_]"
 
 #. type: Plain text
-#: ../disk-utils/cfdisk.8.adoc:54 ../disk-utils/fdisk.8.adoc:66
+#: ../disk-utils/cfdisk.8.adoc:52 ../disk-utils/fdisk.8.adoc:64
 #: ../disk-utils/mkfs.bfs.8.adoc:40 ../disk-utils/mkfs.minix.8.adoc:51
 #: ../disk-utils/mkswap.8.adoc:62 ../disk-utils/sfdisk.8.adoc:167
 msgid ""
@@ -1312,26 +1319,26 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:55 ../sys-utils/losetup.8.adoc:92
+#: ../disk-utils/cfdisk.8.adoc:53 ../sys-utils/losetup.8.adoc:92
 #: ../sys-utils/mount.8.adoc:406 ../sys-utils/umount.8.adoc:105
 #, no-wrap
 msgid "*-r*, *--read-only*"
 msgstr "*-r*, *--read-only*"
 
 #. type: Plain text
-#: ../disk-utils/cfdisk.8.adoc:57
+#: ../disk-utils/cfdisk.8.adoc:55
 msgid "Forced open in read-only mode."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:58 ../disk-utils/fdisk.8.adoc:42
+#: ../disk-utils/cfdisk.8.adoc:56 ../disk-utils/fdisk.8.adoc:42
 #, fuzzy, no-wrap
 #| msgid "B<-r>, B<--reverse>"
 msgid "*-b*, *--sector-size* _sectorsize_"
 msgstr "B<-r>, B<--reverse>"
 
 #. type: Plain text
-#: ../disk-utils/cfdisk.8.adoc:60 ../disk-utils/fdisk.8.adoc:44
+#: ../disk-utils/cfdisk.8.adoc:58 ../disk-utils/fdisk.8.adoc:44
 #: ../disk-utils/sfdisk.8.adoc:213
 msgid ""
 "Specify the sector size of the disk. Valid values are 512, 1024, 2048, and "
@@ -1343,13 +1350,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:61 ../misc-utils/hardlink.1.adoc:82
+#: ../disk-utils/cfdisk.8.adoc:59 ../misc-utils/hardlink.1.adoc:80
 #, no-wrap
 msgid "*-z*, *--zero*"
 msgstr "*-z*, *--zero*"
 
 #. type: Plain text
-#: ../disk-utils/cfdisk.8.adoc:63
+#: ../disk-utils/cfdisk.8.adoc:61
 msgid ""
 "Start with an in-memory zeroed partition table. This option does not zero "
 "the partition table on the disk; rather, it simply starts the program "
@@ -1381,7 +1388,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:71 ../sys-utils/irqtop.1.adoc:56
+#: ../disk-utils/cfdisk.8.adoc:71 ../sys-utils/irqtop.1.adoc:65
 #, no-wrap
 msgid "*d*"
 msgstr "*d*"
@@ -1407,7 +1414,7 @@ msgid "Show the help screen."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:77 ../sys-utils/irqtop.1.adoc:59
+#: ../disk-utils/cfdisk.8.adoc:77 ../sys-utils/irqtop.1.adoc:68
 #: ../term-utils/mesg.1.adoc:77 ../text-utils/more.1.adoc:140
 #, no-wrap
 msgid "*n*"
@@ -1478,7 +1485,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:93 ../sys-utils/irqtop.1.adoc:53
+#: ../disk-utils/cfdisk.8.adoc:93 ../sys-utils/irqtop.1.adoc:62
 #, no-wrap
 msgid "*t*"
 msgstr "*t*"
@@ -1595,14 +1602,14 @@ msgid "*cfdisk* does not support color customization with a color-scheme file."
 msgstr ""
 
 #. type: Title ==
-#: ../disk-utils/cfdisk.8.adoc:122 ../disk-utils/fdisk.8.adoc:193
+#: ../disk-utils/cfdisk.8.adoc:122 ../disk-utils/fdisk.8.adoc:192
 #: ../disk-utils/fsck.8.adoc:128 ../disk-utils/mkfs.minix.8.adoc:70
 #: ../disk-utils/mkswap.8.adoc:95 ../disk-utils/partx.8.adoc:101
 #: ../disk-utils/sfdisk.8.adoc:417 ../disk-utils/swaplabel.8.adoc:39
-#: ../lib/terminal-colors.d.5.adoc:129 ../login-utils/sulogin.8.adoc:66
+#: ../lib/terminal-colors.d.5.adoc:128 ../login-utils/sulogin.8.adoc:66
 #: ../login-utils/vipw.8.adoc:61 ../misc-utils/blkid.8.adoc:173
 #: ../misc-utils/findfs.8.adoc:58 ../misc-utils/findmnt.8.adoc:219
-#: ../misc-utils/getopt.1.adoc:133 ../misc-utils/look.1.adoc:77
+#: ../misc-utils/getopt.1.adoc:133 ../misc-utils/look.1.adoc:79
 #: ../misc-utils/lsblk.8.adoc:214 ../misc-utils/whereis.1.adoc:112
 #: ../misc-utils/wipefs.8.adoc:80 ../sys-utils/hwclock.8.adoc:357
 #: ../sys-utils/losetup.8.adoc:131 ../sys-utils/lsns.8.adoc:99
@@ -1627,20 +1634,20 @@ msgid "enables cfdisk debug output."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:127 ../disk-utils/fdisk.8.adoc:198
+#: ../disk-utils/cfdisk.8.adoc:127 ../disk-utils/fdisk.8.adoc:197
 #: ../disk-utils/sfdisk.8.adoc:421
 #, no-wrap
 msgid "*LIBFDISK_DEBUG*=all"
 msgstr "*LIBFDISK_DEBUG*=all"
 
 #. type: Plain text
-#: ../disk-utils/cfdisk.8.adoc:129 ../disk-utils/fdisk.8.adoc:200
+#: ../disk-utils/cfdisk.8.adoc:129 ../disk-utils/fdisk.8.adoc:199
 #: ../disk-utils/sfdisk.8.adoc:423
 msgid "enables libfdisk debug output."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:130 ../disk-utils/fdisk.8.adoc:201
+#: ../disk-utils/cfdisk.8.adoc:130 ../disk-utils/fdisk.8.adoc:200
 #: ../disk-utils/sfdisk.8.adoc:423 ../misc-utils/lsblk.8.adoc:219
 #: ../sys-utils/mount.8.adoc:1691 ../sys-utils/swapon.8.adoc:128
 #, no-wrap
@@ -1648,7 +1655,7 @@ msgid "*LIBBLKID_DEBUG*=all"
 msgstr "*LIBBLKID_DEBUG*=all"
 
 #. type: Plain text
-#: ../disk-utils/cfdisk.8.adoc:132 ../disk-utils/fdisk.8.adoc:203
+#: ../disk-utils/cfdisk.8.adoc:132 ../disk-utils/fdisk.8.adoc:202
 #: ../disk-utils/fsck.8.adoc:146 ../disk-utils/mkswap.8.adoc:99
 #: ../disk-utils/partx.8.adoc:105 ../disk-utils/sfdisk.8.adoc:425
 #: ../disk-utils/swaplabel.8.adoc:43 ../misc-utils/findfs.8.adoc:62
@@ -1656,7 +1663,7 @@ msgid "enables libblkid debug output."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:133 ../disk-utils/fdisk.8.adoc:204
+#: ../disk-utils/cfdisk.8.adoc:133 ../disk-utils/fdisk.8.adoc:203
 #: ../disk-utils/sfdisk.8.adoc:425 ../misc-utils/findmnt.8.adoc:230
 #: ../misc-utils/lsblk.8.adoc:225
 #, no-wrap
@@ -1664,13 +1671,13 @@ msgid "*LIBSMARTCOLS_DEBUG*=all"
 msgstr "*LIBSMARTCOLS_DEBUG*=all"
 
 #. type: Plain text
-#: ../disk-utils/cfdisk.8.adoc:135 ../disk-utils/fdisk.8.adoc:206
+#: ../disk-utils/cfdisk.8.adoc:135 ../disk-utils/fdisk.8.adoc:205
 #: ../disk-utils/sfdisk.8.adoc:427
 msgid "enables libsmartcols debug output."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:136 ../disk-utils/fdisk.8.adoc:207
+#: ../disk-utils/cfdisk.8.adoc:136 ../disk-utils/fdisk.8.adoc:206
 #: ../misc-utils/findmnt.8.adoc:233 ../misc-utils/lsblk.8.adoc:228
 #, no-wrap
 msgid "*LIBSMARTCOLS_DEBUG_PADDING*=on"
@@ -1682,14 +1689,14 @@ msgid "use visible padding characters. Requires enabled *LIBSMARTCOLS_DEBUG*."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:139 ../disk-utils/fdisk.8.adoc:210
+#: ../disk-utils/cfdisk.8.adoc:139 ../disk-utils/fdisk.8.adoc:209
 #: ../disk-utils/sfdisk.8.adoc:427
 #, no-wrap
 msgid "*LOCK_BLOCK_DEVICE*=<mode>"
 msgstr "*LOCK_BLOCK_DEVICE*=<modo>"
 
 #. type: Plain text
-#: ../disk-utils/cfdisk.8.adoc:141 ../disk-utils/fdisk.8.adoc:212
+#: ../disk-utils/cfdisk.8.adoc:141 ../disk-utils/fdisk.8.adoc:211
 #: ../disk-utils/mkfs.minix.8.adoc:74 ../disk-utils/mkswap.8.adoc:102
 #: ../disk-utils/sfdisk.8.adoc:429 ../misc-utils/wipefs.8.adoc:87
 msgid ""
@@ -1703,7 +1710,7 @@ msgstr ""
 #: ../misc-utils/findmnt.8.adoc:265 ../misc-utils/wipefs.8.adoc:102
 #: ../sys-utils/choom.1.adoc:50 ../sys-utils/dmesg.1.adoc:195
 #: ../sys-utils/lsns.8.adoc:107 ../sys-utils/mount.8.adoc:1740
-#: ../sys-utils/mountpoint.1.adoc:64 ../term-utils/scriptlive.1.adoc:70
+#: ../sys-utils/mountpoint.1.adoc:64 ../term-utils/scriptlive.1.adoc:79
 msgid "mailto:kzak@redhat.com[Karel Zak]"
 msgstr "mailto:kzak@redhat.com[Karel Zak]"
 
@@ -1939,7 +1946,7 @@ msgstr "Salta la verificación que normalmente se realiza tras dar el formato."
 #: ../misc-utils/pipesz.1.adoc:83 ../schedutils/chrt.1.adoc:137
 #: ../schedutils/coresched.1.adoc:107 ../schedutils/ionice.1.adoc:68
 #: ../schedutils/uclampset.1.adoc:114 ../sys-utils/choom.1.adoc:33
-#: ../sys-utils/eject.1.adoc:97 ../sys-utils/flock.1.adoc:99
+#: ../sys-utils/eject.1.adoc:97 ../sys-utils/flock.1.adoc:105
 #: ../sys-utils/fsfreeze.8.adoc:45 ../sys-utils/fstab.5.adoc:131
 #: ../sys-utils/hwclock.8.adoc:176 ../sys-utils/ipcrm.1.adoc:72
 #: ../sys-utils/ipcs.1.adoc:80 ../sys-utils/losetup.8.adoc:127
@@ -2107,7 +2114,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:53 ../sys-utils/dmesg.1.adoc:81
+#: ../disk-utils/fdisk.8.adoc:51 ../sys-utils/dmesg.1.adoc:81
 #: ../text-utils/hexdump.1.adoc:85
 #, fuzzy, no-wrap
 #| msgid "B<-f>, B<--force>"
@@ -2115,7 +2122,7 @@ msgid "*-L*, *--color*[**=**_when_]"
 msgstr "B<-f>, B<--force>"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:55 ../disk-utils/sfdisk.8.adoc:158
+#: ../disk-utils/fdisk.8.adoc:53 ../disk-utils/sfdisk.8.adoc:158
 #: ../misc-utils/cal.1.adoc:124
 msgid ""
 "Colorize the output. The optional argument _when_ can be *auto*, *never* or "
@@ -2125,7 +2132,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:56 ../disk-utils/fsck.minix.8.adoc:47
+#: ../disk-utils/fdisk.8.adoc:54 ../disk-utils/fsck.minix.8.adoc:47
 #: ../disk-utils/partx.8.adoc:54 ../misc-utils/enosys.1.adoc:35
 #: ../misc-utils/findmnt.8.adoc:96 ../misc-utils/lsblk.8.adoc:76
 #: ../sys-utils/losetup.8.adoc:101 ../sys-utils/lsipc.1.adoc:67
@@ -2135,12 +2142,12 @@ msgid "*-l*, *--list*"
 msgstr "*-l*, *--list*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:58
+#: ../disk-utils/fdisk.8.adoc:56
 msgid "List the partition tables for the specified devices and then exit."
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:60
+#: ../disk-utils/fdisk.8.adoc:58
 msgid ""
 "If no devices are given, the devices mentioned in _/proc/partitions_ (if "
 "this file exists) are used. Devices are always listed in the order in which "
@@ -2149,24 +2156,24 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:61
+#: ../disk-utils/fdisk.8.adoc:59
 #, no-wrap
 msgid "*-x*, *--list-details*"
 msgstr "*-x*, *--list-details*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:63
+#: ../disk-utils/fdisk.8.adoc:61
 msgid "Like *--list*, but provides more details."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:67
+#: ../disk-utils/fdisk.8.adoc:65
 #, no-wrap
 msgid "*-n*, *--noauto-pt*"
 msgstr "*-n*, *--noauto-pt*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:69
+#: ../disk-utils/fdisk.8.adoc:67
 msgid ""
 "Don't automatically create a default partition table on empty device. The "
 "partition table has to be explicitly created by user (by command like 'o', "
@@ -2174,13 +2181,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:70 ../disk-utils/partx.8.adoc:69
+#: ../disk-utils/fdisk.8.adoc:68 ../disk-utils/partx.8.adoc:69
 #: ../disk-utils/sfdisk.8.adoc:202 ../login-utils/lslogins.1.adoc:69
 #: ../lsfd-cmd/lsfd.1.adoc:50 ../misc-utils/fincore.1.adoc:37
 #: ../misc-utils/findmnt.8.adoc:115 ../misc-utils/lsblk.8.adoc:94
 #: ../misc-utils/lsclocks.1.adoc:32 ../misc-utils/lslocks.8.adoc:49
 #: ../sys-utils/irqtop.1.adoc:25 ../sys-utils/lsipc.1.adoc:79
-#: ../sys-utils/lsirq.1.adoc:28 ../sys-utils/lsmem.1.adoc:45
+#: ../sys-utils/lsirq.1.adoc:31 ../sys-utils/lsmem.1.adoc:45
 #: ../sys-utils/lsns.8.adoc:46 ../sys-utils/prlimit.1.adoc:46
 #: ../sys-utils/wdctl.8.adoc:39 ../sys-utils/zramctl.8.adoc:52
 #, no-wrap
@@ -2188,7 +2195,7 @@ msgid "*-o*, *--output* _list_"
 msgstr "*-o*, *--output* _lista_"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:72 ../disk-utils/sfdisk.8.adoc:204
+#: ../disk-utils/fdisk.8.adoc:70 ../disk-utils/sfdisk.8.adoc:204
 #: ../misc-utils/lslocks.8.adoc:51 ../misc-utils/uuidparse.1.adoc:58
 #: ../misc-utils/wipefs.8.adoc:60 ../sys-utils/lsipc.1.adoc:81
 #: ../sys-utils/lsns.8.adoc:48
@@ -2199,27 +2206,27 @@ msgstr ""
 
 #. TRANSLATORS: Keep {plus} untranslated.
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:74
+#: ../disk-utils/fdisk.8.adoc:72
 msgid ""
 "The default list of columns may be extended if _list_ is specified in the "
 "format _{plus}list_ (e.g., *-o {plus}UUID*)."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:76
+#: ../disk-utils/fdisk.8.adoc:74
 #, no-wrap
 msgid "*-s*, *--getsz*"
 msgstr "*-s*, *--getsz*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:78
+#: ../disk-utils/fdisk.8.adoc:76
 msgid ""
 "Print the size in 512-byte sectors of each given block device. This option "
 "is DEPRECATED in favour of *blockdev*(8)."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:79 ../disk-utils/mkfs.8.adoc:29
+#: ../disk-utils/fdisk.8.adoc:77 ../disk-utils/mkfs.8.adoc:29
 #: ../disk-utils/partx.8.adoc:84 ../sys-utils/blkpr.8.adoc:39
 #: ../sys-utils/lsns.8.adoc:74
 #, no-wrap
@@ -2227,21 +2234,21 @@ msgid "*-t*, *--type* _type_"
 msgstr "*-t*, *--type* _tipo_"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:81
+#: ../disk-utils/fdisk.8.adoc:79
 msgid ""
 "Enable support only for disklabels of the specified _type_, and disable "
 "support for all other types."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:82
+#: ../disk-utils/fdisk.8.adoc:80
 #, fuzzy, no-wrap
 #| msgid "B<-q>, B<--quiet>"
 msgid "*-u*, *--units*[**=**_unit_]"
 msgstr "B<-q>, B<--quiet>"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:84
+#: ../disk-utils/fdisk.8.adoc:82
 msgid ""
 "When listing partition tables, show sizes in 'sectors' or in 'cylinders'. "
 "The default is to show sizes in sectors. For backward compatibility, it is "
@@ -2252,26 +2259,26 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:85
+#: ../disk-utils/fdisk.8.adoc:83
 #, no-wrap
 msgid "*-C*, *--cylinders* _number_"
 msgstr "*-C*, *--cylinders* _número_"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:87
+#: ../disk-utils/fdisk.8.adoc:85
 msgid ""
 "Specify the _number_ of cylinders of the disk. I have no idea why anybody "
 "would want to do so."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:88
+#: ../disk-utils/fdisk.8.adoc:86
 #, no-wrap
 msgid "*-H*, *--heads* _number_"
 msgstr "*-H*, *--heads* _número_"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:90
+#: ../disk-utils/fdisk.8.adoc:88
 msgid ""
 "Specify the number of heads of the disk. (Not the physical number, of "
 "course, but the number used for partition tables.) Reasonable values are 255 "
@@ -2279,13 +2286,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:91
+#: ../disk-utils/fdisk.8.adoc:89
 #, no-wrap
 msgid "*-S*, *--sectors* _number_"
 msgstr "*-S*, *--sectors* _número_"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:93
+#: ../disk-utils/fdisk.8.adoc:91
 msgid ""
 "Specify the number of sectors per track of the disk. (Not the physical "
 "number, of course, but the number used for partition tables.) A reasonable "
@@ -2293,14 +2300,14 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:94 ../disk-utils/sfdisk.8.adoc:223
+#: ../disk-utils/fdisk.8.adoc:92 ../disk-utils/sfdisk.8.adoc:223
 #, fuzzy, no-wrap
 #| msgid "B<-h>, B<--help>"
 msgid "*-w*, *--wipe* _when_"
 msgstr "B<-h>, B<--help>"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:96
+#: ../disk-utils/fdisk.8.adoc:94
 msgid ""
 "Wipe filesystem, RAID and partition-table signatures from the device, in "
 "order to avoid possible collisions. The argument _when_ can be *auto*, "
@@ -2311,13 +2318,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:97 ../disk-utils/sfdisk.8.adoc:226
+#: ../disk-utils/fdisk.8.adoc:95 ../disk-utils/sfdisk.8.adoc:226
 #, no-wrap
 msgid "*-W*, *--wipe-partitions* _when_"
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:99
+#: ../disk-utils/fdisk.8.adoc:97
 msgid ""
 "Wipe filesystem, RAID and partition-table signatures from a newly created "
 "partitions, in order to avoid possible collisions. The argument _when_ can "
@@ -2328,21 +2335,14 @@ msgid ""
 "*wipefs*(8) command."
 msgstr ""
 
-#. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:102 ../disk-utils/fsck.8.adoc:117
-#: ../disk-utils/sfdisk.8.adoc:231 ../sys-utils/blkpr.8.adoc:45
-#: ../sys-utils/setsid.1.adoc:36
-msgid "Display version information and exit."
-msgstr "Mostrar información de versión y finalizar."
-
 #. type: Title ==
-#: ../disk-utils/fdisk.8.adoc:103
+#: ../disk-utils/fdisk.8.adoc:100
 #, no-wrap
 msgid "DEVICES"
 msgstr "DISPOSITIVOS"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:106
+#: ../disk-utils/fdisk.8.adoc:103
 msgid ""
 "The _device_ is usually _/dev/sda_, _/dev/sdb_ or so. A device name refers "
 "to the entire disk. Old systems without libata (a library used inside the "
@@ -2352,7 +2352,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:108
+#: ../disk-utils/fdisk.8.adoc:105
 #, fuzzy
 #| msgid ""
 #| "The I<partition> is a I<device> name followed by a partition number.  For "
@@ -2372,14 +2372,14 @@ msgstr ""
 "devices.txt>."
 
 #. type: Title ==
-#: ../disk-utils/fdisk.8.adoc:109
+#: ../disk-utils/fdisk.8.adoc:106
 #, no-wrap
 msgid "SIZES"
 msgstr ""
 
 #. TRANSLATORS: Keep {plus} untranslated.
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:114
+#: ../disk-utils/fdisk.8.adoc:111
 msgid ""
 "The \"last sector\" dialog accepts partition size specified by number of "
 "sectors or by {plus}/-<size>{K,B,M,G,...} notation."
@@ -2387,7 +2387,7 @@ msgstr ""
 
 #. TRANSLATORS: Keep {plus} untranslated.
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:118
+#: ../disk-utils/fdisk.8.adoc:115
 msgid ""
 "If the size is prefixed by '{plus}' then it is interpreted as relative to "
 "the partition first sector. If the size is prefixed by '-' then it is "
@@ -2396,7 +2396,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:120
+#: ../disk-utils/fdisk.8.adoc:117
 msgid ""
 "In the case the size is specified in bytes, then the number may be followed "
 "by the multiplicative suffixes KiB (1024 bytes), MiB (1024*1024 bytes), and "
@@ -2406,14 +2406,23 @@ msgstr ""
 
 #. TRANSLATORS: Keep {plus} untranslated.
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:124
+#: ../disk-utils/fdisk.8.adoc:121
 msgid ""
-"The relative sizes are always aligned according to device I/O limits. The "
-"{plus}/-<size>{K,B,M,G,...} notation is recommended."
+"The relative sizes if specified with multiplicative suffixes (e.g. +100MiB) "
+"are always aligned according to device I/O limits. The {plus}/-<size>{K,B,M,"
+"G,...} notation is recommended."
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:126
+#: ../disk-utils/fdisk.8.adoc:123
+msgid ""
+"The last sector of the partition is strictly calculated as <start> + <size> "
+"(without -1) if the size is specified by the +<sectors> notation. In this "
+"case, the size is not aligned to the device I/O limits."
+msgstr ""
+
+#. type: Plain text
+#: ../disk-utils/fdisk.8.adoc:125
 msgid ""
 "For backward compatibility *fdisk* also accepts the suffixes KB (1000 "
 "bytes), MB (1000*1000 bytes), and so on for GB, TB, PB, EB, ZB and YB. These "
@@ -2421,14 +2430,14 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: ../disk-utils/fdisk.8.adoc:127
+#: ../disk-utils/fdisk.8.adoc:126
 #, fuzzy, no-wrap
 #| msgid "DESCRIPTION"
 msgid "SCRIPT FILES"
 msgstr "DESCRIPCIÓN"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:130
+#: ../disk-utils/fdisk.8.adoc:129
 msgid ""
 "*fdisk* allows reading (by 'I' command) *sfdisk*(8) compatible script files. "
 "The script is applied to in-memory partition table, and then it is possible "
@@ -2436,33 +2445,33 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:132
+#: ../disk-utils/fdisk.8.adoc:131
 msgid ""
 "And vice-versa it is possible to write the current in-memory disk layout to "
 "the script file by command 'O'."
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:134
+#: ../disk-utils/fdisk.8.adoc:133
 msgid ""
 "The script files are compatible between *cfdisk*(8), *sfdisk*(8), *fdisk* "
 "and other libfdisk applications. For more details see *sfdisk*(8)."
 msgstr ""
 
 #. type: Title ==
-#: ../disk-utils/fdisk.8.adoc:135
+#: ../disk-utils/fdisk.8.adoc:134
 #, no-wrap
 msgid "DISK LABELS"
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:137
+#: ../disk-utils/fdisk.8.adoc:136
 #, no-wrap
 msgid "*GPT (GUID Partition Table)*"
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:139
+#: ../disk-utils/fdisk.8.adoc:138
 msgid ""
 "GPT is modern standard for the layout of the partition table. GPT uses 64-"
 "bit logical block addresses, checksums, UUIDs and names for partitions and "
@@ -2471,7 +2480,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:141
+#: ../disk-utils/fdisk.8.adoc:140
 msgid ""
 "Note that the first sector is still reserved for a *protective MBR* in the "
 "GPT specification. It prevents MBR-only partitioning tools from mis-"
@@ -2479,20 +2488,20 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:143
+#: ../disk-utils/fdisk.8.adoc:142
 msgid ""
 "GPT is always a better choice than MBR, especially on modern hardware with a "
 "UEFI boot loader."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:144
+#: ../disk-utils/fdisk.8.adoc:143
 #, no-wrap
 msgid "*DOS-type (MBR)*"
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:146
+#: ../disk-utils/fdisk.8.adoc:145
 #, fuzzy
 #| msgid ""
 #| "A DOS type partition table can describe an unlimited number of "
@@ -2522,7 +2531,7 @@ msgstr ""
 
 #. TRANSLATORS: Keep {plus} untranslated.
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:148
+#: ../disk-utils/fdisk.8.adoc:147
 #, fuzzy
 #| msgid ""
 #| "In a DOS type partition table the starting offset and the size of each "
@@ -2558,20 +2567,20 @@ msgstr ""
 "ambas, Linux nunca utiliza C/H/S."
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:151
+#: ../disk-utils/fdisk.8.adoc:150
 msgid ""
 "*Please, read the DOS-mode section if you want DOS-compatible partitions.* "
 "*fdisk* does not care about cylinder boundaries by default."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:152
+#: ../disk-utils/fdisk.8.adoc:151
 #, no-wrap
 msgid "*BSD/Sun-type*"
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:154
+#: ../disk-utils/fdisk.8.adoc:153
 #, fuzzy
 #| msgid ""
 #| "A BSD/SUN type disklabel can describe 8 partitions, the third of which "
@@ -2591,13 +2600,13 @@ msgstr ""
 "trasiego) en el cilindro 0, pues eso destruiría la etiqueta de disco."
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:155
+#: ../disk-utils/fdisk.8.adoc:154
 #, no-wrap
 msgid "*IRIX/SGI-type*"
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:157
+#: ../disk-utils/fdisk.8.adoc:156
 msgid ""
 "An IRIX/SGI disklabel can describe 16 partitions, the eleventh of which "
 "should be an entire `volume' partition, while the ninth should be labeled "
@@ -2611,21 +2620,21 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:159
+#: ../disk-utils/fdisk.8.adoc:158
 msgid ""
 "A *sync*(2) and an ioctl(BLKRRPART) (rereading the partition table from "
 "disk) are performed before exiting when the partition table has been updated."
 msgstr ""
 
 #. type: Title ==
-#: ../disk-utils/fdisk.8.adoc:160
+#: ../disk-utils/fdisk.8.adoc:159
 #, fuzzy, no-wrap
 #| msgid "DOS 6.x WARNING"
 msgid "DOS mode and DOS 6.x WARNING"
 msgstr "AVISO EN DOS 6.x"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:163
+#: ../disk-utils/fdisk.8.adoc:162
 msgid ""
 "*Note that all this is deprecated. You don't have to care about things like* "
 "*geometry and cylinders on modern operating systems. If you really want* "
@@ -2634,7 +2643,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:165
+#: ../disk-utils/fdisk.8.adoc:164
 msgid ""
 "The DOS 6.x FORMAT command looks for some information in the first sector of "
 "the data area of the partition, and treats this information as more reliable "
@@ -2652,7 +2661,7 @@ msgstr ""
 "FORMAT y del FDISK de DOS."
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:167
+#: ../disk-utils/fdisk.8.adoc:166
 #, fuzzy
 #| msgid ""
 #| "The bottom line is that if you use cfdisk or fdisk to change the size of "
@@ -2684,7 +2693,7 @@ msgstr ""
 "count=1\" para poner a cero los primeros 512 bytes de la partición."
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:169
+#: ../disk-utils/fdisk.8.adoc:168
 #, fuzzy
 #| msgid ""
 #| "If possible, B<fdisk> will obtain the disk geometry automatically.  This "
@@ -2707,7 +2716,7 @@ msgstr ""
 "emplea para la tabla de particiones."
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:171
+#: ../disk-utils/fdisk.8.adoc:170
 msgid ""
 "Usually all goes well by default, and there are no problems if Linux is the "
 "only system on the disk. However, if the disk has to be shared with other "
@@ -2724,7 +2733,7 @@ msgstr ""
 "geometría se requiere para la buena cooperación con otros sistemas."
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:173
+#: ../disk-utils/fdisk.8.adoc:172
 #, fuzzy
 #| msgid ""
 #| "Whenever a partition table is printed out, a consistency check is "
@@ -2746,7 +2755,7 @@ msgstr ""
 "cilindro (excepto para la primera partición)."
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:175
+#: ../disk-utils/fdisk.8.adoc:174
 msgid ""
 "Some versions of MS-DOS create a first partition which does not begin on a "
 "cylinder boundary, but on sector 2 of the first cylinder. Partitions "
@@ -2760,7 +2769,7 @@ msgstr ""
 "menos que tenga OS72 en su máquina."
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:177
+#: ../disk-utils/fdisk.8.adoc:176
 msgid ""
 "For best results, you should always use an OS-specific partition table "
 "program. For example, you should make DOS partitions with the DOS FDISK "
@@ -2773,88 +2782,88 @@ msgstr ""
 "de los programas de Linux *fdisk* o *cfdisk*(8)."
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:180
+#: ../disk-utils/fdisk.8.adoc:179
 msgid "The logical color names supported by *fdisk* are:"
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:181 ../disk-utils/sfdisk.8.adoc:410
+#: ../disk-utils/fdisk.8.adoc:180 ../disk-utils/sfdisk.8.adoc:410
 #: ../misc-utils/cal.1.adoc:167
 #, no-wrap
 msgid "*header*"
 msgstr "*header*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:183 ../disk-utils/sfdisk.8.adoc:412
+#: ../disk-utils/fdisk.8.adoc:182 ../disk-utils/sfdisk.8.adoc:412
 msgid "The header of the output tables."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:184
+#: ../disk-utils/fdisk.8.adoc:183
 #, no-wrap
 msgid "*help-title*"
 msgstr "*help-title*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:186
+#: ../disk-utils/fdisk.8.adoc:185
 msgid "The help section titles."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:187 ../disk-utils/sfdisk.8.adoc:412
+#: ../disk-utils/fdisk.8.adoc:186 ../disk-utils/sfdisk.8.adoc:412
 #: ../sys-utils/dmesg.1.adoc:182
 #, no-wrap
 msgid "*warn*"
 msgstr "*warn*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:189 ../disk-utils/sfdisk.8.adoc:414
+#: ../disk-utils/fdisk.8.adoc:188 ../disk-utils/sfdisk.8.adoc:414
 msgid "The warning messages."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:190 ../disk-utils/sfdisk.8.adoc:414
+#: ../disk-utils/fdisk.8.adoc:189 ../disk-utils/sfdisk.8.adoc:414
 #, no-wrap
 msgid "*welcome*"
 msgstr "*welcome*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:192 ../disk-utils/sfdisk.8.adoc:416
+#: ../disk-utils/fdisk.8.adoc:191 ../disk-utils/sfdisk.8.adoc:416
 msgid "The welcome message."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:195
+#: ../disk-utils/fdisk.8.adoc:194
 #, no-wrap
 msgid "*FDISK_DEBUG*=all"
 msgstr "*FDISK_DEBUG*=all"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:197
+#: ../disk-utils/fdisk.8.adoc:196
 msgid "enables fdisk debug output."
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:209 ../misc-utils/findmnt.8.adoc:235
+#: ../disk-utils/fdisk.8.adoc:208 ../misc-utils/findmnt.8.adoc:235
 #: ../misc-utils/lsblk.8.adoc:230
 msgid "use visible padding characters."
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:217
+#: ../disk-utils/fdisk.8.adoc:216
 msgid "mailto:kzak@redhat.com[Karel Zak], mailto:dave@gnu.org[Davidlohr Bueso]"
 msgstr ""
 "mailto:kzak@redhat.com[Karel Zak], mailto:dave@gnu.org[Davidlohr Bueso]"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:219
+#: ../disk-utils/fdisk.8.adoc:218
 msgid ""
 "The original version was written by Andries E. Brouwer, A. V. Le Blanc and "
 "others."
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:226
+#: ../disk-utils/fdisk.8.adoc:225
 #, fuzzy
 #| msgid ""
 #| "*cfdisk*(8),\n"
@@ -3383,6 +3392,12 @@ msgstr "*-?*, *--help*"
 msgid "*--version*"
 msgstr "*--version*"
 
+#. type: Plain text
+#: ../disk-utils/fsck.8.adoc:117 ../disk-utils/sfdisk.8.adoc:231
+#: ../sys-utils/blkpr.8.adoc:45 ../sys-utils/setsid.1.adoc:36
+msgid "Display version information and exit."
+msgstr "Mostrar información de versión y finalizar."
+
 #. type: Title ==
 #: ../disk-utils/fsck.8.adoc:118
 #, fuzzy, no-wrap
@@ -3511,11 +3526,11 @@ msgid "enables libmount debug output."
 msgstr ""
 
 #. type: Title ==
-#: ../disk-utils/fsck.8.adoc:150 ../lib/terminal-colors.d.5.adoc:134
+#: ../disk-utils/fsck.8.adoc:150 ../lib/terminal-colors.d.5.adoc:138
 #: ../login-utils/last.1.adoc:112 ../login-utils/login.1.adoc:141
 #: ../login-utils/newgrp.1.adoc:40 ../login-utils/runuser.1.adoc:118
-#: ../login-utils/su.1.adoc:130 ../misc-utils/lastlog2.8.adoc:76
-#: ../misc-utils/look.1.adoc:82 ../misc-utils/mcookie.1.adoc:44
+#: ../login-utils/su.1.adoc:130 ../misc-utils/lastlog2.8.adoc:79
+#: ../misc-utils/look.1.adoc:84 ../misc-utils/mcookie.1.adoc:44
 #: ../sys-utils/adjtime_config.5.adoc:50 ../sys-utils/ctrlaltdel.8.adoc:39
 #: ../sys-utils/fstab.5.adoc:126 ../sys-utils/hwclock.8.adoc:365
 #: ../sys-utils/losetup.8.adoc:136 ../sys-utils/mount.8.adoc:1697
@@ -3618,12 +3633,12 @@ msgstr "I</etc/mtab> tabla de sistemas de ficheros montados"
 #. type: Labeled list
 #: ../disk-utils/fsck.cramfs.8.adoc:23 ../disk-utils/fsck.minix.8.adoc:56
 #: ../disk-utils/mkfs.bfs.8.adoc:41 ../disk-utils/partx.8.adoc:96
-#: ../misc-utils/hardlink.1.adoc:112 ../misc-utils/mcookie.1.adoc:39
+#: ../misc-utils/hardlink.1.adoc:110 ../misc-utils/mcookie.1.adoc:39
 #: ../misc-utils/pipesz.1.adoc:64 ../misc-utils/rename.1.adoc:32
 #: ../misc-utils/waitpid.1.adoc:26 ../schedutils/chrt.1.adoc:101
 #: ../schedutils/coresched.1.adoc:67 ../schedutils/uclampset.1.adoc:87
 #: ../sys-utils/blkdiscard.8.adoc:54 ../sys-utils/blkzone.8.adoc:98
-#: ../sys-utils/chmem.8.adoc:49 ../sys-utils/eject.1.adoc:84
+#: ../sys-utils/chmem.8.adoc:49 ../sys-utils/eject.1.adoc:82
 #: ../sys-utils/fallocate.1.adoc:64 ../sys-utils/hwclock.8.adoc:173
 #: ../sys-utils/losetup.8.adoc:98 ../sys-utils/mount.8.adoc:455
 #: ../sys-utils/readprofile.8.adoc:51 ../sys-utils/rtcwake.8.adoc:105
@@ -3695,18 +3710,18 @@ msgstr "*-y*"
 #: ../misc-utils/enosys.1.adoc:68 ../misc-utils/exch.1.adoc:28
 #: ../misc-utils/fadvise.1.adoc:44 ../misc-utils/findfs.8.adoc:49
 #: ../misc-utils/findmnt.8.adoc:213 ../misc-utils/kill.1.adoc:107
-#: ../misc-utils/logger.1.adoc:192 ../misc-utils/lsblk.8.adoc:200
-#: ../misc-utils/rename.1.adoc:70 ../misc-utils/waitpid.1.adoc:40
-#: ../sys-utils/blkdiscard.8.adoc:59 ../sys-utils/chcpu.8.adoc:59
-#: ../sys-utils/chmem.8.adoc:54 ../sys-utils/dmesg.1.adoc:188
-#: ../sys-utils/eject.1.adoc:93 ../sys-utils/flock.1.adoc:93
-#: ../sys-utils/fstrim.8.adoc:74 ../sys-utils/hwclock.8.adoc:347
-#: ../sys-utils/losetup.8.adoc:123 ../sys-utils/lsipc.1.adoc:100
-#: ../sys-utils/lsns.8.adoc:88 ../sys-utils/mount.8.adoc:1635
-#: ../sys-utils/mountpoint.1.adoc:39 ../sys-utils/swapon.8.adoc:94
-#: ../sys-utils/switch_root.8.adoc:29 ../sys-utils/umount.8.adoc:132
-#: ../sys-utils/zramctl.8.adoc:79 ../term-utils/mesg.1.adoc:93
-#: ../text-utils/hexdump.1.adoc:224
+#: ../misc-utils/logger.1.adoc:192 ../misc-utils/look.1.adoc:75
+#: ../misc-utils/lsblk.8.adoc:200 ../misc-utils/rename.1.adoc:70
+#: ../misc-utils/waitpid.1.adoc:40 ../sys-utils/blkdiscard.8.adoc:59
+#: ../sys-utils/chcpu.8.adoc:59 ../sys-utils/chmem.8.adoc:54
+#: ../sys-utils/dmesg.1.adoc:188 ../sys-utils/eject.1.adoc:93
+#: ../sys-utils/flock.1.adoc:99 ../sys-utils/fstrim.8.adoc:74
+#: ../sys-utils/hwclock.8.adoc:347 ../sys-utils/losetup.8.adoc:123
+#: ../sys-utils/lsipc.1.adoc:100 ../sys-utils/lsns.8.adoc:88
+#: ../sys-utils/mount.8.adoc:1635 ../sys-utils/mountpoint.1.adoc:39
+#: ../sys-utils/swapon.8.adoc:94 ../sys-utils/switch_root.8.adoc:29
+#: ../sys-utils/umount.8.adoc:132 ../sys-utils/zramctl.8.adoc:79
+#: ../term-utils/mesg.1.adoc:93 ../text-utils/hexdump.1.adoc:224
 #, no-wrap
 msgid "EXIT STATUS"
 msgstr "ESTADO DE SALIDA"
@@ -4098,8 +4113,8 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/isosize.8.adoc:26 ../term-utils/scriptlive.1.adoc:47
-#: ../term-utils/scriptreplay.1.adoc:55
+#: ../disk-utils/isosize.8.adoc:26 ../term-utils/scriptlive.1.adoc:56
+#: ../term-utils/scriptreplay.1.adoc:62
 #, no-wrap
 msgid "*-d*, *--divisor* _number_"
 msgstr "*-d*, *--divisor* _número_"
@@ -4279,7 +4294,7 @@ msgstr ""
 #: ../disk-utils/mkfs.8.adoc:41 ../disk-utils/raw.8.adoc:51
 #: ../login-utils/login.1.adoc:163 ../login-utils/utmpdump.1.adoc:67
 #: ../misc-utils/cal.1.adoc:185 ../misc-utils/getopt.1.adoc:141
-#: ../misc-utils/hardlink.1.adoc:154 ../misc-utils/mcookie.1.adoc:50
+#: ../misc-utils/hardlink.1.adoc:153 ../misc-utils/mcookie.1.adoc:50
 #: ../misc-utils/namei.1.adoc:65 ../misc-utils/pipesz.1.adoc:91
 #: ../sys-utils/lscpu.1.adoc:98 ../sys-utils/mount.8.adoc:1723
 #: ../sys-utils/readprofile.8.adoc:67 ../term-utils/agetty.8.adoc:332
@@ -4529,7 +4544,7 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: ../disk-utils/mkfs.cramfs.8.adoc:27 ../misc-utils/hardlink.1.adoc:150
+#: ../disk-utils/mkfs.cramfs.8.adoc:27 ../misc-utils/hardlink.1.adoc:149
 #: ../misc-utils/kill.1.adoc:36 ../term-utils/agetty.8.adoc:35
 #: ../term-utils/mesg.1.adoc:75
 #, no-wrap
@@ -5034,7 +5049,7 @@ msgstr ""
 
 #. type: Labeled list
 #: ../disk-utils/mkswap.8.adoc:54 ../disk-utils/sfdisk.8.adoc:208
-#: ../misc-utils/getopt.1.adoc:47 ../misc-utils/hardlink.1.adoc:94
+#: ../misc-utils/getopt.1.adoc:47 ../misc-utils/hardlink.1.adoc:92
 #: ../misc-utils/pipesz.1.adoc:61 ../misc-utils/uuidd.8.adoc:53
 #: ../misc-utils/wipefs.8.adoc:72 ../sys-utils/blkdiscard.8.adoc:45
 #: ../sys-utils/mountpoint.1.adoc:28 ../sys-utils/umount.8.adoc:99
@@ -5049,7 +5064,7 @@ msgid "Suppress output and warning messages."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/mkswap.8.adoc:57 ../disk-utils/swaplabel.8.adoc:33
+#: ../disk-utils/mkswap.8.adoc:57 ../disk-utils/swaplabel.8.adoc:31
 #: ../misc-utils/blkid.8.adoc:74 ../sys-utils/mount.8.adoc:339
 #, no-wrap
 msgid "*-L*, *--label* _label_"
@@ -5074,7 +5089,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/mkswap.8.adoc:66 ../disk-utils/swaplabel.8.adoc:36
+#: ../disk-utils/mkswap.8.adoc:66 ../disk-utils/swaplabel.8.adoc:34
 #, no-wrap
 msgid "*-U*, *--uuid* _UUID_"
 msgstr "*-U*, *--uuid* _UUID_"
@@ -5183,7 +5198,7 @@ msgstr ""
 
 #. type: Labeled list
 #: ../disk-utils/mkswap.8.adoc:90 ../misc-utils/findmnt.8.adoc:202
-#: ../misc-utils/kill.1.adoc:80 ../sys-utils/flock.1.adoc:88
+#: ../misc-utils/kill.1.adoc:80 ../sys-utils/flock.1.adoc:94
 #: ../sys-utils/prlimit.1.adoc:56
 #, no-wrap
 msgid "*--verbose*"
@@ -5499,7 +5514,7 @@ msgstr ""
 
 #. type: Labeled list
 #: ../disk-utils/partx.8.adoc:75 ../misc-utils/findmnt.8.adoc:124
-#: ../misc-utils/lsblk.8.adoc:102 ../sys-utils/lsirq.1.adoc:37
+#: ../misc-utils/lsblk.8.adoc:102 ../sys-utils/lsirq.1.adoc:40
 #: ../sys-utils/lsmem.1.adoc:51
 #, no-wrap
 msgid "*-P*, *--pairs*"
@@ -5581,13 +5596,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../disk-utils/partx.8.adoc:98 ../sys-utils/losetup.8.adoc:100
-#: ../sys-utils/mount.8.adoc:457 ../sys-utils/prlimit.1.adoc:58
-#: ../sys-utils/umount.8.adoc:113
+#: ../sys-utils/prlimit.1.adoc:58 ../sys-utils/umount.8.adoc:113
 msgid "Verbose mode."
 msgstr "Modo prolijo."
 
 #. type: Title ==
-#: ../disk-utils/partx.8.adoc:106 ../lib/terminal-colors.d.5.adoc:142
+#: ../disk-utils/partx.8.adoc:106 ../lib/terminal-colors.d.5.adoc:146
 #: ../misc-utils/uuidd.8.adoc:74 ../sys-utils/chmem.8.adoc:67
 #: ../sys-utils/losetup.8.adoc:144 ../sys-utils/pivot_root.8.adoc:37
 #: ../sys-utils/readprofile.8.adoc:77 ../sys-utils/rfkill.8.adoc:64
@@ -6734,7 +6748,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/sfdisk.8.adoc:229 ../misc-utils/lastlog2.8.adoc:67
+#: ../disk-utils/sfdisk.8.adoc:229 ../misc-utils/lastlog2.8.adoc:70
 #, no-wrap
 msgid "*-v*, *--version*"
 msgstr "*-v*, *--version*"
@@ -7400,15 +7414,15 @@ msgstr ""
 #. type: Title ==
 #: ../disk-utils/sfdisk.8.adoc:436 ../misc-utils/enosys.1.adoc:48
 #: ../misc-utils/findmnt.8.adoc:236 ../misc-utils/getopt.1.adoc:128
-#: ../misc-utils/logger.1.adoc:239 ../misc-utils/look.1.adoc:94
+#: ../misc-utils/logger.1.adoc:239 ../misc-utils/look.1.adoc:96
 #: ../misc-utils/pipesz.1.adoc:69 ../misc-utils/rename.1.adoc:87
 #: ../misc-utils/uuidgen.1.adoc:67 ../misc-utils/whereis.1.adoc:117
 #: ../misc-utils/wipefs.8.adoc:88 ../schedutils/chrt.1.adoc:106
 #: ../schedutils/coresched.1.adoc:72 ../schedutils/ionice.1.adoc:72
-#: ../sys-utils/flock.1.adoc:105 ../sys-utils/prlimit.1.adoc:115
+#: ../sys-utils/flock.1.adoc:111 ../sys-utils/prlimit.1.adoc:115
 #: ../sys-utils/renice.1.adoc:96 ../sys-utils/setpriv.1.adoc:135
-#: ../sys-utils/unshare.1.adoc:160 ../term-utils/scriptlive.1.adoc:55
-#: ../term-utils/scriptreplay.1.adoc:69 ../text-utils/colcrt.1.adoc:83
+#: ../sys-utils/unshare.1.adoc:160 ../term-utils/scriptlive.1.adoc:64
+#: ../term-utils/scriptreplay.1.adoc:81 ../text-utils/colcrt.1.adoc:83
 #: ../text-utils/column.1.adoc:212 ../text-utils/hexdump.1.adoc:232
 #: ../text-utils/bits.1.adoc:95 ../pam_lastlog2/man/pam_lastlog2.8.adoc:56
 #, no-wrap
@@ -7574,7 +7588,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/swaplabel.8.adoc:35
+#: ../disk-utils/swaplabel.8.adoc:33
 msgid ""
 "Specify a new _label_ for the device. Swap partition labels can be at most "
 "16 characters long. If _label_ is longer than 16 characters, *swaplabel* "
@@ -7582,7 +7596,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/swaplabel.8.adoc:38
+#: ../disk-utils/swaplabel.8.adoc:36
 msgid ""
 "Specify a new _UUID_ for the device. The _UUID_ must be in the standard "
 "8-4-4-4-12 character format, such as is output by *uuidgen*(1)."
@@ -7675,35 +7689,37 @@ msgstr "*disable*"
 
 #. type: Plain text
 #: ../lib/terminal-colors.d.5.adoc:37
-msgid "Turns off output colorization for all compatible utilities."
+msgid ""
+"Turns off output colorization for all compatible utilities. See also the "
+"NO_COLOR environment variable below."
 msgstr ""
 
 #. type: Labeled list
-#: ../lib/terminal-colors.d.5.adoc:38
+#: ../lib/terminal-colors.d.5.adoc:37
 #, no-wrap
 msgid "*enable*"
 msgstr "*enable*"
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:40
+#: ../lib/terminal-colors.d.5.adoc:39
 msgid "Turns on output colorization; any matching *disable* files are ignored."
 msgstr ""
 
 #. type: Labeled list
-#: ../lib/terminal-colors.d.5.adoc:41
+#: ../lib/terminal-colors.d.5.adoc:40
 #, no-wrap
 msgid "*scheme*"
 msgstr "*scheme*"
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:43
+#: ../lib/terminal-colors.d.5.adoc:42
 msgid ""
 "Specifies colors used for output. The file format may be specific to the "
 "utility, the default format is described below."
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:45
+#: ../lib/terminal-colors.d.5.adoc:44
 msgid ""
 "If there are more files that match for a utility, then the file with the "
 "more specific filename wins. For example, the filename \"@xterm.scheme\" has "
@@ -7712,25 +7728,25 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: ../lib/terminal-colors.d.5.adoc:48
+#: ../lib/terminal-colors.d.5.adoc:47
 #, no-wrap
 msgid "DEFAULT SCHEME FILES FORMAT"
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:51
+#: ../lib/terminal-colors.d.5.adoc:50
 #, fuzzy
 #| msgid "The following environment variable is used:"
 msgid "The following statement is recognized:"
 msgstr "Se emplea la siguiente variable de entorno:"
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:54
+#: ../lib/terminal-colors.d.5.adoc:53
 msgid "*name color-sequence*"
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:57
+#: ../lib/terminal-colors.d.5.adoc:56
 msgid ""
 "The *name* is a logical name of color sequence (for example \"error\"). The "
 "names are specific to the utilities. For more details always see the "
@@ -7738,20 +7754,20 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:59
+#: ../lib/terminal-colors.d.5.adoc:58
 msgid ""
 "The *color-sequence* is a color name, ASCII color sequences or escape "
 "sequences."
 msgstr ""
 
 #. type: Title ===
-#: ../lib/terminal-colors.d.5.adoc:60
+#: ../lib/terminal-colors.d.5.adoc:59
 #, no-wrap
 msgid "Color names"
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:63
+#: ../lib/terminal-colors.d.5.adoc:62
 msgid ""
 "black, blink, blue, bold, brown, cyan, darkgray, gray, green, halfbright, "
 "lightblue, lightcyan, lightgray, lightgreen, lightmagenta, lightred, "
@@ -7759,20 +7775,20 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: ../lib/terminal-colors.d.5.adoc:64
+#: ../lib/terminal-colors.d.5.adoc:63
 #, no-wrap
 msgid "ANSI color sequences"
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:67
+#: ../lib/terminal-colors.d.5.adoc:66
 msgid ""
 "The color sequences are composed of sequences of numbers separated by "
 "semicolons. The most common codes are:"
 msgstr ""
 
 #. type: Table
-#: ../lib/terminal-colors.d.5.adoc:91
+#: ../lib/terminal-colors.d.5.adoc:90
 #, no-wrap
 msgid ""
 "|0 |to restore default color\n"
@@ -7798,20 +7814,20 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: ../lib/terminal-colors.d.5.adoc:94
+#: ../lib/terminal-colors.d.5.adoc:93
 #, no-wrap
 msgid "Escape sequences"
 msgstr ""
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:97
+#: ../lib/terminal-colors.d.5.adoc:96
 msgid ""
 "To specify control or blank characters in the color sequences, C-style \\-"
 "escaped notation can be used:"
 msgstr ""
 
 #. type: Table
-#: ../lib/terminal-colors.d.5.adoc:114
+#: ../lib/terminal-colors.d.5.adoc:113
 #, no-wrap
 msgid ""
 "|*\\a* |Bell (ASCII 7)\n"
@@ -7830,7 +7846,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:118
+#: ../lib/terminal-colors.d.5.adoc:117
 msgid ""
 "Please note that escapes are necessary to enter a space, backslash, caret, "
 "or any control character anywhere in the string, as well as a hash mark as "
@@ -7838,106 +7854,120 @@ msgid ""
 msgstr ""
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:120
+#: ../lib/terminal-colors.d.5.adoc:119
 msgid ""
 "For example, to use a red background for alert messages in the output of "
 "*dmesg*(1), use:"
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:123
+#: ../lib/terminal-colors.d.5.adoc:122
 #, fuzzy
 #| msgid "*touch /etc/terminal-colors.d/dmesg.enable*\n"
 msgid "*echo 'alert 37;41' >> /etc/terminal-colors.d/dmesg.scheme*"
 msgstr "*touch /etc/terminal-colors.d/dmesg.enable*\n"
 
 #. type: Title ===
-#: ../lib/terminal-colors.d.5.adoc:125
+#: ../lib/terminal-colors.d.5.adoc:124
 #, fuzzy, no-wrap
 #| msgid "B<comment>"
 msgid "Comments"
 msgstr "B<comment>"
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:128
+#: ../lib/terminal-colors.d.5.adoc:127
 msgid ""
 "Lines where the first non-blank character is a # (hash) are ignored. Any "
 "other use of the hash character is not interpreted as introducing a comment."
 msgstr ""
 
 #. type: Labeled list
-#: ../lib/terminal-colors.d.5.adoc:131
+#: ../lib/terminal-colors.d.5.adoc:130
 #, fuzzy, no-wrap
 #| msgid "TERMINAL_COLORS_DEBUG=all"
 msgid "*TERMINAL_COLORS_DEBUG*=all"
 msgstr "TERMINAL_COLORS_DEBUG=all"
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:133 ../misc-utils/whereis.1.adoc:116
+#: ../lib/terminal-colors.d.5.adoc:132 ../misc-utils/whereis.1.adoc:116
 #: ../sys-utils/losetup.8.adoc:135
 msgid "enables debug output."
 msgstr ""
 
+#. type: Labeled list
+#: ../lib/terminal-colors.d.5.adoc:133
+#, no-wrap
+msgid "*NO_COLOR*"
+msgstr ""
+
 #. type: delimited block _
 #: ../lib/terminal-colors.d.5.adoc:137
+msgid ""
+"if defined, this disables output colorization unless explicitly enabled by a "
+"command-line option. See https://no-color.org/ for more details. Supported "
+"since util-linux version 2.41."
+msgstr ""
+
+#. type: delimited block _
+#: ../lib/terminal-colors.d.5.adoc:141
 msgid "_$XDG_CONFIG_HOME/terminal-colors.d_"
 msgstr "_$XDG_CONFIG_HOME/terminal-colors.d_"
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:139
+#: ../lib/terminal-colors.d.5.adoc:143
 msgid "_$HOME/.config/terminal-colors.d_"
 msgstr "_$HOME/.config/terminal-colors.d_"
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:141
+#: ../lib/terminal-colors.d.5.adoc:145
 msgid "_/etc/terminal-colors.d_"
 msgstr "_/etc/terminal-colors.d_"
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:145
+#: ../lib/terminal-colors.d.5.adoc:149
 msgid "Disable colors for all compatible utilities:"
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:148 ../lib/terminal-colors.d.5.adoc:160
+#: ../lib/terminal-colors.d.5.adoc:152 ../lib/terminal-colors.d.5.adoc:164
 #, fuzzy
 #| msgid "*touch /etc/terminal-colors.d/disable*\n"
 msgid "*touch /etc/terminal-colors.d/disable*"
 msgstr "*touch /etc/terminal-colors.d/disable*\n"
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:151
+#: ../lib/terminal-colors.d.5.adoc:155
 msgid "Disable colors for all compatible utils on a vt100 terminal:"
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:154
+#: ../lib/terminal-colors.d.5.adoc:158
 #, fuzzy
 #| msgid "*touch /etc/terminal-colors.d/@vt100.disable*\n"
 msgid "*touch /etc/terminal-colors.d/@vt100.disable*"
 msgstr "*touch /etc/terminal-colors.d/@vt100.disable*\n"
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:157
+#: ../lib/terminal-colors.d.5.adoc:161
 msgid "Disable colors for all compatible utils except *dmesg*(1):"
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:162
+#: ../lib/terminal-colors.d.5.adoc:166
 #, fuzzy
 #| msgid "*touch /etc/terminal-colors.d/dmesg.enable*\n"
 msgid "*touch /etc/terminal-colors.d/dmesg.enable*"
 msgstr "*touch /etc/terminal-colors.d/dmesg.enable*\n"
 
 #. type: Title ==
-#: ../lib/terminal-colors.d.5.adoc:164 ../misc-utils/getopt.1.adoc:112
+#: ../lib/terminal-colors.d.5.adoc:168 ../misc-utils/getopt.1.adoc:112
 #: ../term-utils/setterm.1.adoc:169
 #, no-wrap
 msgid "COMPATIBILITY"
 msgstr "COMPATIBILIDADES"
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:167
+#: ../lib/terminal-colors.d.5.adoc:171
 msgid ""
 "The *terminal-colors.d* functionality is currently supported by all util-"
 "linux utilities which provides colorized output. For more details always see "
@@ -11114,7 +11144,7 @@ msgstr ""
 
 #. type: Labeled list
 #: ../login-utils/lslogins.1.adoc:98 ../misc-utils/findmnt.8.adoc:208
-#: ../misc-utils/lsblk.8.adoc:177 ../sys-utils/lsipc.1.adoc:97
+#: ../misc-utils/lsblk.8.adoc:175 ../sys-utils/lsipc.1.adoc:97
 #, fuzzy, no-wrap
 #| msgid "*-h*, *--help*"
 msgid "*-y*, *--shell*"
@@ -11245,8 +11275,8 @@ msgstr ""
 #. type: Title ==
 #: ../login-utils/lslogins.1.adoc:135 ../login-utils/nologin.8.adoc:59
 #: ../login-utils/runuser.1.adoc:132 ../login-utils/su.1.adoc:152
-#: ../login-utils/vipw.8.adoc:68 ../lsfd-cmd/lsfd.1.adoc:733
-#: ../misc-utils/cal.1.adoc:181 ../misc-utils/look.1.adoc:90
+#: ../login-utils/vipw.8.adoc:68 ../lsfd-cmd/lsfd.1.adoc:749
+#: ../misc-utils/cal.1.adoc:181 ../misc-utils/look.1.adoc:92
 #: ../sys-utils/fstab.5.adoc:139 ../sys-utils/lsipc.1.adoc:111
 #: ../sys-utils/mount.8.adoc:1719 ../sys-utils/renice.1.adoc:92
 #: ../sys-utils/rtcwake.8.adoc:118 ../sys-utils/swapon.8.adoc:165
@@ -11813,7 +11843,7 @@ msgstr ""
 #: ../login-utils/runuser.1.adoc:76 ../login-utils/su.1.adoc:84
 #, fuzzy, no-wrap
 #| msgid "*-n*, *--noparity*"
-msgid "*-T*, *--no-pty**"
+msgid "*-T*, *--no-pty*"
 msgstr "*-n*, *--noparity*"
 
 #. type: Plain text
@@ -12840,10 +12870,11 @@ msgstr ""
 #: ../misc-utils/findmnt.8.adoc:84 ../misc-utils/lsblk.8.adoc:73
 #: ../misc-utils/lsclocks.1.adoc:26 ../misc-utils/lslocks.8.adoc:43
 #: ../misc-utils/uuidparse.1.adoc:50 ../misc-utils/wipefs.8.adoc:49
-#: ../sys-utils/dmesg.1.adoc:72 ../sys-utils/losetup.8.adoc:116
-#: ../sys-utils/lscpu.1.adoc:66 ../sys-utils/lsipc.1.adoc:64
-#: ../sys-utils/lsirq.1.adoc:34 ../sys-utils/lsmem.1.adoc:39
-#: ../sys-utils/lsns.8.adoc:37 ../sys-utils/rfkill.8.adoc:27
+#: ../sys-utils/dmesg.1.adoc:72 ../sys-utils/irqtop.1.adoc:40
+#: ../sys-utils/losetup.8.adoc:116 ../sys-utils/lscpu.1.adoc:66
+#: ../sys-utils/lsipc.1.adoc:64 ../sys-utils/lsirq.1.adoc:37
+#: ../sys-utils/lsmem.1.adoc:39 ../sys-utils/lsns.8.adoc:37
+#: ../sys-utils/rfkill.8.adoc:27
 #, no-wrap
 msgid "*-J*, *--json*"
 msgstr "*-J*, *--json*"
@@ -12852,7 +12883,7 @@ msgstr "*-J*, *--json*"
 #: ../lsfd-cmd/lsfd.1.adoc:46 ../misc-utils/fincore.1.adoc:49
 #: ../misc-utils/findmnt.8.adoc:86 ../misc-utils/lsclocks.1.adoc:28
 #: ../misc-utils/lslocks.8.adoc:45 ../misc-utils/uuidparse.1.adoc:52
-#: ../misc-utils/wipefs.8.adoc:51 ../sys-utils/lsirq.1.adoc:36
+#: ../misc-utils/wipefs.8.adoc:51 ../sys-utils/lsirq.1.adoc:39
 #: ../sys-utils/lsmem.1.adoc:41 ../sys-utils/lsns.8.adoc:39
 #: ../sys-utils/rfkill.8.adoc:29
 msgid "Use JSON output format."
@@ -13283,9 +13314,10 @@ msgstr ""
 
 #. type: Labeled list
 #: ../lsfd-cmd/lsfd.1.adoc:177
-#, no-wrap
-msgid "ENDPOINT <``string``>"
-msgstr ""
+#, fuzzy, no-wrap
+#| msgid "*TTYPERM* (string)"
+msgid "ENDPOINTS <``string``>"
+msgstr "*TTYPERM* (cadena)"
 
 #. type: Plain text
 #: ../lsfd-cmd/lsfd.1.adoc:179
@@ -13330,7 +13362,7 @@ msgstr ""
 #. type: Plain text
 #: ../lsfd-cmd/lsfd.1.adoc:194
 msgid ""
-"The last characters ([-r][-w]) represents the read and/or write mode of the "
+"The last characters ([-r][-w]) represent the read and/or write mode of the "
 "endpoint."
 msgstr ""
 
@@ -13346,168 +13378,189 @@ msgid "_PID_,_COMMAND_,_ASSOC_"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:198 ../lsfd-cmd/lsfd.1.adoc:351
+#: ../lsfd-cmd/lsfd.1.adoc:198 ../lsfd-cmd/lsfd.1.adoc:364
+#, no-wrap
+msgid "UNIX"
+msgstr ""
+
+#. type: Plain text
+#: ../lsfd-cmd/lsfd.1.adoc:200
+msgid "Same as _UNIX-STREAM_."
+msgstr ""
+
+#. type: Plain text
+#: ../lsfd-cmd/lsfd.1.adoc:207
+msgid ""
+"In a container, *lsfd* may not fill _ENDPOINTS_ column.  *lsfd* uses "
+"*sock_diag*(7) to collect information about UNIX endpoints. SELinux may "
+"limit the use *sock_diag* in a container. You can remove the limit by "
+"setting 1 to _virt_sandbox_use_netlink_ bool. See *container_selinux*(8)  "
+"for more details."
+msgstr ""
+
+#. type: Labeled list
+#: ../lsfd-cmd/lsfd.1.adoc:208 ../lsfd-cmd/lsfd.1.adoc:361
 #, no-wrap
 msgid "UNIX-STREAM"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:200
+#: ../lsfd-cmd/lsfd.1.adoc:210
 msgid "_PID_,_COMMAND_,_ASSOC_[-r?][-w?]"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:203
+#: ../lsfd-cmd/lsfd.1.adoc:213
 msgid ""
 "About the last characters ([-r?][-w?]), see the description of _SOCK."
 "SHUTDOWN_."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:204
+#: ../lsfd-cmd/lsfd.1.adoc:214
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "EVENTFD.ID <``number``>"
 msgstr "**-**__número__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:206
+#: ../lsfd-cmd/lsfd.1.adoc:216
 msgid "Eventfd ID."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:207
+#: ../lsfd-cmd/lsfd.1.adoc:217
 #, fuzzy, no-wrap
 #| msgid "*TTYPERM* (string)"
 msgid "EVENTPOLL.TFDS <``string``>"
 msgstr "*TTYPERM* (cadena)"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:209
+#: ../lsfd-cmd/lsfd.1.adoc:219
 msgid "File descriptors targeted by the eventpoll file."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:210
+#: ../lsfd-cmd/lsfd.1.adoc:220
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "FD <``number``>"
 msgstr "**-**__número__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:212
+#: ../lsfd-cmd/lsfd.1.adoc:222
 msgid "File descriptor for the file."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:213
+#: ../lsfd-cmd/lsfd.1.adoc:223
 #, no-wrap
 msgid "FLAGS <``string``>"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:215
+#: ../lsfd-cmd/lsfd.1.adoc:225
 msgid "Flags specified when opening the file."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:216
+#: ../lsfd-cmd/lsfd.1.adoc:226
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "FUID <``number``>"
 msgstr "**-**__número__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:218
+#: ../lsfd-cmd/lsfd.1.adoc:228
 msgid "User ID number of the file's owner."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:219
+#: ../lsfd-cmd/lsfd.1.adoc:229
 #, no-wrap
 msgid "INET.LADDR <``string``>"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:221
+#: ../lsfd-cmd/lsfd.1.adoc:231
 msgid "Local IP address."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:222
+#: ../lsfd-cmd/lsfd.1.adoc:232
 #, no-wrap
 msgid "INET.RADDR <``string``>"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:224
+#: ../lsfd-cmd/lsfd.1.adoc:234
 msgid "Remote IP address."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:225
+#: ../lsfd-cmd/lsfd.1.adoc:235
 #, no-wrap
 msgid "INET6.LADDR <``string``>"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:227
+#: ../lsfd-cmd/lsfd.1.adoc:237
 msgid "Local IP6 address."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:228
+#: ../lsfd-cmd/lsfd.1.adoc:238
 #, no-wrap
 msgid "INET6.RADDR <``string``>"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:230
+#: ../lsfd-cmd/lsfd.1.adoc:240
 msgid "Remote IP6 address."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:231
+#: ../lsfd-cmd/lsfd.1.adoc:241
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "INODE <``number``>"
 msgstr "**-**__número__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:233
+#: ../lsfd-cmd/lsfd.1.adoc:243
 msgid "Inode number."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:234
+#: ../lsfd-cmd/lsfd.1.adoc:244
 #, fuzzy, no-wrap
 #| msgid "**+**/__string__"
 msgid "INOTIFY.INODES <``string``>"
 msgstr "**+**/__cadena__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:238
+#: ../lsfd-cmd/lsfd.1.adoc:248
 msgid ""
 "Cooked version of INOTIFY.INODES.RAW.  The format of the element is _inode-"
 "number_,_source-of-inode_."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:239
+#: ../lsfd-cmd/lsfd.1.adoc:249
 #, fuzzy, no-wrap
 #| msgid "**+**/__string__"
 msgid "INOTIFY.INODES.RAW <``string``>"
 msgstr "**+**/__cadena__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:242
+#: ../lsfd-cmd/lsfd.1.adoc:252
 msgid ""
 "List of monitoring inodes. The format of the element is _inode-number_``,"
 "``_device-major_``:``_device-minor_."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:243
+#: ../lsfd-cmd/lsfd.1.adoc:253
 #, fuzzy, no-wrap
 #| msgid "**+**/__string__"
 msgid "KNAME <``string``>"
@@ -13522,390 +13575,384 @@ msgstr "**+**/__cadena__"
 #.    `_u_` p
 #.  Not only u but also p is decorated with underline.
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:254
+#: ../lsfd-cmd/lsfd.1.adoc:264
 msgid ""
 "Raw file name extracted from from ``/proc/``_pid_``/fd/``_fd_ or ``/proc/"
 "``_pid_``/map_files/``_region_."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:255
+#: ../lsfd-cmd/lsfd.1.adoc:265
 #, no-wrap
 msgid "KTHREAD <``boolean``>"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:257
+#: ../lsfd-cmd/lsfd.1.adoc:267
 msgid "Whether the process is a kernel thread or not."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:258
+#: ../lsfd-cmd/lsfd.1.adoc:268
 #, no-wrap
 msgid "MAJ:MIN <``string``>"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:260
+#: ../lsfd-cmd/lsfd.1.adoc:270
 msgid "Device ID for special, or ID of device containing file."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:261
+#: ../lsfd-cmd/lsfd.1.adoc:271
 #, no-wrap
 msgid "MAPLEN <``number``>"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:263
+#: ../lsfd-cmd/lsfd.1.adoc:273
 msgid "Length of file mapping (in page)."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:264
+#: ../lsfd-cmd/lsfd.1.adoc:274
 #, fuzzy, no-wrap
 #| msgid "**+**/__string__"
 msgid "MISCDEV <``string``>"
 msgstr "**+**/__cadena__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:266
+#: ../lsfd-cmd/lsfd.1.adoc:276
 msgid "Misc character device name resolved by `/proc/misc`."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:267
+#: ../lsfd-cmd/lsfd.1.adoc:277
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "MNTID <``number``>"
 msgstr "**-**__número__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:269
+#: ../lsfd-cmd/lsfd.1.adoc:279
 msgid "Mount ID."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:270
+#: ../lsfd-cmd/lsfd.1.adoc:280
 #, fuzzy, no-wrap
 #| msgid "**+**/__string__"
 msgid "MODE <``string``>"
 msgstr "**+**/__cadena__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:272
+#: ../lsfd-cmd/lsfd.1.adoc:282
 msgid "Access mode (rwx)."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:273 ../misc-utils/lsclocks.1.adoc:78
+#: ../lsfd-cmd/lsfd.1.adoc:283 ../misc-utils/lsclocks.1.adoc:78
 #, fuzzy, no-wrap
 #| msgid "**+**/__string__"
 msgid "NAME <``string``>"
 msgstr "**+**/__cadena__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:275
+#: ../lsfd-cmd/lsfd.1.adoc:285
 msgid "Cooked version of KNAME. It is mostly same as KNAME."
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:277
+#: ../lsfd-cmd/lsfd.1.adoc:287
 msgid "Some files have special formats and information sources:"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:278
+#: ../lsfd-cmd/lsfd.1.adoc:288
 #, no-wrap
 msgid "AF_VSOCK"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:280
+#: ../lsfd-cmd/lsfd.1.adoc:290
 msgid ""
 "state=_SOCK.STATE_ type=_SOCK.TYPE_ laddr=_VSOCK.LADDR_[ raddr=_VSOCK.RADDR_]"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:282
+#: ../lsfd-cmd/lsfd.1.adoc:292
 msgid "`raddr` is not shown for listening sockets."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:283
+#: ../lsfd-cmd/lsfd.1.adoc:293
 #, no-wrap
 msgid "bpf-map"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:285
+#: ../lsfd-cmd/lsfd.1.adoc:295
 msgid "id=_BPF-MAP.ID_ type=_BPF-MAP.TYPE_[ name=_BPF.NAME_]"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:286
+#: ../lsfd-cmd/lsfd.1.adoc:296
 #, no-wrap
 msgid "bpf-prog"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:288
+#: ../lsfd-cmd/lsfd.1.adoc:298
 msgid ""
 "id=_BPF-PROG.ID_ type=_BPF-PROG.TYPE_ tag= _BPF-PROG.TAG_ [ name=_BPF.NAME_]"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:289
+#: ../lsfd-cmd/lsfd.1.adoc:299
 #, no-wrap
 msgid "eventpoll"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:291
+#: ../lsfd-cmd/lsfd.1.adoc:301
 msgid "tfds=_EVENTPOLL.TFDS_"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:292
+#: ../lsfd-cmd/lsfd.1.adoc:302
 #, no-wrap
 msgid "eventfd"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:294
+#: ../lsfd-cmd/lsfd.1.adoc:304
 msgid "id=_EVENTFD.ID_"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:295
+#: ../lsfd-cmd/lsfd.1.adoc:305
 #, no-wrap
 msgid "inotify"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:297
+#: ../lsfd-cmd/lsfd.1.adoc:307
 msgid "inodes=_INOTIFY.INODES_"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:298
+#: ../lsfd-cmd/lsfd.1.adoc:308
 #, no-wrap
 msgid "misc:tun"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:300
+#: ../lsfd-cmd/lsfd.1.adoc:310
 msgid "iface=_TUN.IFACE_"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:301
+#: ../lsfd-cmd/lsfd.1.adoc:311
 #, no-wrap
 msgid "NETLINK"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:303
+#: ../lsfd-cmd/lsfd.1.adoc:313
 msgid ""
 "protocol=_NETLINK.PROTOCOL_[ lport=_NETLINK.LPORT_[ group=_NETLINK.GROUPS_]]"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:304
+#: ../lsfd-cmd/lsfd.1.adoc:314
 #, no-wrap
 msgid "PACKET"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:306
+#: ../lsfd-cmd/lsfd.1.adoc:316
 msgid "type=_SOCK.TYPE_[ protocol=_PACKET.PROTOCOL_][ iface=_PACKET.IFACE_]"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:307
+#: ../lsfd-cmd/lsfd.1.adoc:317
 #, no-wrap
 msgid "pidfd"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:309
+#: ../lsfd-cmd/lsfd.1.adoc:319
 msgid "pid=_TARGET-PID_ comm=_TARGET-COMMAND_ nspid=_TARGET-NSPIDS_"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:312
+#: ../lsfd-cmd/lsfd.1.adoc:322
 msgid ""
 "*lsfd* extracts _TARGET-PID_ and _TARGET-NSPIDS_ from ``/proc/``_pid_``/"
 "fdinfo/``_fd_."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:313
+#: ../lsfd-cmd/lsfd.1.adoc:323
 #, no-wrap
 msgid "PING"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:315
+#: ../lsfd-cmd/lsfd.1.adoc:325
 msgid ""
 "state=_SOCK.STATE_[ id=_PING.ID_][ laddr=_INET.LADDR_ [ raddr=_INET.RADDR_]]"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:316
+#: ../lsfd-cmd/lsfd.1.adoc:326
 #, no-wrap
 msgid "PINGv6"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:318
+#: ../lsfd-cmd/lsfd.1.adoc:328
 msgid ""
 "state=_SOCK.STATE_[ id=_PING.ID_][ laddr=_INET6.LADDR_ [ raddr=_INET6."
 "RADDR_]]"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:319
+#: ../lsfd-cmd/lsfd.1.adoc:329
 #, no-wrap
 msgid "ptmx"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:321
+#: ../lsfd-cmd/lsfd.1.adoc:331
 msgid "tty-index=_PTMX.TTY-INDEX_"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:324
+#: ../lsfd-cmd/lsfd.1.adoc:334
 msgid "*lsfd* extracts _PTMX.TTY-INDEX_ from ``/proc/``_pid_``/fdinfo/``_fd_."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:325
+#: ../lsfd-cmd/lsfd.1.adoc:335
 #, no-wrap
 msgid "RAW"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:327
+#: ../lsfd-cmd/lsfd.1.adoc:337
 msgid ""
 "state=_SOCK.STATE_[ protocol=_RAW.PROTOCOL_ [ laddr=_INET.LADDR_ "
 "[ raddr=_INET.RADDR_]]]"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:328
+#: ../lsfd-cmd/lsfd.1.adoc:338
 #, no-wrap
 msgid "RAWv6"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:330
+#: ../lsfd-cmd/lsfd.1.adoc:340
 msgid ""
 "state=_SOCK.STATE_[ protocol=_RAW.PROTOCOL_ [ laddr=_INET6.LADDR_ "
 "[ raddr=_INET6.RADDR_]]]"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:331
+#: ../lsfd-cmd/lsfd.1.adoc:341
 #, no-wrap
 msgid "signalfd"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:333
+#: ../lsfd-cmd/lsfd.1.adoc:343
 msgid "mask=_SIGNALFD.MASK_"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:334
+#: ../lsfd-cmd/lsfd.1.adoc:344
 #, no-wrap
 msgid "TCP"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:335
+#: ../lsfd-cmd/lsfd.1.adoc:345
 #, no-wrap
 msgid "TCPv6"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:337
+#: ../lsfd-cmd/lsfd.1.adoc:347
 msgid "state=_SOCK.STATE_[ laddr=_TCP.LADDR_ [ raddr=_TCP.RADDR_]]"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:338
+#: ../lsfd-cmd/lsfd.1.adoc:348
 #, fuzzy, no-wrap
 #| msgid "*time*"
 msgid "timerfd"
 msgstr "*time*"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:340
+#: ../lsfd-cmd/lsfd.1.adoc:350
 msgid ""
 "clockid=_TIMERFD.CLOCKID_[ remaining=_TIMERFD.REMAINING_ [ interval=_TIMERFD."
 "INTERVAL_]]"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:341
+#: ../lsfd-cmd/lsfd.1.adoc:351
 #, no-wrap
 msgid "UDP"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:342
+#: ../lsfd-cmd/lsfd.1.adoc:352
 #, no-wrap
 msgid "UDPv6"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:344
+#: ../lsfd-cmd/lsfd.1.adoc:354
 msgid "state=_SOCK.STATE_[ laddr=_UDP.LADDR_ [ raddr=_UDP.RADDR_]]"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:346
+#: ../lsfd-cmd/lsfd.1.adoc:356
 msgid ""
 "*lsfd* hides ``raddr=`` if _UDP.RADDR_ is ``0.0.0.0`` and _UDP.RPORT_ is 0."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:347
+#: ../lsfd-cmd/lsfd.1.adoc:357
 #, no-wrap
 msgid "UDP-LITE"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:348
+#: ../lsfd-cmd/lsfd.1.adoc:358
 #, no-wrap
 msgid "UDPLITEv6"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:350
+#: ../lsfd-cmd/lsfd.1.adoc:360
 msgid "state=_SOCK.STATE_[ laddr=_UDPLITE.LADDR_ [ raddr=_UDPLITE.RADDR_]]"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:353
+#: ../lsfd-cmd/lsfd.1.adoc:363
 msgid "state=_SOCK.STATE_[ path=_UNIX.PATH_]"
 msgstr ""
 
-#. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:354
-#, no-wrap
-msgid "UNIX"
-msgstr ""
-
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:356
+#: ../lsfd-cmd/lsfd.1.adoc:366
 msgid "state=_SOCK.STATE_[ path=_UNIX.PATH_] type=_SOCK.TYPE_"
 msgstr ""
 
 #. type: delimited block _
-#: ../lsfd-cmd/lsfd.1.adoc:360
+#: ../lsfd-cmd/lsfd.1.adoc:370
 msgid ""
 "Note that `(deleted)` markers are removed from this column.  Refer to "
 "_KNAME_, _DELETED_, or _XMODE_ to know the readability of the file from the "
@@ -13913,165 +13960,165 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:362
+#: ../lsfd-cmd/lsfd.1.adoc:372
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "NETLINK.GROUPS <``number``>"
 msgstr "**-**__número__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:364
+#: ../lsfd-cmd/lsfd.1.adoc:374
 msgid "Netlink multicast groups."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:365
+#: ../lsfd-cmd/lsfd.1.adoc:375
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "NETLINK.LPORT <``number``>"
 msgstr "**-**__número__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:367
+#: ../lsfd-cmd/lsfd.1.adoc:377
 msgid "Netlink local port id."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:368
+#: ../lsfd-cmd/lsfd.1.adoc:378
 #, fuzzy, no-wrap
 #| msgid "**+**/__string__"
 msgid "NETLINK.PROTOCOL <``string``>"
 msgstr "**+**/__cadena__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:370
+#: ../lsfd-cmd/lsfd.1.adoc:380
 msgid "Netlink protocol."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:371
+#: ../lsfd-cmd/lsfd.1.adoc:381
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "NLINK <``number``>"
 msgstr "**-**__número__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:373
+#: ../lsfd-cmd/lsfd.1.adoc:383
 msgid "Link count."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:374
+#: ../lsfd-cmd/lsfd.1.adoc:384
 #, fuzzy, no-wrap
 #| msgid "**+**/__string__"
 msgid "NS.NAME <``string``>"
 msgstr "**+**/__cadena__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:376
+#: ../lsfd-cmd/lsfd.1.adoc:386
 msgid "Name (_NS.TYPE_:[_INODE_]) of the namespace specified with the file."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:377
+#: ../lsfd-cmd/lsfd.1.adoc:387
 #, fuzzy, no-wrap
 #| msgid "*TTYPERM* (string)"
 msgid "NS.TYPE <``string``>"
 msgstr "*TTYPERM* (cadena)"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:381
+#: ../lsfd-cmd/lsfd.1.adoc:391
 msgid ""
 "Type of the namespace specified with the file.  The type is `mnt`, `cgroup`, "
 "`uts`, `ipc`, `user`, `pid`, `net`, `time`, or `unknown`."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:382
+#: ../lsfd-cmd/lsfd.1.adoc:392
 #, fuzzy, no-wrap
 #| msgid "**+**/__string__"
 msgid "OWNER <``string``>"
 msgstr "**+**/__cadena__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:384
+#: ../lsfd-cmd/lsfd.1.adoc:394
 msgid "Owner of the file."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:385
+#: ../lsfd-cmd/lsfd.1.adoc:395
 #, no-wrap
 msgid "PACKET.IFACE <``string``>"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:387
+#: ../lsfd-cmd/lsfd.1.adoc:397
 msgid "Interface name associated with the packet socket."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:388
+#: ../lsfd-cmd/lsfd.1.adoc:398
 #, no-wrap
 msgid "PACKET.PROTOCOL <``string``>"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:390
+#: ../lsfd-cmd/lsfd.1.adoc:400
 msgid "L3 protocol associated with the packet socket."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:391
+#: ../lsfd-cmd/lsfd.1.adoc:401
 #, no-wrap
 msgid "PARTITION <``string``>"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:393
+#: ../lsfd-cmd/lsfd.1.adoc:403
 msgid "Block device name resolved by `/proc/partition`."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:394
+#: ../lsfd-cmd/lsfd.1.adoc:404
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "PID <``number``>"
 msgstr "**-**__número__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:396
+#: ../lsfd-cmd/lsfd.1.adoc:406
 msgid "PID of the process opening the file."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:397
+#: ../lsfd-cmd/lsfd.1.adoc:407
 #, no-wrap
 msgid "PIDFD.COMM <``string``>"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:399
+#: ../lsfd-cmd/lsfd.1.adoc:409
 msgid "Command of the process targeted by the pidfd."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:400
+#: ../lsfd-cmd/lsfd.1.adoc:410
 #, no-wrap
 msgid "PIDFD.NSPID <``string``>"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:402
+#: ../lsfd-cmd/lsfd.1.adoc:412
 msgid "Value of NSpid field in ``/proc/``_pid_``/fdinfo/``_fd_ of the pidfd."
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:404
+#: ../lsfd-cmd/lsfd.1.adoc:414
 msgid "Quoted from kernel/fork.c of Linux source tree:"
 msgstr ""
 
 #. type: delimited block _
-#: ../lsfd-cmd/lsfd.1.adoc:410
+#: ../lsfd-cmd/lsfd.1.adoc:420
 msgid ""
 "If pid namespaces are supported then this function will also print the pid "
 "of a given pidfd refers to for all descendant pid namespaces starting from "
@@ -14080,7 +14127,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block _
-#: ../lsfd-cmd/lsfd.1.adoc:414
+#: ../lsfd-cmd/lsfd.1.adoc:424
 msgid ""
 "Note that this differs from the Pid and NSpid fields in /proc/<pid>/status "
 "where Pid and NSpid are always shown relative to the pid namespace of the "
@@ -14088,229 +14135,229 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:416
+#: ../lsfd-cmd/lsfd.1.adoc:426
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "PIDFD.PID <``number``>"
 msgstr "**-**__número__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:418
+#: ../lsfd-cmd/lsfd.1.adoc:428
 msgid "PID of the process targeted by the pidfd."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:419
+#: ../lsfd-cmd/lsfd.1.adoc:429
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "PING.ID <`number`>"
 msgstr "**-**__número__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:421
+#: ../lsfd-cmd/lsfd.1.adoc:431
 msgid "ICMP echo request id used on the PING socket."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:422
+#: ../lsfd-cmd/lsfd.1.adoc:432
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "POS <``number``>"
 msgstr "**-**__número__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:424
+#: ../lsfd-cmd/lsfd.1.adoc:434
 msgid "File position."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:425
+#: ../lsfd-cmd/lsfd.1.adoc:435
 #, no-wrap
 msgid "RAW.PROTOCOL <``number``>"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:427
+#: ../lsfd-cmd/lsfd.1.adoc:437
 msgid "Protocol number of the raw socket."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:428
+#: ../lsfd-cmd/lsfd.1.adoc:438
 #, fuzzy, no-wrap
 #| msgid "**+**/__string__"
 msgid "RDEV <``string``>"
 msgstr "**+**/__cadena__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:430
+#: ../lsfd-cmd/lsfd.1.adoc:440
 msgid "Device ID (if special file)."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:431
+#: ../lsfd-cmd/lsfd.1.adoc:441
 #, fuzzy, no-wrap
 #| msgid "**+**/__string__"
 msgid "SIGNALFD.MASK <``string``>"
 msgstr "**+**/__cadena__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:433
+#: ../lsfd-cmd/lsfd.1.adoc:443
 msgid "Masked signals."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:434
+#: ../lsfd-cmd/lsfd.1.adoc:444
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "SIZE <``number``>"
 msgstr "**-**__número__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:436
+#: ../lsfd-cmd/lsfd.1.adoc:446
 msgid "File size."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:437
+#: ../lsfd-cmd/lsfd.1.adoc:447
 #, no-wrap
 msgid "SOCK.LISTENING <``boolean``>"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:439
+#: ../lsfd-cmd/lsfd.1.adoc:449
 msgid "Listening socket."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:440
+#: ../lsfd-cmd/lsfd.1.adoc:450
 #, no-wrap
 msgid "SOCK.NETS <``number``>"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:442
+#: ../lsfd-cmd/lsfd.1.adoc:452
 msgid "Inode identifying network namespace where the socket belongs to."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:443
+#: ../lsfd-cmd/lsfd.1.adoc:453
 #, no-wrap
 msgid "SOCK.PROTONAME <``string``>"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:445
+#: ../lsfd-cmd/lsfd.1.adoc:455
 msgid "Protocol name."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:446
+#: ../lsfd-cmd/lsfd.1.adoc:456
 #, fuzzy, no-wrap
 #| msgid "*TTYPERM* (string)"
 msgid "SOCK.SHUTDOWN <``string``>"
 msgstr "*TTYPERM* (cadena)"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:448
+#: ../lsfd-cmd/lsfd.1.adoc:458
 msgid "Shutdown state of socket."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:449
+#: ../lsfd-cmd/lsfd.1.adoc:459
 #, no-wrap
 msgid "[-r?]"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:453
+#: ../lsfd-cmd/lsfd.1.adoc:463
 msgid ""
 "If the first character is _r_, the receptions are allowed.  If it is _-_, "
 "the receptions are disallowed.  If it is _?_, the state is unknown."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:454
+#: ../lsfd-cmd/lsfd.1.adoc:464
 #, no-wrap
 msgid "[-w?]"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:458
+#: ../lsfd-cmd/lsfd.1.adoc:468
 msgid ""
 "If the second character is _w_, the transmissions are allowed.  If it is _-"
 "_, the transmissions are disallowed.  If it is _?_, the state is unknown."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:459
+#: ../lsfd-cmd/lsfd.1.adoc:469
 #, no-wrap
 msgid "SOCK.STATE <``string``>"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:461
+#: ../lsfd-cmd/lsfd.1.adoc:471
 msgid "State of socket."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:462
+#: ../lsfd-cmd/lsfd.1.adoc:472
 #, fuzzy, no-wrap
 #| msgid "*TTYPERM* (string)"
 msgid "SOCK.TYPE <``string``>"
 msgstr "*TTYPERM* (cadena)"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:465
+#: ../lsfd-cmd/lsfd.1.adoc:475
 msgid ""
 "Type of socket. Here type means the second parameter of socket system call:"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:467
+#: ../lsfd-cmd/lsfd.1.adoc:477
 msgid "stream"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:468
+#: ../lsfd-cmd/lsfd.1.adoc:478
 msgid "dgram"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:469
+#: ../lsfd-cmd/lsfd.1.adoc:479
 #, fuzzy
 #| msgid "raw(8)"
 msgid "raw"
 msgstr "raw(8)"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:470
+#: ../lsfd-cmd/lsfd.1.adoc:480
 msgid "rdm"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:471
+#: ../lsfd-cmd/lsfd.1.adoc:481
 msgid "seqpacket"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:472
+#: ../lsfd-cmd/lsfd.1.adoc:482
 msgid "dccp"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:473
+#: ../lsfd-cmd/lsfd.1.adoc:483
 msgid "packet"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:474
+#: ../lsfd-cmd/lsfd.1.adoc:484
 #, fuzzy, no-wrap
 #| msgid "**+**/__string__"
 msgid "SOURCE <``string``>"
 msgstr "**+**/__cadena__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:478
+#: ../lsfd-cmd/lsfd.1.adoc:488
 msgid ""
 "File system, partition, or device containing the file.  For the association "
 "having ERROR as the value for _TYPE_ column, *lsfd* fills this column with "
@@ -14318,147 +14365,147 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:479
+#: ../lsfd-cmd/lsfd.1.adoc:489
 #, fuzzy, no-wrap
 #| msgid "*TTYPERM* (string)"
 msgid "STTYPE <``string``>"
 msgstr "*TTYPERM* (cadena)"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:481
+#: ../lsfd-cmd/lsfd.1.adoc:491
 msgid ""
 "Raw file types returned from *stat*(2): BLK, CHR, DIR, FIFO, LINK, REG, "
 "SOCK, or UNKN."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:482
+#: ../lsfd-cmd/lsfd.1.adoc:492
 #, no-wrap
 msgid "TCP.LADDR <``string``>"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:484
+#: ../lsfd-cmd/lsfd.1.adoc:494
 msgid "Local L3 (_INET.LADDR_ or _INET6.LADDR_) address and local TCP port."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:485
+#: ../lsfd-cmd/lsfd.1.adoc:495
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "TCP.LPORT <``number``>"
 msgstr "**-**__número__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:487
+#: ../lsfd-cmd/lsfd.1.adoc:497
 msgid "Local TCP port."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:488
+#: ../lsfd-cmd/lsfd.1.adoc:498
 #, fuzzy, no-wrap
 #| msgid "*CHFN_RESTRICT* _string_"
 msgid "TCP.RADDR <``string``>"
 msgstr "*CHFN_RESTRICT* _cadena_"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:490
+#: ../lsfd-cmd/lsfd.1.adoc:500
 msgid "Remote L3 (_INET.RADDR_ or _INET6.RADDR_) address and remote TCP port."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:491
+#: ../lsfd-cmd/lsfd.1.adoc:501
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "TCP.RPORT <``number``>"
 msgstr "**-**__número__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:493
+#: ../lsfd-cmd/lsfd.1.adoc:503
 msgid "Remote TCP port."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:494
+#: ../lsfd-cmd/lsfd.1.adoc:504
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "TID <``number``>"
 msgstr "**-**__número__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:496
+#: ../lsfd-cmd/lsfd.1.adoc:506
 msgid "Thread ID of the process opening the file."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:497
+#: ../lsfd-cmd/lsfd.1.adoc:507
 #, fuzzy, no-wrap
 #| msgid "**+**/__string__"
 msgid "TIMERFD.CLOCKID <``string``>"
 msgstr "**+**/__cadena__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:499
+#: ../lsfd-cmd/lsfd.1.adoc:509
 msgid "Clockid."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:500
+#: ../lsfd-cmd/lsfd.1.adoc:510
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "TIMERFD.INTERVAL <``number``>"
 msgstr "**-**__número__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:502
+#: ../lsfd-cmd/lsfd.1.adoc:512
 msgid "Interval."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:503
+#: ../lsfd-cmd/lsfd.1.adoc:513
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "TIMERFD.REMAINING <``number``>"
 msgstr "**-**__número__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:505
+#: ../lsfd-cmd/lsfd.1.adoc:515
 msgid "Remaining time."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:506
+#: ../lsfd-cmd/lsfd.1.adoc:516
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "PTMX.TTY-INDEX <``number``>"
 msgstr "**-**__número__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:508
+#: ../lsfd-cmd/lsfd.1.adoc:518
 msgid "TTY index of the counterpart."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:509
+#: ../lsfd-cmd/lsfd.1.adoc:519
 #, fuzzy, no-wrap
 #| msgid "**+**/__string__"
 msgid "TUN.IFACE <``string``>"
 msgstr "**+**/__cadena__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:511
+#: ../lsfd-cmd/lsfd.1.adoc:521
 msgid "Network interface behind the tun device."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:512 ../misc-utils/lsclocks.1.adoc:69
+#: ../lsfd-cmd/lsfd.1.adoc:522 ../misc-utils/lsclocks.1.adoc:69
 #, fuzzy, no-wrap
 #| msgid "*TTYPERM* (string)"
 msgid "TYPE <``string``>"
 msgstr "*TTYPERM* (cadena)"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:516
+#: ../lsfd-cmd/lsfd.1.adoc:526
 msgid ""
 "Cooked version of _STTYPE_. It is same as _STTYPE_ with exceptions.  For "
 "_SOCK_, print the value for _SOCK.PROTONAME_.  For _UNKN_, print the value "
@@ -14466,152 +14513,171 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:519
+#: ../lsfd-cmd/lsfd.1.adoc:529
 msgid ""
 "If *lsfd* gets an error when calling a syscall to know about a target file "
 "descriptor, *lsfd* fills this column for it with ERROR."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:520
+#: ../lsfd-cmd/lsfd.1.adoc:530
 #, no-wrap
 msgid "UDP.LADDR <``string``>"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:522
+#: ../lsfd-cmd/lsfd.1.adoc:532
 msgid "Local IP address and local UDP port."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:523
+#: ../lsfd-cmd/lsfd.1.adoc:533
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "UDP.LPORT <``number``>"
 msgstr "**-**__número__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:525 ../lsfd-cmd/lsfd.1.adoc:537
+#: ../lsfd-cmd/lsfd.1.adoc:535 ../lsfd-cmd/lsfd.1.adoc:547
 msgid "Local UDP port."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:526
+#: ../lsfd-cmd/lsfd.1.adoc:536
 #, no-wrap
 msgid "UDP.RADDR <``string``>"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:528
+#: ../lsfd-cmd/lsfd.1.adoc:538
 msgid "Remote IP address and remote UDP port."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:529
+#: ../lsfd-cmd/lsfd.1.adoc:539
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "UDP.RPORT <``number``>"
 msgstr "**-**__número__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:531 ../lsfd-cmd/lsfd.1.adoc:543
+#: ../lsfd-cmd/lsfd.1.adoc:541 ../lsfd-cmd/lsfd.1.adoc:553
 msgid "Remote UDP port."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:532
+#: ../lsfd-cmd/lsfd.1.adoc:542
 #, no-wrap
 msgid "UDPLITE.LADDR <``string``>"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:534
+#: ../lsfd-cmd/lsfd.1.adoc:544
 msgid "Local IP address and local UDPLite port."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:535
+#: ../lsfd-cmd/lsfd.1.adoc:545
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "UDPLITE.LPORT <``number``>"
 msgstr "**-**__número__"
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:538
+#: ../lsfd-cmd/lsfd.1.adoc:548
 #, no-wrap
 msgid "UDPLITE.RADDR <``string``>"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:540
+#: ../lsfd-cmd/lsfd.1.adoc:550
 msgid "Remote IP address and remote UDPLite port."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:541
+#: ../lsfd-cmd/lsfd.1.adoc:551
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "UDPLITE.RPORT <``number``>"
 msgstr "**-**__número__"
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:544
+#: ../lsfd-cmd/lsfd.1.adoc:554
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "UID <``number``>"
 msgstr "**-**__número__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:546
+#: ../lsfd-cmd/lsfd.1.adoc:556
 msgid "User ID number."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:547
+#: ../lsfd-cmd/lsfd.1.adoc:557
+#, fuzzy, no-wrap
+#| msgid "**-**__number__"
+msgid "UNIX.IPEER < number >"
+msgstr "**-**__número__"
+
+#. type: Plain text
+#: ../lsfd-cmd/lsfd.1.adoc:559
+msgid "Inode number for the peer of the UNIX domain socket."
+msgstr ""
+
+#. type: Plain text
+#: ../lsfd-cmd/lsfd.1.adoc:562
+msgid ""
+"If *lsfd* runs in a container, it may not fill _UNIX.IPEER_ column.  See the "
+"description of _UNIX_ in _ENDPOINTS_ column for more details."
+msgstr ""
+
+#. type: Labeled list
+#: ../lsfd-cmd/lsfd.1.adoc:563
 #, no-wrap
 msgid "UNIX.PATH <``string``>"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:549
+#: ../lsfd-cmd/lsfd.1.adoc:565
 msgid "Filesystem pathname for UNIX domain socket."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:550
+#: ../lsfd-cmd/lsfd.1.adoc:566
 #, fuzzy, no-wrap
 #| msgid "**+**/__string__"
 msgid "USER <``string``>"
 msgstr "**+**/__cadena__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:552
+#: ../lsfd-cmd/lsfd.1.adoc:568
 msgid "User of the process."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:553
+#: ../lsfd-cmd/lsfd.1.adoc:569
 #, fuzzy, no-wrap
 #| msgid "*CHFN_RESTRICT* _string_"
 msgid "VSOCK.LADDR <``string``>"
 msgstr "*CHFN_RESTRICT* _cadena_"
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:554
+#: ../lsfd-cmd/lsfd.1.adoc:570
 #, fuzzy, no-wrap
 #| msgid "*CHFN_RESTRICT* _string_"
 msgid "VSOCK.RADDR <``string``>"
 msgstr "*CHFN_RESTRICT* _cadena_"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:557
+#: ../lsfd-cmd/lsfd.1.adoc:573
 msgid ""
 "Local VSOCK address. The format of the element is _VSOCK.LCID_``:``_VSOCK."
 "LPORT_."
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:560
+#: ../lsfd-cmd/lsfd.1.adoc:576
 msgid ""
 "Well-known CIDs will be decoded: \"`{asterisk}`\", \"`hypervisor`\", "
 "\"`local`\", or \"`host`\".  Well-known ports will be decoded: \"`{asterisk}"
@@ -14619,52 +14685,52 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:561
+#: ../lsfd-cmd/lsfd.1.adoc:577
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "VSOCK.LCID <``number``>"
 msgstr "**-**__número__"
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:562
+#: ../lsfd-cmd/lsfd.1.adoc:578
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "VSOCK.RCID <``number``>"
 msgstr "**-**__número__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:564
+#: ../lsfd-cmd/lsfd.1.adoc:580
 msgid "Local and remote VSOCK context identifiers."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:565
+#: ../lsfd-cmd/lsfd.1.adoc:581
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "VSOCK.LPORT <``number``>"
 msgstr "**-**__número__"
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:566
+#: ../lsfd-cmd/lsfd.1.adoc:582
 #, fuzzy, no-wrap
 #| msgid "**-**__number__"
 msgid "VSOCK.RPORT <``number``>"
 msgstr "**-**__número__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:568
+#: ../lsfd-cmd/lsfd.1.adoc:584
 msgid "Local and remote VSOCK ports."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:569
+#: ../lsfd-cmd/lsfd.1.adoc:585
 #, fuzzy, no-wrap
 #| msgid "**+**/__string__"
 msgid "XMODE <``string``>"
 msgstr "**+**/__cadena__"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:573
+#: ../lsfd-cmd/lsfd.1.adoc:589
 msgid ""
 "Extended version of _MODE_. This column may grow; new letters may be "
 "appended to _XMODE_ when *lsfd* supports a new state of file descriptors and/"
@@ -14672,59 +14738,59 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:574
+#: ../lsfd-cmd/lsfd.1.adoc:590
 #, no-wrap
 msgid "[-r]"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:576
+#: ../lsfd-cmd/lsfd.1.adoc:592
 msgid "opened of mapped for reading. This is also in _MODE_."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:577
+#: ../lsfd-cmd/lsfd.1.adoc:593
 #, no-wrap
 msgid "[-w]"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:579
+#: ../lsfd-cmd/lsfd.1.adoc:595
 msgid "opened of mapped for writing. This is also in _MODE_."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:580
+#: ../lsfd-cmd/lsfd.1.adoc:596
 #, no-wrap
 msgid "[-x]"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:582
+#: ../lsfd-cmd/lsfd.1.adoc:598
 msgid "mapped for executing the code. This is also in _MODE_."
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:583
+#: ../lsfd-cmd/lsfd.1.adoc:599
 #, no-wrap
 msgid "[-D]"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:585
+#: ../lsfd-cmd/lsfd.1.adoc:601
 #, fuzzy
 #| msgid "I</etc/mtab> table of mounted file systems"
 msgid "deleted from the file system. See also _DELETED_."
 msgstr "I</etc/mtab> tabla de sistemas de ficheros montados"
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:586
+#: ../lsfd-cmd/lsfd.1.adoc:602
 #, no-wrap
 msgid "[-Ll]"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:591
+#: ../lsfd-cmd/lsfd.1.adoc:607
 msgid ""
 "locked or leased. _l_ represents a read, a shared lock or a read lease.  _L_ "
 "represents a write or an exclusive lock or a write lease. If both read/"
@@ -14733,13 +14799,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:592
+#: ../lsfd-cmd/lsfd.1.adoc:608
 #, no-wrap
 msgid "[-m]"
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:599
+#: ../lsfd-cmd/lsfd.1.adoc:615
 msgid ""
 "Multiplexed. If the file descriptor is targeted by a eventpoll file or "
 "classical system calls for multiplexing (select, pselect, poll, and ppoll), "
@@ -14749,14 +14815,14 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: ../lsfd-cmd/lsfd.1.adoc:600
+#: ../lsfd-cmd/lsfd.1.adoc:616
 #, fuzzy, no-wrap
 #| msgid "EXAMPLES"
 msgid "FILTER EXAMPLES"
 msgstr "EJEMPLOS"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:605
+#: ../lsfd-cmd/lsfd.1.adoc:621
 msgid ""
 "*lsfd* has few options for filtering. In most of cases, what you should know "
 "is *-Q* (or *--filter*) option.  Combined with *-o* (or *--output*) option, "
@@ -14765,237 +14831,237 @@ msgstr ""
 
 #. TRANSLATORS: In the following messages, don't forget to add whitespace at the end!
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:607
+#: ../lsfd-cmd/lsfd.1.adoc:623
 #, no-wrap
 msgid "List files associated with PID 1 and PID 2 processes: "
 msgstr ""
 
 #. type: delimited block .
-#: ../lsfd-cmd/lsfd.1.adoc:610
+#: ../lsfd-cmd/lsfd.1.adoc:626
 #, no-wrap
 msgid "# lsfd -Q '(PID == 1) or (PID == 2)'\n"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:612 ../lsfd-cmd/lsfd.1.adoc:637
-#: ../lsfd-cmd/lsfd.1.adoc:647
+#: ../lsfd-cmd/lsfd.1.adoc:628 ../lsfd-cmd/lsfd.1.adoc:653
+#: ../lsfd-cmd/lsfd.1.adoc:663
 #, no-wrap
 msgid "Do the same in an alternative way: "
 msgstr ""
 
 #. type: delimited block .
-#: ../lsfd-cmd/lsfd.1.adoc:615
+#: ../lsfd-cmd/lsfd.1.adoc:631
 #, no-wrap
 msgid "# lsfd -Q '(PID == 1) || (PID == 2)'\n"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:617
+#: ../lsfd-cmd/lsfd.1.adoc:633
 #, no-wrap
 msgid "Do the same in a more efficient way: "
 msgstr ""
 
 #. type: delimited block .
-#: ../lsfd-cmd/lsfd.1.adoc:620
+#: ../lsfd-cmd/lsfd.1.adoc:636
 #, no-wrap
 msgid "# lsfd --pid 1,2\n"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:622
+#: ../lsfd-cmd/lsfd.1.adoc:638
 #, no-wrap
 msgid "Whitespaces can be used instead of a comma: "
 msgstr ""
 
 #. type: delimited block .
-#: ../lsfd-cmd/lsfd.1.adoc:625
+#: ../lsfd-cmd/lsfd.1.adoc:641
 #, no-wrap
 msgid "# lsfd --pid '1 2'\n"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:627
+#: ../lsfd-cmd/lsfd.1.adoc:643
 #, no-wrap
 msgid "Utilize *pidof*(1) for list the files associated with \"firefox\": "
 msgstr ""
 
 #. type: delimited block .
-#: ../lsfd-cmd/lsfd.1.adoc:630
+#: ../lsfd-cmd/lsfd.1.adoc:646
 #, no-wrap
 msgid "# lsfd --pid \"$(pidof firefox)\"\n"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:632
+#: ../lsfd-cmd/lsfd.1.adoc:648
 #, no-wrap
 msgid "List the 1st file descriptor opened by PID 1 process: "
 msgstr ""
 
 #. type: delimited block .
-#: ../lsfd-cmd/lsfd.1.adoc:635
+#: ../lsfd-cmd/lsfd.1.adoc:651
 #, no-wrap
 msgid "# lsfd -Q '(PID == 1) and (FD == 1)'\n"
 msgstr ""
 
 #. type: delimited block .
-#: ../lsfd-cmd/lsfd.1.adoc:640
+#: ../lsfd-cmd/lsfd.1.adoc:656
 #, no-wrap
 msgid "# lsfd -Q '(PID == 1) && (FD == 1)'\n"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:642
+#: ../lsfd-cmd/lsfd.1.adoc:658
 #, no-wrap
 msgid "List all running executables: "
 msgstr ""
 
 #. type: delimited block .
-#: ../lsfd-cmd/lsfd.1.adoc:645
+#: ../lsfd-cmd/lsfd.1.adoc:661
 #, no-wrap
 msgid "# lsfd -Q 'ASSOC == \"exe\"'\n"
 msgstr ""
 
 #. type: delimited block .
-#: ../lsfd-cmd/lsfd.1.adoc:650
+#: ../lsfd-cmd/lsfd.1.adoc:666
 #, no-wrap
 msgid "# lsfd -Q 'ASSOC eq \"exe\"'\n"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:652
+#: ../lsfd-cmd/lsfd.1.adoc:668
 #, no-wrap
 msgid "Do the same but print only file names: "
 msgstr ""
 
 #. type: delimited block .
-#: ../lsfd-cmd/lsfd.1.adoc:655
+#: ../lsfd-cmd/lsfd.1.adoc:671
 #, no-wrap
 msgid "# lsfd -o NAME -Q 'ASSOC eq \"exe\"' | sort -u\n"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:657
+#: ../lsfd-cmd/lsfd.1.adoc:673
 #, no-wrap
 msgid "List deleted files associated to processes: "
 msgstr ""
 
 #. type: delimited block .
-#: ../lsfd-cmd/lsfd.1.adoc:660
+#: ../lsfd-cmd/lsfd.1.adoc:676
 #, no-wrap
 msgid "# lsfd -Q 'DELETED'\n"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:662
+#: ../lsfd-cmd/lsfd.1.adoc:678
 #, no-wrap
 msgid "List non-regular files: "
 msgstr ""
 
 #. type: delimited block .
-#: ../lsfd-cmd/lsfd.1.adoc:665
+#: ../lsfd-cmd/lsfd.1.adoc:681
 #, no-wrap
 msgid "# lsfd -Q 'TYPE != \"REG\"'\n"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:667
+#: ../lsfd-cmd/lsfd.1.adoc:683
 #, no-wrap
 msgid "List block devices: "
 msgstr ""
 
 #. type: delimited block .
-#: ../lsfd-cmd/lsfd.1.adoc:670
+#: ../lsfd-cmd/lsfd.1.adoc:686
 #, no-wrap
 msgid "# lsfd -Q 'DEVTYPE == \"blk\"'\n"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:672
+#: ../lsfd-cmd/lsfd.1.adoc:688
 #, no-wrap
 msgid "Do the same with TYPE column: "
 msgstr ""
 
 #. type: delimited block .
-#: ../lsfd-cmd/lsfd.1.adoc:675
+#: ../lsfd-cmd/lsfd.1.adoc:691
 #, no-wrap
 msgid "# lsfd -Q 'TYPE == \"BLK\"'\n"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:677
+#: ../lsfd-cmd/lsfd.1.adoc:693
 #, no-wrap
 msgid "List files including \"dconf\" directory in their names: "
 msgstr ""
 
 #. type: delimited block .
-#: ../lsfd-cmd/lsfd.1.adoc:680
+#: ../lsfd-cmd/lsfd.1.adoc:696
 #, no-wrap
 msgid "# lsfd -Q 'NAME =~ \".\\*/dconf/.*\"'\n"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:682
+#: ../lsfd-cmd/lsfd.1.adoc:698
 #, no-wrap
 msgid "List files opened in a QEMU virtual machine: "
 msgstr ""
 
 #. type: delimited block .
-#: ../lsfd-cmd/lsfd.1.adoc:685
+#: ../lsfd-cmd/lsfd.1.adoc:701
 #, no-wrap
 msgid "# lsfd -Q '(COMMAND =~ \".\\*qemu.*\") and (FD >= 0)'\n"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:687
+#: ../lsfd-cmd/lsfd.1.adoc:703
 #, no-wrap
 msgid "List timerfd files expired within 0.5 seconds: "
 msgstr ""
 
 #. type: delimited block .
-#: ../lsfd-cmd/lsfd.1.adoc:690
+#: ../lsfd-cmd/lsfd.1.adoc:706
 #, no-wrap
 msgid "# lsfd -Q '(TIMERFD.remaining < 0.5) and (TIMERFD.remaining > 0.0)'\n"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:692
+#: ../lsfd-cmd/lsfd.1.adoc:708
 #, no-wrap
 msgid "List processes communicating via unix stream sockets: "
 msgstr ""
 
 #. type: delimited block .
-#: ../lsfd-cmd/lsfd.1.adoc:695
+#: ../lsfd-cmd/lsfd.1.adoc:711
 #, no-wrap
 msgid "# lsfd  -Q 'TYPE == \"UNIX-STREAM\" && UNIX.PATH =~ \".+\"' -oUNIX.PATH,PID,COMMAND,FD,SOCK.STATE,ENDPOINTS\n"
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:697
+#: ../lsfd-cmd/lsfd.1.adoc:713
 #, no-wrap
 msgid "List processes communicating via a specified unix stream socket: "
 msgstr ""
 
 #. type: delimited block .
-#: ../lsfd-cmd/lsfd.1.adoc:700
+#: ../lsfd-cmd/lsfd.1.adoc:716
 #, no-wrap
 msgid "# lsfd  -Q 'TYPE == \"UNIX-STREAM\" && UNIX.PATH == \"@/tmp/.X11-unix/X0\"' -oUNIX.PATH,PID,COMMAND,FD,SOCK.STATE,ENDPOINTS\n"
 msgstr ""
 
 #. type: Title ==
-#: ../lsfd-cmd/lsfd.1.adoc:702
+#: ../lsfd-cmd/lsfd.1.adoc:718
 #, fuzzy, no-wrap
 #| msgid "EXAMPLES"
 msgid "COUNTER EXAMPLES"
 msgstr "EJEMPLOS"
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:704
+#: ../lsfd-cmd/lsfd.1.adoc:720
 #, no-wrap
 msgid "Report the numbers of netlink socket descriptors and unix socket descriptors: "
 msgstr ""
 
 #. type: delimited block .
-#: ../lsfd-cmd/lsfd.1.adoc:712
+#: ../lsfd-cmd/lsfd.1.adoc:728
 #, no-wrap
 msgid ""
 "# lsfd --summary=only \\\n"
@@ -15007,13 +15073,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../lsfd-cmd/lsfd.1.adoc:714
+#: ../lsfd-cmd/lsfd.1.adoc:730
 #, no-wrap
 msgid "Do the same but print in JSON format: "
 msgstr ""
 
 #. type: delimited block .
-#: ../lsfd-cmd/lsfd.1.adoc:730
+#: ../lsfd-cmd/lsfd.1.adoc:746
 #, no-wrap
 msgid ""
 "# lsfd --summary=only --json \\\n"
@@ -15033,7 +15099,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:736
+#: ../lsfd-cmd/lsfd.1.adoc:752
 #, fuzzy
 #| msgid ""
 #| "The B<last> command is part of the util-linux package which can be "
@@ -15043,7 +15109,7 @@ msgstr ""
 "La orden B<last> forma parte del paquete util-linux que puede ser descargado"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:741
+#: ../lsfd-cmd/lsfd.1.adoc:757
 #, fuzzy
 #| msgid ""
 #| "mailto:mbroz@redhat.com[Milan Broz], mailto:kzak@redhat.com[Karel Zak]"
@@ -15052,7 +15118,7 @@ msgid ""
 msgstr "mailto:mbroz@redhat.com[Milan Broz], mailto:kzak@redhat.com[Karel Zak]"
 
 #. type: Plain text
-#: ../lsfd-cmd/lsfd.1.adoc:754
+#: ../lsfd-cmd/lsfd.1.adoc:770
 #, fuzzy
 #| msgid ""
 #| "*login*(1),\n"
@@ -15435,7 +15501,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/blkid.8.adoc:103 ../misc-utils/lsblk.8.adoc:191
+#: ../misc-utils/blkid.8.adoc:103 ../misc-utils/lsblk.8.adoc:189
 #, no-wrap
 msgid "*udev*"
 msgstr "*udev*"
@@ -16775,7 +16841,7 @@ msgid "*partx --show <disk>*"
 msgstr "partx --show /dev/sdb3"
 
 #. type: Labeled list
-#: ../misc-utils/findfs.8.adoc:45 ../misc-utils/lsblk.8.adoc:193
+#: ../misc-utils/findfs.8.adoc:45 ../misc-utils/lsblk.8.adoc:191
 #, fuzzy, no-wrap
 #| msgid "*blkid*\n"
 msgid "*blkid*"
@@ -18510,7 +18576,7 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: ../misc-utils/getopt.1.adoc:147 ../misc-utils/hardlink.1.adoc:160
+#: ../misc-utils/getopt.1.adoc:147 ../misc-utils/hardlink.1.adoc:159
 #: ../misc-utils/uuidd.8.adoc:84 ../pam_lastlog2/man/pam_lastlog2.8.adoc:64
 #, no-wrap
 msgid "AUTHOR"
@@ -18585,28 +18651,28 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:45
+#: ../misc-utils/hardlink.1.adoc:43
 #, fuzzy, no-wrap
 #| msgid "*-Z*, *--context*"
 msgid "*-c*, *--content*"
 msgstr "*-Z*, *--context*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:47
+#: ../misc-utils/hardlink.1.adoc:45
 msgid ""
 "Consider only file content, not attributes, when determining whether two "
 "files are equal. Same as *-pot*."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:48
+#: ../misc-utils/hardlink.1.adoc:46
 #, fuzzy, no-wrap
 #| msgid "*-S*, *--size* _size_"
 msgid "*-b*, *--io-size* _size_"
 msgstr "*-S*, *--size* _tamaño_"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:56
+#: ../misc-utils/hardlink.1.adoc:54
 msgid ""
 "The size of the *read*(2) or *sendfile*(2) buffer used when comparing file "
 "contents.  The _size_ argument may be followed by the multiplicative "
@@ -18618,14 +18684,14 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:57
+#: ../misc-utils/hardlink.1.adoc:55
 #, fuzzy, no-wrap
 #| msgid "*-X*, *--respect-xattrs*"
 msgid "*-d*, *--respect-dir*"
 msgstr "*-X*, *--respect-xattrs*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:59
+#: ../misc-utils/hardlink.1.adoc:57
 msgid ""
 "Only try to link files with the same directory name. The top-level directory "
 "(as specified on the *hardlink* command line) is ignored. For example, "
@@ -18635,13 +18701,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:60
+#: ../misc-utils/hardlink.1.adoc:58
 #, no-wrap
 msgid "*-f*, *--respect-name*"
 msgstr "*-f*, *--respect-name*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:62
+#: ../misc-utils/hardlink.1.adoc:60
 msgid ""
 "Only try to link files with the same (base)name. It's strongly recommended "
 "to use long options rather than *-f* which is interpreted in a different way "
@@ -18649,14 +18715,14 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:63
+#: ../misc-utils/hardlink.1.adoc:61
 #, fuzzy, no-wrap
 #| msgid "*-t*, *--ignore-time*"
 msgid "*-F*, *--prioritize-trees*"
 msgstr "*-t*, *--ignore-time*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:66
+#: ../misc-utils/hardlink.1.adoc:64
 msgid ""
 "Keep files found in the earliest specified top-level directory if there are "
 "multiple identical files in different trees.  For example, *hardlink foo/ "
@@ -18664,13 +18730,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:67
+#: ../misc-utils/hardlink.1.adoc:65
 #, no-wrap
 msgid "*-i*, *--include* _regex_"
 msgstr "*-i*, *--include* _regex_"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:69
+#: ../misc-utils/hardlink.1.adoc:67
 msgid ""
 "A regular expression to include files. If the option *--exclude* has been "
 "given, this option re-includes files which would otherwise be excluded. If "
@@ -18679,78 +18745,78 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:70
+#: ../misc-utils/hardlink.1.adoc:68
 #, no-wrap
 msgid "*-m*, *--maximize*"
 msgstr "*-m*, *--maximize*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:72
+#: ../misc-utils/hardlink.1.adoc:70
 msgid "Among equal files, keep the file with the highest link count."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:73
+#: ../misc-utils/hardlink.1.adoc:71
 #, no-wrap
 msgid "*-M*, *--minimize*"
 msgstr "*-M*, *--minimize*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:75
+#: ../misc-utils/hardlink.1.adoc:73
 msgid "Among equal files, keep the file with the lowest link count."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:76 ../sys-utils/rtcwake.8.adoc:93
+#: ../misc-utils/hardlink.1.adoc:74 ../sys-utils/rtcwake.8.adoc:93
 #, no-wrap
 msgid "*-n*, *--dry-run*"
 msgstr "*-n*, *--dry-run*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:78
+#: ../misc-utils/hardlink.1.adoc:76
 msgid "Do not act, just print what would happen."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:79
+#: ../misc-utils/hardlink.1.adoc:77
 #, fuzzy, no-wrap
 #| msgid "*-T*, *--list-types*"
 msgid "*-l*, *--list-duplicates*"
 msgstr "*-T*, *--list-types*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:81
+#: ../misc-utils/hardlink.1.adoc:79
 msgid ""
 "Don't link anything, but list the absolute path of every duplicate file, one "
 "per line, preceded by a unique 16-byte discriminator and a tab."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:84
+#: ../misc-utils/hardlink.1.adoc:82
 msgid "Separate lines with a NUL instead of a newline in *-l* mode."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:85
+#: ../misc-utils/hardlink.1.adoc:83
 #, no-wrap
 msgid "*-o*, *--ignore-owner*"
 msgstr "*-o*, *--ignore-owner*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:87
+#: ../misc-utils/hardlink.1.adoc:85
 msgid ""
 "Link and compare files even if their owner information (user and group) "
 "differs. Results may be unpredictable."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:88
+#: ../misc-utils/hardlink.1.adoc:86
 #, no-wrap
 msgid "*-O*, *--keep-oldest*"
 msgstr "*-O*, *--keep-oldest*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:90
+#: ../misc-utils/hardlink.1.adoc:88
 msgid ""
 "Among equal files, keep the oldest file (least recent modification time). By "
 "default, the newest file is kept. If *--maximize* or *--minimize* is "
@@ -18759,32 +18825,32 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:91
+#: ../misc-utils/hardlink.1.adoc:89
 #, no-wrap
 msgid "*-p*, *--ignore-mode*"
 msgstr "*-p*, *--ignore-mode*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:93
+#: ../misc-utils/hardlink.1.adoc:91
 msgid ""
 "Link and compare files even if their mode is different. Results may be "
 "slightly unpredictable."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:96
+#: ../misc-utils/hardlink.1.adoc:94
 msgid "Quiet mode, don't print anything."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:97
+#: ../misc-utils/hardlink.1.adoc:95
 #, fuzzy, no-wrap
 #| msgid "*-p*, *--pagesize* _size_"
 msgid "*-r*, *--cache-size* _size_"
 msgstr "*-p*, *--pagesize* _tamaño_"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:102
+#: ../misc-utils/hardlink.1.adoc:100
 msgid ""
 "The size of the cache for content checksums. All non-memcmp methods "
 "calculate checksum for each file content block (see *--io-size*), these "
@@ -18793,13 +18859,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:103
+#: ../misc-utils/hardlink.1.adoc:101
 #, no-wrap
 msgid "*-s*, *--minimum-size* _size_"
 msgstr "*-s*, *--minimum-size* _tamaño_"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:105
+#: ../misc-utils/hardlink.1.adoc:103
 msgid ""
 "The minimum size to consider. By default this is 1, so empty files will not "
 "be linked. The _size_ argument may be followed by the multiplicative "
@@ -18809,14 +18875,14 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:106
+#: ../misc-utils/hardlink.1.adoc:104
 #, fuzzy, no-wrap
 #| msgid "*-s*, *--minimum-size* _size_"
 msgid "*-S*, *--maximum-size* _size_"
 msgstr "*-s*, *--minimum-size* _tamaño_"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:108
+#: ../misc-utils/hardlink.1.adoc:106
 msgid ""
 "The maximum size to consider. By default this is 0 and 0 has the special "
 "meaning of unlimited. The _size_ argument may be followed by the "
@@ -18826,20 +18892,20 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:109
+#: ../misc-utils/hardlink.1.adoc:107
 #, no-wrap
 msgid "*-t*, *--ignore-time*"
 msgstr "*-t*, *--ignore-time*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:111
+#: ../misc-utils/hardlink.1.adoc:109
 msgid ""
 "Link and compare files even if their time of modification is different. This "
 "is usually a good choice."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:114
+#: ../misc-utils/hardlink.1.adoc:112
 msgid ""
 "Verbose output, explain to the user what is being done. If specified once, "
 "every hardlinked file is displayed. If specified twice, it also shows every "
@@ -18847,66 +18913,66 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:115
+#: ../misc-utils/hardlink.1.adoc:113
 #, no-wrap
 msgid "*-x*, *--exclude* _regex_"
 msgstr "*-x*, *--exclude* _regex_"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:117
+#: ../misc-utils/hardlink.1.adoc:115
 msgid ""
 "A regular expression that excludes files from being compared and linked. "
 "This option can be used multiple times."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:118
+#: ../misc-utils/hardlink.1.adoc:116
 #, fuzzy, no-wrap
 #| msgid "*-x*, *--exclude* _regex_"
 msgid "*--exclude-subtree* _regex_"
 msgstr "*-x*, *--exclude* _regex_"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:120
+#: ../misc-utils/hardlink.1.adoc:118
 msgid ""
 "A regular expression that excludes entire directories from being compared "
 "and linked. This option can also be used multiple times."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:121
+#: ../misc-utils/hardlink.1.adoc:119
 #, fuzzy, no-wrap
 #| msgid "*remount*"
 msgid "*--mount*"
 msgstr "*remount*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:123
+#: ../misc-utils/hardlink.1.adoc:121
 msgid ""
 "Do not traverse directories on different filesystems (remain within the same "
 "filesystem)."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:124
+#: ../misc-utils/hardlink.1.adoc:122
 #, no-wrap
 msgid "*-X*, *--respect-xattrs*"
 msgstr "*-X*, *--respect-xattrs*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:126
+#: ../misc-utils/hardlink.1.adoc:124
 msgid "Only try to link files with the same extended attributes."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:127
+#: ../misc-utils/hardlink.1.adoc:125
 #, fuzzy, no-wrap
 #| msgid "*-N*, *--name* _name_"
 msgid "*-y*, *--method* _name_"
 msgstr "*-N*, *--name* _nombre_"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:133
+#: ../misc-utils/hardlink.1.adoc:131
 msgid ""
 "Set the file content comparison method. The currently supported methods are "
 "sha256, sha1, crc32c and memcmp. The default is sha256, or memcmp if Linux "
@@ -18916,14 +18982,14 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:134
+#: ../misc-utils/hardlink.1.adoc:132
 #, fuzzy, no-wrap
 #| msgid "B<-f>, B<--force>"
 msgid "*--reflink*[**=**_when_]"
 msgstr "B<-f>, B<--force>"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:139
+#: ../misc-utils/hardlink.1.adoc:137
 msgid ""
 "Create copy-on-write clones (aka reflinks) rather than hardlinks. The "
 "reflinked files share only on-disk data, but the file mode and owner can be "
@@ -18933,7 +18999,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:145
+#: ../misc-utils/hardlink.1.adoc:143
 msgid ""
 "The optional argument _when_ can be *never*, *always*, or *auto*. If the "
 "_when_ argument is omitted, it defaults to *auto*, in this case, *hardlink* "
@@ -18944,28 +19010,28 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:146
+#: ../misc-utils/hardlink.1.adoc:144
 #, fuzzy, no-wrap
 #| msgid "*-n*, *--skip-login*"
 msgid "*--skip-reflinks*"
 msgstr "*-n*, *--skip-login*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:148
+#: ../misc-utils/hardlink.1.adoc:146
 msgid ""
 "Ignore already cloned files. This option may be used without *--reflink* "
 "when creating classic hardlinks."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:153
+#: ../misc-utils/hardlink.1.adoc:152
 msgid ""
 "*hardlink* takes one or more directories which will be searched for files to "
 "be linked."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:157
+#: ../misc-utils/hardlink.1.adoc:156
 msgid ""
 "The original *hardlink* implementation uses the option *-f* to force "
 "hardlinks creation between filesystem. This very rarely usable feature is no "
@@ -18973,7 +19039,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:159
+#: ../misc-utils/hardlink.1.adoc:158
 msgid ""
 "*hardlink* assumes that the trees it operates on do not change during "
 "operation. If a tree does change, the result is undefined and potentially "
@@ -18985,7 +19051,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:163
+#: ../misc-utils/hardlink.1.adoc:162
 msgid ""
 "There are multiple *hardlink* implementations. The very first implementation "
 "is from Jakub Jelinek for Fedora distribution, this implementation has been "
@@ -19427,162 +19493,174 @@ msgstr ""
 #. type: Labeled list
 #: ../misc-utils/lastlog2.8.adoc:34
 #, fuzzy, no-wrap
+#| msgid "*-a*, *--ascii*"
+msgid "*-a*, *--active*"
+msgstr "*-a*, *--ascii*"
+
+#. type: Plain text
+#: ../misc-utils/lastlog2.8.adoc:36
+msgid "Print last login records excluding users who have never logged in."
+msgstr ""
+
+#. type: Labeled list
+#: ../misc-utils/lastlog2.8.adoc:37
+#, fuzzy, no-wrap
 #| msgid "*-f*, *--force*"
 msgid "*-b*, *--before* _DAYS_"
 msgstr "*-f*, *--force*"
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:36
+#: ../misc-utils/lastlog2.8.adoc:39
 msgid "Print only last login records older than _DAYS_."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lastlog2.8.adoc:37 ../sys-utils/dmesg.1.adoc:41
+#: ../misc-utils/lastlog2.8.adoc:40 ../sys-utils/dmesg.1.adoc:41
 #, no-wrap
 msgid "*-C*, *--clear*"
 msgstr "*-C*, *--clear*"
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:40
+#: ../misc-utils/lastlog2.8.adoc:43
 msgid ""
 "Clear last login record of a user. This option can be used only together "
 "with *-u' (*--user*)."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lastlog2.8.adoc:41
+#: ../misc-utils/lastlog2.8.adoc:44
 #, fuzzy, no-wrap
 #| msgid "*-p*, *--task* _PID_"
 msgid "*-d*, *--database _FILE_"
 msgstr "*-p*, *--task* _PID_"
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:43
+#: ../misc-utils/lastlog2.8.adoc:46
 msgid "Use _FILE_ as lastlog2 database."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:46
+#: ../misc-utils/lastlog2.8.adoc:49
 #, fuzzy
 #| msgid "Display a help text and exit."
 msgid "Display help message and exit."
 msgstr "Mostrar texto de ayuda y finalizar."
 
 #. type: Labeled list
-#: ../misc-utils/lastlog2.8.adoc:47
+#: ../misc-utils/lastlog2.8.adoc:50
 #, fuzzy, no-wrap
 #| msgid "*-P*, *--port* _port_"
 msgid "*-i*, *--import* _FILE_"
 msgstr "*-P*, *--port* _puerto_"
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:50
+#: ../misc-utils/lastlog2.8.adoc:53
 msgid ""
 "Import data from old lastlog file _FILE_. Existing entries in the lastlog2 "
 "database will be overwritten."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lastlog2.8.adoc:51
+#: ../misc-utils/lastlog2.8.adoc:54
 #, fuzzy, no-wrap
 #| msgid "*-r*, *--repair* _N_"
 msgid "*-r*, *--rename* _NEWNAME_"
 msgstr "*-r*, *--repair* _N_"
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:53
+#: ../misc-utils/lastlog2.8.adoc:56
 msgid "This option can only be used together with *-u* (*--user*)."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lastlog2.8.adoc:54
+#: ../misc-utils/lastlog2.8.adoc:57
 #, fuzzy, no-wrap
 #| msgid "*-s*, *--since* _time_"
 msgid "*-s*, *--service* _num_"
 msgstr "*-s*, *--since* _fecha_y_hora_"
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:56
+#: ../misc-utils/lastlog2.8.adoc:59
 msgid "Display PAM service used to login in the last column."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lastlog2.8.adoc:57
+#: ../misc-utils/lastlog2.8.adoc:60
 #, fuzzy, no-wrap
 #| msgid "*-r*, *--reset*"
 msgid "*-S*, *--set*"
 msgstr "*-r*, *--reset*"
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:60
+#: ../misc-utils/lastlog2.8.adoc:63
 msgid ""
 "Set last login record of a user to the current time. This option can only be "
 "used together with *-u* (*--user*)."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lastlog2.8.adoc:61
+#: ../misc-utils/lastlog2.8.adoc:64
 #, fuzzy, no-wrap
 #| msgid "*-t*, *--time*"
 msgid "*-t*, *--time* _DAYS_"
 msgstr "*-t*, *--time*"
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:63
+#: ../misc-utils/lastlog2.8.adoc:66
 msgid "Print only last login records more recent than _DAYS_."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lastlog2.8.adoc:64
+#: ../misc-utils/lastlog2.8.adoc:67
 #, fuzzy, no-wrap
 #| msgid "*-u*, *--user*"
 msgid "*-u*, *--users* _LOGINS_"
 msgstr "*-u*, *--user*"
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:66
+#: ../misc-utils/lastlog2.8.adoc:69
 msgid "Print only the last login record of the user _LOGIN_."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:69
+#: ../misc-utils/lastlog2.8.adoc:72
 #, fuzzy
 #| msgid "Display version information and exit."
 msgid "Print version number and exit."
 msgstr "Mostrar información de versión y finalizar."
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:72
+#: ../misc-utils/lastlog2.8.adoc:75
 msgid ""
 "If the user has never logged in the message **Never logged in** will be "
 "displayed in the latest login time row."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:75
+#: ../misc-utils/lastlog2.8.adoc:78
 msgid ""
 "Only the entries for the current users of the system will be displayed.  "
 "Other entries may exist for users that were deleted previously."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lastlog2.8.adoc:78
+#: ../misc-utils/lastlog2.8.adoc:81
 #, no-wrap
 msgid "*/var/lib/lastlog/lastlog2.db*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:80
+#: ../misc-utils/lastlog2.8.adoc:83
 msgid "Lastlog2 logging database file"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:85
+#: ../misc-utils/lastlog2.8.adoc:88
 msgid "lastlog2 was written by Thorsten Kukuk for *liblastlog2*(3)."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lastlog2.8.adoc:89
+#: ../misc-utils/lastlog2.8.adoc:92
 msgid "*liblastlog2*(3)"
 msgstr ""
 
@@ -20410,7 +20488,7 @@ msgstr ""
 "_carácter_."
 
 #. type: Plain text
-#: ../misc-utils/look.1.adoc:76
+#: ../misc-utils/look.1.adoc:78
 msgid ""
 "The *look* utility exits 0 if one or more lines were found and displayed, 1 "
 "if no lines were found, and >1 if an error occurred."
@@ -20420,13 +20498,13 @@ msgstr ""
 "error."
 
 #. type: Labeled list
-#: ../misc-utils/look.1.adoc:79
+#: ../misc-utils/look.1.adoc:81
 #, no-wrap
 msgid "*WORDLIST*"
 msgstr "*WORDLIST*"
 
 #. type: Plain text
-#: ../misc-utils/look.1.adoc:81
+#: ../misc-utils/look.1.adoc:83
 #, fuzzy
 #| msgid ""
 #| "Path to a dictionary file. The environment variable has greater priority "
@@ -20439,34 +20517,34 @@ msgstr ""
 "que la ruta del diccionario definida en el segmento FICHEROS."
 
 #. type: Labeled list
-#: ../misc-utils/look.1.adoc:84
+#: ../misc-utils/look.1.adoc:86
 #, no-wrap
 msgid "_/usr/share/dict/words_"
 msgstr "_/usr/share/dict/words_"
 
 #. type: Plain text
-#: ../misc-utils/look.1.adoc:86
+#: ../misc-utils/look.1.adoc:88
 msgid "the dictionary"
 msgstr "el diccionario"
 
 #. type: Labeled list
-#: ../misc-utils/look.1.adoc:87
+#: ../misc-utils/look.1.adoc:89
 #, no-wrap
 msgid "_/usr/share/dict/web2_"
 msgstr "_/usr/share/dict/web2_"
 
 #. type: Plain text
-#: ../misc-utils/look.1.adoc:89
+#: ../misc-utils/look.1.adoc:91
 msgid "the alternative dictionary"
 msgstr "el diccionario alternativo"
 
 #. type: Plain text
-#: ../misc-utils/look.1.adoc:93
+#: ../misc-utils/look.1.adoc:95
 msgid "The *look* utility appeared in Version 7 AT&T Unix."
 msgstr "La utilidad *look* apareció en el Unix de AT&T versión 7."
 
 #. type: delimited block .
-#: ../misc-utils/look.1.adoc:99
+#: ../misc-utils/look.1.adoc:101
 #, no-wrap
 msgid ""
 "sort -d /etc/passwd -o /tmp/look.dict\n"
@@ -20476,7 +20554,7 @@ msgstr ""
 "look -t: root:foobar /tmp/look.dict\n"
 
 #. type: Plain text
-#: ../misc-utils/look.1.adoc:105
+#: ../misc-utils/look.1.adoc:107
 #, fuzzy
 #| msgid ""
 #| "*grep*(1),\n"
@@ -20959,13 +21037,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lsblk.8.adoc:171
+#: ../misc-utils/lsblk.8.adoc:169
 #, no-wrap
 msgid "*-w*, *--width* _number_"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:173
+#: ../misc-utils/lsblk.8.adoc:171
 msgid ""
 "Specifies output width as a number of characters. The default is the number "
 "of the terminal columns, and if not executed on a terminal, then output "
@@ -20976,13 +21054,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lsblk.8.adoc:174
+#: ../misc-utils/lsblk.8.adoc:172
 #, no-wrap
 msgid "*-x*, *--sort* _column_"
 msgstr "*-x*, *--sort* _columna_"
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:176
+#: ../misc-utils/lsblk.8.adoc:174
 msgid ""
 "Sort output lines by _column_. This option enables *--list* output format by "
 "default. It is possible to use the option *--tree* to force tree-like output "
@@ -20990,7 +21068,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:179
+#: ../misc-utils/lsblk.8.adoc:177
 msgid ""
 "The column name will be modified to contain only characters allowed for "
 "shell variable identifiers, for example, MIN_IO and FSUSE_PCT instead of MIN-"
@@ -21001,24 +21079,24 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lsblk.8.adoc:180
+#: ../misc-utils/lsblk.8.adoc:178
 #, no-wrap
 msgid "*-z*, *--zoned*"
 msgstr "*-z*, *--zoned*"
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:182
+#: ../misc-utils/lsblk.8.adoc:180
 msgid "Print the zone related information for each device."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lsblk.8.adoc:183
+#: ../misc-utils/lsblk.8.adoc:181
 #, no-wrap
 msgid "*--sysroot* _directory_"
 msgstr "*--sysroot* _directorio_"
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:185
+#: ../misc-utils/lsblk.8.adoc:183
 msgid ""
 "Gather data for a Linux instance other than the instance from which the "
 "*lsblk* command is issued. The specified directory is the system root of the "
@@ -21027,14 +21105,14 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lsblk.8.adoc:186
+#: ../misc-utils/lsblk.8.adoc:184
 #, fuzzy, no-wrap
 #| msgid "*-O*, *--options* _list_"
 msgid "*--properties-by* _list_"
 msgstr "*-O*, *--options* _lista_"
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:190
+#: ../misc-utils/lsblk.8.adoc:188
 msgid ""
 "This option specifies the methods used by *lsblk* to gather information "
 "about filesystems and partition tables. The list is a comma-separated list "
@@ -21043,41 +21121,41 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:193
+#: ../misc-utils/lsblk.8.adoc:191
 msgid ""
 "Reads data from udev DB. If unsuccessful, it continues to the next probing "
 "method."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:195
+#: ../misc-utils/lsblk.8.adoc:193
 msgid ""
 "Reads data directly from the device using libblkid. If unsuccessful, it "
 "continues to the next probing method."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lsblk.8.adoc:195
+#: ../misc-utils/lsblk.8.adoc:193
 #, fuzzy, no-wrap
 #| msgid "*fileset=*"
 msgid "*file*"
 msgstr "*fileset=*"
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:197
+#: ../misc-utils/lsblk.8.adoc:195
 msgid ""
 "Reads data from a file. This method is only used if the --sysroot option is "
 "specified. This method always stops probing if used."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lsblk.8.adoc:197
+#: ../misc-utils/lsblk.8.adoc:195
 #, no-wrap
 msgid "*none*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:199
+#: ../misc-utils/lsblk.8.adoc:197
 msgid "Does not probe. This method always stops probing."
 msgstr ""
 
@@ -22837,36 +22915,36 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/uuidgen.1.adoc:39
+#: ../misc-utils/uuidgen.1.adoc:37
 #, no-wrap
 msgid "*-m*, *--md5*"
 msgstr "*-m*, *--md5*"
 
 #. type: Plain text
-#: ../misc-utils/uuidgen.1.adoc:41
+#: ../misc-utils/uuidgen.1.adoc:39
 msgid "Use MD5 as the hash algorithm."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/uuidgen.1.adoc:42
+#: ../misc-utils/uuidgen.1.adoc:40
 #, no-wrap
 msgid "*-s*, *--sha1*"
 msgstr "*-s*, *--sha1*"
 
 #. type: Plain text
-#: ../misc-utils/uuidgen.1.adoc:44
+#: ../misc-utils/uuidgen.1.adoc:42
 msgid "Use SHA1 as the hash algorithm."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/uuidgen.1.adoc:45
+#: ../misc-utils/uuidgen.1.adoc:43
 #, fuzzy, no-wrap
 #| msgid "*-t*, *--time*"
 msgid "*-6*, *--time-v6*"
 msgstr "*-t*, *--time*"
 
 #. type: Plain text
-#: ../misc-utils/uuidgen.1.adoc:47 ../misc-utils/uuidgen.1.adoc:50
+#: ../misc-utils/uuidgen.1.adoc:45 ../misc-utils/uuidgen.1.adoc:48
 msgid ""
 "Generate a time-based UUID. This method creates a UUID based on the system "
 "clock plus and is lexicographically sortable according to the contained "
@@ -22874,20 +22952,20 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/uuidgen.1.adoc:48
+#: ../misc-utils/uuidgen.1.adoc:46
 #, fuzzy, no-wrap
 #| msgid "*-t*, *--time*"
 msgid "*-7*, *--time-v7*"
 msgstr "*-t*, *--time*"
 
 #. type: Labeled list
-#: ../misc-utils/uuidgen.1.adoc:51
+#: ../misc-utils/uuidgen.1.adoc:49
 #, no-wrap
 msgid "*-n*, *--namespace* _namespace_"
 msgstr "*-n*, *--namespace* _espacio-de-nombres_"
 
 #. type: Plain text
-#: ../misc-utils/uuidgen.1.adoc:53
+#: ../misc-utils/uuidgen.1.adoc:51
 msgid ""
 "Generate the hash with the _namespace_ prefix. The _namespace_ is UUID, or "
 "'@ns' where \"ns\" is well-known predefined UUID addressed by namespace name "
@@ -22895,25 +22973,25 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/uuidgen.1.adoc:54 ../sys-utils/lsipc.1.adoc:28
+#: ../misc-utils/uuidgen.1.adoc:52 ../sys-utils/lsipc.1.adoc:28
 #, no-wrap
 msgid "*-N*, *--name* _name_"
 msgstr "*-N*, *--name* _nombre_"
 
 #. type: Plain text
-#: ../misc-utils/uuidgen.1.adoc:56
+#: ../misc-utils/uuidgen.1.adoc:54
 msgid "Generate the hash of the _name_."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/uuidgen.1.adoc:57
+#: ../misc-utils/uuidgen.1.adoc:55
 #, fuzzy, no-wrap
 #| msgid "-t, --timeout I<timeout>"
 msgid "*-C*, *--count* _num_"
 msgstr "-t, --timeout I<tiempo_límite>"
 
 #. type: Plain text
-#: ../misc-utils/uuidgen.1.adoc:59
+#: ../misc-utils/uuidgen.1.adoc:57
 msgid ""
 "Generate multiple UUIDs using the enhanced capability of the libuuid to "
 "cache time-based UUIDs, thus resulting in improved performance. However, "
@@ -22921,13 +22999,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/uuidgen.1.adoc:60 ../sys-utils/lscpu.1.adoc:87
+#: ../misc-utils/uuidgen.1.adoc:58 ../sys-utils/lscpu.1.adoc:87
 #, no-wrap
 msgid "*-x*, *--hex*"
 msgstr "*-x*, *--hex*"
 
 #. type: Plain text
-#: ../misc-utils/uuidgen.1.adoc:62
+#: ../misc-utils/uuidgen.1.adoc:60
 msgid "Interpret name _name_ as a hexadecimal string."
 msgstr ""
 
@@ -23796,7 +23874,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../schedutils/chrt.1.adoc:59
+#: ../schedutils/chrt.1.adoc:59 ../sys-utils/irqtop.1.adoc:28
 #, no-wrap
 msgid "*-b*, *--batch*"
 msgstr "*-b*, *--batch*"
@@ -24414,9 +24492,9 @@ msgstr ""
 
 #. type: Title ==
 #: ../schedutils/coresched.1.adoc:115 ../schedutils/taskset.1.adoc:140
-#: ../sys-utils/chcpu.8.adoc:76 ../sys-utils/flock.1.adoc:131
-#: ../sys-utils/rtcwake.8.adoc:126 ../term-utils/scriptlive.1.adoc:71
-#: ../term-utils/scriptreplay.1.adoc:93
+#: ../sys-utils/chcpu.8.adoc:76 ../sys-utils/flock.1.adoc:137
+#: ../sys-utils/rtcwake.8.adoc:126 ../term-utils/scriptlive.1.adoc:80
+#: ../term-utils/scriptreplay.1.adoc:105
 #, no-wrap
 msgid "COPYRIGHT"
 msgstr ""
@@ -27510,20 +27588,20 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/eject.1.adoc:86
+#: ../sys-utils/eject.1.adoc:84
 msgid ""
 "Run in verbose mode; more information is displayed about what the command is "
 "doing."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/eject.1.adoc:87
+#: ../sys-utils/eject.1.adoc:85
 #, no-wrap
 msgid "*-X*, *--listspeed*"
 msgstr "*-X*, *--listspeed*"
 
 #. type: Plain text
-#: ../sys-utils/eject.1.adoc:89
+#: ../sys-utils/eject.1.adoc:87
 msgid ""
 "With this option the CD-ROM drive will be probed to detect the available "
 "speeds. The output is a list of speeds which can be used as an argument of "
@@ -27534,13 +27612,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/eject.1.adoc:90
+#: ../sys-utils/eject.1.adoc:88
 #, no-wrap
 msgid "*-x*, *--cdspeed* _speed_"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/eject.1.adoc:92
+#: ../sys-utils/eject.1.adoc:90
 msgid ""
 "With this option the drive is given a CD-ROM select speed command. The "
 "_speed_ argument is a number indicating the desired speed (e.g., 8 for 8X "
@@ -28114,15 +28192,39 @@ msgstr ""
 msgid "This is only available on kernel versions >= 3.15."
 msgstr ""
 
+#. type: Labeled list
+#: ../sys-utils/flock.1.adoc:88
+#, fuzzy, no-wrap
+#| msgid "*--boottime* _offset_"
+msgid "*--start* _offset_"
+msgstr "*--boottime* _desplazamiento_"
+
 #. type: Plain text
 #: ../sys-utils/flock.1.adoc:90
+msgid "The starting offset for lock. Ths option implies *--fcntl*."
+msgstr ""
+
+#. type: Labeled list
+#: ../sys-utils/flock.1.adoc:91
+#, fuzzy, no-wrap
+#| msgid "*-N*, *--inodes* _number_"
+msgid "*--length* _number_"
+msgstr "*-N*, *--inodes* _número_"
+
+#. type: Plain text
+#: ../sys-utils/flock.1.adoc:93
+msgid "The number of bytes to lock. Ths option implies *--fcntl*."
+msgstr ""
+
+#. type: Plain text
+#: ../sys-utils/flock.1.adoc:96
 msgid ""
 "Report how long it took to acquire the lock, or why the lock could not be "
 "obtained."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:96
+#: ../sys-utils/flock.1.adoc:102
 msgid ""
 "The command uses <sysexits.h> exit status values for everything, except when "
 "using either of the options *-n* or *-w* which report a failure to acquire "
@@ -28131,19 +28233,19 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:98
+#: ../sys-utils/flock.1.adoc:104
 msgid ""
 "When using the _command_ variant, and executing the child worked, then the "
 "exit status is that of the child command."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:102
+#: ../sys-utils/flock.1.adoc:108
 msgid "*flock* does not detect deadlock. See *flock*(2) for details."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:104
+#: ../sys-utils/flock.1.adoc:110
 msgid ""
 "Some file systems (e. g. NFS and CIFS) have a limited implementation of "
 "*flock*(2) and flock may always fail. For details see *flock*(2), *nfs*(5) "
@@ -28151,55 +28253,55 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:108
+#: ../sys-utils/flock.1.adoc:114
 msgid "Note that \"shell> \" in examples is a command line prompt."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:109
+#: ../sys-utils/flock.1.adoc:115
 #, no-wrap
 msgid "shell1> flock /tmp -c cat; shell2> flock -w .007 /tmp -c echo; /bin/echo $?"
 msgstr "shell1> flock /tmp -c cat; shell2> flock -w .007 /tmp -c echo; /bin/echo $?"
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:111
+#: ../sys-utils/flock.1.adoc:117
 msgid ""
 "Set exclusive lock to directory _/tmp_ and the second command will fail."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:112
+#: ../sys-utils/flock.1.adoc:118
 #, no-wrap
 msgid "shell1> flock -s /tmp -c cat; shell2> flock -s -w .007 /tmp -c echo; /bin/echo $?"
 msgstr "shell1> flock -s /tmp -c cat; shell2> flock -s -w .007 /tmp -c echo; /bin/echo $?"
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:114
+#: ../sys-utils/flock.1.adoc:120
 msgid ""
 "Set shared lock to directory _/tmp_ and the second command will not fail. "
 "Notice that attempting to get exclusive lock with second command would fail."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:115
+#: ../sys-utils/flock.1.adoc:121
 #, no-wrap
 msgid "shell> flock -x local-lock-file echo 'a b c'"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:117
+#: ../sys-utils/flock.1.adoc:123
 msgid ""
 "Grab the exclusive lock \"local-lock-file\" before running echo with 'a b c'."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:118
+#: ../sys-utils/flock.1.adoc:124
 #, no-wrap
 msgid "(; flock -n 9 || exit 1; # ... commands executed under lock ...; ) 9>/var/lock/mylockfile"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:120
+#: ../sys-utils/flock.1.adoc:126
 msgid ""
 "The form is convenient inside shell scripts. The mode used to open the file "
 "doesn't matter to *flock*; using _>_ or _>>_ allows the lockfile to be "
@@ -28209,14 +28311,14 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:121
+#: ../sys-utils/flock.1.adoc:127
 #, fuzzy, no-wrap
 #| msgid "[ $\\{FLOCKER} != $0 ] && exec env FLOCKER=\"$0 flock -en $0 $0 $@ || :"
 msgid "[ \"$\\{FLOCKER}\" != \"$0\" ] && exec env FLOCKER=\"$0\" flock -en \"$0\" \"$0\" \"$@\" || : "
 msgstr "[ $\\{FLOCKER} != $0 ] && exec env FLOCKER=\"$0 flock -en $0 $0 $@ || :"
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:123
+#: ../sys-utils/flock.1.adoc:129
 msgid ""
 "This is useful boilerplate code for shell scripts. Put it at the top of the "
 "shell script you want to lock and it'll automatically lock itself on the "
@@ -28228,13 +28330,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/flock.1.adoc:124
+#: ../sys-utils/flock.1.adoc:130
 #, no-wrap
 msgid "shell> exec 4<>/var/lock/mylockfile; shell> flock -n 4"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:126
+#: ../sys-utils/flock.1.adoc:132
 msgid ""
 "This form is convenient for locking a file without spawning a subprocess. "
 "The shell opens the lock file for reading and writing as file descriptor 4, "
@@ -28242,13 +28344,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:130
+#: ../sys-utils/flock.1.adoc:136
 msgid "mailto:hpa@zytor.com[H. Peter Anvin]"
 msgstr "mailto:hpa@zytor.com[H. Peter Anvin]"
 
 #. TRANSLATORS: Keep {copyright} untranslated.
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:135
+#: ../sys-utils/flock.1.adoc:141
 msgid ""
 "Copyright {copyright} 2003-2006 H. Peter Anvin. This is free software; see "
 "the source for copying conditions. There is NO warranty; not even for "
@@ -28256,7 +28358,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/flock.1.adoc:140
+#: ../sys-utils/flock.1.adoc:146
 #, fuzzy
 #| msgid ""
 #| "*flock*(1),\n"
@@ -31616,22 +31718,29 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/irqtop.1.adoc:27 ../sys-utils/lsirq.1.adoc:30
+#: ../sys-utils/irqtop.1.adoc:27 ../sys-utils/lsirq.1.adoc:33
 msgid ""
 "Specify which output columns to print. Use *--help* to get a list of all "
 "supported columns. The default list of columns may be extended if list is "
 "specified in the format _+list_."
 msgstr ""
 
+#. type: Plain text
+#: ../sys-utils/irqtop.1.adoc:30
+msgid ""
+"Starts irqtop in batch mode, which could be useful for sending output to "
+"other programs or to a file."
+msgstr ""
+
 #. type: Labeled list
-#: ../sys-utils/irqtop.1.adoc:28
+#: ../sys-utils/irqtop.1.adoc:31
 #, fuzzy, no-wrap
 #| msgid "*-c*, *--cr-mode* _mode_"
 msgid "*-c*, *--cpu-stat* _mode_"
 msgstr "*-c*, *--cr-mode* _modo_"
 
 #. type: Plain text
-#: ../sys-utils/irqtop.1.adoc:30
+#: ../sys-utils/irqtop.1.adoc:33
 msgid ""
 "Show per-cpu statistics by specified mode. Available modes are: *auto*, "
 "*enable*, *disable*. The default option *auto* detects the width of window, "
@@ -31640,111 +31749,128 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/irqtop.1.adoc:31 ../sys-utils/lsirq.1.adoc:46
+#: ../sys-utils/irqtop.1.adoc:34 ../sys-utils/lsirq.1.adoc:49
 #, fuzzy, no-wrap
 #| msgid "*-S*, *--split* _list_"
 msgid "*-C*, *--cpu-list* _list_"
 msgstr "*-S*, *--split* _lista_"
 
 #. type: Plain text
-#: ../sys-utils/irqtop.1.adoc:33
+#: ../sys-utils/irqtop.1.adoc:36
 msgid "Specify cpus in list format to show."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/irqtop.1.adoc:34
+#: ../sys-utils/irqtop.1.adoc:37
 #, no-wrap
 msgid "*-d*, *--delay* _seconds_"
 msgstr "*-d*, *--delay* _segundos_"
 
 #. type: Plain text
-#: ../sys-utils/irqtop.1.adoc:36
+#: ../sys-utils/irqtop.1.adoc:39
 msgid "Update interrupt output every _seconds_ intervals."
 msgstr ""
 
+#. type: Plain text
+#: ../sys-utils/irqtop.1.adoc:42
+msgid "Use JSON output format. irqtop will run in batch mode."
+msgstr ""
+
 #. type: Labeled list
-#: ../sys-utils/irqtop.1.adoc:37 ../sys-utils/lsirq.1.adoc:31
+#: ../sys-utils/irqtop.1.adoc:43
+#, fuzzy, no-wrap
+#| msgid "*-n*, *--lines* _number_"
+msgid "*-n*, *--iter* _number_"
+msgstr "*-n*, *--lines* _número_"
+
+#. type: Plain text
+#: ../sys-utils/irqtop.1.adoc:45
+msgid "Specifies the maximum iterations before quitting."
+msgstr ""
+
+#. type: Labeled list
+#: ../sys-utils/irqtop.1.adoc:46 ../sys-utils/lsirq.1.adoc:34
 #, no-wrap
 msgid "*-s*, *--sort* _column_"
 msgstr "*-s*, *--sort* _columna_"
 
 #. type: Plain text
-#: ../sys-utils/irqtop.1.adoc:39
+#: ../sys-utils/irqtop.1.adoc:48
 msgid ""
 "Specify sort criteria by column name. See *--help* output to get column "
 "names. The sort criteria may be changes in interactive mode."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/irqtop.1.adoc:40 ../sys-utils/lsirq.1.adoc:40
+#: ../sys-utils/irqtop.1.adoc:49 ../sys-utils/lsirq.1.adoc:43
 #, no-wrap
 msgid "*-S*, *--softirq*"
 msgstr "*-S*, *--softirq*"
 
 #. type: Plain text
-#: ../sys-utils/irqtop.1.adoc:42 ../sys-utils/lsirq.1.adoc:42
+#: ../sys-utils/irqtop.1.adoc:51 ../sys-utils/lsirq.1.adoc:45
 msgid "Show softirqs information."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/irqtop.1.adoc:43 ../sys-utils/lsirq.1.adoc:43
+#: ../sys-utils/irqtop.1.adoc:52 ../sys-utils/lsirq.1.adoc:46
 #, fuzzy, no-wrap
 #| msgid "*-t*, *--to* _N_"
 msgid "*-t*, *--threshold* _min_"
 msgstr "*-t*, *--to* _N_"
 
 #. type: Plain text
-#: ../sys-utils/irqtop.1.adoc:45 ../sys-utils/lsirq.1.adoc:45
+#: ../sys-utils/irqtop.1.adoc:54 ../sys-utils/lsirq.1.adoc:48
 msgid ""
 "Only show IRQs with counters above the specified threshold. Human readable "
 "values are supported (e.g. 1.2K)."
 msgstr ""
 
 #. type: Title ==
-#: ../sys-utils/irqtop.1.adoc:48
+#: ../sys-utils/irqtop.1.adoc:57
 #, no-wrap
 msgid "INTERACTIVE MODE KEY COMMANDS"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/irqtop.1.adoc:50
+#: ../sys-utils/irqtop.1.adoc:59
 #, no-wrap
 msgid "*i*"
 msgstr "*i*"
 
 #. type: Plain text
-#: ../sys-utils/irqtop.1.adoc:52
+#: ../sys-utils/irqtop.1.adoc:61
 msgid "sort by short irq name or number field"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/irqtop.1.adoc:55
+#: ../sys-utils/irqtop.1.adoc:64
 msgid "sort by total count of interrupts (the default)"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/irqtop.1.adoc:58
+#: ../sys-utils/irqtop.1.adoc:67
 msgid "sort by delta count of interrupts"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/irqtop.1.adoc:61
+#: ../sys-utils/irqtop.1.adoc:70
 msgid "sort by long descriptive name field"
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/irqtop.1.adoc:62
+#: ../sys-utils/irqtop.1.adoc:71
 #, no-wrap
 msgid "*q Q*"
 msgstr "*q Q*"
 
 #. type: Plain text
-#: ../sys-utils/irqtop.1.adoc:64
+#: ../sys-utils/irqtop.1.adoc:73
 msgid "stop updates and exit program"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/irqtop.1.adoc:71 ../sys-utils/lsirq.1.adoc:57
+#: ../sys-utils/irqtop.1.adoc:80 ../sys-utils/lsirq.1.adoc:60
 #, fuzzy
 #| msgid ""
 #| "mailto:pizhenwei@bytedance.com[Zhenwei Pi], mailto:kerolasa@iki.fi[Sami "
@@ -33026,9 +33152,7 @@ msgstr "*-Q*, *--queue*"
 
 #. type: Plain text
 #: ../sys-utils/lsipc.1.adoc:49
-msgid ""
-"Write information about active POSIX message queues. Mounts /dev/mqueue if "
-"not already mounted."
+msgid "Write information about active POSIX message queues."
 msgstr ""
 
 #. type: Plain text
@@ -33117,22 +33241,35 @@ msgstr "*lsirq* [opciones]\n"
 msgid "Display kernel interrupt counter information."
 msgstr "Mostrar información de versión y finalizar."
 
+#. type: Labeled list
+#: ../sys-utils/lsirq.1.adoc:28
+#, fuzzy, no-wrap
+#| msgid "*-o*, *--output* _file_"
+msgid "*-i*, *--input* _file_"
+msgstr "*-o*, *--output* _fichero_"
+
 #. type: Plain text
-#: ../sys-utils/lsirq.1.adoc:33
+#: ../sys-utils/lsirq.1.adoc:30
+msgid ""
+"Read data from _file_ (Which was created by other tools, e.g. sosreport)."
+msgstr ""
+
+#. type: Plain text
+#: ../sys-utils/lsirq.1.adoc:36
 msgid ""
 "Specify sort criteria by column name. See *--help* output to get column "
 "names."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/lsirq.1.adoc:39
+#: ../sys-utils/lsirq.1.adoc:42
 msgid ""
 "Produce output in the form of key=\"value\" pairs. All potentially unsafe "
 "characters are hex-escaped (\\x<code>)."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/lsirq.1.adoc:48
+#: ../sys-utils/lsirq.1.adoc:51
 msgid "Only show interrupt counters on the specified CPU list."
 msgstr ""
 
@@ -33251,14 +33388,14 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/lsmem.1.adoc:65
+#: ../sys-utils/lsmem.1.adoc:63
 #, fuzzy, no-wrap
 #| msgid "B<-f>, B<--force>"
 msgid "*--summary*[**=**_when_]"
 msgstr "B<-f>, B<--force>"
 
 #. type: Plain text
-#: ../sys-utils/lsmem.1.adoc:67
+#: ../sys-utils/lsmem.1.adoc:65
 msgid ""
 "This option controls summary lines output. The optional argument _when_ can "
 "be *never*, *always* or *only*. If the _when_ argument is omitted, it "
@@ -35123,6 +35260,13 @@ msgstr ""
 #. type: Plain text
 #: ../sys-utils/mount.8.adoc:454
 msgid "Mount the partition that has the specified _uuid_."
+msgstr ""
+
+#. type: Plain text
+#: ../sys-utils/mount.8.adoc:457
+msgid ""
+"Enables verbose mode. Starting from version 2.41, if the new kernel mount "
+"API is available, it will also print kernel info messages."
 msgstr ""
 
 #. type: Labeled list
@@ -47706,14 +47850,14 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/script.1.adoc:72 ../term-utils/scriptlive.1.adoc:36
+#: ../term-utils/script.1.adoc:72 ../term-utils/scriptlive.1.adoc:41
 #, fuzzy, no-wrap
 #| msgid "B<-v>, B<--version>"
 msgid "*-E*, *--echo* _when_"
 msgstr "B<-v>, B<--version>"
 
 #. type: Plain text
-#: ../term-utils/script.1.adoc:74 ../term-utils/scriptlive.1.adoc:38
+#: ../term-utils/script.1.adoc:74
 msgid ""
 "This option controls the *ECHO* flag for the slave end of the session's "
 "pseudoterminal. The supported modes are _always_, _never_, or _auto_."
@@ -47782,8 +47926,8 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/script.1.adoc:89 ../term-utils/scriptlive.1.adoc:33
-#: ../term-utils/scriptreplay.1.adoc:40
+#: ../term-utils/script.1.adoc:89 ../term-utils/scriptlive.1.adoc:38
+#: ../term-utils/scriptreplay.1.adoc:43
 #, no-wrap
 msgid "*-B*, *--log-io* _file_"
 msgstr "*-B*, *--log-io* _fichero_"
@@ -47797,8 +47941,8 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/script.1.adoc:92 ../term-utils/scriptlive.1.adoc:30
-#: ../term-utils/scriptreplay.1.adoc:34
+#: ../term-utils/script.1.adoc:92 ../term-utils/scriptlive.1.adoc:35
+#: ../term-utils/scriptreplay.1.adoc:37
 #, no-wrap
 msgid "*-I*, *--log-in* _file_"
 msgstr "*-I*, *--log-in* _fichero_"
@@ -47818,7 +47962,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/script.1.adoc:97 ../term-utils/scriptreplay.1.adoc:37
+#: ../term-utils/script.1.adoc:97 ../term-utils/scriptreplay.1.adoc:40
 #, no-wrap
 msgid "*-O*, *--log-out* _file_"
 msgstr "*-O*, *--log-out* _fichero_"
@@ -47832,8 +47976,8 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/script.1.adoc:100 ../term-utils/scriptlive.1.adoc:44
-#: ../term-utils/scriptreplay.1.adoc:46
+#: ../term-utils/script.1.adoc:100 ../term-utils/scriptlive.1.adoc:52
+#: ../term-utils/scriptreplay.1.adoc:50
 #, no-wrap
 msgid "*-T*, *--log-timing* _file_"
 msgstr "*-T*, *--log-timing* _fichero_"
@@ -48070,8 +48214,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../term-utils/scriptlive.1.adoc:17
-msgid "*scriptlive* [options] [*-t*] _timingfile_ [*-I*|*-B*] _typescript_"
-msgstr ""
+#, fuzzy
+#| msgid "*script* [options] [_file_]\n"
+msgid "*scriptlive* [options] _timingfile_ _typescript_"
+msgstr "*script* [opciones] [_fichero_]\n"
 
 #. type: Plain text
 #: ../term-utils/scriptlive.1.adoc:21
@@ -48089,61 +48235,68 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:25
+#: ../term-utils/scriptlive.1.adoc:28
 msgid ""
-"*Be careful!* Do not forget that the typescript may contains arbitrary "
-"commands. It is recommended to use *\"scriptreplay --stream in --log-in "
-"typescript\"* (or with *--log-io* instead of *--log-in*) to verify the "
-"typescript before it is executed by *scriptlive*."
+"*Be careful!* The typescript may contain arbitrary commands. It is "
+"recommended to use *\"scriptreplay --stream in --log-in typescript\"* (or "
+"with *--log-io* instead of *--log-in*) to verify the typescript before it is "
+"executed with *scriptlive*."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:27
+#: ../term-utils/scriptlive.1.adoc:32
 msgid ""
-"The timing information is what *script*(1) outputs to file specified by *--"
-"log-timing*. The typescript has to contain stdin information and it is what "
-"script1 outputs to file specified by *--log-in* or *--log-io*."
+"The timing information is what *script*(1) outputs to the file specified by "
+"*--log-timing*. The typescript has to contain stdin information, and is what "
+"*script*(1) outputs to the file specified by *--log-in* or *--log-io*."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:32 ../term-utils/scriptreplay.1.adoc:36
+#: ../term-utils/scriptlive.1.adoc:37 ../term-utils/scriptreplay.1.adoc:39
 msgid "File containing *script*'s terminal input."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:35 ../term-utils/scriptreplay.1.adoc:42
+#: ../term-utils/scriptlive.1.adoc:40 ../term-utils/scriptreplay.1.adoc:45
 msgid "File containing *script*'s terminal output and input."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:40
+#: ../term-utils/scriptlive.1.adoc:44
 msgid ""
-"The default is _auto_ -- in this case, *ECHO* enabled; this default behavior "
-"is subject to change."
+"This option controls the *ECHO* flag for the slave end of the session's "
+"pseudoterminal. The supported modes are *always*, *never*, and *auto*."
+msgstr ""
+
+#. type: Plain text
+#: ../term-utils/scriptlive.1.adoc:47
+msgid ""
+"The default is *auto* -- in which case *ECHO* is enabled. This default "
+"behavior is subject to change."
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/scriptlive.1.adoc:41 ../term-utils/scriptreplay.1.adoc:43
+#: ../term-utils/scriptlive.1.adoc:48 ../term-utils/scriptreplay.1.adoc:46
 #, no-wrap
 msgid "*-t*, *--timing* _file_"
 msgstr "*-t*, *--timing* _fichero_"
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:43 ../term-utils/scriptreplay.1.adoc:45
+#: ../term-utils/scriptlive.1.adoc:51 ../term-utils/scriptreplay.1.adoc:49
 msgid ""
-"File containing *script*'s timing output. This option overrides old-style "
-"arguments."
+"File containing *script*'s timing output.  This option replaces the "
+"_timingfile_ positional argument."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:46
+#: ../term-utils/scriptlive.1.adoc:55
 msgid ""
-"Aliased to *-t*, maintained for compatibility with *script*(1) command-line "
-"options."
+"An alias for *-t*; maintained for compatibility with the *script*(1)  "
+"command-line options."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:49 ../term-utils/scriptreplay.1.adoc:57
+#: ../term-utils/scriptlive.1.adoc:58 ../term-utils/scriptreplay.1.adoc:64
 msgid ""
 "Speed up the replay displaying this _number_ of times. The argument is a "
 "floating-point number. It's called divisor because it divides the timings by "
@@ -48151,13 +48304,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/scriptlive.1.adoc:50 ../term-utils/scriptreplay.1.adoc:58
+#: ../term-utils/scriptlive.1.adoc:59 ../term-utils/scriptreplay.1.adoc:65
 #, no-wrap
 msgid "*-m*, *--maxdelay* _number_"
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:52 ../term-utils/scriptreplay.1.adoc:60
+#: ../term-utils/scriptlive.1.adoc:61 ../term-utils/scriptreplay.1.adoc:67
 msgid ""
 "Set the maximum delay between updates to _number_ of seconds. The argument "
 "is a floating-point number. This can be used to avoid long pauses in the "
@@ -48165,7 +48318,7 @@ msgid ""
 msgstr ""
 
 #. type: delimited block .
-#: ../term-utils/scriptlive.1.adoc:65
+#: ../term-utils/scriptlive.1.adoc:74
 #, no-wrap
 msgid ""
 "% script --log-timing file.tm --log-in script.in\n"
@@ -48179,24 +48332,24 @@ msgstr ""
 
 #. TRANSLATORS: Keep {copyright} untranslated.
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:75
+#: ../term-utils/scriptlive.1.adoc:84
 msgid "Copyright {copyright} 2019 Karel Zak"
 msgstr "Copyright {copyright} 2019 Karel Zak"
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:77 ../term-utils/scriptreplay.1.adoc:105
+#: ../term-utils/scriptlive.1.adoc:86 ../term-utils/scriptreplay.1.adoc:117
 msgid ""
 "This is free software; see the source for copying conditions. There is NO "
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:79 ../term-utils/scriptreplay.1.adoc:107
+#: ../term-utils/scriptlive.1.adoc:88 ../term-utils/scriptreplay.1.adoc:119
 msgid "Released under the GNU General Public License version 2 or later."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:84
+#: ../term-utils/scriptlive.1.adoc:93
 #, fuzzy
 #| msgid ""
 #| "*script*(1),\n"
@@ -48221,7 +48374,7 @@ msgstr "script - hace una transcripción de una sesión de terminal"
 
 #. type: Plain text
 #: ../term-utils/scriptreplay.1.adoc:17
-msgid "*scriptreplay* [options] [*-t*] _timingfile_ [_typescript_ [_divisor_]]"
+msgid "*scriptreplay* [options] _timingfile_ [_typescript_ [_divisor_]]"
 msgstr ""
 
 #. type: Plain text
@@ -48252,15 +48405,15 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:27
+#: ../term-utils/scriptreplay.1.adoc:29
 msgid ""
-"By default, the typescript to display is assumed to be named _typescript_, "
+"By default, the _typescript_ to display is assumed to be named *typescript*, "
 "but other filenames may be specified, as the second parameter or with option "
 "*--log-out*."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:29
+#: ../term-utils/scriptreplay.1.adoc:31
 msgid ""
 "If the third parameter or *--divisor* is specified, it is used as a speed-up "
 "multiplier. For example, a speed-up of 2 makes *scriptreplay* go twice as "
@@ -48269,83 +48422,81 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:31
+#: ../term-utils/scriptreplay.1.adoc:34
 msgid ""
 "During the replay, you can interactively speed up, slow down, or pause the "
-"playback using key bindings."
+"playback using the Up, Down, and Space keys."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:39
+#: ../term-utils/scriptreplay.1.adoc:42
 msgid "File containing *script*'s terminal output."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:48
+#: ../term-utils/scriptreplay.1.adoc:52
 msgid ""
 "This is an alias for *-t*, maintained for compatibility with *script*(1) "
 "command-line options."
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/scriptreplay.1.adoc:49
+#: ../term-utils/scriptreplay.1.adoc:53
 #, no-wrap
 msgid "*-s*, *--typescript* _file_"
 msgstr "*-s*, *--typescript* _fichero_"
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:51
-msgid ""
-"File containing *script*'s terminal output. Deprecated alias to *--log-out*. "
-"This option overrides old-style arguments."
+#: ../term-utils/scriptreplay.1.adoc:55
+msgid "Deprecated alias of *--log-out*."
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/scriptreplay.1.adoc:52
+#: ../term-utils/scriptreplay.1.adoc:56
 #, no-wrap
 msgid "*-c*, *--cr-mode* _mode_"
 msgstr "*-c*, *--cr-mode* _modo_"
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:54
+#: ../term-utils/scriptreplay.1.adoc:61
 msgid ""
-"Specifies how to use the CR (0x0D, carriage return) character from log "
-"files. The default mode is _auto_, in this case CR is replaced with line "
-"break for stdin log, because otherwise *scriptreplay* would overwrite the "
-"same line. The other modes are _never_ and _always_."
+"Specifies how to handle the CR (carriage return, 0x0D) character from log "
+"files. The default mode is *auto*, in which case CR is replaced with a line "
+"break for the stdin log, because otherwise *scriptreplay* would overwrite "
+"the same line. The other modes are *never* and *always*."
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/scriptreplay.1.adoc:61
+#: ../term-utils/scriptreplay.1.adoc:68
 #, no-wrap
 msgid "*--summary*"
 msgstr "*--summary*"
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:63
+#: ../term-utils/scriptreplay.1.adoc:72
 msgid ""
 "Display details about the session recorded in the specified timing file and "
-"exit. The session has to be recorded using _advanced_ format (see "
+"exit. The session must have been recorded using the *advanced* format (see "
 "*script*(1) option *--logging-format* for more details)."
 msgstr ""
 
 #. type: Labeled list
-#: ../term-utils/scriptreplay.1.adoc:64
+#: ../term-utils/scriptreplay.1.adoc:73
 #, no-wrap
 msgid "*-x*, *--stream* _type_"
 msgstr "*-x*, *--stream* _tipo_"
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:66
+#: ../term-utils/scriptreplay.1.adoc:78
 msgid ""
 "Forces *scriptreplay* to print only the specified stream. The supported "
-"stream types are _in_, _out_, _signal_, or _info_. This option is "
-"recommended for multi-stream logs (e.g., *--log-io*) in order to print only "
-"specified data."
+"stream types are *in*, *out*, *signal*, and *info*. This option is "
+"recommended for multi-stream logs (created with *--log-io*) in order to "
+"print only the desired data."
 msgstr ""
 
 #. type: delimited block .
-#: ../term-utils/scriptreplay.1.adoc:79
+#: ../term-utils/scriptreplay.1.adoc:91
 #, no-wrap
 msgid ""
 "% script --log-timing file.tm --log-out script.out\n"
@@ -48358,41 +48509,41 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: ../term-utils/scriptreplay.1.adoc:81
+#: ../term-utils/scriptreplay.1.adoc:93
 #, no-wrap
 msgid "KEY BINDINGS"
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:84
+#: ../term-utils/scriptreplay.1.adoc:96
 #, fuzzy
 #| msgid "The following environment variable is utilized by *script*:"
 msgid "The following keys control the playback of the script:"
 msgstr "Las siguientes variables de entorno son usadas por *script*:"
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:86
+#: ../term-utils/scriptreplay.1.adoc:98
 msgid ""
 "*Space*: Toggles pause and unpause. Press this key to pause the playback, "
 "and press it again to resume."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:87
+#: ../term-utils/scriptreplay.1.adoc:99
 msgid ""
 "*Up Arrow*: Increases the playback speed. Each press of this key will make "
 "the script replay faster by x0.1."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:88
+#: ../term-utils/scriptreplay.1.adoc:100
 msgid ""
 "*Down Arrow*: Decreases the playback speed. Each press of this key will slow "
 "down the script replay by x0.1."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:92
+#: ../term-utils/scriptreplay.1.adoc:104
 msgid ""
 "The original *scriptreplay* program was written by mailto:joey@kitenet."
 "net[Joey Hess]. The program was re-written in C by mailto:jay@gnu.org[James "
@@ -48401,26 +48552,26 @@ msgstr ""
 
 #. TRANSLATORS: Keep {copyright} untranslated.
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:97
+#: ../term-utils/scriptreplay.1.adoc:109
 msgid "Copyright {copyright} 2008 James Youngman"
 msgstr "Copyright {copyright} 2008 James Youngman"
 
 #. TRANSLATORS: Keep {copyright} untranslated.
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:100
+#: ../term-utils/scriptreplay.1.adoc:112
 msgid "Copyright {copyright} 2008-2019 Karel Zak"
 msgstr "Copyright {copyright} 2008-2019 Karel Zak"
 
 #. TRANSLATORS: Keep {copyright} untranslated.
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:103
+#: ../term-utils/scriptreplay.1.adoc:115
 #, fuzzy
 #| msgid "Copyright {copyright} 2008 James Youngman"
 msgid "Copyright {copyright} 2024 Jonathan Ketchker"
 msgstr "Copyright {copyright} 2008 James Youngman"
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:112
+#: ../term-utils/scriptreplay.1.adoc:124
 #, fuzzy
 #| msgid ""
 #| "*script*(1),\n"
@@ -52570,14 +52721,14 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../text-utils/rev.1.adoc:61
+#: ../text-utils/rev.1.adoc:59
 #, fuzzy, no-wrap
 #| msgid "*-z*, *--zero*"
 msgid "*-0*, *--zero*"
 msgstr "*-z*, *--zero*"
 
 #. type: Plain text
-#: ../text-utils/rev.1.adoc:63
+#: ../text-utils/rev.1.adoc:61
 msgid "_Zero termination_. Use the byte '\\0' as line separator."
 msgstr ""
 
@@ -52884,13 +53035,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../text-utils/bits.1.adoc:72
+#: ../text-utils/bits.1.adoc:70
 #, no-wrap
 msgid "*-w* __<NUM>__, *--width* __<NUM>__"
 msgstr ""
 
 #. type: Plain text
-#: ../text-utils/bits.1.adoc:75
+#: ../text-utils/bits.1.adoc:73
 msgid ""
 "Maximum number of bits in the masks handled by *bits* (default __8192__). "
 "Any bit larger than this number will be truncated."
