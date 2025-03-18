@@ -121,6 +121,7 @@ audit-arch.h:
     - add defines for m68k, sh (by Chris Hofstaedtler)
 
 autotools:
+    - add missing meson.build files (by Karel Zak)
     - Fix use of mq_open and mq_close (by Samuel Thibault)
     - remove tools/git-tp-sync-man (by Karel Zak)
     - fix po-man discheck (by Karel Zak)
@@ -189,6 +190,7 @@ build(deps):
     - bump actions/checkout from 1 to 4 (by dependabot[bot])
 
 build-sys:
+    - update release dates (by Karel Zak)
     - keep the most recent version in NEWS (by Karel Zak)
     - update version dates (by Karel Zak)
     - build sample-mount-overwrite only on Linux (by Pino Toscano)
@@ -257,6 +259,9 @@ column:
 column.1.adoc:
     - Fix spelling and improve option descriptions (by Nejc Bertoncelj)
 
+{configure.ac,meson.build}:
+    - conditionally build {enosys,setpriv} if seccomp is present #3280 (by Thomas Devoogdt)
+
 coresched:
     - add bash completions (by Thijs Raymakers)
     - Manage core scheduling cookies for tasks (by Thijs Raymakers)
@@ -275,6 +280,7 @@ doc:
     - fsck.8.adoc - fix email typo (by Geoffrey Casper)
 
 docs:
+    - update v2.41-rc2-ReleaseNotes (by Karel Zak)
     - fix typo in v2.41-ReleaseNotes (by Chris Hofstaedtler)
     - add v2.41-ReleaseNotes (by Karel Zak)
     - reduce and freeze NEWS file (by Karel Zak)
@@ -306,6 +312,10 @@ env:
     - cleanup env_list API (by Karel Zak)
     - add "overwrite" argument to env_list_setenv() (by Karel Zak)
     - save parsed variables into ul_env_list (by Karel Zak)
+
+exch:
+    - cosmetic code changes (by Karel Zak)
+    - fix compile error if renameat2 is not present (by Thomas Devoogdt)
 
 fadvise:
     - fix a typo of an option name in the bash completion rule (by Masatake YAMATO)
@@ -408,6 +418,7 @@ hexdump:
     - check blocksize when display data (by Karel Zak)
 
 hwclock:
+    - avoid dereferencing a pointer [coverity scan] (by Karel Zak)
     - Support GNU Hurd (by Zhaoming Luo)
     - Remove ioperm declare as it causes nested extern declare warning (by Zhaoming Luo)
     - cleanup save_adjtime() (by Karel Zak)
@@ -416,6 +427,7 @@ hwclock:
     - initialize parser variables (by Karel Zak)
 
 include:
+    - use public domain for colors.{c,h} and xalloc.h (by Karel Zak)
     - add functions to implement --hyperlink (by Karel Zak)
     - Include <unistd.h> in pidfd-utils.h for syscall() (by Xi Ruoyao)
     - introduce seccomp.h (by Thomas Weißschuh)
@@ -460,6 +472,9 @@ ipc:
 
 ipcrm:
     - simplify code (by Yang Kun)
+
+irqtop,lsirq:
+    - set up locale path, so messages get actually translated (by Benno Schulenberg)
 
 jsonwrt:
     - add ul_jsonwrt_flush (by Thomas Weißschuh)
@@ -539,10 +554,12 @@ lib/jsonwrt:
     - introduce ul_jsonwrt_empty() (by Karel Zak)
 
 liblastlog2:
+    - (test) fix memory leak in failed test [coverity scan] (by Karel Zak)
     - tests provide fallback PATH_MAX definition (by Pino Toscano)
     - Improved sqlite3 error handling (by Stefan Schubert)
 
 libmount:
+    - remove possible leak in mnt_context_guess_srcpath_fstype() [coverity scan] (by Karel Zak)
     - add support for STATMOUNT_SB_SOURCE (by Karel Zak)
     - fix table_init_listmount() (by Karel Zak)
     - fix use-after free, etc. [coverity scan] (by Karel Zak)
@@ -712,6 +729,7 @@ lsclocks:
     - fix FD leak (by Karel Zak)
 
 lscpu:
+    - New Arm part numbers (by Jeremy Linton)
     - skip frequencies of 0 MHz when getting minmhz (by Ricardo Neri)
     - make three column descriptions more grammatical (by Benno Schulenberg)
     - Add FUJITSU aarch64 MONAKA cpupart (by Emi, Kisanuki)
@@ -729,6 +747,9 @@ lscpu:
     - restructure op-mode printing (by Thomas Weißschuh)
 
 lsfd:
+    - (man) fix a typo (by Masatake YAMATO)
+    - initialize struct stat [coverity scan] (by Karel Zak)
+    - (man) fix a typo (by Masatake YAMATO)
     - remove C++ comment (by Karel Zak)
     - support AF_VSOCK sockets (by Masatake YAMATO)
     - don't enable hyperlinks for deleted files (by Masatake YAMATO)
@@ -805,6 +826,8 @@ lslocks:
     - fix buffer overflow (by Karel Zak)
 
 lslogins:
+    - fix typo (by Karel Zak)
+    - remove possible memory leaks [coverity scan] (by Karel Zak)
     - don't ignore stat error (by Thorsten Kukuk)
 
 lsmem:
@@ -851,6 +874,7 @@ mesg:
     - remove ability to compile with fchmod(S_IWOTH) (by Karel Zak)
 
 meson:
+    - bring hexdump in line with others (by Christian Hesse)
     - demote two libraries to library (by Rosen Penev)
     - generate man page translations (by Jordan Williams)
     - use files() for man page source files (by Jordan Williams)
@@ -964,6 +988,8 @@ mkswap.8.adoc:
     - update note regarding swapfile creation (by Mike Yuan)
 
 more:
+    - remove a duplicate call of setlocale() (by Benno Schulenberg)
+    - fix repeat command (by Karel Zak)
     - fix compilation (by Yang Kun)
     - make sure we have data on stderr (by Karel Zak)
     - remove second check for EOF (#2714) (by Thorsten Kukuk)
@@ -1000,6 +1026,13 @@ pg:
     - make sure cmdline[] not overflow [coverity scan] (by Karel Zak)
 
 po:
+    - update uk.po (from translationproject.org) (by Yuri Chornoivan)
+    - update ro.po (from translationproject.org) (by Remus-Gabriel Chelu)
+    - update pl.po (from translationproject.org) (by Jakub Bogusz)
+    - update nl.po (from translationproject.org) (by Benno Schulenberg)
+    - update ko.po (from translationproject.org) (by Seong-ho Cho)
+    - update hr.po (from translationproject.org) (by Božidar Putanec)
+    - update fr.po (from translationproject.org) (by Frédéric Marchal)
     - merge changes (by Karel Zak)
     - update nl.po (from translationproject.org) (by Benno Schulenberg)
     - update es.po (from translationproject.org) (by Antonio Ceballos Roa)
@@ -1024,6 +1057,12 @@ po:
     - update cs.po (from translationproject.org) (by Petr Písař)
 
 po-man:
+    - merge changes (by Karel Zak)
+    - add pl.po (from translationproject.org) (by Michał Kułach)
+    - update uk.po (from translationproject.org) (by Yuri Chornoivan)
+    - update ro.po (from translationproject.org) (by Remus-Gabriel Chelu)
+    - update fr.po (from translationproject.org) (by Frédéric Marchal)
+    - fix typos in configuration (by Karel Zak)
     - merge changes (by Karel Zak)
     - merge changes (by Karel Zak)
     - update uk.po (from translationproject.org) (by Yuri Chornoivan)
@@ -1112,6 +1151,7 @@ strutils.h:
     - Include strings.h header for strncasecmp function (by Jordan Williams)
 
 su:
+    - (man) fix duplicate asterisk (by Gaël PORTAY)
     - use lib/env.c for --whitelist-environment (by Karel Zak)
     - fix use after free in run_shell (by Tanish Yadav)
 
@@ -1125,6 +1165,10 @@ sulogin:
 swapoff:
     - avoid being killed by OOM (by Karel Zak)
 
+swapon:
+    - remove unnecessary variable usage (by Karel Zak)
+    - make options --help and --version override --summary (by Benno Schulenberg)
+
 sys-utils:
     - remove redundant comparison in read_hypervisor_dmi in lscpu-virt.c (by Anton Moryakov)
     - warns if mqueue fs is not mounted (by Prasanna Paithankar)
@@ -1135,6 +1179,9 @@ sys-utils:
     - (save_adjtime) fix memory leak (by Maks Mishin)
     - (setpriv) fix potential memory leak (by Maks Mishin)
     - hwclock-rtc fix pointer usage (by Karthikeyan Krishnasamy)
+
+sys-utils/chmem:
+    - fix typo. (by WanBingjiang)
 
 sys-utils/irq-common:
     - fix SPDX typos (by Karel Zak)
@@ -1148,6 +1195,9 @@ sys-utils/setarch.c:
 sys-utils/setpgid:
     - fix --help typo (foregound > foreground) + alignment (by Emanuele Torre)
     - make -f work (by Emanuele Torre)
+
+terminal-colors.d:
+    - support NO_COLOR (by Karel Zak)
 
 term-utils:
     - make pointer arrays const (by Max Kellermann)
@@ -1163,6 +1213,7 @@ test_mkfds:
     - (cosmetic) remove whitespaces between a function and its arguments (by Masatake YAMATO)
 
 tests:
+    - update lsmem outputs (by Karel Zak)
     - (lsns/nsfs) consider the cases that lsns returns multiple paths (by Masatake YAMATO)
     - (lsns/nsfs) check test_sysinfo helper (by Masatake YAMATO)
     - improve test_sysinfo to check for NS_GET_NSTYPE usability (by Karel Zak)
@@ -1234,6 +1285,9 @@ tests:
     - (lsfd) add a case testing ERROR type appeared in TYPE column (by Masatake YAMATO)
     - (test_mkfds::mmap) new factory (by Masatake YAMATO)
 
+test_sysinfo:
+    - remove memory lea [coverity scan] (by Karel Zak)
+
 textual:
     - make two incorrect synopses identical to a better one (by Benno Schulenberg)
     - fix three misspellings of "unsupported" (by Benno Schulenberg)
@@ -1254,7 +1308,11 @@ tmpfiles:
     - depend on systemd... (by Christian Hesse)
     - add and install for uuidd, generate /run/uuidd & /var/lib/libuuid (by Christian Hesse)
 
+tools:
+    - add SPDX-License-Identifier (by Karel Zak)
+
 tools/git-grouped-log:
+    - sort output (by Karel Zak)
     - add from master branch (by Karel Zak)
 
 tools/git-tp-sync:
@@ -1270,6 +1328,12 @@ tools/git-tp-sync:
 tools/git-tp-sync-man:
     - remove obsolete script (by Karel Zak)
 
+tools/git-version-bump:
+    - add from master branch (by Karel Zak)
+
+tools/poman-translate:
+    - fix to work outside on source dir (by Karel Zak)
+
 treewide:
     - use scols printf api where possible (by Robin Jarry)
     - use fgetc() instead of getc() (by Thomas Weißschuh)
@@ -1278,6 +1342,8 @@ umount, losetup:
     - Document loop destroy behavior (by Stanislav Brabec)
 
 unshare:
+    - fix typo in --map-groups=subids map name [coverity scan] (by Karel Zak)
+    - make strings more robust (by Karel Zak)
     - in usage text, reshuffle options into somewhat related groups (by Benno Schulenberg)
     - don't mark " (by " and ":" as part of the placeholders|Benno Schulenberg)
     - use single asterisks around long options, double around values (by Benno Schulenberg)
@@ -1304,6 +1370,9 @@ uuidgen:
 uuidparse:
     - add support for RFC9562 UUIDs (by Thomas Weißschuh)
     - only report type/version for DCE variant (by Thomas Weißschuh)
+
+various:
+    - (man) list --help and --version last among the options (by Benno Schulenberg)
 
 wall:
     - always use utmp as fallback (by Karel Zak)
@@ -1338,6 +1407,7 @@ zramctl:
     - add COMP-RATIO column (by Karel Zak)
 
 Misc:
+    - Use ipc_stat::cgid for the column COL_CGID. (by Koutheir Attouchi)
     - remove duplicate includes (by Karel Zak)
     - Defined macros for POSIX IPC compilation and removed path buffer. (by Prasanna Paithankar)
     - Fix CodeQL warning (by Prasanna Paithankar)
