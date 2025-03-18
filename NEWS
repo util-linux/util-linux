@@ -1,4 +1,4 @@
-util-linux 2.41-rc2: Mar 06 2025 (the latest and greatest!)
+util-linux 2.41: Mar 18 2025 (the latest and greatest!)
 
  The most recent version (on the first line) may be used as a fallback for
  the ./tools/git-version-gen script.
